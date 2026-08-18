@@ -1,0 +1,46 @@
+{
+  "beta_n": {
+    "ball": "[0.8100000000000000000000000000000000000000000000000000000000 +/- 7.81e-59]",
+    "lower_enclosure": "[0.80999999999999999999999999999999999999999999999999999999987892501475393362694581 +/- 4.92e-81]",
+    "upper_enclosure": "[0.81000000000000000000000000000000000000000000000000000000019754339698042408235158 +/- 1.17e-81]"
+  },
+  "cells": 100,
+  "computed_one_sided_hit_lower_enclosure": {
+    "ball": "[0.19668508938773377699464920014578969068205147427981334 +/- 6.63e-54]",
+    "lower_enclosure": "[0.19668508938773377699464920014578969068205147427981333337882984581943858754733592 +/- 4.07e-82]",
+    "upper_enclosure": "[0.19668508938773377699464920014578969068205147427981333711717932448285110082330666 +/- 1.81e-81]"
+  },
+  "continuum_argument": {
+    "cell_rule": "H_t(y) >= lower[j] for y in [edge_j,edge_(j+1))",
+    "monotonicity_envelope": true,
+    "one_sided_state_monotonicity": "H_t(x) is nondecreasing in x by pathwise coupling",
+    "operator_statement": "sup_s K^n 1(s) <= 1-q_safe",
+    "resolvent_statement": "||(I-K)^-1||_inf <= n/q_safe",
+    "sampled_grid_used": false,
+    "two_sided_domination": "one-sided upper crossing forces two-sided absorption"
+  },
+  "mass_balance": "every Arb row enclosure contains 1",
+  "method": "one-sided monotone Bellman lower envelope",
+  "model": {
+    "h_den": 1,
+    "h_num": 5,
+    "k_den": 2,
+    "k_num": 1
+  },
+  "n": 250,
+  "precision_bits": 192,
+  "q_safe": {
+    "ball": "[0.1900000000000000000000000000000000000000000000000000000000 +/- 7.81e-59]",
+    "denominator": 100,
+    "lower_enclosure": "[0.18999999999999999999999999999999999999999999999999999999992193849635450983842558 +/- 4.87e-81]",
+    "numerator": 19,
+    "upper_enclosure": "[0.19000000000000000000000000000000000000000000000000000000000159309191113245227703 +/- 1.12e-81]"
+  },
+  "resolvent_bound": {
+    "ball": "[1315.789473684210526315789473684210526315789473684210526316 +/- 6.76e-55]",
+    "lower_enclosure": "[1315.7894736842105263157894736842105263157894736842105263152743180683159059584176 +/- 8.37e-78]",
+    "upper_enclosure": "[1315.7894736842105263157894736842105263157894736842105263165793789619156108637597 +/- 3.29e-77]"
+  },
+  "schema": "rebaseguard.monotone-block-contraction.v1",
+  "scope": "entire reachable continuum"
+}

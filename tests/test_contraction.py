@@ -1,6 +1,9 @@
 from flint import arb
 
-from rebaseguard_certify.contraction import certify_block_contraction
+from rebaseguard_certify.contraction import (
+    certify_block_contraction,
+    certify_monotone_block_contraction,
+)
 
 
 def test_global_block_contraction_is_strict_and_analytic():
@@ -18,3 +21,13 @@ def test_contraction_uses_exact_model_parameters():
     assert certificate["derivation"]["sampled_grid_used"] is False
     assert certificate["derivation"]["forcing_threshold"] == "h+n*k"
 
+
+def test_monotone_bellman_minorant_improves_resolvent_bound():
+    certificate = certify_monotone_block_contraction(
+        n=250, cells=100, q_safe_num=19, q_safe_den=100, bits=160
+    )
+    assert certificate["scope"] == "entire reachable continuum"
+    assert certificate["continuum_argument"]["sampled_grid_used"] is False
+    assert certificate["continuum_argument"]["monotonicity_envelope"] is True
+    assert arb(certificate["computed_one_sided_hit_lower_enclosure"]["ball"]) > arb(19) / 100
+    assert arb(certificate["resolvent_bound"]["ball"]) < 1400
