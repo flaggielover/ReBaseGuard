@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools==82.0.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rebaseguard-certify"
+version = "0.1.0"
+description = "Validated continuum certificate for the ReBaseGuard CUSUM lemma"
+requires-python = "==3.14.*"
+dependencies = [
+  "numpy==2.5.2",
+  "python-flint==0.9.0",
+  "scipy==1.18.0",
+]
+
+[project.optional-dependencies]
+test = ["pytest==9.1.1"]
+
+[project.scripts]
+rebaseguard-certify = "rebaseguard_certify.cli:main_entry"
+rebaseguard-audit = "rebaseguard_certify.audit:main_entry"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
