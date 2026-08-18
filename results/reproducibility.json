@@ -1,0 +1,43 @@
+{
+  "generated_at": "2026-08-18T22:58:14+09:00",
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "environment": {
+    "python": "3.14.5",
+    "python_flint": "0.9.0",
+    "flint_arb": "3.6.0",
+    "numpy": "2.5.2",
+    "scipy": "1.18.0",
+    "pytest": "9.1.1"
+  },
+  "commands": {
+    "tests": "make test",
+    "diagnostic": "make diagnostic",
+    "proof": "make proof",
+    "audit": "make audit"
+  },
+  "verification": {
+    "tests": "26 passed",
+    "full_audit_status": "PASS",
+    "full_audit_wall_seconds_cold_measured": 187.91,
+    "full_audit_wall_seconds_warm_measured": 104.39036312499957,
+    "full_audit_peak_rss_bytes_measured": 56573952,
+    "expected_full_audit_wall_seconds": "100-420",
+    "expected_proof_plus_audit_wall_seconds": "240-600",
+    "expected_peak_rss_bytes_upper_budget": 268435456
+  },
+  "certified_interval": {
+    "Gamma_lower": "3.92434820058289712818577754660509526729583740234375",
+    "Gamma_upper": "27.84938212754670328052952754660509526729583740234375",
+    "Gamma_lower_gt_2": true
+  },
+  "hashes_sha256": {
+    "certificate.json": "85e68c7dde306f2e6ce464203def22089e9b935d1cfca4b4944cef191d80545e",
+    "audit_report.md": "034ccb1b6fe4f130b6070c25693461da83ffda79b57fe7b5e6596cb0b2238d7b",
+    "residual.json": "dc463417f629ed0b770967459621f0ebd308df3dd06ca13c57129b168b29edce",
+    "contraction_monotone.json": "694f46dbb65f7d43e37d0e0af681e784d4a6599c232df2b5d94e3f15ae3be434",
+    "candidates.json": "671ce0e8b4f7636a1771fe562798af456288b3369bd5f26e85dd59717c1ba03e",
+    "enclosure.json": "71c3a68c4d82f3663254975b4bbc6c41632e54430a8e86538ee446dc83145907",
+    "bellman_crosscheck.json": "a1fe1496bfa95c3ec291a20c8cb232bdca04eeb973f70feed1220b66b74a41a6"
+  },
+  "artifact_size_kib": 56
+}
