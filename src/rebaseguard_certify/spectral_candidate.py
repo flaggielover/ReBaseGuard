@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 import math
 
 import numpy as np
+from numpy.polynomial.chebyshev import chebvander2d
 from numpy.polynomial.legendre import leggauss
 from scipy.special import ndtr
 
@@ -46,6 +47,24 @@ class SpectralCandidate:
         wp = _basis(float(plus), self.nodes, self.weights)
         wm = _basis(float(minus), self.nodes, self.weights)
         return float(wp @ self.values @ wm)
+
+    def to_chebyshev_dyadic(self, *, scale_bits: int = 50) -> dict[str, object]:
+        normalized = 2.0 * self.nodes / self.h - 1.0
+        xx, yy = np.meshgrid(normalized, normalized, indexing="ij")
+        vandermonde = chebvander2d(xx.ravel(), yy.ravel(), [self.degree, self.degree])
+        coefficients = np.linalg.solve(
+            vandermonde.reshape((self.values.size, self.values.size)), self.values.ravel()
+        ).reshape(self.values.shape)
+        scale = 1 << scale_bits
+        numerators = np.rint(coefficients * scale).astype(np.int64)
+        return {
+            "schema": "rebaseguard.chebyshev-candidate.v1",
+            "degree": self.degree,
+            "scale_bits": scale_bits,
+            "h_num": int(round(self.h * 2)),
+            "h_den": 2,
+            "numerators": numerators.tolist(),
+        }
 
 
 def solve_spectral_candidates(
