@@ -26,6 +26,16 @@ class StepResult:
 
 
 @dataclass(frozen=True, slots=True)
+class OracleResult:
+    """Complete one-step convention oracle for the stopped reward."""
+
+    state: State
+    t_sum: float
+    alarm: Alarm
+    terminal_reward: float | None
+
+
+@dataclass(frozen=True, slots=True)
 class PathResult:
     tau: int
     z_tau: float
@@ -52,6 +62,23 @@ def step(state: State, z: float, k: float, h: float) -> StepResult:
     return StepResult(next_state, Alarm.CONTINUE)
 
 
+def oracle_step(
+    state: State, t_sum: float, z: float, k: float = 0.5, h: float = 5.0
+) -> OracleResult:
+    """Apply one observation, then check the inclusive alarm boundary.
+
+    The cumulative sum includes the same increment that updates both CUSUM
+    arms. On alarm the reward is exactly ``z * (t_sum + z)``.
+    """
+
+    outcome = step(state, z, k, h)
+    next_t_sum = t_sum + z
+    reward = (
+        z * next_t_sum if outcome.alarm is not Alarm.CONTINUE else None
+    )
+    return OracleResult(outcome.state, next_t_sum, outcome.alarm, reward)
+
+
 def run_path(
     innovations: Iterable[float], k: float = 0.5, h: float = 5.0
 ) -> PathResult:
@@ -60,10 +87,9 @@ def run_path(
     for tau, z_value in enumerate(innovations, start=1):
         z = float(z_value)
         pre_state = state
-        outcome = step(state, z, k, h)
-        t_sum += z
+        outcome = oracle_step(state, t_sum, z, k, h)
+        t_sum = outcome.t_sum
         if outcome.alarm is not Alarm.CONTINUE:
             return PathResult(tau, z, t_sum, outcome.alarm, pre_state, outcome.state)
         state = outcome.state
     raise ValueError("innovation sequence ended before an alarm")
-

@@ -15,3 +15,6 @@ def test_diagnostic_summary_is_labelled_nonrigorous():
     summary = result.summary()
     assert summary["proof_role"] == "NON-RIGOROUS DIAGNOSTIC ONLY"
     assert summary["n"] == 256
+    assert summary["arl"] == summary["mean_tau"]
+    assert summary["gamma_se"] > 0.0
+    assert summary["up_fraction"] + summary["down_fraction"] == 1.0

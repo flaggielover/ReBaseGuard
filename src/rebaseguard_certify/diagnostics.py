@@ -19,17 +19,27 @@ class DiagnosticResult:
     arm: np.ndarray
 
     def summary(self) -> dict[str, float | int | str]:
+        rewards = self.z_tau * self.t_tau
+        gamma_se = float(np.std(rewards, ddof=1) / np.sqrt(self.tau.size))
+        up_fraction = float(np.mean(self.arm == 1))
         return {
             "proof_role": "NON-RIGOROUS DIAGNOSTIC ONLY",
             "n": int(self.tau.size),
             "mean_tau": float(np.mean(self.tau)),
+            "arl": float(np.mean(self.tau)),
             "mean_z_tau": float(np.mean(self.z_tau)),
             "mean_t_tau": float(np.mean(self.t_tau)),
             "mean_t_tau_sq": float(np.mean(self.t_tau * self.t_tau)),
-            "gamma": float(np.mean(self.z_tau * self.t_tau)),
+            "wald_second_gap": float(
+                np.mean(self.t_tau * self.t_tau) - np.mean(self.tau)
+            ),
+            "gamma": float(np.mean(rewards)),
+            "gamma_se": gamma_se,
             "mean_z_tau_sq": float(np.mean(self.z_tau * self.z_tau)),
             "cross_term": float(np.mean(self.z_tau * (self.t_tau - self.z_tau))),
-            "up_fraction": float(np.mean(self.arm == 1)),
+            "up_fraction": up_fraction,
+            "down_fraction": 1.0 - up_fraction,
+            "alarm_symmetry_gap": 2.0 * up_fraction - 1.0,
         }
 
 
