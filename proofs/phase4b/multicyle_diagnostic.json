@@ -1,0 +1,184 @@
+{
+  "attempted_settings": [
+    {
+      "name": "fresh",
+      "rho": 0.0,
+      "seed": 41001
+    },
+    {
+      "name": "below_local_threshold",
+      "rho": 0.04916395254371986,
+      "seed": 41002
+    },
+    {
+      "name": "above_local_threshold",
+      "rho": 0.07374592881557979,
+      "seed": 41003
+    },
+    {
+      "name": "full_reuse",
+      "rho": 1.0,
+      "seed": 41004
+    }
+  ],
+  "configuration": {
+    "burn_in_cycles": 30,
+    "chains": 512,
+    "reference_update": "e_next=rho*(e+Z_tau)+(1-rho)*X_fresh, X_fresh iid N(0,1)",
+    "retained_cycles_per_chain": 120
+  },
+  "critical_fraction": {
+    "gamma": 17.272084700443617,
+    "identity": "rho_c=1/(Gamma_D-1)",
+    "rho_c": 0.06145494067964982,
+    "rho_c_delta_method_se": 0.00010584966404846842,
+    "rho_c_transformed_ci95": [
+      0.06124817714919425,
+      0.06166310493643175
+    ]
+  },
+  "detector": {
+    "boundary": "inclusive post-update max(R_plus,R_minus)>=A",
+    "delta": 1.0,
+    "name": "symmetric two-chart Shiryaev-Roberts",
+    "threshold_A": 520.3125,
+    "threshold_selected_without_gamma": true,
+    "threshold_source": "proofs/phase4b/arl_calibration.json"
+  },
+  "failed_or_null_settings": [],
+  "policy_precommit": "fresh rho=0; 0.8*rho_c below; 1.2*rho_c above; full rho=1",
+  "proof_role": "NON-RIGOROUS MULTI-CYCLE SANITY CHECK ONLY",
+  "runs": [
+    {
+      "alarm_direction_alternation_fraction": 0.5028558298319328,
+      "alarm_direction_lag_product": -0.005711659663865546,
+      "burn_in_cycles": 30,
+      "chains": 512,
+      "cycles_per_chain": 120,
+      "fraction_abs_error_gt_1": 0.31549479166666666,
+      "fraction_abs_error_gt_2": 0.045654296875,
+      "fraction_abs_error_gt_3": 0.0032552083333333335,
+      "lag1_reference_correlation": -0.010579761901312807,
+      "mean_cycle_length": 80.03995768229167,
+      "mean_prior_times_new_error": -0.010431566427059754,
+      "mean_reference_error": -0.0035875210288935683,
+      "mean_terminal_residual": 0.008855104369446034,
+      "minus_fraction": 0.49903971354166665,
+      "n_cycles": 61440,
+      "name": "fresh",
+      "plus_fraction": 0.5009602864583333,
+      "prior_error_alarm_direction_correlation": -0.7926918550472033,
+      "reference_error_quantiles_01_05_50_95_99": [
+        -2.3419039391007166,
+        -1.6453438603912693,
+        -0.0040007805786476764,
+        1.6389887415207574,
+        2.3371675554510425
+      ],
+      "rho": 0.0,
+      "runtime_seconds": 0.7410002499964321,
+      "sd_cycle_length": 185.58780700875533,
+      "sd_reference_error": 0.9994680048534456,
+      "seed": 41001
+    },
+    {
+      "alarm_direction_alternation_fraction": 0.5266708245798319,
+      "alarm_direction_lag_product": -0.05334164915966386,
+      "burn_in_cycles": 30,
+      "chains": 512,
+      "cycles_per_chain": 120,
+      "fraction_abs_error_gt_1": 0.29318033854166664,
+      "fraction_abs_error_gt_2": 0.03533528645833333,
+      "fraction_abs_error_gt_3": 0.0016764322916666666,
+      "lag1_reference_correlation": -0.039027041732725684,
+      "mean_cycle_length": 83.80037434895833,
+      "mean_prior_times_new_error": -0.03527170467123704,
+      "mean_reference_error": 0.00017857491904137434,
+      "mean_terminal_residual": 0.0017196945350491854,
+      "minus_fraction": 0.49949544270833335,
+      "n_cycles": 61440,
+      "name": "below_local_threshold",
+      "plus_fraction": 0.5005045572916667,
+      "prior_error_alarm_direction_correlation": -0.792975200294553,
+      "reference_error_quantiles_01_05_50_95_99": [
+        -2.214096845771739,
+        -1.5606522773748728,
+        -0.0015436116895317115,
+        1.5667782367233014,
+        2.2141189200825377
+      ],
+      "rho": 0.04916395254371986,
+      "runtime_seconds": 0.7761224170099013,
+      "sd_cycle_length": 190.2933983199475,
+      "sd_reference_error": 0.9508128349380273,
+      "seed": 41002
+    },
+    {
+      "alarm_direction_alternation_fraction": 0.5403098739495799,
+      "alarm_direction_lag_product": -0.08061974789915967,
+      "burn_in_cycles": 30,
+      "chains": 512,
+      "cycles_per_chain": 120,
+      "fraction_abs_error_gt_1": 0.28416341145833335,
+      "fraction_abs_error_gt_2": 0.03271484375,
+      "fraction_abs_error_gt_3": 0.001171875,
+      "lag1_reference_correlation": -0.06298236230528662,
+      "mean_cycle_length": 83.99581705729166,
+      "mean_prior_times_new_error": -0.05520127028248502,
+      "mean_reference_error": 0.0021898357168256485,
+      "mean_terminal_residual": 0.0017597164735785717,
+      "minus_fraction": 0.49978841145833336,
+      "n_cycles": 61440,
+      "name": "above_local_threshold",
+      "plus_fraction": 0.5002115885416667,
+      "prior_error_alarm_direction_correlation": -0.7943796355365744,
+      "reference_error_quantiles_01_05_50_95_99": [
+        -2.1691009361566818,
+        -1.5340285271000476,
+        0.0015001802516802984,
+        1.537486736115811,
+        2.1756631520555603
+      ],
+      "rho": 0.07374592881557979,
+      "runtime_seconds": 0.7800545830104966,
+      "sd_cycle_length": 190.0847621435834,
+      "sd_reference_error": 0.9346217653087956,
+      "seed": 41003
+    },
+    {
+      "alarm_direction_alternation_fraction": 0.8947610294117647,
+      "alarm_direction_lag_product": -0.7895220588235294,
+      "burn_in_cycles": 30,
+      "chains": 512,
+      "cycles_per_chain": 120,
+      "fraction_abs_error_gt_1": 0.529443359375,
+      "fraction_abs_error_gt_2": 0.13844401041666668,
+      "fraction_abs_error_gt_3": 0.015087890625,
+      "lag1_reference_correlation": -0.4982994412968575,
+      "mean_cycle_length": 48.695621744791666,
+      "mean_prior_times_new_error": -0.9351750539000946,
+      "mean_reference_error": -0.0024698515032049225,
+      "mean_terminal_residual": -0.0004520475295811659,
+      "minus_fraction": 0.49972330729166664,
+      "n_cycles": 61440,
+      "name": "full_reuse",
+      "plus_fraction": 0.5002766927083333,
+      "prior_error_alarm_direction_correlation": -0.8370426640511255,
+      "reference_error_quantiles_01_05_50_95_99": [
+        -2.8941778697001337,
+        -2.187215660107683,
+        -0.0013544417444772971,
+        2.1695523837897723,
+        2.8933021634240004
+      ],
+      "rho": 1.0,
+      "runtime_seconds": 0.4970755829999689,
+      "sd_cycle_length": 146.53423918548967,
+      "sd_reference_error": 1.370080114147525,
+      "seed": 41004
+    }
+  ],
+  "schema": "rebaseguard.phase4b.multicycle-diagnostic.v1",
+  "source_diagnostic": "proofs/phase4b/diagnostic_runs.json",
+  "status": "complete"
+}
