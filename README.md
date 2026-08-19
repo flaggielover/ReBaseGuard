@@ -66,3 +66,18 @@ small (under 100 KiB); peak working memory is recorded in
 The ordinary diagnostic and finite Bellman result are cross-checks only. They
 do not contribute to the certified lower endpoint.
 
+## Phase-4 feasibility pre-gate
+
+The finite-Bellman/Monte-Carlo discrepancy and detector-dependence of the score
+identity are audited separately from the protected certificate:
+
+```bash
+make pregate
+make pregate-audit
+```
+
+This preserves the historical finite Arb implementation, runs the pathwise and
+Monte Carlo diagnostics plus the independent refined Bellman solver, and writes
+`diagnostics/phase4_pregate.json`. The findings and stopped-score proof are in
+`proofs/ReBaseGuard_Phase4_Feasibility_PreGate_Report.md`. These diagnostics are
+not part of the continuum proof trusted base.
