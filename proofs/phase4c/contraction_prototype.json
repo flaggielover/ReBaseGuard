@@ -1,0 +1,66 @@
+{
+  "block_sum": {
+    "beta": {
+      "ball": "[0.999662676139132004617888828945436896876015684640651521659 +/- 4.55e-58]",
+      "lower_enclosure": "[0.99966267613913200461788882894543689687601568464065152165897242927801254336830932 +/- 1.62e-82]",
+      "upper_enclosure": "[0.99966267613913200461788882894543689687601568464065152165960966604246552427912087 +/- 2.33e-81]"
+    },
+    "forcing_events": [
+      "sum Z_i >= log(A)+n/2",
+      "sum Z_i <= -log(A)-n/2"
+    ],
+    "method": "two-sided Gaussian block-sum forcing",
+    "n": 9,
+    "operator_statement": "sup_y K^n 1(y) <= 1-q",
+    "q": {
+      "ball": "[0.00033732386086799538211117105456310312398431535934847834062 +/- 3.71e-60]",
+      "lower_enclosure": "[0.00033732386086799538211117105456310312398431535934847834061630719981180842911979651 +/- 4.85e-84]",
+      "upper_enclosure": "[0.00033732386086799538211117105456310312398431535934847834062377481814524179916836938 +/- 2.03e-84]"
+    },
+    "resolvent_bound": {
+      "ball": "[26680.591099726447258848018836052180118572297118626888616 +/- 7.28e-52]",
+      "lower_enclosure": "[26680.591099726447258848018836052180118572297118626888615269986342202662342664230 +/- 4.29e-76]",
+      "upper_enclosure": "[26680.591099726447258848018836052180118572297118626888615865094109684127779500209 +/- 2.52e-76]"
+    }
+  },
+  "one_sided_monotone": {
+    "beta": {
+      "ball": "[0.890000000000000000000000000000000000000000000000000000000 +/- 2.50e-58]",
+      "lower_enclosure": "[0.88999999999999999999999999999999999999999999999999999999961128557368368164440495 +/- 3.19e-81]",
+      "upper_enclosure": "[0.89000000000000000000000000000000000000000000000000000000024852233813666255521651 +/- 4.66e-81]"
+    },
+    "cells": 200,
+    "computed_hit_probability": {
+      "ball": "[0.11539128268865469906242405601612381716794681601154096 +/- 6.87e-54]",
+      "lower_enclosure": "[0.11539128268865469906242405601612381716794681601154095313660851064541884133618506 +/- 2.74e-81]",
+      "upper_enclosure": "[0.11539128268865469906242405601612381716794681601154095801154941330627943165841052 +/- 3.93e-81]"
+    },
+    "continuum_argument": {
+      "cell_rule": "destination values use the left endpoint of each Y cell",
+      "operator_statement": "sup_y K^n 1(y) <= 1-q_safe",
+      "pathwise_monotonicity": "one-sided SR hitting probability is nondecreasing in R+",
+      "resolvent_statement": "||(I-K)^-1||_inf <= n/q_safe",
+      "sampled_grid_used": false,
+      "two_sided_domination": "a one-sided plus-chart hit forces symmetric two-chart absorption",
+      "uniform_start": "all live plus-chart states dominate R+=0"
+    },
+    "mass_balance": "every Arb transition-plus-alarm row contains 1",
+    "method": "one-sided SR monotone Bellman lower envelope",
+    "n": 139,
+    "q_safe": {
+      "ball": "[0.1100000000000000000000000000000000000000000000000000000000 +/- 2.95e-59]",
+      "denominator": 100,
+      "lower_enclosure": "[0.10999999999999999999999999999999999999999999999999999999997052779964404963287497 +/- 4.29e-81]",
+      "numerator": 11,
+      "upper_enclosure": "[0.11000000000000000000000000000000000000000000000000000000001035509742236093980069 +/- 2.28e-81]"
+    },
+    "resolvent_bound": {
+      "ball": "[1263.63636363636363636363636363636363636363636363636363636 +/- 4.11e-54]",
+      "lower_enclosure": "[1263.6363636363636363636363636363636363636363636363636363628948517650001676674193 +/- 1.53e-77]",
+      "upper_enclosure": "[1263.6363636363636363636363636363636363636363636363636363641999126585998725727613 +/- 4.36e-77]"
+    }
+  },
+  "precision_bits": 192,
+  "proof_role": "RIGOROUS FEASIBILITY BOUNDS; NOT THE FINAL SR CERTIFICATE",
+  "schema": "rebaseguard.phase4c.contraction-prototype.v1"
+}
