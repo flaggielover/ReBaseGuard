@@ -1,0 +1,746 @@
+{
+  "classification": {
+    "category": "D. FINITE DISCRETIZATION BIAS",
+    "mechanism": "one-sided floor projection of every off-grid next state"
+  },
+  "corrected_point_estimate": {
+    "gamma": 15.886823577242515,
+    "method": "second-order extrapolation from cells_per_unit 12 and 16",
+    "proof_role": "NON-RIGOROUS POINT ESTIMATE ONLY"
+  },
+  "environment": {
+    "flint": "3.6.0",
+    "numpy": "2.5.2",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "python": "3.14.5",
+    "python_flint": "0.9.0",
+    "scipy": "1.18.0"
+  },
+  "historical_increment_refinement": [
+    {
+      "cells": 12,
+      "continuum_certificate": false,
+      "gamma_finite": {
+        "ball": "[18.9920911598073226762364827091890 +/- 5.79e-32]",
+        "lower_enclosure": "[18.992091159807322676236482709188942196066882870548459077380126086331954154512065 +/- 2.62e-79]",
+        "upper_enclosure": "[18.992091159807322676236482709189016025199515643861297568859571019449571430101449 +/- 5.60e-80]"
+      },
+      "mass_balance_rows": 169,
+      "precision_bits": 128,
+      "proof_role": "INDEPENDENT FINITE INTERVAL CROSS-CHECK ONLY",
+      "schema": "rebaseguard.finite-bellman-crosscheck.v1",
+      "z_bins": 24
+    },
+    {
+      "cells": 12,
+      "continuum_certificate": false,
+      "gamma_finite": {
+        "ball": "[18.680948219216911659256663688244 +/- 4.39e-31]",
+        "lower_enclosure": "[18.680948219216911659256663688244286591239896731632136451519453670074815032999511 +/- 2.82e-79]",
+        "upper_enclosure": "[18.680948219216911659256663688244438993424204004747063593749012073382486643410494 +/- 7.14e-80]"
+      },
+      "mass_balance_rows": 169,
+      "precision_bits": 128,
+      "proof_role": "INDEPENDENT FINITE INTERVAL CROSS-CHECK ONLY",
+      "schema": "rebaseguard.finite-bellman-crosscheck.v1",
+      "z_bins": 48
+    },
+    {
+      "cells": 12,
+      "continuum_certificate": false,
+      "gamma_finite": {
+        "ball": "[18.740148445039828628710190858166 +/- 1.92e-31]",
+        "lower_enclosure": "[18.740148445039828628710190858165903915401015877632471094388578765403623074440337 +/- 4.7e-82]",
+        "upper_enclosure": "[18.740148445039828628710190858166191537991882420781844902694476147853902063842579 +/- 1.59e-79]"
+      },
+      "mass_balance_rows": 169,
+      "precision_bits": 128,
+      "proof_role": "INDEPENDENT FINITE INTERVAL CROSS-CHECK ONLY",
+      "schema": "rebaseguard.finite-bellman-crosscheck.v1",
+      "z_bins": 96
+    },
+    {
+      "cells": 12,
+      "continuum_certificate": false,
+      "gamma_finite": {
+        "ball": "[18.744503200352119549860780774336 +/- 3.07e-31]",
+        "lower_enclosure": "[18.744503200352119549860780774335693125485903208667320580502500842416199255675334 +/- 2.50e-79]",
+        "upper_enclosure": "[18.744503200352119549860780774336269314448540683164262595053486612313367041530020 +/- 3.46e-79]"
+      },
+      "mass_balance_rows": 169,
+      "precision_bits": 128,
+      "proof_role": "INDEPENDENT FINITE INTERVAL CROSS-CHECK ONLY",
+      "schema": "rebaseguard.finite-bellman-crosscheck.v1",
+      "z_bins": 192
+    },
+    {
+      "cells": 12,
+      "continuum_certificate": false,
+      "gamma_finite": {
+        "ball": "[18.726513553068160533066954269365 +/- 9.05e-31]",
+        "lower_enclosure": "[18.726513553068160533066954269364095208539099899718490597898722830882096525343766 +/- 2.15e-79]",
+        "upper_enclosure": "[18.726513553068160533066954269365231074624367266269990692389802240213624568047288 +/- 4.02e-79]"
+      },
+      "mass_balance_rows": 169,
+      "precision_bits": 128,
+      "proof_role": "INDEPENDENT FINITE INTERVAL CROSS-CHECK ONLY",
+      "schema": "rebaseguard.finite-bellman-crosscheck.v1",
+      "z_bins": 384
+    }
+  ],
+  "historical_reproduction": {
+    "cells": 12,
+    "continuum_certificate": false,
+    "gamma_finite": {
+      "ball": "[18.7401484450398286287101908581660478421964016389642 +/- 2.09e-50]",
+      "lower_enclosure": "[18.740148445039828628710190858166047842196401638964204804223633672265112085730180 +/- 4.67e-79]",
+      "upper_enclosure": "[18.740148445039828628710190858166047842196401638964220892015142722764911074478822 +/- 4.64e-79]"
+    },
+    "mass_balance_rows": 169,
+    "precision_bits": 192,
+    "proof_role": "INDEPENDENT FINITE INTERVAL CROSS-CHECK ONLY",
+    "schema": "rebaseguard.finite-bellman-crosscheck.v1",
+    "z_bins": 96
+  },
+  "historical_state_refinement": [
+    {
+      "arl_finite": {
+        "ball": "[24707.077088137301390427151545530 +/- 6.47e-28]",
+        "lower_enclosure": "[24707.077088137301390427151545530152366286124136664824051742140912856933432882600 +/- 1.55e-76]",
+        "upper_enclosure": "[24707.077088137301390427151545530646527361637841240432299036180975521598626471614 +/- 3.69e-76]"
+      },
+      "cells": 4,
+      "continuum_certificate": false,
+      "full_square_nodes": 25,
+      "gamma_finite": {
+        "ball": "[21.066229818114814519602955610 +/- 2.87e-28]",
+        "lower_enclosure": "[21.066229818114814519602955609713712483642548638017386174002368041478100450603430 +/- 3.89e-79]",
+        "upper_enclosure": "[21.066229818114814519602955610008427995384891317794053754565487381021251939951699 +/- 4.08e-79]"
+      },
+      "precision_bits": 128,
+      "proof_role": "FORENSIC FINITE ARB ABLATION ONLY",
+      "reachable_nodes": 12,
+      "schema": "rebaseguard.historical-floor-reachable-ablation.v1",
+      "z_bins": 32
+    },
+    {
+      "arl_finite": {
+        "ball": "[4310.47323921439882606694654392760 +/- 9.15e-30]",
+        "lower_enclosure": "[4310.4732392143988260669465439275908594640780076645399978134056304024312460836978 +/- 3.66e-77]",
+        "upper_enclosure": "[4310.4732392143988260669465439276038211170484795908737535241575726571545563981479 +/- 2.35e-77]"
+      },
+      "cells": 8,
+      "continuum_certificate": false,
+      "full_square_nodes": 81,
+      "gamma_finite": {
+        "ball": "[19.689532876381831070148510746005 +/- 6.04e-31]",
+        "lower_enclosure": "[19.689532876381831070148510746005141699470525807189913970589304490356815515876270 +/- 3.20e-79]",
+        "upper_enclosure": "[19.689532876381831070148510746005603206828138867054446552653723166054536695817264 +/- 7.81e-80]"
+      },
+      "precision_bits": 128,
+      "proof_role": "FORENSIC FINITE ARB ABLATION ONLY",
+      "reachable_nodes": 32,
+      "schema": "rebaseguard.historical-floor-reachable-ablation.v1",
+      "z_bins": 64
+    },
+    {
+      "arl_finite": {
+        "ball": "[2099.53239836353260787608621366866 +/- 6.95e-30]",
+        "lower_enclosure": "[2099.5323983635326078760862136686619027031385655302768861510906037004362570353930 +/- 2.72e-77]",
+        "upper_enclosure": "[2099.5323983635326078760862136686669463766251754332097654725260936727212275794419 +/- 3.95e-77]"
+      },
+      "cells": 12,
+      "continuum_certificate": false,
+      "full_square_nodes": 169,
+      "gamma_finite": {
+        "ball": "[18.740148445039828628710190858166 +/- 1.92e-31]",
+        "lower_enclosure": "[18.740148445039828628710190858165903915495055425698254095026077688381402728665830 +/- 2.46e-79]",
+        "upper_enclosure": "[18.740148445039828628710190858166191538085921968847627903331975070831681718068072 +/- 8.66e-80]"
+      },
+      "precision_bits": 128,
+      "proof_role": "FORENSIC FINITE ARB ABLATION ONLY",
+      "reachable_nodes": 61,
+      "schema": "rebaseguard.historical-floor-reachable-ablation.v1",
+      "z_bins": 96
+    },
+    {
+      "arl_finite": {
+        "ball": "[1447.79011575857981917676115392861 +/- 4.09e-30]",
+        "lower_enclosure": "[1447.7901157585798191767611539286111755204101285827650198897547201173671141736067 +/- 4.17e-77]",
+        "upper_enclosure": "[1447.7901157585798191767611539286140826996241189628649838068591899239986516971816 +/- 1.26e-77]"
+      },
+      "cells": 16,
+      "continuum_certificate": false,
+      "full_square_nodes": 289,
+      "gamma_finite": {
+        "ball": "[18.076529557098176225345700810828 +/- 3.20e-31]",
+        "lower_enclosure": "[18.076529557098176225345700810827680947834936646328119773664230108052875480901958 +/- 4.97e-79]",
+        "upper_enclosure": "[18.076529557098176225345700810827907580700746933649298129493634559597287909758480 +/- 2.04e-79]"
+      },
+      "precision_bits": 128,
+      "proof_role": "FORENSIC FINITE ARB ABLATION ONLY",
+      "reachable_nodes": 99,
+      "schema": "rebaseguard.historical-floor-reachable-ablation.v1",
+      "z_bins": 128
+    },
+    {
+      "arl_finite": {
+        "ball": "[1161.86743880045721501401694080945 +/- 3.48e-30]",
+        "lower_enclosure": "[1161.8674388004572150140169408094509613104039207731076540935964487788849393913896 +/- 3.44e-77]",
+        "upper_enclosure": "[1161.8674388004572150140169408094534746008330975062149958184120735444124486505880 +/- 1.43e-77]"
+      },
+      "cells": 20,
+      "continuum_certificate": false,
+      "full_square_nodes": 441,
+      "gamma_finite": {
+        "ball": "[17.722769547735306850440842986979 +/- 3.18e-31]",
+        "lower_enclosure": "[17.722769547735306850440842986979112552647404075891941610325732079744503878668464 +/- 1.64e-79]",
+        "upper_enclosure": "[17.722769547735306850440842986979317380187046157845630146729869981609372425504400 +/- 2.60e-79]"
+      },
+      "precision_bits": 128,
+      "proof_role": "FORENSIC FINITE ARB ABLATION ONLY",
+      "reachable_nodes": 161,
+      "schema": "rebaseguard.historical-floor-reachable-ablation.v1",
+      "z_bins": 160
+    },
+    {
+      "arl_finite": {
+        "ball": "[1011.84696270532412222368727760737 +/- 3.92e-30]",
+        "lower_enclosure": "[1011.8469627053241222236872776073716103270308222262654350330784525947932526987786 +/- 1.85e-77]",
+        "upper_enclosure": "[1011.8469627053241222236872776073739135406327838454119926363000588387955945441081 +/- 1.48e-77]"
+      },
+      "cells": 24,
+      "continuum_certificate": false,
+      "full_square_nodes": 625,
+      "gamma_finite": {
+        "ball": "[17.470453194096384407958706370958 +/- 5.89e-31]",
+        "lower_enclosure": "[17.470453194096384407958706370958382656907139549541834591647030961110694481932621 +/- 4.58e-79]",
+        "upper_enclosure": "[17.470453194096384407958706370958588054890680198535204995119635646186945560610578 +/- 3.56e-79]"
+      },
+      "precision_bits": 128,
+      "proof_role": "FORENSIC FINITE ARB ABLATION ONLY",
+      "reachable_nodes": 220,
+      "schema": "rebaseguard.historical-floor-reachable-ablation.v1",
+      "z_bins": 192
+    },
+    {
+      "arl_finite": {
+        "ball": "[827.08153262301488144676648613739 +/- 1.87e-30]",
+        "lower_enclosure": "[827.08153262301488144676648613739000040833083484836280267393898381147440818490996 +/- 9.2e-80]",
+        "upper_enclosure": "[827.08153262301488144676648613739186791639406531265827860695066663913831800733099 +/- 3.96e-79]"
+      },
+      "cells": 32,
+      "continuum_certificate": false,
+      "full_square_nodes": 1089,
+      "gamma_finite": {
+        "ball": "[17.088839635204112100319607965162 +/- 3.42e-31]",
+        "lower_enclosure": "[17.088839635204112100319607965161658121271670989152055893813364404845437338466919 +/- 4.74e-79]",
+        "upper_enclosure": "[17.088839635204112100319607965161854804234134189771625217710781047170012723783933 +/- 3.78e-79]"
+      },
+      "precision_bits": 128,
+      "proof_role": "FORENSIC FINITE ARB ABLATION ONLY",
+      "reachable_nodes": 365,
+      "schema": "rebaseguard.historical-floor-reachable-ablation.v1",
+      "z_bins": 256
+    }
+  ],
+  "model": {
+    "h": 5.0,
+    "initial_state": [
+      0.0,
+      0.0
+    ],
+    "k": 0.5,
+    "m": 1
+  },
+  "monte_carlo": {
+    "combined": {
+      "gamma": 15.846122258715157,
+      "gamma_se": 0.028493264912605253,
+      "n": 2000000
+    },
+    "runs": [
+      {
+        "alarm_symmetry_gap": 0.00035999999999991594,
+        "arl": 465.363379,
+        "cross_term": 11.796198560485069,
+        "down_fraction": 0.49982000000000004,
+        "gamma": 15.84293616665419,
+        "gamma_se": 0.040291549712878946,
+        "mean_t_tau": -0.008547497046390738,
+        "mean_t_tau_sq": 464.69108464817,
+        "mean_tau": 465.363379,
+        "mean_z_tau": 0.00019801448882027643,
+        "mean_z_tau_sq": 4.046737606169121,
+        "n": 1000000,
+        "proof_role": "NON-RIGOROUS DIAGNOSTIC ONLY",
+        "seed": 1729,
+        "up_fraction": 0.50018,
+        "wald_second_gap": -0.6722943518300326
+      },
+      {
+        "alarm_symmetry_gap": 0.0007919999999999039,
+        "arl": 465.790709,
+        "cross_term": 11.802678258068402,
+        "down_fraction": 0.49960400000000005,
+        "gamma": 15.849308350776125,
+        "gamma_se": 0.04029959313300495,
+        "mean_t_tau": 0.03245002666119094,
+        "mean_t_tau_sq": 465.59332851844096,
+        "mean_tau": 465.790709,
+        "mean_z_tau": 0.0016056793840050325,
+        "mean_z_tau_sq": 4.046630092707718,
+        "n": 1000000,
+        "proof_role": "NON-RIGOROUS DIAGNOSTIC ONLY",
+        "seed": 20260818,
+        "up_fraction": 0.500396,
+        "wald_second_gap": -0.19738048155903698
+      }
+    ]
+  },
+  "pathwise_replay": [
+    {
+      "innovations": [
+        0.3,
+        1.4,
+        1.8,
+        2.1,
+        1.8
+      ],
+      "trace": [
+        {
+          "alarm": 0,
+          "post_minus": 0.0,
+          "post_plus": 0.0,
+          "post_t": 0.3,
+          "pre_minus": 0.0,
+          "pre_plus": 0.0,
+          "pre_t": 0.0,
+          "terminal_reward": null,
+          "time": 1,
+          "z": 0.3
+        },
+        {
+          "alarm": 0,
+          "post_minus": 0.0,
+          "post_plus": 0.8999999999999999,
+          "post_t": 1.7,
+          "pre_minus": 0.0,
+          "pre_plus": 0.0,
+          "pre_t": 0.3,
+          "terminal_reward": null,
+          "time": 2,
+          "z": 1.4
+        },
+        {
+          "alarm": 0,
+          "post_minus": 0.0,
+          "post_plus": 2.2,
+          "post_t": 3.5,
+          "pre_minus": 0.0,
+          "pre_plus": 0.8999999999999999,
+          "pre_t": 1.7,
+          "terminal_reward": null,
+          "time": 3,
+          "z": 1.8
+        },
+        {
+          "alarm": 0,
+          "post_minus": 0.0,
+          "post_plus": 3.8000000000000007,
+          "post_t": 5.6,
+          "pre_minus": 0.0,
+          "pre_plus": 2.2,
+          "pre_t": 3.5,
+          "terminal_reward": null,
+          "time": 4,
+          "z": 2.1
+        },
+        {
+          "alarm": 1,
+          "post_minus": 0.0,
+          "post_plus": 5.1000000000000005,
+          "post_t": 7.3999999999999995,
+          "pre_minus": 0.0,
+          "pre_plus": 3.8000000000000007,
+          "pre_t": 5.6,
+          "terminal_reward": 13.319999999999999,
+          "time": 5,
+          "z": 1.8
+        }
+      ]
+    },
+    {
+      "innovations": [
+        -0.3,
+        -1.4,
+        -1.8,
+        -2.1,
+        -1.8
+      ],
+      "trace": [
+        {
+          "alarm": 0,
+          "post_minus": 0.0,
+          "post_plus": 0.0,
+          "post_t": -0.3,
+          "pre_minus": 0.0,
+          "pre_plus": 0.0,
+          "pre_t": 0.0,
+          "terminal_reward": null,
+          "time": 1,
+          "z": -0.3
+        },
+        {
+          "alarm": 0,
+          "post_minus": 0.8999999999999999,
+          "post_plus": 0.0,
+          "post_t": -1.7,
+          "pre_minus": 0.0,
+          "pre_plus": 0.0,
+          "pre_t": -0.3,
+          "terminal_reward": null,
+          "time": 2,
+          "z": -1.4
+        },
+        {
+          "alarm": 0,
+          "post_minus": 2.2,
+          "post_plus": 0.0,
+          "post_t": -3.5,
+          "pre_minus": 0.8999999999999999,
+          "pre_plus": 0.0,
+          "pre_t": -1.7,
+          "terminal_reward": null,
+          "time": 3,
+          "z": -1.8
+        },
+        {
+          "alarm": 0,
+          "post_minus": 3.8000000000000007,
+          "post_plus": 0.0,
+          "post_t": -5.6,
+          "pre_minus": 2.2,
+          "pre_plus": 0.0,
+          "pre_t": -3.5,
+          "terminal_reward": null,
+          "time": 4,
+          "z": -2.1
+        },
+        {
+          "alarm": -1,
+          "post_minus": 5.1000000000000005,
+          "post_plus": 0.0,
+          "post_t": -7.3999999999999995,
+          "pre_minus": 3.8000000000000007,
+          "pre_plus": 0.0,
+          "pre_t": -5.6,
+          "terminal_reward": 13.319999999999999,
+          "time": 5,
+          "z": -1.8
+        }
+      ]
+    },
+    {
+      "innovations": [
+        1.0,
+        -2.0,
+        1.0,
+        -2.0,
+        -2.0,
+        -2.0,
+        -2.0
+      ],
+      "trace": [
+        {
+          "alarm": 0,
+          "post_minus": 0.0,
+          "post_plus": 0.5,
+          "post_t": 1.0,
+          "pre_minus": 0.0,
+          "pre_plus": 0.0,
+          "pre_t": 0.0,
+          "terminal_reward": null,
+          "time": 1,
+          "z": 1.0
+        },
+        {
+          "alarm": 0,
+          "post_minus": 1.5,
+          "post_plus": 0.0,
+          "post_t": -1.0,
+          "pre_minus": 0.0,
+          "pre_plus": 0.5,
+          "pre_t": 1.0,
+          "terminal_reward": null,
+          "time": 2,
+          "z": -2.0
+        },
+        {
+          "alarm": 0,
+          "post_minus": 0.0,
+          "post_plus": 0.5,
+          "post_t": 0.0,
+          "pre_minus": 1.5,
+          "pre_plus": 0.0,
+          "pre_t": -1.0,
+          "terminal_reward": null,
+          "time": 3,
+          "z": 1.0
+        },
+        {
+          "alarm": 0,
+          "post_minus": 1.5,
+          "post_plus": 0.0,
+          "post_t": -2.0,
+          "pre_minus": 0.0,
+          "pre_plus": 0.5,
+          "pre_t": 0.0,
+          "terminal_reward": null,
+          "time": 4,
+          "z": -2.0
+        },
+        {
+          "alarm": 0,
+          "post_minus": 3.0,
+          "post_plus": 0.0,
+          "post_t": -4.0,
+          "pre_minus": 1.5,
+          "pre_plus": 0.0,
+          "pre_t": -2.0,
+          "terminal_reward": null,
+          "time": 5,
+          "z": -2.0
+        },
+        {
+          "alarm": 0,
+          "post_minus": 4.5,
+          "post_plus": 0.0,
+          "post_t": -6.0,
+          "pre_minus": 3.0,
+          "pre_plus": 0.0,
+          "pre_t": -4.0,
+          "terminal_reward": null,
+          "time": 6,
+          "z": -2.0
+        },
+        {
+          "alarm": -1,
+          "post_minus": 6.0,
+          "post_plus": 0.0,
+          "post_t": -8.0,
+          "pre_minus": 4.5,
+          "pre_plus": 0.0,
+          "pre_t": -6.0,
+          "terminal_reward": 16.0,
+          "time": 7,
+          "z": -2.0
+        }
+      ]
+    },
+    {
+      "innovations": [
+        0.1,
+        -0.1,
+        0.2,
+        -0.2,
+        8.0
+      ],
+      "trace": [
+        {
+          "alarm": 0,
+          "post_minus": 0.0,
+          "post_plus": 0.0,
+          "post_t": 0.1,
+          "pre_minus": 0.0,
+          "pre_plus": 0.0,
+          "pre_t": 0.0,
+          "terminal_reward": null,
+          "time": 1,
+          "z": 0.1
+        },
+        {
+          "alarm": 0,
+          "post_minus": 0.0,
+          "post_plus": 0.0,
+          "post_t": 0.0,
+          "pre_minus": 0.0,
+          "pre_plus": 0.0,
+          "pre_t": 0.1,
+          "terminal_reward": null,
+          "time": 2,
+          "z": -0.1
+        },
+        {
+          "alarm": 0,
+          "post_minus": 0.0,
+          "post_plus": 0.0,
+          "post_t": 0.2,
+          "pre_minus": 0.0,
+          "pre_plus": 0.0,
+          "pre_t": 0.0,
+          "terminal_reward": null,
+          "time": 3,
+          "z": 0.2
+        },
+        {
+          "alarm": 0,
+          "post_minus": 0.0,
+          "post_plus": 0.0,
+          "post_t": 0.0,
+          "pre_minus": 0.0,
+          "pre_plus": 0.0,
+          "pre_t": 0.2,
+          "terminal_reward": null,
+          "time": 4,
+          "z": -0.2
+        },
+        {
+          "alarm": 1,
+          "post_minus": 0.0,
+          "post_plus": 7.5,
+          "post_t": 8.0,
+          "pre_minus": 0.0,
+          "pre_plus": 0.0,
+          "pre_t": 0.0,
+          "terminal_reward": 64.0,
+          "time": 5,
+          "z": 8.0
+        }
+      ]
+    }
+  ],
+  "proof_role": "NON-RIGOROUS DIAGNOSTIC AND FORENSIC ABLATION ONLY",
+  "protected_hashes": {
+    "proofs/certificate.json": "85e68c7dde306f2e6ce464203def22089e9b935d1cfca4b4944cef191d80545e",
+    "proofs/contraction_monotone.json": "694f46dbb65f7d43e37d0e0af681e784d4a6599c232df2b5d94e3f15ae3be434",
+    "proofs/enclosure.json": "71c3a68c4d82f3663254975b4bbc6c41632e54430a8e86538ee446dc83145907",
+    "proofs/residual.json": "dc463417f629ed0b770967459621f0ebd308df3dd06ca13c57129b168b29edce",
+    "src/rebaseguard_certify/bellman.py": "5731eb539d73d0f0ca578c22ebc48be14220c9cb61e71d2ac816b9c85dc48343"
+  },
+  "reachable_subset_ablation": {
+    "arl_finite": {
+      "ball": "[2099.532398363532607876086213668664437463548875351497 +/- 3.47e-49]",
+      "lower_enclosure": "[2099.5323983635326078760862136686644374635488753514966530697077104317625398869520 +/- 3.25e-77]",
+      "upper_enclosure": "[2099.5323983635326078760862136686644374635488753514969297582778842923989312675270 +/- 2.92e-77]"
+    },
+    "cells": 12,
+    "continuum_certificate": false,
+    "full_square_nodes": 169,
+    "gamma_finite": {
+      "ball": "[18.7401484450398286287101908581660478421964016389642 +/- 2.09e-50]",
+      "lower_enclosure": "[18.740148445039828628710190858166047842196401638964204804223633672265112085730180 +/- 4.67e-79]",
+      "upper_enclosure": "[18.740148445039828628710190858166047842196401638964220892015142722764911074478822 +/- 4.64e-79]"
+    },
+    "precision_bits": 192,
+    "proof_role": "FORENSIC FINITE ARB ABLATION ONLY",
+    "reachable_nodes": 61,
+    "schema": "rebaseguard.historical-floor-reachable-ablation.v1",
+    "z_bins": 96
+  },
+  "refined_reachable_bellman": [
+    {
+      "a_reflection_error": 2.2437846941344676e-15,
+      "arl_finite": 267.78769663441807,
+      "axis_cells": 5,
+      "b_reflection_error": 1.7763568394002505e-15,
+      "cells_per_unit": 1,
+      "continuum_certificate": false,
+      "gamma_finite": 12.50342508693463,
+      "historical_solver_modified": false,
+      "interpolation": "piecewise-linear on exact reachable transition curves",
+      "linear_solve": "SciPy sparse float64",
+      "maximum_mass_error": 0.0,
+      "node_count": 17,
+      "proof_role": "NON-RIGOROUS REFINED FINITE DIAGNOSTIC ONLY",
+      "quadrature": "analytic Gaussian moments per interpolation segment",
+      "schema": "rebaseguard.refined-bellman-diagnostic.v1"
+    },
+    {
+      "a_reflection_error": 7.687951238635213e-15,
+      "arl_finite": 399.1960557616314,
+      "axis_cells": 10,
+      "b_reflection_error": 8.881784197001252e-15,
+      "cells_per_unit": 2,
+      "continuum_certificate": false,
+      "gamma_finite": 14.90961462008008,
+      "historical_solver_modified": false,
+      "interpolation": "piecewise-linear on exact reachable transition curves",
+      "linear_solve": "SciPy sparse float64",
+      "maximum_mass_error": 1.1102230246251565e-16,
+      "node_count": 49,
+      "proof_role": "NON-RIGOROUS REFINED FINITE DIAGNOSTIC ONLY",
+      "quadrature": "analytic Gaussian moments per interpolation segment",
+      "schema": "rebaseguard.refined-bellman-diagnostic.v1"
+    },
+    {
+      "a_reflection_error": 3.2725558374302466e-15,
+      "arl_finite": 447.41983406966824,
+      "axis_cells": 20,
+      "b_reflection_error": 8.881784197001252e-15,
+      "cells_per_unit": 4,
+      "continuum_certificate": false,
+      "gamma_finite": 15.632640250460005,
+      "historical_solver_modified": false,
+      "interpolation": "piecewise-linear on exact reachable transition curves",
+      "linear_solve": "SciPy sparse float64",
+      "maximum_mass_error": 1.1102230246251565e-16,
+      "node_count": 161,
+      "proof_role": "NON-RIGOROUS REFINED FINITE DIAGNOSTIC ONLY",
+      "quadrature": "analytic Gaussian moments per interpolation segment",
+      "schema": "rebaseguard.refined-bellman-diagnostic.v1"
+    },
+    {
+      "a_reflection_error": 7.488801245791876e-15,
+      "arl_finite": 460.83742292570673,
+      "axis_cells": 40,
+      "b_reflection_error": 1.9539925233402755e-14,
+      "cells_per_unit": 8,
+      "continuum_certificate": false,
+      "gamma_finite": 15.822644979765242,
+      "historical_solver_modified": false,
+      "interpolation": "piecewise-linear on exact reachable transition curves",
+      "linear_solve": "SciPy sparse float64",
+      "maximum_mass_error": 1.1102230246251565e-16,
+      "node_count": 577,
+      "proof_role": "NON-RIGOROUS REFINED FINITE DIAGNOSTIC ONLY",
+      "quadrature": "analytic Gaussian moments per interpolation segment",
+      "schema": "rebaseguard.refined-bellman-diagnostic.v1"
+    },
+    {
+      "a_reflection_error": 4.326671399629278e-15,
+      "arl_finite": 463.3879265634976,
+      "axis_cells": 60,
+      "b_reflection_error": 2.3092638912203256e-14,
+      "cells_per_unit": 12,
+      "continuum_certificate": false,
+      "gamma_finite": 15.85825909722185,
+      "historical_solver_modified": false,
+      "interpolation": "piecewise-linear on exact reachable transition curves",
+      "linear_solve": "SciPy sparse float64",
+      "maximum_mass_error": 2.220446049250313e-16,
+      "node_count": 1249,
+      "proof_role": "NON-RIGOROUS REFINED FINITE DIAGNOSTIC ONLY",
+      "quadrature": "analytic Gaussian moments per interpolation segment",
+      "schema": "rebaseguard.refined-bellman-diagnostic.v1"
+    },
+    {
+      "a_reflection_error": 7.882583474838611e-15,
+      "arl_finite": 464.28557469300966,
+      "axis_cells": 80,
+      "b_reflection_error": 3.552713678800501e-14,
+      "cells_per_unit": 16,
+      "continuum_certificate": false,
+      "gamma_finite": 15.870756057230892,
+      "historical_solver_modified": false,
+      "interpolation": "piecewise-linear on exact reachable transition curves",
+      "linear_solve": "SciPy sparse float64",
+      "maximum_mass_error": 1.1102230246251565e-16,
+      "node_count": 2177,
+      "proof_role": "NON-RIGOROUS REFINED FINITE DIAGNOSTIC ONLY",
+      "quadrature": "analytic Gaussian moments per interpolation segment",
+      "schema": "rebaseguard.refined-bellman-diagnostic.v1"
+    }
+  ],
+  "schema": "rebaseguard.phase4-pregate-diagnostics.v1"
+}
