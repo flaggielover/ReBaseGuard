@@ -55,6 +55,14 @@ def test_symmetric_tie_rule_is_explicit():
     assert outcome.terminal_reward == 0.0
 
 
+def test_symmetric_tie_matches_independent_raw_replay():
+    oracle = run_sr_path([0.0], threshold=0.5)
+    raw = replay_sr_raw([0.0], threshold=0.5)
+    assert oracle.alarm is SRAlarm.TIE
+    assert raw[-1].alarm == SRAlarm.TIE.value
+    assert oracle.terminal_reward == raw[-1].terminal_reward == 0.0
+
+
 @pytest.mark.parametrize(
     "innovations",
     [

@@ -1,0 +1,181 @@
+{
+  "attempted_settings": [
+    {
+      "delta": 1.0,
+      "detector": "symmetric two-chart Shiryaev-Roberts",
+      "sample_size": 1000000,
+      "seed": 1729,
+      "threshold_A": 520.3125
+    },
+    {
+      "delta": 1.0,
+      "detector": "symmetric two-chart Shiryaev-Roberts",
+      "sample_size": 1000000,
+      "seed": 20260818,
+      "threshold_A": 520.3125
+    },
+    {
+      "detector": "protected two-sided Gaussian CUSUM",
+      "h": 5.0,
+      "k": 0.5,
+      "m": 1,
+      "sample_size": 1000000,
+      "seed": 1729
+    }
+  ],
+  "detector": {
+    "boundary": "inclusive post-update max(R_plus,R_minus)>=A",
+    "delta": 1.0,
+    "name": "symmetric two-chart Shiryaev-Roberts",
+    "threshold_A": 520.3125,
+    "threshold_selected_without_gamma": true,
+    "threshold_source": "proofs/phase4b/arl_calibration.json"
+  },
+  "environment": {
+    "flint": "3.6.0",
+    "numpy": "2.5.2",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "python": "3.14.5",
+    "python_flint": "0.9.0",
+    "scipy": "1.18.0"
+  },
+  "failed_or_null_settings": [],
+  "precommit": {
+    "Gamma_D<2": "no instability witness for this configuration",
+    "Gamma_D>5": "strong instability witness / GREEN-A candidate",
+    "clearly 2<Gamma_D<=5": "nontrivial witness / GREEN-B candidate",
+    "near 2": "near-critical; do not immediately certify"
+  },
+  "proof_role": "NON-RIGOROUS PHASE-4B DIAGNOSTIC ONLY",
+  "protected_cusum_positive_control": {
+    "configuration": {
+      "h": 5.0,
+      "k": 0.5,
+      "m": 1
+    },
+    "result": {
+      "arl": 465.363379,
+      "arl_se": 0.45869680064227314,
+      "cross_term": 11.796198560485069,
+      "detector": "protected two-sided Gaussian CUSUM",
+      "direction_symmetry_gap": 0.00035999999999997145,
+      "fprime": -14.84293616665419,
+      "fprime_se": 0.040291549712878946,
+      "gamma": 15.84293616665419,
+      "gamma_ci95_lower": 15.763966180335643,
+      "gamma_ci95_upper": 15.921906152972738,
+      "gamma_se": 0.040291549712878946,
+      "mean_t_tau": -0.008547497046390738,
+      "mean_t_tau_sq": 464.69108464817,
+      "mean_z_tau": 0.00019801448882027643,
+      "mean_z_tau_sq": 4.046737606169121,
+      "minus_fraction": 0.49982,
+      "n": 1000000,
+      "plus_fraction": 0.50018,
+      "proof_role": "NON-RIGOROUS PHASE-4B DIAGNOSTIC ONLY",
+      "runtime_seconds": 13.071252333000302,
+      "seed": 1729,
+      "tie_fraction": 0.0,
+      "wald_second_gap": -0.6722943518300326
+    },
+    "sample_size": 1000000,
+    "seed": 1729
+  },
+  "protected_hashes": {
+    "proofs/certificate.json": "85e68c7dde306f2e6ce464203def22089e9b935d1cfca4b4944cef191d80545e",
+    "proofs/contraction_monotone.json": "694f46dbb65f7d43e37d0e0af681e784d4a6599c232df2b5d94e3f15ae3be434",
+    "proofs/enclosure.json": "71c3a68c4d82f3663254975b4bbc6c41632e54430a8e86538ee446dc83145907",
+    "proofs/residual.json": "dc463417f629ed0b770967459621f0ebd308df3dd06ca13c57129b168b29edce",
+    "src/rebaseguard_certify/bellman.py": "5731eb539d73d0f0ca578c22ebc48be14220c9cb61e71d2ac816b9c85dc48343"
+  },
+  "schema": "rebaseguard.phase4b.stopped-score-diagnostics.v1",
+  "sr_campaign": {
+    "combined": {
+      "arl": 464.4071455,
+      "arl_se": 0.3221453554970736,
+      "cross_term": 13.239433339326112,
+      "detector": "symmetric two-chart Shiryaev-Roberts",
+      "direction_symmetry_gap": -0.0006150000000000322,
+      "fprime": -16.272084700443617,
+      "fprime_se": 0.028026952428261528,
+      "gamma": 17.272084700443617,
+      "gamma_ci95_lower": 17.217152883087806,
+      "gamma_ci95_upper": 17.32701651779943,
+      "gamma_se": 0.028026952428261528,
+      "mean_t_tau": 0.011770282507444985,
+      "mean_t_tau_sq": 464.66713101582957,
+      "mean_z_tau": -0.0013465101489582034,
+      "mean_z_tau_sq": 4.032651361117504,
+      "minus_fraction": 0.5003075,
+      "n": 2000000,
+      "plus_fraction": 0.4996925,
+      "proof_role": "NON-RIGOROUS PHASE-4B DIAGNOSTIC ONLY",
+      "tie_fraction": 0.0,
+      "wald_second_gap": 0.2599855158295554
+    },
+    "precommitted_seeds": [
+      1729,
+      20260818
+    ],
+    "runs": [
+      {
+        "arl": 464.532127,
+        "arl_se": 0.4553417844366982,
+        "cross_term": 13.190702491445885,
+        "detector": "symmetric two-chart Shiryaev-Roberts",
+        "direction_symmetry_gap": -0.0012579999999999814,
+        "fprime": -16.222116272275116,
+        "fprime_se": 0.03968453861145238,
+        "gamma": 17.222116272275116,
+        "gamma_ci95_lower": 17.14433600585358,
+        "gamma_ci95_upper": 17.29989653869665,
+        "gamma_se": 0.03968453861145238,
+        "mean_t_tau": -0.008345306471842156,
+        "mean_t_tau_sq": 465.49467632373273,
+        "mean_z_tau": -0.0022181279232878887,
+        "mean_z_tau_sq": 4.031413780829233,
+        "minus_fraction": 0.500629,
+        "n": 1000000,
+        "plus_fraction": 0.499371,
+        "proof_role": "NON-RIGOROUS PHASE-4B DIAGNOSTIC ONLY",
+        "runtime_seconds": 35.62894983400474,
+        "seed": 1729,
+        "tie_fraction": 0.0,
+        "wald_second_gap": 0.9625493237327305
+      },
+      {
+        "arl": 464.282164,
+        "arl_se": 0.4558229436239833,
+        "cross_term": 13.28816418720634,
+        "detector": "symmetric two-chart Shiryaev-Roberts",
+        "direction_symmetry_gap": 2.799999999997249e-05,
+        "fprime": -16.32205312861212,
+        "fprime_se": 0.03958755135379504,
+        "gamma": 17.32205312861212,
+        "gamma_ci95_lower": 17.24446295372255,
+        "gamma_ci95_upper": 17.399643303501687,
+        "gamma_se": 0.03958755135379504,
+        "mean_t_tau": 0.03188587148673212,
+        "mean_t_tau_sq": 463.83958570792635,
+        "mean_z_tau": -0.0004748923746285184,
+        "mean_z_tau_sq": 4.033888941405777,
+        "minus_fraction": 0.499986,
+        "n": 1000000,
+        "plus_fraction": 0.500014,
+        "proof_role": "NON-RIGOROUS PHASE-4B DIAGNOSTIC ONLY",
+        "runtime_seconds": 33.09863199999381,
+        "seed": 20260818,
+        "tie_fraction": 0.0,
+        "wald_second_gap": -0.4425782920736765
+      }
+    ],
+    "samples_per_seed": 1000000
+  },
+  "status": "complete",
+  "witness_classification": {
+    "category": "GREEN-A candidate",
+    "meaning": "strong second-detector instability witness",
+    "point_estimate_regime": "Gamma_D>5",
+    "rule": "95% diagnostic interval: lower>5 GREEN-A; lower>2 and upper<=5 GREEN-B; overlap 2 near-critical; upper<2 no witness"
+  }
+}
