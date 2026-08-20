@@ -1,0 +1,24 @@
+@hasDerivAt_rebaseguard_cusum : ∀ {Ω : Type u_1} [mΩ : MeasurableSpace Ω] {μ : MeasureTheory.Measure Ω} (X : ℕ → Ω → ℝ),
+  (∀ (n : ℕ), Measurable (X n)) →
+    ProbabilityTheory.iIndepFun X μ →
+      (∀ (j : ℕ), MeasureTheory.Measure.map (X j) μ = ProbabilityTheory.gaussianReal 0 1) →
+        HasDerivAt
+          (fun e =>
+            ∫ (ω : Ω),
+              scoreAt X (cusumTau (1 / 2) 5 X) ω *
+                Real.exp (-e * walkAt X (cusumTau (1 / 2) 5 X) ω - e ^ 2 / 2 * cusumTauReal (1 / 2) 5 X ω) ∂μ)
+          (-∫ (ω : Ω), scoreAt X (cusumTau (1 / 2) 5 X) ω * walkAt X (cusumTau (1 / 2) 5 X) ω ∂μ) 0
+'stoppedIntegrand_hasDerivAt' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RebaseguardLean.hasDerivAt_integral_stoppedIntegrand_zero' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RebaseguardLean.hasDerivAt_integral_stoppedIntegrand_zero_of_expMoment' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RebaseguardLean.isStoppingTime_cusumTau' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RebaseguardLean.integrable_exp_forcingNat' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RebaseguardLean.ae_stopped_quantities_eq' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RebaseguardLean.integrable_exp_abs_walkAt_of_moment_tail' depends on axioms: [propext, Classical.choice, Quot.sound]
+'RebaseguardLean.exists_pos_integrable_exp_abs_walkAt_rebaseguard' depends on axioms: [propext,
+ Classical.choice,
+ Quot.sound]
+'RebaseguardLean.hasDerivAt_rebaseguard_cusum' depends on axioms: [propext, Classical.choice, Quot.sound]
+lake env lean $SP/AxFull.lean  2.81s user 17.45s system 10% cpu 3:07.28 total

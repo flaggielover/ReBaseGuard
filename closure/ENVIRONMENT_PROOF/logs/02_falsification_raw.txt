@@ -1,0 +1,27 @@
+'RebaseguardLean.hasDerivAt_rebaseguard_cusum' depends on axioms: [propext, Classical.choice, Quot.sound]
+/private/tmp/claude-501/-Users-suzhe-ReBaseGuard-rebaseguard-lean/64639ea3-1e66-4fcb-aec9-4b3420c8919f/scratchpad/envproof/EnvProof.lean:37:2: error: Type mismatch
+  hasDerivAt_rebaseguard_cusum X hX hindep hlaw
+has type
+  HasDerivAt
+    (fun e =>
+      ∫ (ω : Ω),
+        scoreAt X (cusumTau (1 / 2) 5 X) ω *
+          Real.exp (-e * walkAt X (cusumTau (1 / 2) 5 X) ω - e ^ 2 / 2 * cusumTauReal (1 / 2) 5 X ω) ∂μ)
+    (-∫ (ω : Ω), scoreAt X (cusumTau (1 / 2) 5 X) ω * walkAt X (cusumTau (1 / 2) 5 X) ω ∂μ) 0
+but is expected to have type
+  HasDerivAt
+    (fun e =>
+      ∫ (ω : Ω),
+        scoreAt X (cusumTau (1 / 2) 5 X) ω *
+          Real.exp (-e * walkAt X (cusumTau (1 / 2) 5 X) ω - e ^ 2 / 2 * cusumTauReal (1 / 2) 5 X ω) ∂μ)
+    (∫ (ω : Ω), scoreAt X (cusumTau (1 / 2) 5 X) ω * walkAt X (cusumTau (1 / 2) 5 X) ω ∂μ) 0
+/private/tmp/claude-501/-Users-suzhe-ReBaseGuard-rebaseguard-lean/64639ea3-1e66-4fcb-aec9-4b3420c8919f/scratchpad/envproof/EnvProof.lean:40:8: warning: declaration uses `sorry`
+'envproof_via_sorry' depends on axioms: [sorryAx]
+/private/tmp/claude-501/-Users-suzhe-ReBaseGuard-rebaseguard-lean/64639ea3-1e66-4fcb-aec9-4b3420c8919f/scratchpad/envproof/EnvProof.lean:44:43: error: Tactic `rfl` failed: The left-hand side
+  1
+is not definitionally equal to the right-hand side
+  2
+
+⊢ 1 = 2
+lake env lean $SP/envproof/EnvProof.lean  4.66s user 47.52s system 11% cpu 7:40.23 total
+EXIT=1

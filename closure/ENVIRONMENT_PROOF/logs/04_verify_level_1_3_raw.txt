@@ -1,0 +1,50 @@
+============================================================
+ReBaseGuard Level 1-3 verification
+root: /Users/suzhe/ReBaseGuard
+date: 2026-08-20T08:58:00Z
+============================================================
+------------------------------------------------------------
+[1/6] Lean environment
+      toolchain: leanprover/lean4:v4.34.0-rc1
+      Lake version 5.0.0-src+3447a66 (Lean version 4.34.0-rc1)
+      mathlib rev: de5ce8a9a66a4aa68a9bdbb35b63a06d34d9ca11
+PASS  Lean environment identified
+------------------------------------------------------------
+[2/6] lake build
+PASS  lake build exit 0
+      29 warning lines (cosmetic lint; see 08_LIMITATIONS)
+      Build completed successfully (8717 jobs).
+------------------------------------------------------------
+[3/6] Lean bypass scan (case-insensitive)
+PASS  no sorry / admit / axiom / unsafe / native_decide anywhere in the Lean sources
+------------------------------------------------------------
+[4/6] Lean axiom audit
+9 theorems, all with axioms [propext, Classical.choice, Quot.sound]
+PASS  axiom audit clean; final theorem elaborates
+      @hasDerivAt_rebaseguard_cusum : ∀ {Ω : Type u_1} [mΩ : MeasurableSpace Ω] {μ : MeasureTheory.Measure Ω} (X : ℕ → Ω → ℝ),
+        (∀ (n : ℕ), Measurable (X n)) →
+          ProbabilityTheory.iIndepFun X μ →
+[4b] direct source elaboration of the final module (slow)
+PASS  ReBaseGuardIdentity.lean elaborates from source, exit 0
+------------------------------------------------------------
+[5/6] Arb certificate full-replay audit
+      python 3.14.5
+      python-flint 0.9.0
+PASS  certificate full replay: status PASS, Gamma_lower > 2, continuum residual replayed
+        "Gamma_lower": "3.9243482005828971281857775466050952672958374023437500000000000000000000000000
+        "Gamma_upper": "27.849382127546703280529527546605095267295837402343750000000000000000000000000
+      regenerated audit_report.md is byte-identical to the stored one
+------------------------------------------------------------
+[6/6] Numerical sanity checks
+PASS  regression suite: 90 passed in 3.32s
+PASS  certificate arithmetic and cross-check consistency
+      certified interval [3.9243482005828971281857775466050952672958374023437500000000000000000000000000000, 27.849382127546703280529527546605095267295837402343750000000000000000000000000000]
+      b_hat(0,0) = 15.886865164064800204357652546605095267295837402343750000000000000000000000000000
+      E_b = 11.962516910658127710605800149323439675621476278236166886898187888236062501199
+      stored radius (hi-lo)/2 = 11.9625169634819030761718750000000000000000000000000000000000000000000000000000000  (outward by 5.28237753655660748506765603243785237217638331131018121117639374988010000E-8)
+      margin above 2: 1.9243482005828971281857775466050952672958374023437500000000000000000000000000000
+      Monte Carlo, Bellman cross-check and decomposition identity all consistent
+------------------------------------------------------------
+RESULT: ALL CHECKS PASSED (0 skipped, explicitly allowed)
+VERIFY_EXIT=0 SECONDS=543
+VERIFY_DONE

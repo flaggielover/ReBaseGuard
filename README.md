@@ -69,6 +69,26 @@ anything about other `(k, h, m)`; anything at Level 4.
 
 ---
 
+## Repository provenance
+
+This is a single ordinary Git repository — clone it normally, no submodules.
+
+Before publication the project consisted of a non-versioned root plus two nested
+repositories. They were normalised as follows:
+
+- **`rebaseguard-proof/`** — had 26 commits on `codex/continuum-certificate`
+  (tip `d77953b`, with `main` at `eb8af8d` as an ancestor). That history was
+  **imported in full** with `git subtree add --prefix=rebaseguard-proof`, so
+  every original commit and SHA remains reachable from `main`.
+  Use `git log -- rebaseguard-proof` on the merge commit's second parent
+  (or plain `git log`) to read it.
+- **`rebaseguard-lean/`** — contained a Git repository with **zero commits and
+  no refs** (only a staged index identical to the working tree). There was no
+  history to preserve; it became an ordinary directory.
+- No license file has been chosen for this project, so none is included.
+
+---
+
 ## Level 4
 
 Not started, and **not authorized by this closure**. Preparatory material for a

@@ -1,0 +1,55 @@
+### CAPTURED: 2026-08-20T09:20:09Z (UTC)
+### host: Darwin 25.5.0 arm64 / Apple A18 Pro
+### cwd: /Users/suzhe/ReBaseGuard/rebaseguard-lean
+
+$ elan --version
+elan 4.2.3 (b6cec7e10 2026-06-08)
+
+$ elan show
+installed toolchains
+--------------------
+
+leanprover/lean4:v4.33.0 (resolved from default 'leanprover/lean4:stable')
+leanprover/lean4:v4.34.0-rc1
+
+active toolchain
+----------------
+
+leanprover/lean4:v4.34.0-rc1 (overridden by '/Users/suzhe/ReBaseGuard/rebaseguard-lean/lean-toolchain')
+Lean (version 4.34.0-rc1, arm64-apple-darwin24.6.0, commit 3447a668783dbce1a8fdb97101dd067687b2b418, Release)
+
+
+$ which lake lean
+/Users/suzhe/.elan/bin/lake
+/Users/suzhe/.elan/bin/lean
+
+$ lake --version
+Lake version 5.0.0-src+3447a66 (Lean version 4.34.0-rc1)
+
+$ lean --version
+Lean (version 4.34.0-rc1, arm64-apple-darwin24.6.0, commit 3447a668783dbce1a8fdb97101dd067687b2b418, Release)
+
+$ cat lean-toolchain
+leanprover/lean4:v4.34.0-rc1
+
+$ git -C .lake/packages/mathlib rev-parse HEAD
+de5ce8a9a66a4aa68a9bdbb35b63a06d34d9ca11
+$ git -C .lake/packages/mathlib describe --tags
+v4.34.0-rc1
+$ git -C .lake/packages/mathlib status --porcelain | wc -l  # 0 => pristine checkout
+       0
+
+$ find .lake/packages/mathlib/.lake/build -name '*.olean' | wc -l
+    8323
+
+$ shasum -a 256 RebaseguardLean.lean RebaseguardLean/*.lean
+b5689d4b400e7a4b7fd1553604747359b4a3a6a9a96dd17104e64c0efb48c095  RebaseguardLean.lean
+a88fef4d3efa63c9f9f5c948dd5ba1de3ea09d828ce8388ee83fa3d039e734a4  RebaseguardLean/Basic.lean
+fbc0df7c87b38d67ace6c05329f8f988a55071577c0f3abc2460b7dd888a07ad  RebaseguardLean/CUSUMBridge.lean
+4b93d117071c50f0bd571f125a7b865eea3285c800c80bc2ca5161b59e364df6  RebaseguardLean/Domination.lean
+668be6875628425e603f1882b84192d65fab17f6c9603eccef8225fc63d06ab2  RebaseguardLean/IntegralBridge.lean
+be969b313f68feb6b947ad163d040f40758258bb92ad40535a751c66e9edf2ca  RebaseguardLean/ReBaseGuardIdentity.lean
+3df27a00478c079b3ea24335706c68959c1409a716fc68af2c6555f17cb0fa81  RebaseguardLean/SmallMoment.lean
+6324b34ff0f751b8ce4b4ad17c61d4ccc3300d0997b8b1eb07ccaf319d870655  RebaseguardLean/StoppedLikelihood.lean
+bb29e46638fd9eaee67ffafbf1d615b0b91923328ffcda74103fe379016332f5  RebaseguardLean/StoppedQuantities.lean
+404402ae56fcbbb1b59ecd800f967d51da3d4dfcc87ab92aaba6daf919f76d51  RebaseguardLean/StoppedWalkMoment.lean
