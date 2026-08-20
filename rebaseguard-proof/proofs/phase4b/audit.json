@@ -1,0 +1,266 @@
+{
+  "audited_input_hashes": {
+    "proofs/phase4b/arl_calibration.json": "a1ff87696b0391eadc4b8d04970e8627287fcc9a445f99a88c7db2c110f001a9",
+    "proofs/phase4b/convention_matrix.md": "7a8636787d3be7de2387c4808abb03877196d2f39089651c930adc0dbd2b4f01",
+    "proofs/phase4b/detector_definition.md": "603f5d2da36499ac76e41c0a2e3caa9659a3d2aa8f570d6d10ffd657e3dcb3b6",
+    "proofs/phase4b/detector_selection.md": "d5681313fa08d58c78738875dc5cf7ebcce80cf7b66511ac731e67a15ae8114b",
+    "proofs/phase4b/diagnostic_runs.json": "8f1ef75a91995606a24c05da92f6ff9a345bbd32a5b2e6443246c6052bed14d8",
+    "proofs/phase4b/multicyle_diagnostic.json": "acb1a2c3e30769a342eedc037b6df32473390373ce019c7783255dc495d0194b",
+    "proofs/phase4b/pathwise_replay.json": "4fc639e228101df0dbd884d14ad4ece9c7b6686c4fb19045a85e2412246622d9",
+    "proofs/phase4b/phase4b_witness_report.md": "1aad92e6d9669eaadf5a83b71588989024ccc444e5a0f58b4e123b40c5404fc9",
+    "proofs/phase4b/score_derivation.md": "29300113b5703152b6578839028bf34d327003285f7bbda983f8cc98a29674fb"
+  },
+  "checks": [
+    {
+      "detail": true,
+      "name": "pathwise replay complete",
+      "pass": true
+    },
+    {
+      "detail": [
+        {
+          "epsilon": -1e-09,
+          "first_step_alarm": false,
+          "oracle_raw_match": true,
+          "raw_tau": 2,
+          "tau": 2
+        },
+        {
+          "epsilon": 0.0,
+          "first_step_alarm": true,
+          "oracle_raw_match": true,
+          "raw_tau": 1,
+          "tau": 1
+        },
+        {
+          "epsilon": 1e-09,
+          "first_step_alarm": true,
+          "oracle_raw_match": true,
+          "raw_tau": 1,
+          "tau": 1
+        }
+      ],
+      "name": "inclusive alarm boundary",
+      "pass": true
+    },
+    {
+      "detail": {
+        "reflected_alarm": "MINUS",
+        "reflected_tau": 4,
+        "reward_preserved": true,
+        "source_case": 0
+      },
+      "name": "reflection reward preserved",
+      "pass": true
+    },
+    {
+      "detail": {
+        "match": true,
+        "oracle_alarm": "TIE",
+        "raw_alarm": 2,
+        "reward": 0.0
+      },
+      "name": "simultaneous tie replayed independently",
+      "pass": true
+    },
+    {
+      "detail": 12,
+      "name": "all 12 calibration attempts preserved",
+      "pass": true
+    },
+    {
+      "detail": {
+        "selection_uses_gamma": false
+      },
+      "name": "calibration Gamma-blind",
+      "pass": true
+    },
+    {
+      "detail": 1.0,
+      "name": "delta frozen through calibration",
+      "pass": true
+    },
+    {
+      "detail": {
+        "arl": 464.96366666666665,
+        "arl_se": 1.3178602653720157,
+        "attempt_index": 9,
+        "decision": "below_target",
+        "gamma_not_inspected": true,
+        "phase": "bisection",
+        "runtime_seconds": 3.953023457987001,
+        "sample_size": 120000,
+        "seed": 314159,
+        "threshold_A": 520.3125
+      },
+      "name": "selected A follows declared ARL-only rule",
+      "pass": true
+    },
+    {
+      "detail": [
+        494.296875,
+        520.3125,
+        546.328125
+      ],
+      "name": "0.95/1.00/1.05 ARL sensitivity preserved",
+      "pass": true
+    },
+    {
+      "detail": {
+        "flint": "3.6.0",
+        "numpy": "2.5.2",
+        "python": "3.14.5",
+        "python_flint": "0.9.0",
+        "scipy": "1.18.0"
+      },
+      "name": "pinned numerical environment recorded",
+      "pass": true
+    },
+    {
+      "detail": "complete",
+      "name": "diagnostic complete",
+      "pass": true
+    },
+    {
+      "detail": [
+        [
+          1729,
+          1000000
+        ],
+        [
+          20260818,
+          1000000
+        ]
+      ],
+      "name": "precommitted independent SR seeds",
+      "pass": true
+    },
+    {
+      "detail": {
+        "arl": 464.4071455,
+        "gamma": 17.272084700443617,
+        "n": 2000000
+      },
+      "name": "pooled SR means replay",
+      "pass": true
+    },
+    {
+      "detail": {
+        "fprime": -16.272084700443617,
+        "lower": 17.217152883087806,
+        "upper": 17.32701651779943
+      },
+      "name": "Gamma interval and slope replay",
+      "pass": true
+    },
+    {
+      "detail": {
+        "category": "GREEN-A candidate",
+        "lower": 17.217152883087806
+      },
+      "name": "precommitted GREEN-A criterion met",
+      "pass": true
+    },
+    {
+      "detail": {
+        "direction_gap": -0.0006150000000000322,
+        "mean_t_tau": 0.011770282507444985,
+        "mean_z_tau": -0.0013465101489582034,
+        "wald_gap": 0.2599855158295554
+      },
+      "name": "SR convention diagnostics centered",
+      "pass": true
+    },
+    {
+      "detail": {
+        "arl": 465.363379,
+        "gamma": 15.84293616665419
+      },
+      "name": "protected CUSUM positive-control scale",
+      "pass": true
+    },
+    {
+      "detail": [],
+      "name": "diagnostic failed/null ledger preserved and empty",
+      "pass": true
+    },
+    {
+      "detail": {
+        "interval": [
+          0.06124817714919425,
+          0.06166310493643175
+        ],
+        "rho_c": 0.06145494067964982
+      },
+      "name": "mixed-reuse critical fraction replay",
+      "pass": true
+    },
+    {
+      "detail": [
+        {
+          "name": "fresh",
+          "rho": 0.0,
+          "seed": 41001
+        },
+        {
+          "name": "below_local_threshold",
+          "rho": 0.04916395254371986,
+          "seed": 41002
+        },
+        {
+          "name": "above_local_threshold",
+          "rho": 0.07374592881557979,
+          "seed": 41003
+        },
+        {
+          "name": "full_reuse",
+          "rho": 1.0,
+          "seed": 41004
+        }
+      ],
+      "name": "precommitted multi-cycle policies replay",
+      "pass": true
+    },
+    {
+      "detail": {
+        "fresh_lag1": -0.010579761901312807,
+        "full_alternation": 0.8947610294117647,
+        "full_lag1": -0.4982994412968575
+      },
+      "name": "multi-cycle full-reuse alternation sanity check",
+      "pass": true
+    },
+    {
+      "detail": [],
+      "name": "multi-cycle failed/null ledger preserved and empty",
+      "pass": true
+    },
+    {
+      "detail": {
+        "proofs/certificate.json": "85e68c7dde306f2e6ce464203def22089e9b935d1cfca4b4944cef191d80545e",
+        "proofs/contraction_monotone.json": "694f46dbb65f7d43e37d0e0af681e784d4a6599c232df2b5d94e3f15ae3be434",
+        "proofs/enclosure.json": "71c3a68c4d82f3663254975b4bbc6c41632e54430a8e86538ee446dc83145907",
+        "proofs/residual.json": "dc463417f629ed0b770967459621f0ebd308df3dd06ca13c57129b168b29edce",
+        "src/rebaseguard_certify/bellman.py": "5731eb539d73d0f0ca578c22ebc48be14220c9cb61e71d2ac816b9c85dc48343"
+      },
+      "name": "protected Level-3 hashes unchanged",
+      "pass": true
+    },
+    {
+      "detail": "explicit stop statement present",
+      "name": "report states certification stop gate",
+      "pass": true
+    }
+  ],
+  "conclusion": "GREEN-A diagnostic witness independently replayed; certification stop gate intact",
+  "proof_role": "INDEPENDENT DIAGNOSTIC ARTIFACT AUDIT; NOT A CONTINUUM CERTIFICATE",
+  "protected_hashes": {
+    "proofs/certificate.json": "85e68c7dde306f2e6ce464203def22089e9b935d1cfca4b4944cef191d80545e",
+    "proofs/contraction_monotone.json": "694f46dbb65f7d43e37d0e0af681e784d4a6599c232df2b5d94e3f15ae3be434",
+    "proofs/enclosure.json": "71c3a68c4d82f3663254975b4bbc6c41632e54430a8e86538ee446dc83145907",
+    "proofs/residual.json": "dc463417f629ed0b770967459621f0ebd308df3dd06ca13c57129b168b29edce",
+    "src/rebaseguard_certify/bellman.py": "5731eb539d73d0f0ca578c22ebc48be14220c9cb61e71d2ac816b9c85dc48343"
+  },
+  "schema": "rebaseguard.phase4b.audit.v1",
+  "status": "PASS"
+}

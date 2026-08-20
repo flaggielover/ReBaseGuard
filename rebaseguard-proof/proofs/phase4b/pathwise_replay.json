@@ -1,0 +1,90 @@
+{
+  "all_checks_pass": true,
+  "cases": [
+    {
+      "alarm": "PLUS",
+      "all_rows_match": true,
+      "innovations": [
+        0.1,
+        -0.2,
+        0.3,
+        5.0
+      ],
+      "raw_terminal_reward": 26.0,
+      "t_tau": 5.2,
+      "tau": 4,
+      "terminal_reward": 26.0,
+      "z_tau": 5.0
+    },
+    {
+      "alarm": "MINUS",
+      "all_rows_match": true,
+      "innovations": [
+        -0.1,
+        0.2,
+        -0.3,
+        -5.0
+      ],
+      "raw_terminal_reward": 26.0,
+      "t_tau": -5.2,
+      "tau": 4,
+      "terminal_reward": 26.0,
+      "z_tau": -5.0
+    },
+    {
+      "alarm": "PLUS",
+      "all_rows_match": true,
+      "innovations": [
+        1.0,
+        -1.5,
+        0.2,
+        -0.4,
+        6.0
+      ],
+      "raw_terminal_reward": 31.799999999999997,
+      "t_tau": 5.3,
+      "tau": 5,
+      "terminal_reward": 31.799999999999997,
+      "z_tau": 6.0
+    }
+  ],
+  "delta": 1.0,
+  "inclusive_boundary_cases": [
+    {
+      "epsilon": -1e-09,
+      "first_step_alarm": false,
+      "oracle_raw_match": true,
+      "raw_tau": 2,
+      "tau": 2
+    },
+    {
+      "epsilon": 0.0,
+      "first_step_alarm": true,
+      "oracle_raw_match": true,
+      "raw_tau": 1,
+      "tau": 1
+    },
+    {
+      "epsilon": 1e-09,
+      "first_step_alarm": true,
+      "oracle_raw_match": true,
+      "raw_tau": 1,
+      "tau": 1
+    }
+  ],
+  "proof_role": "NON-RIGOROUS CONVENTION VALIDATION ONLY",
+  "reflection_check": {
+    "reflected_alarm": "MINUS",
+    "reflected_tau": 4,
+    "reward_preserved": true,
+    "source_case": 0
+  },
+  "schema": "rebaseguard.phase4b.pathwise-replay.v1",
+  "simultaneous_tie_check": {
+    "match": true,
+    "oracle_alarm": "TIE",
+    "raw_alarm": 2,
+    "reward": 0.0
+  },
+  "threshold": 25.0
+}

@@ -1,0 +1,165 @@
+{
+  "Gamma_lower": "3.9243482005828971281857775466050952672958374023437500000000000000000000000000000",
+  "Gamma_upper": "27.849382127546703280529527546605095267295837402343750000000000000000000000000000",
+  "artifacts": {
+    "bellman_crosscheck.json": {
+      "path": "proofs/bellman_crosscheck.json",
+      "sha256": "a1fe1496bfa95c3ec291a20c8cb232bdca04eeb973f70feed1220b66b74a41a6"
+    },
+    "candidates.json": {
+      "path": "proofs/candidates.json",
+      "sha256": "671ce0e8b4f7636a1771fe562798af456288b3369bd5f26e85dd59717c1ba03e"
+    },
+    "contraction_monotone.json": {
+      "path": "proofs/contraction_monotone.json",
+      "sha256": "694f46dbb65f7d43e37d0e0af681e784d4a6599c232df2b5d94e3f15ae3be434"
+    },
+    "enclosure.json": {
+      "path": "proofs/enclosure.json",
+      "sha256": "71c3a68c4d82f3663254975b4bbc6c41632e54430a8e86538ee446dc83145907"
+    },
+    "residual.json": {
+      "path": "proofs/residual.json",
+      "sha256": "dc463417f629ed0b770967459621f0ebd308df3dd06ca13c57129b168b29edce"
+    }
+  },
+  "block_contraction": {
+    "beta_n": {
+      "ball": "[0.8100000000000000000000000000000000000000000000000000000000 +/- 7.81e-59]",
+      "lower_enclosure": "[0.80999999999999999999999999999999999999999999999999999999987892501475393362694581 +/- 4.92e-81]",
+      "upper_enclosure": "[0.81000000000000000000000000000000000000000000000000000000019754339698042408235158 +/- 1.17e-81]"
+    },
+    "computed_lower": {
+      "ball": "[0.19668508938773377699464920014578969068205147427981334 +/- 6.63e-54]",
+      "lower_enclosure": "[0.19668508938773377699464920014578969068205147427981333337882984581943858754733592 +/- 4.07e-82]",
+      "upper_enclosure": "[0.19668508938773377699464920014578969068205147427981333711717932448285110082330666 +/- 1.81e-81]"
+    },
+    "continuum_argument": {
+      "cell_rule": "H_t(y) >= lower[j] for y in [edge_j,edge_(j+1))",
+      "monotonicity_envelope": true,
+      "one_sided_state_monotonicity": "H_t(x) is nondecreasing in x by pathwise coupling",
+      "operator_statement": "sup_s K^n 1(s) <= 1-q_safe",
+      "resolvent_statement": "||(I-K)^-1||_inf <= n/q_safe",
+      "sampled_grid_used": false,
+      "two_sided_domination": "one-sided upper crossing forces two-sided absorption"
+    },
+    "n": 250,
+    "q_safe": {
+      "ball": "[0.1900000000000000000000000000000000000000000000000000000000 +/- 7.81e-59]",
+      "denominator": 100,
+      "lower_enclosure": "[0.18999999999999999999999999999999999999999999999999999999992193849635450983842558 +/- 4.87e-81]",
+      "numerator": 19,
+      "upper_enclosure": "[0.19000000000000000000000000000000000000000000000000000000000159309191113245227703 +/- 1.12e-81]"
+    },
+    "resolvent_bound": {
+      "ball": "[1315.789473684210526315789473684210526315789473684210526316 +/- 6.76e-55]",
+      "lower_enclosure": "[1315.7894736842105263157894736842105263157894736842105263152743180683159059584176 +/- 8.37e-78]",
+      "upper_enclosure": "[1315.7894736842105263157894736842105263157894736842105263165793789619156108637597 +/- 3.29e-77]"
+    }
+  },
+  "continuum_method": {
+    "candidate_role": "exact dyadic candidate only; not proof evidence",
+    "coverage": {
+      "bernstein_patches": 4,
+      "gaussian_tail_truncation": "none",
+      "parameterization": "p=r*t, m=r*(1-t)",
+      "pieces": [
+        "0<=r<=1",
+        "1<=r<=4",
+        "axis tails 4<=r<=5"
+      ],
+      "reachable_continuum_complete": true,
+      "subdivision_depth": 0
+    },
+    "delta_a": {
+      "ball": "[8.463460226872627556639504959090700755415898965274518213755499377021476540679e-6 +/- 3.13e-82]",
+      "lower_enclosure": "[8.4634602268726275566395049590907007554158989652745182137554993770214765406785557e-6 +/- 3.97e-86]",
+      "upper_enclosure": "[8.4634602268726275566395049590907007554158989652745182137554993770214765406793464e-6 +/- 4.55e-87]"
+    },
+    "delta_b": {
+      "ball": "[0.0002061651600070380849333145392832024870503254597841804850307242828867712039640 +/- 3.25e-80]",
+      "lower_enclosure": "[0.00020616516000703808493331453928320248705032545978418048503072428288677120396401241 +/- 1.83e-84]",
+      "upper_enclosure": "[0.00020616516000703808493331453928320248705032545978418048503072428288677120396403350 +/- 3.78e-84]"
+    },
+    "range_method": "symbolic integration plus tensor Bernstein convex-hull bounds"
+  },
+  "environment": {
+    "numpy": "2.5.2",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "pytest": "9.1.1",
+    "python": "3.14.5 (v3.14.5:5607950ef23, May 10 2026, 07:38:09) [Clang 21.0.0 (clang-2100.0.123.102)]",
+    "scipy": "1.18.0"
+  },
+  "error_propagation": {
+    "E_a": {
+      "ball": "[0.011136131877463983627157243367224606257126182849045418702309867601344048079841 +/- 6.33e-79]",
+      "lower_enclosure": "[0.011136131877463983627157243367224606257126182849045418702309867601344048079841362 +/- 4.54e-82]",
+      "upper_enclosure": "[0.011136131877463983627157243367224606257126182849045418702309867601344048079841632 +/- 3.35e-82]"
+    },
+    "E_b": {
+      "ball": "[11.962516910658127710605800149323439675621476278236166886898187888236062501199 +/- 6.42e-76]",
+      "lower_enclosure": "[11.962516910658127710605800149323439675621476278236166886898187888236062501198299 +/- 7.85e-80]",
+      "upper_enclosure": "[11.962516910658127710605800149323439675621476278236166886898187888236062501199404 +/- 3.52e-79]"
+    },
+    "formula": {
+      "E_a": "C*delta_a",
+      "E_b": "C*(delta_b+mu*E_a)",
+      "Gamma": "b_hat(0,0)+[-E_b,E_b]"
+    },
+    "mu": {
+      "ball": "[0.7978845608028653558798921198687637369517172623298693153318516593413158517986 +/- 2.33e-77]",
+      "lower_enclosure": "[0.79788456080286535587989211986876373695171726232986931533185165934131585179857575 +/- 3.68e-81]",
+      "upper_enclosure": "[0.79788456080286535587989211986876373695171726232986931533185165934131585179861029 +/- 1.01e-81]"
+    }
+  },
+  "gaussian_handling": {
+    "density_enclosure": "degree-100 Maclaurin polynomial plus uniform Lagrange remainder",
+    "phi_uniform_error": {
+      "ball": "[3.756034448959646232360653071768433181414776931755950411656923980675011259222e-7 +/- 3.08e-83]",
+      "lower_enclosure": "[3.7560344489596462323606530717684331814147769317559504116569239806750112592219824e-7 +/- 4.03e-88]",
+      "upper_enclosure": "[3.7560344489596462323606530717684331814147769317559504116569239806750112592223118e-7 +/- 4.78e-87]"
+    },
+    "tail_bound": "no truncation; absorbing tails use full Gaussian moment formulas",
+    "tail_cutoff": null
+  },
+  "independent_audit": {
+    "mode": "full replay",
+    "path": "proofs/audit_report.md",
+    "sha256": "034ccb1b6fe4f130b6070c25693461da83ffda79b57fe7b5e6596cb0b2238d7b",
+    "status": "PASS"
+  },
+  "interval_backend": {
+    "flint": "3.6.0",
+    "name": "python-flint/FLINT-Arb",
+    "precision_bits": 256,
+    "python_flint": "0.9.0",
+    "semantics": "outward-rounded real balls"
+  },
+  "model": {
+    "h": {
+      "denominator": 1,
+      "numerator": 5
+    },
+    "k": {
+      "denominator": 2,
+      "numerator": 1
+    }
+  },
+  "proof_status": "CERTIFIED",
+  "reachable_domain": "axes 0<=p<h or 0<=m<h, plus p>0,m>0,p+m<h-2k",
+  "result": "Gamma_lower > 2",
+  "schema": "rebaseguard.continuum-certificate.v1",
+  "state_reduction": "E[Z_tau*T_tau|S_t=(p,m),T_t=x]=a(p,m)*x+b(p,m)",
+  "symmetry": {
+    "a": "a(p,m)=-a(m,p)",
+    "b": "b(p,m)=b(m,p)"
+  },
+  "target": "E[Z_tau*T_tau]",
+  "target_state": "Gamma=b(0,0)",
+  "trusted_computing_base": [
+    "CPython exact integer serialization",
+    "python-flint bindings",
+    "FLINT/Arb outward-rounded arithmetic and transcendental functions",
+    "rebaseguard_certify.audit replay logic"
+  ]
+}

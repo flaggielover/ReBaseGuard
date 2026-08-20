@@ -1,0 +1,83 @@
+{
+  "candidate": {
+    "degree": 16,
+    "diagnostic_residual_a": 5.208491464219075e-07,
+    "diagnostic_residual_b": 8.065093230036346e-06,
+    "exact_dyadic_gamma_denominator": 17592186044416,
+    "exact_dyadic_gamma_numerator": 304112932968465,
+    "gamma_center": 17.286818829715287,
+    "scale_bits": 44,
+    "sha256": "16c6312661553c86d56c4a07111aa07d004dd899ea490c4b2751ea6e4f90c453"
+  },
+  "failure_boundary_with_other_target_fixed": {
+    "maximum_eps_a_for_lower_gt_2": 1.0118463961060608e-05,
+    "maximum_eps_b_for_lower_gt_2": 0.006660619348802755
+  },
+  "interpretation": "A final global residual may be roughly ten times the diagnostic a-residual and over one hundred times the diagnostic b-residual while retaining a pessimistic lower bound above eight.",
+  "nominal_diagnostic_propagation": {
+    "a_solution_error": 0.0006581639213876831,
+    "b_error_direct": 0.010191345081591384,
+    "b_error_induced_by_a": 0.6635845232547795,
+    "total_b_error": 0.6737758683363708
+  },
+  "operator_bounds": {
+    "K_z_derivation": "integral |z| phi(z) dz=sqrt(2/pi)",
+    "K_z_sup_norm_upper": 0.7978845608028654,
+    "resolvent": 1263.6363636363637
+  },
+  "pessimistic_target_budget": {
+    "a_solution_error": 0.006318181818181819,
+    "b_error_direct": 1.8954545454545457,
+    "b_error_induced_by_a": 6.370218016228168,
+    "expected_lower_bound": 8.521146268032574,
+    "extra_engineering_reserve": 0.5,
+    "target_global_residual_a": 5e-06,
+    "target_global_residual_b": 0.0015,
+    "total_b_error": 8.265672561682713
+  },
+  "proof_role": "PESSIMISTIC FEASIBILITY BUDGET; NOT A CERTIFIED ENCLOSURE",
+  "propagation_formula": "||a-a_hat||<=R eps_a; ||b-b_hat||<=R eps_b+R^2 ||K_z|| eps_a",
+  "residual_inflation_study": [
+    {
+      "a_solution_error": 0.0006581639213876831,
+      "b_error_direct": 0.010191345081591384,
+      "b_error_induced_by_a": 0.6635845232547795,
+      "candidate_lower_after_propagation": 16.613042961378916,
+      "diagnostic_residual_inflation_factor": 1,
+      "total_b_error": 0.6737758683363708
+    },
+    {
+      "a_solution_error": 0.0032908196069384157,
+      "b_error_direct": 0.05095672540795692,
+      "b_error_induced_by_a": 3.3179226162738975,
+      "candidate_lower_after_propagation": 13.917939488033433,
+      "diagnostic_residual_inflation_factor": 5,
+      "total_b_error": 3.3688793416818545
+    },
+    {
+      "a_solution_error": 0.006581639213876831,
+      "b_error_direct": 0.10191345081591384,
+      "b_error_induced_by_a": 6.635845232547795,
+      "candidate_lower_after_propagation": 10.549060146351579,
+      "diagnostic_residual_inflation_factor": 10,
+      "total_b_error": 6.737758683363709
+    },
+    {
+      "a_solution_error": 0.009872458820815246,
+      "b_error_direct": 0.15287017622387075,
+      "b_error_induced_by_a": 9.953767848821693,
+      "candidate_lower_after_propagation": 7.180180804669723,
+      "diagnostic_residual_inflation_factor": 15,
+      "total_b_error": 10.106638025045564
+    },
+    {
+      "a_solution_error": 0.013163278427753663,
+      "b_error_direct": 0.20382690163182768,
+      "b_error_induced_by_a": 13.27169046509559,
+      "candidate_lower_after_propagation": 3.8113014629878688,
+      "diagnostic_residual_inflation_factor": 20,
+      "total_b_error": 13.475517366727418
+    }
+  ],
+  "schema": "rebaseguard.phase4c.error-budget.v1"
+}

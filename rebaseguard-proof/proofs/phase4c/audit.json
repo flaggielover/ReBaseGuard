@@ -1,0 +1,186 @@
+{
+  "checks": [
+    {
+      "detail": {
+        "continuation_width_gt_6_79": true,
+        "coordinate_floor_positive": true,
+        "invariant_denominator_positive": true,
+        "product_cap_less_than_A_squared": true,
+        "softplus_slope_strictly_between_zero_and_one": true,
+        "sum_cap_fixed_point": true,
+        "sum_cap_less_than_naive_square": true,
+        "two_step_jacobian_nonzero": true
+      },
+      "name": "all Arb analytic structure checks pass",
+      "pass": true
+    },
+    {
+      "detail": {
+        "minimum_width": 6.792715230034445,
+        "product_max": 303.7314598263861
+      },
+      "name": "compact reachable enclosure is quantitatively useful",
+      "pass": true
+    },
+    {
+      "detail": [
+        17.16093841387867,
+        17.230715179971067,
+        17.25527674099354,
+        17.266553390082183,
+        17.27274531992225
+      ],
+      "name": "bilinear continuum refinement approaches Phase-4B scale",
+      "pass": true
+    },
+    {
+      "detail": {
+        "monte_carlo": 17.272084700443617,
+        "spectral": 17.28681882971501
+      },
+      "name": "independent spectral solve agrees with Monte Carlo",
+      "pass": true
+    },
+    {
+      "detail": {
+        "a_coefficient_abs_max": 0.2904192952667627,
+        "b_coefficient_abs_max": 14.139515654318199,
+        "coefficients_each_function": 289,
+        "collocation_condition_number": 1911.5837008095857,
+        "degree_each_axis": 16,
+        "gamma": 17.28681882971501,
+        "independent_grid_nodes_per_axis": 31,
+        "independent_grid_residual_a": 5.208491464219075e-07,
+        "independent_grid_residual_b": 8.065093230036346e-06,
+        "proof_role": "NON-RIGOROUS SPECTRAL CANDIDATE ONLY",
+        "quadrature_order": 256,
+        "runtime_seconds": 0.1632604159967741,
+        "symmetry_error_a_coefficients": 0.0,
+        "symmetry_error_b_coefficients": 0.0
+      },
+      "name": "degree-16 candidate residual scale is adequate",
+      "pass": true
+    },
+    {
+      "detail": [
+        "reset_neighborhood",
+        "near_plus_boundary",
+        "near_minus_boundary",
+        "symmetry_diagonal",
+        "strong_reachable_curvature"
+      ],
+      "name": "representative Arb widths refine normally",
+      "pass": true
+    },
+    {
+      "detail": {
+        "near_minus_boundary": 2.6114918142557144,
+        "near_plus_boundary": 2.6114914305508137,
+        "reset_neighborhood": 2.9112183302640915,
+        "strong_reachable_curvature": 2.003768779337406,
+        "symmetry_diagonal": 0.5408858237788081
+      },
+      "name": "raw boxes honestly rejected for cancellation loss",
+      "pass": true
+    },
+    {
+      "detail": {
+        "computed_q": 0.1153912826886547,
+        "resolvent": 1263.6363636363637
+      },
+      "name": "continuum one-sided contraction certified",
+      "pass": true
+    },
+    {
+      "detail": {
+        "ball": "[0.00033732386086799538211117105456310312398431535934847834062 +/- 3.71e-60]",
+        "lower_enclosure": "[0.00033732386086799538211117105456310312398431535934847834061630719981180842911979651 +/- 4.85e-84]",
+        "upper_enclosure": "[0.00033732386086799538211117105456310312398431535934847834062377481814524179916836938 +/- 2.03e-84]"
+      },
+      "name": "analytic block contraction independently positive",
+      "pass": true
+    },
+    {
+      "detail": {
+        "a_solution_error": 0.006318181818181819,
+        "b_error_direct": 1.8954545454545457,
+        "b_error_induced_by_a": 6.370218016228168,
+        "expected_lower_bound": 8.521146268032574,
+        "extra_engineering_reserve": 0.5,
+        "target_global_residual_a": 5e-06,
+        "target_global_residual_b": 0.0015,
+        "total_b_error": 8.265672561682713
+      },
+      "name": "pessimistic coupled error budget remains above two",
+      "pass": true
+    },
+    {
+      "detail": "16c6312661553c86d56c4a07111aa07d004dd899ea490c4b2751ea6e4f90c453",
+      "name": "candidate identity agrees across interval and budget artifacts",
+      "pass": true
+    },
+    {
+      "detail": "sections 1-21",
+      "name": "report contains all 21 required sections",
+      "pass": true
+    },
+    {
+      "detail": "structured stop gate present",
+      "name": "report ends with required structured summary",
+      "pass": true
+    },
+    {
+      "detail": [
+        "proofs/phase4c/certificate.json",
+        "proofs/phase4c/final_certificate.json",
+        "proofs/phase4c/enclosure.json"
+      ],
+      "name": "no final SR certificate was generated",
+      "pass": true
+    },
+    {
+      "detail": {
+        "proofs/certificate.json": "85e68c7dde306f2e6ce464203def22089e9b935d1cfca4b4944cef191d80545e",
+        "proofs/contraction_monotone.json": "694f46dbb65f7d43e37d0e0af681e784d4a6599c232df2b5d94e3f15ae3be434",
+        "proofs/enclosure.json": "71c3a68c4d82f3663254975b4bbc6c41632e54430a8e86538ee446dc83145907",
+        "proofs/phase4b/audit.json": "489bbabe99041ab45c7e8f40c36bc543ea5a4b538ae7fb589d8b967f076c97c8",
+        "proofs/phase4b/diagnostic_runs.json": "8f1ef75a91995606a24c05da92f6ff9a345bbd32a5b2e6443246c6052bed14d8",
+        "proofs/residual.json": "dc463417f629ed0b770967459621f0ebd308df3dd06ca13c57129b168b29edce",
+        "src/rebaseguard_certify/bellman.py": "5731eb539d73d0f0ca578c22ebc48be14220c9cb61e71d2ac816b9c85dc48343"
+      },
+      "name": "Level-3 and Phase-4B hashes unchanged",
+      "pass": true
+    }
+  ],
+  "conclusion": "SR certification feasibility GREEN; full certification not begun",
+  "environment": {
+    "flint": "3.6.0",
+    "numpy": "2.5.2",
+    "python": "3.14.5",
+    "python_flint": "0.9.0",
+    "scipy": "1.18.0"
+  },
+  "input_hashes": {
+    "proofs/phase4c/ReBaseGuard_Phase4C_SR_Certification_Feasibility_Report.md": "688166f50a2e35572f5f6086067e8267c05fc84301832791951537b67293844e",
+    "proofs/phase4c/analytic_structure.json": "81466db8fef33f008b53e65002865266dd3d24473c5969e38f2eb00660295b95",
+    "proofs/phase4c/approximate_solve.json": "af1bad3e0d2229a4530d1b0e460713e10d6631efaf025749dfe85d25d456ff7e",
+    "proofs/phase4c/contraction_prototype.json": "40caffaa2935f7ba5c184de66cda7a1bee7fa0a8829ed005c1157628a21894ca",
+    "proofs/phase4c/error_budget.json": "2bd5064da0164eebcaab44cfaf98a687bf3365680f163b5e6e72f7dc660b31d3",
+    "proofs/phase4c/interval_prototype.json": "140bc66e07f7632f26bcd9a3f3bfb3006b22c2d5125fbc6eead1c956ec2d22f0",
+    "proofs/phase4c/operator_geometry_derivation.md": "30927ebb710c13944779c8a1228187bb8bd15d4b55d2878fde17fa21a20d5a13",
+    "proofs/phase4c/spectral_candidate_study.json": "9aae62888eec0655ca59ca487265cb2e00eda0d1bb13b9121add2ee98642cb03"
+  },
+  "proof_role": "INDEPENDENT FEASIBILITY AUDIT; NOT A GAMMA CERTIFICATE",
+  "protected_hashes": {
+    "proofs/certificate.json": "85e68c7dde306f2e6ce464203def22089e9b935d1cfca4b4944cef191d80545e",
+    "proofs/contraction_monotone.json": "694f46dbb65f7d43e37d0e0af681e784d4a6599c232df2b5d94e3f15ae3be434",
+    "proofs/enclosure.json": "71c3a68c4d82f3663254975b4bbc6c41632e54430a8e86538ee446dc83145907",
+    "proofs/phase4b/audit.json": "489bbabe99041ab45c7e8f40c36bc543ea5a4b538ae7fb589d8b967f076c97c8",
+    "proofs/phase4b/diagnostic_runs.json": "8f1ef75a91995606a24c05da92f6ff9a345bbd32a5b2e6443246c6052bed14d8",
+    "proofs/residual.json": "dc463417f629ed0b770967459621f0ebd308df3dd06ca13c57129b168b29edce",
+    "src/rebaseguard_certify/bellman.py": "5731eb539d73d0f0ca578c22ebc48be14220c9cb61e71d2ac816b9c85dc48343"
+  },
+  "schema": "rebaseguard.phase4c.feasibility-audit.v1",
+  "status": "PASS",
+  "verdict": "GREEN"
+}
