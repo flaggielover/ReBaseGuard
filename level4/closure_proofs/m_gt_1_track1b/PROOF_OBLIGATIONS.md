@@ -19,7 +19,7 @@
 | T1B-15 | Lean compilation | PASS | pinned Lean/Mathlib compiler, no warnings after cleanup |
 | T1B-16 | axiom transparency | PASS | only `propext`, `Classical.choice`, `Quot.sound` |
 | T1B-17 | Arb certificate | NOT REQUIRED | no new rigorous numerical inequality claimed |
-| T1B-18 | authoritative repository verification | PENDING | run after the Lean closure checkpoint is committed |
+| T1B-18 | authoritative repository verification | PASS | 695/695; clean tree; historical integrity intact |
 
 The machine-checked claim is deliberately narrower than the human theorem:
 Lean checks the stable random-window algebra and the consequence of a general

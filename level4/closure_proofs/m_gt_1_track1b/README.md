@@ -28,10 +28,12 @@ generated.
 - axiom audit: only `propext`, `Classical.choice`, and `Quot.sound`;
 - concrete frozen-CUSUM analytic instantiation: human proof, not discharged
   end to end in Lean;
-- final Track 1B verdict: pending the authoritative repository verifier.
+- final Track 1B verdict: `MGT1-TRACK1B-CLOSED`;
+- scoped `m>1` derivative-theorem requirement: `CLOSED`;
+- authoritative verification: 695/695, with historical D2.3 still `FAILED`.
 
 Start with `REPLICATION_REPORT.md`, `THEOREM.md`, and
-`LEAN_CORRESPONDENCE.md`. After the closure checkpoint is committed, run:
+`LEAN_CORRESPONDENCE.md`. Reproduce with:
 
 ```bash
 bash level4/closure_proofs/m_gt_1_track1b/reproduce.sh

@@ -57,3 +57,15 @@ def test_numerical_decision_and_lean_gate_order_are_consistent():
     progress = (CAMPAIGN / "PROGRESS_CAPSULE.md").read_text()
     assert "Only after numerical authorization" in protocol
     assert "NUMERICAL GATE CLOSED — LEAN AUTHORIZED" in progress
+
+
+def test_final_claim_guard_closes_only_the_scoped_requirement():
+    decision = json.loads((CAMPAIGN / "results/decision.json").read_text())
+    report = (CAMPAIGN.parents[1] / "reports/MGT1_TRACK1B_REPORT.md").read_text()
+    assert decision["decision"] == "MGT1-TRACK1B-CLOSED"
+    assert decision["m_gt_1_derivative_theorem_requirement"] == "CLOSED"
+    assert decision["historical_d2_3"] == "FAILED"
+    assert decision["historical_stage_f"] == "LEVEL-4-PARTIAL"
+    assert decision["global_level4_reaudit_performed"] is False
+    assert "not a fully instantiated" in report
+    assert "No overall Level-4 re-audit was performed" in report

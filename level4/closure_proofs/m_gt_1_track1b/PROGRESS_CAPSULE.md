@@ -113,3 +113,41 @@
 | Historical artifacts modified? | NO |
 | Blockers | none |
 | Remaining | commit/push Lean closure checkpoint; reproduce history and run full verifier |
+
+## PROGRESS CAPSULE — #7
+
+| Field | Value |
+|---|---|
+| Step | 7 / 8 |
+| Gate | clean reproduction and authoritative verification |
+| Protocol frozen? | YES |
+| Historical Track 1A preserved? | YES — expected failed decision reproduced |
+| Covariance audit | complete |
+| Paired replication | PASS |
+| Independent replication | PASS |
+| m=1 control | PASS |
+| Lean | PASS |
+| Axiom audit | PASS |
+| Tests | Track 1 46/46; Track 1A 32/32; Track 1B 31/31 before final-decision test; authoritative 695/695 |
+| Historical artifacts modified? | NO — clean tree after reproducer |
+| Blockers | none |
+| Remaining | freeze final decision/report; run final scoped test; commit/push |
+
+## PROGRESS CAPSULE — #8
+
+| Field | Value |
+|---|---|
+| Step | 8 / 8 |
+| Gate | `MGT1-TRACK1B-CLOSED` |
+| Protocol frozen? | YES |
+| Historical Track 1A preserved? | YES |
+| Covariance audit | complete — old independence SE valid |
+| Paired replication | PASS |
+| Independent replication | PASS |
+| m=1 control | PASS |
+| Lean | PASS — conditional stable spine, not full concrete instantiation |
+| Axiom audit | PASS — standard axioms only |
+| Tests | 805/805 combined after final scoped decision guard |
+| Historical artifacts modified? | NO |
+| Blockers | none |
+| Remaining | none; do not start next proof track |
