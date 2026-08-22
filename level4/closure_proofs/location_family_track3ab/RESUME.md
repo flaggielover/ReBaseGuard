@@ -1,11 +1,11 @@
 # Track 3A/3B resume state
 
-## PROGRESS CAPSULE — #6
+## PROGRESS CAPSULE — #8
 
 | Field | Value |
 |---|---|
-| Step | Final packaging complete; full reproduction next |
-| Gate | `T3A-NUMERICAL-PASS` — `NUMERICAL GATE CLOSED — LEAN AUTHORIZED` |
+| Step | Campaign complete |
+| Gate | `LOCATION-FAMILY-TRACK3AB-CLOSED` |
 | Protocol frozen? | YES — `0983fb483219a5eb593652fbb1596b73193dc12edf8aa7914c2e3e143750b9aa` |
 | Historical Track 3 preserved? | YES |
 | Variance diagnosis | COMPLETE — sampling variance amplified by heavy-tailed stopped gain |
@@ -15,15 +15,15 @@
 | Numerical gate | PASS — pooled relative `0.1867%`, `|z|=0.3135` |
 | Lean | COMPILED — conditional proof spine |
 | Axiom audit | CLEAN — `propext`, `Classical.choice`, `Quot.sound` only |
-| Tests | Final focused suite pending, target 29 |
+| Tests | 929/929 — 205 historical closure, 29 Track-3A/3B, 695 authoritative |
 | Historical artifacts modified? | NO |
-| Git | Lean checkpoint `cace80b` pushed; final checkpoint pending |
-| Remaining | Run complete reproducer, confirm 929/929 and clean tree, commit/push closure |
+| Git | Final verified tree; closing commits recorded in repository history |
+| Remaining | NONE — next campaign may perform the global Level-4 re-audit |
 
 Exact next command:
 
 ```bash
-bash level4/closure_proofs/location_family_track3ab/reproduce.sh
+git status --short
 ```
 
 Do not edit `PROTOCOL.md` or any file listed in
