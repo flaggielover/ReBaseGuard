@@ -38,3 +38,60 @@
 | Blockers | none |
 | Remaining | commit/push protocol; then implement frozen routes |
 
+## PROGRESS CAPSULE — #3
+
+| Field | Value |
+|---|---|
+| Step | 3 / 8 |
+| Gate | covariance diagnosis |
+| Protocol frozen? | YES |
+| Historical Track 1A preserved? | YES — `3.130 > 3` remains failed |
+| Covariance audit | CLOSED — old routes independent; old quadrature SE valid; paired covariance positive/maximal |
+| Paired replication | implementation ready; outcomes not yet evaluated at this capsule |
+| Independent replication | implementation ready |
+| m=1 control | structural tests pass |
+| Lean | NOT STARTED |
+| Axiom audit | NOT STARTED |
+| Tests | 17/17 pre-outcome tests |
+| Historical artifacts modified? | NO |
+| Blockers | none |
+| Remaining | execute frozen 64-batch routes |
+
+## PROGRESS CAPSULE — #4
+
+| Field | Value |
+|---|---|
+| Step | 4 / 8 |
+| Gate | confirmatory replication complete |
+| Protocol frozen? | YES |
+| Historical Track 1A preserved? | YES |
+| Covariance audit | complete |
+| Paired replication | PASS — path error `8.53e-14`; batch error `5.33e-15` |
+| Independent replication | PASS — Hotelling p `0.0430`; max relative discrepancy `0.638%` |
+| m=1 control | PASS |
+| Lean | NOT STARTED pending explicit gate declaration |
+| Axiom audit | NOT STARTED |
+| Tests | result tests pending |
+| Historical artifacts modified? | NO |
+| Blockers | none |
+| Remaining | freeze numerical decision and authorize Lean |
+
+## PROGRESS CAPSULE — #5
+
+| Field | Value |
+|---|---|
+| Step | 5 / 8 |
+| Gate | `NUMERICAL GATE CLOSED — LEAN AUTHORIZED` |
+| Protocol frozen? | YES |
+| Historical Track 1A preserved? | YES |
+| Covariance audit | complete |
+| Paired replication | PASS |
+| Independent replication | PASS |
+| m=1 control | PASS |
+| Lean | AUTHORIZED, not yet started |
+| Axiom audit | NOT STARTED |
+| Tests | pre-outcome 17/17; confirmatory result checks pending |
+| Historical artifacts modified? | NO |
+| Blockers | none |
+| Remaining | commit green numerical checkpoint; formalize Lean spine |
+
