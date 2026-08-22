@@ -72,3 +72,22 @@
 | Blocker | frozen t3 replication-relative gate |
 | Estimated remaining runtime | under one hour for audit, reports, and verification |
 | Git checkpoint | pending numerical-gate commit |
+
+## Capsule 5 — final partial closeout
+
+| Field | Value |
+|---|---|
+| Phase | 8 / 8 |
+| Gate | `LOCATION-FAMILY-THEOREM-PARTIAL` |
+| Protocol frozen? | YES — unchanged |
+| New outcomes generated? | YES — no rerun or resizing |
+| Human theorem | PROVED under explicit hypotheses |
+| Numerical gate | FAILED, exact t3 predicate preserved |
+| Lean / axiom audit | NOT AUTHORIZED / NOT RUN |
+| Retained numerical audit | PASS |
+| Track-3 tests | target 37 / 37 |
+| Full verification | pending clean closing-commit replay |
+| Historical integrity | PASS; no global re-audit |
+| Blocker | all-family numerical gate prevents closure |
+| Estimated remaining runtime | final clean verification only |
+| Git checkpoint | pending final commit |

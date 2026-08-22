@@ -14,5 +14,6 @@ This is neither of Stage D's two non-Gaussian candidate estimands except in the
 Gaussian case.  Historical Stage-D t3 remains `AMBIGUOUS`; no old artifact is
 rewritten.
 
-Current gate: protocol freeze, before new confirmatory outcomes.
-
+Final status: `LOCATION-FAMILY-THEOREM-PARTIAL`.  Five regular families passed,
+but t3 failed the frozen independent-replication relative criterion (4.605% >
+3%).  Lean was not authorized and was not started.  See `FINAL_REPORT.md`.

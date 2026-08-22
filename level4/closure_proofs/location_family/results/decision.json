@@ -1,0 +1,112 @@
+{
+  "schema": "rebaseguard.location-family.final-decision.v1",
+  "decision": "LOCATION-FAMILY-THEOREM-PARTIAL",
+  "decision_date": "2026-08-23",
+  "general_location_family_theorem_requirement": "PARTIAL",
+  "human_theorem": "PROVED UNDER EXPLICIT ANALYTIC HYPOTHESES",
+  "numerical_gate": "LOCATION-FAMILY-NUMERICAL-FAILED",
+  "lean": {
+    "authorized": false,
+    "status": "NOT RUN",
+    "declarations": [],
+    "axiom_audit": "NOT RUN",
+    "reason": "t3 failed the frozen independent-replication relative criterion"
+  },
+  "theorem": {
+    "residual_density": "f_e(z)=f(z+e)",
+    "parameter_score": "s(z)=f'(z)/f(z)",
+    "conventional_location_score": "psi(z)=-f'(z)/f(z)",
+    "sign_relation": "s=-psi",
+    "stopped_score": "S_tau=sum_{t<=tau}s(Z_t)",
+    "abstract_derivative": "d/de E_e[H_tau]|_0=E_0[H_tau S_tau]",
+    "raw_reuse_gain": "Gamma_f=E_0[Z_tau sum_{t<=tau}psi(Z_t)]=-E_0[Z_tau S_tau]",
+    "rebaseguard_derivative": "F'_rho(0)=rho(1-Gamma_f)",
+    "local_instability_condition": "rho*abs(1-Gamma_f)>1; if Gamma_f>1, equivalently Gamma_f>1+1/rho"
+  },
+  "assumption_boundary": {
+    "path_functional": [
+      "tau is a measurable stopping functional of the residual path",
+      "H_tau is stopped-prefix measurable",
+      "detector, stop, tie rule, and H do not depend on e in residual coordinates"
+    ],
+    "distribution": [
+      "common locally translation-stable support",
+      "local absolute continuity",
+      "absolutely continuous positive density with measurable f'/f"
+    ],
+    "stopped_analytic": [
+      "almost-sure finiteness locally in e",
+      "absolute summability of event-sliced change of measure",
+      "integrability of H_tau",
+      "integrable domination of stopped likelihood difference quotients"
+    ],
+    "symmetry_only": [
+      "even f",
+      "reflection-equivariant detector and odd terminal functional"
+    ],
+    "symmetry_consequences": ["oddness", "F_rho(0)=0"],
+    "instability_only": ["zero is a fixed point", "rho*abs(1-Gamma_f)>1"]
+  },
+  "gaussian_reduction": {
+    "s": "-z",
+    "psi": "z",
+    "S_tau": "-T_tau",
+    "Gamma_f": "E_0[Z_tau T_tau]",
+    "status": "EXACT AND NUMERICALLY REPRODUCED"
+  },
+  "stage_d_t3_resolution": {
+    "historical_status": "AMBIGUOUS (UNCHANGED)",
+    "historical_Gamma_psi": 2.5979720736709115,
+    "historical_Gamma_psi_over_Epsi_prime": 1.2989860304369447,
+    "new_raw_reuse_Gamma_f": 8.710087311547682,
+    "resolution": "NEITHER historical estimand is the raw-observation m=1 ReBaseGuard gain",
+    "reason": "both historical estimands use psi(Z_tau), while actual reuse uses Z_tau"
+  },
+  "numerical": {
+    "protocol_sha256": "52a27f178f91b88abfc78c28c327084eedafa61e6e91b24354a9faf1b3ed55f6",
+    "master_seed": 2026082307,
+    "families_passing": 5,
+    "families_total": 6,
+    "failed_family": "t3",
+    "failed_predicate": "replication_relative_le_3pct",
+    "t3_correspondence_abs_z": 0.15830764400154898,
+    "t3_correspondence_relative": 0.009948503999464772,
+    "t3_replication_abs_z": 1.3182234438470144,
+    "t3_replication_relative": 0.04605351425844214,
+    "t3_replication_relative_limit": 0.03,
+    "all_ties": 0,
+    "all_simultaneous_crossings": 0,
+    "retained_summary_audit": "PASS (honest reproduction of frozen FAILED gate)"
+  },
+  "irregular_edge": {
+    "family": "translated centered variance-one uniform",
+    "classification": "NEGATIVE CONTROL; NOT THEOREM CONFIRMATION",
+    "naive_interior_score_derivative": 0.0,
+    "actual_derivative_of_E_Z1": -1.0,
+    "diagnosis": "moving support violates the common-support/local-absolute-continuity hypothesis"
+  },
+  "historical_status_preserved": {
+    "level_1_3": "CLOSED",
+    "stage_d": "STAGE-D-PARTIAL",
+    "stage_d_D2_3": "FAILED",
+    "stage_d_D3_t3": "AMBIGUOUS",
+    "stage_f": "LEVEL-4-PARTIAL",
+    "track_1": "MGT1-THEOREM-PARTIAL",
+    "track_1a": "MGT1-TRACK1A-FAILED",
+    "track_1b": "MGT1-TRACK1B-CLOSED",
+    "track_2": "SR-DERIVATIVE-CLOSED",
+    "track_2_rigorous_instability": "OPEN",
+    "global_reaudit_performed": false
+  },
+  "verification": {
+    "historical_closure_track_tests": 168,
+    "track3_tests": 37,
+    "closure_track_tests_total": 205,
+    "authoritative_tests": 695,
+    "combined_tests": 900,
+    "numerical_gate_commit": "a515951731c8f182b82fff6107e3144c301bc2da",
+    "expected_final_result": "LEVEL 4 VERIFICATION OK"
+  },
+  "publication_safe_claim": "For fixed residual-path stopping rules and regular one-dimensional location families satisfying explicit stopped change-of-measure and domination conditions, the derivative is the stopped score product; the raw m=1 ReBaseGuard specialization is F'_rho(0)=rho(1-Gamma_f). The frozen six-family closure campaign remained partial because the t3 replication-relative gate failed.",
+  "recommended_next_track": "Start a new pre-registered t3 variance-aware correspondence replication; do not alter or reinterpret Track 3. Only a new passing gate may authorize the reusable Lean spine."
+}
