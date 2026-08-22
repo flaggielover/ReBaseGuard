@@ -55,3 +55,23 @@
 | Historical artifacts preserved? | YES |
 | Blockers | none |
 | Remaining | implement and test the frozen numerical routes; then generate outcomes |
+
+## PROGRESS CAPSULE — #4
+
+| Field | Value |
+|---|---|
+| Step | 4 / 9 |
+| Gate | pre-outcome numerical implementation |
+| Protocol frozen? | YES — unchanged |
+| Human theorem | CLOSED |
+| Route A | raw-state implementation ready; no confirmatory outcome yet |
+| Route B | independently written log-state implementation ready; no confirmatory outcome yet |
+| Paired uncertainty | batch derivative is the statistical unit |
+| Structural controls | PASS — correspondence, reflection, rho, ties, source/seed separation |
+| Confirmatory numerics | NOT STARTED |
+| Lean | NOT AUTHORIZED |
+| Arb | NOT STARTED |
+| Tests | 35 / 35 scoped pre-outcome tests passed |
+| Historical artifacts preserved? | YES |
+| Blockers | none |
+| Remaining | commit/push implementation; execute the immutable confirmatory protocol |
