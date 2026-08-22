@@ -1,0 +1,407 @@
+{
+  "schema": "rebaseguard.location-family-track3ab.historical-variance.v1",
+  "classification": "sampling variance amplified by t3 heavy-tail gain variance; no retained evidence of finite-difference bias or implementation mismatch",
+  "historical_seed_replay_only": true,
+  "fresh_campaign_outcomes_generated": false,
+  "route_a": {
+    "replay_max_abs_error": 0.0,
+    "path_gain": {
+      "n": 480000,
+      "mean": 8.710087311547682,
+      "sd": 290.76958531299795,
+      "se": 0.41968974588153807,
+      "median": 9.457425704288294,
+      "ten_percent_trimmed_mean": 9.538648432103685,
+      "skew": -1.985802024680005,
+      "excess_kurtosis": 265.75394888272916,
+      "min": -25968.12777538308,
+      "q01": -803.3218058185315,
+      "q05": -390.95458528687834,
+      "q95": 401.891432795201,
+      "q99": 814.3067511004748,
+      "max": 14755.1857807601
+    },
+    "batch_gamma": {
+      "n": 48,
+      "mean": 8.710087311547682,
+      "sd": 3.208930483598612,
+      "se": 0.46316921962911367,
+      "median": 8.792952505389934,
+      "ten_percent_trimmed_mean": 8.840167983909947,
+      "skew": -0.4768429563147473,
+      "excess_kurtosis": 0.21197805775664724,
+      "min": 0.12312322006247177,
+      "q01": 0.9902193696199542,
+      "q05": 2.86061567503808,
+      "q95": 13.62174856807539,
+      "q99": 14.391175453119223,
+      "max": 14.44570806601497
+    },
+    "average_within_batch_path_variance": 84545.14740922835,
+    "implied_batch_mean_variance_from_within": 8.454514740922834,
+    "empirical_between_batch_variance": 10.297234848568422,
+    "between_over_within_implied_ratio": 1.2179569335571885,
+    "tail_concentration": {
+      "top_0.1000_abs_share_of_variance_mass": 0.7760843633045098,
+      "top_0.1000_abs_share_of_signed_sum": 0.16707979593078745,
+      "top_0.0100_abs_share_of_variance_mass": 0.391677388988943,
+      "top_0.0100_abs_share_of_signed_sum": 0.00801389188185098,
+      "top_0.0010_abs_share_of_variance_mass": 0.17927291316615945,
+      "top_0.0010_abs_share_of_signed_sum": 0.008450401210189888,
+      "top_0.0001_abs_share_of_variance_mass": 0.08283817676802677,
+      "top_0.0001_abs_share_of_signed_sum": -0.005926640079638708
+    },
+    "max_batch_influence": {
+      "batch": 37,
+      "batch_value": 0.12312322006247177,
+      "absolute_mean_shift": 0.18270136364862033,
+      "relative_to_abs_full_mean": 0.020975836075305246
+    },
+    "t3_score_formula": "psi(z)=4z/(1+z^2)",
+    "t3_score_absolute_bound": 2.0
+  },
+  "route_b": {
+    "replications": [
+      {
+        "replication": 1,
+        "replay_max_abs_error": 4.973799150320701e-14,
+        "h_results": [
+          {
+            "h": 0.05,
+            "path_derivative": {
+              "n": 240000,
+              "mean": -7.633642470999731,
+              "sd": 45.249817744814386,
+              "se": 0.09236580369060923,
+              "median": 0.0,
+              "ten_percent_trimmed_mean": -1.8680361419664766,
+              "skew": -1.2949339797429047,
+              "excess_kurtosis": 64.31228250629697,
+              "min": -2082.2588602793667,
+              "q01": -161.38682381241506,
+              "q05": -100.31595124567583,
+              "q95": 40.11184166733417,
+              "q99": 100.30602102233247,
+              "max": 1468.5325759056923
+            },
+            "batch_derivative": {
+              "n": 48,
+              "mean": -7.633642470999732,
+              "sd": 0.6312525853463229,
+              "se": 0.09111346251908668,
+              "median": -7.6497622539440595,
+              "ten_percent_trimmed_mean": -7.63180897503967,
+              "skew": 0.006932870943048645,
+              "excess_kurtosis": -0.802426120721722,
+              "min": -9.031539611326656,
+              "q01": -8.874293333468982,
+              "q05": -8.539256581844967,
+              "q95": -6.724193739205584,
+              "q99": -6.454768600638988,
+              "max": -6.4450414883358915
+            },
+            "plus_minus_covariance": 78.14222779927086,
+            "plus_minus_correlation": 0.8841649464883747,
+            "paired_se_from_paths": 0.09236580369060923,
+            "independence_assumption_se": 0.27138527015567926,
+            "crn_variance_ratio_paired_over_independent": 0.11583768855725037,
+            "max_batch_influence": {
+              "batch": 46,
+              "batch_value": -9.031539611326656,
+              "absolute_mean_shift": 0.029742492347381244,
+              "relative_to_abs_full_mean": 0.003896238586018825
+            }
+          },
+          {
+            "h": 0.025,
+            "path_derivative": {
+              "n": 240000,
+              "mean": -7.5646739177420175,
+              "sd": 66.56380737142854,
+              "se": 0.13587280283075792,
+              "median": 0.0,
+              "ten_percent_trimmed_mean": 0.0,
+              "skew": -2.854473081395067,
+              "excess_kurtosis": 185.56619628241458,
+              "min": -4164.517720558733,
+              "q01": -277.616637318325,
+              "q05": -106.35444575680816,
+              "q95": 6.57812938680591,
+              "q99": 155.5064093435542,
+              "max": 2888.5856131856385
+            },
+            "batch_derivative": {
+              "n": 48,
+              "mean": -7.5646739177420175,
+              "sd": 0.9991983986782235,
+              "se": 0.14422186611267884,
+              "median": -7.643802535120131,
+              "ten_percent_trimmed_mean": -7.550713671642041,
+              "skew": -0.030022837564669697,
+              "excess_kurtosis": -0.38348290988787426,
+              "min": -9.671992398342965,
+              "q01": -9.664589969719465,
+              "q05": -9.29581896712818,
+              "q95": -5.8761998364091825,
+              "q99": -5.794993153545727,
+              "max": -5.7436797736867655
+            },
+            "plus_minus_covariance": 83.96744994685027,
+            "plus_minus_correlation": 0.9381240117733688,
+            "paired_se_from_paths": 0.13587280283075792,
+            "independence_assumption_se": 0.5462169151279729,
+            "crn_variance_ratio_paired_over_independent": 0.06187778772142756,
+            "max_batch_influence": {
+              "batch": 47,
+              "batch_value": -9.671992398342965,
+              "absolute_mean_shift": 0.04483656341704112,
+              "relative_to_abs_full_mean": 0.005927097969402547
+            }
+          },
+          {
+            "h": 0.0125,
+            "path_derivative": {
+              "n": 240000,
+              "mean": -7.457982323150558,
+              "sd": 95.85229804735116,
+              "se": 0.1956576840743189,
+              "median": 0.0,
+              "ten_percent_trimmed_mean": 0.0,
+              "skew": -0.5383037932437776,
+              "excess_kurtosis": 237.7838461397671,
+              "min": -4116.616290443543,
+              "q01": -447.71087740754047,
+              "q05": 0.0,
+              "q95": 0.0,
+              "q99": 236.49007722496876,
+              "max": 5777.171226371277
+            },
+            "batch_derivative": {
+              "n": 48,
+              "mean": -7.45798232315056,
+              "sd": 1.3104981181072688,
+              "se": 0.18915411031543242,
+              "median": -7.492417094856092,
+              "ten_percent_trimmed_mean": -7.477573431793519,
+              "skew": 0.022376442453702378,
+              "excess_kurtosis": 1.2366981676621878,
+              "min": -10.99395690904452,
+              "q01": -10.78579375528481,
+              "q05": -9.00004199933813,
+              "q95": -5.2226066889187495,
+              "q99": -4.417401629730145,
+              "max": -3.9760695015620784
+            },
+            "plus_minus_covariance": 86.98217675176637,
+            "plus_minus_correlation": 0.9680463717364859,
+            "paired_se_from_paths": 0.1956576840743189,
+            "independence_assumption_se": 1.094552093793412,
+            "crn_variance_ratio_paired_over_independent": 0.031953684670756766,
+            "max_batch_influence": {
+              "batch": 5,
+              "batch_value": -10.99395690904452,
+              "absolute_mean_shift": 0.07523350182753141,
+              "relative_to_abs_full_mean": 0.010087648182538152
+            }
+          }
+        ]
+      },
+      {
+        "replication": 2,
+        "replay_max_abs_error": 8.43769498715119e-14,
+        "h_results": [
+          {
+            "h": 0.05,
+            "path_derivative": {
+              "n": 240000,
+              "mean": -7.809477972038822,
+              "sd": 45.93741806731265,
+              "se": 0.09376936197152082,
+              "median": 0.0,
+              "ten_percent_trimmed_mean": -1.9148738473978417,
+              "skew": -1.6277974571513933,
+              "excess_kurtosis": 62.913771653639856,
+              "min": -1768.1794492600345,
+              "q01": -162.46414135289626,
+              "q05": -100.67038172093336,
+              "q95": 40.21505531435365,
+              "q99": 99.41506162313382,
+              "max": 1766.5713718205009
+            },
+            "batch_derivative": {
+              "n": 48,
+              "mean": -7.809477972038823,
+              "sd": 0.6525632781508408,
+              "se": 0.09418939607591315,
+              "median": -7.684053580610569,
+              "ten_percent_trimmed_mean": -7.807158778158434,
+              "skew": -0.184407031492583,
+              "excess_kurtosis": -0.9533571067027014,
+              "min": -9.090823399257921,
+              "q01": -9.000406686921071,
+              "q05": -8.76429878129137,
+              "q95": -6.864659718406639,
+              "q99": -6.623268209976159,
+              "max": -6.5002526079662175
+            },
+            "plus_minus_covariance": 79.59361153520284,
+            "plus_minus_correlation": 0.8829525401192553,
+            "paired_se_from_paths": 0.09376936197152082,
+            "independence_assumption_se": 0.2740815624174951,
+            "crn_variance_ratio_paired_over_independent": 0.11704753696539148,
+            "max_batch_influence": {
+              "batch": 31,
+              "batch_value": -6.5002526079662175,
+              "absolute_mean_shift": 0.027855858810054812,
+              "relative_to_abs_full_mean": 0.003566929685926558
+            }
+          },
+          {
+            "h": 0.025,
+            "path_derivative": {
+              "n": 240000,
+              "mean": -7.764358619953081,
+              "sd": 68.0348955858678,
+              "se": 0.13887564907408975,
+              "median": 0.0,
+              "ten_percent_trimmed_mean": 0.0,
+              "skew": -2.1386090900591275,
+              "excess_kurtosis": 140.70783144670298,
+              "min": -3536.358898520069,
+              "q01": -279.6986003278706,
+              "q05": -107.96916040260537,
+              "q95": 7.280290235173872,
+              "q99": 154.64516264730648,
+              "max": 3579.552307135151
+            },
+            "batch_derivative": {
+              "n": 48,
+              "mean": -7.764358619953081,
+              "sd": 0.82974904272341,
+              "se": 0.11976395829404878,
+              "median": -7.903444058269779,
+              "ten_percent_trimmed_mean": -7.783731381015096,
+              "skew": 0.3168399152616127,
+              "excess_kurtosis": 0.05705892515553135,
+              "min": -9.616869877485966,
+              "q01": -9.43388577728576,
+              "q05": -9.023626946164033,
+              "q95": -6.279784291178176,
+              "q99": -5.905481086228125,
+              "max": -5.845972763349577
+            },
+            "plus_minus_covariance": 85.46480775812216,
+            "plus_minus_correlation": 0.9365937476049236,
+            "paired_se_from_paths": 0.13887564907408975,
+            "independence_assumption_se": 0.5515153111499482,
+            "crn_variance_ratio_paired_over_independent": 0.06340697812118484,
+            "max_batch_influence": {
+              "batch": 11,
+              "batch_value": -5.845972763349577,
+              "absolute_mean_shift": 0.040816720353266334,
+              "relative_to_abs_full_mean": 0.005256933940219389
+            }
+          },
+          {
+            "h": 0.0125,
+            "path_derivative": {
+              "n": 240000,
+              "mean": -7.809543942432133,
+              "sd": 98.83107878797051,
+              "se": 0.20173809479944158,
+              "median": 0.0,
+              "ten_percent_trimmed_mean": 0.0,
+              "skew": -4.443158976839752,
+              "excess_kurtosis": 380.9173265250388,
+              "min": -7072.717797040138,
+              "q01": -454.6546979644826,
+              "q05": 0.0,
+              "q95": 0.0,
+              "q99": 235.29660324075851,
+              "max": 7159.104614270302
+            },
+            "batch_derivative": {
+              "n": 48,
+              "mean": -7.809543942432132,
+              "sd": 1.3025417043627212,
+              "se": 0.18800570091113278,
+              "median": -7.924980554808983,
+              "ten_percent_trimmed_mean": -7.866814526179015,
+              "skew": 0.450712127174408,
+              "excess_kurtosis": 0.7476048757588103,
+              "min": -10.672935221676022,
+              "q01": -10.41007079078279,
+              "q05": -9.68330713126233,
+              "q95": -5.4922583953404684,
+              "q99": -4.448635367450538,
+              "max": -4.4168382472022305
+            },
+            "plus_minus_covariance": 88.45083360263632,
+            "plus_minus_correlation": 0.9666420015650852,
+            "paired_se_from_paths": 0.20173809479944158,
+            "independence_assumption_se": 1.1045554340676869,
+            "crn_variance_ratio_paired_over_independent": 0.03335806087949923,
+            "max_batch_influence": {
+              "batch": 11,
+              "batch_value": -4.4168382472022305,
+              "absolute_mean_shift": 0.07218522755808277,
+              "relative_to_abs_full_mean": 0.009243206529112898
+            }
+          }
+        ]
+      }
+    ],
+    "primary_replication_comparison": {
+      "replication_means": [
+        -7.45798232315056,
+        -7.809543942432132
+      ],
+      "replication_ses": [
+        0.18915411031543242,
+        0.18800570091113278
+      ],
+      "difference": 0.35156161928157204,
+      "combined_se": 0.2666934964042226,
+      "absolute_z": 1.3182234438470009,
+      "symmetric_relative_difference": 0.0460535142584416,
+      "delta_method_se_of_relative_difference_at_equality": 0.03493604553416422,
+      "observed_relative_over_null_se": 1.318223443847001
+    }
+  },
+  "route_a_vs_pooled_route_b": {
+    "route_a_derivative": -7.710087311547682,
+    "route_a_se": 0.46316921962911367,
+    "route_b_derivative": -7.633763132791334,
+    "route_b_se": 0.13386349241353981,
+    "absolute_z": 0.15830764400154898,
+    "symmetric_relative_difference": 0.009948503999464772,
+    "delta_method_relative_se_at_equality": 0.06284285299178244
+  },
+  "cross_family_batch_sd": {
+    "gaussian": {
+      "route_a_gamma_batch_sd": 0.3979878504941393,
+      "route_b_primary_batch_sd": 0.6481046248971765
+    },
+    "t10": {
+      "route_a_gamma_batch_sd": 0.4861579938285871,
+      "route_b_primary_batch_sd": 0.8265497893466259
+    },
+    "t5": {
+      "route_a_gamma_batch_sd": 1.100071642257487,
+      "route_b_primary_batch_sd": 1.0840926897930547
+    },
+    "t3": {
+      "route_a_gamma_batch_sd": 3.208930483598612,
+      "route_b_primary_batch_sd": 1.311589006400398
+    },
+    "contam0.05": {
+      "route_a_gamma_batch_sd": 0.9913431544345178,
+      "route_b_primary_batch_sd": 1.0933287676894363
+    },
+    "contam0.1": {
+      "route_a_gamma_batch_sd": 0.8120305681928242,
+      "route_b_primary_batch_sd": 1.3347481093511662
+    }
+  },
+  "identifiability_note": "The replay recovers within-batch path variance and CRN covariance. There is no structural batch heterogeneity: batches differ only by seed."
+}

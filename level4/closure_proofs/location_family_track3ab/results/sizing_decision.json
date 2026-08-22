@@ -1,0 +1,30 @@
+{
+  "schema": "rebaseguard.location-family-track3ab.sizing.v1",
+  "decision_time": "PRE-CONFIRMATORY",
+  "pilot_used": false,
+  "reason": "Exact historical-seed replay supplied path-level variance; avoiding a fresh pilot removes a data-dependent sizing stage.",
+  "historical_inputs": {
+    "route_a_path_sd": 290.76958531299795,
+    "route_b_primary_path_sd_upper": 98.83107878797051,
+    "derivative_scale": 7.633763132791334
+  },
+  "precision_rule": {
+    "metric": "sqrt(sd_A^2/N_A + sd_B^2/N_B) / historical_derivative_scale",
+    "maximum": 0.01,
+    "point_estimate_proximity_to_3pct_used": false
+  },
+  "selected": {
+    "replications": 2,
+    "batches_per_route_per_replication": 192,
+    "route_a_paths_per_batch": 200000,
+    "route_a_total_paths_per_replication": 38400000,
+    "route_b_path_streams_per_batch": 25000,
+    "route_b_total_path_streams_per_replication": 4800000,
+    "predicted_route_a_se": 0.04692274006253658,
+    "predicted_route_b_se": 0.04511000936228481,
+    "predicted_combined_se": 0.06508960346815611,
+    "predicted_relative_se": 0.008526542196280549,
+    "passes_precision_rule": true
+  },
+  "sample_size_frozen_before_confirmatory_outcomes": true
+}
