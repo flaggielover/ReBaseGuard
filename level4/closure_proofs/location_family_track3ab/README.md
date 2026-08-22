@@ -19,3 +19,21 @@ mechanism is in `VARIANCE_DIAGNOSIS.md`; the retained human theorem is in
 No fresh confirmatory outcome may be generated until
 `results/protocol_hash.json`, `results/source_manifest.json`, and
 `results/historical_manifest.json` exist and validate.
+
+Final scoped status:
+
+```text
+LOCATION-FAMILY-TRACK3AB-CLOSED
+general location-family theorem: CLOSED
+```
+
+Both independent variance-aware t3 replications and the pooled comparison
+passed the unchanged 3% gate.  The authorized conditional Lean spine compiles
+with a clean standard-axiom audit.  Concrete infinite-process analytic
+obligations remain human-proved as documented in `LEAN_CORRESPONDENCE.md`.
+
+Reproduce the complete 929-check package with:
+
+```bash
+bash level4/closure_proofs/location_family_track3ab/reproduce.sh
+```

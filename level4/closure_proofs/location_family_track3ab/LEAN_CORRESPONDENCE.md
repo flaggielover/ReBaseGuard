@@ -33,9 +33,8 @@ Compilation used the repository-pinned Lean `v4.34.0-rc1` and Mathlib
 | `raw_gain_ne_terminal_score_gain` | raw and terminal-score gains differ off terminal equality |
 | `gaussian_terminal_gain_eq_raw` | Gaussian score equality removes that distinction |
 
-The standalone axiom audit prints the 14 load-bearing declarations; the
-simple definitional `gaussian_score_specialization` is compiled and covered by
-the two audited Gaussian consequence theorems.
+The standalone axiom audit prints every one of the 16 theorem declarations,
+including the simple definitional equalities.
 
 ## Correspondence to the human theorem
 

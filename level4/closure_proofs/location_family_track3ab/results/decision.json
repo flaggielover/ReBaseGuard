@@ -1,0 +1,84 @@
+{
+  "schema": "rebaseguard.location-family-track3ab.final-decision.v1",
+  "decision": "LOCATION-FAMILY-TRACK3AB-CLOSED",
+  "general_location_family_theorem_requirement": "CLOSED",
+  "historical_track_3": {
+    "decision": "LOCATION-FAMILY-THEOREM-PARTIAL",
+    "numerical_gate": "FAILED",
+    "failed_relative_discrepancy": 0.0460535142584416,
+    "relative_limit": 0.03,
+    "lean": "NOT AUTHORIZED / NOT RUN",
+    "unchanged": true
+  },
+  "human_theorem": {
+    "status": "PROVED UNDER EXPLICIT ANALYTIC HYPOTHESES",
+    "gamma": "Gamma_f = E_0[Z_tau sum_{t<=tau} psi(Z_t)]",
+    "derivative": "F'_rho(0) = rho(1-Gamma_f)",
+    "residual_convention": "Z_t = epsilon_t - e",
+    "parameter_score": "s = -psi"
+  },
+  "numerical": {
+    "status": "T3A-NUMERICAL-PASS",
+    "replication_1_relative": 0.008619973189344791,
+    "replication_1_abs_z": 1.0113505011481192,
+    "replication_2_relative": 0.004893682528290915,
+    "replication_2_abs_z": 0.5876127292936872,
+    "route_a_replication_relative": 0.0055334313574409,
+    "route_b_replication_relative": 0.00798023103130424,
+    "pooled_route_a_derivative": -7.660757145528059,
+    "pooled_route_a_se": 0.032267779288862215,
+    "pooled_route_b_derivative": -7.675075444048421,
+    "pooled_route_b_se": 0.03231635902328521,
+    "pooled_relative": 0.0018672997943513694,
+    "pooled_abs_z": 0.31353094983346025,
+    "frozen_three_percent_pass": true,
+    "integrity_gates_pass": true,
+    "exact_ties": 0
+  },
+  "lean": {
+    "status": "COMPILED",
+    "classification": "conditional algebraic/stopped-score proof spine",
+    "theorem_declarations": 16,
+    "concrete_infinite_t3_instantiated_end_to_end": false,
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "project_specific_axiom": false,
+    "sorry_or_admit": false
+  },
+  "human_only_concrete_obligations": [
+    "measurability",
+    "detector-functional parameter independence",
+    "almost-sure finiteness",
+    "geometric stopping tails",
+    "stopped change of measure",
+    "integrability and event-slice summability",
+    "domination"
+  ],
+  "criteria": {
+    "historical_theorem_reproduced": true,
+    "new_protocol_frozen_before_outcomes": true,
+    "variance_aware_t3_replication_passed": true,
+    "two_independent_replications_passed": true,
+    "implementation_separation_passed": true,
+    "gaussian_reduction_passed": true,
+    "lean_spine_compiled": true,
+    "axiom_audit_clean": true,
+    "full_reproduction_passed": true,
+    "historical_scientific_artifacts_unchanged": true
+  },
+  "protocol_sha256": "0983fb483219a5eb593652fbb1596b73193dc12edf8aa7914c2e3e143750b9aa",
+  "verification": {
+    "historical_closure_tests": 205,
+    "track3ab_tests": 29,
+    "authoritative_tests": 695,
+    "combined_checks": 929,
+    "result": "929 / 929",
+    "authoritative_result": "LEVEL 4 VERIFICATION OK"
+  },
+  "arb": "NOT STARTED — OUT OF SCOPE",
+  "global_level4_reaudit_performed": false,
+  "next_recommended_action": "GLOBAL LEVEL-4 RE-AUDIT"
+}

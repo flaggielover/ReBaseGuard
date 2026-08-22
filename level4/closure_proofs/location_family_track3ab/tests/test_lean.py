@@ -44,8 +44,8 @@ def test_axiom_audit_has_exact_allowlist() -> None:
         r"#print axioms RebaseguardLean\.LocationFamilyTrack3AB\.([A-Za-z0-9_]+)",
         audit_source,
     )
-    assert len(declarations) == 14
-    assert output.count("depends on axioms") == 14
+    assert len(declarations) == 16
+    assert output.count("depends on axioms") == 16
     assert all(
         f"LocationFamilyTrack3AB.{name}' depends on axioms" in output
         for name in declarations
