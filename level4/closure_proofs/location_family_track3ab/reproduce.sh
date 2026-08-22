@@ -6,6 +6,18 @@ CAMPAIGN="$ROOT/level4/closure_proofs/location_family_track3ab"
 PY="$ROOT/level4/.venv/bin/python"
 LEAN_PROJECT="$ROOT/rebaseguard-lean"
 LEAN_DIR="$CAMPAIGN/lean"
+HISTORICAL_TRACK3_COMMIT="111006592a56e2784e25039672855feceab39eed"
+HISTORICAL_WORK_BASE=""
+
+cleanup() {
+  if [[ -n "$HISTORICAL_WORK_BASE" && -d "$HISTORICAL_WORK_BASE/historical" ]]; then
+    git -C "$ROOT" worktree remove --force "$HISTORICAL_WORK_BASE/historical" >/dev/null
+  fi
+  if [[ -n "$HISTORICAL_WORK_BASE" && -d "$HISTORICAL_WORK_BASE" ]]; then
+    rmdir "$HISTORICAL_WORK_BASE" 2>/dev/null || true
+  fi
+}
+trap cleanup EXIT
 
 if [[ $# -ne 0 ]]; then
   echo "usage: $0" >&2
@@ -36,7 +48,16 @@ echo "== historical closure-track suites =="
 "$PY" -m pytest "$ROOT/level4/closure_proofs/m_gt_1_track1a/tests" -q
 "$PY" -m pytest "$ROOT/level4/closure_proofs/m_gt_1_track1b/tests" -q
 "$PY" -m pytest "$ROOT/level4/closure_proofs/sr_derivative/tests" -q
-"$PY" -m pytest "$ROOT/level4/closure_proofs/location_family/tests" -q
+
+echo "== frozen historical Track-3 suite in its freeze-scoped tree =="
+HISTORICAL_WORK_BASE="$(mktemp -d "${TMPDIR:-/tmp}/rebaseguard-track3-history.XXXXXX")"
+git -C "$ROOT" worktree add --detach "$HISTORICAL_WORK_BASE/historical" \
+  "$HISTORICAL_TRACK3_COMMIT" >/dev/null
+"$PY" -m pytest \
+  "$HISTORICAL_WORK_BASE/historical/level4/closure_proofs/location_family/tests" -q
+git -C "$ROOT" worktree remove --force "$HISTORICAL_WORK_BASE/historical" >/dev/null
+rmdir "$HISTORICAL_WORK_BASE"
+HISTORICAL_WORK_BASE=""
 
 echo "== Track-3B Lean compile =="
 LEAN_TMP="$(mktemp -d "${TMPDIR:-/tmp}/rebaseguard-track3ab-lean.XXXXXX")"

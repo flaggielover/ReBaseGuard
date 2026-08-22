@@ -71,4 +71,6 @@ def test_reproducer_contains_complete_order_and_count() -> None:
     final_gate = source.index("final scoped decision")
     assert numerical < lean < authoritative < final_gate
     assert 'scripts/verify_level_4.sh' in source
+    assert "111006592a56e2784e25039672855feceab39eed" in source
+    assert "worktree add --detach" in source
     assert "929 / 929" in source

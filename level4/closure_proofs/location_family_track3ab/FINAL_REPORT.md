@@ -203,6 +203,11 @@ combined:                       929 / 929
 ```
 
 Expected historical partial/failure decisions remain asserted by their tests.
+The 37 historical Track-3 tests run in frozen commit `1110065`, whose Git tree
+is byte-identical to original closing commit `ba45ac3`.  This preserves its
+freeze-scoped seed-confinement assertion without weakening the test to permit
+future namespaces.  All other historical and new suites run from the current
+tree.
 
 ## S. Reproduction command
 
@@ -212,7 +217,8 @@ bash level4/closure_proofs/location_family_track3ab/reproduce.sh
 
 The reproducer verifies immutable hashes, independently replays all 768 batch
 summaries and the gate, compiles Lean, reproduces the exact axiom inventory,
-runs historical and new focused suites, runs the authoritative repository
+runs historical and new focused suites (using the byte-identical frozen tree
+for the old Track-3 freeze-scoped suite), runs the authoritative repository
 verifier once at the end, and checks the final scoped decision.
 
 ## T. Artifact entry points

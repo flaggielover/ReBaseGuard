@@ -46,3 +46,13 @@ than overwritten; the numerical commit was safely rebased onto the equivalent
 frozen-protocol tree and then fast-forward pushed.  Protocol, source, outcome,
 and historical hashes remained unchanged.  This was a provenance event, not a
 scientific or implementation failure.
+
+## Historical freeze-scoped seed test
+
+The unchanged historical Track-3 suite contains a repository-wide scan that
+asserts its then-fresh seed occurred only in the Track-3 namespace *at freeze*.
+Any later campaign that documents that seed makes the assertion false on a
+future working tree.  The old test is not weakened or edited.  Reproduction
+runs all 37 old tests in reachable commit `1110065`, whose tree is byte-for-byte
+identical to original historical close `ba45ac3`, while new current-tree tests
+separately enforce cross-campaign seed disjointness and old-artifact hashes.
