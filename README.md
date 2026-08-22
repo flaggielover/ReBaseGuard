@@ -92,6 +92,20 @@ repositories. They were normalised as follows:
 
 ## Level 4 — Gates 4.1 and 4.2
 
+**Overall status: Level 1–3 `CLOSED`; Level 4 `LEVEL-4-PARTIAL`.**
+
+The authoritative Level 4 final record is:
+
+| Entry point | Contents |
+|---|---|
+| [`level4/reports/LEVEL_4_FINAL_REPORT.md`](level4/reports/LEVEL_4_FINAL_REPORT.md) | final scientific report and conservative verdict |
+| [`level4/reports/LEVEL_4_FINAL_LEDGER.md`](level4/reports/LEVEL_4_FINAL_LEDGER.md) | claim-by-claim final evidence ledger |
+| [`level4/stage_f/README.md`](level4/stage_f/README.md) | Stage F audit artifacts and reproduction notes |
+
+```bash
+bash level4/stage_f/reproduce.sh
+```
+
 **Everything at Level 4 is non-rigorous Monte Carlo.** It does not modify,
 reinterpret or extend the Level 1–3 closure above, and the closure's scope
 statement still governs what may be claimed.
