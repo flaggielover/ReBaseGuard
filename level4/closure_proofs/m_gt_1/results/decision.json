@@ -1,0 +1,19 @@
+{
+  "decision": "MGT1-THEOREM-PARTIAL",
+  "human_theorem": "HUMAN-PROVED",
+  "formula": "F'_{rho,m}(0) = rho * (1 - GammaTilde_m)",
+  "gamma_decomposition": "GammaTilde_m = (1/m) * sum_{r=0}^{m-1} gamma_r + C_m",
+  "short_cycle_correction": "C_m = E[1{tau<m} * (1/tau - 1/m) * T_tau^2]",
+  "primary_derivative_correspondence": "PASS",
+  "complete_numerical_gate": "FAIL",
+  "failed_checks": [
+    "short cycles observed for every m>1 (low-power implementation check at m=2)",
+    "Stage-A/Stage-D distinction exceeds 5 SE in every replicate/cell (m=20 failed)"
+  ],
+  "lean": "NOT STARTED — numerical stop gate",
+  "arb": "NOT STARTED / not required for a structural identity",
+  "historical_d2_3": "FAILED",
+  "closes_previous_m_gt_1_requirement": false,
+  "overall_level4_decision_made": false,
+  "protocol_sha256": "27c3cddad3a09520a562b444e9635a3f4155464ac322f01edc79e0fc74c2d9af"
+}
