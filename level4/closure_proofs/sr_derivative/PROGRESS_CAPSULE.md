@@ -75,3 +75,23 @@
 | Historical artifacts preserved? | YES |
 | Blockers | none |
 | Remaining | commit/push implementation; execute the immutable confirmatory protocol |
+
+## PROGRESS CAPSULE — #5
+
+| Field | Value |
+|---|---|
+| Step | 5 / 9 |
+| Gate | `NUMERICAL GATE CLOSED — LEAN AUTHORIZED` |
+| Protocol frozen? | YES — unchanged |
+| Calibration reproduction | PASS — candidate error `0.333%` |
+| Fixed operating point | PASS — ARL ratio error `0.162%` |
+| Route A | PASS — `Gamma=17.29132 ± 0.02757`, historical `z=-0.726` |
+| Route B | PASS — primary `-16.19501 ± 0.03906`, pooled `|z|=2.015` |
+| Independent replication | PASS — agreement `|z|=0.741` |
+| Exact ties | 0 |
+| Gamma above two | CONFIRMATORY NUMERICAL ONLY |
+| Lean | AUTHORIZED, not yet started at this capsule |
+| Arb | NOT STARTED — non-blocking and post-Lean only |
+| Historical artifacts preserved? | YES |
+| Blockers | none |
+| Remaining | freeze numerical report; formalize and audit conditional Lean spine |

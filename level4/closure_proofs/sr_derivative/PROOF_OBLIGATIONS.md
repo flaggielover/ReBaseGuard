@@ -33,16 +33,16 @@ instantiated in Lean.
 
 | ID | Obligation | Blocking rule | Status |
 |---|---|---|---|
-| N1 | Fresh calibration candidate reproduces the authoritative threshold | candidate within 2% | PENDING |
-| N2 | Fixed-threshold SR/CUSUM operating points match | ARL ratio within 1% | PENDING |
-| N3 | Raw-state Route A corresponds to historical SR Gamma | within four combined SE | PENDING |
-| N4 | Route A numerically places Gamma above two | batch 99% lower bound strictly above 2 | PENDING — confirmatory only |
-| N5 | Independent log-state Route B matches stopped-score prediction | frozen finest-step pooled/replication criteria | PENDING |
-| N6 | Raw/log reflection, rho, crossing, and tie controls pass | every structural item; zero confirmatory ties | PENDING |
-| N7 | Seed, batch, CRN, and source separation hold | all integrity guards | PENDING |
+| N1 | Fresh calibration candidate reproduces the authoritative threshold | candidate error `0.333%<2%` | PASS |
+| N2 | Fixed-threshold SR/CUSUM operating points match | ARL ratio error `0.162%<1%` | PASS |
+| N3 | Raw-state Route A corresponds to historical SR Gamma | combined `z=-0.726` | PASS |
+| N4 | Route A numerically places Gamma above two | batch 99% lower bound `17.218>2` | PASS — confirmatory only |
+| N5 | Independent log-state Route B matches stopped-score prediction | pooled `|z|=2.015`; replication and relative gates pass | PASS |
+| N6 | Raw/log reflection, rho, crossing, and tie controls pass | all structural items; zero confirmatory ties | PASS |
+| N7 | Seed, batch, CRN, and source separation hold | all integrity guards | PASS |
 
-Lean is forbidden until N1--N7 pass and the numerical decision records exactly
-`NUMERICAL GATE CLOSED — LEAN AUTHORIZED`.
+N1--N7 passed and the numerical decision records exactly
+`NUMERICAL GATE CLOSED — LEAN AUTHORIZED`.  Lean is now authorized.
 
 ## 3. Lean reuse boundary
 
@@ -61,15 +61,15 @@ Track 2 still must formalize after the numerical gate:
 
 | ID | New Lean obligation | Status |
 |---|---|---|
-| L1 | raw two-chart state, update, and sign/state-swap reflection | NOT AUTHORIZED YET |
-| L2 | inclusive alarm symmetry | NOT AUTHORIZED YET |
-| L3 | finite-list first-alarm and terminal-record reflection | NOT AUTHORIZED YET |
-| L4 | terminal sign negation and product invariance | NOT AUTHORIZED YET |
-| L5 | exact rho scaling and odd-map algebra | NOT AUTHORIZED YET |
-| L6 | conditional stopped-score derivative consequence | NOT AUTHORIZED YET |
-| L7 | `Gamma>2 -> |F'_1(0)|>1` | NOT AUTHORIZED YET |
-| L8 | authoritative threshold/convention correspondence theorem | NOT AUTHORIZED YET |
-| L9 | compilation, forbidden-placeholder scan, and `#print axioms` audit | NOT AUTHORIZED YET |
+| L1 | raw two-chart state, update, and sign/state-swap reflection | PENDING — AUTHORIZED |
+| L2 | inclusive alarm symmetry | PENDING — AUTHORIZED |
+| L3 | finite-list first-alarm and terminal-record reflection | PENDING — AUTHORIZED |
+| L4 | terminal sign negation and product invariance | PENDING — AUTHORIZED |
+| L5 | exact rho scaling and odd-map algebra | PENDING — AUTHORIZED |
+| L6 | conditional stopped-score derivative consequence | PENDING — AUTHORIZED |
+| L7 | `Gamma>2 -> |F'_1(0)|>1` | PENDING — AUTHORIZED |
+| L8 | authoritative threshold/convention correspondence theorem | PENDING — AUTHORIZED |
+| L9 | compilation, forbidden-placeholder scan, and `#print axioms` audit | PENDING — AUTHORIZED |
 
 The following concrete facts are deliberately not claimed as Lean-instantiated:
 
@@ -98,4 +98,3 @@ The final Lean correspondence report must use this wording:
 
 If C1 or C2 remains incomplete, the final report must say `rigorous SR local-
 instability certificate: OPEN`; this does not block `SR-DERIVATIVE-CLOSED`.
-

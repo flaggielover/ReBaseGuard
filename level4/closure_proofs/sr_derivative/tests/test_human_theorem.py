@@ -37,7 +37,11 @@ def test_lean_boundary_is_conditional_and_concrete_obligations_are_human():
     assert "CLOSED (human)" in obligations
 
 
-def test_lean_is_still_unauthorized_before_numerical_outcomes():
+def test_lean_is_authorized_only_by_the_frozen_numerical_decision():
     obligations = (CAMPAIGN / "PROOF_OBLIGATIONS.md").read_text()
-    assert obligations.count("NOT AUTHORIZED YET") == 9
+    decision = __import__("json").loads(
+        (CAMPAIGN / "results/numerical_decision.json").read_text()
+    )
+    assert decision["decision"] == "NUMERICAL GATE CLOSED — LEAN AUTHORIZED"
+    assert obligations.count("PENDING — AUTHORIZED") == 9
     assert "NUMERICAL GATE CLOSED — LEAN AUTHORIZED" in obligations
