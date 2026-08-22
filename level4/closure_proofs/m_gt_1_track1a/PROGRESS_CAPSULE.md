@@ -85,3 +85,36 @@
 | Blockers | numerical stop gate prevents Lean phase |
 | Remaining | finalize failure-first package and run non-scientific verification |
 
+## PROGRESS CAPSULE — #6
+
+| Field | Value |
+|---|---|
+| Step | 6 / 7 |
+| Gate | final verification |
+| Previous theorem reproduced? | YES |
+| New protocol frozen? | YES |
+| Replication | distinction PASS |
+| Decomposition | FAIL |
+| Lean | NOT STARTED — mandatory stop |
+| Axiom audit | NOT RUN; no new axiom |
+| Tests | Track 1A 32/32; prior track 46/46; authoritative 695/695; combined 773 |
+| Historical artifacts modified? | NO |
+| Blockers | frozen decomposition failure remains dispositive |
+| Remaining | issue exact Track 1A verdict and scoped requirement status |
+
+## PROGRESS CAPSULE — #7
+
+| Field | Value |
+|---|---|
+| Step | 7 / 7 |
+| Gate | final decision |
+| Previous theorem reproduced? | YES |
+| New protocol frozen? | YES |
+| Replication | Stage-A / Stage-D distinction PASS |
+| Decomposition | independent criterion FAIL at pooled `m=20`; pathwise identity PASS |
+| Lean | NOT STARTED |
+| Axiom audit | NOT RUN; no Track 1A Lean axiom exists |
+| Tests | ALL GREEN — 773 combined |
+| Historical artifacts modified? | NO |
+| Blockers | `m=20` independent decomposition `3.130 > 3` SE; Lean unopened |
+| Remaining | none within Track 1A; verdict `MGT1-TRACK1A-FAILED` |

@@ -112,9 +112,10 @@ decision.
 
 ## M. Tests
 
-Track 1A adds 32 isolated tests; they pass. The previous 46-test proof track
-and authoritative 695-test repository suite await the final clean-worktree
-rerun at this report checkpoint.
+Track 1A adds 32 isolated tests; all pass. The previous proof track passes
+46/46 tests and reproduces its expected `MGT1-THEOREM-PARTIAL` result. The
+authoritative repository verifier passes 695/695 tests and reports historical
+integrity intact. The combined verified count is 773 tests.
 
 ## N. Artifact entry points
 
@@ -129,10 +130,11 @@ rerun at this report checkpoint.
 ## O. Git
 
 Protocol freeze commit `13e497564d5440bc5ea0ae528df682653139ec2c` was pushed to
-`origin/main`. The final failure-package commit and push are pending clean
-verification.
+`origin/main`. The substantive failure package is commit
+`4f77128c8eb2a1225a7973058c1914a9f9e68a56`; it passed clean verification.
+The verification record is committed immediately after this report and the
+green history is pushed to `origin/main` without rewriting history.
 
 ## P. Next proof track
 
 **Proof Track 1B — Correlation-Aware Decomposition Replication + Lean Completion**
-

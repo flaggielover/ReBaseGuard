@@ -15,9 +15,8 @@
 | T1A-11 | Lean proof spine | NOT STARTED | mandatory stop after T1A-8 |
 | T1A-12 | axiom audit | NOT RUN | no Track 1A Lean declaration or axiom exists |
 | T1A-13 | Arb certificate | NOT REQUIRED | no new rigorous scalar inequality claimed |
-| T1A-14 | final repository verification | PENDING | filled after packaging tests |
+| T1A-14 | final repository verification | PASS | Track 1A 32/32; prior track 46/46; authoritative 695/695 |
 
 The failed independent decomposition gate controls the campaign even though
 the human and pathwise algebra passed. It cannot be replaced post hoc by the
 same-sample identity.
-
