@@ -1,0 +1,263 @@
+{
+  "protocol_sha256": "52a27f178f91b88abfc78c28c327084eedafa61e6e91b24354a9faf1b3ed55f6",
+  "master_seed": 2026082307,
+  "git_head": "ed0890d7a6790c10ede8a9a207ecb41c638955c9",
+  "python": "3.14.5",
+  "numpy": "2.5.2",
+  "source_sha256": {
+    "level4/closure_proofs/location_family/PROTOCOL.md": "52a27f178f91b88abfc78c28c327084eedafa61e6e91b24354a9faf1b3ed55f6",
+    "level4/closure_proofs/location_family/src/rebaseguard_location_family/frozen.py": "833e4400fba62f9e04b1e306aad9e2e815587784debd4308f920e18724655ff8",
+    "level4/closure_proofs/location_family/src/rebaseguard_location_family/route_a.py": "c051ab8acc5935b420bf45e7731352e8e04745178af4b84b652e06c25e7befd2",
+    "level4/closure_proofs/location_family/src/rebaseguard_location_family/route_b.py": "bc2ca3278b6eff7ea21e76013a2e46f53ebd3d3cdcb6dc6c4da2e5ac19847688",
+    "level4/closure_proofs/location_family/src/rebaseguard_location_family/statistics.py": "6055133d770b2479a3b9ac4c82c9b779ced96adc1406488dc25189a5a51eb384",
+    "level4/closure_proofs/location_family/numerics/run_correspondence.py": "1857f835518d42013fd0c3dbdbea189496e7dfa9bf8f1176784d25f8a0772db9"
+  },
+  "schema": "rebaseguard.location-family.numerical-decision.v1",
+  "status": "LOCATION-FAMILY-NUMERICAL-FAILED",
+  "declaration": "NUMERICAL GATE FAILED \u2014 LEAN NOT AUTHORIZED",
+  "lean_authorized": false,
+  "all_regular_families_pass": false,
+  "rows": [
+    {
+      "family": "gaussian",
+      "gamma_f": 15.937502174003612,
+      "gamma_f_se": 0.05744459815424797,
+      "route_a_predicted_derivative": -14.937502174003612,
+      "route_a_se": 0.05744459815424797,
+      "route_b_primary_derivative": -14.792658389018802,
+      "route_b_se": 0.06614690128899887,
+      "correspondence_abs_z": 1.653302580266455,
+      "correspondence_relative": 0.009743895239164116,
+      "route_b_replication_1": {
+        "h": 0.0125,
+        "derivative": -14.789642790296876,
+        "se": 0.10801246454673062
+      },
+      "route_b_replication_2": {
+        "h": 0.0125,
+        "derivative": -14.795673987740722,
+        "se": 0.07759354676420303
+      },
+      "replication_abs_z": 0.04534933483693075,
+      "replication_relative": 0.0004077155900742958,
+      "arl": 464.6383854166667,
+      "historical_arl": 465.599551,
+      "arl_relative_error": 0.002064361061493547,
+      "criteria": {
+        "correspondence_abs_z_le_3": true,
+        "correspondence_relative_le_3pct": true,
+        "replication_abs_z_le_3": true,
+        "replication_relative_le_3pct": true,
+        "route_a_arl_within_2pct": true,
+        "route_a_zero_ties": true,
+        "route_b_zero_ties": true
+      },
+      "pass": true
+    },
+    {
+      "family": "t10",
+      "gamma_f": 15.545882536034767,
+      "gamma_f_se": 0.0701708621514058,
+      "route_a_predicted_derivative": -14.545882536034767,
+      "route_a_se": 0.0701708621514058,
+      "route_b_primary_derivative": -14.331216580047,
+      "route_b_se": 0.08435938462100653,
+      "correspondence_abs_z": 1.9563281915371922,
+      "correspondence_relative": 0.01486755682243851,
+      "route_b_replication_1": {
+        "h": 0.0125,
+        "derivative": -14.377502892415585,
+        "se": 0.12076096670532767
+      },
+      "route_b_replication_2": {
+        "h": 0.0125,
+        "derivative": -14.28493026767842,
+        "se": 0.11872015466596697
+      },
+      "replication_abs_z": 0.5466514739248345,
+      "replication_relative": 0.006459509157516482,
+      "arl": 467.2984645833333,
+      "historical_arl": 466.565783,
+      "arl_relative_error": 0.0015703714460630902,
+      "criteria": {
+        "correspondence_abs_z_le_3": true,
+        "correspondence_relative_le_3pct": true,
+        "replication_abs_z_le_3": true,
+        "replication_relative_le_3pct": true,
+        "route_a_arl_within_2pct": true,
+        "route_a_zero_ties": true,
+        "route_b_zero_ties": true
+      },
+      "pass": true
+    },
+    {
+      "family": "t5",
+      "gamma_f": 13.363845048614754,
+      "gamma_f_se": 0.15878166469630847,
+      "route_a_predicted_derivative": -12.363845048614754,
+      "route_a_se": 0.15878166469630847,
+      "route_b_primary_derivative": -12.177926905306398,
+      "route_b_se": 0.1106447468280964,
+      "correspondence_abs_z": 0.960668130205215,
+      "correspondence_relative": 0.015151158902252885,
+      "route_b_replication_1": {
+        "h": 0.0125,
+        "derivative": -12.253064234831513,
+        "se": 0.16614433478883153
+      },
+      "route_b_replication_2": {
+        "h": 0.0125,
+        "derivative": -12.102789575781282,
+        "se": 0.14712514461562667
+      },
+      "replication_abs_z": 0.6771482247968297,
+      "replication_relative": 0.012339921254146331,
+      "arl": 465.5625333333333,
+      "historical_arl": 464.873177,
+      "arl_relative_error": 0.0014828911785833565,
+      "criteria": {
+        "correspondence_abs_z_le_3": true,
+        "correspondence_relative_le_3pct": true,
+        "replication_abs_z_le_3": true,
+        "replication_relative_le_3pct": true,
+        "route_a_arl_within_2pct": true,
+        "route_a_zero_ties": true,
+        "route_b_zero_ties": true
+      },
+      "pass": true
+    },
+    {
+      "family": "t3",
+      "gamma_f": 8.710087311547682,
+      "gamma_f_se": 0.46316921962911367,
+      "route_a_predicted_derivative": -7.710087311547682,
+      "route_a_se": 0.46316921962911367,
+      "route_b_primary_derivative": -7.633763132791334,
+      "route_b_se": 0.13386349241353981,
+      "correspondence_abs_z": 0.15830764400154898,
+      "correspondence_relative": 0.009948503999464772,
+      "route_b_replication_1": {
+        "h": 0.0125,
+        "derivative": -7.457982323150545,
+        "se": 0.18915411031543247
+      },
+      "route_b_replication_2": {
+        "h": 0.0125,
+        "derivative": -7.8095439424321205,
+        "se": 0.18800570091113264
+      },
+      "replication_abs_z": 1.3182234438470144,
+      "replication_relative": 0.04605351425844214,
+      "arl": 465.82039375,
+      "historical_arl": 465.891191,
+      "arl_relative_error": 0.00015196091140512458,
+      "criteria": {
+        "correspondence_abs_z_le_3": true,
+        "correspondence_relative_le_3pct": true,
+        "replication_abs_z_le_3": true,
+        "replication_relative_le_3pct": false,
+        "route_a_arl_within_2pct": true,
+        "route_a_zero_ties": true,
+        "route_b_zero_ties": true
+      },
+      "pass": false
+    },
+    {
+      "family": "contam0.05",
+      "gamma_f": 15.381661706839841,
+      "gamma_f_se": 0.1430880592680154,
+      "route_a_predicted_derivative": -14.381661706839841,
+      "route_a_se": 0.1430880592680154,
+      "route_b_primary_derivative": -14.72311685707722,
+      "route_b_se": 0.1115874000810436,
+      "correspondence_abs_z": 1.881761473608643,
+      "correspondence_relative": 0.023463854877817356,
+      "route_b_replication_1": {
+        "h": 0.0125,
+        "derivative": -14.660237818190042,
+        "se": 0.17094965263981815
+      },
+      "route_b_replication_2": {
+        "h": 0.0125,
+        "derivative": -14.7859958959644,
+        "se": 0.14472326564328403
+      },
+      "replication_abs_z": 0.5614613528343767,
+      "replication_relative": 0.008541539063714396,
+      "arl": 464.68475416666666,
+      "historical_arl": 465.742994,
+      "arl_relative_error": 0.002272154056993436,
+      "criteria": {
+        "correspondence_abs_z_le_3": true,
+        "correspondence_relative_le_3pct": true,
+        "replication_abs_z_le_3": true,
+        "replication_relative_le_3pct": true,
+        "route_a_arl_within_2pct": true,
+        "route_a_zero_ties": true,
+        "route_b_zero_ties": true
+      },
+      "pass": true
+    },
+    {
+      "family": "contam0.1",
+      "gamma_f": 18.31956944198672,
+      "gamma_f_se": 0.11720651678408295,
+      "route_a_predicted_derivative": -17.31956944198672,
+      "route_a_se": 0.11720651678408295,
+      "route_b_primary_derivative": -17.173701668391075,
+      "route_b_se": 0.13622715846062172,
+      "correspondence_abs_z": 0.8116902380447287,
+      "correspondence_relative": 0.008457752419529566,
+      "route_b_replication_1": {
+        "h": 0.0125,
+        "derivative": -17.187222843744564,
+        "se": 0.20448953173971465
+      },
+      "route_b_replication_2": {
+        "h": 0.0125,
+        "derivative": -17.16018049303759,
+        "se": 0.18220126732396844
+      },
+      "replication_abs_z": 0.09873596854520673,
+      "replication_relative": 0.001574637269770847,
+      "arl": 464.57927500000005,
+      "historical_arl": 464.356687,
+      "arl_relative_error": 0.00047934703264007616,
+      "criteria": {
+        "correspondence_abs_z_le_3": true,
+        "correspondence_relative_le_3pct": true,
+        "replication_abs_z_le_3": true,
+        "replication_relative_le_3pct": true,
+        "route_a_arl_within_2pct": true,
+        "route_a_zero_ties": true,
+        "route_b_zero_ties": true
+      },
+      "pass": true
+    }
+  ],
+  "gaussian_control": {
+    "historical_gamma": 15.867139929316513,
+    "historical_batch_se": 0.04952710236592949,
+    "abs_z": 0.9276826928756102,
+    "relative_discrepancy": 0.004424652505663831,
+    "abs_z_le_3": true,
+    "relative_le_2pct": true,
+    "pass": true
+  },
+  "t3_estimand_resolution": {
+    "new_raw_reuse_gamma_f": 8.710087311547682,
+    "historical_gamma_psi": 2.5979720736709115,
+    "historical_gamma_psi_over_Epsi_prime": 1.2989860304369447,
+    "mathematical_resolution": "NEITHER historical quantity is the raw-observation m=1 reuse gain; historical Stage-D t3 remains AMBIGUOUS"
+  },
+  "uniform_edge": {
+    "interior_a.e._score_prediction_for_dE": 0.0,
+    "actual_dE_e_Z1": -1.0,
+    "naive_score_prediction_for_Fprime": 1.0,
+    "actual_Fprime": 0.0,
+    "mismatch_reproduced": true,
+    "classification": "IRREGULAR SUPPORT-SHIFT EDGE; NOT THEOREM CONFIRMATION"
+  },
+  "structural_pass": true,
+  "elapsed_seconds": 451.654
+}

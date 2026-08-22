@@ -1,0 +1,142 @@
+{
+  "schema": "rebaseguard.location-family.numerical-audit.v1",
+  "pass": true,
+  "audit_scope": "honest reproduction of the frozen FAILED gate",
+  "checks": {
+    "protocol_hash": true,
+    "historical_hashes": true,
+    "structural_pass": true,
+    "stored_status_failed": true,
+    "stored_lean_not_authorized": true,
+    "gaussian_stored_summary_exact": true,
+    "t10_stored_summary_exact": true,
+    "t5_stored_summary_exact": true,
+    "t3_stored_summary_exact": true,
+    "contam0.05_stored_summary_exact": true,
+    "contam0.1_stored_summary_exact": true,
+    "recomputed_regular_gate_fails": true,
+    "exactly_one_failed_predicate": true,
+    "no_lean_artifact_exists": true
+  },
+  "failed_predicates": [
+    "t3:replication_relative_le_3pct"
+  ],
+  "recomputed_status": "LOCATION-FAMILY-NUMERICAL-FAILED",
+  "lean_authorized": false,
+  "rows": [
+    {
+      "family": "gaussian",
+      "gamma_f": 15.937502174003612,
+      "route_a_derivative": -14.937502174003612,
+      "route_b_derivative": -14.792658389018802,
+      "correspondence_abs_z": 1.653302580266455,
+      "replication_abs_z": 0.04534933483693075,
+      "replication_relative": 0.0004077155900742958,
+      "criteria": {
+        "correspondence_abs_z_le_3": true,
+        "correspondence_relative_le_3pct": true,
+        "replication_abs_z_le_3": true,
+        "replication_relative_le_3pct": true,
+        "route_a_arl_within_2pct": true,
+        "route_a_zero_ties": true,
+        "route_b_zero_ties": true
+      },
+      "pass": true
+    },
+    {
+      "family": "t10",
+      "gamma_f": 15.545882536034767,
+      "route_a_derivative": -14.545882536034767,
+      "route_b_derivative": -14.331216580047,
+      "correspondence_abs_z": 1.9563281915371922,
+      "replication_abs_z": 0.5466514739248345,
+      "replication_relative": 0.006459509157516482,
+      "criteria": {
+        "correspondence_abs_z_le_3": true,
+        "correspondence_relative_le_3pct": true,
+        "replication_abs_z_le_3": true,
+        "replication_relative_le_3pct": true,
+        "route_a_arl_within_2pct": true,
+        "route_a_zero_ties": true,
+        "route_b_zero_ties": true
+      },
+      "pass": true
+    },
+    {
+      "family": "t5",
+      "gamma_f": 13.363845048614754,
+      "route_a_derivative": -12.363845048614754,
+      "route_b_derivative": -12.177926905306398,
+      "correspondence_abs_z": 0.960668130205215,
+      "replication_abs_z": 0.6771482247968297,
+      "replication_relative": 0.012339921254146331,
+      "criteria": {
+        "correspondence_abs_z_le_3": true,
+        "correspondence_relative_le_3pct": true,
+        "replication_abs_z_le_3": true,
+        "replication_relative_le_3pct": true,
+        "route_a_arl_within_2pct": true,
+        "route_a_zero_ties": true,
+        "route_b_zero_ties": true
+      },
+      "pass": true
+    },
+    {
+      "family": "t3",
+      "gamma_f": 8.710087311547682,
+      "route_a_derivative": -7.710087311547682,
+      "route_b_derivative": -7.633763132791334,
+      "correspondence_abs_z": 0.15830764400154898,
+      "replication_abs_z": 1.3182234438470144,
+      "replication_relative": 0.04605351425844214,
+      "criteria": {
+        "correspondence_abs_z_le_3": true,
+        "correspondence_relative_le_3pct": true,
+        "replication_abs_z_le_3": true,
+        "replication_relative_le_3pct": false,
+        "route_a_arl_within_2pct": true,
+        "route_a_zero_ties": true,
+        "route_b_zero_ties": true
+      },
+      "pass": false
+    },
+    {
+      "family": "contam0.05",
+      "gamma_f": 15.381661706839841,
+      "route_a_derivative": -14.381661706839841,
+      "route_b_derivative": -14.72311685707722,
+      "correspondence_abs_z": 1.881761473608643,
+      "replication_abs_z": 0.5614613528343767,
+      "replication_relative": 0.008541539063714396,
+      "criteria": {
+        "correspondence_abs_z_le_3": true,
+        "correspondence_relative_le_3pct": true,
+        "replication_abs_z_le_3": true,
+        "replication_relative_le_3pct": true,
+        "route_a_arl_within_2pct": true,
+        "route_a_zero_ties": true,
+        "route_b_zero_ties": true
+      },
+      "pass": true
+    },
+    {
+      "family": "contam0.1",
+      "gamma_f": 18.31956944198672,
+      "route_a_derivative": -17.31956944198672,
+      "route_b_derivative": -17.173701668391075,
+      "correspondence_abs_z": 0.8116902380447287,
+      "replication_abs_z": 0.09873596854520673,
+      "replication_relative": 0.001574637269770847,
+      "criteria": {
+        "correspondence_abs_z_le_3": true,
+        "correspondence_relative_le_3pct": true,
+        "replication_abs_z_le_3": true,
+        "replication_relative_le_3pct": true,
+        "route_a_arl_within_2pct": true,
+        "route_a_zero_ties": true,
+        "route_b_zero_ties": true
+      },
+      "pass": true
+    }
+  ]
+}

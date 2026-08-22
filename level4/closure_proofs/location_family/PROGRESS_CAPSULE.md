@@ -53,3 +53,22 @@
 | Blocker | none |
 | Estimated remaining runtime | several hours |
 | Git checkpoint | pending freeze commit |
+
+## Capsule 4 — numerical gate
+
+| Field | Value |
+|---|---|
+| Phase | 5 / 8 |
+| Gate | `LOCATION-FAMILY-NUMERICAL-FAILED` |
+| Protocol frozen? | YES — unchanged |
+| New outcomes generated? | YES — one frozen campaign |
+| Regular family verdicts | 5 PASS, t3 FAIL |
+| t3 pooled correspondence | PASS: `|z|=0.158`, 0.995% |
+| t3 replication criterion | FAIL: `|z|=1.318`, 4.605% > 3% |
+| Gaussian control | PASS |
+| Structural/tie/source controls | PASS; zero ties |
+| Lean status | NOT AUTHORIZED; will not start |
+| Historical integrity | PASS |
+| Blocker | frozen t3 replication-relative gate |
+| Estimated remaining runtime | under one hour for audit, reports, and verification |
+| Git checkpoint | pending numerical-gate commit |
