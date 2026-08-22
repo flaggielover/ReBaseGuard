@@ -34,3 +34,54 @@
 | Blockers | none |
 | Remaining | commit protocol checkpoint, then implement and run confirmatory replication |
 
+## PROGRESS CAPSULE — #3
+
+| Field | Value |
+|---|---|
+| Step | 3 / 7 |
+| Gate | independent Stage-A / Stage-D distinction |
+| Previous theorem reproduced? | YES |
+| New protocol frozen? | YES |
+| Replication | PASS — preselected `m=20,50` effects positive in both replications and pooled 95% CIs |
+| Decomposition | evaluation complete; one pooled cell failed |
+| Lean | NOT STARTED |
+| Axiom audit | NOT STARTED |
+| Tests | simulation smoke controls passed |
+| Historical artifacts modified? | NO |
+| Blockers | independent decomposition pooled bound at `m=20` |
+| Remaining | preserve results and diagnose decomposition gate |
+
+## PROGRESS CAPSULE — #4
+
+| Field | Value |
+|---|---|
+| Step | 4 / 7 |
+| Gate | independent decomposition correspondence |
+| Previous theorem reproduced? | YES |
+| New protocol frozen? | YES |
+| Replication | distinction PASS |
+| Decomposition | FAIL — `m=20`: discrepancy `0.02955`, SE `0.00944`, abs z `3.130` > 3 |
+| Lean | STOPPED BEFORE START |
+| Axiom audit | NOT STARTED |
+| Tests | pathwise identity and correction-sign checks pass |
+| Historical artifacts modified? | NO |
+| Blockers | frozen decomposition criterion failed |
+| Remaining | document failure; do not add paths, tune rule, or begin Lean |
+
+## PROGRESS CAPSULE — #5
+
+| Field | Value |
+|---|---|
+| Step | 5 / 7 |
+| Gate | Lean authorization after numerical gate |
+| Previous theorem reproduced? | YES |
+| New protocol frozen? | YES |
+| Replication | distinction PASS |
+| Decomposition | FAIL |
+| Lean | NOT STARTED — mandatory stop rule |
+| Axiom audit | NOT RUN; no Track 1A axiom introduced |
+| Tests | pending final package verification |
+| Historical artifacts modified? | NO |
+| Blockers | numerical stop gate prevents Lean phase |
+| Remaining | finalize failure-first package and run non-scientific verification |
+
