@@ -18,3 +18,21 @@ The pre-data statistical reconstruction is in `COVARIANCE_AUDIT.md`. The
 confirmatory design is frozen in `PROTOCOL.md` before any Track 1B outcome is
 generated.
 
+## Current evidence
+
+- numerical gate: `PASS` — `NUMERICAL GATE CLOSED — LEAN AUTHORIZED`;
+- paired pathwise and batch decomposition: `PASS`;
+- independent-route Hotelling cross-check: `PASS`;
+- `m=1` structural control: `PASS`;
+- Lean stable spine: compiled;
+- axiom audit: only `propext`, `Classical.choice`, and `Quot.sound`;
+- concrete frozen-CUSUM analytic instantiation: human proof, not discharged
+  end to end in Lean;
+- final Track 1B verdict: pending the authoritative repository verifier.
+
+Start with `REPLICATION_REPORT.md`, `THEOREM.md`, and
+`LEAN_CORRESPONDENCE.md`. After the closure checkpoint is committed, run:
+
+```bash
+bash level4/closure_proofs/m_gt_1_track1b/reproduce.sh
+```

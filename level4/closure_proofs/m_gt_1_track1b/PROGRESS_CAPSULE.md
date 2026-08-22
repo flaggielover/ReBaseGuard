@@ -95,3 +95,21 @@
 | Blockers | none |
 | Remaining | commit green numerical checkpoint; formalize Lean spine |
 
+## PROGRESS CAPSULE — #6
+
+| Field | Value |
+|---|---|
+| Step | 6 / 8 |
+| Gate | Lean stable-spine compilation and analytic-assumption audit |
+| Protocol frozen? | YES |
+| Historical Track 1A preserved? | YES |
+| Covariance audit | complete |
+| Paired replication | PASS |
+| Independent replication | PASS |
+| m=1 control | PASS |
+| Lean | PASS — stable spine compiles |
+| Axiom audit | PASS — `propext`, `Classical.choice`, `Quot.sound` only |
+| Tests | 26/26 numerical/source tests; Lean-hook tests being added |
+| Historical artifacts modified? | NO |
+| Blockers | none |
+| Remaining | commit/push Lean closure checkpoint; reproduce history and run full verifier |
