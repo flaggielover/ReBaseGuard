@@ -1,7 +1,8 @@
 # Lean correspondence and analytic-assumption audit
 
-**Compile:** `PASS`  
-**Axiom audit:** `PASS`  
+**Compile:** `PASS`
+
+**Axiom audit:** `PASS`
 **Classification:** B — algebraic consequence of the existing general
 dominated-differentiation lemma, not a fully instantiated CUSUM theorem
 

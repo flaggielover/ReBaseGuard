@@ -4,4 +4,3 @@ import «MGtOneTrack1B»
 #print axioms RebaseguardLean.Track1B.shortCorrection_nonneg
 #print axioms RebaseguardLean.Track1B.integral_direct_eq_fixed_add_correction
 #print axioms RebaseguardLean.Track1B.derivative_spine_of_dominated
-

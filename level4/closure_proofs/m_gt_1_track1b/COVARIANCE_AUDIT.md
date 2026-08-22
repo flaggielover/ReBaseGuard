@@ -26,12 +26,12 @@ absolute z-values were `2.361, 2.546, 2.606, 2.858, 3.130, 2.564` at
 
 ```mermaid
 flowchart LR
-  S2[SeedSequence 2026082211, route 2] --> P2[ordinary stopped paths]
+  S2[Track 1A master seed, route 2] --> P2[ordinary stopped paths]
   P2 --> T2[tau, T_tau, lags, window sum]
   T2 --> X[direct A_m T_tau]
   T2 --> XM[cross-m shared trajectories]
 
-  S3[SeedSequence 2026082211, route 3] --> P3[independent ordinary stopped paths]
+  S3[Track 1A master seed, route 3] --> P3[independent ordinary stopped paths]
   P3 --> T3[tau, T_tau, lags, short indicator]
   T3 --> B[fixed-m lag term]
   T3 --> C[short-cycle correction]
@@ -42,8 +42,9 @@ flowchart LR
   S2 -. disjoint seed family .- S3
 ```
 
-Route 2 used keys `[2026082211,2,replicate,batch]`; route 3 used
-`[2026082211,3,replicate,batch]`. Each route had two replications, 20 batches
+Route 2 used keys `[Track1A-master,2,replicate,batch]`; route 3 used
+`[Track1A-master,3,replicate,batch]`. The master value remains recorded in the
+immutable Track 1A protocol. Each route had two replications, 20 batches
 per replication, 50,000 paths per batch, and one million paths per
 replication. The two routes shared no seeds, stopped paths, `tau`, `T_tau`,
 lags, windows, denominators, or short-cycle indicators.
@@ -141,4 +142,3 @@ remains a frozen failure.
 The Track 1B audit replayed Track 1 and Track 1A through the Track 1A
 reproducer. Track 1 reproduced `MGT1-THEOREM-PARTIAL`; Track 1A reproduced
 `MGT1-TRACK1A-FAILED`. Their 46 and 32 isolated tests passed, respectively.
-

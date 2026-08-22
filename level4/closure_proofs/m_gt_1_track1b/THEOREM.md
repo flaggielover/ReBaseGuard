@@ -1,6 +1,7 @@
 # Human theorem package
 
-**Human status:** proved  
+**Human status:** proved
+
 **Lean status:** stable algebraic spine compiled; frozen-CUSUM analytic
 instantiation remains outside Lean
 

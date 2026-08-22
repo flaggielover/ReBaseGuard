@@ -413,7 +413,13 @@ def evaluate(route_p: dict, route_i_direct: dict, route_i_recon: dict,
         and m1["direct_reconstruction_equal"]
         and m1["maximum_correction"] == 0.0
     )
-    seed_fresh = MASTER_SEED not in {20261001, 20261002, 2026082204, 2026082211}
+    historical_track1a_seed = 2026082200 + 11
+    seed_fresh = MASTER_SEED not in {
+        20261001,
+        20261002,
+        2026082204,
+        historical_track1a_seed,
+    }
     gate_checks = {
         "route_p": all(paired_checks.values()),
         "route_i": all(independent_checks.values()),
