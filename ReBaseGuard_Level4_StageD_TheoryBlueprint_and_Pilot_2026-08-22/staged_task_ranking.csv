@@ -1,0 +1,13 @@
+task,score,novelty,p_success,compute_cost,proof_cost,reviewer_value,class,rationale
+m>1 derivative theorem,95,UNCERTAIN (D-1),90,low,med,88,MANDATORY,Gamma_m = sum_{i<m} gamma_i / m with sum over full cycle = E[T^2] = ARL0 by Wald. Closed form + m* both follow.
+SR derivative theorem,92,NOVELTY-DEFENSIBLE,85,low,med,90,MANDATORY,"Gamma_SR analogue now measured at 17.44+/-0.09; factorization F'=rho(1-Gamma_SR) is exact by the same conditional-mean argument as CUSUM. Theorem is a transcription, not a new proof."
+general location-family theorem,80,NOVELTY-DEFENSIBLE,55,low,high,82,STRONG EXTENSION,Score route Gamma_psi validated numerically across 5 families. Rigour needs uniform integrability of stopped score sums - the real obstacle.
+m-rho phase map,78,THREATENED (D-3),95,med,none,70,MANDATORY,"rho_c(m) = 1/(Gamma_m-1) is a theorem-supported consequence, cheap. Frame as consequence, not new concept."
+SR Monte Carlo derivative,70,n/a (support),99,low,none,55,MANDATORY,ALREADY DONE this session at pilot scale. Only replication at higher precision remains.
+Student-t campaign,65,NOVELTY-DEFENSIBLE,90,med,none,63,STRONG EXTENSION,"Pilot: nu=3 gives Gamma_psi=8.41+/-0.66, still >2. nu=3 is the informative endpoint."
+contaminated Gaussian campaign,62,NOVELTY-DEFENSIBLE,92,med,none,60,STRONG EXTENSION,Pilot: Gamma_psi=13.98/14.56 ARL-matched. Effect robust; campaign is confirmation not discovery.
+SR nonlinear map,58,NOVELTY-DEFENSIBLE,70,high,med,55,STRETCH,"Requires full F_SR,1(e) curve, not just the derivative. Only worth it if SR period-2 is targeted."
+h-rho phase map,55,THREATENED (D-3),96,low,none,50,STRONG EXTENSION,"Gamma ~ ARL0^0.232 measured. Use ARL0 axis, not h. Largely redundant with the m axis."
+m>1 rigorous certificate,40,UNCERTAIN,45,high,very high,45,STRETCH,Only defensible for m<=10 where Gamma_m>>2. Arb cost scales badly with window dimension.
+SR rigorous period-2,30,NOVELTY-DEFENSIBLE,35,very high,very high,40,STRETCH / LEVEL-4+,Duplicates Stage B's structure at high cost. Stage C already showed the stochastic system does not exhibit it.
+skewed campaign,25,NOVELTY-DEFENSIBLE,50,med,high,30,STRETCH / LEVEL-4+,"Breaks odd symmetry, so F_rho=rho*F_1 and the whole scalar-g reduction collapse. New theory needed for modest gain."

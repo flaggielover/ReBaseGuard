@@ -1,0 +1,88 @@
+{
+  "experiment_id": "4.1-pilot-dad32849cf6b",
+  "gate": "4.1",
+  "stage": "pilot",
+  "utc_timestamp": "2026-08-20T14:53:00.533758+00:00",
+  "proof_role": "NON-RIGOROUS NUMERICAL DIAGNOSTIC \u2014 NOT PROOF EVIDENCE",
+  "git": {
+    "commit": "9077c9b66e837f9f687d6dc117306da3f4417efb",
+    "branch": "main",
+    "dirty": true,
+    "dirty_paths": [
+      "?? level4/"
+    ]
+  },
+  "environment": {
+    "python": "3.14.5 (v3.14.5:5607950ef23, May 10 2026, 07:38:09) [Clang 21.0.0 (clang-2100.0.123.102)]",
+    "python_short": "3.14.5",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "numpy": "2.5.2",
+    "scipy": "1.18.0",
+    "pyarrow": "25.0.1",
+    "matplotlib": "3.11.1"
+  },
+  "code_sha256": {
+    "__init__.py": "a65418ed6b41f18e84c27c91c0e65edd2d651254c3950c76af14c444399b2699",
+    "analysis.py": "7a260455ffecfab163a4f9021724948de6d764e889ec32ab32392b6e9e139f8f",
+    "campaigns.py": "adaea4f497ccd1acf330b43793766b9a2679dde48558ab5c16be061d452248ea",
+    "conditional.py": "d78346a83a31224dd68e9ca955cb1dc76723bcfc738fb08800ccbe7d85ece719",
+    "frozen.py": "777681ea32842ff48224b4c51ff7a2a26525d5a44d815d521949a6242baa6c54",
+    "ledger.py": "28bcc763c63fe28530b0a9f76b19d43fe6ce3604e52cebf67c9e9d78280f7104",
+    "metrics.py": "064db98786da9fbf607dfefc6ab866a331019561c446defb985b2283cd0278ac",
+    "multicycle.py": "dc5da37c4fb754f0899a5cf4d615cd780947a9e224ec42a9d792da8116812334",
+    "provenance.py": "69dcf9efbabdcaad2312eabf3f5357ba1d349584e1033566ecfa29a23406a557",
+    "reference.py": "1aee8eeaf41dc784b313764aad576bad9b6353791c0a365d2452a217c147b950",
+    "storage.py": "873a46fc177eacf7aa5cc58217a394e7cc5e5348c46f5654c380157c0a7b826b",
+    "streams.py": "b38a307a808384cb6aa42532d48a10ba0bf4883fb5d3f587b0ac4b6a77450aae",
+    "__combined__": "d0a393183c5d694245ce47e7f98c958304abafb1c605a4c5d0fe4877f4c799df"
+  },
+  "config": {
+    "n_replicates": 20,
+    "n_cycles": 500,
+    "burn_in": 200,
+    "rho": 1.0,
+    "m": 10,
+    "master_seed": 20260820,
+    "e0": 0.0,
+    "k": 0.5,
+    "h": 5.0,
+    "max_steps": 20000000,
+    "detector": "frozen_two_sided_cusum",
+    "policy": "mixed_reuse",
+    "policy_label": "full_reuse"
+  },
+  "config_sha256": "dad32849cf6b7e520d403a7740edb0aade36a2b4d672c5a881c8555584a0b44b",
+  "streams": [
+    {
+      "role": "physical_observations_X",
+      "kind": "PerRowStream",
+      "bit_generator": "PCG64",
+      "master_seed": 20260820,
+      "stream_id": 0,
+      "n_rows": 20,
+      "row_offset": 0,
+      "chunk": 4096,
+      "row_entropy_rule": "SeedSequence([master_seed, stream_id, row_index])"
+    },
+    {
+      "role": "fresh_statistic_Y",
+      "kind": "PerRowStream",
+      "bit_generator": "PCG64",
+      "master_seed": 20260820,
+      "stream_id": 1,
+      "n_rows": 20,
+      "row_offset": 0,
+      "chunk": 4096,
+      "row_entropy_rule": "SeedSequence([master_seed, stream_id, row_index])"
+    }
+  ],
+  "extra": {
+    "campaign_id": "gate4.1-pilot-cfa82c38157a",
+    "simulation_seconds": 1.2662510871887207,
+    "seconds_per_lockstep_iteration": 1.5755466500624877e-05,
+    "n_lockstep_iterations": 80369,
+    "raw_path": "level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m10_rho1.parquet",
+    "n_two_arm_ties": 0
+  }
+}

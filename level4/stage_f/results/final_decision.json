@@ -1,0 +1,226 @@
+{
+  "stage": "F",
+  "decision": "LEVEL-4-PARTIAL",
+  "allowed_labels": [
+    "LEVEL-4-CLOSED",
+    "LEVEL-4-CLOSED-WITH-LIMITATIONS",
+    "LEVEL-4-PARTIAL",
+    "LEVEL-4-FAILED"
+  ],
+  "taxonomy_source": "FALLBACK - no pre-existing Level-4 taxonomy found in the repository",
+  "decision_rule_trace": [
+    "central Level-4 claim NOT contradicted and protocol integrity intact -> LEVEL-4-FAILED does not apply",
+    "5 mandatory requirement(s) FAIL/OPEN -> LEVEL-4-CLOSED does not apply",
+    "LEVEL-4-CLOSED-WITH-LIMITATIONS requires that the ORIGINAL architecture permit such closure; the repository contains NO pre-specified Level-4 closure criteria or taxonomy (verified by exhaustive search), so this label is not available without inventing the requirement after the fact",
+    "-> LEVEL-4-PARTIAL: 5 mandatory unmet, 9 mandatory passed, substantial results established"
+  ],
+  "n_mandatory_total": 16,
+  "n_mandatory_passed": 9,
+  "n_mandatory_partial_or_negative": 2,
+  "n_mandatory_unmet": 5,
+  "mandatory_unmet": [
+    {
+      "requirement": "m>1 derivative theorem",
+      "status": "FAIL",
+      "artifact": "level4/stage_d/results/d2_3_derivative.json"
+    },
+    {
+      "requirement": "SR derivative theorem (proved)",
+      "status": "OPEN",
+      "artifact": "level4/reports/STAGE_D_LEDGER.md"
+    },
+    {
+      "requirement": "m-rho phase map (D4)",
+      "status": "FAIL",
+      "artifact": "level4/stage_d/results/stage_d_decision.json"
+    },
+    {
+      "requirement": "Semi-real external validation",
+      "status": "FAIL",
+      "artifact": "level4/stage_e/results/stage_e_decision.json"
+    },
+    {
+      "requirement": "Prior-art / novelty verification",
+      "status": "OPEN",
+      "artifact": "level_4_theory_numerics/rebaseguard_level4_design.md"
+    }
+  ],
+  "mandatory_partial": [
+    {
+      "requirement": "Stability-aware reuse policy + monitoring consequences",
+      "status": "PARTIAL",
+      "artifact": "level4/stage_c/results/findings.json"
+    },
+    {
+      "requirement": "Operational consequence of the Gamma_m crossing",
+      "status": "NEGATIVE",
+      "artifact": "level4/stage_d/results/d2_5_verdict.json"
+    }
+  ],
+  "requirements": [
+    {
+      "requirement": "L1-3 closure foundation",
+      "class": "mandatory",
+      "status": "PASS",
+      "artifact": "closure/LEVEL_1_3_CLOSURE_REPORT.md"
+    },
+    {
+      "requirement": "Multi-cycle oracle, reproducible",
+      "class": "mandatory",
+      "status": "PASS",
+      "artifact": "level4/reports/GATE_4_1_REPORT.md"
+    },
+    {
+      "requirement": "Conditional map + derivative correspondence at m=1",
+      "class": "mandatory",
+      "status": "PASS",
+      "artifact": "level4/reports/GATE_4_2_REPORT.md"
+    },
+    {
+      "requirement": "Gamma_CUSUM > 2 rigorously",
+      "class": "mandatory",
+      "status": "PASS",
+      "artifact": "closure/04_ARB_CERTIFICATE.md"
+    },
+    {
+      "requirement": "Rigorous period-2 for the deterministic skeleton",
+      "class": "mandatory",
+      "status": "PASS",
+      "artifact": "level4/stage_b/certificate/period2_certificate.json"
+    },
+    {
+      "requirement": "Stability-aware reuse policy + monitoring consequences",
+      "class": "mandatory",
+      "status": "PARTIAL",
+      "artifact": "level4/stage_c/results/findings.json"
+    },
+    {
+      "requirement": "Confirmatory sensitivity of that policy",
+      "class": "mandatory",
+      "status": "PASS",
+      "artifact": "level4/stage_c1/results/findings_confirmatory.json"
+    },
+    {
+      "requirement": "SR Monte Carlo derivative",
+      "class": "mandatory",
+      "status": "PASS",
+      "artifact": "level4/stage_d/results/d1_gamma.json"
+    },
+    {
+      "requirement": "m>1 derivative theorem",
+      "class": "mandatory",
+      "status": "FAIL",
+      "artifact": "level4/stage_d/results/d2_3_derivative.json"
+    },
+    {
+      "requirement": "SR derivative theorem (proved)",
+      "class": "mandatory",
+      "status": "OPEN",
+      "artifact": "level4/reports/STAGE_D_LEDGER.md"
+    },
+    {
+      "requirement": "m-rho phase map (D4)",
+      "class": "mandatory",
+      "status": "FAIL",
+      "artifact": "level4/stage_d/results/stage_d_decision.json"
+    },
+    {
+      "requirement": "Operational consequence of the Gamma_m crossing",
+      "class": "mandatory",
+      "status": "NEGATIVE",
+      "artifact": "level4/stage_d/results/d2_5_verdict.json"
+    },
+    {
+      "requirement": "Non-Gaussian robustness",
+      "class": "strong extension",
+      "status": "PARTIAL",
+      "artifact": "level4/stage_d/results/d3_nongaussian.json"
+    },
+    {
+      "requirement": "General location-family theorem",
+      "class": "stretch",
+      "status": "OPEN",
+      "artifact": "level4/stage_d/notes/D3_REGULARITY.md"
+    },
+    {
+      "requirement": "Semi-real external validation",
+      "class": "mandatory",
+      "status": "FAIL",
+      "artifact": "level4/stage_e/results/stage_e_decision.json"
+    },
+    {
+      "requirement": "Prior-art / novelty verification",
+      "class": "mandatory",
+      "status": "OPEN",
+      "artifact": "level_4_theory_numerics/rebaseguard_level4_design.md"
+    },
+    {
+      "requirement": "Reproducibility of every stage",
+      "class": "mandatory",
+      "status": "PASS",
+      "artifact": "scripts/verify_level_4.sh"
+    },
+    {
+      "requirement": "Protocol integrity",
+      "class": "mandatory",
+      "status": "PASS",
+      "artifact": "level4/stage_f/results/adversarial_f.json"
+    }
+  ],
+  "verdict_robust_to_interpretation": {
+    "strict_reading": "staged_task_ranking.csv MANDATORY is binding -> 3 of 4 Stage D mandatory items FAIL/OPEN -> not closed",
+    "lenient_reading": "MANDATORY is Stage-D priority only -> closure rests on frozen per-stage rules: C PARTIAL, D PARTIAL, E PARTIAL -> not closed",
+    "both_readings_agree": true
+  },
+  "inherited_stage_decisions": {
+    "level_1_3": "CLOSED",
+    "stage_b": "STAGE-B-CLOSED-RIGOROUS-PERIOD2",
+    "stage_c": "STAGE-C-PARTIAL",
+    "stage_c1": "STAGE-C1-CLOSED-CONFIRMED-SENSITIVITY",
+    "stage_d": "STAGE-D-PARTIAL",
+    "stage_e": "STAGE-E-PARTIAL"
+  },
+  "adversarial_f": {
+    "passed": 18,
+    "total": 18
+  },
+  "final_status": "LEVEL-4-PARTIAL",
+  "requirements_source": "level4/stage_f/LEVEL4_REQUIREMENTS_RECONSTRUCTION.md (reconstructed; no pre-specified Level-4 closure criteria exist in the repository)",
+  "mandatory_pass": [
+    "L1-3 closure foundation",
+    "Multi-cycle oracle, reproducible",
+    "Conditional map + derivative correspondence at m=1",
+    "Gamma_CUSUM > 2 rigorously",
+    "Rigorous period-2 for the deterministic skeleton",
+    "Confirmatory sensitivity of that policy",
+    "SR Monte Carlo derivative",
+    "Reproducibility of every stage",
+    "Protocol integrity"
+  ],
+  "protocol_integrity": {
+    "protocol_hashes_verified": 4,
+    "precommit_hashes_verified": 3,
+    "stage_decisions_verified": 5,
+    "deviations_recorded": 0,
+    "status": "INTACT"
+  },
+  "historical_artifacts_untouched": true,
+  "verification_status": {
+    "level_1_3": "ALL CHECKS PASSED (0 skipped) - Lean axiom audit clean, final theorem elaborates, Arb certificate full replay PASS",
+    "level_4": "LEVEL 4 VERIFICATION OK"
+  },
+  "unresolved_requirements": [
+    "m>1 derivative theorem",
+    "SR derivative theorem (proved)",
+    "m-rho phase map (D4)",
+    "Semi-real external validation",
+    "Prior-art / novelty verification"
+  ],
+  "strongest_rigorous_result": "Lean-checked differentiation-under-the-expectation identity plus the Arb-certified enclosure Gamma_CUSUM in [3.9243482, 27.8493821], and the Stage B certified period-2 orbit of the DETERMINISTIC conditional-mean skeleton (root in [1.0287243, 1.0447243], multiplier in [0.10815, 0.83253])",
+  "strongest_generalization_result": "two-detector replication: an ARL0-matched Shiryaev-Roberts chart gives Gamma_SR = 17.3198 +/- 0.0280 with excess +1.4746 +/- 0.0400 over CUSUM. NOT detector independence",
+  "strongest_negative_result": "the Gamma_m = 2 crossing is MATHEMATICAL, NOT OPERATIONAL (Stage D D2.5: 0/4 monitoring metrics peak at m*, 4/4 monotone, alternation persists above the crossing), independently corroborating the 2026-08-21 falsification of the stochastic period-2 reading",
+  "most_important_ambiguity": "Stage D t3: frozen estimand Gamma_psi = 2.5980 PASSES while the stability-normalised Gamma_psi/E[psi'] = 1.2990 FAILS; neither selected",
+  "novelty_status": "OPEN. A later external prior-art search found no direct overlap to the extent searched, but the corresponding review artifact is not currently persisted in the repository and exhaustive novelty is not established. Documentation/provenance limitation, not a protocol violation",
+  "generated_utc": "2026-08-22T06:05:50Z",
+  "git_head": "9077c9b66e837f9f687d6dc117306da3f4417efb"
+}

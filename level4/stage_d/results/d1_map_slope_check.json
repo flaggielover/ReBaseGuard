@@ -1,0 +1,65 @@
+{
+  "check": "induced-map slope at 0 vs 1 - Gamma, per detector",
+  "role": "CONSISTENCY CHECK, not a protocol gate",
+  "n_cycles_per_point": 500000,
+  "steps": [
+    0.025,
+    0.05
+  ],
+  "seed_family": 20261001,
+  "sr": {
+    "by_step": {
+      "0.025": {
+        "deriv": -15.968239749961452,
+        "se": 0.07852501646112149
+      },
+      "0.05": {
+        "deriv": -15.193717322318903,
+        "se": 0.03676491137726461
+      }
+    },
+    "richardson": -16.22641389250897,
+    "richardson_se": 0.10541479448776972,
+    "gamma": 17.319830589555345,
+    "gamma_se": 0.02800150922045604,
+    "target_1_minus_gamma": -16.319830589555345,
+    "richardson_discrepancy": 0.09341669704637567,
+    "combined_se": 0.10907045161510064,
+    "n_combined_se": 0.8564803359945222,
+    "agrees_within_3se": true
+  },
+  "cusum": {
+    "by_step": {
+      "0.025": {
+        "deriv": -14.683318463996299,
+        "se": 0.0789618839804604
+      },
+      "0.05": {
+        "deriv": -13.99864316169927,
+        "se": 0.03733691942426546
+      }
+    },
+    "richardson": -14.911543564761976,
+    "richardson_se": 0.10601557092133689,
+    "gamma": 15.845197741370999,
+    "gamma_se": 0.028500176007900817,
+    "target_1_minus_gamma": -14.845197741370999,
+    "richardson_discrepancy": -0.06634582339097683,
+    "combined_se": 0.10977960334350975,
+    "n_combined_se": -0.6043547377683183,
+    "agrees_within_3se": true
+  },
+  "slope_separation": {
+    "F0_cusum_minus_F0_sr": 1.314870327746993,
+    "se": 0.14950444867854515,
+    "gamma_sr_minus_gamma_cusum": 1.4746328481843456,
+    "gamma_gap_se": 0.03995428076069709,
+    "these_should_be_equal_because": "F'(0) = 1 - Gamma",
+    "agrees_within_3se": true
+  },
+  "richardson_note": "Richardson is used here because D2.3 established the raw central difference carries O(h^2) bias; it remains a diagnostic, not a certified value.",
+  "evidence_status": "NEW-NUMERICAL",
+  "python": "3.14.5",
+  "numpy": "2.5.2",
+  "elapsed_s": 105.2
+}

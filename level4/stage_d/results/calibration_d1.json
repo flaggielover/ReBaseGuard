@@ -1,0 +1,116 @@
+{
+  "gate": "D1.1",
+  "criterion": "|ARL0_SR / ARL0_CUSUM - 1| <= 0.01",
+  "protocol_sha256": "925adecf08c7234375333a26c3af934b005e0d8b4cfce470b77834d7245e8b2e",
+  "seed_family": 20261001,
+  "n_paths_calibration": 400000,
+  "cusum": {
+    "threshold_h": 5.0,
+    "arl0": 465.50394,
+    "arl0_se": 0.7262953634962783,
+    "seed": [
+      20261001,
+      10,
+      0
+    ],
+    "n_paths": 400000
+  },
+  "sr": {
+    "detector": "sr",
+    "target_arl0": 465.50394,
+    "threshold": 520.886133602749,
+    "achieved_arl0": 465.29356,
+    "arl0_se": 0.3604198211764879,
+    "relative_error": -0.0004519403208488315,
+    "iterations": 12,
+    "trace": [
+      {
+        "iter": 0,
+        "threshold": 547.722557505166,
+        "arl0": 489.1951325,
+        "se": 0.7600230933593523
+      },
+      {
+        "iter": 1,
+        "threshold": 234.03473193207162,
+        "arl0": 208.9775825,
+        "se": 0.31801398033323824
+      },
+      {
+        "iter": 2,
+        "threshold": 358.0308672710638,
+        "arl0": 319.2473175,
+        "se": 0.49034298416148003
+      },
+      {
+        "iter": 3,
+        "threshold": 442.83358306196664,
+        "arl0": 395.408875,
+        "se": 0.6109078926508364
+      },
+      {
+        "iter": 4,
+        "threshold": 492.4935965714447,
+        "arl0": 439.78397,
+        "se": 0.6822476409652127
+      },
+      {
+        "iter": 5,
+        "threshold": 519.3744817268453,
+        "arl0": 463.625265,
+        "se": 0.7190307675591493
+      },
+      {
+        "iter": 6,
+        "threshold": 533.3602154588848,
+        "arl0": 477.3789,
+        "se": 0.7391234877538901
+      },
+      {
+        "iter": 7,
+        "threshold": 526.3208959158629,
+        "arl0": 469.629595,
+        "se": 0.7285732346341993
+      },
+      {
+        "iter": 8,
+        "threshold": 522.8361526695624,
+        "arl0": 466.49568,
+        "se": 0.724596437898948
+      },
+      {
+        "iter": 9,
+        "threshold": 521.1024427315726,
+        "arl0": 465.8671425,
+        "se": 0.722508349452421
+      },
+      {
+        "iter": 10,
+        "threshold": 520.2377448054912,
+        "arl0": 464.508155,
+        "se": 0.7212604661606236
+      },
+      {
+        "iter": 11,
+        "threshold": 520.6699142636397,
+        "arl0": 464.504465,
+        "se": 0.7211430341739837
+      }
+    ],
+    "final_measurement_seed": [
+      20261001,
+      12,
+      0
+    ],
+    "n_paths_final": 1600000
+  },
+  "relative_error": -0.0004519403208488315,
+  "relative_error_se": 0.0017411509362828786,
+  "criterion_met": true,
+  "evidence_status": "NEW-NUMERICAL",
+  "note": "Monte Carlo calibration, not a certified quantity. The SR threshold is expressed in NATURAL units A; the recursion compares log R against log A.",
+  "git_head": "9077c9b66e837f9f687d6dc117306da3f4417efb",
+  "python": "3.14.5",
+  "numpy": "2.5.2",
+  "elapsed_s": 228.5
+}

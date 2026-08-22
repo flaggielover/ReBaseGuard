@@ -1,0 +1,291 @@
+{
+  "reference_G": -2.073421227184139,
+  "checks": [
+    {
+      "check": "precision",
+      "question": "does Arb working precision move the bracket?",
+      "rows": [
+        {
+          "bits": 64,
+          "G_lo": -2.102525593782614,
+          "G_hi": -2.0456614534819018,
+          "G_width": 0.05686414030071241,
+          "max_total_mass": 0.9999959641644162,
+          "n_cells": 672,
+          "n_segments": 432278
+        },
+        {
+          "bits": 96,
+          "G_lo": -2.1025255937826106,
+          "G_hi": -2.0456614534819035,
+          "G_width": 0.05686414030070708,
+          "max_total_mass": 0.999995964164416,
+          "n_cells": 672,
+          "n_segments": 432278
+        },
+        {
+          "bits": 160,
+          "G_lo": -2.1025255937826106,
+          "G_hi": -2.0456614534819035,
+          "G_width": 0.05686414030070708,
+          "max_total_mass": 0.999995964164416,
+          "n_cells": 672,
+          "n_segments": 432278
+        },
+        {
+          "bits": 256,
+          "G_lo": -2.1025255937826106,
+          "G_hi": -2.0456614534819035,
+          "G_width": 0.05686414030070708,
+          "max_total_mass": 0.999995964164416,
+          "n_cells": 672,
+          "n_segments": 432278
+        }
+      ],
+      "passed": true,
+      "note": "max shift 3.55e-15 over 64..256 bits"
+    },
+    {
+      "check": "grid_refinement",
+      "question": "does the bracket shrink monotonically and keep containing the reference?",
+      "rows": [
+        {
+          "n_axis": 80,
+          "n_tri": 14,
+          "G_lo": -2.131456006937731,
+          "G_hi": -2.0190761703028484,
+          "G_width": 0.11237983663488249,
+          "max_total_mass": 0.999995964164416,
+          "n_cells": 272,
+          "n_segments": 86033
+        },
+        {
+          "n_axis": 160,
+          "n_tri": 26,
+          "G_lo": -2.1025255937826106,
+          "G_hi": -2.0456614534819035,
+          "G_width": 0.05686414030070708,
+          "max_total_mass": 0.999995964164416,
+          "n_cells": 672,
+          "n_segments": 432278
+        },
+        {
+          "n_axis": 320,
+          "n_tri": 46,
+          "G_lo": -2.08793499506251,
+          "G_hi": -2.0591713804338014,
+          "G_width": 0.028763614628708467,
+          "max_total_mass": 0.999995964164416,
+          "n_cells": 1726,
+          "n_segments": 2232921
+        }
+      ],
+      "passed": true,
+      "note": "widths [0.11238, 0.05686, 0.02876], all contain reference: True"
+    },
+    {
+      "check": "z_cut",
+      "question": "does the tail cut point matter? (it must not: tails are exact)",
+      "rows": [
+        {
+          "z_cut": 8.0,
+          "G_lo": -2.1025255937826106,
+          "G_hi": -2.0456614534819035,
+          "G_width": 0.05686414030070708,
+          "max_total_mass": 0.999995964164416,
+          "n_cells": 672,
+          "n_segments": 432278
+        },
+        {
+          "z_cut": 12.0,
+          "G_lo": -2.1025255937826106,
+          "G_hi": -2.0456614534819035,
+          "G_width": 0.05686414030070708,
+          "max_total_mass": 0.999995964164416,
+          "n_cells": 672,
+          "n_segments": 432278
+        },
+        {
+          "z_cut": 20.0,
+          "G_lo": -2.1025255937826106,
+          "G_hi": -2.0456614534819035,
+          "G_width": 0.05686414030070708,
+          "max_total_mass": 0.999995964164416,
+          "n_cells": 672,
+          "n_segments": 432278
+        }
+      ],
+      "passed": true,
+      "note": "max shift 0.00e+00 over z_cut 8..20"
+    },
+    {
+      "check": "grid_placement",
+      "question": "does the (non-rigorous) grid-placement heuristic change validity?",
+      "rows": [
+        {
+          "kind": "adaptive-from-profile",
+          "G_lo": -2.1025255937826106,
+          "G_hi": -2.0456614534819035,
+          "G_width": 0.05686414030070708,
+          "max_total_mass": 0.999995964164416,
+          "n_cells": 672,
+          "n_segments": 432278
+        },
+        {
+          "kind": "power-law-2.0",
+          "G_lo": -2.1003256510055666,
+          "G_hi": -2.0466640437536183,
+          "G_width": 0.05366160725194824,
+          "max_total_mass": 0.999995964164416,
+          "n_cells": 672,
+          "n_segments": 432143
+        },
+        {
+          "kind": "power-law-3.0",
+          "G_lo": -2.104760924145192,
+          "G_hi": -2.042493679786906,
+          "G_width": 0.0622672443582859,
+          "max_total_mass": 0.9999959641644162,
+          "n_cells": 672,
+          "n_segments": 432340
+        }
+      ],
+      "passed": true,
+      "note": "all three grids contain the reference; widths [0.05686, 0.05366, 0.06227]"
+    },
+    {
+      "check": "profile_resolution",
+      "question": "does the float profile's resolution leak into the certificate?",
+      "rows": [
+        {
+          "profile_n": 60,
+          "G_lo": -2.1023455972634326,
+          "G_hi": -2.045649051271295,
+          "G_width": 0.0566965459921378,
+          "max_total_mass": 0.999995964164416,
+          "n_cells": 672,
+          "n_segments": 431928
+        },
+        {
+          "profile_n": 150,
+          "G_lo": -2.1025255937826106,
+          "G_hi": -2.0456614534819035,
+          "G_width": 0.05686414030070708,
+          "max_total_mass": 0.999995964164416,
+          "n_cells": 672,
+          "n_segments": 432278
+        },
+        {
+          "profile_n": 250,
+          "G_lo": -2.102365929188487,
+          "G_hi": -2.045738166838884,
+          "G_width": 0.05662776234960276,
+          "max_total_mass": 0.9999959641644162,
+          "n_cells": 672,
+          "n_segments": 432355
+        }
+      ],
+      "passed": true,
+      "note": "all contain the reference; widths [0.0567, 0.05686, 0.05663]"
+    },
+    {
+      "check": "backend",
+      "question": "does the certified backend enclose the uncertified one?",
+      "rows": [
+        {
+          "backend": "float",
+          "G_lo": -2.1025255937826115,
+          "G_hi": -2.0456614534819035,
+          "G_width": 0.056864140300707966,
+          "max_total_mass": 0.999995964164416,
+          "n_cells": 672,
+          "n_segments": 432278,
+          "Gp_lo": -0.8775481282958952,
+          "Gp_hi": 0.19700886709821236,
+          "F1p_lo": 0.12245187170410476,
+          "F1p_hi": 1.1970088670982124
+        },
+        {
+          "backend": "arb",
+          "G_lo": -2.1025255937826106,
+          "G_hi": -2.0456614534819035,
+          "G_width": 0.05686414030070708,
+          "max_total_mass": 0.999995964164416,
+          "n_cells": 672,
+          "n_segments": 432278,
+          "Gp_lo": -0.8775481282958956,
+          "Gp_hi": 0.19700886709821033,
+          "F1p_lo": 0.12245187170410443,
+          "F1p_hi": 1.1970088670982104
+        }
+      ],
+      "passed": true,
+      "note": "Arb bracket contains the float bracket for both G and F1'"
+    },
+    {
+      "check": "deliberate_perturbation",
+      "question": "is a value deliberately pushed outside the bracket rejected?",
+      "rows": [
+        {
+          "perturbed_value": -1.9028288062820176,
+          "G_lo": -2.1025255937826106,
+          "G_hi": -2.0456614534819035
+        }
+      ],
+      "passed": true,
+      "note": "a value 3 widths away is correctly outside the bracket"
+    },
+    {
+      "check": "mass_conservation",
+      "question": "is the upper operator sub-stochastic (necessary for contraction)?",
+      "rows": [
+        {
+          "n_axis": 80,
+          "G_lo": -2.1297129659087757,
+          "G_hi": -2.021728257609427,
+          "G_width": 0.10798470829934859,
+          "max_total_mass": 0.999995964164416,
+          "n_cells": 512,
+          "n_segments": 192025
+        },
+        {
+          "n_axis": 160,
+          "G_lo": -2.1025255937826106,
+          "G_hi": -2.0456614534819035,
+          "G_width": 0.05686414030070708,
+          "max_total_mass": 0.999995964164416,
+          "n_cells": 672,
+          "n_segments": 432278
+        },
+        {
+          "n_axis": 320,
+          "G_lo": -2.088988877752324,
+          "G_hi": -2.0580264280454745,
+          "G_width": 0.03096244970684925,
+          "max_total_mass": 0.9999959641644162,
+          "n_cells": 992,
+          "n_segments": 1142690
+        }
+      ],
+      "passed": true,
+      "note": "max total continuation mass 0.99999596"
+    },
+    {
+      "check": "killing_bound",
+      "question": "does the uniform resolvent bound dominate the true sup ARL?",
+      "rows": [
+        {
+          "n": 12,
+          "q_n_lower": 0.6459178337655228,
+          "bound": 18.578214399257735,
+          "true_sup_arl": 9.79773524887694
+        }
+      ],
+      "passed": true,
+      "note": "bound 18.5782 > true sup ARL 9.7977"
+    }
+  ],
+  "n_passed": 9,
+  "n_checks": 9,
+  "seconds": 271.2882390022278
+}

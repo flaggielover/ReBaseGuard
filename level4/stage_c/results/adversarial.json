@@ -1,0 +1,947 @@
+{
+  "checks": [
+    {
+      "check": "independent_seeds",
+      "question": "do the headline endpoints reproduce under a disjoint seed family?",
+      "rows": [
+        {
+          "rho": 0.0,
+          "metric": "reference_mse",
+          "seed_a": 1.0003410556748888,
+          "seed_b": 0.9978717034994647,
+          "z": 1.1724855871662017
+        },
+        {
+          "rho": 0.0,
+          "metric": "cycle_arl",
+          "seed_a": 83.308892,
+          "seed_b": 82.97088000000002,
+          "z": 1.3099099968829848
+        },
+        {
+          "rho": 0.029796,
+          "metric": "reference_mse",
+          "seed_a": 0.9436855908380986,
+          "seed_b": 0.9412709328650424,
+          "z": 1.213604759470364
+        },
+        {
+          "rho": 0.029796,
+          "metric": "cycle_arl",
+          "seed_a": 85.22954299999999,
+          "seed_b": 85.029407,
+          "z": 0.7547048009225689
+        },
+        {
+          "rho": 0.25,
+          "metric": "reference_mse",
+          "seed_a": 0.7139553484925034,
+          "seed_b": 0.713044904545157,
+          "z": 0.6308973264637556
+        },
+        {
+          "rho": 0.25,
+          "metric": "cycle_arl",
+          "seed_a": 95.80004300000002,
+          "seed_b": 95.159457,
+          "z": 2.3687034703893
+        },
+        {
+          "rho": 1.0,
+          "metric": "reference_mse",
+          "seed_a": 1.8773132286955845,
+          "seed_b": 1.877487885408437,
+          "z": 0.06963286739473115
+        },
+        {
+          "rho": 1.0,
+          "metric": "cycle_arl",
+          "seed_a": 50.01766699999999,
+          "seed_b": 49.95252800000001,
+          "z": 0.3287619282872876
+        }
+      ],
+      "passed": true,
+      "note": "max |z| = 2.37 over 8 comparisons (threshold 3)"
+    },
+    {
+      "check": "run_length",
+      "question": "does halving or doubling the run change the answer?",
+      "rows": [
+        {
+          "rho": 0.0,
+          "n_cycles": 5000,
+          "metric": "reference_mse",
+          "delta": 0.0013046800803124814,
+          "se": 0.0026835511959366564,
+          "z": 0.48617670580981814
+        },
+        {
+          "rho": 0.0,
+          "n_cycles": 5000,
+          "metric": "cycle_arl",
+          "delta": 0.10483999999999583,
+          "se": 0.3007166201822849,
+          "z": 0.3486338731010116
+        },
+        {
+          "rho": 0.0,
+          "n_cycles": 20000,
+          "metric": "reference_mse",
+          "delta": 0.0005337813013698289,
+          "se": 0.0019373102419687717,
+          "z": 0.2755270115267543
+        },
+        {
+          "rho": 0.0,
+          "n_cycles": 20000,
+          "metric": "cycle_arl",
+          "delta": 0.161847999999992,
+          "se": 0.2182332595231602,
+          "z": 0.7416284774998548
+        },
+        {
+          "rho": 0.029796,
+          "n_cycles": 5000,
+          "metric": "reference_mse",
+          "delta": 0.0012430315749629717,
+          "se": 0.002516206425835097,
+          "z": 0.49401017428465765
+        },
+        {
+          "rho": 0.029796,
+          "n_cycles": 5000,
+          "metric": "cycle_arl",
+          "delta": 0.11100699999998653,
+          "se": 0.332239841645417,
+          "z": 0.3341170626924954
+        },
+        {
+          "rho": 0.029796,
+          "n_cycles": 20000,
+          "metric": "reference_mse",
+          "delta": 0.0005923658475809335,
+          "se": 0.0018273066536881365,
+          "z": 0.32417429575125467
+        },
+        {
+          "rho": 0.029796,
+          "n_cycles": 20000,
+          "metric": "cycle_arl",
+          "delta": 0.03988800000000481,
+          "se": 0.24435147020977369,
+          "z": 0.16324027011485256
+        },
+        {
+          "rho": 0.25,
+          "n_cycles": 5000,
+          "metric": "reference_mse",
+          "delta": 0.00082873062941069,
+          "se": 0.0017776017586283103,
+          "z": 0.4662071385720171
+        },
+        {
+          "rho": 0.25,
+          "n_cycles": 5000,
+          "metric": "cycle_arl",
+          "delta": 0.0721449999999777,
+          "se": 0.3188640172315552,
+          "z": 0.22625632276214744
+        },
+        {
+          "rho": 0.25,
+          "n_cycles": 20000,
+          "metric": "reference_mse",
+          "delta": 0.0002050736958714161,
+          "se": 0.0012573673585125724,
+          "z": 0.1630976774472753
+        },
+        {
+          "rho": 0.25,
+          "n_cycles": 20000,
+          "metric": "cycle_arl",
+          "delta": 0.11144800000000998,
+          "se": 0.22046488364455913,
+          "z": 0.5055136135861446
+        },
+        {
+          "rho": 1.0,
+          "n_cycles": 5000,
+          "metric": "reference_mse",
+          "delta": 1.8267976348740333e-05,
+          "se": 0.0032071338171662657,
+          "z": 0.0056960443156317715
+        },
+        {
+          "rho": 1.0,
+          "n_cycles": 5000,
+          "metric": "cycle_arl",
+          "delta": 0.12109700000002022,
+          "se": 0.24591475352605494,
+          "z": 0.49243487128636165
+        },
+        {
+          "rho": 1.0,
+          "n_cycles": 20000,
+          "metric": "reference_mse",
+          "delta": 0.001568627707075887,
+          "se": 0.0021545606832624655,
+          "z": 0.7280499079286313
+        },
+        {
+          "rho": 1.0,
+          "n_cycles": 20000,
+          "metric": "cycle_arl",
+          "delta": 0.046382500000014204,
+          "se": 0.16887596720406328,
+          "z": 0.27465423747339585
+        }
+      ],
+      "passed": true,
+      "note": "max |z| = 0.74 (threshold 3.5)"
+    },
+    {
+      "check": "burn_in",
+      "question": "is the stationary estimate sensitive to burn-in length?",
+      "rows": [
+        {
+          "rho": 0.0,
+          "burn_in": 200,
+          "delta": 0.0003784866612326354,
+          "z": 0.17478323793156034
+        },
+        {
+          "rho": 0.0,
+          "burn_in": 3000,
+          "delta": 0.0007856761661685363,
+          "z": 0.35079661312684
+        },
+        {
+          "rho": 0.029796,
+          "burn_in": 200,
+          "delta": 0.0003689686974799322,
+          "z": 0.1810458920972434
+        },
+        {
+          "rho": 0.029796,
+          "burn_in": 3000,
+          "delta": 0.0008538199002632307,
+          "z": 0.4045325747503439
+        },
+        {
+          "rho": 0.25,
+          "burn_in": 200,
+          "delta": 8.251078279308821e-05,
+          "z": 0.05660242358969323
+        },
+        {
+          "rho": 0.25,
+          "burn_in": 3000,
+          "delta": 5.805308341799709e-05,
+          "z": 0.0396024626946696
+        },
+        {
+          "rho": 1.0,
+          "burn_in": 200,
+          "delta": 0.00029650590737873017,
+          "z": 0.11842528573383616
+        },
+        {
+          "rho": 1.0,
+          "burn_in": 3000,
+          "delta": 0.00166851353217079,
+          "z": 0.6621790514136261
+        }
+      ],
+      "passed": true,
+      "note": "max |z| = 0.66 (threshold 3.5)"
+    },
+    {
+      "check": "stationary_window",
+      "question": "is the retained window actually stationary (first vs second half)?",
+      "rows": [
+        {
+          "rho": 0.0,
+          "first_half": 1.0016457357552013,
+          "second_half": 0.9990363755945763,
+          "paired_ci": [
+            -0.002622836756402955,
+            0.007824581783645793
+          ]
+        },
+        {
+          "rho": 0.029796,
+          "first_half": 0.9449286224130615,
+          "second_half": 0.942442559263135,
+          "paired_ci": [
+            -0.0024638092010616035,
+            0.007577374055645908
+          ]
+        },
+        {
+          "rho": 0.25,
+          "first_half": 0.7147840791219141,
+          "second_half": 0.7131266178630924,
+          "paired_ci": [
+            -0.0018998061785385988,
+            0.00525985618257217
+          ]
+        },
+        {
+          "rho": 1.0,
+          "first_half": 1.8772949607192357,
+          "second_half": 1.8773314966719326,
+          "paired_ci": [
+            -0.007139281044573986,
+            0.007016455709558067
+          ]
+        }
+      ],
+      "passed": true,
+      "note": "paired CI for the half-to-half MSE difference contains 0 at every probed rho"
+    },
+    {
+      "check": "a_grid_refinement",
+      "question": "does halving the A(e) grid move the decomposition?",
+      "rows": [
+        {
+          "rho": 0.0,
+          "fine": 82.77339519812013,
+          "coarse": 82.57635358271396,
+          "abs_gap": 0.19704161540616383,
+          "rel_gap": 0.002380494540963796
+        },
+        {
+          "rho": 0.029796,
+          "fine": 84.92756421517173,
+          "coarse": 84.72837085989644,
+          "abs_gap": 0.19919335527528403,
+          "rel_gap": 0.0023454499974897374
+        },
+        {
+          "rho": 0.25,
+          "fine": 94.88417187740032,
+          "coarse": 94.65383283616258,
+          "abs_gap": 0.23033904123774107,
+          "rel_gap": 0.0024275812991798227
+        },
+        {
+          "rho": 1.0,
+          "fine": 49.879963370371485,
+          "coarse": 49.77503260080387,
+          "abs_gap": 0.10493076956761627,
+          "rel_gap": 0.002103665730234773
+        }
+      ],
+      "passed": true,
+      "note": "max relative shift 2.43e-03 (threshold 1%)"
+    },
+    {
+      "check": "rho_refinement_near_rho_c",
+      "question": "does refining rho near rho_c reveal any structure the grid missed?",
+      "rows": [
+        {
+          "rho": 0.055,
+          "reference_mse": 0.9004221150534655,
+          "cycle_arl": 86.92784999999999,
+          "added_after_protocol": true
+        },
+        {
+          "rho": 0.062,
+          "reference_mse": 0.8893065363029549,
+          "cycle_arl": 87.701616,
+          "added_after_protocol": true
+        },
+        {
+          "rho": 0.068,
+          "reference_mse": 0.8795687369833969,
+          "cycle_arl": 88.01580800000002,
+          "added_after_protocol": true
+        },
+        {
+          "rho": 0.072,
+          "reference_mse": 0.8738251236586798,
+          "cycle_arl": 88.14591000000001,
+          "added_after_protocol": true
+        }
+      ],
+      "passed": true,
+      "note": "4 added points, MSE monotone decreasing through rho_c; no discontinuity"
+    },
+    {
+      "check": "arl_decomposition",
+      "question": "do direct ARL and the stationary decomposition agree?",
+      "rows": [
+        {
+          "rho": 0.0,
+          "gap": 0.4531866337923954,
+          "relative_gap": 0.005439835087380533,
+          "se_paired": 0.15126092247541112,
+          "se_from_A": 0.01632389954784406,
+          "bias_interp": 0.19704161540616383,
+          "bias_richardson": 0.06568053846872128,
+          "sigma_protocol": 0.2489412271328938,
+          "z_protocol": 1.8204563342594435,
+          "sigma_without_bias_term": 0.15213920061759373,
+          "z_without_bias_term": 2.9787630798159186,
+          "z_richardson": 2.7347944810849665,
+          "gap_ci": [
+            0.16675604542034772,
+            0.760409619416097
+          ]
+        },
+        {
+          "rho": 0.01,
+          "gap": 0.5051832608100522,
+          "relative_gap": 0.006007894944861433,
+          "se_paired": 0.13553833409543517,
+          "se_from_A": 0.01653609733020354,
+          "bias_interp": 0.194699512461753,
+          "bias_richardson": 0.06489983748725099,
+          "sigma_protocol": 0.2378066077238479,
+          "z_protocol": 2.1243449273566632,
+          "sigma_without_bias_term": 0.1365433357007209,
+          "z_without_bias_term": 3.6998016652920023,
+          "z_richardson": 3.3415515049559152,
+          "gap_ci": [
+            0.25301352380750786,
+            0.7819096054164717
+          ]
+        },
+        {
+          "rho": 0.02,
+          "gap": 0.47522939628389355,
+          "relative_gap": 0.005605288889050141,
+          "se_paired": 0.1387124632644344,
+          "se_from_A": 0.016835413602035186,
+          "bias_interp": 0.19860923642471562,
+          "bias_richardson": 0.06620307880823854,
+          "sigma_protocol": 0.24283782120840905,
+          "z_protocol": 1.9569826228841045,
+          "sigma_without_bias_term": 0.13973037828632204,
+          "z_without_bias_term": 3.401045657445364,
+          "z_richardson": 3.073525951904693,
+          "gap_ci": [
+            0.21632377860685842,
+            0.755286966083949
+          ]
+        },
+        {
+          "rho": 0.029796,
+          "gap": 0.176864159225715,
+          "relative_gap": 0.002075150857323205,
+          "se_paired": 0.14850957384484523,
+          "se_from_A": 0.016868736621917284,
+          "bias_interp": 0.19919335527528403,
+          "bias_richardson": 0.06639778509176135,
+          "sigma_protocol": 0.2490334125867906,
+          "z_protocol": 0.7102025282012151,
+          "sigma_without_bias_term": 0.14946453692698194,
+          "z_without_bias_term": 1.1833185507550772,
+          "z_richardson": 1.081413109988303,
+          "gap_ci": [
+            -0.09590254422712485,
+            0.47804562901202713
+          ]
+        },
+        {
+          "rho": 0.03,
+          "gap": 0.27680578707203307,
+          "relative_gap": 0.0032434156590478505,
+          "se_paired": 0.15390930931141206,
+          "se_from_A": 0.016868132949829213,
+          "bias_interp": 0.20061974350842604,
+          "bias_richardson": 0.06687324783614201,
+          "sigma_protocol": 0.2534184107110525,
+          "z_protocol": 1.0922875977927542,
+          "sigma_without_bias_term": 0.15483090583578274,
+          "z_without_bias_term": 1.787794145993176,
+          "z_richardson": 1.6412507573910418,
+          "gap_ci": [
+            -0.011822520395085322,
+            0.5849287464929569
+          ]
+        },
+        {
+          "rho": 0.04,
+          "gap": 0.133157163171406,
+          "relative_gap": 0.0015509494266665181,
+          "se_paired": 0.15979646330078925,
+          "se_from_A": 0.017054689653960522,
+          "bias_interp": 0.20828043286465459,
+          "bias_richardson": 0.06942681095488486,
+          "sigma_protocol": 0.263071303712361,
+          "z_protocol": 0.5061637711614432,
+          "sigma_without_bias_term": 0.16070398913105235,
+          "z_without_bias_term": 0.8285865453085783,
+          "z_richardson": 0.7606391393832227,
+          "gap_ci": [
+            -0.17452999270530278,
+            0.4434278838858165
+          ]
+        },
+        {
+          "rho": 0.05,
+          "gap": 0.186060507409793,
+          "relative_gap": 0.0021471836906459475,
+          "se_paired": 0.15935160800995554,
+          "se_from_A": 0.017140003525892452,
+          "bias_interp": 0.2036601360630499,
+          "bias_richardson": 0.06788671202101663,
+          "sigma_protocol": 0.25916050184672457,
+          "z_protocol": 0.7179354341574583,
+          "sigma_without_bias_term": 0.16027075433848229,
+          "z_without_bias_term": 1.1609136562547417,
+          "z_richardson": 1.0689722377188868,
+          "gap_ci": [
+            -0.11734684826082115,
+            0.5067083145375612
+          ]
+        },
+        {
+          "rho": 0.053743,
+          "gap": 0.1678223159812751,
+          "relative_gap": 0.0019321863081917026,
+          "se_paired": 0.15318000150930153,
+          "se_from_A": 0.017249583081529112,
+          "bias_interp": 0.2064274007170468,
+          "bias_richardson": 0.06880913357234893,
+          "sigma_protocol": 0.2576313892864618,
+          "z_protocol": 0.6514047703817353,
+          "sigma_without_bias_term": 0.15414817864274682,
+          "z_without_bias_term": 1.0887077450990803,
+          "z_richardson": 0.9941571315406363,
+          "gap_ci": [
+            -0.1412538597757238,
+            0.468778652266665
+          ]
+        },
+        {
+          "rho": 0.06,
+          "gap": 0.19718497710460356,
+          "relative_gap": 0.0022567979297749728,
+          "se_paired": 0.14129168536861983,
+          "se_from_A": 0.01728188229493988,
+          "bias_interp": 0.21080906112543119,
+          "bias_richardson": 0.0702696870418104,
+          "sigma_protocol": 0.25436679040815646,
+          "z_protocol": 0.7751993756268297,
+          "sigma_without_bias_term": 0.14234466554796218,
+          "z_without_bias_term": 1.3852642552183543,
+          "z_richardson": 1.2421527218784112,
+          "gap_ci": [
+            -0.08030132154869406,
+            0.4815007447073238
+          ]
+        },
+        {
+          "rho": 0.065,
+          "gap": 0.19152809809037621,
+          "relative_gap": 0.0021833418707568725,
+          "se_paired": 0.12971849210025438,
+          "se_from_A": 0.017464867694977772,
+          "bias_interp": 0.20179342400028588,
+          "bias_richardson": 0.06726447466676196,
+          "sigma_protocol": 0.24052545554707092,
+          "z_protocol": 0.7962903454636389,
+          "sigma_without_bias_term": 0.13088891777521441,
+          "z_without_bias_term": 1.4632873534740514,
+          "z_richardson": 1.3014850383269274,
+          "gap_ci": [
+            -0.0508773327653515,
+            0.4509179922354342
+          ]
+        },
+        {
+          "rho": 0.067,
+          "gap": 0.22649630895774195,
+          "relative_gap": 0.002577082111563076,
+          "se_paired": 0.1422274827292968,
+          "se_from_A": 0.017518138524373093,
+          "bias_interp": 0.20715083893745145,
+          "bias_richardson": 0.06905027964581716,
+          "sigma_protocol": 0.2518869033780071,
+          "z_protocol": 0.8991984335836569,
+          "sigma_without_bias_term": 0.14330227500242815,
+          "z_without_bias_term": 1.5805492896320323,
+          "z_richardson": 1.423872082740396,
+          "gap_ci": [
+            -0.0446668424909242,
+            0.5184037321993075
+          ]
+        },
+        {
+          "rho": 0.07,
+          "gap": 0.2641294132762361,
+          "relative_gap": 0.003002101967924506,
+          "se_paired": 0.14800142530462343,
+          "se_from_A": 0.017357924258009427,
+          "bias_interp": 0.2110512131547182,
+          "bias_richardson": 0.07035040438490607,
+          "sigma_protocol": 0.25835698945611113,
+          "z_protocol": 1.0223428204217622,
+          "sigma_without_bias_term": 0.14901583616094907,
+          "z_without_bias_term": 1.7724922402942138,
+          "z_richardson": 1.602849227179201,
+          "gap_ci": [
+            -0.030312730978823907,
+            0.558796522871705
+          ]
+        },
+        {
+          "rho": 0.075,
+          "gap": 0.27224988452600923,
+          "relative_gap": 0.0030765268846244887,
+          "se_paired": 0.13763183355830158,
+          "se_from_A": 0.017620207277869036,
+          "bias_interp": 0.2168825063952795,
+          "bias_richardson": 0.0722941687984265,
+          "sigma_protocol": 0.2574704155693107,
+          "z_protocol": 1.0574025909890215,
+          "sigma_without_bias_term": 0.13875515598757077,
+          "z_without_bias_term": 1.9620884181802691,
+          "z_richardson": 1.7400709777736063,
+          "gap_ci": [
+            0.0027854705662513366,
+            0.5502825681554199
+          ]
+        },
+        {
+          "rho": 0.08,
+          "gap": 0.3609811035479592,
+          "relative_gap": 0.004062557105807503,
+          "se_paired": 0.12763650743800853,
+          "se_from_A": 0.017724293116110793,
+          "bias_interp": 0.20897057472122071,
+          "bias_richardson": 0.0696568582404069,
+          "sigma_protocol": 0.24550749417636095,
+          "z_protocol": 1.4703465764211967,
+          "sigma_without_bias_term": 0.12886127656297144,
+          "z_without_bias_term": 2.801315594383052,
+          "z_richardson": 2.4643186619982314,
+          "gap_ci": [
+            0.12287632491594101,
+            0.6214891022802472
+          ]
+        },
+        {
+          "rho": 0.1,
+          "gap": 0.1381844098866709,
+          "relative_gap": 0.001538049686197689,
+          "se_paired": 0.16014448833128808,
+          "se_from_A": 0.017876548737408886,
+          "bias_interp": 0.21576231855958383,
+          "bias_richardson": 0.0719207728531946,
+          "sigma_protocol": 0.26929390310190526,
+          "z_protocol": 0.5131360505936877,
+          "sigma_without_bias_term": 0.16113915767947598,
+          "z_without_bias_term": 0.8575470535941074,
+          "z_richardson": 0.7830882766777228,
+          "gap_ci": [
+            -0.16761617426182454,
+            0.45822054037364024
+          ]
+        },
+        {
+          "rho": 0.15,
+          "gap": 0.4602620904217652,
+          "relative_gap": 0.004946532482848345,
+          "se_paired": 0.1464638426631522,
+          "se_from_A": 0.018657903425132395,
+          "bias_interp": 0.22308492590120466,
+          "bias_richardson": 0.07436164196706822,
+          "sigma_protocol": 0.26751945486678935,
+          "z_protocol": 1.720480817557555,
+          "sigma_without_bias_term": 0.14764746719086708,
+          "z_without_bias_term": 3.1173043410678654,
+          "z_richardson": 2.784132703152106,
+          "gap_ci": [
+            0.17612318849683187,
+            0.7487864112691309
+          ]
+        },
+        {
+          "rho": 0.2,
+          "gap": 0.3003545936582485,
+          "relative_gap": 0.003163994702417745,
+          "se_paired": 0.1546391290438948,
+          "se_from_A": 0.0190159946031894,
+          "bias_interp": 0.2338515331691724,
+          "bias_richardson": 0.0779505110563908,
+          "sigma_protocol": 0.28100072570684836,
+          "z_protocol": 1.0688747970408834,
+          "sigma_without_bias_term": 0.15580394180572862,
+          "z_without_bias_term": 1.9277727519420502,
+          "z_richardson": 1.7240374668141727,
+          "gap_ci": [
+            0.003809961038984108,
+            0.6088637175105526
+          ]
+        },
+        {
+          "rho": 0.25,
+          "gap": 0.3912545214920921,
+          "relative_gap": 0.00408407459161675,
+          "se_paired": 0.14256941246454224,
+          "se_from_A": 0.01908466054360842,
+          "bias_interp": 0.23033904123774107,
+          "bias_richardson": 0.07677968041258036,
+          "sigma_protocol": 0.27156276540952984,
+          "z_protocol": 1.4407517205168436,
+          "sigma_without_bias_term": 0.14384109857252042,
+          "z_without_bias_term": 2.7200468112028022,
+          "z_richardson": 2.3995948735162878,
+          "gap_ci": [
+            0.11440129001671528,
+            0.6851184589363027
+          ]
+        },
+        {
+          "rho": 0.3,
+          "gap": 0.28359266049442483,
+          "relative_gap": 0.002971571317513297,
+          "se_paired": 0.16338850653676737,
+          "se_from_A": 0.019070110600173606,
+          "bias_interp": 0.22564362522473402,
+          "bias_richardson": 0.075214541741578,
+          "sigma_protocol": 0.2792391784674535,
+          "z_protocol": 1.015590512946158,
+          "sigma_without_bias_term": 0.1644976388481553,
+          "z_without_bias_term": 1.7239922863342976,
+          "z_richardson": 1.567870677317165,
+          "gap_ci": [
+            -0.03227284632137627,
+            0.6009886089287839
+          ]
+        },
+        {
+          "rho": 0.4,
+          "gap": 0.3132065065930324,
+          "relative_gap": 0.0034561789241338513,
+          "se_paired": 0.1443220961781439,
+          "se_from_A": 0.017894393821200436,
+          "bias_interp": 0.22876017987067598,
+          "bias_richardson": 0.07625339329022533,
+          "sigma_protocol": 0.2710724933849719,
+          "z_protocol": 1.1554344842662534,
+          "sigma_without_bias_term": 0.1454272215765729,
+          "z_without_bias_term": 2.1536993088196863,
+          "z_richardson": 1.9073982529516242,
+          "gap_ci": [
+            0.037008508483537546,
+            0.6037022418368932
+          ]
+        },
+        {
+          "rho": 0.5,
+          "gap": 0.3383690336020166,
+          "relative_gap": 0.00414041001179154,
+          "se_paired": 0.14909348676396156,
+          "se_from_A": 0.01576215029931817,
+          "bias_interp": 0.19596991250755025,
+          "bias_richardson": 0.06532330416918342,
+          "sigma_protocol": 0.2467418079404274,
+          "z_protocol": 1.3713486029238766,
+          "sigma_without_bias_term": 0.14992435818603286,
+          "z_without_bias_term": 2.2569316800553056,
+          "z_richardson": 2.0690633970693044,
+          "gap_ci": [
+            0.03294364871822882,
+            0.6273406501876222
+          ]
+        },
+        {
+          "rho": 0.75,
+          "gap": 0.11527692042911404,
+          "relative_gap": 0.0019324809597698791,
+          "se_paired": 0.11683612263540645,
+          "se_from_A": 0.010950971930395284,
+          "bias_interp": 0.1267002562308832,
+          "bias_richardson": 0.04223341874362774,
+          "sigma_protocol": 0.17269498622620028,
+          "z_protocol": 0.6675174708206144,
+          "sigma_without_bias_term": 0.11734821404135659,
+          "z_without_bias_term": 0.9823491679940475,
+          "z_richardson": 0.924309930758779,
+          "gap_ci": [
+            -0.10600038117566424,
+            0.3466789458734131
+          ]
+        },
+        {
+          "rho": 1.0,
+          "gap": 0.043839365472588696,
+          "relative_gap": 0.0008764776148513423,
+          "se_paired": 0.11376482269064733,
+          "se_from_A": 0.009284192460586415,
+          "bias_interp": 0.10493076956761627,
+          "bias_richardson": 0.03497692318920542,
+          "sigma_protocol": 0.15504546918092066,
+          "z_protocol": 0.28275167087554864,
+          "sigma_without_bias_term": 0.11414302918478918,
+          "z_without_bias_term": 0.3840739621656263,
+          "z_richardson": 0.3672198128097655,
+          "gap_ci": [
+            -0.16997140210217437,
+            0.26954258001854386
+          ]
+        }
+      ],
+      "passed": true,
+      "note": "max |z| = 2.12 under the protocol formula (threshold 3). Without the pre-specified bias_interp term it would be 3.70; with a sharper Richardson bias estimate 3.34 and 2/23 points would exceed 3. Raw agreement is better than 0.60% at every rho. C7 is the weakest criterion and its verdict does not change the Stage C decision, since C6 already fails."
+    },
+    {
+      "check": "policy_variants",
+      "question": "does the conservative variant hold across the whole certified Gamma?",
+      "rows": [
+        {
+          "delta": 0.05,
+          "point_rho": 0.06381951465057573,
+          "conservative_rho": 0.03538256468946177,
+          "point_worst_case_slope": 1.713514536047873,
+          "conservative_worst_case_slope": 0.95
+        },
+        {
+          "delta": 0.1,
+          "point_rho": 0.06046059282686122,
+          "conservative_rho": 0.03352032444264799,
+          "point_worst_case_slope": 1.623329560466406,
+          "conservative_worst_case_slope": 0.8999999999999999
+        },
+        {
+          "delta": 0.2,
+          "point_rho": 0.0537427491794322,
+          "conservative_rho": 0.02979584394902044,
+          "point_worst_case_slope": 1.4429596093034722,
+          "conservative_worst_case_slope": 0.8
+        },
+        {
+          "delta": 0.5,
+          "point_rho": 0.03358921823714512,
+          "conservative_rho": 0.018622402468137775,
+          "point_worst_case_slope": 0.90184975581467,
+          "conservative_worst_case_slope": 0.5
+        }
+      ],
+      "passed": true,
+      "note": "conservative holds at every delta; the POINT variant would violate |F'|<=1 for 3/4 deltas if Gamma were at its certified upper end -- which is exactly why it is labelled heuristic"
+    },
+    {
+      "check": "fresh_baseline_sanity",
+      "question": "does rho = 0 behave exactly as its own definition requires?",
+      "rows": [
+        {
+          "quantity": "reference_mse ~ 1/m",
+          "observed": 1.0003410556748888,
+          "expected": 1.0,
+          "tol": 0.01
+        },
+        {
+          "quantity": "reference_sd ~ 1",
+          "observed": 1.0001483544498542,
+          "expected": 1.0,
+          "tol": 0.01
+        },
+        {
+          "quantity": "alternation ~ 0.5",
+          "observed": 0.5003930393039303,
+          "expected": 0.5,
+          "tol": 0.01
+        },
+        {
+          "quantity": "acf lag1 ~ 0",
+          "observed": -0.0019764274589175925,
+          "expected": 0.0,
+          "tol": 0.01
+        }
+      ],
+      "passed": true,
+      "note": "sd = 1/sqrt(m), alternation 0.5, ACF 0, MSE 1"
+    },
+    {
+      "check": "stage_a_reproduction",
+      "question": "does Stage C reproduce the Stage A Gate 4.1 numbers?",
+      "rows": [
+        {
+          "rho": 0.0,
+          "metric": "arl",
+          "stage_a": 82.93,
+          "stage_c": 83.308892,
+          "rel_gap": 0.004568817074641183
+        },
+        {
+          "rho": 0.0,
+          "metric": "sd",
+          "stage_a": 1.0,
+          "stage_c": 1.0001483544498542,
+          "rel_gap": 0.00014835444985417112
+        },
+        {
+          "rho": 0.0,
+          "metric": "alt",
+          "stage_a": 0.4999,
+          "stage_c": 0.5003930393039303,
+          "rel_gap": 0.000986275863033203
+        },
+        {
+          "rho": 0.25,
+          "metric": "arl",
+          "stage_a": 95.49,
+          "stage_c": 95.80004300000002,
+          "rel_gap": 0.0032468635459212652
+        },
+        {
+          "rho": 0.25,
+          "metric": "sd",
+          "stage_a": 0.8448,
+          "stage_c": 0.8449585080729203,
+          "rel_gap": 0.00018762792722571328
+        },
+        {
+          "rho": 0.25,
+          "metric": "alt",
+          "stage_a": 0.6651,
+          "stage_c": 0.664966496649665,
+          "rel_gap": 0.00020072673332584276
+        },
+        {
+          "rho": 1.0,
+          "metric": "arl",
+          "stage_a": 50.06,
+          "stage_c": 50.01766699999999,
+          "rel_gap": 0.0008456452257293947
+        },
+        {
+          "rho": 1.0,
+          "metric": "sd",
+          "stage_a": 1.3711,
+          "stage_c": 1.3701704556405299,
+          "rel_gap": 0.0006779551888776345
+        },
+        {
+          "rho": 1.0,
+          "metric": "alt",
+          "stage_a": 0.8951,
+          "stage_c": 0.895063506350635,
+          "rel_gap": 4.0770471863453256e-05
+        }
+      ],
+      "passed": true,
+      "note": "max relative gap 4.57e-03 (threshold 2%); note Stage A reported sd on e_next, Stage C on e_prev"
+    },
+    {
+      "check": "no_stage_b_leak",
+      "question": "can any Stage B outcome reach the policy definition?",
+      "rows": [
+        {
+          "forbidden_values_found": []
+        }
+      ],
+      "passed": true,
+      "note": "no Stage B root or multiplier value appears in policy.py"
+    }
+  ],
+  "n_passed": 11,
+  "n_checks": 11,
+  "seconds": 91.3850998878479
+}

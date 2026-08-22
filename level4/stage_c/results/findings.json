@@ -1,0 +1,628 @@
+{
+  "policy": {
+    "delta": 0.2,
+    "conservative_rho": 0.029796,
+    "point_rho": 0.053743,
+    "conservative_rho_exact": 0.02979584394902044,
+    "point_rho_exact": 0.0537427491794322,
+    "snap_note": "the evaluated grid points are the 6-dp rounded policy values listed in the protocol; the rounding shifts rho by <1e-5",
+    "rho_c_point": 0.06717843647429024,
+    "rho_c_certified": [
+      0.03724480493627555,
+      0.3419565425897896
+    ],
+    "table": [
+      {
+        "variant": "point",
+        "delta": 0.05,
+        "gamma_used": 15.885729,
+        "rho": 0.06381951465057573,
+        "clipped": false,
+        "slope_at_zero": -0.95,
+        "guarantee": "heuristic: |F'_rho(0)| <= 1-delta holds if the Monte Carlo point estimate of Gamma is exact",
+        "evidence_class": "NEW-NUMERICAL (point estimate; NOT certified)"
+      },
+      {
+        "variant": "conservative",
+        "delta": 0.05,
+        "gamma_used": 27.849382127546704,
+        "rho": 0.03538256468946177,
+        "clipped": false,
+        "slope_at_zero": -0.95,
+        "guarantee": "certified: |F'_rho(0)| <= 1-delta for the TRUE Gamma, because |F'_rho(0)| = rho(Gamma-1) is increasing in Gamma and Gamma <= Gamma_upper is a frozen certified enclosure",
+        "evidence_class": "RIGOROUS-CERTIFIED for LOCAL LINEAR STABILITY of the DETERMINISTIC map only"
+      },
+      {
+        "variant": "point",
+        "delta": 0.1,
+        "gamma_used": 15.885729,
+        "rho": 0.06046059282686122,
+        "clipped": false,
+        "slope_at_zero": -0.9,
+        "guarantee": "heuristic: |F'_rho(0)| <= 1-delta holds if the Monte Carlo point estimate of Gamma is exact",
+        "evidence_class": "NEW-NUMERICAL (point estimate; NOT certified)"
+      },
+      {
+        "variant": "conservative",
+        "delta": 0.1,
+        "gamma_used": 27.849382127546704,
+        "rho": 0.03352032444264799,
+        "clipped": false,
+        "slope_at_zero": -0.8999999999999999,
+        "guarantee": "certified: |F'_rho(0)| <= 1-delta for the TRUE Gamma, because |F'_rho(0)| = rho(Gamma-1) is increasing in Gamma and Gamma <= Gamma_upper is a frozen certified enclosure",
+        "evidence_class": "RIGOROUS-CERTIFIED for LOCAL LINEAR STABILITY of the DETERMINISTIC map only"
+      },
+      {
+        "variant": "point",
+        "delta": 0.2,
+        "gamma_used": 15.885729,
+        "rho": 0.0537427491794322,
+        "clipped": false,
+        "slope_at_zero": -0.8,
+        "guarantee": "heuristic: |F'_rho(0)| <= 1-delta holds if the Monte Carlo point estimate of Gamma is exact",
+        "evidence_class": "NEW-NUMERICAL (point estimate; NOT certified)"
+      },
+      {
+        "variant": "conservative",
+        "delta": 0.2,
+        "gamma_used": 27.849382127546704,
+        "rho": 0.02979584394902044,
+        "clipped": false,
+        "slope_at_zero": -0.8,
+        "guarantee": "certified: |F'_rho(0)| <= 1-delta for the TRUE Gamma, because |F'_rho(0)| = rho(Gamma-1) is increasing in Gamma and Gamma <= Gamma_upper is a frozen certified enclosure",
+        "evidence_class": "RIGOROUS-CERTIFIED for LOCAL LINEAR STABILITY of the DETERMINISTIC map only"
+      },
+      {
+        "variant": "point",
+        "delta": 0.5,
+        "gamma_used": 15.885729,
+        "rho": 0.03358921823714512,
+        "clipped": false,
+        "slope_at_zero": -0.5,
+        "guarantee": "heuristic: |F'_rho(0)| <= 1-delta holds if the Monte Carlo point estimate of Gamma is exact",
+        "evidence_class": "NEW-NUMERICAL (point estimate; NOT certified)"
+      },
+      {
+        "variant": "conservative",
+        "delta": 0.5,
+        "gamma_used": 27.849382127546704,
+        "rho": 0.018622402468137775,
+        "clipped": false,
+        "slope_at_zero": -0.5,
+        "guarantee": "certified: |F'_rho(0)| <= 1-delta for the TRUE Gamma, because |F'_rho(0)| = rho(Gamma-1) is increasing in Gamma and Gamma <= Gamma_upper is a frozen certified enclosure",
+        "evidence_class": "RIGOROUS-CERTIFIED for LOCAL LINEAR STABILITY of the DETERMINISTIC map only"
+      }
+    ]
+  },
+  "oracle": {
+    "rho": 0.3,
+    "selection": "post-hoc minimiser of stationary reference MSE over the grid",
+    "role": "performance yardstick ONLY; not a proposed method"
+  },
+  "grid": {
+    "protocol": [
+      0.0,
+      0.01,
+      0.02,
+      0.03,
+      0.04,
+      0.05,
+      0.06,
+      0.065,
+      0.067,
+      0.07,
+      0.075,
+      0.08,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.4,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "added": [
+      0.029796,
+      0.053743
+    ],
+    "n_cells": 23
+  },
+  "contrasts": {
+    "mse_full_minus_rbg": {
+      "statistic": "difference",
+      "point": 0.9336276378574859,
+      "ci_low": 0.9292142229054272,
+      "ci_high": 0.9380359328780288,
+      "se": 0.0022464045039765827,
+      "n_replicates": 100,
+      "n_bootstrap": 10000,
+      "paired": true,
+      "seed_key": [
+        20260821,
+        2,
+        1
+      ]
+    },
+    "mse_full_over_rbg": {
+      "statistic": "ratio",
+      "point": 1.9893418389787216,
+      "ci_low": 1.9824562618208705,
+      "ci_high": 1.9962138321173897,
+      "se": 0.003498291768861031,
+      "n_replicates": 100,
+      "n_bootstrap": 10000,
+      "paired": true,
+      "seed_key": [
+        20260821,
+        2,
+        2
+      ]
+    },
+    "mse_fresh_minus_rbg": {
+      "statistic": "difference",
+      "point": 0.05665546483679029,
+      "ci_low": 0.056405411815169754,
+      "ci_high": 0.05690170565462867,
+      "se": 0.00012616198082576443,
+      "n_replicates": 100,
+      "n_bootstrap": 10000,
+      "paired": true,
+      "seed_key": [
+        20260821,
+        2,
+        3
+      ]
+    },
+    "mse_rbg_minus_oracle": {
+      "statistic": "difference",
+      "point": 0.23504695396314712,
+      "ci_low": 0.2330651048493189,
+      "ci_high": 0.23697023158782135,
+      "se": 0.0009938581672583762,
+      "n_replicates": 100,
+      "n_bootstrap": 10000,
+      "paired": true,
+      "seed_key": [
+        20260821,
+        2,
+        4
+      ]
+    },
+    "arl_rbg_minus_full": {
+      "statistic": "difference",
+      "point": 35.211876000000004,
+      "ci_low": 34.779948575,
+      "ci_high": 35.655896274999996,
+      "se": 0.22330215531482894,
+      "n_replicates": 100,
+      "n_bootstrap": 10000,
+      "paired": true,
+      "seed_key": [
+        20260821,
+        2,
+        5
+      ]
+    }
+  },
+  "detection": [
+    {
+      "shift": 0.25,
+      "delay_rbg": 77.676,
+      "delay_full": 51.9095,
+      "delay_fresh": 74.41925,
+      "paired_rbg_minus_full": {
+        "statistic": "difference",
+        "point": 25.7665,
+        "ci_low": 18.388662499999995,
+        "ci_high": 33.018874999999994,
+        "se": 3.759163993739172,
+        "n_replicates": 4000,
+        "n_bootstrap": 10000,
+        "paired": true,
+        "seed_key": [
+          20260821,
+          2,
+          260
+        ]
+      },
+      "c6_threshold": 12.977375,
+      "c6_pass": false,
+      "delay_ratio_vs_own_baseline": {
+        "rbg": 0.9319451818124557,
+        "full": 1.0270363848604158,
+        "fresh": 0.9211443247926724
+      },
+      "ratio_note": "secondary diagnostic; NOT a gating criterion"
+    },
+    {
+      "shift": 0.5,
+      "delay_rbg": 74.1045,
+      "delay_full": 50.282,
+      "delay_fresh": 72.3385,
+      "paired_rbg_minus_full": {
+        "statistic": "difference",
+        "point": 23.822500000000005,
+        "ci_low": 16.69159999999999,
+        "ci_high": 30.90325625,
+        "se": 3.6364255843344315,
+        "n_replicates": 4000,
+        "n_bootstrap": 10000,
+        "paired": true,
+        "seed_key": [
+          20260821,
+          2,
+          510
+        ]
+      },
+      "c6_threshold": 12.5705,
+      "c6_pass": false,
+      "delay_ratio_vs_own_baseline": {
+        "rbg": 0.8890948520214883,
+        "full": 0.9948360801693606,
+        "fresh": 0.8953892808515904
+      },
+      "ratio_note": "secondary diagnostic; NOT a gating criterion"
+    },
+    {
+      "shift": 1.0,
+      "delay_rbg": 51.99675,
+      "delay_full": 53.189,
+      "delay_fresh": 55.05275,
+      "paired_rbg_minus_full": {
+        "statistic": "difference",
+        "point": -1.1922500000000014,
+        "ci_low": -7.522037499999999,
+        "ci_high": 5.3638125000000025,
+        "se": 3.288827448423883,
+        "n_replicates": 4000,
+        "n_bootstrap": 10000,
+        "paired": true,
+        "seed_key": [
+          20260821,
+          2,
+          1010
+        ]
+      },
+      "c6_threshold": 13.29725,
+      "c6_pass": true,
+      "delay_ratio_vs_own_baseline": {
+        "rbg": 0.6238493309697565,
+        "full": 1.0523514631106188,
+        "fresh": 0.6814302512687214
+      },
+      "ratio_note": "secondary diagnostic; NOT a gating criterion"
+    },
+    {
+      "shift": 1.5,
+      "delay_rbg": 33.727,
+      "delay_full": 44.3665,
+      "delay_fresh": 35.006,
+      "paired_rbg_minus_full": {
+        "statistic": "difference",
+        "point": -10.639500000000005,
+        "ci_low": -16.3890875,
+        "ci_high": -4.775512500000006,
+        "se": 2.95892967510613,
+        "n_replicates": 4000,
+        "n_bootstrap": 10000,
+        "paired": true,
+        "seed_key": [
+          20260821,
+          2,
+          1510
+        ]
+      },
+      "c6_threshold": 11.091625,
+      "c6_pass": true,
+      "delay_ratio_vs_own_baseline": {
+        "rbg": 0.40465156736944086,
+        "full": 0.8777971232415963,
+        "fresh": 0.4332962000247555
+      },
+      "ratio_note": "secondary diagnostic; NOT a gating criterion"
+    }
+  ],
+  "pareto": {
+    "0.25": {
+      "front_rho": [
+        0.0,
+        0.05,
+        0.067,
+        0.07,
+        0.075,
+        0.1,
+        0.15,
+        0.2,
+        0.25,
+        0.75,
+        1.0
+      ],
+      "rbg_on_front": false,
+      "oracle_on_front": false
+    },
+    "0.5": {
+      "front_rho": [
+        0.075,
+        0.08,
+        0.1,
+        0.25,
+        0.75,
+        1.0
+      ],
+      "rbg_on_front": false,
+      "oracle_on_front": false
+    },
+    "1.0": {
+      "front_rho": [
+        0.15,
+        0.25
+      ],
+      "rbg_on_front": false,
+      "oracle_on_front": false
+    },
+    "1.5": {
+      "front_rho": [
+        0.25
+      ],
+      "rbg_on_front": false,
+      "oracle_on_front": false
+    }
+  },
+  "regimes": [
+    {
+      "rho": 0.0,
+      "regime": "certified-stable",
+      "reference_mse": 1.0003410556748888,
+      "cycle_arl": 83.308892,
+      "alternation_rate": 0.5003930393039303
+    },
+    {
+      "rho": 0.01,
+      "regime": "certified-stable",
+      "reference_mse": 0.9806906336622871,
+      "cycle_arl": 84.086567,
+      "alternation_rate": 0.5058935893589358
+    },
+    {
+      "rho": 0.02,
+      "regime": "certified-stable",
+      "reference_mse": 0.9617170708504139,
+      "cycle_arl": 84.78232,
+      "alternation_rate": 0.5107940794079407
+    },
+    {
+      "rho": 0.029796,
+      "regime": "certified-stable",
+      "reference_mse": 0.9436855908380986,
+      "cycle_arl": 85.22954299999999,
+      "alternation_rate": 0.516176617661766
+    },
+    {
+      "rho": 0.03,
+      "regime": "certified-stable",
+      "reference_mse": 0.9433317618975409,
+      "cycle_arl": 85.34391399999998,
+      "alternation_rate": 0.5162776277627763
+    },
+    {
+      "rho": 0.04,
+      "regime": "undetermined-by-certificate/point-stable",
+      "reference_mse": 0.92574154279948,
+      "cycle_arl": 85.855258,
+      "alternation_rate": 0.5217851785178518
+    },
+    {
+      "rho": 0.05,
+      "regime": "undetermined-by-certificate/point-stable",
+      "reference_mse": 0.9085669344311681,
+      "cycle_arl": 86.653279,
+      "alternation_rate": 0.5275767576757676
+    },
+    {
+      "rho": 0.053743,
+      "regime": "undetermined-by-certificate/point-stable",
+      "reference_mse": 0.9024201383191545,
+      "cycle_arl": 86.85617699999999,
+      "alternation_rate": 0.5296329632963297
+    },
+    {
+      "rho": 0.06,
+      "regime": "undetermined-by-certificate/point-stable",
+      "reference_mse": 0.8924889704666883,
+      "cycle_arl": 87.37378500000001,
+      "alternation_rate": 0.5332423242324232
+    },
+    {
+      "rho": 0.065,
+      "regime": "undetermined-by-certificate/point-stable",
+      "reference_mse": 0.8845962092609766,
+      "cycle_arl": 87.72244999999997,
+      "alternation_rate": 0.536067606760676
+    },
+    {
+      "rho": 0.067,
+      "regime": "undetermined-by-certificate/point-stable",
+      "reference_mse": 0.8814350918245026,
+      "cycle_arl": 87.88866600000001,
+      "alternation_rate": 0.5371717171717172
+    },
+    {
+      "rho": 0.07,
+      "regime": "undetermined-by-certificate/point-unstable",
+      "reference_mse": 0.8768448407435802,
+      "cycle_arl": 87.98149299999999,
+      "alternation_rate": 0.539069906990699
+    },
+    {
+      "rho": 0.075,
+      "regime": "undetermined-by-certificate/point-unstable",
+      "reference_mse": 0.8692417391851376,
+      "cycle_arl": 88.492607,
+      "alternation_rate": 0.5420922092209222
+    },
+    {
+      "rho": 0.08,
+      "regime": "undetermined-by-certificate/point-unstable",
+      "reference_mse": 0.8617995369320497,
+      "cycle_arl": 88.855638,
+      "alternation_rate": 0.5447804780478047
+    },
+    {
+      "rho": 0.1,
+      "regime": "undetermined-by-certificate/point-unstable",
+      "reference_mse": 0.8338980005958797,
+      "cycle_arl": 89.84391799999999,
+      "alternation_rate": 0.557060706070607
+    },
+    {
+      "rho": 0.15,
+      "regime": "undetermined-by-certificate/point-unstable",
+      "reference_mse": 0.7763805565177861,
+      "cycle_arl": 93.04742100000001,
+      "alternation_rate": 0.591046104610461
+    },
+    {
+      "rho": 0.2,
+      "regime": "undetermined-by-certificate/point-unstable",
+      "reference_mse": 0.7364368132460352,
+      "cycle_arl": 94.92891800000001,
+      "alternation_rate": 0.6271987198719873
+    },
+    {
+      "rho": 0.25,
+      "regime": "undetermined-by-certificate/point-unstable",
+      "reference_mse": 0.7139553484925034,
+      "cycle_arl": 95.80004300000002,
+      "alternation_rate": 0.664966496649665
+    },
+    {
+      "rho": 0.3,
+      "regime": "undetermined-by-certificate/point-unstable",
+      "reference_mse": 0.7086386368749514,
+      "cycle_arl": 95.43525300000002,
+      "alternation_rate": 0.703962396239624
+    },
+    {
+      "rho": 0.4,
+      "regime": "certified-unstable",
+      "reference_mse": 0.7411655566504494,
+      "cycle_arl": 90.62219099999999,
+      "alternation_rate": 0.7785458545854587
+    },
+    {
+      "rho": 0.5,
+      "regime": "certified-unstable",
+      "reference_mse": 0.8242656978471701,
+      "cycle_arl": 81.72355699999999,
+      "alternation_rate": 0.8393339333933393
+    },
+    {
+      "rho": 0.75,
+      "regime": "certified-unstable",
+      "reference_mse": 1.216341207940452,
+      "cycle_arl": 59.652293,
+      "alternation_rate": 0.907997799779978
+    },
+    {
+      "rho": 1.0,
+      "regime": "certified-unstable",
+      "reference_mse": 1.8773132286955845,
+      "cycle_arl": 50.01766699999999,
+      "alternation_rate": 0.895063506350635
+    }
+  ],
+  "criteria": [
+    {
+      "id": "C1",
+      "text": "policy mathematically well-defined",
+      "passed": true,
+      "detail": "closed form rho_safe(delta) = (1-delta)/(Gamma-1), clipped to [0,1]; 21 unit tests"
+    },
+    {
+      "id": "C2",
+      "text": "stability rule follows from frozen theory",
+      "passed": true,
+      "detail": "derived from F'_rho(0) = rho(1-Gamma) (Level 2C, FROZEN-PROVED) and the frozen certified Gamma enclosure"
+    },
+    {
+      "id": "C3",
+      "text": "full reuse substantially worse reference stability than the stable policy",
+      "passed": true,
+      "detail": "MSE(rho=1)/MSE(RBG) = 1.9893 [1.9825, 1.9962] (paired); threshold 1.5"
+    },
+    {
+      "id": "C4",
+      "text": "ReBaseGuard preserves nonzero alarm data",
+      "passed": true,
+      "detail": "rho = 0.029796 > 0; retained alarm-data weight D1 = 0.029796"
+    },
+    {
+      "id": "C5",
+      "text": "ReBaseGuard improves stability over full reuse",
+      "passed": true,
+      "detail": "MSE(rho=1) - MSE(RBG) = 0.9336 [0.9292, 0.9380] (paired)"
+    },
+    {
+      "id": "C6",
+      "text": "improvement not bought by destroying detection",
+      "passed": false,
+      "detail": "Delta=0.25: RBG-full = +25.767 [+18.389, +33.019] vs threshold +12.977; Delta=0.5: RBG-full = +23.823 [+16.692, +30.903] vs threshold +12.570; Delta=1: RBG-full = -1.192 [-7.522, +5.364] vs threshold +13.297; Delta=1.5: RBG-full = -10.640 [-16.389, -4.776] vs threshold +11.092"
+    },
+    {
+      "id": "C7",
+      "text": "direct and decomposition ARL agree",
+      "passed": true,
+      "detail": "max |z| = 2.12 under the protocol formula (threshold 3). Without the pre-specified bias_interp term it would be 3.70; with a sharper Richardson bias estimate 3.34 and 2/23 points would exceed 3. Raw agreement is better than 0.60% at every rho. C7 is the weakest criterion and its verdict does not change the Stage C decision, since C6 already fails."
+    },
+    {
+      "id": "C8",
+      "text": "reproduces under independent seeds",
+      "passed": true,
+      "detail": "max |z| = 2.37 over 8 comparisons (threshold 3)"
+    },
+    {
+      "id": "C9",
+      "text": "no frozen Stage A/B claim regresses",
+      "passed": true,
+      "detail": "474 tests passed, 0 failed across the frozen Level 1-3, Stage A, Stage B and Stage C suites; Stage B certificate unchanged (db8ea712dc0abb34...); Stage A Gate 4.1 ARL reproduced to 7.35e-03"
+    },
+    {
+      "id": "C10",
+      "text": "negative/null findings retained",
+      "passed": true,
+      "detail": "all 23 grid cells reported; adversarial checks recorded pass or fail; the domination finding is a headline limitation"
+    }
+  ],
+  "decision": "STAGE-C-PARTIAL",
+  "decision_basis": {
+    "failed": [
+      "C6"
+    ],
+    "unresolved": []
+  },
+  "domination": {
+    "oracle_rho": 0.3,
+    "rbg_rho": 0.029796,
+    "mse_rbg": 0.9436855908380986,
+    "mse_oracle": 0.7086386368749514,
+    "paired_rbg_minus_oracle": {
+      "statistic": "difference",
+      "point": 0.23504695396314712,
+      "ci_low": 0.2330651048493189,
+      "ci_high": 0.23697023158782135,
+      "se": 0.0009938581672583762,
+      "n_replicates": 100,
+      "n_bootstrap": 10000,
+      "paired": true,
+      "seed_key": [
+        20260821,
+        2,
+        4
+      ]
+    },
+    "dominated": true,
+    "note": "pre-registered in STAGE_C_PROTOCOL.md section 12 BEFORE the campaign; reported as a headline limitation, deliberately not a gating criterion"
+  }
+}

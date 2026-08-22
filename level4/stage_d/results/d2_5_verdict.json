@@ -1,0 +1,69 @@
+{
+  "gate": "D2.5",
+  "question": "does the Gamma_m local-stability crossing correspond to an observable repeated-monitoring consequence?",
+  "protocol_sha256": "925adecf08c7234375333a26c3af934b005e0d8b4cfce470b77834d7245e8b2e",
+  "precommit_sha256": "fb6272ef839d7f3b36af3c8a8ace3d3059df7028dda337455b9df6baaf92bba7",
+  "m_star_interp": 72.18925933962045,
+  "m_star_bracket": [
+    50,
+    75
+  ],
+  "verdict": "MATHEMATICAL, NOT OPERATIONAL",
+  "criterion_applied": "protocol D2.5: 'if none changes materially, the boundary is reported as mathematical, not operational'",
+  "per_metric_localisation": {
+    "cycle_arl": {
+      "rate_across_m_star": 85.07929576272315,
+      "max_rate_elsewhere": 114.50132076028612,
+      "peaks_at_m_star": false,
+      "monotone": true
+    },
+    "reference_mse": {
+      "rate_across_m_star": 0.028513038712465886,
+      "max_rate_elsewhere": 0.21277330808781442,
+      "peaks_at_m_star": false,
+      "monotone": true
+    },
+    "e_acf1": {
+      "rate_across_m_star": 0.1242967571660907,
+      "max_rate_elsewhere": 0.17386541182008036,
+      "peaks_at_m_star": false,
+      "monotone": true
+    },
+    "direction_acf1": {
+      "rate_across_m_star": 0.21832041840305225,
+      "max_rate_elsewhere": 0.23785010709319068,
+      "peaks_at_m_star": false,
+      "monotone": true
+    }
+  },
+  "n_metrics_peaking_at_m_star": 0,
+  "n_metrics_monotone": 4,
+  "nearest_pair_across_m_star": {
+    "m_below": 65,
+    "m_above": 75,
+    "cycle_arl": [
+      286.951335,
+      299.126254
+    ],
+    "reference_mse": [
+      0.05916509162923287,
+      0.055084851734719824
+    ],
+    "e_acf1": [
+      -0.3523080405149801,
+      -0.3345210697027126
+    ],
+    "direction_acf1": [
+      -0.5474297894063849,
+      -0.5161879533489233
+    ]
+  },
+  "alternation_persists_above_m_star": {
+    "direction_acf1_at_m100": -0.45585439806454997,
+    "gamma_m_at_m100": 1.7762,
+    "note": "Alarm alternation remains strongly negative at m=100, where Gamma_m = 1.776 < 2 and full reuse is LOCALLY stable at e=0. The alternation therefore does not switch off at the crossing."
+  },
+  "contradiction_with_pilot": "The pilot framed m* as a stability boundary with monitoring consequences. The confirmatory data show NO localised change in any of the four pre-specified metrics at m*. All four vary smoothly and monotonically in log m, and for all four the steepest change occurs AWAY from m*. This contradicts an operational reading of the crossing and is reported as the primary D2.5 result.",
+  "interpretation": "Gamma_m = 2 is the point where rho_c = 1, i.e. where full reuse ceases to be locally unstable at the fixed point e = 0 of the DETERMINISTIC skeleton. Nothing in the frozen protocol asserts that a local-stability boundary of the skeleton must produce a discontinuity in the stochastic chain's stationary behaviour, and it does not. No phase-transition narrative is constructed from these monotone curves.",
+  "evidence_status": "NEW-NUMERICAL"
+}

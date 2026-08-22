@@ -1,0 +1,49 @@
+{
+  "AirQualityUCI.csv": {
+    "bytes": 785065,
+    "sha256": "13277ae5d8581e80b7be09d47c7d3d06fe9b8e957078f2cf6e859f955e62f996"
+  },
+  "air_quality.zip": {
+    "bytes": 1543989,
+    "sha256": "d4a64013fb385288a8a48d9d193ca7079b2e1bbddf6f8d458feb8c08ab2b8a2a"
+  },
+  "bike_sharing.zip": {
+    "bytes": 279992,
+    "sha256": "b70182d0d0508e9abbb79306ce5c0cec34869000f8220175ac83d11dbe845401"
+  },
+  "day.csv": {
+    "bytes": 57569,
+    "sha256": "a6bcf826782d3c0fbfdcbeead17cd0884185a0dafe8ff10cd48a874ee7ba18be"
+  },
+  "electricity-normalized.arff": {
+    "bytes": 3092013,
+    "sha256": "2d86fbc74c69a5c04bcde0119bce280dd6d8efa0115987edc75b77ccf024d7f2"
+  },
+  "hour.csv": {
+    "bytes": 1156736,
+    "sha256": "e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f"
+  },
+  "_streams": {
+    "electricity": {
+      "n": 45312,
+      "p": 8,
+      "target": "class_UP",
+      "source_file": "electricity-normalized.arff",
+      "source_sha256": "2d86fbc74c69a5c04bcde0119bce280dd6d8efa0115987edc75b77ccf024d7f2"
+    },
+    "air_quality": {
+      "n": 8991,
+      "p": 7,
+      "target": "C6H6(GT)",
+      "source_file": "AirQualityUCI.csv",
+      "source_sha256": "13277ae5d8581e80b7be09d47c7d3d06fe9b8e957078f2cf6e859f955e62f996"
+    },
+    "bike_sharing": {
+      "n": 17379,
+      "p": 13,
+      "target": "log1p_cnt",
+      "source_file": "hour.csv",
+      "source_sha256": "e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f"
+    }
+  }
+}

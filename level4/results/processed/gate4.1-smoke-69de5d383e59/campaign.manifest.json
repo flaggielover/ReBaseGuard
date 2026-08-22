@@ -1,0 +1,123 @@
+{
+  "experiment_id": "4.1-smoke-69de5d383e59",
+  "gate": "4.1",
+  "stage": "smoke",
+  "utc_timestamp": "2026-08-20T14:47:01.423348+00:00",
+  "proof_role": "NON-RIGOROUS NUMERICAL DIAGNOSTIC \u2014 NOT PROOF EVIDENCE",
+  "git": {
+    "commit": "9077c9b66e837f9f687d6dc117306da3f4417efb",
+    "branch": "main",
+    "dirty": true,
+    "dirty_paths": [
+      "?? level4/"
+    ]
+  },
+  "environment": {
+    "python": "3.14.5 (v3.14.5:5607950ef23, May 10 2026, 07:38:09) [Clang 21.0.0 (clang-2100.0.123.102)]",
+    "python_short": "3.14.5",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "numpy": "2.5.2",
+    "scipy": "1.18.0",
+    "pyarrow": "25.0.1",
+    "matplotlib": "3.11.1"
+  },
+  "code_sha256": {
+    "__init__.py": "a65418ed6b41f18e84c27c91c0e65edd2d651254c3950c76af14c444399b2699",
+    "analysis.py": "7a260455ffecfab163a4f9021724948de6d764e889ec32ab32392b6e9e139f8f",
+    "campaigns.py": "0aeece4ec367d5814bab30628e683e2974387f19014c0e131d51c121249683f9",
+    "conditional.py": "c6c27119eff3c4045e5c30df174eea3369bc3205c5e4139572346747f222cd38",
+    "frozen.py": "777681ea32842ff48224b4c51ff7a2a26525d5a44d815d521949a6242baa6c54",
+    "ledger.py": "28bcc763c63fe28530b0a9f76b19d43fe6ce3604e52cebf67c9e9d78280f7104",
+    "metrics.py": "064db98786da9fbf607dfefc6ab866a331019561c446defb985b2283cd0278ac",
+    "multicycle.py": "dc5da37c4fb754f0899a5cf4d615cd780947a9e224ec42a9d792da8116812334",
+    "provenance.py": "69dcf9efbabdcaad2312eabf3f5357ba1d349584e1033566ecfa29a23406a557",
+    "reference.py": "1aee8eeaf41dc784b313764aad576bad9b6353791c0a365d2452a217c147b950",
+    "storage.py": "873a46fc177eacf7aa5cc58217a394e7cc5e5348c46f5654c380157c0a7b826b",
+    "streams.py": "b38a307a808384cb6aa42532d48a10ba0bf4883fb5d3f587b0ac4b6a77450aae",
+    "__combined__": "f9738af3e23dfbbf963af9e5af006cf9c13419ca96a3d194654844b872b6c65f"
+  },
+  "config": {
+    "gate": "4.1",
+    "stage": "smoke",
+    "rho_values": [
+      0.0,
+      0.1,
+      1.0
+    ],
+    "m_values": [
+      1,
+      5
+    ],
+    "n_replicates": 8,
+    "n_cycles": 40,
+    "burn_in": 10,
+    "master_seed": 20260820,
+    "n_bootstrap": 500,
+    "e0": 0.0,
+    "detector": "frozen_two_sided_cusum",
+    "k": 0.5,
+    "h": 5.0
+  },
+  "config_sha256": "69de5d383e59b48e0a157889d2fbf19420fa5ce19b3f13e53dc2fcdad4542128",
+  "streams": [],
+  "extra": {
+    "campaign_id": "gate4.1-smoke-69de5d383e59",
+    "cells": [
+      {
+        "cell_id": "gate4.1-smoke-caddf1a74aa0",
+        "m": 1,
+        "rho": 0.0,
+        "policy": "fresh",
+        "simulation_seconds": 0.1462709903717041,
+        "n_lockstep_iterations": 6413,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-smoke-69de5d383e59/cycles_m1_rho0.parquet"
+      },
+      {
+        "cell_id": "gate4.1-smoke-ffca65a73122",
+        "m": 1,
+        "rho": 0.1,
+        "policy": "partial_reuse",
+        "simulation_seconds": 0.11029505729675293,
+        "n_lockstep_iterations": 6334,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-smoke-69de5d383e59/cycles_m1_rho0.1.parquet"
+      },
+      {
+        "cell_id": "gate4.1-smoke-4b2cd4594ec8",
+        "m": 1,
+        "rho": 1.0,
+        "policy": "full_reuse",
+        "simulation_seconds": 0.06708884239196777,
+        "n_lockstep_iterations": 3768,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-smoke-69de5d383e59/cycles_m1_rho1.parquet"
+      },
+      {
+        "cell_id": "gate4.1-smoke-11b010f58a59",
+        "m": 5,
+        "rho": 0.0,
+        "policy": "fresh",
+        "simulation_seconds": 0.1783912181854248,
+        "n_lockstep_iterations": 10060,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-smoke-69de5d383e59/cycles_m5_rho0.parquet"
+      },
+      {
+        "cell_id": "gate4.1-smoke-4fc43462c328",
+        "m": 5,
+        "rho": 0.1,
+        "policy": "partial_reuse",
+        "simulation_seconds": 0.24684810638427734,
+        "n_lockstep_iterations": 14298,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-smoke-69de5d383e59/cycles_m5_rho0.1.parquet"
+      },
+      {
+        "cell_id": "gate4.1-smoke-99aabf2fd256",
+        "m": 5,
+        "rho": 1.0,
+        "policy": "full_reuse",
+        "simulation_seconds": 0.10910606384277344,
+        "n_lockstep_iterations": 5915,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-smoke-69de5d383e59/cycles_m5_rho1.parquet"
+      }
+    ]
+  }
+}

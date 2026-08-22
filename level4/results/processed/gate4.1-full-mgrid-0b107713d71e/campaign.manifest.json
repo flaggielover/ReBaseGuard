@@ -1,0 +1,293 @@
+{
+  "experiment_id": "4.1-full-mgrid-0b107713d71e",
+  "gate": "4.1",
+  "stage": "full-mgrid",
+  "utc_timestamp": "2026-08-20T15:24:13.723763+00:00",
+  "proof_role": "NON-RIGOROUS NUMERICAL DIAGNOSTIC \u2014 NOT PROOF EVIDENCE",
+  "git": {
+    "commit": "9077c9b66e837f9f687d6dc117306da3f4417efb",
+    "branch": "main",
+    "dirty": true,
+    "dirty_paths": [
+      "M README.md",
+      "?? level4/",
+      "?? scripts/verify_level_4.sh"
+    ]
+  },
+  "environment": {
+    "python": "3.14.5 (v3.14.5:5607950ef23, May 10 2026, 07:38:09) [Clang 21.0.0 (clang-2100.0.123.102)]",
+    "python_short": "3.14.5",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "numpy": "2.5.2",
+    "scipy": "1.18.0",
+    "pyarrow": "25.0.1",
+    "matplotlib": "3.11.1"
+  },
+  "code_sha256": {
+    "__init__.py": "a65418ed6b41f18e84c27c91c0e65edd2d651254c3950c76af14c444399b2699",
+    "analysis.py": "8bb7515f2fbde0a4c7d5fdd039858d16d90ad544383d3023839e04383d6971dd",
+    "campaigns.py": "adaea4f497ccd1acf330b43793766b9a2679dde48558ab5c16be061d452248ea",
+    "conditional.py": "d78346a83a31224dd68e9ca955cb1dc76723bcfc738fb08800ccbe7d85ece719",
+    "figures.py": "d013e341c30069f7d5e90ad5034b840834f588390edbe59801daf91125e65cf0",
+    "frozen.py": "777681ea32842ff48224b4c51ff7a2a26525d5a44d815d521949a6242baa6c54",
+    "ledger.py": "28bcc763c63fe28530b0a9f76b19d43fe6ce3604e52cebf67c9e9d78280f7104",
+    "metrics.py": "064db98786da9fbf607dfefc6ab866a331019561c446defb985b2283cd0278ac",
+    "multicycle.py": "dc5da37c4fb754f0899a5cf4d615cd780947a9e224ec42a9d792da8116812334",
+    "provenance.py": "69dcf9efbabdcaad2312eabf3f5357ba1d349584e1033566ecfa29a23406a557",
+    "reference.py": "1aee8eeaf41dc784b313764aad576bad9b6353791c0a365d2452a217c147b950",
+    "storage.py": "873a46fc177eacf7aa5cc58217a394e7cc5e5348c46f5654c380157c0a7b826b",
+    "streams.py": "b38a307a808384cb6aa42532d48a10ba0bf4883fb5d3f587b0ac4b6a77450aae",
+    "__combined__": "b6a67c99e7e469826fe7e71e22913580d7cd0295d2474c0956bfb3e330663d5a"
+  },
+  "config": {
+    "gate": "4.1",
+    "stage": "full-mgrid",
+    "rho_values": [
+      0.0,
+      0.05,
+      0.1,
+      0.25,
+      0.5,
+      1.0
+    ],
+    "m_values": [
+      5,
+      10,
+      20,
+      50
+    ],
+    "n_replicates": 100,
+    "n_cycles": 2000,
+    "burn_in": 500,
+    "master_seed": 20260820,
+    "n_bootstrap": 10000,
+    "e0": 0.0,
+    "detector": "frozen_two_sided_cusum",
+    "k": 0.5,
+    "h": 5.0
+  },
+  "config_sha256": "0b107713d71e321b6e1605d22758a1a3f7025b158e886ef15c3ff36ac6719306",
+  "streams": [],
+  "extra": {
+    "campaign_id": "gate4.1-full-mgrid-0b107713d71e",
+    "cells": [
+      {
+        "cell_id": "gate4.1-full-mgrid-2aefb09055e1",
+        "m": 5,
+        "rho": 0.0,
+        "policy": "fresh",
+        "simulation_seconds": 18.1860089302063,
+        "n_lockstep_iterations": 439128,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m5_rho0.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-bd45058dd860",
+        "m": 5,
+        "rho": 0.05,
+        "policy": "partial_reuse",
+        "simulation_seconds": 21.020063877105713,
+        "n_lockstep_iterations": 457275,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m5_rho0.05.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-fff0d2932b4d",
+        "m": 5,
+        "rho": 0.1,
+        "policy": "partial_reuse",
+        "simulation_seconds": 21.84326195716858,
+        "n_lockstep_iterations": 458185,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m5_rho0.1.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-403bcc249a9b",
+        "m": 5,
+        "rho": 0.25,
+        "policy": "partial_reuse",
+        "simulation_seconds": 21.756723165512085,
+        "n_lockstep_iterations": 463721,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m5_rho0.25.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-1861f95ad871",
+        "m": 5,
+        "rho": 0.5,
+        "policy": "partial_reuse",
+        "simulation_seconds": 16.15718102455139,
+        "n_lockstep_iterations": 343521,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m5_rho0.5.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-37cacfa1f03d",
+        "m": 5,
+        "rho": 1.0,
+        "policy": "full_reuse",
+        "simulation_seconds": 11.48082709312439,
+        "n_lockstep_iterations": 229849,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m5_rho1.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-d3950c12a712",
+        "m": 10,
+        "rho": 0.0,
+        "policy": "fresh",
+        "simulation_seconds": 21.95569610595703,
+        "n_lockstep_iterations": 556284,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m10_rho0.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-545fa523a4c0",
+        "m": 10,
+        "rho": 0.05,
+        "policy": "partial_reuse",
+        "simulation_seconds": 23.347966194152832,
+        "n_lockstep_iterations": 580178,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m10_rho0.05.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-6a54c992e599",
+        "m": 10,
+        "rho": 0.1,
+        "policy": "partial_reuse",
+        "simulation_seconds": 23.296306133270264,
+        "n_lockstep_iterations": 586773,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m10_rho0.1.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-7a0d62885fc4",
+        "m": 10,
+        "rho": 0.25,
+        "policy": "partial_reuse",
+        "simulation_seconds": 24.366745233535767,
+        "n_lockstep_iterations": 581025,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m10_rho0.25.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-63ae44fcb6e5",
+        "m": 10,
+        "rho": 0.5,
+        "policy": "partial_reuse",
+        "simulation_seconds": 26.866277933120728,
+        "n_lockstep_iterations": 444316,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m10_rho0.5.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-b42f1b34240a",
+        "m": 10,
+        "rho": 1.0,
+        "policy": "full_reuse",
+        "simulation_seconds": 14.513303995132446,
+        "n_lockstep_iterations": 280884,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m10_rho1.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-a849b8b94941",
+        "m": 20,
+        "rho": 0.0,
+        "policy": "fresh",
+        "simulation_seconds": 26.43449091911316,
+        "n_lockstep_iterations": 703887,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m20_rho0.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-246ba81a5dc1",
+        "m": 20,
+        "rho": 0.05,
+        "policy": "partial_reuse",
+        "simulation_seconds": 31.0122230052948,
+        "n_lockstep_iterations": 726717,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m20_rho0.05.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-a4f33e241e1d",
+        "m": 20,
+        "rho": 0.1,
+        "policy": "partial_reuse",
+        "simulation_seconds": 36.218743085861206,
+        "n_lockstep_iterations": 741352,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m20_rho0.1.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-6643344c5506",
+        "m": 20,
+        "rho": 0.25,
+        "policy": "partial_reuse",
+        "simulation_seconds": 32.796422243118286,
+        "n_lockstep_iterations": 763556,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m20_rho0.25.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-54b710f5e4e8",
+        "m": 20,
+        "rho": 0.5,
+        "policy": "partial_reuse",
+        "simulation_seconds": 65.23465394973755,
+        "n_lockstep_iterations": 670647,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m20_rho0.5.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-2425869f64d2",
+        "m": 20,
+        "rho": 1.0,
+        "policy": "full_reuse",
+        "simulation_seconds": 33.43777108192444,
+        "n_lockstep_iterations": 445066,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m20_rho1.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-8dc6b82c5cc7",
+        "m": 50,
+        "rho": 0.0,
+        "policy": "fresh",
+        "simulation_seconds": 43.695345878601074,
+        "n_lockstep_iterations": 966010,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m50_rho0.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-ecf782f2748d",
+        "m": 50,
+        "rho": 0.05,
+        "policy": "partial_reuse",
+        "simulation_seconds": 42.16626787185669,
+        "n_lockstep_iterations": 995006,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m50_rho0.05.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-f841bbee63a4",
+        "m": 50,
+        "rho": 0.1,
+        "policy": "partial_reuse",
+        "simulation_seconds": 38.782063007354736,
+        "n_lockstep_iterations": 1002738,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m50_rho0.1.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-f6534e6e1c1a",
+        "m": 50,
+        "rho": 0.25,
+        "policy": "partial_reuse",
+        "simulation_seconds": 45.760945081710815,
+        "n_lockstep_iterations": 1028347,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m50_rho0.25.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-c78baacc5795",
+        "m": 50,
+        "rho": 0.5,
+        "policy": "partial_reuse",
+        "simulation_seconds": 40.840396881103516,
+        "n_lockstep_iterations": 1016589,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m50_rho0.5.parquet"
+      },
+      {
+        "cell_id": "gate4.1-full-mgrid-f1be59527e5c",
+        "m": 50,
+        "rho": 1.0,
+        "policy": "full_reuse",
+        "simulation_seconds": 36.34225082397461,
+        "n_lockstep_iterations": 830030,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-full-mgrid-0b107713d71e/cycles_m50_rho1.parquet"
+      }
+    ]
+  }
+}

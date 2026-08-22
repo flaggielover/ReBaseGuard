@@ -1,0 +1,170 @@
+{
+  "campaign": "stage_c_incontrol",
+  "tag": "smoke",
+  "arguments": {
+    "n_replicates": 20,
+    "n_cycles": 500,
+    "burn_in": 200,
+    "master_seed": 20260821,
+    "n_bootstrap": 10000,
+    "rho": [
+      0.0,
+      1.0
+    ],
+    "tag": "smoke"
+  },
+  "rows": [
+    {
+      "rho": 0.0,
+      "in_protocol_grid": true,
+      "added_point": false,
+      "reference_mse": 0.9811344825536075,
+      "reference_mse_ci": [
+        0.9654449892341215,
+        0.9959005333330814
+      ],
+      "cycle_arl": 83.63069999999999,
+      "cycle_arl_ci": [
+        80.19264500000001,
+        86.91056499999999
+      ],
+      "arl_decomposition": 83.95053710011483,
+      "arl_paired_gap": -0.31983710011483096,
+      "arl_paired_gap_ci": [
+        -3.16347588429959,
+        2.4077186438666422
+      ],
+      "arl_decomp_se_from_A": 0.01834091409709951,
+      "reference_sd": 0.9904441510577735,
+      "reference_mean": 0.011287774752928637,
+      "alternation_rate": 0.5008016032064128,
+      "acf_e_lag1": -0.0010001942345279895,
+      "acf_e_lag2": -0.002454441235783763,
+      "acf_e_lag3": 0.015932410266346463,
+      "central_mass_0p5": 0.3884,
+      "offcenter_mass_1p0": 0.31370000000000003,
+      "offcenter_mass_1p5": 0.1289,
+      "median_tau": 15.675,
+      "cell_file": "20901ce23f3bc915"
+    },
+    {
+      "rho": 1.0,
+      "in_protocol_grid": true,
+      "added_point": false,
+      "reference_mse": 1.8696684872858647,
+      "reference_mse_ci": [
+        1.8328459778454134,
+        1.9060619560049539
+      ],
+      "cycle_arl": 52.531499999999994,
+      "cycle_arl_ci": [
+        49.6999925,
+        55.27431000000001
+      ],
+      "arl_decomposition": 50.66603728655603,
+      "arl_paired_gap": 1.8654627134439596,
+      "arl_paired_gap_ci": [
+        -0.6069006233420315,
+        4.236294389620485
+      ],
+      "arl_decomp_se_from_A": 0.009666168478150933,
+      "reference_sd": 1.3679109898997837,
+      "reference_mean": 0.0008634588756057784,
+      "alternation_rate": 0.8926853707414828,
+      "acf_e_lag1": -0.4939182163388279,
+      "acf_e_lag2": 0.3829239967560152,
+      "acf_e_lag3": -0.2924426276383949,
+      "central_mass_0p5": 0.22650000000000006,
+      "offcenter_mass_1p0": 0.5289,
+      "offcenter_mass_1p5": 0.2969,
+      "median_tau": 8.2,
+      "cell_file": "ca82c0b9290db925"
+    }
+  ],
+  "protocol_grid": [
+    0.0,
+    0.01,
+    0.02,
+    0.03,
+    0.04,
+    0.05,
+    0.06,
+    0.065,
+    0.067,
+    0.07,
+    0.075,
+    0.08,
+    0.1,
+    0.15,
+    0.2,
+    0.25,
+    0.3,
+    0.4,
+    0.5,
+    0.75,
+    1.0
+  ],
+  "added_points": [
+    0.029796,
+    0.053743
+  ],
+  "seconds": 2.8387608528137207,
+  "manifest": {
+    "experiment_id": "stage-c-incontrol-smoke-f0f10288fc96",
+    "gate": "stage-c",
+    "stage": "incontrol-smoke",
+    "utc_timestamp": "2026-08-21T07:08:37.496324+00:00",
+    "proof_role": "NON-RIGOROUS NUMERICAL DIAGNOSTIC \u2014 NOT PROOF EVIDENCE",
+    "git": {
+      "commit": "9077c9b66e837f9f687d6dc117306da3f4417efb",
+      "branch": "main",
+      "dirty": true,
+      "dirty_paths": [
+        "M README.md",
+        "?? level4/",
+        "?? level_4_theory_numerics/",
+        "?? scripts/verify_level_4.sh"
+      ]
+    },
+    "environment": {
+      "python": "3.14.5 (v3.14.5:5607950ef23, May 10 2026, 07:38:09) [Clang 21.0.0 (clang-2100.0.123.102)]",
+      "python_short": "3.14.5",
+      "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+      "machine": "arm64",
+      "numpy": "2.5.2",
+      "scipy": "1.18.0",
+      "pyarrow": "25.0.1",
+      "matplotlib": "3.11.1"
+    },
+    "code_sha256": {
+      "__init__.py": "a65418ed6b41f18e84c27c91c0e65edd2d651254c3950c76af14c444399b2699",
+      "analysis.py": "8bb7515f2fbde0a4c7d5fdd039858d16d90ad544383d3023839e04383d6971dd",
+      "campaigns.py": "adaea4f497ccd1acf330b43793766b9a2679dde48558ab5c16be061d452248ea",
+      "conditional.py": "d78346a83a31224dd68e9ca955cb1dc76723bcfc738fb08800ccbe7d85ece719",
+      "figures.py": "d013e341c30069f7d5e90ad5034b840834f588390edbe59801daf91125e65cf0",
+      "frozen.py": "777681ea32842ff48224b4c51ff7a2a26525d5a44d815d521949a6242baa6c54",
+      "ledger.py": "33f3b47492269d4b0613905e7db3c1363bde71a868eb0da90d4d4736d66ba286",
+      "metrics.py": "064db98786da9fbf607dfefc6ab866a331019561c446defb985b2283cd0278ac",
+      "multicycle.py": "dc5da37c4fb754f0899a5cf4d615cd780947a9e224ec42a9d792da8116812334",
+      "provenance.py": "69dcf9efbabdcaad2312eabf3f5357ba1d349584e1033566ecfa29a23406a557",
+      "reference.py": "1aee8eeaf41dc784b313764aad576bad9b6353791c0a365d2452a217c147b950",
+      "storage.py": "873a46fc177eacf7aa5cc58217a394e7cc5e5348c46f5654c380157c0a7b826b",
+      "streams.py": "b38a307a808384cb6aa42532d48a10ba0bf4883fb5d3f587b0ac4b6a77450aae",
+      "__combined__": "9651bd6ed6fa54ca29712f9fba128c9db7d1e58724f2ced954c5b303b3d866f8"
+    },
+    "config": {
+      "n_replicates": 20,
+      "n_cycles": 500,
+      "burn_in": 200,
+      "master_seed": 20260821,
+      "n_bootstrap": 10000,
+      "rho": [
+        0.0,
+        1.0
+      ],
+      "tag": "smoke"
+    },
+    "config_sha256": "f0f10288fc96165cdca77aeadf9a27196ebf97929c43991646c4a5ea6aadb445",
+    "streams": []
+  }
+}

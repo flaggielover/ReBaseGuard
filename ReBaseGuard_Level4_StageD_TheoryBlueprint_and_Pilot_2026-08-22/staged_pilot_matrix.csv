@@ -1,0 +1,8 @@
+id,experiment,scale,deliverable,est_cost,class
+P1,"CUSUM Gamma_m, m in {1,5,10,20,50}",1e6 cycles,confirm Gamma_m and locate m* to +/-2,2 core-hours,MANDATORY
+P2,"SR Gamma_m, matched ARL0=465",1e6 cycles,"Gamma_SR,m and m*_SR",3 core-hours,MANDATORY
+P3,"SR full map F_SR,1(e), e in [0,3]","2e5 cycles/pt, 25 pts",root of g_SR(e)=1 -> orbit amplitude,6 core-hours,MANDATORY
+P4,"rho_c(ARL0): h grid -> ARL0 in {100,...,2000}",5e5 cycles/pt,exponent in Gamma ~ ARL0^b,4 core-hours,STRONG
+P5,"t(3,5,10) + contam(.05,.10) ARL-matched",5e5 cycles,"Gamma_psi CIs, tail-index check",5 core-hours,STRONG
+P6,Var of stopped score sum vs truncation,5e5 cycles,uniform-integrability diagnostic,2 core-hours,STRONG
+P7,skewed (skew-normal) pilot,2e5 cycles,does F_rho=rho F_1 survive asymmetry?,2 core-hours,STRETCH

@@ -1,0 +1,891 @@
+{
+  "schema": "rebaseguard.stage-b.period2-certificate/1",
+  "utc_timestamp": "2026-08-21T05:22:51.195917+00:00",
+  "target": "rho=1 period-2 orbit of the deterministic conditional-mean map F_1 for the frozen CUSUM (k=1/2, h=5, m=1)",
+  "decision": "STAGE-B-CLOSED-RIGOROUS-PERIOD2",
+  "requirements": [
+    {
+      "id": "R1",
+      "text": "nonzero root existence rigorously certified (certified sign change + continuity, Lemma L4)",
+      "ok": true
+    },
+    {
+      "id": "R2",
+      "text": "root uniqueness in the stated interval rigorously certified (H' > 0 on all of I)",
+      "ok": true
+    },
+    {
+      "id": "R3",
+      "text": "the certified interval excludes 0",
+      "ok": true
+    },
+    {
+      "id": "R4",
+      "text": "multiplier abs(lambda_2) < 1 rigorously certified",
+      "ok": true
+    },
+    {
+      "id": "R5",
+      "text": "every approximation between the true operator and the computed one is explicitly bounded",
+      "ok": true
+    },
+    {
+      "id": "R6",
+      "text": "the certified backend is interval arithmetic, not floating point",
+      "ok": true
+    }
+  ],
+  "theorem": {
+    "root_interval": [
+      1.0287242887184211,
+      1.0447242887184212
+    ],
+    "zero_excluded": true,
+    "existence_certified": true,
+    "uniqueness_certified": true,
+    "Hprime_min_over_I": 1.3288580785290072,
+    "F1prime_over_I": [
+      0.3288580785290074,
+      0.9124317536230871
+    ],
+    "lambda2": [
+      0.10814763581379079,
+      0.832531705019702
+    ],
+    "multiplier_certified": true
+  },
+  "frozen_level_1_3": {
+    "gamma_enclosure": [
+      3.924348200582897,
+      27.849382127546704
+    ],
+    "modified": false,
+    "role": "quoted unchanged; Stage B neither extends nor revises it"
+  },
+  "operator_norms": {
+    "int_abs_phi_prime": 0.7978845608028654,
+    "int_abs_phi_second": 0.9678828980765735,
+    "int_w_abs_phi_second": 1.1378812353502816
+  },
+  "bounds": {
+    "resolvent": 18.578214399257735,
+    "G_sup": 2.102728099493375,
+    "Gprime_sup_mesh": 2.482955960321191,
+    "Gprime_sup_interval": 2.5600696203419564,
+    "G_second_bound": 153.73831857031328,
+    "contraction_factor": 0.014823270436454887,
+    "a_priori_G": 23.43128668389316,
+    "crude_Gprime": 381.46686060405807
+  },
+  "error_budget": [
+    {
+      "source": "interval rounding (Arb ball radii)",
+      "present": "yes",
+      "bound": "outward-rounded to float at 96 bits; insensitivity verified over 64-256 bits",
+      "magnitude": "< 1e-9 on the reported endpoints"
+    },
+    {
+      "source": "quadrature error",
+      "present": "NO",
+      "bound": "not applicable",
+      "magnitude": "exactly 0 \u2014 every z-segment is integrated against the Gaussian in closed form (Phi and phi differences); the pipeline contains no quadrature rule"
+    },
+    {
+      "source": "domain truncation",
+      "present": "NO",
+      "bound": "not applicable",
+      "magnitude": "exactly 0 \u2014 the continuation set is contained in (-(h+k), h+k), so |z| > z_cut is pure-alarm and is integrated to +/- infinity analytically"
+    },
+    {
+      "source": "state-space escape",
+      "present": "checked",
+      "bound": "hard failure",
+      "magnitude": "build_transitions raises if any continuation segment leaves the live region, so Lemma L1 is verified on the actual grid rather than assumed"
+    },
+    {
+      "source": "cell projection / interpolation",
+      "present": "yes",
+      "bound": "carried by the monotone bracket: destinations resolve to a SUPERSET of cells and min/max is taken",
+      "magnitude": "the whole reported bracket width; max cell width 0.023029 on G"
+    },
+    {
+      "source": "iterative solve error",
+      "present": "NO",
+      "bound": "not applicable",
+      "magnitude": "exactly 0 \u2014 T is monotone, so every iterate is already a valid bracket and the iteration may stop anywhere"
+    },
+    {
+      "source": "float rounding inside the iteration",
+      "present": "yes",
+      "bound": "ROUNDING_SLACK = 1e-9 applied outward per iteration on both sides",
+      "magnitude": "one iteration sums <= 1e4 products of magnitude <= 1e2, so the accumulated error is below 1e4 * 2^-53 * 1e2 ~ 1e-10"
+    },
+    {
+      "source": "e-dependence between mesh points",
+      "present": "yes",
+      "bound": "|G''| <= 153.7383 from the twice-differentiated operator equation with analytic operator norms; times half-spacing 0.000500",
+      "magnitude": "0.076869 added outward to H' and F_1' over I"
+    },
+    {
+      "source": "a priori |G| and |G'| used for the warm start",
+      "present": "yes",
+      "bound": "|G| <= 23.4313 by Wald; |G'| <= 381.47 by the resolvent bound",
+      "magnitude": "affects iteration count only; a warm start is a starting bracket, and the test suite checks it reproduces the cold-start answer"
+    },
+    {
+      "source": "grid placement from a non-rigorous float profile",
+      "present": "yes, but cannot affect validity",
+      "bound": "the monotone bracket is valid on ANY partition",
+      "magnitude": "changes width only; three different grid-placement rules are compared in the adversarial checks"
+    }
+  ],
+  "mesh": {
+    "e": [
+      1.0247242887184211,
+      1.0257242887184213,
+      1.0267242887184211,
+      1.0277242887184213,
+      1.0287242887184211,
+      1.0297242887184213,
+      1.0307242887184211,
+      1.0317242887184213,
+      1.0327242887184211,
+      1.0337242887184213,
+      1.0347242887184211,
+      1.0357242887184213,
+      1.0367242887184211,
+      1.037724288718421,
+      1.0387242887184212,
+      1.039724288718421,
+      1.0407242887184212,
+      1.041724288718421,
+      1.0427242887184212,
+      1.043724288718421,
+      1.0447242887184212,
+      1.045724288718421,
+      1.0467242887184212,
+      1.047724288718421,
+      1.0487242887184212
+    ],
+    "H_lo": [
+      -0.03076050623951332,
+      -0.02916022162841303,
+      -0.02756034033153787,
+      -0.02596084949667743,
+      -0.02436174892656595,
+      -0.02276303842826488,
+      -0.02116471780157969,
+      -0.01956678685023938,
+      -0.017969245376473708,
+      -0.016372093183328662,
+      -0.014775330073875548,
+      -0.01317895585363571,
+      -0.011582970324847786,
+      -0.00998737328924948,
+      -0.008392164548714831,
+      -0.006797344034718211,
+      -0.005202911705933122,
+      -0.003608867081345224,
+      -0.0020152099653354405,
+      -0.0004219401587701732,
+      0.0011709425353032543,
+      0.0027634383145209718,
+      0.004355547376027502,
+      0.005947269917260023,
+      0.007538606135563342
+    ],
+    "H_hi": [
+      -0.00773158682084274,
+      -0.006139751588825071,
+      -0.004548296778887462,
+      -0.0029572222186975416,
+      -0.0013665277362555628,
+      0.00022378684447943442,
+      0.0018137216923763688,
+      0.0034032769798506557,
+      0.004992452906531497,
+      0.006581249624726393,
+      0.00816966729940205,
+      0.009757706103286523,
+      0.011345366209095431,
+      0.012932647789010598,
+      0.014519551015851562,
+      0.01610607606239034,
+      0.017692223111238192,
+      0.01927799234171168,
+      0.020863383909776267,
+      0.02244839846960911,
+      0.024033047486824888,
+      0.025617319365349278,
+      0.02720121427820965,
+      0.028784732403474234,
+      0.03036787393087481
+    ],
+    "Hp_lo": [
+      1.4102290597643026,
+      1.4100814281268474,
+      1.4099332686397301,
+      1.4097846060442798,
+      1.4090246230133818,
+      1.4088756990064986,
+      1.4087263015820026,
+      1.4085764551233069,
+      1.4081004329931455,
+      1.4079498009990763,
+      1.4077986536955858,
+      1.4076470161494203,
+      1.4074949054840753,
+      1.406986083227724,
+      1.4068333653509253,
+      1.4066801786591265,
+      1.4065265253299664,
+      1.4061919449280715,
+      1.4060375424576534,
+      1.4058826578455574,
+      1.4057272378141725,
+      1.4055713764398945,
+      1.40518448210883,
+      1.4050274646398897,
+      1.4048699436760341
+    ],
+    "Hp_hi": [
+      1.8375965830693062,
+      1.8369314244225177,
+      1.8362672781624534,
+      1.8356040687399098,
+      1.835562594337922,
+      1.8349005483846004,
+      1.8342394113035978,
+      1.8335791655976237,
+      1.833250488934021,
+      1.8325917255155244,
+      1.831933890125923,
+      1.831276968028531,
+      1.8306209681409502,
+      1.8303247408168852,
+      1.8296702275371473,
+      1.8290166094379638,
+      1.828363881572014,
+      1.8278149206532912,
+      1.8271637437177057,
+      1.8265134832329566,
+      1.825864176000537,
+      1.82521577247218,
+      1.8247683647463837,
+      1.8241215849195147,
+      1.8234757498587
+    ],
+    "F1p_lo": [
+      0.4102290597643026,
+      0.41008142812684745,
+      0.40993326863973023,
+      0.4097846060442799,
+      0.4090246230133817,
+      0.40887569900649845,
+      0.4087263015820025,
+      0.40857645512330687,
+      0.40810043299314536,
+      0.4079498009990764,
+      0.40779865369558566,
+      0.40764701614942045,
+      0.4074949054840753,
+      0.4069860832277239,
+      0.4068333653509254,
+      0.40668017865912653,
+      0.40652652532996636,
+      0.40619194492807165,
+      0.40603754245765356,
+      0.40588265784555744,
+      0.40572723781417264,
+      0.4055713764398945,
+      0.40518448210883007,
+      0.4050274646398897,
+      0.4048699436760341
+    ],
+    "F1p_hi": [
+      0.8375965830693062,
+      0.8369314244225178,
+      0.8362672781624534,
+      0.8356040687399098,
+      0.8355625943379219,
+      0.8349005483846004,
+      0.8342394113035977,
+      0.8335791655976238,
+      0.8332504889340211,
+      0.8325917255155244,
+      0.8319338901259231,
+      0.8312769680285311,
+      0.8306209681409501,
+      0.8303247408168852,
+      0.8296702275371473,
+      0.8290166094379638,
+      0.828363881572014,
+      0.8278149206532912,
+      0.8271637437177056,
+      0.8265134832329567,
+      0.825864176000537,
+      0.82521577247218,
+      0.8247683647463838,
+      0.8241215849195147,
+      0.8234757498587
+    ],
+    "G_lo": [
+      -2.0802090836763556,
+      -2.0806087990652555,
+      -2.08100891776838,
+      -2.08140942693352,
+      -2.0818103263634082,
+      -2.0822116158651074,
+      -2.082613295238422,
+      -2.083015364287082,
+      -2.083417822813316,
+      -2.083820670620171,
+      -2.084223907510718,
+      -2.0846275332904782,
+      -2.08503154776169,
+      -2.0854359507260916,
+      -2.085840741985557,
+      -2.0862459214715603,
+      -2.0866514891427754,
+      -2.0870574445181873,
+      -2.0874637874021778,
+      -2.0878705175956123,
+      -2.088277634901539,
+      -2.088685139122321,
+      -2.089093030060815,
+      -2.089501307519582,
+      -2.089909971301279
+    ],
+    "G_hi": [
+      -2.057180164257685,
+      -2.0575883290256676,
+      -2.0579968742157297,
+      -2.05840579965554,
+      -2.058815105173098,
+      -2.059224790592363,
+      -2.059634855744466,
+      -2.060045300456992,
+      -2.060456124530311,
+      -2.060867327812116,
+      -2.0612789101374402,
+      -2.061690871333556,
+      -2.062103211227747,
+      -2.0625159296478315,
+      -2.0629290264209907,
+      -2.0633425013744517,
+      -2.063756354325604,
+      -2.0641705850951304,
+      -2.064585193527066,
+      -2.065000178967233,
+      -2.0654155299500174,
+      -2.065831258071493,
+      -2.0662473631586327,
+      -2.066663845033368,
+      -2.0670807035059675
+    ],
+    "spacing": 0.001000000000000112
+  },
+  "grid": {
+    "n_axis": 400,
+    "n_tri": 60,
+    "n_cells": 2631,
+    "n_segments": 4328840,
+    "z_cut": 12.0,
+    "profile_n": 150
+  },
+  "backend": "python-flint/Arb",
+  "precision_bits": 96,
+  "certified_backend": true,
+  "provenance": {
+    "git": {
+      "commit": "9077c9b66e837f9f687d6dc117306da3f4417efb",
+      "branch": "main",
+      "dirty": true,
+      "dirty_paths": [
+        "M README.md",
+        "?? level4/",
+        "?? level_4_theory_numerics/",
+        "?? scripts/verify_level_4.sh"
+      ]
+    },
+    "environment": {
+      "python": "3.14.5 (v3.14.5:5607950ef23, May 10 2026, 07:38:09) [Clang 21.0.0 (clang-2100.0.123.102)]",
+      "python_short": "3.14.5",
+      "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+      "machine": "arm64",
+      "numpy": "2.5.2",
+      "scipy": "1.18.0",
+      "pyarrow": "25.0.1",
+      "matplotlib": "3.11.1"
+    },
+    "arguments": {
+      "backend": "arb",
+      "n_axis": 400,
+      "n_tri": 60,
+      "center": 1.0367242887184211,
+      "radius": 0.012,
+      "spacing": 0.001,
+      "bits": 96,
+      "profile_n": 150,
+      "tag": "primary",
+      "max_iter": 400
+    },
+    "reproduce": "bash level4/stage_b/reproduce.sh"
+  },
+  "cross_check": {
+    "checks": [
+      {
+        "check": "reflection_symmetry_route_B",
+        "route_A_G": [
+          -2.096593424229772,
+          -2.051280653669451
+        ],
+        "route_B_minus_G_at_minus_e": [
+          -2.0965987193778894,
+          -2.0512915744691225
+        ],
+        "overlap": true,
+        "passed": true,
+        "note": "Lemma L3 requires G(-e) = -G(e); the two certified brackets must intersect. The reflected run drives the opposite CUSUM arm, so it exercises the mirror half of the state space."
+      },
+      {
+        "check": "derivative_evenness_route_B",
+        "route_A_F1p": [
+          0.2202197971425084,
+          1.071336104474525
+        ],
+        "route_B_F1p_at_minus_e": [
+          0.22017061630868817,
+          1.0713634066268112
+        ],
+        "passed": true,
+        "note": "F_1' is even for an odd differentiable F_1 (Lemma L4/L7)."
+      },
+      {
+        "check": "claude_science_bellman",
+        "evidence_class": "NON-RIGOROUS (midpoint-collocation Bellman solver)",
+        "science_F1p": 0.5915457061865803,
+        "certified_F1p": [
+          0.2202197971425084,
+          1.071336104474525
+        ],
+        "passed": true,
+        "science_e_star": 1.0367242887184211,
+        "science_multiplier": 0.34992632250778
+      },
+      {
+        "check": "claude_science_G_at_e_star",
+        "evidence_class": "NON-RIGOROUS",
+        "science_G": -2.0734485774368423,
+        "certified_G": [
+          -2.096593424229772,
+          -2.051280653669451
+        ],
+        "passed": true,
+        "note": "at the Science root, H = 2e + G = 0 exactly, so G = -2 e*."
+      },
+      {
+        "check": "stage_a_monte_carlo",
+        "evidence_class": "NON-RIGOROUS (Monte Carlo)",
+        "stage_a": {
+          "e_star": 1.03695,
+          "e_star_se": 0.00037,
+          "F1prime": 0.5954,
+          "multiplier": 0.3545,
+          "source": "level4 Gate 4.2 full run, STRONG-CANDIDATE at rho=1"
+        },
+        "certified_F1p": [
+          0.2202197971425084,
+          1.071336104474525
+        ],
+        "passed": true
+      }
+    ],
+    "route_A": {
+      "e": 1.0367242887184211,
+      "G_lo": -2.096593424229772,
+      "G_hi": -2.051280653669451,
+      "Gp_lo": -0.7797802028574916,
+      "Gp_hi": 0.07133610447452504,
+      "F1p_lo": 0.2202197971425084,
+      "F1p_hi": 1.071336104474525
+    },
+    "route_B": {
+      "e": -1.0367242887184211,
+      "G_lo": 2.0512915744691225,
+      "G_hi": 2.0965987193778894,
+      "Gp_lo": -0.7798293836913118,
+      "Gp_hi": 0.07136340662681107,
+      "F1p_lo": 0.22017061630868817,
+      "F1p_hi": 1.0713634066268112
+    },
+    "science_branch": [
+      {
+        "rho": 0.08,
+        "e_star": 0.08723485410689283,
+        "F1p": -8.594124522866952,
+        "mult": 0.47269744841307604
+      },
+      {
+        "rho": 0.1,
+        "e_star": 0.14229813287984672,
+        "F1p": -3.8179908470306057,
+        "mult": 0.14577054108009482
+      },
+      {
+        "rho": 0.15,
+        "e_star": 0.2363019361167484,
+        "F1p": -0.19900051564514243,
+        "mult": 0.000891027117608233
+      },
+      {
+        "rho": 0.2,
+        "e_star": 0.3111596538196531,
+        "F1p": 0.5656343770100158,
+        "mult": 0.01279768993822035
+      },
+      {
+        "rho": 0.3,
+        "e_star": 0.4386921099113362,
+        "F1p": 0.8047942045718015,
+        "mult": 0.05829243405411228
+      },
+      {
+        "rho": 0.4,
+        "e_star": 0.549377342666232,
+        "F1p": 0.7907287180304312,
+        "mult": 0.10004030488288787
+      },
+      {
+        "rho": 0.5,
+        "e_star": 0.648469186812485,
+        "F1p": 0.7520126282619666,
+        "mult": 0.14138074826636768
+      },
+      {
+        "rho": 0.6,
+        "e_star": 0.7385549853073494,
+        "F1p": 0.7134541117041482,
+        "mult": 0.18324603702271985
+      },
+      {
+        "rho": 0.7,
+        "e_star": 0.821331315038565,
+        "F1p": 0.6782390547998007,
+        "mult": 0.22540402557330622
+      },
+      {
+        "rho": 0.8,
+        "e_star": 0.8980289801104708,
+        "F1p": 0.6464491723344734,
+        "mult": 0.26745378074363246
+      },
+      {
+        "rho": 0.9,
+        "e_star": 0.9695830335611944,
+        "F1p": 0.6176905164129165,
+        "mult": 0.30904867499382893
+      },
+      {
+        "rho": 1.0,
+        "e_star": 1.0367242887184211,
+        "F1p": 0.5915457061865803,
+        "mult": 0.34992632250778
+      }
+    ],
+    "seconds": 37.62941813468933,
+    "n_passed": 5,
+    "n_checks": 5
+  },
+  "adversarial": {
+    "reference_G": -2.073421227184139,
+    "checks": [
+      {
+        "check": "precision",
+        "question": "does Arb working precision move the bracket?",
+        "rows": [
+          {
+            "bits": 64,
+            "G_lo": -2.102525593782614,
+            "G_hi": -2.0456614534819018,
+            "G_width": 0.05686414030071241,
+            "max_total_mass": 0.9999959641644162,
+            "n_cells": 672,
+            "n_segments": 432278
+          },
+          {
+            "bits": 96,
+            "G_lo": -2.1025255937826106,
+            "G_hi": -2.0456614534819035,
+            "G_width": 0.05686414030070708,
+            "max_total_mass": 0.999995964164416,
+            "n_cells": 672,
+            "n_segments": 432278
+          },
+          {
+            "bits": 160,
+            "G_lo": -2.1025255937826106,
+            "G_hi": -2.0456614534819035,
+            "G_width": 0.05686414030070708,
+            "max_total_mass": 0.999995964164416,
+            "n_cells": 672,
+            "n_segments": 432278
+          },
+          {
+            "bits": 256,
+            "G_lo": -2.1025255937826106,
+            "G_hi": -2.0456614534819035,
+            "G_width": 0.05686414030070708,
+            "max_total_mass": 0.999995964164416,
+            "n_cells": 672,
+            "n_segments": 432278
+          }
+        ],
+        "passed": true,
+        "note": "max shift 3.55e-15 over 64..256 bits"
+      },
+      {
+        "check": "grid_refinement",
+        "question": "does the bracket shrink monotonically and keep containing the reference?",
+        "rows": [
+          {
+            "n_axis": 80,
+            "n_tri": 14,
+            "G_lo": -2.131456006937731,
+            "G_hi": -2.0190761703028484,
+            "G_width": 0.11237983663488249,
+            "max_total_mass": 0.999995964164416,
+            "n_cells": 272,
+            "n_segments": 86033
+          },
+          {
+            "n_axis": 160,
+            "n_tri": 26,
+            "G_lo": -2.1025255937826106,
+            "G_hi": -2.0456614534819035,
+            "G_width": 0.05686414030070708,
+            "max_total_mass": 0.999995964164416,
+            "n_cells": 672,
+            "n_segments": 432278
+          },
+          {
+            "n_axis": 320,
+            "n_tri": 46,
+            "G_lo": -2.08793499506251,
+            "G_hi": -2.0591713804338014,
+            "G_width": 0.028763614628708467,
+            "max_total_mass": 0.999995964164416,
+            "n_cells": 1726,
+            "n_segments": 2232921
+          }
+        ],
+        "passed": true,
+        "note": "widths [0.11238, 0.05686, 0.02876], all contain reference: True"
+      },
+      {
+        "check": "z_cut",
+        "question": "does the tail cut point matter? (it must not: tails are exact)",
+        "rows": [
+          {
+            "z_cut": 8.0,
+            "G_lo": -2.1025255937826106,
+            "G_hi": -2.0456614534819035,
+            "G_width": 0.05686414030070708,
+            "max_total_mass": 0.999995964164416,
+            "n_cells": 672,
+            "n_segments": 432278
+          },
+          {
+            "z_cut": 12.0,
+            "G_lo": -2.1025255937826106,
+            "G_hi": -2.0456614534819035,
+            "G_width": 0.05686414030070708,
+            "max_total_mass": 0.999995964164416,
+            "n_cells": 672,
+            "n_segments": 432278
+          },
+          {
+            "z_cut": 20.0,
+            "G_lo": -2.1025255937826106,
+            "G_hi": -2.0456614534819035,
+            "G_width": 0.05686414030070708,
+            "max_total_mass": 0.999995964164416,
+            "n_cells": 672,
+            "n_segments": 432278
+          }
+        ],
+        "passed": true,
+        "note": "max shift 0.00e+00 over z_cut 8..20"
+      },
+      {
+        "check": "grid_placement",
+        "question": "does the (non-rigorous) grid-placement heuristic change validity?",
+        "rows": [
+          {
+            "kind": "adaptive-from-profile",
+            "G_lo": -2.1025255937826106,
+            "G_hi": -2.0456614534819035,
+            "G_width": 0.05686414030070708,
+            "max_total_mass": 0.999995964164416,
+            "n_cells": 672,
+            "n_segments": 432278
+          },
+          {
+            "kind": "power-law-2.0",
+            "G_lo": -2.1003256510055666,
+            "G_hi": -2.0466640437536183,
+            "G_width": 0.05366160725194824,
+            "max_total_mass": 0.999995964164416,
+            "n_cells": 672,
+            "n_segments": 432143
+          },
+          {
+            "kind": "power-law-3.0",
+            "G_lo": -2.104760924145192,
+            "G_hi": -2.042493679786906,
+            "G_width": 0.0622672443582859,
+            "max_total_mass": 0.9999959641644162,
+            "n_cells": 672,
+            "n_segments": 432340
+          }
+        ],
+        "passed": true,
+        "note": "all three grids contain the reference; widths [0.05686, 0.05366, 0.06227]"
+      },
+      {
+        "check": "profile_resolution",
+        "question": "does the float profile's resolution leak into the certificate?",
+        "rows": [
+          {
+            "profile_n": 60,
+            "G_lo": -2.1023455972634326,
+            "G_hi": -2.045649051271295,
+            "G_width": 0.0566965459921378,
+            "max_total_mass": 0.999995964164416,
+            "n_cells": 672,
+            "n_segments": 431928
+          },
+          {
+            "profile_n": 150,
+            "G_lo": -2.1025255937826106,
+            "G_hi": -2.0456614534819035,
+            "G_width": 0.05686414030070708,
+            "max_total_mass": 0.999995964164416,
+            "n_cells": 672,
+            "n_segments": 432278
+          },
+          {
+            "profile_n": 250,
+            "G_lo": -2.102365929188487,
+            "G_hi": -2.045738166838884,
+            "G_width": 0.05662776234960276,
+            "max_total_mass": 0.9999959641644162,
+            "n_cells": 672,
+            "n_segments": 432355
+          }
+        ],
+        "passed": true,
+        "note": "all contain the reference; widths [0.0567, 0.05686, 0.05663]"
+      },
+      {
+        "check": "backend",
+        "question": "does the certified backend enclose the uncertified one?",
+        "rows": [
+          {
+            "backend": "float",
+            "G_lo": -2.1025255937826115,
+            "G_hi": -2.0456614534819035,
+            "G_width": 0.056864140300707966,
+            "max_total_mass": 0.999995964164416,
+            "n_cells": 672,
+            "n_segments": 432278,
+            "Gp_lo": -0.8775481282958952,
+            "Gp_hi": 0.19700886709821236,
+            "F1p_lo": 0.12245187170410476,
+            "F1p_hi": 1.1970088670982124
+          },
+          {
+            "backend": "arb",
+            "G_lo": -2.1025255937826106,
+            "G_hi": -2.0456614534819035,
+            "G_width": 0.05686414030070708,
+            "max_total_mass": 0.999995964164416,
+            "n_cells": 672,
+            "n_segments": 432278,
+            "Gp_lo": -0.8775481282958956,
+            "Gp_hi": 0.19700886709821033,
+            "F1p_lo": 0.12245187170410443,
+            "F1p_hi": 1.1970088670982104
+          }
+        ],
+        "passed": true,
+        "note": "Arb bracket contains the float bracket for both G and F1'"
+      },
+      {
+        "check": "deliberate_perturbation",
+        "question": "is a value deliberately pushed outside the bracket rejected?",
+        "rows": [
+          {
+            "perturbed_value": -1.9028288062820176,
+            "G_lo": -2.1025255937826106,
+            "G_hi": -2.0456614534819035
+          }
+        ],
+        "passed": true,
+        "note": "a value 3 widths away is correctly outside the bracket"
+      },
+      {
+        "check": "mass_conservation",
+        "question": "is the upper operator sub-stochastic (necessary for contraction)?",
+        "rows": [
+          {
+            "n_axis": 80,
+            "G_lo": -2.1297129659087757,
+            "G_hi": -2.021728257609427,
+            "G_width": 0.10798470829934859,
+            "max_total_mass": 0.999995964164416,
+            "n_cells": 512,
+            "n_segments": 192025
+          },
+          {
+            "n_axis": 160,
+            "G_lo": -2.1025255937826106,
+            "G_hi": -2.0456614534819035,
+            "G_width": 0.05686414030070708,
+            "max_total_mass": 0.999995964164416,
+            "n_cells": 672,
+            "n_segments": 432278
+          },
+          {
+            "n_axis": 320,
+            "G_lo": -2.088988877752324,
+            "G_hi": -2.0580264280454745,
+            "G_width": 0.03096244970684925,
+            "max_total_mass": 0.9999959641644162,
+            "n_cells": 992,
+            "n_segments": 1142690
+          }
+        ],
+        "passed": true,
+        "note": "max total continuation mass 0.99999596"
+      },
+      {
+        "check": "killing_bound",
+        "question": "does the uniform resolvent bound dominate the true sup ARL?",
+        "rows": [
+          {
+            "n": 12,
+            "q_n_lower": 0.6459178337655228,
+            "bound": 18.578214399257735,
+            "true_sup_arl": 9.79773524887694
+          }
+        ],
+        "passed": true,
+        "note": "bound 18.5782 > true sup ARL 9.7977"
+      }
+    ],
+    "n_passed": 9,
+    "n_checks": 9,
+    "seconds": 271.2882390022278
+  }
+}

@@ -1,0 +1,246 @@
+{
+  "suite": "Stage F adversarial",
+  "n_checks": 18,
+  "n_passed": 18,
+  "n_failed": 0,
+  "checks": [
+    {
+      "id": "F1",
+      "check": "all frozen protocol and pre-commitment hashes match",
+      "passed": true,
+      "per_artifact": {
+        "stage_c": {
+          "path": "level4/stage_c/STAGE_C_PROTOCOL.md",
+          "expected": "36bd6ba03a20b7f87dc0eb91c42e5c023c03d7a23cba0c515390d1130b2cedd7",
+          "actual": "36bd6ba03a20b7f87dc0eb91c42e5c023c03d7a23cba0c515390d1130b2cedd7",
+          "match": true
+        },
+        "stage_c1": {
+          "path": "level4/stage_c1/STAGE_C1_PROTOCOL.md",
+          "expected": "7b45c091229387e255b285013a4f7d60fac7c2adad66ba83d69e30c3ef79cbdb",
+          "actual": "7b45c091229387e255b285013a4f7d60fac7c2adad66ba83d69e30c3ef79cbdb",
+          "match": true
+        },
+        "stage_d": {
+          "path": "level4/stage_d/STAGE_D_PROTOCOL.md",
+          "expected": "925adecf08c7234375333a26c3af934b005e0d8b4cfce470b77834d7245e8b2e",
+          "actual": "925adecf08c7234375333a26c3af934b005e0d8b4cfce470b77834d7245e8b2e",
+          "match": true
+        },
+        "stage_e": {
+          "path": "level4/stage_e/STAGE_E_PROTOCOL.md",
+          "expected": "974487019f57c7c319b3bfafcdc20497ab6fca86834ad0d2245a694296ef23cc",
+          "actual": "974487019f57c7c319b3bfafcdc20497ab6fca86834ad0d2245a694296ef23cc",
+          "match": true
+        },
+        "d2_3_step": {
+          "path": "level4/stage_d/notes/D2_3_STEP_PRECOMMIT.md",
+          "expected": "7b7a54c64f4c86334415a03cd45797e7cb8b923d378fa90180a71f1831588dea",
+          "actual": "7b7a54c64f4c86334415a03cd45797e7cb8b923d378fa90180a71f1831588dea",
+          "match": true
+        },
+        "d2_5": {
+          "path": "level4/stage_d/notes/D2_5_PRECOMMIT.md",
+          "expected": "fb6272ef839d7f3b36af3c8a8ace3d3059df7028dda337455b9df6baaf92bba7",
+          "actual": "fb6272ef839d7f3b36af3c8a8ace3d3059df7028dda337455b9df6baaf92bba7",
+          "match": true
+        },
+        "d3_regularity": {
+          "path": "level4/stage_d/notes/D3_REGULARITY.md",
+          "expected": "9eafbcd25870a19e20d5f84c763c5252bd44b3af809de4821d1e99555f93626e",
+          "actual": "9eafbcd25870a19e20d5f84c763c5252bd44b3af809de4821d1e99555f93626e",
+          "match": true
+        }
+      }
+    },
+    {
+      "id": "F2",
+      "check": "all historical stage decisions unchanged",
+      "passed": true,
+      "per_stage": {
+        "stage_c": {
+          "expected": "STAGE-C-PARTIAL",
+          "actual": "STAGE-C-PARTIAL",
+          "match": true
+        },
+        "stage_c1": {
+          "expected": "STAGE-C1-CLOSED-CONFIRMED-SENSITIVITY",
+          "actual": "STAGE-C1-CLOSED-CONFIRMED-SENSITIVITY",
+          "match": true
+        },
+        "stage_d": {
+          "expected": "STAGE-D-PARTIAL",
+          "actual": "STAGE-D-PARTIAL",
+          "match": true
+        },
+        "stage_e": {
+          "expected": "STAGE-E-PARTIAL",
+          "actual": "STAGE-E-PARTIAL",
+          "match": true
+        },
+        "stage_b": {
+          "expected": "STAGE-B-CLOSED-RIGOROUS-PERIOD2",
+          "actual": "STAGE-B-CLOSED-RIGOROUS-PERIOD2",
+          "match": true
+        }
+      }
+    },
+    {
+      "id": "F3",
+      "check": "no historical scientific artifact modified after Stage F began",
+      "passed": true,
+      "content_changed": [],
+      "mtime_touched_but_byte_identical": [
+        "rebaseguard-proof/proofs/audit_report.md"
+      ],
+      "marker_present": true,
+      "note": "mtime-only entries are verification side effects: verify_level_1_3.sh regenerates and restores audit_report.md and reports it byte-identical. Content is checked via git."
+    },
+    {
+      "id": "F4",
+      "check": "final claim ledger contains no unsupported universal language",
+      "passed": true,
+      "hits": [],
+      "ledger_exists": true
+    },
+    {
+      "id": "F5",
+      "check": "no Stage D result described as certified without inheritance",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "id": "F6",
+      "check": "Stage E never described as production or deployment validation",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "id": "F7",
+      "check": "Stage C/D/E PARTIAL labels visible in the final report",
+      "passed": true,
+      "present": {
+        "STAGE-C-PARTIAL": true,
+        "STAGE-D-PARTIAL": true,
+        "STAGE-E-PARTIAL": true
+      },
+      "final_report_exists": true
+    },
+    {
+      "id": "F8",
+      "check": "Stage E 0/3 H-E5 count preserved in artifact and report",
+      "passed": true,
+      "n_tasks_supporting_H_E5": 0,
+      "stated_in_final_report": true
+    },
+    {
+      "id": "F9",
+      "check": "D2.3 FAILED preserved in artifact and final report",
+      "passed": true,
+      "d2_3_status": "FAIL",
+      "mentioned_in_final_report": true
+    },
+    {
+      "id": "F10",
+      "check": "Stage D t3 estimand ambiguity preserved",
+      "passed": true,
+      "t3_status": "AMBIGUOUS",
+      "ambiguous_in_final_report": true
+    },
+    {
+      "id": "F11",
+      "check": "Task C unreliable E2/E3 excluded from every closure claim",
+      "passed": true,
+      "unreliable": [
+        "E2",
+        "E3"
+      ],
+      "H_E1": "UNEVALUABLE",
+      "H_E2": "UNEVALUABLE"
+    },
+    {
+      "id": "F12",
+      "check": "Stage E P3 remains exploratory and excluded from closure",
+      "passed": true,
+      "exploratory_policy_excluded": "P3_moderate_EXPLORATORY"
+    },
+    {
+      "id": "F13",
+      "check": "test-count accounting matches the executable suite",
+      "passed": true,
+      "expected": {
+        "level_1_3": 90,
+        "stage_a": 290,
+        "stage_b": 46,
+        "stage_c": 48,
+        "stage_c1": 36,
+        "stage_d": 72,
+        "stage_e": 59
+      },
+      "actual": {
+        "level_1_3": 90,
+        "stage_a": 290,
+        "stage_b": 46,
+        "stage_c": 48,
+        "stage_c1": 36,
+        "stage_d": 72,
+        "stage_e": 59
+      },
+      "actual_total": 641,
+      "expected_total": 641
+    },
+    {
+      "id": "F14",
+      "check": "every ledger claim cites an artifact",
+      "passed": true,
+      "claims_without_artifact": []
+    },
+    {
+      "id": "F15",
+      "check": "final verdict is mechanically derivable from the reconstruction",
+      "passed": true,
+      "decision": "LEVEL-4-PARTIAL",
+      "allowed": [
+        "LEVEL-4-CLOSED",
+        "LEVEL-4-CLOSED-WITH-LIMITATIONS",
+        "LEVEL-4-PARTIAL",
+        "LEVEL-4-FAILED"
+      ],
+      "has_trace": true,
+      "mandatory_unmet": 5
+    },
+    {
+      "id": "F16",
+      "check": "no forbidden wording appears affirmatively in Stage F artifacts",
+      "passed": true,
+      "hits": []
+    },
+    {
+      "id": "F17",
+      "check": "Stage F did not alter any frozen protocol",
+      "passed": true,
+      "protocols_checked": [
+        "stage_c",
+        "stage_c1",
+        "stage_d",
+        "stage_e"
+      ]
+    },
+    {
+      "id": "F18",
+      "check": "every stage reproduction entry point exists",
+      "passed": true,
+      "entry_points": {
+        "scripts/verify_level_1_3.sh": true,
+        "scripts/verify_level_4.sh": true,
+        "level4/stage_b/reproduce.sh": true,
+        "level4/stage_c/reproduce.sh": true,
+        "level4/stage_c1/reproduce.sh": true,
+        "level4/stage_d/reproduce.sh": true,
+        "level4/stage_e/reproduce.sh": true,
+        "level4/stage_f/reproduce.sh": true
+      }
+    }
+  ],
+  "elapsed_s": 2.5
+}

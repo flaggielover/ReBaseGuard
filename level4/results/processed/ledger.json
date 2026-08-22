@@ -1,0 +1,476 @@
+{
+  "schema": "rebaseguard-level4-ledger/1",
+  "statuses": [
+    "FROZEN-PROVED",
+    "FROZEN-CERTIFIED",
+    "REPRODUCED",
+    "NEW-NUMERICAL",
+    "CANDIDATE",
+    "FAILED-TO-REPRODUCE",
+    "OPEN",
+    "BLOCKED"
+  ],
+  "counts": {
+    "FROZEN-PROVED": 2,
+    "FROZEN-CERTIFIED": 1,
+    "REPRODUCED": 13,
+    "NEW-NUMERICAL": 7,
+    "CANDIDATE": 7,
+    "FAILED-TO-REPRODUCE": 2,
+    "OPEN": 4,
+    "BLOCKED": 0
+  },
+  "entries": [
+    {
+      "id": "F-LEAN-DERIV",
+      "statement": "The differentiation-under-the-expectation identity d/de E[Z_tau exp(-e T_tau - (e^2/2) tau)]|_0 = -E[Z_tau T_tau] is machine-checked in Lean for the frozen detector.",
+      "status": "FROZEN-PROVED",
+      "evidence": [
+        "closure/03_LEAN_VERIFICATION.md"
+      ],
+      "notes": "Quoted unchanged from Level 1-3; Level 4 neither extends nor reinterprets it.",
+      "numbers": {}
+    },
+    {
+      "id": "F-ARB-GAMMA",
+      "statement": "Gamma_CUSUM = E_0[Z_tau T_tau] is enclosed in [3.9243482, 27.8493821] by outward-rounded Arb interval arithmetic.",
+      "status": "FROZEN-CERTIFIED",
+      "evidence": [
+        "closure/04_ARB_CERTIFICATE.md",
+        "rebaseguard-proof/proofs/certificate.json"
+      ],
+      "notes": "",
+      "numbers": {}
+    },
+    {
+      "id": "F-SCORE-IDENTITY",
+      "statement": "The score identity F_1'(0) = 1 - Gamma and the mixed-reuse relation F_rho = rho F_1 are established by human mathematics at Level 2C.",
+      "status": "FROZEN-PROVED",
+      "evidence": [
+        "rebaseguard_phase2c.md"
+      ],
+      "notes": "Level 4 uses these as prediction targets, never as assumptions inside the simulator.",
+      "numbers": {}
+    },
+    {
+      "id": "R-GAMMA",
+      "statement": "An independent Level 4 estimator at e=0 returns Gamma = 15.8857 +/- 0.0202, inside the frozen enclosure and consistent with the frozen diagnostic value 15.8429.",
+      "status": "REPRODUCED",
+      "evidence": [
+        "level4/results/processed/gate4.2-gamma-full-474043206fb4/gamma.json"
+      ],
+      "notes": "",
+      "numbers": {
+        "gamma": 15.885729439983507,
+        "se": 0.02016511418528525
+      }
+    },
+    {
+      "id": "R-ARL0",
+      "statement": "In-control ARL at e=0 measured as 465.55, against the frozen diagnostic value 465.4.",
+      "status": "REPRODUCED",
+      "evidence": [],
+      "notes": "",
+      "numbers": {
+        "arl_0": 465.5477525
+      }
+    },
+    {
+      "id": "R-SINGLE-CYCLE",
+      "statement": "The Level 4 multi-cycle oracle reproduces the frozen single-cycle semantics bit-for-bit: with e0=0 and m=1, cycle 0 equals rebaseguard_certify.model.run_path in tau, Z_tau, T_tau, direction and both terminal arm values.",
+      "status": "REPRODUCED",
+      "evidence": [
+        "level4/tests/test_frozen_correspondence.py"
+      ],
+      "notes": "",
+      "numbers": {}
+    },
+    {
+      "id": "H-ALTERNATION-FRESH",
+      "statement": "Phase-1.5 reported fresh alarm alternation = 0.500; this work measures 0.500 (agreement tolerance \u00b10.020).",
+      "status": "REPRODUCED",
+      "evidence": [
+        "rebaseguard_phase15.md",
+        "level4/results/processed/gate4.1-full-0ef53096975d/headline.csv",
+        "level4/results/processed/gate4.1-full-mgrid-0b107713d71e/headline.csv"
+      ],
+      "notes": "Phase-1.5 carries no code or seeds anywhere in git history, so it is historical-only; this entry records a comparison against a new reproducible baseline, not a re-run of the original.",
+      "numbers": {
+        "historical": 0.5,
+        "observed": 0.49989298929892995,
+        "tolerance": 0.02
+      }
+    },
+    {
+      "id": "H-ALT-M5",
+      "statement": "Phase-1.5 reported alternation, full reuse, `m=5` = 0.920; this work measures 0.921 (agreement tolerance \u00b10.030).",
+      "status": "REPRODUCED",
+      "evidence": [
+        "rebaseguard_phase15.md",
+        "level4/results/processed/gate4.1-full-0ef53096975d/headline.csv",
+        "level4/results/processed/gate4.1-full-mgrid-0b107713d71e/headline.csv"
+      ],
+      "notes": "Phase-1.5 carries no code or seeds anywhere in git history, so it is historical-only; this entry records a comparison against a new reproducible baseline, not a re-run of the original.",
+      "numbers": {
+        "historical": 0.92,
+        "observed": 0.9205202601300649,
+        "tolerance": 0.03
+      }
+    },
+    {
+      "id": "H-ALT-M10",
+      "statement": "Phase-1.5 reported alternation, full reuse, `m=10` = 0.940; this work measures 0.942 (agreement tolerance \u00b10.030).",
+      "status": "REPRODUCED",
+      "evidence": [
+        "rebaseguard_phase15.md",
+        "level4/results/processed/gate4.1-full-0ef53096975d/headline.csv",
+        "level4/results/processed/gate4.1-full-mgrid-0b107713d71e/headline.csv"
+      ],
+      "notes": "Phase-1.5 carries no code or seeds anywhere in git history, so it is historical-only; this entry records a comparison against a new reproducible baseline, not a re-run of the original.",
+      "numbers": {
+        "historical": 0.94,
+        "observed": 0.9421060530265133,
+        "tolerance": 0.03
+      }
+    },
+    {
+      "id": "H-ALT-M50",
+      "statement": "Phase-1.5 reported alternation, full reuse, `m=50` = 0.800; this work measures 0.798 (agreement tolerance \u00b10.030).",
+      "status": "REPRODUCED",
+      "evidence": [
+        "rebaseguard_phase15.md",
+        "level4/results/processed/gate4.1-full-0ef53096975d/headline.csv",
+        "level4/results/processed/gate4.1-full-mgrid-0b107713d71e/headline.csv"
+      ],
+      "notes": "Phase-1.5 carries no code or seeds anywhere in git history, so it is historical-only; this entry records a comparison against a new reproducible baseline, not a re-run of the original.",
+      "numbers": {
+        "historical": 0.8,
+        "observed": 0.797968984492246,
+        "tolerance": 0.03
+      }
+    },
+    {
+      "id": "H-ACF1-M10",
+      "statement": "Phase-1.5 reported ACF lag 1, full reuse, `m=10` = -0.560; this work measures -0.562 (agreement tolerance \u00b10.060).",
+      "status": "REPRODUCED",
+      "evidence": [
+        "rebaseguard_phase15.md",
+        "level4/results/processed/gate4.1-full-0ef53096975d/headline.csv",
+        "level4/results/processed/gate4.1-full-mgrid-0b107713d71e/headline.csv"
+      ],
+      "notes": "Phase-1.5 carries no code or seeds anywhere in git history, so it is historical-only; this entry records a comparison against a new reproducible baseline, not a re-run of the original.",
+      "numbers": {
+        "historical": -0.56,
+        "observed": -0.5619733313127706,
+        "tolerance": 0.06
+      }
+    },
+    {
+      "id": "H-ACF2-M10",
+      "statement": "Phase-1.5 reported ACF lag 2, full reuse, `m=10` = 0.570; this work measures 0.628 (agreement tolerance \u00b10.100).",
+      "status": "REPRODUCED",
+      "evidence": [
+        "rebaseguard_phase15.md",
+        "level4/results/processed/gate4.1-full-0ef53096975d/headline.csv",
+        "level4/results/processed/gate4.1-full-mgrid-0b107713d71e/headline.csv"
+      ],
+      "notes": "Phase-1.5 carries no code or seeds anywhere in git history, so it is historical-only; this entry records a comparison against a new reproducible baseline, not a re-run of the original.",
+      "numbers": {
+        "historical": 0.57,
+        "observed": 0.6275338707295185,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "id": "H-ACF3-M10",
+      "statement": "Phase-1.5 reported ACF lag 3, full reuse, `m=10` = -0.470; this work measures -0.505 (agreement tolerance \u00b10.100).",
+      "status": "REPRODUCED",
+      "evidence": [
+        "rebaseguard_phase15.md",
+        "level4/results/processed/gate4.1-full-0ef53096975d/headline.csv",
+        "level4/results/processed/gate4.1-full-mgrid-0b107713d71e/headline.csv"
+      ],
+      "notes": "Phase-1.5 carries no code or seeds anywhere in git history, so it is historical-only; this entry records a comparison against a new reproducible baseline, not a re-run of the original.",
+      "numbers": {
+        "historical": -0.47,
+        "observed": -0.5054461349325454,
+        "tolerance": 0.1
+      }
+    },
+    {
+      "id": "H-ARL-RATIO-M10",
+      "statement": "Phase-1.5 reported ARL(reuse)/ARL(fresh), `m=10` = 0.480; this work measures 0.492 (agreement tolerance \u00b10.050).",
+      "status": "REPRODUCED",
+      "evidence": [
+        "rebaseguard_phase15.md",
+        "level4/results/processed/gate4.1-full-0ef53096975d/headline.csv",
+        "level4/results/processed/gate4.1-full-mgrid-0b107713d71e/headline.csv"
+      ],
+      "notes": "Phase-1.5 carries no code or seeds anywhere in git history, so it is historical-only; this entry records a comparison against a new reproducible baseline, not a re-run of the original.",
+      "numbers": {
+        "historical": 0.48,
+        "observed": 0.49190798919981615,
+        "tolerance": 0.05
+      }
+    },
+    {
+      "id": "H-ARL-RATIO-M50",
+      "statement": "Phase-1.5 reported ARL(reuse)/ARL(fresh), `m=50` = 0.790; this work measures 0.858 (agreement tolerance \u00b10.050).",
+      "status": "FAILED-TO-REPRODUCE",
+      "evidence": [
+        "rebaseguard_phase15.md",
+        "level4/results/processed/gate4.1-full-0ef53096975d/headline.csv",
+        "level4/results/processed/gate4.1-full-mgrid-0b107713d71e/headline.csv"
+      ],
+      "notes": "Phase-1.5 carries no code or seeds anywhere in git history, so it is historical-only; this entry records a comparison against a new reproducible baseline, not a re-run of the original.",
+      "numbers": {
+        "historical": 0.79,
+        "observed": 0.8582556377317744,
+        "tolerance": 0.05
+      }
+    },
+    {
+      "id": "H-ARL-REUSE-M10",
+      "statement": "Phase-1.5 reported absolute ARL, reuse, `m=10` = 101.0; this work measures 103.7 (agreement tolerance \u00b115.0).",
+      "status": "REPRODUCED",
+      "evidence": [
+        "rebaseguard_phase15.md",
+        "level4/results/processed/gate4.1-full-0ef53096975d/headline.csv",
+        "level4/results/processed/gate4.1-full-mgrid-0b107713d71e/headline.csv"
+      ],
+      "notes": "Phase-1.5 carries no code or seeds anywhere in git history, so it is historical-only; this entry records a comparison against a new reproducible baseline, not a re-run of the original.",
+      "numbers": {
+        "historical": 101.0,
+        "observed": 103.65326999999999,
+        "tolerance": 15.0
+      }
+    },
+    {
+      "id": "H-ARL-FRESH-M10",
+      "statement": "Phase-1.5 reported absolute ARL, fresh, `m=10` = 209.0; this work measures 210.7 (agreement tolerance \u00b125.0).",
+      "status": "REPRODUCED",
+      "evidence": [
+        "rebaseguard_phase15.md",
+        "level4/results/processed/gate4.1-full-0ef53096975d/headline.csv",
+        "level4/results/processed/gate4.1-full-mgrid-0b107713d71e/headline.csv"
+      ],
+      "notes": "Phase-1.5 carries no code or seeds anywhere in git history, so it is historical-only; this entry records a comparison against a new reproducible baseline, not a re-run of the original.",
+      "numbers": {
+        "historical": 209.0,
+        "observed": 210.71678500000002,
+        "tolerance": 25.0
+      }
+    },
+    {
+      "id": "H-FPRIME0",
+      "statement": "Phase-1.5's local slopes F'(0) = -4.51 (m=5), -2.98 (m=10), -0.71 (m=50) could not be recovered and are inconsistent with the frozen Level 1-3 enclosure and with Phase-2B/2C's own Gamma(5) ~ 10.2.",
+      "status": "FAILED-TO-REPRODUCE",
+      "evidence": [
+        "rebaseguard_phase15.md"
+      ],
+      "notes": "Reported rather than reconciled. No attempt was made to force agreement, and no Level 4 conclusion depends on these numbers.",
+      "numbers": {}
+    },
+    {
+      "id": "N-FRESH-CONTROL",
+      "statement": "At m=1, rho=0 the matched fresh control shows alternation 0.4999, lag-1 ACF -0.0009 and sd(E_j) 1.0000 against the exact 1/sqrt(m) = 1.0000 forced by the policy.",
+      "status": "NEW-NUMERICAL",
+      "evidence": [
+        "level4/results/processed/gate4.1-full-0ef53096975d/headline.csv",
+        "level4/results/processed/gate4.1-full-mgrid-0b107713d71e/headline.csv"
+      ],
+      "notes": "",
+      "numbers": {
+        "alternation_rate": 0.49989298929892995,
+        "acf_e_lag1": -0.0008933975696932699,
+        "sd_reference_error": 0.9999947615374758,
+        "cycle_arl": 82.92578899999998
+      }
+    },
+    {
+      "id": "N-ALTERNATION",
+      "statement": "At m=1, rho=1 the alarm-direction alternation rate is 0.8951 [0.8945, 0.8956], far above the independent-alarm value 0.5.",
+      "status": "NEW-NUMERICAL",
+      "evidence": [
+        "level4/results/processed/gate4.1-full-0ef53096975d/headline.csv",
+        "level4/results/processed/gate4.1-full-mgrid-0b107713d71e/headline.csv"
+      ],
+      "notes": "",
+      "numbers": {}
+    },
+    {
+      "id": "N-ACF",
+      "statement": "At m=1, rho=1 the reference-error ACF alternates in sign and decays slowly: -0.4965, +0.3956, -0.3002 at lags 1-3, against ~0 at every lag for the fresh control.",
+      "status": "NEW-NUMERICAL",
+      "evidence": [
+        "level4/results/processed/gate4.1-full-0ef53096975d/headline.csv",
+        "level4/results/processed/gate4.1-full-mgrid-0b107713d71e/headline.csv"
+      ],
+      "notes": "",
+      "numbers": {}
+    },
+    {
+      "id": "N-ARL-NONMONOTONE",
+      "statement": "Cycle ARL is non-monotone in rho at m=1: 82.9 at rho=0, rising to 95.5 at rho=0.25, then falling to 50.1 at rho=1. Partial reuse below the turning point improves on the matched fresh control.",
+      "status": "NEW-NUMERICAL",
+      "evidence": [
+        "level4/results/processed/gate4.1-full-0ef53096975d/headline.csv",
+        "level4/results/processed/gate4.1-full-mgrid-0b107713d71e/headline.csv"
+      ],
+      "notes": "This separates the local stability threshold from any global calibration claim, and contradicts an unconditional reading of 'reuse degrades ARL'.",
+      "numbers": {}
+    },
+    {
+      "id": "N-DERIV-CORRESPONDENCE",
+      "statement": "An independent conditional simulator returns F_1'(0) = -14.9073 +/- 0.0251, agreeing with the score/change-of-measure route (-14.8857 +/- 0.0202) to 0.67 sigma and lying inside the frozen enclosure.",
+      "status": "NEW-NUMERICAL",
+      "evidence": [
+        "level4/results/processed/gate4.2-findings-full-a53a5835e076/findings.json"
+      ],
+      "notes": "This is the Gate 4.2 model-correspondence test. Two Monte Carlo routes plus the frozen enclosure agree.",
+      "numbers": {}
+    },
+    {
+      "id": "N-FD-TRUNCATION",
+      "statement": "A naive central difference of the estimated map is biased by order 0.7 at delta=0.05; the bias scales as delta^2 with a coefficient matching the independently fitted cubic term, so the gap is numerical truncation and not a model discrepancy.",
+      "status": "NEW-NUMERICAL",
+      "evidence": [
+        "level4/results/processed/gate4.2-findings-full-a53a5835e076/findings.json"
+      ],
+      "notes": "",
+      "numbers": {}
+    },
+    {
+      "id": "N-RHO-C",
+      "statement": "The critical reuse fraction is measured as rho_c = 0.06708 [0.06686, 0.06730], inside the enclosure [0.03724, 0.34196] implied by the frozen Gamma enclosure.",
+      "status": "NEW-NUMERICAL",
+      "evidence": [
+        "level4/results/processed/gate4.2-findings-full-a53a5835e076/findings.json"
+      ],
+      "notes": "rho_c governs LOCAL linear stability of the deterministic linearisation at e=0 only. Gate 4.1 shows directly that it is not where cycle ARL or stationary dispersion turns around.",
+      "numbers": {}
+    },
+    {
+      "id": "C-RHO0",
+      "statement": "At rho=0 no statistically supported nonzero root of H_rho was located: NO-CANDIDATE.",
+      "status": "CANDIDATE",
+      "evidence": [
+        "level4/results/processed/gate4.2-findings-full-a53a5835e076/findings.json"
+      ],
+      "notes": "no statistically supported sign change of H_rho away from e = 0 on the coarse grid",
+      "numbers": {}
+    },
+    {
+      "id": "C-RHO0p02",
+      "statement": "At rho=0.02 no statistically supported nonzero root of H_rho was located: NO-CANDIDATE.",
+      "status": "CANDIDATE",
+      "evidence": [
+        "level4/results/processed/gate4.2-findings-full-a53a5835e076/findings.json"
+      ],
+      "notes": "no statistically supported sign change of H_rho away from e = 0 on the coarse grid",
+      "numbers": {}
+    },
+    {
+      "id": "C-RHO0p05",
+      "statement": "At rho=0.05 no statistically supported nonzero root of H_rho was located: NO-CANDIDATE.",
+      "status": "CANDIDATE",
+      "evidence": [
+        "level4/results/processed/gate4.2-findings-full-a53a5835e076/findings.json"
+      ],
+      "notes": "no statistically supported sign change of H_rho away from e = 0 on the coarse grid",
+      "numbers": {}
+    },
+    {
+      "id": "C-RHO0p1",
+      "statement": "At rho=0.1 a nonzero root of H_rho is located at e* = 0.14413 +/- 0.00107 with deterministic 2-cycle multiplier [F'(e*)]^2 = 0.1415. Classification: STRONG-CANDIDATE.",
+      "status": "CANDIDATE",
+      "evidence": [
+        "level4/results/processed/gate4.2-findings-full-a53a5835e076/findings.json"
+      ],
+      "notes": "A candidate period-2 point of the DETERMINISTIC map F_rho. The actual recursion is E_{j+1}=F_rho(E_j)+noise and no claim about its invariant law follows from this entry.",
+      "numbers": {
+        "e_star": 0.14412964469577352,
+        "e_star_se": 0.0010735572678796975,
+        "F_prime_at_e_star": -0.37614193417622677,
+        "two_cycle_multiplier": 0.1414827546458329
+      }
+    },
+    {
+      "id": "C-RHO0p25",
+      "statement": "At rho=0.25 a nonzero root of H_rho is located at e* = 0.37860 +/- 0.00047 with deterministic 2-cycle multiplier [F'(e*)]^2 = 0.0331. Classification: STRONG-CANDIDATE.",
+      "status": "CANDIDATE",
+      "evidence": [
+        "level4/results/processed/gate4.2-findings-full-a53a5835e076/findings.json"
+      ],
+      "notes": "A candidate period-2 point of the DETERMINISTIC map F_rho. The actual recursion is E_{j+1}=F_rho(E_j)+noise and no claim about its invariant law follows from this entry.",
+      "numbers": {
+        "e_star": 0.37859534858614463,
+        "e_star_se": 0.0004741095049718726,
+        "F_prime_at_e_star": 0.18186455886878555,
+        "two_cycle_multiplier": 0.03307471777253797
+      }
+    },
+    {
+      "id": "C-RHO0p5",
+      "statement": "At rho=0.5 a nonzero root of H_rho is located at e* = 0.64953 +/- 0.00045 with deterministic 2-cycle multiplier [F'(e*)]^2 = 0.1392. Classification: STRONG-CANDIDATE.",
+      "status": "CANDIDATE",
+      "evidence": [
+        "level4/results/processed/gate4.2-findings-full-a53a5835e076/findings.json"
+      ],
+      "notes": "A candidate period-2 point of the DETERMINISTIC map F_rho. The actual recursion is E_{j+1}=F_rho(E_j)+noise and no claim about its invariant law follows from this entry.",
+      "numbers": {
+        "e_star": 0.6495311219244684,
+        "e_star_se": 0.00044898930575924725,
+        "F_prime_at_e_star": 0.3730576768257425,
+        "two_cycle_multiplier": 0.13917203023862013
+      }
+    },
+    {
+      "id": "C-RHO1",
+      "statement": "At rho=1 a nonzero root of H_rho is located at e* = 1.03695 +/- 0.00037 with deterministic 2-cycle multiplier [F'(e*)]^2 = 0.3545. Classification: STRONG-CANDIDATE.",
+      "status": "CANDIDATE",
+      "evidence": [
+        "level4/results/processed/gate4.2-findings-full-a53a5835e076/findings.json"
+      ],
+      "notes": "A candidate period-2 point of the DETERMINISTIC map F_rho. The actual recursion is E_{j+1}=F_rho(E_j)+noise and no claim about its invariant law follows from this entry.",
+      "numbers": {
+        "e_star": 1.0369517338632857,
+        "e_star_se": 0.00037370878535387616,
+        "F_prime_at_e_star": 0.5953989790221051,
+        "two_cycle_multiplier": 0.3544999442205652
+      }
+    },
+    {
+      "id": "O-BIMODALITY",
+      "statement": "Whether the invariant law of the noisy recursion is genuinely bimodal rather than merely heavy-shouldered was not measured to a standard that would support a conclusion, and is left open.",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": "",
+      "numbers": {}
+    },
+    {
+      "id": "O-MGRID",
+      "statement": "For m > 1 the frozen Level 1-3 package supplies no interval enclosure of Gamma, and the minimum-dwell convention tau >= m is an inherited choice rather than a derived necessity. All m > 1 results are exploratory.",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": "",
+      "numbers": {}
+    },
+    {
+      "id": "O-GLOBAL",
+      "statement": "Existence, uniqueness and shape of the invariant law, and any global bifurcation statement, remain open. Nothing in Level 4 addresses them.",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": "",
+      "numbers": {}
+    },
+    {
+      "id": "O-OTHER-KH",
+      "statement": "Nothing is claimed for any (k, h) other than (1/2, 5), for non-Gaussian innovations, or for the Shiryaev-Roberts detector track in phase4b/phase4c.",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": "",
+      "numbers": {}
+    }
+  ]
+}

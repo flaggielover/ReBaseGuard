@@ -1,0 +1,165 @@
+{
+  "checks": [
+    {
+      "check": "reflection_symmetry_route_B",
+      "route_A_G": [
+        -2.096593424229772,
+        -2.051280653669451
+      ],
+      "route_B_minus_G_at_minus_e": [
+        -2.0965987193778894,
+        -2.0512915744691225
+      ],
+      "overlap": true,
+      "passed": true,
+      "note": "Lemma L3 requires G(-e) = -G(e); the two certified brackets must intersect. The reflected run drives the opposite CUSUM arm, so it exercises the mirror half of the state space."
+    },
+    {
+      "check": "derivative_evenness_route_B",
+      "route_A_F1p": [
+        0.2202197971425084,
+        1.071336104474525
+      ],
+      "route_B_F1p_at_minus_e": [
+        0.22017061630868817,
+        1.0713634066268112
+      ],
+      "passed": true,
+      "note": "F_1' is even for an odd differentiable F_1 (Lemma L4/L7)."
+    },
+    {
+      "check": "claude_science_bellman",
+      "evidence_class": "NON-RIGOROUS (midpoint-collocation Bellman solver)",
+      "science_F1p": 0.5915457061865803,
+      "certified_F1p": [
+        0.2202197971425084,
+        1.071336104474525
+      ],
+      "passed": true,
+      "science_e_star": 1.0367242887184211,
+      "science_multiplier": 0.34992632250778
+    },
+    {
+      "check": "claude_science_G_at_e_star",
+      "evidence_class": "NON-RIGOROUS",
+      "science_G": -2.0734485774368423,
+      "certified_G": [
+        -2.096593424229772,
+        -2.051280653669451
+      ],
+      "passed": true,
+      "note": "at the Science root, H = 2e + G = 0 exactly, so G = -2 e*."
+    },
+    {
+      "check": "stage_a_monte_carlo",
+      "evidence_class": "NON-RIGOROUS (Monte Carlo)",
+      "stage_a": {
+        "e_star": 1.03695,
+        "e_star_se": 0.00037,
+        "F1prime": 0.5954,
+        "multiplier": 0.3545,
+        "source": "level4 Gate 4.2 full run, STRONG-CANDIDATE at rho=1"
+      },
+      "certified_F1p": [
+        0.2202197971425084,
+        1.071336104474525
+      ],
+      "passed": true
+    }
+  ],
+  "route_A": {
+    "e": 1.0367242887184211,
+    "G_lo": -2.096593424229772,
+    "G_hi": -2.051280653669451,
+    "Gp_lo": -0.7797802028574916,
+    "Gp_hi": 0.07133610447452504,
+    "F1p_lo": 0.2202197971425084,
+    "F1p_hi": 1.071336104474525
+  },
+  "route_B": {
+    "e": -1.0367242887184211,
+    "G_lo": 2.0512915744691225,
+    "G_hi": 2.0965987193778894,
+    "Gp_lo": -0.7798293836913118,
+    "Gp_hi": 0.07136340662681107,
+    "F1p_lo": 0.22017061630868817,
+    "F1p_hi": 1.0713634066268112
+  },
+  "science_branch": [
+    {
+      "rho": 0.08,
+      "e_star": 0.08723485410689283,
+      "F1p": -8.594124522866952,
+      "mult": 0.47269744841307604
+    },
+    {
+      "rho": 0.1,
+      "e_star": 0.14229813287984672,
+      "F1p": -3.8179908470306057,
+      "mult": 0.14577054108009482
+    },
+    {
+      "rho": 0.15,
+      "e_star": 0.2363019361167484,
+      "F1p": -0.19900051564514243,
+      "mult": 0.000891027117608233
+    },
+    {
+      "rho": 0.2,
+      "e_star": 0.3111596538196531,
+      "F1p": 0.5656343770100158,
+      "mult": 0.01279768993822035
+    },
+    {
+      "rho": 0.3,
+      "e_star": 0.4386921099113362,
+      "F1p": 0.8047942045718015,
+      "mult": 0.05829243405411228
+    },
+    {
+      "rho": 0.4,
+      "e_star": 0.549377342666232,
+      "F1p": 0.7907287180304312,
+      "mult": 0.10004030488288787
+    },
+    {
+      "rho": 0.5,
+      "e_star": 0.648469186812485,
+      "F1p": 0.7520126282619666,
+      "mult": 0.14138074826636768
+    },
+    {
+      "rho": 0.6,
+      "e_star": 0.7385549853073494,
+      "F1p": 0.7134541117041482,
+      "mult": 0.18324603702271985
+    },
+    {
+      "rho": 0.7,
+      "e_star": 0.821331315038565,
+      "F1p": 0.6782390547998007,
+      "mult": 0.22540402557330622
+    },
+    {
+      "rho": 0.8,
+      "e_star": 0.8980289801104708,
+      "F1p": 0.6464491723344734,
+      "mult": 0.26745378074363246
+    },
+    {
+      "rho": 0.9,
+      "e_star": 0.9695830335611944,
+      "F1p": 0.6176905164129165,
+      "mult": 0.30904867499382893
+    },
+    {
+      "rho": 1.0,
+      "e_star": 1.0367242887184211,
+      "F1p": 0.5915457061865803,
+      "mult": 0.34992632250778
+    }
+  ],
+  "seconds": 37.62941813468933,
+  "n_passed": 5,
+  "n_checks": 5
+}

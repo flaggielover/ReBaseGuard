@@ -1,0 +1,35 @@
+{
+  "purpose": "the prespecified (N replicates, K change events) ladder referenced by STAGE_C1_PROTOCOL.md section 8",
+  "rule": "take the FIRST rung, in the listed order, whose smoke-estimated bootstrap SE(D_Delta) <= 0.010 at EVERY Delta, subject to N >= 100. The chosen rung is then used for every policy and every shift. Replication is never increased for cells close to passing.",
+  "ladder": [
+    {
+      "N": 100,
+      "K": 50
+    },
+    {
+      "N": 100,
+      "K": 100
+    },
+    {
+      "N": 100,
+      "K": 200
+    },
+    {
+      "N": 200,
+      "K": 200
+    },
+    {
+      "N": 400,
+      "K": 200
+    },
+    {
+      "N": 400,
+      "K": 400
+    }
+  ],
+  "se_target": 0.01,
+  "recorded_before_any_smoke_run": true,
+  "burn_in": 300,
+  "cycles_after_per_block": 1,
+  "cycles_between_blocks": "chosen in smoke by measuring recovery; the same value is then used for every policy and shift"
+}

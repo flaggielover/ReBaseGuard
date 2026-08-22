@@ -1,0 +1,213 @@
+{
+  "suite": "Stage D adversarial",
+  "n_checks": 12,
+  "n_passed": 12,
+  "n_failed": 0,
+  "protocol_sha256": "925adecf08c7234375333a26c3af934b005e0d8b4cfce470b77834d7245e8b2e",
+  "independent_seed_family": 20261002,
+  "checks": [
+    {
+      "id": "A1",
+      "check": "independent seed family 20261002 reproduces Gamma_m",
+      "passed": true,
+      "m": [
+        1,
+        20,
+        100
+      ],
+      "gamma_alt": [
+        15.884348010870529,
+        4.257404234618488,
+        1.7769912011359255
+      ],
+      "n_combined_se": [
+        0.6085034955913271,
+        0.5971225576248527,
+        0.20924862633020408
+      ],
+      "tolerance": "max deviation < 3 SE"
+    },
+    {
+      "id": "A2",
+      "check": "CRN on/off: SR-CUSUM excess has the same sign and magnitude",
+      "passed": true,
+      "difference_crn": 1.360026506067003,
+      "difference_independent": 1.4746328481843456,
+      "se_independent": 0.03995428076069709,
+      "note": "CRN couples the innovation stream, so its SE is not the unpaired SE; only sign and magnitude are compared."
+    },
+    {
+      "id": "A3",
+      "check": "batch bootstrap and normal CI agree at every m",
+      "passed": true,
+      "per_m": [
+        {
+          "m": 1,
+          "width_ratio": 0.7783052277457351,
+          "overlap": true
+        },
+        {
+          "m": 2,
+          "width_ratio": 0.8760440807366774,
+          "overlap": true
+        },
+        {
+          "m": 5,
+          "width_ratio": 0.8603121443281548,
+          "overlap": true
+        },
+        {
+          "m": 10,
+          "width_ratio": 1.0123832537343471,
+          "overlap": true
+        },
+        {
+          "m": 20,
+          "width_ratio": 1.0799098842184345,
+          "overlap": true
+        },
+        {
+          "m": 50,
+          "width_ratio": 0.9021184163816225,
+          "overlap": true
+        },
+        {
+          "m": 75,
+          "width_ratio": 0.9012264549989918,
+          "overlap": true
+        },
+        {
+          "m": 100,
+          "width_ratio": 0.9409658658389716,
+          "overlap": true
+        }
+      ],
+      "tolerance": "overlap and width ratio in (0.5, 2)"
+    },
+    {
+      "id": "A4",
+      "check": "FD discrepancy shrinks at the O(h^2) rate (D2.3 diagnosis)",
+      "passed": true,
+      "observed_orders": [
+        2.0987578860778533,
+        2.0315068567047305,
+        2.016844143631116,
+        2.1105630853170485,
+        2.046019813629393,
+        1.7554196487424552,
+        1.600860547537937,
+        1.8416333459991219
+      ],
+      "mean_order": 1.937700665954957,
+      "note": "This check validates the DIAGNOSIS of the D2.3 failure. It does NOT convert D2.3 into a pass; D2.3 remains FAILED."
+    },
+    {
+      "id": "A5",
+      "check": "Gamma_SR is stable under threshold recalibration uncertainty",
+      "passed": true,
+      "threshold_used": 520.6699142636397,
+      "threshold_primary": 520.886133602749,
+      "gamma_at_alt_threshold": 17.199777014470705,
+      "gamma_primary": 17.319830589555345,
+      "abs_change": 0.12005357508463987,
+      "tolerance": "abs change < 0.5"
+    },
+    {
+      "id": "A6",
+      "check": "m* is insensitive to the interpolation method",
+      "passed": true,
+      "linear_in_log_m": 72.18925933962045,
+      "linear_in_m": 72.64487495045262,
+      "local_quadratic_in_log_m": 69.79593831313372,
+      "bracket": [
+        50.0,
+        75.0
+      ],
+      "spread": 0.4556156108321687,
+      "tolerance": "spread < 10% of m*",
+      "note": "The BRACKET, not the interpolated point, is the primary object."
+    },
+    {
+      "id": "A7",
+      "check": "convention B equals the lag decomposition; convention A does not",
+      "passed": true,
+      "decomposed_first_10_mean": 7.058602648549789,
+      "gamma_10_convention_B": 7.058602648549799,
+      "gamma_10_convention_A": 7.081820845901741,
+      "note": "The blueprint's closed form holds for B by construction and is FALSE for the frozen convention A -- see notes/CORRESPONDENCE_AUDIT.md Addendum A1."
+    },
+    {
+      "id": "A8",
+      "check": "tau < m paths are handled and drive the A/B divergence",
+      "passed": true,
+      "P(tau > 100)": 0.81643,
+      "P(tau <= 100)": 0.18357,
+      "gamma_B_over_gamma_A_at_m100": 0.8155712296199291,
+      "note": "B <= A because B keeps denominator m on short cycles. A ratio of exactly 1 would mean the edge case never occurs."
+    },
+    {
+      "id": "A9",
+      "check": "4M-cycle run agrees with the 2M primary",
+      "passed": true,
+      "gamma_4M": 15.853926373023056,
+      "se_4M": 0.02017762180175196,
+      "gamma_primary": 15.854358425605843,
+      "n_combined_se": 0.012365078467462641,
+      "tolerance": "< 3 SE"
+    },
+    {
+      "id": "A10",
+      "check": "Gamma at m=1 lies inside the Stage B certified enclosure",
+      "passed": true,
+      "gamma_m1": 15.854358425605843,
+      "certified_enclosure": [
+        3.9243482,
+        27.8493821
+      ],
+      "note": "A Monte Carlo value sitting inside a certified enclosure is a consistency check on this simulator. It adds nothing to the certificate."
+    },
+    {
+      "id": "A11",
+      "check": "no measured outcome value is hard-coded in executable source",
+      "passed": true,
+      "n_values_scanned": 19,
+      "values_scanned": [
+        "1.03672",
+        "1.037",
+        "1.40369",
+        "1.404",
+        "100.4",
+        "100.407",
+        "15.8452",
+        "15.85",
+        "15.8544",
+        "15.8671",
+        "15.87",
+        "17.3198",
+        "17.32",
+        "465.6",
+        "465.608",
+        "520.886",
+        "520.9",
+        "72.1893",
+        "72.19"
+      ],
+      "hits": [],
+      "exempt": [
+        "adversarial_d.py"
+      ],
+      "note": "Values are derived from the results files at 4 and 6 significant figures. Docstrings and comments are stripped; executable code is not."
+    },
+    {
+      "id": "A12",
+      "check": "frozen protocol hash still matches",
+      "passed": true,
+      "expected": "925adecf08c7234375333a26c3af934b005e0d8b4cfce470b77834d7245e8b2e",
+      "actual": "925adecf08c7234375333a26c3af934b005e0d8b4cfce470b77834d7245e8b2e"
+    }
+  ],
+  "evidence_status": "NEW-NUMERICAL",
+  "python": "3.14.5",
+  "numpy": "2.5.2",
+  "elapsed_s": 144.0
+}

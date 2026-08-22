@@ -1,0 +1,143 @@
+{
+  "schema": "rebaseguard-level4-ledger/1",
+  "statuses": [
+    "FROZEN-PROVED",
+    "FROZEN-CERTIFIED",
+    "RIGOROUS-CERTIFIED",
+    "REPRODUCED",
+    "NEW-NUMERICAL",
+    "CANDIDATE",
+    "FAILED-TO-REPRODUCE",
+    "OPEN",
+    "BLOCKED"
+  ],
+  "counts": {
+    "FROZEN-PROVED": 0,
+    "FROZEN-CERTIFIED": 1,
+    "RIGOROUS-CERTIFIED": 7,
+    "REPRODUCED": 0,
+    "NEW-NUMERICAL": 0,
+    "CANDIDATE": 0,
+    "FAILED-TO-REPRODUCE": 0,
+    "OPEN": 3,
+    "BLOCKED": 0
+  },
+  "entries": [
+    {
+      "id": "SB-F1",
+      "statement": "Frozen Level 1-3 remains unchanged: the Lean derivative identity and the Arb enclosure of Gamma are quoted, not re-derived, and no frozen artifact was modified.",
+      "status": "FROZEN-CERTIFIED",
+      "evidence": [
+        "closure/04_ARB_CERTIFICATE.md"
+      ],
+      "notes": "",
+      "numbers": {}
+    },
+    {
+      "id": "SB-L1",
+      "statement": "Live-region enclosure: every reachable pre-alarm state lies on the two axes or in the open triangle p+m < h-2k, and the region is forward invariant.",
+      "status": "RIGOROUS-CERTIFIED",
+      "evidence": [
+        "level4/stage_b/theorem.md"
+      ],
+      "notes": "Elementary proof; identical to the frozen certificate's reachable_domain. Also checked on the actual grid: the builder raises if a continuation segment escapes.",
+      "numbers": {}
+    },
+    {
+      "id": "SB-L2",
+      "statement": "Uniform killing: P_s(tau <= n) >= q_n(e) for every live s, hence sup_s E_s[tau] <= n/q_n and the resolvent bound ||(I-K_e)^-1|| <= 18.5782.",
+      "status": "RIGOROUS-CERTIFIED",
+      "evidence": [
+        "level4/stage_b/src/killing.py"
+      ],
+      "notes": "",
+      "numbers": {
+        "resolvent": 18.578214399257735
+      }
+    },
+    {
+      "id": "SB-L3",
+      "statement": "Odd symmetry F_1(-e) = -F_1(e) is proved analytically by the innovation-negation / arm-swap involution, not assumed and not merely observed numerically.",
+      "status": "RIGOROUS-CERTIFIED",
+      "evidence": [
+        "level4/stage_b/theorem.md"
+      ],
+      "notes": "This is what makes lambda_2 = [F_1'(e*)]^2 legitimate rather than requiring two independent derivative enclosures.",
+      "numbers": {}
+    },
+    {
+      "id": "SB-C1",
+      "statement": "G(e) = E_e[z_tau] is rigorously enclosed at every mesh point; at the mesh the bracket width on G is at most 0.023029.",
+      "status": "RIGOROUS-CERTIFIED",
+      "evidence": [
+        "level4/stage_b/certificate/period2_certificate.json"
+      ],
+      "notes": "",
+      "numbers": {}
+    },
+    {
+      "id": "SB-C2",
+      "statement": "F_1'(e) is rigorously enclosed over the certified interval: F_1'(I) in [0.32886, 0.91243].",
+      "status": "RIGOROUS-CERTIFIED",
+      "evidence": [
+        "level4/stage_b/certificate/period2_certificate.json"
+      ],
+      "notes": "",
+      "numbers": {
+        "F1prime_lo": 0.3288580785290074,
+        "F1prime_hi": 0.9124317536230871
+      }
+    },
+    {
+      "id": "SB-C3",
+      "statement": "H(e) = F_1(e) + e has exactly one zero in I = [1.028724, 1.044724], and 0 is not in I.",
+      "status": "RIGOROUS-CERTIFIED",
+      "evidence": [
+        "level4/stage_b/certificate/period2_certificate.json"
+      ],
+      "notes": "",
+      "numbers": {
+        "I_lo": 1.0287242887184211,
+        "I_hi": 1.0447242887184212,
+        "Hprime_min": 1.3288580785290072
+      }
+    },
+    {
+      "id": "SB-C4",
+      "statement": "The period-2 multiplier satisfies lambda_2 in [0.10815, 0.83253], so |lambda_2| < 1 and the orbit is locally attracting.",
+      "status": "RIGOROUS-CERTIFIED",
+      "evidence": [
+        "level4/stage_b/certificate/period2_certificate.json"
+      ],
+      "notes": "",
+      "numbers": {
+        "lambda2_lo": 0.10814763581379079,
+        "lambda2_hi": 0.832531705019702
+      }
+    },
+    {
+      "id": "SB-SCOPE-NOISE",
+      "statement": "Nothing here concerns the stochastic recursion E_{j+1} = F_1(E_j) + noise: its invariant law, bimodality and any period-2 behaviour of the noisy chain remain untouched.",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": "",
+      "numbers": {}
+    },
+    {
+      "id": "SB-SCOPE-RHO",
+      "statement": "Only rho = 1 is treated. The rho < 1 branch, the approach to rho_c, m > 1, other (k,h) and non-Gaussian innovations are all untouched.",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": "",
+      "numbers": {}
+    },
+    {
+      "id": "SB-SCOPE-GLOBAL",
+      "statement": "Uniqueness is asserted only inside the stated interval I. No global uniqueness of the period-2 orbit is asserted.",
+      "status": "OPEN",
+      "evidence": [],
+      "notes": "",
+      "numbers": {}
+    }
+  ]
+}

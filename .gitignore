@@ -59,3 +59,12 @@ scratch/
 tmp/
 *.tmp
 *.bak
+level4/stage_e/data/_cache/
+
+# --- Stage A raw Monte Carlo cycle data (944 MB, 119 parquet files) ----------
+# NOT deleted and NOT scientific evidence loss: every summary, manifest,
+# decision and ledger lives in level4/results/processed/ and IS tracked, no
+# test or reproduce script reads raw/, and Stage A is fully seeded and
+# regenerable via level4 reproduce scripts. Committing ~1 GB of regenerable
+# intermediate data would be an archival defect.
+level4/results/raw/

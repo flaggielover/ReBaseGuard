@@ -1,0 +1,392 @@
+{
+  "experiment_id": "4.1-pilot-cfa82c38157a",
+  "gate": "4.1",
+  "stage": "pilot",
+  "utc_timestamp": "2026-08-20T14:54:14.207794+00:00",
+  "proof_role": "NON-RIGOROUS NUMERICAL DIAGNOSTIC \u2014 NOT PROOF EVIDENCE",
+  "git": {
+    "commit": "9077c9b66e837f9f687d6dc117306da3f4417efb",
+    "branch": "main",
+    "dirty": true,
+    "dirty_paths": [
+      "?? level4/"
+    ]
+  },
+  "environment": {
+    "python": "3.14.5 (v3.14.5:5607950ef23, May 10 2026, 07:38:09) [Clang 21.0.0 (clang-2100.0.123.102)]",
+    "python_short": "3.14.5",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "machine": "arm64",
+    "numpy": "2.5.2",
+    "scipy": "1.18.0",
+    "pyarrow": "25.0.1",
+    "matplotlib": "3.11.1"
+  },
+  "code_sha256": {
+    "__init__.py": "a65418ed6b41f18e84c27c91c0e65edd2d651254c3950c76af14c444399b2699",
+    "analysis.py": "7a260455ffecfab163a4f9021724948de6d764e889ec32ab32392b6e9e139f8f",
+    "campaigns.py": "adaea4f497ccd1acf330b43793766b9a2679dde48558ab5c16be061d452248ea",
+    "conditional.py": "d78346a83a31224dd68e9ca955cb1dc76723bcfc738fb08800ccbe7d85ece719",
+    "figures.py": "d013e341c30069f7d5e90ad5034b840834f588390edbe59801daf91125e65cf0",
+    "frozen.py": "777681ea32842ff48224b4c51ff7a2a26525d5a44d815d521949a6242baa6c54",
+    "ledger.py": "28bcc763c63fe28530b0a9f76b19d43fe6ce3604e52cebf67c9e9d78280f7104",
+    "metrics.py": "064db98786da9fbf607dfefc6ab866a331019561c446defb985b2283cd0278ac",
+    "multicycle.py": "dc5da37c4fb754f0899a5cf4d615cd780947a9e224ec42a9d792da8116812334",
+    "provenance.py": "69dcf9efbabdcaad2312eabf3f5357ba1d349584e1033566ecfa29a23406a557",
+    "reference.py": "1aee8eeaf41dc784b313764aad576bad9b6353791c0a365d2452a217c147b950",
+    "storage.py": "873a46fc177eacf7aa5cc58217a394e7cc5e5348c46f5654c380157c0a7b826b",
+    "streams.py": "b38a307a808384cb6aa42532d48a10ba0bf4883fb5d3f587b0ac4b6a77450aae",
+    "__combined__": "bcc8be9991c8ac40be213f17d28a32f9789b8e5ce1a1ef16e96892bd2f485a58"
+  },
+  "config": {
+    "gate": "4.1",
+    "stage": "pilot",
+    "rho_values": [
+      0.0,
+      0.02,
+      0.05,
+      0.1,
+      0.25,
+      0.5,
+      1.0
+    ],
+    "m_values": [
+      1,
+      5,
+      10,
+      20,
+      50
+    ],
+    "n_replicates": 20,
+    "n_cycles": 500,
+    "burn_in": 200,
+    "master_seed": 20260820,
+    "n_bootstrap": 2000,
+    "e0": 0.0,
+    "detector": "frozen_two_sided_cusum",
+    "k": 0.5,
+    "h": 5.0
+  },
+  "config_sha256": "cfa82c38157a1ac7bad197053b86f7a93028666857a5e6d2cfaf655aa91a0273",
+  "streams": [],
+  "extra": {
+    "campaign_id": "gate4.1-pilot-cfa82c38157a",
+    "cells": [
+      {
+        "cell_id": "gate4.1-pilot-bfedb977d6dc",
+        "m": 1,
+        "rho": 0.0,
+        "policy": "fresh",
+        "simulation_seconds": 1.4267609119415283,
+        "n_lockstep_iterations": 66605,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m1_rho0.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-ff22504077fb",
+        "m": 1,
+        "rho": 0.02,
+        "policy": "partial_reuse",
+        "simulation_seconds": 1.4476001262664795,
+        "n_lockstep_iterations": 69143,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m1_rho0.02.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-df9d386a0c6b",
+        "m": 1,
+        "rho": 0.05,
+        "policy": "partial_reuse",
+        "simulation_seconds": 1.4417898654937744,
+        "n_lockstep_iterations": 69145,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m1_rho0.05.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-6dc3eb442942",
+        "m": 1,
+        "rho": 0.1,
+        "policy": "partial_reuse",
+        "simulation_seconds": 1.5330359935760498,
+        "n_lockstep_iterations": 74859,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m1_rho0.1.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-d93494ce4252",
+        "m": 1,
+        "rho": 0.25,
+        "policy": "partial_reuse",
+        "simulation_seconds": 1.6450469493865967,
+        "n_lockstep_iterations": 80272,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m1_rho0.25.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-26cc5a98e2ae",
+        "m": 1,
+        "rho": 0.5,
+        "policy": "partial_reuse",
+        "simulation_seconds": 1.4072489738464355,
+        "n_lockstep_iterations": 66679,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m1_rho0.5.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-70db68c1d113",
+        "m": 1,
+        "rho": 1.0,
+        "policy": "full_reuse",
+        "simulation_seconds": 1.0106971263885498,
+        "n_lockstep_iterations": 44443,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m1_rho1.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-ace7b3bd1a2b",
+        "m": 5,
+        "rho": 0.0,
+        "policy": "fresh",
+        "simulation_seconds": 2.636596918106079,
+        "n_lockstep_iterations": 132726,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m5_rho0.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-47cd9537dab7",
+        "m": 5,
+        "rho": 0.02,
+        "policy": "partial_reuse",
+        "simulation_seconds": 2.6100611686706543,
+        "n_lockstep_iterations": 132726,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m5_rho0.02.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-dbf86c2acb83",
+        "m": 5,
+        "rho": 0.05,
+        "policy": "partial_reuse",
+        "simulation_seconds": 2.6280860900878906,
+        "n_lockstep_iterations": 132344,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m5_rho0.05.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-ca0b95d6a9c0",
+        "m": 5,
+        "rho": 0.1,
+        "policy": "partial_reuse",
+        "simulation_seconds": 2.6796212196350098,
+        "n_lockstep_iterations": 136261,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m5_rho0.1.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-97292ca27f72",
+        "m": 5,
+        "rho": 0.25,
+        "policy": "partial_reuse",
+        "simulation_seconds": 2.6065120697021484,
+        "n_lockstep_iterations": 130827,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m5_rho0.25.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-41be98d7d057",
+        "m": 5,
+        "rho": 0.5,
+        "policy": "partial_reuse",
+        "simulation_seconds": 2.0722498893737793,
+        "n_lockstep_iterations": 101381,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m5_rho0.5.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-e866825ee0b8",
+        "m": 5,
+        "rho": 1.0,
+        "policy": "full_reuse",
+        "simulation_seconds": 1.4430997371673584,
+        "n_lockstep_iterations": 64383,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m5_rho1.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-fc82ef72057c",
+        "m": 10,
+        "rho": 0.0,
+        "policy": "fresh",
+        "simulation_seconds": 3.255326986312866,
+        "n_lockstep_iterations": 168886,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m10_rho0.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-50edbc856820",
+        "m": 10,
+        "rho": 0.02,
+        "policy": "partial_reuse",
+        "simulation_seconds": 3.2096340656280518,
+        "n_lockstep_iterations": 166242,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m10_rho0.02.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-5164f7936693",
+        "m": 10,
+        "rho": 0.05,
+        "policy": "partial_reuse",
+        "simulation_seconds": 3.3688178062438965,
+        "n_lockstep_iterations": 169233,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m10_rho0.05.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-a18681a54032",
+        "m": 10,
+        "rho": 0.1,
+        "policy": "partial_reuse",
+        "simulation_seconds": 3.463092088699341,
+        "n_lockstep_iterations": 169855,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m10_rho0.1.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-3bfe6fc600ec",
+        "m": 10,
+        "rho": 0.25,
+        "policy": "partial_reuse",
+        "simulation_seconds": 3.3095977306365967,
+        "n_lockstep_iterations": 170717,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m10_rho0.25.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-2f88f2a8207a",
+        "m": 10,
+        "rho": 0.5,
+        "policy": "partial_reuse",
+        "simulation_seconds": 2.1865408420562744,
+        "n_lockstep_iterations": 124365,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m10_rho0.5.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-dad32849cf6b",
+        "m": 10,
+        "rho": 1.0,
+        "policy": "full_reuse",
+        "simulation_seconds": 1.2662510871887207,
+        "n_lockstep_iterations": 80369,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m10_rho1.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-c7bef51cf5ad",
+        "m": 20,
+        "rho": 0.0,
+        "policy": "fresh",
+        "simulation_seconds": 2.802949905395508,
+        "n_lockstep_iterations": 203031,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m20_rho0.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-d5c94d448aec",
+        "m": 20,
+        "rho": 0.02,
+        "policy": "partial_reuse",
+        "simulation_seconds": 2.7544970512390137,
+        "n_lockstep_iterations": 201126,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m20_rho0.02.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-89172df661f4",
+        "m": 20,
+        "rho": 0.05,
+        "policy": "partial_reuse",
+        "simulation_seconds": 2.9723780155181885,
+        "n_lockstep_iterations": 215448,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m20_rho0.05.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-d2c14e240618",
+        "m": 20,
+        "rho": 0.1,
+        "policy": "partial_reuse",
+        "simulation_seconds": 3.0204522609710693,
+        "n_lockstep_iterations": 221916,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m20_rho0.1.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-bd89c45a30ed",
+        "m": 20,
+        "rho": 0.25,
+        "policy": "partial_reuse",
+        "simulation_seconds": 2.914562940597534,
+        "n_lockstep_iterations": 215171,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m20_rho0.25.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-cc575b4daa2b",
+        "m": 20,
+        "rho": 0.5,
+        "policy": "partial_reuse",
+        "simulation_seconds": 2.765933036804199,
+        "n_lockstep_iterations": 194810,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m20_rho0.5.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-5230290be1e1",
+        "m": 20,
+        "rho": 1.0,
+        "policy": "full_reuse",
+        "simulation_seconds": 2.2666738033294678,
+        "n_lockstep_iterations": 132176,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m20_rho1.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-bd81a8baa811",
+        "m": 50,
+        "rho": 0.0,
+        "policy": "fresh",
+        "simulation_seconds": 5.465170383453369,
+        "n_lockstep_iterations": 265952,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m50_rho0.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-581e8e81fe55",
+        "m": 50,
+        "rho": 0.02,
+        "policy": "partial_reuse",
+        "simulation_seconds": 9.458041191101074,
+        "n_lockstep_iterations": 271109,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m50_rho0.02.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-7b9d58027fd1",
+        "m": 50,
+        "rho": 0.05,
+        "policy": "partial_reuse",
+        "simulation_seconds": 7.838892698287964,
+        "n_lockstep_iterations": 277086,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m50_rho0.05.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-701f43f56de0",
+        "m": 50,
+        "rho": 0.1,
+        "policy": "partial_reuse",
+        "simulation_seconds": 8.069715976715088,
+        "n_lockstep_iterations": 279605,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m50_rho0.1.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-a5683c1b109b",
+        "m": 50,
+        "rho": 0.25,
+        "policy": "partial_reuse",
+        "simulation_seconds": 7.581881761550903,
+        "n_lockstep_iterations": 287926,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m50_rho0.25.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-4912942c2f80",
+        "m": 50,
+        "rho": 0.5,
+        "policy": "partial_reuse",
+        "simulation_seconds": 8.54357099533081,
+        "n_lockstep_iterations": 287322,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m50_rho0.5.parquet"
+      },
+      {
+        "cell_id": "gate4.1-pilot-21ecaaad61ee",
+        "m": 50,
+        "rho": 1.0,
+        "policy": "full_reuse",
+        "simulation_seconds": 5.940525770187378,
+        "n_lockstep_iterations": 231944,
+        "raw_path": "/Users/suzhe/ReBaseGuard/level4/results/raw/gate4.1-pilot-cfa82c38157a/cycles_m50_rho1.parquet"
+      }
+    ]
+  }
+}

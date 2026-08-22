@@ -1,0 +1,430 @@
+{
+  "suite": "Stage E adversarial",
+  "n_checks": 14,
+  "n_passed": 14,
+  "n_failed": 0,
+  "protocol_sha256": "974487019f57c7c319b3bfafcdc20497ab6fca86834ad0d2245a694296ef23cc",
+  "independent_rerun_seed": 20261103,
+  "checks": [
+    {
+      "id": "A1",
+      "check": "Stage E protocol hash unchanged",
+      "passed": true,
+      "expected": "974487019f57c7c319b3bfafcdc20497ab6fca86834ad0d2245a694296ef23cc",
+      "actual": "974487019f57c7c319b3bfafcdc20497ab6fca86834ad0d2245a694296ef23cc"
+    },
+    {
+      "id": "A2",
+      "check": "Stage E seeds disjoint from prior work; splits contiguous",
+      "passed": true,
+      "stage_e_seeds": [
+        20261101,
+        20261102,
+        20261103
+      ],
+      "overlap_with_prior": [],
+      "per_task": {
+        "electricity": {
+          "split": {
+            "train": [
+              0,
+              13594
+            ],
+            "calib": [
+              13594,
+              22656
+            ],
+            "eval": [
+              22656,
+              45312
+            ]
+          },
+          "contiguous_and_complete": true
+        },
+        "air_quality": {
+          "split": {
+            "train": [
+              0,
+              2697
+            ],
+            "calib": [
+              2697,
+              4495
+            ],
+            "eval": [
+              4495,
+              8991
+            ]
+          },
+          "contiguous_and_complete": true
+        },
+        "bike_sharing": {
+          "split": {
+            "train": [
+              0,
+              5214
+            ],
+            "calib": [
+              5214,
+              8690
+            ],
+            "eval": [
+              8690,
+              17379
+            ]
+          },
+          "contiguous_and_complete": true
+        }
+      }
+    },
+    {
+      "id": "A3",
+      "check": "model, scale and threshold use no evaluation or future data",
+      "passed": true,
+      "per_task": {
+        "electricity": {
+          "calibration_block": [
+            13594,
+            22656
+          ],
+          "eval": [
+            22656,
+            45312
+          ],
+          "grid_range": [
+            24922,
+            43042
+          ],
+          "leak": false
+        },
+        "air_quality": {
+          "calibration_block": [
+            2697,
+            4495
+          ],
+          "eval": [
+            4495,
+            8991
+          ],
+          "grid_range": [
+            4945,
+            8536
+          ],
+          "leak": false
+        },
+        "bike_sharing": {
+          "calibration_block": [
+            5214,
+            8690
+          ],
+          "eval": [
+            8690,
+            17379
+          ],
+          "grid_range": [
+            9559,
+            16510
+          ],
+          "leak": false
+        }
+      }
+    },
+    {
+      "id": "A4",
+      "check": "fresh control has rho = 0 and well-formed positive cycles",
+      "passed": true,
+      "per_task": {
+        "electricity": {
+          "rho": 0.0,
+          "n_cycles": 111,
+          "mean_cycle": 174.00900900900902,
+          "ok": true
+        },
+        "air_quality": {
+          "rho": 0.0,
+          "n_cycles": 22,
+          "mean_cycle": 159.86363636363637,
+          "ok": true
+        },
+        "bike_sharing": {
+          "rho": 0.0,
+          "n_cycles": 7,
+          "mean_cycle": 932.7142857142857,
+          "ok": true
+        }
+      }
+    },
+    {
+      "id": "A5",
+      "check": "calibration on calibration block only, fresh policy, within 5% of the frozen target",
+      "passed": true,
+      "per_task": {
+        "electricity": {
+          "h": 36.713606728189475,
+          "achieved_arl0": 256.0782122905028,
+          "ci": [
+            212.54106145251396,
+            299.7326815642458
+          ],
+          "relative_error": 0.024312849162011263,
+          "policy_used": "fresh (rho = 0)",
+          "within_5pct": true
+        },
+        "air_quality": {
+          "h": 32.17116785863762,
+          "achieved_arl0": 245.56666666666666,
+          "ci": [
+            201.73333333333332,
+            287.00083333333333
+          ],
+          "relative_error": -0.01773333333333338,
+          "policy_used": "fresh (rho = 0)",
+          "within_5pct": true
+        },
+        "bike_sharing": {
+          "h": 15.199641266219569,
+          "achieved_arl0": 260.15384615384613,
+          "ci": [
+            209.75384615384615,
+            325.0946153846154
+          ],
+          "relative_error": 0.0406153846153845,
+          "policy_used": "fresh (rho = 0)",
+          "within_5pct": true
+        }
+      }
+    },
+    {
+      "id": "A6",
+      "check": "full reuse reproduces on an independent injection-grid seed",
+      "passed": true,
+      "tolerance": "< 3 pooled SE",
+      "per_task": {
+        "electricity": {
+          "rerun_seed": 20261103,
+          "mean_rerun": 110.55833333333334,
+          "mean_original": 116.56666666666666,
+          "n_se": 0.25988925697540005
+        },
+        "air_quality": {
+          "rerun_seed": 20261103,
+          "mean_rerun": 55.375,
+          "mean_original": 78.83333333333333,
+          "n_se": 1.2084358049446793
+        },
+        "bike_sharing": {
+          "rerun_seed": 20261103,
+          "mean_rerun": 56.45652173913044,
+          "mean_original": 57.52173913043478,
+          "n_se": 0.052760085411997636
+        }
+      }
+    },
+    {
+      "id": "A7",
+      "check": "P2 rho is the frozen Stage C constant; no measured outcome is hard-coded in executable source",
+      "passed": true,
+      "rho_p2": 0.029796,
+      "rho_is_frozen_stage_c_constant": true,
+      "values_scanned": [
+        "0.2564",
+        "0.2718",
+        "1.008",
+        "15.2",
+        "32.17",
+        "36.71"
+      ],
+      "hits": []
+    },
+    {
+      "id": "A8",
+      "check": "policies differ ONLY in rho; stream, model, scale, threshold, grid and m are shared",
+      "passed": true,
+      "per_task": {
+        "electricity": {
+          "shared_threshold": 36.713606728189475,
+          "shared_scale": 0.3520898498506049,
+          "shared_m": 20,
+          "shared_model": "logistic",
+          "n_grid_points": 120,
+          "distinct_rhos": [
+            0.0,
+            0.029796,
+            0.3,
+            1.0
+          ],
+          "only_rho_differs": true
+        },
+        "air_quality": {
+          "shared_threshold": 32.17116785863762,
+          "shared_scale": 0.7467002344750996,
+          "shared_m": 20,
+          "shared_model": "ridge",
+          "n_grid_points": 24,
+          "distinct_rhos": [
+            0.0,
+            0.029796,
+            0.3,
+            1.0
+          ],
+          "only_rho_differs": true
+        },
+        "bike_sharing": {
+          "shared_threshold": 15.199641266219569,
+          "shared_scale": 0.8361668959104831,
+          "shared_m": 20,
+          "shared_model": "ridge",
+          "n_grid_points": 46,
+          "distinct_rhos": [
+            0.0,
+            0.029796,
+            0.3,
+            1.0
+          ],
+          "only_rho_differs": true
+        }
+      }
+    },
+    {
+      "id": "A9",
+      "check": "halving the event count moves E4 by less than 3 SE",
+      "passed": true,
+      "per_task": {
+        "electricity": {
+          "n_full": 120,
+          "n_half": 60,
+          "mean_full": 124.425,
+          "mean_half": 116.21666666666667,
+          "n_se": 0.2853149062779211
+        },
+        "air_quality": {
+          "n_full": 24,
+          "n_half": 12,
+          "mean_full": 62.416666666666664,
+          "mean_half": 51.833333333333336,
+          "n_se": 0.43532664620291023
+        },
+        "bike_sharing": {
+          "n_full": 46,
+          "n_half": 23,
+          "mean_full": 26.391304347826086,
+          "mean_half": 25.52173913043478,
+          "n_se": 0.3047997327428447
+        }
+      }
+    },
+    {
+      "id": "A10",
+      "check": "halving the warm-up moves E4 by less than 3 SE",
+      "passed": true,
+      "per_task": {
+        "electricity": {
+          "warmup_frozen": 750,
+          "warmup_alt": 400,
+          "mean_frozen": 124.425,
+          "mean_alt": 108.375,
+          "n_se": 0.6612271086810091
+        },
+        "air_quality": {
+          "warmup_frozen": 750,
+          "warmup_alt": 400,
+          "mean_frozen": 62.416666666666664,
+          "mean_alt": 111.25,
+          "n_se": 0.8725536470623261
+        },
+        "bike_sharing": {
+          "warmup_frozen": 750,
+          "warmup_alt": 400,
+          "mean_frozen": 26.391304347826086,
+          "mean_alt": 29.391304347826086,
+          "n_se": 0.6261490820343795
+        }
+      }
+    },
+    {
+      "id": "A11",
+      "check": "early vs late injection locations agree within 3 SE",
+      "passed": true,
+      "per_task": {
+        "electricity": {
+          "first_half_mean": 72.88333333333334,
+          "second_half_mean": 175.96666666666667,
+          "n_se": 2.89110487124454
+        },
+        "air_quality": {
+          "first_half_mean": 64.08333333333333,
+          "second_half_mean": 60.75,
+          "n_se": 0.13466771355577634
+        },
+        "bike_sharing": {
+          "first_half_mean": 27.73913043478261,
+          "second_half_mean": 25.043478260869566,
+          "n_se": 0.7910805627690752
+        }
+      },
+      "note": "a failure here indicates natural nonstationarity dominating the injected effect, not an implementation bug"
+    },
+    {
+      "id": "A12",
+      "check": "robust MAD scale is within 2x of the frozen SD scale",
+      "passed": true,
+      "per_task": {
+        "electricity": {
+          "frozen_sd_scale": 0.3520898498506049,
+          "robust_mad_scale": 0.22249439687627529,
+          "ratio": 0.6319250525701943
+        },
+        "air_quality": {
+          "frozen_sd_scale": 0.7467002344750996,
+          "robust_mad_scale": 0.6297484830565515,
+          "ratio": 0.8433752314263562
+        },
+        "bike_sharing": {
+          "frozen_sd_scale": 0.8361668959104831,
+          "robust_mad_scale": 0.7691807085673436,
+          "ratio": 0.9198889747121598
+        }
+      },
+      "note": "checks that conclusions do not hinge on a fragile scale choice; the frozen scale remains the reference-block SD"
+    },
+    {
+      "id": "A13",
+      "check": "loaders are deterministic and match the recorded checksums",
+      "passed": true,
+      "per_task": {
+        "electricity": {
+          "deterministic": true,
+          "checksum_matches_manifest": true,
+          "sha256": "2d86fbc74c69a5c04bcde0119bce280dd6d8efa0115987edc75b77ccf024d7f2",
+          "n": 45312
+        },
+        "air_quality": {
+          "deterministic": true,
+          "checksum_matches_manifest": true,
+          "sha256": "13277ae5d8581e80b7be09d47c7d3d06fe9b8e957078f2cf6e859f955e62f996",
+          "n": 8991
+        },
+        "bike_sharing": {
+          "deterministic": true,
+          "checksum_matches_manifest": true,
+          "sha256": "e03de4ee4ef4dc376ac6e04bf829673c6269e8eba5c60fa121640fa2f829504f",
+          "n": 17379
+        }
+      }
+    },
+    {
+      "id": "A14",
+      "check": "figures regenerate from results JSON only, with no re-simulation",
+      "passed": true,
+      "n_figures": 4,
+      "figures": [
+        "fig1_E1_response.png",
+        "fig2_noninferiority.png",
+        "fig3_reference_error.png",
+        "fig4_delay.png"
+      ],
+      "figure_source_reads_only_results_json": true
+    }
+  ],
+  "elapsed_s": 2.5
+}

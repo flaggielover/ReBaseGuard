@@ -1,0 +1,280 @@
+{
+  "checks": [
+    {
+      "check": "independent_seed_rerun",
+      "question": "does H-C1 still pass on a completely different seed family?",
+      "rows": [
+        {
+          "shift": 0.25,
+          "D": 0.012848204989923007,
+          "ci_high": 0.029924418714271796,
+          "se": 0.008517862503711903,
+          "hc1_pass": true
+        },
+        {
+          "shift": 0.5,
+          "D": -0.002060483587977502,
+          "ci_high": 0.014109931020274196,
+          "se": 0.008236146284833785,
+          "hc1_pass": true
+        },
+        {
+          "shift": 1.0,
+          "D": -0.02436274718336795,
+          "ci_high": -0.011752631892987695,
+          "se": 0.0064402673987421465,
+          "hc1_pass": true
+        },
+        {
+          "shift": 1.5,
+          "D": -0.021178178468806264,
+          "ci_high": -0.013199486083378377,
+          "se": 0.004007940996464867,
+          "hc1_pass": true
+        }
+      ],
+      "passed": true,
+      "note": "seed 20260902: max upper95 = +0.02992 vs epsilon 0.05"
+    },
+    {
+      "check": "crn_on_off",
+      "question": "does breaking the common random numbers change the conclusion?",
+      "rows": [
+        {
+          "shift": 0.25,
+          "D": -0.004197556494955457,
+          "ci_high": 0.01580719886515872,
+          "se": 0.010197709630494035,
+          "hc1_pass": true
+        },
+        {
+          "shift": 0.5,
+          "D": -0.009226374136775406,
+          "ci_high": 0.01103621953121272,
+          "se": 0.010423849395531707,
+          "hc1_pass": true
+        },
+        {
+          "shift": 1.0,
+          "D": -0.03359211530910322,
+          "ci_high": -0.018110429365394476,
+          "se": 0.007900203351235426,
+          "hc1_pass": true
+        },
+        {
+          "shift": 1.5,
+          "D": -0.02736595676412834,
+          "ci_high": -0.016556264801785577,
+          "se": 0.005523124015079411,
+          "hc1_pass": true
+        }
+      ],
+      "passed": true,
+      "note": "unpaired mean SE 0.00851 vs paired 0.00680 (1.25x wider, as expected); the verdict is unchanged"
+    },
+    {
+      "check": "replicate_count_halved",
+      "question": "does halving the replicate count change the verdict?",
+      "rows": [
+        {
+          "shift": 0.25,
+          "D": -0.0037193610859321824,
+          "ci_high": 0.019125822264730034,
+          "se": 0.011359770100712133,
+          "hc1_pass": true
+        },
+        {
+          "shift": 0.5,
+          "D": -0.013160674752930479,
+          "ci_high": 0.0068917273885307035,
+          "se": 0.010450461067418235,
+          "hc1_pass": true
+        },
+        {
+          "shift": 1.0,
+          "D": -0.018056628927588858,
+          "ci_high": -0.0024752402746712593,
+          "se": 0.007816438828597672,
+          "hc1_pass": true
+        },
+        {
+          "shift": 1.5,
+          "D": -0.01594292087960475,
+          "ci_high": -0.004403209194012516,
+          "se": 0.005857140522413692,
+          "hc1_pass": true
+        }
+      ],
+      "passed": true,
+      "note": "N=200: max upper95 = +0.01913"
+    },
+    {
+      "check": "burn_in_variation",
+      "question": "is the result sensitive to burn-in length?",
+      "rows": [
+        {
+          "burn_in": 100,
+          "max_upper95": 0.009172565583791583,
+          "all_pass": true
+        },
+        {
+          "burn_in": 800,
+          "max_upper95": 0.02443381981702263,
+          "all_pass": true
+        }
+      ],
+      "passed": true,
+      "note": "H-C1 passes at burn-in 100, 300 and 800"
+    },
+    {
+      "check": "ratio_estimator_variant",
+      "question": "does mean-of-ratios instead of ratio-of-means change the verdict?",
+      "rows": [
+        {
+          "shift": 0.25,
+          "D": -0.0025821953712676926,
+          "ci_high": 0.013967989170747895,
+          "se": 0.008561461533396549,
+          "hc1_pass": true
+        },
+        {
+          "shift": 0.5,
+          "D": -0.0008510001228231312,
+          "ci_high": 0.01448952822960126,
+          "se": 0.007818517067967549,
+          "hc1_pass": true
+        },
+        {
+          "shift": 1.0,
+          "D": -0.013831350138742704,
+          "ci_high": -0.0021049444789167852,
+          "se": 0.0060414195478772584,
+          "hc1_pass": true
+        },
+        {
+          "shift": 1.5,
+          "D": -0.01805373807281352,
+          "ci_high": -0.009630835140158812,
+          "se": 0.004281428330097596,
+          "hc1_pass": true
+        }
+      ],
+      "passed": true,
+      "note": "max upper95 = +0.01449; the preregistered estimator remains ratio-of-means"
+    },
+    {
+      "check": "raw_comparison_retained",
+      "question": "is the raw cross-policy delay comparison still reported?",
+      "rows": [
+        {
+          "shift": 0.25,
+          "rbg": 82.98108125,
+          "fresh": 81.77499375,
+          "full": 51.04696249999999,
+          "rbg_minus_full": 31.93411875000001
+        },
+        {
+          "shift": 0.5,
+          "rbg": 75.56345625,
+          "fresh": 74.3501375,
+          "full": 52.335412500000004,
+          "rbg_minus_full": 23.228043749999998
+        },
+        {
+          "shift": 1.0,
+          "rbg": 53.34496875000001,
+          "fresh": 53.46558749999999,
+          "full": 53.022225,
+          "rbg_minus_full": 0.3227437500000079
+        },
+        {
+          "shift": 1.5,
+          "rbg": 31.123293750000002,
+          "fresh": 32.06928125,
+          "full": 44.03371875,
+          "rbg_minus_full": -12.910424999999996
+        }
+      ],
+      "passed": true,
+      "note": "raw delays retained for every policy and shift; RBG is slower than full reuse in raw terms at small shifts, exactly as Stage C found and reported"
+    },
+    {
+      "check": "full_reuse_diagnostic",
+      "question": "does full reuse discriminate between in-control and shifted regimes?",
+      "rows": [
+        {
+          "shift": 0.25,
+          "R_full": 1.0179986336967377,
+          "R_full_ci": [
+            0.9969984240555699,
+            1.038753412231097
+          ]
+        },
+        {
+          "shift": 0.5,
+          "R_full": 1.0436934111203027,
+          "R_full_ci": [
+            1.0227553545003458,
+            1.0653162876120315
+          ]
+        },
+        {
+          "shift": 1.0,
+          "R_full": 1.0573900965324041,
+          "R_full_ci": [
+            1.035907236232933,
+            1.079804887378764
+          ]
+        },
+        {
+          "shift": 1.5,
+          "R_full": 0.8781377643005972,
+          "R_full_ci": [
+            0.8591834662071305,
+            0.8978762707692218
+          ]
+        }
+      ],
+      "passed": true,
+      "note": "R_full is at or above 0.87 at every shift and EXCEEDS 1 at 3/4 shifts, i.e. a genuine shift makes it SLOWER to alarm than no shift: poor discrimination, not high sensitivity"
+    },
+    {
+      "check": "no_outcome_dependent_rho",
+      "question": "can any Stage C or Stage C.1 outcome reach the policy definition?",
+      "rows": [
+        {
+          "forbidden_found": [],
+          "rho_used": 0.02979584394902044,
+          "rho_from_stage_c_policy_module": true
+        }
+      ],
+      "passed": true,
+      "note": "rho is imported verbatim from the Stage C policy module, which contains no Stage C.1 identifier or outcome value"
+    },
+    {
+      "check": "no_shift_dropped",
+      "question": "were all preregistered shifts carried through?",
+      "rows": [
+        {
+          "preregistered": [
+            0.25,
+            0.5,
+            1.0,
+            1.5
+          ],
+          "reported": [
+            0.25,
+            0.5,
+            1.0,
+            1.5
+          ]
+        }
+      ],
+      "passed": true,
+      "note": "all 4 preregistered shifts reported; none dropped, none added"
+    }
+  ],
+  "n_passed": 9,
+  "n_checks": 9,
+  "seconds": 348.52132987976074
+}

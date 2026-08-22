@@ -1,0 +1,119 @@
+{
+  "stage": "D",
+  "decision": "STAGE-D-PARTIAL",
+  "allowed_labels": [
+    "STAGE-D-INCONCLUSIVE",
+    "STAGE-D-SR-FAILED",
+    "STAGE-D-NONGAUSSIAN-PARTIAL",
+    "STAGE-D-CLOSED-GENERALIZED",
+    "STAGE-D-PARTIAL"
+  ],
+  "protocol_sha256_expected": "925adecf08c7234375333a26c3af934b005e0d8b4cfce470b77834d7245e8b2e",
+  "protocol_sha256_actual": "925adecf08c7234375333a26c3af934b005e0d8b4cfce470b77834d7245e8b2e",
+  "protocol_unchanged": true,
+  "decision_rule_trace": [
+    "1 not triggered: adversarial 12/12; the one first-run failure (A11) is diagnosed in notes/FAILURE_DIAGNOSES.md",
+    "2 not triggered: D1.1, D1.2, D1.3 all PASS",
+    "3 not reachable: requires D2 to pass, and D2.3 FAILED",
+    "4 not reachable: same reason",
+    "5 TRIGGERED: fall-through -> STAGE-D-PARTIAL"
+  ],
+  "gate_summary": {
+    "D1_pass": true,
+    "D2_pass": false,
+    "D3_all_families_frozen_criterion": true,
+    "adversarial_all_pass": true
+  },
+  "criteria": [
+    {
+      "id": "D1.1",
+      "statement": "SR ARL0-matched to CUSUM(h=5), |ratio-1| <= 0.01",
+      "status": "PASS",
+      "value": "rel err -0.00045 +/- 0.00174"
+    },
+    {
+      "id": "D1.2",
+      "statement": "lower 95% bound of Gamma_SR strictly > 2",
+      "status": "PASS",
+      "value": "lower bound 17.2649"
+    },
+    {
+      "id": "D1.3",
+      "statement": "95% CI for Gamma_SR - Gamma_CUSUM excludes 0",
+      "status": "PASS",
+      "value": "+1.4746 CI [+1.3963, +1.5529]"
+    },
+    {
+      "id": "D1.4",
+      "statement": "SR period-2 candidate root, or NO-CANDIDATE",
+      "status": "CANDIDATE",
+      "value": "e* = 1.036719 +/- 0.001494"
+    },
+    {
+      "id": "D2.1",
+      "statement": "gamma_i decay (descriptive, no criterion)",
+      "status": "DESCRIPTIVE",
+      "value": "gamma_0 = 15.8544; E[T^2]/ARL0 = 0.99960"
+    },
+    {
+      "id": "D2.2",
+      "statement": "bracket with both ends > 3 SE from Gamma_m = 2",
+      "status": "PASS",
+      "value": "m* in [50, 75], z = +108.6 / -14.5"
+    },
+    {
+      "id": "D2.3",
+      "statement": "FD of the actual induced map = 1 - Gamma_m within 3 combined SE",
+      "status": "FAIL",
+      "value": "0/8 at the pre-committed primary step h = 0.05"
+    },
+    {
+      "id": "D2.4",
+      "statement": "Gamma_m -> Gamma_inf < 2 (numerical only)",
+      "status": "NUMERICAL",
+      "value": "Gamma_inf = 1.4037 +/- 0.0013"
+    },
+    {
+      "id": "D2.5",
+      "statement": "does the crossing predict an operational change?",
+      "status": "MATHEMATICAL, NOT OPERATIONAL",
+      "value": "0/4 metrics peak at m*; 4/4 monotone in log m"
+    },
+    {
+      "id": "D3.1",
+      "statement": "regularity assumptions written and labelled before simulation",
+      "status": "PASS",
+      "value": "notes/D3_REGULARITY.md, A1 and A4 marked UNPROVED"
+    },
+    {
+      "id": "D3.2",
+      "statement": "per family, ARL0-matched, lower 95% bound of Gamma_psi vs 2",
+      "status": "PASS",
+      "value": "6/6 frozen; 5/6 normalised by E[psi']"
+    },
+    {
+      "id": "D3.2-t3",
+      "statement": "t3 under the two estimands (assumption A5)",
+      "status": "AMBIGUOUS",
+      "value": "Gamma_psi = 2.5980 PASS; Gamma_psi/E[psi'] = 1.2990 FAIL"
+    },
+    {
+      "id": "D3.3",
+      "statement": "naive Gaussian-form Gamma_T is diagnostic only",
+      "status": "PASS",
+      "value": "reported as diagnostic; never used as evidence"
+    },
+    {
+      "id": "D4",
+      "statement": "stability map, gated on D1 and D2 both surviving",
+      "status": "NOT RUN",
+      "value": "gate not met: D2.3 FAILED"
+    }
+  ],
+  "scope_limits": [
+    "SR agreement is two-detector replication, NOT detector-independence.",
+    "D3 is numerical robustness over six families, NOT distribution-free.",
+    "No Monte Carlo result here is certified or proved.",
+    "m* is a local-stability boundary of the deterministic conditional-mean skeleton at e = 0, NOT an operational phase transition."
+  ]
+}

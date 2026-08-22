@@ -1,0 +1,281 @@
+{
+  "gate": "D2.3",
+  "criterion": "central finite difference of the ACTUAL induced map at rho=1 agrees with 1 - Gamma_m within 3 combined SE",
+  "protocol_sha256": "925adecf08c7234375333a26c3af934b005e0d8b4cfce470b77834d7245e8b2e",
+  "precommit_sha256": "7b7a54c64f4c86334415a03cd45797e7cb8b923d378fa90180a71f1831588dea",
+  "primary_step": 0.05,
+  "steps_tested": [
+    0.025,
+    0.05,
+    0.1
+  ],
+  "n_cycles_per_point": 500000,
+  "seed_family": 20261001,
+  "rows": [
+    {
+      "m": 1,
+      "gamma_m": 15.854358425605843,
+      "gamma_se": 0.028526510321127477,
+      "target_1_minus_gamma": -14.854358425605843,
+      "primary_step": 0.05,
+      "fd_derivative": -14.056224705302276,
+      "fd_se": 0.03732369923382236,
+      "combined_se": 0.046976806145141714,
+      "discrepancy": 0.7981337203035679,
+      "n_combined_se": 16.989952825605407,
+      "agrees_within_3se": false,
+      "by_step": {
+        "0.025": {
+          "deriv": -14.668026795944943,
+          "se": 0.07890430630727636,
+          "discrepancy": 0.18633162966090033
+        },
+        "0.05": {
+          "deriv": -14.056224705302276,
+          "se": 0.03732369923382236,
+          "discrepancy": 0.7981337203035679
+        },
+        "0.1": {
+          "deriv": -11.938305552934745,
+          "se": 0.015366273320416457,
+          "discrepancy": 2.9160528726710986
+        }
+      },
+      "richardson_diagnostic": -14.871960826159166,
+      "richardson_discrepancy": -0.017602400553322184
+    },
+    {
+      "m": 2,
+      "gamma_m": 13.241091944645998,
+      "gamma_se": 0.02366876959549812,
+      "target_1_minus_gamma": -12.241091944645998,
+      "primary_step": 0.05,
+      "fd_derivative": -11.547567308295456,
+      "fd_se": 0.031038027208320444,
+      "combined_se": 0.039032932084961496,
+      "discrepancy": 0.6935246363505421,
+      "n_combined_se": 17.767679733640644,
+      "agrees_within_3se": false,
+      "by_step": {
+        "0.025": {
+          "deriv": -12.071456190824087,
+          "se": 0.06576934016223182,
+          "discrepancy": 0.1696357538219111
+        },
+        "0.05": {
+          "deriv": -11.547567308295456,
+          "se": 0.031038027208320444,
+          "discrepancy": 0.6935246363505421
+        },
+        "0.1": {
+          "deriv": -9.780087413309314,
+          "se": 0.012675457147640928,
+          "discrepancy": 2.461004531336684
+        }
+      },
+      "richardson_diagnostic": -12.246085818333631,
+      "richardson_discrepancy": -0.004993873687633155
+    },
+    {
+      "m": 5,
+      "gamma_m": 10.173349855072507,
+      "gamma_se": 0.017686254672139988,
+      "target_1_minus_gamma": -9.173349855072507,
+      "primary_step": 0.05,
+      "fd_derivative": -8.638409576646318,
+      "fd_se": 0.02322199163238318,
+      "combined_se": 0.029190143879437594,
+      "discrepancy": 0.5349402784261894,
+      "n_combined_se": 18.326058296787544,
+      "agrees_within_3se": false,
+      "by_step": {
+        "0.025": {
+          "deriv": -9.041167125563538,
+          "se": 0.04938199288254989,
+          "discrepancy": 0.13218272950896903
+        },
+        "0.05": {
+          "deriv": -8.638409576646318,
+          "se": 0.02322199163238318,
+          "discrepancy": 0.5349402784261894
+        },
+        "0.1": {
+          "deriv": -7.268421311313447,
+          "se": 0.009331318664412384,
+          "discrepancy": 1.90492854375906
+        }
+      },
+      "richardson_diagnostic": -9.175419641869277,
+      "richardson_discrepancy": -0.002069786796770501
+    },
+    {
+      "m": 10,
+      "gamma_m": 7.081820845901741,
+      "gamma_se": 0.011650501817427553,
+      "target_1_minus_gamma": -6.081820845901741,
+      "primary_step": 0.05,
+      "fd_derivative": -5.7181561352069155,
+      "fd_se": 0.015216389139006163,
+      "combined_se": 0.019164359916979942,
+      "discrepancy": 0.36366471069482564,
+      "n_combined_se": 18.97609480672572,
+      "agrees_within_3se": false,
+      "by_step": {
+        "0.025": {
+          "deriv": -5.997611874297217,
+          "se": 0.032400616829234126,
+          "discrepancy": 0.08420897160452423
+        },
+        "0.05": {
+          "deriv": -5.7181561352069155,
+          "se": 0.015216389139006163,
+          "discrepancy": 0.36366471069482564
+        },
+        "0.1": {
+          "deriv": -4.801769959983325,
+          "se": 0.00608937668647877,
+          "discrepancy": 1.280050885918416
+        }
+      },
+      "richardson_diagnostic": -6.090763787327318,
+      "richardson_discrepancy": -0.008942941425576834
+    },
+    {
+      "m": 20,
+      "gamma_m": 4.2505167635703955,
+      "gamma_se": 0.006664439240710665,
+      "target_1_minus_gamma": -3.2505167635703955,
+      "primary_step": 0.05,
+      "fd_derivative": -3.0593873500986715,
+      "fd_se": 0.008795036364925306,
+      "combined_se": 0.011034827368540149,
+      "discrepancy": 0.19112941347172407,
+      "n_combined_se": 17.320562169973442,
+      "agrees_within_3se": false,
+      "by_step": {
+        "0.025": {
+          "deriv": -3.2042345426075056,
+          "se": 0.018582558235764476,
+          "discrepancy": 0.04628222096288992
+        },
+        "0.05": {
+          "deriv": -3.0593873500986715,
+          "se": 0.008795036364925306,
+          "discrepancy": 0.19112941347172407
+        },
+        "0.1": {
+          "deriv": -2.5707982604437842,
+          "se": 0.003653470705043987,
+          "discrepancy": 0.6797185031266113
+        }
+      },
+      "richardson_diagnostic": -3.2525169401104503,
+      "richardson_discrepancy": -0.002000176540054799
+    },
+    {
+      "m": 50,
+      "gamma_m": 2.3588418298932012,
+      "gamma_se": 0.0033057697859824216,
+      "target_1_minus_gamma": -1.3588418298932012,
+      "primary_step": 0.05,
+      "fd_derivative": -1.285364936876087,
+      "fd_se": 0.004932084767373638,
+      "combined_se": 0.0059374720235528975,
+      "discrepancy": 0.07347689301711413,
+      "n_combined_se": 12.375113975382847,
+      "agrees_within_3se": false,
+      "by_step": {
+        "0.025": {
+          "deriv": -1.337078927484499,
+          "se": 0.010173346685563833,
+          "discrepancy": 0.021762902408702267
+        },
+        "0.05": {
+          "deriv": -1.285364936876087,
+          "se": 0.004932084767373638,
+          "discrepancy": 0.07347689301711413
+        },
+        "0.1": {
+          "deriv": -1.0938145597513227,
+          "se": 0.002261857311251188,
+          "discrepancy": 0.26502727014187855
+        }
+      },
+      "richardson_diagnostic": -1.3543169243539694,
+      "richardson_discrepancy": 0.004524905539231794
+    },
+    {
+      "m": 75,
+      "gamma_m": 1.9626795297277626,
+      "gamma_se": 0.002566951002627155,
+      "target_1_minus_gamma": -0.9626795297277626,
+      "primary_step": 0.05,
+      "fd_derivative": -0.9178760868979796,
+      "fd_se": 0.004259191114428654,
+      "combined_se": 0.00497292131439022,
+      "discrepancy": 0.04480344282978299,
+      "n_combined_se": 9.00948154963453,
+      "agrees_within_3se": false,
+      "by_step": {
+        "0.025": {
+          "deriv": -0.9479087186285419,
+          "se": 0.008685301933472491,
+          "discrepancy": 0.014770811099220738
+        },
+        "0.05": {
+          "deriv": -0.9178760868979796,
+          "se": 0.004259191114428654,
+          "discrepancy": 0.04480344282978299
+        },
+        "0.1": {
+          "deriv": -0.790793739737667,
+          "se": 0.0020392381683415448,
+          "discrepancy": 0.17188578999009563
+        }
+      },
+      "richardson_diagnostic": -0.9579195958720627,
+      "richardson_discrepancy": 0.004759933855699949
+    },
+    {
+      "m": 100,
+      "gamma_m": 1.776190740820413,
+      "gamma_se": 0.0022082352688064955,
+      "target_1_minus_gamma": -0.776190740820413,
+      "primary_step": 0.05,
+      "fd_derivative": -0.7429914059867831,
+      "fd_se": 0.003983055254202018,
+      "combined_se": 0.0045542323349195965,
+      "discrepancy": 0.0331993348336298,
+      "n_combined_se": 7.289776276689653,
+      "agrees_within_3se": false,
+      "by_step": {
+        "0.025": {
+          "deriv": -0.7669279361850847,
+          "se": 0.008067840600660476,
+          "discrepancy": 0.009262804635328248
+        },
+        "0.05": {
+          "deriv": -0.7429914059867831,
+          "se": 0.003983055254202018,
+          "discrepancy": 0.0331993348336298
+        },
+        "0.1": {
+          "deriv": -0.6503316751174011,
+          "se": 0.0019525777198987752,
+          "discrepancy": 0.12585906570301186
+        }
+      },
+      "richardson_diagnostic": -0.7749067795845185,
+      "richardson_discrepancy": 0.0012839612358944708
+    }
+  ],
+  "n_m_passing": 0,
+  "n_m_total": 8,
+  "criterion_met_all_m": false,
+  "richardson_note": "Richardson values are a TRUNCATION DIAGNOSTIC only and are not the primary estimate.",
+  "evidence_status": "NEW-NUMERICAL",
+  "git_head": "9077c9b66e837f9f687d6dc117306da3f4417efb",
+  "python": "3.14.5",
+  "numpy": "2.5.2",
+  "elapsed_s": 56.2
+}

@@ -1,0 +1,50 @@
+{
+  "gate": "C1.2 sizing (smoke only, NON-confirmatory)",
+  "smoke_master_seed": 20260931,
+  "confirmatory_seeds_still_unused": true,
+  "rule_applied": "first ladder rung, in the prespecified order, with max SE(D_Delta) <= 0.010 at every Delta and N >= 100",
+  "ladder_walked": [
+    {
+      "N": 100,
+      "K": 50,
+      "max_se": 0.04589,
+      "meets_target": false
+    },
+    {
+      "N": 100,
+      "K": 200,
+      "max_se": 0.02587,
+      "meets_target": false
+    },
+    {
+      "N": 200,
+      "K": 200,
+      "max_se": 0.01714,
+      "meets_target": false
+    },
+    {
+      "N": 400,
+      "K": 200,
+      "max_se": 0.01193,
+      "meets_target": false
+    },
+    {
+      "N": 400,
+      "K": 400,
+      "max_se": 0.00799,
+      "meets_target": true
+    }
+  ],
+  "chosen": {
+    "N_replicates": 400,
+    "K_events": 400,
+    "events_per_cell": 160000,
+    "burn_in": 300,
+    "cycles_between": 15,
+    "n_cycles_after": 1
+  },
+  "cycles_between_justification": "measured recovery on smoke seeds: |e| after a shift settles within 1 cycle for fresh and RBG and within ~3 for full reuse; 15 cycles of spacing is therefore ample for every policy, and the SAME spacing is used for all",
+  "applied_symmetrically": "the chosen rung is used for every policy and every shift; replication is never increased for cells close to passing",
+  "smoke_outcomes_are_not_evidence": "the smoke run necessarily revealed the approximate direction of the result. That cannot bias the confirmatory test: epsilon, the shift set, the policies, the estimator, the statistical unit and the decision rule were all frozen in STAGE_C1_PROTOCOL.md beforehand, so no degree of freedom remained to adjust. The smoke numbers are recorded here as sizing information and are excluded from the Stage C.1 result.",
+  "estimated_confirmatory_runtime_seconds": 550
+}

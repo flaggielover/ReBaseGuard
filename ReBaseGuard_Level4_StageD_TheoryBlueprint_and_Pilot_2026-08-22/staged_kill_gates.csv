@@ -1,0 +1,5 @@
+gate,kill_condition,verdict,evidence,note
+D1 SR,"|F_SR,1'(0)| << 1 or map structurally stable",PASSED - NOT KILLED,Gamma_SR=17.44+/-0.09 => |F'|=16.44 >> 1. Continue to nonlinear map/root search.,"Measured this session, 246k cycles, ARL-matched."
+D2 m>1,"|F_1,m'(0)|<1 for all meaningful m",PARTIAL KILL,Gamma_m>2 for all m<=50 (pilot set safe) but Gamma_m crosses 2 at m*~72 (CUSUM) / ~87 (SR). Window stabilization IS the result for large m.,"Direct measurement, no tail model. Report m* as the headline for D2."
+D3 non-Gaussian,stopped score moments or domination fail,NOT KILLED numerically; rigour AT RISK,"Gamma_psi in [8.41,15.90] ARL-matched across t(3,5) and 5-10% contamination. Naive Gamma_T diverges (35-100) - the score form is REQUIRED, not cosmetic.",Rigorous general theorem still needs uniform integrability; recommend numerical-robustness framing if that fails.
+D4 phase diagram,n/a - design gate,"PROCEED, DEMOTED",rho_c(m) and rho_c(ARL0) are consequences of the Gamma_m theorem. Not a novelty headline (D-3 THREATENED).,Pair the boundary with cycle-ARL + lag-1 ACF so it is not an adaptive-gain plot.

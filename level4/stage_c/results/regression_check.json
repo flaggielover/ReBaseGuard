@@ -1,0 +1,79 @@
+{
+  "criterion": "C9",
+  "suites": [
+    {
+      "cmd": "/Users/suzhe/ReBaseGuard/rebaseguard-proof/.venv/bin/python -m pytest -q",
+      "passed": 90,
+      "failed": 0,
+      "returncode": 0
+    },
+    {
+      "cmd": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/tests -q",
+      "passed": 290,
+      "failed": 0,
+      "returncode": 0
+    },
+    {
+      "cmd": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/stage_b/tests -q",
+      "passed": 46,
+      "failed": 0,
+      "returncode": 0
+    },
+    {
+      "cmd": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/stage_c/tests -q",
+      "passed": 48,
+      "failed": 0,
+      "returncode": 0
+    }
+  ],
+  "total_passed": 474,
+  "total_failed": 0,
+  "stage_b_certificate_unchanged": true,
+  "stage_b_science_sha256": "db8ea712dc0abb34f6c82b3e9cbb833291794a85f6b277c6ff2c9806e1625d4d",
+  "stage_a_arl_reproduced": true,
+  "stage_a_comparisons": [
+    {
+      "rho": 0.0,
+      "stage_a_arl": 82.92578899999998,
+      "stage_c_arl": 83.308892,
+      "rel_gap": 0.004619829423631047
+    },
+    {
+      "rho": 0.02,
+      "stage_a_arl": 84.163431,
+      "stage_c_arl": 84.78232,
+      "rel_gap": 0.007353419325312389
+    },
+    {
+      "rho": 0.05,
+      "stage_a_arl": 86.47852700000001,
+      "stage_c_arl": 86.653279,
+      "rel_gap": 0.002020755973329469
+    },
+    {
+      "rho": 0.1,
+      "stage_a_arl": 89.441958,
+      "stage_c_arl": 89.84391799999999,
+      "rel_gap": 0.004494087662973437
+    },
+    {
+      "rho": 0.25,
+      "stage_a_arl": 95.49484500000004,
+      "stage_c_arl": 95.80004300000002,
+      "rel_gap": 0.003195963090991726
+    },
+    {
+      "rho": 0.5,
+      "stage_a_arl": 81.62963900000001,
+      "stage_c_arl": 81.72355699999999,
+      "rel_gap": 0.0011505379804506268
+    },
+    {
+      "rho": 1.0,
+      "stage_a_arl": 50.058819,
+      "stage_c_arl": 50.01766699999999,
+      "rel_gap": 0.0008220729298470058
+    }
+  ],
+  "passed": true
+}

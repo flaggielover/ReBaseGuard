@@ -1,0 +1,22 @@
+claim,status,basis,source
+F_rho(e) = rho*F_1(e) for ALL e (not just linearization),PROVED,Linearity of conditional expectation + fresh block independent of alarm with mean 0. Unconditional.,Level 1-3 / re-derived
+"F_1'(0) = 1 - Gamma, Gamma = E_0[Z_tau T_tau]",PROVED,Score identity under exponential-moment regularity on tau.,Level 1-3
+F_rho odd; kernel reflection symmetry,PROVED,Innovation symmetry + arm-swap equivariance.,Level 1-3
+"Gamma(0.5,5,1) in [3.9243, 27.8494], hence Gamma > 2",RIGOROUSLY CERTIFIED,Computer-assisted enclosure. Width factor 7.1.,Level 1-3 certificate
+F_1'(0) < -1 at the frozen point,RIGOROUSLY CERTIFIED,Immediate from the two rows above.,Derived
+"rho_c = 1/(Gamma-1) in (0,1) exists","PROVED (conditional, antecedent certified)",Prop 3 of Phase 2C; antecedent now closed.,Level 1-3
+"rho_c in [0.03724, 0.34196]",RIGOROUSLY CERTIFIED,Interval image of the certified Gamma enclosure. NOT a point.,Derived this session
+rho_c = 0.0672,NUMERICAL,"From Gamma_hat = 15.87-15.89 (MC + independent deterministic solve, 2 routes).",This session + corpus
+"Nonzero symmetric 2-cycle at rho=1: e* in [1.028724,1.044724]",RIGOROUSLY CERTIFIED,Stage B.,Stage B
+"That orbit is locally attracting: lambda_2 in [0.108148,0.832532]",RIGOROUSLY CERTIFIED,Stage B. Note lambda_2 = [F_1'(e*)]^2 >= 0 always (perfect square).,Stage B
+"2-cycle exists for EVERY rho in (rho_c, 1]",NUMERICAL,"Requires g(e) = -F_1(e)/e strictly decreasing; verified on grids N=50/100/200, unproved.",This session
+Orbit branch continues from rho=1 down to rho_c,CONJECTURAL,Stage B certifies ONE point (rho=1). No continuation argument exists.,Gap
+Period-doubling bifurcation AT rho_c,CONJECTURAL,"Needs a continuation/normal-form argument that Phase 2B explicitly rejected (boundary layer, no cubic normal form).",Gap
+No period-4 / no cascade,NUMERICAL,lambda_2 = rho^2 F_1'(e*)^2 measured <= 0.35 on the branch; perfect-square structure forbids flip via -1.,This session
+Stochastic period-2 orbit for the noisy recursion,REFUTED at the frozen point,Sign alternation 0.879 (not 1); only ~25% of mass within 25% of e*; per-cycle noise SD ~1 vs orbit amplitude 1.04.,This session
+Bimodality of the invariant law,"NUMERICAL, regime-restricted","Onset rho ~ 0.55, eightfold above rho_c. Significantly UNIMODAL at rho=0.5 (dip z ~ -4).",This session
+Invariant law exists / is unique / geometrically ergodic,OPEN,No Lyapunov or irreducibility argument attempted.,Open
+A(e) = A(-e),PROVED,Same reflection symmetry as oddness of F.,Derived
+A(e) < A(0) for all e != 0,NUMERICAL,Verified on grid to |e|=10; no proof.,This session
+ARL_bar_rho = int A dpi_rho,CONDITIONAL IDENTITY,Exact given an invariant pi_rho and renewal-reward; existence of pi_rho is OPEN. Verified numerically to 4 digits.,This session
+Reuse is the dominant cause of cycle-length loss,REFUTED,Fresh m=1 alone costs 82% of the oracle 465.4; dependence on rho is non-monotone (rho=0.2 beats fresh).,This session

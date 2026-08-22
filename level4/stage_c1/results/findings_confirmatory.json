@@ -1,0 +1,477 @@
+{
+  "tag": "confirmatory",
+  "seed": 20260901,
+  "epsilon": 0.05,
+  "q_guard": 1.1,
+  "rho_rbg": 0.02979584394902044,
+  "policies": [
+    {
+      "label": "fresh",
+      "rho": 0.0,
+      "role": "non-inferiority reference"
+    },
+    {
+      "label": "rbg",
+      "rho": 0.02979584394902044,
+      "role": "the Stage C certificate-aware policy under test"
+    },
+    {
+      "label": "full",
+      "rho": 1.0,
+      "role": "DIAGNOSTIC ONLY -- never the reference"
+    },
+    {
+      "label": "explore_0.25",
+      "rho": 0.25,
+      "role": "EXPLORATORY -- must not affect the decision"
+    },
+    {
+      "label": "explore_0.3",
+      "rho": 0.3,
+      "role": "EXPLORATORY -- must not affect the decision"
+    }
+  ],
+  "shifts": [
+    0.25,
+    0.5,
+    1.0,
+    1.5
+  ],
+  "rows": [
+    {
+      "shift": 0.25,
+      "R": {
+        "fresh": {
+          "name": "R_fresh_0.25",
+          "point": 0.9709348075554228,
+          "ci_low": 0.9575757966575731,
+          "ci_high": 0.9843363105512547,
+          "se": 0.006894866032466098,
+          "n_replicates": 400,
+          "n_bootstrap": 10000,
+          "method": "percentile bootstrap over replicates, ratio_of_means",
+          "statistical_unit": "replicate"
+        },
+        "rbg": {
+          "name": "R_rbg_0.25",
+          "point": 0.9685267909411304,
+          "ci_low": 0.9543842045805281,
+          "ci_high": 0.9826404181669389,
+          "se": 0.0072287730230928444,
+          "n_replicates": 400,
+          "n_bootstrap": 10000,
+          "method": "percentile bootstrap over replicates, ratio_of_means",
+          "statistical_unit": "replicate"
+        },
+        "full": {
+          "name": "R_full_0.25",
+          "point": 1.0179986336967377,
+          "ci_low": 0.9971901661945541,
+          "ci_high": 1.03983714860268,
+          "se": 0.010744808371514295,
+          "n_replicates": 400,
+          "n_bootstrap": 10000,
+          "method": "percentile bootstrap over replicates, ratio_of_means",
+          "statistical_unit": "replicate"
+        },
+        "explore_0.25": {
+          "name": "R_explore_0.25_0.25",
+          "point": 0.9680924782973485,
+          "ci_low": 0.9545813224488828,
+          "ci_high": 0.981776458208534,
+          "se": 0.006947801216491823,
+          "n_replicates": 400,
+          "n_bootstrap": 10000,
+          "method": "percentile bootstrap over replicates, ratio_of_means",
+          "statistical_unit": "replicate"
+        },
+        "explore_0.3": {
+          "name": "R_explore_0.3_0.25",
+          "point": 0.9565531872941135,
+          "ci_low": 0.9435792392429542,
+          "ci_high": 0.9700733668982754,
+          "se": 0.0067729473568877326,
+          "n_replicates": 400,
+          "n_bootstrap": 10000,
+          "method": "percentile bootstrap over replicates, ratio_of_means",
+          "statistical_unit": "replicate"
+        }
+      },
+      "D": {
+        "name": "D_0.25",
+        "point": -0.002408016614292463,
+        "ci_low": -0.01841078861302742,
+        "ci_high": 0.013581083176001296,
+        "se": 0.00816360284030268,
+        "n_replicates": 400,
+        "n_bootstrap": 10000,
+        "method": "paired percentile bootstrap over replicates, ratio_of_means",
+        "statistical_unit": "replicate"
+      },
+      "Q": {
+        "name": "Q_0.25",
+        "point": 1.0147488546888457,
+        "ci_low": 1.003144611334139,
+        "ci_high": 1.0268596362699605,
+        "se": 0.006055603016229206,
+        "n_replicates": 400,
+        "n_bootstrap": 10000,
+        "method": "paired percentile bootstrap over replicates",
+        "statistical_unit": "replicate"
+      },
+      "hc1_pass": true,
+      "q_guard_pass": true,
+      "raw_delay": {
+        "fresh": 81.77499375,
+        "rbg": 82.98108125,
+        "full": 51.04696249999999,
+        "explore_0.25": 92.21334374999998,
+        "explore_0.3": 91.50669375000001
+      },
+      "raw_delay_in_control": {
+        "fresh": 84.22295,
+        "rbg": 85.67763124999999,
+        "full": 50.14443125,
+        "explore_0.25": 95.25261875,
+        "explore_0.3": 95.66294375000001
+      }
+    },
+    {
+      "shift": 0.5,
+      "R": {
+        "fresh": {
+          "name": "R_fresh_0.5",
+          "point": 0.882777645522984,
+          "ci_low": 0.8684418538718841,
+          "ci_high": 0.8966891595010853,
+          "se": 0.007203398663871647,
+          "n_replicates": 400,
+          "n_bootstrap": 10000,
+          "method": "percentile bootstrap over replicates, ratio_of_means",
+          "statistical_unit": "replicate"
+        },
+        "rbg": {
+          "name": "R_rbg_0.5",
+          "point": 0.8819508096519652,
+          "ci_low": 0.8678804551001358,
+          "ci_high": 0.8962334334594885,
+          "se": 0.007246362940842642,
+          "n_replicates": 400,
+          "n_bootstrap": 10000,
+          "method": "percentile bootstrap over replicates, ratio_of_means",
+          "statistical_unit": "replicate"
+        },
+        "full": {
+          "name": "R_full_0.5",
+          "point": 1.0436934111203027,
+          "ci_low": 1.0228246180546643,
+          "ci_high": 1.06566682187801,
+          "se": 0.010986433063614577,
+          "n_replicates": 400,
+          "n_bootstrap": 10000,
+          "method": "percentile bootstrap over replicates, ratio_of_means",
+          "statistical_unit": "replicate"
+        },
+        "explore_0.25": {
+          "name": "R_explore_0.25_0.5",
+          "point": 0.8673394740656408,
+          "ci_low": 0.8544931689679114,
+          "ci_high": 0.880177935377263,
+          "se": 0.0065572867774261025,
+          "n_replicates": 400,
+          "n_bootstrap": 10000,
+          "method": "percentile bootstrap over replicates, ratio_of_means",
+          "statistical_unit": "replicate"
+        },
+        "explore_0.3": {
+          "name": "R_explore_0.3_0.5",
+          "point": 0.8692631178830934,
+          "ci_low": 0.855340275532959,
+          "ci_high": 0.8831596214451265,
+          "se": 0.007048281555700187,
+          "n_replicates": 400,
+          "n_bootstrap": 10000,
+          "method": "percentile bootstrap over replicates, ratio_of_means",
+          "statistical_unit": "replicate"
+        }
+      },
+      "D": {
+        "name": "D_0.5",
+        "point": -0.0008268358710188384,
+        "ci_low": -0.015889947700530385,
+        "ci_high": 0.014100679764397616,
+        "se": 0.0077115364095778054,
+        "n_replicates": 400,
+        "n_bootstrap": 10000,
+        "method": "paired percentile bootstrap over replicates, ratio_of_means",
+        "statistical_unit": "replicate"
+      },
+      "Q": {
+        "name": "Q_0.5",
+        "point": 1.0163189846151932,
+        "ci_low": 1.0038788092710784,
+        "ci_high": 1.029520091098166,
+        "se": 0.0065172985913098495,
+        "n_replicates": 400,
+        "n_bootstrap": 10000,
+        "method": "paired percentile bootstrap over replicates",
+        "statistical_unit": "replicate"
+      },
+      "hc1_pass": true,
+      "q_guard_pass": true,
+      "raw_delay": {
+        "fresh": 74.3501375,
+        "rbg": 75.56345625,
+        "full": 52.335412500000004,
+        "explore_0.25": 82.61635625,
+        "explore_0.3": 83.15626875
+      },
+      "raw_delay_in_control": {
+        "fresh": 84.22295,
+        "rbg": 85.67763124999999,
+        "full": 50.14443125,
+        "explore_0.25": 95.25261875,
+        "explore_0.3": 95.66294375000001
+      }
+    },
+    {
+      "shift": 1.0,
+      "R": {
+        "fresh": {
+          "name": "R_fresh_1.0",
+          "point": 0.6348101972205912,
+          "ci_low": 0.6229908880765624,
+          "ci_high": 0.6466307044655384,
+          "se": 0.006006543494467354,
+          "n_replicates": 400,
+          "n_bootstrap": 10000,
+          "method": "percentile bootstrap over replicates, ratio_of_means",
+          "statistical_unit": "replicate"
+        },
+        "rbg": {
+          "name": "R_rbg_1.0",
+          "point": 0.6226242249198505,
+          "ci_low": 0.6115098900789473,
+          "ci_high": 0.6341851261670798,
+          "se": 0.00580263292629728,
+          "n_replicates": 400,
+          "n_bootstrap": 10000,
+          "method": "percentile bootstrap over replicates, ratio_of_means",
+          "statistical_unit": "replicate"
+        },
+        "full": {
+          "name": "R_full_1.0",
+          "point": 1.0573900965324041,
+          "ci_low": 1.0357103269321395,
+          "ci_high": 1.0798574279150805,
+          "se": 0.011186537013235248,
+          "n_replicates": 400,
+          "n_bootstrap": 10000,
+          "method": "percentile bootstrap over replicates, ratio_of_means",
+          "statistical_unit": "replicate"
+        },
+        "explore_0.25": {
+          "name": "R_explore_0.25_1.0",
+          "point": 0.5605067026044364,
+          "ci_low": 0.5506581364596398,
+          "ci_high": 0.5707239694930668,
+          "se": 0.00518964615237504,
+          "n_replicates": 400,
+          "n_bootstrap": 10000,
+          "method": "percentile bootstrap over replicates, ratio_of_means",
+          "statistical_unit": "replicate"
+        },
+        "explore_0.3": {
+          "name": "R_explore_0.3_1.0",
+          "point": 0.5584141090159584,
+          "ci_low": 0.5481327442898415,
+          "ci_high": 0.5686327304834274,
+          "se": 0.005217291404246813,
+          "n_replicates": 400,
+          "n_bootstrap": 10000,
+          "method": "percentile bootstrap over replicates, ratio_of_means",
+          "statistical_unit": "replicate"
+        }
+      },
+      "D": {
+        "name": "D_1.0",
+        "point": -0.0121859723007407,
+        "ci_low": -0.02405460659856235,
+        "ci_high": -0.0005925324865168343,
+        "se": 0.005964224840489903,
+        "n_replicates": 400,
+        "n_bootstrap": 10000,
+        "method": "paired percentile bootstrap over replicates, ratio_of_means",
+        "statistical_unit": "replicate"
+      },
+      "Q": {
+        "name": "Q_1.0",
+        "point": 0.9977439928065883,
+        "ci_low": 0.9825591917983535,
+        "ci_high": 1.013116127466585,
+        "se": 0.007798361154484847,
+        "n_replicates": 400,
+        "n_bootstrap": 10000,
+        "method": "paired percentile bootstrap over replicates",
+        "statistical_unit": "replicate"
+      },
+      "hc1_pass": true,
+      "q_guard_pass": true,
+      "raw_delay": {
+        "fresh": 53.46558749999999,
+        "rbg": 53.34496875000001,
+        "full": 53.022225,
+        "explore_0.25": 53.389731250000004,
+        "explore_0.3": 53.419537500000004
+      },
+      "raw_delay_in_control": {
+        "fresh": 84.22295,
+        "rbg": 85.67763124999999,
+        "full": 50.14443125,
+        "explore_0.25": 95.25261875,
+        "explore_0.3": 95.66294375000001
+      }
+    },
+    {
+      "shift": 1.5,
+      "R": {
+        "fresh": {
+          "name": "R_fresh_1.5",
+          "point": 0.38076653988016335,
+          "ci_low": 0.37275650608550337,
+          "ci_high": 0.3887831117229806,
+          "se": 0.004086189309483552,
+          "n_replicates": 400,
+          "n_bootstrap": 10000,
+          "method": "percentile bootstrap over replicates, ratio_of_means",
+          "statistical_unit": "replicate"
+        },
+        "rbg": {
+          "name": "R_rbg_1.5",
+          "point": 0.3632604367782402,
+          "ci_low": 0.35573054398656623,
+          "ci_high": 0.37080668215288726,
+          "se": 0.0038560280677348933,
+          "n_replicates": 400,
+          "n_bootstrap": 10000,
+          "method": "percentile bootstrap over replicates, ratio_of_means",
+          "statistical_unit": "replicate"
+        },
+        "full": {
+          "name": "R_full_1.5",
+          "point": 0.8781377643005972,
+          "ci_low": 0.8589419368078209,
+          "ci_high": 0.8978149554942745,
+          "se": 0.009996900805130571,
+          "n_replicates": 400,
+          "n_bootstrap": 10000,
+          "method": "percentile bootstrap over replicates, ratio_of_means",
+          "statistical_unit": "replicate"
+        },
+        "explore_0.25": {
+          "name": "R_explore_0.25_1.5",
+          "point": 0.28162716523738623,
+          "ci_low": 0.2754909219595511,
+          "ci_high": 0.2879177710416218,
+          "se": 0.003142372440517617,
+          "n_replicates": 400,
+          "n_bootstrap": 10000,
+          "method": "percentile bootstrap over replicates, ratio_of_means",
+          "statistical_unit": "replicate"
+        },
+        "explore_0.3": {
+          "name": "R_explore_0.3_1.5",
+          "point": 0.2798667273920263,
+          "ci_low": 0.2741507008978381,
+          "ci_high": 0.28569959365544595,
+          "se": 0.002960184458661743,
+          "n_replicates": 400,
+          "n_bootstrap": 10000,
+          "method": "percentile bootstrap over replicates, ratio_of_means",
+          "statistical_unit": "replicate"
+        }
+      },
+      "D": {
+        "name": "D_1.5",
+        "point": -0.01750610310192313,
+        "ci_low": -0.025810192890800047,
+        "ci_high": -0.009203757327789372,
+        "se": 0.004217135680072631,
+        "n_replicates": 400,
+        "n_bootstrap": 10000,
+        "method": "paired percentile bootstrap over replicates, ratio_of_means",
+        "statistical_unit": "replicate"
+      },
+      "Q": {
+        "name": "Q_1.5",
+        "point": 0.9705017554766682,
+        "ci_low": 0.9521180542923703,
+        "ci_high": 0.9893962053894468,
+        "se": 0.009438453767309608,
+        "n_replicates": 400,
+        "n_bootstrap": 10000,
+        "method": "paired percentile bootstrap over replicates",
+        "statistical_unit": "replicate"
+      },
+      "hc1_pass": true,
+      "q_guard_pass": true,
+      "raw_delay": {
+        "fresh": 32.06928125,
+        "rbg": 31.123293750000002,
+        "full": 44.03371875,
+        "explore_0.25": 26.825725000000002,
+        "explore_0.3": 26.772875
+      },
+      "raw_delay_in_control": {
+        "fresh": 84.22295,
+        "rbg": 85.67763124999999,
+        "full": 50.14443125,
+        "explore_0.25": 95.25261875,
+        "explore_0.3": 95.66294375000001
+      }
+    }
+  ],
+  "sanity": [
+    {
+      "id": "A",
+      "text": "fresh reproduces Stage C within independent Monte Carlo uncertainty",
+      "passed": true,
+      "detail": "max |z| = 2.65 over 5 shifts against Stage C's fresh arm (Stage C had ~4000 events/cell, SE ~2.7-3.0; Stage C.1 has 160000, SE ~0.5). A structure-matched rerun on the Stage C.1 seed gives 81.92 +/- 2.97 at Delta=0.25 vs the many-event value 81.78 +/- 0.48, so the replicate structure itself is not responsible"
+    },
+    {
+      "id": "B",
+      "text": "rho_RBG exactly matches the Stage C policy value",
+      "passed": true,
+      "detail": "rho = 0.02979584394902044; Stage C evaluated the 6-dp grid value 0.029796 (difference 4e-9, recorded not hidden)"
+    },
+    {
+      "id": "C",
+      "text": "full reuse still shows degraded in-control behaviour",
+      "passed": true,
+      "detail": "in-control mean cycle length 50.14 vs fresh 84.22"
+    },
+    {
+      "id": "D",
+      "text": "no policy-specific code path alters detector semantics",
+      "passed": true,
+      "detail": "0 simultaneous two-arm crossings across all arms; the Stage C simulator is used unmodified and reproduces the frozen Stage A chain bit-for-bit at Delta = 0 (enforced by test)"
+    },
+    {
+      "id": "E",
+      "text": "the Delta = 0 arm returns the expected in-control behaviour",
+      "passed": true,
+      "detail": "fresh Delta=0 mean cycle length 84.22 against the Stage C in-control campaign value 83.31"
+    },
+    {
+      "id": "F",
+      "text": "every ratio uses that policy's own in-control denominator",
+      "passed": true,
+      "detail": "R_Delta(rho) divides by the Delta=0 arm of the SAME rho, run with the SAME seed; verified by construction and by unit test"
+    }
+  ],
+  "decision": "STAGE-C1-CLOSED-CONFIRMED-SENSITIVITY",
+  "decision_reason": "H-C1 passes at every preregistered shift, the absolute-delay guard holds, and the sanity and adversarial checks pass",
+  "hc1_all_pass": true,
+  "q_guard_all_pass": true,
+  "adversarial_all_pass": null
+}
