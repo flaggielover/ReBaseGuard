@@ -114,3 +114,24 @@
 | Historical artifacts preserved? | YES |
 | Blockers | none |
 | Remaining | commit Lean checkpoint; attempt authoritative-threshold Arb upgrade |
+
+## PROGRESS CAPSULE — #7
+
+| Field | Value |
+|---|---|
+| Step | 7 / 9 |
+| Gate | non-blocking authoritative-threshold Arb attempt |
+| Protocol frozen? | YES — unchanged |
+| Derivative theorem | human, numerical, and Lean gates PASS |
+| Arb threshold | exact runtime rational for `A=520.886133602749` |
+| Fresh candidate | recomputed — midpoint `17.29084`, not a Gamma enclosure |
+| Outward-rounded geometry | PASS |
+| Representative residual cells | completed; raw-box dependency loss persists |
+| Global cover/residual propagation | INCOMPLETE |
+| Independent OPEN-status audit | PASS |
+| Gamma above two | CONFIRMATORY NUMERICAL ONLY |
+| Rigorous SR local-instability certificate | OPEN — non-blocking |
+| `SR-GAMMA-CERTIFIED` | NOT AWARDED |
+| Historical artifacts preserved? | YES |
+| Blockers | none for derivative closure |
+| Remaining | final reproducer, full repository verification, reports and decision |
