@@ -37,3 +37,21 @@
 | Tests | 10 / 10 pre-freeze checks passed before hash record |
 | Blockers | none |
 | Remaining | commit/push freeze; prove human theorem; implement frozen numerical routes |
+
+## PROGRESS CAPSULE — #3
+
+| Field | Value |
+|---|---|
+| Step | 3 / 9 |
+| Gate | human theorem and analytic obligations |
+| Protocol frozen? | YES — unchanged |
+| Definition/code correspondence | PASS |
+| Human theorem | CLOSED — stopped-score proof with SR-specific tail argument |
+| Concrete analytic obligations | CLOSED (human) — measurability, tail, moments, stopped likelihood, domination |
+| Symmetry and rho scaling | CLOSED structurally in the human proof |
+| Confirmatory numerics | NOT STARTED |
+| Lean | NOT AUTHORIZED pending numerical gate |
+| Arb | NOT STARTED — non-blocking and post-Lean only |
+| Historical artifacts preserved? | YES |
+| Blockers | none |
+| Remaining | implement and test the frozen numerical routes; then generate outcomes |
