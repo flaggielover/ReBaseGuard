@@ -61,15 +61,15 @@ Track 2 still must formalize after the numerical gate:
 
 | ID | New Lean obligation | Status |
 |---|---|---|
-| L1 | raw two-chart state, update, and sign/state-swap reflection | PENDING — AUTHORIZED |
-| L2 | inclusive alarm symmetry | PENDING — AUTHORIZED |
-| L3 | finite-list first-alarm and terminal-record reflection | PENDING — AUTHORIZED |
-| L4 | terminal sign negation and product invariance | PENDING — AUTHORIZED |
-| L5 | exact rho scaling and odd-map algebra | PENDING — AUTHORIZED |
-| L6 | conditional stopped-score derivative consequence | PENDING — AUTHORIZED |
-| L7 | `Gamma>2 -> |F'_1(0)|>1` | PENDING — AUTHORIZED |
-| L8 | authoritative threshold/convention correspondence theorem | PENDING — AUTHORIZED |
-| L9 | compilation, forbidden-placeholder scan, and `#print axioms` audit | PENDING — AUTHORIZED |
+| L1 | raw two-chart state, update, and sign/state-swap reflection | PASS |
+| L2 | inclusive alarm symmetry | PASS |
+| L3 | finite-list first-alarm and terminal-record reflection | PASS |
+| L4 | terminal sign negation and product invariance | PASS |
+| L5 | exact rho scaling and odd-map algebra | PASS |
+| L6 | conditional stopped-score derivative consequence | PASS under explicit analytic hypotheses |
+| L7 | `Gamma>2 -> |F'_1(0)|>1` | PASS as a conditional implication |
+| L8 | authoritative threshold/convention correspondence theorem | PASS |
+| L9 | compilation, forbidden-placeholder scan, and `#print axioms` audit | PASS — standard axioms only |
 
 The following concrete facts are deliberately not claimed as Lean-instantiated:
 

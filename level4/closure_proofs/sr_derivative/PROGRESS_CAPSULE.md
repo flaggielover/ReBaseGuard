@@ -95,3 +95,22 @@
 | Historical artifacts preserved? | YES |
 | Blockers | none |
 | Remaining | freeze numerical report; formalize and audit conditional Lean spine |
+
+## PROGRESS CAPSULE — #6
+
+| Field | Value |
+|---|---|
+| Step | 6 / 9 |
+| Gate | conditional Lean proof spine and axiom audit |
+| Protocol frozen? | YES — unchanged |
+| Human theorem | CLOSED |
+| Numerical correspondence | PASS |
+| Lean | PASS — finite SR reflection, stopped record, rho/derivative algebra, instability implication |
+| Analytic boundary | explicit — concrete infinite SR obligations remain human-proved |
+| Axiom audit | PASS — `propext`, `Classical.choice`, `Quot.sound` only |
+| Forbidden placeholders | none |
+| Gamma above two | CONFIRMATORY NUMERICAL ONLY |
+| Arb | AUTHORIZED NEXT — non-blocking rigor upgrade |
+| Historical artifacts preserved? | YES |
+| Blockers | none |
+| Remaining | commit Lean checkpoint; attempt authoritative-threshold Arb upgrade |

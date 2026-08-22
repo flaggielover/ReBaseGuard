@@ -1,0 +1,12 @@
+import «SRDerivative»
+
+#print axioms RebaseguardLean.SRDerivative.srStep_reflection
+#print axioms RebaseguardLean.SRDerivative.alarmed_reflection
+#print axioms RebaseguardLean.SRDerivative.firstAlarm_reflection
+#print axioms RebaseguardLean.SRDerivative.reflected_alarm_negates_terminal_and_total
+#print axioms RebaseguardLean.SRDerivative.reflected_terminal_product
+#print axioms RebaseguardLean.SRDerivative.reuseMean_odd
+#print axioms RebaseguardLean.SRDerivative.derivative_spine_of_dominated
+#print axioms RebaseguardLean.SRDerivative.gamma_gt_two_full_reuse_instability
+#print axioms RebaseguardLean.SRDerivative.authoritativeA_ne_historical
+

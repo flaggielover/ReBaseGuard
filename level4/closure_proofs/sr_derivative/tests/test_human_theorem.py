@@ -43,5 +43,8 @@ def test_lean_is_authorized_only_by_the_frozen_numerical_decision():
         (CAMPAIGN / "results/numerical_decision.json").read_text()
     )
     assert decision["decision"] == "NUMERICAL GATE CLOSED — LEAN AUTHORIZED"
-    assert obligations.count("PENDING — AUTHORIZED") == 9
+    lean_section = obligations.split("## 3. Lean reuse boundary", 1)[1].split(
+        "## 4. Arb and final obligations", 1
+    )[0]
+    assert lean_section.count("| PASS") == 9
     assert "NUMERICAL GATE CLOSED — LEAN AUTHORIZED" in obligations
