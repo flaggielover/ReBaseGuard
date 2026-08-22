@@ -35,3 +35,9 @@ change the meaning of `SR-DERIVATIVE-CLOSED`.
 No Track-2 confirmatory numerical outcome existed when the protocol was
 frozen.
 
+## Final decision
+
+The campaign is `SR-DERIVATIVE-CLOSED`.  The derivative theorem is closed;
+`Gamma_SR>2` remains confirmatory numerical evidence and the rigorous SR
+local-instability certificate remains OPEN.  See `FINAL_REPORT.md` for the
+complete evidence boundary.

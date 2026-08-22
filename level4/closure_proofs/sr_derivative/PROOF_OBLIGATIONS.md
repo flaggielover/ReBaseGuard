@@ -92,9 +92,9 @@ The final Lean correspondence report must use this wording:
 |---|---|---|---|
 | C1 | Arb interval proves `Gamma_SR>2` at exact runtime rational for authoritative `A` | non-blocking rigor upgrade | OPEN — global cover/residual/propagation incomplete |
 | C2 | independent certificate auditor reconstructs all critical claims | required only for `SR-GAMMA-CERTIFIED` | OPEN — auditor covers the OPEN probe, not a full certificate |
-| V1 | Track-2 clean reproduction | required for derivative closure | PENDING |
-| V2 | full authoritative repository verification | required for derivative closure | PENDING |
-| V3 | historical manifest unchanged | required for derivative closure | PASS at current checkpoint |
+| V1 | Track-2 clean reproduction | required for derivative closure | PASS — 168/168 closure-track checks |
+| V2 | full authoritative repository verification | required for derivative closure | PASS — 695/695 |
+| V3 | historical manifest unchanged | required for derivative closure | PASS — 139-file manifest |
 
 C1 and C2 remain incomplete.  The final report must say `rigorous SR local-
 instability certificate: OPEN`; this does not block `SR-DERIVATIVE-CLOSED`.

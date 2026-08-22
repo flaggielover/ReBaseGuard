@@ -1,0 +1,100 @@
+{
+  "schema": "rebaseguard.sr-derivative.final-decision.v1",
+  "decision": "SR-DERIVATIVE-CLOSED",
+  "decision_date": "2026-08-22",
+  "closure_target": "symmetric two-chart SR local derivative theorem under matched m=1 reuse",
+  "theorem": {
+    "gamma": "Gamma_SR = E_0[Z_tau T_tau]",
+    "derivative": "F'_rho(0) = rho(1-Gamma_SR)",
+    "threshold_scope": "arbitrary admissible A; code-correspondence instance A=520.886133602749"
+  },
+  "status_boundary": {
+    "derivative_theorem": "CLOSED",
+    "Gamma_SR_gt_2": "CONFIRMATORY NUMERICAL",
+    "rigorous_SR_local_instability_certificate": "OPEN",
+    "additional_status": "SR-GAMMA-CERTIFIED NOT AWARDED"
+  },
+  "closure_conditions": {
+    "definition_code_correspondence": "PASS",
+    "human_stopped_score_proof": "PASS",
+    "concrete_analytic_obligations_human": "PASS",
+    "reflection_and_rho_scaling": "PASS",
+    "calibration_reproduction": "PASS",
+    "fixed_operating_point_matching": "PASS",
+    "raw_score_route": "PASS",
+    "independent_log_map_route": "PASS",
+    "independent_replication": "PASS",
+    "tie_guard": "PASS (zero exact ties)",
+    "conditional_lean_spine": "PASS",
+    "axiom_audit": "PASS (propext, Classical.choice, Quot.sound only)",
+    "historical_manifest": "PASS",
+    "clean_reproduction": "PASS",
+    "authoritative_repository_verification": "PASS"
+  },
+  "protocol": {
+    "sha256": "e9b66ff8ffbf0d8138598b1d4dc19dcc1e44d8b4f33f5b462b5b82f341d5f762",
+    "frozen_before_confirmatory_outcomes": true,
+    "authoritative_threshold_decimal": "520.886133602749",
+    "runtime_threshold_rational": [4581762885148045, 8796093022208]
+  },
+  "numerical_correspondence": {
+    "route_a_predicted_derivative": -16.291320922042853,
+    "route_a_se": 0.027568571620771132,
+    "route_b_primary_h": 0.0125,
+    "route_b_pooled_derivative": -16.195009584908167,
+    "route_b_se": 0.03905916097090782,
+    "pooled_abs_z": 2.014527033859617,
+    "relative_discrepancy": 0.005911818789621477,
+    "replication_agreement_abs_z": 0.7412313907327577,
+    "exact_ties": 0,
+    "Gamma_SR_estimate": 17.291320922042853,
+    "Gamma_SR_batch_99_percent_lower": 17.218094797683232,
+    "Gamma_inequality_evidence_class": "CONFIRMATORY NUMERICAL ONLY"
+  },
+  "lean": {
+    "classification": "conditional algebraic/stopped-score proof spine",
+    "concrete_infinite_SR_instantiated": false,
+    "human_only_concrete_obligations": [
+      "measurability",
+      "almost-sure finiteness",
+      "geometric/exponential tail",
+      "integrability",
+      "stopped change of measure",
+      "domination"
+    ],
+    "axioms": ["propext", "Classical.choice", "Quot.sound"]
+  },
+  "arb": {
+    "attempted_after_lean": true,
+    "threshold": "exact runtime rational for A=520.886133602749",
+    "status": "OPEN",
+    "global_patch_cover": false,
+    "certified_global_residuals": false,
+    "certified_gamma_interval": false,
+    "strict_lower_endpoint_above_two": false,
+    "claim": "NO RIGOROUS SR GAMMA INEQUALITY CERTIFIED"
+  },
+  "verification": {
+    "predecision_evidence_commit": "2ca2740d816d6703460b894403c344fbe38508a0",
+    "historical_closure_tests": 110,
+    "track2_tests": 58,
+    "closure_track_tests_total": 168,
+    "authoritative_tests": 695,
+    "combined_checks": 863,
+    "authoritative_result": "LEVEL 4 VERIFICATION OK",
+    "worktree_at_verification": "clean"
+  },
+  "historical_status_preserved": {
+    "D2_3": "FAILED",
+    "stage_d": "STAGE-D-PARTIAL",
+    "stage_f": "LEVEL-4-PARTIAL",
+    "global_level4_reaudit_performed": false
+  },
+  "scope_exclusions": [
+    "m-rho phase map",
+    "SR period-2 certificate",
+    "general location-family theorem",
+    "new external validation",
+    "global Level-4 re-audit"
+  ]
+}

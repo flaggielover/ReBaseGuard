@@ -135,3 +135,44 @@
 | Historical artifacts preserved? | YES |
 | Blockers | none for derivative closure |
 | Remaining | final reproducer, full repository verification, reports and decision |
+
+## PROGRESS CAPSULE — #8
+
+| Field | Value |
+|---|---|
+| Step | 8 / 9 |
+| Gate | clean reproduction and authoritative verification |
+| Protocol frozen? | YES — unchanged |
+| Historical closure tracks | 110 / 110 passed |
+| Track 2 | 52 / 52 passed |
+| Lean replay | PASS; axiom artifact exact |
+| Arb OPEN audit replay | PASS; byte-stable |
+| Authoritative verifier | 695 / 695 passed — `LEVEL 4 VERIFICATION OK` |
+| Combined checks | 857 / 857 |
+| Worktree at verification | clean |
+| Historical artifacts preserved? | YES |
+| Global Level-4 re-audit | NOT PERFORMED |
+| Blockers | none |
+| Remaining | freeze final scoped decision and artifact manifest |
+
+## PROGRESS CAPSULE — #9
+
+| Field | Value |
+|---|---|
+| Step | 9 / 9 |
+| Gate | `SR-DERIVATIVE-CLOSED` |
+| Derivative theorem | CLOSED |
+| Gamma_SR > 2 | CONFIRMATORY NUMERICAL |
+| Rigorous SR local-instability certificate | OPEN |
+| `SR-GAMMA-CERTIFIED` | NOT AWARDED |
+| Human theorem | PASS |
+| Independent numerics | PASS |
+| Symmetry/rho scaling | PASS |
+| Lean/axiom audit | PASS, conditional analytic boundary explicit |
+| Verification | PASS |
+| Final Track 2 | 58 / 58 passed |
+| Final combined checks | 863 / 863 |
+| Historical Stage D/F | unchanged |
+| Overall Level 4 | remains `LEVEL-4-PARTIAL` |
+| Blockers | none for scoped derivative closure |
+| Remaining | none; do not begin additional scientific scope |
