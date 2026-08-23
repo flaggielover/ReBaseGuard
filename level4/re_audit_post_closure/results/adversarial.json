@@ -1,0 +1,182 @@
+{
+  "schema": "rebaseguard.level4-post-closure-adversarial.v1",
+  "suite": "Post-closure global Level-4 re-audit",
+  "n_checks": 18,
+  "n_passed": 18,
+  "n_failed": 0,
+  "checks": [
+    {
+      "id": "R1",
+      "description": "Stage-F historical verdict remains preserved",
+      "passed": true,
+      "evidence": {
+        "stage_f": "LEVEL-4-PARTIAL",
+        "current_historical_field": "LEVEL-4-PARTIAL"
+      }
+    },
+    {
+      "id": "R2",
+      "description": "Stage-D D2.3 historical FAIL remains preserved",
+      "passed": true,
+      "evidence": {
+        "id": "D2.3",
+        "statement": "FD of the actual induced map = 1 - Gamma_m within 3 combined SE",
+        "status": "FAIL",
+        "value": "0/8 at the pre-committed primary step h = 0.05"
+      }
+    },
+    {
+      "id": "R3",
+      "description": "Track 1A historical FAIL remains preserved",
+      "passed": true,
+      "evidence": "MGT1-TRACK1A-FAILED"
+    },
+    {
+      "id": "R4",
+      "description": "Historical Track 3 PARTIAL and 4.605351% failure remain preserved",
+      "passed": true,
+      "evidence": {
+        "decision": "LOCATION-FAMILY-THEOREM-PARTIAL",
+        "relative": 0.04605351425844214,
+        "limit": 0.03
+      }
+    },
+    {
+      "id": "R5",
+      "description": "Track 1B closure maps only to the m>1 theorem row",
+      "passed": true,
+      "evidence": {
+        "campaign": "MGT1-TRACK1B-CLOSED",
+        "row": "PASS"
+      }
+    },
+    {
+      "id": "R6",
+      "description": "Track 2 closure maps only to the SR derivative-theorem row",
+      "passed": true,
+      "evidence": {
+        "campaign": "SR-DERIVATIVE-CLOSED",
+        "row": "PASS"
+      }
+    },
+    {
+      "id": "R7",
+      "description": "Track 3A/3B closure maps to the location-family theorem row",
+      "passed": true,
+      "evidence": {
+        "campaign": "LOCATION-FAMILY-TRACK3AB-CLOSED",
+        "row": "PASS"
+      }
+    },
+    {
+      "id": "R8",
+      "description": "No rigorous SR Gamma certificate is claimed",
+      "passed": true,
+      "evidence": {
+        "derivative_theorem": "CLOSED",
+        "Gamma_SR_gt_2": "CONFIRMATORY NUMERICAL",
+        "rigorous_SR_local_instability_certificate": "OPEN"
+      }
+    },
+    {
+      "id": "R9",
+      "description": "Stage E 0/3 H-E5 result remains preserved",
+      "passed": true,
+      "evidence": {
+        "support": 0,
+        "row": "FAIL"
+      }
+    },
+    {
+      "id": "R10",
+      "description": "D2.5 mathematical-not-operational result remains preserved",
+      "passed": true,
+      "evidence": {
+        "verdict": "MATHEMATICAL, NOT OPERATIONAL",
+        "normalized_row": "PARTIAL"
+      }
+    },
+    {
+      "id": "R11",
+      "description": "No affirmative detector-independence wording appears",
+      "passed": true,
+      "evidence": {
+        "forbidden_occurrences": 0
+      }
+    },
+    {
+      "id": "R12",
+      "description": "No affirmative distribution-independence wording appears",
+      "passed": true,
+      "evidence": {
+        "forbidden_occurrences": 0
+      }
+    },
+    {
+      "id": "R13",
+      "description": "No production-validation wording appears",
+      "passed": true,
+      "evidence": {
+        "forbidden_occurrences": []
+      }
+    },
+    {
+      "id": "R14",
+      "description": "No protected historical hash changed",
+      "passed": true,
+      "evidence": {
+        "files_verified": 38,
+        "missing": [],
+        "mismatches": []
+      }
+    },
+    {
+      "id": "R15",
+      "description": "Current verdict mechanically follows from the 18-row table",
+      "passed": true,
+      "evidence": {
+        "counts": [
+          12,
+          3,
+          2,
+          1
+        ],
+        "mandatory_unmet": [
+          "L4R-11",
+          "L4R-15",
+          "L4R-16"
+        ],
+        "verdict": "LEVEL-4-PARTIAL"
+      }
+    },
+    {
+      "id": "R16",
+      "description": "No new science is performed by the re-audit",
+      "passed": true,
+      "evidence": {
+        "source_declaration": true,
+        "prohibited_commands": []
+      }
+    },
+    {
+      "id": "R17",
+      "description": "Full repository verification passes with re-audit integration",
+      "passed": true,
+      "evidence": {
+        "command": "bash scripts/verify_level_4.sh",
+        "status": "PASS",
+        "tests": 713
+      }
+    },
+    {
+      "id": "R18",
+      "description": "The byte-stable post-closure reproduction script passes",
+      "passed": true,
+      "evidence": {
+        "command": "bash level4/re_audit_post_closure/reproduce.sh",
+        "status": "PASS",
+        "byte_stable": true
+      }
+    }
+  ]
+}

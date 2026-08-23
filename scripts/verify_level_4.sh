@@ -54,6 +54,10 @@ echo "== Level 4 Stage F suite =="
 "$L4_PY" -m pytest level4/stage_f/tests -q
 
 echo
+echo "== Level 4 post-closure re-audit suite =="
+"$L4_PY" -m pytest level4/re_audit_post_closure/tests -q
+
+echo
 echo "== Level 4 environment =="
 "$L4_PY" - <<'PY'
 import sys
@@ -201,6 +205,24 @@ else:
     print("  adversarial F: %s/%s" % (a.get("passed"), a.get("total")))
     print("  integrity : %s ; historical artifacts untouched: %s"
           % (d["protocol_integrity"]["status"], d["historical_artifacts_untouched"]))
+PYEOF
+
+echo
+echo "== Current post-closure Level-4 status =="
+"$L4_PY" - <<'PYEOF'
+import json, pathlib
+p = pathlib.Path("level4/re_audit_post_closure/results/final_decision.json")
+if not p.exists():
+    print("  (not built -- run level4/re_audit_post_closure/reproduce.sh)")
+else:
+    d = json.loads(p.read_text())
+    print("  historical Stage F:", d["historical_stage_f_status"])
+    print("  current Level 4  :", d["current_status"])
+    print("  requirements     : %d pass / %d partial / %d fail / %d open"
+          % (d["pass_count"], d["partial_count"], d["fail_count"], d["open_count"]))
+    print("  mandatory unmet :")
+    for row in d["mandatory_unmet"]:
+        print("    - %s [%s]" % (row["requirement"], row["blocker_type"]))
 PYEOF
 
 echo

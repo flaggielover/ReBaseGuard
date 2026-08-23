@@ -1,0 +1,31 @@
+{
+  "schema": "rebaseguard.level4-post-closure-verification.v1",
+  "audit_start_head": "c8743cc9c363b7a8a3be6dc51947d9d74f76e2ca",
+  "level_1_3_full": {
+    "command": "bash scripts/verify_level_1_3.sh",
+    "status": "PASS",
+    "skips": 0,
+    "regression_tests": 90
+  },
+  "authoritative_repository": {
+    "command": "bash scripts/verify_level_4.sh",
+    "status": "PASS",
+    "tests": 713
+  },
+  "scoped_reproducers": {
+    "track_1b": "PASS: MGT1-TRACK1B-CLOSED reproduced",
+    "track_2": "PASS: SR-DERIVATIVE-CLOSED reproduced; rigorous SR certificate OPEN",
+    "track_3ab": "PASS: LOCATION-FAMILY-TRACK3AB-CLOSED reproduced; historical Track 3 partial"
+  },
+  "distinct_test_accounting": {
+    "authoritative_repository_tests": 713,
+    "historical_closure_tests": 205,
+    "track_3ab_tests": 29,
+    "combined_checks": 947
+  },
+  "post_closure_reproducer": {
+    "command": "bash level4/re_audit_post_closure/reproduce.sh",
+    "status": "PASS",
+    "byte_stable": true
+  }
+}
