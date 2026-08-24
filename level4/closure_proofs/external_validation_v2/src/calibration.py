@@ -30,7 +30,8 @@ def calibrate(stream) -> dict:
         lengths = _measure(stream, threshold, r0)
         mean = float(lengths.mean()) if lengths.size else float("inf")
         trace.append({"iteration": iteration, "threshold": threshold,
-                      "mean_cycle_length": mean, "n_cycles": int(lengths.size)})
+                      "mean_cycle_length": mean if np.isfinite(mean) else None,
+                      "n_cycles": int(lengths.size)})
         if mean < target:
             lower = threshold
         else:

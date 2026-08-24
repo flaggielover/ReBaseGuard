@@ -1,0 +1,630 @@
+{
+  "all_primary_pass": true,
+  "confirmatory_outcomes_generated": false,
+  "protocol_hash": "878c4dd71165312a2194e2b906a90cb94e82bdfb3fe8db785175618b3dd83289",
+  "schema": "rebaseguard.external-validation-v2.gates.v1",
+  "tasks": {
+    "beijing": {
+      "actual_power": {
+        "calibration_cycle_blocks": 21,
+        "event_blocks": 20,
+        "floor": 20,
+        "natural_week_blocks": 102
+      },
+      "calibration": {
+        "achieved": {
+          "block": 4,
+          "ci95": [
+            47.02291666666667,
+            72.78571428571429
+          ],
+          "effective_blocks": 21,
+          "mean": 59.51190476190476,
+          "n": 84
+        },
+        "effective_block_gate_pass": true,
+        "initial_reference": 0.08041646723933782,
+        "point_relative_error": -0.008134920634920717,
+        "point_tolerance_pass": true,
+        "policy": "P0_fresh",
+        "status": "PASS",
+        "target_arl": 60,
+        "target_inside_ci": true,
+        "task": "beijing",
+        "threshold": 4.909408242631111,
+        "trace": [
+          {
+            "iteration": 0,
+            "mean_cycle_length": 62.45679012345679,
+            "n_cycles": 81,
+            "threshold": 5.000000000000001
+          },
+          {
+            "iteration": 1,
+            "mean_cycle_length": 15.868421052631579,
+            "n_cycles": 190,
+            "threshold": 1.118033988749895
+          },
+          {
+            "iteration": 2,
+            "mean_cycle_length": 30.616541353383457,
+            "n_cycles": 133,
+            "threshold": 2.3643540225079396
+          },
+          {
+            "iteration": 3,
+            "mean_cycle_length": 41.19090909090909,
+            "n_cycles": 110,
+            "threshold": 3.438280109668161
+          },
+          {
+            "iteration": 4,
+            "mean_cycle_length": 48.68041237113402,
+            "n_cycles": 97,
+            "threshold": 4.146251385087596
+          },
+          {
+            "iteration": 5,
+            "mean_cycle_length": 57.46511627906977,
+            "n_cycles": 86,
+            "threshold": 4.553159005068677
+          },
+          {
+            "iteration": 6,
+            "mean_cycle_length": 59.51190476190476,
+            "n_cycles": 84,
+            "threshold": 4.7713514883461885
+          },
+          {
+            "iteration": 7,
+            "mean_cycle_length": 59.51190476190476,
+            "n_cycles": 84,
+            "threshold": 4.8843379737412675
+          },
+          {
+            "iteration": 8,
+            "mean_cycle_length": 62.45679012345679,
+            "n_cycles": 81,
+            "threshold": 4.941830619184184
+          },
+          {
+            "iteration": 9,
+            "mean_cycle_length": 61.451219512195124,
+            "n_cycles": 82,
+            "threshold": 4.913000198766395
+          },
+          {
+            "iteration": 10,
+            "mean_cycle_length": 59.51190476190476,
+            "n_cycles": 84,
+            "threshold": 4.898648123292088
+          },
+          {
+            "iteration": 11,
+            "mean_cycle_length": 59.51190476190476,
+            "n_cycles": 84,
+            "threshold": 4.905818912620059
+          },
+          {
+            "iteration": 12,
+            "mean_cycle_length": 59.51190476190476,
+            "n_cycles": 84,
+            "threshold": 4.909408242631111
+          }
+        ]
+      },
+      "calibration_residual_diagnostics": {
+        "acf": {
+          "1": 0.33852109801480085,
+          "168": 0.0007023753485255413,
+          "24": 0.0627129453941899,
+          "4": 0.0172378071666442,
+          "96": 0.019582629617537428
+        },
+        "excess_kurtosis": 12.872279484689278,
+        "mean": 0.003861181971057009,
+        "sd": 0.1942375726985833
+      },
+      "dataset_audit": {
+        "eligible_hours": 34462,
+        "hours_at_least_eight_sites": 34956,
+        "missing_pm25_cells": 8739,
+        "rows_per_station": 35064,
+        "stations": 12
+      },
+      "gates": {
+        "calibration": true,
+        "dataset": true,
+        "leakage": true,
+        "power": true
+      },
+      "leakage": {
+        "chronological_nonoverlap": true,
+        "intervention_seed_independent": true,
+        "model_fit_source": "train only",
+        "rho_source": "frozen protocol",
+        "scale_source": "train only",
+        "threshold_source": "calibration only"
+      },
+      "model": {
+        "beta": [
+          4.04791811874668,
+          0.9222326135380903,
+          -0.01532273408388108,
+          0.0018587266544739945,
+          -0.050057074026782486,
+          -0.0013691095651386979,
+          0.11968033226701892,
+          -0.0123563380224739,
+          -0.04538461461387235,
+          -0.03895845008607933,
+          -0.026726248613195103,
+          -0.0013385526674430845,
+          -0.0017029542608866005,
+          0.04770244971511709,
+          0.060230380436843776
+        ],
+        "feature_mean": [
+          4.0480932565924075,
+          4.044942269359629,
+          4.05183961441812,
+          13.53912854241215,
+          1010.1739433214025,
+          2.431995357384647,
+          0.03616887513299164,
+          1.6292436405842003,
+          0.0016114920091487078,
+          -0.00041447169007711396,
+          -0.0026041342042414676,
+          -0.0005293177243865624,
+          0.14365038953146828,
+          -0.029621836847839256
+        ],
+        "feature_sd": [
+          0.9930505440551046,
+          0.9974260274427396,
+          1.0085407159219288,
+          10.549888222521998,
+          9.673513346420249,
+          13.207703500496025,
+          0.4071944816531269,
+          1.0445405526707174,
+          0.7065612797698044,
+          0.7076499058410151,
+          0.7059382183881893,
+          0.708268430841514,
+          0.7339638661768583,
+          0.6631622392114455
+        ],
+        "kind": "ridge",
+        "lambda": 1.0,
+        "n_features": 14
+      },
+      "n": 34462,
+      "split": {
+        "calibration": [
+          10339,
+          17231
+        ],
+        "evaluation": [
+          17231,
+          34462
+        ],
+        "train": [
+          0,
+          10339
+        ]
+      },
+      "status": "PASS",
+      "task": "beijing",
+      "train_residual_scale": 0.20103161741909226
+    },
+    "household": {
+      "actual_power": {
+        "calibration_cycle_blocks": 25,
+        "event_blocks": 20,
+        "floor": 20,
+        "natural_week_blocks": 99
+      },
+      "calibration": {
+        "achieved": {
+          "block": 4,
+          "ci95": [
+            176.81163366336634,
+            310.0512376237624
+          ],
+          "effective_blocks": 25,
+          "mean": 239.20792079207922,
+          "n": 101
+        },
+        "effective_block_gate_pass": true,
+        "initial_reference": -0.07994105763802091,
+        "point_relative_error": -0.0033003300330032292,
+        "point_tolerance_pass": true,
+        "policy": "P0_fresh",
+        "status": "PASS",
+        "target_arl": 240,
+        "target_inside_ci": true,
+        "task": "household",
+        "threshold": 5.254956618461217,
+        "trace": [
+          {
+            "iteration": 0,
+            "mean_cycle_length": 229.59047619047618,
+            "n_cycles": 105,
+            "threshold": 5.000000000000001
+          },
+          {
+            "iteration": 1,
+            "mean_cycle_length": 1349.0,
+            "n_cycles": 2,
+            "threshold": 22.3606797749979
+          },
+          {
+            "iteration": 2,
+            "mean_cycle_length": null,
+            "n_cycles": 0,
+            "threshold": 10.573712634405641
+          },
+          {
+            "iteration": 3,
+            "mean_cycle_length": 3855.0,
+            "n_cycles": 4,
+            "threshold": 7.271077167244769
+          },
+          {
+            "iteration": 4,
+            "mean_cycle_length": 588.9047619047619,
+            "n_cycles": 42,
+            "threshold": 6.029542755153482
+          },
+          {
+            "iteration": 5,
+            "mean_cycle_length": 376.6818181818182,
+            "n_cycles": 66,
+            "threshold": 5.490693378414735
+          },
+          {
+            "iteration": 6,
+            "mean_cycle_length": 234.1747572815534,
+            "n_cycles": 103,
+            "threshold": 5.2396056046303405
+          },
+          {
+            "iteration": 7,
+            "mean_cycle_length": 291.6666666666667,
+            "n_cycles": 84,
+            "threshold": 5.363680434072162
+          },
+          {
+            "iteration": 8,
+            "mean_cycle_length": 264.5652173913044,
+            "n_cycles": 92,
+            "threshold": 5.301280040123385
+          },
+          {
+            "iteration": 9,
+            "mean_cycle_length": 274.1573033707865,
+            "n_cycles": 89,
+            "threshold": 5.270352607743191
+          },
+          {
+            "iteration": 10,
+            "mean_cycle_length": 239.20792079207922,
+            "n_cycles": 101,
+            "threshold": 5.254956618461217
+          },
+          {
+            "iteration": 11,
+            "mean_cycle_length": 247.14285714285714,
+            "n_cycles": 98,
+            "threshold": 5.262648982944275
+          },
+          {
+            "iteration": 12,
+            "mean_cycle_length": 247.14285714285714,
+            "n_cycles": 98,
+            "threshold": 5.258801394192521
+          }
+        ]
+      },
+      "calibration_residual_diagnostics": {
+        "acf": {
+          "1": 0.006069026789614656,
+          "168": -0.0016375401965731072,
+          "24": -0.006614954286260151,
+          "4": -0.03092840187845558,
+          "96": 0.005052509951026077
+        },
+        "excess_kurtosis": 4.566470158307285,
+        "mean": 0.0005508909356280891,
+        "sd": 0.19794508681573567
+      },
+      "dataset_audit": {
+        "bins": 138351,
+        "eligible_bins": 133503,
+        "minimum_real_measurements_per_bin": 12,
+        "missing_target_rows": 25979,
+        "raw_rows": 2075259
+      },
+      "gates": {
+        "calibration": true,
+        "dataset": true,
+        "leakage": true,
+        "power": true
+      },
+      "leakage": {
+        "chronological_nonoverlap": true,
+        "intervention_seed_independent": true,
+        "model_fit_source": "train only",
+        "rho_source": "frozen protocol",
+        "scale_source": "train only",
+        "threshold_source": "calibration only"
+      },
+      "model": {
+        "beta": [
+          0.6652078549483518,
+          0.37683271647291594,
+          0.003842218114264562,
+          0.021610872456473175,
+          0.021133875643777854,
+          -0.00475113972530282,
+          -0.008728304693231374,
+          -0.0031024380135100896,
+          -0.000845613917669581,
+          0.00021055823137374252,
+          0.00848086332667693
+        ],
+        "feature_mean": [
+          0.6653076855198334,
+          0.6655148187133951,
+          0.6674799801325816,
+          0.668183999190076,
+          -0.0003053902288866191,
+          0.0006331067373469958,
+          0.008739416056612942,
+          -0.002291048345392612,
+          0.035585165661780334,
+          0.134479262201902
+        ],
+        "feature_sd": [
+          0.4523825145343808,
+          0.4524508135950478,
+          0.4533600331886915,
+          0.45372563271951566,
+          0.706783043020789,
+          0.7074300219887477,
+          0.7065674297457413,
+          0.7075880446468048,
+          0.6721212629922445,
+          0.7272565103566677
+        ],
+        "kind": "ridge",
+        "lambda": 1.0,
+        "n_features": 10
+      },
+      "n": 133503,
+      "split": {
+        "calibration": [
+          40051,
+          66752
+        ],
+        "evaluation": [
+          66752,
+          133503
+        ],
+        "train": [
+          0,
+          40051
+        ]
+      },
+      "status": "PASS",
+      "task": "household",
+      "train_residual_scale": 0.20346554610540507
+    },
+    "metro": {
+      "actual_power": {
+        "calibration_cycle_blocks": 24,
+        "event_blocks": 20,
+        "floor": 20,
+        "natural_week_blocks": 120
+      },
+      "calibration": {
+        "achieved": {
+          "block": 4,
+          "ci95": [
+            43.060353535353535,
+            81.52525252525253
+          ],
+          "effective_blocks": 24,
+          "mean": 60.18181818181818,
+          "n": 99
+        },
+        "effective_block_gate_pass": true,
+        "initial_reference": 0.027695136247201456,
+        "point_relative_error": 0.003030303030302939,
+        "point_tolerance_pass": true,
+        "policy": "P0_fresh",
+        "status": "PASS",
+        "target_arl": 60,
+        "target_inside_ci": true,
+        "task": "metro",
+        "threshold": 5.2396056046303405,
+        "trace": [
+          {
+            "iteration": 0,
+            "mean_cycle_length": 47.09322033898305,
+            "n_cycles": 118,
+            "threshold": 5.000000000000001
+          },
+          {
+            "iteration": 1,
+            "mean_cycle_length": 1008.0,
+            "n_cycles": 1,
+            "threshold": 22.3606797749979
+          },
+          {
+            "iteration": 2,
+            "mean_cycle_length": 451.2857142857143,
+            "n_cycles": 7,
+            "threshold": 10.573712634405641
+          },
+          {
+            "iteration": 3,
+            "mean_cycle_length": 313.76190476190476,
+            "n_cycles": 21,
+            "threshold": 7.271077167244769
+          },
+          {
+            "iteration": 4,
+            "mean_cycle_length": 149.93478260869566,
+            "n_cycles": 46,
+            "threshold": 6.029542755153482
+          },
+          {
+            "iteration": 5,
+            "mean_cycle_length": 76.81481481481481,
+            "n_cycles": 81,
+            "threshold": 5.490693378414735
+          },
+          {
+            "iteration": 6,
+            "mean_cycle_length": 60.18181818181818,
+            "n_cycles": 99,
+            "threshold": 5.2396056046303405
+          },
+          {
+            "iteration": 7,
+            "mean_cycle_length": 54.18691588785047,
+            "n_cycles": 107,
+            "threshold": 5.118400924424708
+          },
+          {
+            "iteration": 8,
+            "mean_cycle_length": 54.886792452830186,
+            "n_cycles": 106,
+            "threshold": 5.178648681882255
+          },
+          {
+            "iteration": 9,
+            "mean_cycle_length": 54.18691588785047,
+            "n_cycles": 107,
+            "threshold": 5.2090379781685
+          },
+          {
+            "iteration": 10,
+            "mean_cycle_length": 58.59405940594059,
+            "n_cycles": 101,
+            "threshold": 5.224299434866264
+          },
+          {
+            "iteration": 11,
+            "mean_cycle_length": 59.38,
+            "n_cycles": 100,
+            "threshold": 5.231946922436465
+          },
+          {
+            "iteration": 12,
+            "mean_cycle_length": 59.38,
+            "n_cycles": 100,
+            "threshold": 5.235774863181816
+          }
+        ]
+      },
+      "calibration_residual_diagnostics": {
+        "acf": {
+          "1": 0.7236944556885818,
+          "168": 0.207303791543044,
+          "24": 0.29040000864068344,
+          "4": -0.340848576584699,
+          "96": 0.1521549694848031
+        },
+        "excess_kurtosis": 6.812918032032995,
+        "mean": 0.006909597220952151,
+        "sd": 0.565480067625384
+      },
+      "dataset_audit": {
+        "duplicate_target_disagreements": 0,
+        "raw_rows": 48204,
+        "unique_timestamps": 40575
+      },
+      "gates": {
+        "calibration": true,
+        "dataset": true,
+        "leakage": true,
+        "power": true
+      },
+      "leakage": {
+        "chronological_nonoverlap": true,
+        "intervention_seed_independent": true,
+        "model_fit_source": "train only",
+        "rho_source": "frozen protocol",
+        "scale_source": "train only",
+        "threshold_source": "calibration only"
+      },
+      "model": {
+        "beta": [
+          7.753028471713661,
+          -0.010733589515954121,
+          -0.012096328946494836,
+          0.0,
+          0.0050426619649510665,
+          -0.0032360301967228147,
+          -0.3365969945236801,
+          -0.7107564455914748,
+          0.07820550001132759,
+          -0.0744888879205487,
+          -0.02332381593258515,
+          -0.06304042091920742
+        ],
+        "feature_mean": [
+          275.62279419980075,
+          0.07721450870851125,
+          0.0,
+          50.861772921459085,
+          0.0013966480446927375,
+          -0.004900465786268058,
+          0.005978757666473612,
+          -0.0060097043468917664,
+          -0.0073878523774416754,
+          0.10640416129694118,
+          0.19529186030008208
+        ],
+        "feature_sd": [
+          15.385477988484759,
+          0.9335500866521788,
+          1.0,
+          37.22066152037318,
+          0.03734564792491923,
+          0.706448666118681,
+          0.7077220655249786,
+          0.70533376748392,
+          0.7088113850227218,
+          0.6997892932408594,
+          0.6788476919196842
+        ],
+        "kind": "ridge",
+        "lambda": 1.0,
+        "n_features": 11
+      },
+      "n": 40575,
+      "split": {
+        "calibration": [
+          12172,
+          20287
+        ],
+        "evaluation": [
+          20287,
+          40575
+        ],
+        "train": [
+          0,
+          12172
+        ]
+      },
+      "status": "PASS",
+      "task": "metro",
+      "train_residual_scale": 0.5567155223870063
+    }
+  }
+}

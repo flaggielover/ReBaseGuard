@@ -120,3 +120,22 @@ def test_no_pilot_or_confirmatory_artifact_before_execution_checkpoint():
 def test_raw_cache_is_gitignored():
     ignored = (BASE / ".gitignore").read_text().splitlines()
     assert "data/_cache/" in ignored
+
+
+def test_persisted_pre_outcome_gates_all_pass_without_backup():
+    gates = json.loads((BASE / "results/gates.json").read_text())
+    assert gates["confirmatory_outcomes_generated"] is False
+    assert gates["all_primary_pass"] is True
+    assert set(gates["tasks"]) == {"household", "metro", "beijing"}
+    assert all(row["status"] == "PASS" for row in gates["tasks"].values())
+
+
+def test_actual_power_floor_and_calibration_acceptance_are_enforced():
+    gates = json.loads((BASE / "results/gates.json").read_text())
+    for row in gates["tasks"].values():
+        assert min(row["actual_power"][key] for key in
+                   ("natural_week_blocks", "event_blocks", "calibration_cycle_blocks")) >= 20
+        calibration = row["calibration"]
+        assert calibration["point_tolerance_pass"]
+        assert calibration["target_inside_ci"]
+        assert calibration["effective_block_gate_pass"]

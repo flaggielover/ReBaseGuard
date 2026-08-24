@@ -80,7 +80,9 @@ def main() -> int:
         "tasks": tasks,
         "all_primary_pass": all(row["status"] == "PASS" for row in tasks.values()),
     }
-    print(json.dumps(result, indent=2))
+    path = BASE / "results/gates.json"
+    path.write_text(json.dumps(result, indent=2, sort_keys=True, allow_nan=False) + "\n")
+    print(f"all primary gates: {'PASS' if result['all_primary_pass'] else 'FAIL'} -> {path}")
     return 0 if result["all_primary_pass"] else 1
 
 
