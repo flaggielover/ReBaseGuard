@@ -17,3 +17,11 @@ outcome, the split was corrected to 20/30/50 and Retail's cycle-bootstrap block
 to two. The 50% evaluation share, datasets, hypotheses, margins, event count,
 and all closure rules are unchanged. Corrected projections are 46 and 58
 calibration blocks for MetroPT and Retail, respectively.
+
+## F3 — execution checkpoint formatting gate
+
+The first P0-gate checkpoint attempt stopped before commit because newly added
+execution files had extra blank lines at EOF. Mechanical normalization changed
+only bytes, so the execution-config hash was refreshed to
+`633cf2fb90f50c47845351f428b324813f6d2e21b33c49ff1ba30b73b8b48d4c`.
+The protocol hash stayed unchanged, and no confirmatory result existed.

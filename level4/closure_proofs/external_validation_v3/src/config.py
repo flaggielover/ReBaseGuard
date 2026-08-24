@@ -12,6 +12,7 @@ ROOT = BASE.parents[2]
 CACHE = BASE / "data_cache"
 RESULTS = BASE / "results"
 PROTOCOL = json.loads((RESULTS / "protocol.json").read_text())
+EXECUTION = json.loads((RESULTS / "execution_config.json").read_text())
 DATASETS = json.loads((BASE / "manifests/datasets.json").read_text())
 PRIMARY_TASKS = tuple(PROTOCOL["primaries"])
 POLICIES = PROTOCOL["policies"]

@@ -1,0 +1,28 @@
+{
+  "bootstrap": {"draws": 10000, "seed": 20270102},
+  "calibration": {
+    "h_bounds": [0.25, 100.0],
+    "log_tolerance": 0.001,
+    "max_iterations": 60,
+    "single_chronological_chain": true
+  },
+  "events": {
+    "grid_jitter_fraction_of_spacing": 0.2,
+    "task_seeds": {"metropt": 20270111, "retail": 20270112}
+  },
+  "model": {"ridge_lambda": 1.0, "standardisation_source": "train only"},
+  "monitor": {
+    "burn_cycles_natural": 3,
+    "fresh_block_consumed_by_all_policies": true,
+    "inclusive_alarm": true,
+    "initial_reference": "mean of immediately preceding m residuals",
+    "reference_during_settling": "pre-alarm reference"
+  },
+  "natural": {
+    "discard_incomplete_final_block": true,
+    "oracle_centered_window_hours": 24,
+    "oracle_is_measurement_only": true
+  },
+  "protocol_sha256": "a48aa31bffcd7be5db4befa37bfe5e894e64fadc51e904a10be66fd00fb440f0",
+  "schema": "rebaseguard.external-validation-v3.execution-config.v1"
+}

@@ -1,0 +1,464 @@
+{
+  "all_primary_pass": true,
+  "confirmatory_outcomes_generated": false,
+  "protocol_hash": "a48aa31bffcd7be5db4befa37bfe5e894e64fadc51e904a10be66fd00fb440f0",
+  "schema": "rebaseguard.external-validation-v3.gates.v1",
+  "tasks": {
+    "metropt": {
+      "actual_power": {
+        "calibration_cycle_blocks": 46,
+        "event_blocks": 40,
+        "floor": 40,
+        "natural_blocks": 43
+      },
+      "calibration": {
+        "achieved": {
+          "block": 2,
+          "ci95": [
+            26.46711956521739,
+            39.02173913043478
+          ],
+          "effective_blocks": 46,
+          "mean": 32.16304347826087,
+          "n": 92
+        },
+        "effective_block_gate_pass": true,
+        "initial_reference": 0.18293881286491748,
+        "point_relative_error": 0.005095108695652106,
+        "point_tolerance_pass": true,
+        "policy": "P0_fresh",
+        "status": "PASS",
+        "target_arl": 32,
+        "target_inside_ci": true,
+        "task": "metropt",
+        "threshold": 2.0986408318489014,
+        "trace": [
+          {
+            "iteration": 0,
+            "mean_cycle_length": 80.34782608695652,
+            "n_cycles": 46,
+            "threshold": 5.000000000000001
+          },
+          {
+            "iteration": 1,
+            "mean_cycle_length": 10.452830188679245,
+            "n_cycles": 159,
+            "threshold": 1.118033988749895
+          },
+          {
+            "iteration": 2,
+            "mean_cycle_length": 42.324675324675326,
+            "n_cycles": 77,
+            "threshold": 2.3643540225079396
+          },
+          {
+            "iteration": 3,
+            "mean_cycle_length": 22.026086956521738,
+            "n_cycles": 115,
+            "threshold": 1.625862281560591
+          },
+          {
+            "iteration": 4,
+            "mean_cycle_length": 27.85148514851485,
+            "n_cycles": 101,
+            "threshold": 1.9606412281321945
+          },
+          {
+            "iteration": 5,
+            "mean_cycle_length": 37.13095238095238,
+            "n_cycles": 84,
+            "threshold": 2.1530559617504745
+          },
+          {
+            "iteration": 6,
+            "mean_cycle_length": 31.0531914893617,
+            "n_cycles": 94,
+            "threshold": 2.054597353518152
+          },
+          {
+            "iteration": 7,
+            "mean_cycle_length": 32.16304347826087,
+            "n_cycles": 92,
+            "threshold": 2.1032505987135734
+          },
+          {
+            "iteration": 8,
+            "mean_cycle_length": 31.0531914893617,
+            "n_cycles": 94,
+            "threshold": 2.0787816417080407
+          },
+          {
+            "iteration": 9,
+            "mean_cycle_length": 31.602150537634408,
+            "n_cycles": 93,
+            "threshold": 2.090980328103835
+          },
+          {
+            "iteration": 10,
+            "mean_cycle_length": 31.602150537634408,
+            "n_cycles": 93,
+            "threshold": 2.0971064891852045
+          },
+          {
+            "iteration": 11,
+            "mean_cycle_length": 32.16304347826087,
+            "n_cycles": 92,
+            "threshold": 2.100176297110531
+          },
+          {
+            "iteration": 12,
+            "mean_cycle_length": 32.16304347826087,
+            "n_cycles": 92,
+            "threshold": 2.0986408318489014
+          }
+        ]
+      },
+      "calibration_residual_diagnostics": {
+        "acf": {
+          "1": 0.24038476598934952,
+          "168": 0.11663046762548857,
+          "24": 0.3075764505251457,
+          "4": 0.4699370069403006,
+          "96": 0.008583302266443112
+        },
+        "excess_kurtosis": 3.9788578351331703,
+        "mean": -0.020771297429413842,
+        "sd": 2.60811393540887
+      },
+      "dataset_audit": {
+        "coverage_end": "2020-09-01T03:45:00",
+        "coverage_start": "2020-02-01T00:00:00",
+        "eligible_15min_bins_before_lags": 16657,
+        "eligible_after_lags": 16561,
+        "malformed_selected_rows": 0,
+        "minimum_raw_readings_per_bin": 72,
+        "observation_time_gaps": 249,
+        "raw_rows": 1516948
+      },
+      "gates": {
+        "calibration": true,
+        "dataset": true,
+        "leakage": true,
+        "power": true
+      },
+      "leakage": {
+        "chronological_nonoverlap": true,
+        "event_seed_independent": true,
+        "model_fit_source": "train only",
+        "no_future_features": true,
+        "rho_source": "frozen protocol",
+        "scale_source": "train only",
+        "threshold_source": "calibration only"
+      },
+      "model": {
+        "beta": [
+          58.93158249569607,
+          2.783922349610309,
+          0.7041598112752413,
+          0.24795724479085512,
+          0.31056737897564274,
+          0.00795650053680447,
+          0.034297335591204445,
+          1.7417123324653327,
+          -1.3058866283132715,
+          0.45930605594812746,
+          0.678779983584562,
+          1.9237773347098228,
+          1.212530040967634,
+          2.9465300478588996,
+          0.1896971339679495,
+          0.07567846270836676,
+          -0.7733695461085579,
+          0.43528690675143633,
+          -0.038713566386300316,
+          0.08312487157204178,
+          -0.4003263555936158,
+          -0.41950830930747335,
+          -0.2112459436260163,
+          -0.33486680007937547,
+          -0.09429588575049287,
+          -0.07251026379400151
+        ],
+        "feature_mean": [
+          58.93205090560752,
+          58.93239480989164,
+          58.93507504028928,
+          58.9265702359149,
+          58.872334096232656,
+          58.77155821523937,
+          0.9043303093955203,
+          9.013202834554656,
+          8.080482766640516,
+          -0.0021843891949073196,
+          9.014099179705651,
+          1.6149081749898797,
+          0.8995612912658056,
+          0.10064119143667133,
+          0.9497198198696228,
+          0.8993116394400668,
+          0.0005679941368347166,
+          0.9976647590483724,
+          0.9971223522853959,
+          0.740036231884058,
+          0.013285024154589372,
+          -0.040817893128343725,
+          -0.06723782022111968,
+          0.05534535006148082,
+          -0.009356140124718844
+        ],
+        "feature_sd": [
+          5.345212694440476,
+          5.344975974026297,
+          5.34160351325944,
+          5.341218057474822,
+          5.35747307218298,
+          5.374490882429615,
+          1.344625837015909,
+          0.3161667336783189,
+          1.3234757924537583,
+          0.09660948542261255,
+          0.31563038702821167,
+          1.2440278463963093,
+          0.1462359563787353,
+          0.14675771185689696,
+          0.0736472686599186,
+          0.1470630250414574,
+          0.014992229857362559,
+          0.007302695344089987,
+          0.05132953658451746,
+          0.4386144176642028,
+          0.11449249882766102,
+          0.7138102075684714,
+          0.695908013104846,
+          0.6953051010923332,
+          0.7165194842176441
+        ],
+        "fit_source": "train only",
+        "kind": "ridge",
+        "lambda": 1.0,
+        "n_features": 25
+      },
+      "n": 16561,
+      "split": {
+        "calibration": [
+          3312,
+          8280
+        ],
+        "evaluation": [
+          8280,
+          16561
+        ],
+        "train": [
+          0,
+          3312
+        ]
+      },
+      "status": "PASS",
+      "task": "metropt",
+      "train_residual_scale": 1.6136371022438851
+    },
+    "retail": {
+      "actual_power": {
+        "calibration_cycle_blocks": 59,
+        "event_blocks": 40,
+        "floor": 40,
+        "natural_blocks": 52
+      },
+      "calibration": {
+        "achieved": {
+          "block": 2,
+          "ci95": [
+            18.652330508474577,
+            29.99173728813559
+          ],
+          "effective_blocks": 59,
+          "mean": 23.83050847457627,
+          "n": 118
+        },
+        "effective_block_gate_pass": true,
+        "initial_reference": -0.9643335365388548,
+        "point_relative_error": -0.007062146892655385,
+        "point_tolerance_pass": true,
+        "policy": "P0_fresh",
+        "status": "PASS",
+        "target_arl": 24,
+        "target_inside_ci": true,
+        "task": "retail",
+        "threshold": 2.8553683985177662,
+        "trace": [
+          {
+            "iteration": 0,
+            "mean_cycle_length": 214.88888888888889,
+            "n_cycles": 18,
+            "threshold": 5.000000000000001
+          },
+          {
+            "iteration": 1,
+            "mean_cycle_length": 4.757142857142857,
+            "n_cycles": 210,
+            "threshold": 1.118033988749895
+          },
+          {
+            "iteration": 2,
+            "mean_cycle_length": 17.136690647482013,
+            "n_cycles": 139,
+            "threshold": 2.3643540225079396
+          },
+          {
+            "iteration": 3,
+            "mean_cycle_length": 48.82432432432432,
+            "n_cycles": 74,
+            "threshold": 3.438280109668161
+          },
+          {
+            "iteration": 4,
+            "mean_cycle_length": 23.83050847457627,
+            "n_cycles": 118,
+            "threshold": 2.8511947334061487
+          },
+          {
+            "iteration": 5,
+            "mean_cycle_length": 31.97979797979798,
+            "n_cycles": 99,
+            "threshold": 3.1310072086568206
+          },
+          {
+            "iteration": 6,
+            "mean_cycle_length": 29.257142857142856,
+            "n_cycles": 105,
+            "threshold": 2.9878271810094725
+          },
+          {
+            "iteration": 7,
+            "mean_cycle_length": 26.594594594594593,
+            "n_cycles": 111,
+            "threshold": 2.9187115518361777
+          },
+          {
+            "iteration": 8,
+            "mean_cycle_length": 25.36842105263158,
+            "n_cycles": 114,
+            "threshold": 2.8847556230861215
+          },
+          {
+            "iteration": 9,
+            "mean_cycle_length": 24.586206896551722,
+            "n_cycles": 116,
+            "threshold": 2.867926086862582
+          },
+          {
+            "iteration": 10,
+            "mean_cycle_length": 24.586206896551722,
+            "n_cycles": 116,
+            "threshold": 2.8595481731666452
+          },
+          {
+            "iteration": 11,
+            "mean_cycle_length": 23.83050847457627,
+            "n_cycles": 118,
+            "threshold": 2.8553683985177662
+          },
+          {
+            "iteration": 12,
+            "mean_cycle_length": 24.205128205128204,
+            "n_cycles": 117,
+            "threshold": 2.8574575215913973
+          }
+        ]
+      },
+      "calibration_residual_diagnostics": {
+        "acf": {
+          "1": -0.014340717821231327,
+          "168": 0.17701377731384152,
+          "24": -0.019597450299681192,
+          "4": 0.002283971899971106,
+          "96": 0.07894974115164412
+        },
+        "excess_kurtosis": 6.33291951657238,
+        "mean": 0.03373380664810565,
+        "sd": 1.3685238044005048
+      },
+      "dataset_audit": {
+        "clock_hour_bins_before_lags": 17718,
+        "coverage_end": "2011-12-09T12:00:00",
+        "coverage_start": "2009-12-01T07:00:00",
+        "eligible_after_lags": 17550,
+        "malformed_selected_rows": 0,
+        "positive_rows": 1044416,
+        "raw_rows": 1067371,
+        "return_or_zero_rows": 22955,
+        "zero_demand_hours": 11911
+      },
+      "gates": {
+        "calibration": true,
+        "dataset": true,
+        "leakage": true,
+        "power": true
+      },
+      "leakage": {
+        "chronological_nonoverlap": true,
+        "event_seed_independent": true,
+        "model_fit_source": "train only",
+        "no_future_features": true,
+        "rho_source": "frozen protocol",
+        "scale_source": "train only",
+        "threshold_source": "calibration only"
+      },
+      "model": {
+        "beta": [
+          2.1255065535591786,
+          1.6044365352304728,
+          0.18277806051248066,
+          0.3121089764687811,
+          1.0044414395530432,
+          0.3180131116953144,
+          -0.2068829975503624,
+          0.08619488471121572,
+          0.025440757515547082
+        ],
+        "feature_mean": [
+          2.1255065535591755,
+          2.1255065535591755,
+          2.1409911580435206,
+          2.1625551886315364,
+          0.0009395661129238104,
+          -0.0012244663978241692,
+          -0.003624223127198124,
+          -0.003491150440934759
+        ],
+        "feature_sd": [
+          3.2410351946346108,
+          3.2410351946346108,
+          3.2491306278770975,
+          3.2634865560903252,
+          0.7070054222373876,
+          0.7072064414472523,
+          0.7070346871233625,
+          0.7071609633454647
+        ],
+        "fit_source": "train only",
+        "kind": "ridge",
+        "lambda": 1.0,
+        "n_features": 8
+      },
+      "n": 17550,
+      "split": {
+        "calibration": [
+          3510,
+          8775
+        ],
+        "evaluation": [
+          8775,
+          17550
+        ],
+        "train": [
+          0,
+          3510
+        ]
+      },
+      "status": "PASS",
+      "task": "retail",
+      "train_residual_scale": 1.4178417051331753
+    }
+  }
+}

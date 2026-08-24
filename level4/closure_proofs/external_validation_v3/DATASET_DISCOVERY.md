@@ -31,19 +31,19 @@ Machine Learning Repository under CC BY 4.0.
 - Coverage: 2020-02-01 through 2020-09-01; 249 observation-time gaps are
   retained as gaps, never imputed from future values.
 - Pilot target: 15-minute mean oil temperature; causal ridge model only.
-- Frozen-split pilot calibration residual ACF1 0.179; excess kurtosis 4.20.
+- Actual frozen-split P0 calibration residual ACF1 0.240; excess kurtosis 3.98.
 - Pilot values are raw/model diagnostics only; no reuse policy was run.
 
 ### B — Online Retail II
 
 - Official archive SHA-256: `572e36277c2390fbfde10664750731e0a86f55e33470d91919085f0408e67bfb`.
 - 1,067,371 transaction rows across two chronological worksheets.
-- 1,044,416 positive, non-return rows; 22,956 zero/negative return rows excluded
+- 1,044,416 positive, non-return rows; 22,955 zero/negative return rows excluded
   by the frozen gross-demand definition.
 - 17,718 complete clock-hour bins from 2009-12-01 through 2011-12-09; hours
   without positive sales are explicit zeros.
 - Pilot target: `log1p` positive unit demand; causal lag/calendar ridge model.
-- Frozen-split pilot calibration residual ACF1 -0.014; excess kurtosis 6.33.
+- Actual frozen-split P0 calibration residual ACF1 -0.014; excess kurtosis 6.33.
 - Pilot values are raw/model diagnostics only; no reuse policy was run.
 
 No backup task is registered. A failed scientific result is never replaced.
