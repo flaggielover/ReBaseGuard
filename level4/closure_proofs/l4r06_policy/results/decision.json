@@ -1,0 +1,125 @@
+{
+  "H6": {
+    "H6-1": "PASS",
+    "H6-2": "PASS",
+    "H6-3": "PASS",
+    "H6-4": "PASS",
+    "H6-5": "PASS"
+  },
+  "absolute_delay_safety": "PASS",
+  "adversarial": {
+    "final_passed": 23,
+    "final_total": 23,
+    "first_file": "adversarial_first.json"
+  },
+  "claim_scope": "Frozen Gaussian two-sided CUSUM; m={1,20,70,100}; Delta={0.25,0.5,1.0,1.5}. No universal safety or operational phase-transition claim and no semi-real validation.",
+  "criteria": [
+    {
+      "evidence": "original L4R-06 reconstructed from the protected 18-row ledger",
+      "id": "C06.1",
+      "status": "PASS"
+    },
+    {
+      "evidence": "P3 mechanically uses the protected D4 lower 95% boundary",
+      "id": "C06.2",
+      "status": "PASS"
+    },
+    {
+      "evidence": "policy, allocation, endpoints, inference, and thresholds were frozen pre-outcome",
+      "id": "C06.3",
+      "status": "PASS"
+    },
+    {
+      "evidence": "simultaneous reference-MSE improvement in all active regimes",
+      "id": "C06.4",
+      "status": "PASS"
+    },
+    {
+      "evidence": "simultaneous false-alert-burden consequence in all active regimes",
+      "id": "C06.5",
+      "status": "PASS"
+    },
+    {
+      "evidence": "normalized response non-inferior to fresh in all 16 conditions",
+      "id": "C06.6",
+      "status": "PASS"
+    },
+    {
+      "evidence": "absolute-delay guard and simulator semantic tests pass",
+      "id": "C06.7",
+      "status": "PASS"
+    },
+    {
+      "evidence": "D4 remains local/deterministic, not an operational phase transition",
+      "id": "C06.8",
+      "status": "PASS"
+    },
+    {
+      "evidence": "historical Stage C/C6 remains unchanged and failed",
+      "id": "C06.9",
+      "status": "PASS"
+    },
+    {
+      "evidence": "all 23 frozen adversarial checks pass",
+      "id": "C06.10",
+      "status": "PASS"
+    },
+    {
+      "evidence": "focused tests, authoritative verification, and byte-stable replay pass",
+      "id": "C06.11",
+      "status": "PASS"
+    }
+  ],
+  "generator_owned": true,
+  "global_reaudit_performed": false,
+  "historical_C6_preserved": true,
+  "historical_final_global_reaudit": "LEVEL-4-PARTIAL",
+  "historical_stage_c_verdict": "STAGE-C-PARTIAL",
+  "l4r12_touched": false,
+  "mapping_reason": "The pre-frozen D4-driven policy establishes stability awareness, reference improvement, an operational false-alert consequence, and detection safety under the original monitoring requirement.",
+  "next_blocker": "L4R-12 \u2014 OPERATIONAL CONSEQUENCE OF GAMMA_M CROSSING",
+  "original_L4R06_current_status": "PASS",
+  "reproduction": {
+    "figure_sha256": {
+      "figure_a_policy.png": "dab97b656f5a4b94351ef62e0e9e833d1434e54b00b8ae91c3dfc58eaf668257",
+      "figure_b_reference_distortion.png": "d70c8d7400286bcd26c0ae680a1120c5b40448b8acfeac3c08f39fa5b64247c0",
+      "figure_c_operational_consequence.png": "3eef4915100eb8407f6de45ab712b309b1f1a6984dc0ed608cb381ff8ea8e8f3",
+      "figure_d_noninferiority.png": "23e440c498331ac6edc14cf9aa795c21517dd1dedd7f0cb5192a128922219f52",
+      "figure_e_joint_criteria.png": "1f7502eb03473631f69b9d9abc06a499ffbc2def0c1599f76eab9778de048191"
+    },
+    "figures_byte_stable": true,
+    "schema": "rebaseguard.l4r06-reproduction.v1",
+    "scientific_findings_byte_stable": true,
+    "scientific_findings_sha256": "994ca341606f9a40fe37b8968820d6aaca8292d60808203cfbce6664c3853c49",
+    "status": "PASS"
+  },
+  "same_requirement_mapping": true,
+  "schema": "rebaseguard.l4r06-decision.v1",
+  "scoped_verdict": "L4R06-POLICY-CLOSED",
+  "target": "L4R-06 \u2014 Stability-aware reuse policy with monitoring consequences",
+  "verification": {
+    "command": "bash scripts/verify_level_4.sh",
+    "pytest_pass_count": 933,
+    "pytest_suite_pass_counts": [
+      90,
+      290,
+      46,
+      48,
+      36,
+      72,
+      59,
+      54,
+      18,
+      18,
+      18,
+      45,
+      75,
+      36,
+      28
+    ],
+    "returncode": 0,
+    "schema": "rebaseguard.l4r06-verification.v1",
+    "status": "PASS",
+    "terminal_marker": true
+  }
+}

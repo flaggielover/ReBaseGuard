@@ -41,7 +41,7 @@ def main() -> int:
         results.append(f"| {r['m']} | {f(r['point'])} | {f(r['simultaneous_lower95'])} | {'PASS' if r['pass'] else 'FAIL'} |")
     results += ["", "## Detection families", "",
                 f"All {len(response)} normalized-response and {len(safety)} absolute-delay conditions are retained in `results/scientific_findings.json`.", ""]
-    (BASE / "RESULTS.md").write_text("\n".join(results) + "\n")
+    (BASE / "RESULTS.md").write_text("\n".join(results).rstrip() + "\n")
 
     max_response = max(response, key=lambda r: r["simultaneous_upper95"])
     max_safety = max(safety, key=lambda r: r["simultaneous_upper95"])
@@ -68,6 +68,12 @@ claim and not evidence of an operational D4 phase transition.
 
     negatives = science["negative_primary_findings"]
     secondary = science["secondary_epsilon_0.05_failures"]
+    secondary_lines = "\n".join(
+        f"- `m={row['m']}, Delta={row['shift']}`: simultaneous upper 95% "
+        f"`{row['simultaneous_upper95']:.6f}` exceeds 0.05 but remains below "
+        "the controlling 0.10 margin."
+        for row in secondary
+    ) or "- None."
     diagnosis = f"""# Failure diagnoses and unfavorable findings
 
 ## HISTORICAL C6 — immutable failure
@@ -82,6 +88,9 @@ rates, but that diagnosis does not rewrite or reinterpret C6.
 
 Primary unfavorable conditions retained: **{len(negatives)}**.
 Secondary epsilon=0.05 failures retained: **{len(secondary)}**.
+
+{secondary_lines}
+
 P2 outcomes and all 80 policy/regime/shift cell summaries remain in the final
 scientific JSON whether favorable or unfavorable. No policy, regime, shift,
 sample size, threshold, or margin was changed after outcomes.

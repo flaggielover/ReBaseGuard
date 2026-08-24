@@ -1,0 +1,147 @@
+{
+  "checks": [
+    {
+      "check": "Stage C unchanged",
+      "evidence": "protected Stage C tree and files match the pre-campaign hashes",
+      "id": "A1",
+      "passed": true
+    },
+    {
+      "check": "historical C6 failure preserved",
+      "evidence": "Stage C decision=STAGE-C-PARTIAL; failed=['C6']",
+      "id": "A2",
+      "passed": true
+    },
+    {
+      "check": "D4 unchanged",
+      "evidence": "protected D4 tree and decision hash match",
+      "id": "A3",
+      "passed": true
+    },
+    {
+      "check": "L4R-12 untouched",
+      "evidence": "changed L4R-12 paths=[]",
+      "id": "A4",
+      "passed": true
+    },
+    {
+      "check": "P3 rule frozen before outcomes",
+      "evidence": "freeze=FROZEN; pre-outcome=True",
+      "id": "A5",
+      "passed": true
+    },
+    {
+      "check": "no outcome-driven rho tuning",
+      "evidence": "every cell action equals the pre-frozen policy reconstruction",
+      "id": "A6",
+      "passed": true
+    },
+    {
+      "check": "no regime deletion",
+      "evidence": "observed regime/shift grid=20/20",
+      "id": "A7",
+      "passed": true
+    },
+    {
+      "check": "no sample-size increase after outcomes",
+      "evidence": "allocation=200x200; cells=80",
+      "id": "A8",
+      "passed": true
+    },
+    {
+      "check": "stability-awareness is mechanical",
+      "evidence": "P3 is reconstructed from protected lower D4 confidence endpoints",
+      "id": "A9",
+      "passed": true
+    },
+    {
+      "check": "operational consequence pre-specified",
+      "evidence": "ARL0(P3)-ARL0(P1) is the frozen operational family",
+      "id": "A10",
+      "passed": true
+    },
+    {
+      "check": "reference-only improvement cannot close requirement",
+      "evidence": "H6 statuses=['PASS', 'PASS', 'PASS', 'PASS', 'PASS']; H6-5 is a strict conjunction including operational and safety gates",
+      "id": "A11",
+      "passed": true
+    },
+    {
+      "check": "no operational-phase-transition wording",
+      "evidence": "D4 operational interpretation remains MATHEMATICAL, NOT OPERATIONAL",
+      "id": "A12",
+      "passed": true
+    },
+    {
+      "check": "no universal safety claim",
+      "evidence": "claims are scoped to four Gaussian regimes and four positive shifts",
+      "id": "A13",
+      "passed": true
+    },
+    {
+      "check": "fresh comparator preserved",
+      "evidence": "P0 appears in final summaries",
+      "id": "A14",
+      "passed": true
+    },
+    {
+      "check": "full-reuse comparator preserved",
+      "evidence": "P1 appears in final summaries",
+      "id": "A15",
+      "passed": true
+    },
+    {
+      "check": "simultaneous non-inferiority valid",
+      "evidence": "one joint 16-condition maximum-deviation family is retained",
+      "id": "A16",
+      "passed": true
+    },
+    {
+      "check": "negative outcomes retained",
+      "evidence": "80/80 summaries; 0 primary failures retained",
+      "id": "A17",
+      "passed": true
+    },
+    {
+      "check": "same-requirement mapping explicit",
+      "evidence": "candidate=True",
+      "id": "A18",
+      "passed": true
+    },
+    {
+      "check": "figures read final JSON only",
+      "evidence": "figure generator has one scientific JSON input and no checkpoint import",
+      "id": "A19",
+      "passed": true
+    },
+    {
+      "check": "protected hashes unchanged",
+      "evidence": "8 trees and 10 files verified",
+      "id": "A20",
+      "passed": true
+    },
+    {
+      "check": "focused tests green",
+      "evidence": "28 focused tests passed",
+      "id": "A21",
+      "passed": true
+    },
+    {
+      "check": "full verifier green",
+      "evidence": "verification status=PASS",
+      "id": "A22",
+      "passed": true
+    },
+    {
+      "check": "reproducer byte-stable",
+      "evidence": "reproduction status=PASS",
+      "id": "A23",
+      "passed": true
+    }
+  ],
+  "n_checks": 23,
+  "n_passed": 23,
+  "schema": "rebaseguard.l4r06-adversarial.v1",
+  "seed": 2026082408,
+  "status": "PASS"
+}
