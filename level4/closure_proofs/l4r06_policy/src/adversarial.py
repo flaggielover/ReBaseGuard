@@ -23,7 +23,8 @@ def _focused_tests() -> tuple[bool, str]:
          "level4/closure_proofs/l4r06_policy/tests", "-q"],
         cwd=ROOT, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
     )
-    summary = proc.stdout.strip().splitlines()[-1] if proc.stdout.strip() else "no output"
+    match = re.search(r"(\d+) passed", proc.stdout)
+    summary = f"{match.group(1)} focused tests passed" if match else "focused-test count unavailable"
     return proc.returncode == 0, summary
 
 
