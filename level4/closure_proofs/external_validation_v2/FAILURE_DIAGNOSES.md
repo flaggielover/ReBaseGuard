@@ -21,3 +21,11 @@ bisection probe that produced zero cycles. Before persisting the gate, only
 that diagnostic trace value was changed to JSON `null` and deterministic file
 persistence was added. Calibration criteria, thresholds, and outcomes were not
 changed; the same gate was rerun and passed.
+
+## F4 — first outcome-suite run was 43/45
+
+One test incorrectly asserted that a decision file absent at protocol freeze
+must remain absent after the campaign; it now inspects the frozen Git commit
+instead. A second test matched a phrase without normalizing a Markdown line
+wrap. Only the audit assertions changed. The persisted outcome arrays,
+hypotheses, and `EXTERNAL-VALIDATION-V2-PARTIAL` decision were untouched.

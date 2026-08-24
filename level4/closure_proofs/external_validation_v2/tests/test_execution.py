@@ -113,8 +113,12 @@ def test_natural_and_event_block_floors_are_frozen():
     assert EXECUTION["bootstrap"]["event_block"] == 6
 
 
-def test_no_pilot_or_confirmatory_artifact_before_execution_checkpoint():
-    assert not list((BASE / "results").glob("task_*_confirmatory.json"))
+def test_all_confirmatory_artifacts_exist_and_no_pilot_artifact_exists():
+    assert not list((BASE / "results").glob("*pilot*"))
+    assert {path.name for path in (BASE / "results").glob("task_*_confirmatory.json")} == {
+        "task_household_confirmatory.json", "task_metro_confirmatory.json",
+        "task_beijing_confirmatory.json",
+    }
 
 
 def test_raw_cache_is_gitignored():

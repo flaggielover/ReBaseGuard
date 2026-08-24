@@ -68,9 +68,12 @@ def test_alert_burden_not_false_alarm_rate():
     assert "not a false-alarm rate" in text
 
 
-def test_no_confirmatory_result_exists_before_freeze():
-    assert not (BASE / "results/confirmatory.json").exists()
-    assert not (BASE / "results/decision.json").exists()
+def test_no_confirmatory_result_existed_at_protocol_freeze_commit():
+    freeze_commit = "c80d5d47c825683a9fe899cb3e4cc45490f2c5bc"
+    path = "level4/closure_proofs/external_validation_v2/results/decision.json"
+    completed = subprocess.run(["git", "cat-file", "-e", f"{freeze_commit}:{path}"],
+                               cwd=ROOT, capture_output=True)
+    assert completed.returncode != 0
 
 
 def test_no_old_stage_e_pooling():
