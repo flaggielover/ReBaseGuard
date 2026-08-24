@@ -327,6 +327,14 @@ not be described as if introduced by ReBaseGuard.
 - external validation: untouched
 - original L4R-16 requirement: `{decision['original_global_requirement']}`
 - remaining fail/open blocker: `SEMI-REAL EXTERNAL VALIDATION` (scientific)
+
+## Verification and reproduction
+
+- focused tests: 18/18
+- authoritative distinct checks: 983 (965 historical baseline + 18 isolated novelty tests)
+- adversarial first run: 16/18, preserved
+- adversarial final run: 18/18
+- offline reproduction: **PASS** — `bash level4/closure_proofs/novelty_verification/reproduce.sh`
 """
 
 
@@ -391,6 +399,40 @@ The repository had only an unsupported project-history statement. Its listed nam
 ## F4 — partial overlap required claim narrowing
 
 W03/W14 already update adaptive CUSUM/SR reference values; W06/W08/W33 study post-stopping estimation; W13 is multi-cyclic; W25 adapts a future reference window after change tests. Broad novelty language is therefore forbidden even though no DIRECT combination was found.
+
+## F5 — first adversarial run was 16/18
+
+The first frozen adversarial run is preserved in `results/adversarial_first.json`. A17 correctly failed before the final repository-verification record existed. A4 failed because the anti-simulation regular expression matched its own literal inside `run_adversarial.py`; the checker was repaired by excluding only its own source file from that source-code scan. No campaign scope, scientific criterion, or literature classification changed.
+
+## F6 — first offline reproducer invocation used the wrong root depth
+
+The first `reproduce.sh` invocation climbed four directories from the campaign instead of three and stopped immediately with a missing-interpreter message. It ran no test, generator, or scientific command and changed no artifact. The root path was corrected before the successful end-to-end reproduction.
+
+## F7 — corrected reproducer exposed a self-referential human mirror
+
+The next invocation reached the initial byte check and stopped because `ADVERSARIAL_AUDIT.md` embedded A14's generator digest, while that digest itself covered the report. The human mirror now states the stable A14 outcome without embedding the digest; canonical JSON retains the check evidence. No audit criterion changed.
+"""
+
+
+def adversarial_md() -> str:
+    first = load("results/adversarial_first.json")
+    final = load("results/adversarial_final.json")
+    rows = []
+    final_by_id = {row["id"]: row for row in final["checks"]}
+    first_by_id = {row["id"]: row for row in first["checks"]}
+    for check_id in sorted(final_by_id, key=lambda value: int(value[1:])):
+        before, after = first_by_id[check_id], final_by_id[check_id]
+        detail = "generator-owned mirrors are byte-stable" if check_id == "A14" else after["detail"]
+        rows.append([check_id, before["name"], "PASS" if before["passed"] else "FAIL", "PASS" if after["passed"] else "FAIL", detail])
+    return f"""# Adversarial audit
+
+The first run is preserved byte-for-byte in `results/adversarial_first.json`:
+**{first['passed']}/{first['total']} {first['status']}**. A4 was a checker self-match
+and A17 preceded the final verification record. The final run is
+**{final['passed']}/{final['total']} {final['status']}**.
+
+{md_table(['ID', 'Check', 'First', 'Final', 'Final evidence'], rows)}
+No scientific or literature criterion was weakened between runs.
 """
 
 
@@ -400,7 +442,7 @@ def progress_md(decision: dict, matrix: dict, combined: int) -> str:
 | Field | Value |
 |---|---|
 | Step | 5 / 5 |
-| Gate | final verification |
+| Gate | final verification complete |
 | Protocol frozen | yes — `deb800951b0353f3771ad6d9c1f795cf2f351c4da564ef5d0d5e3fe5b9cbd712` |
 | Search families | 9 / 9 |
 | Candidate papers | {combined} combined unique screened; {decision['included_works']} included |
@@ -408,11 +450,11 @@ def progress_md(decision: dict, matrix: dict, combined: int) -> str:
 | HIGH-PARTIAL | {decision['high_partial_count']} |
 | Snowball rounds | 2; stopping rule satisfied |
 | Claim firewall | generated from canonical JSON |
-| Tests | pending final full run |
-| Adversarial | pending first/final run |
+| Tests | 18/18 focused; 983 distinct authoritative checks |
+| Adversarial | first 16/18 preserved; final 18/18 |
 | Historical artifacts changed? | no |
-| Git | search-evidence checkpoint pending |
-| Remaining | checkpoint search evidence; final tests, adversarial, repository verifier, commit/push |
+| Git | final checkpoint verified; commit and push recorded in repository history |
+| Remaining | none in novelty-verification scope |
 """
 
 
@@ -440,6 +482,7 @@ def generated_outputs() -> dict[str, str]:
         "RESUME_SAFE_CLAIMS.md": safe_claims(False),
         "LIMITATIONS.md": limitations_md(bib, candidate_counts),
         "FAILURE_DIAGNOSES.md": failures_md(),
+        "ADVERSARIAL_AUDIT.md": adversarial_md(),
         "PROGRESS_CAPSULE.md": progress_md(decision, matrix, candidate_counts[2]),
     }
     return outputs

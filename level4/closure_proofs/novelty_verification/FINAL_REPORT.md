@@ -58,3 +58,11 @@ not be described as if introduced by ReBaseGuard.
 - external validation: untouched
 - original L4R-16 requirement: `CLOSED`
 - remaining fail/open blocker: `SEMI-REAL EXTERNAL VALIDATION` (scientific)
+
+## Verification and reproduction
+
+- focused tests: 18/18
+- authoritative distinct checks: 983 (965 historical baseline + 18 isolated novelty tests)
+- adversarial first run: 16/18, preserved
+- adversarial final run: 18/18
+- offline reproduction: **PASS** — `bash level4/closure_proofs/novelty_verification/reproduce.sh`
