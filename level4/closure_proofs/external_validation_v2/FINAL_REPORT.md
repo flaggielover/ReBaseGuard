@@ -32,3 +32,11 @@ validation campaign would need at least one additional independently frozen,
 sufficiently powered task that jointly supports reference distortion,
 operational consequence, and ReBaseGuard non-inferiority. No such follow-up is
 started here.
+
+## Verification and reproduction
+
+- focused V2 tests: 45/45
+- authoritative distinct-check convention: 1,028 (983 before V2 + 45 V2)
+- adversarial first run: 19/22, preserved
+- adversarial final run: 22/22
+- generated-artifact reproduction: PASS

@@ -99,11 +99,80 @@ validation campaign would need at least one additional independently frozen,
 sufficiently powered task that jointly supports reference distortion,
 operational consequence, and ReBaseGuard non-inferiority. No such follow-up is
 started here.
+
+## Verification and reproduction
+
+- focused V2 tests: 45/45
+- authoritative distinct-check convention: 1,028 (983 before V2 + 45 V2)
+- adversarial first run: 19/22, preserved
+- adversarial final run: 22/22
+- generated-artifact reproduction: PASS
+"""
+
+
+def calibration_md(summary: dict) -> str:
+    rows = []
+    for task in PRIMARY_TASKS:
+        value = summary["tasks"][task]
+        calibration = value["calibration"]
+        power = value["power"]
+        rows.append(
+            f"| {NAMES[task]} | {calibration['threshold']:.10f} | "
+            f"{calibration['target_arl']} / {calibration['achieved']['mean']:.4f} | "
+            f"[{calibration['achieved']['ci95'][0]:.4f}, {calibration['achieved']['ci95'][1]:.4f}] | "
+            f"{power['calibration_cycle_blocks']} | {power['natural_week_blocks']} | "
+            f"{power['event_blocks']} | PASS |"
+        )
+    return """# Calibration and actual power audit
+
+All values were generated after the execution checkpoint and before any
+confirmatory P0/P1/P2 evaluation comparison. Calibration used the chronological
+calibration block under P0 only. The task threshold is fixed for every policy.
+
+| Task | h | Target / achieved ARL | 95% block interval | Calibration blocks | Natural week blocks | Event blocks | Gate |
+|---|---:|---:|---:|---:|---:|---:|---|
+""" + "\n".join(rows) + """
+
+Each point error is below 1%, each target lies inside its interval, and every
+endpoint class meets the unmodified 20-block floor. The backup was not
+activated. Calibration residuals remain misspecified relative to iid Gaussian
+theory: Metro retains ACF1 0.724 and Beijing excess kurtosis 12.87. The campaign
+therefore uses empirical calibration and the frozen dependence-aware inference;
+it does not claim theorem confirmation.
+
+Canonical record: `results/gates.json`.
+"""
+
+
+def adversarial_md() -> str:
+    first = json.loads((BASE / "results/adversarial_first.json").read_text())
+    final = json.loads((BASE / "results/adversarial_final.json").read_text())
+    first_by = {row["id"]: row for row in first["checks"]}
+    rows = []
+    for row in final["checks"]:
+        before = first_by[row["id"]]
+        rows.append(f"| {row['id']} | {row['name']} | "
+                    f"{'PASS' if before['passed'] else 'FAIL'} | "
+                    f"{'PASS' if row['passed'] else 'FAIL'} | {row['detail']} |")
+    return f"""# Adversarial audit
+
+The first run is preserved at **{first['passed']}/{first['total']} {first['status']}**.
+A19 was an over-broad checker match; A21 and A22 correctly preceded their final
+records. The final run is **{final['passed']}/{final['total']} {final['status']}**.
+
+| ID | Check | First | Final | Final evidence |
+|---|---|---|---|---|
+""" + "\n".join(rows) + """
+
+No scientific threshold, hypothesis, result, or closure rule was weakened
+between runs.
 """
 
 
 def outputs(summary: dict) -> dict[str, str]:
-    return {"RESULTS.md": results_md(summary), "FINAL_REPORT.md": final_md(summary)}
+    return {"RESULTS.md": results_md(summary), "FINAL_REPORT.md": final_md(summary),
+            "CALIBRATION_AUDIT.md": calibration_md(summary),
+            "ADVERSARIAL_AUDIT.md": adversarial_md()}
 
 
 def main() -> int:

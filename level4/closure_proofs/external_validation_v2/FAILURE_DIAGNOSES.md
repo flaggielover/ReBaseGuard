@@ -29,3 +29,11 @@ must remain absent after the campaign; it now inspects the frozen Git commit
 instead. A second test matched a phrase without normalizing a Markdown line
 wrap. Only the audit assertions changed. The persisted outcome arrays,
 hypotheses, and `EXTERNAL-VALIDATION-V2-PARTIAL` decision were untouched.
+
+## F5 — first adversarial run was 19/22
+
+A21 and A22 correctly failed before repository-verification and reproduction
+records existed. A19 also failed because its checker rejected the harmless
+substring `task_` in `figure_d_task_support.png`; the check now rejects raw
+confirmatory/analysis input paths specifically. The plotting code always read
+only `results/summary.json`. No campaign criterion or result changed.
