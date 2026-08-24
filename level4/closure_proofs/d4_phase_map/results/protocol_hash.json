@@ -1,0 +1,30 @@
+{
+  "schema": "rebaseguard.d4-protocol-freeze.v1",
+  "freeze_date": "2026-08-24",
+  "protocol_path": "level4/closure_proofs/d4_phase_map/PROTOCOL.md",
+  "protocol_sha256": "107a9597da6f4baad328e949745c75b486b10753a12086e0eb267100fd6964a0",
+  "baseline_head": "be160e199229e65d3ea630a59d35434a1433b568",
+  "baseline_origin_synchronized": true,
+  "baseline_distinct_checks_expected": 947,
+  "master_seed": 2026082404,
+  "master_seed_absent_before_freeze": true,
+  "new_campaign_outcomes_inspected_before_freeze": false,
+  "m_grid": [1, 2, 5, 10, 20, 35, 50, 60, 65, 70, 72, 75, 80, 90, 100, 150, 250],
+  "rho_grid": [0.0, 0.029796, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95, 1.0],
+  "interpolation": "piecewise-linear in log(m) on raw GammaTilde_m point estimates",
+  "direct_validation_cells": [
+    {"id": "V1", "m": 1, "rho": 0.2},
+    {"id": "V2", "m": 20, "rho": 0.2},
+    {"id": "V3", "m": 20, "rho": 0.4},
+    {"id": "V4", "m": 50, "rho": 0.7},
+    {"id": "V5", "m": 50, "rho": 0.8},
+    {"id": "V6", "m": 100, "rho": 1.0}
+  ],
+  "operational_cells": [
+    {"m": 20, "rho": 0.2},
+    {"m": 20, "rho": 0.4},
+    {"m": 50, "rho": 0.6},
+    {"m": 50, "rho": 0.9},
+    {"m": 100, "rho": 1.0}
+  ]
+}
