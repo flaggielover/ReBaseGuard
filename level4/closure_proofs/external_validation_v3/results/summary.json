@@ -1,4 +1,110 @@
 {
+  "cross_campaign_tasks": [
+    {
+      "campaign": "Stage E",
+      "counts_toward_closure": false,
+      "display": "Electricity / Elec2 (OpenML 151)",
+      "id": "stage_e_electricity",
+      "joint_support": false,
+      "minimum_effective_blocks": 23,
+      "operational_consequence": "NOT_SUPPORTED",
+      "p2_safety": "NOT_SUPPORTED",
+      "protocol": "974487019f57c7c319b3bfafcdc20497ab6fca86834ad0d2245a694296ef23cc",
+      "reference_distortion": "SUPPORTED",
+      "usability": "USABLE"
+    },
+    {
+      "campaign": "Stage E",
+      "counts_toward_closure": false,
+      "display": "UCI Air Quality (id 360)",
+      "id": "stage_e_air_quality",
+      "joint_support": false,
+      "minimum_effective_blocks": 5,
+      "operational_consequence": "NOT_SUPPORTED",
+      "p2_safety": "SUPPORTED",
+      "protocol": "974487019f57c7c319b3bfafcdc20497ab6fca86834ad0d2245a694296ef23cc",
+      "reference_distortion": "NOT_SUPPORTED",
+      "usability": "USABLE"
+    },
+    {
+      "campaign": "Stage E",
+      "counts_toward_closure": false,
+      "display": "UCI Bike Sharing (id 275)",
+      "id": "stage_e_bike_sharing",
+      "joint_support": false,
+      "minimum_effective_blocks": 2,
+      "operational_consequence": "SUPPORTED",
+      "p2_safety": "SUPPORTED",
+      "protocol": "974487019f57c7c319b3bfafcdc20497ab6fca86834ad0d2245a694296ef23cc",
+      "reference_distortion": "UNEVALUABLE",
+      "usability": "PARTIALLY USABLE AFTER FREEZE"
+    },
+    {
+      "campaign": "V2",
+      "counts_toward_closure": false,
+      "display": "Beijing PM2.5",
+      "id": "v2_beijing",
+      "joint_support": false,
+      "minimum_effective_blocks": 20,
+      "operational_consequence": "SUPPORTED",
+      "p2_safety": "NOT_SUPPORTED",
+      "protocol": "878c4dd71165312a2194e2b906a90cb94e82bdfb3fe8db785175618b3dd83289",
+      "reference_distortion": "SUPPORTED",
+      "usability": "USABLE"
+    },
+    {
+      "campaign": "V2",
+      "counts_toward_closure": true,
+      "display": "Household power",
+      "id": "v2_household",
+      "joint_support": true,
+      "minimum_effective_blocks": 20,
+      "operational_consequence": "SUPPORTED",
+      "p2_safety": "SUPPORTED",
+      "protocol": "878c4dd71165312a2194e2b906a90cb94e82bdfb3fe8db785175618b3dd83289",
+      "reference_distortion": "SUPPORTED",
+      "usability": "USABLE"
+    },
+    {
+      "campaign": "V2",
+      "counts_toward_closure": false,
+      "display": "Metro traffic",
+      "id": "v2_metro",
+      "joint_support": false,
+      "minimum_effective_blocks": 20,
+      "operational_consequence": "NOT_SUPPORTED",
+      "p2_safety": "NOT_SUPPORTED",
+      "protocol": "878c4dd71165312a2194e2b906a90cb94e82bdfb3fe8db785175618b3dd83289",
+      "reference_distortion": "SUPPORTED",
+      "usability": "USABLE"
+    },
+    {
+      "campaign": "V3",
+      "counts_toward_closure": true,
+      "display": "MetroPT-3 compressor",
+      "id": "v3_metropt",
+      "joint_support": true,
+      "minimum_effective_blocks": 40,
+      "operational_consequence": "SUPPORTED",
+      "p2_safety": "SUPPORTED",
+      "protocol": "a48aa31bffcd7be5db4befa37bfe5e894e64fadc51e904a10be66fd00fb440f0",
+      "reference_distortion": "SUPPORTED",
+      "usability": "USABLE"
+    },
+    {
+      "campaign": "V3",
+      "counts_toward_closure": true,
+      "display": "Online Retail II",
+      "id": "v3_retail",
+      "joint_support": true,
+      "minimum_effective_blocks": 40,
+      "operational_consequence": "SUPPORTED",
+      "p2_safety": "SUPPORTED",
+      "protocol": "a48aa31bffcd7be5db4befa37bfe5e894e64fadc51e904a10be66fd00fb440f0",
+      "reference_distortion": "SUPPORTED",
+      "usability": "USABLE"
+    }
+  ],
   "decision": {
     "cross_campaign_required": 2,
     "cross_campaign_success_count": 3,
@@ -20,9 +126,132 @@
     },
     "v3_usable_task_count": 2
   },
+  "figure_source_only": true,
   "historical": {
     "stage_e": {
       "decision": "STAGE-E-PARTIAL",
+      "per_task": {
+        "air_quality": {
+          "counts_toward_H_E5": false,
+          "dataset": "UCI Air Quality (id 360)",
+          "effective_blocks": {
+            "E1": 5,
+            "E2": 5,
+            "E3": 5,
+            "E4": 5
+          },
+          "hypotheses": {
+            "H_E1": {
+              "detail": "P1 largest (1.1349) but P1-P2 [-0.7147,+0.9203] and P1-P0 [-0.6993,+0.9213] include 0",
+              "kind": "statistical non-demonstration",
+              "status": "NOT SUPPORTED"
+            },
+            "H_E2": {
+              "detail": "P2 5.33 < P1 5.70 in the predicted direction; cycle-length CI includes 0",
+              "kind": "statistical non-demonstration",
+              "status": "NOT SUPPORTED"
+            },
+            "H_E3": {
+              "detail": "all five conditions pass at the primary margin",
+              "eps_0.05": "NOT SUPPORTED (STEP_0.5 upper95 excess +0.0577 > 0.05)",
+              "status": "SUPPORTED at eps=0.10"
+            },
+            "H_E4": {
+              "detail": "R(P1)-R(P2) = +0.0528 [-0.0436,+0.2367]: predicted direction, CI includes 0",
+              "kind": "statistical non-demonstration",
+              "status": "NOT SUPPORTED"
+            },
+            "H_E5": {
+              "detail": "needs H-E1 AND (H-E2 OR H-E4); H-E1 unmet",
+              "status": "NOT SUPPORTED"
+            }
+          },
+          "power_class": "LOW-POWER",
+          "task": "B",
+          "unreliable_endpoints": [
+            "P3 E2 (4 blocks)"
+          ],
+          "usability": "USABLE"
+        },
+        "bike_sharing": {
+          "counts_toward_H_E5": false,
+          "dataset": "UCI Bike Sharing (id 275)",
+          "effective_blocks": {
+            "E1": 10,
+            "E2": 2,
+            "E3": 2,
+            "E4": 10
+          },
+          "hypotheses": {
+            "H_E1": {
+              "detail": "E2 below the pre-specified effective-block floor for all closure policies (2-3 blocks)",
+              "status": "UNEVALUABLE"
+            },
+            "H_E2": {
+              "detail": "E3 below the floor for all closure policies",
+              "status": "UNEVALUABLE"
+            },
+            "H_E3": {
+              "detail": "all five conditions pass at both margins",
+              "status": "SUPPORTED at eps=0.10 AND eps=0.05"
+            },
+            "H_E4": {
+              "detail": "R(P1)-R(P2) = +0.0470 [+0.0062,+0.1266], excludes 0; the only task where H-E4 is met",
+              "status": "SUPPORTED"
+            },
+            "H_E5": {
+              "detail": "requires H-E1 AND (H-E2 OR H-E4); H-E1 is UNEVALUABLE, so the conjunction cannot hold",
+              "status": "NOT MET"
+            }
+          },
+          "power_class": "E1/E4 adequate; E2/E3 below floor",
+          "task": "C",
+          "unreliable_endpoints": [
+            "E2",
+            "E3"
+          ],
+          "usability": "PARTIALLY USABLE AFTER FREEZE"
+        },
+        "electricity": {
+          "counts_toward_H_E5": false,
+          "dataset": "Electricity / Elec2 (OpenML 151)",
+          "effective_blocks": {
+            "E1": 24,
+            "E2": 23,
+            "E3": 23,
+            "E4": 24
+          },
+          "hypotheses": {
+            "H_E1": {
+              "detail": "E2(P1)=0.3330 > E2(P2)=0.2564 (+0.0766 [+0.0369,+0.1135]) and > E2(P0)=0.2447 (+0.0883 [+0.0498,+0.1326]); both CIs exclude 0",
+              "status": "SUPPORTED"
+            },
+            "H_E2": {
+              "detail": "burden P1 5.55 > P2 5.38 > P0 5.15 in the predicted order; all cycle-length CIs include 0",
+              "kind": "statistical non-demonstration",
+              "status": "NOT SUPPORTED"
+            },
+            "H_E3": {
+              "detail": "fails at 3 of 5 conditions at both margins; point estimate of the excess is NEGATIVE at all five, so this is failure to demonstrate non-inferiority, NOT demonstrated inferiority",
+              "kind": "statistical non-demonstration",
+              "status": "NOT SUPPORTED"
+            },
+            "H_E4": {
+              "detail": "R(P1)-R(P2) = -0.0141 [-0.2855,+0.2047]: point estimate is the OPPOSITE sign to the hypothesis, and the CI includes 0",
+              "kind": "directional contradiction",
+              "status": "NOT SUPPORTED"
+            },
+            "H_E5": {
+              "detail": "needs H-E1 AND (H-E2 OR H-E4); only H-E1 holds",
+              "status": "NOT SUPPORTED"
+            }
+          },
+          "power_class": "adequate",
+          "task": "A",
+          "unreliable_endpoints": [],
+          "usability": "USABLE"
+        }
+      },
       "support": "0/3"
     },
     "v2": {
