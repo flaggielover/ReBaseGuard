@@ -7,7 +7,7 @@
 | Dataset candidates | 12 |
 | Selected V3 tasks | MetroPT-3 / Online Retail II |
 | Power floor | projected PASS at 40 for both |
-| Protocol frozen | yes — `c688dca913c439318815fb89eafab35b860023ad2a1295f85bbcfeec64fa86f4` |
+| Protocol frozen | yes — `a48aa31bffcd7be5db4befa37bfe5e894e64fadc51e904a10be66fd00fb440f0` |
 | Task 1 | selected; no policy outcomes generated |
 | Task 2 | selected; no policy outcomes generated |
 | H3-1 | not run |
@@ -18,5 +18,5 @@
 | Tests | baseline repository verifier PASS at 1,028 |
 | Adversarial | not run |
 | Historical artifacts | unchanged |
-| Git | protocol-freeze checkpoint ready; focused 15/15 PASS |
-| Remaining | commit/push freeze checkpoint; build and gate execution |
+| Git | protocol freeze pushed; outcome-blind power correction checkpoint pending |
+| Remaining | verify/re-freeze correction; build and gate execution |

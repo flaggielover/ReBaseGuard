@@ -24,7 +24,9 @@ This file, `TASK_DEFINITIONS.md`, `METRIC_DEFINITIONS.md`,
 
 - Primaries: MetroPT-3 industrial compressor and Online Retail II demand.
 - Backup: none. Neither scientific failure nor low support permits replacement.
-- Splits: chronological 30/20/50 after frozen causal feature construction.
+- Splits: chronological 20/30/50 after frozen causal feature construction. The
+  30% calibration share accounts for the mandatory post-alarm fresh block and
+  keeps dependence-aware calibration power above 40.
 - Detector: inclusive two-sided CUSUM, `k=0.5`, `m=20`, with one task threshold
   calibrated under P0 and shared by all policies.
 - P0 fresh: rho 0. P1 full alarm-selected reuse: rho 1. P2 authoritative

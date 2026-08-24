@@ -44,7 +44,7 @@
   "power": {"minimum_effective_blocks": 40, "minimum_events": 240},
   "primaries": ["metropt", "retail"],
   "schema": "rebaseguard.external-validation-v3.protocol.v1",
-  "splits": {"calibration": 0.2, "evaluation": 0.5, "train": 0.3},
+  "splits": {"calibration": 0.3, "evaluation": 0.5, "train": 0.2},
   "stop_after_frozen_tasks": true,
   "tasks": {
     "metropt": {
@@ -54,7 +54,7 @@
       "target_arl": 32
     },
     "retail": {
-      "calibration_cycle_block": 3,
+      "calibration_cycle_block": 2,
       "natural_block_observations": 168,
       "observations_per_hour": 1,
       "target_arl": 24

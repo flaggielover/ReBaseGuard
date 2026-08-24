@@ -11,7 +11,7 @@
   and state sensors; gap indicator; daily and weekly sine/cosine terms.
 - Model: ridge regression, lambda 1, fit on train only. Feature centering/scales
   and residual scale come from train only.
-- Splits after lag construction: chronological 30/20/50.
+- Splits after lag construction: chronological 20/30/50.
 - Target ARL: 32 observations (8 observed hours).
 - Natural block: 192 observations; moving-block length one such block.
 
@@ -24,7 +24,7 @@
 - Features: target lags 1, 2, 24, 168 and daily/weekly sine/cosine terms.
 - Model: ridge regression, lambda 1, fit on train only. Feature centering/scales
   and residual scale come from train only.
-- Splits after lag construction: chronological 30/20/50.
+- Splits after lag construction: chronological 20/30/50.
 - Target ARL: 24 observations (24 clock hours).
 - Natural block: 168 observations; moving-block length one such block.
 

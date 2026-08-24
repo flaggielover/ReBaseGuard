@@ -52,6 +52,15 @@ def test_power_floor_is_forty():
     assert PROTOCOL["power"]["minimum_effective_blocks"] == 40
 
 
+def test_calibration_allocation_accounts_for_fresh_block():
+    assert PROTOCOL["splits"] == {"train": 0.2, "calibration": 0.3, "evaluation": 0.5}
+    m = PROTOCOL["detector"]["m"]
+    metro_cycles = 4968 // (PROTOCOL["tasks"]["metropt"]["target_arl"] + m) - 3
+    retail_cycles = 5265 // (PROTOCOL["tasks"]["retail"]["target_arl"] + m) - 3
+    assert metro_cycles // PROTOCOL["tasks"]["metropt"]["calibration_cycle_block"] >= 40
+    assert retail_cycles // PROTOCOL["tasks"]["retail"]["calibration_cycle_block"] >= 40
+
+
 def test_event_floor_yields_forty_blocks():
     assert PROTOCOL["events"]["count"] == 240
     assert PROTOCOL["events"]["count"] // PROTOCOL["bootstrap"]["event_block"] == 40

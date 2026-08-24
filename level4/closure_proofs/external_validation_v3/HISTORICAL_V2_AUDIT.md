@@ -37,6 +37,6 @@ success classifier and not selection criteria based on reuse-policy outcomes.
    inference too variable. V3 therefore raises every closure-relevant floor to
    40 without changing the practical non-inferiority margin.
 
-V3 covers both a high-persistence industrial residual regime and a near-white
-retail-demand residual regime. Their selection used only raw-stream and
-train/calibration diagnostics.
+V3 covers both a moderately persistent industrial residual regime and a
+near-white retail-demand residual regime. Their selection used only raw-stream
+and train/calibration diagnostics.

@@ -16,7 +16,7 @@ select V3 success from pilot reuse-policy results.
 - **non-explanations retained:** the V2 threshold, train residual scale, and
   evaluation-length/ARL ratio did not align monotonically with joint support.
 
-Selected coverage is deliberately contrasting: MetroPT-3 has persistent,
-heavy-tailed pilot calibration residuals, while Online Retail II has near-white
-but heavy-tailed pilot calibration residuals. No P0/P1/P2 result was generated
-or inspected during this choice.
+Selected coverage is deliberately contrasting: under the corrected frozen
+split, MetroPT-3 has moderately persistent pilot calibration residuals while
+Online Retail II is near-white; both remain non-Gaussian. No P0/P1/P2 result
+was generated or inspected during this choice.
