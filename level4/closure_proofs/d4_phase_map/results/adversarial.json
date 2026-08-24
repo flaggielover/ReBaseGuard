@@ -1,0 +1,149 @@
+{
+  "checks": [
+    {
+      "detail": {
+        "actual": "107a9597da6f4baad328e949745c75b486b10753a12086e0eb267100fd6964a0",
+        "expected": "107a9597da6f4baad328e949745c75b486b10753a12086e0eb267100fd6964a0"
+      },
+      "id": "A1",
+      "passed": true,
+      "statement": "protocol hash unchanged"
+    },
+    {
+      "detail": "FAIL",
+      "id": "A2",
+      "passed": true,
+      "statement": "Stage-D D2.3 FAIL preserved"
+    },
+    {
+      "detail": "MATHEMATICAL, NOT OPERATIONAL",
+      "id": "A3",
+      "passed": true,
+      "statement": "D2.5 MATHEMATICAL, NOT OPERATIONAL preserved"
+    },
+    {
+      "detail": "MGT1-TRACK1A-FAILED",
+      "id": "A4",
+      "passed": true,
+      "statement": "Track 1A FAIL preserved"
+    },
+    {
+      "detail": "MGT1-TRACK1B-CLOSED",
+      "id": "A5",
+      "passed": true,
+      "statement": "Track 1B CLOSED preserved"
+    },
+    {
+      "detail": "Gamma simulator calls ordinary-stop Track-1B primitive with minimum_dwell=None",
+      "id": "A6",
+      "passed": true,
+      "statement": "Stage-A dwell semantics never substituted"
+    },
+    {
+      "detail": {
+        "m_grid": [
+          1,
+          2,
+          5,
+          10,
+          20,
+          35,
+          50,
+          60,
+          65,
+          70,
+          72,
+          75,
+          80,
+          90,
+          100,
+          150,
+          250
+        ],
+        "rho_grid": [
+          0.0,
+          0.029796,
+          0.05,
+          0.1,
+          0.2,
+          0.3,
+          0.4,
+          0.5,
+          0.6,
+          0.7,
+          0.8,
+          0.9,
+          0.95,
+          1.0
+        ]
+      },
+      "id": "A7",
+      "passed": true,
+      "statement": "no post-outcome grid change"
+    },
+    {
+      "detail": "piecewise-linear in log(m) on raw GammaTilde_m point estimates",
+      "id": "A8",
+      "passed": true,
+      "statement": "no post-outcome interpolation change"
+    },
+    {
+      "detail": {
+        "direct_source": "src/rebaseguard_d4/direct_map.py",
+        "does_not_import_boundary_finalizer": true,
+        "does_not_import_gamma_accumulator": true,
+        "no_minimum_dwell_branch": true,
+        "owns_stopped_cycle_loop": true,
+        "uses_random_denominator": true
+      },
+      "id": "A9",
+      "passed": true,
+      "statement": "direct-map validation independent enough"
+    },
+    {
+      "detail": "claim artifacts scanned",
+      "id": "A10",
+      "passed": true,
+      "statement": "no operational phase-transition overclaim"
+    },
+    {
+      "detail": "claim artifacts scanned",
+      "id": "A11",
+      "passed": true,
+      "statement": "no universal or distribution-free wording"
+    },
+    {
+      "detail": [
+        "results/direct_validation.json",
+        "results/operational_overlay.json",
+        "results/phase_map.json"
+      ],
+      "id": "A12",
+      "passed": true,
+      "statement": "figures generated from final JSON only"
+    },
+    {
+      "detail": [],
+      "id": "A13",
+      "passed": true,
+      "statement": "no hidden raw-data dependency"
+    },
+    {
+      "detail": "PASS",
+      "id": "A14",
+      "passed": true,
+      "statement": "full verifier green"
+    }
+  ],
+  "history_integrity": {
+    "mismatches": [],
+    "n_checked": 54
+  },
+  "history_integrity_passed": true,
+  "mode": "FINAL-A1-A14",
+  "passed": 14,
+  "protocol_sha256": "107a9597da6f4baad328e949745c75b486b10753a12086e0eb267100fd6964a0",
+  "schema": "rebaseguard.d4-adversarial.v1",
+  "total": 14,
+  "valid": true
+}
