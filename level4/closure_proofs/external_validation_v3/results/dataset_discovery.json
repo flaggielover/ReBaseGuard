@@ -1,0 +1,23 @@
+{
+  "candidates": [
+    {"decision": "PRIMARY_A", "domain": "industrial compressor sensors", "doi": "10.24432/C5VW3R", "id": 791, "instances": 1516948, "name": "MetroPT-3 Dataset", "reason": "long operational stream; independent domain; projected floor 40 passes"},
+    {"decision": "PRIMARY_B", "domain": "retail operations", "doi": "10.24432/C5CG6D", "id": 502, "instances": 1067371, "name": "Online Retail II", "reason": "two chronological years; independent domain; projected floor 40 passes"},
+    {"decision": "EXCLUDED_PRE_OUTCOME", "domain": "parking occupancy", "doi": "10.24432/C51K5Z", "id": 482, "instances": 35717, "name": "Parking Birmingham", "reason": "cross-sectional facility rows collapse to too few chronological blocks"},
+    {"decision": "EXCLUDED_PRE_OUTCOME", "domain": "household energy", "doi": "10.24432/C5VC8G", "id": 374, "instances": 19735, "name": "Appliances Energy Prediction", "reason": "material domain overlap with V2 Household"},
+    {"decision": "EXCLUDED_PRE_OUTCOME", "domain": "laboratory gas sensors", "doi": "10.24432/C5WP4C", "id": 322, "instances": 4178504, "name": "Gas sensor array under dynamic gas mixtures", "reason": "segmented controlled experiments rather than one operational stream"},
+    {"decision": "EXCLUDED_PRE_OUTCOME", "domain": "road traffic", "doi": "10.24432/C57897", "id": 608, "instances": 2101, "name": "Traffic Flow Forecasting", "reason": "projected chronological effective blocks below 40"},
+    {"decision": "EXCLUDED_PRE_OUTCOME", "domain": "bicycle demand", "doi": "10.24432/C5F62R", "id": 560, "instances": 8760, "name": "Seoul Bike Sharing Demand", "reason": "limited power and historical Stage-E mobility overlap"},
+    {"decision": "EXCLUDED_PRE_OUTCOME", "domain": "synthetic maintenance", "doi": "10.24432/C5HS5C", "id": 601, "instances": 10000, "name": "AI4I 2020 Predictive Maintenance Dataset", "reason": "synthetic rather than real/semi-real evidence"},
+    {"decision": "EXCLUDED_PRE_OUTCOME", "domain": "industrial energy", "doi": "10.24432/C52G8C", "id": 851, "instances": 35040, "name": "Steel Industry Energy Consumption", "reason": "energy-domain overlap with V2 Household"},
+    {"decision": "EXCLUDED_PRE_OUTCOME", "domain": "hydraulic test rig", "doi": "10.24432/C5CW21", "id": 447, "instances": 2205, "name": "Condition monitoring of hydraulic systems", "reason": "segmented profiles and too few independent cycles"},
+    {"decision": "EXCLUDED_PRE_OUTCOME", "domain": "building sensors", "doi": "10.24432/C5X01N", "id": 357, "instances": 20560, "name": "Occupancy Detection", "reason": "short physical span and insufficient dependence-aware blocks"},
+    {"decision": "EXCLUDED_PRE_OUTCOME", "domain": "urban energy", "doi": "10.24432/C5B034", "id": 849, "instances": 52417, "name": "Power Consumption of Tetouan City", "reason": "energy-domain overlap with V2 Household"}
+  ],
+  "forbidden_policy_outcomes_inspected": false,
+  "license": "CC BY 4.0",
+  "schema": "rebaseguard.external-validation-v3.dataset-discovery.v1",
+  "selected_raw_diagnostics": {
+    "metropt": {"calibration_residual_acf1": 0.9262223182, "calibration_residual_excess_kurtosis": 17.3735629618, "eligible_15min_bins": 16657, "gaps": 249, "malformed_selected_rows": 0, "raw_rows": 1516948},
+    "retail": {"calibration_residual_acf1": 0.0055777167, "calibration_residual_excess_kurtosis": 6.6030387207, "hourly_bins": 17718, "positive_rows": 1044416, "return_or_zero_rows": 22956, "raw_rows": 1067371, "zero_hours": 11911}
+  }
+}

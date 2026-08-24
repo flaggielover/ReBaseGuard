@@ -1,0 +1,63 @@
+{
+  "aggregation": {
+    "existing_success": "V2 Household",
+    "independent_dataset_and_domain_required": true,
+    "minimum_cross_campaign_successes": 2,
+    "no_statistical_pooling": true,
+    "strong_v3_contradiction_blocks_closure": true
+  },
+  "bootstrap": {
+    "draws": 10000,
+    "event_block": 6,
+    "seed": 20270102
+  },
+  "calibration": {
+    "point_relative_tolerance": 0.1,
+    "target_inside_ci95": true
+  },
+  "detector": {"k": 0.5, "m": 20, "two_sided": true},
+  "events": {
+    "administrative_cap_target_arl": 4,
+    "count": 240,
+    "region": [0.1, 0.9],
+    "seed": 20270101,
+    "warmup_target_arl": 2
+  },
+  "hypotheses": {
+    "effect_ratio_floor": 1.1,
+    "primary_noninferiority_epsilon": 0.1,
+    "secondary_noninferiority_epsilon": 0.05,
+    "simultaneous_one_sided_confidence": 0.99
+  },
+  "interventions": [
+    {"id": "STEP_0.5", "kind": "STEP", "magnitude_sd": 0.5},
+    {"id": "STEP_1.0", "kind": "STEP", "magnitude_sd": 1.0},
+    {"id": "STEP_2.0", "kind": "STEP", "magnitude_sd": 2.0},
+    {"duration_hours": 24, "id": "GRADUAL_1.0", "kind": "GRADUAL", "magnitude_sd": 1.0},
+    {"id": "RECURRING_1.0", "kind": "RECURRING", "magnitude_sd": 1.0, "off_hours": 48, "on_hours": 48}
+  ],
+  "policies": {
+    "P0_fresh": 0.0,
+    "P1_full_reuse": 1.0,
+    "P2_rebaseguard": 0.029796
+  },
+  "power": {"minimum_effective_blocks": 40, "minimum_events": 240},
+  "primaries": ["metropt", "retail"],
+  "schema": "rebaseguard.external-validation-v3.protocol.v1",
+  "splits": {"calibration": 0.2, "evaluation": 0.5, "train": 0.3},
+  "stop_after_frozen_tasks": true,
+  "tasks": {
+    "metropt": {
+      "calibration_cycle_block": 2,
+      "natural_block_observations": 192,
+      "observations_per_hour": 4,
+      "target_arl": 32
+    },
+    "retail": {
+      "calibration_cycle_block": 3,
+      "natural_block_observations": 168,
+      "observations_per_hour": 1,
+      "target_arl": 24
+    }
+  }
+}
