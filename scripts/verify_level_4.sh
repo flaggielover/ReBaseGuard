@@ -74,6 +74,10 @@ echo "== Level 4 external-validation V3 suite =="
 "$L4_PY" -m pytest level4/closure_proofs/external_validation_v3/tests -q
 
 echo
+echo "== Level 4 final global re-audit suite =="
+"$L4_PY" -m pytest level4/final_global_reaudit/tests -q
+
+echo
 echo "== Level 4 environment =="
 "$L4_PY" - <<'PY'
 import sys

@@ -1,0 +1,171 @@
+{
+  "schema": "rebaseguard.level4-final-global-requirements.v1",
+  "audit_date": "2026-08-24",
+  "audit_start_head": "ba9f49d202b8feb71fb4923929b506f8e9b88a40",
+  "original_source": {
+    "path": "level4/re_audit_post_closure/requirements.json",
+    "sha256": "18c6ce3ccd77353082c6743210aa8135f189e1250078bbec5b3650b66f1743c0"
+  },
+  "previous_decision": {
+    "path": "level4/re_audit_post_closure/results/final_decision.json",
+    "sha256": "dc9fa9a0f859114265bdd527aaba8bd0305e226797e94a5f299b11b31459a0bb",
+    "verdict": "LEVEL-4-PARTIAL",
+    "counts": {"PASS": 12, "PARTIAL": 3, "FAIL": 2, "OPEN": 1}
+  },
+  "historical_stage_f": {
+    "path": "level4/stage_f/results/final_decision.json",
+    "sha256": "db630f4a652cd4b26497e1c6d3ffe0830eafd3bc6c9a505f7526bc7a65dc0cbe",
+    "generator_sha256": "61044a2480ba81a0b9d9878a0735ea661a1f82e8ead373ed5192c0ef8b09d9fe",
+    "verdict": "LEVEL-4-PARTIAL"
+  },
+  "taxonomy": {
+    "source": "STAGE_F_FALLBACK_REUSED_NO_FROZEN_POST_STAGE_F_GLOBAL_TAXONOMY_FOUND",
+    "allowed_labels": ["LEVEL-4-CLOSED", "LEVEL-4-CLOSED-WITH-LIMITATIONS", "LEVEL-4-PARTIAL", "LEVEL-4-FAILED"],
+    "closed_with_limitations_independently_authorized": false,
+    "closed_rule": "ALL_MANDATORY_ROWS_PASS",
+    "mandatory_satisfying_statuses": ["PASS"]
+  },
+  "campaign_requirement_map": {
+    "MGT1-TRACK1B-CLOSED": "L4R-09",
+    "SR-DERIVATIVE-CLOSED": "L4R-10",
+    "D4-PHASE-MAP-CLOSED": "L4R-11",
+    "LOCATION-FAMILY-TRACK3AB-CLOSED": "L4R-14",
+    "EXTERNAL-VALIDATION-V3-CLOSED": "L4R-15",
+    "NOVELTY-VERIFICATION-CLOSED": "L4R-16"
+  },
+  "requirements": [
+    {
+      "id": "L4R-01", "requirement": "Level 1-3 closure foundation", "classification": "MANDATORY",
+      "stage_f": {"status": "PASS", "label": "PASS"}, "previous_reaudit_status": "PASS", "later_closure": null,
+      "reason": "The Level 1-3 Lean and Arb foundation remains closed and reproduced.",
+      "evidence_paths": ["closure/LEVEL_1_3_CLOSURE_REPORT.md", "scripts/verify_level_1_3.sh"], "limitations": []
+    },
+    {
+      "id": "L4R-02", "requirement": "Multi-cycle oracle, reproducible", "classification": "MANDATORY",
+      "stage_f": {"status": "PASS", "label": "PASS"}, "previous_reaudit_status": "PASS", "later_closure": null,
+      "reason": "No later campaign changes the closed Stage-A oracle requirement.",
+      "evidence_paths": ["level4/reports/GATE_4_1_REPORT.md"], "limitations": []
+    },
+    {
+      "id": "L4R-03", "requirement": "Conditional map and derivative correspondence at m=1", "classification": "MANDATORY",
+      "stage_f": {"status": "PASS", "label": "PASS"}, "previous_reaudit_status": "PASS", "later_closure": null,
+      "reason": "The three-route m=1 correspondence remains closed.",
+      "evidence_paths": ["level4/reports/GATE_4_2_REPORT.md"], "limitations": []
+    },
+    {
+      "id": "L4R-04", "requirement": "Gamma_CUSUM > 2 rigorously", "classification": "MANDATORY",
+      "stage_f": {"status": "PASS", "label": "PASS"}, "previous_reaudit_status": "PASS", "later_closure": null,
+      "reason": "The outward-rounded Arb enclosure still has lower endpoint above two.",
+      "evidence_paths": ["closure/04_ARB_CERTIFICATE.md"], "limitations": []
+    },
+    {
+      "id": "L4R-05", "requirement": "Rigorous period-2 for the deterministic skeleton", "classification": "MANDATORY",
+      "stage_f": {"status": "PASS", "label": "PASS"}, "previous_reaudit_status": "PASS", "later_closure": null,
+      "reason": "Stage B remains closed for the deterministic conditional-mean skeleton only.",
+      "evidence_paths": ["level4/stage_b/certificate/period2_certificate.json"],
+      "limitations": ["The certificate is for the deterministic conditional-mean skeleton, not the stochastic long-run process."]
+    },
+    {
+      "id": "L4R-06", "requirement": "Stability-aware reuse policy with monitoring consequences", "classification": "MANDATORY",
+      "stage_f": {"status": "PARTIAL", "label": "PARTIAL"}, "previous_reaudit_status": "PARTIAL", "later_closure": null,
+      "reason": "Stage C remains partial and C6 remains failed; no later campaign explicitly closed this same policy requirement.",
+      "evidence_paths": ["level4/stage_c/results/findings.json", "level4/reports/STAGE_C_METHOD_REPORT.md"],
+      "blocker_type": "SCIENTIFIC_LIMITATION", "limitations": ["The stability-aware policy did not satisfy the frozen C6 detection-delay condition."]
+    },
+    {
+      "id": "L4R-07", "requirement": "Confirmatory sensitivity of the stability-aware policy", "classification": "MANDATORY",
+      "stage_f": {"status": "PASS", "label": "PASS (narrow scope)"}, "previous_reaudit_status": "PASS", "later_closure": null,
+      "reason": "Stage C.1 remains closed within its frozen sensitivity scope.",
+      "evidence_paths": ["level4/stage_c1/results/findings_confirmatory.json"], "limitations": ["The result does not repair Stage C C6."]
+    },
+    {
+      "id": "L4R-08", "requirement": "SR Monte Carlo derivative", "classification": "MANDATORY",
+      "stage_f": {"status": "PASS", "label": "PASS"}, "previous_reaudit_status": "PASS", "later_closure": null,
+      "reason": "The matched-ARL SR numerical derivative remains confirmatory numerical evidence.",
+      "evidence_paths": ["level4/stage_d/results/d1_gamma.json"], "limitations": ["This row is numerical evidence, not an Arb certificate."]
+    },
+    {
+      "id": "L4R-09", "requirement": "m>1 derivative theorem", "classification": "MANDATORY",
+      "stage_f": {"status": "FAIL", "label": "FAIL"}, "previous_reaudit_status": "PASS",
+      "later_closure": {"campaign": "MGT1-TRACK1B-CLOSED", "status": "PASS", "decision_path": "level4/closure_proofs/m_gt_1_track1b/results/decision.json"},
+      "reason": "Track 1B independently closed the scoped theorem requirement.",
+      "evidence_paths": ["level4/stage_d/results/d2_3_derivative.json", "level4/closure_proofs/m_gt_1_track1a/results/decision.json", "level4/closure_proofs/m_gt_1_track1b/PROTOCOL.md", "level4/closure_proofs/m_gt_1_track1b/results/decision.json"],
+      "limitations": ["Historical D2.3 and Track 1A remain failed."]
+    },
+    {
+      "id": "L4R-10", "requirement": "SR derivative theorem (proved)", "classification": "MANDATORY",
+      "stage_f": {"status": "OPEN", "label": "OPEN"}, "previous_reaudit_status": "PASS",
+      "later_closure": {"campaign": "SR-DERIVATIVE-CLOSED", "status": "PASS", "decision_path": "level4/closure_proofs/sr_derivative/results/decision.json"},
+      "reason": "Track 2 closes the derivative theorem under explicit analytic hypotheses.",
+      "evidence_paths": ["level4/closure_proofs/sr_derivative/PROTOCOL.md", "level4/closure_proofs/sr_derivative/results/decision.json", "level4/closure_proofs/sr_derivative/ARBITRARY_PRECISION_ATTEMPT.md"],
+      "limitations": ["Gamma_SR > 2 remains confirmatory numerical; the rigorous SR local-instability Arb certificate remains OPEN."]
+    },
+    {
+      "id": "L4R-11", "requirement": "m-rho phase map (D4)", "classification": "MANDATORY",
+      "stage_f": {"status": "FAIL", "label": "FAIL (not run)"}, "previous_reaudit_status": "FAIL",
+      "later_closure": {"campaign": "D4-PHASE-MAP-CLOSED", "status": "PASS", "decision_path": "level4/closure_proofs/d4_phase_map/results/decision.json"},
+      "reason": "The independently frozen D4 campaign closes the original phase-map requirement.",
+      "evidence_paths": ["level4/stage_d/results/stage_d_decision.json", "level4/closure_proofs/d4_phase_map/PROTOCOL.md", "level4/closure_proofs/d4_phase_map/results/decision.json", "level4/closure_proofs/d4_phase_map/results/verification.json"],
+      "limitations": ["The boundary is deterministic and local; Stage-D D2.5 remains MATHEMATICAL, NOT OPERATIONAL."]
+    },
+    {
+      "id": "L4R-12", "requirement": "Operational consequence of the Gamma_m crossing", "classification": "MANDATORY",
+      "stage_f": {"status": "PARTIAL", "label": "NEGATIVE RESULT"}, "previous_reaudit_status": "PARTIAL", "later_closure": null,
+      "reason": "The frozen experiment produced a scientifically valid negative result, but Stage F normalized the mandatory row as non-PASS and no later same-requirement closure exists.",
+      "evidence_paths": ["level4/stage_d/results/d2_5_verdict.json", "level4/closure_proofs/d4_phase_map/OPERATIONAL_BRIDGE.md"],
+      "blocker_type": "SCIENTIFIC_NEGATIVE", "limitations": ["Zero of four monitoring metrics peaked at the crossing; all four were monotone in log m."]
+    },
+    {
+      "id": "L4R-13", "requirement": "Non-Gaussian robustness", "classification": "STRONG_EXTENSION",
+      "stage_f": {"status": "PARTIAL", "label": "PARTIAL"}, "previous_reaudit_status": "PARTIAL", "later_closure": null,
+      "reason": "The six-family numerical evidence remains bounded by the historical t3 estimand ambiguity.",
+      "evidence_paths": ["level4/stage_d/results/d3_nongaussian.json"],
+      "limitations": ["The t3 frozen and stability-normalized estimands disagree; neither is selected post hoc."]
+    },
+    {
+      "id": "L4R-14", "requirement": "General location-family theorem", "classification": "STRETCH",
+      "stage_f": {"status": "OPEN", "label": "OPEN"}, "previous_reaudit_status": "PASS",
+      "later_closure": {"campaign": "LOCATION-FAMILY-TRACK3AB-CLOSED", "status": "PASS", "decision_path": "level4/closure_proofs/location_family_track3ab/results/decision.json"},
+      "reason": "Track 3A/3B closes the regular location-family stopped-score theorem under explicit assumptions.",
+      "evidence_paths": ["level4/closure_proofs/location_family/results/decision.json", "level4/closure_proofs/location_family_track3ab/PROTOCOL.md", "level4/closure_proofs/location_family_track3ab/results/decision.json"],
+      "limitations": ["Historical Track 3 remains partial and failed its frozen numerical gate; the Lean spine is conditional."]
+    },
+    {
+      "id": "L4R-15", "requirement": "Semi-real external validation", "classification": "MANDATORY",
+      "stage_f": {"status": "FAIL", "label": "FAIL vs its own rule"}, "previous_reaudit_status": "FAIL",
+      "later_closure": {"campaign": "EXTERNAL-VALIDATION-V3-CLOSED", "status": "PASS", "decision_path": "level4/closure_proofs/external_validation_v3/results/decision.json"},
+      "reason": "The frozen cross-campaign rule closes the original requirement with V2 Household plus two independently gated V3 tasks.",
+      "evidence_paths": ["level4/stage_e/results/stage_e_decision.json", "level4/closure_proofs/external_validation_v2/results/decision.json", "level4/closure_proofs/external_validation_v3/PROTOCOL.md", "level4/closure_proofs/external_validation_v3/results/decision.json", "level4/closure_proofs/external_validation_v3/CROSS_CAMPAIGN_AGGREGATION.md"],
+      "limitations": ["Stage E remains 0/3; V2 remains 1/3; V3 Route B is unfavorable on both tasks; P2 is regime-dependent, not universal."]
+    },
+    {
+      "id": "L4R-16", "requirement": "Prior-art and novelty verification", "classification": "MANDATORY",
+      "stage_f": {"status": "OPEN", "label": "OPEN / provenance gap"}, "previous_reaudit_status": "OPEN",
+      "later_closure": {"campaign": "NOVELTY-VERIFICATION-CLOSED", "status": "PASS", "decision_path": "level4/closure_proofs/novelty_verification/results/decision.json"},
+      "reason": "The isolated documented search closes the original hygiene requirement at N2.",
+      "evidence_paths": ["level_4_theory_numerics/rebaseguard_level4_design.md", "level4/closure_proofs/novelty_verification/PROTOCOL.md", "level4/closure_proofs/novelty_verification/results/decision.json", "level4/closure_proofs/novelty_verification/FINAL_REPORT.md"],
+      "limitations": ["N2 is PARTIAL-OVERLAP-FOUND-CLAIMS-NARROWED and does not establish absolute novelty or priority."]
+    },
+    {
+      "id": "L4R-17", "requirement": "Reproducibility of every stage", "classification": "MANDATORY",
+      "stage_f": {"status": "PASS", "label": "PASS"}, "previous_reaudit_status": "PASS", "later_closure": null,
+      "reason": "Every historical stage and authorized closure campaign retains a reproduction entry point.",
+      "evidence_paths": ["scripts/verify_level_4.sh"], "limitations": []
+    },
+    {
+      "id": "L4R-18", "requirement": "Protocol integrity", "classification": "MANDATORY",
+      "stage_f": {"status": "PASS", "label": "PASS"}, "previous_reaudit_status": "PASS", "later_closure": null,
+      "reason": "Frozen protocols, historical decisions, and protected hashes remain unchanged.",
+      "evidence_paths": ["level4/final_global_reaudit/protected_hashes.json"], "limitations": []
+    }
+  ],
+  "open_nonblockers": [
+    {
+      "id": "SR-ARB-CERTIFICATE",
+      "status": "OPEN",
+      "classification": "OPTIONAL_RIGOR_UPGRADE_OUTSIDE_ORIGINAL_18_ROWS",
+      "reason": "The original L4R-10 demands the derivative theorem, which Track 2 closed; it does not demand an Arb-certified Gamma_SR inequality.",
+      "evidence_paths": ["level4/closure_proofs/sr_derivative/results/decision.json", "level4/closure_proofs/sr_derivative/ARBITRARY_PRECISION_ATTEMPT.md"]
+    }
+  ]
+}

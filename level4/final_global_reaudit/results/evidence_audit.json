@@ -1,0 +1,148 @@
+{
+  "all_campaigns_pass": true,
+  "campaign_requirement_map": {
+    "D4-PHASE-MAP-CLOSED": "L4R-11",
+    "EXTERNAL-VALIDATION-V3-CLOSED": "L4R-15",
+    "LOCATION-FAMILY-TRACK3AB-CLOSED": "L4R-14",
+    "MGT1-TRACK1B-CLOSED": "L4R-09",
+    "NOVELTY-VERIFICATION-CLOSED": "L4R-16",
+    "SR-DERIVATIVE-CLOSED": "L4R-10"
+  },
+  "campaigns": [
+    {
+      "campaign": "MGT1-TRACK1B-CLOSED",
+      "checks": {
+        "all_closure_criteria_pass": true,
+        "decision_closes_campaign": true,
+        "decision_closes_original_requirement": true,
+        "historical_failures_preserved": true,
+        "protocol_frozen_before_outcomes": true,
+        "protocol_hash_matches": true
+      },
+      "evidence_paths": [
+        "level4/closure_proofs/m_gt_1_track1b/PROTOCOL.md",
+        "level4/closure_proofs/m_gt_1_track1b/results/decision.json"
+      ],
+      "status": "PASS",
+      "surviving_limitations": [
+        "Historical D2.3 and Track 1A remain failed; the Lean spine is conditional."
+      ],
+      "target_requirement": "L4R-09"
+    },
+    {
+      "campaign": "SR-DERIVATIVE-CLOSED",
+      "checks": {
+        "arb_open_preserved": true,
+        "closure_conditions_pass": true,
+        "decision_closes_campaign": true,
+        "derivative_theorem_closed": true,
+        "numerical_not_upgraded": true,
+        "protocol_frozen_before_outcomes": true,
+        "protocol_hash_matches": true
+      },
+      "evidence_paths": [
+        "level4/closure_proofs/sr_derivative/PROTOCOL.md",
+        "level4/closure_proofs/sr_derivative/results/decision.json",
+        "level4/closure_proofs/sr_derivative/ARBITRARY_PRECISION_ATTEMPT.md"
+      ],
+      "status": "PASS",
+      "surviving_limitations": [
+        "Level 4 closure would not imply SR-GAMMA-CERTIFIED; the Arb certificate is OPEN."
+      ],
+      "target_requirement": "L4R-10"
+    },
+    {
+      "campaign": "LOCATION-FAMILY-TRACK3AB-CLOSED",
+      "checks": {
+        "all_closure_criteria_pass": true,
+        "decision_closes_campaign": true,
+        "decision_closes_original_requirement": true,
+        "historical_track3_preserved": true,
+        "lean_no_sorry_or_admit": true,
+        "protocol_frozen_before_outcomes": true,
+        "protocol_hash_matches": true
+      },
+      "evidence_paths": [
+        "level4/closure_proofs/location_family_track3ab/PROTOCOL.md",
+        "level4/closure_proofs/location_family_track3ab/results/decision.json"
+      ],
+      "status": "PASS",
+      "surviving_limitations": [
+        "Historical Track 3 remains partial; the Lean theorem spine is conditional on explicit analytic hypotheses."
+      ],
+      "target_requirement": "L4R-14"
+    },
+    {
+      "campaign": "D4-PHASE-MAP-CLOSED",
+      "checks": {
+        "adversarial_pass": true,
+        "all_closure_criteria_pass": true,
+        "decision_closes_campaign": true,
+        "formula_matches": true,
+        "historical_operational_boundary_preserved": true,
+        "protocol_frozen_before_outcomes": true,
+        "protocol_hash_matches": true,
+        "verification_pass": true
+      },
+      "evidence_paths": [
+        "level4/closure_proofs/d4_phase_map/PROTOCOL.md",
+        "level4/closure_proofs/d4_phase_map/results/decision.json",
+        "level4/closure_proofs/d4_phase_map/results/verification.json"
+      ],
+      "status": "PASS",
+      "surviving_limitations": [
+        "The phase map is mathematical/local and does not prove an abrupt stochastic operational transition."
+      ],
+      "target_requirement": "L4R-11"
+    },
+    {
+      "campaign": "NOVELTY-VERIFICATION-CLOSED",
+      "checks": {
+        "adversarial_pass": true,
+        "all_closure_criteria_pass": true,
+        "decision_closes_campaign": true,
+        "decision_closes_original_requirement": true,
+        "n2_claim_narrowing_preserved": true,
+        "protocol_frozen": true,
+        "verification_pass": true
+      },
+      "evidence_paths": [
+        "level4/closure_proofs/novelty_verification/PROTOCOL.md",
+        "level4/closure_proofs/novelty_verification/results/decision.json",
+        "level4/closure_proofs/novelty_verification/FINAL_REPORT.md"
+      ],
+      "status": "PASS",
+      "surviving_limitations": [
+        "The result is a scoped N2 search conclusion, not absolute novelty or priority."
+      ],
+      "target_requirement": "L4R-16"
+    },
+    {
+      "campaign": "EXTERNAL-VALIDATION-V3-CLOSED",
+      "checks": {
+        "all_closure_gates_pass": true,
+        "cross_campaign_threshold_pass": true,
+        "decision_closes_campaign": true,
+        "decision_closes_original_requirement": true,
+        "historical_stage_e_preserved": true,
+        "historical_v2_preserved": true,
+        "protocol_frozen_before_outcomes": true,
+        "reproduction_pass": true,
+        "unfavorable_route_b_preserved": true,
+        "v3_two_of_two": true,
+        "verification_pass": true
+      },
+      "evidence_paths": [
+        "level4/closure_proofs/external_validation_v3/PROTOCOL.md",
+        "level4/closure_proofs/external_validation_v3/results/decision.json",
+        "level4/closure_proofs/external_validation_v3/CROSS_CAMPAIGN_AGGREGATION.md"
+      ],
+      "status": "PASS",
+      "surviving_limitations": [
+        "Stage E remains 0/3, V2 remains 1/3, V3 Route B is unfavorable, and P2 remains regime-dependent."
+      ],
+      "target_requirement": "L4R-15"
+    }
+  ],
+  "schema": "rebaseguard.level4-final-global-evidence-audit.v1"
+}
