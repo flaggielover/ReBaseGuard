@@ -1,0 +1,14 @@
+{
+  "bootstrap": {"draws":10000,"event_block":6,"natural_block_weeks":2,"seed":20261202},
+  "calibration": {"cycle_block":4,"max_log_iterations":60,"point_relative_tolerance":0.10,"policy":"P0_fresh","target_inside_ci":true},
+  "campaign": {"closure_support_required":2,"primary_tasks":["household","metro","beijing"],"technical_backup":"load_diagrams"},
+  "detector": {"kind":"two-sided-inclusive-CUSUM","k":0.5,"m":20},
+  "events": {"administrative_cap_target_arl":4,"count":120,"grid_seed":20261201,"region":[0.10,0.90]},
+  "hypotheses": {"effect_ratio_floor":1.10,"h2_1_one_sided_confidence":0.975,"h2_2_one_sided_confidence":0.975,"h2_3_bonferroni_one_sided_confidence":0.99,"noninferiority_primary":0.10,"noninferiority_secondary":0.05},
+  "interventions": [{"id":"STEP_0.5","magnitude":0.5},{"id":"STEP_1.0","magnitude":1.0},{"id":"STEP_2.0","magnitude":2.0},{"id":"GRADUAL_1.0","hours":24,"magnitude":1.0},{"id":"RECURRING_1.0","off_hours":48,"on_hours":48,"magnitude":1.0}],
+  "policies": {"P0_fresh":0.0,"P1_full_reuse":1.0,"P2_rebaseguard":0.029796},
+  "power": {"minimum_effective_blocks":20,"minimum_events":120},
+  "schema":"rebaseguard.external-validation-v2.protocol.v1",
+  "splits":{"calibration":0.20,"evaluation":0.50,"train":0.30},
+  "task_time": {"beijing":{"observations_per_hour":1,"target_arl":60,"week":168},"household":{"observations_per_hour":4,"target_arl":240,"week":672},"load_diagrams":{"observations_per_hour":4,"target_arl":240,"week":672},"metro":{"observations_per_hour":1,"target_arl":60,"week":168}}
+}
