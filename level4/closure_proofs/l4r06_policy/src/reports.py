@@ -74,6 +74,30 @@ claim and not evidence of an operational D4 phase transition.
         "the controlling 0.10 margin."
         for row in secondary
     ) or "- None."
+    summaries = science["all_cell_summaries"]
+    p2_dominance = []
+    for m in (1, 20, 70, 100):
+        p2 = next(r for r in summaries if r["policy"] == "P2" and r["m"] == m
+                  and r["shift"] == 0.0)
+        p3 = next(r for r in summaries if r["policy"] == "P3" and r["m"] == m
+                  and r["shift"] == 0.0)
+        lower_response = 0
+        for shift in (0.25, 0.5, 1.0, 1.5):
+            p2s = next(r for r in summaries if r["policy"] == "P2" and r["m"] == m
+                       and r["shift"] == shift)
+            p3s = next(r for r in summaries if r["policy"] == "P3" and r["m"] == m
+                       and r["shift"] == shift)
+            r2 = p2s["mean_delay"] / p2["mean_delay"]
+            r3 = p3s["mean_delay"] / p3["mean_delay"]
+            lower_response += r2 < r3
+        if p2["reference_mse"] < p3["reference_mse"] and p2["cycle_arl"] > p3["cycle_arl"]:
+            p2_dominance.append(
+                f"- `m={m}`: P2 has lower reference MSE "
+                f"(`{p2['reference_mse']:.6f}` vs `{p3['reference_mse']:.6f}`), "
+                f"higher ARL0 (`{p2['cycle_arl']:.3f}` vs `{p3['cycle_arl']:.3f}`), "
+                f"and lower normalized response at {lower_response}/4 shifts."
+            )
+    p2_lines = "\n".join(p2_dominance) or "- No regime."
     diagnosis = f"""# Failure diagnoses and unfavorable findings
 
 ## HISTORICAL C6 — immutable failure
@@ -90,6 +114,14 @@ Primary unfavorable conditions retained: **{len(negatives)}**.
 Secondary epsilon=0.05 failures retained: **{len(secondary)}**.
 
 {secondary_lines}
+
+### Descriptive P2 advantages (non-controlling)
+
+{p2_lines}
+
+At `m=100`, P3 is exactly identical to P1 in every retained per-replicate
+summary. This is the pre-specified natural saturation of the common clipping
+rule; it supplies no P3-versus-P1 improvement and was excluded from H6-2/H6-3.
 
 P2 outcomes and all 80 policy/regime/shift cell summaries remain in the final
 scientific JSON whether favorable or unfavorable. No policy, regime, shift,
