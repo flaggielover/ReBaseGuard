@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -97,8 +98,12 @@ def test_cross_campaign_aggregation_is_frozen():
 
 
 def test_no_confirmatory_v3_outcome_exists_at_freeze():
-    assert not list((BASE / "results").glob("task_*_confirmatory.json"))
     assert load("results/protocol_hash.json")["confirmatory_outcomes_existed_when_frozen"] is False
+    tree = subprocess.check_output([
+        "git", "ls-tree", "-r", "--name-only", "e8376cb",
+        "level4/closure_proofs/external_validation_v3/results",
+    ], cwd=BASE.parents[2], text=True)
+    assert "_confirmatory.json" not in tree
 
 
 def test_historical_trees_are_intact():

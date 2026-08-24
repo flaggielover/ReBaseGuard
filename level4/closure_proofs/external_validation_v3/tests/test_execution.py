@@ -115,7 +115,11 @@ def test_event_grid_inputs_are_outcome_blind():
 
 
 def test_no_confirmatory_result_exists_at_gate_checkpoint():
-    assert not list((BASE / "results").glob("task_*_confirmatory.json"))
+    tree = subprocess.check_output([
+        "git", "ls-tree", "-r", "--name-only", "07e2fb7",
+        "level4/closure_proofs/external_validation_v3/results",
+    ], cwd=ROOT, text=True)
+    assert "_confirmatory.json" not in tree
 
 
 def test_raw_archives_are_gitignored():

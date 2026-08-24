@@ -25,3 +25,19 @@ execution files had extra blank lines at EOF. Mechanical normalization changed
 only bytes, so the execution-config hash was refreshed to
 `633cf2fb90f50c47845351f428b324813f6d2e21b33c49ff1ba30b73b8b48d4c`.
 The protocol hash stayed unchanged, and no confirmatory result existed.
+
+## F4 — first historical summary adapter
+
+After both confirmatory task analyses were persisted, the first canonical
+summary build stopped because it read V2 decision fields at the summary root
+rather than under V2's `decision` object. Only the historical adapter was
+corrected. V3 outcome arrays, H3 calculations, task verdicts, and the scientific
+campaign verdict were already persisted and did not change.
+
+## F5 — first outcome test run was 48/50
+
+Two historical-timing tests correctly passed before outcomes but incorrectly
+required confirmatory files to remain absent from the current tree forever.
+They now inspect the final protocol commit `e8376cb` and P0 gate commit
+`07e2fb7`, where the files are absent. Only test assertions changed; the frozen
+outcomes and `EXTERNAL-VALIDATION-V3-CLOSED` scientific verdict are unchanged.
