@@ -1,0 +1,42 @@
+{
+  "bootstrap": {
+    "draws": 10000,
+    "event_block": 6,
+    "natural_moving_block_weeks": 2,
+    "seed": 20261202
+  },
+  "calibration": {
+    "cycle_block": 4,
+    "h_bounds": [0.25, 100.0],
+    "log_tolerance": 0.001,
+    "max_iterations": 60,
+    "single_chronological_chain": true
+  },
+  "events": {
+    "administrative_cap_target_arl": 4,
+    "grid_jitter_fraction_of_spacing": 0.20,
+    "task_seeds": {
+      "beijing": 20261213,
+      "household": 20261211,
+      "metro": 20261212
+    },
+    "warmup_target_arl": 3
+  },
+  "model": {
+    "ridge_lambda": 1.0,
+    "standardisation_source": "train only"
+  },
+  "monitor": {
+    "burn_cycles_natural": 3,
+    "fresh_block_consumed_by_all_policies": true,
+    "inclusive_alarm": true,
+    "initial_reference": "mean of immediately preceding m residuals",
+    "reference_during_settling": "pre-alarm reference"
+  },
+  "natural_blocks": {
+    "discard_incomplete_final_week": true,
+    "oracle_centered_window_hours": 24,
+    "oracle_is_measurement_only": true
+  },
+  "schema": "rebaseguard.external-validation-v2.execution-config.v1"
+}

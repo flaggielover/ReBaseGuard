@@ -61,6 +61,9 @@ def verify() -> list[str]:
     expected = json.loads((BASE / "results/protocol_hash.json").read_text())
     if protocol_record() != expected:
         errors.append("frozen protocol bundle hash mismatch")
+    execution = json.loads((BASE / "results/execution_hash.json").read_text())
+    if sha256(BASE / execution["file"]) != execution["sha256"]:
+        errors.append("frozen execution configuration hash mismatch")
     history = json.loads((BASE / "results/historical_hashes.json").read_text())
     for name, frozen in history["roots"].items():
         if tracked_tree(name) != frozen:
