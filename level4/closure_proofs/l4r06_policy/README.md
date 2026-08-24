@@ -13,8 +13,8 @@ endpoints, inference, sample sizes, seeds, and decision rule are frozen in
 
 | Field | Value |
 |---|---|
-| Step | 1 / 3 — requirement audit and frozen protocol |
-| Gate | PRE-OUTCOME PROTOCOL FREEZE |
+| Step | 2 / 3 — verified implementation |
+| Gate | PRE-OUTCOME IMPLEMENTATION CHECKPOINT |
 | Original L4R-06 reconstructed? | yes |
 | Protocol frozen | yes — `2abda564099eae20079806609af5d9a48144fa78c95c29de7ccf5e31f8a49faa` |
 | Policy P3 | frozen |
@@ -24,11 +24,11 @@ endpoints, inference, sample sizes, seeds, and decision rule are frozen in
 | H6-3 | not run |
 | H6-4 | not run |
 | H6-5 | not run |
-| Focused tests | not implemented |
+| Focused tests | 28 / 28 pass |
 | Adversarial | not run |
 | Historical C6 preserved | yes |
-| Git | clean synchronized `main` at campaign start `0abbe3bf4950bcab81438be0553b7423ae665005` |
-| Remaining | commit protocol; implement without inspecting confirmatory outcomes |
+| Git | protocol checkpoint pushed at `11df0ee1c9e06407b30aface9b114d41d5b748c8`; implementation checkpoint pending |
+| Remaining | commit/push implementation; then execute the frozen confirmatory campaign |
 
 The eventual offline reproducer will be:
 
