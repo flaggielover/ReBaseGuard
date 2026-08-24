@@ -1,0 +1,210 @@
+{
+  "schema": "rebaseguard.novelty-annotations.v1",
+  "allowed_overlap_labels": ["DIRECT", "HIGH-PARTIAL", "MODERATE-PARTIAL", "ANALOGUE", "BACKGROUND", "NOT-RELEVANT"],
+  "allowed_matrix_values": ["YES", "PARTIAL", "NO", "UNCLEAR"],
+  "works": [
+    {
+      "work_id": "W01", "overlap_label": "HIGH-PARTIAL", "relevance": "HIGH", "threat_level": "HIGH", "access_level": "ABSTRACT",
+      "reason": "Running mean and scale estimates recursively affect a self-starting CUSUM, but the observations are not selected by a prior alarm and no post-alarm reference cycle or local stability map is studied.",
+      "evidence_basis": "Publisher-indexed abstract recovered through OpenAlex; metadata cross-checked with Crossref.",
+      "component_overlaps": {"C1": "PARTIAL", "C2": "PARTIAL", "C4": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W02", "overlap_label": "MODERATE-PARTIAL", "relevance": "MODERATE", "threat_level": "MEDIUM", "access_level": "ABSTRACT",
+      "reason": "Documents control-chart distortion from parameters estimated on an in-control Phase-I sample; that sample is not selected by an alarm stopping time.",
+      "evidence_basis": "Abstract and bibliographic metadata from two indexes.",
+      "component_overlaps": {"C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W03", "overlap_label": "HIGH-PARTIAL", "relevance": "HIGH", "threat_level": "HIGH", "access_level": "ABSTRACT",
+      "reason": "An adaptive CUSUM updates its reference value from an EWMA shift estimator, directly limiting broad claims about adaptive reference updates; it does so within a run, not by reusing alarm-selected observations in the next cycle.",
+      "evidence_basis": "Publisher-indexed abstract recovered through OpenAlex; metadata cross-checked with Crossref.",
+      "component_overlaps": {"C1": "PARTIAL", "C2": "PARTIAL", "C4": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W04", "overlap_label": "MODERATE-PARTIAL", "relevance": "MODERATE", "threat_level": "MEDIUM", "access_level": "ABSTRACT",
+      "reason": "Adaptive EWMA weights observations as a function of current error, but it is neither alarm-selected re-baselining nor a repeated post-alarm reference map.",
+      "evidence_basis": "Abstract and bibliographic metadata from two indexes.",
+      "component_overlaps": {"C2": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W05", "overlap_label": "HIGH-PARTIAL", "relevance": "HIGH", "threat_level": "HIGH", "access_level": "ABSTRACT",
+      "reason": "Continuous monitoring with adaptive forgetting creates recursive detector-estimator interaction over multiple changes, but the accessible description does not form a new reference from the alarm-triggering stopped sample or analyze the ReBaseGuard gain.",
+      "evidence_basis": "Springer article abstract and full reference list inspected; main body was access-limited.",
+      "component_overlaps": {"C1": "PARTIAL", "C2": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W06", "overlap_label": "HIGH-PARTIAL", "relevance": "HIGH", "threat_level": "HIGH", "access_level": "ABSTRACT",
+      "reason": "Directly analyzes conditional bias of change-point and magnitude estimates after a sequential CUSUM alarm, establishing the general stopped-selection effect; it does not reuse those estimates as the next monitoring reference.",
+      "evidence_basis": "Abstract and bibliographic metadata from OpenAlex/Crossref.",
+      "component_overlaps": {"C1": "PARTIAL", "C3": "PARTIAL", "C4": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W07", "overlap_label": "MODERATE-PARTIAL", "relevance": "MODERATE", "threat_level": "MEDIUM", "access_level": "METADATA-ONLY",
+      "reason": "A later paper on bias after a CUSUM test reinforces the stopped-estimation neighborhood, but inaccessible text prevented a stronger component classification.",
+      "evidence_basis": "Title/authors/year/DOI and citation relationships verified in two indexes; article text unavailable.",
+      "component_overlaps": {"C1": "UNCLEAR", "C3": "PARTIAL", "C4": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W08", "overlap_label": "HIGH-PARTIAL", "relevance": "HIGH", "threat_level": "HIGH", "access_level": "FULL-TEXT",
+      "reason": "Closest theoretical neighbor: it recursively estimates post-change parameters inside adaptive CUSUM, studies conditional post-detection bias, and updates an unknown pre-change mean across downward-reset subtests. It stops at the alarm; it does not reuse alarm-triggering observations to form the next cycle's reference or derive C3-C9.",
+      "evidence_basis": "Open-access published PDF inspected, including algorithm, unknown-initial-mean subsection, bias results, and conclusion; metadata cross-checked.",
+      "component_overlaps": {"C1": "PARTIAL", "C2": "PARTIAL", "C3": "PARTIAL", "C4": "PARTIAL", "C8": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W09", "overlap_label": "MODERATE-PARTIAL", "relevance": "MODERATE", "threat_level": "MEDIUM", "access_level": "ABSTRACT",
+      "reason": "Derives transforms for CUSUM stopping times and stopped values, a relevant stopped-process tool, but no recursive reference update or reference-map derivative is present.",
+      "evidence_basis": "Abstract and metadata from two indexes.",
+      "component_overlaps": {"C3": "PARTIAL", "C4": "PARTIAL"}
+    },
+    {
+      "work_id": "W10", "overlap_label": "HIGH-PARTIAL", "relevance": "HIGH", "threat_level": "HIGH", "access_level": "FULL-TEXT",
+      "reason": "Provides rigorous nonanticipating parameter estimation inside sequential tests and an SR-type detector with unknown post-change parameters. Estimates affect later likelihood ratios within the same run; stopped alarm data do not create a recursive next-cycle baseline.",
+      "evidence_basis": "Full arXiv paper inspected, including SRRS definition, theorems, remarks, and references; publisher metadata cross-checked.",
+      "component_overlaps": {"C1": "PARTIAL", "C2": "PARTIAL", "C3": "PARTIAL", "C7": "PARTIAL", "C8": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W11", "overlap_label": "MODERATE-PARTIAL", "relevance": "MODERATE", "threat_level": "MEDIUM", "access_level": "ABSTRACT",
+      "reason": "Sequential detection with an unknown initial mean uses a separate training-sample estimate; it bears on estimated baselines but not alarm-selected reuse.",
+      "evidence_basis": "Project Euclid abstract and metadata from two indexes.",
+      "component_overlaps": {"C3": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W12", "overlap_label": "BACKGROUND", "relevance": "BACKGROUND", "threat_level": "LOW", "access_level": "ABSTRACT",
+      "reason": "Core SR optimality work concerns detector initialization and minimax delay, not parameter/reference reuse across alarm cycles.",
+      "evidence_basis": "Abstract, arXiv location, and metadata from two indexes.",
+      "component_overlaps": {"C7": "PARTIAL"}
+    },
+    {
+      "work_id": "W13", "overlap_label": "MODERATE-PARTIAL", "relevance": "MODERATE", "threat_level": "MEDIUM", "access_level": "ABSTRACT",
+      "reason": "Explicitly applies GSR repetitively in a stationary multi-cyclic regime, but resets the detector statistic while holding distributions/reference fixed; it has no cross-cycle reference feedback.",
+      "evidence_basis": "Abstract and metadata from two indexes; terminology cross-checked against full multi-cyclic SR preprint W34-style evidence in the search corpus.",
+      "component_overlaps": {"C2": "PARTIAL", "C7": "PARTIAL"}
+    },
+    {
+      "work_id": "W14", "overlap_label": "HIGH-PARTIAL", "relevance": "HIGH", "threat_level": "HIGH", "access_level": "ABSTRACT",
+      "reason": "An adaptive SR chart updates its reference value to cover unknown shift sizes and analyzes run length by a two-dimensional Markov chain. The update is within the current chart, not formed from an alarm-stopped sample for the next repeated cycle.",
+      "evidence_basis": "Publisher-indexed abstract and metadata from two independent indexes.",
+      "component_overlaps": {"C1": "PARTIAL", "C2": "PARTIAL", "C7": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W15", "overlap_label": "MODERATE-PARTIAL", "relevance": "MODERATE", "threat_level": "MEDIUM", "access_level": "METADATA-ONLY",
+      "reason": "Adaptive SR for dispersion is a detector-specific neighbor; inaccessible text makes the exact estimator mechanics unclear, and no evidence of post-alarm recursive baseline reuse was found.",
+      "evidence_basis": "Title/authors/year/DOI and citation graph verified; text unavailable.",
+      "component_overlaps": {"C1": "UNCLEAR", "C7": "PARTIAL"}
+    },
+    {
+      "work_id": "W16", "overlap_label": "MODERATE-PARTIAL", "relevance": "MODERATE", "threat_level": "MEDIUM", "access_level": "ABSTRACT",
+      "reason": "Foundational large-sample theory for estimation at sequentially chosen sample sizes establishes the general optional-stopping neighborhood, not recursive monitoring feedback.",
+      "evidence_basis": "Cambridge abstract and metadata from two indexes.",
+      "component_overlaps": {"C3": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W17", "overlap_label": "MODERATE-PARTIAL", "relevance": "MODERATE", "threat_level": "MEDIUM", "access_level": "ABSTRACT",
+      "reason": "Time-uniform confidence sequences provide valid inference under continuous monitoring/optional stopping but do not analyze stopped reference reuse.",
+      "evidence_basis": "Project Euclid abstract, open PDF location, and metadata.",
+      "component_overlaps": {"C3": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W18", "overlap_label": "ANALOGUE", "relevance": "ANALOGUE", "threat_level": "LOW", "access_level": "METADATA-ONLY",
+      "reason": "Variable forgetting in recursive control is a historical adaptive-estimation analogue; no sequential alarm selection or monitoring-cycle semantics were established from accessible evidence.",
+      "evidence_basis": "Metadata verified in two indexes and citation context inspected in the Bodenham–Adams reference list.",
+      "component_overlaps": {"C2": "PARTIAL", "C6": "PARTIAL"}
+    },
+    {
+      "work_id": "W19", "overlap_label": "ANALOGUE", "relevance": "ANALOGUE", "threat_level": "LOW", "access_level": "ABSTRACT",
+      "reason": "Formalizes forgetting for recursive parameter estimation, but lacks an alarm stopping rule and post-alarm reference cycles.",
+      "evidence_basis": "Abstract and metadata from two indexes.",
+      "component_overlaps": {"C2": "PARTIAL", "C6": "PARTIAL"}
+    },
+    {
+      "work_id": "W20", "overlap_label": "ANALOGUE", "relevance": "ANALOGUE", "threat_level": "LOW", "access_level": "ABSTRACT",
+      "reason": "Variable-forgetting RLS analyzes tracking/misadjustment/stability tradeoffs in an adaptive estimator, not stopped selection or repeated monitoring alarms.",
+      "evidence_basis": "IEEE-indexed abstract and metadata from two indexes.",
+      "component_overlaps": {"C2": "PARTIAL", "C6": "PARTIAL"}
+    },
+    {
+      "work_id": "W21", "overlap_label": "ANALOGUE", "relevance": "ANALOGUE", "threat_level": "MEDIUM", "access_level": "ABSTRACT",
+      "reason": "A reset-driven adaptive integrate-and-fire system is analyzed through a Poincare map with rich bifurcations. This is the plausible Touboul–Brette analogue, but its state/reset semantics are neural dynamics, not stopping-selected reference estimation.",
+      "evidence_basis": "Springer abstract and metadata; repository contained no title/identifier proving this was the historical AI review's exact source.",
+      "component_overlaps": {"C2": "PARTIAL", "C6": "PARTIAL", "C9": "PARTIAL"}
+    },
+    {
+      "work_id": "W22", "overlap_label": "ANALOGUE", "relevance": "ANALOGUE", "threat_level": "LOW", "access_level": "ABSTRACT",
+      "reason": "General hybrid-system solution and stability theory covers flows/jumps abstractly, but not the statistical selection and reference-reuse mechanism.",
+      "evidence_basis": "Open publisher abstract/PDF location and metadata from two indexes.",
+      "component_overlaps": {"C2": "PARTIAL", "C6": "PARTIAL", "C9": "PARTIAL"}
+    },
+    {
+      "work_id": "W23", "overlap_label": "MODERATE-PARTIAL", "relevance": "MODERATE", "threat_level": "MEDIUM", "access_level": "ABSTRACT",
+      "reason": "Quantifies EWMA run-length distortion from estimated Phase-I parameters; the estimation sample is not alarm-selected.",
+      "evidence_basis": "Abstract and metadata from two indexes.",
+      "component_overlaps": {"C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W24", "overlap_label": "MODERATE-PARTIAL", "relevance": "MODERATE", "threat_level": "MEDIUM", "access_level": "ABSTRACT",
+      "reason": "Separates conditional and marginal Poisson-CUSUM performance under estimated reference parameters, based on an external reference sample rather than alarm selection.",
+      "evidence_basis": "Abstract and metadata from two indexes.",
+      "component_overlaps": {"C4": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W25", "overlap_label": "HIGH-PARTIAL", "relevance": "HIGH", "threat_level": "HIGH", "access_level": "ABSTRACT",
+      "reason": "ADWIN repeatedly lets detected distribution change determine an adaptive window used for future estimates, the closest practical reference-window feedback. It is not an alarm-stopped sample-mean reference map and does not derive C3-C10.",
+      "evidence_basis": "Proceedings abstract and metadata from two indexes.",
+      "component_overlaps": {"C1": "PARTIAL", "C2": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W26", "overlap_label": "BACKGROUND", "relevance": "BACKGROUND", "threat_level": "LOW", "access_level": "ABSTRACT",
+      "reason": "Comprehensive concept-drift taxonomy confirms that detection and adaptation/reference-window updates are established areas, but it is not a theorem about alarm-selected reference reuse.",
+      "evidence_basis": "ACM abstract, repository copy location, and metadata from two indexes.",
+      "component_overlaps": {"C1": "PARTIAL", "C2": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W27", "overlap_label": "MODERATE-PARTIAL", "relevance": "MODERATE", "threat_level": "MEDIUM", "access_level": "ABSTRACT",
+      "reason": "Incremental KS drift detection uses samples/windows that change over time and supports repeated unsupervised monitoring, but no post-alarm stopped reference map is analyzed.",
+      "evidence_basis": "ACM abstract, open manuscript location, and metadata.",
+      "component_overlaps": {"C1": "PARTIAL", "C2": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W28", "overlap_label": "BACKGROUND", "relevance": "BACKGROUND", "threat_level": "LOW", "access_level": "ABSTRACT",
+      "reason": "Review maps drift detection, understanding, and adaptation; it bounds production-language claims but does not subsume a ReBaseGuard theorem.",
+      "evidence_basis": "IEEE abstract, arXiv manuscript location, and metadata.",
+      "component_overlaps": {"C1": "PARTIAL", "C2": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W29", "overlap_label": "BACKGROUND", "relevance": "BACKGROUND", "threat_level": "LOW", "access_level": "ABSTRACT",
+      "reason": "Drift Detection Method is foundational practical drift adaptation; available evidence does not establish the stopped-reference derivative or repeated alarm-selected re-baselining mechanism.",
+      "evidence_basis": "Springer abstract snippet and metadata from two indexes.",
+      "component_overlaps": {"C1": "PARTIAL", "C2": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W30", "overlap_label": "MODERATE-PARTIAL", "relevance": "MODERATE", "threat_level": "MEDIUM", "access_level": "ABSTRACT",
+      "reason": "An unknown-parameter changepoint model joins Phase I and Phase II and estimates change structure, but the accessible evidence does not reuse one alarm's stopped observations as the next repeated reference.",
+      "evidence_basis": "Journal abstract and metadata from two indexes.",
+      "component_overlaps": {"C1": "PARTIAL", "C4": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W31", "overlap_label": "MODERATE-PARTIAL", "relevance": "MODERATE", "threat_level": "MEDIUM", "access_level": "ABSTRACT",
+      "reason": "Joint online detection and nonparametric change-point estimation reuse streaming data for detection/estimation, but no recursive post-alarm reference state is identified.",
+      "evidence_basis": "Abstract and metadata from two indexes.",
+      "component_overlaps": {"C1": "PARTIAL", "C3": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W32", "overlap_label": "MODERATE-PARTIAL", "relevance": "MODERATE", "threat_level": "MEDIUM", "access_level": "ABSTRACT",
+      "reason": "A two-stage sequential detector plus retrospective estimator establishes post-detection estimation as known, without feeding the estimate into later alarm cycles.",
+      "evidence_basis": "Abstract and metadata from two indexes.",
+      "component_overlaps": {"C1": "PARTIAL", "C3": "PARTIAL", "C11": "PARTIAL"}
+    },
+    {
+      "work_id": "W33", "overlap_label": "HIGH-PARTIAL", "relevance": "HIGH", "threat_level": "HIGH", "access_level": "ABSTRACT",
+      "reason": "Combines a self-starting CUSUM alarm with MLE estimation of the detected shift time, even using extra post-alarm observations. It does not use that estimate/sample as a recursively updated next-cycle reference.",
+      "evidence_basis": "Publisher-indexed abstract and metadata from two indexes.",
+      "component_overlaps": {"C1": "PARTIAL", "C3": "PARTIAL", "C4": "PARTIAL", "C11": "PARTIAL"}
+    }
+  ],
+  "historical_named_reference": {
+    "name": "Touboul",
+    "status": "UNRESOLVED HISTORICAL REFERENCE",
+    "reason": "Touboul and Brette (2008), W21, is a plausible reset-map analogue and was independently inspected, but no repository title, year, or identifier links it conclusively to the unpersisted historical AI review."
+  }
+}

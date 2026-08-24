@@ -1,0 +1,27 @@
+{
+  "schema": "rebaseguard.novelty-snowball-assessment.v1",
+  "rounds": [
+    {
+      "round": "ROUND-1",
+      "seed_work_ids": ["W01", "W03", "W05", "W06", "W07", "W08", "W10", "W11", "W14", "W25", "W33"],
+      "backward_records": 272,
+      "forward_records": 484,
+      "unique_records_screened": 648,
+      "new_direct": 0,
+      "new_high_partial": 0,
+      "assessment": "Titles, returned abstracts, and metadata were screened. Results added background and moderate neighbors (adaptive charts, unknown-baseline detection, stopped inference), but none reused alarm-triggering observations as a recursively updated next-cycle reference or subsumed C3-C9."
+    },
+    {
+      "round": "ROUND-2",
+      "seed_work_ids": ["W09", "W13", "W16", "W19", "W21", "W26"],
+      "backward_records": 284,
+      "forward_records": 409,
+      "unique_records_screened": 687,
+      "new_direct": 0,
+      "new_high_partial": 0,
+      "assessment": "A second expansion through stopped-process, multi-cyclic, optional-stopping, forgetting, reset-map, and concept-drift neighbors produced no new DIRECT or HIGH-PARTIAL work."
+    }
+  ],
+  "stopping_rule_satisfied": true,
+  "reason": "Two consecutive completed snowball rounds produced no new DIRECT or HIGH-PARTIAL work."
+}

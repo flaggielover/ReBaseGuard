@@ -1,0 +1,173 @@
+{
+  "schema": "rebaseguard.novelty-high-candidate-audits.v1",
+  "question_keys": [
+    "problem", "selected_by_stopping_rule", "data_reused", "new_reference_formed",
+    "reference_affects_next_cycle", "cycle_repeated", "local_derivative_or_stability",
+    "m_gt_1_finite_window", "rho_dependent_stability", "sr_included",
+    "general_score_location_theorem", "subsuming_theorem", "claim_change"
+  ],
+  "audits": [
+    {
+      "work_id": "W01",
+      "answers": {
+        "problem": "Self-starting location/scale CUSUM when in-control parameters are unknown.",
+        "selected_by_stopping_rule": "No; the running estimates use all observations since startup, before any alarm selection.",
+        "data_reused": "Past startup observations enter running mean/scale estimates and standardized future CUSUM inputs.",
+        "new_reference_formed": "Yes, continuously estimated in-control parameters, but not from an alarm-stopped batch.",
+        "reference_affects_next_cycle": "No post-alarm next cycle is described in the inspected abstract.",
+        "cycle_repeated": "No evidence of repeated alarm/re-baseline cycles.",
+        "local_derivative_or_stability": "No reference-map derivative or local fixed-point stability analysis.",
+        "m_gt_1_finite_window": "No ReBaseGuard convention-A stopped finite window.",
+        "rho_dependent_stability": "No.",
+        "sr_included": "No.",
+        "general_score_location_theorem": "No stopped-score identity.",
+        "subsuming_theorem": "No theorem found that subsumes C3-C9.",
+        "claim_change": "Do not describe recursively estimated/self-starting CUSUM references as new; specify alarm-stopped post-alarm reuse."
+      }
+    },
+    {
+      "work_id": "W03",
+      "answers": {
+        "problem": "Adaptive CUSUM for good detection across unknown mean-shift sizes.",
+        "selected_by_stopping_rule": "No evidence that the EWMA estimator's observations are selected by a completed alarm.",
+        "data_reused": "Streaming observations update an EWMA shift estimate that sets the current CUSUM reference value.",
+        "new_reference_formed": "Yes, an adaptive within-run reference value.",
+        "reference_affects_next_cycle": "It affects later increments in the current chart; no post-alarm reference cycle is shown.",
+        "cycle_repeated": "No repeated alarm-selected re-baselining established.",
+        "local_derivative_or_stability": "Run-length analysis, not a local derivative of a cross-cycle reference map.",
+        "m_gt_1_finite_window": "No.",
+        "rho_dependent_stability": "No.",
+        "sr_included": "No.",
+        "general_score_location_theorem": "No.",
+        "subsuming_theorem": "No load-bearing ReBaseGuard theorem is subsumed.",
+        "claim_change": "Forbid broad claims that adaptive CUSUM reference updating is introduced here; retain only the stopped post-alarm cross-cycle distinction."
+      }
+    },
+    {
+      "work_id": "W05",
+      "answers": {
+        "problem": "Continuous changepoint monitoring using adaptive forgetting factors over multiple change sizes.",
+        "selected_by_stopping_rule": "Unclear from accessible abstract; the estimator is described as continuously adaptive, not alarm-stopped.",
+        "data_reused": "Streaming observations update forgetting-factor estimates used for detection.",
+        "new_reference_formed": "An adaptive state/estimate is formed; an alarm-selected baseline is not established.",
+        "reference_affects_next_cycle": "Continuous monitoring is supported, but a discrete post-alarm reference cycle is not specified in accessible evidence.",
+        "cycle_repeated": "Multiple changes are the use case; exact alarm-reset mechanics were inaccessible.",
+        "local_derivative_or_stability": "No ReBaseGuard stopped-score derivative/local phase boundary in accessible evidence.",
+        "m_gt_1_finite_window": "No ReBaseGuard random-window theorem.",
+        "rho_dependent_stability": "No.",
+        "sr_included": "No.",
+        "general_score_location_theorem": "No.",
+        "subsuming_theorem": "No evidence of a subsuming theorem.",
+        "claim_change": "Do not claim continuous detector-estimator feedback or adaptive forgetting as new."
+      }
+    },
+    {
+      "work_id": "W06",
+      "answers": {
+        "problem": "Bias of change-point and change-magnitude estimates after a sequential CUSUM detects a Brownian-drift change.",
+        "selected_by_stopping_rule": "Yes; inference is conditioned on the change being detected by the CUSUM stopping rule.",
+        "data_reused": "The stopped detection path is used to estimate change point and magnitude.",
+        "new_reference_formed": "No evidence that the estimate becomes a monitoring reference.",
+        "reference_affects_next_cycle": "No.",
+        "cycle_repeated": "No recursive repeated-monitoring feedback.",
+        "local_derivative_or_stability": "Bias asymptotics, not a reference-map derivative or stability result.",
+        "m_gt_1_finite_window": "No.",
+        "rho_dependent_stability": "No.",
+        "sr_included": "No.",
+        "general_score_location_theorem": "No ReBaseGuard stopped-score derivative identity.",
+        "subsuming_theorem": "No.",
+        "claim_change": "General stopping-induced post-alarm estimation bias is prior art; claims must target its recursive reuse consequence, not the existence of bias itself."
+      }
+    },
+    {
+      "work_id": "W08",
+      "answers": {
+        "problem": "Adaptive sequential CUSUM with recursive post-change parameter estimation and conditional post-detection bias in an exponential family.",
+        "selected_by_stopping_rule": "The final change-point/post-change estimates are evaluated after the alarm; within-run estimators are updated before the alarm. An unknown pre-change mean is updated when subtests cross downward, not after the alarm threshold.",
+        "data_reused": "Observations within candidate post-change segments update the CUSUM's adaptive parameter; the stopped path yields reported post-alarm estimates.",
+        "new_reference_formed": "Within-run shift parameters and, in one subsection, a pre-change estimate across downward-reset subtests are formed. Alarm-triggering observations do not become a next alarm cycle's reference.",
+        "reference_affects_next_cycle": "It affects subsequent subtests before the first alarm, not a post-alarm monitoring cycle.",
+        "cycle_repeated": "Subtests repeat until one alarm; the paper stops at that alarm and does not analyze repeated post-alarm re-baselining.",
+        "local_derivative_or_stability": "No cross-cycle reference-map derivative, fixed-point stability, or period-2 certificate.",
+        "m_gt_1_finite_window": "No convention-A terminal-window theorem or short-cycle correction.",
+        "rho_dependent_stability": "No reuse-fraction phase boundary.",
+        "sr_included": "Adaptive SR is cited, but the studied procedure is CUSUM.",
+        "general_score_location_theorem": "Uses exponential-family likelihood/renewal theory, not C8's stopped accumulated-score identity.",
+        "subsuming_theorem": "No theorem subsumes C3-C9.",
+        "claim_change": "Adaptive CUSUM estimation, recursive unknown-baseline updates across negative subtests, and post-detection bias are established; current wording must isolate post-alarm alarm-sample reuse and its derivative/stability consequences."
+      }
+    },
+    {
+      "work_id": "W10",
+      "answers": {
+        "problem": "Sequential tests and SRRS changepoint detection with unknown post-change parameters estimated nonanticipatingly.",
+        "selected_by_stopping_rule": "No post-alarm sample is selected for a next baseline; estimators are predictable from observations before each current likelihood-ratio factor.",
+        "data_reused": "Past observations in each putative post-change segment estimate parameters used in later likelihood ratios.",
+        "new_reference_formed": "Adaptive post-change likelihood parameters are formed, not a post-alarm in-control reference.",
+        "reference_affects_next_cycle": "They affect the same detection run; the full paper does not feed alarm-stopped estimates into a later cycle.",
+        "cycle_repeated": "No reference-coupled repeated alarms.",
+        "local_derivative_or_stability": "No reference feedback derivative/stability map.",
+        "m_gt_1_finite_window": "No.",
+        "rho_dependent_stability": "No.",
+        "sr_included": "Yes, an SRRS procedure with estimated unknown post-change parameter.",
+        "general_score_location_theorem": "General parametric estimation is present, but not C8's location-score covariance identity.",
+        "subsuming_theorem": "Its ARL/delay theorems do not subsume C3-C9.",
+        "claim_change": "Adaptive/unknown-parameter SR cannot be claimed as introduced; C7 must remain the derivative identity for the frozen reference-reuse map."
+      }
+    },
+    {
+      "work_id": "W14",
+      "answers": {
+        "problem": "Adaptive SR chart for varying unknown future location shifts.",
+        "selected_by_stopping_rule": "No evidence in the inspected abstract that the adaptive reference is estimated from a completed alarm's stopped sample.",
+        "data_reused": "Streaming data drive an adaptive reference/shift estimate in the active chart.",
+        "new_reference_formed": "Yes, an adaptive within-chart reference value.",
+        "reference_affects_next_cycle": "It affects later states of the same two-dimensional Markov chart; a post-alarm next reference is not shown.",
+        "cycle_repeated": "No alarm-selected repeated reference cycle established.",
+        "local_derivative_or_stability": "Markov run-length performance, not the local derivative of a reference map.",
+        "m_gt_1_finite_window": "No.",
+        "rho_dependent_stability": "No.",
+        "sr_included": "Yes.",
+        "general_score_location_theorem": "No.",
+        "subsuming_theorem": "No theorem found that subsumes C7.",
+        "claim_change": "Avoid any claim that adaptive SR reference values are new; state the stopping-selected post-alarm feedback and derivative identity precisely."
+      }
+    },
+    {
+      "work_id": "W25",
+      "answers": {
+        "problem": "Online concept-drift detection and learning with a statistically adaptive window.",
+        "selected_by_stopping_rule": "Partly: window cuts are triggered by a change test over the current window, not by a CUSUM/SR alarm stopping time.",
+        "data_reused": "The retained recent portion of the tested window supplies future estimates/model updates.",
+        "new_reference_formed": "Yes, a new adaptive window/state for future learning and detection.",
+        "reference_affects_next_cycle": "Yes in practical repeated streaming operation, though not as a discrete stopped sample-mean reference cycle.",
+        "cycle_repeated": "Yes, the window is recomputed online repeatedly.",
+        "local_derivative_or_stability": "False-positive/negative guarantees, not local deterministic reference-map stability.",
+        "m_gt_1_finite_window": "No ReBaseGuard convention-A theorem.",
+        "rho_dependent_stability": "No.",
+        "sr_included": "No.",
+        "general_score_location_theorem": "No.",
+        "subsuming_theorem": "No load-bearing theorem is subsumed.",
+        "claim_change": "Practical change-triggered adaptive reference windows are prior art; claims must not imply otherwise."
+      }
+    },
+    {
+      "work_id": "W33",
+      "answers": {
+        "problem": "Self-starting CUSUM detection followed by MLE estimation of detected shift time.",
+        "selected_by_stopping_rule": "Yes; the path is selected by a CUSUM alarm, and the estimator is applied after detection.",
+        "data_reused": "Alarm-path data, and optionally extra post-alarm observations, estimate the change time.",
+        "new_reference_formed": "No evidence that the estimate defines the next in-control reference.",
+        "reference_affects_next_cycle": "No.",
+        "cycle_repeated": "No recursive post-alarm monitoring feedback in the abstract.",
+        "local_derivative_or_stability": "No.",
+        "m_gt_1_finite_window": "No.",
+        "rho_dependent_stability": "No.",
+        "sr_included": "No.",
+        "general_score_location_theorem": "No.",
+        "subsuming_theorem": "No.",
+        "claim_change": "Post-alarm reuse of a CUSUM path for retrospective estimation is known; distinguish reuse to form a future monitoring reference."
+      }
+    }
+  ]
+}
