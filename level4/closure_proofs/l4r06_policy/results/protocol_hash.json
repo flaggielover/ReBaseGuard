@@ -1,0 +1,33 @@
+{
+  "schema": "rebaseguard.l4r06-protocol-freeze.v1",
+  "status": "FROZEN",
+  "freeze_date": "2026-08-24",
+  "confirmatory_outcomes_existed_when_frozen": false,
+  "primary_policy": "rho_P3(m)=min(1,0.8*rho_c,L95(m))",
+  "files": {
+    "PROTOCOL.md": "34120561dde61ea1ce5e9de50c37870d53326e726da77088bd2439062d9871fa",
+    "REQUIREMENT_AUDIT.md": "903679fb6bb8fbb53686dd1a90f89f7da76b61aa02c28db067e3480122bf173f",
+    "DESIGN_AUDIT.md": "9bbb3ca121981da6b67776e1cf4b9c6f39ded93578bce98ad752218fc8fa3614"
+  },
+  "combined_sha256_order": [
+    "REQUIREMENT_AUDIT.md",
+    "DESIGN_AUDIT.md",
+    "PROTOCOL.md"
+  ],
+  "combined_sha256": "2abda564099eae20079806609af5d9a48144fa78c95c29de7ccf5e31f8a49faa",
+  "frozen_primary_epsilon": 0.1,
+  "frozen_secondary_epsilon": 0.05,
+  "frozen_absolute_delay_guard": 1.25,
+  "frozen_safety_factor": 0.8,
+  "frozen_regimes": [1, 20, 70, 100],
+  "frozen_policies": ["P0", "P1", "P2", "P3"],
+  "frozen_shifts": [0.25, 0.5, 1.0, 1.5],
+  "confirmatory_seed": 2026082406,
+  "bootstrap_seed": 2026082407,
+  "adversarial_seed": 2026082408,
+  "n_replicates": 200,
+  "events_per_replicate": 200,
+  "burn_in_cycles": 300,
+  "spacing_cycles": 15,
+  "bootstrap_draws": 10000
+}
