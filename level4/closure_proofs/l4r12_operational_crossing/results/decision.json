@@ -1,0 +1,137 @@
+{
+  "D4_preserved": true,
+  "L4R06_preserved": true,
+  "adversarial": {
+    "final_result": "19/19",
+    "first_file": "adversarial_first.json",
+    "first_result": "17/19"
+  },
+  "claim_forbidden": "The crossing has no operational consequence in general.",
+  "claim_safe": "The Gamma_m=2 crossing is mathematically well-defined, but under the frozen monitoring metrics and protocol no corresponding operational transition was found; this negative result answers the pre-specified operational-consequence question.",
+  "criteria": [
+    {
+      "evidence": "original wording and MANDATORY class reconstructed exactly",
+      "id": "C12.1",
+      "status": "PASS"
+    },
+    {
+      "evidence": "pre-outcome semantics classified without importing a positive-transition rule",
+      "id": "C12.2",
+      "status": "PASS"
+    },
+    {
+      "evidence": "Stage-D crossing and independent D4 support verified",
+      "id": "C12.3",
+      "status": "PASS"
+    },
+    {
+      "evidence": "frozen operational design, complete grid, and 0/4 peak plus 4/4 monotone result verified",
+      "id": "C12.4",
+      "status": "PASS"
+    },
+    {
+      "evidence": "historical D2.5 remains MATHEMATICAL, NOT OPERATIONAL",
+      "id": "C12.5",
+      "status": "PASS"
+    },
+    {
+      "evidence": "negative answer is distinguished from low-power non-demonstration",
+      "id": "C12.6",
+      "status": "PASS"
+    },
+    {
+      "evidence": "frozen investigational semantics explicitly allow the negative outcome",
+      "id": "C12.7",
+      "status": "PASS"
+    },
+    {
+      "evidence": "the evidence and acceptance source both target original L4R-12",
+      "id": "C12.8",
+      "status": "PASS"
+    },
+    {
+      "evidence": "exactly A1-A19 pass",
+      "id": "C12.9",
+      "status": "PASS"
+    },
+    {
+      "evidence": "authoritative verifier and offline byte-stable replay pass",
+      "id": "C12.10",
+      "status": "PASS"
+    }
+  ],
+  "evidence_sufficient": true,
+  "exact_next_action": "FINAL GLOBAL LEVEL-4 RE-AUDIT",
+  "generator_owned": true,
+  "global_reaudit_performed": false,
+  "historical_D2_5_preserved": true,
+  "historical_final_global_reaudit": "LEVEL-4-PARTIAL",
+  "historical_statuses_preserved": {
+    "D4": "D4-PHASE-MAP-CLOSED",
+    "L4R06": "L4R06-POLICY-CLOSED",
+    "final_global_current": "LEVEL-4-PARTIAL",
+    "final_global_historical_stage_f": "LEVEL-4-PARTIAL",
+    "post_closure_current": "LEVEL-4-PARTIAL",
+    "post_closure_historical_stage_f": "LEVEL-4-PARTIAL",
+    "stage_d": "STAGE-D-PARTIAL",
+    "stage_d_D2_5": "MATHEMATICAL, NOT OPERATIONAL",
+    "stage_f": "LEVEL-4-PARTIAL"
+  },
+  "mapping_reason": "The pre-outcome D2.5 sources define an investigational requirement, explicitly authorize the negative reporting path, and the frozen evidence answers that same question with sufficient scientific strength.",
+  "negative_result_class": "C_COMPLETED_RESEARCH_QUESTION_WITH_VALID_NEGATIVE_ANSWER",
+  "negative_result_closure_allowed": true,
+  "new_science_run": false,
+  "original_L4R12_current_status": "PASS",
+  "original_requirement_class": "MANDATORY",
+  "reproduction": {
+    "artifact_stability": {
+      "evidence_assessment.json": true,
+      "semantic_classification.json": true,
+      "source_extraction.json": true
+    },
+    "audit_artifacts_byte_stable": true,
+    "decision_rule_in_digest": true,
+    "digest": "0c29469b0a15832774bce9f46908a3de5c1cbc95846b50828ed0e498bf9225b9",
+    "generated_artifacts": [
+      "evidence_assessment.json",
+      "semantic_classification.json",
+      "source_extraction.json"
+    ],
+    "new_science_run": false,
+    "offline": true,
+    "protected_history": "PASS",
+    "schema": "rebaseguard.l4r12-reproduction.v1",
+    "status": "PASS"
+  },
+  "same_requirement_mapping": true,
+  "schema": "rebaseguard.l4r12-decision.v1",
+  "scoped_verdict": "L4R12-CLOSED-NEGATIVE-RESULT",
+  "semantics": "INVESTIGATIONAL",
+  "target": "L4R-12 \u2014 Operational consequence of the Gamma_m crossing",
+  "verification": {
+    "command": "bash scripts/verify_level_4.sh",
+    "pytest_pass_count": 959,
+    "pytest_suite_pass_counts": [
+      90,
+      290,
+      46,
+      48,
+      36,
+      72,
+      59,
+      54,
+      18,
+      18,
+      18,
+      45,
+      75,
+      36,
+      28,
+      26
+    ],
+    "returncode": 0,
+    "schema": "rebaseguard.l4r12-verification.v1",
+    "status": "PASS",
+    "terminal_marker": true
+  }
+}
