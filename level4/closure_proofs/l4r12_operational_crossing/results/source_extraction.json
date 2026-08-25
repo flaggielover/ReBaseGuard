@@ -1,0 +1,43 @@
+{
+  "authoritative_scope": "repository-only",
+  "frozen_acceptance_condition": {
+    "exact_row": "| D2.5 | the `Gamma_m` transition predicts an operational change | measure in-control cycle ARL, reference MSE, alarm-direction ACF and `R_Delta` at `m` on both sides of `m*`; if none changes materially, the boundary is reported as **mathematical, not operational** |",
+    "sha256": "925adecf08c7234375333a26c3af934b005e0d8b4cfce470b77834d7245e8b2e",
+    "source": "level4/stage_d/STAGE_D_PROTOCOL.md"
+  },
+  "frozen_precommit": {
+    "negative_rule_present": true,
+    "no_posthoc_metric_selection": true,
+    "sha256": "fb6272ef839d7f3b36af3c8a8ace3d3059df7028dda337455b9df6baaf92bba7",
+    "source": "level4/stage_d/notes/D2_5_PRECOMMIT.md",
+    "written_before_data": true
+  },
+  "later_reconstruction": {
+    "exact_row": "| Operational consequence of the `Gamma_m` crossing | Stage D protocol D2.5 (`925adecf\u2026`) | yes | mandatory within D | **MATHEMATICAL, NOT OPERATIONAL** | **NEGATIVE RESULT** |",
+    "sha256": "41ea8cd6a33f430be44d66376df60efc979b6dda5f00308616a519b7ece6a106",
+    "source": "level4/stage_f/LEVEL4_REQUIREMENTS_RECONSTRUCTION.md"
+  },
+  "requirement": {
+    "classification": "MANDATORY",
+    "id": "L4R-12",
+    "later_closure": null,
+    "limitations": [
+      "Zero of four monitoring metrics peaked at the crossing; all four were monotone in log m."
+    ],
+    "previous_reaudit_status": "PARTIAL",
+    "reason": "The frozen experiment produced a scientifically valid negative result, but Stage F normalized the mandatory row as non-PASS and no later same-requirement closure exists.",
+    "stage_f": {
+      "label": "NEGATIVE RESULT",
+      "status": "PARTIAL"
+    },
+    "wording": "Operational consequence of the Gamma_m crossing"
+  },
+  "schema": "rebaseguard.l4r12-source-extraction.v1",
+  "source_precedence": [
+    "pre-outcome Stage-D protocol",
+    "pre-outcome D2.5 precommit",
+    "original reconstructed 18-row requirement wording and class",
+    "blueprint/ranking/kill-gate context",
+    "later Stage-F and global-audit status normalization"
+  ]
+}

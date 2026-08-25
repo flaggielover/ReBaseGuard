@@ -82,6 +82,10 @@ echo "== Level 4 L4R-06 stability-aware policy suite =="
 "$L4_PY" -m pytest level4/closure_proofs/l4r06_policy/tests -q
 
 echo
+echo "== Level 4 L4R-12 operational-crossing audit suite =="
+"$L4_PY" -m pytest level4/closure_proofs/l4r12_operational_crossing/tests -q
+
+echo
 echo "== Level 4 environment =="
 "$L4_PY" - <<'PY'
 import sys

@@ -1,0 +1,293 @@
+{
+  "D4_preserved": true,
+  "N12": [
+    {
+      "evidence": {
+        "gamma_hi": 1.9626795297277626,
+        "gamma_lo": 2.3588418298932012,
+        "m_hi": 75,
+        "m_lo": 50,
+        "m_star_ci": [
+          71.85034656591398,
+          72.52977073982869
+        ],
+        "m_star_interp": 72.18925933962045,
+        "note": "The BRACKET is the primary object; the interpolated m_star is secondary and is not a crossing proof.",
+        "se_hi": 0.002566951002627155,
+        "se_lo": 0.0033057697859824216,
+        "z_hi": 14.538832347809377,
+        "z_lo": 108.55015718723415
+      },
+      "id": "N12.1",
+      "statement": "Stage-D crossing bracket is on opposite sides of 2 by more than 3 SE",
+      "status": "PASS"
+    },
+    {
+      "evidence": [
+        {
+          "bracket": [
+            70,
+            72
+          ],
+          "gamma_at_bracket": [
+            2.0167024527414066,
+            1.9932631645958194
+          ],
+          "m_crossing_log_linear": 71.41938616943077
+        }
+      ],
+      "id": "N12.2",
+      "statement": "D4 independently refines and supports the crossing",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "precommit_sha256": "fb6272ef839d7f3b36af3c8a8ace3d3059df7028dda337455b9df6baaf92bba7",
+        "protocol_sha256": "925adecf08c7234375333a26c3af934b005e0d8b4cfce470b77834d7245e8b2e"
+      },
+      "id": "N12.3",
+      "statement": "operational metrics and the negative reading were frozen before outcomes",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "above": [
+          75,
+          90,
+          100
+        ],
+        "below": [
+          10,
+          20,
+          50,
+          65
+        ]
+      },
+      "id": "N12.4",
+      "statement": "the complete seven-point operational grid covers both sides",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "cycle_arl": {
+          "max_rate_elsewhere": 114.50132076028612,
+          "monotone": true,
+          "peaks_at_m_star": false,
+          "rate_across_m_star": 85.07929576272315
+        },
+        "direction_acf1": {
+          "max_rate_elsewhere": 0.23785010709319068,
+          "monotone": true,
+          "peaks_at_m_star": false,
+          "rate_across_m_star": 0.21832041840305225
+        },
+        "e_acf1": {
+          "max_rate_elsewhere": 0.17386541182008036,
+          "monotone": true,
+          "peaks_at_m_star": false,
+          "rate_across_m_star": 0.1242967571660907
+        },
+        "reference_mse": {
+          "max_rate_elsewhere": 0.21277330808781442,
+          "monotone": true,
+          "peaks_at_m_star": false,
+          "rate_across_m_star": 0.028513038712465886
+        }
+      },
+      "id": "N12.5",
+      "statement": "no preselected primary metric localizes its steepest change at the crossing",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "interpolation_check": {
+          "bracket": [
+            50.0,
+            75.0
+          ],
+          "check": "m* is insensitive to the interpolation method",
+          "id": "A6",
+          "linear_in_log_m": 72.18925933962045,
+          "linear_in_m": 72.64487495045262,
+          "local_quadratic_in_log_m": 69.79593831313372,
+          "note": "The BRACKET, not the interpolated point, is the primary object.",
+          "passed": true,
+          "spread": 0.4556156108321687,
+          "tolerance": "spread < 10% of m*"
+        },
+        "raw_monotone": {
+          "cycle_arl": true,
+          "direction_acf1": true,
+          "e_acf1": true,
+          "reference_mse": true
+        }
+      },
+      "id": "N12.6",
+      "statement": "monotonicity holds on raw tabulated means and crossing interpolation A6 passed",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "D4": "14/14",
+        "stage_d": "12/12"
+      },
+      "id": "N12.7",
+      "statement": "Stage-D replay checks and the later independently structured D4 audit both pass",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "audited_commit": "b61e12eee6222b1baf487234a2bc134596381287",
+        "candidate_count": 1,
+        "candidates": [
+          "b61e12eee6222b1baf487234a2bc134596381287:level4/reports/LEVEL_4_FINAL_LEDGER.md:31:| **F-18** | The `Gamma_m = 2` crossing has an operational counterpart | stochastic monitoring chain | **FAILED / NEGATIVE** | **MATHEMATICAL, NOT OPERATIONAL** \u2014 0/4 metrics peak, 4/4 monotone | `level4/stage_d/results/d2_5_verdict.json` | \"a local-stability boundary of the deterministic skeleton at `e=0`, with no observed operational transition\" | \"an operational phase transition\"; \"a sharp monitoring threshold\" |"
+        ],
+        "contradictory_positive_conclusions": [],
+        "pattern": "(has|shows|establishes|demonstrates|is) (an? )?(observable )?operational (counterpart|transition|phase transition)"
+      },
+      "id": "N12.8",
+      "statement": "no contradictory operational conclusion exists in the audited repository",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "m65_vs_m75_combined_separation": {
+          "cycle_arl": 23.77327156436182,
+          "direction_acf1": 27.39821577286302,
+          "e_acf1": 12.800820301605045,
+          "reference_mse": 12.797517342461896
+        },
+        "n_replicates": 20000
+      },
+      "id": "N12.9",
+      "statement": "the curves resolve smooth neighbor changes; the result is not a low-power significance failure",
+      "status": "PASS"
+    },
+    {
+      "evidence": {
+        "claim_scope": "frozen Gaussian CUSUM, rho=1, Stage-D convention, grid, shifts, and metrics",
+        "historical_verdict": "MATHEMATICAL, NOT OPERATIONAL"
+      },
+      "id": "N12.10",
+      "statement": "the claim is limited to the frozen protocol and monitored metrics",
+      "status": "PASS"
+    }
+  ],
+  "claim_forbidden": "The crossing has no operational consequence in general.",
+  "claim_safe": "The Gamma_m=2 crossing is mathematically well-defined, but under the frozen monitoring metrics and protocol no corresponding operational transition was found; this negative result answers the pre-specified operational-consequence question.",
+  "crossing": {
+    "D4_bracket": [
+      70,
+      72
+    ],
+    "D4_gamma_at_bracket": [
+      2.0167024527414066,
+      1.9932631645958194
+    ],
+    "D4_interpolated": 71.41938616943077,
+    "stage_d_bracket": [
+      50,
+      75
+    ],
+    "stage_d_endpoint_z": [
+      108.55015718723415,
+      -14.538832347809377
+    ],
+    "stage_d_interpolated": 72.18925933962045
+  },
+  "evidence_sufficient": true,
+  "generator_owned": true,
+  "historical_D2_5_preserved": true,
+  "historical_verdict": "MATHEMATICAL, NOT OPERATIONAL",
+  "integrity": {
+    "D4_preserved": true,
+    "L4R06_preserved": true,
+    "audited_commit": "b61e12eee6222b1baf487234a2bc134596381287",
+    "errors": [],
+    "files_verified": 21,
+    "historical_D2_5_preserved": true,
+    "historical_statuses_verified": {
+      "D4": "D4-PHASE-MAP-CLOSED",
+      "L4R06": "L4R06-POLICY-CLOSED",
+      "final_global_current": "LEVEL-4-PARTIAL",
+      "final_global_historical_stage_f": "LEVEL-4-PARTIAL",
+      "post_closure_current": "LEVEL-4-PARTIAL",
+      "post_closure_historical_stage_f": "LEVEL-4-PARTIAL",
+      "stage_d": "STAGE-D-PARTIAL",
+      "stage_d_D2_5": "MATHEMATICAL, NOT OPERATIONAL",
+      "stage_f": "LEVEL-4-PARTIAL"
+    },
+    "schema": "rebaseguard.l4r12-integrity.v1",
+    "status": "PASS",
+    "trees_verified": 6
+  },
+  "mode": "AUDIT_REPLAY_ONLY_NO_NEW_SCIENCE",
+  "n_passed": 10,
+  "n_total": 10,
+  "negative_result_class": "C_COMPLETED_RESEARCH_QUESTION_WITH_VALID_NEGATIVE_ANSWER",
+  "operational_design": {
+    "R_delta_reported": true,
+    "burn_in": 30,
+    "m_values": [
+      10,
+      20,
+      50,
+      65,
+      75,
+      90,
+      100
+    ],
+    "n_cycles": 80,
+    "n_replicates": 20000,
+    "primary_metrics": [
+      "cycle_arl",
+      "reference_mse",
+      "e_acf1",
+      "direction_acf1"
+    ],
+    "rho": 1.0,
+    "shifts": [
+      0.5,
+      1.0
+    ],
+    "statistical_unit": "replicate"
+  },
+  "operational_result": {
+    "alternation_persists_above_crossing": {
+      "direction_acf1_at_m100": -0.45585439806454997,
+      "gamma_m_at_m100": 1.7762,
+      "note": "Alarm alternation remains strongly negative at m=100, where Gamma_m = 1.776 < 2 and full reuse is LOCALLY stable at e=0. The alternation therefore does not switch off at the crossing."
+    },
+    "m65_vs_m75_combined_separation": {
+      "cycle_arl": 23.77327156436182,
+      "direction_acf1": 27.39821577286302,
+      "e_acf1": 12.800820301605045,
+      "reference_mse": 12.797517342461896
+    },
+    "metrics_monotone_in_log_m": 4,
+    "metrics_peaking_at_crossing": 0,
+    "nearest_pair_across_crossing": {
+      "cycle_arl": [
+        286.951335,
+        299.126254
+      ],
+      "direction_acf1": [
+        -0.5474297894063849,
+        -0.5161879533489233
+      ],
+      "e_acf1": [
+        -0.3523080405149801,
+        -0.3345210697027126
+      ],
+      "m_above": 75,
+      "m_below": 65,
+      "reference_mse": [
+        0.05916509162923287,
+        0.055084851734719824
+      ]
+    }
+  },
+  "positive_hypothesis_status": "FALSIFIED_BY_PRECOMMITTED_TEST",
+  "same_requirement_mapping_candidate": true,
+  "schema": "rebaseguard.l4r12-evidence-assessment.v1"
+}
