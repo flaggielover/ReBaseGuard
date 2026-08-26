@@ -1,0 +1,197 @@
+{
+  "all_campaigns_pass": true,
+  "campaign_requirement_map": {
+    "D4-PHASE-MAP-CLOSED": "L4R-11",
+    "EXTERNAL-VALIDATION-V3-CLOSED": "L4R-15",
+    "L4R06-POLICY-CLOSED": "L4R-06",
+    "L4R12-CLOSED-NEGATIVE-RESULT": "L4R-12",
+    "LOCATION-FAMILY-TRACK3AB-CLOSED": "L4R-14",
+    "MGT1-TRACK1B-CLOSED": "L4R-09",
+    "NOVELTY-VERIFICATION-CLOSED": "L4R-16",
+    "SR-DERIVATIVE-CLOSED": "L4R-10"
+  },
+  "campaigns": [
+    {
+      "campaign": "L4R06-POLICY-CLOSED",
+      "checks": {
+        "all_H6_pass": true,
+        "frozen_policy_formula": true,
+        "historical_C6_preserved": true,
+        "original_row_pass": true,
+        "same_requirement_mapping": true,
+        "scoped_verdict": true,
+        "unfavorable_findings_visible": true,
+        "verification_and_reproduction": true
+      },
+      "evidence_paths": [
+        "level4/closure_proofs/l4r06_policy/PROTOCOL.md",
+        "level4/closure_proofs/l4r06_policy/results/scientific_findings.json",
+        "level4/closure_proofs/l4r06_policy/FAILURE_DIAGNOSES.md",
+        "level4/closure_proofs/l4r06_policy/results/decision.json"
+      ],
+      "status": "PASS",
+      "surviving_limitations": [
+        "Historical Stage C remains PARTIAL and C6 remains failed.",
+        "P2 has descriptive advantages at m=70 and m=100; P3=P1 at saturated m=100.",
+        "Two secondary epsilon=0.05 conditions fail; the frozen primary epsilon=0.10 family passes."
+      ],
+      "target_requirement": "L4R-06"
+    },
+    {
+      "campaign": "MGT1-TRACK1B-CLOSED",
+      "checks": {
+        "criteria": true,
+        "decision": true,
+        "failures_preserved": true,
+        "original_requirement": true
+      },
+      "evidence_paths": [
+        "level4/closure_proofs/m_gt_1_track1b/results/decision.json"
+      ],
+      "status": "PASS",
+      "surviving_limitations": [
+        "Historical D2.3 and Track 1A remain failed; the theorem has explicit scope and assumptions."
+      ],
+      "target_requirement": "L4R-09"
+    },
+    {
+      "campaign": "SR-DERIVATIVE-CLOSED",
+      "checks": {
+        "Gamma_numerical": true,
+        "arb_open": true,
+        "closure_conditions": true,
+        "decision": true,
+        "theorem_closed": true
+      },
+      "evidence_paths": [
+        "level4/closure_proofs/sr_derivative/results/decision.json",
+        "level4/closure_proofs/sr_derivative/ARBITRARY_PRECISION_ATTEMPT.md"
+      ],
+      "status": "PASS",
+      "surviving_limitations": [
+        "Gamma_SR > 2 remains confirmatory numerical; SR-GAMMA-CERTIFIED is not awarded."
+      ],
+      "target_requirement": "L4R-10"
+    },
+    {
+      "campaign": "D4-PHASE-MAP-CLOSED",
+      "checks": {
+        "D2_5_preserved": true,
+        "criteria": true,
+        "decision": true,
+        "local_claim": true
+      },
+      "evidence_paths": [
+        "level4/closure_proofs/d4_phase_map/results/decision.json",
+        "level4/closure_proofs/d4_phase_map/OPERATIONAL_BRIDGE.md"
+      ],
+      "status": "PASS",
+      "surviving_limitations": [
+        "The D4 boundary is local and deterministic, not an operational phase-transition proof."
+      ],
+      "target_requirement": "L4R-11"
+    },
+    {
+      "campaign": "L4R12-CLOSED-NEGATIVE-RESULT",
+      "checks": {
+        "adequate_power": true,
+        "crossing_values": true,
+        "frozen_metrics": true,
+        "historical_D2_5_preserved": true,
+        "investigational_semantics": true,
+        "no_new_science": true,
+        "original_row_pass": true,
+        "same_requirement_mapping": true,
+        "scoped_negative_claim": true,
+        "scoped_verdict": true,
+        "valid_negative_answer": true
+      },
+      "evidence_paths": [
+        "level4/closure_proofs/l4r12_operational_crossing/REQUIREMENT_SEMANTICS_AUDIT.md",
+        "level4/closure_proofs/l4r12_operational_crossing/results/evidence_assessment.json",
+        "level4/closure_proofs/l4r12_operational_crossing/results/decision.json"
+      ],
+      "status": "PASS",
+      "surviving_limitations": [
+        "The scientific result remains negative: no crossing-localized transition under the frozen protocol.",
+        "No universal no-effect claim is supported."
+      ],
+      "target_requirement": "L4R-12"
+    },
+    {
+      "campaign": "LOCATION-FAMILY-TRACK3AB-CLOSED",
+      "checks": {
+        "criteria": true,
+        "decision": true,
+        "historical_partial": true,
+        "original_requirement": true
+      },
+      "evidence_paths": [
+        "level4/closure_proofs/location_family_track3ab/results/decision.json"
+      ],
+      "status": "PASS",
+      "surviving_limitations": [
+        "Historical Track 3 remains partial/failed; the theorem is scoped to explicit regularity assumptions."
+      ],
+      "target_requirement": "L4R-14"
+    },
+    {
+      "campaign": "EXTERNAL-VALIDATION-V3-CLOSED",
+      "checks": {
+        "closure_gates": true,
+        "decision": true,
+        "history": true,
+        "original_requirement": true,
+        "route_B_unfavorable": true,
+        "support": true
+      },
+      "evidence_paths": [
+        "level4/closure_proofs/external_validation_v3/results/decision.json",
+        "level4/closure_proofs/external_validation_v3/RESULTS.md",
+        "level4/closure_proofs/external_validation_v3/CROSS_CAMPAIGN_AGGREGATION.md"
+      ],
+      "status": "PASS",
+      "surviving_limitations": [
+        "Stage E remains 0/3 and V2 remains 1/3; V3 Route B is unfavorable on both tasks.",
+        "P2 external safety is regime-dependent rather than universal."
+      ],
+      "target_requirement": "L4R-15"
+    },
+    {
+      "campaign": "NOVELTY-VERIFICATION-CLOSED",
+      "checks": {
+        "N2": true,
+        "claim_narrowing": true,
+        "criteria": true,
+        "decision": true,
+        "original_requirement": true
+      },
+      "evidence_paths": [
+        "level4/closure_proofs/novelty_verification/results/decision.json",
+        "level4/closure_proofs/novelty_verification/FINAL_REPORT.md"
+      ],
+      "status": "PASS",
+      "surviving_limitations": [
+        "N2 is a scoped partial-overlap finding, not absolute novelty or priority."
+      ],
+      "target_requirement": "L4R-16"
+    }
+  ],
+  "mode": "AUDIT_ONLY_NO_NEW_SCIENCE",
+  "negative_and_unfavorable_history": {
+    "L4R13": "PARTIAL",
+    "external_validation_v2": "EXTERNAL-VALIDATION-V2-PARTIAL",
+    "external_validation_v2_support": "1/3",
+    "historical_track_3": "LOCATION-FAMILY-THEOREM-PARTIAL",
+    "novelty_position": "N2",
+    "stage_c": "STAGE-C-PARTIAL",
+    "stage_c_C6": "FAILED",
+    "stage_d": "STAGE-D-PARTIAL",
+    "stage_d_D2_3": "FAIL",
+    "stage_d_D2_5": "MATHEMATICAL, NOT OPERATIONAL",
+    "stage_e": "STAGE-E-PARTIAL",
+    "stage_e_support": "0/3",
+    "track_1A": "MGT1-TRACK1A-FAILED"
+  },
+  "schema": "rebaseguard.final-level4-closure-evidence.v1"
+}
