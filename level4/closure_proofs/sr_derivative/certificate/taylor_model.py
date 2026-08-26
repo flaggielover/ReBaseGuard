@@ -56,13 +56,57 @@ class Model:
 
     def __mul__(self, other: "Model") -> "Model":
         result: dict[Exponent, arb] = {}
-        for left_exponent, left_value in self.coefficients.items():
-            for right_exponent, right_value in other.coefficients.items():
-                exponent = tuple(
-                    a + b for a, b in zip(left_exponent, right_exponent, strict=True)
-                )
-                if sum(exponent) <= self.order:
-                    result[exponent] = result.get(exponent, arb(0)) + left_value * right_value
+        zero = arb(0)
+        if self.variables == 3:
+            right_by_degree: list[list[tuple[Exponent, arb]]] = [
+                [] for _ in range(self.order + 1)
+            ]
+            for exponent, value in other.coefficients.items():
+                degree = exponent[0] + exponent[1] + exponent[2]
+                if degree <= self.order:
+                    right_by_degree[degree].append((exponent, value))
+            for left_exponent, left_value in self.coefficients.items():
+                left_0, left_1, left_2 = left_exponent
+                remaining_degree = self.order - left_0 - left_1 - left_2
+                for degree in range(remaining_degree + 1):
+                    for right_exponent, right_value in right_by_degree[degree]:
+                        exponent_0 = left_0 + right_exponent[0]
+                        exponent_1 = left_1 + right_exponent[1]
+                        exponent_2 = left_2 + right_exponent[2]
+                        exponent = (exponent_0, exponent_1, exponent_2)
+                        result[exponent] = (
+                            result.get(exponent, zero) + left_value * right_value
+                        )
+        elif self.variables == 2:
+            right_by_degree = [[] for _ in range(self.order + 1)]
+            for exponent, value in other.coefficients.items():
+                degree = exponent[0] + exponent[1]
+                if degree <= self.order:
+                    right_by_degree[degree].append((exponent, value))
+            for left_exponent, left_value in self.coefficients.items():
+                left_0, left_1 = left_exponent
+                remaining_degree = self.order - left_0 - left_1
+                for degree in range(remaining_degree + 1):
+                    for right_exponent, right_value in right_by_degree[degree]:
+                        exponent_0 = left_0 + right_exponent[0]
+                        exponent_1 = left_1 + right_exponent[1]
+                        exponent = (exponent_0, exponent_1)
+                        result[exponent] = (
+                            result.get(exponent, zero) + left_value * right_value
+                        )
+        else:
+            for left_exponent, left_value in self.coefficients.items():
+                for right_exponent, right_value in other.coefficients.items():
+                    exponent = tuple(
+                        a + b
+                        for a, b in zip(
+                            left_exponent, right_exponent, strict=True
+                        )
+                    )
+                    if sum(exponent) <= self.order:
+                        result[exponent] = (
+                            result.get(exponent, zero) + left_value * right_value
+                        )
         return Model(result, self.variables, self.order)
 
     def power(self, exponent: int) -> "Model":

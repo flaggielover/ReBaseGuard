@@ -15,6 +15,12 @@ RESULTS = CAMPAIGN / "results"
 sys.path.insert(0, str(CERTIFICATE))
 
 from sr_adaptive_residual import InnovationInterval, Rectangle  # noqa: E402
+from certify_global_residual_a import (  # noqa: E402
+    EXPECTED_FUNDAMENTAL_CELLS,
+    cell_key,
+    cells,
+    geometry_and_algebra_checks,
+)
 from sr_bernstein import bernstein_absolute_bound  # noqa: E402
 from taylor_model import Model  # noqa: E402
 
@@ -63,7 +69,37 @@ def test_interval_bernstein_coefficients_round_outward():
         assert coefficients[0][0].contains(-1)
         assert coefficients[0][0].contains(-2)
         assert coefficients[1][0].contains(1)
-        assert coefficients[1][0].contains(2)
+    assert coefficients[1][0].contains(2)
+
+
+def test_degree_pruned_model_multiplication_preserves_truncated_convolution():
+    with ctx.workprec(128):
+        left_2d = Model({(0, 0): arb(2), (1, 0): arb(3), (0, 2): arb(5)}, 2, 2)
+        right_2d = Model({(0, 0): arb(7), (0, 1): arb(11), (2, 0): arb(13)}, 2, 2)
+        product_2d = left_2d * right_2d
+        assert product_2d.coefficients == {
+            (0, 0): arb(14),
+            (0, 1): arb(22),
+            (2, 0): arb(26),
+            (1, 0): arb(21),
+            (1, 1): arb(33),
+            (0, 2): arb(35),
+        }
+
+        left_3d = Model({(0, 0, 0): arb(2), (1, 0, 0): arb(3)}, 3, 2)
+        right_3d = Model(
+            {(0, 0, 0): arb(5), (0, 1, 0): arb(7), (0, 0, 2): arb(11)},
+            3,
+            2,
+        )
+        product_3d = left_3d * right_3d
+        assert product_3d.coefficients == {
+            (0, 0, 0): arb(10),
+            (0, 1, 0): arb(14),
+            (0, 0, 2): arb(22),
+            (1, 0, 0): arb(15),
+            (1, 1, 0): arb(21),
+        }
 
 
 def test_adaptive_pilot_proves_both_split_directions_tighten():
@@ -128,3 +164,18 @@ def test_parent_patch_pilot_records_state_width_blocker():
         assert arb(patch["certified_residual_a"]) > target
         assert arb(patch["integration_remainder"]) > target
         assert patch["final_intervals"] == 256
+
+
+def test_global_fundamental_cover_enumeration_is_exact_and_unique():
+    cover = cells()
+    assert len(cover) == EXPECTED_FUNDAMENTAL_CELLS == 1210
+    assert len({cell_key(cell) for cell in cover}) == len(cover)
+    assert all(0 <= minus <= plus < 64 for plus, minus in cover)
+    assert all(plus + minus <= 68 for plus, minus in cover)
+    assert (63, 5) in cover
+    assert (63, 6) not in cover
+
+
+def test_global_cover_geometry_and_candidate_symmetry_checks_pass():
+    candidate = json.loads((RESULTS / "arb_candidate.json").read_text())
+    assert all(geometry_and_algebra_checks(candidate).values())

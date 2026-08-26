@@ -49,6 +49,7 @@ def certify_one(specification: tuple[str, tuple[int, int], tuple[int, int]]):
             log_a=threshold.log(),
             normalized_plus=(Fraction(plus[0], 64), Fraction(plus[1], 64)),
             normalized_minus=(Fraction(minus[0], 64), Fraction(minus[1], 64)),
+            initial_partitions=64,
         )
     return name, result
 

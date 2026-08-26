@@ -268,6 +268,7 @@ def certify_adaptive_patch_a(
     patch_target: Fraction = Fraction(5, 1_000_000),
     max_depth: int = 5,
     max_intervals: int = 256,
+    include_trace: bool = True,
 ) -> dict[str, object]:
     """Certify one exact normalized state rectangle by adaptive innovation splits."""
 
@@ -372,7 +373,7 @@ def certify_adaptive_patch_a(
         and ordered[-1][1] == Fraction(1)
         and all(left[1] == right[0] for left, right in zip(ordered, ordered[1:]))
     )
-    return {
+    result = {
         "status": "PATCH_CERTIFIED" if residual < fraction_to_arb(patch_target) else "PATCH_FAIL",
         "normalized_plus": [
             [normalized_plus[0].numerator, normalized_plus[0].denominator],
@@ -395,7 +396,10 @@ def certify_adaptive_patch_a(
         "bernstein_degree": [len(coefficients) - 1, len(coefficients[0]) - 1],
         "exact_innovation_cover": exact_cover,
         "sampled_grid_used": False,
-        "leaves": [
+        "trace_included": include_trace,
+    }
+    if include_trace:
+        result["leaves"] = [
             {
                 "lower": [lower.numerator, lower.denominator],
                 "upper": [upper.numerator, upper.denominator],
@@ -403,6 +407,6 @@ def certify_adaptive_patch_a(
                 "bound": bound.str(50, radius=True),
             }
             for lower, upper, depth, bound in ordered
-        ],
-        "split_history": split_history,
-    }
+        ]
+        result["split_history"] = split_history
+    return result
