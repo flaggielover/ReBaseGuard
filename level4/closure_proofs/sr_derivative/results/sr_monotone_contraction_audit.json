@@ -1,0 +1,28 @@
+{
+  "audit_target": "monotone block-resolvent component only",
+  "checks": {
+    "all_rows_balance_to_one": true,
+    "block_contraction_strict": true,
+    "component_status_only": true,
+    "historical_threshold_absent": true,
+    "producer_not_imported": true,
+    "replayed_hit_strictly_exceeds_safe": true,
+    "safe_constant_exact": true,
+    "sampled_grid_not_used": true,
+    "schema": true,
+    "softplus_monotonicity_direction": true,
+    "stored_hit_overlaps_replay": true,
+    "stored_resolvent_overlaps_exact": true,
+    "threshold_binary64_exact": true,
+    "threshold_decimal_binary64_correspondence": true,
+    "threshold_ratio_exact": true,
+    "transition_inversion": true
+  },
+  "independent_implementation": "scalar/list Arb replay; producer not imported",
+  "overall_sr_gamma_certificate": "OPEN",
+  "q_safe": "19/100",
+  "replayed_hit_probability": "[0.20271993143543464049780124749340429924771296795341114 +/- 8.31e-54]",
+  "resolvent_bound": "25000/19",
+  "schema": "rebaseguard.sr-monotone-block-contraction-audit.v1",
+  "status": "PASS"
+}

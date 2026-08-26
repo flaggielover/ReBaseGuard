@@ -109,6 +109,18 @@ Expected artifact after execution in a `python-flint` environment:
 results/sr_monotone_contraction.json
 ```
 
+Independent replay auditor:
+
+```text
+certificate/audit_sr_resolvent.py
+```
+
+The auditor does not import the producer. It reconstructs all transition rows
+with scalar/list Arb arithmetic, checks their mass balance, replays the full
+250-step lower-envelope recursion, and independently derives the exact
+`25000/19` resolvent bound. Its machine-readable output is
+`results/sr_monotone_contraction_audit.json`.
+
 Until that script has actually run successfully under Arb, this document records
 a rigorous proof architecture and executable producer, not a completed numerical
 certificate. The repository must continue to label the overall SR Arb upgrade
