@@ -1,0 +1,176 @@
+{
+  "figures": [
+    {
+      "evidence": "INTERPRETATION / CONCEPTUAL DIAGRAM",
+      "id": "Figure 1",
+      "limitation": "Diagram defines the mechanism; it is not empirical or proof evidence.",
+      "outputs": {
+        "png": "6bcd26915f929be5f4208a6591345c7500c74c9d28d801dea93ec4c27916bddc",
+        "svg": "6e7562d4a1556b2f3e5a2f11764e85140f56a7d507c9c77b0bdd2d17bb6de47f"
+      },
+      "paper_section": "Sections 1\u20133",
+      "purpose": "Define the cross-cycle feedback mechanism.",
+      "slug": "figure01_recursive_rebaselining",
+      "source_sha256": {
+        "docs/research_synthesis/DEFINITIONS_AND_NOTATION.md": "9447fee60fa90e96a1aab3c19f19ad1fc9379829b3739d2ef695dbf717c9c542",
+        "docs/research_synthesis/MAIN_THEOREM_ARCHITECTURE.md": "f6390a4c225045686ad8049a943a6efb18492138b661bcccd9ff459942d3e3f4"
+      },
+      "sources": [
+        "docs/research_synthesis/MAIN_THEOREM_ARCHITECTURE.md",
+        "docs/research_synthesis/DEFINITIONS_AND_NOTATION.md"
+      ],
+      "title": "Stopping-selected recursive re-baselining",
+      "transformation": "Explanatory vector diagram from the frozen synthesis narrative; no quantitative values."
+    },
+    {
+      "evidence": "LEAN-CHECKED + ARB-CERTIFIED + HUMAN THEOREM BRIDGE",
+      "id": "Figure 2",
+      "limitation": "Local deterministic fixed-point conclusion only; Lean does not certify the Gamma value.",
+      "outputs": {
+        "png": "7e4b119fdd214bdabae28be916f3ef820fc971846be1edc0cfc3d92f27274101",
+        "svg": "dc333a7e6508d3a5843cd812b1b60361201da7dc3326591ae391dba2aa8dc950"
+      },
+      "paper_section": "Sections 4\u20135",
+      "purpose": "Separate the Lean-checked derivative spine from the Arb-certified gain enclosure.",
+      "slug": "figure02_derivative_instability",
+      "source_sha256": {
+        "docs/research_synthesis/MAIN_THEOREM_ARCHITECTURE.md": "f6390a4c225045686ad8049a943a6efb18492138b661bcccd9ff459942d3e3f4",
+        "rebaseguard-proof/proofs/certificate.json": "85e68c7dde306f2e6ce464203def22089e9b935d1cfca4b4944cef191d80545e"
+      },
+      "sources": [
+        "rebaseguard-proof/proofs/certificate.json",
+        "docs/research_synthesis/MAIN_THEOREM_ARCHITECTURE.md"
+      ],
+      "title": "Stopped-selection derivative and local instability",
+      "transformation": "Exact interval transformation F'_1(0)=1-Gamma_CUSUM and evidence-flow diagram."
+    },
+    {
+      "evidence": "RIGOROUS NUMERICAL CERTIFICATE",
+      "id": "Figure 3",
+      "limitation": "No stochastic-chain period-two or invariant-law claim.",
+      "outputs": {
+        "png": "2de25a0d29cf74276032db8846bf43fc375f1837643343e9a9d9b213b84d9359",
+        "svg": "08dbef988ee232c64b02d1ce4705f4690a63e2de18ff0851c3688173e2c95f40"
+      },
+      "paper_section": "Section 5",
+      "purpose": "Show the rigorously certified symmetric deterministic orbit and multiplier.",
+      "slug": "figure03_period2_skeleton",
+      "source_sha256": {
+        "level4/stage_b/certificate/period2_certificate.json": "99095e4bc8eaf960c41ea9732a5a739eec8e7dc402188de552b8bc7e687e8a68"
+      },
+      "sources": [
+        "level4/stage_b/certificate/period2_certificate.json"
+      ],
+      "title": "Certified period-two orbit of the deterministic skeleton",
+      "transformation": "Direct diagram of the certified root and multiplier intervals."
+    },
+    {
+      "evidence": "HUMAN THEOREM CONSEQUENCE + CONFIRMATORY NUMERICAL",
+      "id": "Figure 4",
+      "limitation": "Mathematical deterministic local-stability boundary, not an observed operational phase transition.",
+      "outputs": {
+        "png": "3e96c3f0234f819738569f604d446be7557662cef40c7dbefd28a3d6fcda0b88",
+        "svg": "ddf0ba2dbe73e1ed452315d185db64334db65217500408d862c1fe3303e69e3b"
+      },
+      "paper_section": "Section 6",
+      "purpose": "Show the D4 deterministic local boundary rho_c(m).",
+      "slug": "figure04_m_rho_stability",
+      "source_sha256": {
+        "level4/closure_proofs/d4_phase_map/results/decision.json": "8b21f4dae37d0f59ba01b179573f55bb2b831bf526574691c4af3f4bc452f80a"
+      },
+      "sources": [
+        "level4/closure_proofs/d4_phase_map/results/decision.json"
+      ],
+      "title": "Finite-window local-stability map",
+      "transformation": "Log-m interpolation between frozen D4 grid values for display; plotted grid points remain visible."
+    },
+    {
+      "evidence": "METHOD DEFINITION + CONFIRMATORY NUMERICAL",
+      "id": "Figure 5",
+      "limitation": "P3 is scoped and not universally optimal; m=100 saturates at P1.",
+      "outputs": {
+        "png": "84065540a5c1a4376f3d5d0949c4d03d4871bf5cfa828d30d0964d7343a78065",
+        "svg": "e36be863a939dc0fbdb83658f5b72e9d349fa56a35622cf9f9c0f6c83c791dc9"
+      },
+      "paper_section": "Section 7",
+      "purpose": "Compare P0, P1, fixed P2, and uncertainty-aware P3 at four frozen regimes.",
+      "slug": "figure05_p3_policy",
+      "source_sha256": {
+        "level4/closure_proofs/l4r06_policy/results/scientific_findings.json": "994ca341606f9a40fe37b8968820d6aaca8292d60808203cfbce6664c3853c49"
+      },
+      "sources": [
+        "level4/closure_proofs/l4r06_policy/results/scientific_findings.json"
+      ],
+      "title": "Frozen stability-aware P3 reuse policy",
+      "transformation": "Direct plot of frozen policy actions and lower-95%-boundary allowances."
+    },
+    {
+      "evidence": "CONFIRMATORY NUMERICAL",
+      "id": "Figure 6",
+      "limitation": "P2 has descriptive advantages at m=70 and m=100; P3=P1 at m=100; two secondary epsilon=0.05 conditions fail.",
+      "outputs": {
+        "png": "b03ab97296f18c459073b375bee490c28ccf4af3f177a363e61c53a2f7aad2eb",
+        "svg": "c56df4807eca13f41c92a55676976b745685ddff665a61460b45e42a836dee6a"
+      },
+      "paper_section": "Section 7",
+      "purpose": "Show frozen reference-MSE and false-alert-burden improvements in active regimes.",
+      "slug": "figure06_policy_consequences",
+      "source_sha256": {
+        "level4/closure_proofs/l4r06_policy/results/scientific_findings.json": "994ca341606f9a40fe37b8968820d6aaca8292d60808203cfbce6664c3853c49"
+      },
+      "sources": [
+        "level4/closure_proofs/l4r06_policy/results/scientific_findings.json"
+      ],
+      "title": "Reference-state and monitoring consequences",
+      "transformation": "Direct point and simultaneous lower-95%-bound display for H6-2 and H6-3."
+    },
+    {
+      "evidence": "SEMI-REAL EMPIRICAL",
+      "id": "Figure 7",
+      "limitation": "No pooled samples, production deployment, universal safety, or detector-independence claim.",
+      "outputs": {
+        "png": "ec5144012f726b99a30f99fac78e7fbac2c60343006a3f91d66e63169a0b81e9",
+        "svg": "7fbbcdeaccf6d651e58d8732a8775eb0bbe2eac3c4d2fe5ba0bc271dea792ffe"
+      },
+      "paper_section": "Section 9",
+      "purpose": "Retain every Stage E, V2, and V3 task while showing the non-pooled closure count.",
+      "slug": "figure07_external_validation",
+      "source_sha256": {
+        "level4/closure_proofs/external_validation_v3/CROSS_CAMPAIGN_AGGREGATION.md": "e7c45c1062d045e1f164fc0c921704eef23a93578631c4f6cde4f62ef4a46b76",
+        "level4/closure_proofs/external_validation_v3/results/decision.json": "b3939a091ac577bbc0605c27954e9ec95abf2d9f00ab65e1b7a9119bc2db3118"
+      },
+      "sources": [
+        "level4/closure_proofs/external_validation_v3/CROSS_CAMPAIGN_AGGREGATION.md",
+        "level4/closure_proofs/external_validation_v3/results/decision.json"
+      ],
+      "title": "Semi-real external-validation synthesis",
+      "transformation": "Parse the frozen task table and render a task matrix plus campaign support counts."
+    },
+    {
+      "evidence": "NEGATIVE RESULT",
+      "id": "Figure 8",
+      "limitation": "Negative answer is limited to the frozen Gaussian CUSUM protocol, grid, shifts, and metrics.",
+      "outputs": {
+        "png": "7365165e23fc0690cbbd8652baf4834416fddd7556d633889687bee4bc642185",
+        "svg": "1bc285d95d638628af582dc9201fb08c9eb195d4fb6135d9b170c716a418402e"
+      },
+      "paper_section": "Section 10",
+      "purpose": "Place the frozen mathematical crossing beside all four preselected operational metrics.",
+      "slug": "figure08_negative_crossing",
+      "source_sha256": {
+        "level4/closure_proofs/d4_phase_map/results/decision.json": "8b21f4dae37d0f59ba01b179573f55bb2b831bf526574691c4af3f4bc452f80a",
+        "level4/stage_d/results/d2_5_bridge.json": "6186a3c27847431c10f9fdbf3f3a16b496f8a773877e74aa0815e62860a14cc6"
+      },
+      "sources": [
+        "level4/stage_d/results/d2_5_bridge.json",
+        "level4/closure_proofs/d4_phase_map/results/decision.json"
+      ],
+      "title": "Mathematical crossing without detected operational transition",
+      "transformation": "Four small multiples of frozen tabulated means with Stage-D and D4 crossing bands."
+    }
+  ],
+  "generator": "scripts/generate_final_figures.py",
+  "network_used": false,
+  "new_science_run": false,
+  "schema": "rebaseguard.final-figures.v1"
+}

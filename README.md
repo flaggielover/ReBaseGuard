@@ -1,201 +1,205 @@
 # ReBaseGuard
 
-Research project on **stopping-selected recursive reference reuse** in
-sequential change detection: when a control chart's reference level is
-re-estimated from the very data window that triggered its alarm, the selection
-induced by stopping makes the reference recursion locally unstable.
+**Stopping-selected recursive re-baselining in repeated sequential monitoring.**
 
----
+**Research status: `LEVEL-4-CLOSED` · 16/16 mandatory requirements passed**
 
-## Level 1–3 Research Closure
+“Level 4” is an internally frozen research-program closure criterion, not an
+external academic certification. The terminal ledger contains **17 PASS, 1
+PARTIAL, 0 FAIL, and 0 OPEN**; the sole partial item, L4R-13, is nonmandatory.
+See the [final closure report](level4/final_level4_closure/FINAL_REPORT.md) and
+[mechanical decision](level4/final_level4_closure/results/final_decision.json).
 
-**Status: `LEVEL 1–3: CLOSED` (2026-08-20).**
+## Why this problem exists
 
-The authoritative entry point is:
+A repeated monitoring system can feed its own stopping decision into its next
+cycle:
 
-### → [`closure/LEVEL_1_3_CLOSURE_REPORT.md`](closure/LEVEL_1_3_CLOSURE_REPORT.md)
+![Reference, monitoring, alarm, reuse, and update form a recursive feedback loop.](figures/final/figure01_recursive_rebaselining.png)
 
-Supporting evidence documents:
+If observations that participated in an alarm are reused to estimate the next
+reference, neither the reused window nor its terminal observation is an
+ordinary sample: both were selected by the stopping rule. The updated reference
+then changes the distribution and stopping behavior of the next cycle.
+ReBaseGuard isolates this feedback mechanism rather than treating it as generic
+drift detection.
 
-| Document | Contents |
-|---|---|
-| [`closure/ARTIFACT_INDEX.md`](closure/ARTIFACT_INDEX.md) | Every artifact, its role, evidence type and reproduction status |
-| [`closure/01_FROZEN_MODEL.md`](closure/01_FROZEN_MODEL.md) | The authoritative frozen model and the five-way correspondence table |
-| [`closure/02_THEOREM_MAP.md`](closure/02_THEOREM_MAP.md) | Every claim mapped to its formal name, artifact and evidence label |
-| [`closure/03_LEAN_VERIFICATION.md`](closure/03_LEAN_VERIFICATION.md) | Build, bypass scan, axiom audit, and the Lean ↔ model semantic audit |
-| [`closure/04_ARB_CERTIFICATE.md`](closure/04_ARB_CERTIFICATE.md) | The `Γ_CUSUM > 2` certificate and its reproduction record |
-| [`closure/05_NUMERICAL_VALIDATION.md`](closure/05_NUMERICAL_VALIDATION.md) | All non-rigorous computational evidence |
-| [`closure/06_CLAIM_LEDGER.md`](closure/06_CLAIM_LEDGER.md) | Recommended wording and forbidden overclaims |
-| [`closure/07_REPRODUCIBILITY.md`](closure/07_REPRODUCIBILITY.md) | Clean-checkout reproduction instructions |
-| [`closure/08_LIMITATIONS_AND_BOUNDARIES.md`](closure/08_LIMITATIONS_AND_BOUNDARIES.md) | What is **not** claimed |
-| [`closure/ENVIRONMENT_PROOF/ENVIRONMENT_PROOF.md`](closure/ENVIRONMENT_PROOF/ENVIRONMENT_PROOF.md) | Verbatim transcripts + falsification test proving the toolchain discriminates |
-| [`closure/ENVIRONMENT_PROOF/logs/`](closure/ENVIRONMENT_PROOF/logs/) | Raw, unedited terminal output |
-| [`closure/CLOSURE_PROGRESS.md`](closure/CLOSURE_PROGRESS.md) | Audit checkpoint / resumption record |
+## Core result
 
-Unified verification:
+Let \(e\) be the current reference error, \(m\) the reuse-window length,
+\(\rho\) the reuse fraction, and \(F_{\rho,m}(e)\) the deterministic
+conditional mean of the next reference error. Under the frozen Track-1B
+random-window convention,
+
+\[
+F'_{\rho,m}(0)=\rho\left(1-\widetilde{\Gamma}_m\right).
+\]
+
+For the frozen Gaussian CUSUM with \(m=1\), Lean checks the
+stopped-likelihood differentiation spine and outward-rounded Arb arithmetic
+independently certifies
+\(\Gamma_{\mathrm{CUSUM}}\in[3.9243482,27.8493821]\). The human theorem bridge
+therefore makes zero locally linearly repelling at full reuse. This is a local
+result for the deterministic conditional-mean map, not a claim of global
+instability of the monitoring process.
+
+![Lean-checked derivative spine, human model bridge, and Arb-certified interval.](figures/final/figure02_derivative_instability.png)
+
+## Main findings
+
+- The frozen CUSUM stopped-selection derivative identity is supported by a
+  human theorem and a Lean-checked differentiation spine.
+- Arb certifies \(\Gamma_{\mathrm{CUSUM}}>2\), establishing local repulsion at
+  zero for the full-reuse deterministic map.
+- A separate rigorous numerical certificate establishes a locally attracting
+  period-two orbit of the **deterministic conditional-mean skeleton**; it does
+  not establish period-two behavior for the noisy stochastic chain.
+- The random-window \(m>1\) theorem includes the exact short-cycle correction
+  and yields a protocol-specific \(m\)-\(\rho\) local-stability boundary.
+- The symmetric two-chart SR derivative theorem is closed. Its
+  \(\Gamma_{\mathrm{SR}}>2\) result is confirmatory numerical evidence; the
+  corresponding rigorous Arb certificate remains open.
+- The derivative form extends to regular common-support location families
+  under explicit analytic hypotheses; L4R-13 non-Gaussian robustness remains
+  nonmandatory partial.
+- A frozen stability-aware P3 policy passed its primary scoped criteria, while
+  historical failures and unfavorable P2 comparisons remain part of the
+  record.
+- Semi-real tasks support the scoped package in three tasks against two
+  required, while a pre-specified study found no corresponding operational
+  transition at the mathematical crossing under the frozen protocol.
+
+The [main theorem architecture](docs/research_synthesis/MAIN_THEOREM_ARCHITECTURE.md)
+and [dependency graph](docs/research_synthesis/RESULT_DEPENDENCY_GRAPH.md)
+separate these conclusions and their assumptions.
+
+## Evidence map
+
+| Result | Evidence | Authoritative entry point |
+|---|---|---|
+| CUSUM derivative spine | Human theorem + Lean-checked | [Lean verification](closure/03_LEAN_VERIFICATION.md) |
+| \(\Gamma_{\mathrm{CUSUM}}>2\) | Arb-certified | [Arb certificate report](closure/04_ARB_CERTIFICATE.md) |
+| Period-two skeleton | Rigorous numerical certificate | [Stage-B report](level4/reports/STAGE_B_PERIOD2_CERTIFICATE_REPORT.md) |
+| Random-window \(m>1\) derivative | Human theorem + conditional Lean-checked spine | [Track-1B theorem](level4/closure_proofs/m_gt_1_track1b/THEOREM.md) |
+| D4 \(m\)-\(\rho\) boundary | Theorem consequence + confirmatory numerical | [D4 report](level4/closure_proofs/d4_phase_map/FINAL_REPORT.md) |
+| SR derivative | Human theorem + conditional Lean-checked spine | [SR report](level4/closure_proofs/sr_derivative/FINAL_REPORT.md) |
+| \(\Gamma_{\mathrm{SR}}>2\) | Confirmatory numerical; Arb certificate open | [SR precision attempt](level4/closure_proofs/sr_derivative/ARBITRARY_PRECISION_ATTEMPT.md) |
+| Location-family derivative | Human theorem + conditional Lean-checked spine | [Location-family theorem](level4/closure_proofs/location_family_track3ab/THEOREM.md) |
+| External validation | Semi-real empirical | [Cross-campaign aggregation](level4/closure_proofs/external_validation_v3/CROSS_CAMPAIGN_AGGREGATION.md) |
+| Operational crossing | Negative result | [L4R-12 report](level4/closure_proofs/l4r12_operational_crossing/FINAL_REPORT.md) |
+
+Evidence labels are descriptive rather than cumulative. See the
+[evidence hierarchy](docs/research_synthesis/EVIDENCE_HIERARCHY.md) for exactly
+what each layer does and does not establish.
+
+## Stability-aware reuse policy
+
+The frozen P3 method uses 80% of the simultaneous lower-95% D4 boundary,
+clipped at one:
+
+\[
+\rho_{\mathrm{P3}}(m)=\min\left(1,\;0.8\,\rho_{c,L95}(m)\right).
+\]
+
+![P0, P1, P2, and P3 reuse fractions at the four frozen regimes.](figures/final/figure05_p3_policy.png)
+
+At \(m=1,20,70,100\), P3 uses reuse fractions \(0.053642\), \(0.245418\),
+\(0.781994\), and \(1\). In active regimes it improved the frozen reference-MSE
+and false-alert-burden contrasts against P1. At \(m=100\), P3 saturates at P1;
+P2 retains descriptive advantages at \(m=70\) and \(m=100\), and two secondary
+\(\epsilon=0.05\) conditions fail. The result is scoped to the frozen policy
+protocol.
+
+## External validation
+
+The external-validation package retains every semi-real/public sequential task
+without pooling samples: Stage E is **0/3**, V2 is **1/3**, and V3 is **2/2**.
+That is three supporting tasks against two required. Unsuccessful tasks remain
+visible, and P2 safety is regime-dependent. These results are not production
+deployment evidence.
+
+![Eight external-validation tasks and their campaign-level support counts.](figures/final/figure07_external_validation.png)
+
+## Negative result
+
+The D4 mathematical local-stability boundary brackets the full-reuse crossing
+at \(m\in[70,72]\). Under the frozen Stage-D protocol, **0/4** preselected
+operational metrics peaked at the crossing and **4/4** were monotone in
+\(\log m\). The study therefore detected no corresponding operational
+transition. This conclusion is limited to the frozen Gaussian CUSUM protocol,
+grid, shifts, and monitored metrics.
+
+![Four operational metrics pass smoothly through the mathematical crossing.](figures/final/figure08_negative_crossing.png)
+
+## Reproduce
+
+From a normal Git clone on a Unix-like system with Bash, Python 3, Git, the
+repository’s Python environments, Lean/Lake, and FLINT/Arb available as
+documented, run the authoritative offline terminal reproducer:
 
 ```bash
-scripts/verify_level_1_3.sh          # full
-scripts/verify_level_1_3.sh --quick  # skips the ~4-minute direct elaboration
+bash level4/final_level4_closure/reproduce.sh
 ```
 
-### The one-paragraph summary
-
-For the frozen two-sided Gaussian CUSUM (`k = 1/2`, `h = 5`, alarm
-`max(S⁺,S⁻) ≥ 5`, `Z_t` i.i.d. `N(0,1)`), the differentiation-under-the-expectation
-identity `d/de E[Z_τ e^{−eT_τ−(e²/2)τ}]|₀ = −E[Z_τT_τ]` is **machine-checked in
-Lean**, and the bound `Γ_CUSUM = E₀[Z_τT_τ] > 2` is **certified by outward-rounded
-Arb interval arithmetic** (enclosure `[3.9243, 27.8494]`). Together with the
-proved score identity `F₁'(0) = 1 − Γ` this gives `F₁'(0) < −1` and a strictly
-interior critical reuse fraction `ρ_c = 1/(Γ−1) ∈ (0,1)`.
-
-**Not claimed:** that the project as a whole is formally verified; that Lean
-proves `Γ > 2`; any global bifurcation, period-2, invariant-law or ARL theorem;
-anything about other `(k, h, m)`; anything at Level 4.
-
----
-
-## Repository layout
-
-| Path | Contents |
-|---|---|
-| [`closure/`](closure/) | **The Level 1–3 evidence package** (start here) |
-| [`rebaseguard-lean/`](rebaseguard-lean/) | Lean 4 / Mathlib formalization of the analytic chain (9 modules, Gates 2 → 4.5-C3) |
-| [`rebaseguard-proof/`](rebaseguard-proof/) | Python + FLINT/Arb continuum certificate, diagnostics, and Level-4 preparatory work |
-| [`Mathematical_proof/`](Mathematical_proof/) | Blind re-derivation, hostile mathematical audit, proof-to-code correspondence audit |
-| [`level4/`](level4/) | **Level 4 Gates 4.1–4.2** — Multi-Cycle Oracle and conditional-map estimator (Monte Carlo only) |
-| [`scripts/`](scripts/) | `verify_level_1_3.sh`, `verify_level_4.sh` |
-| `rebaseguard_phase*.md` | Historical phase memos (Level 1 phenomenon, Level 2 mechanism) |
-| `rebaseguard_lemma_handoff.md` | The lemma attack that motivated the certificate route |
-
----
-
-## Repository provenance
-
-This is a single ordinary Git repository — clone it normally, no submodules.
-
-Before publication the project consisted of a non-versioned root plus two nested
-repositories. They were normalised as follows:
-
-- **`rebaseguard-proof/`** — had 26 commits on `codex/continuum-certificate`
-  (tip `d77953b`, with `main` at `eb8af8d` as an ancestor). That history was
-  **imported in full** with `git subtree add --prefix=rebaseguard-proof`, so
-  every original commit and SHA remains reachable from `main`.
-  Use `git log -- rebaseguard-proof` on the merge commit's second parent
-  (or plain `git log`) to read it.
-- **`rebaseguard-lean/`** — contained a Git repository with **zero commits and
-  no refs** (only a staged index identical to the working tree). There was no
-  history to preserve; it became an ordinary directory.
-- No license file has been chosen for this project, so none is included.
-
----
-
-## Level 4 — Gates 4.1 and 4.2
-
-**Overall status: Level 1–3 `CLOSED`; Level 4 `LEVEL-4-PARTIAL`.**
-
-The authoritative Level 4 final record is:
-
-| Entry point | Contents |
-|---|---|
-| [`level4/reports/LEVEL_4_FINAL_REPORT.md`](level4/reports/LEVEL_4_FINAL_REPORT.md) | final scientific report and conservative verdict |
-| [`level4/reports/LEVEL_4_FINAL_LEDGER.md`](level4/reports/LEVEL_4_FINAL_LEDGER.md) | claim-by-claim final evidence ledger |
-| [`level4/stage_f/README.md`](level4/stage_f/README.md) | Stage F audit artifacts and reproduction notes |
-
-```bash
-bash level4/stage_f/reproduce.sh
-```
-
-**Everything at Level 4 is non-rigorous Monte Carlo.** It does not modify,
-reinterpret or extend the Level 1–3 closure above, and the closure's scope
-statement still governs what may be claimed.
-
-The Level 4 work lives in [`level4/`](level4/) and builds a reproducible
-**Multi-Cycle Experimental Oracle** for the frozen CUSUM, together with an
-independent estimator of the conditional map
-`F_rho(e) = E[E_{j+1} | E_j = e]`.
-
-| Entry point | Contents |
-|---|---|
-| [`level4/README.md`](level4/README.md) | layout, environment, conventions, how to reproduce |
-| [`level4/reports/GATE_4_1_REPORT.md`](level4/reports/GATE_4_1_REPORT.md) | Gate 4.1 — the Multi-Cycle Oracle |
-| [`level4/reports/GATE_4_2_REPORT.md`](level4/reports/GATE_4_2_REPORT.md) | Gate 4.2 — the conditional nonlinear map |
-| [`level4/reports/LEDGER.md`](level4/reports/LEDGER.md) | every Level 4 Stage A statement with its evidence status |
-| [`level4/stage_b/README.md`](level4/stage_b/README.md) | **Stage B** — rigorous period-2 certificate at `rho = 1` |
-| [`level4/reports/STAGE_B_PERIOD2_CERTIFICATE_REPORT.md`](level4/reports/STAGE_B_PERIOD2_CERTIFICATE_REPORT.md) | the Stage B certificate report |
-| [`level4/stage_c/README.md`](level4/stage_c/README.md) | **Stage C** — stability-aware reuse policy and the reuse-performance tradeoff |
-| [`level4/reports/STAGE_C_METHOD_REPORT.md`](level4/reports/STAGE_C_METHOD_REPORT.md) | the Stage C method report |
-| [`level4/stage_c1/README.md`](level4/stage_c1/README.md) | **Stage C.1** — confirmatory sensitivity evaluation |
-| [`level4/stage_d/README.md`](level4/stage_d/README.md) | **Stage D** — generalisation: second detector, `m > 1`, non-Gaussian |
-| [`level4/reports/STAGE_D_REPORT.md`](level4/reports/STAGE_D_REPORT.md) | the Stage D report |
-| [`level4/reports/STAGE_C1_CONFIRMATORY_REPORT.md`](level4/reports/STAGE_C1_CONFIRMATORY_REPORT.md) | the Stage C.1 confirmatory report |
+It verifies protected hashes, frozen decisions, the requirement ledger,
+adversarial claim checks, and recorded reproduction state without starting new
+science. Useful component checks are:
 
 ```bash
 bash scripts/verify_level_4.sh
+python3 docs/research_synthesis/verify_synthesis.py --no-diff-check
+level4/.venv/bin/python scripts/generate_final_figures.py
 ```
 
-Level 4 uses its own virtual environment; the frozen `rebaseguard-proof`
-environment and every frozen artifact are left untouched, and
-`verify_level_4.sh` runs the frozen Level 1–3 suite as regression protection
-before it runs anything of its own.
+Figure hashes and exact evidence paths are recorded in
+[figures/final/README.md](figures/final/README.md).
 
-**Stage A** (Gates 4.1–4.2) is Monte Carlo throughout. **Stage B** is not: it
-certifies, for the frozen CUSUM at `k = 1/2`, `h = 5`, `m = 1`, `rho = 1`, that
-the deterministic conditional-mean map `F_1` has a unique nonzero root of
-`F_1(e) + e` in `[1.028724, 1.044724]` and that the resulting symmetric
-period-2 orbit is locally attracting, with multiplier enclosed in
-`[0.1081, 0.8325] ⊂ (−1,1)`. It concerns the deterministic skeleton only; the
-noisy recursion's invariant law remains `OPEN`.
+## Repository map
 
-```bash
-bash level4/stage_b/reproduce.sh
-```
+| Topic | Entry point |
+|---|---|
+| Terminal closure | [level4/final_level4_closure/](level4/final_level4_closure/) |
+| Reviewer synthesis | [docs/research_synthesis/](docs/research_synthesis/) |
+| Complete evidence routing | [REPOSITORY_MAP.md](docs/research_synthesis/REPOSITORY_MAP.md) |
+| Lean formalization | [rebaseguard-lean/](rebaseguard-lean/) |
+| Arb CUSUM certificate | [rebaseguard-proof/proofs/certificate.json](rebaseguard-proof/proofs/certificate.json) |
+| Random-window \(m>1\) theorem | [m_gt_1_track1b/](level4/closure_proofs/m_gt_1_track1b/) |
+| D4 local-stability map | [d4_phase_map/](level4/closure_proofs/d4_phase_map/) |
+| SR theorem and evidence boundary | [sr_derivative/](level4/closure_proofs/sr_derivative/) |
+| Location-family theorem | [location_family_track3ab/](level4/closure_proofs/location_family_track3ab/) |
+| P3 policy | [l4r06_policy/](level4/closure_proofs/l4r06_policy/) |
+| External validation | [external_validation_v3/](level4/closure_proofs/external_validation_v3/) |
+| Novelty audit | [novelty_verification/](level4/closure_proofs/novelty_verification/) |
+| Final figures | [figures/final/](figures/final/) |
 
-**Stage C** asks whether the certified boundary can be turned into a monitoring
-method. It defines a stability-aware reuse policy `rho_safe(delta) =
-(1-delta)/(Gamma-1)`, evaluates it against fresh, full-reuse, fixed-partial and
-oracle baselines over a 23-point `rho` grid, and reports `STAGE-C-PARTIAL`: the
-policy is well-defined and safe, but one pre-specified criterion failed and was
-left failed, and a fixed `rho` well above the stability boundary dominates it on
-in-control performance.
+## Limitations
 
-```bash
-bash level4/stage_c/reproduce.sh
-```
+- L4R-13, the stronger non-Gaussian robustness requirement, remains
+  `PARTIAL` and nonmandatory.
+- The rigorous SR local-instability Arb certificate remains `OPEN`;
+  \(\Gamma_{\mathrm{SR}}>2\) is numerical evidence only.
+- The D4 boundary is a deterministic local-stability map, not an operational
+  phase-transition theorem.
+- Empirical policy safety is regime-dependent; the project does not establish a
+  universally safe or universally optimal reuse rule.
+- Semi-real tasks do not establish production readiness.
+- Within the documented N2 search scope, no identified work combines the same
+  alarm-stopped next-reference mechanism with the reported derivative and
+  stability results. This is a scoped literature-audit position, not a priority
+  claim or exhaustive search.
 
-**Stage C.1** is a separate confirmatory experiment, not a revision of Stage C.
-Stage C's preregistered criterion C6 compared *raw* detection delays across
-policies with in-control run lengths differing by 1.7x; it failed and stays
-failed. Stage C.1 preregistered a baseline-normalised response metric, froze and
-hashed it before generating any data, used entirely new seed families, and found
-that the certificate-aware policy is non-inferior to fresh-only at every tested
-shift: `STAGE-C1-CLOSED-CONFIRMED-SENSITIVITY`. It makes no sample-efficiency
-claim and does not make C6 pass.
+See [limitations and open items](docs/research_synthesis/LIMITATIONS_AND_OPEN_ITEMS.md)
+for the full boundary.
 
-```bash
-bash level4/stage_c1/reproduce.sh
-```
+## Citation
 
-**Stage D** asks whether the mechanism generalises, and answers *partly*:
-`STAGE-D-PARTIAL`. An ARL0-matched Shiryaev–Roberts chart replicates the effect
-with a larger stopped gain (`17.32` vs `15.85`); the gain falls with the window
-length and crosses the `rho_c = 1` boundary inside `m* in [50, 75]`; and the
-score-based gain exceeds 2 for all six non-Gaussian families tested. But the
-derivative correspondence at `m > 1` **failed** its pre-specified test, the
-crossing has **no observable operational counterpart** — the monitoring metrics
-pass through it smoothly and alarm alternation persists above it — and the
-`t(3)` result is **ambiguous** between two estimands. Two detectors is
-replication, not detector-independence; six families is not distribution-free.
+No paper DOI or release DOI is assigned. Cite the repository by its title,
+release tag `rebaseguard-level4-closed`, resolved commit, repository URL, and
+access date. A `CITATION.cff` is intentionally not supplied because complete
+author metadata is not established in repository-authoritative records.
 
-```bash
-bash level4/stage_d/reproduce.sh
-```
+## License
 
-### A separate, still-unstarted track
-
-Preparatory material for the Shiryaev–Roberts chart lives in
-`rebaseguard-proof/proofs/phase4b/`, `phase4c/` and
-`rebaseguard_phase4d_audit.md`. Stage D uses that detector numerically, but a
-**rigorous SR certificate remains `OPEN`** — nothing in Stage D extends the
-Stage B certificate to it. See
-[`closure/08_LIMITATIONS_AND_BOUNDARIES.md`](closure/08_LIMITATIONS_AND_BOUNDARIES.md).
+No explicit license is currently included. Copyright defaults therefore apply;
+do not assume permission to reuse, modify, or redistribute beyond applicable
+law.
