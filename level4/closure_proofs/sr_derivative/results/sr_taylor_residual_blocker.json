@@ -1,0 +1,68 @@
+{
+  "blocking_quantity": "The certified total-degree Taylor remainder on the first continuum patch exceeds the maximum feasible global epsilon_a.",
+  "candidate_degree": 16,
+  "candidate_scale_bits": 44,
+  "candidate_sha256": "108478379a4406eec924e60de98d2f99ace824e917f56ac6e15c50698a57ff90",
+  "claim": "NO GLOBAL SR RESIDUAL SUPREMUM CERTIFIED",
+  "exact_global_patch_cover": false,
+  "first_continuum_patch": {
+    "certified_residual_a_upper": {
+      "ball": "[0.012002358341579830027570979300748753721934373311292770885 +/- 4.10e-58]",
+      "lower_enclosure": "[0.0120023583415798300275709793007487537219343733112927708852367 +/- 3.41e-62]",
+      "upper_enclosure": "[0.0120023583415798300275709793007487537219343733112927708854110 +/- 2.16e-62]"
+    },
+    "domain": "0<=y_plus<=L/64, 0<=y_minus<=L/64",
+    "innovation_partitions": 32,
+    "polynomial_residual_a_upper": {
+      "ball": "[2.8993182689174063133687762651447137074763549180210626724e-7 +/- 2.87e-63]",
+      "lower_enclosure": "[2.89931826891740631336877626514471370747635491802106267237128e-7 +/- 1.49e-67]",
+      "upper_enclosure": "[2.89931826891740631336877626514471370747635491802106267240622e-7 +/- 2.21e-67]"
+    },
+    "taylor_order": 6,
+    "taylor_remainder_a_upper": {
+      "ball": "[0.012002068409752938286939642423122239250563625675800968779 +/- 1.43e-58]",
+      "lower_enclosure": "[0.0120020684097529382869396424231222392505636256758009687789740 +/- 1.15e-63]",
+      "upper_enclosure": "[0.0120020684097529382869396424231222392505636256758009687791433 +/- 3.29e-62]"
+    }
+  },
+  "most_plausible_fix": "Replace sparse interval high-derivative remainders with a Bernstein-bounded local composition and adaptively refine only innovation-dominant patches; retain the validated point integrator.",
+  "precision_bits": 192,
+  "proof_role": "RIGOROUS LOCAL PROBE; NOT A GLOBAL CERTIFICATE",
+  "propagation_budget": {
+    "K_z_bound": {
+      "ball": "[0.797884560802865355879892119868763736951717262329869315332 +/- 6.88e-58]",
+      "lower_enclosure": "[0.797884560802865355879892119868763736951717262329869315331294 +/- 2.69e-61]",
+      "upper_enclosure": "[0.797884560802865355879892119868763736951717262329869315331931 +/- 3.18e-62]"
+    },
+    "formula": "(b_hat(0,0)-2)/(K_z_bound*resolvent^2)",
+    "maximum_epsilon_a_if_epsilon_b_zero": {
+      "ball": "[1.10692560371651393600734477977611324654896089584030692697e-5 +/- 2.92e-62]",
+      "lower_enclosure": "[1.10692560371651393600734477977611324654896089584030692696696e-5 +/- 7.89e-66]",
+      "upper_enclosure": "[1.10692560371651393600734477977611324654896089584030692697085e-5 +/- 1.74e-66]"
+    },
+    "resolvent": {
+      "ball": "[1315.789473684210526315789473684210526315789473684210526316 +/- 7.26e-55]",
+      "lower_enclosure": "[1315.78947368421052631578947368421052631578947368421052631527 +/- 4.32e-57]",
+      "upper_enclosure": "[1315.78947368421052631578947368421052631578947368421052631593 +/- 3.16e-57]"
+    }
+  },
+  "python": "3.14.5",
+  "python_flint": "0.9.0",
+  "reset_point": {
+    "innovation_partitions": 32,
+    "integration_order": 10,
+    "residual_a": {
+      "ball": "[+/- 1.31e-6]",
+      "lower_enclosure": "[-1.30158876565644732181681320071220397949218749999999983119524e-6 +/- 1.15e-66]",
+      "upper_enclosure": "[1.30158876565644732181681320071220397949218750000000016880506e-6 +/- 2.72e-66]"
+    },
+    "residual_b": {
+      "ball": "[+/- 1.64e-5]",
+      "lower_enclosure": "[-1.63299980570162392047641215227856314476467480869102750730038e-5 +/- 4.53e-65]",
+      "upper_enclosure": "[1.63299985204058953734638753033862435523532519130897249270011e-5 +/- 6.94e-66]"
+    }
+  },
+  "sampled_grid_used": false,
+  "schema": "rebaseguard.sr-taylor-residual-blocker.v1",
+  "status": "OPEN"
+}
