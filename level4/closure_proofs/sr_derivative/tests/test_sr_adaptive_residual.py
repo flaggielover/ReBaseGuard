@@ -85,3 +85,29 @@ def test_first_patch_certificate_is_continuum_scoped_not_global():
     assert result["checks"]["patch_engineering_target_met"] is True
     assert result["bernstein"]["convex_hull_bound_used"] is True
     assert arb(result["certified_patch_residual_a"]["ball"]) < arb(5) / arb(1_000_000)
+
+
+def test_representative_patch_pilots_pass_without_claiming_global_cover():
+    result = json.loads(
+        (RESULTS / "sr_residual_adaptive_patch_pilots.json").read_text()
+    )
+    assert result["status"] == "PILOT_GATES_PASS"
+    assert result["global_reachable_cover_complete"] is False
+    assert all(result["checks"].values())
+    assert set(result["patches"]) == {
+        "easy_interior",
+        "difficult_plus_boundary",
+    }
+    target = arb(5) / arb(1_000_000)
+    for patch in result["patches"].values():
+        assert patch["status"] == "PATCH_CERTIFIED"
+        assert patch["exact_innovation_cover"] is True
+        assert patch["sampled_grid_used"] is False
+        assert arb(patch["certified_residual_a"]) < target
+        component_sum = (
+            arb(patch["polynomial_bernstein"])
+            + arb(patch["direct_remainder"])
+            + arb(patch["reward_remainder"])
+            + arb(patch["integration_remainder"])
+        )
+        assert component_sum.overlaps(arb(patch["certified_residual_a"]))
