@@ -111,3 +111,20 @@ def test_representative_patch_pilots_pass_without_claiming_global_cover():
             + arb(patch["integration_remainder"])
         )
         assert component_sum.overlaps(arb(patch["certified_residual_a"]))
+
+
+def test_parent_patch_pilot_records_state_width_blocker():
+    result = json.loads(
+        (RESULTS / "sr_residual_parent_patch_pilot.json").read_text()
+    )
+    assert result["status"] == "PARENT_PATCH_BLOCKED"
+    assert result["global_reachable_cover_complete"] is False
+    assert all(result["checks"].values())
+    target = arb(5) / arb(1_000_000)
+    for patch in result["patches"].values():
+        assert patch["status"] == "PATCH_FAIL"
+        assert patch["exact_innovation_cover"] is True
+        assert patch["sampled_grid_used"] is False
+        assert arb(patch["certified_residual_a"]) > target
+        assert arb(patch["integration_remainder"]) > target
+        assert patch["final_intervals"] == 256
