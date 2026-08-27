@@ -31,6 +31,7 @@ ALGORITHM_FILES = (
     "certify_global_residual_a.py",
     "sr_adaptive_residual.py",
     "sr_bernstein.py",
+    "sr_residual_taylor.py",
     "taylor_model.py",
 )
 

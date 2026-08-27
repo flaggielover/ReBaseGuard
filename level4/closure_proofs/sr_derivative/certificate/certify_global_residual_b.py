@@ -134,7 +134,9 @@ def load_checkpoint(candidate: dict[str, object]) -> dict[str, object]:
     return checkpoint
 
 
-def propagation(epsilon_b: arb, candidate: dict[str, object]) -> dict[str, object]:
+def propagation(
+    epsilon_b_serialized: str, candidate: dict[str, object]
+) -> dict[str, object]:
     with ctx.workprec(PRECISION_BITS):
         threshold = arb(A_NUMERATOR) / arb(A_DENOMINATOR)
         live_max = (arb(1) + threshold).log()
@@ -150,17 +152,18 @@ def propagation(epsilon_b: arb, candidate: dict[str, object]) -> dict[str, objec
                 "epsilon_a"
             ]
         )
+        epsilon_b = arb(epsilon_b_serialized)
         resolvent = arb(25000) / arb(19)
         kz_norm = (arb(2) / arb.pi()).sqrt()
         propagated_a = kz_norm * resolvent * resolvent * epsilon_a
         propagated_b = resolvent * epsilon_b
         total = propagated_a + propagated_b
-        radius = total.upper()
-        gamma_interval = (gamma_candidate - radius).union(gamma_candidate + radius)
+        gamma_lower = gamma_candidate - total
+        gamma_upper = gamma_candidate + total
         return {
             "status": (
                 "PROPAGATION_CERTIFIED"
-                if gamma_interval.lower() > arb(2)
+                if gamma_lower.lower() > arb(2)
                 else "PROPAGATION_BLOCKED"
             ),
             "gamma_candidate": gamma_candidate.str(60, radius=True),
@@ -171,10 +174,13 @@ def propagation(epsilon_b: arb, candidate: dict[str, object]) -> dict[str, objec
             "propagated_a_error": propagated_a.str(60, radius=True),
             "propagated_b_error": propagated_b.str(60, radius=True),
             "total_error_radius": total.str(60, radius=True),
-            "gamma_interval": gamma_interval.str(60, radius=True),
-            "strict_lower_endpoint_above_two": gamma_interval.lower() > arb(2),
+            "gamma_interval": {
+                "lower_endpoint_enclosure": gamma_lower.str(60, radius=True),
+                "upper_endpoint_enclosure": gamma_upper.str(60, radius=True),
+            },
+            "strict_lower_endpoint_above_two": gamma_lower.lower() > arb(2),
             "lower_endpoint_margin_above_two": (
-                gamma_interval.lower() - arb(2)
+                gamma_lower - arb(2)
             ).str(60, radius=True),
         }
 
@@ -193,7 +199,6 @@ def finalize(
         patches,
         key=lambda key: float(arb(patches[key]["certified_residual_b"]).upper()),
     )
-    epsilon_b = arb(patches[worst_key]["certified_residual_b"])
     reset = json.loads((RESULTS / "sr_taylor_residual_blocker.json").read_text())[
         "reset_point"
     ]["residual_b"]
@@ -238,7 +243,9 @@ def finalize(
             "algorithm_sha256": algorithm_digest(),
             "global_reachable_cover_complete": True,
             "sampled_grid_used": False,
-            "propagation": propagation(epsilon_b, candidate),
+            "propagation": propagation(
+                patches[worst_key]["certified_residual_b"], candidate
+            ),
         }
     )
     atomic_json(FINAL, result)
