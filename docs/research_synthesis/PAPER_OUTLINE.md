@@ -1,5 +1,15 @@
 # Paper outline
 
+## Author metadata
+
+Jingzhe Su<br>
+School of Information and Software Engineering<br>
+University of Electronic Science and Technology of China<br>
+Email: suzhea0226@gmail.com
+
+No advisor, coauthor, ORCID, venue, acceptance, peer-review status, or
+institutional endorsement is asserted by this outline.
+
 ## 1. Introduction
 
 Frame the overlooked feedback created by reusing alarm-selected observations.
