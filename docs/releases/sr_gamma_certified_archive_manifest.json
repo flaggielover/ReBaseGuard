@@ -1,0 +1,178 @@
+{
+  "schema": "rebaseguard.sr-gamma-certified-archive.v1",
+  "generated_date": "2026-08-27",
+  "mode": "INTEGRATION_RELEASE_ARCHIVE_NO_NEW_SCIENCE",
+  "integration_content_commit": "9935671f2051bd8d2a7c2a958e729e6d57926aca",
+  "release_commit_resolution": "git rev-list -n 1 rebaseguard-sr-gamma-certified",
+  "relevant_principal_commits": {
+    "propagate_rigorous_residual_bounds": "414ec47a2e7413d8333198d7334659278fa75535",
+    "close_optional_sr_certificate": "14984e2c1a818601ee668316ed07a3fa67581474",
+    "integrate_current_documentation": "9935671f2051bd8d2a7c2a958e729e6d57926aca"
+  },
+  "historical_level4": {
+    "tag": "rebaseguard-level4-closed",
+    "commit": "5e43336264f257c7224b622f8063eb10aad481d6",
+    "verdict": "LEVEL-4-CLOSED",
+    "counts": {
+      "PASS": 17,
+      "PARTIAL": 1,
+      "FAIL": 0,
+      "OPEN": 0
+    },
+    "mandatory": "16/16 PASS",
+    "nonmandatory_partial": "L4R-13",
+    "sr_certificate_status_at_that_time": "OPEN"
+  },
+  "sr_release": {
+    "tag": "rebaseguard-sr-gamma-certified",
+    "verdict": "SR-GAMMA-CERTIFIED",
+    "scope": "post-Level-4 optional rigor upgrade for the authoritative symmetric two-chart SR detector",
+    "gamma_interval": [
+      "5.80039179950844233566163341719178681375064361627654095",
+      "28.78128580308149205926606197637053008078060638372345905"
+    ],
+    "lower_endpoint_margin_above_two": "3.80039179950844233566163341719178681375064361627654095",
+    "epsilon_a": "4.504390937831505821584329894078802406556132351891806631e-6",
+    "epsilon_b": "0.004003813425152367039816387453712930372411790871914867036",
+    "resolvent_bound": "25000/19",
+    "kz_bound": "sqrt(2/pi)",
+    "arb_precision_bits": 192,
+    "candidate_degree": 16,
+    "candidate_coefficients": "exact dyadic"
+  },
+  "covers": {
+    "a": {
+      "certified": 1210,
+      "expected": 1210,
+      "innovation_intervals": 96295,
+      "minimum_per_patch": 62,
+      "maximum_per_patch": 94,
+      "maximum_depth": 2,
+      "worst_patch": "p17_m11"
+    },
+    "b": {
+      "certified": 1210,
+      "expected": 1210,
+      "innovation_intervals": 50947,
+      "minimum_per_patch": 37,
+      "maximum_per_patch": 48,
+      "maximum_depth": 1,
+      "worst_patch": "p45_m04"
+    }
+  },
+  "verification_reported_at_certificate_closure": {
+    "independent_resolvent_auditor": "PASS",
+    "independent_global_a_auditor": "PASS",
+    "independent_global_b_propagation_auditor": "PASS",
+    "focused_tests": "28/28 PASS",
+    "complete_sr_suite": "94/94 PASS",
+    "closed_upgrade_reproduction": "PASS and byte-stable",
+    "historical_suites": "PASS",
+    "lean_axiom_replay": "PASS"
+  },
+  "environment_observed": {
+    "python": "3.14.5",
+    "certificate_python": "3.14.5",
+    "python_flint": "0.9.0",
+    "numpy": "2.5.2",
+    "lean_toolchain": "leanprover/lean4:v4.34.0-rc1",
+    "lake": "5.0.0-src+3447a66",
+    "git": "2.50.1 (Apple Git-155)"
+  },
+  "reproduction_commands": {
+    "terminal_level4": "bash level4/final_level4_closure/reproduce.sh",
+    "post_level4_sr": "bash level4/closure_proofs/sr_derivative/certificate/reproduce_closed_upgrade.sh",
+    "post_level4_archive": "python3 scripts/verify_post_level4_archive.py"
+  },
+  "original_sr_files": {
+    "count": 52,
+    "comparison": "byte-identical to rebaseguard-level4-closed via Git blob IDs",
+    "historical_guard": "unchanged"
+  },
+  "additive_sr_files": {
+    "count": 40,
+    "sha256": {
+      "level4/closure_proofs/sr_derivative/certificate/GAMMA_CERTIFICATE.md": "3e3087ea71b9b42e39ea76fd589604854e3aed09404ec6d758446d3b6dc94977",
+      "level4/closure_proofs/sr_derivative/certificate/RESOLVENT_PROOF.md": "5ce7c402d9e7c146061d0101be836cb1c983f72cb8c9a48ddc7efdfff40e98a5",
+      "level4/closure_proofs/sr_derivative/certificate/TAYLOR_RESIDUAL_BLOCKER.md": "f31c28bfe96a21b01194c465f3b8832fdd38330e4dc1f415e072d8ea6d7b4542",
+      "level4/closure_proofs/sr_derivative/certificate/audit_global_residual_a.py": "2b5a298ac7a28b1d136b2d8f1cc305f6796877e9d78705567009379840aa60f9",
+      "level4/closure_proofs/sr_derivative/certificate/audit_global_residual_b.py": "8f74fa79e1044b0b02da46561b82ed0297b414422267dd74c40f90ea9b3e2824",
+      "level4/closure_proofs/sr_derivative/certificate/audit_sr_resolvent.py": "476506f5a7e3b36888638a8293324aa9874d2ce9bbb1ac1fd7c182a8bfc88596",
+      "level4/closure_proofs/sr_derivative/certificate/certify_first_patch_adaptive.py": "c4c5163dbcbe91a4fae778c334b201dbcb0a263518def4a5ce534597ecf9405b",
+      "level4/closure_proofs/sr_derivative/certificate/certify_global_residual_a.py": "2c52c67b47b0e2cdde069f800ad33007fadd8e48f991779d628b0d60abc7627e",
+      "level4/closure_proofs/sr_derivative/certificate/certify_global_residual_b.py": "64220617ce9f95f392e664ab07659b0db2895e745037f37528d0be4935a35eeb",
+      "level4/closure_proofs/sr_derivative/certificate/certify_sr_resolvent.py": "8210739ddcfd446771416396295698b3959582ba6f02815cb544cb20a07b1964",
+      "level4/closure_proofs/sr_derivative/certificate/profile_sr_remainder.py": "ff30e449cdada10e19d6e15c12e5e829695adc3bbf28208eca0a2f3acdf1ae04",
+      "level4/closure_proofs/sr_derivative/certificate/reproduce_closed_upgrade.sh": "8414939e1cb17cf6c5dd26a90985a7fba9d25d8ccc04f90b299d3bf3bbc01ad6",
+      "level4/closure_proofs/sr_derivative/certificate/reproduce_open_upgrade.sh": "78e58bc16b8e1ba203cd6b78a19a2ddf67378003e7d6623735c823f88bcc8da9",
+      "level4/closure_proofs/sr_derivative/certificate/run_adaptive_b_pilots.py": "b3e3b47273b75dc34197c7d642ed6d65dec61c6c1f022b271059475c5f3ec60e",
+      "level4/closure_proofs/sr_derivative/certificate/run_adaptive_patch_pilots.py": "f920f2e1d84f4cc4ac087889c3372fa42a3edd92d3fe3a20eda35e0c513d103a",
+      "level4/closure_proofs/sr_derivative/certificate/run_adaptive_pilot.py": "b5f3c1e8d587f5be3d69069a5834b151e5b1074225af98a3e5a5fc27076eb2c1",
+      "level4/closure_proofs/sr_derivative/certificate/run_parent_patch_pilot.py": "84998353fe614835193335d347584862f9e2f494a9e2056f3107cc02e023a5b1",
+      "level4/closure_proofs/sr_derivative/certificate/run_taylor_blocker_probe.py": "109f78a0770f76131c74e6959bd0011673846a54e278204203d9ecd446451108",
+      "level4/closure_proofs/sr_derivative/certificate/sr_adaptive_residual.py": "5b0889c6654f376a94816a679dd7bd272d7ad14037e7c774a7fb0f86a295fe2d",
+      "level4/closure_proofs/sr_derivative/certificate/sr_bernstein.py": "709dddd81b1d7cea9338b2797714d4c2964ec0f4823d98f7898daa402066dc7c",
+      "level4/closure_proofs/sr_derivative/certificate/sr_residual_taylor.py": "b6a16831806e6862aa2abc377b61d0fa99caca2aa70301cf8d151b9d4bdd6f08",
+      "level4/closure_proofs/sr_derivative/certificate/taylor_model.py": "3c32f03c788f9b027d57e9f6151a1e662ab3238a5e5cc3de6e2c3461f21fc7f4",
+      "level4/closure_proofs/sr_derivative/certificate/validated_taylor.py": "30764b8ba74bf63abb8f2193c164320d14f250801b7ae087e75f833787a864ee",
+      "level4/closure_proofs/sr_derivative/results/sr_monotone_contraction.json": "3f943f0caa6337690e5aa639bdef1624351f9d6cbec749d1368f9e174efa321c",
+      "level4/closure_proofs/sr_derivative/results/sr_monotone_contraction_audit.json": "8027f01465f7572fda1b548aa68cc196b0fb408b3f97ebf07f8554ef4c2b326a",
+      "level4/closure_proofs/sr_derivative/results/sr_residual_adaptive_b_pilots.json": "fccb84a2fadba08f3581f15919dbe6da6b47b8d3011272254b01c701dd499c08",
+      "level4/closure_proofs/sr_derivative/results/sr_residual_adaptive_patch_pilots.json": "4f9572aa2d58a692890a25842d34e849ca7817155d4a35387425ba7ecada061f",
+      "level4/closure_proofs/sr_derivative/results/sr_residual_adaptive_pilot.json": "b9092a862f9c494ee9df4f923eaab6fb013c7f700bc333004c2a7bf658567024",
+      "level4/closure_proofs/sr_derivative/results/sr_residual_first_patch_adaptive.json": "797dcc5cf16dc6f332740832cc04b4966b403042de13fba15deb83ad051beec4",
+      "level4/closure_proofs/sr_derivative/results/sr_residual_global_a.json": "ed6f0b7538e2ead4a7a19a970de37e0ceda8cd278d57d9caa7d196261fdf1618",
+      "level4/closure_proofs/sr_derivative/results/sr_residual_global_a_checkpoint.json": "6ebd56e98dc05a68ef37e3b651a603c6ba3eb94eb5b822ae4e4d2d4e6ca7f6de",
+      "level4/closure_proofs/sr_derivative/results/sr_residual_global_b.json": "d599defb05e2d0f9b84cb36d5b6aac1938096001f0b06c1962238eb92e764411",
+      "level4/closure_proofs/sr_derivative/results/sr_residual_global_b_checkpoint.json": "0cac088bf6d5daf1ff28ab336f8c909cd8c0627096b7e07e2e1985f0ef4f7cf9",
+      "level4/closure_proofs/sr_derivative/results/sr_residual_parent_patch_pilot.json": "a01992ed2d6285e223d7501837cf7da85afebb9a0c7d5b631939ba03fee6946c",
+      "level4/closure_proofs/sr_derivative/results/sr_residual_remainder_budget.json": "8101b5f7336e9efd4a1d11029d132acfbd7fafe22763a1511977d87f64bb3b48",
+      "level4/closure_proofs/sr_derivative/results/sr_taylor_residual_blocker.json": "2983c900964424b838856a8ac82cfeefff18d59731ce0c10a9240d968785c8d0",
+      "level4/closure_proofs/sr_derivative/tests/test_sr_adaptive_residual.py": "836c1ecb42dd6a5bf4848ce58eacc8da2eff15c02df4984e0e097adc7bcfc2c4",
+      "level4/closure_proofs/sr_derivative/tests/test_sr_remainder_profile.py": "6fe50507d54b4c4d46fb66d741c03fd6a39b16094e0ef2c13b8cf0f1da04dcdf",
+      "level4/closure_proofs/sr_derivative/tests/test_sr_resolvent_certificate.py": "b12ffbbb7ce7fb7bcb9f2faea29c7bb4d90a0756d767992603d22742d44543b1",
+      "level4/closure_proofs/sr_derivative/tests/test_sr_taylor_probe.py": "1664a2699c51d8bfc38d712a7499eee48b63cb262aac7345272f46bc5d322bc3"
+    }
+  },
+  "certificate_files": {
+    "level4/closure_proofs/sr_derivative/certificate/GAMMA_CERTIFICATE.md": "3e3087ea71b9b42e39ea76fd589604854e3aed09404ec6d758446d3b6dc94977",
+    "level4/closure_proofs/sr_derivative/results/sr_monotone_contraction.json": "3f943f0caa6337690e5aa639bdef1624351f9d6cbec749d1368f9e174efa321c",
+    "level4/closure_proofs/sr_derivative/results/sr_residual_global_a.json": "ed6f0b7538e2ead4a7a19a970de37e0ceda8cd278d57d9caa7d196261fdf1618",
+    "level4/closure_proofs/sr_derivative/results/sr_residual_global_b.json": "d599defb05e2d0f9b84cb36d5b6aac1938096001f0b06c1962238eb92e764411",
+    "level4/closure_proofs/sr_derivative/certificate/reproduce_closed_upgrade.sh": "8414939e1cb17cf6c5dd26a90985a7fba9d25d8ccc04f90b299d3bf3bbc01ad6"
+  },
+  "integration_files": {
+    "README.md": "a7c7d3000e047ffb363f2518032c736182756d47a12a09b79b235f5980532bc8",
+    "docs/releases/LEVEL4_RELEASE_CHECKLIST.md": "4794858821faad7c3cc8bd1fdbb8b941a3d76d44c04a243e15bc2fd88eab5066",
+    "docs/releases/LEVEL4_RELEASE_NOTES.md": "eab0f300aa89e365aeeb9e1da7ed92ebac02b7555fb573371137d0c1cadec46f",
+    "docs/releases/SR_GAMMA_CERTIFIED_RELEASE_CHECKLIST.md": "838ddfd781d9da82cc875dc0b754c55429d28d3a878b119d69e1412d739348a9",
+    "docs/releases/SR_GAMMA_CERTIFIED_RELEASE_NOTES.md": "c8b437ae0a0786537ebd8b776178a52752a5a182be2e00bd0f39f3340c590732",
+    "docs/releases/tests/test_post_level4_archive.py": "56ae6e0e1fa0160c7701ee6a23b18a61b2db13da3f4c190d7f46d5dd9afdf8c8",
+    "docs/research_synthesis/CLAIM_CATALOG.md": "67cf0b937793a06cfd39290b1f2136f3e3716565a5942a865da64adca7f80233",
+    "docs/research_synthesis/EVIDENCE_HIERARCHY.md": "c38614d621e5b5205b9eb2284c831e942e8d24861cde2c3c94ebd313cbe02fc6",
+    "docs/research_synthesis/LIMITATIONS_AND_OPEN_ITEMS.md": "cb157ac97b324797635dd37fcfeb4dea4fc9fadd16dcd4b2f221584a4b12ca86",
+    "docs/research_synthesis/MAIN_THEOREM_ARCHITECTURE.md": "91897c72b06e3ac252eba1a07d7ac4fe371d6d0cfc9816fb0df747ecbc658763",
+    "docs/research_synthesis/PAPER_OUTLINE.md": "d6655e37da496ba9d0971a68a6f58604e230e8f39ffa23feda5666cfeff60e02",
+    "docs/research_synthesis/README.md": "03838b601b7c037650574ba4660acd3af3777c18283a9ca918301627df53107d",
+    "docs/research_synthesis/REPOSITORY_MAP.md": "c2c652b61e3a2fc47428a1abfdf929f7f3ddc481198e7bff95b3040251de4e57",
+    "docs/research_synthesis/RESULT_DEPENDENCY_GRAPH.md": "1061fe2391b7cab6b58717737722139f10258713447e44caafda45fd5981cfe8",
+    "docs/research_synthesis/tests/test_verify_synthesis.py": "70867f85756f0118487d01377e50dadd976bbf54b85343300815520c75f536c3",
+    "docs/research_synthesis/verify_synthesis.py": "204955cf2fd31096dbe1e447b9afde1e9183319dd3a4dc7d8b2fb32916172706",
+    "figures/final/README.md": "b0e333ab515704fb988c4d033bf84206cf15dc9d2811b2f0c6aa3cb5ba6ee05d",
+    "figures/final/manifest.json": "1996ea34d3b1782a0e8f486c6414b15364715e5283d9b261a864f13f53f7dd3d",
+    "scripts/verify_post_level4_archive.py": "88188083e7154ccaecc00b1d89967fb598cc160a92ebc864dc385c66e9548648"
+  },
+  "repository_state_at_content_commit": {
+    "branch": "sr-arb-certificate",
+    "worktree": "clean",
+    "origin_main_base": "5e43336264f257c7224b622f8063eb10aad481d6",
+    "tracked_sr_files": 92,
+    "local_content_commit_pushed": false,
+    "release_tag_created": false
+  },
+  "archive_package": {
+    "committed_binary": false,
+    "deterministic_command": "git archive --format=tar --prefix=ReBaseGuard-rebaseguard-sr-gamma-certified/ rebaseguard-sr-gamma-certified | gzip -n > ReBaseGuard-rebaseguard-sr-gamma-certified.tar.gz",
+    "checksum_location": "GitHub Release notes and final release handoff"
+  }
+}
