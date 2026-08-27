@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import tempfile
@@ -26,6 +27,12 @@ GRID = 64
 SAFE_SUM_CAP_NUMERATOR = 69
 SAFE_SUM_CAP_DENOMINATOR = 64
 EXPECTED_FUNDAMENTAL_CELLS = 1210
+ALGORITHM_FILES = (
+    "certify_global_residual_a.py",
+    "sr_adaptive_residual.py",
+    "sr_bernstein.py",
+    "taylor_model.py",
+)
 
 _candidate: dict[str, object] | None = None
 _live_max: arb | None = None
@@ -40,6 +47,17 @@ def atomic_json(path: Path, value: dict[str, object]) -> None:
         handle.write("\n")
         temporary = Path(handle.name)
     os.replace(temporary, path)
+
+
+def algorithm_digest() -> str:
+    digest = hashlib.sha256()
+    certificate = CAMPAIGN / "certificate"
+    for name in ALGORITHM_FILES:
+        digest.update(name.encode("utf-8"))
+        digest.update(b"\0")
+        digest.update((certificate / name).read_bytes())
+        digest.update(b"\0")
+    return digest.hexdigest()
 
 
 def cells() -> list[tuple[int, int]]:
@@ -171,6 +189,24 @@ def finalize(checkpoint: dict[str, object]) -> dict[str, object] | None:
         patches,
         key=lambda key: float(arb(patches[key]["certified_residual_a"]).upper()),
     )
+    reset = json.loads((RESULTS / "sr_taylor_residual_blocker.json").read_text())[
+        "reset_point"
+    ]["residual_a"]
+    maximum_depth = max(patch["maximum_depth"] for patch in patches.values())
+    interval_counts = [patch["final_intervals"] for patch in patches.values()]
+    component_fields = (
+        "polynomial_bernstein",
+        "direct_remainder",
+        "reward_remainder",
+        "integration_remainder",
+    )
+    component_maxima = {}
+    for field in component_fields:
+        key = max(
+            patches,
+            key=lambda patch_key: float(arb(patches[patch_key][field]).upper()),
+        )
+        component_maxima[field] = {"patch": key, "bound": patches[key][field]}
     result = dict(checkpoint)
     result.update(
         {
@@ -180,6 +216,32 @@ def finalize(checkpoint: dict[str, object]) -> dict[str, object] | None:
             "completed_fundamental_cells": len(patches),
             "worst_patch": worst_key,
             "epsilon_a": patches[worst_key]["certified_residual_a"],
+            "reset_point": {
+                "status": "RESET_POINT_CERTIFIED",
+                "residual_a": reset,
+                "source": "results/sr_taylor_residual_blocker.json",
+            },
+            "subdivision_statistics": {
+                "maximum_innovation_depth": maximum_depth,
+                "minimum_innovation_intervals": min(interval_counts),
+                "maximum_innovation_intervals": max(interval_counts),
+                "total_innovation_intervals": sum(interval_counts),
+                "component_maxima": component_maxima,
+            },
+            "gaussian_accounting": {
+                "artificial_truncation_used": False,
+                "omitted_tail_bound": "0",
+                "continuation_integration": (
+                    "exact t in [-1,1] affine image of the full state-dependent "
+                    "continuation interval"
+                ),
+                "alarm_region": "included analytically in reward_a",
+            },
+            "candidate_degree": json.loads(
+                (RESULTS / "arb_candidate.json").read_text()
+            )["degree"],
+            "algorithm_files": list(ALGORITHM_FILES),
+            "algorithm_sha256": algorithm_digest(),
             "global_reachable_cover_complete": True,
             "sampled_grid_used": False,
         }

@@ -7,6 +7,7 @@ import sys
 from pathlib import Path
 
 from flint import arb, ctx
+import pytest
 
 
 CAMPAIGN = Path(__file__).resolve().parents[1]
@@ -21,6 +22,7 @@ from certify_global_residual_a import (  # noqa: E402
     cells,
     geometry_and_algebra_checks,
 )
+from audit_global_residual_a import audit_document  # noqa: E402
 from sr_bernstein import bernstein_absolute_bound  # noqa: E402
 from taylor_model import Model  # noqa: E402
 
@@ -179,3 +181,38 @@ def test_global_fundamental_cover_enumeration_is_exact_and_unique():
 def test_global_cover_geometry_and_candidate_symmetry_checks_pass():
     candidate = json.loads((RESULTS / "arb_candidate.json").read_text())
     assert all(geometry_and_algebra_checks(candidate).values())
+
+
+def test_global_a_certificate_passes_independent_audit():
+    document = json.loads((RESULTS / "sr_residual_global_a.json").read_text())
+    result = audit_document(document)
+    assert result["status"] == "AUDIT_PASS"
+    assert result["audited_patches"] == 1210
+
+
+def test_global_a_audit_fails_on_missing_patch():
+    document = json.loads((RESULTS / "sr_residual_global_a.json").read_text())
+    document["patches"].pop("p00_m00")
+    with pytest.raises(ValueError, match="patch cover mismatch"):
+        audit_document(document)
+
+
+def test_global_a_audit_fails_on_sampled_grid_metadata():
+    document = json.loads((RESULTS / "sr_residual_global_a.json").read_text())
+    document["patches"]["p00_m00"]["sampled_grid_used"] = True
+    with pytest.raises(ValueError, match="sampled grid used"):
+        audit_document(document)
+
+
+def test_global_a_audit_fails_on_omitted_tail_accounting():
+    document = json.loads((RESULTS / "sr_residual_global_a.json").read_text())
+    document["gaussian_accounting"].pop("omitted_tail_bound")
+    with pytest.raises(ValueError, match="Gaussian tail accounting"):
+        audit_document(document)
+
+
+def test_global_a_audit_fails_when_patch_exceeds_budget():
+    document = json.loads((RESULTS / "sr_residual_global_a.json").read_text())
+    document["patches"]["p00_m00"]["certified_residual_a"] = "6e-6"
+    with pytest.raises(ArithmeticError, match="component sum does not overlap residual"):
+        audit_document(document)
