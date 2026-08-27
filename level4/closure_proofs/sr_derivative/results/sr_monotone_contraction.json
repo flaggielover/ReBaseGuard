@@ -1,0 +1,62 @@
+{
+  "beta_n": {
+    "ball": "[0.8100000000000000000000000000000000000000000000000000000000 +/- 7.81e-59]",
+    "lower_enclosure": "[0.809999999999999999999999999999999999999999999999999999999879 +/- 7.51e-62]",
+    "upper_enclosure": "[0.810000000000000000000000000000000000000000000000000000000198 +/- 4.57e-61]"
+  },
+  "cells": 200,
+  "computed_one_sided_hit_lower_enclosure": {
+    "ball": "[0.20271993143543464049780124749340429924771296795341114 +/- 7.00e-54]",
+    "lower_enclosure": "[0.202719931435434640497801247493404299247712967953411133008376 +/- 4.48e-61]",
+    "upper_enclosure": "[0.202719931435434640497801247493404299247712967953411145906925 +/- 2.40e-61]"
+  },
+  "n": 250,
+  "precision_bits": 192,
+  "proof": {
+    "cell_rule": "finite-horizon hit probability on each source cell is bounded below by the value at its exact left endpoint",
+    "mass_balance": "every Arb row enclosure contains one",
+    "operator_statement": "sup_s K^n 1(s) <= 1-q_safe",
+    "pathwise_monotonicity": "softplus(y+z-1/2) is increasing in y for every innovation z",
+    "resolvent_statement": "||(I-K)^-1||_inf <= n/q_safe",
+    "sampled_grid_used": false,
+    "two_chart_domination": "a plus-chart hit forces absorption of the symmetric two-chart detector"
+  },
+  "python": "3.14.5",
+  "python_flint": "0.9.0",
+  "q_safe": {
+    "ball": "[0.1900000000000000000000000000000000000000000000000000000000 +/- 7.81e-59]",
+    "denominator": 100,
+    "lower_enclosure": "[0.189999999999999999999999999999999999999999999999999999999922 +/- 6.16e-62]",
+    "numerator": 19,
+    "upper_enclosure": "[0.190000000000000000000000000000000000000000000000000000000002 +/- 4.07e-61]"
+  },
+  "resolvent_bound": {
+    "ball": "[1315.789473684210526315789473684210526315789473684210526316 +/- 6.76e-55]",
+    "lower_enclosure": "[1315.78947368421052631578947368421052631578947368421052631527 +/- 4.32e-57]",
+    "upper_enclosure": "[1315.78947368421052631578947368421052631578947368421052631658 +/- 6.22e-58]"
+  },
+  "schema": "rebaseguard.sr-monotone-block-contraction.v1",
+  "scope": "authoritative symmetric two-chart SR killed kernel",
+  "status": "CERTIFIED_COMPONENT",
+  "threshold": {
+    "A": {
+      "ball": "520.886133602749055171443615108728408813476562500000000000000",
+      "lower_enclosure": "520.886133602749055171443615108728408813476562500000000000000",
+      "upper_enclosure": "520.886133602749055171443615108728408813476562500000000000000"
+    },
+    "live_log_state_max": {
+      "ball": "[6.25744942922713562368155227408769793718560679554520828060 +/- 4.79e-57]",
+      "lower_enclosure": "[6.25744942922713562368155227408769793718560679554520828059394 +/- 1.04e-60]",
+      "upper_enclosure": "[6.25744942922713562368155227408769793718560679554520828059904 +/- 1.07e-60]"
+    },
+    "log_A": {
+      "ball": "[6.25553146432147319284577138576632261792582292474732102657 +/- 4.77e-57]",
+      "lower_enclosure": "[6.25553146432147319284577138576632261792582292474732102657094 +/- 3.85e-60]",
+      "upper_enclosure": "[6.25553146432147319284577138576632261792582292474732102657604 +/- 1.75e-60]"
+    },
+    "runtime_rational": [
+      4581762885148045,
+      8796093022208
+    ]
+  }
+}

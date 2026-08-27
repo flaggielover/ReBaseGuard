@@ -13,7 +13,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SYNTHESIS = ROOT / "docs" / "research_synthesis"
-SYNTHESIS_BASE_COMMIT = "23365e620ee55ecb45ed4dc0762b9c1751cf0797"
+SYNTHESIS_BASE_COMMIT = "14984e2c1a818601ee668316ed07a3fa67581474"
 REQUIRED_DOCS = {
     "README.md",
     "MAIN_THEOREM_ARCHITECTURE.md",
@@ -27,8 +27,12 @@ REQUIRED_DOCS = {
     "REPOSITORY_MAP.md",
 }
 ALLOWED_DIFF_PREFIXES = (
+    "README.md",
     "docs/research_synthesis/",
-    "docs/superpowers/plans/2026-08-26-final-research-synthesis-implementation.md",
+    "docs/releases/",
+    "figures/final/README.md",
+    "figures/final/manifest.json",
+    "scripts/verify_post_level4_archive.py",
 )
 PATH_RE = re.compile(
     r"`((?:closure|level4|rebaseguard-lean|rebaseguard-proof|scripts)/[^`\n]+)`"
@@ -42,8 +46,6 @@ BANNED_ASSERTIONS = (
     "is universally safe",
     "is detector-independent",
     "is distribution-free",
-    "gamma_sr is arb-certified",
-    "sr-gamma-certified is awarded",
 )
 
 
@@ -91,6 +93,18 @@ def check_terminal_state() -> None:
         raise VerificationError("SR theorem/numerical/Arb evidence boundary drifted")
     if abs(sr["numerical_correspondence"]["Gamma_SR_estimate"] - 17.291320922042853) > 1e-12:
         raise VerificationError("confirmatory Gamma_SR estimate drifted")
+
+    sr_certificate = (
+        ROOT / "level4/closure_proofs/sr_derivative/certificate/GAMMA_CERTIFICATE.md"
+    ).read_text(encoding="utf-8")
+    for marker in (
+        "SR-GAMMA-CERTIFIED",
+        "5.8003917995084423356616334171917868138",
+        "28.781285803081492059266061976370530081",
+        "3.8003917995084423356616334171917868138",
+    ):
+        if marker not in sr_certificate:
+            raise VerificationError(f"post-Level-4 SR certificate marker missing: {marker}")
 
 
 def check_authoritative_values() -> None:
@@ -210,7 +224,10 @@ def check_required_claims_and_wording() -> None:
         "2,445",
         "0 DIRECT",
         "9 HIGH-PARTIAL",
-        "rigorous SR local-instability Arb certificate: OPEN",
+        "SR-GAMMA-CERTIFIED",
+        "5.800391799508442",
+        "3.800391799508442",
+        "At terminal Level-4 closure",
         "Within the documented search scope, no work was identified",
     )
     missing = [marker for marker in required if marker.lower() not in lower]
@@ -278,7 +295,7 @@ def main() -> int:
         return 1
     print("SYNTHESIS VERIFICATION OK")
     print("documents=10 cited_paths=" + str(len(cited_paths())))
-    print("terminal=LEVEL-4-CLOSED mandatory=16/16 partial=L4R-13 sr_arb=OPEN")
+    print("terminal=LEVEL-4-CLOSED mandatory=16/16 partial=L4R-13 sr_arb=SR-GAMMA-CERTIFIED")
     return 0
 
 

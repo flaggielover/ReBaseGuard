@@ -28,7 +28,7 @@ level4/.venv/bin/python scripts/generate_final_figures.py
 
 - **Purpose:** Define the cross-cycle feedback mechanism.
 - **Sources:** `docs/research_synthesis/MAIN_THEOREM_ARCHITECTURE.md`, `docs/research_synthesis/DEFINITIONS_AND_NOTATION.md`
-- **Source SHA-256:** `docs/research_synthesis/MAIN_THEOREM_ARCHITECTURE.md` `f6390a4c225045686ad8049a943a6efb18492138b661bcccd9ff459942d3e3f4`, `docs/research_synthesis/DEFINITIONS_AND_NOTATION.md` `9447fee60fa90e96a1aab3c19f19ad1fc9379829b3739d2ef695dbf717c9c542`
+- **Source SHA-256:** `docs/research_synthesis/MAIN_THEOREM_ARCHITECTURE.md` `91897c72b06e3ac252eba1a07d7ac4fe371d6d0cfc9816fb0df747ecbc658763`, `docs/research_synthesis/DEFINITIONS_AND_NOTATION.md` `9447fee60fa90e96a1aab3c19f19ad1fc9379829b3739d2ef695dbf717c9c542`
 - **Transformation:** Explanatory vector diagram from the frozen synthesis narrative; no quantitative values.
 - **Evidence classification:** INTERPRETATION / CONCEPTUAL DIAGRAM
 - **Paper section:** Sections 1–3
@@ -38,7 +38,7 @@ level4/.venv/bin/python scripts/generate_final_figures.py
 
 - **Purpose:** Separate the Lean-checked derivative spine from the Arb-certified gain enclosure.
 - **Sources:** `rebaseguard-proof/proofs/certificate.json`, `docs/research_synthesis/MAIN_THEOREM_ARCHITECTURE.md`
-- **Source SHA-256:** `rebaseguard-proof/proofs/certificate.json` `85e68c7dde306f2e6ce464203def22089e9b935d1cfca4b4944cef191d80545e`, `docs/research_synthesis/MAIN_THEOREM_ARCHITECTURE.md` `f6390a4c225045686ad8049a943a6efb18492138b661bcccd9ff459942d3e3f4`
+- **Source SHA-256:** `rebaseguard-proof/proofs/certificate.json` `85e68c7dde306f2e6ce464203def22089e9b935d1cfca4b4944cef191d80545e`, `docs/research_synthesis/MAIN_THEOREM_ARCHITECTURE.md` `91897c72b06e3ac252eba1a07d7ac4fe371d6d0cfc9816fb0df747ecbc658763`
 - **Transformation:** Exact interval transformation F'_1(0)=1-Gamma_CUSUM and evidence-flow diagram.
 - **Evidence classification:** LEAN-CHECKED + ARB-CERTIFIED + HUMAN THEOREM BRIDGE
 - **Paper section:** Sections 4–5

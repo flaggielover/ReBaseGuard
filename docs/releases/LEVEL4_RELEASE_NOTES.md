@@ -13,6 +13,12 @@
 “Level 4” is the project’s internally frozen closure criterion, not an external
 academic certification.
 
+> **Post-release note (2026-08-27):** This document preserves the evidence
+> boundary at the original Level-4 release. The optional SR Arb item described
+> below was later closed as `SR-GAMMA-CERTIFIED`; see
+> `docs/releases/SR_GAMMA_CERTIFIED_RELEASE_NOTES.md`. The original tag,
+> verdict, ledger, and historical wording are unchanged.
+
 ## Scientific scope
 
 ReBaseGuard studies stopping-selected recursive re-baselining: observations

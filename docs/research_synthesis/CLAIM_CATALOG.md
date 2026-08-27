@@ -17,7 +17,7 @@ language that must not appear as an asserted ReBaseGuard conclusion.
 | Historical C6 | Historical negative evidence | Stage C | Historical C6 remains failed even though the later same-requirement P3 campaign closes L4R-06. | Stage C or C6 was retrospectively successful. |
 | Operational crossing | NEGATIVE RESULT | Frozen grid, shifts, and four metrics | The mathematical local-stability boundary had no detected operational transition under the frozen protocol. | The boundary has no operational consequence in general. |
 | SR theorem | HUMAN THEOREM + conditional LEAN-CHECKED spine | Symmetric two-chart SR, `m=1` | The SR derivative theorem is closed and has the same stopped-score form. | SR is detector-independent replication. |
-| SR gain | CONFIRMATORY NUMERICAL | Authoritative SR threshold | `Gamma_SR>2` is supported numerically. | `Gamma_SR>2` is rigorously or Arb certified. |
+| SR gain | Post-Level-4 ARB-CERTIFIED | Authoritative symmetric two-chart SR threshold and model | For the authoritative symmetric two-chart SR detector, `Gamma_SR>2` was rigorously certified using Arb interval arithmetic in a post-Level-4 optional rigor upgrade; the interval is `[5.800391799508442,28.781285803081492]`. | The certificate applies to arbitrary SR variants, detectors, or distributions. |
 | Location-family theorem | HUMAN THEOREM + conditional LEAN-CHECKED spine | Regular common-support location families with explicit hypotheses | The regular location-family derivative is `F'_rho(0)=rho(1-Gamma_f)` under stated analytic conditions. | The theorem is distribution-free or covers moving support automatically. |
 | External validation | SEMI-REAL EMPIRICAL | Frozen public sequential tasks | Three tasks support the scoped package against two required; P2 safety is regime-dependent. | The method is production-proven or deployment-ready. |
 | Novelty | Scoped search audit | Documented indexes, queries, and access limitations | Within the documented search scope, no work was identified that combines the same alarm-stopped next-reference mechanism with the reported derivative and stability results. | First, first-ever, unprecedented, unique, or absolute priority. |
@@ -25,4 +25,7 @@ language that must not appear as an asserted ReBaseGuard conclusion.
 
 The terminal status and firewall are authoritative at
 `level4/final_level4_closure/results/final_decision.json` and
-`level4/final_level4_closure/CLAIM_FIREWALL.md`.
+`level4/final_level4_closure/CLAIM_FIREWALL.md`. The later SR certificate is
+authoritative at
+`level4/closure_proofs/sr_derivative/certificate/GAMMA_CERTIFICATE.md`; it does
+not retrospectively alter either terminal Level-4 artifact.

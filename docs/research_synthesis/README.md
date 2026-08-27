@@ -4,14 +4,16 @@
 
 ReBaseGuard is `LEVEL-4-CLOSED`: the terminal ledger contains **17 PASS, 1
 PARTIAL, 0 FAIL, and 0 OPEN**, with **16/16 mandatory requirements passing**.
-The one nonmandatory partial is L4R-13, non-Gaussian robustness. The separate
-rigorous SR local-instability Arb certificate remains an optional open rigor
-upgrade. These facts are mechanically recorded in
+The one nonmandatory partial is L4R-13, non-Gaussian robustness. At that
+terminal closure checkpoint, the separate rigorous SR local-instability Arb
+certificate was an optional open rigor upgrade. These historical facts are
+mechanically recorded in
 `level4/final_level4_closure/results/final_decision.json` and summarized in
 `level4/final_level4_closure/FINAL_REPORT.md`.
 
-The evidence boundary is explicit: **rigorous SR local-instability Arb
-certificate: OPEN**.
+The later, additive post-Level-4 upgrade is now **`SR-GAMMA-CERTIFIED`** for the
+authoritative symmetric two-chart SR detector. It does not change the terminal
+Level-4 ledger or make a detector-independent claim.
 
 ## Central research question
 
@@ -84,9 +86,11 @@ descriptive advantages at `m=70,100`, and P3 equals P1 at saturated `m=100`
 (`level4/closure_proofs/l4r06_policy/results/scientific_findings.json`).
 
 The extension stack is deliberately scoped. The symmetric two-chart SR
-derivative theorem is closed and Lean-supported conditionally, but
-`Gamma_SR>2` is confirmatory numerical evidence and its Arb certificate is
-open. The regular-location-family result gives
+derivative theorem was closed and Lean-supported conditionally at Level 4. A
+later optional Arb upgrade rigorously certified
+`Gamma_SR in [5.800391799508442,28.781285803081492]`, with lower-endpoint margin
+`3.800391799508442` above two, for that authoritative SR model. The
+regular-location-family result gives
 `F'_rho(0)=rho(1-Gamma_f)` under explicit stopped change-of-measure,
 measurability, tail, integrability, and domination assumptions; concrete
 infinite-process obligations remain human-proved. L4R-13 remains partial, so no
@@ -119,7 +123,7 @@ the reported derivative and stability results
 - The random-window theorem yields a protocol-specific `m`-`rho` local-stability
   boundary and the uncertainty-aware P3 reuse policy.
 - SR and location-family results broaden the mechanism under explicit scope;
-  the SR Arb certificate remains open and L4R-13 remains partial.
+  the post-Level-4 SR Arb certificate is closed while L4R-13 remains partial.
 - Semi-real evidence is supportive but regime-dependent, and the mathematical
   crossing produced no detected operational transition under the frozen
   protocol.
@@ -137,8 +141,10 @@ the reported derivative and stability results
 - Evidence locations: [REPOSITORY_MAP.md](REPOSITORY_MAP.md)
 
 Reproduce the terminal closure with
-`bash level4/final_level4_closure/reproduce.sh`. Run the synthesis guard with
-`python3 docs/research_synthesis/verify_synthesis.py`.
+`bash level4/final_level4_closure/reproduce.sh`. Reproduce the separate SR
+upgrade with
+`bash level4/closure_proofs/sr_derivative/certificate/reproduce_closed_upgrade.sh`.
+Run the synthesis guard with `python3 docs/research_synthesis/verify_synthesis.py`.
 
 The terminal closure checkpoint is commit `49cf742` (`Close the frozen Level-4
 campaign mechanically`). Its stored offline reproduction status is `PASS` with
