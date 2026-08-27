@@ -18,17 +18,27 @@ README = ROOT / "README.md"
 BRIEF_MD = ROOT / "docs/research_brief/ReBaseGuard_Research_Brief.md"
 BRIEF_PDF = ROOT / "docs/research_brief/ReBaseGuard_Research_Brief.pdf"
 CITATION = ROOT / "CITATION.cff"
+LICENSE = ROOT / "LICENSE"
+THIRD_PARTY_NOTICES = ROOT / "THIRD_PARTY_NOTICES.md"
+LICENSING_READINESS = ROOT / "docs/releases/LICENSING_READINESS.md"
 AUTHOR = "Jingzhe Su"
 AFFILIATION = "University of Electronic Science and Technology of China"
 SCHOOL = "School of Information and Software Engineering"
 EMAIL = "suzhea0226@gmail.com"
 LEVEL4_TAG_COMMIT = "5e43336264f257c7224b622f8063eb10aad481d6"
 SR_TAG_COMMIT = "b04578810126d3fbc4d938a721481b1e6186b8ce"
+APACHE_2_LICENSE_SHA256 = "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+BRIEF_PDF_SHA256 = "603ec60d070d18d6f3530bd90064b25d78fe57ed6905176f3586d901eeee92af"
 ALLOWED_PATHS = {
     "README.md",
     "CITATION.cff",
+    "LICENSE",
+    "THIRD_PARTY_NOTICES.md",
     "docs/releases/LICENSING_READINESS.md",
     "docs/research_synthesis/PAPER_OUTLINE.md",
+    "docs/superpowers/specs/2026-08-28-license-audit-release-design.md",
+    "docs/superpowers/specs/2026-08-28-public-facing-documentation-upgrade-design.md",
+    "rebaseguard-lean/README.md",
     "scripts/generate_research_brief.py",
     "scripts/verify_academic_presentation.py",
 }
@@ -112,7 +122,11 @@ def check_readme_progressive_disclosure() -> None:
         SCHOOL,
         AFFILIATION,
         EMAIL,
-        "License: not yet specified",
+        "Apache License 2.0",
+        "](LICENSE) only to the extent owned by the licensor",
+        "THIRD_PARTY_NOTICES.md",
+        "retain their respective terms and are excluded",
+        "Citation is scholarly practice, not a condition",
         "CITATION.cff",
         "ReBaseGuard_Research_Brief.pdf",
     )
@@ -143,18 +157,40 @@ def check_author_and_citation() -> None:
         raise VerificationError("CITATION.cff contains unauthorized publication metadata")
 
 
-def check_license_truthfulness() -> None:
-    if any((ROOT / name).exists() for name in ("LICENSE", "LICENSE.md", "LICENSE.txt", "COPYING", "NOTICE")):
-        raise VerificationError("license file appeared without presentation-guard update")
-    readiness = (ROOT / "docs/releases/LICENSING_READINESS.md").read_text(encoding="utf-8")
+def check_license_state() -> None:
+    if not LICENSE.is_file() or sha256(LICENSE) != APACHE_2_LICENSE_SHA256:
+        raise VerificationError("LICENSE is missing or differs from canonical Apache-2.0 bytes")
+    if any((ROOT / name).exists() for name in ("LICENSE.md", "LICENSE.txt", "COPYING", "NOTICE")):
+        raise VerificationError("unexpected alternative license or NOTICE file")
+    public_text = "\n".join(
+        path.read_text(encoding="utf-8")
+        for path in (README, BRIEF_MD, LICENSING_READINESS)
+    )
+    if "License: not yet specified" in public_text:
+        raise VerificationError("obsolete unlicensed presentation remains")
+    notices = re.sub(r"\s+", " ", THIRD_PARTY_NOTICES.read_text(encoding="utf-8"))
     for marker in (
-        "License: not yet specified",
+        "third-party dependencies",
+        "CC BY 4.0",
+        "OpenML",
+        "not redistributed",
+        "bibliographic metadata",
+        "abstracts",
+        "excluded from the Apache-2.0 grant",
+    ):
+        if marker not in notices:
+            raise VerificationError(f"third-party notice marker missing: {marker}")
+    readiness = re.sub(r"\s+", " ", LICENSING_READINESS.read_text(encoding="utf-8"))
+    for marker in (
+        "Apache License 2.0",
+        "only to the extent owned by the licensor",
         "Source code",
         "Documentation and prose",
         "Figures",
         "Formal proofs and certificates",
         "Third-party datasets and derived evidence",
-        "does not grant permission",
+        "No CC BY license is granted",
+        "No evidence found by this audit requires an Apache `NOTICE` file",
     ):
         if marker not in readiness:
             raise VerificationError(f"licensing-readiness marker missing: {marker}")
@@ -162,7 +198,7 @@ def check_license_truthfulness() -> None:
 
 def check_brief() -> None:
     markdown = BRIEF_MD.read_text(encoding="utf-8")
-    for marker in (AUTHOR, SCHOOL, AFFILIATION, EMAIL, "not a peer-reviewed publication", "## 1. Problem", "## 6. Negative result", "## 8. Limitations", "## 9. Reproducibility and repository", "0/4", "4/4", "License: not yet specified"):
+    for marker in (AUTHOR, SCHOOL, AFFILIATION, EMAIL, "not a peer-reviewed publication", "## 1. Problem", "## 6. Negative result", "## 8. Limitations", "## 9. Reproducibility and repository", "0/4", "4/4", "original ReBaseGuard material is Apache-2.0", "THIRD_PARTY_NOTICES.md"):
         if marker not in markdown:
             raise VerificationError(f"Research Brief marker missing: {marker}")
     images = re.findall(r"!\[[^]]+]\(([^)]+)\)", markdown)
@@ -177,6 +213,8 @@ def check_brief() -> None:
     pages = len(re.findall(rb"/Type\s*/Page\b", data))
     if not 2 <= pages <= 4:
         raise VerificationError(f"Research Brief PDF has {pages} pages, expected 2-4")
+    if sha256(BRIEF_PDF) != BRIEF_PDF_SHA256:
+        raise VerificationError("Research Brief PDF deterministic hash mismatch")
 
 
 def check_claim_firewall() -> None:
@@ -230,7 +268,7 @@ def validate_changed_paths(paths: list[str]) -> None:
 def verify(*, base: str = BASE_COMMIT, check_diff: bool = True) -> None:
     check_readme_progressive_disclosure()
     check_author_and_citation()
-    check_license_truthfulness()
+    check_license_state()
     check_brief()
     check_claim_firewall()
     check_links_and_figures()
@@ -250,7 +288,7 @@ def main() -> int:
         print(f"ACADEMIC PRESENTATION VERIFICATION FAILED: {exc}", file=sys.stderr)
         return 1
     print("ACADEMIC PRESENTATION VERIFICATION OK")
-    print("science_first=true author=Jingzhe_Su citation=true license=not_yet_specified")
+    print("science_first=true author=Jingzhe_Su citation=true license=Apache-2.0")
     print("research_brief=2-4_pages figures=4 claims=scoped history=intact")
     return 0
 

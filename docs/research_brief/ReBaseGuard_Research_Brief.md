@@ -153,4 +153,6 @@ at tag `rebaseguard-sr-gamma-certified`.
 Repository: https://github.com/flaggielover/ReBaseGuard
 Research synthesis: `docs/research_synthesis/README.md`
 Citation metadata: `CITATION.cff`
-License: not yet specified; see `docs/releases/LICENSING_READINESS.md`.
+License: original ReBaseGuard material is Apache-2.0 to the extent owned by the
+licensor; third-party material is excluded. See `LICENSE` and
+`THIRD_PARTY_NOTICES.md`.

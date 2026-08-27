@@ -21,6 +21,18 @@ def test_current_diff_is_presentation_only() -> None:
     VERIFY.validate_changed_paths(VERIFY.changed_paths(VERIFY.BASE_COMMIT))
 
 
+def test_canonical_apache_license_is_pinned() -> None:
+    assert VERIFY.sha256(VERIFY.LICENSE) == VERIFY.APACHE_2_LICENSE_SHA256
+
+
+def test_guard_rejects_modified_license(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    modified = tmp_path / "LICENSE"
+    modified.write_bytes(VERIFY.LICENSE.read_bytes() + b"modified\n")
+    monkeypatch.setattr(VERIFY, "LICENSE", modified)
+    with pytest.raises(VERIFY.VerificationError, match="canonical Apache-2.0"):
+        VERIFY.check_license_state()
+
+
 @pytest.mark.parametrize(
     "path",
     [
@@ -41,6 +53,8 @@ def test_guard_accepts_expected_presentation_paths() -> None:
         [
             "README.md",
             "CITATION.cff",
+            "LICENSE",
+            "THIRD_PARTY_NOTICES.md",
             "docs/releases/LICENSING_READINESS.md",
             "docs/research_brief/ReBaseGuard_Research_Brief.md",
             "docs/research_brief/ReBaseGuard_Research_Brief.pdf",

@@ -126,13 +126,21 @@ result. At the original Level-4 closure, the optional SR Arb certificate
 remained open and was closed later as `SR-GAMMA-CERTIFIED`; future work is
 limited to new scoped extensions such as the remaining non-Gaussian question.
 
-## Author, citation, and license
+## Author and citation
 
 **Jingzhe Su (苏靖哲)** · School of Information and Software Engineering ·
 University of Electronic Science and Technology of China ·
 [suzhea0226@gmail.com](mailto:suzhea0226@gmail.com)
 
 Use [CITATION.cff](CITATION.cff) and the relevant immutable release tag when
-citing a snapshot. **License: not yet specified.** See the
-[licensing-readiness audit](docs/releases/LICENSING_READINESS.md); no reuse
-permission or institutional endorsement is implied.
+citing a snapshot. Citation is scholarly practice, not a condition of the
+Apache License 2.0. No institutional endorsement is implied.
+
+## License
+
+Original ReBaseGuard software, formalizations, proof and certificate
+implementations, documentation, and figures are licensed under the
+[Apache License 2.0](LICENSE) only to the extent owned by the licensor.
+Third-party dependencies, datasets, bibliographic records, and source-derived
+portions retain their respective terms and are excluded from that grant. See
+[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for the audited boundaries.

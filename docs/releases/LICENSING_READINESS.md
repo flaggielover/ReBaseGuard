@@ -1,60 +1,76 @@
 # ReBaseGuard licensing readiness
 
-## Current status
+## Current decision
 
-**License: not yet specified.** No root `LICENSE`, `COPYING`, or `NOTICE` file
-exists, and the GitHub repository reports no detected license. Copyright
-defaults therefore apply. This audit records presentation-layer readiness; it
-does not grant permission or provide legal advice.
+Original ReBaseGuard material is licensed under **Apache License 2.0** only to
+the extent owned by the licensor. The canonical grant is the root `LICENSE`.
+Third-party dependencies, datasets, bibliographic records, abstracts, and
+source-derived portions are excluded and remain under their respective terms;
+the repository boundary is documented in `THIRD_PARTY_NOTICES.md`.
+
+This is a repository-governance record, not legal advice. Citation guidance in
+`CITATION.cff` is scholarly practice and does not add a licensing condition.
+
+## Rights confirmation and limits
+
+Jingzhe Su confirmed that the Git author identities `SuZhe`, `suzhe`, and `苏浙`
+are his, and that, to the best of his knowledge, he has authority to license
+the original ReBaseGuard material he owns and authored. He reported no known
+university, employer, contributor, or other agreement restricting that grant.
+AI-assisted coauthor trailers do not identify separate human contributors or
+ownership claims.
+
+That confirmation does not cover third-party dependencies, datasets, external
+abstracts or metadata, externally sourced material, or any content not owned
+by the licensor. The Apache-2.0 grant does not relicense any such material.
 
 ## Rights and provenance inventory
 
-| Material | Current evidence | Readiness boundary |
+| Material | Licensing treatment | Evidence boundary |
 |---|---|---|
-| Source code | Repository history identifies project-authored implementations, but no file-level license grant or complete contributor rights statement exists. | Confirm ownership and contributor authority before selecting MIT, Apache-2.0, or another code license. |
-| Documentation and prose | Project-authored Markdown is tracked without an explicit reuse license. Some novelty-audit JSON contains third-party titles and abstracts as research metadata. | Confirm rights in original prose and keep quoted/abstract metadata within source-specific terms; a future documentation license must not relicense third-party text. |
-| Figures | Final figures are deterministic derivatives of repository evidence and appear project-authored; their provenance is recorded in `figures/final/manifest.json`. | Confirm rights in every source/input before considering CC BY 4.0 or another figure/documentation license. |
-| Formal proofs and certificates | Lean sources, certificate programs, JSON enclosures, and reports are tracked as project artifacts without an explicit license. They also depend on separately licensed tools and libraries. | Decide whether these follow the code license, documentation license, or an explicit split; do not imply third-party tool licenses cover project artifacts. |
-| Third-party datasets and derived evidence | Raw public downloads are not tracked in the reviewed external-validation trees. V2 and V3 manifests record UCI sources as CC BY 4.0; Stage E records source URLs and hashes but not a complete license field for every source. Derived JSON and figures are tracked. | Preserve source attribution, verify each dataset's terms at the authoritative source, and determine whether derived artifacts trigger attribution or redistribution obligations. |
+| Source code | Original ReBaseGuard code is Apache-2.0 to the extent owned. | External packages are dependencies, not relicensed project code. |
+| Documentation and prose | Original ReBaseGuard prose is Apache-2.0 to the extent owned. | External titles, metadata, abstracts, quotations, and source-derived portions retain source terms. |
+| Figures | Original selection, arrangement, and rendering are Apache-2.0 to the extent owned. | Underlying third-party data or content remains excluded. Figure provenance is recorded in `figures/final/manifest.json`. |
+| Formal proofs and certificates | Original Lean sources and proof/certificate implementations are Apache-2.0 to the extent owned. | Lean, Mathlib, Python, FLINT/Arb, and other tools retain their own licenses. Scientific verification boundaries are unchanged. |
+| Third-party datasets and derived evidence | Original ReBaseGuard analysis and presentation are covered only to the extent owned. | Dataset content and source-derived portions retain source-specific terms; raw downloads are not redistributed. |
 
-## Third-party dependency boundary
+## Why Apache-2.0
 
-The repository uses Python, NumPy, SciPy, Matplotlib, PyArrow, pytest,
-python-flint/FLINT-Arb, Lean, Lake, and Mathlib-related packages. Their licenses
-govern those dependencies, not ReBaseGuard automatically. No tracked
-third-party notice aggregation currently exists. A release license decision
-should be accompanied by a dependency and notice review.
+Apache-2.0 is a permissive license with an express patent grant, contribution
+terms, warranty disclaimer, and redistribution conditions suited to a mixed
+research-software, formalization, and documentation repository.
 
-## Dataset evidence found
+- MIT is shorter and permissive, but lacks Apache-2.0's express patent grant
+  and contribution framework.
+- BSD-3-Clause is permissive and includes a non-endorsement clause, but also
+  lacks Apache-2.0's express patent grant and contribution terms.
+- A split Apache/CC BY scheme was considered and rejected. Applying one license
+  to original code, prose, and figures avoids an ongoing classification burden
+  for mixed reports, generated figures, and research-software documentation.
 
-- `level4/closure_proofs/external_validation_v2/data_manifest/datasets.json`
-  records its selected UCI sources under CC BY 4.0.
-- `level4/closure_proofs/external_validation_v3/manifests/datasets.json`
-  records MetroPT-3 and Online Retail II under CC BY 4.0, with UCI identifiers
-  and source URLs.
-- `level4/stage_e/notes/DATA_PROVENANCE.md` records OpenML/UCI source URLs and
-  hashes, but the presentation audit did not find a complete per-source license
-  inventory there.
-- Novelty-audit records include bibliographic metadata and abstracts obtained
-  from external indexes. Those records should not be treated as relicensed
-  project prose.
+No CC BY license is granted for original ReBaseGuard prose or figures.
 
-## Decisions required before licensing
+## Third-party boundary and notices
 
-1. Confirm Jingzhe Su's authority to license the original code, prose, figures,
-   proofs, and certificates, including any university, employer, or contributor
-   obligations.
-2. Complete a file-level provenance review for copied, adapted, generated, or
-   externally sourced material.
-3. Verify and document dataset licenses and attribution requirements, including
-   Stage E and any derived-data implications.
-4. Choose whether to use one license or a split scheme. A possible future
-   scheme is MIT or Apache-2.0 for code and CC BY 4.0 for original
-   documentation/figures, but this audit does **not** authorize or recommend a
-   final selection without the preceding rights review.
-5. Add the selected license text, a scope statement, third-party notices, and
-   dataset attributions together; then update README and release metadata.
+The audit found no tracked vendored dependency tree. Python, Lean, Mathlib,
+NumPy, SciPy, Matplotlib, PyArrow, pytest, python-flint/FLINT-Arb, and related
+packages remain governed by their own licenses.
 
-Until those decisions are complete, the accurate public statement is:
+The repository records UCI datasets under CC BY 4.0 in the V2 and V3 external
+validation manifests. Stage E records UCI CC BY 4.0 inputs and an OpenML Elec2
+source subject to source-specific terms; raw files are fetched into a
+gitignored cache and are not redistributed. Novelty-audit records contain
+externally sourced publication titles, bibliographic metadata, and abstracts.
+These categories are described in `THIRD_PARTY_NOTICES.md` and are excluded
+from the repository-level Apache-2.0 grant.
 
-> License: not yet specified.
+No evidence found by this audit requires an Apache `NOTICE` file, so none is
+added. If a future contribution, vendored component, or upstream notice creates
+such an obligation, the release materials must be revisited.
+
+## Release state
+
+The governance migration consists of the canonical `LICENSE`, the scoped
+`THIRD_PARTY_NOTICES.md`, consistent public presentation, and fail-closed guard
+coverage. It does not alter any scientific claim, theorem, certificate,
+experiment, result, historical failure, or closure decision.
