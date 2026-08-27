@@ -23,6 +23,7 @@ from certify_global_residual_a import (  # noqa: E402
     geometry_and_algebra_checks,
 )
 from audit_global_residual_a import audit_document  # noqa: E402
+from audit_global_residual_b import audit_document as audit_b_document  # noqa: E402
 from sr_bernstein import bernstein_absolute_bound  # noqa: E402
 from taylor_model import Model  # noqa: E402
 
@@ -247,3 +248,46 @@ def test_global_a_audit_fails_when_patch_exceeds_budget():
     document["patches"]["p00_m00"]["certified_residual_a"] = "6e-6"
     with pytest.raises(ArithmeticError, match="component sum does not overlap residual"):
         audit_document(document)
+
+
+def test_global_b_certificate_passes_independent_audit():
+    document = json.loads((RESULTS / "sr_residual_global_b.json").read_text())
+    result = audit_b_document(document)
+    assert result["status"] == "AUDIT_PASS"
+    assert result["audited_patches"] == 1210
+    assert arb(result["gamma_interval"]["lower_endpoint_enclosure"]).lower() > 2
+
+
+def test_global_b_audit_fails_on_missing_patch():
+    document = json.loads((RESULTS / "sr_residual_global_b.json").read_text())
+    document["patches"].pop("p00_m00")
+    with pytest.raises(ValueError, match="patch cover mismatch"):
+        audit_b_document(document)
+
+
+def test_global_b_audit_fails_on_sampled_grid_metadata():
+    document = json.loads((RESULTS / "sr_residual_global_b.json").read_text())
+    document["patches"]["p00_m00"]["sampled_grid_used"] = True
+    with pytest.raises(ValueError, match="sampled grid used"):
+        audit_b_document(document)
+
+
+def test_global_b_audit_fails_on_omitted_tail_accounting():
+    document = json.loads((RESULTS / "sr_residual_global_b.json").read_text())
+    document["gaussian_accounting"].pop("omitted_tail_bound")
+    with pytest.raises(ValueError, match="Gaussian tail accounting"):
+        audit_b_document(document)
+
+
+def test_global_b_audit_fails_when_patch_exceeds_budget():
+    document = json.loads((RESULTS / "sr_residual_global_b.json").read_text())
+    document["patches"]["p00_m00"]["certified_residual_b"] = "6e-3"
+    with pytest.raises(ArithmeticError, match="component sum does not overlap residual"):
+        audit_b_document(document)
+
+
+def test_global_b_audit_fails_when_gamma_propagation_is_overclaimed():
+    document = json.loads((RESULTS / "sr_residual_global_b.json").read_text())
+    document["propagation"]["gamma_interval"]["lower_endpoint_enclosure"] = "1"
+    with pytest.raises(ArithmeticError, match="Gamma interval endpoint disagrees"):
+        audit_b_document(document)
