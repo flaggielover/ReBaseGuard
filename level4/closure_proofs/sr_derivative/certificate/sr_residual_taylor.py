@@ -53,6 +53,43 @@ def _integrand_a(
     return half_width * candidate * gaussian_density(z)
 
 
+def _integrand_b(
+    coefficients_a: list[list[int]],
+    coefficients_b: list[list[int]],
+    scale_bits: int,
+    live_max: arb,
+    log_a: arb,
+    y_plus: Model,
+    y_minus: Model,
+    t: Model,
+) -> Model:
+    """Continuation integrand for ``b-Kb-K_z a-r_b`` cancellation.
+
+    Since the total second Gaussian moment is one, the terminal reward is
+    represented as ``1 - integral_continuation z^2 phi(z) dz``.  Thus the
+    complete residual is ``b(y)-1-integral (b(q)+z*a(q)-z^2) phi(z) dz``.
+    """
+
+    variables = y_plus.variables
+    order = y_plus.order
+    half = arb(1) / arb(2)
+    midpoint = (y_minus - y_plus).scale(half)
+    half_width = _constant(log_a + half, variables, order) - (
+        y_plus + y_minus
+    ).scale(half)
+    z = midpoint + half_width * t
+    q_plus = softplus(y_plus + z - _constant(half, variables, order))
+    q_minus = softplus(y_minus - z - _constant(half, variables, order))
+    candidate_a = evaluate_candidate(
+        coefficients_a, scale_bits, live_max, q_plus, q_minus
+    )
+    candidate_b = evaluate_candidate(
+        coefficients_b, scale_bits, live_max, q_plus, q_minus
+    )
+    continuation = candidate_b + z * candidate_a - z * z
+    return half_width * continuation * gaussian_density(z)
+
+
 def _state_candidate_a(
     coefficients_a: list[list[int]],
     scale_bits: int,
@@ -62,6 +99,18 @@ def _state_candidate_a(
 ) -> Model:
     return evaluate_candidate(
         coefficients_a, scale_bits, live_max, y_plus, y_minus
+    )
+
+
+def _state_candidate_b(
+    coefficients_b: list[list[int]],
+    scale_bits: int,
+    live_max: arb,
+    y_plus: Model,
+    y_minus: Model,
+) -> Model:
+    return evaluate_candidate(
+        coefficients_b, scale_bits, live_max, y_plus, y_minus
     )
 
 

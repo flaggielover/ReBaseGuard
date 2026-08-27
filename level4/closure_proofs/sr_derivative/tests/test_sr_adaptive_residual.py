@@ -168,6 +168,37 @@ def test_parent_patch_pilot_records_state_width_blocker():
         assert patch["final_intervals"] == 256
 
 
+def test_representative_b_patch_pilots_close_with_exact_innovation_cover():
+    result = json.loads(
+        (RESULTS / "sr_residual_adaptive_b_pilots.json").read_text()
+    )
+    assert result["status"] == "B_PILOT_GATES_PASS"
+    assert result["global_reachable_cover_complete"] is False
+    assert all(result["checks"].values())
+    target = arb(5) / arb(1_000)
+    for patch in result["patches"].values():
+        assert patch["status"] == "PATCH_CERTIFIED"
+        assert patch["exact_innovation_cover"] is True
+        assert patch["sampled_grid_used"] is False
+        assert arb(patch["certified_residual_b"]) < target
+        component_sum = (
+            arb(patch["polynomial_bernstein"])
+            + arb(patch["direct_remainder"])
+            + arb(patch["integration_remainder"])
+        )
+        assert component_sum.overlaps(arb(patch["certified_residual_b"]))
+
+
+def test_candidate_b_is_exactly_symmetric():
+    candidate = json.loads((RESULTS / "arb_candidate.json").read_text())
+    coefficient_b = candidate["b"]
+    assert all(
+        coefficient_b[i][j] == coefficient_b[j][i]
+        for i in range(len(coefficient_b))
+        for j in range(len(coefficient_b))
+    )
+
+
 def test_global_fundamental_cover_enumeration_is_exact_and_unique():
     cover = cells()
     assert len(cover) == EXPECTED_FUNDAMENTAL_CELLS == 1210
