@@ -152,14 +152,21 @@ change-of-measure proof.
 
 - **Derivative theorem:** CLOSED; HUMAN THEOREM + conditional LEAN-CHECKED
   proof spine.
-- **`Gamma_SR>2`:** CONFIRMATORY NUMERICAL. Route A reports
-  `17.2913209 +/- 0.0275686`.
-- **Rigorous SR local-instability Arb certificate:** OPEN. The Arb attempt did
-  not close global residual and resolvent bounds.
+- **At terminal Level-4 closure:** `Gamma_SR>2` had CONFIRMATORY NUMERICAL
+  support; the rigorous Arb certificate remained `OPEN`.
+- **Current post-Level-4 status:** ARB-CERTIFIED. The later optional upgrade
+  gives `Gamma_SR in [5.800391799508442,28.781285803081492]`, with rigorous
+  lower-endpoint margin `3.800391799508442` above two. Combined with the closed
+  derivative theorem, this makes zero locally linearly repelling at full reuse
+  for the authoritative symmetric two-chart SR deterministic mean map.
+- **Boundary:** the certificate is SR-model-specific and local/deterministic;
+  it does not establish stochastic operational instability or a result for
+  arbitrary SR variants.
 - **Sources:** `level4/closure_proofs/sr_derivative/THEOREM.md`,
   `level4/closure_proofs/sr_derivative/FINAL_REPORT.md`,
-  `level4/closure_proofs/sr_derivative/results/decision.json`, and
-  `level4/closure_proofs/sr_derivative/ARBITRARY_PRECISION_ATTEMPT.md`.
+  `level4/closure_proofs/sr_derivative/results/decision.json`,
+  `level4/closure_proofs/sr_derivative/ARBITRARY_PRECISION_ATTEMPT.md`, and
+  `level4/closure_proofs/sr_derivative/certificate/GAMMA_CERTIFICATE.md`.
 
 ## Theorem 7 — regular location-family derivative
 

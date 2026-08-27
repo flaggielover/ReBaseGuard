@@ -25,8 +25,8 @@ Evidence labels state what supports a claim; they are not interchangeable.
 | D4 `m`-`rho` map | HUMAN THEOREM consequence + CONFIRMATORY NUMERICAL | Protocol-specific deterministic local stability | `level4/closure_proofs/d4_phase_map/results/decision.json` |
 | P3 policy result | CONFIRMATORY NUMERICAL + INTERPRETATION | Frozen CUSUM regimes and primary decision family | `level4/closure_proofs/l4r06_policy/results/scientific_findings.json` |
 | SR derivative identity | HUMAN THEOREM + LEAN-CHECKED conditional spine + CONFIRMATORY NUMERICAL correspondence | Authoritative symmetric two-chart SR, `m=1` | `level4/closure_proofs/sr_derivative/results/decision.json` |
-| `Gamma_SR>2` | CONFIRMATORY NUMERICAL | Not Arb-certified | `level4/closure_proofs/sr_derivative/FINAL_REPORT.md` |
-| Rigorous SR local instability | OPEN | Optional Arb upgrade outside the original 18 rows | `level4/closure_proofs/sr_derivative/ARBITRARY_PRECISION_ATTEMPT.md` |
+| `Gamma_SR>2` | ARB-CERTIFIED in a post-Level-4 optional upgrade | Authoritative symmetric two-chart SR only; the original Level-4 record remains numerical/open | `level4/closure_proofs/sr_derivative/certificate/GAMMA_CERTIFICATE.md` |
+| Rigorous SR local instability | HUMAN THEOREM consequence of LEAN-CHECKED + ARB-CERTIFIED components | Deterministic conditional-mean map, local, `m=1,rho=1`; not operational or detector-general | `level4/closure_proofs/sr_derivative/certificate/GAMMA_CERTIFICATE.md`; `level4/closure_proofs/sr_derivative/THEOREM.md` |
 | Regular location-family derivative | HUMAN THEOREM + LEAN-CHECKED conditional spine + CONFIRMATORY NUMERICAL t3 correspondence | Explicit regularity and stopped analytic hypotheses | `level4/closure_proofs/location_family_track3ab/results/decision.json` |
 | Operational-crossing answer | NEGATIVE RESULT | Frozen Gaussian CUSUM, grid, shifts, four metrics, 20,000 replicates | `level4/closure_proofs/l4r12_operational_crossing/results/evidence_assessment.json` |
 | External validation | SEMI-REAL EMPIRICAL | Public sequential streams; task-level and regime-dependent | `level4/closure_proofs/external_validation_v3/CROSS_CAMPAIGN_AGGREGATION.md` |
@@ -35,7 +35,9 @@ Evidence labels state what supports a claim; they are not interchangeable.
 
 ## Load-bearing separations
 
-Lean does not certify the value of `Gamma_CUSUM`; Arb does not prove
-differentiation under the expectation. SR's numerical lower confidence bound is
-not an Arb enclosure. Semi-real task support is not deployment evidence. A
-negative operational-crossing result is not a universal impossibility theorem.
+Lean does not certify the value of either gain; Arb does not prove
+differentiation under the expectation. The post-Level-4 SR Arb enclosure is
+distinct from the earlier confirmatory numerical interval. Deterministic
+stability analysis does not establish stochastic operational behavior.
+Semi-real task support is not deployment evidence. A negative
+operational-crossing result is not a universal impossibility theorem.

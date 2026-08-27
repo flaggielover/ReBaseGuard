@@ -25,8 +25,9 @@ Stopping-selected recursive re-baselining mechanism
 │
 ├── Cross-detector extension
 │   └── symmetric two-chart SR derivative theorem CLOSED
-│       ├── Gamma_SR>2 confirmatory numerical
-│       └── rigorous SR Arb certificate OPEN
+│       └── post-Level-4 Arb Gamma_SR>2 certificate
+│           └── local repulsion at full reuse for authoritative SR mean map
+│               └── no stochastic operational or detector-general conclusion
 │
 ├── Distributional extension
 │   └── regular location-family theorem
@@ -49,7 +50,8 @@ Stopping-selected recursive re-baselining mechanism
 | `m>1` derivative | ordinary alarm `tau`, random window, short-cycle correction, conditional differentiation | Stage-A minimum-dwell theorem |
 | D4 boundary | `m>1` theorem + numerical `GammaTilde_m` map | abrupt operational transition |
 | P3 | D4 lower 95% boundary + frozen 0.8 margin + monitoring campaign | universal safety or optimality |
-| SR derivative | SR-specific stopping functional, tails, stopped score, reflection | Arb-certified `Gamma_SR>2` |
+| SR derivative | SR-specific stopping functional, tails, stopped score, reflection | a numerical value of `Gamma_SR` without the separate certificate |
+| SR local instability | SR derivative theorem + post-Level-4 Arb lower bound above two | stochastic operational instability or arbitrary SR variants |
 | location-family theorem | common-support regularity and explicit stopped analytic hypotheses | distribution-free validity |
 | external validation | frozen task-level semi-real protocols | production deployment |
 | negative crossing | resolved frozen grid and four preselected metrics | universal absence of operational effects |

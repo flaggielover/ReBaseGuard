@@ -44,9 +44,11 @@ secondary unfavorable outcomes, and `m=100` saturation.
 
 ## 8. Cross-detector and location-family extensions
 
-Present the SR theorem and its three-part evidence status. Then state the
-regular location-family theorem, Gaussian reduction, and concrete human/Lean
-boundary. Do not use L4R-13 to imply general non-Gaussian closure.
+Present the SR derivative theorem, the historically later Arb certificate, and
+the scoped local-instability consequence as separate proof obligations. Then
+state the regular location-family theorem, Gaussian reduction, and concrete
+human/Lean boundary. Do not use either cross-detector result or L4R-13 to imply
+general non-Gaussian closure.
 
 ## 9. Semi-real validation
 
@@ -69,7 +71,8 @@ approved search-scope wording.
 
 ## 12. Limitations
 
-Cover L4R-13, the open SR Arb upgrade, deterministic/stochastic separation,
+Cover L4R-13, the historical/current SR certificate distinction,
+deterministic/stochastic separation,
 location-family hypotheses, regime dependence, semi-real status, and novelty
 coverage.
 
@@ -92,8 +95,8 @@ and negative result, not with a universal safety or novelty claim.
   enclosure, and replay.
 - **C. `m>1` proof:** random-window definition, correction, human proof, Lean
   spine, correspondence.
-- **D. SR proof:** forcing tail, stopped change of measure, reflection, Lean,
-  and open Arb attempt.
+- **D. SR proof and certificate:** forcing tail, stopped change of measure,
+  reflection, Lean, historical open attempt, and post-Level-4 Arb closure.
 - **E. Location-family proof:** score convention, hypotheses, Gaussian
   specialization, t3 correspondence, remaining obligations.
 - **F. Extra simulations:** historical numerical diagnostics and unfavorable

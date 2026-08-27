@@ -4,6 +4,11 @@ This checklist records the release gate for tag
 `rebaseguard-level4-closed`. Evidence-producing commands are listed beside each
 item; the scientific state is read-only throughout.
 
+> **Post-release note (2026-08-27):** This checklist records the original
+> Level-4 release gate. Its historically correct SR `OPEN` item was later closed
+> by a separate optional upgrade; see
+> `docs/releases/SR_GAMMA_CERTIFIED_RELEASE_CHECKLIST.md`.
+
 - [x] `LEVEL-4-CLOSED` unchanged — terminal decision assertion in
   `verify_publication_release.py`
 - [x] `17 PASS / 1 PARTIAL / 0 FAIL / 0 OPEN` unchanged — terminal decision

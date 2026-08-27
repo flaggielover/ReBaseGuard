@@ -13,18 +13,21 @@
 | Novelty scope | Limitation | N2 reflects documented sources and unavailable-index constraints; it is not absolute novelty or priority. | `level4/closure_proofs/novelty_verification/LIMITATIONS.md`; `level4/closure_proofs/novelty_verification/FINAL_REPORT.md` |
 | Deterministic/stochastic gap | Limitation | Local multipliers and the period-2 certificate concern a conditional-mean skeleton, not the noisy chain's invariant law. | `level4/reports/STAGE_B_LEDGER.md`; `level4/closure_proofs/d4_phase_map/OPERATIONAL_BRIDGE.md` |
 
-## Optional rigor upgrade
+## Completed optional rigor upgrade
 
-### Rigorous SR local-instability Arb certificate — OPEN
+### Rigorous SR local-instability Arb certificate — `SR-GAMMA-CERTIFIED`
 
-The SR derivative theorem is closed and `Gamma_SR>2` has confirmatory numerical
-support, but no global Arb enclosure with lower endpoint above two was obtained.
-The attempted degree-16 route did not close a global patch cover, residual
-suprema, resolvent bound, and final propagated enclosure. This optional item is
-outside the original 18-row ledger and does not block `LEVEL-4-CLOSED`.
+At terminal Level-4 closure, the SR derivative theorem was closed,
+`Gamma_SR>2` had confirmatory numerical support, and the optional Arb upgrade
+remained `OPEN`. The later additive upgrade closed the global degree-16 patch
+covers, residual suprema, resolvent bound, and propagated enclosure. It now
+certifies `Gamma_SR in [5.800391799508442,28.781285803081492]` for the
+authoritative symmetric two-chart SR model. This changes no original ledger row
+and does not broaden the detector or operational scope.
 
-Sources: `level4/closure_proofs/sr_derivative/ARBITRARY_PRECISION_ATTEMPT.md` and
-`level4/final_level4_closure/OPEN_ITEMS.md`.
+Historical sources: `level4/closure_proofs/sr_derivative/ARBITRARY_PRECISION_ATTEMPT.md`
+and `level4/final_level4_closure/OPEN_ITEMS.md`. Current certificate:
+`level4/closure_proofs/sr_derivative/certificate/GAMMA_CERTIFICATE.md`.
 
 ## Level-4+ future work
 

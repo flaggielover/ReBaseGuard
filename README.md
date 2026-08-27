@@ -2,7 +2,8 @@
 
 **Stopping-selected recursive re-baselining in repeated sequential monitoring.**
 
-**Research status: `LEVEL-4-CLOSED` · 16/16 mandatory requirements passed**
+**Research status: `LEVEL-4-CLOSED` · 16/16 mandatory requirements passed ·
+post-Level-4 `SR-GAMMA-CERTIFIED`**
 
 “Level 4” is an internally frozen research-program closure criterion, not an
 external academic certification. The terminal ledger contains **17 PASS, 1
@@ -56,9 +57,11 @@ instability of the monitoring process.
   not establish period-two behavior for the noisy stochastic chain.
 - The random-window \(m>1\) theorem includes the exact short-cycle correction
   and yields a protocol-specific \(m\)-\(\rho\) local-stability boundary.
-- The symmetric two-chart SR derivative theorem is closed. Its
-  \(\Gamma_{\mathrm{SR}}>2\) result is confirmatory numerical evidence; the
-  corresponding rigorous Arb certificate remains open.
+- The symmetric two-chart SR derivative theorem was closed at Level 4. A later
+  optional rigor upgrade Arb-certified
+  \(\Gamma_{\mathrm{SR}}\in[5.800391799508442,28.781285803081492]\), whose
+  lower endpoint exceeds two by \(3.800391799508442\), for the authoritative
+  symmetric two-chart SR detector.
 - The derivative form extends to regular common-support location families
   under explicit analytic hypotheses; L4R-13 non-Gaussian robustness remains
   nonmandatory partial.
@@ -83,7 +86,7 @@ separate these conclusions and their assumptions.
 | Random-window \(m>1\) derivative | Human theorem + conditional Lean-checked spine | [Track-1B theorem](level4/closure_proofs/m_gt_1_track1b/THEOREM.md) |
 | D4 \(m\)-\(\rho\) boundary | Theorem consequence + confirmatory numerical | [D4 report](level4/closure_proofs/d4_phase_map/FINAL_REPORT.md) |
 | SR derivative | Human theorem + conditional Lean-checked spine | [SR report](level4/closure_proofs/sr_derivative/FINAL_REPORT.md) |
-| \(\Gamma_{\mathrm{SR}}>2\) | Confirmatory numerical; Arb certificate open | [SR precision attempt](level4/closure_proofs/sr_derivative/ARBITRARY_PRECISION_ATTEMPT.md) |
+| \(\Gamma_{\mathrm{SR}}>2\) | Post-Level-4 Arb-certified | [SR Gamma certificate](level4/closure_proofs/sr_derivative/certificate/GAMMA_CERTIFICATE.md) |
 | Location-family derivative | Human theorem + conditional Lean-checked spine | [Location-family theorem](level4/closure_proofs/location_family_track3ab/THEOREM.md) |
 | External validation | Semi-real empirical | [Cross-campaign aggregation](level4/closure_proofs/external_validation_v3/CROSS_CAMPAIGN_AGGREGATION.md) |
 | Operational crossing | Negative result | [L4R-12 report](level4/closure_proofs/l4r12_operational_crossing/FINAL_REPORT.md) |
@@ -135,10 +138,16 @@ grid, shifts, and monitored metrics.
 
 From a normal Git clone on a Unix-like system with Bash, Python 3, Git, the
 repository’s Python environments, Lean/Lake, and FLINT/Arb available as
-documented, run the authoritative offline terminal reproducer:
+documented, reproduce the historical terminal Level-4 closure with:
 
 ```bash
 bash level4/final_level4_closure/reproduce.sh
+```
+
+Reproduce the separate post-Level-4 SR rigor upgrade with:
+
+```bash
+bash level4/closure_proofs/sr_derivative/certificate/reproduce_closed_upgrade.sh
 ```
 
 It verifies protected hashes, frozen decisions, the requirement ledger,
@@ -166,6 +175,8 @@ Figure hashes and exact evidence paths are recorded in
 | Random-window \(m>1\) theorem | [m_gt_1_track1b/](level4/closure_proofs/m_gt_1_track1b/) |
 | D4 local-stability map | [d4_phase_map/](level4/closure_proofs/d4_phase_map/) |
 | SR theorem and evidence boundary | [sr_derivative/](level4/closure_proofs/sr_derivative/) |
+| Post-Level-4 SR Gamma certificate | [GAMMA_CERTIFICATE.md](level4/closure_proofs/sr_derivative/certificate/GAMMA_CERTIFICATE.md) |
+| SR upgrade release and archive provenance | [SR release notes](docs/releases/SR_GAMMA_CERTIFIED_RELEASE_NOTES.md) |
 | Location-family theorem | [location_family_track3ab/](level4/closure_proofs/location_family_track3ab/) |
 | P3 policy | [l4r06_policy/](level4/closure_proofs/l4r06_policy/) |
 | External validation | [external_validation_v3/](level4/closure_proofs/external_validation_v3/) |
@@ -176,8 +187,9 @@ Figure hashes and exact evidence paths are recorded in
 
 - L4R-13, the stronger non-Gaussian robustness requirement, remains
   `PARTIAL` and nonmandatory.
-- The rigorous SR local-instability Arb certificate remains `OPEN`;
-  \(\Gamma_{\mathrm{SR}}>2\) is numerical evidence only.
+- At terminal Level-4 closure, the optional rigorous SR Arb certificate was
+  `OPEN`; it was subsequently closed as `SR-GAMMA-CERTIFIED`. This does not
+  broaden the result beyond the authoritative symmetric two-chart SR model.
 - The D4 boundary is a deterministic local-stability map, not an operational
   phase-transition theorem.
 - Empirical policy safety is regime-dependent; the project does not establish a
@@ -193,9 +205,10 @@ for the full boundary.
 
 ## Citation
 
-No paper DOI or release DOI is assigned. Cite the repository by its title,
-release tag `rebaseguard-level4-closed`, resolved commit, repository URL, and
-access date. A `CITATION.cff` is intentionally not supplied because complete
+No paper DOI or release DOI is assigned. For the terminal Level-4 snapshot use
+`rebaseguard-level4-closed`; for the additive SR certificate use
+`rebaseguard-sr-gamma-certified`. Include the resolved commit, repository URL,
+and access date. A `CITATION.cff` is intentionally not supplied because complete
 author metadata is not established in repository-authoritative records.
 
 ## License

@@ -41,6 +41,9 @@ def test_guard_accepts_only_approved_presentation_and_guard_paths() -> None:
             "docs/research_synthesis/README.md",
             "docs/research_synthesis/verify_synthesis.py",
             "docs/research_synthesis/tests/test_verify_synthesis.py",
-            "docs/superpowers/plans/2026-08-26-final-research-synthesis-implementation.md",
+            "README.md",
+            "docs/releases/SR_GAMMA_CERTIFIED_RELEASE_NOTES.md",
+            "figures/final/manifest.json",
+            "scripts/verify_post_level4_archive.py",
         ]
     )
