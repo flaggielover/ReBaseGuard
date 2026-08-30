@@ -1,0 +1,9 @@
+import MGtOneClosure
+
+open RebaseguardLean.Level4Priority1
+
+#print axioms direct_eq_fixed_add_short
+#print axioms shortCorrection_nonneg
+#print axioms integral_direct_eq_fixed_add_short
+#print axioms derivative_spine_of_dominated
+#print axioms multiplier_abs_of_nonneg_of_one_le

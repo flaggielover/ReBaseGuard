@@ -2,16 +2,19 @@
 
 **Date:** 2026-08-30
 
-**Status:** Approved design; implementation pending
+**Status:** Implemented; Priority-1 gates closed
 
 **Scope:** Level-4 Priority 1 only
-**Target namespace:** `level4/closure_proofs/m_gt_1/`
+
+**Target namespace:** `level4/closure_proofs/m_gt_1_priority1/`
 
 ## 1. Objective and closure meaning
 
 This campaign independently proves and certifies the general derivative theorem
 for the exact Stage-D truncated reuse window. It creates a new, self-contained
-evidence package under `level4/closure_proofs/m_gt_1/`.
+evidence package under `level4/closure_proofs/m_gt_1_priority1/`. The sibling
+namespace preserves the hash-protected historical partial campaign already
+present at `level4/closure_proofs/m_gt_1/`, including its entire tree boundary.
 
 The existing `level4/closure_proofs/m_gt_1_track1b/` package is immutable,
 read-only prior evidence and a regression anchor. It is not a substitute for
@@ -96,6 +99,23 @@ likelihood ratio `L_e`. Assume:
    neighborhood of zero;
 6. the centered fresh-reference term has zero mean and does not contribute to
    the derivative.
+
+Here `e = R - mu` is the reference error at the start of one monitoring cycle:
+the active reference `R` minus the in-control process location `mu`. Under
+`P_e`, the reference-centered Gaussian innovations have law `N(-e, 1)` and
+drive the detector from its reset state until `tau`. Expectations `E_e` are
+with respect to this stopped-path law. The likelihood ratio is defined on the
+stopped sigma-field
+
+```text
+F_tau = {B : B intersect {tau <= t} belongs to F_t for every t >= 1},
+```
+
+where `F_t = sigma(Z_1, ..., Z_t)`. The map `F_{rho,m}` is the conditional
+mean state-to-state map: given entering error `e`, form the alarm-cycle reuse
+statistic `A_m`, combine it with the old reference using fraction `rho`, add
+the centered fresh-reference component using fraction `1-rho`, and take the
+mean next-cycle reference error.
 
 Define
 
@@ -197,6 +217,29 @@ Independent seed families will separate the direct-map and score routes.
 Machine-readable results will contain estimates, standard errors, tolerances,
 seed provenance, sample sizes, and pass/fail gates.
 
+Before final estimates are observed, the numerical protocol will freeze:
+
+- `m = {1, 2, 3, 5}` and `rho = {1/20, 1/10, 1/4}`;
+- central-difference steps `h = {1/10, 1/20, 1/40}`;
+- a pilot escalation level of 8 batches of 2,500 paths per evaluation and a
+  final level of 48 batches of 10,000 paths per evaluation;
+- disjoint seed families for score, pilot finite-difference, and final
+  finite-difference routes;
+- exact structural tolerances of `1e-12` for deterministic fixtures;
+- agreement at the smallest step within `max(0.20, 4 combined batch SE)` after
+  `rho` scaling;
+- Richardson agreement within `max(0.12, 4 combined batch SE)` after `rho`
+  scaling;
+- a convergence gate requiring the Richardson discrepancy not to exceed the
+  `h=1/10` discrepancy by more than two combined standard errors; and
+- a precision gate requiring the final batch SE not to exceed the pilot batch
+  SE after like-for-like `rho` scaling.
+
+These rules, along with maximum-step and finite-value guards, will be stored in
+a hash-pinned protocol file before the final experiment is run. A failed gate
+will remain failed; tolerances and sample sizes will not be retuned after
+seeing final estimates.
+
 Because very short frozen-CUSUM cycles can be rare, deterministic stopped-path
 fixtures will separately exercise `tau < m`, `tau = m`, and `tau > m`, while
 the stochastic output will report the observed short-cycle counts honestly.
@@ -232,6 +275,16 @@ d/de log P_e(omega) at e=0
 This proof will appear in both the theorem package and certificate report; it
 will not rely on numerical normalization.
 
+Before certificate evaluation, a manifest will freeze the complete witness:
+path labels, every stopped increment, stopping times, baseline rational
+probabilities, the `m` grid, dyadic finite-difference steps, Arb precision, and
+the selected `rho` values. The construction principle is fixed in advance:
+use sign-symmetric short and long path pairs so `E_0[T_tau] = 0`, make the
+short-cycle correction nonzero for every target `m`, and select one rational
+`rho` on each side of the analytically computed unit-multiplier boundary.
+Those attraction and repulsion witnesses are design consequences, not
+parameters selected after interval output is inspected.
+
 Arb via `python-flint` will evaluate the exact rational inputs and rigorous
 transcendental enclosures. The certificate will establish:
 
@@ -249,7 +302,7 @@ not an interval evaluation of the frozen Gaussian CUSUM's `GammaTilde_m`.
 
 ## 8. Lean proof spine
 
-New Lean source in `level4/closure_proofs/m_gt_1/lean/` will independently
+New Lean source in `level4/closure_proofs/m_gt_1_priority1/lean/` will independently
 formalize:
 
 1. `windowLength m tau = min m tau`;
@@ -266,8 +319,13 @@ formalize:
 The new file may import generic `RebaseguardLean` infrastructure but will not
 import the Track 1B theorem source. `LEAN_CORRESPONDENCE.md` will list theorem
 names, assumptions, human-proof sections, and remaining concrete-CUSUM
-analytic obligations. An axiom audit will be recorded. Compilation must use
-the repository's pinned Lean toolchain.
+analytic obligations. It will separate (a) abstract measurability,
+integrability, domination, and derivative assumptions explicitly consumed by
+Lean from (b) concrete Gaussian-CUSUM stopped-moment, measurability, and local
+domination obligations discharged only in the human analysis. It will not
+describe those concrete obligations as machine-checked unless the
+formalization actually proves them. An axiom audit will be recorded.
+Compilation must use the repository's pinned Lean toolchain.
 
 ## 9. Correspondence and evidence boundaries
 
@@ -314,7 +372,7 @@ all feasible relevant repository suites will also run before closure.
 The campaign will create at least:
 
 ```text
-level4/closure_proofs/m_gt_1/
+level4/closure_proofs/m_gt_1_priority1/
   README.md
   DEFINITION_AUDIT.md
   INHERITANCE_LEDGER.md

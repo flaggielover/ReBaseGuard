@@ -1,0 +1,44 @@
+{
+  "campaign": "Level-4 Priority 1 m>1 derivative numerical correspondence",
+  "status": "FROZEN_BEFORE_FINAL_RUN",
+  "frozen_at": "2026-08-30",
+  "model": {
+    "detector": "two-sided Gaussian CUSUM",
+    "k": 0.5,
+    "h": 5.0,
+    "alarm": "inclusive post-update",
+    "stopping": "ordinary tau from t=1",
+    "window": "w=min(m,tau), denominator w",
+    "terminal_increment": "included"
+  },
+  "m_grid": [1, 2, 3, 5],
+  "rho_grid": [0.05, 0.1, 0.25],
+  "step_grid": [0.1, 0.05, 0.025],
+  "pilot": {"batches": 8, "paths_per_batch_per_e": 2500},
+  "final": {"batches": 48, "paths_per_batch_per_e": 10000},
+  "seeds": {
+    "score": 2026083001,
+    "pilot_finite_difference": 2026083002,
+    "final_finite_difference": 2026083003
+  },
+  "gates": {
+    "structural_abs_tolerance": 1e-12,
+    "smallest_step_abs_floor_after_rho": 0.2,
+    "smallest_step_combined_se_multiplier": 4.0,
+    "richardson_abs_floor_after_rho": 0.12,
+    "richardson_combined_se_multiplier": 4.0,
+    "convergence_slack_combined_se_multiplier": 2.0,
+    "precision_rule": "final batch SE <= pilot batch SE after identical rho scaling",
+    "all_cells_required": true,
+    "nonfinite_values_fail": true,
+    "maximum_steps_per_path": 4000000
+  },
+  "independence": {
+    "forbidden_import_roots": [
+      "level4.stage_d",
+      "rebaseguard_mgt1a",
+      "rebaseguard_mgt1b"
+    ],
+    "score_and_fd_seed_families_disjoint": true
+  }
+}

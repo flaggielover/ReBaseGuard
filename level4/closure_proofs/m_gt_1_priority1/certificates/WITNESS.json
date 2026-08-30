@@ -1,0 +1,31 @@
+{
+  "campaign": "Level-4 Priority 1 exact finite-support witness",
+  "status": "FROZEN_BEFORE_CERTIFICATE_RUN",
+  "frozen_at": "2026-08-30",
+  "construction_principle": "Sign-symmetric short and long stopped-path pairs force E0[T_tau]=0, exercise both sides of tau<m, and make the short-cycle correction nonzero. Rho values are fixed on opposite sides of the exact unit-multiplier boundary before interval evaluation.",
+  "paths": [
+    {"label": "short_plus", "probability": [1, 4], "tau": 1, "increments": [[3, 1]]},
+    {"label": "short_minus", "probability": [1, 4], "tau": 1, "increments": [[-3, 1]]},
+    {"label": "long_plus", "probability": [1, 4], "tau": 6, "increments": [[1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1]]},
+    {"label": "long_minus", "probability": [1, 4], "tau": 6, "increments": [[-1, 1], [-1, 1], [-1, 1], [-1, 1], [-1, 1], [-1, 1]]}
+  ],
+  "m_grid": [2, 3, 5],
+  "rho": {
+    "attraction": [1, 10],
+    "repulsion": [1, 4],
+    "exact_unit_boundary": [2, 13]
+  },
+  "finite_difference_steps": [[1, 4], [1, 8], [1, 16], [1, 32]],
+  "arb_precision_bits": 128,
+  "required_certificates": [
+    "probability_family_normalization",
+    "score_at_zero",
+    "random_denominator_decomposition",
+    "short_correction_nonnegative",
+    "derivative_identity",
+    "finite_difference_convergence",
+    "attraction",
+    "repulsion"
+  ],
+  "evidence_boundary": "Rigorous only for this finite-support witness; not a frozen Gaussian CUSUM m>1 interval certificate."
+}

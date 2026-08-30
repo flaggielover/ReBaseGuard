@@ -1,0 +1,32 @@
+{
+  "campaign": "Level-4 Priority 1 general Stage-D m>1 derivative theorem",
+  "verdict": "CLOSED",
+  "categories": {
+    "analytical_theorem_closure": true,
+    "lean_proof_spine_closure": true,
+    "frozen_gaussian_cusum_numerical_correspondence": true,
+    "finite_support_arb_certification": true,
+    "frozen_history_inheritance_integrity": true
+  },
+  "all_required_gates_pass": true,
+  "frozen_gaussian_m_gt_1_interval_certified": false,
+  "evidence_boundary": "Arb certification is for the exact finite-support witness only.",
+  "unrelated_repository_gate_failure": {
+    "command": "bash scripts/verify_level_4.sh",
+    "status": "FAIL_PREEXISTING_PROTECTED_HISTORY_MISMATCH",
+    "passed_before_failure": {
+      "frozen_level_1_3": 90,
+      "stage_a": 290,
+      "stage_b": 46,
+      "stage_c": 48,
+      "stage_c1": 36,
+      "stage_d": 72,
+      "stage_e": 59,
+      "stage_f": 54,
+      "post_closure_reaudit": 18,
+      "d4_phase_map": 18
+    },
+    "failure": "novelty_verification expected 52 protected sr_derivative files, but the current tracked tree contains 92 files from later committed SR work",
+    "campaign_caused": false
+  }
+}

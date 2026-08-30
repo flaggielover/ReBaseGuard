@@ -1,0 +1,35 @@
+{
+  "campaign_focused_tests": {"command": "python -m pytest level4/closure_proofs/m_gt_1_priority1/tests -q", "passed": 13, "failed": 0, "status": "PASS"},
+  "level_1_3_full_verifier": {"command": "bash scripts/verify_level_1_3.sh", "status": "PASS", "skipped": 0},
+  "level_4_regression": {
+    "command": "bash scripts/verify_level_4.sh",
+    "status": "FAIL_PREEXISTING_PROTECTED_HISTORY_MISMATCH",
+    "passed_before_failure": {
+      "frozen_level_1_3": 90,
+      "stage_a": 290,
+      "stage_b": 46,
+      "stage_c": 48,
+      "stage_c1": 36,
+      "stage_d": 72,
+      "stage_e": 59,
+      "stage_f": 54,
+      "post_closure_reaudit": 18,
+      "d4_phase_map": 18
+    },
+    "failure": "novelty_verification expected 52 protected sr_derivative files, but the current tracked tree contains 92 files from later committed SR work",
+    "campaign_caused": false
+  },
+  "remaining_level_4_suites": {
+    "external_validation_v2": {"passed": 43, "failed": 2, "cause": "same pre-existing sr_derivative protected-history mismatch"},
+    "external_validation_v3": {"passed": 75, "failed": 0},
+    "final_global_reaudit": {"passed": 33, "failed": 3, "cause": "same pre-existing sr_derivative protected-history mismatch"},
+    "l4r06_policy": {"passed": 28, "failed": 0},
+    "l4r12_operational_crossing": {"passed": 26, "failed": 0},
+    "final_level4_closure": {"passed": 32, "failed": 4, "cause": "same pre-existing sr_derivative protected-history mismatch"}
+  },
+  "regression_anchors": {
+    "track1b": {"passed": 32, "failed": 0, "status": "PASS"},
+    "historical_m_gt_1_partial": {"passed": 44, "failed": 2, "cause": "one stored historical rebaseguard-lean tree hash predates later tracked Lean commits; one test requires every dirty path to remain inside the old campaign and therefore rejects this isolated sibling campaign"}
+  },
+  "priority1_gate_effect": "The unrelated repository-wide protected-history mismatch is recorded but is not a Priority-1 gate. Campaign-specific frozen hashes and the historical m_gt_1 parent diff are clean."
+}

@@ -1,0 +1,34 @@
+{
+  "campaign": "Level-4 Priority 1 general Stage-D m>1 derivative theorem",
+  "frozen_at": "2026-08-30",
+  "immutable_prior_evidence": {
+    "track1b_tree_sha256": "e28930fe04362b246c77a7f093e327aa1549d5ecdd6a37cb83f55550d519812f",
+    "track1b_tree_hash_rule": "find all regular files excluding __pycache__, sort paths, sha256 each, then sha256 the listing",
+    "historical_d2_3_sha256": "ea1d026384866de0fc5ad0ded3e68f159d32deaa3be24505aab449b73db8e020",
+    "historical_stage_d_decision_sha256": "487a73866ce9f009cf053a89552330bf6b46f72ee8a7841357ebe2140391c437",
+    "historical_track1a_decision_sha256": "ecf49a12818edc7d4bad69b527e3a014123b9356bb73904d31eccc6752210b7c"
+  },
+  "frozen_new_inputs": {
+    "numerical_protocol": "numerics/PROTOCOL.json",
+    "numerical_protocol_sha256": "e58e26b97eb6262493080bdd6962f4a0befbae335f34a6619d71139b300221d2",
+    "finite_support_witness": "certificates/WITNESS.json",
+    "finite_support_witness_sha256": "347962930467043e939f8aaccba694636eceb910cea5e561ee2b022f55a9a7c5"
+  },
+  "finite_support_witness_summary": {
+    "baseline_probabilities": ["1/4", "1/4", "1/4", "1/4"],
+    "stopping_times": [1, 1, 6, 6],
+    "stopped_sums": [3, -3, 6, -6],
+    "m_grid": [2, 3, 5],
+    "rho_attraction": "1/10",
+    "rho_repulsion": "1/4",
+    "rho_unit_boundary": "2/13",
+    "arb_precision_bits": 128
+  },
+  "lean": {
+    "source": "lean/MGtOneClosure.lean",
+    "source_sha256": "900569829dd0bb8136af6a958e8246c890a63d7fbc9d6cd021a870243e5e84ea",
+    "imports_track1b": false,
+    "toolchain": "rebaseguard-lean/lean-toolchain"
+  },
+  "evidence_boundary": "Frozen Gaussian CUSUM m>1 values are empirically evaluated only. Rigorous intervals apply only to the exact finite-support witness."
+}
