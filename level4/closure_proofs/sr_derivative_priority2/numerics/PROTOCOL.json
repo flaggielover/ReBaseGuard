@@ -1,0 +1,52 @@
+{
+  "campaign": "Level-4 Priority 2 Gaussian SR numerical correspondence",
+  "status": "FROZEN_BEFORE_ANY_NUMERICAL_OUTPUT",
+  "frozen_at": "2026-08-30",
+  "model": {
+    "detector": "reset symmetric two-chart Shiryaev-Roberts",
+    "threshold_decimal": "520.886133602749",
+    "threshold_binary64_hex": "0x1.04716cd36dd8dp+9",
+    "initial_state": [0.0, 0.0],
+    "head_start": 0.0,
+    "alarm": "inclusive post-update",
+    "stopping": "ordinary tau from t=1",
+    "window": "w=min(m,tau), denominator w",
+    "terminal_increment": "included",
+    "residual_law": "Z~N(-e,1)"
+  },
+  "m_grid": [1, 2, 3, 5],
+  "rho_grid": [0.05, 0.1, 0.25],
+  "step_grid": [0.05, 0.025, 0.0125],
+  "pilot": {"batches": 8, "paths_per_batch_per_condition": 2000},
+  "final": {"batches": 48, "paths_per_batch_per_condition": 5000},
+  "seeds": {
+    "score": 2026083021,
+    "pilot_direct": 2026083022,
+    "final_direct": 2026083023,
+    "structural_fixtures": 2026083024
+  },
+  "gates": {
+    "smallest_step_abs_floor_after_rho": 0.12,
+    "smallest_step_combined_se_multiplier": 4.0,
+    "richardson_abs_floor_after_rho": 0.08,
+    "richardson_combined_se_multiplier": 4.0,
+    "convergence_slack_combined_se_multiplier": 2.0,
+    "precision_rule": "final batch SE <= pilot batch SE after identical rho scaling",
+    "all_cells_required": true,
+    "nonfinite_values_fail": true,
+    "exact_ties_must_be_zero": true,
+    "maximum_steps_per_path": 4000000,
+    "failure_rescue_runs_allowed": false
+  },
+  "independence": {
+    "score_module": "src/rebaseguard_sr_priority2/score_sr.py",
+    "direct_module": "src/rebaseguard_sr_priority2/direct_sr.py",
+    "forbidden_import_roots": [
+      "level4.stage_d",
+      "rebaseguard_sr_derivative",
+      "rebaseguard_mgt1_priority1"
+    ],
+    "score_and_direct_seed_families_disjoint": true
+  },
+  "evidence_boundary": "Empirical frozen Gaussian SR correspondence only; no interval certification of frozen infinite-horizon SR m>1 values."
+}

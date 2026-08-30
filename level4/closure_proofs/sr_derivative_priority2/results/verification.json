@@ -1,0 +1,95 @@
+{
+  "required_regressions_pass": true,
+  "suites": [
+    {
+      "label": "level_1_3_full",
+      "command": "bash scripts/verify_level_1_3.sh",
+      "exit_code": 0,
+      "summary": "90 passed in 3.26s",
+      "output_tail": "PASS  no sorry / admit / axiom / unsafe / native_decide anywhere in the Lean sources\n------------------------------------------------------------\n[4/6] Lean axiom audit\n9 theorems, all with axioms [propext, Classical.choice, Quot.sound]\nPASS  axiom audit clean; final theorem elaborates\n      @hasDerivAt_rebaseguard_cusum : \u2200 {\u03a9 : Type u_1} [m\u03a9 : MeasurableSpace \u03a9] {\u03bc : MeasureTheory.Measure \u03a9} (X : \u2115 \u2192 \u03a9 \u2192 \u211d),\n        (\u2200 (n : \u2115), Measurable (X n)) \u2192\n          ProbabilityTheory.iIndepFun X \u03bc \u2192\n[4b] direct source elaboration of the final module (slow)\nPASS  ReBaseGuardIdentity.lean elaborates from source, exit 0\n------------------------------------------------------------\n[5/6] Arb certificate full-replay audit\n      python 3.14.5\n      python-flint 0.9.0\nPASS  certificate full replay: status PASS, Gamma_lower > 2, continuum residual replayed\n        \"Gamma_lower\": \"3.9243482005828971281857775466050952672958374023437500000000000000000000000000\n        \"Gamma_upper\": \"27.849382127546703280529527546605095267295837402343750000000000000000000000000\n      regenerated audit_report.md is byte-identical to the stored one\n------------------------------------------------------------\n[6/6] Numerical sanity checks\nPASS  regression suite: 90 passed in 3.26s\nPASS  certificate arithmetic and cross-check consistency\n      certified interval [3.9243482005828971281857775466050952672958374023437500000000000000000000000000000, 27.849382127546703280529527546605095267295837402343750000000000000000000000000000]\n      b_hat(0,0) = 15.886865164064800204357652546605095267295837402343750000000000000000000000000000\n      E_b = 11.962516910658127710605800149323439675621476278236166886898187888236062501199\n      stored radius (hi-lo)/2 = 11.9625169634819030761718750000000000000000000000000000000000000000000000000000000  (outward by 5.28237753655660748506765603243785237217638331131018121117639374988010000E-8)\n      margin above 2: 1.9243482005828971281857775466050952672958374023437500000000000000000000000000000\n      Monte Carlo, Bellman cross-check and decomposition identity all consistent\n------------------------------------------------------------\nRESULT: ALL CHECKS PASSED (0 skipped, explicitly allowed)"
+    },
+    {
+      "label": "level_4_aggregate",
+      "command": "bash scripts/verify_level_4.sh",
+      "exit_code": 1,
+      "summary": "17 passed in 0.24s",
+      "output_tail": "59 passed in 0.86s\n\n== Level 4 Stage F suite ==\n......................................................                   [100%]\n54 passed in 0.05s\n\n== Level 4 post-closure re-audit suite ==\n..................                                                       [100%]\n18 passed in 0.07s\n\n== Level 4 D4 phase-map closure suite ==\n..................                                                       [100%]\n18 passed in 0.06s\n\n== Level 4 novelty-verification closure suite ==\n...............F..                                                       [100%]\n=================================== FAILURES ===================================\n________________________ test_protected_history_hashes _________________________\n\n    def test_protected_history_hashes():\n        frozen = json.loads((BASE / \"results/historical_hashes.json\").read_text())\n        for name, expected in frozen[\"roots\"].items():\n            count, digest = digest_tree(ROOT / name)\n>           assert count == expected[\"files\"]\nE           assert 92 == 52\n\nlevel4/closure_proofs/novelty_verification/tests/test_protocol_freeze.py:40: AssertionError\n=========================== short test summary info ============================\nFAILED level4/closure_proofs/novelty_verification/tests/test_protocol_freeze.py::test_protected_history_hashes\n1 failed, 17 passed in 0.24s"
+    },
+    {
+      "label": "historical_sr",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/sr_derivative/tests -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "94 passed in 1.08s",
+      "output_tail": "........................................................................ [ 76%]\n......................                                                   [100%]\n94 passed in 1.08s"
+    },
+    {
+      "label": "priority1",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/m_gt_1_priority1/tests -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "13 passed in 0.06s",
+      "output_tail": ".............                                                            [100%]\n13 passed in 0.06s"
+    },
+    {
+      "label": "external_validation_v2",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/external_validation_v2/tests -q -p no:cacheprovider",
+      "exit_code": 1,
+      "summary": "43 passed in 2.15s",
+      "output_tail": "        p = subprocess.run(\n            [str(ROOT / \"level4/.venv/bin/python\"), str(BASE / \"src/integrity.py\")],\n            cwd=ROOT, capture_output=True, text=True,\n        )\n>       assert p.returncode == 0, p.stdout + p.stderr\nE       AssertionError: integrity: FAIL\nE           protected root changed: level4/closure_proofs/sr_derivative\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/Users/suzhe/ReBaseGuard/level4/.venv/bin/python', '/Users/suzhe/ReBaseGuard/level4/closure_pr...'], returncode=1, stdout='integrity: FAIL\\n  protected root changed: level4/closure_proofs/sr_derivative\\n', stderr='').returncode\n\nlevel4/closure_proofs/external_validation_v2/tests/test_freeze.py:31: AssertionError\n__________________ test_decision_is_mechanically_reproducible __________________\n\n    def test_decision_is_mechanically_reproducible():\n>       assert derive() == load(\"results/decision.json\")\nE       AssertionError: assert {'schema': 'r...H2_4': 1, ...} == {'all_primary...PARTIAL', ...}\nE         \nE         Omitting 12 identical items, use -vv to show\nE         Differing items:\nE         {'decision': 'EXTERNAL-VALIDATION-V2-FAILED'} != {'decision': 'EXTERNAL-VALIDATION-V2-PARTIAL'}\nE         {'global_requirement': 'UNMET'} != {'global_requirement': 'PARTIAL'}\nE         {'historical_hashes_unchanged': False} != {'historical_hashes_unchanged': True}\nE         Use -v to get more diff\n\nlevel4/closure_proofs/external_validation_v2/tests/test_results.py:69: AssertionError\n=========================== short test summary info ============================\nFAILED level4/closure_proofs/external_validation_v2/tests/test_freeze.py::test_protocol_hash_and_protected_history\nFAILED level4/closure_proofs/external_validation_v2/tests/test_results.py::test_decision_is_mechanically_reproducible\n2 failed, 43 passed in 2.15s"
+    },
+    {
+      "label": "external_validation_v3",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/external_validation_v3/tests -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "75 passed in 0.35s",
+      "output_tail": "........................................................................ [ 96%]\n...                                                                      [100%]\n75 passed in 0.35s"
+    },
+    {
+      "label": "final_global_reaudit",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/final_global_reaudit/tests -q -p no:cacheprovider",
+      "exit_code": 1,
+      "summary": "33 passed in 0.99s",
+      "output_tail": "E         ?         ^ -- -\nE         + LEVEL-4-FAILED\nE         ?         ^   ++\n\nlevel4/final_global_reaudit/tests/test_audit.py:152: AssertionError\n____________ test_34_core_generated_artifacts_match_generator_bytes ____________\n\n    def test_34_core_generated_artifacts_match_generator_bytes():\n>       assert all(path.exists() and path.read_text() == content for path, content in build().items())\n                                                                                      ^^^^^^^\n\nlevel4/final_global_reaudit/tests/test_audit.py:196: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nlevel4/final_global_reaudit/src/audit.py:465: in build\n    require(integrity[\"status\"] == \"INTACT\", \"protected history is not intact\")\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\ncondition = False, message = 'protected history is not intact'\n\n    def require(condition: bool, message: str) -> None:\n        if not condition:\n>           raise ValueError(message)\nE           ValueError: protected history is not intact\n\nlevel4/final_global_reaudit/src/audit.py:42: ValueError\n=========================== short test summary info ============================\nFAILED level4/final_global_reaudit/tests/test_audit.py::test_23_protected_history_is_intact\nFAILED level4/final_global_reaudit/tests/test_audit.py::test_26_current_verdict_is_level4_partial\nFAILED level4/final_global_reaudit/tests/test_audit.py::test_34_core_generated_artifacts_match_generator_bytes\n3 failed, 33 passed in 0.99s"
+    },
+    {
+      "label": "l4r06_policy",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/l4r06_policy/tests -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "28 passed in 2.04s",
+      "output_tail": "............................                                             [100%]\n28 passed in 2.04s"
+    },
+    {
+      "label": "l4r12_operational",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/l4r12_operational_crossing/tests -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "26 passed in 2.79s",
+      "output_tail": "..........................                                               [100%]\n26 passed in 2.79s"
+    },
+    {
+      "label": "final_level4_closure",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/final_level4_closure/tests -q -p no:cacheprovider",
+      "exit_code": 1,
+      "summary": "32 passed in 1.58s",
+      "output_tail": "E         + BROKEN)\n\nlevel4/final_level4_closure/tests/test_terminal_closure.py:216: AssertionError\n_________________ test_35_audit_rebuild_is_pure_and_consistent _________________\n\n    def test_35_audit_rebuild_is_pure_and_consistent():\n>       canonical, evidence, ledger = build_canonical()\n                                      ^^^^^^^^^^^^^^^^^\n\nlevel4/final_level4_closure/tests/test_terminal_closure.py:221: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nlevel4/final_level4_closure/src/audit.py:309: in build_canonical\n    require(integrity[\"status\"] == \"INTACT\", f\"protected history broken: {integrity['errors']}\")\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\ncondition = False\nmessage = \"protected history broken: ['tree level4/closure_proofs/sr_derivative: a4fbe9890b0ba59d588766dccfa17e9ef9d45f1b != abd869b91fe8ba3e69af9db0e7356a73c36c724f']\"\n\n    def require(condition: bool, message: str) -> None:\n        if not condition:\n>           raise ValueError(message)\nE           ValueError: protected history broken: ['tree level4/closure_proofs/sr_derivative: a4fbe9890b0ba59d588766dccfa17e9ef9d45f1b != abd869b91fe8ba3e69af9db0e7356a73c36c724f']\n\nlevel4/final_level4_closure/src/audit.py:95: ValueError\n=========================== short test summary info ============================\nFAILED level4/final_level4_closure/tests/test_terminal_closure.py::test_31_core_json_and_reports_equal_generator_bytes\nFAILED level4/final_level4_closure/tests/test_terminal_closure.py::test_33_reproducer_regeneration_is_byte_stable_and_offline\nFAILED level4/final_level4_closure/tests/test_terminal_closure.py::test_34_protected_history_is_intact\nFAILED level4/final_level4_closure/tests/test_terminal_closure.py::test_35_audit_rebuild_is_pure_and_consistent\n4 failed, 32 passed in 1.58s"
+    },
+    {
+      "label": "post_level4_archive",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python scripts/verify_post_level4_archive.py",
+      "exit_code": 1,
+      "summary": "POST-LEVEL-4 ARCHIVE VERIFICATION FAILED: archive hash mismatch: README.md",
+      "output_tail": "POST-LEVEL-4 ARCHIVE VERIFICATION FAILED: archive hash mismatch: README.md"
+    }
+  ],
+  "historical_diagnostics": {
+    "old_52_file_guard_against_92_file_tree": {
+      "observed": true,
+      "predates_priority2": true,
+      "classification": "HISTORICAL_DIAGNOSTIC"
+    },
+    "post_archive_readme_hash_drift": {
+      "observed": true,
+      "predates_priority2": true,
+      "classification": "HISTORICAL_DIAGNOSTIC"
+    }
+  },
+  "historical_diagnostics_not_counted_as_priority2_passes": true
+}

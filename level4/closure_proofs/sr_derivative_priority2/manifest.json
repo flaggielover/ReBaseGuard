@@ -1,0 +1,48 @@
+{
+  "campaign": "Level-4 Priority 2 Shiryaev-Roberts derivative closure",
+  "frozen_at": "2026-08-30",
+  "approach": "layered independent instantiation",
+  "immutable_sr_history": {
+    "manifest": "history/snapshots.json",
+    "manifest_sha256": "8ed24a024213475f0ca9afc89d1d8a39bfedeb050592e5e33b22999b5cbde982",
+    "terminal_level4": {
+      "tag": "rebaseguard-level4-closed",
+      "commit": "5e43336264f257c7224b622f8063eb10aad481d6",
+      "files": 52,
+      "git_tree": "abd869b91fe8ba3e69af9db0e7356a73c36c724f",
+      "aggregate_sha256": "4d084982669c128967720d38a21d882fd92e3249835162e02ba452ad607594aa"
+    },
+    "additive_sr_certificate": {
+      "tag": "rebaseguard-sr-gamma-certified",
+      "commit": "b04578810126d3fbc4d938a721481b1e6186b8ce",
+      "files": 92,
+      "git_tree": "a4fbe9890b0ba59d588766dccfa17e9ef9d45f1b",
+      "aggregate_sha256": "3212a35f6f7ebc5d2e05bb791f0a099673f5d60d930ebede96d90fa8ea66a063"
+    }
+  },
+  "frozen_new_inputs": {
+    "numerical_protocol": "numerics/PROTOCOL.json",
+    "numerical_protocol_sha256": "8fc6a0d5da8b514f0c53fad2290428186fdb9749a559a3819c3db6f633ab8a56",
+    "finite_support_witness": "certificates/WITNESS.json",
+    "finite_support_witness_sha256": "e90c01ec30700346be510c3d5e5ad69bb471ab44d25d2207e1e988e4e07acc2b",
+    "assumption_targets": "results/assumption_targets.json",
+    "assumption_targets_sha256": "24bd71e9ae5d1c3ed32fcb74b807dfee66e7f1affe37a52824dc52753580ea31"
+  },
+  "authoritative_sr": {
+    "threshold_decimal": "520.886133602749",
+    "threshold_binary64_hex": "0x1.04716cd36dd8dp+9",
+    "initial_state": [0, 0],
+    "head_start": 0,
+    "alarm": "inclusive post-update",
+    "terminal_increment": "included"
+  },
+  "lean": {
+    "source": "lean/SRPriority2.lean",
+    "source_sha256": "a51adb5f07ef26c0995b94985a9bc481771f631d36cc917bc68e33f84781d24e",
+    "imports_historical_sr_theorem": false,
+    "imports_priority1_campaign_theorem": false,
+    "generic_import": "RebaseguardLean.IntegralBridge",
+    "toolchain": "rebaseguard-lean/lean-toolchain"
+  },
+  "evidence_boundary": "Frozen Gaussian SR is empirical; rigorous intervals apply only to the exact finite-support SR-compatible witness."
+}

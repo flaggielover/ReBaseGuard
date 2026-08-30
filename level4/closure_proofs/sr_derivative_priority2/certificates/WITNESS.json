@@ -1,0 +1,43 @@
+{
+  "campaign": "Level-4 Priority 2 exact finite-support SR-compatible witness",
+  "status": "FROZEN_AFTER_ANALYTIC_STOPPING_PROOF_BEFORE_CERTIFICATE",
+  "frozen_at": "2026-08-30",
+  "construction_principle": "At threshold A=2, symmetric tau=1 and tau=6 SR paths exercise short and full windows. The exact gain 2+2/m fixes rho=1/4 and rho=1 on opposite sides of the unit-multiplier boundary before interval evaluation.",
+  "sr": {
+    "threshold": [2, 1],
+    "initial_plus": [0, 1],
+    "initial_minus": [0, 1],
+    "recurrence": "Rplus'=(1+Rplus)exp(z-1/2), Rminus'=(1+Rminus)exp(-z-1/2)",
+    "alarm": "inclusive post-update max(Rplus,Rminus)>=A"
+  },
+  "analytic_stopping_proof": {
+    "zero_prefix": "q=exp(-1/2)<2/3 and R_n=sum_{k=1}^n q^k<q/(1-q)<2",
+    "terminal_crossing": "(1+R_5)exp(3/2)>exp(3/2)>5/2>2",
+    "short_crossing": "exp(3/2)>5/2>2",
+    "reflection": "z->-z exchanges the two charts and preserves stopping time",
+    "verified_before_freeze": true
+  },
+  "paths": [
+    {"label": "short_plus", "probability": [1, 4], "tau": 1, "increments": [[2, 1]]},
+    {"label": "short_minus", "probability": [1, 4], "tau": 1, "increments": [[-2, 1]]},
+    {"label": "long_plus", "probability": [1, 4], "tau": 6, "increments": [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [2, 1]]},
+    {"label": "long_minus", "probability": [1, 4], "tau": 6, "increments": [[0, 1], [0, 1], [0, 1], [0, 1], [0, 1], [-2, 1]]}
+  ],
+  "m_grid": [2, 3, 5],
+  "exact_gamma_formula": "2+2/m",
+  "rho": {"attraction": [1, 4], "repulsion": [1, 1]},
+  "finite_difference_steps": [[1, 4], [1, 8], [1, 16], [1, 32]],
+  "arb_precision_bits": 128,
+  "required_certificates": [
+    "sr_stopping_times",
+    "probability_family_normalization",
+    "score_at_zero",
+    "random_denominator_decomposition",
+    "short_correction_nonnegative",
+    "derivative_identity",
+    "finite_difference_convergence",
+    "attraction",
+    "repulsion"
+  ],
+  "evidence_boundary": "Rigorous only for this exact finite-support SR-compatible witness; not a frozen infinite-horizon Gaussian SR m>1 interval certificate."
+}
