@@ -1,0 +1,295 @@
+{
+ "campaign": "Level-4 Priority 7 statistical consequences",
+ "scientific_verdict": "CLOSED",
+ "repository_integration_verdict": "READY_FOR_COMMIT",
+ "python": "3.14.5",
+ "numpy": "2.5.2",
+ "seed_family": 20260831,
+ "detector_codes": {
+  "cusum": 11,
+  "sr": 13
+ },
+ "seed_stages": {
+  "2": "chain sweep  [SEED_FAMILY, 2, detector_code, m, round(rho*1e7)]",
+  "3": "response curves  [SEED_FAMILY, 3, detector_code, sign, round(|x|*1e6)]",
+  "5": "delay validation  [SEED_FAMILY, 5, detector_code, m, round(rho*1e7), round(Delta*1000)]",
+  "7": "gain correspondence  [SEED_FAMILY, 7, detector_code, batch]",
+  "adversarial replication": "seed family 20260901, stage 2 (deliberately outside the production family)",
+  "independent adjudication": "seed family 20260917, stages 71/72"
+ },
+ "m_grid": [
+  1,
+  2,
+  3,
+  5
+ ],
+ "p3_boundaries_used": {
+  "cusum_m1": 0.06703967349028536,
+  "cusum_m2": 0.08153398056010368,
+  "cusum_m3": 0.09126520612685517,
+  "cusum_m5": 0.10838505864617581,
+  "sr_m1": 0.060777081078997625,
+  "sr_m2": 0.07407127722872422,
+  "sr_m3": 0.08352366543596258,
+  "sr_m5": 0.09951708267319101
+ },
+ "read_only_inputs": {
+  "level4/closure_proofs/m_rho_stability_priority3/results/boundary_table.json": {
+   "sha256": "f59d85070c76b53f5c176c9acf792a0e62dba8b25c83b2078731681edf332887",
+   "read_only": true
+  },
+  "level4/closure_proofs/m_rho_stability_priority3/THEOREM.md": {
+   "sha256": "88f0544d294e919d7e3d49aff1ebce24e9603344f123a2eec00f32a3ded3bb2f",
+   "read_only": true
+  },
+  "level4/closure_proofs/m_gt_1_priority1/THEOREM.md": {
+   "sha256": "c630051d710361b4cb0c45393cc8bbf51108726595785cbb0b66a45cd12d1277",
+   "read_only": true
+  },
+  "level4/closure_proofs/sr_derivative_priority2/THEOREM.md": {
+   "sha256": "4af4e721375e846238e47fc0314b95d7e732f8086205eebfa0bc57c4d1f53474",
+   "read_only": true
+  },
+  "level4/stage_d/STAGE_D_PROTOCOL.md": {
+   "sha256": "925adecf08c7234375333a26c3af934b005e0d8b4cfce470b77834d7245e8b2e",
+   "read_only": true
+  },
+  "level4/stage_d/src/chain.py": {
+   "sha256": "84d354a67d23c33e631f611ed5537b37cbb032023435f051f05e8ccc10439205",
+   "read_only": true
+  },
+  "level4/stage_d/src/stopped.py": {
+   "sha256": "7224bfec8bf0473c7ddee711d4773a2881889e22977b7e925fee8617f4a58c41",
+   "read_only": true
+  },
+  "level4/src/rebaseguard_level4/frozen.py": {
+   "sha256": "777681ea32842ff48224b4c51ff7a2a26525d5a44d815d521949a6242baa6c54",
+   "read_only": true
+  },
+  "level4/stage_d/results/calibration_d1.json": {
+   "sha256": "f623fcc8a140387f904d5c752093f1db92f0a905f08a1a6253976af9a8fc71a5",
+   "read_only": true
+  },
+  "level4/stage_d/results/d2_5_verdict.json": {
+   "sha256": "1da3f04401cf9eafe832be6ed788427b564bf3bada871dd18e21c8fc502c52b5",
+   "read_only": true
+  }
+ },
+ "p4_used": false,
+ "p4_supplementary_diagnostic_used": true,
+ "p4_note": "P4 remains PARTIAL and is not a premise. Its adjudicated 1.6M-path SR replay is used only as supplementary diagnosis; P7 closure rests on closed P1-P3.",
+ "files": {
+  "ADVERSARIAL_REVIEW.md": {
+   "sha256": "cb766fde9c8c97534e6eb640c8c733975a94151d8c1edcf98f1d4295a7fef831",
+   "bytes": 8792
+  },
+  "CLOSURE_REPORT.md": {
+   "sha256": "9e63ed8501fafaab05119fa57e6e0e511d6a1ed3056322bb174786579ae93b88",
+   "bytes": 6345
+  },
+  "CODEX_HANDOFF.md": {
+   "sha256": "5ee03ee0a6c60b959338686abce13de447e786f4b1cbb13aa70eb6c283577264",
+   "bytes": 11464
+  },
+  "DEFINITION_AUDIT.md": {
+   "sha256": "1094b8fac0fa7619b419005ac2e967daa86c0ccb9f3433f55772a712f3e058c5",
+   "bytes": 6962
+  },
+  "EVIDENCE_BOUNDARY.md": {
+   "sha256": "3f4d5a22a83b65a9b41b299f69b4cc7a0488657a2007f2ff9b3811828f81e982",
+   "bytes": 3177
+  },
+  "EXPERIMENT_DESIGN.md": {
+   "sha256": "2b8e3405b0e871dffa40b571a8ffc49a104bea39941e35fd58727cffd1ff9a3a",
+   "bytes": 7414
+  },
+  "INDEPENDENT_ADJUDICATION.md": {
+   "sha256": "88ce4c53f07ccf9569975b4b48bd13b540aac516861cf42a11d68cf2c2da2d49",
+   "bytes": 16337
+  },
+  "P6_HANDOFF.md": {
+   "sha256": "9a7474625ffcd534b674d04dd8ff7a6d45555baf196786b10dc9d887050e7431",
+   "bytes": 5938
+  },
+  "README.md": {
+   "sha256": "d246c28ad73d755cf5234c626d4608f14382ec66559134f3a2968eb2179b7479",
+   "bytes": 3284
+  },
+  "STATISTICAL_CONSEQUENCES.md": {
+   "sha256": "996a24d4056d5eae8b8f18a617c5e1ac8ebf2f1a15612e2aee0b7571fc879fd6",
+   "bytes": 36365
+  },
+  "THEORY_BRIDGE.md": {
+   "sha256": "3ac9ca9eda49e809514d022cd183fd9e5bda3fa172fc344e4e551202ce7bdfe7",
+   "bytes": 9609
+  },
+  "derive_closure.py": {
+   "sha256": "60986f2633c202c03977a22312ef4340890f5ca4bee299a98039ec3a8cde7288",
+   "bytes": 5889
+  },
+  "experiments/analyze.py": {
+   "sha256": "6f025be3b320d4f51d0ce0ae97c24dae212a3405c8fe13d4bef05c281380db09",
+   "bytes": 8128
+  },
+  "experiments/make_figures.py": {
+   "sha256": "35764685fa1542fec40f1bb5f02fc716d271f6fe8a77591a84b9a764a0a80171",
+   "bytes": 6671
+  },
+  "experiments/make_provenance.py": {
+   "sha256": "2f0971a411e079b3607067533582636764a945a31f85f5891d7495bcf2ec97ac",
+   "bytes": 5227
+  },
+  "experiments/make_report.py": {
+   "sha256": "d25e569ac57489c999ab48137a95edb5e31fb57b2198f874e13f375cd4af4b87",
+   "bytes": 13357
+  },
+  "experiments/run_adversarial.py": {
+   "sha256": "7e482b1f79fb18882654e14cdf9533029ada604ad01dca4db7f92e2f788245a6",
+   "bytes": 6338
+  },
+  "experiments/run_chain_sweep.py": {
+   "sha256": "6d2bd842df9460c8a3ce1454d52fd20eac79ad794b96d99a4657ee434ae148fc",
+   "bytes": 5165
+  },
+  "experiments/run_delay_validation.py": {
+   "sha256": "1836c6807e3db4ef159e08afbd0706731dece09bd91ced688ef9d74b0fb6ee3f",
+   "bytes": 3853
+  },
+  "experiments/run_independent_adjudication.py": {
+   "sha256": "2f1f8e2049f7180fe2fff12b4e6d5d0d4d622c1867dda82e47c8cef0ca7962cc",
+   "bytes": 6087
+  },
+  "experiments/run_response_curves.py": {
+   "sha256": "5337a9fe764a33f726465f1b1b5dfcb7e180f3fe7a669fb5dc5bff2ff33fe7cc",
+   "bytes": 3440
+  },
+  "experiments/run_response_tail.py": {
+   "sha256": "3bd656efc25bbf3c807a7a56c96d503b01096dd27060dc19fda7830c6852848e",
+   "bytes": 2540
+  },
+  "experiments/run_sr_gain_check.py": {
+   "sha256": "fc1e10b21dc55a8a3ef30f0c8d5323f124c1607d5cfda2b5c2c1b633b4713396",
+   "bytes": 3290
+  },
+  "figures/figure_index.json": {
+   "sha256": "c3cf5835321cf790902a3d04f3361dbf2f75580f1c2c4351a82b3ab4584fc06f",
+   "bytes": 142
+  },
+  "figures/p7_arl_and_dispersion_vs_boundary.png": {
+   "sha256": "c681fa50a1b10007f23aa878c2977e052117efac3d92dce82c0e52828ebd7e16",
+   "bytes": 162642
+  },
+  "figures/p7_effective_multiplier.png": {
+   "sha256": "538ce2ef176a866ed89bf927673cc14af2f3b9b41dc5b917c13e3b131667d07f",
+   "bytes": 108613
+  },
+  "figures/p7_finite_cycle_decay.png": {
+   "sha256": "73aa1997e84baeb565028cf4b04983075668ca49cb37bd2fd388b730e5ad3cf9",
+   "bytes": 169745
+  },
+  "figures/p7_selection_bias_mechanism.png": {
+   "sha256": "853f5f6c992975fa9a74e8e351dcbdce70954c120136d0b0854851d3ebbe41c0",
+   "bytes": 185753
+  },
+  "reproduce.sh": {
+   "sha256": "41926554eafd17ca6ba74475ebf0763585f6c844e6d1390012a0bbfd95f9b0cf",
+   "bytes": 1101
+  },
+  "results/_pilot_notes.md": {
+   "sha256": "5452d6083c355e5c7130a1da0ae0db1e7e35766426846bf27035fc21c0554163",
+   "bytes": 3080
+  },
+  "results/adversarial.json": {
+   "sha256": "a99151a1229dfa1ac48d514ec075982a2fd83ab522f5e9935a2646387fba9603",
+   "bytes": 5891
+  },
+  "results/boundary_verdict.json": {
+   "sha256": "ce98b5d5d5dcb1745d786e50679a71cd81feb3e12a580c21ded097ace39207cd",
+   "bytes": 19072
+  },
+  "results/chain_sweep.json": {
+   "sha256": "0d76b2bafd627ade7856bdf68f7c9a45f12cf906cc6739a3e17ddaede453b7c7",
+   "bytes": 434642
+  },
+  "results/chain_sweep_arrays.npz": {
+   "sha256": "76a51f5fb424165100951ca16a7c9d2c150751f91cf82bff547b26ce117eac73",
+   "bytes": 21278728
+  },
+  "results/closure_decision.json": {
+   "sha256": "ee797a5c0a7c1f0a50d143da320adc5bf51b9b8b294f09362959ff522e3bcfa8",
+   "bytes": 2427
+  },
+  "results/consequences.json": {
+   "sha256": "d6cb260b30f040fb4106061c1e0e1c490041271b2fa46284f40d9995e90e9eef",
+   "bytes": 644321
+  },
+  "results/delay_validation.json": {
+   "sha256": "5a4fe541c75090397611eae24394b9303160154aafdfbced2fe468aa53ff7484",
+   "bytes": 3474
+  },
+  "results/independent_adjudication_replay.json": {
+   "sha256": "b6719adb24ecc6af49b69d3db5b92a9783a0434e3b2e2692f2c535e461d064c7",
+   "bytes": 6150
+  },
+  "results/repository_verification.json": {
+   "sha256": "4464e689afcbf02f14c986b2086f7126e73961626744693c50e9f2a048c87e69",
+   "bytes": 2062
+  },
+  "results/response_curves.json": {
+   "sha256": "671516ce222828d5a732c9fee70b489e308b4ea4ac9aa0fa48a1f25dcf5501d6",
+   "bytes": 45569
+  },
+  "results/sr_gain_check.json": {
+   "sha256": "b6d1eb02e1fab9f18775f72d231800e937d48bec06de2317ac017849f64da5c2",
+   "bytes": 3262
+  },
+  "src/rebaseguard_p7/__init__.py": {
+   "sha256": "7fee350c27e53f1691460596f4423669d1dafbb8dadff1ed3439e346f6523d9b",
+   "bytes": 566
+  },
+  "src/rebaseguard_p7/analysis.py": {
+   "sha256": "ba6bba8c40e0027ba6e88077fff539fbcdd3e5fea55447c54b831ce5b9487c40",
+   "bytes": 7272
+  },
+  "src/rebaseguard_p7/chain.py": {
+   "sha256": "cf8499eb9f78b240ed1ec4ea9e8e7f9d71f467050c38f456d3db0912372b37b8",
+   "bytes": 4390
+  },
+  "src/rebaseguard_p7/config.py": {
+   "sha256": "cc9849ce1da1283c2389b7da66068ebc8b5e5d3f906f1fabe2758bb1810cb192",
+   "bytes": 2001
+  },
+  "src/rebaseguard_p7/cycles.py": {
+   "sha256": "bdc88194d0e84b7e555770fbe7143b0be2e6a372e9bffdf03e8e6176ac918a85",
+   "bytes": 4655
+  },
+  "src/rebaseguard_p7/detectors.py": {
+   "sha256": "c856d315afa8b860df918b19f51b3342031bffa6ceaa8542b8e97b7528972939",
+   "bytes": 1931
+  },
+  "tests/conftest.py": {
+   "sha256": "fc4ac5ec30415cdd3c817e46a54ade772cbe1693ef6f8c4d084fffb49d22217e",
+   "bytes": 259
+  },
+  "tests/test_bridge.py": {
+   "sha256": "6ede7a5e60c0eb963f1d4fa4570da955b5caa67ac01930e0090b4212d71a1f0e",
+   "bytes": 3655
+  },
+  "tests/test_correspondence.py": {
+   "sha256": "c82fa9e9dbabd5b1e2a5d0dc1609f6f80ad5552222a2c7f4857445dcb7e86368",
+   "bytes": 3319
+  },
+  "tests/test_independent_adjudication.py": {
+   "sha256": "b63f361a96d0147dda7947a955e5f208d1b6d7eb23b421481bb5b9bd8f49e11f",
+   "bytes": 1241
+  },
+  "tests/test_reproducibility.py": {
+   "sha256": "47efb4122e774b715eab433568358ef5ba67d0da96eefbb3b5f5edfd3657a34b",
+   "bytes": 3521
+  },
+  "tests/test_semantics.py": {
+   "sha256": "c48d30eb6fe38b92cc3e3025ea669de645925f06b1a27673168cf6509c64fde5",
+   "bytes": 2624
+  }
+ }
+}

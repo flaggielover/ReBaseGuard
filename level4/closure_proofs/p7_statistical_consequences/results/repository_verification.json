@@ -1,0 +1,46 @@
+{
+ "timestamp_utc": "2026-08-31T08:30:06Z",
+ "baseline_head": "38875fd1fa8a1274b0a6f5ef014619deaf04676f",
+ "level_1_3": {
+  "command": "bash scripts/verify_level_1_3.sh",
+  "status": "PASS",
+  "skipped": 0,
+  "regression_tests_passed": 90
+ },
+ "level_4": {
+  "command": "bash scripts/verify_level_4.sh",
+  "status": "PRE_EXISTING_FAILURES_ONLY",
+  "p7_regression": false,
+  "passing_suites": {
+   "frozen_level_1_3": 90,
+   "stage_a": 290,
+   "stage_b": 46,
+   "stage_c": 48,
+   "stage_c1": 36,
+   "stage_d": 72,
+   "stage_e": 59,
+   "stage_f": 54,
+   "post_closure_reaudit": 18,
+   "d4_phase_map": 18,
+   "external_validation_v3": 75,
+   "l4r06_policy": 28,
+   "l4r12_operational_crossing": 26
+  },
+  "partially_passing_suites": {
+   "novelty_verification": {"passed": 17, "failed": 1},
+   "external_validation_v2": {"passed": 43, "failed": 2},
+   "final_global_reaudit": {"passed": 33, "failed": 3},
+   "final_level4_closure": {"passed": 32, "failed": 4}
+  },
+  "single_root_cause": "Stale historical freeze manifests predate later tracked additions under level4/closure_proofs/sr_derivative and also depend on ignored/generated files. The first novelty test expected 52 files but current HEAD tracks 92 in that protected root. A detached clean worktree at the authoritative HEAD also failed the same freeze test (there, an earlier stage_e count failed first: 33 present versus 41 expected), proving the failure exists without P7.",
+  "classification": "pre-existing and environment-dependent protected-history verifier defect; no P7 regression",
+  "remediation": "not modified because the freeze artifacts and tests are protected and outside P7 scope"
+ },
+ "p7_focused": {
+  "command": "level4/.venv/bin/python -m pytest level4/closure_proofs/p7_statistical_consequences/tests -q -p no:cacheprovider",
+  "status": "PASS",
+  "passed": 31
+ },
+ "protected_p1_p4_tracked_changes": 0,
+ "final_classification": "No P7 regression; authoritative repository verification is green except for a demonstrated pre-existing/environment-dependent freeze-manifest defect."
+}

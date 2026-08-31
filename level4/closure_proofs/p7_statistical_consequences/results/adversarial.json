@@ -1,0 +1,233 @@
+{
+ "burn_in_adequacy": {
+  "note": "cycle-mean ARL over cycles 12-49 (reported) vs 30-49 (late). A large shift would mean burn_in=12 is too short.",
+  "worst_cell": {
+   "key": "sr_m1_r010000000",
+   "reported_window": 48.36412631578947,
+   "late_window": 49.04574000000001,
+   "relative_shift": 0.014093373252728636
+  },
+  "max_abs_relative_shift": 0.014093373252728636,
+  "n_cells_shifted_more_than_2pct": 0
+ },
+ "interval_agreement": {
+  "note": "run lengths are heavy tailed; the replicate mean need not be",
+  "max_relative_width_disagreement": 0.029117386841778975,
+  "n_cells_over_20pct": 0
+ },
+ "seed_dependence": {
+  "seed_family": 20260901,
+  "cells": [
+   {
+    "detector": "cusum",
+    "m": 1,
+    "rho": 1.0,
+    "production_arl": 49.910410526315786,
+    "replication_arl": 49.55994210526316,
+    "z": -0.7887318392205411
+   },
+   {
+    "detector": "cusum",
+    "m": 5,
+    "rho": 0.0,
+    "production_arl": 162.0331052631579,
+    "replication_arl": 162.46274210526317,
+    "z": 0.5039064075518678
+   },
+   {
+    "detector": "sr",
+    "m": 3,
+    "rho": 0.25,
+    "production_arl": 137.31786315789475,
+    "replication_arl": 136.74536315789473,
+    "z": -0.7459829335871254
+   },
+   {
+    "detector": "sr",
+    "m": 5,
+    "rho": 1.0,
+    "production_arl": 77.70667368421053,
+    "replication_arl": 78.59713157894737,
+    "z": 1.6178916721227814
+   },
+   {
+    "detector": "cusum",
+    "m": 1,
+    "rho": 0.0,
+    "production_arl": 83.2233052631579,
+    "replication_arl": 83.01526315789474,
+    "z": -0.33326661302935184
+   },
+   {
+    "detector": "cusum",
+    "m": 1,
+    "rho": 0.25,
+    "production_arl": 95.6858,
+    "replication_arl": 95.30904736842105,
+    "z": -0.5756696185478182
+   }
+  ],
+  "max_abs_z": 1.6178916721227814
+ },
+ "non_monotonicity": {
+  "note": "EXPLORATORY. The in-control ARL is maximised at a strictly positive reuse fraction, well above rho_c. Not a pre-committed claim and not a mitigation recommendation.",
+  "cells": [
+   {
+    "detector": "cusum",
+    "m": 1,
+    "argmax_rho": 0.25,
+    "argmax_rho_over_rhoc": 3.729135107381261,
+    "gain_over_fresh": 0.1497476541869471,
+    "z": 19.520597292933033
+   },
+   {
+    "detector": "cusum",
+    "m": 2,
+    "argmax_rho": 0.25,
+    "argmax_rho_over_rhoc": 3.0662062404240125,
+    "gain_over_fresh": 0.10620041750039542,
+    "z": 16.19752734225549
+   },
+   {
+    "detector": "cusum",
+    "m": 3,
+    "argmax_rho": 0.1825304123,
+    "argmax_rho_over_rhoc": 2.0000000005071996,
+    "gain_over_fresh": 0.09426723076330643,
+    "z": 15.972552940509138
+   },
+   {
+    "detector": "cusum",
+    "m": 5,
+    "argmax_rho": 0.1354813233,
+    "argmax_rho_over_rhoc": 1.2499999999287748,
+    "gain_over_fresh": 0.07840113245214017,
+    "z": 14.722206769428325
+   },
+   {
+    "detector": "sr",
+    "m": 1,
+    "argmax_rho": 0.25,
+    "argmax_rho_over_rhoc": 4.113392673054696,
+    "gain_over_fresh": 0.14812918255760565,
+    "z": 18.9732841674513
+   },
+   {
+    "detector": "sr",
+    "m": 2,
+    "argmax_rho": 0.25,
+    "argmax_rho_over_rhoc": 3.375127436077909,
+    "gain_over_fresh": 0.11177105551458384,
+    "z": 17.10420881683117
+   },
+   {
+    "detector": "sr",
+    "m": 3,
+    "argmax_rho": 0.1670473309,
+    "argmax_rho_over_rhoc": 2.0000000003361307,
+    "gain_over_fresh": 0.08802839335501773,
+    "z": 14.541217383881472
+   },
+   {
+    "detector": "sr",
+    "m": 5,
+    "argmax_rho": 0.149275624,
+    "argmax_rho_over_rhoc": 1.49999999990166,
+    "gain_over_fresh": 0.0718402958420757,
+    "z": 13.535812594121841
+   }
+  ],
+  "min_z": 13.535812594121841
+ },
+ "boundary_robustness": {
+  "note": "the criterion needs >=4 of 8 families for one metric; the observed maximum is far below, so the verdict does not turn on the threshold",
+  "per_metric": {
+   "arl": 2,
+   "ref_mse": 3,
+   "fap100": 1,
+   "e_acf1": 0,
+   "R_delta_1": 3
+  },
+  "required": 4,
+  "observed_max": 3,
+  "verdict_would_flip_at_threshold": 4
+ },
+ "gain_correspondence": {
+  "note": "P7 re-measures GammaTilde only as a correspondence check and does not own those numbers; a disagreement is reported, not resolved, here",
+  "cells": [
+   {
+    "detector": "cusum",
+    "m": 1,
+    "p7": 15.934736112889233,
+    "p7_se": 0.0636325622059575,
+    "p3": 15.916540429525044,
+    "abs_diff": 0.018195683364188753,
+    "diff_in_p7_se": 0.28594924883419526
+   },
+   {
+    "detector": "cusum",
+    "m": 2,
+    "p7": 13.299901102945313,
+    "p7_se": 0.052813855783658104,
+    "p3": 13.26482496169605,
+    "abs_diff": 0.03507614124926306,
+    "diff_in_p7_se": 0.6641465715539836
+   },
+   {
+    "detector": "cusum",
+    "m": 3,
+    "p7": 11.965934058981734,
+    "p7_se": 0.04728880575126822,
+    "p3": 11.957078194838436,
+    "abs_diff": 0.008855864143297865,
+    "diff_in_p7_se": 0.1872718924194943
+   },
+   {
+    "detector": "cusum",
+    "m": 5,
+    "p7": 10.22503867673853,
+    "p7_se": 0.039436745275825934,
+    "p3": 10.226363970189938,
+    "abs_diff": 0.0013252934514085268,
+    "diff_in_p7_se": -0.03360554838233341
+   },
+   {
+    "detector": "sr",
+    "m": 1,
+    "p7": 17.22518898258129,
+    "p7_se": 0.06264752016711961,
+    "p3": 17.453570692218783,
+    "abs_diff": 0.2283817096374925,
+    "diff_in_p7_se": -3.6455027913037497
+   },
+   {
+    "detector": "sr",
+    "m": 2,
+    "p7": 14.295862954768298,
+    "p7_se": 0.0516064401373432,
+    "p3": 14.500509744311637,
+    "abs_diff": 0.20464678954333948,
+    "diff_in_p7_se": -3.9655281201086754
+   },
+   {
+    "detector": "sr",
+    "m": 3,
+    "p7": 12.786592737820289,
+    "p7_se": 0.045949099483274074,
+    "p3": 12.972654633634319,
+    "abs_diff": 0.18606189581402965,
+    "diff_in_p7_se": -4.0493045110004395
+   },
+   {
+    "detector": "sr",
+    "m": 5,
+    "p7": 10.892947678359114,
+    "p7_se": 0.03852792126573598,
+    "p3": 11.04852607349784,
+    "abs_diff": 0.1555783951387255,
+    "diff_in_p7_se": -4.038068757088277
+   }
+  ],
+  "max_abs_diff_in_p7_se": 4.0493045110004395
+ }
+}
