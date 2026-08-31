@@ -1,0 +1,129 @@
+{
+  "campaign": "Level-4 Priority 3 theorem-supported m-rho stability map",
+  "status": "FROZEN_BEFORE_ANY_MAP_OUTPUT",
+  "frozen_at": "2026-08-31",
+  "schema": "rebaseguard.p3-map-protocol.v1",
+  "imported_theorems": {
+    "cusum": {
+      "priority": 1,
+      "package": "level4/closure_proofs/m_gt_1_priority1",
+      "identity": "F'_{rho,m}(0) = rho(1 - GammaTilde_m)",
+      "gain": "GammaTilde_m = E_0[A_m T_tau]",
+      "status": "CLOSED"
+    },
+    "sr": {
+      "priority": 2,
+      "package": "level4/closure_proofs/sr_derivative_priority2",
+      "identity": "F'_{rho,m}(0) = rho(1 - GammaTilde_m^SR)",
+      "gain": "GammaTilde_m^SR = E_0[A_m T_tau]",
+      "status": "CLOSED",
+      "closure_commit": "987056ec32bcc5e437e4731dd22e0a88fb1119c0"
+    }
+  },
+  "admissible_rho_domain": {
+    "interval": [0.0, 1.0],
+    "closed": true,
+    "convention": "rho is the reuse fraction in e_{j+1}=rho*zbar+(1-rho)*fresh; rho=0 is the pure-fresh map with multiplier exactly 0 and is therefore locally attracting by the same first-order criterion, not by a separate convention."
+  },
+  "layers": [
+    {
+      "id": "GAUSSIAN_CUSUM_FROZEN",
+      "detector_family": "Gaussian two-sided CUSUM",
+      "detector_short": "CUSUM",
+      "source_priority": 1,
+      "gamma_source": "level4/closure_proofs/m_gt_1_priority1/results/numerical_correspondence.json",
+      "gamma_pointer": "score.gamma_mean",
+      "gamma_se_pointer": "score.slope_se",
+      "gamma_evidence_class": "EMPIRICAL_ONLY",
+      "cell_evidence_class": "THEOREM_PLUS_EMPIRICAL_ESTIMATE",
+      "uncertainty_model": "batch_mean_normal_95"
+    },
+    {
+      "id": "GAUSSIAN_SR_FROZEN",
+      "detector_family": "reset symmetric two-chart Shiryaev-Roberts",
+      "detector_short": "SR",
+      "source_priority": 2,
+      "gamma_source": "level4/closure_proofs/sr_derivative_priority2/results/numerical_correspondence.json",
+      "gamma_pointer": "final.gamma",
+      "gamma_se_pointer": "final.gamma_se",
+      "gamma_evidence_class": "EMPIRICAL_ONLY",
+      "cell_evidence_class": "THEOREM_PLUS_EMPIRICAL_ESTIMATE",
+      "uncertainty_model": "batch_mean_normal_95"
+    },
+    {
+      "id": "FINITE_SUPPORT_CUSUM_WITNESS",
+      "detector_family": "Priority-1 exact finite-support witness",
+      "detector_short": "CUSUM-witness",
+      "source_priority": 1,
+      "gamma_source": "level4/closure_proofs/m_gt_1_priority1/certificates/WITNESS.json",
+      "gamma_replay_source": "level4/closure_proofs/m_gt_1_priority1/certificates/certificate.json",
+      "gamma_evidence_class": "EXACT_SYMBOLIC",
+      "cell_evidence_class": "THEOREM_PLUS_CERTIFIED_INPUT",
+      "uncertainty_model": "none_exact_rational"
+    },
+    {
+      "id": "FINITE_SUPPORT_SR_WITNESS",
+      "detector_family": "Priority-2 exact finite-support SR-compatible witness",
+      "detector_short": "SR-witness",
+      "source_priority": 2,
+      "gamma_source": "level4/closure_proofs/sr_derivative_priority2/certificates/WITNESS.json",
+      "gamma_replay_source": "level4/closure_proofs/sr_derivative_priority2/certificates/certificate.json",
+      "gamma_evidence_class": "EXACT_SYMBOLIC",
+      "cell_evidence_class": "THEOREM_PLUS_CERTIFIED_INPUT",
+      "uncertainty_model": "none_exact_rational"
+    }
+  ],
+  "m_grid": [1, 2, 3, 5],
+  "m_grid_justification": "The four window lengths jointly supported by the Priority-1 and Priority-2 closed numerical protocols. No m value outside this set is synthesised, and GammaTilde is never interpolated between them.",
+  "witness_m_replay": {
+    "certified_in_priority_packages": [2, 3, 5],
+    "new_priority3_certified": [1],
+    "new_evidence_note": "m=1 for both frozen witnesses is newly certified by this campaign from the unchanged, hash-verified witness files under the unchanged Stage-D window convention. It is labelled P3_NEW and never merged into the Priority-1/2 recorded evidence."
+  },
+  "rho_grid": [
+    0.0, 0.01, 0.02, 0.03, 0.04, 0.05, 0.06, 0.07, 0.08, 0.09,
+    0.1, 0.12, 0.15, 0.2, 0.25, 0.4, 0.6, 0.8, 1.0
+  ],
+  "rho_grid_justification": "Union of the Priority-1/Priority-2 pre-registered rho values {0.05,0.10,0.25}, a coarse unit-interval sweep {0,0.2,0.4,0.6,0.8,1.0}, and a fixed small-rho refinement. Chosen from the inherited protocols and a uniform refinement rule, not from observed boundary locations.",
+  "evidence_hierarchy": [
+    {"rank": 1, "class": "EXACT_SYMBOLIC", "meaning": "closed-form rational or symbolic value"},
+    {"rank": 2, "class": "INTERVAL_CERTIFIED", "meaning": "rigorous Arb/FLINT interval enclosure"},
+    {"rank": 3, "class": "THEOREM_PLUS_CERTIFIED_INPUT", "meaning": "closed derivative theorem applied to an exact or interval-certified GammaTilde"},
+    {"rank": 4, "class": "THEOREM_PLUS_EMPIRICAL_ESTIMATE", "meaning": "closed derivative theorem applied to a Monte Carlo GammaTilde estimate"},
+    {"rank": 5, "class": "EMPIRICAL_ONLY", "meaning": "Monte Carlo estimate with no theorem attached"},
+    {"rank": 6, "class": "INCONCLUSIVE", "meaning": "linearization or evidence does not determine the class"}
+  ],
+  "classification": {
+    "boundary_tolerance": 1e-12,
+    "classes": ["LOCALLY-STABLE", "BOUNDARY", "LOCALLY-UNSTABLE"],
+    "dynamics": ["LOCALLY_ATTRACTING", "FIRST_ORDER_BOUNDARY_INCONCLUSIVE", "LOCALLY_REPELLING"],
+    "rule": "magnitude=|rho(1-GammaTilde)|; BOUNDARY when ||magnitude|-1|<=boundary_tolerance; LOCALLY-STABLE below; LOCALLY-UNSTABLE above",
+    "tolerance_inherited_from": "level4/closure_proofs/d4_phase_map/src/rebaseguard_d4/config.py::BOUNDARY_TOLERANCE"
+  },
+  "uncertainty": {
+    "z95": 1.959963984540054,
+    "z95_inherited_from": "level4/closure_proofs/d4_phase_map/src/rebaseguard_d4/config.py::Z95",
+    "gamma_interval": "GammaTilde_hat -/+ z95 * SE(GammaTilde_hat), with SE the recorded across-batch standard error of the batch means",
+    "estimand": "the frozen infinite-horizon detector gain GammaTilde_m = E_0[A_m T_tau]",
+    "assumptions": "Independent equally sized Monte Carlo batches; a central-limit normal approximation for the batch mean; the recorded SE is taken verbatim from the closed Priority-1/Priority-2 artifacts and is not re-estimated here.",
+    "lambda_interval": "exact monotone image of the GammaTilde interval under rho(1-.) for rho>=0",
+    "magnitude_interval": "exact image of the GammaTilde interval under rho|1-.|, which attains 0 when the GammaTilde interval contains 1",
+    "rho_crit_se": "delta method, SE(rho_c)=SE(GammaTilde)/(GammaTilde-1)^2, valid only where GammaTilde>1",
+    "rho_crit_interval": "monotone transform [1/(Gamma_hi-1), 1/(Gamma_lo-1)] when Gamma_lo>1; reported as unbounded above otherwise",
+    "classification_robustness": "a cell is UNCERTAINTY_SENSITIVE when the class of the magnitude interval's lower endpoint differs from the class of its upper endpoint; such a cell must not be reported as a robust classification"
+  },
+  "gates": {
+    "require_provenance_hash_match": true,
+    "require_witness_replay_match": true,
+    "require_rho_zero_attracting": true,
+    "require_formula_recomputation_tolerance": 1e-15,
+    "require_exact_boundary_unit_magnitude_tolerance": 1e-12,
+    "require_complete_grid": true,
+    "require_every_figure_cell_traceable": true,
+    "require_deterministic_regeneration": true,
+    "forbid_gamma_interpolation_across_m": true,
+    "forbid_certified_label_on_gaussian_layers": true
+  },
+  "claim_scope": "First-order local stability of the origin for the deterministic conditional-mean reference map, per detector family and per window length. No global, nonlinear, cross-distribution, or detector-universal claim is made.",
+  "evidence_boundary": "Rigorous interval statements cover only the two exact finite-support witnesses. Frozen infinite-horizon Gaussian CUSUM and Gaussian SR gains remain Monte Carlo estimates and are never labelled certified."
+}

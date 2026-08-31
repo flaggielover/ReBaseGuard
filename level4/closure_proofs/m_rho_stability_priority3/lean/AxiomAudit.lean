@@ -1,0 +1,18 @@
+import StabilityMapP3
+
+open RebaseguardLean.Priority3Map
+
+#print axioms abs_multiplier
+#print axioms abs_multiplier_strictMonoOn
+#print axioms boundary_at_criticalRho
+#print axioms attracting_iff_lt_criticalRho
+#print axioms repelling_iff_criticalRho_lt
+#print axioms criticalRho_le_one_iff
+#print axioms attracting_of_gain_le_two
+#print axioms full_reuse_attracting_of_gain_between_zero_two
+#print axioms full_reuse_boundary_of_gain_eq_zero_or_two
+#print axioms attracting_of_interval
+#print axioms repelling_of_interval
+#print axioms trichotomy
+#print axioms cusum_attracting_of_lt_criticalRho
+#print axioms sr_repelling_of_criticalRho_lt

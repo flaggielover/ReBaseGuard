@@ -1,0 +1,574 @@
+{
+  "campaign": "Level-4 Priority 3 theorem-supported m-rho stability map",
+  "evidence_boundary": "Rigorous interval statements cover only the two exact finite-support witnesses. Frozen infinite-horizon Gaussian CUSUM and Gaussian SR gains remain Monte Carlo estimates and are never labelled certified.",
+  "gamma_interpolated_across_m": false,
+  "imported_theorems": {
+    "cusum": {
+      "gain": "GammaTilde_m = E_0[A_m T_tau]",
+      "identity": "F'_{rho,m}(0) = rho(1 - GammaTilde_m)",
+      "package": "level4/closure_proofs/m_gt_1_priority1",
+      "priority": 1,
+      "status": "CLOSED"
+    },
+    "sr": {
+      "closure_commit": "987056ec32bcc5e437e4731dd22e0a88fb1119c0",
+      "gain": "GammaTilde_m^SR = E_0[A_m T_tau]",
+      "identity": "F'_{rho,m}(0) = rho(1 - GammaTilde_m^SR)",
+      "package": "level4/closure_proofs/sr_derivative_priority2",
+      "priority": 2,
+      "status": "CLOSED"
+    }
+  },
+  "layers": [
+    {
+      "cell_evidence_class": "THEOREM_PLUS_EMPIRICAL_ESTIMATE",
+      "detector_family": "Gaussian two-sided CUSUM",
+      "detector_short": "CUSUM",
+      "gamma_evidence_class": "EMPIRICAL_ONLY",
+      "id": "GAUSSIAN_CUSUM_FROZEN",
+      "rows": [
+        {
+          "boundary": {
+            "accessible_in_admissible_domain": true,
+            "admissible_interpretation": "the boundary lies inside the admissible domain [0,1]: rho<0.067040 is locally attracting and rho>0.067040 is locally repelling",
+            "gamma_regime": "GAMMA_GT_2",
+            "rho_crit": 0.06703967349028536,
+            "rho_crit_formula": "rho_crit = 1/(GammaTilde-1)",
+            "rho_crit_formula_applicable": true,
+            "rho_crit_interval": [
+              0.06651610771453137,
+              0.06757154690546308
+            ],
+            "rho_crit_se_delta": 0.00026923295724864477
+          },
+          "cell_evidence_class": "THEOREM_PLUS_EMPIRICAL_ESTIMATE",
+          "closed_certificate_value": null,
+          "gamma_evidence_class": "EMPIRICAL_ONLY",
+          "gamma_tilde": 15.916540429525044,
+          "gamma_tilde_ci95": [
+            15.799128417158544,
+            16.033952441891547
+          ],
+          "gamma_tilde_exact": null,
+          "gamma_tilde_se": 0.05990518871399268,
+          "m": 1,
+          "provenance_kind": "READ_FROM_CLOSED_PACKAGE_RESULT_JSON",
+          "replayed_against_closed_certificate": false,
+          "source": "level4/closure_proofs/m_gt_1_priority1/results/numerical_correspondence.json",
+          "source_evidence_class": "EMPIRICAL_FROZEN_GAUSSIAN_CUSUM",
+          "source_protocol_sha256": "e58e26b97eb6262493080bdd6962f4a0befbae335f34a6619d71139b300221d2"
+        },
+        {
+          "boundary": {
+            "accessible_in_admissible_domain": true,
+            "admissible_interpretation": "the boundary lies inside the admissible domain [0,1]: rho<0.081534 is locally attracting and rho>0.081534 is locally repelling",
+            "gamma_regime": "GAMMA_GT_2",
+            "rho_crit": 0.08153398056010368,
+            "rho_crit_formula": "rho_crit = 1/(GammaTilde-1)",
+            "rho_crit_formula_applicable": true,
+            "rho_crit_interval": [
+              0.08088572207223593,
+              0.08219271393210457
+            ],
+            "rho_crit_se_delta": 0.00033340100104785797
+          },
+          "cell_evidence_class": "THEOREM_PLUS_EMPIRICAL_ESTIMATE",
+          "closed_certificate_value": null,
+          "gamma_evidence_class": "EMPIRICAL_ONLY",
+          "gamma_tilde": 13.26482496169605,
+          "gamma_tilde_ci95": [
+            13.166528542007406,
+            13.363121381384694
+          ],
+          "gamma_tilde_exact": null,
+          "gamma_tilde_se": 0.050152156092659925,
+          "m": 2,
+          "provenance_kind": "READ_FROM_CLOSED_PACKAGE_RESULT_JSON",
+          "replayed_against_closed_certificate": false,
+          "source": "level4/closure_proofs/m_gt_1_priority1/results/numerical_correspondence.json",
+          "source_evidence_class": "EMPIRICAL_FROZEN_GAUSSIAN_CUSUM",
+          "source_protocol_sha256": "e58e26b97eb6262493080bdd6962f4a0befbae335f34a6619d71139b300221d2"
+        },
+        {
+          "boundary": {
+            "accessible_in_admissible_domain": true,
+            "admissible_interpretation": "the boundary lies inside the admissible domain [0,1]: rho<0.091265 is locally attracting and rho>0.091265 is locally repelling",
+            "gamma_regime": "GAMMA_GT_2",
+            "rho_crit": 0.09126520612685517,
+            "rho_crit_formula": "rho_crit = 1/(GammaTilde-1)",
+            "rho_crit_formula_applicable": true,
+            "rho_crit_interval": [
+              0.09056598704672979,
+              0.09197530592146654
+            ],
+            "rho_crit_se_delta": 0.0003595052972326427
+          },
+          "cell_evidence_class": "THEOREM_PLUS_EMPIRICAL_ESTIMATE",
+          "closed_certificate_value": null,
+          "gamma_evidence_class": "EMPIRICAL_ONLY",
+          "gamma_tilde": 11.957078194838436,
+          "gamma_tilde_ci95": [
+            11.872483543070286,
+            12.041672846606586
+          ],
+          "gamma_tilde_exact": null,
+          "gamma_tilde_se": 0.04316132971596495,
+          "m": 3,
+          "provenance_kind": "READ_FROM_CLOSED_PACKAGE_RESULT_JSON",
+          "replayed_against_closed_certificate": false,
+          "source": "level4/closure_proofs/m_gt_1_priority1/results/numerical_correspondence.json",
+          "source_evidence_class": "EMPIRICAL_FROZEN_GAUSSIAN_CUSUM",
+          "source_protocol_sha256": "e58e26b97eb6262493080bdd6962f4a0befbae335f34a6619d71139b300221d2"
+        },
+        {
+          "boundary": {
+            "accessible_in_admissible_domain": true,
+            "admissible_interpretation": "the boundary lies inside the admissible domain [0,1]: rho<0.108385 is locally attracting and rho>0.108385 is locally repelling",
+            "gamma_regime": "GAMMA_GT_2",
+            "rho_crit": 0.10838505864617581,
+            "rho_crit_formula": "rho_crit = 1/(GammaTilde-1)",
+            "rho_crit_formula_applicable": true,
+            "rho_crit_interval": [
+              0.10757977663946906,
+              0.10920248735725342
+            ],
+            "rho_crit_se_delta": 0.00041394122727552736
+          },
+          "cell_evidence_class": "THEOREM_PLUS_EMPIRICAL_ESTIMATE",
+          "closed_certificate_value": null,
+          "gamma_evidence_class": "EMPIRICAL_ONLY",
+          "gamma_tilde": 10.226363970189938,
+          "gamma_tilde_ci95": [
+            10.157300572545779,
+            10.295427367834098
+          ],
+          "gamma_tilde_exact": null,
+          "gamma_tilde_se": 0.03523707485898826,
+          "m": 5,
+          "provenance_kind": "READ_FROM_CLOSED_PACKAGE_RESULT_JSON",
+          "replayed_against_closed_certificate": false,
+          "source": "level4/closure_proofs/m_gt_1_priority1/results/numerical_correspondence.json",
+          "source_evidence_class": "EMPIRICAL_FROZEN_GAUSSIAN_CUSUM",
+          "source_protocol_sha256": "e58e26b97eb6262493080bdd6962f4a0befbae335f34a6619d71139b300221d2"
+        }
+      ],
+      "source_priority": 1,
+      "uncertainty_model": "batch_mean_normal_95"
+    },
+    {
+      "cell_evidence_class": "THEOREM_PLUS_EMPIRICAL_ESTIMATE",
+      "detector_family": "reset symmetric two-chart Shiryaev-Roberts",
+      "detector_short": "SR",
+      "gamma_evidence_class": "EMPIRICAL_ONLY",
+      "id": "GAUSSIAN_SR_FROZEN",
+      "rows": [
+        {
+          "boundary": {
+            "accessible_in_admissible_domain": true,
+            "admissible_interpretation": "the boundary lies inside the admissible domain [0,1]: rho<0.060777 is locally attracting and rho>0.060777 is locally repelling",
+            "gamma_regime": "GAMMA_GT_2",
+            "rho_crit": 0.060777081078997625,
+            "rho_crit_formula": "rho_crit = 1/(GammaTilde-1)",
+            "rho_crit_formula_applicable": true,
+            "rho_crit_interval": [
+              0.06030383069519023,
+              0.06125781813348775
+            ],
+            "rho_crit_se_delta": 0.00024335362592844357
+          },
+          "cell_evidence_class": "THEOREM_PLUS_EMPIRICAL_ESTIMATE",
+          "closed_certificate_value": null,
+          "gamma_evidence_class": "EMPIRICAL_ONLY",
+          "gamma_tilde": 17.453570692218783,
+          "gamma_tilde_ci95": [
+            17.32444691093774,
+            17.582694473499824
+          ],
+          "gamma_tilde_exact": null,
+          "gamma_tilde_se": 0.0658806908185833,
+          "m": 1,
+          "provenance_kind": "READ_FROM_CLOSED_PACKAGE_RESULT_JSON",
+          "replayed_against_closed_certificate": false,
+          "source": "level4/closure_proofs/sr_derivative_priority2/results/numerical_correspondence.json",
+          "source_evidence_class": "EMPIRICAL_FROZEN_GAUSSIAN_SR",
+          "source_protocol_sha256": "8fc6a0d5da8b514f0c53fad2290428186fdb9749a559a3819c3db6f633ab8a56"
+        },
+        {
+          "boundary": {
+            "accessible_in_admissible_domain": true,
+            "admissible_interpretation": "the boundary lies inside the admissible domain [0,1]: rho<0.074071 is locally attracting and rho>0.074071 is locally repelling",
+            "gamma_regime": "GAMMA_GT_2",
+            "rho_crit": 0.07407127722872422,
+            "rho_crit_formula": "rho_crit = 1/(GammaTilde-1)",
+            "rho_crit_formula_applicable": true,
+            "rho_crit_interval": [
+              0.07346627165749556,
+              0.07468633016149019
+            ],
+            "rho_crit_se_delta": 0.0003112240255726791
+          },
+          "cell_evidence_class": "THEOREM_PLUS_EMPIRICAL_ESTIMATE",
+          "closed_certificate_value": null,
+          "gamma_evidence_class": "EMPIRICAL_ONLY",
+          "gamma_tilde": 14.500509744311637,
+          "gamma_tilde_ci95": [
+            14.38933105747403,
+            14.611688431149245
+          ],
+          "gamma_tilde_exact": null,
+          "gamma_tilde_se": 0.05672486214775936,
+          "m": 2,
+          "provenance_kind": "READ_FROM_CLOSED_PACKAGE_RESULT_JSON",
+          "replayed_against_closed_certificate": false,
+          "source": "level4/closure_proofs/sr_derivative_priority2/results/numerical_correspondence.json",
+          "source_evidence_class": "EMPIRICAL_FROZEN_GAUSSIAN_SR",
+          "source_protocol_sha256": "8fc6a0d5da8b514f0c53fad2290428186fdb9749a559a3819c3db6f633ab8a56"
+        },
+        {
+          "boundary": {
+            "accessible_in_admissible_domain": true,
+            "admissible_interpretation": "the boundary lies inside the admissible domain [0,1]: rho<0.083524 is locally attracting and rho>0.083524 is locally repelling",
+            "gamma_regime": "GAMMA_GT_2",
+            "rho_crit": 0.08352366543596258,
+            "rho_crit_formula": "rho_crit = 1/(GammaTilde-1)",
+            "rho_crit_formula_applicable": true,
+            "rho_crit_interval": [
+              0.08285887284696825,
+              0.08419921182097227
+            ],
+            "rho_crit_se_delta": 0.0003419074801407008
+          },
+          "cell_evidence_class": "THEOREM_PLUS_EMPIRICAL_ESTIMATE",
+          "closed_certificate_value": null,
+          "gamma_evidence_class": "EMPIRICAL_ONLY",
+          "gamma_tilde": 12.972654633634319,
+          "gamma_tilde_ci95": [
+            12.87659573496056,
+            13.068713532308077
+          ],
+          "gamma_tilde_exact": null,
+          "gamma_tilde_se": 0.049010542760713774,
+          "m": 3,
+          "provenance_kind": "READ_FROM_CLOSED_PACKAGE_RESULT_JSON",
+          "replayed_against_closed_certificate": false,
+          "source": "level4/closure_proofs/sr_derivative_priority2/results/numerical_correspondence.json",
+          "source_evidence_class": "EMPIRICAL_FROZEN_GAUSSIAN_SR",
+          "source_protocol_sha256": "8fc6a0d5da8b514f0c53fad2290428186fdb9749a559a3819c3db6f633ab8a56"
+        },
+        {
+          "boundary": {
+            "accessible_in_admissible_domain": true,
+            "admissible_interpretation": "the boundary lies inside the admissible domain [0,1]: rho<0.099517 is locally attracting and rho>0.099517 is locally repelling",
+            "gamma_regime": "GAMMA_GT_2",
+            "rho_crit": 0.09951708267319101,
+            "rho_crit_formula": "rho_crit = 1/(GammaTilde-1)",
+            "rho_crit_formula_applicable": true,
+            "rho_crit_interval": [
+              0.098726664954527,
+              0.10032025889930474
+            ],
+            "rho_crit_se_delta": 0.0004065104795752744
+          },
+          "cell_evidence_class": "THEOREM_PLUS_EMPIRICAL_ESTIMATE",
+          "closed_certificate_value": null,
+          "gamma_evidence_class": "EMPIRICAL_ONLY",
+          "gamma_tilde": 11.04852607349784,
+          "gamma_tilde_ci95": [
+            10.968076348404743,
+            11.128975798590936
+          ],
+          "gamma_tilde_exact": null,
+          "gamma_tilde_se": 0.04104653234838718,
+          "m": 5,
+          "provenance_kind": "READ_FROM_CLOSED_PACKAGE_RESULT_JSON",
+          "replayed_against_closed_certificate": false,
+          "source": "level4/closure_proofs/sr_derivative_priority2/results/numerical_correspondence.json",
+          "source_evidence_class": "EMPIRICAL_FROZEN_GAUSSIAN_SR",
+          "source_protocol_sha256": "8fc6a0d5da8b514f0c53fad2290428186fdb9749a559a3819c3db6f633ab8a56"
+        }
+      ],
+      "source_priority": 2,
+      "uncertainty_model": "batch_mean_normal_95"
+    },
+    {
+      "cell_evidence_class": "THEOREM_PLUS_CERTIFIED_INPUT",
+      "detector_family": "Priority-1 exact finite-support witness",
+      "detector_short": "CUSUM-witness",
+      "gamma_evidence_class": "EXACT_SYMBOLIC",
+      "id": "FINITE_SUPPORT_CUSUM_WITNESS",
+      "rows": [
+        {
+          "boundary": {
+            "accessible_in_admissible_domain": true,
+            "admissible_interpretation": "the boundary lies inside the admissible domain [0,1]: rho<0.153846 is locally attracting and rho>0.153846 is locally repelling",
+            "gamma_regime": "GAMMA_GT_2",
+            "rho_crit": 0.15384615384615385,
+            "rho_crit_formula": "rho_crit = 1/(GammaTilde-1)",
+            "rho_crit_formula_applicable": true,
+            "rho_crit_interval": null,
+            "rho_crit_se_delta": null
+          },
+          "cell_evidence_class": "THEOREM_PLUS_CERTIFIED_INPUT",
+          "closed_certificate_value": null,
+          "gamma_evidence_class": "EXACT_SYMBOLIC",
+          "gamma_tilde": 7.5,
+          "gamma_tilde_ci95": null,
+          "gamma_tilde_exact": "15/2",
+          "gamma_tilde_se": null,
+          "m": 1,
+          "provenance_kind": "P3_NEW_EXACT_FROM_FROZEN_WITNESS",
+          "replayed_against_closed_certificate": false,
+          "source": "level4/closure_proofs/m_gt_1_priority1/certificates/WITNESS.json"
+        },
+        {
+          "boundary": {
+            "accessible_in_admissible_domain": true,
+            "admissible_interpretation": "the boundary lies inside the admissible domain [0,1]: rho<0.153846 is locally attracting and rho>0.153846 is locally repelling",
+            "gamma_regime": "GAMMA_GT_2",
+            "rho_crit": 0.15384615384615385,
+            "rho_crit_formula": "rho_crit = 1/(GammaTilde-1)",
+            "rho_crit_formula_applicable": true,
+            "rho_crit_interval": null,
+            "rho_crit_se_delta": null
+          },
+          "cell_evidence_class": "THEOREM_PLUS_CERTIFIED_INPUT",
+          "closed_certificate_value": "15/2",
+          "gamma_evidence_class": "EXACT_SYMBOLIC",
+          "gamma_tilde": 7.5,
+          "gamma_tilde_ci95": null,
+          "gamma_tilde_exact": "15/2",
+          "gamma_tilde_se": null,
+          "m": 2,
+          "provenance_kind": "REPLAYED_FROM_CLOSED_PACKAGE",
+          "replayed_against_closed_certificate": true,
+          "source": "level4/closure_proofs/m_gt_1_priority1/certificates/WITNESS.json"
+        },
+        {
+          "boundary": {
+            "accessible_in_admissible_domain": true,
+            "admissible_interpretation": "the boundary lies inside the admissible domain [0,1]: rho<0.153846 is locally attracting and rho>0.153846 is locally repelling",
+            "gamma_regime": "GAMMA_GT_2",
+            "rho_crit": 0.15384615384615385,
+            "rho_crit_formula": "rho_crit = 1/(GammaTilde-1)",
+            "rho_crit_formula_applicable": true,
+            "rho_crit_interval": null,
+            "rho_crit_se_delta": null
+          },
+          "cell_evidence_class": "THEOREM_PLUS_CERTIFIED_INPUT",
+          "closed_certificate_value": "15/2",
+          "gamma_evidence_class": "EXACT_SYMBOLIC",
+          "gamma_tilde": 7.5,
+          "gamma_tilde_ci95": null,
+          "gamma_tilde_exact": "15/2",
+          "gamma_tilde_se": null,
+          "m": 3,
+          "provenance_kind": "REPLAYED_FROM_CLOSED_PACKAGE",
+          "replayed_against_closed_certificate": true,
+          "source": "level4/closure_proofs/m_gt_1_priority1/certificates/WITNESS.json"
+        },
+        {
+          "boundary": {
+            "accessible_in_admissible_domain": true,
+            "admissible_interpretation": "the boundary lies inside the admissible domain [0,1]: rho<0.153846 is locally attracting and rho>0.153846 is locally repelling",
+            "gamma_regime": "GAMMA_GT_2",
+            "rho_crit": 0.15384615384615385,
+            "rho_crit_formula": "rho_crit = 1/(GammaTilde-1)",
+            "rho_crit_formula_applicable": true,
+            "rho_crit_interval": null,
+            "rho_crit_se_delta": null
+          },
+          "cell_evidence_class": "THEOREM_PLUS_CERTIFIED_INPUT",
+          "closed_certificate_value": "15/2",
+          "gamma_evidence_class": "EXACT_SYMBOLIC",
+          "gamma_tilde": 7.5,
+          "gamma_tilde_ci95": null,
+          "gamma_tilde_exact": "15/2",
+          "gamma_tilde_se": null,
+          "m": 5,
+          "provenance_kind": "REPLAYED_FROM_CLOSED_PACKAGE",
+          "replayed_against_closed_certificate": true,
+          "source": "level4/closure_proofs/m_gt_1_priority1/certificates/WITNESS.json"
+        }
+      ],
+      "source_priority": 1,
+      "uncertainty_model": "none_exact_rational"
+    },
+    {
+      "cell_evidence_class": "THEOREM_PLUS_CERTIFIED_INPUT",
+      "detector_family": "Priority-2 exact finite-support SR-compatible witness",
+      "detector_short": "SR-witness",
+      "gamma_evidence_class": "EXACT_SYMBOLIC",
+      "id": "FINITE_SUPPORT_SR_WITNESS",
+      "rows": [
+        {
+          "boundary": {
+            "accessible_in_admissible_domain": true,
+            "admissible_interpretation": "the boundary lies inside the admissible domain [0,1]: rho<0.333333 is locally attracting and rho>0.333333 is locally repelling",
+            "gamma_regime": "GAMMA_GT_2",
+            "rho_crit": 0.3333333333333333,
+            "rho_crit_formula": "rho_crit = 1/(GammaTilde-1)",
+            "rho_crit_formula_applicable": true,
+            "rho_crit_interval": null,
+            "rho_crit_se_delta": null
+          },
+          "cell_evidence_class": "THEOREM_PLUS_CERTIFIED_INPUT",
+          "closed_certificate_value": null,
+          "gamma_evidence_class": "EXACT_SYMBOLIC",
+          "gamma_tilde": 4.0,
+          "gamma_tilde_ci95": null,
+          "gamma_tilde_exact": "4",
+          "gamma_tilde_se": null,
+          "m": 1,
+          "provenance_kind": "P3_NEW_EXACT_FROM_FROZEN_WITNESS",
+          "replayed_against_closed_certificate": false,
+          "source": "level4/closure_proofs/sr_derivative_priority2/certificates/WITNESS.json"
+        },
+        {
+          "boundary": {
+            "accessible_in_admissible_domain": true,
+            "admissible_interpretation": "the boundary lies inside the admissible domain [0,1]: rho<0.500000 is locally attracting and rho>0.500000 is locally repelling",
+            "gamma_regime": "GAMMA_GT_2",
+            "rho_crit": 0.5,
+            "rho_crit_formula": "rho_crit = 1/(GammaTilde-1)",
+            "rho_crit_formula_applicable": true,
+            "rho_crit_interval": null,
+            "rho_crit_se_delta": null
+          },
+          "cell_evidence_class": "THEOREM_PLUS_CERTIFIED_INPUT",
+          "closed_certificate_value": "3",
+          "gamma_evidence_class": "EXACT_SYMBOLIC",
+          "gamma_tilde": 3.0,
+          "gamma_tilde_ci95": null,
+          "gamma_tilde_exact": "3",
+          "gamma_tilde_se": null,
+          "m": 2,
+          "provenance_kind": "REPLAYED_FROM_CLOSED_PACKAGE",
+          "replayed_against_closed_certificate": true,
+          "source": "level4/closure_proofs/sr_derivative_priority2/certificates/WITNESS.json"
+        },
+        {
+          "boundary": {
+            "accessible_in_admissible_domain": true,
+            "admissible_interpretation": "the boundary lies inside the admissible domain [0,1]: rho<0.600000 is locally attracting and rho>0.600000 is locally repelling",
+            "gamma_regime": "GAMMA_GT_2",
+            "rho_crit": 0.6000000000000001,
+            "rho_crit_formula": "rho_crit = 1/(GammaTilde-1)",
+            "rho_crit_formula_applicable": true,
+            "rho_crit_interval": null,
+            "rho_crit_se_delta": null
+          },
+          "cell_evidence_class": "THEOREM_PLUS_CERTIFIED_INPUT",
+          "closed_certificate_value": "8/3",
+          "gamma_evidence_class": "EXACT_SYMBOLIC",
+          "gamma_tilde": 2.6666666666666665,
+          "gamma_tilde_ci95": null,
+          "gamma_tilde_exact": "8/3",
+          "gamma_tilde_se": null,
+          "m": 3,
+          "provenance_kind": "REPLAYED_FROM_CLOSED_PACKAGE",
+          "replayed_against_closed_certificate": true,
+          "source": "level4/closure_proofs/sr_derivative_priority2/certificates/WITNESS.json"
+        },
+        {
+          "boundary": {
+            "accessible_in_admissible_domain": true,
+            "admissible_interpretation": "the boundary lies inside the admissible domain [0,1]: rho<0.714286 is locally attracting and rho>0.714286 is locally repelling",
+            "gamma_regime": "GAMMA_GT_2",
+            "rho_crit": 0.7142857142857143,
+            "rho_crit_formula": "rho_crit = 1/(GammaTilde-1)",
+            "rho_crit_formula_applicable": true,
+            "rho_crit_interval": null,
+            "rho_crit_se_delta": null
+          },
+          "cell_evidence_class": "THEOREM_PLUS_CERTIFIED_INPUT",
+          "closed_certificate_value": "12/5",
+          "gamma_evidence_class": "EXACT_SYMBOLIC",
+          "gamma_tilde": 2.4,
+          "gamma_tilde_ci95": null,
+          "gamma_tilde_exact": "12/5",
+          "gamma_tilde_se": null,
+          "m": 5,
+          "provenance_kind": "REPLAYED_FROM_CLOSED_PACKAGE",
+          "replayed_against_closed_certificate": true,
+          "source": "level4/closure_proofs/sr_derivative_priority2/certificates/WITNESS.json"
+        }
+      ],
+      "source_priority": 2,
+      "uncertainty_model": "none_exact_rational"
+    }
+  ],
+  "m_grid": [
+    1,
+    2,
+    3,
+    5
+  ],
+  "protocol_sha256": "8a40a23905724fa55bdcc0c01e1d8e38035c1ea64497250f635703faa2d440b3",
+  "schema": "rebaseguard.p3-provenance.v1",
+  "upstream_hashes": {
+    "all_match": true,
+    "sources": [
+      {
+        "expected_sha256": "347962930467043e939f8aaccba694636eceb910cea5e561ee2b022f55a9a7c5",
+        "match": true,
+        "observed_sha256": "347962930467043e939f8aaccba694636eceb910cea5e561ee2b022f55a9a7c5",
+        "path": "level4/closure_proofs/m_gt_1_priority1/certificates/WITNESS.json"
+      },
+      {
+        "expected_sha256": "844cfe3d98db4e5e0368f4e53c6936165fe8e9adcf9c2724cdd9dc930a2b1b39",
+        "match": true,
+        "observed_sha256": "844cfe3d98db4e5e0368f4e53c6936165fe8e9adcf9c2724cdd9dc930a2b1b39",
+        "path": "level4/closure_proofs/m_gt_1_priority1/certificates/certificate.json"
+      },
+      {
+        "expected_sha256": "109ceb60ba211a0a91e5ab3618e852331a383c1e554f058c7ed3948be43ffb9f",
+        "match": true,
+        "observed_sha256": "109ceb60ba211a0a91e5ab3618e852331a383c1e554f058c7ed3948be43ffb9f",
+        "path": "level4/closure_proofs/m_gt_1_priority1/manifest.json"
+      },
+      {
+        "expected_sha256": "cf7786b5983c412893818258263481fe585e43d0854e3e592dcf4bad2a069862",
+        "match": true,
+        "observed_sha256": "cf7786b5983c412893818258263481fe585e43d0854e3e592dcf4bad2a069862",
+        "path": "level4/closure_proofs/m_gt_1_priority1/results/closure_decision.json"
+      },
+      {
+        "expected_sha256": "75a60772d69a20cdf67668569692e185c0148254c72cab8e166fc18a4a606e6d",
+        "match": true,
+        "observed_sha256": "75a60772d69a20cdf67668569692e185c0148254c72cab8e166fc18a4a606e6d",
+        "path": "level4/closure_proofs/m_gt_1_priority1/results/numerical_correspondence.json"
+      },
+      {
+        "expected_sha256": "e90c01ec30700346be510c3d5e5ad69bb471ab44d25d2207e1e988e4e07acc2b",
+        "match": true,
+        "observed_sha256": "e90c01ec30700346be510c3d5e5ad69bb471ab44d25d2207e1e988e4e07acc2b",
+        "path": "level4/closure_proofs/sr_derivative_priority2/certificates/WITNESS.json"
+      },
+      {
+        "expected_sha256": "88386f6d974dd016be708410acc9d29e4f85b7f3ccdf6bf551b058cb94cc1559",
+        "match": true,
+        "observed_sha256": "88386f6d974dd016be708410acc9d29e4f85b7f3ccdf6bf551b058cb94cc1559",
+        "path": "level4/closure_proofs/sr_derivative_priority2/certificates/certificate.json"
+      },
+      {
+        "expected_sha256": "244e2ed120c9a53878db1d38addc16600ab29bba176d0595f8ad62d9f0d70757",
+        "match": true,
+        "observed_sha256": "244e2ed120c9a53878db1d38addc16600ab29bba176d0595f8ad62d9f0d70757",
+        "path": "level4/closure_proofs/sr_derivative_priority2/manifest.json"
+      },
+      {
+        "expected_sha256": "67cad6cb5f89f4e79bf3df88019cfa34348dfa0cdc0355f3e6b0d09cd4fa0347",
+        "match": true,
+        "observed_sha256": "67cad6cb5f89f4e79bf3df88019cfa34348dfa0cdc0355f3e6b0d09cd4fa0347",
+        "path": "level4/closure_proofs/sr_derivative_priority2/results/closure_decision.json"
+      },
+      {
+        "expected_sha256": "a2faec13b541a015035df21d45f7476726b55689a7784ad40014a4def220d211",
+        "match": true,
+        "observed_sha256": "a2faec13b541a015035df21d45f7476726b55689a7784ad40014a4def220d211",
+        "path": "level4/closure_proofs/sr_derivative_priority2/results/numerical_correspondence.json"
+      }
+    ]
+  },
+  "valid": true
+}

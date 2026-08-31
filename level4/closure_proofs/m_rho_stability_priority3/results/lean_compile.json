@@ -1,0 +1,33 @@
+{
+  "compiled": true,
+  "source": "lean/StabilityMapP3.lean",
+  "source_sha256": "920b002a5e7baf7b160bcc91c9cc3a122a7abf2283314dbe05c406d4744570ac",
+  "audited_declarations": [
+    "RebaseguardLean.Priority3Map.abs_multiplier",
+    "RebaseguardLean.Priority3Map.abs_multiplier_strictMonoOn",
+    "RebaseguardLean.Priority3Map.attracting_iff_lt_criticalRho",
+    "RebaseguardLean.Priority3Map.attracting_of_gain_le_two",
+    "RebaseguardLean.Priority3Map.attracting_of_interval",
+    "RebaseguardLean.Priority3Map.boundary_at_criticalRho",
+    "RebaseguardLean.Priority3Map.criticalRho_le_one_iff",
+    "RebaseguardLean.Priority3Map.cusum_attracting_of_lt_criticalRho",
+    "RebaseguardLean.Priority3Map.full_reuse_attracting_of_gain_between_zero_two",
+    "RebaseguardLean.Priority3Map.full_reuse_boundary_of_gain_eq_zero_or_two",
+    "RebaseguardLean.Priority3Map.repelling_iff_criticalRho_lt",
+    "RebaseguardLean.Priority3Map.repelling_of_interval",
+    "RebaseguardLean.Priority3Map.sr_repelling_of_criticalRho_lt",
+    "RebaseguardLean.Priority3Map.trichotomy"
+  ],
+  "axiom_audit_declarations": 14,
+  "allowed_axioms": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+  ],
+  "sorryAx": false,
+  "project_specific_scientific_axioms": false,
+  "imports_priority1_closed_spine": true,
+  "imports_priority2_closed_spine": true,
+  "reuse_rationale": "Priority 3 is an explicit synthesis layer. It imports the two closed derivative spines as dependencies instead of restating them, and proves only the generic stability-map algebra plus the two bridges.",
+  "boundary": "Lean proves the generic stability-map algebra and the two bridges into the closed derivative spines. It does not evaluate any GammaTilde value, does not certify the Monte Carlo Gaussian gains, and asserts nothing beyond first-order local behaviour."
+}

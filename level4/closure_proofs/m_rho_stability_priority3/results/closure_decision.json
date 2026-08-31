@@ -1,0 +1,81 @@
+{
+  "campaign": "Level-4 Priority 3 theorem-supported m-rho stability map",
+  "verdict": "CLOSED",
+  "categories": {
+    "theorem_and_report_consistency": true,
+    "machine_readable_artifact_schema": true,
+    "provenance_and_protected_history": true,
+    "cross_detector_map_completeness": true,
+    "evidence_hierarchy_separation": true,
+    "rigorous_interval_certification": true,
+    "lean_spine_and_axiom_audit": true,
+    "figure_data_correspondence": true,
+    "independent_adversarial_adjudication": true,
+    "repository_regressions_and_diagnostics": true
+  },
+  "all_required_gates_pass": true,
+  "frozen_infinite_horizon_gaussian_gains_interval_certified": false,
+  "candidate_intake_aggregate_sha256": "41f82b34481bc2427d16a9534affb9fdd0c6efa328db4467d96f0f8f193bc319",
+  "candidate_original_closed_verdict": "MODIFIED_THEN_INDEPENDENTLY_ADJUDICATED",
+  "post_hoc_gate_widening_accepted": false,
+  "literal_required_environment_sensitive_suites_pass": true,
+  "candidate_protocol_temporal_preregistration_authenticated": false,
+  "global_or_nonlinear_stability_claimed": false,
+  "detector_universal_stability_claimed": false,
+  "non_gaussian_generality_claimed": false,
+  "historical_diagnostics": {
+    "old_52_file_guard_against_92_file_sr_tree": {
+      "observed": true,
+      "also_observed_in": [
+        "external_validation_v2",
+        "final_global_reaudit",
+        "final_level4_closure"
+      ],
+      "predates_priority3": true,
+      "recorded_by": [
+        "level4/closure_proofs/m_gt_1_priority1/results/verification.json",
+        "level4/closure_proofs/sr_derivative_priority2/results/verification.json"
+      ],
+      "classification": "HISTORICAL_DIAGNOSTIC"
+    },
+    "post_archive_readme_hash_drift": {
+      "observed": true,
+      "predates_priority3": true,
+      "recorded_by": [
+        "level4/closure_proofs/sr_derivative_priority2/CLOSURE_REPORT.md"
+      ],
+      "classification": "HISTORICAL_DIAGNOSTIC"
+    }
+  },
+  "environment_diagnostics": {
+    "priority1": {
+      "observed_failures": [],
+      "pristine_head_failures": [],
+      "every_observed_failure_reproduces_without_priority3": false,
+      "priority3_introduced_no_new_failure": true,
+      "pristine_head_summary": "13 passed in 0.07s",
+      "classification": "ENVIRONMENT_DIAGNOSTIC"
+    },
+    "historical_sr": {
+      "observed_failures": [],
+      "pristine_head_failures": [
+        "level4/closure_proofs/sr_derivative/tests/test_integrity.py::test_historical_manifest_is_complete_and_immutable"
+      ],
+      "every_observed_failure_reproduces_without_priority3": false,
+      "priority3_introduced_no_new_failure": true,
+      "pristine_head_summary": "1 failed, 93 passed in 0.96s",
+      "classification": "ENVIRONMENT_DIAGNOSTIC"
+    },
+    "track1b": {
+      "observed_failures": [],
+      "pristine_head_failures": [],
+      "every_observed_failure_reproduces_without_priority3": false,
+      "priority3_introduced_no_new_failure": true,
+      "pristine_head_summary": "32 passed in 1.00s",
+      "classification": "ENVIRONMENT_DIAGNOSTIC"
+    }
+  },
+  "closure_wording": "Level-4 Priority 3 -- the theorem-supported m-rho local stability map has been mechanically derived from the closed detector-specific derivative theorems, with explicit evidence boundaries separating rigorous/certified statements from empirical Gaussian correspondence.",
+  "evidence_boundary": "Rigorous interval statements cover only the two exact finite-support witnesses. Frozen infinite-horizon Gaussian CUSUM and Gaussian SR gains remain Monte Carlo estimates and are never labelled certified.",
+  "claim_scope": "First-order local stability of the origin for the deterministic conditional-mean reference map, per detector family and per window length. No global, nonlinear, cross-distribution, or detector-universal claim is made."
+}

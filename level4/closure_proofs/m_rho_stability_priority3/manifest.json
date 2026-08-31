@@ -1,0 +1,62 @@
+{
+  "campaign": "Level-4 Priority 3 theorem-supported m-rho stability map",
+  "frozen_at": "2026-08-31",
+  "approach": "synthesis layer over the closed Priority-1 and Priority-2 derivative theorems",
+  "independent_adjudication": {
+    "review_date": "2026-08-31",
+    "candidate_intake_head": "987056ec32bcc5e437e4731dd22e0a88fb1119c0",
+    "candidate_intake_git_visible_files": 49,
+    "candidate_intake_aggregate_sha256": "41f82b34481bc2427d16a9534affb9fdd0c6efa328db4467d96f0f8f193bc319",
+    "aggregate_rule": "SHA-256 of bytewise path-sorted per-file shasum output for rg --files under the candidate namespace",
+    "candidate_closed_verdict_inherited": false,
+    "original_contract_restored": "priority1, historical_sr, and track1b are literal required passing suites; controlled locale/PATH failures are diagnostics only",
+    "temporal_preregistration_of_candidate_protocol_independently_authenticated": false
+  },
+  "frozen_new_inputs": {
+    "map_protocol": "configs/MAP_PROTOCOL.json",
+    "map_protocol_sha256": "8a40a23905724fa55bdcc0c01e1d8e38035c1ea64497250f635703faa2d440b3"
+  },
+  "upstream_sources": {
+    "level4/closure_proofs/m_gt_1_priority1/manifest.json": "109ceb60ba211a0a91e5ab3618e852331a383c1e554f058c7ed3948be43ffb9f",
+    "level4/closure_proofs/m_gt_1_priority1/results/numerical_correspondence.json": "75a60772d69a20cdf67668569692e185c0148254c72cab8e166fc18a4a606e6d",
+    "level4/closure_proofs/m_gt_1_priority1/results/closure_decision.json": "cf7786b5983c412893818258263481fe585e43d0854e3e592dcf4bad2a069862",
+    "level4/closure_proofs/m_gt_1_priority1/certificates/WITNESS.json": "347962930467043e939f8aaccba694636eceb910cea5e561ee2b022f55a9a7c5",
+    "level4/closure_proofs/m_gt_1_priority1/certificates/certificate.json": "844cfe3d98db4e5e0368f4e53c6936165fe8e9adcf9c2724cdd9dc930a2b1b39",
+    "level4/closure_proofs/sr_derivative_priority2/manifest.json": "244e2ed120c9a53878db1d38addc16600ab29bba176d0595f8ad62d9f0d70757",
+    "level4/closure_proofs/sr_derivative_priority2/results/numerical_correspondence.json": "a2faec13b541a015035df21d45f7476726b55689a7784ad40014a4def220d211",
+    "level4/closure_proofs/sr_derivative_priority2/results/closure_decision.json": "67cad6cb5f89f4e79bf3df88019cfa34348dfa0cdc0355f3e6b0d09cd4fa0347",
+    "level4/closure_proofs/sr_derivative_priority2/certificates/WITNESS.json": "e90c01ec30700346be510c3d5e5ad69bb471ab44d25d2207e1e988e4e07acc2b",
+    "level4/closure_proofs/sr_derivative_priority2/certificates/certificate.json": "88386f6d974dd016be708410acc9d29e4f85b7f3ccdf6bf551b058cb94cc1559"
+  },
+  "protected_trees_read_only": [
+    "level4/closure_proofs/m_gt_1_priority1",
+    "level4/closure_proofs/sr_derivative_priority2",
+    "level4/closure_proofs/sr_derivative",
+    "level4/closure_proofs/d4_phase_map",
+    "level4/closure_proofs/m_gt_1",
+    "level4/closure_proofs/m_gt_1_track1a",
+    "level4/closure_proofs/m_gt_1_track1b",
+    "level4/stage_d"
+  ],
+  "lean": {
+    "source": "lean/StabilityMapP3.lean",
+    "audit": "lean/AxiomAudit.lean",
+    "toolchain": "rebaseguard-lean/lean-toolchain",
+    "generic_import": "Mathlib",
+    "consumed_closed_spines": [
+      "level4/closure_proofs/m_gt_1_priority1/lean/MGtOneClosure.lean",
+      "level4/closure_proofs/sr_derivative_priority2/lean/SRPriority2.lean"
+    ],
+    "consumption_rationale": "Priority 3 is an explicit synthesis layer. It imports the two closed derivative spines as dependencies instead of restating them, and proves only the generic stability-map algebra plus the two bridges.",
+    "source_sha256": "920b002a5e7baf7b160bcc91c9cc3a122a7abf2283314dbe05c406d4744570ac"
+  },
+  "conventions_inherited_unchanged": {
+    "boundary_tolerance": "level4/closure_proofs/d4_phase_map",
+    "z95": "level4/closure_proofs/d4_phase_map",
+    "admissible_rho_domain": "[0,1] as used throughout Stage C/D and D4",
+    "window": "w_m=min(m,tau), denominator w_m, terminal increment included",
+    "alarm": "inclusive post-update",
+    "stopping": "ordinary tau from t=1"
+  },
+  "evidence_boundary": "Interval certification covers only the two exact finite-support witnesses. Frozen infinite-horizon Gaussian CUSUM and Gaussian SR gains remain Monte Carlo estimates."
+}
