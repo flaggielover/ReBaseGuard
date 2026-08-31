@@ -1,0 +1,106 @@
+{
+  "schema": "rebaseguard.p4-independent-adjudication.v1",
+  "adjudicated_at": "2026-08-31",
+  "baseline": "68bc23d2bc90c33bcc638bbedf90b2a855e6480d",
+  "verdict": "PARTIAL",
+  "accepted_theorem": "Under A1-A7, g_m'(0) = -E_0[A_m sum_{t<=tau} psi(Z_t)] and F'_{rho,m}(0) = rho(1-Gamma_{D,m,f}) for every m>=1; symmetry plus detector reflection equivariance is separately required to classify the origin as a fixed point.",
+  "theorem_narrowing": {
+    "target": "G3 sign characterisation",
+    "accepted": "The correction has the sign of T_tau S_tau^psi on tau<m; the centred Gaussian score makes it nonnegative; explicit non-Gaussian paths and a finite-support expectation can be negative.",
+    "rejected_overstatement": "The original prose claimed pathwise sign-definiteness iff Gaussian, but supplied no all-path functional converse and did not handle the intercept in a general affine score."
+  },
+  "skewnormal_sr_frozen": {
+    "original_flagged_cell": {
+      "m": 2,
+      "route_a": {"mean": 6.387531944055008, "se": 0.028449251737806065, "paths": 3200000},
+      "route_b_richardson_0.05_0.025": {"mean": 6.556100574559456, "se": 0.027042423621162465, "paths": 960000},
+      "combined_z": 4.294616595037833
+    },
+    "finer_full_replay": {
+      "steps": [0.025, 0.0125],
+      "batches": 48,
+      "paths_per_batch": 20000,
+      "m2_richardson": {"mean": 6.516978503056727, "se": 0.03906708287841996}
+    },
+    "smallest_step_replay": {
+      "steps": [0.0125, 0.00625],
+      "batches": 24,
+      "paths_per_batch": 20000,
+      "richardson_by_m": {
+        "1": {"mean": 7.976765002619774, "se": 0.09211532129934313, "z_vs_original_route_a": 0.37808147747890647},
+        "2": {"mean": 6.434162952405576, "se": 0.07848981230730936, "z_vs_original_route_a": 0.5585448974519543},
+        "3": {"mean": 5.677163393739779, "se": 0.06607901083867881, "z_vs_original_route_a": 0.3708900040175066},
+        "5": {"mean": 4.89123392225244, "se": 0.05271492461933664, "z_vs_original_route_a": 0.09061433523190807}
+      }
+    },
+    "fresh_score_replay": {
+      "batches": 16,
+      "paths_per_batch": 100000,
+      "paths": 1600000,
+      "gamma_by_m": {
+        "1": {"mean": 8.01101415951598, "se": 0.052979782361822284},
+        "2": {"mean": 6.454944428968656, "se": 0.045159066671451434},
+        "3": {"mean": 5.7054334360537835, "se": 0.03751397441420763},
+        "5": {"mean": 4.920246653826048, "se": 0.030448803911901884}
+      }
+    },
+    "resolution": "Finite-step bias in Route B plus ordinary Monte Carlo scatter. The smallest-step direct replay agrees with both the original and fresh score routes at every m. The original frozen protocol output and its failed gate remain unchanged."
+  },
+  "priority2_sr_mismatch": {
+    "fresh_replay_implementation": "frozen sr_derivative_priority2 score implementation",
+    "batches": 16,
+    "paths_per_batch": 100000,
+    "paths": 1600000,
+    "gamma_by_m": {
+      "1": {"mean": 17.313235972689984, "se": 0.03633658902057862, "z_vs_p4": 1.3051633148938018},
+      "2": {"mean": 14.405472447000705, "se": 0.03088442390747067, "z_vs_p4": 1.3454418382436395},
+      "3": {"mean": 12.868809865050046, "se": 0.026767112300735803, "z_vs_p4": 1.2582994216673709},
+      "5": {"mean": 10.95750570860808, "se": 0.020989977517758458, "z_vs_p4": 1.4935328489038526}
+    },
+    "resolution": "The fresh frozen-P2 implementation replay agrees with P4 within 1.26-1.49 combined standard errors. The older 240k-path P2 estimate was a high Monte Carlo realization; no recurrence or window mismatch was found. The predeclared single-error historical gate remains unchanged and failed."
+  },
+  "route_q_independent_check": {
+    "family": "logistic",
+    "m": 3,
+    "independent_gamma": 2.208388950726001,
+    "recorded_gamma": 2.2083889507,
+    "absolute_difference": 2.6000979147511316e-11
+  },
+  "lean": {
+    "compiled": true,
+    "declarations": 19,
+    "axioms": ["Classical.choice", "Quot.sound", "propext"],
+    "sorry": false,
+    "sorryAx": false,
+    "unsafe_scientific_shortcut": false,
+    "project_scientific_axiom": false
+  },
+  "certificates": {
+    "stored_precision_bits": 160,
+    "independent_replay_precision_bits": 256,
+    "all_checks_pass": true,
+    "scope": "Laplace memoryless unbounded-horizon closed form, uniform moving-support defect, and finite-support general-score witness only; no frozen CUSUM or SR gain."
+  },
+  "repository_verification": {
+    "artifact": "results/verification.json",
+    "all_gates_pass": true,
+    "required_regressions_pass": true,
+    "environment_diagnostics_reproduce_without_priority4": true,
+    "controlled_environment_causality_pass": true,
+    "historical_diagnostics_unchanged": true,
+    "freeze_scoped_suites_pass": true
+  },
+  "protected_tree_integrity": {
+    "trees_checked": 12,
+    "all_byte_identical_to_head": true,
+    "near_miss_file_sha256_worktree": "fe7cef0e936e745b51477c7f3eee718acad7241baf46cc7c17179bc49e57ff31",
+    "near_miss_file_sha256_head": "fe7cef0e936e745b51477c7f3eee718acad7241baf46cc7c17179bc49e57ff31"
+  },
+  "novelty": "NOVELTY-NOT-ADJUDICATED",
+  "failed_literal_closure_gates": [
+    "all_theorem_supported_cells_pass",
+    "all_outside_assumption_cells_demonstrate_failure",
+    "gaussian_consistency_with_closed_core"
+  ],
+  "decision_reason": "The scientific theorem survives after a G3 prose narrowing and both named discrepancies are reconciled, but three frozen preregistered gates remain false. They were not weakened or regenerated, so the mechanically consistent verdict is PARTIAL."
+}

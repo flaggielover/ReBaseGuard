@@ -1,0 +1,194 @@
+{
+  "campaign": "Level-4 Priority 4 theory generalization beyond the Gaussian core",
+  "frozen_at": "2026-08-31",
+  "preregistration_honesty": "This protocol was frozen AFTER an exploratory pilot. The pilot found and fixed a real defect in the campaign's own common-random-number stream (overlapping Philox counters) and established the Route-Q reference. Pilot outcomes are disclosed in PROVENANCE.md. This is a frozen-before-final-run protocol, not a blind preregistration, and is labelled as such.",
+  "m_grid": [
+    1,
+    2,
+    3,
+    5
+  ],
+  "residual_convention": "Z_t = eps_t - e, f_e(z) = f(z+e), parameter score s = f'/f = -psi",
+  "window": "w = min(m, tau), denominator w, terminal alarm-causing increment included",
+  "families": {
+    "gaussian": {
+      "class": "THEOREM-SUPPORTED",
+      "discharge": "light-tailed"
+    },
+    "laplace": {
+      "class": "THEOREM-SUPPORTED",
+      "discharge": "light-tailed-bounded-score"
+    },
+    "logistic": {
+      "class": "THEOREM-SUPPORTED",
+      "discharge": "light-tailed-bounded-score"
+    },
+    "t3": {
+      "class": "THEOREM-SUPPORTED",
+      "discharge": "bounded-score-polynomial-moment"
+    },
+    "t1p5": {
+      "class": "THEOREM-SUPPORTED",
+      "discharge": "bounded-score-polynomial-moment"
+    },
+    "skewnormal4": {
+      "class": "THEOREM-SUPPORTED",
+      "discharge": "light-tailed"
+    },
+    "uniform": {
+      "class": "OUTSIDE-ASSUMPTIONS",
+      "discharge": "none: moving support"
+    },
+    "cauchy": {
+      "class": "OUTSIDE-ASSUMPTIONS",
+      "discharge": "none: no first moment"
+    }
+  },
+  "layers": {
+    "reduced": {
+      "purpose": "primary cross-family correspondence at a computationally reachable operating point",
+      "detectors": [
+        [
+          "cusum",
+          2.0
+        ],
+        [
+          "sr",
+          20.0
+        ]
+      ],
+      "families": [
+        "gaussian",
+        "laplace",
+        "logistic",
+        "t3",
+        "t1p5",
+        "skewnormal4",
+        "uniform",
+        "cauchy"
+      ],
+      "route_a": {
+        "batches": 24,
+        "paths": 250000
+      },
+      "route_b": {
+        "batches": 32,
+        "paths": 100000
+      },
+      "max_steps": 60000
+    },
+    "frozen": {
+      "purpose": "the exact frozen Priority-1 and Priority-2 operating points",
+      "detectors": [
+        [
+          "cusum",
+          5.0
+        ],
+        [
+          "sr",
+          520.886133602749
+        ]
+      ],
+      "families": [
+        "gaussian",
+        "laplace",
+        "logistic",
+        "t3",
+        "t1p5",
+        "skewnormal4",
+        "uniform",
+        "cauchy"
+      ],
+      "route_a": {
+        "batches": 16,
+        "paths": 200000
+      },
+      "route_b": {
+        "batches": 48,
+        "paths": 20000
+      },
+      "max_steps": 200000,
+      "batching_note": "Route B draws the full path block at every step so that the +h and -h runs share innovations exactly; its cost is therefore n_paths * max(tau) per batch. Many small batches are materially cheaper than few large ones for the same path count, and they also give a better behaved batch standard error for the heavy-tailed cells."
+    }
+  },
+  "fd_ladder_cells": [
+    [
+      "reduced",
+      "cusum",
+      2.0,
+      "gaussian"
+    ],
+    [
+      "reduced",
+      "cusum",
+      2.0,
+      "t3"
+    ]
+  ],
+  "route_q": {
+    "detector": "memoryless |Z| >= c",
+    "c": 2.0,
+    "c_uniform": 1.0,
+    "families": [
+      "gaussian",
+      "laplace",
+      "logistic",
+      "t3",
+      "t1p5",
+      "skewnormal4"
+    ],
+    "tolerance_relative": 1e-06
+  },
+  "neutrality_control": {
+    "deterministic_tau": [
+      1,
+      2,
+      4
+    ],
+    "batches": 16,
+    "paths": 250000,
+    "tolerance_z": 4.0
+  },
+  "gates": {
+    "correspondence_relative_limit": 0.03,
+    "correspondence_z_limit": 4.0,
+    "rationale_relative_limit": "inherited unchanged from the frozen location-family Track-3 gate",
+    "counterexample_min_relative": 0.5,
+    "counterexample_min_z": 10.0,
+    "arl_reproduction_relative_limit": 0.02
+  },
+  "frozen_reference_values": {
+    "source": "level4/closure_proofs/m_rho_stability_priority3/results/stability_map.json",
+    "cusum_gaussian": {
+      "1": 15.916540429525044,
+      "2": 13.26482496169605,
+      "3": 11.957078194838436,
+      "5": 10.226363970189938
+    },
+    "sr_gaussian": {
+      "1": 17.453570692218783,
+      "2": 14.500509744311637,
+      "3": 12.972654633634319,
+      "5": 11.04852607349784
+    },
+    "consistency_z_limit": 4.0,
+    "use": "P4 must not contradict the closed Gaussian gains; this is a one-sided consistency check on P4's own independent implementation, never a re-derivation of the frozen values"
+  },
+  "master_seeds": {
+    "route_a_reduced": 4010001,
+    "route_b_reduced": 4010002,
+    "route_a_frozen": 4010003,
+    "route_b_frozen": 4010004,
+    "neutrality": 4010005,
+    "fd_ladder": 4010006
+  },
+  "fd_steps": [
+    0.05,
+    0.025
+  ],
+  "fd_ladder_fine": [
+    0.025,
+    0.0125
+  ],
+  "fd_estimator": "Route B reports the per-batch Richardson combination (4 D(h/2) - D(h))/3 of a central difference. A central difference is O(h^2) accurate and the pilot showed a clearly resolvable h^2 deficit at the frozen operating point; the raw per-step values are reported too."
+}

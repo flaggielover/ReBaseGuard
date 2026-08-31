@@ -1,0 +1,52 @@
+{
+  "campaign": "Level-4 Priority 4 theory generalization beyond the closed Gaussian core",
+  "frozen_at": "2026-08-31",
+  "approach": "generalize the closed P1/P2/P3 derivative and stability mechanism from the frozen Gaussian model to regular location families, and identify exactly which steps are Gaussian",
+  "frozen_new_inputs": {
+    "protocol": "configs/P4_PROTOCOL.json",
+    "protocol_sha256": "2afa247e986f7c4ff063bf2bda60386a9783d001244821e7eb5aff12db03e627",
+    "finite_support_witness": "certificates/WITNESS.json",
+    "finite_support_witness_sha256": "8c8173f708d2945608ec6c063d8494aec6772676a45890c0ed81069b0481ea15"
+  },
+  "protected_trees_read_only": [
+    "level4/closure_proofs/m_gt_1_priority1",
+    "level4/closure_proofs/sr_derivative_priority2",
+    "level4/closure_proofs/m_rho_stability_priority3",
+    "level4/closure_proofs/location_family",
+    "level4/closure_proofs/location_family_track3ab",
+    "level4/closure_proofs/sr_derivative",
+    "level4/closure_proofs/d4_phase_map",
+    "level4/closure_proofs/m_gt_1",
+    "level4/closure_proofs/m_gt_1_track1a",
+    "level4/closure_proofs/m_gt_1_track1b",
+    "level4/closure_proofs/novelty_verification",
+    "level4/stage_d"
+  ],
+  "lean": {
+    "source": "lean/GeneralLocationFamilyP4.lean",
+    "audit": "lean/AxiomAudit.lean",
+    "toolchain": "rebaseguard-lean/lean-toolchain",
+    "consumed_closed_spines": [
+      "level4/closure_proofs/m_gt_1_priority1/lean/MGtOneClosure.lean",
+      "level4/closure_proofs/sr_derivative_priority2/lean/SRPriority2.lean",
+      "level4/closure_proofs/m_rho_stability_priority3/lean/StabilityMapP3.lean"
+    ],
+    "consumption_rationale": "Priority 4 generalizes rather than restates: it imports the closed Priority-3 synthesis spine (which itself imports P1 and P2), proves the abstract-likelihood derivative bridge under a strictly weaker Lipschitz hypothesis, and derives the closed Gaussian statement from it as an instance.",
+    "source_sha256": "9ccfcd13d84bcf010f3292ba88f5faa7a7711a20dffed39ecacf00650da5967f"
+  },
+  "conventions_inherited_unchanged": {
+    "residual_convention": "Z_t = eps_t - e, f_e(z) = f(z+e), parameter score s = f'/f = -psi (location_family / location_family_track3ab)",
+    "window": "w_m=min(m,tau), denominator w_m, terminal increment included (m_gt_1_priority1)",
+    "alarm": "inclusive post-update",
+    "stopping": "ordinary tau from t=1",
+    "admissible_rho_domain": "[0,1]",
+    "correspondence_relative_limit": "3% (location_family Track-3 frozen gate)",
+    "m_grid": "[1,2,3,5] (m_rho_stability_priority3)"
+  },
+  "prior_art_within_repository": {
+    "location_family": "LOCATION-FAMILY-THEOREM-PARTIAL -- proved the stopped-score identity for a general regular location family, applied to the single terminal observation (m = 1) only",
+    "location_family_track3ab": "LOCATION-FAMILY-TRACK3AB-CLOSED -- replicated that m = 1 result and compiled a conditional Lean spine in which the stopped-score derivative bridge is an assumed hypothesis",
+    "priority4_delta": "m >= 1 truncated window with the random denominator and the tau < m branch; both frozen detectors in one statement; the weaker Lipschitz differentiation hypothesis (which admits Laplace and which the closed spines' dominated-derivative hypothesis excludes); the neutrality corollary; the sign analysis of the short-window correction; the proved moving-support and first-moment failure modes; a Lean proof of the bridge that Track 3A/3B assumed"
+  },
+  "evidence_boundary": "Interval certification covers one closed-form unbounded-horizon Laplace instance, one exactly rational moving-support counterexample, and one finite-support general-score witness. Every frozen CUSUM and SR gain in this campaign, Gaussian or non-Gaussian, is a Monte Carlo estimate."
+}

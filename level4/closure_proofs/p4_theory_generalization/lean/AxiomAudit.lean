@@ -1,0 +1,21 @@
+import «GeneralLocationFamilyP4»
+
+#print axioms RebaseguardLean.Level4Priority4.hasDerivAt_stoppedMean
+#print axioms RebaseguardLean.Level4Priority4.reuse_derivative
+#print axioms RebaseguardLean.Level4Priority4.gaussianLikelihood_zero
+#print axioms RebaseguardLean.Level4Priority4.gaussianLikelihood_hasDerivAt
+#print axioms RebaseguardLean.Level4Priority4.gaussian_reuse_derivative
+#print axioms RebaseguardLean.Level4Priority4.generalDirect_eq_fixed_add_short
+#print axioms RebaseguardLean.Level4Priority4.generalShortCorrection_gaussian
+#print axioms RebaseguardLean.Level4Priority4.generalShortCorrection_nonneg
+#print axioms RebaseguardLean.Level4Priority4.generalShortCorrection_neg
+#print axioms RebaseguardLean.Level4Priority4.witnessPrefix_total
+#print axioms RebaseguardLean.Level4Priority4.witnessPrefix_score
+#print axioms RebaseguardLean.Level4Priority4.witness_shortCorrection
+#print axioms RebaseguardLean.Level4Priority4.witness_shortCorrection_neg
+#print axioms RebaseguardLean.Level4Priority4.neutral_gain_of_orthonormal_cross
+#print axioms RebaseguardLean.Level4Priority4.neutral_multiplier
+#print axioms RebaseguardLean.Level4Priority4.integral_eq_zero_of_odd_under_involution
+#print axioms RebaseguardLean.Level4Priority4.reuse_fixed_point_of_zero_mean
+#print axioms RebaseguardLean.Level4Priority4.general_attracting_of_lt_criticalRho
+#print axioms RebaseguardLean.Level4Priority4.general_repelling_of_criticalRho_lt

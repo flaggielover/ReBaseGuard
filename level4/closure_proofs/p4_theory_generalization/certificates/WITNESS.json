@@ -1,0 +1,65 @@
+{
+  "campaign": "Level-4 Priority 4 rigorous certification inputs",
+  "status": "FROZEN_BEFORE_CERTIFICATE_RUN",
+  "frozen_at": "2026-08-31",
+  "construction_principle": "Three exactly specified objects, each isolating one Priority-4 claim that the closed Gaussian core cannot make: (i) a closed-form unbounded-horizon Laplace instance of the general derivative identity; (ii) an exactly rational moving-support counterexample proving that local absolute continuity is necessary; (iii) a finite-support general-score witness whose stopped score is NOT proportional to the residual total, on which the short-window correction and its expectation are strictly negative.",
+  "laplace_closed_form": {
+    "comment": "Unit-variance Laplace, memoryless detector tau = inf{t : |Z_t| >= c}, m = 1. Gamma_1 = (c+b)/b and g_1(e) = -(c+b) tanh(e/b), derived in PROOF.md Section 11. The horizon is unbounded: tau is geometric and the series is summed exactly by memorylessness.",
+    "b_squared_reciprocal": 2,
+    "c": [2, 1],
+    "rho": {"attraction": [1, 4], "repulsion": [1, 2]},
+    "finite_difference_steps": [[1, 4], [1, 8], [1, 16], [1, 32]],
+    "expected_gain": "1 + 2*sqrt(2)",
+    "expected_critical_rho": "sqrt(2)/4"
+  },
+  "uniform_counterexample": {
+    "comment": "eps ~ U[-a,a], memoryless detector at threshold c with 0 < c < a. The a.e. interior score is identically zero, so the score side is exactly 0, while g_1(e) = -e a/(a-c) is exactly linear with nonzero slope.",
+    "a": [1, 1],
+    "c": [1, 2],
+    "test_points": [[1, 8], [1, 16], [-1, 8], [-1, 16]],
+    "expected_alarm_probability": [1, 2],
+    "expected_map_slope": [-2, 1],
+    "expected_score_side": [0, 1],
+    "expected_defect": [2, 1]
+  },
+  "general_score_witness": {
+    "comment": "Exponential tilt P_e(w) proportional to p(w) exp(-e S(w)) with E_0[S] = 0, so the score at zero is exactly -S. This is an exact instance of the abstract score theorem, NOT of any location family, and not of the frozen CUSUM. The bounded score psi(z) = sign(z) min(|z|,1) is applied to each increment.",
+    "score_rule": "psi(z) = sign(z) * min(|z|, 1)",
+    "paths": [
+      {"label": "short_plus",  "probability": [1, 4], "tau": 4, "increments": [[5, 1], [-1, 1], [-1, 1], [-1, 1]]},
+      {"label": "short_minus", "probability": [1, 4], "tau": 4, "increments": [[-5, 1], [1, 1], [1, 1], [1, 1]]},
+      {"label": "long_plus",   "probability": [1, 4], "tau": 6, "increments": [[1, 1], [1, 1], [1, 1], [1, 1], [1, 1], [1, 1]]},
+      {"label": "long_minus",  "probability": [1, 4], "tau": 6, "increments": [[-1, 1], [-1, 1], [-1, 1], [-1, 1], [-1, 1], [-1, 1]]}
+    ],
+    "m": 5,
+    "rho": {"attraction": [1, 2], "repulsion": [1, 1], "exact_unit_boundary": [2, 3]},
+    "finite_difference_steps": [[1, 4], [1, 8], [1, 16], [1, 32]],
+    "expected_gain": [5, 2],
+    "expected_fixed_denominator_gain": [13, 5],
+    "expected_expected_short_correction": [-1, 10],
+    "expected_gaussian_form_gain": [7, 2]
+  },
+  "arb_precision_bits": 160,
+  "required_certificates": [
+    "laplace_gain_closed_form",
+    "laplace_map_fixed_point",
+    "laplace_finite_difference_convergence",
+    "laplace_attraction",
+    "laplace_repulsion",
+    "uniform_alarm_probability_constant",
+    "uniform_map_exactly_linear",
+    "uniform_identity_defect_positive",
+    "witness_probability_normalization",
+    "witness_score_at_zero",
+    "witness_zero_is_fixed_point",
+    "witness_derivative_identity",
+    "witness_general_decomposition",
+    "witness_short_correction_negative",
+    "witness_expected_short_correction_negative",
+    "witness_gaussian_form_gain_differs",
+    "witness_finite_difference_convergence",
+    "witness_attraction",
+    "witness_repulsion"
+  ],
+  "evidence_boundary": "The Laplace object is an unbounded-horizon closed-form instance whose derivation is human-proved in PROOF.md Section 11 and whose values are interval-enclosed here. The uniform object is exactly rational. The tilt witness is finite support. NONE of these is an interval certificate for any frozen CUSUM or SR gain, Gaussian or otherwise, and none certifies a Monte Carlo value."
+}

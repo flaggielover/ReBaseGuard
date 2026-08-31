@@ -1,0 +1,588 @@
+{
+  "schema": "rebaseguard.p4-closure.v1",
+  "campaign": "Level-4 Priority 4 theory generalization beyond the closed Gaussian core",
+  "verdict": "PARTIAL",
+  "all_required_gates_pass": false,
+  "gates": {
+    "protocol_hash_matches_manifest": true,
+    "witness_hash_matches_manifest": true,
+    "route_q_analytic_identity_holds": true,
+    "route_q_uniform_identity_fails_as_predicted": true,
+    "route_n_neutrality_holds": true,
+    "all_theorem_supported_cells_pass": false,
+    "all_outside_assumption_cells_demonstrate_failure": false,
+    "both_frozen_detectors_covered": true,
+    "at_least_five_theorem_supported_families": true,
+    "asymmetric_family_origin_not_a_fixed_point": true,
+    "gaussian_consistency_with_closed_core": false,
+    "certificate_all_checks_pass": true,
+    "lean_compiles_with_clean_axioms": true,
+    "repository_verification_all_gates_pass": true
+  },
+  "repository_verification_status": "COMPLETED",
+  "repository_verification_note": "completed in this session",
+  "negative_claims_asserted_false": {
+    "frozen_infinite_horizon_gains_interval_certified": false,
+    "any_frozen_p1_p2_p3_artifact_modified": false,
+    "novelty_verdict_claimed": false,
+    "global_or_nonlinear_stability_claimed": false,
+    "distribution_free_or_detector_universal_claim": false,
+    "asymmetric_family_classified_at_the_origin": false
+  },
+  "theorem_supported_families": [
+    "gaussian",
+    "laplace",
+    "logistic",
+    "skewnormal4",
+    "t1p5",
+    "t3"
+  ],
+  "theorem_supported_cells": 96,
+  "outside_assumption_cells": 32,
+  "worst_theorem_supported_relative_discrepancy": 0.25637198870157685,
+  "worst_theorem_supported_z": 4.294616595037833,
+  "non_passing_cell_breakdown": {
+    "precision_limited_relative_gate_only": [
+      {
+        "layer": "reduced",
+        "detector": "sr@20",
+        "family": "t1p5",
+        "m": 1,
+        "relative": 0.05275657982168333,
+        "z": 1.2933000567929807,
+        "route_b_relative_se": 0.0371890653796169
+      },
+      {
+        "layer": "reduced",
+        "detector": "sr@20",
+        "family": "t1p5",
+        "m": 2,
+        "relative": 0.03873811641721572,
+        "z": 1.3457229713177143,
+        "route_b_relative_se": 0.026276690986780288
+      },
+      {
+        "layer": "reduced",
+        "detector": "sr@20",
+        "family": "t1p5",
+        "m": 3,
+        "relative": 0.03645065458714536,
+        "z": 1.4714454943277497,
+        "route_b_relative_se": 0.020864496710286038
+      },
+      {
+        "layer": "reduced",
+        "detector": "sr@20",
+        "family": "t1p5",
+        "m": 5,
+        "relative": 0.03131973254121129,
+        "z": 1.4383611205884825,
+        "route_b_relative_se": 0.015261881710116268
+      },
+      {
+        "layer": "frozen",
+        "detector": "cusum@5",
+        "family": "t1p5",
+        "m": 1,
+        "relative": 0.031552745689059095,
+        "z": 0.3508863780655885,
+        "route_b_relative_se": 0.08102337199844538
+      },
+      {
+        "layer": "frozen",
+        "detector": "sr@520.886",
+        "family": "t1p5",
+        "m": 1,
+        "relative": 0.25637198870157685,
+        "z": 1.4650161767316756,
+        "route_b_relative_se": 0.23325520628624588
+      },
+      {
+        "layer": "frozen",
+        "detector": "sr@520.886",
+        "family": "t1p5",
+        "m": 2,
+        "relative": 0.18717235864005735,
+        "z": 1.486251944690047,
+        "route_b_relative_se": 0.15356566571557112
+      },
+      {
+        "layer": "frozen",
+        "detector": "sr@520.886",
+        "family": "t1p5",
+        "m": 3,
+        "relative": 0.14705507005221277,
+        "z": 1.4432909172338606,
+        "route_b_relative_se": 0.11839265331118375
+      },
+      {
+        "layer": "frozen",
+        "detector": "sr@520.886",
+        "family": "t1p5",
+        "m": 5,
+        "relative": 0.11044108695201771,
+        "z": 1.4529235376318548,
+        "route_b_relative_se": 0.08460626359787078
+      }
+    ],
+    "statistically_inconsistent": [
+      {
+        "layer": "frozen",
+        "detector": "sr@520.886",
+        "family": "skewnormal4",
+        "m": 2,
+        "relative": 0.02571172125677395,
+        "z": 4.294616595037833
+      }
+    ],
+    "outside_assumption_cells_not_demonstrating_the_gate": [
+      {
+        "detector": "cusum@2",
+        "family": "cauchy",
+        "m": 1,
+        "relative": 1.211316864475648,
+        "z": 1.6034818642352573,
+        "route_a": {
+          "mean": -2.996699872480147,
+          "se": 6.820948498056468,
+          "batches": 24,
+          "paths_per_batch": 250000,
+          "paths": 6000000
+        },
+        "route_b": {
+          "mean": 14.181072958450425,
+          "se": 8.260668420324588,
+          "batches": 32,
+          "paths_per_batch": 100000,
+          "paths": 3200000
+        },
+        "reading": "the preregistered counterexample gate expects a deterministic defect; this family instead exhibits non-convergence, with standard errors comparable to or larger than the estimates, which is the failure mode PROOF.md section 10 proves but not the one the gate was written to detect"
+      },
+      {
+        "detector": "cusum@2",
+        "family": "cauchy",
+        "m": 2,
+        "relative": 1.1230875776449223,
+        "z": 1.6026726559382218,
+        "route_a": {
+          "mean": -0.9407286724817459,
+          "se": 3.410437829664533,
+          "batches": 24,
+          "paths_per_batch": 250000,
+          "paths": 6000000
+        },
+        "route_b": {
+          "mean": 7.642758842777127,
+          "se": 4.1295029176013145,
+          "batches": 32,
+          "paths_per_batch": 100000,
+          "paths": 3200000
+        },
+        "reading": "the preregistered counterexample gate expects a deterministic defect; this family instead exhibits non-convergence, with standard errors comparable to or larger than the estimates, which is the failure mode PROOF.md section 10 proves but not the one the gate was written to detect"
+      },
+      {
+        "detector": "cusum@2",
+        "family": "cauchy",
+        "m": 3,
+        "relative": 1.0636835134773914,
+        "z": 1.6163441769554276,
+        "route_a": {
+          "mean": -0.3458257690333409,
+          "se": 2.2763920748630033,
+          "batches": 24,
+          "paths_per_batch": 250000,
+          "paths": 6000000
+        },
+        "route_b": {
+          "mean": 5.430381430762508,
+          "se": 2.7547833677776055,
+          "batches": 32,
+          "paths_per_batch": 100000,
+          "paths": 3200000
+        },
+        "reading": "the preregistered counterexample gate expects a deterministic defect; this family instead exhibits non-convergence, with standard errors comparable to or larger than the estimates, which is the failure mode PROOF.md section 10 proves but not the one the gate was written to detect"
+      },
+      {
+        "detector": "cusum@2",
+        "family": "cauchy",
+        "m": 5,
+        "relative": 0.9212737105740324,
+        "z": 1.5766548375141867,
+        "route_a": {
+          "mean": 0.2914867390185341,
+          "se": 1.3963869222887053,
+          "batches": 24,
+          "paths_per_batch": 250000,
+          "paths": 6000000
+        },
+        "route_b": {
+          "mean": 3.702533691653813,
+          "se": 1.6524860519212112,
+          "batches": 32,
+          "paths_per_batch": 100000,
+          "paths": 3200000
+        },
+        "reading": "the preregistered counterexample gate expects a deterministic defect; this family instead exhibits non-convergence, with standard errors comparable to or larger than the estimates, which is the failure mode PROOF.md section 10 proves but not the one the gate was written to detect"
+      },
+      {
+        "detector": "sr@20",
+        "family": "cauchy",
+        "m": 1,
+        "relative": 0.021246332113401562,
+        "z": 0.027070967981027632,
+        "route_a": {
+          "mean": 4.7713896646528795,
+          "se": 3.085648658510219,
+          "batches": 24,
+          "paths_per_batch": 250000,
+          "paths": 6000000
+        },
+        "route_b": {
+          "mean": 4.874964785527331,
+          "se": 2.262189179084561,
+          "batches": 32,
+          "paths_per_batch": 100000,
+          "paths": 3200000
+        },
+        "reading": "the preregistered counterexample gate expects a deterministic defect; this family instead exhibits non-convergence, with standard errors comparable to or larger than the estimates, which is the failure mode PROOF.md section 10 proves but not the one the gate was written to detect"
+      },
+      {
+        "detector": "sr@20",
+        "family": "cauchy",
+        "m": 2,
+        "relative": 0.016990537289800142,
+        "z": 0.02649800304088462,
+        "route_a": {
+          "mean": 2.932865281604039,
+          "se": 1.5428629144415682,
+          "batches": 24,
+          "paths_per_batch": 250000,
+          "paths": 6000000
+        },
+        "route_b": {
+          "mean": 2.98355752702319,
+          "se": 1.1310919879651513,
+          "batches": 32,
+          "paths_per_batch": 100000,
+          "paths": 3200000
+        },
+        "reading": "the preregistered counterexample gate expects a deterministic defect; this family instead exhibits non-convergence, with standard errors comparable to or larger than the estimates, which is the failure mode PROOF.md section 10 proves but not the one the gate was written to detect"
+      },
+      {
+        "detector": "sr@20",
+        "family": "cauchy",
+        "m": 3,
+        "relative": 0.03959252067981368,
+        "z": 0.07028803129571001,
+        "route_a": {
+          "mean": 2.251542709726398,
+          "se": 1.08366576377142,
+          "batches": 24,
+          "paths_per_batch": 250000,
+          "paths": 6000000
+        },
+        "route_b": {
+          "mean": 2.344361907010686,
+          "se": 0.7546744323070361,
+          "batches": 32,
+          "paths_per_batch": 100000,
+          "paths": 3200000
+        },
+        "reading": "the preregistered counterexample gate expects a deterministic defect; this family instead exhibits non-convergence, with standard errors comparable to or larger than the estimates, which is the failure mode PROOF.md section 10 proves but not the one the gate was written to detect"
+      },
+      {
+        "detector": "sr@20",
+        "family": "cauchy",
+        "m": 5,
+        "relative": 0.07589039747764466,
+        "z": 0.1592187505729494,
+        "route_a": {
+          "mean": 1.7234624096876956,
+          "se": 0.7553950988706181,
+          "batches": 24,
+          "paths_per_batch": 250000,
+          "paths": 6000000
+        },
+        "route_b": {
+          "mean": 1.8649978368188236,
+          "se": 0.46860122478358684,
+          "batches": 32,
+          "paths_per_batch": 100000,
+          "paths": 3200000
+        },
+        "reading": "the preregistered counterexample gate expects a deterministic defect; this family instead exhibits non-convergence, with standard errors comparable to or larger than the estimates, which is the failure mode PROOF.md section 10 proves but not the one the gate was written to detect"
+      },
+      {
+        "detector": "cusum@5",
+        "family": "cauchy",
+        "m": 1,
+        "relative": 0.7042098551617234,
+        "z": 0.856646483143112,
+        "route_a": {
+          "mean": 29.92803002272648,
+          "se": 22.322304883058923,
+          "batches": 16,
+          "paths_per_batch": 200000,
+          "paths": 3200000
+        },
+        "route_b": {
+          "mean": 8.852416335146557,
+          "se": 10.343882567502895,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "reading": "the preregistered counterexample gate expects a deterministic defect; this family instead exhibits non-convergence, with standard errors comparable to or larger than the estimates, which is the failure mode PROOF.md section 10 proves but not the one the gate was written to detect"
+      },
+      {
+        "detector": "cusum@5",
+        "family": "cauchy",
+        "m": 2,
+        "relative": 0.6763772318332737,
+        "z": 0.8572137403695081,
+        "route_a": {
+          "mean": 15.590380247742754,
+          "se": 11.161350229410019,
+          "batches": 16,
+          "paths_per_batch": 200000,
+          "paths": 3200000
+        },
+        "route_b": {
+          "mean": 5.0454020125463614,
+          "se": 5.172051148028581,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "reading": "the preregistered counterexample gate expects a deterministic defect; this family instead exhibits non-convergence, with standard errors comparable to or larger than the estimates, which is the failure mode PROOF.md section 10 proves but not the one the gate was written to detect"
+      },
+      {
+        "detector": "cusum@5",
+        "family": "cauchy",
+        "m": 3,
+        "relative": 0.6476669920423356,
+        "z": 0.8391743088159517,
+        "route_a": {
+          "mean": 10.665286524075778,
+          "se": 7.474755331398479,
+          "batches": 16,
+          "paths_per_batch": 200000,
+          "paths": 3200000
+        },
+        "route_b": {
+          "mean": 3.7577324817579627,
+          "se": 3.4472425391450705,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "reading": "the preregistered counterexample gate expects a deterministic defect; this family instead exhibits non-convergence, with standard errors comparable to or larger than the estimates, which is the failure mode PROOF.md section 10 proves but not the one the gate was written to detect"
+      },
+      {
+        "detector": "cusum@5",
+        "family": "cauchy",
+        "m": 5,
+        "relative": 0.5821935547481524,
+        "z": 0.7481517437515803,
+        "route_a": {
+          "mean": 6.482191255516549,
+          "se": 4.600703465104808,
+          "batches": 16,
+          "paths_per_batch": 200000,
+          "paths": 3200000
+        },
+        "route_b": {
+          "mean": 2.70830128590998,
+          "se": 2.068412442960068,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "reading": "the preregistered counterexample gate expects a deterministic defect; this family instead exhibits non-convergence, with standard errors comparable to or larger than the estimates, which is the failure mode PROOF.md section 10 proves but not the one the gate was written to detect"
+      },
+      {
+        "detector": "sr@520.886",
+        "family": "cauchy",
+        "m": 1,
+        "relative": 1.2153013879633972,
+        "z": 1.48354160823514,
+        "route_a": {
+          "mean": -15.03963571550009,
+          "se": 20.116781013790344,
+          "batches": 16,
+          "paths_per_batch": 200000,
+          "paths": 3200000
+        },
+        "route_b": {
+          "mean": 69.85387255402621,
+          "se": 53.57097247758537,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "reading": "the preregistered counterexample gate expects a deterministic defect; this family instead exhibits non-convergence, with standard errors comparable to or larger than the estimates, which is the failure mode PROOF.md section 10 proves but not the one the gate was written to detect"
+      },
+      {
+        "detector": "sr@520.886",
+        "family": "cauchy",
+        "m": 2,
+        "relative": 1.1940790884583552,
+        "z": 1.4836315116685694,
+        "route_a": {
+          "mean": -6.899299621351444,
+          "se": 10.058513189275873,
+          "batches": 16,
+          "paths_per_batch": 200000,
+          "paths": 3200000
+        },
+        "route_b": {
+          "mean": 35.54890779916184,
+          "se": 26.784634503295077,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "reading": "the preregistered counterexample gate expects a deterministic defect; this family instead exhibits non-convergence, with standard errors comparable to or larger than the estimates, which is the failure mode PROOF.md section 10 proves but not the one the gate was written to detect"
+      },
+      {
+        "detector": "sr@520.886",
+        "family": "cauchy",
+        "m": 3,
+        "relative": 1.1711422637858224,
+        "z": 1.4780753754504243,
+        "route_a": {
+          "mean": -4.122960396356158,
+          "se": 6.7445700769006525,
+          "batches": 16,
+          "paths_per_batch": 200000,
+          "paths": 3200000
+        },
+        "route_b": {
+          "mean": 24.090837091625,
+          "se": 17.856935085145622,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "reading": "the preregistered counterexample gate expects a deterministic defect; this family instead exhibits non-convergence, with standard errors comparable to or larger than the estimates, which is the failure mode PROOF.md section 10 proves but not the one the gate was written to detect"
+      },
+      {
+        "detector": "sr@520.886",
+        "family": "cauchy",
+        "m": 5,
+        "relative": 1.121293956708515,
+        "z": 1.460944840257602,
+        "route_a": {
+          "mean": -1.8150909497408554,
+          "se": 4.142550160430206,
+          "batches": 16,
+          "paths_per_batch": 200000,
+          "paths": 3200000
+        },
+        "route_b": {
+          "mean": 14.964397229639012,
+          "se": 10.712279939615422,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "reading": "the preregistered counterexample gate expects a deterministic defect; this family instead exhibits non-convergence, with standard errors comparable to or larger than the estimates, which is the failure mode PROOF.md section 10 proves but not the one the gate was written to detect"
+      }
+    ]
+  },
+  "gaussian_consistency_worst_z": 12.911638828585788,
+  "gaussian_consistency_worst_z_combined_error": 2.9768218705413254,
+  "gaussian_consistency_rows": [
+    {
+      "detector": "cusum@5",
+      "m": 1,
+      "closed_value": 15.916540429525044,
+      "closed_se": 0.05990518871399268,
+      "priority4_value": 15.877341607803746,
+      "priority4_se": 0.016820858912165428,
+      "signed_relative_difference": -0.002462772729718607,
+      "z_single_error_gate_statistic": 2.3303698060833278,
+      "z_combined_error_reported_statistic": 0.6299836676089405
+    },
+    {
+      "detector": "cusum@5",
+      "m": 2,
+      "closed_value": 13.26482496169605,
+      "closed_se": 0.050152156092659925,
+      "priority4_value": 13.247492200009852,
+      "priority4_se": 0.015086940786342914,
+      "signed_relative_difference": -0.0013066709689912154,
+      "z_single_error_gate_statistic": 1.1488586010683026,
+      "z_combined_error_reported_statistic": 0.33095304197084563
+    },
+    {
+      "detector": "cusum@5",
+      "m": 3,
+      "closed_value": 11.957078194838436,
+      "closed_se": 0.04316132971596495,
+      "priority4_value": 11.91473469343104,
+      "priority4_se": 0.01373348633327897,
+      "signed_relative_difference": -0.003541291669872569,
+      "z_single_error_gate_statistic": 3.083230316018851,
+      "z_combined_error_reported_statistic": 0.934867475641764
+    },
+    {
+      "detector": "cusum@5",
+      "m": 5,
+      "closed_value": 10.226363970189938,
+      "closed_se": 0.03523707485898826,
+      "priority4_value": 10.18421225463857,
+      "priority4_se": 0.01206152585544661,
+      "signed_relative_difference": -0.004121867329799829,
+      "z_single_error_gate_statistic": 3.4947249673500957,
+      "z_combined_error_reported_statistic": 1.1317653224558812
+    },
+    {
+      "detector": "sr@520.886",
+      "m": 1,
+      "closed_value": 17.453570692218783,
+      "closed_se": 0.0658806908185833,
+      "priority4_value": 17.258937362693644,
+      "priority4_se": 0.02025970312960504,
+      "signed_relative_difference": -0.011151490600826534,
+      "z_single_error_gate_statistic": 9.606919128085645,
+      "z_combined_error_reported_statistic": 2.8238228577380813
+    },
+    {
+      "detector": "sr@520.886",
+      "m": 2,
+      "closed_value": 14.500509744311637,
+      "closed_se": 0.05672486214775936,
+      "priority4_value": 14.358609580755475,
+      "priority4_se": 0.01610402470856826,
+      "signed_relative_difference": -0.009785874156032872,
+      "z_single_error_gate_statistic": 8.811472046529033,
+      "z_combined_error_reported_statistic": 2.4064533837582203
+    },
+    {
+      "detector": "sr@520.886",
+      "m": 3,
+      "closed_value": 12.972654633634319,
+      "closed_se": 0.049010542760713774,
+      "priority4_value": 12.831339840632122,
+      "priority4_se": 0.013048722904538327,
+      "signed_relative_difference": -0.010893282600448532,
+      "z_single_error_gate_statistic": 10.829779591154294,
+      "z_combined_error_reported_statistic": 2.7862918795060465
+    },
+    {
+      "detector": "sr@520.886",
+      "m": 5,
+      "closed_value": 11.04852607349784,
+      "closed_se": 0.04104653234838718,
+      "priority4_value": 10.922954931665537,
+      "priority4_se": 0.00972542242695747,
+      "signed_relative_difference": -0.011365420237683223,
+      "z_single_error_gate_statistic": 12.911638828585788,
+      "z_combined_error_reported_statistic": 2.9768218705413254
+    }
+  ],
+  "gaussian_consistency_note": "The gate statistic divides by Priority 4's standard error alone and so treats the closed Monte Carlo value as exact; it is not the right test for two Monte Carlo estimates. It was left unchanged after the data were seen. The combined-error statistic is the correct one and is reported beside it. Priority 4 does not update, replace or reinterpret any closed value.",
+  "scope": "A conditional derivative and local-stability theorem for regular one-dimensional location families under the frozen two-sided CUSUM and two-chart Shiryaev-Roberts recursions, for every truncated window length m >= 1. Not distribution free, not detector universal, not global, not nonlinear, and not valid for moving support or for innovation laws without a first moment.",
+  "evidence_boundary": "Interval certification covers one closed-form unbounded-horizon Laplace instance, one exactly rational moving-support counterexample, and one finite-support general-score witness. Every frozen CUSUM and SR gain in this campaign, Gaussian or non-Gaussian, is a Monte Carlo estimate."
+}

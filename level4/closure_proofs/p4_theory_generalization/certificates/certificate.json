@@ -1,0 +1,228 @@
+{
+  "schema": "rebaseguard.p4-certificate.v1",
+  "witness_sha256": "8c8173f708d2945608ec6c063d8494aec6772676a45890c0ed81069b0481ea15",
+  "arb_precision_bits": 160,
+  "sections": {
+    "laplace_closed_form": {
+      "object": "unit-variance Laplace, memoryless detector, m=1, unbounded horizon",
+      "gain": {
+        "ball": "[3.8284271247461900976033774484193961571393437507 +/- 6.57e-47]",
+        "lower": "[3.8284271247461900976033774484193961571393437507 +/- 3.33e-47]",
+        "upper": "[3.8284271247461900976033774484193961571393437508 +/- 3.39e-47]"
+      },
+      "map_derivative": {
+        "ball": "[-3.8284271247461900976033774484193961571393437507 +/- 6.57e-47]",
+        "lower": "[-3.8284271247461900976033774484193961571393437508 +/- 3.39e-47]",
+        "upper": "[-3.8284271247461900976033774484193961571393437507 +/- 3.33e-47]"
+      },
+      "critical_rho": {
+        "ball": "[0.35355339059327376220042218105242451964241796884 +/- 7.08e-48]",
+        "lower": "[0.35355339059327376220042218105242451964241796884 +/- 2.35e-48]",
+        "upper": "[0.35355339059327376220042218105242451964241796885 +/- 2.87e-48]"
+      },
+      "critical_rho_minus_sqrt2_over_4": {
+        "ball": "[+/- 3.37e-48]",
+        "lower": "[-1.9940504009098936593623809079661820169904795087e-48 +/- 4.70e-95]",
+        "upper": "[3.3625059324770978301863355791477407389438603113e-48 +/- 3.32e-95]"
+      },
+      "finite_differences": [
+        {
+          "step": "1/4",
+          "central_difference": {
+            "ball": "[-3.6765011309354203533054230558014331660618012326 +/- 6.30e-47]",
+            "lower": "[-3.6765011309354203533054230558014331660618012326 +/- 1.61e-47]",
+            "upper": "[-3.6765011309354203533054230558014331660618012325 +/- 3.47e-47]"
+          },
+          "error_against_exact": {
+            "ball": "[0.1519259938107697442979543926179629910775425182 +/- 4.79e-47]",
+            "lower": "[0.15192599381076974429795439261796299107754251815 +/- 2.06e-48]",
+            "upper": "[0.15192599381076974429795439261796299107754251823 +/- 1.32e-48]"
+          }
+        },
+        {
+          "step": "1/8",
+          "central_difference": {
+            "ball": "[-3.7890399421493006560207570147480969179849497858 +/- 4.28e-47]",
+            "lower": "[-3.7890399421493006560207570147480969179849497858 +/- 5.36e-48]",
+            "upper": "[-3.7890399421493006560207570147480969179849497858 +/- 4.40e-47]"
+          },
+          "error_against_exact": {
+            "ball": "[0.0393871825968894415826204336712992391543939650 +/- 7.05e-47]",
+            "lower": "[0.039387182596889441582620433671299239154393964930 +/- 4.63e-49]",
+            "upper": "[0.039387182596889441582620433671299239154393965008 +/- 3.95e-49]"
+          }
+        },
+        {
+          "step": "1/16",
+          "central_difference": {
+            "ball": "[-3.8184883200517746647845179725376582012946809516 +/- 5.92e-47]",
+            "lower": "[-3.8184883200517746647845179725376582012946809516 +/- 1.08e-47]",
+            "upper": "[-3.8184883200517746647845179725376582012946809515 +/- 4.00e-47]"
+          },
+          "error_against_exact": {
+            "ball": "[0.0099388046944154328188594758817379558446627992 +/- 5.46e-47]",
+            "lower": "[0.0099388046944154328188594758817379558446627991454 +/- 2.97e-50]",
+            "upper": "[0.0099388046944154328188594758817379558446627992248 +/- 2.14e-50]"
+          }
+        },
+        {
+          "step": "1/32",
+          "central_difference": {
+            "ball": "[-3.8259366048707413868102112414927484283034387487 +/- 3.87e-47]",
+            "lower": "[-3.8259366048707413868102112414927484283034387487 +/- 3.96e-47]",
+            "upper": "[-3.8259366048707413868102112414927484283034387487 +/- 9.76e-48]"
+          },
+          "error_against_exact": {
+            "ball": "[0.0024905198754487107931662069266477288359050020 +/- 7.46e-47]",
+            "lower": "[0.0024905198754487107931662069266477288359050019951 +/- 1.79e-51]",
+            "upper": "[0.0024905198754487107931662069266477288359050020745 +/- 3.11e-50]"
+          }
+        }
+      ],
+      "checks": {
+        "laplace_gain_closed_form": true,
+        "laplace_map_fixed_point": true,
+        "laplace_finite_difference_convergence": true,
+        "laplace_attraction": true,
+        "laplace_repulsion": true
+      }
+    },
+    "uniform_counterexample": {
+      "object": "uniform innovations, memoryless detector, moving support",
+      "alarm_probability": "1/2",
+      "map_slope": "-2/1",
+      "score_side": "0",
+      "identity_defect": "2/1",
+      "points": [
+        {
+          "e": "1/8",
+          "g1": "-1/4"
+        },
+        {
+          "e": "1/16",
+          "g1": "-1/8"
+        },
+        {
+          "e": "-1/8",
+          "g1": "1/4"
+        },
+        {
+          "e": "-1/16",
+          "g1": "1/8"
+        }
+      ],
+      "checks": {
+        "uniform_alarm_probability_constant": true,
+        "uniform_map_exactly_linear": true,
+        "uniform_identity_defect_positive": true
+      }
+    },
+    "general_score_witness": {
+      "object": "finite-support exponential tilt with a bounded non-affine score",
+      "not_a_location_family": true,
+      "exact": {
+        "gain": "5/2",
+        "fixed_denominator_gain": "13/5",
+        "expected_short_correction": "-1/10",
+        "gaussian_form_gain": "7/2",
+        "pathwise_short_corrections": {
+          "short_plus": "-1/5",
+          "short_minus": "-1/5"
+        },
+        "exact_unit_boundary_rho": "2/3"
+      },
+      "finite_differences": [
+        {
+          "step": "1/4",
+          "central_difference": {
+            "ball": "[-0.5739728138678970818132068667679056183018182191 +/- 3.01e-47]",
+            "lower": "[-0.57397281386789708181320686676790561830181821913 +/- 4.34e-49]",
+            "upper": "[-0.57397281386789708181320686676790561830181821912 +/- 4.62e-48]"
+          },
+          "error_against_exact": {
+            "ball": "[0.1760271861321029181867931332320943816981817809 +/- 3.01e-47]",
+            "lower": "[0.17602718613210291818679313323209438169818178087 +/- 9.15e-50]",
+            "upper": "[0.17602718613210291818679313323209438169818178088 +/- 4.28e-48]"
+          }
+        },
+        {
+          "step": "1/8",
+          "central_difference": {
+            "ball": "[-0.6968731444711371463357218781167234212499654722 +/- 2.53e-47]",
+            "lower": "[-0.69687314447113714633572187811672342124996547219 +/- 4.65e-49]",
+            "upper": "[-0.69687314447113714633572187811672342124996547217 +/- 4.49e-48]"
+          },
+          "error_against_exact": {
+            "ball": "[0.0531268555288628536642781218832765787500345278 +/- 2.53e-47]",
+            "lower": "[0.053126855528862853664278121883276578750034527811 +/- 3.22e-49]",
+            "upper": "[0.053126855528862853664278121883276578750034527825 +/- 3.04e-49]"
+          }
+        },
+        {
+          "step": "1/16",
+          "central_difference": {
+            "ball": "[-0.7359553354369955068834859178173901610686302163 +/- 4.25e-47]",
+            "lower": "[-0.73595533543699550688348591781739016106863021634 +/- 3.05e-48]",
+            "upper": "[-0.73595533543699550688348591781739016106863021631 +/- 4.31e-48]"
+          },
+          "error_against_exact": {
+            "ball": "[0.0140446645630044931165140821826098389313697837 +/- 4.25e-47]",
+            "lower": "[0.014044664563004493116514082182609838931369783658 +/- 4.42e-49]",
+            "upper": "[0.014044664563004493116514082182609838931369783685 +/- 9.89e-50]"
+          }
+        },
+        {
+          "step": "1/32",
+          "central_difference": {
+            "ball": "[-0.7464369680565350061003037975541068399869590284 +/- 4.46e-47]",
+            "lower": "[-0.74643696805653500610030379755410683998695902840 +/- 4.88e-50]",
+            "upper": "[-0.74643696805653500610030379755410683998695902835 +/- 4.80e-48]"
+          },
+          "error_against_exact": {
+            "ball": "[0.0035630319434649938996962024458931600130409716 +/- 4.46e-47]",
+            "lower": "[0.0035630319434649938996962024458931600130409716007 +/- 1.94e-50]",
+            "upper": "[0.0035630319434649938996962024458931600130409716445 +/- 3.67e-50]"
+          }
+        }
+      ],
+      "checks": {
+        "witness_probability_normalization": true,
+        "witness_score_at_zero": true,
+        "witness_zero_is_fixed_point": true,
+        "witness_derivative_identity": true,
+        "witness_general_decomposition": true,
+        "witness_short_correction_negative": true,
+        "witness_expected_short_correction_negative": true,
+        "witness_gaussian_form_gain_differs": true,
+        "witness_finite_difference_convergence": true,
+        "witness_attraction": true,
+        "witness_repulsion": true
+      }
+    }
+  },
+  "required_certificates": [
+    "laplace_gain_closed_form",
+    "laplace_map_fixed_point",
+    "laplace_finite_difference_convergence",
+    "laplace_attraction",
+    "laplace_repulsion",
+    "uniform_alarm_probability_constant",
+    "uniform_map_exactly_linear",
+    "uniform_identity_defect_positive",
+    "witness_probability_normalization",
+    "witness_score_at_zero",
+    "witness_zero_is_fixed_point",
+    "witness_derivative_identity",
+    "witness_general_decomposition",
+    "witness_short_correction_negative",
+    "witness_expected_short_correction_negative",
+    "witness_gaussian_form_gain_differs",
+    "witness_finite_difference_convergence",
+    "witness_attraction",
+    "witness_repulsion"
+  ],
+  "missing_certificates": [],
+  "all_checks_pass": true,
+  "failed_checks": [],
+  "evidence_boundary": "The Laplace object is an unbounded-horizon closed-form instance whose derivation is human-proved in PROOF.md Section 11 and whose values are interval-enclosed here. The uniform object is exactly rational. The tilt witness is finite support. NONE of these is an interval certificate for any frozen CUSUM or SR gain, Gaussian or otherwise, and none certifies a Monte Carlo value."
+}

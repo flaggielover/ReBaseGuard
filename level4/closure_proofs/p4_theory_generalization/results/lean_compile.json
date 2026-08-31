@@ -1,0 +1,41 @@
+{
+  "compiled": true,
+  "source": "lean/GeneralLocationFamilyP4.lean",
+  "source_sha256": "9ccfcd13d84bcf010f3292ba88f5faa7a7711a20dffed39ecacf00650da5967f",
+  "audited_declarations": [
+    "RebaseguardLean.Level4Priority4.gaussianLikelihood_hasDerivAt",
+    "RebaseguardLean.Level4Priority4.gaussianLikelihood_zero",
+    "RebaseguardLean.Level4Priority4.gaussian_reuse_derivative",
+    "RebaseguardLean.Level4Priority4.generalDirect_eq_fixed_add_short",
+    "RebaseguardLean.Level4Priority4.generalShortCorrection_gaussian",
+    "RebaseguardLean.Level4Priority4.generalShortCorrection_neg",
+    "RebaseguardLean.Level4Priority4.generalShortCorrection_nonneg",
+    "RebaseguardLean.Level4Priority4.general_attracting_of_lt_criticalRho",
+    "RebaseguardLean.Level4Priority4.general_repelling_of_criticalRho_lt",
+    "RebaseguardLean.Level4Priority4.hasDerivAt_stoppedMean",
+    "RebaseguardLean.Level4Priority4.integral_eq_zero_of_odd_under_involution",
+    "RebaseguardLean.Level4Priority4.neutral_gain_of_orthonormal_cross",
+    "RebaseguardLean.Level4Priority4.neutral_multiplier",
+    "RebaseguardLean.Level4Priority4.reuse_derivative",
+    "RebaseguardLean.Level4Priority4.reuse_fixed_point_of_zero_mean",
+    "RebaseguardLean.Level4Priority4.witnessPrefix_score",
+    "RebaseguardLean.Level4Priority4.witnessPrefix_total",
+    "RebaseguardLean.Level4Priority4.witness_shortCorrection",
+    "RebaseguardLean.Level4Priority4.witness_shortCorrection_neg"
+  ],
+  "axiom_audit_declarations": 19,
+  "allowed_axioms": [
+    "Classical.choice",
+    "Quot.sound",
+    "propext"
+  ],
+  "sorryAx": false,
+  "project_specific_scientific_axioms": false,
+  "imports_closed_spines": [
+    "MGtOneClosure",
+    "SRPriority2",
+    "StabilityMapP3"
+  ],
+  "reuse_rationale": "Priority 4 generalizes rather than restates: it imports the closed Priority-3 synthesis spine (which itself imports P1 and P2), proves the abstract-likelihood derivative bridge under a strictly weaker Lipschitz hypothesis, and derives the closed Gaussian statement from it as an instance.",
+  "boundary": "Lean proves the abstract-likelihood derivative bridge under a Lipschitz difference-quotient hypothesis, derives the frozen Gaussian statement from it as an instance, proves the general random-denominator decomposition and the sign analysis of its short-cycle correction, the algebraic neutrality corollary, the symmetry fixed point, and the bridges into the closed Priority-3 classification. It does NOT construct any probability space, stopping time, or location-family density, does not discharge the concrete integrability, tail, or domination obligations for the frozen CUSUM or SR processes, and evaluates no gain."
+}

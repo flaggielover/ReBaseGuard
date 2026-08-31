@@ -1,0 +1,477 @@
+{
+  "schema": "rebaseguard.p4-verification.v1",
+  "required_suites": [
+    "priority4_focused",
+    "level_1_3_full",
+    "priority2",
+    "d4_phase_map",
+    "external_validation_v3",
+    "l4r06_policy",
+    "l4r12_operational",
+    "priority1",
+    "historical_sr",
+    "track1b",
+    "location_family_track3ab"
+  ],
+  "required_regressions_pass": true,
+  "suites": [
+    {
+      "label": "priority4_focused",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/p4_theory_generalization/tests -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "134 passed, 2 skipped in 5.39s",
+      "failing_node_ids": [],
+      "output_tail": "........................................................................ [ 52%]\n........................s....s..................................         [100%]\n134 passed, 2 skipped in 5.39s"
+    },
+    {
+      "label": "level_1_3_full",
+      "command": "bash scripts/verify_level_1_3.sh",
+      "exit_code": 0,
+      "summary": "90 passed in 7.17s",
+      "failing_node_ids": [],
+      "output_tail": "PASS  no sorry / admit / axiom / unsafe / native_decide anywhere in the Lean sources\n------------------------------------------------------------\n[4/6] Lean axiom audit\n9 theorems, all with axioms [propext, Classical.choice, Quot.sound]\nPASS  axiom audit clean; final theorem elaborates\n      @hasDerivAt_rebaseguard_cusum : \u2200 {\u03a9 : Type u_1} [m\u03a9 : MeasurableSpace \u03a9] {\u03bc : MeasureTheory.Measure \u03a9} (X : \u2115 \u2192 \u03a9 \u2192 \u211d),\n        (\u2200 (n : \u2115), Measurable (X n)) \u2192\n          ProbabilityTheory.iIndepFun X \u03bc \u2192\n[4b] direct source elaboration of the final module (slow)\nPASS  ReBaseGuardIdentity.lean elaborates from source, exit 0\n------------------------------------------------------------\n[5/6] Arb certificate full-replay audit\n      python 3.14.5\n      python-flint 0.9.0\nPASS  certificate full replay: status PASS, Gamma_lower > 2, continuum residual replayed\n        \"Gamma_lower\": \"3.9243482005828971281857775466050952672958374023437500000000000000000000000000\n        \"Gamma_upper\": \"27.849382127546703280529527546605095267295837402343750000000000000000000000000\n      regenerated audit_report.md is byte-identical to the stored one\n------------------------------------------------------------\n[6/6] Numerical sanity checks\nPASS  regression suite: 90 passed in 7.17s\nPASS  certificate arithmetic and cross-check consistency\n      certified interval [3.9243482005828971281857775466050952672958374023437500000000000000000000000000000, 27.849382127546703280529527546605095267295837402343750000000000000000000000000000]\n      b_hat(0,0) = 15.886865164064800204357652546605095267295837402343750000000000000000000000000000\n      E_b = 11.962516910658127710605800149323439675621476278236166886898187888236062501199\n      stored radius (hi-lo)/2 = 11.9625169634819030761718750000000000000000000000000000000000000000000000000000000  (outward by 5.28237753655660748506765603243785237217638331131018121117639374988010000E-8)\n      margin above 2: 1.9243482005828971281857775466050952672958374023437500000000000000000000000000000\n      Monte Carlo, Bellman cross-check and decomposition identity all consistent\n------------------------------------------------------------\nRESULT: ALL CHECKS PASSED (0 skipped, explicitly allowed)"
+    },
+    {
+      "label": "level_4_aggregate",
+      "command": "bash scripts/verify_level_4.sh",
+      "exit_code": 1,
+      "summary": "1 failed, 17 passed in 0.33s",
+      "failing_node_ids": [
+        "level4/closure_proofs/novelty_verification/tests/test_protocol_freeze.py::test_protected_history_hashes"
+      ],
+      "output_tail": "59 passed in 1.13s\n\n== Level 4 Stage F suite ==\n......................................................                   [100%]\n54 passed in 0.07s\n\n== Level 4 post-closure re-audit suite ==\n..................                                                       [100%]\n18 passed in 0.09s\n\n== Level 4 D4 phase-map closure suite ==\n..................                                                       [100%]\n18 passed in 0.09s\n\n== Level 4 novelty-verification closure suite ==\n...............F..                                                       [100%]\n=================================== FAILURES ===================================\n________________________ test_protected_history_hashes _________________________\n\n    def test_protected_history_hashes():\n        frozen = json.loads((BASE / \"results/historical_hashes.json\").read_text())\n        for name, expected in frozen[\"roots\"].items():\n            count, digest = digest_tree(ROOT / name)\n>           assert count == expected[\"files\"]\nE           assert 92 == 52\n\nlevel4/closure_proofs/novelty_verification/tests/test_protocol_freeze.py:40: AssertionError\n=========================== short test summary info ============================\nFAILED level4/closure_proofs/novelty_verification/tests/test_protocol_freeze.py::test_protected_history_hashes\n1 failed, 17 passed in 0.33s"
+    },
+    {
+      "label": "priority1",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/m_gt_1_priority1/tests -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "13 passed in 0.09s",
+      "failing_node_ids": [],
+      "output_tail": ".............                                                            [100%]\n13 passed in 0.09s"
+    },
+    {
+      "label": "priority2",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/sr_derivative_priority2/tests -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "19 passed in 0.18s",
+      "failing_node_ids": [],
+      "output_tail": "...................                                                      [100%]\n19 passed in 0.18s"
+    },
+    {
+      "label": "location_family_track3ab",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/location_family_track3ab/tests -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "29 passed in 0.08s",
+      "failing_node_ids": [],
+      "output_tail": ".............................                                            [100%]\n29 passed in 0.08s"
+    },
+    {
+      "label": "historical_sr",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/sr_derivative/tests -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "94 passed in 1.42s",
+      "failing_node_ids": [],
+      "output_tail": "........................................................................ [ 76%]\n......................                                                   [100%]\n94 passed in 1.42s"
+    },
+    {
+      "label": "d4_phase_map",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/d4_phase_map/tests -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "18 passed in 0.07s",
+      "failing_node_ids": [],
+      "output_tail": "..................                                                       [100%]\n18 passed in 0.07s"
+    },
+    {
+      "label": "external_validation_v2",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/external_validation_v2/tests -q -p no:cacheprovider",
+      "exit_code": 1,
+      "summary": "2 failed, 43 passed in 3.27s",
+      "failing_node_ids": [
+        "level4/closure_proofs/external_validation_v2/tests/test_freeze.py::test_protocol_hash_and_protected_history",
+        "level4/closure_proofs/external_validation_v2/tests/test_results.py::test_decision_is_mechanically_reproducible"
+      ],
+      "output_tail": "        p = subprocess.run(\n            [str(ROOT / \"level4/.venv/bin/python\"), str(BASE / \"src/integrity.py\")],\n            cwd=ROOT, capture_output=True, text=True,\n        )\n>       assert p.returncode == 0, p.stdout + p.stderr\nE       AssertionError: integrity: FAIL\nE           protected root changed: level4/closure_proofs/sr_derivative\nE         \nE       assert 1 == 0\nE        +  where 1 = CompletedProcess(args=['/Users/suzhe/ReBaseGuard/level4/.venv/bin/python', '/Users/suzhe/ReBaseGuard/level4/closure_pr...'], returncode=1, stdout='integrity: FAIL\\n  protected root changed: level4/closure_proofs/sr_derivative\\n', stderr='').returncode\n\nlevel4/closure_proofs/external_validation_v2/tests/test_freeze.py:31: AssertionError\n__________________ test_decision_is_mechanically_reproducible __________________\n\n    def test_decision_is_mechanically_reproducible():\n>       assert derive() == load(\"results/decision.json\")\nE       AssertionError: assert {'schema': 'r...H2_4': 1, ...} == {'all_primary...PARTIAL', ...}\nE         \nE         Omitting 12 identical items, use -vv to show\nE         Differing items:\nE         {'global_requirement': 'UNMET'} != {'global_requirement': 'PARTIAL'}\nE         {'decision': 'EXTERNAL-VALIDATION-V2-FAILED'} != {'decision': 'EXTERNAL-VALIDATION-V2-PARTIAL'}\nE         {'historical_hashes_unchanged': False} != {'historical_hashes_unchanged': True}\nE         Use -v to get more diff\n\nlevel4/closure_proofs/external_validation_v2/tests/test_results.py:69: AssertionError\n=========================== short test summary info ============================\nFAILED level4/closure_proofs/external_validation_v2/tests/test_freeze.py::test_protocol_hash_and_protected_history\nFAILED level4/closure_proofs/external_validation_v2/tests/test_results.py::test_decision_is_mechanically_reproducible\n2 failed, 43 passed in 3.27s"
+    },
+    {
+      "label": "external_validation_v3",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/external_validation_v3/tests -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "75 passed in 0.44s",
+      "failing_node_ids": [],
+      "output_tail": "........................................................................ [ 96%]\n...                                                                      [100%]\n75 passed in 0.44s"
+    },
+    {
+      "label": "final_global_reaudit",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/final_global_reaudit/tests -q -p no:cacheprovider",
+      "exit_code": 1,
+      "summary": "3 failed, 33 passed in 1.44s",
+      "failing_node_ids": [
+        "level4/final_global_reaudit/tests/test_audit.py::test_23_protected_history_is_intact",
+        "level4/final_global_reaudit/tests/test_audit.py::test_26_current_verdict_is_level4_partial",
+        "level4/final_global_reaudit/tests/test_audit.py::test_34_core_generated_artifacts_match_generator_bytes"
+      ],
+      "output_tail": "E         ?         ^ -- -\nE         + LEVEL-4-FAILED\nE         ?         ^   ++\n\nlevel4/final_global_reaudit/tests/test_audit.py:152: AssertionError\n____________ test_34_core_generated_artifacts_match_generator_bytes ____________\n\n    def test_34_core_generated_artifacts_match_generator_bytes():\n>       assert all(path.exists() and path.read_text() == content for path, content in build().items())\n                                                                                      ^^^^^^^\n\nlevel4/final_global_reaudit/tests/test_audit.py:196: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nlevel4/final_global_reaudit/src/audit.py:465: in build\n    require(integrity[\"status\"] == \"INTACT\", \"protected history is not intact\")\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\ncondition = False, message = 'protected history is not intact'\n\n    def require(condition: bool, message: str) -> None:\n        if not condition:\n>           raise ValueError(message)\nE           ValueError: protected history is not intact\n\nlevel4/final_global_reaudit/src/audit.py:42: ValueError\n=========================== short test summary info ============================\nFAILED level4/final_global_reaudit/tests/test_audit.py::test_23_protected_history_is_intact\nFAILED level4/final_global_reaudit/tests/test_audit.py::test_26_current_verdict_is_level4_partial\nFAILED level4/final_global_reaudit/tests/test_audit.py::test_34_core_generated_artifacts_match_generator_bytes\n3 failed, 33 passed in 1.44s"
+    },
+    {
+      "label": "l4r06_policy",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/l4r06_policy/tests -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "28 passed in 2.62s",
+      "failing_node_ids": [],
+      "output_tail": "............................                                             [100%]\n28 passed in 2.62s"
+    },
+    {
+      "label": "l4r12_operational",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/l4r12_operational_crossing/tests -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "26 passed in 3.84s",
+      "failing_node_ids": [],
+      "output_tail": "..........................                                               [100%]\n26 passed in 3.84s"
+    },
+    {
+      "label": "final_level4_closure",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/final_level4_closure/tests -q -p no:cacheprovider",
+      "exit_code": 1,
+      "summary": "4 failed, 32 passed in 2.02s",
+      "failing_node_ids": [
+        "level4/final_level4_closure/tests/test_terminal_closure.py::test_31_core_json_and_reports_equal_generator_bytes",
+        "level4/final_level4_closure/tests/test_terminal_closure.py::test_33_reproducer_regeneration_is_byte_stable_and_offline",
+        "level4/final_level4_closure/tests/test_terminal_closure.py::test_34_protected_history_is_intact",
+        "level4/final_level4_closure/tests/test_terminal_closure.py::test_35_audit_rebuild_is_pure_and_consistent"
+      ],
+      "output_tail": "E         + BROKEN)\n\nlevel4/final_level4_closure/tests/test_terminal_closure.py:216: AssertionError\n_________________ test_35_audit_rebuild_is_pure_and_consistent _________________\n\n    def test_35_audit_rebuild_is_pure_and_consistent():\n>       canonical, evidence, ledger = build_canonical()\n                                      ^^^^^^^^^^^^^^^^^\n\nlevel4/final_level4_closure/tests/test_terminal_closure.py:221: \n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \nlevel4/final_level4_closure/src/audit.py:309: in build_canonical\n    require(integrity[\"status\"] == \"INTACT\", f\"protected history broken: {integrity['errors']}\")\n_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ \n\ncondition = False\nmessage = \"protected history broken: ['tree level4/closure_proofs/sr_derivative: a4fbe9890b0ba59d588766dccfa17e9ef9d45f1b != abd869b91fe8ba3e69af9db0e7356a73c36c724f']\"\n\n    def require(condition: bool, message: str) -> None:\n        if not condition:\n>           raise ValueError(message)\nE           ValueError: protected history broken: ['tree level4/closure_proofs/sr_derivative: a4fbe9890b0ba59d588766dccfa17e9ef9d45f1b != abd869b91fe8ba3e69af9db0e7356a73c36c724f']\n\nlevel4/final_level4_closure/src/audit.py:95: ValueError\n=========================== short test summary info ============================\nFAILED level4/final_level4_closure/tests/test_terminal_closure.py::test_31_core_json_and_reports_equal_generator_bytes\nFAILED level4/final_level4_closure/tests/test_terminal_closure.py::test_33_reproducer_regeneration_is_byte_stable_and_offline\nFAILED level4/final_level4_closure/tests/test_terminal_closure.py::test_34_protected_history_is_intact\nFAILED level4/final_level4_closure/tests/test_terminal_closure.py::test_35_audit_rebuild_is_pure_and_consistent\n4 failed, 32 passed in 2.02s"
+    },
+    {
+      "label": "track1b",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/m_gt_1_track1b/tests -q -p no:cacheprovider",
+      "exit_code": 0,
+      "summary": "32 passed in 1.63s",
+      "failing_node_ids": [],
+      "output_tail": "................................                                         [100%]\n32 passed in 1.63s"
+    },
+    {
+      "label": "post_level4_archive",
+      "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python scripts/verify_post_level4_archive.py",
+      "exit_code": 1,
+      "summary": "POST-LEVEL-4 ARCHIVE VERIFICATION FAILED: archive hash mismatch: README.md",
+      "failing_node_ids": [],
+      "output_tail": "POST-LEVEL-4 ARCHIVE VERIFICATION FAILED: archive hash mismatch: README.md"
+    }
+  ],
+  "environment_diagnostics": {
+    "priority1": {
+      "observed_failures": [],
+      "pristine_head_failures": [],
+      "every_observed_failure_reproduces_without_priority4": false,
+      "priority4_introduced_no_new_failure": true,
+      "pristine_head_summary": "13 passed in 0.14s",
+      "classification": "ENVIRONMENT_DIAGNOSTIC"
+    },
+    "historical_sr": {
+      "observed_failures": [],
+      "pristine_head_failures": [
+        "level4/closure_proofs/sr_derivative/tests/test_integrity.py::test_historical_manifest_is_complete_and_immutable"
+      ],
+      "every_observed_failure_reproduces_without_priority4": false,
+      "priority4_introduced_no_new_failure": true,
+      "pristine_head_summary": "1 failed, 93 passed in 2.60s",
+      "classification": "ENVIRONMENT_DIAGNOSTIC"
+    },
+    "track1b": {
+      "observed_failures": [],
+      "pristine_head_failures": [],
+      "every_observed_failure_reproduces_without_priority4": false,
+      "priority4_introduced_no_new_failure": true,
+      "pristine_head_summary": "32 passed in 1.94s",
+      "classification": "ENVIRONMENT_DIAGNOSTIC"
+    }
+  },
+  "environment_probes": {
+    "ripgrep_binary_on_path": "/Users/suzhe/.vscode/extensions/openai.chatgpt-26.825.32147-darwin-arm64/bin/macos-aarch64/rg",
+    "ripgrep_available": true,
+    "track1b_tree_hash_recorded_by_priority1": "e28930fe04362b246c77a7f093e327aa1549d5ecdd6a37cb83f55550d519812f",
+    "track1b_tree_hash_by_collation": {
+      "host_default": "e28930fe04362b246c77a7f093e327aa1549d5ecdd6a37cb83f55550d519812f",
+      "C": "196e978077a62eafc864b78b4ff38a68221d78b00055e4f1461d8bb1f7ce9be9",
+      "en_US.UTF-8": "e28930fe04362b246c77a7f093e327aa1549d5ecdd6a37cb83f55550d519812f"
+    },
+    "track1b_tree_hash_is_collation_dependent": true,
+    "track1b_tree_hash_matches_under_en_US_UTF_8": true,
+    "track1b_worktree_clean_against_head": true,
+    "track1b_untracked_files": []
+  },
+  "controlled_environment_matrix": {
+    "runs": [
+      {
+        "label": "worktree_priority1_en_us_with_rg",
+        "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/m_gt_1_priority1/tests/test_integrity.py::test_immutable_prior_evidence_hashes -q -p no:cacheprovider",
+        "exit_code": 0,
+        "summary": "1 passed in 0.04s",
+        "failing_node_ids": [],
+        "output_tail": ".                                                                        [100%]\n1 passed in 0.04s",
+        "scope": "worktree",
+        "case": "priority1_en_us_with_rg",
+        "expected_exit_code": 0,
+        "matches_expected_causal_outcome": true
+      },
+      {
+        "label": "worktree_priority1_c_with_rg",
+        "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/m_gt_1_priority1/tests/test_integrity.py::test_immutable_prior_evidence_hashes -q -p no:cacheprovider",
+        "exit_code": 1,
+        "summary": "1 failed in 0.04s",
+        "failing_node_ids": [
+          "level4/closure_proofs/m_gt_1_priority1/tests/test_integrity.py::test_immutable_prior_evidence_hashes"
+        ],
+        "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_____________________ test_immutable_prior_evidence_hashes _____________________\n\n    def test_immutable_prior_evidence_hashes() -> None:\n        frozen = json.loads((CAMPAIGN / \"manifest.json\").read_text())[\"immutable_prior_evidence\"]\n>       assert track1b_tree_hash() == frozen[\"track1b_tree_sha256\"]\nE       AssertionError: assert '196e978077a6...d8bb1f7ce9be9' == 'e28930fe0436...55550d519812f'\nE         \nE         - e28930fe04362b246c77a7f093e327aa1549d5ecdd6a37cb83f55550d519812f\nE         + 196e978077a62eafc864b78b4ff38a68221d78b00055e4f1461d8bb1f7ce9be9\n\nlevel4/closure_proofs/m_gt_1_priority1/tests/test_integrity.py:29: AssertionError\n=========================== short test summary info ============================\nFAILED level4/closure_proofs/m_gt_1_priority1/tests/test_integrity.py::test_immutable_prior_evidence_hashes\n1 failed in 0.04s",
+        "scope": "worktree",
+        "case": "priority1_c_with_rg",
+        "expected_exit_code": 1,
+        "matches_expected_causal_outcome": true
+      },
+      {
+        "label": "worktree_historical_sr_en_us_with_rg",
+        "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/sr_derivative/tests/test_integrity.py::test_fresh_master_seed_is_confined_to_design_and_track2 -q -p no:cacheprovider",
+        "exit_code": 0,
+        "summary": "1 passed in 0.23s",
+        "failing_node_ids": [],
+        "output_tail": ".                                                                        [100%]\n1 passed in 0.23s",
+        "scope": "worktree",
+        "case": "historical_sr_en_us_with_rg",
+        "expected_exit_code": 0,
+        "matches_expected_causal_outcome": true
+      },
+      {
+        "label": "worktree_historical_sr_en_us_without_rg",
+        "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/sr_derivative/tests/test_integrity.py::test_fresh_master_seed_is_confined_to_design_and_track2 -q -p no:cacheprovider",
+        "exit_code": 1,
+        "summary": "1 failed in 0.08s",
+        "failing_node_ids": [
+          "level4/closure_proofs/sr_derivative/tests/test_integrity.py::test_fresh_master_seed_is_confined_to_design_and_track2"
+        ],
+        "output_tail": "                err_msg = err_msg.decode()\n            except ValueError:\n                exception_name = b'SubprocessError'\n                hex_errno = b'0'\n                err_msg = 'Bad exception data from child: {!r}'.format(\n                              bytes(errpipe_data))\n            child_exception_type = getattr(\n                    builtins, exception_name.decode('ascii'),\n                    SubprocessError)\n            if issubclass(child_exception_type, OSError) and hex_errno:\n                errno_num = int(hex_errno, 16)\n                if err_msg == \"noexec:chdir\":\n                    err_msg = \"\"\n                    # The error must be from chdir(cwd).\n                    err_filename = cwd\n                elif err_msg == \"noexec\":\n                    err_msg = \"\"\n                    err_filename = None\n                else:\n                    err_filename = orig_executable\n                if errno_num != 0:\n                    err_msg = os.strerror(errno_num)\n                if err_filename is not None:\n>                   raise child_exception_type(errno_num, err_msg, err_filename)\nE                   FileNotFoundError: [Errno 2] No such file or directory: 'rg'\n\n/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py:1990: FileNotFoundError\n=========================== short test summary info ============================\nFAILED level4/closure_proofs/sr_derivative/tests/test_integrity.py::test_fresh_master_seed_is_confined_to_design_and_track2\n1 failed in 0.08s",
+        "scope": "worktree",
+        "case": "historical_sr_en_us_without_rg",
+        "expected_exit_code": 1,
+        "matches_expected_causal_outcome": true
+      },
+      {
+        "label": "worktree_track1b_en_us_with_rg",
+        "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/m_gt_1_track1b/tests/test_integrity.py::test_fresh_seed_exists_only_inside_track1b -q -p no:cacheprovider",
+        "exit_code": 0,
+        "summary": "1 passed in 0.07s",
+        "failing_node_ids": [],
+        "output_tail": ".                                                                        [100%]\n1 passed in 0.07s",
+        "scope": "worktree",
+        "case": "track1b_en_us_with_rg",
+        "expected_exit_code": 0,
+        "matches_expected_causal_outcome": true
+      },
+      {
+        "label": "worktree_track1b_en_us_without_rg",
+        "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/m_gt_1_track1b/tests/test_integrity.py::test_fresh_seed_exists_only_inside_track1b -q -p no:cacheprovider",
+        "exit_code": 1,
+        "summary": "1 failed in 0.09s",
+        "failing_node_ids": [
+          "level4/closure_proofs/m_gt_1_track1b/tests/test_integrity.py::test_fresh_seed_exists_only_inside_track1b"
+        ],
+        "output_tail": "                err_msg = err_msg.decode()\n            except ValueError:\n                exception_name = b'SubprocessError'\n                hex_errno = b'0'\n                err_msg = 'Bad exception data from child: {!r}'.format(\n                              bytes(errpipe_data))\n            child_exception_type = getattr(\n                    builtins, exception_name.decode('ascii'),\n                    SubprocessError)\n            if issubclass(child_exception_type, OSError) and hex_errno:\n                errno_num = int(hex_errno, 16)\n                if err_msg == \"noexec:chdir\":\n                    err_msg = \"\"\n                    # The error must be from chdir(cwd).\n                    err_filename = cwd\n                elif err_msg == \"noexec\":\n                    err_msg = \"\"\n                    err_filename = None\n                else:\n                    err_filename = orig_executable\n                if errno_num != 0:\n                    err_msg = os.strerror(errno_num)\n                if err_filename is not None:\n>                   raise child_exception_type(errno_num, err_msg, err_filename)\nE                   FileNotFoundError: [Errno 2] No such file or directory: 'rg'\n\n/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py:1990: FileNotFoundError\n=========================== short test summary info ============================\nFAILED level4/closure_proofs/m_gt_1_track1b/tests/test_integrity.py::test_fresh_seed_exists_only_inside_track1b\n1 failed in 0.09s",
+        "scope": "worktree",
+        "case": "track1b_en_us_without_rg",
+        "expected_exit_code": 1,
+        "matches_expected_causal_outcome": true
+      },
+      {
+        "label": "pristine_head_priority1_en_us_with_rg",
+        "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/m_gt_1_priority1/tests/test_integrity.py::test_immutable_prior_evidence_hashes -q -p no:cacheprovider",
+        "exit_code": 0,
+        "summary": "1 passed in 0.02s",
+        "failing_node_ids": [],
+        "output_tail": ".                                                                        [100%]\n1 passed in 0.02s",
+        "scope": "pristine_head",
+        "case": "priority1_en_us_with_rg",
+        "expected_exit_code": 0,
+        "matches_expected_causal_outcome": true
+      },
+      {
+        "label": "pristine_head_priority1_c_with_rg",
+        "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/m_gt_1_priority1/tests/test_integrity.py::test_immutable_prior_evidence_hashes -q -p no:cacheprovider",
+        "exit_code": 1,
+        "summary": "1 failed in 0.03s",
+        "failing_node_ids": [
+          "level4/closure_proofs/m_gt_1_priority1/tests/test_integrity.py::test_immutable_prior_evidence_hashes"
+        ],
+        "output_tail": "F                                                                        [100%]\n=================================== FAILURES ===================================\n_____________________ test_immutable_prior_evidence_hashes _____________________\n\n    def test_immutable_prior_evidence_hashes() -> None:\n        frozen = json.loads((CAMPAIGN / \"manifest.json\").read_text())[\"immutable_prior_evidence\"]\n>       assert track1b_tree_hash() == frozen[\"track1b_tree_sha256\"]\nE       AssertionError: assert '196e978077a6...d8bb1f7ce9be9' == 'e28930fe0436...55550d519812f'\nE         \nE         - e28930fe04362b246c77a7f093e327aa1549d5ecdd6a37cb83f55550d519812f\nE         + 196e978077a62eafc864b78b4ff38a68221d78b00055e4f1461d8bb1f7ce9be9\n\nlevel4/closure_proofs/m_gt_1_priority1/tests/test_integrity.py:29: AssertionError\n=========================== short test summary info ============================\nFAILED level4/closure_proofs/m_gt_1_priority1/tests/test_integrity.py::test_immutable_prior_evidence_hashes\n1 failed in 0.03s",
+        "scope": "pristine_head",
+        "case": "priority1_c_with_rg",
+        "expected_exit_code": 1,
+        "matches_expected_causal_outcome": true
+      },
+      {
+        "label": "pristine_head_historical_sr_en_us_with_rg",
+        "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/sr_derivative/tests/test_integrity.py::test_fresh_master_seed_is_confined_to_design_and_track2 -q -p no:cacheprovider",
+        "exit_code": 0,
+        "summary": "1 passed in 0.16s",
+        "failing_node_ids": [],
+        "output_tail": ".                                                                        [100%]\n1 passed in 0.16s",
+        "scope": "pristine_head",
+        "case": "historical_sr_en_us_with_rg",
+        "expected_exit_code": 0,
+        "matches_expected_causal_outcome": true
+      },
+      {
+        "label": "pristine_head_historical_sr_en_us_without_rg",
+        "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/sr_derivative/tests/test_integrity.py::test_fresh_master_seed_is_confined_to_design_and_track2 -q -p no:cacheprovider",
+        "exit_code": 1,
+        "summary": "1 failed in 0.08s",
+        "failing_node_ids": [
+          "level4/closure_proofs/sr_derivative/tests/test_integrity.py::test_fresh_master_seed_is_confined_to_design_and_track2"
+        ],
+        "output_tail": "                err_msg = err_msg.decode()\n            except ValueError:\n                exception_name = b'SubprocessError'\n                hex_errno = b'0'\n                err_msg = 'Bad exception data from child: {!r}'.format(\n                              bytes(errpipe_data))\n            child_exception_type = getattr(\n                    builtins, exception_name.decode('ascii'),\n                    SubprocessError)\n            if issubclass(child_exception_type, OSError) and hex_errno:\n                errno_num = int(hex_errno, 16)\n                if err_msg == \"noexec:chdir\":\n                    err_msg = \"\"\n                    # The error must be from chdir(cwd).\n                    err_filename = cwd\n                elif err_msg == \"noexec\":\n                    err_msg = \"\"\n                    err_filename = None\n                else:\n                    err_filename = orig_executable\n                if errno_num != 0:\n                    err_msg = os.strerror(errno_num)\n                if err_filename is not None:\n>                   raise child_exception_type(errno_num, err_msg, err_filename)\nE                   FileNotFoundError: [Errno 2] No such file or directory: 'rg'\n\n/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py:1990: FileNotFoundError\n=========================== short test summary info ============================\nFAILED level4/closure_proofs/sr_derivative/tests/test_integrity.py::test_fresh_master_seed_is_confined_to_design_and_track2\n1 failed in 0.08s",
+        "scope": "pristine_head",
+        "case": "historical_sr_en_us_without_rg",
+        "expected_exit_code": 1,
+        "matches_expected_causal_outcome": true
+      },
+      {
+        "label": "pristine_head_track1b_en_us_with_rg",
+        "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/m_gt_1_track1b/tests/test_integrity.py::test_fresh_seed_exists_only_inside_track1b -q -p no:cacheprovider",
+        "exit_code": 0,
+        "summary": "1 passed in 0.07s",
+        "failing_node_ids": [],
+        "output_tail": ".                                                                        [100%]\n1 passed in 0.07s",
+        "scope": "pristine_head",
+        "case": "track1b_en_us_with_rg",
+        "expected_exit_code": 0,
+        "matches_expected_causal_outcome": true
+      },
+      {
+        "label": "pristine_head_track1b_en_us_without_rg",
+        "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/m_gt_1_track1b/tests/test_integrity.py::test_fresh_seed_exists_only_inside_track1b -q -p no:cacheprovider",
+        "exit_code": 1,
+        "summary": "1 failed in 0.08s",
+        "failing_node_ids": [
+          "level4/closure_proofs/m_gt_1_track1b/tests/test_integrity.py::test_fresh_seed_exists_only_inside_track1b"
+        ],
+        "output_tail": "                err_msg = err_msg.decode()\n            except ValueError:\n                exception_name = b'SubprocessError'\n                hex_errno = b'0'\n                err_msg = 'Bad exception data from child: {!r}'.format(\n                              bytes(errpipe_data))\n            child_exception_type = getattr(\n                    builtins, exception_name.decode('ascii'),\n                    SubprocessError)\n            if issubclass(child_exception_type, OSError) and hex_errno:\n                errno_num = int(hex_errno, 16)\n                if err_msg == \"noexec:chdir\":\n                    err_msg = \"\"\n                    # The error must be from chdir(cwd).\n                    err_filename = cwd\n                elif err_msg == \"noexec\":\n                    err_msg = \"\"\n                    err_filename = None\n                else:\n                    err_filename = orig_executable\n                if errno_num != 0:\n                    err_msg = os.strerror(errno_num)\n                if err_filename is not None:\n>                   raise child_exception_type(errno_num, err_msg, err_filename)\nE                   FileNotFoundError: [Errno 2] No such file or directory: 'rg'\n\n/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py:1990: FileNotFoundError\n=========================== short test summary info ============================\nFAILED level4/closure_proofs/m_gt_1_track1b/tests/test_integrity.py::test_fresh_seed_exists_only_inside_track1b\n1 failed in 0.08s",
+        "scope": "pristine_head",
+        "case": "track1b_en_us_without_rg",
+        "expected_exit_code": 1,
+        "matches_expected_causal_outcome": true
+      }
+    ],
+    "checks": {
+      "rg_available_for_positive_control": true,
+      "all_controlled_outcomes_match": true,
+      "both_scopes_covered": true
+    },
+    "all_checks_pass": true
+  },
+  "environment_diagnostics_reproduce_without_priority4": true,
+  "historical_diagnostics": {
+    "old_52_file_guard_against_92_file_sr_tree": {
+      "observed": true,
+      "also_observed_in": [
+        "external_validation_v2",
+        "final_global_reaudit",
+        "final_level4_closure"
+      ],
+      "predates_priority4": true,
+      "recorded_by": [
+        "level4/closure_proofs/m_gt_1_priority1/results/verification.json",
+        "level4/closure_proofs/sr_derivative_priority2/results/verification.json"
+      ],
+      "classification": "HISTORICAL_DIAGNOSTIC"
+    },
+    "post_archive_readme_hash_drift": {
+      "observed": true,
+      "predates_priority4": true,
+      "recorded_by": [
+        "level4/closure_proofs/sr_derivative_priority2/CLOSURE_REPORT.md"
+      ],
+      "classification": "HISTORICAL_DIAGNOSTIC"
+    }
+  },
+  "historical_diagnostics_unchanged": true,
+  "freeze_scoped_suites": {
+    "priority3": {
+      "revision": "HEAD",
+      "working_tree": {
+        "label": "priority3_worktree",
+        "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/m_rho_stability_priority3/tests -q -p no:cacheprovider",
+        "exit_code": 1,
+        "summary": "1 failed, 84 passed in 2.84s",
+        "failing_node_ids": [
+          "level4/closure_proofs/m_rho_stability_priority3/tests/test_integrity.py::test_priority3_writes_only_inside_its_own_namespace"
+        ],
+        "output_tail": "........................................F............................... [ 84%]\n.............                                                            [100%]\n=================================== FAILURES ===================================\n_____________ test_priority3_writes_only_inside_its_own_namespace ______________\n\n    def test_priority3_writes_only_inside_its_own_namespace():\n        changed = subprocess.check_output(\n            [\"git\", \"status\", \"--porcelain\"], cwd=ROOT, text=True\n        ).splitlines()\n        outside = [line for line in changed\n                   if CAMPAIGN_RELATIVE not in line and line.strip()]\n>       assert not outside, outside\nE       AssertionError: ['?? level4/closure_proofs/p4_theory_generalization/', '?? level4/closure_proofs/p7_statistical_consequences/']\nE       assert not ['?? level4/closure_proofs/p4_theory_generalization/', '?? level4/closure_proofs/p7_statistical_consequences/']\n\nlevel4/closure_proofs/m_rho_stability_priority3/tests/test_integrity.py:42: AssertionError\n=========================== short test summary info ============================\nFAILED level4/closure_proofs/m_rho_stability_priority3/tests/test_integrity.py::test_priority3_writes_only_inside_its_own_namespace\n1 failed, 84 passed in 2.84s"
+      },
+      "frozen_tree": {
+        "label": "priority3_frozen_tree",
+        "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest /var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/rebaseguard-p3-pristine-2b5e4ckd/frozen_tree_priority3/level4/closure_proofs/m_rho_stability_priority3/tests -q -p no:cacheprovider",
+        "exit_code": 0,
+        "summary": "85 passed in 2.74s",
+        "failing_node_ids": [],
+        "output_tail": "........................................................................ [ 84%]\n.............                                                            [100%]\n85 passed in 2.74s"
+      },
+      "frozen_tree_passes": true,
+      "clean_head_tree": {
+        "label": "priority3_head_tree",
+        "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest /var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/rebaseguard-p3-pristine-2b5e4ckd/head_tree_priority3/level4/closure_proofs/m_rho_stability_priority3/tests -q -p no:cacheprovider",
+        "exit_code": 0,
+        "summary": "85 passed in 2.89s",
+        "failing_node_ids": [],
+        "output_tail": "........................................................................ [ 84%]\n.............                                                            [100%]\n85 passed in 2.89s"
+      },
+      "same_failure_already_present_at_head_without_priority4": false,
+      "working_tree_failures_are_exactly_the_freeze_scope_assertions": true,
+      "expected_worktree_failures": [
+        "level4/closure_proofs/m_rho_stability_priority3/tests/test_integrity.py::test_priority3_writes_only_inside_its_own_namespace"
+      ],
+      "classification": "FREEZE_SCOPED_DIAGNOSTIC",
+      "reading": "The assertion describes the tree at that campaign's freeze. It fails on the working tree because a later namespace exists, not because Priority 4 changed anything the campaign owns; the same suite passes in full at the revision it describes. The clean-HEAD replay separates the two possible causes: a suite that already fails at HEAD was broken by an earlier campaign and has nothing to do with Priority 4, while one that passes at HEAD is failing only because this untracked namespace exists."
+    },
+    "location_family": {
+      "revision": "1110065",
+      "working_tree": {
+        "label": "location_family_worktree",
+        "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest level4/closure_proofs/location_family/tests -q -p no:cacheprovider",
+        "exit_code": 1,
+        "summary": "1 failed, 36 passed in 45.29s",
+        "failing_node_ids": [
+          "level4/closure_proofs/location_family/tests/test_integrity.py::test_fresh_seed_is_confined_to_track3_at_freeze"
+        ],
+        "output_tail": "..............F......................                                    [100%]\n=================================== FAILURES ===================================\n_______________ test_fresh_seed_is_confined_to_track3_at_freeze ________________\n\n    def test_fresh_seed_is_confined_to_track3_at_freeze():\n        hits = []\n        for path in REPO.rglob(\"*\"):\n            if not path.is_file() or \".venv\" in path.parts or \"__pycache__\" in path.parts:\n                continue\n            try:\n                if \"2026082307\" in path.read_text():\n                    hits.append(path)\n            except (UnicodeDecodeError, OSError):\n                continue\n        assert hits\n>       assert all(CAMPAIGN in path.parents for path in hits)\nE       assert False\nE        +  where False = all(<generator object test_fresh_seed_is_confined_to_track3_at_freeze.<locals>.<genexpr> at 0x1073f7ed0>)\n\nlevel4/closure_proofs/location_family/tests/test_integrity.py:60: AssertionError\n=========================== short test summary info ============================\nFAILED level4/closure_proofs/location_family/tests/test_integrity.py::test_fresh_seed_is_confined_to_track3_at_freeze\n1 failed, 36 passed in 45.29s"
+      },
+      "frozen_tree": {
+        "label": "location_family_frozen_tree",
+        "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest /var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/rebaseguard-p3-pristine-2b5e4ckd/frozen_tree_location_family/level4/closure_proofs/location_family/tests -q -p no:cacheprovider",
+        "exit_code": 0,
+        "summary": "37 passed in 0.68s",
+        "failing_node_ids": [],
+        "output_tail": ".....................................                                    [100%]\n37 passed in 0.68s"
+      },
+      "frozen_tree_passes": true,
+      "clean_head_tree": {
+        "label": "location_family_head_tree",
+        "command": "/Users/suzhe/ReBaseGuard/level4/.venv/bin/python -m pytest /var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/rebaseguard-p3-pristine-2b5e4ckd/head_tree_location_family/level4/closure_proofs/location_family/tests -q -p no:cacheprovider",
+        "exit_code": 1,
+        "summary": "1 failed, 36 passed in 0.78s",
+        "failing_node_ids": [
+          "../../../../../../../../var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/rebaseguard-p3-pristine-2b5e4ckd/head_tree_location_family/level4/closure_proofs/location_family/tests/test_integrity.py::test_fresh_seed_is_confined_to_track3_at_freeze"
+        ],
+        "output_tail": "..............F......................                                    [100%]\n=================================== FAILURES ===================================\n_______________ test_fresh_seed_is_confined_to_track3_at_freeze ________________\n\n    def test_fresh_seed_is_confined_to_track3_at_freeze():\n        hits = []\n        for path in REPO.rglob(\"*\"):\n            if not path.is_file() or \".venv\" in path.parts or \"__pycache__\" in path.parts:\n                continue\n            try:\n                if \"2026082307\" in path.read_text():\n                    hits.append(path)\n            except (UnicodeDecodeError, OSError):\n                continue\n        assert hits\n>       assert all(CAMPAIGN in path.parents for path in hits)\nE       assert False\nE        +  where False = all(<generator object test_fresh_seed_is_confined_to_track3_at_freeze.<locals>.<genexpr> at 0x10722e740>)\n\n/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/rebaseguard-p3-pristine-2b5e4ckd/head_tree_location_family/level4/closure_proofs/location_family/tests/test_integrity.py:60: AssertionError\n=========================== short test summary info ============================\nFAILED ../../../../../../../../var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/rebaseguard-p3-pristine-2b5e4ckd/head_tree_location_family/level4/closure_proofs/location_family/tests/test_integrity.py::test_fresh_seed_is_confined_to_track3_at_freeze\n1 failed, 36 passed in 0.78s"
+      },
+      "same_failure_already_present_at_head_without_priority4": true,
+      "working_tree_failures_are_exactly_the_freeze_scope_assertions": true,
+      "expected_worktree_failures": [
+        "level4/closure_proofs/location_family/tests/test_integrity.py::test_fresh_seed_is_confined_to_track3_at_freeze"
+      ],
+      "classification": "FREEZE_SCOPED_DIAGNOSTIC",
+      "reading": "The assertion describes the tree at that campaign's freeze. It fails on the working tree because a later namespace exists, not because Priority 4 changed anything the campaign owns; the same suite passes in full at the revision it describes. The clean-HEAD replay separates the two possible causes: a suite that already fails at HEAD was broken by an earlier campaign and has nothing to do with Priority 4, while one that passes at HEAD is failing only because this untracked namespace exists."
+    },
+    "all_frozen_trees_pass": true
+  },
+  "diagnostics_not_counted_as_priority4_passes": true,
+  "gate": "all named required suites literally pass in the current intended environment; every freeze-scoped suite passes in full in a clean worktree at the revision its assertion describes, and its working-tree failures are exactly the named freeze-scope assertions; controlled worktree/pristine replays prove the locale/PATH diagnostics; no observed failure is new to Priority 4; and the two grandfathered historical diagnostics are unchanged",
+  "all_gates_pass": true
+}
