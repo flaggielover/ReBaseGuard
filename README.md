@@ -18,6 +18,21 @@ tested regimes, while a pre-specified operational-transition hypothesis
 produces a negative result. The project keeps theorem, formal proof, certified
 numerics, empirical evidence, and limitations distinct.
 
+## Current Level-4 research status
+
+At the current authoritative repository state, the campaign status is:
+
+| Priority | Status | Current conclusion |
+|---|---|---|
+| P1 | `CLOSED` | The frozen \(m>1\) CUSUM derivative theorem is closed within its stated convention. |
+| P2 | `CLOSED` | The frozen symmetric two-chart SR derivative/stability result is closed, with its supporting Lean and Arb evidence. |
+| P3 | `CLOSED` | The reuse-fraction local stability map is closed; its conclusions are local deterministic results. |
+| P4 | `PARTIAL` | The general location-family derivative theorem and supporting proof, numerical, Lean, and Arb evidence survived independent review. Three frozen preregistered numerical closure gates remain literally false; none was weakened or rewritten. Novelty remains `NOVELTY-NOT-ADJUDICATED`. |
+| P5 | `PARTIAL` | The raw-mean identity and the fixed-policy invariant-law/ergodicity theorem survive independent adjudication. Global deterministic attraction, operational-invisibility, and universal finite-grid claims were narrowed; several literal closure gates fail. Novelty remains `NOVELTY-NOT-ADJUDICATED`. |
+| P7 | `CLOSED` | Independent adjudication confirms material monitoring degradation under recursive re-baselining, while \(\rho_c\) is a local mathematical boundary, not an operational safety boundary under the frozen criterion. |
+
+P6 has a pre-design directory only; its full campaign has not started.
+
 ## Why this problem exists
 
 The cycle is **monitor -> alarm at a data-dependent stopping time -> reuse
@@ -117,14 +132,51 @@ python3 docs/research_synthesis/verify_synthesis.py --no-diff-check
 - Policy and semi-real evidence are regime-scoped, not production validation;
   the novelty position is scoped to the documented search.
 
+## Priority-7 operational consequence
+
+P7's independent adjudication finds that recursive re-baselining materially
+degrades monitoring performance. Nominal single-cycle ARL is about **465**;
+fresh-reference recursive ARL is roughly **80–162**, and full-reuse ARL roughly
+**48–80**, with substantial false-alarm inflation. Detection delay develops a
+severe heavy tail. One-cycle calibration can look normal while cycle 2 collapses
+to about **5.6–9.4** in mean run length.
+
+The P3 critical reuse fraction \(\rho_c\) is a local mathematical boundary. Under
+P7's frozen operational criterion it is **not** an operational safety boundary.
+This is a monitoring consequence, not a global nonlinear-dynamics theorem.
+
+### P7 theory-status boundaries
+
+| Statement | Status |
+|---|---|
+| P7-A | Exact finite-cycle conditional theorem. |
+| P7-B | Conditional-exact stationary identity. |
+| P7-C | Conditional proposition with an empirically supported but unproved global sign condition. |
+| P7-D | Monte Carlo plug-in diagnostic; not certified. |
+
+P7 itself left stationary-law existence, uniqueness, ergodicity, and finite
+fourth moment as simulation evidence. P5 now proves those properties for the
+same frozen Gaussian constant-policy convention-A chain, with the explicit
+cross-reference and limitations recorded in P5's independent adjudication. The
+P7 artifacts remain unchanged. The repository distinguishes proved theorems,
+conditional theorems, rigorous certificates, numerical evidence, exploratory
+observations, and novelty status.
+
+## Future research implications
+
+- **P5:** retain the exact raw-mean and fixed-policy ergodicity results; treat
+  attraction, global cycle uniqueness, bimodality onset, and the dispersion
+  optimum at their adjudicated conditional or numerical tiers.
+- **P6 pre-design:** control entering-reference dispersion and delay-tail risk;
+  do not treat \(\rho < \rho_c\) as a safety rule or import P5's measured
+  optimum as a design constant.
+
 ## Research status and reproducibility
 
-`LEVEL-4-CLOSED` is an **internal project-closure designation**: 17 PASS, 1
-PARTIAL, 0 FAIL, 0 OPEN, with **16/16 satisfied** mandatory requirements. It is
-not an external academic standard, certification, endorsement, or peer-review
-result. At the original Level-4 closure, the optional SR Arb certificate
-remained open and was closed later as `SR-GAMMA-CERTIFIED`; future work is
-limited to new scoped extensions such as the remaining non-Gaussian question.
+The status labels above are internal, scope-bound research designations. They
+are not an external academic standard, certification, endorsement, or
+peer-review result. Frozen artifacts and campaign records remain authoritative;
+this README summarizes them and does not replace their evidence boundaries.
 
 ## Author and citation
 

@@ -1,0 +1,17 @@
+import NonlinearSkeletonP5
+
+open RebaseguardLean.Priority5Skeleton
+open RebaseguardLean.Priority5Skeleton.SecantMap
+
+#print axioms RebaseguardLean.Priority5Skeleton.SecantMap.R_zero
+#print axioms RebaseguardLean.Priority5Skeleton.SecantMap.f_zero
+#print axioms RebaseguardLean.Priority5Skeleton.SecantMap.fixedPoint_unique
+#print axioms RebaseguardLean.Priority5Skeleton.SecantMap.twoCycle_iff
+#print axioms RebaseguardLean.Priority5Skeleton.SecantMap.no_twoCycle_of_le_criticalRho
+#print axioms RebaseguardLean.Priority5Skeleton.SecantMap.mul_criticalRho_le_one
+#print axioms RebaseguardLean.Priority5Skeleton.SecantMap.exists_twoCycle
+#print axioms RebaseguardLean.Priority5Skeleton.SecantMap.twoCycle_unique_of_strictAntiOn
+#print axioms RebaseguardLean.Priority5Skeleton.SecantMap.abs_map_le
+#print axioms RebaseguardLean.Priority5Skeleton.SecantMap.invariant_region
+#print axioms RebaseguardLean.Priority5Skeleton.SecantMap.local_repulsion_with_global_bound
+#print axioms RebaseguardLean.Priority5Skeleton.snr_le_of_small_amplitude

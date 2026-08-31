@@ -1,0 +1,28 @@
+{
+ "p5_nonlinear_map.png": {
+  "panels": ["(a) R(e) over |e|<=12 with 95% bands: odd, saturating, decaying to zero",
+             "(b) linear core |e|<=0.12 against the frozen P3 tangent (1-GammaTilde)e",
+             "(c) secant gain s(e)=-R(e)/e on log axes; symmetric 2-cycles solve s(e*)=1/rho"],
+  "source": "experiments/make_figures.py::fig_map",
+  "data": ["results/nonlinear_map.json", "results/nonlinear_map_rep.json", "results/map_tail.json"],
+  "note": "CUSUM (solid) and SR (dashed) nearly coincide away from the origin; that coincidence is a result, not a plotting error."
+ },
+ "p5_bifurcation_and_dispersion.png": {
+  "panels": ["(a) skeleton period-2 branch +/-e*(rho) against the chain's q95(|e|); dashed verticals are the frozen P3 rho_c",
+             "(b) skeleton signal-to-noise e*/sqrt(V(e*)): zero at rho_c, never above ~2.1",
+             "(c) stationary RMS(e) vs rho with replicate 95% intervals: smooth U with an interior minimum far above rho_c"],
+  "source": "experiments/make_figures.py::fig_bifurcation",
+  "data": ["results/skeleton_scan.json", "results/map_analysis.json", "results/chain_analysis.json"],
+  "note": "CUSUM m=1 (blue) is hidden beneath SR m=1 (red) in every panel: the two detectors are indistinguishable in the nonlinear regime."
+ },
+ "p5_stationary_density.png": {
+  "panels": ["invariant densities with replicate 95% bands at rho in {0.3,0.5,0.8,1.0} for CUSUM m=1, CUSUM m=3, SR m=5; dashed verticals are the skeleton 2-cycle +/-e*"],
+  "source": "experiments/make_figures.py::fig_density",
+  "data": ["results/density.json"]
+ },
+ "p5_bimodality_onset.png": {
+  "panels": ["per-replicate contrast [dens(+e*)+dens(-e*)]/2 - dens(0) vs rho; the zero crossing is the bimodality onset, at 4x-10x rho_c"],
+  "source": "experiments/make_figures.py::fig_crossover",
+  "data": ["results/density.json", "results/density_crossover.json", "results/bimodality_onset.json"]
+ }
+}

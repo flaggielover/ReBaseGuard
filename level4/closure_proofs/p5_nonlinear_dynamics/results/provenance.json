@@ -1,0 +1,76 @@
+{
+ "campaign": "level4/closure_proofs/p5_nonlinear_dynamics",
+ "git_head_at_start": "3ae61138dc2353e86788d4c5e44ab3e3286e1a6f",
+ "git_head_now": "3ae61138dc2353e86788d4c5e44ab3e3286e1a6f",
+ "python": "3.14.5",
+ "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+ "seed_families": {
+  "primary": 20260501,
+  "replication": 20261119
+ },
+ "seed_derivation": "np.random.SeedSequence([family, detector_code, tag, index]); detector_code = {'cusum': 11, 'sr': 13}; hash(str) never used",
+ "frozen_inputs": {
+  "p3_boundary_table": "f59d85070c76b53f5c176c9acf792a0e62dba8b25c83b2078731681edf332887",
+  "p7_chain": "cf8499eb9f78b240ed1ec4ea9e8e7f9d71f467050c38f456d3db0912372b37b8",
+  "p7_cycles": "bdc88194d0e84b7e555770fbe7143b0be2e6a372e9bffdf03e8e6176ac918a85",
+  "p7_detectors": "c856d315afa8b860df918b19f51b3342031bffa6ceaa8542b8e97b7528972939",
+  "frozen_cusum": "777681ea32842ff48224b4c51ff7a2a26525d5a44d815d521949a6242baa6c54"
+ },
+ "src": {
+  "src/rebaseguard_p5/__init__.py": "a7531a0638387c2e42e2615fff21d927db36959f1437e881ebd37ceea40d8cea",
+  "src/rebaseguard_p5/chain.py": "ab0387591ed90c081d3e5ed09cf5b2e751f9b599f6a3f2f3fbb642a79106ff88",
+  "src/rebaseguard_p5/kernel.py": "843881978fca41e782020abd43fa4b3732f68a9bc97cd44dc9c0c693adcf1080"
+ },
+ "experiments": {
+  "experiments/analyze_chain.py": "32c99e7a06f558a3df0b7601c2e8d97374e37cae503ace8530f7ef8bfa71ad4d",
+  "experiments/analyze_map.py": "8499b760e3ab261a254c5dec6c3cb5c3c59d5e14aac6071735cde7ec2e9d32f9",
+  "experiments/audit_hypotheses.py": "32ff2b1861c504e1e466c228fade25d74d22161d5c474f2b4407ea5f62da9c16",
+  "experiments/independent_adjudication.py": "78acb2b571319539505939afb635f2f77c1eed353be0b0e9e0fea4e6efb907c3",
+  "experiments/make_figures.py": "607c5a319712b42c7a797a1386381b000d5e2ea23b4c55c1e0d27085fbe051d8",
+  "experiments/make_onset.py": "b48843ae9260decf63b26aca97c91c3b50e3c86d2c0fb2fcafe74dd404669f3a",
+  "experiments/make_provenance.py": "b05d7849017d32cc99d556abb7eea978f46eacb28aeacef0e27c2f8ff76cf752",
+  "experiments/run_chain.py": "3a6ddd8cde3e5afd714406edea4c08367a0b0aef4f34e40ee658072a1b2dc443",
+  "experiments/run_density.py": "fbb7b2597f36b2ba549ad8055be26befb71be7f9d9bc8b99653403b9833fa241",
+  "experiments/run_map_tail.py": "9ffba4a77cbf812c4907c346fb78db69230e93788fd90bbc90115e6ce12ecacd",
+  "experiments/run_nonlinear_map.py": "b5e707a4964346e7ece52b1c92dd6c08b34702b75a34a8bc3f57fd7865d082f7",
+  "experiments/run_skeleton.py": "ef4ce8fc914cfbf65fc311cebd438ccf115d0176e79cf1dfaed9e7eaeb05b8e1",
+  "experiments/run_stress.py": "aff69d2a014a041865604e0d89cff24f3b1eaa90a6ab806bd1897909f3b45f2a"
+ },
+ "tests": {
+  "tests/test_correspondence.py": "4d77e8574db90e486dad0062fb93b4853455032aad65057780868d6fdf31d381",
+  "tests/test_protected_tree.py": "2f189b9c7e12d9892c40ce156e139b46790dbc9a34ea23129df8329967c13966",
+  "tests/test_results.py": "3c135146cf55d95157a58f30aa9d43db31872932652b806cf19c765c37b0ed13"
+ },
+ "lean": {
+  "lean/AxiomAudit.lean": "191ee149077222c799652f1d4d9a5e4d959a794bbc507d7186417167f99235e3",
+  "lean/NonlinearSkeletonP5.lean": "9134cfe55f9b7cab4a246d544780e01c92f1e47fd1e2fc8700faa0fb8ed6aacb"
+ },
+ "results": {
+  "results/baseline_failure_replay.json": "28f25af2dd9a1eedfd867dee450daeab7192770dce895c77a190080f7ea46ac4",
+  "results/baseline_remaining_failures_replay.json": "74d51e68e8d8751d32a9c2d156e92b09ab6bc5df29cf6de85944ca8d5d51f0ee",
+  "results/bimodality_onset.json": "70947d17c50b8f32a49aa2f9156cb6e2e85db4c19489b93abdc45bd499e9cc06",
+  "results/chain_analysis.json": "47b7e63a64024ad0213a37c4ee6b5cad2eb695264c9e42b41e3d75315bd0e8eb",
+  "results/chain_sweep.json": "67d2d71d18bd0ee16297c0374f3321ae4a9c1740120a3e3ddb75dc584ee848d9",
+  "results/density.json": "5183dd561c922b72429e9f8cf3ae488addb44aa72e66dcec90085048ba389864",
+  "results/density_crossover.json": "ad0a5518c62089358877cffe93c28c8cb19254f48fd477e281ede450edfb333c",
+  "results/hypothesis_audit.json": "99d7fb61d8bb0919ea37d13606896fe40b5da246d08bc8a49c039cdd0ddea2d6",
+  "results/independent_adjudication.json": "513b569803dee4d85f306e8c848572395d95b98af25716d889315728e2789dbb",
+  "results/lean_compile.json": "c9d72a075e5462a6f9c6d6cb5b00ef1429d48278d1f5d79f8720307c90557f86",
+  "results/map_analysis.json": "3a24f03ac06169e84ba6c3772ab7c9a295422ab40fb650bd19e326b9bafb39e0",
+  "results/map_analysis_rep.json": "098d114ae8a9666fc7be93f190a93e5f7bdf889a3899b742aec2bc2f3ceacbd9",
+  "results/map_tail.json": "4f5567e0ec1272c41635681dfd8d8545bfbc589158f8d382f03df574229e0e81",
+  "results/nonlinear_map.json": "6754d7896db82778dd5004380baaf664be5c041d5dabf828510dd7698fbc079d",
+  "results/nonlinear_map_rep.json": "db2774fce21441c696e2c9b763385fc9b53bbf09fda476a46c0bd3c8ee3cc972",
+  "results/provenance.json": "ded3006304ca37d764c155ff899455549d173492677816ea262017ebbff87e73",
+  "results/repository_continuation.json": "d987d1f987add866a167a56e8bfd91d09f9abc0b5ec1594bd5e7e9c16a76fad4",
+  "results/repository_verification.json": "be6dba26c69dd12d621c296800ade7b63c6fc52cd40879651d1a532d5c14f0fe",
+  "results/skeleton_scan.json": "8d02931409da5e864706319597c119667437a900d3ce535f4dfc4abe4d0fbbcc",
+  "results/stress.json": "9342a9e0681e8c0c419d53d583e9cbf07bc5551822301d7ba4e8467919383744"
+ },
+ "figures": {
+  "figures/p5_bifurcation_and_dispersion.png": "40969dcd6d2b589973469c92422f317a41b1d8f9c74c2d9e2fec096c64f0916c",
+  "figures/p5_bimodality_onset.png": "71c31fb9adcf4214d9aff1a7f197b9984293cde710dc0ab88353c3d4ec608b74",
+  "figures/p5_nonlinear_map.png": "3d7fdf7e025e41338391ebdbc4e9a5b6a6c9c35a77793516e3caf63e26eaf023",
+  "figures/p5_stationary_density.png": "19b27d1d092df08dbdb9988f4b62c12f1e0a29d49c076682c355c4c1fb1644ea"
+ }
+}

@@ -1,0 +1,6 @@
+{
+  "baseline_head": "3ae61138dc2353e86788d4c5e44ab3e3286e1a6f",
+  "command": "pytest novelty_verification test_protected_history_hashes from git archive",
+  "exit_code": 1,
+  "output": "F                                                                        [100%]\n=================================== FAILURES ===================================\n________________________ test_protected_history_hashes _________________________\n\n    def test_protected_history_hashes():\n        frozen = json.loads((BASE / \"results/historical_hashes.json\").read_text())\n        for name, expected in frozen[\"roots\"].items():\n            count, digest = digest_tree(ROOT / name)\n>           assert count == expected[\"files\"]\nE           assert 33 == 41\n\n/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/p5-baseline-3k37217f/level4/closure_proofs/novelty_verification/tests/test_protocol_freeze.py:40: AssertionError\n=========================== short test summary info ============================\nFAILED ../../../../../../../var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/p5-baseline-3k37217f/level4/closure_proofs/novelty_verification/tests/test_protocol_freeze.py::test_protected_history_hashes\n1 failed in 0.05s\n"
+}

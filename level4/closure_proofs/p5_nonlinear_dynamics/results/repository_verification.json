@@ -1,0 +1,96 @@
+{
+  "timestamp_utc": "2026-08-31T13:32:21.330754+00:00",
+  "baseline_head": "3ae61138dc2353e86788d4c5e44ab3e3286e1a6f",
+  "level_1_3": {
+    "command": "bash scripts/verify_level_1_3.sh",
+    "status": "PASS",
+    "skipped": 0,
+    "regression_tests_passed": 90,
+    "log": "results/_log_repository_level_1_3.txt"
+  },
+  "level_4": {
+    "command": "bash scripts/verify_level_4.sh plus post-failure continuation",
+    "status": "PRE_EXISTING_FAILURES_ONLY",
+    "p5_regression": false,
+    "passing_suites": {
+      "frozen_level_1_3": 90,
+      "stage_a": 290,
+      "stage_b": 46,
+      "stage_c": 48,
+      "stage_c1": 36,
+      "stage_d": 72,
+      "stage_e": 59,
+      "stage_f": 54,
+      "post_closure_reaudit": 18,
+      "d4_phase_map": 18,
+      "external_validation_v3": 75,
+      "l4r06_policy": 28,
+      "l4r12_operational": 26
+    },
+    "partially_passing_suites": {
+      "novelty_verification": {
+        "passed": 17,
+        "failed": 1
+      },
+      "external_validation_v2": {
+        "passed": 43,
+        "failed": 2
+      },
+      "final_global_reaudit": {
+        "passed": 33,
+        "failed": 3
+      },
+      "final_level4_closure": {
+        "passed": 32,
+        "failed": 4
+      }
+    },
+    "baseline_replay": {
+      "novelty_verification": "same node fails from git archive (33 present vs 41 expected)",
+      "remaining_failure_groups": {
+        "external_validation_v2": {
+          "exit_code": 1,
+          "summary": "2 failed in 0.29s"
+        },
+        "final_global_reaudit": {
+          "exit_code": 1,
+          "summary": "3 failed in 0.98s"
+        },
+        "final_level4_closure": {
+          "exit_code": 1,
+          "summary": "4 failed in 0.54s"
+        }
+      }
+    },
+    "classification": "historical freeze manifests and byte-generation audits already fail at authoritative HEAD; no P5 regression",
+    "logs": [
+      "results/_log_repository_level_4.txt",
+      "results/repository_continuation.json",
+      "results/baseline_failure_replay.json",
+      "results/baseline_remaining_failures_replay.json"
+    ]
+  },
+  "p5_focused": {
+    "status": "FAIL_LITERAL_G20",
+    "passed": 44,
+    "failed": 1,
+    "failure": "known README.md and untracked P6 pre-design violate worktree-scope=P5-only"
+  },
+  "p5_independent": {
+    "status": "PASS",
+    "artifact": "results/independent_adjudication.json"
+  },
+  "p5_lean": {
+    "status": "PASS",
+    "declarations": 12,
+    "sorry_free": true,
+    "axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ]
+  },
+  "protected_p1_p4_p7_stage_changes": 0,
+  "p6_predesign_modified": false,
+  "final_classification": "P5 causes no repository regression; aggregate is green through D4 and later current suites pass except demonstrated pre-existing historical freeze/generated-artifact defects."
+}
