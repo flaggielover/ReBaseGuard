@@ -1,0 +1,113 @@
+{
+ "checkpoint": "A",
+ "purpose": "temporal anchor: frozen protocol, TUNE-only evidence",
+ "contains_eval_results": false,
+ "contains_replay_results": false,
+ "documents": {
+  "ADJUDICATION_RECORD.md": "b9ae206030601260f6eee25741e63bcba0f741ad382e99a34d57c12582581d1a",
+  "THEOREM_SCOPE.md": "e1f21d37f5ccb4a48eabb6ae9e62705d442cab3cce9ec5113bc868ed4a8a555b",
+  "REPAIRED_PROTOCOL.md": "b53450fe97565b26596dc7f9220683ce0d4d71d0a32e2905166b213fefc1eb15",
+  "NOVELTY_SCOPE.md": "902e68c5aca102e71aebf82efd067711a22201e969f3178c3112beceea9dd2c6",
+  "README.md": "8560e11ce9cc402146fb8bab12233ee568eeee3bf6442a5874875c5625370813"
+ },
+ "frozen_constants": {
+  "rho_grid": [
+   0.05,
+   0.06,
+   0.07,
+   0.08,
+   0.09,
+   0.1,
+   0.11,
+   0.12,
+   0.13,
+   0.14,
+   0.15,
+   0.16,
+   0.17,
+   0.18,
+   0.19,
+   0.2,
+   0.21,
+   0.22,
+   0.23,
+   0.24,
+   0.25,
+   0.26,
+   0.27,
+   0.28,
+   0.29,
+   0.3,
+   0.31,
+   0.32,
+   0.33,
+   0.34,
+   0.35
+  ],
+  "selection_rule": "S1",
+  "n_rep_selection": 150000,
+  "smoothing_halfwidth": 2,
+  "adjudication_control_rho": 0.25,
+  "n_boot": 10000,
+  "alpha": 0.05,
+  "bh_q": 0.1,
+  "tail_event_floor": 200,
+  "materiality_relative": 0.1,
+  "primary_cell": {
+   "detector": "cusum",
+   "m": 3,
+   "k": 3,
+   "shift": 1.0
+  },
+  "in_control": {
+   "n_rep": 8000,
+   "n_cycles": 100,
+   "burn_in": 15
+  },
+  "delay": {
+   "n_rep": 60000,
+   "shift_cycle": 15
+  },
+  "cost_primary": "C_acq = k_j * 1{rho_j < 1}  (fresh-sample acquisition cost)",
+  "cost_sensitivities": [
+   "(1-rho_j)*k_j",
+   "(1-rho_j)^2*k_j"
+  ]
+ },
+ "selected_rho_tune": {
+  "cusum_m1": 0.24,
+  "cusum_m2": 0.19,
+  "cusum_m3": 0.2,
+  "cusum_m5": 0.17,
+  "sr_m1": 0.22,
+  "sr_m2": 0.21,
+  "sr_m3": 0.23,
+  "sr_m5": 0.19
+ },
+ "calibration_summary": {
+  "n_cells": 8,
+  "n_converged": 6,
+  "all_converged": false,
+  "non_converged_cells": [
+   "cusum_m2",
+   "sr_m3"
+  ],
+  "s1_sparse_cells": [
+   "cusum_m1",
+   "cusum_m2",
+   "sr_m1",
+   "sr_m2",
+   "sr_m3"
+  ],
+  "s1_fallback_cells": [
+   "cusum_m1",
+   "sr_m1",
+   "sr_m2"
+  ],
+  "variance_floor_active_anywhere": false,
+  "rho_max_can_bind_anywhere": false,
+  "final_refit_is_a_verified_fixed_point": false,
+  "note": "The shipped constants are a refit under the policy built from the fixed-point iterate, NOT a verified fixed point of themselves; no further update was run after the large final pass. The recorded drift measures that one-step-off gap."
+ },
+ "seconds": 9477.749757051468
+}
