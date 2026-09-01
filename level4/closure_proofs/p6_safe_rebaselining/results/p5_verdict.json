@@ -1,0 +1,28 @@
+{
+  "recorded_by": "P6 full campaign, entry-gate item 1",
+  "date_recorded": "2026-09-01",
+  "adjudicator": "Codex (independent adjudication of Level-4 Priority 5)",
+  "source": "level4/closure_proofs/p5_nonlinear_dynamics/INDEPENDENT_ADJUDICATION.md",
+  "source_sha256": "e08ae0ec730afbd220b8efac47fbcfbff2f7f5bf8ea253c7a8bf10ac6c99a6d3",
+  "repository_checkpoint": "bb03c0ea9ea34060c992b6d7f0390de6a3cf8108",
+  "verdict_block_verbatim": "# Independent adjudication of Level-4 Priority 5\n\n```text\nFINAL_P5_VERDICT               = PARTIAL\nSCIENTIFIC_CORE                = SURVIVES\nSTRONGEST_SURVIVING_THEOREM    = T7, WITH SCOPING CORRECTIONS\nREPOSITORY_CHECKPOINT          = SCIENTIFICALLY LEGITIMATE\nNOVELTY                        = NOVELTY-NOT-ADJUDICATED\n```",
+  "premises_p6_may_use": [
+    "T1 exact raw-mean transition law; T2 conditional mean/variance factorisation",
+    "T3 symmetry",
+    "T4/T5 state-independent stopping and moment bounds",
+    "T7 existence, uniqueness, uniform ergodicity, symmetry, all positive invariant moments, for each FIXED (D,m,rho)",
+    "T11 exact stationary ACF identity",
+    "finite-grid R, S, dispersion, ARL, density, detector and window results as NUMERICAL PRIOR INFORMATION only",
+    "P7's rule that rho < rho_c is not an operational safety rule"
+  ],
+  "premises_p6_must_not_use": [
+    "T7 for state-dependent/adaptive policies without a new proof",
+    "H2/H3, global one-crossing, global 2-cycle uniqueness, attraction, supercritical flip classification as exact premises",
+    "T10 as proof that no stochastic operational statistic can change at rho_c, or as a causal proof of P7",
+    "rho* = 0.15-0.30, rho*/rho_c, bimodality onset, Gamma_eff, or detector transfer as design constants or safety thresholds",
+    "exact RMS/ARL co-optimality, or a universal theorem that larger m improves all metrics",
+    "exact one-cycle reset at finite |e|, guaranteed bounded sample paths, or the claim that divergence guards can never be useful",
+    "any statement that P6's full campaign has started (superseded by this campaign)"
+  ],
+  "branch_selected": "B (CLOSED-but-narrowed content); see P5_TO_P6_DEPENDENCY_AUDIT.md section 0"
+}
