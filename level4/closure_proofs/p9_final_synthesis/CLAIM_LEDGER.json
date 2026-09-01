@@ -1,0 +1,1414 @@
+{
+ "anchor_commit": "ffe23a63181e2ff11380768d3c73980de80f94fb",
+ "status_vocabulary": [
+  "EXACT_THEOREM",
+  "CONDITIONAL_THEOREM",
+  "FORMALLY_VERIFIED",
+  "CERTIFIED_NUMERICAL",
+  "EMPIRICAL_REPRODUCED",
+  "EMPIRICAL_ONLY",
+  "NEGATIVE_RESULT",
+  "PARTIAL_PRIORITY_RESULT",
+  "REJECTED_CLAIM",
+  "NOT_ESTABLISHED",
+  "PROVISIONAL_P8_PENDING_CODEX"
+ ],
+ "strength_rank": {
+  "NOT_ESTABLISHED": 0,
+  "REJECTED_CLAIM": 0,
+  "PROVISIONAL_P8_PENDING_CODEX": 0,
+  "NEGATIVE_RESULT": 1,
+  "EMPIRICAL_ONLY": 2,
+  "PARTIAL_PRIORITY_RESULT": 2,
+  "EMPIRICAL_REPRODUCED": 3,
+  "CERTIFIED_NUMERICAL": 4,
+  "CONDITIONAL_THEOREM": 5,
+  "FORMALLY_VERIFIED": 6,
+  "EXACT_THEOREM": 6
+ },
+ "n_claims": 65,
+ "validation_findings": [],
+ "claims": [
+  {
+   "id": "CORE-T1",
+   "priority": "CORE",
+   "statement": "For the frozen m=1 two-sided Gaussian CUSUM, F'_rho(0) = rho(1 - Gamma) where Gamma is the stopped-selection gain.",
+   "status": "EXACT_THEOREM",
+   "evidence_type": "human theorem + Lean-checked differentiation/moment spine",
+   "source": "closure/02_THEOREM_MAP.md; rebaseguard-lean/",
+   "edges": [],
+   "parents": [],
+   "assumptions": "stopped-likelihood differentiability, measurability, integrability, local domination",
+   "scope": "m=1, rho in [0,1], frozen Gaussian CUSUM",
+   "limitations": "local deterministic result for the conditional-mean map; not a global or stochastic instability theorem",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "CORE-C1",
+   "priority": "CORE",
+   "statement": "Gamma_CUSUM lies in [3.9243482, 27.8493821]; in particular Gamma_CUSUM > 2, so zero is locally repelling for the deterministic conditional-mean map at rho=1.",
+   "status": "CERTIFIED_NUMERICAL",
+   "evidence_type": "Arb outward-rounded interval certificate",
+   "source": "closure/04_ARB_CERTIFICATE.md",
+   "edges": [
+    {
+     "parent": "CORE-T1",
+     "type": "verifies"
+    }
+   ],
+   "parents": [],
+   "assumptions": "",
+   "scope": "m=1 frozen Gaussian CUSUM",
+   "limitations": "Arb does not prove differentiation under the expectation; the human theorem supplies that bridge",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "CORE-C2",
+   "priority": "CORE",
+   "statement": "Gamma_SR lies in [5.800391799508442, 28.781285803081492]; its lower endpoint exceeds two by 3.800391799508442.",
+   "status": "CERTIFIED_NUMERICAL",
+   "evidence_type": "Arb outward-rounded interval certificate (SR-GAMMA-CERTIFIED)",
+   "source": "docs/releases/SR_GAMMA_CERTIFIED_RELEASE_NOTES.md",
+   "edges": [
+    {
+     "parent": "CORE-T1",
+     "type": "verifies"
+    }
+   ],
+   "parents": [],
+   "assumptions": "",
+   "scope": "frozen symmetric two-chart SR",
+   "limitations": "separate later upgrade; same local-deterministic caveat as CORE-C1",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P1-T1",
+   "priority": "P1",
+   "statement": "For every fixed m>=1 in the frozen CUSUM convention, F'_{rho,m}(0) = rho(1 - GammaTilde_m) with GammaTilde_m = E_0[A_m T_tau], retaining the random denominator and the exact nonnegative short-cycle correction on {tau<m}.",
+   "status": "EXACT_THEOREM",
+   "evidence_type": "human theorem + proof, independently reviewed",
+   "source": "level4/closure_proofs/m_gt_1_priority1/{THEOREM,PROOF,DEFINITION_AUDIT}.md",
+   "edges": [
+    {
+     "parent": "CORE-T1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "CORE-T1"
+   ],
+   "assumptions": "stopped-likelihood, measurability, integrability, local domination (human obligations)",
+   "scope": "frozen two-sided Gaussian CUSUM (k=1/2, h=5) and frozen symmetric two-chart SR (A=520.886133602749); convention A window w=min(m,tau) with random denominator; m in {1,2,3,5} numerically supported, theorem for all m>=1",
+   "limitations": "attraction/repulsion/inconclusive-equality trichotomy is local and first order only",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P1-L1",
+   "priority": "P1",
+   "statement": "The Lean namespace MGtOneClosure kernel-checks the window partition, correction identity and nonnegativity, expectation decomposition, m=1 reduction, rho scaling, dominated Gaussian-likelihood derivative spine, and multiplier criteria. Axioms: propext, Classical.choice, Quot.sound. No sorry/admit.",
+   "status": "FORMALLY_VERIFIED",
+   "evidence_type": "Lean 4.34.0-rc1 kernel check + axiom audit",
+   "source": "level4/closure_proofs/m_gt_1_priority1/lean/MGtOneClosure.lean",
+   "edges": [
+    {
+     "parent": "P1-T1",
+     "type": "verifies"
+    }
+   ],
+   "parents": [],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "Lean consumes abstract measurability/integrability/domination as HYPOTHESES; it does not prove the concrete frozen-CUSUM stopped exponential moment or domination conditions. Those remain explicit human analytic obligations.",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P1-N1",
+   "priority": "P1",
+   "statement": "Frozen Gaussian CUSUM GammaTilde_m score-route estimates: m=1 15.916540430, m=2 13.264824962, m=3 11.957078195, m=5 10.226363970.",
+   "status": "EMPIRICAL_REPRODUCED",
+   "evidence_type": "preregistered independent implementation; 12/12 cells passed smallest-step, Richardson, convergence, precision, finite-value gates",
+   "source": "level4/closure_proofs/m_gt_1_priority1/CLOSURE_REPORT.md \u00a73",
+   "edges": [
+    {
+     "parent": "P1-T1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P1-T1"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "Monte Carlo estimates. Frozen infinite-horizon Gaussian CUSUM values for m>1 are NOT interval-certified (stated verbatim in the closure report).",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P2-T1",
+   "priority": "P2",
+   "statement": "For the reset symmetric two-chart SR detector, GammaTilde_m^SR = E_0[A_m T_tau] and F'_{rho,m}(0) = rho(1 - GammaTilde_m^SR). All eight preregistered analytical obligations are PROVED; none is discharged numerically.",
+   "status": "EXACT_THEOREM",
+   "evidence_type": "human theorem + proof, independently reviewed",
+   "source": "level4/closure_proofs/sr_derivative_priority2/CLOSURE_REPORT.md \u00a72",
+   "edges": [
+    {
+     "parent": "CORE-T1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "CORE-T1"
+   ],
+   "assumptions": "SR forcing inequality |Z| >= log(A)+1/2 supplies a uniform geometric tail near zero, hence the stopped exponential moment; reflection symmetry exchanges charts, preserves tau, negates (A_m, T_tau)",
+   "scope": "reset symmetric two-chart SR, A=520.886133602749, inclusive terminal comparison, no head-start",
+   "limitations": "frozen infinite-horizon Gaussian SR m>1 values are NOT interval-certified",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P2-N1",
+   "priority": "P2",
+   "statement": "Frozen Gaussian SR GammaTilde_m^SR: m=1 17.453570692, m=2 14.500509744, m=3 12.972654634, m=5 11.048526073.",
+   "status": "EMPIRICAL_REPRODUCED",
+   "evidence_type": "P2 numerical package; later re-run at 1.6M paths during P4 adjudication",
+   "source": "level4/closure_proofs/sr_derivative_priority2/; p4/INDEPENDENT_ADJUDICATION.md",
+   "edges": [
+    {
+     "parent": "P2-T1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P2-T1"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "the original 240k-path realization was later diagnosed by P4's adjudicator as a correlated high Monte Carlo realization across m; see D-01 in DISCREPANCY_REGISTER.md",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P3-T1",
+   "priority": "P3",
+   "statement": "The first-order local stability boundary is rho_c = 1/|1 - GammaTilde|, and |lambda| = rho|1 - GammaTilde| classifies local attraction/repulsion of the origin.",
+   "status": "EXACT_THEOREM",
+   "evidence_type": "algebraic consequence of P1/P2, independently recomputed",
+   "source": "level4/closure_proofs/m_rho_stability_priority3/CLOSURE_REPORT.md \u00a72",
+   "edges": [
+    {
+     "parent": "P1-T1",
+     "type": "premise"
+    },
+    {
+     "parent": "P2-T1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P1-T1",
+    "P2-T1"
+   ],
+   "assumptions": "",
+   "scope": "first-order local, deterministic conditional-mean map, m in {1,2,3,5}, two frozen detectors",
+   "limitations": "does NOT establish global or nonlinear stability, a stationary-law result, detector universality, or any non-Gaussian extension (verbatim)",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P3-N1",
+   "priority": "P3",
+   "statement": "Frozen Gaussian rho_c: CUSUM m=1..5 = 0.067039673, 0.081533981, 0.091265206, 0.108385059; SR = 0.060777081, 0.074071277, 0.083523665, 0.099517083, each with a transformed 95% interval from the gain SE.",
+   "status": "EMPIRICAL_REPRODUCED",
+   "evidence_type": "independent recomputation from immutable P1/P2 JSON without importing P3 code",
+   "source": "level4/closure_proofs/m_rho_stability_priority3/CLOSURE_REPORT.md \u00a73",
+   "edges": [
+    {
+     "parent": "P3-T1",
+     "type": "premise"
+    },
+    {
+     "parent": "P1-N1",
+     "type": "premise"
+    },
+    {
+     "parent": "P2-N1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P3-T1",
+    "P1-N1",
+    "P2-N1"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "empirical Gaussian correspondence, not rigorous gain enclosures",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P3-X1",
+   "priority": "P3",
+   "statement": "Exact finite-support witnesses: CUSUM-compatible gain 15/2 with rho_c = 2/13 for all m; SR-compatible gains 4, 3, 8/3, 12/5 with rho_c = 1/3, 1/2, 3/5, 5/7. Every rational boundary satisfies |rho_c(1-GammaTilde)| = 1 exactly.",
+   "status": "FORMALLY_VERIFIED",
+   "evidence_type": "independent exact Fraction arithmetic + Arb 128-bit replay of the SR witness recurrence",
+   "source": "level4/closure_proofs/m_rho_stability_priority3/CLOSURE_REPORT.md \u00a75",
+   "edges": [
+    {
+     "parent": "P3-T1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P3-T1"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "witness rows only. The certificate contains no Gaussian gain and records gaussian_layers_certified=false.",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P3-N2",
+   "priority": "P3",
+   "statement": "For every supported m the frozen Gaussian SR point boundary lies below the CUSUM boundary with disjoint transformed intervals (gaps ~0.0052583, 0.0061994, 0.0063668, 0.0072595).",
+   "status": "EMPIRICAL_ONLY",
+   "evidence_type": "independent recomputation",
+   "source": "level4/closure_proofs/m_rho_stability_priority3/CLOSURE_REPORT.md \u00a74",
+   "edges": [
+    {
+     "parent": "P3-N1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P3-N1"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "an empirical ordering of the two frozen specializations only - NOT a detector-universal theorem (verbatim)",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P3-U1",
+   "priority": "P3",
+   "statement": "Exactly one declared grid cell is uncertainty-inconclusive: Gaussian SR m=5 rho=0.10, |lambda| interval [0.9968076348404744, 1.0128975798590936].",
+   "status": "EMPIRICAL_REPRODUCED",
+   "evidence_type": "independent reconstruction of all 304 grid cells",
+   "source": "level4/closure_proofs/m_rho_stability_priority3/CLOSURE_REPORT.md \u00a74",
+   "edges": [
+    {
+     "parent": "P3-N1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P3-N1"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "one cell crosses unit magnitude; it is classified INCONCLUSIVE and must not be reported as either side",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P3-LIM1",
+   "priority": "P3",
+   "statement": "P3's grid preregistration cannot be independently authenticated: all 49 candidate files arrived in one uncommitted intake. Reports call it the candidate-declared fixed grid.",
+   "status": "NOT_ESTABLISHED",
+   "evidence_type": "temporal-integrity finding by P3's adjudicator",
+   "source": "level4/closure_proofs/m_rho_stability_priority3/CLOSURE_REPORT.md \u00a74",
+   "edges": [],
+   "parents": [],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "does not change the scientific result - the boundary is analytic and continuous in rho, so grid cells are descriptive evaluations, not fitted thresholds",
+   "p9_may_use": "AS_LIMITATION_ONLY",
+   "note": ""
+  },
+  {
+   "id": "P4-T1",
+   "priority": "P4",
+   "statement": "For a regular location family with score psi, under (A1)-(A7) and for every fixed m>=1: g_m'(0) = -E_0[A_m sum_{t<=tau} psi(Z_t)] and F'_{rho,m}(0) = rho(1 - Gamma_{D,m,f}).",
+   "status": "CONDITIONAL_THEOREM",
+   "evidence_type": "human theorem, independently re-derived and accepted by P4's adjudicator",
+   "source": "level4/closure_proofs/p4_theory_generalization/INDEPENDENT_ADJUDICATION.md 'Strongest theorem accepted'",
+   "edges": [
+    {
+     "parent": "P1-T1",
+     "type": "premise"
+    },
+    {
+     "parent": "P2-T1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P1-T1",
+    "P2-T1"
+   ],
+   "assumptions": "(A1)-(A7); L3 needs a finite 1+eta moment; change of measure justified on each {tau=n} then summed via (A5)-(A6); Lipschitz difference quotient in (A6) gives dominated convergence. Symmetry is NOT needed for the derivative identity - it is needed separately to make the origin a fixed point before P3's local classification applies.",
+   "scope": "regular location families; m=1 raw-reuse for the abstract theorem",
+   "limitations": "P4 is PARTIAL. The theorem survives; three literal frozen numerical gates remain false.",
+   "p9_may_use": "YES_AS_CONDITIONAL_ONLY",
+   "note": ""
+  },
+  {
+   "id": "P4-T2",
+   "priority": "P4",
+   "statement": "Narrowed G3: sign(Q_{m,f}) = sign(T_tau S_tau^psi) on {tau<m}; psi(z)=cz with c>0 makes the product a square; non-Gaussian corrections can be negative pathwise and in expectation.",
+   "status": "CONDITIONAL_THEOREM",
+   "evidence_type": "adjudicator-narrowed theorem statement",
+   "source": "level4/closure_proofs/p4_theory_generalization/INDEPENDENT_ADJUDICATION.md 'Theorem narrowing'",
+   "edges": [
+    {
+     "parent": "P4-T1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P4-T1"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "This is Gaussian sufficiency plus explicit non-Gaussian failure, NOT an iff characterisation. The campaign did NOT prove that all-path sign preservation forces a linear score, and a general affine score has an intercept that must be handled. The original G3 prose overstated its converse.",
+   "p9_may_use": "YES_IN_NARROWED_FORM_ONLY",
+   "note": ""
+  },
+  {
+   "id": "P4-L1",
+   "priority": "P4",
+   "statement": "Lean recompiled 19 intended declarations from P1/P2/P3/P4 sources with axioms propext, Classical.choice, Quot.sound; no sorry, sorryAx, project scientific axiom, or unsafe shortcut.",
+   "status": "FORMALLY_VERIFIED",
+   "evidence_type": "Lean kernel check + axiom audit at adjudication",
+   "source": "level4/closure_proofs/p4_theory_generalization/INDEPENDENT_ADJUDICATION.md",
+   "edges": [
+    {
+     "parent": "P4-T1",
+     "type": "verifies"
+    }
+   ],
+   "parents": [],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "the bridge uses Mathlib's local Lipschitz dominated-integral lemma; it does NOT construct the stopped probability model or discharge L1-L5",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P4-C1",
+   "priority": "P4",
+   "statement": "Arb (160 bits stored, 256 bits independent) certifies only the Laplace memoryless closed form Gamma_1 = 1 + 2*sqrt(2), the uniform moving-support defect 2, and the finite-support negative-correction witness.",
+   "status": "CERTIFIED_NUMERICAL",
+   "evidence_type": "Arb replay at two precisions",
+   "source": "level4/closure_proofs/p4_theory_generalization/INDEPENDENT_ADJUDICATION.md",
+   "edges": [
+    {
+     "parent": "P4-T1",
+     "type": "verifies"
+    }
+   ],
+   "parents": [],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "NO frozen CUSUM or SR gain is interval-certified by P4. Cauchy is excluded because E|A_m| diverges already on tau=1.",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P4-F1",
+   "priority": "P4",
+   "statement": "Frozen gate all_theorem_supported_cells_pass is FALSE: the original skewnormal4/SR/m=2 cell and nine precision-limited t1p5 cells remain frozen failures.",
+   "status": "NEGATIVE_RESULT",
+   "evidence_type": "literal frozen gate evaluation, not weakened or regenerated",
+   "source": "level4/closure_proofs/p4_theory_generalization/INDEPENDENT_ADJUDICATION.md",
+   "edges": [
+    {
+     "parent": "P4-T1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P4-T1"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P4-F2",
+   "priority": "P4",
+   "statement": "Frozen gate all_outside_assumption_cells_demonstrate_failure is FALSE: Cauchy produces the proved non-convergence failure, not the sharp deterministic defect the gate was written to detect.",
+   "status": "NEGATIVE_RESULT",
+   "evidence_type": "literal frozen gate evaluation",
+   "source": "level4/closure_proofs/p4_theory_generalization/INDEPENDENT_ADJUDICATION.md",
+   "edges": [
+    {
+     "parent": "P4-T1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P4-T1"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P4-F3",
+   "priority": "P4",
+   "statement": "Frozen gate gaussian_consistency_with_closed_core is FALSE.",
+   "status": "NEGATIVE_RESULT",
+   "evidence_type": "literal frozen gate evaluation",
+   "source": "level4/closure_proofs/p4_theory_generalization/INDEPENDENT_ADJUDICATION.md",
+   "edges": [
+    {
+     "parent": "P4-T1",
+     "type": "premise"
+    },
+    {
+     "parent": "P2-N1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P4-T1",
+    "P2-N1"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P4-R1",
+   "priority": "P4",
+   "statement": "The skewnormal4/SR/m=2 anomaly (combined |z| = 4.29) is diagnosed as finite-step bias in the asymmetric frozen-SR map plus score-route Monte Carlo scatter; at the smallest step pair all four windows agree with the original Route A within 0.09-0.56 combined SE.",
+   "status": "EMPIRICAL_REPRODUCED",
+   "evidence_type": "two independent attacks: finer Route B (960k paths), smallest Route B (480k), fresh Route A (1.6M)",
+   "source": "level4/closure_proofs/p4_theory_generalization/INDEPENDENT_ADJUDICATION.md",
+   "edges": [
+    {
+     "parent": "P4-F1",
+     "type": "diagnoses"
+    }
+   ],
+   "parents": [],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "resolves the SCIENTIFIC anomaly; the original protocol result remains immutable and its gate remains FAILED",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P4-NOV",
+   "priority": "P4",
+   "statement": "P4 novelty is NOVELTY-NOT-ADJUDICATED.",
+   "status": "NOT_ESTABLISHED",
+   "evidence_type": "adjudication record",
+   "source": "README.md Level-4 table; p4 adjudication",
+   "edges": [],
+   "parents": [],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "",
+   "p9_may_use": "AS_LIMITATION_ONLY",
+   "note": ""
+  },
+  {
+   "id": "P5-T1",
+   "priority": "P5",
+   "statement": "Raw-mean identity: the frozen Stage-D update collapses identically to e_{j+1} = rho * (mean of the last min(m,tau) RAW N(0,1) observations) + (1-rho) * N(0,1/m). The entering reference error cancels; it influences the future ONLY by selecting which observations land in the terminal reuse window.",
+   "status": "EXACT_THEOREM",
+   "evidence_type": "human theorem, independently confirmed in 48 configurations (attack A1)",
+   "source": "level4/closure_proofs/p5_nonlinear_dynamics/{THEOREM,PROOF}.md; INDEPENDENT_ADJUDICATION.md",
+   "edges": [
+    {
+     "parent": "P1-T1",
+     "type": "premise"
+    },
+    {
+     "parent": "P2-T1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P1-T1",
+    "P2-T1"
+   ],
+   "assumptions": "",
+   "scope": "frozen Gaussian constant-policy convention-A chain, both frozen detectors",
+   "limitations": "exact for the frozen convention; it is an identity, not a dynamical conclusion by itself",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P5-T7",
+   "priority": "P5",
+   "statement": "For each frozen detector, each fixed m>=1 and each fixed rho in [0,1], the reference-error chain admits a two-step whole-space minorisation, a unique invariant law, uniform geometric convergence in total variation, and finite invariant moments of every positive order.",
+   "status": "EXACT_THEOREM",
+   "evidence_type": "human theorem, independently re-verified; Lean spine 12 declarations sorry-free, 3 standard axioms",
+   "source": "level4/closure_proofs/p5_nonlinear_dynamics/STATIONARY_DYNAMICS.md; INDEPENDENT_ADJUDICATION.md",
+   "edges": [
+    {
+     "parent": "P5-T1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P5-T1"
+   ],
+   "assumptions": "uniform stopping-time control: for CUSUM, ten consecutive Z_t>=1 or <=-1 has probability at least Phi(-1)^10 and forces a crossing from every reachable state; for SR, one observation with Z_t >= log(A)+1/2 forces an inclusive crossing",
+   "scope": "PER FIXED (D, m, rho) - the constants are not claimed uniform in rho",
+   "limitations": "constants are qualitative; A12 confirmed they are loose. Fixed constant policy only - NOT adaptive kernels.",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P5-T11",
+   "priority": "P5",
+   "statement": "Under T7's invariant law pi, ACF1 = rho(1 - Gamma_eff) with Gamma_eff = 1 + sbar.",
+   "status": "EXACT_THEOREM",
+   "evidence_type": "human theorem using T7's pi; independently confirmed",
+   "source": "level4/closure_proofs/p5_nonlinear_dynamics/STATIONARY_DYNAMICS.md",
+   "edges": [
+    {
+     "parent": "P5-T7",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P5-T7"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "map-predicted vs chain-measured ACF1 agree to <= 0.0174 absolute (<= 3.5%), up to 16 chain s.e.; the PREDICTION's own error budget is unquantified. The identity is proved; the gridded-map/PCHIP plug-in is the residual (attack A13, 'overturned as unresolved').",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P5-T8T9",
+   "priority": "P5",
+   "statement": "A unique fixed point and a symmetric 2-cycle branch emerging at rho_c: symmetric 2-cycles are exactly the roots of s(e) = 1/rho for the odd map rho*R(e).",
+   "status": "CONDITIONAL_THEOREM",
+   "evidence_type": "human theorem conditional on measured hypotheses (H1)-(H3)",
+   "source": "level4/closure_proofs/p5_nonlinear_dynamics/NONLINEAR_MAP.md",
+   "edges": [
+    {
+     "parent": "P5-T1",
+     "type": "premise"
+    },
+    {
+     "parent": "P3-T1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P5-T1",
+    "P3-T1"
+   ],
+   "assumptions": "(H1)-(H3), including a one-crossing condition, all MEASURED not proved",
+   "scope": "",
+   "limitations": "uniqueness among ALL cycles is unproved; uniqueness is only among symmetric cycles under one-crossing H3",
+   "p9_may_use": "YES_AS_CONDITIONAL_ONLY",
+   "note": ""
+  },
+  {
+   "id": "P5-T10",
+   "priority": "P5",
+   "statement": "The symmetric branch amplitude tends to zero at rho_c against an O(1) noise floor, so its SNR tends to zero.",
+   "status": "CONDITIONAL_THEOREM",
+   "evidence_type": "human theorem conditional on H2/H3",
+   "source": "level4/closure_proofs/p5_nonlinear_dynamics/NONLINEAR_MAP.md",
+   "edges": [
+    {
+     "parent": "P5-T8T9",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P5-T8T9"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "the UNIVERSAL operational-invisibility inference drawn from it was REJECTED by P5's adjudicator. Only the conditional asymptotic survives.",
+   "p9_may_use": "YES_AS_CONDITIONAL_ONLY",
+   "note": ""
+  },
+  {
+   "id": "P5-MECH",
+   "priority": "P5",
+   "statement": "Selection-channel mechanism: the selection channel is maximal per unit of e at e=0 (where the alarm is rare and therefore exquisitely selective, giving GammaTilde ~ 9-17) and VANISHES once |e| is large enough that the alarm is immediate, because a certain event selects nothing. Local repulsion and global boundedness are the same channel evaluated at opposite ends of its dynamic range: the chain does not 'return' from a large excursion, it is RESET.",
+   "status": "EXACT_THEOREM",
+   "evidence_type": "mechanism follows from T1; adjudicated SCIENTIFIC_CORE = SURVIVES",
+   "source": "level4/closure_proofs/p5_nonlinear_dynamics/CLOSURE_REPORT.md \u00a71; INDEPENDENT_ADJUDICATION.md",
+   "edges": [
+    {
+     "parent": "P5-T1",
+     "type": "premise"
+    },
+    {
+     "parent": "P5-T7",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P5-T1",
+    "P5-T7"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "the mechanism is exact; the quantitative shape of R(e) away from the origin is a measured PCHIP map",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P5-N1",
+   "priority": "P5",
+   "statement": "Attraction and supercritical-flip classification of the 2-cycle branch.",
+   "status": "EMPIRICAL_ONLY",
+   "evidence_type": "numerical evidence on the measured PCHIP map",
+   "source": "level4/closure_proofs/p5_nonlinear_dynamics/INDEPENDENT_ADJUDICATION.md theory-status table",
+   "edges": [
+    {
+     "parent": "P5-T8T9",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P5-T8T9"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "attack A4 partially confirmed: the independent scan supports the branch but still scans an ESTIMATED PCHIP map. Global deterministic attraction was NARROWED by the adjudicator.",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P5-N2",
+   "priority": "P5",
+   "statement": "Bimodality onset of the invariant law.",
+   "status": "EMPIRICAL_ONLY",
+   "evidence_type": "numerical evidence, four measured cells",
+   "source": "level4/closure_proofs/p5_nonlinear_dynamics/INDEPENDENT_ADJUDICATION.md",
+   "edges": [
+    {
+     "parent": "P5-T7",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P5-T7"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "four cells only; the earlier unimodality draft was overturned",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P5-N3",
+   "priority": "P5",
+   "statement": "A dispersion/ARL optimum in rho.",
+   "status": "EMPIRICAL_ONLY",
+   "evidence_type": "numerical evidence, finite grid",
+   "source": "level4/closure_proofs/p5_nonlinear_dynamics/INDEPENDENT_ADJUDICATION.md",
+   "edges": [
+    {
+     "parent": "P5-T7",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P5-T7"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "finite grid; attack A7 partially confirmed - the minimum is robust but its exact LOCATION has near-ties in three cells. Must not be imported as a design constant (P6 pre-design X-ledger).",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P5-N4",
+   "priority": "P5",
+   "statement": "Increasing m improves the listed dispersion and ARL metrics over m in {1,2,3,5} at common measured rho.",
+   "status": "EMPIRICAL_ONLY",
+   "evidence_type": "numerical evidence for specified metrics and m<=5",
+   "source": "level4/closure_proofs/p5_nonlinear_dynamics/INDEPENDENT_ADJUDICATION.md",
+   "edges": [
+    {
+     "parent": "P5-T7",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P5-T7"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "NOT a monotonic theorem; does not cover m>5; does not improve every conceivable metric - measured SNR INCREASES with m. This is the premise P5's ledger labels 'P9', which is NOT Priority 9 (see P9_DEFINITION_AUDIT.md U1). It stands in recorded tension X8 with P6 premise S14.",
+   "p9_may_use": "YES",
+   "note": "LABEL_COLLISION_WITH_PRIORITY_NINE"
+  },
+  {
+   "id": "P5-F1",
+   "priority": "P5",
+   "statement": "Frozen closure gates G3, G7 and G9 are literally false: they use universal language (sup_e, 'wherever', 'anywhere') while their evidence is finite-grid Monte Carlo/interpolation. Gate G20 is also false in the adjudication worktree.",
+   "status": "NEGATIVE_RESULT",
+   "evidence_type": "literal frozen gate evaluation; focused suite 44 passed, 1 failed",
+   "source": "level4/closure_proofs/p5_nonlinear_dynamics/INDEPENDENT_ADJUDICATION.md",
+   "edges": [
+    {
+     "parent": "P5-N1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P5-N1"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "G20's failure is a worktree-scope artifact (pre-existing root README modification plus untracked P6 pre-design), NOT a scientific defect; the brief forbade weakening it or deleting the unrelated files",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P5-NOV",
+   "priority": "P5",
+   "statement": "P5 novelty is NOVELTY-NOT-ADJUDICATED.",
+   "status": "NOT_ESTABLISHED",
+   "evidence_type": "adjudication record",
+   "source": "p5/INDEPENDENT_ADJUDICATION.md",
+   "edges": [],
+   "parents": [],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "",
+   "p9_may_use": "AS_LIMITATION_ONLY",
+   "note": ""
+  },
+  {
+   "id": "P6-T6A",
+   "priority": "P6",
+   "statement": "One-step reference-risk bound, uniform over the decision box, with C_D := sup_x E_x[tau_x] finite by T4/T5.",
+   "status": "EXACT_THEOREM",
+   "evidence_type": "human theorem",
+   "source": "level4/closure_proofs/p6_safe_rebaselining/THEORY.md \u00a72",
+   "edges": [
+    {
+     "parent": "P5-T7",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P5-T7"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "the theorem CONSTANTS are EMPIRICAL_ONLY (a loose theorem constant is reported beside the measured one)",
+   "p9_may_use": "YES_UNDER_P6_PARTIAL",
+   "note": ""
+  },
+  {
+   "id": "P6-T6B",
+   "priority": "P6",
+   "statement": "Closed-loop invariant law and uniform geometric ergodicity for a memoryless admissible policy u with rho_max < 1.",
+   "status": "EXACT_THEOREM",
+   "evidence_type": "human theorem, adjudicated T6_B = EXACT_VALID",
+   "source": "level4/closure_proofs/p6_safe_rebaselining/THEORY.md \u00a74; p6r2 ADJUDICATION_RECORD_P6R2.md",
+   "edges": [
+    {
+     "parent": "P6-T6A",
+     "type": "premise"
+    },
+    {
+     "parent": "P5-T7",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P6-T6A",
+    "P5-T7"
+   ],
+   "assumptions": "MEMORYLESS policies only, and rho_max < 1",
+   "scope": "",
+   "limitations": "policies that read the detector state are outside T6-B. This is the well-posedness of stationary language for the safe-adaptive-window policy, not a performance claim.",
+   "p9_may_use": "YES_UNDER_P6_PARTIAL",
+   "note": ""
+  },
+  {
+   "id": "P6-T6C",
+   "priority": "P6",
+   "statement": "Exact conditional dominance and the Jensen-gap identity, with a plug-in design criterion; requires V non-degenerate (P(V != E V) > 0).",
+   "status": "EXACT_THEOREM",
+   "evidence_type": "human theorem, adjudicated T6_C = VALID_WITH_NARROWER_ASSUMPTIONS",
+   "source": "level4/closure_proofs/p6_safe_rebaselining/THEORY.md \u00a73",
+   "edges": [
+    {
+     "parent": "P5-T1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P5-T1"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "ONE STEP, from a COMMON entering law. It does not assert a multi-step or closed-loop advantage. This is the separation from fixed-rho tuning.",
+   "p9_may_use": "YES_IN_NARROWED_FORM_ONLY",
+   "note": ""
+  },
+  {
+   "id": "P6-T6D",
+   "priority": "P6",
+   "statement": "One-step tail control.",
+   "status": "CONDITIONAL_THEOREM",
+   "evidence_type": "EXACT in oracle form, APPROXIMATE in implementable form",
+   "source": "level4/closure_proofs/p6_safe_rebaselining/THEORY.md \u00a75",
+   "edges": [
+    {
+     "parent": "P6-T6A",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P6-T6A"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "the implementable form is an approximation; only the oracle form is exact",
+   "p9_may_use": "YES_AS_CONDITIONAL_ONLY",
+   "note": ""
+  },
+  {
+   "id": "P6-T6E",
+   "priority": "P6",
+   "statement": "Pareto endpoints: rho_j == 1 is the unique endpoint of the declared cost model, with endpoint non-comparability exact.",
+   "status": "CONDITIONAL_THEOREM",
+   "evidence_type": "EXACT endpoint non-comparability given the cost model; frontier is EMPIRICAL",
+   "source": "level4/closure_proofs/p6_safe_rebaselining/THEORY.md \u00a76",
+   "edges": [
+    {
+     "parent": "P6-T6C",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P6-T6C"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "conditional on the declared step-shaped fresh-sample cost model; the frontier itself is empirical",
+   "p9_may_use": "YES_AS_CONDITIONAL_ONLY",
+   "note": ""
+  },
+  {
+   "id": "P6-EMP",
+   "priority": "P6",
+   "statement": "The primary empirical result of the stability-aware re-baselining policy is CONFIRMED and independently REPLICATED in the tested regimes.",
+   "status": "EMPIRICAL_REPRODUCED",
+   "evidence_type": "adjudicated PRIMARY_EMPIRICAL_RESULT = CONFIRMED, REPLICATION = CONFIRMED",
+   "source": "level4/closure_proofs/p6r2_literal_closure_repair/ADJUDICATION_RECORD_P6R2.md",
+   "edges": [
+    {
+     "parent": "P6-T6C",
+     "type": "premise"
+    },
+    {
+     "parent": "P6-T6B",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P6-T6C",
+    "P6-T6B"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "regime-scoped simulation and semi-real evidence, NOT production validation",
+   "p9_may_use": "YES_UNDER_P6_PARTIAL",
+   "note": ""
+  },
+  {
+   "id": "P6-F1",
+   "priority": "P6",
+   "statement": "P6 is CLOSED at the authoritative status table: 'The safe-rebaselining campaign and its literal closure repairs are complete at the repository's authoritative status; its scope and negative results remain as adjudicated.'",
+   "status": "PARTIAL_PRIORITY_RESULT",
+   "evidence_type": "root README.md Level-4 status table, updated by the adjudicator in the same pass as the P8 verdict",
+   "source": "README.md Level-4 status table (authoritative)",
+   "edges": [
+    {
+     "parent": "P6-EMP",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P6-EMP"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "CLOSURE IS SCOPE-BOUND, NOT NOVELTY (P6-NOV remains NOT_ESTABLISHED) and not a calibration or production claim. The intermediate record in the P6 namespace still reads FINAL_P6_VERDICT = PARTIAL with G6/G9/G12 PARTIAL, and p6r2b GATE9_REPAIR_REPORT.md says verbatim 'P6 = CLOSED is not declared here'; no independent Gate-9 review is recorded IN the P6 namespace. P9 follows the newer authoritative status table and records the gap (D-10).",
+   "p9_may_use": "AS_STATUS_ONLY",
+   "note": ""
+  },
+  {
+   "id": "P6-NOV",
+   "priority": "P6",
+   "statement": "P6 NOVELTY_STATUS = NOT_ESTABLISHED.",
+   "status": "NOT_ESTABLISHED",
+   "evidence_type": "independent adjudication record",
+   "source": "level4/closure_proofs/p6r_safe_rebaselining_confirmation/ADJUDICATION_RECORD.md",
+   "edges": [],
+   "parents": [],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "P6 closure, if it ever comes, is NOT a novelty claim. Scientific validity, operational effectiveness, algorithmic novelty and theoretical novelty are four separate questions.",
+   "p9_may_use": "AS_LIMITATION_ONLY",
+   "note": ""
+  },
+  {
+   "id": "P7-A",
+   "priority": "P7",
+   "statement": "Exact decomposition: in the frozen repeated-cycle model, ARL_0 = E_pi[A(e)] and delay = E_pi[A(e-Delta)] for the actual entering-error law, with A even and non-increasing in |e|.",
+   "status": "EXACT_THEOREM",
+   "evidence_type": "exact structural bridge, independently adjudicated",
+   "source": "level4/closure_proofs/p7_statistical_consequences/THEORY_BRIDGE.md",
+   "edges": [
+    {
+     "parent": "P5-T1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P5-T1"
+   ],
+   "assumptions": "",
+   "scope": "frozen Gaussian repeated-cycle model, both detectors",
+   "limitations": "EXACT as a structural bridge for ANY actual entering-error law; the numerical consequence is conditional on which law pi actually holds",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P7-B",
+   "priority": "P7",
+   "statement": "Effective-multiplier identity ACF1 = rho(1 - Gamma_eff).",
+   "status": "CONDITIONAL_THEOREM",
+   "evidence_type": "exact under its stationary-law conditions",
+   "source": "level4/closure_proofs/p7_statistical_consequences/THEORY_BRIDGE.md",
+   "edges": [
+    {
+     "parent": "P7-A",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P7-A"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "P7 itself supplied NO existence or uniqueness proof for pi; P7-B/C/D are conditional on a stationary law. P5's T7 later proved existence/uniqueness/ergodicity for the same frozen constant-policy convention-A chain.",
+   "p9_may_use": "YES_AS_CONDITIONAL_ONLY",
+   "note": ""
+  },
+  {
+   "id": "P7-C",
+   "priority": "P7",
+   "statement": "Mass escape: local repulsion implies stationary mass outside a radius r.",
+   "status": "CONDITIONAL_THEOREM",
+   "evidence_type": "conditional proposition with an empirically supported but UNPROVED global sign condition",
+   "source": "level4/closure_proofs/p7_statistical_consequences/THEORY_BRIDGE.md",
+   "edges": [
+    {
+     "parent": "P7-B",
+     "type": "premise"
+    },
+    {
+     "parent": "P3-T1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P7-B",
+    "P3-T1"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "the global sign condition is empirically supported and NOT proved",
+   "p9_may_use": "YES_AS_CONDITIONAL_ONLY",
+   "note": ""
+  },
+  {
+   "id": "P7-D",
+   "priority": "P7",
+   "statement": "ARL-deficit plug-in diagnostic.",
+   "status": "EMPIRICAL_ONLY",
+   "evidence_type": "Monte Carlo plug-in diagnostic; explicitly NOT certified",
+   "source": "level4/closure_proofs/p7_statistical_consequences/THEORY_BRIDGE.md",
+   "edges": [
+    {
+     "parent": "P7-C",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P7-C"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "conditional on P7-C's hypotheses plus a finite fourth moment; a diagnostic, not a theorem",
+   "p9_may_use": "YES_AS_DIAGNOSTIC_ONLY",
+   "note": ""
+  },
+  {
+   "id": "P7-E1",
+   "priority": "P7",
+   "statement": "Recursive re-baselining materially degrades monitoring: nominal A(0) is CUSUM 465.12 / SR 464.86; fresh-reference (rho=0) ARL is 79.91-162.03; full-reuse (rho=1) ARL is 48.36-80.05; loss vs nominal 82.8%-89.6%; loss vs fresh 39.5%-50.6%; FAP(100) rises from 0.619-0.823 (fresh) to 0.822-0.899 (full reuse).",
+   "status": "EMPIRICAL_REPRODUCED",
+   "evidence_type": "production plus independent seed-20260917 replay, agreeing across every listed quantity",
+   "source": "level4/closure_proofs/p7_statistical_consequences/INDEPENDENT_ADJUDICATION.md \u00a73",
+   "edges": [
+    {
+     "parent": "P7-A",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P7-A"
+   ],
+   "assumptions": "",
+   "scope": "frozen Gaussian repeated-cycle regime, m in {1,2,3,5}, both frozen detectors",
+   "limitations": "simulation in the frozen model; ranges are across the m/detector families",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P7-E2",
+   "priority": "P7",
+   "statement": "One-cycle calibration can look normal while cycle 2 collapses to about 5.6-9.4 in mean run length; detection delay develops a severe heavy tail.",
+   "status": "EMPIRICAL_REPRODUCED",
+   "evidence_type": "frozen operational evaluation with independent replay",
+   "source": "level4/closure_proofs/p7_statistical_consequences/; README.md",
+   "edges": [
+    {
+     "parent": "P7-E1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P7-E1"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "the measured delay tail is NOT attributable to changed-observation contamination - the adjudicator corrected candidate wording that said so. The entering reference of the reported delay was built from pre-change observations.",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P7-D0",
+   "priority": "P7",
+   "statement": "At rho=0 every new reference is an independent estimate with error N(0,1/m), so the cycle length is a mixture E[A(e)] rather than the calibrated A(0). Fresh-reference estimation ALONE reduces ARL. This is a matched-information/reset-reference effect - it is not reuse and not burn-in.",
+   "status": "EXACT_THEOREM",
+   "evidence_type": "structural consequence of P7-A plus the rho=0 kernel; adjudicated as a required separation",
+   "source": "level4/closure_proofs/p7_statistical_consequences/INDEPENDENT_ADJUDICATION.md \u00a73",
+   "edges": [
+    {
+     "parent": "P7-A",
+     "type": "premise"
+    },
+    {
+     "parent": "P5-T1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P7-A",
+    "P5-T1"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "the two controls (rho=0 vs nominal A(0)) MUST remain separate; conflating them inflates the reuse-attributable effect",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P7-R1",
+   "priority": "P7",
+   "statement": "RHO_C_STATUS = LOCAL_MATHEMATICAL_BOUNDARY_ONLY. Under P7's frozen operational criterion, the P3 critical reuse fraction rho_c is NOT an operational safety boundary; rho < rho_c is not a safety rule.",
+   "status": "NEGATIVE_RESULT",
+   "evidence_type": "independent adjudication verdict line",
+   "source": "level4/closure_proofs/p7_statistical_consequences/INDEPENDENT_ADJUDICATION.md",
+   "edges": [
+    {
+     "parent": "P3-T1",
+     "type": "premise"
+    },
+    {
+     "parent": "P7-E1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P3-T1",
+    "P7-E1"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "this is a MONITORING consequence under a frozen criterion, not a global nonlinear-dynamics theorem",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P7-R2",
+   "priority": "P7",
+   "statement": "The preregistered operational-crossing hypothesis is rejected: 0/4 metrics peaked at the crossing and 4/4 were monotone in log m.",
+   "status": "NEGATIVE_RESULT",
+   "evidence_type": "frozen operational evaluation under the tested protocol",
+   "source": "level4/closure_proofs/l4r12_operational_crossing/FINAL_REPORT.md; README.md",
+   "edges": [
+    {
+     "parent": "P7-R1",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P7-R1"
+   ],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "PROJ-L4R11",
+   "priority": "PROJECT",
+   "statement": "L4R-11 (the m-rho phase map, D4) is a MANDATORY Level-4 row recorded as FAIL (not run); no later closure campaign supplies the phase map.",
+   "status": "NEGATIVE_RESULT",
+   "evidence_type": "Level-4 requirement ledger",
+   "source": "level4/reports/LEVEL_4_CURRENT_LEDGER.md:19; level4/re_audit_post_closure/REQUIREMENT_UPDATE.md:19",
+   "edges": [],
+   "parents": [],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "",
+   "p9_may_use": "AS_LIMITATION_ONLY",
+   "note": ""
+  },
+  {
+   "id": "PROJ-L4R13",
+   "priority": "PROJECT",
+   "statement": "L4R-13 non-Gaussian robustness remains PARTIAL and nonmandatory.",
+   "status": "PARTIAL_PRIORITY_RESULT",
+   "evidence_type": "Level-4 requirement ledger + README limitations",
+   "source": "README.md 'Limitations and negative results'",
+   "edges": [],
+   "parents": [],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "",
+   "p9_may_use": "AS_LIMITATION_ONLY",
+   "note": ""
+  },
+  {
+   "id": "PROJ-STAGED",
+   "priority": "PROJECT",
+   "statement": "Historical Stage-D D2.3 and Track 1A remain FAILED. The later Track 1B theorem is a separate result under its own random-window convention.",
+   "status": "NEGATIVE_RESULT",
+   "evidence_type": "README.md limitations; Stage-D records",
+   "source": "README.md 'Limitations and negative results'",
+   "edges": [],
+   "parents": [],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "",
+   "p9_may_use": "AS_LIMITATION_ONLY",
+   "note": ""
+  },
+  {
+   "id": "PROJ-SCOPE",
+   "priority": "PROJECT",
+   "statement": "Results concern frozen CUSUM and one symmetric two-chart SR model; they are neither detector-independent nor distribution-free.",
+   "status": "NEGATIVE_RESULT",
+   "evidence_type": "README.md limitations",
+   "source": "README.md 'Limitations and negative results'",
+   "edges": [],
+   "parents": [],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "",
+   "p9_may_use": "AS_LIMITATION_ONLY",
+   "note": ""
+  },
+  {
+   "id": "P8-V",
+   "priority": "P8",
+   "statement": "Authoritative verdict P8 = FAIL. Gate count 16 PASS / 5 FAIL: the four candidate-reported scientific failures G4, G4-D, G4-F, G7, plus G14 (temporal integrity). Under the frozen verdict rule any integrity-spine failure requires FAIL. PREREGISTRATION_TEMPORAL_ANCHOR = PARTIAL: the directory was untracked with no pre-result commit or externally anchored digest, the provenance record does not hash THEORY.md/EXPERIMENT_PROTOCOL.md/CLOSURE_GATES.md, and the frozen protocol's stated E2 sizes (250,000 / 2,048,000 cycles) contradict the executed 163,840 / 1,024,000.",
+   "status": "NEGATIVE_RESULT",
+   "evidence_type": "authoritative independent adjudication",
+   "source": "level4/closure_proofs/p8_model_class_robustness/INDEPENDENT_ADJUDICATION.md \u00a72,\u00a715",
+   "edges": [],
+   "parents": [],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "The verdict does not erase the surviving evidence; it prevents that evidence being represented as a successfully preregistered P8 closure campaign. P9 must not describe P8 as a successful preregistered closure campaign.",
+   "p9_may_use": "AS_STATUS_AND_HISTORY_ONLY",
+   "note": ""
+  },
+  {
+   "id": "P8-S1",
+   "priority": "P8",
+   "statement": "P8-L0/P8-L1 algebra and the P8-T2 reset decomposition under their stated iid/reset definitions; exact convention-A/B truncation decomposition.",
+   "status": "EXACT_THEOREM",
+   "evidence_type": "surviving P8 premise, tier assigned by the authoritative adjudicator",
+   "source": "level4/closure_proofs/p8_model_class_robustness/INDEPENDENT_ADJUDICATION.md \u00a716",
+   "edges": [],
+   "parents": [],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "survives inside a FAILED campaign; P9 draws no conclusion from it",
+   "p9_may_use": "PERMITTED_BY_P8_BOUNDARY_BUT_NOT_USED_BY_P9",
+   "note": ""
+  },
+  {
+   "id": "P8-S2",
+   "priority": "P8",
+   "statement": "P8-T1, conditional on the stated P4 analytic/differentiation/integrability hypotheses for the particular detector, family and window.",
+   "status": "CONDITIONAL_THEOREM",
+   "evidence_type": "surviving P8 premise, tier assigned by the authoritative adjudicator",
+   "source": "level4/closure_proofs/p8_model_class_robustness/INDEPENDENT_ADJUDICATION.md \u00a716",
+   "edges": [],
+   "parents": [],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "conditional on P4 hypotheses, and P4 is itself PARTIAL. Unconditional hypotheses 7-9 are NOT_ESTABLISHED (P8-S5).",
+   "p9_may_use": "PERMITTED_BY_P8_BOUNDARY_BUT_NOT_USED_BY_P9",
+   "note": ""
+  },
+  {
+   "id": "P8-S3",
+   "priority": "P8",
+   "statement": "In the measured matrix only: broad Gamma_A > 2 at m <= 5, operational degradation in the declared cells, exact-to-floating implementation identities, and the scoped drift/seed results.",
+   "status": "EMPIRICAL_ONLY",
+   "evidence_type": "surviving P8 evidence, tier assigned by the authoritative adjudicator",
+   "source": "level4/closure_proofs/p8_model_class_robustness/INDEPENDENT_ADJUDICATION.md \u00a716",
+   "edges": [],
+   "parents": [],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "Monte Carlo evidence with heavy-tail and seed-level overdispersion caveats. Citable ONLY as a failed-campaign evidence set within the exact tested scope. The single CUSUM/t3/m=20 cell is contested: production Gamma_A = 1.9492126 +/- 0.0071724 vs an independent 1.96323 +/- 0.02558 whose interval crosses two.",
+   "p9_may_use": "PERMITTED_BY_P8_BOUNDARY_BUT_NOT_USED_BY_P9",
+   "note": ""
+  },
+  {
+   "id": "P8-S4",
+   "priority": "P8",
+   "statement": "NEGATIVE: the preregistered cross-family window-separability law and BOTH its sub-gates fail; literal G7 (P7 boundary transfer) fails; measured detector transfer is absent.",
+   "status": "NEGATIVE_RESULT",
+   "evidence_type": "authoritative adjudication",
+   "source": "level4/closure_proofs/p8_model_class_robustness/INDEPENDENT_ADJUDICATION.md \u00a77,\u00a79,\u00a716",
+   "edges": [],
+   "parents": [],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "a failed gate is NOT a positive premise for a weaker law. P9 must not use the rejected window law, assume detector transfer, or assume P7-boundary transfer.",
+   "p9_may_use": "AS_NEGATIVE_RESULT_ONLY",
+   "note": ""
+  },
+  {
+   "id": "P8-S5",
+   "priority": "P8",
+   "statement": "NOT ESTABLISHED by P8: unconditional P8-T1 hypotheses 7-9, detector transfer, P7-boundary transfer, long-run ramp accumulation, the t3/m20 attraction claim as a theorem or certificate, novelty, and any new algorithm. P8 created NO certified-numerical result.",
+   "status": "NOT_ESTABLISHED",
+   "evidence_type": "authoritative adjudication",
+   "source": "level4/closure_proofs/p8_model_class_robustness/INDEPENDENT_ADJUDICATION.md \u00a716",
+   "edges": [],
+   "parents": [],
+   "assumptions": "",
+   "scope": "",
+   "limitations": "",
+   "p9_may_use": "AS_LIMITATION_ONLY",
+   "note": ""
+  },
+  {
+   "id": "P9-T1",
+   "priority": "P9",
+   "statement": "Claim-class propagation: on the acyclic premise sub-graph, rho(v) = min(r(s(v)), min over premise parents p of rho(p)) is well defined, bounded by r(s(v)), and non-increasing along premise paths. verifies-edges and diagnoses-edges are excluded from the bound.",
+   "status": "EXACT_THEOREM",
+   "evidence_type": "elementary proof over the ledger DAG; validator-enforced",
+   "source": "level4/closure_proofs/p9_final_synthesis/THEORY.md \u00a71",
+   "edges": [],
+   "parents": [],
+   "assumptions": "",
+   "scope": "the P9 claim graph as published in CLAIM_LEDGER.json",
+   "limitations": "the ARITHMETIC is elementary and P9 does not present it as a deep theorem. Its soundness reading - that rho(v) bounds what a sentence about v may assert - is a POLICY with a rationale, not a proved metatheorem. The substantive content is the verifies/premise edge distinction, which was forced by the validator, not designed in advance.",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P9-T2",
+   "priority": "P9",
+   "statement": "Separation: for each frozen detector and each m>=1, at rho=0 the invariant law is exactly N(0,1/m), the stationary in-control ARL equals E_{e~N(0,1/m)}[A(e)], and that expectation is STRICTLY less than A(0). Operational degradation is therefore already present at rho=0, which lies strictly below rho_c for every supported (D,m) and is where the local map is maximally stable. Hence no threshold in rho is an operational safety boundary.",
+   "status": "EXACT_THEOREM",
+   "evidence_type": "human proof from existing exact claims; independent numerical correspondence on an 81-point half-grid",
+   "source": "level4/closure_proofs/p9_final_synthesis/THEORY.md \u00a72",
+   "edges": [
+    {
+     "parent": "P5-T1",
+     "type": "premise"
+    },
+    {
+     "parent": "P5-T7",
+     "type": "premise"
+    },
+    {
+     "parent": "P7-A",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P5-T1",
+    "P5-T7",
+    "P7-A"
+   ],
+   "assumptions": "frozen two-sided CUSUM (k=1/2,h=5) or frozen symmetric two-chart SR (A=520.886133602749); A even and non-increasing in |e| (P7-A, independently corroborated with 0 monotonicity violations at 3 SE over 320 comparisons); A(0)>1 and A(e)->1 as |e|->infinity, both proved from the frozen recurrences",
+   "scope": "the two frozen Gaussian detectors, any m>=1, rho=0",
+   "limitations": "says nothing about the SIZE of the degradation (measured, P7-E1), nothing about rho>0, nothing about other detectors or non-Gaussian innovations. Does NOT say rho_c is meaningless - rho_c remains an exact local boundary (P3-T1); it says being on its stable side is not SUFFICIENT for operational safety.",
+   "p9_may_use": "YES",
+   "note": ""
+  },
+  {
+   "id": "P9-N1",
+   "priority": "P9",
+   "statement": "The approach to the stationary regime under full reuse is slow and OSCILLATORY, not monotone: SR m=1 rho=1 mean cycle length by cycle index runs 460.5, 5.8, 73.7, 38.2, 53.6, 46.0, 48.6, 46.4, ... converging to about 48.5 only after roughly ten cycles. Finite-horizon operational estimates therefore depend materially on the burn-in convention; pooling all cycles including the first inflates the estimate by about 40%.",
+   "status": "EMPIRICAL_REPRODUCED",
+   "evidence_type": "P9 independent implementation, 12000 paths, 20 cycles, deterministic seed derivation",
+   "source": "level4/closure_proofs/p9_final_synthesis/{RESULTS,CROSS_PRIORITY_REPRODUCTION}.md",
+   "edges": [
+    {
+     "parent": "P5-T7",
+     "type": "premise"
+    }
+   ],
+   "parents": [
+    "P5-T7"
+   ],
+   "assumptions": "",
+   "scope": "frozen Gaussian chain, both detectors, m in {1,5}, rho=1",
+   "limitations": "measured, not proved. P5-T7 proves uniform geometric ergodicity but its constants are loose, so the RATE here is empirical. Two detectors and two windows only.",
+   "p9_may_use": "YES",
+   "note": ""
+  }
+ ]
+}

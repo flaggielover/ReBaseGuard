@@ -32,6 +32,7 @@ At the current authoritative repository state, the campaign status is:
 | P6 | `CLOSED` | The safe-rebaselining campaign and its literal closure repairs are complete at the repository's authoritative status; its scope and negative results remain as adjudicated. |
 | P7 | `CLOSED` | Independent adjudication confirms material monitoring degradation under recursive re-baselining, while \(\rho_c\) is a local mathematical boundary, not an operational safety boundary under the frozen criterion. |
 | P8 | `FAIL` | Broad tested local repulsion and operational degradation reproduce, but the cross-family window law and its sub-gates are rejected, G7 fails literally, and the temporal-integrity gate fails. The evidence is scope-bound and novelty is not independently adjudicated. |
+| P9 | `PARTIAL` | The retrospective synthesis, P8 quarantine, exact \(\rho=0\) invariant law, and stationary mixture identity survive. P9-T2's strict ARL deficit is conditional as submitted; the claim ledger inflates its monotonicity premise, the SR replay has a first-step recurrence mismatch, and A5/A6 lack supplied generators. |
 
 ## Why this problem exists
 
@@ -173,6 +174,10 @@ observations, and novelty status.
 - **P8:** retain the tested robustness evidence only within its empirical and
   conditional-theorem tiers. Do not use the rejected window-separability law,
   assume detector or P7-boundary transfer, or claim novelty.
+- **P9:** retain the retrospective ledger/quarantine work and the exact
+  `rho=0` kernel/mixture identity. Repair P9-T2's missing monotonicity premise,
+  the SR recurrence, and A5/A6 reproducibility in a separately anchored P9R
+  namespace before reconsidering closure.
 
 ## Research status and reproducibility
 
