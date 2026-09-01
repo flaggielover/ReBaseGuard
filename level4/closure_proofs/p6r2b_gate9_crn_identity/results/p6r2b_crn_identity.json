@@ -1,0 +1,1245 @@
+{
+ "artifact": "P6R2B_CRN_PRIMITIVE_IDENTITY",
+ "contract": "for every (seed_namespace, detector, m, k, replicate_id, cycle_id, primitive_type, primitive_index) the raw exogenous draw is bit-identical across all variants",
+ "address_excludes": [
+  "policy_id",
+  "sensitivity_variant",
+  "s1_multiplier",
+  "live_set_position",
+  "stopping_time",
+  "branch_order",
+  "n_previously_consumed_draws"
+ ],
+ "block_len": 512,
+ "ladder": [
+  0,
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  15,
+  31,
+  63,
+  127,
+  255,
+  511,
+  1023,
+  2047
+ ],
+ "n_rep": 1500,
+ "n_cycles": 60,
+ "burn_in": 15,
+ "variants": [
+  "baseline",
+  "s1_x0.5",
+  "s1_x2.0",
+  "s1_eq_s0"
+ ],
+ "cells": {
+  "cusum_m1": {
+   "primitive_stream_identity": true,
+   "endogenous_path_identity": "NOT_REQUIRED",
+   "statement": "All sensitivity variants consume the same addressable exogenous primitive random field; endogenous trajectories may diverge as a consequence of the parameter perturbation.",
+   "n_primitive_monitor_draws_compared": 2505540,
+   "n_fresh_draws_compared": 270000,
+   "n_overflow_draws_compared": 3921,
+   "max_abs_difference_monitor": 0.0,
+   "max_abs_difference_fresh": 0.0,
+   "max_abs_difference_overflow": 0.0,
+   "ladder_checkpoints": [
+    {
+     "observation_index": 0,
+     "n_comparisons": 90000,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 1,
+     "n_comparisons": 89998,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 2,
+     "n_comparisons": 89579,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 3,
+     "n_comparisons": 87578,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 4,
+     "n_comparisons": 84391,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 5,
+     "n_comparisons": 80778,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 6,
+     "n_comparisons": 77048,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 7,
+     "n_comparisons": 73642,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 15,
+     "n_comparisons": 55486,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 31,
+     "n_comparisons": 40886,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 63,
+     "n_comparisons": 29165,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 127,
+     "n_comparisons": 19384,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 255,
+     "n_comparisons": 11082,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 511,
+     "n_comparisons": 4856,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 1023,
+     "n_comparisons": 1220,
+     "max_abs_diff": 0.0,
+     "past_first_block": true
+    },
+    {
+     "observation_index": 2047,
+     "n_comparisons": 87,
+     "max_abs_diff": 0.0,
+     "past_first_block": true
+    }
+   ],
+   "block_len": 512,
+   "max_block_index_touched": 7,
+   "deepest_observation_index_compared": 2047,
+   "monitor_draws_consumed_per_variant": {
+    "baseline": 10082539,
+    "s1_x0.5": 10082539,
+    "s1_x2.0": 10082539,
+    "s1_eq_s0": 10082539
+   },
+   "overflow_draws_consumed_per_variant": {
+    "baseline": 1812727,
+    "s1_x0.5": 1812727,
+    "s1_x2.0": 1812727,
+    "s1_eq_s0": 1812727
+   },
+   "min_common_overflow_draws": 1812727,
+   "primitive_field_digest_per_variant": {
+    "baseline": "8fe0e7431d5922d4bc3853f14e23801e143cba5689cc2c397cd0c4edd302d0dc",
+    "s1_x0.5": "8fe0e7431d5922d4bc3853f14e23801e143cba5689cc2c397cd0c4edd302d0dc",
+    "s1_x2.0": "8fe0e7431d5922d4bc3853f14e23801e143cba5689cc2c397cd0c4edd302d0dc",
+    "s1_eq_s0": "8fe0e7431d5922d4bc3853f14e23801e143cba5689cc2c397cd0c4edd302d0dc"
+   },
+   "primitive_field_digest_offsets": [
+    0,
+    1,
+    255,
+    511
+   ],
+   "primitive_field_digests_match": true,
+   "endogenous_tau_divergences_vs_baseline": {
+    "baseline": 0,
+    "s1_x0.5": 0,
+    "s1_x2.0": 0,
+    "s1_eq_s0": 0
+   },
+   "endogenous_entering_state_divergences_vs_baseline": {
+    "baseline": 0,
+    "s1_x0.5": 0,
+    "s1_x2.0": 0,
+    "s1_eq_s0": 0
+   }
+  },
+  "cusum_m2": {
+   "primitive_stream_identity": true,
+   "endogenous_path_identity": "NOT_REQUIRED",
+   "statement": "All sensitivity variants consume the same addressable exogenous primitive random field; endogenous trajectories may diverge as a consequence of the parameter perturbation.",
+   "n_primitive_monitor_draws_compared": 2687811,
+   "n_fresh_draws_compared": 270000,
+   "n_overflow_draws_compared": 5004,
+   "max_abs_difference_monitor": 0.0,
+   "max_abs_difference_fresh": 0.0,
+   "max_abs_difference_overflow": 0.0,
+   "ladder_checkpoints": [
+    {
+     "observation_index": 0,
+     "n_comparisons": 90000,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 1,
+     "n_comparisons": 90000,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 2,
+     "n_comparisons": 89897,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 3,
+     "n_comparisons": 89217,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 4,
+     "n_comparisons": 87724,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 5,
+     "n_comparisons": 85769,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 6,
+     "n_comparisons": 83366,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 7,
+     "n_comparisons": 80976,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 15,
+     "n_comparisons": 65370,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 31,
+     "n_comparisons": 50078,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 63,
+     "n_comparisons": 36679,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 127,
+     "n_comparisons": 24663,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 255,
+     "n_comparisons": 14264,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 511,
+     "n_comparisons": 6266,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 1023,
+     "n_comparisons": 1542,
+     "max_abs_diff": 0.0,
+     "past_first_block": true
+    },
+    {
+     "observation_index": 2047,
+     "n_comparisons": 126,
+     "max_abs_diff": 0.0,
+     "past_first_block": true
+    }
+   ],
+   "block_len": 512,
+   "max_block_index_touched": 8,
+   "deepest_observation_index_compared": 2047,
+   "monitor_draws_consumed_per_variant": {
+    "baseline": 12588012,
+    "s1_x0.5": 12588012,
+    "s1_x2.0": 12588012,
+    "s1_eq_s0": 12588012
+   },
+   "overflow_draws_consumed_per_variant": {
+    "baseline": 2340334,
+    "s1_x0.5": 2340334,
+    "s1_x2.0": 2340334,
+    "s1_eq_s0": 2340334
+   },
+   "min_common_overflow_draws": 2340334,
+   "primitive_field_digest_per_variant": {
+    "baseline": "ff7140e43dd01f2d9139d72f2ac8b922e367829ff00efd9b9f3e0315f1a0c1f3",
+    "s1_x0.5": "ff7140e43dd01f2d9139d72f2ac8b922e367829ff00efd9b9f3e0315f1a0c1f3",
+    "s1_x2.0": "ff7140e43dd01f2d9139d72f2ac8b922e367829ff00efd9b9f3e0315f1a0c1f3",
+    "s1_eq_s0": "ff7140e43dd01f2d9139d72f2ac8b922e367829ff00efd9b9f3e0315f1a0c1f3"
+   },
+   "primitive_field_digest_offsets": [
+    0,
+    1,
+    255,
+    511
+   ],
+   "primitive_field_digests_match": true,
+   "endogenous_tau_divergences_vs_baseline": {
+    "baseline": 0,
+    "s1_x0.5": 0,
+    "s1_x2.0": 0,
+    "s1_eq_s0": 0
+   },
+   "endogenous_entering_state_divergences_vs_baseline": {
+    "baseline": 0,
+    "s1_x0.5": 0,
+    "s1_x2.0": 0,
+    "s1_eq_s0": 0
+   }
+  },
+  "cusum_m3": {
+   "primitive_stream_identity": true,
+   "endogenous_path_identity": "NOT_REQUIRED",
+   "statement": "All sensitivity variants consume the same addressable exogenous primitive random field; endogenous trajectories may diverge as a consequence of the parameter perturbation.",
+   "n_primitive_monitor_draws_compared": 2778246,
+   "n_fresh_draws_compared": 270000,
+   "n_overflow_draws_compared": 5403,
+   "max_abs_difference_monitor": 0.0,
+   "max_abs_difference_fresh": 0.0,
+   "max_abs_difference_overflow": 0.0,
+   "ladder_checkpoints": [
+    {
+     "observation_index": 0,
+     "n_comparisons": 90000,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 1,
+     "n_comparisons": 90000,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 2,
+     "n_comparisons": 89968,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 3,
+     "n_comparisons": 89591,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 4,
+     "n_comparisons": 88711,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 5,
+     "n_comparisons": 87387,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 6,
+     "n_comparisons": 85746,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 7,
+     "n_comparisons": 83922,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 15,
+     "n_comparisons": 70697,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 31,
+     "n_comparisons": 55645,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 63,
+     "n_comparisons": 41299,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 127,
+     "n_comparisons": 28058,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 255,
+     "n_comparisons": 16211,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 511,
+     "n_comparisons": 7046,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 1023,
+     "n_comparisons": 1670,
+     "max_abs_diff": 0.0,
+     "past_first_block": true
+    },
+    {
+     "observation_index": 2047,
+     "n_comparisons": 131,
+     "max_abs_diff": 0.0,
+     "past_first_block": true
+    }
+   ],
+   "block_len": 512,
+   "max_block_index_touched": 8,
+   "deepest_observation_index_compared": 2047,
+   "monitor_draws_consumed_per_variant": {
+    "baseline": 14038693,
+    "s1_x0.5": 14036936,
+    "s1_x2.0": 14039306,
+    "s1_eq_s0": 14036276
+   },
+   "overflow_draws_consumed_per_variant": {
+    "baseline": 2574474,
+    "s1_x0.5": 2574334,
+    "s1_x2.0": 2574163,
+    "s1_eq_s0": 2575382
+   },
+   "min_common_overflow_draws": 2572814,
+   "primitive_field_digest_per_variant": {
+    "baseline": "47851788e7e0cbc64573237f900a9a4e749811ea72f026cf9328590c139e750c",
+    "s1_x0.5": "47851788e7e0cbc64573237f900a9a4e749811ea72f026cf9328590c139e750c",
+    "s1_x2.0": "47851788e7e0cbc64573237f900a9a4e749811ea72f026cf9328590c139e750c",
+    "s1_eq_s0": "47851788e7e0cbc64573237f900a9a4e749811ea72f026cf9328590c139e750c"
+   },
+   "primitive_field_digest_offsets": [
+    0,
+    1,
+    255,
+    511
+   ],
+   "primitive_field_digests_match": true,
+   "endogenous_tau_divergences_vs_baseline": {
+    "baseline": 0,
+    "s1_x0.5": 74,
+    "s1_x2.0": 57,
+    "s1_eq_s0": 91
+   },
+   "endogenous_entering_state_divergences_vs_baseline": {
+    "baseline": 0,
+    "s1_x0.5": 625,
+    "s1_x2.0": 626,
+    "s1_eq_s0": 643
+   }
+  },
+  "cusum_m5": {
+   "primitive_stream_identity": true,
+   "endogenous_path_identity": "NOT_REQUIRED",
+   "statement": "All sensitivity variants consume the same addressable exogenous primitive random field; endogenous trajectories may diverge as a consequence of the parameter perturbation.",
+   "n_primitive_monitor_draws_compared": 2890443,
+   "n_fresh_draws_compared": 270000,
+   "n_overflow_draws_compared": 6792,
+   "max_abs_difference_monitor": 0.0,
+   "max_abs_difference_fresh": 0.0,
+   "max_abs_difference_overflow": 0.0,
+   "ladder_checkpoints": [
+    {
+     "observation_index": 0,
+     "n_comparisons": 90000,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 1,
+     "n_comparisons": 90000,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 2,
+     "n_comparisons": 89978,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 3,
+     "n_comparisons": 89836,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 4,
+     "n_comparisons": 89365,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 5,
+     "n_comparisons": 88561,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 6,
+     "n_comparisons": 87592,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 7,
+     "n_comparisons": 86458,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 15,
+     "n_comparisons": 76594,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 31,
+     "n_comparisons": 62889,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 63,
+     "n_comparisons": 48188,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 127,
+     "n_comparisons": 33504,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 255,
+     "n_comparisons": 19661,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 511,
+     "n_comparisons": 8591,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 1023,
+     "n_comparisons": 2098,
+     "max_abs_diff": 0.0,
+     "past_first_block": true
+    },
+    {
+     "observation_index": 2047,
+     "n_comparisons": 166,
+     "max_abs_diff": 0.0,
+     "past_first_block": true
+    }
+   ],
+   "block_len": 512,
+   "max_block_index_touched": 8,
+   "deepest_observation_index_compared": 2047,
+   "monitor_draws_consumed_per_variant": {
+    "baseline": 16669471,
+    "s1_x0.5": 16675226,
+    "s1_x2.0": 16680363,
+    "s1_eq_s0": 16672739
+   },
+   "overflow_draws_consumed_per_variant": {
+    "baseline": 3201951,
+    "s1_x0.5": 3204870,
+    "s1_x2.0": 3210340,
+    "s1_eq_s0": 3214368
+   },
+   "min_common_overflow_draws": 3171983,
+   "primitive_field_digest_per_variant": {
+    "baseline": "2200135a72038bcbfbd986e07cb76d43947f4bd311a0016d656abe7565a35711",
+    "s1_x0.5": "2200135a72038bcbfbd986e07cb76d43947f4bd311a0016d656abe7565a35711",
+    "s1_x2.0": "2200135a72038bcbfbd986e07cb76d43947f4bd311a0016d656abe7565a35711",
+    "s1_eq_s0": "2200135a72038bcbfbd986e07cb76d43947f4bd311a0016d656abe7565a35711"
+   },
+   "primitive_field_digest_offsets": [
+    0,
+    1,
+    255,
+    511
+   ],
+   "primitive_field_digests_match": true,
+   "endogenous_tau_divergences_vs_baseline": {
+    "baseline": 0,
+    "s1_x0.5": 668,
+    "s1_x2.0": 800,
+    "s1_eq_s0": 1049
+   },
+   "endogenous_entering_state_divergences_vs_baseline": {
+    "baseline": 0,
+    "s1_x0.5": 10372,
+    "s1_x2.0": 10447,
+    "s1_eq_s0": 10634
+   }
+  },
+  "sr_m1": {
+   "primitive_stream_identity": true,
+   "endogenous_path_identity": "NOT_REQUIRED",
+   "statement": "All sensitivity variants consume the same addressable exogenous primitive random field; endogenous trajectories may diverge as a consequence of the parameter perturbation.",
+   "n_primitive_monitor_draws_compared": 2536410,
+   "n_fresh_draws_compared": 270000,
+   "n_overflow_draws_compared": 3564,
+   "max_abs_difference_monitor": 0.0,
+   "max_abs_difference_fresh": 0.0,
+   "max_abs_difference_overflow": 0.0,
+   "ladder_checkpoints": [
+    {
+     "observation_index": 0,
+     "n_comparisons": 90000,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 1,
+     "n_comparisons": 90000,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 2,
+     "n_comparisons": 89921,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 3,
+     "n_comparisons": 89027,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 4,
+     "n_comparisons": 86836,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 5,
+     "n_comparisons": 83569,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 6,
+     "n_comparisons": 80120,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 7,
+     "n_comparisons": 76558,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 15,
+     "n_comparisons": 56460,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 31,
+     "n_comparisons": 40234,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 63,
+     "n_comparisons": 28059,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 127,
+     "n_comparisons": 18473,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 255,
+     "n_comparisons": 10546,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 511,
+     "n_comparisons": 4479,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 1023,
+     "n_comparisons": 1094,
+     "max_abs_diff": 0.0,
+     "past_first_block": true
+    },
+    {
+     "observation_index": 2047,
+     "n_comparisons": 94,
+     "max_abs_diff": 0.0,
+     "past_first_block": true
+    }
+   ],
+   "block_len": 512,
+   "max_block_index_touched": 7,
+   "deepest_observation_index_compared": 2047,
+   "monitor_draws_consumed_per_variant": {
+    "baseline": 9671527,
+    "s1_x0.5": 9671527,
+    "s1_x2.0": 9671527,
+    "s1_eq_s0": 9671527
+   },
+   "overflow_draws_consumed_per_variant": {
+    "baseline": 1672643,
+    "s1_x0.5": 1672643,
+    "s1_x2.0": 1672643,
+    "s1_eq_s0": 1672643
+   },
+   "min_common_overflow_draws": 1672643,
+   "primitive_field_digest_per_variant": {
+    "baseline": "74cdbcc67af5860fe2ef55dd1557d9ff244df64696ee8606b5a0e83b2af9a70c",
+    "s1_x0.5": "74cdbcc67af5860fe2ef55dd1557d9ff244df64696ee8606b5a0e83b2af9a70c",
+    "s1_x2.0": "74cdbcc67af5860fe2ef55dd1557d9ff244df64696ee8606b5a0e83b2af9a70c",
+    "s1_eq_s0": "74cdbcc67af5860fe2ef55dd1557d9ff244df64696ee8606b5a0e83b2af9a70c"
+   },
+   "primitive_field_digest_offsets": [
+    0,
+    1,
+    255,
+    511
+   ],
+   "primitive_field_digests_match": true,
+   "endogenous_tau_divergences_vs_baseline": {
+    "baseline": 0,
+    "s1_x0.5": 0,
+    "s1_x2.0": 0,
+    "s1_eq_s0": 0
+   },
+   "endogenous_entering_state_divergences_vs_baseline": {
+    "baseline": 0,
+    "s1_x0.5": 0,
+    "s1_x2.0": 0,
+    "s1_eq_s0": 0
+   }
+  },
+  "sr_m2": {
+   "primitive_stream_identity": true,
+   "endogenous_path_identity": "NOT_REQUIRED",
+   "statement": "All sensitivity variants consume the same addressable exogenous primitive random field; endogenous trajectories may diverge as a consequence of the parameter perturbation.",
+   "n_primitive_monitor_draws_compared": 2701614,
+   "n_fresh_draws_compared": 270000,
+   "n_overflow_draws_compared": 4596,
+   "max_abs_difference_monitor": 0.0,
+   "max_abs_difference_fresh": 0.0,
+   "max_abs_difference_overflow": 0.0,
+   "ladder_checkpoints": [
+    {
+     "observation_index": 0,
+     "n_comparisons": 90000,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 1,
+     "n_comparisons": 90000,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 2,
+     "n_comparisons": 89995,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 3,
+     "n_comparisons": 89779,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 4,
+     "n_comparisons": 88999,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 5,
+     "n_comparisons": 87586,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 6,
+     "n_comparisons": 85546,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 7,
+     "n_comparisons": 83324,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 15,
+     "n_comparisons": 66430,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 31,
+     "n_comparisons": 49406,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 63,
+     "n_comparisons": 35353,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 127,
+     "n_comparisons": 23390,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 255,
+     "n_comparisons": 13421,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 511,
+     "n_comparisons": 5777,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 1023,
+     "n_comparisons": 1426,
+     "max_abs_diff": 0.0,
+     "past_first_block": true
+    },
+    {
+     "observation_index": 2047,
+     "n_comparisons": 106,
+     "max_abs_diff": 0.0,
+     "past_first_block": true
+    }
+   ],
+   "block_len": 512,
+   "max_block_index_touched": 8,
+   "deepest_observation_index_compared": 2047,
+   "monitor_draws_consumed_per_variant": {
+    "baseline": 11999495,
+    "s1_x0.5": 11999495,
+    "s1_x2.0": 11999495,
+    "s1_eq_s0": 11999495
+   },
+   "overflow_draws_consumed_per_variant": {
+    "baseline": 2130173,
+    "s1_x0.5": 2130173,
+    "s1_x2.0": 2130173,
+    "s1_eq_s0": 2130173
+   },
+   "min_common_overflow_draws": 2130173,
+   "primitive_field_digest_per_variant": {
+    "baseline": "abb300dd7b3083818a3e3ce74e6dcf5394c95eec5fd7595e1d4456de44cd76c1",
+    "s1_x0.5": "abb300dd7b3083818a3e3ce74e6dcf5394c95eec5fd7595e1d4456de44cd76c1",
+    "s1_x2.0": "abb300dd7b3083818a3e3ce74e6dcf5394c95eec5fd7595e1d4456de44cd76c1",
+    "s1_eq_s0": "abb300dd7b3083818a3e3ce74e6dcf5394c95eec5fd7595e1d4456de44cd76c1"
+   },
+   "primitive_field_digest_offsets": [
+    0,
+    1,
+    255,
+    511
+   ],
+   "primitive_field_digests_match": true,
+   "endogenous_tau_divergences_vs_baseline": {
+    "baseline": 0,
+    "s1_x0.5": 0,
+    "s1_x2.0": 0,
+    "s1_eq_s0": 0
+   },
+   "endogenous_entering_state_divergences_vs_baseline": {
+    "baseline": 0,
+    "s1_x0.5": 0,
+    "s1_x2.0": 0,
+    "s1_eq_s0": 0
+   }
+  },
+  "sr_m3": {
+   "primitive_stream_identity": true,
+   "endogenous_path_identity": "NOT_REQUIRED",
+   "statement": "All sensitivity variants consume the same addressable exogenous primitive random field; endogenous trajectories may diverge as a consequence of the parameter perturbation.",
+   "n_primitive_monitor_draws_compared": 2790102,
+   "n_fresh_draws_compared": 270000,
+   "n_overflow_draws_compared": 5355,
+   "max_abs_difference_monitor": 0.0,
+   "max_abs_difference_fresh": 0.0,
+   "max_abs_difference_overflow": 0.0,
+   "ladder_checkpoints": [
+    {
+     "observation_index": 0,
+     "n_comparisons": 90000,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 1,
+     "n_comparisons": 90000,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 2,
+     "n_comparisons": 89997,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 3,
+     "n_comparisons": 89919,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 4,
+     "n_comparisons": 89537,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 5,
+     "n_comparisons": 88705,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 6,
+     "n_comparisons": 87475,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 7,
+     "n_comparisons": 85819,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 15,
+     "n_comparisons": 71861,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 31,
+     "n_comparisons": 55249,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 63,
+     "n_comparisons": 40305,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 127,
+     "n_comparisons": 27115,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 255,
+     "n_comparisons": 15582,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 511,
+     "n_comparisons": 6685,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 1023,
+     "n_comparisons": 1659,
+     "max_abs_diff": 0.0,
+     "past_first_block": true
+    },
+    {
+     "observation_index": 2047,
+     "n_comparisons": 126,
+     "max_abs_diff": 0.0,
+     "past_first_block": true
+    }
+   ],
+   "block_len": 512,
+   "max_block_index_touched": 8,
+   "deepest_observation_index_compared": 2047,
+   "monitor_draws_consumed_per_variant": {
+    "baseline": 13650872,
+    "s1_x0.5": 13649946,
+    "s1_x2.0": 13650428,
+    "s1_eq_s0": 13649411
+   },
+   "overflow_draws_consumed_per_variant": {
+    "baseline": 2468941,
+    "s1_x0.5": 2468436,
+    "s1_x2.0": 2468663,
+    "s1_eq_s0": 2468436
+   },
+   "min_common_overflow_draws": 2468436,
+   "primitive_field_digest_per_variant": {
+    "baseline": "d8cca2fe2778eaa84eb2007cde2e455b3aa9c3be49a0692eec9ea46d1f90d1f2",
+    "s1_x0.5": "d8cca2fe2778eaa84eb2007cde2e455b3aa9c3be49a0692eec9ea46d1f90d1f2",
+    "s1_x2.0": "d8cca2fe2778eaa84eb2007cde2e455b3aa9c3be49a0692eec9ea46d1f90d1f2",
+    "s1_eq_s0": "d8cca2fe2778eaa84eb2007cde2e455b3aa9c3be49a0692eec9ea46d1f90d1f2"
+   },
+   "primitive_field_digest_offsets": [
+    0,
+    1,
+    255,
+    511
+   ],
+   "primitive_field_digests_match": true,
+   "endogenous_tau_divergences_vs_baseline": {
+    "baseline": 0,
+    "s1_x0.5": 6,
+    "s1_x2.0": 2,
+    "s1_eq_s0": 7
+   },
+   "endogenous_entering_state_divergences_vs_baseline": {
+    "baseline": 0,
+    "s1_x0.5": 57,
+    "s1_x2.0": 56,
+    "s1_eq_s0": 57
+   }
+  },
+  "sr_m5": {
+   "primitive_stream_identity": true,
+   "endogenous_path_identity": "NOT_REQUIRED",
+   "statement": "All sensitivity variants consume the same addressable exogenous primitive random field; endogenous trajectories may diverge as a consequence of the parameter perturbation.",
+   "n_primitive_monitor_draws_compared": 2888616,
+   "n_fresh_draws_compared": 270000,
+   "n_overflow_draws_compared": 6177,
+   "max_abs_difference_monitor": 0.0,
+   "max_abs_difference_fresh": 0.0,
+   "max_abs_difference_overflow": 0.0,
+   "ladder_checkpoints": [
+    {
+     "observation_index": 0,
+     "n_comparisons": 90000,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 1,
+     "n_comparisons": 90000,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 2,
+     "n_comparisons": 89999,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 3,
+     "n_comparisons": 89970,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 4,
+     "n_comparisons": 89824,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 5,
+     "n_comparisons": 89406,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 6,
+     "n_comparisons": 88712,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 7,
+     "n_comparisons": 87749,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 15,
+     "n_comparisons": 77537,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 31,
+     "n_comparisons": 62375,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 63,
+     "n_comparisons": 46926,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 127,
+     "n_comparisons": 31902,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 255,
+     "n_comparisons": 18438,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 511,
+     "n_comparisons": 7975,
+     "max_abs_diff": 0.0,
+     "past_first_block": false
+    },
+    {
+     "observation_index": 1023,
+     "n_comparisons": 1922,
+     "max_abs_diff": 0.0,
+     "past_first_block": true
+    },
+    {
+     "observation_index": 2047,
+     "n_comparisons": 137,
+     "max_abs_diff": 0.0,
+     "past_first_block": true
+    }
+   ],
+   "block_len": 512,
+   "max_block_index_touched": 10,
+   "deepest_observation_index_compared": 2047,
+   "monitor_draws_consumed_per_variant": {
+    "baseline": 15810947,
+    "s1_x0.5": 15809192,
+    "s1_x2.0": 15803295,
+    "s1_eq_s0": 15802385
+   },
+   "overflow_draws_consumed_per_variant": {
+    "baseline": 2904102,
+    "s1_x0.5": 2906086,
+    "s1_x2.0": 2900524,
+    "s1_eq_s0": 2901328
+   },
+   "min_common_overflow_draws": 2892086,
+   "primitive_field_digest_per_variant": {
+    "baseline": "e763c08e993611d0a769a85e45b29b0b3beb6b9aa680409d33454e6d9204994e",
+    "s1_x0.5": "e763c08e993611d0a769a85e45b29b0b3beb6b9aa680409d33454e6d9204994e",
+    "s1_x2.0": "e763c08e993611d0a769a85e45b29b0b3beb6b9aa680409d33454e6d9204994e",
+    "s1_eq_s0": "e763c08e993611d0a769a85e45b29b0b3beb6b9aa680409d33454e6d9204994e"
+   },
+   "primitive_field_digest_offsets": [
+    0,
+    1,
+    255,
+    511
+   ],
+   "primitive_field_digests_match": true,
+   "endogenous_tau_divergences_vs_baseline": {
+    "baseline": 0,
+    "s1_x0.5": 266,
+    "s1_x2.0": 276,
+    "s1_eq_s0": 396
+   },
+   "endogenous_entering_state_divergences_vs_baseline": {
+    "baseline": 0,
+    "s1_x0.5": 2996,
+    "s1_x2.0": 3040,
+    "s1_eq_s0": 3073
+   }
+  }
+ },
+ "all_cells_primitive_identity": true,
+ "seconds": 184.98935222625732
+}

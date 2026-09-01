@@ -51,6 +51,8 @@ def address_key(detector: str, m: int, k: int, cycle: int,
     """The full address key of one block.  Contains nothing policy-dependent."""
     if primitive_type not in PRIMITIVE_TYPES:
         raise ValueError(f"unknown primitive type {primitive_type!r}")
+    if int(cycle) < 0 or int(block_index) < 0 or int(m) < 0 or int(k) < 0:
+        raise ValueError("address components must be non-negative")
     return (SEED_NAMESPACE, _tag(detector), int(m), int(k), int(cycle),
             _tag(primitive_type), int(block_index))
 
@@ -94,8 +96,12 @@ def fresh(detector: str, m: int, k: int, cycle: int, n_rep: int) -> np.ndarray:
 
 
 def init(detector: str, m: int, k: int, n_rep: int) -> np.ndarray:
-    """Initialisation primitive.  Addressable even when the experiment ignores it."""
-    return block(detector, m, k, -1, INIT, 0, n_rep, width=1)[:, 0]
+    """Initialisation primitive.  Addressable even when the experiment ignores it.
+
+    Lives at cycle 0 of the ``init`` type; the primitive type is part of the key,
+    so it cannot collide with the ``monitor`` or ``fresh`` streams of cycle 0.
+    """
+    return block(detector, m, k, 0, INIT, 0, n_rep, width=1)[:, 0]
 
 
 def aux(detector: str, m: int, k: int, cycle: int, index: int,
@@ -105,22 +111,32 @@ def aux(detector: str, m: int, k: int, cycle: int, index: int,
     return block(detector, m, k, cycle, AUX, b, n_rep)[:, off]
 
 
-def field_hash(detector: str, m: int, k: int, n_rep: int, n_cycles: int,
-               max_block_index: int) -> str:
-    """SHA-256 over every primitive block any variant could have touched.
+#: Column offsets sampled by ``field_digest``.  Fixed and declared: sampling is
+#: over the *offset within a block*, never over cycles or blocks, so every
+#: (cycle, block) address any variant could touch is represented.
+DIGEST_OFFSETS = (0, 1, 255, 511)
 
-    Exhaustive over the address space, and computed from the address alone, so
-    it cannot depend on which variant asks for it.
+
+def field_digest(detector: str, m: int, k: int, n_rep: int, n_cycles: int,
+                 max_block_index: int, offsets=DIGEST_OFFSETS) -> str:
+    """SHA-256 digest of the primitive field over the touched address space.
+
+    Exhaustive over ``(cycle, block_index)`` for every cycle and every block any
+    variant reached, and over **all** replicates and **all** fresh and init
+    draws; sampled at the declared ``offsets`` within each monitor block so the
+    digest is cheap.  It is computed from the address alone and takes no policy,
+    variant or live-set argument, so it cannot depend on which variant asks.
     """
     h = hashlib.sha256()
-    h.update(f"ns={SEED_NAMESPACE} det={detector} m={m} k={k} "
-             f"n_rep={n_rep} n_cycles={n_cycles} blk={BLOCK_LEN}".encode())
+    h.update(f"ns={SEED_NAMESPACE} det={detector} m={m} k={k} n_rep={n_rep} "
+             f"n_cycles={n_cycles} blk={BLOCK_LEN} off={tuple(offsets)}".encode())
     h.update(np.ascontiguousarray(init(detector, m, k, n_rep)).tobytes())
     for j in range(int(n_cycles)):
         h.update(np.ascontiguousarray(fresh(detector, m, k, j, n_rep)).tobytes())
         for b in range(int(max_block_index) + 1):
-            h.update(np.ascontiguousarray(
-                block(detector, m, k, j, MONITOR, b, n_rep)).tobytes())
+            blk = block(detector, m, k, j, MONITOR, b, n_rep)
+            for off in offsets:
+                h.update(np.ascontiguousarray(blk[:, off]).tobytes())
     return h.hexdigest()
 
 

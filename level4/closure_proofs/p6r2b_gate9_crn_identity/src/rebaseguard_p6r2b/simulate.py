@@ -31,9 +31,11 @@ from rebaseguard_p7.detectors import make_step
 
 from . import primitives as PR
 
-#: how many leading reads per (replicate, cycle) are checksummed for the
-#: consumption-level identity evidence
-PREFIX_K = 8
+#: Checkpoint ladder for the consumption-level identity evidence.  Cumulative
+#: sums of the monitor reads are recorded at these observation indices, so the
+#: evidence reaches DEEP addresses -- 1023 and 2047 are past the 512-wide first
+#: block and past the 2000-step tape whose absence broke the P6R2 driver.
+LADDER = (0, 1, 2, 3, 4, 5, 6, 7, 15, 31, 63, 127, 255, 511, 1023, 2047)
 
 
 def saw_decider(g0: float, g1: float, s0: float, s1: float, m: int, k: int,
@@ -51,7 +53,7 @@ def saw_decider(g0: float, g1: float, s0: float, s1: float, m: int, k: int,
 
 def simulate(*, detector: str, decide, m: int, k: int, n_rep: int,
              n_cycles: int, burn_in: int, e0: float = 0.0,
-             prefix_k: int = PREFIX_K, max_steps: int = 60_000):
+             ladder=LADDER, max_steps: int = 60_000):
     """Run the frozen chain on the addressable primitive field."""
     step, _thr, _log = make_step(detector, None)
     e = np.full(n_rep, float(e0))
@@ -61,8 +63,9 @@ def simulate(*, detector: str, decide, m: int, k: int, n_rep: int,
     zbar_rec = np.zeros((n_rep, n_cycles))
     rho_rec = np.zeros((n_rep, n_cycles))
     fresh_rec = np.zeros((n_rep, n_cycles))
-    mon_prefix = np.zeros((n_rep, n_cycles, prefix_k))
-    ovf_prefix = np.zeros((n_rep, n_cycles, prefix_k))
+    ladder = tuple(int(x) for x in ladder)
+    lad_pos = {t_: i for i, t_ in enumerate(ladder)}
+    ladder_sum = np.zeros((n_rep, n_cycles, len(ladder)))
     ovf_count = np.zeros((n_rep, n_cycles), np.int64)
     max_block = 0
 
@@ -74,7 +77,6 @@ def simulate(*, detector: str, decide, m: int, k: int, n_rep: int,
         t_cnt = np.zeros(n_rep, np.int64)
         live = np.ones(n_rep, bool)
         run_mon = np.zeros(n_rep)
-        run_ovf = np.zeros(n_rep)
         t = 0
         while live.any():
             if t >= max_steps:
@@ -90,16 +92,12 @@ def simulate(*, detector: str, decide, m: int, k: int, n_rep: int,
             minus[idx] = nm_
             buf[idx, t % m] = z
             t_cnt[idx] += 1
-            # consumption-level evidence: cumulative sums of the leading reads
+            # consumption-level evidence: cumulative sums at the ladder points
             run_mon[idx] += x
-            if t < prefix_k:
-                mon_prefix[idx, j, t] = run_mon[idx]
+            if t in lad_pos:
+                ladder_sum[idx, j, lad_pos[t]] = run_mon[idx]
             if t >= PR.BLOCK_LEN:
-                o = t - PR.BLOCK_LEN
-                run_ovf[idx] += x
                 ovf_count[idx, j] += 1
-                if o < prefix_k:
-                    ovf_prefix[idx, j, o] = run_ovf[idx]
             crossed = cu | cd
             if crossed.any():
                 done = idx[crossed]
@@ -123,7 +121,7 @@ def simulate(*, detector: str, decide, m: int, k: int, n_rep: int,
     sl = slice(burn_in, n_cycles)
     return {
         "tau": tau, "e_start": e_start, "zbar": zbar_rec, "rho": rho_rec,
-        "fresh": fresh_rec, "mon_prefix": mon_prefix, "ovf_prefix": ovf_prefix,
+        "fresh": fresh_rec, "ladder_sum": ladder_sum, "ladder": ladder,
         "ovf_count": ovf_count, "max_block_index": int(max_block),
         "n_monitor_draws": int(tau.sum()),
         "n_overflow_draws": int(ovf_count.sum()),

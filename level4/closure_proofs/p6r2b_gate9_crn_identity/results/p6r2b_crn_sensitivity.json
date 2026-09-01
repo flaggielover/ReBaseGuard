@@ -1,0 +1,884 @@
+{
+ "artifact": "P6R2B_CORRECTED_CRN_CALIBRATION_SENSITIVITY",
+ "replaces": "p6r2_literal_closure_repair/results/p6r2_crn_fixed_path_calibration_sensitivity.json, whose CRN identity was FAIL: overflow draws came from a shared vector RNG indexed by the current live set",
+ "saw_m_recalibrated": false,
+ "shipped_constants_changed": false,
+ "does_not_claim": "This experiment does NOT prove calibration convergence.  It measures only the empirical sensitivity of aggregate outcomes to the declared s1 perturbations under shared exogenous randomness.",
+ "n_rep": 1500,
+ "n_cycles": 60,
+ "burn_in": 15,
+ "variants": [
+  "baseline",
+  "s1_x0.5",
+  "s1_x2.0",
+  "s1_eq_s0"
+ ],
+ "cells": {
+  "cusum_m1": {
+   "detector": "cusum",
+   "m": 1,
+   "k": 1,
+   "shipped": {
+    "g0": 0.9663456298957928,
+    "g1": -1.0189196766689768,
+    "s0": 0.12340949164846748,
+    "s1": 0.12340949164846748
+   },
+   "variants": {
+    "baseline": {
+     "s1_used": 0.12340949164846748,
+     "rho_mean": 0.35537582482360014,
+     "rms": 0.778110524065254,
+     "arl0": 106.21011851851851
+    },
+    "s1_x0.5": {
+     "s1_used": 0.06170474582423374,
+     "rho_mean": 0.35537582482360014,
+     "rms": 0.778110524065254,
+     "arl0": 106.21011851851851
+    },
+    "s1_x2.0": {
+     "s1_used": 0.24681898329693497,
+     "rho_mean": 0.35537582482360014,
+     "rms": 0.778110524065254,
+     "arl0": 106.21011851851851
+    },
+    "s1_eq_s0": {
+     "s1_used": 0.12340949164846748,
+     "rho_mean": 0.35537582482360014,
+     "rms": 0.778110524065254,
+     "arl0": 106.21011851851851
+    }
+   },
+   "absolute_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x2.0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    }
+   },
+   "relative_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x2.0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    }
+   },
+   "max_abs_relative_change": {
+    "rho_mean": 0.0,
+    "rms": 0.0,
+    "arl0": 0.0
+   },
+   "n_cycles_where_s1_can_fire_tau_lt_m": 0,
+   "s1_can_fire_under_observed_trajectories": false,
+   "why_if_not": "no cycle had tau < m, so the truncated-window branch that s1 governs was never taken; the s1 perturbation is therefore inert by construction, not by accident",
+   "calibration_facts_carried_forward": {
+    "converged": true,
+    "iterations_reached": 3,
+    "n_obs_behind_s1": 0,
+    "s1_is_fallback_equal_to_s0": true,
+    "s1_sparse": true,
+    "variance_floor_1e-2_active": false,
+    "rho_max_can_bind": false,
+    "final_refit_followed_by_another_fixed_point_update": false,
+    "drift_fixed_point_to_final": {
+     "g0": 2.73247461759496e-05,
+     "g1": 0.0024998343369864173,
+     "s0": 0.00012796420494208538,
+     "s1": 0.00012796420494208538
+    }
+   }
+  },
+  "cusum_m2": {
+   "detector": "cusum",
+   "m": 2,
+   "k": 2,
+   "shipped": {
+    "g0": 0.9480047914480603,
+    "g1": -1.0615181935724507,
+    "s0": 0.08090968900736141,
+    "s1": 22.769149834852794
+   },
+   "variants": {
+    "baseline": {
+     "s1_used": 22.769149834852794,
+     "rho_mean": 0.28674785222580257,
+     "rms": 0.5848205465153175,
+     "arl0": 135.20291851851852
+    },
+    "s1_x0.5": {
+     "s1_used": 11.384574917426397,
+     "rho_mean": 0.28674785222580257,
+     "rms": 0.5848205465153175,
+     "arl0": 135.20291851851852
+    },
+    "s1_x2.0": {
+     "s1_used": 45.53829966970559,
+     "rho_mean": 0.28674785222580257,
+     "rms": 0.5848205465153175,
+     "arl0": 135.20291851851852
+    },
+    "s1_eq_s0": {
+     "s1_used": 0.08090968900736141,
+     "rho_mean": 0.28674785222580257,
+     "rms": 0.5848205465153175,
+     "arl0": 135.20291851851852
+    }
+   },
+   "absolute_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x2.0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    }
+   },
+   "relative_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x2.0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    }
+   },
+   "max_abs_relative_change": {
+    "rho_mean": 0.0,
+    "rms": 0.0,
+    "arl0": 0.0
+   },
+   "n_cycles_where_s1_can_fire_tau_lt_m": 0,
+   "s1_can_fire_under_observed_trajectories": false,
+   "why_if_not": "no cycle had tau < m, so the truncated-window branch that s1 governs was never taken; the s1 perturbation is therefore inert by construction, not by accident",
+   "calibration_facts_carried_forward": {
+    "converged": false,
+    "iterations_reached": 6,
+    "n_obs_behind_s1": 3,
+    "s1_is_fallback_equal_to_s0": false,
+    "s1_sparse": true,
+    "variance_floor_1e-2_active": false,
+    "rho_max_can_bind": false,
+    "final_refit_followed_by_another_fixed_point_update": false,
+    "drift_fixed_point_to_final": {
+     "g0": 0.0008604369006521839,
+     "g1": -0.005959787586958365,
+     "s0": 0.0006722952616539796,
+     "s1": 22.688912441107085
+    }
+   }
+  },
+  "cusum_m3": {
+   "detector": "cusum",
+   "m": 3,
+   "k": 3,
+   "shipped": {
+    "g0": 0.938401060379731,
+    "g1": -1.0666785553806677,
+    "s0": 0.06263202667097299,
+    "s1": 2.560084629304598
+   },
+   "variants": {
+    "baseline": {
+     "s1_used": 2.560084629304598,
+     "rho_mean": 0.24711293501754517,
+     "rms": 0.49332836969036686,
+     "arl0": 150.54459259259258
+    },
+    "s1_x0.5": {
+     "s1_used": 1.280042314652299,
+     "rho_mean": 0.24712744328984182,
+     "rms": 0.49337379136885845,
+     "arl0": 150.5514962962963
+    },
+    "s1_x2.0": {
+     "s1_used": 5.120169258609196,
+     "rho_mean": 0.24708676437703528,
+     "rms": 0.4932958218357544,
+     "arl0": 150.5708888888889
+    },
+    "s1_eq_s0": {
+     "s1_used": 0.06263202667097299,
+     "rho_mean": 0.2472495416772306,
+     "rms": 0.4936027392511692,
+     "arl0": 150.53965925925925
+    }
+   },
+   "absolute_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 1.4508272296653857e-05,
+     "rms": 4.542167849158618e-05,
+     "arl0": 0.006903703703727615
+    },
+    "s1_x2.0": {
+     "rho_mean": -2.6170640509887155e-05,
+     "rms": -3.254785461248577e-05,
+     "arl0": 0.026296296296322907
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.00013660665968542873,
+     "rms": 0.00027436956080234554,
+     "arl0": -0.004933333333326573
+    }
+   },
+   "relative_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 5.871110023281112e-05,
+     "rms": 9.207189629112378e-05,
+     "arl0": 4.5858197792680855e-05
+    },
+    "s1_x2.0": {
+     "rho_mean": -0.00010590558728962307,
+     "rms": -6.59760447851987e-05,
+     "arl0": 0.00017467446584062962
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0005528106397010291,
+     "rms": 0.0005561601109105307,
+     "arl0": -3.2769913873131884e-05
+    }
+   },
+   "max_abs_relative_change": {
+    "rho_mean": 0.0005528106397010291,
+    "rms": 0.0005561601109105307,
+    "arl0": 0.00017467446584062962
+   },
+   "n_cycles_where_s1_can_fire_tau_lt_m": 32,
+   "s1_can_fire_under_observed_trajectories": true,
+   "why_if_not": null,
+   "calibration_facts_carried_forward": {
+    "converged": true,
+    "iterations_reached": 2,
+    "n_obs_behind_s1": 262,
+    "s1_is_fallback_equal_to_s0": false,
+    "s1_sparse": false,
+    "variance_floor_1e-2_active": false,
+    "rho_max_can_bind": false,
+    "final_refit_followed_by_another_fixed_point_update": false,
+    "drift_fixed_point_to_final": {
+     "g0": -0.00024291014913258024,
+     "g1": 0.003592137180130184,
+     "s0": 0.00038530788410810757,
+     "s1": -0.1688502491081696
+    }
+   }
+  },
+  "cusum_m5": {
+   "detector": "cusum",
+   "m": 5,
+   "k": 5,
+   "shipped": {
+    "g0": 0.9200662470738735,
+    "g1": -1.0320673021410112,
+    "s0": 0.04332604720707365,
+    "s1": 0.49840680258877684
+   },
+   "variants": {
+    "baseline": {
+     "s1_used": 0.49840680258877684,
+     "rho_mean": 0.20296908735729963,
+     "rms": 0.3935144217992053,
+     "arl0": 180.6488740740741
+    },
+    "s1_x0.5": {
+     "s1_used": 0.24920340129438842,
+     "rho_mean": 0.20325010372578808,
+     "rms": 0.3936463052477875,
+     "arl0": 180.78435555555555
+    },
+    "s1_x2.0": {
+     "s1_used": 0.9968136051775537,
+     "rho_mean": 0.2027128159321266,
+     "rms": 0.39344555520720176,
+     "arl0": 180.76472592592592
+    },
+    "s1_eq_s0": {
+     "s1_used": 0.04332604720707365,
+     "rho_mean": 0.2036602506554217,
+     "rms": 0.39383031215510406,
+     "arl0": 180.71182222222222
+    }
+   },
+   "absolute_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.000281016368488457,
+     "rms": 0.00013188344858217071,
+     "arl0": 0.1354814814814631
+    },
+    "s1_x2.0": {
+     "rho_mean": -0.000256271425173038,
+     "rms": -6.886659200355805e-05,
+     "arl0": 0.11585185185182922
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0006911632981220772,
+     "rms": 0.00031589035589874026,
+     "arl0": 0.06294814814813776
+    }
+   },
+   "relative_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0013845279207160832,
+     "rms": 0.00033514260539480034,
+     "arl0": 0.0007499713583927203
+    },
+    "s1_x2.0": {
+     "rho_mean": -0.0012626130831534521,
+     "rms": -0.0001750039850857421,
+     "arl0": 0.0006413095705446459
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0034052638612174224,
+     "rms": 0.0008027414966254032,
+     "arl0": 0.0003484558011821459
+    }
+   },
+   "max_abs_relative_change": {
+    "rho_mean": 0.0034052638612174224,
+    "rms": 0.0008027414966254032,
+    "arl0": 0.0007499713583927203
+   },
+   "n_cycles_where_s1_can_fire_tau_lt_m": 630,
+   "s1_can_fire_under_observed_trajectories": true,
+   "why_if_not": null,
+   "calibration_facts_carried_forward": {
+    "converged": true,
+    "iterations_reached": 6,
+    "n_obs_behind_s1": 3653,
+    "s1_is_fallback_equal_to_s0": false,
+    "s1_sparse": false,
+    "variance_floor_1e-2_active": false,
+    "rho_max_can_bind": false,
+    "final_refit_followed_by_another_fixed_point_update": false,
+    "drift_fixed_point_to_final": {
+     "g0": -0.00047891434204194727,
+     "g1": 0.0047774550103742985,
+     "s0": 5.169614106443482e-05,
+     "s1": 0.02317804399605139
+    }
+   }
+  },
+  "sr_m1": {
+   "detector": "sr",
+   "m": 1,
+   "k": 1,
+   "shipped": {
+    "g0": 0.9904115013968149,
+    "g1": -1.16789246712758,
+    "s0": 0.11727392552107573,
+    "s1": 0.11727392552107573
+   },
+   "variants": {
+    "baseline": {
+     "s1_used": 0.11727392552107573,
+     "rho_mean": 0.35798913928401466,
+     "rms": 0.7791162728481327,
+     "arl0": 101.30933333333333
+    },
+    "s1_x0.5": {
+     "s1_used": 0.05863696276053786,
+     "rho_mean": 0.35798913928401466,
+     "rms": 0.7791162728481327,
+     "arl0": 101.30933333333333
+    },
+    "s1_x2.0": {
+     "s1_used": 0.23454785104215145,
+     "rho_mean": 0.35798913928401466,
+     "rms": 0.7791162728481327,
+     "arl0": 101.30933333333333
+    },
+    "s1_eq_s0": {
+     "s1_used": 0.11727392552107573,
+     "rho_mean": 0.35798913928401466,
+     "rms": 0.7791162728481327,
+     "arl0": 101.30933333333333
+    }
+   },
+   "absolute_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x2.0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    }
+   },
+   "relative_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x2.0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    }
+   },
+   "max_abs_relative_change": {
+    "rho_mean": 0.0,
+    "rms": 0.0,
+    "arl0": 0.0
+   },
+   "n_cycles_where_s1_can_fire_tau_lt_m": 0,
+   "s1_can_fire_under_observed_trajectories": false,
+   "why_if_not": "no cycle had tau < m, so the truncated-window branch that s1 governs was never taken; the s1 perturbation is therefore inert by construction, not by accident",
+   "calibration_facts_carried_forward": {
+    "converged": true,
+    "iterations_reached": 3,
+    "n_obs_behind_s1": 0,
+    "s1_is_fallback_equal_to_s0": true,
+    "s1_sparse": true,
+    "variance_floor_1e-2_active": false,
+    "rho_max_can_bind": false,
+    "final_refit_followed_by_another_fixed_point_update": false,
+    "drift_fixed_point_to_final": {
+     "g0": -0.000956622360209991,
+     "g1": 0.0035087699618900903,
+     "s0": 0.0007377068953518945,
+     "s1": 0.0007377068953518945
+    }
+   }
+  },
+  "sr_m2": {
+   "detector": "sr",
+   "m": 2,
+   "k": 2,
+   "shipped": {
+    "g0": 0.9702781169674478,
+    "g1": -1.2167114399667318,
+    "s0": 0.0750225529805187,
+    "s1": 0.0750225529805187
+   },
+   "variants": {
+    "baseline": {
+     "s1_used": 0.0750225529805187,
+     "rho_mean": 0.29134469974291266,
+     "rms": 0.583209413248672,
+     "arl0": 128.16431111111112
+    },
+    "s1_x0.5": {
+     "s1_used": 0.03751127649025935,
+     "rho_mean": 0.29134469974291266,
+     "rms": 0.583209413248672,
+     "arl0": 128.16431111111112
+    },
+    "s1_x2.0": {
+     "s1_used": 0.1500451059610374,
+     "rho_mean": 0.29134469974291266,
+     "rms": 0.583209413248672,
+     "arl0": 128.16431111111112
+    },
+    "s1_eq_s0": {
+     "s1_used": 0.0750225529805187,
+     "rho_mean": 0.29134469974291266,
+     "rms": 0.583209413248672,
+     "arl0": 128.16431111111112
+    }
+   },
+   "absolute_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x2.0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    }
+   },
+   "relative_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x2.0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    }
+   },
+   "max_abs_relative_change": {
+    "rho_mean": 0.0,
+    "rms": 0.0,
+    "arl0": 0.0
+   },
+   "n_cycles_where_s1_can_fire_tau_lt_m": 0,
+   "s1_can_fire_under_observed_trajectories": false,
+   "why_if_not": "no cycle had tau < m, so the truncated-window branch that s1 governs was never taken; the s1 perturbation is therefore inert by construction, not by accident",
+   "calibration_facts_carried_forward": {
+    "converged": true,
+    "iterations_reached": 3,
+    "n_obs_behind_s1": 0,
+    "s1_is_fallback_equal_to_s0": true,
+    "s1_sparse": true,
+    "variance_floor_1e-2_active": false,
+    "rho_max_can_bind": false,
+    "final_refit_followed_by_another_fixed_point_update": false,
+    "drift_fixed_point_to_final": {
+     "g0": -0.0013585083620627492,
+     "g1": 0.011266913037315529,
+     "s0": 0.000732612934414803,
+     "s1": 0.000732612934414803
+    }
+   }
+  },
+  "sr_m3": {
+   "detector": "sr",
+   "m": 3,
+   "k": 3,
+   "shipped": {
+    "g0": 0.9601095245121234,
+    "g1": -1.2386190457399877,
+    "s0": 0.058158798039248706,
+    "s1": 5.175557523636009
+   },
+   "variants": {
+    "baseline": {
+     "s1_used": 5.175557523636009,
+     "rho_mean": 0.2543551164099448,
+     "rms": 0.49200090173909905,
+     "arl0": 146.8133777777778
+    },
+    "s1_x0.5": {
+     "s1_used": 2.5877787618180044,
+     "rho_mean": 0.254357535499299,
+     "rms": 0.4920018185716606,
+     "arl0": 146.79965925925927
+    },
+    "s1_x2.0": {
+     "s1_used": 10.351115047272017,
+     "rho_mean": 0.2543519070271475,
+     "rms": 0.4920030644875286,
+     "arl0": 146.8068
+    },
+    "s1_eq_s0": {
+     "s1_used": 0.058158798039248706,
+     "rho_mean": 0.25438587577125216,
+     "rms": 0.4920964410044654,
+     "arl0": 146.79173333333333
+    }
+   },
+   "absolute_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 2.4190893542219705e-06,
+     "rms": 9.168325615371842e-07,
+     "arl0": -0.01371851851851602
+    },
+    "s1_x2.0": {
+     "rho_mean": -3.2093827972978772e-06,
+     "rms": 2.1627484295683175e-06,
+     "arl0": -0.006577777777778238
+    },
+    "s1_eq_s0": {
+     "rho_mean": 3.075936130736423e-05,
+     "rms": 9.553926536637336e-05,
+     "arl0": -0.021644444444461897
+    }
+   },
+   "relative_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 9.510676995061473e-06,
+     "rms": 1.8634774008319255e-06,
+     "arl0": -9.344188333626491e-05
+    },
+    "s1_x2.0": {
+     "rho_mean": -1.261772455218857e-05,
+     "rms": 4.39582208477951e-06,
+     "arl0": -4.480366760406529e-05
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.00012093077482178138,
+     "rms": 0.00019418514280911126,
+     "arl0": -0.00014742828461600244
+    }
+   },
+   "max_abs_relative_change": {
+    "rho_mean": 0.00012093077482178138,
+    "rms": 0.00019418514280911126,
+    "arl0": 0.00014742828461600244
+   },
+   "n_cycles_where_s1_can_fire_tau_lt_m": 3,
+   "s1_can_fire_under_observed_trajectories": true,
+   "why_if_not": null,
+   "calibration_facts_carried_forward": {
+    "converged": false,
+    "iterations_reached": 6,
+    "n_obs_behind_s1": 20,
+    "s1_is_fallback_equal_to_s0": false,
+    "s1_sparse": true,
+    "variance_floor_1e-2_active": false,
+    "rho_max_can_bind": false,
+    "final_refit_followed_by_another_fixed_point_update": false,
+    "drift_fixed_point_to_final": {
+     "g0": 0.0027529263251682146,
+     "g1": -0.018534230013347974,
+     "s0": -0.0007434587425606057,
+     "s1": 0.16846640996598072
+    }
+   }
+  },
+  "sr_m5": {
+   "detector": "sr",
+   "m": 5,
+   "k": 5,
+   "shipped": {
+    "g0": 0.9457249658634086,
+    "g1": -1.2529940552115175,
+    "s0": 0.04096276057005532,
+    "s1": 0.7118040062508738
+   },
+   "variants": {
+    "baseline": {
+     "s1_used": 0.7118040062508738,
+     "rho_mean": 0.2126507920510556,
+     "rms": 0.39238072896603954,
+     "arl0": 170.9471111111111
+    },
+    "s1_x0.5": {
+     "s1_used": 0.3559020031254369,
+     "rho_mean": 0.21274508707528048,
+     "rms": 0.39245321068438604,
+     "arl0": 170.90917037037036
+    },
+    "s1_x2.0": {
+     "s1_used": 1.4236080125017476,
+     "rho_mean": 0.21255959056670107,
+     "rms": 0.3923958111696947,
+     "arl0": 170.88395555555556
+    },
+    "s1_eq_s0": {
+     "s1_used": 0.04096276057005532,
+     "rho_mean": 0.21299831062358704,
+     "rms": 0.39265557607113305,
+     "arl0": 170.8367111111111
+    }
+   },
+   "absolute_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 9.429502422486635e-05,
+     "rms": 7.248171834650652e-05,
+     "arl0": -0.037940740740737056
+    },
+    "s1_x2.0": {
+     "rho_mean": -9.120148435454167e-05,
+     "rms": 1.5082203655147897e-05,
+     "arl0": -0.06315555555553942
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.00034751857253143004,
+     "rms": 0.00027484710509351196,
+     "arl0": -0.1103999999999985
+    }
+   },
+   "relative_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.00044342663065277677,
+     "rms": 0.00018472293106119864,
+     "arl0": -0.0002219443223938633
+    },
+    "s1_x2.0": {
+     "rho_mean": -0.00042887911902367293,
+     "rms": 3.843767683209265e-05,
+     "arl0": -0.00036944500053293083
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.001634221858190843,
+     "rms": 0.0007004602540439109,
+     "arl0": -0.0006458137799605357
+    }
+   },
+   "max_abs_relative_change": {
+    "rho_mean": 0.001634221858190843,
+    "rms": 0.0007004602540439109,
+    "arl0": 0.0006458137799605357
+   },
+   "n_cycles_where_s1_can_fire_tau_lt_m": 172,
+   "s1_can_fire_under_observed_trajectories": true,
+   "why_if_not": null,
+   "calibration_facts_carried_forward": {
+    "converged": true,
+    "iterations_reached": 2,
+    "n_obs_behind_s1": 1061,
+    "s1_is_fallback_equal_to_s0": false,
+    "s1_sparse": false,
+    "variance_floor_1e-2_active": false,
+    "rho_max_can_bind": false,
+    "final_refit_followed_by_another_fixed_point_update": false,
+    "drift_fixed_point_to_final": {
+     "g0": -4.721983198585633e-05,
+     "g1": 0.006387137923063113,
+     "s0": 0.00010567266948062481,
+     "s1": 0.08632087883984807
+    }
+   }
+  }
+ },
+ "calibration_summary_carried_forward": {
+  "n_cells": 8,
+  "n_converged": 6,
+  "all_converged": false,
+  "non_converged_cells": [
+   "cusum_m2",
+   "sr_m3"
+  ],
+  "s1_sparse_cells": [
+   "cusum_m1",
+   "cusum_m2",
+   "sr_m1",
+   "sr_m2",
+   "sr_m3"
+  ],
+  "s1_fallback_cells": [
+   "cusum_m1",
+   "sr_m1",
+   "sr_m2"
+  ],
+  "variance_floor_active_anywhere": false,
+  "rho_max_can_bind_anywhere": false,
+  "final_refit_is_a_verified_fixed_point": false,
+  "note": "The shipped constants are a refit under the policy built from the fixed-point iterate, NOT a verified fixed point of themselves; no further update was run after the large final pass. The recorded drift measures that one-step-off gap."
+ },
+ "seconds": 184.98935222625732
+}
