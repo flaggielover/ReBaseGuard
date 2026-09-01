@@ -1,0 +1,959 @@
+{
+ "artifact": "CORRECTED_CRN_FIXED_PATH_CALIBRATION_SENSITIVITY",
+ "replaces": "p6r_safe_rebaselining_confirmation/precommit/s1_sensitivity.json, which was CONFOUNDED: its variants used different policy_id values and therefore different RNG streams",
+ "method": "every variant is applied to IDENTICAL stochastic paths. The innovations of cycle j of replicate r are seeded by (cell, j) alone -- never by the policy -- so the only thing that can differ between variants is the reuse weight the perturbed constant produces.",
+ "does_not_claim": "This artifact does NOT prove calibration convergence. It answers only: given the frozen shipped policy constants and identical stochastic paths, how much do aggregate outcomes move under the declared s1 perturbations?",
+ "saw_m_recalibrated": false,
+ "shipped_constants_changed": false,
+ "n_rep": 1500,
+ "n_cycles": 60,
+ "burn_in": 15,
+ "tape_len": 2000,
+ "variants": [
+  "baseline",
+  "s1_x0.5",
+  "s1_x2.0",
+  "s1_eq_s0"
+ ],
+ "cells": {
+  "cusum_m1": {
+   "detector": "cusum",
+   "m": 1,
+   "k": 1,
+   "shipped": {
+    "g0": 0.9663456298957928,
+    "g1": -1.0189196766689768,
+    "s0": 0.12340949164846748,
+    "s1": 0.12340949164846748
+   },
+   "variants": {
+    "baseline": {
+     "s1_used": 0.12340949164846748,
+     "rho_mean": 0.3560664238292985,
+     "rms": 0.7812005857396876,
+     "arl0": 105.36625185185186,
+     "n_overflow_draws": 41322
+    },
+    "s1_x0.5": {
+     "s1_used": 0.06170474582423374,
+     "rho_mean": 0.3560664238292985,
+     "rms": 0.7812005857396876,
+     "arl0": 105.36625185185186,
+     "n_overflow_draws": 41322
+    },
+    "s1_x2.0": {
+     "s1_used": 0.24681898329693497,
+     "rho_mean": 0.3560664238292985,
+     "rms": 0.7812005857396876,
+     "arl0": 105.36625185185186,
+     "n_overflow_draws": 41322
+    },
+    "s1_eq_s0": {
+     "s1_used": 0.12340949164846748,
+     "rho_mean": 0.3560664238292985,
+     "rms": 0.7812005857396876,
+     "arl0": 105.36625185185186,
+     "n_overflow_draws": 41322
+    }
+   },
+   "absolute_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x2.0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    }
+   },
+   "relative_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x2.0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    }
+   },
+   "max_abs_relative_change": {
+    "rho_mean": 0.0,
+    "rms": 0.0,
+    "arl0": 0.0
+   },
+   "cycle0_innovation_paths_identical_across_variants": {
+    "baseline": true,
+    "s1_x0.5": true,
+    "s1_x2.0": true,
+    "s1_eq_s0": true
+   },
+   "calibration_facts_carried_forward": {
+    "converged": true,
+    "iterations_reached": 3,
+    "n_obs_behind_s1": 0,
+    "s1_is_fallback_equal_to_s0": true,
+    "s1_sparse": true,
+    "frac_truncated_windows_tau_lt_m": 0.0,
+    "n_truncated_window_events_tau_lt_m": 0,
+    "variance_floor_1e-2_active": false,
+    "rho_max_can_bind": false,
+    "final_refit_followed_by_another_fixed_point_update": false,
+    "drift_fixed_point_to_final": {
+     "g0": 2.73247461759496e-05,
+     "g1": 0.0024998343369864173,
+     "s0": 0.00012796420494208538,
+     "s1": 0.00012796420494208538
+    }
+   }
+  },
+  "cusum_m2": {
+   "detector": "cusum",
+   "m": 2,
+   "k": 2,
+   "shipped": {
+    "g0": 0.9480047914480603,
+    "g1": -1.0615181935724507,
+    "s0": 0.08090968900736141,
+    "s1": 22.769149834852794
+   },
+   "variants": {
+    "baseline": {
+     "s1_used": 22.769149834852794,
+     "rho_mean": 0.2876806379254558,
+     "rms": 0.584155397849571,
+     "arl0": 132.57651851851853,
+     "n_overflow_draws": 53110
+    },
+    "s1_x0.5": {
+     "s1_used": 11.384574917426397,
+     "rho_mean": 0.2876806379254558,
+     "rms": 0.584155397849571,
+     "arl0": 132.57651851851853,
+     "n_overflow_draws": 53110
+    },
+    "s1_x2.0": {
+     "s1_used": 45.53829966970559,
+     "rho_mean": 0.2876806379254558,
+     "rms": 0.584155397849571,
+     "arl0": 132.57651851851853,
+     "n_overflow_draws": 53110
+    },
+    "s1_eq_s0": {
+     "s1_used": 0.08090968900736141,
+     "rho_mean": 0.2876806379254558,
+     "rms": 0.584155397849571,
+     "arl0": 132.57651851851853,
+     "n_overflow_draws": 53110
+    }
+   },
+   "absolute_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x2.0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    }
+   },
+   "relative_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x2.0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    }
+   },
+   "max_abs_relative_change": {
+    "rho_mean": 0.0,
+    "rms": 0.0,
+    "arl0": 0.0
+   },
+   "cycle0_innovation_paths_identical_across_variants": {
+    "baseline": true,
+    "s1_x0.5": true,
+    "s1_x2.0": true,
+    "s1_eq_s0": true
+   },
+   "calibration_facts_carried_forward": {
+    "converged": false,
+    "iterations_reached": 6,
+    "n_obs_behind_s1": 3,
+    "s1_is_fallback_equal_to_s0": false,
+    "s1_sparse": true,
+    "frac_truncated_windows_tau_lt_m": 5.769230769230769e-06,
+    "n_truncated_window_events_tau_lt_m": 3,
+    "variance_floor_1e-2_active": false,
+    "rho_max_can_bind": false,
+    "final_refit_followed_by_another_fixed_point_update": false,
+    "drift_fixed_point_to_final": {
+     "g0": 0.0008604369006521839,
+     "g1": -0.005959787586958365,
+     "s0": 0.0006722952616539796,
+     "s1": 22.688912441107085
+    }
+   }
+  },
+  "cusum_m3": {
+   "detector": "cusum",
+   "m": 3,
+   "k": 3,
+   "shipped": {
+    "g0": 0.938401060379731,
+    "g1": -1.0666785553806677,
+    "s0": 0.06263202667097299,
+    "s1": 2.560084629304598
+   },
+   "variants": {
+    "baseline": {
+     "s1_used": 2.560084629304598,
+     "rho_mean": 0.24777563622438514,
+     "rms": 0.49198041081933525,
+     "arl0": 152.5346074074074,
+     "n_overflow_draws": 68334
+    },
+    "s1_x0.5": {
+     "s1_used": 1.280042314652299,
+     "rho_mean": 0.2477809933637574,
+     "rms": 0.49204499981342925,
+     "arl0": 152.5326074074074,
+     "n_overflow_draws": 68334
+    },
+    "s1_x2.0": {
+     "s1_used": 5.120169258609196,
+     "rho_mean": 0.24773130648984995,
+     "rms": 0.4919750389105237,
+     "arl0": 152.576,
+     "n_overflow_draws": 68331
+    },
+    "s1_eq_s0": {
+     "s1_used": 0.06263202667097299,
+     "rho_mean": 0.24793388506006067,
+     "rms": 0.4923996990259529,
+     "arl0": 152.526,
+     "n_overflow_draws": 68547
+    }
+   },
+   "absolute_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 5.357139372247355e-06,
+     "rms": 6.458899409400587e-05,
+     "arl0": -0.0020000000000095497
+    },
+    "s1_x2.0": {
+     "rho_mean": -4.432973453519229e-05,
+     "rms": -5.371908811557802e-06,
+     "arl0": 0.04139259259258665
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0001582488356755285,
+     "rms": 0.00041928820661762956,
+     "arl0": -0.008607407407396295
+    }
+   },
+   "relative_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 2.1620928731591604e-05,
+     "rms": 0.00013128367039327848,
+     "arl0": -1.3111778592422851e-05
+    },
+    "s1_x2.0": {
+     "rho_mean": -0.0001789107888519048,
+     "rms": -1.0918948587068655e-05,
+     "arl0": 0.00027136525471904704
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0006386779510969554,
+     "rms": 0.0008522457345798706,
+     "arl0": -5.642921009008095e-05
+    }
+   },
+   "max_abs_relative_change": {
+    "rho_mean": 0.0006386779510969554,
+    "rms": 0.0008522457345798706,
+    "arl0": 0.00027136525471904704
+   },
+   "cycle0_innovation_paths_identical_across_variants": {
+    "baseline": true,
+    "s1_x0.5": true,
+    "s1_x2.0": true,
+    "s1_eq_s0": true
+   },
+   "calibration_facts_carried_forward": {
+    "converged": true,
+    "iterations_reached": 2,
+    "n_obs_behind_s1": 262,
+    "s1_is_fallback_equal_to_s0": false,
+    "s1_sparse": false,
+    "frac_truncated_windows_tau_lt_m": 0.0005038461538461539,
+    "n_truncated_window_events_tau_lt_m": 262,
+    "variance_floor_1e-2_active": false,
+    "rho_max_can_bind": false,
+    "final_refit_followed_by_another_fixed_point_update": false,
+    "drift_fixed_point_to_final": {
+     "g0": -0.00024291014913258024,
+     "g1": 0.003592137180130184,
+     "s0": 0.00038530788410810757,
+     "s1": -0.1688502491081696
+    }
+   }
+  },
+  "cusum_m5": {
+   "detector": "cusum",
+   "m": 5,
+   "k": 5,
+   "shipped": {
+    "g0": 0.9200662470738735,
+    "g1": -1.0320673021410112,
+    "s0": 0.04332604720707365,
+    "s1": 0.49840680258877684
+   },
+   "variants": {
+    "baseline": {
+     "s1_used": 0.49840680258877684,
+     "rho_mean": 0.2026594413612095,
+     "rms": 0.3945460869292255,
+     "arl0": 178.9793925925926,
+     "n_overflow_draws": 86659
+    },
+    "s1_x0.5": {
+     "s1_used": 0.24920340129438842,
+     "rho_mean": 0.20296434974799982,
+     "rms": 0.3946431204109896,
+     "arl0": 179.00823703703705,
+     "n_overflow_draws": 87238
+    },
+    "s1_x2.0": {
+     "s1_used": 0.9968136051775537,
+     "rho_mean": 0.20236662976428033,
+     "rms": 0.3944670975648916,
+     "arl0": 178.95097777777778,
+     "n_overflow_draws": 87184
+    },
+    "s1_eq_s0": {
+     "s1_used": 0.04332604720707365,
+     "rho_mean": 0.20333581527178377,
+     "rms": 0.39490198060908194,
+     "arl0": 179.0280148148148,
+     "n_overflow_draws": 87619
+    }
+   },
+   "absolute_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0003049083867903146,
+     "rms": 9.703348176409721e-05,
+     "arl0": 0.028844444444445116
+    },
+    "s1_x2.0": {
+     "rho_mean": -0.0002928115969291767,
+     "rms": -7.898936433387016e-05,
+     "arl0": -0.02841481481482333
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0006763739105742628,
+     "rms": 0.00035589367985644493,
+     "arl0": 0.0486222222222068
+    }
+   },
+   "relative_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0015045358101370976,
+     "rms": 0.00024593700198449753,
+     "arl0": 0.0001611607013891625
+    },
+    "s1_x2.0": {
+     "rho_mean": -0.0014448455742424038,
+     "rms": -0.00020020313710022997,
+     "arl0": -0.00015876025950933847
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.003337490254740949,
+     "rms": 0.0009020332266538311,
+     "arl0": 0.00027166380172549687
+    }
+   },
+   "max_abs_relative_change": {
+    "rho_mean": 0.003337490254740949,
+    "rms": 0.0009020332266538311,
+    "arl0": 0.00027166380172549687
+   },
+   "cycle0_innovation_paths_identical_across_variants": {
+    "baseline": true,
+    "s1_x0.5": true,
+    "s1_x2.0": true,
+    "s1_eq_s0": true
+   },
+   "calibration_facts_carried_forward": {
+    "converged": true,
+    "iterations_reached": 6,
+    "n_obs_behind_s1": 3653,
+    "s1_is_fallback_equal_to_s0": false,
+    "s1_sparse": false,
+    "frac_truncated_windows_tau_lt_m": 0.007025,
+    "n_truncated_window_events_tau_lt_m": 3653,
+    "variance_floor_1e-2_active": false,
+    "rho_max_can_bind": false,
+    "final_refit_followed_by_another_fixed_point_update": false,
+    "drift_fixed_point_to_final": {
+     "g0": -0.00047891434204194727,
+     "g1": 0.0047774550103742985,
+     "s0": 5.169614106443482e-05,
+     "s1": 0.02317804399605139
+    }
+   }
+  },
+  "sr_m1": {
+   "detector": "sr",
+   "m": 1,
+   "k": 1,
+   "shipped": {
+    "g0": 0.9904115013968149,
+    "g1": -1.16789246712758,
+    "s0": 0.11727392552107573,
+    "s1": 0.11727392552107573
+   },
+   "variants": {
+    "baseline": {
+     "s1_used": 0.11727392552107573,
+     "rho_mean": 0.3579753983039344,
+     "rms": 0.7831471554828552,
+     "arl0": 100.70653333333334,
+     "n_overflow_draws": 25615
+    },
+    "s1_x0.5": {
+     "s1_used": 0.05863696276053786,
+     "rho_mean": 0.3579753983039344,
+     "rms": 0.7831471554828552,
+     "arl0": 100.70653333333334,
+     "n_overflow_draws": 25615
+    },
+    "s1_x2.0": {
+     "s1_used": 0.23454785104215145,
+     "rho_mean": 0.3579753983039344,
+     "rms": 0.7831471554828552,
+     "arl0": 100.70653333333334,
+     "n_overflow_draws": 25615
+    },
+    "s1_eq_s0": {
+     "s1_used": 0.11727392552107573,
+     "rho_mean": 0.3579753983039344,
+     "rms": 0.7831471554828552,
+     "arl0": 100.70653333333334,
+     "n_overflow_draws": 25615
+    }
+   },
+   "absolute_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x2.0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    }
+   },
+   "relative_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x2.0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    }
+   },
+   "max_abs_relative_change": {
+    "rho_mean": 0.0,
+    "rms": 0.0,
+    "arl0": 0.0
+   },
+   "cycle0_innovation_paths_identical_across_variants": {
+    "baseline": true,
+    "s1_x0.5": true,
+    "s1_x2.0": true,
+    "s1_eq_s0": true
+   },
+   "calibration_facts_carried_forward": {
+    "converged": true,
+    "iterations_reached": 3,
+    "n_obs_behind_s1": 0,
+    "s1_is_fallback_equal_to_s0": true,
+    "s1_sparse": true,
+    "frac_truncated_windows_tau_lt_m": 0.0,
+    "n_truncated_window_events_tau_lt_m": 0,
+    "variance_floor_1e-2_active": false,
+    "rho_max_can_bind": false,
+    "final_refit_followed_by_another_fixed_point_update": false,
+    "drift_fixed_point_to_final": {
+     "g0": -0.000956622360209991,
+     "g1": 0.0035087699618900903,
+     "s0": 0.0007377068953518945,
+     "s1": 0.0007377068953518945
+    }
+   }
+  },
+  "sr_m2": {
+   "detector": "sr",
+   "m": 2,
+   "k": 2,
+   "shipped": {
+    "g0": 0.9702781169674478,
+    "g1": -1.2167114399667318,
+    "s0": 0.0750225529805187,
+    "s1": 0.0750225529805187
+   },
+   "variants": {
+    "baseline": {
+     "s1_used": 0.0750225529805187,
+     "rho_mean": 0.2912692880695653,
+     "rms": 0.5833226298519469,
+     "arl0": 127.97028148148148,
+     "n_overflow_draws": 51016
+    },
+    "s1_x0.5": {
+     "s1_used": 0.03751127649025935,
+     "rho_mean": 0.2912692880695653,
+     "rms": 0.5833226298519469,
+     "arl0": 127.97028148148148,
+     "n_overflow_draws": 51016
+    },
+    "s1_x2.0": {
+     "s1_used": 0.1500451059610374,
+     "rho_mean": 0.2912692880695653,
+     "rms": 0.5833226298519469,
+     "arl0": 127.97028148148148,
+     "n_overflow_draws": 51016
+    },
+    "s1_eq_s0": {
+     "s1_used": 0.0750225529805187,
+     "rho_mean": 0.2912692880695653,
+     "rms": 0.5833226298519469,
+     "arl0": 127.97028148148148,
+     "n_overflow_draws": 51016
+    }
+   },
+   "absolute_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x2.0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    }
+   },
+   "relative_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x2.0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    }
+   },
+   "max_abs_relative_change": {
+    "rho_mean": 0.0,
+    "rms": 0.0,
+    "arl0": 0.0
+   },
+   "cycle0_innovation_paths_identical_across_variants": {
+    "baseline": true,
+    "s1_x0.5": true,
+    "s1_x2.0": true,
+    "s1_eq_s0": true
+   },
+   "calibration_facts_carried_forward": {
+    "converged": true,
+    "iterations_reached": 3,
+    "n_obs_behind_s1": 0,
+    "s1_is_fallback_equal_to_s0": true,
+    "s1_sparse": true,
+    "frac_truncated_windows_tau_lt_m": 0.0,
+    "n_truncated_window_events_tau_lt_m": 0,
+    "variance_floor_1e-2_active": false,
+    "rho_max_can_bind": false,
+    "final_refit_followed_by_another_fixed_point_update": false,
+    "drift_fixed_point_to_final": {
+     "g0": -0.0013585083620627492,
+     "g1": 0.011266913037315529,
+     "s0": 0.000732612934414803,
+     "s1": 0.000732612934414803
+    }
+   }
+  },
+  "sr_m3": {
+   "detector": "sr",
+   "m": 3,
+   "k": 3,
+   "shipped": {
+    "g0": 0.9601095245121234,
+    "g1": -1.2386190457399877,
+    "s0": 0.058158798039248706,
+    "s1": 5.175557523636009
+   },
+   "variants": {
+    "baseline": {
+     "s1_used": 5.175557523636009,
+     "rho_mean": 0.2532799757621387,
+     "rms": 0.4914217705948281,
+     "arl0": 145.52805925925927,
+     "n_overflow_draws": 52663
+    },
+    "s1_x0.5": {
+     "s1_used": 2.5877787618180044,
+     "rho_mean": 0.25327792729800525,
+     "rms": 0.4914179539853588,
+     "arl0": 145.5352,
+     "n_overflow_draws": 52663
+    },
+    "s1_x2.0": {
+     "s1_used": 10.351115047272017,
+     "rho_mean": 0.2532753036490731,
+     "rms": 0.49141846303970976,
+     "arl0": 145.54122962962964,
+     "n_overflow_draws": 52663
+    },
+    "s1_eq_s0": {
+     "s1_used": 0.058158798039248706,
+     "rho_mean": 0.25330938426802135,
+     "rms": 0.4915519773399785,
+     "arl0": 145.5513185185185,
+     "n_overflow_draws": 52663
+    }
+   },
+   "absolute_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": -2.0484641334306275e-06,
+     "rms": -3.816609469298182e-06,
+     "arl0": 0.007140740740737783
+    },
+    "s1_x2.0": {
+     "rho_mean": -4.672113065595784e-06,
+     "rms": -3.3075551183481267e-06,
+     "arl0": 0.01317037037037494
+    },
+    "s1_eq_s0": {
+     "rho_mean": 2.9408505882677627e-05,
+     "rms": 0.00013020674515040742,
+     "arl0": 0.02325925925924821
+    }
+   },
+   "relative_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": -8.087746089180392e-06,
+     "rms": -7.766463957614711e-06,
+     "arl0": 4.906779336644185e-05
+    },
+    "s1_x2.0": {
+     "rho_mean": -1.844643679993485e-05,
+     "rms": -6.730583210323715e-06,
+     "arl0": 9.050055664472367e-05
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.00011611066289063388,
+     "rms": 0.00026495925280811683,
+     "arl0": 0.000159826629844817
+    }
+   },
+   "max_abs_relative_change": {
+    "rho_mean": 0.00011611066289063388,
+    "rms": 0.00026495925280811683,
+    "arl0": 0.000159826629844817
+   },
+   "cycle0_innovation_paths_identical_across_variants": {
+    "baseline": true,
+    "s1_x0.5": true,
+    "s1_x2.0": true,
+    "s1_eq_s0": true
+   },
+   "calibration_facts_carried_forward": {
+    "converged": false,
+    "iterations_reached": 6,
+    "n_obs_behind_s1": 20,
+    "s1_is_fallback_equal_to_s0": false,
+    "s1_sparse": true,
+    "frac_truncated_windows_tau_lt_m": 3.846153846153846e-05,
+    "n_truncated_window_events_tau_lt_m": 20,
+    "variance_floor_1e-2_active": false,
+    "rho_max_can_bind": false,
+    "final_refit_followed_by_another_fixed_point_update": false,
+    "drift_fixed_point_to_final": {
+     "g0": 0.0027529263251682146,
+     "g1": -0.018534230013347974,
+     "s0": -0.0007434587425606057,
+     "s1": 0.16846640996598072
+    }
+   }
+  },
+  "sr_m5": {
+   "detector": "sr",
+   "m": 5,
+   "k": 5,
+   "shipped": {
+    "g0": 0.9457249658634086,
+    "g1": -1.2529940552115175,
+    "s0": 0.04096276057005532,
+    "s1": 0.7118040062508738
+   },
+   "variants": {
+    "baseline": {
+     "s1_used": 0.7118040062508738,
+     "rho_mean": 0.21153669071021264,
+     "rms": 0.3907684205568589,
+     "arl0": 171.60207407407407,
+     "n_overflow_draws": 76881
+    },
+    "s1_x0.5": {
+     "s1_used": 0.3559020031254369,
+     "rho_mean": 0.21167392765735116,
+     "rms": 0.39081408691939595,
+     "arl0": 171.5320888888889,
+     "n_overflow_draws": 76881
+    },
+    "s1_x2.0": {
+     "s1_used": 1.4236080125017476,
+     "rho_mean": 0.2114595727905921,
+     "rms": 0.39074534354188134,
+     "arl0": 171.62056296296296,
+     "n_overflow_draws": 76881
+    },
+    "s1_eq_s0": {
+     "s1_used": 0.04096276057005532,
+     "rho_mean": 0.2118709644512495,
+     "rms": 0.39101615392064437,
+     "arl0": 171.45604444444444,
+     "n_overflow_draws": 76881
+    }
+   },
+   "absolute_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0001372369471385193,
+     "rms": 4.5666362537055694e-05,
+     "arl0": -0.06998518518517471
+    },
+    "s1_x2.0": {
+     "rho_mean": -7.711791962053405e-05,
+     "rms": -2.307701497755721e-05,
+     "arl0": 0.018488888888896327
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0003342737410368668,
+     "rms": 0.00024773336378547395,
+     "arl0": -0.14602962962962351
+    }
+   },
+   "relative_change_vs_baseline": {
+    "baseline": {
+     "rho_mean": 0.0,
+     "rms": 0.0,
+     "arl0": 0.0
+    },
+    "s1_x0.5": {
+     "rho_mean": 0.0006487619082899965,
+     "rms": 0.00011686298107704829,
+     "arl0": -0.000407834145145336
+    },
+    "s1_x2.0": {
+     "rho_mean": -0.0003645604900105459,
+     "rms": -5.9055475733371665e-05,
+     "arl0": 0.00010774280549141757
+    },
+    "s1_eq_s0": {
+     "rho_mean": 0.0015802163677354208,
+     "rms": 0.0006339646469704086,
+     "arl0": -0.0008509782321546311
+    }
+   },
+   "max_abs_relative_change": {
+    "rho_mean": 0.0015802163677354208,
+    "rms": 0.0006339646469704086,
+    "arl0": 0.0008509782321546311
+   },
+   "cycle0_innovation_paths_identical_across_variants": {
+    "baseline": true,
+    "s1_x0.5": true,
+    "s1_x2.0": true,
+    "s1_eq_s0": true
+   },
+   "calibration_facts_carried_forward": {
+    "converged": true,
+    "iterations_reached": 2,
+    "n_obs_behind_s1": 1061,
+    "s1_is_fallback_equal_to_s0": false,
+    "s1_sparse": false,
+    "frac_truncated_windows_tau_lt_m": 0.0020403846153846153,
+    "n_truncated_window_events_tau_lt_m": 1061,
+    "variance_floor_1e-2_active": false,
+    "rho_max_can_bind": false,
+    "final_refit_followed_by_another_fixed_point_update": false,
+    "drift_fixed_point_to_final": {
+     "g0": -4.721983198585633e-05,
+     "g1": 0.006387137923063113,
+     "s0": 0.00010567266948062481,
+     "s1": 0.08632087883984807
+    }
+   }
+  }
+ },
+ "calibration_summary_carried_forward": {
+  "n_cells": 8,
+  "n_converged": 6,
+  "all_converged": false,
+  "non_converged_cells": [
+   "cusum_m2",
+   "sr_m3"
+  ],
+  "s1_sparse_cells": [
+   "cusum_m1",
+   "cusum_m2",
+   "sr_m1",
+   "sr_m2",
+   "sr_m3"
+  ],
+  "s1_fallback_cells": [
+   "cusum_m1",
+   "sr_m1",
+   "sr_m2"
+  ],
+  "variance_floor_active_anywhere": false,
+  "rho_max_can_bind_anywhere": false,
+  "final_refit_is_a_verified_fixed_point": false,
+  "note": "The shipped constants are a refit under the policy built from the fixed-point iterate, NOT a verified fixed point of themselves; no further update was run after the large final pass. The recorded drift measures that one-step-off gap."
+ },
+ "all_paths_identical_across_variants": true,
+ "seconds": 107.09713006019592
+}
