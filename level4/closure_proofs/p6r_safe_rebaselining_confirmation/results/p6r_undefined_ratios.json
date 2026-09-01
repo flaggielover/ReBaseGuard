@@ -1,0 +1,428 @@
+{
+ "note": "Ratio effects with an exactly-zero denominator.  These are UNDEFINED, not material: B3 acquires no fresh samples so its cost denominators are 0, and B0 reuses nothing so its Wbar denominator is 0.  The verdict recorded for them in the analysis JSON comes from a non-finite bootstrap and must be read as UNDEFINED_ZERO_DENOMINATOR.  None of them enters a BH family and none supports any claim in CONFIRMATION_REPORT.md.",
+ "label": "UNDEFINED_ZERO_DENOMINATOR",
+ "families": {
+  "eval": {
+   "n_undefined": 52,
+   "controls_involved": [
+    "B0_fresh_only",
+    "B3_full_reuse"
+   ],
+   "metrics_involved": [
+    "C_acq_fresh_acquisition_count",
+    "C_prop_proportional_fresh_contribution",
+    "C_quad_effective_squared_weight_contribution",
+    "Wbar_mean_algebraic_reuse_weight"
+   ],
+   "entries": [
+    {
+     "cell": "P",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_acq_fresh_acquisition_count",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "P",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_prop_proportional_fresh_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "P",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_quad_effective_squared_weight_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "P",
+     "comparison": "vs_B0_fresh_only@1.0",
+     "metric": "Wbar_mean_algebraic_reuse_weight",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B0_fresh_only"
+    },
+    {
+     "cell": "P",
+     "comparison": "vs_B3_full_reuse@0.5",
+     "metric": "C_acq_fresh_acquisition_count",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "P",
+     "comparison": "vs_B3_full_reuse@0.5",
+     "metric": "C_prop_proportional_fresh_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "P",
+     "comparison": "vs_B3_full_reuse@0.5",
+     "metric": "C_quad_effective_squared_weight_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "P",
+     "comparison": "vs_B0_fresh_only@0.5",
+     "metric": "Wbar_mean_algebraic_reuse_weight",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B0_fresh_only"
+    },
+    {
+     "cell": "P",
+     "comparison": "vs_B3_full_reuse@2.0",
+     "metric": "C_acq_fresh_acquisition_count",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "P",
+     "comparison": "vs_B3_full_reuse@2.0",
+     "metric": "C_prop_proportional_fresh_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "P",
+     "comparison": "vs_B3_full_reuse@2.0",
+     "metric": "C_quad_effective_squared_weight_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "P",
+     "comparison": "vs_B0_fresh_only@2.0",
+     "metric": "Wbar_mean_algebraic_reuse_weight",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B0_fresh_only"
+    },
+    {
+     "cell": "RC1_sr_m3",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_acq_fresh_acquisition_count",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC1_sr_m3",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_prop_proportional_fresh_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC1_sr_m3",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_quad_effective_squared_weight_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC1_sr_m3",
+     "comparison": "vs_B0_fresh_only@1.0",
+     "metric": "Wbar_mean_algebraic_reuse_weight",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B0_fresh_only"
+    },
+    {
+     "cell": "RC2_cusum_m1",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_acq_fresh_acquisition_count",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC2_cusum_m1",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_prop_proportional_fresh_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC2_cusum_m1",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_quad_effective_squared_weight_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC2_cusum_m1",
+     "comparison": "vs_B0_fresh_only@1.0",
+     "metric": "Wbar_mean_algebraic_reuse_weight",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B0_fresh_only"
+    },
+    {
+     "cell": "RC2_cusum_m2",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_acq_fresh_acquisition_count",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC2_cusum_m2",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_prop_proportional_fresh_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC2_cusum_m2",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_quad_effective_squared_weight_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC2_cusum_m2",
+     "comparison": "vs_B0_fresh_only@1.0",
+     "metric": "Wbar_mean_algebraic_reuse_weight",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B0_fresh_only"
+    },
+    {
+     "cell": "RC2_cusum_m5",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_acq_fresh_acquisition_count",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC2_cusum_m5",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_prop_proportional_fresh_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC2_cusum_m5",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_quad_effective_squared_weight_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC2_cusum_m5",
+     "comparison": "vs_B0_fresh_only@1.0",
+     "metric": "Wbar_mean_algebraic_reuse_weight",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B0_fresh_only"
+    },
+    {
+     "cell": "RC2_sr_m1",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_acq_fresh_acquisition_count",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC2_sr_m1",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_prop_proportional_fresh_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC2_sr_m1",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_quad_effective_squared_weight_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC2_sr_m1",
+     "comparison": "vs_B0_fresh_only@1.0",
+     "metric": "Wbar_mean_algebraic_reuse_weight",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B0_fresh_only"
+    },
+    {
+     "cell": "RC2_sr_m2",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_acq_fresh_acquisition_count",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC2_sr_m2",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_prop_proportional_fresh_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC2_sr_m2",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_quad_effective_squared_weight_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC2_sr_m2",
+     "comparison": "vs_B0_fresh_only@1.0",
+     "metric": "Wbar_mean_algebraic_reuse_weight",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B0_fresh_only"
+    },
+    {
+     "cell": "RC2_sr_m5",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_acq_fresh_acquisition_count",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC2_sr_m5",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_prop_proportional_fresh_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC2_sr_m5",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_quad_effective_squared_weight_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC2_sr_m5",
+     "comparison": "vs_B0_fresh_only@1.0",
+     "metric": "Wbar_mean_algebraic_reuse_weight",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B0_fresh_only"
+    },
+    {
+     "cell": "RC4_m020",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_acq_fresh_acquisition_count",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC4_m020",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_prop_proportional_fresh_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC4_m020",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_quad_effective_squared_weight_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC4_m020",
+     "comparison": "vs_B0_fresh_only@1.0",
+     "metric": "Wbar_mean_algebraic_reuse_weight",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B0_fresh_only"
+    },
+    {
+     "cell": "RC4_m050",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_acq_fresh_acquisition_count",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC4_m050",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_prop_proportional_fresh_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC4_m050",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_quad_effective_squared_weight_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC4_m050",
+     "comparison": "vs_B0_fresh_only@1.0",
+     "metric": "Wbar_mean_algebraic_reuse_weight",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B0_fresh_only"
+    },
+    {
+     "cell": "RC4_m0100",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_acq_fresh_acquisition_count",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC4_m0100",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_prop_proportional_fresh_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC4_m0100",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_quad_effective_squared_weight_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "RC4_m0100",
+     "comparison": "vs_B0_fresh_only@1.0",
+     "metric": "Wbar_mean_algebraic_reuse_weight",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B0_fresh_only"
+    }
+   ]
+  },
+  "replay": {
+   "n_undefined": 4,
+   "controls_involved": [
+    "B0_fresh_only",
+    "B3_full_reuse"
+   ],
+   "metrics_involved": [
+    "C_acq_fresh_acquisition_count",
+    "C_prop_proportional_fresh_contribution",
+    "C_quad_effective_squared_weight_contribution",
+    "Wbar_mean_algebraic_reuse_weight"
+   ],
+   "entries": [
+    {
+     "cell": "P_replay",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_acq_fresh_acquisition_count",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "P_replay",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_prop_proportional_fresh_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "P_replay",
+     "comparison": "vs_B3_full_reuse@1.0",
+     "metric": "C_quad_effective_squared_weight_contribution",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B3_full_reuse"
+    },
+    {
+     "cell": "P_replay",
+     "comparison": "vs_B0_fresh_only@1.0",
+     "metric": "Wbar_mean_algebraic_reuse_weight",
+     "recorded_verdict": "PRACTICALLY_MATERIAL",
+     "control_arm": "B0_fresh_only"
+    }
+   ]
+  }
+ }
+}
