@@ -1,0 +1,88 @@
+{
+ "family": "t5",
+ "detector": "sr",
+ "target_arl0": 465.50394,
+ "threshold": 929.2356243815761,
+ "relative_error_at_selection": 0.0016477447638520036,
+ "n_iterations": 5,
+ "trace": [
+  {
+   "iter": 0,
+   "threshold": 520.886133602749,
+   "arl0": 300.4346496582031,
+   "se": 0.6560515244154114,
+   "n": 163840,
+   "batch": 1000,
+   "relative_error": 0.3546034225656541
+  },
+  {
+   "iter": 1,
+   "threshold": 807.0791693278495,
+   "arl0": 417.548828125,
+   "se": 0.9082737767557568,
+   "n": 163840,
+   "batch": 1001,
+   "relative_error": 0.10301762832555188
+  },
+  {
+   "iter": 2,
+   "threshold": 899.7714947521531,
+   "arl0": 453.68223876953124,
+   "se": 1.0008035480712332,
+   "n": 163840,
+   "batch": 1002,
+   "relative_error": 0.02539549124002852
+  },
+  {
+   "iter": 3,
+   "threshold": 913.7663916282407,
+   "arl0": 456.9703430175781,
+   "se": 1.1214822905810113,
+   "n": 163840,
+   "batch": 1003,
+   "relative_error": 0.0183319543598748
+  },
+  {
+   "iter": 4,
+   "threshold": 923.9668458292662,
+   "arl0": 466.2709716796875,
+   "se": 0.8804603599780603,
+   "n": 163840,
+   "batch": 1004,
+   "relative_error": 0.0016477447638520036
+  }
+ ],
+ "start_threshold": 520.886133602749,
+ "n_cycles_per_evaluation": 163840,
+ "procedure": "damped proportional iteration A <- A*(target/ARL)^p on the P8 addressable field; ARL_0 is asymptotically linear in the SR natural threshold; then refined at 614400 cycles per step with the same proportional correction until within 0.25%",
+ "label": "NEW_P8_CALIBRATION",
+ "verification_arl0": 465.163103515625,
+ "verification_se": 0.4585054889779642,
+ "verification_n": 1024000,
+ "verification_relative_error": 0.0007321881837885578,
+ "verification_z": -0.7433640219548132,
+ "seconds": 828.05362200737,
+ "polish_trace": [
+  {
+   "iter": 0,
+   "threshold": 923.9668458292662,
+   "arl0": 462.8645263671875,
+   "se": 0.6037780033829027,
+   "n": 614400,
+   "batch": 2000,
+   "relative_error": 0.005670013518709374
+  },
+  {
+   "iter": 1,
+   "threshold": 929.2356243815761,
+   "arl0": 465.5731477864583,
+   "se": 0.5649987460394486,
+   "n": 614400,
+   "batch": 2001,
+   "relative_error": 0.0001486728263961013
+  }
+ ],
+ "n_polish_iterations": 2,
+ "polish_cycles_per_iteration": 614400,
+ "polish_seconds": 744.4912323951721
+}

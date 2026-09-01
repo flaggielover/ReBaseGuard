@@ -1,0 +1,133 @@
+{
+ "family": "t3",
+ "detector": "sr",
+ "target_arl0": 465.50394,
+ "threshold": 1676.9656644763495,
+ "relative_error_at_selection": 0.0010466814016789475,
+ "n_iterations": 11,
+ "trace": [
+  {
+   "iter": 0,
+   "threshold": 520.886133602749,
+   "arl0": 257.1762329101563,
+   "se": 0.624615400318944,
+   "n": 163840,
+   "batch": 1000,
+   "relative_error": 0.44753156566160046
+  },
+  {
+   "iter": 1,
+   "threshold": 942.834198711332,
+   "arl0": 349.335986328125,
+   "se": 0.86131999732982,
+   "n": 163840,
+   "batch": 1001,
+   "relative_error": 0.2495531051184551
+  },
+  {
+   "iter": 2,
+   "threshold": 1256.3636483033947,
+   "arl0": 402.559423828125,
+   "se": 0.9738990193844203,
+   "n": 163840,
+   "batch": 1002,
+   "relative_error": 0.13521800947995202
+  },
+  {
+   "iter": 3,
+   "threshold": 1452.8096816029483,
+   "arl0": 433.87620849609374,
+   "se": 1.1902168861555846,
+   "n": 163840,
+   "batch": 1003,
+   "relative_error": 0.06794299421806453
+  },
+  {
+   "iter": 4,
+   "threshold": 1558.7133325435766,
+   "arl0": 447.6402893066406,
+   "se": 1.09515741551734,
+   "n": 163840,
+   "batch": 1004,
+   "relative_error": 0.0383748646539047
+  },
+  {
+   "iter": 5,
+   "threshold": 1595.7423321620763,
+   "arl0": 453.19594116210936,
+   "se": 1.131051582475074,
+   "n": 163840,
+   "batch": 1005,
+   "relative_error": 0.02644016039454067
+  },
+  {
+   "iter": 6,
+   "threshold": 1621.6053777972932,
+   "arl0": 456.9280944824219,
+   "se": 1.2468457441691834,
+   "n": 163840,
+   "batch": 1006,
+   "relative_error": 0.01842271306571133
+  },
+  {
+   "iter": 7,
+   "threshold": 1639.7984653555948,
+   "arl0": 458.3920837402344,
+   "se": 1.2248834213880566,
+   "n": 163840,
+   "batch": 1007,
+   "relative_error": 0.015277757390765806
+  },
+  {
+   "iter": 8,
+   "threshold": 1655.0161153800634,
+   "arl0": 459.79925537109375,
+   "se": 1.0801112135649558,
+   "n": 163840,
+   "batch": 1008,
+   "relative_error": 0.012254857883493425
+  },
+  {
+   "iter": 9,
+   "threshold": 1667.305894394606,
+   "arl0": 461.0434814453125,
+   "se": 1.0931724596146029,
+   "n": 163840,
+   "batch": 1009,
+   "relative_error": 0.009581999573811293
+  },
+  {
+   "iter": 10,
+   "threshold": 1676.9656644763495,
+   "arl0": 465.9911743164063,
+   "se": 1.2249263261862964,
+   "n": 163840,
+   "batch": 1010,
+   "relative_error": 0.0010466814016789475
+  }
+ ],
+ "start_threshold": 520.886133602749,
+ "n_cycles_per_evaluation": 163840,
+ "procedure": "damped proportional iteration A <- A*(target/ARL)^p on the P8 addressable field; ARL_0 is asymptotically linear in the SR natural threshold; then refined at 614400 cycles per step with the same proportional correction until within 0.25%",
+ "label": "NEW_P8_CALIBRATION",
+ "verification_arl0": 463.4620986328125,
+ "verification_se": 0.480418006250449,
+ "verification_n": 1024000,
+ "verification_relative_error": 0.004386303083036176,
+ "verification_z": -4.2501349670958115,
+ "seconds": 1177.057538986206,
+ "polish_trace": [
+  {
+   "iter": 0,
+   "threshold": 1676.9656644763495,
+   "arl0": 465.26016927083333,
+   "se": 0.5470783634848194,
+   "n": 614400,
+   "batch": 2000,
+   "relative_error": 0.0005236706034468145
+  }
+ ],
+ "n_polish_iterations": 1,
+ "polish_cycles_per_iteration": 614400,
+ "polish_seconds": 486.03355884552
+}

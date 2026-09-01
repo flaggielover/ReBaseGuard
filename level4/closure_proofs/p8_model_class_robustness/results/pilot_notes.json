@@ -1,0 +1,22 @@
+{
+ "schema": "rebaseguard.p8.pilot-notes.v1",
+ "purpose": "runtime and variance pilot run BEFORE EXPERIMENT_PROTOCOL.md was frozen. It fixed sample sizes and confirmed the estimator reproduces P3/P4; it fixed no verdict and no gate threshold that depends on a P8 outcome.",
+ "experiment_tag": "pilot",
+ "n_paths_per_cell": 81920,
+ "rows": [
+  {"detector": "cusum", "family": "gaussian", "threshold": 5.0, "seconds": 3.0, "arl": 466.76, "gamma_A_m1": 16.0057, "se_m1": 0.1412, "gamma_A_m5": 10.3112, "se_m5": 0.0876, "max_tau": 5558},
+  {"detector": "sr", "family": "gaussian", "threshold": 520.886133602749, "seconds": 4.2, "arl": 463.91, "gamma_A_m1": 17.2959, "se_m1": 0.1387, "gamma_A_m5": 10.9698, "se_m5": 0.0851, "max_tau": 5089},
+  {"detector": "cusum", "family": "t3", "threshold": 6.337011391962933, "seconds": 8.4, "arl": 463.75, "gamma_A_m1": 8.6751, "se_m1": 1.0347, "gamma_A_m5": 3.9240, "se_m5": 0.2278, "max_tau": 5539},
+  {"detector": "cusum", "family": "contam0.1", "threshold": 9.381983052368211, "seconds": 5.4, "arl": 467.42, "gamma_A_m1": 18.7624, "se_m1": 0.3432, "gamma_A_m5": 8.3586, "se_m5": 0.1262, "max_tau": 5086}
+ ],
+ "observations_that_fixed_the_design": [
+  "the per-path standard deviation of the Gamma_A integrand is ~7x larger for t3 than for gaussian at m=1 (SE 1.03 vs 0.14 at the same n), which is the finite-sample signature of the divergent third absolute moment declared in config.MOMENT_MARGINAL",
+  "4096 cycles cost ~0.16s (gaussian cusum) to ~0.42s (t3 cusum); 4,096,000 cycles per cell is therefore affordable and is adopted as the production size",
+  "max tau reaches ~5500 at the operating ARL, i.e. ~43 primitive blocks of length 128, so block overflow is routine and is exercised by every ordinary run",
+  "no exact simultaneous crossings (ties) were observed in the pilot"
+ ],
+ "not_fixed_by_the_pilot": [
+  "no gate threshold below was chosen after seeing a P8 production number",
+  "the window-law margin in CLOSURE_GATES.md G4 was chosen from the P3 CLOSED Gaussian boundary table (a cross-detector spread of 0.1%) and from the Stage-D Gamma_psi spread (a DIFFERENT estimand), not from any P8 measurement of Gamma_A across families"
+ ]
+}

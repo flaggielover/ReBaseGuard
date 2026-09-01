@@ -29,9 +29,9 @@ At the current authoritative repository state, the campaign status is:
 | P3 | `CLOSED` | The reuse-fraction local stability map is closed; its conclusions are local deterministic results. |
 | P4 | `PARTIAL` | The general location-family derivative theorem and supporting proof, numerical, Lean, and Arb evidence survived independent review. Three frozen preregistered numerical closure gates remain literally false; none was weakened or rewritten. Novelty remains `NOVELTY-NOT-ADJUDICATED`. |
 | P5 | `PARTIAL` | The raw-mean identity and the fixed-policy invariant-law/ergodicity theorem survive independent adjudication. Global deterministic attraction, operational-invisibility, and universal finite-grid claims were narrowed; several literal closure gates fail. Novelty remains `NOVELTY-NOT-ADJUDICATED`. |
+| P6 | `CLOSED` | The safe-rebaselining campaign and its literal closure repairs are complete at the repository's authoritative status; its scope and negative results remain as adjudicated. |
 | P7 | `CLOSED` | Independent adjudication confirms material monitoring degradation under recursive re-baselining, while \(\rho_c\) is a local mathematical boundary, not an operational safety boundary under the frozen criterion. |
-
-P6 has a pre-design directory only; its full campaign has not started.
+| P8 | `FAIL` | Broad tested local repulsion and operational degradation reproduce, but the cross-family window law and its sub-gates are rejected, G7 fails literally, and the temporal-integrity gate fails. The evidence is scope-bound and novelty is not independently adjudicated. |
 
 ## Why this problem exists
 
@@ -167,9 +167,12 @@ observations, and novelty status.
 - **P5:** retain the exact raw-mean and fixed-policy ergodicity results; treat
   attraction, global cycle uniqueness, bimodality onset, and the dispersion
   optimum at their adjudicated conditional or numerical tiers.
-- **P6 pre-design:** control entering-reference dispersion and delay-tail risk;
-  do not treat \(\rho < \rho_c\) as a safety rule or import P5's measured
-  optimum as a design constant.
+- **P6:** preserve its adjudicated safe-rebaselining scope and literal repairs;
+  do not treat \(\rho < \rho_c\) as a universal safety rule or import P5's
+  measured optimum as a design constant.
+- **P8:** retain the tested robustness evidence only within its empirical and
+  conditional-theorem tiers. Do not use the rejected window-separability law,
+  assume detector or P7-boundary transfer, or claim novelty.
 
 ## Research status and reproducibility
 

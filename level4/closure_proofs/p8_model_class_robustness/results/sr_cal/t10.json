@@ -1,0 +1,70 @@
+{
+ "family": "t10",
+ "detector": "sr",
+ "target_arl0": 465.50394,
+ "threshold": 633.1015027010842,
+ "relative_error_at_selection": 0.0002711284617430363,
+ "n_iterations": 4,
+ "trace": [
+  {
+   "iter": 0,
+   "threshold": 520.886133602749,
+   "arl0": 388.60955810546875,
+   "se": 0.9703986150268806,
+   "n": 163840,
+   "batch": 1000,
+   "relative_error": 0.1651852439627713
+  },
+  {
+   "iter": 1,
+   "threshold": 623.9541525060441,
+   "arl0": 456.93992309570314,
+   "se": 0.9600037851111379,
+   "n": 163840,
+   "batch": 1001,
+   "relative_error": 0.018397302725937967
+  },
+  {
+   "iter": 2,
+   "threshold": 630.9446083509775,
+   "arl0": 462.86375732421874,
+   "se": 1.1252806781708289,
+   "n": 163840,
+   "batch": 1002,
+   "relative_error": 0.00567166558414363
+  },
+  {
+   "iter": 3,
+   "threshold": 633.1015027010842,
+   "arl0": 465.6301513671875,
+   "se": 0.9177119996526574,
+   "n": 163840,
+   "batch": 1003,
+   "relative_error": 0.0002711284617430363
+  }
+ ],
+ "start_threshold": 520.886133602749,
+ "n_cycles_per_evaluation": 163840,
+ "procedure": "damped proportional iteration A <- A*(target/ARL)^p on the P8 addressable field; ARL_0 is asymptotically linear in the SR natural threshold; then refined at 614400 cycles per step with the same proportional correction until within 0.25%",
+ "label": "NEW_P8_CALIBRATION",
+ "verification_arl0": 465.0618955078125,
+ "verification_se": 0.44893725387013844,
+ "verification_n": 1024000,
+ "verification_relative_error": 0.0009496041906487537,
+ "verification_z": -0.9846464920805474,
+ "seconds": 798.6042821407318,
+ "polish_trace": [
+  {
+   "iter": 0,
+   "threshold": 633.1015027010842,
+   "arl0": 465.5451839192708,
+   "se": 0.5487450789458388,
+   "n": 614400,
+   "batch": 2000,
+   "relative_error": 8.860058041788445e-05
+  }
+ ],
+ "n_polish_iterations": 1,
+ "polish_cycles_per_iteration": 614400,
+ "polish_seconds": 482.6674129962921
+}

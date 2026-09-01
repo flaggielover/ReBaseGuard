@@ -1,0 +1,71 @@
+{
+ "schema": "rebaseguard.p8.protocol-amendment.v1",
+ "amendments": [
+  {
+   "id": "A1",
+   "recorded_utc": "2026-09-01T13:00:56.203888+00:00",
+   "what": "chain (E3) and drift (E4) sample sizes",
+   "from": {
+    "E3": "4,000 replicates x 80 cycles",
+    "E4": "8,000 replicates x 40 cycles"
+   },
+   "to": {
+    "E3": "2,000 replicates x 70 cycles, burn_in 20 (50 post-burn-in cycles)",
+    "E4": "6,000 replicates x 24 cycles, shift at cycle 20"
+   },
+   "why": "a chain smoke run (400 replicates x 30 cycles, cusum/gaussian, the full 26-rung ladder) measured 68 s; the declared sizes extrapolate to ~6 h of serial compute for E3 and ~17 h for E4, which was not budgeted. The reduced sizes keep the replicate-level SE of the chain ARL below ~0.5% and keep E4's delay-tail resolution at 6,000 replicates per arm.",
+   "when": "BEFORE any E3 or E4 production artifact existed (only a SMOKE-tagged file, deleted)",
+   "what_did_NOT_change": [
+    "the rho ladder (P7's, verbatim)",
+    "the burn-in of 20 cycles",
+    "the shift cycle (20, a re-baselining instant)",
+    "the metric definitions",
+    "any closure gate",
+    "the E1/E5 Gamma-matrix sizes",
+    "the preregistered tail floor of 200 events"
+   ],
+   "smoke_run_observed": {
+    "note": "the smoke run reproduced P7's qualitative chain findings (ARL_0 non-monotone in rho with a grid maximum at rho ~ 0.25 = 3.7 x rho_c; ARL_0 at rho=1 of 51 (m=1) and 81 (m=5) against P7's reported 48-80). It fixed sizes only; no gate threshold was chosen or changed from it."
+   }
+  },
+  {
+   "id": "A2",
+   "recorded_utc": "2026-09-01T13:20:11.578268+00:00",
+   "what": "the PROCEDURE by which the P8 SR thresholds are found (not gate G2)",
+   "from": "damped proportional iteration on 163,840-cycle evaluations, max 12 iterations, then one 1,024,000-cycle verification",
+   "to": "the same search, followed by a refinement phase that evaluates at 614,400 cycles and applies the same proportional correction until the residual is inside 0.25%, then the same 1,024,000-cycle verification",
+   "why": "the search-phase evaluations have a relative standard error of about 0.25%, which is not enough resolution to land inside G2's 0.5% tolerance reliably. The first pass left contam0.1 at 0.80% and t5 at 0.49%. The fix is to calibrate better, not to move the gate.",
+   "what_did_NOT_change": [
+    "gate G2's 0.5% tolerance",
+    "gate G2's 1,024,000-cycle verification sample",
+    "the frozen ARL_0 target 465.50394",
+    "the frozen Gaussian SR threshold 520.886133602749, which is not recalibrated",
+    "every frozen Stage-D CUSUM threshold, which is never recalibrated",
+    "any scientific result: no P8 Gamma or chain cell had been run at an SR non-Gaussian threshold when this change was made"
+   ],
+   "guard": "experiments/finalize_sr_calibration.sh refuses to publish results/sr_calibration.json until every non-Gaussian family is inside the tolerance, so no downstream cell can be run on an out-of-tolerance threshold.",
+   "first_pass_values_for_the_record": {
+    "t10": {
+     "A": 633.101503,
+     "arl0": 465.062,
+     "relative_error": 0.00095
+    },
+    "t5": {
+     "A": 923.966846,
+     "arl0": 463.246,
+     "relative_error": 0.00485
+    },
+    "contam0.05": {
+     "A": 6356.434673,
+     "arl0": 464.362,
+     "relative_error": 0.00245
+    },
+    "contam0.1": {
+     "A": 33633.795873,
+     "arl0": 461.785,
+     "relative_error": 0.00799
+    }
+   }
+  }
+ ]
+}

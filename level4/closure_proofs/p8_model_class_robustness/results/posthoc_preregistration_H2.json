@@ -1,0 +1,69 @@
+{
+ "schema": "rebaseguard.p8.posthoc-preregistration.v1",
+ "recorded_utc": "2026-09-01T12:50:28.314318+00:00",
+ "status": "POST_HOC_EXPLORATORY_THEN_OUT_OF_SAMPLE_CONFIRMATORY",
+ "why_this_file_exists": "The preregistered primary hypothesis H1 (CLOSURE_GATES.md G4) was formulated before any P8 production cell existed. While the E1 matrix was still running, four CUSUM cells finished and were inspected. They suggested a different structure. Rather than silently rewriting H1 -- which the protocol forbids -- the new hypotheses are frozen HERE, with the exact list of cells that were visible when they were written, and are tested on the cells that did not yet exist. H1 and gate G4 are NOT modified and their verdict stands as measured.",
+ "cells_visible_when_written": {
+  "E1_cusum_contam0.05.json": "3a6b21ac202790de89ae07e14c7eacec5f4885856bcfd171c49b68b45a8f793b",
+  "E1_cusum_gaussian.json": "b042673489d2f91bf9b4fd6987a7f31ab2957c0faa8c8caa69a0e071a54fef24",
+  "E1_cusum_t10.json": "d46b3b7a858d676715779ff9d7a3e65e6a05d516abe0ddc974bcbf3a7e97a167",
+  "E1_cusum_t3.json": "c1a967cc203bdece0ace16638fbb20ddc6aebab3c05f89dc293a5fb81160c48f",
+  "E1_cusum_t5.json": "0ced24c91a0b699451b306163cc9e8decbdded4f63b2f1bb16993bd9d8d41261"
+ },
+ "cells_held_out_when_written": [
+  "E1_cusum_contam0.1",
+  "E1_sr_gaussian",
+  "E1_sr_t10",
+  "E1_sr_t5",
+  "E1_sr_t3",
+  "E1_sr_contam0.05",
+  "E1_sr_contam0.1"
+ ],
+ "observation_that_motivated_them": "On the four visible CUSUM cells the normalised lag-selection profile w_r = (gamma_r - 1)/(gamma_0 - 1) is NOT invariant across innovation family: w_1 = 0.6466 (gaussian), 0.5535 (t10), 0.4354 (t5), 0.2860 (t3). The heavier the innovation tail, the more the stopping-time selection concentrates on the alarm-causing observation itself. K(m) therefore also varies across families, so H1's distribution axis is expected to fail.",
+ "hypotheses": {
+  "H2a_detector_invariance_of_the_lag_profile": {
+   "statement": "|w_r(cusum,f)/w_r(sr,f) - 1| <= 0.05 for every family f and every r in 1..5",
+   "test_cells": "all 6 families x r in 1..5 = 30 comparisons",
+   "criterion": "PASS iff all 30 hold",
+   "held_out": "every SR cell"
+  },
+  "H2b_w1_is_monotone_decreasing_in_fisher_information": {
+   "statement": "across the six families, w_1 is strictly decreasing in the Fisher information I(f), in BOTH detectors",
+   "fisher_information": {
+    "gaussian": 0.9999999999999999,
+    "t10": 1.057692307692308,
+    "t5": 1.249999999951539,
+    "t3": 1.9999999947644873,
+    "contam0.05": 0.8832563315870725,
+    "contam0.1": 0.796051012053651
+   },
+   "criterion": "PASS iff the measured ordering of w_1 from largest to smallest equals predicted_ordering_by_DECREASING_w1, in BOTH detectors",
+   "held_out": "both contaminated families and every SR cell",
+   "note": "this is a genuinely risky prediction: the contaminated families have LOWER Fisher information than the Gaussian but HEAVIER tails, so the 'heavier tail -> more concentration' reading and the Fisher-information reading make OPPOSITE predictions for them. Exactly one can survive.",
+   "predicted_ordering_by_INCREASING_w1": [
+    "t3",
+    "t5",
+    "t10",
+    "gaussian",
+    "contam0.05",
+    "contam0.1"
+   ],
+   "predicted_ordering_by_DECREASING_w1": [
+    "contam0.1",
+    "contam0.05",
+    "gaussian",
+    "t10",
+    "t5",
+    "t3"
+   ]
+  },
+  "H2c_K_is_a_function_of_m_and_w1_alone": {
+   "statement": "any two cells whose w_1 agree to within 1% have K(m) agreeing to within 1% for m in {2,3,5}",
+   "criterion": "PASS iff every such pair satisfies it; VACUOUS if no pair qualifies",
+   "held_out": "every SR cell"
+  }
+ },
+ "what_a_failure_means": "H2a/H2b/H2c are exploratory. A failure narrows or rejects them and changes nothing about H1, G4 or any other preregistered gate. A success is reported as OUT_OF_SAMPLE_SUPPORTED, never as preregistered confirmatory evidence.",
+ "not_a_gate": "None of H2a-H2c is a closure gate. They do not enter closure_decision.json.",
+ "integrity_note_on_contam0.05": "E1_cusum_contam0.05.json completed and landed on disk in the same minute this file was written. Its contents were NOT read before the hypotheses below were fixed -- the four cells quoted in observation_that_motivated_them are the only ones that were inspected -- but because the file existed, it is listed as VISIBLE rather than held out, and it is excluded from the held-out set. The strictly held-out set is therefore 7 cells: cusum:contam0.1 and all six SR cells. H2b's risky contaminated-family prediction is still genuinely out of sample for cusum:contam0.1 and for both contaminated families under SR."
+}

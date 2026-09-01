@@ -1,0 +1,169 @@
+{
+ "schema": "rebaseguard.p8.family-regularity.v1",
+ "note": "E[eps psi(eps)] = 1 and E[psi(eps)] = 0 are exact for every regular location family (P8-L1(a)); the Fisher information must reproduce Stage-D's independently computed E[psi'].",
+ "rows": [
+  {
+   "family": "gaussian",
+   "variance": 1.0,
+   "tail_moment_order": Infinity,
+   "E_z_psi": 0.9999999999999999,
+   "E_z_psi_error": 1.1102230246251565e-16,
+   "E_psi": 0.0,
+   "fisher_information": 0.9999999999999999,
+   "stage_d_E_psi_prime": 1.000000000001032,
+   "fisher_vs_stage_d_abs_diff": 1.032174345994008e-12,
+   "psi_vs_finite_difference_max_abs": 3.299431838854616e-10,
+   "psi_vs_P4_route_a_max_abs": 0.0,
+   "logpdf_vs_P4_route_a_max_abs": 0.0,
+   "gamma_integrand_second_moment_finite": true,
+   "gamma_integrand_third_moment_finite": true
+  },
+  {
+   "family": "t10",
+   "variance": 1.0,
+   "tail_moment_order": 10.0,
+   "E_z_psi": 0.9999999999998552,
+   "E_z_psi_error": 1.4477308241112041e-13,
+   "E_psi": 0.0,
+   "fisher_information": 1.057692307692308,
+   "stage_d_E_psi_prime": 1.0576923076848912,
+   "fisher_vs_stage_d_abs_diff": 7.416733893705896e-12,
+   "psi_vs_finite_difference_max_abs": 2.0509638432031352e-10,
+   "psi_vs_P4_route_a_max_abs": 6.661338147750939e-16,
+   "logpdf_vs_P4_route_a_max_abs": 0.0,
+   "gamma_integrand_second_moment_finite": true,
+   "gamma_integrand_third_moment_finite": true
+  },
+  {
+   "family": "t5",
+   "variance": 1.0,
+   "tail_moment_order": 5.0,
+   "E_z_psi": 0.9999999592579014,
+   "E_z_psi_error": 4.074209858373479e-08,
+   "E_psi": 0.0,
+   "fisher_information": 1.249999999951539,
+   "stage_d_E_psi_prime": 1.2500000001168037,
+   "fisher_vs_stage_d_abs_diff": 1.6526469082123185e-10,
+   "psi_vs_finite_difference_max_abs": 1.4206813503392368e-10,
+   "psi_vs_P4_route_a_max_abs": 8.881784197001252e-16,
+   "logpdf_vs_P4_route_a_max_abs": 0.0,
+   "gamma_integrand_second_moment_finite": true,
+   "gamma_integrand_third_moment_finite": true
+  },
+  {
+   "family": "t3",
+   "variance": 1.0,
+   "tail_moment_order": 3.0,
+   "E_z_psi": 0.9999921444248301,
+   "E_z_psi_error": 7.855575169912754e-06,
+   "E_psi": 0.0,
+   "fisher_information": 1.9999999947644873,
+   "stage_d_E_psi_prime": 2.000000009851547,
+   "fisher_vs_stage_d_abs_diff": 1.5087059823670756e-08,
+   "psi_vs_finite_difference_max_abs": 9.854139726428457e-11,
+   "psi_vs_P4_route_a_max_abs": 4.440892098500626e-16,
+   "logpdf_vs_P4_route_a_max_abs": 0.0,
+   "gamma_integrand_second_moment_finite": true,
+   "gamma_integrand_third_moment_finite": false
+  },
+  {
+   "family": "contam0.05",
+   "variance": 1.4,
+   "tail_moment_order": Infinity,
+   "E_z_psi": 1.0000000000000002,
+   "E_z_psi_error": 2.220446049250313e-16,
+   "E_psi": 0.0,
+   "fisher_information": 0.8832563315870725,
+   "stage_d_E_psi_prime": 0.8832563315825681,
+   "fisher_vs_stage_d_abs_diff": 4.504396855509185e-12,
+   "psi_vs_finite_difference_max_abs": 6.3107741254953e-11,
+   "psi_vs_P4_route_a_max_abs": 0.0,
+   "logpdf_vs_P4_route_a_max_abs": 0.0,
+   "gamma_integrand_second_moment_finite": true,
+   "gamma_integrand_third_moment_finite": true
+  },
+  {
+   "family": "contam0.1",
+   "variance": 1.8,
+   "tail_moment_order": Infinity,
+   "E_z_psi": 1.0000000000000002,
+   "E_z_psi_error": 2.220446049250313e-16,
+   "E_psi": 0.0,
+   "fisher_information": 0.796051012053651,
+   "stage_d_E_psi_prime": 0.7960510120495221,
+   "fisher_vs_stage_d_abs_diff": 4.128919428580957e-12,
+   "psi_vs_finite_difference_max_abs": 6.555433973431946e-11,
+   "psi_vs_P4_route_a_max_abs": 0.0,
+   "logpdf_vs_P4_route_a_max_abs": 0.0,
+   "gamma_integrand_second_moment_finite": true,
+   "gamma_integrand_third_moment_finite": true
+  }
+ ],
+ "draw_distribution_check": [
+  {
+   "family": "gaussian",
+   "p8_var": 1.0015625769166676,
+   "p4_var": 1.0015625769166676,
+   "ks_stat": 0.0,
+   "ks_p": 1.0,
+   "n": 400000
+  },
+  {
+   "family": "t10",
+   "p8_var": 1.0041256278248814,
+   "p4_var": 1.0041256278248814,
+   "ks_stat": 0.0,
+   "ks_p": 1.0,
+   "n": 400000
+  },
+  {
+   "family": "t5",
+   "p8_var": 1.0096421087787608,
+   "p4_var": 1.0096421087787608,
+   "ks_stat": 0.0,
+   "ks_p": 1.0,
+   "n": 400000
+  },
+  {
+   "family": "t3",
+   "p8_var": 1.0010017228256622,
+   "p4_var": 1.0010017228256622,
+   "ks_stat": 0.0,
+   "ks_p": 1.0,
+   "n": 400000
+  },
+  {
+   "family": "contam0.05",
+   "p8_var": 1.3962229845883956,
+   "p4_var": 1.3962229845883956,
+   "ks_stat": 0.0,
+   "ks_p": 1.0,
+   "n": 400000
+  },
+  {
+   "family": "contam0.1",
+   "p8_var": 1.797196348461652,
+   "p4_var": 1.797196348461652,
+   "ks_stat": 0.0,
+   "ks_p": 1.0,
+   "n": 400000
+  }
+ ],
+ "stage_d_cusum_thresholds": {
+  "gaussian": 5.0,
+  "t10": 5.234517732360302,
+  "t5": 5.669498491821448,
+  "t3": 6.337011391962933,
+  "contam0.05": 7.671712168173407,
+  "contam0.1": 9.381983052368211
+ },
+ "gates": {
+  "G1d_E_z_psi_max_error": 7.855575169912754e-06,
+  "G1d_E_psi_max_abs": 0.0,
+  "G1d_fisher_max_abs_diff": 1.5087059823670756e-08,
+  "G1d_pass": true,
+  "G1e_psi_max_abs_diff": 8.881784197001252e-16,
+  "G1e_logpdf_max_abs_diff": 0.0,
+  "G1e_pass": true
+ }
+}
