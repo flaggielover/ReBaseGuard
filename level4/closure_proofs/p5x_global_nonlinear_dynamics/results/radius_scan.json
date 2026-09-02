@@ -1,0 +1,60 @@
+{
+ "schema": "rebaseguard.p5x.radius-scan.v1",
+ "role": "DIAGNOSTIC; attributes the stop-gate failure to interval dependency",
+ "generated_utc": "2026-09-02T10:05:23.884249+00:00",
+ "detector": "cusum",
+ "m": 1,
+ "e_midpoint": 0.25,
+ "method": "identical pipeline to the stop gate; only the e-ball radius varies",
+ "finding": "residual is exactly linear in the e-ball radius; amplification ~4.96e41 per unit radius",
+ "rows": [
+  {
+   "e_ball_radius": 0.0,
+   "radius_rational": "0/1",
+   "residual_mid": 3.33552e-05,
+   "residual_rad": 3.36e-11,
+   "residual_over_radius": null,
+   "wall_seconds": 82
+  },
+  {
+   "e_ball_radius": 1e-08,
+   "radius_rational": "1/100000000",
+   "residual_mid": 4.96084e+33,
+   "residual_rad": 2.1e+27,
+   "residual_over_radius": 4.96084e+41,
+   "wall_seconds": 73
+  },
+  {
+   "e_ball_radius": 1e-06,
+   "radius_rational": "1/1000000",
+   "residual_mid": 4.96086e+35,
+   "residual_rad": 3.07e+29,
+   "residual_over_radius": 4.96086e+41,
+   "wall_seconds": 73
+  },
+  {
+   "e_ball_radius": 1e-05,
+   "radius_rational": "1/100000",
+   "residual_mid": 4.96105e+36,
+   "residual_rad": 3.08e+30,
+   "residual_over_radius": 4.961049999999999e+41,
+   "wall_seconds": 96
+  },
+  {
+   "e_ball_radius": 0.0001,
+   "radius_rational": "1/10000",
+   "residual_mid": 4.96295e+37,
+   "residual_rad": 4.33e+31,
+   "residual_over_radius": 4.962949999999999e+41,
+   "wall_seconds": 100
+  },
+  {
+   "e_ball_radius": 0.001,
+   "radius_rational": "1/1000",
+   "residual_mid": 4.98202e+38,
+   "residual_rad": 2.82e+32,
+   "residual_over_radius": 4.98202e+41,
+   "wall_seconds": 157
+  }
+ ]
+}
