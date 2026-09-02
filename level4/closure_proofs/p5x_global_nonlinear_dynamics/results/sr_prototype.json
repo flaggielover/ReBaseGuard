@@ -1,0 +1,147 @@
+{
+ "schema": "rebaseguard.p5x.sr_prototype.v1",
+ "checkpoint_i": "3fe7e0a81bb8a46640469e1b1186998ee1363df4",
+ "config": {
+  "detector": "SR",
+  "m": 1,
+  "e_cell": [
+   "24/100",
+   "26/100"
+  ],
+  "degree": 16,
+  "state_grid": "64x64 uniform in zeta (the R4 production variable)",
+  "bits": 192,
+  "evaluator": "R6 minimal stable-tail"
+ },
+ "criteria": {
+  "P1_candidate_solve": {
+   "monomial_cond": 6.43e+19,
+   "chebyshev_cond": 405000.0,
+   "ghat_x0": -1.840342283103732,
+   "pass": true
+  },
+  "P2_residual_evaluated": {
+   "cells": 4096,
+   "delta": 61783380000.0,
+   "worst_cell": [
+    63,
+    63
+   ],
+   "pass": true
+  },
+  "P3_resolvent_bound": {
+   "C": null,
+   "n_max": 4000,
+   "q_final": 1.0,
+   "mass_sum": 1.0079779432018743,
+   "wall_s": 61.165035009384155,
+   "pass": false,
+   "note": "q never left 1.0 in 4000 sweeps"
+  },
+  "P4_half_width": {
+   "required": 0.2,
+   "achieved": null,
+   "pass": false,
+   "note": "C unavailable and delta=6.18e10; half-width cannot be formed"
+  },
+  "P5_panel_softplus_free": {
+   "z_panels": 0,
+   "softplus_approximations": 0,
+   "pass": true
+  },
+  "P6_correspondence_diagnostic_only": {
+   "candidate_implied_R_at_0.25": -1.590342283103732,
+   "monte_carlo": {
+    "0.24": [
+     -1.593369,
+     0.001273
+    ],
+    "0.25": [
+     -1.592117,
+     0.001251
+    ],
+    "0.26": [
+     -1.589105,
+     0.00122
+    ]
+   },
+   "deviation_in_standard_errors": 1.42,
+   "r2_cusum_same_cell": [
+    -1.584952,
+    -1.567644
+   ],
+   "pass": true,
+   "note": "DIAGNOSTIC ONLY - can refute, never establish"
+  },
+  "P7_resources": {
+   "solve_s": 0.1,
+   "residual_sweep_s": 1.8,
+   "resolvent_s": 61.165035009384155,
+   "budget_s": 3600,
+   "pass": true
+  },
+  "P8_exact_rational_e": {
+   "cell_endpoints": "24/100, 26/100 exact",
+   "pass": true
+  }
+ },
+ "gate": "FAIL",
+ "failed_criteria": [
+  "P3_resolvent_bound",
+  "P4_half_width"
+ ],
+ "tractability": {
+  "ms_per_cell": 0.447,
+  "full_64x64_sweep_s": 1.8,
+  "erfc_calls_per_sweep": 269248,
+  "z_panels": 0,
+  "softplus": 0,
+  "verdict": "ESTABLISHED - the panel-free architecture is fast"
+ },
+ "blockers": [
+  {
+   "id": "B1",
+   "class": "RESOLVENT_BOUND_NOT_OBTAINED",
+   "statement": "the frozen max-over-image-box value iteration is ADVERSARIAL, not probabilistic: max over the image box lets the state remain at the safest reachable point, so the per-sweep decay is the one-step boundary mass ~4e-11 rather than the true ~1/130. q stays exactly 1.0 for all 4000 frozen sweeps.",
+   "evidence": {
+    "q_at_n": {
+     "1": 1.0,
+     "10": 1.0,
+     "100": 1.0,
+     "500": 1.0,
+     "1000": 1.0,
+     "2000": 1.0,
+     "4000": 1.0
+    },
+    "mc_scoped_E_tau_at_0.25": 129.59,
+    "mc_scoped_E_tau_at_0": 472.13
+   }
+  },
+  {
+   "id": "B2",
+   "class": "INTERVAL_DEPENDENCY",
+   "statement": "the residual is correct at points (2.25e-5, both bases agreeing to 6 digits) but blows up by 2.99e9 when evaluated as a ball over a 1/64 cell, because the monomial-in-zeta candidate carries coefficients ~2e10 with heavy cancellation. Same defect CLASS as the first certified CUSUM method (4.96e41), which R-A' Device 2 and R2's Bernstein range bound fixed for CUSUM.",
+   "evidence": {
+    "point_residual": 2.252942e-05,
+    "cell_residual": 67367.13,
+    "blowup": 2990000000.0,
+    "max_monomial_coef": 20120000000.0
+   }
+  }
+ ],
+ "stop": {
+  "rule": "autonomous STOP condition 8 - multiple scientifically distinct repair paths exist for both blockers and none was pre-frozen",
+  "paths_B1": [
+   "finer grid with no cell margin",
+   "Lyapunov/geometric drift bound",
+   "one-sided chart reduction",
+   "spectral bound on K_e"
+  ],
+  "paths_B2": [
+   "Bernstein range bound on the polynomial part (R2 precedent)",
+   "per-cell Taylor model / centred form (R-A' Device 2 precedent)",
+   "lower degree with a larger point residual",
+   "reformulated candidate basis"
+  ]
+ }
+}
