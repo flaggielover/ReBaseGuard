@@ -74,3 +74,14 @@ substitution) change only how the range bound is computed. `X1`-`X6` consume the
 same certified scalars with the same semantics; the only observable difference
 is a slightly larger radius at depth 0, which `X2`/`X3` take as hypotheses and
 are indifferent to. `LEAN_INTERFACE_CHANGED = NO`.
+
+---
+
+## Re-check after R3 (SR local architecture feasibility)
+
+R3 proposed and tested a certifier architecture for SR. Every construction —
+local softplus enclosure, composition, centred Gaussian moments, core/strip
+split — lives **strictly below** the theorem interface: it changes how
+`R_{SR,m}` and `S_{SR,m}` are enclosed, never what they are. `X1`-`X6` consume
+the same certified scalars with the same semantics.
+`LEAN_INTERFACE_CHANGED = NO`.
