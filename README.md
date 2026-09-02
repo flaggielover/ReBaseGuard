@@ -33,6 +33,7 @@ At the current authoritative repository state, the campaign status is:
 | P7 | `CLOSED` | Independent adjudication confirms material monitoring degradation under recursive re-baselining, while \(\rho_c\) is a local mathematical boundary, not an operational safety boundary under the frozen criterion. |
 | P8 | `FAIL` | Broad tested local repulsion and operational degradation reproduce, but the cross-family window law and its sub-gates are rejected, G7 fails literally, and the temporal-integrity gate fails. The evidence is scope-bound and novelty is not independently adjudicated. |
 | P9 | `PARTIAL` | The retrospective synthesis, P8 quarantine, exact \(\rho=0\) invariant law, and stationary mixture identity survive. P9-T2's strict ARL deficit is conditional as submitted; the claim ledger inflates its monotonicity premise, the SR replay has a first-step recurrence mismatch, and A5/A6 lack supplied generators. |
+| P9R | `CLOSED` | Independent adjudication closes the separate P9 repair lineage: the pre-result anchor is valid, original P9 remains immutable and `PARTIAL`, the \(\rho=0\) theorem is exact in frozen scope, the strict deficit remains conditional on unproved `ASM-DOM`, the SR recurrence is corrected, and A5/A6 are reproducible. This does not close Level 4 globally. |
 
 ## Why this problem exists
 
@@ -176,8 +177,9 @@ observations, and novelty status.
   assume detector or P7-boundary transfer, or claim novelty.
 - **P9:** retain the retrospective ledger/quarantine work and the exact
   `rho=0` kernel/mixture identity. Repair P9-T2's missing monotonicity premise,
-  the SR recurrence, and A5/A6 reproducibility in a separately anchored P9R
-  namespace before reconsidering closure.
+  the SR recurrence, and A5/A6 reproducibility through the independently
+  adjudicated, separately anchored P9R lineage. P9 remains `PARTIAL`; P9R is
+  `CLOSED`, with `ASM-DOM` and global monotonicity still unproved.
 
 ## Research status and reproducibility
 

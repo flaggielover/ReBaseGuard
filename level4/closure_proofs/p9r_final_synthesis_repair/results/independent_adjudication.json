@@ -1,0 +1,105 @@
+{
+  "schema": "rebaseguard.p9r.independent-adjudication.v1",
+  "adjudication_scope_commit": "eea2bfb43803e853a1bc84d10410fd9f3984d849",
+  "integration_base_observed_during_audit": "e02b5ce04798668fc4d406d5b528887dccf66da6",
+  "adjudication_commit": "SELF",
+  "final_p9r_verdict": "CLOSED",
+  "p9_original_verdict": "PARTIAL",
+  "temporal_repair_anchor": "VALID",
+  "original_p9_preserved": true,
+  "p9r_t2a": "EXACT",
+  "rho0_kernel": "EXACT_CONSTANT_GAUSSIAN",
+  "invariant_law": "EXACT_UNIQUE_GAUSSIAN",
+  "stationary_mixture_identity": "EXACT",
+  "local_multiplier": "EXACT_ZERO_AT_RHO0",
+  "p9r_t2b": "CONDITIONAL_ON_ASM_DOM",
+  "asm_dom": "NOT_ESTABLISHED",
+  "global_monotonicity": "EMPIRICALLY_SUPPORTED",
+  "operational_safety": {
+    "frozen_p7_rule": "REJECTED_EMPIRICALLY",
+    "universal_impossibility": "UNSUPPORTED"
+  },
+  "sr_recurrence": "CORRECTED",
+  "original_log2_defect": "REPRODUCED_EXACTLY",
+  "a5_a6_reproducibility": "REPAIRED",
+  "claim_inflation": "NO_MATERIAL_INFLATION_WITH_REVIEWER_CORRECTIONS",
+  "dependency_graph": "PASS_WITH_REVIEWER_LIMITATIONS",
+  "p3_x1_class": "CERTIFIED_NUMERICAL",
+  "p7_monotonicity_class": "EMPIRICALLY_SUPPORTED_NOT_PROVED",
+  "p8_original_verdict": "FAIL",
+  "p8r_verdict": "CLOSED",
+  "p8r_required_for_p9r_core": false,
+  "d09": "BLOCKS_GLOBAL_LEVEL4_CLOSURE_DOES_NOT_BLOCK_P9R",
+  "d13": "SCOPE_LIMITING_DOES_NOT_BLOCK_P9R",
+  "d15": "PROVENANCE_LIMITATION_DOES_NOT_BLOCK_P9R",
+  "protected_tree": "PASS_AT_CHECKPOINT_B",
+  "novelty_status": "NOT_ESTABLISHED",
+  "scientific_core": "SURVIVES_IN_FROZEN_SCOPE",
+  "level4_global_closure": "NO",
+  "authoritative_status_recommendation": "RECORD_P9R_CLOSED_RETAIN_P9_PARTIAL_AND_LEVEL4_GLOBAL_NO",
+  "reviewer_corrections": [
+    "IMMATERIAL is not an equivalence conclusion; the experiment shows only a small observed aggregate SR difference.",
+    "The typed-graph validator is a consistency checker and not a semantic proof of every source classification or edge type.",
+    "The evenness theorem is valid, but the written sign-coupling explanation should be read as Z_e mapping to -Z_e, which has the Z_-e law."
+  ],
+  "evidence": {
+    "checkpoint_a": "c1e8f98bb908aff095814f3c45994ecc0f0846ed",
+    "checkpoint_b": "eea2bfb43803e853a1bc84d10410fd9f3984d849",
+    "checkpoint_b_direct_parent_is_a": true,
+    "anchor_file_count": 34,
+    "anchor_result_files": [
+      "results/integrity/protected_tree_manifest_pre.json"
+    ],
+    "source_manifest_aggregate_sha256": "c1d53e2cf66e0e18b9d4599cef8b07d3151c9cf27033e682355094a6bb16b46d",
+    "protocol_digest_aggregate_sha256": "446f41a3815c4cc7c76daad89d125973aeaa1f72b318cf7919ea37c0139549e3",
+    "original_p9_tree": "3aec482ec1f87184848b4bb60a7ee7c6928e3127",
+    "p9r_checkpoint_b_tree": "f08e6dabc5350b763a4cbd925b74dab61be62a0f",
+    "protected_file_count": 3428,
+    "protected_changed_count": 0,
+    "claim_nodes": 75,
+    "typed_edges": 108,
+    "typed_graph_violations": 0,
+    "collapsed_graph_violations": 36,
+    "cusum_reproduction": {
+      "consistent_cells": 8,
+      "total_cells": 8,
+      "max_abs_z": 2.3630617101331013
+    },
+    "sr_reproduction": {
+      "consistent_cells": 8,
+      "total_cells": 8,
+      "max_abs_z": 1.7282259220311964
+    },
+    "response_grid": {
+      "range": [0.0, 8.0],
+      "nodes_per_detector": 321,
+      "paths_per_node": 20000,
+      "adjacent_pairs_total": 640,
+      "increases_at_3se": 0,
+      "multiple_comparison_adjustment": false,
+      "common_random_numbers_across_nodes": false
+    },
+    "sr_certificate": {
+      "model": "frozen symmetric two-chart Shiryaev-Roberts",
+      "m": 1,
+      "threshold": 520.886133602749,
+      "precision_bits": 192,
+      "gamma_lower": "5.80039179950844233566163341719178681375064361627654095",
+      "gamma_upper": "28.78128580308149205926606197637053008078060638372345905",
+      "auditors_passed": 3,
+      "focused_tests_passed": 28
+    },
+    "tests": {
+      "level1_3_unified_verifier": {"status": "ALL_CHECKS_PASSED", "skipped": 0, "proof_tests_passed": 90},
+      "p9r_focused": {"passed": 110, "failed": 0},
+      "level4_core": {"passed": 290, "failed": 0},
+      "p7": {"passed": 31, "failed": 0},
+      "novelty": {"passed": 17, "failed": 1},
+      "external_validation_v2": {"passed": 43, "failed": 2},
+      "final_global_reaudit": {"passed": 33, "failed": 3},
+      "final_level4_closure": {"passed": 32, "failed": 4},
+      "p8r": {"passed": 71, "failed": 1},
+      "p9_clean_tree": {"passed": 44, "failed": 0}
+    }
+  }
+}
