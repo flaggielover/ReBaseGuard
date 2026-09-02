@@ -144,3 +144,27 @@ unchanged.
 | correction | frozen bytes **not edited**. The gate reports `P2` twice: `pass` is the literal frozen verdict, and `pass_corrected` uses the test that was intended — overlap against a reference **widened by a Richardson estimate of its own truncation error**, together with the frozen `<= 1e-12` relative-half-width requirement. The gate reports `gate` (frozen conjunction, binding) and `gate_corrected` separately, both labelled |
 | honesty note | the correction is **post-hoc**: it was written after observing that the literal criterion could not pass. It is disclosed as post-hoc wherever it is reported, and the frozen verdict is the one carried in the headline. `P4`, the decisive criterion, is untouched by this and was not re-budgeted |
 | lesson | a criterion comparing a rigorous enclosure against a non-rigorous numerical reference must be stated as *overlap with a widened reference*, never as *containment*. Direction matters, and "high-order quadrature" is not an enclosure |
+
+## `D12` — the frozen R5 `erfcx` branch is numerically inferior in Arb
+
+| field | content |
+|---|---|
+| subject | `compute_optimization_r5_scaled_tail/R5_FROZEN_SPEC.md` §2, the `erfcx` branch rule, frozen at Checkpoint G `f19f8d13caae1d9d8d21a6237fe1b71ee06b8e63` |
+| class | **frozen implementation-choice defect.** The *mathematics* is correct — `erfcx(t) = U(1/2,1/2,t^2)/sqrt(pi)` was verified to overlap `exp(t^2)erfc(t)` at eight arguments — but the *evaluator* chosen is the wrong one |
+| statement | the rule freezes `t > 2 -> hypgeom_u(1/2,1/2,t^2)/sqrt(pi)`. That choice was made on evidence gathered at **point** arguments, where Arb's `U` gives relative radius `~5e-60`. On **ball** arguments Arb's `U` loses up to 26 decimal digits: at `t = 7.5708` (a ball of relative radius `5.3e-58`) it returns relative radius `1.772e-29`, while the true sensitivity is `7.3e-58` |
+| consequence | `Q3` amplification `2.238e20` — **worse than R4's `2.136e17` by a factor of 1048**; and `Q7` runtime `2.2617 ms` against the `2.0 ms` budget, `COST_FAIL`. The frozen gate fails on both, plus `Q2` (the R5 interval is wider than R4's, so `R5 subset R4` cannot hold) |
+| what is **not** affected | `Q1` passes: the scaled interval overlaps R4's at **every** `k` in `-16..16`. The algebra of `SCALED_TAIL_DERIVATION.md` §3-§5 is correct; `L-R5.1`..`L-R5.9` stand. The defect is confined to which routine evaluates `erfcx` |
+| correction | frozen bytes **not edited**. Two post-hoc variants are reported, labelled: `expbranch` (`erfcx = exp(t^2)erfc(t)` throughout) and `minimal` (regime-split `erfc` difference, no exponent folding). Both give amplification `1.0027e2` |
+| how found | the pre-gate smoke test showed the scaled path was *worse* than R4 (`1.77e-29` vs `1.68e-32`), which was traced to `hypgeom_u` on ball input. Found before the gate ran, but after the spec was frozen |
+| residual classification | `ARB_SPECIAL_FUNCTION_LIMITATION` |
+
+## `D13` — `Q4` encoded a mechanism that R5's own diagnostic had already refuted
+
+| field | content |
+|---|---|
+| subject | `R5_FROZEN_SPEC.md` §4, criterion `Q4` (`huge_tiny_intermediate = NO`), frozen at Checkpoint G |
+| statement | `Q4` forbids constructing any product of a `|log10| > 20` factor with a `|log10| < -20` factor. It encodes the R4 brief's hypothesis that the `2^58` came from forming `exp(k^2/2-ke) x [Phi(b)-Phi(a)]` as `~1e55 x ~1e-55`. **§1 of `SCALED_TAIL_DERIVATION.md` — written by me, in the same commit — measured that this is not the mechanism**: there is no cross-`k` cancellation (`max|G_k I_k|/|sum| = 0.9933`), and the entire radius is produced by the `1 + erf` branch inside a single `I_k` |
+| consequence | `Q4` is the only criterion that forced the exponent-folding architecture and hence the `erfcx`/`hypgeom_u` choice of `D12`. `Q4` **passed** (`0` huge-tiny products) while `Q3`, the criterion that actually matters, failed. The two post-hoc variants violate `Q4` (26 and 4 products respectively) and achieve amplification `1.0027e2` — a factor `2.1e15` better than R4 |
+| finding | a `huge x tiny` product is **harmless when both factors carry full relative accuracy**, because relative error is preserved under multiplication. `Q4` is a hygiene proxy, not a conditioning criterion, and it was allowed to override the measured diagnosis |
+| correction | frozen bytes **not edited**; `Q4` remains part of the binding conjunction and is reported as passing. The variants that violate it are reported as **post-hoc**, and the gate verdict stays `FAIL` |
+| lesson | this is the third mis-specified criterion in the campaign (`D11`, then `Q4`). Twice now a criterion was frozen from an inherited hypothesis rather than from the measurement already in hand. A frozen criterion must be checked against the campaign's own diagnostics **before** the anchor commit, not after |

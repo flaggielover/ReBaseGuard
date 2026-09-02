@@ -1,0 +1,294 @@
+{
+ "schema": "rebaseguard.p5x.r5.gate.v1",
+ "generated_utc": "2026-09-02T17:07:37.070276+00:00",
+ "checkpoint_g": "f19f8d13caae1d9d8d21a6237fe1b71ee06b8e63",
+ "git_commit": "f19f8d13caae1d9d8d21a6237fe1b71ee06b8e63",
+ "config": {
+  "bits": 192,
+  "candidate_degree": 16,
+  "patch": [
+   17,
+   11
+  ],
+  "e": "1/4",
+  "k_range": [
+   -16,
+   16
+  ],
+  "state": "patch centre (point)",
+  "l": "[-5.629951559340937758125572 +/- 4.19e-25]",
+  "u": "[5.043315675350893793405427 +/- 1.08e-25]"
+ },
+ "selftest": {
+  "verdict": "PASS",
+  "detail": {
+   "S1_central_regime_D": {
+    "k": 0,
+    "regime": "D",
+    "ok": true
+   },
+   "S2_deep_negative_tail": {
+    "k": 16,
+    "regime": "B",
+    "ok": true
+   },
+   "S3_deep_positive_tail": {
+    "k": -16,
+    "regime": "C",
+    "ok": true
+   },
+   "S5_both_charts": {
+    "ok": true,
+    "note": "G_k spans i-j over both zeta^+ and zeta^-"
+   },
+   "S6_k_sign_coverage": {
+    "ok": true
+   },
+   "S7_boundary_switching": {
+    "k_hi": 6,
+    "k_lo": -6,
+    "cases": {
+     "5": {
+      "regime": "D",
+      "overlaps_R4": true
+     },
+     "6": {
+      "regime": "B",
+      "overlaps_R4": true
+     },
+     "7": {
+      "regime": "B",
+      "overlaps_R4": true
+     },
+     "-7": {
+      "regime": "C",
+      "overlaps_R4": true
+     },
+     "-6": {
+      "regime": "C",
+      "overlaps_R4": true
+     },
+     "-5": {
+      "regime": "D",
+      "overlaps_R4": true
+     }
+    },
+    "ok": true
+   },
+   "S10_live_limits_identical": {
+    "ok": true
+   },
+   "S11_erfcx_branch_seam": {
+    "exp_branch_at_2": "[0.25539567631050574387 +/- 4.92e-21]",
+    "U_branch_just_above": "[0.25538499708233246085 +/- 3.72e-21]",
+    "ok": true
+   },
+   "S12_Gk_matches_R4": {
+    "r4": "[1.006778979954588506337282 +/- 1.29e-25]",
+    "via_compute_Gk": "[1.006778979954588506337282 +/- 1.29e-25]",
+    "ok": true
+   },
+   "S4_near_equal_tail_bounds": {
+    "W_min": "[0.9961640701886751383284382 +/- 2.34e-26]",
+    "regime_D_min_diff": "0.19078688886760390794",
+    "regime_BC_min_ratio": "3.13312228929",
+    "ok": true
+   },
+   "S8_brute_force_yspace": {
+    "status": "DIAGNOSTIC ONLY - not rigorous, cannot pass or fail the gate"
+   },
+   "S9_simpson": {
+    "status": "DIAGNOSTIC ONLY - not rigorous, cannot pass or fail the gate"
+   },
+   "all_k_overlap_R4": true
+  }
+ },
+ "regimes_used": {
+  "-16": "C",
+  "-15": "C",
+  "-14": "C",
+  "-13": "C",
+  "-12": "C",
+  "-11": "C",
+  "-10": "C",
+  "-9": "C",
+  "-8": "C",
+  "-7": "C",
+  "-6": "C",
+  "-5": "D",
+  "-4": "D",
+  "-3": "D",
+  "-2": "D",
+  "-1": "D",
+  "0": "D",
+  "1": "D",
+  "2": "D",
+  "3": "D",
+  "4": "D",
+  "5": "D",
+  "6": "B",
+  "7": "B",
+  "8": "B",
+  "9": "B",
+  "10": "B",
+  "11": "B",
+  "12": "B",
+  "13": "B",
+  "14": "B",
+  "15": "B",
+  "16": "B"
+ },
+ "criteria": {
+  "Q1_per_k_overlap_with_R4": {
+   "all": true,
+   "failing_k": [],
+   "pass": true
+  },
+  "Q2_summed_rigorous": {
+   "overlaps_R4": true,
+   "R5_subset_R4": false,
+   "R5": "[1.00677897995458850633728212897 +/- 2.23e-30]",
+   "R4": "[1.00677897995458850633728212897 +/- 2.23e-30]",
+   "pass": false
+  },
+  "Q3_amplification": {
+   "value": 2.238123651003098e+20,
+   "threshold": 1000000000000.0,
+   "r4_reference": 2.1355909533505946e+17,
+   "pass": false
+  },
+  "Q4_huge_tiny": {
+   "count": 0,
+   "max_abs_log10": 46.835005367071254,
+   "max_raw_prefactor_log10": 32.835826909969065,
+   "min_tail_factor": 0.0372381744632833,
+   "status": "NO",
+   "pass": true
+  },
+  "Q5_z_panels": {
+   "count": 0,
+   "pass": true
+  },
+  "Q6_softplus": {
+   "count": 0,
+   "pass": true
+  },
+  "Q7_runtime": {
+   "t_patch_ms": 2.2617200000000004,
+   "budget_ms": 2.0,
+   "reps": 100,
+   "class": "COST_FAIL",
+   "pass": false
+  },
+  "Q8_no_empirical_monotonicity": {
+   "note": "only Phi/exp increasing, erfcx decreasing - all classical",
+   "pass": true
+  },
+  "Q9_exact_rational_e": {
+   "e": "0.25000000000000000000",
+   "radius": 0.0,
+   "pass": true
+  },
+  "Q10_xi_recurrence_unchanged": {
+   "live_limits_identical": true,
+   "Gk_matches_R4": true,
+   "imports_xi_kernel": true,
+   "pass": true
+  }
+ },
+ "gate": "FAIL",
+ "failed_criteria": [
+  "Q2_summed_rigorous",
+  "Q3_amplification",
+  "Q7_runtime"
+ ],
+ "amp_class": "R5_P3_FAIL",
+ "projection": {
+  "formula": "835*1210*t_patch*2*43/3600",
+  "projected_SR_cpu_hours": 54.589188047777796,
+  "cusum_cpu_hours": 146.0,
+  "projected_total_cpu_hours": 200.58918804777778
+ },
+ "post_hoc_variants": {
+  "status": "POST-HOC. Not part of the frozen gate verdict.",
+  "detail": {
+   "expbranch": {
+    "amplification": 100.27383935451508,
+    "overlaps_R4": true,
+    "huge_tiny_products": 26,
+    "t_patch_ms": 0.4777400000000004,
+    "projected_SR_cpu_hours": 11.530798992777786,
+    "amp_class": "R5_P3_BREAKTHROUGH"
+   },
+   "minimal": {
+    "amplification": 100.27378582954407,
+    "overlaps_R4": true,
+    "huge_tiny_products": 4,
+    "t_patch_ms": 0.38848999999999967,
+    "projected_SR_cpu_hours": 9.376648596944436,
+    "amp_class": "R5_P3_BREAKTHROUGH"
+   }
+  }
+ },
+ "precision_sweep": [
+  {
+   "bits": 192,
+   "frozen": {
+    "amplification": 2.238123651003098e+20,
+    "rad": 3.565536684527267e-38
+   },
+   "minimal": {
+    "amplification": 100.27378582954407,
+    "rad": 1.5974535710367457e-56
+   }
+  },
+  {
+   "bits": 256,
+   "frozen": {
+    "amplification": 3.029348889695764e+20,
+    "rad": 2.6161967623600825e-57
+   },
+   "minimal": {
+    "amplification": 100.28078842163086,
+    "rad": 8.660417916469675e-76
+   }
+  },
+  {
+   "bits": 320,
+   "frozen": {
+    "amplification": 2.8925791759662422e+20,
+    "rad": 1.35421195321962e-76
+   },
+   "minimal": {
+    "amplification": 100.27722823619843,
+    "rad": 4.69465528347483e-95
+   }
+  },
+  {
+   "bits": 384,
+   "frozen": {
+    "amplification": 3.034773093916397e+20,
+    "rad": 7.702077601810277e-96
+   },
+   "minimal": {
+    "amplification": 100.28352224826813,
+    "rad": 2.545137467072544e-114
+   }
+  },
+  {
+   "bits": 512,
+   "frozen": {
+    "amplification": 3.038308628531092e+20,
+    "rad": 2.266074099813048e-134
+   },
+   "minimal": {
+    "amplification": 100.28375041484833,
+    "rad": 7.479503803965789e-153
+   }
+  }
+ ],
+ "runtime": {
+  "wall_seconds": 0.4033350944519043,
+  "peak_rss_mib": 30.546875
+ }
+}
