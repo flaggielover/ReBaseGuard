@@ -1,0 +1,227 @@
+{
+ "schema": "rebaseguard.p8r.sr-calibration-cell.v1",
+ "campaign": "P8R",
+ "generator": "experiments/run_calibration.py",
+ "argv": [
+  "experiments/run_calibration.py",
+  "t3"
+ ],
+ "git_commit": "ee61e240998e468eff66a076226eadc70109f9f5",
+ "generated_utc": "2026-09-02T02:17:28Z",
+ "environment": {
+  "python": "3.14.5",
+  "numpy": "2.5.2",
+  "scipy": "1.18.0",
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "machine": "arm64"
+ },
+ "address_tags": [
+  "p8r/cal_search/sr_arl0",
+  "p8r/cal_verify_1/sr_arl0",
+  "p8r/cal_verify_2/sr_arl0"
+ ],
+ "payload_sha256": "1669b3cd2b770674f92faf605de6918787a0f51589fe941e08ace4873c0ce650",
+ "payload": {
+  "family": "t3",
+  "detector": "sr",
+  "target_arl0": 465.50394,
+  "start_threshold": 520.886133602749,
+  "search_trace": [
+   {
+    "stage": "S1",
+    "iter": 0,
+    "threshold_in": 520.886133602749,
+    "arl0": 256.2810287475586,
+    "se": 0.5347534994022601,
+    "n": 262144,
+    "batch": 1000,
+    "row_blocks": 64,
+    "cycles": 262144,
+    "relative_error": 0.44945465177467975,
+    "threshold_out": 946.127572018949,
+    "address_class": "cal_search"
+   },
+   {
+    "stage": "S1",
+    "iter": 1,
+    "threshold_in": 946.127572018949,
+    "arl0": 351.02044677734375,
+    "se": 0.6929920817636578,
+    "n": 262144,
+    "batch": 1001,
+    "row_blocks": 64,
+    "cycles": 262144,
+    "relative_error": 0.24593453112911623,
+    "threshold_out": 1616.3908803030113,
+    "address_class": "cal_search"
+   },
+   {
+    "stage": "S1",
+    "iter": 2,
+    "threshold_in": 1616.3908803030113,
+    "arl0": 454.2678642272949,
+    "se": 0.8609375262916815,
+    "n": 262144,
+    "batch": 1002,
+    "row_blocks": 64,
+    "cycles": 262144,
+    "relative_error": 0.02413744505085194,
+    "threshold_out": 1700.5428694958443,
+    "address_class": "cal_search"
+   },
+   {
+    "stage": "S1",
+    "iter": 3,
+    "threshold_in": 1700.5428694958443,
+    "arl0": 468.30296325683594,
+    "se": 0.938746525245552,
+    "n": 262144,
+    "batch": 1003,
+    "row_blocks": 64,
+    "cycles": 262144,
+    "relative_error": 0.00601288843406124,
+    "threshold_out": 1683.6240363817349,
+    "address_class": "cal_search"
+   },
+   {
+    "stage": "S1",
+    "iter": 4,
+    "threshold_in": 1683.6240363817349,
+    "arl0": 464.35455322265625,
+    "se": 0.8176193466027605,
+    "n": 262144,
+    "batch": 1004,
+    "row_blocks": 64,
+    "cycles": 262144,
+    "relative_error": 0.0024691236283494187,
+    "threshold_out": 1688.5464530711301,
+    "address_class": "cal_search"
+   },
+   {
+    "stage": "S1",
+    "iter": 5,
+    "threshold_in": 1688.5464530711301,
+    "arl0": 465.7953224182129,
+    "se": 0.7627867167607172,
+    "n": 262144,
+    "batch": 1005,
+    "row_blocks": 64,
+    "cycles": 262144,
+    "relative_error": 0.0006259504875788819,
+    "threshold_out": 1687.9491168384316,
+    "address_class": "cal_search"
+   },
+   {
+    "stage": "S2",
+    "iter": 0,
+    "threshold_in": 1687.9491168384316,
+    "arl0": 466.0517858886719,
+    "se": 0.5164187671738529,
+    "n": 819200,
+    "batch": 2000,
+    "row_blocks": 200,
+    "cycles": 819200,
+    "relative_error": 0.0011768877588272887,
+    "threshold_out": 1682.0035369262553,
+    "address_class": "cal_search"
+   },
+   {
+    "stage": "S2",
+    "iter": 1,
+    "threshold_in": 1682.0035369262553,
+    "arl0": 465.1152087402344,
+    "se": 0.5286484759381306,
+    "n": 819200,
+    "batch": 2001,
+    "row_blocks": 200,
+    "cycles": 819200,
+    "relative_error": 0.0008350761967033416,
+    "threshold_out": 1683.4830926988188,
+    "address_class": "cal_search"
+   },
+   {
+    "stage": "S2",
+    "iter": 2,
+    "threshold_in": 1683.4830926988188,
+    "arl0": 464.82767822265623,
+    "se": 0.5091617995263412,
+    "n": 819200,
+    "batch": 2002,
+    "row_blocks": 200,
+    "cycles": 819200,
+    "relative_error": 0.0014527519946313844,
+    "threshold_out": 1690.8415125187357,
+    "address_class": "cal_search"
+   }
+  ],
+  "verify_1": {
+   "experiment": "p8r/cal_verify_1/sr_arl0",
+   "address_class": "cal_verify_1",
+   "batch": 7,
+   "threshold": 1690.8415125187357,
+   "row_blocks": 300,
+   "cycles": 1228800,
+   "arl0": 465.81876708984373,
+   "se": 0.42607309119697945,
+   "n": 1228800,
+   "relative_error": 0.0006763145545958897,
+   "z": 0.7389039494591854,
+   "tolerance": 0.005,
+   "accepted": true
+  },
+  "verify_2": null,
+  "retry_trace": [],
+  "label": "NEW_P8R_CALIBRATION",
+  "threshold": 1690.8415125187357,
+  "outcome": "ACCEPTED_VERIFY_1",
+  "accepted_by": "p8r/cal_verify_1/sr_arl0",
+  "executed_budget": {
+   "s1_evaluations": 6,
+   "s2_evaluations": 3,
+   "retry_evaluations": 0,
+   "s1_cycles_per_evaluation": 262144,
+   "s2_cycles_per_evaluation": 819200,
+   "retry_cycles_per_evaluation": null,
+   "verification_cycles": 1228800,
+   "verification_evaluations": 1,
+   "total_search_cycles": 4030464,
+   "search_batches": [
+    1000,
+    1001,
+    1002,
+    1003,
+    1004,
+    1005,
+    2000,
+    2001,
+    2002
+   ],
+   "verify_batches": [
+    7
+   ],
+   "search_classes": [
+    "cal_search"
+   ],
+   "verify_classes": [
+    "cal_verify_1"
+   ]
+  },
+  "declared_budget": {
+   "s1_evaluations": 6,
+   "s1_row_blocks_per_evaluation": 64,
+   "s1_cycles_per_evaluation": 262144,
+   "s2_evaluations": 3,
+   "s2_row_blocks_per_evaluation": 200,
+   "s2_cycles_per_evaluation": 819200,
+   "retry_evaluations_if_used": 3,
+   "verification_row_blocks": 300,
+   "verification_cycles": 1228800,
+   "tolerance": 0.005,
+   "search_class": "cal_search",
+   "verify_1_class": "cal_verify_1",
+   "verify_2_class": "cal_verify_2"
+  },
+  "budget_matches_declaration": true,
+  "seconds": 1221.7811789512634
+ }
+}

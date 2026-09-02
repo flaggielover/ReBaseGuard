@@ -1,0 +1,88 @@
+{
+ "schema": "rebaseguard.p8r.sr-calibration-cell.v1",
+ "campaign": "P8R",
+ "generator": "experiments/run_calibration.py",
+ "argv": [
+  "experiments/run_calibration.py",
+  "gaussian"
+ ],
+ "git_commit": "ee61e240998e468eff66a076226eadc70109f9f5",
+ "generated_utc": "2026-09-02T01:59:16Z",
+ "environment": {
+  "python": "3.14.5",
+  "numpy": "2.5.2",
+  "scipy": "1.18.0",
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "machine": "arm64"
+ },
+ "address_tags": [
+  "p8r/cal_search/sr_arl0",
+  "p8r/cal_verify_1/sr_arl0",
+  "p8r/cal_verify_2/sr_arl0"
+ ],
+ "payload_sha256": "85a64d379ea83f4c921fc2b54c4187a98b1f90c52e31cc0ef4219f8a39b8b87a",
+ "payload": {
+  "family": "gaussian",
+  "detector": "sr",
+  "target_arl0": 465.50394,
+  "start_threshold": 520.886133602749,
+  "threshold": 520.886133602749,
+  "label": "FROZEN_NOT_RECALIBRATED",
+  "outcome": "FROZEN_NOT_RECALIBRATED",
+  "accepted_by": null,
+  "search_trace": [],
+  "retry_trace": [],
+  "verify_1": {
+   "experiment": "p8r/cal_verify_1/sr_arl0",
+   "address_class": "cal_verify_1",
+   "batch": 7,
+   "threshold": 520.886133602749,
+   "row_blocks": 300,
+   "cycles": 1228800,
+   "arl0": 465.63816731770834,
+   "se": 0.43551134466953473,
+   "n": 1228800,
+   "relative_error": 0.0002883484030410936,
+   "z": 0.3082062484737075,
+   "tolerance": 0.005,
+   "accepted": true
+  },
+  "verify_2": null,
+  "declared_budget": {
+   "s1_evaluations": 6,
+   "s1_row_blocks_per_evaluation": 64,
+   "s1_cycles_per_evaluation": 262144,
+   "s2_evaluations": 3,
+   "s2_row_blocks_per_evaluation": 200,
+   "s2_cycles_per_evaluation": 819200,
+   "retry_evaluations_if_used": 3,
+   "verification_row_blocks": 300,
+   "verification_cycles": 1228800,
+   "tolerance": 0.005,
+   "search_class": "cal_search",
+   "verify_1_class": "cal_verify_1",
+   "verify_2_class": "cal_verify_2"
+  },
+  "executed_budget": {
+   "s1_evaluations": 0,
+   "s2_evaluations": 0,
+   "retry_evaluations": 0,
+   "s1_cycles_per_evaluation": null,
+   "s2_cycles_per_evaluation": null,
+   "retry_cycles_per_evaluation": null,
+   "verification_cycles": 1228800,
+   "verification_evaluations": 1,
+   "total_search_cycles": 0,
+   "search_batches": [],
+   "verify_batches": [
+    7
+   ],
+   "search_classes": [],
+   "verify_classes": [
+    "cal_verify_1"
+   ]
+  },
+  "budget_matches_declaration": true,
+  "seconds": 129.31553602218628
+ }
+}

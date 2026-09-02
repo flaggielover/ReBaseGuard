@@ -1,0 +1,186 @@
+{
+ "schema": "rebaseguard.p8r.arl0-check.v1",
+ "campaign": "P8R",
+ "generator": "experiments/run_arl0_check.py",
+ "argv": [
+  "experiments/run_arl0_check.py"
+ ],
+ "git_commit": "ee61e240998e468eff66a076226eadc70109f9f5",
+ "generated_utc": "2026-09-02T04:11:48Z",
+ "environment": {
+  "python": "3.14.5",
+  "numpy": "2.5.2",
+  "scipy": "1.18.0",
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "machine": "arm64"
+ },
+ "address_tags": [
+  "p8r/production/arl0_check"
+ ],
+ "payload_sha256": "5119a4f17d3ea77a391664c9028d15015f41cbc34c476a05c46bb48e7fb4659d",
+ "payload": {
+  "target_arl0": 465.50394,
+  "row_blocks": 150,
+  "cycles_per_cell": 614400,
+  "tolerance": 0.01,
+  "seconds": 653.1879708766937,
+  "rows": [
+   {
+    "detector": "cusum",
+    "family": "gaussian",
+    "status": "OK",
+    "threshold": 5.0,
+    "threshold_provenance": "STAGE_D_D3_FROZEN",
+    "arl0": 465.78417643229164,
+    "se": 0.6073331466534279,
+    "n": 614400,
+    "relative_error": 0.0006020065744054597,
+    "z": 0.46142127074048933,
+    "within_1pct": true
+   },
+   {
+    "detector": "cusum",
+    "family": "t10",
+    "status": "OK",
+    "threshold": 5.234517732360302,
+    "threshold_provenance": "STAGE_D_D3_FROZEN",
+    "arl0": 466.3750244140625,
+    "se": 0.5670855621303078,
+    "n": 614400,
+    "relative_error": 0.0018712718394231478,
+    "z": 1.536072282972989,
+    "within_1pct": true
+   },
+   {
+    "detector": "cusum",
+    "family": "t5",
+    "status": "OK",
+    "threshold": 5.669498491821448,
+    "threshold_provenance": "STAGE_D_D3_FROZEN",
+    "arl0": 464.4876611328125,
+    "se": 0.6405138602940444,
+    "n": 614400,
+    "relative_error": 0.0021831799472793057,
+    "z": -1.586661788584809,
+    "within_1pct": true
+   },
+   {
+    "detector": "cusum",
+    "family": "t3",
+    "status": "OK",
+    "threshold": 6.337011391962933,
+    "threshold_provenance": "STAGE_D_D3_FROZEN",
+    "arl0": 465.21300944010414,
+    "se": 0.6115305888855146,
+    "n": 614400,
+    "relative_error": 0.0006249798012361729,
+    "z": -0.4757416312176018,
+    "within_1pct": true
+   },
+   {
+    "detector": "cusum",
+    "family": "contam0.05",
+    "status": "OK",
+    "threshold": 7.671712168173407,
+    "threshold_provenance": "STAGE_D_D3_FROZEN",
+    "arl0": 464.810966796875,
+    "se": 0.5870545545690088,
+    "n": 614400,
+    "relative_error": 0.0014886516387487652,
+    "z": -1.180423859642413,
+    "within_1pct": true
+   },
+   {
+    "detector": "cusum",
+    "family": "contam0.1",
+    "status": "OK",
+    "threshold": 9.381983052368211,
+    "threshold_provenance": "STAGE_D_D3_FROZEN",
+    "arl0": 465.1678922526042,
+    "se": 0.6356400379582974,
+    "n": 614400,
+    "relative_error": 0.0007219009733748116,
+    "z": -0.528676180429429,
+    "within_1pct": true
+   },
+   {
+    "detector": "sr",
+    "family": "gaussian",
+    "status": "OK",
+    "threshold": 520.886133602749,
+    "threshold_provenance": "STAGE_D_D1_FROZEN",
+    "arl0": 465.6431608072917,
+    "se": 0.6782678758959041,
+    "n": 614400,
+    "relative_error": 0.0002990754649502617,
+    "z": 0.2052593263506488,
+    "within_1pct": true
+   },
+   {
+    "detector": "sr",
+    "family": "t10",
+    "status": "OK",
+    "threshold": 633.7817692131832,
+    "threshold_provenance": "P8R_CALIBRATION:ACCEPTED_VERIFY_1",
+    "arl0": 464.7336328125,
+    "se": 0.5584726634294306,
+    "n": 614400,
+    "relative_error": 0.0016547812409493444,
+    "z": -1.3793104621625698,
+    "within_1pct": true
+   },
+   {
+    "detector": "sr",
+    "family": "t5",
+    "status": "OK",
+    "threshold": 929.0425928760179,
+    "threshold_provenance": "P8R_CALIBRATION:ACCEPTED_VERIFY_1",
+    "arl0": 463.89703125,
+    "se": 0.6482673012091859,
+    "n": 614400,
+    "relative_error": 0.003451976690036184,
+    "z": -2.478774954409551,
+    "within_1pct": true
+   },
+   {
+    "detector": "sr",
+    "family": "t3",
+    "status": "OK",
+    "threshold": 1690.8415125187357,
+    "threshold_provenance": "P8R_CALIBRATION:ACCEPTED_VERIFY_1",
+    "arl0": 465.72056966145834,
+    "se": 0.6323431827537807,
+    "n": 614400,
+    "relative_error": 0.0004653659031507695,
+    "z": 0.34258242575644565,
+    "within_1pct": true
+   },
+   {
+    "detector": "sr",
+    "family": "contam0.05",
+    "status": "OK",
+    "threshold": 6408.0645837792035,
+    "threshold_provenance": "P8R_CALIBRATION:ACCEPTED_VERIFY_1",
+    "arl0": 466.2146142578125,
+    "se": 0.6560750863941264,
+    "n": 614400,
+    "relative_error": 0.0015266772131134134,
+    "z": 1.0832209186885473,
+    "within_1pct": true
+   },
+   {
+    "detector": "sr",
+    "family": "contam0.1",
+    "status": "OK",
+    "threshold": 34317.39159354839,
+    "threshold_provenance": "P8R_CALIBRATION:ACCEPTED_VERIFY_1",
+    "arl0": 466.1217317708333,
+    "se": 0.6383412678177347,
+    "n": 614400,
+    "relative_error": 0.0013271461694466457,
+    "z": 0.9678079766726267,
+    "within_1pct": true
+   }
+  ]
+ }
+}

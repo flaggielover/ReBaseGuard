@@ -1,0 +1,102 @@
+{
+ "schema": "rebaseguard.p8r.verdict.v1",
+ "campaign": "P8R",
+ "generator": "experiments/derive_verdict.py",
+ "argv": [
+  "experiments/derive_verdict.py"
+ ],
+ "git_commit": "ee61e240998e468eff66a076226eadc70109f9f5",
+ "generated_utc": "2026-09-02T04:59:16Z",
+ "environment": {
+  "python": "3.14.5",
+  "numpy": "2.5.2",
+  "scipy": "1.18.0",
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "machine": "arm64"
+ },
+ "address_tags": [],
+ "payload_sha256": "820d01b6520842b9ad1455d643e6126c5ac5b8bc1b17a054026d6241688551a1",
+ "payload": {
+  "verdict": "CLOSED_CANDIDATE",
+  "authoritative": false,
+  "authoritative_status_recommendation": "AWAIT_CODEX_ADJUDICATION",
+  "integrity_gates": {
+   "I1": "PASS",
+   "I2": "PASS",
+   "I3": "PASS",
+   "I4": "PASS",
+   "I5": "PASS",
+   "I6": "PASS",
+   "I7": "PASS",
+   "I8": "PASS",
+   "I9": "PASS",
+   "I10": "PASS",
+   "I11": "PASS",
+   "I12": "PASS",
+   "I13": "PASS"
+  },
+  "integrity_all_pass": true,
+  "scientific_questions": {
+   "S1": "SUPPORTED",
+   "S2": "SUPPORTED",
+   "S3": "SUPPORTED",
+   "S4": "SUPPORTED",
+   "S5": "SUPPORTED",
+   "S6": "SUPPORTED",
+   "S7": "REJECTED",
+   "S7D": "REJECTED",
+   "S7F": "REJECTED",
+   "S7X": "OUT_OF_SCOPE",
+   "S8": "SUPPORTED",
+   "S9": "SUPPORTED",
+   "S10": "REJECTED",
+   "S11": "SUPPORTED",
+   "S12": "REJECTED",
+   "S13": "SUPPORTED",
+   "S14": "SUPPORTED",
+   "S15": "SUPPORTED",
+   "S16": "SUPPORTED",
+   "S17": "SUPPORTED"
+  },
+  "all_questions_resolved": true,
+  "n_supported": 14,
+  "n_rejected": 5,
+  "n_inconclusive": 0,
+  "n_out_of_scope": 1,
+  "p8_negative_result_comparison": {
+   "S7": {
+    "p8_outcome": "P8 G4: the cross-family window-separability law was REJECTED",
+    "p8r_status": "REJECTED",
+    "p8r_also_negative": true
+   },
+   "S7D": {
+    "p8_outcome": "P8 G4-D: detector invariance of K was REJECTED",
+    "p8r_status": "REJECTED",
+    "p8r_also_negative": true
+   },
+   "S7F": {
+    "p8_outcome": "P8 G4-F: family invariance of K was REJECTED",
+    "p8r_status": "REJECTED",
+    "p8r_also_negative": true
+   },
+   "S10": {
+    "p8_outcome": "P8 G7: literal P7-boundary transfer FAILED (4/6 families)",
+    "p8r_status": "REJECTED",
+    "p8r_also_negative": true
+   },
+   "S12": {
+    "p8_outcome": "P8 G9/adjudication: detector transfer was measured ABSENT",
+    "p8r_status": "REJECTED",
+    "p8r_also_negative": true
+   },
+   "S15": {
+    "p8_outcome": "P8: t3/m=20 attraction was NOT certified (EMPIRICAL only)",
+    "p8r_status": "SUPPORTED",
+    "p8r_also_negative": false
+   }
+  },
+  "novelty_status": "NOT_ESTABLISHED",
+  "novelty_note": "P8R is a repair campaign.  No independent novelty review was run, so no novelty is claimed.  Zero direct hits, the absence of a known transfer law, a new negative result and a new empirical matrix are explicitly NOT evidence of novelty.",
+  "closure_rule": "CLOSED_CANDIDATE iff every integrity gate passes AND every mandatory question is resolved admissibly; PARTIAL_CANDIDATE iff integrity passes but a question is unresolved; FAIL_CANDIDATE iff any integrity gate is FAIL or UNVERIFIABLE.  A REJECTED hypothesis is a resolved question, not a failure."
+ }
+}

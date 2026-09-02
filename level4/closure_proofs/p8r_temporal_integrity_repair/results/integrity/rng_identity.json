@@ -1,0 +1,119 @@
+{
+ "schema": "rebaseguard.p8r.rng-identity.v1",
+ "campaign": "P8R",
+ "generator": "scripts/rng_identity.py",
+ "argv": [
+  "scripts/rng_identity.py"
+ ],
+ "git_commit": "ee61e240998e468eff66a076226eadc70109f9f5",
+ "generated_utc": "2026-09-02T04:55:05Z",
+ "environment": {
+  "python": "3.14.5",
+  "numpy": "2.5.2",
+  "scipy": "1.18.0",
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "machine": "arm64"
+ },
+ "address_tags": [
+  "p8r/cal_search/sr_arl0",
+  "p8r/cal_verify_1/sr_arl0",
+  "p8r/cal_verify_2/sr_arl0",
+  "p8r/production/arl0_check",
+  "p8r/production/gamma_e1",
+  "p8r/production/gamma_e5",
+  "p8r/production/chain_e3",
+  "p8r/production/drift_e4"
+ ],
+ "payload_sha256": "682436551798a8d776b8e229c0c12ceae1be13d6008bc2898a10438edbb5f83e",
+ "payload": {
+  "all_pass": true,
+  "n_checks": 6,
+  "checks": [
+   {
+    "check": "same_address_across_variants",
+    "pass": true,
+    "detail": {
+     "values": [
+      0.6278640938471928,
+      -0.10511273265526108,
+      -0.06115250076228872,
+      -1.2367920067555749
+     ],
+     "repeats": 3
+    }
+   },
+   {
+    "check": "class_separation",
+    "pass": true,
+    "detail": {
+     "tag_digests_distinct": true,
+     "values_distinct_at_identical_coordinates": true,
+     "calibration_production_digest_overlap": false,
+     "n_tags": 8,
+     "search_vs_verify_values": {
+      "cal_search": -0.4094208130639556,
+      "cal_verify_1": -0.9823567069742513,
+      "cal_verify_2": 0.19286708601559177
+     }
+    }
+   },
+   {
+    "check": "execution_order",
+    "pass": true,
+    "detail": {
+     "forward": [
+      0.6381783176302074,
+      0.7930032067073836,
+      0.4852079285479925,
+      -0.8173695922499054,
+      -0.501774113147326
+     ],
+     "backward": [
+      0.6381783176302074,
+      0.7930032067073836,
+      0.4852079285479925,
+      -0.8173695922499054,
+      -0.501774113147326
+     ],
+     "cache_cleared_between_reads": [
+      0.6381783176302074,
+      0.7930032067073836,
+      0.4852079285479925,
+      -0.8173695922499054,
+      -0.501774113147326
+     ]
+    }
+   },
+   {
+    "check": "live_set",
+    "pass": true,
+    "detail": {
+     "needed_indices_identical": true,
+     "unneeded_bands_not_materialised": true,
+     "n_replicates": 600
+    }
+   },
+   {
+    "check": "stopping_time_divergence",
+    "pass": true,
+    "detail": {
+     "stopping_times_actually_diverged": true,
+     "max_abs_primitive_mismatch": 0.0,
+     "shared_prefix_identical": true,
+     "mean_tau_cusum": 469.224609375,
+     "mean_tau_sr": 291.3828125
+    }
+   },
+   {
+    "check": "block_overflow",
+    "pass": true,
+    "detail": {
+     "max_block_index_probed": 7812,
+     "identical_after_cache_clear": true,
+     "all_finite": true
+    }
+   }
+  ],
+  "seconds": 0.4635939598083496
+ }
+}

@@ -24,7 +24,9 @@
 ## 1. The anchor
 
 ```
-ANCHOR_COMMIT = PENDING_THIS_COMMIT
+ANCHOR_COMMIT = ee61e240998e468eff66a076226eadc70109f9f5
+ANCHOR_TIMESTAMP = 2026-09-02T10:56:22+09:00
+ANCHOR_PUSHED_TO = origin/main (github.com/flaggielover/ReBaseGuard)
 ANCHOR_BRANCH = main
 ANCHOR_SUBJECT = P8R Checkpoint A: pre-result temporal anchor for the Level-4
                  Priority-8 repair
@@ -52,9 +54,14 @@ being absent is exactly what makes this a real anchor.
 ## 3. Digests recorded at the anchor
 
 ```
-SOURCE_DIGEST        = see SOURCE_MANIFEST.json  ("aggregate_sha256")
-PROTOCOL_DIGEST      = see PROTOCOL_DIGEST.json  ("aggregate_sha256")
-PROTECTED_TREE_PRE   = see results/integrity/protected_tree_manifest_pre.json
+SOURCE_DIGEST        = 2f6c7b1eab3fc3c5d01ead7aa57ed535ee19ade87a6747c36bf11c168c17de99
+                       (36 files; see SOURCE_MANIFEST.json)
+PROTOCOL_DIGEST      = fc2302c3bbbf253d1c04ecaac4974867d2955640637b2359121ae41b8981eaf6
+                       (10 files; see PROTOCOL_DIGEST.json)
+PROTECTED_TREE_PRE   = 3f2a6b33ee42f3443c15af6acc01f6e37fc0ba35ef2e4c423694f383aeba9da4
+                       (3306 tracked files outside the
+                       P8R namespace; see
+                       results/integrity/protected_tree_manifest_pre.json)
 ```
 
 Each file also lists every constituent path with its own SHA-256, so a

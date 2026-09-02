@@ -1,0 +1,601 @@
+{
+ "schema": "rebaseguard.p8r.integrity-audit.v1",
+ "anchor_commit": "ee61e240998e468eff66a076226eadc70109f9f5",
+ "generated_utc": "2026-09-02T04:59:29Z",
+ "n_gates": 13,
+ "n_pass": 13,
+ "all_pass": true,
+ "summary": {
+  "I1": "PASS",
+  "I2": "PASS",
+  "I3": "PASS",
+  "I4": "PASS",
+  "I5": "PASS",
+  "I6": "PASS",
+  "I7": "PASS",
+  "I8": "PASS",
+  "I9": "PASS",
+  "I10": "PASS",
+  "I11": "PASS",
+  "I12": "PASS",
+  "I13": "PASS"
+ },
+ "gates": [
+  {
+   "gate": "I1",
+   "statement": "the anchor commit carries the frozen protocol, gates, plans, source and tests, and NO production result",
+   "status": "PASS",
+   "evidence": {
+    "anchor": "ee61e240998e468eff66a076226eadc70109f9f5",
+    "frozen_prose_present": [
+     "README.md",
+     "DEFINITION_AUDIT.md",
+     "REPAIR_RATIONALE.md",
+     "FROZEN_PROTOCOL.md",
+     "FROZEN_GATES.md",
+     "CALIBRATION_PLAN.md",
+     "RNG_ADDRESS_PLAN.md",
+     "PRODUCTION_PLAN.md",
+     "STATISTICAL_ANALYSIS_PLAN.md",
+     "COMMAND_MANIFEST.json"
+    ],
+    "n_source_files": 10,
+    "n_test_files": 10,
+    "production_results_at_anchor": []
+   }
+  },
+  {
+   "gate": "I2",
+   "statement": "every frozen prose artifact is byte-identical to its anchored digest",
+   "status": "PASS",
+   "evidence": {
+    "anchor_aggregate": "fc2302c3bbbf253d1c04ecaac4974867d2955640637b2359121ae41b8981eaf6",
+    "current_aggregate": "fc2302c3bbbf253d1c04ecaac4974867d2955640637b2359121ae41b8981eaf6",
+    "differences": {}
+   }
+  },
+  {
+   "gate": "I3",
+   "statement": "every executable file is byte-identical to its anchored digest",
+   "status": "PASS",
+   "evidence": {
+    "anchor_aggregate": "2f6c7b1eab3fc3c5d01ead7aa57ed535ee19ade87a6747c36bf11c168c17de99",
+    "current_aggregate": "2f6c7b1eab3fc3c5d01ead7aa57ed535ee19ade87a6747c36bf11c168c17de99",
+    "differences": {}
+   }
+  },
+  {
+   "gate": "I4",
+   "statement": "no calibration-search evaluation ever reads a calibration-verification address",
+   "status": "PASS",
+   "evidence": {
+    "search_addresses": [
+     [
+      "cal_search",
+      1000
+     ],
+     [
+      "cal_search",
+      1001
+     ],
+     [
+      "cal_search",
+      1002
+     ],
+     [
+      "cal_search",
+      1003
+     ],
+     [
+      "cal_search",
+      1004
+     ],
+     [
+      "cal_search",
+      1005
+     ],
+     [
+      "cal_search",
+      2000
+     ],
+     [
+      "cal_search",
+      2001
+     ],
+     [
+      "cal_search",
+      2002
+     ]
+    ],
+    "verify_addresses": [
+     [
+      "cal_verify_1",
+      7
+     ]
+    ],
+    "class_tag_digests": {
+     "cal_search": 9274669113573859960,
+     "cal_verify_1": 17281709416777340608,
+     "cal_verify_2": 18358826966229865727
+    },
+    "class_digest_collision": false,
+    "class_batch_overlap": [],
+    "violations": []
+   }
+  },
+  {
+   "gate": "I5",
+   "statement": "no production address coincides with any calibration address",
+   "status": "PASS",
+   "evidence": {
+    "production_tag_digests": {
+     "p8r/production/arl0_check": 251817794726254395,
+     "p8r/production/gamma_e1": 15979486869430770178,
+     "p8r/production/gamma_e5": 1651809816191618769,
+     "p8r/production/chain_e3": 3882039711623865023,
+     "p8r/production/drift_e4": 10511533233079958278
+    },
+    "calibration_tag_digests": {
+     "p8r/cal_search/sr_arl0": 9274669113573859960,
+     "p8r/cal_verify_1/sr_arl0": 17281709416777340608,
+     "p8r/cal_verify_2/sr_arl0": 18358826966229865727
+    },
+    "overlap": []
+   }
+  },
+  {
+   "gate": "I6",
+   "statement": "no frozen prose artifact changed after the anchor commit",
+   "status": "PASS",
+   "evidence": {
+    "anchor": "ee61e240998e468eff66a076226eadc70109f9f5",
+    "changed": []
+   }
+  },
+  {
+   "gate": "I7",
+   "statement": "every frozen threshold, budget and grid is byte-identical to the anchor: config.py did not change",
+   "status": "PASS",
+   "evidence": {
+    "anchor_sha256": "8b17c0a77222c75191873a8265e106f01305e91ca60ba5e0281addf84cf0130a",
+    "current_sha256": "8b17c0a77222c75191873a8265e106f01305e91ca60ba5e0281addf84cf0130a"
+   }
+  },
+  {
+   "gate": "I8",
+   "statement": "every production command is recorded verbatim and its script exists",
+   "status": "PASS",
+   "evidence": {
+    "n_commands": 65,
+    "missing": []
+   }
+  },
+  {
+   "gate": "I9",
+   "statement": "every primitive value is a pure function of its address",
+   "status": "PASS",
+   "evidence": [
+    {
+     "check": "same_address_across_variants",
+     "pass": true,
+     "detail": {
+      "values": [
+       0.6278640938471928,
+       -0.10511273265526108,
+       -0.06115250076228872,
+       -1.2367920067555749
+      ],
+      "repeats": 3
+     }
+    },
+    {
+     "check": "class_separation",
+     "pass": true,
+     "detail": {
+      "tag_digests_distinct": true,
+      "values_distinct_at_identical_coordinates": true,
+      "calibration_production_digest_overlap": false,
+      "n_tags": 8,
+      "search_vs_verify_values": {
+       "cal_search": -0.4094208130639556,
+       "cal_verify_1": -0.9823567069742513,
+       "cal_verify_2": 0.19286708601559177
+      }
+     }
+    },
+    {
+     "check": "execution_order",
+     "pass": true,
+     "detail": {
+      "forward": [
+       0.6381783176302074,
+       0.7930032067073836,
+       0.4852079285479925,
+       -0.8173695922499054,
+       -0.501774113147326
+      ],
+      "backward": [
+       0.6381783176302074,
+       0.7930032067073836,
+       0.4852079285479925,
+       -0.8173695922499054,
+       -0.501774113147326
+      ],
+      "cache_cleared_between_reads": [
+       0.6381783176302074,
+       0.7930032067073836,
+       0.4852079285479925,
+       -0.8173695922499054,
+       -0.501774113147326
+      ]
+     }
+    },
+    {
+     "check": "live_set",
+     "pass": true,
+     "detail": {
+      "needed_indices_identical": true,
+      "unneeded_bands_not_materialised": true,
+      "n_replicates": 600
+     }
+    },
+    {
+     "check": "stopping_time_divergence",
+     "pass": true,
+     "detail": {
+      "stopping_times_actually_diverged": true,
+      "max_abs_primitive_mismatch": 0.0,
+      "shared_prefix_identical": true,
+      "mean_tau_cusum": 469.224609375,
+      "mean_tau_sr": 291.3828125
+     }
+    },
+    {
+     "check": "block_overflow",
+     "pass": true,
+     "detail": {
+      "max_block_index_probed": 7812,
+      "identical_after_cache_clear": true,
+      "all_finite": true
+     }
+    }
+   ]
+  },
+  {
+   "gate": "I10",
+   "statement": "every result artifact carries a working generator, a verbatim argv, a git commit and a matching payload digest",
+   "status": "PASS",
+   "evidence": {
+    "orphans": [],
+    "problems": []
+   }
+  },
+  {
+   "gate": "I11",
+   "statement": "every protected tree is byte-identical to its pre-campaign manifest; only the authorised root status file may differ",
+   "status": "PASS",
+   "evidence": {
+    "n_trees": 22,
+    "trees_differing": {},
+    "authorised_changes": [],
+    "unauthorised_changes": {}
+   }
+  },
+  {
+   "gate": "I12",
+   "statement": "the P8R focused test suite passes in full",
+   "status": "PASS",
+   "evidence": {
+    "schema": "rebaseguard.p8r.focused-tests.v1",
+    "command": "level4/.venv/bin/python -m pytest tests -q",
+    "working_directory": "level4/closure_proofs/p8r_temporal_integrity_repair",
+    "note": "Recorded by an explicit inline command rather than by a script under src/experiments/scripts/tests, because adding a file to those directories after the anchor would change SOURCE_MANIFEST and fail I3. The command above reproduces it.",
+    "git_commit": "ee61e240998e468eff66a076226eadc70109f9f5",
+    "generated_utc": "2026-09-02T04:59:15Z",
+    "summary_line": "-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html72 passed, 2 warnings in 4.97s",
+    "passed": 72,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0
+   }
+  },
+  {
+   "gate": "I13",
+   "statement": "the executed calibration budget, re-derived from the stored trace, equals the single declared budget -- the exact disagreement that failed P8's G14",
+   "status": "PASS",
+   "evidence": {
+    "rows": [
+     {
+      "family": "gaussian",
+      "declared": {
+       "s1_evaluations": 6,
+       "s1_row_blocks_per_evaluation": 64,
+       "s1_cycles_per_evaluation": 262144,
+       "s2_evaluations": 3,
+       "s2_row_blocks_per_evaluation": 200,
+       "s2_cycles_per_evaluation": 819200,
+       "retry_evaluations_if_used": 3,
+       "verification_row_blocks": 300,
+       "verification_cycles": 1228800,
+       "tolerance": 0.005,
+       "search_class": "cal_search",
+       "verify_1_class": "cal_verify_1",
+       "verify_2_class": "cal_verify_2"
+      },
+      "executed": {
+       "s1_evaluations": 0,
+       "s2_evaluations": 0,
+       "retry_evaluations": 0,
+       "s1_cycles_per_evaluation": null,
+       "s2_cycles_per_evaluation": null,
+       "retry_cycles_per_evaluation": null,
+       "verification_cycles": 1228800,
+       "verification_evaluations": 1,
+       "total_search_cycles": 0,
+       "search_batches": [],
+       "verify_batches": [
+        7
+       ],
+       "search_classes": [],
+       "verify_classes": [
+        "cal_verify_1"
+       ]
+      },
+      "matches": true
+     },
+     {
+      "family": "t10",
+      "declared": {
+       "s1_evaluations": 6,
+       "s1_row_blocks_per_evaluation": 64,
+       "s1_cycles_per_evaluation": 262144,
+       "s2_evaluations": 3,
+       "s2_row_blocks_per_evaluation": 200,
+       "s2_cycles_per_evaluation": 819200,
+       "retry_evaluations_if_used": 3,
+       "verification_row_blocks": 300,
+       "verification_cycles": 1228800,
+       "tolerance": 0.005,
+       "search_class": "cal_search",
+       "verify_1_class": "cal_verify_1",
+       "verify_2_class": "cal_verify_2"
+      },
+      "executed": {
+       "s1_evaluations": 6,
+       "s2_evaluations": 3,
+       "retry_evaluations": 0,
+       "s1_cycles_per_evaluation": 262144,
+       "s2_cycles_per_evaluation": 819200,
+       "retry_cycles_per_evaluation": null,
+       "verification_cycles": 1228800,
+       "verification_evaluations": 1,
+       "total_search_cycles": 4030464,
+       "search_batches": [
+        1000,
+        1001,
+        1002,
+        1003,
+        1004,
+        1005,
+        2000,
+        2001,
+        2002
+       ],
+       "verify_batches": [
+        7
+       ],
+       "search_classes": [
+        "cal_search"
+       ],
+       "verify_classes": [
+        "cal_verify_1"
+       ]
+      },
+      "matches": true
+     },
+     {
+      "family": "t5",
+      "declared": {
+       "s1_evaluations": 6,
+       "s1_row_blocks_per_evaluation": 64,
+       "s1_cycles_per_evaluation": 262144,
+       "s2_evaluations": 3,
+       "s2_row_blocks_per_evaluation": 200,
+       "s2_cycles_per_evaluation": 819200,
+       "retry_evaluations_if_used": 3,
+       "verification_row_blocks": 300,
+       "verification_cycles": 1228800,
+       "tolerance": 0.005,
+       "search_class": "cal_search",
+       "verify_1_class": "cal_verify_1",
+       "verify_2_class": "cal_verify_2"
+      },
+      "executed": {
+       "s1_evaluations": 6,
+       "s2_evaluations": 3,
+       "retry_evaluations": 0,
+       "s1_cycles_per_evaluation": 262144,
+       "s2_cycles_per_evaluation": 819200,
+       "retry_cycles_per_evaluation": null,
+       "verification_cycles": 1228800,
+       "verification_evaluations": 1,
+       "total_search_cycles": 4030464,
+       "search_batches": [
+        1000,
+        1001,
+        1002,
+        1003,
+        1004,
+        1005,
+        2000,
+        2001,
+        2002
+       ],
+       "verify_batches": [
+        7
+       ],
+       "search_classes": [
+        "cal_search"
+       ],
+       "verify_classes": [
+        "cal_verify_1"
+       ]
+      },
+      "matches": true
+     },
+     {
+      "family": "t3",
+      "declared": {
+       "s1_evaluations": 6,
+       "s1_row_blocks_per_evaluation": 64,
+       "s1_cycles_per_evaluation": 262144,
+       "s2_evaluations": 3,
+       "s2_row_blocks_per_evaluation": 200,
+       "s2_cycles_per_evaluation": 819200,
+       "retry_evaluations_if_used": 3,
+       "verification_row_blocks": 300,
+       "verification_cycles": 1228800,
+       "tolerance": 0.005,
+       "search_class": "cal_search",
+       "verify_1_class": "cal_verify_1",
+       "verify_2_class": "cal_verify_2"
+      },
+      "executed": {
+       "s1_evaluations": 6,
+       "s2_evaluations": 3,
+       "retry_evaluations": 0,
+       "s1_cycles_per_evaluation": 262144,
+       "s2_cycles_per_evaluation": 819200,
+       "retry_cycles_per_evaluation": null,
+       "verification_cycles": 1228800,
+       "verification_evaluations": 1,
+       "total_search_cycles": 4030464,
+       "search_batches": [
+        1000,
+        1001,
+        1002,
+        1003,
+        1004,
+        1005,
+        2000,
+        2001,
+        2002
+       ],
+       "verify_batches": [
+        7
+       ],
+       "search_classes": [
+        "cal_search"
+       ],
+       "verify_classes": [
+        "cal_verify_1"
+       ]
+      },
+      "matches": true
+     },
+     {
+      "family": "contam0.05",
+      "declared": {
+       "s1_evaluations": 6,
+       "s1_row_blocks_per_evaluation": 64,
+       "s1_cycles_per_evaluation": 262144,
+       "s2_evaluations": 3,
+       "s2_row_blocks_per_evaluation": 200,
+       "s2_cycles_per_evaluation": 819200,
+       "retry_evaluations_if_used": 3,
+       "verification_row_blocks": 300,
+       "verification_cycles": 1228800,
+       "tolerance": 0.005,
+       "search_class": "cal_search",
+       "verify_1_class": "cal_verify_1",
+       "verify_2_class": "cal_verify_2"
+      },
+      "executed": {
+       "s1_evaluations": 6,
+       "s2_evaluations": 3,
+       "retry_evaluations": 0,
+       "s1_cycles_per_evaluation": 262144,
+       "s2_cycles_per_evaluation": 819200,
+       "retry_cycles_per_evaluation": null,
+       "verification_cycles": 1228800,
+       "verification_evaluations": 1,
+       "total_search_cycles": 4030464,
+       "search_batches": [
+        1000,
+        1001,
+        1002,
+        1003,
+        1004,
+        1005,
+        2000,
+        2001,
+        2002
+       ],
+       "verify_batches": [
+        7
+       ],
+       "search_classes": [
+        "cal_search"
+       ],
+       "verify_classes": [
+        "cal_verify_1"
+       ]
+      },
+      "matches": true
+     },
+     {
+      "family": "contam0.1",
+      "declared": {
+       "s1_evaluations": 6,
+       "s1_row_blocks_per_evaluation": 64,
+       "s1_cycles_per_evaluation": 262144,
+       "s2_evaluations": 3,
+       "s2_row_blocks_per_evaluation": 200,
+       "s2_cycles_per_evaluation": 819200,
+       "retry_evaluations_if_used": 3,
+       "verification_row_blocks": 300,
+       "verification_cycles": 1228800,
+       "tolerance": 0.005,
+       "search_class": "cal_search",
+       "verify_1_class": "cal_verify_1",
+       "verify_2_class": "cal_verify_2"
+      },
+      "executed": {
+       "s1_evaluations": 6,
+       "s2_evaluations": 3,
+       "retry_evaluations": 0,
+       "s1_cycles_per_evaluation": 262144,
+       "s2_cycles_per_evaluation": 819200,
+       "retry_cycles_per_evaluation": null,
+       "verification_cycles": 1228800,
+       "verification_evaluations": 1,
+       "total_search_cycles": 4030464,
+       "search_batches": [
+        1000,
+        1001,
+        1002,
+        1003,
+        1004,
+        1005,
+        2000,
+        2001,
+        2002
+       ],
+       "verify_batches": [
+        7
+       ],
+       "search_classes": [
+        "cal_search"
+       ],
+       "verify_classes": [
+        "cal_verify_1"
+       ]
+      },
+      "matches": true
+     }
+    ],
+    "all_match": true
+   }
+  }
+ ]
+}
