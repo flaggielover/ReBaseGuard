@@ -1,0 +1,74 @@
+{
+ "schema": "rebaseguard.p9r.command-manifest.v1",
+ "root": "level4/closure_proofs/p9r_final_synthesis_repair",
+ "interpreter": "level4/.venv/bin/python",
+ "note": "Frozen at Checkpoint A. These are the only production programs P9R intends to run, in this order. Every one of them writes its artifact through rebaseguard_p9r.provenance.write_artifact, so every artifact carries its generator, argv, config, git commit, environment and payload digest.",
+ "pre_anchor": [
+  {
+   "step": "A0",
+   "command": "level4/.venv/bin/python level4/closure_proofs/p9r_final_synthesis_repair/scripts/make_manifests.py --stage anchor",
+   "writes": ["SOURCE_MANIFEST.json", "PROTOCOL_DIGEST.json", "results/integrity/protected_tree_manifest_pre.json"],
+   "is_production_result": false
+  }
+ ],
+ "production": [
+  {
+   "step": "R1",
+   "command": "level4/.venv/bin/python level4/closure_proofs/p9r_final_synthesis_repair/experiments/run_sr_recurrence_check.py",
+   "writes": ["results/sr_recurrence_check.json"],
+   "deterministic": true,
+   "gate": "I5"
+  },
+  {
+   "step": "R2",
+   "command": "level4/.venv/bin/python level4/closure_proofs/p9r_final_synthesis_repair/experiments/run_reproduction.py",
+   "writes": ["results/reproduction.json"],
+   "deterministic": true,
+   "gate": "S4, S5"
+  },
+  {
+   "step": "R3",
+   "command": "level4/.venv/bin/python level4/closure_proofs/p9r_final_synthesis_repair/experiments/run_burnin_sensitivity.py",
+   "writes": ["results/burnin_sensitivity.json"],
+   "deterministic": true,
+   "gate": "I6"
+  },
+  {
+   "step": "R4",
+   "command": "level4/.venv/bin/python level4/closure_proofs/p9r_final_synthesis_repair/experiments/run_response_grid.py",
+   "writes": ["results/response_grid.json"],
+   "deterministic": true,
+   "gate": "I6, S3"
+  },
+  {
+   "step": "R5",
+   "command": "level4/.venv/bin/python level4/closure_proofs/p9r_final_synthesis_repair/experiments/build_ledger.py --final",
+   "writes": ["results/claim_ledger.json", "results/dependency_graph.json"],
+   "deterministic": true,
+   "gate": "I7, I8, I9, I10, I11, I12, I13"
+  }
+ ],
+ "post_production": [
+  {
+   "step": "A1",
+   "command": "level4/.venv/bin/python level4/closure_proofs/p9r_final_synthesis_repair/scripts/make_manifests.py --stage final",
+   "writes": ["results/integrity/protected_tree_manifest_final.json"]
+  },
+  {
+   "step": "A2",
+   "command": "level4/.venv/bin/python level4/closure_proofs/p9r_final_synthesis_repair/scripts/audit_integrity.py",
+   "writes": ["results/integrity/gate_report.json"]
+  },
+  {
+   "step": "A3",
+   "command": "level4/.venv/bin/python -m pytest level4/closure_proofs/p9r_final_synthesis_repair/tests -q",
+   "writes": [],
+   "gate": "I15"
+  }
+ ],
+ "reduced_deterministic_replays": [
+  "level4/.venv/bin/python level4/closure_proofs/p9r_final_synthesis_repair/experiments/run_reproduction.py --quick",
+  "level4/.venv/bin/python level4/closure_proofs/p9r_final_synthesis_repair/experiments/run_burnin_sensitivity.py --quick",
+  "level4/.venv/bin/python level4/closure_proofs/p9r_final_synthesis_repair/experiments/run_response_grid.py --quick"
+ ]
+}
