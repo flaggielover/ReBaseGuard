@@ -26,8 +26,9 @@
 ## 1. The anchor
 
 ```text
-ANCHOR_COMMIT    = PENDING_THIS_COMMIT
+ANCHOR_COMMIT    = db0781ed79851ca55af788731a47a0f4dda1d9c6
 ANCHOR_PARENT    = eea2bfb43803e853a1bc84d10410fd9f3984d849
+ANCHOR_TIMESTAMP = 2026-09-02T18:16:55+09:00
 ANCHOR_BRANCH    = main
 ANCHOR_PUSHED_TO = origin/main (github.com/flaggielover/ReBaseGuard)
 ANCHOR_SUBJECT   = P5X Checkpoint A: pre-result temporal anchor for the
