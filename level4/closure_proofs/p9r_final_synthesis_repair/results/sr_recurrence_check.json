@@ -1,0 +1,191 @@
+{
+ "schema": "rebaseguard.p9r.sr-recurrence-check.v1",
+ "generator": "level4/closure_proofs/p9r_final_synthesis_repair/experiments/run_sr_recurrence_check.py",
+ "argv": [],
+ "seed_namespace": "rebaseguard/p9r/v1",
+ "git_commit": "c1e8f98bb908aff095814f3c45994ecc0f0846ed",
+ "git_dirty_at_write": true,
+ "environment": {
+  "python": "3.14.5",
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "numpy": "2.5.2",
+  "scipy": "1.18.0"
+ },
+ "config": {
+  "z_path": [
+   0.25,
+   -0.75,
+   1.5,
+   0.1,
+   -0.4,
+   2.0,
+   -1.25,
+   0.6
+  ],
+  "z_witness": 6.4089578740415005,
+  "sr_threshold": 520.886133602749,
+  "log_threshold": 6.255531464321473,
+  "deterministic": true,
+  "monte_carlo": false
+ },
+ "payload_sha256": "b82b135aca4ac7852e2399662a4d8d2c95f8bf6e9396953e947abd2e6d31554d",
+ "payload": {
+  "C1_first_step": {
+   "stored_state_before": 0.0,
+   "log_R1_recurrence": -0.25,
+   "log_R1_closed_form": -0.25,
+   "abs_diff": 0.0,
+   "pass": true
+  },
+  "C2_first_two_steps": {
+   "log_R_direct": [
+    -0.25,
+    -0.6740605801211564
+   ],
+   "log_R_log_form": [
+    -0.25,
+    -0.6740605801211564
+   ],
+   "max_abs_diff": 0.0,
+   "tolerance": 1e-12,
+   "pass": true
+  },
+  "C3_reset_first_step": {
+   "stored_state_after_reset": 0.0,
+   "log_R_after_reset_recurrence": -0.4,
+   "log_R_after_reset_closed_form": -0.4,
+   "abs_diff": 0.0,
+   "pass": true
+  },
+  "C4_eight_step_path": {
+   "rows": [
+    {
+     "t": 1,
+     "z": 0.25,
+     "log_Rplus_direct": -0.25,
+     "log_Rplus_log_form": -0.25,
+     "log_Rminus_direct": -0.75,
+     "log_Rminus_log_form": -0.75,
+     "alarm_up": false,
+     "alarm_down": false
+    },
+    {
+     "t": 2,
+     "z": -0.75,
+     "log_Rplus_direct": -0.6740605801211564,
+     "log_Rplus_log_form": -0.6740605801211564,
+     "log_Rminus_direct": 0.6368710061148999,
+     "log_Rminus_log_form": 0.6368710061148999,
+     "alarm_up": false,
+     "alarm_down": false
+    },
+    {
+     "t": 3,
+     "z": 1.5,
+     "log_Rplus_direct": 1.4118678712750954,
+     "log_Rplus_log_form": 1.4118678712750956,
+     "log_Rminus_direct": -0.9385511024054861,
+     "log_Rminus_log_form": -0.9385511024054862,
+     "alarm_up": false,
+     "alarm_down": false
+    },
+    {
+     "t": 4,
+     "z": 0.1,
+     "log_Rplus_direct": 1.2299487734310417,
+     "log_Rplus_log_form": 1.229948773431042,
+     "log_Rminus_direct": -0.26983746681974385,
+     "log_Rminus_log_form": -0.2698374668197437,
+     "alarm_up": false,
+     "alarm_down": false
+    },
+    {
+     "t": 5,
+     "z": -0.4,
+     "log_Rplus_direct": 0.5863781931961782,
+     "log_Rplus_log_form": 0.5863781931961786,
+     "log_Rminus_direct": 0.4673025001319261,
+     "log_Rminus_log_form": 0.4673025001319261,
+     "alarm_up": false,
+     "alarm_down": false
+    },
+    {
+     "t": 6,
+     "z": 2.0,
+     "log_Rplus_direct": 2.528714198846303,
+     "log_Rplus_log_form": 2.528714198846303,
+     "log_Rminus_direct": -1.5461499246505763,
+     "log_Rminus_log_form": -1.5461499246505763,
+     "alarm_up": false,
+     "alarm_down": false
+    },
+    {
+     "t": 7,
+     "z": -1.25,
+     "log_Rplus_direct": 0.855454393212238,
+     "log_Rplus_log_form": 0.8554543932122378,
+     "log_Rminus_direct": 0.9431516322611989,
+     "log_Rminus_log_form": 0.9431516322611988,
+     "alarm_up": false,
+     "alarm_down": false
+    },
+    {
+     "t": 8,
+     "z": 0.6,
+     "log_Rplus_direct": 1.3096893552442934,
+     "log_Rplus_log_form": 1.3096893552442932,
+     "log_Rminus_direct": 0.17202266568546126,
+     "log_Rminus_log_form": 0.17202266568546126,
+     "alarm_up": false,
+     "alarm_down": false
+    }
+   ],
+   "max_abs_diff": 3.3306690738754696e-16,
+   "tolerance": 1e-12,
+   "alarm_decisions_match": true,
+   "pass": true
+  },
+  "C5_log2_shift": {
+   "steps": [
+    {
+     "t": 1,
+     "frozen_log_R": -0.25,
+     "p9_statistic": 0.4431471805599453,
+     "shift": 0.6931471805599453
+    },
+    {
+     "t": 2,
+     "frozen_log_R": -0.6740605801211564,
+     "p9_statistic": -0.31093006888808095,
+     "shift": 0.3631305112330755
+    },
+    {
+     "t": 3,
+     "frozen_log_R": 1.4118678712750954,
+     "p9_statistic": 1.5497184661507464,
+     "shift": 0.137850594875651
+    },
+    {
+     "t": 4,
+     "frozen_log_R": 1.229948773431042,
+     "p9_statistic": 1.3422442301725996,
+     "shift": 0.11229545674155772
+    }
+   ],
+   "first_step_shift": 0.6931471805599453,
+   "log2": 0.6931471805599453,
+   "first_step_shift_is_exactly_log2": true,
+   "note": "after step 1 the two forms are compared on their own trajectories, so the later shifts are path effects of the first-step defect, not additional independent shifts",
+   "pass": true
+  },
+  "C6_alarm_witness": {
+   "z_witness": 6.4089578740415005,
+   "frozen_alarms_step1": false,
+   "p9_alarms_step1": true,
+   "decisions_differ": true,
+   "pass": true
+  },
+  "all_pass": true
+ }
+}

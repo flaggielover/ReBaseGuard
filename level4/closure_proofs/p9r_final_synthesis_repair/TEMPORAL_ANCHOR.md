@@ -24,10 +24,11 @@
 ## 1. The anchor
 
 ```text
-ANCHOR_COMMIT    = PENDING_THIS_COMMIT
+ANCHOR_COMMIT    = c1e8f98bb908aff095814f3c45994ecc0f0846ed
 ANCHOR_PARENT    = dc8516732c2c5672987a6a5a22c1ce023c77f68f
 ANCHOR_TIMESTAMP = 2026-09-02T15:22:41+09:00
 ANCHOR_BRANCH    = main
+ANCHOR_PUSHED_TO = origin/main (github.com/flaggielover/ReBaseGuard)
 ANCHOR_SUBJECT   = P9R Checkpoint A: pre-result temporal anchor for the
                    Level-4 Priority-9 final-synthesis repair
 ```

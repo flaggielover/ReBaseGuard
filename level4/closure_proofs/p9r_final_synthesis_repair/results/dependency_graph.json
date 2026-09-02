@@ -1,0 +1,723 @@
+{
+ "schema": "rebaseguard.p9r.dependency-graph.v1",
+ "generator": "level4/closure_proofs/p9r_final_synthesis_repair/experiments/build_ledger.py",
+ "argv": [
+  "--final"
+ ],
+ "seed_namespace": "rebaseguard/p9r/v1",
+ "git_commit": "c1e8f98bb908aff095814f3c45994ecc0f0846ed",
+ "git_dirty_at_write": true,
+ "environment": {
+  "python": "3.14.5",
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "machine": "arm64",
+  "numpy": "2.5.2",
+  "scipy": "1.18.0"
+ },
+ "config": {
+  "edge_types": [
+   "LOGICAL_PREMISE",
+   "ASSUMPTION",
+   "SCOPE_RESTRICTION",
+   "FORMAL_SUPPORT",
+   "CERTIFIED_SUPPORT",
+   "EMPIRICAL_SUPPORT",
+   "REPRODUCTION",
+   "CONSISTENCY_CHECK",
+   "NEGATIVE_RESULT_CONSTRAINT",
+   "PROVENANCE",
+   "STATUS_PROPAGATION"
+  ],
+  "strength_edges": [
+   "LOGICAL_PREMISE",
+   "ASSUMPTION"
+  ],
+  "final": true
+ },
+ "payload_sha256": "2167f32afa17fd13584caf609b059443f4892d4bbb47f49190327c4734ac0160",
+ "payload": {
+  "n_nodes": 75,
+  "n_edges": 108,
+  "edge_type_distribution": {
+   "ASSUMPTION": 6,
+   "CERTIFIED_SUPPORT": 2,
+   "CONSISTENCY_CHECK": 3,
+   "EMPIRICAL_SUPPORT": 11,
+   "FORMAL_SUPPORT": 4,
+   "LOGICAL_PREMISE": 34,
+   "NEGATIVE_RESULT_CONSTRAINT": 4,
+   "PROVENANCE": 3,
+   "REPRODUCTION": 2,
+   "SCOPE_RESTRICTION": 17,
+   "STATUS_PROPAGATION": 22
+  },
+  "acyclic": true,
+  "edges": [
+   {
+    "child": "DEF-A",
+    "parent": "DEF-CUSUM",
+    "type": "SCOPE_RESTRICTION"
+   },
+   {
+    "child": "DEF-A",
+    "parent": "DEF-SR",
+    "type": "SCOPE_RESTRICTION"
+   },
+   {
+    "child": "ASM-DOM",
+    "parent": "DEF-A",
+    "type": "SCOPE_RESTRICTION"
+   },
+   {
+    "child": "ASM-MONO",
+    "parent": "DEF-A",
+    "type": "SCOPE_RESTRICTION"
+   },
+   {
+    "child": "ASM-P1-EXPMOM",
+    "parent": "DEF-CUSUM",
+    "type": "SCOPE_RESTRICTION"
+   },
+   {
+    "child": "P1-T1",
+    "parent": "DEF-CUSUM",
+    "type": "SCOPE_RESTRICTION"
+   },
+   {
+    "child": "P1-T1",
+    "parent": "ASM-P1-EXPMOM",
+    "type": "ASSUMPTION"
+   },
+   {
+    "child": "P1-L1",
+    "parent": "P1-T1",
+    "type": "FORMAL_SUPPORT"
+   },
+   {
+    "child": "P2-T1",
+    "parent": "DEF-SR",
+    "type": "SCOPE_RESTRICTION"
+   },
+   {
+    "child": "P2-T1",
+    "parent": "P2-D1",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P2-D1",
+    "parent": "DEF-SR",
+    "type": "SCOPE_RESTRICTION"
+   },
+   {
+    "child": "P2-L1",
+    "parent": "P2-T1",
+    "type": "FORMAL_SUPPORT"
+   },
+   {
+    "child": "P2-C1",
+    "parent": "P2-T1",
+    "type": "CERTIFIED_SUPPORT"
+   },
+   {
+    "child": "P3-T1",
+    "parent": "DEF-CUSUM",
+    "type": "SCOPE_RESTRICTION"
+   },
+   {
+    "child": "P3-T1",
+    "parent": "DEF-SR",
+    "type": "SCOPE_RESTRICTION"
+   },
+   {
+    "child": "P3-X1",
+    "parent": "P3-T1",
+    "type": "CERTIFIED_SUPPORT"
+   },
+   {
+    "child": "P3-N1",
+    "parent": "P3-T1",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P3-L1",
+    "parent": "P3-T1",
+    "type": "FORMAL_SUPPORT"
+   },
+   {
+    "child": "P3-PROV",
+    "parent": "P3-T1",
+    "type": "PROVENANCE"
+   },
+   {
+    "child": "P4-T1",
+    "parent": "ASM-P4-A1A7",
+    "type": "ASSUMPTION"
+   },
+   {
+    "child": "P4-T1",
+    "parent": "P4-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "P4-T2N",
+    "parent": "P4-T1",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P4-L1",
+    "parent": "P4-T1",
+    "type": "FORMAL_SUPPORT"
+   },
+   {
+    "child": "P4-F1",
+    "parent": "P4-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "P4-RESULT",
+    "parent": "P4-T1",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P4-RESULT",
+    "parent": "P4-F1",
+    "type": "NEGATIVE_RESULT_CONSTRAINT"
+   },
+   {
+    "child": "P4-RESULT",
+    "parent": "P4-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "P5-T1",
+    "parent": "DEF-CONV-A",
+    "type": "SCOPE_RESTRICTION"
+   },
+   {
+    "child": "P5-T7",
+    "parent": "P5-T1",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P5-T11",
+    "parent": "P5-T7",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P5-D13",
+    "parent": "P5-T11",
+    "type": "CONSISTENCY_CHECK"
+   },
+   {
+    "child": "P5-E1",
+    "parent": "P5-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "P5-RESULT",
+    "parent": "P5-T1",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P5-RESULT",
+    "parent": "P5-T7",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P5-RESULT",
+    "parent": "P5-E1",
+    "type": "EMPIRICAL_SUPPORT"
+   },
+   {
+    "child": "P5-RESULT",
+    "parent": "P5-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "P6-E1",
+    "parent": "P6-T6ABC",
+    "type": "EMPIRICAL_SUPPORT"
+   },
+   {
+    "child": "P6-LIM",
+    "parent": "P6-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "P7-A-ID",
+    "parent": "DEF-A",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P7-A-ID",
+    "parent": "DEF-CONV-A",
+    "type": "SCOPE_RESTRICTION"
+   },
+   {
+    "child": "P7-A-MONO",
+    "parent": "ASM-MONO",
+    "type": "ASSUMPTION"
+   },
+   {
+    "child": "P7-A-OP",
+    "parent": "ASM-MONO",
+    "type": "EMPIRICAL_SUPPORT"
+   },
+   {
+    "child": "P7-A-OP",
+    "parent": "ASM-DOM",
+    "type": "EMPIRICAL_SUPPORT"
+   },
+   {
+    "child": "P7-D0-ID",
+    "parent": "P7-A-ID",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P7-D0-ID",
+    "parent": "P5-T1",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P7-D0-DEF",
+    "parent": "P7-D0-ID",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P7-D0-DEF",
+    "parent": "ASM-DOM",
+    "type": "ASSUMPTION"
+   },
+   {
+    "child": "P7-BCD",
+    "parent": "P7-A-ID",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P7-BCD",
+    "parent": "ASM-MONO",
+    "type": "ASSUMPTION"
+   },
+   {
+    "child": "P7-E1",
+    "parent": "P7-A-ID",
+    "type": "EMPIRICAL_SUPPORT"
+   },
+   {
+    "child": "P7-E2",
+    "parent": "P7-E1",
+    "type": "EMPIRICAL_SUPPORT"
+   },
+   {
+    "child": "P7-R1",
+    "parent": "P7-E1",
+    "type": "EMPIRICAL_SUPPORT"
+   },
+   {
+    "child": "P7-R1",
+    "parent": "P3-T1",
+    "type": "SCOPE_RESTRICTION"
+   },
+   {
+    "child": "P8-L0L1",
+    "parent": "P8-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "P8-T1",
+    "parent": "P8-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "P8-F1",
+    "parent": "P8-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "P8R-T1",
+    "parent": "P8R-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "P8R-S15",
+    "parent": "P8R-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "P8R-F1",
+    "parent": "P8R-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "P8R-RECON",
+    "parent": "P8-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "P8R-RECON",
+    "parent": "P8R-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "P8R-RECON",
+    "parent": "P8R-F1",
+    "type": "NEGATIVE_RESULT_CONSTRAINT"
+   },
+   {
+    "child": "P9-ORIG-RESULT",
+    "parent": "P9-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "P9-T2-SUBMITTED",
+    "parent": "P7-A-MONO",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9-T2-SUBMITTED",
+    "parent": "P9-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "P9-SR-DEFECT",
+    "parent": "DEF-SR",
+    "type": "SCOPE_RESTRICTION"
+   },
+   {
+    "child": "P9-SR-DEFECT",
+    "parent": "P9-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "P9-A5A6-PROV",
+    "parent": "P9-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "P9R-L1",
+    "parent": "DEF-CUSUM",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9R-L1",
+    "parent": "DEF-SR",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9R-L1",
+    "parent": "DEF-A",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9R-L2",
+    "parent": "DEF-CUSUM",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9R-L2",
+    "parent": "DEF-SR",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9R-L2",
+    "parent": "P5-T7",
+    "type": "CONSISTENCY_CHECK"
+   },
+   {
+    "child": "P9R-L3",
+    "parent": "DEF-CUSUM",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9R-L3",
+    "parent": "DEF-SR",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9R-L4",
+    "parent": "DEF-CUSUM",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9R-L4",
+    "parent": "DEF-SR",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9R-L4",
+    "parent": "P9R-L1",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9R-L4",
+    "parent": "P9R-L3",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9R-T2a",
+    "parent": "P5-T1",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9R-T2a",
+    "parent": "P5-T7",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9R-T2a",
+    "parent": "P7-A-ID",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9R-T2a",
+    "parent": "P9R-L2",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9R-T2a",
+    "parent": "P3-T1",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9R-T2a",
+    "parent": "DEF-CONV-A",
+    "type": "SCOPE_RESTRICTION"
+   },
+   {
+    "child": "P9R-T2b",
+    "parent": "P9R-T2a",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9R-T2b",
+    "parent": "P9R-L3",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9R-T2b",
+    "parent": "P9R-L4",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9R-T2b",
+    "parent": "ASM-DOM",
+    "type": "ASSUMPTION"
+   },
+   {
+    "child": "P9R-T3",
+    "parent": "P9R-T2a",
+    "type": "LOGICAL_PREMISE"
+   },
+   {
+    "child": "P9R-T3",
+    "parent": "P7-R1",
+    "type": "NEGATIVE_RESULT_CONSTRAINT"
+   },
+   {
+    "child": "P9R-T3",
+    "parent": "P9R-E1",
+    "type": "EMPIRICAL_SUPPORT"
+   },
+   {
+    "child": "P9R-T3",
+    "parent": "P3-T1",
+    "type": "SCOPE_RESTRICTION"
+   },
+   {
+    "child": "P9R-E1",
+    "parent": "P7-E1",
+    "type": "REPRODUCTION"
+   },
+   {
+    "child": "P9R-E1",
+    "parent": "P7-E2",
+    "type": "REPRODUCTION"
+   },
+   {
+    "child": "P9R-E1",
+    "parent": "P9-SR-DEFECT",
+    "type": "NEGATIVE_RESULT_CONSTRAINT"
+   },
+   {
+    "child": "P9R-E1",
+    "parent": "DEF-SR",
+    "type": "SCOPE_RESTRICTION"
+   },
+   {
+    "child": "P9R-E2",
+    "parent": "P5-T7",
+    "type": "EMPIRICAL_SUPPORT"
+   },
+   {
+    "child": "P9R-E2",
+    "parent": "P9-A5A6-PROV",
+    "type": "PROVENANCE"
+   },
+   {
+    "child": "P9R-E3",
+    "parent": "ASM-DOM",
+    "type": "EMPIRICAL_SUPPORT"
+   },
+   {
+    "child": "P9R-E3",
+    "parent": "ASM-MONO",
+    "type": "EMPIRICAL_SUPPORT"
+   },
+   {
+    "child": "P9R-E3",
+    "parent": "P9R-T2a",
+    "type": "CONSISTENCY_CHECK"
+   },
+   {
+    "child": "P9R-E3",
+    "parent": "P9-A5A6-PROV",
+    "type": "PROVENANCE"
+   },
+   {
+    "child": "GLOBAL-CLOSURE",
+    "parent": "P4-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "GLOBAL-CLOSURE",
+    "parent": "P5-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "GLOBAL-CLOSURE",
+    "parent": "P8-STATUS",
+    "type": "STATUS_PROPAGATION"
+   },
+   {
+    "child": "GLOBAL-CLOSURE",
+    "parent": "P9-STATUS",
+    "type": "STATUS_PROPAGATION"
+   }
+  ],
+  "licensed_strength": {
+   "DEF-CUSUM": 6,
+   "DEF-SR": 6,
+   "DEF-CONV-A": 6,
+   "DEF-A": 6,
+   "ASM-DOM": 0,
+   "ASM-MONO": 0,
+   "ASM-P1-EXPMOM": 0,
+   "ASM-P4-A1A7": 0,
+   "P1-T1": 4,
+   "P1-L1": 6,
+   "P2-T1": 6,
+   "P2-D1": 6,
+   "P2-L1": 6,
+   "P2-C1": 5,
+   "P3-T1": 6,
+   "P3-X1": 5,
+   "P3-N1": 2,
+   "P3-L1": 6,
+   "P3-PROV": 1,
+   "P4-T1": 4,
+   "P4-T2N": 4,
+   "P4-L1": 6,
+   "P4-F1": 2,
+   "P4-RESULT": 1,
+   "P5-T1": 6,
+   "P5-T7": 6,
+   "P5-T11": 6,
+   "P5-D13": 0,
+   "P5-E1": 2,
+   "P5-RESULT": 1,
+   "P6-T6ABC": 6,
+   "P6-E1": 3,
+   "P6-LIM": 0,
+   "P7-A-ID": 6,
+   "P7-A-MONO": 0,
+   "P7-A-OP": 2,
+   "P7-D0-ID": 6,
+   "P7-D0-DEF": 4,
+   "P7-BCD": 4,
+   "P7-E1": 3,
+   "P7-E2": 3,
+   "P7-R1": 2,
+   "P8-L0L1": 6,
+   "P8-T1": 4,
+   "P8-F1": 2,
+   "P8R-T1": 4,
+   "P8R-S15": 2,
+   "P8R-F1": 2,
+   "P8R-RECON": 1,
+   "P9-ORIG-RESULT": 1,
+   "P9-T2-SUBMITTED": 0,
+   "P9-SR-DEFECT": 2,
+   "P9-A5A6-PROV": 1,
+   "P9R-L1": 6,
+   "P9R-L2": 6,
+   "P9R-L3": 6,
+   "P9R-L4": 6,
+   "P9R-T2a": 6,
+   "P9R-T2b": 4,
+   "P9R-T3": 2,
+   "P9R-E1": 3,
+   "P9R-E2": 3,
+   "P9R-E3": 2,
+   "P9R-N1": 0,
+   "GLOBAL-CLOSURE": 0,
+   "P1-STATUS": 6,
+   "P2-STATUS": 6,
+   "P3-STATUS": 6,
+   "P4-STATUS": 6,
+   "P5-STATUS": 6,
+   "P6-STATUS": 6,
+   "P7-STATUS": 6,
+   "P8-STATUS": 6,
+   "P8R-STATUS": 6,
+   "P9-STATUS": 6
+  },
+  "collapsed_diagnostic": {
+   "n_violations": 36,
+   "violations": {
+    "V6": [
+     "P4-T1 <- STATUS P4-STATUS as LOGICAL_PREMISE",
+     "P4-F1 <- STATUS P4-STATUS as LOGICAL_PREMISE",
+     "P4-RESULT <- STATUS P4-STATUS as LOGICAL_PREMISE",
+     "P5-E1 <- STATUS P5-STATUS as LOGICAL_PREMISE",
+     "P5-RESULT <- STATUS P5-STATUS as LOGICAL_PREMISE",
+     "P6-LIM <- STATUS P6-STATUS as LOGICAL_PREMISE",
+     "P8-L0L1 <- STATUS P8-STATUS as LOGICAL_PREMISE",
+     "P8-T1 <- STATUS P8-STATUS as LOGICAL_PREMISE",
+     "P8-F1 <- STATUS P8-STATUS as LOGICAL_PREMISE",
+     "P8R-T1 <- STATUS P8R-STATUS as LOGICAL_PREMISE",
+     "P8R-S15 <- STATUS P8R-STATUS as LOGICAL_PREMISE",
+     "P8R-F1 <- STATUS P8R-STATUS as LOGICAL_PREMISE",
+     "P8R-RECON <- STATUS P8-STATUS as LOGICAL_PREMISE",
+     "P8R-RECON <- STATUS P8R-STATUS as LOGICAL_PREMISE",
+     "P9-ORIG-RESULT <- STATUS P9-STATUS as LOGICAL_PREMISE",
+     "P9-T2-SUBMITTED <- STATUS P9-STATUS as LOGICAL_PREMISE",
+     "P9-SR-DEFECT <- STATUS P9-STATUS as LOGICAL_PREMISE",
+     "P9-A5A6-PROV <- STATUS P9-STATUS as LOGICAL_PREMISE",
+     "GLOBAL-CLOSURE <- STATUS P4-STATUS as LOGICAL_PREMISE",
+     "GLOBAL-CLOSURE <- STATUS P5-STATUS as LOGICAL_PREMISE",
+     "GLOBAL-CLOSURE <- STATUS P8-STATUS as LOGICAL_PREMISE",
+     "GLOBAL-CLOSURE <- STATUS P9-STATUS as LOGICAL_PREMISE"
+    ],
+    "V10": [
+     "P9R-T2b does not carry the ASM-DOM ASSUMPTION edge"
+    ],
+    "V15": [
+     "P1-T1: declared CONDITIONAL_THEOREM (rank 4) exceeds licensed strength 0",
+     "P1-L1: declared FORMALLY_VERIFIED (rank 6) exceeds licensed strength 0",
+     "P4-T1: declared CONDITIONAL_THEOREM (rank 4) exceeds licensed strength 0",
+     "P4-T2N: declared CONDITIONAL_THEOREM (rank 4) exceeds licensed strength 0",
+     "P4-L1: declared FORMALLY_VERIFIED (rank 6) exceeds licensed strength 0",
+     "P4-RESULT: declared PARTIAL_PRIORITY_RESULT (rank 1) exceeds licensed strength 0",
+     "P7-A-OP: declared EMPIRICAL_ONLY (rank 2) exceeds licensed strength 0",
+     "P7-D0-DEF: declared CONDITIONAL_THEOREM (rank 4) exceeds licensed strength 0",
+     "P7-BCD: declared CONDITIONAL_THEOREM (rank 4) exceeds licensed strength 0",
+     "P9R-T2b: declared CONDITIONAL_THEOREM (rank 4) exceeds licensed strength 0",
+     "P9R-E1: declared EMPIRICAL_REPRODUCED (rank 3) exceeds licensed strength 2",
+     "P9R-E2: declared EMPIRICAL_REPRODUCED (rank 3) exceeds licensed strength 1",
+     "P9R-E3: declared EMPIRICAL_ONLY (rank 2) exceeds licensed strength 0"
+    ]
+   },
+   "interpretation": "Flattening every edge to LOGICAL_PREMISE makes formal, certified, empirical, reproduction, provenance, negative-constraint and status edges indistinguishable from logical premises. The violations listed here are precisely the unsound propagations that a collapsed graph would license or hide, which is why P9R's edge types are frozen and typed."
+  }
+ }
+}

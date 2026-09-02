@@ -1,0 +1,184 @@
+{
+ "schema": "rebaseguard.p9r.gate-report.v1",
+ "anchor_commit": "c1e8f98bb908aff095814f3c45994ecc0f0846ed",
+ "head": "c1e8f98bb908aff095814f3c45994ecc0f0846ed",
+ "gates": {
+  "I1": {
+   "pass": true,
+   "detail": {
+    "anchor": "c1e8f98bb908aff095814f3c45994ecc0f0846ed",
+    "exists": true,
+    "ancestor_of_head": true,
+    "results_files_at_anchor": [
+     "level4/closure_proofs/p9r_final_synthesis_repair/results/integrity/protected_tree_manifest_pre.json"
+    ],
+    "stray_result_files": [],
+    "missing_required": [],
+    "n_p9r_files_at_anchor": 34
+   }
+  },
+  "I2": {
+   "pass": true,
+   "detail": {
+    "diff_empty": true,
+    "tree_at_head": "3aec482ec1f87184848b4bb60a7ee7c6928e3127",
+    "tree_at_adjudication": "3aec482ec1f87184848b4bb60a7ee7c6928e3127",
+    "commits_touching_p9": [
+     "a3e3cabc30c4508b866736aeede54db17e5e1fcc"
+    ]
+   }
+  },
+  "I3": {
+   "pass": true,
+   "detail": {
+    "n_files": 20,
+    "aggregate_sha256": "c1d53e2cf66e0e18b9d4599cef8b07d3151c9cf27033e682355094a6bb16b46d",
+    "drift": [],
+    "manifest": "source"
+   }
+  },
+  "I4": {
+   "pass": true,
+   "detail": {
+    "n_files": 9,
+    "aggregate_sha256": "446f41a3815c4cc7c76daad89d125973aeaa1f72b318cf7919ea37c0139549e3",
+    "drift": [],
+    "manifest": "protocol"
+   }
+  },
+  "I5": {
+   "pass": true,
+   "detail": {
+    "all_pass": true,
+    "first_step_shift": 0.6931471805599453,
+    "alarm_decisions_differ": true
+   }
+  },
+  "I6": {
+   "pass": true,
+   "detail": {
+    "artifacts_checked": [
+     "burnin_sensitivity.json",
+     "claim_ledger.json",
+     "dependency_graph.json",
+     "reproduction.json",
+     "response_grid.json",
+     "sr_recurrence_check.json"
+    ],
+    "problems": []
+   }
+  },
+  "I7": {
+   "pass": true,
+   "detail": {
+    "V8": [],
+    "n_nodes": 75
+   }
+  },
+  "I8": {
+   "pass": true,
+   "detail": {
+    "failing_rules": {}
+   }
+  },
+  "I9": {
+   "pass": true,
+   "detail": {
+    "V10": [],
+    "asm_dom_present": true,
+    "t2b_assumptions": [
+     "ASM-DOM"
+    ]
+   }
+  },
+  "I10": {
+   "pass": true,
+   "detail": {
+    "p3_x1_class": "CERTIFIED_NUMERICAL"
+   }
+  },
+  "I11": {
+   "pass": true,
+   "detail": {
+    "expected": {
+     "P7-A-ID": "EXACT_THEOREM",
+     "P7-A-MONO": "NOT_ESTABLISHED",
+     "P7-A-OP": "EMPIRICAL_ONLY",
+     "P7-D0-ID": "EXACT_THEOREM",
+     "P7-D0-DEF": "CONDITIONAL_THEOREM"
+    },
+    "actual": {
+     "P7-A-ID": "EXACT_THEOREM",
+     "P7-A-MONO": "NOT_ESTABLISHED",
+     "P7-A-OP": "EMPIRICAL_ONLY",
+     "P7-D0-ID": "EXACT_THEOREM",
+     "P7-D0-DEF": "CONDITIONAL_THEOREM"
+    }
+   }
+  },
+  "I12": {
+   "pass": true,
+   "detail": {
+    "V13": [],
+    "p8_status": "FAIL",
+    "p8r_status": "CLOSED",
+    "core_premise_closure": [
+     "ASM-DOM",
+     "DEF-A",
+     "DEF-CUSUM",
+     "DEF-SR",
+     "P3-T1",
+     "P5-T1",
+     "P5-T7",
+     "P7-A-ID",
+     "P9R-L1",
+     "P9R-L2",
+     "P9R-L3",
+     "P9R-L4",
+     "P9R-T2a"
+    ],
+    "p8_or_p8r_in_core_closure": []
+   }
+  },
+  "I13": {
+   "pass": true,
+   "detail": {
+    "V14": [],
+    "results_declares_not_established": true,
+    "p9r_n1_class": "NOT_ESTABLISHED"
+   }
+  },
+  "I14": {
+   "pass": true,
+   "detail": {
+    "n_pre": 3428,
+    "n_final": 3428,
+    "changed": [],
+    "added": [],
+    "removed": [],
+    "authorised_root_status_files": [
+     "README.md"
+    ],
+    "unauthorised": [],
+    "p9_tree_pre": {
+     "n_files": 41,
+     "aggregate_sha256": "9274ecb9327208e2a22c350747135b19061463b3c8f08fbc02065b6ab43bf336"
+    },
+    "p9_tree_final": {
+     "n_files": 41,
+     "aggregate_sha256": "9274ecb9327208e2a22c350747135b19061463b3c8f08fbc02065b6ab43bf336"
+    }
+   }
+  },
+  "I15": {
+   "pass": true,
+   "detail": {
+    "pytest_returncode": 0,
+    "summary": "110 passed in 3.18s"
+   }
+  }
+ },
+ "n_gates": 15,
+ "n_pass": 15,
+ "all_pass": true
+}
