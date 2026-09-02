@@ -28,3 +28,23 @@ implementation waits until the certified scalar route survives the stop-gate.
    `T-19` (machine-checked) and `N-03` (certified).
 
 `FROZEN_GATES.md` `G7` remains testable as written.
+
+
+---
+
+## Re-check after the R-A′ repair (certified-method change only)
+
+The certified **scalar interface** the spine consumes is unchanged by R-A′:
+`X1` still consumes a bound `B` on `|M|`, `X2`/`X3` still consume
+`alpha, beta, g_min, g_max`, and `X4`-`X6` are untouched. R-A′ altered how those
+scalars are *obtained* (recentred representation, exact-centre Taylor model in
+`e`, sub-cell hull), never what they are.
+
+One addition is worth recording for the eventual `LEAN_CORRESPONDENCE.md`: R-A′
+produces enclosures **per sub-cell**, and the cover-level scalar is the hull.
+`X1`-`X3` take a single scalar, so the hull step happens outside Lean, in the
+same layer that already takes the sup over the cover. No `X` statement changes.
+
+`FROZEN_GATES.md` `G7` remains testable as written. Full Lean implementation
+still waits, per the staging discipline: the certified scalar route has now
+survived a stop-gate, but no cover exists yet.

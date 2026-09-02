@@ -77,3 +77,25 @@ unchanged.
 | correction | the test file's bytes are frozen and are **not** edited. `tests/conftest.py` (which is not in `SOURCE_MANIFEST.json`) marks it `xfail(strict=True)` with this defect id as the reason, and `tests/test_checkpoint_b.py::test_gate_g1_anchor_holds` checks the intended property correctly, against `git ls-tree` on the anchor |
 | blast radius | none. `G1` is checked, and more faithfully than before |
 | lesson for the next anchor | freeze tests of *invariants*, not of *phases*; a phase assertion belongs in a gate script that names the commit it is about |
+
+## `D6` — a Checkpoint-B test asserts a transient worktree property
+
+| field | content |
+|---|---|
+| subject | `tests/test_ra_frozen.py::test_no_ra_production_result_at_the_anchor` |
+| status | **STALE at the R-A result checkpoint**, by construction — the same defect class as `D5` |
+| why | it asserts that no R-A result file exists in the working tree. That is a property of the **anchor commit** `e02b5ce`, not of the working tree, so it necessarily goes red as soon as the R-A′ gate writes its artifact |
+| correction | the test is not edited. `tests/conftest.py` marks it `xfail(strict=True)` naming this defect, and `tests/test_checkpoint_c.py::test_no_ra_result_existed_in_the_anchor_commit` checks the intended property with `git ls-tree` on `e02b5ce` |
+| blast radius | none; the property is checked, and more faithfully |
+| lesson | repeated from `D5` and now demonstrated twice: freeze tests of *invariants*, never of *phases*. A phase assertion belongs in a gate script that names the commit it is about |
+
+## `D7` — external repository change invalidates the protected-tree manifest comparison
+
+| field | content |
+|---|---|
+| subject | `test_protected_tree_intact` in `test_anchor_and_protection.py` and `test_checkpoint_b.py` |
+| status | **FAILING at `HEAD`, for a cause outside P5X** |
+| why | commit `31132e8` ("Independently close P9R repair adjudication") and an external working-tree clean landed between Checkpoint B and the R-A′ result. See `INCIDENT_EXTERNAL_TREE_CHANGE.md` |
+| correction | the manifest is **not** re-baselined — that would destroy the gate. Both tests are marked `xfail(strict=True)` naming the incident, and `tests/test_checkpoint_c.py` checks against git the properties that actually matter (`P5` byte-identical to `bb03c0e`; the P5X tree at `HEAD` identical to the anchor; no P5X commit touching anything outside P5X) **and pins the external diff to exactly three files**, so any further outside change fails loudly |
+| blast radius | the P4/P5 disposition-audit namespaces are lost as working-tree artifacts; their recorded digests survive. No P5X proof path depends on them (`DEPENDENCY_AUDIT.md` §2) |
+| responsibility | not P5X's. Escalated to the repository owner in `INCIDENT_EXTERNAL_TREE_CHANGE.md` §5 |
