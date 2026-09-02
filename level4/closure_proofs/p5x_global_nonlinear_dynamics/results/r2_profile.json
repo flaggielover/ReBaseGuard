@@ -1,0 +1,177 @@
+{
+ "schema": "rebaseguard.p5x.opt-r2.profile.v1",
+ "generated_utc": "2026-09-02T14:34:56.994499+00:00",
+ "git_commit": "9e19c706b65ba354de7123fbe670c121acf1a861",
+ "note": "only the CUSUM m=1 first-moment path exists; m>1, SR and second-moment costs are composed from measured primitives",
+ "config": {
+  "taylor_order": 120,
+  "candidate_degree": 12,
+  "precision_bits": 256,
+  "subdivision_depth": 3,
+  "quadrature_order": 400
+ },
+ "cells": [
+  {
+   "e": "2500000/10000000",
+   "wall_seconds": 411.18739199638367,
+   "cpu_seconds": 398.320453,
+   "accounted_seconds": 361.941924017,
+   "unaccounted_pct": 9.13298042041541,
+   "buckets": [
+    {
+     "bucket": "poly_bi_primitives",
+     "tottime": 198.408437291,
+     "ncalls": 145792,
+     "pct_of_cpu": 49.81126020435612
+    },
+    {
+     "bucket": "bernstein_subdivide",
+     "tottime": 122.82489879,
+     "ncalls": 54314,
+     "pct_of_cpu": 30.83569971487254
+    },
+    {
+     "bucket": "bernstein_param",
+     "tottime": 20.508756119,
+     "ncalls": 12,
+     "pct_of_cpu": 5.148808193135892
+    },
+    {
+     "bucket": "bernstein_transform",
+     "tottime": 12.188291593,
+     "ncalls": 8,
+     "pct_of_cpu": 3.059921101515719
+    },
+    {
+     "bucket": "kernel_integrate_z",
+     "tottime": 6.701279714,
+     "ncalls": 18,
+     "pct_of_cpu": 1.6823840361519171
+    },
+    {
+     "bucket": "candidate_solve_numpy",
+     "tottime": 0.47106168000000004,
+     "ncalls": 135214,
+     "pct_of_cpu": 0.11826198641122757
+    },
+    {
+     "bucket": "kernel_phi_multiply",
+     "tottime": 0.42576509700000004,
+     "ncalls": 18,
+     "pct_of_cpu": 0.10689009158161407
+    },
+    {
+     "bucket": "kernel_substitute",
+     "tottime": 0.39459325800000006,
+     "ncalls": 3510,
+     "pct_of_cpu": 0.09906427225317503
+    },
+    {
+     "bucket": "hermite_taylor_coeffs",
+     "tottime": 0.010560690000000001,
+     "ncalls": 8,
+     "pct_of_cpu": 0.0026513049783059976
+    },
+    {
+     "bucket": "reward_build",
+     "tottime": 0.006549451,
+     "ncalls": 12,
+     "pct_of_cpu": 0.0016442668084633858
+    },
+    {
+     "bucket": "cheb_to_power",
+     "tottime": 0.001730334,
+     "ncalls": 6,
+     "pct_of_cpu": 0.0004344075196158707
+    }
+   ],
+   "label": "near-origin e=0.25"
+  },
+  {
+   "e": "40000000/10000000",
+   "wall_seconds": 373.63111996650696,
+   "cpu_seconds": 366.540201,
+   "accounted_seconds": 329.188723864,
+   "unaccounted_pct": 10.190281184464137,
+   "buckets": [
+    {
+     "bucket": "poly_bi_primitives",
+     "tottime": 177.266577873,
+     "ncalls": 145784,
+     "pct_of_cpu": 48.36211072874922
+    },
+    {
+     "bucket": "bernstein_subdivide",
+     "tottime": 114.150661294,
+     "ncalls": 54314,
+     "pct_of_cpu": 31.142739863887396
+    },
+    {
+     "bucket": "bernstein_param",
+     "tottime": 18.280241336,
+     "ncalls": 12,
+     "pct_of_cpu": 4.987240495347466
+    },
+    {
+     "bucket": "bernstein_transform",
+     "tottime": 11.135625842000001,
+     "ncalls": 8,
+     "pct_of_cpu": 3.038036704192237
+    },
+    {
+     "bucket": "kernel_integrate_z",
+     "tottime": 6.813943811000001,
+     "ncalls": 18,
+     "pct_of_cpu": 1.8589894893957348
+    },
+    {
+     "bucket": "candidate_solve_numpy",
+     "tottime": 0.6100464270000001,
+     "ncalls": 135214,
+     "pct_of_cpu": 0.16643370231577956
+    },
+    {
+     "bucket": "kernel_substitute",
+     "tottime": 0.46486749200000005,
+     "ncalls": 3510,
+     "pct_of_cpu": 0.1268257862934931
+    },
+    {
+     "bucket": "kernel_phi_multiply",
+     "tottime": 0.44856911600000005,
+     "ncalls": 18,
+     "pct_of_cpu": 0.12237924101536683
+    },
+    {
+     "bucket": "hermite_taylor_coeffs",
+     "tottime": 0.009110666000000002,
+     "ncalls": 8,
+     "pct_of_cpu": 0.002485584384780757
+    },
+    {
+     "bucket": "reward_build",
+     "tottime": 0.006965333000000001,
+     "ncalls": 12,
+     "pct_of_cpu": 0.0019002916954257904
+    },
+    {
+     "bucket": "cheb_to_power",
+     "tottime": 0.002114674,
+     "ncalls": 6,
+     "pct_of_cpu": 0.000576928258955148
+    }
+   ],
+   "label": "moderate e=4"
+  }
+ ],
+ "primitives": {
+  "solve_candidates_pair": 0.7586290836334229,
+  "phi_taylor_coefficients": 0.00074005126953125,
+  "derivative_coefficients": 1.4781951904296875e-05,
+  "chebyshev_payload_to_power": 0.00892329216003418,
+  "kernel_polynomials_ONE": 2.0975160598754883,
+  "reward_rho1": 0.03606104850769043,
+  "reward_drho1": 0.03437685966491699,
+  "max_abs_on_reachable_ONE": 129.71975016593933
+ }
+}
