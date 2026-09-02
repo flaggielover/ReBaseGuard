@@ -1,0 +1,621 @@
+{
+ "schema": "rebaseguard.p8r.command-manifest.v1",
+ "declared": "at the temporal anchor, before any production result existed",
+ "interpreter": "level4/.venv/bin/python  (python 3.14.5, numpy 2.5.2, scipy 1.18.0)",
+ "working_directory": "level4/closure_proofs/p8r_temporal_integrity_repair",
+ "driver": "experiments/pipeline.sh runs commands 1-40 in this order; the last four are run after it",
+ "note": "Every production artifact records its own argv, so this manifest and the artifacts can be compared directly.  Gate I8 checks that every script named here exists; gate I10 checks that every artifact names a generator that exists and matches its declared generator.",
+ "n_commands": 65,
+ "commands": [
+  {
+   "script": "experiments/run_regularity.py",
+   "argv": [
+    "experiments/run_regularity.py"
+   ],
+   "note": "S4 / S2(b): exact identities, no randomness"
+  },
+  {
+   "script": "experiments/run_calibration.py",
+   "argv": [
+    "experiments/run_calibration.py",
+    "gaussian"
+   ],
+   "note": "E2: frozen SR calibration for one family (CAL_SEARCH -> CAL_VERIFY_1 -> optional frozen retry -> CAL_VERIFY_2)"
+  },
+  {
+   "script": "experiments/run_calibration.py",
+   "argv": [
+    "experiments/run_calibration.py",
+    "t10"
+   ],
+   "note": "E2: frozen SR calibration for one family (CAL_SEARCH -> CAL_VERIFY_1 -> optional frozen retry -> CAL_VERIFY_2)"
+  },
+  {
+   "script": "experiments/run_calibration.py",
+   "argv": [
+    "experiments/run_calibration.py",
+    "t5"
+   ],
+   "note": "E2: frozen SR calibration for one family (CAL_SEARCH -> CAL_VERIFY_1 -> optional frozen retry -> CAL_VERIFY_2)"
+  },
+  {
+   "script": "experiments/run_calibration.py",
+   "argv": [
+    "experiments/run_calibration.py",
+    "t3"
+   ],
+   "note": "E2: frozen SR calibration for one family (CAL_SEARCH -> CAL_VERIFY_1 -> optional frozen retry -> CAL_VERIFY_2)"
+  },
+  {
+   "script": "experiments/run_calibration.py",
+   "argv": [
+    "experiments/run_calibration.py",
+    "contam0.05"
+   ],
+   "note": "E2: frozen SR calibration for one family (CAL_SEARCH -> CAL_VERIFY_1 -> optional frozen retry -> CAL_VERIFY_2)"
+  },
+  {
+   "script": "experiments/run_calibration.py",
+   "argv": [
+    "experiments/run_calibration.py",
+    "contam0.1"
+   ],
+   "note": "E2: frozen SR calibration for one family (CAL_SEARCH -> CAL_VERIFY_1 -> optional frozen retry -> CAL_VERIFY_2)"
+  },
+  {
+   "script": "experiments/run_calibration.py",
+   "argv": [
+    "experiments/run_calibration.py",
+    "--merge"
+   ],
+   "note": "freezes the accepted thresholds; no SR production cell may run before this exists"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "cusum",
+    "gaussian",
+    "--tag",
+    "E1"
+   ],
+   "note": "E1: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "cusum",
+    "t10",
+    "--tag",
+    "E1"
+   ],
+   "note": "E1: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "cusum",
+    "t5",
+    "--tag",
+    "E1"
+   ],
+   "note": "E1: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "cusum",
+    "t3",
+    "--tag",
+    "E1"
+   ],
+   "note": "E1: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "cusum",
+    "contam0.05",
+    "--tag",
+    "E1"
+   ],
+   "note": "E1: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "cusum",
+    "contam0.1",
+    "--tag",
+    "E1"
+   ],
+   "note": "E1: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "sr",
+    "gaussian",
+    "--tag",
+    "E1"
+   ],
+   "note": "E1: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "sr",
+    "t10",
+    "--tag",
+    "E1"
+   ],
+   "note": "E1: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "sr",
+    "t5",
+    "--tag",
+    "E1"
+   ],
+   "note": "E1: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "sr",
+    "t3",
+    "--tag",
+    "E1"
+   ],
+   "note": "E1: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "sr",
+    "contam0.05",
+    "--tag",
+    "E1"
+   ],
+   "note": "E1: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "sr",
+    "contam0.1",
+    "--tag",
+    "E1"
+   ],
+   "note": "E1: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/aggregate_gamma.py",
+   "argv": [
+    "experiments/aggregate_gamma.py",
+    "E1"
+   ],
+   "note": "aggregate E1 into one matrix, keeping the raw per-batch vectors for paired analysis"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "cusum",
+    "gaussian",
+    "--tag",
+    "E5"
+   ],
+   "note": "E5: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "cusum",
+    "t10",
+    "--tag",
+    "E5"
+   ],
+   "note": "E5: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "cusum",
+    "t5",
+    "--tag",
+    "E5"
+   ],
+   "note": "E5: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "cusum",
+    "t3",
+    "--tag",
+    "E5"
+   ],
+   "note": "E5: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "cusum",
+    "contam0.05",
+    "--tag",
+    "E5"
+   ],
+   "note": "E5: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "cusum",
+    "contam0.1",
+    "--tag",
+    "E5"
+   ],
+   "note": "E5: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "sr",
+    "gaussian",
+    "--tag",
+    "E5"
+   ],
+   "note": "E5: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "sr",
+    "t10",
+    "--tag",
+    "E5"
+   ],
+   "note": "E5: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "sr",
+    "t5",
+    "--tag",
+    "E5"
+   ],
+   "note": "E5: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "sr",
+    "t3",
+    "--tag",
+    "E5"
+   ],
+   "note": "E5: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "sr",
+    "contam0.05",
+    "--tag",
+    "E5"
+   ],
+   "note": "E5: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/run_gamma_matrix.py",
+   "argv": [
+    "experiments/run_gamma_matrix.py",
+    "sr",
+    "contam0.1",
+    "--tag",
+    "E5"
+   ],
+   "note": "E5: stopped-cycle Gamma matrix for one (detector, family) cell"
+  },
+  {
+   "script": "experiments/aggregate_gamma.py",
+   "argv": [
+    "experiments/aggregate_gamma.py",
+    "E5"
+   ],
+   "note": "aggregate E5 into one matrix, keeping the raw per-batch vectors for paired analysis"
+  },
+  {
+   "script": "experiments/run_arl0_check.py",
+   "argv": [
+    "experiments/run_arl0_check.py"
+   ],
+   "note": "S3: in-control ARL at the frozen thresholds, PRODUCTION addresses"
+  },
+  {
+   "script": "experiments/run_independent_repro.py",
+   "argv": [
+    "experiments/run_independent_repro.py"
+   ],
+   "note": "E6: independent reimplementation, entropy outside the P8R address system"
+  },
+  {
+   "script": "experiments/run_chain_ladder.py",
+   "argv": [
+    "experiments/run_chain_ladder.py",
+    "cusum",
+    "gaussian"
+   ],
+   "note": "E3: in-control reuse ladder, P7's ladder verbatim"
+  },
+  {
+   "script": "experiments/run_chain_ladder.py",
+   "argv": [
+    "experiments/run_chain_ladder.py",
+    "cusum",
+    "t10"
+   ],
+   "note": "E3: in-control reuse ladder, P7's ladder verbatim"
+  },
+  {
+   "script": "experiments/run_chain_ladder.py",
+   "argv": [
+    "experiments/run_chain_ladder.py",
+    "cusum",
+    "t5"
+   ],
+   "note": "E3: in-control reuse ladder, P7's ladder verbatim"
+  },
+  {
+   "script": "experiments/run_chain_ladder.py",
+   "argv": [
+    "experiments/run_chain_ladder.py",
+    "cusum",
+    "t3"
+   ],
+   "note": "E3: in-control reuse ladder, P7's ladder verbatim"
+  },
+  {
+   "script": "experiments/run_chain_ladder.py",
+   "argv": [
+    "experiments/run_chain_ladder.py",
+    "cusum",
+    "contam0.05"
+   ],
+   "note": "E3: in-control reuse ladder, P7's ladder verbatim"
+  },
+  {
+   "script": "experiments/run_chain_ladder.py",
+   "argv": [
+    "experiments/run_chain_ladder.py",
+    "cusum",
+    "contam0.1"
+   ],
+   "note": "E3: in-control reuse ladder, P7's ladder verbatim"
+  },
+  {
+   "script": "experiments/run_chain_ladder.py",
+   "argv": [
+    "experiments/run_chain_ladder.py",
+    "sr",
+    "gaussian"
+   ],
+   "note": "E3: in-control reuse ladder, P7's ladder verbatim"
+  },
+  {
+   "script": "experiments/run_chain_ladder.py",
+   "argv": [
+    "experiments/run_chain_ladder.py",
+    "sr",
+    "t10"
+   ],
+   "note": "E3: in-control reuse ladder, P7's ladder verbatim"
+  },
+  {
+   "script": "experiments/run_chain_ladder.py",
+   "argv": [
+    "experiments/run_chain_ladder.py",
+    "sr",
+    "t5"
+   ],
+   "note": "E3: in-control reuse ladder, P7's ladder verbatim"
+  },
+  {
+   "script": "experiments/run_chain_ladder.py",
+   "argv": [
+    "experiments/run_chain_ladder.py",
+    "sr",
+    "t3"
+   ],
+   "note": "E3: in-control reuse ladder, P7's ladder verbatim"
+  },
+  {
+   "script": "experiments/run_chain_ladder.py",
+   "argv": [
+    "experiments/run_chain_ladder.py",
+    "sr",
+    "contam0.05"
+   ],
+   "note": "E3: in-control reuse ladder, P7's ladder verbatim"
+  },
+  {
+   "script": "experiments/run_chain_ladder.py",
+   "argv": [
+    "experiments/run_chain_ladder.py",
+    "sr",
+    "contam0.1"
+   ],
+   "note": "E3: in-control reuse ladder, P7's ladder verbatim"
+  },
+  {
+   "script": "experiments/run_drift.py",
+   "argv": [
+    "experiments/run_drift.py",
+    "cusum",
+    "gaussian"
+   ],
+   "note": "E4: step and ramp detection delay"
+  },
+  {
+   "script": "experiments/run_drift.py",
+   "argv": [
+    "experiments/run_drift.py",
+    "cusum",
+    "t10"
+   ],
+   "note": "E4: step and ramp detection delay"
+  },
+  {
+   "script": "experiments/run_drift.py",
+   "argv": [
+    "experiments/run_drift.py",
+    "cusum",
+    "t5"
+   ],
+   "note": "E4: step and ramp detection delay"
+  },
+  {
+   "script": "experiments/run_drift.py",
+   "argv": [
+    "experiments/run_drift.py",
+    "cusum",
+    "t3"
+   ],
+   "note": "E4: step and ramp detection delay"
+  },
+  {
+   "script": "experiments/run_drift.py",
+   "argv": [
+    "experiments/run_drift.py",
+    "cusum",
+    "contam0.05"
+   ],
+   "note": "E4: step and ramp detection delay"
+  },
+  {
+   "script": "experiments/run_drift.py",
+   "argv": [
+    "experiments/run_drift.py",
+    "cusum",
+    "contam0.1"
+   ],
+   "note": "E4: step and ramp detection delay"
+  },
+  {
+   "script": "experiments/run_drift.py",
+   "argv": [
+    "experiments/run_drift.py",
+    "sr",
+    "gaussian"
+   ],
+   "note": "E4: step and ramp detection delay"
+  },
+  {
+   "script": "experiments/run_drift.py",
+   "argv": [
+    "experiments/run_drift.py",
+    "sr",
+    "t10"
+   ],
+   "note": "E4: step and ramp detection delay"
+  },
+  {
+   "script": "experiments/run_drift.py",
+   "argv": [
+    "experiments/run_drift.py",
+    "sr",
+    "t5"
+   ],
+   "note": "E4: step and ramp detection delay"
+  },
+  {
+   "script": "experiments/run_drift.py",
+   "argv": [
+    "experiments/run_drift.py",
+    "sr",
+    "t3"
+   ],
+   "note": "E4: step and ramp detection delay"
+  },
+  {
+   "script": "experiments/run_drift.py",
+   "argv": [
+    "experiments/run_drift.py",
+    "sr",
+    "contam0.05"
+   ],
+   "note": "E4: step and ramp detection delay"
+  },
+  {
+   "script": "experiments/run_drift.py",
+   "argv": [
+    "experiments/run_drift.py",
+    "sr",
+    "contam0.1"
+   ],
+   "note": "E4: step and ramp detection delay"
+  },
+  {
+   "script": "experiments/derive_resolution.py",
+   "argv": [
+    "experiments/derive_resolution.py"
+   ],
+   "note": "apply the frozen S1-S17 rules literally"
+  },
+  {
+   "script": "scripts/rng_identity.py",
+   "argv": [
+    "scripts/rng_identity.py"
+   ],
+   "note": "I9: the six independent primitive-identity checks"
+  },
+  {
+   "script": "scripts/audit_integrity.py",
+   "argv": [
+    "scripts/audit_integrity.py"
+   ],
+   "note": "evaluate the frozen integrity gates I1-I13"
+  },
+  {
+   "script": "experiments/derive_verdict.py",
+   "argv": [
+    "experiments/derive_verdict.py"
+   ],
+   "note": "apply the frozen closure rule; emits a CANDIDATE verdict only"
+  },
+  {
+   "script": "scripts/make_manifests.py",
+   "argv": [
+    "scripts/make_manifests.py",
+    "--stage",
+    "final"
+   ],
+   "note": "recompute the protected-tree manifest for I11"
+  }
+ ]
+}
