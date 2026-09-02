@@ -64,3 +64,13 @@ are indifferent to how tight they are. No `X` statement, hypothesis or
 conclusion is affected, and `FROZEN_GATES.md` `G7` remains testable as written.
 
 `LEAN_INTERFACE_CHANGED = NO`.
+
+---
+
+## Re-check after Compute Optimization R2
+
+R2's two candidates (`C1` Bernstein depth ladder, `C2` dense affine
+substitution) change only how the range bound is computed. `X1`-`X6` consume the
+same certified scalars with the same semantics; the only observable difference
+is a slightly larger radius at depth 0, which `X2`/`X3` take as hypotheses and
+are indifferent to. `LEAN_INTERFACE_CHANGED = NO`.

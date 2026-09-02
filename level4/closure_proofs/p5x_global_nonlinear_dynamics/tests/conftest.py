@@ -31,6 +31,9 @@ _STALE_AT_CHECKPOINT_B = {
     # D8: third occurrence of the same defect class.  Superseded by
     # test_checkpoint_d.py::test_no_r1_result_in_the_checkpoint_c_anchor.
     "test_r1_frozen.py::test_no_r1_result_at_the_anchor",
+    # D8 pattern, fourth occurrence.  Superseded by
+    # test_checkpoint_e.py::test_no_r2_result_in_the_checkpoint_d_anchor.
+    "test_r2_frozen.py::test_no_r2_result_at_the_anchor",
 }
 
 # Protected-tree comparisons against the pre-campaign manifest.  These fail at

@@ -110,3 +110,12 @@ unchanged.
 | correction | the test is not edited. `tests/conftest.py` marks it `xfail(strict=True)` naming this defect, and `tests/test_checkpoint_d.py::test_no_r1_result_in_the_checkpoint_c_anchor` checks the intended property with `git ls-tree` on `a5fdb17` |
 | blast radius | none |
 | **standing lesson, now demonstrated three times** | anchor-phase assertions must be written against `git ls-tree <anchor>` from the outset. Every future P5X checkpoint test that wants to say "no result existed at the anchor" must name the commit, never inspect the working tree. This is recorded as a process rule, not merely a defect |
+
+## `D9` — anchor-phase worktree assertion (fourth occurrence, D8 pattern)
+
+| field | content |
+|---|---|
+| subject | `tests/test_r2_frozen.py::test_no_r2_result_at_the_anchor` |
+| status | **STALE at the R2 result checkpoint**, by construction |
+| correction | not edited; `tests/conftest.py` marks it `xfail(strict=True)` citing the `D8` pattern, and `tests/test_checkpoint_e.py::test_no_r2_result_in_the_checkpoint_d_anchor` checks the property against `git ls-tree` on `afbfe18` |
+| note | the `D8` standing rule was written after the third occurrence and was **not** followed when `test_r2_frozen.py` was authored. Recorded as a process failure, not just a defect: the rule needs to be enforced at authoring time, e.g. by a lint that rejects `results/*.exists()` assertions in anchor-phase tests |
