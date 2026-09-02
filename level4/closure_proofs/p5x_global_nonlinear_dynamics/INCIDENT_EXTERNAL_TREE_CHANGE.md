@@ -102,3 +102,44 @@ repository; they are the only artifacts lost, and they were the authority for
 launching P5X. If no copy exists, record their loss in the root status
 documentation, citing the digests in §1(b). P5X takes no action on either, since
 both lie outside its namespace.
+
+---
+
+## 6. Addendum — worktree isolation adopted for Compute Optimization R1
+
+After this incident, the R1 campaign was run in a **dedicated git worktree**:
+
+```text
+path   = /Users/suzhe/ReBaseGuard-p5x-opt
+branch = p5x-compute-opt-r1     based on f2ac22e (contains 31132e8 and f2ac22e)
+```
+
+Isolation was verified rather than assumed: both `ra_certifier` and
+`rebaseguard_certify` resolve to files inside that worktree; only the Python
+interpreter and its site packages come from the main tree, and nothing writes
+there. The other live worktree, `/Users/suzhe/ReBaseGuard-p9` on branch
+`p9-research`, is a separate checkout and is the most likely origin of the
+original incident.
+
+**Two statuses must be kept apart, and are:**
+
+```text
+HISTORICAL_EXTERNAL_WORKTREE_INCIDENT      = RECORDED   (sections 1-5; the p4/p5
+                                                          disposition audits remain
+                                                          lost; digests preserved)
+CURRENT_DEDICATED_WORKTREE_PROTECTED_TREE  = PASS        (verified by git object)
+```
+
+The current status is asserted against git objects, not against the presence of
+untracked auxiliary namespaces:
+
+| invariant | check | result |
+|---|---|---|
+| original P5 immutable | `HEAD:.../p5_nonlinear_dynamics` vs `bb03c0e:` | `ec1d3b1da066a4ddda34f24bd5e062c6b8a93484` both |
+| R-A′ reference implementation untouched by R1 | `HEAD:.../certified_method_repair_ra` vs `f2ac22e:` | `bef5da6a0f723e824c6d6271caa11a77ac42f97e` both |
+| no campaign commit wrote outside P5X | `git show --name-only` on `db0781e`, `528908b`, `e02b5ce`, `f2ac22e`, `a5fdb17` | none |
+
+The Checkpoint-A manifest comparison (`scripts/protected_tree.py`) still returns
+`pass: false`, and is left that way on purpose: it is the standing record of the
+external change (`DEFECT_REGISTER.md` `D7`). Re-baselining it would erase the
+only durable evidence that the incident happened.

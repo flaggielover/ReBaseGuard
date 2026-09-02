@@ -99,3 +99,14 @@ unchanged.
 | correction | the manifest is **not** re-baselined — that would destroy the gate. Both tests are marked `xfail(strict=True)` naming the incident, and `tests/test_checkpoint_c.py` checks against git the properties that actually matter (`P5` byte-identical to `bb03c0e`; the P5X tree at `HEAD` identical to the anchor; no P5X commit touching anything outside P5X) **and pins the external diff to exactly three files**, so any further outside change fails loudly |
 | blast radius | the P4/P5 disposition-audit namespaces are lost as working-tree artifacts; their recorded digests survive. No P5X proof path depends on them (`DEPENDENCY_AUDIT.md` §2) |
 | responsibility | not P5X's. Escalated to the repository owner in `INCIDENT_EXTERNAL_TREE_CHANGE.md` §5 |
+
+## `D8` — a Checkpoint-C test asserts a transient worktree property (third occurrence)
+
+| field | content |
+|---|---|
+| subject | `tests/test_r1_frozen.py::test_no_r1_result_at_the_anchor` |
+| status | **STALE at the R1 result checkpoint**, by construction — identical in kind to `D5` and `D6` |
+| why | it asserts that no R1 result file exists in the working tree; that is a property of the **anchor commit** `a5fdb17`, not of the working tree |
+| correction | the test is not edited. `tests/conftest.py` marks it `xfail(strict=True)` naming this defect, and `tests/test_checkpoint_d.py::test_no_r1_result_in_the_checkpoint_c_anchor` checks the intended property with `git ls-tree` on `a5fdb17` |
+| blast radius | none |
+| **standing lesson, now demonstrated three times** | anchor-phase assertions must be written against `git ls-tree <anchor>` from the outset. Every future P5X checkpoint test that wants to say "no result existed at the anchor" must name the commit, never inspect the working tree. This is recorded as a process rule, not merely a defect |

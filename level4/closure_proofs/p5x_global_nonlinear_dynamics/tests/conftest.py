@@ -28,6 +28,9 @@ _STALE_AT_CHECKPOINT_B = {
     # test_checkpoint_c.py::test_no_ra_result_in_the_anchor_commit, which checks
     # the intended property against git ls-tree on the anchor e02b5ce.
     "test_ra_frozen.py::test_no_ra_production_result_at_the_anchor",
+    # D8: third occurrence of the same defect class.  Superseded by
+    # test_checkpoint_d.py::test_no_r1_result_in_the_checkpoint_c_anchor.
+    "test_r1_frozen.py::test_no_r1_result_at_the_anchor",
 }
 
 # Protected-tree comparisons against the pre-campaign manifest.  These fail at

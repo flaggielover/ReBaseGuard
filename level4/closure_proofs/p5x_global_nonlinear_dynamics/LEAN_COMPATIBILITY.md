@@ -48,3 +48,19 @@ same layer that already takes the sup over the cover. No `X` statement changes.
 `FROZEN_GATES.md` `G7` remains testable as written. Full Lean implementation
 still waits, per the staging discipline: the certified scalar route has now
 survived a stop-gate, but no cover exists yet.
+
+---
+
+## Re-check after Compute Optimization R1 (bound refactor, no interface change)
+
+R1 replaced one rigorous upper bound on `||(I - K_e)^{-1}||_inf` by a tighter
+one. That scalar is **internal to the certifier**: it never reaches Lean. The
+spine still consumes exactly `R_max`, `s_min`, `M_2` (and, for `X1`, a bound `B`
+on `|M|`), and `X1`-`X6` are unchanged word for word.
+
+The only observable difference at the interface is that the certified scalars
+arrive with **smaller radii** — `X2`/`X3` take `g_min`, `g_max` as hypotheses and
+are indifferent to how tight they are. No `X` statement, hypothesis or
+conclusion is affected, and `FROZEN_GATES.md` `G7` remains testable as written.
+
+`LEAN_INTERFACE_CHANGED = NO`.
