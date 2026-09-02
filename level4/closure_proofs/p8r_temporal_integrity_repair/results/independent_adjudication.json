@@ -1,0 +1,144 @@
+{
+ "schema": "rebaseguard.p8r.independent-adjudication.v1",
+ "campaign": "P8R_INDEPENDENT_ADJUDICATION",
+ "generator": "INDEPENDENT_ADJUDICATION.md",
+ "argv": ["independent-adjudication"],
+ "git_commit": "84dcfe953ae6f1e95b144d3d4b1435e457884f17",
+ "generated_utc": "2026-09-02T05:00:00Z",
+ "environment": {
+  "python": "3.14.5",
+  "numpy": "2.5.2",
+  "scipy": "1.18.0",
+  "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+  "machine": "arm64"
+ },
+ "authority": "CODEX_INDEPENDENT_ADJUDICATION",
+ "authoritative": true,
+ "p8_original_verdict": "FAIL",
+ "verdict": "CLOSED",
+ "repository_head_at_start": "84dcfe953ae6f1e95b144d3d4b1435e457884f17",
+ "origin_main_at_start": "84dcfe953ae6f1e95b144d3d4b1435e457884f17",
+ "p8_adjudication_commit": "5411e2c7c5ff9af2fb983a5b5a48c1e360bca2e8",
+ "p9_integration_commit": "a3e3cabc30c4508b866736aeede54db17e5e1fcc",
+ "anchor_commit": "ee61e240998e468eff66a076226eadc70109f9f5",
+ "completion_commit": "84dcfe953ae6f1e95b144d3d4b1435e457884f17",
+ "temporal_anchor": "VALID",
+ "source_digest": {
+  "files": 36,
+  "sha256": "2f6c7b1eab3fc3c5d01ead7aa57ed535ee19ade87a6747c36bf11c168c17de99",
+  "locked": true
+ },
+ "protocol_digest": {
+  "files": 10,
+  "sha256": "fc2302c3bbbf253d1c04ecaac4974867d2955640637b2359121ae41b8981eaf6",
+  "locked": true
+ },
+ "post_anchor_source_mutation": "NONE",
+ "result_driven_amendment": "NONE",
+ "original_p8_preserved": true,
+ "g14_root_causes": {
+  "no_pre_result_anchor": "REPAIRED",
+  "declared_executed_budget_mismatch": "REPAIRED",
+  "result_driven_amendment": "REPAIRED",
+  "reused_verification_address": "REPAIRED",
+  "inadequate_provenance_hashing": "REPAIRED"
+ },
+ "rng": {
+  "cal_search_verify_disjoint": "PASS",
+  "cal_production_disjoint": "PASS",
+  "crn_primitive_identity": "PASS",
+  "execution_order_dependence": "NO",
+  "live_set_dependence": "NO"
+ },
+ "calibration_protocol": "PASS",
+ "calibration_leakage": "NONE",
+ "latent_failure_path_defect": "SCOPE_LIMITING",
+ "candidate_corrections": {
+  "S10": {
+   "candidate": "REJECTED_1_OF_6",
+   "authoritative": "SUPPORTED_5_OF_6",
+   "reason": "anchored resolver inverted P7 verdict reproduction: P7 LOCAL-MATHEMATICAL, NOT OPERATIONAL corresponds to criterion_met=false"
+  },
+  "detector_transfer_median_naive_paired_se_ratio": {
+   "candidate_prose": 1.83,
+   "authoritative_recomputation": 1.764889431794761
+  }
+ },
+ "s15": {
+  "frozen_gate": "SUPPORTED",
+  "statistical_trust": "FRAGILE",
+  "claim_class": "EMPIRICAL_SUGGESTIVE_ONLY",
+  "E1_upper95": 1.958595097955487,
+  "E5_upper95": 1.980063236558523,
+  "independent_upper95": 1.9424776637934908
+ },
+ "p8r_t1": "CONDITIONAL",
+ "p3_discrepancy": "KNOWN_PREEXISTING_DISCREPANCY",
+ "novelty_status": "NOT_ESTABLISHED",
+ "protected_tree": {
+  "files": 3306,
+  "differences": 0,
+  "aggregate_sha256": "3f2a6b33ee42f3443c15af6acc01f6e37fc0ba35ef2e4c423694f383aeba9da4"
+ },
+ "integrity_gates": {
+  "I1": "PASS",
+  "I2": "PASS",
+  "I3": "PASS",
+  "I4": "PASS",
+  "I5": "PASS",
+  "I6": "PASS",
+  "I7": "PASS",
+  "I8": "PASS",
+  "I9": "PASS",
+  "I10": "PASS_WITH_ENFORCEMENT_CAVEAT",
+  "I11": "PASS",
+  "I12": "PASS",
+  "I13": "PASS"
+ },
+ "scientific_questions": {
+  "S1": "SUPPORTED",
+  "S2": "SUPPORTED",
+  "S3": "SUPPORTED",
+  "S4": "SUPPORTED",
+  "S5": "SUPPORTED",
+  "S6": "SUPPORTED",
+  "S7": "REJECTED",
+  "S7D": "REJECTED",
+  "S7F": "REJECTED",
+  "S7X": "OUT_OF_SCOPE",
+  "S8": "SUPPORTED",
+  "S9": "SUPPORTED",
+  "S10": "SUPPORTED",
+  "S11": "SUPPORTED",
+  "S12": "REJECTED",
+  "S13": "SUPPORTED",
+  "S14": "SUPPORTED",
+  "S15": "SUPPORTED",
+  "S16": "SUPPORTED",
+  "S17": "SUPPORTED"
+ },
+ "scientific_counts": {
+  "supported": 15,
+  "rejected": 4,
+  "inconclusive": 0,
+  "out_of_scope": 1
+ },
+ "focused_tests": {
+  "anchored_passed": 72,
+  "anchored_failed": 0,
+  "persisted_reviewer_tests_added": 0,
+  "reviewer_probes_executed": true
+ },
+ "repository_regression": {
+  "new_regressions": 0,
+  "historical_failures": {
+   "novelty_verification": {"passed": 17, "failed": 1},
+   "external_validation_v2": {"passed": 43, "failed": 2},
+   "final_global_reaudit": {"passed": 33, "failed": 3},
+   "final_level4_closure": {"passed": 32, "failed": 4}
+  }
+ },
+ "level4_global_closure": "NO",
+ "priority8_repair_lineage_closed": true,
+ "next_action": "Create a separately anchored P9 repair/synthesis checkpoint consuming this adjudication; preserve P8=FAIL and correct S10 semantics."
+}
