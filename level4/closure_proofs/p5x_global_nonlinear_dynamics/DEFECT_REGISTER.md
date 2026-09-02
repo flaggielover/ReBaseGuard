@@ -119,3 +119,28 @@ unchanged.
 | status | **STALE at the R2 result checkpoint**, by construction |
 | correction | not edited; `tests/conftest.py` marks it `xfail(strict=True)` citing the `D8` pattern, and `tests/test_checkpoint_e.py::test_no_r2_result_in_the_checkpoint_d_anchor` checks the property against `git ls-tree` on `afbfe18` |
 | note | the `D8` standing rule was written after the third occurrence and was **not** followed when `test_r2_frozen.py` was authored. Recorded as a process failure, not just a defect: the rule needs to be enforced at authoring time, e.g. by a lint that rejects `results/*.exists()` assertions in anchor-phase tests |
+
+## `D10` — the R4 two-chart exponential shorthand is wrong (NOT a `D8`/`D9` repeat)
+
+| field | content |
+|---|---|
+| subject | `compute_optimization_r4_xi_reformulation/XI_DERIVATION_AND_INVARIANCE.md` §7 and §14, as committed at Checkpoint F `209a6fd9a5ca2824688062ac855a7abcefae9697` |
+| class | **algebra defect in a frozen derivation.** Explicitly *not* the anchor-phase transient-worktree pattern of `D5`/`D6`/`D8`/`D9`; the `D8` standing rule was followed in R4 |
+| statement | §7 writes the minus-chart factor as `E^{-b}` and §14 as `(1/A+zeta^-)/E`, with `E = e^{z-1/2}`. That is false. The frozen minus-chart update is `v^- = y^- - z - 1/2`, so the correct factor is `E^- = e^{-z-1/2}`, and `E^- = e^{-1}/E^+`, **not** `1/E^+`. The two charts are *not* reciprocal; they satisfy `E^+ E^- = e^{-1}` |
+| consequence | as written, §7/§14 overstate every minus-chart contribution by `e^{j}`. Measured error before correction: relative `5.3e-3` to `2.9e-1` against an independent brute-force simulation of the frozen `y`-space recurrence |
+| what is **not** affected | §1 (`xi^- ' = 1 + xi^- exp(-z-1/2)`) is correct as written. The live-region limits `l`, `u` are correct (re-derived and re-checked). The closed-form integral identity of §7 is correct. `L-R4.1`..`L-R4.10` are unaffected: they are pathwise statements about `exp`/`log`, not about the shorthand |
+| correction | `(E^+)^i (E^-)^j = e^{(i-j)z} e^{-(i+j)/2}`. The `z`-exponent is still `k = i-j`, so the closed-form structure, the `2(2n+1)` `Phi` count and the zero-panel property all survive **unchanged**; only the constant prefactor moves inside the `G_k` accumulation: `G_k = sum_{i-j=k} c_ij (1/A+zeta^+)^i (1/A+zeta^-)^j e^{-(i+j)/2}`, and `(K_e f) = sum_k G_k e^{k^2/2-ke}[Phi(u+e-k)-Phi(l+e-k)]` |
+| frozen bytes | **not edited.** `XI_DERIVATION_AND_INVARIANCE.md` keeps its Checkpoint-F content; this erratum and `errata/D10_XI_CHART_ASYMMETRY_ERRATUM.md` carry the correction, exactly as `D1` was handled |
+| how found | a pre-gate independent equivalence check against a brute-force simulation of the frozen recurrence, run **before** the gate — the same discipline that caught the R2 `C2` substitution-order bug. It was not found by reading the algebra |
+| gate impact | none on any criterion, threshold, class or the recorded prediction. The bug was in the implementation and the shorthand, and was fixed before the gate ran |
+
+## `D11` — the frozen `P2` criterion is ill-typed and unsatisfiable
+
+| field | content |
+|---|---|
+| subject | `compute_optimization_r4_xi_reformulation/R4_FROZEN_SPEC.md` §3, criterion `P2`, frozen at Checkpoint F |
+| statement | `P2` requires the closed-form **ball to CONTAIN** a composite-Simpson reference. The closed form's radius at 192 bits is `~1e-50` relative; composite Simpson at `40000` points has a truncation error of `~1e-15` relative that its ball arithmetic does **not** account for. So the reference's midpoint sits outside the closed-form ball whenever the closed form is *correct*, and the criterion cannot be met by any correct implementation |
+| consequence | `P2` as literally frozen is a **FAIL for a correct method**. It does not discriminate correct from incorrect implementations, which is what a correctness criterion is for |
+| correction | frozen bytes **not edited**. The gate reports `P2` twice: `pass` is the literal frozen verdict, and `pass_corrected` uses the test that was intended — overlap against a reference **widened by a Richardson estimate of its own truncation error**, together with the frozen `<= 1e-12` relative-half-width requirement. The gate reports `gate` (frozen conjunction, binding) and `gate_corrected` separately, both labelled |
+| honesty note | the correction is **post-hoc**: it was written after observing that the literal criterion could not pass. It is disclosed as post-hoc wherever it is reported, and the frozen verdict is the one carried in the headline. `P4`, the decisive criterion, is untouched by this and was not re-budgeted |
+| lesson | a criterion comparing a rigorous enclosure against a non-rigorous numerical reference must be stated as *overlap with a widened reference*, never as *containment*. Direction matters, and "high-order quadrature" is not an enclosure |

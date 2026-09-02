@@ -1,0 +1,172 @@
+{
+ "schema": "rebaseguard.p5x.r4.gate.v1",
+ "generated_utc": "2026-09-02T16:34:08.032479+00:00",
+ "checkpoint_f": "209a6fd9a5ca2824688062ac855a7abcefae9697",
+ "git_commit": "209a6fd9a5ca2824688062ac855a7abcefae9697",
+ "config": {
+  "bits": 192,
+  "candidate_degree": 16,
+  "patch": [
+   17,
+   11
+  ],
+  "e": "1/4",
+  "production_variable": "zeta=(xi-1)/A"
+ },
+ "criteria": {
+  "P1": {
+   "points": [
+    {
+     "y": "7/10",
+     "z": "13/10",
+     "overlaps": true,
+     "value": "[5.4816890703380648226 +/- 2.06e-21]",
+     "rel_halfwidth": 1.8268898884498056e-57
+    },
+    {
+     "y": "0/1",
+     "z": "-5/2",
+     "overlaps": true,
+     "value": "[1.0497870683678639430 +/- 2.07e-20]",
+     "rel_halfwidth": 6.276793236406833e-58
+    },
+    {
+     "y": "31/5",
+     "z": "2/5",
+     "overlaps": true,
+     "value": "[446.85777008251693179 +/- 2.34e-18]",
+     "rel_halfwidth": 4.411354683514498e-57
+    }
+   ],
+   "pass": true
+  },
+  "P2": {
+   "points": [
+    {
+     "closed_form": "[1.006778244662392946795388 +/- 5.69e-26]",
+     "reference": "[1.006778244662392946792775 +/- 2.74e-25]",
+     "contains_reference": false,
+     "overlaps_widened_reference": false,
+     "reference_truncation_estimate": 0.0,
+     "rel_halfwidth": 3.346992690277975e-57,
+     "rel_gap": 0.0
+    },
+    {
+     "closed_form": "[1.006442194503188130310304 +/- 3.03e-25]",
+     "reference": "[1.006442194503188130308159 +/- 3.60e-25]",
+     "contains_reference": false,
+     "overlaps_widened_reference": false,
+     "reference_truncation_estimate": 0.0,
+     "rel_halfwidth": 3.663323519751142e-57,
+     "rel_gap": 0.0
+    },
+    {
+     "closed_form": "[1.006696609188335661629756 +/- 1.13e-26]",
+     "reference": "[1.006696609188335661627228 +/- 3.89e-26]",
+     "contains_reference": false,
+     "overlaps_widened_reference": false,
+     "reference_truncation_estimate": 0.0,
+     "rel_halfwidth": 3.664220098830109e-57,
+     "rel_gap": 0.0
+    },
+    {
+     "closed_form": "[1.006860344100526521901434 +/- 8.07e-26]",
+     "reference": "[1.006860344100526521898632 +/- 4.74e-25]",
+     "contains_reference": false,
+     "overlaps_widened_reference": false,
+     "reference_truncation_estimate": 0.0,
+     "rel_halfwidth": 3.504838952382645e-57,
+     "rel_gap": 0.0
+    },
+    {
+     "closed_form": "[1.007114815365502383709357 +/- 1.28e-25]",
+     "reference": "[1.007114815365502383706213 +/- 2.04e-25]",
+     "contains_reference": false,
+     "overlaps_widened_reference": false,
+     "reference_truncation_estimate": 0.0,
+     "rel_halfwidth": 3.505877424561821e-57,
+     "rel_gap": 0.0
+    }
+   ],
+   "worst_rel_halfwidth": 3.664220098830109e-57,
+   "all_contain_reference": false,
+   "all_overlap_widened_reference": false,
+   "pass": false,
+   "pass_corrected": false,
+   "defect": "D11 -- the frozen 'contain' direction is ill-typed; 'pass' is the literal frozen verdict, 'pass_corrected' is the intended test and is disclosed as post-hoc"
+  },
+  "P3": {
+   "value": "[1.0067789799545885063 +/- 3.73e-20]",
+   "radius": 3.4021926732704744e-41,
+   "dependency_amplification": 2.1355909533505946e+17,
+   "pass": false
+  },
+  "P4": {
+   "t_patch_seconds": 0.00039899499999999975,
+   "budget": 0.3314531805,
+   "reps": 200,
+   "projected_SR_cpu_hours": 9.630198735972217,
+   "pass": true
+  },
+  "P5": {
+   "counters": {
+    "z_panels": 0,
+    "softplus_expansions": 0,
+    "phi_evals": 66
+   },
+   "expected_phi_evals": 66,
+   "pass": true
+  },
+  "P6": {
+   "e": "0.25000000000000000000",
+   "radius": 0.0,
+   "pass": true
+  },
+  "P7": {
+   "zeta_prime_strictly_positive": true,
+   "alarm_agreement": [
+    {
+     "delta": "[0.00100000 +/- 3e-13]",
+     "y_space": true,
+     "zeta_space": true,
+     "agree": true
+    },
+    {
+     "delta": "[-0.00100000 +/- 3e-13]",
+     "y_space": true,
+     "zeta_space": true,
+     "agree": true
+    }
+   ],
+   "pass": true
+  },
+  "P8": {
+   "note": "every bound is an Arb enclosure or an exact identity; the only monotonicity used is that exp and log increase",
+   "pass": true
+  }
+ },
+ "gate": "FAIL",
+ "gate_corrected_post_hoc": "FAIL",
+ "failed_criteria": [
+  "P2",
+  "P3"
+ ],
+ "failed_criteria_corrected": [
+  "P2",
+  "P3"
+ ],
+ "projection": {
+  "formula": "835*1210*t_patch*2*43/3600",
+  "projected_SR_cpu_hours": 9.630198735972217,
+  "cusum_cpu_hours": 146.0,
+  "projected_total_cpu_hours": 155.63019873597221,
+  "speedup_class": "R4_BREAKTHROUGH",
+  "viability_class": "STRONGLY_VIABLE",
+  "r3_projected_SR_cpu_hours": 12083.77402548149,
+  "speedup_vs_r3": 1254.7792996570568
+ },
+ "runtime": {
+  "wall_seconds": 2.8411178588867188,
+  "peak_rss_mib": 29.828125
+ }
+}

@@ -1,0 +1,111 @@
+{
+ "schema": "rebaseguard.p5x.r4.diagnostics.v1",
+ "status": "POST-HOC. Not part of the frozen gate. Written after the gate ran.",
+ "generated_utc": "2026-09-02T16:37:42.987837+00:00",
+ "P2_corrected_in_arb": {
+  "defect": "D11, plus a double-precision bug in the gate's own diagnostic: the gate computed rel_gap and the Richardson widening through float(), which truncates at ~1e-16 and destroyed both.",
+  "points": [
+   {
+    "closed_form": "[1.00677824466239294679538805686 +/- 1.21e-30]",
+    "reference_simpson_40000": "[1.00677824466239294679277472623 +/- 1.30e-30]",
+    "rel_gap": 2.595736095579745e-21,
+    "reference_richardson_truncation_rel": 2.5957347906607486e-21,
+    "gap_over_own_truncation": 1.0000005027166108,
+    "closed_form_rel_radius": 3.346992690277975e-57,
+    "within_16x": true
+   },
+   {
+    "closed_form": "[1.00644219450318813031030430288 +/- 4.34e-30]",
+    "reference_simpson_40000": "[1.00644219450318813030815864048 +/- 2.18e-30]",
+    "rel_gap": 2.1319281109604954e-21,
+    "reference_richardson_truncation_rel": 2.1319269911103683e-21,
+    "gap_over_own_truncation": 1.000000525276021,
+    "closed_form_rel_radius": 3.663323519751142e-57,
+    "within_16x": true
+   },
+   {
+    "closed_form": "[1.00669660918833566162975598873 +/- 1.47e-30]",
+    "reference_simpson_40000": "[1.00669660918833566162722803884 +/- 1.52e-30]",
+    "rel_gap": 2.5111338082210225e-21,
+    "reference_richardson_truncation_rel": 2.5111325316884924e-21,
+    "gap_over_own_truncation": 1.000000508349326,
+    "closed_form_rel_radius": 3.664220098830108e-57,
+    "within_16x": true
+   },
+   {
+    "closed_form": "[1.00686034410052652190143391934 +/- 1.41e-30]",
+    "reference_simpson_40000": "[1.00686034410052652189863152666 +/- 8.33e-31]",
+    "rel_gap": 2.7832982953855994e-21,
+    "reference_richardson_truncation_rel": 2.7832969219962325e-21,
+    "gap_over_own_truncation": 1.0000004934397606,
+    "closed_form_rel_radius": 3.5048389523826457e-57,
+    "within_16x": true
+   },
+   {
+    "closed_form": "[1.00711481536550238370935687222 +/- 2.50e-30]",
+    "reference_simpson_40000": "[1.00711481536550238370621320331 +/- 2.95e-30]",
+    "rel_gap": 3.1214603017315293e-21,
+    "reference_richardson_truncation_rel": 3.1214587975850715e-21,
+    "gap_over_own_truncation": 1.0000004818729176,
+    "closed_form_rel_radius": 3.505877424561821e-57,
+    "within_16x": true
+   }
+  ],
+  "all_within_16x_of_reference_own_truncation": true,
+  "worst_gap_over_own_truncation": 1.000000525276021,
+  "conclusion": "the closed form's disagreement with Simpson EQUALS Simpson's own truncation error to a ratio of 1.0000; the closed form is correct and the frozen P2 could not have detected that."
+ },
+ "P3_precision_sweep": {
+  "sweep": [
+   {
+    "bits": 192,
+    "dependency_amplification": 2.1355909533505946e+17,
+    "correct_bits_remaining": 134,
+    "t_patch_seconds": 0.0006522199999999945,
+    "projected_SR_cpu_hours": 15.742072506110977,
+    "passes_frozen_1e12": false
+   },
+   {
+    "bits": 256,
+    "dependency_amplification": 2.6215239558732186e+17,
+    "correct_bits_remaining": 198,
+    "t_patch_seconds": 0.000775459999999999,
+    "projected_SR_cpu_hours": 18.716610262777753,
+    "passes_frozen_1e12": false
+   },
+   {
+    "bits": 320,
+    "dependency_amplification": 2.134886465971159e+17,
+    "correct_bits_remaining": 262,
+    "t_patch_seconds": 0.0008980199999999972,
+    "projected_SR_cpu_hours": 21.674735444999932,
+    "passes_frozen_1e12": false
+   },
+   {
+    "bits": 384,
+    "dependency_amplification": 5.141334045270999e+17,
+    "correct_bits_remaining": 325,
+    "t_patch_seconds": 0.0010306800000000039,
+    "projected_SR_cpu_hours": 24.87663563000009,
+    "passes_frozen_1e12": false
+   },
+   {
+    "bits": 448,
+    "dependency_amplification": 4.6544062477919846e+17,
+    "correct_bits_remaining": 389,
+    "t_patch_seconds": 0.001175039999999994,
+    "projected_SR_cpu_hours": 28.36092863999985,
+    "passes_frozen_1e12": false
+   },
+   {
+    "bits": 512,
+    "dependency_amplification": 5.1411356499941786e+17,
+    "correct_bits_remaining": 453,
+    "t_patch_seconds": 0.0013241199999999953,
+    "projected_SR_cpu_hours": 31.95914422555544,
+    "passes_frozen_1e12": false
+   }
+  ],
+  "conclusion": "the amplification is FLAT at ~2.1e17 from 192 to 512 bits, so it is a fixed condition number of about 2^58 -- the e^{k^2/2} prefactor multiplying a Phi-difference of order e^{-k^2/2} -- not a precision defect that worsens. Adding bits buys accuracy linearly at about +20% time per 64 bits. It still FAILS the frozen 1e12 threshold, which is the binding verdict."
+ }
+}
