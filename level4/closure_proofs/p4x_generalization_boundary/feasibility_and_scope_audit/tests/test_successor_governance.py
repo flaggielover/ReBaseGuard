@@ -97,11 +97,17 @@ def test_the_destroyed_disposition_artifact_is_recorded_with_its_digest(results)
     assert gov["conditionality"]
 
 
-def test_no_p4r_or_p4_1_prohibition_exists_anywhere_in_the_repository(root):
-    """The audit's claim of zero references must stay true."""
+def test_no_p4r_or_p4_1_prohibition_exists_in_the_historical_record(root):
+    """The audit's claim of zero historical references must stay true.
+
+    This audit's own documents discuss the absent `P4R` / `P4.1` prohibition by
+    name, so the audit namespace is excluded: the claim is about the historical
+    record, not about this audit's discussion of it.
+    """
     out = subprocess.run(
         ["git", "grep", "-l", "-E", r"P4R|P4\.1|p4_1",
-         "--", "*.md", "*.json", "*.py", "*.lean", "*.sh", "*.txt"],
+         "--", "*.md", "*.json", "*.py", "*.lean", "*.sh", "*.txt",
+         ":(exclude)level4/closure_proofs/p4x_generalization_boundary/**"],
         cwd=root, capture_output=True, text=True,
     )
     assert out.stdout.strip() == "", out.stdout
