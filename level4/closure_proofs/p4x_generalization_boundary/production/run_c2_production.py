@@ -124,39 +124,30 @@ def job(spec: dict) -> dict:
     }
 
 
-def pooled(stage1: dict, stage2: dict | None) -> dict:
-    """Pool stage-1 and stage-2 block means for one m.
+def pooled(groups: list[dict]) -> dict:
+    """Pool block-mean summaries from one or more independent runs of the SAME
+    estimator at the SAME block size.
 
-    Both stages use the same estimator and block size, so the pooled mean is the
-    path-weighted mean and the pooled standard error follows from the pooled
-    block-to-block variance.
+    Blocks are i.i.d., so pooling shards is pooling blocks: the pooled mean is
+    the block-count-weighted mean and the pooled standard error follows from
+    the pooled block-to-block variance about that mean.  Sharding a job across
+    workers with distinct Philox seeds is therefore a parallelisation choice
+    only -- it changes no estimator, no sample size and no block size.
     """
-    if stage2 is None:
-        return dict(stage1)
-    n1, n2 = stage1["batches"], stage2["batches"]
-    m1, m2 = stage1["mean"], stage2["mean"]
-    s1, s2 = stage1["se"], stage2["se"]
-    n = n1 + n2
-    mean = (n1 * m1 + n2 * m2) / n
-    # block variance from each stage's reported SE, then the pooled block
-    # variance about the pooled mean
-    v1, v2 = (s1 ** 2) * n1, (s2 ** 2) * n2
-    ss = (n1 - 1) * v1 + (n2 - 1) * v2 + n1 * (m1 - mean) ** 2 + n2 * (m2 - mean) ** 2
+    groups = [g for g in groups if g]
+    if len(groups) == 1:
+        return dict(groups[0])
+    n = sum(g["batches"] for g in groups)
+    mean = sum(g["batches"] * g["mean"] for g in groups) / n
+    ss = 0.0
+    for g in groups:
+        ni, mi, si = g["batches"], g["mean"], g["se"]
+        var_block_i = (si ** 2) * ni          # sd_i^2
+        ss += (ni - 1) * var_block_i + ni * (mi - mean) ** 2
     var_block = ss / (n - 1)
     return {"mean": mean, "se": math.sqrt(var_block / n), "batches": n,
-            "paths_per_batch": stage1["paths_per_batch"],
-            "paths": stage1["paths"] + stage2["paths"]}
-
-
-def _measured_projection(cfg: str, route: str, rows: list, heavy: bool,
-                         paths: int) -> float:
-    """Pre-run cost projection at the PRODUCTION block size (charter section 20)."""
-    if cfg in MEASURED_S_PER_1E6 and route == "route_b":
-        return paths / 1e6 * MEASURED_S_PER_1E6[cfg] / 3600.0
-    base = max(r[route]["seconds_per_1e6_paths"] for r in rows)
-    if heavy and route == "route_b":
-        base *= HEAVY_COST_INFLATION
-    return paths / 1e6 * base / 3600.0
+            "paths_per_batch": groups[0]["paths_per_batch"],
+            "paths": sum(g["paths"] for g in groups)}
 
 
 def build_stage1_specs() -> list[dict]:

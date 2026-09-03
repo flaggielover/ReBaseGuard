@@ -31,6 +31,9 @@ sys.path.insert(0, str(PROD))
 import importlib.util
 _spec = importlib.util.spec_from_file_location("c2", PROD / "run_c2_production.py")
 C2 = importlib.util.module_from_spec(_spec)
+#: register before exec so multiprocessing can resolve `c2.job` by qualified
+#: name when pickling the work function for the pool
+sys.modules["c2"] = C2
 _spec.loader.exec_module(C2)
 
 CHECKPOINT = C2.CHECKPOINT
@@ -142,11 +145,20 @@ def plan_stage2() -> dict:
     return payload
 
 
+#: A top-up projected to take longer than this is split across workers.  The
+#: split is a SCHEDULING choice: each shard runs the identical estimator at the
+#: identical block size with its own Philox seed, and the shards are pooled as
+#: blocks.  Total N, block size, estimator and gate are unchanged.
+SHARD_THRESHOLD_HOURS = 2.0
+MAX_SHARDS = 5
+
+
 def run_stage2(plan: dict) -> dict:
     approved = plan["topups_approved"]
     if not approved:
         payload = {"schema": "rebaseguard.p4x-production-c2-stage2.v1",
-                   "results": [], "note": "no top-up was required or approved",
+                   "specs": [], "results": [],
+                   "note": "no top-up was required or approved",
                    "cpu_seconds_sum_of_jobs": 0.0, "wall_seconds": 0.0}
         (PROD / "results" / "c2_stage2.json").write_text(
             json.dumps(payload, indent=2) + "\n")
@@ -157,17 +169,33 @@ def run_stage2(plan: dict) -> dict:
     specs = []
     for p in approved:
         base = dict(spec_by[(p["config"], p["route"])])
-        blocks, bs = C2.allocate(p["additional_N"], base["heavy"])
-        base.update({"stage": 2, "blocks": blocks, "block_size": bs,
-                     "projected_cpu_hours": p["projected_additional_cpu_hours"],
-                     "seed": C2.seed_for(base["layer"], base["kind"],
-                                         base["family"],
-                                         base["route"] + "_s2")})
-        specs.append(base)
+        blocks_total, bs = C2.allocate(p["additional_N"], base["heavy"])
+        proj = p["projected_additional_cpu_hours"]
+        n_shards = 1
+        if proj > SHARD_THRESHOLD_HOURS:
+            n_shards = min(MAX_SHARDS, math.ceil(proj / SHARD_THRESHOLD_HOURS))
+        per_shard = math.ceil(blocks_total / n_shards)
+        for k in range(n_shards):
+            spec = dict(base)
+            spec.update({
+                "stage": 2, "shard": k, "shards": n_shards,
+                "blocks": per_shard, "block_size": bs,
+                "projected_cpu_hours": proj / n_shards,
+                "seed": C2.seed_for(base["layer"], base["kind"], base["family"],
+                                    f"{base['route']}_s2_shard{k}"),
+            })
+            specs.append(spec)
     t0 = time.perf_counter()
     results = C2.run_specs(specs, "STAGE 2 (precision top-up)")
     payload = {
         "schema": "rebaseguard.p4x-production-c2-stage2.v1",
+        "shard_threshold_hours": SHARD_THRESHOLD_HOURS,
+        "sharding_note": (
+            "a top-up projected above the threshold is split across workers; "
+            "each shard runs the identical estimator at the identical block "
+            "size with its own Philox seed, and shards are pooled as blocks.  "
+            "Total N, block size, estimator, precision rule and gate are "
+            "unchanged -- this is a scheduling choice only"),
         "specs": specs, "results": results,
         "cpu_seconds_sum_of_jobs": sum(r["cpu_seconds"] for r in results),
         "wall_seconds": time.perf_counter() - t0,
@@ -187,7 +215,9 @@ def adjudicate() -> dict:
          / "correspondence.json").read_text())
 
     s1_by = {(r["config"], r["route"]): r for r in s1["results"]}
-    s2_by = {(r["config"], r["route"]): r for r in s2["results"]}
+    s2_by: dict[tuple, list] = {}
+    for r in s2["results"]:
+        s2_by.setdefault((r["config"], r["route"]), []).append(r)
     limited = {(p["config"], p["route"]) for p in plan["precision_limited"]}
 
     gate = CHECKPOINT["gates"]["X6_theorem_supported_correspondence"]
@@ -205,9 +235,9 @@ def adjudicate() -> dict:
         est = {}
         for route in ("route_a", "route_b"):
             a1 = s1_by[(cfg, route)]
-            a2 = s2_by.get((cfg, route))
-            g = C2.pooled(a1["by_m"][str(m)],
-                          a2["by_m"][str(m)] if a2 else None)
+            shards = s2_by.get((cfg, route), [])
+            g = C2.pooled([a1["by_m"][str(m)]]
+                          + [s["by_m"][str(m)] for s in shards])
             rel_se = abs(g["se"] / g["mean"]) if g["mean"] else math.inf
             est[route] = {
                 "estimate": g["mean"], "se": g["se"],
@@ -215,16 +245,19 @@ def adjudicate() -> dict:
                 "paths": g["paths"], "blocks": g["batches"],
                 "block_size": g["paths_per_batch"],
                 "stage1_paths": a1["paths"],
-                "stage2_paths": a2["paths"] if a2 else 0,
+                "stage2_paths": sum(s["paths"] for s in shards),
+                "stage2_shards": len(shards),
                 "meets_r_star": rel_se <= R_STAR,
                 "precision_status": ("PRECISION_LIMITED"
                                      if (cfg, route) in limited
                                      else "AT_TARGET" if rel_se <= R_STAR
                                      else "BELOW_TARGET"),
-                "cpu_seconds": a1["cpu_seconds"] + (a2["cpu_seconds"] if a2 else 0),
-                "wall_seconds": a1["wall_seconds"] + (a2["wall_seconds"] if a2 else 0),
-                "peak_rss_mb": max(a1["peak_rss_mb"],
-                                   a2["peak_rss_mb"] if a2 else 0),
+                "cpu_seconds": a1["cpu_seconds"] + sum(
+                    s["cpu_seconds"] for s in shards),
+                "wall_seconds": a1["wall_seconds"] + sum(
+                    s["wall_seconds"] for s in shards),
+                "peak_rss_mb": max([a1["peak_rss_mb"]]
+                                   + [s["peak_rss_mb"] for s in shards]),
             }
         a, b = est["route_a"], est["route_b"]
         diff = abs(a["estimate"] - b["estimate"])
