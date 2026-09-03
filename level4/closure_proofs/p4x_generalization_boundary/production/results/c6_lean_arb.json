@@ -1,0 +1,118 @@
+{
+  "schema": "rebaseguard.p4x-production-c6.v1",
+  "phase": "P1_ZERO_NEW_SCIENCE_OBLIGATIONS",
+  "obligation": "C6",
+  "new_lean_declarations": 0,
+  "new_arb_objects": 0,
+  "tool_versions": {
+    "lean": "Lean (version 4.33.1, arm64-apple-darwin24.6.0, commit 819816b2e0a3bf405af45ae5c7af2491d8f5bee6, Release)",
+    "lake": "Lake version 5.0.0-src+819816b (Lean version 4.33.1)",
+    "python": "3.14.5",
+    "python_flint": "0.9.0"
+  },
+  "lean": {
+    "obligation": "C6-Lean",
+    "new_declarations_added": 0,
+    "environment_identity": {
+      "tree_object_identical:rebaseguard-lean": true,
+      "tree_object_identical:level4/closure_proofs/p4_theory_generalization": true,
+      "source_bytes_identical:lean/GeneralLocationFamilyP4.lean": true,
+      "source_bytes_identical:lean/AxiomAudit.lean": true
+    },
+    "compiled_against_worktree": "/Users/suzhe/ReBaseGuard",
+    "environment_note": "compiled against the primary worktree's pre-built Lean project; the rebaseguard-lean and p4_theory_generalization tree objects and the Lean source bytes are identical in both worktrees, so the artifact verified is the same one.  Only gitignored .lake build state is touched",
+    "commands": [
+      "lake env lean -R /Users/suzhe/ReBaseGuard/level4/closure_proofs/m_gt_1_priority1/lean -o <tmp>/MGtOneClosure.olean /Users/suzhe/ReBaseGuard/level4/closure_proofs/m_gt_1_priority1/lean/MGtOneClosure.lean",
+      "lake env lean -R /Users/suzhe/ReBaseGuard/level4/closure_proofs/sr_derivative_priority2/lean -o <tmp>/SRPriority2.olean /Users/suzhe/ReBaseGuard/level4/closure_proofs/sr_derivative_priority2/lean/SRPriority2.lean",
+      "lake env lean -R /Users/suzhe/ReBaseGuard/level4/closure_proofs/m_rho_stability_priority3/lean -o <tmp>/StabilityMapP3.olean /Users/suzhe/ReBaseGuard/level4/closure_proofs/m_rho_stability_priority3/lean/StabilityMapP3.lean",
+      "lake env lean -R /Users/suzhe/ReBaseGuard/level4/closure_proofs/p4_theory_generalization/lean -o <tmp>/GeneralLocationFamilyP4.olean /Users/suzhe/ReBaseGuard/level4/closure_proofs/p4_theory_generalization/lean/GeneralLocationFamilyP4.lean",
+      "lake env lean -R /Users/suzhe/ReBaseGuard/level4/closure_proofs/p4_theory_generalization/lean /Users/suzhe/ReBaseGuard/level4/closure_proofs/p4_theory_generalization/lean/AxiomAudit.lean"
+    ],
+    "declarations_audited": 19,
+    "declarations": [
+      "RebaseguardLean.Level4Priority4.gaussianLikelihood_hasDerivAt",
+      "RebaseguardLean.Level4Priority4.gaussianLikelihood_zero",
+      "RebaseguardLean.Level4Priority4.gaussian_reuse_derivative",
+      "RebaseguardLean.Level4Priority4.generalDirect_eq_fixed_add_short",
+      "RebaseguardLean.Level4Priority4.generalShortCorrection_gaussian",
+      "RebaseguardLean.Level4Priority4.generalShortCorrection_neg",
+      "RebaseguardLean.Level4Priority4.generalShortCorrection_nonneg",
+      "RebaseguardLean.Level4Priority4.general_attracting_of_lt_criticalRho",
+      "RebaseguardLean.Level4Priority4.general_repelling_of_criticalRho_lt",
+      "RebaseguardLean.Level4Priority4.hasDerivAt_stoppedMean",
+      "RebaseguardLean.Level4Priority4.integral_eq_zero_of_odd_under_involution",
+      "RebaseguardLean.Level4Priority4.neutral_gain_of_orthonormal_cross",
+      "RebaseguardLean.Level4Priority4.neutral_multiplier",
+      "RebaseguardLean.Level4Priority4.reuse_derivative",
+      "RebaseguardLean.Level4Priority4.reuse_fixed_point_of_zero_mean",
+      "RebaseguardLean.Level4Priority4.witnessPrefix_score",
+      "RebaseguardLean.Level4Priority4.witnessPrefix_total",
+      "RebaseguardLean.Level4Priority4.witness_shortCorrection",
+      "RebaseguardLean.Level4Priority4.witness_shortCorrection_neg"
+    ],
+    "axioms_observed": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "allowed_axioms": [
+      "Classical.choice",
+      "Quot.sound",
+      "propext"
+    ],
+    "source_sha256": "9ccfcd13d84bcf010f3292ba88f5faa7a7711a20dffed39ecacf00650da5967f",
+    "checks": {
+      "compiled": true,
+      "declaration_count_matches": true,
+      "declarations_match_recorded": true,
+      "axioms_within_allowed_set": true,
+      "no_sorryAx_in_audit_output": true,
+      "no_sorry_in_source": true,
+      "no_axiom_declaration_in_source": true,
+      "source_hash_matches_manifest": true,
+      "source_hash_matches_recorded_result": true
+    },
+    "all_checks_pass": true,
+    "audit_output_sha256": "4398ee145c9ea4893a455122863c193e5ad76e6199b943eb8177f6aa853dacba"
+  },
+  "arb": {
+    "obligation": "C6-Arb",
+    "new_certificate_objects_added": 0,
+    "witness_sha256": "8c8173f708d2945608ec6c063d8494aec6772676a45890c0ed81069b0481ea15",
+    "certificate_objects": [
+      "laplace_closed_form",
+      "uniform_counterexample",
+      "general_score_witness"
+    ],
+    "runs": {
+      "160": {
+        "arb_precision_bits": 160,
+        "required_certificates": 19,
+        "checks_evaluated": 19,
+        "missing_certificates": [],
+        "failed_checks": [],
+        "all_checks_pass": true
+      },
+      "256": {
+        "arb_precision_bits": 256,
+        "required_certificates": 19,
+        "checks_evaluated": 19,
+        "missing_certificates": [],
+        "failed_checks": [],
+        "all_checks_pass": true
+      }
+    },
+    "checks": {
+      "witness_hash_matches_manifest": true,
+      "witness_hash_matches_recorded_certificate": true,
+      "all_pass_at_160_bits": true,
+      "all_pass_at_256_bits": true,
+      "matches_recorded_all_checks_pass": true,
+      "no_new_certificate_object": true
+    },
+    "all_checks_pass": true
+  },
+  "C6": "PASS",
+  "cpu_seconds": 307.129977,
+  "wall_seconds": 1865.6916569999885
+}

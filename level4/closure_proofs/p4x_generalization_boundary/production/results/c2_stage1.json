@@ -1,0 +1,3138 @@
+{
+  "schema": "rebaseguard.p4x-production-c2-stage1.v1",
+  "stage": 1,
+  "seed_base": 4210000,
+  "workers": 5,
+  "r_star": 0.010823,
+  "fd_steps": [
+    0.05,
+    0.025
+  ],
+  "projected_cpu_hours": 4.583089561568414,
+  "specs": [
+    {
+      "config": "frozen/cusum@5/gaussian",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "gaussian",
+      "kind": "cusum",
+      "threshold": 5.0,
+      "max_steps": 200000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 160,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.01662674073336853,
+      "projected_cpu_hours": 0.01662674073336853,
+      "seed": 4216943
+    },
+    {
+      "config": "frozen/cusum@5/gaussian",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "gaussian",
+      "kind": "cusum",
+      "threshold": 5.0,
+      "max_steps": 200000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 960000.0,
+      "blocks": 48,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.034250361666393773,
+      "projected_cpu_hours": 0.034250361666393773,
+      "seed": 4218790
+    },
+    {
+      "config": "frozen/cusum@5/laplace",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "laplace",
+      "kind": "cusum",
+      "threshold": 5.0,
+      "max_steps": 200000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 160,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.013373405556194484,
+      "projected_cpu_hours": 0.013373405556194484,
+      "seed": 4219601
+    },
+    {
+      "config": "frozen/cusum@5/laplace",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "laplace",
+      "kind": "cusum",
+      "threshold": 5.0,
+      "max_steps": 200000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 960000.0,
+      "blocks": 48,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.04341465194631989,
+      "projected_cpu_hours": 0.04341465194631989,
+      "seed": 4210347
+    },
+    {
+      "config": "frozen/cusum@5/logistic",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "logistic",
+      "kind": "cusum",
+      "threshold": 5.0,
+      "max_steps": 200000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 160,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.01488931482243869,
+      "projected_cpu_hours": 0.01488931482243869,
+      "seed": 4213916
+    },
+    {
+      "config": "frozen/cusum@5/logistic",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "logistic",
+      "kind": "cusum",
+      "threshold": 5.0,
+      "max_steps": 200000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 960000.0,
+      "blocks": 48,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.038195015833868334,
+      "projected_cpu_hours": 0.038195015833868334,
+      "seed": 4215300
+    },
+    {
+      "config": "frozen/cusum@5/skewnormal4",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "skewnormal4",
+      "kind": "cusum",
+      "threshold": 5.0,
+      "max_steps": 200000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 160,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.023511893511749805,
+      "projected_cpu_hours": 0.023511893511749805,
+      "seed": 4212724
+    },
+    {
+      "config": "frozen/cusum@5/skewnormal4",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "skewnormal4",
+      "kind": "cusum",
+      "threshold": 5.0,
+      "max_steps": 200000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 960000.0,
+      "blocks": 48,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.05027306971993918,
+      "projected_cpu_hours": 0.05027306971993918,
+      "seed": 4218960
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t1p5",
+      "kind": "cusum",
+      "threshold": 5.0,
+      "max_steps": 200000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": true,
+      "required_paths": 44313186.77000272,
+      "blocks": 178,
+      "block_size": 250000,
+      "projected_cpu_hours_checkpoint": 0.012231619378747248,
+      "projected_cpu_hours": 0.012283184804093452,
+      "seed": 4219269
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t1p5",
+      "kind": "cusum",
+      "threshold": 5.0,
+      "max_steps": 200000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": true,
+      "required_paths": 53801767.4758362,
+      "blocks": 216,
+      "block_size": 250000,
+      "projected_cpu_hours_checkpoint": 0.1725183563875444,
+      "projected_cpu_hours": 0.297,
+      "seed": 4212108
+    },
+    {
+      "config": "frozen/cusum@5/t3",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t3",
+      "kind": "cusum",
+      "threshold": 5.0,
+      "max_steps": 200000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 160,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.011785309267644253,
+      "projected_cpu_hours": 0.011785309267644253,
+      "seed": 4214139
+    },
+    {
+      "config": "frozen/cusum@5/t3",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t3",
+      "kind": "cusum",
+      "threshold": 5.0,
+      "max_steps": 200000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 960000.0,
+      "blocks": 48,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.04769569194720437,
+      "projected_cpu_hours": 0.04769569194720437,
+      "seed": 4213083
+    },
+    {
+      "config": "frozen/sr@520.886/gaussian",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "gaussian",
+      "kind": "sr",
+      "threshold": 520.886133602749,
+      "max_steps": 200000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 160,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.028487069444316955,
+      "projected_cpu_hours": 0.028487069444316955,
+      "seed": 4215335
+    },
+    {
+      "config": "frozen/sr@520.886/gaussian",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "gaussian",
+      "kind": "sr",
+      "threshold": 520.886133602749,
+      "max_steps": 200000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 960000.0,
+      "blocks": 48,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.04034571888623759,
+      "projected_cpu_hours": 0.04034571888623759,
+      "seed": 4213593
+    },
+    {
+      "config": "frozen/sr@520.886/laplace",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "laplace",
+      "kind": "sr",
+      "threshold": 520.886133602749,
+      "max_steps": 200000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 160,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.02235212222310818,
+      "projected_cpu_hours": 0.02235212222310818,
+      "seed": 4212926
+    },
+    {
+      "config": "frozen/sr@520.886/laplace",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "laplace",
+      "kind": "sr",
+      "threshold": 520.886133602749,
+      "max_steps": 200000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 960000.0,
+      "blocks": 48,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.05575352750020102,
+      "projected_cpu_hours": 0.05575352750020102,
+      "seed": 4212120
+    },
+    {
+      "config": "frozen/sr@520.886/logistic",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "logistic",
+      "kind": "sr",
+      "threshold": 520.886133602749,
+      "max_steps": 200000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 160,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.026513885178913673,
+      "projected_cpu_hours": 0.026513885178913673,
+      "seed": 4216196
+    },
+    {
+      "config": "frozen/sr@520.886/logistic",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "logistic",
+      "kind": "sr",
+      "threshold": 520.886133602749,
+      "max_steps": 200000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 960000.0,
+      "blocks": 48,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.05009016944638764,
+      "projected_cpu_hours": 0.05009016944638764,
+      "seed": 4218370
+    },
+    {
+      "config": "frozen/sr@520.886/skewnormal4",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "skewnormal4",
+      "kind": "sr",
+      "threshold": 520.886133602749,
+      "max_steps": 200000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 160,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.035656594443652365,
+      "projected_cpu_hours": 0.035656594443652365,
+      "seed": 4216741
+    },
+    {
+      "config": "frozen/sr@520.886/skewnormal4",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "skewnormal4",
+      "kind": "sr",
+      "threshold": 520.886133602749,
+      "max_steps": 200000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 960000.0,
+      "blocks": 48,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.06415425499978786,
+      "projected_cpu_hours": 0.06415425499978786,
+      "seed": 4214130
+    },
+    {
+      "config": "frozen/sr@520.886/t1p5",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "t1p5",
+      "kind": "sr",
+      "threshold": 520.886133602749,
+      "max_steps": 200000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": true,
+      "required_paths": 14668069.231661826,
+      "blocks": 59,
+      "block_size": 250000,
+      "projected_cpu_hours_checkpoint": 0.005399139750912244,
+      "projected_cpu_hours": 0.0054292974806836964,
+      "seed": 4216598
+    },
+    {
+      "config": "frozen/sr@520.886/t1p5",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "t1p5",
+      "kind": "sr",
+      "threshold": 520.886133602749,
+      "max_steps": 200000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": true,
+      "required_paths": 445901166.22220033,
+      "blocks": 1784,
+      "block_size": 250000,
+      "projected_cpu_hours_checkpoint": 1.7503967701698675,
+      "projected_cpu_hours": 3.1839444444444442,
+      "seed": 4218819
+    },
+    {
+      "config": "frozen/sr@520.886/t3",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "t3",
+      "kind": "sr",
+      "threshold": 520.886133602749,
+      "max_steps": 200000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 160,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.0198952101998859,
+      "projected_cpu_hours": 0.0198952101998859,
+      "seed": 4216573
+    },
+    {
+      "config": "frozen/sr@520.886/t3",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "t3",
+      "kind": "sr",
+      "threshold": 520.886133602749,
+      "max_steps": 200000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 960000.0,
+      "blocks": 48,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.05658461750019342,
+      "projected_cpu_hours": 0.05658461750019342,
+      "seed": 4219679
+    },
+    {
+      "config": "reduced/cusum@2/gaussian",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "gaussian",
+      "kind": "cusum",
+      "threshold": 2.0,
+      "max_steps": 60000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 6000000.0,
+      "blocks": 300,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.0013197701327347508,
+      "projected_cpu_hours": 0.0013197701327347508,
+      "seed": 4216267
+    },
+    {
+      "config": "reduced/cusum@2/gaussian",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "gaussian",
+      "kind": "cusum",
+      "threshold": 2.0,
+      "max_steps": 60000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 160,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.004830434444463915,
+      "projected_cpu_hours": 0.004830434444463915,
+      "seed": 4211199
+    },
+    {
+      "config": "reduced/cusum@2/laplace",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "laplace",
+      "kind": "cusum",
+      "threshold": 2.0,
+      "max_steps": 60000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 6000000.0,
+      "blocks": 300,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.001808733333988736,
+      "projected_cpu_hours": 0.001808733333988736,
+      "seed": 4216529
+    },
+    {
+      "config": "reduced/cusum@2/laplace",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "laplace",
+      "kind": "cusum",
+      "threshold": 2.0,
+      "max_steps": 60000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 160,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.010230219625971383,
+      "projected_cpu_hours": 0.010230219625971383,
+      "seed": 4216912
+    },
+    {
+      "config": "reduced/cusum@2/logistic",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "logistic",
+      "kind": "cusum",
+      "threshold": 2.0,
+      "max_steps": 60000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 6000000.0,
+      "blocks": 300,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.001525945132986332,
+      "projected_cpu_hours": 0.001525945132986332,
+      "seed": 4219463
+    },
+    {
+      "config": "reduced/cusum@2/logistic",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "logistic",
+      "kind": "cusum",
+      "threshold": 2.0,
+      "max_steps": 60000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 160,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.006891546666415203,
+      "projected_cpu_hours": 0.006891546666415203,
+      "seed": 4216384
+    },
+    {
+      "config": "reduced/cusum@2/skewnormal4",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "skewnormal4",
+      "kind": "cusum",
+      "threshold": 2.0,
+      "max_steps": 60000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 6000000.0,
+      "blocks": 300,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.002271834733740737,
+      "projected_cpu_hours": 0.002271834733740737,
+      "seed": 4214742
+    },
+    {
+      "config": "reduced/cusum@2/skewnormal4",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "skewnormal4",
+      "kind": "cusum",
+      "threshold": 2.0,
+      "max_steps": 60000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 160,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.011612757777588235,
+      "projected_cpu_hours": 0.011612757777588235,
+      "seed": 4214407
+    },
+    {
+      "config": "reduced/cusum@2/t1p5",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "t1p5",
+      "kind": "cusum",
+      "threshold": 2.0,
+      "max_steps": 60000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": true,
+      "required_paths": 23056709.4913715,
+      "blocks": 93,
+      "block_size": 250000,
+      "projected_cpu_hours_checkpoint": 0.0023143972739598866,
+      "projected_cpu_hours": 0.0023337994799173126,
+      "seed": 4215313
+    },
+    {
+      "config": "reduced/cusum@2/t1p5",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "t1p5",
+      "kind": "cusum",
+      "threshold": 2.0,
+      "max_steps": 60000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": true,
+      "required_paths": 64983568.36295928,
+      "blocks": 260,
+      "block_size": 250000,
+      "projected_cpu_hours_checkpoint": 0.08114427494164511,
+      "projected_cpu_hours": 0.14609662730654235,
+      "seed": 4218722
+    },
+    {
+      "config": "reduced/cusum@2/t3",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "t3",
+      "kind": "cusum",
+      "threshold": 2.0,
+      "max_steps": 60000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 6000000.0,
+      "blocks": 300,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.002615338199151059,
+      "projected_cpu_hours": 0.002615338199151059,
+      "seed": 4213922
+    },
+    {
+      "config": "reduced/cusum@2/t3",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "t3",
+      "kind": "cusum",
+      "threshold": 2.0,
+      "max_steps": 60000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 160,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.017407918151261078,
+      "projected_cpu_hours": 0.017407918151261078,
+      "seed": 4210834
+    },
+    {
+      "config": "reduced/sr@20/gaussian",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "gaussian",
+      "kind": "sr",
+      "threshold": 20.0,
+      "max_steps": 60000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 6000000.0,
+      "blocks": 300,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.002162187499925494,
+      "projected_cpu_hours": 0.002162187499925494,
+      "seed": 4213049
+    },
+    {
+      "config": "reduced/sr@20/gaussian",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "gaussian",
+      "kind": "sr",
+      "threshold": 20.0,
+      "max_steps": 60000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 160,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.007075280365016725,
+      "projected_cpu_hours": 0.007075280365016725,
+      "seed": 4210723
+    },
+    {
+      "config": "reduced/sr@20/laplace",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "laplace",
+      "kind": "sr",
+      "threshold": 20.0,
+      "max_steps": 60000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 6000000.0,
+      "blocks": 300,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.0028361638833303005,
+      "projected_cpu_hours": 0.0028361638833303005,
+      "seed": 4212700
+    },
+    {
+      "config": "reduced/sr@20/laplace",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "laplace",
+      "kind": "sr",
+      "threshold": 20.0,
+      "max_steps": 60000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 160,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.011214316667368015,
+      "projected_cpu_hours": 0.011214316667368015,
+      "seed": 4211909
+    },
+    {
+      "config": "reduced/sr@20/logistic",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "logistic",
+      "kind": "sr",
+      "threshold": 20.0,
+      "max_steps": 60000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 6000000.0,
+      "blocks": 300,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.0024591381836216895,
+      "projected_cpu_hours": 0.0024591381836216895,
+      "seed": 4216396
+    },
+    {
+      "config": "reduced/sr@20/logistic",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "logistic",
+      "kind": "sr",
+      "threshold": 20.0,
+      "max_steps": 60000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 160,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.008810499262892537,
+      "projected_cpu_hours": 0.008810499262892537,
+      "seed": 4217091
+    },
+    {
+      "config": "reduced/sr@20/skewnormal4",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "skewnormal4",
+      "kind": "sr",
+      "threshold": 20.0,
+      "max_steps": 60000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 6000000.0,
+      "blocks": 300,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.003216644450246046,
+      "projected_cpu_hours": 0.003216644450246046,
+      "seed": 4213834
+    },
+    {
+      "config": "reduced/sr@20/skewnormal4",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "skewnormal4",
+      "kind": "sr",
+      "threshold": 20.0,
+      "max_steps": 60000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 160,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.010781472968972392,
+      "projected_cpu_hours": 0.010781472968972392,
+      "seed": 4215284
+    },
+    {
+      "config": "reduced/sr@20/t1p5",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "t1p5",
+      "kind": "sr",
+      "threshold": 20.0,
+      "max_steps": 60000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": true,
+      "required_paths": 16040059.211509483,
+      "blocks": 65,
+      "block_size": 250000,
+      "projected_cpu_hours_checkpoint": 0.002573198652808745,
+      "projected_cpu_hours": 0.0026068780393365566,
+      "seed": 4219137
+    },
+    {
+      "config": "reduced/sr@20/t1p5",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "t1p5",
+      "kind": "sr",
+      "threshold": 20.0,
+      "max_steps": 60000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": true,
+      "required_paths": 37782021.375868544,
+      "blocks": 152,
+      "block_size": 250000,
+      "projected_cpu_hours_checkpoint": 0.05881054991684719,
+      "projected_cpu_hours": 0.10646972998860292,
+      "seed": 4212527
+    },
+    {
+      "config": "reduced/sr@20/t3",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "t3",
+      "kind": "sr",
+      "threshold": 20.0,
+      "max_steps": 60000,
+      "route": "route_a",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 6000000.0,
+      "blocks": 300,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.003963788899515445,
+      "projected_cpu_hours": 0.003963788899515445,
+      "seed": 4214088
+    },
+    {
+      "config": "reduced/sr@20/t3",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "t3",
+      "kind": "sr",
+      "threshold": 20.0,
+      "max_steps": 60000,
+      "route": "route_b",
+      "stage": 1,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 160,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.02004298481779794,
+      "projected_cpu_hours": 0.02004298481779794,
+      "seed": 4214664
+    }
+  ],
+  "results": [
+    {
+      "config": "reduced/sr@20/t1p5",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "t1p5",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 152,
+      "block_size": 250000,
+      "seed": 4212527,
+      "heavy": true,
+      "paths": 38000000,
+      "by_m": {
+        "1": {
+          "mean": 2.80073061116684,
+          "se": 0.05956590347890521,
+          "batches": 152,
+          "paths_per_batch": 250000,
+          "paths": 38000000
+        },
+        "2": {
+          "mean": 2.008820377528194,
+          "se": 0.02988065300455822,
+          "batches": 152,
+          "paths_per_batch": 250000,
+          "paths": 38000000
+        },
+        "3": {
+          "mean": 1.7039754922000538,
+          "se": 0.019981868617589583,
+          "batches": 152,
+          "paths_per_batch": 250000,
+          "paths": 38000000
+        },
+        "5": {
+          "mean": 1.4769394233572943,
+          "se": 0.01216313814377571,
+          "batches": 152,
+          "paths_per_batch": 250000,
+          "paths": 38000000
+        }
+      },
+      "cpu_seconds": 608.2607380000001,
+      "wall_seconds": 965.4329719160451,
+      "peak_rss_mb": 145.6875,
+      "pid": 31125
+    },
+    {
+      "config": "frozen/sr@520.886/skewnormal4",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "skewnormal4",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 48,
+      "block_size": 20000,
+      "seed": 4214130,
+      "heavy": false,
+      "paths": 960000,
+      "by_m": {
+        "1": {
+          "mean": 8.093106243511068,
+          "se": 0.03085963588779707,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "2": {
+          "mean": 6.5184361921592755,
+          "se": 0.02491906468051237,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "3": {
+          "mean": 5.752753059722232,
+          "se": 0.020952407728393733,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "5": {
+          "mean": 4.956714611753765,
+          "se": 0.015493895102983688,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        }
+      },
+      "cpu_seconds": 677.0942459999999,
+      "wall_seconds": 1070.646942457999,
+      "peak_rss_mb": 22.984375,
+      "pid": 31126
+    },
+    {
+      "config": "reduced/cusum@2/t1p5",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "t1p5",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 260,
+      "block_size": 250000,
+      "seed": 4218722,
+      "heavy": true,
+      "paths": 65000000,
+      "by_m": {
+        "1": {
+          "mean": 2.4195335414801016,
+          "se": 0.03559154358557774,
+          "batches": 260,
+          "paths_per_batch": 250000,
+          "paths": 65000000
+        },
+        "2": {
+          "mean": 1.8224888251574056,
+          "se": 0.01778140647539071,
+          "batches": 260,
+          "paths_per_batch": 250000,
+          "paths": 65000000
+        },
+        "3": {
+          "mean": 1.593398687541326,
+          "se": 0.011896548315263607,
+          "batches": 260,
+          "paths_per_batch": 250000,
+          "paths": 65000000
+        },
+        "5": {
+          "mean": 1.4333327315526092,
+          "se": 0.007445425169729213,
+          "batches": 260,
+          "paths_per_batch": 250000,
+          "paths": 65000000
+        }
+      },
+      "cpu_seconds": 924.442227,
+      "wall_seconds": 1537.7512107919902,
+      "peak_rss_mb": 147.34375,
+      "pid": 31124
+    },
+    {
+      "config": "frozen/sr@520.886/t3",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "t3",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 48,
+      "block_size": 20000,
+      "seed": 4219679,
+      "heavy": false,
+      "paths": 960000,
+      "by_m": {
+        "1": {
+          "mean": 10.993498226120906,
+          "se": 0.08472695839919558,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "2": {
+          "mean": 7.251804134959244,
+          "se": 0.04529974832381888,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "3": {
+          "mean": 5.843776374921354,
+          "se": 0.03277883228086708,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "5": {
+          "mean": 4.486841776088551,
+          "se": 0.020285267761301493,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        }
+      },
+      "cpu_seconds": 481.318794,
+      "wall_seconds": 814.052060790942,
+      "peak_rss_mb": 145.6875,
+      "pid": 31125
+    },
+    {
+      "config": "frozen/sr@520.886/laplace",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "laplace",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 48,
+      "block_size": 20000,
+      "seed": 4212120,
+      "heavy": false,
+      "paths": 960000,
+      "by_m": {
+        "1": {
+          "mean": 15.96662875664569,
+          "se": 0.05758235852010164,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "2": {
+          "mean": 11.543116930686367,
+          "se": 0.03852741238355942,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "3": {
+          "mean": 9.6188989573686,
+          "se": 0.031296333566330395,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "5": {
+          "mean": 7.578334264114768,
+          "se": 0.02246390882222288,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        }
+      },
+      "cpu_seconds": 446.204257,
+      "wall_seconds": 754.8278098329902,
+      "peak_rss_mb": 27.796875,
+      "pid": 31126
+    },
+    {
+      "config": "frozen/cusum@5/skewnormal4",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "skewnormal4",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 48,
+      "block_size": 20000,
+      "seed": 4218960,
+      "heavy": false,
+      "paths": 960000,
+      "by_m": {
+        "1": {
+          "mean": 5.375163873632034,
+          "se": 0.029197385632625486,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "2": {
+          "mean": 4.29822258970725,
+          "se": 0.02400354550206253,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "3": {
+          "mean": 3.849717066517195,
+          "se": 0.021120214017309968,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "5": {
+          "mean": 3.476213225253178,
+          "se": 0.015546932101336754,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        }
+      },
+      "cpu_seconds": 498.33525299999997,
+      "wall_seconds": 736.581565707922,
+      "peak_rss_mb": 147.34375,
+      "pid": 31124
+    },
+    {
+      "config": "frozen/cusum@5/t3",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t3",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 48,
+      "block_size": 20000,
+      "seed": 4213083,
+      "heavy": false,
+      "paths": 960000,
+      "by_m": {
+        "1": {
+          "mean": 7.900237786673801,
+          "se": 0.06827052825640213,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "2": {
+          "mean": 5.495124966184373,
+          "se": 0.03490836674882724,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "3": {
+          "mean": 4.546377482042686,
+          "se": 0.02233485439434525,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "5": {
+          "mean": 3.593495162474115,
+          "se": 0.013999645053858369,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        }
+      },
+      "cpu_seconds": 354.6313440000001,
+      "wall_seconds": 523.0234047500417,
+      "peak_rss_mb": 27.90625,
+      "pid": 31126
+    },
+    {
+      "config": "frozen/sr@520.886/logistic",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "logistic",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 48,
+      "block_size": 20000,
+      "seed": 4218370,
+      "heavy": false,
+      "paths": 960000,
+      "by_m": {
+        "1": {
+          "mean": 16.85230254917424,
+          "se": 0.04082945879746816,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "2": {
+          "mean": 13.0725526348018,
+          "se": 0.031527328070098885,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "3": {
+          "mean": 11.267542893019728,
+          "se": 0.026341839828426895,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "5": {
+          "mean": 9.19432210721174,
+          "se": 0.021188437720803987,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        }
+      },
+      "cpu_seconds": 446.11218900000017,
+      "wall_seconds": 648.5014757909812,
+      "peak_rss_mb": 145.6875,
+      "pid": 31125
+    },
+    {
+      "config": "frozen/cusum@5/laplace",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "laplace",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 48,
+      "block_size": 20000,
+      "seed": 4210347,
+      "heavy": false,
+      "paths": 960000,
+      "by_m": {
+        "1": {
+          "mean": 13.045787141702045,
+          "se": 0.048817727544440276,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "2": {
+          "mean": 9.56014499709787,
+          "se": 0.02913134358230893,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "3": {
+          "mean": 8.049966005434666,
+          "se": 0.023887987866325566,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "5": {
+          "mean": 6.4031914548361835,
+          "se": 0.01793214291404711,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        }
+      },
+      "cpu_seconds": 332.40532200000007,
+      "wall_seconds": 446.75287704204675,
+      "peak_rss_mb": 147.34375,
+      "pid": 31124
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t1p5",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 216,
+      "block_size": 250000,
+      "seed": 4212108,
+      "heavy": true,
+      "paths": 54000000,
+      "by_m": {
+        "1": {
+          "mean": 3.7113555914708116,
+          "se": 0.13244296702613836,
+          "batches": 216,
+          "paths_per_batch": 250000,
+          "paths": 54000000
+        },
+        "2": {
+          "mean": 2.6342385143844917,
+          "se": 0.0660583914126087,
+          "batches": 216,
+          "paths_per_batch": 250000,
+          "paths": 54000000
+        },
+        "3": {
+          "mean": 2.211789254634749,
+          "se": 0.044101157855370075,
+          "batches": 216,
+          "paths_per_batch": 250000,
+          "paths": 54000000
+        },
+        "5": {
+          "mean": 1.8178550885314098,
+          "se": 0.026467302703366103,
+          "batches": 216,
+          "paths_per_batch": 250000,
+          "paths": 54000000
+        }
+      },
+      "cpu_seconds": 1872.049235,
+      "wall_seconds": 2868.6324088750407,
+      "peak_rss_mb": 160.125,
+      "pid": 31123
+    },
+    {
+      "config": "frozen/cusum@5/logistic",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "logistic",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 48,
+      "block_size": 20000,
+      "seed": 4215300,
+      "heavy": false,
+      "paths": 960000,
+      "by_m": {
+        "1": {
+          "mean": 14.601001122826185,
+          "se": 0.048460859188148464,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "2": {
+          "mean": 11.43244890680271,
+          "se": 0.03355207956234451,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "3": {
+          "mean": 9.93935570163128,
+          "se": 0.027133549119456913,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "5": {
+          "mean": 8.142321042303113,
+          "se": 0.0212814349117613,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        }
+      },
+      "cpu_seconds": 342.12419100000034,
+      "wall_seconds": 449.89501237496734,
+      "peak_rss_mb": 145.6875,
+      "pid": 31125
+    },
+    {
+      "config": "frozen/sr@520.886/gaussian",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "gaussian",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 48,
+      "block_size": 20000,
+      "seed": 4213593,
+      "heavy": false,
+      "paths": 960000,
+      "by_m": {
+        "1": {
+          "mean": 17.284302168385526,
+          "se": 0.03658548784665559,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "2": {
+          "mean": 14.361295681870743,
+          "se": 0.02939004924591037,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "3": {
+          "mean": 12.846967979671021,
+          "se": 0.024918295563482098,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "5": {
+          "mean": 10.941348195366643,
+          "se": 0.02224866076561919,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        }
+      },
+      "cpu_seconds": 419.40880300000003,
+      "wall_seconds": 551.7588933339575,
+      "peak_rss_mb": 27.90625,
+      "pid": 31126
+    },
+    {
+      "config": "frozen/sr@520.886/skewnormal4",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "skewnormal4",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 160,
+      "block_size": 20000,
+      "seed": 4216741,
+      "heavy": false,
+      "paths": 3200000,
+      "by_m": {
+        "1": {
+          "mean": 8.07164849464603,
+          "se": 0.033185758777769844,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "2": {
+          "mean": 6.510853894011168,
+          "se": 0.026076808477689846,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "3": {
+          "mean": 5.751581448304043,
+          "se": 0.022795674482314558,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "5": {
+          "mean": 4.948576105554915,
+          "se": 0.01756242740180914,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        }
+      },
+      "cpu_seconds": 319.15864699999975,
+      "wall_seconds": 410.6206904168939,
+      "peak_rss_mb": 147.34375,
+      "pid": 31124
+    },
+    {
+      "config": "frozen/sr@520.886/logistic",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "logistic",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 160,
+      "block_size": 20000,
+      "seed": 4216196,
+      "heavy": false,
+      "paths": 3200000,
+      "by_m": {
+        "1": {
+          "mean": 16.86939647455499,
+          "se": 0.03080276684306503,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "2": {
+          "mean": 13.082411739032747,
+          "se": 0.02343999158347068,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "3": {
+          "mean": 11.289629969654518,
+          "se": 0.018986768389510945,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "5": {
+          "mean": 9.226012735199955,
+          "se": 0.01518658294334192,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        }
+      },
+      "cpu_seconds": 233.2425699999999,
+      "wall_seconds": 299.4613732909784,
+      "peak_rss_mb": 27.90625,
+      "pid": 31126
+    },
+    {
+      "config": "frozen/sr@520.886/gaussian",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "gaussian",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 160,
+      "block_size": 20000,
+      "seed": 4215335,
+      "heavy": false,
+      "paths": 3200000,
+      "by_m": {
+        "1": {
+          "mean": 17.294303060855697,
+          "se": 0.021331205524562417,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "2": {
+          "mean": 14.37824811048302,
+          "se": 0.01796573533220563,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "3": {
+          "mean": 12.855535813034527,
+          "se": 0.01639736408739452,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "5": {
+          "mean": 10.94568994167042,
+          "se": 0.013273427721733438,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        }
+      },
+      "cpu_seconds": 258.8816190000002,
+      "wall_seconds": 332.16830695804674,
+      "peak_rss_mb": 145.6875,
+      "pid": 31125
+    },
+    {
+      "config": "frozen/cusum@5/gaussian",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "gaussian",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 48,
+      "block_size": 20000,
+      "seed": 4218790,
+      "heavy": false,
+      "paths": 960000,
+      "by_m": {
+        "1": {
+          "mean": 15.874766643583762,
+          "se": 0.037548405031717344,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "2": {
+          "mean": 13.270024747013053,
+          "se": 0.030397220635041557,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "3": {
+          "mean": 11.938818125884453,
+          "se": 0.026122633125283908,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        },
+        "5": {
+          "mean": 10.199657208147087,
+          "se": 0.022470202906612037,
+          "batches": 48,
+          "paths_per_batch": 20000,
+          "paths": 960000
+        }
+      },
+      "cpu_seconds": 312.8286639999999,
+      "wall_seconds": 402.825037584058,
+      "peak_rss_mb": 160.125,
+      "pid": 31123
+    },
+    {
+      "config": "reduced/sr@20/t3",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "t3",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 160,
+      "block_size": 20000,
+      "seed": 4214664,
+      "heavy": false,
+      "paths": 3200000,
+      "by_m": {
+        "1": {
+          "mean": 6.267217473947317,
+          "se": 0.020206662302334463,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "2": {
+          "mean": 4.351809101053169,
+          "se": 0.011375783770451198,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "3": {
+          "mean": 3.509618101957605,
+          "se": 0.007880993401330607,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "5": {
+          "mean": 2.6565014756710155,
+          "se": 0.005310519978009317,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        }
+      },
+      "cpu_seconds": 155.38934199999994,
+      "wall_seconds": 200.1679293330526,
+      "peak_rss_mb": 145.6875,
+      "pid": 31125
+    },
+    {
+      "config": "frozen/cusum@5/skewnormal4",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "skewnormal4",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 160,
+      "block_size": 20000,
+      "seed": 4212724,
+      "heavy": false,
+      "paths": 3200000,
+      "by_m": {
+        "1": {
+          "mean": 5.371576401160045,
+          "se": 0.03105960336166209,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "2": {
+          "mean": 4.285089611760563,
+          "se": 0.025378889642260986,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "3": {
+          "mean": 3.8371015318760584,
+          "se": 0.021321029393239134,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "5": {
+          "mean": 3.466096373640525,
+          "se": 0.015891421029408163,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        }
+      },
+      "cpu_seconds": 216.25099900000032,
+      "wall_seconds": 279.5544865420088,
+      "peak_rss_mb": 147.34375,
+      "pid": 31124
+    },
+    {
+      "config": "frozen/sr@520.886/laplace",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "laplace",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 160,
+      "block_size": 20000,
+      "seed": 4212926,
+      "heavy": false,
+      "paths": 3200000,
+      "by_m": {
+        "1": {
+          "mean": 16.132717192333118,
+          "se": 0.04635462044573718,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "2": {
+          "mean": 11.637061436861066,
+          "se": 0.03232767995327905,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "3": {
+          "mean": 9.70406493731277,
+          "se": 0.025339002369681226,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "5": {
+          "mean": 7.651033223211951,
+          "se": 0.018724212541048644,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        }
+      },
+      "cpu_seconds": 195.18655199999966,
+      "wall_seconds": 249.27616991696414,
+      "peak_rss_mb": 27.90625,
+      "pid": 31126
+    },
+    {
+      "config": "frozen/sr@520.886/t3",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "t3",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 160,
+      "block_size": 20000,
+      "seed": 4216573,
+      "heavy": false,
+      "paths": 3200000,
+      "by_m": {
+        "1": {
+          "mean": 10.92726614769322,
+          "se": 0.09515280221013649,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "2": {
+          "mean": 7.250120062875726,
+          "se": 0.05043565506225217,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "3": {
+          "mean": 5.837768670609692,
+          "se": 0.03490296107597859,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "5": {
+          "mean": 4.486625181509329,
+          "se": 0.021177191209092,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        }
+      },
+      "cpu_seconds": 170.48691199999985,
+      "wall_seconds": 221.02498641598504,
+      "peak_rss_mb": 160.125,
+      "pid": 31123
+    },
+    {
+      "config": "reduced/cusum@2/t3",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "t3",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 160,
+      "block_size": 20000,
+      "seed": 4210834,
+      "heavy": false,
+      "paths": 3200000,
+      "by_m": {
+        "1": {
+          "mean": 4.8058784832827435,
+          "se": 0.017133665321297318,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "2": {
+          "mean": 3.4966287223467263,
+          "se": 0.009491913717392879,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "3": {
+          "mean": 2.8779179208885397,
+          "se": 0.007219720654124223,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "5": {
+          "mean": 2.234214018311792,
+          "se": 0.004776078560461181,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        }
+      },
+      "cpu_seconds": 150.33597699999973,
+      "wall_seconds": 199.25294699997175,
+      "peak_rss_mb": 145.6875,
+      "pid": 31125
+    },
+    {
+      "config": "frozen/cusum@5/gaussian",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "gaussian",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 160,
+      "block_size": 20000,
+      "seed": 4216943,
+      "heavy": false,
+      "paths": 3200000,
+      "by_m": {
+        "1": {
+          "mean": 15.892546281532452,
+          "se": 0.023291791125108176,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "2": {
+          "mean": 13.256155250092993,
+          "se": 0.018888349102308324,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "3": {
+          "mean": 11.923697804251345,
+          "se": 0.016557286752221123,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "5": {
+          "mean": 10.18901291149433,
+          "se": 0.014091985214232761,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        }
+      },
+      "cpu_seconds": 153.97681600000033,
+      "wall_seconds": 204.41326116700657,
+      "peak_rss_mb": 147.34375,
+      "pid": 31124
+    },
+    {
+      "config": "frozen/cusum@5/logistic",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "logistic",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 160,
+      "block_size": 20000,
+      "seed": 4213916,
+      "heavy": false,
+      "paths": 3200000,
+      "by_m": {
+        "1": {
+          "mean": 14.559987014471165,
+          "se": 0.02985894681613783,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "2": {
+          "mean": 11.398963595250446,
+          "se": 0.021540711097314973,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "3": {
+          "mean": 9.904774687342236,
+          "se": 0.01848594681653363,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "5": {
+          "mean": 8.115496784655733,
+          "se": 0.01377150021629311,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        }
+      },
+      "cpu_seconds": 142.67969100000028,
+      "wall_seconds": 191.92373845807742,
+      "peak_rss_mb": 27.90625,
+      "pid": 31126
+    },
+    {
+      "config": "frozen/cusum@5/laplace",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "laplace",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 160,
+      "block_size": 20000,
+      "seed": 4219601,
+      "heavy": false,
+      "paths": 3200000,
+      "by_m": {
+        "1": {
+          "mean": 13.066644631458008,
+          "se": 0.045873256468306596,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "2": {
+          "mean": 9.581396009031215,
+          "se": 0.03131878976825836,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "3": {
+          "mean": 8.072840918336414,
+          "se": 0.02385486148012377,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "5": {
+          "mean": 6.410854947602499,
+          "se": 0.017101375313226905,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        }
+      },
+      "cpu_seconds": 118.28325100000029,
+      "wall_seconds": 158.53668529191054,
+      "peak_rss_mb": 160.125,
+      "pid": 31123
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t1p5",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 178,
+      "block_size": 250000,
+      "seed": 4219269,
+      "heavy": true,
+      "paths": 44500000,
+      "by_m": {
+        "1": {
+          "mean": 3.4622089377052108,
+          "se": 0.04750564964214458,
+          "batches": 178,
+          "paths_per_batch": 250000,
+          "paths": 44500000
+        },
+        "2": {
+          "mean": 2.5111391985754907,
+          "se": 0.02374876214190119,
+          "batches": 178,
+          "paths_per_batch": 250000,
+          "paths": 44500000
+        },
+        "3": {
+          "mean": 2.1291952639624543,
+          "se": 0.01586305760304792,
+          "batches": 178,
+          "paths_per_batch": 250000,
+          "paths": 44500000
+        },
+        "5": {
+          "mean": 1.7670273490236954,
+          "se": 0.00970366140580689,
+          "batches": 178,
+          "paths_per_batch": 250000,
+          "paths": 44500000
+        }
+      },
+      "cpu_seconds": 106.6415049999996,
+      "wall_seconds": 150.1761645419756,
+      "peak_rss_mb": 145.6875,
+      "pid": 31125
+    },
+    {
+      "config": "frozen/cusum@5/t3",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t3",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 160,
+      "block_size": 20000,
+      "seed": 4214139,
+      "heavy": false,
+      "paths": 3200000,
+      "by_m": {
+        "1": {
+          "mean": 7.842007673647707,
+          "se": 0.09567002351876563,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "2": {
+          "mean": 5.464806752266124,
+          "se": 0.05068398286642165,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "3": {
+          "mean": 4.509081325439088,
+          "se": 0.03457931099573753,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "5": {
+          "mean": 3.5669464955623065,
+          "se": 0.021885971044780624,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        }
+      },
+      "cpu_seconds": 102.60276299999987,
+      "wall_seconds": 145.38311966694891,
+      "peak_rss_mb": 147.34375,
+      "pid": 31124
+    },
+    {
+      "config": "reduced/cusum@2/skewnormal4",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "skewnormal4",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 160,
+      "block_size": 20000,
+      "seed": 4214407,
+      "heavy": false,
+      "paths": 3200000,
+      "by_m": {
+        "1": {
+          "mean": 6.137501885770006,
+          "se": 0.014301799018417693,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "2": {
+          "mean": 4.680437567868137,
+          "se": 0.010289752736391846,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "3": {
+          "mean": 3.8295477428097797,
+          "se": 0.008005182785058204,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "5": {
+          "mean": 2.8131054540985607,
+          "se": 0.005625959068280614,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        }
+      },
+      "cpu_seconds": 84.82985300000018,
+      "wall_seconds": 122.08400875004008,
+      "peak_rss_mb": 33.40625,
+      "pid": 31126
+    },
+    {
+      "config": "reduced/sr@20/laplace",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "laplace",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 160,
+      "block_size": 20000,
+      "seed": 4211909,
+      "heavy": false,
+      "paths": 3200000,
+      "by_m": {
+        "1": {
+          "mean": 6.075228412608377,
+          "se": 0.0158745888046273,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "2": {
+          "mean": 4.13902314326956,
+          "se": 0.009623738362842778,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "3": {
+          "mean": 3.296485908883065,
+          "se": 0.007313685197223549,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "5": {
+          "mean": 2.473868036863639,
+          "se": 0.005034208360251482,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        }
+      },
+      "cpu_seconds": 88.94153700000015,
+      "wall_seconds": 128.0862934999168,
+      "peak_rss_mb": 160.125,
+      "pid": 31123
+    },
+    {
+      "config": "reduced/sr@20/gaussian",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "gaussian",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 160,
+      "block_size": 20000,
+      "seed": 4210723,
+      "heavy": false,
+      "paths": 3200000,
+      "by_m": {
+        "1": {
+          "mean": 6.433523350863513,
+          "se": 0.013222177833197945,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "2": {
+          "mean": 4.826035179077346,
+          "se": 0.010271399939679357,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "3": {
+          "mean": 3.858902003677494,
+          "se": 0.00788745144833198,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "5": {
+          "mean": 2.791372808765918,
+          "se": 0.00551392018007465,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        }
+      },
+      "cpu_seconds": 54.867526,
+      "wall_seconds": 72.01004850002937,
+      "peak_rss_mb": 160.125,
+      "pid": 31123
+    },
+    {
+      "config": "reduced/sr@20/logistic",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "logistic",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 160,
+      "block_size": 20000,
+      "seed": 4217091,
+      "heavy": false,
+      "paths": 3200000,
+      "by_m": {
+        "1": {
+          "mean": 6.288096175745892,
+          "se": 0.014700047677821081,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "2": {
+          "mean": 4.530264084970814,
+          "se": 0.009554666861445599,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "3": {
+          "mean": 3.6349710390499963,
+          "se": 0.00742064352555824,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "5": {
+          "mean": 2.6763050765246144,
+          "se": 0.0053734527941047775,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        }
+      },
+      "cpu_seconds": 71.89148400000022,
+      "wall_seconds": 95.21746783296112,
+      "peak_rss_mb": 33.8125,
+      "pid": 31126
+    },
+    {
+      "config": "reduced/cusum@2/laplace",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "laplace",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 160,
+      "block_size": 20000,
+      "seed": 4216912,
+      "heavy": false,
+      "paths": 3200000,
+      "by_m": {
+        "1": {
+          "mean": 4.9944610451764815,
+          "se": 0.01427620791813716,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "2": {
+          "mean": 3.5547653452138257,
+          "se": 0.00859193560329899,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "3": {
+          "mean": 2.88988118105392,
+          "se": 0.0063434939809297935,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "5": {
+          "mean": 2.234806016371519,
+          "se": 0.004503656654544035,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        }
+      },
+      "cpu_seconds": 77.63031799999999,
+      "wall_seconds": 103.43590608297382,
+      "peak_rss_mb": 147.34375,
+      "pid": 31124
+    },
+    {
+      "config": "reduced/sr@20/skewnormal4",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "skewnormal4",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 160,
+      "block_size": 20000,
+      "seed": 4215284,
+      "heavy": false,
+      "paths": 3200000,
+      "by_m": {
+        "1": {
+          "mean": 6.762194392163403,
+          "se": 0.014081636088308914,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "2": {
+          "mean": 5.0316836287306845,
+          "se": 0.010086374280830701,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "3": {
+          "mean": 4.075494433575187,
+          "se": 0.008160417183491548,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "5": {
+          "mean": 2.9496962564034375,
+          "se": 0.005371389359600421,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        }
+      },
+      "cpu_seconds": 90.96917199999962,
+      "wall_seconds": 121.81707583297975,
+      "peak_rss_mb": 145.6875,
+      "pid": 31125
+    },
+    {
+      "config": "reduced/cusum@2/gaussian",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "gaussian",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 160,
+      "block_size": 20000,
+      "seed": 4211199,
+      "heavy": false,
+      "paths": 3200000,
+      "by_m": {
+        "1": {
+          "mean": 6.206508536914585,
+          "se": 0.01322644560047496,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "2": {
+          "mean": 4.73300261207067,
+          "se": 0.009708234273936949,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "3": {
+          "mean": 3.7647250824386695,
+          "se": 0.007686685257418258,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "5": {
+          "mean": 2.759259268389326,
+          "se": 0.00523627982922771,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        }
+      },
+      "cpu_seconds": 45.42189300000018,
+      "wall_seconds": 62.732392083038576,
+      "peak_rss_mb": 147.34375,
+      "pid": 31124
+    },
+    {
+      "config": "frozen/sr@520.886/t1p5",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "t1p5",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 59,
+      "block_size": 250000,
+      "seed": 4216598,
+      "heavy": true,
+      "paths": 14750000,
+      "by_m": {
+        "1": {
+          "mean": 4.040411911870906,
+          "se": 0.05044807731908893,
+          "batches": 59,
+          "paths_per_batch": 250000,
+          "paths": 14750000
+        },
+        "2": {
+          "mean": 2.813859393870952,
+          "se": 0.02525084412993157,
+          "batches": 59,
+          "paths_per_batch": 250000,
+          "paths": 14750000
+        },
+        "3": {
+          "mean": 2.335188603640812,
+          "se": 0.0169080769193836,
+          "batches": 59,
+          "paths_per_batch": 250000,
+          "paths": 14750000
+        },
+        "5": {
+          "mean": 1.8891046359980215,
+          "se": 0.010704578357740756,
+          "batches": 59,
+          "paths_per_batch": 250000,
+          "paths": 14750000
+        }
+      },
+      "cpu_seconds": 51.281120999999985,
+      "wall_seconds": 70.21353979199193,
+      "peak_rss_mb": 116.5625,
+      "pid": 31126
+    },
+    {
+      "config": "reduced/sr@20/t3",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "t3",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 300,
+      "block_size": 20000,
+      "seed": 4214088,
+      "heavy": false,
+      "paths": 6000000,
+      "by_m": {
+        "1": {
+          "mean": 6.272761321574254,
+          "se": 0.009468956920803257,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "2": {
+          "mean": 4.35082368042267,
+          "se": 0.005223470885924557,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "3": {
+          "mean": 3.5097741217201883,
+          "se": 0.0036214861845189805,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "5": {
+          "mean": 2.6555999735931337,
+          "se": 0.002350338689348797,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        }
+      },
+      "cpu_seconds": 35.22451099999989,
+      "wall_seconds": 48.73741112498101,
+      "peak_rss_mb": 145.6875,
+      "pid": 31125
+    },
+    {
+      "config": "reduced/cusum@2/logistic",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "logistic",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 160,
+      "block_size": 20000,
+      "seed": 4216384,
+      "heavy": false,
+      "paths": 3200000,
+      "by_m": {
+        "1": {
+          "mean": 5.6223902266353605,
+          "se": 0.013666834486858832,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "2": {
+          "mean": 4.164647236653719,
+          "se": 0.009228727116144893,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "3": {
+          "mean": 3.3576380272220283,
+          "se": 0.006999267710835796,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        },
+        "5": {
+          "mean": 2.5209044787871813,
+          "se": 0.0047939080218100845,
+          "batches": 160,
+          "paths_per_batch": 20000,
+          "paths": 3200000
+        }
+      },
+      "cpu_seconds": 64.60069500000054,
+      "wall_seconds": 88.93393004091922,
+      "peak_rss_mb": 160.125,
+      "pid": 31123
+    },
+    {
+      "config": "reduced/sr@20/laplace",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "laplace",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 300,
+      "block_size": 20000,
+      "seed": 4212700,
+      "heavy": false,
+      "paths": 6000000,
+      "by_m": {
+        "1": {
+          "mean": 6.089370405837901,
+          "se": 0.005884620601442643,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "2": {
+          "mean": 4.15599963247968,
+          "se": 0.003538823681145793,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "3": {
+          "mean": 3.311756143469049,
+          "se": 0.0026179468262462454,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "5": {
+          "mean": 2.4810503255573826,
+          "se": 0.001775928514378871,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        }
+      },
+      "cpu_seconds": 25.786973000000216,
+      "wall_seconds": 36.32195729203522,
+      "peak_rss_mb": 116.5625,
+      "pid": 31126
+    },
+    {
+      "config": "reduced/cusum@2/t3",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "t3",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 300,
+      "block_size": 20000,
+      "seed": 4213922,
+      "heavy": false,
+      "paths": 6000000,
+      "by_m": {
+        "1": {
+          "mean": 4.8005742388797925,
+          "se": 0.010888197438234562,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "2": {
+          "mean": 3.49351833571514,
+          "se": 0.005818864802333827,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "3": {
+          "mean": 2.8754579637880138,
+          "se": 0.004015324301075017,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "5": {
+          "mean": 2.233912135497903,
+          "se": 0.0026015057054444516,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        }
+      },
+      "cpu_seconds": 26.745058999999856,
+      "wall_seconds": 37.857629999984056,
+      "peak_rss_mb": 145.6875,
+      "pid": 31125
+    },
+    {
+      "config": "reduced/sr@20/skewnormal4",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "skewnormal4",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 300,
+      "block_size": 20000,
+      "seed": 4213834,
+      "heavy": false,
+      "paths": 6000000,
+      "by_m": {
+        "1": {
+          "mean": 6.757150416188463,
+          "se": 0.0034462785493714365,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "2": {
+          "mean": 5.023496567435221,
+          "se": 0.0023155778754597456,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "3": {
+          "mean": 4.067133974179941,
+          "se": 0.0017696181686055793,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "5": {
+          "mean": 2.948309522732377,
+          "se": 0.0012454990004526463,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        }
+      },
+      "cpu_seconds": 30.733034999999745,
+      "wall_seconds": 43.332925290917046,
+      "peak_rss_mb": 147.34375,
+      "pid": 31124
+    },
+    {
+      "config": "reduced/sr@20/t1p5",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "t1p5",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 65,
+      "block_size": 250000,
+      "seed": 4219137,
+      "heavy": true,
+      "paths": 16250000,
+      "by_m": {
+        "1": {
+          "mean": 2.7841763439624563,
+          "se": 0.020832627834398692,
+          "batches": 65,
+          "paths_per_batch": 250000,
+          "paths": 16250000
+        },
+        "2": {
+          "mean": 2.0004232235180437,
+          "se": 0.010433525612451984,
+          "batches": 65,
+          "paths_per_batch": 250000,
+          "paths": 16250000
+        },
+        "3": {
+          "mean": 1.697829395823229,
+          "se": 0.007129309970712434,
+          "batches": 65,
+          "paths_per_batch": 250000,
+          "paths": 16250000
+        },
+        "5": {
+          "mean": 1.4741700204049164,
+          "se": 0.00472993212342749,
+          "batches": 65,
+          "paths_per_batch": 250000,
+          "paths": 16250000
+        }
+      },
+      "cpu_seconds": 27.594594999999572,
+      "wall_seconds": 39.710435957997106,
+      "peak_rss_mb": 160.125,
+      "pid": 31123
+    },
+    {
+      "config": "reduced/sr@20/logistic",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "logistic",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 300,
+      "block_size": 20000,
+      "seed": 4216396,
+      "heavy": false,
+      "paths": 6000000,
+      "by_m": {
+        "1": {
+          "mean": 6.2731532744970675,
+          "se": 0.002762706009090298,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "2": {
+          "mean": 4.5223127658397715,
+          "se": 0.0017920859895285328,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "3": {
+          "mean": 3.6225798197106647,
+          "se": 0.0013835664308029345,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "5": {
+          "mean": 2.6680213451872272,
+          "se": 0.0010037207694907797,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        }
+      },
+      "cpu_seconds": 24.476414000000204,
+      "wall_seconds": 37.37863879208453,
+      "peak_rss_mb": 116.5625,
+      "pid": 31126
+    },
+    {
+      "config": "reduced/cusum@2/skewnormal4",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "skewnormal4",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 300,
+      "block_size": 20000,
+      "seed": 4214742,
+      "heavy": false,
+      "paths": 6000000,
+      "by_m": {
+        "1": {
+          "mean": 6.161410057420788,
+          "se": 0.0036975262454126386,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "2": {
+          "mean": 4.702804763407095,
+          "se": 0.0024287234089786355,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "3": {
+          "mean": 3.8424998297533617,
+          "se": 0.0019129075587386093,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "5": {
+          "mean": 2.82567395951369,
+          "se": 0.0013806102793747018,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        }
+      },
+      "cpu_seconds": 24.952808000000005,
+      "wall_seconds": 37.84922508301679,
+      "peak_rss_mb": 147.34375,
+      "pid": 31124
+    },
+    {
+      "config": "reduced/cusum@2/t1p5",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "t1p5",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 93,
+      "block_size": 250000,
+      "seed": 4215313,
+      "heavy": true,
+      "paths": 23250000,
+      "by_m": {
+        "1": {
+          "mean": 2.4767601606236713,
+          "se": 0.022071867883869823,
+          "batches": 93,
+          "paths_per_batch": 250000,
+          "paths": 23250000
+        },
+        "2": {
+          "mean": 1.8512306724934229,
+          "se": 0.011055798801312732,
+          "batches": 93,
+          "paths_per_batch": 250000,
+          "paths": 23250000
+        },
+        "3": {
+          "mean": 1.613418355023242,
+          "se": 0.008110235268931,
+          "batches": 93,
+          "paths_per_batch": 250000,
+          "paths": 23250000
+        },
+        "5": {
+          "mean": 1.4484374269386178,
+          "se": 0.006194652504271214,
+          "batches": 93,
+          "paths_per_batch": 250000,
+          "paths": 23250000
+        }
+      },
+      "cpu_seconds": 29.325493999999708,
+      "wall_seconds": 43.76715054200031,
+      "peak_rss_mb": 145.6875,
+      "pid": 31125
+    },
+    {
+      "config": "reduced/sr@20/gaussian",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "gaussian",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 300,
+      "block_size": 20000,
+      "seed": 4213049,
+      "heavy": false,
+      "paths": 6000000,
+      "by_m": {
+        "1": {
+          "mean": 6.426418541016987,
+          "se": 0.0021406687082957095,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "2": {
+          "mean": 4.820098563966912,
+          "se": 0.0014981113294910721,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "3": {
+          "mean": 3.850653575932409,
+          "se": 0.0011699768035824754,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "5": {
+          "mean": 2.7839645369099664,
+          "se": 0.0008886368639981995,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        }
+      },
+      "cpu_seconds": 21.507700000000114,
+      "wall_seconds": 32.32260270905681,
+      "peak_rss_mb": 160.125,
+      "pid": 31123
+    },
+    {
+      "config": "reduced/cusum@2/laplace",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "laplace",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 300,
+      "block_size": 20000,
+      "seed": 4216529,
+      "heavy": false,
+      "paths": 6000000,
+      "by_m": {
+        "1": {
+          "mean": 4.986015554787557,
+          "se": 0.006208016182881601,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "2": {
+          "mean": 3.5405125941702242,
+          "se": 0.0035946762474311747,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "3": {
+          "mean": 2.8764090598330436,
+          "se": 0.0025917299003021953,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "5": {
+          "mean": 2.224004545226596,
+          "se": 0.0016880465026808571,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        }
+      },
+      "cpu_seconds": 18.14834000000019,
+      "wall_seconds": 23.79341912502423,
+      "peak_rss_mb": 116.5625,
+      "pid": 31126
+    },
+    {
+      "config": "reduced/cusum@2/gaussian",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "gaussian",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 300,
+      "block_size": 20000,
+      "seed": 4216267,
+      "heavy": false,
+      "paths": 6000000,
+      "by_m": {
+        "1": {
+          "mean": 6.193129830280571,
+          "se": 0.0025646115601510333,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "2": {
+          "mean": 4.721076117423579,
+          "se": 0.001789314222234604,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "3": {
+          "mean": 3.757665938072661,
+          "se": 0.0013882126799290059,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "5": {
+          "mean": 2.7523980713094462,
+          "se": 0.0010940720374153605,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        }
+      },
+      "cpu_seconds": 13.798361999999997,
+      "wall_seconds": 17.306866667000577,
+      "peak_rss_mb": 145.6875,
+      "pid": 31125
+    },
+    {
+      "config": "reduced/cusum@2/logistic",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "logistic",
+      "route": "route_a",
+      "stage": 1,
+      "blocks": 300,
+      "block_size": 20000,
+      "seed": 4219463,
+      "heavy": false,
+      "paths": 6000000,
+      "by_m": {
+        "1": {
+          "mean": 5.616038259519173,
+          "se": 0.00330403373974135,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "2": {
+          "mean": 4.158376528278637,
+          "se": 0.002109260238813163,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "3": {
+          "mean": 3.3520926335367385,
+          "se": 0.0016606113683424646,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        },
+        "5": {
+          "mean": 2.5165407336268837,
+          "se": 0.0011910805353500754,
+          "batches": 300,
+          "paths_per_batch": 20000,
+          "paths": 6000000
+        }
+      },
+      "cpu_seconds": 16.348485999999866,
+      "wall_seconds": 20.895620584022254,
+      "peak_rss_mb": 147.34375,
+      "pid": 31124
+    },
+    {
+      "config": "frozen/sr@520.886/t1p5",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "t1p5",
+      "route": "route_b",
+      "stage": 1,
+      "blocks": 1784,
+      "block_size": 250000,
+      "seed": 4218819,
+      "heavy": true,
+      "paths": 446000000,
+      "by_m": {
+        "1": {
+          "mean": 4.004778594310622,
+          "se": 0.043182762839059426,
+          "batches": 1784,
+          "paths_per_batch": 250000,
+          "paths": 446000000
+        },
+        "2": {
+          "mean": 2.795700405007513,
+          "se": 0.0216266394656545,
+          "batches": 1784,
+          "paths_per_batch": 250000,
+          "paths": 446000000
+        },
+        "3": {
+          "mean": 2.3224328827950624,
+          "se": 0.014419315605904964,
+          "batches": 1784,
+          "paths_per_batch": 250000,
+          "paths": 446000000
+        },
+        "5": {
+          "mean": 1.8808408460222483,
+          "se": 0.008653882748986643,
+          "batches": 1784,
+          "paths_per_batch": 250000,
+          "paths": 446000000
+        }
+      },
+      "cpu_seconds": 9593.057162000001,
+      "wall_seconds": 11097.010981249972,
+      "peak_rss_mb": 158.859375,
+      "pid": 31122
+    }
+  ],
+  "cpu_seconds_sum_of_jobs": 20556.464445,
+  "wall_seconds": 11097.194479290978
+}

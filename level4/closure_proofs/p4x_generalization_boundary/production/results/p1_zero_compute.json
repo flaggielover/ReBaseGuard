@@ -1,0 +1,199 @@
+{
+  "schema": "rebaseguard.p4x-production-p1.v1",
+  "phase": "P1_ZERO_NEW_SCIENCE_OBLIGATIONS",
+  "new_simulation_performed": false,
+  "C1": {
+    "obligation": "C1",
+    "statement": "inherit the theorem unchanged",
+    "inherited_tree_object": "eede90383da44c250871b1bb97d12045c897c8d9",
+    "checks": {
+      "p4_tree_object_matches_checkpoint": true,
+      "p4_verdict_is_partial": true,
+      "theorem_states_G1a": true,
+      "theorem_states_G1b": true,
+      "theorem_states_score": true,
+      "independent_adjudication_accepted_the_theorem": true,
+      "no_new_proof_added": true,
+      "no_theorem_strengthening": true,
+      "no_theorem_rewriting": true
+    },
+    "status": "PASS"
+  },
+  "C4": {
+    "obligation": "C4",
+    "statement": "failure-mode evidence matched to the proved failure mode",
+    "a3_half": {
+      "assumption": "A3 local common support / absolute continuity",
+      "proved_failure_mode": "the identity is FALSE, exact defect 2",
+      "discharge": "analytic closed form + Route Q + exact rational Arb",
+      "uniform_cells": 16,
+      "uniform_confirmed": 16,
+      "uniform_z_range": [
+        468.03821791482136,
+        713.688090594911
+      ],
+      "route_q_exact_slope": 2.366025403784439,
+      "checks": {
+        "identity_is_false_without_A3": true,
+        "exact_defect_two_in_theorem": true,
+        "route_q_identity_does_not_hold": true,
+        "route_q_score_side_exactly_zero": true,
+        "arb_uniform_alarm_probability_constant": true,
+        "arb_uniform_map_exactly_linear": true,
+        "arb_uniform_identity_defect_positive": true,
+        "monte_carlo_corroboration_all_confirmed": true
+      },
+      "status": "PASS",
+      "new_compute": "NONE"
+    },
+    "first_moment_half": {
+      "assumption": "A5 / A7 finite first moment",
+      "proved_failure_mode": "NON-EXISTENCE of the estimand, E|A_1| = infinity",
+      "discharge": "analytic (PROOF.md section 10)",
+      "cauchy_cells": 16,
+      "measured_z_range": [
+        0.02649800304088462,
+        1.6163441769554276
+      ],
+      "monte_carlo_signature_demanded": false,
+      "checks": {
+        "non_existence_proved_in_theorem": true,
+        "non_existence_proved_in_proof": true,
+        "no_monte_carlo_disagreement_signature_demanded": true,
+        "no_necessity_claimed_for_A1_A7": true
+      },
+      "status": "PASS",
+      "new_compute": "NONE"
+    },
+    "status": "PASS"
+  },
+  "C5": {
+    "obligation": "C5",
+    "statement": "Gaussian consistency by a two-sample uncertainty statistic",
+    "formula": "z_combined = |e1 - e2| / sqrt(SE1^2 + SE2^2)",
+    "limit": 4.0,
+    "cells": 8,
+    "rows": [
+      {
+        "detector": "cusum@5",
+        "m": 1,
+        "closed_estimate": 15.916540429525044,
+        "closed_se": 0.05990518871399268,
+        "p4x_estimate": 15.877341607803746,
+        "p4x_se": 0.016820858912165428,
+        "absolute_difference": 0.03919882172129796,
+        "signed_relative_difference": -0.002462772729718607,
+        "z_combined": 0.6299836676089405,
+        "z_historical_single_error_reported_only": 2.3303698060833278,
+        "pass": true
+      },
+      {
+        "detector": "cusum@5",
+        "m": 2,
+        "closed_estimate": 13.26482496169605,
+        "closed_se": 0.050152156092659925,
+        "p4x_estimate": 13.247492200009852,
+        "p4x_se": 0.015086940786342914,
+        "absolute_difference": 0.01733276168619824,
+        "signed_relative_difference": -0.0013066709689912154,
+        "z_combined": 0.33095304197084563,
+        "z_historical_single_error_reported_only": 1.1488586010683026,
+        "pass": true
+      },
+      {
+        "detector": "cusum@5",
+        "m": 3,
+        "closed_estimate": 11.957078194838436,
+        "closed_se": 0.04316132971596495,
+        "p4x_estimate": 11.91473469343104,
+        "p4x_se": 0.01373348633327897,
+        "absolute_difference": 0.04234350140739629,
+        "signed_relative_difference": -0.003541291669872569,
+        "z_combined": 0.934867475641764,
+        "z_historical_single_error_reported_only": 3.083230316018851,
+        "pass": true
+      },
+      {
+        "detector": "cusum@5",
+        "m": 5,
+        "closed_estimate": 10.226363970189938,
+        "closed_se": 0.03523707485898826,
+        "p4x_estimate": 10.18421225463857,
+        "p4x_se": 0.01206152585544661,
+        "absolute_difference": 0.042151715551367985,
+        "signed_relative_difference": -0.004121867329799829,
+        "z_combined": 1.1317653224558812,
+        "z_historical_single_error_reported_only": 3.4947249673500957,
+        "pass": true
+      },
+      {
+        "detector": "sr@520.886",
+        "m": 1,
+        "closed_estimate": 17.453570692218783,
+        "closed_se": 0.0658806908185833,
+        "p4x_estimate": 17.258937362693644,
+        "p4x_se": 0.02025970312960504,
+        "absolute_difference": 0.19463332952513923,
+        "signed_relative_difference": -0.011151490600826534,
+        "z_combined": 2.8238228577380813,
+        "z_historical_single_error_reported_only": 9.606919128085645,
+        "pass": true
+      },
+      {
+        "detector": "sr@520.886",
+        "m": 2,
+        "closed_estimate": 14.500509744311637,
+        "closed_se": 0.05672486214775936,
+        "p4x_estimate": 14.358609580755475,
+        "p4x_se": 0.01610402470856826,
+        "absolute_difference": 0.14190016355616208,
+        "signed_relative_difference": -0.009785874156032872,
+        "z_combined": 2.4064533837582203,
+        "z_historical_single_error_reported_only": 8.811472046529033,
+        "pass": true
+      },
+      {
+        "detector": "sr@520.886",
+        "m": 3,
+        "closed_estimate": 12.972654633634319,
+        "closed_se": 0.049010542760713774,
+        "p4x_estimate": 12.831339840632122,
+        "p4x_se": 0.013048722904538327,
+        "absolute_difference": 0.14131479300219674,
+        "signed_relative_difference": -0.010893282600448532,
+        "z_combined": 2.7862918795060465,
+        "z_historical_single_error_reported_only": 10.829779591154294,
+        "pass": true
+      },
+      {
+        "detector": "sr@520.886",
+        "m": 5,
+        "closed_estimate": 11.04852607349784,
+        "closed_se": 0.04104653234838718,
+        "p4x_estimate": 10.922954931665537,
+        "p4x_se": 0.00972542242695747,
+        "absolute_difference": 0.1255711418323031,
+        "signed_relative_difference": -0.011365420237683223,
+        "z_combined": 2.9768218705413254,
+        "z_historical_single_error_reported_only": 12.911638828585788,
+        "pass": true
+      }
+    ],
+    "worst_z_combined": 2.9768218705413254,
+    "worst_z_historical_single_error": 12.911638828585788,
+    "closed_uncertainty_source": "m_rho_stability_priority3/results/stability_map.json gamma_tilde_se",
+    "treats_either_estimate_as_exact": false,
+    "note": "The anchor phase reproduced the frozen Route-A Gaussian estimates bitwise, so P4X's own Gaussian estimate for these eight cells is numerically identical to the frozen one and the statistic is arithmetic on published uncertainties.",
+    "status": "PASS"
+  },
+  "C7_pre_production": {
+    "obligation": "C7",
+    "statement": "protected-tree integrity",
+    "reading": "PRE_PRODUCTION",
+    "paths_checked": 33,
+    "mismatches": {},
+    "dirty_paths_outside_p4x_namespace": [],
+    "status": "PASS"
+  },
+  "wall_seconds": 0.34755654097534716
+}

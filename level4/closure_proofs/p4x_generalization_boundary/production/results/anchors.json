@@ -1,0 +1,519 @@
+{
+  "schema": "rebaseguard.p4x-production-anchors.v1",
+  "phase": "P0_ANCHOR_REPRODUCTION",
+  "checkpoint_commit": "756bf687cfe8e7d08f3fadea3daac504ea0330ac",
+  "anchor_rtol": 1e-12,
+  "anchors_attempted": [
+    "reduced/cusum@2/gaussian",
+    "frozen/cusum@5/t1p5",
+    "frozen/sr@520.886/gaussian"
+  ],
+  "comparisons": 48,
+  "mismatches": [],
+  "all_anchors_reproduced": true,
+  "route_q_recorded": {
+    "recorded_all_pass": true,
+    "recorded_rows": 24,
+    "recorded_uniform_identity_holds": false,
+    "recorded_worst_relative": 4.3312930119965086e-09
+  },
+  "route_n_recorded": {
+    "recorded_all_pass": true,
+    "recorded_rows": 72
+  },
+  "semantics_validated_by_exact_reproduction": [
+    "Route-A frozen score estimator",
+    "Route-B frozen CRN central difference",
+    "Richardson per-block combination at h = 0.05 / 0.025",
+    "Philox RNG addressing (seed, batch, step) with 2^64 stream stride",
+    "detector parameters k=1/2, h=5, A=520.886133602749",
+    "window semantics w = min(m, tau) with random denominator",
+    "inclusion of the alarm-causing increment",
+    "family parameterisation and per-family seed offset"
+  ],
+  "rows": [
+    {
+      "config": "reduced/cusum@2/gaussian",
+      "m": 1,
+      "route": "route_a",
+      "field": "mean",
+      "historical": 6.198161347694672,
+      "reproduced": 6.198161347694672,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "reduced/cusum@2/gaussian",
+      "m": 1,
+      "route": "route_a",
+      "field": "se",
+      "historical": 0.0025677691842622766,
+      "reproduced": 0.0025677691842622766,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "reduced/cusum@2/gaussian",
+      "m": 1,
+      "route": "route_b",
+      "field": "mean",
+      "historical": 6.19460944083637,
+      "reproduced": 6.19460944083637,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "reduced/cusum@2/gaussian",
+      "m": 1,
+      "route": "route_b",
+      "field": "se",
+      "historical": 0.015422704668671693,
+      "reproduced": 0.015422704668671693,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "reduced/cusum@2/gaussian",
+      "m": 2,
+      "route": "route_a",
+      "field": "mean",
+      "historical": 4.725071607733235,
+      "reproduced": 4.725071607733235,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "reduced/cusum@2/gaussian",
+      "m": 2,
+      "route": "route_a",
+      "field": "se",
+      "historical": 0.0019859016034816743,
+      "reproduced": 0.0019859016034816743,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "reduced/cusum@2/gaussian",
+      "m": 2,
+      "route": "route_b",
+      "field": "mean",
+      "historical": 4.719862830132907,
+      "reproduced": 4.719862830132907,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "reduced/cusum@2/gaussian",
+      "m": 2,
+      "route": "route_b",
+      "field": "se",
+      "historical": 0.011424344280776514,
+      "reproduced": 0.011424344280776514,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "reduced/cusum@2/gaussian",
+      "m": 3,
+      "route": "route_a",
+      "field": "mean",
+      "historical": 3.761069419595954,
+      "reproduced": 3.761069419595954,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "reduced/cusum@2/gaussian",
+      "m": 3,
+      "route": "route_a",
+      "field": "se",
+      "historical": 0.0015263775986273961,
+      "reproduced": 0.0015263775986273961,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "reduced/cusum@2/gaussian",
+      "m": 3,
+      "route": "route_b",
+      "field": "mean",
+      "historical": 3.7570722874927953,
+      "reproduced": 3.7570722874927953,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "reduced/cusum@2/gaussian",
+      "m": 3,
+      "route": "route_b",
+      "field": "se",
+      "historical": 0.009177956021265123,
+      "reproduced": 0.009177956021265123,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "reduced/cusum@2/gaussian",
+      "m": 5,
+      "route": "route_a",
+      "field": "mean",
+      "historical": 2.754195442429488,
+      "reproduced": 2.754195442429488,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "reduced/cusum@2/gaussian",
+      "m": 5,
+      "route": "route_a",
+      "field": "se",
+      "historical": 0.0011714838790356354,
+      "reproduced": 0.0011714838790356354,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "reduced/cusum@2/gaussian",
+      "m": 5,
+      "route": "route_b",
+      "field": "mean",
+      "historical": 2.7557526028641277,
+      "reproduced": 2.7557526028641277,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "reduced/cusum@2/gaussian",
+      "m": 5,
+      "route": "route_b",
+      "field": "se",
+      "historical": 0.005859776970771357,
+      "reproduced": 0.005859776970771357,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "m": 1,
+      "route": "route_a",
+      "field": "mean",
+      "historical": 3.4824719060557694,
+      "reproduced": 3.4824719060557694,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "m": 1,
+      "route": "route_a",
+      "field": "se",
+      "historical": 0.14025772247907853,
+      "reproduced": 0.14025772247907853,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "m": 1,
+      "route": "route_b",
+      "field": "mean",
+      "historical": 3.5959334806866483,
+      "reproduced": 3.5959334806866483,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "m": 1,
+      "route": "route_b",
+      "field": "se",
+      "historical": 0.2913546560873388,
+      "reproduced": 0.2913546560873388,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "m": 2,
+      "route": "route_a",
+      "field": "mean",
+      "historical": 2.5210111585865596,
+      "reproduced": 2.5210111585865596,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "m": 2,
+      "route": "route_a",
+      "field": "se",
+      "historical": 0.07028045554809371,
+      "reproduced": 0.07028045554809371,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "m": 2,
+      "route": "route_b",
+      "field": "mean",
+      "historical": 2.583355088944657,
+      "reproduced": 2.583355088944657,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "m": 2,
+      "route": "route_b",
+      "field": "se",
+      "historical": 0.1487523278909255,
+      "reproduced": 0.1487523278909255,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "m": 3,
+      "route": "route_a",
+      "field": "mean",
+      "historical": 2.137629149638606,
+      "reproduced": 2.137629149638606,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "m": 3,
+      "route": "route_a",
+      "field": "se",
+      "historical": 0.04728549902371601,
+      "reproduced": 0.04728549902371601,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "m": 3,
+      "route": "route_b",
+      "field": "mean",
+      "historical": 2.1852385281443336,
+      "reproduced": 2.1852385281443336,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "m": 3,
+      "route": "route_b",
+      "field": "se",
+      "historical": 0.09974638378576554,
+      "reproduced": 0.09974638378576554,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "m": 5,
+      "route": "route_a",
+      "field": "mean",
+      "historical": 1.7750725777131664,
+      "reproduced": 1.7750725777131664,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "m": 5,
+      "route": "route_a",
+      "field": "se",
+      "historical": 0.029125525828974715,
+      "reproduced": 0.029125525828974715,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "m": 5,
+      "route": "route_b",
+      "field": "mean",
+      "historical": 1.804900806096951,
+      "reproduced": 1.804900806096951,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "m": 5,
+      "route": "route_b",
+      "field": "se",
+      "historical": 0.05996214940310369,
+      "reproduced": 0.05996214940310369,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/sr@520.886/gaussian",
+      "m": 1,
+      "route": "route_a",
+      "field": "mean",
+      "historical": 17.258937362693644,
+      "reproduced": 17.258937362693644,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/sr@520.886/gaussian",
+      "m": 1,
+      "route": "route_a",
+      "field": "se",
+      "historical": 0.02025970312960504,
+      "reproduced": 0.02025970312960504,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/sr@520.886/gaussian",
+      "m": 1,
+      "route": "route_b",
+      "field": "mean",
+      "historical": 17.23852889349197,
+      "reproduced": 17.23852889349197,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/sr@520.886/gaussian",
+      "m": 1,
+      "route": "route_b",
+      "field": "se",
+      "historical": 0.03413468715169491,
+      "reproduced": 0.03413468715169491,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/sr@520.886/gaussian",
+      "m": 2,
+      "route": "route_a",
+      "field": "mean",
+      "historical": 14.358609580755475,
+      "reproduced": 14.358609580755475,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/sr@520.886/gaussian",
+      "m": 2,
+      "route": "route_a",
+      "field": "se",
+      "historical": 0.01610402470856826,
+      "reproduced": 0.01610402470856826,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/sr@520.886/gaussian",
+      "m": 2,
+      "route": "route_b",
+      "field": "mean",
+      "historical": 14.32429917480909,
+      "reproduced": 14.32429917480909,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/sr@520.886/gaussian",
+      "m": 2,
+      "route": "route_b",
+      "field": "se",
+      "historical": 0.02837510716633154,
+      "reproduced": 0.02837510716633154,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/sr@520.886/gaussian",
+      "m": 3,
+      "route": "route_a",
+      "field": "mean",
+      "historical": 12.831339840632122,
+      "reproduced": 12.831339840632122,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/sr@520.886/gaussian",
+      "m": 3,
+      "route": "route_a",
+      "field": "se",
+      "historical": 0.013048722904538327,
+      "reproduced": 0.013048722904538327,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/sr@520.886/gaussian",
+      "m": 3,
+      "route": "route_b",
+      "field": "mean",
+      "historical": 12.80064169290006,
+      "reproduced": 12.80064169290006,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/sr@520.886/gaussian",
+      "m": 3,
+      "route": "route_b",
+      "field": "se",
+      "historical": 0.02584584221142333,
+      "reproduced": 0.02584584221142333,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/sr@520.886/gaussian",
+      "m": 5,
+      "route": "route_a",
+      "field": "mean",
+      "historical": 10.922954931665537,
+      "reproduced": 10.922954931665537,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/sr@520.886/gaussian",
+      "m": 5,
+      "route": "route_a",
+      "field": "se",
+      "historical": 0.00972542242695747,
+      "reproduced": 0.00972542242695747,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/sr@520.886/gaussian",
+      "m": 5,
+      "route": "route_b",
+      "field": "mean",
+      "historical": 10.911766241931526,
+      "reproduced": 10.911766241931526,
+      "relative_difference": 0.0,
+      "match": true
+    },
+    {
+      "config": "frozen/sr@520.886/gaussian",
+      "m": 5,
+      "route": "route_b",
+      "field": "se",
+      "historical": 0.022075873555611084,
+      "reproduced": 0.022075873555611084,
+      "relative_difference": 0.0,
+      "match": true
+    }
+  ],
+  "cpu_seconds": 361.943627,
+  "wall_seconds": 368.4427884579636,
+  "peak_rss_mb": 147.328125
+}
