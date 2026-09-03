@@ -1,0 +1,83 @@
+{
+ "schema": "rebaseguard.p5x.r8.sr_prototype.v1",
+ "checkpoint_j": "55c5f1de9eb07a855948f92215b38a24b8321c5d",
+ "inputs": {
+  "C_SR_cell": 216.963,
+  "C_SR_source": "B1 binding at e=0.24, cell-valid by B1-L6",
+  "delta": 0.0050108623233077534,
+  "delta_source": "B2 binding 1024x1024 sweep",
+  "ghat_x0": "[-1.8403422831037321572 +/- 1.20e-21]"
+ },
+ "enclosure": {
+  "interval": "[+/- 2.69]",
+  "midpoint": -1.5903422831037322,
+  "half_width": 1.097171725705266,
+  "C_times_delta": 1.08717172225182,
+  "e_cell_half_width": 0.01
+ },
+ "criteria": {
+  "F1_finite": {
+   "pass": true
+  },
+  "F2_mc_consistent": {
+   "mc": {
+    "0.24": [
+     -1.593369,
+     0.001273
+    ],
+    "0.25": [
+     -1.592117,
+     0.001251
+    ],
+    "0.26": [
+     -1.589105,
+     0.00122
+    ]
+   },
+   "contains_all_within_3se": true,
+   "pass": true
+  },
+  "F3_half_width": {
+   "value": 1.097171725705266,
+   "limit": 0.2,
+   "pass": false
+  },
+  "F4_z_panels": {
+   "count": 0,
+   "pass": true
+  },
+  "F5_softplus": {
+   "count": 0,
+   "pass": true
+  },
+  "F6_no_empirical_monotonicity": {
+   "note": "B1-L1/B1-L6 are pathwise couplings; softplus monotonicity is calculus",
+   "pass": true
+  },
+  "F7_cpu": {
+   "wall_s": 0.10206413269042969,
+   "b2_sweep_s": 2260.965663909912,
+   "total_cpu_hours": 3.7683044582605363,
+   "limit_h": 2.0,
+   "pass": false
+  },
+  "F8_protected_tree": {
+   "pass": true
+  },
+  "F9_candidate_unchanged": {
+   "pass": true
+  },
+  "F10_traceable": {
+   "pass": true
+  }
+ },
+ "runtime": {
+  "wall_s": 0.10206842422485352,
+  "peak_rss_mib": 40.671875
+ },
+ "verdict": "FAIL",
+ "failed": [
+  "F3_half_width",
+  "F7_cpu"
+ ]
+}
