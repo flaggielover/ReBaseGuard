@@ -1,0 +1,681 @@
+{
+  "schema": "rebaseguard.p4x-production-c2-stage2.v1",
+  "shard_threshold_hours": 2.0,
+  "sharding_note": "a top-up projected above the threshold is split across workers; each shard runs the identical estimator at the identical block size with its own Philox seed, and shards are pooled as blocks.  Total N, block size, estimator, precision rule and gate are unchanged -- this is a scheduling choice only",
+  "specs": [
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t1p5",
+      "kind": "cusum",
+      "threshold": 5.0,
+      "max_steps": 200000,
+      "route": "route_a",
+      "stage": 2,
+      "heavy": true,
+      "required_paths": 44313186.77000272,
+      "blocks": 196,
+      "block_size": 250000,
+      "projected_cpu_hours_checkpoint": 0.012231619378747248,
+      "projected_cpu_hours": 0.03259468682394851,
+      "seed": 4218112,
+      "shard": 0,
+      "shards": 1
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t1p5",
+      "kind": "cusum",
+      "threshold": 5.0,
+      "max_steps": 200000,
+      "route": "route_b",
+      "stage": 2,
+      "heavy": true,
+      "required_paths": 53801767.4758362,
+      "blocks": 1761,
+      "block_size": 250000,
+      "projected_cpu_hours_checkpoint": 0.1725183563875444,
+      "projected_cpu_hours": 4.23747351062433,
+      "seed": 4212760,
+      "shard": 0,
+      "shards": 5
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t1p5",
+      "kind": "cusum",
+      "threshold": 5.0,
+      "max_steps": 200000,
+      "route": "route_b",
+      "stage": 2,
+      "heavy": true,
+      "required_paths": 53801767.4758362,
+      "blocks": 1761,
+      "block_size": 250000,
+      "projected_cpu_hours_checkpoint": 0.1725183563875444,
+      "projected_cpu_hours": 4.23747351062433,
+      "seed": 4210700,
+      "shard": 1,
+      "shards": 5
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t1p5",
+      "kind": "cusum",
+      "threshold": 5.0,
+      "max_steps": 200000,
+      "route": "route_b",
+      "stage": 2,
+      "heavy": true,
+      "required_paths": 53801767.4758362,
+      "blocks": 1761,
+      "block_size": 250000,
+      "projected_cpu_hours_checkpoint": 0.1725183563875444,
+      "projected_cpu_hours": 4.23747351062433,
+      "seed": 4212341,
+      "shard": 2,
+      "shards": 5
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t1p5",
+      "kind": "cusum",
+      "threshold": 5.0,
+      "max_steps": 200000,
+      "route": "route_b",
+      "stage": 2,
+      "heavy": true,
+      "required_paths": 53801767.4758362,
+      "blocks": 1761,
+      "block_size": 250000,
+      "projected_cpu_hours_checkpoint": 0.1725183563875444,
+      "projected_cpu_hours": 4.23747351062433,
+      "seed": 4212798,
+      "shard": 3,
+      "shards": 5
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t1p5",
+      "kind": "cusum",
+      "threshold": 5.0,
+      "max_steps": 200000,
+      "route": "route_b",
+      "stage": 2,
+      "heavy": true,
+      "required_paths": 53801767.4758362,
+      "blocks": 1761,
+      "block_size": 250000,
+      "projected_cpu_hours_checkpoint": 0.1725183563875444,
+      "projected_cpu_hours": 4.23747351062433,
+      "seed": 4217997,
+      "shard": 4,
+      "shards": 5
+    },
+    {
+      "config": "frozen/cusum@5/t3",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t3",
+      "kind": "cusum",
+      "threshold": 5.0,
+      "max_steps": 200000,
+      "route": "route_a",
+      "stage": 2,
+      "heavy": false,
+      "required_paths": 3200000.0,
+      "blocks": 44,
+      "block_size": 20000,
+      "projected_cpu_hours_checkpoint": 0.011785309267644253,
+      "projected_cpu_hours": 0.0077117296484934175,
+      "seed": 4215443,
+      "shard": 0,
+      "shards": 1
+    },
+    {
+      "config": "frozen/sr@520.886/t1p5",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "t1p5",
+      "kind": "sr",
+      "threshold": 520.886133602749,
+      "max_steps": 200000,
+      "route": "route_a",
+      "stage": 2,
+      "heavy": true,
+      "required_paths": 14668069.231661826,
+      "blocks": 34,
+      "block_size": 250000,
+      "projected_cpu_hours_checkpoint": 0.005399139750912244,
+      "projected_cpu_hours": 0.00802897467403337,
+      "seed": 4210474,
+      "shard": 0,
+      "shards": 1
+    },
+    {
+      "config": "reduced/cusum@2/t1p5",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "t1p5",
+      "kind": "cusum",
+      "threshold": 2.0,
+      "max_steps": 60000,
+      "route": "route_b",
+      "stage": 2,
+      "heavy": true,
+      "required_paths": 64983568.36295928,
+      "blocks": 419,
+      "block_size": 250000,
+      "projected_cpu_hours_checkpoint": 0.08114427494164511,
+      "projected_cpu_hours": 0.4137011072743311,
+      "seed": 4218776,
+      "shard": 0,
+      "shards": 1
+    },
+    {
+      "config": "reduced/sr@20/t1p5",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "t1p5",
+      "kind": "sr",
+      "threshold": 20.0,
+      "max_steps": 60000,
+      "route": "route_b",
+      "stage": 2,
+      "heavy": true,
+      "required_paths": 37782021.375868544,
+      "blocks": 1106,
+      "block_size": 250000,
+      "projected_cpu_hours_checkpoint": 0.05881054991684719,
+      "projected_cpu_hours": 1.2286168236995805,
+      "seed": 4215006,
+      "shard": 0,
+      "shards": 1
+    }
+  ],
+  "results": [
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t1p5",
+      "route": "route_b",
+      "stage": 2,
+      "blocks": 1761,
+      "block_size": 250000,
+      "seed": 4210700,
+      "heavy": true,
+      "paths": 440250000,
+      "by_m": {
+        "1": {
+          "mean": 3.5379153673777295,
+          "se": 0.02824848125095914,
+          "batches": 1761,
+          "paths_per_batch": 250000,
+          "paths": 440250000
+        },
+        "2": {
+          "mean": 2.549023666759787,
+          "se": 0.014136449631020842,
+          "batches": 1761,
+          "paths_per_batch": 250000,
+          "paths": 440250000
+        },
+        "3": {
+          "mean": 2.1548803725987598,
+          "se": 0.00944869318310159,
+          "batches": 1761,
+          "paths_per_batch": 250000,
+          "paths": 440250000
+        },
+        "5": {
+          "mean": 1.7823926489865183,
+          "se": 0.005709105530844776,
+          "batches": 1761,
+          "paths_per_batch": 250000,
+          "paths": 440250000
+        }
+      },
+      "cpu_seconds": 12955.347944,
+      "wall_seconds": 14644.696611125022,
+      "peak_rss_mb": 177.390625,
+      "pid": 40713
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t1p5",
+      "route": "route_b",
+      "stage": 2,
+      "blocks": 1761,
+      "block_size": 250000,
+      "seed": 4217997,
+      "heavy": true,
+      "paths": 440250000,
+      "by_m": {
+        "1": {
+          "mean": 3.5775228858176846,
+          "se": 0.04921118480165487,
+          "batches": 1761,
+          "paths_per_batch": 250000,
+          "paths": 440250000
+        },
+        "2": {
+          "mean": 2.570021848985106,
+          "se": 0.024603708863272438,
+          "batches": 1761,
+          "paths_per_batch": 250000,
+          "paths": 440250000
+        },
+        "3": {
+          "mean": 2.168775296913499,
+          "se": 0.01640389409183004,
+          "batches": 1761,
+          "paths_per_batch": 250000,
+          "paths": 440250000
+        },
+        "5": {
+          "mean": 1.7901857939856713,
+          "se": 0.00989425388749525,
+          "batches": 1761,
+          "paths_per_batch": 250000,
+          "paths": 440250000
+        }
+      },
+      "cpu_seconds": 12959.792682000001,
+      "wall_seconds": 14653.00286929193,
+      "peak_rss_mb": 171.5,
+      "pid": 40716
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t1p5",
+      "route": "route_b",
+      "stage": 2,
+      "blocks": 1761,
+      "block_size": 250000,
+      "seed": 4212341,
+      "heavy": true,
+      "paths": 440250000,
+      "by_m": {
+        "1": {
+          "mean": 3.6179915440189476,
+          "se": 0.04627062113612535,
+          "batches": 1761,
+          "paths_per_batch": 250000,
+          "paths": 440250000
+        },
+        "2": {
+          "mean": 2.5898618286719874,
+          "se": 0.023128980854545497,
+          "batches": 1761,
+          "paths_per_batch": 250000,
+          "paths": 440250000
+        },
+        "3": {
+          "mean": 2.181951904705081,
+          "se": 0.015413316516629609,
+          "batches": 1761,
+          "paths_per_batch": 250000,
+          "paths": 440250000
+        },
+        "5": {
+          "mean": 1.7988135019950209,
+          "se": 0.00925914344300024,
+          "batches": 1761,
+          "paths_per_batch": 250000,
+          "paths": 440250000
+        }
+      },
+      "cpu_seconds": 12975.919167,
+      "wall_seconds": 14668.675450750045,
+      "peak_rss_mb": 176.125,
+      "pid": 40714
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t1p5",
+      "route": "route_b",
+      "stage": 2,
+      "blocks": 1761,
+      "block_size": 250000,
+      "seed": 4212798,
+      "heavy": true,
+      "paths": 440250000,
+      "by_m": {
+        "1": {
+          "mean": 3.511330340226042,
+          "se": 0.028534746141919295,
+          "batches": 1761,
+          "paths_per_batch": 250000,
+          "paths": 440250000
+        },
+        "2": {
+          "mean": 2.535729013220347,
+          "se": 0.01427664614196863,
+          "batches": 1761,
+          "paths_per_batch": 250000,
+          "paths": 440250000
+        },
+        "3": {
+          "mean": 2.1454252890960466,
+          "se": 0.009530892669855458,
+          "batches": 1761,
+          "paths_per_batch": 250000,
+          "paths": 440250000
+        },
+        "5": {
+          "mean": 1.7763920782579794,
+          "se": 0.005734738391555511,
+          "batches": 1761,
+          "paths_per_batch": 250000,
+          "paths": 440250000
+        }
+      },
+      "cpu_seconds": 12984.126194,
+      "wall_seconds": 14674.37639208301,
+      "peak_rss_mb": 172.203125,
+      "pid": 40715
+    },
+    {
+      "config": "frozen/sr@520.886/t1p5",
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "t1p5",
+      "route": "route_a",
+      "stage": 2,
+      "blocks": 34,
+      "block_size": 250000,
+      "seed": 4210474,
+      "heavy": true,
+      "paths": 8500000,
+      "by_m": {
+        "1": {
+          "mean": 4.208438211712103,
+          "se": 0.1436650880726955,
+          "batches": 34,
+          "paths_per_batch": 250000,
+          "paths": 8500000
+        },
+        "2": {
+          "mean": 2.899100062066124,
+          "se": 0.07211992769428771,
+          "batches": 34,
+          "paths_per_batch": 250000,
+          "paths": 8500000
+        },
+        "3": {
+          "mean": 2.4084178706324737,
+          "se": 0.061195168134825124,
+          "batches": 34,
+          "paths_per_batch": 250000,
+          "paths": 8500000
+        },
+        "5": {
+          "mean": 1.9544084339734373,
+          "se": 0.05472335170197609,
+          "batches": 34,
+          "paths_per_batch": 250000,
+          "paths": 8500000
+        }
+      },
+      "cpu_seconds": 25.488463000001502,
+      "wall_seconds": 26.85073775006458,
+      "peak_rss_mb": 172.203125,
+      "pid": 40715
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t1p5",
+      "route": "route_b",
+      "stage": 2,
+      "blocks": 1761,
+      "block_size": 250000,
+      "seed": 4212760,
+      "heavy": true,
+      "paths": 440250000,
+      "by_m": {
+        "1": {
+          "mean": 3.5353354403105333,
+          "se": 0.0790157197280814,
+          "batches": 1761,
+          "paths_per_batch": 250000,
+          "paths": 440250000
+        },
+        "2": {
+          "mean": 2.548583719864592,
+          "se": 0.03951547848685324,
+          "batches": 1761,
+          "paths_per_batch": 250000,
+          "paths": 440250000
+        },
+        "3": {
+          "mean": 2.1541759650703574,
+          "se": 0.026340222350835038,
+          "batches": 1761,
+          "paths_per_batch": 250000,
+          "paths": 440250000
+        },
+        "5": {
+          "mean": 1.7816841562654142,
+          "se": 0.0158237258125561,
+          "batches": 1761,
+          "paths_per_batch": 250000,
+          "paths": 440250000
+        }
+      },
+      "cpu_seconds": 13012.174325999998,
+      "wall_seconds": 14705.576285624993,
+      "peak_rss_mb": 173.703125,
+      "pid": 40712
+    },
+    {
+      "config": "frozen/cusum@5/t3",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t3",
+      "route": "route_a",
+      "stage": 2,
+      "blocks": 44,
+      "block_size": 20000,
+      "seed": 4215443,
+      "heavy": false,
+      "paths": 880000,
+      "by_m": {
+        "1": {
+          "mean": 8.136094417603466,
+          "se": 0.20271975677715523,
+          "batches": 44,
+          "paths_per_batch": 20000,
+          "paths": 880000
+        },
+        "2": {
+          "mean": 5.605029220167006,
+          "se": 0.10994474593570994,
+          "batches": 44,
+          "paths_per_batch": 20000,
+          "paths": 880000
+        },
+        "3": {
+          "mean": 4.606181199398667,
+          "se": 0.0734428920610011,
+          "batches": 44,
+          "paths_per_batch": 20000,
+          "paths": 880000
+        },
+        "5": {
+          "mean": 3.6280621570838467,
+          "se": 0.04466877630862739,
+          "batches": 44,
+          "paths_per_batch": 20000,
+          "paths": 880000
+        }
+      },
+      "cpu_seconds": 23.56476399999883,
+      "wall_seconds": 24.250628542038612,
+      "peak_rss_mb": 172.203125,
+      "pid": 40715
+    },
+    {
+      "config": "frozen/cusum@5/t1p5",
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t1p5",
+      "route": "route_a",
+      "stage": 2,
+      "blocks": 196,
+      "block_size": 250000,
+      "seed": 4218112,
+      "heavy": true,
+      "paths": 49000000,
+      "by_m": {
+        "1": {
+          "mean": 3.6453571418538533,
+          "se": 0.10375593685360504,
+          "batches": 196,
+          "paths_per_batch": 250000,
+          "paths": 49000000
+        },
+        "2": {
+          "mean": 2.6035706670064416,
+          "se": 0.05188425156869199,
+          "batches": 196,
+          "paths_per_batch": 250000,
+          "paths": 49000000
+        },
+        "3": {
+          "mean": 2.190263683633972,
+          "se": 0.034543887851534484,
+          "batches": 196,
+          "paths_per_batch": 250000,
+          "paths": 49000000
+        },
+        "5": {
+          "mean": 1.80192000280193,
+          "se": 0.02077620075558226,
+          "batches": 196,
+          "paths_per_batch": 250000,
+          "paths": 49000000
+        }
+      },
+      "cpu_seconds": 91.84665700000187,
+      "wall_seconds": 94.49994012503885,
+      "peak_rss_mb": 176.125,
+      "pid": 40714
+    },
+    {
+      "config": "reduced/cusum@2/t1p5",
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "t1p5",
+      "route": "route_b",
+      "stage": 2,
+      "blocks": 419,
+      "block_size": 250000,
+      "seed": 4218776,
+      "heavy": true,
+      "paths": 104750000,
+      "by_m": {
+        "1": {
+          "mean": 2.4729708268288086,
+          "se": 0.020665861216539797,
+          "batches": 419,
+          "paths_per_batch": 250000,
+          "paths": 104750000
+        },
+        "2": {
+          "mean": 1.8481602164983253,
+          "se": 0.010333851833506809,
+          "batches": 419,
+          "paths_per_batch": 250000,
+          "paths": 104750000
+        },
+        "3": {
+          "mean": 1.611156449904861,
+          "se": 0.006915359152151585,
+          "batches": 419,
+          "paths_per_batch": 250000,
+          "paths": 104750000
+        },
+        "5": {
+          "mean": 1.444958373716449,
+          "se": 0.004403418587868518,
+          "batches": 419,
+          "paths_per_batch": 250000,
+          "paths": 104750000
+        }
+      },
+      "cpu_seconds": 833.8346280000005,
+      "wall_seconds": 838.8343889580574,
+      "peak_rss_mb": 171.5,
+      "pid": 40716
+    },
+    {
+      "config": "reduced/sr@20/t1p5",
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "t1p5",
+      "route": "route_b",
+      "stage": 2,
+      "blocks": 1106,
+      "block_size": 250000,
+      "seed": 4215006,
+      "heavy": true,
+      "paths": 276500000,
+      "by_m": {
+        "1": {
+          "mean": 2.715449428673027,
+          "se": 0.05272267885428795,
+          "batches": 1106,
+          "paths_per_batch": 250000,
+          "paths": 276500000
+        },
+        "2": {
+          "mean": 1.9659899901326443,
+          "se": 0.026356821077958205,
+          "batches": 1106,
+          "paths_per_batch": 250000,
+          "paths": 276500000
+        },
+        "3": {
+          "mean": 1.6736713198007969,
+          "se": 0.017599408776398352,
+          "batches": 1106,
+          "paths_per_batch": 250000,
+          "paths": 276500000
+        },
+        "5": {
+          "mean": 1.4572598376783032,
+          "se": 0.011788763154297383,
+          "batches": 1106,
+          "paths_per_batch": 250000,
+          "paths": 276500000
+        }
+      },
+      "cpu_seconds": 2009.6763889999984,
+      "wall_seconds": 2016.0607876250288,
+      "peak_rss_mb": 177.390625,
+      "pid": 40713
+    }
+  ],
+  "cpu_seconds_sum_of_jobs": 67871.77121400001,
+  "wall_seconds": 16660.84385475004
+}

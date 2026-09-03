@@ -26,7 +26,8 @@ def test_cell_ledger_records_every_required_field(ledger):
 
 def test_no_failed_cell_is_hidden(ledger):
     counted = (ledger["cells_passed"] + ledger["cells_failed"]
-               + ledger["cells_precision_limited"])
+               + ledger["cells_precision_limited"]
+               + ledger.get("cells_precondition_not_met", 0))
     assert counted == ledger["cells_total"] == 96
     failed = [c for c in ledger["cells"] if c["gate_result"] == "FAIL"]
     assert len(failed) == ledger["cells_failed"]
@@ -36,11 +37,37 @@ def test_no_failed_cell_is_hidden(ledger):
 
 def test_gate_result_is_recomputable_from_the_frozen_criterion(ledger):
     for c in ledger["cells"]:
-        if c["gate_result"] == "PRECISION_LIMITED":
+        if c["gate_result"] in {"PRECISION_LIMITED", "PRECONDITION_NOT_MET"}:
             continue
         expected = ("PASS" if (c["relative_discrepancy"] <= 0.03
                                and c["z"] <= 4.0) else "FAIL")
         assert c["gate_result"] == expected, (c["config"], c["m"])
+
+
+def test_precondition_not_met_cells_are_not_counted_as_passes(ledger):
+    """Checkpoint A X6 requires a route to reach r* (or be PRECISION_LIMITED)
+    BEFORE the gate is adjudicated.  A cell whose route got its one frozen
+    top-up and still missed r*, without hitting a cap, satisfies neither
+    branch, so its criterion value may not be read as a pass."""
+    unmet = [c for c in ledger["cells"]
+             if c["gate_result"] == "PRECONDITION_NOT_MET"]
+    assert len(unmet) == ledger.get("cells_precondition_not_met", 0)
+    for c in unmet:
+        assert c["precondition_unmet"] is True, (c["config"], c["m"])
+        assert "criterion_satisfied_informational" in c
+        # a route below target is what makes the precondition unmet
+        assert any(c[r]["precision_status"] == "BELOW_TARGET"
+                   for r in ("route_a", "route_b")), (c["config"], c["m"])
+    if unmet:
+        assert ledger["C2"] == "INCOMPLETE"
+
+
+def test_below_target_routes_are_never_silently_passed(ledger):
+    for c in ledger["cells"]:
+        below = any(c[r]["precision_status"] == "BELOW_TARGET"
+                    for r in ("route_a", "route_b"))
+        if below:
+            assert c["gate_result"] != "PASS", (c["config"], c["m"])
 
 
 def test_discrepancy_and_z_are_recomputable(ledger):
@@ -75,7 +102,8 @@ def test_route_q_is_cross_check_only(verdict, checkpoint):
 def test_route_q_did_not_enter_any_cell_decision(ledger):
     for c in ledger["cells"]:
         assert "route_q" not in c
-        assert c["gate_result"] in {"PASS", "FAIL", "PRECISION_LIMITED"}
+        assert c["gate_result"] in {
+            "PASS", "FAIL", "PRECISION_LIMITED", "PRECONDITION_NOT_MET"}
 
 
 # --------------------------------------------------------------- CUT-2 --

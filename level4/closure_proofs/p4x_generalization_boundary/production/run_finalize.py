@@ -166,8 +166,13 @@ def main() -> None:
         "cells_passed": ledger["cells_passed"],
         "cells_failed": ledger["cells_failed"],
         "cells_precision_limited": ledger["cells_precision_limited"],
+        "cells_precondition_not_met": ledger.get("cells_precondition_not_met", 0),
         "precision_limited_configurations": sorted(
             {c["config"] for c in ledger["precision_limited_cells"]}),
+        "precondition_not_met_configurations": sorted(
+            {c["config"] for c in ledger.get("precondition_not_met_cells", [])}),
+        "precondition": ledger.get("precondition"),
+        "precondition_note": ledger.get("precondition_note"),
         "failed_cells": [{"config": c["config"], "m": c["m"],
                           "relative_discrepancy": c["relative_discrepancy"],
                           "z": c["z"]} for c in ledger["failed_cells"]],

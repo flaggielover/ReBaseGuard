@@ -1,0 +1,53 @@
+{
+  "schema": "rebaseguard.p4x-production-costs.v1",
+  "total_cpu_hours": 24.749349116539157,
+  "job_cpu_hours": 24.563398794166666,
+  "non_job_cpu_hours": 0.18595032237249312,
+  "total_wall_hours": 8.331159105416381,
+  "per_configuration_cpu_hours": {
+    "reduced/sr@20/t1p5": 0.7348699227777773,
+    "frozen/sr@520.886/skewnormal4": 0.2767369147222221,
+    "reduced/cusum@2/t1p5": 0.49655620805555567,
+    "frozen/sr@520.886/t3": 0.1810571405555555,
+    "frozen/sr@520.886/laplace": 0.178164113611111,
+    "frozen/cusum@5/skewnormal4": 0.1984961811111112,
+    "frozen/cusum@5/t3": 0.13355524194444413,
+    "frozen/sr@520.886/logistic": 0.18870965527777778,
+    "frozen/cusum@5/laplace": 0.12519127027777788,
+    "frozen/cusum@5/t1p5": 18.59941603055556,
+    "frozen/cusum@5/logistic": 0.13466774500000017,
+    "frozen/sr@520.886/gaussian": 0.1884140061111112,
+    "frozen/cusum@5/gaussian": 0.12966818888888895,
+    "reduced/sr@20/t3": 0.05294829249999995,
+    "reduced/cusum@2/t3": 0.049189176666666556,
+    "reduced/cusum@2/skewnormal4": 0.030495183611111164,
+    "reduced/sr@20/laplace": 0.03186903055555566,
+    "reduced/sr@20/gaussian": 0.021215340555555587,
+    "reduced/sr@20/logistic": 0.026768860555555673,
+    "reduced/cusum@2/laplace": 0.026605182777777826,
+    "reduced/sr@20/skewnormal4": 0.03380616861111094,
+    "reduced/cusum@2/gaussian": 0.016450070833333386,
+    "frozen/sr@520.886/t1p5": 2.686062985000001,
+    "reduced/cusum@2/logistic": 0.022485883611111226
+  },
+  "max_configuration_cpu_hours": 18.59941603055556,
+  "max_configuration": "frozen/cusum@5/t1p5",
+  "total_cap_hours": 60.0,
+  "per_configuration_cap_hours": 40.0,
+  "total_cap_status": "PASS",
+  "per_configuration_cap_status": "PASS",
+  "high_risk_configuration": {
+    "config": "frozen/sr@520.886/t1p5",
+    "checkpoint_projection_cpu_hours": 1.7503967701698675,
+    "pre_run_projection_cpu_hours": 3.1839444444444442,
+    "actual_cpu_hours": 2.686062985000001,
+    "checkpoint_worst_case_cpu_hours": 55.840749623833766
+  },
+  "accounting_method": "per-job CPU measured inside each worker with RUSAGE_SELF and persisted; the finaliser reconciles that sum against the parent process's RUSAGE_SELF+RUSAGE_CHILDREN",
+  "reconciliation": {
+    "sum_of_persisted_job_cpu_hours": 24.563398794166666,
+    "finaliser_process_cpu_hours": 8.025555555555556e-06,
+    "note": "the finaliser is a separate short-lived process, so its own accounting covers only itself; per-job persistence is the authoritative record",
+    "relative_difference": 0.0
+  }
+}

@@ -268,6 +268,16 @@ def adjudicate() -> dict:
         precision_limited = any(
             est[r]["precision_status"] == "PRECISION_LIMITED"
             for r in ("route_a", "route_b"))
+        # Checkpoint A X6 precondition: "each route on each cell must
+        # FIRST reach r*, or be declared PRECISION_LIMITED from projected
+        # cost alone".  A route that received its one frozen top-up and
+        # still missed r*, without hitting a cap, satisfies NEITHER
+        # branch, so the gate is not adjudicable for that cell.  The
+        # criterion value is still recorded, clearly labelled, so nothing
+        # is hidden.
+        precondition_unmet = (not precision_limited) and any(
+            est[r]["precision_status"] == "BELOW_TARGET"
+            for r in ("route_a", "route_b"))
         row.update({
             "route_a": a, "route_b": b,
             "h_values": list(C2.FD_STEPS),
@@ -278,8 +288,13 @@ def adjudicate() -> dict:
             "z": z,
             "gate_relative_limit": rel_limit,
             "gate_z_limit": z_limit,
+            "criterion_satisfied_informational": bool(
+                rel_disc <= rel_limit and z <= z_limit),
+            "precondition_unmet": precondition_unmet,
             "gate_result": ("PRECISION_LIMITED" if precision_limited else
-                            "PASS" if (rel_disc <= rel_limit and z <= z_limit)
+                            "PRECONDITION_NOT_MET" if precondition_unmet
+                            else "PASS"
+                            if (rel_disc <= rel_limit and z <= z_limit)
                             else "FAIL"),
             "precision_status": ("PRECISION_LIMITED" if precision_limited
                                  else "AT_TARGET"
@@ -291,6 +306,7 @@ def adjudicate() -> dict:
     passed = [c for c in cells if c["gate_result"] == "PASS"]
     failed = [c for c in cells if c["gate_result"] == "FAIL"]
     plimited = [c for c in cells if c["gate_result"] == "PRECISION_LIMITED"]
+    unmet = [c for c in cells if c["gate_result"] == "PRECONDITION_NOT_MET"]
 
     c2_status = ("PASS" if len(passed) == len(cells) else
                  "FAIL" if failed else "INCOMPLETE")
@@ -302,8 +318,12 @@ def adjudicate() -> dict:
         "cells_passed": len(passed),
         "cells_failed": len(failed),
         "cells_precision_limited": len(plimited),
+        "cells_precondition_not_met": len(unmet),
         "failed_cells": failed,
         "precision_limited_cells": plimited,
+        "precondition_not_met_cells": unmet,
+        "precondition": 'Checkpoint A X6: each route on each cell must first reach r*, or be declared PRECISION_LIMITED from projected cost alone',
+        "precondition_note": 'Cells recorded PRECONDITION_NOT_MET received their one frozen top-up, sized deterministically by the frozen rule, and still missed r* without hitting any cap. Checkpoint A permits at most one top-up, so no further paths may be bought, and the caps were not reached, so PRECISION_LIMITED does not apply either. The gate is therefore not adjudicable for these cells. Their criterion values are recorded in criterion_satisfied_informational and are NOT treated as passes.',
         "cells": cells,
         "C2": c2_status,
     }
@@ -332,6 +352,7 @@ if __name__ == "__main__":
         led = adjudicate()
         print(f"C2 = {led['C2']}   pass {led['cells_passed']}/{led['cells_total']}"
               f"   fail {led['cells_failed']}"
-              f"   precision-limited {led['cells_precision_limited']}")
+              f"   precision-limited {led['cells_precision_limited']}"
+              f"   precondition-not-met {led['cells_precondition_not_met']}")
     else:
         raise SystemExit(f"unknown mode {mode}")

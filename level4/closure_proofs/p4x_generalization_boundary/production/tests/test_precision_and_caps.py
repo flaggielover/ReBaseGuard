@@ -71,11 +71,28 @@ def test_topup_trigger_excludes_pass_fail_information(stage2_plan, prod_dir):
 
 
 def test_topup_planning_never_reads_the_other_route(prod_dir):
-    """The stage-2 planner must not compute a discrepancy."""
+    """The stage-2 planner must not read any outcome quantity.
+
+    Checked at the AST level over `plan_stage2`'s data accesses, so prose in
+    comments and in the recorded `trigger_excludes` strings cannot satisfy or
+    break it: only real subscript reads count.
+    """
+    import ast
+
     src = (prod_dir / "run_c2_stage2_adjudicate.py").read_text()
-    plan_src = src[src.index("def plan_stage2"):src.index("def run_stage2")]
-    for banned in ("relative_discrepancy", "route_a\"] - ", "z =", "gate"):
-        assert banned not in plan_src, banned
+    tree = ast.parse(src)
+    fn = next(n for n in ast.walk(tree)
+              if isinstance(n, ast.FunctionDef) and n.name == "plan_stage2")
+    keys = {n.slice.value for n in ast.walk(fn)
+            if isinstance(n, ast.Subscript)
+            and isinstance(n.slice, ast.Constant)
+            and isinstance(n.slice.value, str)}
+    banned = {"relative_discrepancy", "z", "gate_result", "gate", "verdict",
+              "correspondence", "absolute_difference", "combined_se",
+              "criterion_satisfied_informational"}
+    assert not (keys & banned), sorted(keys & banned)
+    # and it must read the achieved precision it is allowed to read
+    assert "worst_relative_se" in keys
 
 
 def test_total_cpu_cap_respected(costs, checkpoint):

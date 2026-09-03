@@ -1,0 +1,352 @@
+{
+  "schema": "rebaseguard.p4x-production-verdict.v1",
+  "checkpoint_commit": "756bf687cfe8e7d08f3fadea3daac504ea0330ac",
+  "P4_ORIGINAL_VERDICT": "PARTIAL",
+  "P4X_CHECKPOINT_A_ACTIVE": true,
+  "P4X_CHECKPOINT_A_BINDING": true,
+  "obligations": {
+    "C1": {
+      "obligation": "C1",
+      "statement": "inherit the theorem unchanged",
+      "inherited_tree_object": "eede90383da44c250871b1bb97d12045c897c8d9",
+      "checks": {
+        "p4_tree_object_matches_checkpoint": true,
+        "p4_verdict_is_partial": true,
+        "theorem_states_G1a": true,
+        "theorem_states_G1b": true,
+        "theorem_states_score": true,
+        "independent_adjudication_accepted_the_theorem": true,
+        "no_new_proof_added": true,
+        "no_theorem_strengthening": true,
+        "no_theorem_rewriting": true
+      },
+      "status": "PASS"
+    },
+    "C2": {
+      "obligation": "C2",
+      "statement": "attainable-precision numerical correspondence",
+      "cells_total": 96,
+      "cells_passed": 88,
+      "cells_failed": 0,
+      "cells_precision_limited": 0,
+      "cells_precondition_not_met": 8,
+      "precision_limited_configurations": [],
+      "precondition_not_met_configurations": [
+        "frozen/cusum@5/t1p5",
+        "frozen/cusum@5/t3",
+        "frozen/sr@520.886/t1p5",
+        "reduced/sr@20/t1p5"
+      ],
+      "precondition": "Checkpoint A X6: each route on each cell must first reach r*, or be declared PRECISION_LIMITED from projected cost alone",
+      "precondition_note": "Cells recorded PRECONDITION_NOT_MET received their one frozen top-up, sized deterministically by the frozen rule, and still missed r* without hitting any cap. Checkpoint A permits at most one top-up, so no further paths may be bought, and the caps were not reached, so PRECISION_LIMITED does not apply either. The gate is therefore not adjudicable for these cells. Their criterion values are recorded in criterion_satisfied_informational and are NOT treated as passes.",
+      "failed_cells": [],
+      "status": "INCOMPLETE"
+    },
+    "C3": {
+      "obligation": "C3",
+      "statement": "Route Q as an independent cross-check only",
+      "role": "INDEPENDENT_CROSS_CHECK_ONLY",
+      "rows": 24,
+      "all_pass_recorded": true,
+      "worst_relative_discrepancy": 4.3312930119965086e-09,
+      "tolerance": 1e-06,
+      "cross_check": "CONSISTENT",
+      "arbitrated_any_cell": false,
+      "rescued_any_gate": false,
+      "detector": "memoryless |Z| >= c",
+      "note": "Route Q evaluates the memoryless detector and is therefore evidence about the identity, never about a frozen operating point.  It entered no cell decision.",
+      "status": "PASS"
+    },
+    "C4": {
+      "obligation": "C4",
+      "statement": "failure-mode evidence matched to the proved failure mode",
+      "a3_half": {
+        "assumption": "A3 local common support / absolute continuity",
+        "proved_failure_mode": "the identity is FALSE, exact defect 2",
+        "discharge": "analytic closed form + Route Q + exact rational Arb",
+        "uniform_cells": 16,
+        "uniform_confirmed": 16,
+        "uniform_z_range": [
+          468.03821791482136,
+          713.688090594911
+        ],
+        "route_q_exact_slope": 2.366025403784439,
+        "checks": {
+          "identity_is_false_without_A3": true,
+          "exact_defect_two_in_theorem": true,
+          "route_q_identity_does_not_hold": true,
+          "route_q_score_side_exactly_zero": true,
+          "arb_uniform_alarm_probability_constant": true,
+          "arb_uniform_map_exactly_linear": true,
+          "arb_uniform_identity_defect_positive": true,
+          "monte_carlo_corroboration_all_confirmed": true
+        },
+        "status": "PASS",
+        "new_compute": "NONE"
+      },
+      "first_moment_half": {
+        "assumption": "A5 / A7 finite first moment",
+        "proved_failure_mode": "NON-EXISTENCE of the estimand, E|A_1| = infinity",
+        "discharge": "analytic (PROOF.md section 10)",
+        "cauchy_cells": 16,
+        "measured_z_range": [
+          0.02649800304088462,
+          1.6163441769554276
+        ],
+        "monte_carlo_signature_demanded": false,
+        "checks": {
+          "non_existence_proved_in_theorem": true,
+          "non_existence_proved_in_proof": true,
+          "no_monte_carlo_disagreement_signature_demanded": true,
+          "no_necessity_claimed_for_A1_A7": true
+        },
+        "status": "PASS",
+        "new_compute": "NONE"
+      },
+      "status": "PASS"
+    },
+    "C5": {
+      "obligation": "C5",
+      "statement": "Gaussian consistency by a two-sample uncertainty statistic",
+      "formula": "z_combined = |e1 - e2| / sqrt(SE1^2 + SE2^2)",
+      "limit": 4.0,
+      "cells": 8,
+      "rows": [
+        {
+          "detector": "cusum@5",
+          "m": 1,
+          "closed_estimate": 15.916540429525044,
+          "closed_se": 0.05990518871399268,
+          "p4x_estimate": 15.877341607803746,
+          "p4x_se": 0.016820858912165428,
+          "absolute_difference": 0.03919882172129796,
+          "signed_relative_difference": -0.002462772729718607,
+          "z_combined": 0.6299836676089405,
+          "z_historical_single_error_reported_only": 2.3303698060833278,
+          "pass": true
+        },
+        {
+          "detector": "cusum@5",
+          "m": 2,
+          "closed_estimate": 13.26482496169605,
+          "closed_se": 0.050152156092659925,
+          "p4x_estimate": 13.247492200009852,
+          "p4x_se": 0.015086940786342914,
+          "absolute_difference": 0.01733276168619824,
+          "signed_relative_difference": -0.0013066709689912154,
+          "z_combined": 0.33095304197084563,
+          "z_historical_single_error_reported_only": 1.1488586010683026,
+          "pass": true
+        },
+        {
+          "detector": "cusum@5",
+          "m": 3,
+          "closed_estimate": 11.957078194838436,
+          "closed_se": 0.04316132971596495,
+          "p4x_estimate": 11.91473469343104,
+          "p4x_se": 0.01373348633327897,
+          "absolute_difference": 0.04234350140739629,
+          "signed_relative_difference": -0.003541291669872569,
+          "z_combined": 0.934867475641764,
+          "z_historical_single_error_reported_only": 3.083230316018851,
+          "pass": true
+        },
+        {
+          "detector": "cusum@5",
+          "m": 5,
+          "closed_estimate": 10.226363970189938,
+          "closed_se": 0.03523707485898826,
+          "p4x_estimate": 10.18421225463857,
+          "p4x_se": 0.01206152585544661,
+          "absolute_difference": 0.042151715551367985,
+          "signed_relative_difference": -0.004121867329799829,
+          "z_combined": 1.1317653224558812,
+          "z_historical_single_error_reported_only": 3.4947249673500957,
+          "pass": true
+        },
+        {
+          "detector": "sr@520.886",
+          "m": 1,
+          "closed_estimate": 17.453570692218783,
+          "closed_se": 0.0658806908185833,
+          "p4x_estimate": 17.258937362693644,
+          "p4x_se": 0.02025970312960504,
+          "absolute_difference": 0.19463332952513923,
+          "signed_relative_difference": -0.011151490600826534,
+          "z_combined": 2.8238228577380813,
+          "z_historical_single_error_reported_only": 9.606919128085645,
+          "pass": true
+        },
+        {
+          "detector": "sr@520.886",
+          "m": 2,
+          "closed_estimate": 14.500509744311637,
+          "closed_se": 0.05672486214775936,
+          "p4x_estimate": 14.358609580755475,
+          "p4x_se": 0.01610402470856826,
+          "absolute_difference": 0.14190016355616208,
+          "signed_relative_difference": -0.009785874156032872,
+          "z_combined": 2.4064533837582203,
+          "z_historical_single_error_reported_only": 8.811472046529033,
+          "pass": true
+        },
+        {
+          "detector": "sr@520.886",
+          "m": 3,
+          "closed_estimate": 12.972654633634319,
+          "closed_se": 0.049010542760713774,
+          "p4x_estimate": 12.831339840632122,
+          "p4x_se": 0.013048722904538327,
+          "absolute_difference": 0.14131479300219674,
+          "signed_relative_difference": -0.010893282600448532,
+          "z_combined": 2.7862918795060465,
+          "z_historical_single_error_reported_only": 10.829779591154294,
+          "pass": true
+        },
+        {
+          "detector": "sr@520.886",
+          "m": 5,
+          "closed_estimate": 11.04852607349784,
+          "closed_se": 0.04104653234838718,
+          "p4x_estimate": 10.922954931665537,
+          "p4x_se": 0.00972542242695747,
+          "absolute_difference": 0.1255711418323031,
+          "signed_relative_difference": -0.011365420237683223,
+          "z_combined": 2.9768218705413254,
+          "z_historical_single_error_reported_only": 12.911638828585788,
+          "pass": true
+        }
+      ],
+      "worst_z_combined": 2.9768218705413254,
+      "worst_z_historical_single_error": 12.911638828585788,
+      "closed_uncertainty_source": "m_rho_stability_priority3/results/stability_map.json gamma_tilde_se",
+      "treats_either_estimate_as_exact": false,
+      "note": "The anchor phase reproduced the frozen Route-A Gaussian estimates bitwise, so P4X's own Gaussian estimate for these eight cells is numerically identical to the frozen one and the statistic is arithmetic on published uncertainties.",
+      "status": "PASS"
+    },
+    "C6": {
+      "obligation": "C6",
+      "statement": "re-verify the inherited Lean and Arb artifacts",
+      "lean_declarations": 19,
+      "lean_axioms": [
+        "Classical.choice",
+        "Quot.sound",
+        "propext"
+      ],
+      "arb_runs": {
+        "160": true,
+        "256": true
+      },
+      "new_lean_declarations": 0,
+      "new_arb_objects": 0,
+      "tool_versions": {
+        "lean": "Lean (version 4.33.1, arm64-apple-darwin24.6.0, commit 819816b2e0a3bf405af45ae5c7af2491d8f5bee6, Release)",
+        "lake": "Lake version 5.0.0-src+819816b (Lean version 4.33.1)",
+        "python": "3.14.5",
+        "python_flint": "0.9.0"
+      },
+      "status": "PASS"
+    },
+    "C7": {
+      "obligation": "C7",
+      "statement": "protected-tree integrity",
+      "readings": {
+        "pre_production": "PASS",
+        "post_production": "PASS",
+        "pre_verdict": "PASS"
+      },
+      "detail": {
+        "pre_production": {
+          "obligation": "C7",
+          "statement": "protected-tree integrity",
+          "reading": "PRE_PRODUCTION",
+          "paths_checked": 33,
+          "mismatches": {},
+          "dirty_paths_outside_p4x_namespace": [],
+          "status": "PASS"
+        },
+        "post_production": {
+          "label": "POST_PRODUCTION",
+          "paths_checked": 33,
+          "mismatches": {},
+          "dirty_outside_namespace": [],
+          "status": "PASS"
+        },
+        "pre_verdict": {
+          "label": "PRE_VERDICT",
+          "paths_checked": 33,
+          "mismatches": {},
+          "dirty_outside_namespace": [],
+          "status": "PASS"
+        }
+      },
+      "manifest": {
+        "level4/closure_proofs/p4_theory_generalization": "eede90383da44c250871b1bb97d12045c897c8d9",
+        "level4/closure_proofs/p5_nonlinear_dynamics": "ec1d3b1da066a4ddda34f24bd5e062c6b8a93484",
+        "level4/closure_proofs/p5x_global_nonlinear_dynamics": "18e9435cf1995d705f3a85e4248dc5a261fc59c5",
+        "level4/closure_proofs/m_gt_1_priority1": "696d4f7fc186a2dc19f3dcadd663971ef5c77120",
+        "level4/closure_proofs/m_gt_1": "03d083c83be7fd7d4107f8c37cb739562766839f",
+        "level4/closure_proofs/m_gt_1_track1a": "fd525bc67e637c6f85022fe7c69f9dd9b2130a04",
+        "level4/closure_proofs/m_gt_1_track1b": "d41ef5a6db8052a881a3078c9a3ce29ef41f947e",
+        "level4/closure_proofs/sr_derivative": "a4fbe9890b0ba59d588766dccfa17e9ef9d45f1b",
+        "level4/closure_proofs/sr_derivative_priority2": "c60e5aa7fbb83cf4141be9d348273b2518ee6cd9",
+        "level4/closure_proofs/m_rho_stability_priority3": "e6b80937d77a9a08b6b37ce50b47a6b71ce5143b",
+        "level4/closure_proofs/location_family": "749ceb069d707d41c57368c809917e44e70ee2da",
+        "level4/closure_proofs/location_family_track3ab": "0458469cc9a992f40075160f927df8169fd05ea0",
+        "level4/closure_proofs/p6_safe_rebaselining": "802c5f839d4528004e07780a4ceeaa6afd6e7fd1",
+        "level4/closure_proofs/p6_safe_rebaselining_predesign": "38740f45f54438c0ebe3dcde79ea8b85bedb345d",
+        "level4/closure_proofs/p6r_safe_rebaselining_confirmation": "c0ad8dd677b7e14715d1180d04da3accc2edd3a3",
+        "level4/closure_proofs/p6r2_literal_closure_repair": "b5757a220701baad3c45e39606b801d6a82dd58e",
+        "level4/closure_proofs/p6r2b_gate9_crn_identity": "9f3fff3d37f7552e55231373dae0cc84bb4bd812",
+        "level4/closure_proofs/p7_statistical_consequences": "a982a0264c4840f7fa83968594ca37699c8478aa",
+        "level4/closure_proofs/p8_model_class_robustness": "b3fd915f03e3edf4e25ae4d84587fe780cd9e52f",
+        "level4/closure_proofs/p8r_temporal_integrity_repair": "389d6225aeb4fbb41187ae24852dc1efec946bb4",
+        "level4/closure_proofs/p9_final_synthesis": "3aec482ec1f87184848b4bb60a7ee7c6928e3127",
+        "level4/closure_proofs/p9r_final_synthesis_repair": "20ee9bb05a2a6a16c0980767ed390c8368299715",
+        "level4/closure_proofs/d4_phase_map": "9524674aa36fb1888ef0d4c5de6767b47a837d83",
+        "level4/closure_proofs/external_validation_v2": "74a2e17b2c13a69669b2fd7bb2b75dd8dbee5b3b",
+        "level4/closure_proofs/external_validation_v3": "7cdd9ee134b3373a185a10a44b685196babd1841",
+        "level4/closure_proofs/l4r06_policy": "1fe546f963c9a7568ebe3de20a6e3fb2c5a292d3",
+        "level4/closure_proofs/l4r12_operational_crossing": "3a206df2d52be5b0bfda2d991adcdb3859c647f9",
+        "level4/closure_proofs/novelty_verification": "0ced9ffd65d673837c68f2a95a9ab8e6b4d1165a",
+        "rebaseguard-lean": "3fa5d722bc5e1d6c244f2448953eaeb0b258bec3",
+        "rebaseguard-proof": "727edc8013f3f89afb4dd45085994318e57234be",
+        "closure": "ddde11f12b4a49c464bdb2a8b0cc869f76032de1",
+        "Mathematical_proof": "c7416a38e5d3bc3236132ee23dae0c2f451212f2",
+        "README.md": "6ecee8e6aeadd996338e1c0e5a0820bfafe2d231"
+      },
+      "status": "PASS"
+    }
+  },
+  "obligation_statuses": {
+    "C1": "PASS",
+    "C2": "INCOMPLETE",
+    "C3": "PASS",
+    "C4": "PASS",
+    "C5": "PASS",
+    "C6": "PASS",
+    "C7": "PASS"
+  },
+  "load_bearing_contradiction": false,
+  "contradicting_cells_at_target_precision": [],
+  "integrity_failure": false,
+  "P4X_SUCCESSOR_VERDICT": "PARTIAL",
+  "P4_SCIENTIFIC_LINE_STATUS": "PARTIALLY_REPAIRED_BY_SUCCESSOR",
+  "P4_ORIGINAL_MUTATED": "NO",
+  "P5_P5X_MUTATED": "NO",
+  "NOVELTY_STATUS": "NOT_ESTABLISHED",
+  "LEVEL4_GLOBAL_CLOSURE": "NO",
+  "costs": {
+    "total_cpu_hours": 24.749349116539157,
+    "total_wall_hours": 8.331159105416381,
+    "max_configuration_cpu_hours": 18.59941603055556,
+    "total_cap_status": "PASS",
+    "per_configuration_cap_status": "PASS"
+  },
+  "stage2_plan_summary": {
+    "already_meeting_r_star": 42,
+    "topups_approved": 6,
+    "precision_limited": 0
+  },
+  "finalised_at": "2026-09-04T05:02:39"
+}
