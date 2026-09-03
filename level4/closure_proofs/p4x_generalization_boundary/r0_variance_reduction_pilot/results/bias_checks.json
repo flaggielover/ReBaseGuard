@@ -1,0 +1,118 @@
+{
+  "schema": "rebaseguard.p4x-r0-bias.v1",
+  "classification": "PRE_FREEZE_COST_AND_PRECISION_PILOT",
+  "binding": false,
+  "family_symmetry": [
+    {
+      "family": "t1p5",
+      "max_abs_psi_oddness_defect": 0.0,
+      "score_is_odd": true
+    },
+    {
+      "family": "skewnormal4",
+      "max_abs_psi_oddness_defect": 29.864890571263125,
+      "score_is_odd": false
+    },
+    {
+      "family": "gaussian",
+      "max_abs_psi_oddness_defect": 0.0,
+      "score_is_odd": true
+    }
+  ],
+  "detector_equivariance": [
+    {
+      "detector": "sr@520.886",
+      "reflection_equivariant": true,
+      "paths": 4000
+    },
+    {
+      "detector": "cusum@5",
+      "reflection_equivariant": true,
+      "paths": 4000
+    },
+    {
+      "detector": "sr@20",
+      "reflection_equivariant": true,
+      "paths": 4000
+    }
+  ],
+  "reflection_mirror_checks": [
+    {
+      "family": "t1p5",
+      "detector": "sr@520.886",
+      "paths": 20000,
+      "stopping_times_identical": true,
+      "max_abs_window_sum": 0.0,
+      "max_abs_total_sum": 0.0,
+      "relative_window_error": 0.0,
+      "exact_to_machine_precision": true
+    },
+    {
+      "family": "t1p5",
+      "detector": "cusum@5",
+      "paths": 20000,
+      "stopping_times_identical": true,
+      "max_abs_window_sum": 0.0,
+      "max_abs_total_sum": 0.0,
+      "relative_window_error": 0.0,
+      "exact_to_machine_precision": true
+    },
+    {
+      "family": "t1p5",
+      "detector": "sr@20",
+      "paths": 20000,
+      "stopping_times_identical": true,
+      "max_abs_window_sum": 0.0,
+      "max_abs_total_sum": 0.0,
+      "relative_window_error": 0.0,
+      "exact_to_machine_precision": true
+    }
+  ],
+  "asymmetric_pathwise_control": {
+    "family": "skewnormal4",
+    "detector": "sr@520.886",
+    "paths": 20000,
+    "stopping_times_identical": true,
+    "max_abs_window_sum": 0.0,
+    "max_abs_total_sum": 0.0,
+    "relative_window_error": 0.0,
+    "exact_to_machine_precision": true
+  },
+  "negated_stream_validity": [
+    {
+      "family": "t1p5",
+      "n": 400000,
+      "ks_statistic": 0.0018600000000000838,
+      "ks_pvalue": 0.49276502737323047,
+      "sample_skewness": -19.603910647720788,
+      "negated_stream_is_same_law": true
+    },
+    {
+      "family": "skewnormal4",
+      "n": 400000,
+      "ks_statistic": 0.12185750000000006,
+      "ks_pvalue": 0.0,
+      "sample_skewness": 0.7812229321506898,
+      "negated_stream_is_same_law": false
+    },
+    {
+      "family": "gaussian",
+      "n": 400000,
+      "ks_statistic": 0.00208750000000002,
+      "ks_pvalue": 0.34761643206427406,
+      "sample_skewness": 0.004458765728101732,
+      "negated_stream_is_same_law": true
+    }
+  ],
+  "pathwise_mirror_holds_for_every_family": "The pathwise mirror is algebra -- Z' = (-eps) - (-e) = -Z -- and holds under any reflection-equivariant detector regardless of the family.  It is therefore NOT evidence that the method is valid.  Validity needs the negated stream to have the same law, which is the separate check below and which skewnormal4 fails.",
+  "reflection_pathwise_exact_for_symmetric_families": true,
+  "reflection_distributionally_valid": {
+    "t1p5": true,
+    "skewnormal4": false,
+    "gaussian": true
+  },
+  "asymmetric_control_correctly_fails": true,
+  "reflection_admissible_for_symmetric_families": true,
+  "reflection_verdict": "EXACT BUT VARIANCE-CATASTROPHIC: the method is unbiased for symmetric families, but substituting the mirror for the -h run destroys the common-random-number cancellation that makes coupled paths contribute exactly 1.  Measured variance reduction factor is 0.001-0.003, i.e. a 300-1000x variance INCREASE.  Not adopted.",
+  "wall_seconds": 4.987496666959487
+}

@@ -1,0 +1,660 @@
+{
+  "schema": "rebaseguard.p4x-r0-tailsweep.v1",
+  "classification": "PRE_FREEZE_COST_AND_PRECISION_PILOT",
+  "binding": false,
+  "fd_step": 0.05,
+  "seed": 4112001,
+  "cpu_seconds": 74.455186,
+  "peak_rss_mb": 72.34375,
+  "rule": "convergence exponent kappa = 0.5 when alpha >= 2, else kappa = 1 - 1/alpha",
+  "rows": [
+    {
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "gaussian",
+      "paths": 60000,
+      "wall_seconds": 5.4323303749552,
+      "mean_tau": 464.29136666666665,
+      "route_b": {
+        "tail": {
+          "alpha": 15.643639261843731,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "coupled_fraction": 0.175,
+        "mean": 16.187265444470913
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 4.995035102518831,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "mean": 17.294495152209436
+      }
+    },
+    {
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "laplace",
+      "paths": 60000,
+      "wall_seconds": 6.910579749965109,
+      "mean_tau": 299.00795,
+      "route_b": {
+        "tail": {
+          "alpha": 12.07337201941733,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "coupled_fraction": 0.39061666666666667,
+        "mean": 15.544688658977016
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 4.301097682178971,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "mean": 16.44242081266008
+      }
+    },
+    {
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "logistic",
+      "paths": 60000,
+      "wall_seconds": 7.887155915959738,
+      "mean_tau": 374.4723,
+      "route_b": {
+        "tail": {
+          "alpha": 11.267438479229861,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "coupled_fraction": 0.27898333333333336,
+        "mean": 15.950592845564671
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 4.193358126595983,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "mean": 17.166091963364536
+      }
+    },
+    {
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "skewnormal4",
+      "paths": 60000,
+      "wall_seconds": 12.550366332987323,
+      "mean_tau": 393.69208333333336,
+      "route_b": {
+        "tail": {
+          "alpha": 13.97063744035669,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "coupled_fraction": 0.2936166666666667,
+        "mean": 8.321069673776897
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 4.67275335396666,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "mean": 7.929613889196799
+      }
+    },
+    {
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "t1p5",
+      "paths": 60000,
+      "wall_seconds": 0.5109291250118986,
+      "mean_tau": 13.090833333333334,
+      "route_b": {
+        "tail": {
+          "alpha": 1.50934971499484,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.33746302128303074
+        },
+        "coupled_fraction": 0.8565,
+        "mean": 4.560837906549347
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 1.500316777227923,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.3334740934860029
+        },
+        "mean": 5.091517105438867
+      }
+    },
+    {
+      "layer": "frozen",
+      "detector": "sr@520.886",
+      "family": "t3",
+      "paths": 60000,
+      "wall_seconds": 7.909729459090158,
+      "mean_tau": 254.83053333333334,
+      "route_b": {
+        "tail": {
+          "alpha": 3.497297676367043,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "coupled_fraction": 0.657,
+        "mean": 10.86023848620857
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 2.6954952489983155,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "mean": 11.649853623930792
+      }
+    },
+    {
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "gaussian",
+      "paths": 60000,
+      "wall_seconds": 3.9987277910113335,
+      "mean_tau": 462.8584333333333,
+      "route_b": {
+        "tail": {
+          "alpha": 14.416684836030596,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "coupled_fraction": 0.2167,
+        "mean": 15.089097540037786
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 5.163111053550295,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "mean": 15.804188863774971
+      }
+    },
+    {
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "laplace",
+      "paths": 60000,
+      "wall_seconds": 6.040557999978773,
+      "mean_tau": 276.22173333333336,
+      "route_b": {
+        "tail": {
+          "alpha": 11.522639946933975,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "coupled_fraction": 0.4742,
+        "mean": 12.779966811116184
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 4.797980668990675,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "mean": 12.485758009482586
+      }
+    },
+    {
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "logistic",
+      "paths": 60000,
+      "wall_seconds": 4.083378958981484,
+      "mean_tau": 359.79225,
+      "route_b": {
+        "tail": {
+          "alpha": 11.113928436838375,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "coupled_fraction": 0.34868333333333335,
+        "mean": 14.011562375793227
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 4.45798405480351,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "mean": 14.454459466528116
+      }
+    },
+    {
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "skewnormal4",
+      "paths": 60000,
+      "wall_seconds": 7.023919334053062,
+      "mean_tau": 362.67541666666665,
+      "route_b": {
+        "tail": {
+          "alpha": 10.905491059097876,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "coupled_fraction": 0.36946666666666667,
+        "mean": 5.791171123868134
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 4.372847287135989,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "mean": 5.51103198331637
+      }
+    },
+    {
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t1p5",
+      "paths": 60000,
+      "wall_seconds": 0.3597280830144882,
+      "mean_tau": 11.760183333333334,
+      "route_b": {
+        "tail": {
+          "alpha": 1.470730601965757,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.32006582397659045
+        },
+        "coupled_fraction": 0.8759666666666667,
+        "mean": 4.0787309081831715
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 1.5151057254819338,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.339980053417121
+        },
+        "mean": 2.8595364590088717
+      }
+    },
+    {
+      "layer": "frozen",
+      "detector": "cusum@5",
+      "family": "t3",
+      "paths": 60000,
+      "wall_seconds": 4.743971125106327,
+      "mean_tau": 236.23226666666667,
+      "route_b": {
+        "tail": {
+          "alpha": 2.9628023577284415,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "coupled_fraction": 0.7347666666666667,
+        "mean": 7.877265263604609
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 2.95519656991938,
+          "k": 300,
+          "n": 60000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "mean": 8.958726816336434
+      }
+    },
+    {
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "gaussian",
+      "paths": 150000,
+      "wall_seconds": 0.6422289580805227,
+      "mean_tau": 18.360606666666666,
+      "route_b": {
+        "tail": {
+          "alpha": 13.311541069850993,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "coupled_fraction": 0.5255133333333334,
+        "mean": 6.3178941978468215
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 5.15985892821288,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "mean": 6.437577800147822
+      }
+    },
+    {
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "laplace",
+      "paths": 150000,
+      "wall_seconds": 1.198334375047125,
+      "mean_tau": 19.36766666666667,
+      "route_b": {
+        "tail": {
+          "alpha": 10.260760852339379,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "coupled_fraction": 0.63218,
+        "mean": 6.105471046030782
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 4.897501904893536,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "mean": 6.1435613733896695
+      }
+    },
+    {
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "logistic",
+      "paths": 150000,
+      "wall_seconds": 1.3397546249907464,
+      "mean_tau": 18.827353333333335,
+      "route_b": {
+        "tail": {
+          "alpha": 10.940761930839287,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "coupled_fraction": 0.57062,
+        "mean": 6.3089370443608495
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 4.999099842322438,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "mean": 6.295213262683821
+      }
+    },
+    {
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "skewnormal4",
+      "paths": 150000,
+      "wall_seconds": 1.1387763749808073,
+      "mean_tau": 18.87892,
+      "route_b": {
+        "tail": {
+          "alpha": 12.597814949323892,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "coupled_fraction": 0.5114666666666666,
+        "mean": 6.668703882819565
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 5.0345302990888205,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "mean": 6.780248433629833
+      }
+    },
+    {
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "t1p5",
+      "paths": 150000,
+      "wall_seconds": 0.5392625409876928,
+      "mean_tau": 5.50538,
+      "route_b": {
+        "tail": {
+          "alpha": 1.5284642337102445,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.3457485115156623
+        },
+        "coupled_fraction": 0.8735666666666667,
+        "mean": 3.229964272179562
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 1.4952623436665928,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.33122103673937253
+        },
+        "mean": 2.860478092157039
+      }
+    },
+    {
+      "layer": "reduced",
+      "detector": "sr@20",
+      "family": "t3",
+      "paths": 150000,
+      "wall_seconds": 1.7889562080381438,
+      "mean_tau": 27.038046666666666,
+      "route_b": {
+        "tail": {
+          "alpha": 3.351208301268071,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "coupled_fraction": 0.63776,
+        "mean": 6.135699978042576
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 2.895582219017834,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "mean": 6.23925731313172
+      }
+    },
+    {
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "gaussian",
+      "paths": 150000,
+      "wall_seconds": 0.40100083290599287,
+      "mean_tau": 19.27334,
+      "route_b": {
+        "tail": {
+          "alpha": 16.22694823790053,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "coupled_fraction": 0.5980266666666667,
+        "mean": 6.168266898776038
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 5.594667903957768,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "mean": 6.178002207887828
+      }
+    },
+    {
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "laplace",
+      "paths": 150000,
+      "wall_seconds": 0.9518958330154419,
+      "mean_tau": 19.593966666666667,
+      "route_b": {
+        "tail": {
+          "alpha": 9.29702229205725,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "coupled_fraction": 0.7351466666666666,
+        "mean": 4.9455122752524945
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 4.748159409392176,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "mean": 4.971190283514781
+      }
+    },
+    {
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "logistic",
+      "paths": 150000,
+      "wall_seconds": 0.5981097499607131,
+      "mean_tau": 19.56654,
+      "route_b": {
+        "tail": {
+          "alpha": 11.115983817472477,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "coupled_fraction": 0.66178,
+        "mean": 5.638543106792549
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 4.990474493207053,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "mean": 5.609878483836069
+      }
+    },
+    {
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "skewnormal4",
+      "paths": 150000,
+      "wall_seconds": 0.9140662919962779,
+      "mean_tau": 20.118813333333332,
+      "route_b": {
+        "tail": {
+          "alpha": 12.19492642859454,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "coupled_fraction": 0.6062666666666666,
+        "mean": 6.0793854070387505
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 5.093050966552952,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "mean": 6.158310423946213
+      }
+    },
+    {
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "t1p5",
+      "paths": 150000,
+      "wall_seconds": 0.3864603750407696,
+      "mean_tau": 4.840426666666667,
+      "route_b": {
+        "tail": {
+          "alpha": 1.4939538398091716,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.330635275767467
+        },
+        "coupled_fraction": 0.8994733333333333,
+        "mean": 3.077282355888959
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 1.5221367934161218,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.3430288234766953
+        },
+        "mean": 2.656472323517968
+      }
+    },
+    {
+      "layer": "reduced",
+      "detector": "cusum@2",
+      "family": "t3",
+      "paths": 150000,
+      "wall_seconds": 1.7500702500110492,
+      "mean_tau": 29.17428,
+      "route_b": {
+        "tail": {
+          "alpha": 3.418973774992603,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "coupled_fraction": 0.7518733333333333,
+        "mean": 4.82293828184296
+      },
+      "route_a": {
+        "tail": {
+          "alpha": 2.847597605201754,
+          "k": 750,
+          "n": 150000,
+          "implied_block_mean_rate_exponent": -0.5
+        },
+        "mean": 4.817097647399656
+      }
+    }
+  ]
+}

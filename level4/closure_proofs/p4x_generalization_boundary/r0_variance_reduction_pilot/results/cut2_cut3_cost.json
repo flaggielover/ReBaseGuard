@@ -1,0 +1,172 @@
+{
+  "schema": "rebaseguard.p4x-r0-cut23.v1",
+  "classification": "PRE_FREEZE_COST_AND_PRECISION_PILOT",
+  "binding": false,
+  "new_simulation_performed": false,
+  "cut2": {
+    "requires_new_simulation": false,
+    "a3_half": {
+      "assumption": "A3 local common support / absolute continuity",
+      "proved_failure_mode": "the identity is FALSE; exact defect 2",
+      "analytic_evidence": "PROOF.md section 9 (closed form)",
+      "certified_evidence": "Arb: alarm probability constant in e, map exactly linear with slope -2, defect exactly 2, exact rational arithmetic",
+      "route_q_evidence": {
+        "family": "uniform",
+        "m": 1,
+        "c": 1.0,
+        "gamma_score_route": 0.0,
+        "negative_map_derivative_exact": 2.366025403784439,
+        "negative_map_derivative_quadrature": 2.3660254062539923,
+        "identity_holds": false,
+        "reason": "the a.e. interior score of a flat density is zero, but the support moves with e, so no local absolute continuity holds"
+      },
+      "monte_carlo_evidence": {
+        "cells": 16,
+        "confirmed": 16,
+        "relative": [
+          1.0
+        ],
+        "z_range": [
+          468.03821791482136,
+          713.688090594911
+        ]
+      },
+      "load_bearing": true,
+      "already_satisfied": true,
+      "new_compute_required": "NONE"
+    },
+    "first_moment_half": {
+      "assumption": "A5 / A7 finite first moment",
+      "proved_failure_mode": "NON-EXISTENCE of the estimand: E|A_1| = infinity under the frozen CUSUM, so g_m(e) is undefined and no identity is asserted to be true or false",
+      "analytic_evidence": "PROOF.md section 10 (closed form)",
+      "historical_gate_demanded": {
+        "relative": 0.5,
+        "z": 10.0,
+        "signature": "sharp deterministic two-route defect"
+      },
+      "signature_reachable": false,
+      "why_unreachable": "a two-sample z statistic formed from two divergent Monte Carlo estimators cannot grow: the standard errors grow with the estimates.  Measured |z| across all 16 Cauchy cells is 0.027 to 1.62, against a gate demanding >= 10",
+      "measured_z_range": [
+        0.02649800304088462,
+        1.6163441769554276
+      ],
+      "load_bearing": false,
+      "new_compute_required": "NONE",
+      "optional_confirmatory_diagnostic": {
+        "design": "a truncated-moment ladder E[|A_1| 1{|A_1|<=K}] growing without bound in K, and a standard-error ladder failing to shrink at n^{-1/2}",
+        "cauchy_arls_m1": {
+          "cusum@2": 3.6599911666666665,
+          "sr@20": 4.1362235,
+          "cusum@5": 6.915886875,
+          "sr@520.886": 7.605590625
+        },
+        "projected_paths": 8000000,
+        "projected_cpu_seconds": 28.082180769230767,
+        "projected_cpu_hours": 0.007800605769230769,
+        "status": "OPTIONAL, not load-bearing"
+      }
+    },
+    "classification": "NONE",
+    "note": "The theorem's logical form is assumptions => identity.  Neither A3 nor the first moment needs an empirical failure signature for the theorem to hold; A3's sharpness is a separate claim that is already proved AND certified, and the first-moment boundary is a non-existence claim that a two-route discrepancy test cannot express."
+  },
+  "cut3": {
+    "requires_new_simulation": false,
+    "reason": "both standard errors are already published: the closed Gaussian gains carry gamma_tilde_se in the frozen Priority-3 stability map, and Priority 4 publishes its own route_a standard error for every cell",
+    "rows": [
+      {
+        "detector": "cusum@5",
+        "m": 1,
+        "closed_value": 15.916540429525044,
+        "closed_se": 0.05990518871399268,
+        "p4_value": 15.877341607803746,
+        "p4_se": 0.016820858912165428,
+        "signed_relative_difference": -0.002462772729718607,
+        "z_single_error_historical_gate": 2.3303698060833278,
+        "z_two_sample_correct": 0.6299836676089405
+      },
+      {
+        "detector": "cusum@5",
+        "m": 2,
+        "closed_value": 13.26482496169605,
+        "closed_se": 0.050152156092659925,
+        "p4_value": 13.247492200009852,
+        "p4_se": 0.015086940786342914,
+        "signed_relative_difference": -0.0013066709689912154,
+        "z_single_error_historical_gate": 1.1488586010683026,
+        "z_two_sample_correct": 0.33095304197084563
+      },
+      {
+        "detector": "cusum@5",
+        "m": 3,
+        "closed_value": 11.957078194838436,
+        "closed_se": 0.04316132971596495,
+        "p4_value": 11.91473469343104,
+        "p4_se": 0.01373348633327897,
+        "signed_relative_difference": -0.003541291669872569,
+        "z_single_error_historical_gate": 3.083230316018851,
+        "z_two_sample_correct": 0.934867475641764
+      },
+      {
+        "detector": "cusum@5",
+        "m": 5,
+        "closed_value": 10.226363970189938,
+        "closed_se": 0.03523707485898826,
+        "p4_value": 10.18421225463857,
+        "p4_se": 0.01206152585544661,
+        "signed_relative_difference": -0.004121867329799829,
+        "z_single_error_historical_gate": 3.4947249673500957,
+        "z_two_sample_correct": 1.1317653224558812
+      },
+      {
+        "detector": "sr@520.886",
+        "m": 1,
+        "closed_value": 17.453570692218783,
+        "closed_se": 0.0658806908185833,
+        "p4_value": 17.258937362693644,
+        "p4_se": 0.02025970312960504,
+        "signed_relative_difference": -0.011151490600826534,
+        "z_single_error_historical_gate": 9.606919128085645,
+        "z_two_sample_correct": 2.8238228577380813
+      },
+      {
+        "detector": "sr@520.886",
+        "m": 2,
+        "closed_value": 14.500509744311637,
+        "closed_se": 0.05672486214775936,
+        "p4_value": 14.358609580755475,
+        "p4_se": 0.01610402470856826,
+        "signed_relative_difference": -0.009785874156032872,
+        "z_single_error_historical_gate": 8.811472046529033,
+        "z_two_sample_correct": 2.4064533837582203
+      },
+      {
+        "detector": "sr@520.886",
+        "m": 3,
+        "closed_value": 12.972654633634319,
+        "closed_se": 0.049010542760713774,
+        "p4_value": 12.831339840632122,
+        "p4_se": 0.013048722904538327,
+        "signed_relative_difference": -0.010893282600448532,
+        "z_single_error_historical_gate": 10.829779591154294,
+        "z_two_sample_correct": 2.7862918795060465
+      },
+      {
+        "detector": "sr@520.886",
+        "m": 5,
+        "closed_value": 11.04852607349784,
+        "closed_se": 0.04104653234838718,
+        "p4_value": 10.922954931665537,
+        "p4_se": 0.00972542242695747,
+        "signed_relative_difference": -0.011365420237683223,
+        "z_single_error_historical_gate": 12.911638828585788,
+        "z_two_sample_correct": 2.9768218705413254
+      }
+    ],
+    "limit": 4.0,
+    "worst_z_historical_gate": 12.911638828585788,
+    "worst_z_two_sample": 2.9768218705413254,
+    "all_pass_two_sample": true,
+    "marginal_production_cost": "zero: the Gaussian family is already one of the six theorem-supported families in the production grid, so P4X re-estimates these eight cells as a by-product and the statistic is arithmetic on numbers it already has",
+    "classification": "NEGLIGIBLE"
+  }
+}
