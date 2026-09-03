@@ -1,0 +1,178 @@
+{
+ "schema": "rebaseguard.p5x.final_archival_closure.claim_table.v1",
+ "classification": "FINAL_ARCHIVAL_CLOSURE_RECORD",
+ "vocabulary": [
+  "CERTIFIED",
+  "CONDITIONAL",
+  "EMPIRICAL",
+  "EXACT",
+  "FAIL",
+  "INCOMPLETE",
+  "NOT_RUN",
+  "OUT_OF_BUDGET"
+ ],
+ "note": "No claim in this table was upgraded on the basis of numerical intuition. Where a theorem is exact but its production constant was never certified, the theorem and the missing constant are recorded separately.",
+ "claims": [
+  {
+   "claim": "2-D Fredholm reduction of the selection map",
+   "scope": "all m >= 1, both detectors",
+   "method": "P5X-T1 exact reduction to Fredholm objects on the pre-alarm square",
+   "status": "EXACT",
+   "strongest_legitimate_claim": "R_{D,m}(e) equals an exact 2-D Fredholm expression for every m; no approximation.",
+   "commit": "db0781ed79851ca55af788731a47a0f4dda1d9c6"
+  },
+  {
+   "claim": "second-moment reduction",
+   "scope": "all m >= 1, both detectors",
+   "method": "P5X-T2 exact pair recursion",
+   "status": "EXACT",
+   "strongest_legitimate_claim": "E_e[Rbar^2] admits the same exact reduction; the reduction exists, its production solve does not.",
+   "commit": "db0781ed79851ca55af788731a47a0f4dda1d9c6"
+  },
+  {
+   "claim": "invariant law",
+   "scope": "per fixed (D,m,rho)",
+   "method": "P5-T7, imported",
+   "status": "EXACT",
+   "strongest_legitimate_claim": "A unique invariant law pi exists, symmetric, with all moments finite. Imported, not re-derived.",
+   "commit": "db0781ed79851ca55af788731a47a0f4dda1d9c6"
+  },
+  {
+   "claim": "ergodicity",
+   "scope": "per fixed (D,m,rho)",
+   "method": "P5-T7 uniform ergodicity, imported",
+   "status": "EXACT",
+   "strongest_legitimate_claim": "Uniform ergodicity holds. Imported from P5; P5X neither strengthened nor weakened it.",
+   "commit": "db0781ed79851ca55af788731a47a0f4dda1d9c6"
+  },
+  {
+   "claim": "symmetry",
+   "scope": "all m, both detectors, all e",
+   "method": "P5-T3, imported and used throughout",
+   "status": "EXACT",
+   "strongest_legitimate_claim": "R is odd, S is even, R(0) = 0 exactly. This supplies e < 0 from e >= 0 with no extra compute.",
+   "commit": "db0781ed79851ca55af788731a47a0f4dda1d9c6"
+  },
+  {
+   "claim": "finite moments",
+   "scope": "uniform in e",
+   "method": "P5-T4/P5-T5, imported",
+   "status": "EXACT",
+   "strongest_legitimate_claim": "E_e[tau] and all even moments are uniformly finite.",
+   "commit": "db0781ed79851ca55af788731a47a0f4dda1d9c6"
+  },
+  {
+   "claim": "local derivative at e=0",
+   "scope": "e = 0, m = 1, both detectors",
+   "method": "existing Arb certificates for GammaTilde",
+   "status": "CERTIFIED",
+   "strongest_legitimate_claim": "Gamma_CUSUM in [3.9243482005828971282, 27.8493821275467032805] and Gamma_SR in [5.8003917995084423356, 28.781285803081492059]; enclosures, not exact values.",
+   "commit": "db0781ed79851ca55af788731a47a0f4dda1d9c6"
+  },
+  {
+   "claim": "local instability (repulsion at 0)",
+   "scope": "fixed (D,m), rho in (rho_c,1]",
+   "method": "P3 import + the certified Gamma enclosures",
+   "status": "CERTIFIED",
+   "strongest_legitimate_claim": "The conditional-mean multiplier lambda(rho) = rho(1 - GammaTilde) satisfies |lambda| > 1 at 0. Conditional on the imported P3 identity.",
+   "commit": "db0781ed79851ca55af788731a47a0f4dda1d9c6"
+  },
+  {
+   "claim": "far-field forgetting",
+   "scope": "|e| large, all m, both detectors",
+   "method": "P5X-T3 with an explicit decreasing majorant B_D",
+   "status": "EXACT",
+   "strongest_legitimate_claim": "|R_{D,m}(e)| <= B_D(e), B_D decreasing and -> 0 super-exponentially. Audit arithmetic gives |R_CUSUM(+-10)| <= 3.2e-5, |R_SR(+-10)| <= 4.2e-3. The theorem is exact; the frozen production CERTIFIED scalar B_D(e_far) was never run.",
+   "commit": "c6a82cc0a57d505a429ab2f8291f1a17c756fdbc",
+   "reason_if_non_pass": "the certified scalar at e_far is NOT_RUN; only the theorem and audit arithmetic exist"
+  },
+  {
+   "claim": "CUSUM m=1 global G3 (sup|R| < 2)",
+   "scope": "e in [0,12], frozen cover, m=1",
+   "method": "R-A'/R1/R2 certifier over the Checkpoint K frozen cover",
+   "status": "FAIL",
+   "strongest_legitimate_claim": "46 of 47 frozen cover cells satisfy |R| < 2 strictly. The cover as a whole does not.",
+   "commit": "66f9cbad4d638e276aa7d19994ffee4341bd6c1f",
+   "reason_if_non_pass": "final cell e in [10.5441104,12] returned [-2.336765897,+2.336765896]; ABS_MAX 2.336766 >= 2 by certificate width"
+  },
+  {
+   "claim": "CUSUM m>1 global G3",
+   "scope": "m in {2,3,5}",
+   "method": "none - no production certifier exists in the tree",
+   "status": "INCOMPLETE",
+   "strongest_legitimate_claim": "Nothing. ra_certifier.py is m=1 only; the m-dependent objects appear only in a Phase-1 probe.",
+   "commit": "3704988533f2d9038ddf0b35e58dea0eed4b6a2d",
+   "reason_if_non_pass": "no m>1 CUSUM production certifier was ever built; disclosed in Checkpoint K section 0 before the run"
+  },
+  {
+   "claim": "SR m=1 local certification",
+   "scope": "single cell [0.24,0.26]",
+   "method": "R8: B1 one-sided resolvent + B2 Bernstein range certification",
+   "status": "CERTIFIED",
+   "strongest_legitimate_claim": "The local certification gate PASSES. C_SR = 203.0665 at e=1/4, 1505.8205 at e=0, 216.963 cell-valid via B1-L6; B2 worst residual 5.0108623e-3 over a 1024x1024 sweep.",
+   "commit": "6c4744aa1272c6bf9639dc01c4bcb50f9f6e629f"
+  },
+  {
+   "claim": "SR m=1 sign",
+   "scope": "probe cell",
+   "method": "R8 sign certificate",
+   "status": "CERTIFIED",
+   "strongest_legitimate_claim": "The sign of R is certified on the probe cell.",
+   "commit": "6c4744aa1272c6bf9639dc01c4bcb50f9f6e629f"
+  },
+  {
+   "claim": "SR m=1 global G3",
+   "scope": "e in [0,12], m=1",
+   "method": "six architectures measured; none affordable under the frozen envelope",
+   "status": "OUT_OF_BUDGET",
+   "strongest_legitimate_claim": "Certification is feasible in principle and unaffordable in practice under the frozen envelope. Not a mathematical failure and not a certifier failure.",
+   "commit": "7995ec303c9cfc708908ca7b7b049a3285b4a127",
+   "reason_if_non_pass": "far field needs G = 4708 at e = 3.0 against a frozen cap of 1536 (over by 3.06x); an independent blocker on [0.072,0.35] reaches G = 2362"
+  },
+  {
+   "claim": "SR m>1 global G3",
+   "scope": "m in {2,3,5}",
+   "method": "not attempted",
+   "status": "NOT_RUN",
+   "strongest_legitimate_claim": "Nothing. SR m=1 was already out-of-budget, so m>1 was never opened.",
+   "commit": "c6a82cc0a57d505a429ab2f8291f1a17c756fdbc",
+   "reason_if_non_pass": "not run"
+  },
+  {
+   "claim": "second-moment production",
+   "scope": "both detectors, all m",
+   "method": "P5X-T2 reduction exists; no production solve",
+   "status": "NOT_RUN",
+   "strongest_legitimate_claim": "The exact reduction exists. No certified second-moment number was produced.",
+   "commit": "c6a82cc0a57d505a429ab2f8291f1a17c756fdbc",
+   "reason_if_non_pass": "never run; G4 TWO_SIDED and the certified scalars s_min, M_2 were not produced"
+  },
+  {
+   "claim": "stationary nonlinear mechanism (P5X-T9)",
+   "scope": "fixed (D,m), rho in (rho_c,1]",
+   "method": "synthesis of P3 + P5X-T3 + P5X-T4 + P5X-T6",
+   "status": "CONDITIONAL",
+   "strongest_legitimate_claim": "P5X-T9 is an exact theorem GIVEN P5X-T4 and P5X-T6. Both premises require certified scalars (R_max, s_min, M_2) that were never produced, so the mechanism claim stands conditionally and is not asserted unconditionally.",
+   "commit": "c6a82cc0a57d505a429ab2f8291f1a17c756fdbc",
+   "reason_if_non_pass": "premises P5X-T4 (needs global G3) and P5X-T6 (needs s_min, M_2) are not certified"
+  },
+  {
+   "claim": "detector-general universal claims (8/8)",
+   "scope": "2 detectors x m in {1,2,3,5}",
+   "method": "the union of everything above",
+   "status": "INCOMPLETE",
+   "strongest_legitimate_claim": "No universal-in-e certified statement across 8/8 exists. One detector-moment pair reached production and failed one cell by width; the other seven were never certified.",
+   "commit": "66f9cbad4d638e276aa7d19994ffee4341bd6c1f",
+   "reason_if_non_pass": "1 of 8 reached production (CUSUM m=1, FAIL by width); 3 lack a certifier; 4 are out-of-budget or not run"
+  },
+  {
+   "claim": "novelty",
+   "scope": "campaign-wide",
+   "method": "gate G12",
+   "status": "INCOMPLETE",
+   "strongest_legitimate_claim": "NOVELTY_STATUS = NOT_ESTABLISHED. Unchanged by this campaign and not claimed.",
+   "commit": "c6a82cc0a57d505a429ab2f8291f1a17c756fdbc",
+   "reason_if_non_pass": "not established"
+  }
+ ]
+}
