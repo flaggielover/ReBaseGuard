@@ -1,0 +1,278 @@
+{
+  "schema": "rebaseguard.p4x-feasibility-audit.v1",
+  "classification": "PRE_SUCCESSOR_FEASIBILITY_AND_SCOPE_AUDIT",
+  "binding": false,
+  "checkpoint_created": false,
+  "audit_date": "2026-09-03",
+  "isolation": {
+    "worktree": "/Users/suzhe/ReBaseGuard-p4x",
+    "branch": "p4x-feasibility-audit",
+    "starting_head": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+    "tree_clean_at_entry": true,
+    "p5x_worktree_used": false,
+    "origin_main": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+    "other_worktrees": [
+      "/Users/suzhe/ReBaseGuard (main)",
+      "/Users/suzhe/ReBaseGuard-p5x-opt (p5x-compute-opt-r1)",
+      "/Users/suzhe/ReBaseGuard-p9 (p9-research)"
+    ]
+  },
+  "historical_p4": {
+    "verdict": "PARTIAL",
+    "tree_object": "eede90383da44c250871b1bb97d12045c897c8d9",
+    "source": "level4/closure_proofs/p4_theory_generalization",
+    "theorem_g1a": "g_m'(0) = -Gamma_{D,m,f},  Gamma_{D,m,f} = E_0[A_m sum_{t<=tau} psi(Z_t)],  psi = -f'/f",
+    "theorem_g1b": "F'_{rho,m}(0) = rho (1 - Gamma_{D,m,f})",
+    "window": "w = min(m, tau), random denominator w, terminal alarm-causing increment included",
+    "companions": ["G1'", "G2", "G3a", "G4", "F1", "F2"],
+    "generality_level_reached": "B (general differentiable location family, score formulation); C reached for the formal spine only, deliberately not the headline",
+    "detectors": ["cusum@5 (k=1/2,h=5)", "sr@520.886133602749 (symmetric two-chart, no headstart)"],
+    "reduced_layer_detectors": ["cusum@2", "sr@20"],
+    "windows_measured": [1, 2, 3, 5],
+    "theorem_supported_families": ["gaussian", "laplace", "logistic", "skewnormal4", "t1p5", "t3"],
+    "outside_assumption_families": ["uniform", "cauchy"],
+    "theorem_supported_cells": 96,
+    "outside_assumption_cells": 32,
+    "elapsed_seconds_full_grid": 6604.162981748581,
+    "lean_declarations": 19,
+    "lean_axioms": ["propext", "Classical.choice", "Quot.sound"],
+    "arb_objects": 3,
+    "frozen_gain_interval_certified": false,
+    "novelty": "NOVELTY-NOT-ADJUDICATED"
+  },
+  "failed_gates": [
+    {
+      "gate": "all_theorem_supported_cells_pass",
+      "literal_criterion": "relative_discrepancy <= 0.03 AND z <= 4.0, for all 96 theorem-supported cells",
+      "observed": "86/96 pass",
+      "classification": "NUMERICAL_CORRESPONDENCE_GAP",
+      "dominant_component": "GATE_OVER_SPECIFICATION",
+      "scientific_theorem_gap": false,
+      "detail": "9 t1p5 cells are statistically consistent (|z| 0.35-1.49) but fail a 3% accuracy criterion asked of an estimator whose own relative SE is 1.5%-23.3%. 1 skewnormal4 cell (|z|=4.29) is finite-difference bias on an asymmetric map, resolved by independent adjudication to 0.56 combined SE at a finer step pair."
+    },
+    {
+      "gate": "all_outside_assumption_cells_demonstrate_failure",
+      "literal_criterion": "relative_discrepancy >= 0.5 AND z >= 10.0, for all 32 outside-assumption cells",
+      "observed": "16/32 (uniform 16/16 CONFIRMED; cauchy 0/16)",
+      "classification": "NEGATIVE_TEST_DESIGN_GAP",
+      "dominant_component": "GATE_OVER_SPECIFICATION",
+      "scientific_theorem_gap": false,
+      "detail": "The gate tests for a sharp deterministic defect. That is the signature of F1 (moving support) and F1 produces it. It is structurally unreachable for F2 (no first moment), whose proved content is non-existence of the estimand: PROOF.md section 10 proves E|A_1| = infinity, so neither route converges and z cannot grow."
+    },
+    {
+      "gate": "gaussian_consistency_with_closed_core",
+      "literal_criterion": "|P4 - closed| / se_P4 <= 4.0 on the 8 Gaussian frozen cells",
+      "observed": "worst single-error z = 12.911638828585788",
+      "classification": "CERTIFICATION_GAP",
+      "secondary_component": "NUMERICAL_CORRESPONDENCE_GAP",
+      "dominant_component": "GATE_OVER_SPECIFICATION",
+      "scientific_theorem_gap": false,
+      "detail": "The gate divides by P4's standard error alone, treating an uncertified closed Monte Carlo point as exact. The correctly specified two-sample statistic gives worst |z| = 2.9768218705413254 against the same limit of 4. A fresh 1.6M-path run of the frozen P2 implementation itself agrees with P4 within 1.26-1.49 combined SE, identifying the older 240k-path P2 vector as a correlated high Monte Carlo realization."
+    }
+  ],
+  "gate_classification_counts": {
+    "SCIENTIFIC_THEOREM_GAP": 0,
+    "NUMERICAL_CORRESPONDENCE_GAP": 1,
+    "CERTIFICATION_GAP": 1,
+    "ASSUMPTION_BOUNDARY_GAP": 0,
+    "NEGATIVE_TEST_DESIGN_GAP": 1,
+    "GOVERNANCE_ONLY": 0,
+    "OTHER": 0,
+    "GATE_OVER_SPECIFICATION_present_in": 3
+  },
+  "theorem_supported_cell_audit": {
+    "total": 96,
+    "passing": 86,
+    "failing": 10,
+    "classification": {
+      "TRUE_THEOREM_CONTRADICTION": 0,
+      "NUMERICAL_ERROR": 1,
+      "CERTIFICATE_WIDTH": 0,
+      "FINITE_PRECISION": 0,
+      "CONVENTION_MISMATCH": 0,
+      "ASSUMPTION_NOT_ACTUALLY_SATISFIED": 0,
+      "GATE_OVER_SPECIFICATION": 9,
+      "UNKNOWN": 0
+    },
+    "worst_relative_discrepancy": 0.25637198870157685,
+    "worst_z": 4.294616595037833
+  },
+  "outside_assumption_audit": {
+    "uniform": {
+      "cells": 16,
+      "confirmed": 16,
+      "assumption_broken": "A3 (moving support)",
+      "sharpness_claimed_by_p4": true,
+      "load_bearing": true,
+      "status": "CLOSED - 100% relative at 468-517 SE, plus an exact rational Arb certificate of defect 2"
+    },
+    "cauchy": {
+      "cells": 16,
+      "confirmed": 0,
+      "assumption_broken": "A5 / A7 first moment",
+      "sharpness_claimed_by_p4": true,
+      "claimed_failure_mode": "NON_EXISTENCE of the estimand (E|A_1| = infinity), proved analytically in PROOF.md section 10",
+      "gate_signature_demanded": "sharp deterministic two-route defect",
+      "signature_reachable": false,
+      "load_bearing": false,
+      "status": "OPEN - over-specified gate; the load-bearing evidence is the analytic proof, which the campaign already has"
+    }
+  },
+  "gaussian_consistency_audit": {
+    "quantity_compared": "Gamma_{D,m,gaussian} at the two frozen operating points, m in {1,2,3,5}",
+    "closed_source": "level4/closure_proofs/m_rho_stability_priority3/results/stability_map.json (P1 CUSUM, P2 SR)",
+    "mismatch_is_mathematical": false,
+    "mismatch_is_convention_related": false,
+    "mismatch_is_interpolation_related": false,
+    "mismatch_is_numerical": true,
+    "mismatch_is_gate_design_related": true,
+    "repairable_without_changing_scientific_meaning": true,
+    "worst_z_gate_statistic": 12.911638828585788,
+    "worst_z_combined_error": 2.9768218705413254,
+    "cusum_signed_relative_range": [-0.00412, -0.00131],
+    "sr_signed_relative_range": [-0.01137, -0.00979],
+    "cusum_combined_z_range": [0.331, 1.132],
+    "sr_combined_z_range": [2.406, 2.977],
+    "fresh_p2_replay_combined_z_range": [1.26, 1.49],
+    "limit": 4.0,
+    "new_computation_performed": false
+  },
+  "assumption_boundary_audit": {
+    "A1": {"role": "sufficient", "failure_outside_required": false, "load_bearing_negative_test": false},
+    "A2": {"role": "sufficient", "failure_outside_required": false, "load_bearing_negative_test": false},
+    "A3": {"role": "sufficient, with a separate sharpness claim F1", "failure_outside_required": true, "load_bearing_negative_test": true, "status": "SATISFIED"},
+    "A4": {"role": "sufficient, deliberately weaker than P1/P2", "failure_outside_required": false, "load_bearing_negative_test": false},
+    "A5": {"role": "sufficient, with a separate first-moment boundary claim F2", "failure_outside_required": "partly - as NON_EXISTENCE, already proved analytically", "load_bearing_negative_test": false},
+    "A6": {"role": "sufficient, deliberately weaker than P1/P2", "failure_outside_required": false, "load_bearing_negative_test": false},
+    "A7": {"role": "sufficient", "failure_outside_required": false, "load_bearing_negative_test": false},
+    "conclusion": "The historical negative-cell gate is load-bearing on its A3 half only, and passes there. Its A5 half is a robustness/engineering gate whose load-bearing evidence is an analytic proof the campaign already has."
+  },
+  "dependency_graph": {
+    "theorem_layer_open_edges": 0,
+    "evidence_layer_open_edges": 3,
+    "open_edges": [
+      "Routes A vs B over 96 theorem-supported cells",
+      "outside-assumption failure demonstration, cauchy half only",
+      "cross-implementation consistency vs the closed Gaussian gains"
+    ],
+    "closed_evidence_edges": [
+      "Route Q arbiter, 24 cells, worst 4.3e-09",
+      "Route N neutrality control, 72 cells, worst |z| 2.64",
+      "Lean, 19 declarations, clean axioms",
+      "Arb, 3 objects at 160 bits, re-verified at 256",
+      "outside-assumption, uniform half, 16/16"
+    ],
+    "p4_is_scientific_leaf": true,
+    "downstream_consumers_of_p4": ["GLOBAL-CLOSURE (status propagation only)"]
+  },
+  "smallest_open_cut_set": [
+    "CUT-1: the pass rule of the theorem-supported two-route correspondence gate must be attainable by the estimator that has to meet it",
+    "CUT-2: the outside-assumption gate must test the failure signature the theorem proves, split between A3 (defect) and the first moment (non-existence)",
+    "CUT-3: the cross-implementation consistency gate must use the two-sample combined-error statistic"
+  ],
+  "p4x_core_required": ["C1", "C2", "C3", "C4", "C5", "C6", "C7"],
+  "p4x_core_required_detail": {
+    "C1": "INHERIT G1a, G1b, G1', G2, G3a (narrowed), G4 under (A1)-(A7) with L1-L5; do not reprove",
+    "C2": "theorem-supported two-route correspondence over the same 96-cell design with an attainable, pre-frozen pass rule",
+    "C3": "Route Q as deterministic arbiter, with its non-frozen-detector disclaimer preserved",
+    "C4": "outside-assumption demonstration split by proved failure mode: A3 defect; first-moment non-existence",
+    "C5": "Gaussian cross-implementation consistency via the two-sample combined-error statistic",
+    "C6": "re-verification, not extension, of the inherited Lean and Arb layers",
+    "C7": "protected-tree integrity throughout"
+  },
+  "routes": {
+    "A": {"name": "theorem-boundary cleanup only", "math_risk": "none", "implementation": "none", "certification": "none", "cpu": "~0", "wall": "hours", "new_lean": false, "new_arb": false, "p_true_contradiction": "~0", "cuts_closed": 0, "closes_line": false},
+    "B": {"name": "theorem + corrected numerical correspondence", "math_risk": "low", "implementation": "moderate", "certification": "none new", "cpu": "tens of CPU-hours; up to ~1e2 if brute force is the only lever", "wall": "days", "new_lean": false, "new_arb": false, "p_true_contradiction": "low", "cuts_closed": 3, "closes_line": true, "recommended": true},
+    "C": {"name": "theorem + correspondence + counterexamples/sharpness", "math_risk": "moderate", "implementation": "B plus a new certificate object", "certification": "one new Arb object", "cpu": "B plus a small increment", "wall": "days", "new_lean": "optional", "new_arb": true, "p_true_contradiction": "low", "cuts_closed": 3, "required_for_closure": false, "note": "F1 and F2 are already proved analytically; F1 is already Arb-certified. Principal risk is scope creep."},
+    "D": {"name": "stronger general location-family theorem", "math_risk": "high", "implementation": "unbounded", "certification": "unbounded", "cpu": "unbounded", "wall": "unbounded", "new_lean": "substantial", "new_arb": true, "p_true_contradiction": "low", "p_campaign_fails_on_cost": "high", "admissible_as_p4_repair": false, "note": "changes the original scientific question; new science for a new priority"}
+  },
+  "lean_requirement": {
+    "already_formalized": "19 declarations; axioms exactly propext, Classical.choice, Quot.sound; hasDerivAt_stoppedMean proves the bridge Track 3A/3B assumed",
+    "not_formalized": "probability space, filtration, stopping time, RN derivative on F_tau, L1-L5 discharges, any Gamma value, the integration-by-parts identities, F1/F2",
+    "minimum_additional_for_p4x_closure": "NONE_NEW",
+    "reason": "every open edge is a numerical or gate-specification object; Lean evaluates no gain, so no declaration can move the cut set",
+    "obligation": "recompile the inherited 19 declarations and re-assert the axiom audit"
+  },
+  "certificate_requirement": {
+    "existing": "3 Arb objects at 160 bits, re-verified at 256",
+    "minimum_additional_for_p4x_closure": "NO_NEW_CERTIFICATION_BEYOND_RE-VERIFICATION",
+    "reason": "requiring interval certification of frozen gains would raise an evidence boundary P1/P2/P3 never moved - a post-hoc change to the original scientific meaning in the stricter direction - and is the P5X over-engineering pattern",
+    "needed_shape": "a finite set of correspondence points arbitrated by Route Q",
+    "not_needed": ["full interval certification over parameter families", "analytic exact reduction"]
+  },
+  "governance": {
+    "p4_disposition_audit_status": "DESTROYED_AND_UNRECOVERABLE",
+    "p4_disposition_audit_sha256": "bda05c9c5ee5df2a7bfbe11ca1fb07432907378299fd36ea0b75cada68ffba34",
+    "p4_disposition_audit_path": "level4/closure_proofs/p4_final_disposition_audit",
+    "loss_mechanism": "untracked namespace removed by an external git clean alongside commit 31132e8; recorded in p5x_global_nonlinear_dynamics/INCIDENT_EXTERNAL_TREE_CHANGE.md section 1(b)",
+    "prohibition_text_readable": false,
+    "p4r_or_p4_1_references_in_repository": 0,
+    "prohibition_reading": "A",
+    "prohibition_reading_meaning": "no retroactive repair or amendment of the historical priority; a successor scientific campaign under a fresh preregistered scope is permitted",
+    "evidence_for_reading_A": [
+      "the parallel P5 disposition ruling, quoted verbatim in a surviving P5X document, is P5_PARTIAL_SHOULD_BE_FINAL / P5R_LAUNCHED = NO / NEW_SCIENCE_REQUIRED = YES - it ruled the missing work new science for a new priority, not forbidden work",
+      "P5X was opened as a successor under that ruling, committed, and archivally completed with no recorded objection",
+      "P5X's own final disposition audit section 13 states by name: 'P4X and residual P5 coexist: P4X is not the only remaining repair campaign'",
+      "P4's own CLOSURE_REPORT.md section 10 limitation 1 names a follow-up campaign as the fix for one of its limitations",
+      "no surviving text anywhere in the repository prohibits a P4 successor"
+    ],
+    "conditionality": "This is a structural inference from the surviving record, not a quotation of the P4 ruling, because that ruling is destroyed. A recovered copy hashing to bda05c9c... takes precedence.",
+    "successor_governance_test": {
+      "requires_changing_historical_p4_verdict": false,
+      "requires_changing_historical_failed_artifacts": false,
+      "requires_changing_frozen_theorem_meaning": false,
+      "requires_changing_a_p4_threshold_after_seeing_results": false,
+      "p4x_own_threshold_risk": "REAL - a precision-aware pass rule chosen after seeing t1p5's 23% standard error would be a prohibited post-hoc move; mitigated by buying precision rather than moving the threshold, and by freezing any precision rule from a published pilot as a function of estimator precision only",
+      "adds_new_successor_evidence_under_fresh_preregistered_scope": true
+    },
+    "p4x_governance_valid": "YES"
+  },
+  "verdicts": {
+    "P4_ORIGINAL_VERDICT": "PARTIAL",
+    "P4_ORIGINAL_FAILED_GATES": [
+      "all_theorem_supported_cells_pass",
+      "all_outside_assumption_cells_demonstrate_failure",
+      "gaussian_consistency_with_closed_core"
+    ],
+    "P4X_THEOREM_STATUS": "PROVED_AND_INDEPENDENTLY_ADJUDICATED_NO_SUCCESSOR_WORK_REQUIRED",
+    "P4X_ASSUMPTION_BOUNDARY_STATUS": "SUFFICIENT_SET_ESTABLISHED_A3_SHARPNESS_PROVED_AND_CERTIFIED_NO_FURTHER_NECESSITY_REQUIRED",
+    "P4X_GAUSSIAN_CONSISTENCY_STATUS": "MIS_SPECIFIED_STATISTIC_PLUS_MONTE_CARLO_REALIZATION_REPAIRABLE_WITHOUT_CHANGING_MEANING",
+    "P4X_NUMERICAL_CORRESPONDENCE_STATUS": "OPEN_PRECISION_LIMITED_ZERO_THEOREM_CONTRADICTION_CELLS",
+    "P4X_GOVERNANCE_VALID": "YES",
+    "P4X_FEASIBILITY": "STRONG",
+    "P4X_EXPECTED_SCALE": "LIGHT",
+    "P4X_EXPECTED_SCALE_CAVEAT": "one configuration (frozen/sr@520.886/t1p5, Route B) needs ~544x its historical path budget by brute force; if brute force is the only lever the campaign edges toward MEDIUM (~1e2 CPU-hours). A cheap variance-reduction pilot must precede any frozen resource envelope.",
+    "P4X_DECISION": "OPEN_P4X_NARROW_SUCCESSOR",
+    "P4X_DECISION_CASE": "B",
+    "P5_RESIDUAL_STATUS": "DOCUMENTED_LIMITATION",
+    "NEXT_ACTIVE_REPAIR_CAMPAIGN": "P4X",
+    "LEVEL4_GLOBAL_CLOSURE": "NO",
+    "NOVELTY_STATUS": "NOT_ESTABLISHED"
+  },
+  "protected_tree_objects_at_head": {
+    "level4/closure_proofs/p4_theory_generalization": "eede90383da44c250871b1bb97d12045c897c8d9",
+    "level4/closure_proofs/p5_nonlinear_dynamics": "ec1d3b1da066a4ddda34f24bd5e062c6b8a93484",
+    "level4/closure_proofs/p5x_global_nonlinear_dynamics": "18e9435cf1995d705f3a85e4248dc5a261fc59c5",
+    "level4/closure_proofs/m_gt_1_priority1": "696d4f7fc186a2dc19f3dcadd663971ef5c77120",
+    "level4/closure_proofs/sr_derivative_priority2": "c60e5aa7fbb83cf4141be9d348273b2518ee6cd9",
+    "level4/closure_proofs/m_rho_stability_priority3": "e6b80937d77a9a08b6b37ce50b47a6b71ce5143b",
+    "level4/closure_proofs/location_family": "749ceb069d707d41c57368c809917e44e70ee2da",
+    "level4/closure_proofs/location_family_track3ab": "0458469cc9a992f40075160f927df8169fd05ea0",
+    "level4/closure_proofs/p6_safe_rebaselining": "802c5f839d4528004e07780a4ceeaa6afd6e7fd1",
+    "level4/closure_proofs/p6r_safe_rebaselining_confirmation": "c0ad8dd677b7e14715d1180d04da3accc2edd3a3",
+    "level4/closure_proofs/p6r2_literal_closure_repair": "b5757a220701baad3c45e39606b801d6a82dd58e",
+    "level4/closure_proofs/p6r2b_gate9_crn_identity": "9f3fff3d37f7552e55231373dae0cc84bb4bd812",
+    "level4/closure_proofs/p7_statistical_consequences": "a982a0264c4840f7fa83968594ca37699c8478aa",
+    "level4/closure_proofs/p8_model_class_robustness": "b3fd915f03e3edf4e25ae4d84587fe780cd9e52f",
+    "level4/closure_proofs/p8r_temporal_integrity_repair": "389d6225aeb4fbb41187ae24852dc1efec946bb4",
+    "level4/closure_proofs/p9_final_synthesis": "3aec482ec1f87184848b4bb60a7ee7c6928e3127",
+    "level4/closure_proofs/p9r_final_synthesis_repair": "20ee9bb05a2a6a16c0980767ed390c8368299715",
+    "rebaseguard-lean": "3fa5d722bc5e1d6c244f2448953eaeb0b258bec3",
+    "rebaseguard-proof": "727edc8013f3f89afb4dd45085994318e57234be",
+    "closure": "ddde11f12b4a49c464bdb2a8b0cc869f76032de1",
+    "Mathematical_proof": "c7416a38e5d3bc3236132ee23dae0c2f451212f2",
+    "README.md": "6ecee8e6aeadd996338e1c0e5a0820bfafe2d231"
+  },
+  "p5x_archive_note": "The P5X archival closure record lives on branch p5x-compute-opt-r1 (c4fc5e7a2afeef149dbfd2f906eabf8183017a78, p5x tree b7261d9ac9a90395d31573a24429017a7e7f81a5), of which main is an ancestor. main's p5x tree (18e9435...) is a strictly earlier state of the same namespace. This audit branches from main and modifies neither.",
+  "writes_outside_audit_namespace": 0
+}
