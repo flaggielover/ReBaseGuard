@@ -1,0 +1,53 @@
+{
+ "schema": "rebaseguard.p5x.f3_provenance_audit.v1",
+ "classification": "GOVERNANCE_PROVENANCE_AUDIT",
+ "next_binding_checkpoint": "NOT_CREATED",
+ "historical_r8_mutated": false, "f3_changed": false, "expensive_rerun": false,
+ "provenance": {
+   "first_commit": "db0781ed79851ca55af788731a47a0f4dda1d9c6",
+   "commit_label": "P5X Checkpoint A: pre-result temporal anchor",
+   "pre_result": true,
+   "files": ["CERTIFICATE_PLAN.md", "PROOF_OBLIGATIONS.md", "CODEX_HANDOFF.md"],
+   "quoted_rationale": "the required half-width for P5X-T4 is < 0.2. That margin is the campaign's central engineering bet, and step 3 of PROOF_OBLIGATIONS.md section 4 tests it on a single cell before any scaling.",
+   "stop_gate_wording": "If the achieved width exceeds 0.2 the campaign re-plans rather than scaling a losing method. Step 3 is a deliberate stop-gate: it is the cheapest possible falsification of the campaign's central engineering assumption.",
+   "self_described_as": "method-viability stop-gate / engineering bet",
+   "prose_inaccuracy": "CERTIFICATE_PLAN.md calls 0.2 'required for P5X-T4'; the frozen gate G3 requires only |R| < 2, i.e. half-width < 0.4096577169 at the binding cell"},
+ "consumers": {
+   "load_bearing": {"gate":"G3","theorem":"P5X-T4/P5X-T5",
+     "inequality":"sup_e |R_{D,m}(e)| <= R_max < 2",
+     "corollary":"I_rho = [-rho R_max, rho R_max] subset [-2,2] forward invariant",
+     "note":"FEASIBILITY_AUDIT H3b records that the constant 2 may be replaced by any certified E with s(E) < 1"},
+   "not_consuming_this_cell": {
+     "G2_local_P3":"uses R'(0), a derivative at e=0",
+     "rho_c":"1/|1-GammaTilde|, depends on the slope at 0",
+     "G4":"needs s_min > 0 and M_2 < infinity, second-moment quantities"},
+   "binding_cell_is_the_argmax":"FEASIBILITY_AUDIT records sup|R| at SR 1.591 (m=1, e=0.25)"},
+ "centre_R": -1.5903422831,
+ "max_half_widths": {
+   "sign_only": 1.5903422831,
+   "R_less_than_minus_1": 0.5903422831,
+   "G3_R_max_lt_2": 0.4096577169,
+   "hypothetical_E_1p8": 0.2096577169,
+   "F3_as_frozen": 0.2,
+   "F3_strictness_vs_strongest_consumer": 2.0483},
+ "r8_enclosure": {"lo": -2.6875142831, "hi": -0.4931702831, "half_width": 1.097172,
+   "certifies_sign": true, "certifies_G3": false, "abs_R_max": 2.687514,
+   "certifies_R_lt_minus1": false, "separates_from_cusum_r2": false},
+ "hypotheticals_diagnostic": [
+  {"label":"pointwise-best C=141.361 x direct-residual@1024","half_width":0.235980,"abs_R_max":1.826322,"G3":true,"F3":false},
+  {"label":"current certified C=216.963 x direct-residual@1024","half_width":0.356837,"abs_R_max":1.947179,"G3":true,"F3":false},
+  {"label":"pointwise-best C x R8 B2@1024","half_width":0.718341,"abs_R_max":2.308683,"G3":false,"F3":false}],
+ "campaign_wide_qualification": {
+   "statement":"G3 requires |R(e)| < 2 at EVERY cell; C_SR is certified at two drifts only",
+   "rows":[{"e":0.25,"C":203.067,"absR":1.5903,"hw":0.334623,"absRmax":1.924923,"G3":true},
+           {"e":0.24,"C":216.963,"absR":1.5903,"hw":0.356837,"absRmax":1.947137,"G3":true},
+           {"e":0.0, "C":1505.821,"absR":0.0,  "hw":2.417205,"absRmax":2.417205,"G3":false}],
+   "conclusion":"the binding region moves from the |R| argmax to small e, where C_SR is large; per-cell analysis is OUT OF SCOPE and is an open item"},
+ "verdicts": {"f3_mathematically_necessary": false,
+   "governance_class":"G2", "audit_case":"B",
+   "successor_respec_allowed": true,
+   "successor_gate":"the certified enclosure satisfies |R| < 2 strictly on every accepted cell -- G3's own pass condition verbatim from Checkpoint A",
+   "successor_derived_half_width_at_binding_cell": 0.4096577169,
+   "successor_still_has_teeth":"R8 fails it (|R|max = 2.688) and so does the e->0 region under every certifier measured",
+   "r8_remains_FAIL": true}
+}
