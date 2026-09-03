@@ -31,7 +31,8 @@ def test_b2_improvement_over_the_historical_enclosure():
 
 
 def test_grid_deviation_is_disclosed_not_silent():
-    assert "DISCLOSED DEVIATION" in SPEC and "1024x1024, not `256x256`" in SPEC
+    assert "DISCLOSED DEVIATION" in SPEC
+    assert "`1024x1024`, not `256x256`" in SPEC
     import re
     assert re.search(r"threshold `<= 1e-2` is\s+\*\*not\*\* weakened", SPEC)
 
