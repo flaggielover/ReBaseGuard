@@ -41,9 +41,16 @@ def test_pilot_is_not_binding_and_creates_no_checkpoint(pilot, cut23):
     assert cut23["binding"] is False
 
 
-def test_no_binding_checkpoint_file_exists(pilot_dir):
-    boundary = pilot_dir.parent
-    for path in boundary.rglob("*.md"):
+def test_r0_creates_no_binding_checkpoint(pilot_dir):
+    """R0 is a pre-freeze pilot and may create no binding checkpoint OF ITS OWN.
+
+    Scope note: this test originally scanned the whole
+    ``p4x_generalization_boundary`` tree.  That over-reached -- R0 does not own
+    its sibling namespaces, and a later phase creating a binding Checkpoint A
+    is exactly what R0 was run to enable.  The assertion is therefore narrowed
+    to R0's own namespace, which is what it was always meant to police.
+    """
+    for path in pilot_dir.rglob("*.md"):
         name = path.name.upper()
         if "CHECKPOINT" in name:
             assert name.startswith("DRAFT_"), path
