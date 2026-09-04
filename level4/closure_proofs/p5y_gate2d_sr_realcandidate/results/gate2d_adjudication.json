@@ -1,0 +1,43 @@
+{
+ "schema": "rebaseguard.p5y.gate2d.adjudication.v1",
+ "binding": false,
+ "generated_utc": "2026-09-04T15:34:29.639807+00:00",
+ "git_commit": "b0a09df8a2dae7e933c787597181207e7122caf1",
+ "subject": "the artifact's mechanically-derived decision field vs the frozen rule",
+ "artifact_field": "SR_REALCANDIDATE_FAIL_WITHIN_GRID",
+ "governing_decision": "SR_REALCANDIDATE_FAIL_REPRESENTATION",
+ "why": {
+  "frozen_rule": "GATE2D_PREREGISTRATION.md section 7 requires, BEFORE entering the precision grid, that the candidate residual be small enough that P2 <= 1e-8 remains theoretically reachable, else FAIL_REPRESENTATION; section 22 adds FAIL_REPRESENTATION if degree 16 is insufficient and a higher degree would be needed.",
+  "measured": {
+   "eps_cand_times_N0_over_acc": 7.909192144366835,
+   "P2_target_reachable": false,
+   "target": 1e-08
+  },
+  "degree_needed_for_relative_target": "eps_cand would have to fall from 1.93e-07 to ~2.4e-16 for the RELATIVE target to be reachable; the degree-20 tail is ~8e-10, so roughly degree 35-40 would be required. Degree 16 is insufficient for a relative criterion on this function.",
+  "conclusion": "the representation, not the precision grid, is what fails; FAIL_WITHIN_GRID would mis-name the cause"
+ },
+ "implementation_defect_recorded_not_patched": {
+  "defect": "sr_realcandidate.py computes acceptance_precondition AFTER the precision cells and never branches on it, so the frozen section-7 gate was not enforced in code. The decision field therefore fell through to the selection rule.",
+  "blast_radius": "naming only. Both outcomes are failures; the artifact records the measured precondition value, so the frozen rule is applied on top of the artifact rather than against it.",
+  "not_patched_because": "no post-T2 mutation is permitted. A test asserts the module is byte-identical to its T1 hash.",
+  "fix_for_the_successor": "evaluate and branch on the acceptance precondition BEFORE the grid, as section 7 specifies, and assert that ordering in a pre-T2 test."
+ },
+ "what_did_NOT_fail": {
+  "precision": "P2 equals P2_floor at 256, 384 and 512 bits; the interval radius runs 1.11e-55 -> 2.81e-94 -> 6.09e-132 and is irrelevant to the outcome",
+  "conditioning": "the genuine candidate loses 30.54 digits against unit_candidate's 50.96 measured in the SAME run -- 20.4 digits BETTER",
+  "complexity guard": "PASS, score 37,281 of a 100,000 budget",
+  "P1 repair": "PASS, n_z = 28 unchanged",
+  "reproducibility": "ball-identical at 384 bits"
+ },
+ "root_cause": {
+  "statement": "P2 is a RELATIVE half-width, and Gate-2A calibrated it on unit_candidate whose panel integral is |acc| = 75.94. A genuine backward function has a huge dynamic range across the SR square: h_1 runs from ~1e-9 near a = 0 to 0.63 at a = b_SR, and its panel integral at patch (17,11) is |acc| = 3.75e-9. The same ABSOLUTE enclosure error (~1.3e-10) therefore reads as a relative 3.54e-02.",
+  "scale_evidence": {
+   "unit_candidate_acc": 75.937,
+   "genuine_h1_acc": 3.7473e-09,
+   "nonseparable_h2_probe_acc": 9.038e-06
+  },
+  "not_separability": "the NON-separable h_2 probe fails by the same mechanism (|acc| = 9.04e-06, P2 = 6.96e-06 = its floor), so the cause is function SCALE, not separability"
+ },
+ "probe_caveat": "the non-separable probe's node values were enclosed by acb.integral at 256 bits, so its coefficient radii do not shrink with evaluation precision; its 512-bit digit-loss figure (86.55) is a construction artifact and only its 256-bit figure is meaningful. It is non-decisive in any case.",
+ "consequence": "Gate-2A's SR precision conclusion is NOT invalidated -- with a real candidate the conditioning is better, so 256 bits remains supported on that axis. What is invalidated is the P2 acceptance INSTRUMENT: a relative criterion cannot be applied to real backward functions spanning nine orders of magnitude. That is a new named gap, and it must be re-specified BEFORE a successor gate runs, with a justification independent of any result."
+}
