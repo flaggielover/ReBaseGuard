@@ -13,7 +13,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parents[2]
 P5X = ROOT / "level4" / "closure_proofs" / "p5x_global_nonlinear_dynamics"
-for p in (str(HERE), str(P5X / "certified_method_repair_ra"),
+for p in (str(ROOT / "rebaseguard-proof" / "src"), str(HERE), str(P5X / "certified_method_repair_ra"),
           str(P5X / "compute_optimization_r1"), str(P5X / "compute_optimization_r2")):
     if p not in sys.path:
         sys.path.insert(0, p)

@@ -7,7 +7,7 @@
  "files": {
   "GATE1_PREREGISTRATION.md": "2d2d127cb264eaa5daafcfec822a81910163694c637fc0c26bf4cfc6ef560a68",
   "raw_certifier.py": "f224dd116ca95a67e4321b93548c6e884775fed93c366c15455f5ab4303a172a",
-  "m1_raw_2cell.py": "00565058482d38ab5a2e50588020a0657cc7d2d0ea4758384f816dd676814676",
+  "m1_raw_2cell.py": "0b5ae097dc3acd9bdfcebef631be3fbf23d31d1506c0ce1dafce2c2a997aa58e",
   "m2_sr_degree.py": "6a6323a32b728dc0481746331b2d3295d9ca0230bfa638ae7c5763851a5b810b",
   "m3_analytic.py": "fbba286c58a298c3bff864fe1a54a1861764cdc776cc998838adc063bbec1f5c",
   "optional_checks.py": "4a18412596374ae59785528059ae0b6fe5ba760350207359351a127e4b2ee1a4",
@@ -29,5 +29,12 @@
   "compute_optimization_r2/fast_range.py": "82e630bdbe31271dca057cf33dc069937ca4e54f509be34f823092675d4cdbc4",
   "compute_optimization_r3_sr_symbolic/sr_local.py": "8de4d3453dd5f6ff624203a48a1c37f5c6fd4301aa2567d5a7a470c10d70bb54",
   "compute_optimization_r3_sr_symbolic/r3_gate.py": "f3f5095f4e19ebccd195b2037177ddfc6a5c3d9d8b89ef72c0ac7f968196e67b"
+ },
+ "T1_refreeze": {
+  "reason": "import-path defect in m1_raw_2cell.py: rebaseguard_certify src was not on sys.path, so the module raised ModuleNotFoundError at import. No computation ran, no results/ file was written, no threshold or rule changed. T2 had therefore not been reached; this is a pre-T2 correction.",
+  "files_changed": [
+   "m1_raw_2cell.py"
+  ],
+  "semantic_change": "none - one sys.path entry added"
  }
 }
