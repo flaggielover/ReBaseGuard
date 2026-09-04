@@ -72,7 +72,7 @@ PROTECTED_FILES = [
     "level4/closure_proofs/p5_nonlinear_dynamics/LIMITATIONS.md",
     "level4/closure_proofs/sr_derivative/results/sr_monotone_contraction.json",
     "level4/closure_proofs/p5y_gate2b_sr_cover/results/sr_cover.json",
-    "level4/closure_proofs/p5y_gate2f_sr_metric_b/results/gate2f_adjudication.json",
+    "level4/closure_proofs/p5y_gate2f_sr_metric_b/results/sr_metric_b.json",
 ]
 
 
@@ -135,6 +135,15 @@ def main() -> int:
     }
     absent = [k for k, v in prot["file_sha256"].items() if v is None]
     prot["absent_at_anchor"] = absent
+    if absent:
+        # A protected input that does not exist at the anchor is a hard-coded
+        # name that disagrees with the authoritative artifact. Freezing it would
+        # create an integrity manifest that can never be satisfied.
+        print("REFUSING TO FREEZE -- protected inputs absent at anchor:",
+              file=sys.stderr)
+        for a in absent:
+            print("   ", a, file=sys.stderr)
+        return 3
 
     manifest = {
         "schema": "rebaseguard.p5y.k1.sourcemanifest.v1",
