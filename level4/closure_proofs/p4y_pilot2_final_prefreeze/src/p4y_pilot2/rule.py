@@ -103,22 +103,29 @@ def next_allocation(current: Precision, target: float, kappa: float) -> int:
 
 
 def trace(*, measure, b1: int, target: float, kappa: float,
-          pool_limit: int) -> Trajectory:
-    """Run the rule out to the pool limit, recording every stage.
+          max_cap: int) -> Trajectory:
+    """Record the stage sequence out to the LARGEST frozen cap.
 
     ``measure(blocks) -> float`` is the only input.  It returns the route's own
     achieved relative standard error and nothing else.
+
+    The trajectory is complete for every cap in the frozen grid once the rule
+    either reaches the target or requires a stage larger than ``max_cap``:
+    beyond that point no cap in the grid can behave differently, because every
+    one of them refuses the same stage.  So the loop terminates there -- "the
+    rule can always run to the point where the largest cap would refuse it,
+    and never one block further".
+
+    ``measure`` is therefore never called with more than ``max_cap`` blocks,
+    which is what bounds the pilot's cost.
     """
     stages: list[Stage] = []
     blocks = b1
-    if b1 > pool_limit:
-        # Cannot even plan stage 1 inside the pool.  Since the largest frozen
-        # cap is pool_limit - B_ref, every cap in the grid refuses this route
-        # before it starts, so no block is drawn and none needs to be.
+    if b1 > max_cap:
+        # Stage 1 alone already exceeds every frozen cap, so the route is
+        # PRECISION_LIMITED from projected cost alone and NOTHING executes.
         return Trajectory((), target, kappa, False, False, b1)
     while True:
-        if blocks > pool_limit:
-            return Trajectory(tuple(stages), target, kappa, False, True, b1)
         achieved = measure(blocks)
         here = Precision(blocks, achieved)
         if achieved <= target:
@@ -126,6 +133,9 @@ def trace(*, measure, b1: int, target: float, kappa: float,
             return Trajectory(tuple(stages), target, kappa, True, False, b1)
         nxt = next_allocation(here, target, kappa)
         stages.append(Stage(len(stages) + 1, blocks, achieved, nxt))
+        if nxt > max_cap:
+            # Every frozen cap refuses this stage; the record is complete.
+            return Trajectory(tuple(stages), target, kappa, False, False, b1)
         blocks = nxt
 
 

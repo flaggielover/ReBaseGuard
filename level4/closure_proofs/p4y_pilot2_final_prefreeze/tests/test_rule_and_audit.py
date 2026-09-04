@@ -34,7 +34,7 @@ def stuck(v):
                          ids=["mild", "large", "stuck", "hopeless", "already"])
 def test_terminal_state_space_is_exactly_two(kappa, measure):
     traj = trace(measure=measure, b1=48, target=TARGET, kappa=kappa,
-                 pool_limit=10 ** 6)
+                 max_cap=10 ** 6)
     for cap in (48, 72, 144, 576, 5000, 10 ** 6):
         o = terminate(traj, cap)
         assert o.status in (ATTAINED, PRECISION_LIMITED), o
@@ -44,14 +44,14 @@ def test_terminal_state_space_is_exactly_two(kappa, measure):
 @pytest.mark.parametrize("kappa", KAPPAS)
 def test_nothing_ever_executes_beyond_the_cap(kappa):
     traj = trace(measure=stuck(0.5), b1=48, target=TARGET, kappa=kappa,
-                 pool_limit=10 ** 6)
+                 max_cap=10 ** 6)
     for cap in (48, 100, 576, 4000):
         assert terminate(traj, cap).blocks <= cap
 
 
 def test_precision_limited_requires_the_next_stage_to_cross_the_cap():
     traj = trace(measure=stuck(0.05), b1=48, target=TARGET, kappa=KAPPA_B,
-                 pool_limit=10 ** 6)
+                 max_cap=10 ** 6)
     o = terminate(traj, 100)
     assert o.status == PRECISION_LIMITED
     assert o.next_stage_blocks > 100
@@ -62,7 +62,7 @@ def test_precision_limited_requires_the_next_stage_to_cross_the_cap():
 def test_precision_limited_before_stage_one_executes_nothing():
     """A route whose projected stage 1 already exceeds the cap draws no block."""
     traj = trace(measure=law(0.15), b1=5000, target=TARGET, kappa=KAPPA_B,
-                 pool_limit=624)
+                 max_cap=624)
     assert traj.stages == ()
     assert traj.planned_b1 == 5000
     o = terminate(traj, 576)
@@ -75,7 +75,7 @@ def test_precision_limited_before_stage_one_executes_nothing():
 def test_a_generous_cap_always_attains_when_the_route_converges():
     for kappa in KAPPAS:
         traj = trace(measure=law(0.6), b1=48, target=TARGET, kappa=kappa,
-                     pool_limit=10 ** 7)
+                     max_cap=10 ** 7)
         o = terminate(traj, 10 ** 7)
         assert o.status == ATTAINED
         assert o.relative_se <= TARGET
@@ -83,7 +83,7 @@ def test_a_generous_cap_always_attains_when_the_route_converges():
 
 def test_the_auditor_catches_a_mislabelled_attainment():
     traj = trace(measure=stuck(0.5), b1=48, target=TARGET, kappa=KAPPA_B,
-                 pool_limit=10 ** 6)
+                 max_cap=10 ** 6)
     forged = Outcome(ATTAINED, 48, 1, 0.5, TARGET, KAPPA_B, 576, None, (48,))
     a = audit(forged, traj, cap_blocks=576)
     assert not a.valid
@@ -92,7 +92,7 @@ def test_the_auditor_catches_a_mislabelled_attainment():
 
 def test_the_auditor_catches_execution_past_the_cap():
     traj = trace(measure=law(0.15), b1=48, target=TARGET, kappa=KAPPA_B,
-                 pool_limit=10 ** 6)
+                 max_cap=10 ** 6)
     forged = Outcome(ATTAINED, 9000, 2, 0.001, TARGET, KAPPA_B, 576, None,
                      (48, 9000))
     a = audit(forged, traj, cap_blocks=576)
@@ -102,7 +102,7 @@ def test_the_auditor_catches_execution_past_the_cap():
 
 def test_the_auditor_catches_a_premature_precision_limited():
     traj = trace(measure=stuck(0.5), b1=48, target=TARGET, kappa=KAPPA_B,
-                 pool_limit=10 ** 6)
+                 max_cap=10 ** 6)
     forged = Outcome(PRECISION_LIMITED, 48, 1, 0.5, TARGET, KAPPA_B,
                      10 ** 6, 120000, (48,))
     a = audit(forged, traj, cap_blocks=10 ** 6)
@@ -112,7 +112,7 @@ def test_the_auditor_catches_a_premature_precision_limited():
 
 def test_the_auditor_catches_a_foreign_trajectory():
     traj = trace(measure=law(0.15), b1=48, target=TARGET, kappa=KAPPA_B,
-                 pool_limit=10 ** 6)
+                 max_cap=10 ** 6)
     o = terminate(traj, 576)
     other = Trajectory(traj.stages, TARGET * 2, traj.kappa, True, False, 48)
     assert not audit(o, other, cap_blocks=576).valid
@@ -124,7 +124,7 @@ def test_terminate_agrees_with_a_rule_run_under_that_cap():
         for c in (0.05, 0.15, 0.4):
             m = law(c)
             traj = trace(measure=m, b1=48, target=TARGET, kappa=kappa,
-                         pool_limit=10 ** 6)
+                         max_cap=10 ** 6)
             for cap in (48, 60, 100, 300, 1000, 10 ** 6):
                 derived = terminate(traj, cap)
                 # an independent re-run that stops itself at the cap

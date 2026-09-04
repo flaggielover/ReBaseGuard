@@ -147,6 +147,7 @@ def replicate(cell, stratum, namespace: str, gid: int, target: float) -> dict:
     b1 = max(MIN_BLOCKS,
              math.ceil(stratum.b_ref * (ref_rel / target) ** (1.0 / KAPPA_STAGE1)))
     limit = pool_limit(stratum)
+    max_cap = cap_blocks(stratum, MAX_CAP_MULTIPLIER)
     pool = Pool(cell, seed(cell.key, stratum.key, namespace, gid))
 
     def measure(blocks: int) -> float:
@@ -159,8 +160,8 @@ def replicate(cell, stratum, namespace: str, gid: int, target: float) -> dict:
            "b1_nominal": stratum.b1, "kappas": {}}
     for kname, kappa in KAPPA_CANDIDATES.items():
         traj = R.trace(measure=measure, b1=b1, target=target, kappa=kappa,
-                       pool_limit=limit)
-        if traj.pool_exhausted:
+                       max_cap=max_cap)
+        if traj.pool_exhausted:                       # defensive; unreachable
             raise Stop(f"trajectory exhausted the pool limit {limit}")
         caps = {}
         for mult in CAP_MULTIPLIERS:

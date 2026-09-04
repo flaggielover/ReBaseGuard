@@ -20,7 +20,7 @@ from p4y_pilot2.audit import audit
 
 def test_the_rules_entire_input_surface_is_precision_only():
     params = set(inspect.signature(R.trace).parameters)
-    assert params == {"measure", "b1", "target", "kappa", "pool_limit"}
+    assert params == {"measure", "b1", "target", "kappa", "max_cap"}
     assert set(inspect.signature(R.next_allocation).parameters) == {
         "current", "target", "kappa"}
     assert R.Precision.__slots__ == R.PRECISION_FIELDS
@@ -51,7 +51,7 @@ def test_a_measure_returning_a_rich_object_cannot_smuggle_fields_in():
         return Poisoned(0.005)
 
     traj = R.trace(measure=measure, b1=48, target=0.01, kappa=0.5,
-                   pool_limit=1000)
+                   max_cap=1000)
     o = R.terminate(traj, 576)
     # the rule used the numeric value and nothing else
     assert o.status == R.ATTAINED
@@ -71,7 +71,7 @@ def test_next_allocation_is_a_pure_function_of_the_two_numbers():
 
 def test_the_auditor_rejects_a_run_that_saw_a_forbidden_field():
     traj = R.trace(measure=lambda b: 0.005, b1=48, target=0.01, kappa=0.5,
-                   pool_limit=1000)
+                   max_cap=1000)
     o = R.terminate(traj, 576)
     clean = audit(o, traj, cap_blocks=576)
     assert clean.valid
@@ -84,7 +84,7 @@ def test_the_auditor_rejects_a_run_that_saw_a_forbidden_field():
 @pytest.mark.parametrize("field", R.FORBIDDEN_FIELDS)
 def test_every_named_forbidden_field_is_rejected_by_the_auditor(field):
     traj = R.trace(measure=lambda b: 0.005, b1=48, target=0.01, kappa=0.5,
-                   pool_limit=1000)
+                   max_cap=1000)
     o = R.terminate(traj, 576)
     assert not audit(o, traj, cap_blocks=576,
                      measure_inputs_seen=(field,)).valid
