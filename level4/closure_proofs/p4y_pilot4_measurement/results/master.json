@@ -1,0 +1,349 @@
+{
+ "schema": "rebaseguard.p4y-pilot4-master.v1",
+ "binding": false,
+ "base_block_paths": 50000,
+ "accuracy_factor": 1.25,
+ "address_audit": {
+  "addresses": 124,
+  "unique_seeds": 124,
+  "collision_free": true
+ },
+ "strata": [
+  {
+   "stratum": "H",
+   "config": "reduced/cusum@2/t1p5",
+   "route": "route_a",
+   "heavy": true,
+   "role": "primary heavy stratum -- the full block-size sweep",
+   "master_base_blocks": 40960,
+   "by_block_size": {
+    "250000": {
+     "block_paths": 250000,
+     "pool_blocks_each": 2048,
+     "theta_pool0": 0.08728360023104553,
+     "theta_pool1": 0.09645946102554388,
+     "theta_benchmark": 0.09197195726470388,
+     "mean_benchmark": 2.4862953268037407,
+     "independent_pool_spread": 1.105126974256438,
+     "quarter_estimates": [
+      0.08701232886618564,
+      0.08759110258158433,
+      0.09962060925780267,
+      0.09309900229737382
+     ],
+     "quarter_spread": 1.1449022288669808,
+     "prefix_curve": {
+      "0.125": {
+       "n": 512,
+       "theta": 0.08868839826194053
+      },
+      "0.25": {
+       "n": 1024,
+       "theta": 0.08701232886618564
+      },
+      "0.5": {
+       "n": 2048,
+       "theta": 0.08728360023104553
+      },
+      "1": {
+       "n": 4096,
+       "theta": 0.09197195726470388
+      }
+     },
+     "prefix_full_over_half": 1.0537140656577861,
+     "concentration": {
+      "top1": 0.08622861092381302,
+      "top5": 0.2694409663337782,
+      "top1pct": 0.5763376607421373,
+      "n": 4096
+     },
+     "hill_alpha_secondary": 16.356584372262525,
+     "admissible_checks": {
+      "disjoint_split": true,
+      "growing_prefix": true,
+      "extreme_top1": true,
+      "extreme_top5": true
+     },
+     "benchmark_admissible": true
+    },
+    "1000000": {
+     "block_paths": 1000000,
+     "pool_blocks_each": 1024,
+     "theta_pool0": 0.05624623964452179,
+     "theta_pool1": 0.10086579923387007,
+     "theta_benchmark": 0.08158042308076249,
+     "mean_benchmark": 2.482380566039363,
+     "independent_pool_spread": 1.7932896469407638,
+     "quarter_estimates": [
+      0.04386709579891829,
+      0.06642146807750782,
+      0.04707596803235758,
+      0.13496718562373267
+     ],
+     "quarter_spread": 3.0767294521252717,
+     "prefix_curve": {
+      "0.125": {
+       "n": 256,
+       "theta": 0.04382229023695824
+      },
+      "0.25": {
+       "n": 512,
+       "theta": 0.04386709579891829
+      },
+      "0.5": {
+       "n": 1024,
+       "theta": 0.05624623964452179
+      },
+      "1": {
+       "n": 2048,
+       "theta": 0.08158042308076249
+      }
+     },
+     "prefix_full_over_half": 1.4504155939375438,
+     "concentration": {
+      "top1": 0.573462750829769,
+      "top5": 0.6944220427177424,
+      "top1pct": 0.7916018893167007,
+      "n": 2048
+     },
+     "hill_alpha_secondary": 24.75231402422241,
+     "admissible_checks": {
+      "disjoint_split": false,
+      "growing_prefix": false,
+      "extreme_top1": false,
+      "extreme_top5": false
+     },
+     "benchmark_admissible": false
+    },
+    "4000000": {
+     "block_paths": 4000000,
+     "pool_blocks_each": 512,
+     "theta_pool0": 0.028955371507858617,
+     "theta_pool1": 0.03954780943747975,
+     "theta_benchmark": 0.0346398130566027,
+     "mean_benchmark": 2.4832375102645963,
+     "independent_pool_spread": 1.365819444822053,
+     "quarter_estimates": [
+      0.02800595509564167,
+      0.02987539812599988,
+      0.04927328977575743,
+      0.026553811266383544
+     ],
+     "quarter_spread": 1.8556014156105785,
+     "prefix_curve": {
+      "0.125": {
+       "n": 128,
+       "theta": 0.021204415860133826
+      },
+      "0.25": {
+       "n": 256,
+       "theta": 0.02800595509564167
+      },
+      "0.5": {
+       "n": 512,
+       "theta": 0.028955371507858617
+      },
+      "1": {
+       "n": 1024,
+       "theta": 0.0346398130566027
+      }
+     },
+     "prefix_full_over_half": 1.196317341229806,
+     "concentration": {
+      "top1": 0.3816736987908444,
+      "top5": 0.4887674696127991,
+      "top1pct": 0.5595750595717259,
+      "n": 1024
+     },
+     "hill_alpha_secondary": 51.98108606160672,
+     "admissible_checks": {
+      "disjoint_split": false,
+      "growing_prefix": false,
+      "extreme_top1": false,
+      "extreme_top5": false
+     },
+     "benchmark_admissible": false
+    }
+   }
+  },
+  {
+   "stratum": "HSR",
+   "config": "reduced/sr@20/t1p5",
+   "route": "route_a",
+   "heavy": true,
+   "role": "heavy, SR detector -- is the phenomenon detector-generic?",
+   "master_base_blocks": 10240,
+   "by_block_size": {
+    "250000": {
+     "block_paths": 250000,
+     "pool_blocks_each": 2048,
+     "theta_pool0": 0.12455484373625186,
+     "theta_pool1": 0.11962834752815937,
+     "theta_benchmark": 0.12210287161212292,
+     "mean_benchmark": 2.7689114268918757,
+     "independent_pool_spread": 1.0411816790074178,
+     "quarter_estimates": [
+      0.1372506157449927,
+      0.11051351594501127,
+      0.08201531668615933,
+      0.14818631821359177
+     ],
+     "quarter_spread": 1.806812729634918,
+     "prefix_curve": {
+      "0.125": {
+       "n": 512,
+       "theta": 0.09927531034307926
+      },
+      "0.25": {
+       "n": 1024,
+       "theta": 0.1372506157449927
+      },
+      "0.5": {
+       "n": 2048,
+       "theta": 0.12455484373625186
+      },
+      "1": {
+       "n": 4096,
+       "theta": 0.12210287161212292
+      }
+     },
+     "prefix_full_over_half": 0.9803141166527328,
+     "concentration": {
+      "top1": 0.2501387176990193,
+      "top5": 0.5122343276676175,
+      "top1pct": 0.7532050697156571,
+      "n": 4096
+     },
+     "hill_alpha_secondary": 15.078468007873926,
+     "admissible_checks": {
+      "disjoint_split": true,
+      "growing_prefix": true,
+      "extreme_top1": false,
+      "extreme_top5": false
+     },
+     "benchmark_admissible": false
+    }
+   }
+  },
+  {
+   "stratum": "HB",
+   "config": "reduced/cusum@2/t1p5",
+   "route": "route_b",
+   "heavy": true,
+   "role": "heavy, Route B -- is the phenomenon route-generic?",
+   "master_base_blocks": 2560,
+   "by_block_size": {
+    "250000": {
+     "block_paths": 250000,
+     "pool_blocks_each": 512,
+     "theta_pool0": 0.22040166664941885,
+     "theta_pool1": 0.22590341716850365,
+     "theta_benchmark": 0.22318725573804024,
+     "mean_benchmark": 2.4664503243881724,
+     "independent_pool_spread": 1.0249623816494824,
+     "quarter_estimates": [
+      0.1869641073550577,
+      0.2477026969300421,
+      0.21088031870638219,
+      0.24048943612455528
+     ],
+     "quarter_spread": 1.3248676467063147,
+     "prefix_curve": {
+      "0.125": {
+       "n": 128,
+       "theta": 0.13652839992188318
+      },
+      "0.25": {
+       "n": 256,
+       "theta": 0.1869641073550577
+      },
+      "0.5": {
+       "n": 512,
+       "theta": 0.22040166664941885
+      },
+      "1": {
+       "n": 1024,
+       "theta": 0.22318725573804024
+      }
+     },
+     "prefix_full_over_half": 1.0126386933954192,
+     "concentration": {
+      "top1": 0.20613660176473964,
+      "top5": 0.5579115401657951,
+      "top1pct": 0.6270269560643679,
+      "n": 1024
+     },
+     "hill_alpha_secondary": 9.015235518937274,
+     "admissible_checks": {
+      "disjoint_split": true,
+      "growing_prefix": true,
+      "extreme_top1": false,
+      "extreme_top5": false
+     },
+     "benchmark_admissible": false
+    }
+   }
+  },
+  {
+   "stratum": "O",
+   "config": "reduced/cusum@2/gaussian",
+   "route": "route_a",
+   "heavy": false,
+   "role": "ordinary finite-variance control -- the framework must find a stable regime where one exists",
+   "master_base_blocks": 5120,
+   "by_block_size": {
+    "250000": {
+     "block_paths": 250000,
+     "pool_blocks_each": 1024,
+     "theta_pool0": 0.002025594320011202,
+     "theta_pool1": 0.0019320018417597954,
+     "theta_benchmark": 0.001979374309109996,
+     "mean_benchmark": 6.192152720502912,
+     "independent_pool_spread": 1.0484432655437617,
+     "quarter_estimates": [
+      0.0020750035589315935,
+      0.0019755194389238493,
+      0.0019676524965474866,
+      0.0018961647622501145
+     ],
+     "quarter_spread": 1.094316063794613,
+     "prefix_curve": {
+      "0.125": {
+       "n": 256,
+       "theta": 0.001983590133000489
+      },
+      "0.25": {
+       "n": 512,
+       "theta": 0.0020750035589315935
+      },
+      "0.5": {
+       "n": 1024,
+       "theta": 0.002025594320011202
+      },
+      "1": {
+       "n": 2048,
+       "theta": 0.001979374309109996
+      }
+     },
+     "prefix_full_over_half": 0.977182000144555,
+     "concentration": {
+      "top1": 0.005758409632627574,
+      "top5": 0.02662034494913643,
+      "top1pct": 0.08590035954059153,
+      "n": 2048
+     },
+     "hill_alpha_secondary": 1025.4526472841578,
+     "admissible_checks": {
+      "disjoint_split": true,
+      "growing_prefix": true,
+      "extreme_top1": true,
+      "extreme_top5": true
+     },
+     "benchmark_admissible": true
+    }
+   }
+  }
+ ],
+ "stopped": null,
+ "cpu_hours": 1.2554975038888887
+}
