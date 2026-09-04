@@ -423,7 +423,8 @@ class TestAnchorIntegrity(unittest.TestCase):
         prot = load("manifests/protected_inputs.json")
         self.assertEqual(prot["absent_at_anchor"], [])
         for path, sha in prot["directory_tree_sha1"].items():
-            out = git("ls-tree", "HEAD", path + "/")
+            # --full-tree: paths resolve from the REPO ROOT, never the cwd
+            out = git("ls-tree", "--full-tree", "HEAD", path + "/")
             self.assertTrue(out.strip(), path)
             self.assertEqual(out.split()[2], sha, f"{path} MUTATED since anchor")
 

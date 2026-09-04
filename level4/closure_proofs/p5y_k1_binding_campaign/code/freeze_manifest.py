@@ -91,7 +91,7 @@ def blob_sha256(anchor: str, path: str) -> str | None:
 
 
 def tree_sha(anchor: str, path: str) -> str | None:
-    out = git("ls-tree", anchor, path + "/")
+    out = git("ls-tree", "--full-tree", anchor, path + "/")
     if not out.strip():
         return None
     return out.split()[2]
