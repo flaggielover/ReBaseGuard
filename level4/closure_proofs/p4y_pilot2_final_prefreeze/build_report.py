@@ -139,22 +139,37 @@ def main() -> int:
                 for m in CAP_MULTIPLIERS}
         for kname in KAPPA_CANDIDATES}
 
+    if validation:
+        # PILOT2_PREREGISTRATION section 9: "The full kappa x cap curve is
+        # computed on validation and reported, but only the selected pair is
+        # decisive."  The curve is therefore emitted whether or not a pair was
+        # selectable -- reporting only; no threshold, criterion or decision is
+        # affected by this branch.
+        out["validation_curve"] = {
+            kn: {f"{m:g}": tally(collect(validation, kn, m))
+                 for m in CAP_MULTIPLIERS} for kn in KAPPA_CANDIDATES}
+        out["validation_curve_per_stratum"] = {
+            kn: {f"{m:g}": per_stratum(collect(validation, kn, m))
+                 for m in CAP_MULTIPLIERS} for kn in KAPPA_CANDIDATES}
+        out["validation_stopped"] = validation["stopped"]
+        out["cumulative_cpu_hours"] = validation.get("cumulative_cpu_hours")
+        rob_all = {kn: {f"{m:g}": tally([r for r in
+                                         collect(validation, kn, m, primary_only=False)
+                                         if r["cell"] not in PRIMARY_CELLS])
+                        for m in CAP_MULTIPLIERS} for kn in KAPPA_CANDIDATES}
+        out["robustness_route_b_curve"] = rob_all
+
     if validation and sel["selected"]:
         kname = sel["selected"]["kappa"]
         mult = sel["selected"]["multiplier"]
         rows = collect(validation, kname, mult)
         t = tally(rows)
         st = per_stratum(rows)
-        out["validation_curve"] = {
-            kn: {f"{m:g}": tally(collect(validation, kn, m))
-                 for m in CAP_MULTIPLIERS} for kn in KAPPA_CANDIDATES}
         out["primary"] = t
         out["primary_per_stratum"] = st
         rob = collect(validation, kname, mult, primary_only=False)
         rob = [r for r in rob if r["cell"] not in PRIMARY_CELLS]
         out["robustness_route_b"] = tally(rob) if rob else None
-        out["validation_stopped"] = validation["stopped"]
-        out["cumulative_cpu_hours"] = validation.get("cumulative_cpu_hours")
 
         baseline = 1.0          # a run that stops at its own stage 1
         proj = project(mean_multiplier=t["mean_multiplier"],

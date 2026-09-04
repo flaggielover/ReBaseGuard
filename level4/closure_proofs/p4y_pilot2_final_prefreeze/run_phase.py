@@ -33,7 +33,8 @@ from p4y_pilot2.audit import audit, summarise as summarise_audits  # noqa: E402
 from p4y_pilot2 import rule as R  # noqa: E402
 from p4y_pilot2.strata import (  # noqa: E402
     BETA, CALIBRATION_BLOCKS, CAP_MULTIPLIERS, CELL_STRATA, CELLS, DELTA,
-    KAPPA_CANDIDATES, KAPPA_STAGE1, MIN_BLOCKS, MIN_BLOCK_MEAN_ALPHA,
+    KAPPA_CANDIDATES, KAPPA_STAGE1, MAX_CAP_MULTIPLIER, MIN_BLOCKS,
+    MIN_BLOCK_MEAN_ALPHA,
     PILOT2_CPU_CAP_HOURS, PRIMARY_CELLS, R_DESIGN, R_DESIGN_ROBUSTNESS,
     R_VALIDATION, R_VALIDATION_ROBUSTNESS, STRATA, VALIDATION_BASE,
     cap_blocks, pool_limit, reachable_addresses,
