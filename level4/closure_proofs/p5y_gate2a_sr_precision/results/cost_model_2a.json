@@ -1,0 +1,79 @@
+{
+ "schema": "rebaseguard.p5y.gate2a.costmodel.v1",
+ "binding": false,
+ "measured_precision_scaling_t_panel_relative_to_192bits": {
+  "8": {
+   "192": 1.0,
+   "256": 1.0328980837714115,
+   "384": 1.2017975241648267,
+   "512": 1.4130914024080055
+  },
+  "10": {
+   "192": 1.0,
+   "256": 1.0259812823020003,
+   "384": 1.1715323369185657,
+   "512": 1.3177818131023937
+  }
+ },
+ "sr_unit_cpu_hours": {
+  "deg8@256": 95.7295398888891,
+  "deg8@384": 111.38322922222196,
+  "deg8@512": 130.96605744444457,
+  "deg10@256": 70.08741819444435,
+  "deg10@384": 80.03038480555533,
+  "deg10@512": 90.02106238888886
+ },
+ "cusum_unit_cpu_hours": 2.862480884236111,
+ "m_sharing_multiplier": 24.5,
+ "bands": {
+  "optimistic": {
+   "config": "degree 10 @ 256 (frozen-rule winner)",
+   "cpu_hours": 2404.775185653931,
+   "assumption": "m>1 per-function cost equals m=1; cover as estimated",
+   "wall_hours_16_cores": 158.2088937930218,
+   "wall_hours_64_cores": 41.74956919538075,
+   "wall_hours_128_cores": 23.48413267240167
+  },
+  "central": {
+   "config": "degree 8 @ 256 (precision-saturated, safer backend)",
+   "cpu_hours": 3250.0613167808788,
+   "assumption": "m>1 per-function cost equals m=1; cover as estimated",
+   "wall_hours_16_cores": 213.81982347242624,
+   "wall_hours_64_cores": 56.42467563855692,
+   "wall_hours_128_cores": 31.73888004668827
+  },
+  "conservative": {
+   "config": "degree 8 @ 256",
+   "cpu_hours": 6058.479606440914,
+   "assumption": "m>1 functions 1.5x; SR cover 1.25x the estimate",
+   "wall_hours_16_cores": 398.5841846342707,
+   "wall_hours_64_cores": 105.18193761182141,
+   "wall_hours_128_cores": 59.16483990664955
+  },
+  "worst": {
+   "config": "degree 8 @ 384",
+   "cpu_hours": 11203.882849966963,
+   "assumption": "real production candidate needs 384 bits; m>1 2x; cover 1.5x",
+   "wall_hours_16_cores": 737.0975559188793,
+   "wall_hours_64_cores": 194.51185503414865,
+   "wall_hours_128_cores": 109.41291845670862
+  }
+ },
+ "selected_precision_degree8": 256,
+ "central_cpu_hours": 3250.0613167808788,
+ "feasibility_ceiling": 30000,
+ "sr_production_feasibility": "STRONG",
+ "gate1_bands_for_comparison": {
+  "optimistic": 3257.832701652122,
+  "central": 4839.568569113872,
+  "conservative": 14377.164257248682,
+  "worst": 31823.43928269225
+ },
+ "gate1_assumed_precision_multipliers": {
+  "optimistic": 1.0,
+  "central": 1.5,
+  "conservative": 3.0,
+  "worst": 5.0
+ },
+ "note": "Gate-1 assumed precision multipliers of 1.0/1.5/3.0/5.0. MEASURED multipliers are 1.03 (256), 1.17-1.20 (384), 1.32-1.41 (512). Gate-1's conservative and worst bands were over-pessimistic on precision."
+}
