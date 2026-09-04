@@ -1,10 +1,18 @@
-T2 first result-bearing execution: 2026-09-04T08:29:37Z
-T3 measurement pools complete: 2026-09-04T09:48:43Z
-T4 diagnostics complete: 2026-09-04T12:13:41Z
-T5 report complete: 2026-09-04T12:14:57Z
-T4 diagnostics complete: 2026-09-04T12:15:13Z
-T4 diagnostics complete: 2026-09-04T12:15:14Z
-T4 diagnostics complete: 2026-09-04T12:15:15Z
-T4 diagnostics complete: 2026-09-04T12:15:19Z
-T4 diagnostics complete: 2026-09-04T12:15:20Z
-T4 diagnostics complete: 2026-09-04T12:15:51Z
+P4Y PILOT-4 temporal ledger.
+
+T0/T1 are the freeze commit 783151b5417c410d7aecc2e924cc62e2980463a9, which
+contains the preregistration, all source and all tests, and zero files under
+results/.
+
+T2 first result-bearing execution: 2026-09-04T08:29:37Z   (master phase)
+T3 measurement pools complete:     2026-09-04T09:48:43Z
+T4 diagnostics complete:           2026-09-04T12:13:41Z   (reference phase)
+T5 report complete:                2026-09-04T12:14:57Z
+
+NOTE.  An earlier revision of this file carried repeated "T4 diagnostics
+complete" lines timestamped AFTER T5.  They were an artifact of the shell
+monitoring loops used to wait for results/reference.json: each loop appended a
+date stamp when it exited, and several exited after the phase had already
+finished.  The four timestamps above are the authoritative ones -- the first
+occurrence of each event.  No measurement, threshold, criterion or result is
+affected; this is a log file, not an input to anything.
