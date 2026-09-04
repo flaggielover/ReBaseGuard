@@ -1,0 +1,60 @@
+{
+ "schema": "rebaseguard.p5y.k1.task1.adjudication.v1",
+ "binding": true,
+ "subject": "the artifact's mechanically-derived failure_class vs the frozen taxonomy",
+ "artifact_verdict": "FAIL",
+ "artifact_failure_class": "CANDIDATE_RESIDUAL_TOO_LARGE",
+ "governing_failure_class": "IMPLEMENTATION_DEFECT",
+ "verdict_unchanged": true,
+ "verdict_note": "Task 1 FAILS either way. Only the CAUSE is re-named; no outcome is upgraded.",
+ "measured": {
+  "delta_0_certified": 0.001106607209535348,
+  "delta_candidate_max": 0.00021305244925601228,
+  "overshoot_factor": 5.194060023246223,
+  "defect_polynomial_part": 8.153368898463163e-07,
+  "defect_polynomial_part_share_of_delta0": 0.0007367897866747743,
+  "total_interval_error": 0.0011057918726455015,
+  "interval_error_share_of_delta0": 0.9992632102133251,
+  "dominant_term": "main_taylor_and_truncation",
+  "dominant_term_value": 0.0010870266608613657,
+  "dominant_term_share_of_delta0": 0.9823057824806655,
+  "defect_constant_term": 2.0162029161699793e-07,
+  "defect_constant_radius": 2.6552452236927593e-08,
+  "propagated_if_polynomial_part_were_certified": 0.00015307721506014233,
+  "that_as_fraction_of_B_candidate": 0.003826930376503558
+ },
+ "why_not_CANDIDATE_RESIDUAL_TOO_LARGE": "The candidate's own residual is the POLYNOMIAL part of the defect Taylor model, certified at 8.153e-07, which is 0.074% of the certified delta_0 and would propagate to 0.38% of B_candidate. 99.93% of delta_0 is the certifier's own error ball, and 98.30% is a single term -- the (alpha,beta) truncation discard bound. Naming this a candidate-residual failure would attribute to the object a width produced entirely by the harness.",
+ "why_not_INTERVAL_WIDTH_TOO_LARGE": "That class covers the Arb working-precision radius (ledger line B_interval). The precision radius here is 2.655e-08 on the defect constant term -- four orders of magnitude below the dominant term. Precision is not the cause; 256 bits was never the constraint.",
+ "why_not_K1_CAMPAIGN_FAIL_ARCHITECTURE": "CHECKPOINT.md section 11 maps Task-1 FAIL to K1_CAMPAIGN_FAIL_ARCHITECTURE. That mapping presupposes the architecture was actually exercised. It was not: the harness's truncation term dominated before the raw-variable / Chebyshev-candidate / Taylor-model architecture was placed at risk. Declaring the architecture dead on this evidence would be unsupported. Equally, Task 1 did NOT pass, so the campaign does not proceed.",
+ "the_defect": {
+  "what": "Task-1 froze two harness parameters at T1 -- TRUNC_U = 32 (composed series truncation in the panel variable) and DEG_X = 6 (Taylor-model total degree in the patch-local coordinates) -- as 'implementation parameters, not scientific thresholds', WITHOUT deriving either from the frozen budget.",
+  "why_it_bites": "A composed term of total degree n in the panel variable distributes its mass over patch-local degrees with weight ratio H/(H+h) = 0.2041. Its expected (alpha,beta) degree is therefore 0.2041*n, which exceeds DEG_X = 6 once n > 29. TRUNC_U = 32 admits n up to 64, so for most of the retained series the MAJORITY of the mass falls outside the kept (alpha,beta) degrees and is surrendered to the discard bound. The two frozen parameters are mutually inconsistent.",
+  "secondary": "The discard bound also uses the a-priori |N_k| <= h^k N_0, which discards the Gaussian decay of the panel moments and is itself lossy for the surrendered terms.",
+  "whose_defect": "the Task-1 harness, authored in this task -- not the checkpoint, not the candidate, not the architecture",
+  "not_patched_because": "Re-running with a larger DEG_X after seeing that DEG_X dominated is precisely the refit-for-PASS the frozen rules forbid (section 5) and that this gate history has been repairing since Gate-2C. The result stands."
+ },
+ "what_did_not_fail": {
+  "checkpoint_integrity": "PASS -- hash recomputed from the anchor, 18 blobs, 10 protected trees, 15 protected blobs, none mutated",
+  "predeclared_object": "PASS -- SR / F_0 / e=1/4 / patch (17,11) / grid 64, all read from the frozen checkpoint",
+  "candidate_construction": "PASS -- genuine resolvent solve, cond(I-W) = 717.86, 289 collocation nodes, no refit loop, no regularisation",
+  "representation_complexity": "PASS -- score 37,281 of 60,000, guard fired before kernel construction",
+  "amplification_direction": "PASS -- UPPER, C(0) = 1205.94 <= 25000/19, monotone non-increasing in e",
+  "P1": "PASS -- rule target evaluated inside workprec(512), distinct from the check threshold, E_d = 8.864e-10 <= 1e-9, headroom 1.136e-01 vs a 1e-06 guard",
+  "precision": "NOT the constraint -- 256 bits, no escalation, radius 2.66e-08",
+  "pipeline_correctness": "PASS -- validated pre-T2 against two closed forms: the zero candidate reproduces -S_0 exactly, and the constant candidate reproduces h_1 - S_0 to 1e-13 with both sides ~1e-7, exercising the full kernel with real cancellation",
+  "reproducibility": "PASS -- every decisive output bit-identical across independent processes"
+ },
+ "corroboration_not_certification": "A non-result-bearing float probe run BEFORE the implementation was frozen put the true defect on this patch at ~2.4e-07, consistent with the certified constant term 2.016e-07 +/- 2.66e-08. This CORROBORATES the diagnosis. It certifies nothing and no verdict rests on it.",
+ "what_is_NOT_established": [
+  "that the genuine F_0 candidate meets B_candidate -- it was not certified to",
+  "that bidegree (16,16) suffices for F_0 anywhere but as indicated evidence",
+  "any statement about the other 3993 SR patches, the CUSUM detector, or any m",
+  "that the K1 architecture is viable -- Task 1 did not reach that question",
+  "that the K1 architecture is dead -- Task 1 did not reach that question either"
+ ],
+ "successor_requirement": "A successor task must DERIVE its truncation parameters from the frozen budget before freezing them: choose the panel half-width h and the patch-local Taylor degree DEG_X jointly so that the discard bound is a preregistered fraction of B_candidate, and predeclare that fraction. It must also replace the a-priori moment bound with the actual Gaussian decay. No scientific threshold, degree, precision or budget line changes.",
+ "P5Y_K1_TASK1": "FAIL",
+ "NEXT_ACTION": "STOP_K1_AND_DESIGN_SUCCESSOR_ONLY_IF_SCIENTIFICALLY_JUSTIFIED",
+ "successor_scientifically_justified": true,
+ "justification": "the certified decomposition, which is internal to the artifact and rigorous, localises 98.30% of the failure in a harness term with a named and derivable fix, and 0.074% in the object under test"
+}
