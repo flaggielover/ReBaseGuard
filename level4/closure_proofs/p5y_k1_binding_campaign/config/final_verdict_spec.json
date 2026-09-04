@@ -1,0 +1,99 @@
+{
+ "schema": "rebaseguard.p5y.k1.verdict.v1",
+ "binding": true,
+ "verdicts": {
+  "K1_CLOSED": {
+   "requires_all": [
+    "checkpoint_integrity_PASS",
+    "task1_F0_PASS",
+    "every_compact_cover_cell_in_scope_PASS",
+    "all_m_assembled_for_both_detectors",
+    "far_field_splice_valid_both_detectors",
+    "every_absolute_budget_respected",
+    "non_borrowing_rule_intact",
+    "no_load_bearing_STOP_fired",
+    "required_artifact_set_complete",
+    "independent_adjudication_PASS"
+   ],
+   "producer_may_self_award": false
+  },
+  "K1_FAIL_MATHEMATICAL": {
+   "trigger": "S01 on a genuine enclosure violation"
+  },
+  "K1_FAIL_CERTIFICATE": {
+   "trigger": "S02/S03/S10 or interval width; the architecture cannot certify inside budget"
+  },
+  "K1_FAIL_GOVERNANCE": {
+   "trigger": "S04/S05/S06/S07/S11/S12"
+  },
+  "K1_CAMPAIGN_FAIL_ARCHITECTURE": {
+   "trigger": "Task-1 F_r qualification FAIL"
+  },
+  "K1_INCOMPLETE_BUDGET": {
+   "trigger": "S13 hard CPU cap reached"
+  },
+  "K1_INCOMPLETE_EXTERNAL": {
+   "trigger": "external interruption, not a budget breach"
+  }
+ },
+ "derived_mechanically_from_recorded_fields": true,
+ "narrative_override_allowed": false,
+ "downstream_effects": {
+  "if_K1_CLOSED": {
+   "K1_STATUS": "K1_CLOSED_BY_P5Y_BINDING_CAMPAIGN",
+   "P5_SCIENTIFIC_LINE_STATUS": "PARTIALLY_REPAIRED_BY_SUCCESSOR",
+   "P5_ORIGINAL_VERDICT": "PARTIAL",
+   "P5X_FINAL_VERDICT": "PARTIAL",
+   "K2_s_min": "OPEN",
+   "K3_M2": "OPEN",
+   "K4_H2": "OPEN",
+   "K5_H3a": "OPEN",
+   "NOVELTY_STATUS": "NOT_ESTABLISHED",
+   "LEVEL4_GLOBAL_CLOSURE": "NO",
+   "auto_close_P5": false
+  }
+ },
+ "post_freeze_amendment_allowed": false,
+ "required_artifacts": [
+  "certificates/cusum_compact_certificate.json",
+  "certificates/sr_compact_certificate.json",
+  "certificates/far_field_splice.json",
+  "certificates/assembly_all_m.json",
+  "results/cells_cusum.jsonl",
+  "results/cells_sr.jsonl",
+  "results/task1_F0_qualification.json",
+  "results/cpu_ledger.json",
+  "results/budget_ledger_usage.json",
+  "logs/run_log.jsonl",
+  "logs/shard_map.json",
+  "logs/work_conservation.json",
+  "adjudication/ADJUDICATION_REPORT.md",
+  "adjudication/ADJUDICATION_VERDICT.json",
+  "FINAL_K1_VERDICT.json"
+ ],
+ "missing_artifact_is": "CHECKPOINT_INTEGRITY_FAILURE",
+ "cell_record_fields": [
+  "detector",
+  "m_relevance",
+  "e_interval",
+  "cover_cell_id",
+  "candidate_id",
+  "candidate_degree",
+  "candidate_residual",
+  "kernel_residual",
+  "resolvent_amplification_bound",
+  "rounding_error",
+  "interval_radius",
+  "propagated_absolute_half_width",
+  "allowed_absolute_half_width",
+  "budget_usage_by_component",
+  "P1_E_d",
+  "P1_headroom_rel",
+  "complexity_score",
+  "working_precision_bits",
+  "timing_cpu_seconds",
+  "verdict",
+  "failure_class"
+ ],
+ "summary_only_artifacts_allowed": false
+}

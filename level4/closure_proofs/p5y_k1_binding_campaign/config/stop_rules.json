@@ -1,0 +1,114 @@
+{
+ "schema": "rebaseguard.p5y.k1.stoprules.v1",
+ "binding": true,
+ "rules": [
+  {
+   "id": "S01",
+   "condition": "certified cell enclosure not strictly inside (-2,2)",
+   "failure_class": "MATHEMATICAL_COUNTEREXAMPLE",
+   "action": "STOP IMMEDIATELY"
+  },
+  {
+   "id": "S02",
+   "condition": "candidate budget B_candidate cannot be met",
+   "failure_class": "CANDIDATE_RESIDUAL_TOO_LARGE",
+   "action": "STOP IMMEDIATELY"
+  },
+  {
+   "id": "S03",
+   "condition": "representation-complexity guard fails",
+   "failure_class": "REPRESENTATION_COMPLEXITY_FAILURE",
+   "action": "STOP IMMEDIATELY"
+  },
+  {
+   "id": "S04",
+   "condition": "amplification direction invalid (lower bound used as upper)",
+   "failure_class": "CHECKPOINT_INTEGRITY_FAILURE",
+   "action": "STOP IMMEDIATELY"
+  },
+  {
+   "id": "S05",
+   "condition": "protected artifact mutated",
+   "failure_class": "CHECKPOINT_INTEGRITY_FAILURE",
+   "action": "STOP IMMEDIATELY"
+  },
+  {
+   "id": "S06",
+   "condition": "checkpoint hash mismatch",
+   "failure_class": "CHECKPOINT_INTEGRITY_FAILURE",
+   "action": "STOP IMMEDIATELY"
+  },
+  {
+   "id": "S07",
+   "condition": "cover gap or overlap",
+   "failure_class": "COVER_INTEGRITY_FAILURE",
+   "action": "STOP IMMEDIATELY"
+  },
+  {
+   "id": "S08",
+   "condition": "far-field splice mismatch at e_star_D",
+   "failure_class": "FAR_FIELD_SPLICE_FAILURE",
+   "action": "STOP IMMEDIATELY"
+  },
+  {
+   "id": "S09",
+   "condition": "P1 headroom below 1e-6",
+   "failure_class": "P1_HEADROOM_FAILURE",
+   "action": "STOP IMMEDIATELY"
+  },
+  {
+   "id": "S10",
+   "condition": "unapproved precision or degree substitution",
+   "failure_class": "PRECISION_FAILURE",
+   "action": "STOP IMMEDIATELY"
+  },
+  {
+   "id": "S11",
+   "condition": "budget-ledger violation or attempted redistribution",
+   "failure_class": "BUDGET_EXCEEDED",
+   "action": "STOP IMMEDIATELY"
+  },
+  {
+   "id": "S12",
+   "condition": "deterministic work-conservation mismatch",
+   "failure_class": "IMPLEMENTATION_DEFECT",
+   "action": "STOP IMMEDIATELY"
+  },
+  {
+   "id": "S13",
+   "condition": "CPU cap breach",
+   "failure_class": "BUDGET_EXCEEDED",
+   "action": "STOP IMMEDIATELY"
+  }
+ ],
+ "continue_to_see_what_happens_allowed": false,
+ "non_decisive_diagnostic_work_exists": false,
+ "cpu_stop_semantics": {
+  "on_cap": [
+   "stop launching new work",
+   "preserve every completed artifact and partial log",
+   "mark uncomputed cells NOT_COMPUTED explicitly",
+   "PASS may not be inferred from partial coverage",
+   "verdict forced to K1_INCOMPLETE_BUDGET",
+   "no cap extension inside this checkpoint"
+  ],
+  "external_interruption_verdict": "K1_INCOMPLETE_EXTERNAL"
+ },
+ "failure_taxonomy": [
+  "NONE",
+  "MATHEMATICAL_COUNTEREXAMPLE",
+  "CANDIDATE_RESIDUAL_TOO_LARGE",
+  "KERNEL_ERROR_TOO_LARGE",
+  "INTERVAL_WIDTH_TOO_LARGE",
+  "REPRESENTATION_COMPLEXITY_FAILURE",
+  "P1_HEADROOM_FAILURE",
+  "COVER_INTEGRITY_FAILURE",
+  "FAR_FIELD_SPLICE_FAILURE",
+  "PRECISION_FAILURE",
+  "BUDGET_EXCEEDED",
+  "CHECKPOINT_INTEGRITY_FAILURE",
+  "IMPLEMENTATION_DEFECT",
+  "INCOMPLETE_EXTERNAL",
+  "UNKNOWN"
+ ]
+}

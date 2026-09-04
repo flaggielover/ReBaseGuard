@@ -1,0 +1,380 @@
+{
+ "schema": "rebaseguard.p5y.k1.dag.v1",
+ "binding": true,
+ "detectors": [
+  "CUSUM",
+  "SR"
+ ],
+ "m_values": [
+  1,
+  2,
+  3,
+  5
+ ],
+ "cartesian_scope_cells": 8,
+ "functions_per_detector": 19,
+ "resolvent_solves_per_detector": 10,
+ "functions": [
+  {
+   "id": "h_1",
+   "kind": "closed_form",
+   "deps": [],
+   "expr": "1 - Phi(u+e) + Phi(l+e)",
+   "needed_by_m": [
+    3,
+    5
+   ]
+  },
+  {
+   "id": "h_2",
+   "kind": "kernel_apply",
+   "deps": [
+    "h_1"
+   ],
+   "expr": "K_e h_1",
+   "needed_by_m": [
+    5
+   ]
+  },
+  {
+   "id": "h_3",
+   "kind": "kernel_apply",
+   "deps": [
+    "h_2"
+   ],
+   "expr": "K_e h_2",
+   "needed_by_m": [
+    5
+   ]
+  },
+  {
+   "id": "h_4",
+   "kind": "kernel_apply",
+   "deps": [
+    "h_3"
+   ],
+   "expr": "K_e h_3",
+   "needed_by_m": [
+    5
+   ]
+  },
+  {
+   "id": "S_0",
+   "kind": "closed_form",
+   "deps": [],
+   "expr": "phi(u+e) - phi(l+e)",
+   "needed_by_m": [
+    2,
+    3,
+    5
+   ]
+  },
+  {
+   "id": "S_1",
+   "kind": "kernel_apply",
+   "deps": [
+    "h_1"
+   ],
+   "expr": "K_z,e h_1 + e K_e h_1",
+   "needed_by_m": [
+    3,
+    5
+   ]
+  },
+  {
+   "id": "S_2",
+   "kind": "kernel_apply",
+   "deps": [
+    "h_2"
+   ],
+   "expr": "K_z,e h_2 + e K_e h_2",
+   "needed_by_m": [
+    5
+   ]
+  },
+  {
+   "id": "S_3",
+   "kind": "kernel_apply",
+   "deps": [
+    "h_3"
+   ],
+   "expr": "K_z,e h_3 + e K_e h_3",
+   "needed_by_m": [
+    5
+   ]
+  },
+  {
+   "id": "S_4",
+   "kind": "kernel_apply",
+   "deps": [
+    "h_4"
+   ],
+   "expr": "K_z,e h_4 + e K_e h_4",
+   "needed_by_m": [
+    5
+   ]
+  },
+  {
+   "id": "F_0",
+   "kind": "resolvent_solve",
+   "deps": [
+    "S_0"
+   ],
+   "expr": "(I - K_e)^-1 S_0",
+   "needed_by_m": [
+    1,
+    2,
+    3,
+    5
+   ]
+  },
+  {
+   "id": "dF_0",
+   "kind": "resolvent_solve",
+   "deps": [
+    "F_0",
+    "S_0"
+   ],
+   "expr": "derivative equation; d_e h_1 = -S_0 exactly",
+   "needed_by_m": [
+    1,
+    2,
+    3,
+    5
+   ]
+  },
+  {
+   "id": "F_1",
+   "kind": "resolvent_solve",
+   "deps": [
+    "S_1"
+   ],
+   "expr": "(I - K_e)^-1 S_1",
+   "needed_by_m": [
+    2,
+    3,
+    5
+   ]
+  },
+  {
+   "id": "dF_1",
+   "kind": "resolvent_solve",
+   "deps": [
+    "F_1",
+    "S_0"
+   ],
+   "expr": "derivative equation; d_e h_1 = -S_0 exactly",
+   "needed_by_m": [
+    2,
+    3,
+    5
+   ]
+  },
+  {
+   "id": "F_2",
+   "kind": "resolvent_solve",
+   "deps": [
+    "S_2"
+   ],
+   "expr": "(I - K_e)^-1 S_2",
+   "needed_by_m": [
+    3,
+    5
+   ]
+  },
+  {
+   "id": "dF_2",
+   "kind": "resolvent_solve",
+   "deps": [
+    "F_2",
+    "S_0"
+   ],
+   "expr": "derivative equation; d_e h_1 = -S_0 exactly",
+   "needed_by_m": [
+    3,
+    5
+   ]
+  },
+  {
+   "id": "F_3",
+   "kind": "resolvent_solve",
+   "deps": [
+    "S_3"
+   ],
+   "expr": "(I - K_e)^-1 S_3",
+   "needed_by_m": [
+    5
+   ]
+  },
+  {
+   "id": "dF_3",
+   "kind": "resolvent_solve",
+   "deps": [
+    "F_3",
+    "S_0"
+   ],
+   "expr": "derivative equation; d_e h_1 = -S_0 exactly",
+   "needed_by_m": [
+    5
+   ]
+  },
+  {
+   "id": "F_4",
+   "kind": "resolvent_solve",
+   "deps": [
+    "S_4"
+   ],
+   "expr": "(I - K_e)^-1 S_4",
+   "needed_by_m": [
+    5
+   ]
+  },
+  {
+   "id": "dF_4",
+   "kind": "resolvent_solve",
+   "deps": [
+    "F_4",
+    "S_0"
+   ],
+   "expr": "derivative equation; d_e h_1 = -S_0 exactly",
+   "needed_by_m": [
+    5
+   ]
+  }
+ ],
+ "union_over_m_equals_m5_set": true,
+ "m_specific_solves": 0,
+ "geometry_multiplied_by_m": false,
+ "assembly": {
+  "general": "R_m = (1/m) sum_{r<m} F_r(x0) + sum_{t=1}^{m-1} (1/t - 1/m) sum_{r<t} (K_e^{t-r-1} S_r)(x0)",
+  "derivation": "P5X-T1(c) with raw = Z + e; every finite coefficient collapses to (1/t - 1/m).",
+  "verified_against_probabilistic_decomposition": [
+   2,
+   3
+  ],
+  "per_m": {
+   "1": {
+    "F": {
+     "F_0": "1"
+    },
+    "finite": {}
+   },
+   "2": {
+    "F": {
+     "F_0": "1/2",
+     "F_1": "1/2"
+    },
+    "finite": {
+     "S_0": "1/2"
+    }
+   },
+   "3": {
+    "F": {
+     "F_0": "1/3",
+     "F_1": "1/3",
+     "F_2": "1/3"
+    },
+    "finite": {
+     "S_0": "2/3",
+     "K S_0": "1/6",
+     "S_1": "1/6"
+    }
+   },
+   "5": {
+    "F": {
+     "F_0": "1/5",
+     "F_1": "1/5",
+     "F_2": "1/5",
+     "F_3": "1/5",
+     "F_4": "1/5"
+    },
+    "finite": {
+     "S_0": "4/5",
+     "K S_0": "3/10",
+     "S_1": "3/10",
+     "K^2 S_0": "2/15",
+     "K S_1": "2/15",
+     "S_2": "2/15",
+     "K^3 S_0": "1/20",
+     "K^2 S_1": "1/20",
+     "K S_2": "1/20",
+     "S_3": "1/20"
+    }
+   }
+  }
+ },
+ "phases": [
+  {
+   "id": "A",
+   "name": "integrity + Task-1 F_r qualification",
+   "detector": "SR",
+   "cpu_hours_est": 0.5,
+   "gates": [
+    "checkpoint_hash",
+    "protected_tree",
+    "direction_audit_both",
+    "complexity_guard",
+    "task1_F0"
+   ],
+   "on_fail": "K1_CAMPAIGN_FAIL_ARCHITECTURE"
+  },
+  {
+   "id": "B",
+   "name": "CUSUM compact certificate",
+   "detector": "CUSUM",
+   "cells": 323,
+   "functions": 19,
+   "cpu_hours_est": 27.19,
+   "on_fail": "per-cell failure_class; STOP under S01-S12"
+  },
+  {
+   "id": "C",
+   "name": "SR compact certificate",
+   "detector": "SR",
+   "cells": 322,
+   "functions": 19,
+   "cpu_hours_est": 863.84,
+   "on_fail": "per-cell failure_class; STOP under S01-S12"
+  },
+  {
+   "id": "D",
+   "name": "all-m assembly",
+   "detector": "both",
+   "m_values": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "cpu_hours_est": 0.0,
+   "note": "arithmetic over already-certified enclosures"
+  },
+  {
+   "id": "E",
+   "name": "far-field splice",
+   "detector": "both",
+   "cpu_hours_est": 0.01,
+   "note": "P5X-T3 B_D on [c_D, c_D+1] plus monotonicity; 3 outward-rounded Gaussian tail evaluations per detector"
+  },
+  {
+   "id": "F",
+   "name": "independent K1 adjudication",
+   "detector": "both",
+   "cpu_hours_est": 0.0,
+   "producer_may_self_award": false
+  }
+ ],
+ "phase_order_justification": "Task 1 runs first and on SR because every candidate failure in this campaign's history (Gate-2D, Gate-2E) was an SR candidate failure, and it costs one cell. CUSUM then precedes SR because it is ~3% of projected cost yet exercises the identical raw-variable assembly, m-sharing DAG and budget ledger: a scientific or governance failure surfacing there costs ~27 CPU-h instead of ~864. No order optimisation after observing production outcomes.",
+ "total_work_units": 12255,
+ "work_unit_address": "(detector, e_subcell_index, function_id)",
+ "shard_rule": "shard k gets units [floor(k*N/S), floor((k+1)*N/S))",
+ "shard_invariants": [
+  "sum of shard sizes == N exactly",
+  "no overlap",
+  "no omission",
+  "deterministic address mapping",
+  "aggregation identity reproduces the hull",
+  "every unit individually recomputable"
+ ],
+ "RNG_NOT_LOAD_BEARING": true
+}

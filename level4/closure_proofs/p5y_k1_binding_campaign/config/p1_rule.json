@@ -1,0 +1,14 @@
+{
+ "schema": "rebaseguard.p5y.k1.p1_rule.v1",
+ "binding": true,
+ "eps_P1": 0.001,
+ "P1_RULE_TARGET_EXPR": "(1 - eps_P1) * 1e-9",
+ "P1_CHECK_THRESHOLD": 1e-09,
+ "P1_HEADROOM_GUARD": 1e-06,
+ "P1_RULE_WORKPREC_BITS": 512,
+ "rule_and_check_distinct": true,
+ "headroom_rel_expr": "(P1_CHECK_THRESHOLD - E_d) / P1_CHECK_THRESHOLD",
+ "expected_headroom_rel": 0.001,
+ "headroom_over_guard": 1000.0,
+ "gate2f_defect_repaired": "P1_RULE_TARGET must be evaluated INSIDE workprec(512); Gate-2F evaluated it at ambient module precision, giving a 2.22e-16 relative provenance discrepancy against Gate-2E. Verdict-irrelevant there; fixed here."
+}

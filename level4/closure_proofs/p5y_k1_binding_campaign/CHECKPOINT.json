@@ -1,0 +1,1006 @@
+{
+ "schema": "rebaseguard.p5y.k1.checkpoint.v1",
+ "checkpoint_id": "P5Y-K1-BINDING-CHECKPOINT-1",
+ "binding": true,
+ "design_only": true,
+ "production_run": "NO",
+ "result_bearing_artifacts_present": false,
+ "inherited_state": {
+  "P5_ORIGINAL_VERDICT": "PARTIAL",
+  "P5X_FINAL_VERDICT": "PARTIAL",
+  "P5X_CAMPAIGN": "ARCHIVALLY_COMPLETE",
+  "P5Y_GATE1": "PASS_ROUTE_B_SUPPORTED",
+  "P5Y_GATE2A": "SR_PRECISION_PASS_256",
+  "P5Y_GATE2B": "SR_COVER_PASS_MEASURED",
+  "P5Y_GATE2C": "M2_ASSEMBLY_INCOMPLETE_EXTERNAL",
+  "P5Y_GATE2CBIS": "M2_ASSEMBLY_B_PASS",
+  "P5Y_GATE2D": "SR_REALCANDIDATE_FAIL_REPRESENTATION",
+  "P5Y_GATE2E": "SR_METRIC_FAIL_CANDIDATE",
+  "P5Y_GATE2F": "SR_METRIC_B_PASS_256",
+  "failed_gates_remain_failed_permanently": true,
+  "reinterpretation_of_prior_verdicts": false
+ },
+ "target": {
+  "claim": "R_max(D,m) = sup_e |R_{D,m}(e)| < 2 for both detectors and all frozen m",
+  "K1_only": true,
+  "out_of_scope": [
+   "K2_s_min",
+   "K3_M2",
+   "K4_H2",
+   "K5_H3a",
+   "novelty",
+   "level4_global_closure"
+  ]
+ },
+ "scope": {
+  "detectors": {
+   "CUSUM": {
+    "k": 0.5,
+    "h": 5,
+    "two_sided": true,
+    "test": "inclusive post-update",
+    "priority": "plus-arm"
+   },
+   "SR": {
+    "A": 520.886133602749,
+    "charts": 2,
+    "stored": "y=log(1+R)",
+    "y0": 0.0,
+    "b_SR_is_log1pA": true,
+    "erratum": "D1 (b_SR = log(1+A))"
+   }
+  },
+  "m_values": [
+   1,
+   2,
+   3,
+   5
+  ],
+  "cartesian_cells": 8,
+  "observation": "raw_t ~ iid N(0,1), Delta = 0, z_t = raw_t - e",
+  "stopping": "tau inclusive, w = min(m,tau), Stage-D convention A",
+  "source": "p5x_global_nonlinear_dynamics/FROZEN_SCOPE.md",
+  "result_dependent_cell_deletion_allowed": false
+ },
+ "architecture": {
+  "route": "B",
+  "raw_variable_reformulation": true,
+  "external_plus_e_cancellation": false,
+  "CUSUM_backend": "recentred Hermite phi-expansion order 120, exact-dyadic Chebyshev degree 12, Bernstein range bound, depth ladder (0,1,2,3), 256-bit Arb",
+  "SR_backend": "degree-8 composed contraction, candidate bidegree (16,16), 256-bit Arb, patch grid 64, continuous minimal-safe panel rule, Gate-2F asymmetric P1",
+  "m_sharing": true,
+  "far_field": "P5X-T3 analytic splice",
+  "substitution_after_results_allowed": false
+ },
+ "amplification": {
+  "type": "UPPER",
+  "object": "||(I - K_e)^{-1}||_inf = sup_x E_{x,e}[tau]",
+  "form": "C = min_t t / H_t(0), H_t a LOWER Bellman envelope",
+  "per_detector": {
+   "CUSUM": {
+    "source": "compute_optimization_r1/drift_minorant.py",
+    "cells": 100,
+    "n_max": 250,
+    "bits": 192,
+    "C_at_0": 1232.84
+   },
+   "SR": {
+    "source": "p5y_gate2b_sr_cover/sr_cover.py",
+    "cells": 200,
+    "n_max": 250,
+    "bits": 192,
+    "C_at_0": 1205.9371382854872,
+    "C_at_quarter": 187.7471962405577
+   }
+  },
+  "certified_cap": 1315.7894736842106,
+  "direction_audit_mandatory_before_cells": true,
+  "uses_P5X_defect_D3_assumption": false
+ },
+ "budget_ledger": {
+  "schema": "rebaseguard.p5y.k1.budget_ledger.v1",
+  "binding": true,
+  "scientific_target": "R_MAX_LT_2",
+  "metric_type": "ABSOLUTE",
+  "boundary": 2.0,
+  "slack_R": 2.0,
+  "alpha": 0.1,
+  "w_target": 0.2,
+  "ledger_fractions": {
+   "B_cover": [
+    1,
+    4
+   ],
+   "B_candidate": [
+    1,
+    5
+   ],
+   "B_kernel": [
+    1,
+    5
+   ],
+   "B_other": [
+    1,
+    5
+   ],
+   "B_rounding": [
+    1,
+    20
+   ],
+   "B_interval": [
+    1,
+    20
+   ]
+  },
+  "ledger_absolute": {
+   "B_cover": 0.05,
+   "B_candidate": 0.04,
+   "B_kernel": 0.04,
+   "B_other": 0.04,
+   "B_rounding": 0.01,
+   "B_interval": 0.01,
+   "B_resolvent": 0.0
+  },
+  "reserve_fraction": [
+   1,
+   20
+  ],
+  "reserve_absolute": 0.01,
+  "allocated_fraction_sum": [
+   19,
+   20
+  ],
+  "allocated_plus_reserve_eq_one": true,
+  "local_gate_components": [
+   "B_candidate",
+   "B_kernel",
+   "B_interval",
+   "B_rounding"
+  ],
+  "local_gate_budget": 0.1,
+  "B_resolvent_zero_reason": "C is a MULTIPLICATIVE amplifier of local error, never an additive budget line; giving it an additive share would double-count.",
+  "redistribution_allowed": false,
+  "reserve_drawable": false,
+  "post_result_rebudgeting_allowed": false,
+  "assembly_coefficient_max_over_m": 1.0,
+  "assembly_coefficient_argmax_m": 1,
+  "gate2e_assembly_coefficient_used": 0.5,
+  "gate2e_coefficient_was_m2_specific": true,
+  "delta_max_formula": "LOCAL_GATE_BUDGET / C_D(e_lo)",
+  "w_panel_max_formula": "LOCAL_GATE_BUDGET / ( C_D(e_lo) * n_panels(patch) )",
+  "reference_cell": {
+   "detector": "SR",
+   "e": 0.25,
+   "patch": [
+    17,
+    11
+   ],
+   "C_D": 187.7471962405577,
+   "n_panels": 30,
+   "delta_max": 0.0005326311231400307,
+   "w_panel_max": 1.7754370771334357e-05,
+   "gate2e_w_panel_max": 3.550874083164312e-05,
+   "tightening_factor_vs_gate2e": 0.5000000100119798,
+   "gate2e_delta_candidate_max_carried": 0.0005340432825927636,
+   "delta_max_provenance_note": "Gate-2E carried 5.340433e-04; the frozen FORMULA above is authoritative and yields 5.326287e-04 at the same drift. The 0.27% difference is a Gate-2E constant-formation artifact and is recorded, not silently adopted; the formula is stricter."
+  },
+  "worst_case_C_at_e0": {
+   "detector": "SR",
+   "C_D": 1205.9371382854872,
+   "delta_max": 8.292306192856176e-05
+  },
+  "C_evaluated_at": "e_lo, the smallest |e| of the cell (worst case by M2)"
+ },
+ "p1_rule": {
+  "schema": "rebaseguard.p5y.k1.p1_rule.v1",
+  "binding": true,
+  "eps_P1": 0.001,
+  "P1_RULE_TARGET_EXPR": "(1 - eps_P1) * 1e-9",
+  "P1_CHECK_THRESHOLD": 1e-09,
+  "P1_HEADROOM_GUARD": 1e-06,
+  "P1_RULE_WORKPREC_BITS": 512,
+  "rule_and_check_distinct": true,
+  "headroom_rel_expr": "(P1_CHECK_THRESHOLD - E_d) / P1_CHECK_THRESHOLD",
+  "expected_headroom_rel": 0.001,
+  "headroom_over_guard": 1000.0,
+  "gate2f_defect_repaired": "P1_RULE_TARGET must be evaluated INSIDE workprec(512); Gate-2F evaluated it at ambient module precision, giving a 2.22e-16 relative provenance discrepancy against Gate-2E. Verdict-irrelevant there; fixed here."
+ },
+ "complexity_guard": {
+  "schema": "rebaseguard.p5y.k1.complexity_guard.v1",
+  "binding": true,
+  "score_formula": "(deg_a + 1) * (deg_b + 1) * (composed_z_degree + 1)",
+  "hard_bidegree": {
+   "SR": [
+    16,
+    16
+   ],
+   "CUSUM": [
+    12,
+    12
+   ]
+  },
+  "composed_z_degree": {
+   "SR": 128,
+   "CUSUM": 145
+  },
+  "measured_scores": {
+   "SR": 37281,
+   "CUSUM": 24674
+  },
+  "PRODUCTION_COMPLEXITY_CEILING": 60000,
+  "headroom": {
+   "SR": 1.6093988895147662,
+   "CUSUM": 2.431709491772716
+  },
+  "rejects_bidegree_20": 71001,
+  "gate2c_defect_score_order": 5447544,
+  "pilot_era_ceiling_not_used": 100000,
+  "fires_before_kernel_construction": true
+ },
+ "precision_policy": {
+  "schema": "rebaseguard.p5y.k1.precision_policy.v1",
+  "binding": true,
+  "SR_production_bits": 256,
+  "CUSUM_production_bits": 256,
+  "P1_rule_workprec_bits": 512,
+  "PRECISION_ESCALATION_ALLOWED": false,
+  "DEGREE_ADAPTATION_ALLOWED": false,
+  "POST_RESULT_REBUDGETING_ALLOWED": false,
+  "on_interval_too_wide": "STOP (S10 / PRECISION_FAILURE); never silent rerun"
+ },
+ "cover": {
+  "CUSUM": {
+   "schema": "rebaseguard.p5y.k1.cover.v1",
+   "binding": true,
+   "detector": "CUSUM",
+   "e_star": 5.5,
+   "e_star_exact": "11/2 = c_D = h/2 + k*... frozen c_CUSUM",
+   "interval": [
+    0.0,
+    5.5
+   ],
+   "subcell_count": 323,
+   "source_artifact": "level4/closure_proofs/p5x_global_nonlinear_dynamics/compute_optimization_r1/R1_COST_REPROJECTION.md",
+   "source_note": "R1 optimized monotone-minorant cover: 334 over [0,12], 323 over [0, e_star] = [0, 5.5]",
+   "step_rule": "h(e) = 1 / (4 a C(e)),  a = 2 phi(0) = 0.797884560802865...",
+   "walk": "greedy from e=0, exact tiling, no adaptive splitting",
+   "covers_exactly": true,
+   "adaptive_splitting_allowed": false
+  },
+  "SR": {
+   "schema": "rebaseguard.p5y.k1.cover.v1",
+   "binding": true,
+   "detector": "SR",
+   "e_star": 6.755531464321473,
+   "interval": [
+    0.0,
+    6.755531464321473
+   ],
+   "subcell_count": 322,
+   "subcell_count_lower_bound": 309,
+   "outer_cell_count": 9,
+   "width_min": 0.0005196432291227758,
+   "width_median": 0.0015509296712958864,
+   "width_max": 0.31328086324531856,
+   "covers_exactly": true,
+   "patches_nominal": 4096,
+   "patches_live": 3994,
+   "patches_excluded": 102,
+   "patch_exclusion_rule": "exact multiplicative invariant (xi+' - 1)(xi-' - 1) = xi+ xi- / e; z cancels exactly, so patch geometry is e-independent",
+   "total_panels_over_live_patches": 83452,
+   "n_z_mean": 18.8943415122684,
+   "n_z_is_not_global_28": true,
+   "grid": 64,
+   "degree": 8,
+   "source_artifact": "level4/closure_proofs/p5y_gate2b_sr_cover/results/sr_cover.json",
+   "step_rule": "h(e) = 1 / (4 a C_SR(e))",
+   "adaptive_splitting_allowed": false
+  }
+ },
+ "production_dag": {
+  "schema": "rebaseguard.p5y.k1.dag.v1",
+  "binding": true,
+  "detectors": [
+   "CUSUM",
+   "SR"
+  ],
+  "m_values": [
+   1,
+   2,
+   3,
+   5
+  ],
+  "cartesian_scope_cells": 8,
+  "functions_per_detector": 19,
+  "resolvent_solves_per_detector": 10,
+  "functions": [
+   {
+    "id": "h_1",
+    "kind": "closed_form",
+    "deps": [],
+    "expr": "1 - Phi(u+e) + Phi(l+e)",
+    "needed_by_m": [
+     3,
+     5
+    ]
+   },
+   {
+    "id": "h_2",
+    "kind": "kernel_apply",
+    "deps": [
+     "h_1"
+    ],
+    "expr": "K_e h_1",
+    "needed_by_m": [
+     5
+    ]
+   },
+   {
+    "id": "h_3",
+    "kind": "kernel_apply",
+    "deps": [
+     "h_2"
+    ],
+    "expr": "K_e h_2",
+    "needed_by_m": [
+     5
+    ]
+   },
+   {
+    "id": "h_4",
+    "kind": "kernel_apply",
+    "deps": [
+     "h_3"
+    ],
+    "expr": "K_e h_3",
+    "needed_by_m": [
+     5
+    ]
+   },
+   {
+    "id": "S_0",
+    "kind": "closed_form",
+    "deps": [],
+    "expr": "phi(u+e) - phi(l+e)",
+    "needed_by_m": [
+     2,
+     3,
+     5
+    ]
+   },
+   {
+    "id": "S_1",
+    "kind": "kernel_apply",
+    "deps": [
+     "h_1"
+    ],
+    "expr": "K_z,e h_1 + e K_e h_1",
+    "needed_by_m": [
+     3,
+     5
+    ]
+   },
+   {
+    "id": "S_2",
+    "kind": "kernel_apply",
+    "deps": [
+     "h_2"
+    ],
+    "expr": "K_z,e h_2 + e K_e h_2",
+    "needed_by_m": [
+     5
+    ]
+   },
+   {
+    "id": "S_3",
+    "kind": "kernel_apply",
+    "deps": [
+     "h_3"
+    ],
+    "expr": "K_z,e h_3 + e K_e h_3",
+    "needed_by_m": [
+     5
+    ]
+   },
+   {
+    "id": "S_4",
+    "kind": "kernel_apply",
+    "deps": [
+     "h_4"
+    ],
+    "expr": "K_z,e h_4 + e K_e h_4",
+    "needed_by_m": [
+     5
+    ]
+   },
+   {
+    "id": "F_0",
+    "kind": "resolvent_solve",
+    "deps": [
+     "S_0"
+    ],
+    "expr": "(I - K_e)^-1 S_0",
+    "needed_by_m": [
+     1,
+     2,
+     3,
+     5
+    ]
+   },
+   {
+    "id": "dF_0",
+    "kind": "resolvent_solve",
+    "deps": [
+     "F_0",
+     "S_0"
+    ],
+    "expr": "derivative equation; d_e h_1 = -S_0 exactly",
+    "needed_by_m": [
+     1,
+     2,
+     3,
+     5
+    ]
+   },
+   {
+    "id": "F_1",
+    "kind": "resolvent_solve",
+    "deps": [
+     "S_1"
+    ],
+    "expr": "(I - K_e)^-1 S_1",
+    "needed_by_m": [
+     2,
+     3,
+     5
+    ]
+   },
+   {
+    "id": "dF_1",
+    "kind": "resolvent_solve",
+    "deps": [
+     "F_1",
+     "S_0"
+    ],
+    "expr": "derivative equation; d_e h_1 = -S_0 exactly",
+    "needed_by_m": [
+     2,
+     3,
+     5
+    ]
+   },
+   {
+    "id": "F_2",
+    "kind": "resolvent_solve",
+    "deps": [
+     "S_2"
+    ],
+    "expr": "(I - K_e)^-1 S_2",
+    "needed_by_m": [
+     3,
+     5
+    ]
+   },
+   {
+    "id": "dF_2",
+    "kind": "resolvent_solve",
+    "deps": [
+     "F_2",
+     "S_0"
+    ],
+    "expr": "derivative equation; d_e h_1 = -S_0 exactly",
+    "needed_by_m": [
+     3,
+     5
+    ]
+   },
+   {
+    "id": "F_3",
+    "kind": "resolvent_solve",
+    "deps": [
+     "S_3"
+    ],
+    "expr": "(I - K_e)^-1 S_3",
+    "needed_by_m": [
+     5
+    ]
+   },
+   {
+    "id": "dF_3",
+    "kind": "resolvent_solve",
+    "deps": [
+     "F_3",
+     "S_0"
+    ],
+    "expr": "derivative equation; d_e h_1 = -S_0 exactly",
+    "needed_by_m": [
+     5
+    ]
+   },
+   {
+    "id": "F_4",
+    "kind": "resolvent_solve",
+    "deps": [
+     "S_4"
+    ],
+    "expr": "(I - K_e)^-1 S_4",
+    "needed_by_m": [
+     5
+    ]
+   },
+   {
+    "id": "dF_4",
+    "kind": "resolvent_solve",
+    "deps": [
+     "F_4",
+     "S_0"
+    ],
+    "expr": "derivative equation; d_e h_1 = -S_0 exactly",
+    "needed_by_m": [
+     5
+    ]
+   }
+  ],
+  "union_over_m_equals_m5_set": true,
+  "m_specific_solves": 0,
+  "geometry_multiplied_by_m": false,
+  "assembly": {
+   "general": "R_m = (1/m) sum_{r<m} F_r(x0) + sum_{t=1}^{m-1} (1/t - 1/m) sum_{r<t} (K_e^{t-r-1} S_r)(x0)",
+   "derivation": "P5X-T1(c) with raw = Z + e; every finite coefficient collapses to (1/t - 1/m).",
+   "verified_against_probabilistic_decomposition": [
+    2,
+    3
+   ],
+   "per_m": {
+    "1": {
+     "F": {
+      "F_0": "1"
+     },
+     "finite": {}
+    },
+    "2": {
+     "F": {
+      "F_0": "1/2",
+      "F_1": "1/2"
+     },
+     "finite": {
+      "S_0": "1/2"
+     }
+    },
+    "3": {
+     "F": {
+      "F_0": "1/3",
+      "F_1": "1/3",
+      "F_2": "1/3"
+     },
+     "finite": {
+      "S_0": "2/3",
+      "K S_0": "1/6",
+      "S_1": "1/6"
+     }
+    },
+    "5": {
+     "F": {
+      "F_0": "1/5",
+      "F_1": "1/5",
+      "F_2": "1/5",
+      "F_3": "1/5",
+      "F_4": "1/5"
+     },
+     "finite": {
+      "S_0": "4/5",
+      "K S_0": "3/10",
+      "S_1": "3/10",
+      "K^2 S_0": "2/15",
+      "K S_1": "2/15",
+      "S_2": "2/15",
+      "K^3 S_0": "1/20",
+      "K^2 S_1": "1/20",
+      "K S_2": "1/20",
+      "S_3": "1/20"
+     }
+    }
+   }
+  },
+  "phases": [
+   {
+    "id": "A",
+    "name": "integrity + Task-1 F_r qualification",
+    "detector": "SR",
+    "cpu_hours_est": 0.5,
+    "gates": [
+     "checkpoint_hash",
+     "protected_tree",
+     "direction_audit_both",
+     "complexity_guard",
+     "task1_F0"
+    ],
+    "on_fail": "K1_CAMPAIGN_FAIL_ARCHITECTURE"
+   },
+   {
+    "id": "B",
+    "name": "CUSUM compact certificate",
+    "detector": "CUSUM",
+    "cells": 323,
+    "functions": 19,
+    "cpu_hours_est": 27.19,
+    "on_fail": "per-cell failure_class; STOP under S01-S12"
+   },
+   {
+    "id": "C",
+    "name": "SR compact certificate",
+    "detector": "SR",
+    "cells": 322,
+    "functions": 19,
+    "cpu_hours_est": 863.84,
+    "on_fail": "per-cell failure_class; STOP under S01-S12"
+   },
+   {
+    "id": "D",
+    "name": "all-m assembly",
+    "detector": "both",
+    "m_values": [
+     1,
+     2,
+     3,
+     5
+    ],
+    "cpu_hours_est": 0.0,
+    "note": "arithmetic over already-certified enclosures"
+   },
+   {
+    "id": "E",
+    "name": "far-field splice",
+    "detector": "both",
+    "cpu_hours_est": 0.01,
+    "note": "P5X-T3 B_D on [c_D, c_D+1] plus monotonicity; 3 outward-rounded Gaussian tail evaluations per detector"
+   },
+   {
+    "id": "F",
+    "name": "independent K1 adjudication",
+    "detector": "both",
+    "cpu_hours_est": 0.0,
+    "producer_may_self_award": false
+   }
+  ],
+  "phase_order_justification": "Task 1 runs first and on SR because every candidate failure in this campaign's history (Gate-2D, Gate-2E) was an SR candidate failure, and it costs one cell. CUSUM then precedes SR because it is ~3% of projected cost yet exercises the identical raw-variable assembly, m-sharing DAG and budget ledger: a scientific or governance failure surfacing there costs ~27 CPU-h instead of ~864. No order optimisation after observing production outcomes.",
+  "total_work_units": 12255,
+  "work_unit_address": "(detector, e_subcell_index, function_id)",
+  "shard_rule": "shard k gets units [floor(k*N/S), floor((k+1)*N/S))",
+  "shard_invariants": [
+   "sum of shard sizes == N exactly",
+   "no overlap",
+   "no omission",
+   "deterministic address mapping",
+   "aggregation identity reproduces the hull",
+   "every unit individually recomputable"
+  ],
+  "RNG_NOT_LOAD_BEARING": true
+ },
+ "stop_rules": {
+  "schema": "rebaseguard.p5y.k1.stoprules.v1",
+  "binding": true,
+  "rules": [
+   {
+    "id": "S01",
+    "condition": "certified cell enclosure not strictly inside (-2,2)",
+    "failure_class": "MATHEMATICAL_COUNTEREXAMPLE",
+    "action": "STOP IMMEDIATELY"
+   },
+   {
+    "id": "S02",
+    "condition": "candidate budget B_candidate cannot be met",
+    "failure_class": "CANDIDATE_RESIDUAL_TOO_LARGE",
+    "action": "STOP IMMEDIATELY"
+   },
+   {
+    "id": "S03",
+    "condition": "representation-complexity guard fails",
+    "failure_class": "REPRESENTATION_COMPLEXITY_FAILURE",
+    "action": "STOP IMMEDIATELY"
+   },
+   {
+    "id": "S04",
+    "condition": "amplification direction invalid (lower bound used as upper)",
+    "failure_class": "CHECKPOINT_INTEGRITY_FAILURE",
+    "action": "STOP IMMEDIATELY"
+   },
+   {
+    "id": "S05",
+    "condition": "protected artifact mutated",
+    "failure_class": "CHECKPOINT_INTEGRITY_FAILURE",
+    "action": "STOP IMMEDIATELY"
+   },
+   {
+    "id": "S06",
+    "condition": "checkpoint hash mismatch",
+    "failure_class": "CHECKPOINT_INTEGRITY_FAILURE",
+    "action": "STOP IMMEDIATELY"
+   },
+   {
+    "id": "S07",
+    "condition": "cover gap or overlap",
+    "failure_class": "COVER_INTEGRITY_FAILURE",
+    "action": "STOP IMMEDIATELY"
+   },
+   {
+    "id": "S08",
+    "condition": "far-field splice mismatch at e_star_D",
+    "failure_class": "FAR_FIELD_SPLICE_FAILURE",
+    "action": "STOP IMMEDIATELY"
+   },
+   {
+    "id": "S09",
+    "condition": "P1 headroom below 1e-6",
+    "failure_class": "P1_HEADROOM_FAILURE",
+    "action": "STOP IMMEDIATELY"
+   },
+   {
+    "id": "S10",
+    "condition": "unapproved precision or degree substitution",
+    "failure_class": "PRECISION_FAILURE",
+    "action": "STOP IMMEDIATELY"
+   },
+   {
+    "id": "S11",
+    "condition": "budget-ledger violation or attempted redistribution",
+    "failure_class": "BUDGET_EXCEEDED",
+    "action": "STOP IMMEDIATELY"
+   },
+   {
+    "id": "S12",
+    "condition": "deterministic work-conservation mismatch",
+    "failure_class": "IMPLEMENTATION_DEFECT",
+    "action": "STOP IMMEDIATELY"
+   },
+   {
+    "id": "S13",
+    "condition": "CPU cap breach",
+    "failure_class": "BUDGET_EXCEEDED",
+    "action": "STOP IMMEDIATELY"
+   }
+  ],
+  "continue_to_see_what_happens_allowed": false,
+  "non_decisive_diagnostic_work_exists": false,
+  "cpu_stop_semantics": {
+   "on_cap": [
+    "stop launching new work",
+    "preserve every completed artifact and partial log",
+    "mark uncomputed cells NOT_COMPUTED explicitly",
+    "PASS may not be inferred from partial coverage",
+    "verdict forced to K1_INCOMPLETE_BUDGET",
+    "no cap extension inside this checkpoint"
+   ],
+   "external_interruption_verdict": "K1_INCOMPLETE_EXTERNAL"
+  },
+  "failure_taxonomy": [
+   "NONE",
+   "MATHEMATICAL_COUNTEREXAMPLE",
+   "CANDIDATE_RESIDUAL_TOO_LARGE",
+   "KERNEL_ERROR_TOO_LARGE",
+   "INTERVAL_WIDTH_TOO_LARGE",
+   "REPRESENTATION_COMPLEXITY_FAILURE",
+   "P1_HEADROOM_FAILURE",
+   "COVER_INTEGRITY_FAILURE",
+   "FAR_FIELD_SPLICE_FAILURE",
+   "PRECISION_FAILURE",
+   "BUDGET_EXCEEDED",
+   "CHECKPOINT_INTEGRITY_FAILURE",
+   "IMPLEMENTATION_DEFECT",
+   "INCOMPLETE_EXTERNAL",
+   "UNKNOWN"
+  ]
+ },
+ "final_verdict_spec": {
+  "schema": "rebaseguard.p5y.k1.verdict.v1",
+  "binding": true,
+  "verdicts": {
+   "K1_CLOSED": {
+    "requires_all": [
+     "checkpoint_integrity_PASS",
+     "task1_F0_PASS",
+     "every_compact_cover_cell_in_scope_PASS",
+     "all_m_assembled_for_both_detectors",
+     "far_field_splice_valid_both_detectors",
+     "every_absolute_budget_respected",
+     "non_borrowing_rule_intact",
+     "no_load_bearing_STOP_fired",
+     "required_artifact_set_complete",
+     "independent_adjudication_PASS"
+    ],
+    "producer_may_self_award": false
+   },
+   "K1_FAIL_MATHEMATICAL": {
+    "trigger": "S01 on a genuine enclosure violation"
+   },
+   "K1_FAIL_CERTIFICATE": {
+    "trigger": "S02/S03/S10 or interval width; the architecture cannot certify inside budget"
+   },
+   "K1_FAIL_GOVERNANCE": {
+    "trigger": "S04/S05/S06/S07/S11/S12"
+   },
+   "K1_CAMPAIGN_FAIL_ARCHITECTURE": {
+    "trigger": "Task-1 F_r qualification FAIL"
+   },
+   "K1_INCOMPLETE_BUDGET": {
+    "trigger": "S13 hard CPU cap reached"
+   },
+   "K1_INCOMPLETE_EXTERNAL": {
+    "trigger": "external interruption, not a budget breach"
+   }
+  },
+  "derived_mechanically_from_recorded_fields": true,
+  "narrative_override_allowed": false,
+  "downstream_effects": {
+   "if_K1_CLOSED": {
+    "K1_STATUS": "K1_CLOSED_BY_P5Y_BINDING_CAMPAIGN",
+    "P5_SCIENTIFIC_LINE_STATUS": "PARTIALLY_REPAIRED_BY_SUCCESSOR",
+    "P5_ORIGINAL_VERDICT": "PARTIAL",
+    "P5X_FINAL_VERDICT": "PARTIAL",
+    "K2_s_min": "OPEN",
+    "K3_M2": "OPEN",
+    "K4_H2": "OPEN",
+    "K5_H3a": "OPEN",
+    "NOVELTY_STATUS": "NOT_ESTABLISHED",
+    "LEVEL4_GLOBAL_CLOSURE": "NO",
+    "auto_close_P5": false
+   }
+  },
+  "post_freeze_amendment_allowed": false,
+  "required_artifacts": [
+   "certificates/cusum_compact_certificate.json",
+   "certificates/sr_compact_certificate.json",
+   "certificates/far_field_splice.json",
+   "certificates/assembly_all_m.json",
+   "results/cells_cusum.jsonl",
+   "results/cells_sr.jsonl",
+   "results/task1_F0_qualification.json",
+   "results/cpu_ledger.json",
+   "results/budget_ledger_usage.json",
+   "logs/run_log.jsonl",
+   "logs/shard_map.json",
+   "logs/work_conservation.json",
+   "adjudication/ADJUDICATION_REPORT.md",
+   "adjudication/ADJUDICATION_VERDICT.json",
+   "FINAL_K1_VERDICT.json"
+  ],
+  "missing_artifact_is": "CHECKPOINT_INTEGRITY_FAILURE",
+  "cell_record_fields": [
+   "detector",
+   "m_relevance",
+   "e_interval",
+   "cover_cell_id",
+   "candidate_id",
+   "candidate_degree",
+   "candidate_residual",
+   "kernel_residual",
+   "resolvent_amplification_bound",
+   "rounding_error",
+   "interval_radius",
+   "propagated_absolute_half_width",
+   "allowed_absolute_half_width",
+   "budget_usage_by_component",
+   "P1_E_d",
+   "P1_headroom_rel",
+   "complexity_score",
+   "working_precision_bits",
+   "timing_cpu_seconds",
+   "verdict",
+   "failure_class"
+  ],
+  "summary_only_artifacts_allowed": false
+ },
+ "cpu": {
+  "model": {
+   "schema": "rebaseguard.p5y.k1.cpumodel.v1",
+   "binding": true,
+   "result_bearing": false,
+   "programme_central_recomputed": 3091.856205551252,
+   "programme_central_carried": 3091.856205551252,
+   "programme_central_reproduces": true,
+   "primitives": {
+    "SR_ALL_SCOPE_CPU_H": 2227.792819637778,
+    "CUSUM_ALL_SCOPE_CPU_H": 70.13078166378472,
+    "N_FUNCTIONS_ALL_SCOPE": 49,
+    "N_FUNCTIONS_K1": 19,
+    "C3_DERIVATIVE_FACTOR": 1.17,
+    "OVERHEAD_FACTOR": 1.15,
+    "RATIO_PER_UNIT_M_GT_1": 0.629,
+    "BITS_384_TPANEL_FACTOR": 1.202,
+    "COVER_ENVELOPE_SLACK": 1.25,
+    "BETA_CAP": 1.5
+   },
+   "bands_cpu_hours": {
+    "sr_k1_cpu_hours": 863.8380321044446,
+    "cusum_k1_cpu_hours": 27.193568400243052,
+    "k1_scope_factor": 0.33141461712890286,
+    "optimistic": 656.9075203963633,
+    "central": 1024.6863405803906,
+    "conservative": 1231.6729813776294,
+    "worst_plausible": 1539.5912267220367,
+    "f_share_m_gt_1": 0.6680526315789473,
+    "f_cover_lower": 0.9596273291925466,
+    "hard_cpu_cap": 1848,
+    "cap_over_worst": 1.200318609202912,
+    "cap_over_central": 1.8034787103273748,
+    "soft_expected_band": [
+     1024.6863405803906,
+     1231.6729813776294
+    ]
+   }
+  },
+  "soft_expected_band_cpu_hours": [
+   1024.6863405803906,
+   1231.6729813776294
+  ],
+  "HARD_CPU_CAP_CPU_HOURS": 1848,
+  "cap_derivation": "ceil(beta * K1_conservative), beta = 1.5 governance-inherited from Gate-2C-bis",
+  "programme_worst_reference_not_adopted": 4597,
+  "cap_extension_allowed": false
+ },
+ "task1": {
+  "name": "F_r candidate qualification",
+  "detector": "SR",
+  "object": "F_0",
+  "e": "1/4 exact",
+  "patch": [
+   17,
+   11
+  ],
+  "grid": 64,
+  "candidate_bidegree": [
+   16,
+   16
+  ],
+  "dyadic_scale_bits": 50,
+  "residual_certified_by": "equation defect ||Fhat - K_e Fhat - S_0^raw|| via reachable-set range bound, propagated as C * delta",
+  "budget_line": "B_candidate (already frozen; no new budget)",
+  "guard_before_kernel_construction": true,
+  "on_fail": "K1_CAMPAIGN_FAIL_ARCHITECTURE, STOP, no repair in this checkpoint",
+  "is_first_result_bearing_task": true,
+  "executed": false
+ },
+ "governance": {
+  "protected_write_paths": [
+   "results/",
+   "certificates/",
+   "logs/"
+  ],
+  "immutable": [
+   "p5_nonlinear_dynamics/",
+   "p5x_global_nonlinear_dynamics/",
+   "p5y_micropilot_gate1/",
+   "p5y_gate2a_sr_precision/",
+   "p5y_gate2b_sr_cover/",
+   "p5y_gate2c_m2_assembly/",
+   "p5y_gate2cbis_m2_assembly_b/",
+   "p5y_gate2d_sr_realcandidate/",
+   "p5y_gate2e_sr_metric/",
+   "p5y_gate2f_sr_metric_b/"
+  ],
+  "post_freeze_amendment_allowed": false,
+  "independent_adjudication_required": true,
+  "producer_may_self_award_K1_CLOSED": false,
+  "merge_to_main_authorized": false,
+  "temporal_anchors": {
+   "T0": "namespace + checkpoint authored",
+   "T1": "freeze commit; hashes from git ls-tree at anchor",
+   "T2": "design-validation tests pass against the anchor commit",
+   "T3": "production execution -- NOT PERFORMED",
+   "T4": "adjudication -- NOT PERFORMED"
+  },
+  "hash_source": "git ls-tree at anchor commit (never the worktree)"
+ },
+ "residual_risk": {
+  "R1": "F_r resolvent-solution candidates have never been built at production fidelity; Gate-2D failed on the EASIER closed-form h_1. Dominant risk; Task 1 exists for it.",
+  "R2": "C_SR(0) = 1205.94 multiplies every local error; the cover is densest exactly where amplification is largest.",
+  "R3": "the 322-cell SR cover came from a monotone ENVELOPE walk; the true production cover may be larger (the x1.25 worst band).",
+  "R4": "the far-field splice requires numerics to reach e_star_D exactly; a gap is S08 and fatal, not patchable.",
+  "R5": "no outcome here bears on K2..K5 or novelty."
+ },
+ "state": {
+  "P5Y_K1_CHECKPOINT_STATUS": "FROZEN",
+  "P5Y_BINDING_CHECKPOINT_CREATED": "YES",
+  "P5Y_PRODUCTION_RUN": "NO"
+ }
+}

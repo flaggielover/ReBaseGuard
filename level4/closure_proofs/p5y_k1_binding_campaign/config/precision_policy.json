@@ -1,0 +1,11 @@
+{
+ "schema": "rebaseguard.p5y.k1.precision_policy.v1",
+ "binding": true,
+ "SR_production_bits": 256,
+ "CUSUM_production_bits": 256,
+ "P1_rule_workprec_bits": 512,
+ "PRECISION_ESCALATION_ALLOWED": false,
+ "DEGREE_ADAPTATION_ALLOWED": false,
+ "POST_RESULT_REBUDGETING_ALLOWED": false,
+ "on_interval_too_wide": "STOP (S10 / PRECISION_FAILURE); never silent rerun"
+}

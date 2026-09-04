@@ -1,0 +1,32 @@
+{
+ "schema": "rebaseguard.p5y.k1.complexity_guard.v1",
+ "binding": true,
+ "score_formula": "(deg_a + 1) * (deg_b + 1) * (composed_z_degree + 1)",
+ "hard_bidegree": {
+  "SR": [
+   16,
+   16
+  ],
+  "CUSUM": [
+   12,
+   12
+  ]
+ },
+ "composed_z_degree": {
+  "SR": 128,
+  "CUSUM": 145
+ },
+ "measured_scores": {
+  "SR": 37281,
+  "CUSUM": 24674
+ },
+ "PRODUCTION_COMPLEXITY_CEILING": 60000,
+ "headroom": {
+  "SR": 1.6093988895147662,
+  "CUSUM": 2.431709491772716
+ },
+ "rejects_bidegree_20": 71001,
+ "gate2c_defect_score_order": 5447544,
+ "pilot_era_ceiling_not_used": 100000,
+ "fires_before_kernel_construction": true
+}
