@@ -1,0 +1,33 @@
+{
+ "schema": "rebaseguard.p5y.gate2f.manifest.v1",
+ "binding": false,
+ "frozen_utc": "2026-09-04T16:19:26.674660+00:00",
+ "branch": "p5y-gate1-micropilots",
+ "base_commit": "7b0a69075a84b49648c2ccbc1ba6f9a27c17588e",
+ "files": {
+  "GATE2F_PREREGISTRATION.md": "29d0d826d331eaacdb0a5c671ef6fd625fc41f43c8d9c96757d7d8a3f1e69abc",
+  "sr_metric_b.py": "b08aa564d6da6b300438af256f54539b8e3f8d95d48725ea0cc5854ab363f072",
+  "tests/test_gate2f_frozen.py": "89dc2d5c14a5eb529dd147d6c1192ff6e374fb4caecea19ba426038e95c6b9fb"
+ },
+ "preregistration_sha256": "29d0d826d331eaacdb0a5c671ef6fd625fc41f43c8d9c96757d7d8a3f1e69abc",
+ "the_only_semantic_change": {
+  "P1_RULE_TARGET": "(1 - 1e-3) * 1e-9  [solves for h_z]",
+  "P1_CHECK_THRESHOLD": "1e-9  [tests E_d]",
+  "MIN_HEADROOM_REL": 1e-06,
+  "gate2e_behaviour": "rule target and check threshold were the SAME value"
+ },
+ "inherited_by_reference": {
+  "level4/closure_proofs/p5y_gate2e_sr_metric/sr_metric.py": {
+   "purpose": "the frozen Gate-2E metric and run_cell, imported by reference",
+   "sha256": "7a2f5f113cdd98a1e3d677883455492919765d2009804e687f73e69a194a38b6"
+  },
+  "level4/closure_proofs/p5y_gate2e_sr_metric/results/sr_metric.json": {
+   "purpose": "Gate-2E constants for the equality audit",
+   "sha256": "0d9c592f17d89715ccb41f3b3de21813f073205a87439fc93b50a1ef1dde4f1f"
+  },
+  "level4/closure_proofs/p5y_gate2d_sr_realcandidate/sr_realcandidate.py": {
+   "purpose": "the frozen candidate builders",
+   "sha256": "e3b30f46b25f4174a0e7dd7b72d2ef0274d7911f39b59813734b561a6b3d8f70"
+  }
+ }
+}
