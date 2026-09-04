@@ -1,0 +1,52 @@
+{
+ "schema": "rebaseguard.p5y.gate2e.adjudication.v1",
+ "binding": false,
+ "generated_utc": "2026-09-04T16:04:36.294710+00:00",
+ "git_commit": "9b15156f0f1fa64ee3e82c848d3ea632d5a5a52b",
+ "decision_stands": "SR_METRIC_FAIL_CANDIDATE",
+ "decision_is_mechanical_and_not_reinterpreted": true,
+ "failure_class": "IMPLEMENTATION_DEFECT",
+ "the_name_understates_the_cause": {
+  "frozen_name": "SR_METRIC_FAIL_CANDIDATE",
+  "frozen_definition": "section 21: the metric is justified, the architecture is valid, but the genuine candidate exceeds its frozen budget",
+  "what_actually_happened": "the candidate did NOT exceed its budget. It passed by 1,193x (w_panel 2.977e-08 against a proposition-derived 3.551e-05). The selection additionally requires the inherited P1 gate, and P1 failed on a floating-point knife edge.",
+  "why_not_adjudicated_to_another_name": "in Gate-2D a frozen rule explicitly mapped the measured precondition to FAIL_REPRESENTATION and the code failed to implement it, so applying the rule was correct. Here NO frozen rule maps a P1 knife edge to another name -- the decision vocabulary simply has no slot for it. Choosing a different name would be inventing a rule after results, not applying one. The mechanical decision therefore stands and the cause is recorded in failure_class."
+ },
+ "the_P1_knife_edge_third_occurrence": {
+  "E_d": 9.990000000000004e-10,
+  "target": 9.99e-10,
+  "ratio_E_d_over_target": 1.0000000000000004,
+  "overshoot_relative": 4.440892098500626e-16,
+  "mechanism": "the continuous panel rule solves E_d = (1 - eps_P1) * 1e-9 to EQUALITY, so h_z is the float root and the acceptance test E_d <= (1 - eps_P1) * 1e-9 is decided in the 16th significant digit by rounding.",
+  "history": [
+   "Gate-2C: recorded, degree-6 control failed by 6.3e-17 relative",
+   "Gate-2D: carried forward, passed by luck",
+   "Gate-2E: fires again, this time on the selected object"
+  ],
+  "my_error": "Gate-2C's recommended fix was to target (1 - eps) * 1e-9. I applied eps to BOTH the panel rule and the acceptance test, which reproduces equality and reproduces the knife edge. The fix must be ASYMMETRIC: the RULE targets (1 - eps) * 1e-9 while the CHECK tests against 1e-9, so that eps is genuine headroom rather than a shifted equality.",
+  "not_patched_because": "no post-T2 amendment is permitted; a test asserts the module is byte-identical to its T1 hash."
+ },
+ "what_the_gate_DID_establish": {
+  "metric_question_answered": true,
+  "absolute_metric_derived_non_circularly": true,
+  "all_objects_pass_the_proposition_derived_absolute_budget": true,
+  "budget_ratios": {
+   "hhat_1": 0.000838416365415358,
+   "hhat_2_probe": 1.772607433863315e-06,
+   "unit_candidate": 0.0016108712738647484
+  },
+  "gate2d_root_cause_confirmed": {
+   "prediction": "hhat_1 and unit_candidate within an order of magnitude in ABSOLUTE terms",
+   "measured_absolute_ratio": 0.5204738448180639,
+   "measured_relative_P2_ratio": 46999608.62315278,
+   "verdict": "CONFIRMED -- 0.52x apart absolutely, 4.7e7x apart relatively"
+  },
+  "error_source_decomposition_at_hhat1_256": {
+   "candidate_approximation": 0.9955438030753125,
+   "kernel_truncation": 0.004456196924687527,
+   "arb_working_precision": 3.738941028078573e-48,
+   "conclusion": "the certificate is APPROXIMATION-limited, not precision-limited and not propagation-limited: 99.55% of the absolute half-width is the candidate fit, 0.45% the softplus truncation, and 4e-48 the Arb radius"
+  }
+ },
+ "consequence": "the acceptance instrument is now proposition-derived and validated, and the genuine candidate satisfies it with three orders of magnitude to spare. What blocks the PASS is a one-line asymmetry in an inherited panel rule, recorded three times and now precisely located."
+}
