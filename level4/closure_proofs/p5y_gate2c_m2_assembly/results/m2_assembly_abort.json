@@ -1,0 +1,62 @@
+{
+ "schema": "rebaseguard.p5y.gate2c.abort.v1",
+ "binding": false,
+ "generated_utc": "2026-09-04T14:33:21.651250+00:00",
+ "git_commit": "6cdd059a630a7f7058718640ee9db3ccb21c8ead",
+ "GATE2C_DECISION": "M2_ASSEMBLY_INCOMPLETE_EXTERNAL",
+ "stop_rule_fired": "S1 (cumulative result-bearing CPU reached the frozen 0.20 CPU-hour cap)",
+ "cap_cpu_seconds": 720,
+ "observed_cpu_seconds_at_kill": 723,
+ "cap_enforced_by": "external watchdog polling the worker's CPU time every 5 s, killing it the first time CPU >= 720 s",
+ "measurement_completed": false,
+ "result_file_written": false,
+ "phase_reached": "m=2 certification (certify_F1); the resolvent and the m=1 baseline repeats had completed",
+ "timings_recorded": null,
+ "inferred_lower_bound_on_ratio_incremental": {
+  "value": ">= 10x",
+  "basis": "phase ordering plus Gate-1's measured 30.85 CPU-s for exactly this m=1 call: resolvent ~0.4 s + 2 x m=1 ~62 s leaves >= 660 s consumed by at most 2 m=2 repeats without completing. This is an INFERENCE from ordering, not a measurement; no timing was recorded before the kill."
+ },
+ "cause": {
+  "classification": "IMPLEMENTATION_DEFECT (in this pilot, not in the architecture)",
+  "mechanism": "the m=2 source chain applied _kernel_polynomials six times to h_1 and to d_e h_1 = -S_0^raw, whose EXACT series representations are bidegree (121,121) and (120,120), against the bidegree (12,12) candidate the m=1 path feeds in. _kernel_polynomials substitutes, multiplies by the degree-120 phi series and integrates symbolically in z, so a 10x higher degree per variable inflates every intermediate TriPoly and roughly doubles the z-degree.",
+  "measured_degrees": {
+   "h_1": [
+    121,
+    121,
+    243
+   ],
+   "d_e h_1 (= -S_0^raw)": [
+    120,
+    120,
+    241
+   ],
+   "F_0 candidate": [
+    12,
+    12,
+    169
+   ]
+  },
+  "diagnostic_cpu_seconds": 0.57,
+  "note": "h_1 IS closed form; being closed form does not make its polynomial representation small. This is the same lesson class as Gate-2A's exponential-Gaussian closed form needing 400+ bits: mathematically exact is not computationally cheap in the chosen representation."
+ },
+ "identified_repair_NOT_APPLIED": {
+  "design": "treat h_1 as Gate-1's MSHARE accounting already does -- as its own CERTIFIED FUNCTION with a degree-12 exact-dyadic candidate hhat_1 plus a certified residual -- and apply the kernel to hhat_1, never to the exact degree-121 series. Every kernel application in the m=2 chain then acts on a degree-12 object, exactly as m=1 does.",
+  "why_not_applied": "the frozen rules forbid adaptive repair after T2 and forbid extending the cap after results. The repair must be re-preregistered and run as its own gate.",
+  "expected_effect": "UNMEASURED. It is NOT claimed that the corrected ratio is acceptable; that is precisely what the successor gate must test."
+ },
+ "post_T2_code_mutation_check": {
+  "m2_certifier_sha256_at_T1": "cbcb2357cb16bbb7672f48f2bdd2cc8d9cfaca7d53fb4b83ff230dde42180903",
+  "m2_certifier_sha256_now": "cbcb2357cb16bbb7672f48f2bdd2cc8d9cfaca7d53fb4b83ff230dde42180903",
+  "unchanged_since_T1": true
+ },
+ "what_this_gate_did_NOT_establish": [
+  "the m>1 per-function cost ratio (unmeasured)",
+  "correspondence of R_{CUSUM,2}(1/4) against Monte Carlo (never reached)",
+  "any updated P5Y CPU band (the Gate-2B bands stand unchanged)"
+ ],
+ "what_survives": [
+  "the exact raw-variable m=2 assembly R_2 = (1/2)[F_0(x0) + F_1(x0) + S_0^raw(x0)], derived from P5X-T1(c) and verified against the probabilistic decomposition",
+  "the m-sharing structure: m=2 adds ONE resolvent solve (F_1) and its derivative, and no new solve architecture",
+  "d_e h_1 = -S_0^raw, an exact identity used by the derivative source"
+ ]
+}
