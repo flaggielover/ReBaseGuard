@@ -1,0 +1,94 @@
+{
+ "schema": "rebaseguard.p5y.gate1.m3analytic.v1",
+ "pilot": "PILOT-SR-XI (analytic component only)",
+ "binding": false,
+ "decisive": false,
+ "generated_utc": "2026-09-04T13:18:56.154195+00:00",
+ "git_commit": "269c2020b9bba0d5fde9246c7eb0cd92330058b9",
+ "checks": {
+  "X1_transform_max_rel_error": 1.8711271906245368e-56,
+  "X1_transform_identity_holds": true,
+  "X1_alarm_equivalence_holds": true,
+  "X2_per_c": {
+   "0": {
+    "closed_form": 0.03895357691307157,
+    "series": 0.03895357691307157,
+    "abs_gap": 3.665261289867516e-57,
+    "series_tail_bound": 0.0,
+    "gap_within_tail": true
+   },
+   "1": {
+    "closed_form": 0.038970433620632836,
+    "series": 0.038970433620632836,
+    "abs_gap": 9.756317175526492e-57,
+    "series_tail_bound": 1.6846231396579158e-165,
+    "gap_within_tail": true
+   },
+   "-1": {
+    "closed_form": 0.038967745406213915,
+    "series": 0.038967745406213915,
+    "abs_gap": 1.0422236546274915e-56,
+    "series_tail_bound": 1.6846231396579158e-165,
+    "gap_within_tail": true
+   },
+   "4": {
+    "closed_form": 0.03920761943606115,
+    "series": 0.03920761943606115,
+    "abs_gap": 2.132835483915904e-53,
+    "series_tail_bound": 8.956992958321535e-129,
+    "gap_within_tail": true
+   },
+   "-4": {
+    "closed_form": 0.03919682798996844,
+    "series": 0.03919682798996844,
+    "abs_gap": 2.1460976745934715e-53,
+    "series_tail_bound": 8.956992958321535e-129,
+    "gap_within_tail": true
+   },
+   "16": {
+    "closed_form": 0.04335173180908081,
+    "series": 0.04307040736258386,
+    "abs_gap": 0.01266754451726324,
+    "series_tail_bound": 4.7623543192997356e-92,
+    "gap_within_tail": false
+   },
+   "-16": {
+    "closed_form": 0.043356943749603326,
+    "series": 0.04302471759665649,
+    "abs_gap": 0.0034291606918635206,
+    "series_tail_bound": 4.7623543192997356e-92,
+    "gap_within_tail": false
+   }
+  },
+  "X2_moment_identity_max_rel_gap": 0.2272696447095429,
+  "X2_moment_identity_holds": false,
+  "X3_panels": {
+   "crossings_plus_chart": 63,
+   "crossings_minus_chart": 63,
+   "induced_panel_count": 127,
+   "closed_form_upper_bound": 127,
+   "frozen_threshold": 127,
+   "brief_default_threshold": 100,
+   "within_frozen_threshold": true,
+   "within_brief_default": false
+  },
+  "X4_conditioning": {
+   "panel_half_width_z": 0.048886323665837,
+   "max_centred_exponential_range_exp_16h": 2.186235639232731,
+   "note": "bounded dynamic range: the composed integrand is expanded in panel-centred variables, so no e^{c z} magnitude blow-up occurs",
+   "acceptable": true
+  }
+ },
+ "summary": {
+  "transform_verified": true,
+  "moment_identity_verified": false,
+  "induced_panel_count": 127,
+  "panels_within_frozen_threshold": true,
+  "conditioning_acceptable": true,
+  "backend_built": false,
+  "status": "ANALYTIC_ONLY_NOT_DECISIVE"
+ },
+ "runtime": {
+  "wall_seconds": 0.01856207847595215
+ }
+}

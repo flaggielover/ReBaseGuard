@@ -1,0 +1,69 @@
+{
+ "schema": "rebaseguard.p5y.gate1.costmodel.v1",
+ "binding": false,
+ "measured_inputs": {
+  "sr_t_panel_seconds_degree8": 0.005796999999999997,
+  "sr_t_panel_incl_moments_seconds": 0.006106,
+  "sr_n_z_degree8": 28,
+  "cusum_raw_cpu_seconds_per_subcell": 30.853087375,
+  "cusum_z_cpu_seconds_per_subcell": 34.307984000000005,
+  "raw_vs_z_speed_ratio": 1.1119789596097107,
+  "m_sharing_multiplier_measured": 24.5,
+  "m_sharing_multiplier_historical": 43.0
+ },
+ "derived": {
+  "sr_cpu_hours_per_certified_function": 47.982644111111114,
+  "sr_cpu_hours_per_unit": 95.96528822222223,
+  "cusum_cpu_hours_per_unit": 2.862480884236111,
+  "C3_fraction": 0.17,
+  "overhead_fraction": 0.15
+ },
+ "bands": {
+  "optimistic": {
+   "precision_mult": 1.0,
+   "m_gt1_mult": 1.0,
+   "note": "degree 8 at 192 bits as measured; m>1 per-function cost equals m=1",
+   "cpu_hours": 3257.832701652122,
+   "wall_hours_1_cores": 3257.832701652122,
+   "wall_hours_16_cores": 214.33109879290276,
+   "wall_hours_64_cores": 56.559595514793784,
+   "wall_hours_128_cores": 31.814772477071504
+  },
+  "central": {
+   "precision_mult": 1.5,
+   "m_gt1_mult": 1.0,
+   "note": "256 bits on SR to restore the P2 conditioning margin",
+   "cpu_hours": 4839.568569113872,
+   "wall_hours_1_cores": 4839.568569113872,
+   "wall_hours_16_cores": 318.3926690206495,
+   "wall_hours_64_cores": 84.02028765822695,
+   "wall_hours_128_cores": 47.26141180775266
+  },
+  "conservative": {
+   "precision_mult": 3.0,
+   "m_gt1_mult": 1.5,
+   "note": "384 bits on SR; m>1 functions 1.5x the m=1 cost",
+   "cpu_hours": 14377.164257248682,
+   "wall_hours_1_cores": 14377.164257248682,
+   "wall_hours_16_cores": 945.8660695558343,
+   "wall_hours_64_cores": 249.6035461327896,
+   "wall_hours_128_cores": 140.40199469969414
+  },
+  "worst": {
+   "precision_mult": 5.0,
+   "m_gt1_mult": 2.0,
+   "note": "512 bits on SR; m>1 functions 2x the m=1 cost",
+   "cpu_hours": 31823.43928269225,
+   "wall_hours_1_cores": 31823.43928269225,
+   "wall_hours_16_cores": 2093.6473212297533,
+   "wall_hours_64_cores": 552.4902653245182,
+   "wall_hours_128_cores": 310.7757742450415
+  }
+ },
+ "dominant_uncertainty": "SR working precision. Degree 8 passed P2 with only 1.34x margin and its composed contraction already lost ~17 digits at 192 bits; degrees 10 and 12 were destroyed. Precision, not panel count, now sets the SR cost.",
+ "comparison": {
+  "pre_gate_audit_central_cpu_hours": 6000,
+  "r3_projected_sr_cpu_hours": 12084,
+  "note": "the R3 projection used the dyadic n_z = 128, t_panel = 3.911 ms and the 43x multiplier; this model uses the measured continuous n_z = 28, t_panel(incl. moments) and the 24.5x structural multiplier"
+ }
+}

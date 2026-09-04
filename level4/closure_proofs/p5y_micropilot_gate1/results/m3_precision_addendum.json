@@ -1,0 +1,18 @@
+{
+ "schema": "rebaseguard.p5y.gate1.m3.precision-addendum.v1",
+ "binding": false,
+ "decisive": false,
+ "subject": "X2 exponential-Gaussian moment identity: which side failed at 192 bits",
+ "finding": "The identity G_c(L,U) = exp(c^2/2 - c(z_c+e)) [Phi(z_hi+e-c) - Phi(z_lo+e-c)] is CORRECT. At 192 bits it is the CLOSED FORM that is uninformative, not the series.",
+ "evidence": {
+  "c": 16,
+  "bits_192":  {"closed_form": "[+/- 0.0558]", "series": "[0.043070407362584 +/- 1.46e-16]"},
+  "bits_512":  {"closed_form": "[0.043070407362584 +/- 1.46e-16]", "series": "[0.043070407362584 +/- 1.46e-16]"},
+  "bits_1536": {"closed_form": "[0.043070407362584 +/- 1.46e-16]", "series": "[0.043070407362584 +/- 1.46e-16]"}
+ },
+ "mechanism": "the closed form evaluates exp(c^2/2 - c(z_c+e)) ~ 1.5e56 multiplied by a Gaussian tail difference ~3e-58; the product is O(0.04) but the representation passes through ~57 decimal digits of magnitude that 192 bits (~57 digits) cannot absorb.",
+ "precision_law": "extra decimal digits required ~ (c^2/2 - c(z_c+e)) / ln(10) ~ 0.217 c^2 for c up to the candidate degree",
+ "consequence_for_M3": "a production xi-coordinate back-end at candidate degree 16 needs roughly 400+ bits, not 192, with a cost multiplier this gate did NOT measure. This is a NEW, previously unrecorded obstacle for the xi route and it was invisible to the pre-gate architecture audit.",
+ "governance": "M3 back-end is NOT_RUN (frozen condition: M3 runs iff M2 fails; M2 passed). This addendum is a reporting diagnostic on a non-decisive component and alters no Gate-1 selection. results/m3_analytic.json is left exactly as produced.",
+ "self_criticism": "the frozen check compared ball midpoints, which masked that the closed-form ball had radius 0.0558. A successor's identity checks must compare enclosure RADII, not midpoints."
+}
