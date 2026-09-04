@@ -1,0 +1,312 @@
+{
+ "schema": "rebaseguard.p5y.k1.task1r.v1",
+ "binding": true,
+ "result_bearing": true,
+ "task": "K1 TASK 1R -- genuine SR F_0 qualification, repaired harness",
+ "generated_utc": "2026-09-04T17:57:28.934538+00:00",
+ "git_commit": "d45e9432404b283281c9b0fa65e6504b58c110ee",
+ "frozen_parameters_source": "config/frozen_parameters.json",
+ "D": 11,
+ "Z": 20,
+ "selection_was_result_independent": true,
+ "integrity": {
+  "k1_checkpoint_hash": "ababbef4d42ad5a7a61e87279eb895c1b2d0ecfe67454f18c85acf6d57cd5c1d",
+  "k1_anchor": "310c3aa34a5d980ef48331d2d2bea36b7c37360d",
+  "k1_blobs_verified": 18,
+  "k1_blob_mismatch": [],
+  "protected_trees_verified": 10,
+  "protected_tree_mutated": [],
+  "predecessor_blobs_verified": 3,
+  "predecessor_mutated": [],
+  "predecessor_verdict": "FAIL",
+  "predecessor_governing_class": "IMPLEMENTATION_DEFECT",
+  "predecessor_delta_0": 0.001106607209535348,
+  "checkpoint_status": "FROZEN",
+  "prior_task1r_results": [],
+  "PASS": true
+ },
+ "frozen_scope": {
+  "checks": {
+   "detector": true,
+   "object": true,
+   "patch": true,
+   "grid": true,
+   "e": true,
+   "bidegree": true,
+   "scale_bits": true,
+   "B_candidate": true,
+   "LOCAL_GATE_BUDGET": true,
+   "no_redistribution": true,
+   "eps_P1": true,
+   "P1_check": true,
+   "P1_guard": true,
+   "P1_workprec": true,
+   "SR_bits": true,
+   "no_precision_escalation": true,
+   "no_degree_adaptation": true,
+   "complexity_ceiling": true,
+   "m_set": true,
+   "detectors": true,
+   "budget_partition_sums_to_B_candidate": true,
+   "reserve_not_redistributable": true,
+   "no_new_budget": true
+  },
+  "PASS": true
+ },
+ "amplification": {
+  "type": "UPPER",
+  "object": "||(I-K_e)^{-1}||_inf = sup_x E_{x,e}[tau]",
+  "form": "C = min_t t / H_t(0), H_t a LOWER Bellman envelope",
+  "C_at_0": 1205.9371382854872,
+  "C_at_e": 187.7471962405577,
+  "certified_cap_25000_over_19": 1315.7894736842106,
+  "C0_le_certified_cap": true,
+  "monotone_nonincreasing_in_e": true,
+  "sequence": [
+   1205.9371382854872,
+   187.7471962405577,
+   57.75125704713849,
+   17.585597969690387,
+   6.427858413243532
+  ],
+  "PASS": true
+ },
+ "p1": {
+  "eps_P1": 0.001,
+  "P1_RULE_TARGET": "[9.99000000000000000000000000000e-10 +/- 3e-43]",
+  "P1_CHECK_THRESHOLD": 1e-09,
+  "rule_and_check_distinct": true,
+  "P1_RULE_WORKPREC_BITS": 512,
+  "rule_target_evaluated_inside_workprec": true,
+  "H_max": 0.2427259472342348,
+  "n_panels": 28,
+  "h_panel": 0.1906367170718643,
+  "patch_half": 0.048886323665837,
+  "H_used": 0.23952304073770128,
+  "E_d": 8.8643177305787e-10,
+  "E_d_le_construction_target": true,
+  "HEADROOM_REL": 0.11356822694213002,
+  "headroom_guard": 1e-06,
+  "PASS": true
+ },
+ "joint_consistency": {
+  "mode": "truncate_each_product",
+  "p_alpha_share": 0.20409862665100265,
+  "n_max_composed_degree": 288,
+  "required_D": 9,
+  "selected_D": 11,
+  "D_max_from_complexity": 52,
+  "local_score": 3024,
+  "candidate_score": 6069,
+  "complexity_ceiling": 60000,
+  "D_satisfies_requirement": true,
+  "D_within_complexity": true,
+  "scores_within_ceiling": true,
+  "PASS": true
+ },
+ "complexity_guard": {
+  "deg_a": 16,
+  "deg_b": 16,
+  "nonzero_coefficients": 289,
+  "composed_z_degree": 128,
+  "score": 37281,
+  "ceiling": 60000,
+  "headroom_ratio": 1.6093988895147662,
+  "evaluated_before_kernel_construction": true,
+  "PASS": true
+ },
+ "budget_partition": {
+  "B_candidate_total": 0.04,
+  "partition_twentieths": {
+   "B_eq": 9,
+   "B_trunc": 3,
+   "B_tail": 3,
+   "B_end": 2,
+   "B_int": 1,
+   "B_round": 1,
+   "B_reserve": 1
+  },
+  "absolute": {
+   "B_eq": 0.018,
+   "B_trunc": 0.006,
+   "B_tail": 0.006,
+   "B_end": 0.004,
+   "B_int": 0.002,
+   "B_round": 0.002,
+   "B_reserve": 0.002
+  },
+  "sum_absolute": 0.04,
+  "sums_to_B_candidate": true,
+  "reserve_key": "B_reserve",
+  "reserve_redistributable": false,
+  "new_budget_created": false
+ },
+ "candidate": {
+  "collocation_nodes": 289,
+  "cond_I_minus_W": 717.8621081828228,
+  "quadrature_order": 220,
+  "F_node_min": -1.6014039876606811,
+  "F_node_max": -0.40788827288536056,
+  "sup_abs_node": 1.6014039876606811,
+  "cheb_coeff_max": 1.3323896990492499,
+  "cheb_coeff_abs_sum": 2.3818553691263062,
+  "dyadic_rounding_max": 4.4228672373830547e-16,
+  "dyadic_rounding_abs_sum": 6.674400925089117e-14,
+  "scale_bits": 50,
+  "basis": "Chebyshev product basis on [0,b_SR]^2",
+  "refit_loop": false,
+  "regularisation": false,
+  "cpu_seconds": 0.1057039999999998,
+  "construction_policy": "IDENTICAL to the predecessor (imported from p5y_k1_binding_campaign/task1/task1_f0.py)"
+ },
+ "certificate": {
+  "delta_F0": 1.9581425988141803e-05,
+  "components": {
+   "equation_defect_polynomial": 2.50779660007465e-07,
+   "truncation_patch_local": 4.158311554157886e-15,
+   "tail_zeta_and_moments": 1.0759617040809397e-14,
+   "endpoint_slivers": 1.8765208019458264e-05,
+   "interval_arithmetic": 5.654382937581442e-07,
+   "rounding_exact_dyadic": 0.0
+  },
+  "per_line": {
+   "equation_defect_polynomial": {
+    "value": 2.50779660007465e-07,
+    "budget_line": "B_eq",
+    "allowance_delta_units": 9.587360216520551e-05,
+    "fraction_of_line": 0.002615732113364549,
+    "PASS": true
+   },
+   "truncation_patch_local": {
+    "value": 4.158311554157886e-15,
+    "budget_line": "B_trunc",
+    "allowance_delta_units": 3.195786738840184e-05,
+    "fraction_of_line": 1.3011855589797653e-10,
+    "PASS": true
+   },
+   "tail_zeta_and_moments": {
+    "value": 1.0759617040809397e-14,
+    "budget_line": "B_tail",
+    "allowance_delta_units": 3.195786738840184e-05,
+    "fraction_of_line": 3.366813220056818e-10,
+    "PASS": true
+   },
+   "endpoint_slivers": {
+    "value": 1.8765208019458264e-05,
+    "budget_line": "B_end",
+    "allowance_delta_units": 2.1305244925601227e-05,
+    "fraction_of_line": 0.8807787981310295,
+    "PASS": true
+   },
+   "interval_arithmetic": {
+    "value": 5.654382937581442e-07,
+    "budget_line": "B_int",
+    "allowance_delta_units": 1.0652622462800614e-05,
+    "fraction_of_line": 0.05307972715006821,
+    "PASS": true
+   },
+   "rounding_exact_dyadic": {
+    "value": 0.0,
+    "budget_line": "B_round",
+    "allowance_delta_units": 1.0652622462800614e-05,
+    "fraction_of_line": 0.0,
+    "PASS": true
+   }
+  },
+  "all_lines_pass": true,
+  "defect_constant_term": 2.0162029161699793e-07,
+  "defect_constant_radius": 2.6551646326034017e-08,
+  "D": 11,
+  "Z": 20,
+  "n_panels": 28,
+  "panel_half_width": 0.1906367170718643,
+  "patch_half_width": 0.048886323665837,
+  "rho": 0.23952304073770128,
+  "rounding_note": "exact-dyadic coefficients are exactly representable, so no rounding error enters the defect; all arithmetic error is captured in the Arb radii (interval channel)",
+  "dyadic_rounding_abs_sum_construction": 6.674400925089117e-14,
+  "cpu_seconds": 10.491876999999999
+ },
+ "budget": {
+  "metric": "ABSOLUTE (frozen); relative P2 gates nothing",
+  "C_SR_at_e": 187.7471962405577,
+  "delta_F0": 1.9581425988141803e-05,
+  "delta_candidate_max": 0.00021305244925601228,
+  "propagated_contribution": 0.0036763578276656156,
+  "B_candidate": 0.04,
+  "fraction_of_B_candidate": 0.09190894569164039,
+  "margin_factor": 10.880333709354641,
+  "per_line": {
+   "equation_defect_polynomial": {
+    "value": 2.50779660007465e-07,
+    "budget_line": "B_eq",
+    "allowance_delta_units": 9.587360216520551e-05,
+    "fraction_of_line": 0.002615732113364549,
+    "PASS": true
+   },
+   "truncation_patch_local": {
+    "value": 4.158311554157886e-15,
+    "budget_line": "B_trunc",
+    "allowance_delta_units": 3.195786738840184e-05,
+    "fraction_of_line": 1.3011855589797653e-10,
+    "PASS": true
+   },
+   "tail_zeta_and_moments": {
+    "value": 1.0759617040809397e-14,
+    "budget_line": "B_tail",
+    "allowance_delta_units": 3.195786738840184e-05,
+    "fraction_of_line": 3.366813220056818e-10,
+    "PASS": true
+   },
+   "endpoint_slivers": {
+    "value": 1.8765208019458264e-05,
+    "budget_line": "B_end",
+    "allowance_delta_units": 2.1305244925601227e-05,
+    "fraction_of_line": 0.8807787981310295,
+    "PASS": true
+   },
+   "interval_arithmetic": {
+    "value": 5.654382937581442e-07,
+    "budget_line": "B_int",
+    "allowance_delta_units": 1.0652622462800614e-05,
+    "fraction_of_line": 0.05307972715006821,
+    "PASS": true
+   },
+   "rounding_exact_dyadic": {
+    "value": 0.0,
+    "budget_line": "B_round",
+    "allowance_delta_units": 1.0652622462800614e-05,
+    "fraction_of_line": 0.0,
+    "PASS": true
+   }
+  },
+  "all_lines_pass": true,
+  "redistribution_used": false,
+  "reserve_drawn": false,
+  "PASS": true
+ },
+ "pass_conditions": {
+  "1_predecessor_history_preserved": true,
+  "2_successor_checkpoint_frozen_before_T2R": true,
+  "3_no_scientific_scope_change": true,
+  "4_no_error_ledger_change": true,
+  "5_budget_derived_parameters": true,
+  "6_gaussian_tail_certificate": true,
+  "7_joint_truncation_consistency": true,
+  "8_complexity_guard": true,
+  "9_representation_policy_unchanged": true,
+  "10_precision_policy": true,
+  "11_P1": true,
+  "12_total_within_B_candidate": true,
+  "13_no_stop_fired": true,
+  "14_reproducibility": true,
+  "15_independent_adjudication": null
+ },
+ "TASK1R_VERDICT": "PASS",
+ "failure_class": "NONE",
+ "runtime": {
+  "wall_seconds": 13.238193988800049,
+  "cpu_seconds": 12.724771,
+  "cpu_hours": 0.0035346588888888887,
+  "peak_rss_mib": 48.609375
+ }
+}

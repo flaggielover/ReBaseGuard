@@ -1,0 +1,112 @@
+{
+ "schema": "rebaseguard.p5y.k1.task1r.adjudication.v1",
+ "binding": true,
+ "generated_utc": "2026-09-04T17:59:04.015110+00:00",
+ "adjudicator": "independent of the producing script (code/adjudicate.py)",
+ "producer_self_award_permitted": false,
+ "sections": {
+  "provenance": {
+   "T1R_commit": "d45e943",
+   "T1R_is_ancestor_of_HEAD": true,
+   "T1R_frozen_before_T2R": true,
+   "frozen_files_changed_since_T1R": [],
+   "manifest_hash_recomputes": true,
+   "TASK1R_CHECKPOINT_HASH": "20e664dec414b427e2b714531f3121224774f20f46cfe43e5c84300ec9de3aea"
+  },
+  "parameters": {
+   "used": [
+    11,
+    20
+   ],
+   "frozen": [
+    11,
+    20
+   ],
+   "identical": true,
+   "selection_result_independent": true
+  },
+  "certificate_arithmetic": {
+   "components_sum_equals_delta": true,
+   "propagated_equals_C_times_delta": true,
+   "fraction_matches": true,
+   "per_line_allowances_correct": true,
+   "per_line_gates_correct": true,
+   "every_line_within_allowance": true,
+   "total_within_B_candidate": true
+  },
+  "budget_integrity": {
+   "partition_sums_to_B_candidate": true,
+   "sum_absolute_exact": true,
+   "reserve_non_redistributable": true,
+   "no_new_budget": true,
+   "no_redistribution_used": true,
+   "reserve_not_drawn": true,
+   "every_component_has_a_line": true
+  },
+  "frozen_invariants": {
+   "detector": true,
+   "object": true,
+   "patch": true,
+   "grid": true,
+   "e": true,
+   "bidegree": true,
+   "scale_bits": true,
+   "B_candidate": true,
+   "LOCAL_GATE_BUDGET": true,
+   "no_redistribution": true,
+   "eps_P1": true,
+   "P1_check": true,
+   "P1_guard": true,
+   "P1_workprec": true,
+   "SR_bits": true,
+   "no_precision_escalation": true,
+   "no_degree_adaptation": true,
+   "complexity_ceiling": true,
+   "m_set": true,
+   "detectors": true
+  },
+  "predecessor_immutability": {
+   "unmutated": true,
+   "still_FAIL": true,
+   "class_preserved": true
+  },
+  "guards": {
+   "amplification_UPPER": true,
+   "amplification_PASS": true,
+   "C0_le_certified_cap": true,
+   "P1_PASS": true,
+   "P1_rule_check_distinct": true,
+   "P1_workprec_512": true,
+   "P1_headroom_above_guard": true,
+   "joint_consistency_PASS": true,
+   "complexity_PASS": true,
+   "scores_within_ceiling": true,
+   "precision_256": true
+  }
+ },
+ "checks_total": 58,
+ "checks_failed": [],
+ "tightest_line": {
+  "name": "endpoint_slivers",
+  "fraction_of_line": 0.8807787981310295,
+  "note": "the endpoint-sliver term is the structural component the successor did NOT repair; it is the binding line here and is a named residual risk for the full campaign, where other patches may carry larger slivers"
+ },
+ "producer_verdict": "PASS",
+ "ADJUDICATED_VERDICT": "PASS",
+ "P5Y_K1_TASK1R": "PASS",
+ "NEXT_ACTION": "K1_FULL_PRODUCTION_CAMPAIGN",
+ "phase_scoping_note": {
+  "observed": "re-running tests/test_pre_t2r.py after T3R fails 2 of 19: test_no_successor_result_before_T2R and test_binding_checkpoint_unmutated",
+  "cause": "both assert integrity.verify()'s prior_task1r_results / PASS, which is a T1R-PHASE condition. The successor result now exists, by design.",
+  "phase_independent_content_verified_separately": {
+   "k1_checkpoint_hash_matches": true,
+   "k1_blob_mismatch": [],
+   "protected_tree_mutated": [],
+   "predecessor_mutated": [],
+   "predecessor_verdict": "FAIL"
+  },
+  "imperfection_recorded": "the split into pre-T2R / post-T3R files was designed at T1R as required, but test_binding_checkpoint_unmutated mixes a phase-independent claim (hash unmutated) with a phase-dependent one (verify()['PASS']). That is an imperfection in MY test scoping, not a scientific or governance failure.",
+  "not_patched_because": "no post-freeze amendment of a frozen pre-T2R test",
+  "affects_verdict": false
+ }
+}
