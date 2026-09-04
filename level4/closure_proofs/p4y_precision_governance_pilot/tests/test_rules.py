@@ -147,3 +147,30 @@ def test_every_candidate_is_uniquely_named():
     names = [r.name for r in CANDIDATES]
     assert len(names) == len(set(names))
     assert len(CANDIDATES) == 9
+
+
+def test_first_crossing_matches_the_reference_definition():
+    """The cost-tail phase's fast curve must equal worst_relative_se(B)."""
+    import importlib.util
+    import sys
+    from pathlib import Path
+
+    from p4y_pilot.blocks import BlockPool, Cell, register_cells, worst_relative_se
+
+    root = Path(__file__).resolve().parents[1]
+    spec = importlib.util.spec_from_file_location("ct", root / "run_costtail.py")
+    ct = importlib.util.module_from_spec(spec)
+    sys.modules["ct"] = ct
+    spec.loader.exec_module(ct)
+
+    register_cells({"crossing-probe": 930})
+    cell = Cell(key="crossing-probe", layer="reduced", kind="cusum",
+                threshold=2.0, family="t1p5", route="route_a",
+                max_steps=60_000, block_size=3_000, heavy=True)
+    pool = BlockPool(cell, "identity", 0)
+    pool.take(40)
+    for r_star in (0.02, 0.05, 0.1, 0.5, 1e-9):
+        fast = ct.first_crossing(pool, r_star)
+        slow = next((b for b in range(8, 41)
+                     if worst_relative_se(pool.take(b))[0] <= r_star), None)
+        assert fast == slow, (r_star, fast, slow)

@@ -1,0 +1,33 @@
+criterion: original sec. 7 (unconditional)
+A_oneshot_one_topup: EXCLUDED -- admits the third state; design attainment 0.875 < delta 0.95
+B_oneshot_safety_1.15: EXCLUDED -- admits the third state; design attainment 0.792 < delta 0.95
+B_oneshot_safety_1.30: EXCLUDED -- admits the third state; design attainment 0.783 < delta 0.95
+B_oneshot_safety_1.50: EXCLUDED -- admits the third state; design attainment 0.725 < delta 0.95
+C_staged_safety_1.00: EXCLUDED -- design attainment 0.875 < delta 0.95
+C_staged_safety_1.15: EXCLUDED -- design attainment 0.808 < delta 0.95
+C_staged_safety_1.30: EXCLUDED -- design attainment 0.783 < delta 0.95
+D_staged_quantile_0.95: EXCLUDED -- design attainment 0.792 < delta 0.95
+D_staged_quantile_0.99: EXCLUDED -- design attainment 0.758 < delta 0.95
+NO ELIGIBLE RULE
+
+criterion: AMENDMENT 1 (conditional)
+A_oneshot_one_topup: EXCLUDED -- admits the third state
+B_oneshot_safety_1.15: EXCLUDED -- admits the third state
+B_oneshot_safety_1.30: EXCLUDED -- admits the third state
+B_oneshot_safety_1.50: EXCLUDED -- admits the third state
+C_staged_safety_1.00: eligible, mean multiplier 1.276
+C_staged_safety_1.15: eligible, mean multiplier 1.419
+C_staged_safety_1.30: eligible, mean multiplier 1.596
+D_staged_quantile_0.95: eligible, mean multiplier 1.616
+D_staged_quantile_0.99: eligible, mean multiplier 1.843
+SELECTED: C_staged_safety_1.00
+
+PRIMARY (C_staged_safety_1.00): attained 282/282 funded  (72 PRECISION_LIMITED, 0 UNRESOLVED of 354)
+  p_attain=1.0000  CP lower=0.9894  target=0.95  -> MET
+SECONDARY: min per-cell lower bound = 0.9278  -> MET
+    C1: 40/40 funded, lower 0.9278
+    C3: 42/42 funded, lower 0.9312
+    C2: 40/40 funded, lower 0.9278
+    C4: 53/53 funded, lower 0.9450
+    C6: 48/48 funded, lower 0.9395
+    C5: 59/59 funded, lower 0.9505

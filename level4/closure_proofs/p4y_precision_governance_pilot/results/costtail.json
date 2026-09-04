@@ -1,0 +1,4672 @@
+{
+ "schema": "rebaseguard.p4y-pilot-costtail.v1",
+ "binding": false,
+ "amendment": 1,
+ "purpose": "project a production cap only",
+ "not_used_for": [
+  "rule selection",
+  "delta",
+  "beta",
+  "the primary endpoint"
+ ],
+ "replicates_per_cell": 24,
+ "cap_blocks": 384,
+ "cap_multiplier": 16,
+ "b1_nominal": 24,
+ "cells": [
+  {
+   "cell": "C1",
+   "config": "reduced/cusum@2/t1p5",
+   "route": "route_a",
+   "heavy": true,
+   "r_star_pilot": 0.02522,
+   "rules": [
+    {
+     "rule": "A_oneshot_one_topup",
+     "replicates": 24,
+     "attained": 18,
+     "p_attain_at_16x_cap": 0.75,
+     "lower_bound_at_16x_cap": 0.565308621098989,
+     "mean_multiplier": 3.107638888888889,
+     "q50_multiplier": 2.2916666666666665,
+     "q90_multiplier": 7.75,
+     "q95_multiplier": 9.25,
+     "max_multiplier": 13.041666666666666
+    },
+    {
+     "rule": "C_staged_safety_1.00",
+     "replicates": 24,
+     "attained": 19,
+     "p_attain_at_16x_cap": 0.7916666666666666,
+     "lower_bound_at_16x_cap": 0.6108606526401017,
+     "mean_multiplier": 3.111111111111111,
+     "q50_multiplier": 2.2916666666666665,
+     "q90_multiplier": 7.75,
+     "q95_multiplier": 9.25,
+     "max_multiplier": 13.041666666666666
+    },
+    {
+     "rule": "D_staged_quantile_0.95",
+     "replicates": 24,
+     "attained": 19,
+     "p_attain_at_16x_cap": 0.7916666666666666,
+     "lower_bound_at_16x_cap": 0.6108606526401017,
+     "mean_multiplier": 3.2100694444444446,
+     "q50_multiplier": 2.0,
+     "q90_multiplier": 7.833333333333333,
+     "q95_multiplier": 8.833333333333334,
+     "max_multiplier": 11.125
+    }
+   ],
+   "oracle_resolved": 21,
+   "oracle_replicates": 24,
+   "oracle_q50": 0.7916666666666666,
+   "oracle_q90": 1.5416666666666667,
+   "oracle_q95": 1.8333333333333333,
+   "oracle_max": 2.8333333333333335,
+   "replicates": [
+    {
+     "replicate": 5000,
+     "reference_relative_se": 0.021059670407653254,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 39,
+       "stages": 2,
+       "relative_se": 0.017727941994438254,
+       "block_multiplier": 1.625
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 39,
+       "stages": 2,
+       "relative_se": 0.017727941994438254,
+       "block_multiplier": 1.625
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 37,
+       "stages": 2,
+       "relative_se": 0.01857482510944271,
+       "block_multiplier": 1.5416666666666667
+      }
+     },
+     "oracle_first_crossing_blocks": 20,
+     "oracle_multiplier": 0.8333333333333334,
+     "blocks_simulated": 51
+    },
+    {
+     "replicate": 5001,
+     "reference_relative_se": 0.02494470503301689,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 313,
+       "stages": 2,
+       "relative_se": 0.0067835876545358515,
+       "block_multiplier": 13.041666666666666
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 313,
+       "stages": 2,
+       "relative_se": 0.0067835876545358515,
+       "block_multiplier": 13.041666666666666
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 82,
+       "stages": 2,
+       "relative_se": 0.015101232955552405,
+       "block_multiplier": 3.4166666666666665
+      }
+     },
+     "oracle_first_crossing_blocks": 37,
+     "oracle_multiplier": 1.5416666666666667,
+     "blocks_simulated": 325
+    },
+    {
+     "replicate": 5002,
+     "reference_relative_se": 0.03520921469783711,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 222,
+       "stages": 2,
+       "relative_se": 0.018343890372812897,
+       "block_multiplier": 9.25
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 222,
+       "stages": 2,
+       "relative_se": 0.018343890372812897,
+       "block_multiplier": 9.25
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 85,
+       "stages": 1,
+       "relative_se": 0.021080106540170982,
+       "block_multiplier": 3.5416666666666665
+      }
+     },
+     "oracle_first_crossing_blocks": 68,
+     "oracle_multiplier": 2.8333333333333335,
+     "blocks_simulated": 234
+    },
+    {
+     "replicate": 5003,
+     "reference_relative_se": 0.017498059931604467,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "UNRESOLVED",
+       "blocks": 13,
+       "stages": 2,
+       "relative_se": 0.02587138062400083,
+       "block_multiplier": 0.5416666666666666
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 15,
+       "stages": 3,
+       "relative_se": 0.023737581752362718,
+       "block_multiplier": 0.625
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 25,
+       "stages": 2,
+       "relative_se": 0.022088095181525914,
+       "block_multiplier": 1.0416666666666667
+      }
+     },
+     "oracle_first_crossing_blocks": 14,
+     "oracle_multiplier": 0.5833333333333334,
+     "blocks_simulated": 37
+    },
+    {
+     "replicate": 5004,
+     "reference_relative_se": 0.02936951749976524,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 20,
+       "stages": 1,
+       "relative_se": 0.019602736299492152,
+       "block_multiplier": 0.8333333333333334
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 20,
+       "stages": 1,
+       "relative_se": 0.019602736299492152,
+       "block_multiplier": 0.8333333333333334
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 48,
+       "stages": 1,
+       "relative_se": 0.010454591386877909,
+       "block_multiplier": 2.0
+      }
+     },
+     "oracle_first_crossing_blocks": 15,
+     "oracle_multiplier": 0.625,
+     "blocks_simulated": 60
+    },
+    {
+     "replicate": 5005,
+     "reference_relative_se": 0.0291471456303172,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 186,
+       "stages": 2,
+       "relative_se": 0.009790524578152566,
+       "block_multiplier": 7.75
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 186,
+       "stages": 2,
+       "relative_se": 0.009790524578152566,
+       "block_multiplier": 7.75
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 47,
+       "stages": 1,
+       "relative_se": 0.023485665020445,
+       "block_multiplier": 1.9583333333333333
+      }
+     },
+     "oracle_first_crossing_blocks": 44,
+     "oracle_multiplier": 1.8333333333333333,
+     "blocks_simulated": 198
+    },
+    {
+     "replicate": 5006,
+     "reference_relative_se": 0.022467634751970427,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.017617895229080336,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.017617895229080336,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 21,
+       "stages": 1,
+       "relative_se": 0.014146077583122744,
+       "block_multiplier": 0.875
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 33
+    },
+    {
+     "replicate": 5007,
+     "reference_relative_se": 0.03139009164385027,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 61,
+       "stages": 2,
+       "relative_se": 0.01954746747813476,
+       "block_multiplier": 2.5416666666666665
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 61,
+       "stages": 2,
+       "relative_se": 0.01954746747813476,
+       "block_multiplier": 2.5416666666666665
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 60,
+       "stages": 1,
+       "relative_se": 0.0198792486158363,
+       "block_multiplier": 2.5
+      }
+     },
+     "oracle_first_crossing_blocks": 34,
+     "oracle_multiplier": 1.4166666666666667,
+     "blocks_simulated": 73
+    },
+    {
+     "replicate": 5008,
+     "reference_relative_se": 0.0454260918711802,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 76,
+       "stages": 1,
+       "relative_se": 0.012867781367466012,
+       "block_multiplier": 3.1666666666666665
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 76,
+       "stages": 1,
+       "relative_se": 0.012867781367466012,
+       "block_multiplier": 3.1666666666666665
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 188,
+       "stages": 1,
+       "relative_se": 0.010330910722934546,
+       "block_multiplier": 7.833333333333333
+      }
+     },
+     "oracle_first_crossing_blocks": 15,
+     "oracle_multiplier": 0.625,
+     "blocks_simulated": 200
+    },
+    {
+     "replicate": 5009,
+     "reference_relative_se": 0.047199658521766004,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 86,
+       "stages": 1,
+       "relative_se": 0.018495351331914076,
+       "block_multiplier": 3.5833333333333335
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 86,
+       "stages": 1,
+       "relative_se": 0.018495351331914076,
+       "block_multiplier": 3.5833333333333335
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 212,
+       "stages": 1,
+       "relative_se": 0.009187488032796214,
+       "block_multiplier": 8.833333333333334
+      }
+     },
+     "oracle_first_crossing_blocks": 12,
+     "oracle_multiplier": 0.5,
+     "blocks_simulated": 224
+    },
+    {
+     "replicate": 5010,
+     "reference_relative_se": 0.04179256369009441,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 59,
+       "stages": 1,
+       "relative_se": 0.020466694767822466,
+       "block_multiplier": 2.4583333333333335
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 59,
+       "stages": 1,
+       "relative_se": 0.020466694767822466,
+       "block_multiplier": 2.4583333333333335
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 145,
+       "stages": 1,
+       "relative_se": 0.009641344791802335,
+       "block_multiplier": 6.041666666666667
+      }
+     },
+     "oracle_first_crossing_blocks": 11,
+     "oracle_multiplier": 0.4583333333333333,
+     "blocks_simulated": 157
+    },
+    {
+     "replicate": 5011,
+     "reference_relative_se": 0.08111340202210934,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      },
+      "C_staged_safety_1.00": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      },
+      "D_staged_quantile_0.95": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      }
+     },
+     "oracle_first_crossing_blocks": null,
+     "oracle_multiplier": null,
+     "blocks_simulated": 12
+    },
+    {
+     "replicate": 5012,
+     "reference_relative_se": 0.050788845663280055,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 108,
+       "stages": 1,
+       "relative_se": 0.03858245733129654,
+       "block_multiplier": 4.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 108,
+       "stages": 1,
+       "relative_se": 0.03858245733129654,
+       "block_multiplier": 4.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 267,
+       "stages": 1,
+       "relative_se": 0.015976342843394623,
+       "block_multiplier": 11.125
+      }
+     },
+     "oracle_first_crossing_blocks": 19,
+     "oracle_multiplier": 0.7916666666666666,
+     "blocks_simulated": 279
+    },
+    {
+     "replicate": 5013,
+     "reference_relative_se": 0.019102939518104423,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 47,
+       "stages": 2,
+       "relative_se": 0.018882391031442246,
+       "block_multiplier": 1.9583333333333333
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 47,
+       "stages": 2,
+       "relative_se": 0.018882391031442246,
+       "block_multiplier": 1.9583333333333333
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 67,
+       "stages": 2,
+       "relative_se": 0.013921989121500047,
+       "block_multiplier": 2.7916666666666665
+      }
+     },
+     "oracle_first_crossing_blocks": 32,
+     "oracle_multiplier": 1.3333333333333333,
+     "blocks_simulated": 79
+    },
+    {
+     "replicate": 5014,
+     "reference_relative_se": 0.10954578745751664,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      },
+      "C_staged_safety_1.00": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      },
+      "D_staged_quantile_0.95": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      }
+     },
+     "oracle_first_crossing_blocks": null,
+     "oracle_multiplier": null,
+     "blocks_simulated": 12
+    },
+    {
+     "replicate": 5015,
+     "reference_relative_se": 0.05786003945246966,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 162,
+       "stages": 1,
+       "relative_se": 0.013240635440484835,
+       "block_multiplier": 6.75
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 162,
+       "stages": 1,
+       "relative_se": 0.013240635440484835,
+       "block_multiplier": 6.75
+      },
+      "D_staged_quantile_0.95": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      }
+     },
+     "oracle_first_crossing_blocks": 25,
+     "oracle_multiplier": 1.0416666666666667,
+     "blocks_simulated": 174
+    },
+    {
+     "replicate": 5016,
+     "reference_relative_se": 0.03258934448040872,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 27,
+       "stages": 1,
+       "relative_se": 0.014994854568733094,
+       "block_multiplier": 1.125
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 27,
+       "stages": 1,
+       "relative_se": 0.014994854568733094,
+       "block_multiplier": 1.125
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 67,
+       "stages": 1,
+       "relative_se": 0.011337375876436566,
+       "block_multiplier": 2.7916666666666665
+      }
+     },
+     "oracle_first_crossing_blocks": 13,
+     "oracle_multiplier": 0.5416666666666666,
+     "blocks_simulated": 79
+    },
+    {
+     "replicate": 5017,
+     "reference_relative_se": 0.12915365688920707,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      },
+      "C_staged_safety_1.00": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      },
+      "D_staged_quantile_0.95": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      }
+     },
+     "oracle_first_crossing_blocks": null,
+     "oracle_multiplier": null,
+     "blocks_simulated": 12
+    },
+    {
+     "replicate": 5018,
+     "reference_relative_se": 0.04510609849575662,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 74,
+       "stages": 1,
+       "relative_se": 0.010594267123249896,
+       "block_multiplier": 3.0833333333333335
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 74,
+       "stages": 1,
+       "relative_se": 0.010594267123249896,
+       "block_multiplier": 3.0833333333333335
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 184,
+       "stages": 1,
+       "relative_se": 0.0073201734196058545,
+       "block_multiplier": 7.666666666666667
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 196
+    },
+    {
+     "replicate": 5019,
+     "reference_relative_se": 0.022956271002673743,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 55,
+       "stages": 2,
+       "relative_se": 0.01322178648146191,
+       "block_multiplier": 2.2916666666666665
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 55,
+       "stages": 2,
+       "relative_se": 0.01322178648146191,
+       "block_multiplier": 2.2916666666666665
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 23,
+       "stages": 1,
+       "relative_se": 0.024401447688691968,
+       "block_multiplier": 0.9583333333333334
+      }
+     },
+     "oracle_first_crossing_blocks": 23,
+     "oracle_multiplier": 0.9583333333333334,
+     "blocks_simulated": 67
+    },
+    {
+     "replicate": 5020,
+     "reference_relative_se": 0.018581421495477122,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.09190144438152986,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.09190144438152986,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.09190144438152986,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5021,
+     "reference_relative_se": 0.044609172086137065,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 72,
+       "stages": 1,
+       "relative_se": 0.012445512148260427,
+       "block_multiplier": 3.0
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 72,
+       "stages": 1,
+       "relative_se": 0.012445512148260427,
+       "block_multiplier": 3.0
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 178,
+       "stages": 1,
+       "relative_se": 0.014186127571275083,
+       "block_multiplier": 7.416666666666667
+      }
+     },
+     "oracle_first_crossing_blocks": 21,
+     "oracle_multiplier": 0.875,
+     "blocks_simulated": 190
+    },
+    {
+     "replicate": 5022,
+     "reference_relative_se": 0.026947460894118327,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 120,
+       "stages": 2,
+       "relative_se": 0.010138073677714347,
+       "block_multiplier": 5.0
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 120,
+       "stages": 2,
+       "relative_se": 0.010138073677714347,
+       "block_multiplier": 5.0
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 37,
+       "stages": 1,
+       "relative_se": 0.021188789942989544,
+       "block_multiplier": 1.5416666666666667
+      }
+     },
+     "oracle_first_crossing_blocks": 30,
+     "oracle_multiplier": 1.25,
+     "blocks_simulated": 132
+    },
+    {
+     "replicate": 5023,
+     "reference_relative_se": 0.03216492713074793,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 26,
+       "stages": 1,
+       "relative_se": 0.014389947181992624,
+       "block_multiplier": 1.0833333333333333
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 26,
+       "stages": 1,
+       "relative_se": 0.014389947181992624,
+       "block_multiplier": 1.0833333333333333
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 64,
+       "stages": 1,
+       "relative_se": 0.022520713388977185,
+       "block_multiplier": 2.6666666666666665
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 76
+    }
+   ],
+   "cpu_seconds": 60.158744000000006,
+   "blocks_simulated": 2924
+  },
+  {
+   "cell": "C3",
+   "config": "reduced/sr@20/t1p5",
+   "route": "route_a",
+   "heavy": true,
+   "r_star_pilot": 0.02631,
+   "rules": [
+    {
+     "rule": "A_oneshot_one_topup",
+     "replicates": 24,
+     "attained": 19,
+     "p_attain_at_16x_cap": 0.7916666666666666,
+     "lower_bound_at_16x_cap": 0.6108606526401017,
+     "mean_multiplier": 2.0885416666666665,
+     "q50_multiplier": 0.8333333333333334,
+     "q90_multiplier": 5.083333333333333,
+     "q95_multiplier": 6.416666666666667,
+     "max_multiplier": 13.416666666666666
+    },
+    {
+     "rule": "C_staged_safety_1.00",
+     "replicates": 24,
+     "attained": 19,
+     "p_attain_at_16x_cap": 0.7916666666666666,
+     "lower_bound_at_16x_cap": 0.6108606526401017,
+     "mean_multiplier": 2.0885416666666665,
+     "q50_multiplier": 0.8333333333333334,
+     "q90_multiplier": 5.083333333333333,
+     "q95_multiplier": 6.416666666666667,
+     "max_multiplier": 13.416666666666666
+    },
+    {
+     "rule": "D_staged_quantile_0.95",
+     "replicates": 24,
+     "attained": 19,
+     "p_attain_at_16x_cap": 0.7916666666666666,
+     "lower_bound_at_16x_cap": 0.6108606526401017,
+     "mean_multiplier": 3.2916666666666665,
+     "q50_multiplier": 1.25,
+     "q90_multiplier": 10.791666666666666,
+     "q95_multiplier": 11.0,
+     "max_multiplier": 15.875
+    }
+   ],
+   "oracle_resolved": 22,
+   "oracle_replicates": 24,
+   "oracle_q50": 0.375,
+   "oracle_q90": 1.25,
+   "oracle_q95": 1.75,
+   "oracle_max": 3.4583333333333335,
+   "replicates": [
+    {
+     "replicate": 5000,
+     "reference_relative_se": 0.023108407479506588,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.015187131330323952,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.015187131330323952,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 20,
+       "stages": 1,
+       "relative_se": 0.017977715997160363,
+       "block_multiplier": 0.8333333333333334
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 32
+    },
+    {
+     "replicate": 5001,
+     "reference_relative_se": 0.024136044366694552,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.024535549879427354,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.024535549879427354,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 23,
+       "stages": 1,
+       "relative_se": 0.016102244048719967,
+       "block_multiplier": 0.9583333333333334
+      }
+     },
+     "oracle_first_crossing_blocks": 11,
+     "oracle_multiplier": 0.4583333333333333,
+     "blocks_simulated": 35
+    },
+    {
+     "replicate": 5002,
+     "reference_relative_se": 0.015639003445198817,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.02565570318326089,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.02565570318326089,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.02565570318326089,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 9,
+     "oracle_multiplier": 0.375,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5003,
+     "reference_relative_se": 0.03773380794618656,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 65,
+       "stages": 2,
+       "relative_se": 0.019917222990121577,
+       "block_multiplier": 2.7083333333333335
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 65,
+       "stages": 2,
+       "relative_se": 0.019917222990121577,
+       "block_multiplier": 2.7083333333333335
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 93,
+       "stages": 1,
+       "relative_se": 0.0166669234019764,
+       "block_multiplier": 3.875
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 105
+    },
+    {
+     "replicate": 5004,
+     "reference_relative_se": 0.012729447029035959,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 17,
+       "stages": 2,
+       "relative_se": 0.020687273508029555,
+       "block_multiplier": 0.7083333333333334
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 17,
+       "stages": 2,
+       "relative_se": 0.020687273508029555,
+       "block_multiplier": 0.7083333333333334
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 30,
+       "stages": 2,
+       "relative_se": 0.013350324547332206,
+       "block_multiplier": 1.25
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 42
+    },
+    {
+     "replicate": 5005,
+     "reference_relative_se": 0.04793903234004208,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 122,
+       "stages": 2,
+       "relative_se": 0.020842831002271783,
+       "block_multiplier": 5.083333333333333
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 122,
+       "stages": 2,
+       "relative_se": 0.020842831002271783,
+       "block_multiplier": 5.083333333333333
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 195,
+       "stages": 1,
+       "relative_se": 0.01337950052600738,
+       "block_multiplier": 8.125
+      }
+     },
+     "oracle_first_crossing_blocks": 42,
+     "oracle_multiplier": 1.75,
+     "blocks_simulated": 207
+    },
+    {
+     "replicate": 5006,
+     "reference_relative_se": 0.029014767826299876,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 17,
+       "stages": 1,
+       "relative_se": 0.6088291730329572,
+       "block_multiplier": 0.7083333333333334
+      },
+      "C_staged_safety_1.00": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 17,
+       "stages": 1,
+       "relative_se": 0.6088291730329572,
+       "block_multiplier": 0.7083333333333334
+      },
+      "D_staged_quantile_0.95": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 41,
+       "stages": 1,
+       "relative_se": 0.38877396719627755,
+       "block_multiplier": 1.7083333333333333
+      }
+     },
+     "oracle_first_crossing_blocks": 14,
+     "oracle_multiplier": 0.5833333333333334,
+     "blocks_simulated": 53
+    },
+    {
+     "replicate": 5007,
+     "reference_relative_se": 0.09067426955916946,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      },
+      "C_staged_safety_1.00": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      },
+      "D_staged_quantile_0.95": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      }
+     },
+     "oracle_first_crossing_blocks": null,
+     "oracle_multiplier": null,
+     "blocks_simulated": 12
+    },
+    {
+     "replicate": 5008,
+     "reference_relative_se": 0.02378032403402976,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.026097641105633874,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.026097641105633874,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 22,
+       "stages": 1,
+       "relative_se": 0.018018950871849532,
+       "block_multiplier": 0.9166666666666666
+      }
+     },
+     "oracle_first_crossing_blocks": 12,
+     "oracle_multiplier": 0.5,
+     "blocks_simulated": 34
+    },
+    {
+     "replicate": 5009,
+     "reference_relative_se": 0.030796085333142875,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 20,
+       "stages": 1,
+       "relative_se": 0.021580573895784688,
+       "block_multiplier": 0.8333333333333334
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 20,
+       "stages": 1,
+       "relative_se": 0.021580573895784688,
+       "block_multiplier": 0.8333333333333334
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 49,
+       "stages": 1,
+       "relative_se": 0.01537223242419635,
+       "block_multiplier": 2.0416666666666665
+      }
+     },
+     "oracle_first_crossing_blocks": 16,
+     "oracle_multiplier": 0.6666666666666666,
+     "blocks_simulated": 61
+    },
+    {
+     "replicate": 5010,
+     "reference_relative_se": 0.059388477135562716,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 154,
+       "stages": 1,
+       "relative_se": 0.013036938678301902,
+       "block_multiplier": 6.416666666666667
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 154,
+       "stages": 1,
+       "relative_se": 0.013036938678301902,
+       "block_multiplier": 6.416666666666667
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 381,
+       "stages": 1,
+       "relative_se": 0.008596166349473296,
+       "block_multiplier": 15.875
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 393
+    },
+    {
+     "replicate": 5011,
+     "reference_relative_se": 0.022807095136635508,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 17,
+       "stages": 2,
+       "relative_se": 0.021282157942997745,
+       "block_multiplier": 0.7083333333333334
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 17,
+       "stages": 2,
+       "relative_se": 0.021282157942997745,
+       "block_multiplier": 0.7083333333333334
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 20,
+       "stages": 1,
+       "relative_se": 0.018478453801877175,
+       "block_multiplier": 0.8333333333333334
+      }
+     },
+     "oracle_first_crossing_blocks": 14,
+     "oracle_multiplier": 0.5833333333333334,
+     "blocks_simulated": 32
+    },
+    {
+     "replicate": 5012,
+     "reference_relative_se": 0.07525999059885685,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 322,
+       "stages": 1,
+       "relative_se": 0.03241508104647819,
+       "block_multiplier": 13.416666666666666
+      },
+      "C_staged_safety_1.00": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 322,
+       "stages": 1,
+       "relative_se": 0.03241508104647819,
+       "block_multiplier": 13.416666666666666
+      },
+      "D_staged_quantile_0.95": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      }
+     },
+     "oracle_first_crossing_blocks": 12,
+     "oracle_multiplier": 0.5,
+     "blocks_simulated": 334
+    },
+    {
+     "replicate": 5013,
+     "reference_relative_se": 0.036812083367837506,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 35,
+       "stages": 1,
+       "relative_se": 0.02411389129713299,
+       "block_multiplier": 1.4583333333333333
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 35,
+       "stages": 1,
+       "relative_se": 0.02411389129713299,
+       "block_multiplier": 1.4583333333333333
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 86,
+       "stages": 1,
+       "relative_se": 0.014212290644209835,
+       "block_multiplier": 3.5833333333333335
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 98
+    },
+    {
+     "replicate": 5014,
+     "reference_relative_se": 0.03154243106393141,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 22,
+       "stages": 1,
+       "relative_se": 0.08606517732891357,
+       "block_multiplier": 0.9166666666666666
+      },
+      "C_staged_safety_1.00": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 22,
+       "stages": 1,
+       "relative_se": 0.08606517732891357,
+       "block_multiplier": 0.9166666666666666
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 259,
+       "stages": 2,
+       "relative_se": 0.021681060373127548,
+       "block_multiplier": 10.791666666666666
+      }
+     },
+     "oracle_first_crossing_blocks": 83,
+     "oracle_multiplier": 3.4583333333333335,
+     "blocks_simulated": 271
+    },
+    {
+     "replicate": 5015,
+     "reference_relative_se": 0.03954347926310201,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 43,
+       "stages": 1,
+       "relative_se": 0.010930133231224583,
+       "block_multiplier": 1.7916666666666667
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 43,
+       "stages": 1,
+       "relative_se": 0.010930133231224583,
+       "block_multiplier": 1.7916666666666667
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 107,
+       "stages": 1,
+       "relative_se": 0.008546330564082034,
+       "block_multiplier": 4.458333333333333
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 119
+    },
+    {
+     "replicate": 5016,
+     "reference_relative_se": 0.03361563851799625,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 30,
+       "stages": 2,
+       "relative_se": 0.025063849467887162,
+       "block_multiplier": 1.25
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 30,
+       "stages": 2,
+       "relative_se": 0.025063849467887162,
+       "block_multiplier": 1.25
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 65,
+       "stages": 1,
+       "relative_se": 0.023276134017061845,
+       "block_multiplier": 2.7083333333333335
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 77
+    },
+    {
+     "replicate": 5017,
+     "reference_relative_se": 0.040487092983845514,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 47,
+       "stages": 1,
+       "relative_se": 0.015604037925332069,
+       "block_multiplier": 1.9583333333333333
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 47,
+       "stages": 1,
+       "relative_se": 0.015604037925332069,
+       "block_multiplier": 1.9583333333333333
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 115,
+       "stages": 1,
+       "relative_se": 0.015372181874543043,
+       "block_multiplier": 4.791666666666667
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 127
+    },
+    {
+     "replicate": 5018,
+     "reference_relative_se": 0.02378765351997312,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.01993997766008089,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.01993997766008089,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 22,
+       "stages": 1,
+       "relative_se": 0.016630405725387296,
+       "block_multiplier": 0.9166666666666666
+      }
+     },
+     "oracle_first_crossing_blocks": 9,
+     "oracle_multiplier": 0.375,
+     "blocks_simulated": 34
+    },
+    {
+     "replicate": 5019,
+     "reference_relative_se": 1.7349972637284627,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      },
+      "C_staged_safety_1.00": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      },
+      "D_staged_quantile_0.95": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      }
+     },
+     "oracle_first_crossing_blocks": null,
+     "oracle_multiplier": null,
+     "blocks_simulated": 12
+    },
+    {
+     "replicate": 5020,
+     "reference_relative_se": 0.02461459434570066,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 64,
+       "stages": 2,
+       "relative_se": 0.014811299655577332,
+       "block_multiplier": 2.6666666666666665
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 64,
+       "stages": 2,
+       "relative_se": 0.014811299655577332,
+       "block_multiplier": 2.6666666666666665
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 25,
+       "stages": 1,
+       "relative_se": 0.02459835783672071,
+       "block_multiplier": 1.0416666666666667
+      }
+     },
+     "oracle_first_crossing_blocks": 24,
+     "oracle_multiplier": 1.0,
+     "blocks_simulated": 76
+    },
+    {
+     "replicate": 5021,
+     "reference_relative_se": 0.015305837936862684,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.023097211234806566,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.023097211234806566,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.023097211234806566,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 11,
+     "oracle_multiplier": 0.4583333333333333,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5022,
+     "reference_relative_se": 0.05281729058295925,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 107,
+       "stages": 1,
+       "relative_se": 0.01122450920756671,
+       "block_multiplier": 4.458333333333333
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 107,
+       "stages": 1,
+       "relative_se": 0.01122450920756671,
+       "block_multiplier": 4.458333333333333
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 264,
+       "stages": 1,
+       "relative_se": 0.015148298523307223,
+       "block_multiplier": 11.0
+      }
+     },
+     "oracle_first_crossing_blocks": 9,
+     "oracle_multiplier": 0.375,
+     "blocks_simulated": 276
+    },
+    {
+     "replicate": 5023,
+     "reference_relative_se": 0.031851030486393796,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 49,
+       "stages": 2,
+       "relative_se": 0.01806582255238628,
+       "block_multiplier": 2.0416666666666665
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 49,
+       "stages": 2,
+       "relative_se": 0.01806582255238628,
+       "block_multiplier": 2.0416666666666665
+      },
+      "D_staged_quantile_0.95": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 55,
+       "stages": 1,
+       "relative_se": 0.09960516582019492,
+       "block_multiplier": 2.2916666666666665
+      }
+     },
+     "oracle_first_crossing_blocks": 30,
+     "oracle_multiplier": 1.25,
+     "blocks_simulated": 67
+    }
+   ],
+   "cpu_seconds": 83.176851,
+   "blocks_simulated": 2545
+  },
+  {
+   "cell": "C2",
+   "config": "reduced/cusum@2/t1p5",
+   "route": "route_b",
+   "heavy": true,
+   "r_star_pilot": 0.08986,
+   "rules": [
+    {
+     "rule": "A_oneshot_one_topup",
+     "replicates": 24,
+     "attained": 19,
+     "p_attain_at_16x_cap": 0.7916666666666666,
+     "lower_bound_at_16x_cap": 0.6108606526401017,
+     "mean_multiplier": 1.8697916666666667,
+     "q50_multiplier": 1.2083333333333333,
+     "q90_multiplier": 5.041666666666667,
+     "q95_multiplier": 6.166666666666667,
+     "max_multiplier": 6.458333333333333
+    },
+    {
+     "rule": "C_staged_safety_1.00",
+     "replicates": 24,
+     "attained": 22,
+     "p_attain_at_16x_cap": 0.9166666666666666,
+     "lower_bound_at_16x_cap": 0.7601989838711982,
+     "mean_multiplier": 2.045138888888889,
+     "q50_multiplier": 1.5416666666666667,
+     "q90_multiplier": 5.041666666666667,
+     "q95_multiplier": 6.166666666666667,
+     "max_multiplier": 6.458333333333333
+    },
+    {
+     "rule": "D_staged_quantile_0.95",
+     "replicates": 24,
+     "attained": 22,
+     "p_attain_at_16x_cap": 0.9166666666666666,
+     "lower_bound_at_16x_cap": 0.7601989838711982,
+     "mean_multiplier": 4.256944444444445,
+     "q50_multiplier": 2.5,
+     "q90_multiplier": 8.166666666666666,
+     "q95_multiplier": 15.25,
+     "max_multiplier": 16.0
+    }
+   ],
+   "oracle_resolved": 22,
+   "oracle_replicates": 24,
+   "oracle_q50": 0.5833333333333334,
+   "oracle_q90": 0.9166666666666666,
+   "oracle_q95": 1.4166666666666667,
+   "oracle_max": 3.2083333333333335,
+   "replicates": [
+    {
+     "replicate": 5000,
+     "reference_relative_se": 0.06772336825432038,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 17,
+       "stages": 2,
+       "relative_se": 0.0698296090181501,
+       "block_multiplier": 0.7083333333333334
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 17,
+       "stages": 2,
+       "relative_se": 0.0698296090181501,
+       "block_multiplier": 0.7083333333333334
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 26,
+       "stages": 2,
+       "relative_se": 0.0584002180272764,
+       "block_multiplier": 1.0833333333333333
+      }
+     },
+     "oracle_first_crossing_blocks": 14,
+     "oracle_multiplier": 0.5833333333333334,
+     "blocks_simulated": 38
+    },
+    {
+     "replicate": 5001,
+     "reference_relative_se": 0.040202227291559964,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.0563387784174858,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.0563387784174858,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.0563387784174858,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5002,
+     "reference_relative_se": 0.20344445044597573,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 155,
+       "stages": 1,
+       "relative_se": 0.07300151510999967,
+       "block_multiplier": 6.458333333333333
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 155,
+       "stages": 1,
+       "relative_se": 0.07300151510999967,
+       "block_multiplier": 6.458333333333333
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 384,
+       "stages": 1,
+       "relative_se": 0.050776641898002926,
+       "block_multiplier": 16.0
+      }
+     },
+     "oracle_first_crossing_blocks": 77,
+     "oracle_multiplier": 3.2083333333333335,
+     "blocks_simulated": 396
+    },
+    {
+     "replicate": 5003,
+     "reference_relative_se": 0.05777042958167825,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 37,
+       "stages": 2,
+       "relative_se": 0.053622029509724896,
+       "block_multiplier": 1.5416666666666667
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 37,
+       "stages": 2,
+       "relative_se": 0.053622029509724896,
+       "block_multiplier": 1.5416666666666667
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 58,
+       "stages": 2,
+       "relative_se": 0.049952314151679736,
+       "block_multiplier": 2.4166666666666665
+      }
+     },
+     "oracle_first_crossing_blocks": 21,
+     "oracle_multiplier": 0.875,
+     "blocks_simulated": 70
+    },
+    {
+     "replicate": 5004,
+     "reference_relative_se": 0.10854355898487214,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 22,
+       "stages": 1,
+       "relative_se": 0.08335334972818419,
+       "block_multiplier": 0.9166666666666666
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 22,
+       "stages": 1,
+       "relative_se": 0.08335334972818419,
+       "block_multiplier": 0.9166666666666666
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 54,
+       "stages": 1,
+       "relative_se": 0.060082928859561825,
+       "block_multiplier": 2.25
+      }
+     },
+     "oracle_first_crossing_blocks": 17,
+     "oracle_multiplier": 0.7083333333333334,
+     "blocks_simulated": 66
+    },
+    {
+     "replicate": 5005,
+     "reference_relative_se": 0.10094493111788405,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 29,
+       "stages": 2,
+       "relative_se": 0.06972745573261008,
+       "block_multiplier": 1.2083333333333333
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 29,
+       "stages": 2,
+       "relative_se": 0.06972745573261008,
+       "block_multiplier": 1.2083333333333333
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 43,
+       "stages": 1,
+       "relative_se": 0.05847272289326489,
+       "block_multiplier": 1.7916666666666667
+      }
+     },
+     "oracle_first_crossing_blocks": 22,
+     "oracle_multiplier": 0.9166666666666666,
+     "blocks_simulated": 55
+    },
+    {
+     "replicate": 5006,
+     "reference_relative_se": 0.08609935389538734,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 39,
+       "stages": 2,
+       "relative_se": 0.06205145083973196,
+       "block_multiplier": 1.625
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 39,
+       "stages": 2,
+       "relative_se": 0.06205145083973196,
+       "block_multiplier": 1.625
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 27,
+       "stages": 1,
+       "relative_se": 0.07519797249901518,
+       "block_multiplier": 1.125
+      }
+     },
+     "oracle_first_crossing_blocks": 19,
+     "oracle_multiplier": 0.7916666666666666,
+     "blocks_simulated": 51
+    },
+    {
+     "replicate": 5007,
+     "reference_relative_se": 0.11733920664071282,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 28,
+       "stages": 1,
+       "relative_se": 0.06405340503849362,
+       "block_multiplier": 1.1666666666666667
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 28,
+       "stages": 1,
+       "relative_se": 0.06405340503849362,
+       "block_multiplier": 1.1666666666666667
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 69,
+       "stages": 1,
+       "relative_se": 0.03635092344401519,
+       "block_multiplier": 2.875
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 81
+    },
+    {
+     "replicate": 5008,
+     "reference_relative_se": 0.1441242119745577,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 53,
+       "stages": 1,
+       "relative_se": 0.04808675027703344,
+       "block_multiplier": 2.2083333333333335
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 53,
+       "stages": 1,
+       "relative_se": 0.04808675027703344,
+       "block_multiplier": 2.2083333333333335
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 131,
+       "stages": 1,
+       "relative_se": 0.027814980958605198,
+       "block_multiplier": 5.458333333333333
+      }
+     },
+     "oracle_first_crossing_blocks": 19,
+     "oracle_multiplier": 0.7916666666666666,
+     "blocks_simulated": 143
+    },
+    {
+     "replicate": 5009,
+     "reference_relative_se": 0.0647077909036286,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.08497271186222766,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.08497271186222766,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.08497271186222766,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5010,
+     "reference_relative_se": 0.2002871212504404,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 148,
+       "stages": 1,
+       "relative_se": 0.03351414350652551,
+       "block_multiplier": 6.166666666666667
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 148,
+       "stages": 1,
+       "relative_se": 0.03351414350652551,
+       "block_multiplier": 6.166666666666667
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 366,
+       "stages": 1,
+       "relative_se": 0.07220890414805833,
+       "block_multiplier": 15.25
+      }
+     },
+     "oracle_first_crossing_blocks": 11,
+     "oracle_multiplier": 0.4583333333333333,
+     "blocks_simulated": 378
+    },
+    {
+     "replicate": 5011,
+     "reference_relative_se": 0.08209528211415867,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.06646748120982868,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.06646748120982868,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 151,
+       "stages": 2,
+       "relative_se": 0.049249323104390584,
+       "block_multiplier": 6.291666666666667
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 163
+    },
+    {
+     "replicate": 5012,
+     "reference_relative_se": 0.1572662695240176,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 70,
+       "stages": 1,
+       "relative_se": 0.0350501461810003,
+       "block_multiplier": 2.9166666666666665
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 70,
+       "stages": 1,
+       "relative_se": 0.0350501461810003,
+       "block_multiplier": 2.9166666666666665
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 172,
+       "stages": 1,
+       "relative_se": 0.026828258183774052,
+       "block_multiplier": 7.166666666666667
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 184
+    },
+    {
+     "replicate": 5013,
+     "reference_relative_se": 0.07467708480905433,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "UNRESOLVED",
+       "blocks": 67,
+       "stages": 2,
+       "relative_se": 0.098273100092975,
+       "block_multiplier": 2.7916666666666665
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 89,
+       "stages": 3,
+       "relative_se": 0.08233254104843211,
+       "block_multiplier": 3.7083333333333335
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 185,
+       "stages": 3,
+       "relative_se": 0.04367707885475866,
+       "block_multiplier": 7.708333333333333
+      }
+     },
+     "oracle_first_crossing_blocks": 21,
+     "oracle_multiplier": 0.875,
+     "blocks_simulated": 197
+    },
+    {
+     "replicate": 5014,
+     "reference_relative_se": 0.06846531766424788,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.068751396549422,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.068751396549422,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 13,
+       "stages": 1,
+       "relative_se": 0.06453481379918864,
+       "block_multiplier": 0.5416666666666666
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 25
+    },
+    {
+     "replicate": 5015,
+     "reference_relative_se": 0.0472848725053379,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.05721615272626232,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.05721615272626232,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.05721615272626232,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5016,
+     "reference_relative_se": 0.08483151253332295,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.9895179896639166,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.9895179896639166,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 25,
+       "stages": 1,
+       "relative_se": 0.3271222820058322,
+       "block_multiplier": 1.0416666666666667
+      }
+     },
+     "oracle_first_crossing_blocks": null,
+     "oracle_multiplier": null,
+     "blocks_simulated": 37
+    },
+    {
+     "replicate": 5017,
+     "reference_relative_se": 0.1463392623292064,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 56,
+       "stages": 1,
+       "relative_se": 0.04712978684993554,
+       "block_multiplier": 2.3333333333333335
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 56,
+       "stages": 1,
+       "relative_se": 0.04712978684993554,
+       "block_multiplier": 2.3333333333333335
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 137,
+       "stages": 1,
+       "relative_se": 0.04412634661799368,
+       "block_multiplier": 5.708333333333333
+      }
+     },
+     "oracle_first_crossing_blocks": 12,
+     "oracle_multiplier": 0.5,
+     "blocks_simulated": 149
+    },
+    {
+     "replicate": 5018,
+     "reference_relative_se": 0.12804622747376718,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 37,
+       "stages": 1,
+       "relative_se": 0.06228993115866848,
+       "block_multiplier": 1.5416666666666667
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 37,
+       "stages": 1,
+       "relative_se": 0.06228993115866848,
+       "block_multiplier": 1.5416666666666667
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 91,
+       "stages": 1,
+       "relative_se": 0.052048109758783295,
+       "block_multiplier": 3.7916666666666665
+      }
+     },
+     "oracle_first_crossing_blocks": 14,
+     "oracle_multiplier": 0.5833333333333334,
+     "blocks_simulated": 103
+    },
+    {
+     "replicate": 5019,
+     "reference_relative_se": 0.1481707112205382,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 75,
+       "stages": 2,
+       "relative_se": 0.08021839259365839,
+       "block_multiplier": 3.125
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 75,
+       "stages": 2,
+       "relative_se": 0.08021839259365839,
+       "block_multiplier": 3.125
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 143,
+       "stages": 1,
+       "relative_se": 0.044867209132331665,
+       "block_multiplier": 5.958333333333333
+      }
+     },
+     "oracle_first_crossing_blocks": 19,
+     "oracle_multiplier": 0.7916666666666666,
+     "blocks_simulated": 155
+    },
+    {
+     "replicate": 5020,
+     "reference_relative_se": 0.4145807434791489,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      },
+      "C_staged_safety_1.00": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      },
+      "D_staged_quantile_0.95": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      }
+     },
+     "oracle_first_crossing_blocks": null,
+     "oracle_multiplier": null,
+     "blocks_simulated": 12
+    },
+    {
+     "replicate": 5021,
+     "reference_relative_se": 0.1640510258347498,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 121,
+       "stages": 2,
+       "relative_se": 0.06872540233259121,
+       "block_multiplier": 5.041666666666667
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 121,
+       "stages": 2,
+       "relative_se": 0.06872540233259121,
+       "block_multiplier": 5.041666666666667
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 196,
+       "stages": 1,
+       "relative_se": 0.04445569140836671,
+       "block_multiplier": 8.166666666666666
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 208
+    },
+    {
+     "replicate": 5022,
+     "reference_relative_se": 0.09211921283413231,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "UNRESOLVED",
+       "blocks": 29,
+       "stages": 2,
+       "relative_se": 0.10841229491500827,
+       "block_multiplier": 1.2083333333333333
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 53,
+       "stages": 3,
+       "relative_se": 0.06482647690583238,
+       "block_multiplier": 2.2083333333333335
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 60,
+       "stages": 2,
+       "relative_se": 0.062320655747264184,
+       "block_multiplier": 2.5
+      }
+     },
+     "oracle_first_crossing_blocks": 17,
+     "oracle_multiplier": 0.7083333333333334,
+     "blocks_simulated": 72
+    },
+    {
+     "replicate": 5023,
+     "reference_relative_se": 0.08511529352508196,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "UNRESOLVED",
+       "blocks": 22,
+       "stages": 2,
+       "relative_se": 0.13401941168366613,
+       "block_multiplier": 0.9166666666666666
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 77,
+       "stages": 3,
+       "relative_se": 0.05637708083824327,
+       "block_multiplier": 3.2083333333333335
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 85,
+       "stages": 2,
+       "relative_se": 0.05106045448057876,
+       "block_multiplier": 3.5416666666666665
+      }
+     },
+     "oracle_first_crossing_blocks": 34,
+     "oracle_multiplier": 1.4166666666666667,
+     "blocks_simulated": 97
+    }
+   ],
+   "cpu_seconds": 279.702043,
+   "blocks_simulated": 2752
+  },
+  {
+   "cell": "C4",
+   "config": "reduced/sr@20/t1p5",
+   "route": "route_b",
+   "heavy": true,
+   "r_star_pilot": 0.1471,
+   "rules": [
+    {
+     "rule": "A_oneshot_one_topup",
+     "replicates": 24,
+     "attained": 22,
+     "p_attain_at_16x_cap": 0.9166666666666666,
+     "lower_bound_at_16x_cap": 0.7601989838711982,
+     "mean_multiplier": 2.475694444444444,
+     "q50_multiplier": 0.5,
+     "q90_multiplier": 6.791666666666667,
+     "q95_multiplier": 11.083333333333334,
+     "max_multiplier": 15.625
+    },
+    {
+     "rule": "C_staged_safety_1.00",
+     "replicates": 24,
+     "attained": 22,
+     "p_attain_at_16x_cap": 0.9166666666666666,
+     "lower_bound_at_16x_cap": 0.7601989838711982,
+     "mean_multiplier": 2.475694444444444,
+     "q50_multiplier": 0.5,
+     "q90_multiplier": 6.791666666666667,
+     "q95_multiplier": 11.083333333333334,
+     "max_multiplier": 15.625
+    },
+    {
+     "rule": "D_staged_quantile_0.95",
+     "replicates": 24,
+     "attained": 21,
+     "p_attain_at_16x_cap": 0.875,
+     "lower_bound_at_16x_cap": 0.7077268034920106,
+     "mean_multiplier": 1.9166666666666667,
+     "q50_multiplier": 0.5,
+     "q90_multiplier": 5.916666666666667,
+     "q95_multiplier": 6.375,
+     "max_multiplier": 13.458333333333334
+    }
+   ],
+   "oracle_resolved": 22,
+   "oracle_replicates": 24,
+   "oracle_q50": 0.3333333333333333,
+   "oracle_q90": 1.2083333333333333,
+   "oracle_q95": 1.4583333333333333,
+   "oracle_max": 1.6666666666666667,
+   "replicates": [
+    {
+     "replicate": 5000,
+     "reference_relative_se": 0.07244873516388632,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.0755551717971423,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.0755551717971423,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.0755551717971423,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5001,
+     "reference_relative_se": 0.1432632988694615,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.11804122106197659,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.11804122106197659,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 28,
+       "stages": 1,
+       "relative_se": 0.06468178771020734,
+       "block_multiplier": 1.1666666666666667
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 40
+    },
+    {
+     "replicate": 5002,
+     "reference_relative_se": 0.7059235402871449,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      },
+      "C_staged_safety_1.00": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      },
+      "D_staged_quantile_0.95": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      }
+     },
+     "oracle_first_crossing_blocks": null,
+     "oracle_multiplier": null,
+     "blocks_simulated": 12
+    },
+    {
+     "replicate": 5003,
+     "reference_relative_se": 0.10975026440847686,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 266,
+       "stages": 2,
+       "relative_se": 0.03656660918697652,
+       "block_multiplier": 11.083333333333334
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 266,
+       "stages": 2,
+       "relative_se": 0.03656660918697652,
+       "block_multiplier": 11.083333333333334
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 323,
+       "stages": 2,
+       "relative_se": 0.03156695233679351,
+       "block_multiplier": 13.458333333333334
+      }
+     },
+     "oracle_first_crossing_blocks": 29,
+     "oracle_multiplier": 1.2083333333333333,
+     "blocks_simulated": 335
+    },
+    {
+     "replicate": 5004,
+     "reference_relative_se": 0.17260541427554746,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 130,
+       "stages": 2,
+       "relative_se": 0.062252916477809755,
+       "block_multiplier": 5.416666666666667
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 130,
+       "stages": 2,
+       "relative_se": 0.062252916477809755,
+       "block_multiplier": 5.416666666666667
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 50,
+       "stages": 1,
+       "relative_se": 0.11781539949944055,
+       "block_multiplier": 2.0833333333333335
+      }
+     },
+     "oracle_first_crossing_blocks": 40,
+     "oracle_multiplier": 1.6666666666666667,
+     "blocks_simulated": 142
+    },
+    {
+     "replicate": 5005,
+     "reference_relative_se": 0.15789659328156735,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 26,
+       "stages": 2,
+       "relative_se": 0.10222353311034817,
+       "block_multiplier": 1.0833333333333333
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 26,
+       "stages": 2,
+       "relative_se": 0.10222353311034817,
+       "block_multiplier": 1.0833333333333333
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 38,
+       "stages": 1,
+       "relative_se": 0.07703384590583072,
+       "block_multiplier": 1.5833333333333333
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 50
+    },
+    {
+     "replicate": 5006,
+     "reference_relative_se": 0.09070407810492556,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.07478126216794999,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.07478126216794999,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.07478126216794999,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5007,
+     "reference_relative_se": 0.4420722011292865,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 375,
+       "stages": 1,
+       "relative_se": 0.05519307299480779,
+       "block_multiplier": 15.625
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 375,
+       "stages": 1,
+       "relative_se": 0.05519307299480779,
+       "block_multiplier": 15.625
+      },
+      "D_staged_quantile_0.95": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 387
+    },
+    {
+     "replicate": 5008,
+     "reference_relative_se": 0.14723577597761503,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 13,
+       "stages": 1,
+       "relative_se": 0.07164216014010134,
+       "block_multiplier": 0.5416666666666666
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 13,
+       "stages": 1,
+       "relative_se": 0.07164216014010134,
+       "block_multiplier": 0.5416666666666666
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 30,
+       "stages": 1,
+       "relative_se": 0.07931130807355502,
+       "block_multiplier": 1.25
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 42
+    },
+    {
+     "replicate": 5009,
+     "reference_relative_se": 0.050415184293859334,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.09320396644959195,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.09320396644959195,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.09320396644959195,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5010,
+     "reference_relative_se": 0.15473584120182735,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 163,
+       "stages": 2,
+       "relative_se": 0.038580522143308316,
+       "block_multiplier": 6.791666666666667
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 163,
+       "stages": 2,
+       "relative_se": 0.038580522143308316,
+       "block_multiplier": 6.791666666666667
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 35,
+       "stages": 1,
+       "relative_se": 0.11414492122485315,
+       "block_multiplier": 1.4583333333333333
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 175
+    },
+    {
+     "replicate": 5011,
+     "reference_relative_se": 0.08531613733423352,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.09570948592673502,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.09570948592673502,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.09570948592673502,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5012,
+     "reference_relative_se": 0.1085170266348702,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.053243448304373636,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.053243448304373636,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.053243448304373636,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5013,
+     "reference_relative_se": 0.08359718992541068,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.058124917393457765,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.058124917393457765,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.058124917393457765,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5014,
+     "reference_relative_se": 0.10139632919530124,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.08817627383124431,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.08817627383124431,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.08817627383124431,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5015,
+     "reference_relative_se": 0.07496249376989463,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.09882361287092513,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.09882361287092513,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.09882361287092513,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5016,
+     "reference_relative_se": 0.24815695004799151,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 62,
+       "stages": 1,
+       "relative_se": 0.0630217024994795,
+       "block_multiplier": 2.5833333333333335
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 62,
+       "stages": 1,
+       "relative_se": 0.0630217024994795,
+       "block_multiplier": 2.5833333333333335
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 153,
+       "stages": 1,
+       "relative_se": 0.042803093137952386,
+       "block_multiplier": 6.375
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 165
+    },
+    {
+     "replicate": 5017,
+     "reference_relative_se": 0.1428714526982203,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 110,
+       "stages": 2,
+       "relative_se": 0.05871842610870883,
+       "block_multiplier": 4.583333333333333
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 110,
+       "stages": 2,
+       "relative_se": 0.05871842610870883,
+       "block_multiplier": 4.583333333333333
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 73,
+       "stages": 2,
+       "relative_se": 0.08518069474346736,
+       "block_multiplier": 3.0416666666666665
+      }
+     },
+     "oracle_first_crossing_blocks": 35,
+     "oracle_multiplier": 1.4583333333333333,
+     "blocks_simulated": 122
+    },
+    {
+     "replicate": 5018,
+     "reference_relative_se": 0.07939715467694283,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.09400548057489674,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.09400548057489674,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.09400548057489674,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5019,
+     "reference_relative_se": 0.2419771868702058,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 57,
+       "stages": 1,
+       "relative_se": 0.09317981417330094,
+       "block_multiplier": 2.375
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 57,
+       "stages": 1,
+       "relative_se": 0.09317981417330094,
+       "block_multiplier": 2.375
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 142,
+       "stages": 1,
+       "relative_se": 0.048864945521131534,
+       "block_multiplier": 5.916666666666667
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 154
+    },
+    {
+     "replicate": 5020,
+     "reference_relative_se": 0.20637029471039767,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 68,
+       "stages": 2,
+       "relative_se": 0.10040859104220193,
+       "block_multiplier": 2.8333333333333335
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 68,
+       "stages": 2,
+       "relative_se": 0.10040859104220193,
+       "block_multiplier": 2.8333333333333335
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 86,
+       "stages": 1,
+       "relative_se": 0.0795722829733011,
+       "block_multiplier": 3.5833333333333335
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 98
+    },
+    {
+     "replicate": 5021,
+     "reference_relative_se": 0.1141567632353576,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.07035770177022381,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.07035770177022381,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 14,
+       "stages": 1,
+       "relative_se": 0.06050921929679201,
+       "block_multiplier": 0.5833333333333334
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 26
+    },
+    {
+     "replicate": 5022,
+     "reference_relative_se": 0.10989004246315003,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.08982162142927769,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.08982162142927769,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.08982162142927769,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5023,
+     "reference_relative_se": 0.06909912160521806,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.9015489846637094,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.9015489846637094,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.9015489846637094,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": null,
+     "oracle_multiplier": null,
+     "blocks_simulated": 24
+    }
+   ],
+   "cpu_seconds": 231.33905800000008,
+   "blocks_simulated": 2012
+  },
+  {
+   "cell": "C6",
+   "config": "reduced/cusum@2/t1p5",
+   "route": "route_a",
+   "heavy": true,
+   "r_star_pilot": 0.01858,
+   "rules": [
+    {
+     "rule": "A_oneshot_one_topup",
+     "replicates": 24,
+     "attained": 20,
+     "p_attain_at_16x_cap": 0.8333333333333334,
+     "lower_bound_at_16x_cap": 0.6581926505958837,
+     "mean_multiplier": 1.8472222222222223,
+     "q50_multiplier": 0.5416666666666666,
+     "q90_multiplier": 4.958333333333333,
+     "q95_multiplier": 8.333333333333334,
+     "max_multiplier": 10.375
+    },
+    {
+     "rule": "C_staged_safety_1.00",
+     "replicates": 24,
+     "attained": 21,
+     "p_attain_at_16x_cap": 0.875,
+     "lower_bound_at_16x_cap": 0.7077268034920106,
+     "mean_multiplier": 2.1927083333333335,
+     "q50_multiplier": 0.5416666666666666,
+     "q90_multiplier": 8.333333333333334,
+     "q95_multiplier": 9.166666666666666,
+     "max_multiplier": 10.375
+    },
+    {
+     "rule": "D_staged_quantile_0.95",
+     "replicates": 24,
+     "attained": 19,
+     "p_attain_at_16x_cap": 0.7916666666666666,
+     "lower_bound_at_16x_cap": 0.6108606526401017,
+     "mean_multiplier": 2.3940972222222223,
+     "q50_multiplier": 0.75,
+     "q90_multiplier": 8.625,
+     "q95_multiplier": 9.416666666666666,
+     "max_multiplier": 12.333333333333334
+    }
+   ],
+   "oracle_resolved": 21,
+   "oracle_replicates": 24,
+   "oracle_q50": 0.3333333333333333,
+   "oracle_q90": 0.875,
+   "oracle_q95": 1.2083333333333333,
+   "oracle_max": 1.4583333333333333,
+   "replicates": [
+    {
+     "replicate": 5000,
+     "reference_relative_se": 0.04894193634931371,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 249,
+       "stages": 1,
+       "relative_se": 0.0071303937213782476,
+       "block_multiplier": 10.375
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 249,
+       "stages": 1,
+       "relative_se": 0.0071303937213782476,
+       "block_multiplier": 10.375
+      },
+      "D_staged_quantile_0.95": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 261
+    },
+    {
+     "replicate": 5001,
+     "reference_relative_se": 0.11265322278285109,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      },
+      "C_staged_safety_1.00": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      },
+      "D_staged_quantile_0.95": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      }
+     },
+     "oracle_first_crossing_blocks": null,
+     "oracle_multiplier": null,
+     "blocks_simulated": 12
+    },
+    {
+     "replicate": 5002,
+     "reference_relative_se": 0.03448488641142878,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 84,
+       "stages": 1,
+       "relative_se": 0.0056765221372713694,
+       "block_multiplier": 3.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 84,
+       "stages": 1,
+       "relative_se": 0.0056765221372713694,
+       "block_multiplier": 3.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 207,
+       "stages": 1,
+       "relative_se": 0.00438209656052388,
+       "block_multiplier": 8.625
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 219
+    },
+    {
+     "replicate": 5003,
+     "reference_relative_se": 0.012029202227618474,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 98,
+       "stages": 2,
+       "relative_se": 0.0073857609465094514,
+       "block_multiplier": 4.083333333333333
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 98,
+       "stages": 2,
+       "relative_se": 0.0073857609465094514,
+       "block_multiplier": 4.083333333333333
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 132,
+       "stages": 2,
+       "relative_se": 0.0059431296802780025,
+       "block_multiplier": 5.5
+      }
+     },
+     "oracle_first_crossing_blocks": 29,
+     "oracle_multiplier": 1.2083333333333333,
+     "blocks_simulated": 144
+    },
+    {
+     "replicate": 5004,
+     "reference_relative_se": 0.06264522015435063,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      },
+      "C_staged_safety_1.00": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      },
+      "D_staged_quantile_0.95": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      }
+     },
+     "oracle_first_crossing_blocks": null,
+     "oracle_multiplier": null,
+     "blocks_simulated": 12
+    },
+    {
+     "replicate": 5005,
+     "reference_relative_se": 0.02158980115606241,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 20,
+       "stages": 1,
+       "relative_se": 0.011736575445931487,
+       "block_multiplier": 0.8333333333333334
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 20,
+       "stages": 1,
+       "relative_se": 0.011736575445931487,
+       "block_multiplier": 0.8333333333333334
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 48,
+       "stages": 1,
+       "relative_se": 0.007627395127186928,
+       "block_multiplier": 2.0
+      }
+     },
+     "oracle_first_crossing_blocks": 13,
+     "oracle_multiplier": 0.5416666666666666,
+     "blocks_simulated": 60
+    },
+    {
+     "replicate": 5006,
+     "reference_relative_se": 0.013070420456389356,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.012296890822223558,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.012296890822223558,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.012296890822223558,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5007,
+     "reference_relative_se": 0.010115554228178747,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.01651882817943544,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.01651882817943544,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.01651882817943544,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 11,
+     "oracle_multiplier": 0.4583333333333333,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5008,
+     "reference_relative_se": 0.01572338135552005,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.010764948646024645,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.010764948646024645,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 18,
+       "stages": 1,
+       "relative_se": 0.012518838628466806,
+       "block_multiplier": 0.75
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 30
+    },
+    {
+     "replicate": 5009,
+     "reference_relative_se": 0.022651669455219525,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 23,
+       "stages": 1,
+       "relative_se": 0.010964313497419003,
+       "block_multiplier": 0.9583333333333334
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 23,
+       "stages": 1,
+       "relative_se": 0.010964313497419003,
+       "block_multiplier": 0.9583333333333334
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 56,
+       "stages": 1,
+       "relative_se": 0.011189570469161539,
+       "block_multiplier": 2.3333333333333335
+      }
+     },
+     "oracle_first_crossing_blocks": 11,
+     "oracle_multiplier": 0.4583333333333333,
+     "blocks_simulated": 68
+    },
+    {
+     "replicate": 5010,
+     "reference_relative_se": 0.015529922912192247,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.012477001786971446,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.012477001786971446,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 18,
+       "stages": 1,
+       "relative_se": 0.009423488794152557,
+       "block_multiplier": 0.75
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 30
+    },
+    {
+     "replicate": 5011,
+     "reference_relative_se": 0.045664891783557426,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 200,
+       "stages": 1,
+       "relative_se": 0.005398809717362893,
+       "block_multiplier": 8.333333333333334
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 200,
+       "stages": 1,
+       "relative_se": 0.005398809717362893,
+       "block_multiplier": 8.333333333333334
+      },
+      "D_staged_quantile_0.95": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 0,
+       "stages": 0,
+       "relative_se": Infinity,
+       "block_multiplier": 0.0
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 212
+    },
+    {
+     "replicate": 5012,
+     "reference_relative_se": 0.01906281040204112,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 14,
+       "stages": 1,
+       "relative_se": 0.010269473347694414,
+       "block_multiplier": 0.5833333333333334
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 14,
+       "stages": 1,
+       "relative_se": 0.010269473347694414,
+       "block_multiplier": 0.5833333333333334
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 33,
+       "stages": 1,
+       "relative_se": 0.01126756593521854,
+       "block_multiplier": 1.375
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 45
+    },
+    {
+     "replicate": 5013,
+     "reference_relative_se": 0.022659643840759063,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 44,
+       "stages": 2,
+       "relative_se": 0.013523340753404094,
+       "block_multiplier": 1.8333333333333333
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 44,
+       "stages": 2,
+       "relative_se": 0.013523340753404094,
+       "block_multiplier": 1.8333333333333333
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 56,
+       "stages": 1,
+       "relative_se": 0.010851820692287071,
+       "block_multiplier": 2.3333333333333335
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 68
+    },
+    {
+     "replicate": 5014,
+     "reference_relative_se": 0.01287027934707472,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 13,
+       "stages": 2,
+       "relative_se": 0.01710554293603494,
+       "block_multiplier": 0.5416666666666666
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 13,
+       "stages": 2,
+       "relative_se": 0.01710554293603494,
+       "block_multiplier": 0.5416666666666666
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 24,
+       "stages": 2,
+       "relative_se": 0.013543025997446754,
+       "block_multiplier": 1.0
+      }
+     },
+     "oracle_first_crossing_blocks": 10,
+     "oracle_multiplier": 0.4166666666666667,
+     "blocks_simulated": 36
+    },
+    {
+     "replicate": 5015,
+     "reference_relative_se": 0.016966636287450314,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.17520871868384544,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.17520871868384544,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "PRECISION_LIMITED",
+       "blocks": 23,
+       "stages": 1,
+       "relative_se": 0.10010851615357401,
+       "block_multiplier": 0.9583333333333334
+      }
+     },
+     "oracle_first_crossing_blocks": null,
+     "oracle_multiplier": null,
+     "blocks_simulated": 35
+    },
+    {
+     "replicate": 5016,
+     "reference_relative_se": 0.014283554792344047,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.01578977211752926,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.01578977211752926,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 14,
+       "stages": 1,
+       "relative_se": 0.013928941587000771,
+       "block_multiplier": 0.5833333333333334
+      }
+     },
+     "oracle_first_crossing_blocks": 10,
+     "oracle_multiplier": 0.4166666666666667,
+     "blocks_simulated": 26
+    },
+    {
+     "replicate": 5017,
+     "reference_relative_se": 0.030574741518150886,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 57,
+       "stages": 1,
+       "relative_se": 0.009296817617583608,
+       "block_multiplier": 2.375
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 57,
+       "stages": 1,
+       "relative_se": 0.009296817617583608,
+       "block_multiplier": 2.375
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 142,
+       "stages": 1,
+       "relative_se": 0.006938037133157542,
+       "block_multiplier": 5.916666666666667
+      }
+     },
+     "oracle_first_crossing_blocks": 21,
+     "oracle_multiplier": 0.875,
+     "blocks_simulated": 154
+    },
+    {
+     "replicate": 5018,
+     "reference_relative_se": 0.007396881541948643,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.01281734886163634,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.01281734886163634,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.01281734886163634,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5019,
+     "reference_relative_se": 0.008745128852583852,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 14,
+       "stages": 2,
+       "relative_se": 0.01809950250552377,
+       "block_multiplier": 0.5833333333333334
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 14,
+       "stages": 2,
+       "relative_se": 0.01809950250552377,
+       "block_multiplier": 0.5833333333333334
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 26,
+       "stages": 2,
+       "relative_se": 0.013291914624458608,
+       "block_multiplier": 1.0833333333333333
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 38
+    },
+    {
+     "replicate": 5020,
+     "reference_relative_se": 0.013254019148119271,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.014794669642379545,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.014794669642379545,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.014794669642379545,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5021,
+     "reference_relative_se": 0.010142268408509436,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.010309863494600153,
+       "block_multiplier": 0.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.010309863494600153,
+       "block_multiplier": 0.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 12,
+       "stages": 1,
+       "relative_se": 0.010309863494600153,
+       "block_multiplier": 0.5
+      }
+     },
+     "oracle_first_crossing_blocks": 8,
+     "oracle_multiplier": 0.3333333333333333,
+     "blocks_simulated": 24
+    },
+    {
+     "replicate": 5022,
+     "reference_relative_se": 0.015863168545055602,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "UNRESOLVED",
+       "blocks": 21,
+       "stages": 2,
+       "relative_se": 0.03934268242662308,
+       "block_multiplier": 0.875
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 220,
+       "stages": 3,
+       "relative_se": 0.0055348410449034095,
+       "block_multiplier": 9.166666666666666
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 226,
+       "stages": 2,
+       "relative_se": 0.005439119375819866,
+       "block_multiplier": 9.416666666666666
+      }
+     },
+     "oracle_first_crossing_blocks": 16,
+     "oracle_multiplier": 0.6666666666666666,
+     "blocks_simulated": 238
+    },
+    {
+     "replicate": 5023,
+     "reference_relative_se": 0.03869092316104971,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 119,
+       "stages": 1,
+       "relative_se": 0.0062600678640915295,
+       "block_multiplier": 4.958333333333333
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 119,
+       "stages": 1,
+       "relative_se": 0.0062600678640915295,
+       "block_multiplier": 4.958333333333333
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 296,
+       "stages": 1,
+       "relative_se": 0.004351983394045538,
+       "block_multiplier": 12.333333333333334
+      }
+     },
+     "oracle_first_crossing_blocks": 35,
+     "oracle_multiplier": 1.4583333333333333,
+     "blocks_simulated": 308
+    }
+   ],
+   "cpu_seconds": 230.12078299999996,
+   "blocks_simulated": 2116
+  },
+  {
+   "cell": "C5",
+   "config": "reduced/cusum@2/gaussian",
+   "route": "route_b",
+   "heavy": false,
+   "r_star_pilot": 0.005528,
+   "rules": [
+    {
+     "rule": "A_oneshot_one_topup",
+     "replicates": 24,
+     "attained": 24,
+     "p_attain_at_16x_cap": 1.0,
+     "lower_bound_at_16x_cap": 0.8826538438450512,
+     "mean_multiplier": 1.404513888888889,
+     "q50_multiplier": 1.4166666666666667,
+     "q90_multiplier": 1.875,
+     "q95_multiplier": 2.0416666666666665,
+     "max_multiplier": 2.6666666666666665
+    },
+    {
+     "rule": "C_staged_safety_1.00",
+     "replicates": 24,
+     "attained": 24,
+     "p_attain_at_16x_cap": 1.0,
+     "lower_bound_at_16x_cap": 0.8826538438450512,
+     "mean_multiplier": 1.404513888888889,
+     "q50_multiplier": 1.4166666666666667,
+     "q90_multiplier": 1.875,
+     "q95_multiplier": 2.0416666666666665,
+     "max_multiplier": 2.6666666666666665
+    },
+    {
+     "rule": "D_staged_quantile_0.95",
+     "replicates": 24,
+     "attained": 24,
+     "p_attain_at_16x_cap": 1.0,
+     "lower_bound_at_16x_cap": 0.8826538438450512,
+     "mean_multiplier": 2.3854166666666665,
+     "q50_multiplier": 2.4583333333333335,
+     "q90_multiplier": 3.0833333333333335,
+     "q95_multiplier": 3.6666666666666665,
+     "max_multiplier": 4.791666666666667
+    }
+   ],
+   "oracle_resolved": 24,
+   "oracle_replicates": 24,
+   "oracle_q50": 0.9166666666666666,
+   "oracle_q90": 1.4166666666666667,
+   "oracle_q95": 1.4166666666666667,
+   "oracle_max": 1.8333333333333333,
+   "replicates": [
+    {
+     "replicate": 5000,
+     "reference_relative_se": 0.006530304126806268,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 17,
+       "stages": 1,
+       "relative_se": 0.005319975857884227,
+       "block_multiplier": 0.7083333333333334
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 17,
+       "stages": 1,
+       "relative_se": 0.005319975857884227,
+       "block_multiplier": 0.7083333333333334
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 30,
+       "stages": 1,
+       "relative_se": 0.005205340410035453,
+       "block_multiplier": 1.25
+      }
+     },
+     "oracle_first_crossing_blocks": 11,
+     "oracle_multiplier": 0.4583333333333333,
+     "blocks_simulated": 42
+    },
+    {
+     "replicate": 5001,
+     "reference_relative_se": 0.009448267911701494,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 36,
+       "stages": 1,
+       "relative_se": 0.004884451912011598,
+       "block_multiplier": 1.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 36,
+       "stages": 1,
+       "relative_se": 0.004884451912011598,
+       "block_multiplier": 1.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 63,
+       "stages": 1,
+       "relative_se": 0.0034265355709649265,
+       "block_multiplier": 2.625
+      }
+     },
+     "oracle_first_crossing_blocks": 24,
+     "oracle_multiplier": 1.0,
+     "blocks_simulated": 75
+    },
+    {
+     "replicate": 5002,
+     "reference_relative_se": 0.005782403169533606,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 37,
+       "stages": 2,
+       "relative_se": 0.0053002417567537975,
+       "block_multiplier": 1.5416666666666667
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 37,
+       "stages": 2,
+       "relative_se": 0.0053002417567537975,
+       "block_multiplier": 1.5416666666666667
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 45,
+       "stages": 2,
+       "relative_se": 0.0046525302855584,
+       "block_multiplier": 1.875
+      }
+     },
+     "oracle_first_crossing_blocks": 34,
+     "oracle_multiplier": 1.4166666666666667,
+     "blocks_simulated": 57
+    },
+    {
+     "replicate": 5003,
+     "reference_relative_se": 0.007177881085112458,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 24,
+       "stages": 2,
+       "relative_se": 0.005377083439127379,
+       "block_multiplier": 1.0
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 24,
+       "stages": 2,
+       "relative_se": 0.005377083439127379,
+       "block_multiplier": 1.0
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 37,
+       "stages": 1,
+       "relative_se": 0.004087082430241341,
+       "block_multiplier": 1.5416666666666667
+      }
+     },
+     "oracle_first_crossing_blocks": 23,
+     "oracle_multiplier": 0.9583333333333334,
+     "blocks_simulated": 49
+    },
+    {
+     "replicate": 5004,
+     "reference_relative_se": 0.010042555857581173,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 40,
+       "stages": 1,
+       "relative_se": 0.0041038304523867,
+       "block_multiplier": 1.6666666666666667
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 40,
+       "stages": 1,
+       "relative_se": 0.0041038304523867,
+       "block_multiplier": 1.6666666666666667
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 71,
+       "stages": 1,
+       "relative_se": 0.0028936257019726397,
+       "block_multiplier": 2.9583333333333335
+      }
+     },
+     "oracle_first_crossing_blocks": 28,
+     "oracle_multiplier": 1.1666666666666667,
+     "blocks_simulated": 83
+    },
+    {
+     "replicate": 5005,
+     "reference_relative_se": 0.007328266773927284,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 22,
+       "stages": 1,
+       "relative_se": 0.004207920859780211,
+       "block_multiplier": 0.9166666666666666
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 22,
+       "stages": 1,
+       "relative_se": 0.004207920859780211,
+       "block_multiplier": 0.9166666666666666
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 38,
+       "stages": 1,
+       "relative_se": 0.0033910819369065417,
+       "block_multiplier": 1.5833333333333333
+      }
+     },
+     "oracle_first_crossing_blocks": 14,
+     "oracle_multiplier": 0.5833333333333334,
+     "blocks_simulated": 50
+    },
+    {
+     "replicate": 5006,
+     "reference_relative_se": 0.009193275365168476,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 34,
+       "stages": 1,
+       "relative_se": 0.004916814620145609,
+       "block_multiplier": 1.4166666666666667
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 34,
+       "stages": 1,
+       "relative_se": 0.004916814620145609,
+       "block_multiplier": 1.4166666666666667
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 60,
+       "stages": 1,
+       "relative_se": 0.0036172370920696463,
+       "block_multiplier": 2.5
+      }
+     },
+     "oracle_first_crossing_blocks": 29,
+     "oracle_multiplier": 1.2083333333333333,
+     "blocks_simulated": 72
+    },
+    {
+     "replicate": 5007,
+     "reference_relative_se": 0.008381597079911424,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 28,
+       "stages": 1,
+       "relative_se": 0.004569540141924257,
+       "block_multiplier": 1.1666666666666667
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 28,
+       "stages": 1,
+       "relative_se": 0.004569540141924257,
+       "block_multiplier": 1.1666666666666667
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 50,
+       "stages": 1,
+       "relative_se": 0.0035139741561908324,
+       "block_multiplier": 2.0833333333333335
+      }
+     },
+     "oracle_first_crossing_blocks": 16,
+     "oracle_multiplier": 0.6666666666666666,
+     "blocks_simulated": 62
+    },
+    {
+     "replicate": 5008,
+     "reference_relative_se": 0.009496889667826173,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 36,
+       "stages": 1,
+       "relative_se": 0.005193187745150702,
+       "block_multiplier": 1.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 36,
+       "stages": 1,
+       "relative_se": 0.005193187745150702,
+       "block_multiplier": 1.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 64,
+       "stages": 1,
+       "relative_se": 0.003649821967048281,
+       "block_multiplier": 2.6666666666666665
+      }
+     },
+     "oracle_first_crossing_blocks": 31,
+     "oracle_multiplier": 1.2916666666666667,
+     "blocks_simulated": 76
+    },
+    {
+     "replicate": 5009,
+     "reference_relative_se": 0.007123642604500159,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 20,
+       "stages": 1,
+       "relative_se": 0.004875972016360352,
+       "block_multiplier": 0.8333333333333334
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 20,
+       "stages": 1,
+       "relative_se": 0.004875972016360352,
+       "block_multiplier": 0.8333333333333334
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 36,
+       "stages": 1,
+       "relative_se": 0.004830255718975063,
+       "block_multiplier": 1.5
+      }
+     },
+     "oracle_first_crossing_blocks": 15,
+     "oracle_multiplier": 0.625,
+     "blocks_simulated": 48
+    },
+    {
+     "replicate": 5010,
+     "reference_relative_se": 0.007948326788482242,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 34,
+       "stages": 2,
+       "relative_se": 0.005124926924770062,
+       "block_multiplier": 1.4166666666666667
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 34,
+       "stages": 2,
+       "relative_se": 0.005124926924770062,
+       "block_multiplier": 1.4166666666666667
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 45,
+       "stages": 1,
+       "relative_se": 0.004504296071276309,
+       "block_multiplier": 1.875
+      }
+     },
+     "oracle_first_crossing_blocks": 30,
+     "oracle_multiplier": 1.25,
+     "blocks_simulated": 57
+    },
+    {
+     "replicate": 5011,
+     "reference_relative_se": 0.01020038629072026,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 45,
+       "stages": 2,
+       "relative_se": 0.005344066972031913,
+       "block_multiplier": 1.875
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 45,
+       "stages": 2,
+       "relative_se": 0.005344066972031913,
+       "block_multiplier": 1.875
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 74,
+       "stages": 1,
+       "relative_se": 0.0035599824635443545,
+       "block_multiplier": 3.0833333333333335
+      }
+     },
+     "oracle_first_crossing_blocks": 44,
+     "oracle_multiplier": 1.8333333333333333,
+     "blocks_simulated": 86
+    },
+    {
+     "replicate": 5012,
+     "reference_relative_se": 0.006831372503126693,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 28,
+       "stages": 2,
+       "relative_se": 0.00497406293337566,
+       "block_multiplier": 1.1666666666666667
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 28,
+       "stages": 2,
+       "relative_se": 0.00497406293337566,
+       "block_multiplier": 1.1666666666666667
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 33,
+       "stages": 1,
+       "relative_se": 0.004285215203167949,
+       "block_multiplier": 1.375
+      }
+     },
+     "oracle_first_crossing_blocks": 25,
+     "oracle_multiplier": 1.0416666666666667,
+     "blocks_simulated": 45
+    },
+    {
+     "replicate": 5013,
+     "reference_relative_se": 0.00910619666632466,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 33,
+       "stages": 1,
+       "relative_se": 0.004051354454936901,
+       "block_multiplier": 1.375
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 33,
+       "stages": 1,
+       "relative_se": 0.004051354454936901,
+       "block_multiplier": 1.375
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 59,
+       "stages": 1,
+       "relative_se": 0.003268649353723353,
+       "block_multiplier": 2.4583333333333335
+      }
+     },
+     "oracle_first_crossing_blocks": 21,
+     "oracle_multiplier": 0.875,
+     "blocks_simulated": 71
+    },
+    {
+     "replicate": 5014,
+     "reference_relative_se": 0.009793846444680976,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 38,
+       "stages": 1,
+       "relative_se": 0.005316824683175763,
+       "block_multiplier": 1.5833333333333333
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 38,
+       "stages": 1,
+       "relative_se": 0.005316824683175763,
+       "block_multiplier": 1.5833333333333333
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 68,
+       "stages": 1,
+       "relative_se": 0.0035244257679130776,
+       "block_multiplier": 2.8333333333333335
+      }
+     },
+     "oracle_first_crossing_blocks": 34,
+     "oracle_multiplier": 1.4166666666666667,
+     "blocks_simulated": 80
+    },
+    {
+     "replicate": 5015,
+     "reference_relative_se": 0.008813479520886647,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 31,
+       "stages": 1,
+       "relative_se": 0.004886441922062323,
+       "block_multiplier": 1.2916666666666667
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 31,
+       "stages": 1,
+       "relative_se": 0.004886441922062323,
+       "block_multiplier": 1.2916666666666667
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 55,
+       "stages": 1,
+       "relative_se": 0.0036516886583388215,
+       "block_multiplier": 2.2916666666666665
+      }
+     },
+     "oracle_first_crossing_blocks": 26,
+     "oracle_multiplier": 1.0833333333333333,
+     "blocks_simulated": 67
+    },
+    {
+     "replicate": 5016,
+     "reference_relative_se": 0.012756264292122389,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 64,
+       "stages": 1,
+       "relative_se": 0.0038006490207781545,
+       "block_multiplier": 2.6666666666666665
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 64,
+       "stages": 1,
+       "relative_se": 0.0038006490207781545,
+       "block_multiplier": 2.6666666666666665
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 115,
+       "stages": 1,
+       "relative_se": 0.0028165661739330324,
+       "block_multiplier": 4.791666666666667
+      }
+     },
+     "oracle_first_crossing_blocks": 22,
+     "oracle_multiplier": 0.9166666666666666,
+     "blocks_simulated": 127
+    },
+    {
+     "replicate": 5017,
+     "reference_relative_se": 0.009783290947990226,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 38,
+       "stages": 1,
+       "relative_se": 0.004402839926590957,
+       "block_multiplier": 1.5833333333333333
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 38,
+       "stages": 1,
+       "relative_se": 0.004402839926590957,
+       "block_multiplier": 1.5833333333333333
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 68,
+       "stages": 1,
+       "relative_se": 0.0033208224850590864,
+       "block_multiplier": 2.8333333333333335
+      }
+     },
+     "oracle_first_crossing_blocks": 16,
+     "oracle_multiplier": 0.6666666666666666,
+     "blocks_simulated": 80
+    },
+    {
+     "replicate": 5018,
+     "reference_relative_se": 0.01003125488890553,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 40,
+       "stages": 1,
+       "relative_se": 0.004199881989731665,
+       "block_multiplier": 1.6666666666666667
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 40,
+       "stages": 1,
+       "relative_se": 0.004199881989731665,
+       "block_multiplier": 1.6666666666666667
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 71,
+       "stages": 1,
+       "relative_se": 0.0031966741160037574,
+       "block_multiplier": 2.9583333333333335
+      }
+     },
+     "oracle_first_crossing_blocks": 21,
+     "oracle_multiplier": 0.875,
+     "blocks_simulated": 83
+    },
+    {
+     "replicate": 5019,
+     "reference_relative_se": 0.007198721126835906,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 21,
+       "stages": 1,
+       "relative_se": 0.004643062673886848,
+       "block_multiplier": 0.875
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 21,
+       "stages": 1,
+       "relative_se": 0.004643062673886848,
+       "block_multiplier": 0.875
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 37,
+       "stages": 1,
+       "relative_se": 0.0043170383923818965,
+       "block_multiplier": 1.5416666666666667
+      }
+     },
+     "oracle_first_crossing_blocks": 17,
+     "oracle_multiplier": 0.7083333333333334,
+     "blocks_simulated": 49
+    },
+    {
+     "replicate": 5020,
+     "reference_relative_se": 0.009506287696729064,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 36,
+       "stages": 1,
+       "relative_se": 0.00381431548752719,
+       "block_multiplier": 1.5
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 36,
+       "stages": 1,
+       "relative_se": 0.00381431548752719,
+       "block_multiplier": 1.5
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 64,
+       "stages": 1,
+       "relative_se": 0.003583164912264284,
+       "block_multiplier": 2.6666666666666665
+      }
+     },
+     "oracle_first_crossing_blocks": 17,
+     "oracle_multiplier": 0.7083333333333334,
+     "blocks_simulated": 76
+    },
+    {
+     "replicate": 5021,
+     "reference_relative_se": 0.0111487570393058,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 49,
+       "stages": 1,
+       "relative_se": 0.0038327549027262404,
+       "block_multiplier": 2.0416666666666665
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 49,
+       "stages": 1,
+       "relative_se": 0.0038327549027262404,
+       "block_multiplier": 2.0416666666666665
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 88,
+       "stages": 1,
+       "relative_se": 0.00318175428386544,
+       "block_multiplier": 3.6666666666666665
+      }
+     },
+     "oracle_first_crossing_blocks": 22,
+     "oracle_multiplier": 0.9166666666666666,
+     "blocks_simulated": 100
+    },
+    {
+     "replicate": 5022,
+     "reference_relative_se": 0.006834641891397473,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 19,
+       "stages": 1,
+       "relative_se": 0.0051876728443124255,
+       "block_multiplier": 0.7916666666666666
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 19,
+       "stages": 1,
+       "relative_se": 0.0051876728443124255,
+       "block_multiplier": 0.7916666666666666
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 33,
+       "stages": 1,
+       "relative_se": 0.005007433016070294,
+       "block_multiplier": 1.375
+      }
+     },
+     "oracle_first_crossing_blocks": 18,
+     "oracle_multiplier": 0.75,
+     "blocks_simulated": 45
+    },
+    {
+     "replicate": 5023,
+     "reference_relative_se": 0.009948989044374605,
+     "outcomes": {
+      "A_oneshot_one_topup": {
+       "status": "ATTAINED",
+       "blocks": 39,
+       "stages": 1,
+       "relative_se": 0.004368369681863132,
+       "block_multiplier": 1.625
+      },
+      "C_staged_safety_1.00": {
+       "status": "ATTAINED",
+       "blocks": 39,
+       "stages": 1,
+       "relative_se": 0.004368369681863132,
+       "block_multiplier": 1.625
+      },
+      "D_staged_quantile_0.95": {
+       "status": "ATTAINED",
+       "blocks": 70,
+       "stages": 1,
+       "relative_se": 0.0032699145622647643,
+       "block_multiplier": 2.9166666666666665
+      }
+     },
+     "oracle_first_crossing_blocks": 20,
+     "oracle_multiplier": 0.8333333333333334,
+     "blocks_simulated": 82
+    }
+   ],
+   "cpu_seconds": 191.62200200000007,
+   "blocks_simulated": 1662
+  }
+ ],
+ "stopped": null,
+ "cpu_hours": 0.2989239316666667,
+ "wall_seconds": 1103.8583896249766,
+ "cumulative_pilot_cpu_hours": 1.198272346388889
+}

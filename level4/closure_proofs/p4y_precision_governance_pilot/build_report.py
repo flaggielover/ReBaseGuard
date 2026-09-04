@@ -66,16 +66,25 @@ def pool_rule(phase: dict, name: str) -> dict:
     }
 
 
-def select(design: dict) -> tuple[str, list[dict], list[str]]:
+def select(design: dict, conditional: bool) -> tuple[str, list[dict], list[str]]:
+    """Apply the selection criterion of sec. 7.
+
+    ``conditional`` selects the reading of "attainment fraction":
+    True  -- AMENDMENT 1: a PRECISION_LIMITED replicate is not a trial of the
+             precision rule, so it is excluded from the denominator;
+    False -- the literal text of the original sec. 7, under which every
+             non-ATTAINED replicate counts against the rule.
+    """
     pooled = [pool_rule(design, r.name) for r in CANDIDATES]
-    log = []
+    field = "p_attain_within_cap" if conditional else "p_attain"
+    log = [f"criterion: {'AMENDMENT 1 (conditional)' if conditional else 'original sec. 7 (unconditional)'}"]
     eligible = []
     for p in pooled:
         why = []
         if p["third_state_possible"]:
             why.append("admits the third state")
-        if p["p_attain"] < DELTA:
-            why.append(f"design attainment {p['p_attain']:.3f} < delta {DELTA}")
+        if p[field] < DELTA:
+            why.append(f"design attainment {p[field]:.3f} < delta {DELTA}")
         if why:
             log.append(f"{p['rule']}: EXCLUDED -- " + "; ".join(why))
         else:
@@ -93,13 +102,18 @@ def select(design: dict) -> tuple[str, list[dict], list[str]]:
 
 def main() -> int:
     design = json.loads((ROOT / "results" / "design.json").read_text())
-    chosen, design_pooled, log = select(design)
+    chosen, design_pooled, log = select(design, conditional=True)
+    literal, _, literal_log = select(design, conditional=False)
     out = {"schema": "rebaseguard.p4y-pilot-report.v1", "binding": False,
            "delta": DELTA, "beta": BETA, "b1_nominal": B1_NOMINAL,
            "selection_log": log, "selected_rule": chosen,
+           "literal_frozen_criterion_selection": literal or None,
+           "literal_frozen_criterion_log": literal_log,
            "design_pooled": design_pooled,
            "design_cpu_hours": design["cpu_hours"],
            "design_stopped": design["stopped"]}
+    print("\n".join(literal_log))
+    print()
     print("\n".join(log))
 
     vpath = ROOT / "results" / "validation.json"
@@ -109,28 +123,47 @@ def main() -> int:
         out["validation_cpu_hours"] = val["cpu_hours"]
         out["validation_stopped"] = val["stopped"]
         out["cumulative_cpu_hours"] = val["cumulative_pilot_cpu_hours"]
+        if not chosen:
+            (ROOT / "results" / "report.json").write_text(json.dumps(out, indent=1))
+            print("\nno rule selected: no primary endpoint")
+            return 0
         sel = next(p for p in out["validation_pooled"] if p["rule"] == chosen)
+        funded = sel["replicates"] - sel["precision_limited"]
         out["primary_endpoint"] = {
             "rule": chosen, "replicates": sel["replicates"],
+            "funded_replicates": funded,
             "attained": sel["attained"],
-            "p_attain": sel["p_attain"],
-            "clopper_pearson_lower": sel["lower_bound"],
+            "unresolved": sel["unresolved"],
+            "p_attain_funded": sel["p_attain_within_cap"],
+            "clopper_pearson_lower": sel["lower_bound_within_cap"],
+            "p_attain_unconditional": sel["p_attain"],
             "target": DELTA,
-            "met": sel["lower_bound"] >= DELTA,
+            "met": sel["lower_bound_within_cap"] >= DELTA,
         }
+        cell_lb = []
+        for c in sel["per_cell"]:
+            f = c["replicates"] - c["precision_limited"]
+            cell_lb.append((c["cell"], c["attained"], f,
+                            clopper_pearson_lower(c["attained"], f, BETA)
+                            if f else 0.0))
         out["secondary_endpoint"] = {
-            "min_cell_lower_bound": min(c["lower_bound"] for c in sel["per_cell"]),
+            "min_cell_lower_bound": min(x[3] for x in cell_lb),
             "threshold": 0.90,
-            "met": min(c["lower_bound"] for c in sel["per_cell"]) >= 0.90,
-            "per_cell": sel["per_cell"],
+            "met": min(x[3] for x in cell_lb) >= 0.90,
+            "per_cell": [{"cell": a, "attained": b, "funded": c,
+                          "lower_bound": d} for a, b, c, d in cell_lb],
         }
-        print(f"\nPRIMARY: {chosen} attained {sel['attained']}/{sel['replicates']}"
-              f"  p_attain={sel['p_attain']:.4f}"
-              f"  CP lower={sel['lower_bound']:.4f}  target={DELTA}"
+        print(f"\nPRIMARY ({chosen}): attained {sel['attained']}/{funded} funded"
+              f"  ({sel['precision_limited']} PRECISION_LIMITED,"
+              f" {sel['unresolved']} UNRESOLVED of {sel['replicates']})"
+              f"\n  p_attain={sel['p_attain_within_cap']:.4f}"
+              f"  CP lower={sel['lower_bound_within_cap']:.4f}  target={DELTA}"
               f"  -> {'MET' if out['primary_endpoint']['met'] else 'NOT MET'}")
         print(f"SECONDARY: min per-cell lower bound = "
               f"{out['secondary_endpoint']['min_cell_lower_bound']:.4f}"
               f"  -> {'MET' if out['secondary_endpoint']['met'] else 'NOT MET'}")
+        for a, b, c, d in cell_lb:
+            print(f"    {a}: {b}/{c} funded, lower {d:.4f}")
     (ROOT / "results" / "report.json").write_text(json.dumps(out, indent=1))
     return 0
 
