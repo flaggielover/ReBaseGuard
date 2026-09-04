@@ -1,0 +1,65 @@
+{
+ "schema": "rebaseguard.p5y.gate2cbis.costmodel.v1",
+ "binding": false,
+ "measured_inputs": {
+  "ratio_incremental": 1.2577083263160647,
+  "ratio_per_unit": 0.6288541631580323,
+  "ratio_cold": 2.2577083263160644,
+  "T_m1_seconds_in_process": 17.5311565,
+  "T_incr_seconds": 22.0490815,
+  "gate1_T_m1_per_subcell_in_pool": 30.85,
+  "note_on_T_m1": "the in-process m=1 call costs 17.53 CPU-s; Gate-1's 30.85 CPU-s per sub-cell was measured inside a 5-worker pool and carries per-worker startup. Gate-1's larger figure is RETAINED in the CUSUM unit as the conservative choice, since production also runs in a pool."
+ },
+ "bands": {
+  "optimistic": {
+   "cpu_hours": 1868.224672586219,
+   "named_assumptions": [
+    "measured ratio_per_unit = 0.6289 (Gate-2C-bis, m=2) applied to all m",
+    "SR cover at the walk's LOWER bound (309 sub-cells)"
+   ],
+   "wall_hours_16_cores": 122.90951793330389,
+   "wall_hours_64_cores": 32.43445612128852,
+   "wall_hours_128_cores": 18.244381568224792
+  },
+  "central": {
+   "cpu_hours": 3091.856205551252,
+   "named_assumptions": [
+    "ratio_per_unit = 1.0 RETAINED: the m=2 measurement shows 1.0 is conservative, but a single m=2 datum is not extrapolated to m in {3,5}, whose solve/source mix differs",
+    "SR cover at the walk's upper bound (322 sub-cells), degree 8 @ 256 bits"
+   ],
+   "wall_hours_16_cores": 203.41159247047713,
+   "wall_hours_64_cores": 53.67805912415368,
+   "wall_hours_128_cores": 30.193908257336446
+  },
+  "conservative": {
+   "cpu_hours": 3696.743323441515,
+   "named_assumptions": [
+    "ratio_per_unit = 1.0",
+    "the PRODUCTION SR candidate needs 384 bits, not 256: Gate-2A measured t_panel x1.202. Gate-2A used a representative candidate, so its conditioning is unmeasured for production"
+   ],
+   "wall_hours_16_cores": 243.2067975948365,
+   "wall_hours_64_cores": 64.1795715875263,
+   "wall_hours_128_cores": 36.10100901798354
+  },
+  "worst": {
+   "cpu_hours": 4597.338912619738,
+   "named_assumptions": [
+    "ratio_per_unit = 1.0",
+    "384-bit SR as above",
+    "SR cover x1.25: the walk used a monotone step envelope, so a production certifier may need finer cells near e = 0 than the envelope implies"
+   ],
+   "wall_hours_16_cores": 302.4565074091933,
+   "wall_hours_64_cores": 79.81491167742601,
+   "wall_hours_128_cores": 44.895887818552126
+  }
+ },
+ "superseded_assumption": "Gate-2B hedged the m>1 per-function cost at 1.5x and 2.0x; those arbitrary multipliers are now removed and replaced by named, measured or explicitly-sourced uncertainties.",
+ "gate2b_bands_for_comparison": {
+  "optimistic": 3091.856205551252,
+  "central": 3091.856205551252,
+  "conservative": 4637.784308326879,
+  "worst": 6183.712411102504
+ },
+ "central_cpu_hours": 3091.856205551252,
+ "feasibility": "STRONG"
+}
