@@ -1,0 +1,98 @@
+{
+ "schema": "rebaseguard.p5y.k1.production.v1",
+ "binding": true,
+ "result_bearing": true,
+ "generated_utc": "2026-09-04T18:11:20.866640+00:00",
+ "git_commit": "871e3da40d07b979b012d5d76d71ddfe974d8b17",
+ "campaign": "K1 FULL PRODUCTION -- R_max(D,m) < 2, both detectors, all frozen m",
+ "checkpoint_anchor": "310c3aa34a5d980ef48331d2d2bea36b7c37360d",
+ "checkpoint_hash": "ababbef4d42ad5a7a61e87279eb895c1b2d0ecfe67454f18c85acf6d57cd5c1d",
+ "phase_K1_A": {
+  "name": "integrity recheck + reuse verified Task1R qualification",
+  "k1_checkpoint_hash_recomputed": true,
+  "k1_blobs": 18,
+  "k1_blob_mismatch": [],
+  "protected_trees": 10,
+  "protected_tree_mutated": [],
+  "task1_verdict": "FAIL",
+  "task1_governing_class": "IMPLEMENTATION_DEFECT",
+  "task1_artifacts_mutated": [],
+  "task1r_verdict": "PASS",
+  "task1r_adjudicated": "PASS",
+  "task1r_checkpoint_hash": "20e664dec414b427e2b714531f3121224774f20f46cfe43e5c84300ec9de3aea",
+  "frozen_invariants_checked": 23,
+  "frozen_invariants_failing": [],
+  "chronology_valid": true,
+  "PASS": true
+ },
+ "phase_K1_B_C_cpu_governance": {
+  "why": "the frozen K1 CPU model derives from Gate-2B/R3, where t_panel was measured on a SCALAR per-panel composition. Task 1 established that a scalar per-panel evaluation cannot produce a valid certificate: it destroys the Fhat / K_e Fhat cancellation. The only QUALIFIED harness (Task1R) must carry bivariate Taylor models, and its true per-panel cost was never in the model.",
+  "measurement": {
+   "qualified_harness": {
+    "D": 11,
+    "Z": 20,
+    "coefficients_per_object": 252
+   },
+   "t_panel_qualified_s": 0.369425,
+   "t_panel_samples_s": [
+    0.3675,
+    0.3694,
+    0.3715
+   ],
+   "t_panel_frozen_model_s": 0.006091,
+   "ratio": 60.65096043342637,
+   "cusum_certify_at_exact_drift_s": 234.1,
+   "cusum_call_covers": "value and derivative resolvent objects at one drift"
+  },
+  "projection_cpu_hours": {
+   "SR_per_subcell_function": 8.563681972222222,
+   "SR_total": 52392.60630605555,
+   "CUSUM_total": 126.02383333333333,
+   "K1_total": 52518.630139388886,
+   "frozen_model_SR_K1": 863.84,
+   "SR_inflation_vs_model": 60.65082226576166
+  },
+  "against_frozen_cap": {
+   "HARD_CPU_CAP": 1848,
+   "K1_total_over_cap_factor": 28.419172153348963,
+   "SR_alone_over_cap_factor": 28.35097743834175,
+   "CUSUM_fraction_of_cap": 0.06819471500721501,
+   "CUSUM_within_cap": true,
+   "SR_within_cap": false,
+   "cap_extension_considered": false,
+   "cap_extension_permitted": false
+  },
+  "STOP": "hard CPU-cap breach, determined a priori by measurement"
+ },
+ "cells": {
+  "total_work_units": 12255,
+  "computed": 0,
+  "NOT_COMPUTED": 12255,
+  "note": "every frozen cell is explicitly NOT_COMPUTED. No cell is hidden and no coverage is inferred. PASS is not inferrable from partial coverage.",
+  "phases_D_E_F_not_reached": [
+   "all-m assembly",
+   "far-field splice",
+   "final K1 adjudication"
+  ]
+ },
+ "cap_not_burned": "the campaign was not run to the 1,848 CPU-h cap merely to arrive at the same verdict. The breach is established by measurement in advance; burning the cap would consume the entire budget to learn nothing new.",
+ "what_is_NOT_established": [
+  "any mathematical contradiction -- none was found",
+  "that R_max >= 2 for any (D,m)",
+  "that the K1 architecture is scientifically wrong",
+  "that the frozen scope, ledger, P1 rule, precision or complexity ceiling is wrong",
+  "any statement about K2..K5"
+ ],
+ "what_IS_established": [
+  "the frozen K1 CPU model understates the only qualified harness by 60.7x per panel",
+  "SR at K1 scope projects to 52393 CPU-h against a frozen cap of 1848",
+  "CUSUM at K1 scope projects to ~126 CPU-h and WOULD fit the cap",
+  "K1 therefore cannot complete inside its own frozen budget"
+ ],
+ "P5Y_K1_VERDICT": "K1_INCOMPLETE_BUDGET",
+ "failure_class": "BUDGET_EXCEEDED",
+ "downstream": {
+  "K2_K5_attempted": false,
+  "reason": "frozen rule: if K1 does not close, stop the downstream chain"
+ }
+}
