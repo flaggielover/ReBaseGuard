@@ -53,6 +53,16 @@ VALIDATION_BASE = 1_000
 PILOT_CPU_CAP_HOURS = 2.0
 POOL_HARD_LIMIT = REFERENCE_BLOCKS + CAP_MULTIPLIER * B1_NOMINAL
 
+# ------------------------------------------------- AMENDMENT 1: cost tail
+#: Added after design, before validation.  Purpose: project a production cap
+#: from an UNCENSORED cost distribution.  Never used to select a rule.
+COSTTAIL_REPLICATES = 24
+COSTTAIL_CAP_MULTIPLIER = 16
+COSTTAIL_CAP_BLOCKS = COSTTAIL_CAP_MULTIPLIER * B1_NOMINAL
+COSTTAIL_POOL_LIMIT = REFERENCE_BLOCKS + COSTTAIL_CAP_BLOCKS
+COSTTAIL_RULES = ("A_oneshot_one_topup", "C_staged_safety_1.00",
+                  "D_staged_quantile_0.95")
+
 PILOT_CELLS: tuple[Cell, ...] = (
     Cell(key="C1", layer="reduced", kind="cusum", threshold=2.0,
          family="t1p5", route="route_a", max_steps=60_000,

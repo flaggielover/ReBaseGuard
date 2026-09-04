@@ -269,3 +269,117 @@ target probability; attaining `r*` reliably needs implausible compute;
 precision behaviour is too unstable for a finite staged rule; the pilot
 uncovers estimator drift; exact shard identity cannot be guaranteed; or the
 successor would have to change scientific meaning.
+
+---
+
+# AMENDMENT 1 — recorded after the design phase, before any validation replicate
+
+```text
+TIMING   design.json exists; validation.json does NOT.
+SCOPE    the DESIGN phase and one ADDED phase only.
+          The validation phase runs exactly as frozen above: same cells, same
+          R = 59, same seeds, same cap of 144 blocks, same nine rules.
+          Nothing already frozen is edited.
+```
+
+The design phase is the phase whose purpose is to inform the design, and the
+design/validation split exists so that it can.  This amendment is recorded
+because it changes the criterion the pilot is finally judged by, and a change
+of that kind must be visible and dated rather than silently absorbed.
+
+## A1.1 The defect in §6 / §7 that design exposed
+
+§6 defines `p_attain = P(realised relative SE <= r*)` without saying what to
+do with a replicate the cap refused to fund.  §7 then thresholds "the design
+attainment fraction" against `delta`.  Read literally — every non-`ATTAINED`
+replicate counts against the rule — the pooled design fractions are:
+
+| rule | attained / 120 | fraction |
+|---|---|---|
+| `A_oneshot_one_topup` | 105 | 0.875 |
+| `C_staged_safety_1.00` | 105 | 0.875 |
+| `C_staged_safety_1.15` | 97 | 0.808 |
+| `D_staged_quantile_0.95` | 95 | 0.792 |
+| `D_staged_quantile_0.99` | 91 | 0.758 |
+
+so **no rule is eligible and the frozen criterion selects nothing.**
+
+That result is an artefact of the criterion, not a fact about the rules.
+Every one of those shortfalls is a `PRECISION_LIMITED` replicate, and
+`PRECISION_LIMITED` is branch B of the requirement this pilot exists to
+satisfy — an acceptable, predeclared disposition, not a miss.  Counting it as
+a miss makes a *more* careful rule score *worse*, which is why the safety
+factors rank below the plain rule above: they cost more, so they meet the
+pilot's deliberately tight cap more often.
+
+Conditioning on the cap having permitted the purchase, the same design data
+reads:
+
+| rule | attained / funded | 95% CP lower |
+|---|---|---|
+| `A_oneshot_one_topup` | 105 / 105 | 0.972 |
+| `C_staged_safety_1.00` | 105 / 105 | 0.972 |
+| `C_staged_safety_1.15` | 97 / 97 | 0.970 |
+| `D_staged_quantile_0.95` | 95 / 95 | 0.969 |
+| `D_staged_quantile_0.99` | 91 / 91 | 0.968 |
+
+The intent was already recorded pre-result: `run_pilot.summarise_rule`, frozen
+in the preregistration commit, computes both readings and its comment states
+that "a `PRECISION_LIMITED` route is a declared, legal outcome, not a failure
+of the precision rule".  The ambiguity is in the prose, not the code.
+
+## A1.2 What is amended
+
+```text
+PRIMARY endpoint (amended)
+    p_attain = P( realised relSE <= r*  |  the frozen cap funded the
+                  allocation the rule required )
+    pooled over cells, Clopper-Pearson lower bound >= delta = 0.95
+
+SECONDARY endpoint (amended)
+    per cell, lower bound >= 0.90, same conditioning
+
+TERTIARY endpoint (unchanged, now explicitly secondary)
+    the unconditional fraction, reported for every rule, NOT used to select
+```
+
+`delta`, `beta`, `R`, the cells, the seeds, the split, the cap, the rules and
+the selection rule ("smallest mean block multiplier among eligible") are
+**unchanged**.  Only the treatment of a `PRECISION_LIMITED` replicate changes,
+from *counts as a failure* to *is not a trial of the precision rule*.
+
+## A1.3 Added phase — cost tail
+
+The pilot cap of `6 * B1 = 144` blocks censors the cost distribution: the
+observed maximum multipliers sit at 5.4–6.0, i.e. against the cap.  A frozen
+production cap cannot be projected from censored costs, and without it the
+unconditional `p_attain` at a production-like cap is unmeasurable.
+
+```text
+PHASE       costtail
+NAMESPACE   "costtail"          fresh, disjoint from calibration/reference/
+                                design/validation
+REPLICATES  R = 24 per cell
+CAP         16 * B1 = 384 blocks   (pool hard limit 396)
+RULES       A_oneshot_one_topup, C_staged_safety_1.00, D_staged_quantile_0.95
+RECORDS     blocks each rule spends, and the ORACLE first-crossing block count
+            at which the realised relative SE first reaches r*
+USED FOR    projecting a production cap, and for an uncensored unconditional
+            p_attain at that cap
+NOT USED FOR  selecting the rule, setting delta or beta, or the primary
+              endpoint
+BUDGET      whatever remains under the unchanged 2.0 CPU-hour pilot cap,
+            cheapest-first, STOP on exhaustion
+```
+
+## A1.4 Consequence for the pilot verdict
+
+The criterion that finally decides the recommendation was amended in the
+middle of the pilot.  That is exactly the class of move that turned P4X's
+disclosed limitation into an invalidating one, so the amendment is not
+allowed to buy a clean bill of health for itself: whatever the validation
+numbers say, this pilot cannot return `READY_FOR_BINDING_CHECKPOINT` on an
+endpoint it re-defined after seeing design data.  The strongest outcome
+available to it is `NEEDS_ONE_MORE_PRE-FREEZE_PILOT`, whose content is
+"re-run this identical design with the amended endpoint frozen from the
+start".

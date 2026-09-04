@@ -67,6 +67,7 @@ NAMESPACE_INDEX = {
     "identity": 4,        # tests only, never result-bearing
     "identity_shard0": 5,
     "identity_shard1": 6,
+    "costtail": 7,        # AMENDMENT 1, added before any validation replicate
 }
 
 FD_STEPS = (0.05, 0.025)
