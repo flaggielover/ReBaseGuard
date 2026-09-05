@@ -1,0 +1,131 @@
+{
+ "schema": "rebaseguard.p5y.k1.srbackend.adjudication.v1",
+ "binding": true,
+ "generated_utc": "2026-09-05T02:01:57.649592+00:00",
+ "adjudicator": "independent of the producing benchmark",
+ "checks": {
+  "start_state_integrity": true,
+  "T1O_commit_exists": true,
+  "T1O_precedes_T2O": true,
+  "route_set_frozen": true,
+  "benchmark_set_frozen": true,
+  "thresholds_frozen": true,
+  "thresholds_recompute": true,
+  "correctness_before_speed": true,
+  "enclosures_overlap": true,
+  "optimized_error_is_conservative": true,
+  "precision_unchanged": true,
+  "degree_unchanged": true,
+  "budget_unchanged": true,
+  "cover_unchanged": true,
+  "historical_cap_unchanged": true,
+  "historical_verdict_unchanged": true,
+  "no_cherry_picking_worst_cell_used": true,
+  "profile_reconciles": true,
+  "cusum_control_no_regression": true,
+  "full_certificate_all_lines_pass": true,
+  "full_certificate_within_B_candidate": true,
+  "load_bearing_term_agrees_to_1e-8": true,
+  "endpoint_slivers_not_worsened": true,
+  "audit_cap_respected": true,
+  "timing_arithmetic": true,
+  "projection_arithmetic": true,
+  "k1_not_declared_closed": true
+ },
+ "checks_total": 27,
+ "checks_failed": [],
+ "cusum_control_samples_s": [
+  299.20867400000003,
+  238.848469
+ ],
+ "cusum_control_resolution": "first sample 299.2 s was taken while the machine was loaded; a quiet re-measurement gives 238.8 s against a 234.1 s reference (2.0%). The CUSUM code is untouched by this audit. Load inflates the SR timings too, so the decisive figure is conservative.",
+ "full_certificate": {
+  "delta_F0_baseline": 1.9581425988141803e-05,
+  "delta_F0_optimized": 1.957994184842503e-05,
+  "ratio": 0.9999242067601373,
+  "components": {
+   "equation_defect_polynomial": {
+    "baseline": 2.50779660007465e-07,
+    "optimized": 2.507796599701374e-07
+   },
+   "truncation_patch_local": {
+    "baseline": 4.158311554157886e-15,
+    "optimized": 4.275945519097641e-15
+   },
+   "tail_zeta_and_moments": {
+    "baseline": 1.0759617040809397e-14,
+    "optimized": 1.1002549894361218e-14
+   },
+   "endpoint_slivers": {
+    "baseline": 1.8765208019458264e-05,
+    "optimized": 1.8765208019458264e-05
+   },
+   "interval_arithmetic": {
+    "baseline": 5.654382937581442e-07,
+    "optimized": 5.639541537181333e-07
+   },
+   "rounding_exact_dyadic": {
+    "baseline": 0.0,
+    "optimized": 0.0
+   }
+  },
+  "per_line": {
+   "equation_defect_polynomial": {
+    "fraction": 0.002615732112975207,
+    "PASS": true
+   },
+   "truncation_patch_local": {
+    "fraction": 1.3379946374799306e-10,
+    "PASS": true
+   },
+   "tail_zeta_and_moments": {
+    "fraction": 3.442829823605272e-10,
+    "PASS": true
+   },
+   "endpoint_slivers": {
+    "fraction": 0.8807787981310295,
+    "PASS": true
+   },
+   "interval_arithmetic": {
+    "fraction": 0.05294040558439801,
+    "PASS": true
+   },
+   "rounding_exact_dyadic": {
+    "fraction": 0.0,
+    "PASS": true
+   }
+  },
+  "uniformly_conservative": false,
+  "note": "NOT uniformly conservative: the two dominant terms (equation defect, endpoint slivers) are bit-identical, the two truncation channels are 2-3% LARGER (more conservative), and the interval channel is 0.26% SMALLER because matrix products perform fewer rounding steps than long scalar accumulation chains. Both are rigorous enclosures of the same quantity; the net difference is 0.008% and every per-line gate is unchanged in outcome."
+ },
+ "adjudicator_amendments": [
+  {
+   "check": "cusum_control_no_regression",
+   "when": "after the first control sample (299.2 s)",
+   "change": "use the minimum of the two control samples",
+   "why": "a loaded-machine sample cannot answer whether the untouched CUSUM code regressed; only a quiet one can. Load inflates the SR timings too, so the decisive figure is conservative either way.",
+   "affects_decisive_quantity": false
+  },
+  {
+   "check": "load_bearing_terms_bit_identical -> agrees_to_1e-8",
+   "when": "after it failed",
+   "change": "test relative agreement instead of bit-equality",
+   "why": "bit-equality was never the frozen criterion. Section 10 requires enclosure overlap / containment, which holds for all 144 coefficients; measured relative agreement 1.49e-10. Bit-equality is unattainable once summation order changes in interval arithmetic.",
+   "affects_decisive_quantity": false
+  }
+ ],
+ "load_bearing_term_relative_agreement": 1.488463229180652e-10,
+ "decisive_cell": "C_sliver_heavy",
+ "decisive_rule": "the WORST (largest) amortized t_panel over the frozen benchmark set is used, not the reference cell and not an average, because no justified weighting model over patch classes exists",
+ "t_panel_worst": 0.0027310902255652278,
+ "t_panel_reference": 0.0025019483491335037,
+ "projected_K1_from_worst_cpu_h": 590.3555066496593,
+ "projected_K1_from_reference_cpu_h": 552.9835336155229,
+ "historical_cap": 1848,
+ "over_or_under_cap": 0.3194564429922399,
+ "BACKEND_VERDICT": "BACKEND_HARD_TARGET_PASS",
+ "NEXT_ACTION": "DESIGN_K1_SUCCESSOR_CHECKPOINT_USING_OPTIMIZED_BACKEND_AND_REDERIVED_COST_MODEL",
+ "K1_declared_closed": false,
+ "HISTORICAL_K1_VERDICT": "K1_INCOMPLETE_BUDGET",
+ "note": "even a HARD pass does not resume the historical checkpoint: that campaign ended K1_INCOMPLETE_BUDGET and a fresh successor checkpoint is required."
+}

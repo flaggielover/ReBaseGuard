@@ -1,0 +1,187 @@
+{
+ "schema": "rebaseguard.p5y.k1.srbackend.bench.v1",
+ "binding": true,
+ "generated_utc": "2026-09-05T01:14:57.478177+00:00",
+ "git_commit": "576fb173eae24bd77332176c1b9c6a52cec70753",
+ "D": 11,
+ "Z": 20,
+ "timing_repetitions": 3,
+ "cost_profile_baseline": {
+  "absolute_seconds": {
+   "softplus_source_expansion": 0.0010050000000000336,
+   "chebyshev_composition_tensors": 0.133795,
+   "gaussian_moment_construction": 0.0013000000000000234,
+   "candidate_inner_combination": 0.027538000000000007,
+   "taylor_coefficient_contraction": 0.397935
+  },
+  "profiled_sum": 0.5615730000000001,
+  "measured_single_panel": 0.5622199999999999,
+  "reconciliation_ratio": 0.9988492049375692,
+  "percent": {
+   "softplus_source_expansion": 0.17896159537585202,
+   "chebyshev_composition_tensors": 23.825041446080917,
+   "gaussian_moment_construction": 0.23149261093393433,
+   "candidate_inner_combination": 4.903725784537363,
+   "taylor_coefficient_contraction": 70.86077856307193
+  }
+ },
+ "correctness": {
+  "coefficients_compared": 144,
+  "enclosure_overlap_failures": [],
+  "max_relative_midpoint_difference": 0.2229797854238206,
+  "baseline_ex": 7.865986523165482e-19,
+  "opt_ex": 7.865986523165801e-19,
+  "baseline_ez": 6.077861595056971e-18,
+  "opt_ez": 6.077861595056971e-18,
+  "opt_error_is_conservative": true,
+  "PASS": true
+ },
+ "cells": {
+  "A_reference": {
+   "patch": [
+    17,
+    11
+   ],
+   "n_panels": 28,
+   "baseline_t_panel": {
+    "median": 0.48549200000000026,
+    "min": 0.42530800000000024,
+    "max": 0.6531959999999999,
+    "spread": 0.4693959941667412
+   },
+   "opt_shared_build": {
+    "median": 0.10529999999999973,
+    "min": 0.1040719999999995,
+    "max": 0.10821400000000025,
+    "spread": 0.039335232668573285
+   },
+   "opt_cold_total": {
+    "median": 0.10781599999999969,
+    "min": 0.107456,
+    "max": 0.11160399999999981,
+    "spread": 0.03847295392149431
+   },
+   "opt_per_function": {
+    "median": 0.002482999999999791,
+    "min": 0.002391000000000254,
+    "max": 0.002715000000000245,
+    "spread": 0.13048731373339437
+   },
+   "opt_drift_stage": 3.300000000017178e-05,
+   "amortized_t_panel": 0.0025019483491335037,
+   "speedup_vs_task1r": 194.04557259071316
+  },
+  "B_max_span": {
+   "patch": [
+    0,
+    0
+   ],
+   "n_panels": 35,
+   "baseline_t_panel": {
+    "median": 0.443327,
+    "min": 0.41480299999999914,
+    "max": 0.4740959999999994,
+    "spread": 0.13374551967283801
+   },
+   "opt_shared_build": {
+    "median": 0.10807400000000023,
+    "min": 0.10573100000000046,
+    "max": 0.11581099999999989,
+    "spread": 0.0932694265040565
+   },
+   "opt_cold_total": {
+    "median": 0.10878900000000069,
+    "min": 0.10677000000000003,
+    "max": 0.10918600000000023,
+    "spread": 0.02220812765996728
+   },
+   "opt_per_function": {
+    "median": 0.0025519999999996656,
+    "min": 0.00234300000000065,
+    "max": 0.0027369999999997674,
+    "spread": 0.15438871473321666
+   },
+   "opt_drift_stage": 0.0,
+   "amortized_t_panel": 0.0025696649231771746,
+   "speedup_vs_task1r": 172.52327180925343
+  },
+  "C_sliver_heavy": {
+   "patch": [
+    63,
+    63
+   ],
+   "n_panels": 3,
+   "baseline_t_panel": {
+    "median": 0.40886699999999987,
+    "min": 0.4088069999999995,
+    "max": 0.4182749999999995,
+    "spread": 0.02315667441979919
+   },
+   "opt_shared_build": {
+    "median": 0.10262600000000077,
+    "min": 0.10148299999999999,
+    "max": 0.10270399999999924,
+    "spread": 0.01189756981660828
+   },
+   "opt_cold_total": {
+    "median": 0.1053999999999995,
+    "min": 0.1043309999999984,
+    "max": 0.10566799999999965,
+    "spread": 0.01268500948767799
+   },
+   "opt_per_function": {
+    "median": 0.0027110000000014622,
+    "min": 0.002181999999999462,
+    "max": 0.0029570000000003205,
+    "spread": 0.2858723718186796
+   },
+   "opt_drift_stage": 6.299999999725969e-05,
+   "amortized_t_panel": 0.0027310902255652278,
+   "speedup_vs_task1r": 149.70834583664498
+  },
+  "D_second_object": {
+   "patch": [
+    17,
+    11
+   ],
+   "n_panels": 28,
+   "baseline_t_panel": {
+    "median": 0.12629399999999968,
+    "min": 0.12483699999999942,
+    "max": 0.13260000000000005,
+    "spread": 0.06146768650926133
+   },
+   "opt_shared_build": {
+    "median": 0.13308499999999945,
+    "min": 0.13231899999999897,
+    "max": 0.13532900000000048,
+    "spread": 0.02261712439419562
+   },
+   "opt_cold_total": {
+    "median": 0.1398299999999999,
+    "min": 0.13413000000000075,
+    "max": 0.1416550000000001,
+    "spread": 0.05381534720731848
+   },
+   "opt_per_function": {
+    "median": 0.0016079999999991657,
+    "min": 0.0013480000000001269,
+    "max": 0.0016329999999999956,
+    "spread": 0.17723880597015956
+   },
+   "opt_drift_stage": 0.005137000000001279,
+   "amortized_t_panel": 0.0019001214449158724,
+   "speedup_vs_task1r": 66.46627789919572
+  }
+ },
+ "cusum_control": {
+  "t_certify_s": 299.20867400000003,
+  "reference_s": 234.1,
+  "regression": 0.27812345578812486
+ },
+ "runtime": {
+  "cpu_seconds": 309.266175,
+  "cpu_hours": 0.08590727194444443,
+  "peak_rss_mib": 269.28125
+ }
+}
