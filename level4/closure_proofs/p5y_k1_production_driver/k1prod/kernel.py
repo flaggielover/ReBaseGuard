@@ -30,9 +30,18 @@ AUD = ROOT / "level4/closure_proofs/p5y_k1_sr_backend_cost_audit"
 K1 = ROOT / "level4/closure_proofs/p5y_k1_binding_campaign"
 
 # object classes and their implementation status
+_CUSUM_OBJECTS = (["h_%d" % j for j in range(1, 5)]
+                  + ["S_%d" % r for r in range(5)]
+                  + ["F_%d" % r for r in range(5)]
+                  + ["dF_%d" % r for r in range(5)])
+
 IMPLEMENTED: dict[tuple[str, str], str] = {
     ("SR", "F_0"): "qualified by Task1R (PASS) and re-timed by the backend audit",
 }
+IMPLEMENTED.update({
+    ("CUSUM", o): "raw-variable CUSUM kernel (p5y_k1_cusum_kernel), certified "
+                  "against the frozen ledger at the representative cell"
+    for o in _CUSUM_OBJECTS})
 
 GAP_REASON = {
     "h": "kernel application h_j = K_e h_{j-1}: the source recursion has no "
@@ -87,6 +96,21 @@ def run_unit(det: str, cell: int, fn: str, rec: dict, *, dry_run: bool = True) -
     """
     ok, why = kernel_status(det, fn)
     rec["contributing_object_ids"] = [fn]
+    if det == "CUSUM" and ok:
+        rec["m_relevance"] = _m_relevance(fn)
+        if dry_run:
+            rec["status"] = "NOT_RUN"
+            rec["certificate_status"] = "dry run: no certified numerics executed"
+            return rec
+        if CELL_DRIFT_IS_PLACEHOLDER:
+            rec["status"] = "NOT_IMPLEMENTED"
+            rec["failure_class"] = "CELL_DRIFT_MAPPING_NOT_IMPLEMENTED"
+            rec["certificate_status"] = (
+                "the CUSUM object kernel is implemented and certified, but the "
+                "frozen cover walk mapping cell index -> exact rational drift is "
+                "not. Refusing to certify at a placeholder drift.")
+            return rec
+        return _run_cusum(cell, fn, rec)
     if not ok:
         rec["status"] = "NOT_IMPLEMENTED"
         rec["failure_class"] = "KERNEL_NOT_IMPLEMENTED"
@@ -144,6 +168,79 @@ def run_unit(det: str, cell: int, fn: str, rec: dict, *, dry_run: bool = True) -
     # R / R' are assembled in PHASE D from the certified objects; this unit
     # contributes F_0 and records that it did.
     return rec
+
+
+def _m_relevance(fn: str) -> list[int]:
+    """Which frozen m values consume this object (from the frozen DAG)."""
+    idx = int(fn.split("_")[1])
+    if fn.startswith(("F_", "dF_")):
+        return [m for m in (1, 2, 3, 5) if idx <= m - 1]
+    if fn.startswith("S_"):
+        return [3, 5] if idx == 1 else ([2, 3, 5] if idx == 0 else [5])
+    return [3, 5] if idx == 1 else [5]
+
+
+def _run_cusum(cell: int, fn: str, rec: dict) -> dict:
+    """One certified CUSUM raw-variable unit."""
+    import time
+    t0 = time.process_time()
+    CK = ROOT / "level4/closure_proofs/p5y_k1_cusum_kernel/code"
+    R1 = ROOT / "level4/closure_proofs/p5x_global_nonlinear_dynamics/compute_optimization_r1"
+    for p in (str(CK), str(R1), str(ROOT / "rebaseguard-proof" / "src")):
+        if p not in sys.path:
+            sys.path.insert(0, p)
+    import cusum_raw as CR
+    from drift_minorant import drift_monotone_resolvent
+    ck = _ck()
+    e_num, e_den = _cell_drift(cell)
+    C = drift_monotone_resolvent(e_num=e_num, e_den=e_den)["resolvent_bound_upper_float"]
+    co = CR.collocation(e_num / e_den); co["e_rational"] = (e_num, e_den)
+    obj = CR.build_objects(co)
+    res = CR.certify_object(fn, obj, co)
+    line = {"h": "B_kernel", "S": "B_kernel",
+            "F": "B_candidate", "dF": "B_candidate"}[fn.split("_")[0]]
+    allow = ck["budget_ledger"]["ledger_absolute"][line] / C
+    ok = res["total_certified_error"] <= allow
+    Rm = {m: CR.assemble(obj, co, m) for m in ck["scope"]["m_values"]}
+    rec.update({
+        "e_interval": [e_num / e_den, e_num / e_den],
+        "candidate_id": f"CUSUM/{fn}/cheb(12,12)/dyadic2^-50",
+        "candidate_degree": [CR.DEGREE, CR.DEGREE],
+        "candidate_residual": res["equation_defect"],
+        "kernel_residual": res["truncation_and_tail"],
+        "resolvent_amplification_bound": C,
+        "interval_radius": res["truncation_and_tail"],
+        "propagated_absolute_half_width": C * res["total_certified_error"],
+        "allowed_absolute_half_width": ck["budget_ledger"]["ledger_absolute"][line],
+        "budget_usage_by_component": {line: res["total_certified_error"] / allow},
+        "working_precision_bits": CR.BITS,
+        "R_enclosure": {str(m): Rm[m][0] for m in Rm},
+        "R_prime_enclosure": {str(m): Rm[m][1] for m in Rm},
+        "cpu_seconds": time.process_time() - t0,
+        "status": "COMPLETE" if ok else "FAILED",
+        "failure_class": None if ok else "NUMERICAL_BUDGET_FAILURE",
+        "certificate_status": f"raw-variable certified defect vs {line}",
+    })
+    return rec
+
+
+CELL_DRIFT_IS_PLACEHOLDER = True
+
+
+def _cell_drift(cell: int) -> tuple[int, int]:
+    """PLACEHOLDER. NOT the frozen cover mapping.
+
+    The frozen CUSUM cover is defined by a step-rule walk -- h(e) = 1/(4 a C(e)),
+    greedy from e = 0, exact tiling over [0, 5.5] giving 323 sub-cells -- and the
+    manifest records the RULE, not an explicit endpoint list. Resolving cell
+    index -> exact rational drift therefore requires executing that walk, which
+    this task did not implement.
+
+    Production must not run against this placeholder: `run_unit` refuses when
+    CELL_DRIFT_IS_PLACEHOLDER is set, so a cell cannot be silently certified at
+    the wrong drift.
+    """
+    return (cell if cell > 0 else 1), 4
 
 
 def _ck() -> dict:

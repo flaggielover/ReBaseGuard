@@ -167,24 +167,33 @@ class TestPhasesAndGovernance(unittest.TestCase):
 
 class TestKernelGapIsExplicit(unittest.TestCase):
     def test_gap_is_reported_not_hidden(self):
+        """CUSUM is now fully implemented; SR remains partial (F_0 only)."""
         f = K.implemented_fraction(UNITS)
         self.assertLess(f["fraction"], 1.0)
-        self.assertEqual(f["implemented_classes"], ["SR/F_0"])
+        cusum = {c for c in f["implemented_classes"] if c.startswith("CUSUM/")}
+        sr = {c for c in f["implemented_classes"] if c.startswith("SR/")}
+        self.assertEqual(len(cusum), 19)
+        self.assertEqual(sr, {"SR/F_0"})
 
     def test_unimplemented_unit_is_NOT_IMPLEMENTED_not_FAILED(self):
-        rec = S.new_record("CUSUM", 0, "h_1", ck_hash="a", be_hash="b")
-        out = K.run_unit("CUSUM", 0, "h_1", rec, dry_run=True)
+        # probe an object that is genuinely still unimplemented: SR/h_1
+        rec = S.new_record("SR", 0, "h_1", ck_hash="a", be_hash="b")
+        out = K.run_unit("SR", 0, "h_1", rec, dry_run=True)
         self.assertEqual(out["status"], "NOT_IMPLEMENTED")
         self.assertEqual(out["failure_class"], "KERNEL_NOT_IMPLEMENTED")
 
     def test_not_implemented_never_counts_as_coverage(self):
         with tempfile.TemporaryDirectory() as d:
             r = DR.Run(pathlib.Path(d), 0, 64)
-            r.go(["A", "B", "F"])
+            # shard 0 of 64 is entirely CUSUM, which is now implemented, so it
+            # dry-runs to NOT_RUN; the SR gap is checked on an SR shard.
+            r.go(["A", "B", "C", "F"])
             f = r.phase_f()
             self.assertEqual(f["complete"], 0)
-            self.assertGreater(f["not_implemented"], 0)
             self.assertFalse(f["coverage_complete"])
+            r2 = DR.Run(pathlib.Path(d) / "sr", 63, 64)
+            r2.go(["A", "C", "F"])
+            self.assertGreater(r2.phase_f()["not_implemented"], 0)
 
 
 class TestQualificationIsNonResultBearing(unittest.TestCase):

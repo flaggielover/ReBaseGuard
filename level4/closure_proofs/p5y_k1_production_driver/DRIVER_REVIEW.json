@@ -1,7 +1,7 @@
 {
  "schema": "rebaseguard.p5y.k1.driver_review.v1",
  "binding": true,
- "generated_utc": "2026-09-05T03:30:48.807836+00:00",
+ "generated_utc": "2026-09-05T03:55:23.166563+00:00",
  "reviewer": "independent of the driver implementation",
  "checks": {
   "checkpoint_hash_recomputed_not_read": true,
@@ -27,10 +27,29 @@
  "checks_total": 19,
  "checks_failed": [],
  "kernel_coverage": {
-  "implemented_units": 322,
+  "implemented_units": 6459,
   "total_units": 12255,
-  "fraction": 0.0262749898000816,
+  "fraction": 0.5270501835985312,
   "implemented_classes": [
+   "CUSUM/F_0",
+   "CUSUM/F_1",
+   "CUSUM/F_2",
+   "CUSUM/F_3",
+   "CUSUM/F_4",
+   "CUSUM/S_0",
+   "CUSUM/S_1",
+   "CUSUM/S_2",
+   "CUSUM/S_3",
+   "CUSUM/S_4",
+   "CUSUM/dF_0",
+   "CUSUM/dF_1",
+   "CUSUM/dF_2",
+   "CUSUM/dF_3",
+   "CUSUM/dF_4",
+   "CUSUM/h_1",
+   "CUSUM/h_2",
+   "CUSUM/h_3",
+   "CUSUM/h_4",
    "SR/F_0"
   ]
  },
@@ -39,5 +58,5 @@
  "blocker": null,
  "orchestration_ready": true,
  "science_ready": false,
- "note": "orchestration readiness and scientific readiness are separate. The per-unit kernel covers 322 of 12255 units (2.63%); the driver reports the remainder as NOT_IMPLEMENTED and never counts it as coverage."
+ "note": "orchestration readiness and scientific readiness are separate. The per-unit kernel covers 6459 of 12255 units (52.71%); the driver reports the remainder as NOT_IMPLEMENTED and never counts it as coverage."
 }
