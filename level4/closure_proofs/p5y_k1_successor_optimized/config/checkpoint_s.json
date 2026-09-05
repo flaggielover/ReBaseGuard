@@ -1,0 +1,1103 @@
+{
+ "schema": "rebaseguard.p5y.k1.successor.checkpoint.v1",
+ "checkpoint_id": "P5Y-K1-SUCCESSOR-OPTIMIZED-1",
+ "binding": true,
+ "design_only": true,
+ "generated_utc": "2026-09-05T02:12:12.033356+00:00",
+ "git_commit": "47b49d3bd13fc5c8e63b3108514880adc217760f",
+ "lineage": {
+  "parent_checkpoint_anchor": "310c3aa34a5d980ef48331d2d2bea36b7c37360d",
+  "parent_checkpoint_hash": "ababbef4d42ad5a7a61e87279eb895c1b2d0ecfe67454f18c85acf6d57cd5c1d",
+  "HISTORICAL_K1_VERDICT": "K1_INCOMPLETE_BUDGET",
+  "HISTORICAL_K1_CAP": 1848,
+  "historical_campaign_resumed_or_repaired_in_place": false,
+  "new_verdict_lineage": true,
+  "P5Y_K1_TASK1": "FAIL",
+  "P5Y_K1_TASK1_CLASS": "IMPLEMENTATION_DEFECT",
+  "P5Y_K1_TASK1R": "PASS",
+  "P5Y_K1_SR_BACKEND_AUDIT": "COMPLETE",
+  "BACKEND_VERDICT": "BACKEND_HARD_TARGET_PASS",
+  "P5_ORIGINAL_VERDICT": "PARTIAL",
+  "P5X_FINAL_VERDICT": "PARTIAL"
+ },
+ "target": {
+  "claim": "R_max(D,m) = sup_e |R_{D,m}(e)| < 2 for both frozen detectors and all frozen m",
+  "identical_to_parent": true,
+  "K1_CLOSED_closes_P5": false,
+  "remaining_after_K1": [
+   "K2 s_min",
+   "K3 M_2",
+   "K4 H2",
+   "K5 H3a"
+  ]
+ },
+ "scope": {
+  "detectors": {
+   "CUSUM": {
+    "k": 0.5,
+    "h": 5,
+    "two_sided": true,
+    "test": "inclusive post-update",
+    "priority": "plus-arm"
+   },
+   "SR": {
+    "A": 520.886133602749,
+    "charts": 2,
+    "stored": "y=log(1+R)",
+    "y0": 0.0,
+    "b_SR_is_log1pA": true,
+    "erratum": "D1 (b_SR = log(1+A))"
+   }
+  },
+  "m_values": [
+   1,
+   2,
+   3,
+   5
+  ],
+  "cartesian_cells": 8,
+  "observation": "raw_t ~ iid N(0,1), Delta = 0, z_t = raw_t - e",
+  "stopping": "tau inclusive, w = min(m,tau), Stage-D convention A",
+  "source": "p5x_global_nonlinear_dynamics/FROZEN_SCOPE.md",
+  "result_dependent_cell_deletion_allowed": false
+ },
+ "backend": {
+  "name": "optimized cancellation-preserving SR backend (audit routes O1+O2+O3)",
+  "source_of_truth": "p5y_k1_sr_backend_cost_audit/code/opt_backend.py",
+  "reference_architecture": "p5y_k1_task1r_budget_harness/code/harness.py (Task1R)",
+  "D": 11,
+  "Z": 20,
+  "elements": [
+   "patch/panel-local Chebyshev composition tensors T_i(tau V), T_j(tau W)",
+   "Gaussian moments N_k with the certified 2 phi_max h^(k+1)/(k+1) bound",
+   "local composition maps via bivariate Taylor models in (alpha,zeta),(beta,zeta)",
+   "shared panel operator M = P . Hankel(N) . Q^T, factorised through R = P . Hankel(N)",
+   "arb_mat carriage so contractions are C-level matrix products",
+   "patch-outer / drift-inner / function-innermost reuse ordering",
+   "value and derivative share every (patch,panel) and (patch,panel,e) intermediate",
+   "m-sharing: the 19-function union over m in {1,2,3,5} equals the m=5 set"
+  ],
+  "optimization_is": "reuse, scheduling and exact algebraic refactoring only",
+  "no_new_mathematics": true
+ },
+ "correctness_equivalence": {
+  "criterion": [
+   "same mathematical quantity",
+   "certified enclosure overlap/containment against the Task1R reference",
+   "no weaker interval semantics",
+   "same error-ledger outcome, line by line",
+   "same P1 semantics",
+   "same endpoint/sliver treatment",
+   "same candidate representation",
+   "same precision",
+   "same resolvent amplification theorem",
+   "no float-only load-bearing path"
+  ],
+  "bit_identity_required": false,
+  "bit_identity_rationale": "interval endpoints cannot be bit-identical across a reordered interval summation; demanding it would test something the science never required",
+  "frozen_equivalence_tolerance_relative": 1e-08,
+  "measured_evidence": {
+   "coefficient_enclosures_compared": 144,
+   "enclosure_overlap_failures": 0,
+   "equation_defect_relative_agreement": 1.488463229180652e-10,
+   "endpoint_slivers_bit_identical": true,
+   "delta_F0_ratio": 0.9999242067601373,
+   "all_per_line_gates_pass": true,
+   "not_uniformly_conservative": true,
+   "channel_directions": "truncation channels 2-3% LARGER, interval channel 0.26% SMALLER because matrix products round fewer times than long scalar chains; both are rigorous enclosures of the same quantity"
+  }
+ },
+ "audit_adjudicator_amendments": {
+  "recorded": [
+   {
+    "check": "cusum_control_no_regression",
+    "when": "after the first control sample (299.2 s)",
+    "change": "use the minimum of the two control samples",
+    "why": "a loaded-machine sample cannot answer whether the untouched CUSUM code regressed; only a quiet one can. Load inflates the SR timings too, so the decisive figure is conservative either way.",
+    "affects_decisive_quantity": false
+   },
+   {
+    "check": "load_bearing_terms_bit_identical -> agrees_to_1e-8",
+    "when": "after it failed",
+    "change": "test relative agreement instead of bit-equality",
+    "why": "bit-equality was never the frozen criterion. Section 10 requires enclosure overlap / containment, which holds for all 144 coefficients; measured relative agreement 1.49e-10. Bit-equality is unattainable once summation order changes in interval arithmetic.",
+    "affects_decisive_quantity": false
+   }
+  ],
+  "conclusion": "NEITHER amendment changes a scientific or performance decision. (1) The CUSUM control amendment selects the quiet sample over a loaded one; machine load inflates the SR timings too, so the decisive figure was conservative under either sample. (2) The equivalence amendment replaced a bit-equality assertion with the frozen criterion (enclosure agreement); the measured agreement is 1.49e-10 and all 144 enclosures overlap, so the backend qualified on the criterion the science actually requires. The decisive quantity -- the worst-cell amortized t_panel of 2.731 ms against a 10.442 ms HARD target frozen before timing -- is untouched by both.",
+  "hidden": false
+ },
+ "performance_model": {
+  "basis": "WORST admissible representative timing, not average, not fastest",
+  "worst_benchmark_cell": "C_sliver_heavy",
+  "t_panel_s": 0.0027310902255652278,
+  "decomposition_s": {
+   "shared_patch_panel": 0.10262600000000077,
+   "drift_stage": 6.299999999725969e-05,
+   "per_function": 0.0027110000000014622
+  },
+  "caches_are_not_free": true,
+  "cache_build_included_via": "amortisation of the shared and drift stages inside t_panel",
+  "SR_panel_evaluations": 510559336,
+  "SR_raw_cpu_h": 387.32878114463136,
+  "candidate_construction_cpu_h": 0.1801411111111111,
+  "CUSUM_cpu_h": 126.0,
+  "overhead_factor": 1.15,
+  "aggregation_factor": 1.05,
+  "bands_cpu_h": {
+   "central": 620.090802373809,
+   "conservative": 750.1516210855237,
+   "worst_plausible": 899.5917015714881
+  },
+  "band_provenance": {
+   "conservative": "x1.2781, the MEASURED machine-load inflation from the audit's own CUSUM control (299.2 s loaded vs 234.1 s reference)",
+   "worst_plausible": "a further x1.25 for patch-class variation beyond the three benchmarked patches"
+  },
+  "degraded_reuse_contingency": {
+   "t_panel_s": 0.008115684210527673,
+   "cpu_h": 1542.2031179244661,
+   "status": "NOT a budget band -- the frozen memory plan prevents it; if it occurs it is STOP S04 (cache scope violation), not an overrun to absorb"
+  }
+ },
+ "cpu_governance": {
+  "SUCCESSOR_K1_HARD_CAP": 1126,
+  "HISTORICAL_K1_CAP": 1848,
+  "caps_are_distinct": true,
+  "derivation": "ceil(1.5 x conservative); beta = 1.5 is governance-inherited from Gate-2C-bis and the parent checkpoint, not invented here",
+  "cap_over_worst_plausible": 1.2516789539443298,
+  "cap_over_central": 1.8158630892273968,
+  "cap_vs_historical": 0.6093073593073594,
+  "in_campaign_extension_allowed": false
+ },
+ "memory_and_parallelism": {
+  "per_patch_shared_cache_mib": 22,
+  "candidate_set_mib": 108,
+  "audit_peak_rss_mib": 269.28125,
+  "per_worker_budget_mib": 300,
+  "safety_margin": 2.0,
+  "MAX_WORKERS": 64,
+  "max_workers_memory_gib": 38.4,
+  "cache_ownership": "each worker owns the shared cache for the patches it is assigned; no cross-worker cache sharing, no mutable global state",
+  "scheduling": "deterministic: workers receive a contiguous, precomputed shard of the frozen unit list; assignment is a pure function of (shard index, shard count)",
+  "oversubscription_allowed": false,
+  "parallelism_changes_wall_time_not_cpu_accounting": true,
+  "wall_hours_at_workers": {
+   "1": 620.090802373809,
+   "8": 77.51135029672612,
+   "16": 38.75567514836306,
+   "32": 19.37783757418153,
+   "64": 9.688918787090765
+  }
+ },
+ "cover": {
+  "CUSUM": {
+   "schema": "rebaseguard.p5y.k1.cover.v1",
+   "binding": true,
+   "detector": "CUSUM",
+   "e_star": 5.5,
+   "e_star_exact": "11/2 = c_D = h/2 + k*... frozen c_CUSUM",
+   "interval": [
+    0.0,
+    5.5
+   ],
+   "subcell_count": 323,
+   "source_artifact": "level4/closure_proofs/p5x_global_nonlinear_dynamics/compute_optimization_r1/R1_COST_REPROJECTION.md",
+   "source_note": "R1 optimized monotone-minorant cover: 334 over [0,12], 323 over [0, e_star] = [0, 5.5]",
+   "step_rule": "h(e) = 1 / (4 a C(e)),  a = 2 phi(0) = 0.797884560802865...",
+   "walk": "greedy from e=0, exact tiling, no adaptive splitting",
+   "covers_exactly": true,
+   "adaptive_splitting_allowed": false
+  },
+  "SR": {
+   "schema": "rebaseguard.p5y.k1.cover.v1",
+   "binding": true,
+   "detector": "SR",
+   "e_star": 6.755531464321473,
+   "interval": [
+    0.0,
+    6.755531464321473
+   ],
+   "subcell_count": 322,
+   "subcell_count_lower_bound": 309,
+   "outer_cell_count": 9,
+   "width_min": 0.0005196432291227758,
+   "width_median": 0.0015509296712958864,
+   "width_max": 0.31328086324531856,
+   "covers_exactly": true,
+   "patches_nominal": 4096,
+   "patches_live": 3994,
+   "patches_excluded": 102,
+   "patch_exclusion_rule": "exact multiplicative invariant (xi+' - 1)(xi-' - 1) = xi+ xi- / e; z cancels exactly, so patch geometry is e-independent",
+   "total_panels_over_live_patches": 83452,
+   "n_z_mean": 18.8943415122684,
+   "n_z_is_not_global_28": true,
+   "grid": 64,
+   "degree": 8,
+   "source_artifact": "level4/closure_proofs/p5y_gate2b_sr_cover/results/sr_cover.json",
+   "step_rule": "h(e) = 1 / (4 a C_SR(e))",
+   "adaptive_splitting_allowed": false
+  }
+ },
+ "production_dag": {
+  "schema": "rebaseguard.p5y.k1.dag.v1",
+  "binding": true,
+  "detectors": [
+   "CUSUM",
+   "SR"
+  ],
+  "m_values": [
+   1,
+   2,
+   3,
+   5
+  ],
+  "cartesian_scope_cells": 8,
+  "functions_per_detector": 19,
+  "resolvent_solves_per_detector": 10,
+  "functions": [
+   {
+    "id": "h_1",
+    "kind": "closed_form",
+    "deps": [],
+    "expr": "1 - Phi(u+e) + Phi(l+e)",
+    "needed_by_m": [
+     3,
+     5
+    ]
+   },
+   {
+    "id": "h_2",
+    "kind": "kernel_apply",
+    "deps": [
+     "h_1"
+    ],
+    "expr": "K_e h_1",
+    "needed_by_m": [
+     5
+    ]
+   },
+   {
+    "id": "h_3",
+    "kind": "kernel_apply",
+    "deps": [
+     "h_2"
+    ],
+    "expr": "K_e h_2",
+    "needed_by_m": [
+     5
+    ]
+   },
+   {
+    "id": "h_4",
+    "kind": "kernel_apply",
+    "deps": [
+     "h_3"
+    ],
+    "expr": "K_e h_3",
+    "needed_by_m": [
+     5
+    ]
+   },
+   {
+    "id": "S_0",
+    "kind": "closed_form",
+    "deps": [],
+    "expr": "phi(u+e) - phi(l+e)",
+    "needed_by_m": [
+     2,
+     3,
+     5
+    ]
+   },
+   {
+    "id": "S_1",
+    "kind": "kernel_apply",
+    "deps": [
+     "h_1"
+    ],
+    "expr": "K_z,e h_1 + e K_e h_1",
+    "needed_by_m": [
+     3,
+     5
+    ]
+   },
+   {
+    "id": "S_2",
+    "kind": "kernel_apply",
+    "deps": [
+     "h_2"
+    ],
+    "expr": "K_z,e h_2 + e K_e h_2",
+    "needed_by_m": [
+     5
+    ]
+   },
+   {
+    "id": "S_3",
+    "kind": "kernel_apply",
+    "deps": [
+     "h_3"
+    ],
+    "expr": "K_z,e h_3 + e K_e h_3",
+    "needed_by_m": [
+     5
+    ]
+   },
+   {
+    "id": "S_4",
+    "kind": "kernel_apply",
+    "deps": [
+     "h_4"
+    ],
+    "expr": "K_z,e h_4 + e K_e h_4",
+    "needed_by_m": [
+     5
+    ]
+   },
+   {
+    "id": "F_0",
+    "kind": "resolvent_solve",
+    "deps": [
+     "S_0"
+    ],
+    "expr": "(I - K_e)^-1 S_0",
+    "needed_by_m": [
+     1,
+     2,
+     3,
+     5
+    ]
+   },
+   {
+    "id": "dF_0",
+    "kind": "resolvent_solve",
+    "deps": [
+     "F_0",
+     "S_0"
+    ],
+    "expr": "derivative equation; d_e h_1 = -S_0 exactly",
+    "needed_by_m": [
+     1,
+     2,
+     3,
+     5
+    ]
+   },
+   {
+    "id": "F_1",
+    "kind": "resolvent_solve",
+    "deps": [
+     "S_1"
+    ],
+    "expr": "(I - K_e)^-1 S_1",
+    "needed_by_m": [
+     2,
+     3,
+     5
+    ]
+   },
+   {
+    "id": "dF_1",
+    "kind": "resolvent_solve",
+    "deps": [
+     "F_1",
+     "S_0"
+    ],
+    "expr": "derivative equation; d_e h_1 = -S_0 exactly",
+    "needed_by_m": [
+     2,
+     3,
+     5
+    ]
+   },
+   {
+    "id": "F_2",
+    "kind": "resolvent_solve",
+    "deps": [
+     "S_2"
+    ],
+    "expr": "(I - K_e)^-1 S_2",
+    "needed_by_m": [
+     3,
+     5
+    ]
+   },
+   {
+    "id": "dF_2",
+    "kind": "resolvent_solve",
+    "deps": [
+     "F_2",
+     "S_0"
+    ],
+    "expr": "derivative equation; d_e h_1 = -S_0 exactly",
+    "needed_by_m": [
+     3,
+     5
+    ]
+   },
+   {
+    "id": "F_3",
+    "kind": "resolvent_solve",
+    "deps": [
+     "S_3"
+    ],
+    "expr": "(I - K_e)^-1 S_3",
+    "needed_by_m": [
+     5
+    ]
+   },
+   {
+    "id": "dF_3",
+    "kind": "resolvent_solve",
+    "deps": [
+     "F_3",
+     "S_0"
+    ],
+    "expr": "derivative equation; d_e h_1 = -S_0 exactly",
+    "needed_by_m": [
+     5
+    ]
+   },
+   {
+    "id": "F_4",
+    "kind": "resolvent_solve",
+    "deps": [
+     "S_4"
+    ],
+    "expr": "(I - K_e)^-1 S_4",
+    "needed_by_m": [
+     5
+    ]
+   },
+   {
+    "id": "dF_4",
+    "kind": "resolvent_solve",
+    "deps": [
+     "F_4",
+     "S_0"
+    ],
+    "expr": "derivative equation; d_e h_1 = -S_0 exactly",
+    "needed_by_m": [
+     5
+    ]
+   }
+  ],
+  "union_over_m_equals_m5_set": true,
+  "m_specific_solves": 0,
+  "geometry_multiplied_by_m": false,
+  "assembly": {
+   "general": "R_m = (1/m) sum_{r<m} F_r(x0) + sum_{t=1}^{m-1} (1/t - 1/m) sum_{r<t} (K_e^{t-r-1} S_r)(x0)",
+   "derivation": "P5X-T1(c) with raw = Z + e; every finite coefficient collapses to (1/t - 1/m).",
+   "verified_against_probabilistic_decomposition": [
+    2,
+    3
+   ],
+   "per_m": {
+    "1": {
+     "F": {
+      "F_0": "1"
+     },
+     "finite": {}
+    },
+    "2": {
+     "F": {
+      "F_0": "1/2",
+      "F_1": "1/2"
+     },
+     "finite": {
+      "S_0": "1/2"
+     }
+    },
+    "3": {
+     "F": {
+      "F_0": "1/3",
+      "F_1": "1/3",
+      "F_2": "1/3"
+     },
+     "finite": {
+      "S_0": "2/3",
+      "K S_0": "1/6",
+      "S_1": "1/6"
+     }
+    },
+    "5": {
+     "F": {
+      "F_0": "1/5",
+      "F_1": "1/5",
+      "F_2": "1/5",
+      "F_3": "1/5",
+      "F_4": "1/5"
+     },
+     "finite": {
+      "S_0": "4/5",
+      "K S_0": "3/10",
+      "S_1": "3/10",
+      "K^2 S_0": "2/15",
+      "K S_1": "2/15",
+      "S_2": "2/15",
+      "K^3 S_0": "1/20",
+      "K^2 S_1": "1/20",
+      "K S_2": "1/20",
+      "S_3": "1/20"
+     }
+    }
+   }
+  },
+  "phases": [
+   {
+    "id": "A",
+    "name": "integrity + Task-1 F_r qualification",
+    "detector": "SR",
+    "cpu_hours_est": 0.5,
+    "gates": [
+     "checkpoint_hash",
+     "protected_tree",
+     "direction_audit_both",
+     "complexity_guard",
+     "task1_F0"
+    ],
+    "on_fail": "K1_CAMPAIGN_FAIL_ARCHITECTURE"
+   },
+   {
+    "id": "B",
+    "name": "CUSUM compact certificate",
+    "detector": "CUSUM",
+    "cells": 323,
+    "functions": 19,
+    "cpu_hours_est": 27.19,
+    "on_fail": "per-cell failure_class; STOP under S01-S12"
+   },
+   {
+    "id": "C",
+    "name": "SR compact certificate",
+    "detector": "SR",
+    "cells": 322,
+    "functions": 19,
+    "cpu_hours_est": 863.84,
+    "on_fail": "per-cell failure_class; STOP under S01-S12"
+   },
+   {
+    "id": "D",
+    "name": "all-m assembly",
+    "detector": "both",
+    "m_values": [
+     1,
+     2,
+     3,
+     5
+    ],
+    "cpu_hours_est": 0.0,
+    "note": "arithmetic over already-certified enclosures"
+   },
+   {
+    "id": "E",
+    "name": "far-field splice",
+    "detector": "both",
+    "cpu_hours_est": 0.01,
+    "note": "P5X-T3 B_D on [c_D, c_D+1] plus monotonicity; 3 outward-rounded Gaussian tail evaluations per detector"
+   },
+   {
+    "id": "F",
+    "name": "independent K1 adjudication",
+    "detector": "both",
+    "cpu_hours_est": 0.0,
+    "producer_may_self_award": false
+   }
+  ],
+  "phase_order_justification": "Task 1 runs first and on SR because every candidate failure in this campaign's history (Gate-2D, Gate-2E) was an SR candidate failure, and it costs one cell. CUSUM then precedes SR because it is ~3% of projected cost yet exercises the identical raw-variable assembly, m-sharing DAG and budget ledger: a scientific or governance failure surfacing there costs ~27 CPU-h instead of ~864. No order optimisation after observing production outcomes.",
+  "total_work_units": 12255,
+  "work_unit_address": "(detector, e_subcell_index, function_id)",
+  "shard_rule": "shard k gets units [floor(k*N/S), floor((k+1)*N/S))",
+  "shard_invariants": [
+   "sum of shard sizes == N exactly",
+   "no overlap",
+   "no omission",
+   "deterministic address mapping",
+   "aggregation identity reproduces the hull",
+   "every unit individually recomputable"
+  ],
+  "RNG_NOT_LOAD_BEARING": true
+ },
+ "budget_ledger": {
+  "schema": "rebaseguard.p5y.k1.budget_ledger.v1",
+  "binding": true,
+  "scientific_target": "R_MAX_LT_2",
+  "metric_type": "ABSOLUTE",
+  "boundary": 2.0,
+  "slack_R": 2.0,
+  "alpha": 0.1,
+  "w_target": 0.2,
+  "ledger_fractions": {
+   "B_cover": [
+    1,
+    4
+   ],
+   "B_candidate": [
+    1,
+    5
+   ],
+   "B_kernel": [
+    1,
+    5
+   ],
+   "B_other": [
+    1,
+    5
+   ],
+   "B_rounding": [
+    1,
+    20
+   ],
+   "B_interval": [
+    1,
+    20
+   ]
+  },
+  "ledger_absolute": {
+   "B_cover": 0.05,
+   "B_candidate": 0.04,
+   "B_kernel": 0.04,
+   "B_other": 0.04,
+   "B_rounding": 0.01,
+   "B_interval": 0.01,
+   "B_resolvent": 0.0
+  },
+  "reserve_fraction": [
+   1,
+   20
+  ],
+  "reserve_absolute": 0.01,
+  "allocated_fraction_sum": [
+   19,
+   20
+  ],
+  "allocated_plus_reserve_eq_one": true,
+  "local_gate_components": [
+   "B_candidate",
+   "B_kernel",
+   "B_interval",
+   "B_rounding"
+  ],
+  "local_gate_budget": 0.1,
+  "B_resolvent_zero_reason": "C is a MULTIPLICATIVE amplifier of local error, never an additive budget line; giving it an additive share would double-count.",
+  "redistribution_allowed": false,
+  "reserve_drawable": false,
+  "post_result_rebudgeting_allowed": false,
+  "assembly_coefficient_max_over_m": 1.0,
+  "assembly_coefficient_argmax_m": 1,
+  "gate2e_assembly_coefficient_used": 0.5,
+  "gate2e_coefficient_was_m2_specific": true,
+  "delta_max_formula": "LOCAL_GATE_BUDGET / C_D(e_lo)",
+  "w_panel_max_formula": "LOCAL_GATE_BUDGET / ( C_D(e_lo) * n_panels(patch) )",
+  "reference_cell": {
+   "detector": "SR",
+   "e": 0.25,
+   "patch": [
+    17,
+    11
+   ],
+   "C_D": 187.7471962405577,
+   "n_panels": 30,
+   "delta_max": 0.0005326311231400307,
+   "w_panel_max": 1.7754370771334357e-05,
+   "gate2e_w_panel_max": 3.550874083164312e-05,
+   "tightening_factor_vs_gate2e": 0.5000000100119798,
+   "gate2e_delta_candidate_max_carried": 0.0005340432825927636,
+   "delta_max_provenance_note": "Gate-2E carried 5.340433e-04; the frozen FORMULA above is authoritative and yields 5.326287e-04 at the same drift. The 0.27% difference is a Gate-2E constant-formation artifact and is recorded, not silently adopted; the formula is stricter."
+  },
+  "worst_case_C_at_e0": {
+   "detector": "SR",
+   "C_D": 1205.9371382854872,
+   "delta_max": 8.292306192856176e-05
+  },
+  "C_evaluated_at": "e_lo, the smallest |e| of the cell (worst case by M2)"
+ },
+ "p1_rule": {
+  "schema": "rebaseguard.p5y.k1.p1_rule.v1",
+  "binding": true,
+  "eps_P1": 0.001,
+  "P1_RULE_TARGET_EXPR": "(1 - eps_P1) * 1e-9",
+  "P1_CHECK_THRESHOLD": 1e-09,
+  "P1_HEADROOM_GUARD": 1e-06,
+  "P1_RULE_WORKPREC_BITS": 512,
+  "rule_and_check_distinct": true,
+  "headroom_rel_expr": "(P1_CHECK_THRESHOLD - E_d) / P1_CHECK_THRESHOLD",
+  "expected_headroom_rel": 0.001,
+  "headroom_over_guard": 1000.0,
+  "gate2f_defect_repaired": "P1_RULE_TARGET must be evaluated INSIDE workprec(512); Gate-2F evaluated it at ambient module precision, giving a 2.22e-16 relative provenance discrepancy against Gate-2E. Verdict-irrelevant there; fixed here."
+ },
+ "precision_policy": {
+  "schema": "rebaseguard.p5y.k1.precision_policy.v1",
+  "binding": true,
+  "SR_production_bits": 256,
+  "CUSUM_production_bits": 256,
+  "P1_rule_workprec_bits": 512,
+  "PRECISION_ESCALATION_ALLOWED": false,
+  "DEGREE_ADAPTATION_ALLOWED": false,
+  "POST_RESULT_REBUDGETING_ALLOWED": false,
+  "on_interval_too_wide": "STOP (S10 / PRECISION_FAILURE); never silent rerun"
+ },
+ "complexity_guard": {
+  "schema": "rebaseguard.p5y.k1.complexity_guard.v1",
+  "binding": true,
+  "score_formula": "(deg_a + 1) * (deg_b + 1) * (composed_z_degree + 1)",
+  "hard_bidegree": {
+   "SR": [
+    16,
+    16
+   ],
+   "CUSUM": [
+    12,
+    12
+   ]
+  },
+  "composed_z_degree": {
+   "SR": 128,
+   "CUSUM": 145
+  },
+  "measured_scores": {
+   "SR": 37281,
+   "CUSUM": 24674
+  },
+  "PRODUCTION_COMPLEXITY_CEILING": 60000,
+  "headroom": {
+   "SR": 1.6093988895147662,
+   "CUSUM": 2.431709491772716
+  },
+  "rejects_bidegree_20": 71001,
+  "gate2c_defect_score_order": 5447544,
+  "pilot_era_ceiling_not_used": 100000,
+  "fires_before_kernel_construction": true
+ },
+ "endpoint_sliver_gate": {
+  "measured_share_of_B_end": 0.8807787981310295,
+  "rule": "B_end is checked INDEPENDENTLY for every required (sub-cell, patch); a patch exceeding its own B_end fails under the frozen taxonomy",
+  "cross_cell_borrowing": false,
+  "redistribution": false,
+  "B_end_enlarged": false,
+  "tightest_channel": true
+ },
+ "cache_dependency_table": {
+  "dimensions": [
+   "detector",
+   "drift_e",
+   "outer_cell",
+   "patch",
+   "panel",
+   "function_r",
+   "value_or_derivative",
+   "m"
+  ],
+  "table": {
+   "patch_geometry": [
+    "detector",
+    "patch"
+   ],
+   "P1_rule_and_panel_grid": [
+    "detector",
+    "patch"
+   ],
+   "softplus_V": [
+    "detector",
+    "patch",
+    "panel"
+   ],
+   "softplus_W": [
+    "detector",
+    "patch",
+    "panel"
+   ],
+   "chebyshev_TV_TW": [
+    "detector",
+    "patch",
+    "panel"
+   ],
+   "matrices_P_Q_Qflat": [
+    "detector",
+    "patch",
+    "panel"
+   ],
+   "mag_ex_ez_vectors": [
+    "detector",
+    "patch",
+    "panel"
+   ],
+   "gaussian_moments_N": [
+    "detector",
+    "drift_e",
+    "outer_cell",
+    "patch",
+    "panel"
+   ],
+   "hankel_and_R": [
+    "detector",
+    "drift_e",
+    "outer_cell",
+    "patch",
+    "panel"
+   ],
+   "candidate_chat": [
+    "detector",
+    "drift_e",
+    "outer_cell",
+    "function_r",
+    "value_or_derivative"
+   ],
+   "kernel_coefficients": [
+    "detector",
+    "drift_e",
+    "outer_cell",
+    "patch",
+    "panel",
+    "function_r",
+    "value_or_derivative"
+   ],
+   "Fhat_patch_expansion": [
+    "detector",
+    "drift_e",
+    "outer_cell",
+    "patch",
+    "function_r",
+    "value_or_derivative"
+   ],
+   "S0_expansion": [
+    "detector",
+    "drift_e",
+    "outer_cell",
+    "patch"
+   ],
+   "endpoint_slivers": [
+    "detector",
+    "drift_e",
+    "outer_cell",
+    "patch",
+    "function_r",
+    "value_or_derivative"
+   ],
+   "resolvent_bound_C": [
+    "detector",
+    "drift_e",
+    "outer_cell"
+   ],
+   "m_assembly_coefficients": [
+    "m"
+   ]
+  },
+  "load_bearing_reuse": [
+   {
+    "quantity": "chebyshev_TV_TW",
+    "reused_across": [
+     "drift_e",
+     "outer_cell",
+     "function_r",
+     "value_or_derivative",
+     "m"
+    ],
+    "multiplicity": "322 sub-cells x 19 functions = 6118",
+    "why": "V and W are softplus of (p_c + z_c - 1/2 + alpha + zeta) and (m_c - z_c - 1/2 + beta - zeta). Neither expression contains e, r or any candidate coefficient. The panel grid is fixed by the P1 rule, whose H_max depends only on the softplus derivative bound and the frozen P1 target -- also e-free. Gate-2B separately established that SR patch geometry is e-independent."
+   },
+   {
+    "quantity": "hankel_and_R",
+    "reused_across": [
+     "function_r",
+     "value_or_derivative",
+     "m"
+    ],
+    "multiplicity": "19 functions",
+    "why": "R = P . Hankel(N) contains no candidate coefficient; the candidate enters only in the final contraction."
+   }
+  ],
+  "rule": "a quantity may be reused ONLY across dimensions absent from its key",
+  "verification": {
+   "positive_chebyshev_tensor_is_drift_independent": true,
+   "negative_chebyshev_tensor_depends_on_patch": true,
+   "negative_gaussian_moments_depend_on_drift": true,
+   "panel_grid_is_drift_independent": true,
+   "PASS": true
+  }
+ },
+ "work_conservation": {
+  "unit_identity": "(detector, subcell_index, function_id)",
+  "total_units": 12255,
+  "counts": {
+   "CUSUM": 6137,
+   "SR": 6118
+  },
+  "unit_id_rule": "deterministic string 'D:subcell:function', globally unique",
+  "shard_rule": "shard k receives units [floor(k*N/S), floor((k+1)*N/S)) -- FLOOR boundaries, never ceil-per-shard, which is the P4X shard-rounding defect",
+  "invariants": [
+   "sum over shards of |shard| == N exactly",
+   "no overlap",
+   "no omission",
+   "aggregation deterministic and order-independent",
+   "every unit individually recomputable from its stored record"
+  ]
+ },
+ "execution_order": [
+  {
+   "phase": "A",
+   "name": "integrity + backend qualification artifact checks",
+   "note": "Task1R is VERIFIED, never re-executed"
+  },
+  {
+   "phase": "B",
+   "name": "CUSUM production",
+   "cpu_h_est": 126.0
+  },
+  {
+   "phase": "C",
+   "name": "SR production in frozen patch order",
+   "cpu_h_est": 387.32878114463136
+  },
+  {
+   "phase": "D",
+   "name": "exact all-m assembly"
+  },
+  {
+   "phase": "E",
+   "name": "far-field splice"
+  },
+  {
+   "phase": "F",
+   "name": "independent K1 adjudication"
+  }
+ ],
+ "execution_order_rationale": "CUSUM first: ~20% of projected cost but it exercises the identical assembly, DAG and ledger, so a governance or scientific failure surfaces for ~126 CPU-h instead of ~387",
+ "stop_rules": [
+  [
+   "S01",
+   "checkpoint hash mismatch",
+   "CHECKPOINT_INTEGRITY_FAILURE"
+  ],
+  [
+   "S02",
+   "protected tree mutation",
+   "CHECKPOINT_INTEGRITY_FAILURE"
+  ],
+  [
+   "S03",
+   "backend equivalence failure vs the Task1R reference",
+   "BACKEND_EQUIVALENCE_FAILURE"
+  ],
+  [
+   "S04",
+   "invalid cache dependency / cache scope violation",
+   "CACHE_SCOPE_VIOLATION"
+  ],
+  [
+   "S05",
+   "precision change",
+   "PRECISION_FAILURE"
+  ],
+  [
+   "S06",
+   "degree change",
+   "REPRESENTATION_COMPLEXITY_FAILURE"
+  ],
+  [
+   "S07",
+   "budget redistribution",
+   "BUDGET_EXCEEDED"
+  ],
+  [
+   "S08",
+   "P1 failure",
+   "P1_HEADROOM_FAILURE"
+  ],
+  [
+   "S09",
+   "B_end failure on any patch",
+   "ENDPOINT_SLIVER_FAILURE"
+  ],
+  [
+   "S10",
+   "complexity ceiling breach",
+   "REPRESENTATION_COMPLEXITY_FAILURE"
+  ],
+  [
+   "S11",
+   "cover gap or overlap",
+   "COVER_INTEGRITY_FAILURE"
+  ],
+  [
+   "S12",
+   "work duplication or omission",
+   "WORK_CONSERVATION_FAILURE"
+  ],
+  [
+   "S13",
+   "far-field splice gap",
+   "FAR_FIELD_SPLICE_FAILURE"
+  ],
+  [
+   "S14",
+   "hard CPU-cap breach",
+   "BUDGET_EXCEEDED"
+  ],
+  [
+   "S15",
+   "true mathematical counterexample |R| >= 2",
+   "MATHEMATICAL_COUNTEREXAMPLE"
+  ],
+  [
+   "S16",
+   "implementation defect invalidating the current frozen run",
+   "IMPLEMENTATION_DEFECT"
+  ]
+ ],
+ "continue_and_see_exception": false,
+ "verdicts": {
+  "K1_CLOSED": {
+   "requires_all": [
+    "both detectors complete",
+    "all frozen m complete",
+    "full compact cover complete",
+    "every local budget passes",
+    "every endpoint/sliver budget passes",
+    "P1 passes",
+    "all shared-object solves complete",
+    "exact finite-m assembly",
+    "complete far-field splice",
+    "no hidden or uncomputed cells",
+    "no hard STOP fired",
+    "reproducibility passes",
+    "complete artifact set",
+    "independent adjudication passes"
+   ],
+   "producer_may_self_award": false,
+   "closes_P5": false
+  },
+  "K1_FAIL_MATHEMATICAL": {
+   "trigger": "S15"
+  },
+  "K1_FAIL_CERTIFICATE": {
+   "trigger": "S03,S05,S06,S08,S09,S10"
+  },
+  "K1_FAIL_GOVERNANCE": {
+   "trigger": "S01,S02,S04,S07,S11,S12,S13,S16"
+  },
+  "K1_INCOMPLETE_BUDGET": {
+   "trigger": "S14"
+  },
+  "K1_INCOMPLETE_EXTERNAL": {
+   "trigger": "external interruption that is not a budget breach"
+  }
+ },
+ "temporal": {
+  "T0S": "successor design",
+  "T1S": "binding checkpoint frozen",
+  "T2S": "first result-bearing full production -- NOT PERFORMED",
+  "T3S": "campaign completion -- NOT PERFORMED",
+  "T4S": "independent adjudication -- NOT PERFORMED",
+  "this_task_stops_at": "T1S"
+ },
+ "state": {
+  "P5Y_K1_SUCCESSOR_CHECKPOINT_STATUS": "FROZEN",
+  "P5Y_K1_OPTIMIZED_BACKEND": "QUALIFIED",
+  "P5Y_K1_SUCCESSOR_PRODUCTION_RUN": "NO",
+  "P5Y_K1_SUCCESSOR_VERDICT": "NOT_RUN",
+  "HISTORICAL_K1_VERDICT": "K1_INCOMPLETE_BUDGET",
+  "P5_SCIENTIFIC_LINE_STATUS": "PARTIALLY_REPAIRED_BY_SUCCESSOR",
+  "LEVEL4_GLOBAL_CLOSURE": "NO"
+ }
+}
