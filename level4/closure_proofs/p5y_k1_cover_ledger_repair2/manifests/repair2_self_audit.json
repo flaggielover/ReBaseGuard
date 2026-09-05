@@ -1,0 +1,85 @@
+{
+  "backend_hash": "8abad284d1eb642e0e682de3eb118f1f901993ae16c939b29ab95c339b2ebf25",
+  "chain_replay": {
+    "cell221_256": {
+      "all_verified": true,
+      "leaf_maps_empty": true,
+      "obligations": 28,
+      "units_verified": 28
+    }
+  },
+  "checks": {
+    "S0_double_charge_remains_fixed": true,
+    "SR_absent": true,
+    "budgets_unchanged": true,
+    "cap_remains_1126": true,
+    "cell_325_unresolved": true,
+    "exact_dependency_chain_replay_passes": true,
+    "far_field_absent": true,
+    "frozen_successor_byte_preserved": true,
+    "loaded_modules_covered": true,
+    "precision_unchanged": true,
+    "producer_hash_covers_certifying_code": true,
+    "producer_hash_distinct_from_commit_ids": true,
+    "production_off": true,
+    "repair1_byte_preserved": true,
+    "reviewed_implementation_byte_preserved": true,
+    "shard_conservation_unchanged": true,
+    "source_hashes_cover_certificate_content": true,
+    "substitution_attacks_all_reject": true,
+    "work_universe_17978_unchanged": true
+  },
+  "checks_failed": [],
+  "cost_cap_status": "NOT_ESTABLISHED",
+  "implementation_complete": false,
+  "namespaces_preserved": {
+    "frozen_successor": {
+      "namespace": "level4/closure_proofs/p5y_k1_cover_ledger_successor",
+      "preserved": true
+    },
+    "repair1": {
+      "commit": "41641218363f2c8b2bf14a571eecc193ae271fc2",
+      "namespace": "level4/closure_proofs/p5y_k1_cover_ledger_repair1",
+      "paths_changed": [],
+      "preserved": true
+    },
+    "reviewed_implementation": {
+      "commit": "c0a1f40cff6974899cd44ab424591bb6a819c949",
+      "namespace": "level4/closure_proofs/p5y_k1_cover_ledger_implementation",
+      "paths_changed": [],
+      "preserved": true
+    }
+  },
+  "producer_hash": "f703921b045f39092d9bdf67d02927f70961dd344dc3be50d17aab0b23df16bd",
+  "production_ready": false,
+  "remaining_unresolved": [
+    "SR raw DAG absent",
+    "SR M_R2 absent",
+    "SR all-m absent",
+    "far-field not implemented",
+    "cell 325 CURRENT_CERTIFICATE_FAILURE_ONLY",
+    "full cost cap NOT_ESTABLISHED"
+  ],
+  "repair1_commit": "41641218363f2c8b2bf14a571eecc193ae271fc2",
+  "review_kind": "read-only self-adjudication of repair2; not an independent human or agent review",
+  "reviewed_commit": "c0a1f40cff6974899cd44ab424591bb6a819c949",
+  "reviewed_parent_hash": "44f5417bdbba87fd34ff1d161fa307b3236bf7f55ea9b27cb12ddd5681938155",
+  "scientific_verdict_changed": false,
+  "substitution_attacks": {
+    "all_rejected": true,
+    "certificate_from_another_m": true,
+    "dependency_hashes_mispaired": true,
+    "dependency_omitted": true,
+    "different_producer_hash": true,
+    "extra_dependency": true,
+    "forged_metadata_only": true,
+    "leaf_declaring_dependency": true,
+    "modified_certified_interval": true,
+    "modified_error_bound": true,
+    "non_leaf_empty_map": true,
+    "old_12255_universe": true,
+    "repair1_record_as_repair2": true
+  },
+  "verdict": "REPAIR2_READY_FOR_INDEPENDENT_ADJUDICATION",
+  "work_universe_verdict": "RESERVED_FOR_INDEPENDENT_ADJUDICATION"
+}
