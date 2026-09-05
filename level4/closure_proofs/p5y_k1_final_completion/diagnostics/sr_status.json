@@ -1,0 +1,46 @@
+{
+ "SR_ALL_M": "ABSENT",
+ "SR_IMPLEMENTATION": "ABSENT",
+ "SR_M_R2": "ABSENT",
+ "architectural_note": "the validated CUSUM path is hard-wired to the CUSUM state square and a recentred Hermite expansion; SR is a softplus/Taylor-model formulation on two charts with panel Gaussian moments. They share the Arb backend and the frozen error algebra and little else.",
+ "consequence": "SR representative certification, SR M_R2, SR all-m assembly and any SR cost measurement are all blocked; the SR half of the frozen scope (8849 of 17978 obligations) is undischarged.",
+ "coverage": {
+  "drifts_implemented": 1,
+  "live_patches": 3994,
+  "object_classes_implemented": 1,
+  "objects_required_per_cell": 19,
+  "obligations_per_cell": 28,
+  "patches_implemented": 1,
+  "sr_cells": 316,
+  "sr_obligations_total": 8849,
+  "sr_share_of_universe": 0.49221270441650905,
+  "total_universe": 17978
+ },
+ "failure_class": "IMPLEMENTATION_INCOMPLETE",
+ "missing": [
+  "h_1..h_4 and S_1..S_4 for SR at any drift",
+  "F_1..F_4 (require S_r, absent)",
+  "dF_0..dF_4 (derivative resolvent system)",
+  "order-2 chain h'', S'', H_r and finite powers W_(r,j)",
+  "whole-cell uniform-in-e envelopes (no M_R2 without them)",
+  "exact all-m interval assembly for m in {1,2,3,5}",
+  "generalisation from patch (17,11) to all 3994 live patches",
+  "generalisation from e = 1/4 to all 316 frozen cells"
+ ],
+ "not_a_scientific_failure": true,
+ "schema": "k1.final.sr-status.v1",
+ "task1r_evidence": {
+  "D": 11,
+  "Z": 20,
+  "cpu_seconds": 12.724771,
+  "detector_object": "\"SR\", \"F_0\"",
+  "drift": "1, 4",
+  "n_panels_on_that_patch": 28,
+  "objects_certified": [
+   "F_0"
+  ],
+  "patch_grid": "(17, 11), 64",
+  "peak_rss_mib": 48.609375,
+  "verdict": "PASS"
+ }
+}

@@ -1,0 +1,56 @@
+{
+ "COST_CAP_STATUS": "NOT_ESTABLISHED",
+ "cap_increased": false,
+ "extrapolation": {
+  "campaign_central_cpu_h": 1337.103000297578,
+  "campaign_conservative_cpu_h": 1680.2837181090429,
+  "cusum_complete_measured_cpu_h": 103.02303041026734,
+  "label": "EXTRAPOLATION, not a cost result: SR is unimplemented",
+  "over_cap_central": true,
+  "over_cap_conservative": true,
+  "sr_complete_central_cpu_h": 1234.0799698873107,
+  "sr_complete_conservative_cpu_h": 1577.2606876987754
+ },
+ "frozen_hard_cap_cpu_h": 1126,
+ "lower_bounds": {
+  "assumption_dependent_campaign_cpu_h": 1188.9299407837161,
+  "assumption_dependent_exceeds_cap": true,
+  "assumption_dependent_sr_complete_cpu_h": 1085.9069103734487,
+  "assumption_free_campaign_cpu_h": 435.8009545569694,
+  "assumption_free_exceeds_cap": false,
+  "assumption_free_sr_base_only_cpu_h": 332.77792414670205,
+  "the_assumption": "that order-1 and order-2 certified objects cost comparably per function to order-0 ones; plausible because 71% of the measured panel cost is the per-function Taylor contraction, but NOT proved for an SR implementation that does not exist"
+ },
+ "measured_primitives": {
+  "baseline_t_panel_median": 0.48549200000000026,
+  "load_factor": 1.278086287911149,
+  "n_panels": 28,
+  "opt_per_function_median": 0.002482999999999791,
+  "opt_per_function_min": 0.002391000000000254,
+  "opt_shared_build_median": 0.10529999999999973,
+  "sr_raw_cpu_h": 387.32878114463136,
+  "t_drift_s": 6.299999999725969e-05,
+  "t_perfn_s": 0.0027110000000014622,
+  "t_shared_s": 0.10262600000000077
+ },
+ "model_check": {
+  "base_only_reproduced_cpu_h": 380.1558035712946,
+  "frozen_base_only_sr_cpu_h": 380.1558035712946,
+  "frozen_base_raw_sr_cpu_h": 387.32878114463136,
+  "reproduces_frozen_model": true
+ },
+ "schema": "k1.final.sr-cost-model.v1",
+ "status_reason": "the assumption-free lower bound (SR base objects only) does NOT exceed the cap, so COST_CAP_FAIL is not supported; the complete extrapolation and the assumption-dependent lower bound both DO exceed it, so COST_CAP_PASS is not supported either",
+ "structural_counts": {
+  "base_functions": 19,
+  "bundle_functions": 22,
+  "complete_functions": 62,
+  "complete_over_base_cusum_measured": 3.3318,
+  "complete_over_base_structural": 3.263157894736842,
+  "curvature_functions": 21,
+  "cusum_cells": 326,
+  "live_patches": 3994,
+  "panels_over_live_patches": 83452,
+  "sr_cells": 316
+ }
+}

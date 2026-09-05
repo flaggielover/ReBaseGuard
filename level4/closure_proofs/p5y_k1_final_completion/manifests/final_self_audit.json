@@ -1,0 +1,148 @@
+{
+  "K1_CLOSED_claimed": false,
+  "P5Y_PRODUCTION_ALLOWED": "NO",
+  "cell_325": {
+    "chain_verified": true,
+    "state": "CERTIFIED_PASS",
+    "statuses": {
+      "1": "PASS",
+      "2": "PASS",
+      "3": "PASS",
+      "5": "PASS"
+    },
+    "worst_cover_utilization_pct": 22.749342197926897
+  },
+  "checks": {
+    "S0_charged_exactly_once": true,
+    "budgets_unchanged": true,
+    "cap_remains_1126": true,
+    "cost_cap_not_claimed_pass": true,
+    "cover_geometry_unchanged": true,
+    "degree_unchanged": true,
+    "drift_aware_norms_only_tighten": true,
+    "frozen_successor_byte_preserved": true,
+    "no_certified_counterexample": true,
+    "precision_unchanged": true,
+    "production_off": true,
+    "provenance_chains_verify": true,
+    "repair1_byte_preserved": true,
+    "repair2_byte_preserved": true,
+    "reviewed_implementation_byte_preserved": true,
+    "shard_conservation_unchanged": true,
+    "sr_still_absent": true,
+    "work_universe_17978_unchanged": true
+  },
+  "checks_failed": [],
+  "cost": {
+    "COST_CAP_STATUS": "NOT_ESTABLISHED",
+    "assumption_free_lower_bound_cpu_h": 435.8009545569694,
+    "campaign_central_cpu_h": 1337.103000297578,
+    "cap": 1126
+  },
+  "far_field": {
+    "CUSUM": {
+      "at_e_far_12_all_m_pass": true,
+      "at_splice_all_m_pass": false,
+      "failure_class": "CERTIFICATE_TOO_LOOSE",
+      "status": "NOT_ESTABLISHED_AT_FROZEN_SPLICE",
+      "uncovered_interval": [
+        5.5,
+        5.930728316307068
+      ]
+    },
+    "SR": {
+      "at_e_far_12_all_m_pass": true,
+      "at_splice_all_m_pass": false,
+      "failure_class": "CERTIFICATE_TOO_LOOSE",
+      "status": "NOT_ESTABLISHED_AT_FROZEN_SPLICE",
+      "uncovered_interval": [
+        6.755531464321473,
+        7.186260223388672
+      ]
+    }
+  },
+  "norms_tighten_audit": {
+    "all_tighten_or_equal": true,
+    "cells_checked": 326,
+    "violations": []
+  },
+  "overall_state": "K1_INCOMPLETE_IMPLEMENTATION",
+  "production_authorization_gate": {
+    "1_implementation_complete": false,
+    "2_no_implementation_defect": true,
+    "3_cell_325_certified": true,
+    "3b_all_recertified_cusum_cells_pass": false,
+    "4_cusum_far_field_pass": false,
+    "5_sr_far_field_pass": false,
+    "6_sr_representative_certificates_pass": false,
+    "7_provenance_resume_pass": true,
+    "8_within_1126_cap": false,
+    "9_memory_safe_on_host": true
+  },
+  "production_launched": false,
+  "protected_namespaces": {
+    "frozen_successor": {
+      "namespace": "level4/closure_proofs/p5y_k1_cover_ledger_successor",
+      "preserved": true
+    },
+    "repair1": {
+      "commit": "41641218363f2c8b2bf14a571eecc193ae271fc2",
+      "namespace": "level4/closure_proofs/p5y_k1_cover_ledger_repair1",
+      "paths_changed": [],
+      "preserved": true
+    },
+    "repair2": {
+      "commit": "7a7df9b173e5de535c15037089fabebc687c5e6f",
+      "namespace": "level4/closure_proofs/p5y_k1_cover_ledger_repair2",
+      "paths_changed": [],
+      "preserved": true
+    },
+    "reviewed_implementation": {
+      "commit": "c0a1f40cff6974899cd44ab424591bb6a819c949",
+      "namespace": "level4/closure_proofs/p5y_k1_cover_ledger_implementation",
+      "paths_changed": [],
+      "preserved": true
+    }
+  },
+  "recertified_cells": {
+    "all_m_pass": [
+      0,
+      136,
+      150,
+      221,
+      293,
+      300,
+      310,
+      325,
+      50
+    ],
+    "cusum_compact_cover_certified": false,
+    "failure_class": "CERTIFICATE_TOO_LOOSE",
+    "failures_are_certificate_looseness_only": true,
+    "total": 16,
+    "with_failures": [
+      318,
+      319,
+      320,
+      321,
+      322,
+      323,
+      324
+    ]
+  },
+  "remaining_blockers": [
+    "CUSUM high-radius cells 318-324 fail (CERTIFICATE_TOO_LOOSE)",
+    "SR raw DAG absent (8,849 of 17,978 obligations)",
+    "SR M_R2 absent",
+    "SR all-m assembly absent",
+    "far-field does not close m=3,5 at the frozen K1 splice",
+    "cost cap NOT_ESTABLISHED"
+  ],
+  "review_kind": "read-only self-adjudication of the final-completion campaign; not an independent review",
+  "sr": {
+    "SR_ALL_M": "ABSENT",
+    "SR_IMPLEMENTATION": "ABSENT",
+    "SR_M_R2": "ABSENT",
+    "failure_class": "IMPLEMENTATION_INCOMPLETE"
+  }
+}
