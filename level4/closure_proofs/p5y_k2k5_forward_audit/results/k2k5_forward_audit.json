@@ -1,0 +1,289 @@
+{
+ "schema": "rebaseguard.p5y.k2k5.forward_audit.v1",
+ "binding": false,
+ "design_audit": true,
+ "generated_utc": "2026-09-05T02:43:53.297732+00:00",
+ "git_commit": "af247ae4e92ff7750525bac8f8a4a89a8f3e3fa2",
+ "K1_untouched": true,
+ "authoritative_hypotheses": {
+  "source": "p5_nonlinear_dynamics/THEOREM.md 'Measured hypotheses' + p5x FEASIBILITY_AUDIT.md section 8",
+  "H1": {
+   "claim": "R continuous and odd",
+   "status": "ALREADY EXACT (P5-T3)",
+   "open": false
+  },
+  "H2": {
+   "claim": "R(e) < 0 for all e > 0",
+   "consumed_by": [
+    "T8",
+    "T9",
+    "T10"
+   ],
+   "load_bearing_range": "(0,2] ONLY -- FEASIBILITY_AUDIT s8: T8/T9 use e in (0,E], E=2, because sup|R| < E kills e > E",
+   "open": true
+  },
+  "H3a": {
+   "claim": "s(e) = -R(e)/e continuous and STRICTLY DECREASING on (0,2], s(0+) = GammaTilde-1 = 1/rho_c, s(2) < 1",
+   "consumed_by": [
+    "T9 uniqueness",
+    "T10"
+   ],
+   "open": true,
+   "note": "'H3 globally' is FALSE -- s rises between e=4 and e=5 (secondary lobe). The (0,2] restriction is essential and must NOT be widened."
+  },
+  "H3b": {
+   "claim": "sup_e |R(e)| < 2",
+   "equals": "K1 / gate G3",
+   "open": true,
+   "status": "successor checkpoint FROZEN, NOT_RUN"
+  },
+  "T10_extra": {
+   "claim": "S continuous at 0",
+   "open": true,
+   "note": "the ONLY S-related requirement in the authoritative theorem"
+  }
+ },
+ "prompt_summary_corrections": [
+  {
+   "item": "K4 / H2",
+   "prompt_said": "R(e) < 0 on the frozen positive near-zero interval",
+   "authoritative": "R(e) < 0 for ALL e > 0",
+   "why_it_matters": "the authoritative statement is global; what is LOAD-BEARING is (0,2], and that reduction is licensed by K1, not by a near-zero restriction"
+  },
+  {
+   "item": "K5 / H3a",
+   "prompt_said": "s(e) attains each required frozen level exactly once",
+   "authoritative": "s continuous and STRICTLY DECREASING on (0,2], with s(0+) = GammaTilde-1 and s(2) < 1",
+   "why_it_matters": "FEASIBILITY_AUDIT records level-attainment as a legitimate WEAKENING of strict decrease. Adopting the weaker form as the target would silently substitute the theorem; it may only be adopted by an explicit pre-registered decision"
+  },
+  {
+   "item": "K2 / s_min",
+   "prompt_said": "s_min = inf_e S_{D,m}(e) > 0 is a P5 target",
+   "authoritative": "inf_e S(e) > 0 is NOT among the hypotheses T8/T9/T10 are conditional on. T10 requires 'S continuous at 0'. V = rho^2 S(e) + (1-rho)^2/m is already bounded below by (1-rho)^2/m > 0 for every rho < 1, so positivity of S can bind only at rho = 1, and there only at the branch point",
+   "why_it_matters": "K2 as framed is STRONGER than anything the theorem consumes"
+  },
+  {
+   "item": "K3 / M2",
+   "prompt_said": "M2 < infinity with a quantitatively useful bound",
+   "authoritative": "P5-T5 is an EXACT THEOREM: E[Rbar^{2p}|e] <= (2p-1)!! C_D for every p,D,m,rho,e. At p=1 this IS M2 <= C_D, with C_D explicit and finite from P5-T4 (C_CUSUM <= 9.8959e8, C_SR <= 1.4054e11)",
+   "why_it_matters": "finiteness is ALREADY CLOSED by exact theorems. What is open is only whether any downstream consumer needs a NON-VACUOUS M2; the audit calls the bound 'numerically empty' but also records that T7 uses only finiteness"
+  }
+ ],
+ "dependency_dag": {
+  "edges": [
+   [
+    "K4(H2)",
+    "K1(H3b)",
+    "MATHEMATICAL_DEPENDENCY",
+    "the reduction of H2 from (0,inf) to (0,2] is licensed by sup|R| < 2: for e >= 2, R(e) < 2 <= e already excludes a positive fixed point of f_rho. Without K1 the far field of H2 needs its own sign lemma."
+   ],
+   [
+    "K4(H2)",
+    "K1 production artifacts",
+    "CERTIFICATE_DEPENDENCY",
+    "proof path = certified enclosure of R on a finite cover of [e_0,2] plus certified R' < 0 on [0,e_0]. K1's cover [0,e_star] strictly contains (0,2] and its DAG already solves dF_0..dF_4, so R and R' enclosures are K1 by-products."
+   ],
+   [
+    "K5(H3a)",
+    "K1(H3b)",
+    "MATHEMATICAL_DEPENDENCY",
+    "same (0,2] localisation; s(2) < 1 is meaningful only once |R| is controlled"
+   ],
+   [
+    "K5(H3a)",
+    "K4(H2)",
+    "MATHEMATICAL_DEPENDENCY",
+    "s(e) = -R(e)/e > 0 on (0,2] requires R < 0 there, which is H2"
+   ],
+   [
+    "K5(H3a)",
+    "K1 production artifacts",
+    "CERTIFICATE_DEPENDENCY",
+    "s'(e) = (R - e R')/e^2 < 0 cellwise needs BOTH R and R' enclosures on a cover of (0,2]; both are K1 by-products"
+   ],
+   [
+    "K3(M2)",
+    "K1",
+    "NO_DEPENDENCY",
+    "P5-T5/T4 are exact and independent of H1-H3b"
+   ],
+   [
+    "K2(s_min)",
+    "K1",
+    "NO_DEPENDENCY",
+    "S is a variance, not the mean map"
+   ],
+   [
+    "K2(s_min)",
+    "authoritative theorem",
+    "GOVERNANCE_DEPENDENCY",
+    "the exact statement T10 consumes must be re-resolved before K2 can be framed at all"
+   ],
+   [
+    "T9",
+    "K1,K4,K5",
+    "MATHEMATICAL_DEPENDENCY",
+    "T9 is conditional on H1-H3"
+   ],
+   [
+    "T10",
+    "K1,K4,K5,S-continuity",
+    "MATHEMATICAL_DEPENDENCY",
+    "T10 adds S continuous at 0"
+   ],
+   [
+    "K4,K5",
+    "external compute",
+    "COST/IMPLEMENTATION_DEPENDENCY",
+    "they ride on the K1 production run; no separate cover campaign is needed"
+   ]
+  ],
+  "conclusion": "the remaining LOAD-BEARING work on the P5 line is K1 + K4 + K5, and K4/K5 are near-free riders on K1: their numerical inputs (certified R and R' enclosures on a cover containing (0,2]) are already produced by the frozen K1 successor DAG. K2 and K3 as named in the P5Y campaign are not hypotheses of the authoritative theorem."
+ },
+ "reuse_matrix": {
+  "legend": "YES reusable as-is | BY_PRODUCT already produced by K1 | NO does not transfer",
+  "rows": {
+   "raw-variable formulation": {
+    "K2": "NO",
+    "K3": "NO",
+    "K4": "YES",
+    "K5": "YES"
+   },
+   "compact covers": {
+    "K2": "YES",
+    "K3": "YES",
+    "K4": "BY_PRODUCT",
+    "K5": "BY_PRODUCT"
+   },
+   "far-field splice P5X-T3": {
+    "K2": "NO",
+    "K3": "NO",
+    "K4": "PARTIAL -- gives |R|, not the sign",
+    "K5": "PARTIAL"
+   },
+   "m-sharing DAG": {
+    "K2": "YES",
+    "K3": "YES",
+    "K4": "BY_PRODUCT",
+    "K5": "BY_PRODUCT"
+   },
+   "optimized cached backend": {
+    "K2": "YES",
+    "K3": "YES",
+    "K4": "BY_PRODUCT",
+    "K5": "BY_PRODUCT"
+   },
+   "Gaussian moments": {
+    "K2": "YES",
+    "K3": "YES",
+    "K4": "BY_PRODUCT",
+    "K5": "BY_PRODUCT"
+   },
+   "shared panel operator": {
+    "K2": "YES",
+    "K3": "YES",
+    "K4": "BY_PRODUCT",
+    "K5": "BY_PRODUCT"
+   },
+   "resolvent amplification": {
+    "K2": "YES",
+    "K3": "the second-moment resolvent is a DIFFERENT operator",
+    "K4": "BY_PRODUCT",
+    "K5": "BY_PRODUCT"
+   },
+   "genuine F_r machinery": {
+    "K2": "NO",
+    "K3": "NO -- needs new backward functions",
+    "K4": "BY_PRODUCT",
+    "K5": "BY_PRODUCT"
+   },
+   "Task1R early truncation": {
+    "K2": "YES",
+    "K3": "YES",
+    "K4": "BY_PRODUCT",
+    "K5": "BY_PRODUCT"
+   },
+   "exact-dyadic representation": {
+    "K2": "YES",
+    "K3": "YES",
+    "K4": "BY_PRODUCT",
+    "K5": "BY_PRODUCT"
+   },
+   "interval arithmetic": {
+    "K2": "YES",
+    "K3": "YES",
+    "K4": "YES",
+    "K5": "YES"
+   },
+   "P1 machinery": {
+    "K2": "YES",
+    "K3": "YES",
+    "K4": "BY_PRODUCT",
+    "K5": "BY_PRODUCT"
+   },
+   "dF_r derivative solves": {
+    "K2": "NO",
+    "K3": "NO",
+    "K4": "BY_PRODUCT (R'<0 near 0)",
+    "K5": "BY_PRODUCT (s')"
+   }
+  },
+  "warning": "first-moment machinery does NOT automatically certify second moments: the second-moment reduction has its own backward functions, its own resolvent and its own cross terms. Nothing in the K1 stack certifies E[Rbar^2]."
+ },
+ "cost_projections_optimized_backend": {
+  "basis": "the QUALIFIED optimized backend at 0.002731 s/panel (worst cell); the obsolete 0.369425 s/panel Task1R figure is NOT used",
+  "K4_H2": {
+   "incremental_cpu_h": 0.0,
+   "why": "R enclosures on (0,2] and R' near 0 are already K1 outputs; K4 adds an assembly-and-adjudication pass over existing certified cells",
+   "new_production": "none"
+  },
+  "K5_H3a": {
+   "incremental_cpu_h": 0.0,
+   "why": "s'(e) = (R - e R')/e^2 is arithmetic over the same certified cells",
+   "new_production": "one certified near-zero second-order remainder, order minutes"
+  },
+  "K3_M2": {
+   "status": "finiteness already exact; a NON-VACUOUS M2 needs a full second-moment campaign with its own backward functions",
+   "central_cpu_h_if_needed": 620.0
+  },
+  "K2_s_min": {
+   "status": "not costable until the consumed statement is re-resolved"
+  }
+ },
+ "readiness": {
+  "K2": {
+   "status": "BLOCKED_BY_THEOREM",
+   "reason": "inf_e S(e) > 0 is not a hypothesis of T8/T9/T10; T10 consumes only 'S continuous at 0', and V >= (1-rho)^2/m > 0 already for rho < 1. The exact consumed statement must be re-resolved before any checkpoint can be framed."
+  },
+  "K3": {
+   "status": "BLOCKED_BY_THEOREM",
+   "reason": "M2 < infinity is ALREADY CLOSED exactly by P5-T5 with explicit finite C_D from P5-T4. Whether a NON-VACUOUS M2 is consumed anywhere is a theorem question that must be adjudicated before spending ~620 CPU-h."
+  },
+  "K4": {
+   "status": "BLOCKED_BY_K1",
+   "reason": "architecture fully determined (certified R on a cover of [e_0,2] + certified R' < 0 on [0,e_0], with e > 2 licensed by sup|R| < 2), but every numerical input is a K1 production artifact and K1 is NOT_RUN."
+  },
+  "K5": {
+   "status": "BLOCKED_BY_K1",
+   "reason": "architecture fully determined (s' < 0 cellwise on (0,2], s(0+) via a certified second-order remainder), but it consumes the same not-yet-existing K1 R and R' enclosures and additionally depends on K4."
+  }
+ },
+ "micropilots_run": 0,
+ "micropilot_policy": "none run: no K2-K5 architecture uncertainty is resolvable by compute. K4/K5 are blocked on K1 artifacts, not on knowledge; K2/K3 are blocked on a theorem question, which compute cannot answer.",
+ "parallel_execution_plan": {
+  "K1_server": "external 32-vCPU (not provisioned in this task)",
+  "K4_K5_share_everything": true,
+  "ACTION_REQUIRED_BEFORE_T2S": "K1 production must EMIT, per certified cell, the R and R' enclosures it already computes, not only the sup. That is a REPORTING requirement on the K1 run, not a scientific change -- but it must be added to the K1 successor checkpoint BEFORE T2S, or K4/K5 will need a second full K1-scale campaign to recover data K1 already had.",
+  "idle_time_if_done": "near zero -- K4 and K5 become assembly passes",
+  "idle_time_if_not": "a second full K1-scale campaign (~620 CPU-h)"
+ },
+ "governance": {
+  "K1_modified": false,
+  "K1_executed": false,
+  "historical_artifacts_modified": false,
+  "scope_narrowed": false,
+  "thresholds_weakened": false,
+  "novelty_claimed": false,
+  "theorem_substituted": false
+ }
+}
