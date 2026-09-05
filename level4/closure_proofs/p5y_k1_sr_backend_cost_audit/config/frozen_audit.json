@@ -1,0 +1,123 @@
+{
+ "schema": "rebaseguard.p5y.k1.srbackend.frozen.v1",
+ "binding": true,
+ "result_bearing": false,
+ "generated_utc": "2026-09-05T01:09:52.156109+00:00",
+ "immutable_history": {
+  "HARD_CPU_CAP_historical": 1848,
+  "P5Y_K1_VERDICT": "K1_INCOMPLETE_BUDGET",
+  "P5Y_K1_TASK1": "FAIL",
+  "P5Y_K1_TASK1R": "PASS",
+  "cap_may_be_raised": false
+ },
+ "work_model": {
+  "SR_subcells": 322,
+  "functions_per_detector": 19,
+  "panels_per_subcell_function": 83452,
+  "SR_panel_evaluations": 510559336,
+  "CUSUM_projection_cpu_h": 126.02383333333333,
+  "overhead_factor": 1.15,
+  "formula": "K1_total = OVERHEAD * (t_panel * EVALS / 3600 + CUSUM)"
+ },
+ "baseline": {
+  "t_panel_task1r_s": 0.369425,
+  "t_panel_old_scalar_model_s": 0.006091
+ },
+ "thresholds": {
+  "T_PANEL_HARD_TARGET_s": 0.010442190167414487,
+  "hard_sr_allowance_cpu_h": 1480.932688405797,
+  "T_PANEL_STRONG_TARGET_s": 0.021772985768145348,
+  "strong_sr_allowance_cpu_h": 3087.889210144928,
+  "T_PANEL_PROMISING_TARGET_s": 0.04443457696960707,
+  "promising_sr_allowance_cpu_h": 6301.802253623188,
+  "required_speedup_hard": 35.37811455999087,
+  "required_speedup_strong": 16.967126324974775,
+  "required_speedup_promising": 8.313908338830007,
+  "semantics": {
+   "HARD": "projected full K1 <= 1848 CPU-h (historical cap)",
+   "STRONG": "> 1848 but <= 2x historical cap",
+   "PROMISING": "> 2x but <= 4x historical cap",
+   "NOT_FEASIBLE": "> 4x historical cap"
+  }
+ },
+ "routes": [
+  {
+   "id": "O1_CACHED",
+   "status": "BENCHMARK",
+   "claim": "V, W and the Chebyshev tensors T_i(tau V), T_j(tau W) depend only on (patch, panel). They contain no drift e, no function r and no candidate coefficient, so they are identical across all 322 sub-cells and all 19 functions and may be computed once per (patch, panel).",
+   "exactness": "exact reuse of identical quantities; no bound is weakened"
+  },
+  {
+   "id": "O2_BATCHED",
+   "status": "BENCHMARK",
+   "claim": "the per-panel work is dominated by Python-level scalar arb dispatch; restructuring the contractions to bulk index order reduces dispatch count without changing any value",
+   "exactness": "identical arithmetic, reordered; interval semantics unchanged"
+  },
+  {
+   "id": "O3_SHARED_OPERATOR",
+   "status": "BENCHMARK",
+   "claim": "the panel operator M[i][j][a][b] = sum_{k1,k2} P[i][a][k1] Q[j][b][k2] N_{k1+k2} is candidate-independent and depends on e only through the Gaussian moments N. Build it once per (patch, panel, e) and contract with each of the 19 candidates. Factorises via R[i][a][k2] = sum_k1 P[i][a][k1] N_{k1+k2}, turning a rank-4 build into two cheap contractions.",
+   "exactness": "exact algebraic refactoring of the same sum; identical enclosures"
+  },
+  {
+   "id": "O4_SPARSE",
+   "status": "NOT_SEPARATELY_BENCHMARKED",
+   "reason": "the baseline already skips zero coefficients via is_zero() guards, and the only structural sparsity is at the softplus source (c[a][k] nonzero for a+k <= 9), which the Chebyshev composition fills in by degree 2. There is no further provably-zero structure to exploit without a tail bound, and introducing a negligibility threshold would change certificate semantics. Rejected on mathematical grounds BEFORE benchmarking, as required."
+  }
+ ],
+ "benchmark_cells": [
+  {
+   "id": "A_reference",
+   "patch": [
+    17,
+    11
+   ],
+   "e": "1/4",
+   "object": "F_0",
+   "rationale": "the exact Task1R reference cell; the only cell with a qualified certificate"
+  },
+  {
+   "id": "B_max_span",
+   "patch": [
+    0,
+    0
+   ],
+   "e": "1/4",
+   "object": "F_0",
+   "span": 13.413290281311273,
+   "rationale": "maximal z-span over the 64x64 grid, hence the maximal panel count; the geometrically hardest cell for the panel loop. Selected by argmax over frozen geometry, before any timing."
+  },
+  {
+   "id": "C_sliver_heavy",
+   "patch": [
+    63,
+    63
+   ],
+   "e": "1/4",
+   "object": "F_0",
+   "phi_sum": 0.6721267519808799,
+   "rationale": "maximises phi(U_c+e)+phi(L_c+e), the Gaussian weight at the two x-dependent integration endpoints, hence the largest endpoint-sliver term. Selected by argmax over frozen geometry, before any timing."
+  },
+  {
+   "id": "D_second_object",
+   "patch": [
+    17,
+    11
+   ],
+   "e": "1/4",
+   "object": "constant candidate",
+   "rationale": "a second candidate on the reference geometry, to establish that the per-function cost is candidate-independent and that reuse claims are not an artifact of one candidate. Non-decisive; closed form."
+  },
+  {
+   "id": "E_cusum_control",
+   "detector": "CUSUM",
+   "e": "1/4",
+   "rationale": "generic-regression control: the CUSUM backend is untouched by this audit, so its timing must not move."
+  }
+ ],
+ "audit_cpu_cap_hours": 0.5,
+ "audit_cap_rationale": "a micro-benchmark campaign; 0.5 CPU-h is 1/10 of the suggested ceiling and 0.027% of the historical K1 cap. No extension after T2O.",
+ "no_route_additions_after_T2O": true,
+ "no_threshold_change_after_T2O": true,
+ "no_benchmark_set_change_after_T2O": true
+}
