@@ -1,0 +1,62 @@
+{
+  "checks": {
+    "all_m_coefficients_match_frozen": true,
+    "base_objects_12198": true,
+    "budgets_preserved": true,
+    "cap_not_increased": true,
+    "curvature_is_whole_cell": true,
+    "derivative_dependency_complete": true,
+    "frozen_guard_conflict_is_not_a_mutation": true,
+    "frozen_spec_hashes_unchanged": true,
+    "frozen_successor_tree_unchanged": true,
+    "historical_verdicts_unchanged": true,
+    "missing_certificates_not_passed": true,
+    "nested_partition_preserved": true,
+    "no_double_counting_in_measured_dags": true,
+    "no_leading_e_term": true,
+    "old_universe_and_checkpoints_rejected": true,
+    "one_taylor_charge_style_1": true,
+    "only_new_namespace_written": true,
+    "precision_preserved": true,
+    "production_off": true,
+    "reserve_not_drawable": true,
+    "shard_conservation_all_worker_counts": true,
+    "value_style_derivative_charge_refused": true,
+    "work_ids_match_frozen_reference": true,
+    "work_universe_exact_17978": true
+  },
+  "checks_failed": [],
+  "checks_incomplete": [],
+  "frozen_scope_narrowed": false,
+  "frozen_successor_guard_conflict": {
+    "all_objected_paths_are_this_namespace": true,
+    "cause": "audit.protected_check() diffs START_HEAD against the WORKTREE and rejects any differing path outside its own namespace, so it fails for ANY commit made anywhere in the repository after the freeze commit, including the implementation namespace the frozen CHECKPOINT authorises",
+    "frozen_successor_start_head": "8929bbede755933b7a2f1570f42756d17b227e44",
+    "frozen_tests_failing": [
+      "GovernanceTests::test_protected_tree",
+      "GovernanceTests::test_read_only_adjudication"
+    ],
+    "frozen_tree_byte_identical_to_freeze_manifest": true,
+    "is_a_frozen_namespace_mutation": false,
+    "paths_objected_to": 40,
+    "resolution": "surfaced for the independent adjudicator; the frozen namespace is immutable and was NOT edited to satisfy its own guard",
+    "start_head_git_object_manifest_unchanged": true
+  },
+  "implementation_dependencies": {
+    "all_m_certified_interval_assembly": "PASS (CUSUM) / NOT_IMPLEMENTED (SR)",
+    "complete_SR_raw_DAG": "NOT_IMPLEMENTED",
+    "cost_and_memory_model": "see benchmarks/",
+    "derivative_dependency_propagation": "PASS",
+    "far_field_certificates": "NOT_IMPLEMENTED",
+    "precision_diagnostic_256_384_512": "see diagnostics/PRECISION.md",
+    "representative_full_ledger": "PASS (CUSUM)",
+    "sharding_and_resume": "PASS",
+    "whole_cell_M_R2": "PASS (CUSUM) / NOT_IMPLEMENTED (SR)",
+    "work_universe_17978": "PASS"
+  },
+  "production_ready": false,
+  "representative_records": 5,
+  "review_kind": "read-only self-adjudication of the implementation namespace; not an independent human or agent review",
+  "scientific_verdict_changed": false,
+  "verdict": "IMPLEMENTATION_INCOMPLETE"
+}

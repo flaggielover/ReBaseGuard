@@ -1,0 +1,146 @@
+{
+ "aggregate_cpu_seconds": {
+  "assembly": {
+   "max_s": 0.014945178999710151,
+   "mean_s": 0.014608503799649952,
+   "min_s": 0.013521644999173077
+  },
+  "cell_setup": {
+   "max_s": 4.584827622,
+   "mean_s": 3.2041891465999996,
+   "min_s": 2.218032234
+  },
+  "cells_measured": 5,
+  "curvature": {
+   "max_s": 533.7054440760003,
+   "mean_s": 434.19083247400005,
+   "min_s": 371.628561373
+  },
+  "dependency_bundle": {
+   "max_s": 448.3165070560004,
+   "mean_s": 361.9948014474003,
+   "min_s": 312.2226420879999
+  },
+  "object": {
+   "max_s": 467.81717043300023,
+   "mean_s": 342.7824086012,
+   "min_s": 260.898599642
+  },
+  "peak_rss_mib": 201.88671875,
+  "per_cell": {
+   "0": {
+    "assembly": 0.014844631999494595,
+    "cell_setup": 2.314741664,
+    "curvature": 490.04415645299986,
+    "dependency_bundle": 399.23107479900057,
+    "object": 467.81717043300023,
+    "total": 1359.421987981,
+    "unattributed": -2.2737367544323206e-13
+   },
+   "136": {
+    "assembly": 0.014909485999965,
+    "cell_setup": 2.218032234,
+    "curvature": 371.628561373,
+    "dependency_bundle": 312.2226420879999,
+    "object": 260.898599642,
+    "total": 946.982744823,
+    "unattributed": 1.1368683772161603e-13
+   },
+   "221": {
+    "assembly": 0.014945178999710151,
+    "cell_setup": 4.582790463,
+    "curvature": 396.422724722,
+    "dependency_bundle": 331.2261692510002,
+    "object": 283.503929707,
+    "total": 1015.750559322,
+    "unattributed": 0.0
+   },
+   "293": {
+    "assembly": 0.014821576999906938,
+    "cell_setup": 2.3205537499999997,
+    "curvature": 379.15327574599996,
+    "dependency_bundle": 318.97761404300036,
+    "object": 267.84100224699984,
+    "total": 968.307267363,
+    "unattributed": 0.0
+   },
+   "325": {
+    "assembly": 0.013521644999173077,
+    "cell_setup": 4.584827622,
+    "curvature": 533.7054440760003,
+    "dependency_bundle": 448.3165070560004,
+    "object": 433.8513409770002,
+    "total": 1420.471641376,
+    "unattributed": 0.0
+   }
+  },
+  "total": {
+   "max_s": 1420.471641376,
+   "mean_s": 1142.186840173,
+   "min_s": 946.982744823
+  }
+ },
+ "host": {
+  "note": "AWS node used for these measurements",
+  "vcpu": 8
+ },
+ "production_run": false,
+ "projection": {
+  "COST_CAP_STATUS": "FAIL_BUDGET",
+  "CUSUM": {
+   "cells": 326,
+   "complete_over_base_object_ratio": 3.3321045990485567,
+   "frozen_base_only_cpu_h": 127.17027863777089,
+   "measured_complete_cpu_h_central": 103.43136386011057,
+   "measured_complete_cpu_h_conservative": 128.63159863571556,
+   "status": "MEASURED"
+  },
+  "SR": {
+   "cells": 316,
+   "frozen_base_only_cpu_h": {
+    "central": 485.63943284634234,
+    "conservative": 613.2916432097905,
+    "worst_plausible": 759.9642290037373
+   },
+   "frozen_raw_sr_component_cpu_h": 380.1558035712946,
+   "indicative_extrapolation": {
+    "central_cpu_h": 1618.2013876666301,
+    "conservative_cpu_h": 2043.5519048973897,
+    "method": "frozen SR base-only projection multiplied by the CUSUM complete/base-object ratio; NOT a measurement of SR and NOT admissible as cost qualification",
+    "ratio_applied": 3.3321045990485567,
+    "worst_plausible_cpu_h": 2532.2803025757435
+   },
+   "measured": false,
+   "reason": "no raw-variable SR DAG exists: Task1R certified the F_0 class only, on one patch at one drift, in a different formulation. The SR dependency, curvature and all-m interval-assembly kernels are unimplemented, so their cost cannot be measured, only guessed.",
+   "status": "NOT_MEASURABLE"
+  },
+  "campaign_indicative": {
+   "central_cpu_h": 1721.6327515267408,
+   "conservative_cpu_h": 2660.911901211459,
+   "over_cap_central": true,
+   "over_cap_conservative": true
+  },
+  "cap_increased": false,
+  "cost_cap_reason": "even the indicative central projection exceeds the frozen cap",
+  "frozen_hard_cap_cpu_h": 1126,
+  "governed_work_units": 17978,
+  "memory": {
+   "fits_frozen_per_worker_envelope": true,
+   "frozen_per_worker_budget_mib": 300,
+   "measured_peak_rss_mib_per_worker": 201.88671875,
+   "oversubscription_allowed": false,
+   "projected_total_gib_at_ceiling": 12.617919921875,
+   "worker_ceiling": 64
+  },
+  "wall_hours_indicative": {
+   "1": 1721.6327515267408,
+   "16": 107.6020469704213,
+   "32": 53.80102348521065,
+   "64": 26.900511742605325,
+   "8": 215.2040939408426
+  },
+  "wall_time_note": "8 workers is the measured host concurrency (8 vCPU); 32 and 64 worker wall times assume the frozen no-oversubscription rule and a host that actually has that many cores. They are arithmetic divisions of an already-extrapolated CPU total, not measurements."
+ },
+ "result_bearing": false,
+ "schema": "k1.cover-ledger.cost-model.v1"
+}
