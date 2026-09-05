@@ -1,0 +1,131 @@
+{
+ "schema": "rebaseguard.p5y.theorem_adjudication.v1",
+ "binding": true,
+ "read_only": true,
+ "generated_utc": "2026-09-05T02:54:30.061559+00:00",
+ "git_commit": "17eb58b2c032c84dbaa012e49da78263ac285a84",
+ "K1_run": false,
+ "K1_checkpoint_modified": false,
+ "result_bearing_artifacts": false,
+ "OVERTURNS_PRIOR_SESSION": {
+  "prior_claim": "K2 and K3 are not hypotheses of the authoritative theorem",
+  "verdict": "WRONG -- the prior reading examined p5_nonlinear_dynamics/THEOREM.md T8/T9/T10 and did NOT examine p5x_global_nonlinear_dynamics/FROZEN_THEOREM.md, which is where s_min and M_2 are actually consumed",
+  "decisive_clause": "FROZEN_THEOREM.md section 7, P5X-T6 (tier CERTIFIED_THEOREM, 'Primary target'): 'with certified s_min = inf_e S_{D,m}(e) > 0 and M_2 = sup_e E_e[Rbar^2] < infinity, rho^2 s_min + (1-rho)^2/m <= E_pi[e^2] <= rho^2 M_2 + (1-rho)^2/m'",
+  "also": "the P5X final theorem consumes both: item 4 (bounded stationary law, uses M_2) and item 5 (high dispersion, uses s_min)"
+ },
+ "K3": {
+  "question": "does P5-T5 at p=1 already provide the M_2 needed downstream?",
+  "P5_T5_exact": "EXACT THEOREM: for every integer p >= 1, every D, m, rho, and every e, E[Rbar^{2p}|e] <= (2p-1)!! C_D",
+  "quantifiers": {
+   "p": "every p >= 1",
+   "detector": "every D (both frozen)",
+   "m": "every m",
+   "rho": "every rho",
+   "e": "every e -- RHS is e-FREE, so the bound is uniform in e"
+  },
+  "at_p_equals_1": "E[Rbar^2|e] <= 1!! C_D = C_D, hence M_2 = sup_e E_e[Rbar^2] <= C_D",
+  "C_D_explicit_and_finite": true,
+  "C_D_values": {
+   "C_CUSUM": "<= 10/Phi(-1)^10 = 9.8959e8",
+   "C_SR": "<= 1/Phi(-(log A + 1/2)) = 1.4054e11",
+   "source": "P5-T4, EXACT THEOREM (explicit constants)"
+  },
+  "consumers": {
+   "P5_T5_T7": "consume FINITENESS only; both are already EXACT theorems carrying C_D",
+   "P5_T8_T9_T10": "do NOT consume M_2 at all -- they are about the skeleton R and s",
+   "P5X_T6_upper_arm": "E_pi[e^2] <= rho^2 M_2 + (1-rho)^2/m -- CONSUMES M_2 quantitatively",
+   "P5X_final_item_4": "'bounded stationary law ... E_pi[e^2] <= rho^2 M_2 + (1-rho)^2/m'"
+  },
+  "tightness_analysis": {
+   "with_C_D": "the upper arm reads E_pi[e^2] <= 9.9e8 (CUSUM) / 1.4e11 (SR)",
+   "measured_reference": "stationary RMS 1.37; E[Rbar^2|0] = 4.036",
+   "audit_wording": "FEASIBILITY_AUDIT: the bound 'is numerically empty: it bounds the stationary RMS by 3.1e4 where the measured value is 1.37'",
+   "consequence": "P5X-T6 is TRUE with M_2 = C_D but its upper arm carries no content. P5X-T6 is tiered CERTIFIED_THEOREM and named the campaign's primary target precisely to deliver a quantitative sandwich."
+  },
+  "artifacts_that_treated_K3_as_open": [
+   "p5y_k1_binding_campaign/CHECKPOINT.md line 32 ('K3 (finite / useful M_2)') and the downstream block listing K3_M2 = OPEN"
+  ],
+  "were_they_wrong": "NO -- the phrase 'finite / useful' is precise: finiteness is closed by P5-T5, usefulness is not. Listing K3 as OPEN is correct for the useful half.",
+  "VERDICT": "K3_FINITE_BUT_TIGHT_BOUND_STILL_REQUIRED"
+ },
+ "K2": {
+  "question": "is s_min > 0 a load-bearing P5 hypothesis?",
+  "P5_T8_T9_T10": "none of them consumes inf_e S(e). T10 uses S only at 0, via the stated hypothesis 'S continuous at 0', and its conclusion lim SNR = 0 needs only that the noise floor is bounded below",
+  "V_positivity_for_rho_lt_1": "V = rho^2 S(e) + (1-rho)^2/m >= (1-rho)^2/m > 0 automatically, since S >= 0 as a variance",
+  "at_rho_equals_1": "V = S(e); positivity is then not automatic",
+  "DECISIVE_CONSUMER": "P5X-T6 lower arm: rho^2 s_min + (1-rho)^2/m <= E_pi[e^2], stated with 'certified s_min = inf_e S_{D,m}(e) > 0'. Its corollary -- RMS_pi >= sqrt(rho^2 s_min + (1-rho)^2/m) 'uniformly in rho in [0,1]' -- is the campaign's HIGH-DISPERSION result, and at rho = 1 the lower arm degenerates to s_min. With s_min = 0 the corollary is vacuous exactly where it is claimed to bite.",
+  "is_continuity_already_proved": "NO -- no listed exact theorem gives continuity of S; P5-T3 gives only the symmetry S(-e) = S(e), P5-T6 gives Feller for the kernel, not continuity of S",
+  "VERDICT": "K2_POSITIVITY_STILL_REQUIRED",
+  "note": "the separate T10 hypothesis 'S continuous at 0' also remains unproved, but it is a different and weaker statement than s_min > 0 and should not be conflated with it"
+ },
+ "K4_K5_dependency": {
+  "K4_H2": {
+   "proof_path": "FEASIBILITY_AUDIT s8: certified enclosure of R on a finite cover of [e_0,2] plus certified R' < 0 on [0,e_0] (which gives R < R(0) = 0, and R(0) = 0 is exact by P5-T3)",
+   "requires": {
+    "R_enclosure": "YES, on [e_0,2]",
+    "R_prime_enclosure": "YES, on [0,e_0]",
+    "near_zero_taylor_certificate": "NO -- first-order sign of R' suffices",
+    "K1_far_field_splice": "YES -- e > 2 is licensed by sup|R| < 2, i.e. by K1"
+   },
+   "all_inputs_are_K1_by_products": true,
+   "new_objects_needed": "NONE"
+  },
+  "K5_H3a": {
+   "proof_path": "FEASIBILITY_AUDIT s8: certified enclosure of R AND R' on a finite cover of (0,2], then s'(e) = (R(e) - e R'(e))/e^2 < 0 cellwise; near 0 use the s(0+) limit and a certified second-order remainder",
+   "requires": {
+    "R_enclosure": "YES",
+    "R_prime_enclosure": "YES",
+    "second_derivative_or_local_remainder": "YES -- a certified second-order remainder near 0",
+    "additional_object_not_in_K1": "YES"
+   },
+   "K1_DAG_has_second_derivative_objects": false,
+   "K1_DAG_functions": "h_1..h_4, S_0..S_4, F_0..F_4, dF_0..dF_4 -- first derivatives only",
+   "new_objects_needed": "a second-derivative rung (ddF_r) or an equivalent certified R'' bound",
+   "incremental_cost_cpu_h": 105.4,
+   "cost_basis": "the parent K1 cost model's own C3 factor of x1.17, which it labels 'the H2/H3a derivative rung, i.e. K4/K5'; 0.17 x 620.1 = 105.4"
+  },
+  "CORRECTION_TO_PRIOR_SESSION": "the prior claim that K5 costs ~0 incremental CPU-h was WRONG: K5 needs a second-order remainder near zero and the K1 DAG contains no second-derivative object. K4 remains ~0."
+ },
+ "K1_output_schema_audit": {
+  "method": "inspected code and the frozen schema, not prose",
+  "production_driver_exists": false,
+  "python_files_in_both_K1_namespaces": [
+   "build_checkpoint_json.py",
+   "build_config.py",
+   "build_dag.py",
+   "cpu_model_k1.py",
+   "freeze_manifest.py",
+   "negative_control.py",
+   "test_k1_checkpoint_design.py",
+   "task1_f0.py",
+   "test_task1_pre.py",
+   "cache_scope.py",
+   "review.py",
+   "test_pre_t2s.py"
+  ],
+  "finding": "there is NO K1 production driver. Nothing computes a cell record today, so no quantity can literally be 'computed but not emitted'. The 21-field cell record is a frozen SPECIFICATION awaiting an implementation.",
+  "per_quantity": {
+   "per_cell_R_enclosure": "NOT_COMPUTED (no producer exists); SPECIFIED to be derivable -- Phase D assembles R_m from F_r, and the campaign sup is the max over per-cell enclosures",
+   "per_cell_R_prime_enclosure": "NOT_COMPUTED (no producer exists); ingredients dF_0..dF_4 are in the frozen DAG",
+   "e_interval_and_cell_identity": "ALREADY_EMITTED (fields 'e_interval [lo,hi]', 'cover_cell_id')",
+   "detector_and_m_identity": "ALREADY_EMITTED (fields 'detector', 'm_relevance')",
+   "error_ledger_provenance": "ALREADY_EMITTED (field 'budget_usage_by_component' plus the residual and half-width fields)"
+  }
+ },
+ "emission_successor": {
+  "decisive_clause": "CHECKPOINT.md section 23: 'Every production cell record must carry, AT MINIMUM:' -- the frozen contract sets a floor, not a ceiling, so emitting additional fields is ALREADY PERMITTED by the existing frozen checkpoint",
+  "extra_numerical_computation_required": false,
+  "why": "R and R' per cell are assembled in Phase D from F_r and dF_r, which the frozen DAG already solves; the campaign sup is by definition the max over those per-cell enclosures, so they exist transiently. Emitting them is persistence, not computation.",
+  "changes_to_scope_method_cover_precision_degree_budgets_candidates_workcount_acceptance_verdicts": "NONE",
+  "VERDICT": "EMISSION_SUCCESSOR_NOT_NEEDED",
+  "CORRECTION_TO_PRIOR_SESSION": "the prior session framed this as a blocked operator decision requiring either a post-freeze amendment or a forbidden second K1 successor. That was WRONG on two counts: (1) the frozen clause says 'at minimum', so no amendment is needed; (2) no producer exists yet, so there is nothing to amend -- the requirement simply lands on the not-yet-written production driver.",
+  "actionable": "the K1 production driver, when written, MUST persist per-cell R and R' enclosures. This is an implementation requirement inside the existing frozen contract, not a checkpoint change."
+ },
+ "cost_consequence_of_not_emitting": {
+  "classification": "FULL_K1_SCALE_RERUN",
+  "cpu_h": 620.1,
+  "reproduction": "SR raw 387.3 + CUSUM 126.02 + candidates 0.18, x1.15 overhead x1.05 aggregation = 620.1 CPU-h -- the figure reproduces from the authoritative successor cost model, it was not invented",
+  "K4_incremental_if_emitted": 0.0,
+  "K5_incremental_if_emitted": 105.4
+ }
+}
