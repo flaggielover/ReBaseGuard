@@ -1,0 +1,31 @@
+{
+  "aggregate_rule": "sha256(concat sorted relative-path + NUL + file SHA256 + LF)",
+  "checkpoint_hash": "bcba597cbd445127ac6f094fed3a8b38bac585a3dcdf32dcf38e8ba2efb104e7",
+  "effective_anchor": "the single commit adding this manifest; discover with git log --diff-filter=A -- manifests/freeze.json",
+  "files": {
+    "CHECKPOINT.md": "c487421fed7fe1e12362d785841dff88933f286b10d0942a5bfebfe571fd8b84",
+    "ERROR_ALGEBRA.md": "4f32df0273d05b1b4e0136e2a901adec9979e158b5decd8c9bf3cce0e35b9ffa",
+    "adjudication/REVIEW.json": "308b6ecc48cdc6a95c37ab2c420eb6b71b8add206d3967a7a313193444b411a3",
+    "adjudication/VALIDATION.md": "9a6c5eace7a6e7867a095f51b205d50a9dd380931d580a1f72ed878ef3e8c60f",
+    "code/algebra.py": "323a9eaeb300d4c14e735b69bc26546d7b2cd85798ba1e6535692745a1c73655",
+    "code/audit.py": "4e3ea82abbf3f27cd24629e98d3355049e90a89b2f1e308af3a3386a3d105c89",
+    "code/build_spec.py": "ddaf6f57e3d00eee77c2d6240f039721e281c0663ab57afc1d44231d8646dfcb",
+    "code/geometry.py": "bb58dd839a997c6f0330c32fa83a68c26ac6c622577d7cb6e7d89de003cde8b6",
+    "code/representatives.py": "cce1f25ed20ea4e866fd6aa2cfa436e6c639bf2ca4da11e73d8a738d0e39d262",
+    "code/seal.py": "c7795dc323446c9438a98b296a157b2f5a888c13498bf213ad701304a94fba80",
+    "config/cells.json": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f",
+    "config/checkpoint.json": "1c2a6825f19e19de6fb588647ca3fc4618068087ef0976292ca7bbeca701f13f",
+    "config/cost_model.json": "2a3ec2171d1d639770b6cca8b131e7947677b7ec89e39da24e7c729f3a8e0d34",
+    "config/cover_witnesses.json": "dcb89ccc1a15729a0fb2469ce9c28b0891a81dffe112840b2325417cda31f446",
+    "config/record_schema.json": "666dee60b9ab60203f7582d01e49416c23e75cbacd713655344ff459689038a0",
+    "diagnostics/REPRESENTATIVES.md": "6d89425f2177d8f822a972ccee33a743fb6f718e47ac8b52799be928848ded64",
+    "diagnostics/representatives.json": "cca1a3c79df696fe699c58ecacc8d0a1a51ba60f260bb76609e82ed325f9160c",
+    "manifests/authority.json": "4ffd0e47d301886646f45884c5c233bf8f42f3ed6dd785d778de3298ed2f523e",
+    "manifests/protected_start.json": "d30f011447df72315e568c279f53fdf8a0d7f152a9720321d26a4f1ae9f40873",
+    "tests/test_successor.py": "426be531e286b79e4070344b652c15fd8d5a2c9845dfa386bd496615b44e4a88"
+  },
+  "production_enabled": false,
+  "schema": "rebaseguard.k1.cover-ledger.freeze.v1",
+  "self_hash_exclusion": "Only this manifest excluded; commit anchors it. All remaining namespace files, including reports and tests, are hashed.",
+  "status": "FROZEN_WITH_IMPLEMENTATION_DEPENDENCIES"
+}
