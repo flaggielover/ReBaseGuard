@@ -1,0 +1,43 @@
+{
+ "schema": "rebaseguard.p5y.k1.driver_review.v1",
+ "binding": true,
+ "generated_utc": "2026-09-05T03:30:48.807836+00:00",
+ "reviewer": "independent of the driver implementation",
+ "checks": {
+  "checkpoint_hash_recomputed_not_read": true,
+  "cap_read_from_checkpoint": true,
+  "no_scientific_constant_hardcoded_in_driver": true,
+  "work_units_match_checkpoint": true,
+  "floor_sharding_only": true,
+  "conservation_exact_at_64": true,
+  "worker_ceiling_enforced": true,
+  "phase_a_gates_execution": true,
+  "resume_rejects_hash_mismatch": true,
+  "atomic_writes": true,
+  "R_and_Rprime_persisted": true,
+  "R_Rprime_emitted_in_phase_D": true,
+  "no_self_award": true,
+  "not_implemented_is_distinct_state": true,
+  "kernel_gap_declared": true,
+  "no_adaptive_precision_or_degree": true,
+  "dry_run_is_the_default": true,
+  "cpu_cap_checked_before_work": true,
+  "cover_counts_from_checkpoint": true
+ },
+ "checks_total": 19,
+ "checks_failed": [],
+ "kernel_coverage": {
+  "implemented_units": 322,
+  "total_units": 12255,
+  "fraction": 0.0262749898000816,
+  "implemented_classes": [
+   "SR/F_0"
+  ]
+ },
+ "no_result_bearing_work_executed": true,
+ "DRIVER_REVIEW": "READY",
+ "blocker": null,
+ "orchestration_ready": true,
+ "science_ready": false,
+ "note": "orchestration readiness and scientific readiness are separate. The per-unit kernel covers 322 of 12255 units (2.63%); the driver reports the remainder as NOT_IMPLEMENTED and never counts it as coverage."
+}
