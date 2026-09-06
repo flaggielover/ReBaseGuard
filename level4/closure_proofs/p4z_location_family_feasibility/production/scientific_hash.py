@@ -38,8 +38,6 @@ TCB_PATHS = (
     f"{REL}/p4z_location_family_feasibility/src/rebaseguard_p4z/rbmap.py",
     # P4Z production driver and its dependencies
     f"{REL}/p4z_location_family_feasibility/production/run_p4z.py",
-    f"{REL}/p4z_location_family_feasibility/production/adjudicate.py",
-    f"{REL}/p4z_location_family_feasibility/production/build_plan.py",
     f"{REL}/p4z_location_family_feasibility/production/scientific_hash.py",
     f"{REL}/p4z_location_family_feasibility/production/runtime_contract.py",
     # inherited frozen P4 implementation, read-only
@@ -55,6 +53,14 @@ TCB_PATHS = (
     f"{REL}/p4z_location_family_feasibility/production/campaign_plan.json",
     f"{REL}/p4z_location_family_feasibility/production/mac_runtime_contract.json",
 )
+
+#: Deliberately NOT in the TCB: ``adjudicate.py``, ``build_plan.py``,
+#: ``independent_adjudication.py``, ``replay_check.py``, ``build_closure.py``.
+#: None of them produces a block.  ``build_plan.py`` emits
+#: ``campaign_plan.json``, which IS in the TCB by content, so the plan a run
+#: consumed is bound exactly; binding the generator as well would mean that
+#: correcting a downstream *reader* invalidates already-produced block data,
+#: which is over-binding rather than safety.
 
 #: Modules whose resolved __file__ must be inside the manifest at the final gate.
 SCIENTIFIC_MODULES = (
@@ -97,7 +103,14 @@ def refuse_dirty_scientific_state() -> str:
 
 
 def build_manifest() -> dict[str, object]:
-    """Immutable producer manifest: exact paths, git blob hashes, content hashes."""
+    """Immutable producer manifest: exact paths, git blob hashes, content hashes.
+
+    ``head`` is recorded as provenance metadata but is deliberately **excluded**
+    from ``producer_hash``.  The producer's identity is the *content* of the
+    trusted files, not the commit that happens to be checked out; binding HEAD
+    would make an unrelated documentation commit invalidate every block already
+    produced under identical scientific code.
+    """
     head = _git("rev-parse", "HEAD")
     entries = {}
     for rel in sorted(TCB_PATHS):
@@ -111,18 +124,19 @@ def build_manifest() -> dict[str, object]:
         }
     manifest = {
         "schema": "rebaseguard.p4z-producer-manifest.v1",
-        "head": head,
         "entries": entries,
     }
     manifest["producer_hash"] = hashlib.sha256(
         json.dumps({k: v for k, v in manifest.items() if k != "producer_hash"},
                    indent=2, sort_keys=True).encode()).hexdigest()
+    manifest["head_informational"] = head
     return manifest
 
 
 def verify_manifest(manifest: dict[str, object]) -> None:
     """Re-read every TCB file and compare.  No stale producer admission."""
-    body = {k: v for k, v in manifest.items() if k != "producer_hash"}
+    body = {k: v for k, v in manifest.items()
+            if k not in ("producer_hash", "head_informational")}
     recomputed = hashlib.sha256(
         json.dumps(body, indent=2, sort_keys=True).encode()).hexdigest()
     if recomputed != manifest["producer_hash"]:

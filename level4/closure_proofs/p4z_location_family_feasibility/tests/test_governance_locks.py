@@ -243,17 +243,84 @@ def test_p4_verdict_is_still_partial_and_p4z_claims_nothing_more():
         assert claim in CHECKPOINT["claims_explicitly_not_made"]
 
 
-def test_no_scientific_result_artifact_is_produced():
-    assert CHECKPOINT["scientific_results_produced"] is False
-    assert CHECKPOINT["production_run_launched"] is False
-    for path in (NS / "results").glob("*.json"):
-        doc = json.loads(path.read_text())
-        assert doc.get("result_bearing") is False, path
-    for path in (NS / "micropilots" / "diagnostics").glob("*.json"):
-        doc = json.loads(path.read_text())
-        assert doc.get("result_bearing") is False, path
+#: The commit at which the feasibility checkpoint was frozen.  Its claims were
+#: true then and are asserted against that commit, not against the working tree,
+#: so that promoting the Mac to a result-bearing host cannot quietly erase them.
+FEASIBILITY_CHECKPOINT_COMMIT = "d46fc6846303946a717dffac71c4755e94194067"
 
 
-def test_no_production_driver_ships_with_this_checkpoint():
-    assert not (NS / "production").exists()
+def test_the_feasibility_checkpoint_shipped_no_production_driver():
+    """True at d46fc68 and asserted there.  The driver that exists now was
+    authorised by a later commit, and the checkpoint still says so."""
+    listing = _git("ls-tree", "-r", "--name-only",
+                   FEASIBILITY_CHECKPOINT_COMMIT,
+                   "level4/closure_proofs/p4z_location_family_feasibility/")
+    assert listing, "the feasibility checkpoint commit must be reachable"
+    assert not any("/production/" in line for line in listing.splitlines())
     assert CHECKPOINT["full_run_command"]["authorised_by_this_checkpoint"] is False
+    assert CHECKPOINT["production_run_launched"] is False
+    assert CHECKPOINT["scientific_results_produced"] is False
+
+
+#: Governance INPUTS and run state.  These are contracts and plans, bound by
+#: hash in the producer manifest; "result bearing" is a property of outputs, so
+#: they do not carry the flag.  The set is enumerated here so that a new schema
+#: cannot join it silently.
+GOVERNANCE_SCHEMAS = frozenset({
+    "rebaseguard.p4z-campaign-plan.v1",
+    "rebaseguard.p4z-mac-runtime-contract.v1",
+    "rebaseguard.p4z-stage0-freeze.v1",
+    "rebaseguard.p4z-run-state.v1",
+    "rebaseguard.p4z-checkpoint.v1",
+    "rebaseguard.p4z-estimand-contract.v1",
+    "rebaseguard.p4z-producer-manifest.v1",
+})
+
+
+def test_every_output_artifact_declares_whether_it_is_result_bearing():
+    """No OUTPUT may be ambiguous about its own status; inputs are exempt, and
+    the exempt set is enumerated so nothing joins it silently."""
+    roots = [NS / "results", NS / "micropilots" / "diagnostics",
+             NS / "production", NS / "configs"]
+    seen = 0
+    for root in roots:
+        if not root.exists():
+            continue
+        for path in root.glob("*.json"):
+            doc = json.loads(path.read_text())
+            schema = doc.get("schema")
+            if schema is None or schema in GOVERNANCE_SCHEMAS:
+                continue
+            assert "result_bearing" in doc, f"{path} does not declare its status"
+            seen += 1
+    assert seen > 0
+
+
+def test_no_unenumerated_schema_escapes_the_result_bearing_requirement():
+    """Every governance schema actually present must be in the enumerated set."""
+    for root in (NS / "production", NS / "configs"):
+        for path in root.glob("*.json"):
+            schema = json.loads(path.read_text()).get("schema")
+            if schema and "result_bearing" not in json.loads(path.read_text()):
+                assert schema in GOVERNANCE_SCHEMAS, (
+                    f"{path} carries neither a result_bearing flag nor a "
+                    "recognised governance schema")
+
+
+def test_the_feasibility_phase_artifacts_remain_non_result_bearing():
+    """Nothing produced during the feasibility phase may be relabelled."""
+    for root in (NS / "results", NS / "micropilots" / "diagnostics"):
+        for path in root.glob("*.json"):
+            doc = json.loads(path.read_text())
+            if path.name == "lean_audit.json":
+                continue          # produced in the production phase
+            assert doc.get("result_bearing") is False, path
+
+
+def test_result_bearing_artifacts_live_only_under_production_or_are_declared():
+    """A result-bearing artifact must say so and must not sit among the
+    feasibility outputs unannounced."""
+    for path in (NS / "production").rglob("*.json"):
+        doc = json.loads(path.read_text())
+        if doc.get("schema", "").startswith("rebaseguard.p4z-block"):
+            assert doc["result_bearing"] is True, path

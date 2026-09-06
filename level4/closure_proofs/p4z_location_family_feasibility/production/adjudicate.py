@@ -122,6 +122,27 @@ def adjudicate() -> dict[str, object]:
                 continue
 
             # --- preconditions, each a frozen kill gate ---------------------
+            # K5 and K6 are specified in the checkpoint as evaluated "after all
+            # 200 blocks, per route".  The concentration statistic K5 uses is
+            # strongly sample-size dependent -- at n = 20 a perfectly Gaussian
+            # sample has a median top-1 share of 0.23 against a 0.10 limit, and
+            # at n = 200 it has 0.043 -- so the frozen thresholds discriminate
+            # only at the block count they were calibrated for.  Evaluating
+            # them earlier is not a stricter gate, it is a different one.  A
+            # route short of its full block count is INCONCLUSIVE for
+            # incompleteness instead.
+            full = plan["fixed_policy"]["blocks_per_route_full"]
+            complete = a["blocks"] >= full and b["blocks"] >= full
+            if not complete:
+                row["gate_result"] = "INCONCLUSIVE"
+                row["reasons"] = [
+                    f"route block counts {a['blocks']}/{b['blocks']} below the "
+                    f"frozen {full}; K5 and K6 are specified after all {full} "
+                    "blocks and are not evaluated early"]
+                row["preconditions"] = {"complete": False}
+                counts["INCONCLUSIVE"] += 1
+                cells.append(row)
+                continue
             k6_a = _round_up(a["relative_se"]) > r_star
             k6_b = _round_up(b["relative_se"]) > r_star
             k5_a = (_round_up(a["top1_share_of_block_variance"]) > top1_max
@@ -187,6 +208,12 @@ def adjudicate() -> dict[str, object]:
             "source": "campaign_plan.json, derived from P4_PROTOCOL.json and checkpoint_p4z.json",
             "any_threshold_changed_by_p4z": False,
         },
+        "precondition_evaluation_point":
+            "K5 and K6 are evaluated only when both routes have their full "
+            "frozen block count, as the checkpoint specifies. The K5 "
+            "concentration statistic is sample-size dependent: a clean Gaussian "
+            "sample has a median top-1 share of 0.23 at n=20 and 0.043 at "
+            "n=200, so the frozen 0.10 limit discriminates only at n=200.",
         "rounding_policy":
             "test statistics rounded AWAY FROM ZERO at 12 decimal places before "
             "comparison against exact limits; conservative for every <= gate",

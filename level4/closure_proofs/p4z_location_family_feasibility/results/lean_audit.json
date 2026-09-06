@@ -1,0 +1,51 @@
+{
+  "axioms": [
+    "propext",
+    "Classical.choice",
+    "Quot.sound"
+  ],
+  "axioms_match_inherited_p4_audit": true,
+  "compile": {
+    "errors": 0,
+    "sorry_count": 0,
+    "warnings": 0
+  },
+  "declaration_names": [
+    "cusum_up_alarm_iff",
+    "cusum_down_alarm_iff",
+    "cusum_alarm_iff",
+    "cusum_survival_bounded",
+    "cusum_live_residual_bounded",
+    "sr_alarm_iff",
+    "sr_survival_bounded",
+    "srChart_nonneg",
+    "srChart_mono",
+    "srChart_side_condition",
+    "srChart_lt_of_live",
+    "sr_live_residual_bounded"
+  ],
+  "declarations": 12,
+  "files": {
+    "AxiomAudit.lean": "40fb756a76e529602b52d361a470e851aef22e46abfa227d2a961a74996b1b78",
+    "BoundedSurvival.lean": "98df4e51411c57d7dc0c55030b6a239cb7c7db7537b535cf19c3e6569646825a",
+    "verify_lean.sh": "257d3939cdbf3c4075e1bb555f7a7ce13d15aac122d7cc5f5cb2cafc1ea9b5a4"
+  },
+  "lean_version": "Lean (version 4.34.0-rc1, arm64-apple-darwin24.6.0, commit 3447a668783dbce1a8fdb97101dd067687b2b418, Release)",
+  "mathlib_rev": "de5ce8a9a66a (v4.34.0-rc1), read-only from the main worktree's prebuilt packages",
+  "new_axioms": 0,
+  "new_declarations_in_inherited_p4_namespace": 0,
+  "non_vacuity_checks": [
+    "the frozen CUSUM survival interval at k=1/2, h=5 is non-empty",
+    "the SR side condition holds at A=20",
+    "the SR side condition holds at A=520.886133602749"
+  ],
+  "reproduce": "level4/closure_proofs/p4z_location_family_feasibility/lean/verify_lean.sh",
+  "result_bearing": true,
+  "schema": "rebaseguard.p4z-lean-audit.v1",
+  "scope": "the bounded-survival lemma only; the estimator is NOT formalised",
+  "what_is_not_formalised": [
+    "the RB identity Gamma = sum_n E[1{tau>=n} h_n] (tower property; controlled by the Corollary-G2 algebraic identity and the Route-Q closed form instead)",
+    "the estimator implementation",
+    "the P4 theorem itself, which is inherited unchanged"
+  ]
+}
