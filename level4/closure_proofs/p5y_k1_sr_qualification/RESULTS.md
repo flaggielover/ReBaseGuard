@@ -2,6 +2,8 @@
 
 ```text
 SR_IMPLEMENTATION = PARTIAL
+SR_REFINEMENT     = ARCHITECTURE_PARTIAL   (derived, implemented, contraction proved)
+SR_ORDER3         = NOT_ESTABLISHED        (downgraded from LIKELY_NEEDED)
 SR_NSTEP          = ARCHITECTURE_PARTIAL   (derived, implemented, corroborating)
 SR_M_R2           = IMPLEMENTED_NOT_YET_QUANTITATIVELY_CLOSING
 SR_ALL_M          = IMPLEMENTED  (m = 1,2,3,5, exact frozen coefficients)
@@ -47,7 +49,36 @@ SR now consumes it the same way. The n-step machinery is therefore independent
 *corroboration*, and it corroborates: frozen `C_upper` dominates the survival
 estimate at every drift with a 1.4x-2.6x margin. See `SR_RESOLVENT_GOVERNANCE.md`.
 
-## Blocker 2 — refinement: designed, and shown to be mandatory
+## Blocker 2 — refinement: DERIVED, IMPLEMENTED, contraction PROVED
+
+`SR_MIDPOINT_REFINEMENT.md`. Three results.
+
+**The cover is frozen at order 2 in `e`.** `assembly.py` fixes `R_interval` and
+`D_interval` at `e0` and `R2_interval` uniformly on the cell; `ledger.py` consumes
+them through a second-order Taylor cover, so raising the Taylor order is not
+available. This exposes a conservatism in the previous checkpoint: `sr_propagate`
+evaluates all three as whole-cell envelopes where the frozen semantics ask for
+midpoints on the first two.
+
+**Refinement acts on the ERROR, not the value** (as `refine.py` does), consuming
+midpoint errors and CANDIDATE sups. The patch-resolved candidate layer is
+therefore a PREREQUISITE for refinement, not a parallel task. This reorders the
+remaining blockers.
+
+**The iteration provably contracts on every compact SR cell:**
+
+```text
+    kappa  = rho * C_upper * 2 k1           max 0.500000  over all 315 cells
+    kappa' = C rho (2 k1 + k2 rho / 2)      max 0.513371  over all 315 cells
+    fixed-point amplification 1/(1-kappa')  <= 2.0550
+```
+
+`kappa` is capped at exactly 1/2 by construction: the frozen step rule
+`s = 1/(4 a_upper C_upper)` with `a_upper = k1 = sqrt(2/pi)` gives
+`kappa = 2k1/(4 a_upper) = 1/2`, the same identity behind `rho*C_upper = 0.3133`.
+The `C^3` tower is removed by the iteration itself, with no order-3 evidence.
+
+## Blocker 2b — the measured gap refinement must close
 
 Second correction: an earlier probe used an artificial `rho = 1e-3` and concluded
 that large-drift cells fit inside `B_cover`. The frozen geometry holds
@@ -67,7 +98,48 @@ No sampled cell fits; the best is 397x over budget, and the dominant term is the
 
 Phase-7 diagnosis: **`NSTEP_HELPS_BUT_REFINEMENT_REQUIRED`**.
 
-## Blocker 3 — full-scope structure: prepared
+Exact additive attribution of `W_cover` at cell 150 (sums to 100.000000%):
+
+| origin | C-power | share |
+|---|---|---|
+| `S_r` source uncertainty | C^2 | 67.65% |
+| `S_r` source uncertainty | C^3 | 16.90% |
+| `e*h_1` raw-variable drift | C^2 | 11.51% |
+| `e*h_1` raw-variable drift | C^3 | 2.88% |
+| everything else | C^0..C^2 | 1.06% |
+
+Amplification spectrum: **C^2 = 79.4%**, C^3 = 19.8%, C^1 = 0.85%. The dominant
+depth is `C^2`, i.e. `D`, not the curvature.
+
+Correction to the previous checkpoint: the claim that `rho|D|` dominates
+curvature by ~4x holds only for small-`rho` cells (3.99 / 3.95 / 4.00 at cells
+150 / 250 / 0) and REVERSES at large `rho` (1.30 at cell 313). Cell 315 is the
+unique terminal/far-field cell whose `rho` is a compactified coordinate, so the
+Taylor cover arithmetic does not apply to it; it is excluded from the
+compact-cell analysis and SR far-field is already PASS.
+
+### The falsifiable target refinement must hit
+
+With `D_int ~ a_m sup|Dhat|` and `M_R2 ~ 2 a_m sup|Hhat|`, `B_cover` closes iff
+
+```text
+    rho * sup|Dhat| + rho^2 * sup|Hhat|  <=  B_cover / a_m
+```
+
+| cell | rho | max sup&#124;Dhat&#124; | max sup&#124;Hhat&#124; | proxy for &#124;R'&#124; | gap |
+|---|---|---|---|---|---|
+| 50 | 3.35e-4 | 99.4 | 2.97e5 | 5322 | 53.5x |
+| 150 | 7.26e-4 | 45.9 | 6.32e4 | 2139 | 46.6x |
+| 250 | 5.44e-3 | 6.13 | 1127 | 136.6 | 22.3x |
+| 300 | 7.92e-2 | 0.421 | 5.31 | 1.343 | 3.19x |
+
+The projected gap is now **3x-54x**, not 400x-6.2e7x. The proxy uses derivatives
+of the frozen `C_upper(e)` profile and cannot see the renewal cancellation that
+the cancellation-preserving backend exists to exploit, so it is an upper
+indicator, not evidence. Measuring `sup|Dhat|` at cell 150 against **45.9** is
+the single decisive pilot measurement.
+
+## SR work universe — exact and shard-conserving
 
 `sr_universe.py` derives the exact 8,849-obligation SR universe from the frozen
 `universe.work_ids()`, verifies uniqueness, per-cell shape and the single
@@ -77,28 +149,43 @@ ID + scientific hash + TCB + frozen checkpoint hash, and admission rejects the
 superseded 12,255-object universe, superseded checkpoint hashes and stale
 producers.
 
-## Order-3 assessment
+## Order-3 assessment — DOWNGRADED to NOT_ESTABLISHED
 
 `(I-K) F_r''' = 3K'F_r'' + 3K''F_r' + K'''F_r + S_r''' + 3h_1'' + e h_1'''`, with
 `K''' f = -int (w^3-3w) f phi dz` — still inside the frozen panel machinery, so no
-new object or operator class. Assessment: **LIKELY NEEDED but `NOT_ESTABLISHED`
-for SR** — order-2 midpoint refinement leaves a residual `rho·sup|F'''| ~ 0.3133 C^3`,
-the same order it was meant to remove, unless the midpoint third derivative is
-much smaller than its tower (as Aux3 measured for CUSUM). That is an empirical
-question requiring the deferred midpoint solves; it is not inherited from CUSUM.
+new object or operator class. Verdict: **`NOT_ESTABLISHED`**, downgraded from the previous `LIKELY_NEEDED`.
 
-## Exact remaining SR blockers
+The earlier reading rested on order-2 refinement leaving a residual of the same
+order it was meant to remove. That reasoning is superseded: the monotone
+iteration contracts at <= 0.5134 and removes the `C^3` tower without any order-3
+evidence. It is equally not `ORDER2_LIKELY_SUFFICIENT`, because the refined fixed
+point is driven by midpoint errors and candidate sups that do not yet exist. The
+adjudication is blocked on the candidate layer, not on more derivation.
 
-1. **Midpoint refinement solves** for `F/D/H` at `e0` — the deferred heavy
-   numerics, and the only way to remove the norm-tower artefact.
-2. **Order-3 auxiliary evidence**, if the midpoint third derivative does not turn
-   out to be small; architecture derived, not built.
-3. **Patch-resolved candidate layer**: the sup-norm envelope is implemented; the
-   Task1R bivariate Taylor-model panel certification must be generalised from
-   `F_0` at one patch/drift to all objects, 3,994 live patches and 316 cells.
-4. **Production-resolution corroboration** of `C_upper`: the interval-DP
-   certifier converges (ratio to frozen 1.98 -> 1.57 as P goes 16 -> 32) but has
-   not yet been run fine enough to return `CORROBORATED`.
+## Blocker 3 — patch-resolved architecture: identity and contracts built
+
+`sr_patch.py` reproduces the frozen Gate-2B live-patch census exactly — **4096
+nominal, 3994 live, 57 dead_low, 45 dead_high, 83452 panels, reset patch (0,0)** —
+by importing the frozen classifier rather than re-deriving it. Deterministic patch
+identity, the cell x patch x object work mapping, the candidate determinism
+contract (producer + runtime + patch/cell/config -> identity) and the Gate-2C
+degree ceiling are implemented and tested. Candidate SOLVES raise
+`CandidateSolveDeferred` rather than returning a stub that could be certified.
+
+Patch evidence is NESTED: 23,979,976 order-0 patch items sit beneath the **8,849**
+SR obligations and create no work ID.
+
+## Exact remaining SR blockers, in dependency order
+
+1. **Patch-resolved candidate solves** — now the FIRST blocker, not the third:
+   refinement consumes `sup|Dhat|`, `sup|Hhat|` and midpoint errors, none of which
+   exist without candidates.
+2. **Midpoint propagation at `e0`** (`epsF_mid`, `epsD_mid`), the second
+   propagation the refinement requires.
+3. **Order-3 auxiliary evidence** — `NOT_ESTABLISHED`; decidable only once 1 and 2
+   supply real numbers.
+4. **Production-resolution corroboration** of `C_upper` — needs `n` raised as well
+   as `P`; plan and cost in `SR_RESOLVENT_GOVERNANCE.md` section 6.
 5. **Measured cost**: no SR cell has been certified, so no statement is made in
    either direction about the 1126 CPU-hour cap.
 

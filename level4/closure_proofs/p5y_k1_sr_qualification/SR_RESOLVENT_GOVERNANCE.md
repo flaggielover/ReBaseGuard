@@ -100,3 +100,64 @@ which this lane does not claim to produce.
   (`CellMismatch`);
 * nothing here alters the theorem, the estimand, the detector scope, `m`, the
   precision, the budgets, the reserve, the cover geometry or the splice points.
+
+---
+
+## 6. Production-resolution corroboration plan (Phase 10)
+
+Corroboration currently returns `INCONCLUSIVE`: the interval-DP enclosure is
+looser than the frozen constant. Measured convergence at cell 292 (`e in [2, 41/20]`):
+
+| partition P | z-panels | n | independent `C_n` | ratio to frozen `C_upper = 6.592` | CPU |
+|---|---|---|---|---|---|
+| 10 | 10 | 6 | 32.71 | 4.96 | 0.29 s |
+| 16 | 16 | 6 | 13.02 | 1.98 | 1.20 s |
+| 24 | 24 | 6 | 10.50 | 1.59 | 4.09 s |
+| 32 | 32 | 6 | 10.32 | 1.57 | 9.59 s |
+
+**Refining `P` alone will not reach `CORROBORATED`.** Fitting `ratio = c + a/P`
+to the last two rows gives an asymptote `c ~ 1.16 > 1`. The residual is not
+spatial resolution: it is `n`. At `n = 6` the survival is still `q_6 ~ 0.44`, so
+the `1/(1 - q_n)` factor alone inflates `C_n` by `~1.8x` above `sup_y E_y[tau]`.
+Both `P` and `n` must increase together.
+
+### Target configuration
+
+```text
+    n          32        (q_32 ~ 3.6e-3 at e = 2, from the exploratory ladder)
+    partition  64
+    z_panels   64
+    bits       256
+```
+
+Cost scales as `P^2 * Nz * n`, so from the measured 9.59 s at `(32, 32, 6)`:
+
+```text
+    (64/32)^2 * (64/32) * (32/6) = 42.7      ->  ~410 CPU-s (~6.8 min) per cell
+    selected-cell (8 pilots)                 ->  ~55 CPU-minutes
+    all 315 compact cells                    ->  ~36 CPU-hours
+```
+
+Small-drift cells need larger `n` (the exploratory ladder shows `e -> 0` has not
+converged even at `n = 256`), so their cost is proportionally higher; those cells
+are exactly where `C_upper` is largest and corroboration matters most.
+
+### Scope decision
+
+> **Selected-cell corroboration, not global.** `C_upper` is frozen cover
+> geometry that the certificate consumes; corroboration is nested auxiliary
+> evidence that it is sound. Governance does not require it per cell, and
+> spending ~36 CPU-hours of a 1126-hour cap to re-derive a frozen input would be
+> a poor trade. The pilot suite corroborates the cells that bound the range —
+> largest `C_upper`, smallest, central and the splice neighbour.
+
+### Prepared command (NOT run — CUSUM owns the host)
+
+```bash
+python code/sr_pilot.py --pilot hardest --m all --bits 256 --corroborate 32
+python code/sr_pilot.py --all --m all --bits 256 --corroborate 32
+```
+
+A run that still returns `INCONCLUSIVE` is not a failure of the frozen constant:
+it means the enclosure is not yet tight enough, and `can_falsify_frozen` remains
+`False` by construction (section 4).

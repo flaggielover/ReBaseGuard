@@ -45,12 +45,32 @@ def measure(label: str, sink: list):
 
 COST_CATEGORIES = (
     "resolvent",      # independent n-step resolvent corroboration, per cell
+    "candidate",      # one patch-resolved candidate solve
     "object",         # one object class on one patch
     "patch",          # all objects on one patch
+    "midpoint",       # the second propagation performed at e0
+    "refinement",     # the monotone whole-cell refinement iteration
+    "order3",         # nested order-3 auxiliary evidence, if built
+    "assembly",       # exact all-m interval assembly
     "cell",           # one whole cell, all objects and all m
-    "refinement",     # midpoint / auxiliary refinement evidence
     "provenance",     # TCB hashing, runtime binding, scientific hash
 )
+
+SR_LIVE_PATCHES = 3994
+
+
+def cost_formulas() -> dict:
+    """The projection formulas, stated explicitly and never pre-evaluated."""
+    return {
+        "measured_pilot_cost": "sum of measured category CPU seconds for one pilot cell",
+        "modeled_per_cell": "candidate*n_live_patches + midpoint + refinement + assembly + provenance",
+        "modeled_316_cells": "modeled_per_cell * 316  (+ resolvent corroboration if run per cell)",
+        "conservative_sr": "modeled_316_cells * contingency",
+        "combined_campaign": "CUSUM_measured + SR_measured, summed only when BOTH are complete",
+        "cap_rule": ("the 1126 CPU-hour cap is adjudicated ONCE on the sum, after "
+                     "both detectors finish; neither side may claim it alone"),
+        "excluded": "the historical Gate-2F SR extrapolation is not reused",
+    }
 
 
 def by_category(records: list) -> dict:
@@ -104,6 +124,7 @@ def write_report(cell_records: list, path: Path | None = None) -> Path:
         "schema": "k1.sr.cost.v1",
         "records": cell_records,
         "by_category": by_category(cell_records),
+        "formulas": cost_formulas(),
         "projection": campaign_projection(cell_records),
     }, indent=1, sort_keys=True) + "\n")
     return path

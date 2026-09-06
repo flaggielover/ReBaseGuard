@@ -8,7 +8,7 @@ so that it cannot touch it.
 branch     p5y-k1-sr-parallel
 worktree   /home/ubuntu/work/ReBaseGuard-sr-parallel   (separate from the running one)
 based on   f0954a9db09d22ad44151afdb557f823fe6eb393
-status     SR_NSTEP_ARCHITECTURE_PARTIAL -- heavy numerics deliberately deferred
+status     SR_REFINEMENT_ARCHITECTURE_PARTIAL -- heavy numerics deferred
 ```
 
 ## Contents
@@ -19,6 +19,7 @@ status     SR_NSTEP_ARCHITECTURE_PARTIAL -- heavy numerics deliberately deferred
 | `SR_NSTEP_RESOLVENT.md` | n-step resolvent: positivity, survival, geometric decomposition |
 | `SR_RESOLVENT_GOVERNANCE.md` | global vs local C, decided from frozen artifacts |
 | `SR_REFINEMENT_DESIGN.md` | why refinement is mandatory, and the order-3 assessment |
+| `SR_MIDPOINT_REFINEMENT.md` | midpoint derivation, contraction proof, order-3 adjudication |
 | `config/excluded_routes.json` | machine-readable historical route exclusions (Phase 2) |
 | `config/sr_dag.json` | the complete SR object DAG, audited (Phase 3) |
 | `code/sr_dag.py` | DAG builder + structural audit |
@@ -28,6 +29,9 @@ status     SR_NSTEP_ARCHITECTURE_PARTIAL -- heavy numerics deliberately deferred
 | `code/sr_nstep.py` | `ResolventCertificate`, frozen `C_upper`, interval-DP certifier |
 | `code/sr_survival_explore.py` | EXPLORATORY float survival DP (not a certificate) |
 | `code/sr_universe.py` | the exact 8,849-obligation SR universe, sharding, resume |
+| `code/sr_refine.py` | `SRRefinedCellValues`, the monotone whole-cell refinement |
+| `code/sr_patch.py` | live-patch identity, work mapping, candidate determinism |
+| `code/sr_width.py` | exact additive attribution of whole-cell width |
 | `code/sr_provenance.py` | execution-derived TCB, runtime binding, scientific hash, final gate |
 | `code/sr_cost.py` | honest cost instrumentation (no cap claim) |
 | `code/sr_pilot.py` | representative pilot runner -- PREPARED, NOT RUN |
@@ -37,7 +41,7 @@ status     SR_NSTEP_ARCHITECTURE_PARTIAL -- heavy numerics deliberately deferred
 ## Running the tests (safe while CUSUM runs)
 
 ```bash
-OMP_NUM_THREADS=1 nice -n 19 python -m pytest tests/ -q     # 89 tests, ~1.0 s
+OMP_NUM_THREADS=1 nice -n 19 python -m pytest tests/ -q     # 126 tests, ~1.6 s
 ```
 
 ## The CPU resource gate

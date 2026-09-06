@@ -57,6 +57,40 @@ SCIENTIFIC_FIELDS = (
 )
 
 
+# ------------------------------------------------------- M_R2 semantics lock
+M_R2_SEMANTICS = "sup_{e in cell} |R''_{SR,m}(e)| == mag(R2_interval)"
+"""The K1 cover obligation. See assembly.curvature_bound and ledger.cover_charge."""
+
+FORBIDDEN_M2_SEMANTICS = "sup_e E_e[Rbar^2]"
+"""The P5X theorem-consumer scalar M_2 (EXACT_SR_TARGET.md section 5).
+
+A DIFFERENT quantity. It feeds P5X-T4/T6/T9 and is NOT a K1 cover obligation.
+Substituting it for M_R2 would leave every K1 cover obligation undischarged while
+appearing to succeed, so the two must never share a field name, a schema slot or
+a variable name. Enforced by assert_M_R2_semantics and by tests.
+"""
+
+FORBIDDEN_FIELD_NAMES = ("M_2", "M2", "E_Rbar2", "E_Rbar_squared", "Rbar2_mean")
+
+
+class M_R2SemanticsViolation(RuntimeError):
+    """The P5X scalar M_2 leaked into a K1 M_R2 slot."""
+
+
+def assert_M_R2_semantics(record: dict | None = None) -> bool:
+    """No record or schema field may carry the P5X M_2 under a K1 name."""
+    if "M_R2" not in SCIENTIFIC_FIELDS:
+        raise M_R2SemanticsViolation("M_R2 vanished from the scientific schema")
+    for bad in FORBIDDEN_FIELD_NAMES:
+        if bad in SCIENTIFIC_FIELDS:
+            raise M_R2SemanticsViolation(
+                f"{bad} (the P5X scalar M_2) is in the K1 scientific schema")
+        if record is not None and bad in record:
+            raise M_R2SemanticsViolation(
+                f"{bad} (the P5X scalar M_2) is present in a K1 record")
+    return True
+
+
 class ProducerGateFailure(RuntimeError):
     """The truly-final fail-closed producer gate rejected this record."""
 
@@ -177,6 +211,7 @@ def final_gate(record: dict, *, tcb: dict, expected_tcb: dict | None = None) -> 
     absent from the TCB, a TCB hash mismatch against a pinned manifest, an
     unpinned thread contract, or a lazy import / broad except on the path.
     """
+    assert_M_R2_semantics(record)                    # M_2 must not wear M_R2's name
     h = scientific_hash(record)                      # raises on missing fields
     if not tcb:
         raise ProducerGateFailure("empty TCB")
