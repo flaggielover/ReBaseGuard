@@ -105,10 +105,30 @@ def test_manifest_verification_detects_a_changed_tcb_file():
     victim = next(iter(manifest["entries"]))
     manifest["entries"][victim]["sha256"] = "0" * 64
     manifest["producer_hash"] = __import__("hashlib").sha256(
-        json.dumps({k: v for k, v in manifest.items() if k != "producer_hash"},
+        json.dumps({k: v for k, v in manifest.items()
+                    if k not in ("producer_hash", "head_informational")},
                    indent=2, sort_keys=True).encode()).hexdigest()
     with pytest.raises(sh.ProducerGateError, match="changed mid-run"):
         sh.verify_manifest(manifest)
+
+
+def test_head_is_recorded_but_excluded_from_the_producer_hash():
+    """An unrelated commit must not invalidate blocks produced under identical
+    scientific code, so the producer's identity is the TCB content, not HEAD."""
+    manifest = sh.build_manifest()
+    assert "head_informational" in manifest
+    assert "head" not in manifest
+    tampered = dict(manifest, head_informational="0" * 40)
+    sh.verify_manifest(tampered)          # must not raise
+
+
+def test_the_tcb_contains_producers_and_not_downstream_readers():
+    for reader in ("adjudicate.py", "build_plan.py", "replay_check.py",
+                   "independent_adjudication.py", "build_closure.py"):
+        assert not any(p.endswith(reader) for p in sh.TCB_PATHS), reader
+    assert any(p.endswith("run_p4z.py") for p in sh.TCB_PATHS)
+    # the plan a run consumed is still bound, by content
+    assert any(p.endswith("campaign_plan.json") for p in sh.TCB_PATHS)
 
 
 def test_manifest_verification_detects_a_forged_producer_hash():
