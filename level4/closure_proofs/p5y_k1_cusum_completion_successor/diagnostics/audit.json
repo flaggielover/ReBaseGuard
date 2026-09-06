@@ -1,0 +1,680 @@
+{
+  "campaign": "P5Y-K1",
+  "cost": {
+    "cap_changed": false,
+    "contention": {
+      "block_workers": 8,
+      "cores": 8,
+      "note": "per-cell CPU seconds from the block are inflated by memory-bandwidth contention and must not be used as a per-cell cost model",
+      "observed_inflation_factor": 2.03,
+      "repeat_workers": 2,
+      "same_cell_cpu_seconds_contended_vs_not": {
+        "318": [
+          2636.8403049800004,
+          1302.109248131
+        ],
+        "323": [
+          2669.5533866650003,
+          1309.799204013
+        ]
+      }
+    },
+    "cost_cap_status": "NOT_ESTABLISHED",
+    "hard_cap_cpu_hours": 1126,
+    "max_cpu_seconds_per_cell": 2681.5,
+    "mean_cpu_seconds_per_cell": 2652.8,
+    "measured_cells": 8,
+    "measured_cpu_hours": 5.895,
+    "measured_cpu_seconds": 21222.2,
+    "measured_under_contention": true,
+    "note": "measurements taken with one worker per core, BLAS and FLINT pinned to one thread; not a projection",
+    "predecessor_435_8_hour_figure_reused": false,
+    "reserve_redistributed": false,
+    "why_not_established": [
+      "only 8 of 326 CUSUM cells were certified in this task, and 0 of 316 SR cells; per-cell cost varies strongly with rho and with how many objects need the order-2 path, so these 8 do not extrapolate",
+      "SR has no implementation, so its cost is unmeasured, not estimated",
+      "the predecessor's 435.8 CPU-hour figure was adjudicated NOT a rigorous lower bound and is not carried forward",
+      "cells 318-324 do not yet fully certify, so the work required to close them is not yet bounded"
+    ]
+  },
+  "determinism": {
+    "all_identical": true,
+    "cells": [
+      318,
+      323
+    ],
+    "checked": true,
+    "findings": [],
+    "ok": true
+  },
+  "determinism_field_classes": {
+    "classes": {
+      "D_interval": "SCIENTIFIC_CONTENT",
+      "M_R2": "SCIENTIFIC_CONTENT",
+      "R2_interval": "SCIENTIFIC_CONTENT",
+      "R_interval": "SCIENTIFIC_CONTENT",
+      "__key_order__": "SERIALIZATION_NOISE",
+      "bernstein_calls": "NONDETERMINISTIC_RUNTIME_NOISE",
+      "cover": "SCIENTIFIC_CONTENT",
+      "cpu_seconds": "NONDETERMINISTIC_RUNTIME_NOISE",
+      "cpu_seconds_including_dependencies": "NONDETERMINISTIC_RUNTIME_NOISE",
+      "cpu_seconds_prepare": "NONDETERMINISTIC_RUNTIME_NOISE",
+      "delta_cell": "SCIENTIFIC_CONTENT",
+      "delta_mid": "SCIENTIFIC_CONTENT",
+      "envelope": "SCIENTIFIC_CONTENT",
+      "eps_cell": "SCIENTIFIC_CONTENT",
+      "eps_cell_refined": "SCIENTIFIC_CONTENT",
+      "eps_mid": "SCIENTIFIC_CONTENT",
+      "float_candidate_coefficients": "IMPLEMENTATION_DEFECT",
+      "generated_utc": "NONDETERMINISTIC_RUNTIME_NOISE",
+      "kernel_calls": "NONDETERMINISTIC_RUNTIME_NOISE",
+      "norm_improvement": "SERIALIZATION_NOISE",
+      "peak_rss_kib": "NONDETERMINISTIC_RUNTIME_NOISE",
+      "pid": "NONDETERMINISTIC_RUNTIME_NOISE",
+      "status": "SCIENTIFIC_CONTENT",
+      "threading": "NONDETERMINISTIC_RUNTIME_NOISE",
+      "tightening_report": "SERIALIZATION_NOISE",
+      "top_level_gates": "SCIENTIFIC_CONTENT",
+      "wall_seconds": "NONDETERMINISTIC_RUNTIME_NOISE"
+    },
+    "excluded_from_scientific_hash": [
+      "bernstein_calls",
+      "cpu_seconds",
+      "cpu_seconds_including_dependencies",
+      "cpu_seconds_prepare",
+      "generated_utc",
+      "host",
+      "kernel_calls",
+      "norm_improvement",
+      "peak_rss_kib",
+      "pid",
+      "threading",
+      "tightening_report",
+      "wall_seconds"
+    ],
+    "implementation_defect_note": "float_candidate_coefficients: numpy.linalg.solve reduction order varies with BLAS thread count, which changes the degree-12 dyadic candidate and therefore every certified residual. That is scientifically meaningful drift, so it is NOT normalised away. successor_qualify pins the threading contract BEFORE numpy is imported (re-exec'ing if needed) and binds blas_threads/flint_threads into the producer identity, so a record made under different threading is a different PRODUCER, not a silently different certificate."
+  },
+  "far_field": {
+    "inherited": {
+      "CUSUM_FAR_FIELD": "PASS",
+      "SR_FAR_FIELD": "PASS",
+      "authority": "binding K1/P5X far-field certificate (P5X-T3)",
+      "confirmed_by": "independent adjudication of f8e6f758",
+      "far_field_logic_changed_here": false,
+      "governance_note": "FAR_FIELD_GOVERNANCE = IMPLEMENTATION_GAP: the K1 namespace carries no executable far-field certificate of its own; that is an implementation task, not a gap in the cover",
+      "re_derived_here": false,
+      "uncovered_interval_between_c_D_and_e_far": null
+    },
+    "predecessor_commit": "f8e6f7583e798813c7f7e0dc8b952488c2a06a7e",
+    "result_bearing": false,
+    "schema": "k1.cusum-successor.far-field-inherited.v1",
+    "superseded_predecessor_reading": {
+      "claim": "far field NOT_ESTABLISHED at the frozen K1 splice; uncovered interval (5.5, 5.9307] for CUSUM and (6.7555, 7.1863] for SR",
+      "module": "code/far_field.py",
+      "namespace": "p5y_k1_final_completion",
+      "predecessor_bytes_preserved": true,
+      "status": "SUPERSEDED \u2014 rejected by independent adjudication",
+      "why_it_was_wrong": "a freshly invented crude majorant was allowed to override the binding certificate; failing to prove a bound is not evidence the bound is false"
+    }
+  },
+  "governance": {
+    "far_field_inherited_unchanged": true,
+    "findings": [],
+    "frozen_invariants": {
+      "budget_sum": true,
+      "cell_counts": true,
+      "cover_geometry": true,
+      "degree_adaptation_disallowed": true,
+      "hard_cap_cpu_hours": true,
+      "obligation_universe": true,
+      "precision_bits": true,
+      "precision_escalation_disallowed": true,
+      "production_disabled": true
+    },
+    "frozen_spec_matches": true,
+    "ok": true,
+    "predecessor_namespaces_untouched": {
+      "final_completion": true,
+      "frozen_successor": true,
+      "repair1": true,
+      "repair2": true,
+      "reviewed_implementation": true
+    },
+    "production_run": false,
+    "sr_implemented_here": false
+  },
+  "inherited_facts": {
+    "CELL_325": "CERTIFIED_PASS",
+    "CUSUM_FAR_FIELD": "PASS",
+    "DRIFT_AWARE_NORM": "SOUND",
+    "SR_FAR_FIELD": "PASS",
+    "no_uncovered_interval_between_c_D_and_e_far": true,
+    "source": "independent adjudication of f8e6f758"
+  },
+  "k1_state": "K1_INCOMPLETE_IMPLEMENTATION",
+  "namespace": "level4/closure_proofs/p5y_k1_cusum_completion_successor",
+  "not_claimed": [
+    "K1 CLOSED",
+    "SR complete",
+    "COST_CAP PASS",
+    "production ready",
+    "P5Y closed"
+  ],
+  "provenance": {
+    "backend_hash": "a556e1ea7d7136382fd0777f3a5d0a56aa7f30e8475925b86bbdad09035da0b8",
+    "findings": [],
+    "loaded_module_coverage": true,
+    "manifest_file_count": 47,
+    "ok": true,
+    "per_cell": {
+      "318": {
+        "chain_verified": true,
+        "hash_recomputes": true,
+        "obligations": 28,
+        "ok": true,
+        "producer_bound": true,
+        "scientific_hash": "a3153b267835714867770f6ff0bdd3bf2788b02d3205d3b9425a103f6d8f411c"
+      },
+      "319": {
+        "chain_verified": true,
+        "hash_recomputes": true,
+        "obligations": 28,
+        "ok": true,
+        "producer_bound": true,
+        "scientific_hash": "be02000fbee08df2f3319c9fd0efa7fcb4a9c9519b9934560e915470af40758e"
+      },
+      "320": {
+        "chain_verified": true,
+        "hash_recomputes": true,
+        "obligations": 28,
+        "ok": true,
+        "producer_bound": true,
+        "scientific_hash": "3d9444ae7a57f567281804669013aff6f43aec0316ef0da5cc7162f9878bd3e1"
+      },
+      "321": {
+        "chain_verified": true,
+        "hash_recomputes": true,
+        "obligations": 28,
+        "ok": true,
+        "producer_bound": true,
+        "scientific_hash": "45a95fcfbfb7cdfd1b2065302a087f2580a07c0728d5a4810d51c72a1654e87a"
+      },
+      "322": {
+        "chain_verified": true,
+        "hash_recomputes": true,
+        "obligations": 28,
+        "ok": true,
+        "producer_bound": true,
+        "scientific_hash": "6a1a6bb026e8fcffee5af40f5b785df51aa198334a3a998411e838deb8302f06"
+      },
+      "323": {
+        "chain_verified": true,
+        "hash_recomputes": true,
+        "obligations": 28,
+        "ok": true,
+        "producer_bound": true,
+        "scientific_hash": "41b02326a5e63a601c44fdca6054c67c652666a8f524230df0a7cbac64e4f05c"
+      },
+      "324": {
+        "chain_verified": true,
+        "hash_recomputes": true,
+        "obligations": 28,
+        "ok": true,
+        "producer_bound": true,
+        "scientific_hash": "e4d7f2c8576872e4f5758c4dbbe78b2d98730848af13121a1ade330c6b53334f"
+      },
+      "325": {
+        "chain_verified": true,
+        "hash_recomputes": true,
+        "obligations": 28,
+        "ok": true,
+        "producer_bound": true,
+        "scientific_hash": "5c94b024375d1cc61e969e63dca985f2888a7095c1ccb8d5febb5aa0fb08370f"
+      }
+    },
+    "producer_hash": "bda92461332249511b00e676b23d8e448f8b7ad768cddb5616584dac85f97d12",
+    "producer_hash_kind": "cusum_successor_producer_manifest_v1",
+    "rejected_lineage_hashes": {
+      "final_completion_lineage_only": "f703921b045f39092d9bdf67d02927f70961dd344dc3be50d17aab0b23df16bd",
+      "repair2_producer": "f703921b045f39092d9bdf67d02927f70961dd344dc3be50d17aab0b23df16bd",
+      "reviewed_parent": "44f5417bdbba87fd34ff1d161fa307b3236bf7f55ea9b27cb12ddd5681938155"
+    }
+  },
+  "reasons": [
+    "science: cell 319 m=5 is CERTIFICATE_TOO_LOOSE -- the certified R'' interval straddles zero, so the bound fails, not the mathematics",
+    "science: cell 320 m=5 is CERTIFICATE_TOO_LOOSE -- the certified R'' interval straddles zero, so the bound fails, not the mathematics",
+    "science: cell 321 m=5 is CERTIFICATE_TOO_LOOSE -- the certified R'' interval straddles zero, so the bound fails, not the mathematics",
+    "science: cell 322 m=5 is CERTIFICATE_TOO_LOOSE -- the certified R'' interval straddles zero, so the bound fails, not the mathematics",
+    "science: cell 323 m=5 is CERTIFICATE_TOO_LOOSE -- the certified R'' interval straddles zero, so the bound fails, not the mathematics"
+  ],
+  "result_bearing": false,
+  "schema": "k1.cusum-successor.audit.v1",
+  "science": {
+    "block": [
+      318,
+      319,
+      320,
+      321,
+      322,
+      323,
+      324
+    ],
+    "block_all_pass": false,
+    "cells": {
+      "318": {
+        "all_pass": true,
+        "cpu_seconds": 2636.8403049800004,
+        "e0": [
+          "69208427/20000000",
+          "0/1"
+        ],
+        "levels": {
+          "1": {
+            "M_R2": 1.445188187381179,
+            "R2_centre": -0.13916758852258404,
+            "R2_halfwidth": 1.306020598858595,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.5608225042085149
+          },
+          "2": {
+            "M_R2": 2.0812932487616864,
+            "R2_centre": -0.07281028218964014,
+            "R2_halfwidth": 2.0084829665720463,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.43958123728445664
+          },
+          "3": {
+            "M_R2": 3.275575888948193,
+            "R2_centre": -0.07311035101269765,
+            "R2_halfwidth": 3.2024655379354954,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.47350488897514437
+          },
+          "5": {
+            "M_R2": 7.8157490361337,
+            "R2_centre": -0.05166301316063942,
+            "R2_halfwidth": 7.764086022973061,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.9829422697214847
+          }
+        },
+        "peak_rss_mib": 246.9,
+        "rho": [
+          "2146333/20000000",
+          "0/1"
+        ],
+        "scientific_hash": "a3153b267835714867770f6ff0bdd3bf2788b02d3205d3b9425a103f6d8f411c"
+      },
+      "319": {
+        "all_pass": false,
+        "cpu_seconds": 2681.465105562,
+        "e0": [
+          "14762159/4000000",
+          "0/1"
+        ],
+        "levels": {
+          "1": {
+            "M_R2": 1.6081244037543767,
+            "R2_centre": -0.2897718795632356,
+            "R2_halfwidth": 1.3183525241911411,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.5723813488334544
+          },
+          "2": {
+            "M_R2": 2.0967014649349456,
+            "R2_centre": -0.14631213372826624,
+            "R2_halfwidth": 1.9503893312066793,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.48298701933116667
+          },
+          "3": {
+            "M_R2": 3.180386252500803,
+            "R2_centre": -0.12611089999297334,
+            "R2_halfwidth": 3.0542753525078297,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.5333569937934003
+          },
+          "5": {
+            "M_R2": 7.331096124266504,
+            "R2_centre": -0.11518854311597239,
+            "R2_halfwidth": 7.215907581150532,
+            "classification": "CERTIFICATE_TOO_LOOSE",
+            "status": "FAIL",
+            "utilization": 1.1529156378492937
+          }
+        },
+        "peak_rss_mib": 247.1,
+        "rho": [
+          "491207/4000000",
+          "0/1"
+        ],
+        "scientific_hash": "be02000fbee08df2f3319c9fd0efa7fcb4a9c9519b9934560e915470af40758e"
+      },
+      "320": {
+        "all_pass": false,
+        "cpu_seconds": 2656.009425393,
+        "e0": [
+          "78996879/20000000",
+          "0/1"
+        ],
+        "levels": {
+          "1": {
+            "M_R2": 1.5870088864033054,
+            "R2_centre": -0.4021922130052875,
+            "R2_halfwidth": 1.1848166733980179,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.4107634534353458
+          },
+          "2": {
+            "M_R2": 1.9730314918051133,
+            "R2_centre": -0.20157327951887938,
+            "R2_halfwidth": 1.771458212286234,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.42643366824770235
+          },
+          "3": {
+            "M_R2": 2.900029144507914,
+            "R2_centre": -0.16213327206399963,
+            "R2_halfwidth": 2.7378958724439144,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.5886642862977985
+          },
+          "5": {
+            "M_R2": 6.477099305934716,
+            "R2_centre": -0.15801330561142002,
+            "R2_halfwidth": 6.319086000323296,
+            "classification": "CERTIFICATE_TOO_LOOSE",
+            "status": "FAIL",
+            "utilization": 1.2577745283480646
+          }
+        },
+        "peak_rss_mib": 247.5,
+        "rho": [
+          "2730049/20000000",
+          "0/1"
+        ],
+        "scientific_hash": "3d9444ae7a57f567281804669013aff6f43aec0316ef0da5cc7162f9878bd3e1"
+      },
+      "321": {
+        "all_pass": false,
+        "cpu_seconds": 2648.356820598,
+        "e0": [
+          "84658349/20000000",
+          "0/1"
+        ],
+        "levels": {
+          "1": {
+            "M_R2": 1.3839239395079597,
+            "R2_centre": -0.373199629676102,
+            "R2_halfwidth": 1.0107243098318577,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.5095803684215606
+          },
+          "2": {
+            "M_R2": 1.7616369568587325,
+            "R2_centre": -0.18671372466097091,
+            "R2_halfwidth": 1.5749232321977615,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.48532231685603217
+          },
+          "3": {
+            "M_R2": 2.515160786455377,
+            "R2_centre": -0.14244129369209638,
+            "R2_halfwidth": 2.372719492763281,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.7227084429057631
+          },
+          "5": {
+            "M_R2": 5.3629537354017005,
+            "R2_centre": -0.14135172020442374,
+            "R2_halfwidth": 5.221602015197277,
+            "classification": "CERTIFICATE_TOO_LOOSE",
+            "status": "FAIL",
+            "utilization": 1.33528413564571
+          }
+        },
+        "peak_rss_mib": 246.9,
+        "rho": [
+          "2931421/20000000",
+          "0/1"
+        ],
+        "scientific_hash": "45a95fcfbfb7cdfd1b2065302a087f2580a07c0728d5a4810d51c72a1654e87a"
+      },
+      "322": {
+        "all_pass": false,
+        "cpu_seconds": 2673.755115173,
+        "e0": [
+          "11329961/2500000",
+          "0/1"
+        ],
+        "levels": {
+          "1": {
+            "M_R2": 0.9808699132975143,
+            "R2_centre": -0.18603369948528226,
+            "R2_halfwidth": 0.794836213812232,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.7127982324511419
+          },
+          "2": {
+            "M_R2": 1.4394286257395086,
+            "R2_centre": -0.09303578931778045,
+            "R2_halfwidth": 1.3463928364217281,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.577638439419488
+          },
+          "3": {
+            "M_R2": 2.036741757497618,
+            "R2_centre": -0.05939162682039475,
+            "R2_halfwidth": 1.9773501306772232,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.7587296230203421
+          },
+          "5": {
+            "M_R2": 4.101116940614565,
+            "R2_centre": -0.059193529424055716,
+            "R2_halfwidth": 4.04192341119051,
+            "classification": "CERTIFICATE_TOO_LOOSE",
+            "status": "FAIL",
+            "utilization": 1.238997653948431
+          }
+        },
+        "peak_rss_mib": 247.1,
+        "rho": [
+          "1524959/10000000",
+          "0/1"
+        ],
+        "scientific_hash": "6a1a6bb026e8fcffee5af40f5b785df51aa198334a3a998411e838deb8302f06"
+      },
+      "323": {
+        "all_pass": false,
+        "cpu_seconds": 2669.5533866650003,
+        "e0": [
+          "19358921/4000000",
+          "0/1"
+        ],
+        "levels": {
+          "1": {
+            "M_R2": 0.8241018192422223,
+            "R2_centre": 0.07034673593459839,
+            "R2_halfwidth": 0.7537550833076239,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.7477527386151863
+          },
+          "2": {
+            "M_R2": 1.2423909696217064,
+            "R2_centre": 0.03517110631125009,
+            "R2_halfwidth": 1.2072198633104563,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.5746355404986663
+          },
+          "3": {
+            "M_R2": 1.7246781751321,
+            "R2_centre": 0.053607061113540556,
+            "R2_halfwidth": 1.6710711140185595,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.7090752736156649
+          },
+          "5": {
+            "M_R2": 3.109395501883302,
+            "R2_centre": 0.05363206726459057,
+            "R2_halfwidth": 3.0557634346187115,
+            "classification": "CERTIFICATE_TOO_LOOSE",
+            "status": "FAIL",
+            "utilization": 1.0429284634700506
+          }
+        },
+        "peak_rss_mib": 247.6,
+        "rho": [
+          "3104999/20000000",
+          "0/1"
+        ],
+        "scientific_hash": "41b02326a5e63a601c44fdca6054c67c652666a8f524230df0a7cbac64e4f05c"
+      },
+      "324": {
+        "all_pass": true,
+        "cpu_seconds": 2630.721138286,
+        "e0": [
+          "103024971/20000000",
+          "0/1"
+        ],
+        "levels": {
+          "1": {
+            "M_R2": 0.9402490134012274,
+            "R2_centre": 0.28419209519739663,
+            "R2_halfwidth": 0.6560569182038307,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.6021731944342875
+          },
+          "2": {
+            "M_R2": 1.1698526557173672,
+            "R2_centre": 0.14209579710029985,
+            "R2_halfwidth": 1.0277568586170673,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.47235463949475526
+          },
+          "3": {
+            "M_R2": 1.4906195270655858,
+            "R2_centre": 0.14968810591978907,
+            "R2_halfwidth": 1.3409314211457968,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.5568506799317107
+          },
+          "5": {
+            "M_R2": 2.3010382555808673,
+            "R2_centre": 0.14969034273287135,
+            "R2_halfwidth": 2.1513479128479958,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.7547914259707971
+          }
+        },
+        "peak_rss_mib": 246.9,
+        "rho": [
+          "3125367/20000000",
+          "0/1"
+        ],
+        "scientific_hash": "e4d7f2c8576872e4f5758c4dbbe78b2d98730848af13121a1ade330c6b53334f"
+      },
+      "325": {
+        "all_pass": true,
+        "cpu_seconds": 2625.504111149,
+        "e0": [
+          "108075169/20000000",
+          "0/1"
+        ],
+        "levels": {
+          "1": {
+            "M_R2": 0.674080192477863,
+            "R2_centre": 0.37498999796197907,
+            "R2_halfwidth": 0.2990901945158839,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.1280706974714146
+          },
+          "2": {
+            "M_R2": 0.6383747614746635,
+            "R2_centre": 0.18749495389067583,
+            "R2_halfwidth": 0.4508798075839877,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.09206889491229621
+          },
+          "3": {
+            "M_R2": 0.749960800908918,
+            "R2_centre": 0.1905668008108088,
+            "R2_halfwidth": 0.5593940000981092,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.10374269491556375
+          },
+          "5": {
+            "M_R2": 1.0025165579200177,
+            "R2_centre": 0.1905670515180021,
+            "R2_halfwidth": 0.8119495064020157,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.12713635100567963
+          }
+        },
+        "peak_rss_mib": 246.4,
+        "rho": [
+          "1924831/20000000",
+          "0/1"
+        ],
+        "scientific_hash": "5c94b024375d1cc61e969e63dca985f2888a7095c1ccb8d5febb5aa0fb08370f"
+      }
+    },
+    "certificate_too_loose": [
+      [
+        319,
+        5
+      ],
+      [
+        320,
+        5
+      ],
+      [
+        321,
+        5
+      ],
+      [
+        322,
+        5
+      ],
+      [
+        323,
+        5
+      ]
+    ],
+    "control": 325,
+    "control_regression_clean": true,
+    "cusum_compact_cover_status": "INCOMPLETE",
+    "findings": [],
+    "implementation_defects": [],
+    "scientific_failures": []
+  },
+  "sr_status": "NOT_IMPLEMENTED_IN_THIS_TASK",
+  "verdict": "INCOMPLETE_CERTIFICATE"
+}
