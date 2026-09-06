@@ -1,0 +1,226 @@
+{
+  "aggregate_ledger": {
+    "cells_present": 2,
+    "cusum_full_cover": "INCOMPLETE",
+    "ledger_hash": "43858a228024132b0ebb19ae7483114ed33f1831736b22767017b965701cda17",
+    "obligations_pass": 8
+  },
+  "architecture": {
+    "final_gate_after_scientific_hash": true,
+    "findings": [],
+    "loaded_repository_modules": 46,
+    "non_certifying_modules_absent_from_certifying_path": true,
+    "ok": true,
+    "reviewed_modules_intact": true,
+    "tcb_coverage_clean": true,
+    "tcb_size": 58
+  },
+  "campaign": "P5Y-K1",
+  "cost": {
+    "cap_changed": false,
+    "cells_measured": 2,
+    "cost_cap_status": "NOT_ESTABLISHED",
+    "cost_model": {
+      "auxiliary_cpu_seconds_mean": 188.9,
+      "auxiliary_share": 0.0832,
+      "cells_measured": [
+        318,
+        323
+      ],
+      "chosen_workers": 4,
+      "conditions": "4 workers on 4 physical cores (8 logical), one thread each",
+      "cpu_seconds_per_cell_mean": 2270.1,
+      "cpu_seconds_per_cell_worst": 2278.1,
+      "cusum_only_exceeds_hard_cap": false,
+      "cusum_share_of_cap": 0.1826,
+      "hard_cap_cpu_hours": 1126,
+      "logical_cpus": 8,
+      "measured": true,
+      "peak_rss_mib_per_worker": 260.7,
+      "physical_cores": 4,
+      "projected_cusum_cpu_hours": 205.6,
+      "projected_cusum_wall_hours": 51.4,
+      "scope_note": "the cap governs the COMPLETE K1 campaign. SR (316 cells) is unimplemented and unmeasured, so this is the CUSUM contribution only and implies nothing about campaign cost.",
+      "worker_choice_rationale": "8 logical CPUs are 4 hyperthreaded cores. Measured on the predecessor, 8 workers inflate per-cell CPU by 2.04x for the same wall time, so 4 workers deliver the same throughput at half the CPU-hours. CPU-hours are the governed quantity."
+    },
+    "cusum_cpu_hours_so_far": 1.261,
+    "cusum_cpu_seconds_so_far": 4540.1,
+    "hard_cap_cpu_hours": 1126,
+    "reserve_redistributed": false,
+    "scope_note": "the 1126 CPU-hour cap is for the COMPLETE K1 campaign. Only the CUSUM contribution is recorded here; SR is unimplemented and unmeasured, so no campaign-level cost conclusion follows."
+  },
+  "determinism": {
+    "all_identical": true,
+    "cells": [
+      318,
+      323
+    ],
+    "checked": true,
+    "findings": [],
+    "ok": true
+  },
+  "governance": {
+    "findings": [],
+    "frozen_invariants": {
+      "budget_sum": true,
+      "cover_geometry": true,
+      "cusum_cells_326": true,
+      "degree_adaptation_disallowed": true,
+      "detector_scope": true,
+      "frozen_spec_hashes": true,
+      "hard_cap_cpu_hours": true,
+      "m_scope": true,
+      "obligation_universe": true,
+      "precision_bits": true,
+      "precision_escalation_disallowed": true,
+      "production_disabled": true
+    },
+    "obligation_universe": {
+      "cusum_cells": 326,
+      "expected": 17978,
+      "expected_cusum_cells": 326,
+      "new_top_level_ids_added_here": 0,
+      "ok": true,
+      "total": 17978
+    },
+    "ok": true,
+    "predecessor_namespaces_untouched": {
+      "aux3_successor": true,
+      "cusum_completion_successor": true,
+      "final_completion": true,
+      "frozen_successor": true,
+      "repair1": true,
+      "repair2": true,
+      "reviewed_implementation": true
+    },
+    "production_run": false,
+    "sr_implemented_here": false
+  },
+  "inherited_facts": {
+    "AUX3_BLOCK_REPLAY": "32_32_PASS",
+    "AUXILIARY_DERIVATIVE_SOUND": "YES",
+    "COST_CAP": "NOT_ESTABLISHED",
+    "CUSUM_FAR_FIELD": "PASS",
+    "EXPLICIT_REFINEMENT_WIRING": "PASS",
+    "REPOSITORY_PROVENANCE": "PASS",
+    "SR_FAR_FIELD": "PASS",
+    "no_uncovered_interval_between_c_D_and_e_far": true,
+    "source": "independent adjudication of 4191beb8"
+  },
+  "k1_state": "CUSUM_K1_INCOMPLETE",
+  "namespace": "level4/closure_proofs/p5y_k1_cusum_aux4_fullcover",
+  "not_claimed": [
+    "K1 CLOSED",
+    "SR complete",
+    "overall COST_CAP PASS",
+    "production ready",
+    "P5Y closed"
+  ],
+  "predecessor": "4191beb8fd6ed5bffac87fe47a7284e8fa0b0de0",
+  "provenance": {
+    "cells_checked": 2,
+    "cells_provenance_ok": 2,
+    "findings": [],
+    "manifest_file_count": 58,
+    "manifest_verifies": true,
+    "ok": true,
+    "producer_identity_hash": "f85bd92cd5d32122d4b9618f5981c2a83653266b2a59b097339c6271ed9dcb7c",
+    "producer_manifest_hash": "72c75c2244f553d6fd08a6b1e0369eaaf01b2c3cda77a9e5a54943b6805b21cb",
+    "producer_manifest_path": "level4/closure_proofs/p5y_k1_cusum_aux4_fullcover/manifests/producer_manifest_v2.json",
+    "producer_manifest_schema": "k1.cusum-aux4.producer-manifest.v2",
+    "producer_manifest_version": 2,
+    "rejected_identities": {
+      "aux3_commit": "4191beb8fd6ed5bffac87fe47a7284e8fa0b0de0",
+      "aux3_producer_manifest_hash": "9deb4d552e3381b855140cb33310465f9e77a5177f7c899f749e1aee375f16f8",
+      "cusum_successor_commit": "70a29436d5ab78ed3150303f1e32a210a9845a6c",
+      "final_commit": "f8e6f7583e798813c7f7e0dc8b952488c2a06a7e",
+      "repair1_commit": "41641218363f2c8b2bf14a571eecc193ae271fc2",
+      "repair2_commit": "7a7df9b173e5de535c15037089fabebc687c5e6f",
+      "reviewed_parent_commit": "c0a1f40cff6974899cd44ab424591bb6a819c949"
+    },
+    "runtime_contract": {
+      "backend_libraries": {
+        "level4/.venv/lib/python3.12/site-packages/numpy.libs/libscipy_openblas64_-61654e39.so": "6cad8d2ad994ddc43d2ccdb0fb5d9458373ff1b87ef7ff420f2f94406eb8f082",
+        "level4/.venv/lib/python3.12/site-packages/python_flint.libs/libflint-6839011d.so.24.0.0": "871a4132fd1e9f3638391b2208e07088f8e3e72a10e41d45f58b150a60c2a1a9",
+        "level4/.venv/lib/python3.12/site-packages/python_flint.libs/libgmp-e0c82b6b.so.10.5.0": "33d24e675b10f8b1ab93a8ad3fa2ed5012e1b0d89dcdb97273877c6c6b9450d8",
+        "level4/.venv/lib/python3.12/site-packages/python_flint.libs/libmpfr-be332c05.so.6.2.2": "c4dfcfc7c5c7ab71d427e15f2f9fae4ace88592a81d4596a918dcc02eadfc6e3"
+      },
+      "collocation_degree": 12,
+      "collocation_quadrature": 400,
+      "cpython_build": [
+        "main",
+        "Jul 15 2026 23:46:41"
+      ],
+      "cpython_compiler": "GCC 13.3.0",
+      "cpython_implementation": "CPython",
+      "cpython_version": "3.12.3",
+      "cpython_version_full": "3.12.3 (main, Jul 15 2026, 23:46:41) [GCC 13.3.0]",
+      "flint_threads": 1,
+      "libc": [
+        "glibc",
+        "2.39"
+      ],
+      "numpy_version": "2.5.2",
+      "openblas_config": "OpenBLAS 0.3.34.0.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY SkylakeX MAX_THREADS=64",
+      "openblas_coretype_env": null,
+      "openblas_runtime_corename": "SkylakeX",
+      "platform_machine": "x86_64",
+      "precision_bits": 256,
+      "python_flint_version": "0.9.0",
+      "schema": "k1.cusum-aux4.runtime-contract.v2",
+      "subdivision_depth": 0,
+      "taylor_order": 120,
+      "thread_environment": {
+        "MKL_NUM_THREADS": "1",
+        "NUMEXPR_NUM_THREADS": "1",
+        "OMP_NUM_THREADS": "1",
+        "OPENBLAS_NUM_THREADS": "1"
+      }
+    },
+    "runtime_contract_hash": "d49f043755ef658a60e3c4017022ddecf0642a087a6e5bb0c1f2aefbe9721191"
+  },
+  "reasons": [],
+  "repaired_here": {
+    "AUXILIARY_GOVERNANCE": "FAIL -> schema-driven hash binds candidate_suprema, auxiliary order and hermite_weight",
+    "CERTIFICATE_DETERMINISM": "FAIL -> no lazy imports, no swallowed exceptions on the certifying path",
+    "PRODUCER_MANIFEST": "FAIL -> exact path TCB; no basename exemption; successor_producer.py removed from the execution path",
+    "RUNTIME_BINDING": "FAIL -> OpenBLAS runtime kernel, backend library bytes, CPython build, precision and thread contract all bound",
+    "STRICT_PRODUCER_ENFORCEMENT": "FAIL -> final gate after certificate assembly AND after the scientific hash"
+  },
+  "result_bearing": false,
+  "schema": "k1.cusum-aux4.audit.v1",
+  "science": {
+    "block_318_325": {
+      "318": true,
+      "323": true
+    },
+    "cells_certified": 2,
+    "cells_expected": 326,
+    "control_325_all_pass": null,
+    "cusum_far_field": "PASS",
+    "cusum_full_cover": "INCOMPLETE",
+    "difficult_cells": {
+      "323,m5": "PASS"
+    },
+    "failing": [],
+    "findings": [],
+    "obligations_certified": 8,
+    "obligations_pass": 8
+  },
+  "scientific_hash": {
+    "classes": {
+      "INCIDENTAL_RUNTIME": 358,
+      "PROVENANCE_IDENTITY": 575,
+      "SCIENTIFIC_IDENTITY": 2099
+    },
+    "default_class_for_unknown_fields": "SCIENTIFIC_IDENTITY",
+    "dropped_incidental": 358,
+    "findings": [],
+    "hashed": 2673,
+    "leaf_paths": 3032,
+    "ok": true,
+    "unaccounted": []
+  },
+  "sr_status": "NOT_IMPLEMENTED_IN_THIS_TASK",
+  "verdict": "CUSUM_AUX4_INCOMPLETE_FULL_COVER"
+}

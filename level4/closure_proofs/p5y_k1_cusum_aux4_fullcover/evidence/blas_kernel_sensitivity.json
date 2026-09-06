@@ -1,0 +1,116 @@
+{
+  "aux3_bound_fields": [
+    "numpy_version",
+    "python_flint_version",
+    "python_major_minor",
+    "blas_threads",
+    "precision_bits"
+  ],
+  "aux3_declared_identity_identical_across_kernels": true,
+  "candidates_compared": 240,
+  "candidates_differing": 62,
+  "cells_sampled": [
+    0,
+    150,
+    318,
+    325
+  ],
+  "conclusion": "62 of 240 certified dyadic candidates differ between two OpenBLAS kernels on the SAME host, with numpy version, python-flint version, CPython major.minor, thread pinning and precision all identical. Aux3's declared producer identity cannot distinguish these runs, so two hosts carrying it produce different certificates. Aux4 binds openblas_runtime_corename and the backend library bytes.",
+  "host_default_kernel": "SkylakeX",
+  "kernels_compared": [
+    "SkylakeX",
+    "Haswell"
+  ],
+  "method": "OPENBLAS_CORETYPE forces the DYNAMIC_ARCH selection on one host; Layer 1 collocation + build_objects + dyadic_candidate is computed for every certified object of the sampled cells and hashed",
+  "per_cell": {
+    "0": {
+      "candidates_compared": 60,
+      "candidates_differing": 18,
+      "differing": [
+        "D:0:0",
+        "D:1:0",
+        "D:2:0",
+        "D:3:0",
+        "D:4:0",
+        "F:0:0",
+        "H:0:0",
+        "H:1:0",
+        "H:2:0",
+        "H:3:0",
+        "H:4:0",
+        "S:1:1",
+        "S:1:2",
+        "S:2:1",
+        "S:3:1",
+        "W:(0, 1):0",
+        "W:(0, 1):2",
+        "W:(1, 1):2"
+      ]
+    },
+    "150": {
+      "candidates_compared": 60,
+      "candidates_differing": 24,
+      "differing": [
+        "D:0:0",
+        "D:1:0",
+        "D:2:0",
+        "D:3:0",
+        "D:4:0",
+        "F:0:0",
+        "F:1:0",
+        "F:2:0",
+        "F:3:0",
+        "F:4:0",
+        "H:0:0",
+        "H:1:0",
+        "H:2:0",
+        "H:3:0",
+        "H:4:0",
+        "S:2:2",
+        "W:(0, 1):2",
+        "W:(0, 2):2",
+        "W:(1, 1):1",
+        "W:(1, 1):2",
+        "h:2:1",
+        "h:2:2",
+        "h:3:0",
+        "h:4:2"
+      ]
+    },
+    "318": {
+      "candidates_compared": 60,
+      "candidates_differing": 17,
+      "differing": [
+        "D:1:0",
+        "D:2:0",
+        "F:0:0",
+        "F:2:0",
+        "H:1:0",
+        "H:2:0",
+        "S:1:0",
+        "S:1:1",
+        "S:2:2",
+        "S:3:2",
+        "W:(0, 2):2",
+        "W:(1, 1):0",
+        "W:(1, 2):2",
+        "h:1:0",
+        "h:2:0",
+        "h:2:1",
+        "h:4:2"
+      ]
+    },
+    "325": {
+      "candidates_compared": 60,
+      "candidates_differing": 3,
+      "differing": [
+        "F:0:0",
+        "F:1:0",
+        "h:2:1"
+      ]
+    }
+  },
+  "question": "does the OpenBLAS DYNAMIC_ARCH runtime kernel change certified candidates, with everything Aux3 binds held fixed?",
+  "result_bearing": false,
+  "schema": "k1.cusum-aux4.blas-kernel-sensitivity.v1"
+}

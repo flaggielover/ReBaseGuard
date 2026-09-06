@@ -1,0 +1,23 @@
+{
+  "auxiliary_cpu_seconds_mean": 188.9,
+  "auxiliary_share": 0.0832,
+  "cells_measured": [
+    318,
+    323
+  ],
+  "chosen_workers": 4,
+  "conditions": "4 workers on 4 physical cores (8 logical), one thread each",
+  "cpu_seconds_per_cell_mean": 2270.1,
+  "cpu_seconds_per_cell_worst": 2278.1,
+  "cusum_only_exceeds_hard_cap": false,
+  "cusum_share_of_cap": 0.1826,
+  "hard_cap_cpu_hours": 1126,
+  "logical_cpus": 8,
+  "measured": true,
+  "peak_rss_mib_per_worker": 260.7,
+  "physical_cores": 4,
+  "projected_cusum_cpu_hours": 205.6,
+  "projected_cusum_wall_hours": 51.4,
+  "scope_note": "the cap governs the COMPLETE K1 campaign. SR (316 cells) is unimplemented and unmeasured, so this is the CUSUM contribution only and implies nothing about campaign cost.",
+  "worker_choice_rationale": "8 logical CPUs are 4 hyperthreaded cores. Measured on the predecessor, 8 workers inflate per-cell CPU by 2.04x for the same wall time, so 4 workers deliver the same throughput at half the CPU-hours. CPU-hours are the governed quantity."
+}
