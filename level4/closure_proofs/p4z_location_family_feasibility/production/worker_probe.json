@@ -1,0 +1,60 @@
+{
+  "frozen_decision": {
+    "blas_threads": 1,
+    "estimator_parallelism": "process-parallel only; the kernel is element-wise numpy ufuncs and axis reductions with no BLAS call on any path",
+    "frozen_before_stage0": true,
+    "may_be_retuned_after_seeing_scientific_values": false,
+    "measured_single_worker_cpu_to_wall_ratio": 0.929017867247029,
+    "rationale": "This is an Apple A18 Pro: 2 performance cores and 4 efficiency cores, no SMT. Adding workers pushes work onto efficiency cores, which consume far more CPU-seconds for the same computation: measured CPU inflation 1.45x at 2 workers and 1.79x at 4, for wall speedups of only 1.15x and 1.75x. CPU-hours are the CAPPED resource (12.0 h), so parallelism here buys wall time by spending the budget that gates the campaign. One worker minimises the capped resource, keeps the CPU-to-wall ratio at 0.93 so the accounting is honest, and makes per-block CPU attributable to a single process.",
+    "thread_variable_that_binds": "VECLIB_MAXIMUM_THREADS",
+    "workers": 1
+  },
+  "host_cores": {
+    "efficiency": 4,
+    "performance": 2
+  },
+  "purpose": "freeze the worker/thread configuration before Stage-0",
+  "result_bearing": false,
+  "runs": [
+    {
+      "blocks": 12,
+      "blocks_per_wall_second": 1.6904798770292568,
+      "cpu_inflation_vs_1_worker": 1.0,
+      "cpu_to_wall_ratio": 0.929017867247029,
+      "parallel_efficiency": 1.0,
+      "paths_per_block": 120000,
+      "peak_rss_mb": 137.09375,
+      "speedup_vs_1_worker": 1.0,
+      "wall_seconds": 7.098576068878174,
+      "worker_cpu_seconds_sum": 6.594704,
+      "workers": 1
+    },
+    {
+      "blocks": 12,
+      "blocks_per_wall_second": 1.9502488549201853,
+      "cpu_inflation_vs_1_worker": 1.4521804162855525,
+      "cpu_to_wall_ratio": 1.5564123507428447,
+      "parallel_efficiency": 0.5768329104122286,
+      "paths_per_block": 120000,
+      "peak_rss_mb": 131.484375,
+      "speedup_vs_1_worker": 1.1536658208244572,
+      "wall_seconds": 6.1530609130859375,
+      "worker_cpu_seconds_sum": 9.576699999999999,
+      "workers": 2
+    },
+    {
+      "blocks": 12,
+      "blocks_per_wall_second": 2.9591117993203495,
+      "cpu_inflation_vs_1_worker": 1.7843160208555227,
+      "cpu_to_wall_ratio": 2.901664589218944,
+      "parallel_efficiency": 0.43761417091230137,
+      "paths_per_block": 120000,
+      "peak_rss_mb": 148.0625,
+      "speedup_vs_1_worker": 1.7504566836492055,
+      "wall_seconds": 4.0552709102630615,
+      "worker_cpu_seconds_sum": 11.767036,
+      "workers": 4
+    }
+  ],
+  "schema": "rebaseguard.p4z-worker-probe.v1"
+}

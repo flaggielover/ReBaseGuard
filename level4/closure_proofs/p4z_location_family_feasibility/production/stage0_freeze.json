@@ -1,0 +1,61 @@
+{
+  "schema": "rebaseguard.p4z-stage0-freeze.v1",
+  "frozen_before_execution": true,
+  "authority": "configs/checkpoint_p4z.json pilot_plan.stage_0; CAMPAIGN_GOVERNANCE.md sections 5 and 6",
+  "purpose": "check the variance model and fire K1-K4 before the full budget is committed",
+  "runs_the_production_driver": true,
+  "separate_pilot_script": false,
+  "design": {
+    "configurations": "all 24 of production/campaign_plan.json, which contains every configuration carrying an unresolved cell",
+    "mandatory_coverage": [
+      {"role": "t1p5 CUSUM unresolved", "configuration": "frozen/cusum@5/t1p5"},
+      {"role": "t1p5 SR unresolved, historically worst concentration", "configuration": "frozen/sr@520.886/t1p5"},
+      {"role": "t1p5 SR unresolved, the only cells where Route B missed r*", "configuration": "reduced/sr@20/t1p5"},
+      {"role": "the only non-t1p5 unresolved cell", "configuration": "frozen/cusum@5/t3"},
+      {"role": "light-tailed control", "configuration": "reduced/cusum@2/gaussian"}
+    ],
+    "blocks_per_route": 20,
+    "block_paths": "per configuration, from production/campaign_plan.json (variance derived)",
+    "seeds": "the frozen campaign-plan seeds; Stage-0 uses block indices 0..19, and Stage 1 continues at block index 20, so no path is ever drawn twice and no block is discarded",
+    "routes": ["rb_score", "rb_map"],
+    "m_grid": [1, 2, 3, 5],
+    "fd_steps": [0.05, 0.025],
+    "workers": 1,
+    "max_cpu_hours": 2.0
+  },
+  "kill_gates_evaluated_at_stage0": ["K1", "K2", "K3", "K4", "K8", "K9"],
+  "kill_gates_deferred_to_full_run": ["K5", "K6", "K7"],
+  "kill_gate_parameters": {
+    "K1_quadrature_tolerance": 1e-07,
+    "K2_probe_residuals": 100000,
+    "K3_variance_safety_factor": 4.0,
+    "K3_model_source": "results/estimator_feasibility.json regime_envelopes",
+    "K4_per_configuration_cpu_cap_hours": 2.0,
+    "K8_total_cpu_cap_hours": 12.0
+  },
+  "stage0_verdict_rule": {
+    "STAGE0_KILLED": "K1, K2 or K9 fired. These are trusted-computing-base failures: the analytic contract disagrees with quadrature, the alarm bounds disagree with the frozen detector, or the producer gate failed. The campaign aborts and no estimator is redesigned inside this result-bearing campaign.",
+    "STAGE0_INCONCLUSIVE": "any of the four configurations carrying an unresolved cell was killed by K3 or K4. The residue cannot be addressed within the frozen budget, so the campaign stops without a full run.",
+    "STAGE0_PASS": "no K1/K2/K9 failure, and all four unresolved-residue configurations survived K3 and K4. Configurations outside the residue that were killed carry forward and their cells are reported INCONCLUSIVE in the full run; they do not block Stage-0.",
+    "exhaustive": true,
+    "manual_override": "not permitted"
+  },
+  "what_stage0_may_do": "falsify feasibility, kill a configuration, exclude a configuration on cost",
+  "what_stage0_may_not_do": [
+    "alter any full-run scientific gate",
+    "alter any threshold",
+    "alter the block count or path count",
+    "alter the worker or thread configuration",
+    "alter a seed",
+    "trigger a top-up",
+    "cause an estimator redesign inside this campaign"
+  ],
+  "stage0_reads": ["precision statistics", "stability statistics", "cost"],
+  "stage0_does_not_read": [
+    "the relative discrepancy between routes",
+    "the z statistic",
+    "the sign of any disagreement",
+    "whether a cell is close to passing",
+    "whether the campaign would close"
+  ]
+}
