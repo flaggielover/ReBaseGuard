@@ -42,6 +42,7 @@ from flint import arb                                              # noqa: E402
 
 import assembly                                                    # noqa: E402
 import spec                                                        # noqa: E402
+import sr_nstep as NST                                             # noqa: E402
 import sr_operators as OPS                                         # noqa: E402
 import sr_sources as SRC                                           # noqa: E402
 
@@ -50,6 +51,16 @@ R_MAX, H_MAX, ORDERS = 5, 4, (0, 1, 2)
 
 class MissingCertifiedInput(RuntimeError):
     """A propagation input was not supplied as a certified enclosure."""
+
+
+class UncertifiedResolvent(RuntimeError):
+    """A resolvent constant reached propagation without a ResolventCertificate.
+
+    Guards the blocker recorded in RESULTS.md: the SR one-step constant
+    1/(1-k0) = 7.03e10 is useless, so a bare number must never be accepted here.
+    Every resolvent use consumes an explicit sr_nstep.ResolventCertificate whose
+    drift interval is checked against the cell.
+    """
 
 
 # --------------------------------------------------------------- S_0 envelope
@@ -162,13 +173,24 @@ def assemble_order(m: int, fdh: dict, w: dict, k: int) -> arb:
     return arb(0, total.abs_upper())
 
 
-def cell_certificate(*, C: arb, e_lo: arb, e_hi: arb, rho: arb,
-                     grid: int = 16) -> dict:
+def cell_certificate(*, resolvent, e_lo: arb, e_hi: arb, rho: arb,
+                     cell_e=None, grid: int = 16) -> dict:
     """Full whole-cell SR certificate: R, D, R2 intervals, M_R2 and B_cover use.
 
-    `C` MUST be a certified resolvent bound (see sr_operators.resolvent_bound);
-    it is not derivable from the one-step norm for SR.
+    `resolvent` MUST be an sr_nstep.ResolventCertificate covering [e_lo, e_hi].
+    A bare number is refused: for SR the one-step constant is 7.03e10 and there
+    is no safe default, so the constant has to arrive with its own evidence.
     """
+    if not isinstance(resolvent, NST.ResolventCertificate):
+        raise UncertifiedResolvent(
+            "cell_certificate requires an sr_nstep.ResolventCertificate, not "
+            f"{type(resolvent).__name__}; see SR_NSTEP_RESOLVENT.md")
+    if cell_e is None:
+        raise MissingCertifiedInput(
+            "cell_e=(e_lo_exact, e_hi_exact) exact rationals are required so the "
+            "resolvent certificate can be matched to the cell without float slack")
+    resolvent.require_covers(*cell_e)
+    C = resolvent.constant()
     if not isinstance(C, arb):
         raise MissingCertifiedInput("C must be a certified Arb enclosure")
     e_mid = (e_lo + e_hi) / arb(2)
@@ -202,4 +224,5 @@ def cell_certificate(*, C: arb, e_lo: arb, e_hi: arb, rho: arb,
         }
     return {"norms": norms, "s0_envelope": s0, "h": h, "S": s, "W": w,
             "FDH": fdh, "per_m": per_m, "C": C,
+            "resolvent_certificate": resolvent.to_json(),
             "e_lo": e_lo, "e_hi": e_hi, "rho": rho}

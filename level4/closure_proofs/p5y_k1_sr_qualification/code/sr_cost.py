@@ -43,6 +43,30 @@ def measure(label: str, sink: list):
         })
 
 
+COST_CATEGORIES = (
+    "resolvent",      # independent n-step resolvent corroboration, per cell
+    "object",         # one object class on one patch
+    "patch",          # all objects on one patch
+    "cell",           # one whole cell, all objects and all m
+    "refinement",     # midpoint / auxiliary refinement evidence
+    "provenance",     # TCB hashing, runtime binding, scientific hash
+)
+
+
+def by_category(records: list) -> dict:
+    """Split measured CPU seconds by cost category (label prefix before ':')."""
+    out = {c: {"n": 0, "cpu_seconds": 0.0, "peak_rss_mib": 0.0}
+           for c in COST_CATEGORIES}
+    for r in records:
+        cat = r["label"].split(":")[0]
+        if cat not in out:
+            continue
+        out[cat]["n"] += 1
+        out[cat]["cpu_seconds"] += r["cpu_seconds"]
+        out[cat]["peak_rss_mib"] = max(out[cat]["peak_rss_mib"], r["peak_rss_mib"])
+    return out
+
+
 def campaign_projection(cell_records: list, *, contingency: float = 2.0) -> dict:
     """Project a campaign from MEASURED cell costs only. No cap verdict."""
     measured = [r["cpu_seconds"] for r in cell_records if r["label"].startswith("cell")]
@@ -79,6 +103,7 @@ def write_report(cell_records: list, path: Path | None = None) -> Path:
     path.write_text(json.dumps({
         "schema": "k1.sr.cost.v1",
         "records": cell_records,
+        "by_category": by_category(cell_records),
         "projection": campaign_projection(cell_records),
     }, indent=1, sort_keys=True) + "\n")
     return path

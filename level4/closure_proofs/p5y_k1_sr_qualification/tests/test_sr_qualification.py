@@ -266,17 +266,27 @@ def test_certified_n_step_bound_is_accepted():
 
 # ------------------------------------------------------------ end-to-end wiring
 def test_cell_certificate_produces_all_m_and_M_R2():
-    cert = P.cell_certificate(C=arb(600), e_lo=arb(1) / arb(4),
-                              e_hi=arb(3) / arb(10), rho=arb(1) / arb(1000), grid=4)
+    """End-to-end wiring, driven by a frozen-cell resolvent certificate."""
+    import sr_nstep as NST
+    from fractions import Fraction as Fr
+    cell = next(c for c in spec.CELLS if c["detector"] == "SR"
+                and int(c["index"]) == 292)
+    res = NST.ResolventCertificate.from_frozen_cell(cell)
+    lo, hi = Fr(cell["left"][0]), Fr(cell["right"][0])
+    a = lambda f: arb(Fr(f).numerator) / arb(Fr(f).denominator)   # noqa: E731
+    cert = P.cell_certificate(resolvent=res, e_lo=a(lo), e_hi=a(hi),
+                              rho=a(abs(Fr(cell["rho"][0]))),
+                              cell_e=(lo, hi), grid=4)
     assert set(cert["per_m"]) == set(spec.M_VALUES)
     for m, d in cert["per_m"].items():
         assert d["M_R2"] >= 0
         assert d["W_cover_exact"] >= 0
+    assert cert["resolvent_certificate"]["method"] == "frozen-cover-geometry-C_upper"
 
 
-def test_cell_certificate_requires_a_certified_C():
-    with pytest.raises(P.MissingCertifiedInput):
-        P.cell_certificate(C=600, e_lo=arb(0), e_hi=arb(1),
+def test_cell_certificate_requires_a_certified_resolvent():
+    with pytest.raises(P.UncertifiedResolvent):
+        P.cell_certificate(resolvent=600, e_lo=arb(0), e_hi=arb(1),
                            rho=arb(1) / arb(1000), grid=2)
 
 
