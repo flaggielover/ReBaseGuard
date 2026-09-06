@@ -1,0 +1,119 @@
+{
+  "schema": "rebaseguard.p4z-failure-taxonomy.v1",
+  "result_bearing": false,
+  "scope": "P4, P4X and the four P4Y pilots",
+  "mandatory_separation": {
+    "failures_of_the_theorem_target": 0,
+    "failures_of_the_measurement_architecture": 6,
+    "evidence": "96 theorem-supported cells adjudicated against the unchanged 0.03 / |z|<=4 gate across P4 and P4X; 0 FAILED. The uniform and cauchy behaviours are the theorem's own proved failure modes F1 and F2 (THEOREM.md Sec. 9), i.e. confirmations."
+  },
+  "categories_not_claimed": {
+    "SCIENTIFIC_COUNTEREXAMPLE": "0 of 96 cells failed the gate in either campaign",
+    "ESTIMATOR_BIAS": "no bias demonstrated in production; the coarse-FD bias found by the P4X R0 pilot belongs to a candidate that was rejected and never ran",
+    "PATH_BUDGET_VIOLATION": "24.7493 of 60 authorised CPU-h; 18.5994 of 40 per configuration; sharding preserved total N, block size, estimator, precision rule and gate",
+    "NUMERICAL_CONDITIONING": "SR charts carried in the log domain; P4X anchor phase reproduced 48 frozen comparisons at 1e-12 with 0 mismatches"
+  },
+  "findings": [
+    {
+      "id": "F-01",
+      "statement": "The historical Route-A per-path summand A_m * S_tau^psi has an infinite second moment whenever the innovation law does, which for t1p5 (Student-t, nu=1.5) it does.",
+      "categories": ["ESTIMATOR_VARIANCE"],
+      "layer": "measurement architecture",
+      "mechanism": "psi is bounded for t1p5 (sup|psi| = (nu+1)/(2 sqrt(nu)) = 1.0206) and tau has a geometric tail, so S_tau^psi has every moment. A_m does not: its alarm-causing increment Z_tau inherits the family's x^{-1.5} tail.",
+      "quantified": {
+        "theoretical_tail_index": 1.5,
+        "measured_hill_index_historical_summand": [1.5, 1.6],
+        "top1_share_of_squared_deviation_historical": [0.0098, 0.9746],
+        "source": "micropilots/diagnostics/micropilot.json"
+      },
+      "documented_misstatement": "estimators.py asserts that a heavy-tailed stopped gain 'has a finite variance but an infinite fourth moment'. False for t1p5. The batch-mean remedy it justifies does not repair an infinite second moment: block means of alpha-stable summands keep tail index alpha.",
+      "affects": ["P4", "P4X", "P4Y"]
+    },
+    {
+      "id": "F-02",
+      "statement": "The historical Route-B CRN central difference is a rare-event estimator of a heavy-tailed jump.",
+      "categories": ["ESTIMATOR_VARIANCE", "INSUFFICIENT_POWER"],
+      "layer": "measurement architecture",
+      "mechanism": "Under CRN the pathwise difference of A_m is exactly -2h whenever the two shifted runs agree in stopping time and window indices, contributing exactly 1. All variance lives on the rare disagreement paths, where the value is O(Z_tau / 2h) with an amplification of 10 to 40.",
+      "quantified": {
+        "worst_historical_allocation_paths": 2255250000,
+        "worst_historical_allocation_cpu_seconds": 66759.4,
+        "relative_se_reached": 0.006175,
+        "configuration": "frozen/cusum@5/t1p5"
+      },
+      "affects": ["P4", "P4X"]
+    },
+    {
+      "id": "F-03",
+      "statement": "The batch standard error reported for every heavy cell estimates a quantity that does not exist, so every derived z is unreliable.",
+      "categories": ["ESTIMATOR_VARIANCE", "CERTIFICATE_WIDTH"],
+      "layer": "measurement architecture",
+      "mechanism": "Pilot-3 froze a normal-theory 1/sqrt(2(n-1)) uncertainty for a tail-index-1.5 law and was stopped. Pilot-4 showed that at b=250000 two independent 2048-block pools agreed to 2-4 % while one block carried 21-25 % of the squared deviation: agreement diagnostics cannot detect this, concentration diagnostics can.",
+      "quantified": {
+        "best_heavy_reference_accuracy_lower_bound": 0.2293,
+        "target": 0.90,
+        "finite_variance_control_lower_bound": 0.9019,
+        "source": "p4y_pilot4_measurement/PILOT4_REPORT.md sections 8 and 9"
+      },
+      "affects": ["P4", "P4X", "P4Y"]
+    },
+    {
+      "id": "F-04",
+      "statement": "Checkpoint A's precision precondition admits a state satisfying neither of its two branches, leaving 8 cells unadjudicable.",
+      "categories": ["STOPPING_RULE_DEFECT", "GOVERNANCE_VIOLATION"],
+      "layer": "measurement architecture",
+      "mechanism": "Section 8.1 permits at most one top-up; gate X6 requires each route to reach r* or be declared PRECISION_LIMITED from projected cost alone. A route that takes its top-up, misses r*, and hits no cap satisfies neither.",
+      "quantified": {
+        "cells_precondition_not_met": 8,
+        "configurations": ["frozen/cusum@5/t1p5", "frozen/cusum@5/t3", "frozen/sr@520.886/t1p5", "reduced/sr@20/t1p5"],
+        "r_star": 0.010823063
+      },
+      "note": "A defect in the rule's totality, not a breach of it. P4X applied its own rule correctly and refused to count the cells as passes.",
+      "affects": ["P4X"]
+    },
+    {
+      "id": "F-05",
+      "statement": "N_req targets an expectation where the gate needs a quantile, so the realised precision attains the target with probability near one half.",
+      "categories": ["STOPPING_RULE_DEFECT", "INSUFFICIENT_POWER"],
+      "layer": "measurement architecture",
+      "quantified": {
+        "attainment_probability_under_normality_B12": 0.557,
+        "attainment_probability_under_normality_B24": 0.539,
+        "measured_under_estimation_rate_pooled": 0.75,
+        "measured_under_estimation_rate_heaviest_cell": 1.0,
+        "source": "p4y_precision_governance_pilot/PILOT_REPORT.md sections 1.2 and 1.3"
+      },
+      "affects": ["P4X"]
+    },
+    {
+      "id": "F-06",
+      "statement": "P4's Gaussian-consistency gate divided by one campaign's standard error alone, treating the closed Monte Carlo values as exact.",
+      "categories": ["IMPLEMENTATION_DEFECT", "CERTIFICATE_WIDTH"],
+      "layer": "measurement architecture",
+      "quantified": {
+        "worst_z_single_error": 12.911638828585788,
+        "worst_z_combined_error": 2.9768218705413254,
+        "limit": 4.0
+      },
+      "status": "ALREADY REPAIRED BY P4X obligation C5 as a new preregistered object. P4's own gate remains failed and untouched.",
+      "affects": ["P4"]
+    }
+  ],
+  "proved_failure_modes_confirmed_not_failures": [
+    {
+      "id": "N-01",
+      "family": "uniform",
+      "initial_category": "NOT_ESTABLISHED",
+      "resolution": "THEOREM.md Sec. 9 F1: moving support breaks (A3) and the identity is FALSE with exact defect 2. Discharged analytically, by Route Q, and by an exact rational Arb certificate; 16/16 Monte Carlo cells corroborate at |z| 468-714.",
+      "layer": "theorem, and proved"
+    },
+    {
+      "id": "N-02",
+      "family": "cauchy",
+      "initial_category": "NOT_ESTABLISHED",
+      "resolution": "THEOREM.md Sec. 9 F2: no first moment, so E|A_1| = infinity and the estimand does not exist. A two-route discrepancy statistic cannot express non-existence, which is why P4's counterexample gate could not fire. Discharged analytically by P4X obligation C4 with new compute NONE.",
+      "layer": "theorem, and proved"
+    }
+  ],
+  "conclusion": "F-01, F-02 and F-03 are one defect seen three times: the per-path summand carries the innovation law's tail. F-04 and F-05 are governance consequences of trying to buy precision the estimator cannot deliver. F-06 is independent and already repaired. A successor that changes only the allocation rule cannot work; P4X and P4Y demonstrated that across five campaigns."
+}

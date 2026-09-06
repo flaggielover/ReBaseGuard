@@ -1,0 +1,240 @@
+{
+  "schema": "rebaseguard.p4z-checkpoint.v1",
+  "checkpoint": "P4Z_CHECKPOINT_1",
+  "status": "FROZEN",
+  "binding_on": "any P4Z production run",
+  "binding_on_history": false,
+  "verdict": "P4Z_READY_FOR_NUMERICAL_QUALIFICATION",
+  "production_run_launched": false,
+  "scientific_results_produced": false,
+  "immutable_history": {
+    "P4_ORIGINAL_VERDICT": "PARTIAL",
+    "P4X_SUCCESSOR_VERDICT_AS_RECORDED_ON_P4X_BRANCH": "PARTIAL",
+    "P4X_SUCCESSOR_VERDICT_AS_RECORDED_ON_P4Y_BRANCHES": "FAIL",
+    "P4X_SCIENTIFIC_FAILURES": "NONE",
+    "P4Y_OUTCOME": "DO_NOT_FREEZE_P4Y",
+    "LEVEL4_GLOBAL_CLOSURE": "NO",
+    "p4z_adopts_neither_p4x_label": true
+  },
+  "theorem": {
+    "source": "level4/closure_proofs/p4_theory_generalization",
+    "tree_object": "eede90383da44c250871b1bb97d12045c897c8d9",
+    "theorem_md_blob": "1fd9c35ae69f273c0acb2aad7106787a53b08a7e",
+    "proof_md_blob": "3af5d735927623af1026b25a9414ff9bc6152350",
+    "protocol_blob": "4f2b560ba119f072841efd26c2da40f068c741e0",
+    "protocol_sha256": "2afa247e986f7c4ff063bf2bda60386a9783d001244821e7eb5aff12db03e627",
+    "witness_sha256": "8c8173f708d2945608ec6c063d8494aec6772676a45890c0ed81069b0481ea15",
+    "modification": "NOT PERMITTED"
+  },
+  "estimand": {
+    "definition": "Gamma_{D,m,f} = E_0[A_m * S_tau^psi]",
+    "theorem_reference": "G1a",
+    "cells": 96,
+    "contract_file": "configs/estimand_contract.json",
+    "contract_sha256": "e04f5a6be23e3867e13be838ba6c74d5dd7993072f6455eddd329453b3802019"
+  },
+  "estimators": {
+    "primary": {
+      "name": "RB-SCORE",
+      "file": "src/rebaseguard_p4z/rbscore.py",
+      "sha256": "981f4f09ed17c7afac59e81680128e882a9ee392e93254504d0227660351d975"
+    },
+    "fallback": {
+      "name": "RB-MAP",
+      "file": "src/rebaseguard_p4z/rbmap.py",
+      "sha256": "8166946145d82d5049665d78a80ff43d705d4e40f6b0d326af9d8de1e1648ec3"
+    },
+    "analytic_contract": {
+      "file": "src/rebaseguard_p4z/analytic.py",
+      "sha256": "71e576e2ad218801dbee80ebfbf0108e10b0128549e6500404ac813ac1ffc111"
+    },
+    "package_init": {
+      "file": "src/rebaseguard_p4z/__init__.py",
+      "sha256": "d902667c7fc5f3e5436b8107adf6b1ef984ae73ac98c745447823765b3b13f18"
+    },
+    "rejected": [
+      {
+        "name": "historical Route A",
+        "cause": "F-01 infinite second moment for t1p5"
+      },
+      {
+        "name": "historical Route B",
+        "cause": "F-02 rare-event estimator of a heavy-tailed jump"
+      },
+      {
+        "name": "reflection-antithetic",
+        "cause": "P4X R0: VRF 0.001-0.003, a variance increase"
+      },
+      {
+        "name": "Corollary-G2 control variate",
+        "cause": "P4X R0: degenerate, per-path variance 6e-29 to 9e-31"
+      },
+      {
+        "name": "coarse finite-difference step",
+        "cause": "P4X R0: inadmissibly biased for skewnormal4"
+      },
+      {
+        "name": "fine finite-difference step",
+        "cause": "P4X R0 and P4Z FD ladder: variance increase as h shrinks"
+      }
+    ]
+  },
+  "seed_policy": {
+    "rb_score": 4090001,
+    "rb_map": 4090002,
+    "neutrality": 4090003,
+    "fd_ladder": 4090004,
+    "quadrature": 4090005,
+    "stream_rule": "stream_counter(batch, step) = ((batch << 32) | step) * 2**64, inherited verbatim from p4_theory_generalization/src/rebaseguard_p4_general/simulate.py",
+    "forbidden_seed_inputs": [
+      "worker id",
+      "pid",
+      "shard index",
+      "schedule",
+      "wall clock"
+    ],
+    "disjoint_from_historical_p4_p4x_seeds": true
+  },
+  "budget": {
+    "total_cpu_cap_hours": 12.0,
+    "per_configuration_cpu_cap_hours": 2.0,
+    "projected_total_cpu_hours": 6.1573,
+    "projected_route_a_cpu_hours": 0.9389,
+    "projected_route_b_cpu_hours": 5.2183,
+    "blocks_per_route": 200,
+    "historical_p4x_actual_cpu_hours": 24.7493,
+    "projected_worst_configuration_cpu_hours": 1.3389,
+    "note": "path counts are variance derived and timing independent; the CPU projection is a measured rate on the pilot host and carries a x3 safety factor"
+  },
+  "stopping_rule": {
+    "adaptive": false,
+    "description": "every configuration runs its frozen 200 blocks and stops",
+    "top_ups_permitted": 0,
+    "precision_trigger": "none",
+    "post_hoc_extension": "not permitted",
+    "repairs_findings": [
+      "F-04",
+      "F-05"
+    ]
+  },
+  "gate_thresholds_unchanged": {
+    "correspondence_relative_limit": 0.03,
+    "correspondence_z_limit": 4.0,
+    "r_star": 0.010823063,
+    "route_q_tolerance_relative": 1e-06,
+    "neutrality_tolerance_z": 4.0,
+    "fd_steps": [
+      0.05,
+      0.025
+    ],
+    "fd_combination": "per-batch Richardson (4 D(h/2) - D(h)) / 3",
+    "m_grid": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "source": "p4_theory_generalization/configs/P4_PROTOCOL.json and P4X Checkpoint A section 8",
+    "any_threshold_relaxed_by_p4z": false
+  },
+  "uncertainty_rule": {
+    "se_a": "batch standard error over 200 RB-SCORE block means",
+    "se_b": "hypot(batch standard error over 200 RB-MAP block means, T_B)",
+    "T_B": "|Richardson(0.2,0.1) - Richardson(0.05,0.025)| from the frozen FD ladder, rounded outward",
+    "rationale": "the historical |z| gate divided by Monte Carlo error alone; at P4Z precision the deterministic truncation residual is no longer negligible beneath it. Including a known error term widens the uncertainty honestly and does not move the threshold.",
+    "pass": "rel <= 0.03 AND z <= 4.0 AND both routes met r* AND both routes passed scale stability",
+    "fail": "rel > 0.03 OR z > 4.0, with both preconditions met",
+    "inconclusive": "any precondition unmet, any kill gate fired, or BUDGET_EXCLUDED",
+    "almost_pass": "does not exist",
+    "scale_stability": {
+      "top1_share_max": 0.1,
+      "top5_share_max": 0.3,
+      "source": "P4Y Pilot-4"
+    },
+    "multiple_comparison_correction": "none applied and none removed; the frozen gate is a per-cell conjunction over 96 cells and is inherited as it stands"
+  },
+  "kill_gates": [
+    {
+      "id": "K1",
+      "when": "before any block, per family",
+      "condition": "any of the four alarm-set integrals differs from adaptive quadrature by more than 1e-7",
+      "action": "ABORT campaign"
+    },
+    {
+      "id": "K2",
+      "when": "before any block, per detector",
+      "condition": "alarm_bounds disagrees with the frozen Detector.step on any of 1e5 probe residuals",
+      "action": "ABORT campaign"
+    },
+    {
+      "id": "K3",
+      "when": "Stage 0, after 20 blocks, per configuration",
+      "condition": "measured per-path relative sd exceeds the model by more than the x4 safety factor",
+      "action": "KILL configuration; cells INCONCLUSIVE"
+    },
+    {
+      "id": "K4",
+      "when": "Stage 0, per configuration",
+      "condition": "projected CPU to complete exceeds the 2.0 CPU-h per-configuration cap",
+      "action": "BUDGET_EXCLUDED; cells INCONCLUSIVE; no blocks bought"
+    },
+    {
+      "id": "K5",
+      "when": "after 200 blocks, per route",
+      "condition": "top-1 share > 0.10 or top-5 share > 0.30 over the 200 block values",
+      "action": "route not scale-stable; cells INCONCLUSIVE"
+    },
+    {
+      "id": "K6",
+      "when": "after 200 blocks, per route",
+      "condition": "achieved Monte Carlo relative SE > r*",
+      "action": "precondition unmet; cells INCONCLUSIVE"
+    },
+    {
+      "id": "K7",
+      "when": "per configuration, on the FD ladder",
+      "condition": "Richardson(0.2,0.1) and Richardson(0.05,0.025) differ by more than 0.02 relative",
+      "action": "RB-MAP unusable on that configuration; cells INCONCLUSIVE"
+    },
+    {
+      "id": "K8",
+      "when": "continuous",
+      "condition": "total CPU reaches 12.0 CPU-h",
+      "action": "STOP; unfinished cells INCONCLUSIVE"
+    },
+    {
+      "id": "K9",
+      "when": "continuous",
+      "condition": "any producer-gate failure: manifest mismatch, import outside the TCB, thread count != 1, stale producer hash, resume-key mismatch",
+      "action": "ABORT campaign"
+    }
+  ],
+  "kill_gate_trigger_discipline": "K3, K5, K6 and K7 read precision and stability statistics only. None reads a discrepancy, a z, the sign of a disagreement, whether a cell is close to passing, or whether the campaign would close.",
+  "producer_contract": "CAMPAIGN_GOVERNANCE.md section 3",
+  "pilot_plan": {
+    "stage_0": "20 blocks per configuration, all 24 configurations, to check the variance model and fire K3/K4 before the budget is committed; reads variance and cost only",
+    "stage_1": "the remaining 180 blocks"
+  },
+  "full_run_command": {
+    "authorised_by_this_checkpoint": false,
+    "command_when_authorised": "OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 python production/run_p4z.py --checkpoint configs/checkpoint_p4z.json --stage 0",
+    "note": "production/ does not exist in this commit, by design",
+    "host_constraint": "must not be scheduled on a host whose cores are held by the CUSUM Aux4 campaign"
+  },
+  "residual_risks": [
+    "19 of 24 configurations were never piloted; laplace, logistic and skewnormal4 sit on the gaussian regime envelope (handled by Stage 0 and K3)",
+    "skewnormal4 is the least-exercised analytic branch, the only asymmetric family and the only non-elementary Mlow (handled by K1 at run time)",
+    "at P4Z precision |z| <= 4 becomes the binding gate rather than the 3 % relative gate; this is a property of the frozen gate, not of any estimator, and the threshold is not touched",
+    "RB-MAP is less independent than the historical Route B because it uses f and F analytically; disclosed, partly offset by the Route-Q and Corollary-G2 controls",
+    "both routes share the analytic TCB (handled by K1 and the fail-closed producer gate)"
+  ],
+  "no_result_change_governance_statement": "P4Z produces no scientific result artifact and changes no historical verdict. P4 remains PARTIAL. P4X and the four P4Y pilots remain exactly as their own branches record them. No PARTIAL, FAIL or INCOMPLETE is converted to PASS. No frozen numerical gate is relaxed. The only precision number P4Z chooses, 0.0025, is tighter than the frozen r*, which is not a threshold change.",
+  "claims_explicitly_not_made": [
+    "historical P4 repaired",
+    "P4 CLOSED",
+    "P5Y CLOSED",
+    "Level-4 CLOSED",
+    "production ready",
+    "the P4Z gate will pass"
+  ]
+}

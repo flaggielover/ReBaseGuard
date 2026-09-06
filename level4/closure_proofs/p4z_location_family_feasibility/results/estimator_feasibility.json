@@ -1,0 +1,440 @@
+{
+  "design": {
+    "minimum_blocks_per_route": 200,
+    "minimum_blocks_rationale": "P4X's 8 unadjudicable cells and P4Y Pilot-4's negative result both trace to a batch standard error estimated from too few blocks of a badly concentrated law.  200 blocks makes the SE itself a trustworthy statistic once the summand has finite variance, which is what the RB construction supplies.",
+    "safety_factor_on_cpu": 3.0,
+    "safety_factor_on_variance": 4.0,
+    "target_is_tighter_than_r_star_by": 4.329225200000001,
+    "target_relative_se_per_route": 0.0025
+  },
+  "extrapolation_risk": {
+    "configurations_covered_by_pilot": 5,
+    "configurations_total": 24,
+    "families_never_piloted": [
+      "laplace",
+      "logistic",
+      "skewnormal4"
+    ],
+    "note": "laplace, logistic and skewnormal4 are all light-tailed with bounded or near-linear score; they are placed on the gaussian envelope.  skewnormal4 is additionally asymmetric, so its cost is plausible but its analytic partial mean is the least exercised part of the contract.  Stage 0 of the campaign must pilot it before the budget is committed."
+  },
+  "frozen_unchanged": {
+    "fd_steps": [
+      0.05,
+      0.025
+    ],
+    "m_grid": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "note": "no scientific threshold is altered by P4Z",
+    "r_star": 0.010823063,
+    "relative_gate": 0.03,
+    "z_gate": 4.0
+  },
+  "measured_cells": {
+    "gaussian/cusum@2": {
+      "detector": "cusum@2",
+      "family": "gaussian",
+      "historical_route_a_relative_sd_per_path": 0.998418976829788,
+      "rb_map_cpu_seconds_per_million_paths": 9.86071875,
+      "rb_map_relative_sd_per_path": 1.1098132645797374,
+      "rb_score_cpu_seconds_per_million_paths": 2.039234375,
+      "rb_score_relative_sd_per_path": 0.9726943612637886,
+      "regime": "control",
+      "variance_reduction_factor_route_a": 1.0535929537321846,
+      "worst_hill_rb_score": 3.831074725835297,
+      "worst_top1_share_historical": 0.0027692668332592357,
+      "worst_top1_share_rb_score": 0.00465570446520658
+    },
+    "t1p5/cusum@5": {
+      "detector": "cusum@5",
+      "family": "t1p5",
+      "historical_route_a_relative_sd_per_path": 29.686092159180607,
+      "rb_map_cpu_seconds_per_million_paths": 23.09039375,
+      "rb_map_relative_sd_per_path": 1.921419082719554,
+      "rb_score_cpu_seconds_per_million_paths": 3.8329437500000005,
+      "rb_score_relative_sd_per_path": 1.2163130592981066,
+      "regime": "heavy",
+      "variance_reduction_factor_route_a": 595.6831608193976,
+      "worst_hill_rb_score": 3.5241202880288034,
+      "worst_top1_share_historical": 0.2964853182505211,
+      "worst_top1_share_rb_score": 0.011694592324766991
+    },
+    "t1p5/sr@20": {
+      "detector": "sr@20",
+      "family": "t1p5",
+      "historical_route_a_relative_sd_per_path": 12.064213752378441,
+      "rb_map_cpu_seconds_per_million_paths": 12.609037499999998,
+      "rb_map_relative_sd_per_path": 2.9817013734155817,
+      "rb_score_cpu_seconds_per_million_paths": 2.4028718749999953,
+      "rb_score_relative_sd_per_path": 0.9400535103779375,
+      "regime": "heavy",
+      "variance_reduction_factor_route_a": 164.69973322650137,
+      "worst_hill_rb_score": 4.033875033871659,
+      "worst_top1_share_historical": 0.4361982637704511,
+      "worst_top1_share_rb_score": 0.004535495007288432
+    },
+    "t1p5/sr@520.886": {
+      "detector": "sr@520.886",
+      "family": "t1p5",
+      "historical_route_a_relative_sd_per_path": 128.2716137332034,
+      "rb_map_cpu_seconds_per_million_paths": 30.243193749999996,
+      "rb_map_relative_sd_per_path": 1.7547376675887918,
+      "rb_score_cpu_seconds_per_million_paths": 5.426056249999999,
+      "rb_score_relative_sd_per_path": 1.2419255374449627,
+      "regime": "heavy",
+      "variance_reduction_factor_route_a": 10667.680548724264,
+      "worst_hill_rb_score": 4.065436343700994,
+      "worst_top1_share_historical": 0.9746115959739418,
+      "worst_top1_share_rb_score": 0.0063000068368693155
+    },
+    "t3/cusum@5": {
+      "detector": "cusum@5",
+      "family": "t3",
+      "historical_route_a_relative_sd_per_path": 19.928848693355242,
+      "rb_map_cpu_seconds_per_million_paths": 403.0061,
+      "rb_map_relative_sd_per_path": 1.8483229978914415,
+      "rb_score_cpu_seconds_per_million_paths": 72.291746875,
+      "rb_score_relative_sd_per_path": 2.2982275043344536,
+      "regime": "moderate",
+      "variance_reduction_factor_route_a": 75.19316824257541,
+      "worst_hill_rb_score": 3.3327217017092754,
+      "worst_top1_share_historical": 0.00978300885951078,
+      "worst_top1_share_rb_score": 0.011603431571497947
+    }
+  },
+  "pilot_source": "level4/closure_proofs/p4z_location_family_feasibility/micropilots/diagnostics/micropilot.json",
+  "plan": [
+    {
+      "block_paths": 3942,
+      "blocks": 200,
+      "configuration": "reduced/cusum@2/gaussian",
+      "from_pilot": true,
+      "projected_relative_se": 0.0025,
+      "regime": "light",
+      "route_a_cpu_seconds": 4.82319714375,
+      "route_a_paths": 788400,
+      "route_b_cpu_seconds": 23.3225719875,
+      "route_b_paths": 788400
+    },
+    {
+      "block_paths": 3942,
+      "blocks": 200,
+      "configuration": "reduced/cusum@2/laplace",
+      "from_pilot": false,
+      "projected_relative_se": 0.0025,
+      "regime": "light",
+      "route_a_cpu_seconds": 4.82319714375,
+      "route_a_paths": 788400,
+      "route_b_cpu_seconds": 23.3225719875,
+      "route_b_paths": 788400
+    },
+    {
+      "block_paths": 3942,
+      "blocks": 200,
+      "configuration": "reduced/cusum@2/logistic",
+      "from_pilot": false,
+      "projected_relative_se": 0.0025,
+      "regime": "light",
+      "route_a_cpu_seconds": 4.82319714375,
+      "route_a_paths": 788400,
+      "route_b_cpu_seconds": 23.3225719875,
+      "route_b_paths": 788400
+    },
+    {
+      "block_paths": 3942,
+      "blocks": 200,
+      "configuration": "reduced/cusum@2/skewnormal4",
+      "from_pilot": false,
+      "projected_relative_se": 0.0025,
+      "regime": "light",
+      "route_a_cpu_seconds": 4.82319714375,
+      "route_a_paths": 788400,
+      "route_b_cpu_seconds": 23.3225719875,
+      "route_b_paths": 788400
+    },
+    {
+      "block_paths": 16902,
+      "blocks": 200,
+      "configuration": "reduced/cusum@2/t3",
+      "from_pilot": false,
+      "projected_relative_se": 0.0025,
+      "regime": "moderate",
+      "route_a_cpu_seconds": 733.12506340875,
+      "route_a_paths": 3380400,
+      "route_b_cpu_seconds": 4086.96546132,
+      "route_b_paths": 3380400
+    },
+    {
+      "block_paths": 28450,
+      "blocks": 200,
+      "configuration": "reduced/cusum@2/t1p5",
+      "from_pilot": false,
+      "projected_relative_se": 0.0025,
+      "regime": "heavy",
+      "route_a_cpu_seconds": 92.62278018749998,
+      "route_a_paths": 5690000,
+      "route_b_cpu_seconds": 516.2513173125,
+      "route_b_paths": 5690000
+    },
+    {
+      "block_paths": 3942,
+      "blocks": 200,
+      "configuration": "reduced/sr@20/gaussian",
+      "from_pilot": false,
+      "projected_relative_se": 0.0025,
+      "regime": "light",
+      "route_a_cpu_seconds": 4.82319714375,
+      "route_a_paths": 788400,
+      "route_b_cpu_seconds": 23.3225719875,
+      "route_b_paths": 788400
+    },
+    {
+      "block_paths": 3942,
+      "blocks": 200,
+      "configuration": "reduced/sr@20/laplace",
+      "from_pilot": false,
+      "projected_relative_se": 0.0025,
+      "regime": "light",
+      "route_a_cpu_seconds": 4.82319714375,
+      "route_a_paths": 788400,
+      "route_b_cpu_seconds": 23.3225719875,
+      "route_b_paths": 788400
+    },
+    {
+      "block_paths": 3942,
+      "blocks": 200,
+      "configuration": "reduced/sr@20/logistic",
+      "from_pilot": false,
+      "projected_relative_se": 0.0025,
+      "regime": "light",
+      "route_a_cpu_seconds": 4.82319714375,
+      "route_a_paths": 788400,
+      "route_b_cpu_seconds": 23.3225719875,
+      "route_b_paths": 788400
+    },
+    {
+      "block_paths": 3942,
+      "blocks": 200,
+      "configuration": "reduced/sr@20/skewnormal4",
+      "from_pilot": false,
+      "projected_relative_se": 0.0025,
+      "regime": "light",
+      "route_a_cpu_seconds": 4.82319714375,
+      "route_a_paths": 788400,
+      "route_b_cpu_seconds": 23.3225719875,
+      "route_b_paths": 788400
+    },
+    {
+      "block_paths": 16902,
+      "blocks": 200,
+      "configuration": "reduced/sr@20/t3",
+      "from_pilot": false,
+      "projected_relative_se": 0.0025,
+      "regime": "moderate",
+      "route_a_cpu_seconds": 733.12506340875,
+      "route_a_paths": 3380400,
+      "route_b_cpu_seconds": 4086.96546132,
+      "route_b_paths": 3380400
+    },
+    {
+      "block_paths": 28450,
+      "blocks": 200,
+      "configuration": "reduced/sr@20/t1p5",
+      "from_pilot": true,
+      "projected_relative_se": 0.0025,
+      "regime": "heavy",
+      "route_a_cpu_seconds": 92.62278018749998,
+      "route_a_paths": 5690000,
+      "route_b_cpu_seconds": 516.2513173125,
+      "route_b_paths": 5690000
+    },
+    {
+      "block_paths": 3942,
+      "blocks": 200,
+      "configuration": "frozen/cusum@5/gaussian",
+      "from_pilot": false,
+      "projected_relative_se": 0.0025,
+      "regime": "light",
+      "route_a_cpu_seconds": 4.82319714375,
+      "route_a_paths": 788400,
+      "route_b_cpu_seconds": 23.3225719875,
+      "route_b_paths": 788400
+    },
+    {
+      "block_paths": 3942,
+      "blocks": 200,
+      "configuration": "frozen/cusum@5/laplace",
+      "from_pilot": false,
+      "projected_relative_se": 0.0025,
+      "regime": "light",
+      "route_a_cpu_seconds": 4.82319714375,
+      "route_a_paths": 788400,
+      "route_b_cpu_seconds": 23.3225719875,
+      "route_b_paths": 788400
+    },
+    {
+      "block_paths": 3942,
+      "blocks": 200,
+      "configuration": "frozen/cusum@5/logistic",
+      "from_pilot": false,
+      "projected_relative_se": 0.0025,
+      "regime": "light",
+      "route_a_cpu_seconds": 4.82319714375,
+      "route_a_paths": 788400,
+      "route_b_cpu_seconds": 23.3225719875,
+      "route_b_paths": 788400
+    },
+    {
+      "block_paths": 3942,
+      "blocks": 200,
+      "configuration": "frozen/cusum@5/skewnormal4",
+      "from_pilot": false,
+      "projected_relative_se": 0.0025,
+      "regime": "light",
+      "route_a_cpu_seconds": 4.82319714375,
+      "route_a_paths": 788400,
+      "route_b_cpu_seconds": 23.3225719875,
+      "route_b_paths": 788400
+    },
+    {
+      "block_paths": 16902,
+      "blocks": 200,
+      "configuration": "frozen/cusum@5/t3",
+      "from_pilot": true,
+      "projected_relative_se": 0.0025,
+      "regime": "moderate",
+      "route_a_cpu_seconds": 733.12506340875,
+      "route_a_paths": 3380400,
+      "route_b_cpu_seconds": 4086.96546132,
+      "route_b_paths": 3380400
+    },
+    {
+      "block_paths": 28450,
+      "blocks": 200,
+      "configuration": "frozen/cusum@5/t1p5",
+      "from_pilot": true,
+      "projected_relative_se": 0.0025,
+      "regime": "heavy",
+      "route_a_cpu_seconds": 92.62278018749998,
+      "route_a_paths": 5690000,
+      "route_b_cpu_seconds": 516.2513173125,
+      "route_b_paths": 5690000
+    },
+    {
+      "block_paths": 3942,
+      "blocks": 200,
+      "configuration": "frozen/sr@520.886/gaussian",
+      "from_pilot": false,
+      "projected_relative_se": 0.0025,
+      "regime": "light",
+      "route_a_cpu_seconds": 4.82319714375,
+      "route_a_paths": 788400,
+      "route_b_cpu_seconds": 23.3225719875,
+      "route_b_paths": 788400
+    },
+    {
+      "block_paths": 3942,
+      "blocks": 200,
+      "configuration": "frozen/sr@520.886/laplace",
+      "from_pilot": false,
+      "projected_relative_se": 0.0025,
+      "regime": "light",
+      "route_a_cpu_seconds": 4.82319714375,
+      "route_a_paths": 788400,
+      "route_b_cpu_seconds": 23.3225719875,
+      "route_b_paths": 788400
+    },
+    {
+      "block_paths": 3942,
+      "blocks": 200,
+      "configuration": "frozen/sr@520.886/logistic",
+      "from_pilot": false,
+      "projected_relative_se": 0.0025,
+      "regime": "light",
+      "route_a_cpu_seconds": 4.82319714375,
+      "route_a_paths": 788400,
+      "route_b_cpu_seconds": 23.3225719875,
+      "route_b_paths": 788400
+    },
+    {
+      "block_paths": 3942,
+      "blocks": 200,
+      "configuration": "frozen/sr@520.886/skewnormal4",
+      "from_pilot": false,
+      "projected_relative_se": 0.0025,
+      "regime": "light",
+      "route_a_cpu_seconds": 4.82319714375,
+      "route_a_paths": 788400,
+      "route_b_cpu_seconds": 23.3225719875,
+      "route_b_paths": 788400
+    },
+    {
+      "block_paths": 16902,
+      "blocks": 200,
+      "configuration": "frozen/sr@520.886/t3",
+      "from_pilot": false,
+      "projected_relative_se": 0.0025,
+      "regime": "moderate",
+      "route_a_cpu_seconds": 733.12506340875,
+      "route_a_paths": 3380400,
+      "route_b_cpu_seconds": 4086.96546132,
+      "route_b_paths": 3380400
+    },
+    {
+      "block_paths": 28450,
+      "blocks": 200,
+      "configuration": "frozen/sr@520.886/t1p5",
+      "from_pilot": true,
+      "projected_relative_se": 0.0025,
+      "regime": "heavy",
+      "route_a_cpu_seconds": 92.62278018749998,
+      "route_a_paths": 5690000,
+      "route_b_cpu_seconds": 516.2513173125,
+      "route_b_paths": 5690000
+    }
+  ],
+  "purpose": "falsifiable cost/power model for the P4Z successor campaign",
+  "regime_envelopes": {
+    "heavy": {
+      "rb_map_cpu_seconds_per_million_paths": 30.243193749999996,
+      "rb_map_relative_sd_per_path": 2.9817013734155817,
+      "rb_score_cpu_seconds_per_million_paths": 5.426056249999999,
+      "rb_score_relative_sd_per_path": 1.2419255374449627,
+      "source_cells": [
+        "t1p5/cusum@5",
+        "t1p5/sr@520.886",
+        "t1p5/sr@20"
+      ]
+    },
+    "light": {
+      "rb_map_cpu_seconds_per_million_paths": 9.86071875,
+      "rb_map_relative_sd_per_path": 1.1098132645797374,
+      "rb_score_cpu_seconds_per_million_paths": 2.039234375,
+      "rb_score_relative_sd_per_path": 0.9726943612637886,
+      "source_cells": [
+        "gaussian/cusum@2"
+      ]
+    },
+    "moderate": {
+      "rb_map_cpu_seconds_per_million_paths": 403.0061,
+      "rb_map_relative_sd_per_path": 1.8483229978914415,
+      "rb_score_cpu_seconds_per_million_paths": 72.291746875,
+      "rb_score_relative_sd_per_path": 2.2982275043344536,
+      "source_cells": [
+        "t3/cusum@5"
+      ]
+    }
+  },
+  "result_bearing": false,
+  "schema": "rebaseguard.p4z-estimator-feasibility.v1",
+  "totals": {
+    "historical_p4x_total_cpu_hours": 24.7493,
+    "historical_p4x_worst_configuration_cpu_hours": 18.5994,
+    "route_a_cpu_hours": 0.9389340357458331,
+    "route_b_cpu_hours": 5.21834118509167,
+    "total_cpu_hours": 6.157275220837502
+  }
+}
