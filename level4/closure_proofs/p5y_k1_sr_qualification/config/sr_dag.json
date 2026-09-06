@@ -1,0 +1,2239 @@
+{
+ "audit": {
+  "findings": [],
+  "n_edges": 351,
+  "n_nodes": 99,
+  "obligation_classes_covered": [
+   [
+    "assembly",
+    "1"
+   ],
+   [
+    "assembly",
+    "2"
+   ],
+   [
+    "assembly",
+    "3"
+   ],
+   [
+    "assembly",
+    "5"
+   ],
+   [
+    "curvature",
+    "1"
+   ],
+   [
+    "curvature",
+    "2"
+   ],
+   [
+    "curvature",
+    "3"
+   ],
+   [
+    "curvature",
+    "5"
+   ],
+   [
+    "dependency_bundle",
+    "orders_0_1"
+   ],
+   [
+    "object",
+    "F_0"
+   ],
+   [
+    "object",
+    "F_1"
+   ],
+   [
+    "object",
+    "F_2"
+   ],
+   [
+    "object",
+    "F_3"
+   ],
+   [
+    "object",
+    "F_4"
+   ],
+   [
+    "object",
+    "S_0"
+   ],
+   [
+    "object",
+    "S_1"
+   ],
+   [
+    "object",
+    "S_2"
+   ],
+   [
+    "object",
+    "S_3"
+   ],
+   [
+    "object",
+    "S_4"
+   ],
+   [
+    "object",
+    "dF_0"
+   ],
+   [
+    "object",
+    "dF_1"
+   ],
+   [
+    "object",
+    "dF_2"
+   ],
+   [
+    "object",
+    "dF_3"
+   ],
+   [
+    "object",
+    "dF_4"
+   ],
+   [
+    "object",
+    "h_1"
+   ],
+   [
+    "object",
+    "h_2"
+   ],
+   [
+    "object",
+    "h_3"
+   ],
+   [
+    "object",
+    "h_4"
+   ]
+  ],
+  "ok": true,
+  "sr_top_level_obligations": 8849,
+  "topological_order_len": 99,
+  "universe_preserved": true
+ },
+ "cells": 316,
+ "detector": "SR",
+ "m_values": [
+  1,
+  2,
+  3,
+  5
+ ],
+ "nodes": {
+  "F:0:k0": {
+   "certificate_output": "top-level object F_0",
+   "class": "resolvent",
+   "dependencies": [
+    "op:resolvent",
+    "S:0:k0",
+    "h:1:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "epsF_r = C (deltaF_r + epsS_r)",
+   "exact_source": "RAW-VARIABLE: (I - K_e) F_r = S_r + e * h_1   [SR_DERIVATION s2]",
+   "id": "F:0:k0",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "F_equation_certificate_value",
+   "r_index": 0
+  },
+  "F:0:k1": {
+   "certificate_output": "top-level object dF_0",
+   "class": "resolvent",
+   "dependencies": [
+    "op:resolvent",
+    "F:0:k0",
+    "op:K:k1",
+    "S:0:k1",
+    "h:1:k0",
+    "h:1:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "epsD_r = C (deltaD_r + k1 epsF_r + epsS1_r)",
+   "exact_source": "(I - K_e) D_r = K' F_r + S_r' + h_1 + e h_1'   [SR_DERIVATION s4]",
+   "id": "F:0:k1",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "dF_equation_certificate",
+   "r_index": 0
+  },
+  "F:0:k2": {
+   "certificate_output": "curvature bundle input (not a separate top-level object)",
+   "class": "resolvent",
+   "dependencies": [
+    "op:resolvent",
+    "F:0:k0",
+    "F:0:k1",
+    "op:K:k1",
+    "op:K:k2",
+    "S:0:k2",
+    "h:1:k1",
+    "h:1:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "epsH_r = C (deltaH_r + k2 epsF_r + 2 k1 epsD_r + epsS2_r)  [whole cell]",
+   "exact_source": "(I - K_e) H_r = K'' F_r + 2 K' D_r + S_r'' + 2 h_1' + e h_1''",
+   "id": "F:0:k2",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "curvature_envelope",
+   "r_index": 0
+  },
+  "F:1:k0": {
+   "certificate_output": "top-level object F_1",
+   "class": "resolvent",
+   "dependencies": [
+    "op:resolvent",
+    "S:1:k0",
+    "h:1:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "epsF_r = C (deltaF_r + epsS_r)",
+   "exact_source": "RAW-VARIABLE: (I - K_e) F_r = S_r + e * h_1   [SR_DERIVATION s2]",
+   "id": "F:1:k0",
+   "j_index": null,
+   "m_ownership": [
+    2,
+    3,
+    5
+   ],
+   "owner": "F_equation_certificate_value",
+   "r_index": 1
+  },
+  "F:1:k1": {
+   "certificate_output": "top-level object dF_1",
+   "class": "resolvent",
+   "dependencies": [
+    "op:resolvent",
+    "F:1:k0",
+    "op:K:k1",
+    "S:1:k1",
+    "h:1:k0",
+    "h:1:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "epsD_r = C (deltaD_r + k1 epsF_r + epsS1_r)",
+   "exact_source": "(I - K_e) D_r = K' F_r + S_r' + h_1 + e h_1'   [SR_DERIVATION s4]",
+   "id": "F:1:k1",
+   "j_index": null,
+   "m_ownership": [
+    2,
+    3,
+    5
+   ],
+   "owner": "dF_equation_certificate",
+   "r_index": 1
+  },
+  "F:1:k2": {
+   "certificate_output": "curvature bundle input (not a separate top-level object)",
+   "class": "resolvent",
+   "dependencies": [
+    "op:resolvent",
+    "F:1:k0",
+    "F:1:k1",
+    "op:K:k1",
+    "op:K:k2",
+    "S:1:k2",
+    "h:1:k1",
+    "h:1:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "epsH_r = C (deltaH_r + k2 epsF_r + 2 k1 epsD_r + epsS2_r)  [whole cell]",
+   "exact_source": "(I - K_e) H_r = K'' F_r + 2 K' D_r + S_r'' + 2 h_1' + e h_1''",
+   "id": "F:1:k2",
+   "j_index": null,
+   "m_ownership": [
+    2,
+    3,
+    5
+   ],
+   "owner": "curvature_envelope",
+   "r_index": 1
+  },
+  "F:2:k0": {
+   "certificate_output": "top-level object F_2",
+   "class": "resolvent",
+   "dependencies": [
+    "op:resolvent",
+    "S:2:k0",
+    "h:1:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "epsF_r = C (deltaF_r + epsS_r)",
+   "exact_source": "RAW-VARIABLE: (I - K_e) F_r = S_r + e * h_1   [SR_DERIVATION s2]",
+   "id": "F:2:k0",
+   "j_index": null,
+   "m_ownership": [
+    3,
+    5
+   ],
+   "owner": "F_equation_certificate_value",
+   "r_index": 2
+  },
+  "F:2:k1": {
+   "certificate_output": "top-level object dF_2",
+   "class": "resolvent",
+   "dependencies": [
+    "op:resolvent",
+    "F:2:k0",
+    "op:K:k1",
+    "S:2:k1",
+    "h:1:k0",
+    "h:1:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "epsD_r = C (deltaD_r + k1 epsF_r + epsS1_r)",
+   "exact_source": "(I - K_e) D_r = K' F_r + S_r' + h_1 + e h_1'   [SR_DERIVATION s4]",
+   "id": "F:2:k1",
+   "j_index": null,
+   "m_ownership": [
+    3,
+    5
+   ],
+   "owner": "dF_equation_certificate",
+   "r_index": 2
+  },
+  "F:2:k2": {
+   "certificate_output": "curvature bundle input (not a separate top-level object)",
+   "class": "resolvent",
+   "dependencies": [
+    "op:resolvent",
+    "F:2:k0",
+    "F:2:k1",
+    "op:K:k1",
+    "op:K:k2",
+    "S:2:k2",
+    "h:1:k1",
+    "h:1:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "epsH_r = C (deltaH_r + k2 epsF_r + 2 k1 epsD_r + epsS2_r)  [whole cell]",
+   "exact_source": "(I - K_e) H_r = K'' F_r + 2 K' D_r + S_r'' + 2 h_1' + e h_1''",
+   "id": "F:2:k2",
+   "j_index": null,
+   "m_ownership": [
+    3,
+    5
+   ],
+   "owner": "curvature_envelope",
+   "r_index": 2
+  },
+  "F:3:k0": {
+   "certificate_output": "top-level object F_3",
+   "class": "resolvent",
+   "dependencies": [
+    "op:resolvent",
+    "S:3:k0",
+    "h:1:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "epsF_r = C (deltaF_r + epsS_r)",
+   "exact_source": "RAW-VARIABLE: (I - K_e) F_r = S_r + e * h_1   [SR_DERIVATION s2]",
+   "id": "F:3:k0",
+   "j_index": null,
+   "m_ownership": [
+    5
+   ],
+   "owner": "F_equation_certificate_value",
+   "r_index": 3
+  },
+  "F:3:k1": {
+   "certificate_output": "top-level object dF_3",
+   "class": "resolvent",
+   "dependencies": [
+    "op:resolvent",
+    "F:3:k0",
+    "op:K:k1",
+    "S:3:k1",
+    "h:1:k0",
+    "h:1:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "epsD_r = C (deltaD_r + k1 epsF_r + epsS1_r)",
+   "exact_source": "(I - K_e) D_r = K' F_r + S_r' + h_1 + e h_1'   [SR_DERIVATION s4]",
+   "id": "F:3:k1",
+   "j_index": null,
+   "m_ownership": [
+    5
+   ],
+   "owner": "dF_equation_certificate",
+   "r_index": 3
+  },
+  "F:3:k2": {
+   "certificate_output": "curvature bundle input (not a separate top-level object)",
+   "class": "resolvent",
+   "dependencies": [
+    "op:resolvent",
+    "F:3:k0",
+    "F:3:k1",
+    "op:K:k1",
+    "op:K:k2",
+    "S:3:k2",
+    "h:1:k1",
+    "h:1:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "epsH_r = C (deltaH_r + k2 epsF_r + 2 k1 epsD_r + epsS2_r)  [whole cell]",
+   "exact_source": "(I - K_e) H_r = K'' F_r + 2 K' D_r + S_r'' + 2 h_1' + e h_1''",
+   "id": "F:3:k2",
+   "j_index": null,
+   "m_ownership": [
+    5
+   ],
+   "owner": "curvature_envelope",
+   "r_index": 3
+  },
+  "F:4:k0": {
+   "certificate_output": "top-level object F_4",
+   "class": "resolvent",
+   "dependencies": [
+    "op:resolvent",
+    "S:4:k0",
+    "h:1:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "epsF_r = C (deltaF_r + epsS_r)",
+   "exact_source": "RAW-VARIABLE: (I - K_e) F_r = S_r + e * h_1   [SR_DERIVATION s2]",
+   "id": "F:4:k0",
+   "j_index": null,
+   "m_ownership": [
+    5
+   ],
+   "owner": "F_equation_certificate_value",
+   "r_index": 4
+  },
+  "F:4:k1": {
+   "certificate_output": "top-level object dF_4",
+   "class": "resolvent",
+   "dependencies": [
+    "op:resolvent",
+    "F:4:k0",
+    "op:K:k1",
+    "S:4:k1",
+    "h:1:k0",
+    "h:1:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "epsD_r = C (deltaD_r + k1 epsF_r + epsS1_r)",
+   "exact_source": "(I - K_e) D_r = K' F_r + S_r' + h_1 + e h_1'   [SR_DERIVATION s4]",
+   "id": "F:4:k1",
+   "j_index": null,
+   "m_ownership": [
+    5
+   ],
+   "owner": "dF_equation_certificate",
+   "r_index": 4
+  },
+  "F:4:k2": {
+   "certificate_output": "curvature bundle input (not a separate top-level object)",
+   "class": "resolvent",
+   "dependencies": [
+    "op:resolvent",
+    "F:4:k0",
+    "F:4:k1",
+    "op:K:k1",
+    "op:K:k2",
+    "S:4:k2",
+    "h:1:k1",
+    "h:1:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "epsH_r = C (deltaH_r + k2 epsF_r + 2 k1 epsD_r + epsS2_r)  [whole cell]",
+   "exact_source": "(I - K_e) H_r = K'' F_r + 2 K' D_r + S_r'' + 2 h_1' + e h_1''",
+   "id": "F:4:k2",
+   "j_index": null,
+   "m_ownership": [
+    5
+   ],
+   "owner": "curvature_envelope",
+   "r_index": 4
+  },
+  "M_R2:1": {
+   "certificate_output": "curvature obligation m=1",
+   "class": "curvature",
+   "dependencies": [
+    "R:1:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "magnitude of the order-2 whole-cell enclosure; not re-charged",
+   "exact_source": "M_R2 = mag(R2_interval) >= sup_{e in cell} |R''_(D,m)(e)|  [assembly.curvature_bound]",
+   "id": "M_R2:1",
+   "j_index": null,
+   "m_ownership": [
+    1
+   ],
+   "owner": "curvature_envelope",
+   "r_index": null
+  },
+  "M_R2:2": {
+   "certificate_output": "curvature obligation m=2",
+   "class": "curvature",
+   "dependencies": [
+    "R:2:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "magnitude of the order-2 whole-cell enclosure; not re-charged",
+   "exact_source": "M_R2 = mag(R2_interval) >= sup_{e in cell} |R''_(D,m)(e)|  [assembly.curvature_bound]",
+   "id": "M_R2:2",
+   "j_index": null,
+   "m_ownership": [
+    2
+   ],
+   "owner": "curvature_envelope",
+   "r_index": null
+  },
+  "M_R2:3": {
+   "certificate_output": "curvature obligation m=3",
+   "class": "curvature",
+   "dependencies": [
+    "R:3:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "magnitude of the order-2 whole-cell enclosure; not re-charged",
+   "exact_source": "M_R2 = mag(R2_interval) >= sup_{e in cell} |R''_(D,m)(e)|  [assembly.curvature_bound]",
+   "id": "M_R2:3",
+   "j_index": null,
+   "m_ownership": [
+    3
+   ],
+   "owner": "curvature_envelope",
+   "r_index": null
+  },
+  "M_R2:5": {
+   "certificate_output": "curvature obligation m=5",
+   "class": "curvature",
+   "dependencies": [
+    "R:5:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "magnitude of the order-2 whole-cell enclosure; not re-charged",
+   "exact_source": "M_R2 = mag(R2_interval) >= sup_{e in cell} |R''_(D,m)(e)|  [assembly.curvature_bound]",
+   "id": "M_R2:5",
+   "j_index": null,
+   "m_ownership": [
+    5
+   ],
+   "owner": "curvature_envelope",
+   "r_index": null
+  },
+  "R:1:k0": {
+   "certificate_output": "assembly unit m=1 (R_interval)",
+   "class": "assembly",
+   "dependencies": [
+    "F:0:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "exact rational coefficients through Arb division; assembly_arithmetic_excess -> B_interval",
+   "exact_source": "R_m^(k) = (1/m) sum_{r<m} F_r^(k) + sum_t c_(m,t) sum_{r<t} W_(r,t-r-1)^(k),  c_(m,t) = 1/t - 1/m",
+   "id": "R:1:k0",
+   "j_index": null,
+   "m_ownership": [
+    1
+   ],
+   "owner": "value_assembly_arithmetic_not_in_certificate",
+   "r_index": null
+  },
+  "R:1:k1": {
+   "certificate_output": "assembly unit m=1 (D_interval)",
+   "class": "assembly",
+   "dependencies": [
+    "F:0:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "exact rational coefficients through Arb division; assembly_arithmetic_excess -> B_interval",
+   "exact_source": "R_m^(k) = (1/m) sum_{r<m} F_r^(k) + sum_t c_(m,t) sum_{r<t} W_(r,t-r-1)^(k),  c_(m,t) = 1/t - 1/m",
+   "id": "R:1:k1",
+   "j_index": null,
+   "m_ownership": [
+    1
+   ],
+   "owner": "derivative_arithmetic",
+   "r_index": null
+  },
+  "R:1:k2": {
+   "certificate_output": "curvature unit m=1 (R2_interval)",
+   "class": "assembly",
+   "dependencies": [
+    "F:0:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "exact rational coefficients through Arb division; assembly_arithmetic_excess -> B_interval",
+   "exact_source": "R_m^(k) = (1/m) sum_{r<m} F_r^(k) + sum_t c_(m,t) sum_{r<t} W_(r,t-r-1)^(k),  c_(m,t) = 1/t - 1/m",
+   "id": "R:1:k2",
+   "j_index": null,
+   "m_ownership": [
+    1
+   ],
+   "owner": "curvature_envelope",
+   "r_index": null
+  },
+  "R:2:k0": {
+   "certificate_output": "assembly unit m=2 (R_interval)",
+   "class": "assembly",
+   "dependencies": [
+    "F:0:k0",
+    "F:1:k0",
+    "W:0,0:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "exact rational coefficients through Arb division; assembly_arithmetic_excess -> B_interval",
+   "exact_source": "R_m^(k) = (1/m) sum_{r<m} F_r^(k) + sum_t c_(m,t) sum_{r<t} W_(r,t-r-1)^(k),  c_(m,t) = 1/t - 1/m",
+   "id": "R:2:k0",
+   "j_index": null,
+   "m_ownership": [
+    2
+   ],
+   "owner": "value_assembly_arithmetic_not_in_certificate",
+   "r_index": null
+  },
+  "R:2:k1": {
+   "certificate_output": "assembly unit m=2 (D_interval)",
+   "class": "assembly",
+   "dependencies": [
+    "F:0:k1",
+    "F:1:k1",
+    "W:0,0:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "exact rational coefficients through Arb division; assembly_arithmetic_excess -> B_interval",
+   "exact_source": "R_m^(k) = (1/m) sum_{r<m} F_r^(k) + sum_t c_(m,t) sum_{r<t} W_(r,t-r-1)^(k),  c_(m,t) = 1/t - 1/m",
+   "id": "R:2:k1",
+   "j_index": null,
+   "m_ownership": [
+    2
+   ],
+   "owner": "derivative_arithmetic",
+   "r_index": null
+  },
+  "R:2:k2": {
+   "certificate_output": "curvature unit m=2 (R2_interval)",
+   "class": "assembly",
+   "dependencies": [
+    "F:0:k2",
+    "F:1:k2",
+    "W:0,0:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "exact rational coefficients through Arb division; assembly_arithmetic_excess -> B_interval",
+   "exact_source": "R_m^(k) = (1/m) sum_{r<m} F_r^(k) + sum_t c_(m,t) sum_{r<t} W_(r,t-r-1)^(k),  c_(m,t) = 1/t - 1/m",
+   "id": "R:2:k2",
+   "j_index": null,
+   "m_ownership": [
+    2
+   ],
+   "owner": "curvature_envelope",
+   "r_index": null
+  },
+  "R:3:k0": {
+   "certificate_output": "assembly unit m=3 (R_interval)",
+   "class": "assembly",
+   "dependencies": [
+    "F:0:k0",
+    "F:1:k0",
+    "F:2:k0",
+    "W:0,0:k0",
+    "W:0,1:k0",
+    "W:1,0:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "exact rational coefficients through Arb division; assembly_arithmetic_excess -> B_interval",
+   "exact_source": "R_m^(k) = (1/m) sum_{r<m} F_r^(k) + sum_t c_(m,t) sum_{r<t} W_(r,t-r-1)^(k),  c_(m,t) = 1/t - 1/m",
+   "id": "R:3:k0",
+   "j_index": null,
+   "m_ownership": [
+    3
+   ],
+   "owner": "value_assembly_arithmetic_not_in_certificate",
+   "r_index": null
+  },
+  "R:3:k1": {
+   "certificate_output": "assembly unit m=3 (D_interval)",
+   "class": "assembly",
+   "dependencies": [
+    "F:0:k1",
+    "F:1:k1",
+    "F:2:k1",
+    "W:0,0:k1",
+    "W:0,1:k1",
+    "W:1,0:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "exact rational coefficients through Arb division; assembly_arithmetic_excess -> B_interval",
+   "exact_source": "R_m^(k) = (1/m) sum_{r<m} F_r^(k) + sum_t c_(m,t) sum_{r<t} W_(r,t-r-1)^(k),  c_(m,t) = 1/t - 1/m",
+   "id": "R:3:k1",
+   "j_index": null,
+   "m_ownership": [
+    3
+   ],
+   "owner": "derivative_arithmetic",
+   "r_index": null
+  },
+  "R:3:k2": {
+   "certificate_output": "curvature unit m=3 (R2_interval)",
+   "class": "assembly",
+   "dependencies": [
+    "F:0:k2",
+    "F:1:k2",
+    "F:2:k2",
+    "W:0,0:k2",
+    "W:0,1:k2",
+    "W:1,0:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "exact rational coefficients through Arb division; assembly_arithmetic_excess -> B_interval",
+   "exact_source": "R_m^(k) = (1/m) sum_{r<m} F_r^(k) + sum_t c_(m,t) sum_{r<t} W_(r,t-r-1)^(k),  c_(m,t) = 1/t - 1/m",
+   "id": "R:3:k2",
+   "j_index": null,
+   "m_ownership": [
+    3
+   ],
+   "owner": "curvature_envelope",
+   "r_index": null
+  },
+  "R:5:k0": {
+   "certificate_output": "assembly unit m=5 (R_interval)",
+   "class": "assembly",
+   "dependencies": [
+    "F:0:k0",
+    "F:1:k0",
+    "F:2:k0",
+    "F:3:k0",
+    "F:4:k0",
+    "W:0,0:k0",
+    "W:0,1:k0",
+    "W:0,2:k0",
+    "W:0,3:k0",
+    "W:1,0:k0",
+    "W:1,1:k0",
+    "W:1,2:k0",
+    "W:2,0:k0",
+    "W:2,1:k0",
+    "W:3,0:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "exact rational coefficients through Arb division; assembly_arithmetic_excess -> B_interval",
+   "exact_source": "R_m^(k) = (1/m) sum_{r<m} F_r^(k) + sum_t c_(m,t) sum_{r<t} W_(r,t-r-1)^(k),  c_(m,t) = 1/t - 1/m",
+   "id": "R:5:k0",
+   "j_index": null,
+   "m_ownership": [
+    5
+   ],
+   "owner": "value_assembly_arithmetic_not_in_certificate",
+   "r_index": null
+  },
+  "R:5:k1": {
+   "certificate_output": "assembly unit m=5 (D_interval)",
+   "class": "assembly",
+   "dependencies": [
+    "F:0:k1",
+    "F:1:k1",
+    "F:2:k1",
+    "F:3:k1",
+    "F:4:k1",
+    "W:0,0:k1",
+    "W:0,1:k1",
+    "W:0,2:k1",
+    "W:0,3:k1",
+    "W:1,0:k1",
+    "W:1,1:k1",
+    "W:1,2:k1",
+    "W:2,0:k1",
+    "W:2,1:k1",
+    "W:3,0:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "exact rational coefficients through Arb division; assembly_arithmetic_excess -> B_interval",
+   "exact_source": "R_m^(k) = (1/m) sum_{r<m} F_r^(k) + sum_t c_(m,t) sum_{r<t} W_(r,t-r-1)^(k),  c_(m,t) = 1/t - 1/m",
+   "id": "R:5:k1",
+   "j_index": null,
+   "m_ownership": [
+    5
+   ],
+   "owner": "derivative_arithmetic",
+   "r_index": null
+  },
+  "R:5:k2": {
+   "certificate_output": "curvature unit m=5 (R2_interval)",
+   "class": "assembly",
+   "dependencies": [
+    "F:0:k2",
+    "F:1:k2",
+    "F:2:k2",
+    "F:3:k2",
+    "F:4:k2",
+    "W:0,0:k2",
+    "W:0,1:k2",
+    "W:0,2:k2",
+    "W:0,3:k2",
+    "W:1,0:k2",
+    "W:1,1:k2",
+    "W:1,2:k2",
+    "W:2,0:k2",
+    "W:2,1:k2",
+    "W:3,0:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "exact rational coefficients through Arb division; assembly_arithmetic_excess -> B_interval",
+   "exact_source": "R_m^(k) = (1/m) sum_{r<m} F_r^(k) + sum_t c_(m,t) sum_{r<t} W_(r,t-r-1)^(k),  c_(m,t) = 1/t - 1/m",
+   "id": "R:5:k2",
+   "j_index": null,
+   "m_ownership": [
+    5
+   ],
+   "owner": "curvature_envelope",
+   "r_index": null
+  },
+  "S:0:k0": {
+   "certificate_output": "top-level object S_0",
+   "class": "source_chain",
+   "dependencies": [],
+   "derivative_order": 0,
+   "error_algebra": "closed-form enclosure (r=0) / Leibniz operator-sum rule",
+   "exact_source": "S_0 = rho_{1,e} (closed form)",
+   "id": "S:0:k0",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "source_dependency_value",
+   "r_index": 0
+  },
+  "S:0:k1": {
+   "certificate_output": "dependency_bundle order 1",
+   "class": "source_chain",
+   "dependencies": [],
+   "derivative_order": 1,
+   "error_algebra": "closed-form enclosure (r=0) / Leibniz operator-sum rule",
+   "exact_source": "S_0' = rho_{1,e}' (closed form, SR_DERIVATION s4)",
+   "id": "S:0:k1",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "derivative_source_dependency",
+   "r_index": 0
+  },
+  "S:0:k2": {
+   "certificate_output": "dependency_bundle order 2",
+   "class": "source_chain",
+   "dependencies": [],
+   "derivative_order": 2,
+   "error_algebra": "closed-form enclosure (r=0) / Leibniz operator-sum rule",
+   "exact_source": "S_0'' = rho_{1,e}'' (closed form, SR_DERIVATION s4)",
+   "id": "S:0:k2",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "derivative_source_dependency",
+   "r_index": 0
+  },
+  "S:1:k0": {
+   "certificate_output": "top-level object S_1",
+   "class": "source_chain",
+   "dependencies": [
+    "h:1:k0",
+    "op:Kz:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "closed-form enclosure (r=0) / Leibniz operator-sum rule",
+   "exact_source": "S_1 = K_z,e h_1",
+   "id": "S:1:k0",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "source_dependency_value",
+   "r_index": 1
+  },
+  "S:1:k1": {
+   "certificate_output": "dependency_bundle order 1",
+   "class": "source_chain",
+   "dependencies": [
+    "h:1:k0",
+    "h:1:k1",
+    "op:Kz:k0",
+    "op:Kz:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "closed-form enclosure (r=0) / Leibniz operator-sum rule",
+   "exact_source": "S_1' = K_z' h_1 + K_z h_1'",
+   "id": "S:1:k1",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "derivative_source_dependency",
+   "r_index": 1
+  },
+  "S:1:k2": {
+   "certificate_output": "dependency_bundle order 2",
+   "class": "source_chain",
+   "dependencies": [
+    "h:1:k0",
+    "h:1:k1",
+    "h:1:k2",
+    "op:Kz:k0",
+    "op:Kz:k1"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "closed-form enclosure (r=0) / Leibniz operator-sum rule",
+   "exact_source": "S_1'' = K_z'' h_1 + 2 K_z' h_1' + K_z h_1''",
+   "id": "S:1:k2",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "derivative_source_dependency",
+   "r_index": 1
+  },
+  "S:2:k0": {
+   "certificate_output": "top-level object S_2",
+   "class": "source_chain",
+   "dependencies": [
+    "h:2:k0",
+    "op:Kz:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "closed-form enclosure (r=0) / Leibniz operator-sum rule",
+   "exact_source": "S_2 = K_z,e h_2",
+   "id": "S:2:k0",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "source_dependency_value",
+   "r_index": 2
+  },
+  "S:2:k1": {
+   "certificate_output": "dependency_bundle order 1",
+   "class": "source_chain",
+   "dependencies": [
+    "h:2:k0",
+    "h:2:k1",
+    "op:Kz:k0",
+    "op:Kz:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "closed-form enclosure (r=0) / Leibniz operator-sum rule",
+   "exact_source": "S_2' = K_z' h_2 + K_z h_2'",
+   "id": "S:2:k1",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "derivative_source_dependency",
+   "r_index": 2
+  },
+  "S:2:k2": {
+   "certificate_output": "dependency_bundle order 2",
+   "class": "source_chain",
+   "dependencies": [
+    "h:2:k0",
+    "h:2:k1",
+    "h:2:k2",
+    "op:Kz:k0",
+    "op:Kz:k1"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "closed-form enclosure (r=0) / Leibniz operator-sum rule",
+   "exact_source": "S_2'' = K_z'' h_2 + 2 K_z' h_2' + K_z h_2''",
+   "id": "S:2:k2",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "derivative_source_dependency",
+   "r_index": 2
+  },
+  "S:3:k0": {
+   "certificate_output": "top-level object S_3",
+   "class": "source_chain",
+   "dependencies": [
+    "h:3:k0",
+    "op:Kz:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "closed-form enclosure (r=0) / Leibniz operator-sum rule",
+   "exact_source": "S_3 = K_z,e h_3",
+   "id": "S:3:k0",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "source_dependency_value",
+   "r_index": 3
+  },
+  "S:3:k1": {
+   "certificate_output": "dependency_bundle order 1",
+   "class": "source_chain",
+   "dependencies": [
+    "h:3:k0",
+    "h:3:k1",
+    "op:Kz:k0",
+    "op:Kz:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "closed-form enclosure (r=0) / Leibniz operator-sum rule",
+   "exact_source": "S_3' = K_z' h_3 + K_z h_3'",
+   "id": "S:3:k1",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "derivative_source_dependency",
+   "r_index": 3
+  },
+  "S:3:k2": {
+   "certificate_output": "dependency_bundle order 2",
+   "class": "source_chain",
+   "dependencies": [
+    "h:3:k0",
+    "h:3:k1",
+    "h:3:k2",
+    "op:Kz:k0",
+    "op:Kz:k1"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "closed-form enclosure (r=0) / Leibniz operator-sum rule",
+   "exact_source": "S_3'' = K_z'' h_3 + 2 K_z' h_3' + K_z h_3''",
+   "id": "S:3:k2",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "derivative_source_dependency",
+   "r_index": 3
+  },
+  "S:4:k0": {
+   "certificate_output": "top-level object S_4",
+   "class": "source_chain",
+   "dependencies": [
+    "h:4:k0",
+    "op:Kz:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "closed-form enclosure (r=0) / Leibniz operator-sum rule",
+   "exact_source": "S_4 = K_z,e h_4",
+   "id": "S:4:k0",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "source_dependency_value",
+   "r_index": 4
+  },
+  "S:4:k1": {
+   "certificate_output": "dependency_bundle order 1",
+   "class": "source_chain",
+   "dependencies": [
+    "h:4:k0",
+    "h:4:k1",
+    "op:Kz:k0",
+    "op:Kz:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "closed-form enclosure (r=0) / Leibniz operator-sum rule",
+   "exact_source": "S_4' = K_z' h_4 + K_z h_4'",
+   "id": "S:4:k1",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "derivative_source_dependency",
+   "r_index": 4
+  },
+  "S:4:k2": {
+   "certificate_output": "dependency_bundle order 2",
+   "class": "source_chain",
+   "dependencies": [
+    "h:4:k0",
+    "h:4:k1",
+    "h:4:k2",
+    "op:Kz:k0",
+    "op:Kz:k1"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "closed-form enclosure (r=0) / Leibniz operator-sum rule",
+   "exact_source": "S_4'' = K_z'' h_4 + 2 K_z' h_4' + K_z h_4''",
+   "id": "S:4:k2",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "derivative_source_dependency",
+   "r_index": 4
+  },
+  "W:0,0:k0": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "S:0:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W_(0,0) = S_0",
+   "id": "W:0,0:k0",
+   "j_index": 0,
+   "m_ownership": [
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_kernel_chain_value",
+   "r_index": 0
+  },
+  "W:0,0:k1": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "S:0:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W_(0,0) = S_0",
+   "id": "W:0,0:k1",
+   "j_index": 0,
+   "m_ownership": [
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 0
+  },
+  "W:0,0:k2": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "S:0:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W_(0,0) = S_0",
+   "id": "W:0,0:k2",
+   "j_index": 0,
+   "m_ownership": [
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 0
+  },
+  "W:0,1:k0": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "W:0,0:k0",
+    "op:K:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W_(0,1) = K W_(0,0)",
+   "id": "W:0,1:k0",
+   "j_index": 1,
+   "m_ownership": [
+    3,
+    5
+   ],
+   "owner": "finite_kernel_chain_value",
+   "r_index": 0
+  },
+  "W:0,1:k1": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "W:0,0:k0",
+    "W:0,0:k1",
+    "op:K:k0",
+    "op:K:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W'_(0,1) = K W'_(0,0) + K' W_(0,0)",
+   "id": "W:0,1:k1",
+   "j_index": 1,
+   "m_ownership": [
+    3,
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 0
+  },
+  "W:0,1:k2": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "W:0,0:k0",
+    "W:0,0:k1",
+    "W:0,0:k2",
+    "op:K:k0",
+    "op:K:k1",
+    "op:K:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W''_(0,1) = K W''_(0,0) + 2K' W'_(0,0) + K'' W_(0,0)",
+   "id": "W:0,1:k2",
+   "j_index": 1,
+   "m_ownership": [
+    3,
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 0
+  },
+  "W:0,2:k0": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "W:0,1:k0",
+    "op:K:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W_(0,2) = K W_(0,1)",
+   "id": "W:0,2:k0",
+   "j_index": 2,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_kernel_chain_value",
+   "r_index": 0
+  },
+  "W:0,2:k1": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "W:0,1:k0",
+    "W:0,1:k1",
+    "op:K:k0",
+    "op:K:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W'_(0,2) = K W'_(0,1) + K' W_(0,1)",
+   "id": "W:0,2:k1",
+   "j_index": 2,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 0
+  },
+  "W:0,2:k2": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "W:0,1:k0",
+    "W:0,1:k1",
+    "W:0,1:k2",
+    "op:K:k0",
+    "op:K:k1",
+    "op:K:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W''_(0,2) = K W''_(0,1) + 2K' W'_(0,1) + K'' W_(0,1)",
+   "id": "W:0,2:k2",
+   "j_index": 2,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 0
+  },
+  "W:0,3:k0": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "W:0,2:k0",
+    "op:K:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W_(0,3) = K W_(0,2)",
+   "id": "W:0,3:k0",
+   "j_index": 3,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_kernel_chain_value",
+   "r_index": 0
+  },
+  "W:0,3:k1": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "W:0,2:k0",
+    "W:0,2:k1",
+    "op:K:k0",
+    "op:K:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W'_(0,3) = K W'_(0,2) + K' W_(0,2)",
+   "id": "W:0,3:k1",
+   "j_index": 3,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 0
+  },
+  "W:0,3:k2": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "W:0,2:k0",
+    "W:0,2:k1",
+    "W:0,2:k2",
+    "op:K:k0",
+    "op:K:k1",
+    "op:K:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W''_(0,3) = K W''_(0,2) + 2K' W'_(0,2) + K'' W_(0,2)",
+   "id": "W:0,3:k2",
+   "j_index": 3,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 0
+  },
+  "W:1,0:k0": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "S:1:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W_(1,0) = S_1",
+   "id": "W:1,0:k0",
+   "j_index": 0,
+   "m_ownership": [
+    3,
+    5
+   ],
+   "owner": "finite_kernel_chain_value",
+   "r_index": 1
+  },
+  "W:1,0:k1": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "S:1:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W_(1,0) = S_1",
+   "id": "W:1,0:k1",
+   "j_index": 0,
+   "m_ownership": [
+    3,
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 1
+  },
+  "W:1,0:k2": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "S:1:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W_(1,0) = S_1",
+   "id": "W:1,0:k2",
+   "j_index": 0,
+   "m_ownership": [
+    3,
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 1
+  },
+  "W:1,1:k0": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "W:1,0:k0",
+    "op:K:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W_(1,1) = K W_(1,0)",
+   "id": "W:1,1:k0",
+   "j_index": 1,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_kernel_chain_value",
+   "r_index": 1
+  },
+  "W:1,1:k1": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "W:1,0:k0",
+    "W:1,0:k1",
+    "op:K:k0",
+    "op:K:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W'_(1,1) = K W'_(1,0) + K' W_(1,0)",
+   "id": "W:1,1:k1",
+   "j_index": 1,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 1
+  },
+  "W:1,1:k2": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "W:1,0:k0",
+    "W:1,0:k1",
+    "W:1,0:k2",
+    "op:K:k0",
+    "op:K:k1",
+    "op:K:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W''_(1,1) = K W''_(1,0) + 2K' W'_(1,0) + K'' W_(1,0)",
+   "id": "W:1,1:k2",
+   "j_index": 1,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 1
+  },
+  "W:1,2:k0": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "W:1,1:k0",
+    "op:K:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W_(1,2) = K W_(1,1)",
+   "id": "W:1,2:k0",
+   "j_index": 2,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_kernel_chain_value",
+   "r_index": 1
+  },
+  "W:1,2:k1": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "W:1,1:k0",
+    "W:1,1:k1",
+    "op:K:k0",
+    "op:K:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W'_(1,2) = K W'_(1,1) + K' W_(1,1)",
+   "id": "W:1,2:k1",
+   "j_index": 2,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 1
+  },
+  "W:1,2:k2": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "W:1,1:k0",
+    "W:1,1:k1",
+    "W:1,1:k2",
+    "op:K:k0",
+    "op:K:k1",
+    "op:K:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W''_(1,2) = K W''_(1,1) + 2K' W'_(1,1) + K'' W_(1,1)",
+   "id": "W:1,2:k2",
+   "j_index": 2,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 1
+  },
+  "W:2,0:k0": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "S:2:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W_(2,0) = S_2",
+   "id": "W:2,0:k0",
+   "j_index": 0,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_kernel_chain_value",
+   "r_index": 2
+  },
+  "W:2,0:k1": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "S:2:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W_(2,0) = S_2",
+   "id": "W:2,0:k1",
+   "j_index": 0,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 2
+  },
+  "W:2,0:k2": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "S:2:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W_(2,0) = S_2",
+   "id": "W:2,0:k2",
+   "j_index": 0,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 2
+  },
+  "W:2,1:k0": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "W:2,0:k0",
+    "op:K:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W_(2,1) = K W_(2,0)",
+   "id": "W:2,1:k0",
+   "j_index": 1,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_kernel_chain_value",
+   "r_index": 2
+  },
+  "W:2,1:k1": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "W:2,0:k0",
+    "W:2,0:k1",
+    "op:K:k0",
+    "op:K:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W'_(2,1) = K W'_(2,0) + K' W_(2,0)",
+   "id": "W:2,1:k1",
+   "j_index": 1,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 2
+  },
+  "W:2,1:k2": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "W:2,0:k0",
+    "W:2,0:k1",
+    "W:2,0:k2",
+    "op:K:k0",
+    "op:K:k1",
+    "op:K:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W''_(2,1) = K W''_(2,0) + 2K' W'_(2,0) + K'' W_(2,0)",
+   "id": "W:2,1:k2",
+   "j_index": 1,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 2
+  },
+  "W:3,0:k0": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "S:3:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W_(3,0) = S_3",
+   "id": "W:3,0:k0",
+   "j_index": 0,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_kernel_chain_value",
+   "r_index": 3
+  },
+  "W:3,0:k1": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "S:3:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W_(3,0) = S_3",
+   "id": "W:3,0:k1",
+   "j_index": 0,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 3
+  },
+  "W:3,0:k2": {
+   "certificate_output": "dependency_bundle (finite kernel powers)",
+   "class": "finite_power",
+   "dependencies": [
+    "S:3:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "frozen Leibniz recurrence depgraph: epsW_next,k <= l_k + sum",
+   "exact_source": "W_(3,0) = S_3",
+   "id": "W:3,0:k2",
+   "j_index": 0,
+   "m_ownership": [
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 3
+  },
+  "cover:1": {
+   "certificate_output": "B_cover utilisation m=1",
+   "class": "cover",
+   "dependencies": [
+    "R:1:k0",
+    "R:1:k1",
+    "M_R2:1"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "STYLE_1: derivative uncertainty is inside D_interval exactly once",
+   "exact_source": "W_cover_exact = rho * mag(D_interval) + rho^2 * M_R2 / 2 [ledger.cover_charge]",
+   "id": "cover:1",
+   "j_index": null,
+   "m_ownership": [
+    1
+   ],
+   "owner": "cover_arithmetic",
+   "r_index": null
+  },
+  "cover:2": {
+   "certificate_output": "B_cover utilisation m=2",
+   "class": "cover",
+   "dependencies": [
+    "R:2:k0",
+    "R:2:k1",
+    "M_R2:2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "STYLE_1: derivative uncertainty is inside D_interval exactly once",
+   "exact_source": "W_cover_exact = rho * mag(D_interval) + rho^2 * M_R2 / 2 [ledger.cover_charge]",
+   "id": "cover:2",
+   "j_index": null,
+   "m_ownership": [
+    2
+   ],
+   "owner": "cover_arithmetic",
+   "r_index": null
+  },
+  "cover:3": {
+   "certificate_output": "B_cover utilisation m=3",
+   "class": "cover",
+   "dependencies": [
+    "R:3:k0",
+    "R:3:k1",
+    "M_R2:3"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "STYLE_1: derivative uncertainty is inside D_interval exactly once",
+   "exact_source": "W_cover_exact = rho * mag(D_interval) + rho^2 * M_R2 / 2 [ledger.cover_charge]",
+   "id": "cover:3",
+   "j_index": null,
+   "m_ownership": [
+    3
+   ],
+   "owner": "cover_arithmetic",
+   "r_index": null
+  },
+  "cover:5": {
+   "certificate_output": "B_cover utilisation m=5",
+   "class": "cover",
+   "dependencies": [
+    "R:5:k0",
+    "R:5:k1",
+    "M_R2:5"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "STYLE_1: derivative uncertainty is inside D_interval exactly once",
+   "exact_source": "W_cover_exact = rho * mag(D_interval) + rho^2 * M_R2 / 2 [ledger.cover_charge]",
+   "id": "cover:5",
+   "j_index": null,
+   "m_ownership": [
+    5
+   ],
+   "owner": "cover_arithmetic",
+   "r_index": null
+  },
+  "h:1:k0": {
+   "certificate_output": "top-level object h_1",
+   "class": "reward_chain",
+   "dependencies": [
+    "op:K:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "Leibniz operator-sum rule: epsY <= lY + sum |b_i| ||T_i|| epsX_i",
+   "exact_source": "h_1 = 1 - K_e 1",
+   "id": "h:1:k0",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_kernel_chain_value",
+   "r_index": 1
+  },
+  "h:1:k1": {
+   "certificate_output": "dependency_bundle order 1",
+   "class": "reward_chain",
+   "dependencies": [
+    "op:K:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "Leibniz operator-sum rule: epsY <= lY + sum |b_i| ||T_i|| epsX_i",
+   "exact_source": "h_1' = -K' 1",
+   "id": "h:1:k1",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 1
+  },
+  "h:1:k2": {
+   "certificate_output": "dependency_bundle order 2",
+   "class": "reward_chain",
+   "dependencies": [
+    "op:K:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "Leibniz operator-sum rule: epsY <= lY + sum |b_i| ||T_i|| epsX_i",
+   "exact_source": "h_1'' = -K'' 1",
+   "id": "h:1:k2",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 1
+  },
+  "h:2:k0": {
+   "certificate_output": "top-level object h_2",
+   "class": "reward_chain",
+   "dependencies": [
+    "h:1:k0",
+    "op:K:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "Leibniz operator-sum rule: epsY <= lY + sum |b_i| ||T_i|| epsX_i",
+   "exact_source": "h_2 = K_e h_1",
+   "id": "h:2:k0",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_kernel_chain_value",
+   "r_index": 2
+  },
+  "h:2:k1": {
+   "certificate_output": "dependency_bundle order 1",
+   "class": "reward_chain",
+   "dependencies": [
+    "h:1:k0",
+    "h:1:k1",
+    "op:K:k0",
+    "op:K:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "Leibniz operator-sum rule: epsY <= lY + sum |b_i| ||T_i|| epsX_i",
+   "exact_source": "h_2' = K' h_1 + K h_1'",
+   "id": "h:2:k1",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 2
+  },
+  "h:2:k2": {
+   "certificate_output": "dependency_bundle order 2",
+   "class": "reward_chain",
+   "dependencies": [
+    "h:1:k0",
+    "h:1:k1",
+    "h:1:k2",
+    "op:K:k0",
+    "op:K:k1",
+    "op:K:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "Leibniz operator-sum rule: epsY <= lY + sum |b_i| ||T_i|| epsX_i",
+   "exact_source": "h_2'' = K'' h_1 + 2K' h_1' + K h_1''",
+   "id": "h:2:k2",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 2
+  },
+  "h:3:k0": {
+   "certificate_output": "top-level object h_3",
+   "class": "reward_chain",
+   "dependencies": [
+    "h:2:k0",
+    "op:K:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "Leibniz operator-sum rule: epsY <= lY + sum |b_i| ||T_i|| epsX_i",
+   "exact_source": "h_3 = K_e h_2",
+   "id": "h:3:k0",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_kernel_chain_value",
+   "r_index": 3
+  },
+  "h:3:k1": {
+   "certificate_output": "dependency_bundle order 1",
+   "class": "reward_chain",
+   "dependencies": [
+    "h:2:k0",
+    "h:2:k1",
+    "op:K:k0",
+    "op:K:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "Leibniz operator-sum rule: epsY <= lY + sum |b_i| ||T_i|| epsX_i",
+   "exact_source": "h_3' = K' h_2 + K h_2'",
+   "id": "h:3:k1",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 3
+  },
+  "h:3:k2": {
+   "certificate_output": "dependency_bundle order 2",
+   "class": "reward_chain",
+   "dependencies": [
+    "h:2:k0",
+    "h:2:k1",
+    "h:2:k2",
+    "op:K:k0",
+    "op:K:k1",
+    "op:K:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "Leibniz operator-sum rule: epsY <= lY + sum |b_i| ||T_i|| epsX_i",
+   "exact_source": "h_3'' = K'' h_2 + 2K' h_2' + K h_2''",
+   "id": "h:3:k2",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 3
+  },
+  "h:4:k0": {
+   "certificate_output": "top-level object h_4",
+   "class": "reward_chain",
+   "dependencies": [
+    "h:3:k0",
+    "op:K:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "Leibniz operator-sum rule: epsY <= lY + sum |b_i| ||T_i|| epsX_i",
+   "exact_source": "h_4 = K_e h_3",
+   "id": "h:4:k0",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_kernel_chain_value",
+   "r_index": 4
+  },
+  "h:4:k1": {
+   "certificate_output": "dependency_bundle order 1",
+   "class": "reward_chain",
+   "dependencies": [
+    "h:3:k0",
+    "h:3:k1",
+    "op:K:k0",
+    "op:K:k1"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "Leibniz operator-sum rule: epsY <= lY + sum |b_i| ||T_i|| epsX_i",
+   "exact_source": "h_4' = K' h_3 + K h_3'",
+   "id": "h:4:k1",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 4
+  },
+  "h:4:k2": {
+   "certificate_output": "dependency_bundle order 2",
+   "class": "reward_chain",
+   "dependencies": [
+    "h:3:k0",
+    "h:3:k1",
+    "h:3:k2",
+    "op:K:k0",
+    "op:K:k1",
+    "op:K:k2"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "Leibniz operator-sum rule: epsY <= lY + sum |b_i| ||T_i|| epsX_i",
+   "exact_source": "h_4'' = K'' h_3 + 2K' h_3' + K h_3''",
+   "id": "h:4:k2",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": 4
+  },
+  "op:K:k0": {
+   "certificate_output": "operator norm bound k0",
+   "class": "operator",
+   "dependencies": [],
+   "derivative_order": 0,
+   "error_algebra": "panel enclosure; norm k0 = ||K_e||",
+   "exact_source": "EXACT_SR_TARGET.md s3: (K_e f)(y) = int_l^u f(q_SR(y,z)) phi(z+e) dz",
+   "id": "op:K:k0",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_kernel_chain_value",
+   "r_index": null
+  },
+  "op:K:k1": {
+   "certificate_output": "operator norm bound k1",
+   "class": "operator",
+   "dependencies": [
+    "op:Kz:k0",
+    "op:K:k0"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "exact operator identity; norm k1 = ||K'||",
+   "exact_source": "SR_DERIVATION.md s3: K' = -(K_z,e + e K_e)  [l,u are e-free]",
+   "id": "op:K:k1",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": null
+  },
+  "op:K:k2": {
+   "certificate_output": "operator norm bound k2",
+   "class": "operator",
+   "dependencies": [
+    "op:Kz2:k0",
+    "op:Kz:k0",
+    "op:K:k0"
+   ],
+   "derivative_order": 2,
+   "error_algebra": "exact operator identity; norm k2 = ||K''||",
+   "exact_source": "SR_DERIVATION.md s3: K'' = K_z2,e + 2e K_z,e + (e^2-1) K_e",
+   "id": "op:K:k2",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": null
+  },
+  "op:Kz2:k0": {
+   "certificate_output": "operator norm bound",
+   "class": "operator",
+   "dependencies": [],
+   "derivative_order": 0,
+   "error_algebra": "panel enclosure",
+   "exact_source": "EXACT_SR_TARGET.md s3: (K_z2,e f)(y) = int_l^u z^2 f(q_SR) phi(z+e) dz",
+   "id": "op:Kz2:k0",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_kernel_chain_value",
+   "r_index": null
+  },
+  "op:Kz:k0": {
+   "certificate_output": "operator norm bound",
+   "class": "operator",
+   "dependencies": [],
+   "derivative_order": 0,
+   "error_algebra": "panel enclosure",
+   "exact_source": "EXACT_SR_TARGET.md s3: (K_z,e f)(y) = int_l^u z f(q_SR) phi(z+e) dz",
+   "id": "op:Kz:k0",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_kernel_chain_value",
+   "r_index": null
+  },
+  "op:Kz:k1": {
+   "certificate_output": "operator norm bound",
+   "class": "operator",
+   "dependencies": [
+    "op:Kz2:k0",
+    "op:Kz:k0"
+   ],
+   "derivative_order": 1,
+   "error_algebra": "exact operator identity",
+   "exact_source": "SR_DERIVATION.md s3: K_z' = -(K_z2,e + e K_z,e)",
+   "id": "op:Kz:k1",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "finite_derivative_chain",
+   "r_index": null
+  },
+  "op:resolvent": {
+   "certificate_output": "C",
+   "class": "operator",
+   "dependencies": [
+    "op:K:k0"
+   ],
+   "derivative_order": 0,
+   "error_algebra": "resolvent norm; multiplies every F/D/H bound",
+   "exact_source": "C = ||(I - K_e)^{-1}||, frozen depgraph.ErrorDAG.C",
+   "id": "op:resolvent",
+   "j_index": null,
+   "m_ownership": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "owner": "F_equation_certificate_value",
+   "r_index": null
+  }
+ },
+ "schema": "k1.sr.dag.v1",
+ "w_indices": [
+  [
+   0,
+   0
+  ],
+  [
+   0,
+   1
+  ],
+  [
+   0,
+   2
+  ],
+  [
+   0,
+   3
+  ],
+  [
+   1,
+   0
+  ],
+  [
+   1,
+   1
+  ],
+  [
+   1,
+   2
+  ],
+  [
+   2,
+   0
+  ],
+  [
+   2,
+   1
+  ],
+  [
+   3,
+   0
+  ]
+ ]
+}

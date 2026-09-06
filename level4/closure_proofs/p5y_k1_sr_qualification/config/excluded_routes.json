@@ -1,0 +1,116 @@
+{
+  "schema": "k1.sr.excluded-routes.v1",
+  "purpose": "Historically invalid or superseded SR numerical routes. The SR kernel must not be able to call these, accidentally or otherwise. Enforced by tests/test_route_exclusion.py (AST + source scan).",
+  "classes": ["VALID_REUSABLE", "VALID_BUT_TOO_LOOSE", "IMPLEMENTATION_DEFECT", "GOVERNANCE_PROHIBITED"],
+  "routes": [
+    {
+      "id": "degree120_closed_form_into_kernel",
+      "class": "GOVERNANCE_PROHIBITED",
+      "evidence": "p5y_gate2c_m2_assembly/GATE2C_RESULT.md; p5y_k1_cover_ledger_implementation/code/cusum_layer2.py:204-215; p5y_gate2cbis_m2_assembly_b/tests/test_gate2cbis_frozen.py::test_no_degree121_object_enters_the_kernel_path",
+      "what": "Handing the degree-120/121 closed-form series (h_1, rho_1) to the kernel/composition path.",
+      "why_invalid": "Catastrophic blow-up: complexity is (deg_p+1)*(deg_m+1)*(z_degree_after+1); a degree-120 argument explodes the product and the discard bound.",
+      "banned_symbols": ["h1_bipoly", "_recentred_sites", "reward_rho1_raw"],
+      "max_kernel_argument_degree": 12,
+      "correct_route": "Low-degree (<=12) dyadic/Chebyshev candidate as the kernel argument; the closed form retained ONLY as a separate certification reference."
+    },
+    {
+      "id": "late_re_expansion_mixed_variable",
+      "class": "IMPLEMENTATION_DEFECT",
+      "evidence": "p5y_k1_task1r_budget_harness/code/harness.py docstring 'THE PREDECESSOR DEFECT'",
+      "what": "Composing to full degree in the mixed variable u = alpha + zeta and truncating the patch-local variable once at the end.",
+      "why_invalid": "Re-expanding u^n spreads alpha-mass binomially with p = H/rho = 0.2041; 98.23% of the certified delta_0 was surrendered to the discard bound.",
+      "banned_symbols": [],
+      "correct_route": "Truncate the patch-local variable at EVERY product (Task1R repair); alpha-degree never exceeds D and the discard decays geometrically in H/R."
+    },
+    {
+      "id": "direct_interval_e_substitution",
+      "class": "VALID_BUT_TOO_LOOSE",
+      "evidence": "SR_DERIVATION.md section 5; frozen refine.py rationale (unrefined chain gives M_R2 = 6.2e4, B_cover = 143% of .050)",
+      "what": "Substituting the whole-cell drift interval [e_lo, e_hi] directly for e inside the resolvent/kernel and reading off the result.",
+      "why_invalid": "Sound but unusably wide: the dependency on e is entered many times and the interval is not refined, so the whole-cell envelope blows past B_cover.",
+      "banned_symbols": [],
+      "correct_route": "Midpoint candidate + certified derivative + explicit refinement wiring; whole-cell width enters only through the order-2 envelope."
+    },
+    {
+      "id": "crude_moment_tail_bound",
+      "class": "VALID_BUT_TOO_LOOSE",
+      "evidence": "p5y_k1_task1r_budget_harness/code/harness.py::gaussian_moment_bound",
+      "what": "|N_k| <= h^k N_0.",
+      "why_invalid": "Sound but a factor (k+1) looser than the Gaussian-structure bound.",
+      "banned_symbols": [],
+      "correct_route": "|N_k| <= 2 phi_max h^(k+1) / (k+1)."
+    },
+    {
+      "id": "symmetric_P1_threshold",
+      "class": "IMPLEMENTATION_DEFECT",
+      "evidence": "p5y_gate2e_sr_metric (FAIL); p5y_gate2f_sr_metric_b/GATE2F_RESULT.md",
+      "what": "Using the same value for the P1 solve target and the P1 check threshold.",
+      "why_invalid": "Knife edge: headroom +3.21e-16, the check is decided by rounding. Gate-2E FAIL.",
+      "banned_symbols": [],
+      "correct_route": "Asymmetric pair P1_RULE_TARGET = (1-EPS_P1)*P1_CHECK_THRESHOLD with MIN_HEADROOM_REL guard (Gate-2F, inherited by Task1R)."
+    },
+    {
+      "id": "gate2d_representation",
+      "class": "IMPLEMENTATION_DEFECT",
+      "evidence": "P5Y_GATE2D_DECISION = SR_REALCANDIDATE_FAIL_REPRESENTATION",
+      "what": "The Gate-2D real-candidate representation.",
+      "why_invalid": "Failed its representation guard. Gate-2D remains FAIL, permanently and unrewritten.",
+      "banned_symbols": [],
+      "correct_route": "Gate-2F representation guard (bidegree 16, complexity score bounded)."
+    },
+    {
+      "id": "value_style_derivative_charge",
+      "class": "GOVERNANCE_PROHIBITED",
+      "evidence": "p5y_k1_cover_ledger_implementation/code/depgraph.py::ValueStyleDerivativeCharge",
+      "what": "Charging a derivative-order-1/2 term to a value channel (B_candidate/B_kernel/B_rounding/B_interval).",
+      "why_invalid": "The defect the cover-ledger successor exists to repair (old C*delta_dF against B_candidate).",
+      "banned_symbols": [],
+      "correct_route": "Derivative orders charge only DERIVATIVE_OWNERS; enforced by the frozen depgraph, which SR reuses unmodified."
+    },
+    {
+      "id": "M2_substituted_for_M_R2",
+      "class": "GOVERNANCE_PROHIBITED",
+      "evidence": "assembly.py::curvature_bound vs EXACT_SR_TARGET.md section 5",
+      "what": "Implementing sup_e E_e[Rbar^2] (the P5X theorem-consumer scalar M_2) as if it were the K1 cover obligation M_R2.",
+      "why_invalid": "Different quantity. K1 requires M_R2 = mag(R2_interval) >= sup_{e in cell} |R''_{D,m}(e)|. Substituting M_2 leaves every K1 cover obligation undischarged while appearing to succeed.",
+      "banned_symbols": [],
+      "correct_route": "M_R2 from the order-2 assembly of H_r and W''_{r,j}, uniformly on the cell."
+    },
+    {
+      "id": "task1r_F0_path",
+      "class": "VALID_REUSABLE",
+      "evidence": "p5y_k1_task1r_budget_harness/results/task1r_F0_qualification.json (PASS, 12.72 CPU-s, 48.6 MiB, patch (17,11), e=1/4, D=11, Z=20)",
+      "what": "Bivariate Taylor-model panel enclosure with per-product patch-local truncation, softplus degree 8, candidate degree 16, scale 2^-50.",
+      "why_valid": "The only SR path with a PASS verdict. Certifies one object class (F_0) at one drift on one patch.",
+      "banned_symbols": [],
+      "correct_route": "Reuse as the panel/patch primitive layer; generalise to h/S/F/dF/H, all patches, all cells."
+    },
+    {
+      "id": "sr_opt_backend",
+      "class": "VALID_REUSABLE",
+      "evidence": "p5y_k1_sr_backend_cost_audit/code/opt_backend.py; verified coefficient-overlap-equivalent to the reference harness",
+      "what": "Cancellation-preserving optimized backend and timing primitives.",
+      "why_valid": "Equivalence-audited against the reference harness.",
+      "banned_symbols": [],
+      "correct_route": "Use for cost measurement and as the production kernel, behind the same certification."
+    },
+    {
+      "id": "sr_local_panel_primitives",
+      "class": "VALID_REUSABLE",
+      "evidence": "p5x/compute_optimization_r3_sr_symbolic/sr_local.py; PROOF.md L-R3.1..L-R3.6",
+      "what": "softplus_local_enclosure, centred_gaussian_moments, patch_geometry, sr_constants.",
+      "why_valid": "Proved in PROOF.md and used by the PASS Task1R path.",
+      "banned_symbols": [],
+      "correct_route": "Import, do not re-derive."
+    },
+    {
+      "id": "historical_sr_cost_extrapolation",
+      "class": "VALID_BUT_TOO_LOOSE",
+      "evidence": "p5y_gate2f_sr_metric_b/GATE2F_RESULT.md line 108: '1,868 / 3,092 / 3,697 / 4,597 CPU-hours'",
+      "what": "Reusing the historical SR CPU-hour extrapolation as a current result.",
+      "why_invalid": "It is a historical projection under a superseded backend and configuration, not a measurement of this implementation. It must not be quoted as this campaign's cost, in either direction against the 1126 cap.",
+      "banned_symbols": [],
+      "correct_route": "Measure object and cell cost with sr_cost.py instrumentation; model the campaign only from measured units."
+    }
+  ]
+}

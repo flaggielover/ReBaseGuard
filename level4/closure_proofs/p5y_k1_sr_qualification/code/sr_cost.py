@@ -1,0 +1,84 @@
+"""Honest SR cost instrumentation.
+
+Four strictly separated quantities. Nothing here reuses the historical SR
+extrapolation (Gate-2F's 1,868 / 3,092 / 3,697 / 4,597 CPU-hours), which is a
+projection under a superseded backend and is listed as a non-reusable route in
+config/excluded_routes.json.
+
+    measured_object_cost    CPU seconds actually spent on one object class
+    measured_cell_cost      CPU seconds actually spent on one whole cell
+    modeled_campaign_cost   measured cell cost x 316 cells, no margin
+    conservative_campaign   modeled x contingency, stated with its factor
+
+No claim is made, in either direction, about the 1126 CPU-hour cap until real
+cell measurements exist. `campaign_projection` refuses to report a verdict.
+"""
+from __future__ import annotations
+
+import json
+import resource
+import time
+from contextlib import contextmanager
+from pathlib import Path
+
+NS = Path(__file__).resolve().parents[1]
+SR_CELLS = 316
+
+
+@contextmanager
+def measure(label: str, sink: list):
+    """Measure CPU seconds and peak RSS of a block, appending one record."""
+    t0 = time.process_time()
+    w0 = time.perf_counter()
+    r0 = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+    try:
+        yield
+    finally:
+        r1 = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+        sink.append({
+            "label": label,
+            "cpu_seconds": round(time.process_time() - t0, 6),
+            "wall_seconds": round(time.perf_counter() - w0, 6),
+            "peak_rss_mib": round(max(r0, r1) / 1024.0, 3),
+        })
+
+
+def campaign_projection(cell_records: list, *, contingency: float = 2.0) -> dict:
+    """Project a campaign from MEASURED cell costs only. No cap verdict."""
+    measured = [r["cpu_seconds"] for r in cell_records if r["label"].startswith("cell")]
+    if not measured:
+        return {
+            "status": "NO_MEASURED_CELLS",
+            "modeled_campaign_cpu_hours": None,
+            "conservative_campaign_cpu_hours": None,
+            "cap_cpu_hours": 1126,
+            "cap_verdict": "NOT_ESTABLISHED",
+            "note": ("No SR cell has been certified yet. No statement is made in "
+                     "either direction about the 1126 CPU-hour cap."),
+        }
+    mean_cell = sum(measured) / len(measured)
+    modeled_h = mean_cell * SR_CELLS / 3600.0
+    return {
+        "status": "MEASURED",
+        "n_cells_measured": len(measured),
+        "mean_cell_cpu_seconds": round(mean_cell, 3),
+        "modeled_campaign_cpu_hours": round(modeled_h, 3),
+        "conservative_campaign_cpu_hours": round(modeled_h * contingency, 3),
+        "contingency_factor": contingency,
+        "cap_cpu_hours": 1126,
+        "cap_verdict": "NOT_ESTABLISHED",
+        "note": ("Modeled from measured cells only; the historical Gate-2F "
+                 "extrapolation is NOT reused. A cap verdict requires the "
+                 "adjudicated full-cover measurement."),
+    }
+
+
+def write_report(cell_records: list, path: Path | None = None) -> Path:
+    path = path or (NS / "diagnostics/sr_cost_report.json")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps({
+        "schema": "k1.sr.cost.v1",
+        "records": cell_records,
+        "projection": campaign_projection(cell_records),
+    }, indent=1, sort_keys=True) + "\n")
+    return path
