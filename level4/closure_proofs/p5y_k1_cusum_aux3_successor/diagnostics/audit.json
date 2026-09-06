@@ -1,0 +1,567 @@
+{
+  "architecture": {
+    "explicit_injection": true,
+    "findings": [],
+    "ok": true,
+    "predecessor_defect_reproduced": true,
+    "predecessor_findings": [
+      {
+        "detail": "propagate.refine",
+        "file": "level4/closure_proofs/p5y_k1_cusum_completion_successor/code/refine2.py",
+        "line": 229,
+        "pattern": "module_attribute_assignment"
+      }
+    ],
+    "reviewed_module_intact_in_certifying_process": true,
+    "this_namespace_clean": true
+  },
+  "campaign": "P5Y-K1",
+  "cost": {
+    "auxiliary_cpu_seconds": {
+      "318": 385.4,
+      "319": 388.1,
+      "320": 392.6,
+      "321": 385.0,
+      "322": 385.1,
+      "323": 386.7,
+      "324": 390.2,
+      "325": 387.1
+    },
+    "auxiliary_share": 0.0836,
+    "cap_changed": false,
+    "clean_uncontended_cpu_seconds": {
+      "318": 2267.079911712,
+      "323": 2268.880239056
+    },
+    "contention_note": "the block ran 8 workers on 8 cores; per-cell CPU seconds are inflated by memory-bandwidth stalls. Only the repeat runs, at 2 workers, are clean measurements, and even those are not a cost model.",
+    "cost_cap_status": "NOT_ESTABLISHED",
+    "hard_cap_cpu_hours": 1126,
+    "measured_cells": 8,
+    "measured_cpu_hours_contended": 10.3,
+    "measured_cpu_seconds_contended": 37080.7,
+    "reserve_redistributed": false,
+    "why_not_established": [
+      "8 of 326 CUSUM cells were certified here and 0 of 316 SR cells",
+      "SR has no implementation, so its cost is unmeasured, not estimated",
+      "the 435.8 CPU-hour figure from two namespaces ago was adjudicated NOT a rigorous lower bound and is not carried forward",
+      "per-cell cost varies with rho and with how many nodes take the auxiliary path, so these cells do not extrapolate"
+    ]
+  },
+  "determinism": {
+    "all_identical": true,
+    "cells": [
+      318,
+      323
+    ],
+    "checked": true,
+    "findings": [],
+    "ok": true
+  },
+  "governance": {
+    "far_field": {
+      "CUSUM_FAR_FIELD": "PASS",
+      "FAR_FIELD_PRESERVATION": "PASS",
+      "SR_FAR_FIELD": "PASS",
+      "authority": "binding K1/P5X far-field certificate (P5X-T3)",
+      "confirmed_by": "independent adjudication of 70a29436",
+      "far_field_logic_changed_here": false,
+      "gap_claim_reintroduced": false,
+      "re_derived_here": false,
+      "uncovered_interval_between_c_D_and_e_far": null
+    },
+    "findings": [],
+    "frozen_invariants": {
+      "budget_sum": true,
+      "cover_geometry": true,
+      "degree_adaptation_disallowed": true,
+      "detector_scope": true,
+      "frozen_spec_hashes": true,
+      "hard_cap_cpu_hours": true,
+      "m_scope": true,
+      "obligation_universe": true,
+      "precision_bits": true,
+      "precision_escalation_disallowed": true,
+      "production_disabled": true
+    },
+    "obligation_universe": {
+      "expected": 17978,
+      "new_top_level_ids_added_here": 0,
+      "ok": true,
+      "total": 17978
+    },
+    "ok": true,
+    "predecessor_namespaces_untouched": {
+      "cusum_completion_successor": true,
+      "final_completion": true,
+      "frozen_successor": true,
+      "repair1": true,
+      "repair2": true,
+      "reviewed_implementation": true
+    },
+    "production_run": false,
+    "sr_implemented_here": false
+  },
+  "inherited_facts": {
+    "CELL_325": "CERTIFIED_PASS",
+    "CERTIFICATE_DETERMINISM": "PASS",
+    "COST_CAP": "NOT_ESTABLISHED",
+    "CUSUM_FAR_FIELD": "PASS",
+    "DRIFT_AWARE_NORM": "SOUND",
+    "REFINE2_SOUND": "YES",
+    "REMAINING_WIDTH_DIAGNOSIS": "CONFIRMED",
+    "SR_FAR_FIELD": "PASS",
+    "no_uncovered_interval_between_c_D_and_e_far": true,
+    "source": "independent adjudication of 70a29436"
+  },
+  "k1_state": "K1_INCOMPLETE_IMPLEMENTATION",
+  "namespace": "level4/closure_proofs/p5y_k1_cusum_aux3_successor",
+  "not_claimed": [
+    "K1 CLOSED",
+    "SR complete",
+    "production ready",
+    "cost-cap PASS",
+    "P5Y closed"
+  ],
+  "predecessor": "70a29436d5ab78ed3150303f1e32a210a9845a6c",
+  "provenance": {
+    "findings": [],
+    "manifest_files": 51,
+    "manifest_verifies": true,
+    "ok": true,
+    "per_cell": {
+      "318": {
+        "auxiliary_bound": true,
+        "chain_verified": true,
+        "obligations": 28,
+        "ok": true,
+        "producer_resolves": true,
+        "scientific_hash": "2853045fc5d4f14d0e2e9b72e6ae57853ed7cd05c34e75defc37587cce5e75a3"
+      },
+      "319": {
+        "auxiliary_bound": true,
+        "chain_verified": true,
+        "obligations": 28,
+        "ok": true,
+        "producer_resolves": true,
+        "scientific_hash": "12e651c2c53c03746bbdb44308692cec9105e63ad6e7a1406ba776d8185a0434"
+      },
+      "320": {
+        "auxiliary_bound": true,
+        "chain_verified": true,
+        "obligations": 28,
+        "ok": true,
+        "producer_resolves": true,
+        "scientific_hash": "e79920ac2ba554c43e1a8ac3a618d4a3b442ff11af4497dd807444059cc007a4"
+      },
+      "321": {
+        "auxiliary_bound": true,
+        "chain_verified": true,
+        "obligations": 28,
+        "ok": true,
+        "producer_resolves": true,
+        "scientific_hash": "9f4e4e271856c1162d2bb22ff9d2089c30927fe066f94c5e05f06c3bd8958a60"
+      },
+      "322": {
+        "auxiliary_bound": true,
+        "chain_verified": true,
+        "obligations": 28,
+        "ok": true,
+        "producer_resolves": true,
+        "scientific_hash": "67b56302a935c38afb9deeff08a6e8918f1b0008c8cc85525ef8b70a0768c366"
+      },
+      "323": {
+        "auxiliary_bound": true,
+        "chain_verified": true,
+        "obligations": 28,
+        "ok": true,
+        "producer_resolves": true,
+        "scientific_hash": "0a739fe7e68c105ae9b63599b4d6abb6337c711b981aa0ab19fcbe68c587648a"
+      },
+      "324": {
+        "auxiliary_bound": true,
+        "chain_verified": true,
+        "obligations": 28,
+        "ok": true,
+        "producer_resolves": true,
+        "scientific_hash": "bddcbe9c0f5768a20a5181e2e55b3f0445644558b55a1c311a02faef8662a2b0"
+      },
+      "325": {
+        "auxiliary_bound": true,
+        "chain_verified": true,
+        "obligations": 28,
+        "ok": true,
+        "producer_resolves": true,
+        "scientific_hash": "fe2fd1d0608bd1ec20599c48baa23b812d4685706c94355b01964bdd314295fa"
+      }
+    },
+    "producer_manifest_hash": "9deb4d552e3381b855140cb33310465f9e77a5177f7c899f749e1aee375f16f8",
+    "producer_manifest_path": "level4/closure_proofs/p5y_k1_cusum_aux3_successor/manifests/producer_manifest_v1.json",
+    "producer_manifest_schema": "k1.cusum-aux3.producer-manifest.v1",
+    "rejected_identities": {
+      "cusum_successor_commit": "70a29436d5ab78ed3150303f1e32a210a9845a6c",
+      "final_commit": "f8e6f7583e798813c7f7e0dc8b952488c2a06a7e",
+      "repair1_commit": "41641218363f2c8b2bf14a571eecc193ae271fc2",
+      "repair2_commit": "7a7df9b173e5de535c15037089fabebc687c5e6f",
+      "repair2_producer": "f703921b045f39092d9bdf67d02927f70961dd344dc3be50d17aab0b23df16bd",
+      "reviewed_parent_commit": "c0a1f40cff6974899cd44ab424591bb6a819c949"
+    },
+    "runtime_contract": {
+      "blas_threads": "1",
+      "collocation_degree": 12,
+      "collocation_quadrature": 400,
+      "flint_threads": 1,
+      "numpy_version": "2.5.2",
+      "precision_bits": 256,
+      "python_flint_version": "0.9.0",
+      "python_major_minor": "3.12",
+      "scipy_evidence": "level4/closure_proofs/p5y_k1_cusum_aux3_successor/evidence/scipy_execution_probe.json",
+      "scipy_import_required": true,
+      "scipy_status": "AVAILABILITY_ONLY_IMPORTED_NOT_CALLED",
+      "scipy_version": null,
+      "subdivision_depth": 0,
+      "taylor_order": 120,
+      "thread_environment": [
+        "MKL_NUM_THREADS",
+        "NUMEXPR_NUM_THREADS",
+        "OMP_NUM_THREADS",
+        "OPENBLAS_NUM_THREADS"
+      ]
+    },
+    "strict_coverage_in_certifying_process": true
+  },
+  "reasons": [],
+  "repaired_here": {
+    "LOADED_MODULE_COVERAGE": "strict=False audit -> fail-closed inside the run",
+    "MONKEY_PATCHING": "propagate.refine assignment -> explicit dependency injection",
+    "PRODUCER_BINDING": "FAIL -> manifest hash + schema id carried by every record",
+    "REPOSITORY_PROVENANCE": "FAIL -> committed immutable manifest artifact"
+  },
+  "result_bearing": false,
+  "schema": "k1.cusum-aux3.audit.v1",
+  "science": {
+    "block_318_324_obligations": 28,
+    "block_318_324_pass": 28,
+    "cells": {
+      "318": {
+        "all_pass": true,
+        "cpu_seconds": 4627.75295381,
+        "levels": {
+          "1": {
+            "M_R2": 1.445188187381179,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.5608225042085149
+          },
+          "2": {
+            "M_R2": 2.0812932487616864,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.43958123728445664
+          },
+          "3": {
+            "M_R2": 2.7036965132222086,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.4076423226474577
+          },
+          "5": {
+            "M_R2": 3.788451829910689,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.5191239530888115
+          }
+        },
+        "nodes_tightened": 28,
+        "rho": 0.10731665,
+        "scientific_hash": "2853045fc5d4f14d0e2e9b72e6ae57853ed7cd05c34e75defc37587cce5e75a3"
+      },
+      "319": {
+        "all_pass": true,
+        "cpu_seconds": 4635.088468688,
+        "levels": {
+          "1": {
+            "M_R2": 1.6081244037543767,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.5723813488334544
+          },
+          "2": {
+            "M_R2": 2.082848000659347,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.48089787954133556
+          },
+          "3": {
+            "M_R2": 2.6071437595269984,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.446910479227149
+          },
+          "5": {
+            "M_R2": 3.553115032975792,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.5831858961739693
+          }
+        },
+        "nodes_tightened": 27,
+        "rho": 0.12280175,
+        "scientific_hash": "12e651c2c53c03746bbdb44308692cec9105e63ad6e7a1406ba776d8185a0434"
+      },
+      "320": {
+        "all_pass": true,
+        "cpu_seconds": 4671.86788363,
+        "levels": {
+          "1": {
+            "M_R2": 1.5870088864033054,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.4107634534353458
+          },
+          "2": {
+            "M_R2": 1.9071739398131737,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.41416248402449457
+          },
+          "3": {
+            "M_R2": 2.2786949195685677,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.47289158434027806
+          },
+          "5": {
+            "M_R2": 3.144314582444239,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.6367794551748368
+          }
+        },
+        "nodes_tightened": 25,
+        "rho": 0.13650245,
+        "scientific_hash": "e79920ac2ba554c43e1a8ac3a618d4a3b442ff11af4497dd807444059cc007a4"
+      },
+      "321": {
+        "all_pass": true,
+        "cpu_seconds": 4627.567742566,
+        "levels": {
+          "1": {
+            "M_R2": 1.3839239395079597,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.5095803684215606
+          },
+          "2": {
+            "M_R2": 1.620370007383921,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.4549738354019667
+          },
+          "3": {
+            "M_R2": 1.8928524428064668,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.5890174890333101
+          },
+          "5": {
+            "M_R2": 2.5471931638921013,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.730372245063796
+          }
+        },
+        "nodes_tightened": 23,
+        "rho": 0.14657105,
+        "scientific_hash": "9f4e4e271856c1162d2bb22ff9d2089c30927fe066f94c5e05f06c3bd8958a60"
+      },
+      "322": {
+        "all_pass": true,
+        "cpu_seconds": 4629.343345179,
+        "levels": {
+          "1": {
+            "M_R2": 0.9808699132975143,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.7127982324511419
+          },
+          "2": {
+            "M_R2": 1.2899586578079996,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.5428791990992395
+          },
+          "3": {
+            "M_R2": 1.5115581822697612,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.6365981851387386
+          },
+          "5": {
+            "M_R2": 1.9234954754382216,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.7325917927437213
+          }
+        },
+        "nodes_tightened": 20,
+        "rho": 0.1524959,
+        "scientific_hash": "67b56302a935c38afb9deeff08a6e8918f1b0008c8cc85525ef8b70a0768c366"
+      },
+      "323": {
+        "all_pass": true,
+        "cpu_seconds": 4632.228260974,
+        "levels": {
+          "1": {
+            "M_R2": 0.8241018192422223,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.7477527386151863
+          },
+          "2": {
+            "M_R2": 1.1209180204595808,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.545357465864944
+          },
+          "3": {
+            "M_R2": 1.2874453790293379,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.6036910335448799
+          },
+          "5": {
+            "M_R2": 1.4900744163706638,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.6526308381582466
+          }
+        },
+        "nodes_tightened": 18,
+        "rho": 0.15524995,
+        "scientific_hash": "0a739fe7e68c105ae9b63599b4d6abb6337c711b981aa0ab19fcbe68c587648a"
+      },
+      "324": {
+        "all_pass": true,
+        "cpu_seconds": 4649.340431691,
+        "levels": {
+          "1": {
+            "M_R2": 0.9402490134012274,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.6021731944342875
+          },
+          "2": {
+            "M_R2": 1.0643602966901007,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.44659361934643454
+          },
+          "3": {
+            "M_R2": 1.139910255448352,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.4712081870000731
+          },
+          "5": {
+            "M_R2": 1.2076248802628167,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.4877820970322789
+          }
+        },
+        "nodes_tightened": 18,
+        "rho": 0.15626835,
+        "scientific_hash": "bddcbe9c0f5768a20a5181e2e55b3f0445644558b55a1c311a02faef8662a2b0"
+      },
+      "325": {
+        "all_pass": true,
+        "cpu_seconds": 4607.506709830001,
+        "levels": {
+          "1": {
+            "M_R2": 0.674080192477863,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.1280706974714146
+          },
+          "2": {
+            "M_R2": 0.5860332118173783,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.08722079240193571
+          },
+          "3": {
+            "M_R2": 0.5664764296230325,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.08674757255354926
+          },
+          "5": {
+            "M_R2": 0.5455779386602729,
+            "classification": "CERTIFIED_PASS",
+            "status": "PASS",
+            "utilization": 0.08481270408236977
+          }
+        },
+        "nodes_tightened": 18,
+        "rho": 0.09624155,
+        "scientific_hash": "fe2fd1d0608bd1ec20599c48baa23b812d4685706c94355b01964bdd314295fa"
+      }
+    },
+    "certificate_too_loose": [],
+    "control_regression_clean": true,
+    "cusum_compact_cover": "PASS_CANDIDATE",
+    "cusum_far_field": "PASS",
+    "findings": [],
+    "previously_failing": [
+      [
+        319,
+        "5"
+      ],
+      [
+        320,
+        "5"
+      ],
+      [
+        321,
+        "5"
+      ],
+      [
+        322,
+        "5"
+      ],
+      [
+        323,
+        "5"
+      ]
+    ],
+    "previously_failing_now_pass": [
+      [
+        319,
+        "5"
+      ],
+      [
+        320,
+        "5"
+      ],
+      [
+        321,
+        "5"
+      ],
+      [
+        322,
+        "5"
+      ],
+      [
+        323,
+        "5"
+      ]
+    ],
+    "scientific_failures": [],
+    "status": "PASS_CANDIDATE",
+    "still_open": [],
+    "with_control_318_325_obligations": 32,
+    "with_control_318_325_pass": 32
+  },
+  "sr_status": "NOT_IMPLEMENTED_IN_THIS_TASK",
+  "verdict": "CUSUM_AUX3_READY_FOR_INDEPENDENT_ADJUDICATION"
+}
