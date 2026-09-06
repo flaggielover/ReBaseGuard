@@ -1,15 +1,28 @@
-# P4Z — general location-family estimator redesign and feasibility adjudication
+# P4Z — general location-family estimator redesign, and its governed campaign
 
 ```text
-P4Z_VERDICT = P4Z_READY_FOR_NUMERICAL_QUALIFICATION
-P4Z_PRODUCTION_RUN = NOT LAUNCHED       P4Z_SCIENTIFIC_RESULTS = NONE
 P4 = PARTIAL (untouched)   P4X, P4Y = as their own branches record (untouched)
 LEVEL4_GLOBAL_CLOSURE = NO
+
+P4Z_NUMERICAL_HOST  = LOCAL_MAC
+AWS_CPU_USED_BY_P4Z = 0
 ```
 
-P4Z is a governed successor **design**.  It rewrites no history, reruns no
-failed architecture, converts no historical PARTIAL/FAIL/INCOMPLETE, and relaxes
-no frozen numerical gate.  It produces no scientific result artifact.
+P4Z has two phases, and they must not be conflated.
+
+**Phase 1 — feasibility (checkpoint `d46fc68`).**  A governed successor
+*design*: estimator redesign, failure taxonomy, cost model and micro-pilots.
+It produced no scientific result artifact and shipped no production driver.
+Verdict `P4Z_READY_FOR_NUMERICAL_QUALIFICATION`.
+
+**Phase 2 — governed numerical qualification (this tree).**  The local Mac is
+promoted to a result-bearing host under a frozen runtime contract, a frozen
+worker configuration, a fail-closed producer gate and a non-adaptive 200-block
+policy.  The campaign verdict, when the run completes, is in
+`SUCCESSOR_CLOSURE.md` and `results/successor_closure.json`.
+
+Neither phase rewrites history, reruns the failed architecture, converts any
+historical PARTIAL/FAIL/INCOMPLETE, or relaxes any frozen numerical gate.
 
 ## The problem
 
@@ -58,7 +71,10 @@ signature of a fix aimed at exactly the diagnosed failure mode.
 | `MICROPILOT_REPORT.md`, `results/estimator_feasibility.json` | 9–10 — cost model and falsification probes |
 | `CAMPAIGN_GOVERNANCE.md` | 11–16 — selection, budget, provenance, gate, power, kill gates |
 | `CORRESPONDENCE_AND_FORMAL_PLAN.md` | 17–18 — cross-check and what to certify |
-| `CHECKPOINT_P4Z.md`, `configs/checkpoint_p4z.json` | 19–20 — verdict and frozen checkpoint |
+| `CHECKPOINT_P4Z.md`, `configs/checkpoint_p4z.json` | 19–20 — feasibility verdict and frozen checkpoint |
+| `MAC_RUNTIME.md`, `production/mac_runtime_contract.json` | the result-bearing host contract and the worker freeze |
+| `PRODUCTION_GOVERNANCE_NOTES.md` | decisions taken before any result was seen, including three conservative corrections |
+| `SUCCESSOR_CLOSURE.md`, `results/successor_closure.json` | the campaign verdict and exactly what it discharges |
 
 ## Layout
 
@@ -66,14 +82,29 @@ signature of a fix aimed at exactly the diagnosed failure mode.
 src/rebaseguard_p4z/analytic.py   the (f, F, Mlow) contract and the alarm-set integrals
 src/rebaseguard_p4z/rbscore.py    Candidate A, PRIMARY
 src/rebaseguard_p4z/rbmap.py      Candidate B, second official route
+lean/                             the bounded-survival lemma and its axiom audit
 micropilots/                      falsification probes; NOT result bearing
-tests/                            analytic contract, estimator identity, governance locks
+production/                       the result-bearing layer (see below)
+tests/                            analytic contract, estimator identity, governance, gate logic
 configs/                          estimand contract and frozen checkpoint
-results/                          taxonomy and cost model; every file carries result_bearing:false
+results/                          taxonomy, cost model, Lean audit, successor closure
 ```
 
-`production/` is deliberately absent.  A checkpoint that ships a runnable
-production driver invites the run.
+The result-bearing layer:
+
+```text
+production/runtime_contract.py    host identity; fail-closed
+production/scientific_hash.py     exclusion-based hashing and the path-based TCB
+production/run_p4z.py             the ONLY entry point that produces a block
+production/adjudicate.py          the frozen gate, applied mechanically
+production/replay_check.py        determinism / replay
+production/independent_adjudication.py   audits the runner rather than trusting it
+production/blocks/                one JSON per (configuration, route, block)
+```
+
+`production/` did not exist at the feasibility checkpoint, by design: a
+checkpoint that ships a runnable production driver invites the run.  The driver
+here was authorised by a later, separate commit.
 
 ## Running the lightweight tests
 
@@ -82,11 +113,20 @@ OMP_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1 MKL_NUM_THREADS=1 \
   python -m pytest level4/closure_proofs/p4z_location_family_feasibility/tests -q
 ```
 
-Under a second of CPU.  The micro-pilots are ~133 CPU-seconds, single threaded,
-and were run on a host the CUSUM Aux4 campaign does not use.
+Under a few seconds of CPU.  Everything P4Z ran — micro-pilots and the governed
+campaign alike — ran single-threaded on the local Mac.  The AWS CUSUM Aux4
+campaign was verified alive read-only before, during and after, its branch head
+never moved, and P4Z consumed zero AWS CPU.
+
+The bounded-survival lemma is verified by `lean/verify_lean.sh` against the
+prebuilt mathlib in the main worktree, read-only.
 
 ## What P4Z does not claim
 
-Historical P4 is not repaired.  P4 is not CLOSED.  P5Y is not CLOSED.  Level 4
-is not closed.  Nothing here is production ready.  READY means the architecture
-can now *decide* the frozen gate — not that the gate will pass.
+Historical P4 is not repaired.  P4 is not CLOSED.  P5Y is not CLOSED.  K1 is not
+closed.  Level 4 is not closed.  Nothing here is production ready in any sense
+unrelated to this theorem.
+
+In particular, discharging the 8-cell historically unadjudicated residue is
+**not** a re-adjudication of the frozen 96-cell grid, and the two are reported
+separately everywhere.

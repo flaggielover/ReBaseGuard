@@ -151,11 +151,138 @@ def main() -> int:
     }
     out = NS / "results" / "successor_closure.json"
     out.write_text(json.dumps(doc, indent=2, sort_keys=True) + "\n")
+    (NS / "SUCCESSOR_CLOSURE.md").write_text(_markdown(doc))
     print(f"verdict {verdict}")
     print(f"residue: PASS {discharged}  FAIL {failed}  INCONCLUSIVE {inconclusive}")
     print(f"full grid: {adj['counts']}")
     print(f"-> {out}")
     return 0
+
+
+def _markdown(d: dict) -> str:
+    r = d["successor_evidence"]
+    g = d["full_grid"]
+    rows = "\n".join(
+        f"| {c['layer']} | `{c['detector']}` | `{c['family']}` | {c['m']} | "
+        f"**{c['gate_result']}** | {'; '.join(c['reasons']) or '—'} |"
+        for c in r["cells"])
+    fm = d["formal"]
+    pv = d["provenance"]
+    rp = pv["replay"]
+    return f"""# P4Z successor closure
+
+```text
+P4Z_VERDICT = {d["verdict"]}
+
+P4_ORIGINAL_VERDICT = {d["historical_status_unchanged"]["P4_ORIGINAL_VERDICT"]}   (unchanged, untouched, not relabelled)
+LEVEL4_GLOBAL_CLOSURE = NO
+```
+
+Historical P4 remains historical P4.  Nothing in the P4, P4X or P4Y namespaces
+was modified, and no verdict of theirs was converted.  This is a **new**
+successor artifact recording what a governed P4Z campaign, run entirely on the
+local Mac, does and does not establish.
+
+## 1. What was discharged
+
+The historically unadjudicated residue is the **{r["historically_unresolved_cells"]} cells** that P4X's own
+precision precondition could not decide — its obligation C2 / Checkpoint-A gate
+`X6`, recorded `PRECONDITION_NOT_MET`.
+
+```text
+discharged PASS   {r["discharged_PASS"]}
+FAIL              {r["FAIL"]}
+INCONCLUSIVE      {r["INCONCLUSIVE"]}
+```
+
+| layer | detector | family | m | result | reasons |
+|---|---|---|---|---|---|
+{rows}
+
+## 2. What was NOT re-adjudicated
+
+The frozen scope is **{g["cells_total"]} cells** in 24 configurations.  Discharging the
+{r["historically_unresolved_cells"]}-cell residue is **not** a re-adjudication of all {g["cells_total"]}.
+
+```text
+PASS         {g["counts"]["PASS"]}
+FAIL         {g["counts"]["FAIL"]}
+INCONCLUSIVE {g["counts"]["INCONCLUSIVE"]}
+```
+
+Configurations killed by a prespecified kill gate: `{g["killed_configurations"]}`
+Configurations excluded on budget: `{g["excluded_configurations"]}`
+
+A cell reported `INCONCLUSIVE` is reported as `INCONCLUSIVE`.  It is never
+counted as a pass and never dropped from the denominator.
+
+## 3. Theorem scope
+
+Inherited unchanged at tree `{d["theorem_scope"]["tree_object"]}`.
+
+{d["theorem_scope"]["statement"]}
+
+## 4. Estimator
+
+```text
+PRIMARY    {d["estimators"]["primary"]["name"]}   {d["estimators"]["primary"]["file"]}
+           sha256 {d["estimators"]["primary"]["sha256"]}
+COMPANION  {d["estimators"]["companion"]["name"]}     {d["estimators"]["companion"]["file"]}
+           sha256 {d["estimators"]["companion"]["sha256"]}
+CONTRACT   {d["estimators"]["analytic_contract"]["file"]}
+           sha256 {d["estimators"]["analytic_contract"]["sha256"]}
+```
+
+## 5. Runtime
+
+```text
+host          {d["runtime"]["host"]["P4Z_NUMERICAL_HOST"]}
+AWS CPU used  {d["runtime"]["host"]["AWS_CPU_USED_BY_P4Z"]}
+runtime_hash  {d["runtime"]["runtime_hash"]}
+cpu           {d["runtime"]["cpu"]}
+os            {d["runtime"]["os"]}
+python        {d["runtime"]["python"]}   numpy {d["runtime"]["numpy"]}   scipy {d["runtime"]["scipy"]}
+blas          {d["runtime"]["blas"]}
+workers       {d["runtime"]["workers"]}
+```
+
+## 6. Thresholds — none changed
+
+```text
+relative <= {d["thresholds"]["relative"]}
+|z|      <= {d["thresholds"]["z"]}
+r*        = {d["thresholds"]["r_star"]}
+any_threshold_changed_by_p4z = {d["thresholds"]["any_threshold_changed_by_p4z"]}
+```
+
+## 7. Cost
+
+```text
+CPU        {d["cost"]["cpu_hours_total"]:.4f} h
+cap        {d["cost"]["cap_hours"]} h
+COST_CAP   {d["cost"]["COST_CAP"]}
+```
+
+Includes every block produced, failed and inconclusive alike.
+
+## 8. Provenance
+
+```text
+independent adjudication   {pv["independent_adjudication"]}  ({pv["checks_total"] - pv["checks_failed"]}/{pv["checks_total"]} checks)
+replay                     {"n/a" if rp is None else f'{rp["blocks_replayed"]} blocks, hashes identical: {rp["all_scientific_hashes_identical"]}, field mismatches: {rp["any_scientific_field_mismatch"]}'}
+```
+
+## 9. Formal
+
+```text
+{"none" if fm is None else f'target       {fm["target"]}'}
+{"" if fm is None else f'declarations {fm["declarations"]}, errors {fm["errors"]}, new axioms {fm["new_axioms"]}'}
+{"" if fm is None else f'axioms       {fm["axioms"]}'}
+```
+
+## 10. What this does not claim
+
+""" + "\n".join(f"* {c}" for c in d["claims_explicitly_not_made"]) + "\n"
 
 
 if __name__ == "__main__":
