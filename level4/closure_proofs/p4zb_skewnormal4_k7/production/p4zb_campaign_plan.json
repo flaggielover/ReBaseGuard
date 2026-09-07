@@ -1,0 +1,91 @@
+{
+  "budget": {
+    "borrowed_from_p4za_cap": false,
+    "cost_bearing_calibration_included": true,
+    "ladder_study_cpu_seconds": 1824.702223,
+    "total_cpu_cap_hours": 4.5
+  },
+  "configuration": {
+    "block_paths": 32268,
+    "blocks": 200,
+    "detector": "cusum@5",
+    "detector_kind": "cusum",
+    "family": "skewnormal4",
+    "id": "frozen/cusum@5/skewnormal4",
+    "ladder_blocks": 40,
+    "layer": "frozen",
+    "m_grid": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "max_steps": 200000,
+    "seed_fd_ladder": 4390003,
+    "seed_rb_map": 4390002,
+    "seed_rb_score": 4390001,
+    "threshold": 5.0
+  },
+  "derived_from": {
+    "ladder_study_sha256": "c85a248108ddd869c811696eff4850dd1464625537b19bd8cbe51f722850da0e",
+    "note": "no value is taken from a prompt",
+    "p4_protocol_sha256": "2afa247e986f7c4ff063bf2bda60386a9783d001244821e7eb5aff12db03e627",
+    "p4za_plan_sha256": "49d9836935160418406f29281d60ff63ad5c884c09687d3e80aebf3c8bcd6f4b",
+    "p4zb_starting_audit_sha256": "cc382ea4333eec6e749664ed8bfdffefd0a2ed1c69280973ef0456b513c43f1e"
+  },
+  "execution": {
+    "blas_threads": 1,
+    "workers": 1
+  },
+  "fd_ladder": {
+    "estimator_unchanged": "Route B remains the frozen per-batch Richardson at (0.05, 0.025). P4ZB changes only how its TRUNCATION RESIDUAL is bounded, exactly as P4ZA did.",
+    "frozen_scientific_pair": [
+      0.05,
+      0.025
+    ],
+    "model_dependence": "NONE. The rule is the standard empirical estimate and does not assume the h^4 relation. The h^4 model is reported as a diagnostic only.",
+    "noise_is_conservative": "The (0.025,0.0125) rung pair has measured SNR ~2.5, so T_B carries Monte Carlo noise. Noise inflates |difference| in expectation, which makes the K7 threshold HARDER to satisfy, not easier. The ladder block count is left at P4ZA's 40 rather than raised, so this conservatism is retained.",
+    "rung_0_00625_excluded": "measured SNR 0.0-0.1: the paired difference is consistent with zero, so the rung carries no information and would only add noise",
+    "rungs": [
+      0.1,
+      0.05,
+      0.025,
+      0.0125
+    ],
+    "truncation_rule": "T_B = |R(0.05,0.025) - R(0.025,0.0125)|, the standard adjacent-pair Richardson error estimate, rounded outward. Same FORM as P4ZA's rule -- adjacent pairs, raw difference, no divisor -- with the single change that the reference neighbour is the FINER pair rather than the coarser one.",
+    "why_the_finer_neighbour": "The residual of R(0.05,0.025) must be estimated against a MORE accurate value, not a less accurate one. Under the validated h^4 model the coarse neighbour differs from the frozen pair by 15x the residual it stands for, while the fine neighbour differs by 0.9375x it. P4ZA declared that 15x in advance as a deliberate conservatism; P4ZB removes it by changing WHICH MEASUREMENT is used, not by applying an algebraic divisor."
+  },
+  "fixed_policy": {
+    "adaptive": false,
+    "block_paths_unchanged_from_p4za": true,
+    "blocks_per_route": 200,
+    "ladder_blocks": 40,
+    "path_count_may_increase_during_run": false,
+    "top_ups_permitted": 0
+  },
+  "runtime_contract_reused_from_p4z": true,
+  "runtime_hash": "fb9ec8f26ce46c4a7e566dc58683d2a3d3da866cae475aeca9ba35ff729f7410",
+  "schema": "rebaseguard.p4zb-campaign-plan.v1",
+  "scope_lock": {
+    "cells": 4,
+    "cells_not_rerun": 92,
+    "cells_not_rerun_reason": "44 authored by P4Z and 48 by P4ZA, all COVERED_PASS on full evidence; P4ZB reruns nothing that already has a governed disposition",
+    "configuration": "frozen/cusum@5/skewnormal4",
+    "m": [
+      1,
+      2,
+      3,
+      5
+    ]
+  },
+  "thresholds": {
+    "any_threshold_changed_by_p4zb": false,
+    "fd_ladder_relative_max": 0.02,
+    "r_star": 0.010823063,
+    "relative": 0.03,
+    "source": "frozen P4 protocol and the P4ZA plan; NONE changed",
+    "top1_share_max": 0.1,
+    "top5_share_max": 0.3,
+    "z": 4.0
+  }
+}
