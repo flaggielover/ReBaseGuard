@@ -139,6 +139,30 @@ def main() -> int:
             "errors": lean["compile"]["errors"],
             "new_axioms": lean["new_axioms"],
         },
+        "what_is_awaiting": {
+            "formal": "SATISFIED. The bounded-survival lemma compiles with no "
+                      "error, no sorry, and no new axiom. Nothing further was "
+                      "required by the frozen checkpoint.",
+            "governance": "OUTSTANDING. 52 of the 96 frozen cells are "
+                          "INCONCLUSIVE and a governance decision is needed on "
+                          "them. 32 were killed by K3 because P4Z's own light "
+                          "regime envelope under-predicted their variance; 20 "
+                          "were refused by K7 because the h=0.2 rung of the "
+                          "frozen FD ladder is outside the O(h^2) asymptotic "
+                          "regime for light-tailed families at the frozen "
+                          "thresholds. Neither is evidence against the "
+                          "estimator, and every one of those 52 cells already "
+                          "PASSED in P4X. Re-certifying them needs a "
+                          "re-calibrated envelope and a ladder whose coarsest "
+                          "rung is inside the asymptotic regime -- which is a "
+                          "NEW frozen campaign, not an amendment of this one.",
+            "why_not_closed": "P4Z_CLOSED requires every frozen scientific, "
+                              "numerical, provenance, governance, cost and "
+                              "formal condition to be satisfied. The 8-cell "
+                              "residue is discharged and provenance, cost, "
+                              "replay and formal are all clean, but the frozen "
+                              "96-cell scope is not fully adjudicated.",
+        },
         "claims_explicitly_not_made": [
             "historical P4 was retroactively repaired",
             "P4 is CLOSED",
@@ -280,7 +304,24 @@ replay                     {"n/a" if rp is None else f'{rp["blocks_replayed"]} b
 {"" if fm is None else f'axioms       {fm["axioms"]}'}
 ```
 
-## 10. What this does not claim
+## 10. What is awaiting
+
+```text
+formal      SATISFIED   -- bounded-survival lemma compiles, no sorry, no new axiom
+governance  OUTSTANDING -- 52 of 96 frozen cells are INCONCLUSIVE
+```
+
+32 of those 52 were killed by `K3` because P4Z's own light-regime variance
+envelope under-predicted them; 20 were refused by `K7` because the `h = 0.2`
+rung of the frozen FD ladder is outside the `O(h^2)` asymptotic regime for
+light-tailed families at the frozen thresholds.  Neither is evidence against
+the estimator, and **every one of those 52 cells already PASSED in P4X**.
+
+Re-certifying them requires a re-calibrated regime envelope and a ladder whose
+coarsest rung is inside the asymptotic regime.  That is a **new frozen
+campaign**, not an amendment of this one, and P4Z does not make it.
+
+## 11. What this does not claim
 
 """ + "\n".join(f"* {c}" for c in d["claims_explicitly_not_made"]) + "\n"
 

@@ -1,0 +1,193 @@
+{
+  "claims_explicitly_not_made": [
+    "historical P4 was retroactively repaired",
+    "P4 is CLOSED",
+    "P5Y is CLOSED",
+    "K1 is CLOSED",
+    "Level-4 is CLOSED",
+    "production readiness unrelated to this theorem",
+    "all 96 frozen cells were re-adjudicated"
+  ],
+  "cost": {
+    "COST_CAP": "PASS",
+    "cap_hours": 12.0,
+    "cpu_hours_total": 2.38093141444445,
+    "note": "includes every block produced, failed and inconclusive alike"
+  },
+  "estimators": {
+    "analytic_contract": {
+      "file": "src/rebaseguard_p4z/analytic.py",
+      "sha256": "71e576e2ad218801dbee80ebfbf0108e10b0128549e6500404ac813ac1ffc111"
+    },
+    "companion": {
+      "file": "src/rebaseguard_p4z/rbmap.py",
+      "name": "RB-MAP",
+      "sha256": "8166946145d82d5049665d78a80ff43d705d4e40f6b0d326af9d8de1e1648ec3"
+    },
+    "primary": {
+      "file": "src/rebaseguard_p4z/rbscore.py",
+      "name": "RB-SCORE",
+      "sha256": "981f4f09ed17c7afac59e81680128e882a9ee392e93254504d0227660351d975"
+    }
+  },
+  "formal": {
+    "axioms": [
+      "propext",
+      "Classical.choice",
+      "Quot.sound"
+    ],
+    "declarations": 12,
+    "errors": 0,
+    "new_axioms": 0,
+    "target": "bounded-survival lemma only"
+  },
+  "full_grid": {
+    "cells_total": 96,
+    "counts": {
+      "FAIL": 0,
+      "INCONCLUSIVE": 52,
+      "PASS": 44
+    },
+    "excluded_configurations": {},
+    "killed_configurations": {
+      "frozen/cusum@5/laplace": "K3 variance model exceeded",
+      "frozen/cusum@5/skewnormal4": "K3 variance model exceeded",
+      "frozen/sr@520.886/skewnormal4": "K3 variance model exceeded",
+      "reduced/cusum@2/gaussian": "K3 variance model exceeded",
+      "reduced/cusum@2/skewnormal4": "K3 variance model exceeded",
+      "reduced/sr@20/gaussian": "K3 variance model exceeded",
+      "reduced/sr@20/logistic": "K3 variance model exceeded",
+      "reduced/sr@20/skewnormal4": "K3 variance model exceeded"
+    },
+    "note": "the frozen scope is 96 cells; a campaign that discharges the 8-cell residue has NOT re-adjudicated all 96"
+  },
+  "historical_status_unchanged": {
+    "P4X_and_P4Y_modified": false,
+    "P4_ORIGINAL_VERDICT": "PARTIAL",
+    "P4_artifacts_modified": false,
+    "P4_relabelled": false,
+    "statement": "Historical P4 remained PARTIAL throughout and is untouched. P4Z supplies successor evidence; it does not repair, rewrite or relabel any historical artifact."
+  },
+  "provenance": {
+    "checks_failed": 0,
+    "checks_total": 44,
+    "independent_adjudication": "ADJUDICATION_PASS",
+    "replay": {
+      "all_scientific_hashes_identical": true,
+      "any_scientific_field_mismatch": false,
+      "blocks_replayed": 24
+    }
+  },
+  "result_bearing": true,
+  "runtime": {
+    "blas": "accelerate",
+    "cpu": "Apple A18 Pro",
+    "host": {
+      "AWS_CPU_USED_BY_P4Z": 0,
+      "P4Z_NUMERICAL_HOST": "LOCAL_MAC",
+      "campaign_isolation": "MAC_ONLY"
+    },
+    "numpy": "2.5.3",
+    "os": "macOS 26.5.2 (25F84)",
+    "python": "3.14.5",
+    "runtime_hash": "fb9ec8f26ce46c4a7e566dc58683d2a3d3da866cae475aeca9ba35ff729f7410",
+    "scipy": "1.18.1",
+    "workers": 1
+  },
+  "schema": "rebaseguard.p4z-successor-closure.v1",
+  "successor_evidence": {
+    "FAIL": 0,
+    "INCONCLUSIVE": 0,
+    "cells": [
+      {
+        "detector": "cusum@5",
+        "family": "t1p5",
+        "gate_result": "PASS",
+        "layer": "frozen",
+        "m": 1,
+        "reasons": []
+      },
+      {
+        "detector": "cusum@5",
+        "family": "t1p5",
+        "gate_result": "PASS",
+        "layer": "frozen",
+        "m": 2,
+        "reasons": []
+      },
+      {
+        "detector": "cusum@5",
+        "family": "t3",
+        "gate_result": "PASS",
+        "layer": "frozen",
+        "m": 1,
+        "reasons": []
+      },
+      {
+        "detector": "sr@520.886",
+        "family": "t1p5",
+        "gate_result": "PASS",
+        "layer": "frozen",
+        "m": 1,
+        "reasons": []
+      },
+      {
+        "detector": "sr@520.886",
+        "family": "t1p5",
+        "gate_result": "PASS",
+        "layer": "frozen",
+        "m": 2,
+        "reasons": []
+      },
+      {
+        "detector": "sr@520.886",
+        "family": "t1p5",
+        "gate_result": "PASS",
+        "layer": "frozen",
+        "m": 5,
+        "reasons": []
+      },
+      {
+        "detector": "sr@20",
+        "family": "t1p5",
+        "gate_result": "PASS",
+        "layer": "reduced",
+        "m": 1,
+        "reasons": []
+      },
+      {
+        "detector": "sr@20",
+        "family": "t1p5",
+        "gate_result": "PASS",
+        "layer": "reduced",
+        "m": 2,
+        "reasons": []
+      }
+    ],
+    "discharged_PASS": 8,
+    "historically_unresolved_cells": 8,
+    "which_historical_gate": "P4X obligation C2 / Checkpoint A gate X6, the 8 cells recorded PRECONDITION_NOT_MET"
+  },
+  "theorem_scope": {
+    "modified_by_p4z": false,
+    "source": "level4/closure_proofs/p4_theory_generalization",
+    "statement": "G1a: Gamma_{D,m,f} = E_0[A_m S_tau^psi], for a regular one-dimensional location family and a fixed residual-path stopping rule; the frozen two-sided CUSUM and two-chart SR only. Not distribution free, not detector universal, not global, not nonlinear, not valid for moving support or for an innovation law without a first moment.",
+    "tree_object": "eede90383da44c250871b1bb97d12045c897c8d9"
+  },
+  "thresholds": {
+    "any_threshold_changed_by_p4z": false,
+    "fd_ladder_relative_max": 0.02,
+    "r_star": 0.010823063,
+    "relative": 0.03,
+    "source": "campaign_plan.json, derived from P4_PROTOCOL.json and checkpoint_p4z.json",
+    "top1_share_max": 0.1,
+    "top5_share_max": 0.3,
+    "z": 4.0
+  },
+  "verdict": "P4Z_NUMERICAL_PASS_AWAITING_FORMAL_OR_GOVERNANCE",
+  "what_is_awaiting": {
+    "formal": "SATISFIED. The bounded-survival lemma compiles with no error, no sorry, and no new axiom. Nothing further was required by the frozen checkpoint.",
+    "governance": "OUTSTANDING. 52 of the 96 frozen cells are INCONCLUSIVE and a governance decision is needed on them. 32 were killed by K3 because P4Z's own light regime envelope under-predicted their variance; 20 were refused by K7 because the h=0.2 rung of the frozen FD ladder is outside the O(h^2) asymptotic regime for light-tailed families at the frozen thresholds. Neither is evidence against the estimator, and every one of those 52 cells already PASSED in P4X. Re-certifying them needs a re-calibrated envelope and a ladder whose coarsest rung is inside the asymptotic regime -- which is a NEW frozen campaign, not an amendment of this one.",
+    "why_not_closed": "P4Z_CLOSED requires every frozen scientific, numerical, provenance, governance, cost and formal condition to be satisfied. The 8-cell residue is discharged and provenance, cost, replay and formal are all clean, but the frozen 96-cell scope is not fully adjudicated."
+  }
+}

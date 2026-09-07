@@ -307,14 +307,34 @@ def test_no_unenumerated_schema_escapes_the_result_bearing_requirement():
                     "recognised governance schema")
 
 
+#: The feasibility phase's own outputs, enumerated.  Each was produced before
+#: the Mac became a result-bearing host and each declared itself non-result
+#: bearing; none of them may ever be relabelled.  Production-phase artifacts may
+#: legitimately be result-bearing, so they are not covered by this lock -- but
+#: the list is explicit, so a feasibility artifact cannot quietly leave it.
+FEASIBILITY_ARTIFACTS = (
+    ("results", "estimator_feasibility.json"),
+    ("results", "failure_taxonomy.json"),
+    ("micropilots/diagnostics", "micropilot.json"),
+    ("micropilots/diagnostics", "fd_ladder.json"),
+)
+
+
 def test_the_feasibility_phase_artifacts_remain_non_result_bearing():
     """Nothing produced during the feasibility phase may be relabelled."""
-    for root in (NS / "results", NS / "micropilots" / "diagnostics"):
-        for path in root.glob("*.json"):
-            doc = json.loads(path.read_text())
-            if path.name == "lean_audit.json":
-                continue          # produced in the production phase
-            assert doc.get("result_bearing") is False, path
+    for folder, name in FEASIBILITY_ARTIFACTS:
+        path = NS / folder / name
+        assert path.exists(), path
+        doc = json.loads(path.read_text())
+        assert doc.get("result_bearing") is False, path
+
+
+def test_the_feasibility_artifact_list_is_complete_for_the_micropilots():
+    """Every micro-pilot diagnostic is covered by the lock above."""
+    covered = {name for folder, name in FEASIBILITY_ARTIFACTS
+               if folder.endswith("diagnostics")}
+    on_disk = {p.name for p in (NS / "micropilots" / "diagnostics").glob("*.json")}
+    assert on_disk == covered, on_disk ^ covered
 
 
 def test_result_bearing_artifacts_live_only_under_production_or_are_declared():

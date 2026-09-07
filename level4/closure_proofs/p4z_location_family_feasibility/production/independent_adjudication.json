@@ -1,0 +1,315 @@
+{
+  "checks": [
+    {
+      "check": "historical P4 tree object unchanged",
+      "detail": "eede90383da44c250871b1bb97d12045c897c8d9",
+      "status": "PASS"
+    },
+    {
+      "check": "frozen P4 artifact unchanged: THEOREM.md",
+      "detail": "1fd9c35ae69f273c0acb2aad7106787a53b08a7e",
+      "status": "PASS"
+    },
+    {
+      "check": "frozen P4 artifact unchanged: PROOF.md",
+      "detail": "3af5d735927623af1026b25a9414ff9bc6152350",
+      "status": "PASS"
+    },
+    {
+      "check": "frozen P4 artifact unchanged: configs/P4_PROTOCOL.json",
+      "detail": "4f2b560ba119f072841efd26c2da40f068c741e0",
+      "status": "PASS"
+    },
+    {
+      "check": "P4Z touches no path outside its own namespace",
+      "detail": [],
+      "status": "PASS"
+    },
+    {
+      "check": "historical P4 verdict still PARTIAL",
+      "detail": "PARTIAL",
+      "status": "PASS"
+    },
+    {
+      "check": "relative threshold is the frozen 0.03",
+      "detail": 0.03,
+      "status": "PASS"
+    },
+    {
+      "check": "z threshold is the frozen 4.0",
+      "detail": 4.0,
+      "status": "PASS"
+    },
+    {
+      "check": "r* is the frozen forced value",
+      "detail": 0.010823063,
+      "status": "PASS"
+    },
+    {
+      "check": "finite-difference convention unchanged",
+      "detail": [
+        0.05,
+        0.025
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "m grid unchanged",
+      "detail": [
+        1,
+        2,
+        3,
+        5
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "adjudication used the frozen thresholds and changed none",
+      "detail": {
+        "any_threshold_changed_by_p4z": false,
+        "fd_ladder_relative_max": 0.02,
+        "r_star": 0.010823063,
+        "relative": 0.03,
+        "source": "campaign_plan.json, derived from P4_PROTOCOL.json and checkpoint_p4z.json",
+        "top1_share_max": 0.1,
+        "top5_share_max": 0.3,
+        "z": 4.0
+      },
+      "status": "PASS"
+    },
+    {
+      "check": "primary estimator is RB-SCORE",
+      "detail": "RB-SCORE",
+      "status": "PASS"
+    },
+    {
+      "check": "companion route is RB-MAP",
+      "detail": "RB-MAP",
+      "status": "PASS"
+    },
+    {
+      "check": "estimator source hash matches the checkpoint: src/rebaseguard_p4z/rbscore.py",
+      "detail": "981f4f09ed17c7afac59e81680128e882a9ee392e93254504d0227660351d975",
+      "status": "PASS"
+    },
+    {
+      "check": "estimator source hash matches the checkpoint: src/rebaseguard_p4z/rbmap.py",
+      "detail": "8166946145d82d5049665d78a80ff43d705d4e40f6b0d326af9d8de1e1648ec3",
+      "status": "PASS"
+    },
+    {
+      "check": "estimator source hash matches the checkpoint: src/rebaseguard_p4z/analytic.py",
+      "detail": "71e576e2ad218801dbee80ebfbf0108e10b0128549e6500404ac813ac1ffc111",
+      "status": "PASS"
+    },
+    {
+      "check": "producer manifest verifies against the working tree",
+      "detail": "cfe183485ef9da92c89969c890fcc5f9db209cb03cfe66d9d39c9d65ee353889",
+      "status": "PASS"
+    },
+    {
+      "check": "scientific source tree is clean",
+      "detail": "clean",
+      "status": "PASS"
+    },
+    {
+      "check": "host is declared MAC_ONLY with zero AWS CPU",
+      "detail": {
+        "AWS_CPU_USED_BY_P4Z": 0,
+        "P4Z_NUMERICAL_HOST": "LOCAL_MAC",
+        "campaign_isolation": "MAC_ONLY"
+      },
+      "status": "PASS"
+    },
+    {
+      "check": "every block re-hashes to its recorded scientific hash",
+      "detail": "7200 blocks, 0 mismatches",
+      "status": "PASS"
+    },
+    {
+      "check": "every block used the planned path count (no silent extension)",
+      "detail": "0 deviations",
+      "status": "PASS"
+    },
+    {
+      "check": "exactly one producer hash across every block",
+      "detail": [
+        "cfe183485ef9da92c89969c890fcc5f9db209cb03cfe66d9d39c9d65ee353889"
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "exactly one runtime hash across every block",
+      "detail": [
+        "fb9ec8f26ce46c4a7e566dc58683d2a3d3da866cae475aeca9ba35ff729f7410"
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "no route exceeded the fixed 200-block policy",
+      "detail": {},
+      "status": "PASS"
+    },
+    {
+      "check": "no FD ladder exceeded its fixed block count",
+      "detail": {},
+      "status": "PASS"
+    },
+    {
+      "check": "the plan forbids top-ups and adaptive stopping",
+      "detail": {
+        "adaptive": false,
+        "blocks_per_route_full": 200,
+        "blocks_per_route_stage0": 20,
+        "path_count_may_increase_during_run": false,
+        "seed_rule": "seed = base + 100 * configuration_index, base rb_score 4090001, rb_map 4090002, fd_ladder 4090004",
+        "top_ups_permitted": 0
+      },
+      "status": "PASS"
+    },
+    {
+      "check": "seed schedule has no collision",
+      "detail": 72,
+      "status": "PASS"
+    },
+    {
+      "check": "seed schedule is disjoint from every historical P4 master seed",
+      "detail": [
+        4010001,
+        4010002,
+        4010003,
+        4010004,
+        4010005,
+        4010006
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "Stage-0 was frozen before execution",
+      "detail": true,
+      "status": "PASS"
+    },
+    {
+      "check": "Stage-0 ran the production driver, not a separate script",
+      "detail": true,
+      "status": "PASS"
+    },
+    {
+      "check": "Stage-0 covered every configuration carrying an unresolved cell",
+      "detail": [
+        "frozen/cusum@5/t1p5",
+        "frozen/cusum@5/t3",
+        "frozen/sr@520.886/t1p5",
+        "reduced/sr@20/t1p5"
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "kill gate K1 did not fire",
+      "detail": {
+        "fired": false,
+        "gate": "K1",
+        "tolerance": 1e-07,
+        "worst_abs_error": 3.733402476058245e-12
+      },
+      "status": "PASS"
+    },
+    {
+      "check": "kill gate K2 did not fire",
+      "detail": {
+        "fired": false,
+        "gate": "K2",
+        "mismatches": 0,
+        "residuals_checked": 102887
+      },
+      "status": "PASS"
+    },
+    {
+      "check": "no configuration carrying an unresolved cell was killed or excluded",
+      "detail": [],
+      "status": "PASS"
+    },
+    {
+      "check": "the Stage-0 verdict follows its own frozen rule",
+      "detail": "STAGE0_PASS",
+      "status": "PASS"
+    },
+    {
+      "check": "every cell in scope is accounted for exactly once",
+      "detail": {
+        "adjudicated": 96,
+        "counted": 96,
+        "expected": 96
+      },
+      "status": "PASS"
+    },
+    {
+      "check": "no cell is reported outside PASS / FAIL / INCONCLUSIVE",
+      "detail": {
+        "FAIL": 0,
+        "INCONCLUSIVE": 52,
+        "PASS": 44
+      },
+      "status": "PASS"
+    },
+    {
+      "check": "the historically unresolved residue is fully accounted",
+      "detail": {
+        "by_result": {
+          "FAIL": 0,
+          "INCONCLUSIVE": 0,
+          "PASS": 8
+        },
+        "total": 8
+      },
+      "status": "PASS"
+    },
+    {
+      "check": "total CPU is within the frozen cap",
+      "detail": {
+        "cap": 12.0,
+        "cpu_hours_recomputed_from_blocks": 2.380931414444448,
+        "runner_reported": 2.38093141444445
+      },
+      "status": "PASS"
+    },
+    {
+      "check": "replay reproduced every scientific hash",
+      "detail": {
+        "blocks": 24
+      },
+      "status": "PASS"
+    },
+    {
+      "check": "bounded-survival lemma compiles with no error and no sorry",
+      "detail": {
+        "errors": 0,
+        "sorry_count": 0,
+        "warnings": 0
+      },
+      "status": "PASS"
+    },
+    {
+      "check": "bounded-survival lemma introduces no new axiom",
+      "detail": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "no declaration was added to the inherited P4 Lean namespace",
+      "detail": 0,
+      "status": "PASS"
+    }
+  ],
+  "checks_failed": 0,
+  "checks_total": 44,
+  "failed_checks": [],
+  "independent_of_the_runner": true,
+  "method": "every count recomputed from the block files, every threshold re-read from its frozen source, every hash recomputed",
+  "result_bearing": true,
+  "schema": "rebaseguard.p4z-independent-adjudication.v1",
+  "verdict": "ADJUDICATION_PASS"
+}

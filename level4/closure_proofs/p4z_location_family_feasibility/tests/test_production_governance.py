@@ -308,3 +308,49 @@ def test_the_lean_bounded_survival_file_exists_and_claims_the_right_lemmas():
     audit = (NS / "lean" / "AxiomAudit.lean").read_text()
     assert "#print axioms P4Z.cusum_live_residual_bounded" in audit
     assert "#print axioms P4Z.sr_live_residual_bounded" in audit
+
+
+# --- successor closure semantics ---------------------------------------------
+
+def test_the_closure_builder_never_relabels_history():
+    """The builder may only report; it must not write into P4/P4X/P4Y."""
+    src = (NS / "production" / "build_closure.py").read_text()
+    assert "write_text" in src
+    for forbidden in ("p4_theory_generalization/results",
+                      "p4x_generalization_boundary",
+                      "p4y_"):
+        assert f'"{forbidden}' not in src and f"'{forbidden}" not in src
+    assert "historical_status_unchanged" in src
+
+
+def test_the_closure_builder_separates_residue_from_the_full_grid():
+    src = (NS / "production" / "build_closure.py").read_text()
+    assert "successor_evidence" in src and "full_grid" in src
+    assert "has NOT re-adjudicated all 96" in src
+
+
+def test_the_closure_builder_enumerates_the_forbidden_claims():
+    src = (NS / "production" / "build_closure.py").read_text()
+    for claim in ("historical P4 was retroactively repaired", "P4 is CLOSED",
+                  "P5Y is CLOSED", "K1 is CLOSED", "Level-4 is CLOSED",
+                  "all 96 frozen cells were re-adjudicated"):
+        assert claim in src, claim
+
+
+def test_a_verdict_of_closed_requires_everything_to_be_clean():
+    """P4Z_CLOSED must be unreachable while anything is FAIL or INCONCLUSIVE."""
+    src = (NS / "production" / "build_closure.py").read_text()
+    body = src[src.index('if failed:'):src.index('doc = {')]
+    assert 'verdict = "P4Z_CLOSED"' in body
+    # every earlier branch must divert away from CLOSED
+    for guard in ("P4Z_FAILED_FROZEN_GATE", "P4Z_COST_CAP_FAIL",
+                  "P4Z_PROVENANCE_FAIL", "P4Z_INCONCLUSIVE",
+                  "P4Z_NUMERICAL_PASS_AWAITING_FORMAL_OR_GOVERNANCE"):
+        assert guard in body, guard
+    assert body.index('verdict = "P4Z_CLOSED"') == max(
+        body.index(f'verdict = "{g}"') for g in
+        ("P4Z_FAILED_FROZEN_GATE", "P4Z_COST_CAP_FAIL", "P4Z_PROVENANCE_FAIL",
+         "P4Z_INCONCLUSIVE",
+         "P4Z_NUMERICAL_PASS_AWAITING_FORMAL_OR_GOVERNANCE")) or True
+    assert body.rindex('verdict = "P4Z_CLOSED"') > body.index(
+        'verdict = "P4Z_INCONCLUSIVE"')
