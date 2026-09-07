@@ -1,0 +1,225 @@
+{
+  "checks": [
+    {
+      "check": "historical P4 tree unchanged",
+      "detail": "eede90383da44c250871b1bb97d12045c897c8d9",
+      "status": "PASS"
+    },
+    {
+      "check": "historical P4 verdict still PARTIAL",
+      "detail": "PARTIAL",
+      "status": "PASS"
+    },
+    {
+      "check": "P4Z artifact unchanged: production/adjudication.json",
+      "detail": "fde940761e40b551...",
+      "status": "PASS"
+    },
+    {
+      "check": "P4Z artifact unchanged: results/successor_closure.json",
+      "detail": "bd28a361a6dd744f...",
+      "status": "PASS"
+    },
+    {
+      "check": "P4Z artifact unchanged: production/campaign_plan.json",
+      "detail": "f85c2c935e446ee9...",
+      "status": "PASS"
+    },
+    {
+      "check": "P4Z artifact unchanged: configs/checkpoint_p4z.json",
+      "detail": "c865b8dafde0908c...",
+      "status": "PASS"
+    },
+    {
+      "check": "P4ZA touches no path outside its own namespace",
+      "detail": [],
+      "status": "PASS"
+    },
+    {
+      "check": "relative threshold is the frozen 0.03",
+      "detail": 0.03,
+      "status": "PASS"
+    },
+    {
+      "check": "z threshold is the frozen 4.0",
+      "detail": 4.0,
+      "status": "PASS"
+    },
+    {
+      "check": "r* unchanged",
+      "detail": 0.010823063,
+      "status": "PASS"
+    },
+    {
+      "check": "frozen FD pair unchanged",
+      "detail": [
+        0.05,
+        0.025
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "K7 limit unchanged from P4Z",
+      "detail": 0.02,
+      "status": "PASS"
+    },
+    {
+      "check": "adjudication changed no threshold",
+      "detail": true,
+      "status": "PASS"
+    },
+    {
+      "check": "the frozen plan predates every result-bearing block",
+      "detail": {
+        "blocks_present_at_freeze": 0,
+        "freeze_commit": "5eb7278a75133ee9d982033a6f5e9cbeb8cbdc3e"
+      },
+      "status": "PASS"
+    },
+    {
+      "check": "ladder rungs are the frozen ones",
+      "detail": [
+        0.1,
+        0.05,
+        0.025
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "no rung was added or removed after results",
+      "detail": "all ladder blocks use the frozen rungs",
+      "status": "PASS"
+    },
+    {
+      "check": "sizing rule is non-adaptive with no top-up",
+      "detail": "N = 4.0 * (measured_relative_sd / 0.010823063)^2",
+      "status": "PASS"
+    },
+    {
+      "check": "every block re-hashes to its recorded scientific hash",
+      "detail": "5720 blocks, 0 mismatches",
+      "status": "PASS"
+    },
+    {
+      "check": "every block used the planned path count",
+      "detail": "0 deviations",
+      "status": "PASS"
+    },
+    {
+      "check": "exactly one producer hash across every block",
+      "detail": [
+        "445a73722d33d60c5001e9c5aae121543b997f9c895e5e3bcbdbaeb241105676"
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "exactly one runtime hash across every block",
+      "detail": [
+        "fb9ec8f26ce46c4a7e566dc58683d2a3d3da866cae475aeca9ba35ff729f7410"
+      ],
+      "status": "PASS"
+    },
+    {
+      "check": "no route exceeded its frozen block count",
+      "detail": {},
+      "status": "PASS"
+    },
+    {
+      "check": "runtime hash matches the frozen plan",
+      "detail": "fb9ec8f26ce46c4a7e566dc58683d2a3d3da866cae475aeca9ba35ff729f7410",
+      "status": "PASS"
+    },
+    {
+      "check": "seed schedule has no internal collision",
+      "detail": 39,
+      "status": "PASS"
+    },
+    {
+      "check": "seeds disjoint from P4Z",
+      "detail": "disjoint",
+      "status": "PASS"
+    },
+    {
+      "check": "seeds disjoint from historical P4",
+      "detail": "disjoint",
+      "status": "PASS"
+    },
+    {
+      "check": "total CPU within the P4ZA cap",
+      "detail": {
+        "cap": 6.0,
+        "recomputed_from_blocks": 3.6098779055555594,
+        "runner_reported": 3.6098779055555594
+      },
+      "status": "PASS"
+    },
+    {
+      "check": "P4ZA did not borrow the P4Z cap",
+      "detail": false,
+      "status": "PASS"
+    },
+    {
+      "check": "96 cells accounted exactly once",
+      "detail": {
+        "accounted": 96,
+        "conserved": true,
+        "expected": 96
+      },
+      "status": "PASS"
+    },
+    {
+      "check": "no cell is UNCOVERED",
+      "detail": {
+        "COVERED_FAIL": 0,
+        "COVERED_PASS": 92,
+        "INCONCLUSIVE": 4,
+        "UNCOVERED": 0
+      },
+      "status": "PASS"
+    },
+    {
+      "check": "no ambiguous coverage path",
+      "detail": 0,
+      "status": "PASS"
+    },
+    {
+      "check": "historical evidence never used as sole authority",
+      "detail": true,
+      "status": "PASS"
+    },
+    {
+      "check": "P4X contributes 0 authoritative dispositions",
+      "detail": 0,
+      "status": "PASS"
+    },
+    {
+      "check": "P4Z INCONCLUSIVE cells all received NEW P4ZA evidence",
+      "detail": "each superseded cell is authored by P4ZA",
+      "status": "PASS"
+    },
+    {
+      "check": "replay reproduced every scientific hash",
+      "detail": {
+        "blocks": 18
+      },
+      "status": "PASS"
+    },
+    {
+      "check": "inherited bounded-survival lemma still compiles clean",
+      "detail": {
+        "errors": 0,
+        "sorry_count": 0,
+        "warnings": 0
+      },
+      "status": "PASS"
+    }
+  ],
+  "checks_failed": 0,
+  "checks_total": 36,
+  "failed_checks": [],
+  "independent_of_the_runner": true,
+  "method": "counts recomputed from block files, thresholds re-read from frozen sources, hashes recomputed",
+  "result_bearing": true,
+  "schema": "rebaseguard.p4za-independent-closure-audit.v1",
+  "verdict": "CLOSURE_AUDIT_PASS"
+}

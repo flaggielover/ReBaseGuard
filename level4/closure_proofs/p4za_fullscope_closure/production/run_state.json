@@ -1,0 +1,84 @@
+{
+  "configurations": {
+    "frozen/cusum@5/gaussian": {
+      "cpu_seconds": 180.41590299999993,
+      "stage": "full"
+    },
+    "frozen/cusum@5/laplace": {
+      "cpu_seconds": 173.15878899999993,
+      "stage": "full"
+    },
+    "frozen/cusum@5/logistic": {
+      "cpu_seconds": 165.69290500000056,
+      "stage": "full"
+    },
+    "frozen/cusum@5/skewnormal4": {
+      "cpu_seconds": 8060.889107000001,
+      "stage": "full"
+    },
+    "frozen/sr@520.886/gaussian": {
+      "cpu_seconds": 205.80753199999526,
+      "stage": "full"
+    },
+    "frozen/sr@520.886/laplace": {
+      "cpu_seconds": 193.294366000011,
+      "stage": "full"
+    },
+    "frozen/sr@520.886/logistic": {
+      "cpu_seconds": 189.8571080000056,
+      "stage": "full"
+    },
+    "frozen/sr@520.886/skewnormal4": {
+      "cpu_seconds": 3738.79374200002,
+      "stage": "full"
+    },
+    "reduced/cusum@2/gaussian": {
+      "cpu_seconds": 9.257297999984075,
+      "stage": "full"
+    },
+    "reduced/cusum@2/skewnormal4": {
+      "cpu_seconds": 32.290953000021545,
+      "stage": "full"
+    },
+    "reduced/sr@20/gaussian": {
+      "cpu_seconds": 10.46545699998392,
+      "stage": "full"
+    },
+    "reduced/sr@20/logistic": {
+      "cpu_seconds": 11.447937999987705,
+      "stage": "full"
+    },
+    "reduced/sr@20/skewnormal4": {
+      "cpu_seconds": 24.189362000001932,
+      "stage": "full"
+    }
+  },
+  "cpu_seconds_total": 12995.560460000013,
+  "excluded": {
+    "frozen/cusum@5/skewnormal4": "K4 per-configuration cap"
+  },
+  "schema": "rebaseguard.p4za-run-state.v1",
+  "stage_a": {
+    "blocks_per_route": 20,
+    "configurations": [
+      "reduced/sr@20/gaussian",
+      "reduced/sr@20/logistic",
+      "reduced/sr@20/skewnormal4"
+    ],
+    "cost_cap_hit": false,
+    "ladder_implied_order_p": {
+      "reduced/sr@20/gaussian": 2.09,
+      "reduced/sr@20/logistic": 2.01,
+      "reduced/sr@20/skewnormal4": 2.04
+    },
+    "limit": 0.02,
+    "measured_over_model_relative_sd_range": [
+      0.37,
+      1.03
+    ],
+    "producer_gate_fired": false,
+    "tcb_gate_fired": false,
+    "worst_relative_T_B": 0.00064
+  },
+  "stage_a_verdict": "P4ZA_STAGE_A_PASS"
+}

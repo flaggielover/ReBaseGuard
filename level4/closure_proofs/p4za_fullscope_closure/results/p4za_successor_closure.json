@@ -1,0 +1,158 @@
+{
+  "claims_explicitly_not_made": [
+    "historical P4 was retroactively changed to PASS",
+    "P4 is CLOSED",
+    "P5Y is CLOSED",
+    "K1 is CLOSED",
+    "Level-4 is CLOSED",
+    "production readiness",
+    "the full 96-cell scope is closed"
+  ],
+  "cost": {
+    "COST_CAP": "PASS",
+    "cap_hours": 6.0,
+    "cpu_hours_total": 3.6098779055555594
+  },
+  "formal": {
+    "inherited_bounded_survival_lemma": {
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "declarations": 12,
+      "errors": 0,
+      "new_axioms": 0,
+      "sorry": 0
+    },
+    "p4za_addition": "none required; the skewnormal4 integrability argument reuses the already-formalised lemma"
+  },
+  "full_scope": {
+    "authoritative_sources": {
+      "P4X": 0,
+      "P4Z": 44,
+      "P4ZA": 52
+    },
+    "cells_total": 96,
+    "conservation": {
+      "accounted": 96,
+      "conserved": true,
+      "expected": 96
+    },
+    "counts": {
+      "COVERED_FAIL": 0,
+      "COVERED_PASS": 92,
+      "INCONCLUSIVE": 4,
+      "UNCOVERED": 0
+    },
+    "historical_evidence_used_as_sole_authority": false
+  },
+  "historical_status_unchanged": {
+    "P4X_P4Y_P4Z_modified": false,
+    "P4_ORIGINAL_VERDICT": "PARTIAL",
+    "P4_artifacts_modified": false,
+    "statement": "Historical P4 remains PARTIAL in its own artifact. P4X, P4Y and P4Z are untouched. P4ZA adds successor evidence and rewrites nothing."
+  },
+  "provenance": {
+    "checks": "36/36",
+    "independent_closure_audit": "CLOSURE_AUDIT_PASS",
+    "replay_blocks": 18,
+    "replay_field_mismatch": false,
+    "replay_hashes_identical": true
+  },
+  "result_bearing": true,
+  "schema": "rebaseguard.p4za-successor-closure.v1",
+  "theorem_scope": {
+    "modified_by_p4za": false,
+    "source": "level4/closure_proofs/p4_theory_generalization",
+    "tree_object": "eede90383da44c250871b1bb97d12045c897c8d9"
+  },
+  "thresholds": {
+    "any_threshold_changed_by_p4za": false,
+    "fd_ladder_relative_max": 0.02,
+    "r_star": 0.010823063,
+    "relative": 0.03,
+    "source": "frozen P4 protocol via the frozen P4ZA plan",
+    "top1_share_max": 0.1,
+    "top5_share_max": 0.3,
+    "z": 4.0
+  },
+  "truncation_rule": "T_B = |R(0.1,0.05) - R(0.05,0.025)|, the standard Richardson error estimate (difference between successive extrapolations), rounded outward. The idealised h^4 relation would divide this by 15; P4ZA does NOT, which is a conservative factor of 15.",
+  "verdict": "P4ZA_INCONCLUSIVE",
+  "what_p4za_resolved": {
+    "K3_resolved": 28,
+    "K7_all_resolved": true,
+    "by_cause": {
+      "K3": {
+        "FAIL": 0,
+        "INCONCLUSIVE": 4,
+        "PASS": 28
+      },
+      "K7": {
+        "FAIL": 0,
+        "INCONCLUSIVE": 0,
+        "PASS": 20
+      }
+    },
+    "cells_addressed": 52,
+    "note": "the 52 cells P4Z left INCONCLUSIVE received new P4ZA evidence under the unchanged frozen gate; none was upgraded by argument"
+  },
+  "what_remains_open": {
+    "cells": 4,
+    "detail": [
+      {
+        "configuration": "frozen/cusum@5/skewnormal4",
+        "empirical_order_p": 1.483707313273939,
+        "limit": 0.02,
+        "m": 1,
+        "r_star": 0.010823063,
+        "rb_map_relative_se": 0.003344924326155209,
+        "rb_score_relative_se": 0.005006583072076566,
+        "reasons": [
+          "K7 Richardson drift above the ladder limit"
+        ],
+        "relative_drift": 0.02553379230650733
+      },
+      {
+        "configuration": "frozen/cusum@5/skewnormal4",
+        "empirical_order_p": 1.4924311417738214,
+        "limit": 0.02,
+        "m": 2,
+        "r_star": 0.010823063,
+        "rb_map_relative_se": 0.003395314251282479,
+        "rb_score_relative_se": 0.004997759663881764,
+        "reasons": [
+          "K7 Richardson drift above the ladder limit"
+        ],
+        "relative_drift": 0.026749355115993356
+      },
+      {
+        "configuration": "frozen/cusum@5/skewnormal4",
+        "empirical_order_p": 1.484747457915165,
+        "limit": 0.02,
+        "m": 3,
+        "r_star": 0.010823063,
+        "rb_map_relative_se": 0.003280101399497816,
+        "rb_score_relative_se": 0.0047776450097235645,
+        "reasons": [
+          "K7 Richardson drift above the ladder limit"
+        ],
+        "relative_drift": 0.026601656556027985
+      },
+      {
+        "configuration": "frozen/cusum@5/skewnormal4",
+        "empirical_order_p": 1.4347337071832507,
+        "limit": 0.02,
+        "m": 5,
+        "r_star": 0.010823063,
+        "rb_map_relative_se": 0.002871770080568467,
+        "rb_score_relative_se": 0.004004072970566354,
+        "reasons": [
+          "K7 Richardson drift above the ladder limit"
+        ],
+        "relative_drift": 0.025224842374453618
+      }
+    ],
+    "reading": "these four cells had their K3 problem resolved -- both routes reach relative SE 0.0029-0.0050 against r* = 0.010823, and scale stability is clean -- but they fail K7: the finite-difference Richardson drift is 0.0252-0.0268 against the unchanged 0.02 limit, with empirical order still 1.43-1.49 rather than 2. The frozen limit is NOT widened to admit them."
+  }
+}
