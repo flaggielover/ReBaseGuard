@@ -1,0 +1,148 @@
+{
+  "claims_explicitly_not_made": [
+    "historical P4 was retroactively changed to PASS",
+    "P4's own historical verdict is anything other than PARTIAL",
+    "P5Y is CLOSED",
+    "K1 is CLOSED",
+    "Level-4 is CLOSED",
+    "production readiness",
+    "the theorem holds beyond its own frozen scope"
+  ],
+  "cost": {
+    "COST_CAP": "PASS",
+    "calibration_cpu_hours": 0.5068617286111111,
+    "cap_hours": 4.5,
+    "cpu_hours_total": 2.7382255294444424,
+    "run_cpu_hours": 2.2313638008333316
+  },
+  "formal": {
+    "bounded_survival_lemma": {
+      "axioms": [
+        "propext",
+        "Classical.choice",
+        "Quot.sound"
+      ],
+      "declarations": 12,
+      "errors": 0,
+      "new_axioms": 0,
+      "sorry": 0
+    },
+    "p4zb_addition": "none required"
+  },
+  "full_scope": {
+    "P4X_role": "corroboration only, 0 authoritative dispositions",
+    "authoritative_sources": {
+      "P4Z": 44,
+      "P4ZA": 48,
+      "P4ZB": 4
+    },
+    "cells_total": 96,
+    "conservation": {
+      "accounted": 96,
+      "conserved": true,
+      "expected": 96,
+      "one_source_per_cell": true
+    },
+    "counts": {
+      "COVERED_FAIL": 0,
+      "COVERED_PASS": 96,
+      "INCONCLUSIVE": 0,
+      "UNCOVERED": 0
+    },
+    "historical_evidence_used_as_sole_authority": false
+  },
+  "historical_status_unchanged": {
+    "P4X_P4Y_P4Z_P4ZA_modified": false,
+    "P4_ORIGINAL_VERDICT": "PARTIAL",
+    "P4_artifacts_modified": false,
+    "statement": "Historical P4 remains PARTIAL in its own artifact. P4X, P4Y, P4Z and P4ZA are untouched. No historical verdict is rewritten and no INCONCLUSIVE was reinterpreted: the four cells received new P4ZB measurement under the unchanged frozen gate."
+  },
+  "provenance": {
+    "checks": "41/41",
+    "independent_closure_audit": "CLOSURE_AUDIT_PASS",
+    "replay_blocks": 6,
+    "replay_field_mismatch": false,
+    "replay_hashes_identical": true
+  },
+  "result_bearing": true,
+  "schema": "rebaseguard.p4zb-successor-closure.v1",
+  "successor_closure_statement": "The general-location-family closure obligations of the frozen P4 theorem are closed by successor evidence: all 96 theorem-supported cells now carry a governed disposition under the unchanged frozen gate, authored by P4Z (44), P4ZA (48) and P4ZB (4), with zero scientific FAIL, zero INCONCLUSIVE and zero uncovered claims. This is successor evidence composed across a governed lineage; it does not alter the historical P4 record.",
+  "theorem_scope": {
+    "modified": false,
+    "source": "level4/closure_proofs/p4_theory_generalization",
+    "statement": "G1a: Gamma_{D,m,f} = E_0[A_m S_tau^psi] for a regular one-dimensional location family under the frozen two-sided CUSUM and two-chart SR, every m >= 1. Not distribution free, not detector universal, not global, not nonlinear, not valid for moving support or without a first moment.",
+    "tree_object": "eede90383da44c250871b1bb97d12045c897c8d9"
+  },
+  "thresholds": {
+    "any_threshold_changed_by_p4zb": false,
+    "fd_ladder_relative_max": 0.02,
+    "r_star": 0.010823063,
+    "relative": 0.03,
+    "source": "frozen P4 protocol via the frozen P4ZB plan",
+    "top1_share_max": 0.1,
+    "top5_share_max": 0.3,
+    "z": 4.0
+  },
+  "verdict": "P4ZB_CLOSED",
+  "what_p4zb_resolved": {
+    "cells": [
+      {
+        "T_B_relative": 0.003797877385169524,
+        "empirical_order_p": 1.765132125564191,
+        "gate_result": "PASS",
+        "m": 1,
+        "p4za_style_coarse_drift": 0.025019190407669038,
+        "rb_map_relative_se": 0.002796547865025193,
+        "rb_score_relative_se": 0.004975412013000473,
+        "relative_discrepancy": 0.004519705327,
+        "z": 0.661274527272
+      },
+      {
+        "T_B_relative": 0.004479046833828597,
+        "empirical_order_p": 1.7399784571223742,
+        "gate_result": "PASS",
+        "m": 2,
+        "p4za_style_coarse_drift": 0.02561296475074491,
+        "rb_map_relative_se": 0.002819924435520143,
+        "rb_score_relative_se": 0.004954386694926997,
+        "relative_discrepancy": 0.0046717041,
+        "z": 0.646099131645
+      },
+      {
+        "T_B_relative": 0.004232400844680495,
+        "empirical_order_p": 1.7474237643663306,
+        "gate_result": "PASS",
+        "m": 3,
+        "p4za_style_coarse_drift": 0.025000065072412255,
+        "rb_map_relative_se": 0.00276001541992689,
+        "rb_score_relative_se": 0.004696074999219878,
+        "relative_discrepancy": 0.004715884326,
+        "z": 0.685409269462
+      },
+      {
+        "T_B_relative": 0.004462144257144591,
+        "empirical_order_p": 1.7005415206978687,
+        "gate_result": "PASS",
+        "m": 5,
+        "p4za_style_coarse_drift": 0.02316909773968502,
+        "rb_map_relative_se": 0.0024082614326513814,
+        "rb_score_relative_se": 0.003947852350194576,
+        "relative_discrepancy": 0.003871177262,
+        "z": 0.603668260252
+      }
+    ],
+    "configuration": "frozen/cusum@5/skewnormal4",
+    "counts": {
+      "FAIL": 0,
+      "INCONCLUSIVE": 0,
+      "PASS": 4
+    },
+    "m": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "what_changed": "Only the reference neighbour of the truncation estimate. Route B remains the frozen per-batch Richardson at (0.05, 0.025); the K7 limit remains 0.02; every scientific threshold is unchanged. P4ZA compared the frozen pair against the COARSER (0.1,0.05) neighbour, which under the validated h^4 model overstates the residual by 15x; P4ZB compares it against the FINER (0.025,0.0125) neighbour. On identical blocks the coarser reference reads 0.0232-0.0256 and the finer reads 0.0038-0.0045."
+  }
+}
