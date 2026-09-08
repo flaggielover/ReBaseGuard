@@ -8,9 +8,10 @@ SR_NSTEP          = ARCHITECTURE_PARTIAL   (derived, implemented, corroborating)
 SR_M_R2           = IMPLEMENTED_NOT_YET_QUANTITATIVELY_CLOSING
 SR_ALL_M          = IMPLEMENTED  (m = 1,2,3,5, exact frozen coefficients)
 SR_FAR_FIELD      = PASS         (inherited, not recomputed)
-COST_CAP          = NOT_ESTABLISHED
+COST_CAP          = NOT_ESTABLISHED   (cap lies INSIDE the projection interval)
+SR_COST_FEASIBILITY = UNRESOLVED      (see SR_COST_FEASIBILITY.md)
 PRODUCTION        = OFF
-heavy numerics    = DEFERRED by the Phase-10 CPU gate (CUSUM owns the cores)
+heavy numerics    = BLOCKED on the unimplemented candidate solver, not on CPU
 ```
 
 ## Frozen scope, confirmed from authoritative files
@@ -174,6 +175,29 @@ degree ceiling are implemented and tested. Candidate SOLVES raise
 
 Patch evidence is NESTED: 23,979,976 order-0 patch items sit beneath the **8,849**
 SR obligations and create no work ID.
+
+## Overnight campaign finding (CUSUM cores released)
+
+With the host free, the pilot suite was run. It completed in **0.012 CPU-s** and
+returned `B_cover` utilisation **1563x-2609x** at cell 150 — i.e. it exercised the
+sup-norm envelope, not a candidate solve. `sr_patch.build_candidate` still raises
+`CandidateSolveDeferred`. Blocker 1 is unimplemented, and no amount of available
+CPU changes that.
+
+A cost-feasibility analysis was therefore performed from adjudicated data
+(`SR_COST_FEASIBILITY.md`). Key results:
+
+* the completed CUSUM campaign shows the frozen work model **under-projects by
+  1.635x** (projected 126.02 CPU-h, measured 206.086);
+* the frozen work model assumes **19** functions/cell, but the frozen SR DAG
+  requires **72** panel-resolved candidate functions/cell (3.79x);
+* projected `K1_total` spans **645 - 2766 CPU-h** against the 1126 cap, which lies
+  strictly inside that interval;
+* fitting at 72 functions needs a further **1.74x** speedup (uncalibrated) or
+  **3.6x** (calibrated) beyond the adjudicated 194x optimization.
+
+`COST_CAP` is therefore **NOT_ESTABLISHED** — neither PASS nor FAIL — and this is
+a governed stop condition, not a matter of effort.
 
 ## Exact remaining SR blockers, in dependency order
 
