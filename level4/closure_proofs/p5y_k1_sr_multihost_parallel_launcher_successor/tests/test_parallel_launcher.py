@@ -124,7 +124,8 @@ def test_descendant_after_approved_head_is_refused(frozen_auth, tmp_path):
 
 def test_unrelated_and_missing_producer_are_refused(frozen_auth):
     approved = approved_head_or_skip(frozen_auth)
-    unrelated = git("rev-list", "--max-parents=0", "HEAD").splitlines()[-1]
+    # a real non-ancestor: the CUSUM branch tip, which is not in this branch's ancestry
+    unrelated = git("rev-list", "-n1", "p5y-gate1-micropilots")
     bad = negative_control(producer_commit=unrelated)
     with pytest.raises(M.MultiHostRefusal, match="NOT an ancestor"):
         L.gate_producer_ancestry(bad, approved, repo=ROOT)
@@ -310,8 +311,10 @@ def test_role_transition_is_deterministic_and_result_independent(frozen_auth, tm
     assert seq == ["AWS", "VULTR"]
     assert L.resolve_active_host(frozen_auth, owners, [])["active_host"] == "AWS"
     assert L.resolve_active_host(frozen_auth, owners, aws)["active_host"] == "VULTR"
-    assert L.resolve_active_host(frozen_auth, owners, aws, inflight=1)["active_host"] == "VULTR"
-    assert "in flight" in L.resolve_active_host(frozen_auth, owners, aws, inflight=1)["reason"]
+    # in-flight work BLOCKS the advance: the active host must stay put, never jump ahead
+    blocked = L.resolve_active_host(frozen_auth, owners, aws, inflight=1)
+    assert blocked["active_host"] == "AWS", blocked
+    assert "in flight" in blocked["reason"]
     assert L.resolve_active_host(frozen_auth, owners, aws + vul)["active_host"] is None
 
 
