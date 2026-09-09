@@ -1,8 +1,16 @@
 {
+ "authorisation_layering": [
+  "1. protocol/checkpoint/repaired driver are frozen in the producer commit",
+  "2. producer_commit names that immutable commit (a commit cannot contain its own hash)",
+  "3. this result-free launch manifest binds producer_commit + checkpoint + shard manifest + both runtime hashes",
+  "4. the additive tag p5y-k1-sr-multihost-accounting-repair-preresult signs this manifest",
+  "the driver REFUSES production unless the actual checkout HEAD equals producer_commit"
+ ],
  "checkpoint_sha256": "4dc2dae7890c5e6d7aa0eb3415740ca9d22e3463b4a3276de892f6f2adb71bf3",
  "multihost_tag": "p5y-k1-sr-multihost-accounting-repair-preresult",
- "producer_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+ "producer_commit": "7f010caf7a4b25cf7b433e660145f5ef9ab3b552",
  "production_enabled": false,
+ "production_enabled_note": "authorises nothing by itself; production_enabled is false",
  "result_bearing": false,
  "runtime_contract_hashes": {
   "AWS": "d49f043755ef658a60e3c4017022ddecf0642a087a6e5bb0c1f2aefbe9721191",
@@ -10,5 +18,5 @@
  },
  "schema": "rebaseguard.p5y.k1.sr.multihost.accounting-repair.launch-manifest.v1",
  "shard_manifest_sha256": "48fe845c8fb68ba5d8987214ee30d616559944d4f841dba07f458395bdcd219c",
- "status": "PLACEHOLDER producer_commit; replaced by the real freeze commit before authorisation"
+ "status": "authorised"
 }
