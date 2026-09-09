@@ -1,0 +1,198 @@
+{
+ "ALL_AGREE": true,
+ "cases": [
+  {
+   "AGREES": true,
+   "case": "overhead=NaN with sr=5000 CPU-h",
+   "expected": "FAIL_CLOSED",
+   "observed": "FAIL_CLOSED",
+   "refusal": "governed cost governed_overhead_cpu_h is not finite: nan"
+  },
+  {
+   "AGREES": true,
+   "case": "overhead=-inf with sr=5000 CPU-h",
+   "expected": "FAIL_CLOSED",
+   "observed": "FAIL_CLOSED",
+   "refusal": "governed cost governed_overhead_cpu_h is not finite: -inf"
+  },
+  {
+   "AGREES": true,
+   "case": "overhead=-5000 with sr=5000 CPU-h",
+   "expected": "FAIL_CLOSED",
+   "observed": "FAIL_CLOSED",
+   "refusal": "governed cost governed_overhead_cpu_h is negative: -5000.0"
+  },
+  {
+   "AGREES": true,
+   "case": "overhead=+inf",
+   "expected": "FAIL_CLOSED",
+   "observed": "FAIL_CLOSED",
+   "refusal": "governed cost governed_overhead_cpu_h is not finite: inf"
+  },
+  {
+   "AGREES": true,
+   "case": "overhead=-0.0",
+   "expected": "PASS",
+   "observed": "PASS",
+   "refusal": null
+  },
+  {
+   "AGREES": true,
+   "case": "overhead=0.0",
+   "expected": "PASS",
+   "observed": "PASS",
+   "refusal": null
+  },
+  {
+   "AGREES": true,
+   "case": "overhead=206.086 (frozen CUSUM)",
+   "expected": "PASS",
+   "observed": "PASS",
+   "refusal": null
+  },
+  {
+   "AGREES": true,
+   "case": "bool overhead",
+   "expected": "FAIL_CLOSED",
+   "observed": "FAIL_CLOSED",
+   "refusal": "governed cost governed_overhead_cpu_h is a bool (True); bools are not CPU-hours"
+  },
+  {
+   "AGREES": true,
+   "case": "bool host component",
+   "expected": "FAIL_CLOSED",
+   "observed": "FAIL_CLOSED",
+   "refusal": "governed cost governed CPU-h for AWS is a bool (True); bools are not CPU-hours"
+  },
+  {
+   "AGREES": true,
+   "case": "str overhead",
+   "expected": "FAIL_CLOSED",
+   "observed": "FAIL_CLOSED",
+   "refusal": "governed cost governed_overhead_cpu_h is not numeric: '206' (str)"
+  },
+  {
+   "AGREES": true,
+   "case": "aggregate overflow +inf",
+   "expected": "FAIL_CLOSED",
+   "observed": "FAIL_CLOSED",
+   "refusal": "governed cost aggregate SR CPU-h is not finite: inf"
+  },
+  {
+   "AGREES": true,
+   "case": "(+inf sum) + (-inf overhead) -> NaN",
+   "expected": "FAIL_CLOSED",
+   "observed": "FAIL_CLOSED",
+   "refusal": "governed cost governed_overhead_cpu_h is not finite: -inf"
+  },
+  {
+   "AGREES": true,
+   "case": "subtractive overhead factor 0.5",
+   "expected": "FAIL_CLOSED",
+   "observed": "FAIL_CLOSED",
+   "refusal": "governed factor f is 0.5 < 1; that would be subtractive"
+  },
+  {
+   "AGREES": true,
+   "case": "aggregate EXACTLY 4500",
+   "expected": "PASS",
+   "observed": "PASS",
+   "refusal": null
+  },
+  {
+   "AGREES": true,
+   "case": "aggregate just above 4500",
+   "expected": "FAIL_CLOSED",
+   "observed": "FAIL_CLOSED",
+   "refusal": "global cap exceeded: charged 4500.000 CPU-h > 4500.0 (per-host {'AWS': 3913.0434782608704})"
+  },
+  {
+   "AGREES": true,
+   "case": "Codex 11 CPU-h Vultr counterexample",
+   "expected": "PASS",
+   "observed": "PASS",
+   "refusal": null
+  },
+  {
+   "AGREES": true,
+   "case": "Vultr over projected share, global under cap (full ledger)",
+   "expected": "PASS",
+   "observed": "PASS",
+   "refusal": null
+  },
+  {
+   "AGREES": true,
+   "case": "AWS over projected share, global under cap (full ledger)",
+   "expected": "PASS",
+   "observed": "PASS",
+   "refusal": null
+  },
+  {
+   "AGREES": true,
+   "case": "global > 4500 (full ledger)",
+   "expected": "FAIL_CLOSED",
+   "observed": "FAIL_CLOSED",
+   "refusal": "global cap exceeded: charged 5687.999 CPU-h > 4500.0 (per-host {'AWS': 3705.0, 'VULTR': 1035.0})"
+  },
+  {
+   "AGREES": true,
+   "case": "corrupted reconciliation",
+   "expected": "FAIL_CLOSED",
+   "observed": "FAIL_CLOSED",
+   "refusal": "corrupted accounting: VULTR claims 0.0 CPU-h but the ledger sums to 690.0 CPU-h"
+  },
+  {
+   "AGREES": true,
+   "case": "valid full campaign admitted",
+   "expected": "PASS",
+   "observed": "PASS",
+   "refusal": null
+  },
+  {
+   "AGREES": true,
+   "case": "wrong host role",
+   "expected": "FAIL_CLOSED",
+   "observed": "FAIL_CLOSED",
+   "refusal": "host role mismatch: declared AWS but sys_vendor 'Vultr' resolves to VULTR"
+  },
+  {
+   "AGREES": true,
+   "case": "wrong runtime hash",
+   "expected": "FAIL_CLOSED",
+   "observed": "FAIL_CLOSED",
+   "refusal": "VULTR runtime contract d49f043755ef658a60e3c4017022ddecf0642a087a6e5bb0c1f2aefbe9721191 != required c7f9fc671664a1bcfef6d2d3d93d6c"
+  },
+  {
+   "AGREES": true,
+   "case": "SMT misuse",
+   "expected": "FAIL_CLOSED",
+   "observed": "FAIL_CLOSED",
+   "refusal": "VULTR core assignment [0, 1, 2, 3] != frozen [0, 2, 4, 6]"
+  },
+  {
+   "AGREES": true,
+   "case": "wrong producer commit",
+   "expected": "FAIL_CLOSED",
+   "observed": "FAIL_CLOSED",
+   "refusal": "checkout HEAD bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb != authorised producer_commit aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; pro"
+  },
+  {
+   "AGREES": true,
+   "case": "authorised producer commit",
+   "expected": "PASS",
+   "observed": "PASS",
+   "refusal": null
+  },
+  {
+   "AGREES": true,
+   "case": "shard manifest wrong hash",
+   "expected": "FAIL_CLOSED",
+   "observed": "FAIL_CLOSED",
+   "refusal": "shard manifest sha256 48fe845c8fb68ba5d8987214ee30d616559944d4f841dba07f458395bdcd219c != authorised 00000000000000000000000000000"
+  }
+ ],
+ "production_enabled": false,
+ "result_bearing": false,
+ "result_cells_produced": 0,
+ "schema": "rebaseguard.p5y.k1.sr.multihost.accounting-repair.dry-run.v1"
+}

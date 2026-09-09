@@ -1,0 +1,174 @@
+{
+ "fields": {
+  "OVERHEAD_FACTOR": {
+   "domain": "finite, >= 1 (a factor < 1 is subtractive)",
+   "effect_on_total": "MULTIPLIES",
+   "finite_enforced": true,
+   "malformed_fails_closed": true,
+   "non_negative_enforced": true,
+   "source": "frozen module constant 1.15",
+   "validation_site": "gate_global_cap step (1) validate_governed_factor"
+  },
+  "cap.headroom_cpu_h": {
+   "domain": "n/a",
+   "effect_on_total": "NONE (diagnostic only)",
+   "finite_enforced": false,
+   "malformed_fails_closed": "n/a",
+   "non_negative_enforced": false,
+   "source": "GLOBAL_CPU_CAP - charged",
+   "validation_site": "n/a",
+   "why_not_load_bearing": "reported output, computed AFTER the decision"
+  },
+  "charged": {
+   "domain": "finite, >= 0 CPU-h",
+   "effect_on_total": "IS THE TOTAL",
+   "finite_enforced": true,
+   "malformed_fails_closed": true,
+   "non_negative_enforced": true,
+   "source": "factor * subtotal",
+   "validation_site": "gate_global_cap step (2) validate_governed_cost, then compared to the cap"
+  },
+  "cpu_h_by_role[role]": {
+   "domain": "finite, >= 0 CPU-h",
+   "effect_on_total": "INCREASES",
+   "finite_enforced": true,
+   "malformed_fails_closed": true,
+   "non_negative_enforced": true,
+   "source": "host_accounting.cpu_h",
+   "validation_site": "gate_global_cap step (1) validate_governed_cost"
+  },
+  "governed_overhead_cpu_h": {
+   "domain": "finite, >= 0 CPU-h",
+   "effect_on_total": "INCREASES",
+   "finite_enforced": true,
+   "malformed_fails_closed": true,
+   "non_negative_enforced": true,
+   "source": "caller; defaults to CUSUM_CPU_H=206.086",
+   "validation_site": "gate_global_cap step (1) validate_governed_cost  <-- THE REPAIRED FIELD"
+  },
+  "host_accounting.cpu_h": {
+   "domain": "finite, >= 0 CPU-h",
+   "effect_on_total": "INCREASES",
+   "finite_enforced": true,
+   "malformed_fails_closed": true,
+   "non_negative_enforced": true,
+   "source": "per_host_cpu_h",
+   "validation_site": "inherited from per_host_cpu_h; re-validated in reconcile_accounting and gate_global_cap"
+  },
+  "host_accounting.over_projected_share": {
+   "domain": "n/a",
+   "effect_on_total": "NONE (diagnostic only)",
+   "finite_enforced": false,
+   "malformed_fails_closed": "n/a",
+   "non_negative_enforced": false,
+   "source": "used > projected",
+   "validation_site": "n/a",
+   "why_not_load_bearing": "anomaly warning only"
+  },
+  "host_accounting.projected_share_cpu_h": {
+   "domain": "n/a",
+   "effect_on_total": "NONE (diagnostic only)",
+   "finite_enforced": false,
+   "malformed_fails_closed": "n/a",
+   "non_negative_enforced": false,
+   "source": "ROLES[*].per_cell_reservation_cpu_h * cells",
+   "validation_site": "n/a",
+   "why_not_load_bearing": "planning projection; never summed into the charge"
+  },
+  "host_accounting.variance_cpu_h": {
+   "domain": "n/a",
+   "effect_on_total": "NONE (diagnostic only)",
+   "finite_enforced": false,
+   "malformed_fails_closed": "n/a",
+   "non_negative_enforced": false,
+   "source": "used - projected",
+   "validation_site": "n/a",
+   "why_not_load_bearing": "diagnostic delta; never summed into the charge"
+  },
+  "per_host_cpu_h(records)": {
+   "domain": "finite, >= 0 CPU-h",
+   "effect_on_total": "INCREASES",
+   "finite_enforced": true,
+   "malformed_fails_closed": true,
+   "non_negative_enforced": true,
+   "source": "sum(cpu_seconds)/3600",
+   "validation_site": "validate_governed_cost on the SUM (catches overflow to +inf)"
+  },
+  "rec.cpu_seconds": {
+   "domain": "finite, >= 0 seconds",
+   "effect_on_total": "INCREASES",
+   "finite_enforced": true,
+   "malformed_fails_closed": true,
+   "non_negative_enforced": true,
+   "source": "per-host ledger cell record",
+   "validation_site": "validate_record -> validate_governed_cost; again in per_host_cpu_h"
+  },
+  "rec.obligations_completed": {
+   "domain": "int, >= 0",
+   "effect_on_total": "NONE (conservation check, not cost)",
+   "finite_enforced": true,
+   "malformed_fails_closed": true,
+   "non_negative_enforced": true,
+   "source": "ledger record",
+   "validation_site": "validate_record"
+  },
+  "reconcile_accounting.claimed": {
+   "domain": "finite, >= 0 CPU-h",
+   "effect_on_total": "GUARDS the total",
+   "finite_enforced": true,
+   "malformed_fails_closed": true,
+   "non_negative_enforced": true,
+   "source": "host_accounting.cpu_h as presented",
+   "validation_site": "reconcile_accounting -> validate_governed_cost"
+  },
+  "retry_count / resume cost": {
+   "domain": "n/a",
+   "effect_on_total": "NONE",
+   "finite_enforced": "n/a",
+   "malformed_fails_closed": "n/a",
+   "non_negative_enforced": "n/a",
+   "source": "ABSENT",
+   "validation_site": "n/a",
+   "why_not_load_bearing": "this driver's CELL_RECORD_REQUIRED_FIELDS carries no retry or resume cost term; no such value reaches the charge"
+  },
+  "sr (aggregate)": {
+   "domain": "finite, >= 0 CPU-h",
+   "effect_on_total": "INCREASES",
+   "finite_enforced": true,
+   "malformed_fails_closed": true,
+   "non_negative_enforced": true,
+   "source": "sum(cpu_h_by_role.values())",
+   "validation_site": "gate_global_cap step (2) validate_governed_cost"
+  },
+  "subtotal": {
+   "domain": "finite, >= 0 CPU-h",
+   "effect_on_total": "INCREASES",
+   "finite_enforced": true,
+   "malformed_fails_closed": true,
+   "non_negative_enforced": true,
+   "source": "sr + overhead",
+   "validation_site": "gate_global_cap step (2) validate_governed_cost"
+  }
+ },
+ "invariant": "every governed cost component finite and >= 0; THEN GLOBAL_CHARGE = OVERHEAD_FACTOR * (sum(host CPU-h) + governed overhead); THEN GLOBAL_CHARGE <= 4500",
+ "per_cell_hard_caps_present": false,
+ "per_host_hard_caps_present": false,
+ "result_bearing": false,
+ "schema": "rebaseguard.p5y.k1.sr.multihost.accounting-repair.surface-audit.v1",
+ "shard_hard_caps_present": false,
+ "shared_primitives": {
+  "GOVERNED_COST_DOMAIN": "finite real, >= 0; bool rejected; -0.0 normalised to 0.0",
+  "cost": "validate_governed_cost",
+  "factor": "validate_governed_factor"
+ },
+ "subtraction_sites": [
+  "GLOBAL_CPU_CAP - charged",
+  "claimed - truth_cpu_h",
+  "set(owners) - set(range(TOTAL_CELLS))",
+  "set(range(TOTAL_CELLS)) - set(owners)",
+  "set(range(TOTAL_CELLS)) - set(seen)",
+  "used - projected"
+ ],
+ "subtractive_paths_into_the_charge": [],
+ "unvalidated_inputs_to_the_charge": []
+}
