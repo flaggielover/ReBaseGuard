@@ -1,0 +1,293 @@
+{
+ "backend": {
+  "accepted": "O9",
+  "accepted_baseline_routes": [
+   "O4",
+   "O5",
+   "O7"
+  ],
+  "no_approximate_arithmetic_path": true,
+  "o9_acceptance": "Taylor coefficients bit-for-bit identical to the accepted baseline; max radius ratio exactly 1.000000",
+  "rejected": {
+   "O6": "inflates certified Taylor radii 23.549x at 256/384/512/768 bits"
+  }
+ },
+ "binding": true,
+ "campaign_identifier": "P5Y_K1_SR_CAP_AUTHORIZED_SUCCESSOR",
+ "campaign_kind": "compute-cap-authorized successor to the cost-blocked P5Y K1 SR campaign",
+ "census": {
+  "by_moment_shift": {
+   "0": 43,
+   "1": 35,
+   "2": 20,
+   "3": 4
+  },
+  "certified_contracts": 102,
+  "distinct_candidates": 46,
+  "inherited_verbatim": true
+ },
+ "certificate_semantics": {
+  "changed": false,
+  "inherited_from": "p5y_k1_sr_backend_o9_successor and p5y_k1_cusum_aux4_fullcover"
+ },
+ "compute_governance": {
+  "ONLY_GOVERNANCE_CHANGE": "a pre-authorized compute budget",
+  "cap_derivation": {
+   "step0_inputs": {
+    "candidate_cost_ratio_dense_over_real": 1.3602064023810607,
+    "cusum_cover_cpu_h": 206.086,
+    "frozen_overhead_factor": 1.15,
+    "ms_per_contract_dense_random": 3.944132548462567,
+    "ms_per_contract_real_F0": 2.899657391377005,
+    "panel_contract_evaluations": 2689824864,
+    "sr_contraction_cpu_h_dense": 2946.9516099350826,
+    "sr_contraction_cpu_h_real": 2166.5473745575687,
+    "wall_days_dense": 7.700820472719215,
+    "wall_days_real": 5.671456710459525,
+    "workers": 16
+   },
+   "step1_cost_basis": {
+    "rule": "conservative: the larger of the two measured candidate types",
+    "value_cpu_h": 2946.9516099350826,
+    "why": "the 46-candidate production mix was not individually measured; the real F_0 candidate has decaying Chebyshev coefficients and is 1.360x CHEAPER than the protocol's declared dense-random benchmark. Basing a cap on the cheaper candidate is precisely how the previous cap became insufficient."
+   },
+   "step2_plus_cusum": {
+    "cusum_cpu_h": 206.086,
+    "value_cpu_h": 3153.0376099350824,
+    "why": "the aux4 CUSUM cover is byte-identical on this host and is INHERITABLE, but a re-run allowance is budgeted so that an adjudicator may lawfully require a re-run without a second budget failure."
+   },
+   "step3_frozen_overhead": {
+    "factor": 1.15,
+    "value_cpu_h": 3625.9932514253446,
+    "why": "the benchmark measured contraction only. The frozen model already carries OVERHEAD=1.15 for certificate generation and per-cell setup: K1_total = OVERHEAD*(t_panel*EVALS/3600 + CUSUM). Reused unchanged."
+   },
+   "step4_timing_variance": {
+    "factor": 1.05,
+    "measured_replicate_variance_cpu_pct": 0.44,
+    "measured_replicate_variance_tp_pct": 3.03,
+    "value_cpu_h": 3807.2929139966122,
+    "why": "measured replicate variance was <=0.44% on CPU and <=3.03% on throughput; 5% covers that band plus host-level jitter across a multi-day run."
+   },
+   "step5_retry_resume": {
+    "abrupt_loss_events_budgeted": 2,
+    "added_cpu_h": 367.1891900177564,
+    "cell_cpu_h": 11.474662188054888,
+    "value_cpu_h": 4174.482104014369,
+    "why": "resume granularity is ONE CELL. An abrupt host loss forfeits at most the in-flight cell of each of the 16 workers. Two such events are budgeted.",
+    "workers": 16
+   },
+   "step6_assembly_verification": {
+    "factor": 1.02,
+    "value_cpu_h": 4257.971746094656,
+    "why": "aggregate ledger, governed-input manifest, re-hash and audit of all 316 cell records, and the final adjudication pass."
+   },
+   "step7_cap": {
+    "derived_requirement_cpu_h": 4257.971746094656,
+    "expected_cost_real_basis_cpu_h": 2728.5283807412034,
+    "expected_utilisation_dense_basis": 0.9462159435765902,
+    "expected_utilisation_real_basis": 0.6063396401647119,
+    "rounding_headroom_over_derived": 1.056841207114004,
+    "selected_cap_cpu_h": 4500.0,
+    "superseded_caps_must_not_be_reused": [
+     1848,
+     1126
+    ],
+    "why": "clean rounded cap 5.7% above the derived requirement. It binds only in the adversarial candidate case, which is what a cap is for."
+   }
+  },
+  "cap_enforcement": "the campaign aborts when cumulative measured CPU-hours reach the cap; the cap is NEVER raised mid-campaign",
+  "cap_selected_before_any_production_result": true,
+  "compute_cap_cpu_h": 4500.0,
+  "historical_caps_remain_immutable": true,
+  "overhead_factor": 1.15,
+  "superseded_caps_must_not_be_reused": [
+   1848,
+   1126
+  ]
+ },
+ "cover": {
+  "executable_cells": 316,
+  "rule": "the exact 316-cell executable cover; no cell added, removed or reordered"
+ },
+ "created_utc": "2026-09-09T07:30:00+00:00",
+ "documented_backend_observation": {
+  "cause": "matrix products perform fewer rounding steps than long scalar accumulation chains -- the same effect already adjudicated in p5y_k1_sr_backend_cost_audit/adjudication/AUDIT_ADJUDICATION.json",
+  "consequence": "the predecessor protocol's literal criterion error_channel >= predecessor holds only up to 256-bit rounding, not strictly. Recorded honestly; it is NOT a scientific loosening and NO threshold, bound or semantic is changed to accommodate it.",
+  "direction": "TIGHTENING, not loosening",
+  "disclosed_before_results": true,
+  "magnitude_context": "256-bit unit roundoff is 2^-256; the smallest governing threshold is 4.0e-2. The effect is ~73 orders of magnitude below it.",
+  "what": "O9's error channel is smaller than the accepted baseline's by at most 1.2521728187025763e-75 relative (~2^-248), measured exactly via dyadic mantissa/exponent over 88 comparisons on both candidate types."
+ },
+ "executable_commit": {
+  "recorded_after_freeze": true,
+  "rule": "production MUST execute the pre-result commit recorded in PRE_RESULT_CHECKPOINT.json, on branch p5y-k1-sr-parallel"
+ },
+ "execution": {
+  "flint_threads": 1,
+  "nested_thread_contract": {
+   "BLIS_NUM_THREADS": "1",
+   "MKL_NUM_THREADS": "1",
+   "NUMEXPR_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "parallel_efficiency_at_16": 0.9052,
+  "projected_cpu_h_dense_candidate_basis": 2946.95,
+  "projected_cpu_h_real_candidate_basis": 2166.5,
+  "projected_wall_days_dense_basis": 7.7,
+  "projected_wall_days_real_basis": 5.67,
+  "smt_qualified_for_production": false,
+  "smt_rejection_evidence": {
+   "w24": "dominated by w16 on BOTH axes (+53.1% CPU and +19.9% wall)",
+   "w32": "+80.5% CPU-hours for only 9.2% less wall time"
+  },
+  "thread_contract_enforcement": "every worker records os.environ for all six variables and REFUSES to certify if any is not exactly '1'; violation aborts the shard",
+  "worker_placement": "one worker per DISTINCT physical core, taskset -c 0..15",
+  "workers": 16
+ },
+ "frozen_scope": {
+  "D": 11,
+  "Z": 20,
+  "cand_degree": 16,
+  "e_den": 4,
+  "e_num": 1,
+  "inherited_verbatim_from": "p5y_k1_sr_backend_o9_successor/config/protocol.json:frozen_scope",
+  "live_patches": 3994,
+  "m_values": [
+   1,
+   2,
+   3,
+   5
+  ],
+  "obligations": 8849,
+  "panels": 83452,
+  "precision_bits": 256,
+  "sr_cells": 316
+ },
+ "governed_inputs_hash": "79f9fadaf98f2909e3a6da7fceb97cd3ee10e1a89c8a96a23e0c7b74c2759d7a",
+ "immutable_historical_states": {
+  "P5X_FINAL_VERDICT": "PARTIAL",
+  "P5_ORIGINAL_VERDICT": "PARTIAL",
+  "historical_k1_verdict": "K1_INCOMPLETE_BUDGET",
+  "prior_p5y_cost_blocked_successor": "historically unchanged; SR_BACKEND_OPTIMIZATION = EXHAUSTED_UNDER_FROZEN_SCOPE_AND_PRECISION stands as a true statement about the 1126 CPU-h cap",
+  "rule": "this successor does not overturn any historical verdict; it authorises a NEW campaign with its own budget"
+ },
+ "incidental_runtime_classification": {
+  "authority": "p5y_k1_cusum_aux4_fullcover/code/schema.py classify()",
+  "definition": "fields that vary between two runs of identical science on identical inputs and therefore MUST NOT enter the scientific hash",
+  "evidence": "in the representative replay, 320 of ~12,222 leaves differed across four cells and ALL 320 were in this class; 0 scientific leaves moved",
+  "fields": [
+   "cpu_seconds",
+   "cpu_seconds_prepare",
+   "cpu_seconds_auxiliary",
+   "cpu_seconds_including_dependencies",
+   "wall_seconds",
+   "peak_rss_kib"
+  ]
+ },
+ "k1_meaning": {
+  "changed": false,
+  "definition": "K1 = the SR cover plus the CUSUM cover under the frozen obligation universe"
+ },
+ "not_a_retroactive_repair": true,
+ "obligation_universe": {
+  "inherited_verbatim": true,
+  "total": 8849
+ },
+ "predecessors": {
+  "authoritative_worktree_head": "ea2ce6bd9d2aad9008f94e8ae304d69a623c5e2d",
+  "cost_blocked_predecessor_namespace": "level4/closure_proofs/p5y_k1_sr_backend_o9_successor",
+  "cusum_anchor": "ea2ce6bd9d2aad9008f94e8ae304d69a623c5e2d",
+  "note": "predecessors are referenced, never edited. This namespace is additive.",
+  "o9_predecessor_checkpoint": "7389f57924ad0ffe42d2ffb8cb1ed8e2570d837b",
+  "sr_worktree_head": "4f0c7d7f1ee0b7959d07b7340609bc03c1006966"
+ },
+ "production_state": {
+  "production_enabled": false,
+  "reason": "frozen pre-result checkpoint; awaiting independent pre-run adjudication"
+ },
+ "protected_trees": {
+  "authoritative_cusum_tree": {
+   "head": "ea2ce6bd9d2aad9008f94e8ae304d69a623c5e2d",
+   "p5y_k1_cusum_aux4_fullcover": "d34ee83c3924cd19357a90b425f06c60de957674"
+  },
+  "rule": "these git tree object hashes MUST be byte-identical before and after the freeze; the campaign is additive only",
+  "sr_worktree_head_at_freeze": "4f0c7d7f1ee0b7959d07b7340609bc03c1006966",
+  "trees": {
+   "p5_nonlinear_dynamics": "ec1d3b1da066a4ddda34f24bd5e062c6b8a93484",
+   "p5x_global_nonlinear_dynamics": "18e9435cf1995d705f3a85e4248dc5a261fc59c5",
+   "p5y_k1_binding_campaign": "820089faa243509d65966ce5a710a00a5241f911",
+   "p5y_k1_sr_backend_cost_audit": "86df000135fe2a8efe7cf6b3471630aa5dd7154b",
+   "p5y_k1_sr_backend_o9_successor": "bb958bc68f8eab7303180fdf7d974f95337a47b2",
+   "p5y_k1_sr_qualification": "f708f2f9f940fd713abf522fbea431231c7f1f50",
+   "p5y_k1_successor_optimized": "dabcccdf9fb196f92ea51a2ce3cb7cda841575cb",
+   "p5y_k1_task1r_budget_harness": "cda25f2e9bc62d1f47bcf16515ef58380d2b4756",
+   "p5y_micropilot_gate1": "266f271160963d69c661ca5e609482246685224e",
+   "p5y_theorem_adjudication": "3576fcfa1fbdba46c2ac8c9ac859c21f63941254"
+  }
+ },
+ "result_bearing": false,
+ "retry_and_resume": {
+  "budgeted_abrupt_loss_events": 2,
+  "forfeit_bound_per_event_cpu_h": 183.5945950088782,
+  "max_automatic_retries_per_cell": 2,
+  "resume_granularity": "ONE CELL",
+  "resume_rule": "a cell is re-run from scratch unless a complete cell record exists whose producer identity AND runtime contract hash match the current process; partial cell state is NEVER composed",
+  "retry_trigger": "infrastructure failure only (host loss, I/O error, OOM). A SCIENTIFIC failure is NEVER retried -- it is recorded and the campaign stops.",
+  "skip_if_current": "a cell certified under the current producer identity is skipped"
+ },
+ "runtime_qualification_required": {
+  "backend_libraries": {
+   "numpy.libs/libscipy_openblas64_-61654e39.so": "6cad8d2ad994ddc43d2ccdb0fb5d9458373ff1b87ef7ff420f2f94406eb8f082",
+   "python_flint.libs/libflint-6839011d.so.24.0.0": "871a4132fd1e9f3638391b2208e07088f8e3e72a10e41d45f58b150a60c2a1a9",
+   "python_flint.libs/libgmp-e0c82b6b.so.10.5.0": "33d24e675b10f8b1ab93a8ad3fa2ed5012e1b0d89dcdb97273877c6c6b9450d8",
+   "python_flint.libs/libmpfr-be332c05.so.6.2.2": "c4dfcfc7c5c7ab71d427e15f2f9fae4ace88592a81d4596a918dcc02eadfc6e3"
+  },
+  "cpython_version": "3.12.3",
+  "flint_version": "3.6.0",
+  "numpy_version": "2.5.2",
+  "openblas_config": "OpenBLAS 0.3.34.0.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY SkylakeX MAX_THREADS=64",
+  "openblas_runtime_corename": "SkylakeX",
+  "precision_bits": 256,
+  "python_flint_version": "0.9.0",
+  "required_runtime_contract_hash": "d49f043755ef658a60e3c4017022ddecf0642a087a6e5bb0c1f2aefbe9721191",
+  "rule": "production REFUSES to start unless the live runtime contract hash equals the committed value",
+  "runtime_contract_schema": "k1.cusum-aux4.runtime-contract.v2",
+  "why_the_kernel_binds": "SkylakeX vs Haswell changes 62 of 240 certified dyadic candidates on one host (evidence/blas_kernel_sensitivity.json)"
+ },
+ "schema": "rebaseguard.p5y.k1.sr-cap-authorized.protocol.v1",
+ "scientific_hash_rules": {
+  "algorithm": "sha256 over canonical JSON: sorted keys, separators (',',':'), ensure_ascii, trailing newline",
+  "exact_values": "rationals travel as exact strings; interval endpoints are compared as exact dyadic (mantissa, exponent) pairs. No float enters any hash.",
+  "inherited_from": "p5y_k1_cusum_aux4_fullcover/code/hash_v2.py (schema k1.cusum-aux4.cell-record.v2)",
+  "method": "built by EXCLUSION -- the record is walked in full and every leaf whose path classifies as INCIDENTAL_RUNTIME is dropped; everything else is hashed",
+  "published": [
+   "scientific_content_hash",
+   "auxiliary_evidence_hash"
+  ]
+ },
+ "shard_and_manifest_rules": {
+  "atomic_write": "write to a temporary file then rename; a partial record is never visible",
+  "manifest": "every shard is listed with its sha256 and its scientific_content_hash in the campaign ledger; the ledger is rebuilt from the shards, never appended to incrementally",
+  "no_result_may_predate_the_pre_result_commit": true,
+  "record_name": "sr_CELL_{cell_index}_256.json",
+  "shard": "one cell = one shard = one atomic JSON record"
+ },
+ "stop_and_abort_conditions": [
+  "cumulative measured CPU-hours reach the compute cap -> STOP, do not raise the cap",
+  "live runtime contract hash != required hash -> REFUSE TO START",
+  "any of the six thread variables != '1' in a worker -> ABORT that shard",
+  "a scientific obligation FAILS -> STOP the campaign and record; never retry, never adjust a threshold",
+  "a protected predecessor tree hash changes -> ABORT immediately",
+  "a cell record's producer identity or runtime contract hash disagrees with the campaign's -> ABORT",
+  "wall-clock exceeds 14 days -> STOP and report (2x the dense-basis projection)",
+  "free disk below 5 GiB -> STOP before writing a partial record"
+ ],
+ "thresholds": {
+  "B_candidate": 0.04,
+  "changed": false,
+  "local_gate_budget": 0.1,
+  "note": "reproduced for the record only; NOT redefined here"
+ }
+}

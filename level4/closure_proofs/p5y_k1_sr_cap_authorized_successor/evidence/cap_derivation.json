@@ -1,0 +1,63 @@
+{
+ "step0_inputs": {
+  "panel_contract_evaluations": 2689824864,
+  "workers": 16,
+  "frozen_overhead_factor": 1.15,
+  "ms_per_contract_real_F0": 2.899657391377005,
+  "ms_per_contract_dense_random": 3.944132548462567,
+  "candidate_cost_ratio_dense_over_real": 1.3602064023810607,
+  "sr_contraction_cpu_h_real": 2166.5473745575687,
+  "sr_contraction_cpu_h_dense": 2946.9516099350826,
+  "cusum_cover_cpu_h": 206.086,
+  "wall_days_real": 5.671456710459525,
+  "wall_days_dense": 7.700820472719215
+ },
+ "step1_cost_basis": {
+  "value_cpu_h": 2946.9516099350826,
+  "rule": "conservative: the larger of the two measured candidate types",
+  "why": "the 46-candidate production mix was not individually measured; the real F_0 candidate has decaying Chebyshev coefficients and is 1.360x CHEAPER than the protocol's declared dense-random benchmark. Basing a cap on the cheaper candidate is precisely how the previous cap became insufficient."
+ },
+ "step2_plus_cusum": {
+  "value_cpu_h": 3153.0376099350824,
+  "cusum_cpu_h": 206.086,
+  "why": "the aux4 CUSUM cover is byte-identical on this host and is INHERITABLE, but a re-run allowance is budgeted so that an adjudicator may lawfully require a re-run without a second budget failure."
+ },
+ "step3_frozen_overhead": {
+  "value_cpu_h": 3625.9932514253446,
+  "factor": 1.15,
+  "why": "the benchmark measured contraction only. The frozen model already carries OVERHEAD=1.15 for certificate generation and per-cell setup: K1_total = OVERHEAD*(t_panel*EVALS/3600 + CUSUM). Reused unchanged."
+ },
+ "step4_timing_variance": {
+  "value_cpu_h": 3807.2929139966122,
+  "factor": 1.05,
+  "measured_replicate_variance_cpu_pct": 0.44,
+  "measured_replicate_variance_tp_pct": 3.03,
+  "why": "measured replicate variance was <=0.44% on CPU and <=3.03% on throughput; 5% covers that band plus host-level jitter across a multi-day run."
+ },
+ "step5_retry_resume": {
+  "value_cpu_h": 4174.482104014369,
+  "added_cpu_h": 367.1891900177564,
+  "cell_cpu_h": 11.474662188054888,
+  "abrupt_loss_events_budgeted": 2,
+  "workers": 16,
+  "why": "resume granularity is ONE CELL. An abrupt host loss forfeits at most the in-flight cell of each of the 16 workers. Two such events are budgeted."
+ },
+ "step6_assembly_verification": {
+  "value_cpu_h": 4257.971746094656,
+  "factor": 1.02,
+  "why": "aggregate ledger, governed-input manifest, re-hash and audit of all 316 cell records, and the final adjudication pass."
+ },
+ "step7_cap": {
+  "derived_requirement_cpu_h": 4257.971746094656,
+  "selected_cap_cpu_h": 4500.0,
+  "rounding_headroom_over_derived": 1.056841207114004,
+  "expected_cost_real_basis_cpu_h": 2728.5283807412034,
+  "expected_utilisation_real_basis": 0.6063396401647119,
+  "expected_utilisation_dense_basis": 0.9462159435765902,
+  "superseded_caps_must_not_be_reused": [
+   1848,
+   1126
+  ],
+  "why": "clean rounded cap 5.7% above the derived requirement. It binds only in the adversarial candidate case, which is what a cap is for."
+ }
+}
