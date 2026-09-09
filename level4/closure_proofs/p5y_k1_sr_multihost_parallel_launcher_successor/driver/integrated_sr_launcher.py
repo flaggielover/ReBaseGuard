@@ -361,6 +361,38 @@ def gate_concurrency(auth, role, *, enforce_active=False, active_host=None) -> d
     return {"mode": mode, "host_sequence": c.get("host_sequence")}
 
 
+def far_field_attribution(auth, owners) -> dict:
+    """The frozen universe holds 8849 SR obligations, but the 316-cell cover
+    carries only 8848: the remaining one is SR:-1:far_field:all_m, on cell -1,
+    which is NOT a shard cell.
+
+    A campaign that reported obligations_per_cell for all 316 cells would sum to
+    8848 and final assembly would refuse obligation conservation forever. The
+    far-field obligation is therefore attributed DETERMINISTICALLY to the lowest
+    -numbered cell owned by the first host in the frozen sequence. This is
+    bookkeeping attribution of work that is produced either way; it changes no
+    scientific scope, no threshold and no obligation count.
+    """
+    ff = auth.get("far_field_obligation")
+    if not ff:
+        raise Refusal("authorization does not bind far_field_obligation attribution")
+    first = auth["concurrency"]["host_sequence"][0]
+    owned = sorted(c for c, r in owners.items() if r == first)
+    cell = owned[0]
+    if ff.get("attributed_to_role") != first or ff.get("attributed_to_cell") != cell:
+        raise Refusal(
+            f"far-field attribution {ff.get('attributed_to_role')}:{ff.get('attributed_to_cell')} "
+            f"!= deterministic {first}:{cell}")
+    return {"work_id": ff["work_id"], "count": ff["count"],
+            "role": first, "cell": cell}
+
+
+def obligations_for_cell(auth, owners, role, cell) -> int:
+    per = auth["scientific_scope"]["obligations_per_cell"]
+    ff = far_field_attribution(auth, owners)
+    return per + (ff["count"] if (role == ff["role"] and cell == ff["cell"]) else 0)
+
+
 def shard_structurally_complete(role, owners, completed) -> bool:
     owned = {c for c, r in owners.items() if r == role}
     return owned.issubset(set(completed))
@@ -633,7 +665,8 @@ def run_production(pf, *, max_cells=None, poll_timeout=3600.0,
                       "runtime_contract_hash": auth["runtime_contract_hashes"][role],
                       "scientific_content_hash": sci,
                       "cpu_seconds": actual * 3600.0,
-                      "obligations_completed": auth["scientific_scope"]["obligations_per_cell"],
+                      "obligations_completed": obligations_for_cell(
+                          auth, pf["owners"], role, cell),
                       "complete": True}
             M.validate_record(record, role, pf["owners"], auth["producer_commit"],
                               auth["checkpoint_sha256"])

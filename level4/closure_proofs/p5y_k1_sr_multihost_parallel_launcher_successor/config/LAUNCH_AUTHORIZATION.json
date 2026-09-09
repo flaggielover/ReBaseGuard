@@ -18,7 +18,14 @@
    "result_independent": true
   }
  },
- "evidence_manifest_sha256": "0b74a2a8c97515a2657b5f4639e9f22c6e1bca59c37473f78062e7913bc79c3b",
+ "evidence_manifest_sha256": "74293a3d398f18eeb140fb952fd22c6628906e5ecefc5430507bfd1bc5bf2acc",
+ "far_field_obligation": {
+  "attributed_to_cell": 0,
+  "attributed_to_role": "AWS",
+  "count": 1,
+  "why": "the 316-cell cover carries 8848 of the 8849 frozen SR obligations; the remaining one lives on cell -1 (far field) which is not a shard cell, so it is attributed deterministically to the lowest cell of the first host in the frozen sequence",
+  "work_id": "SR:-1:far_field:all_m"
+ },
  "global_cpu_cap": 4500.0,
  "governed_overhead_cpu_h": 206.086,
  "hosts": {
@@ -63,7 +70,7 @@
    "workers": 4
   }
  },
- "integrated_source_manifest_sha256": "ca22ab06cdf7248c040a754b1e9217bb457ffaa2bc2c92d2a7df0760f478179f",
+ "integrated_source_manifest_sha256": "d4abb7dadeb567c111b7dc28317d233ec19975aa6f04423fe51a035eb364d5ca",
  "multihost_tag": "p5y-k1-sr-multihost-parallel-launcher-preresult",
  "overhead_factor": 1.15,
  "producer_commit": "038b7ca80518be2387c2f27d00d6741243520077",

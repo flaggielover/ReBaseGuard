@@ -344,3 +344,29 @@ def test_gate_library_and_adapter_unchanged_from_predecessor():
     for rel in ("driver/multihost.py", "driver/executor_adapter.py"):
         assert hashlib.sha256((NS / rel).read_bytes()).hexdigest() == \
                hashlib.sha256((prev / rel).read_bytes()).hexdigest(), rel
+
+
+# ================= D18: obligation conservation over the real cover =========
+def test_far_field_obligation_makes_316_cells_sum_to_8849(frozen_auth, tmp_path):
+    """The 316 cover cells carry 8848 obligations; the 8849th is SR:-1:far_field.
+    Without deterministic attribution, final assembly could NEVER succeed."""
+    approved_head_or_skip(frozen_auth)
+    p = pf(frozen_auth, "AWS", tmp_path)
+    owners = p["owners"]
+    total = sum(L.obligations_for_cell(frozen_auth, owners, r, c)
+                for c, r in owners.items())
+    assert total == frozen_auth["scientific_scope"]["obligations"] == 8849
+    ff = L.far_field_attribution(frozen_auth, owners)
+    assert ff["role"] == "AWS" and ff["cell"] == 0 and ff["count"] == 1
+    assert L.obligations_for_cell(frozen_auth, owners, "AWS", 0) == 29
+    assert L.obligations_for_cell(frozen_auth, owners, "AWS", 1) == 28
+
+
+def test_far_field_attribution_must_be_deterministic(frozen_auth, tmp_path):
+    approved_head_or_skip(frozen_auth)
+    p = pf(frozen_auth, "AWS", tmp_path)
+    bad = negative_control(far_field_obligation={
+        "work_id": "SR:-1:far_field:all_m", "count": 1,
+        "attributed_to_role": "VULTR", "attributed_to_cell": 4})
+    with pytest.raises(M.MultiHostRefusal, match="far-field attribution"):
+        L.far_field_attribution(bad, p["owners"])
