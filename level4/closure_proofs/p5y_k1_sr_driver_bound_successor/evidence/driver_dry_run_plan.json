@@ -1,0 +1,255 @@
+{
+ "admitted": true,
+ "checkpoint_sha256": "73baadb220765e7544e3a79d6ded832f12a5e51b6b4b6538f5459226ecd53052",
+ "gates": {
+  "A_repository": {
+   "bound_artifacts_verified": 5,
+   "branch": "p5y-k1-sr-parallel",
+   "dirty_entries": 0,
+   "head": "96db7cd5e3d575eba64e9f938f145f3cd5c5efa6"
+  },
+  "B_runtime": {
+   "flint_version": "3.6.0",
+   "openblas_runtime_corename": "SkylakeX",
+   "runtime_contract_hash": "d49f043755ef658a60e3c4017022ddecf0642a087a6e5bb0c1f2aefbe9721191",
+   "sys_vendor": "Amazon EC2",
+   "venv_root": "/home/ubuntu/work/ReBaseGuard"
+  },
+  "C_threads": {
+   "value": "1",
+   "variables_enforced": [
+    "OMP_NUM_THREADS",
+    "OPENBLAS_NUM_THREADS",
+    "MKL_NUM_THREADS",
+    "NUMEXPR_NUM_THREADS",
+    "BLIS_NUM_THREADS",
+    "VECLIB_MAXIMUM_THREADS"
+   ]
+  },
+  "D_topology": {
+   "core_assignment": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+   ],
+   "physical_cores_available": 16,
+   "smt_used": false,
+   "workers": 16
+  },
+  "E_scope": {
+   "D": 11,
+   "Z": 20,
+   "backend": "O9",
+   "cand_degree": 16,
+   "cells": 316,
+   "census": {
+    "by_moment_shift": {
+     "0": 43,
+     "1": 35,
+     "2": 20,
+     "3": 4
+    },
+    "certified_contracts": 102,
+    "distinct_candidates": 46,
+    "inherited_verbatim": true
+   },
+   "live_patches": 3994,
+   "obligations": 8849,
+   "obligations_per_cell": 28,
+   "panels": 83452,
+   "precision_bits": 256
+  }
+ },
+ "mode": "dry-run",
+ "plan": {
+  "backend": "O9",
+  "cell_ids_first": [
+   0,
+   1,
+   2,
+   3,
+   4
+  ],
+  "cell_ids_last": [
+   311,
+   312,
+   313,
+   314,
+   315
+  ],
+  "cells": 316,
+  "contracts_per_cell": 102,
+  "core_assignment": [
+   0,
+   1,
+   2,
+   3,
+   4,
+   5,
+   6,
+   7,
+   8,
+   9,
+   10,
+   11,
+   12,
+   13,
+   14,
+   15
+  ],
+  "exact_partition": true,
+  "far_field_units": 1,
+  "obligations_per_cell": 28,
+  "panel_contract_evaluations": 2689824864,
+  "precision_bits": 256,
+  "scientific_computation_performed": false,
+  "shard_sizes": [
+   19,
+   20,
+   20,
+   20,
+   19,
+   20,
+   20,
+   20,
+   19,
+   20,
+   20,
+   20,
+   19,
+   20,
+   20,
+   20
+  ],
+  "shards": [
+   {
+    "core": 0,
+    "first": 0,
+    "last": 18,
+    "n_cells": 19,
+    "worker": 0
+   },
+   {
+    "core": 1,
+    "first": 19,
+    "last": 38,
+    "n_cells": 20,
+    "worker": 1
+   },
+   {
+    "core": 2,
+    "first": 39,
+    "last": 58,
+    "n_cells": 20,
+    "worker": 2
+   },
+   {
+    "core": 3,
+    "first": 59,
+    "last": 78,
+    "n_cells": 20,
+    "worker": 3
+   },
+   {
+    "core": 4,
+    "first": 79,
+    "last": 97,
+    "n_cells": 19,
+    "worker": 4
+   },
+   {
+    "core": 5,
+    "first": 98,
+    "last": 117,
+    "n_cells": 20,
+    "worker": 5
+   },
+   {
+    "core": 6,
+    "first": 118,
+    "last": 137,
+    "n_cells": 20,
+    "worker": 6
+   },
+   {
+    "core": 7,
+    "first": 138,
+    "last": 157,
+    "n_cells": 20,
+    "worker": 7
+   },
+   {
+    "core": 8,
+    "first": 158,
+    "last": 176,
+    "n_cells": 19,
+    "worker": 8
+   },
+   {
+    "core": 9,
+    "first": 177,
+    "last": 196,
+    "n_cells": 20,
+    "worker": 9
+   },
+   {
+    "core": 10,
+    "first": 197,
+    "last": 216,
+    "n_cells": 20,
+    "worker": 10
+   },
+   {
+    "core": 11,
+    "first": 217,
+    "last": 236,
+    "n_cells": 20,
+    "worker": 11
+   },
+   {
+    "core": 12,
+    "first": 237,
+    "last": 255,
+    "n_cells": 19,
+    "worker": 12
+   },
+   {
+    "core": 13,
+    "first": 256,
+    "last": 275,
+    "n_cells": 20,
+    "worker": 13
+   },
+   {
+    "core": 14,
+    "first": 276,
+    "last": 295,
+    "n_cells": 20,
+    "worker": 14
+   },
+   {
+    "core": 15,
+    "first": 296,
+    "last": 315,
+    "n_cells": 20,
+    "worker": 15
+   }
+  ],
+  "total_obligations": 8849,
+  "workers": 16
+ },
+ "production_performed": false
+}
