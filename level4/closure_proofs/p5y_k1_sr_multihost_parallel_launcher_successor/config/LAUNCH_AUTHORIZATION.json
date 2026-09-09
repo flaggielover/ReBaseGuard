@@ -1,0 +1,103 @@
+{
+ "approved_launch_tag": "p5y-k1-sr-multihost-parallel-launcher-preresult",
+ "checkpoint_sha256": "7bc11a83a99baeeae34eb67d7feab9ba4ab15a8f6e5480301eb802d3723fc2d9",
+ "concurrency": {
+  "coordinator_endpoint": null,
+  "host_sequence": [
+   "AWS",
+   "VULTR"
+  ],
+  "mode": "SERIALIZED_ACTIVE_HOST",
+  "role_switch_trigger": {
+   "conditions": [
+    "active host shard structurally complete",
+    "zero in-flight tasks",
+    "global ledger valid"
+   ],
+   "requires_new_authorization": false,
+   "result_independent": true
+  }
+ },
+ "evidence_manifest_sha256": "78782bbf523f4dc66f153a94a86cfea7f1c7a4e90c8cd95a380917c5f5c5efb0",
+ "global_cpu_cap": 4500.0,
+ "governed_overhead_cpu_h": 206.086,
+ "hosts": {
+  "AWS": {
+   "cell_count": 247,
+   "cores": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+   ],
+   "per_cell_reservation_cpu_h": 11.474662,
+   "producer_binding": "GIT_COMMIT",
+   "sys_vendor": "Amazon EC2",
+   "use_smt_siblings": false,
+   "workers": 16
+  },
+  "VULTR": {
+   "cell_count": 69,
+   "cores": [
+    0,
+    2,
+    4,
+    6
+   ],
+   "per_cell_reservation_cpu_h": 10.217741105316279,
+   "producer_binding": "SOURCE_MANIFEST",
+   "sys_vendor": "Vultr",
+   "use_smt_siblings": false,
+   "workers": 4
+  }
+ },
+ "integrated_source_manifest_sha256": "721605e612afec08c8768adad771c143aac6780032aaa60ffe8b4e1e56cc4866",
+ "multihost_tag": "p5y-k1-sr-multihost-parallel-launcher-preresult",
+ "overhead_factor": 1.15,
+ "producer_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+ "production_enabled": false,
+ "protocol_sha256": "ebc0d7675fd11df1f0e3822d6f54652e1d1e655ace0589cd22070eb2747421df",
+ "result_bearing": false,
+ "runtime_contract_hashes": {
+  "AWS": "d49f043755ef658a60e3c4017022ddecf0642a087a6e5bb0c1f2aefbe9721191",
+  "VULTR": "c7f9fc671664a1bcfef6d2d3d93d6cc865a2a241a869f2e93f94e6e00b6489d9"
+ },
+ "schema": "rebaseguard.p5y.k1.sr.multihost.launch-authorization.v2",
+ "scientific_adapter_hash": "6134970f7c36d7733cba9f5719519dc2b661b27856f693312b2617bb907ad49c",
+ "scientific_scope": {
+  "D": 11,
+  "Z": 20,
+  "backend": "O9",
+  "candidates": 46,
+  "contracts": 102,
+  "obligations": 8849,
+  "obligations_per_cell": 28,
+  "precision_bits": 256,
+  "total_cells": 316
+ },
+ "shard_manifest_sha256": "48fe845c8fb68ba5d8987214ee30d616559944d4f841dba07f458395bdcd219c",
+ "status": "PLACEHOLDER producer_commit; bound by the freeze commit",
+ "thread_contract": {
+  "required_value": "1",
+  "variables": [
+   "OMP_NUM_THREADS",
+   "OPENBLAS_NUM_THREADS",
+   "MKL_NUM_THREADS",
+   "NUMEXPR_NUM_THREADS",
+   "BLIS_NUM_THREADS",
+   "VECLIB_MAXIMUM_THREADS"
+  ]
+ }
+}

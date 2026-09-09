@@ -1,0 +1,141 @@
+{
+ "EXHAUSTIVE_DEFECTS_FOUND_BEFORE_REPAIR": 17,
+ "also_classified_non_authoritative": [
+  "p5y_k1_production_driver/k1prod/driver.py (K1 cover-ledger unit universe; run_units('SR',..))",
+  "p5y_k1_cover_ledger_repair2/code/repair2_qualify.py, repair2_audit.py (CUSUM lineage)",
+  "p5y_k1_final_completion/code/final_qualify.py (CUSUM lineage)",
+  "p5y_k1_sr_driver_bound_successor/driver/sr_production_driver.py (AWS_ONLY, unreachable --produce)"
+ ],
+ "defects": {
+  "accounting": [
+   {
+    "desc": "in-flight reservation accounting was structurally present but never exercised under multi-worker admission pressure",
+    "id": "D13",
+    "note": "open_reservations already counted in the governed total; now proven under 16-way oversubscription",
+    "repaired": true
+   }
+  ],
+  "bypass_reachability": [
+   {
+    "campaign_impact": "a pilot artifact can NEVER enter the campaign: it carries no producer_commit, checkpoint_sha256 or runtime_contract_hash, is absent from the global budget ledger, and final assembly rejects it",
+    "classification": "CURRENT_REACHABLE_SCIENCE_BYPASS / NOT_CAMPAIGN_VALID",
+    "desc": "sr_pilot.py has a live __main__ (--pilot/--all) that calls the authoritative sr_propagate.cell_certificate for frozen cells and WRITES diagnostics/pilots/*.json. It consults NO multi-host gate: no launch authorization, no production_enabled, no shard ownership, no global cap, no producer binding. Its only guard is resource_gate(), a CUSUM-busy check.",
+    "id": "D17",
+    "repaired": false,
+    "scope_limit": "restricted to the named PILOT_CELLS set, not the 316-cell campaign",
+    "severity": "GOVERNANCE",
+    "source": "this sweep",
+    "why_not_repaired": "sr_pilot.py is frozen predecessor scientific source; editing it is prohibited and would change SCIENTIFIC_ADAPTER_HASH. Mitigated by a test proving a pilot-shaped record cannot pass validate_record or final assembly."
+   }
+  ],
+  "concurrency": [
+   {
+    "desc": "no bounded in-flight scheduling; all pending cells would have been submitted or run serially",
+    "id": "D11",
+    "repaired": true
+   },
+   {
+    "desc": "concurrency was never MEASURED, only inferred from declared counts",
+    "id": "D12",
+    "repaired": true
+   }
+  ],
+  "execution": [
+   {
+    "desc": "AWS=16 / VULTR=4 validated but no process pool existed; worker counts were declarative only",
+    "id": "D7",
+    "repaired": true,
+    "source": "codex"
+   },
+   {
+    "desc": "main() executed cells in a sequential parent loop",
+    "evidence": "integrated_sr_launcher.py:440",
+    "id": "D8",
+    "repaired": true,
+    "source": "codex"
+   },
+   {
+    "desc": "scientific computation ran in the PARENT process (EA.execute_cell inline at line 383), not in a child",
+    "id": "D9",
+    "repaired": true
+   },
+   {
+    "desc": "no CPU affinity was ever set or verified; topology was only inspected",
+    "id": "D10",
+    "repaired": true
+   }
+  ],
+  "final_assembly": [
+   {
+    "desc": "final assembly was never exercised over a full 316-cell campaign produced by the real scheduler",
+    "id": "D15",
+    "repaired": true
+   }
+  ],
+  "identity_binding": [
+   {
+    "desc": "launcher required live HEAD == producer_commit, conflating PRODUCER IMPLEMENTATION IDENTITY with APPROVED LAUNCH STATE IDENTITY",
+    "evidence": "frozen auth refused live at its own tag: f7b2e941 != 4c75eba7",
+    "id": "D1",
+    "repaired": true,
+    "source": "codex"
+   },
+   {
+    "desc": "authorization bound no approved launch head/tag at all",
+    "id": "D2",
+    "repaired": true
+   },
+   {
+    "desc": "gate_producer_commit required multihost_tag to be truthy but never resolved it against the live checkout",
+    "id": "D3",
+    "repaired": true
+   }
+  ],
+  "role_transition": [
+   {
+    "desc": "SERIALIZED_ACTIVE_HOST pinned active_host=AWS with no host_sequence and no transition trigger, so the 69 VULTR cells could NEVER complete and the 316-cell universe was unreachable",
+    "id": "D14",
+    "repaired": true,
+    "severity": "BLOCKING"
+   }
+  ],
+  "runtime": [
+   {
+    "desc": "worker thread contract was applied but never VALIDATED inside the child; a malformed parent could have introduced nested thread expansion",
+    "id": "D6",
+    "repaired": true
+   }
+  ],
+  "stale_evidence": [
+   {
+    "desc": "wall-time 177.14 h was carried forward although the implementation was sequential (~3539 h); AWS dry-run evidence was generated at a HEAD that no longer equalled the tagged head",
+    "id": "D16",
+    "repaired": true,
+    "source": "codex"
+   }
+  ],
+  "test_masking": [
+   {
+    "desc": "test fixture rewrote producer_commit to the live HEAD, masking D1",
+    "evidence": "test_integrated_launcher.py:32",
+    "id": "D4",
+    "repaired": true,
+    "source": "codex"
+   },
+   {
+    "desc": "no regression test proved the frozen authorization is byte-unchanged across a test session",
+    "id": "D5",
+    "repaired": true
+   }
+  ]
+ },
+ "fixture_audit": {
+  "current_successors_scanned": 2,
+  "frozen_identity_mutations_found": 1,
+  "location": "p5y_k1_sr_multihost_integrated_launcher_successor/tests/test_integrated_launcher.py:32",
+  "this_successor_mutations": 0
+ },
+ "method": "Phases 0-8 completed read-only BEFORE any repair; defects accumulated first",
+ "result_bearing": false,
+ "schema": "rebaseguard.p5y.k1.sr.multihost.parallel-launcher.exhaustive-defect-inventory.v1"
+}
