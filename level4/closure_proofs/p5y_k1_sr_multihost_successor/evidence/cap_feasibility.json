@@ -1,0 +1,40 @@
+{
+ "AWS_CELL_COUNT": 247,
+ "DEFENSIBLE_UNDER_BOTH_PROJECTIONS": true,
+ "GLOBAL_CPU_CAP": 4500.0,
+ "PROJECTED_WALL_TIME_h": 177.14009462500002,
+ "VULTR_CELL_COUNT": 69,
+ "aws_only_baseline_charged_cpu_h": 4406.891070799999,
+ "aws_only_wall_h": 226.6245745,
+ "cusum_cpu_h": 206.086,
+ "overhead_factor": 1.15,
+ "per_cell_cost_weights": {
+  "consequence": "deterministic throughput-proportional allocation is used, as required",
+  "trustworthy_pre_result_weights_exist": false,
+  "why": "p5y_k1_cover_ledger_successor/config/cost_model.json is aggregate-only (no per-cell term), declares cap_adequacy NOT_ESTABLISHED, full_campaign_projection_cpu_h null, and carries the SUPERSEDED 1126 hard cap"
+ },
+ "per_cell_reservation_aws_cpu_h": 11.474662,
+ "per_cell_reservation_vultr_cpu_h_measured": 10.217741105316279,
+ "projection_conservative": {
+  "assumption": "Vultr cells assumed no cheaper than AWS cells",
+  "charged_cpu_h": 4406.891070799999,
+  "headroom_cpu_h": 93.1089292000006,
+  "sr_cpu_h": 3625.993192
+ },
+ "projection_measured": {
+  "charged_cpu_h": 4307.154397806847,
+  "headroom_cpu_h": 192.84560219315335,
+  "sr_cpu_h": 3539.2656502668233
+ },
+ "schema": "rebaseguard.p5y.k1.sr.multihost.cap-feasibility.v1",
+ "semantics": "ONE global campaign cap; never per host",
+ "superseded_caps_must_not_be_reused": [
+  1848,
+  1126
+ ],
+ "wall_balance": {
+  "aws_wall_h": 177.14009462500002,
+  "vultr_wall_h": 176.2560340667058
+ },
+ "wall_reduction_pct": 21.835443037974677
+}

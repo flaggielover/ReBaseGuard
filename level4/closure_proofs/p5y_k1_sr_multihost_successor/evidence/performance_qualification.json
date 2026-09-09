@@ -1,0 +1,158 @@
+{
+ "AWS": {
+  "measured_par_eff_w16": 0.9030575306028235,
+  "published_reference_par_eff_w16": 0.905,
+  "runs": [
+   {
+    "contracts": 6000,
+    "contracts_per_s": 225.21192340084707,
+    "cores": [
+     0
+    ],
+    "cpu_per_wall": 0.9893575022328059,
+    "cpu_s": 26.358040568,
+    "distinct_scientific_hashes": 1,
+    "ms_per_contract_cpu": 4.393006761333333,
+    "parallel_efficiency": 1.0,
+    "peak_rss_mb": 34.4453125,
+    "speedup_vs_w1": 1.0,
+    "wall_s": 26.641573453998717,
+    "workers": 1
+   },
+   {
+    "contracts": 24000,
+    "contracts_per_s": 878.9685196515236,
+    "cores": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "cpu_per_wall": 3.955813378163811,
+    "cpu_s": 108.01242473799999,
+    "distinct_scientific_hashes": 1,
+    "ms_per_contract_cpu": 4.500517697416666,
+    "parallel_efficiency": 0.9757126825020243,
+    "peak_rss_mb": 137.69140625,
+    "speedup_vs_w1": 3.902850730008097,
+    "wall_s": 27.30473215299571,
+    "workers": 4
+   },
+   {
+    "contracts": 96000,
+    "contracts_per_s": 3254.069174538899,
+    "cores": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13,
+     14,
+     15
+    ],
+    "cpu_per_wall": 15.798237300531106,
+    "cpu_s": 466.072077606,
+    "distinct_scientific_hashes": 1,
+    "ms_per_contract_cpu": 4.8549174750625,
+    "parallel_efficiency": 0.9030575306028235,
+    "peak_rss_mb": 551.26171875,
+    "speedup_vs_w1": 14.448920489645175,
+    "wall_s": 29.50152404599794,
+    "workers": 16
+   }
+  ]
+ },
+ "FROZEN_VULTR_WORKERS": 4,
+ "VULTR": {
+  "runs": [
+   {
+    "contracts": 6000,
+    "contracts_per_s": 231.91,
+    "cores": [
+     0
+    ],
+    "cpu_per_wall": 0.99,
+    "cpu_s": 25.59,
+    "distinct_scientific_hashes": 1,
+    "ms_per_contract_cpu": 4.2656,
+    "parallel_efficiency": 1.0,
+    "peak_rss_mb": 34.8,
+    "speedup_vs_w1": 1.0,
+    "wall_s": 25.87,
+    "workers": 1
+   },
+   {
+    "contracts": 12000,
+    "contracts_per_s": 456.56,
+    "cores": [
+     0,
+     2
+    ],
+    "cpu_per_wall": 1.97,
+    "cpu_s": 51.79,
+    "distinct_scientific_hashes": 1,
+    "ms_per_contract_cpu": 4.316,
+    "parallel_efficiency": 0.9843,
+    "peak_rss_mb": 69.7,
+    "speedup_vs_w1": 1.9687,
+    "wall_s": 26.28,
+    "workers": 2
+   },
+   {
+    "contracts": 24000,
+    "contracts_per_s": 905.06,
+    "cores": [
+     0,
+     2,
+     4,
+     6
+    ],
+    "cpu_per_wall": 3.91,
+    "cpu_s": 103.75,
+    "distinct_scientific_hashes": 1,
+    "ms_per_contract_cpu": 4.3231,
+    "parallel_efficiency": 0.9757,
+    "peak_rss_mb": 138.8,
+    "speedup_vs_w1": 3.9027,
+    "wall_s": 26.52,
+    "workers": 4
+   }
+  ],
+  "smt_probe_NOT_QUALIFIED": {
+   "contracts_per_s": 1743.82,
+   "cores": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+   ],
+   "cpu_per_wall": 7.72,
+   "ms_per_contract_cpu": 4.4254,
+   "peak_rss_mb": 275.1,
+   "why_not_adopted": [
+    "the frozen gate_topology admits one worker per PHYSICAL core only and refuses SMT siblings",
+    "cpu_per_wall 7.72 on 4 physical cores shows SMT inflates CPU-second accounting, which would corrupt the ONE global CPU-hour cap",
+    "no separate pre-result scientific/performance qualification of SMT exists"
+   ],
+   "workers": 8
+  }
+ },
+ "harness_sha256": "374dcc3e7e5dbd71fd35618f602d22ccfccbe496be0d2b7a11d870b98b1cf2cf",
+ "result_bearing": false,
+ "schema": "rebaseguard.p5y.k1.sr.multihost.performance.v1",
+ "scientific_output_invariance": "one distinct scientific hash across every worker, every width, and both hosts",
+ "workload": "frozen DENSE benchmark candidate (seed 0), accepted O9 backend, 256 bits, 1 thread/worker, pinned to distinct physical cores"
+}

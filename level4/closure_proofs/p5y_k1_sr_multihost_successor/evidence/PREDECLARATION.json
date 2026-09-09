@@ -1,0 +1,45 @@
+{
+  "schema": "rebaseguard.p5y.k1.sr.multihost.cross-host-qualification.predeclaration.v1",
+  "result_bearing": false,
+  "production_enabled": false,
+  "declared_before_observing_any_cross_host_result": true,
+  "baseline": {
+    "aws_head": "3cc2b466173796dba01cd3dc8fcb7564423891d0",
+    "protocol_sha256": "13c02ac1972341dde609f0ffd2bef7c2bc974db447b7bda660d906c9b8281b8f",
+    "checkpoint_sha256": "73baadb220765e7544e3a79d6ded832f12a5e51b6b4b6538f5459226ecd53052",
+    "source_manifest_sha256": "201dc2510264f2d82ff87ce7976a7164de41ed329b9ef952b3d31940cf611b3a"
+  },
+  "frozen_inputs": {
+    "patch": [17, 11],
+    "e": "1/4",
+    "D": 11,
+    "Z": 20,
+    "cand_degree": 16,
+    "precision_bits": 256,
+    "threads": 1,
+    "candidate_family": "DENSE random, rnd_cand(seed) as frozen in route_o9_batched_a"
+  },
+  "locations": {
+    "rule": "SR cells ranked by frozen cells.json C_upper (exact Fraction), ties broken by cell index; EASY=min, MIDDLE=element at index len//2, DIFFICULT=max",
+    "EASY": {"cell": 315, "C_upper": "8589984305/4294967296"},
+    "MIDDLE": {"cell": 157, "C_upper": "1714657327304/4294967296"},
+    "DIFFICULT": {"cell": 0, "C_upper": "5179460569968/4294967296"}
+  },
+  "moment_shifts": {
+    "values": [0, 1, 2, 3],
+    "definition": "moment_shift s selects panel s of the frozen p1_rule panel partition: z_lo = L_c + 2*s*h, z_hi = z_lo + 2*h, z_c = z_lo + h, with h = span/(2*n_panels)"
+  },
+  "candidate_seeds": [0, 1, 2],
+  "channels": {
+    "contract": "OB.contract(PanelDrift(shift), rnd_cand(seed)) for every (shift, seed); records every Taylor coefficient coef[a][b] and both error-channel values",
+    "selection": "H.select_parameters(g, p1, C_SR) for each location's C_upper",
+    "certificate": "H.certify at the EASY location, seed 0, if it completes within the qualification budget"
+  },
+  "exact_serialisation": "every arb ball is serialised losslessly as [mid.man_exp(), rad.man_exp()] (exact binary mantissa/exponent pairs); no decimal rounding is used anywhere in the comparison",
+  "decision_rule": {
+    "pass": "SCIENTIFIC_HASH computed over the canonical serialisation is byte-identical on AWS and Vultr for every declared combination",
+    "fail": "any difference in any coefficient, error-channel value, selection output or certificate field",
+    "on_fail": "return NOT_READY_CROSS_HOST_EQUIVALENCE",
+    "no_post_hoc_tolerance": "no containment-based, radius-ratio-based or any other equivalence rule may be introduced after observing results; only exact byte identity is accepted"
+  }
+}

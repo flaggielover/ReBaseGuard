@@ -1,0 +1,78 @@
+{
+ "VULTR_RUNTIME_HASH": "c7f9fc671664a1bcfef6d2d3d93d6cc865a2a241a869f2e93f94e6e00b6489d9",
+ "backend_libraries_byte_identical_to_AWS": {
+  "libflint-6839011d.so.24.0.0": "871a4132fd1e9f3638391b2208e07088f8e3e72a10e41d45f58b150a60c2a1a9",
+  "libgmp-e0c82b6b.so.10.5.0": "33d24e675b10f8b1ab93a8ad3fa2ed5012e1b0d89dcdb97273877c6c6b9450d8",
+  "libmpfr-be332c05.so.6.2.2": "c4dfcfc7c5c7ab71d427e15f2f9fae4ace88592a81d4596a918dcc02eadfc6e3",
+  "libscipy_openblas64_-61654e39.so": "6cad8d2ad994ddc43d2ccdb0fb5d9458373ff1b87ef7ff420f2f94406eb8f082"
+ },
+ "cpu": "AMD EPYC-Milan, 8 logical / 4 physical / 2 threads per core, 1 NUMA node",
+ "host": "rebaseguard-vultr-02",
+ "isa": "AVX/AVX2/FMA, no AVX-512",
+ "live_host_gates": {
+  "ALL_LIVE_GATES_PASS": true,
+  "aws_runtime_hash_rejected_here": true,
+  "core_assignment": [
+   0,
+   2,
+   4,
+   6
+  ],
+  "physical_cores_frozen_helper": [
+   0,
+   2,
+   4,
+   6
+  ],
+  "role_resolved": "VULTR",
+  "would_reject_8_workers": true
+ },
+ "memory": "15 GiB RAM, 8 GiB swap",
+ "openblas_runtime_corename": {
+  "AWS": "SkylakeX",
+  "VULTR": "Haswell"
+ },
+ "provisioning": {
+  "SOURCE_MANIFEST_SHA256": "201dc2510264f2d82ff87ce7976a7164de41ed329b9ef952b3d31940cf611b3a",
+  "bundle_sha256": "71de82143ceb58e27b5bf8a8da03712901d0dcc6b6ee2d3d3dcfdafb3af2d4c6",
+  "files": 111,
+  "inner_tar_sha256": "a4e18f44d5864a2de3e68ea878b1b03d393094ffd8c724e5ed16e138b88c6bd8",
+  "method": "immutable source bundle, sha256-verified independently on both hosts",
+  "note": "16 further files (p5y_k1_cover_ledger_successor frozen spec, p5y_k1_sr_backend_cost_audit) were reconstructed on Vultr from local git objects and accepted ONLY after their sha256 matched the AWS baseline and, for the frozen spec, the hashes published inside spec.py"
+ },
+ "runtime_contract_divergence_from_AWS": [
+  "cpython_build",
+  "cpython_compiler",
+  "cpython_version_full",
+  "libc",
+  "openblas_config",
+  "openblas_runtime_corename"
+ ],
+ "runtime_contract_identical_to_AWS": [
+  "backend_libraries (all four sha256)",
+  "numpy_version",
+  "python_flint_version",
+  "cpython_version",
+  "precision_bits",
+  "taylor_order",
+  "collocation_degree",
+  "collocation_quadrature",
+  "subdivision_depth",
+  "flint_threads",
+  "thread_environment",
+  "platform_machine",
+  "schema"
+ ],
+ "schema": "rebaseguard.p5y.k1.sr.multihost.vultr-evidence.v1",
+ "sys_vendor": "Vultr",
+ "vultr_artifact_sha256": {
+  "PREDECLARATION.json": "5278926b8db3453a0ef3f0f1f9a589a63e07223bd0b208816faa06382e50cf80",
+  "SHARD_MANIFEST.json": "48fe845c8fb68ba5d8987214ee30d616559944d4f841dba07f458395bdcd219c",
+  "bench_vultr.json": "01bde694f3fbffb142ea749a2baaafd978dd8ed7f5eaece7d7080b56fc5d13c9",
+  "bench_vultr_smt.json": "b067b21e25eecd3f42026758645a9b27b90cf808b5b54bcaa4b3f6c6eb8fdc26",
+  "bench_workers.py": "374dcc3e7e5dbd71fd35618f602d22ccfccbe496be0d2b7a11d870b98b1cf2cf",
+  "manifest_vultr.txt": "201dc2510264f2d82ff87ce7976a7164de41ed329b9ef952b3d31940cf611b3a",
+  "qual_runner.py": "d12cd5e8ff736bd67714bc709ec23a7622bb351e29ca120222d4f09ff7bef78d",
+  "qual_vultr.json": "15bf117dbcf33482c0c7a7359ade157e4c72a43c48ac9e19e8ea29e3943d6bf2"
+ }
+}
