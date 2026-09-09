@@ -1,0 +1,30 @@
+{
+ "candidates": {
+  "dense_random_protocol_candidate": {
+   "comparisons": 88,
+   "direction": "TIGHTENING (O9 enclosure is smaller, i.e. sharper, than the baseline's)",
+   "exactly_equal": 0,
+   "max_relative_shortfall": 1.0543557905202855e-75,
+   "max_shortfall_log2": -249.0682453324956,
+   "min_relative_shortfall": 9.032926030437986e-77,
+   "o9_strictly_below_baseline": 88
+  },
+  "real_F0_production_candidate": {
+   "comparisons": 88,
+   "direction": "TIGHTENING (O9 enclosure is smaller, i.e. sharper, than the baseline's)",
+   "exactly_equal": 0,
+   "max_relative_shortfall": 2.0411433045431312e-75,
+   "max_shortfall_log2": -248.11522964192483,
+   "min_relative_shortfall": 2.906382936343902e-76,
+   "o9_strictly_below_baseline": 88
+  }
+ },
+ "conclusion": "a rounding-order artefact of replacing long scalar accumulation with matrix products, ~73 orders of magnitude below the smallest governing threshold. It is NOT a scientific loosening. The predecessor's literal 'error_channel >= predecessor' criterion therefore holds only up to 256-bit rounding, not strictly.",
+ "contexts": 44,
+ "method": "O9 vs the ACCEPTED baseline opt_backend.contract on identical inputs; the error-channel upper bounds are compared as EXACT dyadic rationals via arb.man_exp(), not floats (a float comparison cannot resolve a 2^-248 gap)",
+ "orders_of_magnitude_below_threshold": 73.2921864946043,
+ "purpose": "exact measurement backing the protocol's documented_backend_observation",
+ "schema": "rebaseguard.p5y.k1.sr-cap-authorized.error-channel-exact.v1",
+ "smallest_governing_threshold_B_candidate": 0.04,
+ "unit_roundoff_256bit": 8.636168555094445e-78
+}
