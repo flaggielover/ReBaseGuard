@@ -150,19 +150,45 @@ def resolve_role(auth, sys_vendor=None) -> str:
     return role
 
 
+def venv_root() -> Path:
+    """The worktree that actually holds the LIVE venv, derived from the loaded
+    numpy rather than from this file's location.
+
+    runtime_identity.backend_libraries() globs `<its own worktree>/level4/.venv`.
+    Importing it from a worktree that has no venv yields an EMPTY backend-library
+    set and therefore a different, WEAKER contract hash. The launcher's own
+    worktree need not hold the venv, so the root is resolved from numpy.
+    """
+    import numpy
+    marker = "/level4/.venv/"
+    real = os.path.realpath(numpy.__file__)
+    if marker not in real:
+        raise Refusal(f"cannot locate the level4 venv from numpy at {real}")
+    return Path(real.split(marker)[0])
+
+
 def gate_runtime_identity(auth, role, *, live_hash=None, env=None) -> dict:
     """Thread contract FIRST: the fingerprint includes thread_environment, so a
     missing contract must refuse precisely rather than look like drift."""
     tc = M.gate_thread_contract(env)
+    backend_libs = None
     if live_hash is None:
-        sys.path.insert(0, str(ROOT / "level4/closure_proofs"
+        vroot = venv_root()
+        sys.path.insert(0, str(vroot / "level4/closure_proofs"
                                "/p5y_k1_cusum_aux4_fullcover/code"))
         import runtime_identity as RI                               # noqa: E402
-        live_hash = RI.contract_hash(RI.contract())
+        contract = RI.contract()
+        backend_libs = contract.get("backend_libraries") or {}
+        if not backend_libs:
+            raise Refusal(
+                "runtime contract has an EMPTY backend-library set; the fingerprint "
+                f"would be computed over no libraries (venv root resolved to {vroot})")
+        live_hash = RI.contract_hash(contract)
     M.gate_runtime_hash(role, live_hash)
     if auth["runtime_contract_hashes"][role] != live_hash:
         raise Refusal(f"{role} runtime hash not the authorised one")
-    return {"thread_contract": tc["thread_contract"], "runtime_contract_hash": live_hash}
+    return {"thread_contract": tc["thread_contract"], "runtime_contract_hash": live_hash,
+            "backend_libraries_hashed": len(backend_libs) if backend_libs is not None else "injected"}
 
 
 def gate_topology(auth, role, *, cores=None, siblings=None) -> dict:
