@@ -348,6 +348,16 @@ def validate_record(rec: dict, role: str, owners: dict[int, str],
     if rec["runtime_contract_hash"] != ROLES[role]["runtime_contract_hash"]:
         raise MultiHostRefusal(
             f"cell {rec['cell_id']} carries a runtime hash that is not {role}'s qualified one")
+    # D19: presence of scientific_content_hash was checked but never its CONTENT, so a
+    # None / empty / malformed digest was admitted straight through final assembly.
+    sch = rec["scientific_content_hash"]
+    if not isinstance(sch, str) or len(sch) != 64 \
+            or any(c not in "0123456789abcdef" for c in sch.lower()):
+        raise MultiHostRefusal(
+            f"cell {rec['cell_id']} has a malformed scientific_content_hash: {sch!r}")
+    cid = rec["cell_id"]
+    if isinstance(cid, bool) or not isinstance(cid, int) or not (0 <= cid < TOTAL_CELLS):
+        raise MultiHostRefusal(f"cell record has a non-physical cell_id: {cid!r}")
     # the return is the trusted representation; per_host_cpu_h re-derives it so
     # no raw record object ever reaches governed arithmetic
     validate_governed_cost(rec["cpu_seconds"], f"cell {rec['cell_id']} cpu_seconds")

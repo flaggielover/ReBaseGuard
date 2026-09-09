@@ -339,11 +339,40 @@ def test_frozen_scope_and_cap_unchanged(frozen_auth):
     assert not hasattr(M, "gate_per_host_reservation")
 
 
-def test_gate_library_and_adapter_unchanged_from_predecessor():
+def test_adapter_unchanged_and_gate_library_diff_is_exactly_the_documented_repair():
     prev = ROOT / "level4/closure_proofs/p5y_k1_sr_multihost_integrated_launcher_successor"
-    for rel in ("driver/multihost.py", "driver/executor_adapter.py"):
-        assert hashlib.sha256((NS / rel).read_bytes()).hexdigest() == \
-               hashlib.sha256((prev / rel).read_bytes()).hexdigest(), rel
+    assert hashlib.sha256((NS / "driver/executor_adapter.py").read_bytes()).hexdigest() == \
+           hashlib.sha256((prev / "driver/executor_adapter.py").read_bytes()).hexdigest()
+    old = (prev / "driver/multihost.py").read_text().splitlines()
+    new = (NS / "driver/multihost.py").read_text().splitlines()
+    added = [l for l in new if l not in old]
+    assert all(("scientific_content_hash" in l or "cell_id" in l or "D19" in l
+                or "malformed" in l or "non-physical" in l or "isinstance" in l
+                or "raise MultiHostRefusal" in l or l.strip() in ("", "sch = rec[\"scientific_content_hash\"]"))
+               for l in added), added
+    assert [l for l in old if l not in new] == [], "no predecessor line was removed"
+
+
+def test_malformed_scientific_content_hash_is_refused(frozen_auth, tmp_path):
+    """D19 regression: a None / short / non-hex digest must never finalise."""
+    approved_head_or_skip(frozen_auth)
+    p = pf(frozen_auth, "AWS", tmp_path)
+    base = {"cell_id": 0, "role": "AWS", "producer_commit": frozen_auth["producer_commit"],
+            "checkpoint_sha256": frozen_auth["checkpoint_sha256"],
+            "runtime_contract_hash": AWS_RT, "scientific_content_hash": "0" * 64,
+            "cpu_seconds": 1.0, "obligations_completed": 29, "complete": True}
+    M.validate_record(dict(base), "AWS", p["owners"], frozen_auth["producer_commit"],
+                      frozen_auth["checkpoint_sha256"])
+    for bad in (None, "", "abc", "z" * 64, 12345, "0" * 63, True):
+        r = dict(base, scientific_content_hash=bad)
+        with pytest.raises(M.MultiHostRefusal, match="malformed scientific_content_hash"):
+            M.validate_record(r, "AWS", p["owners"], frozen_auth["producer_commit"],
+                              frozen_auth["checkpoint_sha256"])
+    for bad in (-1, 316, 3.5, True, "0"):
+        r = dict(base, cell_id=bad)
+        with pytest.raises(M.MultiHostRefusal):
+            M.validate_record(r, "AWS", p["owners"], frozen_auth["producer_commit"],
+                              frozen_auth["checkpoint_sha256"])
 
 
 # ================= D18: obligation conservation over the real cover =========
