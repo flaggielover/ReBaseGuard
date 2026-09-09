@@ -1,0 +1,67 @@
+{
+ "binding": true,
+ "file_count": 16,
+ "files": {
+  ".pytest_cache/.gitignore": "3ed731b65d06150c138e2dadb0be0697550888a6b47eb8c45ecc9adba8b8e9bd",
+  ".pytest_cache/CACHEDIR.TAG": "37dc88ef9a0abeddbe81053a6dd8fdfb13afb613045ea1eb4a5c815a74a3bde4",
+  ".pytest_cache/README.md": "73fd6fccdd802c419a6b2d983d6c3173b7da97558ac4b589edec2dfe443db9ad",
+  ".pytest_cache/v/cache/lastfailed": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+  ".pytest_cache/v/cache/nodeids": "b949e1ff7db749b9779cf093bf2b462470cb19cf8f586ae52ca7c8c5d3f91a5b",
+  "config/CHECKPOINT_HASH": "8697ac56326d52e671e4c0d9fc3bd4f387b103ebf74826466be7f090f6a69e0b",
+  "config/O9_GOVERNANCE_CLARIFICATION.json": "af1414aa73c682a345aefc99384b16fbab50c14944245fa9c35b2c28448cf0b8",
+  "config/PRE_RESULT_CHECKPOINT.json": "75af9821d8aa05b2d221d0bf2a49ae72bb1dc479043a83e209d307b0bcd17f4c",
+  "config/PROTOCOL_HASH": "bcedb2939e8b9b84a978adb73658ee398c263cda8fd93137a1cb7382baee6f29",
+  "config/protocol.json": "a14ef248c6e53b950a74fce45c9c70a88933a83517850634e94680919586c7d4",
+  "driver/gates.py": "eab5d747bd1ef2895e85da2e59d30f397b751393491bbb9738408649fd620f20",
+  "driver/ledger.py": "ce9e18389cafffc6226338cd2cd5da70a73b687c77d2a3179d44d9c6f1ee1e15",
+  "driver/sr_production_driver.py": "41f2c24b6d68e81e67b2caa721001df0ebbd985b7929e53aefaaa4ae7ba20e27",
+  "evidence/driver_produce_refusal.json": "f1391311a35cfa74f51065a2c5867c3f3bb80483959fd0047fbf433d2f99aecd",
+  "evidence/pytest_report.txt": "c4d2084858bbdde20ec9777d2ec7c0b2d1584f0608e456b3225390e4e837e226",
+  "tests/test_driver.py": "b448f4714b9e66f7cedf5ceec86c9be718f4f3d1068024775292b331c36ee5a1"
+ },
+ "inherited_evidence": {
+  "../p5y_k1_sr_cap_authorized_successor/evidence/EVIDENCE_MANIFEST.json": "cefafecd113d0948939b9011939394fcc1687ae24222e668fca4c9485b7abc88",
+  "../p5y_k1_sr_cap_authorized_successor/evidence/RUNTIME_FINGERPRINT.md": "18cace09920a9c2935bb932867066d3f9c7bf11e9f39b7a67630e21228693982",
+  "../p5y_k1_sr_cap_authorized_successor/evidence/cap_derivation.json": "9ea51166d97fe95ca5f00b80b31fc34ce457b4542ca376a64653e95ec7b90e90",
+  "../p5y_k1_sr_cap_authorized_successor/evidence/cusum_cover_binding.json": "dfce0157bf197dfe43a01a547f86ec3f7c480fb9203064cc6491765a904bed1a",
+  "../p5y_k1_sr_cap_authorized_successor/evidence/error_channel_exact.json": "e86e17661d3b6fd298725f278211405832994922a25e4514a249de9c4bc4e054",
+  "../p5y_k1_sr_cap_authorized_successor/evidence/live_runtime_contract.json": "4d76b792e8acd000c537098a6ebbbc837c91033f1721900f16b08486927b2b09",
+  "../p5y_k1_sr_cap_authorized_successor/evidence/orchestrate.py": "14cdf604d71283edde5e8865684009157f9c775bc26fec138c85a02ba043900a",
+  "../p5y_k1_sr_cap_authorized_successor/evidence/packet.py": "b7569a2625498db00c91ca87ec4377460c27d868e39d2253d440ea2802a3f1e5",
+  "../p5y_k1_sr_cap_authorized_successor/evidence/replay_determinism.json": "f977f974be0c917590c20ccffb6bbaa6d1a91424c419ec09c50a16e0b516a909",
+  "../p5y_k1_sr_cap_authorized_successor/evidence/worker.py": "b82ba469c03d5a8e1f9e850bbdce8dbb16b386a9b2060bf3b78f5e00dd4a044c",
+  "../p5y_k1_sr_cap_authorized_successor/evidence/worker_scaling_results.txt": "37d0eb772aa253622477b4293364f4339e8707dba6d830c292ed4a12d92de940"
+ },
+ "inherited_evidence_manifest_hash": "123e8bccbe941bb76dde21ee8590445fb2b5364ea558e7565586cde76751119c",
+ "purpose": "binds by sha256 every artifact of the driver-bound repair successor, plus the inherited qualification evidence it relies on.",
+ "repairs": {
+  "blocker_1_o9_governance_wording": {
+   "artifact": "config/O9_GOVERNANCE_CLARIFICATION.json",
+   "exact_evidence": "88 comparisons per candidate type; max shortfall 2.0411433045431312e-75 ~ 2^-248.115; radius ratio <= 1; Taylor coefficients bit-identical",
+   "rule": "RIGOR_PRESERVING_EQUIVALENCE (10 mandatory conditions)",
+   "sha256": "af1414aa73c682a345aefc99384b16fbab50c14944245fa9c35b2c28448cf0b8",
+   "supersedes_for_this_successor_only": "error_channel >= predecessor"
+  },
+  "blocker_2_bound_executable_driver_checkpoint": {
+   "checkpoint": "config/PRE_RESULT_CHECKPOINT.json",
+   "checkpoint_sha256": "75af9821d8aa05b2d221d0bf2a49ae72bb1dc479043a83e209d307b0bcd17f4c",
+   "driver_entrypoint": "driver/sr_production_driver.py",
+   "driver_modules": {
+    "driver/gates.py": "eab5d747bd1ef2895e85da2e59d30f397b751393491bbb9738408649fd620f20",
+    "driver/ledger.py": "ce9e18389cafffc6226338cd2cd5da70a73b687c77d2a3179d44d9c6f1ee1e15",
+    "driver/sr_production_driver.py": "41f2c24b6d68e81e67b2caa721001df0ebbd985b7929e53aefaaa4ae7ba20e27"
+   },
+   "test_count": 61,
+   "test_result": "61 passed",
+   "tests": "tests/test_driver.py"
+  }
+ },
+ "result_bearing": false,
+ "result_free": {
+  "driver_produce_mode_refuses": true,
+  "refusal_evidence": "evidence/driver_produce_refusal.json",
+  "result_bearing_artifacts": 0,
+  "scientific_production_performed": false
+ },
+ "schema": "rebaseguard.p5y.k1.sr-driver-bound.evidence-manifest.v1"
+}

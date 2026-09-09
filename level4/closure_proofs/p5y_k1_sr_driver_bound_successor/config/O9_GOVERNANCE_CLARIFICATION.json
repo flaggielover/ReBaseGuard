@@ -1,0 +1,65 @@
+{
+ "additive": true,
+ "applies_to": "p5y_k1_sr_driver_bound_successor ONLY",
+ "binding": true,
+ "bound_exact_evidence": {
+  "approx_log2": -248.115,
+  "certificate_radius_ratio_max": 1.0,
+  "contexts": 44,
+  "max_relative_shortfall_overall": 2.0411433045431312e-75,
+  "method": "exact dyadic rationals via arb.man_exp(); a float comparison cannot resolve a 2^-248 gap",
+  "orders_of_magnitude_below_threshold": 73.2921864946043,
+  "per_candidate": {
+   "dense_random_protocol_candidate": {
+    "comparisons": 88,
+    "max_relative_shortfall": 1.0543557905202855e-75,
+    "max_shortfall_log2": -249.0682453324956,
+    "o9_strictly_below_baseline": 88
+   },
+   "real_F0_production_candidate": {
+    "comparisons": 88,
+    "max_relative_shortfall": 2.0411433045431312e-75,
+    "max_shortfall_log2": -248.11522964192483,
+    "o9_strictly_below_baseline": 88
+   }
+  },
+  "smallest_governing_threshold": 0.04,
+  "source_artifact": "p5y_k1_sr_cap_authorized_successor/evidence/error_channel_exact.json",
+  "source_sha256": "e86e17661d3b6fd298725f278211405832994922a25e4514a249de9c4bc4e054",
+  "taylor_bit_identical": true,
+  "unit_roundoff_256bit": 8.636168555094445e-78
+ },
+ "clarified_rule": {
+  "acceptance_direction": "one-sided: radius_O9 <= radius_predecessor AND taylor_O9 == taylor_predecessor (bitwise). A LARGER O9 error channel or a LARGER radius is a REJECTION.",
+  "conditions": {
+   "10_evidence_bound": "exact dyadic predecessor-vs-O9 comparison evidence is bound into this checkpoint and manifest",
+   "1_taylor_bit_identical": "Taylor coefficients bit-for-bit identical to the accepted predecessor backend (verified: True, all runs)",
+   "2_enclosure_rigorous": "the O9 certificate remains a rigorous enclosure computed in the same certified 256-bit ball arithmetic",
+   "3_radius_not_greater": "certificate radius/width <= predecessor (verified: max radius ratio exactly 1.000000)",
+   "4_thresholds_unchanged": "no threshold altered",
+   "5_precision_256": "precision remains 256 bits",
+   "6_scope_unchanged": "scientific scope unchanged",
+   "7_census_unchanged": "candidate/contract census unchanged",
+   "8_never_loosen": "the change may TIGHTEN an enclosure but may NEVER loosen any scientific acceptance criterion",
+   "9_same_semantics_not_term_deletion": "any tighter error channel must arise from the SAME certified arithmetic semantics -- reassociation/rounding order -- and NEVER from deleting or weakening a required error term. The O9 error channel computes the same majorant sum sum_i sum_j |c_ij|(magW_j exV_i + magV_i exW_j) via matrix products; no term is dropped."
+  },
+  "name": "RIGOR_PRESERVING_EQUIVALENCE",
+  "statement": "O9 is accepted for this successor if and only if ALL ten conditions below hold. Tightening is permitted; loosening is not."
+ },
+ "defect": {
+  "consequence_of_the_literal_rule": "a literal reading would reject a STRICTLY BETTER enclosure, or invite the far worse repair of re-loosening O9 to satisfy a comparison operator. Neither is acceptable.",
+  "measured": "strictly below the predecessor in 88 of 88 exact dyadic comparisons for BOTH candidate types; max relative shortfall 2.0411433045431312e-75 ~ 2^-248.115",
+  "what": "the literal comparison 'error_channel >= predecessor' is unsatisfiable as written, because O9 is MICROSCOPICALLY TIGHTER than the predecessor.",
+  "why": "replacing long scalar accumulation chains with matrix products performs fewer rounding steps, so the O9 majorant is a slightly SHARPER enclosure of the same quantity."
+ },
+ "o9_numerical_behaviour_changed": false,
+ "result_bearing": false,
+ "schema": "rebaseguard.p5y.k1.sr.o9-governance-clarification.v1",
+ "scientific_scope_changed": false,
+ "supersedes_for_this_successor_only": {
+  "historical_records_rewritten": false,
+  "note": "the predecessor record keeps that wording verbatim; it is NOT edited. This clarification governs only the successor named above.",
+  "rule": "error_channel >= predecessor",
+  "source": "p5y_k1_sr_backend_o9_successor/config/protocol.json:acceptance_criteria.error_channel"
+ }
+}
