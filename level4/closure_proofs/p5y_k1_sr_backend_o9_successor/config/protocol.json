@@ -1,0 +1,27 @@
+{
+  "schema": "rebaseguard.p5y.k1.sr-backend-o9.protocol.v1",
+  "binding": true,
+  "result_bearing": false,
+  "predecessor_checkpoint": "7389f57924ad0ffe42d2ffb8cb1ed8e2570d837b",
+  "cusum_anchor": "ea2ce6bd9d2aad9008f94e8ae304d69a623c5e2d",
+  "governing_cap_cpu_h": 1126,
+  "superseded_cap_must_not_be_reused": 1848,
+  "cusum_measured_cpu_h": 206.086,
+  "overhead_factor": 1.15,
+  "residual_sr_allowance_cpu_h": 773.0,
+  "census": {"distinct_candidates": 46, "certified_contracts": 102,
+             "by_moment_shift": {"0": 43, "1": 35, "2": 20, "3": 4}},
+  "frozen_scope": {"sr_cells": 316, "m_values": [1,2,3,5], "live_patches": 3994,
+                   "panels": 83452, "obligations": 8849, "precision_bits": 256,
+                   "D": 11, "Z": 20, "cand_degree": 16},
+  "accepted_baseline": ["O4","O5","O7"],
+  "rejected": {"O6": "inflates certified Taylor radii 23.549x identically at 256/384/512/768 bits"},
+  "speed_target_predeclared": 3.75,
+  "acceptance_criteria": {
+    "taylor_coefficients": "bit-for-bit identical OR containment with radius ratio <= 1.0",
+    "error_channel": "conservative (>= predecessor)",
+    "no_threshold_change": true, "no_scope_change": true, "no_precision_reduction": true},
+  "benchmark": {"patch": [17,11], "n_panels": 28, "e": "1/4",
+                "candidates": "DENSE random, seeds 0-5", "moment_shifts": [0,1,2,3],
+                "runtime": "flint 0.9.0, OpenBLAS 0.3.34.0.0, 1 thread, 256 bits"}
+}
