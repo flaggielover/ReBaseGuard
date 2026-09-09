@@ -1,0 +1,20 @@
+{
+ "current_successor_evidence_self_consistent": true,
+ "historical_failed_probes_preserved": [
+  "predecessor probe outputs recording NaN/-inf/negative overhead ADMITTED remain valid evidence ABOUT THEIR OWN DRIVER and are deliberately not altered"
+ ],
+ "policy": "predecessor evidence is PRESERVED, never rewritten; this record states which predecessor findings no longer describe the current driver",
+ "result_bearing": false,
+ "schema": "rebaseguard.p5y.k1.sr.multihost.trusted-domain.superseded-findings.v1",
+ "superseded": [
+  {
+   "artifact": "p5y_k1_sr_multihost_accounting_repair_successor/evidence/probe_accounting.py",
+   "false_of": "p5y_k1_sr_multihost_accounting_repair_successor driver, which already defined validate_governed_factor; the probe hard-coded the claim instead of measuring it",
+   "lines": "49-52",
+   "replacement": "evidence/probe_trusted_domain.py, which COMPUTES every claim from the driver under test and asserts nothing statically",
+   "stale_claim": "OVERHEAD_FACTOR / CUSUM_CPU_H 'NOT_VALIDATED'",
+   "status": "SUPERSEDED, predecessor file left byte-intact",
+   "was_true_of": "p5y_k1_sr_multihost_cap_repair_successor driver, which the probe was written against"
+  }
+ ]
+}

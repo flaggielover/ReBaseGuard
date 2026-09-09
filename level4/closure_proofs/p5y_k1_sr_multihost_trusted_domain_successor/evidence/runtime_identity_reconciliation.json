@@ -1,0 +1,60 @@
+{
+ "AWS": {
+  "FLINT": "3.6.0",
+  "MATCHES_FROZEN": true,
+  "finding": "the shell that lacked NumPy was /usr/bin/python3, NOT the qualified environment",
+  "live_hash_with_frozen_thread_contract": "d49f043755ef658a60e3c4017022ddecf0642a087a6e5bb0c1f2aefbe9721191",
+  "live_hash_without_thread_env": "b4be598b6495294af3119620643d3c6231c17ac55c51c127c36b4233d96b36ca",
+  "numpy": "2.5.2",
+  "numpy_path": "/home/ubuntu/work/ReBaseGuard/level4/.venv/lib/python3.12/site-packages/numpy/__init__.py",
+  "python": "3.12.3",
+  "python_flint": "0.9.0",
+  "qualified_python": "/home/ubuntu/work/ReBaseGuard/level4/.venv/bin/python",
+  "runtime_identity_py_sha256": "4064fbff163cbd59b1496c22d808da2ad3df1b44dce71beb82a5074d58aed2b3",
+  "sys_prefix": "/home/ubuntu/work/ReBaseGuard/level4/.venv",
+  "system_python3_has_numpy": false
+ },
+ "RUNTIME_DISCREPANCY_CLASS": "WRONG_ENVIRONMENT_SELECTED",
+ "VULTR": {
+  "MATCHES_FROZEN_UNDER_THREAD_CONTRACT": true,
+  "backend_libraries_unchanged": true,
+  "differing_field_detail": {
+   "with_contract": {
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1"
+   },
+   "without_contract": {
+    "MKL_NUM_THREADS": null,
+    "NUMEXPR_NUM_THREADS": null,
+    "OMP_NUM_THREADS": null,
+    "OPENBLAS_NUM_THREADS": null
+   }
+  },
+  "fields_compared": 21,
+  "fields_identical": 20,
+  "live_hash_with_frozen_thread_contract": "c7f9fc671664a1bcfef6d2d3d93d6cc865a2a241a869f2e93f94e6e00b6489d9",
+  "live_hash_without_thread_env": "e8a9f671d8a76fb0b3d364beb48a1213a4898a472396203b21a8374670d6a5c8",
+  "only_differing_field": "thread_environment",
+  "qualified_python": "/root/prov/tree/level4/.venv/bin/python",
+  "reported_e8a9f671_reproduced_exactly": true,
+  "second_venv_root_/root/work/ReBaseGuard_gives": "c7f9fc671664a1bcfef6d2d3d93d6cc865a2a241a869f2e93f94e6e00b6489d9",
+  "sys_prefix": "/root/prov/tree/level4/.venv"
+ },
+ "frozen": {
+  "AWS": "d49f043755ef658a60e3c4017022ddecf0642a087a6e5bb0c1f2aefbe9721191",
+  "VULTR": "c7f9fc671664a1bcfef6d2d3d93d6cc865a2a241a869f2e93f94e6e00b6489d9"
+ },
+ "frozen_binding_action": "PRESERVED UNCHANGED; no runtime hash was rewritten",
+ "hardening_added": "gate_thread_contract() runs BEFORE the runtime hash is computed or compared, so a shell missing the contract yields a precise refusal naming the variables instead of an opaque mismatch that resembles drift",
+ "justification": "The runtime fingerprint includes thread_environment. The reported e8a9f671... is bit-for-bit the FROZEN Vultr runtime measured without the frozen thread contract applied; 20 of 21 fields including all four backend library hashes are identical. The AWS 'no NumPy' observation was the system interpreter, not the qualified venv, whose hash reproduces d49f0437... exactly. Neither host shows ACTUAL_RUNTIME_DRIFT.",
+ "no_post_result_equivalence_rule_invented": true,
+ "reported_by_adjudication": {
+  "AWS_live": "not obtained (no NumPy in the shell used)",
+  "VULTR_live": "e8a9f671..."
+ },
+ "result_bearing": false,
+ "schema": "rebaseguard.p5y.k1.sr.multihost.trusted-domain.runtime-reconciliation.v1",
+ "treated_as": "SEPARATE LAUNCH GATE"
+}

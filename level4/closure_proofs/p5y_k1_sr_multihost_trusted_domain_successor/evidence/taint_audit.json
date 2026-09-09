@@ -1,0 +1,121 @@
+{
+ "RAW_OBJECT_ARITHMETIC_PATHS": [],
+ "arithmetic_operands_in_gate_global_cap": [
+  "cap",
+  "charged"
+ ],
+ "coercion_exceptions_normalised": [
+  "TypeError",
+  "ValueError",
+  "OverflowError",
+  "ArithmeticError"
+ ],
+ "operator_overload_exposure": {
+  "Decimal / Fraction / __float__-only wrapper": "REFUSED (not an int/float instance)",
+  "float subclass (incl. numpy.float64)": "ACCEPTED then normalised via float()",
+  "int subclass": "ACCEPTED then normalised via float(); overloads never consulted",
+  "policy": "if accepted, only the normalised primitive is used afterwards"
+ },
+ "raw_source_names_watched": [
+  "CUSUM_CPU_H",
+  "GLOBAL_CPU_CAP",
+  "OVERHEAD_FACTOR",
+  "acct",
+  "cpu_h_by_role",
+  "governed_overhead_cpu_h",
+  "host_ledgers",
+  "rec",
+  "records"
+ ],
+ "result_bearing": false,
+ "runtime_hostile_object_check": {
+  "evil_100_charged": 114.99999999999999,
+  "evil_5000_admitted": false,
+  "no_subclass_survives": true,
+  "refusal": "global cap exceeded: charged 5750.000 CPU-h > 4500.0 (per-host {'AWS': 5000.0})",
+  "validated_types": [
+   "float"
+  ]
+ },
+ "schema": "rebaseguard.p5y.k1.sr.multihost.trusted-domain.taint-audit.v1",
+ "taint_edges": {
+  "GLOBAL_CPU_CAP": [
+   "module global (MUTABLE)",
+   "validate_governed_cap",
+   "float",
+   "cap comparison AND headroom"
+  ],
+  "OVERHEAD_FACTOR": [
+   "module global",
+   "validate_governed_factor",
+   "float",
+   "charged"
+  ],
+  "aggregate SR total": [
+   "sum(validated_by_role.values())",
+   "validate_governed_cost",
+   "float",
+   "subtotal"
+  ],
+  "charged total": [
+   "factor * subtotal",
+   "validate_governed_cost",
+   "float",
+   "cap comparison"
+  ],
+  "cpu_seconds": [
+   "ledger record",
+   "validate_governed_cost",
+   "float",
+   "per_host_cpu_h sum"
+  ],
+  "governed overhead": [
+   "caller / CUSUM_CPU_H",
+   "validate_governed_cost",
+   "float",
+   "subtotal"
+  ],
+  "governed subtotal": [
+   "sr + overhead",
+   "validate_governed_cost",
+   "float",
+   "charged"
+  ],
+  "headroom": [
+   "cap - charged",
+   "both operands already validated",
+   "float",
+   "reported output"
+  ],
+  "per-cell costs": [
+   "rec.cpu_seconds",
+   "validate_governed_cost",
+   "float",
+   "per_host_cpu_h"
+  ],
+  "per-host total": [
+   "per_host_cpu_h",
+   "validate_governed_cost",
+   "float",
+   "cpu_h_by_role"
+  ],
+  "per-role value": [
+   "cpu_h_by_role",
+   "validate_governed_cost",
+   "float",
+   "validated_by_role"
+  ],
+  "retry / resume cost": [
+   "ABSENT from this driver",
+   "n/a",
+   "n/a",
+   "never reaches the charge"
+  ],
+  "seconds->hours division": [
+   "per_host_cpu_h",
+   "validate_governed_cost",
+   "float",
+   "host_accounting.cpu_h"
+  ]
+ }
+}

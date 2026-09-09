@@ -1,0 +1,71 @@
+{
+ "cases": [
+  {
+   "label": "overhead=NaN sr=5000",
+   "outcome": "FAIL_CLOSED",
+   "refusal": "governed cost governed_overhead_cpu_h is not finite: nan"
+  },
+  {
+   "label": "overhead=-inf sr=5000",
+   "outcome": "FAIL_CLOSED",
+   "refusal": "governed cost governed_overhead_cpu_h is not finite: -inf"
+  },
+  {
+   "label": "overhead=-5000 sr=5000",
+   "outcome": "FAIL_CLOSED",
+   "refusal": "governed cost governed_overhead_cpu_h is negative: -5000.0"
+  },
+  {
+   "label": "huge int cpu-h 10**400",
+   "outcome": "FAIL_CLOSED",
+   "refusal": "governed numeric cost governed CPU-h for AWS is not representable as a float: OverflowError: int too"
+  },
+  {
+   "charged": 114.99999999999999,
+   "label": "valid campaign",
+   "outcome": "ADMITTED"
+  }
+ ],
+ "no_raw_exception_leaked": true,
+ "validators_measured": {
+  "validate_governed_cap": {
+   "all_fail_closed": true,
+   "checks": {
+    "bool": "FAIL_CLOSED",
+    "huge_int": "FAIL_CLOSED",
+    "nan": "FAIL_CLOSED",
+    "neg_inf": "FAIL_CLOSED",
+    "none": "FAIL_CLOSED",
+    "pos_inf": "FAIL_CLOSED",
+    "str": "FAIL_CLOSED"
+   },
+   "validator_present": true
+  },
+  "validate_governed_cost": {
+   "all_fail_closed": true,
+   "checks": {
+    "bool": "FAIL_CLOSED",
+    "huge_int": "FAIL_CLOSED",
+    "nan": "FAIL_CLOSED",
+    "neg_inf": "FAIL_CLOSED",
+    "none": "FAIL_CLOSED",
+    "pos_inf": "FAIL_CLOSED",
+    "str": "FAIL_CLOSED"
+   },
+   "validator_present": true
+  },
+  "validate_governed_factor": {
+   "all_fail_closed": true,
+   "checks": {
+    "bool": "FAIL_CLOSED",
+    "huge_int": "FAIL_CLOSED",
+    "nan": "FAIL_CLOSED",
+    "neg_inf": "FAIL_CLOSED",
+    "none": "FAIL_CLOSED",
+    "pos_inf": "FAIL_CLOSED",
+    "str": "FAIL_CLOSED"
+   },
+   "validator_present": true
+  }
+ }
+}
