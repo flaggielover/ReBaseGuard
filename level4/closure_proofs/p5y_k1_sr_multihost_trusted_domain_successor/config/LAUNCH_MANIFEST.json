@@ -1,7 +1,14 @@
 {
+ "authorisation_layering": [
+  "1. protocol/checkpoint/driver frozen in the producer commit",
+  "2. producer_commit names that immutable commit",
+  "3. this result-free launch manifest binds it",
+  "4. the additive tag signs this manifest",
+  "the driver REFUSES production unless the checkout HEAD equals producer_commit"
+ ],
  "checkpoint_sha256": "d1159ebd7603705fb55cf81c83a8a982e87007a5118adbf0b2ffe2c729b6b423",
  "multihost_tag": "p5y-k1-sr-multihost-trusted-domain-preresult",
- "producer_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+ "producer_commit": "e530c5081585be491a51ff786ba2d64e4e8b9f75",
  "production_enabled": false,
  "result_bearing": false,
  "runtime_contract_hashes": {
@@ -10,5 +17,5 @@
  },
  "schema": "rebaseguard.p5y.k1.sr.multihost.trusted-domain.launch-manifest.v1",
  "shard_manifest_sha256": "48fe845c8fb68ba5d8987214ee30d616559944d4f841dba07f458395bdcd219c",
- "status": "PLACEHOLDER producer_commit; replaced by the real freeze commit"
+ "status": "authorised"
 }
