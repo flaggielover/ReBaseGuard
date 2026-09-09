@@ -1,14 +1,21 @@
 {
- "checkpoint_sha256": "73baadb220765e7544e3a79d6ded832f12a5e51b6b4b6538f5459226ecd53052",
+ "authorisation_layering": [
+  "1. protocol/checkpoint/driver are frozen in the producer commit",
+  "2. producer_commit names that immutable commit (a commit cannot contain its own hash)",
+  "3. this result-free launch manifest binds producer_commit + checkpoint + shard manifest + both runtime hashes",
+  "4. the additive tag p5y-k1-sr-multihost-preresult signs this manifest",
+  "the driver REFUSES production unless the actual checkout HEAD equals producer_commit"
+ ],
+ "checkpoint_sha256": "d8ea6a305bfbea36f9ca9f69856f2eb65a09abe4673eb7c9d5447f18ce9dd3f0",
  "multihost_tag": "p5y-k1-sr-multihost-preresult",
- "producer_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+ "producer_commit": "f82e842eaf728453b6a2879501724a8766cd54ae",
  "production_enabled": false,
+ "production_enabled_note": "this manifest authorises nothing by itself; production_enabled is false and no adjudication has been performed",
  "result_bearing": false,
  "runtime_contract_hashes": {
   "AWS": "d49f043755ef658a60e3c4017022ddecf0642a087a6e5bb0c1f2aefbe9721191",
   "VULTR": "c7f9fc671664a1bcfef6d2d3d93d6cc865a2a241a869f2e93f94e6e00b6489d9"
  },
  "schema": "rebaseguard.p5y.k1.sr.multihost.launch-manifest.v1",
- "shard_manifest_sha256": "48fe845c8fb68ba5d8987214ee30d616559944d4f841dba07f458395bdcd219c",
- "status": "PLACEHOLDER producer_commit; replaced by the real freeze commit before authorisation"
+ "shard_manifest_sha256": "48fe845c8fb68ba5d8987214ee30d616559944d4f841dba07f458395bdcd219c"
 }

@@ -14,7 +14,8 @@ NS = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(NS / "driver"))
 import multihost as M                                              # noqa: E402
 
-CKPT = "73baadb220765e7544e3a79d6ded832f12a5e51b6b4b6538f5459226ecd53052"
+CKPT = json.loads((NS / "config/CHECKPOINT_HASH").read_text().strip() and
+                  '"' + (NS / "config/CHECKPOINT_HASH").read_text().strip() + '"')
 PRODUCER = "a" * 40
 SHARD_SHA = json.loads((NS / "config/SHARD_MANIFEST_SHA256.json").read_text())["sha256"]
 
@@ -189,3 +190,21 @@ def test_17_foreign_checkpoint_and_runtime_in_record(owners, ledgers):
     bad2["VULTR"][0]["runtime_contract_hash"] = M.ROLES["AWS"]["runtime_contract_hash"]
     with pytest.raises(M.MultiHostRefusal):
         M.assemble_global_ledger(bad2, owners, PRODUCER, CKPT)
+
+
+def test_09b_authorised_producer_commit_is_accepted():
+    """Positive control: the binding must ADMIT the authorised checkout, so the
+    refusal in test_09 is a real discrimination and not a blanket failure."""
+    lm = json.loads((NS / "config/LAUNCH_MANIFEST.json").read_text())
+    pc = lm["producer_commit"]
+    assert M.gate_producer_commit(lm, pc, CKPT, SHARD_SHA) == pc
+
+
+def test_09c_launch_manifest_must_stay_result_free():
+    lm = json.loads((NS / "config/LAUNCH_MANIFEST.json").read_text())
+    bad = dict(lm, result_bearing=True)
+    with pytest.raises(M.MultiHostRefusal):
+        M.gate_producer_commit(bad, bad["producer_commit"], CKPT, SHARD_SHA)
+    bad2 = dict(lm, shard_manifest_sha256="0" * 64)
+    with pytest.raises(M.MultiHostRefusal):
+        M.gate_producer_commit(bad2, bad2["producer_commit"], CKPT, SHARD_SHA)
