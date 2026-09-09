@@ -1,0 +1,105 @@
+{
+ "audit": {
+  "HOST_HARD_LIMIT_PRESENT": false,
+  "PER_CELL_HARD_LIMIT_PRESENT": false,
+  "SHARD_HARD_LIMIT_PRESENT": false,
+  "acceptance_convention_preserved": "charged == cap is admitted (frozen <= semantics)",
+  "classification": {
+   "ACCOUNTING_ONLY": [
+    "per_host_cpu_h",
+    "host_accounting.cpu_h",
+    "host_accounting.projected_share_cpu_h",
+    "host_accounting.variance_cpu_h",
+    "host_accounting.cells",
+    "cpu_h_by_role",
+    "ROLES[AWS].per_cell_reservation_cpu_h",
+    "ROLES[VULTR].per_cell_reservation_cpu_h",
+    "CUSUM_CPU_H",
+    "OVERHEAD_FACTOR"
+   ],
+   "DIAGNOSTIC_ONLY": [
+    "host_accounting.over_projected_share",
+    "hosts_over_projected_share",
+    "cap.headroom_cpu_h",
+    "cap.sr_cpu_h",
+    "REMOVED_HOST_HARD_LIMITS"
+   ],
+   "GLOBAL_HARD_LIMIT": [
+    "GLOBAL_CPU_CAP",
+    "gate_global_cap"
+   ],
+   "HOST_HARD_LIMIT": [],
+   "PER_CELL_HARD_LIMIT": [],
+   "SHARD_HARD_LIMIT": []
+  },
+  "functions_that_can_refuse": [
+   "assemble_global_ledger",
+   "detect_role",
+   "gate_cell_ownership",
+   "gate_global_cap",
+   "gate_producer_commit",
+   "gate_role",
+   "gate_runtime_hash",
+   "gate_shards",
+   "gate_workers",
+   "load_shard_manifest",
+   "reconcile_accounting",
+   "validate_record",
+   "verify_aggregate_ledger"
+  ],
+  "gate_per_host_reservation_removed": true,
+  "refusers_keyed_off_a_role_specific_budget": [],
+  "result_bearing": false,
+  "schema": "rebaseguard.p5y.k1.sr.multihost.cap-repair.driver-audit.v1",
+  "term_sweep_symbols": [
+   "charged_cpu_h",
+   "gate_global_cap",
+   "gate_per_host_reservation",
+   "governed_overhead_cpu_h",
+   "headroom_cpu_h",
+   "per_cell_reservation_cpu_h",
+   "per_host_cpu_h",
+   "projected_share_cpu_h",
+   "sr_cpu_h",
+   "truth_cpu_h",
+   "variance_cpu_h"
+  ],
+  "the_only_compute_cap_rejection": "gate_global_cap: charged > GLOBAL_CPU_CAP"
+ },
+ "dry_run": {
+  "counterexample_11_cpuh": {
+   "OUTCOME": "PASS",
+   "REFUSED": false,
+   "enforcement": "ACCOUNTING_ONLY",
+   "former_per_cell_reservation_cpu_h": 10.217741105316279,
+   "global_cap": 4500.0,
+   "governed_total_cpu_h": 249.6489,
+   "headroom_cpu_h": 4250.3511,
+   "over_projected_share_warning": true,
+   "predecessor_would_have": "REFUSED (10.217741 CPU-h allowed for 1 record)",
+   "vultr_cpu_h": 11.0
+  },
+  "exactly_at_cap": {
+   "OUTCOME": "PASS",
+   "cap": 4500.0,
+   "charged_cpu_h": 4500.0,
+   "convention": "charged == cap admitted",
+   "headroom_cpu_h": 0.0
+  },
+  "global_overrun": {
+   "OUTCOME": "FAIL_CLOSED",
+   "REFUSED": true,
+   "global_cap": 4500.0,
+   "governed_total_cpu_h": 4836.9989,
+   "refusal": "global cap exceeded: charged 4836.999 CPU-h > 4500.0 (per-host {'AWS': 3000.0, 'VULTR': 1000.0})",
+   "sr_cpu_h": 4000.0
+  },
+  "one_ulp_above_cap": {
+   "OUTCOME": "FAIL_CLOSED"
+  }
+ },
+ "note": "no scientific computation is performed anywhere in this file",
+ "production_enabled": false,
+ "result_bearing": false,
+ "result_cells_produced": 0
+}
