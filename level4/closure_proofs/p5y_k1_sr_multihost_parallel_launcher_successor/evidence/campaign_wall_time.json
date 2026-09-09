@@ -1,0 +1,15 @@
+{
+ "AWS_ONLY_WALL_TIME_H": 177.14,
+ "ESTIMATE_BASIS": "frozen per-cell CPU-h reservation divided by the REAL worker count. Valid only now that the pools genuinely exist: 16-way and 4-way simultaneous occupancy were MEASURED (max_simultaneous_active_workers 16 and 4), not inferred. No long benchmark was re-run; per-cell CPU-h is unchanged frozen data.",
+ "SERIALIZED_AWS_THEN_VULTR_WALL_TIME_H": 353.396,
+ "SERIALIZED_VULTR_THEN_AWS_WALL_TIME_H": 353.396,
+ "VULTR_ONLY_WALL_TIME_H": 176.256,
+ "current_true_claim": "353.396 h serialized, with real 16-way AWS and 4-way Vultr host-local parallelism",
+ "note_order_independent": "exactly one host runs at a time, so the total is the sum either way; only the frozen host_sequence [AWS, VULTR] is authorised",
+ "result_bearing": false,
+ "schema": "rebaseguard.p5y.k1.sr.multihost.parallel-launcher.wall-time.v1",
+ "superseded_claims": {
+  "177.14_h_concurrent_multi_host": "NOT APPLICABLE: assumed both hosts concurrent, which SERIALIZED_ACTIVE_HOST forbids",
+  "~3539_h_single_process": "NOT APPLICABLE: that was the predecessor sequential architecture, now replaced by real process pools"
+ }
+}
