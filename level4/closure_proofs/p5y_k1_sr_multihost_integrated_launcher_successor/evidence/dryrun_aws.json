@@ -1,20 +1,92 @@
-Traceback (most recent call last):
-  File "/home/ubuntu/work/ReBaseGuard-sr-parallel/level4/closure_proofs/p5y_k1_sr_multihost_integrated_launcher_successor/driver/integrated_sr_launcher.py", line 422, in <module>
-    raise SystemExit(main())
-                     ^^^^^^
-  File "/home/ubuntu/work/ReBaseGuard-sr-parallel/level4/closure_proofs/p5y_k1_sr_multihost_integrated_launcher_successor/driver/integrated_sr_launcher.py", line 400, in main
-    pf = preflight()
-         ^^^^^^^^^^^
-  File "/home/ubuntu/work/ReBaseGuard-sr-parallel/level4/closure_proofs/p5y_k1_sr_multihost_integrated_launcher_successor/driver/integrated_sr_launcher.py", line 291, in preflight
-    step("thread_contract_and_runtime_identity",
-  File "/home/ubuntu/work/ReBaseGuard-sr-parallel/level4/closure_proofs/p5y_k1_sr_multihost_integrated_launcher_successor/driver/integrated_sr_launcher.py", line 280, in step
-    trace.append({"gate": name, "status": "PASS", "detail": fn()})
-                                                            ^^^^
-  File "/home/ubuntu/work/ReBaseGuard-sr-parallel/level4/closure_proofs/p5y_k1_sr_multihost_integrated_launcher_successor/driver/integrated_sr_launcher.py", line 292, in <lambda>
-    lambda: gate_runtime_identity(auth, resolved, live_hash=live_hash, env=env))
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/ubuntu/work/ReBaseGuard-sr-parallel/level4/closure_proofs/p5y_k1_sr_multihost_integrated_launcher_successor/driver/integrated_sr_launcher.py", line 162, in gate_runtime_identity
-    M.gate_runtime_hash(role, live_hash)
-  File "/home/ubuntu/work/ReBaseGuard-sr-parallel/level4/closure_proofs/p5y_k1_sr_multihost_integrated_launcher_successor/driver/multihost.py", line 227, in gate_runtime_hash
-    raise MultiHostRefusal(
-multihost.MultiHostRefusal: AWS runtime contract fa1cb23ca101d64e81e3a81c10acf89560c2966dcb51b1a84bd75049213c15a3 != required d49f043755ef658a60e3c4017022ddecf0642a087a6e5bb0c1f2aefbe9721191
+{
+ "all_pass": true,
+ "final_transition": "REFUSED: production_enabled=false",
+ "gates": [
+  "launch_authorization",
+  "host_role",
+  "repository_producer_identity",
+  "bound_hashes_protocol_checkpoint_evidence_shard",
+  "thread_contract_and_runtime_identity",
+  "worker_topology",
+  "scientific_scope",
+  "concurrency_mode",
+  "shard_ownership",
+  "global_accounting_and_cap",
+  "pending_cell_plan"
+ ],
+ "host": "AWS",
+ "key_details": {
+  "concurrency_mode": {
+   "active_host": "AWS",
+   "admission_allowed_on_this_host": true,
+   "mode": "SERIALIZED_ACTIVE_HOST"
+  },
+  "global_accounting_and_cap": {
+   "cap": 4500.0,
+   "charged_cpu_h": 236.9989,
+   "headroom_cpu_h": 4263.0011
+  },
+  "pending_cell_plan": {
+   "completed": 0,
+   "first": [
+    0,
+    1,
+    2,
+    3,
+    5
+   ],
+   "owned": 247,
+   "pending": 247
+  },
+  "repository_producer_identity": {
+   "binding": "GIT_COMMIT",
+   "head": "4c75eba7ccd23caff651274d26549974c3bb31ec",
+   "producer_commit": "4c75eba7ccd23caff651274d26549974c3bb31ec"
+  },
+  "scientific_scope": {
+   "D": 11,
+   "Z": 20,
+   "backend": "O9",
+   "candidates": 46,
+   "cells": 316,
+   "contracts": 102,
+   "obligations": 8849,
+   "precision_bits": 256,
+   "scientific_adapter_hash": "6134970f7c36d7733cba9f5719519dc2b661b27856f693312b2617bb907ad49c"
+  },
+  "shard_ownership": {
+   "owned_cells": 247,
+   "role": "AWS"
+  },
+  "thread_contract_and_runtime_identity": {
+   "backend_libraries_hashed": 4,
+   "runtime_contract_hash": "d49f043755ef658a60e3c4017022ddecf0642a087a6e5bb0c1f2aefbe9721191",
+   "thread_contract": "applied"
+  },
+  "worker_topology": {
+   "core_assignment": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+   ],
+   "role": "AWS",
+   "smt_used": false,
+   "workers": 16
+  }
+ },
+ "pending": 247,
+ "role": "AWS"
+}

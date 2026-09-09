@@ -1,0 +1,43 @@
+{
+ "all_pass": true,
+ "final_transition": "REFUSED: production_enabled=false",
+ "gates": [
+  "launch_authorization", "host_role", "repository_producer_identity",
+  "bound_hashes_protocol_checkpoint_evidence_shard",
+  "thread_contract_and_runtime_identity", "worker_topology", "scientific_scope",
+  "concurrency_mode", "shard_ownership", "global_accounting_and_cap",
+  "pending_cell_plan"
+ ],
+ "host": "VULTR",
+ "key_details": {
+  "concurrency_mode": {"active_host": "AWS", "admission_allowed_on_this_host": false,
+                       "mode": "SERIALIZED_ACTIVE_HOST"},
+  "global_accounting_and_cap": {"cap": 4500.0, "charged_cpu_h": 236.9989,
+                                "headroom_cpu_h": 4263.0011},
+  "pending_cell_plan": {"completed": 0, "first": [4, 9, 13, 18, 22], "owned": 69,
+                        "pending": 69},
+  "repository_producer_identity": {
+   "INTEGRATED_SOURCE_MANIFEST_HASH": "6aa4abc674a0641f399f4f38f7270eb5cee5f8119bab8d5a2005e570a8bea635",
+   "binding": "SOURCE_MANIFEST",
+   "producer_commit": "4c75eba7ccd23caff651274d26549974c3bb31ec"},
+  "scientific_scope": {"D": 11, "Z": 20, "backend": "O9", "candidates": 46,
+                       "cells": 316, "contracts": 102, "obligations": 8849,
+                       "precision_bits": 256,
+                       "scientific_adapter_hash": "6134970f7c36d7733cba9f5719519dc2b661b27856f693312b2617bb907ad49c"},
+  "shard_ownership": {"owned_cells": 69, "role": "VULTR"},
+  "thread_contract_and_runtime_identity": {
+   "backend_libraries_hashed": 4,
+   "runtime_contract_hash": "c7f9fc671664a1bcfef6d2d3d93d6cc865a2a241a869f2e93f94e6e00b6489d9",
+   "thread_contract": "applied"},
+  "worker_topology": {"core_assignment": [0, 2, 4, 6], "role": "VULTR",
+                      "smt_used": false, "workers": 4}
+ },
+ "pending": 69,
+ "role": "VULTR",
+ "deployment": {
+  "root": "/root/prov/tree",
+  "namespace": "level4/closure_proofs/p5y_k1_sr_multihost_integrated_launcher_successor",
+  "byte_identical_to_aws": true,
+  "verified_files": 14
+ }
+}
