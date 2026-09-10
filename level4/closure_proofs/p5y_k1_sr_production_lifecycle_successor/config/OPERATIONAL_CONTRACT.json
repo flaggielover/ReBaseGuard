@@ -1,0 +1,165 @@
+{
+ "accounting": {
+  "evidence_hierarchy": [
+   "SUPERVISOR_FINAL (cgroup, all run processes dead)",
+   "EXECSTOPPOST_CGROUP",
+   "JOURNAL CPU_USAGE_NSEC for the invocation",
+   "TAIL_BOUND: last fsynced sample + (t_death_upper - t_sample)*online_cpus"
+  ],
+  "invariant": "1.15*(committed + open cell reservations + TORN escrows + SHADOW + requested + overhead) <= 4500 at every frozen admission",
+  "max_infra_tears_per_cell": 3,
+  "per_host_caps": "NONE",
+  "poll_interval_s": 5,
+  "retry_rule": "infrastructure tears retry at most twice per cell (frozen protocol); the 3rd tear HALTS",
+  "science_failure": "worker-reported / malformed / unclassified release HALTS the campaign; never retried (frozen protocol)",
+  "settlement": "charge = max(0, U_final - C_run); all run-owned reservations closed; committed[role] += charge (exact measured run CPU)",
+  "shadow": "max(0, U_run - C_run - R_run) + 2*poll_interval_s*online_cpus/3600",
+  "torn_release": "frozen release() moves the reservation to an OPS:TORN escrow (never dropped, never zero)"
+ },
+ "genuine_sr_production_cells_at_freeze": 0,
+ "hosts": {
+  "AWS": {
+   "handoff_private_key": "/home/ubuntu/.rebaseguard/handoff_ed25519.pem",
+   "launch_prefix": [
+    "sudo",
+    "-n"
+   ],
+   "online_cpus": 32,
+   "ops_root": "/home/ubuntu/work/ReBaseGuard-sr-lifecycle/level4/closure_proofs/p5y_k1_sr_production_lifecycle_successor",
+   "producer_binding": "GIT_COMMIT",
+   "production_root": "/home/ubuntu/work/ReBaseGuard-sr-parallel",
+   "python": "/home/ubuntu/work/ReBaseGuard/level4/.venv/bin/python",
+   "runtime_dir": "/home/ubuntu/rbg-runtime/p5y_k1_sr_production",
+   "sys_vendor": "Amazon EC2",
+   "user": "ubuntu"
+  },
+  "VULTR": {
+   "launch_prefix": [],
+   "online_cpus": 8,
+   "ops_root": "/root/prov/tree/level4/closure_proofs/p5y_k1_sr_production_lifecycle_successor",
+   "producer_binding": "SOURCE_MANIFEST",
+   "production_root": "/root/prov/tree",
+   "python": "/root/prov/tree/level4/.venv/bin/python",
+   "runtime_dir": "/root/rbg-runtime/p5y_k1_sr_production",
+   "sys_vendor": "Vultr",
+   "user": "root"
+  }
+ },
+ "locks": {
+  "campaign": "kernel flock on <runtime_dir>/campaign.lock for the whole run + owner identity (host, boot id, pid, start time, run id, unit, invocation id)",
+  "frozen_ledger_lock": "DEAD if written before current boot / owner pid dead / pid reused (started after the lock); LIVE if a sanctioned producer; else AMBIGUOUS; only DEAD is reclaimed, only under the campaign lock"
+ },
+ "mode": "PRODUCTION",
+ "parent": {
+  "aws_cells": 247,
+  "checkpoint_sha256": "9984800a5392c00375e20136679cb74657c055577c51de0c6571482df03baa9a",
+  "commit": "bd7cf269792bc146e911ee57a85533b7b7b1aa9d",
+  "cores": {
+   "AWS": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+   ],
+   "VULTR": [
+    0,
+    2,
+    4,
+    6
+   ]
+  },
+  "execution_order": [
+   "AWS",
+   "AUTHENTICATED_HANDOFF",
+   "VULTR"
+  ],
+  "far_field": "SR:-1:far_field:all_m",
+  "global_cpu_cap": 4500.0,
+  "governed_overhead_cpu_h": 206.086,
+  "handoff_public_key_fingerprint": "fcb3ff840dc8ea6a68ca1f2ef5170d690345240ab60b9c74aaee0b91bbff9acf",
+  "integrated_source_manifest_sha256": "e5c126dfde4ad6dbe8ef1f3bc53a2dbd37633b92e4375609dc91edb3f627ceb4",
+  "namespace": "level4/closure_proofs/p5y_k1_sr_production_authorized_successor",
+  "obligations": 8849,
+  "overhead_factor": 1.15,
+  "per_host_hard_caps_present": false,
+  "production_authorization_sha256": "050cef378723e94b5be6d47407467ae42cdcf19c17e91a7b5917590b1a4c67ff",
+  "production_closure_sha256": "cc8a5b6708a5137ef412bbe55b743f179610f4555f42117ec77a2f33cda3630c",
+  "protocol_sha256": "50d8753da4b8f04ec84cb6fe87905f67f33bcf55a9a8a0ba86ca2a2fd5024e31",
+  "scientific_adapter_hash": "6134970f7c36d7733cba9f5719519dc2b661b27856f693312b2617bb907ad49c",
+  "shard_manifest_sha256": "48fe845c8fb68ba5d8987214ee30d616559944d4f841dba07f458395bdcd219c",
+  "tag": "p5y-k1-sr-production-authorized-preresult",
+  "total_cells": 316,
+  "vultr_cells": 69,
+  "workers": {
+   "AWS": 16,
+   "VULTR": 4
+  }
+ },
+ "result_bearing": false,
+ "runtime_state": {
+  "exclude_file": "config/RUNTIME_STATE_EXCLUDE",
+  "exclude_sha256": "2653f922f57294da18cee6bed0d6a63ecf5f61f386c53ce6124260cf8a13ab00",
+  "installed_into": "<git common dir>/info/exclude (verified byte-identical and by probes before every run)",
+  "vultr": "no git gate; every file under production/ is content-classified; unexpected files refuse"
+ },
+ "schema": "rebaseguard.p5y.k1.sr.production.operational-contract.v1",
+ "scientific_identity_changed": false,
+ "service": {
+  "cpu_accounting": true,
+  "entry": "ops/produce_entry.py",
+  "environment": {
+   "AWS": {
+    "BLIS_NUM_THREADS": "1",
+    "HOME": "/home/ubuntu",
+    "LANG": "C.UTF-8",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PATH": "/usr/bin:/bin",
+    "VECLIB_MAXIMUM_THREADS": "1"
+   },
+   "VULTR": {
+    "BLIS_NUM_THREADS": "1",
+    "HOME": "/root",
+    "LANG": "C.UTF-8",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PATH": "/usr/bin:/bin",
+    "VECLIB_MAXIMUM_THREADS": "1"
+   }
+  },
+  "exec_stop_post": "ops/prodctl.py settle-fallback",
+  "kill_mode": "control-group",
+  "logs": "<runtime_dir>/logs/<run_id>.log (child) + systemd journal (supervisor); never inside a source tree",
+  "manager": "systemd transient SYSTEM service created with systemd-run (one unit per run)",
+  "restart": "no",
+  "restart_policy_why": "Restart=no: every (re)start must pass the deterministic pre-start recovery by an explicit operator start; a crash loop can never burn budget unattended",
+  "runtime_max_sec": "infinity",
+  "science_command": "production_launcher.production_preflight() + production_launcher.run_production_cells(pf, poll_timeout=None) with pf['budget'] = OpsBudget (see ops/produce_entry.py)",
+  "status": "ops/prodctl.py status --role <ROLE>",
+  "supervisor": "ops/supervisor.py",
+  "timeout_stop_sec": 180,
+  "type": "exec",
+  "unit_prefix": "rbg-p5y-k1-sr-prod-"
+ },
+ "stop_conditions": {
+  "free_disk_min_gib": 5.0,
+  "wall_clock_14_days": "NOT ENFORCED: the parent production authorization excludes wall-clock bindings; flagged OPEN_GOVERNANCE (inventory R09)"
+ },
+ "what_this_is": "ADDITIVE PRE-RESULT OPERATIONAL successor. It binds the parent production authorization unchanged and adds only the execution, recovery and accounting-settlement contract of the lifecycle. No science, threshold, scope, shard, topology, order, provenance or handoff semantics is changed."
+}
