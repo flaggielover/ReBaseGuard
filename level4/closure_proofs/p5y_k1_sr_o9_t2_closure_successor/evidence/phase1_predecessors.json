@@ -1,0 +1,152 @@
+{
+ "all_pass": true,
+ "bint_pilot": {
+  "code_matches_manifest": true,
+  "counts": {
+   "kill_all_pass": 4,
+   "kill_n": 4,
+   "lagrange_calls": 1644,
+   "lagrange_calls_old_ball_contains_new": 1200,
+   "pilot_B_int_PASS": 36,
+   "pilot_all_local_gates_PASS": 36,
+   "pilot_endpoint_PASS": 36,
+   "pilot_invariant_violations": 0,
+   "pilot_n": 36,
+   "pilot_predecessor_all_pass": 33
+  },
+  "files_match_manifest": true,
+  "kill_c0_p51_63_scientific_hash_reproduced": true
+ },
+ "checks": {
+  "bint_pilot_invariants": true,
+  "endpoint_successor_invariants": true,
+  "predecessor_commits_ancestors_of_HEAD": true,
+  "predecessor_dirs_clean_after_verifiers": true,
+  "predecessor_dirs_clean_before": true,
+  "predecessor_tags_point_to_commits": true,
+  "verify_a5_pass": true,
+  "verify_bint_governance_pass": true,
+  "verify_pre_t2_pass": true
+ },
+ "commits": {
+  "a5_amendment": "44acc65e0fbb78507f90ff047bfff2a6936ddd54",
+  "bint_governance_authorization": "014879b64d2b53c89de31b7bf8e3c779f5b0a0ea",
+  "bint_pilot": "0f52b77643a2b68a887e6d0f46fe537d33fea3a8",
+  "bint_representation_audit": "fa92afbbb0bfdde9c4a227a0249e0ab25ecf4a1a",
+  "endpoint_strip_successor": "b48973d634a924f1196dbe08c9bea9332d61c296",
+  "pre_t2_governance": "a296244c866368c78750eb5b1800aee8decbd249",
+  "t1": "ab8d197398dc1d11e7ef983c9d66347080356da1",
+  "t2_negative_evidence": "29ee382b435afb7eeefbb4e4a465e5c8f383b29d"
+ },
+ "dirs_clean_after": {
+  "p5y_k1_sr_o9_bint_p1_bound_successor": true,
+  "p5y_k1_sr_o9_bint_representation_successor": true,
+  "p5y_k1_sr_o9_endpoint_strip_successor": true,
+  "p5y_k1_sr_o9_executor_t1_successor": true,
+  "p5y_k1_sr_o9_pre_t2_a5_amendment": true,
+  "p5y_k1_sr_o9_pre_t2_governance_successor": true,
+  "p5y_k1_sr_o9_t2_per_patch_successor": true
+ },
+ "dirs_clean_before": {
+  "p5y_k1_sr_o9_bint_p1_bound_successor": true,
+  "p5y_k1_sr_o9_bint_representation_successor": true,
+  "p5y_k1_sr_o9_endpoint_strip_successor": true,
+  "p5y_k1_sr_o9_executor_t1_successor": true,
+  "p5y_k1_sr_o9_pre_t2_a5_amendment": true,
+  "p5y_k1_sr_o9_pre_t2_governance_successor": true,
+  "p5y_k1_sr_o9_t2_per_patch_successor": true
+ },
+ "endpoint_successor": {
+  "aux_evidence_match_manifest": true,
+  "classification": "ENDPOINT_STRIP_SUCCESSOR_MICROPILOT_PASS__INT_LINE_OPEN",
+  "micropilot_c150_p17_11_scientific_hash_reproduced": true,
+  "pilot_files_match_manifest": true,
+  "sources_match_manifest": true,
+  "strip_validation_reproduced": true
+ },
+ "schema": "rebaseguard.p5y.k1.sr.o9.t2-closure-phase1.v1",
+ "tags": {
+  "a5_amendment": {
+   "commit": "44acc65e0fbb78507f90ff047bfff2a6936ddd54",
+   "matches": true,
+   "tag": "p5y-k1-sr-o9-pre-t2-a5-amendment"
+  },
+  "endpoint_strip_successor": {
+   "commit": "b48973d634a924f1196dbe08c9bea9332d61c296",
+   "matches": true,
+   "tag": "p5y-k1-sr-o9-endpoint-strip-micropilot"
+  },
+  "pre_t2_governance": {
+   "commit": "a296244c866368c78750eb5b1800aee8decbd249",
+   "matches": true,
+   "tag": "p5y-k1-sr-o9-pre-t2-governance"
+  },
+  "t1": {
+   "commit": "ab8d197398dc1d11e7ef983c9d66347080356da1",
+   "matches": true,
+   "tag": "p5y-k1-sr-o9-t1-candidate-construction"
+  },
+  "t2_negative_evidence": {
+   "commit": "29ee382b435afb7eeefbb4e4a465e5c8f383b29d",
+   "matches": true,
+   "tag": "p5y-k1-sr-o9-t2-endpoint-not-closing"
+  }
+ },
+ "verifiers": {
+  "verify_a5": {
+   "all_pass": true,
+   "checks": {
+    "A4_baseline_exact_gates_all_pass": true,
+    "A5_1a_bit_identical_to_committed_o9_reference": true,
+    "A5_1b_coefficients_bit_identical_opt_backend_4032": true,
+    "A5_1b_error_channel_frozen_relation": true,
+    "A5_2_overlap_4032": true,
+    "A5_3_o9_certificate_all_frozen_lines_pass": true,
+    "A5_3_o9_exact_gates_all_pass": true,
+    "doctrine_bound_and_present": true,
+    "old_governance_namespace_unchanged": true,
+    "old_verifier_all_pass": true
+   },
+   "rc": 0,
+   "stderr_tail": ""
+  },
+  "verify_bint_governance": {
+   "PASS": true,
+   "checks": {
+    "A9_P1_proof_all_pass": true,
+    "A9_P1_proof_reproduces_stored": true,
+    "doctrine_fragments_present": true,
+    "doctrine_hashes_match_phase1": true,
+    "doctrine_unchanged_since_fa92afb": true,
+    "frozen_settings_unchanged": true,
+    "frozen_sources_equal_governed_manifest_pins": true,
+    "no_excluded_route_used": true,
+    "predecessor_commits_are_ancestors": true,
+    "predecessor_dirs_unchanged": true,
+    "predecessor_verifiers_pass": true
+   },
+   "rc": 0,
+   "stderr_tail": ""
+  },
+  "verify_pre_t2": {
+   "all_pass": true,
+   "checks": {
+    "A_candidate_identical": true,
+    "A_output_identical_to_committed": true,
+    "A_verdicts_equal_historical": true,
+    "B_exact_abs_gate": true,
+    "B_kernel_identity_equal_historical": true,
+    "B_output_identical_to_committed": true,
+    "B_verdict_equal_historical": true,
+    "C_committed_packet_hashes_reproduced": true,
+    "C_per_shift_identical_to_committed": true,
+    "exec_panel_universe_P1_all_pass": true,
+    "historical_artifacts_unchanged": true,
+    "panel_universe_identical_to_committed": true,
+    "runtime_is_authorized": true
+   },
+   "rc": 0,
+   "stderr_tail": ""
+  }
+ }
+}

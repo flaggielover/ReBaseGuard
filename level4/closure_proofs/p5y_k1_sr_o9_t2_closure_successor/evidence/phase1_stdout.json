@@ -1,0 +1,54 @@
+{
+ "checks": {
+  "predecessor_commits_ancestors_of_HEAD": true,
+  "predecessor_tags_point_to_commits": true,
+  "predecessor_dirs_clean_before": true,
+  "verify_pre_t2_pass": true,
+  "verify_a5_pass": true,
+  "verify_bint_governance_pass": true,
+  "endpoint_successor_invariants": true,
+  "bint_pilot_invariants": true,
+  "predecessor_dirs_clean_after_verifiers": true
+ },
+ "all_pass": true,
+ "tags": {
+  "t1": {
+   "tag": "p5y-k1-sr-o9-t1-candidate-construction",
+   "commit": "ab8d197398dc1d11e7ef983c9d66347080356da1",
+   "matches": true
+  },
+  "pre_t2_governance": {
+   "tag": "p5y-k1-sr-o9-pre-t2-governance",
+   "commit": "a296244c866368c78750eb5b1800aee8decbd249",
+   "matches": true
+  },
+  "a5_amendment": {
+   "tag": "p5y-k1-sr-o9-pre-t2-a5-amendment",
+   "commit": "44acc65e0fbb78507f90ff047bfff2a6936ddd54",
+   "matches": true
+  },
+  "t2_negative_evidence": {
+   "tag": "p5y-k1-sr-o9-t2-endpoint-not-closing",
+   "commit": "29ee382b435afb7eeefbb4e4a465e5c8f383b29d",
+   "matches": true
+  },
+  "endpoint_strip_successor": {
+   "tag": "p5y-k1-sr-o9-endpoint-strip-micropilot",
+   "commit": "b48973d634a924f1196dbe08c9bea9332d61c296",
+   "matches": true
+  }
+ },
+ "endpoint": {
+  "sources_match_manifest": true,
+  "aux_evidence_match_manifest": true,
+  "pilot_files_match_manifest": true,
+  "strip_validation_reproduced": true,
+  "micropilot_c150_p17_11_scientific_hash_reproduced": true,
+  "classification": "ENDPOINT_STRIP_SUCCESSOR_MICROPILOT_PASS__INT_LINE_OPEN"
+ },
+ "bint": {
+  "files_match_manifest": true,
+  "code_matches_manifest": true,
+  "kill_c0_p51_63_scientific_hash_reproduced": true
+ }
+}
