@@ -1,0 +1,119 @@
+{
+ "approved_launch_tag": "p5y-k1-sr-multihost-handoff-preresult",
+ "checkpoint_sha256": "fa2113dd38ee550443e2ff751f6c5a106e12d6fad16d549457c7b8fa91f30c69",
+ "concurrency": {
+  "coordinator_endpoint": null,
+  "host_sequence": [
+   "AWS",
+   "VULTR"
+  ],
+  "mode": "SERIALIZED_ACTIVE_HOST",
+  "role_switch_trigger": {
+   "conditions": [
+    "active host shard structurally complete",
+    "zero in-flight tasks",
+    "global ledger valid"
+   ],
+   "requires_new_authorization": false,
+   "result_independent": true
+  }
+ },
+ "evidence_manifest_sha256": "e25e21cb9a0176de18bb1934d54ddd4f7471a7b9f74e9704e2959641561b4ac4",
+ "far_field_obligation": {
+  "attributed_to_cell": 0,
+  "attributed_to_role": "AWS",
+  "count": 1,
+  "why": "the 316-cell cover carries 8848 of the 8849 frozen SR obligations; the remaining one lives on cell -1 (far field) which is not a shard cell, so it is attributed deterministically to the lowest cell of the first host in the frozen sequence",
+  "work_id": "SR:-1:far_field:all_m"
+ },
+ "global_cpu_cap": 4500.0,
+ "governed_overhead_cpu_h": 206.086,
+ "handoff": {
+  "protocol": "ONE_WAY_AUTHENTICATED_FILE_HANDOFF",
+  "public_key_fingerprint": "fcb3ff840dc8ea6a68ca1f2ef5170d690345240ab60b9c74aaee0b91bbff9acf",
+  "public_key_path": "config/handoff_pubkey.pem",
+  "schema_version": "rebaseguard.p5y.k1.sr.multihost.handoff.v1",
+  "sequence": 1,
+  "signature_algorithm": "Ed25519",
+  "transition_id": "AWS_TO_VULTR"
+ },
+ "hosts": {
+  "AWS": {
+   "cell_count": 247,
+   "cores": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+   ],
+   "per_cell_reservation_cpu_h": 11.474662,
+   "producer_binding": "GIT_COMMIT",
+   "sys_vendor": "Amazon EC2",
+   "use_smt_siblings": false,
+   "workers": 16
+  },
+  "VULTR": {
+   "cell_count": 69,
+   "cores": [
+    0,
+    2,
+    4,
+    6
+   ],
+   "per_cell_reservation_cpu_h": 10.217741105316279,
+   "producer_binding": "SOURCE_MANIFEST",
+   "sys_vendor": "Vultr",
+   "use_smt_siblings": false,
+   "workers": 4
+  }
+ },
+ "integrated_source_manifest_sha256": "79ced5294ad95ede611a17ba12c3e838838ef3860abeafed6e2aabb79d29c6a5",
+ "multihost_tag": "p5y-k1-sr-multihost-handoff-preresult",
+ "overhead_factor": 1.15,
+ "producer_commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+ "production_enabled": false,
+ "protocol_sha256": "c6a6b14804c78e2c8a2698b9e738bb8efe2fca616880f51644c4d20aa95eacf3",
+ "result_bearing": false,
+ "runtime_contract_hashes": {
+  "AWS": "d49f043755ef658a60e3c4017022ddecf0642a087a6e5bb0c1f2aefbe9721191",
+  "VULTR": "c7f9fc671664a1bcfef6d2d3d93d6cc865a2a241a869f2e93f94e6e00b6489d9"
+ },
+ "schema": "rebaseguard.p5y.k1.sr.multihost.launch-authorization.v3",
+ "scientific_adapter_hash": "6134970f7c36d7733cba9f5719519dc2b661b27856f693312b2617bb907ad49c",
+ "scientific_scope": {
+  "D": 11,
+  "Z": 20,
+  "backend": "O9",
+  "candidates": 46,
+  "contracts": 102,
+  "obligations": 8849,
+  "obligations_per_cell": 28,
+  "precision_bits": 256,
+  "total_cells": 316
+ },
+ "shard_manifest_sha256": "48fe845c8fb68ba5d8987214ee30d616559944d4f841dba07f458395bdcd219c",
+ "status": "PLACEHOLDER",
+ "thread_contract": {
+  "required_value": "1",
+  "variables": [
+   "OMP_NUM_THREADS",
+   "OPENBLAS_NUM_THREADS",
+   "MKL_NUM_THREADS",
+   "NUMEXPR_NUM_THREADS",
+   "BLIS_NUM_THREADS",
+   "VECLIB_MAXIMUM_THREADS"
+  ]
+ }
+}
