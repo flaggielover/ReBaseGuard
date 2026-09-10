@@ -1,0 +1,249 @@
+{
+ "classification": "T2_GOVERNANCE_REPAIR_CLOSED",
+ "cost_and_cap": {
+  "cap_4500_status": "UNQUALIFIED",
+  "meaning": "the historical 4500 CPU-h authorization record is preserved and not revoked, but its derivation basis (83,452 panel units as contracted panels) is superseded and it omits known components; it must be requalified at T7 from measured units before any production reauthorization",
+  "rebased_contraction_line": {
+   "contraction_cpu_h_dense_rebased": 2700.5718780830352,
+   "contraction_cpu_h_real_rebased": 1985.4132970964154,
+   "known_unmodelled_components": [
+    "per-cell stage-1 PanelShared recompute or cache strategy (M0 tile-major)",
+    "per-patch Taylor-model residual assembly for all 72 DAG nodes",
+    "analytic sliver evaluation",
+    "whole-cell envelope, refinement, ledger",
+    "possible order-3 auxiliary evidence"
+   ],
+   "new_basis": "102 x 316 x 76475 (executed contracted span panels; slivers analytic)",
+   "new_panel_contract_evaluations": 2464942200,
+   "old_basis": "102 x 316 x 83452 (census units, strips counted as contracted panels)",
+   "old_panel_contract_evaluations": 2689824864,
+   "ratio": "76475/83452",
+   "ratio_float": 0.9163950534438959,
+   "status": "ARITHMETIC_REBASE_ONLY_NOT_A_REQUALIFICATION"
+  }
+ },
+ "history_preserved": [
+  "all historical Task1R/Gate-2F values",
+  "the 83,452 census",
+  "O9 and cap artifacts",
+  "T1 commit/history",
+  "first production attempt 20260910T105333Z-640db8f2 and its settled accounting (0 genuine cells, 16 cells torn_attempts=1)"
+ ],
+ "issue_1_reference_criterion": {
+  "A_task1r_F0": {
+   "A1": "live runtime contract hash (frozen gate_runtime_identity) == authorized",
+   "A2": "candidate mantissa sha256 == c30e1c23004eee25f0d1f1f7adaf2aa3116df325ddd9f0213aebd33f4ba57f32 and O9 packet hash == c72f65b39525e0811a026ea08ad64d23355d6f5c0c85a42ca9d12a604f4147a2",
+   "A3": "frozen harness.certify canonical output sha256 == 8664ff437eaceecbdc7f16ec7c2d2d1c63c48e56db8998f6e57a3af8c7d37400",
+   "A4": "T2 certifier in task1r-baseline contraction mode returns components, delta_F0 and per_line byte-equal (canonical JSON) to the A3 output",
+   "A5": "T2 O9 mode: Taylor coefficients exact()-identical to baseline mode per panel; ex, ez >= baseline (exact arb upper); delta_O9 >= delta_baseline; every gate compared in exact rationals",
+   "A6_non_gating": "per-line PASS verdicts equal historical (gating); relative drift vs historical reported",
+   "authorized_runtime_delta_F0": 1.9581424276820705e-05,
+   "drift_rel": {
+    "delta_F0": 8.739512119704317e-08,
+    "endpoint_slivers": 9.102086929095555e-08,
+    "equation_defect_polynomial": 1.3023326543951673e-08,
+    "interval_arithmetic": 5.228621152668696e-11,
+    "rounding_exact_dyadic": 0.0,
+    "tail_zeta_and_moments": 2.3754942928340648e-11,
+    "truncation_patch_local": 5.7782862104455215e-12
+   },
+   "historical_delta_F0": 1.9581425988141803e-05
+  },
+  "B_gate2f_hhat_1": {
+   "B1": "live runtime contract hash == authorized",
+   "B2": "frozen Gate-2E run_cell(256, hhat_1) scientific output sha256 == 2e5188182e5876b23e75cbee63e6b7bcbf14809e66a2d85d705ebe0c4a05148e",
+   "B3": "kernel-identity fields byte-identical to the HISTORICAL record: E_d, acc_abs, acc_enclosure, bits, err_interval_radius, err_kernel_rem_width",
+   "B4": "ABS_PASS equal historical; exact rational w_panel_total_ABS <= w_panel_max_ABS",
+   "B5": "T2 panel-gate metric for hhat_1 at patch (17,11) equals the B2 output on every scientific field",
+   "drift_rel": {
+    "eps_cand": 1.479898837202105e-11,
+    "err_candidate_propagated": 1.4798937834115382e-11,
+    "w_panel_total_ABS": 1.4732990852850354e-11
+   },
+   "runtime_sensitive_fields": [
+    "budget_ratio",
+    "eps_cand",
+    "err_candidate_propagated",
+    "share_candidate",
+    "share_interval",
+    "share_kernel",
+    "w_panel_total_ABS"
+   ]
+  },
+  "C_o9": {
+   "C1": "live runtime contract hash == authorized",
+   "C2": "T2 contraction reproduces committed packet hashes real c72f65b39525e0811a026ea08ad64d23355d6f5c0c85a42ca9d12a604f4147a2 and dense c0fc860934f04d8f1c6b8dcfd976a1802b47008fd58c61a0e9fe5ddaa7ff2988 over the 44 frozen contexts (worker.py procedure)",
+   "C3": "per-shift hashes (s = 0..3, real and dense) equal AUTHORIZED_RUNTIME_REFERENCES.C.per_shift_hashes",
+   "C4": "worker baseline_check: coefficients bit-exact vs opt_backend.contract; error-channel shortfall < 2^-200",
+   "C5": "raw z^s moment weights (census semantics) validated by a T2 unit test of the exact identity N^(s)_k = sum_t C(s,t) z_c^(s-t) N_(k+t)",
+   "per_shift_hashes": {
+    "dense": {
+     "0": "fc166bd978a050add1eaf7959be1bd4d1c59ff68428e481482d771b03e0b07dd",
+     "1": "87b73b32f6dd7715cb3bbbbfd46906eae9c54eb268c73655ae788326266827f7",
+     "2": "132df8fea1765860245269850981efeab935c1e0c14ef3994a70fd8a948b0162",
+     "3": "ce5f577fb517bb6bbff1ce396347427e425ba7a59c44e6eee372ca3eb43a4b5f"
+    },
+    "real": {
+     "0": "6e950fdb447cffb39223e3ae0560cc1b02b42eb7a8f32555429bb5a2c528bb66",
+     "1": "08d244c07bf14f7159ef3cbf47806b1fc605ca4c46c046f30eb7649684281a13",
+     "2": "71bfa2216a4d6b6087f0a076f75f9c6016040ea69682d9aa62a0ed3c1fe7bb44",
+     "3": "6f55f2e23429b5ade536fd801ec7b528f02b19f63151338d3b96c3d83c858a16"
+    }
+   }
+  },
+  "ruling": "Historical Task1R/Gate-2F scalar records are immutable historical evidence produced under a pre-resize runtime; by the frozen runtime-binding doctrine (aux4 RUNTIME_BINDING, sr_patch.candidate_identity, cap PROTOCOL runtime refusal, replay_determinism) an identity is (producer, runtime contract, inputs). T2 reference identity is therefore the frozen certifier algorithm executed under the bound runtime contract, pinned by committed reference hashes; historical scalars are drift/consistency evidence only. No threshold changes.",
+  "runtime_contract": "d49f043755ef658a60e3c4017022ddecf0642a087a6e5bb0c1f2aefbe9721191"
+ },
+ "issue_2_panel_universe": {
+  "P1_fail_counts": {
+   "census_on_core": 0,
+   "census_on_span": 1011,
+   "census_repaired_on_core_count_diff": 0,
+   "exec_span": 0
+  },
+  "boundaries": "Executed boundaries are z_k = L_c + 2hk, h = span/(2 n_z_exec), for EVERY patch; they are defined by the rule, never by the census (which fixed counts only). Relative to the census construction every patch differs in construction (span vs core; analytic slivers vs strip panels); the COUNT differs in 1,011 patches. Reference patch (17,11): n_z = 28 in both.",
+  "canonical_panel_id": "SRpanel:v2:task1r-span-p1:64:{i}:{j}:{k}/{n_z_exec}   (k = 0..n_z_exec-1)",
+  "canonical_sliver_id": "SRsliver:v2:task1r-span-p1:64:{i}:{j}:{L|U}",
+  "census_panel_units_historical": 83452,
+  "contracted_panels_exec": 76475,
+  "local_gate_panel_max_n_panels_patch": "n_z_exec + 2 (equals Gate-2E N_PANELS = 30 at (17,11))",
+  "o9_contract_identities": "the 102 (candidate, shift) contracts do not depend on panel IDs or counts: unchanged",
+  "panel_units_exec_census_convention": 84463,
+  "patch_identity": "sr_patch.PatchIdentity (census n_z, panels) remains historical; T2 uses the v2 panel IDs",
+  "patches_count_differs": 1011,
+  "rule": "task1r-span-p1-v1: n_z = ceil(span/(2 h_z)), h_z = H_max - H, H_max from the frozen asymmetric P1 rule target inside workprec(512); span = U_c - L_c at the patch centre; n_z contracted panels [L_c + 2hk, L_c + 2h(k+1)], h = span/(2 n_z); plus 2 analytic endpoint slivers (B_end)",
+  "ruling": "AUTHORITATIVE for execution: the binding P1 rule applied to the frozen certifier's own construction (Task1R span partition + analytic endpoint slivers). The 83,452 census is P1-consistent for ITS construction (core partition + strip panels; Gate-2B s7, re-verified: 0 failures) but that is not the construction the frozen certifier executes; forcing census counts into the executed span construction fails the binding P1 check on 1,011 patches. The census is superseded ONLY as the executable T2 panel universe and as a cost multiplier; it remains immutable historical evidence.",
+  "sliver_units_exec": 7988,
+  "table_sha256": "ab19d33042e3a2667ecbedfd43a2204a8e9dc427c3a0233e3a338b55f0198b55"
+ },
+ "parent": {
+  "t1_commit": "ab8d197398dc1d11e7ef983c9d66347080356da1",
+  "t1_tag": "p5y-k1-sr-o9-t1-candidate-construction"
+ },
+ "rebinding_required": {
+  "p5y_gate2b_sr_cover/GATE2B_RESULT.md": {
+   "lines_83452": [
+    7,
+    114,
+    123,
+    128,
+    135,
+    147
+   ],
+   "sha256": "6cbb07620c5fe578ceeece504605adefc6ec9cff10246a3fef095224f93ba691",
+   "why": "prose/code carrying the census panel count or census PatchIdentity(n_z, panels)"
+  },
+  "p5y_k1_cover_ledger_successor/config/checkpoint.json": {
+   "paths_11.474662": [],
+   "paths_2689824864": [],
+   "paths_83452": [
+    "cpu.formula"
+   ],
+   "sha256": "1c2a6825f19e19de6fb588647ca3fc4618068087ef0976292ca7bbeca701f13f",
+   "why": "non-binding cost/cover mention (binding blocks: P1, complexity, precision)"
+  },
+  "p5y_k1_cover_ledger_successor/config/cost_model.json": {
+   "paths_11.474662": [],
+   "paths_2689824864": [],
+   "paths_83452": [
+    "formula"
+   ],
+   "sha256": "2a3ec2171d1d639770b6cca8b131e7947677b7ec89e39da24e7c729f3a8e0d34",
+   "why": "cost model panel count"
+  },
+  "p5y_k1_sr_backend_cost_audit/config/frozen_audit.json": {
+   "paths_11.474662": [],
+   "paths_2689824864": [],
+   "paths_83452": [
+    "work_model.panels_per_subcell_function"
+   ],
+   "sha256": "69f0e1ec4e501c4336d6abc0f644b758e8d0b9662fc36c02812d0317dd6c7a3c",
+   "why": "work model panel multiplier"
+  },
+  "p5y_k1_sr_backend_o9_successor/RESULT.md": {
+   "lines_83452": [
+    69,
+    75
+   ],
+   "sha256": "2eb70aaad90e2d07cf601603bce5f6143dc1111014c41aa4d5d16fb261cd9cd4",
+   "why": "prose/code carrying the census panel count or census PatchIdentity(n_z, panels)"
+  },
+  "p5y_k1_sr_backend_o9_successor/config/protocol.json": {
+   "paths_11.474662": [],
+   "paths_2689824864": [],
+   "paths_83452": [
+    "frozen_scope.panels"
+   ],
+   "sha256": "af2bc2af0257fe60af84af92283ee7b52db31871cc8ce7c1b7f01f3189960f2b",
+   "why": "O9 frozen_scope panel count (cost basis)"
+  },
+  "p5y_k1_sr_cap_authorized_successor/PROTOCOL.md": {
+   "lines_83452": [
+    21
+   ],
+   "sha256": "6dd3d2e6aa65427a187b95bbd55a2bf9caad5d0afb3058d6df124b99fb511bc8",
+   "why": "prose/code carrying the census panel count or census PatchIdentity(n_z, panels)"
+  },
+  "p5y_k1_sr_cap_authorized_successor/config/protocol.json": {
+   "paths_11.474662": [
+    "compute_governance.cap_derivation.step5_retry_resume.cell_cpu_h"
+   ],
+   "paths_2689824864": [
+    "compute_governance.cap_derivation.step0_inputs.panel_contract_evaluations"
+   ],
+   "paths_83452": [
+    "frozen_scope.panels"
+   ],
+   "sha256": "0df02a0e06aedf36c265127174f66545a89f1383de20eedc03589f4770673b7b",
+   "why": "cap scope panel count"
+  },
+  "p5y_k1_sr_cap_authorized_successor/evidence/cap_derivation.json": {
+   "paths_11.474662": [
+    "step5_retry_resume.cell_cpu_h"
+   ],
+   "paths_2689824864": [
+    "step0_inputs.panel_contract_evaluations"
+   ],
+   "paths_83452": [],
+   "sha256": "9ea51166d97fe95ca5f00b80b31fc34ce457b4542ca376a64653e95ec7b90e90",
+   "why": "panel_contract_evaluations and per-cell reservation"
+  },
+  "p5y_k1_sr_production_authorized_successor/config/LAUNCH_AUTHORIZATION.json": {
+   "paths_11.474662": [
+    "hosts.AWS.per_cell_reservation_cpu_h"
+   ],
+   "paths_2689824864": [],
+   "paths_83452": [],
+   "sha256": "050cef378723e94b5be6d47407467ae42cdcf19c17e91a7b5917590b1a4c67ff",
+   "why": "per_cell_reservation_cpu_h (derived from the cap basis)"
+  },
+  "p5y_k1_sr_qualification/code/sr_patch.py": {
+   "lines_83452": [],
+   "sha256": "972179666ec729f54f87a87b30b2aa762444ee7c9cf6bed502a75bd9b439687b",
+   "why": "prose/code carrying the census panel count or census PatchIdentity(n_z, panels)"
+  }
+ },
+ "schema": "rebaseguard.p5y.k1.sr.o9.pre-t2-governance.v1",
+ "scientific_scope_changed": false,
+ "supersession_scope": "future T2+ execution only, where inconsistent; no predecessor is edited",
+ "t2_may_resume": true,
+ "t2_resume_conditions": [
+  "implement criteria A1-A6, B1-B5, C1-C5 as T2 gates",
+  "use the task1r-span-p1-v1 executable panel universe (table_sha256)",
+  "run verify_pre_t2.py verify with all checks true before T2 evidence is accepted"
+ ],
+ "unchanged": [
+  "K1 theorem target sup_e |R_D,m(e)| < 2",
+  "316 SR cells / 8849 obligations",
+  "3994 live patches (grid 64)",
+  "D = 11, Z = 20",
+  "precision 256 bits",
+  "bidegree (16,16)",
+  "46 candidates / 102 (candidate, shift) contracts",
+  "P1 threshold 1e-9, headroom guard 1e-6, rule target (1-1e-3)1e-9",
+  "every ledger budget and gate",
+  "far-field treatment"
+ ],
+ "verification_all_pass": true,
+ "verification_evidence_sha256": "74ed828427b6d02ec2cafa6cbcc5f2777304c1339a25b78b72163b9b3e50fa90"
+}

@@ -1,0 +1,101 @@
+{
+ "rebased": {
+  "status": "ARITHMETIC_REBASE_ONLY_NOT_A_REQUALIFICATION",
+  "old_panel_contract_evaluations": 2689824864,
+  "old_basis": "102 x 316 x 83452 (census units, strips counted as contracted panels)",
+  "new_panel_contract_evaluations": 2464942200,
+  "new_basis": "102 x 316 x 76475 (executed contracted span panels; slivers analytic)",
+  "ratio": "76475/83452",
+  "ratio_float": 0.9163950534438959,
+  "contraction_cpu_h_dense_rebased": 2700.5718780830352,
+  "contraction_cpu_h_real_rebased": 1985.4132970964154,
+  "known_unmodelled_components": [
+   "per-cell stage-1 PanelShared recompute or cache strategy (M0 tile-major)",
+   "per-patch Taylor-model residual assembly for all 72 DAG nodes",
+   "analytic sliver evaluation",
+   "whole-cell envelope, refinement, ledger",
+   "possible order-3 auxiliary evidence"
+  ]
+ },
+ "rebind_keys": {
+  "p5y_k1_sr_backend_o9_successor/config/protocol.json": {
+   "paths_83452": [
+    "frozen_scope.panels"
+   ],
+   "paths_2689824864": [],
+   "paths_11.474662": []
+  },
+  "p5y_k1_sr_backend_cost_audit/config/frozen_audit.json": {
+   "paths_83452": [
+    "work_model.panels_per_subcell_function"
+   ],
+   "paths_2689824864": [],
+   "paths_11.474662": []
+  },
+  "p5y_k1_sr_cap_authorized_successor/config/protocol.json": {
+   "paths_83452": [
+    "frozen_scope.panels"
+   ],
+   "paths_2689824864": [
+    "compute_governance.cap_derivation.step0_inputs.panel_contract_evaluations"
+   ],
+   "paths_11.474662": [
+    "compute_governance.cap_derivation.step5_retry_resume.cell_cpu_h"
+   ]
+  },
+  "p5y_k1_sr_cap_authorized_successor/evidence/cap_derivation.json": {
+   "paths_83452": [],
+   "paths_2689824864": [
+    "step0_inputs.panel_contract_evaluations"
+   ],
+   "paths_11.474662": [
+    "step5_retry_resume.cell_cpu_h"
+   ]
+  },
+  "p5y_k1_cover_ledger_successor/config/cost_model.json": {
+   "paths_83452": [
+    "formula"
+   ],
+   "paths_2689824864": [],
+   "paths_11.474662": []
+  },
+  "p5y_k1_cover_ledger_successor/config/checkpoint.json": {
+   "paths_83452": [
+    "cpu.formula"
+   ],
+   "paths_2689824864": [],
+   "paths_11.474662": []
+  },
+  "p5y_k1_sr_production_authorized_successor/config/LAUNCH_AUTHORIZATION.json": {
+   "paths_83452": [],
+   "paths_2689824864": [],
+   "paths_11.474662": [
+    "hosts.AWS.per_cell_reservation_cpu_h"
+   ]
+  },
+  "p5y_k1_sr_cap_authorized_successor/PROTOCOL.md": {
+   "lines_83452": [
+    21
+   ]
+  },
+  "p5y_k1_sr_backend_o9_successor/RESULT.md": {
+   "lines_83452": [
+    69,
+    75
+   ]
+  },
+  "p5y_gate2b_sr_cover/GATE2B_RESULT.md": {
+   "lines_83452": [
+    7,
+    114,
+    123,
+    128,
+    135,
+    147
+   ]
+  },
+  "p5y_k1_sr_qualification/code/sr_patch.py": {
+   "lines_83452": []
+  }
+ }
+}
