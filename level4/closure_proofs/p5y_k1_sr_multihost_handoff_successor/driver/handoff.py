@@ -134,9 +134,35 @@ def campaign_identity(auth, ns: Path) -> dict:
     }
 
 
+def _refuse_on(what, fn, *args):
+    """Fail CLOSED across an INJECTED trusted-domain gate.
+
+    export_handoff/verify_handoff receive the frozen validators as CALLABLES, so
+    the exception type they raise belongs to the caller, not to this boundary: a
+    consumer wrapping the import in `except HandoffRefusal` would not catch a
+    malformed accounting field, and a foreign exception would escape the handoff
+    contract entirely. Any failure of an injected gate -- an explicit refusal, a
+    coercion error, or an outright broken gate -- is normalised into
+    HandoffRefusal, so a handoff can never be admitted through a gate that did
+    not cleanly return. Nothing is swallowed: the original message is preserved
+    for diagnosis and the original exception is chained as __cause__.
+    """
+    try:
+        return fn(*args)
+    except HandoffRefusal:
+        raise
+    except Exception as exc:
+        raise HandoffRefusal(f"{what} refused by the trusted-domain gate: {exc}") from exc
+
+
 def _validated_cost(value, what, validate_governed_cost):
     """Route every governed number through the frozen trusted-domain validator."""
-    return validate_governed_cost(value, what)
+    return _refuse_on(what, validate_governed_cost, value, what)
+
+
+def _gated_cap(gate_global_cap, by_role, overhead):
+    """Route the frozen ONE global CPU-h cap gate through the same boundary."""
+    return _refuse_on("global CPU-h cap", gate_global_cap, by_role, overhead)
 
 
 # ------------------------------------------------------------------- EXPORT
@@ -168,7 +194,7 @@ def export_handoff(*, auth, ns: Path, owners: dict, budget, approved_head: str,
 
     finalized = _validated_cost(state.get("committed_cpu_h_by_role", {}).get("AWS", 0.0),
                                 "AWS finalized CPU-h", validate_governed_cost)
-    cap = gate_global_cap({"AWS": finalized}, auth["governed_overhead_cpu_h"])
+    cap = _gated_cap(gate_global_cap, {"AWS": finalized}, auth["governed_overhead_cpu_h"])
     remaining = _validated_cost(cap["cap"] - cap["charged_cpu_h"],
                                 "remaining global CPU-h", validate_governed_cost)
 
@@ -301,13 +327,13 @@ def verify_handoff(*, doc: dict, auth, ns: Path, owners: dict, approved_head: st
 
     if payload.get("aws_inflight_count") != 0:
         raise HandoffRefusal(f"aws_inflight_count {payload.get('aws_inflight_count')!r} != 0")
-    reserved = validate_governed_cost(payload.get("aws_reserved_inflight_cpu_h"),
-                                      "aws_reserved_inflight_cpu_h")
+    reserved = _validated_cost(payload.get("aws_reserved_inflight_cpu_h"),
+                               "aws_reserved_inflight_cpu_h", validate_governed_cost)
     if reserved != 0.0:
         raise HandoffRefusal(f"reserved in-flight CPU-h {reserved} != 0")
-    finalized = validate_governed_cost(payload.get("aws_finalized_cpu_h"),
-                                       "aws_finalized_cpu_h")
-    cap_now = gate_global_cap({"AWS": finalized}, auth["governed_overhead_cpu_h"])
+    finalized = _validated_cost(payload.get("aws_finalized_cpu_h"),
+                                "aws_finalized_cpu_h", validate_governed_cost)
+    cap_now = _gated_cap(gate_global_cap, {"AWS": finalized}, auth["governed_overhead_cpu_h"])
     if cap_now["charged_cpu_h"] > cap_now["cap"]:
         raise HandoffRefusal("imported AWS cost already exceeds the global cap")
     remaining = cap_now["cap"] - cap_now["charged_cpu_h"]
