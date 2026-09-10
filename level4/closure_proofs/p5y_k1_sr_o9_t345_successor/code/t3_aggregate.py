@@ -28,9 +28,10 @@ def aggregate(cell: int, files) -> dict:
     live = [tuple(map(int, l.split())) for l in (NS / "config/live_patches.txt").read_text().splitlines() if l.strip()]
     uni = json.loads(T2U.read_text())
     urow = {(r[0], r[1]): r for r in uni["rows"]}
-    recs, dup_conflicts, file_sha = {}, 0, {}
+    # Provenance = the records CONSUMED for this cell (canonical, runtime fields removed), never whole-file hashes:
+    # chunk files are shared by several cells and may still be growing while another cell's batch runs.
+    recs, dup_conflicts = {}, 0
     for f in sorted(files):
-        file_sha[Path(f).name] = hashlib.sha256(Path(f).read_bytes()).hexdigest()
         for line in Path(f).read_text().splitlines():
             r = json.loads(line)
             if r["cell"] != cell:
@@ -99,8 +100,10 @@ def aggregate(cell: int, files) -> dict:
            "failures": {"non_finite": fin_fail[:50], "geometry": geo_fail[:50], "local_gates": lg_fail[:50],
                         "missing": [list(p) for p in missing[:50]], "extra": [list(p) for p in extra[:50]]},
            "contract_evaluations_mid": evals, "delta": agg, "x0_images": x0,
-           "input_files_sha256": file_sha, "universe_table_sha256": uni and hashlib.sha256(T2U.read_bytes()).hexdigest()}
-    out["t3_record_sha256"] = hashlib.sha256(canonical({k: v for k, v in out.items() if k != "input_files_sha256"})).hexdigest()
+           "input_source_files": sorted(Path(f).name for f in files),
+           "consumed_records_sha256": hashlib.sha256(canonical([recs[p] for p in live if p in recs])).hexdigest(),
+           "universe_table_sha256": hashlib.sha256(T2U.read_bytes()).hexdigest()}
+    out["t3_record_sha256"] = hashlib.sha256(canonical(out)).hexdigest()
     return out
 
 
