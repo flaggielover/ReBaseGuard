@@ -1,0 +1,37 @@
+{
+ "artifacts": {
+  "config/CHECKPOINT_HASH": "bd81dded8ca1aa6c2dd938edc15af531ff789ab4c38fd972d88ab8fdf89cf0db",
+  "config/HANDOFF_PUBKEY_FINGERPRINT": "9454073dc57a61557a9201674d8adfdce8927c2074e9b6ed10e75dd30d9e6f06",
+  "config/PRE_RESULT_CHECKPOINT.json": "9984800a5392c00375e20136679cb74657c055577c51de0c6571482df03baa9a",
+  "config/PROTOCOL_HASH": "227a080487ba8a47098357e1173703e1a2205f7dffee25275dabd98df1728225",
+  "config/SHARD_MANIFEST.json": "48fe845c8fb68ba5d8987214ee30d616559944d4f841dba07f458395bdcd219c",
+  "config/SHARD_MANIFEST_SHA256.json": "4d85d7b8963d428c7559bdc9f9aa1121599a0da2166893aa1af4f8e7fa23f7b6",
+  "config/handoff_pubkey.pem": "3201a59d23b827ddbe28799ceb273273503a8ab4dec437c69aa91eae4fb27298",
+  "config/protocol.json": "50d8753da4b8f04ec84cb6fe87905f67f33bcf55a9a8a0ba86ca2a2fd5024e31",
+  "driver/executor_adapter.py": "ba44bd1c8a252bc7e86622173a1f077fa32b49aa2ffd795e8a3edfdfcd9b0e67",
+  "driver/global_budget.py": "a9658839e3dbf29b394ec3b85ad7cd9621bc9b238471652105afefbc1aae58a3",
+  "driver/handoff.py": "6bcb5be974a2f33bb46f18a56fa712d0c7cf67810865cfd454c4b591dae8f384",
+  "driver/integrated_sr_launcher.py": "c4219e2c2cb92d055938231b54b257f0a811c6eda22e2b45339206256d0d0185",
+  "driver/multihost.py": "ce002235e5f4977ca1ea6c979203fc380bc010a6f27cec3333d4408518175ce9",
+  "driver/production_launcher.py": "ce0dd8a0fd44232b49201feb864da781bacdb7e3f2b18b64d3fbc65029c0945a",
+  "driver/production_provenance.py": "a285250eb8f615ee1f76719b3f15f77757f81497baea6dc9ce76681a68368c70",
+  "driver/worker_pool.py": "2a4b1c6578df8387f7d915fb43e2fd51db48a82f11c955b2dcb433b4e73bf724",
+  "evidence/scientific_adapter_identity.json": "5a9c06b649c053881750848874f275121b6205cc2511b8fe041781bfe5809a4b"
+ },
+ "excludes": [
+  "config/LAUNCH_AUTHORIZATION.json",
+  "config/LAUNCH_AUTHORIZATION_HASH",
+  "config/EVIDENCE_MANIFEST_HASH",
+  "evidence/INTEGRATED_SOURCE_MANIFEST.json",
+  "evidence/dryrun_*.json",
+  "evidence/campaign_*.json",
+  "evidence/readiness_*.json",
+  "evidence/handoff_*.json",
+  "evidence/global_budget.json",
+  "production/*"
+ ],
+ "excludes_note": "evidence/INTEGRATED_SOURCE_MANIFEST.json is EXCLUDED on purpose: the integrated source closure already covers evidence/EVIDENCE_MANIFEST.json, so listing it here would be mutually circular and unsatisfiable. The predecessor carried exactly that circular entry; this namespace does not reproduce it. The integrated source manifest hash is bound independently in the production authorization and is verified live.",
+ "production_namespace_note": "production/* is excluded because genuine, result-bearing output must never be admitted into the pre-result evidence set",
+ "result_bearing": false,
+ "schema": "rebaseguard.p5y.k1.sr.production.evidence-manifest.v1"
+}

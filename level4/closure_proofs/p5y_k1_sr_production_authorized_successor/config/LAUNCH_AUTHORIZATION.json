@@ -1,0 +1,170 @@
+{
+ "approved_launch_tag": "p5y-k1-sr-production-authorized-preresult",
+ "cap_policy": {
+  "admission_condition": "overhead_factor * (finalized_global_cpu_h + reserved_inflight_cpu_h + requested_reservation_cpu_h + governed_overhead_cpu_h) <= 4500.0, every operand validated in the trusted domain",
+  "enforcement": "GLOBAL_HARD_LIMIT_ONLY",
+  "note": "reservations are atomic draws from the ONE global budget and are returned to it on release; no per-host subcap exists and none may be introduced",
+  "per_host_hard_caps_present": false
+ },
+ "checkpoint_sha256": "9984800a5392c00375e20136679cb74657c055577c51de0c6571482df03baa9a",
+ "concurrency": {
+  "coordinator_endpoint": null,
+  "host_sequence": [
+   "AWS",
+   "VULTR"
+  ],
+  "mode": "SERIALIZED_ACTIVE_HOST",
+  "role_switch_trigger": {
+   "conditions": [
+    "active host shard structurally complete",
+    "zero in-flight tasks",
+    "global ledger valid"
+   ],
+   "requires_new_authorization": false,
+   "result_independent": true
+  }
+ },
+ "evidence_manifest_sha256": "afc08e8f4ed6dbbedbf777ae58b73d3538350e6f37287cf1a5d29a937392a9ea",
+ "excluded_bindings": {
+  "stale_runtime_projection_177h": "NOT BOUND: the historical ~177-hour wall-clock projection is an estimate, not an execution requirement, and is deliberately not a gate. The ONE binding compute limit is the global 4500 CPU-h cap."
+ },
+ "execution_order": [
+  "AWS",
+  "AUTHENTICATED_HANDOFF",
+  "VULTR"
+ ],
+ "far_field_obligation": {
+  "attributed_to_cell": 0,
+  "attributed_to_role": "AWS",
+  "count": 1,
+  "why": "the 316-cell cover carries 8848 of the 8849 frozen SR obligations; the remaining one lives on cell -1 (far field) which is not a shard cell, so it is attributed deterministically to the lowest cell of the first host in the frozen sequence",
+  "work_id": "SR:-1:far_field:all_m"
+ },
+ "genuine_sr_production_cells_at_freeze": 0,
+ "global_cpu_cap": 4500.0,
+ "governed_overhead_cpu_h": 206.086,
+ "handoff": {
+  "protocol": "ONE_WAY_AUTHENTICATED_FILE_HANDOFF",
+  "public_key_fingerprint": "fcb3ff840dc8ea6a68ca1f2ef5170d690345240ab60b9c74aaee0b91bbff9acf",
+  "public_key_path": "config/handoff_pubkey.pem",
+  "schema_version": "rebaseguard.p5y.k1.sr.multihost.handoff.v1",
+  "sequence": 1,
+  "signature_algorithm": "Ed25519",
+  "transition_id": "AWS_TO_VULTR"
+ },
+ "hosts": {
+  "AWS": {
+   "cell_count": 247,
+   "cores": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+   ],
+   "per_cell_reservation_cpu_h": 11.474662,
+   "producer_binding": "GIT_COMMIT",
+   "sys_vendor": "Amazon EC2",
+   "use_smt_siblings": false,
+   "workers": 16
+  },
+  "VULTR": {
+   "cell_count": 69,
+   "cores": [
+    0,
+    2,
+    4,
+    6
+   ],
+   "per_cell_reservation_cpu_h": 10.217741105316279,
+   "producer_binding": "SOURCE_MANIFEST",
+   "sys_vendor": "Vultr",
+   "use_smt_siblings": false,
+   "workers": 4
+  }
+ },
+ "inherited": {
+  "checkpoint_sha256": "fa2113dd38ee550443e2ff751f6c5a106e12d6fad16d549457c7b8fa91f30c69",
+  "evidence_manifest_sha256": "44a48effb5015c14dcaa9b0caf9ed4c6c3fe1e9806f987d0c60bfa8ca8eeff79",
+  "integrated_source_manifest_sha256": "4c748578d82c7ba7a357c0c4fb50a9723c422f4a15012fa90373cd174896187f",
+  "launch_authorization_sha256": "fc3f278243ab53430f8b41673889323c10a4379bd4c6261535401220b6e62803",
+  "protocol_sha256": "c6a6b14804c78e2c8a2698b9e738bb8efe2fca616880f51644c4d20aa95eacf3"
+ },
+ "integrated_source_manifest_sha256": "e5c126dfde4ad6dbe8ef1f3bc53a2dbd37633b92e4375609dc91edb3f627ceb4",
+ "multihost_tag": "p5y-k1-sr-production-authorized-preresult",
+ "overhead_factor": 1.15,
+ "parent": {
+  "head": "53597595e54a523d8674c344121573da88a4340c",
+  "tag": "p5y-k1-sr-multihost-handoff-preresult",
+  "verdict": "ROLE_TRANSITION_CLOSED"
+ },
+ "producer_commit": "e136c1a4b0ad0eeb31495f0689d80703e70deebe",
+ "production_closure_sha256": "cc8a5b6708a5137ef412bbe55b743f179610f4555f42117ec77a2f33cda3630c",
+ "production_enabled": true,
+ "production_ledger_path": "production/PRODUCTION_LEDGER.json",
+ "production_ledger_schema": "rebaseguard.p5y.k1.sr.production.ledger.v1",
+ "production_provenance_schema": "rebaseguard.p5y.k1.sr.production.provenance.v1",
+ "production_record_dir": "production/cells/",
+ "production_result_namespace": "production/",
+ "protocol_sha256": "50d8753da4b8f04ec84cb6fe87905f67f33bcf55a9a8a0ba86ca2a2fd5024e31",
+ "result_bearing": false,
+ "result_separation": {
+  "assembler_rule": "the production assembler verifies production_provenance on EVERY record before the frozen assembler sees it; a record without genuine provenance is refused regardless of where it is stored",
+  "genuine_results_only_in": "production/",
+  "no_overwrite": "no genuine production file may be written over Phase-8 evidence",
+  "synthetic_control_evidence_only_in": [
+   "evidence/",
+   "diagnostics/",
+   "phase8/"
+  ]
+ },
+ "runtime_contract_hashes": {
+  "AWS": "d49f043755ef658a60e3c4017022ddecf0642a087a6e5bb0c1f2aefbe9721191",
+  "VULTR": "c7f9fc671664a1bcfef6d2d3d93d6cc865a2a241a869f2e93f94e6e00b6489d9"
+ },
+ "schema": "rebaseguard.p5y.k1.sr.production.launch-authorization.v1",
+ "scientific_adapter_hash": "6134970f7c36d7733cba9f5719519dc2b661b27856f693312b2617bb907ad49c",
+ "scientific_scope": {
+  "D": 11,
+  "Z": 20,
+  "backend": "O9",
+  "candidates": 46,
+  "contracts": 102,
+  "obligations": 8849,
+  "obligations_per_cell": 28,
+  "precision_bits": 256,
+  "total_cells": 316
+ },
+ "shard_identity": {
+  "aws_cell_count": 247,
+  "aws_cell_set_sha256": "d9be251f5b7ddd031f52dd35b78f2ec08d381d73a3626cb9ddbbd4117fecf398",
+  "shard_manifest_sha256": "48fe845c8fb68ba5d8987214ee30d616559944d4f841dba07f458395bdcd219c",
+  "total_cells": 316,
+  "vultr_cell_count": 69,
+  "vultr_cell_set_sha256": "c1dbbfbffc05f2c1a111e6628e9917aefd97c538b243d7b54308d8daddb7e082"
+ },
+ "shard_manifest_sha256": "48fe845c8fb68ba5d8987214ee30d616559944d4f841dba07f458395bdcd219c",
+ "status": "authorised",
+ "thread_contract": {
+  "required_value": "1",
+  "variables": [
+   "OMP_NUM_THREADS",
+   "OPENBLAS_NUM_THREADS",
+   "MKL_NUM_THREADS",
+   "NUMEXPR_NUM_THREADS",
+   "BLIS_NUM_THREADS",
+   "VECLIB_MAXIMUM_THREADS"
+  ]
+ }
+}
