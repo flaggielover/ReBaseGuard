@@ -1,0 +1,105 @@
+{
+ "all_pass": true,
+ "checks": {
+  "E1_frozen_p8_equals_independent": true,
+  "E2_bernstein_identity_exact": true,
+  "E3_sigma_range_and_bernstein_partition": true,
+  "E4a_frozen_M_contains_M_exact": true,
+  "E4b_A9_mid_exactly_zero": true,
+  "E4c_A9_rad_ge_M_exact_over_9fact": true,
+  "LINK_E_new_ge_P1_E_d": true,
+  "LINK_E_new_le_P1_check_threshold": true,
+  "SANITY_grid_inside_A9": true,
+  "SANITY_grid_series_equals_p8_sigma": true,
+  "SANITY_rational_sigma_points_exact_agreement": true,
+  "STATIC_single_consumer_softplus_tm2": true
+ },
+ "claim": "A9_P1 contains sp^(9)(xi)/9! for every real xi; hence L-R3.1 holds with A_{d+1} = A9_P1 on every U",
+ "info": {
+  "A9_rad": 0.0003416014042159077,
+  "A9_rad_minus_exact_rel": 8.19222796122803e-10,
+  "M_exact": "15619/126",
+  "M_exact_over_9fact": 0.00034160140393606,
+  "bernstein_coefficients": [
+   "0",
+   "1/9",
+   "-247/36",
+   "1431/28",
+   "-15619/126",
+   "15619/126",
+   "-1431/28",
+   "247/36",
+   "-1/9",
+   "0"
+  ],
+  "consumer_scan": {
+   "harness": {
+    "calls_softplus_local_enclosure": 1,
+    "calls_softplus_tm2": 3,
+    "file": "/home/ubuntu/work/ReBaseGuard-sr-o9-t1/level4/closure_proofs/p5y_k1_task1r_budget_harness/code/harness.py",
+    "sha256": "ea1f3e0484022e74753a8817362476c292406829ad5ceac1c9eb45e68740b563"
+   },
+   "opt_backend": {
+    "calls_softplus_local_enclosure": 0,
+    "calls_softplus_tm2": 2,
+    "file": "/home/ubuntu/work/ReBaseGuard-sr-o9-t1/level4/closure_proofs/p5y_k1_sr_backend_cost_audit/code/opt_backend.py",
+    "sha256": "825ed958d1cc5a3b2412fbd8f31f8773a2078e3708f5ce39c2aa5e8a3e43f5b1"
+   },
+   "sr_o9_candidates": {
+    "calls_softplus_local_enclosure": 0,
+    "calls_softplus_tm2": 0,
+    "file": "/home/ubuntu/work/ReBaseGuard-sr-o9-t1/level4/closure_proofs/p5y_k1_sr_o9_executor_t1_successor/code/sr_o9_candidates.py",
+    "sha256": "ee1ab4a8b7ac20357202237a6e14dd3f2384e60c24620c685b24756fe159775b"
+   },
+   "sr_o9_endpoint_strips": {
+    "calls_softplus_local_enclosure": 0,
+    "calls_softplus_tm2": 0,
+    "file": "/home/ubuntu/work/ReBaseGuard-sr-o9-t1/level4/closure_proofs/p5y_k1_sr_o9_endpoint_strip_successor/code/sr_o9_endpoint_strips.py",
+    "sha256": "e6157e563720e297d2bd7b1c707c68a2a3b3b533e5cc191971e91ee5353588ec"
+   },
+   "sr_o9_patch_certifier": {
+    "calls_softplus_local_enclosure": 0,
+    "calls_softplus_tm2": 0,
+    "file": "/home/ubuntu/work/ReBaseGuard-sr-o9-t1/level4/closure_proofs/p5y_k1_sr_o9_t2_per_patch_successor/code/sr_o9_patch_certifier.py",
+    "sha256": "76197c13ba5dd5d38b9d0ba7f2f988c676f15d81f79117042c02700da25603b7"
+   }
+  },
+  "grid": {
+   "A9_rad_over_sampled_max": 51.936385560755056,
+   "max_abs_coeff9": 6.577304148674405e-06,
+   "points": 2001,
+   "u_range": [
+    -40,
+    40
+   ]
+  },
+  "link_task1r_reference": {
+   "E_P1_recomputed": 8.8643177305787e-10,
+   "E_new": 8.864317737840551e-10,
+   "P1_rule_E_d_reported": 8.8643177305787e-10,
+   "rel_diff": 8.19222796122803e-10,
+   "rho": 0.23952304073770128
+  },
+  "p8_coefficients": [
+   "0",
+   "1",
+   "-255",
+   "6050",
+   "-46620",
+   "166824",
+   "-317520",
+   "332640",
+   "-181440",
+   "40320"
+  ]
+ },
+ "proof_checks_exact": [
+  "E1_frozen_p8_equals_independent",
+  "E2_bernstein_identity_exact",
+  "E3_sigma_range_and_bernstein_partition",
+  "E4a_frozen_M_contains_M_exact",
+  "E4b_A9_mid_exactly_zero",
+  "E4c_A9_rad_ge_M_exact_over_9fact"
+ ],
+ "schema": "rebaseguard.p5y.k1.sr.o9.a9_p1_proof.v1"
+}

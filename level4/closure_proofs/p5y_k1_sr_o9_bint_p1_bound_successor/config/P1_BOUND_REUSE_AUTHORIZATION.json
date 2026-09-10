@@ -1,0 +1,393 @@
+{
+ "T2_CLOSED": false,
+ "additive": true,
+ "adjudication": {
+  "Q1_requirement_is_only_a_valid_enclosure": {
+   "answer": "YES",
+   "basis": "PROOF.md L-R3.1 Claim: the containment holds whenever A_{d+1} 'is a ball containing sp^{(d+1)}(xi)/(d+1)! for every xi in U'. The claim is construction-independent."
+  },
+  "Q2_interval_series_declared_binding": {
+   "answer": "NO",
+   "basis": "The L-R3.1 Proof paragraph, the status table ('coefficients by interval arb_series'), SR_DERIVATION section 9 and the harness docstring DESCRIBE the construction used to discharge the hypothesis; none states it as a requirement. The same frozen file sr_local.py (hash-pinned by protected_inputs and governed_inputs_manifest) ships softplus_enclosure_absolute 'L-R3.1 with the ABSOLUTE derivative bound', and PROOF.md's L-R3.1 remark states every derivative is bounded by an absolute constant independent of u. Task1R 'representation family' refers to the candidate representation (exact-dyadic Chebyshev), and no frozen invariant in TASK1R_ADJUDICATION, the Task1R checkpoint, GATE2F (NON-BINDING; its only semantic change was the P1 threshold pair) or excluded_routes names the Lagrange-ball construction."
+  },
+  "Q3_M_over_9fact_frozen_proved_enclosure_same_quantity_same_domain": {
+   "answer": "YES (domain is all of R, a superset of every U)",
+   "basis": "sr_local.softplus_derivative_bound_tight(9) bounds |sp^(9)(u)| = |sigma^(8)(u)| for ALL real u (Bernstein convex hull on sigma in (0,1)); it is the M the frozen P1 rule uses to certify E_d = M rho^9/9! <= 1e-9 for the same ninth-order Lagrange remainder. evidence/A9_P1_PROOF.json re-proves it exactly."
+  },
+  "Q4_preserves_every_dependency_and_uncertainty_source": {
+   "answer": "YES",
+   "basis": "Both constructions enter the Lagrange factor as ONE constant ball multiplying (u-c)^9, i.e. (x + sign*z)^9 expanded binomially by the unchanged harness.softplus_tm2; neither tracks any correlation of the unknown xi with x or z, so no dependency exists to lose. a_0..a_8, centre, rho, the binomial expansion, all downstream Taylor-model algebra, moments, candidates, strips and rounding are the unchanged code. The new ball has midpoint 0 and radius >= M_exact/9! > 0: the remainder uncertainty is carried in full, not set to zero (ERROR_ALGEBRA section 1)."
+  },
+  "Q5_moves_uncertainty_between_frozen_budget_lines": {
+   "answer": "NO",
+   "basis": "The ball occupies the same Taylor-model coefficient slots as before; its radius reaches the certificate through the same unchanged channel (int = Arb interval radius, B_int). No line mapping (PC.LINES), allowance or nested budget is touched; E returned by softplus_local_enclosure is discarded by softplus_tm2 before and after."
+  },
+  "Q6_alters_frozen_threshold_or_degree": {
+   "answer": "NO",
+   "basis": "SOFTPLUS_DEGREE = 8 (Lagrange order 9), D = 11, Z = 20, 256 bits, candidate degree 16, P1 rule target/check/guard/workprec, panel geometry (n_z from the unchanged P1 rule), candidates, contracts, the 1/250 endpoint gate, B_int allowance and B_cover target are unchanged and asserted at runtime. ERROR_ALGEBRA section 7 forbids degree/precision/scope/P1/complexity/CPU/cell-splitting relaxation: none occurs; the P1 rule is reused, not relaxed."
+  },
+  "answer": "A",
+  "answer_text": "Equivalent rigorous enclosure repair permitted by the frozen doctrine; not a change to a frozen scientific setting.",
+  "not_inferred_from_numerical_success": "The adjudication rests on the L-R3.1 hypothesis, ERROR_ALGEBRA section 1 and the exact proof; the fa92afb diagnostic numbers are reported only as prior evidence."
+ },
+ "all_pass": true,
+ "authorizes": "P1_DERIVATIVE_BOUND_REUSE_FOR_SOFTPLUS_LAGRANGE_FACTOR",
+ "binding": true,
+ "checks": {
+  "A9_P1_proof_all_pass": true,
+  "A9_P1_proof_reproduces_stored": true,
+  "doctrine_fragments_present": true,
+  "doctrine_hashes_match_phase1": true,
+  "doctrine_unchanged_since_fa92afb": true,
+  "frozen_settings_unchanged": true,
+  "frozen_sources_equal_governed_manifest_pins": true,
+  "no_excluded_route_used": true,
+  "predecessor_commits_are_ancestors": true,
+  "predecessor_dirs_unchanged": true,
+  "predecessor_verifiers_pass": true
+ },
+ "classification": "BINT_P1_BOUND_REUSE_AUTHORIZED",
+ "doctrine": {
+  "p5x_global_nonlinear_dynamics/compute_optimization_r3_sr_symbolic/PROOF.md": {
+   "fragments": [
+    "is a ball containing `sp^{(d+1)}(xi)/(d+1)!` for",
+    "E_d := |A_{d+1}| H^{d+1}",
+    "bounded by an absolute constant **independent of `u`**",
+    "Both `a_k` and `A_{d+1}` are obtained by evaluating the power"
+   ],
+   "fragments_present": true,
+   "prefix_matches_phase1_read": true,
+   "sha256": "14d6f028ab3d4c5308f839d8cbd2bb56e93d8bea3d7bb9ed965325728bc8df2c",
+   "unchanged_since_fa92afb": true
+  },
+  "p5x_global_nonlinear_dynamics/compute_optimization_r3_sr_symbolic/sr_local.py": {
+   "fragments": [
+    "def softplus_derivative_bound_tight(order: int) -> arb:",
+    "the convex-hull property gives",
+    "L-R3.1 with the ABSOLUTE derivative bound",
+    "Absolute derivative bound for softplus (PROOF.md L-R3.1 remark)",
+    "a_next = coeffs[degree + 1]                      # contains sp^{(d+1)}(xi)/(d+1)!"
+   ],
+   "fragments_present": true,
+   "prefix_matches_phase1_read": true,
+   "sha256": "8de4d3453dd5f6ff624203a48a1c37f5c6fd4301aa2567d5a7a470c10d70bb54",
+   "unchanged_since_fa92afb": true
+  },
+  "p5y_gate2f_sr_metric_b/GATE2F_PREREGISTRATION.md": {
+   "fragments": [
+    "**NON-BINDING.**"
+   ],
+   "fragments_present": true,
+   "prefix_matches_phase1_read": true,
+   "sha256": "29d0d826d331eaacdb0a5c671ef6fd625fc41f43c8d9c96757d7d8a3f1e69abc",
+   "unchanged_since_fa92afb": true
+  },
+  "p5y_gate2f_sr_metric_b/GATE2F_RESULT.md": {
+   "fragments": [
+    "| **P1 thresholds** |"
+   ],
+   "fragments_present": true,
+   "prefix_matches_phase1_read": true,
+   "sha256": "5c4799e19739032dc7af6c4f1515d99b6ea063e570a1b5548815fd092820903c",
+   "unchanged_since_fa92afb": true
+  },
+  "p5y_gate2f_sr_metric_b/GATE2F_SOURCE_MANIFEST.json": {
+   "fragments": [],
+   "fragments_present": true,
+   "prefix_matches_phase1_read": true,
+   "sha256": "bcef56d2a2ec06279e58cffdc251c3a042afbf100fd0e6f7402b12a0d0a35b24",
+   "unchanged_since_fa92afb": true
+  },
+  "p5y_k1_binding_campaign/config/p1_rule.json": {
+   "fragments": [
+    "\"P1_CHECK_THRESHOLD\": 1e-09"
+   ],
+   "fragments_present": true,
+   "prefix_matches_phase1_read": true,
+   "sha256": "0d9e80a41114a3ac948efc356b7032eb7ea0ed4644d7bbe3bde38ac2eeb5a161",
+   "unchanged_since_fa92afb": true
+  },
+  "p5y_k1_cover_ledger_successor/ERROR_ALGEBRA.md": {
+   "fragments": [
+    "An interval may be tighter only if a proved enclosure of the same expression",
+    "No source uncertainty may silently become zero.",
+    "No degree, precision, scope, P1, complexity,"
+   ],
+   "fragments_present": true,
+   "prefix_matches_phase1_read": true,
+   "sha256": "4f32df0273d05b1b4e0136e2a901adec9979e158b5decd8c9bf3cce0e35b9ffa",
+   "unchanged_since_fa92afb": true
+  },
+  "p5y_k1_sr_backend_cost_audit/adjudication/AUDIT_ADJUDICATION.json": {
+   "fragments": [
+    "bit-equality was never the frozen criterion"
+   ],
+   "fragments_present": true,
+   "prefix_matches_phase1_read": true,
+   "sha256": "d7edf59ff5c7caf53afe0c240aca931cbff0b0d2d9936f11abfc4a5a26e5f9b6",
+   "unchanged_since_fa92afb": true
+  },
+  "p5y_k1_sr_backend_cost_audit/code/opt_backend.py": {
+   "fragments": [
+    "V = H.softplus_tm2(p_c + z_c - half, ctxt, +1)"
+   ],
+   "fragments_present": true,
+   "prefix_matches_phase1_read": true,
+   "sha256": "825ed958d1cc5a3b2412fbd8f31f8773a2078e3708f5ce39c2aa5e8a3e43f5b1",
+   "unchanged_since_fa92afb": true
+  },
+  "p5y_k1_sr_o9_endpoint_strip_successor/config/ENDPOINT_STRIP_MANIFEST.json": {
+   "fragments": [],
+   "fragments_present": true,
+   "prefix_matches_phase1_read": true,
+   "sha256": "faecda8ca4f97cc4d6e0174a6baf681563e0980ed90e0910a5632169733b8042",
+   "unchanged_since_fa92afb": true
+  },
+  "p5y_k1_sr_o9_pre_t2_a5_amendment/config/A5_AMENDMENT.json": {
+   "fragments": [],
+   "fragments_present": true,
+   "prefix_matches_phase1_read": true,
+   "sha256": "ebf730f74533ba5c15e4f78a4b923129f3c1a24838fdb9ac202f05f9adfcef5f",
+   "unchanged_since_fa92afb": true
+  },
+  "p5y_k1_sr_o9_pre_t2_governance_successor/config/PRE_T2_GOVERNANCE.json": {
+   "fragments": [
+    "\"A5\": \"T2 O9 mode:"
+   ],
+   "fragments_present": true,
+   "prefix_matches_phase1_read": true,
+   "sha256": "ce02ad685686652348fc10a0df366a41c4732c9d707e48f80cb4e9c32aa73b68",
+   "unchanged_since_fa92afb": true
+  },
+  "p5y_k1_sr_qualification/SR_DERIVATION.md": {
+   "fragments": [
+    "softplus enclosure by `softplus_local_enclosure` at degree 8"
+   ],
+   "fragments_present": true,
+   "prefix_matches_phase1_read": true,
+   "sha256": "1d4f5f96641aa016d6cd07de111921bd3b2a536b456f6a8e02b91769c68cfc63",
+   "unchanged_since_fa92afb": true
+  },
+  "p5y_k1_sr_qualification/config/excluded_routes.json": {
+   "fragments": [
+    "\"id\": \"sr_local_panel_primitives\"",
+    "\"correct_route\": \"Import, do not re-derive.\""
+   ],
+   "fragments_present": true,
+   "prefix_matches_phase1_read": true,
+   "sha256": "80e16c58b56e1dac818cb4ac71cffef70e5e4a8abf608ec4ab249a8f5d4bd311",
+   "unchanged_since_fa92afb": true
+  },
+  "p5y_k1_task1r_budget_harness/CHECKPOINT_T1R.md": {
+   "fragments": [
+    "representation family or verdict semantic changes",
+    "| `B_int` | 1 | 0.002 | Arb interval radius |"
+   ],
+   "fragments_present": true,
+   "prefix_matches_phase1_read": true,
+   "sha256": "0fc9296a7d94f1cfc24c3983bcf8430ff977d2c8ff758e3ac7225b90130f5424",
+   "unchanged_since_fa92afb": true
+  },
+  "p5y_k1_task1r_budget_harness/adjudication/TASK1R_ADJUDICATION.json": {
+   "fragments": [
+    "\"no_degree_adaptation\": true",
+    "\"P1_workprec\": true"
+   ],
+   "fragments_present": true,
+   "prefix_matches_phase1_read": true,
+   "sha256": "613f81a6088b85d4abdc5cc645443ee1a574b1d45a93985605a2e0f28bdcbeac",
+   "unchanged_since_fa92afb": true
+  },
+  "p5y_k1_task1r_budget_harness/code/harness.py": {
+   "fragments": [
+    "a, _E, a_next = L.softplus_local_enclosure(centre, rho, SOFTPLUS_DEGREE)",
+    "M = L.softplus_derivative_bound_tight(SOFTPLUS_DEGREE + 1)",
+    "E_d = M * ((h + H) ** (SOFTPLUS_DEGREE + 1)) / arb(math.factorial(SOFTPLUS_DEGREE + 1))"
+   ],
+   "fragments_present": true,
+   "prefix_matches_phase1_read": true,
+   "sha256": "ea1f3e0484022e74753a8817362476c292406829ad5ceac1c9eb45e68740b563",
+   "unchanged_since_fa92afb": true
+  }
+ },
+ "excluded_routes": {
+  "banned_symbols_found": [],
+  "route_ids": [
+   "degree120_closed_form_into_kernel",
+   "late_re_expansion_mixed_variable",
+   "direct_interval_e_substitution",
+   "crude_moment_tail_bound",
+   "symmetric_P1_threshold",
+   "gate2d_representation",
+   "value_style_derivative_charge",
+   "M2_substituted_for_M_R2",
+   "task1r_F0_path",
+   "sr_opt_backend",
+   "sr_local_panel_primitives",
+   "historical_sr_cost_extrapolation"
+  ]
+ },
+ "frozen_settings_runtime": {
+  "D": 11,
+  "M_W": 23,
+  "P1_check": 1e-09,
+  "P1_guard": 1e-06,
+  "P1_workprec": 512,
+  "Z": 20,
+  "bits": 256,
+  "cand_degree": 16,
+  "eps_P1": 0.001,
+  "lines": [
+   [
+    "eq",
+    "B_eq"
+   ],
+   [
+    "trunc",
+    "B_trunc"
+   ],
+   [
+    "tail",
+    "B_tail"
+   ],
+   [
+    "end",
+    "B_end"
+   ],
+   [
+    "int",
+    "B_int"
+   ],
+   [
+    "round",
+    "B_round"
+   ]
+  ],
+  "nested": {
+   "B_end": "1/250",
+   "B_eq": "9/500",
+   "B_int": "1/500",
+   "B_reserve": "1/500",
+   "B_round": "1/500",
+   "B_tail": "3/500",
+   "B_trunc": "3/500"
+  },
+  "prod_bits": 256,
+  "softplus_degree": 8
+ },
+ "manifest_pins": {
+  "p5y_k1_binding_campaign/manifests/protected_inputs.json": {
+   "level4/closure_proofs/p5x_global_nonlinear_dynamics/compute_optimization_r3_sr_symbolic/sr_local.py": {
+    "current": "8de4d3453dd5f6ff624203a48a1c37f5c6fd4301aa2567d5a7a470c10d70bb54",
+    "equal": true,
+    "pinned": "8de4d3453dd5f6ff624203a48a1c37f5c6fd4301aa2567d5a7a470c10d70bb54"
+   }
+  },
+  "p5y_k1_sr_cap_authorized_successor/config/governed_inputs_manifest.json": {
+   "level4/closure_proofs/p5x_global_nonlinear_dynamics/compute_optimization_r3_sr_symbolic/sr_local.py": {
+    "current": "8de4d3453dd5f6ff624203a48a1c37f5c6fd4301aa2567d5a7a470c10d70bb54",
+    "equal": true,
+    "pinned": "8de4d3453dd5f6ff624203a48a1c37f5c6fd4301aa2567d5a7a470c10d70bb54"
+   },
+   "level4/closure_proofs/p5y_k1_sr_backend_cost_audit/code/opt_backend.py": {
+    "current": "825ed958d1cc5a3b2412fbd8f31f8773a2078e3708f5ce39c2aa5e8a3e43f5b1",
+    "equal": true,
+    "pinned": "825ed958d1cc5a3b2412fbd8f31f8773a2078e3708f5ce39c2aa5e8a3e43f5b1"
+   },
+   "level4/closure_proofs/p5y_k1_task1r_budget_harness/code/harness.py": {
+    "current": "ea1f3e0484022e74753a8817362476c292406829ad5ceac1c9eb45e68740b563",
+    "equal": true,
+    "pinned": "ea1f3e0484022e74753a8817362476c292406829ad5ceac1c9eb45e68740b563"
+   }
+  }
+ },
+ "predecessor_verifiers_frozen_ball_mode": {
+  "verify_a5": {
+   "rc": 0,
+   "stderr_tail": "",
+   "stdout_tail": "\n  \"A5_3_o9_certificate_all_frozen_lines_pass\": true,\n  \"A5_3_o9_exact_gates_all_pass\": true,\n  \"A4_baseline_exact_gates_all_pass\": true\n },\n \"classification\": \"T2_A5_GOVERNANCE_AMENDMENT_CLOSED\",\n \"doctrine_paths\": {\n  \"bit_equality_not_frozen_criterion\": [\n   \"adjudicator_amendments[1].why\"\n  ],\n  \"section10_overlap_containment\": [\n   \"adjudicator_amendments[1].why\"\n  ],\n  \"enclosures_overlap_true\": [\n   \"checks.enclosures_overlap\"\n  ],\n  \"uniformly_conservative_false\": [\n   \"full_certificate.uniformly_conservative\"\n  ]\n },\n \"delta\": [\n  1.9581424276820705e-05,\n  1.9579940137093534e-05\n ]\n}\n"
+  },
+  "verify_pre_t2": {
+   "rc": 0,
+   "stderr_tail": "",
+   "stdout_tail": " 84463,\n  \"contracted_panels_census\": 75464,\n  \"panel_units_census\": 83452,\n  \"patches_count_differs\": 1011,\n  \"P1_fail_counts\": {\n   \"exec_span\": 0,\n   \"census_on_span\": 1011,\n   \"census_on_core\": 0,\n   \"census_repaired_on_core_count_diff\": 0\n  },\n  \"P1_worst_headroom_rel\": {\n   \"exec_span\": 0.0017037183354879479,\n   \"census_on_span\": -0.13843593556122105,\n   \"census_on_core\": 0.0017037183354879479\n  },\n  \"reference_patch_17_11\": [\n   17,\n   11,\n   28,\n   30,\n   28,\n   30,\n   true,\n   true,\n   true\n  ],\n  \"table_sha256\": \"ab19d33042e3a2667ecbedfd43a2204a8e9dc427c3a0233e3a338b55f0198b55\"\n }\n}\n"
+  }
+ },
+ "predecessors": {
+  "ancestors_of_HEAD": {
+   "bint_representation_audit": true,
+   "endpoint_strip_successor": true
+  },
+  "commits": {
+   "bint_representation_audit": "fa92afb",
+   "endpoint_strip_successor": "b48973d6"
+  },
+  "dirs_unchanged_vs_fa92afb_and_clean": {
+   "p5x_global_nonlinear_dynamics/compute_optimization_r3_sr_symbolic": true,
+   "p5y_gate2f_sr_metric_b": true,
+   "p5y_k1_binding_campaign": true,
+   "p5y_k1_cover_ledger_successor": true,
+   "p5y_k1_sr_backend_cost_audit": true,
+   "p5y_k1_sr_o9_bint_representation_successor": true,
+   "p5y_k1_sr_o9_endpoint_strip_successor": true,
+   "p5y_k1_sr_o9_executor_t1_successor": true,
+   "p5y_k1_sr_o9_pre_t2_a5_amendment": true,
+   "p5y_k1_sr_o9_pre_t2_governance_successor": true,
+   "p5y_k1_sr_o9_t2_per_patch_successor": true,
+   "p5y_k1_sr_qualification": true,
+   "p5y_k1_task1r_budget_harness": true
+  }
+ },
+ "proof": {
+  "checks": {
+   "E1_frozen_p8_equals_independent": true,
+   "E2_bernstein_identity_exact": true,
+   "E3_sigma_range_and_bernstein_partition": true,
+   "E4a_frozen_M_contains_M_exact": true,
+   "E4b_A9_mid_exactly_zero": true,
+   "E4c_A9_rad_ge_M_exact_over_9fact": true,
+   "LINK_E_new_ge_P1_E_d": true,
+   "LINK_E_new_le_P1_check_threshold": true,
+   "SANITY_grid_inside_A9": true,
+   "SANITY_grid_series_equals_p8_sigma": true,
+   "SANITY_rational_sigma_points_exact_agreement": true,
+   "STATIC_single_consumer_softplus_tm2": true
+  },
+  "file": "evidence/A9_P1_PROOF.json",
+  "rc": 0,
+  "sha256": "5fc9631db30ded4ebc4e481f436cedecfd9bcc306a140891d8a862972fbbb2b7"
+ },
+ "reference_conformance_scope": "PRE_T2_GOVERNANCE A1-A6/B/C and the A5 amendment stay in force, unchanged, as conformance of the preserved frozen-ball mode (re-verified here by the untouched predecessor verifiers). They are not reinterpreted: the successor mode is certified by L-R3.1 with A9_P1 (evidence/A9_P1_PROOF.json) and differs from that mode only in A_9.",
+ "replacement": {
+  "E_d": "|A9_P1| rho^9 (L-R3.1); discarded by softplus_tm2 as before",
+  "historical": "A_9 = coefficient 9 of arb_series(log(1+exp(x))) at x = centre + [-rho, rho] (interval series)",
+  "implementation": "code/sr_o9_bint_p1.py::softplus_local_enclosure_p1, scoped context p1_lagrange_factor()",
+  "successor": "A9_P1 = arb(0, upper(M/9!)), M = sr_local.softplus_derivative_bound_tight(9) (frozen P1 rule's M)"
+ },
+ "schema": "rebaseguard.p5y.k1.sr.o9.bint_p1_bound_reuse.v1",
+ "scope": "SR O9 per-patch certifier (endpoint-strip successor b48973d6 architecture): the SOURCE of the L-R3.1 Lagrange-factor ball A_9 passed by sr_local.softplus_local_enclosure to harness.softplus_tm2, for every core-panel and strip PanelShared construction. Nothing else.",
+ "successor_code": {
+  "code/a9_p1_proof.py": "482ddc479bbb8f0756eaee50cca16d89d8884f84abc51e3b8639302b6b48850d",
+  "code/sr_o9_bint_p1.py": "e4e9c3a6871fbf32c2b8ab23ee55e7f79d099e2a57c85dd5f0cb5f04d5f5748c"
+ },
+ "supersession": "The historical interval-series construction remains immutable historical evidence (Task1R, Gate-2E/2F, T2 29ee382, endpoint strips b48973d6, B_int audit fa92afb) and is superseded for future T2 execution only.",
+ "unchanged": [
+  "theorem target",
+  "D = 11",
+  "Z = 20",
+  "256 bits",
+  "SR candidate degree 16",
+  "softplus degree 8 / Lagrange order 9",
+  "Taylor polynomial a_0..a_8 (frozen function's own output)",
+  "expansion centre",
+  "panel radius rho = H + h",
+  "panel geometry (task1r-span-p1-v1, n_z from the unchanged P1 rule)",
+  "endpoint-strip successor",
+  "candidates / 102 contracts",
+  "B_int allowance and every nested line",
+  "1/250 endpoint gate",
+  "B_cover target",
+  "P1 rule and check",
+  "harness.py, opt_backend.py, T2 certifier, endpoint strips (unchanged files)"
+ ]
+}
