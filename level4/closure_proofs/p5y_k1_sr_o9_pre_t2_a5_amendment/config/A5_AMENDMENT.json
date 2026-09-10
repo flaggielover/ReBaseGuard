@@ -1,0 +1,152 @@
+{
+ "a51_encoding_note": "A first encoding of A5.1 in this verifier also demanded error-channel bit-identity with opt_backend; that is frozen-documented false (O9 error channel smaller by <= ~2^-248 relative). A5.1 is encoded as the user's text '/ O9 reference' plus the frozen C4 relation; today's max relative shortfall at (17,11) is reported against the disclosed sample max 1.25e-75 (a sample statistic, not a frozen bound; the frozen bound is C4's 2^-200).",
+ "all_pass": true,
+ "amends": {
+  "commit": "a296244c866368c78750eb5b1800aee8decbd249",
+  "field": "issue_1_reference_criterion.A_task1r_F0.A5",
+  "file": "p5y_k1_sr_o9_pre_t2_governance_successor/config/PRE_T2_GOVERNANCE.json",
+  "file_sha256": "ce02ad685686652348fc10a0df366a41c4732c9d707e48f80cb4e9c32aa73b68"
+ },
+ "checks": {
+  "A4_baseline_exact_gates_all_pass": true,
+  "A5_1a_bit_identical_to_committed_o9_reference": true,
+  "A5_1b_coefficients_bit_identical_opt_backend_4032": true,
+  "A5_1b_error_channel_frozen_relation": true,
+  "A5_2_overlap_4032": true,
+  "A5_3_o9_certificate_all_frozen_lines_pass": true,
+  "A5_3_o9_exact_gates_all_pass": true,
+  "doctrine_bound_and_present": true,
+  "old_governance_namespace_unchanged": true,
+  "old_verifier_all_pass": true
+ },
+ "classification": "T2_A5_GOVERNANCE_AMENDMENT_CLOSED",
+ "doctrine": {
+  "bit_equality_not_frozen_criterion": [
+   "adjudicator_amendments[1].why"
+  ],
+  "enclosures_overlap_true": [
+   "checks.enclosures_overlap"
+  ],
+  "file": "p5y_k1_sr_backend_cost_audit/adjudication/AUDIT_ADJUDICATION.json",
+  "o9_error_channel_disclosure": {
+   "cap_protocol": "p5y_k1_sr_cap_authorized_successor/PROTOCOL.md",
+   "cap_protocol_section_present": true,
+   "cap_protocol_sha256": "6dd3d2e6aa65427a187b95bbd55a2bf9caad5d0afb3058d6df124b99fb511bc8",
+   "conclusion": "a rounding-order artefact of replacing long scalar accumulation with matrix products, ~73 orders of magnitude below the smallest governing threshold. It is NOT a scientific loosening. The predecessor's literal 'error_channel >= predecessor' criterion therefore holds only up to 256-bit rounding, not strictly.",
+   "disclosed_sample_max_rel": 1.25e-75,
+   "error_channel_exact": "p5y_k1_sr_cap_authorized_successor/evidence/error_channel_exact.json",
+   "error_channel_exact_sha256": "e86e17661d3b6fd298725f278211405832994922a25e4514a249de9c4bc4e054"
+  },
+  "present": true,
+  "quote": "bit-equality was never the frozen criterion. Section 10 requires enclosure overlap / containment, which holds for all 144 coefficients; measured relative agreement 1.49e-10. Bit-equality is unattainable once summation order changes in interval arithmetic.",
+  "section10_overlap_containment": [
+   "adjudicator_amendments[1].why"
+  ],
+  "sha256": "d7edf59ff5c7caf53afe0c240aca931cbff0b0d2d9936f11abfc4a5a26e5f9b6",
+  "uniformly_conservative_false": [
+   "full_certificate.uniformly_conservative"
+  ]
+ },
+ "measurement": {
+  "A5_1_bit_identical_o9_vs_opt_backend": 4032,
+  "A5_1_error_channels_bit_identical_panels_informational": 0,
+  "A5_1b_error_channel_max_rel_shortfall": 2.031270096635929e-75,
+  "A5_1b_error_channel_min_rel_shortfall": 3.3748290978658164e-76,
+  "A5_1b_error_channel_o9_le_opt_all": true,
+  "A5_1b_error_channel_shortfall_lt_2m200_all": true,
+  "A5_2_overlap_o9_vs_harness": 4032,
+  "A5_3_o9_exact_gates": {
+   "endpoint_slivers": true,
+   "equation_defect_polynomial": true,
+   "interval_arithmetic": true,
+   "rounding_exact_dyadic": true,
+   "tail_zeta_and_moments": true,
+   "truncation_patch_local": true
+  },
+  "A5_3_o9_frozen_verdicts_all_pass": true,
+  "A5_4_delta_o9_lt_baseline_observed": true,
+  "B_candidate_exact": "1/25",
+  "baseline_exact_gates": {
+   "endpoint_slivers": true,
+   "equation_defect_polynomial": true,
+   "interval_arithmetic": true,
+   "rounding_exact_dyadic": true,
+   "tail_zeta_and_moments": true,
+   "truncation_patch_local": true
+  },
+  "coefficients_compared": 4032,
+  "components": {
+   "endpoint_slivers": {
+    "baseline": 1.8765206311432718e-05,
+    "o9": 1.8765206311432718e-05
+   },
+   "equation_defect_polynomial": {
+    "baseline": 2.507796567414796e-07,
+    "o9": 2.5077965666425864e-07
+   },
+   "interval_arithmetic": {
+    "baseline": 5.654382937285795e-07,
+    "o9": 5.639541537180613e-07
+   },
+   "rounding_exact_dyadic": {
+    "baseline": 0.0,
+    "o9": 0.0
+   },
+   "tail_zeta_and_moments": {
+    "baseline": 1.0759617040553803e-14,
+    "o9": 1.1002549893617538e-14
+   },
+   "truncation_patch_local": {
+    "baseline": 4.158311554133858e-15,
+    "o9": 4.275945519012612e-15
+   }
+  },
+  "delta_baseline": 1.9581424276820705e-05,
+  "delta_o9": 1.9579940137093534e-05,
+  "n_panels": 28,
+  "o9_error_channels_ge_baseline_panels": 28,
+  "patch": [
+   17,
+   11
+  ]
+ },
+ "new_A5": {
+  "A5.1": "(a) O9 per-panel contraction output (every coefficient, ex, ez) bit-identical to the committed O9 reference for the same frozen inputs (packet contract_O9; committed packet hashes c72f65b3/c0fc8609 and the pre-T2 per-shift hashes, which include exact(ex) and exact(ez)); (b) against the accepted optimized backend opt_backend.contract: Taylor coefficients bit-identical, and error channels related EXACTLY as frozen-disclosed (cap PROTOCOL 'O9 error-channel observation', evidence/error_channel_exact.json, governance C4): O9 <= opt_backend with relative shortfall < 2^-200 (a rounding-order artefact, not a loosening). Error-channel bit-identity with opt_backend is NOT required; it is frozen-documented false.",
+  "A5.2": "every O9 certified coefficient enclosure overlaps or contains the corresponding Task1R reference-harness enclosure (frozen cost-audit Section-10 criterion); bit-equality with the harness is NOT required",
+  "A5.3": "the complete O9-mode certificate is independently recomputed and every frozen scientific line passes under exact/outward-safe comparison",
+  "A5.4": "NO requirement delta_O9 >= delta_baseline: both are independently rigorous enclosures and the optimized backend is adjudicated as not uniformly conservative relative to the harness",
+  "A5.5": "baseline Task1R mode remains the authoritative A4 reproduction path; O9 mode is the authoritative T2 evidence-execution path; historical Task1R and prior governance records remain immutable"
+ },
+ "old_A5": "T2 O9 mode: Taylor coefficients exact()-identical to baseline mode per panel; ex, ez >= baseline (exact arb upper); delta_O9 >= delta_baseline; every gate compared in exact rationals",
+ "old_A5_status": "GOVERNANCE SPECIFICATION ERROR: contradicted the already-adjudicated optimized-backend acceptance doctrine (bit-equality with the reference harness was never the frozen criterion; the optimized certificate is adjudicated as not uniformly conservative)",
+ "old_verifier": {
+  "all_pass": true,
+  "checks": {
+   "A_candidate_identical": true,
+   "A_output_identical_to_committed": true,
+   "A_verdicts_equal_historical": true,
+   "B_exact_abs_gate": true,
+   "B_kernel_identity_equal_historical": true,
+   "B_output_identical_to_committed": true,
+   "B_verdict_equal_historical": true,
+   "C_committed_packet_hashes_reproduced": true,
+   "C_per_shift_identical_to_committed": true,
+   "exec_panel_universe_P1_all_pass": true,
+   "historical_artifacts_unchanged": true,
+   "panel_universe_identical_to_committed": true,
+   "runtime_is_authorized": true
+  },
+  "governance_namespace_unchanged": true,
+  "returncode": 0
+ },
+ "schema": "rebaseguard.p5y.k1.sr.o9.a5-amendment.v1",
+ "unchanged": [
+  "A1-A4",
+  "A6",
+  "B1-B5",
+  "C1-C5",
+  "issue_2_panel_universe",
+  "cap status UNQUALIFIED",
+  "every threshold, budget, patch, panel, D, Z, precision, degree, candidate, contract, obligation and the theorem target"
+ ]
+}
