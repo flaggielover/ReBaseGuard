@@ -1,0 +1,141 @@
+{
+ "all_fragments_present": true,
+ "answers": {
+  "Q10_cell_313_target_gate": "Does NOT survive independently: with zero curvature error, the m=1..5 enclosures lie inside (-2,2) (phase2_decomposition.json: target_gate_with_zero_curvature_error = PASS).",
+  "Q1_quantity": "M_R2 >= sup_{e in parent cell} |R''_{D,m}(e)| at x0, assembled with the frozen positive all-m coefficients from uniform-cell H_r = F_r'' and W''_(r,j) enclosures (ERROR_ALGEBRA 3; checkpoint enclosure.curvature).",
+  "Q2_one_uniform_enclosure_binding": "NO as a representation. What binds is a certified bound UNIFORM over the parent cell. ERROR_ALGEBRA 1 permits any proved, dependency-preserving enclosure of the same expression, and the frozen CUSUM implementation itself does NOT substitute an interval e: it uses delta_cell = delta_mid + rho*Env (cusum_layer2).",
+  "Q3_uniform_or_cover": "A rigorous bound for every e in the parent cell. The Taylor cover itself is single and parent-level: R(cell) in R_interval + (cell-e0) D_interval +- rho^2 M_R2/2 with the EXACT midpoint e0 and the parent rho.",
+  "Q4_sr_refine_subintervals": "NO. sr_refine (like frozen refine.py) refines whole-cell ERROR bounds around the parent midpoint with the parent rho; it has no subinterval concept and neither authorises nor uses one.",
+  "Q5_union_of_subinterval_certificates": "YES for M_R2 only: max_j over certified sup_{E_j}|R''| on a cover of the cell bounds sup_cell|R''|, with parent e0, rho, D_interval and STYLE_1 unchanged. NO for local Taylor covers with local rho_j: that is cell splitting (ERROR_ALGEBRA 7; checkpoint adaptive_splitting=false; exactly one Taylor representation, no_interpolation).",
+  "Q6_subdivision_geometry": "No frozen subdivision rule exists. Any subdivision must be predeclared and deterministic before results. The successor chosen here uses none (N = 1).",
+  "Q7_scientific_vs_representation": "SCIENTIFIC: theorem target sup|R|<2; B_cover<=1/20 with the parent-rho STYLE_1 cover; M_R2 >= sup_cell|R''|; the twice-differentiated resolvent H equation, C_upper, the candidates, contracts and obligations. REPRESENTATION: how sup_cell of the residuals (and of R'') is enclosed: interval-e ball, mean-value extension, or max over subintervals.",
+  "Q8_obligation_identity": "Unchanged. The same 28 units per cell; the new enclosure is nested evidence inside the existing curvature/assembly obligations, as CUSUM Aux3 did (no new work ID).",
+  "Q9_cell_315": "Its right endpoint is exactly c_SR (affine [0,1]). The mean-value successor needs only rho (Arb enclosure) and the operator window [-c_SR+e_lo, c_SR+e_hi], so no decimal endpoint enters. A piecewise subdivision would need exact affine sub-endpoints; not used."
+ },
+ "bound_artifacts": {
+  "p5y_k1_cover_ledger_implementation/code/assembly.py": {
+   "fragments": {
+    "k=2 UNIFORMLY ON\nTHE CELL gives R2_interval": true
+   },
+   "sha256": "c51918c8b4d3fbb5530ca6432a38bb94e55138c6168e2ea124868c8d7a5b128c"
+  },
+  "p5y_k1_cover_ledger_implementation/code/cusum_layer2.py": {
+   "fragments": {
+    "SUBDIVISION_DEPTH = 0": true,
+    "The construction used instead is the mean-value extension": true,
+    "WHY delta_cell IS NOT COMPUTED BY SUBSTITUTING AN INTERVAL e": true
+   },
+   "sha256": "42c3d98394a6a8536e05d50626b21c7c71c309f5f98e286bdf2a3f7b5badf5a7"
+  },
+  "p5y_k1_cover_ledger_implementation/code/ledger.py": {
+   "fragments": {
+    "W_cover_exact = rho * mag(D_interval) + rho^2 * M_R2 / 2": true
+   },
+   "sha256": "8dd799be8c813563f3591ba2c41b8496914c3f5a79985e1dba17dabc80f20bda"
+  },
+  "p5y_k1_cover_ledger_implementation/code/propagate.py": {
+   "fragments": {
+    "which = \"delta_cell\"  whole-cell residuals": true
+   },
+   "sha256": "bc6d2fdefac3595796283e08f07da54b4d42d99577497495335c842a7190d7f6"
+  },
+  "p5y_k1_cover_ledger_implementation/code/refine.py": {
+   "fragments": {
+    "seeded with the crude mean-value": true
+   },
+   "sha256": "46698ab62c295d6bec04ea78e43cd975134636f6314f86751080249e6aef2070"
+  },
+  "p5y_k1_cover_ledger_successor/CHECKPOINT.md": {
+   "fragments": {
+    "adaptive splitting": true
+   },
+   "sha256": "c487421fed7fe1e12362d785841dff88933f286b10d0942a5bfebfe571fd8b84"
+  },
+  "p5y_k1_cover_ledger_successor/ERROR_ALGEBRA.md": {
+   "fragments": {
+    "A state-only dyadic candidate may be constant in e over the cell": true,
+    "All quantities on this right-hand side must be uniform cell bounds": true,
+    "An interval may be tighter only if a proved enclosure of the same expression": true,
+    "CPU-limit or cell-splitting relaxation is permitted after freeze.": true,
+    "Exactly one Taylor representation: STYLE_1": true,
+    "For the EXACT cell midpoint e0 and actual radius rho": true,
+    "M_R2(D,cell,m) must be a NONNEGATIVE certified upper bound": true,
+    "replacing\nthis scientific construction requires a new governed disposition": true
+   },
+   "sha256": "4f32df0273d05b1b4e0136e2a901adec9979e158b5decd8c9bf3cce0e35b9ffa"
+  },
+  "p5y_k1_cover_ledger_successor/config/checkpoint.json": {
+   "keys": {
+    "enclosure.B_cover_complete": true,
+    "enclosure.curvature": true,
+    "enclosure.no_interpolation": true,
+    "enclosure.style": true,
+    "geometry.adaptive_splitting": true,
+    "geometry.expansion_point": true,
+    "scope.result_dependent_cell_deletion_allowed": true
+   },
+   "sha256": "1c2a6825f19e19de6fb588647ca3fc4618068087ef0976292ca7bbeca701f13f"
+  },
+  "p5y_k1_cusum_aux3_successor/README.md": {
+   "fragments": {
+    "auxiliary third-derivative": true
+   },
+   "sha256": "dce4f4c26747986f556fd3afd5bc9f96bb663873751e86ca2196b3affbe017f5"
+  },
+  "p5y_k1_cusum_aux3_successor/RESULTS.md": {
+   "fragments": {
+    "28 of 28": true
+   },
+   "sha256": "a4ef271865866676055f68e94caa6addf2236feebca97922eb586cf2fc79f0c9"
+  },
+  "p5y_k1_final_completion/STATUS.md": {
+   "fragments": {
+    "CERTIFICATE_TOO_LOOSE": true
+   },
+   "sha256": "ad2fad08fda18d6540c104163c5f58655f68941568b3d9f5d7b79d0f26c58522"
+  },
+  "p5y_k1_sr_o9_t345_successor/code/t3_patch.py": {
+   "fragments": {
+    "cell : e = the whole cell [left, right] as one ball": true
+   },
+   "sha256": "384ec5167933682e211589c2c46ab66f692a324adbb8d396366d7254dce94d62"
+  },
+  "p5y_k1_sr_o9_t345_successor/code/t4_cell.py": {
+   "fragments": {
+    "sr_refine.refine_cell": true
+   },
+   "sha256": "403a08ea1638127c70a9a36d9df904fcd5f24850fe59048b40b2fa9f90a1105c"
+  },
+  "p5y_k1_sr_o9_t345_successor/config/T345_RECORD.json": {
+   "fragments": {},
+   "sha256": "509cf1dd8fe1ec467cf7c5ea26a15b1beefa5436731a66191cdffb6f7ee0fa0b"
+  },
+  "p5y_k1_sr_qualification/SR_DERIVATION.md": {
+   "fragments": {
+    "is required **uniformly on the cell**": true
+   },
+   "sha256": "1d4f5f96641aa016d6cd07de111921bd3b2a536b456f6a8e02b91769c68cfc63"
+  },
+  "p5y_k1_sr_qualification/SR_MIDPOINT_REFINEMENT.md": {
+   "fragments": {
+    "The cover is frozen at order 2 in `e`.": true
+   },
+   "sha256": "4aeb724c097913d934db05ebe7ef7e5628d4717e3811bbf837fdd2a80232997d"
+  },
+  "p5y_k1_sr_qualification/SR_REFINEMENT_DESIGN.md": {
+   "fragments": {
+    "order-3 evidence enters **only** as nested auxiliary evidence": true
+   },
+   "sha256": "219f8bb24def5ae57454e1cfa13f74f9a7163dee728852f2625fd0bd6cf0ba30"
+  },
+  "p5y_k1_sr_qualification/code/sr_refine.py": {
+   "fragments": {
+    "the iteration is seeded with\nthe crude mean-value bound": true
+   },
+   "sha256": "d99813dca5ed18443f56cad8e172228af5569d1d33d417edb1596d0e06144411"
+  }
+ },
+ "ruling": "CURVATURE_LOCALIZATION_DOCTRINE_PERMITS_SUCCESSOR",
+ "ruling_scope": "PERMITTED: tighter proved enclosures of the SAME parent-cell quantity, meaning the frozen mean-value whole-cell residual extension, or max over a predeclared subinterval cover, with the parent e0/rho/STYLE_1 unchanged. FORBIDDEN: local-rho Taylor covers (cell splitting), new candidates, any threshold/degree/precision change.",
+ "schema": "rebaseguard.p5y.k1.sr.o9.curvature-doctrine.v1"
+}

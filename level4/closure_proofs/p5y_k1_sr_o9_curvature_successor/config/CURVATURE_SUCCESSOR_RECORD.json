@@ -1,0 +1,885 @@
+{
+ "classification": "CURVATURE_SUCCESSOR_NUMERICALLY_NOT_CLOSING",
+ "control_150": {
+  "T5": [
+   28,
+   "T5_28_OF_28_PASS"
+  ],
+  "all_pass": true,
+  "tighter_or_equal": true
+ },
+ "cost": {
+  "T2_T3_evidence_reuse": "100% (T3 midpoint-mode deltas and x0 values; no patch recomputation)",
+  "curvature_layer_cpu_s_per_cell": {
+   "150": 0.854874586,
+   "275": 0.842538249,
+   "313": 0.840684756,
+   "315": 0.839376591
+  },
+  "peak_rss_kib": 61192,
+  "projection_note": "the curvature layer is about 1 CPU-s per cell. The mean-value construction removes the need for the T3 interval-e mode; the T3 midpoint mode alone is ~18 CPU-s per patch at 30-way load (T2 closure runs), i.e. ~20 CPU-h per cell, ~6,300 CPU-h for 316 cells. Estimate only; no cap qualification."
+ },
+ "determinism": {
+  "all_bytes_equal": true,
+  "pairs": 12,
+  "zero_scientific_leaves_moved": true
+ },
+ "evidence_sha256": {
+  "evidence/determinism_kill.json": "932119ff625e18d39b229671353eef8be2d8438f50524826cd557e12d68ea2ca",
+  "evidence/kill/run_c150.log": "79bfb679b0b6dd3baf071142a864825337cbfff5b2c55c191d44434b749ab8c9",
+  "evidence/kill/run_c275.log": "bf1cb07097d1d9f98542eb61a5023777eaccfde876166ba1f95e089f158aa0e4",
+  "evidence/kill/run_c313.log": "2ae281aa8f89eff3c37ed886e1c8195f9741fefe25947fd20cb477383ae5a0ad",
+  "evidence/kill/run_c315.log": "7cad56e861fe86752896c456f4b7b07779d6f8d7139a7873e48dae5e871983e9",
+  "evidence/kill/t3view_c150.json": "45050bab8f129077d97644df3859976685fca61fd4db091a8931ee9af2131f19",
+  "evidence/kill/t3view_c275.json": "994cb61bf31f0538bd149c0f869e0d31c69e4663d12422986a29b6868cd29237",
+  "evidence/kill/t3view_c313.json": "7fa79d2643543466649c863193b9265eb9ea733cc3d8632795b21cddf4519831",
+  "evidence/kill/t3view_c315.json": "efc08c62e697bbf51703424921f81154737fa5030c2ef60994d4e333d4d51008",
+  "evidence/kill/t4_c150.json": "9a1568cc0866f4d7161d8f5e6327e93ac4ad5ed0e05eee84a798df4f9aecb550",
+  "evidence/kill/t4_c275.json": "7da4067eeccbce7eebb09af86d3a923882d55b54b8c869a6ab2bcbbc520bdb3f",
+  "evidence/kill/t4_c313.json": "bfb547de10bab26694157d693801b31f8a7684372ca46229e3ad85a4b652b308",
+  "evidence/kill/t4_c315.json": "7d0230246e4f404b069bc5527ba420de33242b935e42762284cc3cd4008cb515",
+  "evidence/kill/t5_c150.json": "9450972d733d2d16f1ad3f9d77d40e8fc02aee36c559ccdac096f7ec47a2a029",
+  "evidence/kill/t5_c275.json": "bff95db2dbd5025dda6e9d4e1201a0db39a3bd44edb00ed737f7d5a72227380b",
+  "evidence/kill/t5_c313.json": "c9897f90636224fa9ec11004eb6e753e0dae0701666b12f61bf294e303e8ad0a",
+  "evidence/kill/t5_c315.json": "79cb2499c661070afa82e9f40062445514ccd8d09941f703ead61b229dd94e7a",
+  "evidence/kill_replay/run_c150.log": "0940706e95be287aa75d8ec0c5389dc31a619914b3e3d464c57825d7043c90d4",
+  "evidence/kill_replay/run_c275.log": "a20deecff7c85c25b59a7005bdc7821ace3baec3bed4f161bbc17e795ae203c4",
+  "evidence/kill_replay/run_c313.log": "5e94bf0656635e4c0462ef55db0660d81fcd76ae53f6a89969c216ea5cc1aa2e",
+  "evidence/kill_replay/run_c315.log": "79cf8ed82f179dd677c6096c11c7b224634fc297200cf9b89bb235ae8cc1cf3c",
+  "evidence/kill_replay/t3view_c150.json": "45050bab8f129077d97644df3859976685fca61fd4db091a8931ee9af2131f19",
+  "evidence/kill_replay/t3view_c275.json": "994cb61bf31f0538bd149c0f869e0d31c69e4663d12422986a29b6868cd29237",
+  "evidence/kill_replay/t3view_c313.json": "7fa79d2643543466649c863193b9265eb9ea733cc3d8632795b21cddf4519831",
+  "evidence/kill_replay/t3view_c315.json": "efc08c62e697bbf51703424921f81154737fa5030c2ef60994d4e333d4d51008",
+  "evidence/kill_replay/t4_c150.json": "9a1568cc0866f4d7161d8f5e6327e93ac4ad5ed0e05eee84a798df4f9aecb550",
+  "evidence/kill_replay/t4_c275.json": "7da4067eeccbce7eebb09af86d3a923882d55b54b8c869a6ab2bcbbc520bdb3f",
+  "evidence/kill_replay/t4_c313.json": "bfb547de10bab26694157d693801b31f8a7684372ca46229e3ad85a4b652b308",
+  "evidence/kill_replay/t4_c315.json": "7d0230246e4f404b069bc5527ba420de33242b935e42762284cc3cd4008cb515",
+  "evidence/kill_replay/t5_c150.json": "9450972d733d2d16f1ad3f9d77d40e8fc02aee36c559ccdac096f7ec47a2a029",
+  "evidence/kill_replay/t5_c275.json": "bff95db2dbd5025dda6e9d4e1201a0db39a3bd44edb00ed737f7d5a72227380b",
+  "evidence/kill_replay/t5_c313.json": "c9897f90636224fa9ec11004eb6e753e0dae0701666b12f61bf294e303e8ad0a",
+  "evidence/kill_replay/t5_c315.json": "79cb2499c661070afa82e9f40062445514ccd8d09941f703ead61b229dd94e7a",
+  "evidence/kill_table.json": "3b8dcc5714205003b3f60404543547bf1faae04707231757a59b92d0627b0e53",
+  "evidence/kz2_predecessor_check.json": "d8c0c8cb977be356d4fb6f6bf8b1b26c29ef51cac144da77b923d3ce6bf174de",
+  "evidence/phase1_doctrine.json": "0202beaad1859dc74a9591b5f48cf7e9fa086a666e3deb2091ea029dacffb515",
+  "evidence/phase2_decomposition.json": "edff515e24738aa1354c9e75b6b852d863b59ad292c4115fd513dec111536683",
+  "evidence/sanity_norms.txt": "93a6399c3e3ec8bf2bb07357021e4bef8ca6bc2aa1442cc947fc1df9029d6f0d"
+ },
+ "kill_micropilot": {
+  "all_pass": false,
+  "cell313_remaining_H_closure": {
+   "0": {
+    "C*2k1*eps_D_cell": 0.6431412020232538,
+    "C*deltaH_cell": 0.7466553707679909,
+    "C*eps_S2_cell": 0.0,
+    "C*k2*eps_F_cell": 0.11412997120637061,
+    "contraction": 0.3187213730163461,
+    "eps_H_cell": 1.5039265439976153,
+    "iterations": 12,
+    "sup_H_final": 2.139925580858032,
+    "sup_H_hat": 0.6359990368604169
+   },
+   "1": {
+    "C*2k1*eps_D_cell": 9.33492263544521,
+    "C*deltaH_cell": 14.153047701334085,
+    "C*eps_S2_cell": 4.139380130924825,
+    "C*k2*eps_F_cell": 1.4079371852456815,
+    "contraction": 0.3187213730163461,
+    "eps_H_cell": 29.0352876529498,
+    "iterations": 13,
+    "sup_H_final": 31.061722583314943,
+    "sup_H_hat": 2.0264349303651406
+   },
+   "2": {
+    "C*2k1*eps_D_cell": 10.294572284352522,
+    "C*deltaH_cell": 9.869098854619384,
+    "C*eps_S2_cell": 13.225487216466835,
+    "C*k2*eps_F_cell": 0.856123883627166,
+    "contraction": 0.3187213730163461,
+    "eps_H_cell": 34.24528223906591,
+    "iterations": 13,
+    "sup_H_final": 34.255041944425045,
+    "sup_H_hat": 0.009759705359138948
+   },
+   "3": {
+    "C*2k1*eps_D_cell": 11.4455927062818,
+    "C*deltaH_cell": 4.9768148920978454,
+    "C*eps_S2_cell": 20.737326855202195,
+    "C*k2*eps_F_cell": 0.9253788344340773,
+    "contraction": 0.3187213730163461,
+    "eps_H_cell": 38.08511328801592,
+    "iterations": 13,
+    "sup_H_final": 38.08511331136988,
+    "sup_H_hat": 2.3353964984096365e-08
+   },
+   "4": {
+    "C*2k1*eps_D_cell": 12.333869122011183,
+    "C*deltaH_cell": 4.971102233670887,
+    "C*eps_S2_cell": 22.756743985571617,
+    "C*k2*eps_F_cell": 0.9791583508736217,
+    "contraction": 0.3187213730163461,
+    "eps_H_cell": 41.04087369212731,
+    "iterations": 12,
+    "sup_H_final": 41.040873692128784,
+    "sup_H_hat": 1.4708234630234074e-12
+   }
+  },
+  "critical": {
+   "275/m2": 0.24748867114507106,
+   "313/m2": 4.2384665358148395,
+   "313/m5": 9.820491512207859,
+   "315/m2": 0.009273167173054082
+  },
+  "rows": [
+   {
+    "B_cover_new": 0.011517902475562634,
+    "B_cover_old": 0.047565430400627294,
+    "D_interval_new": [
+     0.6022465166287443,
+     0.603126267119384
+    ],
+    "D_interval_old": [
+     0.6022465166287443,
+     0.603126267119384
+    ],
+    "M_R2_new": 6.374944224364818,
+    "M_R2_old": 242.2764448517633,
+    "assembly_obligation_new": "PASS",
+    "cell": 275,
+    "curvature_obligation_new": "PASS",
+    "failing_gates_new": [],
+    "idealized_ratio_DIAGNOSTIC": 0.2119076272492735,
+    "ledger_new": "PASS",
+    "ledger_old": "PASS",
+    "m": 1,
+    "ratio_new": 0.2303580495112527,
+    "ratio_old": 0.9513086080125459,
+    "subdivision_level": 1,
+    "target_new": "PASS",
+    "target_old": "PASS"
+   },
+   {
+    "B_cover_new": 0.012374433557253553,
+    "B_cover_old": 0.10313721372161393,
+    "D_interval_new": [
+     0.5770103621201899,
+     0.5783023932748521
+    ],
+    "D_interval_old": [
+     0.5770103621201899,
+     0.5783023932748521
+    ],
+    "M_R2_new": 14.820197142502991,
+    "M_R2_old": 608.7881409747813,
+    "assembly_obligation_new": "PASS",
+    "cell": 275,
+    "curvature_obligation_new": "PASS",
+    "failing_gates_new": [],
+    "idealized_ratio_DIAGNOSTIC": 0.2036674483174042,
+    "ledger_new": "PASS",
+    "ledger_old": "FAIL",
+    "m": 2,
+    "ratio_new": 0.24748867114507106,
+    "ratio_old": 2.0627442744322786,
+    "subdivision_level": 1,
+    "target_new": "PASS",
+    "target_old": "PASS"
+   },
+   {
+    "B_cover_new": 0.012532830242491091,
+    "B_cover_old": 0.15826855314777513,
+    "D_interval_new": [
+     0.5340000860355817,
+     0.5354334424623689
+    ],
+    "D_interval_old": [
+     0.5340000860355817,
+     0.5354334424623689
+    ],
+    "M_R2_new": 20.76116873797664,
+    "M_R2_old": 974.4819287258077,
+    "assembly_obligation_new": "PASS",
+    "cell": 275,
+    "curvature_obligation_new": "PASS",
+    "failing_gates_new": [],
+    "idealized_ratio_DIAGNOSTIC": 0.18894043762706184,
+    "ledger_new": "PASS",
+    "ledger_old": "FAIL",
+    "m": 3,
+    "ratio_new": 0.25065660484982183,
+    "ratio_old": 3.1653710629555025,
+    "subdivision_level": 1,
+    "target_new": "PASS",
+    "target_old": "PASS"
+   },
+   {
+    "B_cover_new": 0.013238750796680972,
+    "B_cover_old": 0.2949007226503164,
+    "D_interval_new": [
+     0.45195339035116316,
+     0.45355530992300314
+    ],
+    "D_interval_old": [
+     0.45195339035116316,
+     0.45355530992300314
+    ],
+    "M_R2_new": 34.74805570416891,
+    "M_R2_old": 1877.9946153037338,
+    "_cell_run": {
+     "T5": [
+      28,
+      "T5_28_OF_28_PASS"
+     ],
+     "cpu_s": 0.842538249,
+     "rss_kib": 61192,
+     "t4_sha": "76976a5b46bc3e433c78ec45dfcc0d8d9953889c7859cdd759fb809a39d61169"
+    },
+    "assembly_obligation_new": "PASS",
+    "cell": 275,
+    "curvature_obligation_new": "PASS",
+    "failing_gates_new": [],
+    "idealized_ratio_DIAGNOSTIC": 0.16067209597299528,
+    "ledger_new": "PASS",
+    "ledger_old": "FAIL",
+    "m": 5,
+    "ratio_new": 0.2647750159336194,
+    "ratio_old": 5.898014453006328,
+    "subdivision_level": 1,
+    "target_new": "PASS",
+    "target_old": "PASS"
+   },
+   {
+    "B_cover_new": 0.04948265489695168,
+    "B_cover_old": 1.6711984226412435,
+    "D_interval_new": [
+     -0.1786072633101643,
+     -0.1785662223755029
+    ],
+    "D_interval_old": [
+     -0.1786072633101643,
+     -0.1785662223755029
+    ],
+    "M_R2_new": 1.7534306307955934,
+    "M_R2_old": 133.9643473548516,
+    "assembly_obligation_new": "FAIL",
+    "cell": 313,
+    "curvature_obligation_new": "FAIL",
+    "failing_gates_new": [],
+    "idealized_ratio_DIAGNOSTIC": 0.620641764471013,
+    "ledger_new": "PASS",
+    "ledger_old": "FAIL",
+    "m": 1,
+    "ratio_new": 0.9896530979390337,
+    "ratio_old": 33.42396845282487,
+    "subdivision_level": 1,
+    "target_new": "PASS",
+    "target_old": "FAIL"
+   },
+   {
+    "B_cover_new": 0.21192332679074197,
+    "B_cover_old": 54.222826058677484,
+    "D_interval_new": [
+     -0.08936883398675954,
+     -0.08929061846718023
+    ],
+    "D_interval_old": [
+     -0.08936883398675954,
+     -0.08929061846718023
+    ],
+    "M_R2_new": 16.13595741948269,
+    "M_R2_old": 4419.3927458818835,
+    "assembly_obligation_new": "FAIL",
+    "cell": 313,
+    "curvature_obligation_new": "FAIL",
+    "failing_gates_new": [
+     "B_cover",
+     "total"
+    ],
+    "idealized_ratio_DIAGNOSTIC": 0.3104787286387048,
+    "ledger_new": "FAIL",
+    "ledger_old": "FAIL",
+    "m": 2,
+    "ratio_new": 4.2384665358148395,
+    "ratio_old": 1084.4565211735496,
+    "subdivision_level": 1,
+    "target_new": "PASS",
+    "target_old": "FAIL"
+   },
+   {
+    "B_cover_new": 0.3140661893115554,
+    "B_cover_old": 79.76969176913418,
+    "D_interval_new": [
+     -0.0895921240258235,
+     -0.08949886401868978
+    ],
+    "D_interval_old": [
+     -0.0895921240258235,
+     -0.08949886401868978
+    ],
+    "M_R2_new": 24.46033700051618,
+    "M_R2_old": 6502.106608765748,
+    "assembly_obligation_new": "FAIL",
+    "cell": 313,
+    "curvature_obligation_new": "FAIL",
+    "failing_gates_new": [
+     "B_cover",
+     "total"
+    ],
+    "idealized_ratio_DIAGNOSTIC": 0.31141373840551395,
+    "ledger_new": "FAIL",
+    "ledger_old": "FAIL",
+    "m": 3,
+    "ratio_new": 6.281323786231107,
+    "ratio_old": 1595.3938353826836,
+    "subdivision_level": 1,
+    "target_new": "PASS",
+    "target_old": "FAIL"
+   },
+   {
+    "B_cover_new": 0.4910245756103929,
+    "B_cover_old": 108.72351802319409,
+    "D_interval_new": [
+     -0.08960271169821116,
+     -0.08948827666910691
+    ],
+    "D_interval_old": [
+     -0.08960271169821116,
+     -0.08948827666910691
+    ],
+    "M_R2_new": 38.886793036444466,
+    "M_R2_old": 8862.576777835133,
+    "_cell_run": {
+     "T5": [
+      20,
+      "T5_NOT_28_OF_28"
+     ],
+     "cpu_s": 0.840684756,
+     "rss_kib": 60896,
+     "t4_sha": "4f7a9f6b83d8c6a97960743746e099bcd0bf9dfd91e2315c60614c70c2076f48"
+    },
+    "assembly_obligation_new": "FAIL",
+    "cell": 313,
+    "curvature_obligation_new": "FAIL",
+    "failing_gates_new": [
+     "B_cover",
+     "total"
+    ],
+    "idealized_ratio_DIAGNOSTIC": 0.31141373933915295,
+    "ledger_new": "FAIL",
+    "ledger_old": "FAIL",
+    "m": 5,
+    "ratio_new": 9.820491512207859,
+    "ratio_old": 2174.4703604638817,
+    "subdivision_level": 1,
+    "target_new": "PASS",
+    "target_old": "FAIL"
+   },
+   {
+    "B_cover_new": 0.00033812930770468037,
+    "B_cover_old": 0.015028838563498605,
+    "D_interval_new": [
+     -0.008963131995955997,
+     -0.008944880552832934
+    ],
+    "D_interval_old": [
+     -0.008963131995955997,
+     -0.008944880552832934
+    ],
+    "M_R2_new": 0.5226907790723301,
+    "M_R2_old": 57.542472962065695,
+    "assembly_obligation_new": "PASS",
+    "cell": 315,
+    "curvature_obligation_new": "PASS",
+    "failing_gates_new": [],
+    "idealized_ratio_DIAGNOSTIC": 0.006116147517527378,
+    "ledger_new": "PASS",
+    "ledger_old": "PASS",
+    "m": 1,
+    "ratio_new": 0.006762586154093607,
+    "ratio_old": 0.30057677126997207,
+    "subdivision_level": 1,
+    "target_new": "PASS",
+    "target_old": "PASS"
+   },
+   {
+    "B_cover_new": 0.00046365835865270415,
+    "B_cover_old": 0.47640804364790496,
+    "D_interval_new": [
+     -0.004505098808206043,
+     -0.004453861011281646
+    ],
+    "D_interval_old": [
+     -0.004505098808206043,
+     -0.004453861011281646
+    ],
+    "M_R2_new": 1.402693235693603,
+    "M_R2_old": 1848.7093622250538,
+    "assembly_obligation_new": "PASS",
+    "cell": 315,
+    "curvature_obligation_new": "PASS",
+    "failing_gates_new": [],
+    "idealized_ratio_DIAGNOSTIC": 0.0030592744513031496,
+    "ledger_new": "PASS",
+    "ledger_old": "FAIL",
+    "m": 2,
+    "ratio_new": 0.009273167173054082,
+    "ratio_old": 9.5281608729581,
+    "subdivision_level": 1,
+    "target_new": "PASS",
+    "target_old": "PASS"
+   },
+   {
+    "B_cover_new": 0.0006011481103733585,
+    "B_cover_old": 0.6626155084335668,
+    "D_interval_new": [
+     -0.00452668105689454,
+     -0.0044621775952363345
+    ],
+    "D_interval_old": [
+     -0.00452668105689454,
+     -0.0044621775952363345
+    ],
+    "M_R2_new": 1.9344375334873092,
+    "M_R2_old": 2571.4437764208956,
+    "assembly_obligation_new": "PASS",
+    "cell": 315,
+    "curvature_obligation_new": "PASS",
+    "failing_gates_new": [],
+    "idealized_ratio_DIAGNOSTIC": 0.003066518956379459,
+    "ledger_new": "PASS",
+    "ledger_old": "FAIL",
+    "m": 3,
+    "ratio_new": 0.01202296220746717,
+    "ratio_old": 13.252310168671336,
+    "subdivision_level": 1,
+    "target_new": "PASS",
+    "target_old": "PASS"
+   },
+   {
+    "B_cover_new": 0.0007724231471851172,
+    "B_cover_old": 0.8213908991046773,
+    "D_interval_new": [
+     -0.004531601814370725,
+     -0.004457256838897075
+    ],
+    "D_interval_old": [
+     -0.004531601814370725,
+     -0.004457256838897075
+    ],
+    "M_R2_new": 2.5987823229543654,
+    "M_R2_old": 3187.7061818164075,
+    "_cell_run": {
+     "T5": [
+      28,
+      "T5_28_OF_28_PASS"
+     ],
+     "cpu_s": 0.839376591,
+     "rss_kib": 60812,
+     "t4_sha": "3b4cab9e2e8a04881bd4f9f92ae571be94348ac7256ac07926770428e80b197e"
+    },
+    "assembly_obligation_new": "PASS",
+    "cell": 315,
+    "curvature_obligation_new": "PASS",
+    "failing_gates_new": [],
+    "idealized_ratio_DIAGNOSTIC": 0.0030665189566724984,
+    "ledger_new": "PASS",
+    "ledger_old": "FAIL",
+    "m": 5,
+    "ratio_new": 0.015448462943702343,
+    "ratio_old": 16.427817982093547,
+    "subdivision_level": 1,
+    "target_new": "PASS",
+    "target_old": "PASS"
+   },
+   {
+    "B_cover_new": 0.003553217771816082,
+    "B_cover_old": 0.0037922972960519235,
+    "D_interval_new": [
+     -4.705129605317944,
+     -4.377679284261995
+    ],
+    "D_interval_old": [
+     -4.705129605317944,
+     -4.377679284261995
+    ],
+    "M_R2_new": 516.1445392714932,
+    "M_R2_old": 1422.711918269296,
+    "assembly_obligation_new": "PASS",
+    "cell": 150,
+    "curvature_obligation_new": "PASS",
+    "failing_gates_new": [],
+    "idealized_ratio_DIAGNOSTIC": 0.06640416653568695,
+    "ledger_new": "PASS",
+    "ledger_old": "PASS",
+    "m": 1,
+    "ratio_new": 0.07106435543632164,
+    "ratio_old": 0.07584594592103847,
+    "subdivision_level": 1,
+    "target_new": "PASS",
+    "target_old": "PASS"
+   },
+   {
+    "B_cover_new": 0.002777241944495911,
+    "B_cover_old": 0.003005336818483389,
+    "D_interval_new": [
+     -3.6627391519003507,
+     -3.3782900025115308
+    ],
+    "D_interval_old": [
+     -3.6627391519003507,
+     -3.3782900025115308
+    ],
+    "M_R2_new": 444.3267242015515,
+    "M_R2_old": 1309.2413283885633,
+    "assembly_obligation_new": "PASS",
+    "cell": 150,
+    "curvature_obligation_new": "PASS",
+    "failing_gates_new": [],
+    "idealized_ratio_DIAGNOSTIC": 0.05150449178960329,
+    "ledger_new": "PASS",
+    "ledger_old": "PASS",
+    "m": 2,
+    "ratio_new": 0.055544838889918215,
+    "ratio_old": 0.060106736369667776,
+    "subdivision_level": 1,
+    "target_new": "PASS",
+    "target_old": "PASS"
+   },
+   {
+    "B_cover_new": 0.00238063375934971,
+    "B_cover_old": 0.002601853082073856,
+    "D_interval_new": [
+     -3.1266461708650297,
+     -2.8499800488420135
+    ],
+    "D_interval_old": [
+     -3.1266461708650297,
+     -2.8499800488420135
+    ],
+    "M_R2_new": 416.75706474236324,
+    "M_R2_old": 1255.6002163117296,
+    "assembly_obligation_new": "PASS",
+    "cell": 150,
+    "curvature_obligation_new": "PASS",
+    "failing_gates_new": [],
+    "idealized_ratio_DIAGNOSTIC": 0.04373679421927894,
+    "ledger_new": "PASS",
+    "ledger_old": "PASS",
+    "m": 3,
+    "ratio_new": 0.0476126751869942,
+    "ratio_old": 0.05203706164147712,
+    "subdivision_level": 1,
+    "target_new": "PASS",
+    "target_old": "PASS"
+   },
+   {
+    "B_cover_new": 0.0019090056724400191,
+    "B_cover_old": 0.0021283771446797355,
+    "D_interval_new": [
+     -2.4905609410536362,
+     -2.229263263410039
+    ],
+    "D_interval_old": [
+     -2.4905609410536362,
+     -2.229263263410039
+    ],
+    "M_R2_new": 380.0848140625366,
+    "M_R2_old": 1211.9210880006901,
+    "_cell_run": {
+     "T5": [
+      28,
+      "T5_28_OF_28_PASS"
+     ],
+     "cpu_s": 0.854874586,
+     "rss_kib": 61112,
+     "t4_sha": "24ff401537f6f5344929f1e2f6207c38ed69027bcfe65b67abadfa3a3b592337"
+    },
+    "assembly_obligation_new": "PASS",
+    "cell": 150,
+    "curvature_obligation_new": "PASS",
+    "failing_gates_new": [],
+    "idealized_ratio_DIAGNOSTIC": 0.034561307027750274,
+    "ledger_new": "PASS",
+    "ledger_old": "PASS",
+    "m": 5,
+    "ratio_new": 0.03818011344880038,
+    "ratio_old": 0.04256754289359471,
+    "subdivision_level": 1,
+    "target_new": "PASS",
+    "target_old": "PASS"
+   }
+  ]
+ },
+ "next_options_not_taken": [
+  "drift-aware sharper operator norms (final_completion sharp_norms precedent)",
+  "predeclared dyadic max-over-subinterval ladder for the residual enclosure (parent rho)",
+  "Aux3-style nested third-derivative evidence (needs auxiliary candidates: governance required)"
+ ],
+ "parent": {
+  "commit": "8b8a242",
+  "tag": "p5y-k1-sr-o9-t5-one-cell-28-of-28"
+ },
+ "phase1_doctrine": {
+  "answers": {
+   "Q10_cell_313_target_gate": "Does NOT survive independently: with zero curvature error, the m=1..5 enclosures lie inside (-2,2) (phase2_decomposition.json: target_gate_with_zero_curvature_error = PASS).",
+   "Q1_quantity": "M_R2 >= sup_{e in parent cell} |R''_{D,m}(e)| at x0, assembled with the frozen positive all-m coefficients from uniform-cell H_r = F_r'' and W''_(r,j) enclosures (ERROR_ALGEBRA 3; checkpoint enclosure.curvature).",
+   "Q2_one_uniform_enclosure_binding": "NO as a representation. What binds is a certified bound UNIFORM over the parent cell. ERROR_ALGEBRA 1 permits any proved, dependency-preserving enclosure of the same expression, and the frozen CUSUM implementation itself does NOT substitute an interval e: it uses delta_cell = delta_mid + rho*Env (cusum_layer2).",
+   "Q3_uniform_or_cover": "A rigorous bound for every e in the parent cell. The Taylor cover itself is single and parent-level: R(cell) in R_interval + (cell-e0) D_interval +- rho^2 M_R2/2 with the EXACT midpoint e0 and the parent rho.",
+   "Q4_sr_refine_subintervals": "NO. sr_refine (like frozen refine.py) refines whole-cell ERROR bounds around the parent midpoint with the parent rho; it has no subinterval concept and neither authorises nor uses one.",
+   "Q5_union_of_subinterval_certificates": "YES for M_R2 only: max_j over certified sup_{E_j}|R''| on a cover of the cell bounds sup_cell|R''|, with parent e0, rho, D_interval and STYLE_1 unchanged. NO for local Taylor covers with local rho_j: that is cell splitting (ERROR_ALGEBRA 7; checkpoint adaptive_splitting=false; exactly one Taylor representation, no_interpolation).",
+   "Q6_subdivision_geometry": "No frozen subdivision rule exists. Any subdivision must be predeclared and deterministic before results. The successor chosen here uses none (N = 1).",
+   "Q7_scientific_vs_representation": "SCIENTIFIC: theorem target sup|R|<2; B_cover<=1/20 with the parent-rho STYLE_1 cover; M_R2 >= sup_cell|R''|; the twice-differentiated resolvent H equation, C_upper, the candidates, contracts and obligations. REPRESENTATION: how sup_cell of the residuals (and of R'') is enclosed: interval-e ball, mean-value extension, or max over subintervals.",
+   "Q8_obligation_identity": "Unchanged. The same 28 units per cell; the new enclosure is nested evidence inside the existing curvature/assembly obligations, as CUSUM Aux3 did (no new work ID).",
+   "Q9_cell_315": "Its right endpoint is exactly c_SR (affine [0,1]). The mean-value successor needs only rho (Arb enclosure) and the operator window [-c_SR+e_lo, c_SR+e_hi], so no decimal endpoint enters. A piecewise subdivision would need exact affine sub-endpoints; not used."
+  },
+  "artifacts_bound": 18,
+  "ruling": "CURVATURE_LOCALIZATION_DOCTRINE_PERMITS_SUCCESSOR",
+  "scope": "PERMITTED: tighter proved enclosures of the SAME parent-cell quantity, meaning the frozen mean-value whole-cell residual extension, or max over a predeclared subinterval cover, with the parent e0/rho/STYLE_1 unchanged. FORBIDDEN: local-rho Taylor covers (cell splitting), new candidates, any threshold/degree/precision change."
+ },
+ "phase2_answer": "B: certified curvature grossly inflated relative to nominal (idealized cover passes in every cell; cell 313's target-gate failure does not survive a zero-error curvature term)",
+ "phase2_phase3": {
+  "150": {
+   "1": {
+    "B_cover_ratio": 0.07584594592103847,
+    "IDEALIZED_B_cover_ratio_DIAGNOSTIC": 0.06640416653568695,
+    "M_R2": 1422.711918269296,
+    "inflation_MR2_over_nominal": 17.044063779426622,
+    "nominal_Rsecond_e0": 83.4725765334561,
+    "target_gate_current": "PASS",
+    "target_gate_with_zero_curvature_error_DIAGNOSTIC": "PASS"
+   },
+   "2": {
+    "B_cover_ratio": 0.060106736369667776,
+    "IDEALIZED_B_cover_ratio_DIAGNOSTIC": 0.05150449178960329,
+    "M_R2": 1309.2413283885633,
+    "inflation_MR2_over_nominal": 18.71306684978467,
+    "nominal_Rsecond_e0": 69.96401706348998,
+    "target_gate_current": "PASS",
+    "target_gate_with_zero_curvature_error_DIAGNOSTIC": "PASS"
+   },
+   "3": {
+    "B_cover_ratio": 0.05203706164147712,
+    "IDEALIZED_B_cover_ratio_DIAGNOSTIC": 0.04373679421927894,
+    "M_R2": 1255.6002163117296,
+    "inflation_MR2_over_nominal": 19.97466428217612,
+    "nominal_Rsecond_e0": 62.859640521324415,
+    "target_gate_current": "PASS",
+    "target_gate_with_zero_curvature_error_DIAGNOSTIC": "PASS"
+   },
+   "5": {
+    "B_cover_ratio": 0.04256754289359471,
+    "IDEALIZED_B_cover_ratio_DIAGNOSTIC": 0.034561307027750274,
+    "M_R2": 1211.9210880006901,
+    "inflation_MR2_over_nominal": 22.540591223378325,
+    "nominal_Rsecond_e0": 53.76616238635867,
+    "target_gate_current": "PASS",
+    "target_gate_with_zero_curvature_error_DIAGNOSTIC": "PASS"
+   }
+  },
+  "250": {
+   "1": {
+    "B_cover_ratio": 0.21265213527548013,
+    "IDEALIZED_B_cover_ratio_DIAGNOSTIC": 0.0881704800493822,
+    "M_R2": 419.5822555129285,
+    "inflation_MR2_over_nominal": 1284.5579933401648,
+    "nominal_Rsecond_e0": -0.3266355101819203,
+    "target_gate_current": "PASS",
+    "target_gate_with_zero_curvature_error_DIAGNOSTIC": "PASS"
+   },
+   "2": {
+    "B_cover_ratio": 0.3110528649950572,
+    "IDEALIZED_B_cover_ratio_DIAGNOSTIC": 0.09616957110010373,
+    "M_R2": 725.7656842323189,
+    "inflation_MR2_over_nominal": 1313.1794731905966,
+    "nominal_Rsecond_e0": -0.5526782127266623,
+    "target_gate_current": "PASS",
+    "target_gate_with_zero_curvature_error_DIAGNOSTIC": "PASS"
+   },
+   "3": {
+    "B_cover_ratio": 0.4072766941977524,
+    "IDEALIZED_B_cover_ratio_DIAGNOSTIC": 0.09879636151857854,
+    "M_R2": 1042.631184316182,
+    "inflation_MR2_over_nominal": 1461.6940341494303,
+    "nominal_Rsecond_e0": -0.7133033042191325,
+    "target_gate_current": "PASS",
+    "target_gate_with_zero_curvature_error_DIAGNOSTIC": "PASS"
+   },
+   "5": {
+    "B_cover_ratio": 0.6494607456057995,
+    "IDEALIZED_B_cover_ratio_DIAGNOSTIC": 0.09898396359304001,
+    "M_R2": 1861.396257549386,
+    "inflation_MR2_over_nominal": 2096.624546651199,
+    "nominal_Rsecond_e0": -0.8878061933036471,
+    "target_gate_current": "PASS",
+    "target_gate_with_zero_curvature_error_DIAGNOSTIC": "PASS"
+   }
+  },
+  "275": {
+   "1": {
+    "B_cover_ratio": 0.9513086080125459,
+    "IDEALIZED_B_cover_ratio_DIAGNOSTIC": 0.2119076272492735,
+    "M_R2": 242.2764448517633,
+    "inflation_MR2_over_nominal": 624.2244468952947,
+    "nominal_Rsecond_e0": -0.38812392891174596,
+    "target_gate_current": "PASS",
+    "target_gate_with_zero_curvature_error_DIAGNOSTIC": "PASS"
+   },
+   "2": {
+    "B_cover_ratio": 2.0627442744322786,
+    "IDEALIZED_B_cover_ratio_DIAGNOSTIC": 0.2036674483174042,
+    "M_R2": 608.7881409747813,
+    "inflation_MR2_over_nominal": 1096.1131461558969,
+    "nominal_Rsecond_e0": -0.5554062946054614,
+    "target_gate_current": "PASS",
+    "target_gate_with_zero_curvature_error_DIAGNOSTIC": "PASS"
+   },
+   "3": {
+    "B_cover_ratio": 3.1653710629555025,
+    "IDEALIZED_B_cover_ratio_DIAGNOSTIC": 0.18894043762706184,
+    "M_R2": 974.4819287258077,
+    "inflation_MR2_over_nominal": 1501.3385438638488,
+    "nominal_Rsecond_e0": -0.6490754085470146,
+    "target_gate_current": "PASS",
+    "target_gate_with_zero_curvature_error_DIAGNOSTIC": "PASS"
+   },
+   "5": {
+    "B_cover_ratio": 5.898014453006328,
+    "IDEALIZED_B_cover_ratio_DIAGNOSTIC": 0.16067209597299528,
+    "M_R2": 1877.9946153037338,
+    "inflation_MR2_over_nominal": 2419.2288307549857,
+    "nominal_Rsecond_e0": -0.7762782054468386,
+    "target_gate_current": "PASS",
+    "target_gate_with_zero_curvature_error_DIAGNOSTIC": "PASS"
+   }
+  },
+  "313": {
+   "1": {
+    "B_cover_ratio": 33.42396845282487,
+    "IDEALIZED_B_cover_ratio_DIAGNOSTIC": 0.620641764471013,
+    "M_R2": 133.9643473548516,
+    "inflation_MR2_over_nominal": 536.922468154108,
+    "nominal_Rsecond_e0": 0.24950408168875704,
+    "target_gate_current": "FAIL",
+    "target_gate_with_zero_curvature_error_DIAGNOSTIC": "PASS"
+   },
+   "2": {
+    "B_cover_ratio": 1084.4565211735496,
+    "IDEALIZED_B_cover_ratio_DIAGNOSTIC": 0.3104787286387048,
+    "M_R2": 4419.3927458818835,
+    "inflation_MR2_over_nominal": 35374.59922691362,
+    "nominal_Rsecond_e0": 0.12493124565265834,
+    "target_gate_current": "FAIL",
+    "target_gate_with_zero_curvature_error_DIAGNOSTIC": "PASS"
+   },
+   "3": {
+    "B_cover_ratio": 1595.3938353826836,
+    "IDEALIZED_B_cover_ratio_DIAGNOSTIC": 0.31141373840551395,
+    "M_R2": 6502.106608765748,
+    "inflation_MR2_over_nominal": 51609.1702111171,
+    "nominal_Rsecond_e0": 0.1259874278576394,
+    "target_gate_current": "FAIL",
+    "target_gate_with_zero_curvature_error_DIAGNOSTIC": "PASS"
+   },
+   "5": {
+    "B_cover_ratio": 2174.4703604638817,
+    "IDEALIZED_B_cover_ratio_DIAGNOSTIC": 0.31141373933915295,
+    "M_R2": 8862.576777835133,
+    "inflation_MR2_over_nominal": 70344.92890125916,
+    "nominal_Rsecond_e0": 0.12598742960242718,
+    "target_gate_current": "FAIL",
+    "target_gate_with_zero_curvature_error_DIAGNOSTIC": "PASS"
+   }
+  },
+  "315": {
+   "1": {
+    "B_cover_ratio": 0.30057677126997207,
+    "IDEALIZED_B_cover_ratio_DIAGNOSTIC": 0.006116147517527378,
+    "M_R2": 57.542472962065695,
+    "inflation_MR2_over_nominal": 144.56379097687608,
+    "nominal_Rsecond_e0": 0.39804208628749915,
+    "target_gate_current": "PASS",
+    "target_gate_with_zero_curvature_error_DIAGNOSTIC": "PASS"
+   },
+   "2": {
+    "B_cover_ratio": 9.5281608729581,
+    "IDEALIZED_B_cover_ratio_DIAGNOSTIC": 0.0030592744513031496,
+    "M_R2": 1848.7093622250538,
+    "inflation_MR2_over_nominal": 9288.323984012648,
+    "nominal_Rsecond_e0": 0.19903583955588866,
+    "target_gate_current": "PASS",
+    "target_gate_with_zero_curvature_error_DIAGNOSTIC": "PASS"
+   },
+   "3": {
+    "B_cover_ratio": 13.252310168671336,
+    "IDEALIZED_B_cover_ratio_DIAGNOSTIC": 0.003066518956379459,
+    "M_R2": 2571.4437764208956,
+    "inflation_MR2_over_nominal": 12913.74061615849,
+    "nominal_Rsecond_e0": 0.19912462646209128,
+    "target_gate_current": "PASS",
+    "target_gate_with_zero_curvature_error_DIAGNOSTIC": "PASS"
+   },
+   "5": {
+    "B_cover_ratio": 16.427817982093547,
+    "IDEALIZED_B_cover_ratio_DIAGNOSTIC": 0.0030665189566724984,
+    "M_R2": 3187.7061818164075,
+    "inflation_MR2_over_nominal": 16008.59842574591,
+    "nominal_Rsecond_e0": 0.19912462646884582,
+    "target_gate_current": "PASS",
+    "target_gate_with_zero_curvature_error_DIAGNOSTIC": "PASS"
+   }
+  }
+ },
+ "phase7_six_cell_validation": "NOT REACHED: the predeclared condition (every kill case passes) failed at 313 m = 2, 3, 5",
+ "predecessor_kz2_check": {
+  "all_valid": true,
+  "note": "frozen sr_operators kz2 cites a pointwise-false inequality; the values used by 8b8a242 are nevertheless valid upper bounds on all six cells (slack 1.07-1.58x); committed T4/T5 stand"
+ },
+ "predecessors_unchanged_vs_8b8a242": {
+  "p5y_k1_cover_ledger_implementation": true,
+  "p5y_k1_cover_ledger_successor": true,
+  "p5y_k1_cusum_aux3_successor": true,
+  "p5y_k1_sr_o9_bint_p1_bound_successor": true,
+  "p5y_k1_sr_o9_bint_representation_successor": true,
+  "p5y_k1_sr_o9_endpoint_strip_successor": true,
+  "p5y_k1_sr_o9_executor_t1_successor": true,
+  "p5y_k1_sr_o9_pre_t2_a5_amendment": true,
+  "p5y_k1_sr_o9_pre_t2_governance_successor": true,
+  "p5y_k1_sr_o9_t2_closure_successor": true,
+  "p5y_k1_sr_o9_t2_per_patch_successor": true,
+  "p5y_k1_sr_o9_t345_successor": true,
+  "p5y_k1_sr_qualification": true
+ },
+ "predeclaration": {
+  "declared_utc": "2026-09-11T02:33:37+00:00",
+  "file": "config/SUCCESSOR_PREDECLARATION.json",
+  "sha256": "1c0cdc8b9e68e61a6e6ec490de46c3483978b840321b0238aab9adef7fbbe4eb",
+  "subdivision_rule": "NONE: N = 1 for every cell. No subinterval geometry. A max-over-subintervals enclosure (parent rho) is doctrinally permitted but is not part of this successor, and would need its own predeclared dyadic ladder."
+ },
+ "production_firewall": {
+  "PASS": true,
+  "active_rbg_units": [],
+  "aws_or_vultr_production_started": false,
+  "prodctl_run": false,
+  "production_ledger_touched": false,
+  "production_processes": [],
+  "worktrees": {
+   "ReBaseGuard-sr-lifecycle": {
+    "dirty": false,
+    "head": "bcec064"
+   },
+   "ReBaseGuard-sr-parallel": {
+    "dirty": false,
+    "head": "bd7cf26"
+   }
+  }
+ },
+ "schema": "rebaseguard.p5y.k1.sr.o9.curvature-successor-record.v1",
+ "sources_sha256": {
+  "curv_mv.py": "be2233f8283dd124c19bb84b92305ec64b194b79122dbc7420517d60547b64e7",
+  "curvature_record.py": "4987193d3f61909353b8d2e4cacf6e4fe08637561731d3a66ee5e0af9c98307d",
+  "kill_table.py": "64f76e78e604a8c184a8fd12b66d1a1b432d94e4a77b50e5b0808bc802f23fe6",
+  "kz2_predecessor_check.py": "32d0aabfee734f009e2cf026a8c49c092f9df67aa04be6e5f60ca9fc2d87f676",
+  "phase1_doctrine.py": "f8bafd3c0f6d0d75aa47daa2f9644b8e599ce5f8b6bc2cc1759e3fd7f0af36c5",
+  "phase2_decompose.py": "121a3eba190030d22c2128d9fbd8b6c6e099ef4807d25e0f9cbb3921cea7d036"
+ },
+ "status_label": "CURVATURE_CERTIFICATION_SUCCESSOR only (not K1 closure, not P5Y closure, not production readiness)"
+}

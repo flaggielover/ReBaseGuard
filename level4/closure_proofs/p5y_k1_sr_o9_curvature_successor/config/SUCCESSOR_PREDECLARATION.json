@@ -1,0 +1,71 @@
+{
+ "architecture": "MEAN-VALUE WHOLE-CELL RESIDUAL EXTENSION, the frozen cusum_layer2 construction applied to the SR DAG: delta_cell_mv(X) = delta_mid(X) + rho*Env_X, where Env_X is an e-uniform bound on sup_x|d_e r_X(x;e)| equal to (certified cell-uniform operator norms K^(i+1), K_z^(i+1)) x (certified candidate sup norms), plus the e-derivatives of the exact const:1 and closed-form source terms. The new delta_cell(X) = min(T3 interval-e delta_cell(X), delta_cell_mv(X)). Cell-mode image x0 values = the narrower of the T3 interval-e ball and (midpoint ball +- rho*Env). The frozen t4_cell (ErrorDAG, sr_refine, assembly, ledger) and t5_obligations are then run UNCHANGED.",
+ "declared_before_any_successor_result": true,
+ "declared_utc": "2026-09-11T02:33:37+00:00",
+ "forbidden": [
+  "local-rho Taylor covers / cell splitting",
+  "new or auxiliary candidates",
+  "threshold, degree or precision change",
+  "selecting any parameter after seeing results"
+ ],
+ "kill_micropilot": {
+  "cells": [
+   275,
+   313,
+   315
+  ],
+  "control": [
+   150
+  ],
+  "critical": [
+   [
+    313,
+    2
+   ],
+   [
+    313,
+    5
+   ],
+   [
+    315,
+    2
+   ],
+   [
+    275,
+    2
+   ]
+  ],
+  "m": [
+   1,
+   2,
+   3,
+   5
+  ]
+ },
+ "kill_rules": [
+  "doctrine forbids",
+  "idealized/true term fails",
+  "after N = 1 (the maximum predeclared level), cell 313 or 315 remains orders of magnitude (>= 10x) above 1/20",
+  "any frozen setting would need to change",
+  "theorem weakened",
+  "determinism lost"
+ ],
+ "parent": {
+  "commit": "8b8a242",
+  "tag": "p5y-k1-sr-o9-t5-one-cell-28-of-28"
+ },
+ "phase7_condition": "only if every kill case and the control pass: run cells 0, 150, 250, 275, 313, 315, all m",
+ "schema": "rebaseguard.p5y.k1.sr.o9.curvature-successor-predeclaration.v1",
+ "status_label": "CURVATURE_CERTIFICATION_SUCCESSOR only (not K1 closure, not production)",
+ "subdivision_rule": "NONE: N = 1 for every cell. No subinterval geometry. A max-over-subintervals enclosure (parent rho) is doctrinally permitted but is not part of this successor, and would need its own predeclared dyadic ladder.",
+ "success_condition": "all curvature and assembly obligations PASS on the six cells; control 150 keeps 28/28; determinism PASS",
+ "unchanged": [
+  "parent cells, e0, rho, D_interval semantics, STYLE_1 cover, B_cover = 1/20",
+  "theorem target",
+  "D = 11, Z = 20, 256 bits, SR candidate degree 16",
+  "46 candidates / 102 contracts",
+  "T2 certifier, T3 midpoint evidence",
+  "sr_refine, ErrorDAG, assembly, ledger, obligation identities",
+  "316-cell universe"
+ ]
+}
