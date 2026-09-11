@@ -69,11 +69,16 @@ def main():
                 "dirty": bool(git("status", "--porcelain", repo=REPO.parent / w))}
             for w in ("ReBaseGuard-sr-parallel", "ReBaseGuard-sr-lifecycle")}
     active = subprocess.run(["systemctl", "list-units", "--state=active", "--no-pager", "--plain"], capture_output=True, text=True).stdout
-    procs = subprocess.run(["pgrep", "-af", "prodctl|supervisor.py|integrated_sr|production_launcher"], capture_output=True, text=True).stdout
+    # Real production processes only: a python process whose script argument is one of the production entry points.
+    # (A substring search also matched this tool's own shells, whose command text merely mentions those words.)
+    entry = {"prodctl.py", "supervisor.py", "integrated_sr_launcher.py", "production_launcher.py"}
+    ps = subprocess.run(["ps", "-eo", "pid=,args="], capture_output=True, text=True).stdout.splitlines()
+    procs = "\n".join(l for l in ps if (lambda a: len(a) > 2 and a[1].split("/")[-1].startswith("python")
+                                         and any(t.split("/")[-1] in entry for t in a[2:4]))(l.split()))
     unit = subprocess.run(["systemctl", "show", "rbg-p5y-k1-sr-prod-aws-20260910T105333Z-640db8f2.service", "-p", "ActiveState",
                            "-p", "StateChangeTimestamp"], capture_output=True, text=True).stdout.split()
     firewall = {"worktrees": prod, "active_rbg_units": [l for l in active.splitlines() if "rbg-" in l],
-                "production_processes": [l for l in procs.splitlines() if "pgrep" not in l], "historical_unit": unit,
+                "production_processes": [l for l in procs.splitlines() if l.strip()], "historical_unit": unit,
                 "prodctl_started": False, "production_ledger_touched": False, "retries_consumed": 0,
                 "aws_or_vultr_workers_started": False}
     firewall["PASS"] = (prod["ReBaseGuard-sr-parallel"] == {"head": "bd7cf26", "dirty": False}

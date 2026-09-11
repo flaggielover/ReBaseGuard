@@ -1,0 +1,7 @@
+Superseded comparison. Ten cell-313 patches were replayed standalone. For patches (0,0) and (0,18), the original
+313 records came from the first five-cell tile run, where cell 313 ran fourth in its process and found the
+PanelShared cache warm (mid-mode cache_hits 35 and 31). A standalone replay starts cold. Only
+modes.mid.cache_hits and modes.mid.cache_misses moved; the frozen aux4 classifier defaults these nested counters
+to SCIENTIFIC. Every node and geometry value was identical in all ten patches. The definitive comparison replays
+those two patches in the matching configuration (cells 0, 250, 275, 313 in one process); see
+../matched_tile_config/ and ../replay_patches_c313.json.
