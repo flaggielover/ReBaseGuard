@@ -100,7 +100,7 @@ def main():
           "## Next blocker", "", rec["next_blocker"]["identity"] + ".", "",
           "| F_r (oracle norms) | eps_H_cell | C·deltaH | C·k2·nF | C·2k1·nD | C·epsS2 | sup|H_hat| |", "|---|---:|---:|---:|---:|---:|---:|"]
     for r, d in nb["decomposition_oracle_norms"].items():
-        p = list(d["parts"].values())
+        p = [d["parts"][k] for k in ("C*deltaH_cell (mean-value residual)", "C*k2*nF (value chain)", "C*2k1*nD (parent-rho derivative feedback)", "C*epsS2_cell (source chain)")]
         L.append(f"| F_{r} | {d['eps_H_cell']:.4g} | " + " | ".join(f"{x:.3g}" for x in p) + f" | {d['sup_H_hat']:.3g} |")
     L += ["", "| m | M_R2 certified | M_R2 oracle | M_R2 max for ratio 1 | reduction still needed |", "|---|---:|---:|---:|---:|"]
     for m in M:
