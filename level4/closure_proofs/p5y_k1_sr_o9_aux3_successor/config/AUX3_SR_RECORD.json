@@ -1,0 +1,240 @@
+{
+ "classification": "AUX3_SR_FEASIBILITY_FAIL",
+ "determinism_replay": [
+  "phase1_doctrine.json IDENTICAL 97b46ea42d0c0864ea61364b2ea71af7a700ab574b59f409aa1d0a744050e327",
+  "phase2_equations.json IDENTICAL fd965e4f1825fbb62301b4aa8bcbe7000b6de4ef7341f1f7d568d79b4c8b2271",
+  "phase34_oracle_c313.json IDENTICAL 8ce54c177c8cc1ac724bfdbffedc47af1135795c32ca5c515b8fa14671a345f5",
+  "phase34_tower_ext_c313.json IDENTICAL 358959a4d557a202b246fe8a8ff3b6b5b88c834452b9dc1116c58c4b0fda7e1f",
+  "phase34_consistent_c313.json IDENTICAL 23bdbcc20c3a1dd518fdaf85184572dd8a45122d6bbac32093e5cc11986ee484",
+  "phase34_consistent_v2_c313.json IDENTICAL 362aef3691f49750f6d60ec499847168047bd2702944234ed2771da39e2791f5",
+  "DONE"
+ ],
+ "evidence_sha256": {
+  "phase1_doctrine.json": "97b46ea42d0c0864ea61364b2ea71af7a700ab574b59f409aa1d0a744050e327",
+  "phase2_equations.json": "fd965e4f1825fbb62301b4aa8bcbe7000b6de4ef7341f1f7d568d79b4c8b2271",
+  "phase34_consistent_c313.json": "23bdbcc20c3a1dd518fdaf85184572dd8a45122d6bbac32093e5cc11986ee484",
+  "phase34_consistent_v2_c313.json": "362aef3691f49750f6d60ec499847168047bd2702944234ed2771da39e2791f5",
+  "phase34_oracle_c313.json": "8ce54c177c8cc1ac724bfdbffedc47af1135795c32ca5c515b8fa14671a345f5",
+  "phase34_tower_ext_c313.json": "358959a4d557a202b246fe8a8ff3b6b5b88c834452b9dc1116c58c4b0fda7e1f"
+ },
+ "kill_rule": "any m in (2,3,5) with best-case certified-architecture ratio > 1.1 -> AUX3_SR_FEASIBILITY_FAIL",
+ "not_claimed": [
+  "K1 CLOSED",
+  "P5Y CLOSED",
+  "PRODUCTION READY"
+ ],
+ "parent_commit": "d2981a5",
+ "parent_tag": "p5y-k1-sr-o9-opnorm-successor-insufficient",
+ "phase1": {
+  "answers": {
+   "Q1_additive_aux_candidates_preserve_28": "YES. Precedent CUSUM aux3/aux4: third-derivative candidates entered as an additive successor with no new top-level work id and no new frozen DAG node; universe 17,978 and the per-cell 19+1+4+4 = 28 SR obligations are untouched. The frozen SR T2 census (46 candidates / 102 contracts) stays immutable; order-3 objects form a separate auxiliary census.",
+   "Q2_evidence_only": "YES. They are nested internal support of the existing curvature (and hence assembly) obligations, bound into the parent certificate as an auxiliary-evidence hash with every leaf SCIENTIFIC by default (aux4 repair of the AUXILIARY_GOVERNANCE defect). They are not obligations.",
+   "Q3_same_quantity": "YES, as a min-with-cascade refinement: the certified quantity is unchanged (M_R2 = mag(R2_interval(cell)) >= sup_{e in parent cell}|R''_{D,m}(e)|, same all-m assembly, same H_r and W2 node intervals). The Taylor bound H_r(x0,e) in H_r(x0,e0) + [-1,1]*(rho*|F_r'''(x0,e0)| + (rho^2/2)*T[F_r,4]) (or aux3's node form eps_mid + rho*||X'''(e0)|| + (rho^2/2)*T[X,4]) is a proved enclosure of the same node quantity, and a node keeps the cascade whenever it is smaller. ERROR_ALGEBRA s3 fixes differentiation twice as the construction and requires a new governed disposition to replace it, so the successor must carry that disposition explicitly. The cascade is still computed and remains the fallback.",
+   "Q4_midpoint": "YES: EXACT_MIDPOINT e0 of the frozen parent cell (checkpoint geometry), the same e0 as T2/T3.",
+   "Q5_parent_rho": "YES: the frozen parent rho; no splitting (adaptive_splitting=false) and no local rho.",
+   "Q6_fourth_order_global": "YES: T[X,4] must bound sup over every state and every e in the whole parent cell. The norm tower does this by construction from cell-uniform operator norms and closed-form source suprema. No whole-cell order-3 candidate quantity is used; order 3 is used at e0 only.",
+   "Q7_census_change": "YES, an additive auxiliary census (order-3 candidates and their contracts) is required, and only through an explicitly governed successor: ERROR_ALGEBRA s3 (new governed disposition), aux4 AUXILIARY_GOVERNANCE. The historical 46/102 census and every predecessor stay byte-identical."
+  },
+  "ruling": "AUX3_SR_PERMITTED_ONLY_VIA_EXPLICITLY_GOVERNED_ADDITIVE_SUCCESSOR"
+ },
+ "phase2": {
+  "auxiliary_candidates": [
+   "F:0:k3",
+   "F:1:k3",
+   "F:2:k3",
+   "F:3:k3",
+   "F:4:k3",
+   "S:0:k3",
+   "S:1:k3",
+   "S:2:k3",
+   "W:0,1:k3",
+   "W:0,2:k3",
+   "W:1,1:k3",
+   "h:1:k3",
+   "h:2:k3",
+   "h:3:k3",
+   "h:4:k3"
+  ],
+  "dag_sha256": "7526883218b8afa23b17c3eadf8ea2ca8f099b67b33a1fe395c6787d5dcb5fdc",
+  "image_nodes": [
+   "S:3:k3",
+   "S:4:k3",
+   "W:0,3:k3",
+   "W:1,2:k3",
+   "W:2,1:k3"
+  ],
+  "n_auxiliary_candidates": 15,
+  "n_image_nodes": 5,
+  "n_new_contracts": 64,
+  "n_new_contracts_on_frozen_candidates": 46,
+  "new_raw_moment_shifts": [
+   4
+  ]
+ },
+ "phase4_cover_ratios": {
+  "all_self_consistent_variants": {
+   "N4/cert_additive_midpoint/kz_certform": {
+    "1": 0.8450796446206967,
+    "2": 2.252607711648368,
+    "3": 3.0427061499062904,
+    "5": 4.017832352355321
+   },
+   "N4/cert_additive_midpoint/kz_exact": {
+    "1": 0.8450796446206967,
+    "2": 1.7806113345668484,
+    "3": 2.301518545336285,
+    "5": 3.0674581007576394
+   },
+   "N4/true_midpoint/kz_certform": {
+    "1": 0.7955478963801984,
+    "2": 1.7630795040697047,
+    "3": 2.421644782839326,
+    "5": 3.2054180908820076
+   },
+   "N4/true_midpoint/kz_exact": {
+    "1": 0.7955478963801984,
+    "2": 1.4241206391801389,
+    "3": 1.868578773035994,
+    "5": 2.4913755062672025
+   },
+   "N5/cert_additive_midpoint/kz_certform": {
+    "1": 0.7858199528562104,
+    "2": 1.5787519922126925,
+    "3": 2.075355270626634,
+    "5": 2.73598073851928
+   },
+   "N5/cert_additive_midpoint/kz_exact": {
+    "1": 0.7858199528562104,
+    "2": 1.2509052490642292,
+    "3": 1.554601927556128,
+    "5": 2.04401788919762
+   },
+   "N5/true_midpoint/kz_certform": {
+    "1": 0.7514006093872956,
+    "2": 1.220214890014987,
+    "3": 1.6241205693083627,
+    "5": 2.1366519022680217
+   },
+   "N5/true_midpoint/kz_exact": {
+    "1": 0.7514006093872956,
+    "2": 0.9931958682119387,
+    "3": 1.2467042627167573,
+    "5": 1.6313788917898353
+   },
+   "N6/cert_additive_midpoint/kz_certform": {
+    "no_bound": "resolvent self-consistency fails (q_N >= 1)",
+    "q_N": 1.1850243821374657
+   },
+   "N6/cert_additive_midpoint/kz_exact": {
+    "no_bound": "resolvent self-consistency fails (q_N >= 1)",
+    "q_N": 1.1850243821374657
+   },
+   "N6/true_midpoint/kz_certform": {
+    "no_bound": "resolvent self-consistency fails (q_N >= 1)",
+    "q_N": 1.1850243821374657
+   },
+   "N6/true_midpoint/kz_exact": {
+    "no_bound": "resolvent self-consistency fails (q_N >= 1)",
+    "q_N": 1.1850243821374657
+   }
+  },
+  "contraction_qN": {
+   "N4/cert_additive_midpoint/kz_certform": 0.7089079282017469,
+   "N4/cert_additive_midpoint/kz_exact": 0.7089079282017469,
+   "N4/true_midpoint/kz_certform": 0.7089079282017469,
+   "N4/true_midpoint/kz_exact": 0.7089079282017469,
+   "N5/cert_additive_midpoint/kz_certform": 0.9355894963759781,
+   "N5/cert_additive_midpoint/kz_exact": 0.9355894963759781,
+   "N5/true_midpoint/kz_certform": 0.9355894963759781,
+   "N5/true_midpoint/kz_exact": 0.9355894963759781,
+   "N6/cert_additive_midpoint/kz_certform": 1.1850243821374657,
+   "N6/cert_additive_midpoint/kz_exact": 1.1850243821374657,
+   "N6/true_midpoint/kz_certform": 1.1850243821374657,
+   "N6/true_midpoint/kz_exact": 1.1850243821374657
+  },
+  "ideal_true_M_R4": {
+   "2": 0.3219830697214847,
+   "3": 0.3227275910275651,
+   "5": 0.322760757061496
+  },
+  "one_level_hybrid_true_lower_orders": {
+   "2": 0.4763422249509584,
+   "3": 0.492788760378784,
+   "5": 0.5302519389486483
+  },
+  "pure_norm_tower_order4_certform_norms": {
+   "2": 8.182584841390868,
+   "3": 11.266435975038483,
+   "5": 15.409859942796498
+  },
+  "pure_norm_tower_order4_exact_norms": {
+   "2": 6.806913851142711,
+   "3": 9.224402868307424,
+   "5": 12.373462510119877
+  },
+  "pure_tower_minimal_taylor_order": {
+   "2": 7,
+   "3": 7,
+   "5": 7
+  },
+  "self_consistent_N4_ideal_midpoint_exact_norms (THE ARCHITECTURE, best case)": {
+   "2": 1.4241206391801389,
+   "3": 1.868578773035994,
+   "5": 2.4913755062672025
+  }
+ },
+ "phase4_true_function": {
+  "1": {
+   "R2_e0": 0.24950406741445863,
+   "R3_e0": 0.5230361481345152,
+   "sup_cell_R2": 0.3225392067692912,
+   "sup_cell_R4": 0.9104426152490424
+  },
+  "2": {
+   "R2_e0": 0.12493123788659369,
+   "R3_e0": 0.26070843051182824,
+   "sup_cell_R2": 0.16135573005871984,
+   "sup_cell_R4": 0.4533804939052908
+  },
+  "3": {
+   "R2_e0": 0.12598741667248287,
+   "R3_e0": 0.2559776760896324,
+   "sup_cell_R2": 0.161866319174939,
+   "sup_cell_R4": 0.44265474271029076
+  },
+  "5": {
+   "R2_e0": 0.125987418418292,
+   "R3_e0": 0.25597765700125696,
+   "sup_cell_R2": 0.16186631949647437,
+   "sup_cell_R4": 0.44265470051442374
+  }
+ },
+ "phases_not_run": {
+  "5": "kill rule",
+  "6": "kill rule",
+  "7": "no successor evidence to govern"
+ },
+ "scaling_if_ever_pursued": {
+  "aux_candidates_per_cell": 15,
+  "measured": "NOT MEASURED (Phase 5 not run); T2-proportional estimate only",
+  "midpoint_only": true,
+  "new_contracts_per_cell": 64,
+  "relative_to_frozen_T2_census": {
+   "candidates": 0.32608695652173914,
+   "contracts": 0.6274509803921569
+  },
+  "reusable_across_m": true
+ },
+ "schema": "rebaseguard.p5y.k1.sr.o9.aux3-sr-record.v1",
+ "untouched": [
+  "theorem target",
+  "B_cover = 1/20",
+  "D, Z, precision, degree",
+  "parent-cell geometry",
+  "production",
+  "316-cell campaign",
+  "historical 46/102 census",
+  "all predecessors"
+ ],
+ "why": "The true R_m is benign on cell 313 (sup_cell|R''''| ~ 0.44-0.91; ideal third-order cover 0.32), but every certifiable whole-cell fourth-order bound is norm-based. Pure norm towers give M_R4 ~ 2e3-4e3; the best self-consistent Taylor tower fed by IDEAL midpoint evidence (orders <= 3) and EXACT norms still leaves m=2,3,5 above 1, because the resolvent self-consistency q_N = C sum C(N,i) k_i rho^i/i! (C ~ 2, parent rho ~ 0.157) amplifies the remainder; adding order-4/5 midpoint candidates raises q_N toward and past 1."
+}
