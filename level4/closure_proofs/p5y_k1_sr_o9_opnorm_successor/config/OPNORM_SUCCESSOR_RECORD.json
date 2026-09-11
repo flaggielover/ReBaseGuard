@@ -1,0 +1,631 @@
+{
+ "classification": "OPERATOR_NORM_TIGHTENING_INSUFFICIENT",
+ "determinism_replay": [
+  "phase23_oracle_c313.json IDENTICAL 9cffaac07ceb80f290ce5bc35b8c73140b17d7dbd498c8eb3303dc6c95672b29",
+  "phase3_next_blocker_c313.json IDENTICAL e53a9522e66ceb8e600fbc7cf9807a4a81b5c335f13680ecf33fbc7db36bfa5f",
+  "DONE"
+ ],
+ "escalation": {
+  "closure_not_predicted": "whether it closes 313 depends on the uncomputed |X'''(e0)| and T[X,4]; aux3 measured norm-only towers 500x-53000x above certified candidate sups at CUSUM cell 321, which is the same structure seen here (sup|H_hat| of F_3, F_4 ~ 1e-8..1e-12 against eps_H ~ 30..41)",
+  "estimated_new_candidates": {
+   "F:r:k3 (r=0..4)": 5,
+   "S:r:k3 / Ssrc:r:k3 (r=0..3)": 4,
+   "W:(r,j):k3 (r+j<=3, j>=1)": 6,
+   "note": "one order-3 object per existing k2 object that feeds R''; midpoint (e0) certification only",
+   "total_order3_auxiliary_candidates_per_cell": 15
+  },
+  "estimated_new_contracts": [
+   "order-3 SR equations: K_e''' by differentiating SR_DERIVATION K_e'' = K_z2,e + 2e K_z,e + (e^2-1) K_e once more, and the Leibniz order-3 recursions for F, W, S (as aux3 code/aux_certifier.py)",
+   "order-3 collocation operator continuing phi^(i)/phi = (-1)^i He_i at i=3 on the frozen grid/degree/quadrature/basis",
+   "per-patch T2 certification of the 15 order-3 objects at e0 (midpoint residual, B_int/endpoint strips as frozen)",
+   "order-4 norm-only tower T[X,4]: new certified K^(4), K_z^(4) bounds (A_5 moments) with an independent derivation (the sr_operators kz2 justification must not be reused)",
+   "governed successor contract: auxiliary evidence nested in the existing units, bound as auxiliary_evidence_hash; 28 obligations per cell unchanged; candidates/contracts change requires explicit authorization"
+  ],
+  "per_m_target": {
+   "2": {
+    "M_R2_max": 2.935128805176912,
+    "aux3_style_requirement": "rho*|R'''(e0)| + (rho^2/2)*T[R,4] <= 2.81, i.e. |R'''(e0)| + 0.0783*T[R,4] <= 17.94",
+    "cell_H_error_budget_after_nominal": 2.8101975595242537
+   },
+   "3": {
+    "M_R2_max": 2.9323021882704885,
+    "aux3_style_requirement": "rho*|R'''(e0)| + (rho^2/2)*T[R,4] <= 2.806, i.e. |R'''(e0)| + 0.0783*T[R,4] <= 17.92",
+    "cell_H_error_budget_after_nominal": 2.806314760412849
+   },
+   "5": {
+    "M_R2_max": 2.9321874443583225,
+    "aux3_style_requirement": "rho*|R'''(e0)| + (rho^2/2)*T[R,4] <= 2.806, i.e. |R'''(e0)| + 0.0783*T[R,4] <= 17.92",
+    "cell_H_error_budget_after_nominal": 2.806200014755895
+   }
+  },
+  "reason": "the frozen sr_refine already applies the aux3 Taylor alternative at orders 0 and 1 (nF, nD); order 2 (H) has no Taylor alternative because it needs X'''(e0), which no frozen candidate provides. Norms (even exact), D/Z/degree/precision, splitting and local rho are all excluded, so the only remaining frozen-compatible lever on eps_H_cell is eps_cell(X^(2)) <= eps_mid(X^(2)) + rho*||X^(3)(e0)|| + (rho^2/2)*T[X,4], min with the cascade (CUSUM aux3, Part 3).",
+  "requires_CUSUM_AUX3_STYLE_THIRD_DERIVATIVE_EVIDENCE": true
+ },
+ "next_blocker": {
+  "cover_requirement": {
+   "1": {
+    "D_mag_oracle": 0.17860726331175591,
+    "M_R2_certified": 1.7534306307955934,
+    "M_R2_max_for_ratio_1": 1.7956073621712145,
+    "M_R2_oracle": 1.743571787856455,
+    "required_reduction_factor_vs_oracle": 0.9710206276655944,
+    "rho": 0.15662775
+   },
+   "2": {
+    "D_mag_oracle": 0.08936692346438813,
+    "M_R2_certified": 16.13595741948269,
+    "M_R2_max_for_ratio_1": 2.935128805176912,
+    "M_R2_oracle": 12.78902772030018,
+    "required_reduction_factor_vs_oracle": 4.357228785920124,
+    "rho": 0.15662775
+   },
+   "3": {
+    "D_mag_oracle": 0.08958828678747066,
+    "M_R2_certified": 24.46033700051618,
+    "M_R2_max_for_ratio_1": 2.9323021882704885,
+    "M_R2_oracle": 18.951846914914373,
+    "required_reduction_factor_vs_oracle": 6.463128865341273,
+    "rho": 0.15662775
+   },
+   "5": {
+    "D_mag_oracle": 0.08959727282786506,
+    "M_R2_certified": 38.886793036444466,
+    "M_R2_max_for_ratio_1": 2.9321874443583225,
+    "M_R2_oracle": 30.408103395684048,
+    "required_reduction_factor_vs_oracle": 10.37045003865315,
+    "rho": 0.15662775
+   }
+  },
+  "decomposition_certified_norms": {
+   "0": {
+    "contraction": 0.3187213730163461,
+    "eps_H_cell": 1.5039265439976153,
+    "nD": 0.33519254663603126,
+    "nD_rho_supH_share": 0.9999387800610468,
+    "parts": {
+     "C*2k1*nD (parent-rho derivative feedback)": 0.6431412020232538,
+     "C*deltaH_cell (mean-value residual)": 0.7466553707679909,
+     "C*epsS2_cell (source chain)": 0.0,
+     "C*k2*nF (value chain)": 0.11412997120637061
+    },
+    "parts_sum": 1.5039265439976153,
+    "sup_H_hat": 0.6359990368604169
+   },
+   "1": {
+    "contraction": 0.3187213730163461,
+    "eps_H_cell": 29.0352876529498,
+    "nD": 4.865178099275435,
+    "nD_rho_supH_share": 0.9999902328301952,
+    "parts": {
+     "C*2k1*nD (parent-rho derivative feedback)": 9.33492263544521,
+     "C*deltaH_cell (mean-value residual)": 14.153047701334085,
+     "C*epsS2_cell (source chain)": 4.139380130924825,
+     "C*k2*nF (value chain)": 1.4079371852456815
+    },
+    "parts_sum": 29.0352876529498,
+    "sup_H_hat": 2.0264349303651406
+   },
+   "2": {
+    "contraction": 0.3187213730163461,
+    "eps_H_cell": 34.24528223906591,
+    "nD": 5.365328624049286,
+    "nD_rho_supH_share": 0.9999933620503028,
+    "parts": {
+     "C*2k1*nD (parent-rho derivative feedback)": 10.294572284352522,
+     "C*deltaH_cell (mean-value residual)": 9.869098854619384,
+     "C*epsS2_cell (source chain)": 13.225487216466835,
+     "C*k2*nF (value chain)": 0.856123883627166
+    },
+    "parts_sum": 34.24528223906591,
+    "sup_H_hat": 0.009759705359138948
+   },
+   "3": {
+    "contraction": 0.3187213730163461,
+    "eps_H_cell": 38.08511328801592,
+    "nD": 5.965217832271097,
+    "nD_rho_supH_share": 0.9999949827017885,
+    "parts": {
+     "C*2k1*nD (parent-rho derivative feedback)": 11.4455927062818,
+     "C*deltaH_cell (mean-value residual)": 4.9768148920978454,
+     "C*epsS2_cell (source chain)": 20.737326855202195,
+     "C*k2*nF (value chain)": 0.9253788344340773
+    },
+    "parts_sum": 38.08511328801592,
+    "sup_H_hat": 2.3353964984096365e-08
+   },
+   "4": {
+    "contraction": 0.3187213730163461,
+    "eps_H_cell": 41.04087369212731,
+    "nD": 6.428170031521259,
+    "nD_rho_supH_share": 0.9999962015921539,
+    "parts": {
+     "C*2k1*nD (parent-rho derivative feedback)": 12.333869122011183,
+     "C*deltaH_cell (mean-value residual)": 4.971102233670887,
+     "C*epsS2_cell (source chain)": 22.756743985571617,
+     "C*k2*nF (value chain)": 0.9791583508736217
+    },
+    "parts_sum": 41.040873692127306,
+    "sup_H_hat": 1.4708234630234074e-12
+   }
+  },
+  "decomposition_oracle_norms": {
+   "0": {
+    "contraction": 0.3176489612644965,
+    "eps_H_cell": 1.494067702213992,
+    "nD": 0.3336483643665255,
+    "nD_rho_supH_share": 0.9999384967198068,
+    "parts": {
+     "C*2k1*nD (parent-rho derivative feedback)": 0.6401789838152624,
+     "C*deltaH_cell (mean-value residual)": 0.7466557700154407,
+     "C*epsS2_cell (source chain)": 0.0,
+     "C*k2*nF (value chain)": 0.10723294838328895
+    },
+    "parts_sum": 1.494067702213992,
+    "sup_H_hat": 0.6359990368604169
+   },
+   "1": {
+    "contraction": 0.3176489612644965,
+    "eps_H_cell": 22.351285807029896,
+    "nD": 3.8182735458302552,
+    "nD_rho_supH_share": 0.9999885555674072,
+    "parts": {
+     "C*2k1*nD (parent-rho derivative feedback)": 7.326211483575769,
+     "C*deltaH_cell (mean-value residual)": 10.879023269349311,
+     "C*epsS2_cell (source chain)": 2.9355713915861728,
+     "C*k2*nF (value chain)": 1.2104796625186436
+    },
+    "parts_sum": 22.351285807029896,
+    "sup_H_hat": 2.0264349303651406
+   },
+   "2": {
+    "contraction": 0.3176489612644965,
+    "eps_H_cell": 25.555666708487347,
+    "nD": 4.0042862176268645,
+    "nD_rho_supH_share": 0.9999928504777653,
+    "parts": {
+     "C*2k1*nD (parent-rho derivative feedback)": 7.683118382950524,
+     "C*deltaH_cell (mean-value residual)": 7.654844223926918,
+     "C*epsS2_cell (source chain)": 9.560852288809473,
+     "C*k2*nF (value chain)": 0.6568518128004318
+    },
+    "parts_sum": 25.555666708487347,
+    "sup_H_hat": 0.009759705359138948
+   },
+   "3": {
+    "contraction": 0.3176489612644965,
+    "eps_H_cell": 29.819265724534677,
+    "nD": 4.6705507296138284,
+    "nD_rho_supH_share": 0.9999948166652818,
+    "parts": {
+     "C*2k1*nD (parent-rho derivative feedback)": 8.96149581197166,
+     "C*deltaH_cell (mean-value residual)": 4.974664210827181,
+     "C*epsS2_cell (source chain)": 15.153824126629278,
+     "C*k2*nF (value chain)": 0.7292815751065531
+    },
+    "parts_sum": 29.819265724534674,
+    "sup_H_hat": 2.3353964984096365e-08
+   },
+   "4": {
+    "contraction": 0.3176489612644965,
+    "eps_H_cell": 32.12938709204612,
+    "nD": 5.032375157763175,
+    "nD_rho_supH_share": 0.9999960578352577,
+    "parts": {
+     "C*2k1*nD (parent-rho derivative feedback)": 9.65573687373131,
+     "C*deltaH_cell (mean-value residual)": 4.971107199996935,
+     "C*epsS2_cell (source chain)": 16.73370763040053,
+     "C*k2*nF (value chain)": 0.7688353879173461
+    },
+    "parts_sum": 32.12938709204612,
+    "sup_H_hat": 1.4708234630234074e-12
+   }
+  },
+  "evidence_sha256": "e53a9522e66ceb8e600fbc7cf9807a4a81b5c335f13680ecf33fbc7db36bfa5f",
+  "identity": "NORM_ONLY_UNIFORM_CELL_H_CASCADE: the cell-uniform eps_H of F_1..F_4 is carried by the mean-value residual (F_1), the parent-rho derivative feedback C*2k1*(epsD_mid+rho*supH) and the source cascade C*epsS2 (F_2..F_4), while sup|H_hat| of F_2..F_4 is 1e-2..1e-12"
+ },
+ "not_claimed": [
+  "K1 CLOSED",
+  "P5Y CLOSED",
+  "PRODUCTION READY"
+ ],
+ "parent_commit": "804e387",
+ "parent_tag": "p5y-k1-sr-o9-curvature-successor-not-closing",
+ "phase1": {
+  "answers": {
+   "Q1_requirement": "YES: every propagation edge needs a certified UPPER bound ||T_i|| of the same operator (depgraph edge rule; ERROR_ALGEBRA 2 'certified operator norm bounds ... over the whole cell'). Sampled norms are forbidden.",
+   "Q2_historical_formula_binding": "NO: whole-line moments are 'admissible', not mandatory. The frozen final-completion campaign replaced them by drift-aware closed forms, min(drift-aware, whole-line, Cauchy-Schwarz), recorded as 'not a relaxation of anything'.",
+   "Q3_tighter_proved_norm": "YES, provided it bounds the SAME operator (K^(i), K_z^(i) with the frozen e-free continuation limits), sup over the SAME reachable state set and every e of the SAME parent cell, on the same edges and owners (ERROR_ALGEBRA 1: a tighter proved enclosure of the same expression).",
+   "Q4_cell_dependence": "C_upper is frozen per-cell input and not replaceable (B_resolvent = 0, multiplicative only). k_j >= sup_cell ||K_j|| may depend on the frozen parent cell's drift interval. Midpoint-DAG norms may be evaluated at e0 (R and D intervals are midpoint quantities); cell-DAG, mean-value and refinement norms must be uniform over the parent cell. No sub-cell dependence.",
+   "Q5_derivative_specific": "YES: each edge carries its own norm (k_i, kz_i per derivative index), so no shared envelope is required; each can be certified separately.",
+   "Q6_obligation_identity": "NO change: norms are nested certificate inputs; the 28 units per cell are unchanged.",
+   "known_defect": "The frozen sr_operators kz2 cites a pointwise-false inequality; its values were proved valid for the six cells (curvature successor evidence). It must not be copied: any successor norm needs an independent derivation."
+  },
+  "evidence_sha256": "7fbbbc23601138b91f85feec44b43f866e1abfe590f1461b24f97467a4d4c933",
+  "ruling": "OPERATOR_NORM_TIGHTENING_PERMITTED"
+ },
+ "phase2_3": {
+  "ALL_NORMS_closes_m2_m3_m5": false,
+  "B_cover_ratio": {
+   "ALL_NORMS": {
+    "1": 0.9872345017429984,
+    "2": 3.417383320587194,
+    "3": 4.929955092816682,
+    "5": 7.740460959737738
+   },
+   "ALL_NORMS_plus_CANDSUP__beyond_norm_scope": {
+    "1": 0.9136362191410288,
+    "2": 2.95764089692599,
+    "3": 4.343522074470218,
+    "5": 6.815925095390327
+   },
+   "CANDSUP_only__beyond_norm_scope": {
+    "1": 0.9154454814192041,
+    "2": 3.616097941320029,
+    "3": 5.457520998776927,
+    "5": 8.545392882740364
+   },
+   "K0": {
+    "1": 0.9896530979390337,
+    "2": 4.2384665358148395,
+    "3": 6.277832331833397,
+    "5": 9.783041011959265
+   },
+   "K1": {
+    "1": 0.9896533629743253,
+    "2": 4.238468553725149,
+    "3": 6.2813271055383755,
+    "5": 9.820498633342345
+   },
+   "K2": {
+    "1": 0.9872341800460552,
+    "2": 4.222337306839394,
+    "3": 6.258856805301219,
+    "5": 9.76928881228528
+   },
+   "K3": {
+    "1": 0.9896531564284804,
+    "2": 4.2384678152714885,
+    "3": 6.2813257163828515,
+    "5": 9.820494246589496
+   },
+   "K_all": {
+    "1": 0.9872345017429984,
+    "2": 4.222340585928401,
+    "3": 6.255375469608968,
+    "5": 9.7320855762174
+   },
+   "Kz0": {
+    "1": 0.9896530979390337,
+    "2": 4.179195123169499,
+    "3": 6.072688192292601,
+    "5": 9.227620413974211
+   },
+   "Kz1": {
+    "1": 0.9896530979390337,
+    "2": 4.11558252722566,
+    "3": 5.980856728172505,
+    "5": 9.22781655621233
+   },
+   "Kz2": {
+    "1": 0.9896530979390337,
+    "2": 4.021936549293296,
+    "3": 5.92371748065755,
+    "5": 9.391351414155611
+   },
+   "Kz3": {
+    "1": 0.9896530979390337,
+    "2": 3.8309277675685554,
+    "3": 5.818919957483336,
+    "5": 9.426387309288762
+   },
+   "Kz_all": {
+    "1": 0.9896530979390337,
+    "2": 3.4322423671236737,
+    "3": 4.952211007223851,
+    "5": 7.811701003472363
+   },
+   "base": {
+    "1": 0.9896530979390337,
+    "2": 4.2384665358148395,
+    "3": 6.281323786231107,
+    "5": 9.820491512207859
+   }
+  },
+  "DIAGNOSTIC_ONLY": true,
+  "M_R2": {
+   "ALL_NORMS": {
+    "1": 1.743571787856455,
+    "2": 12.78902772030018,
+    "3": 18.951846914914373,
+    "5": 30.408103395684048
+   },
+   "ALL_NORMS_plus_CANDSUP__beyond_norm_scope": {
+    "1": 1.4435655658765985,
+    "2": 10.914995029179078,
+    "3": 16.561389582780127,
+    "5": 26.639448721392437
+   },
+   "CANDSUP_only__beyond_norm_scope": {
+    "1": 1.4509406013115598,
+    "2": 13.599017098156434,
+    "3": 21.102297204163794,
+    "5": 33.689151067717354
+   },
+   "K0": {
+    "1": 1.7534306307955934,
+    "2": 16.13595741948269,
+    "3": 24.446104901459936,
+    "5": 38.73413481233863
+   },
+   "K1": {
+    "1": 1.75343171112978,
+    "2": 16.13596564492367,
+    "3": 24.460350530770544,
+    "5": 38.88682206390647
+   },
+   "K2": {
+    "1": 1.7435704765542699,
+    "2": 16.070210381952744,
+    "3": 24.368755596307043,
+    "5": 38.67807718036918
+   },
+   "K3": {
+    "1": 1.7534308692141725,
+    "2": 16.135962634889108,
+    "3": 24.46034486832929,
+    "5": 38.88680418251304
+   },
+   "K_all": {
+    "1": 1.743571787856455,
+    "2": 16.070223748294335,
+    "3": 24.354564743664984,
+    "5": 38.526426870806496
+   },
+   "Kz0": {
+    "1": 1.7534306307955934,
+    "2": 15.89436680039547,
+    "3": 23.609914141324285,
+    "5": 36.470138211233895
+   },
+   "Kz1": {
+    "1": 1.7534306307955934,
+    "2": 15.63505837282322,
+    "3": 23.23557071628881,
+    "5": 36.47091551540641
+   },
+   "Kz2": {
+    "1": 1.7534306307955934,
+    "2": 15.253323465196114,
+    "3": 23.00263835730863,
+    "5": 37.13750358341483
+   },
+   "Kz3": {
+    "1": 1.7534306307955934,
+    "2": 14.474720745889169,
+    "3": 22.575455712702993,
+    "5": 37.28031923292426
+   },
+   "Kz_all": {
+    "1": 1.7534306307955934,
+    "2": 12.849597155658227,
+    "3": 19.0425679558785,
+    "5": 30.698496807797238
+   },
+   "base": {
+    "1": 1.7534306307955934,
+    "2": 16.13595741948269,
+    "3": 24.46033700051618,
+    "5": 38.886793036444466
+   }
+  },
+  "evidence_sha256": "9cffaac07ceb80f290ce5bc35b8c73140b17d7dbd498c8eb3303dc6c95672b29",
+  "norm_table": [
+   {
+    "dag_old_cell": 0.7554626503551845,
+    "dag_old_mid": 0.6968434667715883,
+    "env_old_bound_cell": 0.7491989730754928,
+    "norm_id": "K0",
+    "old_over_oracle_dag_cell": 1.0083604990193449,
+    "old_over_oracle_env": 1.0000000000000002,
+    "operator": "K^(0)",
+    "oracle_argmax_e": 6.0835603,
+    "oracle_cell_sup": 0.7491989730754927,
+    "oracle_mid_e0": 0.696843466771588,
+    "removable_share_B_cover": {
+     "1": 0.0,
+     "2": 0.0,
+     "3": 0.0005558469068834837,
+     "5": 0.0038135056887976804
+    },
+    "removable_share_M_R2": {
+     "1": 0.0,
+     "2": 0.0,
+     "3": 0.0005818439482637716,
+     "5": 0.003925708760883495
+    }
+   },
+   {
+    "dag_old_cell": 0.47956871453943434,
+    "dag_old_mid": 0.44855096469309935,
+    "env_old_bound_cell": 0.47956871268116025,
+    "norm_id": "K1",
+    "old_over_oracle_dag_cell": 1.000000003874886,
+    "old_over_oracle_env": 1.0,
+    "operator": "K^(1)",
+    "oracle_argmax_e": 6.0835603,
+    "oracle_cell_sup": 0.47956871268116025,
+    "oracle_mid_e0": 0.4485509646930991,
+    "removable_share_B_cover": {
+     "1": -2.6780625672628844e-07,
+     "2": -4.76094430101881e-07,
+     "3": -5.284407207373221e-07,
+     "5": -7.251301501476348e-07
+    },
+    "removable_share_M_R2": {
+     "1": -6.161259917814021e-07,
+     "2": -5.097584707680625e-07,
+     "3": -5.531507747402742e-07,
+     "5": -7.464606808227359e-07
+    }
+   },
+   {
+    "dag_old_cell": 0.7415576017881164,
+    "dag_old_mid": 0.663968217194692,
+    "env_old_bound_cell": 0.6978405201226061,
+    "norm_id": "K2",
+    "old_over_oracle_dag_cell": 1.0626462356439685,
+    "old_over_oracle_env": 1.0000000000000002,
+    "operator": "K^(2)",
+    "oracle_argmax_e": 6.0835603,
+    "oracle_cell_sup": 0.697840520122606,
+    "oracle_mid_e0": 0.6639682171946919,
+    "removable_share_B_cover": {
+     "1": 0.002444207872451365,
+     "2": 0.0038054397360823833,
+     "3": 0.0035767907680760436,
+     "5": 0.0052138632632520165
+    },
+    "removable_share_M_R2": {
+     "1": 0.005623350059106413,
+     "2": 0.004074566870792662,
+     "3": 0.0037440777781272416,
+     "5": 0.005367268416289317
+    }
+   },
+   {
+    "env_old_bound_cell": 0.9793669401887778,
+    "norm_id": "K3",
+    "old_over_oracle_env": 1.0000000000000002,
+    "operator": "K^(3)",
+    "oracle_argmax_e": 6.0835603,
+    "oracle_cell_sup": 0.9793669401887777,
+    "removable_share_B_cover": {
+     "1": -5.910095857153408e-08,
+     "2": -3.0186781896368586e-07,
+     "3": -3.0728423028314467e-07,
+     "5": -2.7843633221280584e-07
+    },
+    "removable_share_M_R2": {
+     "1": -1.35972632708814e-07,
+     "2": -3.2321642162713715e-07,
+     "3": -3.216559572027933e-07,
+     "5": -2.8662863926776083e-07
+    }
+   },
+   {
+    "dag_old_cell": 5.312124135466046,
+    "dag_old_mid": 4.796985238761737,
+    "env_old_bound_cell": 5.272056540994247,
+    "norm_id": "Kz0",
+    "old_over_oracle_dag_cell": 1.2530127585868889,
+    "old_over_oracle_env": 1.2435616979944115,
+    "operator": "K_z^(0)",
+    "oracle_argmax_e": 6.0835603,
+    "oracle_cell_sup": 4.239481281465086,
+    "oracle_mid_e0": 3.999100678025702,
+    "removable_share_B_cover": {
+     "1": 0.0,
+     "2": 0.013984164353900264,
+     "3": 0.0332152267641167,
+     "5": 0.06037081723421367
+    },
+    "removable_share_M_R2": {
+     "1": 0.0,
+     "2": 0.01497218992382321,
+     "3": 0.03476742201769123,
+     "5": 0.062145901899025136
+    }
+   },
+   {
+    "dag_old_cell": 3.7191803869036377,
+    "dag_old_mid": 3.315859068309033,
+    "env_old_bound_cell": 3.7191803869036377,
+    "norm_id": "Kz1",
+    "old_over_oracle_dag_cell": 1.5163091173452314,
+    "old_over_oracle_env": 1.5163091173452314,
+    "operator": "K_z^(1)",
+    "oracle_argmax_e": 6.0835603,
+    "oracle_cell_sup": 2.4527850847558144,
+    "oracle_mid_e0": 2.3158590687460774,
+    "removable_share_B_cover": {
+     "1": 0.0,
+     "2": 0.02899256312414289,
+     "3": 0.04783498961114496,
+     "5": 0.06035084448255712
+    },
+    "removable_share_M_R2": {
+     "1": 0.0,
+     "2": 0.031042412522400475,
+     "3": 0.050071521263240326,
+     "5": 0.062125913000177446
+    }
+   },
+   {
+    "dag_old_cell": 5.874643758772969,
+    "dag_old_mid": 5.108654197826404,
+    "env_old_bound_cell": 6.402461630551603,
+    "norm_id": "Kz2",
+    "old_over_oracle_dag_cell": 1.5709612072656516,
+    "old_over_oracle_env": 1.7121070256529338,
+    "operator": "K_z^(2)",
+    "oracle_argmax_e": 6.0835603,
+    "oracle_cell_sup": 3.7395218491729176,
+    "oracle_mid_e0": 3.617512844716373,
+    "removable_share_B_cover": {
+     "1": 0.0,
+     "2": 0.05108686943541374,
+     "3": 0.0569316783760524,
+     "5": 0.04369843378193272
+    },
+    "removable_share_M_R2": {
+     "1": 0.0,
+     "2": 0.054699819250940473,
+     "3": 0.05959438102495429,
+     "5": 0.04498415313883586
+    }
+   },
+   {
+    "env_old_bound_cell": 10.303763732429525,
+    "norm_id": "Kz3",
+    "old_over_oracle_env": 2.0087106644826163,
+    "operator": "K_z^(3)",
+    "oracle_argmax_e": 6.0835603,
+    "oracle_cell_sup": 5.129541010867021,
+    "removable_share_B_cover": {
+     "1": 0.0,
+     "2": 0.0961524090853616,
+     "3": 0.07361566518213525,
+     "5": 0.04013080225457
+    },
+    "removable_share_M_R2": {
+     "1": 0.0,
+     "2": 0.10295247008942465,
+     "3": 0.07705868025340001,
+     "5": 0.041311552794148554
+    }
+   }
+  ],
+  "oracle_method": "exact norms sup_y int|kernel| attained at the reset state y0=(0,0): ||K^(i)|| = int_{-c+e}^{c+e}|He_i|phi, ||K_z^(i)|| = int_{-c+e}^{c+e}|w-e||He_i(w)|phi(w)dw; double-precision Gauss-Legendre between sign changes, point value at e0 for the midpoint DAG, max over an 81-point e-grid of the parent cell for cell DAG / mean-value envelope / refinement, +1e-6 relative; every other certified term unchanged"
+ },
+ "phases_not_run": {
+  "4": "stop rule 2",
+  "5": "stop rule 2",
+  "6": "313 not closed",
+  "7": "no successor to cost"
+ },
+ "schema": "rebaseguard.p5y.k1.sr.o9.opnorm-successor-record.v1",
+ "stop_rule": "2: oracle-tight norms cannot bring m=2,3,5 below 1 -> Phase 4 (rigorous drift-aware norms), Phase 5 (kill test), Phase 6 (controls) NOT run; no rigorous norm successor built",
+ "untouched": [
+  "T1/T2",
+  "endpoint treatment",
+  "B_int",
+  "mean-value successor",
+  "theorem target",
+  "B_cover = 1/20",
+  "D, Z, precision, degree",
+  "candidates/contracts",
+  "frozen parent cells",
+  "production",
+  "316-cell campaign"
+ ]
+}

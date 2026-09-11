@@ -1,0 +1,96 @@
+{
+ "all_fragments_present": true,
+ "answers": {
+  "Q1_requirement": "YES: every propagation edge needs a certified UPPER bound ||T_i|| of the same operator (depgraph edge rule; ERROR_ALGEBRA 2 'certified operator norm bounds ... over the whole cell'). Sampled norms are forbidden.",
+  "Q2_historical_formula_binding": "NO: whole-line moments are 'admissible', not mandatory. The frozen final-completion campaign replaced them by drift-aware closed forms, min(drift-aware, whole-line, Cauchy-Schwarz), recorded as 'not a relaxation of anything'.",
+  "Q3_tighter_proved_norm": "YES, provided it bounds the SAME operator (K^(i), K_z^(i) with the frozen e-free continuation limits), sup over the SAME reachable state set and every e of the SAME parent cell, on the same edges and owners (ERROR_ALGEBRA 1: a tighter proved enclosure of the same expression).",
+  "Q4_cell_dependence": "C_upper is frozen per-cell input and not replaceable (B_resolvent = 0, multiplicative only). k_j >= sup_cell ||K_j|| may depend on the frozen parent cell's drift interval. Midpoint-DAG norms may be evaluated at e0 (R and D intervals are midpoint quantities); cell-DAG, mean-value and refinement norms must be uniform over the parent cell. No sub-cell dependence.",
+  "Q5_derivative_specific": "YES: each edge carries its own norm (k_i, kz_i per derivative index), so no shared envelope is required; each can be certified separately.",
+  "Q6_obligation_identity": "NO change: norms are nested certificate inputs; the 28 units per cell are unchanged.",
+  "known_defect": "The frozen sr_operators kz2 cites a pointwise-false inequality; its values were proved valid for the six cells (curvature successor evidence). It must not be copied: any successor norm needs an independent derivation."
+ },
+ "bound_artifacts": {
+  "p5y_k1_cover_ledger_implementation/code/depgraph.py": {
+   "fragments": {
+    "epsY <= lY + sum_i |b_i| ||T_i|| epsX_i": true
+   },
+   "sha256": "87d91a22205f9e6379aa3c38100c9b4abcc01a450406d6e6056017698213a2b2"
+  },
+  "p5y_k1_cover_ledger_successor/ERROR_ALGEBRA.md": {
+   "fragments": {
+    "An interval may be tighter only if a proved enclosure of the same expression preserves every dependency": true,
+    "C is a proven UPPER bound on ||(I-K_e)^-1|| for every e in the declared cell": true,
+    "No degree, precision, scope, P1, complexity,": true,
+    "Use certified operator norm bounds j_k over the whole cell; rigorous whole-line absolute Gaussian moments are admissible. Do not use sampled operator norms.": true,
+    "k0 <= 1, k1 <= 2 phi(0), k2 <= 4 phi(1) follow by integrating |phi|, |phi'|, |phi''| over the whole real line": true
+   },
+   "sha256": "4f32df0273d05b1b4e0136e2a901adec9979e158b5decd8c9bf3cce0e35b9ffa"
+  },
+  "p5y_k1_cover_ledger_successor/config/checkpoint.json": {
+   "fragments": {
+    "\"B_resolvent\":\"0\"": true
+   },
+   "sha256": "1c2a6825f19e19de6fb588647ca3fc4618068087ef0976292ca7bbeca701f13f"
+  },
+  "p5y_k1_cusum_aux3_successor/README.md": {
+   "fragments": {
+    "auxiliary third-derivative": true
+   },
+   "sha256": "dce4f4c26747986f556fd3afd5bc9f96bb663873751e86ca2196b3affbe017f5"
+  },
+  "p5y_k1_cusum_aux4_fullcover/README.md": {
+   "fragments": {},
+   "sha256": "7784cf201eb1e6e2dd84dc98c90b5be3adb4fe9524ac012aab26e0cb66258695"
+  },
+  "p5y_k1_final_completion/CHECKPOINT.md": {
+   "fragments": {
+    "A sharper certified bound on the same operator is not a relaxation of anything": true,
+    "calls the whole-line moments \"admissible\", not mandatory": true
+   },
+   "sha256": "a3f03d83226f1388a641c779a6ff9d2c0629ea10f67f373243bca3fb718dca26"
+  },
+  "p5y_k1_final_completion/code/sharp_norms.py": {
+   "fragments": {
+    "at the known roots of `He_n`": true
+   },
+   "sha256": "0664d313054c007f270368057e0a26b62383866824ac0392814626284f125560"
+  },
+  "p5y_k1_sr_o9_curvature_successor/code/curv_mv.py": {
+   "fragments": {
+    "Its kz2 rests on a pointwise-false": true
+   },
+   "sha256": "be2233f8283dd124c19bb84b92305ec64b194b79122dbc7420517d60547b64e7"
+  },
+  "p5y_k1_sr_o9_curvature_successor/config/CURVATURE_SUCCESSOR_RECORD.json": {
+   "fragments": {},
+   "sha256": "bd5f582d9c8aa88c4db39d66aefb5e672d19f6723d635eedafe95610d35b0a27"
+  },
+  "p5y_k1_sr_o9_curvature_successor/evidence/kz2_predecessor_check.json": {
+   "fragments": {},
+   "sha256": "d8c0c8cb977be356d4fb6f6bf8b1b26c29ef51cac144da77b923d3ce6bf174de"
+  },
+  "p5y_k1_sr_o9_t345_successor/code/t4_cell.py": {
+   "fragments": {
+    "def norms_at(e) -> dict:": true
+   },
+   "sha256": "403a08ea1638127c70a9a36d9df904fcd5f24850fe59048b40b2fa9f90a1105c"
+  },
+  "p5y_k1_sr_qualification/SR_DERIVATION.md": {
+   "fragments": {
+    "K_e' = -( K_z,e + e K_e )": true,
+    "K_e'' = K_z2,e + 2 e K_z,e + ( e^2 - 1 ) K_e": true
+   },
+   "sha256": "1d4f5f96641aa016d6cd07de111921bd3b2a536b456f6a8e02b91769c68cfc63"
+  },
+  "p5y_k1_sr_qualification/code/sr_operators.py": {
+   "fragments": {
+    "kz2 = _int_abs_w_phi(L, U) * arb(1) + ae * k2 + _int_w2_phi(L, U)": true,
+    "the widest continuation interval -- attained at the reset state y_0 = (0,0) -- is [-c_SR, c_SR]": true,
+    "|z (w^2 - 1)| <= (|w| + |e|) |w^2 - 1|": true
+   },
+   "sha256": "5d8fbc7b69c5388687afc9878ce8985544faf796fe23e748cd71f9b9c4bf6d57"
+  }
+ },
+ "ruling": "OPERATOR_NORM_TIGHTENING_PERMITTED",
+ "schema": "rebaseguard.p5y.k1.sr.o9.opnorm-doctrine.v1"
+}
