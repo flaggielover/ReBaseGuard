@@ -20,8 +20,9 @@ def region(parent):
     man = json.loads((d / "RUN_MANIFEST.json").read_text())
     rows = []
     cpu = {}
-    for f in glob.glob(str(d / "chunks/rec_*.jsonl")):
-        for line in open(f):
+    import gzip
+    for f in glob.glob(str(d / "chunks/rec_*.jsonl*")):
+        for line in (gzip.open(f, "rt") if f.endswith(".gz") else open(f)):
             r = json.loads(line)
             cpu.setdefault(r["successor_cell"], [0.0, 0, 0])
             cpu[r["successor_cell"]][0] += r["cpu_seconds"]
@@ -78,11 +79,35 @@ def main():
                              "note": "measured at 30-way load on 32 vCPU; estimate only; cap not requalified"},
            "not_claimed": ["K1 CLOSED", "P5Y CLOSED", "PRODUCTION READY", "the old 316-cell campaign passed"]}
     (NS / "config/PS1_ROUND_RECORD.json").write_text(json.dumps(rec, indent=1, sort_keys=True) + "\n")
+    det = json.loads((EV / "replay_313/determinism.json").read_text()) if (EV / "replay_313/determinism.json").exists() else None
     L = ["# PS1 - P5Y K1 SR predeclared partition successor: round result", "",
-         f"**Classification: `{cls}`.** Anchor `9bfe3a7` (pre-result). Not K1 closure; not production.", "",
-         "## Certified children of old cell 313", "",
-         "| successor cell | T3 | T5 | B_cover/limit m1 | m2 | m3 | m5 | M_R2 m5 | contraction | T3 CPU-h | peak RSS MiB |",
-         "|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
+         f"**Classification: `{cls}`.** Not K1 closure; not P5Y closure; not production ready; the old 316-cell "
+         "campaign is NOT claimed to pass.", "",
+         "## A. Governance ruling", "", f"`{p1['ruling']}`.", ""] + [f"- **{k}**: {v}" for k, v in p1["answers"].items()] + [
+         "", "## B. Old vs new campaign semantics", "",
+         "The frozen 316-cell campaign and every result of it (cell 313 m1 PASS, m2/m3/m5 FAIL) remain immutable history. "
+         "PS1 is a new additive K1 SR successor with its own predeclared 369-cell table, its own identities "
+         "(PS1-SR-P<parent>-N<n>-K<k>) and its own work universe (28 obligations per successor cell); the theorem target, "
+         "domain, thresholds and science are unchanged. Union of successor cells = [0, c_SR] exactly.", "",
+         "## C. Legal partition rules evaluated", "",
+         "| rule | successor cells | refined parents | old 313 -> | max child rho | CPU-h (midpoint T3) |", "|---|---:|---:|---:|---:|---:|"]
+    for k, v in rules.items():
+        L.append(f"| {k} | {v['successor_cells']} | {v['refined_parents']} | {v['children_of_313']} | {v['max_child_rho']:.4f} | {v['cpu_h_midpoint_only_T3']:.0f} |")
+    L += ["", "## D/E. rho-scaling and child-location diagnostic (NON-CERTIFYING, pre-anchor)", "",
+          "| N | child rho | worst-child ratio m2/m3/m5 (certified inputs, B) | oracle (A) | worst child |", "|---:|---:|---|---|---|"]
+    aggfull = json.loads((EV / "phase34_diag_aggregate.json").read_text())["by_N"]
+    for n, row in aggfull.items():
+        b_, a_ = row["variants"]["B_certified"]["worst"], row["variants"]["A_oracle"]["worst"]
+        L.append(f"| {n} | {row['child_rho']:.5f} | " + " / ".join(f"{b_[m]['ratio']:.3g}" for m in ("2", "3", "5"))
+                 + " | " + " / ".join(f"{a_[m]['ratio']:.3g}" for m in ("2", "3", "5")) + f" | k{b_['5']['worst_child_k']} (leftmost) |")
+    L += ["", "## G/H. Chosen pre-result rule and anchor", "",
+          f"RULE RHO_CAP, r_max = 1/25 (dyadic, equal exact-rational children, C_upper inherited); 369 cells; table sha256 "
+          f"`{rec['successor_cells_sha256']}`; protocol sha256 `{rec['protocol_sha256']}`; temporal anchor commit "
+          "`9bfe3a71dd1884c933aa237896c21d59f9775c0e` (2026-09-11T05:26:43Z), containing no successor result.", "",
+          "## I. Temporal integrity", "", f"{rec['temporal_integrity']}", "",
+          "## J/K. Certified successor cells", "",
+          "| successor cell | T3 | T5 | B_cover/limit m1 | m2 | m3 | m5 | M_R2 m5 | contraction | T3 CPU-h | peak RSS MiB |",
+          "|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for v in [r313] + [ctrl[p] for p in sorted(ctrl)]:
         if not v:
             continue
@@ -93,9 +118,14 @@ def main():
             L.append(f"| {c['id']} | {c['T3_PASS']} | {c['t5_pass']}/{c['t5_total']} | "
                      + " | ".join(f"{c['B_cover_ratio'][m]:.4g}" for m in MS)
                      + f" | {c['M_R2']['5']:.4g} | {c['contraction_max']:.3f} | {c['t3_patch_cpu_h']:.1f} | {c['peak_rss_mib']:.0f} |")
-    L += ["", f"Temporal integrity: {rec['temporal_integrity']}.", "",
-          f"Measured T3 midpoint CPU per successor cell: {mean_cpu:.1f} CPU-h; 369-cell projection "
-          f"{(mean_cpu or 0) * 369:.0f} CPU-h (estimate)." if mean_cpu else "", ""]
+    L += ["", f"Determinism replay (fresh process, 6 patches of successor cell 360): {det['all_identical'] if det else 'not run'}.", "",
+          "## F. Cost", "", (f"Measured T3 midpoint CPU per successor cell: {mean_cpu:.1f} CPU-h (30-way load, 32 vCPU); "
+          f"369-cell projection {(mean_cpu or 0) * 369:.0f} CPU-h. Estimate only; the 1,126 CPU-h cap is not requalified "
+          "and is far exceeded.") if mean_cpu else "", "",
+          "## L. Production firewall", "", "No production process, no prodctl, no AWS/Vultr production worker, no production "
+          "ledger touched; every predecessor namespace byte-identical (temporal-integrity I3).", "",
+          "## M. Next step", "", "A governed full PS1 SR campaign over all 369 successor cells under this frozen protocol "
+          "(and a matching governed decision on the CPU cap), followed by independent adjudication. Not started.", ""]
     (NS / "RESULT.md").write_text("\n".join(L))
     print(cls, sha(NS / "config/PS1_ROUND_RECORD.json")[:16])
 
