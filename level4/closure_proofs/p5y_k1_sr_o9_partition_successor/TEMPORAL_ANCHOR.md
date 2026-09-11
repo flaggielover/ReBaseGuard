@@ -6,7 +6,9 @@ This is the only PS1 document written twice (P8R pattern). At Checkpoint A it is
 against git (`git ls-tree` of the anchor, byte comparison of every frozen file at the anchor, ancestry of HEAD,
 and ancestry of every certified run manifest's recorded commit).
 
-ANCHOR_COMMIT = PENDING_THIS_COMMIT
+ANCHOR_COMMIT = 9bfe3a71dd1884c933aa237896c21d59f9775c0e
+ANCHOR_TIMESTAMP = 2026-09-11T05:26:43+00:00
+ANCHOR_BRANCH = p5y-k1-sr-o9-t1
 
 At the anchor: the protocol, the deterministic partition generator and its table, the complete successor executable
 surface (identity layer, T1, T3 midpoint producer, T3 aggregation with the mean-value cell mode, generated T4/T5,
