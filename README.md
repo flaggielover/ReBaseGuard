@@ -121,6 +121,14 @@ python3 docs/research_synthesis/verify_synthesis.py --no-diff-check
 | Where are frozen artifacts by topic? | [Reviewer-first repository map](docs/research_synthesis/REPOSITORY_MAP.md) |
 | What wording and limitations are authoritative? | [Claim catalog](docs/research_synthesis/CLAIM_CATALOG.md) and [limitations register](docs/research_synthesis/LIMITATIONS_AND_OPEN_ITEMS.md) |
 
+## Current successor status (PS1)
+
+The historical P4/P5/P8/P9 verdicts remain unchanged. P5Y/K1 is a successor line, not a closure of P5 or K1. Its O9 research progression records T1 candidate construction, T2 per-patch certification, T3 whole-cell aggregation, T4 curvature, and T5 one-cell/regional closure, including the governed **NOT_CLOSING**, **INSUFFICIENT**, and **FEASIBILITY_FAIL** negative results that motivated the additive PS1 partition. See the [current PS1 status note](docs/research_synthesis/PS1_CURRENT_STATUS.md).
+
+PS1 defines a new **369-cell** SR universe and replaces the old cell-313 region with four deterministic successor cells; it does not recolor the historical 316-cell SR campaign or its cell-313 failure. The PS1 successor region and certified controls passed **28/28** obligations. Qualification and lifecycle acceptance are complete; the expected AWS-only campaign cost is approximately **4,413–4,642 CPU-h** against a frozen **6,600 CPU-h** cap.
+
+The current classification is **PS1_PRODUCTION_AUTHORIZATION_CLOSED**. AWS production is authorized to start, but genuine PS1 production remains **NOT STARTED** (0 cells), the full 369-cell campaign is **NOT RUN**, K1 and P5Y remain **NOT CLOSED**, and LEVEL4_GLOBAL_CLOSURE = NO.
+
 ## Limitations and negative results
 
 - Historical Stage-D D2.3 and Track 1A remain failed. The later Track 1B
@@ -206,3 +214,5 @@ implementations, documentation, and figures are licensed under the
 Third-party dependencies, datasets, bibliographic records, and source-derived
 portions retain their respective terms and are excluded from that grant. See
 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for the audited boundaries.
+
+[exit_code=0]

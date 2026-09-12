@@ -150,3 +150,8 @@ The terminal closure checkpoint is commit `49cf742` (`Close the frozen Level-4
 campaign mechanically`). Its stored offline reproduction status is `PASS` with
 `new_science_run=false` in
 `level4/final_level4_closure/results/final_decision.json`.
+
+[exit_code=0]
+## Current PS1 successor (additive update)
+
+The public research record now includes the governed P5Y/K1 O9-to-PS1 successor chain. The O9 line preserves its T1/T2/T3/T4/T5 milestones and its negative curvature, operator-norm, and Aux3 feasibility results. PS1 is a new additive 369-cell partition: four deterministic successor cells replace the old-313 region without changing the historical 316-cell SR campaign or its failure. The PS1 region and controls passed 28/28 obligations; qualification and lifecycle acceptance are complete; authorization is closed, while genuine production remains at 0 cells and has not started. See [PS1_CURRENT_STATUS.md](PS1_CURRENT_STATUS.md).
