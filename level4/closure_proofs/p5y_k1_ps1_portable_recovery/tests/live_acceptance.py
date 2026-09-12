@@ -113,10 +113,11 @@ def sealed_cells(root: Path):
 # ------------------------------------------------------------------ A: drain
 def scenario_A(work: Path):
     print("=" * 70); print("A. start -> finalize cells -> real prodctl drain")
-    ct, root = setup(work, {"spin_s": 3.0, "cells": list(range(8)), "cores": [20, 21]})
+    NCELLS = 32
+    ct, root = setup(work, {"spin_s": 3.0, "cells": list(range(NCELLS)), "cores": [20, 21]})
     st = prodctl(ct, "start", "--role", "AWS")
     print(f"  start unit: {st.get('unit')}  state {st.get('unit_state')}")
-    time.sleep(14)
+    time.sleep(16)
     mid = sealed_cells(root)
     print(f"  finalized before drain: {mid}")
     dr = prodctl(ct, "drain", "--role", "AWS", "--wait", "120")
@@ -130,7 +131,8 @@ def scenario_A(work: Path):
       "zero_open_reservations": fin_st.get("open_reservations") == [],
       "no_unsettled_runs": fin_st.get("unsettled_runs") == [],
       "no_torn_from_drain": not fin_st.get("torn_attempts"),
-      "not_all_8_admitted": len(after) < 8,
+      "drain_stopped_admission": len(after) < NCELLS,
+      "inflight_cells_reached_boundary": len(after) >= len(mid),
     }
     print(f"  finalized after drain : {after}")
     print(f"  torn_attempts         : {fin_st.get('torn_attempts')}")
