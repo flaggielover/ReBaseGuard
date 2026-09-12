@@ -177,6 +177,15 @@ p4zr-rng-provenance...  p4z, p4za, p4zb
 this packet's tip       p4z, p4za, p4zb, p4zr
 ```
 
+One further harness detail, recorded because it is latent rather than fixed
+upstream: `p4zr_rng_provenance_repair`'s lock slices
+`git status --porcelain` at a fixed offset, which mis-parses the first line when
+that line is an unstaged modification, because the surrounding helper strips the
+output. It never triggers there — that suite runs against a clean tree — but the
+same flaw was live in this packet's lock and is fixed here by matching the
+status field instead of slicing it
+(`tests/test_packet.py::test_the_porcelain_parser_handles_every_status_shape`).
+
 Every lock **passes at its own branch tip**. The substantive property those
 tests approximate — that no successor modified a protected artifact — is
 verified here directly and independently by tree-object equality

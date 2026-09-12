@@ -104,11 +104,42 @@ def test_p4zr_tree_matches_its_own_branch_tip():
         git("rev-parse", f"{PARENT_BRANCH}:{path}")
 
 
+def porcelain_paths() -> list[str]:
+    """Paths from `git status --porcelain`, robust to the leading status field.
+
+    The XY status field is two characters followed by a space, but a leading
+    space (unstaged modification) is lost when the command output is stripped,
+    so the field is matched rather than sliced at a fixed offset.
+    """
+    out = []
+    for line in git("status", "--porcelain").splitlines():
+        if not line.strip():
+            continue
+        path = re.sub(r"^\s*[A-Z?! ]{1,2}\s+", "", line).strip().strip('"')
+        # rename/copy entries read "old -> new"; the destination is what matters
+        out.append(path.split(" -> ")[-1])
+    return out
+
+
 def test_packet_touches_no_path_outside_its_own_namespace():
     changed = [p for p in git("diff", "--name-only", PARENT_BRANCH, "HEAD").splitlines() if p]
-    working = [l[3:].strip().strip('"') for l in git("status", "--porcelain").splitlines() if l]
-    outside = [p for p in changed + working if p and not p.startswith(OWN)]
+    outside = [p for p in changed + porcelain_paths() if p and not p.startswith(OWN)]
     assert not outside, f"packet modified protected paths: {sorted(set(outside))}"
+
+
+@pytest.mark.parametrize("line,want", [
+    # a stripped leading space must not shift the slice
+    ("M level4/a.json", "level4/a.json"),
+    (" M level4/a.json", "level4/a.json"),
+    ("?? level4/a.json", "level4/a.json"),
+    ("A  level4/a.json", "level4/a.json"),
+    ("MM level4/a.json", "level4/a.json"),
+    ('R  "old path" -> level4/a.json', "level4/a.json"),
+])
+def test_the_porcelain_parser_handles_every_status_shape(monkeypatch, line, want):
+    monkeypatch.setitem(globals(), "git",
+                        lambda *a: line if a[0] == "status" else git(*a))
+    assert porcelain_paths() == [want]
 
 
 def test_defective_historical_scripts_remain_unedited():
