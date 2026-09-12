@@ -4,9 +4,11 @@ Only lifecycle/execution fields change. parent.commit becomes the recovery code 
 predecessor authorization commit is recorded, never overwritten.
 """
 import hashlib, json, subprocess, sys
+sys_path_added = True
 from pathlib import Path
 
 NS = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 FROZEN = Path("/home/ubuntu/work/ReBaseGuard-ps1-ops/level4/closure_proofs/"
               "p5y_k1_ps1_lifecycle_adapter/config/OPERATIONAL_CONTRACT.json")
 PRED_COMMIT = "29b3bffb6a739121b66bdfcb23cb6b6544b39baf"
@@ -54,6 +56,29 @@ def main():
                  "campaign_cpu_h": 5694.0, "cells_per_24h": 24.9},
     }
     c["scientific_identity_changed"] = False
+
+    # EXECUTION_GENERATION_LEDGER_NAMESPACE_DEFECT repair: generation 2 resolves its own
+    # production_root and runtime_dir, so prod_ns()/ledger_path() land in a namespace that
+    # has never held a ledger. Generation 1 stays HALTED and is read-only evidence.
+    import make_generation2 as G2
+    tr = G2.transition_record()
+    g2 = tr["generation_2"]
+    c["hosts"]["AWS"]["production_root"] = g2["production_root"]
+    c["hosts"]["AWS"]["runtime_dir"] = g2["runtime_dir"]
+    c["execution_generation"] = {
+        "generation": 2,
+        "transition_record": "config/GENERATION_TRANSITION.json",
+        "transition_record_sha256": hashlib.sha256(
+            (NS / "config" / "GENERATION_TRANSITION.json").read_bytes()).hexdigest(),
+        "predecessor_ledger_sha256": tr["predecessor"]["ledger_sha256"],
+        "predecessor_production_root": tr["predecessor"]["production_root"],
+        "predecessor_final_phase": tr["predecessor"]["final_phase"],
+        "predecessor_halt_reason": tr["predecessor"]["halt_reason"],
+        "imported_science_cpu_h": tr["predecessor"]["science_cpu_h"],
+        "halt_supersession": tr["halt_supersession"]["record"],
+        "predecessor_torn_lineage": tr["predecessor"]["torn_attempt_lineage"],
+        "generation_2_torn_counters": "independent, start empty",
+    }
     src = {}
     for sub in ("driver", "ops", "code", "tests"):
         for p in sorted((NS / sub).glob("*.py")):
