@@ -383,6 +383,7 @@ def run_production_cells(pf, *, max_cells=None, poll_timeout=None) -> dict:
     groups = [g2 for g2 in ([c for c in g if c in pend] for g in pf["groups"]) if g2]
     target = pf.get("drain_after_completed")
     inflight, tasks, done, stopped, drained = {}, {}, [], None, False
+    drained_keys = []          # reservations for cells a drain stopped before they started
     t_idle = time.monotonic()
     try:
         while groups or inflight:
@@ -448,8 +449,7 @@ def run_production_cells(pf, *, max_cells=None, poll_timeout=None) -> dict:
                 if key is None:
                     continue          # already finalized and committed from its marker
                 if drained_now:
-                    dkey = key        # never started: the worker drained at a cell boundary
-                    budget.release(dkey)
+                    drained_keys.append(key)   # never started: released as GRACEFUL_DRAIN below
                     continue
                 budget.release(key); continue
     finally:
@@ -462,6 +462,15 @@ def run_production_cells(pf, *, max_cells=None, poll_timeout=None) -> dict:
             import traceback
             print(f"FINAL_REAP_FAILED {type(_exc).__name__}: {_exc}", flush=True)
             traceback.print_exc()
+        # A drain in force must never tear: whatever is still reserved was stopped at a
+        # cell boundary, not lost. This is the ONLY GRACEFUL_DRAIN release site, so it also
+        # covers cells whose drained group result was never consumed before the run ended.
+        if dflag.exists():
+            drained_keys.extend(inflight.values())
+            inflight.clear()
+        for k in drained_keys:
+            dkey = k
+            budget.release(dkey)
         for k in inflight.values():
             budget.release(k)
         pool.close()
