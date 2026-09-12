@@ -215,6 +215,12 @@ SYNTH_FN = '''def synthetic_cellseq(task: dict) -> dict:
              "B_cover_ratio": {}, "cpu_seconds": spin, "precision_bits": FROZEN_BITS,
              "evidence": {"t5": {"path": "SYNTHETIC_CONTROL_NOT_SCIENCE",
                                  "sha256": hashlib.sha256(f"SYN-EV:{s}".encode()).hexdigest()}}}
+        # ACCEPTANCE BARRIER (before): kill the LAUNCHER before this cell's marker is
+        # renamed into place. The cell must NOT be finalized by anything.
+        if task.get("kill_launcher_before_cell") is not None and s == int(task["kill_launcher_before_cell"]):
+            import signal as _sig
+            os.kill(int(task["launcher_pid"]), _sig.SIGKILL)
+            time.sleep(600)
         results[str(s)] = r
         _seal_cell(ev, s, r, task)
         # ACCEPTANCE BARRIER: the marker is now durable (fsynced + atomically renamed).

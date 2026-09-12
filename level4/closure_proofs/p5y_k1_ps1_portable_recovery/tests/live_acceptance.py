@@ -203,6 +203,38 @@ def scenario_B2(work: Path):
     return all(ok.values()), {"finalized": after, "reconciliation": recon}
 
 
+# ------------------------- B3: the other side of the barrier -- kill BEFORE marker rename
+def scenario_B3(work: Path):
+    print("=" * 70)
+    print("B3. kill LAUNCHER before cell 1's marker is renamed -> cell 1 must NOT finalize")
+    ct, root = setup(work, {"spin_s": 2.0, "cells": [0, 1, 2, 3], "cores": [20, 21],
+                            "kill_launcher_before_cell": 1})
+    prodctl(ct, "start", "--role", "AWS")
+    fin_st = wait_idle(ct, timeout=300)
+    after = sealed_cells(root)
+    recon, reason = None, None
+    rd = work / "runtime-AWS" / "runs"
+    for f in sorted(rd.glob("*.json")) if rd.exists() else []:
+        d = json.loads(f.read_text())
+        recon = d.get("reconciliation") or recon
+        reason = d.get("reason") or reason
+    print(f"  run end reason : {reason}")
+    print(f"  finalized      : {after}")
+    print(f"  torn_attempts  : {fin_st.get('torn_attempts')}")
+    print(f"  reconciliation : {json.dumps(recon) if recon else 'ABSENT'}")
+    ok = {
+      "0_FINALIZED": 0 in after,
+      "1_NOT_finalized_no_durable_marker": 1 not in after,
+      "no_false_finalization": set(after) <= {0},
+      "1_torn_or_pending": str(1) in (fin_st.get("torn_attempts") or {}) or 1 not in after,
+      "lock_FREE": fin_st.get("campaign_lock") == "FREE",
+      "zero_open_reservations": fin_st.get("open_reservations") == [],
+    }
+    for k, v in ok.items():
+        print(f"    {'PASS' if v else 'FAIL'}  {k}")
+    return all(ok.values()), {"finalized": after}
+
+
 # --------------------------------------------- C: checkpoint / export / resume
 def scenario_C(work: Path):
     print("=" * 70); print("C. checkpoint -> export -> clean runtime -> resume")
@@ -298,7 +330,7 @@ def scenario_E(work: Path, prior):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("scenario", choices=("A", "B", "B2", "C", "D", "E", "all"))
+    ap.add_argument("scenario", choices=("A", "B", "B2", "B3", "C", "D", "E", "all"))
     ap.add_argument("--work", required=True)
     a = ap.parse_args()
     w = Path(a.work)
@@ -309,6 +341,8 @@ def main():
         results["B"], _ = scenario_B(w / "B")
     if a.scenario in ("B2", "all"):
         results["B2"], _ = scenario_B2(w / "B2")
+    if a.scenario in ("B3", "all"):
+        results["B3"], _ = scenario_B3(w / "B3")
     if a.scenario in ("C", "D", "E", "all"):
         results["C"], prior = scenario_C(w / "C")
     if a.scenario in ("D", "all"):
