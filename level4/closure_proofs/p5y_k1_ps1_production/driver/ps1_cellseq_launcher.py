@@ -414,7 +414,8 @@ def run_production_cells(pf, *, max_cells=None, poll_timeout=None) -> dict:
                          "live_patches_sha256": auth["live_patches_sha256"],
                          "expect_patches": auth["live_patches_count"],
                          "successor_cells_sha256": auth["successor_cells_sha256"],
-                         "drain_flag": str(dflag)}
+                         "drain_flag": str(dflag),
+                         "launcher_pid": os.getpid(), "run_id": run_tag}
                     for cell in drawn:
                         tasks[cell] = t
                     pool.submit(pool.idle()[0], t)

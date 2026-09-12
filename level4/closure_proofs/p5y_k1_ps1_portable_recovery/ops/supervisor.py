@@ -29,6 +29,8 @@ from opscommon import (OPS_NS, OpsRefusal, CgroupCPU, ProcTreeCPU, RuntimeDir, b
 import ledger_ops as LO                                                                     # noqa: E402
 import locks as LK                                                                          # noqa: E402
 import runtime_state as RS                                                                  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "driver"))
+import ps1_reconcile as RECON                                               # noqa: E402
 
 EXIT_OK, EXIT_OTHER, EXIT_HALT, EXIT_REFUSED, EXIT_BUSY = 0, 1, 20, 30, 75
 
@@ -222,6 +224,17 @@ def kill_all(cpu, child, timeout_s=120.0):
     child.wait()
 
 
+def _synthetic_validator(contract):
+    """Under SYNTHETIC_CONTROL only, accept the synthetic marker shape -- exactly mirroring
+    what tests/synthetic_cellseq_entry.py patches into the child. Under the PRODUCTION
+    contract this returns None, so reconciliation uses the real _verified(), which demands
+    the full t3/t4/t5/patches_gz bundle and re-hashes every file from disk."""
+    if (contract or {}).get("mode") != "SYNTHETIC_CONTROL":
+        return None
+    return lambda r, cell, task: bool(isinstance(r, dict) and r.get("synthetic")
+                                      and r.get("cell_id") == cell)
+
+
 def run(contract, role, run_id) -> int:
     spec = host_spec(contract, role)
     unit = unit_name(contract, role, run_id)
@@ -319,6 +332,18 @@ def run(contract, role, run_id) -> int:
         write_json_atomic(rt.run_record(run_id), rec)
         try:
             LK.reclaim_ledger_lock(Path(str(io.path) + ".lock"), contract, campaign_lock=lock)
+            # A durable marker is a write-ahead completion fact. Convert every valid one
+            # into an authoritative commit BEFORE any reservation can be classified torn.
+            try:
+                rrep = RECON.reconcile(contract, role, spec, io, child.pid,
+                                       validator=_synthetic_validator(contract), say=say)
+                if rrep.get("finalized") or rrep.get("rejected"):
+                    rec["reconciliation"] = rrep
+                    write_json_atomic(rt.run_record(run_id), rec)
+            except Exception as exc:                              # noqa: BLE001
+                say(f"RECONCILE_FAILED {type(exc).__name__}: {exc}")
+                rec["reconciliation_error"] = f"{type(exc).__name__}: {exc}"[:300]
+                write_json_atomic(rt.run_record(run_id), rec)
             s = LO.settle_run(io, rt, role, run_id, u_final, "SUPERVISOR_FINAL")
         except OpsRefusal as exc:
             # the EXACT final CPU is already persisted in the run record; the next

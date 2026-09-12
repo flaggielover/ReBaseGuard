@@ -37,10 +37,26 @@ HELPERS = '''def drain_pending(task: dict) -> bool:
     return bool(f) and Path(f).exists()
 
 
-def _seal_cell(ev: Path, s: int, result: dict) -> None:
-    """THE durability point: written atomically the instant cell s is scientifically
-    complete and verified, independent of every sibling cell in the scheduling group."""
-    atomic_write(ev / f"cell_done_{s:04d}.json", canonical(result))
+MARKER_SCHEMA = "rebaseguard.p5y.k1.ps1.cell-done-marker.v1"
+
+
+def _seal_cell(ev: Path, s: int, result: dict, task: dict) -> None:
+    """THE durability point. A write-ahead completion fact.
+
+    All scientific evidence for cell s is already flushed+fsynced above. atomic_write then
+    writes the marker to a .tmp- name, fsyncs its contents, atomically renames it to the
+    final cell_done_XXXX.json and fsyncs the containing directory -- so only a complete,
+    durable marker can ever carry the final name. A truncated or .tmp- file never qualifies.
+
+    The marker BINDS identity so it can never be replayed across runs: schema, cell, task,
+    launcher pid (the supervisor matches this against its own child pid), evidence hashes
+    and the scientific content hash."""
+    m = dict(result)
+    m.update({"marker_schema": MARKER_SCHEMA, "cell_id": s,
+              "task_id": task.get("task_id"), "launcher_pid": task.get("launcher_pid"),
+              "run_id": task.get("run_id"), "evidence_dir": str(ev),
+              "completed_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())})
+    atomic_write(ev / f"cell_done_{s:04d}.json", canonical(m))
 
 
 ''' + ANCHOR
@@ -159,7 +175,7 @@ NEW = '''        for s in cells:
                                             (("t3", f"t3_{s:04d}.json"), ("t4", f"t4_{s:04d}.json"), ("t5", f"t5_{s:04d}.json"),
                                              ("patches_gz", f"patches_{s:04d}.jsonl.gz"))},
                                "cpu_seconds": cpu[s], "precision_bits": FROZEN_BITS}
-            _seal_cell(ev, s, results[str(s)])
+            _seal_cell(ev, s, results[str(s)], task)
 '''
 
 SYNTH_OLD = '            res = synthetic_spin(task) if task.get("kind") == "SYNTHETIC_SPIN" else run_group(task)\n'
@@ -200,7 +216,7 @@ SYNTH_FN = '''def synthetic_cellseq(task: dict) -> dict:
              "evidence": {"t5": {"path": "SYNTHETIC_CONTROL_NOT_SCIENCE",
                                  "sha256": hashlib.sha256(f"SYN-EV:{s}".encode()).hexdigest()}}}
         results[str(s)] = r
-        _seal_cell(ev, s, r)
+        _seal_cell(ev, s, r, task)
     sealed = {k: v for k, v in results.items() if k.isdigit()}
     return {"ok": all(v["ok"] for v in sealed.values()), "results": sealed, "synthetic": True,
             "finalized_cells": sorted(int(k) for k in sealed),
