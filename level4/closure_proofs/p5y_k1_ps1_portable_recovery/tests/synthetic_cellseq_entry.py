@@ -19,9 +19,11 @@ from pathlib import Path
 
 ADAPTER = Path(__file__).resolve().parents[1]
 OPS = ADAPTER / "ops"
+# ONLY the recovery ops dir. It carries every module: opscommon/locks/produce_entry/
+# runtime_state byte-identical from the frozen adapter, plus the GENERATED ledger_ops
+# (GRACEFUL_DRAIN) and supervisor (marker reconciliation). Adding the frozen adapter path
+# here would shadow those and silently restore the frozen tear taxonomy.
 sys.path.insert(0, str(OPS))
-sys.path.insert(0, str(Path("/home/ubuntu/work/ReBaseGuard-ps1-ops/level4/closure_proofs/"
-                            "p5y_k1_ps1_lifecycle_adapter/ops")))
 from opscommon import host_spec, load_contract, prod_ns          # noqa: E402
 import ledger_ops as LO                                          # noqa: E402
 import produce_entry as PE                                       # noqa: E402

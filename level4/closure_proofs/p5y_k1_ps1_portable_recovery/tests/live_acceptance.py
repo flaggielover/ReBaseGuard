@@ -21,9 +21,8 @@ from pathlib import Path
 NS = Path(__file__).resolve().parents[1]
 FROZEN_OPS = Path("/home/ubuntu/work/ReBaseGuard-ps1-ops/level4/closure_proofs/"
                   "p5y_k1_ps1_lifecycle_adapter")
-sys.path.insert(0, str(NS / "ops"))
-sys.path.insert(0, str(FROZEN_OPS / "ops"))
 sys.path.insert(0, str(NS / "driver"))
+sys.path.insert(0, str(NS / "ops"))      # recovery ops FIRST: never shadow generated modules
 import opscommon as OC                                            # noqa: E402
 import runtime_state as RS                                        # noqa: E402
 import ps1_checkpoint as CK                                       # noqa: E402
