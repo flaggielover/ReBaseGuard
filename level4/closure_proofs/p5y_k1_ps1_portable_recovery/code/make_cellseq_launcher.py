@@ -53,6 +53,8 @@ LOOP_END = "def assemble_production_campaign(pf, host_ledgers) -> dict:"
 
 LOOP_NEW = '''# ------------------------------------------------- the result-bearing loop
 def drain_flag_path(auth, role) -> Path:
+    """Same location prodctl drain writes: <work_dir>/DRAIN, where work_dir is whatever the
+    running campaign was actually configured with (the synthetic hook rewrites it)."""
     return Path(auth["hosts"][role]["work_dir"]) / "DRAIN"
 
 
@@ -79,13 +81,16 @@ def _seal_one(pf, cell, task, r, ah, adapter):
     return actual, sealed
 
 
-def _reap_markers(pf, inflight, tasks, done, ah, adapter) -> bool:
+def _reap_markers(pf, inflight, tasks, done, ah, adapter):
     """Consume every durable per-cell marker that has appeared. THE durability boundary.
 
-    A sealed cell is committed immediately and can never be rolled back because a sibling
-    in its scheduling group later tears."""
+    A sealed cell is committed immediately and can never be rolled back because a sibling in
+    its scheduling group later tears. This helper NEVER calls budget.release(): the frozen
+    OpsBudget classifies a tear by the exact source line AND by the calling frame being
+    run_production_cells, so every release must stay lexically in that function. Malformed
+    cells are returned for the caller to release."""
     budget = pf["budget"]
-    progressed = False
+    sealed_now, malformed = [], []
     for cell in sorted(inflight):
         task = tasks.get(cell)
         if task is None:
@@ -93,20 +98,18 @@ def _reap_markers(pf, inflight, tasks, done, ah, adapter) -> bool:
         marker = Path(task["evidence_dir"]) / f"cell_done_{cell:04d}.json"
         if not marker.exists():
             continue
-        key = inflight[cell]
         try:
             r = json.loads(marker.read_text())
         except (OSError, ValueError):
             continue
         if not _verified(r, cell, task):
-            inflight.pop(cell, None)
-            budget.release(key); continue
+            malformed.append(cell)
+            continue
         actual, _sealed = _seal_one(pf, cell, task, r, ah, adapter)
-        budget.commit(key, actual, _sealed)
-        inflight.pop(cell, None)
+        budget.commit(inflight.pop(cell), actual, _sealed)
         done.append(cell)
-        progressed = True
-    return progressed
+        sealed_now.append(cell)
+    return sealed_now, malformed
 
 
 def run_production_cells(pf, *, max_cells=None, poll_timeout=None) -> dict:
@@ -166,7 +169,12 @@ def run_production_cells(pf, *, max_cells=None, poll_timeout=None) -> dict:
                     break
             if not inflight:
                 break
-            progressed = _reap_markers(pf, inflight, tasks, done, ah, adapter)
+            sealed_now, malformed = _reap_markers(pf, inflight, tasks, done, ah, adapter)
+            for cell in malformed:
+                key = inflight.pop(cell)
+                budget.release(key)
+                raise ProductionRefusal(f"cell {cell}: marker failed re-verification from disk")
+            progressed = bool(sealed_now)
             got = pool.poll()
             if got is None:
                 if poll_timeout is not None and not progressed and time.monotonic() - t_idle > poll_timeout:
@@ -181,7 +189,7 @@ def run_production_cells(pf, *, max_cells=None, poll_timeout=None) -> dict:
                 key = inflight.pop(cell, None)
                 if key is None:
                     continue          # already finalized and committed from its marker
-                budget.release(key)   # never reached its boundary: pending/torn, never rolled back
+                budget.release(key); continue
     finally:
         for k in inflight.values():
             budget.release(k)

@@ -79,8 +79,10 @@ def cmd_drain(contract, role, wait_s=0.0) -> dict:
     """Cooperative drain. Deliberately does NOT take the campaign lock: a running campaign
     holds it. Writes the flag the launcher and workers poll at CELL boundaries only."""
     spec = host_spec(contract, role)
-    auth = _auth(spec)
-    work = Path(auth["hosts"][role]["work_dir"])
+    # resolve from the CONTRACT runtime dir, never from the authorization: under a synthetic
+    # contract the authorization still names the genuine work_dir, and a drain must never
+    # touch genuine production state.
+    work = Path(spec["runtime_dir"]) / "work"
     work.mkdir(parents=True, exist_ok=True)
     flag = work / "DRAIN"
     atomic_write(flag, canonical({"requested_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
