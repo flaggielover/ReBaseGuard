@@ -1,0 +1,190 @@
+"""Generate driver/ps1_cellseq_worker.py from the FROZEN ps1_pool_worker.py.
+
+EXECUTION-ONLY transform, as ONE whole-block asserted substitution plus a helper insert.
+If the frozen source drifts by a single byte, the sha256 gate or the verbatim block
+assertion fails and nothing is written.
+
+Every scientific call is reproduced byte-for-byte: S3.cell_inputs, OC.core with identical
+arguments, the identical record dict and canonical serialisation, AG.aggregate, S4.t4,
+S5.obligations, the identical ok-gate and scientific_content_hash.
+
+Why this cannot change science (RESULT Phase A): succ_t3_aggregate.aggregate() strips
+cpu_seconds, peak_rss_kib, cache_hits and cache_misses from every record before
+consumed_records_sha256 / t3_record_sha256 are computed. Those four fields are the ONLY
+values loop order or cache warmth can touch.
+
+Cost: the cross-cell per-patch cache is lost, so each cell pays the cache-builder cost
+(14.98 CPU-h) instead of the grouped 11.96-12.58. Predeclared, not discovered.
+"""
+import hashlib
+import sys
+from pathlib import Path
+
+NS = Path(__file__).resolve().parents[1]
+SRC = Path("/home/ubuntu/work/ReBaseGuard-ps1-prod/level4/closure_proofs/"
+           "p5y_k1_ps1_production/driver/ps1_pool_worker.py")
+FROZEN_SHA = "c5e9e1c35961f18dd17f686a2576ce1f51b698cacffce5e4708a9d4b8cfcd6bb"
+OUT = NS / "driver" / "ps1_cellseq_worker.py"
+
+ANCHOR = "def run_group(task: dict) -> dict:\n"
+HELPERS = '''def drain_pending(task: dict) -> bool:
+    """DRAIN is cooperative and checked ONLY at a cell boundary, never mid-cell. A cell
+    that reaches its boundary under drain is FINALIZED, not torn."""
+    f = task.get("drain_flag")
+    return bool(f) and Path(f).exists()
+
+
+def _seal_cell(ev: Path, s: int, result: dict) -> None:
+    """THE durability point: written atomically the instant cell s is scientifically
+    complete and verified, independent of every sibling cell in the scheduling group."""
+    atomic_write(ev / f"cell_done_{s:04d}.json", canonical(result))
+
+
+''' + ANCHOR
+
+OLD = '''        inp = {}
+        for s in cells:
+            t0 = time.process_time()
+            inp[s] = S3.cell_inputs(s)
+            cpu[s] += time.process_time() - t0
+        files = {s: ev / f"patches_{s:04d}.jsonl" for s in cells}
+        fhs = {s: open(files[s], "w") for s in cells}
+        for (i, j) in live:
+            cache = {}
+            for s in cells:
+                cands, hashes, C, e0, clsha = inp[s]
+                t0 = time.process_time()
+                rec = {"schema": S3.SCHEMA, "successor_cell": s, "successor_cells_sha256": SC.table_sha256(), "patch": [i, j],
+                       "candidate_identity_list_sha256": clsha, "modes": {}}
+                with BP.p1_lagrange_factor():
+                    nodes, geo, st = OC.core(i, j, e0, cands, cand_hashes=hashes, C_gate=C, shared_cache=cache, mode="mid")
+                rec["modes"]["mid"] = {"nodes": nodes, "geo": geo, "cache_hits": st["hits"], "cache_misses": st["misses"]}
+                dt = time.process_time() - t0
+                rec["cpu_seconds"] = dt
+                rec["peak_rss_kib"] = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+                fhs[s].write(json.dumps(rec, sort_keys=True, separators=(",", ":")) + "\\n")
+                cpu[s] += dt
+        for fh in fhs.values():
+            fh.flush()
+            os.fsync(fh.fileno())
+            fh.close()
+        for s in cells:
+            t0 = time.process_time()
+            rec_cell = SC.cell(s)
+            t3 = AG.aggregate(s, [str(files[s])])
+            atomic_write(ev / f"t3_{s:04d}.json", AG.canonical(t3))
+            t4 = S4.t4(t3, rec_cell)
+            atomic_write(ev / f"t4_{s:04d}.json", S4.canonical(t4))
+            evd = {"t3_record_sha256": t3["t3_record_sha256"], "t4_record_sha256": t4["t4_record_sha256"],
+                   "t3_file_sha256": sha256_file(ev / f"t3_{s:04d}.json"), "t4_file_sha256": sha256_file(ev / f"t4_{s:04d}.json"),
+                   "successor_cells_sha256": SC.table_sha256(), "task_id": task["task_id"]}
+            t5 = S5.obligations(t3, t4, evd, rec_cell)
+            atomic_write(ev / f"t5_{s:04d}.json", S5.canonical(t5))
+            gz = ev / f"patches_{s:04d}.jsonl.gz"
+            with open(files[s], "rb") as src, open(gz, "wb") as raw:
+                with gzip.GzipFile(filename="", mode="wb", fileobj=raw, mtime=0, compresslevel=9) as z:
+                    z.write(src.read())
+                raw.flush()
+                os.fsync(raw.fileno())
+            os.unlink(files[s])
+            cpu[s] += time.process_time() - t0
+            ok = bool(t3["T3_PASS"] and t5["status"] == "T5_28_OF_28_PASS" and t5["pass_count"] == 28 and t5["total"] == 28
+                      and t5["obligation_ids_equal_frozen_universe"] and t5["provenance_chain_verified"])
+            sch = hashlib.sha256(canonical({"t3_record_sha256": t3["t3_record_sha256"], "t4_record_sha256": t4["t4_record_sha256"],
+                                            "t5_certificate_hashes": [o["certificate_hash"] for o in t5["obligations"]]})).hexdigest()
+            results[str(s)] = {"cell_id": s, "successor_id": rec_cell["id"], "ok": ok, "T3_PASS": t3["T3_PASS"],
+                               "t5_status": t5["status"], "pass_count": t5["pass_count"], "total": t5["total"],
+                               "B_cover_ratio": t4["B_cover_ratio"], "scientific_content_hash": sch,
+                               "evidence": {k: {"path": str(ev / n), "sha256": sha256_file(ev / n)} for k, n in
+                                            (("t3", f"t3_{s:04d}.json"), ("t4", f"t4_{s:04d}.json"), ("t5", f"t5_{s:04d}.json"),
+                                             ("patches_gz", f"patches_{s:04d}.jsonl.gz"))},
+                               "cpu_seconds": cpu[s], "precision_bits": FROZEN_BITS}
+'''
+
+NEW = '''        for s in cells:
+            if drain_pending(task):
+                results["drained_before_cell"] = s
+                break
+            t0 = time.process_time()
+            cands, hashes, C, e0, clsha = S3.cell_inputs(s)
+            cpu[s] += time.process_time() - t0
+            f_s = ev / f"patches_{s:04d}.jsonl"
+            fh = open(f_s, "w")
+            for (i, j) in live:
+                cache = {}
+                t0 = time.process_time()
+                rec = {"schema": S3.SCHEMA, "successor_cell": s, "successor_cells_sha256": SC.table_sha256(), "patch": [i, j],
+                       "candidate_identity_list_sha256": clsha, "modes": {}}
+                with BP.p1_lagrange_factor():
+                    nodes, geo, st = OC.core(i, j, e0, cands, cand_hashes=hashes, C_gate=C, shared_cache=cache, mode="mid")
+                rec["modes"]["mid"] = {"nodes": nodes, "geo": geo, "cache_hits": st["hits"], "cache_misses": st["misses"]}
+                dt = time.process_time() - t0
+                rec["cpu_seconds"] = dt
+                rec["peak_rss_kib"] = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
+                fh.write(json.dumps(rec, sort_keys=True, separators=(",", ":")) + "\\n")
+                cpu[s] += dt
+            fh.flush()
+            os.fsync(fh.fileno())
+            fh.close()
+            t0 = time.process_time()
+            rec_cell = SC.cell(s)
+            t3 = AG.aggregate(s, [str(f_s)])
+            atomic_write(ev / f"t3_{s:04d}.json", AG.canonical(t3))
+            t4 = S4.t4(t3, rec_cell)
+            atomic_write(ev / f"t4_{s:04d}.json", S4.canonical(t4))
+            evd = {"t3_record_sha256": t3["t3_record_sha256"], "t4_record_sha256": t4["t4_record_sha256"],
+                   "t3_file_sha256": sha256_file(ev / f"t3_{s:04d}.json"), "t4_file_sha256": sha256_file(ev / f"t4_{s:04d}.json"),
+                   "successor_cells_sha256": SC.table_sha256(), "task_id": task["task_id"]}
+            t5 = S5.obligations(t3, t4, evd, rec_cell)
+            atomic_write(ev / f"t5_{s:04d}.json", S5.canonical(t5))
+            gz = ev / f"patches_{s:04d}.jsonl.gz"
+            with open(f_s, "rb") as src, open(gz, "wb") as raw:
+                with gzip.GzipFile(filename="", mode="wb", fileobj=raw, mtime=0, compresslevel=9) as z:
+                    z.write(src.read())
+                raw.flush()
+                os.fsync(raw.fileno())
+            os.unlink(f_s)
+            cpu[s] += time.process_time() - t0
+            ok = bool(t3["T3_PASS"] and t5["status"] == "T5_28_OF_28_PASS" and t5["pass_count"] == 28 and t5["total"] == 28
+                      and t5["obligation_ids_equal_frozen_universe"] and t5["provenance_chain_verified"])
+            sch = hashlib.sha256(canonical({"t3_record_sha256": t3["t3_record_sha256"], "t4_record_sha256": t4["t4_record_sha256"],
+                                            "t5_certificate_hashes": [o["certificate_hash"] for o in t5["obligations"]]})).hexdigest()
+            results[str(s)] = {"cell_id": s, "successor_id": rec_cell["id"], "ok": ok, "T3_PASS": t3["T3_PASS"],
+                               "t5_status": t5["status"], "pass_count": t5["pass_count"], "total": t5["total"],
+                               "B_cover_ratio": t4["B_cover_ratio"], "scientific_content_hash": sch,
+                               "evidence": {k: {"path": str(ev / n), "sha256": sha256_file(ev / n)} for k, n in
+                                            (("t3", f"t3_{s:04d}.json"), ("t4", f"t4_{s:04d}.json"), ("t5", f"t5_{s:04d}.json"),
+                                             ("patches_gz", f"patches_{s:04d}.jsonl.gz"))},
+                               "cpu_seconds": cpu[s], "precision_bits": FROZEN_BITS}
+            _seal_cell(ev, s, results[str(s)])
+'''
+
+OK_OLD = '''    return {"ok": all(r["ok"] for r in results.values()) and len(results) == len(cells), "results": results,
+'''
+OK_NEW = '''    sealed = {k: v for k, v in results.items() if k.isdigit()}
+    return {"ok": all(r["ok"] for r in sealed.values()) and len(sealed) == len(cells), "results": sealed,
+            "finalized_cells": sorted(int(k) for k in sealed), "drained": "drained_before_cell" in results,
+'''
+
+
+def main() -> int:
+    got = hashlib.sha256(SRC.read_bytes()).hexdigest()
+    if got != FROZEN_SHA:
+        raise SystemExit(f"FROZEN EXECUTOR DRIFT: {got} != {FROZEN_SHA}")
+    src = SRC.read_text()
+    for name, blk in (("ANCHOR", ANCHOR), ("OLD", OLD), ("OK_OLD", OK_OLD)):
+        if src.count(blk) != 1:
+            raise SystemExit(f"{name} block not found exactly once ({src.count(blk)})")
+    out = src.replace(ANCHOR, HELPERS, 1).replace(OLD, NEW, 1).replace(OK_OLD, OK_NEW, 1)
+    out = out.replace("patch-outer / cells-inner with one",
+                      "CELLS-OUTER / PATCH-INNER with a per-cell")
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    OUT.write_text(out)
+    print(f"wrote {OUT}")
+    print(f"  frozen source sha256 : {got}")
+    print(f"  generated sha256     : {hashlib.sha256(OUT.read_bytes()).hexdigest()}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
