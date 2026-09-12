@@ -24,7 +24,10 @@ NS = Path(__file__).resolve().parents[1]
 SRC = Path("/home/ubuntu/work/ReBaseGuard-ps1-prod/level4/closure_proofs/"
            "p5y_k1_ps1_production/driver/ps1_pool_worker.py")
 FROZEN_SHA = "c5e9e1c35961f18dd17f686a2576ce1f51b698cacffce5e4708a9d4b8cfcd6bb"
-OUT = NS / "driver" / "ps1_cellseq_worker.py"
+# produce_entry binds the launcher to the PRODUCTION namespace driver dir, so the
+# recovery modules ship there ADDITIVELY. executor_source_identity hashes an explicit
+# 39-file manifest, so new files cannot change EXECUTOR_HASH.
+OUT = Path("/home/ubuntu/work/ReBaseGuard-sr-o9-t1/level4/closure_proofs/p5y_k1_ps1_production/driver") / "ps1_cellseq_worker.py"
 
 ANCHOR = "def run_group(task: dict) -> dict:\n"
 HELPERS = '''def drain_pending(task: dict) -> bool:
