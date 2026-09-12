@@ -92,7 +92,7 @@ converts an earlier `PARTIAL` or `FAIL` into a pass.
 
 | Line | Successors | Recorded outcome |
 |---|---|---|
-| P4 | P4X, P4Y pilots 1-4, P4Z/P4ZA/P4ZB | P4 remains `PARTIAL`; see below |
+| P4 | P4X, P4Y pilots 1-4, P4Z/P4ZA/P4ZB | P4 remains `PARTIAL`; the P4Z line is scientifically complete for its 96-cell obligation with governance adjudication outstanding; see below |
 | P5 | P5X -> P5Y -> O9 -> PS1 | P5 remains `PARTIAL`; PS1 is the current frontier |
 | P6 | P6R -> P6R2 -> P6R2b | Literal-closure repairs within P6's adjudicated scope |
 | P8 | P8R | Temporal-integrity repair lineage, `CLOSED`; P8 remains `FAIL` |
@@ -122,12 +122,34 @@ informative negative results:
   Checkpoint A was frozen and no P4Y production campaign was run.
 - **P4Z / P4ZA / P4ZB**
   ([`p4zb-skewnormal4-k7`](https://github.com/flaggielover/ReBaseGuard/tree/p4zb-skewnormal4-k7))
-  is a later numerical-correspondence line reporting a final scope of 96/96
-  `COVERED_PASS` with 0 `COVERED_FAIL` and 0 `INCONCLUSIVE`, from exactly one
-  authoritative source per cell. Its recorded verdict is
-  `P4Z_NUMERICAL_PASS_AWAITING_FORMAL_OR_GOVERNANCE`.
+  is a later numerical-correspondence line, run in three stages against the
+  unchanged frozen gate. Each stage recorded its own self-verdict:
+  **P4Z** `P4Z_NUMERICAL_PASS_AWAITING_FORMAL_OR_GOVERNANCE` (44/96 cells
+  adjudicated, 52 `INCONCLUSIVE`); **P4ZA** `P4ZA_INCONCLUSIVE` (92/96, 4 cells
+  still open, and the frozen K7 limit explicitly *not* widened to admit them);
+  **P4ZB** `P4ZB_CLOSED` (96/96 `COVERED_PASS`, 0 `COVERED_FAIL`, 0
+  `INCONCLUSIVE`, exactly one authoritative source per cell).
 
-None of these closes P4. The historical `P4 = PARTIAL` verdict on `main` stands.
+  `P4ZB_CLOSED` is the **campaign's own self-recorded verdict**, not an
+  independently accepted closure. Independent read-only assessment of the line
+  currently reads:
+
+  ```text
+  P4Z successor closure   SCIENTIFICALLY_COMPLETE_GOVERNANCE_INCOMPLETE
+  P4 scientific line      CLOSABLE_WITH_REMAINING_OBLIGATIONS
+  ```
+
+  The 96-cell numerical and scientific obligation it targets is complete; final
+  independent governance adjudication is still outstanding. Two items remain
+  open: independent adjudication of the K7 instrument lineage, and a ruling on
+  whether P4X's C4/C5 obligations survive P4X's governance `FAIL`. A disclosed
+  calibration/production RNG address overlap inside P4Z is recorded, with its
+  bounded impact and residual risk, in
+  [`p4zr_rng_provenance_repair`](https://github.com/flaggielover/ReBaseGuard/tree/p4zr-rng-provenance-repair)
+  and also awaits that adjudication.
+
+None of these closes P4. The historical `P4 = PARTIAL` verdict on `main` stands,
+and no successor may replace it retroactively.
 
 ## Governed negative results
 
@@ -283,8 +305,9 @@ observations, and novelty status.
 
 - **P4:** retain the theorem and its surviving evidence; treat P4X as a
   governance failure with no scientific failure, P4Y as a negative feasibility
-  result, and the P4Z line as numerical correspondence awaiting formal or
-  governance adjudication.
+  result, and the P4Z/P4ZA/P4ZB line as numerically and scientifically complete
+  for the 96-cell theorem-supported obligation it targets, with final
+  independent governance adjudication still outstanding.
 - **P5:** retain the exact raw-mean and fixed-policy ergodicity results; treat
   attraction, global cycle uniqueness, bimodality onset, and the dispersion
   optimum at their adjudicated conditional or numerical tiers.

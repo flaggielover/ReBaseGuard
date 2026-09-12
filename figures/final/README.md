@@ -21,7 +21,7 @@ level4/.venv/bin/python scripts/generate_final_figures.py
 | Figure 6 | Reference-state and monitoring consequences | CONFIRMATORY NUMERICAL | Section 7 | `b03ab97296f18c459073b375bee490c28ccf4af3f177a363e61c53a2f7aad2eb` | `c56df4807eca13f41c92a55676976b745685ddff665a61460b45e42a836dee6a` |
 | Figure 7 | Semi-real external-validation synthesis | SEMI-REAL EMPIRICAL | Section 9 | `ec5144012f726b99a30f99fac78e7fbac2c60343006a3f91d66e63169a0b81e9` | `7fbbcdeaccf6d651e58d8732a8775eb0bbe2eac3c4d2fe5ba0bc271dea792ffe` |
 | Figure 8 | Mathematical crossing without detected operational transition | NEGATIVE RESULT | Section 10 | `7365165e23fc0690cbbd8652baf4834416fddd7556d633889687bee4bc642185` | `1bc285d95d638628af582dc9201fb08c9eb195d4fb6135d9b170c716a418402e` |
-| Figure 9 | Level-4 campaign chronology and successor lineage | GOVERNANCE / RECORD SUMMARY | Sections 1 and 11 | `77ceeefc150958ac71154297ed109ef43867bbf76e64a0f6468975cc4872a567` | `da545ac4d288c3397cd0e21e7f82b486681ce55d210a77ad0fbbf141af6b75fe` |
+| Figure 9 | Level-4 campaign chronology and successor lineage | GOVERNANCE / RECORD SUMMARY | Sections 1 and 11 | `9a962a5a60eb958c9cdbcafcc5a24b11728bc57f2d1ed44d59ed5c3576d72acc` | `e10711ced40444f59727919ffcaa51b85594ad99a36c7e3e770e3d1fcd495e04` |
 | Figure 10 | Governed negative results on the P5Y/K1 route to PS1 | NEGATIVE RESULT / GOVERNANCE | Section 11 | `7b65ac99a3e0d9f5e8491cc4c92fcc68700a8efa668a92d2915a098cf7a9eb3d` | `09824a734ca769e076c93bc83d966d08c7ba48641ed260da9a838c25a0fcad6c` |
 | Figure 11 | PS1 partition geometry and certified cover utilisation | CERTIFIED REGIONAL RESULT | Section 11 | `be199dbc68cb29ad1dd72a0e9c603d4cb8c5b3ed937ec5d69084c7bb85ee156d` | `b4a90ce1813c2fd0c362bd5f7068ae2b2b10e6fa30edabed12e49e32492d15c2` |
 | Figure 12 | Evidence hierarchy and claim boundary | INTERPRETATION / CONCEPTUAL DIAGRAM | Sections 2 and 12 | `aba32a7c4c6c5969a3dc87dad71f1fc07c47a442438458bf7e45832ec08f12f9` | `2187ac91c0aaefd4849c2f1cde0db9a6465e6b6e537e10c64e737ef157e19a54` |
@@ -113,7 +113,7 @@ level4/.venv/bin/python scripts/generate_final_figures.py
 
 - **Purpose:** Show the P1-P9 historical verdicts and the successor branches that continue them.
 - **Sources:** `docs/research_synthesis/PS1_CURRENT_STATUS.md`, `level4/final_level4_closure/results/final_decision.json`
-- **Source SHA-256:** `docs/research_synthesis/PS1_CURRENT_STATUS.md` `28787f49a326f4d20ffc144267bc40e09c0a2cc988494a1a452af930453fd676`, `level4/final_level4_closure/results/final_decision.json` `1486f7f8e74c395d4a79da99c5ee81f076dae9bddaa15868119da38993385ac7`
+- **Source SHA-256:** `docs/research_synthesis/PS1_CURRENT_STATUS.md` `36ee02105d02f09f43127496a5e9e7c1b5bcaec5e1e1b8fa71a14b43c66d1713`, `level4/final_level4_closure/results/final_decision.json` `1486f7f8e74c395d4a79da99c5ee81f076dae9bddaa15868119da38993385ac7`
 - **Transformation:** Chronology diagram of committed campaign verdicts and their published successor branches.
 - **Evidence classification:** GOVERNANCE / RECORD SUMMARY
 - **Paper section:** Sections 1 and 11

@@ -744,7 +744,7 @@ def figure09(output: Path) -> dict[str, str]:
         (0.665, "P4", [
             ("P4X", "governance OVERRIDE_FAIL\n0 scientific failures", PINK, "#f3e3e8"),
             ("P4Y pilots 1-4", "measurement NOT_FEASIBLE\nDO_NOT_FREEZE_P4Y", PINK, "#f3e3e8"),
-            ("P4Z / P4ZA / P4ZB", "96/96 COVERED_PASS\nawaiting formal or governance", GOLD, GOLD_LIGHT),
+            ("P4Z / P4ZA / P4ZB", "96/96 COVERED_PASS\ngovernance adjudication outstanding", GOLD, GOLD_LIGHT),
         ]),
         (0.535, "P5", [
             ("P5X", "global dynamics", BLUE, SOFT),

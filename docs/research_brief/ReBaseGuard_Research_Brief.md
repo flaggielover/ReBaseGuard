@@ -154,9 +154,15 @@ integrity: stage-2 top-up sharding executed four unauthorised blocks and
 **P4Y** ran four measurement-architecture pilots and concluded
 `P4Y_MEASUREMENT_FEASIBILITY = NOT_FEASIBLE` with `DO_NOT_FREEZE_P4Y`; no P4Y
 checkpoint was frozen and no P4Y production ran. The later **P4Z/P4ZA/P4ZB**
-line reports 96/96 `COVERED_PASS` and remains
-`P4Z_NUMERICAL_PASS_AWAITING_FORMAL_OR_GOVERNANCE`. None of these closes P4,
-which remains `PARTIAL`.
+line ran in three stages against the unchanged frozen gate, each recording its
+own self-verdict: P4Z `P4Z_NUMERICAL_PASS_AWAITING_FORMAL_OR_GOVERNANCE` (44/96
+adjudicated), P4ZA `P4ZA_INCONCLUSIVE` (92/96, four cells left open rather than
+widening the frozen K7 limit), and P4ZB `P4ZB_CLOSED` (96/96 `COVERED_PASS`).
+`P4ZB_CLOSED` is the campaign's own self-verdict, not an independently accepted
+closure: independent assessment currently reads the line as
+`SCIENTIFICALLY_COMPLETE_GOVERNANCE_INCOMPLETE`, with the P4 scientific line
+`CLOSABLE_WITH_REMAINING_OBLIGATIONS`. None of these closes P4, which remains
+`PARTIAL`.
 
 ## 9. O9 certification architecture and governed negative results
 
@@ -259,8 +265,10 @@ checklist outcome, not an external academic standard.
 Run the declared 369-cell PS1 campaign under its frozen cap, submit the result
 to independent adjudication, and only then consider the SR side of K1. K1
 closure, the remaining K2-K5 work, and P5Y closure follow in that order. The P4
-line needs formal or governance adjudication of the P4Z numerical result. None
-of these steps is anticipated by the present snapshot.
+line needs independent governance adjudication of the P4Z/P4ZA/P4ZB result: the
+K7 instrument lineage, the status of P4X's C4/C5 obligations under P4X's
+governance `FAIL`, and a disclosed calibration/production RNG address overlap
+inside P4Z. None of these steps is anticipated by the present snapshot.
 
 ## 16. Reproducibility and repository
 
