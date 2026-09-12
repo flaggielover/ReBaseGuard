@@ -138,6 +138,76 @@ FIGURES = [
         "paper_section": "Section 10",
         "limitation": "Negative answer is limited to the frozen Gaussian CUSUM protocol, grid, shifts, and metrics.",
     },
+    {
+        "id": "Figure 9",
+        "slug": "figure09_campaign_lineage",
+        "title": "Level-4 campaign chronology and successor lineage",
+        "purpose": "Show the P1-P9 historical verdicts and the successor branches that continue them.",
+        "sources": [
+            "docs/research_synthesis/PS1_CURRENT_STATUS.md",
+            "level4/final_level4_closure/results/final_decision.json",
+        ],
+        "transformation": "Chronology diagram of committed campaign verdicts and their published successor branches.",
+        "evidence": "GOVERNANCE / RECORD SUMMARY",
+        "paper_section": "Sections 1 and 11",
+        "limitation": "Summarises recorded verdicts; supersession never changes an earlier campaign's status. The P4 successor line is published on historical research branches rather than main.",
+    },
+    {
+        "id": "Figure 10",
+        "slug": "figure10_o9_negative_lineage",
+        "title": "Governed negative results on the P5Y/K1 route to PS1",
+        "purpose": "Show that four falsified routes constrained the design space before the PS1 partition.",
+        "sources": [
+            "level4/closure_proofs/p5y_k1_sr_o9_curvature_successor/config/CURVATURE_SUCCESSOR_RECORD.json",
+            "level4/closure_proofs/p5y_k1_sr_o9_partition_successor/config/PS1_ROUND_RECORD.json",
+        ],
+        "transformation": "Decision diagram of recorded O9 stage classifications and the additive successor they motivated.",
+        "evidence": "NEGATIVE RESULT / GOVERNANCE",
+        "paper_section": "Section 11",
+        "limitation": "Each negative classification is scope-bound to its own successor; none is a closure result.",
+    },
+    {
+        "id": "Figure 11",
+        "slug": "figure11_ps1_partition_geometry",
+        "title": "PS1 partition geometry and certified cover utilisation",
+        "purpose": "Contrast the failed old-313 cover ratios with the certified PS1 successor and control cells.",
+        "sources": [
+            "level4/closure_proofs/p5y_k1_sr_o9_t345_successor/config/T345_RECORD.json",
+            "level4/closure_proofs/p5y_k1_sr_o9_partition_successor/config/PS1_ROUND_RECORD.json",
+        ],
+        "transformation": "Direct plot of recorded B_cover ratios against the frozen ratio limit of one.",
+        "evidence": "CERTIFIED REGIONAL RESULT",
+        "paper_section": "Section 11",
+        "limitation": "Seven certified cells only; the full 369-cell campaign has not been run.",
+    },
+    {
+        "id": "Figure 12",
+        "slug": "figure12_evidence_hierarchy",
+        "title": "Evidence hierarchy and claim boundary",
+        "purpose": "Rank the evidence tiers the repository keeps distinct and mark what each cannot support.",
+        "sources": [
+            "docs/research_synthesis/EVIDENCE_HIERARCHY.md",
+            "docs/research_synthesis/CLAIM_CATALOG.md",
+        ],
+        "transformation": "Tier diagram of the frozen evidence vocabulary and its recorded claim boundaries.",
+        "evidence": "INTERPRETATION / CONCEPTUAL DIAGRAM",
+        "paper_section": "Sections 2 and 12",
+        "limitation": "Ordering is an evidential convention of this repository, not an external standard.",
+    },
+    {
+        "id": "Figure 13",
+        "slug": "figure13_ps1_current_boundary",
+        "title": "Current PS1 boundary and remaining scientific steps",
+        "purpose": "Separate what PS1 has authorized from what has not been run or closed.",
+        "sources": [
+            "level4/closure_proofs/p5y_k1_ps1_production/config/PS1_CONSTANTS.json",
+            "level4/closure_proofs/p5y_k1_ps1_production/config/LAUNCH_AUTHORIZATION.json",
+        ],
+        "transformation": "Roadmap diagram of the recorded authorization state, cost cap, and unclosed downstream steps.",
+        "evidence": "GOVERNANCE / RECORD SUMMARY",
+        "paper_section": "Section 11",
+        "limitation": "Authorization is not a result; genuine production cells remain zero in this snapshot.",
+    },
 ]
 
 
@@ -618,11 +688,450 @@ def figure08(output: Path) -> dict[str, str]:
     return save_figure(fig, output, FIGURES[7]["slug"])
 
 
+def chip(ax, xy, width, height, label, status, *, face=SOFT, edge=BLUE,
+         label_size=10.0, status_size=8.4):
+    """Small campaign chip: bold identifier over a recorded status word."""
+    ax.add_patch(
+        FancyBboxPatch(
+            xy, width, height,
+            boxstyle="round,pad=0.005,rounding_size=0.016",
+            linewidth=1.5, edgecolor=edge, facecolor=face,
+        )
+    )
+    ax.text(xy[0] + width / 2, xy[1] + height * 0.63, label, ha="center",
+            va="center", fontsize=label_size, fontweight="bold")
+    ax.text(xy[0] + width / 2, xy[1] + height * 0.25, status, ha="center",
+            va="center", fontsize=status_size, color=MUTED)
+
+
+def _verdict_style(status: str) -> tuple[str, str]:
+    if status.startswith("FAIL"):
+        return "#f3e3e8", PINK
+    if status.startswith("PARTIAL"):
+        return GOLD_LIGHT, GOLD
+    return BLUE_LIGHT, BLUE
+
+
+def figure09(output: Path) -> dict[str, str]:
+    fig, ax = plt.subplots(figsize=(13.4, 7.4))
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.axis("off")
+    fig.suptitle("Level-4 campaign chronology and successor lineage",
+                 fontsize=16, fontweight="bold", y=0.985)
+    subtitle(fig, "A successor continues a research line; it never changes the earlier campaign's recorded verdict")
+
+    campaigns = [
+        ("P1", "CLOSED"), ("P2", "CLOSED"), ("P3", "CLOSED"), ("P4", "PARTIAL"),
+        ("P5", "PARTIAL"), ("P6", "CLOSED"), ("P7", "CLOSED"), ("P8", "FAIL"),
+        ("P9", "PARTIAL"),
+    ]
+    ax.text(0.012, 0.945, "HISTORICAL VERDICTS  (immutable, recorded on main)",
+            fontsize=9.6, fontweight="bold", color=INK)
+    width, gap = 0.0935, 0.0175
+    positions: dict[str, float] = {}
+    for index, (name, status) in enumerate(campaigns):
+        x = 0.012 + index * (width + gap)
+        positions[name] = x + width / 2
+        face, edge = _verdict_style(status)
+        chip(ax, (x, 0.828), width, 0.090, name, status, face=face, edge=edge)
+
+    ax.plot([0.012, 0.988], [0.795, 0.795], color=GRID, linewidth=1.0)
+    ax.text(0.012, 0.768, "SUCCESSOR RESEARCH LINES  (additive; none closes its parent)",
+            fontsize=9.6, fontweight="bold", color=INK)
+
+    lanes = [
+        (0.665, "P4", [
+            ("P4X", "governance OVERRIDE_FAIL\n0 scientific failures", PINK, "#f3e3e8"),
+            ("P4Y pilots 1-4", "measurement NOT_FEASIBLE\nDO_NOT_FREEZE_P4Y", PINK, "#f3e3e8"),
+            ("P4Z / P4ZA / P4ZB", "96/96 COVERED_PASS\nawaiting formal or governance", GOLD, GOLD_LIGHT),
+        ]),
+        (0.535, "P5", [
+            ("P5X", "global dynamics", BLUE, SOFT),
+            ("P5Y", "K1 programme", BLUE, SOFT),
+            ("O9", "SR executor\nT1-T5", BLUE, SOFT),
+            ("PS1", "partition successor\nauthorized, 0 cells", GOLD, GOLD_LIGHT),
+        ]),
+        (0.405, "P6", [
+            ("P6R", "confirmation", BLUE, SOFT),
+            ("P6R2", "literal repair", BLUE, SOFT),
+            ("P6R2b", "CRN identity", BLUE, SOFT),
+        ]),
+        (0.290, "P8", [("P8R", "temporal-integrity repair  ->  CLOSED", BLUE, SOFT)]),
+        (0.175, "P9", [("P9R", "synthesis repair  ->  CLOSED", BLUE, SOFT)]),
+    ]
+    sx, sw, sgap = 0.108, 0.202, 0.026
+    for y, parent, steps in lanes:
+        face_p, edge_p = _verdict_style(dict(campaigns)[parent])
+        chip(ax, (0.012, y - 0.008), 0.082, 0.082, parent,
+             dict(campaigns)[parent], face=face_p, edge=edge_p,
+             label_size=9.6, status_size=7.4)
+        arrow(ax, (0.094, y + 0.033), (sx, y + 0.033), color=MUTED)
+        for index, (name, note_text, edge, face) in enumerate(steps):
+            x = sx + index * (sw + sgap)
+            chip(ax, (x, y - 0.008), sw, 0.082, name, note_text, face=face,
+                 edge=edge, label_size=9.8, status_size=7.6)
+            if index:
+                arrow(ax, (x - sgap, y + 0.033), (x, y + 0.033), color=MUTED)
+
+    ax.add_patch(
+        FancyBboxPatch(
+            (0.012, 0.022), 0.976, 0.092,
+            boxstyle="round,pad=0.010,rounding_size=0.018",
+            linewidth=1.6, edgecolor=GOLD, facecolor=GOLD_LIGHT,
+        )
+    )
+    ax.text(0.5, 0.088, "CURRENT FRONTIER", ha="center", va="center",
+            fontsize=9.4, fontweight="bold", color=INK)
+    ax.text(
+        0.5, 0.048,
+        "PS1 production authorization CLOSED  ·  genuine production cells = 0  ·  "
+        "369-cell campaign NOT RUN  ·  K1, P5Y and Level-4 global closure remain open",
+        ha="center", va="center", fontsize=9.0, color=INK,
+    )
+    note(fig, "The P4 successor line is published on the historical research branches p4x-feasibility-audit, "
+              "p4y-prefreeze-pilot, p4y-pilot2-final, p4y-pilot3-heavy-stage1, p4y-pilot4-measurement and "
+              "p4zb-skewnormal4-k7. Statuses are internal, scope-bound research designations.")
+    return save_figure(fig, output, FIGURES[8]["slug"])
+
+
+def figure10(output: Path) -> dict[str, str]:
+    curvature = load_json(
+        "level4/closure_proofs/p5y_k1_sr_o9_curvature_successor/config/"
+        "CURVATURE_SUCCESSOR_RECORD.json"
+    )
+    partition = load_json(
+        "level4/closure_proofs/p5y_k1_sr_o9_partition_successor/config/"
+        "PS1_ROUND_RECORD.json"
+    )
+    rule = partition["rules_projection"]["RHO_CAP_1/25"]
+
+    fig, ax = plt.subplots(figsize=(13, 6.2))
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.axis("off")
+    fig.suptitle("Governed negative results on the P5Y/K1 route to PS1",
+                 fontsize=16, fontweight="bold", y=0.985)
+    subtitle(fig, "Four recorded falsifications constrained the design space before the additive partition was declared")
+
+    draw_box(ax, (0.015, 0.545), 0.20, 0.235, "O9 executor",
+             "T1 candidates -> T2 per-patch\n-> T3 cell -> T4 curvature\n-> T5 one-cell / regional",
+             face=BLUE_LIGHT, edge=BLUE)
+    ax.text(0.115, 0.492, "old cell 313 obstruction", ha="center", fontsize=8.6,
+            color=MUTED)
+
+    routes = [
+        (0.775, "Curvature successor", "NOT_CLOSING", "kill cases failed at m = 2, 3, 5"),
+        (0.560, "Operator-norm tightening", "INSUFFICIENT", "tighter certified norms did not close"),
+        (0.345, "Aux3 third derivative", "FEASIBILITY_FAIL", "augmentation not feasible as governed"),
+        (0.130, "Endpoint analytic route", "NOT_CLOSING", "strip successor left the B_int line open"),
+    ]
+    for y, title, verdict, detail in routes:
+        ax.add_patch(
+            FancyBboxPatch(
+                (0.275, y - 0.048), 0.335, 0.145,
+                boxstyle="round,pad=0.012,rounding_size=0.02",
+                linewidth=1.6, edgecolor=PINK, facecolor="#f3e3e8",
+            )
+        )
+        ax.text(0.4425, y + 0.062, title, ha="center", va="center",
+                fontsize=10.2, fontweight="bold")
+        ax.text(0.4425, y + 0.026, verdict, ha="center", va="center",
+                fontsize=9.4, fontweight="bold", color=PINK)
+        ax.text(0.4425, y - 0.011, detail, ha="center", va="center",
+                fontsize=8.2, color=MUTED)
+        arrow(ax, (0.215, 0.60), (0.275, y + 0.028), color=PINK,
+              connectionstyle="arc3,rad=-0.12")
+
+    draw_box(
+        ax, (0.675, 0.400), 0.310, 0.300, "PS1 partition successor",
+        f"predeclared additive campaign\n"
+        f"rule RHO_CAP 1/25 (geometry only)\n"
+        f"{rule['successor_cells']} cells  ·  {rule['refined_parents']} parents refined\n"
+        f"old-313 -> {rule['children_of_313']} successor cells",
+        face=BLUE_LIGHT, edge=BLUE,
+    )
+    for y, *_ in routes:
+        arrow(ax, (0.610, y + 0.028), (0.675, 0.545), color=MUTED,
+              connectionstyle="arc3,rad=0.10")
+
+    ax.text(0.830, 0.345, "declared before any successor result", ha="center",
+            fontsize=8.6, color=MUTED, style="italic")
+    ax.add_patch(
+        FancyBboxPatch(
+            (0.675, 0.095), 0.310, 0.195,
+            boxstyle="round,pad=0.012,rounding_size=0.02",
+            linewidth=1.5, edgecolor=GOLD, facecolor=GOLD_LIGHT,
+        )
+    )
+    ax.text(0.830, 0.240, "Not claimed by this successor", ha="center",
+            fontsize=9.4, fontweight="bold")
+    ax.text(0.830, 0.160, "\n".join(partition["not_claimed"]), ha="center",
+            va="center", fontsize=8.4, color=INK, linespacing=1.5)
+
+    note(fig, f"Curvature phase-7 record: {curvature['phase7_six_cell_validation']}. "
+              "Negative results are retained as evidence, not removed.")
+    return save_figure(fig, output, FIGURES[9]["slug"])
+
+
+def figure11(output: Path) -> dict[str, str]:
+    t345 = load_json(
+        "level4/closure_proofs/p5y_k1_sr_o9_t345_successor/config/T345_RECORD.json"
+    )
+    partition = load_json(
+        "level4/closure_proofs/p5y_k1_sr_o9_partition_successor/config/"
+        "PS1_ROUND_RECORD.json"
+    )
+    old = t345["cells"]["313"]["B_cover_ratio"]
+    region = partition["certified_313_region"]["cells"]
+    controls = partition["controls"]
+    rule = partition["rules_projection"]["RHO_CAP_1/25"]
+    m_values = ["1", "2", "3", "5"]
+
+    fig = plt.figure(figsize=(13, 6.1))
+    grid = fig.add_gridspec(1, 2, width_ratios=[1.0, 1.45], wspace=0.20,
+                            top=0.855, bottom=0.225, left=0.045, right=0.985)
+    fig.suptitle("PS1 partition geometry and certified cover utilisation",
+                 fontsize=16, fontweight="bold", y=0.985)
+    subtitle(fig, "The old-313 region failed its cover gate; the four declared successor cells certify with headroom")
+
+    ax = fig.add_subplot(grid[0, 0])
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.axis("off")
+    panel_label(ax, "A")
+    ax.text(0.5, 0.945, "Declared SR cover over $[0,\\,c_{SR}]$", ha="center",
+            fontsize=10.4, fontweight="bold")
+
+    ax.text(0.02, 0.80, "frozen campaign — 316 cells", fontsize=9.0, color=MUTED)
+    for index in range(26):
+        x = 0.02 + index * 0.0373
+        failed = index == 17
+        ax.add_patch(
+            Rectangle((x, 0.66), 0.0335, 0.085,
+                      facecolor="#f3e3e8" if failed else SOFT,
+                      edgecolor=PINK if failed else GRID,
+                      linewidth=1.5 if failed else 0.8)
+        )
+    ax.annotate("cell 313\nB_cover gate FAIL", xy=(0.652, 0.655), xytext=(0.72, 0.50),
+                fontsize=8.4, color=PINK, ha="center",
+                arrowprops=dict(arrowstyle="-|>", color=PINK, linewidth=1.3))
+
+    ax.text(0.02, 0.34, f"PS1 successor campaign — {rule['successor_cells']} cells",
+            fontsize=9.0, color=MUTED)
+    for index in range(26):
+        x = 0.02 + index * 0.0373
+        if index == 17:
+            for k in range(4):
+                ax.add_patch(
+                    Rectangle((x + k * 0.0084, 0.20), 0.0074, 0.085,
+                              facecolor=BLUE_LIGHT, edgecolor=BLUE, linewidth=1.2)
+                )
+        else:
+            ax.add_patch(
+                Rectangle((x, 0.20), 0.0335, 0.085, facecolor=SOFT,
+                          edgecolor=GRID, linewidth=0.8)
+            )
+    ax.annotate(f"old-313 -> {rule['children_of_313']} successor cells",
+                xy=(0.652, 0.195), xytext=(0.66, 0.075), fontsize=8.4, color=BLUE,
+                ha="center",
+                arrowprops=dict(arrowstyle="-|>", color=BLUE, linewidth=1.3))
+    ax.text(0.02, 0.075, f"{rule['refined_parents']} parents\nrefined in total",
+            fontsize=8.4, color=MUTED, va="center")
+    ax.text(0.5, 0.015, "union of successor cells $=[0,\\,c_{SR}]$ exactly",
+            ha="center", fontsize=8.6, color=MUTED, style="italic")
+
+    ax = fig.add_subplot(grid[0, 1])
+    style_axis(ax)
+    panel_label(ax, "B")
+    ax.set_yscale("log")
+    ax.axhline(1.0, color=PINK, linewidth=1.5, linestyle="--")
+    ax.text(0.012, 1.25, "frozen cover limit = 1", transform=ax.get_yaxis_transform(),
+            fontsize=8.6, color=PINK, fontweight="bold")
+
+    series = [("old cell 313\n(frozen campaign)", old, PINK, "o", "none")]
+    for cell in region:
+        series.append((f"PS1 {cell['successor_cell']}\n{cell['t5_status'].replace('_', ' ').lower()}",
+                       cell["B_cover_ratio"], BLUE, "s", BLUE_LIGHT))
+    for parent in ("150", "275", "315"):
+        series.append((f"control\nparent {parent}",
+                       controls[parent]["cells"][0]["B_cover_ratio"], OLIVE, "^", "none"))
+
+    offsets = np.linspace(-0.26, 0.26, len(series))
+    for (label, ratios, color, marker, face), offset in zip(series, offsets):
+        xs = np.arange(len(m_values)) + offset
+        ys = [ratios[m] for m in m_values]
+        ax.plot(xs, ys, linestyle="none", marker=marker, markersize=7.0,
+                markeredgecolor=color, markerfacecolor=face, markeredgewidth=1.4,
+                label=label)
+    ax.set_xticks(range(len(m_values)))
+    ax.set_xticklabels([f"$m={m}$" for m in m_values])
+    ax.set_ylabel("recorded $B_{\\mathrm{cover}}$ ratio (log scale)")
+    legend = ax.legend(fontsize=7.2, ncol=4, loc="upper center",
+                       bbox_to_anchor=(0.5, -0.085), frameon=True,
+                       handletextpad=0.5, columnspacing=1.4, labelspacing=0.6)
+    legend.get_frame().set_facecolor(PAPER)
+    legend.get_frame().set_edgecolor(GRID)
+    legend.get_frame().set_linewidth(0.8)
+    ax.set_ylim(3e-3, 2e4)
+
+    note(fig, "Values are recorded B_cover ratios from the frozen T3/T4/T5 record and the PS1 round record. "
+              "Seven certified cells only; the 369-cell campaign has not been run.")
+    return save_figure(fig, output, FIGURES[10]["slug"])
+
+
+def figure12(output: Path) -> dict[str, str]:
+    fig, ax = plt.subplots(figsize=(12.6, 6.4))
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.axis("off")
+    fig.suptitle("Evidence hierarchy and claim boundary", fontsize=16,
+                 fontweight="bold", y=0.985)
+    subtitle(fig, "Each tier is kept separate; a lower tier never inherits the authority of a higher one")
+
+    tiers = [
+        ("HUMAN THEOREM", "Explicit assumptions and the model bridge", BLUE_LIGHT, BLUE,
+         "Not machine-checked end to end"),
+        ("LEAN-CHECKED", "Compiled formal spine on an audited axiom baseline", BLUE_LIGHT, BLUE,
+         "Proves only its encoded statement"),
+        ("ARB-CERTIFIED", "Outward-rounded rigorous interval enclosures", BLUE_LIGHT, BLUE,
+         "Certifies values, not differentiation"),
+        ("CONFIRMATORY NUMERICAL", "Frozen simulation and Monte Carlo correspondence", GOLD_LIGHT, GOLD,
+         "Evidence, never proof"),
+        ("SEMI-REAL EMPIRICAL", "Public sequential streams under frozen task protocols", GOLD_LIGHT, GOLD,
+         "Not production validation"),
+        ("NEGATIVE RESULT", "A pre-specified hypothesis falsified under an adequate design", "#f3e3e8", PINK,
+         "Scope-bound; not a no-effect law"),
+        ("GOVERNANCE / TEMPORAL INTEGRITY", "Pre-result anchors, immutability and audit records", SOFT, MUTED,
+         "Process evidence, not a theorem"),
+    ]
+    top, height, gap = 0.868, 0.086, 0.024
+    for index, (label, meaning, face, edge, boundary) in enumerate(tiers):
+        y = top - index * (height + gap)
+        ax.add_patch(
+            FancyBboxPatch(
+                (0.035, y), 0.545, height,
+                boxstyle="round,pad=0.008,rounding_size=0.018",
+                linewidth=1.6, edgecolor=edge, facecolor=face,
+            )
+        )
+        ax.text(0.052, y + height * 0.63, label, fontsize=9.8, fontweight="bold",
+                va="center")
+        ax.text(0.052, y + height * 0.24, meaning, fontsize=8.3, color=MUTED,
+                va="center")
+        ax.text(0.605, y + height * 0.5, "cannot support:", fontsize=7.8,
+                color=MUTED, va="center", style="italic")
+        ax.text(0.705, y + height * 0.5, boundary, fontsize=8.4, color=INK,
+                va="center")
+
+    ax.text(0.0125, 0.50, "decreasing formal authority", rotation=90, fontsize=8.8,
+            color=MUTED, va="center", ha="center")
+    ax.annotate("", xy=(0.026, 0.145), xytext=(0.026, 0.905),
+                arrowprops=dict(arrowstyle="-|>", color=MUTED, linewidth=1.3))
+
+    ax.add_patch(
+        FancyBboxPatch(
+            (0.035, 0.020), 0.930, 0.078,
+            boxstyle="round,pad=0.008,rounding_size=0.018",
+            linewidth=1.5, edgecolor=GOLD, facecolor=GOLD_LIGHT,
+        )
+    )
+    ax.text(0.5, 0.059,
+            "Standing boundary: results are local and deterministic for frozen CUSUM\n"
+            "and one symmetric two-chart SR model. They are neither detector-general nor distribution-general.",
+            ha="center", va="center", fontsize=8.8, linespacing=1.5)
+    note(fig, "Labels follow docs/research_synthesis/EVIDENCE_HIERARCHY.md. They are internal conventions, not an external standard.")
+    return save_figure(fig, output, FIGURES[11]["slug"])
+
+
+def figure13(output: Path) -> dict[str, str]:
+    constants = load_json(
+        "level4/closure_proofs/p5y_k1_ps1_production/config/PS1_CONSTANTS.json"
+    )
+    authorization = load_json(
+        "level4/closure_proofs/p5y_k1_ps1_production/config/LAUNCH_AUTHORIZATION.json"
+    )
+    derivation = constants["derivation"]
+    cap = constants["GLOBAL_CPU_CAP"]
+    mean_projection = derivation["measured_mean_projection"]
+
+    fig, ax = plt.subplots(figsize=(13, 6.0))
+    ax.set_xlim(0, 1)
+    ax.set_ylim(0, 1)
+    ax.axis("off")
+    fig.suptitle("Current PS1 boundary and remaining scientific steps",
+                 fontsize=16, fontweight="bold", y=0.985)
+    subtitle(fig, "Authorization to start is a governance state, not a scientific result")
+
+    ax.text(0.020, 0.885, "COMPLETE IN THIS SNAPSHOT", fontsize=9.4,
+            fontweight="bold", color=BLUE)
+    done = [
+        ("Partition successor", "369 cells declared\npre-result anchor"),
+        ("Regional certification", "4 successor cells\n28/28 obligations"),
+        ("Control cells", "parents 150, 275, 315\n28/28 obligations"),
+        ("Cost qualification", f"{mean_projection:,.0f} mean CPU-h\ncap {cap:,.0f} CPU-h"),
+        ("Lifecycle acceptance", f"topology {authorization['topology']}\nadapter frozen"),
+    ]
+    width, gap, x0 = 0.162, 0.038, 0.020
+    for index, (title, body) in enumerate(done):
+        x = x0 + index * (width + gap)
+        draw_box(ax, (x, 0.695), width, 0.165, title, body, face=BLUE_LIGHT, edge=BLUE)
+        if index:
+            arrow(ax, (x - gap + 0.020, 0.7775), (x - 0.016, 0.7775), color=MUTED)
+
+    ax.add_patch(
+        FancyBboxPatch(
+            (0.020, 0.500), 0.960, 0.140,
+            boxstyle="round,pad=0.012,rounding_size=0.02",
+            linewidth=2.0, edgecolor=GOLD, facecolor=GOLD_LIGHT,
+        )
+    )
+    ax.text(0.5, 0.592, "PS1_PRODUCTION_AUTHORIZATION_CLOSED", ha="center",
+            fontsize=12.0, fontweight="bold", color=INK)
+    ax.text(0.5, 0.545,
+            "AWS_GENUINE_PS1_SR_PRODUCTION_AUTHORIZED_TO_START = YES   ·   "
+            "genuine production cells = 0   ·   result_bearing = false",
+            ha="center", fontsize=9.4, color=INK)
+
+    ax.text(0.020, 0.437, "NOT RUN AND NOT CLOSED IN THIS SNAPSHOT", fontsize=9.4,
+            fontweight="bold", color=PINK)
+    pending = [
+        ("Genuine production", "full 369-cell\ncampaign NOT RUN"),
+        ("Independent adjudication", "no successor result\nto adjudicate yet"),
+        ("SR side of K1", "NOT CLOSED"),
+        ("K1", "NOT CLOSED"),
+        ("K2-K5 and P5Y", "NOT CLOSED"),
+    ]
+    for index, (title, body) in enumerate(pending):
+        x = x0 + index * (width + gap)
+        ax.add_patch(
+            FancyBboxPatch(
+                (x, 0.245), width, 0.165,
+                boxstyle="round,pad=0.012,rounding_size=0.02",
+                linewidth=1.6, edgecolor=PINK, facecolor=PAPER, linestyle=(0, (4, 2)),
+            )
+        )
+        ax.text(x + width / 2, 0.245 + 0.165 * 0.66, title, ha="center",
+                va="center", fontsize=10.2, fontweight="bold", color=MUTED)
+        ax.text(x + width / 2, 0.245 + 0.165 * 0.29, body, ha="center",
+                va="center", fontsize=8.4, color=MUTED, linespacing=1.3)
+        if index:
+            arrow(ax, (x - gap + 0.016, 0.3275), (x - 0.012, 0.3275), color=MUTED)
+
+    ax.text(0.5, 0.155, "LEVEL4_GLOBAL_CLOSURE = NO", ha="center",
+            fontsize=11.0, fontweight="bold", color=PINK)
+    ax.text(0.5, 0.095,
+            "The historical P4 = PARTIAL, P5 = PARTIAL, P8 = FAIL and P9 = PARTIAL verdicts are unchanged by PS1.",
+            ha="center", fontsize=9.0, color=MUTED)
+    note(fig, "Cost figures are the requalified projection recorded in PS1_CONSTANTS.json; they are estimates, not measured campaign cost.")
+    return save_figure(fig, output, FIGURES[12]["slug"])
+
+
 def provenance_markdown(manifest: dict) -> str:
     lines = [
         "# Final publication figures",
         "",
-        "These eight figures are presentation-only derivatives of frozen ReBaseGuard evidence.",
+        "These thirteen figures are presentation-only derivatives of frozen ReBaseGuard evidence.",
         "They do not run simulations, download data, or modify scientific artifacts.",
         "",
         "Regenerate with:",
@@ -676,7 +1185,8 @@ def provenance_markdown(manifest: dict) -> str:
 def generate(output: Path) -> dict:
     assert_frozen_state()
     configure_matplotlib()
-    renderers = [figure01, figure02, figure03, figure04, figure05, figure06, figure07, figure08]
+    renderers = [figure01, figure02, figure03, figure04, figure05, figure06, figure07, figure08,
+                 figure09, figure10, figure11, figure12, figure13]
     manifest = {
         "schema": "rebaseguard.final-figures.v1",
         "generator": "scripts/generate_final_figures.py",

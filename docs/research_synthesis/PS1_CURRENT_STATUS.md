@@ -24,8 +24,8 @@ Those results motivated the predeclared additive PS1 partition successor. PS1 de
 
 Authoritative records:
 
-- [PS1 qualification result](../../level4/closure_proofs/p5y_k1_ps1_production_qualification/RESULT.md)
-- [PS1 partition result](../../level4/closure_proofs/p5y_k1_sr_o9_partition_successor/RESULT.md)
-- [PS1 production authorization record](../../level4/closure_proofs/p5y_k1_ps1_production/RESULT.md)
+- [PS1 partition successor result](../../level4/closure_proofs/p5y_k1_sr_o9_partition_successor/RESULT.md)
+- [PS1 cost requalification and production authorization record](../../level4/closure_proofs/p5y_k1_ps1_production_qualification/RESULT.md)
+- [PS1 production namespace (pre-result; ledger empty at freeze)](../../level4/closure_proofs/p5y_k1_ps1_production/README.md)
 
 The production start command is recorded in the authorization result but is intentionally **not run** by this reconciliation.

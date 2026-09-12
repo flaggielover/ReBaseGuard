@@ -1,6 +1,6 @@
 # Final publication figures
 
-These eight figures are presentation-only derivatives of frozen ReBaseGuard evidence.
+These thirteen figures are presentation-only derivatives of frozen ReBaseGuard evidence.
 They do not run simulations, download data, or modify scientific artifacts.
 
 Regenerate with:
@@ -21,6 +21,11 @@ level4/.venv/bin/python scripts/generate_final_figures.py
 | Figure 6 | Reference-state and monitoring consequences | CONFIRMATORY NUMERICAL | Section 7 | `b03ab97296f18c459073b375bee490c28ccf4af3f177a363e61c53a2f7aad2eb` | `c56df4807eca13f41c92a55676976b745685ddff665a61460b45e42a836dee6a` |
 | Figure 7 | Semi-real external-validation synthesis | SEMI-REAL EMPIRICAL | Section 9 | `ec5144012f726b99a30f99fac78e7fbac2c60343006a3f91d66e63169a0b81e9` | `7fbbcdeaccf6d651e58d8732a8775eb0bbe2eac3c4d2fe5ba0bc271dea792ffe` |
 | Figure 8 | Mathematical crossing without detected operational transition | NEGATIVE RESULT | Section 10 | `7365165e23fc0690cbbd8652baf4834416fddd7556d633889687bee4bc642185` | `1bc285d95d638628af582dc9201fb08c9eb195d4fb6135d9b170c716a418402e` |
+| Figure 9 | Level-4 campaign chronology and successor lineage | GOVERNANCE / RECORD SUMMARY | Sections 1 and 11 | `77ceeefc150958ac71154297ed109ef43867bbf76e64a0f6468975cc4872a567` | `da545ac4d288c3397cd0e21e7f82b486681ce55d210a77ad0fbbf141af6b75fe` |
+| Figure 10 | Governed negative results on the P5Y/K1 route to PS1 | NEGATIVE RESULT / GOVERNANCE | Section 11 | `7b65ac99a3e0d9f5e8491cc4c92fcc68700a8efa668a92d2915a098cf7a9eb3d` | `09824a734ca769e076c93bc83d966d08c7ba48641ed260da9a838c25a0fcad6c` |
+| Figure 11 | PS1 partition geometry and certified cover utilisation | CERTIFIED REGIONAL RESULT | Section 11 | `be199dbc68cb29ad1dd72a0e9c603d4cb8c5b3ed937ec5d69084c7bb85ee156d` | `b4a90ce1813c2fd0c362bd5f7068ae2b2b10e6fa30edabed12e49e32492d15c2` |
+| Figure 12 | Evidence hierarchy and claim boundary | INTERPRETATION / CONCEPTUAL DIAGRAM | Sections 2 and 12 | `aba32a7c4c6c5969a3dc87dad71f1fc07c47a442438458bf7e45832ec08f12f9` | `2187ac91c0aaefd4849c2f1cde0db9a6465e6b6e537e10c64e737ef157e19a54` |
+| Figure 13 | Current PS1 boundary and remaining scientific steps | GOVERNANCE / RECORD SUMMARY | Section 11 | `ec5f6a17b43a2ba9eed36a937cb33908541961b6cb3df8cbc7ea6e7e3979f38b` | `d83f01aab98651cbe3acc76ac57604defd9b1f9c31b662c66547398cd1ccf92a` |
 
 ## Figure details
 
@@ -103,6 +108,56 @@ level4/.venv/bin/python scripts/generate_final_figures.py
 - **Evidence classification:** NEGATIVE RESULT
 - **Paper section:** Section 10
 - **Limitation:** Negative answer is limited to the frozen Gaussian CUSUM protocol, grid, shifts, and metrics.
+
+### Figure 9 — Level-4 campaign chronology and successor lineage
+
+- **Purpose:** Show the P1-P9 historical verdicts and the successor branches that continue them.
+- **Sources:** `docs/research_synthesis/PS1_CURRENT_STATUS.md`, `level4/final_level4_closure/results/final_decision.json`
+- **Source SHA-256:** `docs/research_synthesis/PS1_CURRENT_STATUS.md` `28787f49a326f4d20ffc144267bc40e09c0a2cc988494a1a452af930453fd676`, `level4/final_level4_closure/results/final_decision.json` `1486f7f8e74c395d4a79da99c5ee81f076dae9bddaa15868119da38993385ac7`
+- **Transformation:** Chronology diagram of committed campaign verdicts and their published successor branches.
+- **Evidence classification:** GOVERNANCE / RECORD SUMMARY
+- **Paper section:** Sections 1 and 11
+- **Limitation:** Summarises recorded verdicts; supersession never changes an earlier campaign's status. The P4 successor line is published on historical research branches rather than main.
+
+### Figure 10 — Governed negative results on the P5Y/K1 route to PS1
+
+- **Purpose:** Show that four falsified routes constrained the design space before the PS1 partition.
+- **Sources:** `level4/closure_proofs/p5y_k1_sr_o9_curvature_successor/config/CURVATURE_SUCCESSOR_RECORD.json`, `level4/closure_proofs/p5y_k1_sr_o9_partition_successor/config/PS1_ROUND_RECORD.json`
+- **Source SHA-256:** `level4/closure_proofs/p5y_k1_sr_o9_curvature_successor/config/CURVATURE_SUCCESSOR_RECORD.json` `bd5f582d9c8aa88c4db39d66aefb5e672d19f6723d635eedafe95610d35b0a27`, `level4/closure_proofs/p5y_k1_sr_o9_partition_successor/config/PS1_ROUND_RECORD.json` `b6caa3907121f046ac04ed29a9fe8791bc79156bb63f3b2a0c4494a4e174b6f7`
+- **Transformation:** Decision diagram of recorded O9 stage classifications and the additive successor they motivated.
+- **Evidence classification:** NEGATIVE RESULT / GOVERNANCE
+- **Paper section:** Section 11
+- **Limitation:** Each negative classification is scope-bound to its own successor; none is a closure result.
+
+### Figure 11 — PS1 partition geometry and certified cover utilisation
+
+- **Purpose:** Contrast the failed old-313 cover ratios with the certified PS1 successor and control cells.
+- **Sources:** `level4/closure_proofs/p5y_k1_sr_o9_t345_successor/config/T345_RECORD.json`, `level4/closure_proofs/p5y_k1_sr_o9_partition_successor/config/PS1_ROUND_RECORD.json`
+- **Source SHA-256:** `level4/closure_proofs/p5y_k1_sr_o9_t345_successor/config/T345_RECORD.json` `509cf1dd8fe1ec467cf7c5ea26a15b1beefa5436731a66191cdffb6f7ee0fa0b`, `level4/closure_proofs/p5y_k1_sr_o9_partition_successor/config/PS1_ROUND_RECORD.json` `b6caa3907121f046ac04ed29a9fe8791bc79156bb63f3b2a0c4494a4e174b6f7`
+- **Transformation:** Direct plot of recorded B_cover ratios against the frozen ratio limit of one.
+- **Evidence classification:** CERTIFIED REGIONAL RESULT
+- **Paper section:** Section 11
+- **Limitation:** Seven certified cells only; the full 369-cell campaign has not been run.
+
+### Figure 12 — Evidence hierarchy and claim boundary
+
+- **Purpose:** Rank the evidence tiers the repository keeps distinct and mark what each cannot support.
+- **Sources:** `docs/research_synthesis/EVIDENCE_HIERARCHY.md`, `docs/research_synthesis/CLAIM_CATALOG.md`
+- **Source SHA-256:** `docs/research_synthesis/EVIDENCE_HIERARCHY.md` `c38614d621e5b5205b9eb2284c831e942e8d24861cde2c3c94ebd313cbe02fc6`, `docs/research_synthesis/CLAIM_CATALOG.md` `67cf0b937793a06cfd39290b1f2136f3e3716565a5942a865da64adca7f80233`
+- **Transformation:** Tier diagram of the frozen evidence vocabulary and its recorded claim boundaries.
+- **Evidence classification:** INTERPRETATION / CONCEPTUAL DIAGRAM
+- **Paper section:** Sections 2 and 12
+- **Limitation:** Ordering is an evidential convention of this repository, not an external standard.
+
+### Figure 13 — Current PS1 boundary and remaining scientific steps
+
+- **Purpose:** Separate what PS1 has authorized from what has not been run or closed.
+- **Sources:** `level4/closure_proofs/p5y_k1_ps1_production/config/PS1_CONSTANTS.json`, `level4/closure_proofs/p5y_k1_ps1_production/config/LAUNCH_AUTHORIZATION.json`
+- **Source SHA-256:** `level4/closure_proofs/p5y_k1_ps1_production/config/PS1_CONSTANTS.json` `6edb53b1b3a2812d6115c7a958d03ca4a53d5e24bb0453d4caec84315e5a8f8d`, `level4/closure_proofs/p5y_k1_ps1_production/config/LAUNCH_AUTHORIZATION.json` `fc7cb93465916c3a7842066701b0e11fb6799bfdfc7fff55073a3f6e4cfc03ef`
+- **Transformation:** Roadmap diagram of the recorded authorization state, cost cap, and unclosed downstream steps.
+- **Evidence classification:** GOVERNANCE / RECORD SUMMARY
+- **Paper section:** Section 11
+- **Limitation:** Authorization is not a result; genuine production cells remain zero in this snapshot.
 
 ## Visual system
 

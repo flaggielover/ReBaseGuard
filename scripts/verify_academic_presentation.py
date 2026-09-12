@@ -28,7 +28,7 @@ EMAIL = "suzhea0226@gmail.com"
 LEVEL4_TAG_COMMIT = "5e43336264f257c7224b622f8063eb10aad481d6"
 SR_TAG_COMMIT = "b04578810126d3fbc4d938a721481b1e6186b8ce"
 APACHE_2_LICENSE_SHA256 = "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
-BRIEF_PDF_SHA256 = "603ec60d070d18d6f3530bd90064b25d78fe57ed6905176f3586d901eeee92af"
+BRIEF_PDF_SHA256 = "8a28709e67810f62850c897f96c2a973415a3308ebc6df51dd9bf3ad121a9f19"
 ALLOWED_PATHS = {
     "README.md",
     "CITATION.cff",
@@ -40,14 +40,22 @@ ALLOWED_PATHS = {
     "docs/superpowers/specs/2026-08-28-public-facing-documentation-upgrade-design.md",
     "rebaseguard-lean/README.md",
     "scripts/generate_research_brief.py",
+    "scripts/generate_final_figures.py",
     "scripts/verify_academic_presentation.py",
+    "docs/research_synthesis/README.md",
+    "docs/research_synthesis/PS1_CURRENT_STATUS.md",
 }
-ALLOWED_PREFIXES = ("docs/research_brief/",)
+ALLOWED_PREFIXES = ("docs/research_brief/", "figures/final/")
 SELECTED_FIGURES = (
     "figure01_recursive_rebaselining.png",
     "figure02_derivative_instability.png",
     "figure05_p3_policy.png",
     "figure08_negative_crossing.png",
+    "figure09_campaign_lineage.png",
+    "figure10_o9_negative_lineage.png",
+    "figure11_ps1_partition_geometry.png",
+    "figure12_evidence_hierarchy.png",
+    "figure13_ps1_current_boundary.png",
 )
 FORBIDDEN_ASSERTIONS = (
     r"\b(first-ever|unprecedented|globally novel)\b",
@@ -89,9 +97,15 @@ def section(text: str, heading: str) -> str:
 def check_readme_progressive_disclosure() -> None:
     text = README.read_text(encoding="utf-8")
     headings = ["Plain-language abstract", "Why this problem exists", "Results at a glance", "Core mathematical result", "Research status and reproducibility"]
+    for heading in headings:
+        if f"## {heading}" not in text:
+            raise VerificationError(f"README section missing: {heading}")
     positions = [text.index(f"## {heading}") for heading in headings]
     if positions != sorted(positions):
         raise VerificationError("README science-first section order drifted")
+    for token in ("LEVEL-4-CLOSED", "## Research status and reproducibility"):
+        if token not in text:
+            raise VerificationError(f"README closure-status marker missing: {token}")
     if text.index("LEVEL-4-CLOSED") < text.index("## Research status and reproducibility"):
         raise VerificationError("README leads with internal closure terminology")
     abstract = re.sub(r"\[[^]]+]\([^)]+\)|[*_`]", "", section(text, "Plain-language abstract"))
@@ -198,12 +212,27 @@ def check_license_state() -> None:
 
 def check_brief() -> None:
     markdown = BRIEF_MD.read_text(encoding="utf-8")
-    for marker in (AUTHOR, SCHOOL, AFFILIATION, EMAIL, "not a peer-reviewed publication", "## 1. Problem", "## 6. Negative result", "## 8. Limitations", "## 9. Reproducibility and repository", "0/4", "4/4", "original ReBaseGuard material is Apache-2.0", "THIRD_PARTY_NOTICES.md"):
+    for marker in (
+        AUTHOR, SCHOOL, AFFILIATION, EMAIL, "not a peer-reviewed publication",
+        "## 1. Problem and motivation",
+        "## 6. Negative result on the operational crossing",
+        "## 7. Historical campaign status",
+        "## 8. Successor philosophy and the P4 line",
+        "## 9. O9 certification architecture and governed negative results",
+        "## 10. The PS1 partition successor",
+        "## 12. Exact current closure boundary",
+        "## 14. Limitations",
+        "## 16. Reproducibility and repository",
+        "PS1_PRODUCTION_AUTHORIZATION_CLOSED",
+        "LEVEL4_GLOBAL_CLOSURE",
+        "0/4", "4/4",
+        "original ReBaseGuard material is Apache-2.0", "THIRD_PARTY_NOTICES.md",
+    ):
         if marker not in markdown:
             raise VerificationError(f"Research Brief marker missing: {marker}")
     images = re.findall(r"!\[[^]]+]\(([^)]+)\)", markdown)
-    if len(images) != 4:
-        raise VerificationError(f"Research Brief uses {len(images)} figures, expected four")
+    if len(images) != 7:
+        raise VerificationError(f"Research Brief uses {len(images)} figures, expected seven")
     for target in images:
         if not (BRIEF_MD.parent / target).resolve().is_file():
             raise VerificationError(f"Research Brief image is missing: {target}")
@@ -211,8 +240,8 @@ def check_brief() -> None:
     if not data.startswith(b"%PDF-") or len(data) < 100_000:
         raise VerificationError("Research Brief PDF is missing or implausibly small")
     pages = len(re.findall(rb"/Type\s*/Page\b", data))
-    if not 2 <= pages <= 4:
-        raise VerificationError(f"Research Brief PDF has {pages} pages, expected 2-4")
+    if not 2 <= pages <= 8:
+        raise VerificationError(f"Research Brief PDF has {pages} pages, expected 2-8")
     if sha256(BRIEF_PDF) != BRIEF_PDF_SHA256:
         raise VerificationError("Research Brief PDF deterministic hash mismatch")
 
@@ -289,7 +318,7 @@ def main() -> int:
         return 1
     print("ACADEMIC PRESENTATION VERIFICATION OK")
     print("science_first=true author=Jingzhe_Su citation=true license=Apache-2.0")
-    print("research_brief=2-4_pages figures=4 claims=scoped history=intact")
+    print("research_brief=2-8_pages figures=7 claims=scoped history=intact")
     return 0
 
 
