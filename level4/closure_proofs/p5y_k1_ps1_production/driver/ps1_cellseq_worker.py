@@ -225,11 +225,18 @@ def synthetic_cellseq(task: dict) -> dict:
         x = 0
         while time.process_time() < t_end:
             x += 1
+        # Write REAL files (synthetic content) so the checkpoint/export/resume path
+        # exercises genuine sha256 verification rather than being waived.
+        evd = {}
+        for k, nm in (("t3", f"t3_{s:04d}.json"), ("t4", f"t4_{s:04d}.json"),
+                      ("t5", f"t5_{s:04d}.json"), ("patches_gz", f"patches_{s:04d}.jsonl.gz")):
+            fp = ev / nm
+            atomic_write(fp, canonical({"SYNTHETIC_CONTROL_NOT_SCIENCE": True, "cell": s, "artifact": k}))
+            evd[k] = {"path": str(fp), "sha256": sha256_file(fp)}
         r = {"cell_id": s, "ok": True, "synthetic": True, "successor_id": f"SYNTHETIC-{s}",
              "scientific_content_hash": hashlib.sha256(f"SYNTHETIC-CELLSEQ:{s}".encode()).hexdigest(),
              "B_cover_ratio": {}, "cpu_seconds": spin, "precision_bits": FROZEN_BITS,
-             "evidence": {"t5": {"path": "SYNTHETIC_CONTROL_NOT_SCIENCE",
-                                 "sha256": hashlib.sha256(f"SYN-EV:{s}".encode()).hexdigest()}}}
+             "evidence": evd}
         # ACCEPTANCE BARRIER (before): kill the LAUNCHER before this cell's marker is
         # renamed into place. The cell must NOT be finalized by anything.
         if task.get("kill_launcher_before_cell") is not None and s == int(task["kill_launcher_before_cell"]):
