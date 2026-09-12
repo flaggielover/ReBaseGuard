@@ -201,8 +201,10 @@ def run_production_cells(pf, *, max_cells=None, poll_timeout=None) -> dict:
         # (observed live in acceptance B: cell 1 sealed on disk, lost to the release sweep).
         try:
             _reap_markers(pf, inflight, tasks, done, ah, adapter)
-        except Exception:                                          # noqa: BLE001
-            pass
+        except Exception as _exc:                                  # noqa: BLE001
+            import traceback
+            print(f"FINAL_REAP_FAILED {type(_exc).__name__}: {_exc}", flush=True)
+            traceback.print_exc()
         for k in inflight.values():
             budget.release(k)
         pool.close()
