@@ -55,6 +55,8 @@ def install(PL, ctl_path: Path, runtime_dir: Path):
         syn["seconds"] = float(ctl.get("spin_s", 0.2))
         if die is not None:
             syn["die_on_cell"] = die
+        if ctl.get("kill_launcher_after_cell") is not None:
+            syn["kill_launcher_after_cell"] = int(ctl["kill_launcher_after_cell"])
         submit0(self, slot, syn)
 
     PL.Pool.submit = submit

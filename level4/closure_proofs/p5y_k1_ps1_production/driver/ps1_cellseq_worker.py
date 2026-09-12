@@ -232,6 +232,13 @@ def synthetic_cellseq(task: dict) -> dict:
                                  "sha256": hashlib.sha256(f"SYN-EV:{s}".encode()).hexdigest()}}}
         results[str(s)] = r
         _seal_cell(ev, s, r, task)
+        # ACCEPTANCE BARRIER: the marker is now durable (fsynced + atomically renamed).
+        # SIGKILL the LAUNCHER so its finally/atexit can never run. Only supervisor-side
+        # reconciliation can finalize this cell.
+        if task.get("kill_launcher_after_cell") is not None and s == int(task["kill_launcher_after_cell"]):
+            import signal as _sig
+            os.kill(int(task["launcher_pid"]), _sig.SIGKILL)
+            time.sleep(600)
     sealed = {k: v for k, v in results.items() if k.isdigit()}
     return {"ok": all(v["ok"] for v in sealed.values()), "results": sealed, "synthetic": True,
             "finalized_cells": sorted(int(k) for k in sealed),

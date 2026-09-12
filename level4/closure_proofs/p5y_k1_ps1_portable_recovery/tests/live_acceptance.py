@@ -166,6 +166,43 @@ def scenario_B(work: Path):
     return all(ok.values()), {"finalized": after, "torn": ops_torn}
 
 
+# ------------------------------- B2: DECISIVE -- launcher SIGKILLed after durable marker
+def scenario_B2(work: Path):
+    print("=" * 70)
+    print("B2. DECISIVE: cell 0 commits live; cell 1 marker durable then LAUNCHER SIGKILLed")
+    print("    (launcher finally/atexit cannot run -- only supervisor reconciliation can save it)")
+    ct, root = setup(work, {"spin_s": 2.0, "cells": [0, 1, 2, 3], "cores": [20, 21],
+                            "kill_launcher_after_cell": 1})
+    prodctl(ct, "start", "--role", "AWS")
+    fin_st = wait_idle(ct, timeout=300)
+    after = sealed_cells(root)
+    recon, reason = None, None
+    rd = work / "runtime-AWS" / "runs"
+    for f in sorted(rd.glob("*.json")) if rd.exists() else []:
+        d = json.loads(f.read_text())
+        recon = d.get("reconciliation") or recon
+        reason = d.get("reason") or reason
+    print(f"  run end reason : {reason}")
+    print(f"  finalized      : {after}")
+    print(f"  torn_attempts  : {fin_st.get('torn_attempts')}")
+    print(f"  reconciliation : {json.dumps(recon) if recon else 'ABSENT'}")
+    ok = {
+      "0_FINALIZED": 0 in after,
+      "1_FINALIZED_FROM_DURABLE_MARKER": 1 in after,
+      "reconciliation_actually_ran": bool(recon and 1 in (recon.get("finalized") or [])),
+      "launcher_was_sigkilled": reason is not None and "CHILD_EXIT_-9" in str(reason),
+      "2_and_3_not_finalized": 2 not in after and 3 not in after,
+      "no_duplicate_commit": len(after) == len(set(after)),
+      "lock_FREE": fin_st.get("campaign_lock") == "FREE",
+      "zero_open_reservations": fin_st.get("open_reservations") == [],
+      "torn_not_incremented_for_finalized": all(str(c) not in (fin_st.get("torn_attempts") or {})
+                                                for c in after),
+    }
+    for k, v in ok.items():
+        print(f"    {'PASS' if v else 'FAIL'}  {k}")
+    return all(ok.values()), {"finalized": after, "reconciliation": recon}
+
+
 # --------------------------------------------- C: checkpoint / export / resume
 def scenario_C(work: Path):
     print("=" * 70); print("C. checkpoint -> export -> clean runtime -> resume")
@@ -261,7 +298,7 @@ def scenario_E(work: Path, prior):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("scenario", choices=("A", "B", "C", "D", "E", "all"))
+    ap.add_argument("scenario", choices=("A", "B", "B2", "C", "D", "E", "all"))
     ap.add_argument("--work", required=True)
     a = ap.parse_args()
     w = Path(a.work)
@@ -270,6 +307,8 @@ def main():
         results["A"], _ = scenario_A(w / "A")
     if a.scenario in ("B", "all"):
         results["B"], _ = scenario_B(w / "B")
+    if a.scenario in ("B2", "all"):
+        results["B2"], _ = scenario_B2(w / "B2")
     if a.scenario in ("C", "D", "E", "all"):
         results["C"], prior = scenario_C(w / "C")
     if a.scenario in ("D", "all"):
