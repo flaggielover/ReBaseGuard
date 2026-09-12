@@ -59,14 +59,23 @@ def main():
         for p in sorted((NS / sub).glob("*.py")):
             src[f"{sub}/{p.name}"] = hashlib.sha256(p.read_bytes()).hexdigest()
     c["recovery_source_manifest"] = src
-    body = json.dumps(c, sort_keys=True, separators=(",", ":")).encode()
-    c["_contract_sha256"] = hashlib.sha256(body).hexdigest()
+
+    # ESTABLISHED REPOSITORY RULE (model A, as the frozen lifecycle adapter does it):
+    # opscommon.load_contract verifies sha256(RAW FILE BYTES) against the hash held in the
+    # separate OPERATIONAL_CONTRACT_HASH file, and sets c["_sha256"] in memory only. The
+    # contract therefore must NOT embed its own hash -- doing so is self-referential and
+    # unsatisfiable, which is exactly the defect this repairs. Write the file first, then
+    # hash the bytes that were written.
     out = NS / "config" / "OPERATIONAL_CONTRACT.json"
-    out.write_text(json.dumps(c, indent=1, sort_keys=True) + "\n")
-    (NS / "config" / "OPERATIONAL_CONTRACT_HASH").write_text(c["_contract_sha256"] + "\n")
+    payload = (json.dumps(c, indent=1, sort_keys=True) + "\n").encode()
+    assert b'"_contract_sha256"' not in payload and b'"_sha256"' not in payload, \
+        "the contract must never embed its own hash"
+    out.write_bytes(payload)
+    digest = hashlib.sha256(out.read_bytes()).hexdigest()      # hash of what is ON DISK
+    (NS / "config" / "OPERATIONAL_CONTRACT_HASH").write_text(digest + "\n")
     print(f"wrote {out}")
     print(f"  parent.commit   : {code_commit}")
-    print(f"  contract sha256 : {c['_contract_sha256']}")
+    print(f"  contract sha256 : {digest}  (== sha256 of the written file)")
     print(f"  source files    : {len(src)}")
     return 0
 
