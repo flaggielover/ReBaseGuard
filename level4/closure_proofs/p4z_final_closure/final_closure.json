@@ -1,0 +1,172 @@
+{
+  "adjudications": {
+    "B1_k7": {
+      "diagnostic_history_preserved": [
+        "level4/closure_proofs/p4z_location_family_feasibility/configs/checkpoint_p4z.json",
+        "level4/closure_proofs/p4za_fullscope_closure/K7_DIAGNOSIS.md",
+        "level4/closure_proofs/p4zb_skewnormal4_k7/SKEWNORMAL4_K7_ASYMPTOTICS.md"
+      ],
+      "finding": "K7 was successor-added and is absent from the frozen P4 protocol. It changed across P4Z, P4ZA and P4ZB; each version was frozen before its own result-bearing run; no original frozen threshold changed. Disclosure-worthy, not closure-blocking.",
+      "verdict": "PASS_ADMISSIBLE"
+    },
+    "B2_rng_provenance": {
+      "admissibility_basis": "No disposition-bearing final cell relies on overlapped P4Z evidence: both affected configurations are authored by later P4ZA evidence at disjoint addresses, and the strict 96/96 frozen-gate PASS holds.",
+      "commit": "9a6215d114b2cf182e5aad88b0ac3bef165b9897",
+      "finding_text": "P4Z carries a real same-campaign provenance defect: 5 address overlaps over 25 shared RNG addresses. P4ZA has no innovation-address collision - the same integer keys Philox in calibration and PCG64 in production, which is namespace reuse, not a shared stream. P4ZB is clean.",
+      "findings": {
+        "P4Z": "RNG_ADDRESS_SEPARATION_FAIL",
+        "P4ZA": "RNG_ADDRESS_SEPARATION_PASS",
+        "P4ZB": "RNG_ADDRESS_SEPARATION_PASS",
+        "address_overlaps_total": 5,
+        "disposition_bearing_overlaps": 0,
+        "overlapping_addresses_total": 25
+      },
+      "impact_statement": "No observed disposition dependence. Scientific impact is bounded by the facts that the correspondence gate statistic was never read at a shared address, that both affected configurations are authored by a campaign with no address overlap, and that all 96 cells clear the frozen gate with margin under the strictest available reading.",
+      "residual_uncertainty_retained": true,
+      "verdict": "PASS"
+    },
+    "B3_rule_c": {
+      "P4X_C4": "PASS",
+      "P4X_C5": "PASS",
+      "p4x_campaign_rehabilitated": false,
+      "scope": "obligation-local; P4X as a campaign is not rehabilitated",
+      "verdict": "PASS_ADMISSIBLE"
+    },
+    "B4_presentation": {
+      "commit": "51742dc72848e3d5fcdb7a4740082cb0969d3787",
+      "verdict": "PASS"
+    }
+  },
+  "claims_explicitly_not_made": [
+    "P4 = CLOSED",
+    "P4's historical verdict is anything other than PARTIAL",
+    "P4X is rehabilitated as a campaign",
+    "P4Y is anything other than NOT_FEASIBLE",
+    "P5, P5Y, K1 or Level-4 is CLOSED",
+    "production readiness",
+    "the theorem holds beyond its own frozen scope",
+    "the P4Z RNG address overlap had no effect"
+  ],
+  "historical_record_preserved": {
+    "P4": {
+      "branches": [
+        "main",
+        "codex/presentation-refresh"
+      ],
+      "immutable": true,
+      "verdict": "PARTIAL"
+    },
+    "P4X": {
+      "branch": "p4x-feasibility-audit",
+      "commit": "19b006456be7efc8254b1a72b6e0eb764b127753",
+      "outcome": "governance failure / non-closure",
+      "rehabilitated_by_this_packet": false,
+      "scientific_failures": "NONE"
+    },
+    "P4Y": {
+      "branches": [
+        "p4y-prefreeze-pilot",
+        "p4y-pilot2-final",
+        "p4y-pilot3-heavy-stage1",
+        "p4y-pilot4-measurement"
+      ],
+      "checkpoint_frozen": false,
+      "outcome": "NOT_FEASIBLE",
+      "production_run": false
+    },
+    "stagewise_note": "These are the campaigns' OWN self-recorded verdicts and are retained verbatim. P4ZB_CLOSED is a campaign self-verdict; P4Z = CLOSED above is the independent integrated adjudication. The two are distinct statements and the record keeps both.",
+    "stagewise_self_verdicts": {
+      "P4Z": "P4Z_NUMERICAL_PASS_AWAITING_FORMAL_OR_GOVERNANCE",
+      "P4ZA": "P4ZA_INCONCLUSIVE",
+      "P4ZB": "P4ZB_CLOSED"
+    }
+  },
+  "manifest": "MANIFEST.json",
+  "new_numerical_compute": "NONE",
+  "numerical_basis": {
+    "authoritative_sources": {
+      "P4Z": 44,
+      "P4ZA": 48,
+      "P4ZB": 4
+    },
+    "cells_total": 96,
+    "counts": {
+      "COVERED_FAIL": 0,
+      "COVERED_PASS": 96,
+      "INCONCLUSIVE": 0,
+      "UNCOVERED": 0
+    },
+    "final_coverage": {
+      "path": "level4/closure_proofs/p4zb_skewnormal4_k7/results/final_coverage.json",
+      "sha256": "a9ad4a8f9b06f3550c10e8910243011afc7f4b537cc6a4216b6dbf1b8df7beb6"
+    },
+    "strict_frozen_gate_reconstruction": {
+      "cells_exceeding_either_frozen_gate": 0,
+      "cells_passing": 96,
+      "cells_total": 96,
+      "relative_limit": 0.03,
+      "reproduce": "level4/closure_proofs/p4zr_rng_provenance_repair/audit/strict_gate_recheck.py",
+      "worst_relative_discrepancy": 0.009499604379,
+      "worst_z_monte_carlo_error_only": 1.787674614076624,
+      "z_limit": 4.0
+    },
+    "strict_gate_meaning": "Every cell re-decided under the frozen gate with the successor-added T_B truncation term removed from the z denominator, which can only raise |z|. No final disposition depends on the T_B convention."
+  },
+  "original_p4_failed_gates": {
+    "all_discharged": true,
+    "count": 3,
+    "detail": "gate_discharge.json",
+    "gates": [
+      "all_outside_assumption_cells_demonstrate_failure",
+      "all_theorem_supported_cells_pass",
+      "gaussian_consistency_with_closed_core"
+    ],
+    "map": [
+      {
+        "discharged_by": "P4Z -> P4ZA -> P4ZB successor evidence",
+        "gate": "all_theorem_supported_cells_pass",
+        "rule_c_applied": false,
+        "status": "DISCHARGED"
+      },
+      {
+        "discharged_by": "P4X obligation C4, admitted under obligation-local Rule C",
+        "gate": "all_outside_assumption_cells_demonstrate_failure",
+        "rule_c_applied": true,
+        "status": "DISCHARGED"
+      },
+      {
+        "discharged_by": "P4X obligation C5, admitted under obligation-local Rule C",
+        "gate": "gaussian_consistency_with_closed_core",
+        "rule_c_applied": true,
+        "status": "DISCHARGED"
+      }
+    ]
+  },
+  "residual_uncertainty": [
+    "The bound on the P4Z RNG overlap is an argument from what the calibrations recorded and from which campaign authored each cell. It is NOT a reconstruction of the counterfactual campaign that would have run on disjoint addresses, and no such reconstruction is offered.",
+    "P4Z's fd_ladder diagnostic records no seed in its artifact; its addresses are recoverable only from the source of run_fd_ladder.py.",
+    "The P4Z and P4ZA independent closure audits compared seed integers against predecessors and history only, so this defect class was structurally invisible to them at the time.",
+    "P4ZA's seed-namespace reuse shares no innovation but removes the margin that would make a later same-generator reuse obvious.",
+    "P4ZA's precision target was relaxed from P4Z's self-imposed 0.0025 to the frozen r*, which makes the z gate easier. Disclosed in CHECKPOINT_P4ZA.md section 5; the achieved relative SE is about r*/2 and the strict-gate reconstruction shows nothing rides on it.",
+    "Closure is scoped to the frozen P4 theorem and its 96 theorem-supported cells. It says nothing about any wider claim."
+  ],
+  "result_bearing": false,
+  "schema": "rebaseguard.p4z-final-closure.v1",
+  "status": {
+    "historical_verdict": {
+      "P4": "PARTIAL",
+      "immutable": true,
+      "source": "level4/closure_proofs/p4_theory_generalization/results/closure_decision.json",
+      "statement": "P4's own recorded verdict is PARTIAL and remains PARTIAL. No successor replaces it, and this packet does not assert P4 = CLOSED."
+    },
+    "scientific_line": {
+      "P4_SCIENTIFIC_LINE": "CLOSED_BY_LATER_SUCCESSOR",
+      "statement": "All three of P4's originally failed gates are discharged by admissible later evidence. The scientific line is closed by successor evidence; the historical verdict is untouched."
+    },
+    "successor_closure": {
+      "P4Z": "CLOSED",
+      "statement": "The P4Z -> P4ZA -> P4ZB successor line is closed on its own terms: all 96 theorem-supported cells carry a governed disposition under the unchanged frozen gate, with zero FAIL and zero INCONCLUSIVE, and the outstanding governance questions have been independently adjudicated as admissible."
+    }
+  },
+  "verdict": "P4Z_CLOSED"
+}

@@ -1,0 +1,197 @@
+{
+  "adjudication_inputs": {
+    "B1_k7": {
+      "basis": "K7 is a successor-added precondition absent from P4_PROTOCOL.json; every version was frozen before its own result-bearing run; no original frozen threshold changed; and the strict-gate reconstruction holds with T_B removed",
+      "diagnostic_history_preserved": [
+        "level4/closure_proofs/p4z_location_family_feasibility/configs/checkpoint_p4z.json",
+        "level4/closure_proofs/p4za_fullscope_closure/K7_DIAGNOSIS.md",
+        "level4/closure_proofs/p4zb_skewnormal4_k7/SKEWNORMAL4_K7_ASYMPTOTICS.md"
+      ],
+      "supporting_artifact": {
+        "path": "level4/closure_proofs/p4zr_rng_provenance_repair/results/strict_gate_reconstruction.json",
+        "sha256": "f385948a4ff5298d0d57243c046b4395a04260498125eb2bb27e727f2b1ad01b"
+      },
+      "verdict": "PASS_ADMISSIBLE"
+    },
+    "B2_rng_provenance": {
+      "audit_module": {
+        "path": "level4/closure_proofs/p4zr_rng_provenance_repair/src/rebaseguard_p4zr/rng_address_audit.py",
+        "sha256": "0b1664c5788257894e6b414f2c6cf08ca1296af4d78bbd7a7d0509c23916dd54"
+      },
+      "branch": "p4zr-rng-provenance-repair",
+      "commit": "9a6215d114b2cf182e5aad88b0ac3bef165b9897",
+      "disclosure": {
+        "path": "level4/closure_proofs/p4zr_rng_provenance_repair/results/rng_collision_disclosure.json",
+        "sha256": "a523c5aabdc667f86a2448aeb9f0aa1669519e3953c82a46dbf27454e02369be"
+      },
+      "findings": {
+        "P4Z": "RNG_ADDRESS_SEPARATION_FAIL",
+        "P4ZA": "RNG_ADDRESS_SEPARATION_PASS",
+        "P4ZB": "RNG_ADDRESS_SEPARATION_PASS",
+        "address_overlaps_total": 5,
+        "disposition_bearing_overlaps": 0,
+        "overlapping_addresses_total": 25
+      },
+      "namespace": "level4/closure_proofs/p4zr_rng_provenance_repair",
+      "record": {
+        "path": "level4/closure_proofs/p4zr_rng_provenance_repair/RNG_ADDRESS_SEPARATION.md",
+        "sha256": "ea8050ef71b9716188d391ef3ea4e5992fb5efa552d7b180609a57dfff4deaf6"
+      },
+      "tree_object": "e01164e3d88dc7891cb1275ca4285748ccc3590b",
+      "verdict": "PASS"
+    },
+    "B3_rule_c": {
+      "obligations": [
+        "P4X C4",
+        "P4X C5"
+      ],
+      "scope": "obligation-local; P4X as a campaign is not rehabilitated",
+      "verdict": "PASS_ADMISSIBLE"
+    },
+    "B4_presentation": {
+      "branch": "codex/presentation-refresh",
+      "commit": "51742dc72848e3d5fcdb7a4740082cb0969d3787",
+      "note": "separates the campaign self-verdicts from the independent closure status on the public surface",
+      "verdict": "PASS"
+    }
+  },
+  "frozen_theorem": {
+    "closure_decision": {
+      "path": "level4/closure_proofs/p4_theory_generalization/results/closure_decision.json",
+      "sha256": "e64c0c0687577df9ca22fb9464223d48c82775e0e5ae19b636a7bf58fe5a869a"
+    },
+    "modification": "NOT PERMITTED",
+    "namespace": "level4/closure_proofs/p4_theory_generalization",
+    "proof_md": {
+      "path": "level4/closure_proofs/p4_theory_generalization/PROOF.md",
+      "sha256": "49e631ef6fcd303279a3b5dbd83a0cedb49f2ce42f8027593130dfe16eb4e773"
+    },
+    "protocol": {
+      "path": "level4/closure_proofs/p4_theory_generalization/configs/P4_PROTOCOL.json",
+      "sha256": "2afa247e986f7c4ff063bf2bda60386a9783d001244821e7eb5aff12db03e627"
+    },
+    "theorem_md": {
+      "path": "level4/closure_proofs/p4_theory_generalization/THEOREM.md",
+      "sha256": "82fe3450c47e34f74ceee718cba00d4e63acadbc00518f1ffd9d97af2b13f18b"
+    },
+    "tree_object": "eede90383da44c250871b1bb97d12045c897c8d9"
+  },
+  "historical_lineage": {
+    "P4": {
+      "branches": [
+        "main",
+        "codex/presentation-refresh"
+      ],
+      "immutable": true,
+      "verdict": "PARTIAL"
+    },
+    "P4X": {
+      "branch": "p4x-feasibility-audit",
+      "commit": "19b006456be7efc8254b1a72b6e0eb764b127753",
+      "outcome": "governance failure / non-closure",
+      "rehabilitated_by_this_packet": false,
+      "scientific_failures": "NONE"
+    },
+    "P4Y": {
+      "branches": [
+        "p4y-prefreeze-pilot",
+        "p4y-pilot2-final",
+        "p4y-pilot3-heavy-stage1",
+        "p4y-pilot4-measurement"
+      ],
+      "checkpoint_frozen": false,
+      "outcome": "NOT_FEASIBLE",
+      "production_run": false
+    }
+  },
+  "manifest_self_hash": "EXCLUDED BY CONSTRUCTION: the manifest carries no hash of itself; its integrity is established by the commit that contains it",
+  "new_numerical_compute": "NONE",
+  "protected_trees": {
+    "level4/closure_proofs/p4_theory_generalization": "eede90383da44c250871b1bb97d12045c897c8d9",
+    "level4/closure_proofs/p4z_location_family_feasibility": "4f4f5209ea6b9b15ed8c8e0e3f83355007c00e18",
+    "level4/closure_proofs/p4za_fullscope_closure": "478edf02e28a451ae2ea1d830777e049735c28dd",
+    "level4/closure_proofs/p4zb_skewnormal4_k7": "07a56584955cd5c6a94c1ee8a3cd33f4e3ce0ae8",
+    "level4/closure_proofs/p4zr_rng_provenance_repair": "e01164e3d88dc7891cb1275ca4285748ccc3590b"
+  },
+  "result_bearing": false,
+  "schema": "rebaseguard.p4z-final-closure-manifest.v1",
+  "strict_gate_reconstruction": {
+    "cells_exceeding_either_frozen_gate": 0,
+    "cells_passing": 96,
+    "cells_total": 96,
+    "relative_limit": 0.03,
+    "reproduce": "level4/closure_proofs/p4zr_rng_provenance_repair/audit/strict_gate_recheck.py",
+    "worst_relative_discrepancy": 0.009499604379,
+    "worst_z_monte_carlo_error_only": 1.787674614076624,
+    "z_limit": 4.0
+  },
+  "successor_campaigns": {
+    "P4Z": {
+      "adjudication": {
+        "path": "level4/closure_proofs/p4z_location_family_feasibility/production/adjudication.json",
+        "sha256": "fde940761e40b551da2a0f9018ca0833c706043a27c215887116f58c6fcb64ff"
+      },
+      "checkpoint": {
+        "path": "level4/closure_proofs/p4z_location_family_feasibility/configs/checkpoint_p4z.json",
+        "sha256": "c865b8dafde0908cdcc0c46da516c7d724e8cd242de0b2fd097cf97d037e7c68"
+      },
+      "estimand_contract": {
+        "path": "level4/closure_proofs/p4z_location_family_feasibility/configs/estimand_contract.json",
+        "sha256": "e04f5a6be23e3867e13be838ba6c74d5dd7993072f6455eddd329453b3802019"
+      },
+      "freeze_commit": "e29e32a463648b3aea060c1a64dc750e149a8874",
+      "namespace": "level4/closure_proofs/p4z_location_family_feasibility",
+      "result_commit": "298d916c75e7eaa3ef28d6957116ed76569dd708",
+      "self_verdict": "P4Z_NUMERICAL_PASS_AWAITING_FORMAL_OR_GOVERNANCE",
+      "successor_closure": {
+        "path": "level4/closure_proofs/p4z_location_family_feasibility/results/successor_closure.json",
+        "sha256": "bd28a361a6dd744ff6141ee8446a3d9710f8446de17285083e2bc0d3e8bccdc2"
+      },
+      "tree_object": "4f4f5209ea6b9b15ed8c8e0e3f83355007c00e18"
+    },
+    "P4ZA": {
+      "adjudication": {
+        "path": "level4/closure_proofs/p4za_fullscope_closure/production/adjudication_p4za.json",
+        "sha256": "c0c35ccf93bd30c379fd49ebbd506ea9034be512a45c009ed2c89377ea310def"
+      },
+      "campaign_plan": {
+        "path": "level4/closure_proofs/p4za_fullscope_closure/production/p4za_campaign_plan.json",
+        "sha256": "49d9836935160418406f29281d60ff63ad5c884c09687d3e80aebf3c8bcd6f4b"
+      },
+      "freeze_commit": "5eb7278a75133ee9d982033a6f5e9cbeb8cbdc3e",
+      "namespace": "level4/closure_proofs/p4za_fullscope_closure",
+      "result_commit": "a311e4407d58abf96a8674f636a7b6989d8a2504",
+      "self_verdict": "P4ZA_INCONCLUSIVE",
+      "successor_closure": {
+        "path": "level4/closure_proofs/p4za_fullscope_closure/results/p4za_successor_closure.json",
+        "sha256": "f69e3901a450106d9ca98bb2ec942afadb4a4f0fec397bce6794368c97ba30ca"
+      },
+      "tree_object": "478edf02e28a451ae2ea1d830777e049735c28dd"
+    },
+    "P4ZB": {
+      "adjudication": {
+        "path": "level4/closure_proofs/p4zb_skewnormal4_k7/production/adjudication_p4zb.json",
+        "sha256": "13ecb684ff2645744f85160cd4c63283bd737e72c0895f4470caea486f0504f5"
+      },
+      "branch": "p4zb-skewnormal4-k7",
+      "branch_commit": "90e03634b62879760d6b4928d43b7696bddcd7c6",
+      "campaign_plan": {
+        "path": "level4/closure_proofs/p4zb_skewnormal4_k7/production/p4zb_campaign_plan.json",
+        "sha256": "1daa03bca38ec4e11adf673ce0a0fbd7bd117286556bb4c6444460f758336713"
+      },
+      "final_coverage": {
+        "path": "level4/closure_proofs/p4zb_skewnormal4_k7/results/final_coverage.json",
+        "sha256": "a9ad4a8f9b06f3550c10e8910243011afc7f4b537cc6a4216b6dbf1b8df7beb6"
+      },
+      "freeze_commit": "f06fe61f10f39eca9f75965ab377761ab812457d",
+      "namespace": "level4/closure_proofs/p4zb_skewnormal4_k7",
+      "result_commit": "90e03634b62879760d6b4928d43b7696bddcd7c6",
+      "self_verdict": "P4ZB_CLOSED",
+      "successor_closure": {
+        "path": "level4/closure_proofs/p4zb_skewnormal4_k7/results/p4zb_successor_closure.json",
+        "sha256": "be201a980f3610967ca5999d4a778284b62631abbf1e7c7dd0d6c7c306f33820"
+      },
+      "tree_object": "07a56584955cd5c6a94c1ee8a3cd33f4e3ce0ae8"
+    }
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "all_discharged": true,
+  "gates": [
+    {
+      "discharged_by": "P4Z -> P4ZA -> P4ZB successor evidence",
+      "evidence": {
+        "authoritative_sources": {
+          "P4Z": 44,
+          "P4ZA": 48,
+          "P4ZB": 4
+        },
+        "cells_total": 96,
+        "conservation": {
+          "accounted": 96,
+          "conserved": true,
+          "expected": 96,
+          "one_source_per_cell": true
+        },
+        "counts": {
+          "COVERED_FAIL": 0,
+          "COVERED_PASS": 96,
+          "INCONCLUSIVE": 0,
+          "UNCOVERED": 0
+        },
+        "final_coverage": "level4/closure_proofs/p4zb_skewnormal4_k7/results/final_coverage.json"
+      },
+      "mechanism": "new measurement under the unchanged frozen gate; 96 theorem-supported cells, one authoritative source each",
+      "original_p4_gate": "all_theorem_supported_cells_pass",
+      "recorded_in_p4_as": false,
+      "rule_c_applied": false,
+      "status": "DISCHARGED"
+    },
+    {
+      "discharged_by": "P4X obligation C4, admitted under obligation-local Rule C",
+      "mechanism": "the proved failure mode for a law with no first moment is NON-EXISTENCE of the estimand, not a Monte Carlo disagreement signature; the discharge is analytic",
+      "original_p4_gate": "all_outside_assumption_cells_demonstrate_failure",
+      "recorded_in_p4_as": false,
+      "rule_c_applied": true,
+      "rule_c_findings": {
+        "frozen_provenance_intact": true,
+        "independently_identifiable": true,
+        "new_compute": "NONE",
+        "note": "P4X's governance failure is the stage-2 top-up sharding on frozen/cusum@5/t1p5. C4 records new_compute NONE and rests on PROOF.md section 10 plus the Arb certificate, so the defective path is not traversed.",
+        "predates_or_avoids_the_defective_path": true,
+        "reconstructible_without_the_defect": true,
+        "uses_no_tainted_result_bearing_computation": true
+      },
+      "status": "DISCHARGED"
+    },
+    {
+      "discharged_by": "P4X obligation C5, admitted under obligation-local Rule C",
+      "mechanism": "the correctly specified two-sample statistic z = |e1-e2| / sqrt(SE1^2 + SE2^2) over frozen published anchors; P4's own gate divided by one standard error alone",
+      "original_p4_gate": "gaussian_consistency_with_closed_core",
+      "recorded_in_p4_as": false,
+      "rule_c_applied": true,
+      "rule_c_findings": {
+        "frozen_provenance_intact": true,
+        "independently_identifiable": true,
+        "new_compute": "NONE (arithmetic over published uncertainties; the anchor phase reproduced the frozen Route-A Gaussian estimates bitwise)",
+        "note": "The eight C5 cells are Gaussian under cusum@5 and sr@520.886; the sharded configuration is frozen/cusum@5/t1p5 and is not among them.",
+        "predates_or_avoids_the_defective_path": true,
+        "reconstructible_without_the_defect": true,
+        "uses_no_tainted_result_bearing_computation": true
+      },
+      "status": "DISCHARGED"
+    }
+  ],
+  "historical_p4_verdict_unchanged": true,
+  "originally_failed_gates": [
+    "all_outside_assumption_cells_demonstrate_failure",
+    "all_theorem_supported_cells_pass",
+    "gaussian_consistency_with_closed_core"
+  ],
+  "p4_all_required_gates_pass": false,
+  "p4_closure_decision": "level4/closure_proofs/p4_theory_generalization/results/closure_decision.json",
+  "p4_recorded_verdict": "PARTIAL",
+  "p4x_campaign_note": "Rule C is applied obligation-locally. P4X's campaign-level governance outcome is unchanged and is not rehabilitated by this packet.",
+  "p4x_campaign_rehabilitated": false,
+  "p4x_production_results_available": false,
+  "p4x_production_results_sha256": null,
+  "result_bearing": false,
+  "schema": "rebaseguard.p4z-final-gate-discharge.v1"
+}
