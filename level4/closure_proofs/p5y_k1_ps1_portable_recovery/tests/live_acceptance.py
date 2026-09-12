@@ -147,8 +147,17 @@ def scenario_B(work: Path):
                             "die": {"2": [1]}})
     prodctl(ct, "start", "--role", "AWS")
     fin_st = wait_idle(ct, timeout=240)
+    # A SIGKILL landing mid-ledger-write leaves the frozen lock AMBIGUOUS, so the supervisor
+    # correctly DEFERS settlement. That is the frozen design: the sanctioned recover step
+    # completes it. Durability is unaffected -- finalized cells are already committed.
+    deferred = bool(fin_st.get("open_reservations"))
+    if deferred:
+        rc = prodctl(ct, "recover", "--role", "AWS")
+        print(f"  settlement was deferred; prodctl recover -> {str(rc)[:120]}")
+        fin_st = prodctl(ct, "status", "--role", "AWS")
     after = sealed_cells(root)
     ops_torn = fin_st.get("torn_attempts", {})
+    print(f"  settlement_deferred_then_recovered: {deferred}")
     ok = {
       "0_and_1_FINALIZED": after[:2] == [0, 1],
       "2_NOT_finalized": 2 not in after,
