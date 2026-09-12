@@ -12,7 +12,7 @@
   "invariant": "FINALIZED u PENDING = 369 cells; FINALIZED n PENDING = empty",
   "schema": "rebaseguard.p5y.k1.ps1.portable-checkpoint.v1"
  },
- "contract_sha256": "cf8102ffd917675f1123a917e7bf9fc64c6d424e668def53ef957558d3f62e82",
+ "contract_sha256": "8d189231e7f48f6f8a32bae5a42baa3ca0ce3b0c1d1bfcff77d35bd142405aab",
  "drain_semantics": {
   "checked_only_at": "a cell boundary, never mid-cell",
   "distinct_from_stop": "STOP is emergency termination and does tear in-flight cells; DRAIN does not",
@@ -165,12 +165,20 @@
  },
  "source_manifest": {
   "code/bench_ordering.py": "ed4fe1ac83f890a1b61d3d8606e93c179d021e3a41fc4ca8a91fbfc7d7a46601",
-  "code/make_cellseq_worker.py": "1ab0a4294d865d829ff901167cb8cde2da4983ad18405dced2e27f714aaf168d",
+  "code/make_cellseq_launcher.py": "c9460dd47123f141e4846ea43190adbca698c32fbce97959e10f8b5d58321bce",
+  "code/make_cellseq_worker.py": "3c23a18f9513349c929fce5788be7b859cb8e32fd39f1f0f41accfd05ba0e58c",
+  "code/make_ledger_ops_recovery.py": "af5f7fac8d265a05ff5dfcdf3913114f51636a320b9c6697abee688b041729c3",
+  "code/make_operational_contract.py": "565d7239aed28e3d92d6d82c8d009d21d9542e5853ecb83beb91004a3252ad4a",
+  "code/make_prodctl_recovery.py": "2f36337632b255b98241df2763cfcccb9c5f2db65eb821b235f918a67ee00aca",
   "code/make_recovery_contract.py": "b671f4bdeecac25d4f216cae8cfac816f735b5ad29b45782f742940071ed9357",
+  "code/make_supervisor_recovery.py": "f2a4040589587ed513c254d21ec2cd8c1233b3191f57ffa3b19e4542af7431fa",
   "host_guard.py": "56668026173ae4c82d41c642a908c46fc53415609500c464cf25ef9a7d8343d6",
-  "ps1_cellseq_worker.py": "c66099b741ae987e5b7031f30b48cd498ec6ed0cb374878768dc920fb6a3949f",
   "ps1_checkpoint.py": "1dbc166db760d6a148f8495fde9561f185349f673d81494ff3904ad77de40626",
+  "ps1_reconcile.py": "b0f8b7da5d8a3c18d08ff2ee342917b988dd1584ac50e0bf484bc627518af031",
+  "tests/live_acceptance.py": "d1ee27bf9273f47efd6fc40f6e39625cc3fd7418715220aebfcd1f7c29c797e6",
+  "tests/synthetic_cellseq_entry.py": "ef21a5b7b8da543bd5e58ec0276883a45d8ed4ceef879e88dc0620d9214b6a65",
+  "tests/test_marker_reconciliation.py": "dd5d8a58bf5b1386920d2107a39bcb509501fc868bfa34c25ce5591ce0fbbfc7",
   "tests/test_portable_recovery.py": "d947e5c487624f2ba49c540d3531679114954357cb8f1603d12f9b856cb2505f"
  },
- "worktree_commit_at_freeze": "f3cec1ed4ba407e28ee502f6fe9e579c3f24f051"
+ "worktree_commit_at_freeze": "c90fb94c1a37a2119475bb7bbfa914cc3e17e841"
 }
