@@ -159,6 +159,53 @@ NEW = '''        for s in cells:
             _seal_cell(ev, s, results[str(s)])
 '''
 
+SYNTH_OLD = '            res = synthetic_spin(task) if task.get("kind") == "SYNTHETIC_SPIN" else run_group(task)\n'
+SYNTH_NEW = '''            kind = task.get("kind")
+            if kind == "SYNTHETIC_CELLSEQ":
+                res = synthetic_cellseq(task)
+            elif kind == "SYNTHETIC_SPIN":
+                res = synthetic_spin(task)
+            else:
+                res = run_group(task)
+'''
+
+SYNTH_FN_ANCHOR = "def main(argv=None) -> int:\n"
+SYNTH_FN = '''def synthetic_cellseq(task: dict) -> dict:
+    """ACCEPTANCE-TEST ONLY. Mirrors run_group's cells-outer shape -- spin one cell, seal that
+    cell's durable marker, check drain at the boundary, repeat -- while producing NO scientific
+    evidence. Every record is stamped synthetic=True, which the PRODUCTION _verified() rejects
+    outright; only the SYNTHETIC_CONTROL entry's patched _verified accepts it."""
+    ev = Path(task["evidence_dir"])
+    ev.mkdir(parents=True, exist_ok=True)
+    cells = [int(c) for c in task["cells"]]
+    spin = float(task.get("seconds", 0.2))
+    die_on = task.get("die_on_cell")
+    results = {}
+    for s in cells:
+        if drain_pending(task):
+            results["drained_before_cell"] = s
+            break
+        if die_on is not None and s == int(die_on):
+            os._exit(9)                       # controlled infrastructure tear, mid-cell
+        t_end = time.process_time() + spin
+        x = 0
+        while time.process_time() < t_end:
+            x += 1
+        r = {"cell_id": s, "ok": True, "synthetic": True, "successor_id": f"SYNTHETIC-{s}",
+             "scientific_content_hash": hashlib.sha256(f"SYNTHETIC-CELLSEQ:{s}".encode()).hexdigest(),
+             "B_cover_ratio": {}, "cpu_seconds": spin, "precision_bits": FROZEN_BITS,
+             "evidence": {"t5": {"path": "SYNTHETIC_CONTROL_NOT_SCIENCE",
+                                 "sha256": hashlib.sha256(f"SYN-EV:{s}".encode()).hexdigest()}}}
+        results[str(s)] = r
+        _seal_cell(ev, s, r)
+    sealed = {k: v for k, v in results.items() if k.isdigit()}
+    return {"ok": all(v["ok"] for v in sealed.values()), "results": sealed, "synthetic": True,
+            "finalized_cells": sorted(int(k) for k in sealed),
+            "drained": "drained_before_cell" in results, "cpu_seconds_group": spin * len(sealed)}
+
+
+''' + SYNTH_FN_ANCHOR
+
 OK_OLD = '''    return {"ok": all(r["ok"] for r in results.values()) and len(results) == len(cells), "results": results,
 '''
 OK_NEW = '''    sealed = {k: v for k, v in results.items() if k.isdigit()}
@@ -175,7 +222,11 @@ def main() -> int:
     for name, blk in (("ANCHOR", ANCHOR), ("OLD", OLD), ("OK_OLD", OK_OLD)):
         if src.count(blk) != 1:
             raise SystemExit(f"{name} block not found exactly once ({src.count(blk)})")
-    out = src.replace(ANCHOR, HELPERS, 1).replace(OLD, NEW, 1).replace(OK_OLD, OK_NEW, 1)
+    for nm, blk in (("SYNTH_OLD", SYNTH_OLD), ("SYNTH_FN_ANCHOR", SYNTH_FN_ANCHOR)):
+        if src.count(blk) != 1:
+            raise SystemExit(f"{nm} not found exactly once ({src.count(blk)})")
+    out = (src.replace(ANCHOR, HELPERS, 1).replace(OLD, NEW, 1).replace(OK_OLD, OK_NEW, 1)
+              .replace(SYNTH_OLD, SYNTH_NEW, 1).replace(SYNTH_FN_ANCHOR, SYNTH_FN, 1))
     out = out.replace("patch-outer / cells-inner with one",
                       "CELLS-OUTER / PATCH-INNER with a per-cell")
     OUT.parent.mkdir(parents=True, exist_ok=True)

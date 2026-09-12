@@ -188,6 +188,40 @@ def synthetic_spin(task: dict) -> dict:
     return {"ok": task.get("verdict", True) is True, "results": {}, "synthetic": True, "cpu_seconds_group": float(task["seconds"])}
 
 
+def synthetic_cellseq(task: dict) -> dict:
+    """ACCEPTANCE-TEST ONLY. Mirrors run_group's cells-outer shape -- spin one cell, seal that
+    cell's durable marker, check drain at the boundary, repeat -- while producing NO scientific
+    evidence. Every record is stamped synthetic=True, which the PRODUCTION _verified() rejects
+    outright; only the SYNTHETIC_CONTROL entry's patched _verified accepts it."""
+    ev = Path(task["evidence_dir"])
+    ev.mkdir(parents=True, exist_ok=True)
+    cells = [int(c) for c in task["cells"]]
+    spin = float(task.get("seconds", 0.2))
+    die_on = task.get("die_on_cell")
+    results = {}
+    for s in cells:
+        if drain_pending(task):
+            results["drained_before_cell"] = s
+            break
+        if die_on is not None and s == int(die_on):
+            os._exit(9)                       # controlled infrastructure tear, mid-cell
+        t_end = time.process_time() + spin
+        x = 0
+        while time.process_time() < t_end:
+            x += 1
+        r = {"cell_id": s, "ok": True, "synthetic": True, "successor_id": f"SYNTHETIC-{s}",
+             "scientific_content_hash": hashlib.sha256(f"SYNTHETIC-CELLSEQ:{s}".encode()).hexdigest(),
+             "B_cover_ratio": {}, "cpu_seconds": spin, "precision_bits": FROZEN_BITS,
+             "evidence": {"t5": {"path": "SYNTHETIC_CONTROL_NOT_SCIENCE",
+                                 "sha256": hashlib.sha256(f"SYN-EV:{s}".encode()).hexdigest()}}}
+        results[str(s)] = r
+        _seal_cell(ev, s, r)
+    sealed = {k: v for k, v in results.items() if k.isdigit()}
+    return {"ok": all(v["ok"] for v in sealed.values()), "results": sealed, "synthetic": True,
+            "finalized_cells": sorted(int(k) for k in sealed),
+            "drained": "drained_before_cell" in results, "cpu_seconds_group": spin * len(sealed)}
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--probe", action="store_true")
@@ -216,7 +250,13 @@ def main(argv=None) -> int:
             continue
         task = json.loads(t.read_text())
         try:
-            res = synthetic_spin(task) if task.get("kind") == "SYNTHETIC_SPIN" else run_group(task)
+            kind = task.get("kind")
+            if kind == "SYNTHETIC_CELLSEQ":
+                res = synthetic_cellseq(task)
+            elif kind == "SYNTHETIC_SPIN":
+                res = synthetic_spin(task)
+            else:
+                res = run_group(task)
         except Exception as exc:                          # noqa: BLE001  (reported, never retried: science halts)
             res = {"ok": False, "results": {}, "error": f"{type(exc).__name__}: {exc}"[:2000]}
         res["task_id"] = task["task_id"]
