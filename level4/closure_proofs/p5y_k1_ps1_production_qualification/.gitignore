@@ -1,1 +1,7 @@
 code/__pycache__/
+# The repository-wide `*.log` rule (.gitignore:56) targets reproducible build output.
+# The logs in this namespace are scientific and acceptance EVIDENCE - profile runs,
+# identity checks, the Phase-4 stage log, and the clean-checkout suite outputs cited by
+# RESULT.md - and are tracked, per the repository policy that evidence artifacts are
+# tracked even when machine-generated.
+!evidence/**/*.log

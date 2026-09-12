@@ -1,0 +1,16 @@
+..................................F..................................... [100%]
+=================================== FAILURES ===================================
+__________________ test_real_production_namespaces_untouched ___________________
+
+    def test_real_production_namespaces_untouched():
+>       assert C.real_production_untouched() == {"AWS": ["README.md"]}
+E       AssertionError: assert {'AWS': ['PRO... 'README.md']} == {'AWS': ['README.md']}
+E         
+E         Differing items:
+E         {'AWS': ['PRODUCTION_LEDGER.json', 'README.md']} != {'AWS': ['README.md']}
+E         Use -v to get more diff
+
+../ReBaseGuard-ps1-ops/level4/closure_proofs/p5y_k1_sr_production_lifecycle_successor/tests/test_lifecycle_integrated.py:397: AssertionError
+=========================== short test summary info ============================
+FAILED ../ReBaseGuard-ps1-ops/level4/closure_proofs/p5y_k1_sr_production_lifecycle_successor/tests/test_lifecycle_integrated.py::test_real_production_namespaces_untouched
+1 failed, 71 passed, 1 deselected in 59.36s

@@ -1,0 +1,99 @@
+{
+ "dispatch": "whole group to an idle slot (greedy dynamic); a group is never split across workers",
+ "group_sizes": {
+  "1": 1,
+  "4": 92
+ },
+ "groups": 93,
+ "qualification_harness_contrast": {
+  "groups": {
+   "0-3": {
+    "core_h_idle_in_window": 18.760691283795552,
+    "imbalance": 1.3728339134113094,
+    "mean_worker_cpu_h": 3.144947825450833,
+    "slowest_worker_cpu_h": 4.317491030688055
+   },
+   "148-151": {
+    "core_h_idle_in_window": 18.72610070138304,
+    "imbalance": 1.3722963227671878,
+    "mean_worker_cpu_h": 3.143682121642462,
+    "slowest_worker_cpu_h": 4.314063415478902
+   },
+   "360-363": {
+    "core_h_idle_in_window": 13.04436293380526,
+    "imbalance": 1.3041909167549357,
+    "mean_worker_cpu_h": 2.6801348707582675,
+    "slowest_worker_cpu_h": 3.4954075541210963
+   }
+  },
+  "mean_imbalance": 1.3497737176444777,
+  "note": "16 workers split ONE group's patch range; low patch indices carried 290/291 patches against ~244 and were the expensive ones. This shape does NOT occur in production."
+ },
+ "scenarios": {
+  "mean_based": {
+   "groups_per_slot": {
+    "5": 3,
+    "6": 13
+   },
+   "ideal_wall_h_if_perfectly_divisible": 275.33443766213594,
+   "makespan_wall_days": 11.939317345663467,
+   "makespan_wall_h": 286.5436162959232,
+   "per_cell_cpu_h": 11.939317345663465,
+   "quantisation_factor_vs_ideal": 1.0407111392565505,
+   "slot_loads_cpu_h": [
+    286.54,
+    286.54,
+    286.54,
+    286.54,
+    286.54,
+    286.54,
+    286.54,
+    286.54,
+    286.54,
+    286.54,
+    286.54,
+    286.54,
+    250.47,
+    238.79,
+    238.79,
+    238.79
+   ],
+   "total_cpu_h": 4405.351002594175,
+   "utilisation": 0.9608814225956751
+  },
+  "worst_group_based": {
+   "groups_per_slot": {
+    "5": 3,
+    "6": 13
+   },
+   "ideal_wall_h_if_perfectly_divisible": 290.12099151593566,
+   "makespan_wall_days": 12.582210991480842,
+   "makespan_wall_h": 301.9730637955402,
+   "per_cell_cpu_h": 12.582210991480842,
+   "quantisation_factor_vs_ideal": 1.0408521707363376,
+   "slot_loads_cpu_h": [
+    301.97,
+    301.97,
+    301.97,
+    301.97,
+    301.97,
+    301.97,
+    301.97,
+    301.97,
+    301.97,
+    301.97,
+    301.97,
+    301.97,
+    263.33,
+    251.64,
+    251.64,
+    251.64
+   ],
+   "total_cpu_h": 4641.9358642549705,
+   "utilisation": 0.9607512268457515
+  }
+ },
+ "schema": "rebaseguard.p5y.k1.ps1.makespan-model.v1",
+ "terminal_single_cell_cpu_h": 11.682219390020318,
+ "workers": 16
+}

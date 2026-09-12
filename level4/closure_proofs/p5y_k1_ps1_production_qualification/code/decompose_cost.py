@@ -46,15 +46,22 @@ def main():
         a = my - b * mx
         full = a * n_patch + b * nz_total
         qsp = E / "qual_summary.json"
-        measured = None
+        measured, basis = None, None
         if qsp.exists():
-            qcells = json.loads(qsp.read_text())["cells"]
-            measured = qcells.get(str(d["cell"]), {}).get("total_cpu_h") or json.loads(qsp.read_text())["per_cell_cpu_h_stats"]["mean"]
+            qs = json.loads(qsp.read_text())
+            qcells = qs["cells"]
+            if str(d["cell"]) in qcells:
+                measured, basis = qcells[str(d["cell"])]["total_cpu_h"], "phase4_measured_cell"
+            else:
+                # This cell was PROFILED for stage shares but is not one of the 13 Phase-4 cells;
+                # its shares are scaled onto the 13-cell mean, which is NOT a measurement of this cell.
+                measured = qs["per_cell_cpu_h_stats"]["mean"]
+                basis = "13_cell_phase4_mean__cell_not_in_qualification_set"
         cell = {"profile_cpu_s_3_patches": prof_total,
                 "profile_core": "idle core" if d["cell"] == 360 else "logical cpu 31 = SMT sibling of a busy Phase-4 core: "
                                 "absolute CPU inflated ~1.9x, only the SHARES are used",
                 "stage_share": {k: v / prof_total for k, v in sorted(buckets.items())},
-                "measured_cell_cpu_h_phase4": measured,
+                "cell_cpu_h": measured, "cost_basis": basis,
                 "stage_cpu_h_from_phase4": ({k: v / prof_total * measured for k, v in sorted(buckets.items())}
                                             if measured else None),
                 "scaling": {"patches": "a term (strips, per-patch setup)", "panels_n_z": "b term (O9 core, shared tensors)",
@@ -79,7 +86,7 @@ def main():
     out["K_serialization_hashing_evidence"] = "negligible (<0.5%): JSON lines per patch, gzip at cell end"
     (E / "cost_decomposition.json").write_text(json.dumps(out, indent=1, sort_keys=True) + "\n")
     for s, c in out["cells"].items():
-        print(s, c["measured_cell_cpu_h_phase4"], {k: round(v, 3) for k, v in c["stage_share"].items()})
+        print(s, c["cell_cpu_h"], c["cost_basis"], {k: round(v, 3) for k, v in c["stage_share"].items()})
     print(out["L_duplicated_by_topology"])
 
 

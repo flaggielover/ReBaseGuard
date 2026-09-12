@@ -1,0 +1,48 @@
+{
+ "AWS_GENUINE_PS1_SR_PRODUCTION_AUTHORIZED_TO_START": "YES",
+ "adapter_commit": "b45fb15285f9995271e14124e62b07930e5b904a",
+ "authorization_commit": "29b3bffb6a739121b66bdfcb23cb6b6544b39baf",
+ "checks": {
+  "cap_not_below_measured_projection": true,
+  "cost_measured_on_real_cells": true,
+  "executor_bit_identity_343_records": true,
+  "executor_full_cell_identity_6_certified_cells": true,
+  "executor_tests": true,
+  "genuine_production_cells": 0,
+  "lifecycle_readiness_real_contract": true,
+  "lifecycle_tests": true,
+  "old_caps_not_reused": true,
+  "original_lifecycle_known_pre_existing_failure_only": true,
+  "topology_A_qualified": true
+ },
+ "classification": "PS1_PRODUCTION_AUTHORIZATION_CLOSED",
+ "genuine_ps1_production_cells": 0,
+ "global_cpu_cap": 6600.0,
+ "operator_preconditions_before_start": [
+  "operator runs tests/ps1_systemd_live_acceptance.py (prepare, start, stop, report) with the contract's privilege prefix on AWS and confirms: completion, cgroup settlement, stop settlement, restart completion",
+  "prodctl.py install-runtime-policy --role AWS in the PS1 production clone",
+  "prodctl.py verify --role AWS and status --role AWS show NOT_STARTED/READY with 0 genuine cells"
+ ],
+ "original_lifecycle_suite_disposition": "known_pre_existing_only",
+ "producer_commit": "c9b12670d4da677d384747aa703c725c58bac65a",
+ "projection_cpu_h": {
+  "mean_based": 4413.235339900566,
+  "mean_plus_10pct": 4854.558873890623,
+  "mean_plus_15pct": 5075.220640885651,
+  "worst_group_based": 4641.9358642549705,
+  "worst_plus_10pct": 5106.129450680468
+ },
+ "schema": "rebaseguard.p5y.k1.ps1.authorization-adjudication.v1",
+ "started_in_this_round": false,
+ "suite_exit_codes": {
+  "deterministic_replay": 0,
+  "install_runtime_policy": 0,
+  "original_lifecycle_suite": 1,
+  "partition_and_historical_regression": 0,
+  "prodctl_render": 0,
+  "prodctl_status": 0,
+  "prodctl_verify": 0,
+  "ps1_lifecycle_adapter": 0,
+  "ps1_production": 0
+ }
+}
