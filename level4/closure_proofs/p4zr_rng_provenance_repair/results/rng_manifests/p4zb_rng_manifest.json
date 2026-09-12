@@ -1,0 +1,61 @@
+{
+  "campaign": "P4ZB",
+  "derived_from": {
+    "calibration_streams": "parsed from the frozen diagnostic scripts and cross-checked against the stored diagnostic JSON",
+    "plan": "production/p4zb_campaign_plan.json",
+    "production_streams": "read from the stored production block files"
+  },
+  "programs": [
+    {
+      "class": "calibration",
+      "label": "audit/ladder_study.py :: out-of-sample ladder study",
+      "result_bearing": false,
+      "streams": [
+        {
+          "batch_hi": 29,
+          "batch_lo": 0,
+          "configuration": "frozen/cusum@5/skewnormal4 (study only)",
+          "generator": "PHILOX",
+          "key": 4290001,
+          "route": "rb_map-kernel"
+        }
+      ]
+    },
+    {
+      "class": "production",
+      "label": "P4ZB production runner",
+      "result_bearing": true,
+      "streams": [
+        {
+          "batch_hi": 39,
+          "batch_lo": 0,
+          "blocks_consumed": 40,
+          "configuration": "frozen/cusum@5/skewnormal4",
+          "generator": "PHILOX",
+          "key": 4390003,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "frozen/cusum@5/skewnormal4",
+          "generator": "PHILOX",
+          "key": 4390002,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "frozen/cusum@5/skewnormal4",
+          "generator": "PCG64",
+          "key": 4390001,
+          "route": "rb_score"
+        }
+      ]
+    }
+  ],
+  "result_bearing": false,
+  "schema": "rebaseguard.campaign-rng-manifest.v1"
+}

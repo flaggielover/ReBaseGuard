@@ -1,0 +1,742 @@
+{
+  "campaign": "P4Z",
+  "derived_from": {
+    "calibration_streams": "parsed from the frozen diagnostic scripts and cross-checked against the stored diagnostic JSON",
+    "plan": "production/campaign_plan.json",
+    "production_streams": "read from the stored production block files"
+  },
+  "programs": [
+    {
+      "class": "calibration",
+      "label": "micropilots/run_micropilots.py :: RB-SCORE candidate",
+      "result_bearing": false,
+      "streams": [
+        {
+          "batch_hi": 7,
+          "batch_lo": 0,
+          "configuration": "5 diagnostic cells (not a production id)",
+          "generator": "PCG64",
+          "key": 4090001,
+          "route": "rb_score-kernel"
+        }
+      ]
+    },
+    {
+      "class": "calibration",
+      "label": "micropilots/run_micropilots.py :: historical Route-A tail check",
+      "result_bearing": false,
+      "streams": [
+        {
+          "batch_hi": 0,
+          "batch_lo": 0,
+          "configuration": "5 diagnostic cells (not a production id)",
+          "generator": "PCG64",
+          "key": 4090001,
+          "route": "simulate_group(mode='compact')"
+        }
+      ]
+    },
+    {
+      "class": "calibration",
+      "label": "micropilots/run_micropilots.py :: RB-MAP candidate",
+      "result_bearing": false,
+      "streams": [
+        {
+          "batch_hi": 3,
+          "batch_lo": 0,
+          "configuration": "5 diagnostic cells (not a production id)",
+          "generator": "PHILOX",
+          "key": 4090002,
+          "route": "rb_map-kernel"
+        }
+      ]
+    },
+    {
+      "class": "calibration",
+      "label": "micropilots/run_fd_ladder.py :: RB-SCORE reference",
+      "result_bearing": false,
+      "streams": [
+        {
+          "batch_hi": 5,
+          "batch_lo": 0,
+          "configuration": "2 diagnostic cells (not a production id)",
+          "generator": "PCG64",
+          "key": 4090101,
+          "route": "rb_score-kernel"
+        }
+      ]
+    },
+    {
+      "class": "calibration",
+      "label": "micropilots/run_fd_ladder.py :: FD ladder",
+      "result_bearing": false,
+      "streams": [
+        {
+          "batch_hi": 5,
+          "batch_lo": 0,
+          "configuration": "2 diagnostic cells (not a production id)",
+          "generator": "PHILOX",
+          "key": 4090102,
+          "route": "rb_map-kernel"
+        }
+      ]
+    },
+    {
+      "class": "production",
+      "label": "P4Z production runner",
+      "result_bearing": true,
+      "streams": [
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "frozen/cusum@5/gaussian",
+          "generator": "PHILOX",
+          "key": 4090004,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "frozen/cusum@5/gaussian",
+          "generator": "PHILOX",
+          "key": 4090002,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "frozen/cusum@5/gaussian",
+          "generator": "PCG64",
+          "key": 4090001,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "frozen/cusum@5/laplace",
+          "generator": "PHILOX",
+          "key": 4090104,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "frozen/cusum@5/laplace",
+          "generator": "PHILOX",
+          "key": 4090102,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "frozen/cusum@5/laplace",
+          "generator": "PCG64",
+          "key": 4090101,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "frozen/cusum@5/logistic",
+          "generator": "PHILOX",
+          "key": 4090204,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "frozen/cusum@5/logistic",
+          "generator": "PHILOX",
+          "key": 4090202,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "frozen/cusum@5/logistic",
+          "generator": "PCG64",
+          "key": 4090201,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "frozen/cusum@5/skewnormal4",
+          "generator": "PHILOX",
+          "key": 4090304,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "frozen/cusum@5/skewnormal4",
+          "generator": "PHILOX",
+          "key": 4090302,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "frozen/cusum@5/skewnormal4",
+          "generator": "PCG64",
+          "key": 4090301,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "frozen/cusum@5/t1p5",
+          "generator": "PHILOX",
+          "key": 4090404,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "frozen/cusum@5/t1p5",
+          "generator": "PHILOX",
+          "key": 4090402,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "frozen/cusum@5/t1p5",
+          "generator": "PCG64",
+          "key": 4090401,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "frozen/cusum@5/t3",
+          "generator": "PHILOX",
+          "key": 4090504,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "frozen/cusum@5/t3",
+          "generator": "PHILOX",
+          "key": 4090502,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "frozen/cusum@5/t3",
+          "generator": "PCG64",
+          "key": 4090501,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "frozen/sr@520.886/gaussian",
+          "generator": "PHILOX",
+          "key": 4090604,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "frozen/sr@520.886/gaussian",
+          "generator": "PHILOX",
+          "key": 4090602,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "frozen/sr@520.886/gaussian",
+          "generator": "PCG64",
+          "key": 4090601,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "frozen/sr@520.886/laplace",
+          "generator": "PHILOX",
+          "key": 4090704,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "frozen/sr@520.886/laplace",
+          "generator": "PHILOX",
+          "key": 4090702,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "frozen/sr@520.886/laplace",
+          "generator": "PCG64",
+          "key": 4090701,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "frozen/sr@520.886/logistic",
+          "generator": "PHILOX",
+          "key": 4090804,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "frozen/sr@520.886/logistic",
+          "generator": "PHILOX",
+          "key": 4090802,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "frozen/sr@520.886/logistic",
+          "generator": "PCG64",
+          "key": 4090801,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "frozen/sr@520.886/skewnormal4",
+          "generator": "PHILOX",
+          "key": 4090904,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "frozen/sr@520.886/skewnormal4",
+          "generator": "PHILOX",
+          "key": 4090902,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "frozen/sr@520.886/skewnormal4",
+          "generator": "PCG64",
+          "key": 4090901,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "frozen/sr@520.886/t1p5",
+          "generator": "PHILOX",
+          "key": 4091004,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "frozen/sr@520.886/t1p5",
+          "generator": "PHILOX",
+          "key": 4091002,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "frozen/sr@520.886/t1p5",
+          "generator": "PCG64",
+          "key": 4091001,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "frozen/sr@520.886/t3",
+          "generator": "PHILOX",
+          "key": 4091104,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "frozen/sr@520.886/t3",
+          "generator": "PHILOX",
+          "key": 4091102,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "frozen/sr@520.886/t3",
+          "generator": "PCG64",
+          "key": 4091101,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/cusum@2/gaussian",
+          "generator": "PHILOX",
+          "key": 4091204,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/cusum@2/gaussian",
+          "generator": "PHILOX",
+          "key": 4091202,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/cusum@2/gaussian",
+          "generator": "PCG64",
+          "key": 4091201,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/cusum@2/laplace",
+          "generator": "PHILOX",
+          "key": 4091304,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "reduced/cusum@2/laplace",
+          "generator": "PHILOX",
+          "key": 4091302,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "reduced/cusum@2/laplace",
+          "generator": "PCG64",
+          "key": 4091301,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/cusum@2/logistic",
+          "generator": "PHILOX",
+          "key": 4091404,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "reduced/cusum@2/logistic",
+          "generator": "PHILOX",
+          "key": 4091402,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "reduced/cusum@2/logistic",
+          "generator": "PCG64",
+          "key": 4091401,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/cusum@2/skewnormal4",
+          "generator": "PHILOX",
+          "key": 4091504,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/cusum@2/skewnormal4",
+          "generator": "PHILOX",
+          "key": 4091502,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/cusum@2/skewnormal4",
+          "generator": "PCG64",
+          "key": 4091501,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/cusum@2/t1p5",
+          "generator": "PHILOX",
+          "key": 4091604,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "reduced/cusum@2/t1p5",
+          "generator": "PHILOX",
+          "key": 4091602,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "reduced/cusum@2/t1p5",
+          "generator": "PCG64",
+          "key": 4091601,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/cusum@2/t3",
+          "generator": "PHILOX",
+          "key": 4091704,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "reduced/cusum@2/t3",
+          "generator": "PHILOX",
+          "key": 4091702,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "reduced/cusum@2/t3",
+          "generator": "PCG64",
+          "key": 4091701,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/sr@20/gaussian",
+          "generator": "PHILOX",
+          "key": 4091804,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/sr@20/gaussian",
+          "generator": "PHILOX",
+          "key": 4091802,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/sr@20/gaussian",
+          "generator": "PCG64",
+          "key": 4091801,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/sr@20/laplace",
+          "generator": "PHILOX",
+          "key": 4091904,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "reduced/sr@20/laplace",
+          "generator": "PHILOX",
+          "key": 4091902,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "reduced/sr@20/laplace",
+          "generator": "PCG64",
+          "key": 4091901,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/sr@20/logistic",
+          "generator": "PHILOX",
+          "key": 4092004,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/sr@20/logistic",
+          "generator": "PHILOX",
+          "key": 4092002,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/sr@20/logistic",
+          "generator": "PCG64",
+          "key": 4092001,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/sr@20/skewnormal4",
+          "generator": "PHILOX",
+          "key": 4092104,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/sr@20/skewnormal4",
+          "generator": "PHILOX",
+          "key": 4092102,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/sr@20/skewnormal4",
+          "generator": "PCG64",
+          "key": 4092101,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/sr@20/t1p5",
+          "generator": "PHILOX",
+          "key": 4092204,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "reduced/sr@20/t1p5",
+          "generator": "PHILOX",
+          "key": 4092202,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "reduced/sr@20/t1p5",
+          "generator": "PCG64",
+          "key": 4092201,
+          "route": "rb_score"
+        },
+        {
+          "batch_hi": 19,
+          "batch_lo": 0,
+          "blocks_consumed": 20,
+          "configuration": "reduced/sr@20/t3",
+          "generator": "PHILOX",
+          "key": 4092304,
+          "route": "fd_ladder"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "reduced/sr@20/t3",
+          "generator": "PHILOX",
+          "key": 4092302,
+          "route": "rb_map"
+        },
+        {
+          "batch_hi": 199,
+          "batch_lo": 0,
+          "blocks_consumed": 200,
+          "configuration": "reduced/sr@20/t3",
+          "generator": "PCG64",
+          "key": 4092301,
+          "route": "rb_score"
+        }
+      ]
+    }
+  ],
+  "result_bearing": false,
+  "schema": "rebaseguard.campaign-rng-manifest.v1"
+}

@@ -1,0 +1,670 @@
+{
+  "campaign_audits": {
+    "P4Z": {
+      "address_model": {
+        "PCG64": "np.random.Generator(np.random.PCG64([seed, batch])); address is (key, batch)",
+        "PHILOX": "np.random.Philox(key=seed, counter=((batch<<32)|step)*2**64); the 2**64 stride makes (key, batch) the exact collision granularity",
+        "draw_length_is_not_part_of_the_test": "both generators deliver a prefix of one stream, so a shorter draw shares its innovations exactly with a longer one"
+      },
+      "address_overlaps": [
+        {
+          "authoritative_source_of_this_configuration": {
+            "P4ZA": 4
+          },
+          "calibration_address": "PCG64(key=4090001, batch=0..7)",
+          "calibration_configuration": "5 diagnostic cells (not a production id)",
+          "calibration_diagnostic_cells": [
+            "gaussian/cusum@2",
+            "t1p5/cusum@5",
+            "t1p5/sr@520.886",
+            "t1p5/sr@20",
+            "t3/cusum@5"
+          ],
+          "calibration_influence_artifact": "results/estimator_feasibility.json",
+          "calibration_influenced": [
+            "path count (block_paths per configuration)",
+            "the K3 variance regime envelope",
+            "estimator choice (RB-SCORE primary, RB-MAP companion)"
+          ],
+          "calibration_program": "micropilots/run_micropilots.py :: RB-SCORE candidate",
+          "calibration_recorded_fields": [
+            "mean",
+            "se",
+            "relative_se",
+            "per_path_sd",
+            "hill_index_upper_half_percent",
+            "top1_share_of_squared_deviation",
+            "top5_share_of_squared_deviation"
+          ],
+          "campaign": "P4Z",
+          "confers_any_final_disposition": false,
+          "generator": "PCG64",
+          "identical_innovations_delivered": true,
+          "identical_innovations_note": "the shared address delivers the same underlying bit stream in every case; the drawn VALUES are identical only where the calibration also ran the production configuration's family",
+          "key": 4090001,
+          "overlapping_address_count": 8,
+          "overlapping_batches": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7
+          ],
+          "production_address": "PCG64(key=4090001, batch=0..199)",
+          "production_configuration": "frozen/cusum@5/gaussian",
+          "production_configuration_family": "gaussian",
+          "production_program": "P4Z production runner",
+          "production_route": "rb_score",
+          "severity": "ADDRESS_OVERLAP",
+          "what_calibration_inspected": {
+            "asymptotic_or_order_diagnostics": false,
+            "comparison_against_the_historical_record": "yes: a two-sample z of the new estimator against the P4X record, MICROPILOT_REPORT.md section 3.2",
+            "correspondence_gate_z": false,
+            "estimator_precision": true,
+            "inter_route_discrepancy": false,
+            "pass_fail_outcome": false,
+            "point_estimate_of_the_estimand": true
+          }
+        },
+        {
+          "authoritative_source_of_this_configuration": {
+            "P4ZA": 4
+          },
+          "calibration_address": "PCG64(key=4090001, batch=0..0)",
+          "calibration_configuration": "5 diagnostic cells (not a production id)",
+          "calibration_diagnostic_cells": [
+            "gaussian/cusum@2",
+            "t1p5/cusum@5",
+            "t1p5/sr@520.886",
+            "t1p5/sr@20",
+            "t3/cusum@5"
+          ],
+          "calibration_influence_artifact": "results/failure_taxonomy.json",
+          "calibration_influenced": [
+            "the F-01/F-02 failure diagnosis (FAILURE_TAXONOMY.md), i.e. the rejection of the historical routes"
+          ],
+          "calibration_program": "micropilots/run_micropilots.py :: historical Route-A tail check",
+          "calibration_recorded_fields": [
+            "per_path_sd",
+            "hill_index_upper_half_percent",
+            "top1_share_of_squared_deviation",
+            "top5_share_of_squared_deviation"
+          ],
+          "campaign": "P4Z",
+          "confers_any_final_disposition": false,
+          "generator": "PCG64",
+          "identical_innovations_delivered": true,
+          "identical_innovations_note": "the shared address delivers the same underlying bit stream in every case; the drawn VALUES are identical only where the calibration also ran the production configuration's family",
+          "key": 4090001,
+          "overlapping_address_count": 1,
+          "overlapping_batches": [
+            0
+          ],
+          "production_address": "PCG64(key=4090001, batch=0..199)",
+          "production_configuration": "frozen/cusum@5/gaussian",
+          "production_configuration_family": "gaussian",
+          "production_program": "P4Z production runner",
+          "production_route": "rb_score",
+          "severity": "ADDRESS_OVERLAP",
+          "what_calibration_inspected": {
+            "asymptotic_or_order_diagnostics": false,
+            "comparison_against_the_historical_record": "tail shape only; no mean is recorded for this leg",
+            "correspondence_gate_z": false,
+            "estimator_precision": true,
+            "inter_route_discrepancy": false,
+            "pass_fail_outcome": false,
+            "point_estimate_of_the_estimand": false
+          }
+        },
+        {
+          "authoritative_source_of_this_configuration": {
+            "P4ZA": 4
+          },
+          "calibration_address": "PHILOX(key=4090002, batch=0..3)",
+          "calibration_configuration": "5 diagnostic cells (not a production id)",
+          "calibration_diagnostic_cells": [
+            "gaussian/cusum@2",
+            "t1p5/cusum@5",
+            "t1p5/sr@520.886",
+            "t1p5/sr@20",
+            "t3/cusum@5"
+          ],
+          "calibration_influence_artifact": "results/estimator_feasibility.json",
+          "calibration_influenced": [
+            "path count (block_paths per configuration)",
+            "the K3 variance regime envelope"
+          ],
+          "calibration_program": "micropilots/run_micropilots.py :: RB-MAP candidate",
+          "calibration_recorded_fields": [
+            "mean",
+            "se",
+            "relative_se",
+            "per_path_sd",
+            "hill_index_upper_half_percent",
+            "top1_share_of_squared_deviation",
+            "top5_share_of_squared_deviation"
+          ],
+          "campaign": "P4Z",
+          "confers_any_final_disposition": false,
+          "generator": "PHILOX",
+          "identical_innovations_delivered": true,
+          "identical_innovations_note": "the shared address delivers the same underlying bit stream in every case; the drawn VALUES are identical only where the calibration also ran the production configuration's family",
+          "key": 4090002,
+          "overlapping_address_count": 4,
+          "overlapping_batches": [
+            0,
+            1,
+            2,
+            3
+          ],
+          "production_address": "PHILOX(key=4090002, batch=0..199)",
+          "production_configuration": "frozen/cusum@5/gaussian",
+          "production_configuration_family": "gaussian",
+          "production_program": "P4Z production runner",
+          "production_route": "rb_map",
+          "severity": "ADDRESS_OVERLAP",
+          "what_calibration_inspected": {
+            "asymptotic_or_order_diagnostics": false,
+            "comparison_against_the_historical_record": "yes: RB-MAP against the P4X Route-B record, MICROPILOT_REPORT.md section 3.2",
+            "correspondence_gate_z": false,
+            "estimator_precision": true,
+            "inter_route_discrepancy": false,
+            "pass_fail_outcome": false,
+            "point_estimate_of_the_estimand": true
+          }
+        },
+        {
+          "authoritative_source_of_this_configuration": {
+            "P4ZA": 4
+          },
+          "calibration_address": "PCG64(key=4090101, batch=0..5)",
+          "calibration_configuration": "2 diagnostic cells (not a production id)",
+          "calibration_diagnostic_cells": [
+            "t1p5/sr@520.886",
+            "t1p5/cusum@5"
+          ],
+          "calibration_influence_artifact": "MICROPILOT_REPORT.md section 3.6",
+          "calibration_influenced": [
+            "the finite-difference ladder design and the decision to keep the frozen (0.05, 0.025) pair unchanged",
+            "the rejection of a finer finite-difference step"
+          ],
+          "calibration_program": "micropilots/run_fd_ladder.py :: RB-SCORE reference",
+          "calibration_recorded_fields": [
+            "mean",
+            "se"
+          ],
+          "campaign": "P4Z",
+          "confers_any_final_disposition": false,
+          "generator": "PCG64",
+          "identical_innovations_delivered": false,
+          "identical_innovations_note": "the shared address delivers the same underlying bit stream in every case; the drawn VALUES are identical only where the calibration also ran the production configuration's family",
+          "key": 4090101,
+          "overlapping_address_count": 6,
+          "overlapping_batches": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "production_address": "PCG64(key=4090101, batch=0..19)",
+          "production_configuration": "frozen/cusum@5/laplace",
+          "production_configuration_family": "laplace",
+          "production_program": "P4Z production runner",
+          "production_route": "rb_score",
+          "severity": "ADDRESS_OVERLAP",
+          "what_calibration_inspected": {
+            "asymptotic_or_order_diagnostics": false,
+            "comparison_against_the_historical_record": "no",
+            "correspondence_gate_z": false,
+            "estimator_precision": true,
+            "inter_route_discrepancy": true,
+            "pass_fail_outcome": false,
+            "point_estimate_of_the_estimand": true
+          }
+        },
+        {
+          "authoritative_source_of_this_configuration": {
+            "P4ZA": 4
+          },
+          "calibration_address": "PHILOX(key=4090102, batch=0..5)",
+          "calibration_configuration": "2 diagnostic cells (not a production id)",
+          "calibration_diagnostic_cells": [
+            "t1p5/sr@520.886",
+            "t1p5/cusum@5"
+          ],
+          "calibration_influence_artifact": "MICROPILOT_REPORT.md section 3.6",
+          "calibration_influenced": [
+            "the finite-difference ladder design, including the rungs later used by the K7 precondition",
+            "the rejection of a finer finite-difference step"
+          ],
+          "calibration_program": "micropilots/run_fd_ladder.py :: FD ladder",
+          "calibration_recorded_fields": [
+            "central difference per h",
+            "Richardson per pair",
+            "se"
+          ],
+          "campaign": "P4Z",
+          "confers_any_final_disposition": false,
+          "generator": "PHILOX",
+          "identical_innovations_delivered": false,
+          "identical_innovations_note": "the shared address delivers the same underlying bit stream in every case; the drawn VALUES are identical only where the calibration also ran the production configuration's family",
+          "key": 4090102,
+          "overlapping_address_count": 6,
+          "overlapping_batches": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "production_address": "PHILOX(key=4090102, batch=0..19)",
+          "production_configuration": "frozen/cusum@5/laplace",
+          "production_configuration_family": "laplace",
+          "production_program": "P4Z production runner",
+          "production_route": "rb_map",
+          "severity": "ADDRESS_OVERLAP",
+          "what_calibration_inspected": {
+            "asymptotic_or_order_diagnostics": true,
+            "comparison_against_the_historical_record": "no",
+            "correspondence_gate_z": false,
+            "estimator_precision": true,
+            "inter_route_discrepancy": true,
+            "pass_fail_outcome": false,
+            "point_estimate_of_the_estimand": true
+          }
+        }
+      ],
+      "calibration_blocks": 5,
+      "campaign": "P4Z",
+      "key_partitions": [],
+      "overlapping_address_total": 25,
+      "production_blocks": 72,
+      "schema": "rebaseguard.same-campaign-rng-address-audit.v1",
+      "seed_namespace_reuse": [],
+      "verdict": "RNG_ADDRESS_SEPARATION_FAIL"
+    },
+    "P4ZA": {
+      "address_model": {
+        "PCG64": "np.random.Generator(np.random.PCG64([seed, batch])); address is (key, batch)",
+        "PHILOX": "np.random.Philox(key=seed, counter=((batch<<32)|step)*2**64); the 2**64 stride makes (key, batch) the exact collision granularity",
+        "draw_length_is_not_part_of_the_test": "both generators deliver a prefix of one stream, so a shorter draw shares its innovations exactly with a longer one"
+      },
+      "address_overlaps": [],
+      "calibration_blocks": 1,
+      "campaign": "P4ZA",
+      "key_partitions": [],
+      "overlapping_address_total": 0,
+      "production_blocks": 39,
+      "schema": "rebaseguard.same-campaign-rng-address-audit.v1",
+      "seed_namespace_reuse": [
+        {
+          "calibration_address": "PHILOX(key=4190001, batch=0..59)",
+          "calibration_configuration": "4 calibration cells (not a production id)",
+          "calibration_generator": "PHILOX",
+          "calibration_program": "audit/calibrate_ladder.py :: FD ladder micro-calibration",
+          "key": 4190001,
+          "production_address": "PCG64(key=4190001, batch=0..199)",
+          "production_configuration": "frozen/cusum@5/gaussian",
+          "production_generator": "PCG64",
+          "production_program": "P4ZA production runner",
+          "production_route": "rb_score",
+          "severity": "SEED_NAMESPACE_REUSE"
+        }
+      ],
+      "verdict": "RNG_ADDRESS_SEPARATION_PASS"
+    },
+    "P4ZB": {
+      "address_model": {
+        "PCG64": "np.random.Generator(np.random.PCG64([seed, batch])); address is (key, batch)",
+        "PHILOX": "np.random.Philox(key=seed, counter=((batch<<32)|step)*2**64); the 2**64 stride makes (key, batch) the exact collision granularity",
+        "draw_length_is_not_part_of_the_test": "both generators deliver a prefix of one stream, so a shorter draw shares its innovations exactly with a longer one"
+      },
+      "address_overlaps": [],
+      "calibration_blocks": 1,
+      "campaign": "P4ZB",
+      "key_partitions": [],
+      "overlapping_address_total": 0,
+      "production_blocks": 3,
+      "schema": "rebaseguard.same-campaign-rng-address-audit.v1",
+      "seed_namespace_reuse": [],
+      "verdict": "RNG_ADDRESS_SEPARATION_PASS"
+    }
+  },
+  "findings": {
+    "address_overlaps_total": 5,
+    "affected_production_configurations": [
+      "frozen/cusum@5/gaussian",
+      "frozen/cusum@5/laplace"
+    ],
+    "campaigns_clean_on_both_axes": [
+      "P4ZB"
+    ],
+    "campaigns_with_address_overlap": [
+      "P4Z"
+    ],
+    "campaigns_with_seed_namespace_reuse_only": [
+      "P4ZA"
+    ],
+    "overlapping_addresses_total": 25,
+    "overlaps": [
+      {
+        "authoritative_source_of_this_configuration": {
+          "P4ZA": 4
+        },
+        "calibration_address": "PCG64(key=4090001, batch=0..7)",
+        "calibration_configuration": "5 diagnostic cells (not a production id)",
+        "calibration_diagnostic_cells": [
+          "gaussian/cusum@2",
+          "t1p5/cusum@5",
+          "t1p5/sr@520.886",
+          "t1p5/sr@20",
+          "t3/cusum@5"
+        ],
+        "calibration_influence_artifact": "results/estimator_feasibility.json",
+        "calibration_influenced": [
+          "path count (block_paths per configuration)",
+          "the K3 variance regime envelope",
+          "estimator choice (RB-SCORE primary, RB-MAP companion)"
+        ],
+        "calibration_program": "micropilots/run_micropilots.py :: RB-SCORE candidate",
+        "calibration_recorded_fields": [
+          "mean",
+          "se",
+          "relative_se",
+          "per_path_sd",
+          "hill_index_upper_half_percent",
+          "top1_share_of_squared_deviation",
+          "top5_share_of_squared_deviation"
+        ],
+        "campaign": "P4Z",
+        "confers_any_final_disposition": false,
+        "generator": "PCG64",
+        "identical_innovations_delivered": true,
+        "identical_innovations_note": "the shared address delivers the same underlying bit stream in every case; the drawn VALUES are identical only where the calibration also ran the production configuration's family",
+        "key": 4090001,
+        "overlapping_address_count": 8,
+        "overlapping_batches": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ],
+        "production_address": "PCG64(key=4090001, batch=0..199)",
+        "production_configuration": "frozen/cusum@5/gaussian",
+        "production_configuration_family": "gaussian",
+        "production_program": "P4Z production runner",
+        "production_route": "rb_score",
+        "severity": "ADDRESS_OVERLAP",
+        "what_calibration_inspected": {
+          "asymptotic_or_order_diagnostics": false,
+          "comparison_against_the_historical_record": "yes: a two-sample z of the new estimator against the P4X record, MICROPILOT_REPORT.md section 3.2",
+          "correspondence_gate_z": false,
+          "estimator_precision": true,
+          "inter_route_discrepancy": false,
+          "pass_fail_outcome": false,
+          "point_estimate_of_the_estimand": true
+        }
+      },
+      {
+        "authoritative_source_of_this_configuration": {
+          "P4ZA": 4
+        },
+        "calibration_address": "PCG64(key=4090001, batch=0..0)",
+        "calibration_configuration": "5 diagnostic cells (not a production id)",
+        "calibration_diagnostic_cells": [
+          "gaussian/cusum@2",
+          "t1p5/cusum@5",
+          "t1p5/sr@520.886",
+          "t1p5/sr@20",
+          "t3/cusum@5"
+        ],
+        "calibration_influence_artifact": "results/failure_taxonomy.json",
+        "calibration_influenced": [
+          "the F-01/F-02 failure diagnosis (FAILURE_TAXONOMY.md), i.e. the rejection of the historical routes"
+        ],
+        "calibration_program": "micropilots/run_micropilots.py :: historical Route-A tail check",
+        "calibration_recorded_fields": [
+          "per_path_sd",
+          "hill_index_upper_half_percent",
+          "top1_share_of_squared_deviation",
+          "top5_share_of_squared_deviation"
+        ],
+        "campaign": "P4Z",
+        "confers_any_final_disposition": false,
+        "generator": "PCG64",
+        "identical_innovations_delivered": true,
+        "identical_innovations_note": "the shared address delivers the same underlying bit stream in every case; the drawn VALUES are identical only where the calibration also ran the production configuration's family",
+        "key": 4090001,
+        "overlapping_address_count": 1,
+        "overlapping_batches": [
+          0
+        ],
+        "production_address": "PCG64(key=4090001, batch=0..199)",
+        "production_configuration": "frozen/cusum@5/gaussian",
+        "production_configuration_family": "gaussian",
+        "production_program": "P4Z production runner",
+        "production_route": "rb_score",
+        "severity": "ADDRESS_OVERLAP",
+        "what_calibration_inspected": {
+          "asymptotic_or_order_diagnostics": false,
+          "comparison_against_the_historical_record": "tail shape only; no mean is recorded for this leg",
+          "correspondence_gate_z": false,
+          "estimator_precision": true,
+          "inter_route_discrepancy": false,
+          "pass_fail_outcome": false,
+          "point_estimate_of_the_estimand": false
+        }
+      },
+      {
+        "authoritative_source_of_this_configuration": {
+          "P4ZA": 4
+        },
+        "calibration_address": "PHILOX(key=4090002, batch=0..3)",
+        "calibration_configuration": "5 diagnostic cells (not a production id)",
+        "calibration_diagnostic_cells": [
+          "gaussian/cusum@2",
+          "t1p5/cusum@5",
+          "t1p5/sr@520.886",
+          "t1p5/sr@20",
+          "t3/cusum@5"
+        ],
+        "calibration_influence_artifact": "results/estimator_feasibility.json",
+        "calibration_influenced": [
+          "path count (block_paths per configuration)",
+          "the K3 variance regime envelope"
+        ],
+        "calibration_program": "micropilots/run_micropilots.py :: RB-MAP candidate",
+        "calibration_recorded_fields": [
+          "mean",
+          "se",
+          "relative_se",
+          "per_path_sd",
+          "hill_index_upper_half_percent",
+          "top1_share_of_squared_deviation",
+          "top5_share_of_squared_deviation"
+        ],
+        "campaign": "P4Z",
+        "confers_any_final_disposition": false,
+        "generator": "PHILOX",
+        "identical_innovations_delivered": true,
+        "identical_innovations_note": "the shared address delivers the same underlying bit stream in every case; the drawn VALUES are identical only where the calibration also ran the production configuration's family",
+        "key": 4090002,
+        "overlapping_address_count": 4,
+        "overlapping_batches": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "production_address": "PHILOX(key=4090002, batch=0..199)",
+        "production_configuration": "frozen/cusum@5/gaussian",
+        "production_configuration_family": "gaussian",
+        "production_program": "P4Z production runner",
+        "production_route": "rb_map",
+        "severity": "ADDRESS_OVERLAP",
+        "what_calibration_inspected": {
+          "asymptotic_or_order_diagnostics": false,
+          "comparison_against_the_historical_record": "yes: RB-MAP against the P4X Route-B record, MICROPILOT_REPORT.md section 3.2",
+          "correspondence_gate_z": false,
+          "estimator_precision": true,
+          "inter_route_discrepancy": false,
+          "pass_fail_outcome": false,
+          "point_estimate_of_the_estimand": true
+        }
+      },
+      {
+        "authoritative_source_of_this_configuration": {
+          "P4ZA": 4
+        },
+        "calibration_address": "PCG64(key=4090101, batch=0..5)",
+        "calibration_configuration": "2 diagnostic cells (not a production id)",
+        "calibration_diagnostic_cells": [
+          "t1p5/sr@520.886",
+          "t1p5/cusum@5"
+        ],
+        "calibration_influence_artifact": "MICROPILOT_REPORT.md section 3.6",
+        "calibration_influenced": [
+          "the finite-difference ladder design and the decision to keep the frozen (0.05, 0.025) pair unchanged",
+          "the rejection of a finer finite-difference step"
+        ],
+        "calibration_program": "micropilots/run_fd_ladder.py :: RB-SCORE reference",
+        "calibration_recorded_fields": [
+          "mean",
+          "se"
+        ],
+        "campaign": "P4Z",
+        "confers_any_final_disposition": false,
+        "generator": "PCG64",
+        "identical_innovations_delivered": false,
+        "identical_innovations_note": "the shared address delivers the same underlying bit stream in every case; the drawn VALUES are identical only where the calibration also ran the production configuration's family",
+        "key": 4090101,
+        "overlapping_address_count": 6,
+        "overlapping_batches": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "production_address": "PCG64(key=4090101, batch=0..19)",
+        "production_configuration": "frozen/cusum@5/laplace",
+        "production_configuration_family": "laplace",
+        "production_program": "P4Z production runner",
+        "production_route": "rb_score",
+        "severity": "ADDRESS_OVERLAP",
+        "what_calibration_inspected": {
+          "asymptotic_or_order_diagnostics": false,
+          "comparison_against_the_historical_record": "no",
+          "correspondence_gate_z": false,
+          "estimator_precision": true,
+          "inter_route_discrepancy": true,
+          "pass_fail_outcome": false,
+          "point_estimate_of_the_estimand": true
+        }
+      },
+      {
+        "authoritative_source_of_this_configuration": {
+          "P4ZA": 4
+        },
+        "calibration_address": "PHILOX(key=4090102, batch=0..5)",
+        "calibration_configuration": "2 diagnostic cells (not a production id)",
+        "calibration_diagnostic_cells": [
+          "t1p5/sr@520.886",
+          "t1p5/cusum@5"
+        ],
+        "calibration_influence_artifact": "MICROPILOT_REPORT.md section 3.6",
+        "calibration_influenced": [
+          "the finite-difference ladder design, including the rungs later used by the K7 precondition",
+          "the rejection of a finer finite-difference step"
+        ],
+        "calibration_program": "micropilots/run_fd_ladder.py :: FD ladder",
+        "calibration_recorded_fields": [
+          "central difference per h",
+          "Richardson per pair",
+          "se"
+        ],
+        "campaign": "P4Z",
+        "confers_any_final_disposition": false,
+        "generator": "PHILOX",
+        "identical_innovations_delivered": false,
+        "identical_innovations_note": "the shared address delivers the same underlying bit stream in every case; the drawn VALUES are identical only where the calibration also ran the production configuration's family",
+        "key": 4090102,
+        "overlapping_address_count": 6,
+        "overlapping_batches": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "production_address": "PHILOX(key=4090102, batch=0..19)",
+        "production_configuration": "frozen/cusum@5/laplace",
+        "production_configuration_family": "laplace",
+        "production_program": "P4Z production runner",
+        "production_route": "rb_map",
+        "severity": "ADDRESS_OVERLAP",
+        "what_calibration_inspected": {
+          "asymptotic_or_order_diagnostics": true,
+          "comparison_against_the_historical_record": "no",
+          "correspondence_gate_z": false,
+          "estimator_precision": true,
+          "inter_route_discrepancy": true,
+          "pass_fail_outcome": false,
+          "point_estimate_of_the_estimand": true
+        }
+      }
+    ]
+  },
+  "impact": {
+    "defect_class": "calibration/production RNG address reuse within a single campaign",
+    "defect_exists": true,
+    "disposition_bearing_overlaps": 0,
+    "gate_statistic_never_read_at_a_shared_address": true,
+    "residual_dependence_channel": "P4ZA sized its blocks from the P4Z Stage-0 measured per-path relative sd, and P4Z Stage-0 for the two affected configurations includes the blocks whose innovations the micropilot had already inspected.  The transmitted quantity is a scalar precision statistic, which the frozen K3 trigger discipline explicitly permits a sizing rule to read, and P4ZA drew its own innovations from disjoint seeds.",
+    "statement": "No observed disposition dependence.  The scientific impact is bounded by the facts that the correspondence gate statistic was never read at a shared address, that both affected configurations are authored by a campaign with no address overlap, and that all 96 cells clear the frozen gate with margin even when every successor-added uncertainty allowance is removed.  This is a bound, not a proof of zero influence; see residual_governance_risk.",
+    "strict_gate_bound": {
+      "cells_passing": 96,
+      "cells_total": 96,
+      "relative_limit": 0.03,
+      "reproduce": "audit/strict_gate_recheck.py",
+      "worst_relative_discrepancy": 0.009499604379,
+      "worst_z_monte_carlo_error_only": 1.787674614076624,
+      "z_limit": 4.0
+    },
+    "why_no_disposition_is_affected": "every production configuration carrying an overlapping address has all four of its cells authored by P4ZA in final_coverage.json, and P4ZA's audit reports RNG_ADDRESS_SEPARATION_PASS on disjoint seeds.  The P4Z blocks at the overlapping addresses were superseded and confer no governed disposition."
+  },
+  "preserved": {
+    "P4_ORIGINAL_VERDICT": "PARTIAL",
+    "frozen_artifacts_modified": false,
+    "historical_scripts_modified": false,
+    "note": "The defective historical scripts are deliberately left exactly as they are, as evidence of the defect."
+  },
+  "requires_independent_adjudication": true,
+  "residual_governance_risk": [
+    "The bound is an argument from what the calibration recorded and from which campaign authored each cell.  It is not a reconstruction of the counterfactual campaign that would have run on disjoint addresses, and no such reconstruction is offered.",
+    "micropilots/diagnostics/fd_ladder.json records no seed, so its addresses are recoverable only from the source of micropilots/run_fd_ladder.py.  Provenance that lives only in a script is weaker than provenance recorded in the artifact.",
+    "The P4Z and P4ZA independent closure audits checked seed disjointness against predecessor campaigns and against history, never against the campaign's own calibration, so this defect class was structurally invisible to them at the time.",
+    "P4ZA's seed-namespace reuse (key 4190001 keying Philox in calibration and PCG64 in production) shares no innovation, but it removes the margin that would have made a later same-generator reuse obvious.",
+    "This disclosure is authored inside the successor lineage it describes and has not been independently adjudicated."
+  ],
+  "result_bearing": false,
+  "schema": "rebaseguard.p4zr-rng-collision-disclosure.v1",
+  "scope": "B2 only: disclosure and future-audit protection.  This record performs neither the K7 instrument adjudication (B1) nor the Rule-C ruling on P4X C4/C5 (B3), and declares no verdict CLOSED.",
+  "verdicts": {
+    "P4Z": "RNG_ADDRESS_SEPARATION_FAIL",
+    "P4ZA": "RNG_ADDRESS_SEPARATION_PASS",
+    "P4ZB": "RNG_ADDRESS_SEPARATION_PASS"
+  }
+}
