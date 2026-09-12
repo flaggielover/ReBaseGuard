@@ -48,6 +48,14 @@ GEN2 = {
     "namespace": "level4/closure_proofs/p5y_k1_ps1_production",
     "production_root": "/home/ubuntu/work/ReBaseGuard-ps1-prod-gen2",
     "runtime_dir": "/home/ubuntu/rbg-runtime/p5y_k1_ps1_generation2",
+    # SYSTEMD_RECOVERY_EXECUTABLE_BINDING_DEFECT: render_start() builds BOTH ExecStart
+    # (ops/supervisor.py) and ExecStopPost (ops/prodctl.py settle-fallback) from
+    # spec["ops_root"]. That field was inherited from the frozen adapter, so the unit ran
+    # the ADAPTER's ops against the RECOVERY contract; the adapter's opscommon.CONTRACT_PATH
+    # is its own contract, so load_contract took the non-frozen branch and demanded
+    # SYNTHETIC_CONTROL. The recovery ops/ is complete (3 generated + 4 byte-identical
+    # inherited, per OPS_SOURCE_MANIFEST), so it is the correct and only executable root.
+    "ops_root": "/home/ubuntu/work/ReBaseGuard-ps1-ops/level4/closure_proofs/p5y_k1_ps1_portable_recovery",
     "separation": ["ledger", "lock", "open reservations", "work dir", "durable markers",
                    "finalized cell evidence", "checkpoint state", "drain flag",
                    "settlement state"],

@@ -65,6 +65,8 @@ def main():
     g2 = tr["generation_2"]
     c["hosts"]["AWS"]["production_root"] = g2["production_root"]
     c["hosts"]["AWS"]["runtime_dir"] = g2["runtime_dir"]
+    for _role in c["hosts"]:
+        c["hosts"][_role]["ops_root"] = g2["ops_root"]      # ExecStart + ExecStopPost root
     c["execution_generation"] = {
         "generation": 2,
         "transition_record": "config/GENERATION_TRANSITION.json",
