@@ -438,12 +438,24 @@ def run_production_cells(pf, *, max_cells=None, poll_timeout=None) -> dict:
             t_idle = time.monotonic()
             task, rec = got
             _reap_markers(pf, inflight, tasks, done, ah, adapter)
+            drained_now = bool(rec.get("drained"))
             for cell in task["cells"]:
                 key = inflight.pop(cell, None)
                 if key is None:
                     continue          # already finalized and committed from its marker
+                if drained_now:
+                    dkey = key        # never started: the worker drained at a cell boundary
+                    budget.release(dkey)
+                    continue
                 budget.release(key); continue
     finally:
+        # A marker already on disk is a FINALIZED cell. Honour it even if the worker died,
+        # otherwise a tear would roll back work that had already reached its boundary
+        # (observed live in acceptance B: cell 1 sealed on disk, lost to the release sweep).
+        try:
+            _reap_markers(pf, inflight, tasks, done, ah, adapter)
+        except Exception:                                          # noqa: BLE001
+            pass
         for k in inflight.values():
             budget.release(k)
         pool.close()

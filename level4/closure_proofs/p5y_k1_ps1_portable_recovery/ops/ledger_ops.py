@@ -70,13 +70,15 @@ ABORT = "INFRASTRUCTURE_ABORT"
 WORKER_FAILURE = "WORKER_REPORTED_FAILURE"
 MALFORMED = "MALFORMED_RESULT"
 UNCLASSIFIED = "UNCLASSIFIED_RELEASE"
+DRAIN = "GRACEFUL_DRAIN"          # recovery successor: a boundary drain is NOT a tear
 ORPHAN = "ORPHAN_RESERVATION"
 HALTING = (WORKER_FAILURE, MALFORMED, UNCLASSIFIED)
 
 # the exact frozen call sites of GlobalBudget.release() in run_production_cells
 RELEASE_SITES = {"budget.release(key); continue": WORKER_FAILURE,
                  "budget.release(key)": MALFORMED,
-                 "budget.release(k)": ABORT}
+                 "budget.release(k)": ABORT,
+                 "budget.release(dkey)": DRAIN}
 
 
 class ScientificHalt(RuntimeError):
@@ -338,6 +340,8 @@ def settle_run(io, rt, role, run_id, u_usec_final, evidence):
         for k in closed:
             del st["open_reservations"][k]
         st["committed_cpu_h_by_role"][role] = io.v(committed_now + charge, "committed after")
+        # GRACEFUL_DRAIN is excluded by construction: a cell that never started
+        # because the worker drained at a boundary is pending, not torn.
         infra = sorted(set(orphans) | set(torn.get(ABORT, [])))
         for c in infra:
             ops["torn_attempts"][str(c)] = ops["torn_attempts"].get(str(c), 0) + 1
