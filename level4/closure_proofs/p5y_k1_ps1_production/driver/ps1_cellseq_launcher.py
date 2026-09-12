@@ -433,7 +433,10 @@ def run_production_cells(pf, *, max_cells=None, poll_timeout=None) -> dict:
                 if poll_timeout is not None and not progressed and time.monotonic() - t_idle > poll_timeout:
                     raise PoolWorkerLost("no result within poll timeout")
                 if not progressed:
-                    time.sleep(2.0)
+                    # Tight: a durable marker must be consumed before the supervisor's
+                    # WORKER_LOST detection settles the run, otherwise a cell that reached
+                    # its boundary is torn. Detection latency is ~1-2s; this is 0.25s.
+                    time.sleep(0.25)
                 continue
             t_idle = time.monotonic()
             task, rec = got
