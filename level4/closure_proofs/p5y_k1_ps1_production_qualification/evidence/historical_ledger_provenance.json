@@ -1,0 +1,70 @@
+{
+ "committed_cpu_h_by_role": {
+  "AWS": 0.0005906247222222222
+ },
+ "expected_sha256": "d338679045d839ac5913f8aafc8b8b56683713206fa2b38b0c6d320c31ffb14a",
+ "genuine_completed_cells": 0,
+ "git_note": "runtime state is excluded from git by RUNTIME_STATE_EXCLUDE; absence from history is by design",
+ "git_tracked": false,
+ "known_pre_existing_test_failure": {
+  "actual": "{\"AWS\": [\"PRODUCTION_LEDGER.json\", \"README.md\"]}",
+  "asserts": "real_production_untouched() == {\"AWS\": [\"README.md\"]}",
+  "cause": "historical torn attempt of 2026-09-10 wrote the ledger; 0 genuine cells completed",
+  "is_regression_from_round4": false,
+  "suite": "p5y_k1_sr_production_lifecycle_successor/tests",
+  "test": "test_lifecycle_integrated.py::test_real_production_namespaces_untouched"
+ },
+ "mtime_utc": "2026-09-10T11:03:19.723607+00:00",
+ "mutated_by_this_round": false,
+ "path": "/home/ubuntu/work/ReBaseGuard-sr-parallel/level4/closure_proofs/p5y_k1_sr_production_authorized_successor/production/PRODUCTION_LEDGER.json",
+ "predates_round4": true,
+ "remote_completed_cells": 0,
+ "round4_parent_commit": "e3194dd",
+ "runs": {
+  "20260910T105333Z-640db8f2": {
+   "completed_in_run": [],
+   "evidence": "SUPERVISOR_FINAL",
+   "orphan_cells": [
+    0,
+    1,
+    2,
+    3,
+    5,
+    6,
+    7,
+    8,
+    10,
+    11,
+    12,
+    14,
+    15,
+    16,
+    17,
+    19
+   ],
+   "status": "SETTLED"
+  }
+ },
+ "schema": "rebaseguard.p5y.k1.sr.ps1.historical-ledger-provenance.v1",
+ "sha256": "d338679045d839ac5913f8aafc8b8b56683713206fa2b38b0c6d320c31ffb14a",
+ "sha256_matches_historical": true,
+ "size_bytes": 2582,
+ "torn_attempt_cells": [
+  0,
+  1,
+  2,
+  3,
+  5,
+  6,
+  7,
+  8,
+  10,
+  11,
+  12,
+  14,
+  15,
+  16,
+  17,
+  19
+ ]
+}
