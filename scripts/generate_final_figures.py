@@ -744,7 +744,7 @@ def figure09(output: Path) -> dict[str, str]:
         (0.665, "P4", [
             ("P4X", "governance OVERRIDE_FAIL\n0 scientific failures", PINK, "#f3e3e8"),
             ("P4Y pilots 1-4", "measurement NOT_FEASIBLE\nDO_NOT_FREEZE_P4Y", PINK, "#f3e3e8"),
-            ("P4Z / P4ZA / P4ZB", "96/96 COVERED_PASS\ngovernance adjudication outstanding", GOLD, GOLD_LIGHT),
+            ("P4Z / P4ZA / P4ZB", "96/96 COVERED_PASS  ->  P4Z CLOSED\nP4 scientific line closed by successor", BLUE, SOFT),
         ]),
         (0.535, "P5", [
             ("P5X", "global dynamics", BLUE, SOFT),
@@ -790,8 +790,9 @@ def figure09(output: Path) -> dict[str, str]:
         ha="center", va="center", fontsize=9.0, color=INK,
     )
     note(fig, "The P4 successor line is published on the historical research branches p4x-feasibility-audit, "
-              "p4y-prefreeze-pilot, p4y-pilot2-final, p4y-pilot3-heavy-stage1, p4y-pilot4-measurement and "
-              "p4zb-skewnormal4-k7. Statuses are internal, scope-bound research designations.")
+              "p4y-prefreeze-pilot, p4y-pilot2-final, p4y-pilot3-heavy-stage1, p4y-pilot4-measurement, "
+              "p4zb-skewnormal4-k7, p4zr-rng-provenance-repair and p4z-final-closure. P4Z CLOSED is a successor "
+              "closure; P4 itself remains PARTIAL. Statuses are internal, scope-bound research designations.")
     return save_figure(fig, output, FIGURES[8]["slug"])
 
 

@@ -35,6 +35,7 @@ ALLOWED_PATHS = {
     "LICENSE",
     "THIRD_PARTY_NOTICES.md",
     "docs/releases/LICENSING_READINESS.md",
+    "docs/releases/PUBLICATION_REMAINDERS.md",
     "docs/research_synthesis/PAPER_OUTLINE.md",
     "docs/superpowers/specs/2026-08-28-license-audit-release-design.md",
     "docs/superpowers/specs/2026-08-28-public-facing-documentation-upgrade-design.md",

@@ -158,11 +158,19 @@ line ran in three stages against the unchanged frozen gate, each recording its
 own self-verdict: P4Z `P4Z_NUMERICAL_PASS_AWAITING_FORMAL_OR_GOVERNANCE` (44/96
 adjudicated), P4ZA `P4ZA_INCONCLUSIVE` (92/96, four cells left open rather than
 widening the frozen K7 limit), and P4ZB `P4ZB_CLOSED` (96/96 `COVERED_PASS`).
-`P4ZB_CLOSED` is the campaign's own self-verdict, not an independently accepted
-closure: independent assessment currently reads the line as
-`SCIENTIFICALLY_COMPLETE_GOVERNANCE_INCOMPLETE`, with the P4 scientific line
-`CLOSABLE_WITH_REMAINING_OBLIGATIONS`. None of these closes P4, which remains
-`PARTIAL`.
+`P4ZB_CLOSED` is the campaign's own self-verdict. Independent integrated
+adjudication of the line now records `P4Z = CLOSED` and
+`P4_SCIENTIFIC_LINE = CLOSED_BY_LATER_SUCCESSOR`: all three of P4's originally
+failed gates are discharged, the 96-cell gate by the successor result and the
+outside-assumption and Gaussian-consistency gates by P4X obligations C4 and C5
+admitted under an obligation-local Rule C that does not rehabilitate P4X as a
+campaign. Two disclosed defects remain on the record — the successor-added K7
+precondition, redesigned twice with each version frozen before its own run, and
+a calibration/production RNG address overlap inside P4Z — both non-blocking
+because with the successor-added truncation term removed entirely all 96 cells
+still clear the frozen gate, at worst `|z|` 1.7877 against 4.0 and worst
+relative discrepancy 0.0095 against 0.03. None of this closes P4 itself, which
+remains `PARTIAL`.
 
 ## 9. O9 certification architecture and governed negative results
 
@@ -265,10 +273,10 @@ checklist outcome, not an external academic standard.
 Run the declared 369-cell PS1 campaign under its frozen cap, submit the result
 to independent adjudication, and only then consider the SR side of K1. K1
 closure, the remaining K2-K5 work, and P5Y closure follow in that order. The P4
-line needs independent governance adjudication of the P4Z/P4ZA/P4ZB result: the
-K7 instrument lineage, the status of P4X's C4/C5 obligations under P4X's
-governance `FAIL`, and a disclosed calibration/production RNG address overlap
-inside P4Z. None of these steps is anticipated by the present snapshot.
+line needs no further work: its successor closure is adjudicated and its
+scientific line is closed by later successor evidence, with P4's own historical
+verdict left at `PARTIAL`. None of these steps is anticipated by the present
+snapshot.
 
 ## 16. Reproducibility and repository
 

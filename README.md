@@ -92,7 +92,7 @@ converts an earlier `PARTIAL` or `FAIL` into a pass.
 
 | Line | Successors | Recorded outcome |
 |---|---|---|
-| P4 | P4X, P4Y pilots 1-4, P4Z/P4ZA/P4ZB | P4 remains `PARTIAL`; the P4Z line is scientifically complete for its 96-cell obligation with governance adjudication outstanding; see below |
+| P4 | P4X, P4Y pilots 1-4, P4Z/P4ZA/P4ZB | P4 remains `PARTIAL`; `P4Z = CLOSED` and the P4 scientific line is `CLOSED_BY_LATER_SUCCESSOR`; see below |
 | P5 | P5X -> P5Y -> O9 -> PS1 | P5 remains `PARTIAL`; PS1 is the current frontier |
 | P6 | P6R -> P6R2 -> P6R2b | Literal-closure repairs within P6's adjudicated scope |
 | P8 | P8R | Temporal-integrity repair lineage, `CLOSED`; P8 remains `FAIL` |
@@ -130,26 +130,40 @@ informative negative results:
   **P4ZB** `P4ZB_CLOSED` (96/96 `COVERED_PASS`, 0 `COVERED_FAIL`, 0
   `INCONCLUSIVE`, exactly one authoritative source per cell).
 
-  `P4ZB_CLOSED` is the **campaign's own self-recorded verdict**, not an
-  independently accepted closure. Independent read-only assessment of the line
-  currently reads:
+  `P4ZB_CLOSED` above is the **campaign's own self-recorded verdict**.
+  Independent integrated adjudication of the whole line, recorded in
+  [`p4z_final_closure`](https://github.com/flaggielover/ReBaseGuard/tree/p4z-final-closure),
+  now reads:
 
   ```text
-  P4Z successor closure   SCIENTIFICALLY_COMPLETE_GOVERNANCE_INCOMPLETE
-  P4 scientific line      CLOSABLE_WITH_REMAINING_OBLIGATIONS
+  P4                    PARTIAL                     historical, immutable
+  P4Z                   CLOSED                      successor closure
+  P4_SCIENTIFIC_LINE    CLOSED_BY_LATER_SUCCESSOR
   ```
 
-  The 96-cell numerical and scientific obligation it targets is complete; final
-  independent governance adjudication is still outstanding. Two items remain
-  open: independent adjudication of the K7 instrument lineage, and a ruling on
-  whether P4X's C4/C5 obligations survive P4X's governance `FAIL`. A disclosed
-  calibration/production RNG address overlap inside P4Z is recorded, with its
-  bounded impact and residual risk, in
-  [`p4zr_rng_provenance_repair`](https://github.com/flaggielover/ReBaseGuard/tree/p4zr-rng-provenance-repair)
-  and also awaits that adjudication.
+  All three of P4's originally failed gates are discharged by admissible later
+  evidence: `all_theorem_supported_cells_pass` by the 96/96 successor result,
+  and `all_outside_assumption_cells_demonstrate_failure` and
+  `gaussian_consistency_with_closed_core` by P4X obligations C4 and C5 admitted
+  under an obligation-local Rule C. **P4X is not rehabilitated as a campaign**;
+  Rule C is applied per obligation and nowhere else.
 
-None of these closes P4. The historical `P4 = PARTIAL` verdict on `main` stands,
-and no successor may replace it retroactively.
+  Two defects stay on the record rather than being erased. The K7 precondition
+  was successor-added — it is absent from the frozen P4 protocol — and its
+  statistic was redesigned twice, each version frozen before its own run with no
+  frozen threshold ever moved. A calibration/production RNG address overlap
+  inside P4Z is disclosed in
+  [`p4zr_rng_provenance_repair`](https://github.com/flaggielover/ReBaseGuard/tree/p4zr-rng-provenance-repair);
+  it is admissible because no disposition-bearing final cell relies on
+  overlapped evidence. Both are non-blocking for the same reason: with the
+  successor-added `T_B` term removed entirely, all 96 cells still clear the
+  frozen gate at worst `|z|` 1.7877 against 4.0 and worst relative discrepancy
+  0.0095 against 0.03.
+
+None of this closes P4. The historical `P4 = PARTIAL` verdict on `main` stands,
+and no successor may replace it retroactively. What is closed is the **P4Z
+successor line** and, through it, the **P4 scientific line** — three distinct
+statements that the closure packet keeps deliberately apart.
 
 ## Governed negative results
 
@@ -305,9 +319,9 @@ observations, and novelty status.
 
 - **P4:** retain the theorem and its surviving evidence; treat P4X as a
   governance failure with no scientific failure, P4Y as a negative feasibility
-  result, and the P4Z/P4ZA/P4ZB line as numerically and scientifically complete
-  for the 96-cell theorem-supported obligation it targets, with final
-  independent governance adjudication still outstanding.
+  result, and the P4Z/P4ZA/P4ZB line as `CLOSED`, having discharged all three of
+  P4's originally failed gates. The P4 scientific line is
+  `CLOSED_BY_LATER_SUCCESSOR`; P4's own historical verdict remains `PARTIAL`.
 - **P5:** retain the exact raw-mean and fixed-policy ergodicity results; treat
   attraction, global cycle uniqueness, bimodality onset, and the dispersion
   optimum at their adjudicated conditional or numerical tiers.
