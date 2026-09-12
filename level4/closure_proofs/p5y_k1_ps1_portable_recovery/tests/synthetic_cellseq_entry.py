@@ -95,7 +95,9 @@ def main(argv=None) -> int:
     sys.path.insert(0, str(prod_ns(spec) / "driver"))
     sys.path.insert(0, str(ADAPTER / "driver"))
     import ps1_cellseq_launcher as PL
-    sys.modules["production_launcher"] = PL        # PE.run imports it by this name
+    # No sys.modules shim: the recovery produce_entry imports ps1_cellseq_launcher by its
+    # real name, so it receives THIS already-patched module object from the import cache.
+    # The shim previously masked the genuine-path launcher-binding defect.
     hook = install(PL, Path(os.environ["RBG_SYNTH_CONTROL"]), Path(spec["runtime_dir"]))
     try:
         PE.run(c, a.role, a.run_id, preflight_kwargs={"role": a.role}, before_run=hook)

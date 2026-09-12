@@ -35,7 +35,10 @@ def run(contract, role, run_id, *, preflight_kwargs=None, before_run=None) -> di
     drv = prod_ns(spec) / "driver"
     if str(drv) not in sys.path:
         sys.path.insert(0, str(drv))
-    import production_launcher as PL                               # noqa: E402
+    # recovery generation: the bound executor is the cells-outer, per-cell-durable
+    # launcher. make_ops_budget therefore scans ITS release sites (4, each exactly
+    # once) rather than the frozen group-level launcher's 3.
+    import ps1_cellseq_launcher as PL                              # noqa: E402
     import global_budget as GB                                     # noqa: E402
     if Path(PL.__file__).resolve().parent != drv.resolve():
         raise OpsRefusal(f"imported launcher {PL.__file__} is not the bound one under {drv}")
