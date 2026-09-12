@@ -16,6 +16,21 @@
   "shadow": "max(0, U_run - C_run - R_run) + 2*poll_interval_s*online_cpus/3600",
   "torn_release": "frozen release() moves the reservation to an OPS:TORN escrow (never dropped, never zero)"
  },
+ "execution_generation": {
+  "generation": 2,
+  "generation_2_torn_counters": "independent, start empty",
+  "halt_supersession": "PREDECESSOR_HALT_SUPERSEDED_FOR_NEW_EXECUTION_GENERATION",
+  "imported_science_cpu_h": 92.32,
+  "predecessor_final_phase": "HALTED",
+  "predecessor_halt_reason": "RETRY_LIMIT",
+  "predecessor_ledger_sha256": "0557bc229c3fcdb10cb0dd0b5836fa62a6b0e6c2512656e6ec7e49294b4d6cab",
+  "predecessor_production_root": "/home/ubuntu/work/ReBaseGuard-ps1-prod",
+  "predecessor_torn_lineage": {
+   "cells_0_to_63": 3
+  },
+  "transition_record": "config/GENERATION_TRANSITION.json",
+  "transition_record_sha256": "f1fbd732cb4a1735069f786c4f9c92660d8d967906aeea76914606d4cb317e49"
+ },
  "genuine_sr_production_cells_at_freeze": 0,
  "hosts": {
   "AWS": {
@@ -27,9 +42,9 @@
    "online_cpus": 32,
    "ops_root": "/home/ubuntu/work/ReBaseGuard-ps1-ops/level4/closure_proofs/p5y_k1_ps1_lifecycle_adapter",
    "producer_binding": "GIT_COMMIT",
-   "production_root": "/home/ubuntu/work/ReBaseGuard-ps1-prod",
+   "production_root": "/home/ubuntu/work/ReBaseGuard-ps1-prod-gen2",
    "python": "/home/ubuntu/work/ReBaseGuard/level4/.venv/bin/python",
-   "runtime_dir": "/home/ubuntu/rbg-runtime/p5y_k1_ps1_production",
+   "runtime_dir": "/home/ubuntu/rbg-runtime/p5y_k1_ps1_generation2",
    "sys_vendor": "Amazon EC2",
    "user": "ubuntu"
   },
@@ -54,7 +69,7 @@
  "parent": {
   "aws_cells": 369,
   "checkpoint_sha256": "1c2a6825f19e19de6fb588647ca3fc4618068087ef0976292ca7bbeca701f13f",
-  "commit": "50e5dcc1632d2ebe0b798acfb4448fdfb1bbbe24",
+  "commit": "c82863d63d2639c031004ce1d6f023ff2be88ab1",
   "cores": {
    "AWS": [
     0,
@@ -141,10 +156,12 @@
  },
  "recovery_source_manifest": {
   "code/bench_ordering.py": "ed4fe1ac83f890a1b61d3d8606e93c179d021e3a41fc4ca8a91fbfc7d7a46601",
+  "code/init_generation2.py": "23a54452b7252a75adec3805bc149ba69ccbe8d64a2a5cb18038f9985d949b48",
   "code/make_cellseq_launcher.py": "c9460dd47123f141e4846ea43190adbca698c32fbce97959e10f8b5d58321bce",
   "code/make_cellseq_worker.py": "3c23a18f9513349c929fce5788be7b859cb8e32fd39f1f0f41accfd05ba0e58c",
+  "code/make_generation2.py": "93e9048b55f5486a6786e64ca9d0c8cb25431005fbc9a648e5ceb4dda5648dcd",
   "code/make_ledger_ops_recovery.py": "af5f7fac8d265a05ff5dfcdf3913114f51636a320b9c6697abee688b041729c3",
-  "code/make_operational_contract.py": "7cc6584184d5e6c15ec0ee414c24c28fa9aca3f3e9c01ee851e07f3bf8212037",
+  "code/make_operational_contract.py": "3eae7ba24ab990c529d3cf58ed74126d7ad932a6614c36f13f035d6628ab6ad2",
   "code/make_ops_manifest.py": "d805134b01fe5274641bbb5693dafed8fe6b2dbed4205b5c4d3837a21fd934a6",
   "code/make_prodctl_recovery.py": "2f36337632b255b98241df2763cfcccb9c5f2db65eb821b235f918a67ee00aca",
   "code/make_recovery_contract.py": "b671f4bdeecac25d4f216cae8cfac816f735b5ad29b45782f742940071ed9357",
@@ -162,6 +179,7 @@
   "tests/live_acceptance.py": "d1ee27bf9273f47efd6fc40f6e39625cc3fd7418715220aebfcd1f7c29c797e6",
   "tests/synthetic_cellseq_entry.py": "ef21a5b7b8da543bd5e58ec0276883a45d8ed4ceef879e88dc0620d9214b6a65",
   "tests/test_contract_hash.py": "fe2d2e0e7acfa5c83499b1095db98e7b09d439a6b597d9a554348d65d0bf5c99",
+  "tests/test_generation2.py": "9b56ef37e0983fd186763e08a9cc9d0b4a3dc1bbda2f39ce6cc86c66f598efbc",
   "tests/test_marker_reconciliation.py": "dd5d8a58bf5b1386920d2107a39bcb509501fc868bfa34c25ce5591ce0fbbfc7",
   "tests/test_portable_recovery.py": "d947e5c487624f2ba49c540d3531679114954357cb8f1603d12f9b856cb2505f"
  },

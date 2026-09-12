@@ -1,0 +1,70 @@
+{
+ "accounting_import": {
+  "global_cpu_cap": 6600.0,
+  "invariant": "cumulative accounting can never report below 92.32 CPU-h",
+  "predecessor_science_cpu_h": 92.32,
+  "seeded_into_generation_2_as": "committed_cpu_h_by_role.AWS"
+ },
+ "defect_classification": "EXECUTION_GENERATION_LEDGER_NAMESPACE_DEFECT",
+ "generation_2": {
+  "generation": 2,
+  "namespace": "level4/closure_proofs/p5y_k1_ps1_production",
+  "production_root": "/home/ubuntu/work/ReBaseGuard-ps1-prod-gen2",
+  "runtime_dir": "/home/ubuntu/rbg-runtime/p5y_k1_ps1_generation2",
+  "separation": [
+   "ledger",
+   "lock",
+   "open reservations",
+   "work dir",
+   "durable markers",
+   "finalized cell evidence",
+   "checkpoint state",
+   "drain flag",
+   "settlement state"
+  ]
+ },
+ "genuine_production_launched_under_defective_generation": false,
+ "halt_supersession": {
+  "grounds": [
+   "RETRY_LIMIT is an infrastructure/lifecycle counter, not a scientific counterexample (ledger_ops.MAX_INFRA_TEARS_PER_CELL; protocol retry_and_halt.infrastructure_tear)",
+   "root cause established as a host/systemd maintenance event, not science",
+   "scientific failure: none; 0 finalized cells, 0 committed scientific results",
+   "execution architecture repaired: per-cell durable finalization, supervisor-owned marker reconciliation, GRACEFUL_DRAIN",
+   "operator explicitly authorized creation of a successor generation"
+  ],
+  "immutable": true,
+  "not_a_clear": "the generation-1 halt is NOT cleared and NOT reclassified; it remains authoritative for generation 1",
+  "pre_result": true,
+  "record": "PREDECESSOR_HALT_SUPERSEDED_FOR_NEW_EXECUTION_GENERATION"
+ },
+ "historical_results_affected": "NONE",
+ "predecessor": {
+  "archival_patch_records": 24610,
+  "archival_patch_records_status": "ARCHIVAL_ONLY_NEVER_SCIENTIFICALLY_ADMISSIBLE",
+  "committed_scientific_results": 0,
+  "final_phase": "HALTED",
+  "forensic_incident": "HOST_OR_SYSTEMD_INFRASTRUCTURE_EVENT (apt-daily-upgrade re-executed systemd 255.4-1ubuntu8.17; the service restart cascade tore the transient unit at 06:01:57Z and 06:02:07Z)",
+  "generation": 1,
+  "genuine_finalized_cells": 0,
+  "halt_cells": "0..63",
+  "halt_reason": "RETRY_LIMIT",
+  "immutability": "generation 1 remains HALTED forever; this record imports facts only and never mutates, clears or reclassifies it",
+  "ledger_sha256": "0557bc229c3fcdb10cb0dd0b5836fa62a6b0e6c2512656e6ec7e49294b4d6cab",
+  "namespace": "level4/closure_proofs/p5y_k1_ps1_production",
+  "production_root": "/home/ubuntu/work/ReBaseGuard-ps1-prod",
+  "run_id": "20260912T041203Z-962132d3",
+  "science_cpu_h": 92.32,
+  "torn_attempt_lineage": {
+   "cells_0_to_63": 3
+  }
+ },
+ "retry_accounting": {
+  "generation_1_torn_counters": "preserved verbatim in the generation-1 ledger; never overwritten, never reset, never imported as active state",
+  "generation_2_torn_counters": "start empty and are governed independently",
+  "graceful_drain_is_a_tear": false,
+  "max_infra_tears_per_cell_generation_2": 3,
+  "reporting": "predecessor lineage and current-generation lineage are reported separately"
+ },
+ "schema": "rebaseguard.p5y.k1.ps1.generation-transition.v1",
+ "scientific_impact": "NONE"
+}

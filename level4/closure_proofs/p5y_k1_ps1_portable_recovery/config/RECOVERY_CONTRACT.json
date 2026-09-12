@@ -12,7 +12,7 @@
   "invariant": "FINALIZED u PENDING = 369 cells; FINALIZED n PENDING = empty",
   "schema": "rebaseguard.p5y.k1.ps1.portable-checkpoint.v1"
  },
- "contract_sha256": "694599250f1d625660a85a739dde128cca7b3af9a7657e35c295b95a566d1ac2",
+ "contract_sha256": "6c7c2b9a7c0dffb7290c6ee412690cdd4ef1e79b8e73c2b32bb532000db0ed0c",
  "drain_semantics": {
   "checked_only_at": "a cell boundary, never mid-cell",
   "distinct_from_stop": "STOP is emergency termination and does tear in-flight cells; DRAIN does not",
@@ -165,10 +165,13 @@
  },
  "source_manifest": {
   "code/bench_ordering.py": "ed4fe1ac83f890a1b61d3d8606e93c179d021e3a41fc4ca8a91fbfc7d7a46601",
+  "code/init_generation2.py": "23a54452b7252a75adec3805bc149ba69ccbe8d64a2a5cb18038f9985d949b48",
   "code/make_cellseq_launcher.py": "c9460dd47123f141e4846ea43190adbca698c32fbce97959e10f8b5d58321bce",
   "code/make_cellseq_worker.py": "3c23a18f9513349c929fce5788be7b859cb8e32fd39f1f0f41accfd05ba0e58c",
+  "code/make_generation2.py": "93e9048b55f5486a6786e64ca9d0c8cb25431005fbc9a648e5ceb4dda5648dcd",
   "code/make_ledger_ops_recovery.py": "af5f7fac8d265a05ff5dfcdf3913114f51636a320b9c6697abee688b041729c3",
-  "code/make_operational_contract.py": "7cc6584184d5e6c15ec0ee414c24c28fa9aca3f3e9c01ee851e07f3bf8212037",
+  "code/make_operational_contract.py": "3eae7ba24ab990c529d3cf58ed74126d7ad932a6614c36f13f035d6628ab6ad2",
+  "code/make_ops_manifest.py": "d805134b01fe5274641bbb5693dafed8fe6b2dbed4205b5c4d3837a21fd934a6",
   "code/make_prodctl_recovery.py": "2f36337632b255b98241df2763cfcccb9c5f2db65eb821b235f918a67ee00aca",
   "code/make_recovery_contract.py": "b671f4bdeecac25d4f216cae8cfac816f735b5ad29b45782f742940071ed9357",
   "code/make_supervisor_recovery.py": "f2a4040589587ed513c254d21ec2cd8c1233b3191f57ffa3b19e4542af7431fa",
@@ -178,8 +181,9 @@
   "tests/live_acceptance.py": "d1ee27bf9273f47efd6fc40f6e39625cc3fd7418715220aebfcd1f7c29c797e6",
   "tests/synthetic_cellseq_entry.py": "ef21a5b7b8da543bd5e58ec0276883a45d8ed4ceef879e88dc0620d9214b6a65",
   "tests/test_contract_hash.py": "fe2d2e0e7acfa5c83499b1095db98e7b09d439a6b597d9a554348d65d0bf5c99",
+  "tests/test_generation2.py": "9b56ef37e0983fd186763e08a9cc9d0b4a3dc1bbda2f39ce6cc86c66f598efbc",
   "tests/test_marker_reconciliation.py": "dd5d8a58bf5b1386920d2107a39bcb509501fc868bfa34c25ce5591ce0fbbfc7",
   "tests/test_portable_recovery.py": "d947e5c487624f2ba49c540d3531679114954357cb8f1603d12f9b856cb2505f"
  },
- "worktree_commit_at_freeze": "2588e5ae2feccd74d82fcce74bb225ddef6c34a3"
+ "worktree_commit_at_freeze": "c82863d63d2639c031004ce1d6f023ff2be88ab1"
 }
