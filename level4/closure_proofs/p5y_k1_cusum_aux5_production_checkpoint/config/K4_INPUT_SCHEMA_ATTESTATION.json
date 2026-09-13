@@ -1,0 +1,175 @@
+{
+ "K4_CUSUM_INPUT_SCHEMA_ATTESTED": "YES",
+ "consumed_record_paths": [
+  "cell_index",
+  "detector",
+  "e0.0",
+  "e0.1",
+  "rho.0",
+  "rho.1",
+  "C_upper",
+  "precision_bits",
+  "producer_identity_hash",
+  "producer.producer_identity_hash",
+  "runtime_contract_hash",
+  "producer.runtime.precision_bits",
+  "m.1.R_interval.lo",
+  "m.1.R_interval.hi",
+  "m.1.D_interval.lo",
+  "m.1.D_interval.hi",
+  "m.1.R2_interval.lo",
+  "m.1.R2_interval.hi",
+  "m.1.M_R2",
+  "m.1.detector",
+  "m.2.R_interval.lo",
+  "m.2.R_interval.hi",
+  "m.2.D_interval.lo",
+  "m.2.D_interval.hi",
+  "m.2.R2_interval.lo",
+  "m.2.R2_interval.hi",
+  "m.2.M_R2",
+  "m.2.detector",
+  "m.3.R_interval.lo",
+  "m.3.R_interval.hi",
+  "m.3.D_interval.lo",
+  "m.3.D_interval.hi",
+  "m.3.R2_interval.lo",
+  "m.3.R2_interval.hi",
+  "m.3.M_R2",
+  "m.3.detector",
+  "m.5.R_interval.lo",
+  "m.5.R_interval.hi",
+  "m.5.D_interval.lo",
+  "m.5.D_interval.hi",
+  "m.5.R2_interval.lo",
+  "m.5.R2_interval.hi",
+  "m.5.M_R2",
+  "m.5.detector"
+ ],
+ "enforcement": {
+  "after_completion": "build_integrity_attestation emits rebaseguard.p5y.k1.cusum-production.integrity-attestation.v1",
+  "at_seal": "prod_sealer.verify_record: K4_INPUT_STRUCTURE and K4_HASH_COVERAGE refuse the record, so no sealed record can lack a consumed field"
+ },
+ "interval_fields": [
+  "R_interval",
+  "D_interval",
+  "R2_interval"
+ ],
+ "k4_assembly_run": false,
+ "k4_checkpoint": {
+  "checkpoint_sha256": "95b1fd16ac420d6f545cbb2619a6086ced31c6d748a9c801ca7f7c114e77a1e1",
+  "integrity_clause_cusum": "attestation rebaseguard.p5y.k1.cusum-production.integrity-attestation.v1 with cells_verified == 326, all_scientific_hashes_verified true, producer_identity_hash equal to the FROZEN CUSUM successor checkpoint (recorded as producer_checkpoint_sha256), and every record carrying that producer_identity_hash",
+  "k4_assembly_sha256": "6e9518b0dc1f399984a36af313fd58ad80746e80f2c3a356a35ddef6c3568de7",
+  "per_cell_schema": {
+   "cell|cell_index": "int",
+   "e0": "[p, s] exact rationals, s == 0",
+   "m": {
+    "1|2|3|5": {
+     "D_interval": {
+      "hi": "rational str",
+      "lo": "rational str"
+     },
+     "M_R2": "rational str",
+     "R_interval": {
+      "hi": "rational str",
+      "lo": "rational str"
+     },
+     "detector": "CUSUM|SR"
+    }
+   },
+   "rho": "[p, s] exact rationals, s == 0"
+  },
+  "source_reads_verified": [
+   "rec.get(\"cell\", rec.get(\"cell_index\"))",
+   "v.get(\"detector\") for v in rec[\"m\"].values()",
+   "e0, rho = rec[\"e0\"], rec[\"rho\"]",
+   "entry[\"R_interval\"][\"lo\"]",
+   "entry[\"R_interval\"][\"hi\"]",
+   "entry[\"D_interval\"][\"lo\"]",
+   "entry[\"D_interval\"][\"hi\"]",
+   "entry[\"M_R2\"]",
+   "set(rec[\"m\"]) != set(M_SCOPE)",
+   "M_SCOPE = (\"1\", \"2\", \"3\", \"5\")",
+   "r.get(\"producer_identity_hash\") != a[\"producer_identity_hash\"]",
+   "a.get(\"cells_verified\") == 326",
+   "a.get(\"all_scientific_hashes_verified\") is True",
+   "a.get(\"producer_checkpoint_sha256\")",
+   "CUSUM_ATTESTATION_SCHEMA = \"rebaseguard.p5y.k1.cusum-production.integrity-attestation.v1\"",
+   "raise AssemblyRefusal(\"floating-point value in a certified field\")"
+  ],
+  "status": "FROZEN_PRE_RESULT"
+ },
+ "k4_values_evaluated": false,
+ "problems": [],
+ "qualification_records_read_structurally": {
+  "318A": {
+   "cell_index": 318,
+   "hash_coverage_problems": [],
+   "mutation_tested": true,
+   "outside_k4_domain_so_no_k4_value_exposed": true,
+   "record_sha256": "5895bcf5769eae6386483965af10dabc8b7ed25ebfc6028ba2542fe65acc387a",
+   "structure_problems": []
+  },
+  "318B": {
+   "cell_index": 318,
+   "hash_coverage_problems": [],
+   "mutation_tested": false,
+   "outside_k4_domain_so_no_k4_value_exposed": true,
+   "record_sha256": "cd0e923c5b4f1d0e489a9733fce26351b8c2c5f659c46d152d176e4789d7eba5",
+   "structure_problems": []
+  },
+  "323A": {
+   "cell_index": 323,
+   "hash_coverage_problems": [],
+   "mutation_tested": true,
+   "outside_k4_domain_so_no_k4_value_exposed": true,
+   "record_sha256": "28e6a53e57f10c46b2f965b27d0b7be6395da8170acb604fa34db6e474aec59f",
+   "structure_problems": []
+  },
+  "323B": {
+   "cell_index": 323,
+   "hash_coverage_problems": [],
+   "mutation_tested": false,
+   "outside_k4_domain_so_no_k4_value_exposed": true,
+   "record_sha256": "d08a694c56793157069bb1069b7ffe07b80582ec6197d42d9b4de9539505440d",
+   "structure_problems": []
+  }
+ },
+ "required_fields": {
+  "R": [
+   "m.1.R_interval.lo|hi",
+   "m.2.R_interval.lo|hi",
+   "m.3.R_interval.lo|hi",
+   "m.5.R_interval.lo|hi"
+  ],
+  "R_double_prime_and_curvature": [
+   "m.1.R2_interval.lo|hi, m.1.M_R2",
+   "m.2.R2_interval.lo|hi, m.2.M_R2",
+   "m.3.R2_interval.lo|hi, m.3.M_R2",
+   "m.5.R2_interval.lo|hi, m.5.M_R2"
+  ],
+  "R_prime": [
+   "m.1.D_interval.lo|hi",
+   "m.2.D_interval.lo|hi",
+   "m.3.D_interval.lo|hi",
+   "m.5.D_interval.lo|hi"
+  ],
+  "midpoint_and_geometry": [
+   "cell_index",
+   "e0 [p, s]",
+   "rho [p, s]",
+   "C_upper"
+  ],
+  "precision": [
+   "precision_bits == 256",
+   "producer.runtime.precision_bits == 256"
+  ],
+  "producer_identity": [
+   "producer_identity_hash",
+   "producer.producer_identity_hash",
+   "runtime_contract_hash"
+  ],
+  "scientific_hash_coverage": "every path above: not INCIDENTAL under the frozen Aux4 schema, and a mutation moves the recomputed scientific_content_hash"
+ },
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.k4-input-schema-attestation.v1"
+}
