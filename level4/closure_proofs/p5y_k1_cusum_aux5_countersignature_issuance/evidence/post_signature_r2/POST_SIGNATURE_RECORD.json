@@ -1,0 +1,100 @@
+{
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.countersignature-post-signature-record.v2",
+ "issuance_revision": "r2",
+ "host": "rebaseguard-vultr-02",
+ "checkout": "/root/work/postk1-aux5",
+ "checkout_head": "50cb25ae5f2db2713201f80ef7065e575332051d",
+ "checkout_clean": true,
+ "frozen_semantics": {
+  "PRE_GENESIS_ALLOWED_FILES": ["campaign.lock", "campaign.owner.json", "reaper.jsonl"],
+  "AUTHORITATIVE_PRODUCTION_STARTED_PREDICATE": "ledger.json OR journal.jsonl exists in the runtime root (genesis has begun); every run open, reservation, admission, seal, provenance binding and overhead charge is a journalled transition after GENESIS",
+  "ROOT_EXISTENCE_ALONE_MEANS_STARTED": "NO"
+ },
+ "revoked_countersignature": {
+  "sha256": "a58b1ad175567b232531ee4a65d131bbf48d6a72b9c7d1f71ac996e04734821f",
+  "commit": "6b8aad681f56231e6cdc488a1b3163643e491668",
+  "revocation_commit": "7131440343d5c5c4f140d6be3cb85f9451644a43",
+  "reason": "STALE_ISSUANCE_SEMANTICS"
+ },
+ "countersignature": {
+  "path": "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/config/COUNTERSIGNATURE.json",
+  "sha256": "1ceb92d463d1332dfb26505143454b3c3fd87a611bc731372d9e227017682b07",
+  "commit": "50cb25ae5f2db2713201f80ef7065e575332051d",
+  "commit_contains_only_countersignature": true,
+  "issuance_schema": "rebaseguard.p5y.k1.cusum-aux5.countersignature-issuance.v2",
+  "frozen_verify_countersignature_before_commit": "PASS",
+  "issuance_binding_before_commit": "PASS"
+ },
+ "repair_commit": "8778dd4f261ac7c56434229276c201ed1aaa09df",
+ "authorization_sha256": "b8f11ec05efc2476f733dd989ae02b542dc9efa374f24fa0a27688d76ec2b329",
+ "provenance_checkpoint_sha256": "dd4c89d773c411355d93d0d703e40c027f9913e11e116e4bfe35117f84b4baf2",
+ "freeze_record_sha256": "e61dcc15f8f6ab89752596109782d9108e8d25962271e3858b6c8b8a7af31ec1",
+ "review_evidence": {
+  "path": "level4/closure_proofs/p5y_k1_cusum_aux5_countersignature_issuance/evidence/review_preflight_r2/REVIEW_PREFLIGHT.json",
+  "sha256": "b7b650c23407b5ee0d30ac0b15311fcf6e7eaaca2ed0edb81c1fa76277d8f93d",
+  "commit": "35e425f57517b8622c8b449cfa358ffdd785d5b3",
+  "reviewed_tip": "8778dd4f261ac7c56434229276c201ed1aaa09df",
+  "state": "READY_FOR_COUNTERSIGNATURE"
+ },
+ "host_tests": {"suite": "tests/test_issuance.py", "checkout": "8778dd4f261ac7c56434229276c201ed1aaa09df", "ran": 24, "passed": 24,
+                "includes": "A-J; J drives the frozen ledger (genesis, crash before RUN_OPENED, relaunch) in a temporary synthetic root"},
+ "timeline_utc": {
+  "refused_launch": "2026-09-13T11:18:12Z",
+  "revocation_commit_71314403": "2026-09-13T11:37:00Z",
+  "repair_commit_8778dd4f": "2026-09-13T11:37:00Z",
+  "review_preflight_r2": "2026-09-13T11:37:53Z",
+  "review_evidence_commit_35e425f5": "2026-09-13T11:40:38Z",
+  "pre_write_host_check": "2026-09-13T11:41:11Z",
+  "countersignature_commit_50cb25ae": "2026-09-13T11:44:02Z",
+  "frozen_preflight_and_launch_preflight": "2026-09-13T11:45:15Z..11:45:24Z"
+ },
+ "frozen_preflight_p01_p10": {
+  "path": "FROZEN_PREFLIGHT_P01_P10.txt",
+  "sha256": "79bb6459b2b0b56cb23509176ee5ffcad84ae427b1bdbdf57ace6eeb8f9a2dce",
+  "all_pass": true,
+  "P07_independent_countersignature": "PASS",
+  "P09_run_state": "PASS (relation FRESH)",
+  "entrypoint": "READY",
+  "exit_code": 0
+ },
+ "launch_preflight": {
+  "path": "LAUNCH_PREFLIGHT.json",
+  "sha256": "9b420fb9c8bbd20fa5665ceb7967e77442c7fd1f9a2203e3dde16969470b3f34",
+  "state": "READY_TO_LAUNCH_PRODUCTION",
+  "runtime_root_state": "PRE_GENESIS",
+  "issuance_binding_problems": [],
+  "exit_code": 0
+ },
+ "host_state_post_signature": {
+  "production_runtime_root": "/root/work/postk1-runs/cusum-aux5-production-prov-r1",
+  "entries": ["campaign.lock", "campaign.owner.json", "reaper.jsonl"],
+  "file_sha256": {
+   "campaign.lock": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "campaign.owner.json": "ddebda2bc6bb8914a8df22136e14cc10374494403e3a8ac67b0e1fb3371f80c7",
+   "reaper.jsonl": "9e0af36a3bceb5e973bcedb9205fdbbaa069a951d1277a2acbda22874380085d"
+  },
+  "residue_unchanged_since_refused_launch": true,
+  "ledger": "absent",
+  "journal": "absent",
+  "lock": "free",
+  "production_cells": 0,
+  "reservations": 0,
+  "production_processes": 0,
+  "predecessor_fence": "DRAIN + BLOCKED_ON_PRODUCTION_STATUS_SEMANTICS, no ledger"
+ },
+ "accounting": {
+  "REAPER_ACCOUNTING_PRESERVED": "YES",
+  "REFUSED_LAUNCH_CPU_CHARGE_USEC": 4441807,
+  "records": {"CHILD_REAPED supervisor pid 102197 exit 30": 4366444, "KEEPER_EXIT pid 102196": 75363},
+  "charged_at": "first RUN_OPENED after genesis (frozen unmatched_overhead -> op_charge_overhead), keyed by reaper record_id",
+  "DOUBLE_CHARGE_PATH": "NONE",
+  "UNDERCHARGE_PATH": "NONE"
+ },
+ "origin_main": {"sha": "1cb453826313c189f0bdafd5b84120c1edb74da9", "unchanged": true},
+ "COUNTERSIGNATURE_TEMPORAL_INTEGRITY": "PASS",
+ "CUSUM_READY_TO_RELAUNCH": "YES",
+ "CUSUM_PRODUCTION_LAUNCHED": "NO",
+ "launch_command_invoked_in_this_repair": false,
+ "LIVE_AWS_PS1_TOUCHED": "NO",
+ "NEW_RESULT_BEARING_COMPUTE": "NONE"
+}
