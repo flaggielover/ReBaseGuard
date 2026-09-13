@@ -1,0 +1,35 @@
+{
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.freeze-record.v1",
+ "status": "FROZEN_PRE_QUALIFICATION",
+ "frozen_at_utc": "2026-09-13",
+ "pre_manifest_commit": "868fa2c8",
+ "bound_host": "rebaseguard-vultr-02",
+ "manifest": {
+  "path": "level4/closure_proofs/p5y_k1_cusum_aux5_successor/manifests/producer_manifest_v3.json",
+  "file_sha256": "611bd0a9f356b0e7f5e63da60567ac1afa9e69fc1f8c464c7e5b89aeedbd2b9f",
+  "generated_on": "rebaseguard-vultr-02, clean checkout of 868fa2c8, env -i with the pinned thread contract, venv /root/work/rbg-cusum-aux5-venv",
+  "files": 60,
+  "verify_on_host": "ok, problems []"
+ },
+ "identity": {
+  "producer_manifest_hash": "b55a2da1fea0c7ee889f8da6a4b893c12d3ef24e2bc02d19bd5488187fd30fd9",
+  "runtime_contract_hash": "bc75c9ea7cd5f9406a0509bb0a161aa2c013f80427d1035197989e3d202c845a",
+  "producer_identity_hash": "3692d0feeaef71365798cd99399fdb6d744573f38d59dba5cfe2e99294f0ae19"
+ },
+ "runtime_highlights": {
+  "openblas_runtime_corename": "Haswell",
+  "openblas_config": "OpenBLAS 0.3.34.0.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=64",
+  "backend_libraries_bound": 5,
+  "external_venv_defect": "REPAIRED: absolute-path binding non-empty (Aux4 bound {} for an external venv)"
+ },
+ "frozen_objects": {
+  "producer_manifest_and_runtime_contract": "manifests/producer_manifest_v3.json",
+  "host_qualification": "config/HOST_QUALIFICATION.json",
+  "scientific_hash_semantics": "Aux4 schema.py + hash_v2.py, byte-identical and in the TCB by exact path",
+  "cost_cap_formula": "config/COST_CAP_FORMULA.json",
+  "qualification_protocol": "config/QUALIFICATION_PROTOCOL.json"
+ },
+ "focused_tests_on_bound_host_pre_freeze": "tests/test_aux5.py: 10 passed",
+ "qualification_executed": false,
+ "production_authorized": false
+}
