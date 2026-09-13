@@ -1,0 +1,150 @@
+{
+ "authorization_sha256": "b8f11ec05efc2476f733dd989ae02b542dc9efa374f24fa0a27688d76ec2b329",
+ "decision": {
+  "eligibility": {
+   "exempt_gate": "P07_independent_countersignature",
+   "exempt_only_with_code": "COUNTERSIGNATURE_MISSING",
+   "launch_authorized": false,
+   "problems": [],
+   "state": "READY_FOR_COUNTERSIGNATURE"
+  },
+  "launch_authorized": false,
+  "signing_guard_problems": [],
+  "signing_permitted": true,
+  "state": "READY_FOR_COUNTERSIGNATURE",
+  "temporal_problems": []
+ },
+ "facts": {
+  "checkout_clean": true,
+  "countersignature_present": false,
+  "host_name": "rebaseguard-vultr-02",
+  "predecessor_ledger_exists": false,
+  "production_processes": [],
+  "production_root_exists": true,
+  "production_runtime_root": "/root/work/postk1-runs/cusum-aux5-production-prov-r1",
+  "result_bearing_cells": 0,
+  "runtime_root": {
+   "entries": [
+    "campaign.lock",
+    "campaign.owner.json",
+    "reaper.jsonl"
+   ],
+   "lock_state": "FREE",
+   "overhead_usec": 4441807,
+   "problems": [],
+   "reaper_record_ids": [
+    "b9c67a8a7bdd9a5d81cf1c56fb1aaee530c22e56e728a41a03875299b7d7325d",
+    "0168fb88e8974cddcf79ad5249ab358982f402d3d91c1e2bdd6b0b00210e9a76"
+   ],
+   "reaper_sha256": "9e0af36a3bceb5e973bcedb9205fdbbaa069a951d1277a2acbda22874380085d",
+   "reaper_size": 710,
+   "state": "PRE_GENESIS"
+  }
+ },
+ "freeze_record_sha256": "e61dcc15f8f6ab89752596109782d9108e8d25962271e3858b6c8b8a7af31ec1",
+ "frozen_preflight": {
+  "CUSUM_AUX5_PROVENANCE_ENTRYPOINT": "NOT_READY",
+  "checks": [
+   {
+    "check": "P01_checkpoint_and_freeze",
+    "detail": {
+     "checkpoint_sha256": "dd4c89d773c411355d93d0d703e40c027f9913e11e116e4bfe35117f84b4baf2"
+    },
+    "status": "PASS"
+   },
+   {
+    "check": "P02_bound_sources",
+    "detail": {
+     "bound_sources": 52
+    },
+    "status": "PASS"
+   },
+   {
+    "check": "P03_predecessor_frozen_and_fenced",
+    "detail": {
+     "C13": "DRAIN_PRESENT",
+     "predecessor_checks_pass": 13,
+     "predecessor_ledger": "absent"
+    },
+    "status": "PASS"
+   },
+   {
+    "check": "P04_inherited_sections_unchanged",
+    "detail": {
+     "inherited_sections": [
+      "producer",
+      "runtime_contract",
+      "host",
+      "workers",
+      "scientific_universe",
+      "geometry",
+      "precision",
+      "scientific_hash",
+      "cost_cap",
+      "qualification",
+      "k4",
+      "checkout_path"
+     ]
+    },
+    "status": "PASS"
+   },
+   {
+    "check": "P05_provenance_schemas",
+    "detail": {
+     "envelope_schema": "rebaseguard.p5y.k1.cusum-aux5.production-provenance-envelope.v1"
+    },
+    "status": "PASS"
+   },
+   {
+    "check": "P06_run_authorization",
+    "detail": {
+     "authorization_id": "CUSUM-AUX5-PROD-AUTH-001",
+     "authorization_sha256": "b8f11ec05efc2476f733dd989ae02b542dc9efa374f24fa0a27688d76ec2b329",
+     "commit": "9719cba2263c553bb134167504fb3f6fac60670f",
+     "production_run_id": "CUSUM-AUX5-PROD-R1"
+    },
+    "status": "PASS"
+   },
+   {
+    "check": "P07_independent_countersignature",
+    "code": "COUNTERSIGNATURE_MISSING",
+    "detail": "no independent countersignature binds authorization b8f11ec05efc2476; production is not authorized",
+    "status": "FAIL"
+   },
+   {
+    "check": "P08_synthetic_acceptance",
+    "detail": {
+     "tests": 19,
+     "verdict": "PASS"
+    },
+    "status": "PASS"
+   },
+   {
+    "check": "P09_run_state",
+    "detail": {
+     "relation": "FRESH"
+    },
+    "status": "PASS"
+   },
+   {
+    "check": "P10_host_idle",
+    "detail": {
+     "foreign_processes": 0
+    },
+    "status": "PASS"
+   }
+  ],
+  "probe_cpu_usec": 171119,
+  "production_launched": false,
+  "provenance_checkpoint_sha256": "dd4c89d773c411355d93d0d703e40c027f9913e11e116e4bfe35117f84b4baf2",
+  "ready": false,
+  "schema": "rebaseguard.p5y.k1.cusum-aux5.production-provenance-preflight.v1"
+ },
+ "generated_utc": "2026-09-13T11:37:53Z",
+ "head": "8778dd4f261ac7c56434229276c201ed1aaa09df",
+ "historical_verdict": "BLOCKED_BY_COUNTERSIGNATURE_ISSUANCE_DEADLOCK",
+ "issuance_code_sha256": "b1030e32d00d51c3a7a5c8dc46232a970ecc0cbaaa82a78c2152422ff89e9a78",
+ "production_launched": false,
+ "provenance_checkpoint_sha256": "dd4c89d773c411355d93d0d703e40c027f9913e11e116e4bfe35117f84b4baf2",
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.countersignature-review-preflight.v2"
+}
