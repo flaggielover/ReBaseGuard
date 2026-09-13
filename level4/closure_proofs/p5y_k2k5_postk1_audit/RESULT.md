@@ -21,6 +21,16 @@ VERDICTS_ISSUED                     = NONE           (K1, K2, K3, K4, K5 all rem
 | `code/k4_assembly.py`, `tests/test_k4_assembly.py` | Exact-rational K4 assembly. Genuine mode is locked until `config/K4_ASSEMBLY_CHECKPOINT_HASH` exists. **13 passed** on Vultr (synthetic fixtures plus frozen geometry only). |
 | `CUSUM_READINESS.md` | Host binding: Vultr 7 mismatches (Haswell, no AVX-512); AWS 2 mismatches (CPython build stamp), kernel and libraries match. Cost cap: none established for CUSUM. |
 
+## Update 2026-09-13: pre-compute resolution pass (`../p5y_postk1_precompute_resolution/RESULT.md`)
+
+The status block above is preserved as recorded. It is superseded as follows:
+- **K2:** analytic route found, `K2_ANALYTIC_ROUTE = PASS_POSSIBLE` with no compute.
+- **K3:** the back-solve criterion is `M_2 < ∞` (discharged), `K3_READY_TO_FREEZE = YES`.
+- **K4:** the assembly checkpoint is **FROZEN** (`config/K4_ASSEMBLY_CHECKPOINT.json`, sha256 `95b1fd16…`, domain made strict at `left < 2`). It waits only for complete K1 inputs.
+- **K5:** binding target H3a; minimal third-order design recorded, sufficiency UNRESOLVED.
+- **CUSUM:** NEW_SUCCESSOR recommended, cap 300 CPU-h by the PS1 formula, prefreeze ready.
+- **Correction:** signed use of `R2_interval` is admissible to the same extent as `M_R2` (K4_FREEZE_AUDIT). This does not change the near-zero K5 conclusion.
+
 ## Adverse findings
 
 1. `FORWARD_AUDIT.md`'s "K2/K3 not hypotheses" was already overturned by the binding TA. The post-K1 DAG rows are corrected accordingly.

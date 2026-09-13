@@ -28,7 +28,7 @@ def rec(det, idx, left, right, *, R, D, M="1/100", sr_hash=True):
     return r
 
 
-def cover(det, *, breaks=("0", "1/4", "1/2", "1", "3/2", "2", "5/2"), near=None, far=None, override=None):
+def cover(det, *, breaks=("0", "1/4", "1/2", "1", "3/2", "2", "5/2"), override=None):
     """R ~ -e with R' ~ -1 near 0 (chain), then clearly negative R."""
     out = []
     for k, (a, b) in enumerate(zip(breaks, breaks[1:])):
@@ -54,7 +54,6 @@ def test_chain_then_direct_certifies_all_eight():
 
 
 def test_cell_at_zero_needs_the_chain_not_a_direct_enclosure():
-    # R' not certified negative on the first cell: R_cell must straddle 0 there -> too loose, never a counterexample
     rep = K4.assemble(both(override={0: ((F(-13, 100), F(-12, 100)), (F(-11, 10), F(2, 10)))}))
     per = rep["per_Dm"]["CUSUM|m=3"]
     assert per["outcome"] == "K4_CERTIFICATE_TOO_LOOSE" and per["too_loose_cells"] == [0]
@@ -72,10 +71,16 @@ def test_certified_positive_midpoint_is_counterexample():
 
 
 def test_strict_inequality_at_zero_boundary():
-    # Rprime_cell.hi == 0 exactly (D.hi + rho*M == 0) must not chain
     rho, M = F(1, 8), F(1, 100)
     rep = K4.assemble(both(override={0: ((F(-13, 100), F(-12, 100)), (F(-2), -rho * M))}))
     assert rep["per_Dm"]["SR|m=1"]["per_cell"][0]["how"] != "CHAIN_RPRIME_NEGATIVE"
+
+
+def test_cell_starting_exactly_at_two_is_outside_the_domain():
+    # the [2, 5/2] cell is made hopeless; it meets (0,2] only in {2}, which the previous cell already covers
+    rep = K4.assemble(both(override={5: ((F(-1), F(1)), (F(-5), F(5)))}))
+    assert rep["all_eight_cellwise_certified"] is True
+    assert rep["per_Dm"]["SR|m=1"]["cells"] == 5
 
 
 @pytest.mark.parametrize("breaks", [("1/100", "1", "2", "3"), ("0", "1", "3/2"), ("0", "1/2", "3/4", "2", "3")])
@@ -98,26 +103,42 @@ def test_tampered_sr_record_refused():
         K4.assemble(recs)
 
 
-def test_float_and_symbolic_refused():
+def test_float_and_symbolic_handling():
     recs = both()
     recs[0]["m"]["1"]["M_R2"] = 0.01
     with pytest.raises(K4.AssemblyRefusal):
         K4.assemble(recs, verify_sr_integrity=False)
-    recs = both()
-    recs[1]["rho"] = ["1/8", "1/1000"]
-    with pytest.raises(K4.AssemblyRefusal, match="symbolic"):
-        K4.assemble(recs, verify_sr_integrity=False)
+    recs = both() + [rec("SR", 99, "6", "7", R=(-1, 1), D=(-1, 1), sr_hash=False)]
+    recs[-1]["rho"] = ["1/2", "1/1000"]            # symbolic terminal-style cell: never in (0, 2]
+    assert K4.assemble(recs, verify_sr_integrity=False)["all_eight_cellwise_certified"] is True
 
 
-def test_genuine_mode_locked_and_synthetic_mode_rejects_unstamped(tmp_path):
-    assert not K4.CHECKPOINT_HASH.exists() and K4.genuine_mode_allowed() is False
+def test_sealed_record_path_verifies_hashes(tmp_path):
+    sealed = tmp_path / "cells"
+    sealed.mkdir()
+    for r in cover("SR"):
+        t4p = tmp_path / f"t4_{r['cell']:04d}.json"
+        t4p.write_text(json.dumps(r))
+        (sealed / f"{r['cell']:04d}.json").write_text(json.dumps(
+            {"cell_id": r["cell"], "evidence": {"t4": {"path": str(t4p), "sha256": hashlib.sha256(t4p.read_bytes()).hexdigest()}}}))
+    assert len(K4.load_sr_sealed(sealed)) == 6
+    (tmp_path / "t4_0002.json").write_text(json.dumps(dict(cover("SR")[2], cell=2, extra=1)))
+    with pytest.raises(K4.AssemblyRefusal, match="hash drift"):
+        K4.load_sr_sealed(sealed)
+
+
+def test_genuine_mode_refuses_without_every_gate(tmp_path):
     d = tmp_path / "recs"
     d.mkdir()
     for i, r in enumerate(both()):
         (d / f"{i:03d}.json").write_text(json.dumps(r))
-    with pytest.raises(K4.AssemblyRefusal, match="GENUINE mode locked"):
+    with pytest.raises(K4.AssemblyRefusal, match="GENUINE mode"):
         K4.main(["--records", str(d), "--out", str(tmp_path / "o.json")])
     assert K4.main(["--records", str(d), "--synthetic", "--out", str(tmp_path / "o.json")]) == 0
+    att = tmp_path / "att.json"
+    att.write_text(json.dumps({"schema": K4.CUSUM_ATTESTATION_SCHEMA, "cells_verified": 2}))
+    with pytest.raises(K4.AssemblyRefusal, match="attestation"):
+        K4.check_cusum_attestation(att, [])
     r = both()[0]
     r.pop("SYNTHETIC_FIXTURE_NOT_SCIENCE")
     (d / "999.json").write_text(json.dumps(r))
@@ -125,10 +146,19 @@ def test_genuine_mode_locked_and_synthetic_mode_rejects_unstamped(tmp_path):
         K4.main(["--records", str(d), "--synthetic", "--out", str(tmp_path / "o.json")])
 
 
-def test_frozen_sr_geometry_meets_the_cover_precondition():
-    """Frozen pre-result geometry only (no certified value): PS1 cells meeting (0,2] are contiguous from 0 to >= 2."""
+def test_checkpoint_binding_is_consistent_when_present():
+    if not K4.CHECKPOINT.exists():
+        pytest.skip("checkpoint not generated yet")
+    spec = json.loads(K4.CHECKPOINT.read_text())
+    assert spec["bound_sources"] == {r: K4.sha_file(NS / r) for r in K4.BOUND_SOURCES}
+    assert K4.genuine_mode_allowed() is (K4.CHECKPOINT_HASH.exists()
+                                         and K4.CHECKPOINT_HASH.read_text().strip() == K4.sha_file(K4.CHECKPOINT))
+
+
+def test_frozen_geometry_meets_the_cover_precondition():
+    """Frozen pre-result geometry only (no certified value)."""
     cells = sorted(json.loads(SR_TABLE.read_text())["cells"], key=lambda c: c["index"])
-    dom = [c for c in cells if F(c["left"][1]) == 0 and F(c["left"][0]) <= 2]
+    dom = [c for c in cells if F(c["left"][1]) == 0 and F(c["left"][0]) < 2]
     assert F(dom[0]["left"][0]) == 0 and F(dom[-1]["right"][0]) >= 2
     assert all(F(a["right"][0]) == F(b["left"][0]) and F(a["right"][1]) == 0 for a, b in zip(dom, dom[1:]))
     assert len(dom) == 295

@@ -63,6 +63,14 @@ Sources:
 - **K4.** Assembly-only over K1 production records (`R_interval`, signed `D_interval`, `M_R2`), so `K4_NEW_COMPUTE_REQUIRED = NO`. The exact-rational tooling is built and locked pending a frozen K4 checkpoint and independent adjudication.
 - **K5.** `K5_NEW_COMPUTE_REQUIRED = YES`. Because `R` is odd, `R''(0) = 0`, so the sign of `s'` near 0 depends on a third-order quantity that no K1 record contains. The frozen "second-order remainder" route is insufficient there.
 - **CUSUM.** Host binding and cost cap are **not ready** (`CUSUM_READINESS.md`).
+
+**Update 2026-09-13, pre-compute resolution (`p5y_postk1_precompute_resolution/RESULT.md`).**
+- **K2:** analytic route `PASS_POSSIBLE`, no compute.
+- **K3:** criterion `M_2 < ∞`, ready to freeze.
+- **K4:** assembly checkpoint **frozen**, waiting only for complete K1 inputs.
+- **K5:** binding target H3a; the minimal new object is an `R'''` cell certificate on the K1 cover of `(0,2]`, gated by a feasibility oracle.
+- **CUSUM:** new successor on `rebaseguard-vultr-02`, cap 300 CPU-h, prefreeze ready.
+- Remaining adjudication and operator decisions are listed in that RESULT.
 | T8 | conditional on (H1, H2) | K4 | formal/theorem; blocked by K4 |
 | T9, T10 | conditional on (H1–H3); T10 also needs `S` continuous at 0 | K1, K4, K5 (+ K2 re-resolution for what T10 consumes) | formal/theorem; blocked |
 | G.NOV | `NOVELTY_STATUS = NOT_ESTABLISHED` must not be overclaimed | — | governance/publication; parallelizable now |
