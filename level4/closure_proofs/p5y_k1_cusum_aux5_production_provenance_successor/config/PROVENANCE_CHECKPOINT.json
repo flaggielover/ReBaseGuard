@@ -1,0 +1,655 @@
+{
+ "NEW_SCIENTIFIC_COMPUTE": "NONE",
+ "PREDECESSOR_CHECKPOINT": "BLOCKED_ON_PRODUCTION_STATUS_SEMANTICS",
+ "PRODUCTION_AUTHORITY_LAYER": "COMPOSITE_PROVENANCE: pre-result run authorization + independent countersignature -> authorization-bound ledger genesis -> sealed attempt -> hash-bound production provenance envelope (PROVENANCE_BOUND) -> pair-verifying integrity audit",
+ "SCIENTIFIC_PRODUCER": "UNCHANGED_AUX5",
+ "authority": {
+  "authoritative_rule": "Derived from the frozen K1 checkpoint ('an explicit separate production authorization is then necessary; it must not flip the guard inside this frozen checkpoint') and the PS1 production precedent (LAUNCH_AUTHORIZATION + production_provenance + sealed production cell record + PRODUCTION_LEDGER.completed_cells + Lane C integrity audit): a scientific artifact is PRODUCTION-AUTHORIZED iff it was produced under a hash-bound run authorization that existed before its result; RESULT-BEARING iff, in addition, it is sealed into that authorization's production ledger with a provenance object that binds the artifact bytes to the authorization, checkpoint, producer, cell and run; DISPOSITION-BEARING iff, in addition, the integrity audit admits it for adjudication. No inline boolean in the scientific artifact is part of this rule.",
+  "composite_rule": "A CUSUM Aux5 production result is the PAIR (scientific record, valid production provenance envelope). Neither object alone is production-authorized, result-bearing or disposition-bearing. An envelope is valid only if it recomputes exactly from: the sealed record bytes; a production ledger whose GENESIS names the pre-result run authorization and its independent countersignature; that ledger's RESERVED -> RUNNING -> SEAL journal entries for the attempt; the frozen producer, checkpoint, cell geometry and host; and the ledger's PROVENANCE_BOUND entry naming the envelope sha256.",
+  "envelope": {
+   "binding_event": "PROVENANCE_BOUND",
+   "schema": "rebaseguard.p5y.k1.cusum-aux5.production-provenance-envelope.v1",
+   "schema_file": "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/config/ENVELOPE_SCHEMA.json",
+   "schema_file_sha256": "decda981cb1b31ecbe461b4620c8a624b6fde89f92c7b2bfd2aa143629ded197"
+  },
+  "run_authorization": {
+   "authorization_id": "CUSUM-AUX5-PROD-AUTH-001",
+   "countersignature": {
+    "created_by": "the independent reviewer only",
+    "path": "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/config/COUNTERSIGNATURE.json",
+    "required_verdict": "APPROVED_FOR_PRODUCTION_LAUNCH",
+    "schema": "rebaseguard.p5y.k1.cusum-aux5.production-countersignature.v1"
+   },
+   "path": "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/config/RUN_AUTHORIZATION.json",
+   "production_run_id": "CUSUM-AUX5-PROD-R1",
+   "schema": "rebaseguard.p5y.k1.cusum-aux5.production-run-authorization.v1",
+   "status": "PRE_RESULT_AUTHORIZATION_AWAITING_INDEPENDENT_COUNTERSIGNATURE"
+  },
+  "sanctioned_consumer_path": "prov_integrity.audit -> export_pairs / build_k4_attestation; the predecessor export and attest commands are non-authoritative (their ledgers carry no authorization block and are refused by check_genesis)"
+ },
+ "bound_sources": {
+  "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/cells.json": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f",
+  "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/checkpoint.json": "1c2a6825f19e19de6fb588647ca3fc4618068087ef0976292ca7bbeca701f13f",
+  "level4/closure_proofs/p5y_k1_cusum_aux4_fullcover/code/ancestry4.py": "91d517955345e38592b11cabfe76edcf7594872c195950ff18c66aee2e50048a",
+  "level4/closure_proofs/p5y_k1_cusum_aux4_fullcover/code/hash_v2.py": "c00912e39d3e71a2c6c3f8684c24d7a8d9ceb6b6750331d2dbd9140bf679518a",
+  "level4/closure_proofs/p5y_k1_cusum_aux4_fullcover/code/schema.py": "25c70663affa90122db60fcb859c4576d3c9d73469c6ac7522f8c9091dc54211",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/k4_input_attestation.py": "21436d066e55906827382d40cdf617b74f2dcf72ce01c0b5c13de28cfde1e64a",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/make_production_checkpoint.py": "12e54666343cff34feb5ad2fe6e50b5d5917057092d99cb632885f039c1278e9",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/prod_cells.py": "3b3a8d59ea943d0e1d0492e5e5132cc94b0afc4411cf4d0a1dabe87963ec07cb",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/prod_common.py": "dec6d7828da15d2de7f35956861f424a4b22246f49354904b4ecac13c6e6586b",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/prod_entry.py": "41bd68292e066677a07861bcfb32ff4f4b002f98500559fdaaa531071e1893b9",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/prod_ledger.py": "f1542de3324c2c731137091d8145ce16ed1ead9c1b8a27e9b53b3cf3a425aa79",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/prod_sealer.py": "af9d6729f0a971cb29a7919ee04bf521cbb70b313a38428f759070b2bb605fce",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/prod_spec.py": "073396ef3d8ffe844de5038fa5483927a0fa6cfb88a9560b6e0f2e3ffa50e109",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/prod_supervisor.py": "26a6c523c7ac1330e4bf5f1255a8c12d49bfd06bf1f70bdaa895ee0ab046c04c",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/config/FREEZE_RECORD.json": "e2326063a25d4a8b5b85765d22329f46bb83f516abd3929b141d4643a56650c0",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/config/HOST_IDENTITY.json": "8569413c9512568df7a4c43abbb122272c97f7c4f11e2ce12a9520218096a1d0",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/config/K4_INPUT_SCHEMA_ATTESTATION.json": "8a29d162998aa0bb59d94a3b47a7f26489c4c58ead858c092e2c338d6d4a3613",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/config/PRODUCTION_CHECKPOINT.json": "4026f296bd7b32bea24a0f73422f4fc8df1f0c1d04aea952ee7ed0f5313c3c5c",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/config/PRODUCTION_CHECKPOINT_HASH": "00859c220dc9debe1275c51ebf38bb31a89a059938c4ede6cc22707158dab763",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/evidence/acceptance_r1/ACCEPTANCE_RESULT.json": "3d5b6eb8d0ef8427677225cfd3ca0d0b73f15b80336b845424e4194f06b10eaf",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/tests/acceptance.py": "c03d4a535619489cf000030f81cbf8efee1fdf309c8b8e9e7935cb11e5d3709f",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/tests/synthetic_worker.py": "6be375d2a598c5501e11bb487677e7380e7f06c7d7057931cb9342950a5d27e9",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/code/make_provenance_checkpoint.py": "e42d338519d7ce4599baad2defd0d11ca761df3c64c964ace912a3824cebe5ab",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/code/prov_authorization.py": "4e80750e91a1d57dd7dcd8a446d495a56dd6bbaa28007498a63bd2e6bbb5572f",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/code/prov_entry.py": "1160f7cf685d7f2f21152508e25ea6585ee0c2f6266a016fecaf118ab9092b22",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/code/prov_envelope.py": "7b96de9e80c3eae374c5552260e4790197dded412f1c64a3592474e44e658e40",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/code/prov_integrity.py": "117a38116bc9711e57b5e8ddd2b9e2705fe1581cbbc2cf5e2c33e63a3c442375",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/code/prov_ledger.py": "ebbcf4bc1f0f958254d253652d917cc9af8aad237636509b96eafb4549304642",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/code/prov_schema.py": "041b250dc0ca734bcb53e78933afbc6a3ab86b07330aa3ca1f9ca4d0ed493c44",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/code/prov_spec.py": "37dc367cd047361d2d5692107f790f6b4372ef53e9dc8a10c3fa8eb3cb46cc41",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/code/prov_supervisor.py": "90b5ecaf934e1d0bb2fab66e5b23a04f1b6392936fa894d2c95f91f22013921c",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/config/ENVELOPE_SCHEMA.json": "decda981cb1b31ecbe461b4620c8a624b6fde89f92c7b2bfd2aa143629ded197",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/tests/prov_acceptance.py": "c576667f933208f1498e7c004e7fd2225b750fc53d54ae83d76b7dd148d8c2a4",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/tests/prov_synthetic_worker.py": "e3c9492584e7162120b36ffae2c9986a69eb309d0d94822f9e0c2117613ff2bd",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/analyze_qualification.py": "dc2d9fb5f9e0faa1a891d8df45fc69d5c4b1799517b1bc9f29443763bdda48ae",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/cap_formula.py": "bf1008841ee10ea0e9b4b94ae69eb1e17318f2a89169181452f5558294dd089e",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/qualify5.py": "7d917e51c3b4851236e4cdf5b600d593c0d85b3e89778f1745e7ccae94c0403d",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/run_qualification.sh": "9b38489d91c586ba519cf63d2ea03bbdc516d5880fee87b1ab8a13e3f7ccf50c",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/config/COST_CAP_FORMULA.json": "f50331b883503b3807b941e60b28d8fd3fa8d5cf637267d6f558909fb8d1345c",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/config/FREEZE_RECORD.json": "4635e78e4f7debefd930be905aff076fd1c9aaf012a650c7e243b8fdca720b45",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/config/GENERATION_REPORT.json": "3df95228593a676a71b4c9c7317af08023a2d87387b8726e6c5f2d7e43e7e392",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/config/HOST_QUALIFICATION.json": "967df818d711aa90eb7fbf0b8475d826e4f95f0ca8d7e5fe6449b06ca9f7e3cc",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/config/QUALIFICATION_PROTOCOL.json": "81e28577fdb0ebf671e0ea99799245e6d02a58015cf7c8e7a229f0d4f26b1d94",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/evidence/qualification_r1/QUALIFICATION_RESULT.json": "c52cffa439f7cde77ec9dd91b642021a826adc50760088a9523bf1b68806f4a7",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/evidence/qualification_r1/c318_A/aux5_CUSUM_318_256.json": "5895bcf5769eae6386483965af10dabc8b7ed25ebfc6028ba2542fe65acc387a",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/evidence/qualification_r1/c318_B/aux5_CUSUM_318_256.json": "cd0e923c5b4f1d0e489a9733fce26351b8c2c5f659c46d152d176e4789d7eba5",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/evidence/qualification_r1/c323_A/aux5_CUSUM_323_256.json": "28e6a53e57f10c46b2f965b27d0b7be6395da8170acb604fa34db6e474aec59f",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/evidence/qualification_r1/c323_B/aux5_CUSUM_323_256.json": "d08a694c56793157069bb1069b7ffe07b80582ec6197d42d9b4de9539505440d",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/manifests/producer_manifest_v3.json": "611bd0a9f356b0e7f5e63da60567ac1afa9e69fc1f8c464c7e5b89aeedbd2b9f",
+  "level4/closure_proofs/p5y_k2k5_postk1_audit/code/k4_assembly.py": "6e9518b0dc1f399984a36af313fd58ad80746e80f2c3a356a35ddef6c3568de7",
+  "level4/closure_proofs/p5y_k2k5_postk1_audit/config/K4_ASSEMBLY_CHECKPOINT.json": "95b1fd16ac420d6f545cbb2619a6086ced31c6d748a9c801ca7f7c114e77a1e1",
+  "level4/closure_proofs/p5y_k2k5_postk1_audit/config/K4_ASSEMBLY_CHECKPOINT_HASH": "05e8390f7a9b80b694d12812d0454076baca10f897ee0e2cdbf337a17315b893"
+ },
+ "campaign_id": "p5y_k1_cusum_aux5_production_provenance_r1",
+ "checkout_path": "/root/work/postk1-aux5",
+ "cost_cap": {
+  "N": 326,
+  "W": 4,
+  "accounting_unit": "integer microseconds of CPU, cumulative across every run of this ledger",
+  "admission_rule": "admit iff 115 * (committed + sum_open max(R, sampled CPU) + R) <= 100 * CAP",
+  "c_max_cpu_seconds": "2041.449429377",
+  "c_max_source": "max cpu_seconds_including_dependencies over the four qualification runs (318A)",
+  "cap_cpu_h": 300,
+  "cap_formula_py_sha256": "bf1008841ee10ea0e9b4b94ae69eb1e17318f2a89169181452f5558294dd089e",
+  "cap_usec": 1080000000000,
+  "derived": {
+   "CAP_cpu_h": 300,
+   "INFL": 4.0,
+   "N": 326,
+   "OVH": 4.067020918747734,
+   "P": 203.35104593738671,
+   "R": 1.0,
+   "RETRY": 9.78,
+   "W": 4,
+   "c_max_cpu_h": 0.5670692859380555,
+   "exact": {
+    "CAP": "300",
+    "P": "3660318826872961/18000000000000",
+    "R": "1"
+   }
+  },
+  "excluded_from_accounting": {
+   "qualification_cpu_seconds": "8153.45557912",
+   "rule": "qualification is not a production cell and is not in N; COST_CAP_FORMULA.json does not include it, so it is excluded and disclosed here",
+   "synthetic_acceptance": "separate synthetic ledgers; never counted"
+  },
+  "exhaustion": "a denied admission with nothing in flight records INCOMPLETE_BUDGET_EXHAUSTED (terminal)",
+  "formula": "CAP = ceil_50(1.15*(P + INFL + RETRY + OVH)); P = 1.10*N*c_max; R = ceil_0.5(1.25*c_max); INFL = W*R; RETRY = 0.03*N*R; OVH = 0.02*P",
+  "formula_file_sha256": "f50331b883503b3807b941e60b28d8fd3fa8d5cf637267d6f558909fb8d1345c",
+  "formula_path": "level4/closure_proofs/p5y_k1_cusum_aux5_successor/config/COST_CAP_FORMULA.json",
+  "invariant": [
+   115,
+   100
+  ],
+  "never_raised": "the cap is bound into the ledger at genesis; any later difference is CAP_CHANGE_FORBIDDEN",
+  "reservation_cpu_h": "1",
+  "reservation_usec": 3600000000,
+  "retry_and_recovery_accounting": "every torn, failed and recovered attempt is charged to its bucket; supervisor, probe and keeper CPU are charged to the supervisor bucket"
+ },
+ "entrypoint": {
+  "checks": [
+   "P01_checkpoint_and_freeze",
+   "P02_bound_sources",
+   "P03_predecessor_frozen_and_fenced",
+   "P04_inherited_sections_unchanged",
+   "P05_provenance_schemas",
+   "P06_run_authorization",
+   "P07_independent_countersignature",
+   "P08_synthetic_acceptance",
+   "P09_run_state",
+   "P10_host_idle"
+  ],
+  "no_self_authorization": "no code path creates a production countersignature",
+  "path": "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/code/prov_entry.py"
+ },
+ "frozen_utc": "2026-09-13",
+ "geometry": {
+  "cells_sha256": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f",
+  "cells_table": "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/cells.json",
+  "cover": {
+   "all_endpoints_exact_non_symbolic": true,
+   "cells": 326,
+   "contiguous": true,
+   "cover_left": [
+    "0/1",
+    "0/1"
+   ],
+   "cover_right": [
+    "11/2",
+    "0/1"
+   ],
+   "e0_minus_rho_is_left_and_e0_plus_rho_is_right": true,
+   "first_index": 0,
+   "k4_domain": {
+    "cells": 310,
+    "first_index": 0,
+    "indices_contiguous": true,
+    "last_index": 309,
+    "last_right": [
+     "2092283/1000000",
+     "0/1"
+    ],
+    "predicate": "left < 2 and right > 0 (exact, non-symbolic)"
+   },
+   "last_index": 325,
+   "m_values": [
+    "1",
+    "2",
+    "3",
+    "5"
+   ]
+  },
+  "geometry_digest": "cd48d716c459b6b8e5ead849f89ba55a9d0525c738e9586506c32573ae6af164",
+  "geometry_fields": [
+   "index",
+   "e0",
+   "rho",
+   "left",
+   "right",
+   "C_upper"
+  ],
+  "m_rho_domain_mapping": "every one of the 326 cells is certified for m in {1,2,3,5} at its frozen (e0, rho) with left = e0 - rho, right = e0 + rho; the K4 domain (0, 2] is the contiguous prefix of cells 0..309"
+ },
+ "host": {
+  "bound_facts": {
+   "cpu_model": "AMD EPYC-Milan Processor",
+   "glibc_package_version": "2.41-12+deb13u3",
+   "host_name": "rebaseguard-vultr-02",
+   "kernel_release": "6.12.107+deb13-amd64",
+   "libc_path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+   "libc_sha256": "fa430b8f298f817a266046af84a77533185ad6fc4406c7d3787b5a0a0c207826",
+   "logical_cpus": 8,
+   "machine_id_sha256": "e914421252e5e879ffea329880295de11d5e770e0cbec522fd572f3ac8829ffd",
+   "physical_cores": 4,
+   "smt_groups": [
+    [
+     0,
+     1
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     4,
+     5
+    ],
+    [
+     6,
+     7
+    ]
+   ]
+  },
+  "disclosures": {
+   "note": "automatic upgrades are enabled on this host and are NOT modified; a glibc or kernel change is caught by the bound host facts and fails closed",
+   "unit_state_observed": {
+    "apt-daily-upgrade.timer": "enabled",
+    "apt-daily.timer": "enabled",
+    "unattended-upgrades.service": "enabled"
+   }
+  },
+  "drift_rule": "any difference in a bound fact refuses the launch (C04) or halts admissions (HOST_DRIFT); a change of host, kernel, glibc bytes or runtime contract requires requalification and a new checkpoint (COST_CAP_FORMULA rules)",
+  "guard_before_every_admission": [
+   "host_name",
+   "machine_id_sha256",
+   "cpu_model",
+   "logical_cpus",
+   "physical_cores",
+   "smt_groups",
+   "kernel_release",
+   "libc_path",
+   "libc_sha256"
+  ],
+  "host_identity_file_sha256": "8569413c9512568df7a4c43abbb122272c97f7c4f11e2ce12a9520218096a1d0",
+  "host_qualification_sha256": "967df818d711aa90eb7fbf0b8475d826e4f95f0ca8d7e5fe6449b06ca9f7e3cc"
+ },
+ "k4": {
+  "K4_CUSUM_INPUT_SCHEMA_ATTESTED": "YES",
+  "checkpoint_sha256": "95b1fd16ac420d6f545cbb2619a6086ced31c6d748a9c801ca7f7c114e77a1e1",
+  "export_layout": "prod_entry.py export: k4_records/ holds exactly one JSON per sealed cell (K4 globs *.json)",
+  "input_schema_attestation_path": "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/config/K4_INPUT_SCHEMA_ATTESTATION.json",
+  "input_schema_attestation_sha256": "8a29d162998aa0bb59d94a3b47a7f26489c4c58ead858c092e2c338d6d4a3613",
+  "integrity_attestation_schema": "rebaseguard.p5y.k1.cusum-production.integrity-attestation.v1",
+  "k4_assembly_run": false,
+  "k4_assembly_sha256": "6e9518b0dc1f399984a36af313fd58ad80746e80f2c3a356a35ddef6c3568de7",
+  "k4_values_evaluated": false
+ },
+ "ledger": {
+  "atomicity": "validate -> temp file, fsync, os.replace, fsync dir -> append journal line, fsync",
+  "attempt_states": [
+   "RESERVED",
+   "RUNNING",
+   "SEALED",
+   "RELEASED",
+   "TORN",
+   "FAILED"
+  ],
+  "cell_states": [
+   "PENDING",
+   "RESERVED",
+   "RUNNING",
+   "SEALED",
+   "FAILED"
+  ],
+  "invariants": [
+   "one scientific cell -> at most one SEALED attempt (DUPLICATE_SEALED_CELL)",
+   "a SEALED cell has no open attempt and is never re-admitted",
+   "committed CPU per bucket == sum of recorded charges (ACCOUNTING_CORRUPT)",
+   "the cap bound at genesis never changes (CAP_CHANGE_FORBIDDEN)",
+   "ledger state == journal head, or exactly one step past it (LEDGER_ROLLBACK_OR_MUTATION)"
+  ],
+  "layout": {
+   "DRAIN": "operator drain marker",
+   "attempts/": "one directory per attempt",
+   "campaign.lock": "kernel flock",
+   "journal.jsonl": "hash-chained transitions",
+   "ledger.json": "state, atomically replaced",
+   "reaper.jsonl": "keeper rusage evidence"
+  },
+  "provenance_extension": {
+   "attempt_provenance": "attempts[aid].provenance = {schema, envelope, envelope_sha256}, set once by PROVENANCE_BOUND",
+   "envelope_root": "provenance/",
+   "genesis": "state.production_authorization and journal entry 0 detail.production_authorization carry the authorization block {authorization_sha256, authorization_id, production_run_id, ledger_id, countersignature_sha256}"
+  },
+  "schemas": {
+   "export": "rebaseguard.p5y.k1.cusum-aux5.production-export.v1",
+   "journal": "rebaseguard.p5y.k1.cusum-aux5.production-journal.v1",
+   "ledger": "rebaseguard.p5y.k1.cusum-aux5.production-ledger.v1",
+   "reaper": "rebaseguard.p5y.k1.cusum-aux5.reaper-record.v1"
+  },
+  "transitions": "PENDING->RESERVED->RUNNING->SEALED | ->PENDING (TORN, RELEASED) | ->FAILED"
+ },
+ "lifecycle": {
+  "cpu_evidence_hierarchy": [
+   "WAIT4_RUSAGE",
+   "REAPER_RUSAGE",
+   "TAIL_BOUND_NOW",
+   "TAIL_BOUND_REBOOT"
+  ],
+  "crash_reconciliation": "open attempt with a live pid -> refused (LIVE_ORPHAN_WORKER); record present and verifying -> SEALED (recovered); keeper reap with exit != 0 -> FAILED; otherwise TORN (ORPHAN_ATTEMPT); charge = keeper rusage, else tail bound",
+  "duplicate_cell_rule": "one flock-holding supervisor per runtime root; op_reserve admits only PENDING cells; op_close refuses a cell owned by another attempt; validate refuses two seals",
+  "exit_codes": {
+   "COMPLETE": 0,
+   "DRAINED": 10,
+   "HALTED": 20,
+   "INCOMPLETE_BUDGET_EXHAUSTED": 40,
+   "REFUSED": 30
+  },
+  "failure_rule": "a nonzero worker exit, an exit 0 without a record, or a record failing the seal check is FAILED: charged, never retried, the campaign halts",
+  "graceful_drain": "SIGTERM/SIGINT to the keeper or supervisor, or the DRAIN marker: no new admission, in-flight attempts finish and seal, disposition DRAINED; relaunch requires removing DRAIN",
+  "halt_rules": [
+   "WORKER_REPORTED_FAILURE",
+   "MALFORMED_RESULT",
+   "RETRY_LIMIT",
+   "HOST_DRIFT",
+   "SPAWN_FAILED"
+  ],
+  "heartbeat_seconds": 60,
+  "max_infra_tears_per_cell": 3,
+  "poll_seconds": 5,
+  "provenance_binding": "immediately after a SEALED transition the envelope is derived, written read-only, verified as a pair and bound by one PROVENANCE_BOUND transition; a sealed-but-unbound attempt is not a production result and is bound by the next supervisor before any admission or disposition",
+  "reservation": "a PENDING cell is RESERVED (durable) before its worker is started, RUNNING (pid, start ticks) immediately after; admission in ascending cell index, one per free bound core",
+  "restart_recovery": "a supervisor first reconciles every attempt and run left open by a dead predecessor",
+  "sealed_cell_rule": "a record is SEALED only after prod_sealer.verify_record passes and the file is made read-only and its directory fsynced; the seal binds record sha256 and scientific hash",
+  "skip_resume_rule": "on restart sealed cells are re-verified by sha256 and skipped; admission resumes at the lowest PENDING index; the ledger is the only resume state",
+  "torn_attempt_rule": "a worker lost to a signal or an orphaned attempt without a verifying record is TORN (charged, cell back to PENDING, retried); the 3rd infrastructure tear of one cell halts the campaign; partial files are never read"
+ },
+ "precision": {
+  "collocation_degree": 12,
+  "collocation_quadrature": 400,
+  "degree_adaptation_allowed": false,
+  "precision_bits": 256,
+  "precision_escalation_allowed": false,
+  "subdivision_depth": 0,
+  "taylor_order": 120
+ },
+ "predecessor": {
+  "blocked_by": "independent countersignature (relayed by the user, 2026-09-13): record-level production-authority semantics",
+  "checkpoint_sha256": "4026f296bd7b32bea24a0f73422f4fc8df1f0c1d04aea952ee7ed0f5313c3c5c",
+  "freeze_commit": "532c880ee8edacf322f8c57660b0a7e71e729c40",
+  "freeze_record_sha256": "e2326063a25d4a8b5b85765d22329f46bb83f516abd3929b141d4643a56650c0",
+  "namespace": "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint",
+  "preserved": "unmodified; fenced on host",
+  "readiness_record_commit": "264e9d37a3af961ede7da32073db1787d6568087",
+  "runtime_root": "/root/work/postk1-runs/cusum-aux5-production",
+  "status": "BLOCKED_ON_PRODUCTION_STATUS_SEMANTICS"
+ },
+ "producer": {
+  "aux5_freeze_record_sha256": "4635e78e4f7debefd930be905aff076fd1c9aaf012a650c7e243b8fdca720b45",
+  "certifier_path": "level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/qualify5.py",
+  "certifier_sha256": "7d917e51c3b4851236e4cdf5b600d593c0d85b3e89778f1745e7ccae94c0403d",
+  "freeze_commit": "d31ea4edd5a96be5c9ac0a7d4acea2a5a3c5e563",
+  "generation_report_sha256": "3df95228593a676a71b4c9c7317af08023a2d87387b8726e6c5f2d7e43e7e392",
+  "manifest_file_sha256": "611bd0a9f356b0e7f5e63da60567ac1afa9e69fc1f8c464c7e5b89aeedbd2b9f",
+  "manifest_path": "level4/closure_proofs/p5y_k1_cusum_aux5_successor/manifests/producer_manifest_v3.json",
+  "namespace": "level4/closure_proofs/p5y_k1_cusum_aux5_successor",
+  "qualification_commit": "09aa94c9befb47ab6cc6336fd2b4ece15a2f6a1a",
+  "record_identity": {
+   "campaign": "p5y_k1_cusum_aux5_successor",
+   "implementation_hash_kind": "cusum_aux5_manifest_bound_identity_v3",
+   "producer_identity_hash": "3692d0feeaef71365798cd99399fdb6d744573f38d59dba5cfe2e99294f0ae19",
+   "producer_manifest_hash": "b55a2da1fea0c7ee889f8da6a4b893c12d3ef24e2bc02d19bd5488187fd30fd9",
+   "producer_manifest_path": "level4/closure_proofs/p5y_k1_cusum_aux5_successor/manifests/producer_manifest_v3.json",
+   "producer_manifest_schema": "k1.cusum-aux5.producer-manifest.v3",
+   "producer_manifest_version": 3,
+   "runtime_contract_hash": "bc75c9ea7cd5f9406a0509bb0a161aa2c013f80427d1035197989e3d202c845a"
+  },
+  "statement": "The production certifier is the frozen, qualified Aux5 qualify5.py, unmodified and started as a separate env -i interpreter; nothing in this namespace is on its certifying path.",
+  "tcb_files": 60
+ },
+ "production_launched": false,
+ "qualification": {
+  "not_production": "cells 318 and 323 of qualification are NOT imported as production cells. Production certifies all 326 cells, 318 and 323 included, in fresh attempts. The seal refuses a file byte-identical to a qualification record (QUALIFICATION_RECORD_REUSE) and any record claiming more CPU or wall time than its attempt used (CPU_EVIDENCE_INCONSISTENT). Equality of a production scientific hash with a qualification hash is expected (determinism) and is informational only.",
+  "protocol_path": "level4/closure_proofs/p5y_k1_cusum_aux5_successor/config/QUALIFICATION_PROTOCOL.json",
+  "protocol_sha256": "81e28577fdb0ebf671e0ea99799245e6d02a58015cf7c8e7a229f0d4f26b1d94",
+  "record_file_sha256": {
+   "318A": "5895bcf5769eae6386483965af10dabc8b7ed25ebfc6028ba2542fe65acc387a",
+   "318B": "cd0e923c5b4f1d0e489a9733fce26351b8c2c5f659c46d152d176e4789d7eba5",
+   "323A": "28e6a53e57f10c46b2f965b27d0b7be6395da8170acb604fa34db6e474aec59f",
+   "323B": "d08a694c56793157069bb1069b7ffe07b80582ec6197d42d9b4de9539505440d"
+  },
+  "record_paths": {
+   "318A": "level4/closure_proofs/p5y_k1_cusum_aux5_successor/evidence/qualification_r1/c318_A/aux5_CUSUM_318_256.json",
+   "318B": "level4/closure_proofs/p5y_k1_cusum_aux5_successor/evidence/qualification_r1/c318_B/aux5_CUSUM_318_256.json",
+   "323A": "level4/closure_proofs/p5y_k1_cusum_aux5_successor/evidence/qualification_r1/c323_A/aux5_CUSUM_323_256.json",
+   "323B": "level4/closure_proofs/p5y_k1_cusum_aux5_successor/evidence/qualification_r1/c323_B/aux5_CUSUM_323_256.json"
+  },
+  "result_path": "level4/closure_proofs/p5y_k1_cusum_aux5_successor/evidence/qualification_r1/QUALIFICATION_RESULT.json",
+  "result_sha256": "c52cffa439f7cde77ec9dd91b642021a826adc50760088a9523bf1b68806f4a7",
+  "scientific_content_hash": {
+   "318A": "01ff4f7a2632102475805537f439ccbe7932b68339eafa37d5ecdd03c13edda9",
+   "318B": "01ff4f7a2632102475805537f439ccbe7932b68339eafa37d5ecdd03c13edda9",
+   "323A": "054a5ef0cd932ddcac3b4b2dc1a9b461e353ae6b51a2d726a5ccbc9607e57077",
+   "323B": "054a5ef0cd932ddcac3b4b2dc1a9b461e353ae6b51a2d726a5ccbc9607e57077"
+  },
+  "verdict": "PASS"
+ },
+ "result_bearing": false,
+ "result_schema": {
+  "auxiliary_schema": "k1.cusum-aux4.auxiliary-evidence.v2",
+  "certifier_constant_flags": {
+   "production_run": false,
+   "result_bearing": false,
+   "scientific_certification_of_full_cover": false
+  },
+  "interval_fields": [
+   "R_interval",
+   "D_interval",
+   "R2_interval"
+  ],
+  "m_values": [
+   "1",
+   "2",
+   "3",
+   "5"
+  ],
+  "obligation_statuses": "never read by the ledger; scientific interpretation belongs to adjudication",
+  "obligations_per_cell": 28,
+  "per_m_keys_exact": [
+   "C_upper",
+   "D_interval",
+   "D_interval_mag",
+   "M_R2",
+   "R2_interval",
+   "R_interval",
+   "R_interval_mag",
+   "cell_index",
+   "channel_provenance",
+   "cover",
+   "detector",
+   "e0",
+   "local_gates",
+   "m",
+   "nested_candidate_gates",
+   "rho",
+   "status",
+   "target_gate",
+   "top_level_gates",
+   "worst_top_level_utilization"
+  ],
+  "record_flags_semantics": "production_run=false, result_bearing=false and scientific_certification_of_full_cover=false inside the scientific record are constants of the frozen, qualified Aux5 certifier: identical in qualification and production, inside the scientific hash, never rewritten. They state that a scientific record BY ITSELF authorizes nothing, which the composite rule also requires. They are not the production disposition and are never read as one. The PS1 precedent is the same: its T3/T4/T5 science artifacts carry no production flag and acquire production status only through a sealed production cell record whose production_provenance binds the pre-result launch authorization, and that authorization object itself declares result_bearing=false.",
+  "record_path": "attempts/<attempt id>/aux5_CUSUM_<cell>_256.json (read-only once sealed)",
+  "record_schema": "k1.cusum-aux4.cell-record.v2",
+  "required_top_level": [
+   "C_upper",
+   "auxiliary_evidence",
+   "auxiliary_evidence_hash",
+   "campaign",
+   "cell_index",
+   "certificates",
+   "cpu_seconds_including_dependencies",
+   "detector",
+   "e0",
+   "implementation_hash_kind",
+   "m",
+   "obligation_universe_total",
+   "precision_bits",
+   "producer",
+   "producer_identity_hash",
+   "producer_manifest_hash",
+   "producer_manifest_path",
+   "producer_manifest_schema",
+   "producer_manifest_version",
+   "provenance_chain",
+   "rho",
+   "runtime_contract_hash",
+   "scientific_content_hash",
+   "scipy_guard",
+   "universe",
+   "wall_seconds"
+  ],
+  "superseded_predecessor_semantics": "the predecessor's reading (production status conferred by the ledger seal alone) is not relied on here",
+  "synthetic_stamp_refused_in_production": "SYNTHETIC_FIXTURE_NOT_SCIENCE"
+ },
+ "runtime_contract": {
+  "backend_libraries": {
+   "/root/work/rbg-cusum-aux5-venv/lib/python3.12/site-packages/numpy.libs/libscipy_openblas64_-61654e39.so": "6cad8d2ad994ddc43d2ccdb0fb5d9458373ff1b87ef7ff420f2f94406eb8f082",
+   "/root/work/rbg-cusum-aux5-venv/lib/python3.12/site-packages/python_flint.libs/libflint-6839011d.so.24.0.0": "871a4132fd1e9f3638391b2208e07088f8e3e72a10e41d45f58b150a60c2a1a9",
+   "/root/work/rbg-cusum-aux5-venv/lib/python3.12/site-packages/python_flint.libs/libgmp-e0c82b6b.so.10.5.0": "33d24e675b10f8b1ab93a8ad3fa2ed5012e1b0d89dcdb97273877c6c6b9450d8",
+   "/root/work/rbg-cusum-aux5-venv/lib/python3.12/site-packages/python_flint.libs/libmpfr-be332c05.so.6.2.2": "c4dfcfc7c5c7ab71d427e15f2f9fae4ace88592a81d4596a918dcc02eadfc6e3",
+   "/root/work/rbg-cusum-aux5-venv/lib/python3.12/site-packages/scipy.libs/libscipy_openblas-5f890258.so": "2a5b4c1a6311873c59132b2ceaaf3c26258a17350b7cd27ea8782a47e3322981"
+  },
+  "cpython_version_full": "3.12.3 (main, Apr 15 2024, 18:25:56) [Clang 17.0.6 ]",
+  "enforced_by": "the certifier's own initial and final gates (manifest_v3.verify + runtime compare) on every cell, the entrypoint probe C06, and the seal check that producer.runtime equals this contract",
+  "libc": [
+   "glibc",
+   "2.41"
+  ],
+  "numpy_version": "2.5.2",
+  "openblas_config": "OpenBLAS 0.3.34.0.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=64",
+  "openblas_runtime_corename": "Haswell",
+  "python_executable": "/root/.local/share/uv/python/cpython-3.12.3-linux-x86_64-gnu/bin/python3.12",
+  "python_flint_version": "0.9.0",
+  "runtime_contract_hash": "bc75c9ea7cd5f9406a0509bb0a161aa2c013f80427d1035197989e3d202c845a",
+  "schema": "k1.cusum-aux5.runtime-contract.v3",
+  "thread_environment": {
+   "MKL_NUM_THREADS": "1",
+   "NUMEXPR_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1"
+  },
+  "venv_prefix": "/root/work/rbg-cusum-aux5-venv",
+  "venv_python": "/root/work/rbg-cusum-aux5-venv/bin/python",
+  "worker_environment": {
+   "HOME": "/root",
+   "K1_THREADS_PINNED": "1",
+   "LANG": "C.UTF-8",
+   "MKL_NUM_THREADS": "1",
+   "NUMEXPR_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "PATH": "/usr/bin:/bin",
+   "PYTHONDONTWRITEBYTECODE": "1"
+  }
+ },
+ "runtime_root": "/root/work/postk1-runs/cusum-aux5-production-prov-r1",
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.production-provenance-checkpoint.v1",
+ "scientific_hash": {
+  "incidental_paths": [
+   "cpu_seconds*",
+   "wall_seconds",
+   "peak_rss_kib",
+   "generated_utc",
+   "pid",
+   "host*",
+   "**.cpu_seconds",
+   "**.bernstein_calls",
+   "**.kernel_calls",
+   "work.bernstein_calls",
+   "work.kernel_calls",
+   "objects.*.cpu_seconds",
+   "objects.*.bernstein_calls",
+   "objects.*.kernel_calls",
+   "auxiliary_evidence.objects.*.cpu_seconds",
+   "auxiliary_evidence.objects.*.bernstein_calls",
+   "auxiliary_evidence.objects.*.kernel_calls",
+   "tightening_report.*.factor",
+   "node_refinement.decisions.*.factor",
+   "node_refinement.best_factor",
+   "node_refinement.median_factor",
+   "whole_cell_refinement.*.tightening_factor_H",
+   "whole_cell_refinement.*.second_order.factor_H",
+   "m.*.cover.utilization",
+   "m.*.top_level_gates.*.utilization",
+   "m.*.worst_top_level_utilization",
+   "scipy_guard.call_sites_observed",
+   "run.**"
+  ],
+  "modules_sha256": {
+   "ancestry4.py": "91d517955345e38592b11cabfe76edcf7594872c195950ff18c66aee2e50048a",
+   "hash_v2.py": "c00912e39d3e71a2c6c3f8684c24d7a8d9ceb6b6750331d2dbd9140bf679518a",
+   "schema.py": "25c70663affa90122db60fcb859c4576d3c9d73469c6ac7522f8c9091dc54211"
+  },
+  "provenance_paths": [
+   "producer.**",
+   "producer_manifest_*",
+   "runtime_contract_hash",
+   "producer_identity_hash",
+   "auxiliary_evidence_hash",
+   "certificates.*.identity.**",
+   "provenance_chain.**",
+   "campaign",
+   "changes*",
+   "threading.**",
+   "universe.**",
+   "scipy_guard.**"
+  ],
+  "seal_rule": "scientific_content_hash and auxiliary_evidence_hash recompute; audit_record ok; every K4 consumed path is not INCIDENTAL",
+  "semantics": "hash_v2 by EXCLUSION: every leaf not matching INCIDENTAL_PATHS is hashed; unknown fields are SCIENTIFIC; canonical JSON, exact rational strings"
+ },
+ "scientific_universe": {
+  "cells": 326,
+  "detector": "CUSUM",
+  "frozen_spec_hashes": {
+   "ERROR_ALGEBRA.md": "4f32df0273d05b1b4e0136e2a901adec9979e158b5decd8c9bf3cce0e35b9ffa",
+   "config/cells.json": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f",
+   "config/checkpoint.json": "1c2a6825f19e19de6fb588647ca3fc4618068087ef0976292ca7bbeca701f13f",
+   "config/cost_model.json": "2a3ec2171d1d639770b6cca8b131e7947677b7ec89e39da24e7c729f3a8e0d34",
+   "config/cover_witnesses.json": "dcb89ccc1a15729a0fb2469ce9c28b0891a81dffe112840b2325417cda31f446",
+   "config/record_schema.json": "666dee60b9ab60203f7582d01e49416c23e75cbacd713655344ff459689038a0",
+   "manifests/authority.json": "4ffd0e47d301886646f45884c5c233bf8f42f3ed6dd785d778de3298ed2f523e",
+   "manifests/protected_start.json": "d30f011447df72315e568c279f53fdf8a0d7f152a9720321d26a4f1ae9f40873"
+  },
+  "k1_spec_namespace": "level4/closure_proofs/p5y_k1_cover_ledger_successor",
+  "k1_spec_production_enabled_constant": false,
+  "obligation_universe_total": 17978,
+  "statement": "unchanged. spec.PRODUCTION_ENABLED is a frozen constant of the reviewed K1 certifier lineage (every CUSUM certifier since repair1 refuses to run if it is true); production authority is conferred by this checkpoint and the sealed ledger, never by the certifier."
+ },
+ "status": "FROZEN_PRE_PRODUCTION",
+ "workers": {
+  "argv_template": [
+   "/usr/bin/env",
+   "-i",
+   "PATH=/usr/bin:/bin",
+   "HOME=/root",
+   "LANG=C.UTF-8",
+   "OMP_NUM_THREADS=1",
+   "OPENBLAS_NUM_THREADS=1",
+   "MKL_NUM_THREADS=1",
+   "NUMEXPR_NUM_THREADS=1",
+   "K1_THREADS_PINNED=1",
+   "PYTHONDONTWRITEBYTECODE=1",
+   "/usr/bin/taskset",
+   "-c",
+   "{core}",
+   "/root/work/rbg-cusum-aux5-venv/bin/python",
+   "{root}/level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/qualify5.py",
+   "--cell",
+   "{cell}",
+   "--bits",
+   "256",
+   "--out",
+   "{out}"
+  ],
+  "cores": [
+   0,
+   2,
+   4,
+   6
+  ],
+  "count": 4,
+  "cwd": "{root} = checkout_path",
+  "parent_death_signal": "SIGKILL (PR_SET_PDEATHSIG): no worker outlives its supervisor",
+  "resume_flag": "--skip-if-current is NOT used: every attempt recomputes; resume is at ledger level",
+  "shape": "one worker per physical core (logical 0,2,4,6), the measured qualification shape",
+  "smt_groups": [
+   [
+    0,
+    1
+   ],
+   [
+    2,
+    3
+   ],
+   [
+    4,
+    5
+   ],
+   [
+    6,
+    7
+   ]
+  ]
+ }
+}

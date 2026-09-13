@@ -1,0 +1,111 @@
+{
+ "binding_event": "PROVENANCE_BOUND",
+ "certifier_constant_flags": {
+  "production_run": false,
+  "result_bearing": false,
+  "scientific_certification_of_full_cover": false
+ },
+ "composite_rule": "A CUSUM Aux5 production result is the PAIR (scientific record, valid production provenance envelope). Neither object alone is production-authorized, result-bearing or disposition-bearing. An envelope is valid only if it recomputes exactly from: the sealed record bytes; a production ledger whose GENESIS names the pre-result run authorization and its independent countersignature; that ledger's RESERVED -> RUNNING -> SEAL journal entries for the attempt; the frozen producer, checkpoint, cell geometry and host; and the ledger's PROVENANCE_BOUND entry naming the envelope sha256.",
+ "envelope_kind": "CUSUM_AUX5_PRODUCTION_PROVENANCE_ENVELOPE",
+ "envelope_schema": "rebaseguard.p5y.k1.cusum-aux5.production-provenance-envelope.v1",
+ "fields": {
+  "authorization": [
+   "authorization_sha256",
+   "authorization_id",
+   "production_run_id",
+   "ledger_id",
+   "countersignature_sha256",
+   "executor_hash"
+  ],
+  "binding_sha256": "sha256(canonical(envelope without binding_sha256))",
+  "cell": [
+   "detector",
+   "cell_index",
+   "geometry {index,e0,rho,left,right,C_upper}",
+   "geometry_row_sha256",
+   "cells_table_sha256",
+   "m_values"
+  ],
+  "checkpoint": [
+   "production_checkpoint_sha256",
+   "predecessor_checkpoint_sha256",
+   "predecessor_status"
+  ],
+  "composite_rule": "COMPOSITE_RULE",
+  "cpu_accounting": [
+   "charge_usec",
+   "charge_evidence",
+   "bucket",
+   "reference"
+  ],
+  "host_runtime": [
+   "host_name",
+   "machine_id_sha256",
+   "runtime_contract_hash",
+   "boot_id",
+   "core",
+   "pid"
+  ],
+  "kind": "ENVELOPE_KIND",
+  "ledger": [
+   "ledger_id",
+   "attempt_id",
+   "supervisor_run_id",
+   "genesis_entry_sha256",
+   "reservation {seq,event,entry_sha256,t_wall}",
+   "running {..}",
+   "seal {..}"
+  ],
+  "mode": "PRODUCTION | SYNTHETIC",
+  "producer": [
+   "producer_manifest_hash",
+   "runtime_contract_hash",
+   "producer_identity_hash",
+   "implementation_hash_kind",
+   "producer_manifest_path",
+   "producer_manifest_schema",
+   "producer_manifest_version",
+   "campaign"
+  ],
+  "qualification": [
+   "is_qualification_record",
+   "record_sha256_in_qualification_set",
+   "qualification_record_sha256"
+  ],
+  "record_flag_semantics": "FLAG_SEMANTICS",
+  "schema": "ENVELOPE_SCHEMA",
+  "scientific_record": [
+   "path",
+   "sha256",
+   "record_schema",
+   "precision_bits",
+   "scientific_content_hash",
+   "auxiliary_evidence_hash",
+   "certificate_digest",
+   "certificate_count",
+   "certifier_constant_flags_observed"
+  ],
+  "synthetic": "bool (False in production)",
+  "task_kind": "SCIENCE"
+ },
+ "immutability": "an envelope is read-only once bound; a second envelope for a bound attempt or cell is refused (DUPLICATE_ENVELOPE); an unbound crash residue is regenerated from the ledger",
+ "object_sha256": "the envelope FILE sha256 is bound outside the envelope: in the ledger attempt's provenance (PROVENANCE_BOUND journal entry), the integrity audit and the K4 attestation",
+ "path": "provenance/<attempt id>/CUSUM_<cell:04d>.envelope.json under the production runtime root",
+ "record_flag_semantics": "production_run=false, result_bearing=false and scientific_certification_of_full_cover=false inside the scientific record are constants of the frozen, qualified Aux5 certifier: identical in qualification and production, inside the scientific hash, never rewritten. They state that a scientific record BY ITSELF authorizes nothing, which the composite rule also requires. They are not the production disposition and are never read as one. The PS1 precedent is the same: its T3/T4/T5 science artifacts carry no production flag and acquire production status only through a sealed production cell record whose production_provenance binds the pre-result launch authorization, and that authorization object itself declares result_bearing=false.",
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.envelope-schema-document.v1",
+ "seal_events": [
+  "SEALED",
+  "RECONCILED_SEALED"
+ ],
+ "section_refusal_codes": {
+  "authorization": "AUTHORIZATION_MISMATCH",
+  "cell": "CELL_MISMATCH",
+  "checkpoint": "CHECKPOINT_MISMATCH",
+  "cpu_accounting": "CPU_ACCOUNTING_MISMATCH",
+  "host_runtime": "HOST_RUNTIME_MISMATCH",
+  "ledger": "LEDGER_LINKAGE",
+  "producer": "PRODUCER_MISMATCH",
+  "qualification": "QUALIFICATION_DISTINCTION_MISMATCH",
+  "scientific_record": "RECORD_MISMATCH"
+ }
+}
