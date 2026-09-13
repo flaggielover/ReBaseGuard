@@ -1,0 +1,31 @@
+{
+ "schema": "rebaseguard.p5y.k5.feasibility-oracle.v1",
+ "status": "FROZEN_PRE_RESULT",
+ "frozen_utc": "2026-09-13",
+ "classification": "NON-CLOSURE, NON-FULL-CAMPAIGN, NON-DISPOSITION-BEARING feasibility oracle",
+ "result_bearing": false,
+ "bridge": "K5_GLOBAL_BRIDGE.md (Theorem K5-B)",
+ "probes": {
+  "SR":    {"table": "p5y_k1_sr_o9_partition_successor/config/successor_cells.json", "cells": [0, 207, 294]},
+  "CUSUM": {"table": "p5y_k1_cover_ledger_successor/config/cells.json", "cells": [0, 221, 309]},
+  "m": [1, 2, 3, 5],
+  "precision_bits": 256,
+  "probe_rule": "first cell, last cell with left < 1/4, last cell meeting (0,2]; fixed before any R''' value exists"
+ },
+ "object": "certified enclosure [L, U] of R'''_{D,m}(e) over the whole probe cell: midpoint order-3 rung (F_r:k3 r=0..4, S_r:3, W:3, h_j:3) plus whole-cell 4th-order remainder rho*T[R,4] (Aux3 governance pattern Q3-Q7); outward exact rational endpoints",
+ "questions_and_criteria": {
+  "Q1_ENCLOSABLE": {"PASS": "for all 24 (probe, m): finite certified [L, U] produced (tower self-consistency q_N < 1, no NaN/inf)",
+                    "FAIL": "any probe cell yields no finite enclosure -> FAIL_ENCLOSURE for that detector"},
+  "Q2_NEAR_ZERO_SIGN": {"PASS": "cell 0 of the detector: L > 0 for every m",
+                        "STOP": "SR cell 0: L <= 0 for any m -> STOP the SR R''' route (no expansion); CUSUM cell 0 likewise stops the CUSUM route",
+                        "COUNTEREXAMPLE_SIGNAL": "U < 0 at cell 0 for some m -> recorded for independent adjudication (certified R''' < 0 near 0 contradicts H3a); the oracle issues no verdict"},
+  "Q3_NARROW_FOR_BRIDGE": {"PASS": "cell 0: sign-determinate (L > 0), the only width the bridge needs at the first cell",
+                           "REPORT_ONLY": "cells 207/294 (SR), 221/309 (CUSUM): L, U, U-L and sign-determinacy per m; no pass/fail (the bridge falls back to K1 H_k/Gamma_k there; sufficiency is result-dependent)"},
+  "Q4_COST": {"REPORT_ONLY": "CPU-s, wall-s, peak RSS per probe cell; stratum projection to the 605 cells = sum over strata [0,1/4), [1/4,2) of (probe cost x cell count); no cap is set by the oracle"}
+ },
+ "halt_rules": ["no expansion beyond the 6 probe cells under any outcome", "no refinement, splitting or precision change after results",
+                "a STOP outcome ends the route; a new route requires a new predeclared successor"],
+ "execution_precondition": "a governed certified order-3 producer (identity-bound) exists for the detector. SR: NONE exists (p5y_k1_sr_o9_aux3_successor stopped at Phase-4 float feasibility, AUX3_SR_FEASIBILITY_FAIL). CUSUM: Aux4 computes order-3 SOURCE objects only (no F_r:k3).",
+ "executed": false,
+ "full_campaign_authorized": false
+}
