@@ -1,0 +1,66 @@
+{
+ "cost": {
+  "aws_cpu_s_sum_same_pairs": 606.028450929985,
+  "peak_rss_kib_max": 135148,
+  "per_pair_ratio_min_p50_p90_max": [
+   0.48039864404381594,
+   0.8727267684495973,
+   0.9004366693801715,
+   0.9688924469175413
+  ],
+  "process_cpu_s": {
+   "R1": 263.248558,
+   "R2": 262.18381800000003,
+   "R3_OPENBLAS_CORETYPE_HASWELL": 261.695039
+  },
+  "process_wall_s": {
+   "R1": 263.37197971343994,
+   "R2": 262.19898223876953,
+   "R3_OPENBLAS_CORETYPE_HASWELL": 261.7085425853729
+  },
+  "projection": {
+   "aws_cells_outer_production_shape": {
+    "aws_basis_cpu_h": 5694.0,
+    "vultr_equivalent_cpu_h": 4849.7,
+    "vultr_equivalent_cpu_h_p90_ratio": 5127.1
+   },
+   "aws_patch_outer_mean_qualified": {
+    "aws_basis_cpu_h": 4413.2,
+    "vultr_equivalent_cpu_h": 3758.8,
+    "vultr_equivalent_cpu_h_p90_ratio": 3973.8
+   },
+   "aws_patch_outer_worst_group": {
+    "aws_basis_cpu_h": 4641.9,
+    "vultr_equivalent_cpu_h": 3953.6,
+    "vultr_equivalent_cpu_h_p90_ratio": 4179.7
+   }
+  },
+  "vultr_cpu_s_sum": 516.165272683,
+  "vultr_over_aws_cpu_ratio": 0.8517178886418867
+ },
+ "diagnostic_replicates": {
+  "R3_OPENBLAS_CORETYPE_HASWELL": {
+   "OPENBLAS_CORETYPE": "Haswell",
+   "all_bit_identical_to_aws": false
+  }
+ },
+ "disposition_bearing": false,
+ "pairs": 24,
+ "predeclaration": "sha256 of this file is recorded in the run log before the replicates start",
+ "replicates": [
+  "R1",
+  "R2",
+  "R3_OPENBLAS_CORETYPE_HASWELL"
+ ],
+ "result_bearing": false,
+ "runtime_hashes": [
+  "fb0dbe330667612e31fcc0c23eb52844abf2532d967bf5ee3b44d866504bda1f"
+ ],
+ "schema": "rebaseguard.p5y.k1.sr.ps1.vultr-crosshost-analysis.v1",
+ "verdict": {
+  "RUNTIME_CONTRACT_HASH_EQUALS_AWS": true,
+  "SR_CROSS_HOST_BIT_IDENTITY_VS_COMMITTED_AWS": "FAIL",
+  "SR_DETERMINISM_FRESH_PROCESS": "PASS",
+  "VULTR_PS1_PRODUCER_QUALIFICATION_EVIDENCE": "FAIL"
+ }
+}

@@ -1,0 +1,270 @@
+{
+ "accounting": {
+  "evidence_hierarchy": [
+   "SUPERVISOR_FINAL (cgroup, all run processes dead)",
+   "EXECSTOPPOST_CGROUP",
+   "JOURNAL CPU_USAGE_NSEC for the invocation",
+   "TAIL_BOUND: last fsynced sample + (t_death_upper - t_sample)*online_cpus"
+  ],
+  "invariant": "1.15*(committed + open cell reservations + TORN escrows + SHADOW + requested + overhead) <= 6600 at every admission",
+  "max_infra_tears_per_cell": 3,
+  "per_host_caps": "NONE",
+  "poll_interval_s": 5,
+  "retry_rule": "infrastructure tears retry at most twice per cell (frozen protocol); the 3rd tear HALTS",
+  "science_failure": "worker-reported / malformed / unclassified release HALTS the campaign; never retried (frozen protocol)",
+  "settlement": "charge = max(0, U_final - C_run); all run-owned reservations closed; committed[role] += charge (exact measured run CPU)",
+  "shadow": "max(0, U_run - C_run - R_run) + 2*poll_interval_s*online_cpus/3600",
+  "torn_release": "frozen release() moves the reservation to an OPS:TORN escrow (never dropped, never zero)"
+ },
+ "execution_generation": {
+  "generation": 2,
+  "generation_2_torn_counters": "independent, start empty",
+  "halt_supersession": "PREDECESSOR_HALT_SUPERSEDED_FOR_NEW_EXECUTION_GENERATION",
+  "imported_science_cpu_h": 92.32,
+  "predecessor_final_phase": "HALTED",
+  "predecessor_halt_reason": "RETRY_LIMIT",
+  "predecessor_ledger_sha256": "0557bc229c3fcdb10cb0dd0b5836fa62a6b0e6c2512656e6ec7e49294b4d6cab",
+  "predecessor_production_root": "/home/ubuntu/work/ReBaseGuard-ps1-prod",
+  "predecessor_torn_lineage": {
+   "cells_0_to_63": 3
+  },
+  "transition_record": "config/GENERATION_TRANSITION.json",
+  "transition_record_sha256": "039aecfe2e25284f492704cc363b70a7cf6dc89c629c868973038b8af20178d9"
+ },
+ "freeze_status": "PROPOSED_UNFROZEN (no OPERATIONAL_CONTRACT_HASH; production refuses)",
+ "genuine_sr_production_cells_at_freeze": 0,
+ "hosts": {
+  "AWS": {
+   "handoff_private_key": "/home/ubuntu/.rebaseguard/handoff_ed25519.pem",
+   "launch_prefix": [
+    "sudo",
+    "-n"
+   ],
+   "online_cpus": 32,
+   "ops_root": "/home/ubuntu/work/ReBaseGuard-ps1-ops/level4/closure_proofs/p5y_k1_ps1_gen2_runtime_isolation",
+   "producer_binding": "GIT_COMMIT",
+   "production_root": "/home/ubuntu/work/ReBaseGuard-ps1-prod-gen2",
+   "python": "/home/ubuntu/work/ReBaseGuard/level4/.venv/bin/python",
+   "runtime_dir": "/home/ubuntu/rbg-runtime/p5y_k1_ps1_generation2",
+   "sys_vendor": "Amazon EC2",
+   "user": "ubuntu"
+  },
+  "VULTR": {
+   "launch_prefix": [],
+   "online_cpus": 8,
+   "ops_root": "/home/ubuntu/work/ReBaseGuard-ps1-ops/level4/closure_proofs/p5y_k1_ps1_gen2_runtime_isolation",
+   "producer_binding": "SOURCE_MANIFEST",
+   "production_root": "/root/ps1-not-deployed/tree",
+   "python": "/root/prov/tree/level4/.venv/bin/python",
+   "runtime_dir": "/root/rbg-runtime/p5y_k1_ps1_production",
+   "status": "NOT_QUALIFIED_FOR_PS1 (owns no cells)",
+   "sys_vendor": "Vultr",
+   "user": "root"
+  }
+ },
+ "locks": {
+  "campaign": "kernel flock on <runtime_dir>/campaign.lock for the whole run + owner identity (host, boot id, pid, start time, run id, unit, invocation id)",
+  "frozen_ledger_lock": "DEAD if written before current boot / owner pid dead / pid reused (started after the lock); LIVE if a sanctioned producer; else AMBIGUOUS; only DEAD is reclaimed, only under the campaign lock"
+ },
+ "mode": "PRODUCTION",
+ "parent": {
+  "aws_cells": 369,
+  "checkpoint_sha256": "1c2a6825f19e19de6fb588647ca3fc4618068087ef0976292ca7bbeca701f13f",
+  "commit": "4cd7a45ba663741ad83d45edbc43d51d68832683",
+  "cores": {
+   "AWS": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+   ],
+   "VULTR": []
+  },
+  "execution_order": [
+   "AWS"
+  ],
+  "far_field": "SR:-1:far_field:all_m",
+  "global_cpu_cap": 6600.0,
+  "governed_overhead_cpu_h": 102.123,
+  "handoff_public_key_fingerprint": null,
+  "integrated_source_manifest_sha256": "13ba2ecd1c8afdaafb3463233f246716f599dd935c5b3722f4074327d8eec5fd",
+  "namespace": "level4/closure_proofs/p5y_k1_ps1_production",
+  "obligations": 10333,
+  "overhead_factor": 1.15,
+  "per_host_hard_caps_present": false,
+  "predecessor_commit": "29b3bffb6a739121b66bdfcb23cb6b6544b39baf",
+  "predecessor_tag": "p5y-k1-sr-ps1-production-authorized-preresult",
+  "production_authorization_sha256": "fc7cb93465916c3a7842066701b0e11fb6799bfdfc7fff55073a3f6e4cfc03ef",
+  "production_closure_sha256": "90fc16fcf0ef174d2f73574e62111f5aa090bd1cafefaade32776a6d08be8779",
+  "protocol_sha256": "890cf5365fbec0dd9649c4b91d24ff5c30853d48e5b11fc8a01cde82cc4f1162",
+  "scientific_adapter_hash": "13ba2ecd1c8afdaafb3463233f246716f599dd935c5b3722f4074327d8eec5fd",
+  "shard_manifest_sha256": "6450aff37d975a308f5fba5c799ab1163f6f2ab9e678312b53f0ec686b1c9e9c",
+  "tag": "p5y-k1-sr-ps1-portable-recovery-preresult",
+  "total_cells": 369,
+  "vultr_cells": 0,
+  "workers": {
+   "AWS": 16,
+   "VULTR": 0
+  }
+ },
+ "recovery": {
+  "bundle_schema": "rebaseguard.p5y.k1.ps1.portable-bundle.v1",
+  "checkpoint_schema": "rebaseguard.p5y.k1.ps1.portable-checkpoint.v1",
+  "cost": {
+   "campaign_cpu_h": 5694.0,
+   "cells_per_24h": 24.9,
+   "overhead_ratio_measured": 1.2264634058449526
+  },
+  "drain": {
+   "checked_at": "cell boundary only",
+   "command": "prodctl.py drain --role <ROLE>",
+   "increments_torn_attempts": false,
+   "targeted_stop": "--drain-after-completed N == N or the first safe boundary after N"
+  },
+  "durability_boundary": "cell_done_XXXX.json, written atomically per cell",
+  "forensic_root_cause": "HOST_OR_SYSTEMD_INFRASTRUCTURE_EVENT (apt-daily-upgrade -> systemd re-exec)",
+  "host_maintenance_gate": "driver/host_guard.py (fails closed inside the declared window)",
+  "predecessor_halt": {
+   "classification": "EXECUTION_LIFECYCLE_EXHAUSTION_NOT_A_SCIENTIFIC_COUNTEREXAMPLE",
+   "historical_cpu_h": 92.32,
+   "historical_finalized_cells": 0,
+   "historical_patch_records": 24610,
+   "historical_patch_records_status": "ARCHIVAL_ONLY",
+   "ledger_sha256": "0557bc229c3fcdb10cb0dd0b5836fa62a6b0e6c2512656e6ec7e49294b4d6cab",
+   "reason": "RETRY_LIMIT",
+   "run_id": "20260912T041203Z-962132d3",
+   "torn_attempts_preserved": {
+    "cells_0_to_63": 3
+   }
+  },
+  "retry_policy_generation_2": {
+   "GRACEFUL_DRAIN_is_a_tear": false,
+   "historical_counters_reset": false,
+   "max_infra_tears_per_cell": 3
+  }
+ },
+ "recovery_source_manifest": {
+  "code/bench_ordering.py": "ed4fe1ac83f890a1b61d3d8606e93c179d021e3a41fc4ca8a91fbfc7d7a46601",
+  "code/init_generation2.py": "23a54452b7252a75adec3805bc149ba69ccbe8d64a2a5cb18038f9985d949b48",
+  "code/install_generation2_continuity.py": "f8bba49d52ffede095df83bdb6adaf9cb3fae2651f095b52c5dfe057c05cf550",
+  "code/make_cellseq_launcher.py": "c9460dd47123f141e4846ea43190adbca698c32fbce97959e10f8b5d58321bce",
+  "code/make_cellseq_worker.py": "3c23a18f9513349c929fce5788be7b859cb8e32fd39f1f0f41accfd05ba0e58c",
+  "code/make_generation2.py": "a26a71f5a08413c62d59ae5c1ff68d8ce55ca22f006b799d6767661200ac96fb",
+  "code/make_ledger_ops_recovery.py": "af5f7fac8d265a05ff5dfcdf3913114f51636a320b9c6697abee688b041729c3",
+  "code/make_operational_contract.py": "a9ed600d9ee0fd2649642424b7f716a9da12f6f94c3a5a2994be2336195d2dc8",
+  "code/make_ops_manifest.py": "d805134b01fe5274641bbb5693dafed8fe6b2dbed4205b5c4d3837a21fd934a6",
+  "code/make_prodctl_recovery.py": "8347b441bf9f0e732c9d67c61207613a2027a7928f99f6b44c0bc632110e251c",
+  "code/make_produce_entry_recovery.py": "c10e284311c3aed99d7e11c93090c25310220122401471443e971059a0ecc5da",
+  "code/make_recovery_contract.py": "b671f4bdeecac25d4f216cae8cfac816f735b5ad29b45782f742940071ed9357",
+  "code/make_supervisor_recovery.py": "f2a4040589587ed513c254d21ec2cd8c1233b3191f57ffa3b19e4542af7431fa",
+  "driver/host_guard.py": "56668026173ae4c82d41c642a908c46fc53415609500c464cf25ef9a7d8343d6",
+  "driver/ps1_checkpoint.py": "1dbc166db760d6a148f8495fde9561f185349f673d81494ff3904ad77de40626",
+  "driver/ps1_reconcile.py": "b0f8b7da5d8a3c18d08ff2ee342917b988dd1584ac50e0bf484bc627518af031",
+  "ops/ledger_ops.py": "afa361671c67b043cff162091935d4f8a8c3acf37ba261a6e5577e8e846168cc",
+  "ops/locks.py": "470d34d2b1de860deeeda5b5b1fab2eaa52f7bbb57a20b20523e00207735a537",
+  "ops/opscommon.py": "fc38391102cb43d893a0ba18525284f1dbb2ce7248df784646c3d97c95663483",
+  "ops/prodctl.py": "0c5bbeb19d664a54b51531cf94ffa6b1e1b4d3c1710f52b1e712a133e41e23b5",
+  "ops/produce_entry.py": "ce6e79e71be310e9f77f5b85764c6e673b81d7c0d68df65696500c31fb9c9e64",
+  "ops/runtime_state.py": "713c614590bd1f73bd76824943922fc866a20710db3e7025ddbc1d6991ad0201",
+  "ops/supervisor.py": "fa0cd90243fb2bd4289faaee32cdbf746897cdd9250670544ab5b3c014c00872",
+  "tests/live_acceptance.py": "d1ee27bf9273f47efd6fc40f6e39625cc3fd7418715220aebfcd1f7c29c797e6",
+  "tests/synthetic_cellseq_entry.py": "bf57684418fb30a8550af24f54105476cae4644ce4923a71a2b23f0944fa94ce",
+  "tests/test_budget_release_contract.py": "da210b03ffa1f8803065e4844f5747cc4549d528d7f6130182298a7f04bef5b2",
+  "tests/test_contract_hash.py": "fe2d2e0e7acfa5c83499b1095db98e7b09d439a6b597d9a554348d65d0bf5c99",
+  "tests/test_generation2.py": "9b56ef37e0983fd186763e08a9cc9d0b4a3dc1bbda2f39ce6cc86c66f598efbc",
+  "tests/test_marker_reconciliation.py": "dd5d8a58bf5b1386920d2107a39bcb509501fc868bfa34c25ce5591ce0fbbfc7",
+  "tests/test_portable_recovery.py": "d947e5c487624f2ba49c540d3531679114954357cb8f1603d12f9b856cb2505f",
+  "tests/test_systemd_binding.py": "861c7d14498ecc813ecfe0eb4f3f0d6121b40be6a1c29ffcee45b87f7cc08509"
+ },
+ "result_bearing": false,
+ "runtime_isolation": {
+  "authorization_rebinding": {
+   "applied_in": "ops/produce_entry.py after the frozen preflight",
+   "frozen_authorization_file_changed": false,
+   "keys": [
+    "work_dir",
+    "evidence_dir"
+   ]
+  },
+  "defect": "GENERATION2_RUNTIME_PATH_SPLIT",
+  "legacy_bound_roots": {
+   "AWS": {
+    "evidence_dirs": [
+     "/home/ubuntu/rbg-runtime/p5y_k1_ps1_production/evidence"
+    ],
+    "work_dirs": [
+     "/home/ubuntu/rbg-runtime/p5y_k1_ps1_production/work"
+    ]
+   }
+  },
+  "legacy_policy": "legacy roots are never polled for DRAIN and never written; durable markers there are reconciled only when bound to the settling run's launcher pid",
+  "rule": "every mutable path = <hosts[role].runtime_dir>/{work,evidence,work/DRAIN,checkpoints,export,export_src,quarantine/drain_flags}; resolved ONLY by driver/generation_paths.py",
+  "stale_drain_gate": "pre-start refuses while <runtime_dir>/work/DRAIN exists; prodctl clear-drain archives it with a continuity record"
+ },
+ "runtime_state": {
+  "exclude_file": "config/RUNTIME_STATE_EXCLUDE",
+  "exclude_sha256": "573c34c758448da7f725e2bb404dfd0c3f00bc2c48ac8373ac00001c258e16b1",
+  "installed_into": "<git common dir of the SEPARATE PS1 production clone>/info/exclude",
+  "vultr": "no git gate; every file under production/ is content-classified; unexpected files refuse"
+ },
+ "schema": "rebaseguard.p5y.k1.sr.production.operational-contract.v1",
+ "scientific_identity_changed": false,
+ "service": {
+  "cpu_accounting": true,
+  "entry": "ops/produce_entry.py",
+  "environment": {
+   "AWS": {
+    "BLIS_NUM_THREADS": "1",
+    "HOME": "/home/ubuntu",
+    "LANG": "C.UTF-8",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PATH": "/usr/bin:/bin",
+    "VECLIB_MAXIMUM_THREADS": "1"
+   },
+   "VULTR": {
+    "BLIS_NUM_THREADS": "1",
+    "HOME": "/root",
+    "LANG": "C.UTF-8",
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "PATH": "/usr/bin:/bin",
+    "VECLIB_MAXIMUM_THREADS": "1"
+   }
+  },
+  "exec_stop_post": "ops/prodctl.py settle-fallback",
+  "kill_mode": "control-group",
+  "logs": "<runtime_dir>/logs/<run_id>.log (child) + systemd journal (supervisor); never inside a source tree",
+  "manager": "systemd transient SYSTEM service created with systemd-run (one unit per run)",
+  "restart": "no",
+  "restart_policy_why": "Restart=no: every (re)start must pass the deterministic pre-start recovery by an explicit operator start; a crash loop can never burn budget unattended",
+  "runtime_max_sec": "infinity",
+  "science_command": "ps1_cellseq_launcher.production_preflight() + run_production_cells(): per-cell durable finalization; the group result only frees a worker slot",
+  "status": "ops/prodctl.py status --role <ROLE>",
+  "supervisor": "ops/supervisor.py",
+  "timeout_stop_sec": 180,
+  "type": "exec",
+  "unit_prefix": "rbg-p5y-k1-ps1-recov-"
+ },
+ "stop_conditions": {
+  "free_disk_min_gib": 5.0,
+  "wall_clock_14_days": "NOT ENFORCED: the parent production authorization excludes wall-clock bindings; flagged OPEN_GOVERNANCE (inventory R09)"
+ },
+ "what_this_is": "PS1 GENERATION-2 RUNTIME ISOLATION successor: one generation path resolver for work/evidence/DRAIN/reconcile/checkpoint/export/resume. Operational only; no scientific semantics change."
+}

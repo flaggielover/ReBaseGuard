@@ -1,0 +1,37 @@
+{
+ "schema": "rebaseguard.p5y.postk1-frontier.status.v1",
+ "recorded_utc": "2026-09-13",
+ "result_bearing": false,
+ "GEN2_RUNTIME_ISOLATION_REPAIR": "PASS_SYNTHETIC_NOT_DEPLOYED",
+ "LANE_A_DEPLOYMENT_ALLOWED_ONLY_AFTER": "CURRENT_LIVE_DRAIN_SETTLED",
+ "SR_DEFINITION_AUDIT": "PASS",
+ "SR_PRODUCER_QUALIFIED": "YES_ON_AWS_ONLY",
+ "SR_CROSS_HOST_BIT_IDENTITY": "FAIL",
+ "SR_VULTR_RESULT_BEARING_ELIGIBILITY": "NO",
+ "POST_K1_ADJUDICATION_TOOLING_READY": "YES",
+ "P5Y_POST_K1_DAG_READY": "YES",
+ "NEW_RESULT_BEARING_COMPUTE": "NONE",
+ "LIVE_AWS_RUN_TOUCHED": "NO",
+ "K1": "NOT_CLOSED",
+ "P5Y": "NOT_CLOSED",
+ "LEVEL4_GLOBAL_CLOSURE": "NO",
+ "correction": "the live 369-cell PS1 campaign is the SR side of K1, already qualified/authorized on AWS; the unfinished CUSUM side requires its current-producer full 326-cell rerun",
+ "gen2_lineage_publication": {
+  "remote_branch": "p5y-k1-ps1-gen2-lineage",
+  "base_exclusive": "f3cec1ed4ba407e28ee502f6fe9e579c3f24f051",
+  "tip": "082526be41e3bf73efacdb79285df0286e7f05f1",
+  "commits": 29,
+  "first_commit": "5e694ee123f42878241964a9855ee0468cae2a5a",
+  "gen2_production_tree_commit": "4cd7a45ba663741ad83d45edbc43d51d68832683",
+  "rewritten": false,
+  "files_added": 46,
+  "files_modified_or_deleted": 0,
+  "executor_source_manifest_files_touched": 0
+ },
+ "evidence": {
+  "lane_A": "level4/closure_proofs/p5y_k1_ps1_gen2_runtime_isolation/{AUDIT.md,RESULT.md,DEPLOYMENT_GATE.md,evidence/}",
+  "lane_B": "level4/closure_proofs/p5y_k1_sr_ps1_vultr_crosshost_qualification/{RESULT.md,config/PREDECLARATION.json,evidence/}",
+  "lane_C": "level4/closure_proofs/p5y_k1_ps1_postk1_adjudication_tooling/",
+  "lane_D": "level4/closure_proofs/p5y_postk1_frontier/P5Y_POST_K1_DAG.md"
+ }
+}

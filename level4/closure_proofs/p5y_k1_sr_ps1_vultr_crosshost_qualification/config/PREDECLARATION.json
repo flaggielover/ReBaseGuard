@@ -1,0 +1,230 @@
+{
+ "cell_choice_rule": "the four cold-cache group leaders of the four Phase-4 production group types: 0 (low-drift), 148 (mid), 360 (old-313 region), 368 (terminal)",
+ "cells": [
+  0,
+  148,
+  360,
+  368
+ ],
+ "classification": "NON-PRODUCTION; NON-DISPOSITION-BEARING; no cell obligation, T3/T4/T5 status, B_cover ratio or ledger is computed, read or written",
+ "decision_rules": {
+  "aws_runtime_contract_hash": "fb0dbe330667612e31fcc0c23eb52844abf2532d967bf5ee3b44d866504bda1f",
+  "cross_host_pass": "every declared pair in R1 and R2 is byte-identical to the committed AWS record; no tolerance, containment or radius rule may be introduced after results",
+  "determinism_pass": "R1 and R2 produce byte-identical canonical (nodes, geo) for every declared pair",
+  "diagnostic_replicate": "R3 is reported only; it cannot turn a FAIL into PASS",
+  "on_any_fail": "SR_PRODUCER_VULTR_QUALIFIED = NO",
+  "runtime": "the PS1 runtime fingerprint sha256 must equal the AWS runtime_contract_hash"
+ },
+ "declared_before_any_vultr_ps1_replay_result": true,
+ "declared_utc": "2026-09-13T05:11:57Z",
+ "not_authorised": [
+  "full SR campaign",
+  "any production cell",
+  "any change to the PS1 authorization, topology or runtime contract table"
+ ],
+ "pick": {
+  "0": [
+   {
+    "aws_cpu_s": 7.9723866149997775,
+    "patch": [
+     61,
+     53
+    ]
+   },
+   {
+    "aws_cpu_s": 11.077538738000385,
+    "patch": [
+     41,
+     46
+    ]
+   },
+   {
+    "aws_cpu_s": 12.790103035999891,
+    "patch": [
+     23,
+     49
+    ]
+   },
+   {
+    "aws_cpu_s": 14.179971207000563,
+    "patch": [
+     20,
+     36
+    ]
+   },
+   {
+    "aws_cpu_s": 15.909703904999333,
+    "patch": [
+     8,
+     33
+    ]
+   },
+   {
+    "aws_cpu_s": 22.41095929700009,
+    "patch": [
+     60,
+     15
+    ]
+   }
+  ],
+  "148": [
+   {
+    "aws_cpu_s": 7.976280467999459,
+    "patch": [
+     59,
+     55
+    ]
+   },
+   {
+    "aws_cpu_s": 11.08328938699924,
+    "patch": [
+     43,
+     44
+    ]
+   },
+   {
+    "aws_cpu_s": 12.789904534001835,
+    "patch": [
+     43,
+     29
+    ]
+   },
+   {
+    "aws_cpu_s": 14.188764867998543,
+    "patch": [
+     6,
+     51
+    ]
+   },
+   {
+    "aws_cpu_s": 15.916372190000402,
+    "patch": [
+     21,
+     19
+    ]
+   },
+   {
+    "aws_cpu_s": 20.05235677899873,
+    "patch": [
+     0,
+     0
+    ]
+   }
+  ],
+  "360": [
+   {
+    "aws_cpu_s": 7.15228505900086,
+    "patch": [
+     61,
+     54
+    ]
+   },
+   {
+    "aws_cpu_s": 10.047060642998986,
+    "patch": [
+     48,
+     39
+    ]
+   },
+   {
+    "aws_cpu_s": 11.360797306999302,
+    "patch": [
+     24,
+     47
+    ]
+   },
+   {
+    "aws_cpu_s": 12.641698617000657,
+    "patch": [
+     16,
+     38
+    ]
+   },
+   {
+    "aws_cpu_s": 14.172255786994356,
+    "patch": [
+     21,
+     18
+    ]
+   },
+   {
+    "aws_cpu_s": 17.897425877999922,
+    "patch": [
+     0,
+     0
+    ]
+   }
+  ],
+  "368": [
+   {
+    "aws_cpu_s": 6.234685412997351,
+    "patch": [
+     61,
+     53
+    ]
+   },
+   {
+    "aws_cpu_s": 8.748254100999475,
+    "patch": [
+     42,
+     44
+    ]
+   },
+   {
+    "aws_cpu_s": 10.027555158998439,
+    "patch": [
+     55,
+     19
+    ]
+   },
+   {
+    "aws_cpu_s": 11.128952593000577,
+    "patch": [
+     53,
+     10
+    ]
+   },
+   {
+    "aws_cpu_s": 12.346985014999518,
+    "patch": [
+     43,
+     3
+    ]
+   },
+   {
+    "aws_cpu_s": 14.90863886900479,
+    "patch": [
+     0,
+     0
+    ]
+   }
+  ]
+ },
+ "pick_rule": "stratified by AWS Phase-4 per-patch CPU rank, evenly spaced ranks incl. min and max; ties broken by patch index",
+ "predeclaration_sha256_note": "sha256 of this file is recorded in the run log before the replicates start",
+ "producer": {
+  "cache": "cold per patch (identical to the production cells-outer worker)",
+  "per_patch_function": "opt_core.core (bound PS1 executor, frozen T2-closed certifier + bit-identical memoisation)",
+  "precision_bits": 256,
+  "scientific_adapter_hash": "13ba2ecd1c8afdaafb3463233f246716f599dd935c5b3722f4074327d8eec5fd",
+  "tree_commit": "082526be41e3bf73efacdb79285df0286e7f05f1"
+ },
+ "projection_basis_cpu_h": {
+  "aws_cells_outer_production_shape": 5694.0,
+  "aws_patch_outer_mean_qualified": 4413.2,
+  "aws_patch_outer_worst_group": 4641.9
+ },
+ "projection_rule": "Vultr-equivalent CPU-h = AWS basis x (sum Vultr cpu_s / sum AWS cpu_s over the same cold-cache pairs); p90 per-pair ratio reported as the upper band",
+ "reference": "committed AWS Phase-4 qualification records p5y_k1_ps1_production_qualification/evidence/qual/chunks (Xeon 8488C)",
+ "replicates": {
+  "contract_conformant": [
+   "R1",
+   "R2"
+  ],
+  "diagnostic": [
+   "R3_OPENBLAS_CORETYPE_HASWELL"
+  ],
+  "execution": "three fresh interpreters started concurrently, pinned to distinct physical cores 2, 4, 6; six thread variables = 1"
+ },
+ "schema": "rebaseguard.p5y.k1.sr.ps1.vultr-crosshost-qualification.predeclaration.v1"
+}
