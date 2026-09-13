@@ -1,0 +1,483 @@
+{
+ "CUSUM_SYNTHETIC_ACCEPTANCE": "PASS",
+ "bound_sources_verified": true,
+ "checkpoint_sha256": "4026f296bd7b32bea24a0f73422f4fc8df1f0c1d04aea952ee7ed0f5313c3c5c",
+ "checkpoint_unchanged_during_run": true,
+ "coverage": {
+  "K4 structural attestation gate": [
+   "s26_full_synthetic_campaign_and_k4_gate"
+  ],
+  "SIGKILL": [
+   "s06_worker_sigkill_torn_and_retried",
+   "s08_supervisor_sigkill_recovered_by_keeper_evidence"
+  ],
+  "SIGTERM": [
+   "s04_sigterm_graceful_drain",
+   "s07_worker_sigterm_torn_and_retried"
+  ],
+  "already-sealed cells are skipped": [
+   "s13_sealed_skip_deterministic_resume"
+  ],
+  "atomic sealing": [
+   "s01_clean_start_reservation_success",
+   "s09_durable_output_then_death"
+  ],
+  "cap arithmetic": [
+   "s17_cap_admission_boundary"
+  ],
+  "cap cannot be raised after production starts": [
+   "s18_cap_exhaustion_and_no_raise"
+  ],
+  "cap exhaustion prevents new admissions": [
+   "s18_cap_exhaustion_and_no_raise"
+  ],
+  "cap exhaustion produces an incomplete/budget disposition": [
+   "s18_cap_exhaustion_and_no_raise"
+  ],
+  "cap: near-cap admission": [
+   "s17_cap_admission_boundary"
+  ],
+  "cap: normal progress": [
+   "s17_cap_admission_boundary"
+  ],
+  "checkpoint/export/resume": [
+   "s16_export_restore_resume"
+  ],
+  "checkpoint/resume preserves scientific identity": [
+   "s16_export_restore_resume"
+  ],
+  "clean start": [
+   "s01_clean_start_reservation_success"
+  ],
+  "corrupted accounting state refusal": [
+   "s20_corrupted_accounting_state_refused"
+  ],
+  "corrupted evidence refusal": [
+   "s03_bad_records_refused_at_seal",
+   "s14_corrupted_sealed_evidence_refused",
+   "s15_qualification_records_never_production"
+  ],
+  "crash recovery": [
+   "s08_supervisor_sigkill_recovered_by_keeper_evidence",
+   "s09_durable_output_then_death",
+   "s10_stale_reservation_and_unreaped_orphan",
+   "s11_live_orphan_refused"
+  ],
+  "crash-safe reconciliation": [
+   "s08_supervisor_sigkill_recovered_by_keeper_evidence",
+   "s20_corrupted_accounting_state_refused"
+  ],
+  "cumulative CPU accounting": [
+   "s19_restart_preserves_accounting"
+  ],
+  "deterministic resume": [
+   "s13_sealed_skip_deterministic_resume"
+  ],
+  "duplicate launch cannot create duplicate results": [
+   "s12_duplicate_launch_prevented"
+  ],
+  "duplicate-cell rule": [
+   "s12_duplicate_launch_prevented"
+  ],
+  "entrypoint checks": [
+   "s25_preflight_before_freeze"
+  ],
+  "entrypoint fails closed before the freeze": [
+   "s25_preflight_before_freeze"
+  ],
+  "full 326-cell synthetic ledger": [
+   "s26_full_synthetic_campaign_and_k4_gate"
+  ],
+  "graceful drain": [
+   "s04_sigterm_graceful_drain",
+   "s05_drain_marker"
+  ],
+  "halt on failure": [
+   "s02_worker_failure_halts"
+  ],
+  "integrity attestation": [
+   "s26_full_synthetic_campaign_and_k4_gate"
+  ],
+  "no duplicate records": [
+   "s01_clean_start_reservation_success"
+  ],
+  "no permissive fallback": [
+   "s24_production_isolation"
+  ],
+  "no silent reuse of qualification records": [
+   "s15_qualification_records_never_production"
+  ],
+  "production isolation": [
+   "s24_production_isolation"
+  ],
+  "production seal accepts the frozen producer's record format": [
+   "s15_qualification_records_never_production"
+  ],
+  "reservation": [
+   "s01_clean_start_reservation_success"
+  ],
+  "restart with preserved accounting": [
+   "s19_restart_preserves_accounting"
+  ],
+  "restart-safe reservation handling": [
+   "s08_supervisor_sigkill_recovered_by_keeper_evidence",
+   "s10_stale_reservation_and_unreaped_orphan"
+  ],
+  "retry accounting": [
+   "s06_worker_sigkill_torn_and_retried"
+  ],
+  "retry/recovery accounting explicit": [
+   "s19_restart_preserves_accounting"
+  ],
+  "sealed-cell rule": [
+   "s14_corrupted_sealed_evidence_refused"
+  ],
+  "skip/resume": [
+   "s04_sigterm_graceful_drain",
+   "s13_sealed_skip_deterministic_resume"
+  ],
+  "stale incompatible run state": [
+   "s05_drain_marker",
+   "s11_live_orphan_refused"
+  ],
+  "stale reservation": [
+   "s10_stale_reservation_and_unreaped_orphan"
+  ],
+  "synthetic worker failure": [
+   "s02_worker_failure_halts",
+   "s03_bad_records_refused_at_seal"
+  ],
+  "synthetic worker success": [
+   "s01_clean_start_reservation_success"
+  ],
+  "torn attempt rule": [
+   "s06_worker_sigkill_torn_and_retried",
+   "s07_worker_sigterm_torn_and_retried"
+  ],
+  "worker death after durable seal is recoverable": [
+   "s09_durable_output_then_death"
+  ],
+  "wrong host refusal": [
+   "s23_wrong_host_refused"
+  ],
+  "wrong producer identity refusal": [
+   "s03_bad_records_refused_at_seal",
+   "s22_wrong_producer_identity_refused"
+  ],
+  "wrong runtime contract refusal": [
+   "s03_bad_records_refused_at_seal",
+   "s21_wrong_runtime_contract_refused"
+  ]
+ },
+ "finished_utc": "2026-09-13T09:31:05Z",
+ "frozen_certifier_started": false,
+ "git_head": "54b77949761e9f96db604136ff2abe552cf72c43",
+ "host_name": "rebaseguard-vultr-02",
+ "non_result_bearing": true,
+ "production_launched": false,
+ "production_runtime_root_absent_before_and_after": true,
+ "python": "3.12.3",
+ "scenarios": {
+  "s01_clean_start_reservation_success": {
+   "details": {
+    "cells_sealed": 6,
+    "committed_usec": 1130766,
+    "journal_entries": 23
+   },
+   "seconds": 1.0,
+   "status": "PASS"
+  },
+  "s02_worker_failure_halts": {
+   "details": {
+    "halt": "WORKER_REPORTED_FAILURE"
+   },
+   "seconds": 0.8,
+   "status": "PASS"
+  },
+  "s03_bad_records_refused_at_seal": {
+   "details": {
+    "malformed": {
+     "detail": "SCIENTIFIC_HASH: scientific_content_hash does not recompute",
+     "status": "FAILED"
+    },
+    "noout": {
+     "detail": "exit code 0 without a record",
+     "status": "FAILED"
+    },
+    "overclaim": {
+     "detail": "CPU_EVIDENCE_INCONSISTENT: record claims 1000000.0 CPU-s; its attempt used at mo",
+     "status": "FAILED"
+    },
+    "selfkill": {
+     "detail": "signal 9",
+     "status": "TORN"
+    },
+    "wrong_identity": {
+     "detail": "PRODUCER_IDENTITY: producer_identity_hash '26ca7f680c9a243e6e8c888d1f6febcc4ee44",
+     "status": "FAILED"
+    },
+    "wrong_runtime": {
+     "detail": "RUNTIME_CONTRACT: runtime_contract_hash '8c5dc4c1058158ab865407ca920941bed01bcb4",
+     "status": "FAILED"
+    }
+   },
+   "seconds": 2.6,
+   "status": "PASS"
+  },
+  "s04_sigterm_graceful_drain": {
+   "details": {
+    "attempts_total": 8,
+    "sealed_at_drain": 2
+   },
+   "seconds": 13.3,
+   "status": "PASS"
+  },
+  "s05_drain_marker": {
+   "details": {
+    "drained_after": 1
+   },
+   "seconds": 8.9,
+   "status": "PASS"
+  },
+  "s06_worker_sigkill_torn_and_retried": {
+   "details": {
+    "torn_charge_usec": 39080
+   },
+   "seconds": 0.7,
+   "status": "PASS"
+  },
+  "s07_worker_sigterm_torn_and_retried": {
+   "details": {
+    "torn_charge_usec": 39418
+   },
+   "seconds": 0.7,
+   "status": "PASS"
+  },
+  "s08_supervisor_sigkill_recovered_by_keeper_evidence": {
+   "details": {
+    "orphans_reconciled": 2
+   },
+   "seconds": 0.7,
+   "status": "PASS"
+  },
+  "s09_durable_output_then_death": {
+   "details": {
+    "recovered_after_supervisor_death": true,
+    "sealed_after_worker_signal": true
+   },
+   "seconds": 1.4,
+   "status": "PASS"
+  },
+  "s10_stale_reservation_and_unreaped_orphan": {
+   "details": {
+    "stale_reservation_charge_usec": 58825,
+    "unreaped_orphan_charge_usec": 101451
+   },
+   "seconds": 1.3,
+   "status": "PASS"
+  },
+  "s11_live_orphan_refused": {
+   "details": {
+    "refused_while_alive": true
+   },
+   "seconds": 0.7,
+   "status": "PASS"
+  },
+  "s12_duplicate_launch_prevented": {
+   "details": {
+    "race_exit_codes": [
+     0,
+     30,
+     30
+    ]
+   },
+   "seconds": 4.5,
+   "status": "PASS"
+  },
+  "s13_sealed_skip_deterministic_resume": {
+   "details": {
+    "admission_order": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9
+    ],
+    "sealed_before_resume": [
+     0,
+     1,
+     2,
+     3
+    ]
+   },
+   "seconds": 8.3,
+   "status": "PASS"
+  },
+  "s14_corrupted_sealed_evidence_refused": {
+   "details": {
+    "refused": "SEALED_EVIDENCE_CORRUPT"
+   },
+   "seconds": 4.4,
+   "status": "PASS"
+  },
+  "s15_qualification_records_never_production": {
+   "details": {
+    "note": "verify_record calls on scratch copies only; no ledger, nothing sealed",
+    "real_record_format_accepted_by_production_seal": true
+   },
+   "seconds": 0.4,
+   "status": "PASS"
+  },
+  "s16_export_restore_resume": {
+   "details": {
+    "exported_sealed": 4,
+    "restored_seq": 25
+   },
+   "seconds": 4.9,
+   "status": "PASS"
+  },
+  "s17_cap_admission_boundary": {
+   "details": {
+    "production_last_admission_headroom_cpu_h": 72.57
+   },
+   "seconds": 0.0,
+   "status": "PASS"
+  },
+  "s18_cap_exhaustion_and_no_raise": {
+   "details": {
+    "committed_usec": 2720189,
+    "pending": 5,
+    "sealed_before_exhaustion": 7
+   },
+   "seconds": 3.3,
+   "status": "PASS"
+  },
+  "s19_restart_preserves_accounting": {
+   "details": {
+    "snapshots": [
+     {
+      "failed": 0,
+      "released": 0,
+      "science": 487645,
+      "supervisor": 116611,
+      "torn": 0
+     },
+     {
+      "failed": 0,
+      "released": 0,
+      "science": 487645,
+      "supervisor": 240871,
+      "torn": 0
+     },
+     {
+      "failed": 0,
+      "released": 0,
+      "science": 976544,
+      "supervisor": 420973,
+      "torn": 35437
+     },
+     {
+      "failed": 0,
+      "released": 0,
+      "science": 976544,
+      "supervisor": 484619,
+      "torn": 35437
+     }
+    ]
+   },
+   "seconds": 5.3,
+   "status": "PASS"
+  },
+  "s20_corrupted_accounting_state_refused": {
+   "details": {
+    "broken_chain": "JOURNAL_CORRUPT",
+    "deleted_journal": "UNSANCTIONED_LEDGER",
+    "deleted_ledger": "LEDGER_MISSING",
+    "forged_accounting": "ACCOUNTING_CORRUPT",
+    "forged_cap_raise": "CAP_CHANGE_FORBIDDEN",
+    "forged_negative_charge": "ACCOUNTING_CORRUPT",
+    "journal_behind_one": "REPAIRED_AND_RESUMED",
+    "journal_torn_tail": "REPAIRED_AND_RESUMED",
+    "naive_edit": "LEDGER_ROLLBACK_OR_MUTATION",
+    "rolled_back_ledger": "LEDGER_ROLLBACK_OR_MUTATION",
+    "truncated_ledger": "LEDGER_CORRUPT"
+   },
+   "seconds": 3.4,
+   "status": "PASS"
+  },
+  "s21_wrong_runtime_contract_refused": {
+   "details": {
+    "C06": {
+     "code": "RUNTIME_CONTRACT",
+     "status": "FAIL"
+    },
+    "detail": "runtime openblas_config: live 'OpenBLAS 0.3.34.0.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY Sandybridge MAX_THREADS=64' != committed 'OpenBLAS 0.3.34.0.0  USE64BIT"
+   },
+   "seconds": 4.1,
+   "status": "PASS"
+  },
+  "s22_wrong_producer_identity_refused": {
+   "details": {
+    "fake_identity": "PRODUCER_IDENTITY",
+    "tampered_tcb": "content changed: level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/intervals.py (9675a46f44ef != ea860c4ee1f4); science input differs from Aux4 mani"
+   },
+   "seconds": 10.5,
+   "status": "PASS"
+  },
+  "s23_wrong_host_refused": {
+   "details": {
+    "C04": "WRONG_HOST",
+    "admission_guard": "HOST_DRIFT"
+   },
+   "seconds": 4.2,
+   "status": "PASS"
+  },
+  "s24_production_isolation": {
+   "details": {
+    "production_root_absent": true
+   },
+   "seconds": 0.4,
+   "status": "PASS"
+  },
+  "s25_preflight_before_freeze": {
+   "details": {
+    "status": {
+     "C01_checkpoint_and_freeze": "FAIL",
+     "C02_bound_sources": "PASS",
+     "C03_producer_identity": "PASS",
+     "C04_host_identity": "PASS",
+     "C05_checkout": "PASS",
+     "C06_runtime_contract": "PASS",
+     "C07_universe_geometry": "PASS",
+     "C08_qualification_pass": "PASS",
+     "C09_cost_cap": "PASS",
+     "C10_ledger_schema": "PASS",
+     "C11_k4_structural_attestation": "PASS",
+     "C12_synthetic_acceptance": "FAIL",
+     "C13_run_state": "PASS",
+     "C14_host_idle": "PASS"
+    }
+   },
+   "seconds": 4.1,
+   "status": "PASS"
+  },
+  "s26_full_synthetic_campaign_and_k4_gate": {
+   "details": {
+    "cells": 326,
+    "committed_cpu_s": 45.31,
+    "k4_assembly_run": false,
+    "k4_gate": "accepted"
+   },
+   "seconds": 31.0,
+   "status": "PASS"
+  }
+ },
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.synthetic-acceptance.v1",
+ "scratch": "/root/work/postk1-runs/aux5-prodckpt-acceptance-r1",
+ "started_utc": "2026-09-13T09:29:05Z"
+}
