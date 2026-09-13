@@ -52,10 +52,29 @@ LOOP_START = "# ------------------------------------------------- the result-bea
 LOOP_END = "def assemble_production_campaign(pf, host_ledgers) -> dict:"
 
 LOOP_NEW = '''# ------------------------------------------------- the result-bearing loop
-def drain_flag_path(auth, role) -> Path:
-    """Same location prodctl drain writes: <work_dir>/DRAIN, where work_dir is whatever the
-    running campaign was actually configured with (the synthetic hook rewrites it)."""
-    return Path(auth["hosts"][role]["work_dir"]) / "DRAIN"
+def runtime_paths(pf):
+    """GENERATION-2 RUNTIME ISOLATION.
+
+    The launch authorization is frozen and byte-identical (its hash is sealed into every
+    production record via PP.seal, so the 16 already-finalized cells depend on it), and it
+    still names the generation-1 runtime tree. The contract's runtime_dir is therefore the
+    authority for MUTABLE runtime paths, threaded in by produce_entry. prodctl drain and
+    ps1_reconcile already resolve that same namespace, so launcher, drain, markers,
+    reconciliation, checkpoint and export now agree.
+
+    Falls back to the authorization's paths when runtime_dir is absent, preserving
+    generation-1 behaviour exactly."""
+    auth, role = pf["auth"], pf["role"]
+    rd = pf.get("runtime_dir")
+    if rd:
+        return Path(rd) / "work", Path(rd) / "evidence"
+    h = auth["hosts"][role]
+    return Path(h["work_dir"]), Path(h["evidence_dir"])
+
+
+def drain_flag_path(pf) -> Path:
+    """Exactly the path prodctl drain writes: <runtime_dir>/work/DRAIN."""
+    return runtime_paths(pf)[0] / "DRAIN"
 
 
 def _seal_one(pf, cell, task, r, ah, adapter):
@@ -124,8 +143,9 @@ def run_production_cells(pf, *, max_cells=None, poll_timeout=None) -> dict:
         raise ProductionRefusal("live PS1 executor is not the authorised executor")
     run_tag = time.strftime("%Y%m%dT%H%M%SZ", time.gmtime()) + f"-{os.getpid()}"
     host = auth["hosts"][role]
-    dflag = drain_flag_path(auth, role)
-    pool = Pool(auth, role, Path(host["work_dir"]), run_tag)
+    wdir, edir = runtime_paths(pf)
+    dflag = drain_flag_path(pf)
+    pool = Pool(auth, role, wdir, run_tag)
     pend = set(pf["pending"] if max_cells is None else pf["pending"][:max_cells])
     groups = [g2 for g2 in ([c for c in g if c in pend] for g in pf["groups"]) if g2]
     target = pf.get("drain_after_completed")
@@ -157,7 +177,7 @@ def run_production_cells(pf, *, max_cells=None, poll_timeout=None) -> dict:
                 if drawn:
                     tid = f"{run_tag}-g{drawn[0]:04d}"
                     t = {"task_id": tid, "cells": drawn,
-                         "evidence_dir": str(Path(host["evidence_dir"]) / run_tag / f"g{drawn[0]:04d}"),
+                         "evidence_dir": str(edir / run_tag / f"g{drawn[0]:04d}"),
                          "live_patches": str(ROOT / auth["live_patches_path"]),
                          "live_patches_sha256": auth["live_patches_sha256"],
                          "expect_patches": auth["live_patches_count"],

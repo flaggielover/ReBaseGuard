@@ -46,6 +46,14 @@ def main() -> int:
     # the bind check must survive verbatim: the launcher must still live under driver/
     if 'is not the bound one under' not in out:
         raise SystemExit("the launcher bind check disappeared")
+    # generation-2 runtime isolation: give the launcher the CONTRACT's runtime namespace so
+    # work/evidence/drain/markers resolve the same tree as drain/reconcile/checkpoint/export.
+    RT_OLD = '    pf["budget"] = LO.make_ops_budget(GB, pf["budget"], run_id, PL.__file__)\n'
+    RT_NEW = ('    pf["runtime_dir"] = spec["runtime_dir"]      # gen-2 runtime isolation\n'
+              + RT_OLD)
+    if out.count(RT_OLD) != 1:
+        raise SystemExit(f"budget anchor not found exactly once ({out.count(RT_OLD)})")
+    out = out.replace(RT_OLD, RT_NEW, 1)
     OUT.write_text(out)
     print(f"wrote {OUT}")
     print(f"  frozen produce_entry sha256 : {hashlib.sha256(SRC.read_bytes()).hexdigest()}")

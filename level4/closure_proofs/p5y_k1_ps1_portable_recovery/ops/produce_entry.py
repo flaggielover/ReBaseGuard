@@ -49,6 +49,7 @@ def run(contract, role, run_id, *, preflight_kwargs=None, before_run=None) -> di
         raise OpsRefusal(f"preflight role {pf['role']} != service role {role}")
     print(f"  role={pf['role']} owned={len(pf['owned'])} pending={len(pf['pending'])} "
           f"genuine_completed={pf['production']['genuine_cells_completed']}", flush=True)
+    pf["runtime_dir"] = spec["runtime_dir"]      # gen-2 runtime isolation
     pf["budget"] = LO.make_ops_budget(GB, pf["budget"], run_id, PL.__file__)
     if before_run is not None:
         before_run(pf)                          # synthetic harness only

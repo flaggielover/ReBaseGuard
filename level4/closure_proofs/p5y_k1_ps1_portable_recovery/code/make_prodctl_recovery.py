@@ -165,7 +165,7 @@ def _build_checkpoint(contract, role, rt):
                   accounting=acc,
                   runs=sorted((ops.get("runs") or {})),
                   hosts={role: {"role": role, "owned": len(owned)}},
-                  evidence_root=Path(auth["hosts"][role]["evidence_dir"]),
+                  evidence_root=Path(spec["runtime_dir"]) / "evidence",
                   ledger_continuity_sha256=sha256_file(ledger_path(spec)))
     return ck, CK
 
@@ -186,7 +186,7 @@ def _export(contract, role, rt, lock, output=None):
     spec = host_spec(contract, role)
     ck, CK = _build_checkpoint(contract, role, rt)
     auth = _auth(spec)
-    src_root = Path(auth["hosts"][role]["evidence_dir"])
+    src_root = Path(spec["runtime_dir"]) / "evidence"
     stage = Path(output) if output else (rt.root / "export")
     # normalise evidence into cell_XXXX/<name> so the bundle is location-independent
     norm = rt.root / "export_src"
