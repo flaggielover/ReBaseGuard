@@ -3,7 +3,7 @@
 Publication-only items tracked after the P4Z closure. Neither affected any
 scientific or governance verdict, and neither reopened the P4Z closure.
 
-**Both items below are now RESOLVED** by commit `058c89ec59c1d44b6dce6293d5dc924243c893de` on
+**Both items below are now RESOLVED** by commit `ccf7918d3c75dc08a910cb4330205ba95d7f51f0` on
 `codex/presentation-refresh`. The history is kept rather than deleted.
 
 Current public semantics, carried by `README.md`,
