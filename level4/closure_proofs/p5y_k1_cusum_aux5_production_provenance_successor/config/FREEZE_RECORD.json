@@ -1,0 +1,43 @@
+{
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.production-provenance-freeze-record.v1",
+ "status": "FROZEN_PENDING_INDEPENDENT_COUNTERSIGNATURE",
+ "frozen_utc": "2026-09-13",
+ "bound_host": "rebaseguard-vultr-02",
+ "provenance_checkpoint_sha256": "dd4c89d773c411355d93d0d703e40c027f9913e11e116e4bfe35117f84b4baf2",
+ "provenance_checkpoint_path": "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/config/PROVENANCE_CHECKPOINT.json",
+ "run_authorization": {
+  "path": "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/config/RUN_AUTHORIZATION.json",
+  "sha256": "b8f11ec05efc2476f733dd989ae02b542dc9efa374f24fa0a27688d76ec2b329",
+  "commit": "9719cba2263c553bb134167504fb3f6fac60670f",
+  "authorization_id": "CUSUM-AUX5-PROD-AUTH-001",
+  "production_run_id": "CUSUM-AUX5-PROD-R1",
+  "ledger_id": "61eb8565e382127620e85831673608d80e38364d0ee935888f30f0ee48034082",
+  "pre_result": "committed at 9719cba2; the successor production runtime root did not exist then and did not exist after acceptance"
+ },
+ "synthetic_acceptance": {
+  "path": "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/evidence/acceptance_r1/ACCEPTANCE_RESULT.json",
+  "sha256": "e7139f2cc3d3924f7bc99576a5b8f210f669f5450821cb9d39a26e81a1ba1fb8",
+  "verdict": "PASS",
+  "tests_passed": 19,
+  "tests_total": 19,
+  "ran_on": "rebaseguard-vultr-02, clean checkout /root/work/postk1-aux5 at 9719cba2, 2026-09-13T10:22:40Z..10:24:03Z",
+  "non_result_bearing": true
+ },
+ "predecessor": {
+  "checkpoint_sha256": "4026f296bd7b32bea24a0f73422f4fc8df1f0c1d04aea952ee7ed0f5313c3c5c",
+  "status": "BLOCKED_ON_PRODUCTION_STATUS_SEMANTICS",
+  "preserved": "unmodified",
+  "host_fence": "/root/work/postk1-runs/cusum-aux5-production holds DRAIN + BLOCKED_ON_PRODUCTION_STATUS_SEMANTICS and no ledger; predecessor preflight NOT_READY (C13)"
+ },
+ "PREDECESSOR_CHECKPOINT": "BLOCKED_ON_PRODUCTION_STATUS_SEMANTICS",
+ "SCIENTIFIC_PRODUCER": "UNCHANGED_AUX5",
+ "NEW_SCIENTIFIC_COMPUTE": "NONE",
+ "PRODUCTION_AUTHORITY_LAYER": "COMPOSITE_PROVENANCE",
+ "production_countersignature_present": false,
+ "production_launched": false,
+ "launch_requires": [
+  "an independent reviewer commits config/COUNTERSIGNATURE.json binding run authorization b8f11ec0 and the sha256 of this freeze record",
+  "prov_entry.py preflight prints READY (P01-P10)",
+  "an explicit operator command: prov_entry.py launch --confirm-checkpoint-sha256 dd4c89d7... --confirm-authorization-sha256 b8f11ec0..."
+ ]
+}
