@@ -1,0 +1,24 @@
+{
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.countersignature-revocation.v1",
+ "revoked_countersignature": {
+  "path": "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/config/COUNTERSIGNATURE.json",
+  "sha256": "a58b1ad175567b232531ee4a65d131bbf48d6a72b9c7d1f71ac996e04734821f",
+  "commit": "6b8aad681f56231e6cdc488a1b3163643e491668",
+  "issuance_schema": "rebaseguard.p5y.k1.cusum-aux5.countersignature-issuance.v1",
+  "bound_issuance_code_sha256": "de834d5ef2a607c59e8e317d392ae43e5e2082e170b4c7266ebde982d2f39986"
+ },
+ "reason": "STALE_ISSUANCE_SEMANTICS: issuance r1 launch-preflight treated runtime-root existence as a production start. The frozen lifecycle's pre-genesis residue (PRE_GENESIS_FILES only, no ledger) left by the refused launch at 2026-09-13T11:18:12Z is not a start. Issuance r2 changes the bound issuance code/ and tests/, so the r1 countersignature no longer binds the semantics under which launch eligibility is decided.",
+ "effect": "config/COUNTERSIGNATURE.json is removed from the tree in this commit; frozen P07 fails closed (COUNTERSIGNATURE_MISSING) and production is not launchable until a replacement countersignature is issued under issuance r2 after a new Phase-A review",
+ "not_a_substantive_finding": "the reviewed checkpoint dd4c89d7, run authorization b8f11ec0, freeze record e61dcc15, producer, runtime, host, 326-cell universe and 300 CPU-h cap are unchanged and are not the reason for revocation",
+ "production_state_at_revocation": {
+  "observed_utc": "2026-09-13T11:31:30Z",
+  "runtime_root": "/root/work/postk1-runs/cusum-aux5-production-prov-r1",
+  "entries": ["campaign.lock", "campaign.owner.json", "reaper.jsonl"],
+  "reaper_sha256": "9e0af36a3bceb5e973bcedb9205fdbbaa069a951d1277a2acbda22874380085d",
+  "ledger": "absent",
+  "production_cells": 0,
+  "production_processes": 0,
+  "production_launched": false
+ },
+ "revoked_by": "Claude Opus 5 (claude-opus-5), independent reviewer session 44c2b3fb-9d5f-4253-a528-3ac15168057d, under the operator's strict-repair instruction of 2026-09-13"
+}
