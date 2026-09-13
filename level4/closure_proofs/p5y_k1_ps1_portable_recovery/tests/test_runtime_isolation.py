@@ -105,7 +105,15 @@ def test_J_launcher_no_longer_reads_authorization_runtime_paths():
               if isinstance(n, ast.FunctionDef) and n.name == "runtime_paths")
     body = ast.get_source_segment(src, fn)
     assert 'h["work_dir"]' in body and 'h["evidence_dir"]' in body
-    assert src.count('["work_dir"]') == 1 and src.count('["evidence_dir"]') == 1
+    # the ONLY authorization reads are the two inside runtime_paths(). Other occurrences are
+    # task["evidence_dir"] -- the task-dict key the worker and reaper use, which is required.
+    assert src.count('h["work_dir"]') == 1
+    assert src.count('h["evidence_dir"]') == 1
+    non_task = [l for l in src.splitlines()
+                if '["evidence_dir"]' in l and 'task["evidence_dir"]' not in l
+                and '"evidence_dir": str(' not in l]
+    assert non_task == [l for l in src.splitlines() if 'h["evidence_dir"]' in l], \
+        f"unexpected authorization evidence_dir read: {non_task}"
 
 
 # ---- generation-1 fallback preserved (predecessor behaviour unchanged)
