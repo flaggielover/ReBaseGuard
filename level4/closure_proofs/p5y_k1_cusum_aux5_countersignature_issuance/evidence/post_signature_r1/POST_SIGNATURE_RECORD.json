@@ -1,0 +1,69 @@
+{
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.countersignature-post-signature-record.v1",
+ "host": "rebaseguard-vultr-02",
+ "checkout": "/root/work/postk1-aux5",
+ "checkout_head": "6b8aad681f56231e6cdc488a1b3163643e491668",
+ "checkout_clean": true,
+ "countersignature": {
+  "path": "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/config/COUNTERSIGNATURE.json",
+  "sha256": "a58b1ad175567b232531ee4a65d131bbf48d6a72b9c7d1f71ac996e04734821f",
+  "commit": "6b8aad681f56231e6cdc488a1b3163643e491668",
+  "commit_contains_only_countersignature": true,
+  "frozen_verify_countersignature_before_commit": "PASS"
+ },
+ "authorization_sha256": "b8f11ec05efc2476f733dd989ae02b542dc9efa374f24fa0a27688d76ec2b329",
+ "provenance_checkpoint_sha256": "dd4c89d773c411355d93d0d703e40c027f9913e11e116e4bfe35117f84b4baf2",
+ "freeze_record_sha256": "e61dcc15f8f6ab89752596109782d9108e8d25962271e3858b6c8b8a7af31ec1",
+ "hashes_recomputed_on_host_post_signature_utc": "2026-09-13T11:07:29Z",
+ "review_evidence": {
+  "path": "level4/closure_proofs/p5y_k1_cusum_aux5_countersignature_issuance/evidence/review_preflight_r1/REVIEW_PREFLIGHT.json",
+  "sha256": "b8f47ec5e9f2421f4a1677c94ccf444fc8df45ae989d13765ddbf929556af78f",
+  "commit": "292e8f6b6d3817c2818c20b72f2bc5c91e9c8336",
+  "reviewed_tip": "ae60163041ac360fe6e948cfcabf513d8b49885d"
+ },
+ "timeline_utc": {
+  "authorization_commit_9719cba2": "2026-09-13T10:22:22Z",
+  "freeze_commit_292e432e": "2026-09-13T10:29:05Z",
+  "review_preflight": "2026-09-13T10:51:38Z",
+  "review_evidence_commit_292e8f6b": "2026-09-13T10:53:04Z",
+  "pre_write_host_check": "2026-09-13T11:02:13Z",
+  "countersignature_commit_6b8aad68": "2026-09-13T11:03:53Z",
+  "frozen_preflight_post_signature": "2026-09-13T11:07:29Z",
+  "launch_preflight_post_signature": "2026-09-13T11:07:54Z"
+ },
+ "frozen_preflight_p01_p10": {
+  "path": "FROZEN_PREFLIGHT_P01_P10.txt",
+  "sha256": "79bb6459b2b0b56cb23509176ee5ffcad84ae427b1bdbdf57ace6eeb8f9a2dce",
+  "all_pass": true,
+  "P07_independent_countersignature": "PASS",
+  "entrypoint": "READY",
+  "exit_code": 0
+ },
+ "launch_preflight": {
+  "path": "LAUNCH_PREFLIGHT.json",
+  "sha256": "0b30a50cfd21cf0798caa002b42ab68943c1142ed7161befa0aea3b31f9ce5fd",
+  "state": "READY_TO_LAUNCH_PRODUCTION",
+  "issuance_binding_problems": [],
+  "exit_code": 0
+ },
+ "host_state_post_signature": {
+  "production_runtime_root": "/root/work/postk1-runs/cusum-aux5-production-prov-r1",
+  "production_root_exists": false,
+  "production_cells": 0,
+  "production_processes": 0,
+  "predecessor_fence": "DRAIN + BLOCKED_ON_PRODUCTION_STATUS_SEMANTICS, no ledger",
+  "files_newer_than_review_evidence": [
+   "/root/work/postk1-runs/aux5-countersign-postsign-frozen-preflight-r1.txt",
+   "/root/work/postk1-runs/aux5-countersign-launch-preflight-r1.json"
+  ],
+  "no_scientific_result_between_review_and_signing": true
+ },
+ "origin_main": {"sha": "1cb453826313c189f0bdafd5b84120c1edb74da9", "unchanged": true},
+ "COUNTERSIGNATURE_TEMPORAL_INTEGRITY": "PASS",
+ "CUSUM_READY_TO_LAUNCH_PRODUCTION": "YES",
+ "CUSUM_PRODUCTION_LAUNCHED": "NO",
+ "launch_command_invoked": false,
+ "scientific_worker_started": false,
+ "LIVE_AWS_PS1_TOUCHED": "NO",
+ "NEW_RESULT_BEARING_COMPUTE": "NONE"
+}

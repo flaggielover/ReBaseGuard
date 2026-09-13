@@ -1,0 +1,127 @@
+{
+ "authorization_sha256": "b8f11ec05efc2476f733dd989ae02b542dc9efa374f24fa0a27688d76ec2b329",
+ "countersignature_sha256": "a58b1ad175567b232531ee4a65d131bbf48d6a72b9c7d1f71ac996e04734821f",
+ "decision": {
+  "problems": [],
+  "state": "READY_TO_LAUNCH_PRODUCTION"
+ },
+ "facts": {
+  "checkout_clean": true,
+  "countersignature_present": true,
+  "host_name": "rebaseguard-vultr-02",
+  "predecessor_ledger_exists": false,
+  "production_processes": [],
+  "production_root_exists": false,
+  "production_runtime_root": "/root/work/postk1-runs/cusum-aux5-production-prov-r1",
+  "result_bearing_cells": 0
+ },
+ "freeze_record_sha256": "e61dcc15f8f6ab89752596109782d9108e8d25962271e3858b6c8b8a7af31ec1",
+ "frozen_preflight": {
+  "CUSUM_AUX5_PROVENANCE_ENTRYPOINT": "READY",
+  "checks": [
+   {
+    "check": "P01_checkpoint_and_freeze",
+    "detail": {
+     "checkpoint_sha256": "dd4c89d773c411355d93d0d703e40c027f9913e11e116e4bfe35117f84b4baf2"
+    },
+    "status": "PASS"
+   },
+   {
+    "check": "P02_bound_sources",
+    "detail": {
+     "bound_sources": 52
+    },
+    "status": "PASS"
+   },
+   {
+    "check": "P03_predecessor_frozen_and_fenced",
+    "detail": {
+     "C13": "DRAIN_PRESENT",
+     "predecessor_checks_pass": 13,
+     "predecessor_ledger": "absent"
+    },
+    "status": "PASS"
+   },
+   {
+    "check": "P04_inherited_sections_unchanged",
+    "detail": {
+     "inherited_sections": [
+      "producer",
+      "runtime_contract",
+      "host",
+      "workers",
+      "scientific_universe",
+      "geometry",
+      "precision",
+      "scientific_hash",
+      "cost_cap",
+      "qualification",
+      "k4",
+      "checkout_path"
+     ]
+    },
+    "status": "PASS"
+   },
+   {
+    "check": "P05_provenance_schemas",
+    "detail": {
+     "envelope_schema": "rebaseguard.p5y.k1.cusum-aux5.production-provenance-envelope.v1"
+    },
+    "status": "PASS"
+   },
+   {
+    "check": "P06_run_authorization",
+    "detail": {
+     "authorization_id": "CUSUM-AUX5-PROD-AUTH-001",
+     "authorization_sha256": "b8f11ec05efc2476f733dd989ae02b542dc9efa374f24fa0a27688d76ec2b329",
+     "commit": "9719cba2263c553bb134167504fb3f6fac60670f",
+     "production_run_id": "CUSUM-AUX5-PROD-R1"
+    },
+    "status": "PASS"
+   },
+   {
+    "check": "P07_independent_countersignature",
+    "detail": {
+     "countersignature_sha256": "a58b1ad175567b232531ee4a65d131bbf48d6a72b9c7d1f71ac996e04734821f",
+     "reviewer": "Claude Opus 5 (claude-opus-5), independent reviewer session 44c2b3fb-9d5f-4253-a528-3ac15168057d, Claude Code desktop; issuance explicitly authorized by operator suzhe on 2026-09-13"
+    },
+    "status": "PASS"
+   },
+   {
+    "check": "P08_synthetic_acceptance",
+    "detail": {
+     "tests": 19,
+     "verdict": "PASS"
+    },
+    "status": "PASS"
+   },
+   {
+    "check": "P09_run_state",
+    "detail": {
+     "relation": "FRESH"
+    },
+    "status": "PASS"
+   },
+   {
+    "check": "P10_host_idle",
+    "detail": {
+     "foreign_processes": 0
+    },
+    "status": "PASS"
+   }
+  ],
+  "probe_cpu_usec": 174135,
+  "production_launched": false,
+  "provenance_checkpoint_sha256": "dd4c89d773c411355d93d0d703e40c027f9913e11e116e4bfe35117f84b4baf2",
+  "ready": true,
+  "schema": "rebaseguard.p5y.k1.cusum-aux5.production-provenance-preflight.v1"
+ },
+ "generated_utc": "2026-09-13T11:07:54Z",
+ "head": "6b8aad681f56231e6cdc488a1b3163643e491668",
+ "historical_verdict": "BLOCKED_BY_COUNTERSIGNATURE_ISSUANCE_DEADLOCK",
+ "issuance_binding_problems": [],
+ "issuance_code_sha256": "de834d5ef2a607c59e8e317d392ae43e5e2082e170b4c7266ebde982d2f39986",
+ "production_launched": false,
+ "provenance_checkpoint_sha256": "dd4c89d773c411355d93d0d703e40c027f9913e11e116e4bfe35117f84b4baf2",
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.countersignature-launch-preflight.v1"
+}
