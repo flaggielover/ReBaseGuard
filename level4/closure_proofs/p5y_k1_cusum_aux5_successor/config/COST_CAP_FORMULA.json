@@ -1,0 +1,21 @@
+{
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.cost-cap-formula.v1",
+ "status": "FROZEN_PRE_RESULT",
+ "binding_object": "the FORMULA; any numeric cap is derived, never frozen independently",
+ "formula": "CAP = ceil_50(1.15*(P + INFL + RETRY + OVH)); P = 1.10*N*c_max; R = ceil_0.5(1.25*c_max); INFL = W*R; RETRY = 0.03*N*R; OVH = 0.02*P",
+ "implementation": "code/cap_formula.py (exact rationals)",
+ "parameters": {
+  "N": "326 frozen CUSUM cover cells",
+  "W": "physical cores of the bound host used as workers (rebaseguard-vultr-02: 4)",
+  "c_max": "worst measured CPU-h per cell on the bound host, from the frozen qualification protocol"
+ },
+ "methodology_source": "p5y_k1_ps1_production/code/make_constants.py",
+ "reserve_evidence": {
+  "RETRY_3pct": "PS1 generation-1 infrastructure tear loss 92.32 / 5694 CPU-h = 1.62%; frozen tear limit 3 per cell",
+  "no_shape_factor": "Aux4 and the qualification both measure one worker per physical core",
+  "margin_10pct": "2-cell qualification sample (318, 323: the largest-rho block)",
+  "invariant_1_15": "frozen PS1 lifecycle invariant factor"
+ },
+ "rules": ["computed from the qualification measurement before production", "never raised after production starts",
+           "a change of host, runtime contract or producer identity requires requalification and recomputation"]
+}

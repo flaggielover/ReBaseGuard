@@ -1,0 +1,35 @@
+{
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.qualification-protocol.v1",
+ "status": "FROZEN_PRE_RESULT",
+ "classification": "NON-PRODUCTION qualification of the Aux5 successor producer; certificates produced here are not production cells and are never composed into a production ledger",
+ "result_bearing": false,
+ "bound_host": "rebaseguard-vultr-02",
+ "cells": [318, 323],
+ "detector": "CUSUM",
+ "precision_bits": 256,
+ "repeats_per_cell": 2,
+ "isolation": {
+  "process": "each run is a fresh interpreter started with env -i and the frozen thread contract; no shared state, no resume (--skip-if-current NOT used)",
+  "outputs": "distinct output file per run under qualification/<run_label>/",
+  "checkout": "clean git checkout of the freeze commit; the manifest v3 initial and final gates must pass",
+  "shape": "the 4 runs execute concurrently, pinned to distinct physical cores (logical cpus 0,2,4,6): the Aux4 measured cost shape (one worker per physical core)"
+ },
+ "pass_criteria": {
+  "P1_runs_complete": "all 4 runs exit 0; final gate stage == final; provenance_chain.all_verified; scipy_guard.scipy_free",
+  "P2_determinism_scientific_hash": "per cell, scientific_content_hash identical across its 2 repeats",
+  "P3_determinism_certificates": "per cell, every certificates.*.certificate_hash identical across its 2 repeats",
+  "P4_runtime_binding": "every record's runtime_contract_hash and producer_identity_hash equal the frozen manifest v3 identity",
+  "P5_backend_repair": "every record's producer.runtime.backend_libraries is non-empty and contains the four required families by absolute path",
+  "verdict": "PASS iff P1-P5 all hold; otherwise FAIL (no retry, no tolerance)"
+ },
+ "measurements": {
+  "c_max": "max over the 4 runs of cpu_seconds_including_dependencies (CPU-s)",
+  "also_reported": "wall_seconds, peak_rss_kib, cpu_seconds_auxiliary per run"
+ },
+ "cap": "recompute CAP with config/COST_CAP_FORMULA.json using the measured c_max, N = 326, W = 4",
+ "informational_only": "scientific_content_hash equality with the Aux4 SkylakeX records of cells 318/323 (expected unequal: different kernel and identity); never a criterion; obligation statuses are not interpreted",
+ "transition_to_production": {
+  "authorized_by_this_protocol": false,
+  "rule": "qualification certificates are NOT the first production cells. Production of any of the 326 cells requires a separate frozen production checkpoint (ledger, lifecycle, cap invariant, K4 integrity attestation)."
+ }
+}
