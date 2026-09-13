@@ -1,0 +1,44 @@
+# ReBaseGuard publication environment -- pinned.
+#
+# The rendering toolchain for the public presentation artifacts:
+#
+#   scripts/generate_research_brief.py   -> docs/research_brief/*.pdf   (reportlab)
+#   scripts/generate_final_figures.py    -> figures/final/*.{png,svg}   (matplotlib, numpy)
+#   scripts/verify_academic_presentation.py                             (standard library only)
+#
+# Both renderers are byte-deterministic under these pins:
+#
+#   * the brief generator sets `rl_config.invariant = 1`, which zeroes the PDF
+#     timestamp and fixes the document id, and uses only the base-14 PDF fonts
+#     (Helvetica, Helvetica-Bold, Courier) with no embedded font files;
+#   * repeated renders of an unchanged source produce identical bytes, verified
+#     by rendering three times and comparing SHA-256;
+#   * this pin also reproduces the PRE-publication brief PDF at origin/main
+#     commit 59ad9bb8d238cea5c050bdb1f79cee73848f9715 byte for byte
+#     (sha256 8a28709e67810f62850c897f96c2a973415a3308ebc6df51dd9bf3ad121a9f19),
+#     so the pin is a recovery of the historical toolchain rather than a new
+#     and incomparable one.
+#
+# Interpreter used for the pinned renders: CPython 3.14.5.
+#
+# Known, deliberately excluded non-determinism, neither of which affects the
+# brief PDF:
+#   * figures/final/figure04_m_rho_stability.svg carries a randomly named
+#     matplotlib hatch-pattern id that changes between runs;
+#   * figures/final/README.md records source hashes that drift when a cited
+#     source file changes.
+#
+# Regenerating the published artifacts:
+#
+#   python3 -m pip install -r docs/releases/publication-requirements.txt
+#   python3 scripts/generate_final_figures.py
+#   python3 scripts/generate_research_brief.py
+#   python3 scripts/verify_academic_presentation.py
+#
+# If a pin is raised, re-render, confirm determinism, and update
+# BRIEF_PDF_SHA256 in scripts/verify_academic_presentation.py together with the
+# figure manifest, in one reviewed publication commit.
+
+reportlab==5.0.1
+matplotlib==3.11.2
+numpy==2.5.3

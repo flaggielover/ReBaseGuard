@@ -1,10 +1,14 @@
 # Publication remainders
 
-Open **publication-only** items. Neither affects any scientific or governance
-verdict, and neither reopens the P4Z closure.
+Publication-only items tracked after the P4Z closure. Neither affected any
+scientific or governance verdict, and neither reopened the P4Z closure.
 
-Current public semantics, which are up to date in the Markdown surfaces
-(`README.md`, `docs/research_brief/ReBaseGuard_Research_Brief.md`) and in
+**Both items below are now RESOLVED** by commit `058c89ec59c1d44b6dce6293d5dc924243c893de` on
+`codex/presentation-refresh`. The history is kept rather than deleted.
+
+Current public semantics, carried by `README.md`,
+`docs/research_brief/ReBaseGuard_Research_Brief.md`, the regenerated
+`ReBaseGuard_Research_Brief.pdf`, and
 `figures/final/figure09_campaign_lineage.png`:
 
 ```text
@@ -15,86 +19,139 @@ P4_SCIENTIFIC_LINE    CLOSED_BY_LATER_SUCCESSOR
 
 ---
 
-## 1. Research brief PDF is behind its Markdown source
+## 1. Research brief PDF — RESOLVED
 
 ```text
-artifact   docs/research_brief/ReBaseGuard_Research_Brief.pdf
-state      STALE_PUBLICATION_ONLY
+artifact          docs/research_brief/ReBaseGuard_Research_Brief.pdf
+state             CURRENT
+sha256            a761151c95ec42c6cb57a8ec06fb83a22ed4088e7b99ae965e5e5fbfa8019f51
+previous sha256   8a28709e67810f62850c897f96c2a973415a3308ebc6df51dd9bf3ad121a9f19
+environment       docs/releases/publication-requirements.txt
 ```
 
-`ReBaseGuard_Research_Brief.md` carries the current P4Z semantics. The PDF is
-generated from it by `scripts/generate_research_brief.py` and has **not** been
-regenerated, so it still carries superseded P4Z wording.
+The PDF is regenerated from the current Markdown and carries the final P4Z
+semantics. `BRIEF_PDF_SHA256` in `scripts/verify_academic_presentation.py` is
+updated to the new hash as part of that justified re-render.
 
-**Why it was not regenerated.** The repository pins no publication environment:
-there is no root `requirements.txt`, lock file or `pyproject.toml` covering
-`reportlab`, the generator records no version, and `figures/final/manifest.json`
-records only the generator path. The only pin is the output hash,
-`BRIEF_PDF_SHA256` in `scripts/verify_academic_presentation.py`.
+### Correction to the earlier record
 
-Rendering with an unpinned `reportlab` does not reproduce the committed PDF byte
-for byte, so regenerating would substitute an artifact that cannot be verified
-against the one the pin describes, and would require editing the integrity
-constant to match it. That is a fabricated equivalence, so it was not done.
+An earlier revision of this document stated that the historical publication
+environment was not recoverable and that byte-equivalence to the previous PDF
+could not be shown. **That was wrong, and the error was mine.** The probe behind
+it re-rendered the *previous* Markdown against an *already-updated*
+`figure09_campaign_lineage.png`, so it compared two genuinely different
+documents and mistook a content difference for toolchain drift.
 
-**To close this item**, in the project's own pinned publication environment:
-
-```bash
-python3 scripts/generate_research_brief.py
-python3 scripts/verify_academic_presentation.py --no-diff-check
-```
-
-then update `BRIEF_PDF_SHA256` as part of that justified regeneration. Record
-the reportlab version used, so the next regeneration is checkable.
-
-By contrast the **figure** toolchain *is* byte-reproducible here: regenerating
-with `matplotlib 3.11.2` reproduces every untouched figure exactly, which is why
-`figure09_campaign_lineage` could be updated and re-pinned safely. Two known
-non-determinisms are excluded from figure updates on purpose:
-`figure04_m_rho_stability.svg` differs only by a randomly named hatch-pattern id,
-and `figures/final/README.md` carries source hashes that drift when a cited
-source file changes.
-
-## 2. Presentation verifier diff-check base
+Re-run correctly against a clean worktree at the pre-publication baseline
+`59ad9bb8d238cea5c050bdb1f79cee73848f9715`, the pinned toolchain reproduces the
+previous PDF **exactly**:
 
 ```text
-constant   BASE_COMMIT in scripts/verify_academic_presentation.py
-value      b04578810126d3fbc4d938a721481b1e6186b8ce
-state      PUBLICATION_ONLY -- deliberately not changed
+committed at 59ad9bb8   8a28709e67810f62850c897f96c2a973415a3308ebc6df51dd9bf3ad121a9f19
+re-rendered             8a28709e67810f62850c897f96c2a973415a3308ebc6df51dd9bf3ad121a9f19
 ```
 
-`python3 scripts/verify_academic_presentation.py` fails its diff-check. The
-content checks pass:
+So the pin in `publication-requirements.txt` is a **recovery of the historical
+toolchain**, not a new and incomparable environment, and byte-equivalence is
+claimed on evidence rather than asserted.
+
+### Why rendering is deterministic
+
+`scripts/generate_research_brief.py` sets `rl_config.invariant = 1`, which zeroes
+the PDF timestamp and fixes the document id, and it uses only the base-14 PDF
+fonts (Helvetica, Helvetica-Bold, Courier) with no embedded font files and a
+fixed A4 geometry. Three consecutive renders of the current source produce
+identical bytes.
+
+### Verification performed
 
 ```bash
-python3 scripts/verify_academic_presentation.py --no-diff-check
+python3 scripts/generate_research_brief.py     # x3, identical sha256 each time
+python3 scripts/verify_academic_presentation.py
+```
+
+All seven figures embedded in the brief were confirmed to match
+`figures/final/manifest.json`, and the extracted PDF text was checked to carry
+`P4Z = CLOSED` and `CLOSED_BY_LATER_SUCCESSOR`, to retain the stage-specific
+historical labels, and to contain no `P4 = CLOSED` assertion and no stale
+`SCIENTIFICALLY_COMPLETE_GOVERNANCE_INCOMPLETE` or
+`CLOSABLE_WITH_REMAINING_OBLIGATIONS`.
+
+## 2. Presentation verifier baseline — RESOLVED
+
+```text
+state    PASS with the full diff-check
+tests    docs/releases/tests/test_presentation_baseline.py
+```
+
+### What was wrong
+
+`BASE_COMMIT` was byte-identical to `SR_TAG_COMMIT`, conflating two unrelated
+roles in one constant:
+
+- the **identity pin** for the historical `rebaseguard-sr-gamma-certified`
+  release tag, checked by `check_historical_tags()`; and
+- the **baseline** for the current publication generation's diff-check.
+
+Against the SR-gamma release tag the diff-check asked whether anything outside
+the presentation surface had changed since that *scientific* release. Roughly
+190 commits of legitimate later scientific work necessarily violated that, so
+the check failed for reasons unrelated to any presentation change — it failed
+identically at a clean checkout of `origin/main`.
+
+### The migration
+
+The two concepts are now separate constants:
+
+| constant | role | value |
+|---|---|---|
+| `SR_CERTIFIED_TAG_COMMIT` | historical SR release-tag identity pin; **does not move** | `b04578810126d3fbc4d938a721481b1e6186b8ce` (unchanged) |
+| `LEVEL4_TAG_COMMIT` | historical Level-4 release-tag identity pin; **does not move** | `5e43336264f257c7224b622f8063eb10aad481d6` (unchanged) |
+| `CURRENT_PUBLICATION_BASE_COMMIT` | baseline for the current publication generation's diff | `59ad9bb8d238cea5c050bdb1f79cee73848f9715` |
+
+`59ad9bb8` is the direct pre-publication parent of the publication lineage: the
+last commit before publication work began, and the `main` tip this publication
+generation fast-forwards. That is the only point against which "did this
+publication generation touch anything outside the approved surface?" is a
+meaningful question. It moves when a publication generation lands; the tag pins
+never move.
+
+### The surface was not broadened
+
+`ALLOWED_PREFIXES` is unchanged at `("docs/research_brief/", "figures/final/")`.
+Three individual files were added to `ALLOWED_PATHS`, each part of the
+publication tooling: `docs/releases/PUBLICATION_REMAINDERS.md`,
+`docs/releases/publication-requirements.txt` and
+`docs/releases/tests/test_presentation_baseline.py`. `docs/releases/` is
+deliberately **not** a prefix, and a test asserts that a different file in that
+directory is still rejected.
+
+### Regression coverage
+
+`docs/releases/tests/test_presentation_baseline.py` — 27 tests covering: the
+current publication diff passes; each allowed presentation path passes; each
+protected or scientific path fails; the allowlist is not broadened to a whole
+directory; both historical tag identities remain separately pinned and verified
+against the real tags; the baseline is a real ancestor commit; the old conflated
+baseline would still fail; the PDF matches its pinned hash; a tampered PDF is
+caught; the hash constant is neither a placeholder nor the superseded value; and
+the pinned ReportLab matches the installed renderer.
+
+### Verification performed
+
+```bash
+python3 scripts/verify_academic_presentation.py
 # ACADEMIC PRESENTATION VERIFICATION OK
+
+python3 -m pytest docs/releases/tests/test_presentation_baseline.py -q
+# 27 passed
 ```
 
-**Finding.** `BASE_COMMIT` is not a forgotten value. It is byte-identical to
-`SR_TAG_COMMIT` in the same file — the commit carrying the
-`rebaseguard-sr-gamma-certified` release tag, which `check_tags()` independently
-verifies. The diff-check therefore asserts *"nothing outside the approved
-presentation surface has changed since the SR-gamma release tag."* Around 190
-commits of subsequent scientific work on `main` necessarily violate that, so the
-check has been failing for reasons unrelated to any presentation change. It
-fails identically at a clean checkout of `origin/main`.
+---
 
-**Why it was not repaired.** Repair requires choosing what the presentation
-baseline means:
+## Maintaining this going forward
 
-- keep it tied to the release tag, and accept that the diff-check only applies
-  to a branch containing presentation changes alone; or
-- retarget it at the current publication point, decoupling it from
-  `SR_TAG_COMMIT` and redefining the constant.
-
-Both are publication-policy decisions, and the second would turn a failing check
-green by editing an integrity constant. Neither was guessed at.
-
-**Interim use.** `--no-diff-check` exercises the meaningful content checks —
-figure-manifest hash coherence, brief structure, licence, citation and the PDF
-pin. A reviewer scoping a presentation branch can also pass an explicit base:
-
-```bash
-python3 scripts/verify_academic_presentation.py --base <publication-baseline>
-```
+When a publication generation lands on `main`, advance
+`CURRENT_PUBLICATION_BASE_COMMIT` to the new `main` tip in the same reviewed
+publication commit that lands the next generation's changes. Leave
+`SR_CERTIFIED_TAG_COMMIT` and `LEVEL4_TAG_COMMIT` alone — they pin history.

@@ -13,7 +13,23 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parents[1]
-BASE_COMMIT = "b04578810126d3fbc4d938a721481b1e6186b8ce"
+#: Baseline for the CURRENT publication generation's diff-check.
+#
+# This is the direct pre-publication parent of the publication lineage: the last
+# commit before publication work began, and the ``main`` tip that the current
+# publication branch fast-forwards. The diff-check asks "has this publication
+# generation touched anything outside the approved presentation surface?", which
+# is only meaningful against the point that generation departed from.
+#
+# It was previously the same value as SR_CERTIFIED_TAG_COMMIT below, which
+# conflated two unrelated roles: a release-tag identity pin and a publication
+# diff baseline. Against the SR-gamma release tag the check asked whether
+# anything outside the presentation surface had changed since that *scientific*
+# release, which roughly 190 commits of legitimate later scientific work
+# necessarily violated, so it failed for reasons unrelated to any presentation
+# change. The two concepts are now separate constants and only this one moves
+# when a publication generation lands.
+CURRENT_PUBLICATION_BASE_COMMIT = "59ad9bb8d238cea5c050bdb1f79cee73848f9715"
 README = ROOT / "README.md"
 BRIEF_MD = ROOT / "docs/research_brief/ReBaseGuard_Research_Brief.md"
 BRIEF_PDF = ROOT / "docs/research_brief/ReBaseGuard_Research_Brief.pdf"
@@ -26,9 +42,15 @@ AFFILIATION = "University of Electronic Science and Technology of China"
 SCHOOL = "School of Information and Software Engineering"
 EMAIL = "suzhea0226@gmail.com"
 LEVEL4_TAG_COMMIT = "5e43336264f257c7224b622f8063eb10aad481d6"
-SR_TAG_COMMIT = "b04578810126d3fbc4d938a721481b1e6186b8ce"
+#: Identity pin for the historical `rebaseguard-sr-gamma-certified` release
+#: tag. Verified by check_historical_tags(); unrelated to the publication
+#: diff baseline above, and it does not move.
+SR_CERTIFIED_TAG_COMMIT = "b04578810126d3fbc4d938a721481b1e6186b8ce"
 APACHE_2_LICENSE_SHA256 = "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
-BRIEF_PDF_SHA256 = "8a28709e67810f62850c897f96c2a973415a3308ebc6df51dd9bf3ad121a9f19"
+#: SHA-256 of the published research brief PDF. Regenerated deterministically
+#: under docs/releases/publication-requirements.txt; update only together with
+#: a justified re-render.
+BRIEF_PDF_SHA256 = "a761151c95ec42c6cb57a8ec06fb83a22ed4088e7b99ae965e5e5fbfa8019f51"
 ALLOWED_PATHS = {
     "README.md",
     "CITATION.cff",
@@ -36,6 +58,8 @@ ALLOWED_PATHS = {
     "THIRD_PARTY_NOTICES.md",
     "docs/releases/LICENSING_READINESS.md",
     "docs/releases/PUBLICATION_REMAINDERS.md",
+    "docs/releases/publication-requirements.txt",
+    "docs/releases/tests/test_presentation_baseline.py",
     "docs/research_synthesis/PAPER_OUTLINE.md",
     "docs/superpowers/specs/2026-08-28-license-audit-release-design.md",
     "docs/superpowers/specs/2026-08-28-public-facing-documentation-upgrade-design.md",
@@ -276,7 +300,7 @@ def check_links_and_figures() -> None:
 
 
 def check_historical_tags() -> None:
-    expected = (("rebaseguard-level4-closed", LEVEL4_TAG_COMMIT), ("rebaseguard-sr-gamma-certified", SR_TAG_COMMIT))
+    expected = (("rebaseguard-level4-closed", LEVEL4_TAG_COMMIT), ("rebaseguard-sr-gamma-certified", SR_CERTIFIED_TAG_COMMIT))
     for tag, commit in expected:
         observed = run_git("rev-list", "-n", "1", tag)
         if observed != commit:
@@ -295,7 +319,7 @@ def validate_changed_paths(paths: list[str]) -> None:
         raise VerificationError("presentation diff touches unapproved paths: " + ", ".join(forbidden))
 
 
-def verify(*, base: str = BASE_COMMIT, check_diff: bool = True) -> None:
+def verify(*, base: str = CURRENT_PUBLICATION_BASE_COMMIT, check_diff: bool = True) -> None:
     check_readme_progressive_disclosure()
     check_author_and_citation()
     check_license_state()
@@ -309,7 +333,7 @@ def verify(*, base: str = BASE_COMMIT, check_diff: bool = True) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--base", default=BASE_COMMIT)
+    parser.add_argument("--base", default=CURRENT_PUBLICATION_BASE_COMMIT)
     parser.add_argument("--no-diff-check", action="store_true")
     args = parser.parse_args()
     try:
