@@ -1,0 +1,167 @@
+{
+ "authorization_sha256": "b8f11ec05efc2476f733dd989ae02b542dc9efa374f24fa0a27688d76ec2b329",
+ "freeze_record_sha256": "e61dcc15f8f6ab89752596109782d9108e8d25962271e3858b6c8b8a7af31ec1",
+ "issuance": {
+  "COUNTERSIGNATURE_ROLE": "OUTPUT_OF_SUCCESSFUL_REVIEW",
+  "P07_CLASSIFICATION": "POST_SIGNATURE_ONLY",
+  "PRE_SIGNATURE_SUBSTANTIVE_REVIEW": "PASS",
+  "authoring_session_ref": "provenance-successor author session fd295b88 (project memory origin); this reviewer did not author the successor checkpoint, run authorization, envelope, ledger or acceptance",
+  "authorization_commit": "9719cba2263c553bb134167504fb3f6fac60670f",
+  "authorization_id": "CUSUM-AUX5-PROD-AUTH-001",
+  "branch": "p5y-postk1-frontier",
+  "branch_tip_at_signing": "292e8f6b6d3817c2818c20b72f2bc5c91e9c8336",
+  "cap": {
+   "cap_cpu_h": 300,
+   "cap_usec": 1080000000000
+  },
+  "executor_hash": "e7d7d97499f2dd94750c9ff522e44e239225d3314157f422d2aeb8e09e9c62b9",
+  "freeze_commit": "292e432efaa2c43c185a62812be649031b8f42e1",
+  "host": {
+   "cpu_model": "AMD EPYC-Milan Processor",
+   "glibc_package_version": "2.41-12+deb13u3",
+   "host_name": "rebaseguard-vultr-02",
+   "kernel_release": "6.12.107+deb13-amd64",
+   "libc_path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+   "libc_sha256": "fa430b8f298f817a266046af84a77533185ad6fc4406c7d3787b5a0a0c207826",
+   "logical_cpus": 8,
+   "machine_id_sha256": "e914421252e5e879ffea329880295de11d5e770e0cbec522fd572f3ac8829ffd",
+   "physical_cores": 4,
+   "smt_groups": [
+    [
+     0,
+     1
+    ],
+    [
+     2,
+     3
+    ],
+    [
+     4,
+     5
+    ],
+    [
+     6,
+     7
+    ]
+   ]
+  },
+  "issuance_protocol": {
+   "code_path": "level4/closure_proofs/p5y_k1_cusum_aux5_countersignature_issuance/code/issuance.py",
+   "code_sha256": "de834d5ef2a607c59e8e317d392ae43e5e2082e170b4c7266ebde982d2f39986",
+   "commit": "ae60163041ac360fe6e948cfcabf513d8b49885d",
+   "protocol_path": "level4/closure_proofs/p5y_k1_cusum_aux5_countersignature_issuance/PROTOCOL.md",
+   "protocol_sha256": "355e5a499fa7690e1fe7fdb7a79d64780e1fa17fc844ee351f031b6f83bd9e5e",
+   "tests_sha256": "70022400029e57d50fbfdbbd2c7c43ecf57b400776dfd0e81077fa3bdc362483",
+   "version": "rebaseguard.p5y.k1.cusum-aux5.countersignature-issuance.v1"
+  },
+  "launch_note": "this countersignature does not launch production; launch still requires prov_entry.py preflight READY (P01-P10), issuance.py launch-preflight READY_TO_LAUNCH_PRODUCTION, and an explicit operator command",
+  "ledger_id": "61eb8565e382127620e85831673608d80e38364d0ee935888f30f0ee48034082",
+  "pre_write_host_check": {
+   "checkout_clean": true,
+   "checkout_head": "ae60163041ac360fe6e948cfcabf513d8b49885d",
+   "host_name": "rebaseguard-vultr-02",
+   "predecessor_fence": "DRAIN + BLOCKED_ON_PRODUCTION_STATUS_SEMANTICS, no ledger",
+   "production_cells": 0,
+   "production_processes": 0,
+   "production_root_exists": false,
+   "utc": "2026-09-13T11:02:13Z"
+  },
+  "predecessor_checkpoint": {
+   "sha256": "4026f296bd7b32bea24a0f73422f4fc8df1f0c1d04aea952ee7ed0f5313c3c5c",
+   "status": "BLOCKED_ON_PRODUCTION_STATUS_SEMANTICS"
+  },
+  "producer": {
+   "campaign": "p5y_k1_cusum_aux5_successor",
+   "implementation_hash_kind": "cusum_aux5_manifest_bound_identity_v3",
+   "producer_identity_hash": "3692d0feeaef71365798cd99399fdb6d744573f38d59dba5cfe2e99294f0ae19",
+   "producer_manifest_hash": "b55a2da1fea0c7ee889f8da6a4b893c12d3ef24e2bc02d19bd5488187fd30fd9",
+   "producer_manifest_path": "level4/closure_proofs/p5y_k1_cusum_aux5_successor/manifests/producer_manifest_v3.json",
+   "producer_manifest_schema": "k1.cusum-aux5.producer-manifest.v3",
+   "producer_manifest_version": 3,
+   "runtime_contract_hash": "bc75c9ea7cd5f9406a0509bb0a161aa2c013f80427d1035197989e3d202c845a"
+  },
+  "review_evidence": {
+   "commit": "292e8f6b6d3817c2818c20b72f2bc5c91e9c8336",
+   "generated_utc": "2026-09-13T10:51:38Z",
+   "path": "level4/closure_proofs/p5y_k1_cusum_aux5_countersignature_issuance/evidence/review_preflight_r1/REVIEW_PREFLIGHT.json",
+   "sha256": "b8f47ec5e9f2421f4a1677c94ccf444fc8df45ae989d13765ddbf929556af78f"
+  },
+  "review_scope": "frozen P01-P06, P08-P10 PASS on rebaseguard-vultr-02 at the reviewed tip; P07 exempt only as COUNTERSIGNATURE_MISSING; full hashes recomputed immediately before signing; genesis gate reviewed (ProvenanceLedger requires authz, the supervisor loads the verified countersignature before the ledger opens, check_genesis binds state and journal entry 0)",
+  "review_state": "READY_FOR_COUNTERSIGNATURE",
+  "review_verdict": "PASS",
+  "reviewed_design_tip": "612f66f712bb444ddfde5ad33e1e6528075bd6a7",
+  "reviewed_tip": "ae60163041ac360fe6e948cfcabf513d8b49885d",
+  "reviewed_tip_semantics": "the clean checkout on which Phase-A review-preflight ran (REVIEW_PREFLIGHT.json head); review_evidence.commit is the commit that recorded that evidence",
+  "runtime": {
+   "cores": [
+    0,
+    2,
+    4,
+    6
+   ],
+   "runtime_contract_hash": "bc75c9ea7cd5f9406a0509bb0a161aa2c013f80427d1035197989e3d202c845a",
+   "worker_argv_template": [
+    "/usr/bin/env",
+    "-i",
+    "PATH=/usr/bin:/bin",
+    "HOME=/root",
+    "LANG=C.UTF-8",
+    "OMP_NUM_THREADS=1",
+    "OPENBLAS_NUM_THREADS=1",
+    "MKL_NUM_THREADS=1",
+    "NUMEXPR_NUM_THREADS=1",
+    "K1_THREADS_PINNED=1",
+    "PYTHONDONTWRITEBYTECODE=1",
+    "/usr/bin/taskset",
+    "-c",
+    "{core}",
+    "/root/work/rbg-cusum-aux5-venv/bin/python",
+    "{root}/level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/qualify5.py",
+    "--cell",
+    "{cell}",
+    "--bits",
+    "256",
+    "--out",
+    "{out}"
+   ],
+   "workers": 4
+  },
+  "runtime_contract_hash": "bc75c9ea7cd5f9406a0509bb0a161aa2c013f80427d1035197989e3d202c845a",
+  "runtime_root": "/root/work/postk1-runs/cusum-aux5-production-prov-r1",
+  "schema": "rebaseguard.p5y.k1.cusum-aux5.countersignature-issuance.v1",
+  "signed_utc": "2026-09-13T11:02:55Z",
+  "statements": {
+   "aws_resource_touched": false,
+   "production_process_active_at_signing": false,
+   "production_result_existed_at_signing": false,
+   "result_bearing_compute_during_review": false
+  },
+  "superseded_verdict": "BLOCKED_BY_COUNTERSIGNATURE_ISSUANCE_DEADLOCK",
+  "universe": {
+   "cell_indices_sha256": "50f2552e5091a0748ad20355fe5a683db95a983f047d8c61a660e8d671610d02",
+   "cells": 326,
+   "cells_table_sha256": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f",
+   "detector": "CUSUM",
+   "far_field_obligation": {
+    "status": "INHERITED (binding K1/P5X-T3 far-field certificate, adjudicated PASS; unchanged, not produced by this run)",
+    "work_id": "CUSUM:-1:far_field:all_m"
+   },
+   "geometry_digest": "cd48d716c459b6b8e5ead849f89ba55a9d0525c738e9586506c32573ae6af164",
+   "m_values": [
+    "1",
+    "2",
+    "3",
+    "5"
+   ],
+   "precision_bits": 256
+  }
+ },
+ "mode": "PRODUCTION",
+ "production_checkpoint_sha256": "dd4c89d773c411355d93d0d703e40c027f9913e11e116e4bfe35117f84b4baf2",
+ "production_run_id": "CUSUM-AUX5-PROD-R1",
+ "reviewer": "Claude Opus 5 (claude-opus-5), independent reviewer session 44c2b3fb-9d5f-4253-a528-3ac15168057d, Claude Code desktop; issuance explicitly authorized by operator suzhe on 2026-09-13",
+ "reviewer_independent_of_authoring_session": true,
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.production-countersignature.v1",
+ "synthetic": false,
+ "verdict": "APPROVED_FOR_PRODUCTION_LAUNCH"
+}
