@@ -146,3 +146,48 @@ Before signing:
 - the commit times are ordered before now.
 
 The review evidence is committed before the countersignature commit. After signing, `launch-preflight` re-verifies the same absence facts on the host.
+
+## 7. Amendment r2: pre-genesis residue is not a production start
+
+**Trigger.** On 2026-09-13 at 11:18:12Z the first launch attempt was refused fail-closed by the frozen in-supervisor P10. The cause was an operator-wrapper command line; no ledger, cell or worker was created. The keeper left the runtime root holding `campaign.lock`, `campaign.owner.json` and `reaper.jsonl` (4 441 807 µs of refused-launch CPU). Issuance r1 read "root exists" as `PRODUCTION_ALREADY_STARTED`. The frozen lifecycle does not.
+
+**Frozen semantics** (`prod_ledger.py`, `prod_supervisor.keep`, `prov_ledger.py`, `prov_supervisor.py`):
+
+| Fact | Frozen source |
+|---|---|
+| `PRE_GENESIS_FILES = ("campaign.lock", "campaign.owner.json", "reaper.jsonl")` | `prod_ledger.py` |
+| The root is created before any preflight | `CampaignLock.acquire` and `keep()` (`paths.root.mkdir`) |
+| A root with no `ledger.json` / `journal.jsonl` and only `PRE_GENESIS_FILES` is `FRESH`; anything else is `STALE_INCOMPATIBLE_RUN_STATE` | `Ledger.inspect`, `_genesis` |
+| Genesis writes `ledger.json`, then journal entry 0 (`GENESIS`) | `_genesis` |
+| Run open, reservation (`op_reserve`), `RUNNING`, seal, `PROVENANCE_BOUND` and overhead charges are all `txn()` transitions after `GENESIS` | `Ledger.txn`, `prov_supervisor._run_locked` |
+| Refused launches and keeper exits are charged once, keyed by reaper `record_id` | `unmatched_overhead`, `op_charge_overhead` |
+
+```text
+PRE_GENESIS_ALLOWED_FILES                  = {campaign.lock, campaign.owner.json, reaper.jsonl}
+AUTHORITATIVE_PRODUCTION_STARTED_PREDICATE = ledger.json OR journal.jsonl exists in the runtime root (genesis has begun);
+                                             every start event (run open, reservation, admission, seal, provenance,
+                                             overhead charge) is a journalled transition after GENESIS
+ROOT_EXISTENCE_ALONE_MEANS_STARTED         = NO
+```
+
+**r2 classifier** (`classify_runtime_root`). The only acceptable states are `ABSENT` and `PRE_GENESIS`.
+
+- `PRE_GENESIS` requires all of:
+  - every entry is in the frozen set and is a regular file;
+  - the lock is free and empty;
+  - the owner is a JSON object for the bound host;
+  - every reaper line is a frozen-verifiable record (schema plus recomputed `record_id`) with a complete final line;
+  - each reaper record is either a `KEEPER_EXIT` or a supervisor `CHILD_REAPED` with the frozen `REFUSED` exit code 30.
+- A genesis artifact present means `PRODUCTION_STARTED`.
+- Anything else is `CORRUPTED`: an unknown entry, `attempts/`, `provenance/`, any record, `DRAIN`, a symlink, a held lock, a worker reap, a normal or signalled supervisor exit, a duplicate or unreadable reaper line.
+- Unreadable reaper lines are refused because the frozen `read_reaper` skips them, which would silently lose their charge.
+
+**Accounting binding.**
+- The countersignature (issuance schema v2) binds `pre_genesis_residue`: state, entries, reaper sha256, size, record ids and overhead µs, exactly as recorded in the review evidence.
+- `launch-preflight` requires the signed reaper bytes to be a byte-prefix of the live reaper, and every signed record id to still be present.
+- Later refused launches may only append further verifiable pre-genesis records.
+
+**Countersignature impact.** r2 changes issuance `code/` and `tests/`. Those paths are watched by `check_issuance_binding`, and their hashes are bound in the r1 countersignature `a58b1ad1…`. That countersignature is therefore stale:
+- it was revoked in its own commit, which removed `config/COUNTERSIGNATURE.json` so that frozen P07 fails closed;
+- Phase A review, the countersignature and post-signature validation are redone under r2;
+- the schema bump means a v1 countersignature is refused explicitly.

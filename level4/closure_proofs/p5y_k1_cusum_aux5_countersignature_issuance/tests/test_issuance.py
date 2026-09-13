@@ -1,5 +1,5 @@
-"""Adversarial self-reference tests for the countersignature issuance protocol. Governance only: no production
-countersignature is written to the repository, no runtime root is touched, nothing is launched.
+"""Adversarial tests for the countersignature issuance protocol. Governance only: no production countersignature is
+written to the repository, no production runtime root is touched, nothing is launched, no scientific worker runs.
 
   python -B tests/test_issuance.py
 """
@@ -8,23 +8,28 @@ from __future__ import annotations
 import copy
 import itertools
 import json
+import os
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "code"))
 
 import issuance as I                                                                    # noqa: E402
-from prod_common import Refusal, sha256_bytes, sha256_file                              # noqa: E402
+import prod_ledger as L                                                                 # noqa: E402
+from prod_common import Refusal, canonical, sha256_bytes, sha256_file                   # noqa: E402
 from prov_authorization import load_authorization, verify_countersignature              # noqa: E402
 from prov_spec import AUTHORIZATION, AUTHORIZATION_HASH, CHECKPOINT, FREEZE_RECORD      # noqa: E402
 
 AUTH, AUTH_SHA = load_authorization(AUTHORIZATION, AUTHORIZATION_HASH)
 CP_SHA, FR_SHA = sha256_file(CHECKPOINT), sha256_file(FREEZE_RECORD)
-EVIDENCE_REL = f"{I.NS_REL}/evidence/review_preflight_r1/REVIEW_PREFLIGHT.json"
+HOST = AUTH["host"]["host_name"]
+EVIDENCE_REL = f"{I.NS_REL}/evidence/review_preflight_r2/REVIEW_PREFLIGHT.json"
 TIP, EV_COMMIT, CS_COMMIT = "a" * 40, "b" * 40, "c" * 40
 OTHER = "0" * 64
+LINUX = sys.platform.startswith("linux")
 
 
 def report(**fail) -> dict:
@@ -36,8 +41,14 @@ def report(**fail) -> dict:
     return {"checks": checks, "ready": not fail}
 
 
-PRISTINE = {"production_root_exists": False, "production_processes": [], "result_bearing_cells": 0,
-            "predecessor_ledger_exists": False, "checkout_clean": True}
+ABSENT_ROOT = {"state": I.ROOT_ABSENT, "problems": [], "entries": [], "lock_state": "FREE", "reaper_sha256": None,
+               "reaper_size": 0, "reaper_record_ids": [], "overhead_usec": 0}
+PRISTINE = {"production_root_exists": False, "runtime_root": ABSENT_ROOT, "production_processes": [],
+            "result_bearing_cells": 0, "predecessor_ledger_exists": False, "checkout_clean": True}
+
+
+def facts_for(rr: dict, **over) -> dict:
+    return {**PRISTINE, "runtime_root": rr, "production_root_exists": rr["state"] != I.ROOT_ABSENT, **over}
 
 
 class FakeGit:
@@ -66,12 +77,13 @@ class FakeGit:
 
 def evidence(**over) -> bytes:
     rec = {"schema": I.REVIEW_SCHEMA, "head": TIP, "authorization_sha256": AUTH_SHA, "provenance_checkpoint_sha256": CP_SHA,
-           "freeze_record_sha256": FR_SHA, "facts": dict(PRISTINE), "decision": {"state": I.REVIEW_READY}}
+           "freeze_record_sha256": FR_SHA, "facts": copy.deepcopy(PRISTINE), "decision": {"state": I.REVIEW_READY}}
     rec.update(over)
     return (json.dumps(rec, sort_keys=True) + "\n").encode()
 
 
 def countersignature(ev_bytes: bytes, **over) -> dict:
+    rr = json.loads(ev_bytes).get("facts", {}).get("runtime_root")
     cs = {"schema": I.S.COUNTERSIGN_SCHEMA, "verdict": I.S.APPROVED, "synthetic": False, "mode": "PRODUCTION",
           "authorization_sha256": AUTH_SHA, "production_checkpoint_sha256": CP_SHA,
           "production_run_id": AUTH["production_run_id"], "freeze_record_sha256": FR_SHA,
@@ -82,6 +94,7 @@ def countersignature(ev_bytes: bytes, **over) -> dict:
                        "runtime_contract_hash": AUTH["runtime"]["runtime_contract_hash"], "universe": AUTH["universe"],
                        "cap": {"cap_cpu_h": 300, "cap_usec": 300 * 3600 * 10**6}, "review_verdict": "PASS",
                        "review_state": I.REVIEW_READY, "statements": dict(I.REQUIRED_STATEMENTS), "reviewed_tip": TIP,
+                       "pre_genesis_residue": I.residue_summary(rr),
                        "review_evidence": {"path": EVIDENCE_REL, "sha256": sha256_bytes(ev_bytes), "commit": EV_COMMIT}}}
     for k, v in over.items():
         if k.startswith("iss_"):
@@ -99,9 +112,8 @@ def git_with(ev_bytes: bytes, **kw) -> FakeGit:
 
 
 def binding(cs, git=None, auth=None, auth_sha=AUTH_SHA, cp=CP_SHA, fr=FR_SHA):
-    ev = evidence()
     return I.check_issuance_binding(cs, auth=auth or AUTH, auth_sha=auth_sha, checkpoint_sha=cp, freeze_sha=fr,
-                                    git=git or git_with(ev))
+                                    git=git or git_with(evidence()))
 
 
 class Tmp:
@@ -116,6 +128,36 @@ class Tmp:
 def write(path: Path, obj) -> Path:
     path.write_text(json.dumps(obj, indent=1, sort_keys=True) + "\n")
     return path
+
+
+# ---------------------------------------------------------------- runtime-root fixtures (frozen reaper format)
+def reaper_rec(kind, pid, cpu, *, sup, exit_code, exited=True, signal=None, boot="test-boot", t=1789298296.9):
+    body = {"schema": L.REAPER_SCHEMA, "kind": kind, "pid": pid, "boot_id": boot, "t_wall": t, "cpu_usec": cpu,
+            "is_supervisor": sup, "exited": None if kind == "KEEPER_EXIT" else exited,
+            "exit_code": exit_code, "signal": signal}
+    return {**body, "record_id": sha256_bytes(canonical(body))}
+
+
+REFUSED_SUP = reaper_rec("CHILD_REAPED", 102197, 4366444, sup=True, exit_code=30)
+KEEPER = reaper_rec("KEEPER_EXIT", 102196, 75363, sup=False, exit_code=None)
+REFUSED_LAUNCH_USEC = 4366444 + 75363
+
+
+def reaper_bytes(recs) -> bytes:
+    return "".join(json.dumps(r, sort_keys=True) + "\n" for r in recs).encode()
+
+
+def make_root(base: Path, recs=(REFUSED_SUP, KEEPER), *, owner=None) -> Path:
+    root = base / "root"
+    root.mkdir()
+    (root / "campaign.lock").write_bytes(b"")
+    write(root / "campaign.owner.json", owner or {"host": HOST, "pid": 102197, "run_id": "R-refused", "t_wall": 1.0})
+    (root / "reaper.jsonl").write_bytes(reaper_bytes(recs))
+    return root
+
+
+def classify(root, lock="FREE"):
+    return I.classify_runtime_root(root, lock_state=lock, bound_host=HOST)
 
 
 class IssuanceTests(unittest.TestCase):
@@ -135,7 +177,6 @@ class IssuanceTests(unittest.TestCase):
         self.assertTrue(dec["signing_permitted"])
         self.assertFalse(dec["launch_authorized"])
         self.assertEqual(I.launch_eligibility(rep, ["COUNTERSIGNATURE_MISSING"], PRISTINE)["state"], I.NOT_READY)
-        # even with no issuance problem reported, the frozen P07 failure alone refuses launch
         self.assertEqual(I.launch_eligibility(rep, [], PRISTINE)["state"], I.NOT_READY)
 
     # ---- 2 valid countersignature
@@ -174,7 +215,6 @@ class IssuanceTests(unittest.TestCase):
             self.assertRefused("COUNTERSIGNATURE_INVALID", verify_countersignature, write(d / "cs.json", cs),
                                auth=AUTH, auth_sha=AUTH_SHA, freeze_record_sha256=FR_SHA)
         self.assertTrue(binding(cs, git_with(ev)))
-        # an unbound reference cannot redirect it: the review evidence must name the same checkpoint
         ev2 = evidence(provenance_checkpoint_sha256=OTHER)
         cs2 = countersignature(ev2)
         self.assertTrue(any("REVIEW_EVIDENCE" in x for x in binding(cs2, git_with(ev2))))
@@ -203,7 +243,7 @@ class IssuanceTests(unittest.TestCase):
             ap, hp = write(d / "RUN_AUTHORIZATION.json", mutated), d / "RUN_AUTHORIZATION_HASH"
             hp.write_text(AUTH_SHA + "\n")
             self.assertRefused("AUTHORIZATION_INVALID", load_authorization, ap, hp)
-            hp.write_text(sha256_file(ap) + "\n")                 # an attacker also rewrites the hash file
+            hp.write_text(sha256_file(ap) + "\n")
             m_auth, m_sha = load_authorization(ap, hp)
             self.assertRefused("COUNTERSIGNATURE_INVALID", verify_countersignature, write(d / "cs.json", cs),
                                auth=m_auth, auth_sha=m_sha, freeze_record_sha256=FR_SHA)
@@ -215,20 +255,22 @@ class IssuanceTests(unittest.TestCase):
     # ---- 7 production already started before signing
     def test_production_started_before_signing_refused(self):
         rep = report(P07="COUNTERSIGNATURE_MISSING")
-        for key, val in (("production_root_exists", True), ("production_processes", [{"pid": 7}]),
-                         ("result_bearing_cells", 1), ("predecessor_ledger_exists", True), ("checkout_clean", False)):
-            dec = I.review_decision(rep, {**PRISTINE, key: val}, [])
-            self.assertEqual(dec["state"], I.BLOCKED, key)
-            self.assertFalse(dec["signing_permitted"], key)
+        started = {**ABSENT_ROOT, "state": I.ROOT_STARTED, "problems": ["PRODUCTION_STARTED"], "entries": ["ledger.json"]}
+        for f in (facts_for(started), {**PRISTINE, "production_root_exists": True}, {**PRISTINE, "runtime_root": None},
+                  {**PRISTINE, "production_processes": [{"pid": 7}]}, {**PRISTINE, "result_bearing_cells": 1},
+                  {**PRISTINE, "predecessor_ledger_exists": True}, {**PRISTINE, "checkout_clean": False}):
+            dec = I.review_decision(rep, f, [])
+            self.assertEqual(dec["state"], I.BLOCKED, f)
+            self.assertFalse(dec["signing_permitted"], f)
         self.assertEqual(I.review_decision(report(P07="COUNTERSIGNATURE_MISSING", P09="NO_PRE_RESULT_AUTHORIZATION"),
                                            PRISTINE, [])["state"], I.BLOCKED)
         self.assertEqual(I.review_decision(rep, PRISTINE, ["PREDATES: x"])["state"], I.BLOCKED)
-        ev = evidence(facts={**PRISTINE, "production_root_exists": True})
-        self.assertTrue(any("not pristine" in x for x in binding(countersignature(ev), git_with(ev))))
+        ev = evidence(facts=facts_for(started))
+        self.assertTrue(any("not pre-genesis" in x for x in binding(countersignature(ev), git_with(ev))))
         ev = evidence()
         cs = countersignature(ev, iss_statements={**I.REQUIRED_STATEMENTS, "production_result_existed_at_signing": True})
         self.assertTrue(any("STATEMENT" in x for x in binding(cs, git_with(ev))))
-        self.assertEqual(I.launch_eligibility(report(), [], {**PRISTINE, "production_root_exists": True})["state"], I.NOT_READY)
+        self.assertEqual(I.launch_eligibility(report(), [], facts_for(started))["state"], I.NOT_READY)
 
     # ---- 8 stale reviewer base
     def test_stale_reviewer_base_refused(self):
@@ -239,7 +281,7 @@ class IssuanceTests(unittest.TestCase):
         self.assertTrue(any("STALE_REVIEWER_BASE" in x for x in binding(orphan, git_with(ev))))
         ev_other_head = evidence(head=I.FREEZE_COMMIT)
         self.assertTrue(any("REVIEW_EVIDENCE" in x for x in binding(countersignature(ev_other_head), git_with(ev_other_head))))
-        rolled_back = git_with(ev, head=TIP)                    # HEAD behind the evidence commit
+        rolled_back = git_with(ev, head=TIP)
         self.assertTrue(any("REVIEW_EVIDENCE" in x for x in binding(countersignature(ev), rolled_back)))
 
     # ---- structural: no route from Phase A to launch
@@ -279,13 +321,236 @@ class IssuanceTests(unittest.TestCase):
         lying["ready"] = True
         self.assertEqual(I.launch_eligibility(lying, [], PRISTINE)["state"], I.NOT_READY)
 
-    def test_synthetic_or_unapproved_countersignature_refused(self):
+    def test_synthetic_or_unapproved_or_stale_schema_countersignature_refused(self):
         ev = evidence()
         for over in ({"synthetic": True}, {"mode": "SYNTHETIC"}, {"verdict": "BLOCKED"},
                      {"iss_cap": {"cap_cpu_h": 301, "cap_usec": 301 * 3600 * 10**6}},
                      {"iss_universe": {**AUTH["universe"], "cells": 325}}, {"iss_host": {**AUTH["host"], "host_name": "x"}},
-                     {"iss_producer": {**AUTH["producer"], "producer_identity_hash": OTHER}}, {"issuance": None}):
+                     {"iss_producer": {**AUTH["producer"], "producer_identity_hash": OTHER}}, {"issuance": None},
+                     {"iss_schema": "rebaseguard.p5y.k1.cusum-aux5.countersignature-issuance.v1"},
+                     {"iss_pre_genesis_residue": {**I.residue_summary(ABSENT_ROOT), "state": I.ROOT_PRE_GENESIS}}):
             self.assertTrue(binding(countersignature(ev, **over), git_with(ev)), over)
+
+
+class RuntimeRootTests(unittest.TestCase):
+    """Pre-genesis residue versus production start, on real directories with frozen-format reaper records."""
+
+    def eligible(self, rr, **over):
+        return I.launch_eligibility(report(), [], facts_for(rr, **over))["state"] == I.LAUNCH_READY
+
+    def test_frozen_constants_have_not_drifted(self):
+        self.assertEqual(tuple(L.PRE_GENESIS_FILES), I.FROZEN_PRE_GENESIS_FILES)
+        p = L.Paths("/x")
+        self.assertEqual((p.ledger.name, p.journal.name), I.GENESIS_FILES)
+        self.assertEqual((p.lock.name, p.owner.name, p.reaper.name), I.FROZEN_PRE_GENESIS_FILES)
+        cp = json.loads(CHECKPOINT.read_text())
+        self.assertEqual(cp["lifecycle"]["exit_codes"]["REFUSED"], I.FROZEN_REFUSED_EXIT)
+
+    def test_A_root_absent_eligible(self):
+        with Tmp() as d:
+            rr = classify(d / "root")
+        self.assertEqual(rr["state"], I.ROOT_ABSENT)
+        self.assertTrue(self.eligible(rr))
+
+    def test_B_exact_pre_genesis_files_eligible(self):
+        with Tmp() as d:
+            root = make_root(d)
+            rr = classify(root)
+            self.assertEqual(rr["state"], I.ROOT_PRE_GENESIS, rr["problems"])
+            self.assertEqual(rr["entries"], sorted(I.FROZEN_PRE_GENESIS_FILES))
+            self.assertEqual(rr["overhead_usec"], REFUSED_LAUNCH_USEC)
+            self.assertEqual(rr["reaper_record_ids"], [REFUSED_SUP["record_id"], KEEPER["record_id"]])
+            self.assertTrue(self.eligible(rr))
+            self.assertEqual(I.review_decision(report(P07="COUNTERSIGNATURE_MISSING"), facts_for(rr), [])["state"],
+                             I.REVIEW_READY)
+            # the frozen lifecycle agrees: its read-only view of such a root is FRESH
+            self.assertEqual(L.Ledger.inspect(type("Spec", (), {"root": root})())["relation"], "FRESH")
+            # a subset of the frozen files (e.g. a root created by the lock alone) is also pre-genesis
+            (root / "reaper.jsonl").unlink()
+            self.assertEqual(classify(root)["state"], I.ROOT_PRE_GENESIS)
+
+    def _refused(self, root, *, expect=None, lock="FREE"):
+        rr = classify(root, lock)
+        self.assertNotIn(rr["state"], I.ACCEPTABLE_ROOT_STATES, rr)
+        if expect:
+            self.assertEqual(rr["state"], expect, rr)
+        self.assertFalse(self.eligible(rr))
+        self.assertEqual(I.review_decision(report(P07="COUNTERSIGNATURE_MISSING"), facts_for(rr), [])["state"], I.BLOCKED)
+        return rr
+
+    def test_C_pre_genesis_plus_ledger_refused(self):
+        for name in I.GENESIS_FILES:
+            with Tmp() as d:
+                root = make_root(d)
+                (root / name).write_text("{}\n")
+                self._refused(root, expect=I.ROOT_STARTED)
+
+    def test_D_pre_genesis_plus_reservation_state_refused(self):
+        with Tmp() as d:
+            root = make_root(d)
+            (root / "attempts" / "A00000-C0000").mkdir(parents=True)
+            self._refused(root, expect=I.ROOT_CORRUPTED)
+        with Tmp() as d:
+            root = make_root(d)
+            write(root / "ledger.json", {"cells": {"0": {"status": "RESERVED", "attempt": "A00000-C0000"}}})
+            self._refused(root, expect=I.ROOT_STARTED)
+
+    def test_E_pre_genesis_plus_scientific_output_refused(self):
+        for rel in ("attempts/A00000-C0000/aux5_CUSUM_0_256.json", "aux5_CUSUM_0_256.json",
+                    "provenance/A00000-C0000/CUSUM_0000.envelope.json"):
+            with Tmp() as d:
+                root = make_root(d)
+                (root / rel).parent.mkdir(parents=True, exist_ok=True)
+                (root / rel).write_text('{"scientific_content_hash": "x"}\n')
+                self._refused(root, expect=I.ROOT_CORRUPTED)
+
+    def test_F_unknown_or_irregular_entry_refused(self):
+        for mutate in (lambda r: (r / "notes.txt").write_text("x"), lambda r: (r / "DRAIN").write_text("x"),
+                       lambda r: (r / ".hidden").write_text("x")):
+            with Tmp() as d:
+                root = make_root(d)
+                mutate(root)
+                self._refused(root, expect=I.ROOT_CORRUPTED)
+        with Tmp() as d:
+            root = make_root(d)
+            (root / "campaign.lock").unlink()
+            (root / "campaign.lock").mkdir()
+            self._refused(root)
+        with Tmp() as d:
+            root = make_root(d)
+            (d / "elsewhere.jsonl").write_bytes((root / "reaper.jsonl").read_bytes())
+            (root / "reaper.jsonl").unlink()
+            (root / "reaper.jsonl").symlink_to(d / "elsewhere.jsonl")
+            self._refused(root)
+        with Tmp() as d:
+            root = make_root(d, owner={"host": "another-host", "pid": 1})
+            self._refused(root)
+        with Tmp() as d:
+            root = make_root(d)
+            (root / "campaign.lock").write_text("x")
+            self._refused(root)
+        with Tmp() as d:
+            (d / "file").write_text("x")
+            self._refused(d / "file")
+
+    def test_G_running_production_process_or_live_lock_refused(self):
+        with Tmp() as d:
+            rr = classify(make_root(d))
+        self.assertFalse(self.eligible(rr, production_processes=[{"pid": 4242, "cmdline": "python prov_entry.py launch"}]))
+        self.assertFalse(self.eligible(rr, result_bearing_cells=1))
+        with Tmp() as d:
+            self._refused(make_root(d), lock="LIVE")
+        with Tmp() as d:
+            self._refused(make_root(d), lock="UNPROBEABLE_OSError")
+
+    def test_H_corrupted_reaper_refused(self):
+        edited = {**REFUSED_SUP, "cpu_usec": 1}                                   # record_id no longer recomputes
+        worker = reaper_rec("CHILD_REAPED", 555, 10, sup=False, exit_code=0)      # a worker ran
+        sup_ok = reaper_rec("CHILD_REAPED", 556, 10, sup=True, exit_code=0)       # a supervisor finished normally
+        sup_sig = reaper_rec("CHILD_REAPED", 557, 10, sup=True, exit_code=None, exited=False, signal=9)
+        negative = reaper_rec("KEEPER_EXIT", 558, -5, sup=False, exit_code=None)
+        cases = [reaper_bytes([REFUSED_SUP]) + b"not json\n", reaper_bytes([edited, KEEPER]),
+                 reaper_bytes([REFUSED_SUP, KEEPER])[:-1], reaper_bytes([REFUSED_SUP, worker]),
+                 reaper_bytes([sup_ok]), reaper_bytes([sup_sig]), reaper_bytes([negative]),
+                 reaper_bytes([REFUSED_SUP, REFUSED_SUP]), reaper_bytes([{**KEEPER, "schema": "other"}])]
+        for data in cases:
+            with Tmp() as d:
+                root = make_root(d)
+                (root / "reaper.jsonl").write_bytes(data)
+                rr = self._refused(root, expect=I.ROOT_CORRUPTED)
+                self.assertTrue(any(x.startswith("REAPER") for x in rr["problems"]), rr["problems"])
+
+    def test_I_prior_sealed_cell_refused(self):
+        with Tmp() as d:
+            root = make_root(d)
+            write(root / "ledger.json", {"cells": {"0": {"status": "SEALED", "attempt": "A00000-C0000"}}})
+            (root / "journal.jsonl").write_text("{}\n")
+            self._refused(root, expect=I.ROOT_STARTED)
+        with Tmp() as d:
+            root = make_root(d)
+            (root / "attempts/A00000-C0000").mkdir(parents=True)
+            (root / "attempts/A00000-C0000/aux5_CUSUM_0_256.json").write_text("{}")
+            os.chmod(root / "attempts/A00000-C0000/aux5_CUSUM_0_256.json", 0o444)
+            self._refused(root, expect=I.ROOT_CORRUPTED)
+
+    def test_residue_bound_at_signing_cannot_be_lost_or_rewritten(self):
+        with Tmp() as d:
+            root = make_root(d)
+            signed = I.residue_summary(classify(root))
+            live = classify(root)
+            self.assertEqual(I.residue_preserved(signed, live, (root / "reaper.jsonl").read_bytes()), [])
+            extra = reaper_rec("KEEPER_EXIT", 900, 11, sup=False, exit_code=None)
+            with open(root / "reaper.jsonl", "ab") as fh:                        # a later refused launch appends
+                fh.write(reaper_bytes([extra]))
+            live = classify(root)
+            self.assertEqual(live["state"], I.ROOT_PRE_GENESIS)
+            self.assertEqual(I.residue_preserved(signed, live, (root / "reaper.jsonl").read_bytes()), [])
+            (root / "reaper.jsonl").write_bytes(reaper_bytes([KEEPER, REFUSED_SUP]))   # reordered rewrite
+            self.assertTrue(I.residue_preserved(signed, classify(root), (root / "reaper.jsonl").read_bytes()))
+            (root / "reaper.jsonl").write_bytes(reaper_bytes([REFUSED_SUP]))           # truncated
+            self.assertTrue(I.residue_preserved(signed, classify(root), (root / "reaper.jsonl").read_bytes()))
+            (root / "reaper.jsonl").unlink()                                          # deleted
+            self.assertTrue(I.residue_preserved(signed, classify(root), b""))
+        self.assertTrue(I.residue_preserved(signed, ABSENT_ROOT, b""), "a signed residue cannot vanish with the root")
+        self.assertEqual(I.residue_preserved(I.residue_summary(ABSENT_ROOT), ABSENT_ROOT, b""), [])
+        self.assertTrue(I.residue_preserved(None, ABSENT_ROOT, b""))
+
+    @unittest.skipUnless(LINUX, "the frozen ledger accounting reads the Linux boot id")
+    def test_J_pre_genesis_overhead_survives_genesis_and_is_charged_once(self):
+        from prod_common import boot_id
+        from prod_spec import CampaignSpec
+        with Tmp() as d:
+            root = d / "root"
+            spec = CampaignSpec.synthetic({"root": str(root), "checkpoint_sha256": "SYNTHETIC-issuance-J",
+                                           "config_path": str(d / "unused.json"), "cells": [0, 1],
+                                           "cap_usec": 300 * 3600 * 10**6, "reservation_usec": 3600 * 10**6, "cores": [0]})
+            lk = L.CampaignLock(root)
+            lk.acquire({"host": HOST, "pid": 102197, "run_id": "R-refused", "t_wall": time.time()})
+            lk.release()
+            t_ref = time.time() - 120
+            recs = [reaper_rec("CHILD_REAPED", 102197, 4366444, sup=True, exit_code=30, boot=boot_id(), t=t_ref),
+                    reaper_rec("KEEPER_EXIT", 102196, 75363, sup=False, exit_code=None, boot=boot_id(), t=t_ref)]
+            (root / "reaper.jsonl").write_bytes(reaper_bytes(recs))
+            self.assertEqual(classify(root)["state"], I.ROOT_PRE_GENESIS)
+            expected = {r["record_id"]: r["cpu_usec"] for r in recs}
+
+            def supervisor(run_id, *, open_run=True):
+                lock = L.CampaignLock(root)
+                lock.acquire({"host": HOST, "pid": os.getpid(), "run_id": run_id, "t_wall": time.time()})
+                try:
+                    led = L.Ledger(spec, lock, run_id=run_id)
+                    relation = led.open(allow_genesis=True)
+                    reaped, bad = L.read_reaper(led.p)
+                    self.assertEqual(bad, 0)
+                    ov = L.unmatched_overhead(reaped, led.state)
+                    if open_run:
+                        led.txn("RUN_OPENED", lambda s: L.op_run_open(s, run_id, os.getpid(), 0, ov), {"run_id": run_id})
+                    return relation, ov, copy.deepcopy(led.state)
+                finally:
+                    lock.release()
+
+            # crash between GENESIS and RUN_OPENED: nothing charged yet, and nothing lost
+            rel0, _ov0, st0 = supervisor("R-J-0", open_run=False)
+            self.assertEqual(rel0, "GENESIS")
+            self.assertEqual(st0["overhead_charges"], {})
+            self.assertEqual(classify(root)["state"], I.ROOT_STARTED)
+            # the next supervisor charges the refused launch exactly once
+            rel1, ov1, st1 = supervisor("R-J-1")
+            self.assertEqual(rel1, "CONTINUOUS")
+            self.assertEqual(dict(ov1), expected)
+            self.assertEqual(st1["overhead_charges"], expected)
+            self.assertEqual(sum(st1["overhead_charges"].values()), REFUSED_LAUNCH_USEC)
+            self.assertGreaterEqual(st1["committed_usec"]["supervisor"], REFUSED_LAUNCH_USEC)
+            # relaunch: deterministic, no second charge, even if the old overhead list is replayed
+            rel2, ov2, st2 = supervisor("R-J-2")
+            self.assertEqual((rel2, ov2), ("CONTINUOUS", []))
+            self.assertEqual(st2["overhead_charges"], expected)
+            replay = copy.deepcopy(st2)
+            L.op_charge_overhead(replay, ov1)
+            self.assertEqual(replay["committed_usec"], st2["committed_usec"])
+            self.assertEqual(st2["cap"], {"cap_usec": 300 * 3600 * 10**6, "reservation_usec": 3600 * 10**6,
+                                          "invariant": L.INVARIANT})
+            L.validate_state(st2, spec)
 
 
 if __name__ == "__main__":
