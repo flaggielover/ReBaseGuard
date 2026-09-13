@@ -127,7 +127,15 @@ The historical P4/P5/P8/P9 verdicts remain unchanged. P5Y/K1 is a successor line
 
 PS1 defines a new **369-cell** SR universe and replaces the old cell-313 region with four deterministic successor cells; it does not recolor the historical 316-cell SR campaign or its cell-313 failure. The PS1 successor region and certified controls passed **28/28** obligations. Qualification and lifecycle acceptance are complete; the expected AWS-only campaign cost is approximately **4,413–4,642 CPU-h** against a frozen **6,600 CPU-h** cap.
 
-The current classification is **PS1_PRODUCTION_AUTHORIZATION_CLOSED**. AWS production is authorized to start, but genuine PS1 production remains **NOT STARTED** (0 cells), the full 369-cell campaign is **NOT RUN**, K1 and P5Y remain **NOT CLOSED**, and LEVEL4_GLOBAL_CLOSURE = NO.
+Current status (updated 2026-09-13):
+- **PS1/SR is QUALIFIED_AND_AUTHORIZED_ON_AWS.** PS1 is the SR side of K1.
+- **PRODUCTION_STARTED.** Execution generation 1 halted on `RETRY_LIMIT` with 0 finalized cells; generation 2 has run since 2026-09-12.
+- **CURRENTLY_GRACEFUL_DRAINING.**
+- **NOT_CLOSED.**
+- **CUSUM is CURRENT_PRODUCER_FULL_RERUN_REQUIRED.**
+- K1 and P5Y remain **NOT CLOSED**, and LEVEL4_GLOBAL_CLOSURE = NO.
+
+The earlier statement "genuine PS1 production remains **NOT STARTED** (0 cells), the full 369-cell campaign is **NOT RUN**" is **superseded**. It described the state at authorization (`PS1_PRODUCTION_AUTHORIZATION_CLOSED`), before production began.
 
 ## Limitations and negative results
 

@@ -1,0 +1,39 @@
+{
+ "schema": "rebaseguard.p5y.k4.assembly-predeclaration.v1",
+ "status": "PROPOSED_PRE_RESULT_UNFROZEN",
+ "declared_utc": "2026-09-13",
+ "result_bearing": false,
+ "verdict_authority": "NONE in this record; a K4 verdict requires freezing this procedure (config/K4_ASSEMBLY_CHECKPOINT_HASH) and independent adjudication",
+ "blinding": {
+  "genuine_production_values_observed_by_declarer": false,
+  "disclosure": "committed NON-production PS1 control/qualification T4 records (cells 0-3,148-151,150,275,315,360-363,368) and Aux4 CUSUM cells 318,323 pre-date this record; they were not evaluated for K4 and are not K1 production records"
+ },
+ "target": {
+  "statement": "H2: R_{D,m}(e) < 0 for every e in (0, E], E = 2",
+  "scope": {"detectors": ["CUSUM", "SR"], "m_values": [1, 2, 3, 5]},
+  "domain_reduction_source": "p5x_global_nonlinear_dynamics/FROZEN_THEOREM.md section 8 P5X-T7(1); FEASIBILITY_AUDIT.md section 8 (e > 2 licensed by K1 sup|R| < 2)",
+  "premises": ["R(0) = 0 exactly and R continuous (P5-T3, H1)",
+               "R differentiable with |R''| <= M_R2 on each cell (frozen curvature_bound semantics)",
+               "input records are K1 PRODUCTION records bound to their governed producer identity"]
+ },
+ "inputs": {
+  "SR": "sealed PS1 production cell records -> evidence t4_NNNN.json; integrity: file sha256 == sealed evidence sha256 and t4_record_sha256 == sha256(t4_cell.canonical(record minus t4_record_sha256))",
+  "CUSUM": "Aux4 full-cover production records under producer identity of the rerun; integrity attested by the Aux4 verifier (hash_v2/audit4) before assembly",
+  "cells": "every frozen cover cell whose closed interval intersects (0, 2]; symbolic (c_SR-dependent) cells refused"
+ },
+ "arithmetic": "exact rational (Fraction) over the recorded outward endpoints; no floating point; strict inequalities",
+ "per_cell_enclosures": {
+  "R_cell": "[R.lo - rho*mag(D) - rho^2*M/2 , R.hi + rho*mag(D) + rho^2*M/2]  (frozen ledger.taylor_enclosure)",
+  "Rprime_cell": "[D.lo - rho*M , D.hi + rho*M]",
+  "M": "the recorded M_R2 (magnitude); R2_interval is never used signed"
+ },
+ "decision_procedure": [
+  "1 cover check: cells sorted by left endpoint; first left == 0 exactly; each left == previous right exactly; last right >= 2; else COVER_GAP",
+  "2 chain: the maximal prefix of cells from e = 0 with Rprime_cell.hi < 0 certifies R < 0 on (0, right of prefix]",
+  "3 direct: every remaining cell must have R_cell.hi < 0",
+  "4 counterexample: any cell with R.lo > 0 (certified R(e0) > 0) is MATHEMATICAL_COUNTEREXAMPLE",
+  "5 any other cell is CERTIFICATE_TOO_LOOSE; no refinement, splitting, retry, delta or threshold is tunable"
+ ],
+ "per_Dm_outcomes": ["K4_CELLWISE_ALL_CERTIFIED", "K4_CERTIFICATE_TOO_LOOSE", "K4_MATHEMATICAL_COUNTEREXAMPLE", "K4_COVER_GAP", "K4_SCOPE_INCOMPLETE"],
+ "tooling": "code/k4_assembly.py (tests/test_k4_assembly.py)"
+}

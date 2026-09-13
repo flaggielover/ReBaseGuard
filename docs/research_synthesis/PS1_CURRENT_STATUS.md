@@ -1,6 +1,21 @@
-# Current scientific status: PS1 successor (2026-09-12)
+# Current scientific status: PS1 successor (updated 2026-09-13)
 
 This additive status note updates the public narrative without changing any frozen historical record.
+
+```text
+PS1 / SR  = QUALIFIED_AND_AUTHORIZED_ON_AWS, PRODUCTION_STARTED, CURRENTLY_GRACEFUL_DRAINING, NOT_CLOSED
+CUSUM     = CURRENT_PRODUCER_FULL_RERUN_REQUIRED
+K1        = NOT_CLOSED
+```
+
+## Superseded statement (preserved)
+
+The 2026-09-12 version of this note said:
+- "AWS genuine PS1 SR production is authorized to start, but **genuine production has not started**: cells = **0**"
+- "Full 369-cell production is **NOT RUN**"
+- "The production start command is recorded in the authorization result but is intentionally **not run** by this reconciliation."
+
+**Those statements are superseded.** They were accurate when written, at authorization and before production began. They no longer describe the campaign.
 
 ## Historical record (unchanged)
 
@@ -14,18 +29,22 @@ Those results motivated the predeclared additive PS1 partition successor. PS1 de
 
 ## Current successor state
 
-- PS1 scientific architecture, executor, qualification, and lifecycle acceptance are complete.
-- Requalified expected campaign cost is approximately **4,413–4,642 CPU-h** against the frozen **6,600 CPU-h** global cap.
-- Topology is **A_AWS_ONLY**; Vultr is **NOT_QUALIFIED_FOR_PS1**.
-- PS1_PRODUCTION_AUTHORIZATION_CLOSED.
-- AWS genuine PS1 SR production is authorized to start, but **genuine production has not started**: cells = **0**.
-- Full 369-cell production is **NOT RUN**.
-- K1 = NOT CLOSED, P5Y = NOT CLOSED, and LEVEL4_GLOBAL_CLOSURE = NO.
+- **PS1 is the SR side of K1. It is qualified and authorized on AWS** (`PS1_PRODUCTION_AUTHORIZATION_CLOSED`, topology `A_AWS_ONLY`). Vultr is **not eligible** for result-bearing PS1 cells: a predeclared cross-host replay found 0/24 bit-identical patch records against AWS.
+- **Production started.**
+  - Execution generation 1 (run `20260912T041203Z-962132d3`) halted on `RETRY_LIMIT` after a host/systemd maintenance event, with 0 finalized cells and 92.32 CPU-h. That halt is preserved, not cleared.
+  - Execution generation 2 has run on AWS since 2026-09-12T15:46:58Z.
+- **Currently graceful draining.**
+  - An operator DRAIN has been in force since 2026-09-12T16:04:18Z. No new cell is admitted; in-flight cells finish at their boundary.
+  - On 2026-09-13 a read-only check found the unit still active and the DRAIN marker unchanged. This note deliberately reports no finalized-cell counts and no results.
+- Campaign cost basis: **4,413–5,694 CPU-h** (5,694 in the per-cell-durable production shape) against the frozen **6,600 CPU-h** global cap.
+- A runtime-path defect in the deployed generation-2 operations has a synthetically verified repair that is **not deployed**. Deployment is gated on the current drain settling (`level4/closure_proofs/p5y_k1_ps1_gen2_runtime_isolation/DEPLOYMENT_GATE.md`).
+- **CUSUM, the other side of K1, requires its current-producer full rerun.** The Aux4 producer covers 2/326 cells and adjudication requires `REQUIRES_FULL_326_RERUN`. Its cost cap and host binding are not ready.
+- K1 = NOT CLOSED, P5Y = NOT CLOSED, LEVEL4_GLOBAL_CLOSURE = NO. No K1 closure is claimed.
 
 Authoritative records:
 
 - [PS1 qualification result](../../level4/closure_proofs/p5y_k1_ps1_production_qualification/RESULT.md)
 - [PS1 partition result](../../level4/closure_proofs/p5y_k1_sr_o9_partition_successor/RESULT.md)
-- [PS1 production authorization record](../../level4/closure_proofs/p5y_k1_ps1_production/RESULT.md)
-
-The production start command is recorded in the authorization result but is intentionally **not run** by this reconciliation.
+- [PS1 production namespace](../../level4/closure_proofs/p5y_k1_ps1_production/README.md)
+- [Generation-2 portable recovery (published branch `p5y-k1-ps1-gen2-lineage`)](../../level4/closure_proofs/p5y_k1_ps1_portable_recovery/RESULT.md)
+- [Post-K1 status correction](../../level4/closure_proofs/p5y_postk1_frontier/PS1_STATUS_CORRECTION.md), [post-K1 DAG](../../level4/closure_proofs/p5y_postk1_frontier/P5Y_POST_K1_DAG.md), [K2–K5 audit](../../level4/closure_proofs/p5y_k2k5_postk1_audit/RESULT.md)

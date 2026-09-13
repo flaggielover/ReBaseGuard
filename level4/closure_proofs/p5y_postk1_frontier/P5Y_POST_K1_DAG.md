@@ -54,10 +54,15 @@ Sources:
 
 | node | obligation | depends on | class |
 |---|---|---|---|
-| K2 | `inf_e S(e) > 0`: **not** a hypothesis of T8/T9/T10; the consumed statement must be re-resolved | theorem governance | formal/theorem + governance; **parallelizable now** (no compute) |
-| K3 | `M2 < ∞`: already exactly closed by P5-T5/T4; open only whether a non-vacuous M2 is consumed | theorem governance | formal/theorem; **parallelizable now** |
+| K2 | `s_min = inf_e S(e) > 0`: not a hypothesis of T8/T9/T10, **but consumed by P5X-T6** (lower arm; binding THEOREM_ADJUDICATION `K2_POSITIVITY_STILL_REQUIRED`) | certified C2/L2 second-moment computation or an exact positivity theorem (neither exists) | **`K2 = INCOMPLETE`** (2026-09-13 audit `p5y_k2k5_postk1_audit/K2_K3_AUDIT.md`); scientific + checkpoint governance gap |
+| K3 | `M2 < ∞`: finiteness exactly closed by P5-T5/T4 (`M_2 <= C_D`); the frozen "useful" half is open (binding TA `K3_FINITE_BUT_TIGHT_BOUND_STILL_REQUIRED`), and no quantitative usefulness criterion is frozen | certified tight M_2 (C2) + a frozen usefulness criterion | **`K3 = INCOMPLETE`** (2026-09-13 audit) |
 | K4 | (H2) `R(e) < 0` on `(0,2]`, via certified R on `[e_0,2]` plus certified `R' < 0` on `[0,e_0]` | K1 cells (both detectors) | no-compute assembly **if** the K1 cell records carry R and R′. PS1 T4 records carry `R_interval`, `D_interval` (derivative at the midpoint) and `R2_interval`/`M_R2` per m; CUSUM Aux4 reports the same fields. The forward audit's "~620 CPU-h second campaign" finding described the older frozen record. Whether a cellwise R′ enclosure follows from `D_mid ± rho·M_R2` without new compute is **unverified** and must be adjudicated. Blocked by K1. |
 | K5 | (H3a) `s = −R/e` strictly decreasing on `(0,2]`; needs cellwise R and R′ | K1, K4 | as K4; blocked by K1 and K4 |
+
+**Update 2026-09-13 (`p5y_k2k5_postk1_audit/K4_K5_ADMISSIBILITY.md`).** It supersedes the K4 "unverified" clause and the K5 row above:
+- **K4.** Assembly-only over K1 production records (`R_interval`, signed `D_interval`, `M_R2`), so `K4_NEW_COMPUTE_REQUIRED = NO`. The exact-rational tooling is built and locked pending a frozen K4 checkpoint and independent adjudication.
+- **K5.** `K5_NEW_COMPUTE_REQUIRED = YES`. Because `R` is odd, `R''(0) = 0`, so the sign of `s'` near 0 depends on a third-order quantity that no K1 record contains. The frozen "second-order remainder" route is insufficient there.
+- **CUSUM.** Host binding and cost cap are **not ready** (`CUSUM_READINESS.md`).
 | T8 | conditional on (H1, H2) | K4 | formal/theorem; blocked by K4 |
 | T9, T10 | conditional on (H1–H3); T10 also needs `S` continuous at 0 | K1, K4, K5 (+ K2 re-resolution for what T10 consumes) | formal/theorem; blocked |
 | G.NOV | `NOVELTY_STATUS = NOT_ESTABLISHED` must not be overclaimed | — | governance/publication; parallelizable now |
