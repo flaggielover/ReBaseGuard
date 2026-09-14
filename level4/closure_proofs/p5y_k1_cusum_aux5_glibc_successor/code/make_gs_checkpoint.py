@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
 from pathlib import Path
 
@@ -182,7 +183,14 @@ def build_checkpoint() -> dict:
                                             "COUNTERSIGNATURE.json", "CARRYOVER_MANIFEST.json")]
              + sorted(p for p in (NS / "evidence").rglob("*") if p.is_file() and "acceptance_r1" not in p.parts
                       and "preflight_r1" not in p.parts))
+    tracked = set(subprocess.run(["git", "-C", str(GS.ROOT), "ls-files", "-z", "--", GS.NS_REL, str(GS.PROV_NS.relative_to(GS.ROOT))],
+                                 capture_output=True, check=True).stdout.decode().split("\0")) - {""}
+    extra = [p for p in extra if rel(p) in tracked]          # only committed files: an ignored local file is never bound
     srcs.update({rel(p): sha256_file(p) for p in extra})
+    untracked = sorted(r for r in srcs if subprocess.run(["git", "-C", str(GS.ROOT), "ls-files", "--error-unmatch", r],
+                                                         capture_output=True).returncode != 0)
+    if untracked:
+        raise Refusal("CHECKPOINT_BUILD_REFUSED", f"bound sources not tracked by git: {untracked[:6]}")
     cp["bound_sources"] = dict(sorted(srcs.items()))
     return cp
 
