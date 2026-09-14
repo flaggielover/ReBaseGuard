@@ -1,0 +1,153 @@
+{
+ "GLIBC_SUCCESSOR_LAUNCH": "READY_TO_LAUNCH_SUCCESSOR",
+ "PRODUCTION_LAUNCH_AUTHORIZED": true,
+ "authorization_sha256": "0c7621d47fd862e06355276492fe9a425f8fe2eec280d8c7375a4acedaaa043f",
+ "checkpoint_sha256": "f9380847c92b6f5eb014d56021d11c2b66a95bef0990e392c7021c05d537a6cb",
+ "checks": [
+  {
+   "check": "G01_checkpoint_and_freeze",
+   "detail": {
+    "checkpoint_sha256": "f9380847c92b6f5eb014d56021d11c2b66a95bef0990e392c7021c05d537a6cb"
+   },
+   "status": "PASS"
+  },
+  {
+   "check": "G02_bound_sources",
+   "detail": {
+    "bound_sources": 129,
+    "settlement_modules": 2,
+    "settlement_version": "gs-settle-r1"
+   },
+   "status": "PASS"
+  },
+  {
+   "check": "G03_carryover_countersignature",
+   "detail": {
+    "countersignature_sha256": "e1ee7fb112c4d013c53f3adf10f12421c04b39f2ec1d3edd98ec2cc07edf143a"
+   },
+   "status": "PASS"
+  },
+  {
+   "check": "G04_proposal_q6_launch_readiness",
+   "detail": {
+    "launch_readiness": "READY_TO_LAUNCH_SUCCESSOR"
+   },
+   "status": "PASS"
+  },
+  {
+   "check": "G05_run_authorization",
+   "detail": {
+    "authorization_sha256": "0c7621d47fd862e06355276492fe9a425f8fe2eec280d8c7375a4acedaaa043f",
+    "commit": "c4231ff99205c9d6701e2b10fe98b5aabd14f0c2",
+    "ledger_id": "70fec439118575ca4fd053ad16701e7416047163d3f128e98d47375ab9fc5b52"
+   },
+   "status": "PASS"
+  },
+  {
+   "check": "G06_synthetic_acceptance",
+   "detail": {
+    "tests": 37
+   },
+   "status": "PASS"
+  },
+  {
+   "check": "G07_checkout",
+   "detail": {
+    "head": "8dde468add4a46ad5ad9540594e1db8dcdc227f3"
+   },
+   "status": "PASS"
+  },
+  {
+   "check": "G08_predecessor_binding_live",
+   "detail": {
+    "binding_sha256": "0676fc8267bac3fc6044ab4cb9f57c8769b2b9d62e0d2f0bb2a2d3b1d9db8ac3"
+   },
+   "status": "PASS"
+  },
+  {
+   "check": "G09_predecessor_halted_immutable",
+   "detail": {
+    "disposition": "HALTED",
+    "record_envelope_digest": "07249d3bb27a540fd557fa035bc6b3f757cb8518bb99071dcf6ea1be78a85280"
+   },
+   "status": "PASS"
+  },
+  {
+   "check": "G10_composite_predecessor_half",
+   "detail": {
+    "tolerated": [
+     "D_halt",
+     "D_unsettled_supervisor_runs"
+    ],
+    "verified_pairs": 128
+   },
+   "status": "PASS"
+  },
+  {
+   "check": "G11_containment",
+   "detail": {
+    "holds": 8
+   },
+   "status": "PASS"
+  },
+  {
+   "check": "G12_host_runtime_identity_and_boot",
+   "detail": {
+    "boot_id": "eefa85dc-14db-4ba0-912f-f95eeece9c2b",
+    "host_name": "rebaseguard-vultr-02"
+   },
+   "status": "PASS"
+  },
+  {
+   "check": "G13_runtime_contract_probe",
+   "detail": {
+    "probe_cpu_usec": 169464,
+    "producer_identity_hash": "3692d0feeaef7136"
+   },
+   "status": "PASS"
+  },
+  {
+   "check": "G14_universe_and_cap",
+   "detail": {
+    "cap_usec": 817313389420,
+    "cells": 198
+   },
+   "status": "PASS"
+  },
+  {
+   "check": "G15_qualification_firewall",
+   "detail": {
+    "firewalled_records": 8
+   },
+   "status": "PASS"
+  },
+  {
+   "check": "G16_protected_trees",
+   "detail": {
+    "protected_trees": 9
+   },
+   "status": "PASS"
+  },
+  {
+   "check": "G17_run_state",
+   "detail": {
+    "production_started": false,
+    "runtime_root": "ABSENT"
+   },
+   "status": "PASS"
+  },
+  {
+   "check": "G18_host_idle",
+   "detail": {
+    "foreign_processes": 0
+   },
+   "status": "PASS"
+  }
+ ],
+ "launch_requires": "READY here and an explicit operator command with both confirmations",
+ "probe_cpu_usec": 169464,
+ "production_launched": false,
+ "ready": true,
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.glibc-successor.launch-preflight.v1",
+ "version": "gs-launch-preflight-r2"
+}
