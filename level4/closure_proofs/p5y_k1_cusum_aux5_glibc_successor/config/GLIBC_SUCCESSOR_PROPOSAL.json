@@ -1,0 +1,97 @@
+{
+ "activation_conditions": [
+  "Q6 PASS",
+  "independent governance review PASS",
+  "active countersignature binding this manifest sha256 and the Q6 result sha256",
+  "successor checkpoint binding the approved rule"
+ ],
+ "authorizations": {
+  "CARRYOVER_AUTHORIZED": false,
+  "CONTAINMENT_APPLIED": false,
+  "PRODUCTION_LAUNCH_AUTHORIZED": false,
+  "Q6_EXECUTED": false,
+  "SUCCESSOR_CHECKPOINT_CREATED": false
+ },
+ "base_commit": "79d515dd215bfbe761db5ffbf8fea6475bf9ffbd",
+ "branch": "p5y-postk1-frontier",
+ "cap": {
+  "absolute_campaign_cap_usec": 1080000000000,
+  "admission_invariant": [
+   115,
+   100
+  ],
+  "predecessor_settled_usec": 262686610580,
+  "successor_residual_cap_usec": 817313389420
+ },
+ "frozen_utc": "2026-09-14",
+ "governance_artifacts": {
+  "CARRYOVER_PROTOCOL.md": "3812b13b04ff1df186724cdd33516cad9545a01be072ca89ce96fc166bd94c01",
+  "HOST_CONTAINMENT_PLAN.md": "fa8417dff0309bc676486e2f801fe486b7cb32a1c3894a770f875b9a690021c6",
+  "HOST_DRIFT_FORENSIC_AUDIT.md": "b4d40f32eba88ffb3a8890317c70d5b6a47e1c74ed03cb0cf5bdc9a3d884a535",
+  "README.md": "f68ac94aa49a4a04e5e1f084d5b5ee8af8214b981c7598eea9c213aef783e20a",
+  "SUCCESSOR_CHECKPOINT_SPEC.md": "6cc0d187ef0efd19d7eb5dbdaf61425f66cb055651f1ca1f72e4fae9934aa945",
+  "code/glibc_successor.py": "785c6bddf9b0b8acc551a7fd7c10df79fcecd181f5dc8910b6f26bc605fa53b6",
+  "config/CPU_CAP_CONTINUITY.json": "ada6309602eccc18881c8fc5a6a79607a0572f3e81d8a12aafcd0ec871644866",
+  "config/PREDECESSOR_BINDING.json": "0676fc8267bac3fc6044ab4cb9f57c8769b2b9d62e0d2f0bb2a2d3b1d9db8ac3",
+  "config/Q6_REFERENCE.json": "124376c0f98a112ebc2404db72bec782646d1d14fd8a359b8dd6425df5548597",
+  "config/REQUALIFICATION_PROTOCOL.json": "38a7f97884736e3e7cb1e35bcf7e6e2d7d82abbe263fc0cfcdb9feaad019d244",
+  "tests/test_glibc_successor.py": "ca31feffc20ca354909b3b3f02db8ef52ad41e6126fe742813c29407a47e00a7"
+ },
+ "namespace": "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor",
+ "predecessor_repo_objects": {
+  "level4/closure_proofs/p5y_k1_cusum_aux5_countersignature_issuance/code/issuance.py": "b1030e32d00d51c3a7a5c8dc46232a970ecc0cbaaa82a78c2152422ff89e9a78",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_countersignature_issuance/evidence/post_signature_r2/POST_SIGNATURE_RECORD.json": "868ed32c4a300479cba0d08bfd67a86593d2c0bca975ff8954c3a3172f7b7112",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_countersignature_issuance/evidence/revocation_r1/REVOCATION.json": "69290aed4bf6239700d9acf849cb45ad65dba2a00542ac80d54fc660f308f4db",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/config/COUNTERSIGNATURE.json": "1ceb92d463d1332dfb26505143454b3c3fd87a611bc731372d9e227017682b07",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/config/ENVELOPE_SCHEMA.json": "decda981cb1b31ecbe461b4620c8a624b6fde89f92c7b2bfd2aa143629ded197",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/config/FREEZE_RECORD.json": "e61dcc15f8f6ab89752596109782d9108e8d25962271e3858b6c8b8a7af31ec1",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/config/PROVENANCE_CHECKPOINT.json": "dd4c89d773c411355d93d0d703e40c027f9913e11e116e4bfe35117f84b4baf2",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/config/PROVENANCE_CHECKPOINT_HASH": "9dd64af98094f59491f6e8ed0035ab08a020b7a09a685af77548227007ca4537",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/config/RUN_AUTHORIZATION.json": "b8f11ec05efc2476f733dd989ae02b542dc9efa374f24fa0a27688d76ec2b329",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/config/RUN_AUTHORIZATION_HASH": "bcce5b1abb8e83fff139743f619a45e59a714133c151813993171dd678e60660",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/cap_formula.py": "bf1008841ee10ea0e9b4b94ae69eb1e17318f2a89169181452f5558294dd089e",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/qualify5.py": "7d917e51c3b4851236e4cdf5b600d593c0d85b3e89778f1745e7ccae94c0403d",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/config/COST_CAP_FORMULA.json": "f50331b883503b3807b941e60b28d8fd3fa8d5cf637267d6f558909fb8d1345c",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/config/FREEZE_RECORD.json": "4635e78e4f7debefd930be905aff076fd1c9aaf012a650c7e243b8fdca720b45",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/config/HOST_QUALIFICATION.json": "967df818d711aa90eb7fbf0b8475d826e4f95f0ca8d7e5fe6449b06ca9f7e3cc",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/config/QUALIFICATION_PROTOCOL.json": "81e28577fdb0ebf671e0ea99799245e6d02a58015cf7c8e7a229f0d4f26b1d94",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/evidence/qualification_r1/QUALIFICATION_RESULT.json": "c52cffa439f7cde77ec9dd91b642021a826adc50760088a9523bf1b68806f4a7",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/evidence/qualification_r1/c318_A/aux5_CUSUM_318_256.json": "5895bcf5769eae6386483965af10dabc8b7ed25ebfc6028ba2542fe65acc387a",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/evidence/qualification_r1/c318_B/aux5_CUSUM_318_256.json": "cd0e923c5b4f1d0e489a9733fce26351b8c2c5f659c46d152d176e4789d7eba5",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/evidence/qualification_r1/c323_A/aux5_CUSUM_323_256.json": "28e6a53e57f10c46b2f965b27d0b7be6395da8170acb604fa34db6e474aec59f",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/evidence/qualification_r1/c323_B/aux5_CUSUM_323_256.json": "d08a694c56793157069bb1069b7ffe07b80582ec6197d42d9b4de9539505440d",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/manifests/producer_manifest_v3.json": "611bd0a9f356b0e7f5e63da60567ac1afa9e69fc1f8c464c7e5b89aeedbd2b9f"
+ },
+ "predecessor_runtime_binding": {
+  "cells_digest_sha256": "2a93585ced70138afc3f3ca1175fbf34280bcc99d1087b630cafc36cd02dba3f",
+  "files_sha256": {
+   "journal.jsonl": "02170cae2cb25559e24d802e827d19c3c07fd5ee104aa246778f9e5034edc00c",
+   "ledger.json": "eebc21e7801888b31e892f9e81aa7c4954758cb55031afbcfac6be27f6e4d712",
+   "reaper.jsonl": "84d09fd47f794246a1820d873dd4ac398e132bfad446372e86b1e05ad5278f9f"
+  },
+  "genesis_entry_sha256": "eee65c7bf364e3bd6611ad8150178f3c04ab8faaf613ac9ae9a189c2c32272b8",
+  "last_entry_sha256": "eed2a5558b7fcbaf5144f346b98e917cf462a462787c02ce6f25f259d8003eae",
+  "ledger_state_sha256": "b3cee6fff848d55aaba7ae143b43e77563663b929c8f5483d8eeec47875b60cb",
+  "path": "config/PREDECESSOR_BINDING.json",
+  "runtime_root": "/root/work/postk1-runs/cusum-aux5-production-prov-r1",
+  "settled_usec": 262686610580
+ },
+ "q6": {
+  "on_failure": "CARRYOVER_ROUTE = REJECTED; no successor production may launch",
+  "reference": "config/Q6_REFERENCE.json",
+  "required_for": "carry-over activation and any successor launch"
+ },
+ "result_set": {
+  "NEW_SUCCESSOR": [
+   128,
+   325
+  ],
+  "OLD_CARRYOVER": [
+   0,
+   127
+  ],
+  "rule": "disjoint union, exactly cells 0-325; no cell in OLD_CARRYOVER is ever recomputed"
+ },
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.glibc-successor.proposal.v1",
+ "status": "PROPOSED_NOT_AUTHORIZED"
+}

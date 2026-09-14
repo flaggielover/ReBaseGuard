@@ -1,0 +1,122 @@
+{
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.glibc-successor.requalification-protocol.v1",
+ "status": "FROZEN_PRE_EXECUTION",
+ "frozen_utc": "2026-09-14",
+ "executed": false,
+ "result_bearing": false,
+ "classification": "NON-PRODUCTION requalification of the unchanged Aux5 producer on the new glibc of rebaseguard-vultr-02; its records are never production cells and are never composed into any production ledger",
+ "source_protocol": {
+  "path": "level4/closure_proofs/p5y_k1_cusum_aux5_successor/config/QUALIFICATION_PROTOCOL.json",
+  "sha256": "81e28577fdb0ebf671e0ea99799245e6d02a58015cf7c8e7a229f0d4f26b1d94",
+  "rule": "every original requirement is kept verbatim; this protocol adds host binding and criterion Q6"
+ },
+ "preconditions": [
+  "HOST_CONTAINMENT_PLAN.md applied with explicit operator approval, POST_STATE recorded, and every host fact below still equal",
+  "no process of either CUSUM production generation and no qualification run is live on the host",
+  "the terminal predecessor runtime root is not read for writing and is not used as an output location"
+ ],
+ "runs": {
+  "cells": [318, 323],
+  "repeats_per_cell": 2,
+  "labels": ["318A", "318B", "323A", "323B"],
+  "cpus": [0, 2, 4, 6],
+  "concurrent": true,
+  "precision_bits": 256,
+  "fresh_env_i_interpreter_per_run": true,
+  "resume": "none (--skip-if-current NOT used); every run recomputes from scratch",
+  "thread_environment": {"OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1", "MKL_NUM_THREADS": "1", "NUMEXPR_NUM_THREADS": "1", "K1_THREADS_PINNED": "1", "PYTHONDONTWRITEBYTECODE": "1", "PATH": "/usr/bin:/bin", "HOME": "/root", "LANG": "C.UTF-8"},
+  "command_shape": "env -i <thread_environment> taskset -c <cpu> /root/work/rbg-cusum-aux5-venv/bin/python <checkout>/level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/qualify5.py --cell <cell> --bits 256 --out <outdir>/<label>/aux5_CUSUM_<cell>_256.json",
+  "checkout": "a separate clean git worktree at the Aux5 freeze commit d31ea4edd5a96be5c9ac0a7d4acea2a5a3c5e563 (the source protocol's 'clean git checkout of the freeze commit'); the manifest v3 initial and final gates must pass; the production checkout /root/work/postk1-aux5 is not used",
+  "output_location": "a new directory outside the repository and outside both CUSUM production runtime roots"
+ },
+ "software": {
+  "cpython": "3.12.3",
+  "cpython_version_full": "3.12.3 (main, Apr 15 2024, 18:25:56) [Clang 17.0.6 ]",
+  "python_executable": "/root/.local/share/uv/python/cpython-3.12.3-linux-x86_64-gnu/bin/python3.12",
+  "venv": "/root/work/rbg-cusum-aux5-venv",
+  "numpy": "2.5.2",
+  "scipy": "1.18.1",
+  "python_flint": "0.9.0",
+  "openblas_runtime_corename": "Haswell",
+  "openblas_config": "OpenBLAS 0.3.34.0.0  USE64BITINT DYNAMIC_ARCH NO_AFFINITY Haswell MAX_THREADS=64",
+  "backend_libraries": {
+   "/root/work/rbg-cusum-aux5-venv/lib/python3.12/site-packages/numpy.libs/libscipy_openblas64_-61654e39.so": "6cad8d2ad994ddc43d2ccdb0fb5d9458373ff1b87ef7ff420f2f94406eb8f082",
+   "/root/work/rbg-cusum-aux5-venv/lib/python3.12/site-packages/python_flint.libs/libflint-6839011d.so.24.0.0": "871a4132fd1e9f3638391b2208e07088f8e3e72a10e41d45f58b150a60c2a1a9",
+   "/root/work/rbg-cusum-aux5-venv/lib/python3.12/site-packages/python_flint.libs/libgmp-e0c82b6b.so.10.5.0": "33d24e675b10f8b1ab93a8ad3fa2ed5012e1b0d89dcdb97273877c6c6b9450d8",
+   "/root/work/rbg-cusum-aux5-venv/lib/python3.12/site-packages/python_flint.libs/libmpfr-be332c05.so.6.2.2": "c4dfcfc7c5c7ab71d427e15f2f9fae4ace88592a81d4596a918dcc02eadfc6e3",
+   "/root/work/rbg-cusum-aux5-venv/lib/python3.12/site-packages/scipy.libs/libscipy_openblas-5f890258.so": "2a5b4c1a6311873c59132b2ceaaf3c26258a17350b7cd27ea8782a47e3322981"
+  }
+ },
+ "producer": {
+  "runtime_contract_hash": "bc75c9ea7cd5f9406a0509bb0a161aa2c013f80427d1035197989e3d202c845a",
+  "producer_identity_hash": "3692d0feeaef71365798cd99399fdb6d744573f38d59dba5cfe2e99294f0ae19",
+  "producer_manifest_hash": "b55a2da1fea0c7ee889f8da6a4b893c12d3ef24e2bc02d19bd5488187fd30fd9",
+  "producer_manifest_file_sha256": "611bd0a9f356b0e7f5e63da60567ac1afa9e69fc1f8c464c7e5b89aeedbd2b9f",
+  "certifier_sha256": "7d917e51c3b4851236e4cdf5b600d593c0d85b3e89778f1745e7ccae94c0403d",
+  "pre_execution_evidence": "frozen C06 env -i runtime probe PASS under deb13u4 on 2026-09-14 (producer identity and runtime contract unchanged)"
+ },
+ "host": {
+  "host_name": "rebaseguard-vultr-02",
+  "machine_id_sha256": "e914421252e5e879ffea329880295de11d5e770e0cbec522fd572f3ac8829ffd",
+  "cpu_model": "AMD EPYC-Milan Processor",
+  "logical_cpus": 8,
+  "physical_cores": 4,
+  "smt_groups": [[0, 1], [2, 3], [4, 5], [6, 7]],
+  "kernel_release": "6.12.107+deb13-amd64",
+  "libc_path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+  "libc_sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+  "glibc_package_version": "2.41-12+deb13u4",
+  "system_libraries_sha256": {
+   "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2": "c8438e4fde1934e61c88311633f00949ff645d5c04cdb8671fa3d78164d2f307",
+   "/usr/lib/x86_64-linux-gnu/libc.so.6": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+   "/usr/lib/x86_64-linux-gnu/libcrypt.so.1.1.0": "436788729ab71d794a66954d62e930c723e624587f39beb2f4f86ff1000b1d29",
+   "/usr/lib/x86_64-linux-gnu/libdl.so.2": "295fa521a03cd2faa99974f378c9e23dd622021ec7d32bcad4f8ea61aec8a872",
+   "/usr/lib/x86_64-linux-gnu/libgcc_s.so.1": "30c61ab012a4241bed033725a09b61f5fdd3bb7df95ee852d0b096520524c7af",
+   "/usr/lib/x86_64-linux-gnu/libm.so.6": "6d567d53e895273ca14a1f9dc164fc6c8d39aed2f60aa46a733c2784228915f3",
+   "/usr/lib/x86_64-linux-gnu/libpthread.so.0": "85e21f7dba0394411d00959176fd18b470e575b0b05f1f4f41e5636802ce0500",
+   "/usr/lib/x86_64-linux-gnu/librt.so.1": "7b7b84d1aedda0e0b2bdfc68844362782132180b8f02be1300e21e77572e514b",
+   "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00",
+   "/usr/lib/x86_64-linux-gnu/libutil.so.1": "e3981d10efd152a53f083e38f5f9ddde7a049c85d0ab388a5eec91b52fc98a11",
+   "/usr/lib/x86_64-linux-gnu/libz.so.1.3.1": "85590dd58edf5445e18bc7193e5ebc01ac5841f1ae187e97705a662e90c6421e"
+  },
+  "packages": {
+   "libc-bin": "2.41-12+deb13u4",
+   "libc6": "2.41-12+deb13u4",
+   "libcrypt1": "1:4.4.38-1",
+   "libgcc-s1": "14.2.0-19",
+   "libstdc++6": "14.2.0-19",
+   "linux-image-6.12.107+deb13-amd64": "6.12.107-1",
+   "linux-image-amd64": "6.12.107-1",
+   "zlib1g": "1:1.3.dfsg+really1.3.1-1+b1"
+  },
+  "drift_rule": "any difference in these facts before or during requalification is a FAIL (no retry)"
+ },
+ "acceptance": {
+  "P1": "all 4 runs exit 0; final gate stage == final; provenance_chain.all_verified; scipy_guard.scipy_free",
+  "P2": "per cell, scientific_content_hash identical across its 2 repeats",
+  "P3": "per cell, every certificates.*.certificate_hash identical across its 2 repeats",
+  "P4": "every record's runtime_contract_hash and producer_identity_hash equal the frozen manifest v3 identity (bc75c9ea..., 3692d0fe...)",
+  "P5": "every record's producer.runtime.backend_libraries is non-empty and contains the four required families by absolute path",
+  "Q6": "for each cell and each repeat, scientific_content_hash equals config/Q6_REFERENCE.json (318: 01ff4f7a2632102475805537f439ccbe7932b68339eafa37d5ecdd03c13edda9, 323: 054a5ef0cd932ddcac3b4b2dc1a9b461e353ae6b51a2d726a5ccbc9607e57077) AND the full certificates.*.certificate_hash map (28 certificates per cell) equals the reference map exactly; no run record is byte-identical to a predecessor qualification record"
+ },
+ "verdict_rule": "PASS iff P1-P5 and Q6 all hold; otherwise FAIL (no retry, no tolerance)",
+ "on_q6_failure": "CARRYOVER_ROUTE = REJECTED",
+ "on_q6_failure_effect": "no successor production may launch under GLIBC_SUCCESSOR_PROPOSAL; a new governance decision is required",
+ "cross_host_identity_required": false,
+ "predecessor_bit_identity_required": "YES for carry-over (Q6); it is not a producer-qualification criterion in the source protocol",
+ "measurements": {
+  "c_max": "max over the 4 runs of cpu_seconds_including_dependencies (CPU-s)",
+  "cap_consequence": "the absolute campaign cap stays 300 CPU-h; the frozen formula gives 300 for c_max <= 2431.904 CPU-s; a larger c_max is a governance stop, never a raise (config/CPU_CAP_CONTINUITY.json)",
+  "also_reported": "wall_seconds, peak_rss_kib, cpu_seconds_auxiliary per run"
+ },
+ "cpu_accounting": "requalification CPU is excluded from the campaign cap and disclosed in the result",
+ "result_object": {
+  "schema": "rebaseguard.p5y.k1.cusum-aux5.glibc-successor.q6-result.v1",
+  "fields": ["qualification_P1_P5", "libc_sha256", "glibc_package_version", "cells.<318|323>.<A|B>.{record_sha256, scientific_content_hash, certificate_hashes}", "c_max_cpu_seconds", "host_facts", "containment_post_state_sha256"],
+  "evaluation": "code/glibc_successor.py evaluate_q6 against config/Q6_REFERENCE.json"
+ },
+ "transition_to_production": {
+  "authorized_by_this_protocol": false,
+  "rule": "a Q6 PASS makes carry-over ELIGIBLE_FOR_REVIEW only; production requires independent review, an active countersignature and a successor checkpoint"
+ }
+}

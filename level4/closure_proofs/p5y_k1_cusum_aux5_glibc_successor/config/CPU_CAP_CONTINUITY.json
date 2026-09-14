@@ -1,0 +1,40 @@
+{
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.glibc-successor.cpu-cap-continuity.v1",
+ "status": "FROZEN_PROPOSAL_NOT_AUTHORIZED",
+ "unit": "integer microseconds of CPU",
+ "absolute_campaign_cap_usec": 1080000000000,
+ "absolute_campaign_cap_cpu_h": 300,
+ "absolute_cap_source": "predecessor ledger genesis cap (PROVENANCE_CHECKPOINT dd4c89d7 cost_cap.cap_usec), derived by the frozen COST_CAP_FORMULA (f50331b8) from the Aux5 qualification c_max",
+ "absolute_cap_raise_allowed": false,
+ "absolute_cap_rule": "the campaign (cells 0-325, predecessor plus successor) is bounded by one absolute cap that is never raised. A requalified c_max may only confirm or lower it. The frozen formula stays at 300 CPU-h for any c_max <= 2431.904 CPU-s; the observed production maximum, 2150.945 CPU-s, is below that. A requalified c_max above 2431.904 CPU-s is a governance stop, never a raise.",
+ "predecessor_settled_usec": 262686610580,
+ "predecessor_settled_cpu_h": "72.968502938889",
+ "predecessor_settlement_components_usec": {
+  "committed_in_ledger": 262686468127,
+  "supervisor_run_settlement_REAPER_RUSAGE": 71506,
+  "unmatched_keeper_exit_overhead": 70947
+ },
+ "predecessor_settlement_rule": "computed read-only with the frozen prod_ledger reaper rules (match_run_reap, unmatched_overhead) from the immutable predecessor ledger and reaper; the predecessor ledger is NOT settled in place and is never written",
+ "predecessor_consumption_removable": false,
+ "predecessor_consumption_rule": "predecessor consumption is charged once, as the difference between the absolute cap and the successor ledger's genesis cap. It cannot be removed, reset, re-imported as a second charge, or offset by any successor credit.",
+ "successor_residual_cap_usec": 817313389420,
+ "successor_residual_cap_cpu_h": "227.031497061111",
+ "successor_residual_cap_rule": "successor ledger genesis cap = absolute_campaign_cap_usec - predecessor_settled_usec; bound at successor genesis and never changed (frozen CAP_CHANGE_FORBIDDEN)",
+ "admission_invariant": [115, 100],
+ "admission_rule": "unchanged frozen rule applied inside the successor ledger: admit iff 115 * (committed + sum_open max(R, sampled CPU) + R) <= 100 * successor_residual_cap_usec",
+ "reservation_usec": 3600000000,
+ "double_charge_prevention": "predecessor CPU enters only through the residual cap, keyed to the bound predecessor ledger_state_sha256; the successor ledger has no import transition and never reads predecessor reaper records",
+ "undercharge_prevention": "the unsettled predecessor supervisor run and the unmatched keeper exit are included in predecessor_settled_usec",
+ "qualification_cpu": {
+  "counted_against_cap": false,
+  "disclosed": true,
+  "rule": "new-glibc requalification CPU (cells 318/323 x 2) is not a production cell, is excluded from the cap exactly as the frozen predecessor excluded its qualification CPU, and must be disclosed in the requalification result"
+ },
+ "projection_disclosure": {
+  "remaining_cells": 198,
+  "observed_mean_science_cpu_s": 2051.7,
+  "observed_max_cell_cpu_s": 2150.945,
+  "projected_remaining_cpu_h_at_max": "~118.3 plus overhead",
+  "headroom": "informational only; never an admission criterion"
+ }
+}
