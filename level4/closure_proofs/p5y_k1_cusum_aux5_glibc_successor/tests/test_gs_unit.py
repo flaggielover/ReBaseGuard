@@ -114,7 +114,7 @@ class CompositeTolerance(unittest.TestCase):
                 "genesis_entry_sha256": BINDING["journal"]["genesis_entry_sha256"]}
 
     def tol(self, rep):
-        return {**GC.tolerance_for_production(BINDING), "pairs_sha256": sha256_bytes(canonical(rep["pairs"]))}
+        return {**GC.tolerance_for_production(BINDING), "pairs_sha256": GC.pairs_digest(rep["pairs"])}
 
     def test_exact_tolerance(self):
         r = self.rep()

@@ -38,8 +38,7 @@ def b01_crash_before_seal(scratch):
     c.wait_for(lambda s: attempts(s, cell=128, status="RUNNING"), what="cell 128 running")
     os.kill(owner_pid(c), signal.SIGKILL)
     c.finish(p)
-    code, out = c.run(keep=True)
-    check(code == PS.EXIT_COMPLETE, f"exit {code}: {out[-300:]}")
+    c.run_complete()
     st = c.state()
     (_t, torn), (_s, sealed) = attempts(st, cell=128)
     check(torn["status"] == "TORN" and torn["charge_evidence"] == "REAPER_RUSAGE" and sealed["status"] == "SEALED",
@@ -65,7 +64,7 @@ def b02_crash_after_record_before_envelope(scratch):
     unbound = PL.unbound_sealed(c.state())
     check(len(unbound) == 1, f"one sealed-but-unbound attempt: {unbound}")
     check(not c.audit()["INTEGRITY_READY_FOR_ADJUDICATION"], "an unbound seal is not a production result")
-    check(c.run(keep=True)[0] == PS.EXIT_COMPLETE, "restart binds and completes")
+    c.run_complete()
     check(c.audit()["INTEGRITY_READY_FOR_ADJUDICATION"], "recovered binding verifies")
     w = GSCampaign(scratch, "b02_write_then_die", cells=[128, 129], cores=[0], plan={"128": ["write_then_hang"]})
     p = w.start(keep=True)
@@ -146,7 +145,7 @@ def b05_qualification_reuse(scratch):
     pred.make_terminal()
     tol = pred.tolerance()
     succ = GSCampaign(scratch, "b05_succ", cells=[128, 129], cores=[0])
-    check(succ.run(keep=True)[0] == PS.EXIT_COMPLETE, "successor fixture")
+    succ.run_complete()
     sealed_sha = attempts(succ.state(), cell=128, status="SEALED")[0][1]["seal"]["record_sha256"]
     rep = composite(pred, succ, tol, quals=set(succ.spec.qualification_record_sha256) | {sealed_sha})
     check(rep["state"] == "REFUSED" and any(p.startswith("QUALIFICATION_RECORD_REUSE") for p in rep["problems"]), rep["problems"])
@@ -162,7 +161,7 @@ def b06_incomplete_composite(scratch):
     succ = GSCampaign(scratch, "b06_succ", cells=[128, 129], cores=[0])
     none_yet = composite(pred, succ, tol)
     check(none_yet["state"] == "INCOMPLETE" and not none_yet["successor_ledger_exists"], f"no successor ledger: {none_yet['state']}")
-    check(succ.run(keep=True)[0] == PS.EXIT_COMPLETE, "partial successor complete")
+    succ.run_complete()
     rep = composite(pred, succ, tol)
     check(rep["state"] == "INCOMPLETE" and not rep["K4_READY"] and not rep["union_complete"] and not rep["problems"], f"{rep}")
     expect_refusal("ATTESTATION_REFUSED", GC.build_composite_attestation, rep, successor_checkpoint_sha256="x",

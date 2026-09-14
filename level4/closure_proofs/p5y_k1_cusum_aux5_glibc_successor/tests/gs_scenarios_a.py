@@ -78,14 +78,14 @@ def a01_clean_pregenesis_and_boundary_cells(scratch):
     rr = ISS.classify_runtime_root(c.root, lock_state="FREE", bound_host=host)
     check(rr["state"] == "PRE_GENESIS", f"refused launch residue {rr}")
     cs.write_bytes(saved)
-    code, out = c.run(keep=True)
-    check(code == PS.EXIT_COMPLETE, f"exit {code}: {out[-400:]}")
+    c.run_complete()
     st, entries = c.view()
     authz = c.authz()
     check(set(st["cells"]) == {"128", "129", "325"} and st["cap"]["cap_usec"] == c.spec.cap_usec, "universe and cap")
     check(entries[0]["detail"]["production_authorization"] == authz.block == st["production_authorization"]
           and authz.block["countersignature_sha256"] == sha256_bytes(saved), "authorization-born genesis")
-    check(len(st["overhead_charges"]) == 2, f"refused-launch overhead charged once: {st['overhead_charges']}")
+    check(len(st["overhead_charges"]) == 3 and all(r["settled"] for r in st["supervisor_runs"].values()),
+          f"refused supervisor + two keeper exits charged exactly once each: {st['overhead_charges']}")
     rep = c.audit()
     check(rep["INTEGRITY_READY_FOR_ADJUDICATION"] and len(rep["pairs"]) == 3, f"audit {rep['issues']}")
     for cell in (128, 325):

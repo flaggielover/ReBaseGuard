@@ -79,6 +79,14 @@ class _Base(PA.Campaign):
     def view(self):
         return PI.ledger_view(self.spec)
 
+    def run_complete(self, timeout: float = 600) -> str:
+        """Run to COMPLETE, then settle (reconcile runs, charge keeper exits), as the provenance precedent does before
+        an integrity audit."""
+        code, out = self.run(keep=True, timeout=timeout)
+        check(code == PS.EXIT_COMPLETE, f"{self.dir.name}: exit {code}: {out[-300:]}")
+        self.settle()
+        return out
+
     def audit(self):
         return PI.audit(self.spec, self.authz())
 
@@ -166,7 +174,7 @@ class PredFixture(_Base):
         """Bound at 'binding time', exactly as PREDECESSOR_BINDING.json was collected before any successor object."""
         rep, st = self.audit(), self.state()
         return {"stop": st["halt"], "unsettled_runs": sorted(r for r, x in st["supervisor_runs"].items() if not x["settled"]),
-                "pairs_sha256": sha256_bytes(canonical(rep["pairs"])), "ledger_state_sha256": rep["ledger_state_sha256"],
+                "pairs_sha256": GC.pairs_digest(rep["pairs"]), "ledger_state_sha256": rep["ledger_state_sha256"],
                 "genesis_entry_sha256": rep["genesis_entry_sha256"], "carryover_cells": list(range(self.sealed))}
 
 
@@ -187,8 +195,7 @@ def full_composite(scratch: Path):
         tol = pred.tolerance()
         succ = GSCampaign(scratch, "fx_succ_full", cells=list(range(128, 326)), cores=[0, 2, 4, 6], burn_s=0.01,
                           heartbeat_s=2.0)
-        code, out = succ.run(keep=True, timeout=2400)
-        check(code == PS.EXIT_COMPLETE, f"successor fixture exit {code}: {out[-300:]}")
+        succ.run_complete(timeout=2400)
         CACHE["full"] = (pred, tol, succ)
     return CACHE["full"]
 

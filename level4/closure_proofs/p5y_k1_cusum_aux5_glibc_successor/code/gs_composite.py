@@ -19,11 +19,17 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import glibc_successor as G
 import gs_schema as GS
 import prov_integrity as PI
 from prod_common import Refusal, atomic_write_bytes, atomic_write_json, canonical, sha256_bytes
 
 HALF_KEYS = ("ledger_state_sha256", "genesis_entry_sha256", "authorization", "disposition")
+
+
+def pairs_digest(pairs) -> str:
+    """The pairs digest exactly as PREDECESSOR_BINDING.json records it (glibc_successor.collect: sha256 of canon(pairs))."""
+    return sha256_bytes(G.canon(pairs))
 
 
 def tolerance_for_production(binding: dict) -> dict:
@@ -49,7 +55,7 @@ def predecessor_problems(rep: dict, tol: dict) -> list[str]:
     cells = sorted(int(c) for c in rep.get("pairs") or {})
     if cells != sorted(tol["carryover_cells"]) or rep["A_completeness"]["sealed"] != len(tol["carryover_cells"]):
         p.append("PREDECESSOR_PAIRS_NOT_EXACTLY_THE_CARRYOVER_CELLS")
-    if sha256_bytes(canonical(rep.get("pairs"))) != tol["pairs_sha256"]:
+    if pairs_digest(rep.get("pairs")) != tol["pairs_sha256"]:
         p.append("PREDECESSOR_PAIRS_DIGEST_DIFFERS_FROM_BINDING")
     for k in ("ledger_state_sha256", "genesis_entry_sha256"):
         if rep.get(k) != tol[k]:
