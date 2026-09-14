@@ -1,0 +1,111 @@
+{
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.glibc-successor.freeze-record.v1",
+ "status": "FROZEN_PRE_PRODUCTION",
+ "frozen_utc": "2026-09-14",
+ "freeze_generation": "r2 (end-of-campaign settlement repair)",
+ "bound_host": "rebaseguard-vultr-02",
+ "checkpoint_path": "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/config/GLIBC_SUCCESSOR_CHECKPOINT.json",
+ "checkpoint_sha256": "f9380847c92b6f5eb014d56021d11c2b66a95bef0990e392c7021c05d537a6cb",
+ "run_authorization": {
+  "path": "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/config/RUN_AUTHORIZATION.json",
+  "sha256": "0c7621d47fd862e06355276492fe9a425f8fe2eec280d8c7375a4acedaaa043f",
+  "commit": "c4231ff99205c9d6701e2b10fe98b5aabd14f0c2",
+  "authorization_id": "CUSUM-AUX5-GLIBC-PROD-AUTH-002",
+  "production_run_id": "CUSUM-AUX5-GLIBC-PROD-R2",
+  "ledger_id": "70fec439118575ca4fd053ad16701e7416047163d3f128e98d47375ab9fc5b52",
+  "pre_result": "committed at c4231ff9 before any successor ledger; /root/work/postk1-runs/cusum-aux5-production-glibc-r1 absent before issuance, before and after synthetic acceptance r4, and at 2026-09-14T12:35:28Z",
+  "issuance_host_state": {
+   "observed_utc": "2026-09-14T12:35:28Z",
+   "successor_runtime_root": "ABSENT",
+   "successor_ledger_genesis": "NONE",
+   "scientific_production_result": "NONE",
+   "campaign_processes": [],
+   "boot_id": "eefa85dc-14db-4ba0-912f-f95eeece9c2b"
+  },
+  "deterministic_rebuild": "the bound checkout at c4231ff9 on rebaseguard-vultr-02 rebuilt the checkpoint (f9380847) and the authorization (0c7621d4) byte-identically, in memory, before acceptance r4"
+ },
+ "carryover_countersignature": {
+  "path": "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/config/COUNTERSIGNATURE.json",
+  "sha256": "e1ee7fb112c4d013c53f3adf10f12421c04b39f2ec1d3edd98ec2cc07edf143a",
+  "semantics": "necessary but not sufficient for production launch",
+  "reusable_after_supersession": "YES: carryover_countersignature.py verify PASS with checkpoint f9380847 present; it binds no successor checkpoint, authorization or gs_* hash, every file and repo object it pins is unchanged, and it names 'a valid successor checkpoint that binds this countersignature sha256' generically"
+ },
+ "end_of_campaign_settlement": {
+  "command": "python -B level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_entry.py settle",
+  "version": "gs-settle-r1",
+  "binding": "GLIBC_SUCCESSOR_CHECKPOINT.json END_OF_CAMPAIGN_SETTLEMENT (module sha256 of gs_settle.py and gs_entry.py), checked by preflight G02",
+  "document": "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/SETTLEMENT_REPAIR.md"
+ },
+ "supersedes": {
+  "checkpoint_sha256": "51df21860139554ee38874c3578cfcafdf7949cd3916897a129d29467891ab16",
+  "run_authorization_sha256": "03b9ca8085a93a1a54d567f2efacf6fddfcd4f142c900735ea973a9269f87b2f",
+  "previous_freeze_record": "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/evidence/supersession_r1/superseded_objects/FREEZE_RECORD.json",
+  "record": "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/evidence/supersession_r1/SUPERSESSION_RECORD.json",
+  "never_launched": true
+ },
+ "synthetic_acceptance": {
+  "path": "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/evidence/acceptance_r4/ACCEPTANCE_RESULT.json",
+  "sha256": "b973c0af88e07850c445bc407de4fad3ca19ab4358b08d74586e4007ed91a645",
+  "generation": "r4",
+  "verdict": "PASS",
+  "tests_passed": 37,
+  "tests_total": 37,
+  "sanctioned_settlement_tests": 19,
+  "sanctioned_settle_invocations": 53,
+  "direct_settlement_calls_in_tests": 0,
+  "ran_on": "rebaseguard-vultr-02, clean checkout /root/work/postk1-aux5-glibc at c4231ff9, 2026-09-14T12:30:10Z..12:34:47Z, CPython 3.12.3 (bound venv)",
+  "non_result_bearing": true,
+  "first_and_only_acceptance_run_of_this_candidate": true,
+  "invariants_recorded": {
+   "checkpoint_unchanged_during_run": true,
+   "successor_runtime_root_absent_before_and_after": true,
+   "predecessor_runtime_unchanged": true,
+   "frozen_certifier_started": false,
+   "production_launched": false
+  },
+  "end_to_end": "b07: COMPLETE successor ledger -> (before settlement: audit D_unsettled_supervisor_runs, composite INCOMPLETE) -> gs_entry.py settle -> frozen integrity audit INTEGRITY_READY -> composite COMPLETE (128 + 198) -> K4 composite attestation + frozen K4 gate -> export 326 records",
+  "prior_runs_disclosed": [
+   {
+    "run": "r1",
+    "candidate_commit": "ba8541e68e6e27d80b4c70b44700c037d2d920ba",
+    "result_sha256": "df40e54619be1ee536064c9e2eb0c17f74a9122e871f49499ee7907ffba6081e",
+    "verdict": "FAIL (2/24 passed)",
+    "cause": "candidate bound an ignored local file (qualification_r1/launcher.log); fail-closed BOUND_SOURCE_DRIFT on the clean clone"
+   },
+   {
+    "run": "r2",
+    "candidate_commit": "7bea33ea30438458e69c467848f53d4c21e57aa5",
+    "result_sha256": "e6bf0c7b0691ff0f74fa2b38a9138441c3bb7e4276c4a394060b2baa73d042d0",
+    "verdict": "FAIL (13/24 passed)",
+    "cause": "composite pairs digest used prod_common.canonical instead of glibc_successor.canon; synthetic successor ledgers audited without settlement (the latter repaired only in the test harness at r3, which the independent review found; repaired in production by this freeze)"
+   },
+   {
+    "run": "r3",
+    "candidate_commit": "fa18b26f06894c69003f41cab812052cceff6f2c",
+    "result_sha256": "a4d39631146bc2be0b422b1cbd8779d2520e3de18a4c3a168dbe52b8c50b8290",
+    "verdict": "PASS (24/24) for the superseded checkpoint 51df2186; settled through the frozen harness helper, not a production command",
+    "cause": "superseded"
+   }
+  ]
+ },
+ "carryover": {
+  "OLD_CARRYOVER": [0, 127],
+  "NEW_PRODUCTION": [128, 325],
+  "carryover_manifest_sha256": "918d156aa44b9c084c2dd3adf00838c6f141960bc61c1a83e227af2a9b7a8a67",
+  "predecessor_checkpoint_sha256": "dd4c89d773c411355d93d0d703e40c027f9913e11e116e4bfe35117f84b4baf2"
+ },
+ "cpu": {
+  "PREDECESSOR_SETTLED_CPU_US": 262686610580,
+  "ABSOLUTE_CAP_US": 1080000000000,
+  "SUCCESSOR_RESIDUAL_CAP_US": 817313389420,
+  "ADMISSION_INVARIANT": [115, 100]
+ },
+ "production_launched": false,
+ "successor_ledger_exists": false,
+ "launch_requires": [
+  "gs_entry.py preflight READY (G01-G18) on rebaseguard-vultr-02 from /root/work/postk1-aux5-glibc, run immediately before launch",
+  "an explicit operator command: gs_entry.py launch --confirm-checkpoint-sha256 f9380847... --confirm-authorization-sha256 0c7621d4...",
+  "containment kept applied, boot id eefa85dc unchanged, no host or runtime drift",
+  "after the terminal disposition: gs_entry.py settle, then composite-audit, attest and export"
+ ]
+}

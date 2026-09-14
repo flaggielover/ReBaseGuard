@@ -1,0 +1,722 @@
+{
+ "GLIBC_SUCCESSOR_SYNTHETIC_ACCEPTANCE": "PASS",
+ "bound_sources_verified": true,
+ "checkpoint_sha256": "f9380847c92b6f5eb014d56021d11c2b66a95bef0990e392c7021c05d537a6cb",
+ "checkpoint_unchanged_during_run": true,
+ "coverage": {
+  "ABSENT or PRE_GENESIS successor root -> settlement refused": [
+   "c04_refused_unless_terminal_ledger"
+  ],
+  "COMPLETE + one unsettled final supervisor run -> sanctioned settle -> settled -> audit ready": [
+   "c01_complete_settle_audit_ready"
+  ],
+  "CPU cap continuous and unchanged through settlement": [
+   "c12_cap_continuity_through_settlement"
+  ],
+  "CPU cap exhaustion -> FAIL (terminal, no further admission)": [
+   "a12_cap_exhaustion"
+  ],
+  "K4 composite attestation": [
+   "b07_complete_composite_and_k4_gate"
+  ],
+  "Q6 records are never production": [
+   "b05_qualification_reuse"
+  ],
+  "a cap change in the campaign specification refuses settlement": [
+   "c12_cap_continuity_through_settlement"
+  ],
+  "a foreign authorization -> settlement refused": [
+   "c07_run_identity_altered"
+  ],
+  "a forged cap refuses settlement": [
+   "c12_cap_continuity_through_settlement"
+  ],
+  "a live synthetic supervisor is detected": [
+   "b11_process_scan"
+  ],
+  "a predecessor-shaped ledger is never settled by the successor": [
+   "c09_predecessor_runtime_refused"
+  ],
+  "active supervisor or worker on the host -> settlement refused": [
+   "c05_refused_while_campaign_process_runs"
+  ],
+  "altered CPU / rusage accounting -> fail closed": [
+   "c08_cpu_accounting_altered"
+  ],
+  "altered residual cap -> FAIL": [
+   "a11_cap_continuity"
+  ],
+  "altered supervisor run identity -> fail closed": [
+   "c07_run_identity_altered"
+  ],
+  "ambiguous reaper evidence -> fail closed": [
+   "c06_reaper_evidence_missing_or_malformed"
+  ],
+  "boot-id change -> FAIL": [
+   "a09_boot_change"
+  ],
+  "both provenance halves disclosed": [
+   "b07_complete_composite_and_k4_gate"
+  ],
+  "budget-exhausted successor -> settled, never adjudication-ready": [
+   "c11_halted_and_exhausted_stay_terminal"
+  ],
+  "cell 128 reservation -> PASS": [
+   "a01_clean_pregenesis_and_boundary_cells"
+  ],
+  "cell 325 reservation -> PASS": [
+   "a01_clean_pregenesis_and_boundary_cells"
+  ],
+  "cell 326 -> FAIL": [
+   "a03_cell_326_refused"
+  ],
+  "changed old pair -> FAIL": [
+   "a05_changed_old_pair"
+  ],
+  "changed predecessor ledger hash -> FAIL": [
+   "a04_changed_predecessor_ledger"
+  ],
+  "changing the invariant -> FAIL": [
+   "a11_cap_continuity"
+  ],
+  "checkpoint without run authorization -> launch FAIL": [
+   "b09_checkpoint_without_authorization"
+  ],
+  "clean pre-genesis -> PASS": [
+   "a01_clean_pregenesis_and_boundary_cells"
+  ],
+  "containment removed -> FAIL": [
+   "a10_containment_removed"
+  ],
+  "countersignature alone without checkpoint -> launch FAIL": [
+   "b08_countersignature_alone"
+  ],
+  "crash after scientific record but before provenance envelope -> reconcile safely": [
+   "b02_crash_after_record_before_envelope"
+  ],
+  "crash before seal -> recover safely": [
+   "b01_crash_before_seal"
+  ],
+  "crash during settlement -> repeatable, idempotent recovery, charged exactly once": [
+   "c03_crash_during_settlement"
+  ],
+  "double charging -> FAIL": [
+   "a11_cap_continuity"
+  ],
+  "duplicate launch cannot duplicate results": [
+   "b03_duplicate_seal"
+  ],
+  "duplicate old/new cell -> FAIL": [
+   "b04_duplicate_old_new_cell"
+  ],
+  "duplicate seal -> FAIL": [
+   "b03_duplicate_seal"
+  ],
+  "envelope binds the successor authorization and dd4c89d7": [
+   "a01_clean_pregenesis_and_boundary_cells"
+  ],
+  "exact complete synthetic composite -> PASS": [
+   "b07_complete_composite_and_k4_gate"
+  ],
+  "foreign authorization refused": [
+   "b10_isolation_and_foreign_authorization"
+  ],
+  "fresh 300 CPU-h reset -> FAIL": [
+   "a11_cap_continuity"
+  ],
+  "frozen K4 integrity gate accepts the composite attestation (assembly not run)": [
+   "b07_complete_composite_and_k4_gate"
+  ],
+  "host drift -> FAIL": [
+   "a08_host_drift"
+  ],
+  "host idle check has no self-matching": [
+   "b11_process_scan"
+  ],
+  "incomplete composite -> not K4-ready": [
+   "b06_incomplete_composite"
+  ],
+  "invalid countersignature -> FAIL": [
+   "a07_invalid_countersignature"
+  ],
+  "keeper evidence charges the lost attempt": [
+   "b01_crash_before_seal"
+  ],
+  "launch never passes before the freeze": [
+   "b09_checkpoint_without_authorization"
+  ],
+  "live campaign lock -> settlement refused": [
+   "c04_refused_unless_terminal_ledger"
+  ],
+  "malformed reaper evidence -> fail closed": [
+   "c06_reaper_evidence_missing_or_malformed"
+  ],
+  "missing Q6 -> FAIL": [
+   "a06_missing_q6"
+  ],
+  "missing reaper evidence -> fail closed": [
+   "c06_reaper_evidence_missing_or_malformed"
+  ],
+  "no acceptance scenario settles through a helper": [
+   "c13_production_command_and_no_bypass"
+  ],
+  "no recomputation of carry-over cells": [
+   "a02_old_cells_refused"
+  ],
+  "no settlement target inside a repository checkout": [
+   "c10_qualification_runtime_refused"
+  ],
+  "non-terminal ledger (crashed OPEN, DRAINED) -> settlement refused": [
+   "c04_refused_unless_terminal_ledger"
+  ],
+  "old cell reservation 0-127 -> FAIL": [
+   "a02_old_cells_refused"
+  ],
+  "old/new disjointness": [
+   "b04_duplicate_old_new_cell"
+  ],
+  "omitting predecessor consumption -> FAIL": [
+   "a11_cap_continuity"
+  ],
+  "pre-freeze launch preflight: every live check PASS; only freeze-dependent checks fail": [
+   "a00_prefreeze_live_preflight"
+  ],
+  "predecessor runtime passed accidentally -> refused": [
+   "c09_predecessor_runtime_refused"
+  ],
+  "predecessor runtime read only": [
+   "b10_isolation_and_foreign_authorization"
+  ],
+  "production `gs_entry.py settle` refuses without a successor ledger and creates nothing": [
+   "c13_production_command_and_no_bypass"
+  ],
+  "production isolation": [
+   "b10_isolation_and_foreign_authorization"
+  ],
+  "production universe is exactly 128-325": [
+   "a03_cell_326_refused"
+  ],
+  "qualification record reuse -> FAIL": [
+   "b05_qualification_reuse"
+  ],
+  "qualification runtime passed accidentally -> refused": [
+   "c10_qualification_runtime_refused"
+  ],
+  "raising the absolute cap -> FAIL": [
+   "a11_cap_continuity"
+  ],
+  "reboot or provider maintenance fails closed": [
+   "a09_boot_change"
+  ],
+  "refused launch leaves PRE_GENESIS residue only": [
+   "a01_clean_pregenesis_and_boundary_cells"
+  ],
+  "settle twice -> no double CPU charge": [
+   "c02_settle_twice_idempotent"
+  ],
+  "settlement charges REAPER_RUSAGE exactly (reap - children - self) plus the keeper exit, once": [
+   "c01_complete_settle_audit_ready"
+  ],
+  "settlement is idempotent": [
+   "c02_settle_twice_idempotent"
+  ],
+  "settlement never alters records, envelopes, cells, attempts, disposition, halt or cap": [
+   "c01_complete_settle_audit_ready"
+  ],
+  "settlement tooling bound by the checkpoint": [
+   "c13_production_command_and_no_bypass"
+  ],
+  "terminal HALTED successor -> settled for accounting only, never converted to COMPLETE": [
+   "c11_halted_and_exhausted_stay_terminal"
+  ],
+  "undercharging predecessor settlement -> FAIL": [
+   "a11_cap_continuity"
+  ],
+  "union exactly 0-325": [
+   "b04_duplicate_old_new_cell"
+  ]
+ },
+ "finished_utc": "2026-09-14T12:34:47Z",
+ "frozen_certifier_started": false,
+ "generation": "r4",
+ "git_head": "c4231ff99205c9d6701e2b10fe98b5aabd14f0c2",
+ "host_name": "rebaseguard-vultr-02",
+ "non_result_bearing": true,
+ "passed": 37,
+ "predecessor_runtime_unchanged": true,
+ "predecessor_snapshot": {
+  "files": {
+   "journal.jsonl": "02170cae2cb25559e24d802e827d19c3c07fd5ee104aa246778f9e5034edc00c",
+   "ledger.json": "eebc21e7801888b31e892f9e81aa7c4954758cb55031afbcfac6be27f6e4d712",
+   "reaper.jsonl": "84d09fd47f794246a1820d873dd4ac398e132bfad446372e86b1e05ad5278f9f"
+  },
+  "record_envelope_digest": "07249d3bb27a540fd557fa035bc6b3f757cb8518bb99071dcf6ea1be78a85280"
+ },
+ "production_launched": false,
+ "python": "3.12.3",
+ "run_authorization_sha256": "0c7621d47fd862e06355276492fe9a425f8fe2eec280d8c7375a4acedaaa043f",
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.glibc-successor.synthetic-acceptance.v1",
+ "scratch": "/root/work/postk1-runs/glibc-successor-acceptance-r4",
+ "settlement": {
+  "command": "python -B level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_entry.py settle",
+  "direct_settlement_calls_in_tests": [],
+  "frozen_harness_helper": "disabled (gs_fixtures._Base.settle raises)",
+  "invocations_exit_0": 19,
+  "invocations_refused": 34,
+  "sanctioned_settle_invocations_total": 53,
+  "sanctioned_settlement_test_count": 19,
+  "sanctioned_settlement_tests": [
+   "a01_clean_pregenesis_and_boundary_cells",
+   "b01_crash_before_seal",
+   "b02_crash_after_record_before_envelope",
+   "b05_qualification_reuse",
+   "b06_incomplete_composite",
+   "b07_complete_composite_and_k4_gate",
+   "c01_complete_settle_audit_ready",
+   "c02_settle_twice_idempotent",
+   "c03_crash_during_settlement",
+   "c04_refused_unless_terminal_ledger",
+   "c05_refused_while_campaign_process_runs",
+   "c06_reaper_evidence_missing_or_malformed",
+   "c07_run_identity_altered",
+   "c08_cpu_accounting_altered",
+   "c09_predecessor_runtime_refused",
+   "c10_qualification_runtime_refused",
+   "c11_halted_and_exhausted_stay_terminal",
+   "c12_cap_continuity_through_settlement",
+   "c13_production_command_and_no_bypass"
+  ],
+  "version": "gs-settle-r1"
+ },
+ "started_utc": "2026-09-14T12:30:10Z",
+ "successor_runtime_root_absent_before_and_after": true,
+ "tests": {
+  "a00_prefreeze_live_preflight": {
+   "details": {
+    "failing_before_freeze": {
+     "G01_checkpoint_and_freeze": "NOT_FROZEN",
+     "G05_run_authorization": "NOT_FROZEN",
+     "G06_synthetic_acceptance": "NOT_FROZEN"
+    },
+    "passing": [
+     "G02_bound_sources",
+     "G03_carryover_countersignature",
+     "G04_proposal_q6_launch_readiness",
+     "G07_checkout",
+     "G08_predecessor_binding_live",
+     "G09_predecessor_halted_immutable",
+     "G10_composite_predecessor_half",
+     "G11_containment",
+     "G12_host_runtime_identity_and_boot",
+     "G13_runtime_contract_probe",
+     "G14_universe_and_cap",
+     "G15_qualification_firewall",
+     "G16_protected_trees",
+     "G17_run_state",
+     "G18_host_idle"
+    ]
+   },
+   "sanctioned_settle_invocations": 0,
+   "seconds": 108.8,
+   "status": "PASS"
+  },
+  "a01_clean_pregenesis_and_boundary_cells": {
+   "details": {
+    "overhead_records": 3,
+    "pairs": [
+     "128",
+     "129",
+     "325"
+    ],
+    "pre_genesis": "PRE_GENESIS"
+   },
+   "sanctioned_settle_invocations": 1,
+   "seconds": 1.1,
+   "status": "PASS"
+  },
+  "a02_old_cells_refused": {
+   "details": {
+    "forged_row": "LEDGER_CORRUPT",
+    "op_reserve": "CELL_NOT_IN_UNIVERSE",
+    "spec": "RECOMPUTATION_OF_CARRYOVER_CELL"
+   },
+   "sanctioned_settle_invocations": 0,
+   "seconds": 0.6,
+   "status": "PASS"
+  },
+  "a03_cell_326_refused": {
+   "details": {
+    "production_universe": [
+     128,
+     325
+    ]
+   },
+   "sanctioned_settle_invocations": 0,
+   "seconds": 0.0,
+   "status": "PASS"
+  },
+  "a04_changed_predecessor_ledger": {
+   "details": {
+    "G08": "PREDECESSOR_CHANGED_SINCE_BINDING",
+    "G09": "PREDECESSOR_EVIDENCE_CHANGED",
+    "composite": "refused"
+   },
+   "sanctioned_settle_invocations": 0,
+   "seconds": 1.1,
+   "status": "PASS"
+  },
+  "a05_changed_old_pair": {
+   "details": {
+    "envelope": [
+     "PREDECESSOR_ISSUE_NOT_TOLERATED: ['B_pair_refused', 'C_evidence']",
+     "PREDECESSOR_PAIRS_NOT_EXACTLY_THE_CARRYOVER_CELLS"
+    ],
+    "record": [
+     "PREDECESSOR_ISSUE_NOT_TOLERATED: ['B_pair_refused', 'C_evidence']",
+     "PREDECESSOR_PAIRS_NOT_EXACTLY_THE_CARRYOVER_CELLS"
+    ]
+   },
+   "sanctioned_settle_invocations": 0,
+   "seconds": 1.2,
+   "status": "PASS"
+  },
+  "a06_missing_q6": {
+   "details": {
+    "launch_readiness": [
+     "Q6_ABSENT",
+     "COUNTERSIGNATURE_INVALID",
+     "SUCCESSOR_CHECKPOINT_INVALID"
+    ]
+   },
+   "sanctioned_settle_invocations": 0,
+   "seconds": 0.0,
+   "status": "PASS"
+  },
+  "a07_invalid_countersignature": {
+   "details": {
+    "G03": "COUNTERSIGNATURE_INVALID",
+    "synthetic": "COUNTERSIGNATURE_INVALID"
+   },
+   "sanctioned_settle_invocations": 0,
+   "seconds": 0.4,
+   "status": "PASS"
+  },
+  "a08_host_drift": {
+   "details": {
+    "kernel": "HOST_DRIFT",
+    "library": "HOST_DRIFT"
+   },
+   "sanctioned_settle_invocations": 0,
+   "seconds": 0.7,
+   "status": "PASS"
+  },
+  "a09_boot_change": {
+   "details": {
+    "G12": "HOST_DRIFT",
+    "admission_guard": "HOST_DRIFT"
+   },
+   "sanctioned_settle_invocations": 0,
+   "seconds": 0.4,
+   "status": "PASS"
+  },
+  "a10_containment_removed": {
+   "details": {
+    "dropin": "CONTAINMENT_NOT_APPLIED",
+    "holds": "CONTAINMENT_NOT_APPLIED",
+    "timer": "CONTAINMENT_NOT_APPLIED"
+   },
+   "sanctioned_settle_invocations": 0,
+   "seconds": 0.7,
+   "status": "PASS"
+  },
+  "a11_cap_continuity": {
+   "details": {
+    "double_charge": "CAP_RESIDUAL_CHANGED",
+    "invariant": "CAP_INVARIANT_CHANGED",
+    "ledger_cap_reset": "refused (authorization recomputation / CAP_CHANGE_FORBIDDEN)",
+    "omit_predecessor": "CAP_PREDECESSOR_CONSUMPTION",
+    "raise_absolute": "CAP_ABSOLUTE_CHANGED",
+    "reset_300": "CAP_RESET_FORBIDDEN",
+    "residual": "CAP_RESIDUAL_CHANGED",
+    "undercharge": "CAP_PREDECESSOR_CONSUMPTION"
+   },
+   "sanctioned_settle_invocations": 0,
+   "seconds": 0.9,
+   "status": "PASS"
+  },
+  "a12_cap_exhaustion": {
+   "details": {
+    "sealed": 7
+   },
+   "sanctioned_settle_invocations": 0,
+   "seconds": 3.5,
+   "status": "PASS"
+  },
+  "b01_crash_before_seal": {
+   "details": {
+    "torn_charge_usec": 5322
+   },
+   "sanctioned_settle_invocations": 1,
+   "seconds": 1.0,
+   "status": "PASS"
+  },
+  "b02_crash_after_record_before_envelope": {
+   "details": {
+    "recovered_seal": "A00000-C0128",
+    "unbound_after_crash": [
+     "A00000-C0128"
+    ]
+   },
+   "sanctioned_settle_invocations": 1,
+   "seconds": 1.8,
+   "status": "PASS"
+  },
+  "b03_duplicate_seal": {
+   "details": {
+    "forged": "DUPLICATE_SEALED_CELL",
+    "second_launch": "ANOTHER_SUPERVISOR_LIVE"
+   },
+   "sanctioned_settle_invocations": 0,
+   "seconds": 3.9,
+   "status": "PASS"
+  },
+  "b04_duplicate_old_new_cell": {
+   "details": {
+    "problems": [
+     "PARTITION_OVERLAP: [2]",
+     "SUCCESSOR_UNIVERSE_CONTAINS_A_CARRYOVER_CELL"
+    ]
+   },
+   "sanctioned_settle_invocations": 0,
+   "seconds": 1.2,
+   "status": "PASS"
+  },
+  "b05_qualification_reuse": {
+   "details": {
+    "composite": "QUALIFICATION_RECORD_REUSE",
+    "q6_318A": "QUALIFICATION_RECORD_REUSE",
+    "qualification_318A": "QUALIFICATION_RECORD_REUSE"
+   },
+   "sanctioned_settle_invocations": 1,
+   "seconds": 1.4,
+   "status": "PASS"
+  },
+  "b06_incomplete_composite": {
+   "details": {
+    "new": 2,
+    "old": 3,
+    "state": "INCOMPLETE"
+   },
+   "sanctioned_settle_invocations": 1,
+   "seconds": 1.6,
+   "status": "PASS"
+  },
+  "b07_complete_composite_and_k4_gate": {
+   "details": {
+    "cells_verified": 326,
+    "drained_state": "INCOMPLETE",
+    "k4_assembly_run": false,
+    "k4_gate": "accepted"
+   },
+   "sanctioned_settle_invocations": 1,
+   "seconds": 56.2,
+   "status": "PASS"
+  },
+  "b08_countersignature_alone": {
+   "details": {
+    "launch_readiness": [
+     "SUCCESSOR_CHECKPOINT_ABSENT"
+    ]
+   },
+   "sanctioned_settle_invocations": 0,
+   "seconds": 0.0,
+   "status": "PASS"
+  },
+  "b09_checkpoint_without_authorization": {
+   "details": {
+    "launch_before_freeze": "REFUSED",
+    "supervisor": "AUTHORIZATION_MISSING"
+   },
+   "sanctioned_settle_invocations": 0,
+   "seconds": 53.5,
+   "status": "PASS"
+  },
+  "b10_isolation_and_foreign_authorization": {
+   "details": {
+    "foreign_authorization": "refused",
+    "refused_roots": 3
+   },
+   "sanctioned_settle_invocations": 0,
+   "seconds": 0.7,
+   "status": "PASS"
+  },
+  "b11_process_scan": {
+   "details": {
+    "detected_kinds": [
+     "SUPERVISOR_OR_WORKER"
+    ]
+   },
+   "sanctioned_settle_invocations": 0,
+   "seconds": 4.2,
+   "status": "PASS"
+  },
+  "c01_complete_settle_audit_ready": {
+   "details": {
+    "audit": "INTEGRITY_READY_FOR_ADJUDICATION",
+    "charged_usec": 74140,
+    "events": [
+     "RUN_SETTLED",
+     "OVERHEAD_CHARGED"
+    ],
+    "run": "R20260914T123415Z-134686"
+   },
+   "sanctioned_settle_invocations": 1,
+   "seconds": 0.9,
+   "status": "PASS"
+  },
+  "c02_settle_twice_idempotent": {
+   "details": {
+    "committed_usec": 540725,
+    "first": "SETTLED",
+    "second_and_third": "ALREADY_SETTLED"
+   },
+   "sanctioned_settle_invocations": 3,
+   "seconds": 1.1,
+   "status": "PASS"
+  },
+  "c03_crash_during_settlement": {
+   "details": {
+    "between_transitions": {
+     "charged_usec": 72577,
+     "relation_after_crash": "CONTINUOUS"
+    },
+    "inside_run_settled": {
+     "charged_usec": 73527,
+     "relation_after_crash": "JOURNAL_BEHIND_ONE"
+    }
+   },
+   "sanctioned_settle_invocations": 4,
+   "seconds": 2.1,
+   "status": "PASS"
+  },
+  "c04_refused_unless_terminal_ledger": {
+   "details": {
+    "absent": "NO_LEDGER",
+    "drained": "NOT_TERMINAL",
+    "lock_held": "ANOTHER_SUPERVISOR_LIVE",
+    "open_after_crash": "NOT_TERMINAL",
+    "pre_genesis": "PRE_GENESIS"
+   },
+   "sanctioned_settle_invocations": 5,
+   "seconds": 3.1,
+   "status": "PASS"
+  },
+  "c05_refused_while_campaign_process_runs": {
+   "details": {
+    "once_idle": "SETTLED",
+    "while_busy": "HOST_NOT_IDLE"
+   },
+   "sanctioned_settle_invocations": 2,
+   "seconds": 7.5,
+   "status": "PASS"
+  },
+  "c06_reaper_evidence_missing_or_malformed": {
+   "details": {
+    "keeper_exit_removed": "SETTLEMENT_EVIDENCE_MISSING",
+    "reaper_file_deleted": "SETTLEMENT_EVIDENCE_MISSING",
+    "supervisor_reap_duplicated": "SETTLEMENT_EVIDENCE_AMBIGUOUS",
+    "supervisor_reap_removed": "SETTLEMENT_EVIDENCE_MISSING",
+    "unreadable_line": "REAPER_UNREADABLE"
+   },
+   "sanctioned_settle_invocations": 5,
+   "seconds": 2.9,
+   "status": "PASS"
+  },
+  "c07_run_identity_altered": {
+   "details": {
+    "foreign_authorization": "AUTHORIZATION_MISMATCH",
+    "ledger_json_edited_under_journal": "LEDGER_ROLLBACK_OR_MUTATION",
+    "ledger_run_pid_forged_consistently": "SETTLEMENT_EVIDENCE_MISSING",
+    "reap_boot_altered": "SETTLEMENT_EVIDENCE_MISSING",
+    "reap_exit_code_altered": "SETTLEMENT_EVIDENCE_CONTRADICTORY",
+    "reap_pid_altered": "SETTLEMENT_EVIDENCE_MISSING"
+   },
+   "sanctioned_settle_invocations": 6,
+   "seconds": 3.4,
+   "status": "PASS"
+  },
+  "c08_cpu_accounting_altered": {
+   "details": {
+    "ledger_committed_forged": "ACCOUNTING_CORRUPT",
+    "ledger_run_children_forged": "SETTLEMENT_EVIDENCE_CONTRADICTORY",
+    "reap_rusage_below_charged": "SETTLEMENT_EVIDENCE_CONTRADICTORY",
+    "reap_rusage_edited_unsigned": "REAPER_UNREADABLE"
+   },
+   "sanctioned_settle_invocations": 4,
+   "seconds": 2.3,
+   "status": "PASS"
+  },
+  "c09_predecessor_runtime_refused": {
+   "details": {
+    "blocked_root": "SYNTHETIC_PRODUCTION_MIX",
+    "predecessor_cells_unmarked": "RECOMPUTATION_OF_CARRYOVER_CELL",
+    "predecessor_root": "SYNTHETIC_PRODUCTION_MIX",
+    "predecessor_shaped_ledger": "PREDECESSOR_RUNTIME_REFUSED",
+    "successor_production_root": "SYNTHETIC_PRODUCTION_MIX"
+   },
+   "sanctioned_settle_invocations": 5,
+   "seconds": 1.0,
+   "status": "PASS"
+  },
+  "c10_qualification_runtime_refused": {
+   "details": {
+    "aux5_qualification_evidence": "QUALIFICATION_ROOT",
+    "host_q6_runs": "QUALIFICATION_ROOT",
+    "host_qualification_runs": "QUALIFICATION_ROOT",
+    "q6_requalification_evidence": "QUALIFICATION_ROOT",
+    "repository_config": "REPOSITORY_ROOT"
+   },
+   "sanctioned_settle_invocations": 5,
+   "seconds": 0.5,
+   "status": "PASS"
+  },
+  "c11_halted_and_exhausted_stay_terminal": {
+   "details": {
+    "exhausted": {
+     "disposition": "INCOMPLETE_BUDGET_EXHAUSTED",
+     "settlement": "SETTLED"
+    },
+    "halted": {
+     "composite": "INCOMPLETE",
+     "disposition": "HALTED",
+     "settlement": "SETTLED"
+    }
+   },
+   "sanctioned_settle_invocations": 3,
+   "seconds": 4.4,
+   "status": "PASS"
+  },
+  "c12_cap_continuity_through_settlement": {
+   "details": {
+    "cap_usec": 817313389420,
+    "charged_usec": 73971,
+    "forged_cap": "CAP_CHANGE_FORBIDDEN",
+    "spec_cap": "AUTHORIZATION_MISMATCH"
+   },
+   "sanctioned_settle_invocations": 3,
+   "seconds": 2.5,
+   "status": "PASS"
+  },
+  "c13_production_command_and_no_bypass": {
+   "details": {
+    "bypass_scan": "clean",
+    "production_settle": "NO_LEDGER",
+    "settlement_version": "gs-settle-r1"
+   },
+   "sanctioned_settle_invocations": 1,
+   "seconds": 0.2,
+   "status": "PASS"
+  }
+ },
+ "total": 37
+}
