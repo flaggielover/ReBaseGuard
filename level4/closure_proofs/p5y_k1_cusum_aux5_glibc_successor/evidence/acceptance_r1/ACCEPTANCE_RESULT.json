@@ -1,0 +1,425 @@
+{
+ "GLIBC_SUCCESSOR_SYNTHETIC_ACCEPTANCE": "PASS",
+ "bound_sources_verified": true,
+ "checkpoint_sha256": "51df21860139554ee38874c3578cfcafdf7949cd3916897a129d29467891ab16",
+ "checkpoint_unchanged_during_run": true,
+ "coverage": {
+  "CPU cap exhaustion -> FAIL (terminal, no further admission)": [
+   "a12_cap_exhaustion"
+  ],
+  "K4 composite attestation": [
+   "b07_complete_composite_and_k4_gate"
+  ],
+  "Q6 records are never production": [
+   "b05_qualification_reuse"
+  ],
+  "a live synthetic supervisor is detected": [
+   "b11_process_scan"
+  ],
+  "altered residual cap -> FAIL": [
+   "a11_cap_continuity"
+  ],
+  "boot-id change -> FAIL": [
+   "a09_boot_change"
+  ],
+  "both provenance halves disclosed": [
+   "b07_complete_composite_and_k4_gate"
+  ],
+  "cell 128 reservation -> PASS": [
+   "a01_clean_pregenesis_and_boundary_cells"
+  ],
+  "cell 325 reservation -> PASS": [
+   "a01_clean_pregenesis_and_boundary_cells"
+  ],
+  "cell 326 -> FAIL": [
+   "a03_cell_326_refused"
+  ],
+  "changed old pair -> FAIL": [
+   "a05_changed_old_pair"
+  ],
+  "changed predecessor ledger hash -> FAIL": [
+   "a04_changed_predecessor_ledger"
+  ],
+  "changing the invariant -> FAIL": [
+   "a11_cap_continuity"
+  ],
+  "checkpoint without run authorization -> launch FAIL": [
+   "b09_checkpoint_without_authorization"
+  ],
+  "clean pre-genesis -> PASS": [
+   "a01_clean_pregenesis_and_boundary_cells"
+  ],
+  "containment removed -> FAIL": [
+   "a10_containment_removed"
+  ],
+  "countersignature alone without checkpoint -> launch FAIL": [
+   "b08_countersignature_alone"
+  ],
+  "crash after scientific record but before provenance envelope -> reconcile safely": [
+   "b02_crash_after_record_before_envelope"
+  ],
+  "crash before seal -> recover safely": [
+   "b01_crash_before_seal"
+  ],
+  "double charging -> FAIL": [
+   "a11_cap_continuity"
+  ],
+  "duplicate launch cannot duplicate results": [
+   "b03_duplicate_seal"
+  ],
+  "duplicate old/new cell -> FAIL": [
+   "b04_duplicate_old_new_cell"
+  ],
+  "duplicate seal -> FAIL": [
+   "b03_duplicate_seal"
+  ],
+  "envelope binds the successor authorization and dd4c89d7": [
+   "a01_clean_pregenesis_and_boundary_cells"
+  ],
+  "exact complete synthetic composite -> PASS": [
+   "b07_complete_composite_and_k4_gate"
+  ],
+  "foreign authorization refused": [
+   "b10_isolation_and_foreign_authorization"
+  ],
+  "fresh 300 CPU-h reset -> FAIL": [
+   "a11_cap_continuity"
+  ],
+  "frozen K4 integrity gate accepts the composite attestation (assembly not run)": [
+   "b07_complete_composite_and_k4_gate"
+  ],
+  "host drift -> FAIL": [
+   "a08_host_drift"
+  ],
+  "host idle check has no self-matching": [
+   "b11_process_scan"
+  ],
+  "incomplete composite -> not K4-ready": [
+   "b06_incomplete_composite"
+  ],
+  "invalid countersignature -> FAIL": [
+   "a07_invalid_countersignature"
+  ],
+  "keeper evidence charges the lost attempt": [
+   "b01_crash_before_seal"
+  ],
+  "launch never passes before the freeze": [
+   "b09_checkpoint_without_authorization"
+  ],
+  "missing Q6 -> FAIL": [
+   "a06_missing_q6"
+  ],
+  "no recomputation of carry-over cells": [
+   "a02_old_cells_refused"
+  ],
+  "old cell reservation 0-127 -> FAIL": [
+   "a02_old_cells_refused"
+  ],
+  "old/new disjointness": [
+   "b04_duplicate_old_new_cell"
+  ],
+  "omitting predecessor consumption -> FAIL": [
+   "a11_cap_continuity"
+  ],
+  "pre-freeze launch preflight: every live check PASS; only freeze-dependent checks fail": [
+   "a00_prefreeze_live_preflight"
+  ],
+  "predecessor runtime read only": [
+   "b10_isolation_and_foreign_authorization"
+  ],
+  "production isolation": [
+   "b10_isolation_and_foreign_authorization"
+  ],
+  "production universe is exactly 128-325": [
+   "a03_cell_326_refused"
+  ],
+  "qualification record reuse -> FAIL": [
+   "b05_qualification_reuse"
+  ],
+  "raising the absolute cap -> FAIL": [
+   "a11_cap_continuity"
+  ],
+  "reboot or provider maintenance fails closed": [
+   "a09_boot_change"
+  ],
+  "refused launch leaves PRE_GENESIS residue only": [
+   "a01_clean_pregenesis_and_boundary_cells"
+  ],
+  "undercharging predecessor settlement -> FAIL": [
+   "a11_cap_continuity"
+  ],
+  "union exactly 0-325": [
+   "b04_duplicate_old_new_cell"
+  ]
+ },
+ "finished_utc": "2026-09-14T11:10:08Z",
+ "frozen_certifier_started": false,
+ "git_head": "fa18b26f06894c69003f41cab812052cceff6f2c",
+ "host_name": "rebaseguard-vultr-02",
+ "non_result_bearing": true,
+ "passed": 24,
+ "predecessor_runtime_unchanged": true,
+ "predecessor_snapshot": {
+  "files": {
+   "journal.jsonl": "02170cae2cb25559e24d802e827d19c3c07fd5ee104aa246778f9e5034edc00c",
+   "ledger.json": "eebc21e7801888b31e892f9e81aa7c4954758cb55031afbcfac6be27f6e4d712",
+   "reaper.jsonl": "84d09fd47f794246a1820d873dd4ac398e132bfad446372e86b1e05ad5278f9f"
+  },
+  "record_envelope_digest": "07249d3bb27a540fd557fa035bc6b3f757cb8518bb99071dcf6ea1be78a85280"
+ },
+ "production_launched": false,
+ "python": "3.12.3",
+ "run_authorization_sha256": "03b9ca8085a93a1a54d567f2efacf6fddfcd4f142c900735ea973a9269f87b2f",
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.glibc-successor.synthetic-acceptance.v1",
+ "scratch": "/root/work/postk1-runs/glibc-successor-acceptance-r3",
+ "started_utc": "2026-09-14T11:06:15Z",
+ "successor_runtime_root_absent_before_and_after": true,
+ "tests": {
+  "a00_prefreeze_live_preflight": {
+   "details": {
+    "failing_before_freeze": {
+     "G01_checkpoint_and_freeze": "NOT_FROZEN",
+     "G05_run_authorization": "NOT_FROZEN",
+     "G06_synthetic_acceptance": "NOT_FROZEN"
+    },
+    "passing": [
+     "G02_bound_sources",
+     "G03_carryover_countersignature",
+     "G04_proposal_q6_launch_readiness",
+     "G07_checkout",
+     "G08_predecessor_binding_live",
+     "G09_predecessor_halted_immutable",
+     "G10_composite_predecessor_half",
+     "G11_containment",
+     "G12_host_runtime_identity_and_boot",
+     "G13_runtime_contract_probe",
+     "G14_universe_and_cap",
+     "G15_qualification_firewall",
+     "G16_protected_trees",
+     "G17_run_state",
+     "G18_host_idle"
+    ]
+   },
+   "seconds": 106.3,
+   "status": "PASS"
+  },
+  "a01_clean_pregenesis_and_boundary_cells": {
+   "details": {
+    "overhead_records": 3,
+    "pairs": [
+     "128",
+     "129",
+     "325"
+    ],
+    "pre_genesis": "PRE_GENESIS"
+   },
+   "seconds": 0.9,
+   "status": "PASS"
+  },
+  "a02_old_cells_refused": {
+   "details": {
+    "forged_row": "LEDGER_CORRUPT",
+    "op_reserve": "CELL_NOT_IN_UNIVERSE",
+    "spec": "RECOMPUTATION_OF_CARRYOVER_CELL"
+   },
+   "seconds": 0.6,
+   "status": "PASS"
+  },
+  "a03_cell_326_refused": {
+   "details": {
+    "production_universe": [
+     128,
+     325
+    ]
+   },
+   "seconds": 0.0,
+   "status": "PASS"
+  },
+  "a04_changed_predecessor_ledger": {
+   "details": {
+    "G08": "PREDECESSOR_CHANGED_SINCE_BINDING",
+    "G09": "PREDECESSOR_EVIDENCE_CHANGED",
+    "composite": "refused"
+   },
+   "seconds": 1.1,
+   "status": "PASS"
+  },
+  "a05_changed_old_pair": {
+   "details": {
+    "envelope": [
+     "PREDECESSOR_ISSUE_NOT_TOLERATED: ['B_pair_refused', 'C_evidence']",
+     "PREDECESSOR_PAIRS_NOT_EXACTLY_THE_CARRYOVER_CELLS"
+    ],
+    "record": [
+     "PREDECESSOR_ISSUE_NOT_TOLERATED: ['B_pair_refused', 'C_evidence']",
+     "PREDECESSOR_PAIRS_NOT_EXACTLY_THE_CARRYOVER_CELLS"
+    ]
+   },
+   "seconds": 1.2,
+   "status": "PASS"
+  },
+  "a06_missing_q6": {
+   "details": {
+    "launch_readiness": [
+     "Q6_ABSENT",
+     "COUNTERSIGNATURE_INVALID",
+     "SUCCESSOR_CHECKPOINT_INVALID"
+    ]
+   },
+   "seconds": 0.0,
+   "status": "PASS"
+  },
+  "a07_invalid_countersignature": {
+   "details": {
+    "G03": "COUNTERSIGNATURE_INVALID",
+    "synthetic": "COUNTERSIGNATURE_INVALID"
+   },
+   "seconds": 0.4,
+   "status": "PASS"
+  },
+  "a08_host_drift": {
+   "details": {
+    "kernel": "HOST_DRIFT",
+    "library": "HOST_DRIFT"
+   },
+   "seconds": 0.7,
+   "status": "PASS"
+  },
+  "a09_boot_change": {
+   "details": {
+    "G12": "HOST_DRIFT",
+    "admission_guard": "HOST_DRIFT"
+   },
+   "seconds": 0.4,
+   "status": "PASS"
+  },
+  "a10_containment_removed": {
+   "details": {
+    "dropin": "CONTAINMENT_NOT_APPLIED",
+    "holds": "CONTAINMENT_NOT_APPLIED",
+    "timer": "CONTAINMENT_NOT_APPLIED"
+   },
+   "seconds": 0.7,
+   "status": "PASS"
+  },
+  "a11_cap_continuity": {
+   "details": {
+    "double_charge": "CAP_RESIDUAL_CHANGED",
+    "invariant": "CAP_INVARIANT_CHANGED",
+    "ledger_cap_reset": "refused (authorization recomputation / CAP_CHANGE_FORBIDDEN)",
+    "omit_predecessor": "CAP_PREDECESSOR_CONSUMPTION",
+    "raise_absolute": "CAP_ABSOLUTE_CHANGED",
+    "reset_300": "CAP_RESET_FORBIDDEN",
+    "residual": "CAP_RESIDUAL_CHANGED",
+    "undercharge": "CAP_PREDECESSOR_CONSUMPTION"
+   },
+   "seconds": 0.9,
+   "status": "PASS"
+  },
+  "a12_cap_exhaustion": {
+   "details": {
+    "sealed": 7
+   },
+   "seconds": 3.5,
+   "status": "PASS"
+  },
+  "b01_crash_before_seal": {
+   "details": {
+    "torn_charge_usec": 14553
+   },
+   "seconds": 0.9,
+   "status": "PASS"
+  },
+  "b02_crash_after_record_before_envelope": {
+   "details": {
+    "recovered_seal": "A00000-C0128",
+    "unbound_after_crash": [
+     "A00000-C0128"
+    ]
+   },
+   "seconds": 1.7,
+   "status": "PASS"
+  },
+  "b03_duplicate_seal": {
+   "details": {
+    "forged": "DUPLICATE_SEALED_CELL",
+    "second_launch": "ANOTHER_SUPERVISOR_LIVE"
+   },
+   "seconds": 4.0,
+   "status": "PASS"
+  },
+  "b04_duplicate_old_new_cell": {
+   "details": {
+    "problems": [
+     "PARTITION_OVERLAP: [2]",
+     "SUCCESSOR_UNIVERSE_CONTAINS_A_CARRYOVER_CELL"
+    ]
+   },
+   "seconds": 1.2,
+   "status": "PASS"
+  },
+  "b05_qualification_reuse": {
+   "details": {
+    "composite": "QUALIFICATION_RECORD_REUSE",
+    "q6_318A": "QUALIFICATION_RECORD_REUSE",
+    "qualification_318A": "QUALIFICATION_RECORD_REUSE"
+   },
+   "seconds": 1.3,
+   "status": "PASS"
+  },
+  "b06_incomplete_composite": {
+   "details": {
+    "new": 2,
+    "old": 3,
+    "state": "INCOMPLETE"
+   },
+   "seconds": 1.5,
+   "status": "PASS"
+  },
+  "b07_complete_composite_and_k4_gate": {
+   "details": {
+    "cells_verified": 326,
+    "drained_state": "INCOMPLETE",
+    "k4_assembly_run": false,
+    "k4_gate": "accepted"
+   },
+   "seconds": 48.1,
+   "status": "PASS"
+  },
+  "b08_countersignature_alone": {
+   "details": {
+    "launch_readiness": [
+     "SUCCESSOR_CHECKPOINT_ABSENT"
+    ]
+   },
+   "seconds": 0.0,
+   "status": "PASS"
+  },
+  "b09_checkpoint_without_authorization": {
+   "details": {
+    "launch_before_freeze": "REFUSED",
+    "supervisor": "AUTHORIZATION_MISSING"
+   },
+   "seconds": 53.3,
+   "status": "PASS"
+  },
+  "b10_isolation_and_foreign_authorization": {
+   "details": {
+    "foreign_authorization": "refused",
+    "refused_roots": 3
+   },
+   "seconds": 0.7,
+   "status": "PASS"
+  },
+  "b11_process_scan": {
+   "details": {
+    "detected_kinds": [
+     "SUPERVISOR_OR_WORKER"
+    ]
+   },
+   "seconds": 4.2,
+   "status": "PASS"
+  }
+ },
+ "total": 24
+}

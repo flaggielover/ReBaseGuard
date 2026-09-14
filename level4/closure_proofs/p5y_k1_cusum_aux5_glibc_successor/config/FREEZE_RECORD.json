@@ -1,0 +1,73 @@
+{
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.glibc-successor.freeze-record.v1",
+ "status": "FROZEN_PRE_PRODUCTION",
+ "frozen_utc": "2026-09-14",
+ "bound_host": "rebaseguard-vultr-02",
+ "checkpoint_path": "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/config/GLIBC_SUCCESSOR_CHECKPOINT.json",
+ "checkpoint_sha256": "51df21860139554ee38874c3578cfcafdf7949cd3916897a129d29467891ab16",
+ "run_authorization": {
+  "path": "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/config/RUN_AUTHORIZATION.json",
+  "sha256": "03b9ca8085a93a1a54d567f2efacf6fddfcd4f142c900735ea973a9269f87b2f",
+  "commit": "fa18b26f06894c69003f41cab812052cceff6f2c",
+  "authorization_id": "CUSUM-AUX5-GLIBC-PROD-AUTH-001",
+  "production_run_id": "CUSUM-AUX5-GLIBC-PROD-R1",
+  "ledger_id": "e7412e3a19f0a6dd495580cef5766c68833903ee493ed45d2e83b3aa17b68905",
+  "pre_result": "committed at fa18b26f before any successor ledger; /root/work/postk1-runs/cusum-aux5-production-glibc-r1 did not exist then and did not exist after synthetic acceptance"
+ },
+ "carryover_countersignature": {
+  "path": "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/config/COUNTERSIGNATURE.json",
+  "sha256": "e1ee7fb112c4d013c53f3adf10f12421c04b39f2ec1d3edd98ec2cc07edf143a",
+  "semantics": "necessary but not sufficient for production launch"
+ },
+ "synthetic_acceptance": {
+  "path": "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/evidence/acceptance_r1/ACCEPTANCE_RESULT.json",
+  "sha256": "a4d39631146bc2be0b422b1cbd8779d2520e3de18a4c3a168dbe52b8c50b8290",
+  "verdict": "PASS",
+  "tests_passed": 24,
+  "tests_total": 24,
+  "ran_on": "rebaseguard-vultr-02, clean checkout /root/work/postk1-aux5-glibc at fa18b26f, 2026-09-14T11:06:15Z..11:10:08Z, CPython 3.12.3 (bound venv)",
+  "non_result_bearing": true,
+  "invariants_recorded": {
+   "checkpoint_unchanged_during_run": true,
+   "successor_runtime_root_absent_before_and_after": true,
+   "predecessor_runtime_unchanged": true,
+   "frozen_certifier_started": false,
+   "production_launched": false
+  },
+  "prior_runs_disclosed": [
+   {
+    "run": "r1",
+    "candidate_commit": "ba8541e68e6e27d80b4c70b44700c037d2d920ba",
+    "result_sha256": "df40e54619be1ee536064c9e2eb0c17f74a9122e871f49499ee7907ffba6081e",
+    "verdict": "FAIL 2/24",
+    "cause": "candidate bound an ignored local file (qualification_r1/launcher.log); fail-closed BOUND_SOURCE_DRIFT on the clean clone"
+   },
+   {
+    "run": "r2",
+    "candidate_commit": "7bea33ea30438458e69c467848f53d4c21e57aa5",
+    "result_sha256": "e6bf0c7b0691ff0f74fa2b38a9138441c3bb7e4276c4a394060b2baa73d042d0",
+    "verdict": "FAIL 13/24",
+    "cause": "composite pairs digest used prod_common.canonical instead of the binding's glibc_successor.canon; synthetic successor ledgers audited without settlement"
+   }
+  ]
+ },
+ "carryover": {
+  "OLD_CARRYOVER": [0, 127],
+  "NEW_PRODUCTION": [128, 325],
+  "carryover_manifest_sha256": "918d156aa44b9c084c2dd3adf00838c6f141960bc61c1a83e227af2a9b7a8a67",
+  "predecessor_checkpoint_sha256": "dd4c89d773c411355d93d0d703e40c027f9913e11e116e4bfe35117f84b4baf2"
+ },
+ "cpu": {
+  "PREDECESSOR_SETTLED_CPU_US": 262686610580,
+  "ABSOLUTE_CAP_US": 1080000000000,
+  "SUCCESSOR_RESIDUAL_CAP_US": 817313389420,
+  "ADMISSION_INVARIANT": [115, 100]
+ },
+ "production_launched": false,
+ "successor_ledger_exists": false,
+ "launch_requires": [
+  "gs_entry.py preflight READY (G01-G18) on rebaseguard-vultr-02 from /root/work/postk1-aux5-glibc, run immediately before launch",
+  "an explicit operator command: gs_entry.py launch --confirm-checkpoint-sha256 51df2186... --confirm-authorization-sha256 03b9ca80...",
+  "containment kept applied, boot id eefa85dc unchanged, no host or runtime drift"
+ ]
+}
