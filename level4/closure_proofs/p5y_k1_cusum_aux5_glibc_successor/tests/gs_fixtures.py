@@ -5,6 +5,10 @@
   PredFixture  a synthetic terminal predecessor: provenance-shaped ledger over a 0-based universe, halted by a
                synthetic HOST_DRIFT once `sealed` records exist (one core), never settled (its run stays unsettled)
 
+Settlement: every synthetic ledger is settled ONLY by the sanctioned operator command `gs_entry.py settle` in a fresh
+interpreter (sanctioned_settle). The frozen harness settlement helper is disabled here and a source scan refuses any
+direct settlement call in the successor tests.
+
 Only synthetic workers run, in scratch roots outside the repository and outside every production runtime root.
 """
 from __future__ import annotations
@@ -35,10 +39,12 @@ from prov_authorization import synthetic_countersignature as prov_synthetic_coun
 from prov_authorization import write_authorization as prov_write_authorization  # noqa: E402
 
 SUPERVISOR = NS / "code/gs_supervisor.py"
+ENTRY = NS / "code/gs_entry.py"
 check, Fail, expect_refusal, refused_with = PA.check, PA.Fail, PA.expect_refusal, PA.refused_with
 attempts, count, forge_next_state = PA.attempts, PA.count, PA.forge_next_state
 SCENARIOS: list = []
 CACHE: dict = {}
+SETTLE_LOG: list = []          # every invocation of the sanctioned settlement command in this acceptance run
 
 
 def scenario(*covers):
@@ -61,6 +67,57 @@ def real_checkpoint() -> tuple[dict, str]:
     return SP.load_checkpoint()
 
 
+# ====================================================================== the sanctioned settlement command
+def _entry_env() -> dict:
+    return {k: v for k, v in os.environ.items() if k != PS.KEEPER_ENV}
+
+
+def sanctioned_settle(target) -> tuple:
+    """THE operator command `gs_entry.py settle`, in a fresh interpreter. `--synthetic-spec` only selects which synthetic
+    campaign is loaded; the settlement code path is the production one. Returns (exit code, output, report or None)."""
+    cfg = target.cfg["config_path"] if hasattr(target, "cfg") else str(target)
+    r = subprocess.run([sys.executable, "-B", str(ENTRY), "settle", "--synthetic-spec", cfg], capture_output=True, text=True,
+                       timeout=600, env=_entry_env())
+    rep = json.loads(r.stdout) if r.returncode == 0 else None
+    SETTLE_LOG.append({"config": cfg, "rc": r.returncode, "state": (rep or {}).get("state")})
+    return r.returncode, r.stdout + r.stderr, rep
+
+
+def sanctioned_settle_production() -> tuple:
+    """`gs_entry.py settle` against the frozen production checkpoint (refuses: no successor ledger exists)."""
+    r = subprocess.run([sys.executable, "-B", str(ENTRY), "settle"], capture_output=True, text=True, timeout=900,
+                       env=_entry_env())
+    SETTLE_LOG.append({"config": "PRODUCTION", "rc": r.returncode, "state": None})
+    return r.returncode, r.stdout + r.stderr
+
+
+def settle_refused(out: str, code: str) -> bool:
+    return f"REFUSED [{code}]" in out
+
+
+FORBIDDEN_SETTLEMENT_CALLS = tuple("".join(x) for x in ((".set", "tle("), ("recon", "cile("), ("op_settle", "_run("),
+                                                        ("op_charge", "_overhead("), ("unmatched", "_overhead(")))
+BYPASS_NEGATIVE_TEST_MARKER = "c13_helper"      # the one line that proves the helper is disabled
+
+
+def settlement_bypass_scan() -> list:
+    """No successor test file calls a settlement helper or a frozen settlement transition directly."""
+    hits = []
+    for f in sorted((NS / "tests").glob("*.py")):
+        for i, line in enumerate(f.read_text().splitlines(), 1):
+            code = line.split("#", 1)[0]
+            if any(t in code for t in FORBIDDEN_SETTLEMENT_CALLS) and BYPASS_NEGATIVE_TEST_MARKER not in line:
+                hits.append(f"{f.name}:{i}: {line.strip()[:120]}")
+    return hits
+
+
+def tree_digest(root: Path) -> str:
+    """sha256 over every attempt and provenance file (records, envelopes, worker logs) of a runtime root."""
+    rows = sorted((str(p.relative_to(root)), sha256_file(p)) for d in ("attempts", "provenance")
+                  for p in (Path(root) / d).rglob("*") if p.is_file())
+    return sha256_bytes(canonical(rows))
+
+
 class _Base(PA.Campaign):
     predecessor_shape = False
 
@@ -79,13 +136,20 @@ class _Base(PA.Campaign):
     def view(self):
         return PI.ledger_view(self.spec)
 
-    def run_complete(self, timeout: float = 600) -> str:
-        """Run to COMPLETE, then settle (reconcile runs, charge keeper exits), as the provenance precedent does before
-        an integrity audit."""
+    def settle(self):
+        raise Fail("the frozen harness settlement helper is disabled in the successor acceptance; use gs_entry.py settle")
+
+    def settle_via_entrypoint(self) -> dict:
+        rc, out, rep = sanctioned_settle(self)
+        check(rc == 0 and rep["state"] == "SETTLED" and not rep["unsettled_after"],
+              f"{self.dir.name}: gs_entry.py settle exit {rc}: {out[-400:]}")
+        return rep
+
+    def run_complete(self, timeout: float = 600) -> dict:
+        """Run to COMPLETE under the keeper, then settle through the sanctioned operator command `gs_entry.py settle`."""
         code, out = self.run(keep=True, timeout=timeout)
         check(code == PS.EXIT_COMPLETE, f"{self.dir.name}: exit {code}: {out[-300:]}")
-        self.settle()
-        return out
+        return self.settle_via_entrypoint()
 
     def audit(self):
         return PI.audit(self.spec, self.authz())
@@ -188,15 +252,23 @@ def composite(pred: PredFixture, succ: GSCampaign | None, tol: dict, *, succ_spe
 
 
 def full_composite(scratch: Path):
-    """One terminal predecessor (0-127 sealed of 0-325) and one COMPLETE successor (128-325), cached per run."""
+    """One terminal predecessor (0-127 sealed of 0-325) and one COMPLETE successor (128-325), cached per run.
+
+    The successor runs to COMPLETE under its keeper; its frozen audit and the composite are recorded BEFORE settlement
+    (never K4-ready), then it is settled by the sanctioned command `gs_entry.py settle`."""
     if "full" not in CACHE:
         pred = PredFixture(scratch, "fx_pred_full", sealed=128, universe=326)
         pred.make_terminal()
         tol = pred.tolerance()
         succ = GSCampaign(scratch, "fx_succ_full", cells=list(range(128, 326)), cores=[0, 2, 4, 6], burn_s=0.01,
                           heartbeat_s=2.0)
-        succ.run_complete(timeout=2400)
-        CACHE["full"] = (pred, tol, succ)
+        code, out = succ.run(keep=True, timeout=2400)
+        check(code == PS.EXIT_COMPLETE, f"successor fixture exit {code}: {out[-300:]}")
+        unsettled_audit, unsettled_composite = succ.audit(), composite(pred, succ, tol)
+        before = {"issues": sorted(unsettled_audit["issues"]), "ready": unsettled_audit["INTEGRITY_READY_FOR_ADJUDICATION"],
+                  "composite": unsettled_composite["state"], "problems": unsettled_composite["problems"],
+                  "settle": succ.settle_via_entrypoint()}
+        CACHE["full"] = (pred, tol, succ, before)
     return CACHE["full"]
 
 

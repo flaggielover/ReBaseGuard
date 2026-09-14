@@ -2,13 +2,20 @@
 
   python gs_entry.py preflight [--out F]           read-only launch preflight; READY or NOT_READY (exit 0 / 30)
   python gs_entry.py launch --confirm-checkpoint-sha256 SHA --confirm-authorization-sha256 SHA
+  python gs_entry.py settle                        end-of-campaign settlement of the terminal successor ledger (gs_settle)
   python gs_entry.py status | composite-audit --out F | attest --out F | export --out DIR
 
-READY requires every check to PASS; nothing skips or weakens a check (`overrides` exists for tests only and is not
-reachable from this command line). The supervisor re-runs this preflight under the campaign lock before genesis.
+After production the operator sequence is: supervisor exits terminal -> settle -> composite-audit -> attest -> export.
+The frozen supervisor never settles its own final run, so the frozen successor audit (and with it the composite audit,
+the K4 attestation and the export) is never ready before `settle`. `settle --synthetic-spec CFG` runs the same settlement
+on a synthetic acceptance campaign and is refused inside every production runtime root.
 
-  G01 checkpoint_and_freeze             checkpoint sha == hash file == freeze record; frozen, unlaunched
-  G02 bound_sources                     every bound source unchanged (inside load_checkpoint)
+READY requires every check to PASS; nothing skips or weakens a check (`overrides` exists for tests only and is not
+reachable from this command line). The supervisor re-runs this preflight under the campaign lock before genesis. The
+superseded checkpoint 51df2186 and authorization 03b9ca80 are refused by name.
+
+  G01 checkpoint_and_freeze             checkpoint sha == hash file == freeze record; frozen, unlaunched; not superseded
+  G02 bound_sources                     every bound source unchanged (inside load_checkpoint); settlement tooling bound
   G03 carryover_countersignature        verifier PASS, sha e1ee7fb1 == checkpoint binding, committed
   G04 proposal_q6_launch_readiness      proposal and Q6 verify; frozen glibc_successor.launch_readiness READY
   G05 run_authorization                 recomputes; bound by the freeze record; committed before the freeze (pre-result)
@@ -43,6 +50,7 @@ import carryover_countersignature as CC                                         
 import glibc_successor as G                                                      # noqa: E402
 import gs_composite as GC                                                        # noqa: E402
 import gs_host as H                                                              # noqa: E402
+import gs_settle as ST                                                           # noqa: E402
 import prod_ledger as L                                                          # noqa: E402
 import q6_result as R                                                            # noqa: E402
 from gs_authorization import load_authorization, load_authz, verify_authorization  # noqa: E402
@@ -87,6 +95,23 @@ def live_record_envelope_digest(root: Path) -> str:
     return sha256_bytes("".join(f"{h}  {p}\n" for p, h in rows).encode())
 
 
+def refuse_superseded(checkpoint_sha256=None, authorization_sha256=None) -> None:
+    if checkpoint_sha256 == GS.SUPERSEDED_CHECKPOINT_SHA256:
+        raise Refusal("SUPERSEDED_CHECKPOINT", "checkpoint 51df2186 was superseded before launch and is never launched")
+    if authorization_sha256 == GS.SUPERSEDED_AUTHORIZATION_SHA256:
+        raise Refusal("SUPERSEDED_AUTHORIZATION", "authorization 03b9ca80 was superseded before launch and is never used")
+
+
+def settlement_tooling(cp: dict) -> dict:
+    es = cp.get("END_OF_CAMPAIGN_SETTLEMENT") or {}
+    mods = es.get("module_sha256") or {}
+    live = {r: (sha256_file(GS.ROOT / r) if (GS.ROOT / r).is_file() else None) for r in mods}
+    if (not mods or live != mods or es.get("version") != ST.SETTLE_VERSION or es.get("command") != ST.SETTLE_COMMAND
+            or f"{GS.NS_REL}/code/gs_settle.py" not in mods or f"{GS.NS_REL}/code/gs_entry.py" not in mods):
+        raise Refusal("SETTLEMENT_TOOLING", "the end-of-campaign settlement tooling is not the one bound by the checkpoint")
+    return {"settlement_version": es["version"], "settlement_modules": len(mods)}
+
+
 def preflight(*, overrides=None, in_supervisor: bool = False) -> dict:
     ov = overrides or {}
     checks, ctx = [], {"probe_cpu_usec": 0, "sha": None, "asha": None}
@@ -111,6 +136,7 @@ def preflight(*, overrides=None, in_supervisor: bool = False) -> dict:
 
     def g01():
         _cp, sha = cp_()
+        refuse_superseded(checkpoint_sha256=sha)
         fr = freeze()
         if (fr.get("schema") != GS.FREEZE_SCHEMA or fr.get("status") != GS.FREEZE_STATUS
                 or fr.get("checkpoint_sha256") != sha or fr.get("production_launched") is not False):
@@ -119,7 +145,7 @@ def preflight(*, overrides=None, in_supervisor: bool = False) -> dict:
 
     def g02():
         cp, _sha = cp_()
-        return {"bound_sources": len(cp["bound_sources"])}
+        return {"bound_sources": len(cp["bound_sources"]), **settlement_tooling(cp)}
 
     def g03():
         cp, _sha = cp_()
@@ -150,6 +176,7 @@ def preflight(*, overrides=None, in_supervisor: bool = False) -> dict:
         cp, sha = cp_()
         auth, asha = load_authorization(GS.AUTHORIZATION, GS.AUTHORIZATION_HASH)
         ctx["asha"] = asha
+        refuse_superseded(authorization_sha256=asha)
         verify_authorization(auth, spec_from_checkpoint(cp, sha), cp)
         ra = freeze().get("run_authorization") or {}
         commit = ra.get("commit", "")
@@ -337,6 +364,36 @@ def _supervisor_preflight():
     return rep["ready"], rep, rep["probe_cpu_usec"]
 
 
+def settle_command(synthetic_spec=None) -> int:
+    """`gs_entry.py settle`: THE sanctioned end-of-campaign settlement (gs_settle.settle_campaign). The synthetic form
+    differs only in which campaign it loads; the settlement code path is the same."""
+    try:
+        if synthetic_spec:
+            from gs_spec import synthetic_drift_spec, synthetic_spec as load_synthetic
+            from gs_supervisor import synthetic_successor_authz
+            cfg = _json(synthetic_spec)
+            if cfg.get("predecessor_shape"):
+                raise Refusal("PREDECESSOR_RUNTIME_REFUSED", "a predecessor-shaped ledger is never settled by the successor")
+            spec = synthetic_drift_spec(cfg) if cfg.get("drift_after_records") else load_synthetic(cfg)
+            ST.precheck_target(spec)
+            authz = synthetic_successor_authz(spec, cfg)
+        else:
+            spec, _cp = production_spec()
+            refuse_superseded(checkpoint_sha256=spec.checkpoint_sha256)
+            ST.precheck_target(spec)
+            authz = production_authz()
+            refuse_superseded(authorization_sha256=authz.block["authorization_sha256"])
+        rep = ST.settle_campaign(spec, authz)
+    except Refusal as r:
+        print(f"REFUSED [{r.code}] {r.detail}")
+        return EXIT_REFUSED
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        print(f"REFUSED [SETTLE_INPUT_UNREADABLE] {type(exc).__name__}: {exc}")
+        return EXIT_REFUSED
+    print(json.dumps(rep, indent=1, sort_keys=True))
+    return 0
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="CUSUM Aux5 new-glibc successor production entrypoint")
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -345,10 +402,14 @@ def main(argv=None) -> int:
     p.add_argument("--confirm-checkpoint-sha256", required=True)
     p.add_argument("--confirm-authorization-sha256", required=True)
     sub.add_parser("_supervise", help=argparse.SUPPRESS)
+    s = sub.add_parser("settle", help="end-of-campaign settlement of the terminal successor ledger; never admits")
+    s.add_argument("--synthetic-spec", help="synthetic acceptance only: settle a synthetic successor campaign")
     sub.add_parser("status")
     for name in ("composite-audit", "attest", "export"):
         sub.add_parser(name).add_argument("--out", required=True)
     a = ap.parse_args(argv)
+    if a.cmd == "settle":
+        return settle_command(a.synthetic_spec)
     try:
         if a.cmd == "preflight":
             rep = preflight()
@@ -359,6 +420,8 @@ def main(argv=None) -> int:
         if a.cmd == "launch":
             cp, sha = load_checkpoint()
             _auth, asha = load_authorization(GS.AUTHORIZATION, GS.AUTHORIZATION_HASH)
+            refuse_superseded(checkpoint_sha256=sha, authorization_sha256=asha)
+            refuse_superseded(checkpoint_sha256=a.confirm_checkpoint_sha256, authorization_sha256=a.confirm_authorization_sha256)
             if a.confirm_checkpoint_sha256 != sha or a.confirm_authorization_sha256 != asha:
                 print("REFUSED: the confirmations do not equal the frozen checkpoint and authorization sha256")
                 return EXIT_REFUSED

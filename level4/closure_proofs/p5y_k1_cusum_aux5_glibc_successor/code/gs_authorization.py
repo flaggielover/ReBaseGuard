@@ -88,6 +88,8 @@ def build_authorization(spec, cp: dict, *, authorization_id: str, run_id: str) -
         "executor_sources": executor_sources(),
         "launch_preflight": {"path": cp["entrypoint"]["path"], "version": GS.PREFLIGHT_VERSION,
                              "schema": GS.PREFLIGHT_SCHEMA, "checks": cp["entrypoint"]["checks"]},
+        "end_of_campaign_settlement": cp["END_OF_CAMPAIGN_SETTLEMENT"],
+        "supersedes": cp["supersedes"],
         "conditions": cp["conditions"],
         "temporal_rule": "committed before the successor runtime root holds any genesis artifact; every envelope binds a "
                          "genesis entry naming this authorization and a RESERVED entry preceding its result",

@@ -30,7 +30,7 @@ FREEZE_SCHEMA = "rebaseguard.p5y.k1.cusum-aux5.glibc-successor.freeze-record.v1"
 FREEZE_STATUS = "FROZEN_PRE_PRODUCTION"
 MANIFEST_SCHEMA = "rebaseguard.p5y.k1.cusum-aux5.glibc-successor.carryover-manifest.v1"
 PREFLIGHT_SCHEMA = "rebaseguard.p5y.k1.cusum-aux5.glibc-successor.launch-preflight.v1"
-PREFLIGHT_VERSION = "gs-launch-preflight-r1"
+PREFLIGHT_VERSION = "gs-launch-preflight-r2"         # r2: settlement tooling bound (G02), superseded objects refused
 ACCEPTANCE_SCHEMA = "rebaseguard.p5y.k1.cusum-aux5.glibc-successor.synthetic-acceptance.v1"
 COMPOSITE_AUDIT_SCHEMA = "rebaseguard.p5y.k1.cusum-aux5.glibc-successor.composite-audit.v1"
 SYNTHETIC_CS_SCHEMA = "rebaseguard.p5y.k1.cusum-aux5.glibc-successor.synthetic-countersignature-fixture.v1"
@@ -43,7 +43,11 @@ FREEZE_RECORD = NS / "config/FREEZE_RECORD.json"
 CARRYOVER_MANIFEST = NS / "config/CARRYOVER_MANIFEST.json"
 COUNTERSIGNATURE = NS / "config/COUNTERSIGNATURE.json"
 BINDING = NS / "config/PREDECESSOR_BINDING.json"
-ACCEPTANCE_RESULT_REL = f"{NS_REL}/evidence/acceptance_r1/ACCEPTANCE_RESULT.json"
+ACCEPTANCE_RESULT_REL = f"{NS_REL}/evidence/acceptance_r4/ACCEPTANCE_RESULT.json"
+SUPERSESSION_RECORD = NS / "evidence/supersession_r1/SUPERSESSION_RECORD.json"
+# superseded before launch by the end-of-campaign settlement repair (SETTLEMENT_REPAIR.md); never launched, refused by name
+SUPERSEDED_CHECKPOINT_SHA256 = "51df21860139554ee38874c3578cfcafdf7949cd3916897a129d29467891ab16"
+SUPERSEDED_AUTHORIZATION_SHA256 = "03b9ca8085a93a1a54d567f2efacf6fddfcd4f142c900735ea973a9269f87b2f"
 
 SUCCESSOR_RUNTIME_ROOT = Path("/root/work/postk1-runs/cusum-aux5-production-glibc-r1")
 PREDECESSOR_RUNTIME_ROOT = Path("/root/work/postk1-runs/cusum-aux5-production-prov-r1")
@@ -53,8 +57,8 @@ CHECKOUT_PATH = Path("/root/work/postk1-aux5-glibc")
 PREDECESSOR_CHECKOUT_PATH = Path("/root/work/postk1-aux5")
 
 CAMPAIGN_ID = "p5y_k1_cusum_aux5_production_glibc_successor_r1"
-AUTHORIZATION_ID = "CUSUM-AUX5-GLIBC-PROD-AUTH-001"
-RUN_ID = "CUSUM-AUX5-GLIBC-PROD-R1"
+AUTHORIZATION_ID = "CUSUM-AUX5-GLIBC-PROD-AUTH-002"      # AUTH-001 / R1 belong to the superseded authorization 03b9ca80
+RUN_ID = "CUSUM-AUX5-GLIBC-PROD-R2"
 
 OLD_CELLS = tuple(range(128))
 NEW_CELLS = tuple(range(128, 326))

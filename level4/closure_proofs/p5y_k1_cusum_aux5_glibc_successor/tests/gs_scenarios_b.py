@@ -173,7 +173,14 @@ def b06_incomplete_composite(scratch):
 @scenario("exact complete synthetic composite -> PASS", "K4 composite attestation", "both provenance halves disclosed",
           "frozen K4 integrity gate accepts the composite attestation (assembly not run)")
 def b07_complete_composite_and_k4_gate(scratch):
-    pred, tol, succ = full_composite(scratch)
+    pred, tol, succ, before = full_composite(scratch)
+    check(before["issues"] == ["D_unsettled_supervisor_runs"] and before["composite"] == "INCOMPLETE"
+          and not before["problems"], f"a COMPLETE successor before `gs_entry.py settle` is never K4-ready: {before}")
+    check(before["settle"]["state"] == "SETTLED" and before["settle"]["disposition"] == "COMPLETE"
+          and not before["settle"]["unsettled_after"], f"sanctioned settlement {before['settle']}")
+    audit = succ.audit()
+    check(audit["INTEGRITY_READY_FOR_ADJUDICATION"] and not audit["issues"] and len(audit["pairs"]) == 198,
+          f"frozen successor integrity audit after settlement: {sorted(audit['issues'])}")
     rep = composite(pred, succ, tol)
     check(rep["state"] == "COMPLETE" and rep["K4_READY"] and rep["old_cells_verified"] == 128
           and rep["new_cells_verified"] == 198 and not rep["problems"], f"{rep['state']} {rep['problems']}")

@@ -1,51 +1,4 @@
 {
- "END_OF_CAMPAIGN_SETTLEMENT": {
-  "charge_rule": "frozen: final run REAPER_RUSAGE extra = reap - children - self; each uncharged keeper exit once; only the supervisor bucket moves; the cap is the residual cap and never changes",
-  "command": "python -B level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_entry.py settle",
-  "document": {
-   "path": "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/SETTLEMENT_REPAIR.md",
-   "sha256": "c392985eb9a550c2e968d6a81255f1f389e14b1fbc5c61523ca943a209a8a42d"
-  },
-  "evidence_rule": "every reaper line verifies; the one unsettled run is the latest run and ended EXITED; exactly one keeper reap record matches it, with the disposition's exit code, taken after the run ended, whose rusage is not smaller than the CPU already charged to the run; an uncharged keeper exit follows it; otherwise REAPER_UNREADABLE / SETTLEMENT_EVIDENCE_MISSING / _AMBIGUOUS / _CONTRADICTORY",
-  "frozen_model": "prov_entry.py / prod_entry.py settle: campaign flock, authorization-bound ledger open, frozen prod_ledger.reconcile (RUN_SETTLED), frozen unmatched_overhead + op_charge_overhead (OVERHEAD_CHARGED)",
-  "frozen_transitions_only": [
-   "RUN_SETTLED",
-   "OVERHEAD_CHARGED"
-  ],
-  "halted_or_budget_exhausted": "settled for accounting only; disposition and halt unchanged; never adjudication-ready",
-  "idempotence": "a settled ledger returns ALREADY_SETTLED and writes nothing; a crash between or inside the two frozen transitions is repaired by the frozen ledger open and completed by the next call, charging each run and each reaper record at most once",
-  "module_sha256": {
-   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_entry.py": "c4f8f6c6e1f2c50f05c6d01d7feaaf8fcf04e05750da8874c2d38b0a3a151966",
-   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_settle.py": "3b8b7143e207b919053ed055946f97d3c49f84035322be291f2244f70c4fc0fa"
-  },
-  "never": [
-   "a scientific record",
-   "a provenance envelope",
-   "a cell or attempt",
-   "the disposition or halt",
-   "the cap",
-   "a predecessor file",
-   "an admission"
-  ],
-  "operator_sequence": [
-   "gs_entry.py settle",
-   "gs_entry.py composite-audit --out F",
-   "gs_entry.py attest --out F",
-   "gs_entry.py export --out DIR"
-  ],
-  "preconditions": [
-   "target is a successor universe (128-325) outside every predecessor, blocked, qualification and repository root",
-   "a ledger exists (ABSENT and PRE_GENESIS refused)",
-   "no campaign process of any generation on the host; the campaign flock is free",
-   "ledger continuous or journal-behind-one, validates, born under the presented run authorization",
-   "terminal disposition (COMPLETE, HALTED or INCOMPLETE_BUDGET_EXHAUSTED); no open attempt; no sealed-but-unbound attempt; sealed record and bound envelope bytes unchanged",
-   "every precondition is checked read-only before the first ledger write; a refusal writes nothing"
-  ],
-  "report_schema": "rebaseguard.p5y.k1.cusum-aux5.glibc-successor.settlement.v1",
-  "required": "after the successor supervisor exits with a terminal disposition and before gs_entry.py composite-audit, attest and export: the frozen successor audit is INTEGRITY_READY_FOR_ADJUDICATION only on a COMPLETE ledger whose supervisor runs are all settled, and the frozen supervisor never settles its own final run",
-  "synthetic_acceptance_rule": "every synthetic settlement runs `gs_entry.py settle --synthetic-spec CFG` in a fresh interpreter (refused inside every production root); no scenario settles through a helper",
-  "version": "gs-settle-r1"
- },
  "NEW_SCIENTIFIC_COMPUTE": "NONE_IN_THIS_CHECKPOINT",
  "SCIENTIFIC_PRODUCER": "UNCHANGED_AUX5",
  "authority": {
@@ -53,12 +6,12 @@
   "composite_rule": "A CUSUM Aux5 production result is the PAIR (scientific record, valid production provenance envelope). Neither object alone is production-authorized, result-bearing or disposition-bearing. An envelope is valid only if it recomputes exactly from: the sealed record bytes; a production ledger whose GENESIS names the pre-result run authorization and its independent countersignature; that ledger's RESERVED -> RUNNING -> SEAL journal entries for the attempt; the frozen producer, checkpoint, cell geometry and host; and the ledger's PROVENANCE_BOUND entry naming the envelope sha256.",
   "countersignature_path": "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/config/COUNTERSIGNATURE.json",
   "run_authorization": {
-   "authorization_id": "CUSUM-AUX5-GLIBC-PROD-AUTH-002",
+   "authorization_id": "CUSUM-AUX5-GLIBC-PROD-AUTH-001",
    "path": "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/config/RUN_AUTHORIZATION.json",
-   "production_run_id": "CUSUM-AUX5-GLIBC-PROD-R2",
+   "production_run_id": "CUSUM-AUX5-GLIBC-PROD-R1",
    "schema": "rebaseguard.p5y.k1.cusum-aux5.glibc-successor.production-run-authorization.v1"
   },
-  "sanctioned_consumer_path": "gs_entry.py settle -> gs_composite.composite_audit -> build_composite_attestation / export_composite"
+  "sanctioned_consumer_path": "gs_composite.composite_audit -> build_composite_attestation / export_composite"
  },
  "bound_sources": {
   "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/cells.json": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f",
@@ -70,18 +23,16 @@
   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/HOST_CONTAINMENT_PLAN.md": "fa8417dff0309bc676486e2f801fe486b7cb32a1c3894a770f875b9a690021c6",
   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/HOST_DRIFT_FORENSIC_AUDIT.md": "b4d40f32eba88ffb3a8890317c70d5b6a47e1c74ed03cb0cf5bdc9a3d884a535",
   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/README.md": "f68ac94aa49a4a04e5e1f084d5b5ee8af8214b981c7598eea9c213aef783e20a",
-  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/SETTLEMENT_REPAIR.md": "c392985eb9a550c2e968d6a81255f1f389e14b1fbc5c61523ca943a209a8a42d",
   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/SUCCESSOR_CHECKPOINT_SPEC.md": "6cc0d187ef0efd19d7eb5dbdaf61425f66cb055651f1ca1f72e4fae9934aa945",
   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/glibc_successor.py": "785c6bddf9b0b8acc551a7fd7c10df79fcecd181f5dc8910b6f26bc605fa53b6",
-  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_authorization.py": "d94b081a1466d5284e01c03394548a96ee25d9044ed3ec0625fdfc832f09865e",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_authorization.py": "63062f17c077e317938771c1666cc70a4d2a16384ec106ac5ef44ad84595a2a8",
   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_composite.py": "da24fdef319435881fa2d9baeb6eaf04420269f75bfb11d19d89a79193cc9b71",
-  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_entry.py": "c4f8f6c6e1f2c50f05c6d01d7feaaf8fcf04e05750da8874c2d38b0a3a151966",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_entry.py": "0fbd9733aba1c1aae2d8fb997f378076ce4ddc7d23de428d5d5ae2a0111c1b7b",
   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_host.py": "7fb16d1d28724ca3208f791df9dbcefb4b0dcd76f14ff39d5d453c507f8e25bd",
-  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_schema.py": "1f5c2263aeff07243b14f370c3523a8b1b1f62225218e82015c940a8d8326f67",
-  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_settle.py": "3b8b7143e207b919053ed055946f97d3c49f84035322be291f2244f70c4fc0fa",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_schema.py": "54293e4fc7ef30487de5b8164b87da8c6627efe462366eaded7819907d431856",
   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_spec.py": "5bf4fe77018a24fa4d951bae78fd7b676aa1444763ce60402e7961c158bc3ee7",
   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_supervisor.py": "6cb6fa665ff2b96795b6d61e0bf7f397b85adb62e99760323a2074cb0cbfe36f",
-  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/make_gs_checkpoint.py": "9aeb59d8541317288df2abb5154b064d8c54bdc71b18bf6d3d44d74ba3fc01ba",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/make_gs_checkpoint.py": "352990db81ba5f1d29e5f1350aa3dca756efdbbaa7513b1b3cec0174a33ad31a",
   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/q6_result.py": "4d249a39594ada164bab81d6b60c0fa00763d647f649914aefd41e9d4dcb63a1",
   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/config/CARRYOVER_MANIFEST.json": "918d156aa44b9c084c2dd3adf00838c6f141960bc61c1a83e227af2a9b7a8a67",
   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/config/COUNTERSIGNATURE.json": "e1ee7fb112c4d013c53f3adf10f12421c04b39f2ec1d3edd98ec2cc07edf143a",
@@ -122,19 +73,12 @@
   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/evidence/requalification_r1/qualification_r1/load_at_launch": "0673e5717209852b9215ef8a1c7f95ef5ac0089f44ccf979518c6759c538c701",
   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/evidence/requalification_r1/qualification_r1/run.done": "d984640ba578ce6fa8953f538b156cf55b889b33856bdedc9aa6f273a42504d8",
   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/evidence/requalification_r1/qualification_r1/run.started": "1e12c74aa0eb6b51eb173e2c04a248ff6d0665ddccd81ff68b9be4b2cdfc25a5",
-  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/evidence/supersession_r1/SUPERSESSION_RECORD.json": "dd8b6b3595cff3de507a59739aea6a7e6c9e2c66ba5cfb98cf071a56b8edf3b5",
-  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/evidence/supersession_r1/superseded_objects/FREEZE_RECORD.json": "5d917b3f6bd10608791190c325646ff68630b6720f089818d90d0b78af20421f",
-  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/evidence/supersession_r1/superseded_objects/GLIBC_SUCCESSOR_CHECKPOINT.json": "51df21860139554ee38874c3578cfcafdf7949cd3916897a129d29467891ab16",
-  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/evidence/supersession_r1/superseded_objects/GLIBC_SUCCESSOR_CHECKPOINT_HASH": "5d86622cd34d31dd1f4ea1d5167cffd2bd7f48225fafbd23e14da8768ea84dfc",
-  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/evidence/supersession_r1/superseded_objects/RUN_AUTHORIZATION.json": "03b9ca8085a93a1a54d567f2efacf6fddfcd4f142c900735ea973a9269f87b2f",
-  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/evidence/supersession_r1/superseded_objects/RUN_AUTHORIZATION_HASH": "0946bbeb5ef4a0679bf4361e7c69c571843ed39e3c7a0893328289b8de89db37",
-  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/tests/gs_acceptance.py": "ddd55fb98ccf2adbdc8868aff8c8c867f8bd32ae0d911316c5013a72c8de7788",
-  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/tests/gs_fixtures.py": "ed6df496721533d8b54ba338d237c49258650a5bee08494ede0a066cf3ba6f99",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/tests/gs_acceptance.py": "0a3f90c972c22058069e7841c74628dbcd4ff3938934f3d895b48d47d20f5cf9",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/tests/gs_fixtures.py": "45aafe0b89dd69eff90a50bb5c29e0b72a96f24b9bdb4a5329d6ce647d71d850",
   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/tests/gs_scenarios_a.py": "0f6930d0eeacf10f706ea181f6b74a6b43a9c5e8cbd639c4df0d7d03b59ddce2",
-  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/tests/gs_scenarios_b.py": "fe4b7807ad1e6fcf22c093fae6a57594ac60ed23a70f2adc93021e9df1dd25ef",
-  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/tests/gs_scenarios_c.py": "3b540f7676019af796d6d174487e64dc8ed97076ba185f05512159fc04503e5e",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/tests/gs_scenarios_b.py": "d2e8bd1c9f1fcf1456052195940515048eccd9f26927f97dba3db6436670300a",
   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/tests/test_glibc_successor.py": "ca31feffc20ca354909b3b3f02db8ef52ad41e6126fe742813c29407a47e00a7",
-  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/tests/test_gs_unit.py": "d1f001e78f85a3b50dbe54b0488010e9dffd5f9c06abb1dd7932358f36500af5",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/tests/test_gs_unit.py": "26c95e24c58f5d6a7a1f0b10f5be2a91b59d2ef72ed7919e2f3bdd509b9f2077",
   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/tests/test_q6_result.py": "dfafc86153467ff4e809c687ba4659e8b8a15ff3339b6fd5a1cd30b744f58cdf",
   "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/k4_input_attestation.py": "21436d066e55906827382d40cdf617b74f2dcf72ce01c0b5c13de28cfde1e64a",
   "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/make_production_checkpoint.py": "12e54666343cff34feb5ad2fe6e50b5d5917057092d99cb632885f039c1278e9",
@@ -340,11 +284,10 @@
    "tolerate exactly D_halt (the bound HOST_DRIFT stop) and D_unsettled_supervisor_runs (R20260913T115713Z-103963); any other issue refuses",
    "all 128 predecessor pairs verified; digest equal to the binding",
    "frozen prov_integrity.audit unchanged on the successor ledger",
-   "the successor ledger is settled by gs_entry.py settle first; no successor audit issue is ever tolerated",
    "old/new disjoint; union exactly 0-325; one producer identity",
    "qualification and Q6 records never reused",
    "both provenance halves disclosed",
-   "INCOMPLETE until the successor ledger is COMPLETE and settled; never K4-ready before"
+   "INCOMPLETE until the successor ledger is COMPLETE; never K4-ready before"
   ]
  },
  "conditions": {
@@ -357,7 +300,7 @@
    "text": "The future composite audit must run the frozen prov_integrity.audit unchanged on the predecessor ledger and may tolerate exactly two predecessor audit issues: D_halt, only for the bound HOST_DRIFT stop, and D_unsettled_supervisor_runs, only for R20260913T115713Z-103963. Any other predecessor audit issue (including any A_, B_, C_ or D_open_attempts issue) must fail closed."
   },
   "c": {
-   "enforced_by": "gs_entry.py settle + gs_composite.build_composite_attestation",
+   "enforced_by": "gs_composite.build_composite_attestation",
    "text": "The future K4 composite attestation must use the successor checkpoint sha256 as producer_checkpoint_sha256, while the successor checkpoint itself binds the predecessor checkpoint dd4c89d773c411355d93d0d703e40c027f9913e11e116e4bfe35117f84b4baf2. Both provenance halves (each ledger state sha256, genesis entry sha256, authorization block and verified pairs) must be explicitly disclosed, and no record enters K4 unless its pair verified."
   },
   "d": {
@@ -399,8 +342,7 @@
   "rules": [
    "the successor ledger genesis cap is the residual cap and never changes (CAP_CHANGE_FORBIDDEN)",
    "predecessor consumption is charged once, as absolute - residual; it is never reset or re-imported",
-   "the absolute 300 CPU-h cap is never raised",
-   "end-of-campaign settlement charges only the frozen reaper rules into the successor ledger"
+   "the absolute 300 CPU-h cap is never raised"
   ],
   "successor_residual_cap_usec": 817313389420
  },
@@ -426,17 +368,8 @@
    "G17_run_state",
    "G18_host_idle"
   ],
-  "commands": [
-   "preflight",
-   "launch",
-   "settle",
-   "status",
-   "composite-audit",
-   "attest",
-   "export"
-  ],
   "path": "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_entry.py",
-  "version": "gs-launch-preflight-r2"
+  "version": "gs-launch-preflight-r1"
  },
  "frozen_utc": "2026-09-14",
  "geometry": {
@@ -656,9 +589,9 @@
   }
  },
  "id_schemes": {
-  "authorization_id": "CUSUM-AUX5-GLIBC-PROD-AUTH-002",
+  "authorization_id": "CUSUM-AUX5-GLIBC-PROD-AUTH-001",
   "ledger_id": "sha256(canonical({schema: prov LEDGER_ID_SCHEMA, ledger_schema, campaign_id, production_run_id, runtime_root, production_checkpoint_sha256})) (frozen prov_authorization)",
-  "production_run_id": "CUSUM-AUX5-GLIBC-PROD-R2",
+  "production_run_id": "CUSUM-AUX5-GLIBC-PROD-R1",
   "supervisor_run_id": "R<UTC %Y%m%dT%H%M%SZ>-<pid> (frozen prod_supervisor)"
  },
  "k4": {
@@ -740,7 +673,6 @@
   ],
   "crash_reconciliation": "open attempt with a live pid -> refused (LIVE_ORPHAN_WORKER); record present and verifying -> SEALED (recovered); keeper reap with exit != 0 -> FAILED; otherwise TORN (ORPHAN_ATTEMPT); charge = keeper rusage, else tail bound",
   "duplicate_cell_rule": "one flock-holding supervisor per runtime root; op_reserve admits only PENDING cells; op_close refuses a cell owned by another attempt; validate refuses two seals",
-  "end_of_campaign_settlement": "the frozen supervisor leaves its final run unsettled; gs_entry.py settle settles it with the frozen reaper rules before any composite audit",
   "exit_codes": {
    "COMPLETE": 0,
    "DRAINED": 10,
@@ -1175,7 +1107,6 @@
    "ABSENT",
    "PRE_GENESIS"
   ],
-  "end_of_campaign": "a terminal ledger is never relaunched; it is settled by gs_entry.py settle, then consumed only through the composite audit",
   "pre_genesis_files": [
    "campaign.lock",
    "campaign.owner.json",
@@ -1300,13 +1231,6 @@
  },
  "status": "FROZEN_PRE_PRODUCTION",
  "successor_residual_cap_usec": 817313389420,
- "supersedes": {
-  "checkpoint_sha256": "51df21860139554ee38874c3578cfcafdf7949cd3916897a129d29467891ab16",
-  "reason": "END_OF_CAMPAIGN_SETTLEMENT_PATH_MISSING found by the independent pre-launch review; the superseded objects were never used for a production genesis and are refused by name",
-  "record_path": "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/evidence/supersession_r1/SUPERSESSION_RECORD.json",
-  "record_sha256": "dd8b6b3595cff3de507a59739aea6a7e6c9e2c66ba5cfb98cf071a56b8edf3b5",
-  "run_authorization_sha256": "03b9ca8085a93a1a54d567f2efacf6fddfcd4f142c900735ea973a9269f87b2f"
- },
  "workers": {
   "argv_template": [
    "/usr/bin/env",

@@ -17,12 +17,114 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "code"))
 import gs_schema as GS                                                           # noqa: E402
 import gs_composite as GC                                                        # noqa: E402
 import gs_host as H                                                              # noqa: E402
+import gs_settle as ST                                                           # noqa: E402
 import gs_spec as SP                                                             # noqa: E402
 import prod_ledger as L                                                          # noqa: E402
 from prod_common import Refusal, canonical, sha256_bytes                          # noqa: E402
 
 BINDING = json.loads(GS.BINDING.read_bytes())
 HAVE_CP = GS.CHECKPOINT.exists()
+
+
+# ---------------------------------------------------------------------- end-of-campaign settlement (pure evidence plan)
+def _reap(kind, pid, cpu, *, sup, t, exit_code=0, boot="B"):
+    r = {"schema": L.REAPER_SCHEMA, "kind": kind, "pid": pid, "boot_id": boot, "t_wall": t, "cpu_usec": cpu,
+         "is_supervisor": sup, "exited": True if kind == "CHILD_REAPED" else None,
+         "exit_code": exit_code if kind == "CHILD_REAPED" else None, "signal": None}
+    return {**r, "record_id": sha256_bytes(canonical(r))}
+
+
+def _terminal(**run):
+    base = {"pid": 7, "boot_id": "B", "started_wall": 900.0, "ended_wall": 999.0, "end": "EXITED", "settled": False,
+            "self_cpu_seen_usec": 50, "children_usec": 1000, "charged_usec": 1050, "last_charge_wall": 999.0, "settlement": None}
+    return {"disposition": "COMPLETE", "overhead_charges": {}, "supervisor_runs": {"R2": {**base, **run}}}
+
+
+def _good_reaper():
+    return [_reap("CHILD_REAPED", 7, 1200, sup=True, t=1000.0), _reap("KEEPER_EXIT", 6, 30, sup=False, t=1000.1)]
+
+
+class SettlementPlan(unittest.TestCase):
+    def test_complete_unsettled_final_run(self):
+        plan = ST.plan_settlement(_terminal(), _good_reaper(), 0)
+        self.assertEqual(plan["runs"]["R2"]["extra_usec"], 150)
+        self.assertEqual(plan["runs"]["R2"]["evidence"], "REAPER_RUSAGE")
+        self.assertEqual([u for _r, u in plan["overhead"]], [30])
+
+    def test_already_settled_plans_nothing(self):
+        st = _terminal(settled=True)
+        reaped = _good_reaper()
+        st["overhead_charges"] = {reaped[1]["record_id"]: 30}
+        self.assertEqual(ST.plan_settlement(st, reaped, 0), {"runs": {}, "overhead": []})
+
+    def test_crash_between_transitions_plans_only_the_keeper_exit(self):
+        plan = ST.plan_settlement(_terminal(settled=True), _good_reaper(), 0)
+        self.assertEqual((plan["runs"], [u for _r, u in plan["overhead"]]), ({}, [30]))
+
+    def test_fail_closed_evidence(self):
+        good = _good_reaper()
+        cases = {
+            "unreadable_line": (_terminal(), good, 1, "REAPER_UNREADABLE"),
+            "no_reap": (_terminal(), good[1:], 0, "SETTLEMENT_EVIDENCE_MISSING"),
+            "no_keeper_exit": (_terminal(), good[:1], 0, "SETTLEMENT_EVIDENCE_MISSING"),
+            "two_reaps": (_terminal(), good + [_reap("CHILD_REAPED", 7, 1300, sup=True, t=1000.5)], 0, "SETTLEMENT_EVIDENCE_AMBIGUOUS"),
+            "reap_below_charged": (_terminal(), [_reap("CHILD_REAPED", 7, 1049, sup=True, t=1000.0)] + good[1:], 0,
+                                   "SETTLEMENT_EVIDENCE_CONTRADICTORY"),
+            "wrong_exit_code": (_terminal(), [_reap("CHILD_REAPED", 7, 1200, sup=True, t=1000.0, exit_code=20)] + good[1:], 0,
+                                "SETTLEMENT_EVIDENCE_CONTRADICTORY"),
+            "reaped_before_end": (_terminal(), [_reap("CHILD_REAPED", 7, 1200, sup=True, t=950.0)] + good[1:], 0,
+                                  "SETTLEMENT_EVIDENCE_CONTRADICTORY"),
+            "other_pid": (_terminal(pid=8), good, 0, "SETTLEMENT_EVIDENCE_MISSING"),
+            "other_boot": (_terminal(boot_id="rebooted"), good, 0, "SETTLEMENT_EVIDENCE_MISSING"),
+            "run_not_ended": (_terminal(end=None, ended_wall=None), good, 0, "SETTLEMENT_EVIDENCE_CONTRADICTORY"),
+        }
+        for name, (st, reaped, bad, want) in cases.items():
+            with self.subTest(name):
+                self.assertEqual(code(ST.plan_settlement, st, reaped, bad), want)
+
+    def test_two_unsettled_runs_or_not_latest_refuse(self):
+        st = _terminal()
+        st["supervisor_runs"]["R3"] = {**st["supervisor_runs"]["R2"], "pid": 9, "started_wall": 1500.0, "ended_wall": 1600.0}
+        self.assertEqual(code(ST.plan_settlement, st, _good_reaper(), 0), "SETTLEMENT_EVIDENCE_CONTRADICTORY")
+        st["supervisor_runs"]["R3"]["settled"] = True
+        self.assertEqual(code(ST.plan_settlement, st, _good_reaper(), 0), "SETTLEMENT_EVIDENCE_CONTRADICTORY")
+
+    def test_disposition_exit_codes(self):
+        for disposition, exit_code in (("HALTED", 20), ("INCOMPLETE_BUDGET_EXHAUSTED", 40)):
+            with self.subTest(disposition):
+                st = {**_terminal(), "disposition": disposition}
+                reaped = [_reap("CHILD_REAPED", 7, 1200, sup=True, t=1000.0, exit_code=exit_code), _good_reaper()[1]]
+                self.assertEqual(ST.plan_settlement(st, reaped, 0)["runs"]["R2"]["extra_usec"], 150)
+
+    def test_target_refusals(self):
+        from types import SimpleNamespace as NS_
+        cases = {GS.PREDECESSOR_RUNTIME_ROOT: "REFUSED_ROOT", GS.BLOCKED_RUNTIME_ROOT / "x": "REFUSED_ROOT",
+                 GS.AUX5_NS / "evidence/qualification_r1": "QUALIFICATION_ROOT",
+                 GS.NS / "evidence/requalification_r1/qualification_r1": "QUALIFICATION_ROOT",
+                 Path("/root/work/postk1-runs/glibc-successor-q6"): "QUALIFICATION_ROOT",
+                 GS.NS / "config": "REPOSITORY_ROOT", GS.PREDECESSOR_CHECKOUT_PATH / "x": "REPOSITORY_ROOT"}
+        for root, want in cases.items():
+            with self.subTest(str(root)):
+                self.assertEqual(code(ST.precheck_target, NS_(root=root, cell_indices=[128])), want)
+        self.assertIsNone(code(ST.precheck_target, NS_(root=GS.SUCCESSOR_RUNTIME_ROOT, cell_indices=list(GS.NEW_CELLS))))
+        self.assertEqual(code(ST.precheck_target, NS_(root=GS.SUCCESSOR_RUNTIME_ROOT, cell_indices=[127, 128])),
+                         "RECOMPUTATION_OF_CARRYOVER_CELL")
+
+    def test_entrypoint_exposes_settle_and_refuses_unreadable_input(self):
+        import contextlib
+        import io
+        import gs_entry as E
+        with contextlib.redirect_stdout(io.StringIO()) as out:
+            rc = E.main(["settle", "--synthetic-spec", "/nonexistent/cfg.json"])
+        self.assertEqual((rc, "REFUSED [SETTLE_INPUT_UNREADABLE]" in out.getvalue()), (30, True))
+
+    def test_no_settlement_bypass_in_successor_tests(self):
+        banned = tuple("".join(x) for x in ((".set", "tle("), ("recon", "cile("), ("op_settle", "_run("),
+                                            ("op_charge", "_overhead("), ("unmatched", "_overhead(")))
+        hits = [f"{f.name}:{i}" for f in sorted((GS.NS / "tests").glob("*.py"))
+                for i, line in enumerate(f.read_text().splitlines(), 1)
+                if any(t in line.split("#", 1)[0] for t in banned) and "c13_helper" not in line]
+        self.assertEqual(hits, [])
 
 
 def code(fn, *a, **kw):

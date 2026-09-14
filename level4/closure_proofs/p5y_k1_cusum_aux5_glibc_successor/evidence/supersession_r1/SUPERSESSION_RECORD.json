@@ -1,0 +1,62 @@
+{
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.glibc-successor.supersession.v1",
+ "status": "SUPERSEDED_BEFORE_LAUNCH_NEVER_LAUNCHED",
+ "recorded_utc": "2026-09-14",
+ "branch": "p5y-postk1-frontier",
+ "superseded": {
+  "checkpoint_sha256": "51df21860139554ee38874c3578cfcafdf7949cd3916897a129d29467891ab16",
+  "run_authorization_sha256": "03b9ca8085a93a1a54d567f2efacf6fddfcd4f142c900735ea973a9269f87b2f",
+  "run_authorization_id": "CUSUM-AUX5-GLIBC-PROD-AUTH-001",
+  "production_run_id": "CUSUM-AUX5-GLIBC-PROD-R1",
+  "ledger_id": "e7412e3a19f0a6dd495580cef5766c68833903ee493ed45d2e83b3aa17b68905",
+  "freeze_record_sha256": "5d917b3f6bd10608791190c325646ff68630b6720f089818d90d0b78af20421f",
+  "synthetic_acceptance_sha256": "a4d39631146bc2be0b422b1cbd8779d2520e3de18a4c3a168dbe52b8c50b8290",
+  "launch_preflight_sha256": "7591e3fb112a65a60f7a9b169cdc9effa4398b3b0ecb8934e1044e912951aacb",
+  "authorization_commit": "fa18b26f06894c69003f41cab812052cceff6f2c",
+  "freeze_commit": "825cc6f1cf0ecb4bbbe612c65e7ee792dd4e2e0d",
+  "preflight_evidence_commit": "db706cc0d9a8f5b2d1894b91aa685e5f46a89e3e",
+  "preserved_copies": {
+   "evidence/supersession_r1/superseded_objects/GLIBC_SUCCESSOR_CHECKPOINT.json": "51df21860139554ee38874c3578cfcafdf7949cd3916897a129d29467891ab16",
+   "evidence/supersession_r1/superseded_objects/GLIBC_SUCCESSOR_CHECKPOINT_HASH": "5d86622cd34d31dd1f4ea1d5167cffd2bd7f48225fafbd23e14da8768ea84dfc",
+   "evidence/supersession_r1/superseded_objects/RUN_AUTHORIZATION.json": "03b9ca8085a93a1a54d567f2efacf6fddfcd4f142c900735ea973a9269f87b2f",
+   "evidence/supersession_r1/superseded_objects/RUN_AUTHORIZATION_HASH": "0946bbeb5ef4a0679bf4361e7c69c571843ed39e3c7a0893328289b8de89db37",
+   "evidence/supersession_r1/superseded_objects/FREEZE_RECORD.json": "5d917b3f6bd10608791190c325646ff68630b6720f089818d90d0b78af20421f"
+  }
+ },
+ "statements": {
+  "valid_pre_launch_candidates": true,
+  "used_for_production_genesis": false,
+  "successor_runtime_root_ever_created": false,
+  "successor_ledger_genesis_ever_created": false,
+  "production_launched": false,
+  "result_bearing_compute_produced_under_them": "NONE",
+  "must_not_be_launched": true,
+  "evidence": "independent pre-launch review and its live read-only audit of rebaseguard-vultr-02 on 2026-09-14: /root/work/postk1-runs/cusum-aux5-production-glibc-r1 absent, boot eefa85dc-14db-4ba0-912f-f95eeece9c2b unchanged, no campaign process; launch preflight G17 ABSENT at db706cc0"
+ },
+ "defect": {
+  "found_by": "independent pre-launch review of the frozen glibc-successor campaign (verdict BLOCKED)",
+  "class": "END_OF_CAMPAIGN_SETTLEMENT_PATH_MISSING",
+  "description": "the frozen supervisor leaves its final run unsettled (reconcile skips the current run; a terminal ledger is never reopened by a supervisor and preflight G17 refuses it); the frozen successor integrity audit therefore reports D_unsettled_supervisor_runs on every COMPLETE successor ledger, the composite audit stays INCOMPLETE and the K4 composite attestation and export can never succeed; gs_entry.py exposed no settle command",
+  "masked_by": "synthetic acceptance r3 settled its synthetic ledgers through the frozen test-harness helper Campaign.settle(), not through a production command",
+  "scientific_recompute_required": false
+ },
+ "repair": {
+  "sanctioned_path": "gs_entry.py settle (code/gs_settle.py)",
+  "document": "SETTLEMENT_REPAIR.md",
+  "replacement": "the successor checkpoint and run authorization bound by config/FREEZE_RECORD.json after this record; that checkpoint binds this record by sha256 (supersedes.record_sha256)",
+  "guard": "gs_entry.py refuses both superseded sha256 values by name (gs_schema.SUPERSEDED_CHECKPOINT_SHA256 / SUPERSEDED_AUTHORIZATION_SHA256)"
+ },
+ "unchanged": {
+  "carryover_countersignature_sha256": "e1ee7fb112c4d013c53f3adf10f12421c04b39f2ec1d3edd98ec2cc07edf143a",
+  "proposal_sha256": "964dc9691a4d5261d244c64426b6438a2ca7e6d2ef7329c26399345d60e34241",
+  "q6_result_sha256": "894f2e8aae6eb38beb2d389a1447a0fce8e1d0d3189fb49ca683701604dc3d88",
+  "predecessor_binding_sha256": "0676fc8267bac3fc6044ab4cb9f57c8769b2b9d62e0d2f0bb2a2d3b1d9db8ac3",
+  "predecessor_checkpoint_sha256": "dd4c89d773c411355d93d0d703e40c027f9913e11e116e4bfe35117f84b4baf2",
+  "carryover_cells": [0, 127],
+  "production_universe": [128, 325],
+  "absolute_cap_usec": 1080000000000,
+  "predecessor_settled_usec": 262686610580,
+  "successor_residual_cap_usec": 817313389420,
+  "admission_invariant": [115, 100]
+ }
+}
