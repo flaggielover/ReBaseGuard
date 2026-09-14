@@ -1,0 +1,380 @@
+{
+ "authorization_id": "CUSUM-AUX5-GLIBC-PROD-AUTH-001",
+ "campaign_id": "p5y_k1_cusum_aux5_production_glibc_successor_r1",
+ "cap": {
+  "absolute_campaign_cap_usec": 1080000000000,
+  "cap_usec": 817313389420,
+  "invariant": [
+   115,
+   100
+  ],
+  "predecessor_settled_usec": 262686610580,
+  "reservation_usec": 3600000000
+ },
+ "carryover_manifest_sha256": "918d156aa44b9c084c2dd3adf00838c6f141960bc61c1a83e227af2a9b7a8a67",
+ "composite": {
+  "audit_requirements": {
+   "module": "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_composite.py",
+   "requirements": [
+    "frozen prov_integrity.audit unchanged on the predecessor ledger",
+    "tolerate exactly D_halt (the bound HOST_DRIFT stop) and D_unsettled_supervisor_runs (R20260913T115713Z-103963); any other issue refuses",
+    "all 128 predecessor pairs verified; digest equal to the binding",
+    "frozen prov_integrity.audit unchanged on the successor ledger",
+    "old/new disjoint; union exactly 0-325; one producer identity",
+    "qualification and Q6 records never reused",
+    "both provenance halves disclosed",
+    "INCOMPLETE until the successor ledger is COMPLETE; never K4-ready before"
+   ]
+  },
+  "carryover_rule": "SUCCESSOR_PRODUCTION_RESULT = OLD_CARRYOVER (cells 0-127: the verified (record, envelope) pairs of the terminal predecessor ledger, governed by predecessor authorization b8f11ec0 and countersignature 1ceb92d4, unchanged) disjoint-union NEW_SUCCESSOR (cells 128-325: pairs of the successor ledger born under this run authorization). Old cells are never rows of the successor ledger, never reserved, started, recomputed or marked completed by it, and enter final coverage only through the composite audit and the carry-over manifest.",
+  "k4_downstream_obligation": {
+   "all_scientific_hashes_verified": true,
+   "binds_predecessor_checkpoint": "dd4c89d773c411355d93d0d703e40c027f9913e11e116e4bfe35117f84b4baf2",
+   "cells_verified": 326,
+   "disclosure": {
+    "cells_0_127": "predecessor authorized campaign",
+    "cells_128_325": "successor campaign"
+   },
+   "k4_assembly_run": false,
+   "producer_checkpoint_sha256": "this successor checkpoint",
+   "producer_identity_hash": "3692d0feeaef71365798cd99399fdb6d744573f38d59dba5cfe2e99294f0ae19",
+   "schema": "rebaseguard.p5y.k1.cusum-production.integrity-attestation.v1"
+  }
+ },
+ "conditions": {
+  "a": {
+   "enforced_by": "gs_entry preflight G01-G18 and gs_spec.load_checkpoint",
+   "text": "The successor checkpoint and launch preflight must enforce every binding in SUCCESSOR_CHECKPOINT_SPEC.md (sha256 6cc0d187ef0efd19d7eb5dbdaf61425f66cb055651f1ca1f72e4fae9934aa945), including the exact host and runtime identity (every fact of REQUALIFICATION_PROTOCOL.json host, all 11 system-library hashes, the producer identity and runtime contract), the containment POST_STATE, and the production universe exactly 128-325; any missing or differing binding refuses the launch."
+  },
+  "b": {
+   "enforced_by": "gs_composite.composite_audit",
+   "text": "The future composite audit must run the frozen prov_integrity.audit unchanged on the predecessor ledger and may tolerate exactly two predecessor audit issues: D_halt, only for the bound HOST_DRIFT stop, and D_unsettled_supervisor_runs, only for R20260913T115713Z-103963. Any other predecessor audit issue (including any A_, B_, C_ or D_open_attempts issue) must fail closed."
+  },
+  "c": {
+   "enforced_by": "gs_composite.build_composite_attestation",
+   "text": "The future K4 composite attestation must use the successor checkpoint sha256 as producer_checkpoint_sha256, while the successor checkpoint itself binds the predecessor checkpoint dd4c89d773c411355d93d0d703e40c027f9913e11e116e4bfe35117f84b4baf2. Both provenance halves (each ledger state sha256, genesis entry sha256, authorization block and verified pairs) must be explicitly disclosed, and no record enters K4 unless its pair verified."
+  },
+  "d": {
+   "enforced_by": "gs_entry launch requires READY preflight + frozen checkpoint + run authorization + explicit confirmations",
+   "text": "This countersignature is NECESSARY BUT NOT SUFFICIENT for production launch. Despite the frozen verdict label APPROVED_CARRYOVER_AND_SUCCESSOR_LAUNCH, CARRYOVER_AUTHORIZED = YES but PRODUCTION_LAUNCH_AUTHORIZED = NO until a valid successor checkpoint, a successor run authorization and the successor launch preflight all exist and pass."
+  },
+  "e": {
+   "enforced_by": "gs_spec.SuccessorSpec.host_guard + preflight G11/G12",
+   "text": "Any reboot (a boot id different from the one bound at the successor checkpoint), provider maintenance, or host or runtime identity drift before or during successor production must fail closed: the launch is refused or admissions stop under the successor host guard."
+  }
+ },
+ "containment": {
+  "POST_RUN_STATE_sha256": "9cead60d02167a4f7e45d1e982ed5bd2511c63f04d01eb23083e3c9ef36bcf72",
+  "POST_STATE_sha256": "5af4e10228278be2308cf0caf584328c2a320118f2e24d081f575fd3bcef5940",
+  "PRE_STATE_sha256": "7c1e6d24d5214428d82e44621acccd942a56e96dc733cbf15bae55337c923d20",
+  "post_state": {
+   "apt_conf_d_sha256": {
+    "00CDMountPoint": "2b5103e63bc34fbd385bf60446b1d8a2b9273addc6861b26cbb7ea73c78a19ff",
+    "00aptitude": "a7e26333596b9061be18dad3c83b65335dc01b842b554007e1932bde8070ce4c",
+    "00trustcdrom": "f781403c0ecdd4dcb70682adcc7360cb92fc5d6ca7df6b3799a6d951a1c43b21",
+    "01autoremove": "35b4360d9126e5e5efc1ce42cea8a957ba42921de749ad8502922d536c9f385c",
+    "20auto-upgrades": "b81a3a01864d5ed7f8d023f3fa86d65087ad6b85706d399dc229a60b1c784807",
+    "20listchanges": "1b753b8071e9bf2f791310677008f309c5c5ee7df8317b9e14c244af1455ddd4",
+    "50unattended-upgrades": "1bbe2f8e7f113585b1142a5e8e9c347363241053131b843bde54575d7a40dfb3",
+    "70debconf": "db749e19baf3b72ca2c157c70c52522cae23d94bc8b2dc5793fd43d427445367",
+    "99-rebaseguard-cusum-freeze": "77d2fc9523114ea10df5e96a4b0859ef390a01e510c8b1a5f0bd5b2de7b11966"
+   },
+   "apt_config": [
+    "APT::Periodic \"\";",
+    "APT::Periodic::Update-Package-Lists \"0\";",
+    "APT::Periodic::Unattended-Upgrade \"0\";",
+    "Unattended-Upgrade::Origins-Pattern \"\";",
+    "Unattended-Upgrade::Origins-Pattern:: \"origin=Debian,codename=${distro_codename},label=Debian\";",
+    "Unattended-Upgrade::Origins-Pattern:: \"origin=Debian,codename=${distro_codename},label=Debian-Security\";",
+    "Unattended-Upgrade::Origins-Pattern:: \"origin=Debian,codename=${distro_codename}-security,label=Debian-Security\";"
+   ],
+   "freeze_dropin": {
+    "content": "APT::Periodic::Update-Package-Lists \"0\";\nAPT::Periodic::Unattended-Upgrade \"0\";\n",
+    "exists": true,
+    "path": "/etc/apt/apt.conf.d/99-rebaseguard-cusum-freeze"
+   },
+   "holds": [
+    "libc-bin",
+    "libc6",
+    "libcrypt1",
+    "libgcc-s1",
+    "libstdc++6",
+    "linux-image-6.12.107+deb13-amd64",
+    "linux-image-amd64",
+    "zlib1g"
+   ],
+   "kernel_release": "6.12.107+deb13-amd64",
+   "other_managers": {
+    "packagekit": false,
+    "snapd": false
+   },
+   "system_libraries_sha256": {
+    "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2": "c8438e4fde1934e61c88311633f00949ff645d5c04cdb8671fa3d78164d2f307",
+    "/usr/lib/x86_64-linux-gnu/libc.so.6": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+    "/usr/lib/x86_64-linux-gnu/libcrypt.so.1.1.0": "436788729ab71d794a66954d62e930c723e624587f39beb2f4f86ff1000b1d29",
+    "/usr/lib/x86_64-linux-gnu/libdl.so.2": "295fa521a03cd2faa99974f378c9e23dd622021ec7d32bcad4f8ea61aec8a872",
+    "/usr/lib/x86_64-linux-gnu/libgcc_s.so.1": "30c61ab012a4241bed033725a09b61f5fdd3bb7df95ee852d0b096520524c7af",
+    "/usr/lib/x86_64-linux-gnu/libm.so.6": "6d567d53e895273ca14a1f9dc164fc6c8d39aed2f60aa46a733c2784228915f3",
+    "/usr/lib/x86_64-linux-gnu/libpthread.so.0": "85e21f7dba0394411d00959176fd18b470e575b0b05f1f4f41e5636802ce0500",
+    "/usr/lib/x86_64-linux-gnu/librt.so.1": "7b7b84d1aedda0e0b2bdfc68844362782132180b8f02be1300e21e77572e514b",
+    "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00",
+    "/usr/lib/x86_64-linux-gnu/libutil.so.1": "e3981d10efd152a53f083e38f5f9ddde7a049c85d0ab388a5eec91b52fc98a11",
+    "/usr/lib/x86_64-linux-gnu/libz.so.1.3.1": "85590dd58edf5445e18bc7193e5ebc01ac5841f1ae187e97705a662e90c6421e"
+   },
+   "units": {
+    "apt-daily-upgrade.service": {
+     "active": "inactive",
+     "enabled": "masked"
+    },
+    "apt-daily-upgrade.timer": {
+     "active": "inactive",
+     "enabled": "disabled"
+    },
+    "apt-daily.service": {
+     "active": "inactive",
+     "enabled": "masked"
+    },
+    "apt-daily.timer": {
+     "active": "inactive",
+     "enabled": "disabled"
+    },
+    "apt-listchanges.service": {
+     "active": "inactive",
+     "enabled": "static"
+    },
+    "apt-listchanges.timer": {
+     "active": "inactive",
+     "enabled": "disabled"
+    },
+    "unattended-upgrades.service": {
+     "active": "active",
+     "enabled": "enabled"
+    }
+   }
+  }
+ },
+ "countersignature": {
+  "path": "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/config/COUNTERSIGNATURE.json",
+  "semantics": "NECESSARY_BUT_NOT_SUFFICIENT: carry-over authorized by the independent countersignature; production launch additionally requires this authorization, the frozen checkpoint and a READY launch preflight",
+  "sha256": "e1ee7fb112c4d013c53f3adf10f12421c04b39f2ec1d3edd98ec2cc07edf143a"
+ },
+ "executor_sources": {
+  "EXECUTOR_HASH": "b25172112e12afa45eb8380d53e6fa5dc37041e273d3c967a12efb851668e362",
+  "files": {
+   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/glibc_successor.py": "785c6bddf9b0b8acc551a7fd7c10df79fcecd181f5dc8910b6f26bc605fa53b6",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_authorization.py": "63062f17c077e317938771c1666cc70a4d2a16384ec106ac5ef44ad84595a2a8",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_composite.py": "82a4e35da930a275f13fb493593c68067f85f18c4e2a03f96e7f3c0e641ef3de",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_entry.py": "0fbd9733aba1c1aae2d8fb997f378076ce4ddc7d23de428d5d5ae2a0111c1b7b",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_host.py": "7fb16d1d28724ca3208f791df9dbcefb4b0dcd76f14ff39d5d453c507f8e25bd",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_schema.py": "54293e4fc7ef30487de5b8164b87da8c6627efe462366eaded7819907d431856",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_spec.py": "5bf4fe77018a24fa4d951bae78fd7b676aa1444763ce60402e7961c158bc3ee7",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_supervisor.py": "6cb6fa665ff2b96795b6d61e0bf7f397b85adb62e99760323a2074cb0cbfe36f",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/make_gs_checkpoint.py": "803110c4cca6fb05ecf0cee8d25f5d310388660051ea2576def6399df565aa81",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/q6_result.py": "4d249a39594ada164bab81d6b60c0fa00763d647f649914aefd41e9d4dcb63a1",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/countersignature/code/carryover_countersignature.py": "24be8b732b6e9064af7ed982001946dbaafc7bd5b5dc656ceddea669fa188d09",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/k4_input_attestation.py": "21436d066e55906827382d40cdf617b74f2dcf72ce01c0b5c13de28cfde1e64a",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/make_production_checkpoint.py": "12e54666343cff34feb5ad2fe6e50b5d5917057092d99cb632885f039c1278e9",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/prod_cells.py": "3b3a8d59ea943d0e1d0492e5e5132cc94b0afc4411cf4d0a1dabe87963ec07cb",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/prod_common.py": "dec6d7828da15d2de7f35956861f424a4b22246f49354904b4ecac13c6e6586b",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/prod_entry.py": "41bd68292e066677a07861bcfb32ff4f4b002f98500559fdaaa531071e1893b9",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/prod_ledger.py": "f1542de3324c2c731137091d8145ce16ed1ead9c1b8a27e9b53b3cf3a425aa79",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/prod_sealer.py": "af9d6729f0a971cb29a7919ee04bf521cbb70b313a38428f759070b2bb605fce",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/prod_spec.py": "073396ef3d8ffe844de5038fa5483927a0fa6cfb88a9560b6e0f2e3ffa50e109",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/prod_supervisor.py": "26a6c523c7ac1330e4bf5f1255a8c12d49bfd06bf1f70bdaa895ee0ab046c04c",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/code/make_provenance_checkpoint.py": "e42d338519d7ce4599baad2defd0d11ca761df3c64c964ace912a3824cebe5ab",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/code/prov_authorization.py": "4e80750e91a1d57dd7dcd8a446d495a56dd6bbaa28007498a63bd2e6bbb5572f",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/code/prov_entry.py": "1160f7cf685d7f2f21152508e25ea6585ee0c2f6266a016fecaf118ab9092b22",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/code/prov_envelope.py": "7b96de9e80c3eae374c5552260e4790197dded412f1c64a3592474e44e658e40",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/code/prov_integrity.py": "117a38116bc9711e57b5e8ddd2b9e2705fe1581cbbc2cf5e2c33e63a3c442375",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/code/prov_ledger.py": "ebbcf4bc1f0f958254d253652d917cc9af8aad237636509b96eafb4549304642",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/code/prov_schema.py": "041b250dc0ca734bcb53e78933afbc6a3ab86b07330aa3ca1f9ca4d0ed493c44",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/code/prov_spec.py": "37dc367cd047361d2d5692107f790f6b4372ef53e9dc8a10c3fa8eb3cb46cc41",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_production_provenance_successor/code/prov_supervisor.py": "90b5ecaf934e1d0bb2fab66e5b23a04f1b6392936fa894d2c95f91f22013921c",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/qualify5.py": "7d917e51c3b4851236e4cdf5b600d593c0d85b3e89778f1745e7ccae94c0403d",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_successor/manifests/producer_manifest_v3.json": "611bd0a9f356b0e7f5e63da60567ac1afa9e69fc1f8c464c7e5b89aeedbd2b9f"
+  }
+ },
+ "host": {
+  "boot_id": "eefa85dc-14db-4ba0-912f-f95eeece9c2b",
+  "cpu_model": "AMD EPYC-Milan Processor",
+  "glibc_package_version": "2.41-12+deb13u4",
+  "host_name": "rebaseguard-vultr-02",
+  "kernel_release": "6.12.107+deb13-amd64",
+  "libc_path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+  "libc_sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+  "logical_cpus": 8,
+  "machine_id_sha256": "e914421252e5e879ffea329880295de11d5e770e0cbec522fd572f3ac8829ffd",
+  "packages": {
+   "libc-bin": "2.41-12+deb13u4",
+   "libc6": "2.41-12+deb13u4",
+   "libcrypt1": "1:4.4.38-1",
+   "libgcc-s1": "14.2.0-19",
+   "libstdc++6": "14.2.0-19",
+   "linux-image-6.12.107+deb13-amd64": "6.12.107-1",
+   "linux-image-amd64": "6.12.107-1",
+   "zlib1g": "1:1.3.dfsg+really1.3.1-1+b1"
+  },
+  "physical_cores": 4,
+  "smt_groups": [
+   [
+    0,
+    1
+   ],
+   [
+    2,
+    3
+   ],
+   [
+    4,
+    5
+   ],
+   [
+    6,
+    7
+   ]
+  ],
+  "system_libraries_sha256": {
+   "/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2": "c8438e4fde1934e61c88311633f00949ff645d5c04cdb8671fa3d78164d2f307",
+   "/usr/lib/x86_64-linux-gnu/libc.so.6": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+   "/usr/lib/x86_64-linux-gnu/libcrypt.so.1.1.0": "436788729ab71d794a66954d62e930c723e624587f39beb2f4f86ff1000b1d29",
+   "/usr/lib/x86_64-linux-gnu/libdl.so.2": "295fa521a03cd2faa99974f378c9e23dd622021ec7d32bcad4f8ea61aec8a872",
+   "/usr/lib/x86_64-linux-gnu/libgcc_s.so.1": "30c61ab012a4241bed033725a09b61f5fdd3bb7df95ee852d0b096520524c7af",
+   "/usr/lib/x86_64-linux-gnu/libm.so.6": "6d567d53e895273ca14a1f9dc164fc6c8d39aed2f60aa46a733c2784228915f3",
+   "/usr/lib/x86_64-linux-gnu/libpthread.so.0": "85e21f7dba0394411d00959176fd18b470e575b0b05f1f4f41e5636802ce0500",
+   "/usr/lib/x86_64-linux-gnu/librt.so.1": "7b7b84d1aedda0e0b2bdfc68844362782132180b8f02be1300e21e77572e514b",
+   "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.33": "972bb2a18b71140dab0240f8a1f68ab3fb1d56bcd4c4f824a91b70888faf5a00",
+   "/usr/lib/x86_64-linux-gnu/libutil.so.1": "e3981d10efd152a53f083e38f5f9ddde7a049c85d0ab388a5eec91b52fc98a11",
+   "/usr/lib/x86_64-linux-gnu/libz.so.1.3.1": "85590dd58edf5445e18bc7193e5ebc01ac5841f1ae187e97705a662e90c6421e"
+  }
+ },
+ "launch_preflight": {
+  "checks": [
+   "G01_checkpoint_and_freeze",
+   "G02_bound_sources",
+   "G03_carryover_countersignature",
+   "G04_proposal_q6_launch_readiness",
+   "G05_run_authorization",
+   "G06_synthetic_acceptance",
+   "G07_checkout",
+   "G08_predecessor_binding_live",
+   "G09_predecessor_halted_immutable",
+   "G10_composite_predecessor_half",
+   "G11_containment",
+   "G12_host_runtime_identity_and_boot",
+   "G13_runtime_contract_probe",
+   "G14_universe_and_cap",
+   "G15_qualification_firewall",
+   "G16_protected_trees",
+   "G17_run_state",
+   "G18_host_idle"
+  ],
+  "path": "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/code/gs_entry.py",
+  "schema": "rebaseguard.p5y.k1.cusum-aux5.glibc-successor.launch-preflight.v1",
+  "version": "gs-launch-preflight-r1"
+ },
+ "ledger": {
+  "genesis_rule": "the GENESIS state and journal entry 0 carry this authorization block; the cells are exactly the production universe, the cap is the residual cap; no import transition",
+  "journal_schema": "rebaseguard.p5y.k1.cusum-aux5.production-journal.v1",
+  "ledger_id": "d42109177acfee661418c4c8239c64fa5a5710c5d74432131364b929057a2c06",
+  "ledger_schema": "rebaseguard.p5y.k1.cusum-aux5.production-ledger.v1",
+  "pre_genesis_files": [
+   "campaign.lock",
+   "campaign.owner.json",
+   "reaper.jsonl"
+  ],
+  "production_start_predicate": "PRODUCTION_STARTED iff ledger.json or journal.jsonl exists in the successor runtime root; a root holding only PRE_GENESIS_FILES is not started",
+  "runtime_root": "/root/work/postk1-runs/cusum-aux5-production-glibc-r1",
+  "supervisor_run_id_scheme": "R<UTC %Y%m%dT%H%M%SZ>-<pid> (frozen prod_supervisor)"
+ },
+ "mode": "PRODUCTION",
+ "predecessor_binding_sha256": "0676fc8267bac3fc6044ab4cb9f57c8769b2b9d62e0d2f0bb2a2d3b1d9db8ac3",
+ "predecessor_checkpoint": {
+  "authorization_sha256": "b8f11ec05efc2476f733dd989ae02b542dc9efa374f24fa0a27688d76ec2b329",
+  "checkpoint_sha256": "dd4c89d773c411355d93d0d703e40c027f9913e11e116e4bfe35117f84b4baf2",
+  "countersignature_sha256": "1ceb92d463d1332dfb26505143454b3c3fd87a611bc731372d9e227017682b07",
+  "ledger_id": "61eb8565e382127620e85831673608d80e38364d0ee935888f30f0ee48034082",
+  "runtime_root": "/root/work/postk1-runs/cusum-aux5-production-prov-r1",
+  "status": "TERMINAL_HOST_DRIFT_STOP_CELLS_0_127_CARRIED_OVER_NEVER_RECOMPUTED"
+ },
+ "producer": {
+  "campaign": "p5y_k1_cusum_aux5_successor",
+  "implementation_hash_kind": "cusum_aux5_manifest_bound_identity_v3",
+  "producer_identity_hash": "3692d0feeaef71365798cd99399fdb6d744573f38d59dba5cfe2e99294f0ae19",
+  "producer_manifest_hash": "b55a2da1fea0c7ee889f8da6a4b893c12d3ef24e2bc02d19bd5488187fd30fd9",
+  "producer_manifest_path": "level4/closure_proofs/p5y_k1_cusum_aux5_successor/manifests/producer_manifest_v3.json",
+  "producer_manifest_schema": "k1.cusum-aux5.producer-manifest.v3",
+  "producer_manifest_version": 3,
+  "runtime_contract_hash": "bc75c9ea7cd5f9406a0509bb0a161aa2c013f80427d1035197989e3d202c845a"
+ },
+ "production_checkpoint_sha256": "bbcb4d909150986d320db945afdabc75044c06fcb5d25f49572c1098b20c123b",
+ "production_run_id": "CUSUM-AUX5-GLIBC-PROD-R1",
+ "proposal_sha256": "964dc9691a4d5261d244c64426b6438a2ca7e6d2ef7329c26399345d60e34241",
+ "provenance": {
+  "composite_rule": "A CUSUM Aux5 production result is the PAIR (scientific record, valid production provenance envelope). Neither object alone is production-authorized, result-bearing or disposition-bearing. An envelope is valid only if it recomputes exactly from: the sealed record bytes; a production ledger whose GENESIS names the pre-result run authorization and its independent countersignature; that ledger's RESERVED -> RUNNING -> SEAL journal entries for the attempt; the frozen producer, checkpoint, cell geometry and host; and the ledger's PROVENANCE_BOUND entry naming the envelope sha256.",
+  "envelope_schema": "rebaseguard.p5y.k1.cusum-aux5.production-provenance-envelope.v1",
+  "envelope_schema_file_sha256": "decda981cb1b31ecbe461b4620c8a624b6fde89f92c7b2bfd2aa143629ded197"
+ },
+ "q6_result_sha256": "894f2e8aae6eb38beb2d389a1447a0fce8e1d0d3189fb49ca683701604dc3d88",
+ "result_bearing": false,
+ "result_bearing_semantics": "a property of THIS authorization object (it carries no result); records become result-bearing only as verified pairs of a ledger born under it",
+ "runtime": {
+  "checkout_path": "/root/work/postk1-aux5-glibc",
+  "cores": [
+   0,
+   2,
+   4,
+   6
+  ],
+  "precision_bits": 256,
+  "runtime_contract_hash": "bc75c9ea7cd5f9406a0509bb0a161aa2c013f80427d1035197989e3d202c845a",
+  "worker_argv_template": [
+   "/usr/bin/env",
+   "-i",
+   "PATH=/usr/bin:/bin",
+   "HOME=/root",
+   "LANG=C.UTF-8",
+   "OMP_NUM_THREADS=1",
+   "OPENBLAS_NUM_THREADS=1",
+   "MKL_NUM_THREADS=1",
+   "NUMEXPR_NUM_THREADS=1",
+   "K1_THREADS_PINNED=1",
+   "PYTHONDONTWRITEBYTECODE=1",
+   "/usr/bin/taskset",
+   "-c",
+   "{core}",
+   "/root/work/rbg-cusum-aux5-venv/bin/python",
+   "{root}/level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/qualify5.py",
+   "--cell",
+   "{cell}",
+   "--bits",
+   "256",
+   "--out",
+   "{out}"
+  ],
+  "workers": 4
+ },
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.glibc-successor.production-run-authorization.v1",
+ "status": "PRE_RESULT_RUN_AUTHORIZATION",
+ "temporal_rule": "committed before the successor runtime root holds any genesis artifact; every envelope binds a genesis entry naming this authorization and a RESERVED entry preceding its result",
+ "universe": {
+  "carryover_cells": [
+   0,
+   127
+  ],
+  "cell_indices_sha256": "123a623e0394e0ec01c267ef5d0fd4b08faa22a7ad271cbeacd6c132fa96b40a",
+  "cells": 198,
+  "cells_table_sha256": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f",
+  "detector": "CUSUM",
+  "first_index": 128,
+  "geometry_digest": "b36ec15d7386ca3e9005311de47199f4382bd815f663dace58999fa69cfc7b3e",
+  "last_index": 325,
+  "m_values": [
+   "1",
+   "2",
+   "3",
+   "5"
+  ],
+  "precision_bits": 256,
+  "rule": "SUCCESSOR_PRODUCTION_RESULT = OLD_CARRYOVER (cells 0-127: the verified (record, envelope) pairs of the terminal predecessor ledger, governed by predecessor authorization b8f11ec0 and countersignature 1ceb92d4, unchanged) disjoint-union NEW_SUCCESSOR (cells 128-325: pairs of the successor ledger born under this run authorization). Old cells are never rows of the successor ledger, never reserved, started, recomputed or marked completed by it, and enter final coverage only through the composite audit and the carry-over manifest."
+ }
+}
