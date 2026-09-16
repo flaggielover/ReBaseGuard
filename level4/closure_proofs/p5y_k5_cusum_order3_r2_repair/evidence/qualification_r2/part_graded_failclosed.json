@@ -1,0 +1,64 @@
+{
+ "argv": [
+  "graded_failclosed",
+  "--out",
+  "evidence/qualification_r2/part_graded_failclosed.json"
+ ],
+ "body": {
+  "checks": {
+   "GF01_missing_hull_norms": {
+    "pass": true,
+    "refused": "missing input k_hull"
+   },
+   "GF02_x0_not_sigma_fixed": {
+    "pass": true,
+    "refused": "the evaluation state must be sigma-fixed"
+   },
+   "GF03_nonfinite_C_o0": {
+    "pass": true,
+    "refused": "C_o0: non-finite enclosure"
+   },
+   "GF04_nan_residual": {
+    "pass": true,
+    "refused": "t: non-finite enclosure"
+   },
+   "GF05_missing_residual": {
+    "pass": true,
+    "refused": "'W_0_1:2'"
+   },
+   "GF06_precision_outside_set": {
+    "pass": true
+   },
+   "GF07_bad_certificate_never_below_scalar_cap": {
+    "pass": true
+   },
+   "GF08_real_front_end_no_authorization": {
+    "pass": true,
+    "refused": "REAL_CELL_NOT_AUTHORIZED: cell 0"
+   },
+   "GF09_real_front_end_forged_authorization": {
+    "pass": true,
+    "refused": "REAL_CELL_NOT_AUTHORIZED: cell 0"
+   },
+   "GF10_registries_empty_and_pinned": {
+    "pass": true
+   }
+  }
+ },
+ "loaded_forbidden_modules": null,
+ "metadata": {
+  "cpu_seconds": 0.232520975,
+  "peak_rss_kib": 50244,
+  "wall_seconds": 0.23264670372009277
+ },
+ "part": "graded_failclosed",
+ "protocol_sha256": "4960e7eb7da8ed8acfe16ddab21c893a7fb8ad154b7918b11a6cf4b5485a2bb6",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}

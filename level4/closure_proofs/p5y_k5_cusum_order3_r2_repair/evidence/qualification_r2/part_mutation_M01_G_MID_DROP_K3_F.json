@@ -1,0 +1,42 @@
+{
+ "argv": [
+  "mutation",
+  "--mutation",
+  "M01_G_MID_DROP_K3_F",
+  "--out",
+  "evidence/qualification_r2/part_mutation_M01_G_MID_DROP_K3_F.json"
+ ],
+ "body": {
+  "detected": true,
+  "mutation": "M01_G_MID_DROP_K3_F",
+  "trials": [
+   {
+    "crashed": null,
+    "detected": true,
+    "first": [
+     "e0 eps_mid F:0:3: error 1.429e-03 > bound 2.107e-76"
+    ],
+    "refused": null,
+    "residual_consistency": true,
+    "trial": "T22_perturb_F0_controlled_K3",
+    "violations": 22
+   }
+  ]
+ },
+ "loaded_forbidden_modules": [],
+ "metadata": {
+  "cpu_seconds": 0.25437309799999996,
+  "peak_rss_kib": 49908,
+  "wall_seconds": 0.254547119140625
+ },
+ "part": "mutation",
+ "protocol_sha256": "4960e7eb7da8ed8acfe16ddab21c893a7fb8ad154b7918b11a6cf4b5485a2bb6",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}

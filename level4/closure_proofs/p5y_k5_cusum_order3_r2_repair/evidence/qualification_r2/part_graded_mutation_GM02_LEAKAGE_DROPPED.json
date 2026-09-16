@@ -1,0 +1,40 @@
+{
+ "argv": [
+  "graded_mutation",
+  "--mutation",
+  "GM02_LEAKAGE_DROPPED",
+  "--out",
+  "evidence/qualification_r2/part_graded_mutation_GM02_LEAKAGE_DROPPED.json"
+ ],
+ "body": {
+  "detected": true,
+  "mutation": "GM02_LEAKAGE_DROPPED",
+  "trials": [
+   {
+    "crashed": null,
+    "detected": true,
+    "first": [
+     "cell e=13/3200 W:0:1:2.o: 2.322e-06 > 2.003e-06"
+    ],
+    "trial": "S05_perturb_F_odd_C50",
+    "violations": 10
+   }
+  ]
+ },
+ "loaded_forbidden_modules": [],
+ "metadata": {
+  "cpu_seconds": 0.51156116,
+  "peak_rss_kib": 50116,
+  "wall_seconds": 0.5117092132568359
+ },
+ "part": "graded_mutation",
+ "protocol_sha256": "4960e7eb7da8ed8acfe16ddab21c893a7fb8ad154b7918b11a6cf4b5485a2bb6",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}

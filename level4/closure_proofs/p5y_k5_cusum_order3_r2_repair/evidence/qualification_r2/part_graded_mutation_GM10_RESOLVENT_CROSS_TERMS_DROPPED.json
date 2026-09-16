@@ -1,0 +1,68 @@
+{
+ "argv": [
+  "graded_mutation",
+  "--mutation",
+  "GM10_RESOLVENT_CROSS_TERMS_DROPPED",
+  "--out",
+  "evidence/qualification_r2/part_graded_mutation_GM10_RESOLVENT_CROSS_TERMS_DROPPED.json"
+ ],
+ "body": {
+  "detected": true,
+  "mutation": "GM10_RESOLVENT_CROSS_TERMS_DROPPED",
+  "trials": [
+   {
+    "crashed": null,
+    "detected": false,
+    "first": [],
+    "trial": "S05_perturb_F_odd_C50",
+    "violations": 0
+   },
+   {
+    "crashed": null,
+    "detected": false,
+    "first": [],
+    "trial": "S09_perturb_D_odd_C50",
+    "violations": 0
+   },
+   {
+    "crashed": null,
+    "detected": false,
+    "first": [],
+    "trial": "S08_perturb_H_odd_C50",
+    "violations": 0
+   },
+   {
+    "crashed": null,
+    "detected": false,
+    "first": [],
+    "trial": "S06_perturb_D_even_C50",
+    "violations": 0
+   },
+   {
+    "crashed": null,
+    "detected": true,
+    "first": [
+     "cell e=3/800 F:0:0.o: 9.320e-05 > 9.191e-05"
+    ],
+    "trial": "S07_perturb_F_even_C50",
+    "violations": 10
+   }
+  ]
+ },
+ "loaded_forbidden_modules": [],
+ "metadata": {
+  "cpu_seconds": 2.358165529,
+  "peak_rss_kib": 49852,
+  "wall_seconds": 2.358621597290039
+ },
+ "part": "graded_mutation",
+ "protocol_sha256": "4960e7eb7da8ed8acfe16ddab21c893a7fb8ad154b7918b11a6cf4b5485a2bb6",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}

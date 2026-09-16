@@ -1,0 +1,74 @@
+{
+ "argv": [
+  "r05",
+  "--out",
+  "evidence/qualification_r2/part_r05.json"
+ ],
+ "body": {
+  "invariants": {
+   "ABL_RESOLVE_CLOSED:R05": true,
+   "ABL_RESOLVE_CLOSED:unmutated": true,
+   "ABL_ZERO_OFFSET:R05": true,
+   "ABL_ZERO_OFFSET:unmutated": true,
+   "FIXTURE:R05": true,
+   "FIXTURE:unmutated": true
+  },
+  "pass": true,
+  "rows": {
+   "ABL_RESOLVE_CLOSED:R05": {
+    "crashed": null,
+    "first": [],
+    "refused": null,
+    "violations": 0
+   },
+   "ABL_RESOLVE_CLOSED:unmutated": {
+    "crashed": null,
+    "first": [],
+    "refused": null,
+    "violations": 0
+   },
+   "ABL_ZERO_OFFSET:R05": {
+    "crashed": null,
+    "first": [],
+    "refused": null,
+    "violations": 0
+   },
+   "ABL_ZERO_OFFSET:unmutated": {
+    "crashed": null,
+    "first": [],
+    "refused": null,
+    "violations": 0
+   },
+   "FIXTURE:R05": {
+    "crashed": null,
+    "first": [
+     "e0 eps_mid F:0:3: error 2.857e-03 > bound 2.107e-76"
+    ],
+    "refused": null,
+    "violations": 5
+   },
+   "FIXTURE:unmutated": {
+    "crashed": null,
+    "first": [],
+    "refused": null,
+    "violations": 0
+   }
+  }
+ },
+ "loaded_forbidden_modules": [],
+ "metadata": {
+  "cpu_seconds": 0.36628915900000003,
+  "peak_rss_kib": 50076,
+  "wall_seconds": 0.3664829730987549
+ },
+ "part": "r05",
+ "protocol_sha256": "4960e7eb7da8ed8acfe16ddab21c893a7fb8ad154b7918b11a6cf4b5485a2bb6",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}

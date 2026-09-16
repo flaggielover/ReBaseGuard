@@ -1,0 +1,113 @@
+{
+ "argv": [
+  "failclosed",
+  "--out",
+  "evidence/qualification_r2/part_failclosed.json"
+ ],
+ "body": {
+  "checks": {
+   "FC01_insufficient_precision_64": {
+    "pass": true,
+    "refused": "ProducerRefusal: precision 64 bits is outside the frozen escalation set (128, 192, 256, 384, 512)"
+   },
+   "FC01b_unlisted_precision_200": {
+    "pass": true,
+    "refused": "ProducerRefusal: precision 200 bits is outside the frozen escalation set (128, 192, 256, 384, 512)"
+   },
+   "FC02_malformed_record_bytes": {
+    "pass": true,
+    "refused": "K1InputRefused: V02: record bytes do not match the export manifest entry k4_records/aux5_CUSUM_0_256.json"
+   },
+   "FC03_wrong_manifest": {
+    "pass": true,
+    "refused": "K1InputRefused: V01: export manifest bytes do not match 29ad1f9b"
+   },
+   "FC04_wrong_cell": {
+    "pass": true,
+    "refused": "K1InputRefused: V02: record bytes do not match the export manifest entry k4_records/aux5_CUSUM_309_256.json"
+   },
+   "FC05_wrong_m_engine": {
+    "pass": true,
+    "refused": "ProducerRefusal: m=4 outside the frozen scope (1, 2, 3, 5)"
+   },
+   "FC05b_wrong_m_record": {
+    "pass": true,
+    "refused": "K1InputRefused: V06: m blocks ['1', '2', '3', '5'] are not exactly ['1', '2', '3', '5']"
+   },
+   "FC06_wrong_coefficient_table": {
+    "frozen_table_matches_engine": true,
+    "pass": true
+   },
+   "FC07_interval_explosion_nonfinite": {
+    "pass": true,
+    "refused": "ProducerRefusal: refined H:2: non-finite enclosure"
+   },
+   "FC07b_nan_candidate": {
+    "pass": true,
+    "refused": "ProducerRefusal: origin ('G', 0): non-finite enclosure"
+   },
+   "FC07c_huge_C_finite_wide_sound": {
+    "pass": true,
+    "widths": {
+     "1": 0.010153016114226426,
+     "2": 0.06627836243883002,
+     "3": 0.07101689397599356,
+     "5": 0.07450639851417787
+    }
+   },
+   "FC08_sign_uncertainty_not_fabricated": {
+    "m1": {
+     "L": "0/1",
+     "U": "0/1",
+     "centre_float": 0.0,
+     "mid_width": "0/1",
+     "sign_status": "SIGN_INDETERMINATE",
+     "truth_grid_max": "0/1",
+     "truth_grid_min": "0/1",
+     "width": "0/1"
+    },
+    "pass": true
+   },
+   "FC09_singular_resolvent": {
+    "pass": true,
+    "refused": "ValueError: singular resolvent matrix"
+   },
+   "FC09b_nonpositive_C": {
+    "pass": true,
+    "refused": "ProducerRefusal: resolvent bound C must be positive"
+   },
+   "FC09c_near_singular_sound": {
+    "C": "48000000000000000000000000000000/47999999918729963401669901",
+    "pass": true
+   },
+   "FC10_runtime_mismatch": {
+    "observed_matches_contract": true,
+    "pass": true
+   },
+   "FC12_missing_input": {
+    "pass": true,
+    "refused": "ProducerRefusal: missing input towers"
+   },
+   "FC13_negative_rho": {
+    "pass": true,
+    "refused": "ProducerRefusal: rho must be a nonnegative half width"
+   }
+  }
+ },
+ "loaded_forbidden_modules": [],
+ "metadata": {
+  "cpu_seconds": 2.8225241650000004,
+  "peak_rss_kib": 51060,
+  "wall_seconds": 2.8227667808532715
+ },
+ "part": "failclosed",
+ "protocol_sha256": "4960e7eb7da8ed8acfe16ddab21c893a7fb8ad154b7918b11a6cf4b5485a2bb6",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}

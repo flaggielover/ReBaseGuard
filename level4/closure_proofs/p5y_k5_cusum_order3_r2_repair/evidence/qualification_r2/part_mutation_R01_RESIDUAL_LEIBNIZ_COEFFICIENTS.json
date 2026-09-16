@@ -1,0 +1,42 @@
+{
+ "argv": [
+  "mutation",
+  "--mutation",
+  "R01_RESIDUAL_LEIBNIZ_COEFFICIENTS",
+  "--out",
+  "evidence/qualification_r2/part_mutation_R01_RESIDUAL_LEIBNIZ_COEFFICIENTS.json"
+ ],
+ "body": {
+  "detected": true,
+  "mutation": "R01_RESIDUAL_LEIBNIZ_COEFFICIENTS",
+  "trials": [
+   {
+    "crashed": null,
+    "detected": true,
+    "first": [
+     "e=29/100 kept F:1:3: error 1.024e-02 > bound 7.609e-03"
+    ],
+    "refused": null,
+    "residual_consistency": true,
+    "trial": "T22_perturb_F0_controlled_K3",
+    "violations": 6
+   }
+  ]
+ },
+ "loaded_forbidden_modules": [],
+ "metadata": {
+  "cpu_seconds": 0.23723189900000002,
+  "peak_rss_kib": 49740,
+  "wall_seconds": 0.23740530014038086
+ },
+ "part": "mutation",
+ "protocol_sha256": "4960e7eb7da8ed8acfe16ddab21c893a7fb8ad154b7918b11a6cf4b5485a2bb6",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}

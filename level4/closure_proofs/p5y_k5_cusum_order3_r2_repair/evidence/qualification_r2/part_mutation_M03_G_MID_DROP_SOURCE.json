@@ -1,0 +1,132 @@
+{
+ "argv": [
+  "mutation",
+  "--mutation",
+  "M03_G_MID_DROP_SOURCE",
+  "--out",
+  "evidence/qualification_r2/part_mutation_M03_G_MID_DROP_SOURCE.json"
+ ],
+ "body": {
+  "detected": true,
+  "mutation": "M03_G_MID_DROP_SOURCE",
+  "trials": [
+   {
+    "crashed": null,
+    "detected": false,
+    "first": [],
+    "refused": null,
+    "residual_consistency": true,
+    "trial": "T22_perturb_F0_controlled_K3",
+    "violations": 0
+   },
+   {
+    "crashed": null,
+    "detected": false,
+    "first": [],
+    "refused": null,
+    "residual_consistency": true,
+    "trial": "T23_perturb_H_controlled_K1",
+    "violations": 0
+   },
+   {
+    "crashed": null,
+    "detected": false,
+    "first": [],
+    "refused": null,
+    "residual_consistency": true,
+    "trial": "T24_perturb_D_controlled_K1",
+    "violations": 0
+   },
+   {
+    "crashed": null,
+    "detected": false,
+    "first": [],
+    "refused": null,
+    "residual_consistency": true,
+    "trial": "T01_random_n1_exact",
+    "violations": 0
+   },
+   {
+    "crashed": null,
+    "detected": false,
+    "first": [],
+    "refused": null,
+    "residual_consistency": true,
+    "trial": "T09_sign_crossing_at_e0",
+    "violations": 0
+   },
+   {
+    "crashed": null,
+    "detected": false,
+    "first": [],
+    "refused": null,
+    "residual_consistency": true,
+    "trial": "T11_tiny_positive_R3",
+    "violations": 0
+   },
+   {
+    "crashed": null,
+    "detected": false,
+    "first": [],
+    "refused": null,
+    "residual_consistency": true,
+    "trial": "T04_random_n3_exact",
+    "violations": 0
+   },
+   {
+    "crashed": null,
+    "detected": false,
+    "first": [],
+    "refused": null,
+    "residual_consistency": null,
+    "trial": "T07_positive_R3",
+    "violations": 0
+   },
+   {
+    "crashed": null,
+    "detected": false,
+    "first": [],
+    "refused": null,
+    "residual_consistency": null,
+    "trial": "T15_ill_conditioned_C1000",
+    "violations": 0
+   },
+   {
+    "crashed": null,
+    "detected": false,
+    "first": [],
+    "refused": null,
+    "residual_consistency": null,
+    "trial": "T17_cusum_like_crho_C1233",
+    "violations": 0
+   },
+   {
+    "crashed": null,
+    "detected": true,
+    "first": [
+     "e0 eps_mid F:3:3: error 8.580e-07 > bound 7.673e-07"
+    ],
+    "refused": null,
+    "residual_consistency": null,
+    "trial": "T02_random_n1_noise6",
+    "violations": 1
+   }
+  ]
+ },
+ "loaded_forbidden_modules": [],
+ "metadata": {
+  "cpu_seconds": 5.048239191,
+  "peak_rss_kib": 49944,
+  "wall_seconds": 5.053027629852295
+ },
+ "part": "mutation",
+ "protocol_sha256": "4960e7eb7da8ed8acfe16ddab21c893a7fb8ad154b7918b11a6cf4b5485a2bb6",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}
