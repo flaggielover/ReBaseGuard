@@ -1,0 +1,27 @@
+{
+ "certificates": [
+  {
+   "artifact": "config/operator_certificates/C_o0_certificate.json",
+   "artifact_sha256": "3bd9aafe4be048937c37418f68f8f6bc1230837473cab7f1fc60a862f49e9bd5",
+   "margin_lower": 0.02049981225494952,
+   "method": "strong Markov at T0 = hit of the sigma-fixed atom (0,0) + polynomial supersolution of E_x[tau ^ T0] with the frozen Pair kernel minus the frozen origin piece",
+   "name": "C_o0",
+   "statement": "||(I - K_0)^-1 f|| <= C ||f|| for every sigma-odd f",
+   "value_float": 20.432241055731772,
+   "value_upper": "73934121238864033276486830243250016032592561338368687096855032226418579381791/3618502788666131106986593281521497120414687020801267626233049500247285301248"
+  },
+  {
+   "artifact": "config/operator_certificates/C_e0_certificate.json",
+   "artifact_sha256": "437372451855bb69cd7a25dc35466c47ef2fa0270de9140a573c343ad13371be",
+   "margin_lower": 0.004092907106321862,
+   "method": "polynomial supersolution of E_x[tau] with the frozen Pair kernel",
+   "name": "C_e0",
+   "statement": "||(I - K_0)^-1 f|| <= C ||f|| for every f (in particular sigma-even f)",
+   "value_float": 469.76966683433835,
+   "value_upper": "528913624126272035/1125899906842624"
+  }
+ ],
+ "rule": "Values are certified upper endpoints recomputed from the stored exact payload by resolvent_certificate.verify_artifact; this registry's sha256 is pinned in code/graded_real.py.",
+ "schema": "rebaseguard.p5y.k5.order3-r3.operator-certificate-registry.v1",
+ "status": "FROZEN"
+}

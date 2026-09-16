@@ -1,0 +1,22 @@
+{
+ "schema": "rebaseguard.p5y.k5.order3-r3.feasibility-criterion.v1",
+ "status": "FROZEN_PRE_RESULT",
+ "principle": "Enclosure quality of a certified first-cell object L_1 <= inf over cell 0 of R''', from committed K1 magnitudes and certified operator constants only. No category depends on the sign or size of any R''' value.",
+ "reference_scale": "S* = max_r sup|Hhat_r| on CUSUM cell 0 (committed candidate suprema, D_at_e0/H_at_e0 minus eps_mid). A heuristic scale anchor for the order-2 candidate size, NOT an estimate of R'''.",
+ "metric": "m = 1, G-residual factor 1 (binding); radius of the certified first-cell interval",
+ "classes": {
+  "PROMISING": "radius <= S*",
+  "MARGINAL": "S* < radius <= 100 S*",
+  "UNINFORMATIVE": "radius > 100 S*",
+  "STRUCTURALLY_BLOCKED": "the strategy has no finite certified bound (a required object has no certified source)"
+ },
+ "strategy_A": "graded whole-cell radius on cell 0 (certified C_e0, C_o0)",
+ "strategy_B": "point radius at e = 0 under assumption A1 (point-run residual magnitudes equal the committed e0 magnitudes) + (x_1^2/2) M5 with the anchored certified tower; the conservative proxy point radius is reported, not binding",
+ "preferred_strategy": "the better class; ties by smaller radius",
+ "next_step_rule": {
+  "PREPARE_GOVERNED_REAL_CELL_QUALIFICATION": "verdict QUALIFIED_FOR_GOVERNED_REAL_CELL_QUALIFICATION and preferred class PROMISING or MARGINAL with certified constants",
+  "REPAIR_GRADED_OPERATOR_CERTIFICATE": "preferred class UNINFORMATIVE with certified constants but PROMISING or MARGINAL for the same strategy with the non-certified operator estimate C_o0 = 4.68 (the certificate slack is the binding lever)",
+  "BUILD_CHEAP_R5_MAJORANT": "strategy B would be preferred but no certified M5 source exists",
+  "SEEK_ALTERNATE_K5_ROUTE": "UNINFORMATIVE for both strategies even with the non-certified operator estimate, or a soundness failure"
+ }
+}

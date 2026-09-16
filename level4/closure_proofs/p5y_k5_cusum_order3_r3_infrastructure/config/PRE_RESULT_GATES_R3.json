@@ -1,0 +1,32 @@
+{
+ "schema": "rebaseguard.p5y.k5.order3-r3.pre-result-gates.v1",
+ "status": "FROZEN_PRE_RESULT",
+ "principle": "Infrastructure qualification only. No gate depends on any R''' value; no gate is evaluated on a real CUSUM cell.",
+ "gates": {
+  "R01_R1_R2_preserved": "every R1 and R2 file byte-identical to the pins",
+  "R02_C_o0_certificate_replayed": "resolvent_certificate.verify_artifact recomputes the stored C_o0 bounds exactly from the exact payload, margin > 0, w >= 0",
+  "R03_C_e0_certificate_replayed": "same for C_e0",
+  "R04_certificate_registry_consistent": "registry values and artifact sha256 match the artifacts",
+  "R05_sigma_invariance_real_kernels": "K_i(0) and J_i(0), i <= 3, satisfy T(f o sigma)(x) = s (T f)(sigma x) on the real Arb kernels within radii and truncation allowances",
+  "R06_real_graded_wiring_scalar_equivalence": "graded engine in scalar mode on the real synthetic residuals equals the FROZEN midpoint DAG, Aux3 order-3 midpoint and the R1 rung (relative 2^-200); every operator-residual envelope term list equals the generic Leibniz rule (C7, structural)",
+  "R07_real_graded_residual_containment": "independent float quadrature residual parity parts at 34 reachable states, at e0 and both cell endpoints, are dominated by the graded mid / cell bounds (16 equations); graded candidate suprema dominate float even/odd parts of every wired candidate at the reachable states (C6)",
+  "R08_graded_never_looser": "graded radii <= scalar radii",
+  "R09_he6_j5_extension": "He_6 verification (recurrence, frozen agreement, exact sign changes, 6 ordered certified roots), orders 0..4 identical to the frozen table, extension <= reviewed bounds, certified moment >= float quadrature, straddle refused",
+  "R10_first_cell_manufactured_soundness": "Strategy A and Strategy B certified bounds contain exact truth on every first-cell fixture; every R^(5)-tower component dominates exact truth; point interval contains R'''(0); R odd",
+  "R11_evenness_lemma_independent_check": "exact check on odd polynomials holds and fails for a non-odd control",
+  "R12_mutation_suites": "every REQUIRED wiring, R^(5) and certificate-verifier mutation detected; the frozen verifier rejects the non-supersolution control payload",
+  "R13_determinism": "synthetic real-path payload hash identical across two fresh processes; forecast hash identical across two; certificate replays identical",
+  "R14_fail_closed": "real entry refuses without / with forged authorization before record validation; missing C_o0 refused even if the registry is re-pinned; tampered certificate value detected; engine refuses missing inputs",
+  "R15_fences_and_registries": "pure-module import fences, no module attribute assignment (Aux3 detector), authorization gate first, authorization registry EMPTY and pinned, certificate registry pinned, protocol hash",
+  "R16_runtime_identity": "python 3.12.3, python-flint 0.9.0, numpy 2.5.2, rebaseguard-vultr-02, /root/work/rbg-cusum-aux5-venv",
+  "R17_r2_graded_regression": "R2 graded soundness on its 16 sigma fixtures still 0 violations and never looser"
+ },
+ "verdict_rule": {
+  "QUALIFIED_FOR_GOVERNED_REAL_CELL_QUALIFICATION": "R01-R17 all PASS (C_o0 certified, real graded wiring complete and qualified, mutation suites, determinism, fail-closed), and at least one first-cell strategy has a fully certified methodology (A: R06-R08 + R10; B: additionally R11 and the certified M5 tower). Does NOT authorize any real-cell evaluation.",
+  "PARTIALLY_QUALIFIED": "all soundness gates (R02, R03, R05, R06, R07, R08, R09, R10, R11, R14) PASS but another gate fails",
+  "NOT_READY": "any soundness gate fails",
+  "CURRENT_ROUTE_STRUCTURALLY_UNPROMISING": "infrastructure gates pass but both strategies are STRUCTURALLY_BLOCKED, or UNINFORMATIVE even with the non-certified best-case operator estimate"
+ },
+ "b1_rule": "CLOSED_FOR_REAL_CELL_QUALIFICATION_ONLY iff the verdict is QUALIFIED_FOR_GOVERNED_REAL_CELL_QUALIFICATION; otherwise OPEN.",
+ "real_cell_qualification": "NOT_AUTHORIZED"
+}
