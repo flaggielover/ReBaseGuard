@@ -1,7 +1,8 @@
 # P5Y K5: CUSUM signed order-3 producer, design and non-scientific qualification
 
 **Not a producer run, not a K5 probe, not an authorization.** Nothing here computes `R'''` for any `(D,m)`, reads
-any K1 record, or uses any host. The authoritative K5 state stays `e8680998` (`NOT_READY`).
+any K1 record, or uses any host. The status block is in `DESIGN.md`. B1 (no certified order-3 producer) stays open,
+and so does B2 (no SR K1 inputs). B3 is closed by `d7d3c08b`, with its scope limitation.
 
 | File | Purpose |
 |---|---|

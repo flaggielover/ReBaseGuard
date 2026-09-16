@@ -1,13 +1,19 @@
 # CUSUM signed certified order-3 producer: design (not built, not run, not authorized)
 
 ```text
-PRODUCER_DESIGN                      = DRAFTED (this document)
-REFERENCE_ALGEBRA_KERNEL             = IMPLEMENTED (exact rationals, manufactured systems only)
-NONSCIENTIFIC_QUALIFICATION          = see evidence/ (protocol frozen before the first trial ran)
-ARB_PRODUCER_IMPLEMENTED             = NO
-PRODUCER_SCIENTIFICALLY_QUALIFIED    = NO
-K5_PROBE_AUTHORIZED / RUN            = NO / NO
-AUTHORITATIVE_K5_STATE               = e8680998 — NOT_READY (B1, B2, B3 open)
+K5_B_COUNTERSIGNATURE                  = PASS_WITH_SCOPE_LIMITATION   (d7d3c08b; separate Claude session, not human, not a different model family)
+B3                                     = CLOSED                       (CLOSED_BY_SESSION_INDEPENDENT_COUNTERSIGNATURE)
+
+ORDER3_PRODUCER_DESIGN                 = PASS
+REFERENCE_KERNEL                       = PENDING_SYNTHETIC_QUALIFICATION
+SYNTHETIC_QUALIFICATION                = NOT_YET_RUN (protocol frozen in this commit)
+
+CERTIFIED_REAL_CUSUM_ORDER3_PRODUCER   = NOT_BUILT
+REAL_INTERVAL_QUALIFICATION            = NOT_DONE
+B1_NO_CERTIFIED_ORDER3_PRODUCER        = OPEN
+
+SCIENTIFIC_K5_PROBES_AUTHORIZED        = NO
+FULL_K5_PRODUCTION_AUTHORIZED          = NO
 ```
 
 Scope: **CUSUM only.** SR has no K1 inputs (B2) and a measured fourth-order tower failure
@@ -160,8 +166,9 @@ differential testing of the Arb code.
   - This design does not choose.
 - **Oracle choice is the owner's decision.** The frozen oracle cannot be edited. Using `{0,148,305}` needs a new
   oracle, frozen before any order-3 value exists.
-- **B3 (K5-B countersignature) is independent of this work.** A qualified producer does not make K5-B adjudicated,
-  and a countersignature does not qualify a producer.
+- **B3 is closed by `d7d3c08b` and independent of this work.** That countersignature does not qualify a producer,
+  and this design does not strengthen the countersignature. Whether K5-B's premises bind to the K1 records is a
+  separate question, handled by the premise-binding audit (`p5y_k5b_k1_premise_binding_audit/`).
 
 ## 7. Technical risk (stated before any result)
 
