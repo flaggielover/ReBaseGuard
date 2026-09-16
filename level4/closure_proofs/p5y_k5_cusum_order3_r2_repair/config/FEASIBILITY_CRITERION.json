@@ -1,0 +1,21 @@
+{
+ "schema": "rebaseguard.p5y.k5.order3-r2.feasibility-criterion.v1",
+ "status": "FROZEN_PRE_RESULT",
+ "principle": "Engineering enclosure quality only. No category depends on the sign or size of any R''' value, and 'R''' becomes positive' is not a success criterion.",
+ "metric": "contraction_factor = R1_radius / R2_radius for the same inputs (m = 1 reported; all m recorded), computed separately for the midpoint interval and the whole-cell interval",
+ "categories": [
+  {"label": "ORDERS_OF_MAGNITUDE_IMPROVEMENT", "min": 1000},
+  {"label": "MATERIAL_IMPROVEMENT", "min": 10},
+  {"label": "MODEST_IMPROVEMENT", "min": 1.5},
+  {"label": "NO_IMPROVEMENT", "min": 0}
+ ],
+ "applied_to": {
+  "manufactured_stress_fixtures": "measured with CERTIFIED (exact) C_e0, C_o0 on sigma-symmetric systems (part method_comparison)",
+  "cusum_cell0_forecast": "computed from committed K1 magnitudes; C_e0 = committed certified C_upper; C_o0 is the NON-CERTIFIED float operator estimate, reported with a predeclared sweep {estimate, 10, 50, 466, C_upper}; the forecast category is conditional on a future certified C_o0 not exceeding the estimate"
+ },
+ "next_step_rule": {
+  "PREPARE_GOVERNED_REAL_CELL_QUALIFICATION": "only if REAL_ORDER3_PRODUCER_R2 = QUALIFIED_FOR_GOVERNED_REAL_CELL_QUALIFICATION",
+  "REPAIR_CELL0_CONDITIONING_AGAIN": "if all R2 qualification gates pass and the cell-0 midpoint forecast is at least MATERIAL_IMPROVEMENT at the float C_o0 estimate, but a certified input or real wiring required to run the graded method on real cells is missing",
+  "SEEK_ALTERNATE_K5_ROUTE": "if the cell-0 midpoint forecast is below MATERIAL_IMPROVEMENT even at the float C_o0 estimate, or the graded method fails soundness"
+ }
+}

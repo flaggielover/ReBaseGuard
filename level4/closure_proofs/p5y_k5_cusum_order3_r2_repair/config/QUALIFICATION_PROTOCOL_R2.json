@@ -1,0 +1,1031 @@
+{
+ "real_cell_qualification": "NOT_AUTHORIZED: no pre-result mechanism permits a real CUSUM cell to be used for producer qualification and excluded from K5 (design DESIGN.md section 6 leaves L4 to the owner; the frozen feasibility oracle requires probe cells be fixed before any R''' value exists). No real cell is run.",
+ "runtime_contract": {
+  "python": "3.12.3",
+  "python_flint": "0.9.0",
+  "numpy": "2.5.2",
+  "host": "rebaseguard-vultr-02",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "machine": "x86_64"
+ },
+ "assembly_table": {
+  "path": "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/checkpoint.json",
+  "key": "assembly",
+  "sha256": "1c2a6825f19e19de6fb588647ca3fc4618068087ef0976292ca7bbeca701f13f"
+ },
+ "mutations": [
+  {
+   "id": "M01_G_MID_DROP_K3_F",
+   "target": "rung3_engine.py",
+   "old": "delta_mid\") + k[3] * M(f\"F:{r}\")",
+   "new": "delta_mid\") + 0 * M(f\"F:{r}\")",
+   "required": true
+  },
+  {
+   "id": "M02_G_MID_LEIBNIZ_3K1H_TO_2",
+   "target": "rung3_engine.py",
+   "old": "+ arb(3) * k[1] * M(f\"H:{r}\") + src_mid)",
+   "new": "+ arb(2) * k[1] * M(f\"H:{r}\") + src_mid)",
+   "required": true
+  },
+  {
+   "id": "M03_G_MID_DROP_SOURCE",
+   "target": "rung3_engine.py",
+   "old": "+ arb(3) * k[1] * M(f\"H:{r}\") + src_mid)",
+   "new": "+ arb(3) * k[1] * M(f\"H:{r}\"))",
+   "required": true
+  },
+  {
+   "id": "M04_G_CASCADE_DROP_3K1_REFH",
+   "target": "rung3_engine.py",
+   "old": "+ arb(3) * k[1] * refH + src_cell)",
+   "new": "+ src_cell)",
+   "required": true
+  },
+  {
+   "id": "M05_G_CASCADE_MIDPOINT_RESIDUAL",
+   "target": "rung3_engine.py",
+   "old": "_up(g[r][\"delta_cell\"], f\"g_{r} delta_cell\")",
+   "new": "_up(g[r][\"delta_mid\"], f\"g_{r} delta_cell\")",
+   "required": true
+  },
+  {
+   "id": "M06_G_TAYLOR_DROPS_TOWER",
+   "target": "rung3_engine.py",
+   "old": "keep(f\"F:{r}:3\", casc, gm + rho * tf4[r], gm)",
+   "new": "keep(f\"F:{r}:3\", casc, gm, gm)",
+   "required": true
+  },
+  {
+   "id": "M07_TF4_DROPS_K1_TERM",
+   "target": "rung3_engine.py",
+   "old": "for i in range(1, 5):",
+   "new": "for i in range(2, 5):",
+   "required": true
+  },
+  {
+   "id": "M08_TF_CANDIDATE_SUP_WITHOUT_ERROR",
+   "target": "rung3_engine.py",
+   "old": "_up(sh[n] + ex[n], \"sup F\")",
+   "new": "_up(sh[n], \"sup F\")",
+   "required": true
+  },
+  {
+   "id": "M09_SCLOSED_CELL_DROPS_DRIFT",
+   "target": "rung3_engine.py",
+   "old": "M(\"Sclosed:3\") + rho * s0_4, M(\"Sclosed:3\")",
+   "new": "M(\"Sclosed:3\") + 0 * s0_4, M(\"Sclosed:3\")",
+   "required": true
+  },
+  {
+   "id": "M10_S_CASCADE_DROPS_J0",
+   "target": "rung3_engine.py",
+   "old": "casc = casc + arb(comb(3, i)) * jn[i] * cellx_h(r, 3 - i)",
+   "new": "casc = casc + arb(comb(3, i)) * jn[i] * cellx_h(r, 3 - i) * (1 if i else 0)",
+   "required": true
+  },
+  {
+   "id": "M11_W_TAYLOR_DROPS_TOWER",
+   "target": "rung3_engine.py",
+   "old": "keep(node, casc, M(node) + rho * _up(T[(\"W\", (r, j), 4)], \"tower\"), M(node))",
+   "new": "keep(node, casc, M(node), M(node))",
+   "required": true
+  },
+  {
+   "id": "M12_H_TAYLOR_WRONG_TOWER_ORDER",
+   "target": "rung3_engine.py",
+   "old": "M(f\"h:{j}:3\") + rho * _up(T[(\"h\", j, 4)], \"tower\")",
+   "new": "M(f\"h:{j}:3\") + rho * _up(T[(\"h\", j, 3)], \"tower\")",
+   "required": true
+  },
+  {
+   "id": "M13_ASSEMBLY_DROPS_W",
+   "target": "rung3_engine.py",
+   "old": "rows += [(\"W\", r, t - r - 1, Fr(1, t) - Fr(1, m)) for t in range(1, m) for r in range(t)]",
+   "new": "rows += []",
+   "required": true
+  },
+  {
+   "id": "M14_COEFFICIENT_1_OVER_T",
+   "target": "rung3_engine.py",
+   "old": "Fr(1, t) - Fr(1, m)) for t",
+   "new": "Fr(1, t)) for t",
+   "required": true
+  },
+  {
+   "id": "M15_EXPORT_USES_MID_RADIUS",
+   "target": "rung3_engine.py",
+   "old": "r_cell = (c_lo - fraction_of(rad_cell), c_hi + fraction_of(rad_cell))",
+   "new": "r_cell = (c_lo - fraction_of(rad_mid), c_hi + fraction_of(rad_mid))",
+   "required": true
+  },
+  {
+   "id": "M16_RHO_ZERO",
+   "target": "rung3_engine.py",
+   "old": "rho = _up(inp[\"rho\"], \"rho\")",
+   "new": "rho = arb(0) * _up(inp[\"rho\"], \"rho\")",
+   "required": true
+  },
+  {
+   "id": "R01_RESIDUAL_LEIBNIZ_COEFFICIENTS",
+   "target": "rung3_residual.py",
+   "old": "TERMS = tuple((comb(RUNG, i), i,",
+   "new": "TERMS = tuple((1, i,",
+   "required": true
+  },
+  {
+   "id": "R02_RESIDUAL_ENVELOPE_DROPS_SHIFT",
+   "target": "rung3_residual.py",
+   "old": "env = env + arb(c) * k_[i + 1] * s",
+   "new": "env = env + arb(c) * k_[i] * s",
+   "required": true
+  },
+  {
+   "id": "R03_RESIDUAL_OPERATOR_ORDER_REVERSED",
+   "target": "rung3_residual.py",
+   "old": "res = res - cert.K(poly, i).scale(arb(c))",
+   "new": "res = res - cert.K(poly, 3 - i).scale(arb(c))",
+   "required": true
+  },
+  {
+   "id": "R04_RESIDUAL_SOURCE_SIGN",
+   "target": "rung3_residual.py",
+   "old": "res = res - cert.vec(src)",
+   "new": "res = res + cert.vec(src)",
+   "required": true
+  },
+  {
+   "id": "R05_RESIDUAL_R0_USES_CANDIDATE_SOURCE",
+   "target": "rung3_residual.py",
+   "old": "src = cert.P[\"Sclosed\", 0, 3] if r == 0 else cert.P[\"S\", r, 3]",
+   "new": "src = cert.P[\"S\", r, 3]",
+   "required": true
+  }
+ ],
+ "mutation_rule": "A mutation is DETECTED iff some mutation trial (in the listed order, stopping at the first detection) shows a containment violation against exact truth, or, on a noise-0 trial, the max certified G-residual delta_mid exceeds residual_consistency_threshold. Refusals and crashes are recorded and never count. QM PASS iff every required mutation is detected.",
+ "whole_cell_mutations": [
+  "M05_G_CASCADE_MIDPOINT_RESIDUAL",
+  "M06_G_TAYLOR_DROPS_TOWER",
+  "M09_SCLOSED_CELL_DROPS_DRIFT",
+  "M11_W_TAYLOR_DROPS_TOWER",
+  "M16_RHO_ZERO"
+ ],
+ "residual_consistency_threshold": "1/1000000000000000000000000000000000000000000000000000000000000",
+ "precision": {
+  "bits": [
+   128,
+   192,
+   256,
+   384,
+   512
+  ],
+  "fixtures": [
+   "T01_random_n1_exact",
+   "T11_tiny_positive_R3",
+   "T16_near_singular_C1e6",
+   "T17_cusum_like_crho_C1233",
+   "T18_cusum_like_crho_noise6",
+   "T15_ill_conditioned_C1000"
+  ],
+  "classification": "per fixture: UNSTABLE if a violation/refusal occurs, a sign flips POSITIVE<->NEGATIVE, or two intervals are disjoint across precisions; INCONCLUSIVE if the max width is not nonincreasing (tolerance 2^-64); CONTRACTING if width(512) < width(128)/2; else STAGNATING. Overall: the first label present in UNSTABLE > INCONCLUSIVE > STAGNATING > CONTRACTING. The binding label is on the WHOLE-CELL interval width; the same rule is also reported, non-binding, on the midpoint interval width"
+ },
+ "crosscheck_fixtures": [
+  "T01_random_n1_exact",
+  "T02_random_n1_noise6",
+  "T09_sign_crossing_at_e0",
+  "T10_identically_zero_R3",
+  "T11_tiny_positive_R3",
+  "T14_parity_near_zero",
+  "T17_cusum_like_crho_C1233",
+  "T15_ill_conditioned_C1000"
+ ],
+ "crosscheck_pieces": 32,
+ "operator_integration": [
+  {
+   "seed": 1,
+   "e0": "1/3",
+   "rho": "1/1000"
+  },
+  {
+   "seed": 2,
+   "e0": "3/2",
+   "rho": "1/1000"
+  },
+  {
+   "seed": 3,
+   "e0": "1/20",
+   "rho": "1/1000"
+  }
+ ],
+ "failclosed_base_fixture": "T01_random_n1_exact",
+ "failclosed_huge_C_fixture": "T16_near_singular_C1e6",
+ "failclosed_sign_fixture": "T10_identically_zero_R3",
+ "failclosed_near_singular_fixture": "T16_near_singular_C1e6",
+ "k1_validation_cells": [
+  0,
+  309
+ ],
+ "pure_modules": [
+  "rung3_engine.py",
+  "rung3_residual.py",
+  "manufactured_chain.py",
+  "fixtures.py",
+  "soundness.py",
+  "run_fixture.py",
+  "independent_crosscheck.py",
+  "k1_inputs.py"
+ ],
+ "forbidden_imports_pure": [
+  "cusum_layer1",
+  "cusum_layer2",
+  "aux_certifier",
+  "aux_collocation",
+  "aux_propagate",
+  "aux_refine",
+  "order2",
+  "refine2",
+  "spec",
+  "ancestry5",
+  "cusum_order3",
+  "subprocess",
+  "socket",
+  "urllib",
+  "requests"
+ ],
+ "producer_modules": [
+  "rung3_engine.py",
+  "rung3_residual.py",
+  "cusum_order3.py"
+ ],
+ "forbidden_producer_tokens": [
+  "mag_fraction(",
+  "finite_difference",
+  "true_R(",
+  ".truth(",
+  "expand(",
+  "abs(centre",
+  "abs(r_cell",
+  "abs(v[\"R3_cell\"]"
+ ],
+ "forbidden_function_names": [
+  "prepare",
+  "collocation",
+  "collocation_order3",
+  "build_objects",
+  "objects_order3",
+  "_candidates_rung3",
+  "all_residuals",
+  "aux_residuals",
+  "cell_obligations",
+  "certify_order3",
+  "validate"
+ ],
+ "forbidden_loaded_modules": [
+  "cusum_layer1",
+  "cusum_layer2",
+  "aux_collocation",
+  "aux_certifier",
+  "aux_propagate",
+  "refine2",
+  "cusum_order3",
+  "spec"
+ ],
+ "forbidden_loaded_modules_operator": [
+  "aux_collocation",
+  "aux_certifier",
+  "aux_propagate",
+  "refine2",
+  "cusum_order3",
+  "k1_inputs"
+ ],
+ "schema": "rebaseguard.p5y.k5.order3-r2.qualification-protocol.v1",
+ "status": "FROZEN_PRE_RESULT",
+ "frozen_utc": "2026-09-16",
+ "scope": "NON-SCIENTIFIC R2 qualification. R1 producer re-qualified with the R05 isolating fixture (all 21 R1 mutations retained). The graded (sigma-parity) error propagation is qualified on manufactured sigma-symmetric systems with exact truth, the CUSUM Arb kernels are checked for the parity structure on synthetic polynomials at e = 0, and a cell-0 radius forecast is computed from committed K1 magnitudes only. No real CUSUM cell is evaluated; no R''' of any (D,m); no probe; no authorization.",
+ "execution_rule": "Development used a DEV protocol (seed-disjoint, different R05 geometry). The parts below run only after the commit freezing this file, the gates, the feasibility criterion and the bound code. R1 remains byte-identical (r1_bound_sha256).",
+ "fixtures": [
+  {
+   "id": "T01_random_n1_exact",
+   "kind": "random",
+   "n": 1,
+   "seed": 1001,
+   "e0": "1/10",
+   "rho": "1/50",
+   "noise": "0"
+  },
+  {
+   "id": "T02_random_n1_noise6",
+   "kind": "random",
+   "n": 1,
+   "seed": 1002,
+   "e0": "1/3",
+   "rho": "1/20",
+   "noise": "1/1000000"
+  },
+  {
+   "id": "T03_random_n3_noise3",
+   "kind": "random",
+   "n": 3,
+   "seed": 1003,
+   "e0": "1",
+   "rho": "1/50",
+   "noise": "1/1000"
+  },
+  {
+   "id": "T04_random_n3_exact",
+   "kind": "random",
+   "n": 3,
+   "seed": 1004,
+   "e0": "19/10",
+   "rho": "1/20",
+   "noise": "0"
+  },
+  {
+   "id": "T05_wide_cell_n3",
+   "kind": "random",
+   "n": 3,
+   "seed": 1005,
+   "e0": "1/10",
+   "rho": "1/4",
+   "noise": "1/1000000",
+   "k0": "1/8"
+  },
+  {
+   "id": "T06_narrow_cell_n1",
+   "kind": "random",
+   "n": 1,
+   "seed": 1006,
+   "e0": "1/2",
+   "rho": "1/1000000",
+   "noise": "1/1000000000"
+  },
+  {
+   "id": "T07_positive_R3",
+   "kind": "target_R3_m1",
+   "n": 3,
+   "seed": 1007,
+   "e0": "1/5",
+   "rho": "1/100",
+   "target": "2",
+   "noise": "1/1000000"
+  },
+  {
+   "id": "T08_negative_R3",
+   "kind": "target_R3_m1",
+   "n": 3,
+   "seed": 1008,
+   "e0": "1/5",
+   "rho": "1/100",
+   "target": "-2",
+   "noise": "1/1000000"
+  },
+  {
+   "id": "T09_sign_crossing_at_e0",
+   "kind": "target_R3_m1",
+   "n": 1,
+   "seed": 1009,
+   "e0": "2/5",
+   "rho": "1/20",
+   "target": "0",
+   "noise": "0"
+  },
+  {
+   "id": "T10_identically_zero_R3",
+   "kind": "identically_zero_R3_m1",
+   "e0": "1/7",
+   "rho": "1/30",
+   "noise": "0"
+  },
+  {
+   "id": "T11_tiny_positive_R3",
+   "kind": "constant_R3_m1",
+   "value": "1/1000000000000",
+   "e0": "1/9",
+   "rho": "1/40",
+   "noise": "0"
+  },
+  {
+   "id": "T12_tiny_negative_R3",
+   "kind": "constant_R3_m1",
+   "value": "-1/1000000000000",
+   "e0": "1/9",
+   "rho": "1/40",
+   "noise": "0"
+  },
+  {
+   "id": "T13_tiny_positive_R3_noisy",
+   "kind": "constant_R3_m1",
+   "value": "1/1000000000000",
+   "e0": "1/9",
+   "rho": "1/40",
+   "noise": "1/1000000000000000",
+   "seed": 1013
+  },
+  {
+   "id": "T14_parity_near_zero",
+   "kind": "parity_near_zero",
+   "e0": "1/40",
+   "rho": "1/40",
+   "noise": "1/1000000",
+   "seed": 1014
+  },
+  {
+   "id": "T15_ill_conditioned_C1000",
+   "kind": "ill_conditioned",
+   "C_target": 1000,
+   "seed": 1015,
+   "e0": "1/2",
+   "rho": "3133/10000000",
+   "noise": "1/1000000000"
+  },
+  {
+   "id": "T16_near_singular_C1e6",
+   "kind": "ill_conditioned",
+   "C_target": 1000000,
+   "seed": 1016,
+   "e0": "1/2",
+   "rho": "3133/10000000000",
+   "noise": "0"
+  },
+  {
+   "id": "T17_cusum_like_crho_C1233",
+   "kind": "cusum_like_crho",
+   "C_target": 1233,
+   "e0": "1/4000",
+   "rho": "0",
+   "noise": "1/1000000000",
+   "seed": 1017
+  },
+  {
+   "id": "T18_cusum_like_crho_noise6",
+   "kind": "cusum_like_crho",
+   "C_target": 1233,
+   "e0": "1/4000",
+   "rho": "0",
+   "noise": "1/1000000",
+   "seed": 1018
+  },
+  {
+   "id": "T19_inflated_dependencies_n3",
+   "kind": "random",
+   "n": 3,
+   "seed": 1003,
+   "e0": "1",
+   "rho": "1/50",
+   "noise": "1/1000",
+   "inflate": "10000"
+  },
+  {
+   "id": "T20_inflated_dependencies_crho",
+   "kind": "cusum_like_crho",
+   "C_target": 1233,
+   "e0": "1/4000",
+   "rho": "0",
+   "noise": "1/1000000000",
+   "seed": 1017,
+   "inflate": "1000"
+  },
+  {
+   "id": "T22_perturb_F0_controlled_K3",
+   "kind": "controlled_K3",
+   "e0": "3/10",
+   "rho": "1/100",
+   "noise": "0",
+   "perturb_F": [
+    0,
+    "1/1000"
+   ]
+  },
+  {
+   "id": "T23_perturb_H_controlled_K1",
+   "kind": "controlled_K1",
+   "e0": "3/10",
+   "rho": "1/100",
+   "noise": "0",
+   "perturb_F": [
+    2,
+    "1/1000"
+   ]
+  },
+  {
+   "id": "T24_perturb_D_controlled_K1",
+   "kind": "controlled_K1",
+   "e0": "3/10",
+   "rho": "1/100",
+   "noise": "0",
+   "perturb_F": [
+    1,
+    "1/1000"
+   ]
+  },
+  {
+   "id": "T21_random_n3_deg4",
+   "kind": "random",
+   "n": 3,
+   "deg": 4,
+   "seed": 1021,
+   "e0": "3/2",
+   "rho": "1/25",
+   "noise": "1/10000"
+  },
+  {
+   "id": "T25_r05_isolating_closed_source",
+   "kind": "r05_isolating",
+   "base_kind": "controlled_K3",
+   "e0": "13/40",
+   "rho": "1/80",
+   "source_offset": "1/500"
+  }
+ ],
+ "mutation_trials": [
+  "T22_perturb_F0_controlled_K3",
+  "T23_perturb_H_controlled_K1",
+  "T24_perturb_D_controlled_K1",
+  "T01_random_n1_exact",
+  "T09_sign_crossing_at_e0",
+  "T11_tiny_positive_R3",
+  "T04_random_n3_exact",
+  "T07_positive_R3",
+  "T15_ill_conditioned_C1000",
+  "T17_cusum_like_crho_C1233",
+  "T02_random_n1_noise6",
+  "T21_random_n3_deg4",
+  "T14_parity_near_zero",
+  "T25_r05_isolating_closed_source"
+ ],
+ "r05_fixture": "T25_r05_isolating_closed_source",
+ "r05_invariants": {
+  "FIXTURE:unmutated": "zero",
+  "FIXTURE:R05": "positive",
+  "ABL_ZERO_OFFSET:unmutated": "zero",
+  "ABL_ZERO_OFFSET:R05": "zero",
+  "ABL_RESOLVE_CLOSED:unmutated": "zero",
+  "ABL_RESOLVE_CLOSED:R05": "zero"
+ },
+ "sigma_fixtures": [
+  {
+   "id": "S01_cell0_like_C4",
+   "seed": 2001,
+   "C_target": 4,
+   "e0": "1/20",
+   "rho": "1/20",
+   "noise": "1/1000000"
+  },
+  {
+   "id": "S02_cusum_cell0_analogue_C1233",
+   "seed": 2002,
+   "C_target": 1233,
+   "e0": "3133/12330000",
+   "rho": "3133/12330000",
+   "noise": "1/1000000"
+  },
+  {
+   "id": "S03_cusum_cell0_analogue_C1233_exactish",
+   "seed": 2003,
+   "C_target": 1233,
+   "e0": "3133/12330000",
+   "rho": "3133/12330000",
+   "noise": "1/1000000000"
+  },
+  {
+   "id": "S04_far_cell_fallback",
+   "seed": 2004,
+   "C_target": 5,
+   "k_scale": "1/20",
+   "e0": "1/4",
+   "rho": "1/50",
+   "noise": "1/100000"
+  },
+  {
+   "id": "S05_perturb_F_odd_C50",
+   "seed": 2005,
+   "C_target": 50,
+   "e0": "1/400",
+   "rho": "1/400",
+   "noise": "0",
+   "perturb": [
+    0,
+    [
+     "0",
+     "1/1000",
+     "-1/1000"
+    ]
+   ]
+  },
+  {
+   "id": "S06_perturb_D_even_C50",
+   "seed": 2006,
+   "C_target": 50,
+   "e0": "1/400",
+   "rho": "1/400",
+   "noise": "0",
+   "perturb": [
+    1,
+    [
+     "1/1000",
+     "1/1000",
+     "1/1000"
+    ]
+   ]
+  },
+  {
+   "id": "S07_perturb_F_even_C50",
+   "seed": 2007,
+   "C_target": 50,
+   "e0": "1/400",
+   "rho": "1/400",
+   "noise": "0",
+   "perturb": [
+    0,
+    [
+     "1/1000",
+     "1/1000",
+     "1/1000"
+    ]
+   ]
+  },
+  {
+   "id": "S08_perturb_H_odd_C50",
+   "seed": 2008,
+   "C_target": 50,
+   "e0": "1/400",
+   "rho": "1/400",
+   "noise": "0",
+   "perturb": [
+    2,
+    [
+     "0",
+     "1/1000",
+     "-1/1000"
+    ]
+   ]
+  },
+  {
+   "id": "S09_perturb_D_odd_C50",
+   "seed": 2009,
+   "C_target": 50,
+   "e0": "1/400",
+   "rho": "1/400",
+   "noise": "0",
+   "perturb": [
+    1,
+    [
+     "0",
+     "1/1000",
+     "-1/1000"
+    ]
+   ]
+  },
+  {
+   "id": "S10_cell_centred_at_zero",
+   "seed": 2010,
+   "C_target": 10,
+   "e0": "0",
+   "rho": "1/50",
+   "noise": "1/1000000"
+  },
+  {
+   "id": "S11_negative_side_cell",
+   "seed": 2011,
+   "C_target": 10,
+   "e0": "-1/40",
+   "rho": "1/40",
+   "noise": "1/1000000"
+  },
+  {
+   "id": "S12_wide_cell_deg3",
+   "seed": 2012,
+   "C_target": 3,
+   "deg": 3,
+   "k_scale": "1/4",
+   "e0": "1/10",
+   "rho": "1/10",
+   "noise": "1/10000"
+  },
+  {
+   "id": "S13_small_odd_eigen_C100",
+   "seed": 2013,
+   "C_target": 100,
+   "c": "1/5",
+   "e0": "3133/1000000",
+   "rho": "3133/1000000",
+   "noise": "1/10000000"
+  },
+  {
+   "id": "S14_cusum_analogue_perturb_F_odd",
+   "seed": 2014,
+   "C_target": 1233,
+   "e0": "3133/12330000",
+   "rho": "3133/12330000",
+   "noise": "0",
+   "perturb": [
+    0,
+    [
+     "0",
+     "1/1000000",
+     "-1/1000000"
+    ]
+   ]
+  },
+  {
+   "id": "S15_leakage_probe_odd_C4",
+   "seed": 2015,
+   "C_target": 4,
+   "e0": "3/40",
+   "rho": "3/40",
+   "noise": "0",
+   "perturb": [
+    0,
+    [
+     "0",
+     "1/1000",
+     "-1/1000"
+    ]
+   ]
+  },
+  {
+   "id": "S16_perturb_H_even_C50",
+   "seed": 2016,
+   "C_target": 50,
+   "e0": "1/400",
+   "rho": "1/400",
+   "noise": "0",
+   "perturb": [
+    2,
+    [
+     "1/1000",
+     "1/1000",
+     "1/1000"
+    ]
+   ]
+  }
+ ],
+ "graded_mutations": [
+  {
+   "id": "GM01_OPERATOR_PARITY_RULE_INVERTED",
+   "target": "graded_dag.py",
+   "old": "    if (i + flip_base) % 2 == 0:       # parity preserving at e = 0",
+   "new": "    if (i + flip_base) % 2 == 1:       # parity preserving at e = 0",
+   "required": true
+  },
+  {
+   "id": "GM02_LEAKAGE_DROPPED",
+   "target": "graded_dag.py",
+   "old": "    leak = _up(eta * hull[i + 1], \"leak\")",
+   "new": "    leak = _up(arb(0) * hull[i + 1], \"leak\")",
+   "required": true
+  },
+  {
+   "id": "GM03_RESOLVENT_PERTURBATION_DROPPED",
+   "target": "graded_dag.py",
+   "old": "    M = {\"ee\": Ce0 * a, \"eo\": Ce0 * b, \"oe\": Co0 * b, \"oo\": Co0 * a}",
+   "new": "    M = {\"ee\": Ce0 * a * 0, \"eo\": Ce0 * b * 0, \"oe\": Co0 * b * 0, \"oo\": Co0 * a * 0}",
+   "required": true
+  },
+  {
+   "id": "GM04_EVEN_ODD_RESOLVENT_SWAPPED",
+   "target": "graded_dag.py",
+   "old": "    out = {\"ee\": inv[\"ee\"] * Ce0, \"eo\": inv[\"eo\"] * Co0, \"oe\": inv[\"oe\"] * Ce0, \"oo\": inv[\"oo\"] * Co0}",
+   "new": "    out = {\"ee\": inv[\"ee\"] * Co0, \"eo\": inv[\"eo\"] * Ce0, \"oe\": inv[\"oe\"] * Co0, \"oo\": inv[\"oo\"] * Ce0}",
+   "required": true
+  },
+  {
+   "id": "GM05_EXPORT_USES_ODD_COMPONENT",
+   "target": "graded_dag.py",
+   "old": "            rad = rad + R1E.exact(abs(c)) * (v.e if parity else v.t)",
+   "new": "            rad = rad + R1E.exact(abs(c)) * (v.o if parity else v.t)",
+   "required": true
+  },
+  {
+   "id": "GM06_J_PARITY_AS_K",
+   "target": "graded_dag.py",
+   "old": "                acc = acc + apply_op(jn, jh, i, N[f\"h:{rr}:{kk - i}\"], eta, 1, parity).scale(comb(kk, i))",
+   "new": "                acc = acc + apply_op(jn, jh, i, N[f\"h:{rr}:{kk - i}\"], eta, 0, parity).scale(comb(kk, i))",
+   "required": true
+  },
+  {
+   "id": "GM07_TOTAL_CAPPED_BY_MIN",
+   "target": "graded_dag.py",
+   "old": "        s = _up(e + o, \"e+o\")",
+   "new": "        s = _up(e if e.upper() <= o.upper() else o, \"e+o\")",
+   "required": true
+  },
+  {
+   "id": "GM08_TRUE_SUP_PARITY_SWAPPED",
+   "target": "graded_dag.py",
+   "old": "    return V(right, wrong, right) if parity_at_0 == 1 else V(wrong, right, right)",
+   "new": "    return V(wrong, right, right) if parity_at_0 == 1 else V(right, wrong, right)",
+   "required": true
+  },
+  {
+   "id": "GM09_ENVELOPE_OPERATOR_ORDER_SHIFT",
+   "target": "graded_dag.py",
+   "old": "        acc = acc + apply_op(norms, hull, order, sv, eta, base, True).scale(coef)",
+   "new": "        acc = acc + apply_op(norms, hull, order - 1, sv, eta, base, True).scale(coef)",
+   "required": true
+  },
+  {
+   "id": "GM10_RESOLVENT_CROSS_TERMS_DROPPED",
+   "target": "graded_dag.py",
+   "old": "    return V(R[\"ee\"] * v.e + R[\"eo\"] * v.o, R[\"oe\"] * v.e + R[\"oo\"] * v.o, _up(C, \"C\") * v.t)",
+   "new": "    return V(R[\"ee\"] * v.e, R[\"oo\"] * v.o, _up(C, \"C\") * v.t)",
+   "required": true
+  },
+  {
+   "id": "GM11_CELL_USES_MIDPOINT_ETA",
+   "target": "graded_dag.py",
+   "old": "    eta = _up(inp[\"eta_mid\"] if which == \"mid\" else inp[\"eta_cell\"], \"eta\")",
+   "new": "    eta = _up(inp[\"eta_mid\"], \"eta\")",
+   "required": true
+  }
+ ],
+ "graded_mutation_trials": [
+  "S05_perturb_F_odd_C50",
+  "S09_perturb_D_odd_C50",
+  "S08_perturb_H_odd_C50",
+  "S06_perturb_D_even_C50",
+  "S07_perturb_F_even_C50",
+  "S16_perturb_H_even_C50",
+  "S15_leakage_probe_odd_C4",
+  "S14_cusum_analogue_perturb_F_odd",
+  "S01_cell0_like_C4",
+  "S02_cusum_cell0_analogue_C1233",
+  "S10_cell_centred_at_zero",
+  "S11_negative_side_cell",
+  "S12_wide_cell_deg3",
+  "S04_far_cell_fallback"
+ ],
+ "graded_precision_fixtures": [
+  "S02_cusum_cell0_analogue_C1233",
+  "S03_cusum_cell0_analogue_C1233_exactish"
+ ],
+ "stress_fixtures": [
+  "S02_cusum_cell0_analogue_C1233",
+  "S03_cusum_cell0_analogue_C1233_exactish",
+  "S13_small_odd_eigen_C100",
+  "S01_cell0_like_C4"
+ ],
+ "graded_failclosed_base": "S01_cell0_like_C4",
+ "operator_parity_seeds": [
+  11,
+  12
+ ],
+ "feasibility_criterion": {
+  "schema": "rebaseguard.p5y.k5.order3-r2.feasibility-criterion.v1",
+  "status": "FROZEN_PRE_RESULT",
+  "principle": "Engineering enclosure quality only. No category depends on the sign or size of any R''' value, and 'R''' becomes positive' is not a success criterion.",
+  "metric": "contraction_factor = R1_radius / R2_radius for the same inputs (m = 1 reported; all m recorded), computed separately for the midpoint interval and the whole-cell interval",
+  "categories": [
+   {
+    "label": "ORDERS_OF_MAGNITUDE_IMPROVEMENT",
+    "min": 1000
+   },
+   {
+    "label": "MATERIAL_IMPROVEMENT",
+    "min": 10
+   },
+   {
+    "label": "MODEST_IMPROVEMENT",
+    "min": 1.5
+   },
+   {
+    "label": "NO_IMPROVEMENT",
+    "min": 0
+   }
+  ],
+  "applied_to": {
+   "manufactured_stress_fixtures": "measured with CERTIFIED (exact) C_e0, C_o0 on sigma-symmetric systems (part method_comparison)",
+   "cusum_cell0_forecast": "computed from committed K1 magnitudes; C_e0 = committed certified C_upper; C_o0 is the NON-CERTIFIED float operator estimate, reported with a predeclared sweep {estimate, 10, 50, 466, C_upper}; the forecast category is conditional on a future certified C_o0 not exceeding the estimate"
+  },
+  "next_step_rule": {
+   "PREPARE_GOVERNED_REAL_CELL_QUALIFICATION": "only if REAL_ORDER3_PRODUCER_R2 = QUALIFIED_FOR_GOVERNED_REAL_CELL_QUALIFICATION",
+   "REPAIR_CELL0_CONDITIONING_AGAIN": "if all R2 qualification gates pass and the cell-0 midpoint forecast is at least MATERIAL_IMPROVEMENT at the float C_o0 estimate, but a certified input or real wiring required to run the graded method on real cells is missing",
+   "SEEK_ALTERNATE_K5_ROUTE": "if the cell-0 midpoint forecast is below MATERIAL_IMPROVEMENT even at the float C_o0 estimate, or the graded method fails soundness"
+  }
+ },
+ "r2_pure_modules": [
+  "graded_dag.py",
+  "sigma_systems.py",
+  "r05_fixture.py"
+ ],
+ "r2_forbidden_imports_pure": [
+  "cusum_layer1",
+  "cusum_layer2",
+  "aux_certifier",
+  "aux_collocation",
+  "aux_propagate",
+  "aux_refine",
+  "order2",
+  "refine2",
+  "spec",
+  "ancestry5",
+  "cusum_order3",
+  "subprocess",
+  "socket",
+  "urllib",
+  "requests",
+  "sharp_norms"
+ ],
+ "r1_bound_sha256": {
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/DESIGN_REAL.md": "3df5ca59ade87133a44adadcd1f87bc7a28b850c73f348bb24cbc1b7b3d9e267",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/README.md": "d5a388a83b12f7ea80a2ee17a9e425892f169fa1eeb81e6bf0a77881a270a2c7",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/RESULT.md": "4cf9ed7df3dbac5b45e9876a46115a5c6ed137eacf8e51556e131d29805a02b6",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/cusum_order3.py": "1ef06882c0f37c901b98b2200b523613d3e5a3fe4545759e5cdab206d0fad545",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/fixtures.py": "9c516b17367d5b1df2df84795aaa8cc0f797ae3ddc45e4acfc77409a7df3a05f",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/independent_crosscheck.py": "bb65c72324301da5a14f5a643eb24f0c651ecbcf84020fa4ed4ecfe243a89747",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/k1_inputs.py": "bcf4585037e020ff661f829410ffffc30bcdae00110d399b2bc98907ace6b2f7",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/make_manifest.py": "2749ee47ddd1aaf243015280ac9fde8c053b1488fbca8df554ffb5158333ad53",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/make_protocol.py": "f584350f598fe9160c66740a0a7e84fb0bed3b4bc9e7a634dd78941cfb3a7fb1",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/manufactured_chain.py": "31cd4ccf62dc2a4c00ee208cfaac9a8848e947c245dbc0a32918a8604f0988a3",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/qualify_order3.py": "850979d51ae03c4e618ac74decf0247b237fd7a2b792de799d2da043211b2048",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/real_operator_integration.py": "7e5724f07b707f6614afffb5af181285dc89ee1d6ef2d6c9da3d8f061dcdb25f",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/reference_differential.py": "9ac260793de49bd71965f5474a37fc599aac5eeed4ef44382153d761ce59536b",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/run_fixture.py": "912009b209c78651300afeb196f74e30a30b27ea8821f70403ec6a3ddd8cb1ab",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/rung3_engine.py": "6d7644c9eea8a94e43dc34ddb741af11ca3e66243548e78ce14177e3ed3f2d6b",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/rung3_residual.py": "a9c704a143166bcd5e1636c1b7b74c1d0254e790392463c567197af5b22ec9e9",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/soundness.py": "383b16b3273706af4fcbc2fb05e62a93c63b3d43d87e64ac71318c63e399e247",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/config/ORDER3_PRODUCER_MANIFEST.json": "e9da8072b784735ebe28ae848b91f8e99f82e0f577baa24159f9c78db9e50fdf",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/config/PRE_RESULT_GATES.json": "77e8aba46dd067f03baa1da6f40184e836d09756922ad310295caa7ff7d80a68",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/config/QUALIFICATION_PROTOCOL.json": "f2c52ce329a031d29632d90af880e2db47009b5561a65c26eb31ef248e034d4a",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/config/REAL_CELL_AUTHORIZATION_REGISTRY.json": "dfe0384b132c7769fb15245948461708264b2a1c8853fdcfe69688fcb148d3a3",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/postresult_diagnostic/r05_isolation.py": "31d593cec304b9e88555f4270fe88d67dfaacb57262062badefbe11617eb05cb",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/postresult_diagnostic/r05_isolation_output.json": "d54c58a95184fcd7b4749ce6dfc7a2d1cdad6d7ccd60fabad47df82ccae2a886",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/QUALIFICATION_RESULT.json": "34932e3db94e24ee8405f1c9720e398a03d3a75f11740faf84dd15b1a362327d",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/RUN_PROVENANCE.json": "7e0f47eebd55384d4ba75b3ecf83fe1aa0c82e6d8ac5c43f0e0a62032c6d68cb",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_crosscheck.json": "f57503da42d27759eda0e851787cc86f295f125ba0a6f723793959801f06cca5",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_determinism_1.json": "40c5feaf718537ac81253ce4301cfdc35436a3ae301384388708d9bf156f95eb",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_determinism_2.json": "ad15130ccbfefa9a066b508418d7268f5c2c38ebe6a42aca3a16bafff2bac914",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_failclosed.json": "bd36c14834753b296df8ece5839768ce2096f0b8e97b5e7a706c4e4f03109179",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_fence.json": "3ce17872598da8cb94301d29f878ea7bb71f2bc93218cfb5bf96e053beeb12c0",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_k1.json": "d070c76b29a1d400d4416bdbe1a0ae4f77954ccf7dcd850cb4cd378abd4ba485",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_M01_G_MID_DROP_K3_F.json": "e88db1a92427d045a22a8ac736ccfb512fa3c31f8c96faac67652b34852aadee",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_M02_G_MID_LEIBNIZ_3K1H_TO_2.json": "07d33f077557962015080ca46e41ba0eb5d5dc0df22791fbd36c3e20898cb307",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_M03_G_MID_DROP_SOURCE.json": "5cf35af27275d60d7712b48550bd96145076d5fb8c8b3f6533fc55f83e9f5ffc",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_M04_G_CASCADE_DROP_3K1_REFH.json": "e7c1ee2772f232a0f3031236905a2e53fff0cbd0b6aad555553e2b026b8d2501",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_M05_G_CASCADE_MIDPOINT_RESIDUAL.json": "f2ce099e2269beb2dbb54ea703e04a07da161913326a897cf855775bc48ffaa4",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_M06_G_TAYLOR_DROPS_TOWER.json": "9731a907dc81516f2cc4fe33d1b6eaf94f99bd4529485574db53ddcb657423f1",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_M07_TF4_DROPS_K1_TERM.json": "b9cd3a722c874b275d44dfa392e25838cb9ac97721dfea7404c5954ee116a881",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_M08_TF_CANDIDATE_SUP_WITHOUT_ERROR.json": "c9b967a549caff58a90e12c3177781d2ab5753355823fbf3c54815f3b9cfea03",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_M09_SCLOSED_CELL_DROPS_DRIFT.json": "16de0ae1e8963ed452ecd0eec0317431e21de8e4be02d13a21862fc166dc367b",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_M10_S_CASCADE_DROPS_J0.json": "5ff3b8bfe63497686c92f7517540181eb48f6b632788a662c2b66b4969646cfc",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_M11_W_TAYLOR_DROPS_TOWER.json": "b3b4d550b3455b492a7011fe90e5edc5631223ed42e39e3acc3c0c65fc0817c9",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_M12_H_TAYLOR_WRONG_TOWER_ORDER.json": "e780ce8182f1913f9e22789cc3b6330eb11fcfb2f9b0ca7cfc1cdb886cdc7e83",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_M13_ASSEMBLY_DROPS_W.json": "c7c576348ed23581821753cb5c4334321baa9852d07fcb0e5aa4c25a83b0f652",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_M14_COEFFICIENT_1_OVER_T.json": "4e4ed9093dbab442b53b7ecec16181605ea0f3f5f79cfb7611c81df7d9f262ad",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_M15_EXPORT_USES_MID_RADIUS.json": "a592839f3e76dbb02a4398d187846594411ea154da8d37a35dff8d9a5993cf59",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_M16_RHO_ZERO.json": "5857e47ad01edf5f2b6a979a299b89b328ed1602c29a9b7a7ca71e34320ec561",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_R01_RESIDUAL_LEIBNIZ_COEFFICIENTS.json": "037914061be3b0f7557e94015474a0437e771b04e0b5820e012b9db257fae5a6",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_R02_RESIDUAL_ENVELOPE_DROPS_SHIFT.json": "41ad835dbc736182fb74cfabb4cd335187ef8eed05026ac47f9d061d605e7a56",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_R03_RESIDUAL_OPERATOR_ORDER_REVERSED.json": "2eff2b108d7293ccc5e403d9123011a9372073b42f81e299464cfa533abf16ef",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_R04_RESIDUAL_SOURCE_SIGN.json": "a2ff7751dfb59be360cf85be95bb37fd4f129d871c9f8477843f3909e03c3bcf",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_mutation_R05_RESIDUAL_R0_USES_CANDIDATE_SOURCE.json": "a29fe65b61c12e47597b684634d1a13eda1e9df8ec4ef546dc73c6a5f0c7fdfb",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_operator.json": "e2daf93552c7a8ed0ab9be13c9abab0387bf2c4e0341d6487ef6e7e16833d33b",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T01_random_n1_exact_128.json": "94e31c695adf0681694af75a6913fa97be2b9e3665d2e4fdc6aefdff554bcc09",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T01_random_n1_exact_192.json": "9726430f2f8d91219bb552b77fa4547de742bcd9ec7ca1841f118263051dade3",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T01_random_n1_exact_256.json": "8a0bb7e4a75ef6df64c830b8ca3ee228d440b7bf0c1df87cf6d6aa63ce08fe70",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T01_random_n1_exact_384.json": "c9ef8d9f3812fdf9f1e00802d306bc23338c083eb3014e0b0948c93fe6f334a3",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T01_random_n1_exact_512.json": "7525b0ebe6efb6c00ddc9a42c688aae59ba565bf98e21eb3feab389cad844c14",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T11_tiny_positive_R3_128.json": "2868993bbe3bd08e80809a7237cdbf455d6082c7a282e821731bc3876cb5a072",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T11_tiny_positive_R3_192.json": "1e52ac290a8d3b8beec710b3e0f3c13f6bcae6db2ba1d8d812d6997bb028ba12",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T11_tiny_positive_R3_256.json": "fdb6f965f5f0354c8c4b233988d4d07a9a3750da663c1cfceb443647dee6dd66",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T11_tiny_positive_R3_384.json": "110383247a2e92354990b57c977461ff63de032fd72421bb9432e52fd945f054",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T11_tiny_positive_R3_512.json": "9dd499dfb0c41bd3c500c064e924d1f6737d1fac1523e65c686baaee1111e619",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T15_ill_conditioned_C1000_128.json": "35d1bc82774db0f167e8803cc64f9e00c501143e0d193b3dfe39cfcc218285d3",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T15_ill_conditioned_C1000_192.json": "6f4358cfb739beac35fcb600aa6db3cd1d61746df5c4fc8a814af756277e292a",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T15_ill_conditioned_C1000_256.json": "b1932e4f01fedfd7375c455aff7af0af6e7e67362c78d80d450db4c82bf814c6",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T15_ill_conditioned_C1000_384.json": "f8425484774cb56b466c7b466ddbc94d222cac858d28a2a64e605dadd756ecf5",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T15_ill_conditioned_C1000_512.json": "7d2c99d8058f200b4f6db3c5b490d361130517936b46fc3df716f9ab6bce6fb9",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T16_near_singular_C1e6_128.json": "23d6d1134f078499b6169c652b3c7d39f0ec10c91f100d9957bd45ddf9253092",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T16_near_singular_C1e6_192.json": "24eee2583f85fab3ae7094959ad67b8228a34f040352a5821e3807c72f5e2d5c",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T16_near_singular_C1e6_256.json": "44dc8298cc87fa689587e3743346e2a854ef99e765e0f69291803415fc77f498",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T16_near_singular_C1e6_384.json": "f9d7e4fe16264339604d9059303d277553d1e03a92196d5f0fe2e1d685835d9d",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T16_near_singular_C1e6_512.json": "05168661862e9fede6841ca9d05f9b5d707936cf5000caef5383059bc6a3f818",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T17_cusum_like_crho_C1233_128.json": "fdd865cd67ff9abae7065216b404817f1dc6daead78c4246c2c48d60b5f439b6",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T17_cusum_like_crho_C1233_192.json": "3f77e8a522a912c0fe1ff55d9afbe5dc1308964e39257b3d8ec2c6f1380697c4",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T17_cusum_like_crho_C1233_256.json": "f470d3568a41b4b27111cafacc21be30d3bb7e2738f2901852ff5a30559cdb03",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T17_cusum_like_crho_C1233_384.json": "7877eb2f88f0d8db1c4807f180f2a7e426cb150fad3b4fe0ee3af0c2e697f367",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T17_cusum_like_crho_C1233_512.json": "39029af9003cbe996faa232fa45520c9b296615fd30eb264031b525381163a75",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T18_cusum_like_crho_noise6_128.json": "aef6748c47b97bf7e583ab6371946cc687b2ab11b2046964dd0e25fa1dd21417",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T18_cusum_like_crho_noise6_192.json": "455da80171d111dd16c715db382b7eb949e30e2bde08dd66bac48579a1b69c26",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T18_cusum_like_crho_noise6_256.json": "5c4f9fadd2f7a84b48c5b61acc94a7eaf43862b04a0e33f51ffa5660958fae14",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T18_cusum_like_crho_noise6_384.json": "2c9f1f4dffc51a0121eff0136bf8bcfd409b2f96e12a1094e13e7c188e49c74b",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_precision_T18_cusum_like_crho_noise6_512.json": "0c5b7c08433db1b1c8efea63cb68f057d2badd0d50e9921ca01938ce851d0e2d",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_realgate.json": "ef667793683ed9b4e8150e826ff9a4992c4ec55c377ff7e4436475628fc8984e",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_reference.json": "482ac8c3e4dbc21c3fd725cea7ba6b1791e5c975f6d29f77a347d67adf6c2c6a",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/evidence/qualification_r1/part_soundness.json": "9cfa31f08dd0856f8469e6fbe53d71202c59adffc438736b0ec95cb9291ee4f3",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/tests/test_order3_producer.py": "f0b220e987938dc0f139e8b53aa6e144369b2e98638874c488da020c33abbcf3"
+ },
+ "bound_code_sha256": {
+  "level4/closure_proofs/p5y_k5_cusum_order3_r2_repair/code/graded_dag.py": "e1e3a72fbd93061af5944be7c7cca7321078ededfb2eae290749c0293470b6ac",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r2_repair/code/sigma_systems.py": "ddf78e30a2f9c26890f962a98e1388b80a31f6bcb622c8d55803c91b56b991c8",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r2_repair/code/r05_fixture.py": "1d9ca10ca1e13e134efe96c77e0e7fafc9d30cda5659fd8dde6bc05ddaf5d061",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r2_repair/code/cusum_graded.py": "df01387fa04ecbf74d657a7ab4cbbb545ae70bfdc0fc5595ba6ee3471d71ecfb",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r2_repair/code/operator_parity_integration.py": "c4f8c1309a3511e9dd825261b7339069d4852d23c165e42bdd9479b16195652f",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r2_repair/code/cell0_forecast.py": "3abc1ff5b3bed50c53d7b0d8573d74f298f6167863e90ad16d23647914685593",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r2_repair/code/e0_operator_estimate.py": "7a90002f04c65fab832e39d935f32235442993cd188d56445586aa36abc7a3d4",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r2_repair/code/qualify_r2.py": "db09ee59f59a4f0f5626d2f278cc30ce9286653993ca2e49247398e48c050b2f",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r2_repair/code/make_protocol_r2.py": "4e7d5c7a51a2ec4f33b1a7b2490e205e43b4cd81d32b56ff4b450c4669d419b7",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r2_repair/code/make_manifest_r2.py": "3dfaaf18c08ad5f2b1cd229131471632bf9c1a5b506e6da5f7d852da7cec34d4"
+ },
+ "gates": "config/PRE_RESULT_GATES_R2.json"
+}

@@ -1,0 +1,33 @@
+{
+ "schema": "rebaseguard.p5y.k5.order3-r2.pre-result-gates.v1",
+ "status": "FROZEN_PRE_RESULT",
+ "frozen_utc": "2026-09-16",
+ "principle": "Producer qualification and enclosure quality only. No gate depends on the sign or size of any R''' value. No gate is evaluated on a real CUSUM cell.",
+ "retained_R1_gates": "G01-G16 with the R1 definitions (p5y_k5_cusum_order3_real_producer/config/PRE_RESULT_GATES.json), evaluated on the R2 run, plus: G02 also requires R1 byte-identical (r1_bound_sha256); G10 also covers the graded precision fixtures; G11/G12 also cover graded payload hashes; G14 also covers the graded fail-closed controls; G16 also covers the R2 static fences, the no-monkeypatch scan of R2 code and zero forbidden calls in the operator-parity and forecast parts.",
+ "questions": {
+  "QS": "R1-producer manufactured soundness incl. T25: zero containment violations",
+  "QC": "residual consistency on noise-0 R1 fixtures (T25 excluded: its offset residual is non-zero by construction)",
+  "QM": "21/21 R1 mutations detected (trial order = R1 order then T25)",
+  "R05_ISOLATING_FIXTURE": "all six predeclared invariants hold AND R05 is detected in QM",
+  "QR": "reference-kernel differential 15/15",
+  "QX": "independent rational-function cross-check",
+  "QO": "R1 real-operator integration on synthetic polynomials",
+  "QP": "R1-producer precision label (reported)",
+  "QG1_graded_soundness": "every sigma fixture: zero violations of every (e, o, t) node bound at e0 and on 17 grid points, and of the export, in both parity and scalar modes",
+  "QG2_graded_never_looser": "every graded node component and radius <= the scalar-mode value on the same inputs",
+  "QG3_graded_mutation_sensitivity": "every REQUIRED graded mutation detected by a containment violation (required flags fixed from the seed-disjoint DEV run before the freeze)",
+  "QG4_real_kernel_parity_structure": "CUSUM Arb kernels at e = 0 on synthetic polynomials: operator parity K_i(f o sigma) = (-1)^i K_i(f) o sigma within radii and truncation allowances, and graded residual ranges dominate float quadrature",
+  "QG5_graded_determinism": "two fresh-process graded payload hash sets identical",
+  "QG6_graded_fail_closed": "all graded fail-closed controls pass (missing hull norms, x0 not fixed, non-finite C_o0, NaN residual, missing residual, precision outside set, bad certificate never below scalar, real front-end refusals, registries empty and pinned)"
+ },
+ "reported_not_gates": ["method_comparison contraction and category on manufactured stress fixtures (certified C_e0, C_o0)", "cell-0 radius forecast from committed magnitudes with the non-certified C_o0 estimate and its sweep"],
+ "verdict_rule": {
+  "QUALIFIED_FOR_GOVERNED_REAL_CELL_QUALIFICATION": "all G01-G16 and all questions except QP PASS, QM = 21/21, R05 fixture PASS, AND a certified C_o0 operator certificate is registered, AND the graded real residual wiring is built, AND the cell-0 forecast with certified inputs is at least MATERIAL_IMPROVEMENT",
+  "PARTIALLY_QUALIFIED": "all gates and questions (except QP) PASS but a required real-cell input is missing (certified C_o0, graded real wiring)",
+  "NOT_READY": "any of G03, G04, G05, G06, G07, G14, QG1, QG2 FAIL, or QM < 21/21, or R05 fixture FAIL",
+  "INFEASIBLE": "only with a proof that no sound signed whole-cell enclosure is constructible",
+  "known_before_results": "OPERATOR_CERTIFICATE_REGISTRY is EMPTY and cusum_graded.certify_real_cell_r2 refuses with GRADED_REAL_WIRING_NOT_BUILT, so QUALIFIED_FOR_GOVERNED_REAL_CELL_QUALIFICATION is unreachable in R2 by construction; the best attainable verdict is PARTIALLY_QUALIFIED."
+ },
+ "b1_rule": "B1_NO_CERTIFIED_ORDER3_PRODUCER stays OPEN unless the verdict is QUALIFIED_FOR_GOVERNED_REAL_CELL_QUALIFICATION (then CLOSED_FOR_QUALIFICATION_ONLY).",
+ "real_cell_qualification": "NOT_AUTHORIZED"
+}
