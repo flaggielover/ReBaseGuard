@@ -1,0 +1,474 @@
+{
+ "RPRIME_ZERO_IDENTITY": "PASS",
+ "analytic_route": {
+  "Q_m_positivity": "Q_m >= 0 exact, but Q_m vanishes unless tau < m, which is rare at h = 5 (reaching 5 within 4 steps needs a ~3.5-sigma excursion), so E[Q_m] cannot carry the bound",
+  "association_FKG": "fails: the survival event {tau >= n} is neither increasing nor decreasing in the increments",
+  "comparison_with_m1": "does not transfer: E[B_m T_tau] = (1/m) sum_{r<m} G_r, G_r = E_0[Z_{tau-r} T_tau; tau>r]; only G_0 = GammaTilde_1 is certified, G_r (r>=1) has no certified sign or bound",
+  "conclusion": "no analytic proof of GammaTilde_m > 1 for m>1 is available from existing material; a proof would be new research",
+  "monotonicity_in_m": "not proved; P1-N1's decreasing estimates are empirical and are not used",
+  "status": "NOT_PROVED",
+  "stopping_time_inequalities": "tau - r is not a stopping time, so Wald/optional stopping do not split G_r",
+  "terminal_observation_fact": "non-load-bearing, unreviewed side remark: alarm increments are tail-conditioned beyond k, so E_0[Z_tau^2] >= 1 + k phi(k)/(1-Phi(k)) (about 1.57); but the cross term E_0[Z_tau T_{tau-1}] has no established sign (the m=1 closure says so and never uses the shortcut), and for r >= 1 Z_{tau-r} is not tail-conditioned at all"
+ },
+ "audit_base_commit": "10769e07029eb66be264109f274d5ca3269b5cbf",
+ "best_certified_bounds": {
+  "1": {
+   "GammaTilde_lower_decimal_rounded_down": "9.718727",
+   "GammaTilde_upper_decimal_rounded_up": "22.054855",
+   "margin_above_1_decimal_rounded_down": "8.718727"
+  },
+  "2": {
+   "GammaTilde_lower_decimal_rounded_down": "1.766264",
+   "GammaTilde_upper_decimal_rounded_up": "24.748817",
+   "margin_above_1_decimal_rounded_down": "0.766264"
+  },
+  "3": {
+   "GammaTilde_lower_decimal_rounded_down": "0.614984",
+   "GammaTilde_upper_decimal_rounded_up": "23.235820",
+   "margin_above_1_decimal_rounded_down": "-0.385016"
+  },
+  "5": {
+   "GammaTilde_lower_decimal_rounded_down": "-0.927465",
+   "GammaTilde_upper_decimal_rounded_up": "21.307502",
+   "margin_above_1_decimal_rounded_down": "-1.927465"
+  }
+ },
+ "definition": {
+  "GammaTilde_m": "E_0[A_m T_tau], A_m = (1/w) sum_{r<w} Z_{tau-r}, w = min(m,tau), T_tau = sum_{t<=tau} Z_t, Z_t = X_t - R ~ N(-e,1) under P_e; terminal alarm increment included; random denominator retained (convention A)",
+  "decomposition": "P1 T3/T4: A_m T_tau = B_m T_tau + Q_m, Q_m = 1{tau<m}(1/tau - 1/m) T_tau^2 >= 0",
+  "detector": "two-sided Gaussian CUSUM, k = 1/2, inclusive threshold h = 5, reset state, no head start",
+  "expectation_object": "stopped-path law P_0 restricted to F_tau; score dL_e/de|_0 = -T_tau (L_e = exp(-e T_tau - e^2 tau/2))",
+  "m_convention": "terminal reuse window of min(m,tau) raw observations; m=1 is the terminal observation",
+  "relation_to_R": "R_m(e) = e + E_e[A_m] (P5-T1, P1 s.1) = K1 raw-variable R (PB3/PB4); P1-T1: F'_{rho,m}(0) = rho(1 - GammaTilde_m), so R_m'(0) = 1 - GammaTilde_m",
+  "relation_to_rho_c": "P3-T1: rho_c = 1/|1 - GammaTilde_m|; equals 1/(GammaTilde_m - 1) iff GammaTilde_m > 1",
+  "sign_conventions": "no hidden +e, no sign flip (PB3 BOUND); GammaTilde > 1 <=> R'(0) < 0 <=> s(0+) = GammaTilde - 1 > 0",
+  "theorems": [
+   "CORE-T1 (m=1)",
+   "P1-T1 (all m>=1, EXACT_THEOREM, independently reviewed)",
+   "P1-L1 (Lean spine, abstract hypotheses)",
+   "P2-T1 (SR analogue)",
+   "P3-T1 (rho_c)",
+   "P4-T1 (location families, conditional)",
+   "P5-T1/T3 (raw-mean identity, oddness)",
+   "P5X L5 (C^3, internal proof only)",
+   "K5-B (sufficient-only; excludes the =1/rho_c clause)"
+  ]
+ },
+ "derivative_identity_route": {
+  "R_interval_route": "R(e0)/e0 enclosure width ~65: useless",
+  "exact_e0_evaluation": "not available: no certified record at e = 0 exactly",
+  "first_order_widening": "R'(0) in D_interval +/- e0*M_R2 (premise-binding r1): contains 0 for m = 2, 3, 5",
+  "odd_C3_widening": "R odd => R'' odd => R''(0) = 0; R'(e0) - R'(0) = int_0^e0 (e0-s) R'''(s) ds, |.| <= (e0^2/2) M3, M3 = (1/m) sum_{r<m} supF3_r + sum_t c_(m,t) sum_r T_W[(r,t-r-1),3]",
+  "premises": [
+   "P5-T3 oddness (EXACT_THEOREM)",
+   "P5X L5 R in C^3 (internal proof only, never independently reviewed; PB2 BOUND_WITH_NOTE)",
+   "P1-T1 (EXACT_THEOREM, reviewed)",
+   "ERROR_ALGEBRA s.4 assembly + PB5 enclosures",
+   "refine2 supF3 majorant (REFINE2_SOUND = YES, inherited adjudication)",
+   "aux_refine norm towers (AUXILIARY_DERIVATIVE_SOUND = YES)"
+  ],
+  "symmetry": "used (P5-T3 oddness); gives R''(0) = 0, not R'(0)",
+  "whole_cell_D_eps_route": "epsD_cell (8.5-23.1 per r) exceeds |center|: useless"
+ },
+ "direct_reuse": "NONE: no certified interval for GammaTilde_m, m>1, exists; CORE-C1 is m=1 only and P1-N1 is empirical",
+ "evidence_inventory": [
+  {
+   "class": "CERTIFIED_INTERVAL",
+   "m": [
+    1
+   ],
+   "object": "GammaTilde_1 in [3.9243482, 27.8493821]",
+   "source": "CORE-C1 closure/04_ARB_CERTIFICATE.md",
+   "usable_for_m_gt_1": false
+  },
+  {
+   "class": "EXACT_THEOREM",
+   "m": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "object": "R'(0) = 1 - GammaTilde_m, all m",
+   "source": "P1-T1 m_gt_1_priority1/THEOREM.md",
+   "usable_for_m_gt_1": "identity only, no value"
+  },
+  {
+   "class": "EXACT_THEOREM",
+   "m": [
+    2,
+    3,
+    5
+   ],
+   "object": "GammaTilde_m = E[B_m T_tau] + E[Q_m], Q_m >= 0",
+   "source": "P1 T3/T4",
+   "usable_for_m_gt_1": "no sign for E[B_m T_tau]"
+  },
+  {
+   "class": "PREREGISTERED_ESTIMATE",
+   "m": [
+    2,
+    3,
+    5
+   ],
+   "object": "GammaTilde estimates 13.2648 / 11.9571 / 10.2264",
+   "source": "P1-N1 m_gt_1_priority1/CLOSURE_REPORT.md s.3",
+   "usable_for_m_gt_1": false
+  },
+  {
+   "class": "UNUSABLE",
+   "m": [
+    2,
+    3,
+    5
+   ],
+   "note": "witness only, not the Gaussian CUSUM",
+   "object": "finite-support witness GammaTilde = 15/2",
+   "source": "m_gt_1_priority1/CERTIFICATE_REPORT.md",
+   "usable_for_m_gt_1": false
+  },
+  {
+   "class": "EMPIRICAL_ESTIMATE",
+   "m": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "object": "Monte Carlo gain grids",
+   "source": "m_gt_1 / d4_phase_map gamma_grid",
+   "usable_for_m_gt_1": false
+  },
+  {
+   "class": "EMPIRICAL_ESTIMATE",
+   "m": [
+    2,
+    3,
+    5
+   ],
+   "object": "rho_c 0.0815 / 0.0913 / 0.1084 with transformed SE intervals",
+   "source": "P3-N1 m_rho_stability_priority3",
+   "usable_for_m_gt_1": false
+  },
+  {
+   "class": "HEURISTIC",
+   "m": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "object": "GammaTilde ~ 9-17",
+   "source": "P5-MECH",
+   "usable_for_m_gt_1": false
+  },
+  {
+   "class": "EMPIRICAL_ESTIMATE",
+   "m": [
+    2,
+    3,
+    5
+   ],
+   "object": "Gamma_A > 2 at m <= 5 in measured matrix",
+   "source": "P8-S3",
+   "usable_for_m_gt_1": false
+  },
+  {
+   "class": "CERTIFIED_INTERVAL",
+   "m": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "object": "R'(e0) enclosure + whole-cell |R''| bound; first-order widening e0*M_R2",
+   "source": "K1 CUSUM Aux5 cell-0 record 4f8df44c (D_interval, M_R2)",
+   "usable_for_m_gt_1": "insufficient (implied intervals contain 0 for m>1)"
+  },
+  {
+   "class": "CERTIFIED_DERIVED_BOUND (via this audit)",
+   "m": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "object": "whole-cell third-derivative majorants",
+   "source": "K1 CUSUM Aux5 cell-0 record 4f8df44c (supF3_final r=0..4, order-3 towers)",
+   "usable_for_m_gt_1": "m=2 yes; m=3,5 insufficient"
+  },
+  {
+   "class": "CERTIFIED_DERIVED_BOUND",
+   "m": [
+    2,
+    3,
+    5
+   ],
+   "object": "m=2 [-3.16,29.67], m=3 [-4.23,28.08], m=5 [-5.69,26.07]",
+   "source": "premise-binding r1 implied GammaTilde intervals",
+   "usable_for_m_gt_1": false
+  },
+  {
+   "class": "UNUSABLE",
+   "m": [],
+   "object": "algebra only",
+   "source": "p5y_k5_cusum_order3_producer_design synthetic qualification",
+   "usable_for_m_gt_1": false
+  }
+ ],
+ "findings": [
+  "F1: RPRIME_ZERO_IDENTITY PASS (P1-T1 at rho=1 with the K1 raw-variable R; PB3 BOUND).",
+  "F2: m=2 CERTIFIED by the odd-C3 widening on committed cell-0 fields: R_2'(0) <= D.hi + (e0^2/2) M3 < 0; margin above 1 = 0.766264 (rounded down).",
+  "F3: m=3 NOT_CERTIFIED: D.hi + E = +0.385; the recorded M3 is 1.152x the value that would certify the sign.",
+  "F4: m=5 NOT_CERTIFIED: D.hi + E = +1.927; the recorded M3 is 3.050x the value that would certify the sign.",
+  "F5: m=1 control: odd-C3 route gives [9.718727, 22.054855], inside CORE-C1 [3.924, 27.849] and consistent with the first-order route.",
+  "F6: no source REFUTES GammaTilde_m > 1 for any m: every certified enclosure contains the P1-N1 estimate (all > 10) and none has an upper endpoint < 1.",
+  "F7: supF3 is dominated by the loop 3 k1 C epsH_cell (C ~ 1233, epsH_cell ~ 1.7e4-4.5e4); it cannot be tightened by exact arithmetic on recorded fields."
+ ],
+ "governance": {
+  "CORE_C1": "m=1 only, not reused for m>1",
+  "P1_N1": "EMPIRICAL, never promoted",
+  "cell0_record": {
+   "independently_reviewed": "producer adjudicated (REFINE2_SOUND, AUXILIARY_DERIVATIVE_SOUND, composite closure); this R'''-based use of supF3/towers is NEW and not independently countersigned",
+   "load_bearing_elsewhere": "supF3 feeds epsH_cell -> M_R2 -> K1 cover charge (CUSUM closure); read-only reuse here",
+   "predates_K5": "produced by the K1 CUSUM Aux5 campaign (launched 2026-09-13, closed 2026-09-16) for K1, not for K5; frozen before the K5-B countersignature was consumed here and before this audit",
+   "preregistered": "producer and checkpoint f9380847 frozen pre-run; this derivation was not preregistered",
+   "sha256": "4f8df44c956309b109e174f7ea15deee39ffad863c459f1656d6e2470a7ff1fb",
+   "wrapper": "this namespace is the additive certification wrapper"
+  },
+  "status_class_of_M2_bound": "CERTIFIED_DERIVED_BOUND (exact rational, verifier-reproducible), carrying the P5X L5 note; independent countersignature recommended before load-bearing publication"
+ },
+ "kind": "REUSE_CERTIFICATION_AUDIT: exact rational arithmetic on committed hash-bound certified fields; no scientific compute",
+ "minimal_new_evidence": {
+  "expectation_not_evidence": "if the e0 midpoint eps carries over to e=0, D(0).hi would be about -2.5 (m=3) and -1.0 (m=5); the m=5 margin would be thin. This is a forecast from recorded widths, not a certificate.",
+  "not_needed": "no order-3 producer, no K1 rerun, no K5 probe, no SR/PS1 work",
+  "option_A_estimated_cpu": "~0.1-0.2 CPU-h single-thread (cell-0 midpoint objects ~ 50-60 objects x ~10 CPU-s)",
+  "option_A_preferred": "one certified POINT evaluation of D_interval at e = 0 exactly (frozen K1 CUSUM kernel, midpoint objects F_r, dF_r, h, S, W at orders 0-1 only, no whole-cell curvature), giving R_m'(0) directly for m = 1,2,3,5 in one run; certifies GammaTilde_m > 1 iff D_interval(0).hi < 0. Needs a new governed point-certificate protocol (not in the frozen cover) and explicit authorization.",
+  "option_B_estimated_cpu": "~0.6 CPU-h (cell-0 record: 2055 CPU-s including dependencies)",
+  "option_B_fallback": "one full Aux5 cell [0, 2e'] with e' <= e0/4 (outside the frozen cover; new checkpoint); E shrinks >= 16x and the supF3 loop gain 3 C k1 rho drops from ~0.75 to <= ~0.19",
+  "required_for": [
+   "m=3",
+   "m=5"
+  ]
+ },
+ "non_claims": [
+  "does not certify GammaTilde_m > 1 for m = 3 or 5",
+  "does not refute H3a or K5-B (K5-B is sufficient-only)",
+  "does not address SR",
+  "does not certify the =1/rho_c clause for any m other than 1 and 2",
+  "does not promote any Monte Carlo estimate"
+ ],
+ "origin_main_at_audit": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+ "recomputed": {
+  "binding": {
+   "cell_index": 0,
+   "detector": "CUSUM",
+   "geometry_equals_frozen_cells": true,
+   "record_sha256": "4f8df44c956309b109e174f7ea15deee39ffad863c459f1656d6e2470a7ff1fb",
+   "record_sha256_equals_composite_export_manifest": true,
+   "scientific_content_hash_recomputes": true
+  },
+  "bound": {
+   "e0": "5083/20000000",
+   "half_e0_squared": "25836889/800000000000000",
+   "m": {
+    "1": {
+     "D_interval": [
+      "-10954679770250915/562949953421312",
+      "-5806356847492771/562949953421312"
+     ],
+     "E_first_order_e0_M_R2": "95400302645216782804851/22517998136852480000000",
+     "E_odd_C3": "550564060337462470744771420969372094436532792189675944156303752360803406473911830831/345087317339528189371737793113851272622555448608519327758126211189964800000000000000",
+     "GammaTilde_gt_1_certified_by_first_order": true,
+     "GammaTilde_gt_1_certified_by_odd_C3": true,
+     "GammaTilde_interval_odd_C3": [
+      "3353809647985582295282176915871836637941035114946250496289516418777039793526088169169/345087317339528189371737793113851272622555448608519327758126211189964800000000000000",
+      "7610850537486305491461686850826470329999422914198179635913581187547184206473911830831/345087317339528189371737793113851272622555448608519327758126211189964800000000000000"
+     ],
+     "GammaTilde_lower_minus_1": "3008722330646054105910439122757985365318479666337731168531390207587074993526088169169/345087317339528189371737793113851272622555448608519327758126211189964800000000000000",
+     "M3": "21309224200230239435745202178535198043252529056020480800002808091980555649479/431359146674410236714672241392314090778194310760649159697657763987456",
+     "M3_excess_factor": "23937567840759237858468322650842264975501425747377214963317554450469713324952688297/154751582216674633767617849727276411293696193849017700551638867823820800000000000000",
+     "M3_finite_part": "0",
+     "M3_needed_for_sign": "1540834336652081298828125/4824721447190528",
+     "M3_resolvent_part": "21309224200230239435745202178535198043252529056020480800002808091980555649479/431359146674410236714672241392314090778194310760649159697657763987456",
+     "Rprime0_upper_first_order": "-136853971254494057195149/22517998136852480000000",
+     "Rprime0_upper_odd_C3": "-3008722330646054105910439122757985365318479666337731168531390207587074993526088169169/345087317339528189371737793113851272622555448608519327758126211189964800000000000000",
+     "contains_P1N1_estimate": true,
+     "finite_part_towers": {},
+     "float_view": {
+      "E_odd_C3": 1.5954340616805909,
+      "GammaTilde_lower": 9.71872763636167,
+      "GammaTilde_upper": 22.054854395005368,
+      "M3": 49400190.91866953,
+      "Rprime0_upper": -8.71872763636167
+     },
+     "intersects_certified_m1_enclosure": true
+    },
+    "2": {
+     "D_interval": [
+      "-46801742704614037/2251799813685248",
+      "-8401312526310037/2251799813685248"
+     ],
+     "E_first_order_e0_M_R2": "177619070143110454727531/22517998136852480000000",
+     "E_odd_C3": "274628023618159524854450492581279671307541915427860221954779681788992583544752351020562176279/92633671389852956338856788006950326282615987732512451231566067206330503711948800000000000000",
+     "GammaTilde_gt_1_certified_by_first_order": false,
+     "GammaTilde_gt_1_certified_by_odd_C3": true,
+     "GammaTilde_interval_odd_C3": [
+      "163615599009765947079946830032036897258484510309906727070423272869859103166543648979437823721/92633671389852956338856788006950326282615987732512451231566067206330503711948800000000000000",
+      "2292573717783435114937579449878355844342568947595462795426423895897611855638448351020562176279/92633671389852956338856788006950326282615987732512451231566067206330503711948800000000000000"
+     ],
+     "GammaTilde_lower_minus_1": "70981927619912990741090042025086570975868522577394275838857205663528599454594848979437823721/92633671389852956338856788006950326282615987732512451231566067206330503711948800000000000000",
+     "M3": "10629299201547040932615784066776757500004815418290500143216920651282458330983747734511/115792089237316195423570985008687907853269984665640564039457584007913129639936",
+     "M3_excess_factor": "274628023618159524854450492581279671307541915427860221954779681788992583544752351020562176279/345609951238072515595540534606366242283410438005254497793636887452521182999347200000000000000",
+     "M3_finite_part": "63753716244460004736989273069575362521844686279451609035216081988029725461487/115792089237316195423570985008687907853269984665640564039457584007913129639936",
+     "M3_needed_for_sign": "51277542274841534423828125/443874373141528576",
+     "M3_resolvent_part": "39597224957471060336216462141973839813580561043492756276448486805209429349579/431359146674410236714672241392314090778194310760649159697657763987456",
+     "Rprime0_upper_first_order": "93605944880010084727531/22517998136852480000000",
+     "Rprime0_upper_odd_C3": "-70981927619912990741090042025086570975868522577394275838857205663528599454594848979437823721/92633671389852956338856788006950326282615987732512451231566067206330503711948800000000000000",
+     "contains_P1N1_estimate": true,
+     "finite_part_towers": {
+      "W(0,0)<-S:0:1": "63753716244460004736989273069575362521844686279451609035216081988029725461487/57896044618658097711785492504343953926634992332820282019728792003956564819968"
+     },
+     "float_view": {
+      "E_odd_C3": 2.9646673773986048,
+      "GammaTilde_lower": 1.766264864113853,
+      "GammaTilde_upper": 24.748816314696583,
+      "M3": 91796419.52709104,
+      "Rprime0_upper": -0.7662648641138531
+     }
+    },
+    "3": {
+     "D_interval": [
+      "-69902839042658697062886034772032610794887792195028263454880710253286798305961/3618502788666131106986593281521497120414687020801267626233049500247285301248",
+      "-18328707085338292866948655780740247726453867681095678355297564524727548335441/7237005577332262213973186563042994240829374041602535252466099000494570602496"
+     ],
+     "E_first_order_e0_M_R2": "43703573722161057568981/5629499534213120000000",
+     "E_odd_C3": "67568220619305535785837703727556283679146142229721668781963971630661886751908936365889562799/23158417847463239084714197001737581570653996933128112807891516801582625927987200000000000000",
+     "GammaTilde_gt_1_certified_by_first_order": false,
+     "GammaTilde_gt_1_certified_by_odd_C3": false,
+     "GammaTilde_interval_odd_C3": [
+      "14242059901240240473112191772550090616160231282912614762879751650048893849489463634110437201/23158417847463239084714197001737581570653996933128112807891516801582625927987200000000000000",
+      "538104808339784436073022523270302574337082009211030667701092034053280021838046536365889562799/23158417847463239084714197001737581570653996933128112807891516801582625927987200000000000000"
+     ],
+     "GammaTilde_lower_minus_1": "-8916357946222998611602005229187490954493765650215498045011765151533732078497736365889562799/23158417847463239084714197001737581570653996933128112807891516801582625927987200000000000000",
+     "M3": "2615184073411684192544919155226323249643025606903434418205844040691659384839596453191/28948022309329048855892746252171976963317496166410141009864396001978282409984",
+     "M3_excess_factor": "67568220619305535785837703727556283679146142229721668781963971630661886751908936365889562799/58651862673082537174235698498368792724652376579506170736952206479128154673411200000000000000",
+     "M3_finite_part": "246877024092403892945828123179052164007138750972548756617300261588901149935573/86844066927987146567678238756515930889952488499230423029593188005934847229952",
+     "M3_needed_for_sign": "111869550081410478924247166630494676064781907233249989961532986601120290133306884765625/1426557234145466422586971055646006350921232643526962932102612122640908552241152",
+     "M3_resolvent_part": "116907834609717555124027498362225988058401835166984085471462838422875353181625/1294077440023230710144016724176942272334582932281947479092973291962368",
+     "Rprime0_upper_first_order": "2957378214221576488728428102410535592081154435431703348861274457458401282358935491/565391060729082985466655200237733925064794847000198066598913984413638328320000000",
+     "Rprime0_upper_odd_C3": "8916357946222998611602005229187490954493765650215498045011765151533732078497736365889562799/23158417847463239084714197001737581570653996933128112807891516801582625927987200000000000000",
+     "contains_P1N1_estimate": true,
+     "finite_part_towers": {
+      "W(0,0)<-S:0:1": "63753716244460004736989273069575362521844686279451609035216081988029725461487/57896044618658097711785492504343953926634992332820282019728792003956564819968",
+      "W(0,1)<-W:0:1:1": "17493359078915336377693687199586995106241941428156064203512797684718683019883/3618502788666131106986593281521497120414687020801267626233049500247285301248",
+      "W(1,0)<-S:1:1": "56574935766141271349032050655564410530163149490236445384016494430998346197277/7237005577332262213973186563042994240829374041602535252466099000494570602496"
+     },
+     "float_view": {
+      "E_odd_C3": 2.917652711180653,
+      "GammaTilde_lower": 0.6149841493943122,
+      "GammaTilde_upper": 23.235819125645847,
+      "M3": 90340681.84232715,
+      "Rprime0_upper": 0.3850158506056877
+     }
+    },
+    "5": {
+     "D_interval": [
+      "-63105444903492678041900186295696906157440043348460839149977360052149572774567/3618502788666131106986593281521497120414687020801267626233049500247285301248",
+      "-3402768965958415144399202069786420586385094257483483500128046871327825111719/3618502788666131106986593281521497120414687020801267626233049500247285301248"
+     ],
+     "E_first_order_e0_M_R2": "539253623437766439220724487662744168065237039713950071720226316300322502889408007/70673882591135373183331900029716740633099355875024758324864248051704791040000000",
+     "E_odd_C3": "249055310172363114299722125877409677950671938208478888480307059904536125083403397785289336629/86844066927987146567678238756515930889952488499230423029593188005934847229952000000000000000",
+     "GammaTilde_gt_1_certified_by_first_order": false,
+     "GammaTilde_gt_1_certified_by_odd_C3": false,
+     "GammaTilde_interval_odd_C3": [
+      "-80544788061374004266463037446019652987477187529644861447640746986733475172195397785289336629/86844066927987146567678238756515930889952488499230423029593188005934847229952000000000000000",
+      "1850430054784174533873004835730651356619185467070769451109356889162060718902963397785289336629/86844066927987146567678238756515930889952488499230423029593188005934847229952000000000000000"
+     ],
+     "GammaTilde_lower_minus_1": "-167388854989361150834141276202535583877429676028875284477233934992668322402147397785289336629/86844066927987146567678238756515930889952488499230423029593188005934847229952000000000000000",
+     "M3": "9639523944711885177032038411335423469546660134216580350688005042113859957497336377661/108555083659983933209597798445644913612440610624038028786991485007418559037440",
+     "M3_excess_factor": "14650312363080183194101301522200569291215996365204640498841591759090360299023729281487608037/4803909128411880203857697039698476121955427187035506117827830877168694275368000000000000000",
+     "M3_finite_part": "2203515104488118347270923334120981614260546991601949496951388801800632739508541/108555083659983933209597798445644913612440610624038028786991485007418559037440",
+     "M3_needed_for_sign": "1221697267764251760828068298263162262460181474567542042497719034110690886273193359375/41957565710160777134910913401353127968271548339028321532429768312967898595328",
+     "M3_resolvent_part": "19152008972956301150547844450497804777950139589447952804443256240536884778469/215679573337205118357336120696157045389097155380324579848828881993728",
+     "Rprime0_upper_first_order": "1891173168285564573726710288948912563949612669989903138433401603378803674704585153/282695530364541492733327600118866962532397423500099033299456992206819164160000000",
+     "Rprime0_upper_odd_C3": "167388854989361150834141276202535583877429676028875284477233934992668322402147397785289336629/86844066927987146567678238756515930889952488499230423029593188005934847229952000000000000000",
+     "contains_P1N1_estimate": true,
+     "finite_part_towers": {
+      "W(0,0)<-S:0:1": "63753716244460004736989273069575362521844686279451609035216081988029725461487/57896044618658097711785492504343953926634992332820282019728792003956564819968",
+      "W(0,1)<-W:0:1:1": "17493359078915336377693687199586995106241941428156064203512797684718683019883/3618502788666131106986593281521497120414687020801267626233049500247285301248",
+      "W(0,2)<-W:0:2:1": "98996574647163308378460045466445032472124436637581187808657764618231427804721/7237005577332262213973186563042994240829374041602535252466099000494570602496",
+      "W(0,3)<-W:0:3:1": "13470698377784276418855074153268984026910762942325020357695968049437018310479/452312848583266388373324160190187140051835877600158453279131187530910662656",
+      "W(1,0)<-S:1:1": "56574935766141271349032050655564410530163149490236445384016494430998346197277/7237005577332262213973186563042994240829374041602535252466099000494570602496",
+      "W(1,1)<-W:1:1:1": "76950691038791469953573696967738512070044766174747611063736583381070786385265/3618502788666131106986593281521497120414687020801267626233049500247285301248",
+      "W(1,2)<-W:1:2:1": "80067781036164988698197939472918866367592462071362221435479495759817119981367/1809251394333065553493296640760748560207343510400633813116524750123642650624",
+      "W(2,0)<-S:2:1": "38475345519395734976786848483869256035022383087373805531868291690535393192633/1809251394333065553493296640760748560207343510400633813116524750123642650624",
+      "W(2,1)<-W:2:1:1": "10008472629520623587274742434114858295949057758920277679434936969977139997671/226156424291633194186662080095093570025917938800079226639565593765455331328",
+      "W(3,0)<-S:3:1": "40033890518082494349098969736459433183796231035681110717739747879908559990683/904625697166532776746648320380374280103671755200316906558262375061821325312"
+     },
+     "float_view": {
+      "E_odd_C3": 2.867844850919808,
+      "GammaTilde_lower": -0.9274644879098461,
+      "GammaTilde_upper": 21.30750113670504,
+      "M3": 88798457.14922746,
+      "Rprime0_upper": 1.9274644879098461
+     }
+    }
+   },
+   "rho": "5083/20000000",
+   "supF3_final": {
+    "0": "21309224200230239435745202178535198043252529056020480800002808091980555649479/431359146674410236714672241392314090778194310760649159697657763987456",
+    "1": "57885225714711881236687722105412481583908593030965031752894165518438303049679/431359146674410236714672241392314090778194310760649159697657763987456",
+    "2": "37713384694775434451594574078278308431240713079998572918565864812456494482467/431359146674410236714672241392314090778194310760649159697657763987456",
+    "3": "9307319221207250459274775903580768555101408994891439766423225842299905301065/107839786668602559178668060348078522694548577690162289924414440996864",
+    "4": "37382978235016454544351842528428985500693924747929683507276820613293873398805/431359146674410236714672241392314090778194310760649159697657763987456"
+   },
+   "tower_indexing_crosscheck_S0_order3": true
+  },
+  "pins_match": {
+   "closure/04_ARB_CERTIFICATE.md": true,
+   "level4/closure_proofs/d4_phase_map/DEFINITION_AUDIT.md": true,
+   "level4/closure_proofs/m_gt_1_priority1/CERTIFICATE_REPORT.md": true,
+   "level4/closure_proofs/m_gt_1_priority1/CLOSURE_REPORT.md": true,
+   "level4/closure_proofs/m_gt_1_priority1/PROOF.md": true,
+   "level4/closure_proofs/m_gt_1_priority1/THEOREM.md": true,
+   "level4/closure_proofs/m_rho_stability_priority3/CLOSURE_REPORT.md": true,
+   "level4/closure_proofs/p5_nonlinear_dynamics/THEOREM.md": true,
+   "level4/closure_proofs/p5x_global_nonlinear_dynamics/PROOF.md": true,
+   "level4/closure_proofs/p5y_k1_cover_ledger_successor/ERROR_ALGEBRA.md": true,
+   "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/cells.json": true,
+   "level4/closure_proofs/p5y_k1_cusum_aux3_successor/README.md": true,
+   "level4/closure_proofs/p5y_k1_cusum_aux3_successor/code/aux_refine.py": true,
+   "level4/closure_proofs/p5y_k1_cusum_aux4_fullcover/code/hash_v2.py": true,
+   "level4/closure_proofs/p5y_k1_cusum_aux4_fullcover/code/schema.py": true,
+   "level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/evidence/closure_r1/COMPOSITE_EXPORT_MANIFEST.json": true,
+   "level4/closure_proofs/p5y_k1_cusum_aux5_successor/manifests/producer_manifest_v3.json": true,
+   "level4/closure_proofs/p5y_k1_cusum_completion_successor/code/order2.py": true,
+   "level4/closure_proofs/p5y_k1_cusum_completion_successor/code/refine2.py": true,
+   "level4/closure_proofs/p5y_k5_feasibility/K5_GLOBAL_BRIDGE.md": true,
+   "level4/closure_proofs/p5y_k5b_independent_countersignature/COUNTERSIGNATURE.json": true,
+   "level4/closure_proofs/p5y_k5b_k1_premise_binding_audit/result_r1/PREMISE_BINDING_RESULT.json": true,
+   "level4/closure_proofs/p5y_k5b_k1_premise_binding_audit/result_r1/records/aux5_CUSUM_0_256.json": true,
+   "level4/closure_proofs/p9_final_synthesis/CLAIM_LEDGER.json": true
+  }
+ },
+ "revision": "r1",
+ "schema": "p5y.gammatilde-sign-audit.result.v1",
+ "scope": "CUSUM (frozen two-sided Gaussian, k=1/2, h=5, reset, convention A), m in {2,3,5}; m=1 recomputed as a control. SR is out of scope (no SR K1 records exist while PS1 drains).",
+ "verdicts": {
+  "ALL_CUSUM_M_GAMMATILDE_GT_1": "NOT_CERTIFIED",
+  "AWS_PS1_TOUCHED": "NO",
+  "CUSUM_CLOSURE_MODIFIED": "NO",
+  "GAMMATILDE_GT_1_M2": "CERTIFIED",
+  "GAMMATILDE_GT_1_M3": "NOT_CERTIFIED",
+  "GAMMATILDE_GT_1_M5": "NOT_CERTIFIED",
+  "H3A_POSITIVE_BRANCH_PREMISE": "OPEN",
+  "K1_MODIFIED": "NO",
+  "K5_DECLARED_CLOSED": "NO",
+  "M1_EXISTING_STATUS": "CERTIFIED (CORE-C1 [3.9243482, 27.8493821]; recomputed control [9.718727, 22.054855])",
+  "NEW_SCIENTIFIC_COMPUTE_REQUIRED": "YES",
+  "ORIGIN_MAIN_TOUCHED": "NO",
+  "P5Y_DECLARED_CLOSED": "NO",
+  "SCIENTIFIC_COMPUTE_RUN": "NO"
+ }
+}
