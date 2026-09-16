@@ -5,8 +5,8 @@ K5_B_COUNTERSIGNATURE                  = PASS_WITH_SCOPE_LIMITATION   (d7d3c08b;
 B3                                     = CLOSED                       (CLOSED_BY_SESSION_INDEPENDENT_COUNTERSIGNATURE)
 
 ORDER3_PRODUCER_DESIGN                 = PASS
-REFERENCE_KERNEL                       = PENDING_SYNTHETIC_QUALIFICATION
-SYNTHETIC_QUALIFICATION                = NOT_YET_RUN (protocol frozen in this commit)
+REFERENCE_KERNEL                       = PASS
+SYNTHETIC_QUALIFICATION                = PASS   (protocol frozen in 10911e51; RESULT.md)
 
 CERTIFIED_REAL_CUSUM_ORDER3_PRODUCER   = NOT_BUILT
 REAL_INTERVAL_QUALIFICATION            = NOT_DONE

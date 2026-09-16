@@ -12,7 +12,7 @@ and so does B2 (no SR K1 inputs). B3 is closed by `d7d3c08b`, with its scope lim
 | `code/manufactured.py` | Manufactured analytic systems with exact derivatives |
 | `code/qualify_nonscientific.py` | Runs and replays the protocol |
 | `tests/test_order3_algebra.py` | Development unit tests (seeds disjoint from the protocol) |
-| `evidence/qualification_r1/` | Written only by the post-freeze run |
+| `evidence/qualification_r1/`, `RESULT.md` | Post-freeze run: synthetic qualification PASS |
 
 ```bash
 python3 -B tests/test_order3_algebra.py
