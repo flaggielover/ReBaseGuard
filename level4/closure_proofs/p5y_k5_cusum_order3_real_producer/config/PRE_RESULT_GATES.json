@@ -1,0 +1,32 @@
+{
+ "schema": "rebaseguard.p5y.k5.order3-real-producer.pre-result-gates.v1",
+ "status": "FROZEN_PRE_RESULT",
+ "frozen_utc": "2026-09-16",
+ "principle": "Producer qualification asks whether the producer is SOUND and fail-closed. No gate depends on the sign or size of any R''' value; there is no sign threshold for PASS. No gate is evaluated on a real CUSUM cell.",
+ "evidence": "config/QUALIFICATION_PROTOCOL.json parts, assembled by code/qualify_order3.py assemble()",
+ "gates": {
+  "G01_input_identity": "K1 record validation (part k1) passes V01-V10 on the committed copies of cells 0 and 309, and the wrong-manifest and wrong-cell controls are refused (FC03, FC04).",
+  "G02_producer_identity": "config/ORDER3_PRODUCER_MANIFEST.json verifies byte-for-byte from disk in the qualification process, and every part ran under the frozen protocol sha256.",
+  "G03_exact_derivative_order_3": "(a) the Arb engine reproduces the frozen reference kernel's F_r:3 midpoint and cascade and W:3 cascade and Taylor values exactly up to outward rounding (QR); (b) every manufactured fixture's export contains the EXACT third derivative (QS); (c) exact-candidate residuals of the order-3 equation vanish to the consistency threshold (QC).",
+  "G04_finite_interval": "every fixture export is finite (no refusal on valid inputs), and non-finite inputs (inf enclosure, NaN candidate) are refused (FC07, FC07b).",
+  "G05_lo_le_hi": "L <= U for every exported interval.",
+  "G06_signed_interval_semantics": "the fixture set produces CERTIFIED_POSITIVE, CERTIFIED_NEGATIVE and SIGN_INDETERMINATE exports, all containing exact truth; the export-uses-midpoint-radius mutation (M15) is detected.",
+  "G07_whole_cell_soundness": "zero containment violations at e0 and at 17 exact grid points per fixture (QS), and every whole-cell mutation (M05, M06, M09, M11, M16) is detected. The proof is DESIGN_REAL.md section 4; samples are necessary conditions only.",
+  "G08_no_unsigned_magnitude_substitution": "producer modules contain no mag_fraction / abs-of-centre export (static scan) and CERTIFIED_NEGATIVE exports occur.",
+  "G09_no_finite_difference_substitution": "producer modules contain no evaluation of truth / expansion / finite-difference tokens (static scan); R''' comes only from the order-3 equation.",
+  "G10_precision_escalation_consistency": "overall precision label is not UNSTABLE: no sign flip and no disjoint intervals across 128/192/256/384/512 bits.",
+  "G11_deterministic_scientific_serialization": "two fresh-process determinism parts and the soundness part give identical canonical scientific payload hashes per fixture.",
+  "G12_deterministic_scientific_hash": "the two fresh-process determinism parts agree and no hash is missing.",
+  "G13_runtime_dependency_identity": "every part records python 3.12.3, python-flint 0.9.0, numpy 2.5.2, host rebaseguard-vultr-02, prefix /root/work/rbg-cusum-aux5-venv, x86_64.",
+  "G14_fail_closed": "every fail-closed control (FC01-FC13) and every real-cell gate control (no / forged authorization, gate before record validation, empty registry, manifest verifies, subclass surface) passes.",
+  "G15_k1_record_provenance": "committed K1 record copies of cells 0 and 309 validate against export manifest 29ad1f9b and producer identity 3692d0fe, with target_gate PASS for every m (cell 309 is in the endpoint region).",
+  "G16_no_scientific_probe_contamination": "no part other than operator/realgate loads CUSUM certifier modules; the operator and realgate parts record zero calls to collocation / prepare / residual / propagation / engine / validate functions in repository code; static import fences hold; no module attribute assignment (Aux3 no_monkeypatch detector, which fires on its control)."
+ },
+ "verdict_rule": {
+  "REAL_ORDER3_PRODUCER": "QUALIFIED requires all G01-G16 PASS, QS/QC/QM/QR/QX/QO PASS, a frozen governance protocol, any permitted real qualification passed, and no remaining blocker to scientific probe authorization. PARTIALLY_QUALIFIED if the gates and questions pass but a stated blocker remains. NOT_READY if any soundness gate (G03, G04, G05, G06, G07, G14) fails. INFEASIBLE only with a proof that no sound signed whole-cell enclosure is constructible.",
+  "declared_blockers_known_before_results": [
+   "REAL_CELL_QUALIFICATION = NOT_AUTHORIZED: the real CUSUM end-to-end path (Order3Certifier.prepare, collect_inputs, cross_check_k1) is not executed, and L4 host determinism on real cells is not measured.",
+   "Cell-0 width forecast (DESIGN_REAL.md section 6), computed from committed K1 magnitudes only: the frozen midpoint rule forces a certified R''' radius >= C*3*k1*eps_H,mid ~ 2.7e7 at CUSUM cell 0, so the H3a sign test there is expected SIGN_INDETERMINATE, which the frozen oracle's Q2 rule turns into STOP."
+  ]
+ }
+}

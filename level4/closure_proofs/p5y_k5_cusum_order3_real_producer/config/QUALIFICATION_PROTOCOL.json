@@ -1,0 +1,564 @@
+{
+ "schema": "rebaseguard.p5y.k5.order3-real-producer.qualification-protocol.v1",
+ "status": "FROZEN_PRE_RESULT",
+ "frozen_utc": "2026-09-16",
+ "scope": "NON-SCIENTIFIC qualification of the real CUSUM signed order-3 producer: Arb engine and rung-3 residual on manufactured chain systems with exact derivatives; differential against the frozen reference kernel (10911e51); independent rational-function cross-check; CUSUM Arb kernels on SYNTHETIC polynomials; fail-closed controls; K1 record validation on committed copies. No real CUSUM cell is evaluated, no R''' of any (D,m) is computed, no K5 probe, no authorization.",
+ "execution_rule": "Development used a DEV protocol (seeds + 900000, e0 shifted). The trials below run only after the commit that freezes this file, the gates and the bound code. Any bound-code change after that commit invalidates this protocol.",
+ "real_cell_qualification": "NOT_AUTHORIZED: no pre-result mechanism permits a real CUSUM cell to be used for producer qualification and excluded from K5 (design DESIGN.md section 6 leaves L4 to the owner; the frozen feasibility oracle requires probe cells be fixed before any R''' value exists). No real cell is run.",
+ "runtime_contract": {
+  "python": "3.12.3",
+  "python_flint": "0.9.0",
+  "numpy": "2.5.2",
+  "host": "rebaseguard-vultr-02",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "machine": "x86_64"
+ },
+ "assembly_table": {
+  "path": "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/checkpoint.json",
+  "key": "assembly",
+  "sha256": "1c2a6825f19e19de6fb588647ca3fc4618068087ef0976292ca7bbeca701f13f"
+ },
+ "fixtures": [
+  {
+   "id": "T01_random_n1_exact",
+   "kind": "random",
+   "n": 1,
+   "seed": 1001,
+   "e0": "1/10",
+   "rho": "1/50",
+   "noise": "0"
+  },
+  {
+   "id": "T02_random_n1_noise6",
+   "kind": "random",
+   "n": 1,
+   "seed": 1002,
+   "e0": "1/3",
+   "rho": "1/20",
+   "noise": "1/1000000"
+  },
+  {
+   "id": "T03_random_n3_noise3",
+   "kind": "random",
+   "n": 3,
+   "seed": 1003,
+   "e0": "1",
+   "rho": "1/50",
+   "noise": "1/1000"
+  },
+  {
+   "id": "T04_random_n3_exact",
+   "kind": "random",
+   "n": 3,
+   "seed": 1004,
+   "e0": "19/10",
+   "rho": "1/20",
+   "noise": "0"
+  },
+  {
+   "id": "T05_wide_cell_n3",
+   "kind": "random",
+   "n": 3,
+   "seed": 1005,
+   "e0": "1/10",
+   "rho": "1/4",
+   "noise": "1/1000000",
+   "k0": "1/8"
+  },
+  {
+   "id": "T06_narrow_cell_n1",
+   "kind": "random",
+   "n": 1,
+   "seed": 1006,
+   "e0": "1/2",
+   "rho": "1/1000000",
+   "noise": "1/1000000000"
+  },
+  {
+   "id": "T07_positive_R3",
+   "kind": "target_R3_m1",
+   "n": 3,
+   "seed": 1007,
+   "e0": "1/5",
+   "rho": "1/100",
+   "target": "2",
+   "noise": "1/1000000"
+  },
+  {
+   "id": "T08_negative_R3",
+   "kind": "target_R3_m1",
+   "n": 3,
+   "seed": 1008,
+   "e0": "1/5",
+   "rho": "1/100",
+   "target": "-2",
+   "noise": "1/1000000"
+  },
+  {
+   "id": "T09_sign_crossing_at_e0",
+   "kind": "target_R3_m1",
+   "n": 1,
+   "seed": 1009,
+   "e0": "2/5",
+   "rho": "1/20",
+   "target": "0",
+   "noise": "0"
+  },
+  {
+   "id": "T10_identically_zero_R3",
+   "kind": "identically_zero_R3_m1",
+   "e0": "1/7",
+   "rho": "1/30",
+   "noise": "0"
+  },
+  {
+   "id": "T11_tiny_positive_R3",
+   "kind": "constant_R3_m1",
+   "value": "1/1000000000000",
+   "e0": "1/9",
+   "rho": "1/40",
+   "noise": "0"
+  },
+  {
+   "id": "T12_tiny_negative_R3",
+   "kind": "constant_R3_m1",
+   "value": "-1/1000000000000",
+   "e0": "1/9",
+   "rho": "1/40",
+   "noise": "0"
+  },
+  {
+   "id": "T13_tiny_positive_R3_noisy",
+   "kind": "constant_R3_m1",
+   "value": "1/1000000000000",
+   "e0": "1/9",
+   "rho": "1/40",
+   "noise": "1/1000000000000000",
+   "seed": 1013
+  },
+  {
+   "id": "T14_parity_near_zero",
+   "kind": "parity_near_zero",
+   "e0": "1/40",
+   "rho": "1/40",
+   "noise": "1/1000000",
+   "seed": 1014
+  },
+  {
+   "id": "T15_ill_conditioned_C1000",
+   "kind": "ill_conditioned",
+   "C_target": 1000,
+   "seed": 1015,
+   "e0": "1/2",
+   "rho": "3133/10000000",
+   "noise": "1/1000000000"
+  },
+  {
+   "id": "T16_near_singular_C1e6",
+   "kind": "ill_conditioned",
+   "C_target": 1000000,
+   "seed": 1016,
+   "e0": "1/2",
+   "rho": "3133/10000000000",
+   "noise": "0"
+  },
+  {
+   "id": "T17_cusum_like_crho_C1233",
+   "kind": "cusum_like_crho",
+   "C_target": 1233,
+   "e0": "1/4000",
+   "rho": "0",
+   "noise": "1/1000000000",
+   "seed": 1017
+  },
+  {
+   "id": "T18_cusum_like_crho_noise6",
+   "kind": "cusum_like_crho",
+   "C_target": 1233,
+   "e0": "1/4000",
+   "rho": "0",
+   "noise": "1/1000000",
+   "seed": 1018
+  },
+  {
+   "id": "T19_inflated_dependencies_n3",
+   "kind": "random",
+   "n": 3,
+   "seed": 1003,
+   "e0": "1",
+   "rho": "1/50",
+   "noise": "1/1000",
+   "inflate": "10000"
+  },
+  {
+   "id": "T20_inflated_dependencies_crho",
+   "kind": "cusum_like_crho",
+   "C_target": 1233,
+   "e0": "1/4000",
+   "rho": "0",
+   "noise": "1/1000000000",
+   "seed": 1017,
+   "inflate": "1000"
+  },
+  {
+   "id": "T22_perturb_F0_controlled_K3",
+   "kind": "controlled_K3",
+   "e0": "3/10",
+   "rho": "1/100",
+   "noise": "0",
+   "perturb_F": [
+    0,
+    "1/1000"
+   ]
+  },
+  {
+   "id": "T23_perturb_H_controlled_K1",
+   "kind": "controlled_K1",
+   "e0": "3/10",
+   "rho": "1/100",
+   "noise": "0",
+   "perturb_F": [
+    2,
+    "1/1000"
+   ]
+  },
+  {
+   "id": "T24_perturb_D_controlled_K1",
+   "kind": "controlled_K1",
+   "e0": "3/10",
+   "rho": "1/100",
+   "noise": "0",
+   "perturb_F": [
+    1,
+    "1/1000"
+   ]
+  },
+  {
+   "id": "T21_random_n3_deg4",
+   "kind": "random",
+   "n": 3,
+   "deg": 4,
+   "seed": 1021,
+   "e0": "3/2",
+   "rho": "1/25",
+   "noise": "1/10000"
+  }
+ ],
+ "mutations": [
+  {
+   "id": "M01_G_MID_DROP_K3_F",
+   "target": "rung3_engine.py",
+   "old": "delta_mid\") + k[3] * M(f\"F:{r}\")",
+   "new": "delta_mid\") + 0 * M(f\"F:{r}\")",
+   "required": true
+  },
+  {
+   "id": "M02_G_MID_LEIBNIZ_3K1H_TO_2",
+   "target": "rung3_engine.py",
+   "old": "+ arb(3) * k[1] * M(f\"H:{r}\") + src_mid)",
+   "new": "+ arb(2) * k[1] * M(f\"H:{r}\") + src_mid)",
+   "required": true
+  },
+  {
+   "id": "M03_G_MID_DROP_SOURCE",
+   "target": "rung3_engine.py",
+   "old": "+ arb(3) * k[1] * M(f\"H:{r}\") + src_mid)",
+   "new": "+ arb(3) * k[1] * M(f\"H:{r}\"))",
+   "required": true
+  },
+  {
+   "id": "M04_G_CASCADE_DROP_3K1_REFH",
+   "target": "rung3_engine.py",
+   "old": "+ arb(3) * k[1] * refH + src_cell)",
+   "new": "+ src_cell)",
+   "required": true
+  },
+  {
+   "id": "M05_G_CASCADE_MIDPOINT_RESIDUAL",
+   "target": "rung3_engine.py",
+   "old": "_up(g[r][\"delta_cell\"], f\"g_{r} delta_cell\")",
+   "new": "_up(g[r][\"delta_mid\"], f\"g_{r} delta_cell\")",
+   "required": true
+  },
+  {
+   "id": "M06_G_TAYLOR_DROPS_TOWER",
+   "target": "rung3_engine.py",
+   "old": "keep(f\"F:{r}:3\", casc, gm + rho * tf4[r], gm)",
+   "new": "keep(f\"F:{r}:3\", casc, gm, gm)",
+   "required": true
+  },
+  {
+   "id": "M07_TF4_DROPS_K1_TERM",
+   "target": "rung3_engine.py",
+   "old": "for i in range(1, 5):",
+   "new": "for i in range(2, 5):",
+   "required": true
+  },
+  {
+   "id": "M08_TF_CANDIDATE_SUP_WITHOUT_ERROR",
+   "target": "rung3_engine.py",
+   "old": "_up(sh[n] + ex[n], \"sup F\")",
+   "new": "_up(sh[n], \"sup F\")",
+   "required": true
+  },
+  {
+   "id": "M09_SCLOSED_CELL_DROPS_DRIFT",
+   "target": "rung3_engine.py",
+   "old": "M(\"Sclosed:3\") + rho * s0_4, M(\"Sclosed:3\")",
+   "new": "M(\"Sclosed:3\") + 0 * s0_4, M(\"Sclosed:3\")",
+   "required": true
+  },
+  {
+   "id": "M10_S_CASCADE_DROPS_J0",
+   "target": "rung3_engine.py",
+   "old": "casc = casc + arb(comb(3, i)) * jn[i] * cellx_h(r, 3 - i)",
+   "new": "casc = casc + arb(comb(3, i)) * jn[i] * cellx_h(r, 3 - i) * (1 if i else 0)",
+   "required": true
+  },
+  {
+   "id": "M11_W_TAYLOR_DROPS_TOWER",
+   "target": "rung3_engine.py",
+   "old": "keep(node, casc, M(node) + rho * _up(T[(\"W\", (r, j), 4)], \"tower\"), M(node))",
+   "new": "keep(node, casc, M(node), M(node))",
+   "required": true
+  },
+  {
+   "id": "M12_H_TAYLOR_WRONG_TOWER_ORDER",
+   "target": "rung3_engine.py",
+   "old": "M(f\"h:{j}:3\") + rho * _up(T[(\"h\", j, 4)], \"tower\")",
+   "new": "M(f\"h:{j}:3\") + rho * _up(T[(\"h\", j, 3)], \"tower\")",
+   "required": true
+  },
+  {
+   "id": "M13_ASSEMBLY_DROPS_W",
+   "target": "rung3_engine.py",
+   "old": "rows += [(\"W\", r, t - r - 1, Fr(1, t) - Fr(1, m)) for t in range(1, m) for r in range(t)]",
+   "new": "rows += []",
+   "required": true
+  },
+  {
+   "id": "M14_COEFFICIENT_1_OVER_T",
+   "target": "rung3_engine.py",
+   "old": "Fr(1, t) - Fr(1, m)) for t",
+   "new": "Fr(1, t)) for t",
+   "required": true
+  },
+  {
+   "id": "M15_EXPORT_USES_MID_RADIUS",
+   "target": "rung3_engine.py",
+   "old": "r_cell = (c_lo - fraction_of(rad_cell), c_hi + fraction_of(rad_cell))",
+   "new": "r_cell = (c_lo - fraction_of(rad_mid), c_hi + fraction_of(rad_mid))",
+   "required": true
+  },
+  {
+   "id": "M16_RHO_ZERO",
+   "target": "rung3_engine.py",
+   "old": "rho = _up(inp[\"rho\"], \"rho\")",
+   "new": "rho = arb(0) * _up(inp[\"rho\"], \"rho\")",
+   "required": true
+  },
+  {
+   "id": "R01_RESIDUAL_LEIBNIZ_COEFFICIENTS",
+   "target": "rung3_residual.py",
+   "old": "TERMS = tuple((comb(RUNG, i), i,",
+   "new": "TERMS = tuple((1, i,",
+   "required": true
+  },
+  {
+   "id": "R02_RESIDUAL_ENVELOPE_DROPS_SHIFT",
+   "target": "rung3_residual.py",
+   "old": "env = env + arb(c) * k_[i + 1] * s",
+   "new": "env = env + arb(c) * k_[i] * s",
+   "required": true
+  },
+  {
+   "id": "R03_RESIDUAL_OPERATOR_ORDER_REVERSED",
+   "target": "rung3_residual.py",
+   "old": "res = res - cert.K(poly, i).scale(arb(c))",
+   "new": "res = res - cert.K(poly, 3 - i).scale(arb(c))",
+   "required": true
+  },
+  {
+   "id": "R04_RESIDUAL_SOURCE_SIGN",
+   "target": "rung3_residual.py",
+   "old": "res = res - cert.vec(src)",
+   "new": "res = res + cert.vec(src)",
+   "required": true
+  },
+  {
+   "id": "R05_RESIDUAL_R0_USES_CANDIDATE_SOURCE",
+   "target": "rung3_residual.py",
+   "old": "src = cert.P[\"Sclosed\", 0, 3] if r == 0 else cert.P[\"S\", r, 3]",
+   "new": "src = cert.P[\"S\", r, 3]",
+   "required": true
+  }
+ ],
+ "mutation_trials": [
+  "T22_perturb_F0_controlled_K3",
+  "T23_perturb_H_controlled_K1",
+  "T24_perturb_D_controlled_K1",
+  "T01_random_n1_exact",
+  "T09_sign_crossing_at_e0",
+  "T11_tiny_positive_R3",
+  "T04_random_n3_exact",
+  "T07_positive_R3",
+  "T15_ill_conditioned_C1000",
+  "T17_cusum_like_crho_C1233",
+  "T02_random_n1_noise6",
+  "T21_random_n3_deg4",
+  "T14_parity_near_zero"
+ ],
+ "mutation_rule": "A mutation is DETECTED iff some mutation trial (in the listed order, stopping at the first detection) shows a containment violation against exact truth, or, on a noise-0 trial, the max certified G-residual delta_mid exceeds residual_consistency_threshold. Refusals and crashes are recorded and never count. QM PASS iff every required mutation is detected.",
+ "whole_cell_mutations": [
+  "M05_G_CASCADE_MIDPOINT_RESIDUAL",
+  "M06_G_TAYLOR_DROPS_TOWER",
+  "M09_SCLOSED_CELL_DROPS_DRIFT",
+  "M11_W_TAYLOR_DROPS_TOWER",
+  "M16_RHO_ZERO"
+ ],
+ "residual_consistency_threshold": "1/1000000000000000000000000000000000000000000000000000000000000",
+ "precision": {
+  "bits": [
+   128,
+   192,
+   256,
+   384,
+   512
+  ],
+  "fixtures": [
+   "T01_random_n1_exact",
+   "T11_tiny_positive_R3",
+   "T16_near_singular_C1e6",
+   "T17_cusum_like_crho_C1233",
+   "T18_cusum_like_crho_noise6",
+   "T15_ill_conditioned_C1000"
+  ],
+  "classification": "per fixture: UNSTABLE if a violation/refusal occurs, a sign flips POSITIVE<->NEGATIVE, or two intervals are disjoint across precisions; INCONCLUSIVE if the max width is not nonincreasing (tolerance 2^-64); CONTRACTING if width(512) < width(128)/2; else STAGNATING. Overall: the first label present in UNSTABLE > INCONCLUSIVE > STAGNATING > CONTRACTING. The binding label is on the WHOLE-CELL interval width; the same rule is also reported, non-binding, on the midpoint interval width"
+ },
+ "crosscheck_fixtures": [
+  "T01_random_n1_exact",
+  "T02_random_n1_noise6",
+  "T09_sign_crossing_at_e0",
+  "T10_identically_zero_R3",
+  "T11_tiny_positive_R3",
+  "T14_parity_near_zero",
+  "T17_cusum_like_crho_C1233",
+  "T15_ill_conditioned_C1000"
+ ],
+ "crosscheck_pieces": 32,
+ "operator_integration": [
+  {
+   "seed": 1,
+   "e0": "1/3",
+   "rho": "1/1000"
+  },
+  {
+   "seed": 2,
+   "e0": "3/2",
+   "rho": "1/1000"
+  },
+  {
+   "seed": 3,
+   "e0": "1/20",
+   "rho": "1/1000"
+  }
+ ],
+ "failclosed_base_fixture": "T01_random_n1_exact",
+ "failclosed_huge_C_fixture": "T16_near_singular_C1e6",
+ "failclosed_sign_fixture": "T10_identically_zero_R3",
+ "failclosed_near_singular_fixture": "T16_near_singular_C1e6",
+ "k1_validation_cells": [
+  0,
+  309
+ ],
+ "pure_modules": [
+  "rung3_engine.py",
+  "rung3_residual.py",
+  "manufactured_chain.py",
+  "fixtures.py",
+  "soundness.py",
+  "run_fixture.py",
+  "independent_crosscheck.py",
+  "k1_inputs.py"
+ ],
+ "forbidden_imports_pure": [
+  "cusum_layer1",
+  "cusum_layer2",
+  "aux_certifier",
+  "aux_collocation",
+  "aux_propagate",
+  "aux_refine",
+  "order2",
+  "refine2",
+  "spec",
+  "ancestry5",
+  "cusum_order3",
+  "subprocess",
+  "socket",
+  "urllib",
+  "requests"
+ ],
+ "producer_modules": [
+  "rung3_engine.py",
+  "rung3_residual.py",
+  "cusum_order3.py"
+ ],
+ "forbidden_producer_tokens": [
+  "mag_fraction(",
+  "finite_difference",
+  "true_R(",
+  ".truth(",
+  "expand(",
+  "abs(centre",
+  "abs(r_cell",
+  "abs(v[\"R3_cell\"]"
+ ],
+ "forbidden_function_names": [
+  "prepare",
+  "collocation",
+  "collocation_order3",
+  "build_objects",
+  "objects_order3",
+  "_candidates_rung3",
+  "all_residuals",
+  "aux_residuals",
+  "cell_obligations",
+  "certify_order3",
+  "validate"
+ ],
+ "forbidden_loaded_modules": [
+  "cusum_layer1",
+  "cusum_layer2",
+  "aux_collocation",
+  "aux_certifier",
+  "aux_propagate",
+  "refine2",
+  "cusum_order3",
+  "spec"
+ ],
+ "forbidden_loaded_modules_operator": [
+  "aux_collocation",
+  "aux_certifier",
+  "aux_propagate",
+  "refine2",
+  "cusum_order3",
+  "k1_inputs"
+ ],
+ "bound_code_sha256": {
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/rung3_engine.py": "6d7644c9eea8a94e43dc34ddb741af11ca3e66243548e78ce14177e3ed3f2d6b",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/rung3_residual.py": "a9c704a143166bcd5e1636c1b7b74c1d0254e790392463c567197af5b22ec9e9",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/cusum_order3.py": "1ef06882c0f37c901b98b2200b523613d3e5a3fe4545759e5cdab206d0fad545",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/k1_inputs.py": "bcf4585037e020ff661f829410ffffc30bcdae00110d399b2bc98907ace6b2f7",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/manufactured_chain.py": "31cd4ccf62dc2a4c00ee208cfaac9a8848e947c245dbc0a32918a8604f0988a3",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/fixtures.py": "9c516b17367d5b1df2df84795aaa8cc0f797ae3ddc45e4acfc77409a7df3a05f",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/soundness.py": "383b16b3273706af4fcbc2fb05e62a93c63b3d43d87e64ac71318c63e399e247",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/run_fixture.py": "912009b209c78651300afeb196f74e30a30b27ea8821f70403ec6a3ddd8cb1ab",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/independent_crosscheck.py": "bb65c72324301da5a14f5a643eb24f0c651ecbcf84020fa4ed4ecfe243a89747",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/reference_differential.py": "9ac260793de49bd71965f5474a37fc599aac5eeed4ef44382153d761ce59536b",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/real_operator_integration.py": "7e5724f07b707f6614afffb5af181285dc89ee1d6ef2d6c9da3d8f061dcdb25f",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/qualify_order3.py": "850979d51ae03c4e618ac74decf0247b237fd7a2b792de799d2da043211b2048",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/make_protocol.py": "f584350f598fe9160c66740a0a7e84fb0bed3b4bc9e7a634dd78941cfb3a7fb1",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/make_manifest.py": "2749ee47ddd1aaf243015280ac9fde8c053b1488fbca8df554ffb5158333ad53"
+ },
+ "gates": "config/PRE_RESULT_GATES.json"
+}

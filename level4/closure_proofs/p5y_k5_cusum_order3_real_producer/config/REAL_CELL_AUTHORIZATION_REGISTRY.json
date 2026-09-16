@@ -1,0 +1,7 @@
+{
+ "schema": "rebaseguard.p5y.k5.order3-real-cell-authorization-registry.v1",
+ "status": "FROZEN_EMPTY",
+ "authorizations": [],
+ "rule": "An entry {authorization_sha256, cells, purpose, governing_commit, scientific_exclusion} may only be added by a governed successor that re-pins this file's sha256 in code/cusum_order3.py (changing the order-3 producer identity) BEFORE any real-cell result exists. No entry exists: no real CUSUM cell may be evaluated by this producer.",
+ "why_empty": "No repository mechanism permits a real CUSUM cell to be used for producer qualification while being excluded from scientific K5 evidence (design DESIGN.md section 6 leaves L4 to the owner; K5_FEASIBILITY_ORACLE requires probe cells fixed before any R''' value exists)."
+}
