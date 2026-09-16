@@ -1,0 +1,51 @@
+{
+ "argv": [
+  "mutation",
+  "--mutation",
+  "M02_G_MID_LEIBNIZ_3K1H_TO_2",
+  "--out",
+  "evidence/qualification_r1/part_mutation_M02_G_MID_LEIBNIZ_3K1H_TO_2.json"
+ ],
+ "body": {
+  "detected": true,
+  "mutation": "M02_G_MID_LEIBNIZ_3K1H_TO_2",
+  "trials": [
+   {
+    "crashed": null,
+    "detected": false,
+    "first": [],
+    "refused": null,
+    "residual_consistency": true,
+    "trial": "T22_perturb_F0_controlled_K3",
+    "violations": 0
+   },
+   {
+    "crashed": null,
+    "detected": true,
+    "first": [
+     "e0 eps_mid F:0:3: error 8.571e-04 > bound 5.760e-04"
+    ],
+    "refused": null,
+    "residual_consistency": true,
+    "trial": "T23_perturb_H_controlled_K1",
+    "violations": 13
+   }
+  ]
+ },
+ "loaded_forbidden_modules": [],
+ "metadata": {
+  "cpu_seconds": 0.382608159,
+  "peak_rss_kib": 49528,
+  "wall_seconds": 0.3827483654022217
+ },
+ "part": "mutation",
+ "protocol_sha256": "f2c52ce329a031d29632d90af880e2db47009b5561a65c26eb31ef248e034d4a",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}

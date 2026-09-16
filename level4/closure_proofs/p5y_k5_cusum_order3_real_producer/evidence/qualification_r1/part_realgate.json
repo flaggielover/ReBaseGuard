@@ -1,0 +1,50 @@
+{
+ "argv": [
+  "realgate",
+  "--out",
+  "evidence/qualification_r1/part_realgate.json"
+ ],
+ "body": {
+  "checks": {
+   "forged_authorization": {
+    "pass": true,
+    "refused": "cell 0: authorization 833d42288628 is not in the pinned registry"
+   },
+   "gate_precedes_record_validation": {
+    "pass": true,
+    "refused": "cell 0: no real-cell authorization supplied"
+   },
+   "no_authorization": {
+    "pass": true,
+    "refused": "cell 0: no real-cell authorization supplied"
+   },
+   "order3_certifier_is_aux3_subclass": {
+    "pass": true
+   },
+   "producer_manifest_verifies": {
+    "pass": true,
+    "problems": []
+   },
+   "registry_empty": {
+    "pass": true
+   }
+  },
+  "forbidden_calls": []
+ },
+ "loaded_forbidden_modules": null,
+ "metadata": {
+  "cpu_seconds": 0.432323839,
+  "peak_rss_kib": 75912,
+  "wall_seconds": 0.4344925880432129
+ },
+ "part": "realgate",
+ "protocol_sha256": "f2c52ce329a031d29632d90af880e2db47009b5561a65c26eb31ef248e034d4a",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}

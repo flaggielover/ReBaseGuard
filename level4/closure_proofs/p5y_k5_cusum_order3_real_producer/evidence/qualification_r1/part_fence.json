@@ -1,0 +1,128 @@
+{
+ "argv": [
+  "fence",
+  "--out",
+  "evidence/qualification_r1/part_fence.json"
+ ],
+ "body": {
+  "checks": {
+   "authorization_gate_is_first_statement": {
+    "pass": true
+   },
+   "fixtures.py": {
+    "forbidden": [],
+    "imports": [
+     "__future__",
+     "fractions",
+     "manufactured_chain"
+    ],
+    "pass": true
+   },
+   "independent_crosscheck.py": {
+    "forbidden": [],
+    "imports": [
+     "__future__",
+     "fractions"
+    ],
+    "pass": true
+   },
+   "k1_inputs.py": {
+    "forbidden": [],
+    "imports": [
+     "__future__",
+     "fractions",
+     "hash_v2",
+     "hashlib",
+     "json",
+     "pathlib",
+     "sys"
+    ],
+    "pass": true
+   },
+   "manufactured_chain.py": {
+    "forbidden": [],
+    "imports": [
+     "__future__",
+     "flint",
+     "fractions",
+     "math",
+     "rung3_engine"
+    ],
+    "pass": true
+   },
+   "no_monkeypatch": {
+    "detector_fires_on_control": true,
+    "findings": [],
+    "pass": true
+   },
+   "no_unsigned_or_finite_difference_substitution": {
+    "found": [],
+    "pass": true
+   },
+   "run_fixture.py": {
+    "forbidden": [],
+    "imports": [
+     "__future__",
+     "fractions",
+     "manufactured_chain",
+     "pathlib",
+     "resource",
+     "rung3_engine",
+     "rung3_residual",
+     "soundness",
+     "sys",
+     "time"
+    ],
+    "pass": true
+   },
+   "rung3_engine.py": {
+    "forbidden": [],
+    "imports": [
+     "__future__",
+     "contextlib",
+     "flint",
+     "fractions",
+     "hashlib",
+     "json",
+     "math"
+    ],
+    "pass": true
+   },
+   "rung3_residual.py": {
+    "forbidden": [],
+    "imports": [
+     "__future__",
+     "flint",
+     "math"
+    ],
+    "pass": true
+   },
+   "soundness.py": {
+    "forbidden": [],
+    "imports": [
+     "__future__",
+     "fractions",
+     "manufactured_chain",
+     "rung3_engine"
+    ],
+    "pass": true
+   }
+  }
+ },
+ "loaded_forbidden_modules": [],
+ "metadata": {
+  "cpu_seconds": 0.154517399,
+  "peak_rss_kib": 47924,
+  "wall_seconds": 0.15464401245117188
+ },
+ "part": "fence",
+ "protocol_sha256": "f2c52ce329a031d29632d90af880e2db47009b5561a65c26eb31ef248e034d4a",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}

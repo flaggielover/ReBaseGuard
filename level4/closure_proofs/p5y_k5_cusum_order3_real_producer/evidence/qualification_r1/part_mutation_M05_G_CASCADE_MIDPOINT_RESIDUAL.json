@@ -1,0 +1,42 @@
+{
+ "argv": [
+  "mutation",
+  "--mutation",
+  "M05_G_CASCADE_MIDPOINT_RESIDUAL",
+  "--out",
+  "evidence/qualification_r1/part_mutation_M05_G_CASCADE_MIDPOINT_RESIDUAL.json"
+ ],
+ "body": {
+  "detected": true,
+  "mutation": "M05_G_CASCADE_MIDPOINT_RESIDUAL",
+  "trials": [
+   {
+    "crashed": null,
+    "detected": true,
+    "first": [
+     "e=29/100 kept F:0:3: error 1.900e-02 > bound 1.197e-02"
+    ],
+    "refused": null,
+    "residual_consistency": true,
+    "trial": "T22_perturb_F0_controlled_K3",
+    "violations": 31
+   }
+  ]
+ },
+ "loaded_forbidden_modules": [],
+ "metadata": {
+  "cpu_seconds": 0.240222065,
+  "peak_rss_kib": 49596,
+  "wall_seconds": 0.24033761024475098
+ },
+ "part": "mutation",
+ "protocol_sha256": "f2c52ce329a031d29632d90af880e2db47009b5561a65c26eb31ef248e034d4a",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}
