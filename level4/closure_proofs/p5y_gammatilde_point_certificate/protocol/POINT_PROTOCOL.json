@@ -1,0 +1,170 @@
+{
+ "allowed_outputs": [
+  "qualification/evidence/*",
+  "result/RUNG_<bits>.json",
+  "adjudication/ADJUDICATION.json",
+  "README.md"
+ ],
+ "base_commit": "879792d008d423ed72df6e7cb2d05c4975bb1fa9",
+ "controls": {
+  "R_at_zero": "R_m(0) = 0 (odd): every R_interval must contain 0",
+  "effect": "a failed control is PROTOCOL_FAILURE (no certificate); controls never alter a target gate",
+  "gamma_reference_intervals": {
+   "1": {
+    "CORE_C1_outward_decimal": [
+     "39243482/10000000",
+     "278493822/10000000"
+    ],
+    "reuse_audit_323e2b8f_odd_C3": [
+     "3353809647985582295282176915871836637941035114946250496289516418777039793526088169169/345087317339528189371737793113851272622555448608519327758126211189964800000000000000",
+     "7610850537486305491461686850826470329999422914198179635913581187547184206473911830831/345087317339528189371737793113851272622555448608519327758126211189964800000000000000"
+    ]
+   },
+   "2": {
+    "reuse_audit_323e2b8f_odd_C3": [
+     "163615599009765947079946830032036897258484510309906727070423272869859103166543648979437823721/92633671389852956338856788006950326282615987732512451231566067206330503711948800000000000000",
+     "2292573717783435114937579449878355844342568947595462795426423895897611855638448351020562176279/92633671389852956338856788006950326282615987732512451231566067206330503711948800000000000000"
+    ]
+   }
+  }
+ },
+ "cpu_ceiling": {
+  "per_run_wall_timeout_seconds": 7200,
+  "qualification_cpu_hours": "2",
+  "science_cpu_hours": "3"
+ },
+ "execution_order": [
+  "commit+push this protocol (freeze)",
+  "Q1 locally and on the host",
+  "Q2+Q3 runs on vultr-02 at the freeze commit",
+  "qualify_point verdict; commit+push qualification evidence",
+  "science rung(s) per ladder at the qualification commit",
+  "commit+push result",
+  "adjudicate_point build; record commits; commit+push adjudication"
+ ],
+ "gates": {
+  "INCONCLUSIVE": "otherwise (interval contains 0 or touches it from below)",
+  "REFUTED": "certified Rprime0_interval.lo >= 0 (GammaTilde_interval.hi <= 1)",
+  "SUCCESS": "certified Rprime0_interval.hi < 0  (equivalently GammaTilde_interval.lo > 1) -> CERTIFIED",
+  "implementation": "code/point_core.py adjudicate/premise",
+  "no_change_after_results": true,
+  "precedence": "CERTIFIED, then REFUTED, then INCONCLUSIVE; [0,0] is REFUTED",
+  "premise": "all targets CERTIFIED -> SATISFIED; any target REFUTED -> REFUTED; else OPEN. ALL_CUSUM_M_GAMMATILDE_GT_1 = CERTIFIED/REFUTED/OPEN accordingly"
+ },
+ "lineage": {
+  "reuse_audit": "323e2b8f (p5y_gammatilde_sign_audit: M2 CERTIFIED by reuse, M3/M5 NOT_CERTIFIED, premise OPEN)"
+ },
+ "m_values": {
+  "controls": [
+   2
+  ],
+  "evaluated": [
+   1,
+   2,
+   3,
+   5
+  ],
+  "non_target_controls": [
+   1
+  ],
+  "targets": [
+   3,
+   5
+  ],
+  "why_evaluated_includes_1_2": "one kernel evaluation produces F_0..F_4, D_0..D_4 and every W needed by m=5; m=1 and m=2 are exact re-assemblies of those same objects and are used only as consistency controls"
+ },
+ "non_claims": [
+  "no K5/P5Y closure",
+  "no SR statement",
+  "K5-B remains sufficient-only",
+  "no statement beyond the sign of R'(0) for CUSUM m = 3, 5"
+ ],
+ "numerical_backend": {
+  "certifier": "order2.Order2Certifier (parent of production Aux3Certifier) prepare + all_residuals; aux_propagate.cell_dag(delta_mid); propagate.enclosures; assembly.assemble orders 0,1",
+  "host": "rebaseguard-vultr-02",
+  "interpreter": "/root/work/rbg-cusum-aux5-venv (CPython 3.12.3)",
+  "library": "python-flint 0.9.0 (Arb ball arithmetic)",
+  "threads": "all BLAS/OpenMP/flint threads = 1"
+ },
+ "point_cell": {
+  "construction": "code/point_core.py point_cell: left = right = e0 = e, rho = 0; C_upper inherited from frozen CUSUM cell 0 ([0, 2 e0], C_evaluation = 0 exactly)"
+ },
+ "precision_ladder": {
+  "bits": [
+   256,
+   384,
+   512
+  ],
+  "note": "Taylor order 120, collocation degree 12 and quadrature 400 are frozen at every rung; only Arb working precision changes",
+  "rule": "run 256 first; escalate to the next rung only if some target m is INCONCLUSIVE at the last rung; stop at the first rung where every target is decisive or the ladder is exhausted. Per target, the first decisive rung decides; contradictory decisive statuses = PROTOCOL_FAILURE."
+ },
+ "producer_identity": {
+  "producer_identity_hash": "3692d0feeaef71365798cd99399fdb6d744573f38d59dba5cfe2e99294f0ae19",
+  "producer_manifest_hash": "b55a2da1fea0c7ee889f8da6a4b893c12d3ef24e2bc02d19bd5488187fd30fd9",
+  "runtime_contract_hash": "bc75c9ea7cd5f9406a0509bb0a161aa2c013f80427d1035197989e3d202c845a"
+ },
+ "qualification_plan": {
+  "Q1": "python3 -B qualification/test_point_core.py passes (manufactured positive/negative/zero/near-zero derivatives, malformed interval, wrong m, wrong manifest, malformed identity, protocol/wrapper tamper, point geometry, precision ladder, controls, premise)",
+  "Q2": "point_eval replay-cell0 reproduces the committed K1 cell-0 record R_interval and D_interval EXACTLY for m=1,2,3,5",
+  "Q3": "point_eval point-e0 (degenerate cell {e0}) gives R and D enclosures contained in the record's for every m",
+  "Q4": "both runs bound to this protocol hash, initial+final gates, identity == producer_identity, SciPy guard clean",
+  "Q5": "qualification CPU <= ceiling",
+  "verdict": "code/qualify_point.py; PASS requires Q1-Q5; science refuses without a PASS bound to this protocol hash"
+ },
+ "retry_policy": "a run that terminates WITHOUT writing an output file (crash, gate refusal, timeout) may be re-run once at the same rung with identical inputs after the cause is recorded; an output file, once written, is final and is never re-run or overwritten (point_eval refuses to overwrite).",
+ "runtime_contract": "manifest v3 runtime contract (hash bc75c9ea), verified live by manifest_v3.verify() and runtime_identity5.require() at the initial and final gates",
+ "schema": "p5y.gammatilde-point-certificate.protocol.v1",
+ "scientific_hash": "sha256(canonical(scientific)) where scientific = {cell, precision_bits, method, m:{R_interval, D_interval}}; runtime (cpu, wall, rss, start epoch) and gate reports are outside it",
+ "scientific_target": {
+  "SCIENTIFIC_TARGET": "sign of R_m'(0), equivalently GammaTilde_m > 1 (P1-T1 at rho=1: R_m'(0) = 1 - GammaTilde_m)",
+  "e": "0/1",
+  "forbidden_methods": [
+   "Monte Carlo",
+   "finite differences",
+   "inference from preregistered estimates",
+   "whole-cell R2/R3 widening",
+   "K5-B recurrences",
+   "order-3 production machinery"
+  ],
+  "object": "certified outward exact-rational enclosure of R_m'(e) at e = 0 exactly, frozen K1 CUSUM raw-variable R_m (k=1/2, h=5, reset, convention A, terminal increment included, random denominator, c_(m,t)=1/t-1/m, no leading +e)"
+ },
+ "separation": "sole purpose: sign of R_m'(0) for CUSUM. NOT a K5 order-3 probe; no signed-R''' object, no cells 148/305/309, no order-3 campaign, no K1 record or CUSUM composite modified, no AWS/PS1, no origin/main.",
+ "serialization": "canonical JSON (sorted keys, compact separators, ASCII, trailing newline); every interval endpoint is an exact rational string from intervals.record (outward); no float enters a gate",
+ "source_hashes": {
+  "level4/closure_proofs/m_gt_1_priority1/THEOREM.md": "c630051d710361b4cb0c45393cc8bbf51108726595785cbb0b66a45cd12d1277",
+  "level4/closure_proofs/p5y_gammatilde_sign_audit/result_r1/GAMMATILDE_SIGN_RESULT.json": "e103370d629ff3e3b3495ac94e300a3bc57958db20ddf4bf670426be86c4ff07",
+  "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/assembly.py": "c51918c8b4d3fbb5530ca6432a38bb94e55138c6168e2ea124868c8d7a5b128c",
+  "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/cusum_layer1.py": "efcc0f36632632577a24c4ddf1a7c2c3579d471cdba5a752dd72c708667cdc79",
+  "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/cusum_layer2.py": "42c3d98394a6a8536e05d50626b21c7c71c309f5f98e286bdf2a3f7b5badf5a7",
+  "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/depgraph.py": "87d91a22205f9e6379aa3c38100c9b4abcc01a450406d6e6056017698213a2b2",
+  "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/intervals.py": "ea860c4ee1f421731b5e8c16c11184105926b7e2cf9fc36096bf77821bbfde9b",
+  "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/propagate.py": "bc6d2fdefac3595796283e08f07da54b4d42d99577497495335c842a7190d7f6",
+  "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/spec.py": "12914fb7c9654c510d54f1e8a95b9efb7e635005aec0d861b7c744f7bafb55ac",
+  "level4/closure_proofs/p5y_k1_cover_ledger_repair1/code/repair_check.py": "d44d15d443432b6f02325b3eb860447edd677d5049a0b9daa3d34d99d5f7dbb6",
+  "level4/closure_proofs/p5y_k1_cover_ledger_repair1/code/repair_layer2.py": "847d9e0f5221bae3c1e0df0d3d00cfd022e01f06e93875bb55bc12437113c308",
+  "level4/closure_proofs/p5y_k1_cover_ledger_successor/ERROR_ALGEBRA.md": "4f32df0273d05b1b4e0136e2a901adec9979e158b5decd8c9bf3cce0e35b9ffa",
+  "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/cells.json": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f",
+  "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/checkpoint.json": "1c2a6825f19e19de6fb588647ca3fc4618068087ef0976292ca7bbeca701f13f",
+  "level4/closure_proofs/p5y_k1_cusum_aux3_successor/code/aux_propagate.py": "6d8d9d1beaefdf86b1ad460acb57f5830b76353d0fd736d48717c247bc2333b8",
+  "level4/closure_proofs/p5y_k1_cusum_aux4_fullcover/code/scipy_guard.py": "d2bbd9cfd1aba67e82129ae6d6f4f6b65b65bbf0beaa3e9c995fbb801e5c75b1",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/evidence/closure_r1/COMPOSITE_EXPORT_MANIFEST.json": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/ancestry5.py": "0f340764f2952fcb2ee48f802177afb6949801646489c5a6eafd267b9f22b643",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/manifest_v3.py": "e894db551d287c53b6d5f05577a5e22a6570df4f06bbbc970d09120aaad94d42",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/runtime_identity5.py": "889865955f0a166bf3d020dadbee53600704b80e30cad7418d9c0eac66092e2b",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/tcb5.py": "de733622d12014da8c55dd957af560a6e92dc42a52c4eb02dacd11f953c340b3",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/manifests/producer_manifest_v3.json": "611bd0a9f356b0e7f5e63da60567ac1afa9e69fc1f8c464c7e5b89aeedbd2b9f",
+  "level4/closure_proofs/p5y_k1_cusum_completion_successor/code/order2.py": "101582c02f988af80a5c4b6861461fe09e0fafa01b788884318115e066345f1f",
+  "level4/closure_proofs/p5y_k1_final_completion/code/sharp_certifier.py": "c2f638fbc31253c8e905d09098ac7dd97a6d950ca28c3eb9a2b3d48ddfc2758c",
+  "level4/closure_proofs/p5y_k1_final_completion/code/sharp_norms.py": "0664d313054c007f270368057e0a26b62383866824ac0392814626284f125560",
+  "level4/closure_proofs/p5y_k5b_k1_premise_binding_audit/result_r1/records/aux5_CUSUM_0_256.json": "4f8df44c956309b109e174f7ea15deee39ffad863c459f1656d6e2470a7ff1fb",
+  "level4/closure_proofs/p9_final_synthesis/CLAIM_LEDGER.json": "e07feffaebddecb9511a95be737da6e5038c10f3e2bcdbc1e49adc6e458c7d19"
+ },
+ "status": "FROZEN_PRE_RESULT",
+ "wrapper_files": {
+  "level4/closure_proofs/p5y_gammatilde_point_certificate/code/adjudicate_point.py": "744a6910e32ff3852ea1cce73c8a281a3a3a8817e23fa6ce4e8512aa11d261c5",
+  "level4/closure_proofs/p5y_gammatilde_point_certificate/code/point_core.py": "dbfb06010a6fc7fd609e7cc14803b1bb4aba628d89a0e45d63a7022f2df9e5a7",
+  "level4/closure_proofs/p5y_gammatilde_point_certificate/code/point_eval.py": "f2ab6573e22dfd1349c68cbb3b04f5ae16c19864f876ebbce559869b8994033c",
+  "level4/closure_proofs/p5y_gammatilde_point_certificate/code/qualify_point.py": "7a363b1c477afe9d1e0a80056eb101f5a3ba87d77ff3773d28e3bb04fae79a3e",
+  "level4/closure_proofs/p5y_gammatilde_point_certificate/qualification/test_point_core.py": "bf3dd0b5614e731332df726618cb59f0cedfa503f4d6929ec19840a459e09198"
+ }
+}
