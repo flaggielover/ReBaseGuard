@@ -1,0 +1,95 @@
+{
+ "audit_utc": "2026-09-16",
+ "authorizations": {
+  "full_k5_production_authorized": false,
+  "k5_probe_protocol_frozen": false,
+  "order3_producer_authorized": false,
+  "probe_executed": false
+ },
+ "blockers": [
+  {
+   "id": "B1_NO_CERTIFIED_ORDER3_PRODUCER",
+   "detail": "The frozen oracle's execution_precondition is unmet on both detectors. SR: AUX3_SR_FEASIBILITY_FAIL at Phase 4. CUSUM: Aux4/Aux5 carry order-3 source magnitudes only, with no F_r:3 rung, no signed value and no fourth-order whole-cell tower.",
+   "unblocked_by": "a separately governed, identity-bound certified order-3 producer with its own feasibility oracle"
+  },
+  {
+   "id": "B2_NO_SR_K1_INPUTS",
+   "detail": "Theorem K5-B consumes certified K1 R(e0), R'(e0) and R''(cell) enclosures. No SR record exists: the PS1 369-cell campaign is still draining on AWS and p5y_k1_ps1_production/production/ is empty.",
+   "unblocked_by": "completion and closure of the PS1 SR campaign"
+  },
+  {
+   "id": "B3_BRIDGE_NOT_INDEPENDENTLY_COUNTERSIGNED",
+   "detail": "p5y_k5_feasibility/RESULT.md records that Theorem K5-B and the oracle were written by the same agent session as the K2/K3 packet and recommends an independent countersignature before K5-B is cited as adjudicated.",
+   "unblocked_by": "an independent countersignature of K5-B"
+  }
+ ],
+ "cost_model": {
+  "basis": "measured CUSUM Aux5 production, 326 sealed cells; measured PS1 qualification projection for SR",
+  "cusum_measured_cpu_seconds_per_cell": {"max": 2150.0, "mean": 2069.5, "min": 2027.4},
+  "cusum_measured_order3_source_cpu_seconds_per_cell": 172.5,
+  "cusum_order3_estimate_cpu_hours": {"full_310_cells": [230, 340], "minimal_149_cells": [110, 165], "per_cell": [0.75, 1.1]},
+  "cusum_peak_rss_mib": 248,
+  "record_bytes_per_cell": 281000,
+  "sr_order3_estimate_cpu_hours": {"full_295_cells": [4700, 7700], "minimal": null, "per_cell": [16, 26]},
+  "sr_ps1_measured_cpu_hours_per_cell": {"mean": 11.96, "reservation": 19.0, "worst_plus_10pct": 13.84},
+  "supersedes_estimate": "the pre-result estimate (CUSUM <= ~124 CPU-h, SR 1500-2870 CPU-h) assumed an order-3 increment on top of an existing cell; the sealed records do not expose the signed order 0-2 candidates, so the base solve must be redone",
+  "wall_time_note": "rebaseguard-vultr-02 has 4 physical cores and the frozen runtime contract pins 4 workers; more workers means more hosts, and the SR cross-host replay measured 0/24 bit-identical records against AWS"
+ },
+ "cusum_minimality": {
+  "candidate_classification": "SUFFICIENT_BUT_NONMINIMAL",
+  "candidate_universe": [0, 309],
+  "candidate_cells": 310,
+  "evidence": "evidence/CUSUM_MINIMALITY_R1.json",
+  "m5_tail_note": "cells 305-309 fail for m=5 because the curvature slack rho*x*M_R2 exceeds |g_mid_hi|; mu_k improves only through the accumulated l chain, so closing them through K5-B needs an unbroken order-3 run 0-309, a tightened K1 R'' enclosure there, or acceptance of K5_INCONCLUSIVE for m=5 on approximately (1.62, 2]",
+  "method": "the frozen Theorem K5-B recurrences evaluated on the certified CUSUM K1 records with L_k = -infinity (no order-3 evidence), exact rational arithmetic",
+  "needs_order3_per_m": {"1": [[0, 132]], "2": [[0, 144]], "3": [[0, 145]], "5": [[0, 148], [305, 309]]},
+  "needs_order3_union": [[0, 148], [305, 309]],
+  "needs_order3_union_count": 154,
+  "provably_not_needed": [[149, 304]],
+  "provably_not_needed_count": 156,
+  "smallest_defensible_campaign": "cells 0-148 (149 cells) for m in {1,2,3}, plus an explicit decision on the m=5 tail 305-309",
+  "z2_never_fires": "no cell, for any m, has R2_interval.lo > 0: the whole tail is carried by the direct bound Gamma_k"
+ },
+ "inputs": {
+  "composite_closure_commit": "ce7fb93308dc41284e5b424be96a9ad578ecfee9",
+  "composite_closure_namespace": "level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/",
+  "cusum_cells_table": "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/cells.json",
+  "cusum_export_manifest_sha256": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334",
+  "cusum_records": "the 326-record composite export on rebaseguard-vultr-02 (external, bound by the export manifest)",
+  "k5_bridge": "level4/closure_proofs/p5y_k5_feasibility/K5_GLOBAL_BRIDGE.md",
+  "k5_oracle": "level4/closure_proofs/p5y_k5_feasibility/config/K5_FEASIBILITY_ORACLE.json",
+  "sr_cells_table": "level4/closure_proofs/p5y_k1_sr_o9_partition_successor/config/successor_cells.json"
+ },
+ "order3_reuse": {
+  "CUSUM": "PARTIAL",
+  "SR": "NONE",
+  "detail": "CUSUM records carry auxiliary_third_derivative_evidence_v1 (S_r:3, W_(r,j):3, h_j:3 suprema and order-3 midpoint error nodes), but every value is mag_fraction = max(|lo|,|hi|), an unsigned magnitude. The bridge needs a signed lower bound L_k <= inf R'''. No sign, and no R''' enclosure, is derivable from the committed records. SR has no order-3 record at all.",
+  "reused_without_recomputation": "R_interval, D_interval, R2_interval and M_R2 per m, which is what the minimality scan uses to remove 156 cells from the CUSUM campaign"
+ },
+ "probe_review": {
+  "frozen_probe_cells": {"CUSUM": [0, 221, 309], "SR": [0, 207, 294]},
+  "frozen_rule_reproduced": true,
+  "finding": "CUSUM cell 221 lies inside 149-304, the region now proved not to need order-3 evidence for any m, while the newly identified difficult region is 305-309. A stronger minimal set would be CUSUM {0, 148, 305}.",
+  "action_taken": "none; the probe set is frozen pre-result and must not be edited. Adopting a different set requires a new predeclared successor oracle.",
+  "probes_run": 0
+ },
+ "schema": "rebaseguard.p5y.k5.order3-readiness.audit-record.v1",
+ "scope": "This record audits readiness of the proposed K5 order-3 evidence campaign. It is not a K5 verdict, not an H3a verdict, not a K1 or P5Y verdict, and it authorizes no production. It changes no frozen artifact.",
+ "sr_geometry_risk": {
+  "aux3_failure_cell": 313,
+  "aux3_failure_c_rho": 0.3133,
+  "detail": "The RHO_CAP rule ties rho to C_upper, so the PS1 cells where K5 needs R''' most sit at the same resolvent self-consistency product as the cell where the Aux3 fourth-order tower failed. The K5 test is a sign test rather than the 1/20 cover budget, so this is a strong risk signal, not a proof of infeasibility.",
+  "ps1_c_rho_at_cells_0_1_207": 0.3133
+ },
+ "verdicts": {
+  "cusum_k1_inputs_exist": true,
+  "full_campaign_technically_ready": false,
+  "k5_bridge_theorem": "PASS",
+  "k5_definition_audit": "PASS",
+  "k5_full_campaign_recommendation": "NOT_READY",
+  "k5_order3_probe": "INCONCLUSIVE",
+  "order3_necessary_for_this_route": true,
+  "scientific_determinism": "NOT_REQUIRED",
+  "sr_k1_inputs_exist": false
+ }
+}
