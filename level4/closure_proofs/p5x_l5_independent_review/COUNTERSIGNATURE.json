@@ -1,0 +1,70 @@
+{
+ "HIDDEN_C4_REQUIREMENT_IN_K5B": "NO",
+ "HOLOMORPHY": "PASS",
+ "K5B_REGULARITY_PREMISE": "SATISFIED",
+ "P5X_L5_INDEPENDENT_REVIEW": "PASS_WITH_SCOPE_LIMITATION",
+ "REAL_C3_ON_K5_DOMAIN": "PASS",
+ "TEMPORAL_INTEGRITY": "PASS",
+ "bound_namespace_files": {
+  "README.md": "dcc04575521e34fce00ba359a414a10164b7d9ac7b93f1b2bcfd82b56a5ef2f3",
+  "code/l5_review_check.py": "47c3299f662dec4fb162e083cb12d793d58359e29262b40c0fb757130277aa4c",
+  "config/L5_HASH_INVENTORY.json": "6f8b19223025ebac1ad0633069412a85ad6073000898e737dc30fc5c6f174d85",
+  "evidence/ADVERSARIAL_REVIEW.json": "0486b4bc09512b7cd06446d8b8c58f5ad29075911783e71ebb71aa17d004e38f",
+  "evidence/REGULARITY_USES.json": "5dac02f05a57452ec8faf11e392e124b0c069c1a28fd865610baeeba159bf3e5",
+  "evidence/STRIP_ARITHMETIC.json": "14d8fbc47003c3291e1cba265bf02983b65f8e6537e6b7c2ec11c0f033cf56cf",
+  "tests/test_l5_review.py": "c6a618c2ef7868d4af4136d69cdad7722404d0b5d88f51749a9a347cf7a4a0be"
+ },
+ "issued_utc": "2026-09-16",
+ "l5": {
+  "file_git_blob": "a46e8c3d23308f138b47d9224db7fa604c5ac9c3",
+  "file_sha256": "da4a2d519317c9a0265079c488f28ff1cec4a27b658c02d40d1c514942cd88be",
+  "introduced_in": "528908ba3c952031f7f41c2f22fc6e07a1401d90",
+  "lines": [
+   412,
+   482
+  ],
+  "modified_after_introduction": false,
+  "name": "P5X L5 - real-analyticity in e",
+  "path": "level4/closure_proofs/p5x_global_nonlinear_dynamics/PROOF.md",
+  "section_sha256": "cad5bc6c1aae105e0e672fc7569989969c7c07a5e60e7449d295df8bc7466449",
+  "sections": "L5.1-L5.6"
+ },
+ "non_claims": {
+  "AWS_PS1_TOUCHED": false,
+  "CUSUM_EVIDENCE_MODIFIED": false,
+  "K5B_COUNTERSIGNATURE_MODIFIED": false,
+  "K5B_MODIFIED": false,
+  "K5_DECLARED_CLOSED": false,
+  "L5_MODIFIED": false,
+  "ORDER3_PRODUCER_BUILT": false,
+  "ORIGIN_MAIN_TOUCHED": false,
+  "P5Y_DECLARED_CLOSED": false,
+  "SCIENTIFIC_COMPUTE_RUN": false
+ },
+ "review_base": {
+  "k5b_countersignature_commit": "d7d3c08b",
+  "k5b_theorem_sha256": "c1c62346dcd11b3a56b028e4aca7b61d7c4254353b1504701f16989205339d3f",
+  "origin/main": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+  "origin/p5y-postk1-frontier": "10769e07029eb66be264109f274d5ca3269b5cbf"
+ },
+ "reviewer": {
+  "independence": "separate session and a second, L1-free proof; NOT independent by agent family and NOT a human review",
+  "kind": "independent Claude Code session (Claude Opus 5)"
+ },
+ "schema": "rebaseguard.p5x.l5.independent-countersignature.v1",
+ "scope": {
+  "certified": "for D in {CUSUM(k=1/2,h=5), SR(A=520.886133602749)} and every integer m >= 1, R_{D,m}(e) = E[Rbar|e] (convention A, reset start, inclusive alarm) is holomorphic on a strip |Im e| <= theta > 0 independent of Re e and m; hence R_{D,m} is C-infinity on R and supplies K5-B regularity premises U1-U11 (C0-C3, incl. R''(0)=0 with oddness) on every closed cover cell, including e = 0 and the whole cell containing e = 2",
+  "exposition_gaps_closed_by_reviewer": [
+   "holomorphy of iterates with e-dependent integrands (joint measurability + Morera/Fubini)",
+   "holomorphy and uniform bound of half-line sources rho_{1,e}"
+  ],
+  "not_certified": [
+   "real-analyticity of S_{D,m} (L2 route not reviewed; not used by K5-B)",
+   "any numerical derivative bound, strip radius of practical size, or approximation rate",
+   "the D4 'hence interval-valued e is admissible' clause",
+   "L1 in full (holomorphy of R is independently re-proved without L1)",
+   "K1 or order-3 enclosures, any cell verdict, H3a, K5, P5Y, P5Z",
+   "regularity obligations internal to order-3/order-4 producers"
+  ]
+ }
+}

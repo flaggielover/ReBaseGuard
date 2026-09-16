@@ -1,0 +1,65 @@
+{
+ "schema": "rebaseguard.p5x.l5.independent-review.adversarial.v1",
+ "cases": [
+  {
+   "id": "F1",
+   "mode": "pointwise but non-uniform domination",
+   "verdict": "RULED_OUT",
+   "reason": "sup-norm bounds over E_D with explicit factor exp(n theta^2/2); uniform on |Re e|<=M, |Im e|<=theta_0"
+  },
+  {
+   "id": "F2",
+   "mode": "stopping-time tail",
+   "verdict": "RULED_OUT",
+   "reason": "geometric tail: exp(n0 theta^2/2) beta < 1 (L5 route) or exp(theta^2/2) beta_1^(1/2) < 1 (direct route), uniform on the strip"
+  },
+  {
+   "id": "F3",
+   "mode": "differentiation/interchange failure",
+   "verdict": "RULED_OUT",
+   "reason": "no termwise differentiation; Morera+Fubini+Weierstrass; joint measurability of e-dependent iterated integrands via Caratheodory (gap in L5 text, closed by reviewer)"
+  },
+  {
+   "id": "F4",
+   "mode": "boundary e = 0",
+   "verdict": "NOT_APPLICABLE",
+   "reason": "0 is interior to R and to the strip; derivatives two-sided; R''(0)=0 from oddness + continuity"
+  },
+  {
+   "id": "F5",
+   "mode": "complex-strip radius collapse",
+   "verdict": "RULED_OUT",
+   "reason": "|phi(z+sigma+i theta)| = phi(z+sigma) exp(theta^2/2) independent of sigma; beta uniform in e and state; bounded continuation interval independent of e"
+  },
+  {
+   "id": "F6",
+   "mode": "m-dependent domination",
+   "verdict": "RULED_OUT",
+   "reason": "theta_0, theta_1 fixed before m enters; R is e + finite combination for each m"
+  },
+  {
+   "id": "F7",
+   "mode": "detector-dependent singularity",
+   "verdict": "RULED_OUT",
+   "reason": "max(0,.) and log(1+exp(.)) act on z only (fixed Borel sets A_t); D1 SR erratum keeps state >= 0"
+  },
+  {
+   "id": "F8",
+   "mode": "unbounded source rho_{1,e} (half-line integrals)",
+   "verdict": "GAP_CLOSED",
+   "reason": "closed form entire in e; |rho_{1,e}| <= exp(theta^2/2)(sqrt(2/pi)+|sigma|) uniformly in x"
+  },
+  {
+   "id": "F9",
+   "mode": "reliance on L1 identity (not fully reviewed)",
+   "verdict": "BYPASSED",
+   "reason": "direct path-space proof (README 2.3) gives holomorphy of E[Rbar|e] without L1, L2 or P5-T4"
+  },
+  {
+   "id": "F10",
+   "mode": "hidden C^4 in K5-B whole-cell signed R''' reasoning",
+   "verdict": "ABSENT",
+   "reason": "L_k is an input lower bound; K5-B needs R''' to exist on the closed cell only; order-4 remainders are producer obligations"
+  }
+ ]
+}

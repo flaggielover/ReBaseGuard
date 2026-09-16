@@ -1,0 +1,82 @@
+{
+ "L5_supplies": "C-infinity (real-analytic) on all of R, every m >= 1, both detectors",
+ "hidden_C4_in_K5B": false,
+ "max_required_order": "C3",
+ "producer_side_fourth_order_objects_not_K5B_premises": [
+  "rho*T[R,4] whole-cell remainders (order-3 readiness audit, K5_TARGET_AND_THIRD_ORDER.md)",
+  "SR Aux3 fourth-order towers",
+  "aux_refine norm-only order-4 towers"
+ ],
+ "theorem": {
+  "path": "level4/closure_proofs/p5y_k5_feasibility/K5_GLOBAL_BRIDGE.md",
+  "sha256": "c1c62346dcd11b3a56b028e4aca7b61d7c4254353b1504701f16989205339d3f"
+ },
+ "uses": [
+  {
+   "id": "U1",
+   "minimum": "C2",
+   "step": "R''(0) = 0 from oddness",
+   "why": "R'' exists at the interior point 0 and is odd"
+  },
+  {
+   "id": "U2",
+   "minimum": "C3",
+   "step": "MVT for R'' on C_k: R''(t) >= R''(x_{k-1}) + L_k (t - x_{k-1})",
+   "why": "R'' continuous on the closed cell, differentiable inside, R''' >= L_k"
+  },
+  {
+   "id": "U3",
+   "minimum": "C3",
+   "step": "cell 1: R''(t) >= L_1 t",
+   "why": "U1 + U2 on [0, x_1]"
+  },
+  {
+   "id": "U4",
+   "minimum": "C2",
+   "step": "g(e) = g(x_{k-1}) - int t R''(t) dt (FTC)",
+   "why": "g' = -e R'' continuous"
+  },
+  {
+   "id": "U5",
+   "minimum": "C2",
+   "step": "g' = R' - R' - e R''",
+   "why": "product rule on e R'(e)"
+  },
+  {
+   "id": "U6",
+   "minimum": "C2",
+   "step": "MVT for g about e0_k: |g(e) - g(e0)| <= rho sup|t R''|",
+   "why": "g differentiable on the closed cell"
+  },
+  {
+   "id": "U7",
+   "minimum": "C2",
+   "step": "K1 inputs H_k superset R''(C_k), M_k >= sup_{C_k}|R''| over the WHOLE closed cell (incl. cell 309 past 2)",
+   "why": "R'' defined on the whole closed cell"
+  },
+  {
+   "id": "U8",
+   "minimum": "C3",
+   "step": "L_k <= inf_{C_k} R''' is meaningful",
+   "why": "R''' defined on the whole closed cell"
+  },
+  {
+   "id": "U9",
+   "minimum": "C1",
+   "step": "D_k contains R'(e0_k); s'(e) = g/e^2; s strictly decreasing by MVT",
+   "why": "R differentiable on (0,2]"
+  },
+  {
+   "id": "U10",
+   "minimum": "C1",
+   "step": "s(0+) = -R'(0) = GammaTilde - 1",
+   "why": "R differentiable at 0 with R(0) = 0"
+  },
+  {
+   "id": "U11",
+   "minimum": "C0",
+   "step": "s continuous on (0,2]; s(2) < 1 iff R(2) > -2",
+   "why": "R continuous"
+  }
+ ]
+}
