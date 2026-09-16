@@ -1,0 +1,368 @@
+{
+ "B1_NO_CERTIFIED_ORDER3_PRODUCER": "OPEN",
+ "B3_REOPENED": "NO",
+ "NEW_K5_BLOCKER_CREATED": "NO",
+ "SR_PREMISE_BINDING": "UNDETERMINED_PENDING_PS1",
+ "audit_base_commit": "1bf31bc87afb0422be116c4b2cd1d673c68fc308",
+ "deviation_from_plan": "The plan named evidence/PREMISE_BINDING_RESULT.json. The frozen plan test asserts that no evidence/ directory exists, which marks the plan as unexecuted, so this result lives in result_r1/ and leaves the plan and its test byte-identical.",
+ "executes_plan": {
+  "path": "level4/closure_proofs/p5y_k5b_k1_premise_binding_audit/config/AUDIT_PLAN.json",
+  "plan_modified": false,
+  "published_in": "9d136827"
+ },
+ "external_observations": {
+  "export_manifest_sha256": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334 (equals committed copy)",
+  "export_root": "/root/work/postk1-runs/closure-r1/COMPOSITE_EXPORT",
+  "host": "rebaseguard-vultr-02, read-only",
+  "host_writes": "none",
+  "ledger_status_all_cells_all_m": {
+   "PASS": 1304
+  },
+  "producer_identity_counts": {
+   "3692d0feeaef71365798cd99399fdb6d744573f38d59dba5cfe2e99294f0ae19": 326
+  },
+  "producer_manifest": "b55a2da1fea0c7ee889f8da6a4b893c12d3ef24e2bc02d19bd5488187fd30fd9, level4/closure_proofs/p5y_k1_cusum_aux5_successor/manifests/producer_manifest_v3.json, version 3: 326/326",
+  "record_geometry_vs_frozen_cells_json": "326/326 equal (e0, rho, C_upper, detector, precision_bits = 256)",
+  "records_hash_checked_against_manifest": "326/326 match",
+  "reproducibility": "not reproducible from Git alone. The Git-checkable part (cells 0 and 309) is recomputed by code/verify_premise_binding.py.",
+  "target_gate_status_all_cells_all_m": {
+   "PASS": 1304
+  }
+ },
+ "findings": {
+  "PB2": {
+   "C3_on_every_relevant_cell": "yes: C-infinity on R, so on every closed cover cell [x_{k-1}, x_k], k = 0..325",
+   "domain": "holomorphic on the strip |Im e| <= theta_0 (theta_0 > 0 with exp(n_0 theta_0^2/2) beta < 1), hence real-analytic on all of R",
+   "e_equals_0": "interior point of R; no one-sided or endpoint argument is needed. The first-cell MVT R''(t) >= L_1 t and g = -int t R'' use only C^3 on [0, x_1].",
+   "final_cell_beyond_2": "cell 309 = [1.9839101, 2.092283] and every later cell lie in R, so they are covered. K5-B's whole-closed-cell pass requirement on cell 309 (countersignature A10) is inside the domain.",
+   "function_covered": "R_{D,m}(e) = E_e[Rbar], the conditional mean of the convention-A terminal window mean. P5X PROOF.md L1.7 writes it as e + E_e[A_m] = e + (finite combination of g_r(x_0), K_e^{i-1}S_j(x_0)), and L5.4 proves each summand holomorphic.",
+   "governance": "L5 was human-proved inside P5X at Checkpoint B (528908ba, 2026-09-02). The repository search found no independent adjudication of L5. DEPENDENCY_AUDIT.md classifies it ANALYTICALLY_PROVED, 'qualitative; nothing certified depends on it'. DEFECT_REGISTER.md D4 records that the certificate does not rest on analyticity. It became load-bearing only through K5-B (C^3 premise). The d7d3c08b countersignature lists L5 as a premise and does not independently review it.",
+   "k5b_arguments_inside_domain": "every MVT, integral and Taylor step of K5-B stays inside [0, x_N] with x_N = 11/2, which is a subset of R",
+   "proof_trace": "L5.3: |phi(z+sigma+i theta)| = phi(z+sigma) exp(theta^2/2), so ||K_e^n|| <= exp(n theta^2/2) ||K_sigma^n|| <= exp(n theta^2/2) beta^{floor(n/n_0)}. L5.4: (K_e f)(x) integrates an entire integrand over the bounded interval (l(x), u(x)) with local domination (Morera/Fubini); iterates are holomorphic and uniformly bounded on compacts; Neumann partial sums converge uniformly on compacts (Weierstrass). Checked step by step; no gap found. L5 gives no quantitative derivative bound, and K5-B needs none from it (all widths come from K1 enclosures).",
+   "scope": "both frozen detectors, every m >= 1. L5.6: no detector-specific step; it uses only a bounded continuation interval with q independent of e, plus the e-uniform block bound of P5-T4 (CUSUM n_0 = 10, beta = 1 - Phi(-1)^10).",
+   "why_note_not_failure": "mathematically sufficient as traced here, but the governance status is weaker than K5 now uses; recorded rather than upgraded"
+  },
+  "PB3": {
+   "chain": [
+    "H3a/K5-B: s(e) = -R(e)/e, s(0+) = -R'(0), premise R'(0) = 1 - GammaTilde (P5 THEOREM.md T2/H3a)",
+    "R_{D,m}(e) := E[Rbar | e] (P5 THEOREM.md T2), with z_t = raw_t - e, raw iid N(0,1) (P5 PROOF.md common probability space)",
+    "Rbar = e + A_m pathwise, with A_m = (1/w) sum_{r<w} Z_{tau-r} and w = min(m, tau) (P5-T1 cancellation; P5X L1.7), so R(e) = e + E_e[A_m]",
+    "m_gt_1_priority1/THEOREM.md section 1: e = R - mu, Z_t = X_t - R ~ N(-e,1), inclusive post-update test, terminal increment included, w_m = min(m,tau), F_{rho,m}(e) = rho(e + E_e[A_m]); hence R = F_{1,m} as functions of e",
+    "P1-T1 (EXACT_THEOREM, 'human theorem + proof, independently reviewed', p9_final_synthesis/CLAIM_LEDGER.json): F'_{rho,m}(0) = rho(1 - GammaTilde_m), GammaTilde_m = E_0[A_m T_tau], for every m >= 1, frozen CUSUM k=1/2, h=5",
+    "rho = 1: R'(0) = 1 - GammaTilde_m, with the same GammaTilde as H3a (d4_phase_map/DEFINITION_AUDIT.md: the random-denominator convention-A gain)"
+   ],
+   "external_consistency": "cell-0 record: R'(0) lies in [D.lo - e0*M_R2, D.hi + e0*M_R2] (cell 0 = [0, 2 e0], so |R'(0) - R'(e0)| <= e0 sup|R''|). Implied GammaTilde intervals: m=1 [7.08, 24.70] (inside the certified m=1 enclosure [3.924, 27.849], and certifies R'(0) < 0); m=2 [-3.16, 29.67]; m=3 [-4.23, 28.08]; m=5 [-5.69, 26.07]. Each contains the preregistered estimate (15.917, 13.265, 11.957, 10.226). Corroborative only, and weak for m > 1 (widths about 32, sign of R'(0) not certified); it is not a proof and does not enter the binding.",
+   "ruled_out": {
+    "alternate_residual_definition": "Stage-A fixed-denominator / minimum-dwell maps are excluded by the convention-A random denominator (d4 DEFINITION_AUDIT.md); K1's coefficient table 1/t - 1/m is exactly convention A (PB4)",
+    "detector_normalization": "CUSUM k = 1/2, h = 5 in P5, P1 and K1 (C_CUSUM = h + k = 11/2, update max(0, x +/- z - 1/2))",
+    "hidden_leading_plus_e": "the K1 object is the raw-variable DAG, unknown F = R (not g = R - e). assembly.py refuses a leading-e argument. PB4 re-derives that the raw DAG assembles to E_e[Rbar], which already contains the +e through raw = Z + e, so adding e would double count. The g-variable certifier is never on the production path (p5y_k1_cusum_kernel/IMPLEMENTATION_MAP.md).",
+    "sign_flip": "one e convention throughout (z = raw - e, kernel weight phi(z+e)); K1 cusum_layer1/2 use weight phi(z+e) with drift = e0; P1 uses Z ~ N(-e,1)"
+   }
+  },
+  "PB4": {
+   "derivation": "Raw-variable version of P5X L1.6/L1.7, from the operator definitions in cusum_layer1.py / ERROR_ALGEBRA.md sections 1-2. S_0(x) = int_{z not in (l,u)} (z+e) phi(z+e) dz = phi(u+e) - phi(l+e) = E_x[raw_1; tau = 1]. For r >= 1, S_r = (K_z + e K) h_r = E_x[raw_1; tau = 1 + r], with h_r(x) = P_x(tau = r). Hence (K^{i-1} S_{t-i})(x) = E_x[raw_i; tau = t] and F_r = sum_n K^n S_r = E_x[raw_{tau-r}; tau >= r+1]. Splitting Rbar over {tau >= m} and {tau = t < m}: E_{x0}[Rbar] = (1/m) sum_{r<m} F_r(x0) - (1/m) sum_{t<m} sum_{r<t} W_{r,t-r-1}(x0) + sum_{t<m} (1/t) sum_{r<t} W_{r,t-r-1}(x0), with W_{r,j} = K^j S_r. The W coefficient is 1/t - 1/m, which is exactly the frozen table (recomputed: assembly section).",
+   "producer_and_manifest": "The production certifier is qualify5.run_cell (GLIBC_SUCCESSOR_CHECKPOINT.json certifier_path, sha 7d917e51, bound for both campaign halves). It runs Aux3Certifier, then aux_propagate.cell_obligations(whole_cell_refinement=refine2.refine, node_refinement_factory=make_backend -> AuxiliaryRefinement). Producer manifest v3 binds 60 files, all byte-identical to the repository at the base commit, including every module on this path. Its canonical hash b55a2da1 and identity 3692d0fe reproduce the records and the closure verdict (recomputed).",
+   "term_by_term": {
+    "D_parameters": "k = 1/2, h = 5 (P5 THEOREM.md; K1 K_FROZEN = 0.5, H_FROZEN = 5.0, C_CUSUM = 11/2)",
+    "cell_geometry": "K5-B C_k = [x_{k-1}, x_k] = frozen CUSUM cells.json left/right; e0 = midpoint, rho = half-width; x_0 = 0; contiguous; 310 cells meet (0,2]; the unique cell containing 2 is 309",
+    "coefficient_table": "frozen checkpoint.json assembly == convention-A rule for m in {1,2,3,5} (recomputed)",
+    "detector": "CUSUM two-sided Gaussian, both sides and all records: detector = CUSUM",
+    "domain": "e in [0, 11/2] covered by cells 0-325; H3a needs (0,2]",
+    "m": "{1,2,3,5}: K1 checkpoint scope; H3a and P1-T1 hold for every m >= 1",
+    "m_convention": "convention A, w = min(m, tau), random denominator, terminal increment included (P5-T1, P5X L1.7, P1 section 1, K1 table)",
+    "normalization": "reset state x0 = (0,0) (P5X L1.3; cusum_layer2.origin evaluates at (0,0)); no +e, no scaling",
+    "precision_independent_object": "records are 256-bit outward enclosures of the exact function above; the identity is of mathematical objects, not of floating-point values",
+    "residual_definition": "raw-variable DAG F = R: h_1 = P(alarm), S_0 = phi(u+e) - phi(l+e), S_r = J_e h_r, F_r = (I-K)^{-1} S_r, W = K^j S_r, with order 1/2 Leibniz extensions (ERROR_ALGEBRA.md sections 1-4; cusum_layer2.py certified operators K, Kz, J = Kz + eK + iK_{i-1})",
+    "rho": "NAME COLLISION, not an identity: H3a/P5 rho is the reuse fraction and R is rho-free (P5-T2), while K5-B/K1 rho_k is the cover-cell half-width. The records' rho equals the frozen cells.json half-width for cells 0 and 309 (recomputed), and cells.json is contiguous from 0 (geometry).",
+    "sign_convention": "z = raw - e, weight phi(z+e) (see PB3)"
+   }
+  },
+  "PB5": {
+   "binding": "every module on this path is in manifest v3 and byte-identical; the identity reproduces the closure's single producer identity; record copies for cells 0 and 309 recompute their frozen scientific hash (which covers R2_interval, D_interval, M_R2 and target_gate) and match the committed export manifest",
+   "distinguished_from": {
+    "local_taylor_coefficient": "R2_interval encloses R''(e) for every e in the cell, not R''(e0)",
+    "midpoint_enclosure": "R_interval and D_interval use delta_mid (propagate.enclosures, mid DAG); R2_interval does not",
+    "point_estimate": "no float enters; outward exact dyadic endpoints (intervals.record)",
+    "sampled_bound": "Bernstein range over the whole reachable continuum plus mean-value/Taylor envelopes; no e-grid",
+    "unsigned_magnitude": "R2_interval carries signed lo/hi; M_R2 = mag(R2_interval) is the separate unsigned quantity (recomputed equal on cell 309)"
+   },
+   "inherited_not_reopened": "DRIFT_AWARE_NORM = SOUND, REFINE2_SOUND = YES (independently adjudicated, per aux3 ancestry.py); AUXILIARY_DERIVATIVE_SOUND = YES (per aux4 ancestry4.py); the per-cell C_upper resolvent bound of the frozen cover. This audit traced these rules and found them whole-cell valid, but did not re-adjudicate them.",
+   "meaning": "R2_interval (per record, per m) = assembly.assemble(m, H-enclosures, W-order-2 enclosures). Each enclosure is candidate(x0) +/- a WHOLE-CELL error radius: H_r radius = refine2.refine eps (itself a min over valid whole-cell bounds seeded by the delta_cell cascade); W_(r,j),2 radius = RefinedCellValues node (delta_cell cascade with AuxiliaryRefinement min).",
+   "why_whole_cell": [
+    "cusum_layer2.certify: delta_cell = delta_mid + rho * Env, where Env bounds sup_x |d_e residual| uniformly over |e - e0| <= rho (candidates constant in e), and the envelopes match the differentiated residuals (F: k1 sup|F|; D: k1 sup|D| + k2 sup|F|; H: k1 sup|H| + k3 sup|F| + 2 k2 sup|D|)",
+    "order2.Order2Certifier: second-order Taylor-in-e tightening, delta_mid + rho * |d_e r(e0)| + (rho^2/2) Env2, valid on the whole cell",
+    "cell DAG (aux_propagate.cell_dag with delta_cell): eps = C (delta_cell + dependencies + source cell errors); C, k_i, j_i are sup-over-cell norm bounds (ERROR_ALGEBRA.md section 1; sharp_norms table over [left, right])",
+    "AuxiliaryRefinement.taylor_bound: eps_mid + rho ||X^(k+1)(e0)|| + (rho^2/2) T[X,k+2], an integral-remainder Taylor bound valid for every |e - e0| <= rho, combined by min",
+    "refine.refine / refine2.refine: monotone iterations of valid whole-cell bounds (MVT and Taylor in e), each min'd with its predecessor"
+   ]
+  },
+  "PB6": {
+   "closure_implication": "NOT NECESSARY. The sealer and the K4 attestation check structure only ('K4 structure (never compares values)', prod_sealer.py): per-m target_gate and status must be PRESENT, not PASS; the closure verdict states k4_values_evaluated = false. So 'CUSUM composite CLOSED' does not by itself imply the gate passed.",
+   "how_bound_instead": "the gate value is inside each record's frozen scientific hash; the records are bound by sha256 in the committed export manifest (29ad1f9b); the cell-309 record copy committed here re-verifies both. Host observation: all 1304 (cell, m) target_gate and ledger status values in the export are PASS.",
+   "not_the_far_field_splice": "THEOREM_ADJUDICATION.json K1_far_field_splice licenses e > 2 through sup|R| < 2; the object here is the cell-309 gate",
+   "note": "any K5 consumer must check the cell-309 gate (or recompute the exact bound) explicitly; it must not infer it from the closure verdict",
+   "object": "per-record, per-m target_gate = ledger.target_gate(taylor_enclosure(R_interval, D_interval, rho, M_R2)) on cell 309 = [1.9839101, 2.092283], which contains 2. The Taylor enclosure R(e0) + [-rho, rho] D + [-rho^2 M_R2/2, rho^2 M_R2/2] covers R over the whole cell; PASS requires it strictly inside (-2, 2).",
+   "result": "PASS for m = 1, 2, 3, 5. Exact recheck from the record's own endpoints: whole-cell R >= -0.625443, -0.336675, -0.226774, -0.161330; margins above -2 of 1.374557, 1.663325, 1.773226, 1.838670 (recomputed exactly); the recorded gate lo <= the exact recheck in every m"
+  }
+ },
+ "independent_consistency_check": {
+  "became_load_bearing_only_after_K5B": [
+   "L5 (C^3 regularity)",
+   "the cell-309 target_gate PASS as a premise of s(2) < 1 (previously a per-cell K1 gate not enforced by closure)"
+  ],
+  "chain": "K5-B (c1c62346, countersigned d7d3c08b) -> H3a R_{D,m} = E[Rbar|e] (P5 T2) = e + E_e[A_m] (P5-T1, P5X L1.7) -> K1 raw-variable DAG (ERROR_ALGEBRA sections 1-4; PB4 derivation) -> certifier qualify5 / aux_propagate / refine2 / AuxiliaryRefinement -> producer manifest v3 (60 files, hash b55a2da1, identity 3692d0fe) -> records (R_interval, D_interval midpoint; R2_interval, M_R2 whole-cell; target_gate) under frozen scientific hash -> composite export manifest 29ad1f9b -> CLOSED composite (single identity 3692d0fe) -> K5-B premises (odd: P5-T3; C^3: L5; R'(0) = 1 - GammaTilde: P1-T1; midpoint and whole-cell enclosures: PB5; R(2) > -2: PB6)",
+  "normalization_mismatches": "none found",
+  "outside_K5B_not_assessed_as_binding": "the H3a clause s(0+) = 1/rho_c needs GammaTilde > 1 (countersignature scope). For m = 1 the certified enclosure [3.924, 27.849] gives it; for m > 1 GammaTilde is not interval-certified (P1-N1 is empirical).",
+  "provenance_gaps": [
+   "the 326-record export tree is external to Git (rebaseguard-vultr-02); it is bound by the committed manifest hash, and only cells 0 and 309 are committed here as byte copies",
+   "the closure verdict does not enforce target_gate PASS (PB6 note)"
+  ],
+  "semantic_gaps": "none found",
+  "sign_mismatches": "none found",
+  "unreviewed_load_bearing_dependencies": [
+   "P5X L5 real-analyticity (PB2 note)"
+  ]
+ },
+ "non_claims": {
+  "AWS_PS1_TOUCHED": false,
+  "CUSUM_CLOSURE_MODIFIED": false,
+  "H3A_DECLARED": false,
+  "K1_RECORDS_MODIFIED": false,
+  "K5B_OR_COUNTERSIGNATURE_MODIFIED": false,
+  "K5_DECLARED_CLOSED": false,
+  "K5_PROBE_RUN": false,
+  "ORDER3_DESIGN_MODIFIED": false,
+  "ORIGIN_MAIN_TOUCHED": false,
+  "REAL_ORDER3_PRODUCER_BUILT": false,
+  "SCIENTIFIC_COMPUTE_RUN": false
+ },
+ "origin_main_at_audit": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+ "recomputed": {
+  "assembly": {
+   "frozen_table_equals_convention_A_rule": {
+    "1": true,
+    "2": true,
+    "3": true,
+    "5": true
+   }
+  },
+  "geometry": {
+   "cell_309": [
+    "19839101/10000000",
+    "2092283/1000000"
+   ],
+   "cells": 326,
+   "cells_containing_2": [
+    309
+   ],
+   "cells_meeting_0_2": 310,
+   "problems": [],
+   "x0": "0"
+  },
+  "manifest_v3": {
+   "bound_file_mismatches": [],
+   "bound_files": 60,
+   "equals_closure_producer_identity": true,
+   "manifest_hash": "b55a2da1fea0c7ee889f8da6a4b893c12d3ef24e2bc02d19bd5488187fd30fd9",
+   "producer_identity_hash": "3692d0feeaef71365798cd99399fdb6d744573f38d59dba5cfe2e99294f0ae19",
+   "r2_path_modules_missing_from_manifest": [],
+   "runtime_contract_hash": "bc75c9ea7cd5f9406a0509bb0a161aa2c013f80427d1035197989e3d202c845a"
+  },
+  "pb3_external_consistency": {
+   "cell_0_is_0_to_2e0": true,
+   "e0": "5083/20000000",
+   "m": {
+    "1": {
+     "R_prime_0_enclosure_float_diagnostic": [
+      -23.696044835441892,
+      -6.077537195925145
+     ],
+     "R_prime_0_negative_certified": true,
+     "contains_recorded_estimate": true,
+     "implied_GammaTilde_interval_float_diagnostic": [
+      7.077537195925145,
+      24.696044835441892
+     ],
+     "implied_width": 17.61850763951675,
+     "inside_certified_m1_enclosure": true,
+     "intersects_certified_m1_enclosure": true
+    },
+    "2": {
+     "R_prime_0_enclosure_float_diagnostic": [
+      -28.672020188713656,
+      4.156939009903219
+     ],
+     "R_prime_0_negative_certified": false,
+     "contains_recorded_estimate": true,
+     "implied_GammaTilde_interval_float_diagnostic": [
+      -3.156939009903219,
+      29.672020188713656
+     ],
+     "implied_width": 32.82895919861688
+    },
+    "3": {
+     "R_prime_0_enclosure_float_diagnostic": [
+      -27.08148062322458,
+      5.230677348184421
+     ],
+     "R_prime_0_negative_certified": false,
+     "contains_recorded_estimate": true,
+     "implied_GammaTilde_interval_float_diagnostic": [
+      -4.230677348184421,
+      28.08148062322458
+     ],
+     "implied_width": 32.312157971409
+    },
+    "5": {
+     "R_prime_0_enclosure_float_diagnostic": [
+      -25.06982465445223,
+      6.689788005657038
+     ],
+     "R_prime_0_negative_certified": false,
+     "contains_recorded_estimate": true,
+     "implied_GammaTilde_interval_float_diagnostic": [
+      -5.689788005657038,
+      26.06982465445223
+     ],
+     "implied_width": 31.759612660109266
+    }
+   },
+   "rho": "5083/20000000"
+  },
+  "pb6_recheck": {
+   "cell": [
+    "19839101/10000000",
+    "2092283/1000000"
+   ],
+   "contains_2": true,
+   "m": {
+    "1": {
+     "M_R2_equals_mag_R2_interval": true,
+     "exact_lower_bound_float_diagnostic": -0.6254425514552201,
+     "exact_lower_bound_gt_minus_2": true,
+     "exact_whole_cell_lower_bound_of_R": "-35209285520942266226737318209/56294995342131200000000000000",
+     "margin_above_minus_2": 1.37455744854478,
+     "recorded_gate_lo": "-352092855245081/562949953421312",
+     "recorded_gate_lo_le_exact_recheck": true,
+     "strictly_inside_minus2_2": true,
+     "target_gate_status": "PASS"
+    },
+    "2": {
+     "M_R2_equals_mag_R2_interval": true,
+     "exact_lower_bound_float_diagnostic": -0.33667466619309827,
+     "exact_lower_bound_gt_minus_2": true,
+     "exact_whole_cell_lower_bound_of_R": "-303249580242464690191565027897/900719925474099200000000000000",
+     "margin_above_minus_2": 1.6633253338069018,
+     "recorded_gate_lo": "-758123950685955/2251799813685248",
+     "recorded_gate_lo_le_exact_recheck": true,
+     "strictly_inside_minus2_2": true,
+     "target_gate_status": "PASS"
+    },
+    "3": {
+     "M_R2_equals_mag_R2_interval": true,
+     "exact_lower_bound_float_diagnostic": -0.22677443337359318,
+     "exact_lower_bound_gt_minus_2": true,
+     "exact_whole_cell_lower_bound_of_R": "-2625868542593691901746063119921626513162968261615956457638863839901735415967501951642145499/11579208923731619542357098500868790785326998466564056403945758400791312963993600000000000000",
+     "margin_above_minus_2": 1.7732255666264067,
+     "recorded_gate_lo": "-26258685430610931601755208038441294324742862627449276163407865480134954844159/115792089237316195423570985008687907853269984665640564039457584007913129639936",
+     "recorded_gate_lo_le_exact_recheck": true,
+     "strictly_inside_minus2_2": true,
+     "target_gate_status": "PASS"
+    },
+    "5": {
+     "M_R2_equals_mag_R2_interval": true,
+     "exact_lower_bound_float_diagnostic": -0.16132954222558454,
+     "exact_lower_bound_gt_minus_2": true,
+     "exact_whole_cell_lower_bound_of_R": "-373613695000005152494233547553935843861425660378652551450243531751773476165832312704897027/2315841784746323908471419700173758157065399693312811280789151680158262592798720000000000000",
+     "margin_above_minus_2": 1.8386704577744155,
+     "recorded_gate_lo": "-74722739014428785076986150824275915300362225930348564745690527384297235546107/463168356949264781694283940034751631413079938662562256157830336031652518559744",
+     "recorded_gate_lo_le_exact_recheck": true,
+     "strictly_inside_minus2_2": true,
+     "target_gate_status": "PASS"
+    }
+   }
+  },
+  "pins_at_base_commit": {
+   "level4/closure_proofs/d4_phase_map/DEFINITION_AUDIT.md": "7d1e7b6baf3427bbb997805fcf24b1994d91a8617461d97b24bbee63f2d517e7",
+   "level4/closure_proofs/m_gt_1_priority1/CLOSURE_REPORT.md": "9f28d0e052e9a24fa7402c07c8b27f46e32b81ef0748c89263becfdca1c11557",
+   "level4/closure_proofs/m_gt_1_priority1/THEOREM.md": "c630051d710361b4cb0c45393cc8bbf51108726595785cbb0b66a45cd12d1277",
+   "level4/closure_proofs/p5_nonlinear_dynamics/PROOF.md": "c1ea7df013c6d99ad963cfe539aedb55c48fb8ab48b71582c1c0099906732c09",
+   "level4/closure_proofs/p5_nonlinear_dynamics/THEOREM.md": "207951a9ea64b995685862240c8605fa62313762ac77e652e6176e0311688ca3",
+   "level4/closure_proofs/p5x_global_nonlinear_dynamics/DEFECT_REGISTER.md": "fbb1ff69de1e50ec89fe078fa2f717af578399fb9722e5b53e3d40dbc06e4e79",
+   "level4/closure_proofs/p5x_global_nonlinear_dynamics/DEPENDENCY_AUDIT.md": "80a2212d832f3460dce386e60b8a9630ca65db1debd743f54f65d79e4c023749",
+   "level4/closure_proofs/p5x_global_nonlinear_dynamics/FEASIBILITY_AUDIT.md": "b4930551e524643a8058a1722dac5c4af745b2a3d98cd447505a1453c0f31c93",
+   "level4/closure_proofs/p5x_global_nonlinear_dynamics/PROOF.md": "da4a2d519317c9a0265079c488f28ff1cec4a27b658c02d40d1c514942cd88be",
+   "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/assembly.py": "c51918c8b4d3fbb5530ca6432a38bb94e55138c6168e2ea124868c8d7a5b128c",
+   "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/cusum_layer1.py": "efcc0f36632632577a24c4ddf1a7c2c3579d471cdba5a752dd72c708667cdc79",
+   "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/cusum_layer2.py": "42c3d98394a6a8536e05d50626b21c7c71c309f5f98e286bdf2a3f7b5badf5a7",
+   "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/intervals.py": "ea860c4ee1f421731b5e8c16c11184105926b7e2cf9fc36096bf77821bbfde9b",
+   "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/ledger.py": "8dd799be8c813563f3591ba2c41b8496914c3f5a79985e1dba17dabc80f20bda",
+   "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/propagate.py": "bc6d2fdefac3595796283e08f07da54b4d42d99577497495335c842a7190d7f6",
+   "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/refine.py": "46698ab62c295d6bec04ea78e43cd975134636f6314f86751080249e6aef2070",
+   "level4/closure_proofs/p5y_k1_cover_ledger_successor/ERROR_ALGEBRA.md": "4f32df0273d05b1b4e0136e2a901adec9979e158b5decd8c9bf3cce0e35b9ffa",
+   "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/cells.json": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f",
+   "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/checkpoint.json": "1c2a6825f19e19de6fb588647ca3fc4618068087ef0976292ca7bbeca701f13f",
+   "level4/closure_proofs/p5y_k1_cusum_aux3_successor/code/ancestry.py": "49c10e7f5b4e9adcab0b1f43485234251dd8cb44a555bad32dfd0ff16f92fab5",
+   "level4/closure_proofs/p5y_k1_cusum_aux3_successor/code/aux_certifier.py": "a6f6c27c510e6384178b94a605fc46c34e24e138873661902f6e7ffc184b07fb",
+   "level4/closure_proofs/p5y_k1_cusum_aux3_successor/code/aux_propagate.py": "6d8d9d1beaefdf86b1ad460acb57f5830b76353d0fd736d48717c247bc2333b8",
+   "level4/closure_proofs/p5y_k1_cusum_aux3_successor/code/aux_refine.py": "99dc19102d0c9cfdbadb44e711d28243e092c6719376ec5100c84ddf1ff97f30",
+   "level4/closure_proofs/p5y_k1_cusum_aux4_fullcover/code/ancestry4.py": "91d517955345e38592b11cabfe76edcf7594872c195950ff18c66aee2e50048a",
+   "level4/closure_proofs/p5y_k1_cusum_aux4_fullcover/code/hash_v2.py": "c00912e39d3e71a2c6c3f8684c24d7a8d9ceb6b6750331d2dbd9140bf679518a",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/README.md": "0301f83a639b5c93ce11a3e35f8a712350b0d13513d00be6aa8b74b4965d3ca9",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/config/CLOSURE_VERDICT.json": "9533d2342f136e569386afa2c72f9380185136b4d314d56e13c1e1b434e6744c",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/evidence/closure_r1/COMPOSITE_EXPORT_MANIFEST.json": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_glibc_successor/config/GLIBC_SUCCESSOR_CHECKPOINT.json": "f9380847c92b6f5eb014d56021d11c2b66a95bef0990e392c7021c05d537a6cb",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_production_checkpoint/code/prod_sealer.py": "af9d6729f0a971cb29a7919ee04bf521cbb70b313a38428f759070b2bb605fce",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/manifest_v3.py": "e894db551d287c53b6d5f05577a5e22a6570df4f06bbbc970d09120aaad94d42",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/qualify5.py": "7d917e51c3b4851236e4cdf5b600d593c0d85b3e89778f1745e7ccae94c0403d",
+   "level4/closure_proofs/p5y_k1_cusum_aux5_successor/manifests/producer_manifest_v3.json": "611bd0a9f356b0e7f5e63da60567ac1afa9e69fc1f8c464c7e5b89aeedbd2b9f",
+   "level4/closure_proofs/p5y_k1_cusum_completion_successor/code/order2.py": "101582c02f988af80a5c4b6861461fe09e0fafa01b788884318115e066345f1f",
+   "level4/closure_proofs/p5y_k1_cusum_completion_successor/code/refine2.py": "81be02622411f062a7de3e25505aa896e7ffd275c406d4f49a3159c9bad84064",
+   "level4/closure_proofs/p5y_k1_cusum_kernel/IMPLEMENTATION_MAP.md": "a9263af2bbc0d5bf132d7267912fd9b70f83e22cd1203711a9d2222362f7e8cd",
+   "level4/closure_proofs/p5y_k5_feasibility/K5_GLOBAL_BRIDGE.md": "c1c62346dcd11b3a56b028e4aca7b61d7c4254353b1504701f16989205339d3f",
+   "level4/closure_proofs/p5y_k5b_independent_countersignature/COUNTERSIGNATURE.json": "c16a830528026c24427cd086fba14037a2b859a5d6e5dd63aabb0b181e0b3917",
+   "level4/closure_proofs/p5y_k5b_k1_premise_binding_audit/config/AUDIT_PLAN.json": "1124a03c5dc80175063642322dc4a1c6c5f063158757237f41875c1df2f1ff57",
+   "level4/closure_proofs/p5y_postk1_precompute_resolution/K5_TARGET_AND_THIRD_ORDER.md": "eca0cdaa6000261a474bad34c09ebe3d9a749ae57adf67f5cd54ed89dcc814d2",
+   "level4/closure_proofs/p9_final_synthesis/CLAIM_LEDGER.json": "e07feffaebddecb9511a95be737da6e5038c10f3e2bcdbc1e49adc6e458c7d19"
+  },
+  "records": {
+   "0": {
+    "detector": "CUSUM",
+    "geometry_equals_frozen_cells": true,
+    "precision_bits": 256,
+    "producer_identity_equals_manifest_v3": true,
+    "producer_manifest_hash_equals_manifest_v3": true,
+    "producer_manifest_path": "level4/closure_proofs/p5y_k1_cusum_aux5_successor/manifests/producer_manifest_v3.json",
+    "scientific_content_hash_recomputes": true,
+    "sha256": "4f8df44c956309b109e174f7ea15deee39ffad863c459f1656d6e2470a7ff1fb",
+    "sha256_equals_committed_export_manifest": true
+   },
+   "309": {
+    "detector": "CUSUM",
+    "geometry_equals_frozen_cells": true,
+    "precision_bits": 256,
+    "producer_identity_equals_manifest_v3": true,
+    "producer_manifest_hash_equals_manifest_v3": true,
+    "producer_manifest_path": "level4/closure_proofs/p5y_k1_cusum_aux5_successor/manifests/producer_manifest_v3.json",
+    "scientific_content_hash_recomputes": true,
+    "sha256": "95be4c65f95f4afdb1caba0be1868c7829700457ba85b292ac143a8e65cdacc0",
+    "sha256_equals_committed_export_manifest": true
+   }
+  }
+ },
+ "revision": "r1",
+ "schema": "rebaseguard.p5y.k5b.k1-premise-binding-audit.result.v1",
+ "scope": "CUSUM only, for the closed Aux5 composite universe 0-325 (K5-B consumes cells 0-309). Read-only. It computes no new scientific value: every number is exact rational arithmetic on committed certified endpoints. It issues no K5, H3a, P5Y or P5Z verdict.",
+ "verdicts": {
+  "CUSUM_K5B_K1_PREMISE_BINDING": "PASS_WITH_NOTES",
+  "PB2": "BOUND_WITH_NOTE",
+  "PB2_L5_GOVERNANCE": "INTERNAL_HUMAN_PROOF_ONLY__NO_INDEPENDENT_REVIEW_FOUND__RECORDED_NON_LOAD_BEARING_AT_PRODUCTION",
+  "PB2_REGULARITY": "BOUND",
+  "PB3": "BOUND",
+  "PB3_DEFINITIONAL_BINDING": "PASS",
+  "PB3_EXTERNAL_CONSISTENCY": "PASS",
+  "PB4_FUNCTION_IDENTITY": "BOUND",
+  "PB5_WHOLE_CELL_R2": "BOUND",
+  "PB6_R2_ENDPOINT_GATE": "BOUND_WITH_NOTE"
+ }
+}
