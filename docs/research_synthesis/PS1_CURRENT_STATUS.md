@@ -4,7 +4,7 @@ This additive status note updates the public narrative without changing any froz
 
 ```text
 PS1 / SR  = QUALIFIED_AND_AUTHORIZED_ON_AWS, PRODUCTION_STARTED, CURRENTLY_GRACEFUL_DRAINING, NOT_CLOSED
-CUSUM     = CURRENT_PRODUCER_FULL_RERUN_REQUIRED
+CUSUM     = AUX5_COMPOSITE_CLOSURE_CLOSED (326-cell composite 0-325: 128 carry-over + 198 successor, K4 attestation PASS)
 K1        = NOT_CLOSED
 ```
 
@@ -38,8 +38,8 @@ Those results motivated the predeclared additive PS1 partition successor. PS1 de
   - On 2026-09-13 a read-only check found the unit still active and the DRAIN marker unchanged. This note deliberately reports no finalized-cell counts and no results.
 - Campaign cost basis: **4,413–5,694 CPU-h** (5,694 in the per-cell-durable production shape) against the frozen **6,600 CPU-h** global cap.
 - A runtime-path defect in the deployed generation-2 operations has a synthetically verified repair that is **not deployed**. Deployment is gated on the current drain settling (`level4/closure_proofs/p5y_k1_ps1_gen2_runtime_isolation/DEPLOYMENT_GATE.md`).
-- **CUSUM, the other side of K1, requires its current-producer full rerun.** The Aux4 producer covers 2/326 cells and adjudication requires `REQUIRES_FULL_326_RERUN`. Its cost cap and host binding are not ready.
-- K1 = NOT CLOSED, P5Y = NOT CLOSED, LEVEL4_GLOBAL_CLOSURE = NO. No K1 closure is claimed.
+- **CUSUM, the other side of K1, is CLOSED as a governed composite** (updated 2026-09-16). The Aux5 composite covers the full 326-cell universe 0-325 as a disjoint union: cells 0-127 are carried over from the predecessor campaign, which remains historically `HALTED` after a host-drift stop and whose cells were **not** recomputed, and cells 128-325 come from the new-glibc successor campaign, `COMPLETE` with 198/198 sealed, 0 failed and 0 torn. Carry-over was gated on the Q6 bit-identity requalification and an independent countersignature; the composite audit is COMPLETE and the K4 composite attestation covers 326 cells. The earlier statement that CUSUM `REQUIRES_FULL_326_RERUN` is **superseded**: it described the Aux4 producer state before the Aux5 campaign and its governed carry-over. See `level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/`.
+- K1 = NOT CLOSED, P5Y = NOT CLOSED, LEVEL4_GLOBAL_CLOSURE = NO. No K1 closure is claimed: the CUSUM side is closed, the PS1/SR side is not.
 
 Authoritative records:
 

@@ -132,7 +132,8 @@ Current status (updated 2026-09-13):
 - **PRODUCTION_STARTED.** Execution generation 1 halted on `RETRY_LIMIT` with 0 finalized cells; generation 2 has run since 2026-09-12.
 - **CURRENTLY_GRACEFUL_DRAINING.**
 - **NOT_CLOSED.**
-- **CUSUM is CURRENT_PRODUCER_FULL_RERUN_REQUIRED.**
+- **CUSUM Aux5 composite closure: CLOSED** (updated 2026-09-16). The governed composite is the **326-cell** universe 0-325: **128** carry-over cells from the predecessor campaign, which stays historically `HALTED`, plus **198** successor cells. K4 attestation **PASS**. This supersedes "CUSUM is CURRENT_PRODUCER_FULL_RERUN_REQUIRED": the rerun requirement was discharged by the governed carry-over under a countersignature, not by recomputing predecessor cells. See the [composite closure namespace](level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/README.md).
+- PS1/SR is a **separate, ongoing** line; the CUSUM closure says nothing about it.
 - K1 and P5Y remain **NOT CLOSED**, and LEVEL4_GLOBAL_CLOSURE = NO.
 
 The earlier statement "genuine PS1 production remains **NOT STARTED** (0 cells), the full 369-cell campaign is **NOT RUN**" is **superseded**. It described the state at authorization (`PS1_PRODUCTION_AUTHORIZATION_CLOSED`), before production began.

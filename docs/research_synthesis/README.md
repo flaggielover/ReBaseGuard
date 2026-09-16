@@ -156,7 +156,7 @@ campaign mechanically`). Its stored offline reproduction status is `PASS` with
 
 The public research record now includes the governed P5Y/K1 O9-to-PS1 successor chain. The O9 line preserves its T1/T2/T3/T4/T5 milestones and its negative curvature, operator-norm, and Aux3 feasibility results. PS1 is a new additive 369-cell partition: four deterministic successor cells replace the old-313 region without changing the historical 316-cell SR campaign or its failure. The PS1 region and controls passed 28/28 obligations; qualification and lifecycle acceptance are complete; authorization is closed. Updated 2026-09-13:
 - PS1/SR (the SR side of K1) is QUALIFIED_AND_AUTHORIZED_ON_AWS, PRODUCTION_STARTED, CURRENTLY_GRACEFUL_DRAINING and NOT_CLOSED.
-- CUSUM is CURRENT_PRODUCER_FULL_RERUN_REQUIRED.
+- CUSUM Aux5 composite closure is CLOSED (updated 2026-09-16): a 326-cell governed composite over 0-325, 128 carry-over cells plus 198 successor cells, K4 attestation PASS. This supersedes "CUSUM is CURRENT_PRODUCER_FULL_RERUN_REQUIRED".
 - K1 is NOT_CLOSED.
 
 The earlier wording "genuine production remains at 0 cells and has not started" is superseded. See [PS1_CURRENT_STATUS.md](PS1_CURRENT_STATUS.md).

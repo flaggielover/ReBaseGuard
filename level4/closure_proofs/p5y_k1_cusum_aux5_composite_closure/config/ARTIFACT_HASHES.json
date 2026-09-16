@@ -1,0 +1,60 @@
+{
+ "cpu_accounting_usec": {
+  "absolute_campaign_cap": 1080000000000,
+  "keeper_overhead": 53463987,
+  "post_settlement_total": 412551818627,
+  "pre_settlement_total": 412497973063,
+  "predecessor_settled": 262686610580,
+  "science": 412353959598,
+  "settlement_overhead": 53845564,
+  "successor_residual_cap": 817313389420,
+  "supervisor_extra": 381577
+ },
+ "external_evidence": {
+  "external_export_tree": {
+   "bytes": 93128357,
+   "committed_to_git": false,
+   "host": "rebaseguard-vultr-02",
+   "manifest_sha256": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334",
+   "path": "/root/work/postk1-runs/closure-r1/COMPOSITE_EXPORT",
+   "record_universe": [
+    0,
+    325
+   ],
+   "records": 326,
+   "tree_sha256_attested": "5c3c1f854fd04ea44a9a9a14902c7ba6bf4361fa5fa5bb9c311124de281acf59",
+   "tree_sha256_attested_rule": "sha256 of `find . -type f | sort | xargs sha256sum` over k4_records/ as computed at closure on the host, whose LANG was en_US.UTF-8: the listing is in that locale's collation order, so this value is locale-dependent",
+   "tree_sha256_bytewise": "7517199ae57fe99dd63e60bd820c72349f6faf1e5cf139be75ce331a6fedb0a3",
+   "tree_sha256_bytewise_rule": "the same listing under `LC_ALL=C sort` (equivalently Python's byte-order sort): `sha256(''.join(f'{sha256(file)}  ./{name}\\n' for name in sorted(names)))`. Locale-independent, and the value verify_closure.py --export-tree checks"
+  },
+  "terminal_runtime": {
+   "committed_to_git": false,
+   "host": "rebaseguard-vultr-02",
+   "journal_sha256": "c59a243d560067495d90647dcf0d59a368afcf74c445e627f6835670e544ad58",
+   "ledger_sha256": "d6f63cf41910437ebc2a0c3413b0698ada3ab4170a6ac1db23b7dd195c0b1a59",
+   "ledger_state_sha256": "241af4f12aa6ee390af6c113cbc262cbefbb9476f6f442be7acfd40f877cffca",
+   "root": "/root/work/postk1-runs/cusum-aux5-production-glibc-r1",
+   "seq": 2531
+  }
+ },
+ "git_artifacts": {
+  "evidence/closure_r1/COMPOSITE_AUDIT.json": "2ec4dcbb9f2bc27568742db053133c01a369863a21f9a4f066471fcd9cb4b670",
+  "evidence/closure_r1/COMPOSITE_EXPORT_MANIFEST.json": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334",
+  "evidence/closure_r1/CONTAINMENT_POST_RESTORE.json": "eee9f12af1021ae3f5fbba0c9696026fa08463e84a32695059285e4c948f4a6d",
+  "evidence/closure_r1/CONTAINMENT_PRE_RESTORE.json": "d83b4eb6028155a472e26a2d4923819332d77577a075e50b504011610029b09e",
+  "evidence/closure_r1/HOST_AT_CLOSURE.json": "a5dd10a1c5ae77e669bf96729b287a67e56d36d3447f708a2d9fd4666f270429",
+  "evidence/closure_r1/K4_COMPOSITE_ATTESTATION.json": "039e2e1cbebb9561c177ddca790dbc2c675eafde15553ad4e1282777d9bd8d2c",
+  "evidence/closure_r1/PREDECESSOR_BINDING_FINAL.json": "0676fc8267bac3fc6044ab4cb9f57c8769b2b9d62e0d2f0bb2a2d3b1d9db8ac3"
+ },
+ "governance_objects": {
+  "canonical_composite_audit_sha256": "fa1d79b52c8ac6014c34ced67f1c53dd862b55c66cd6fcee47ab1797c7404266",
+  "carryover_countersignature_sha256": "e1ee7fb112c4d013c53f3adf10f12421c04b39f2ec1d3edd98ec2cc07edf143a",
+  "predecessor_authorization_sha256": "b8f11ec05efc2476f733dd989ae02b542dc9efa374f24fa0a27688d76ec2b329",
+  "predecessor_binding_sha256": "0676fc8267bac3fc6044ab4cb9f57c8769b2b9d62e0d2f0bb2a2d3b1d9db8ac3",
+  "predecessor_checkpoint_sha256": "dd4c89d773c411355d93d0d703e40c027f9913e11e116e4bfe35117f84b4baf2",
+  "predecessor_countersignature_sha256": "1ceb92d463d1332dfb26505143454b3c3fd87a611bc731372d9e227017682b07",
+  "successor_authorization_sha256": "0c7621d47fd862e06355276492fe9a425f8fe2eec280d8c7375a4acedaaa043f",
+  "successor_checkpoint_sha256": "f9380847c92b6f5eb014d56021d11c2b66a95bef0990e392c7021c05d537a6cb"
+ },
+ "schema": "rebaseguard.p5y.k1.cusum-aux5.composite-closure.artifact-hashes.v1"
+}
