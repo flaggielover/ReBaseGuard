@@ -1,0 +1,42 @@
+{
+ "schema": "rebaseguard.p5y.k5b.dependency-dag.v1",
+ "direction": "edge [a, b] means b depends on a (a is used to establish b)",
+ "nodes": {
+  "CALCULUS": {"class": "MATHEMATICS", "detail": "mean value theorem for R'' and for g; fundamental theorem of calculus g(e) = g(a) - int_a^e t R''(t) dt"},
+  "P5_T1": {"class": "ANALYTICALLY_PROVED", "detail": "raw-mean identity (imported by P5X)"},
+  "P5_T4": {"class": "ANALYTICALLY_PROVED", "detail": "uniform stopping-time bound (imported by P5X)"},
+  "P5_T3_ODD": {"class": "ANALYTICALLY_PROVED", "detail": "R odd, R(0) = 0; hence R''(0) = 0 (p5_nonlinear_dynamics/THEOREM.md T3)"},
+  "P5X_L1": {"class": "ANALYTICALLY_PROVED", "detail": "reduction (p5x PROOF.md)"},
+  "P5X_L5_ANALYTIC": {"class": "ANALYTICALLY_PROVED", "detail": "R holomorphic on a strip |Im e| <= theta_0, real-analytic on R (p5x PROOF.md L5)"},
+  "LOCAL_DERIVATIVE": {"class": "ANALYTICALLY_PROVED", "detail": "R'(0) = 1 - GammaTilde (P5 THEOREM.md, recovers P1/P2/P3)"},
+  "P3_RHO_C": {"class": "DEFINITION_PLUS_CERTIFIED_SCALAR", "detail": "rho_c = 1/|1 - GammaTilde|; equals 1/(GammaTilde - 1) only when GammaTilde > 1 (outside K5-B)"},
+  "K1_COVER_CELLS": {"class": "FROZEN_GEOMETRY", "detail": "contiguous exact-rational cells from x_0 = 0 (SR PS1 0-294, CUSUM 0-309); result-independent"},
+  "K1_ENCLOSURES": {"class": "CERTIFIED_INPUT", "detail": "R_interval ∋ R(e0), D_interval ∋ R'(e0), R2_interval ⊇ R''(cell), M_R2 = mag(R2_interval); CUSUM exists (composite closure ce7fb933), SR does not yet"},
+  "K1_TARGET_GATE": {"class": "CERTIFIED_INPUT", "detail": "sup|R| < 2 on the cell containing 2, hence R(2) > -2"},
+  "ORDER3_LOWER_BOUNDS": {"class": "FUTURE_CERTIFIED_INPUT", "detail": "L_k <= inf_cell R''' (no producer exists; L_k = -inf allowed)"},
+  "K5B_THEOREM": {"class": "THEOREM_UNDER_REVIEW", "detail": "p5y_k5_feasibility/K5_GLOBAL_BRIDGE.md; conditional on its inputs"},
+  "K5B_INSTANCE_VERDICT": {"class": "FUTURE_RESULT", "detail": "evaluation of the recurrences on certified inputs for one (D,m)"},
+  "H3a": {"class": "TARGET", "detail": "s = -R/e continuous, strictly decreasing on (0,2], s(0+) = GammaTilde - 1 = 1/rho_c, s(2) < 1"},
+  "K5_ADJUDICATION": {"class": "FUTURE_GOVERNANCE", "detail": "not issued"},
+  "P5_T9_T10": {"class": "CONDITIONAL_THEOREM", "detail": "consumers of H3a"},
+  "P5Z": {"class": "FUTURE_GOVERNANCE", "detail": "integration; not issued"}
+ },
+ "edges": [
+  ["P5_T1", "P5X_L1"], ["P5_T4", "P5X_L1"], ["P5X_L1", "P5X_L5_ANALYTIC"], ["P5_T4", "P5X_L5_ANALYTIC"],
+  ["CALCULUS", "K5B_THEOREM"], ["P5_T3_ODD", "K5B_THEOREM"], ["P5X_L5_ANALYTIC", "K5B_THEOREM"],
+  ["LOCAL_DERIVATIVE", "K5B_THEOREM"],
+  ["K5B_THEOREM", "K5B_INSTANCE_VERDICT"], ["K1_COVER_CELLS", "K5B_INSTANCE_VERDICT"],
+  ["K1_ENCLOSURES", "K5B_INSTANCE_VERDICT"], ["K1_TARGET_GATE", "K5B_INSTANCE_VERDICT"],
+  ["ORDER3_LOWER_BOUNDS", "K5B_INSTANCE_VERDICT"],
+  ["K5B_INSTANCE_VERDICT", "H3a"], ["P3_RHO_C", "H3a"],
+  ["H3a", "K5_ADJUDICATION"], ["H3a", "P5_T9_T10"], ["K5_ADJUDICATION", "P5Z"], ["P5_T9_T10", "P5Z"]
+ ],
+ "forbidden_ancestors_of_K5B_THEOREM": ["H3a", "K5_ADJUDICATION", "P5Z", "P5_T9_T10", "K5B_INSTANCE_VERDICT",
+                                        "K1_ENCLOSURES", "K1_TARGET_GATE", "ORDER3_LOWER_BOUNDS"],
+ "notes": [
+  "The theorem's validity depends only on CALCULUS, oddness, analyticity and the local derivative correspondence; every numerical object enters only an instance verdict, as a premise, never the theorem.",
+  "No K1 producer or cover in p5y_k1_* uses H3a or monotonicity of s: H3a appears there only as the downstream K5 label (p5y_k1_binding_campaign CHECKPOINT.md, build_dag.py).",
+  "P5X L5 depends on L1, P5-T1 and P5-T4; the P5X dependency audit lists H3a only as an OPTIONAL downstream discharge target (C3 -> P5X-T7).",
+  "Order-3 objects, when a producer exists, would depend on orders 0-2 of the same frozen recursions, not on any K5 verdict."
+ ]
+}

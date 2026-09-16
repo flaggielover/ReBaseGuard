@@ -1,0 +1,83 @@
+{
+ "fuzz_mutation_sensitivity": {
+  "mutations": {
+   "gamma1_sign": {
+    "invariant": 90,
+    "soundness": 21
+   },
+   "mu_uses_endpoint": {
+    "invariant": 128,
+    "soundness": 0
+   },
+   "nonstrict": {
+    "invariant": 0,
+    "soundness": 13
+   },
+   "wrong_corner": {
+    "invariant": 14,
+    "soundness": 14
+   }
+  },
+  "status": "PASS"
+ },
+ "readiness_scan_cross_check": {
+  "agree_with_independent_variant": 40,
+  "agree_with_literal_when_all_Hlo_le_0": 14,
+  "cases_with_all_Hlo_le_0": 14,
+  "compared": 40,
+  "status": "PASS"
+ },
+ "readiness_variant_equivalence_on_committed_evidence": {
+  "cells_with_R2_interval_lo_positive_count": {
+   "1": 0,
+   "2": 0,
+   "3": 0,
+   "5": 0
+  },
+  "equivalence_lemma_applies": true
+ },
+ "schema": "rebaseguard.p5y.k5b.independent-verification.v1",
+ "seed": 20260916,
+ "soundness_fuzz": {
+  "cell_configurations": 800,
+  "cell_passes_exactly_verified": 3479,
+  "cells_checked": 7229,
+  "full_passes_exactly_verified": 157,
+  "full_theorem_passes": 157,
+  "h3a_g_part_true_but_theorem_failed": 103,
+  "invariant_violations": 0,
+  "passes_by": {
+   "L1": 351,
+   "chain": 2949,
+   "direct": 179
+  },
+  "polynomials": 160,
+  "readiness_variant_soundness_violations": 0,
+  "soundness_violations": 0,
+  "status": "PASS",
+  "variant_divergences_with_some_Hlo_gt_0": 207,
+  "variant_equivalence_checked_with_Hlo_le_0": 980,
+  "variant_equivalence_violations": 0
+ },
+ "status": "PASS",
+ "symbolic_spine": {
+  "checks": {
+   "R2_odd_R3_even": 200,
+   "e2_sprime_eq_g": 200,
+   "g_coeff_eq_(1-k)r_k": 200,
+   "g_cubic_coeff_eq_-R3(0)/3": 200,
+   "g_odd_divisible_by_e3": 200,
+   "g_prime_eq_minus_e_R2": 200,
+   "sprime_linear_coeff_eq_-2a3": 200
+  },
+  "general_proofs": {
+   "a3": "r3 = R'''(0)/3! = R'''(0)/6",
+   "coefficients": "R = sum r_k e^k  =>  eR' = sum k r_k e^k  =>  g = sum (1-k) r_k e^k; odd R => g = -2 r3 e^3 - 4 r5 e^5 - ...",
+   "g_prime": "g = R - eR'  =>  g' = R' - R' - eR'' = -eR''",
+   "parity": "R odd => R' even => R'' odd (R''(0) = 0) => R''' even",
+   "s_prime": "s = -R/e  =>  s' = (-eR' + R)/e^2 = g/e^2  (e > 0); sign(s') = sign(g)"
+  },
+  "status": "PASS",
+  "trials": 200
+ }
+}

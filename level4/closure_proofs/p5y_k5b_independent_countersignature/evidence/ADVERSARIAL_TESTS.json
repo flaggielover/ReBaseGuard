@@ -1,0 +1,125 @@
+{
+ "cases": {
+  "A10_last_cell_overshoot_past_2": {
+   "R": "-17/25 e + 47/2000 e^3 + 3/1000 e^5 + 33/100 e^7 - 57/1000 e^9",
+   "g(2)": "-2591/125",
+   "g(211/100)_positive": true,
+   "h3a_g_part_exact": true,
+   "last_cell": "[1959/1000, 211/100]",
+   "ok": true,
+   "passes": [
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    true,
+    false
+   ],
+   "verdict": "near-exact inputs (256-piece enclosures, exact L): H3a holds on (0,2] but g > 0 on (2, 2.11], so the cell containing 2 cannot pass. THEOREM LIMITATION: the pass condition is over the whole frozen cell, not over cell \u2229 (0,2] (relevant to CUSUM cell 309 = [1.98391, 2.092283] and SR cell 294)"
+  },
+  "A11_intrinsic_granularity_slack": {
+   "R": "-18/25 e + 1/250 e^3 - 27/500 e^5 + 7/25 e^7 + 7/100 e^9",
+   "cover_right": "2",
+   "failing_cell_widths": [
+    "123/200",
+    "76/125"
+   ],
+   "failing_cells": [
+    3,
+    4
+   ],
+   "h3a_g_part_exact": true,
+   "ok": true,
+   "verdict": "with (near-)exact inputs on a fixed coarse cover the first-order direct bound (slack rho*x*sup|R''|) and the chain (slack from min R'' over the cell) both miss a true g < 0: THEOREM LIMITATION of fixed cells, not repairable by better enclosures on the same cells"
+  },
+  "A1_wrong_R3_sign_near_zero": {
+   "L_1": "-3/5",
+   "R": "-e/2 - e^3/10  (a3 = -1/10)",
+   "cell1_pass": false,
+   "certified_sup_R3_cell1": "-3/5",
+   "g_positive_on_(0,x1]_exact": true,
+   "h3a_g_part": false,
+   "ok": true,
+   "verdict": "theorem cannot pass (L_1 <= inf R''' < 0); sup R''' < 0 on C_1 forces g > 0 there, i.e. H3a false: the counterexample direction in K5_GLOBAL_BRIDGE.md is correct"
+  },
+  "A2_R3_unavailable_R2_favourable": {
+   "Gamma_1": "11/20480",
+   "H_1": [
+    "0",
+    "3/40"
+   ],
+   "R": "-e/2 + e^3/10  (R'' = 3e/5 >= 0, g = -e^3/5 < 0)",
+   "cell1_pass": false,
+   "h3a_g_part": true,
+   "ok": true,
+   "verdict": "Gamma_1 >= g(0) = 0 for every valid enclosure and H_1.lo <= 0, so cell 1 can never pass without L_1 > 0, although H3a holds: order-3 is necessary FOR THIS ROUTE at 0, and failure is not refutation"
+  },
+  "A3_chain_lower_bound_too_weak": {
+   "R": "-e/2 + e^3/10 - e^5/400",
+   "h3a_g_part": true,
+   "loose_all_pass": false,
+   "loose_first_failing_cell": 2,
+   "ok": true,
+   "tight_all_pass": true,
+   "verdict": "same function, valid but loose inputs: the theorem fails; with tight inputs it passes. Sufficient only."
+  },
+  "A4_strictness_at_boundary": {
+   "linear_R": "-e/2: g == 0, s constant => H3a false",
+   "nonstrict_variant_would_pass": true,
+   "ok": true,
+   "strict_theorem_all_pass": false,
+   "touch_R": "g = -e^3 (e^2-1)^2, touches 0 at the cell boundary e = 1 (s' <= 0 with an isolated zero: H3a TRUE)",
+   "touch_cells_containing_1_pass": [
+    false,
+    false
+   ],
+   "touch_g_le_0_and_g(1)=0": true,
+   "touch_theorem_all_pass": false,
+   "verdict": "strict '<' is what keeps the linear case out (a '<=' implementation would certify a false H3a). A touching g cannot be certified by any valid enclosure (U_k, Gamma_k >= g(1) = 0 on both adjacent cells) although H3a holds: the degenerate case the theorem text disclaims."
+  },
+  "A5_local_g_negative_chain_fails": {
+   "Gamma": "2373/320",
+   "R": "-e/2 + e^3/10",
+   "U": "57517/5120",
+   "cell": 4,
+   "cell_pass": false,
+   "exact_g_negative_on_cell": true,
+   "ok": true,
+   "verdict": "g < 0 exactly on the cell; a wide (valid) H and no L break both the chain and the direct test"
+  },
+  "A6_differentiability_premise_violated": {
+   "R''": "t on [0,1/2]; -10 on (1/2,2]  (R in C^1, not C^2; R''' has a -21/2 atom at 1/2)",
+   "g(2)": "449/24",
+   "ok": true,
+   "theorem_all_pass_with_piecewise_L": true,
+   "verdict": "with L_k taken over smooth pieces the recurrences certify every cell while g(2) = 449/24 > 0: the MVT step needs R'' absolutely continuous with R''' >= L_k, supplied here by P5X L5 analyticity"
+  },
+  "A7_parity_premise_violated": {
+   "L_1": "1",
+   "R": "-e/2 - e^2/2 + e^3/6  (not odd, R''(0) = -1, R''' = 1)",
+   "cell1_pass": true,
+   "g(1/16)": "23/12288",
+   "ok": true,
+   "verdict": "ell_0 = 0 = R''(0) is exactly where oddness enters; without it the L_1 > 0 test certifies a cell on which g > 0"
+  },
+  "A8_interval_direction": {
+   "Gamma_correct": "1583/320",
+   "Gamma_wrong_corner": "-1617/320",
+   "ok": true,
+   "verdict": "the wrong corner under-estimates sup g(e0) over the enclosure by 2*e0*rad(D); the theorem's hi() is the correct corner (e0 >= 0)"
+  },
+  "A9_tail_local_restart": {
+   "cell5_pass_with_island": true,
+   "cell5_pass_without_island": false,
+   "mu5_with": "3/10",
+   "mu5_without": "-100",
+   "ok": true,
+   "setup": "cell 5 has a wide valid H (lo = -100); L absent on cells 3-4; island L_5 = 3/5 only",
+   "verdict": "ell restarts from H_{k-1}.lo, so a non-contiguous order-3 island can close a tail cell: K5-B does NOT require an unbroken run from cell 0. Whether realised K1 H_k.lo make restarts useful is numerical."
+  }
+ },
+ "schema": "rebaseguard.p5y.k5b.adversarial-tests.v1",
+ "status": "PASS"
+}

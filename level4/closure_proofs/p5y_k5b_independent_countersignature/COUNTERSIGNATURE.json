@@ -1,0 +1,73 @@
+{
+ "CIRCULARITY": "NONE",
+ "ENDPOINT_ARGUMENT": "PASS",
+ "INTERIOR_CHAIN": "PASS",
+ "K5_B_INDEPENDENT_REVIEW": "PASS_WITH_SCOPE_LIMITATION",
+ "K5_B_LOGICAL_STATUS": "SUFFICIENT_ONLY",
+ "M5_TAIL_CLASSIFICATION": "BOTH",
+ "STRICTNESS_PRESERVED": "YES",
+ "TEMPORAL_INTEGRITY": "PASS",
+ "binding_target": {
+  "name": "H3a (form A)",
+  "path": "level4/closure_proofs/p5y_postk1_precompute_resolution/K5_TARGET_AND_THIRD_ORDER.md",
+  "sha256": "eca0cdaa6000261a474bad34c09ebe3d9a749ae57adf67f5cd54ed89dcc814d2"
+ },
+ "bound_namespace_files": {
+  "README.md": "bc0564c1cdec1ecad22d77f046ed140a60e23377733c0c899cc20fd9f75a4d7c",
+  "code/k5b_check.py": "ddd54dc469375a2d64352782add8573231be07b94f7246dad83c4e55a2bf35a6",
+  "config/THEOREM_HASH_INVENTORY.json": "63d73f80d3cc993ce2d2faf6214c325045c32a20406d524b5367bf49c3916d37",
+  "evidence/ADVERSARIAL_TESTS.json": "305e57e27b38de503d0b52e19b6122cb354bf3bc982cf75bdb1cc34cb573f11d",
+  "evidence/DEPENDENCY_DAG.json": "6c2a93f3fb16a6b4c78592dccc78e92e8b96c4b86408d9279dcadb955d179dec",
+  "evidence/INDEPENDENT_VERIFICATION.json": "844f260c7baaf0d9b781931e34b7bb1c4c02634d7c3931e25c1308d6ceebcbf6",
+  "tests/test_k5b_countersignature.py": "25d39b8e3de3bb0157e05ee1101059fafd23e14758f1c9643dbd98904e6c3323"
+ },
+ "issued_utc": "2026-09-16",
+ "non_claims": {
+  "AWS_PS1_TOUCHED": false,
+  "CUSUM_CLOSURE_MODIFIED": false,
+  "K5_DECLARED_CLOSED": false,
+  "K5_PRODUCTION_EVIDENCE_GENERATED": false,
+  "ORACLE_EXECUTED": false,
+  "ORIGINAL_THEOREM_MODIFIED": false,
+  "ORIGIN_MAIN_TOUCHED": false,
+  "P5Y_DECLARED_CLOSED": false,
+  "P5Z_VERDICT_ISSUED": false,
+  "READINESS_AUDIT_MODIFIED": false,
+  "SCIENTIFIC_COMPUTE_RUN": false
+ },
+ "review_base": {
+  "cusum_closure_commit": "ce7fb93308dc41284e5b424be96a9ad578ecfee9",
+  "k5_readiness_audit_commit": "e86809982f4a47b96aa59aee4fd7a3b180402598",
+  "origin/main": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+  "origin/p5y-postk1-frontier": "e86809982f4a47b96aa59aee4fd7a3b180402598"
+ },
+ "reviewer": {
+  "independence": "separate session and re-implementation from the theorem text; NOT independent by agent family and NOT a human review",
+  "kind": "independent Claude Code session (Claude Opus 5)"
+ },
+ "schema": "rebaseguard.p5y.k5b.independent-countersignature.v1",
+ "scope": {
+  "failure_semantics": "a failed cell, failed chain or K5_INCONCLUSIVE does not imply that H3a is false; refutation needs an independently proved counterexample such as a certified sup_{C_1} R''' < 0",
+  "guarantees": "for a fixed (D,m): if R is odd, C^3 (P5-T3, P5X L5), R'(0) = 1 - GammaTilde, the inputs are valid outward enclosures on the frozen contiguous cover from x_0 = 0, every cell meeting (0,2] passes the strict exact recurrences over the whole closed cell, and K1 certifies R(2) > -2, then s = -R/e is continuous and strictly decreasing on (0,2] with s(0+) = GammaTilde - 1 and s(2) < 1",
+  "not_covered": [
+   "the clause s(0+) = 1/rho_c, which needs certified GammaTilde > 1 (P3), outside K5-B",
+   "degenerate truths (a3 = 0; g touching 0 at isolated points) are not certifiable",
+   "the cell containing 2 must pass over its whole closed cell, including the part beyond e = 2 (A10)",
+   "fixed-cell granularity slack does not vanish with exact inputs (A11)",
+   "no statement about realised K1 or order-3 widths"
+  ],
+  "readiness_scan_semantics": "k5_minimality.py (gamma_0 = 0) yields the literal K5-B pass set whenever all R2_interval.lo <= 0, which CUSUM_MINIMALITY_R1.json records for every m; the pass semantics were not changed on committed data",
+  "readiness_statements_stronger_than_theorem": [
+   "README section 3 caveat 3: 'an order-3 island buys nothing downstream - only an unbroken run from cell 0 propagates'",
+   "K5_READINESS_RECORD.json m5_tail_note: 'needs an unbroken order-3 run 0-309'"
+  ],
+  "unblocks": "B3_BRIDGE_NOT_INDEPENDENTLY_COUNTERSIGNED only"
+ },
+ "theorem": {
+  "git_blob": "a7cf57c16a1023b930b0a803f15a41e8adefbbc2",
+  "introduced_in": "6f1d351bd12c57d6438c61dda4bdd6aa2b46528a",
+  "name": "Theorem K5-B (sufficient bridge)",
+  "path": "level4/closure_proofs/p5y_k5_feasibility/K5_GLOBAL_BRIDGE.md",
+  "sha256": "c1c62346dcd11b3a56b028e4aca7b61d7c4254353b1504701f16989205339d3f"
+ }
+}

@@ -1,0 +1,107 @@
+{
+ "bound_at_commit": "e86809982f4a47b96aa59aee4fd7a3b180402598",
+ "bound_branch": "p5y-postk1-frontier",
+ "premise_files": {
+  "level4/closure_proofs/p5_nonlinear_dynamics/THEOREM.md": {
+   "commits_touching": 1,
+   "git_blob": "fe287dbcda3d0bc7cc78348a86d1d5464df22812",
+   "introduced_in": "bb03c0ea9ea34060c992b6d7f0390de6a3cf8108",
+   "last_modified_in": "bb03c0ea9ea34060c992b6d7f0390de6a3cf8108",
+   "role": "H3a verbatim; P5-T3 oddness; R'(0) = 1 - GammaTilde; rho_c = 1/|1 - GammaTilde|",
+   "sha256": "207951a9ea64b995685862240c8605fa62313762ac77e652e6176e0311688ca3"
+  },
+  "level4/closure_proofs/p5x_global_nonlinear_dynamics/DEPENDENCY_AUDIT.md": {
+   "commits_touching": 1,
+   "git_blob": "8eb4032a2aa1d91d705e35373be4020ef47b899e",
+   "introduced_in": "528908ba3c952031f7f41c2f22fc6e07a1401d90",
+   "last_modified_in": "528908ba3c952031f7f41c2f22fc6e07a1401d90",
+   "role": "P5X dependency graph (L5 depends on L1, P5-T1, P5-T4; no H3a)",
+   "sha256": "80a2212d832f3460dce386e60b8a9630ca65db1debd743f54f65d79e4c023749"
+  },
+  "level4/closure_proofs/p5x_global_nonlinear_dynamics/PROOF.md": {
+   "commits_touching": 1,
+   "git_blob": "a46e8c3d23308f138b47d9224db7fa604c5ac9c3",
+   "introduced_in": "528908ba3c952031f7f41c2f22fc6e07a1401d90",
+   "last_modified_in": "528908ba3c952031f7f41c2f22fc6e07a1401d90",
+   "role": "L5 real-analyticity of R on a complex strip (hence C^3 on every cell, including past e = 2)",
+   "sha256": "da4a2d519317c9a0265079c488f28ff1cec4a27b658c02d40d1c514942cd88be"
+  },
+  "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/assembly.py": {
+   "commits_touching": 1,
+   "git_blob": "53ba37d4b202ad17000de510c10a844154dc7b50",
+   "introduced_in": "c0a1f40cff6974899cd44ab424591bb6a819c949",
+   "last_modified_in": "c0a1f40cff6974899cd44ab424591bb6a819c949",
+   "role": "K1 semantics: R_interval at e0, D_interval at e0, R2_interval uniform on the cell, M_R2 = mag(R2_interval)",
+   "sha256": "c51918c8b4d3fbb5530ca6432a38bb94e55138c6168e2ea124868c8d7a5b128c"
+  },
+  "level4/closure_proofs/p5y_postk1_precompute_resolution/K5_TARGET_AND_THIRD_ORDER.md": {
+   "commits_touching": 1,
+   "git_blob": "f9b10e7e7f3f87799472515a0ab12cb809b75cd3",
+   "introduced_in": "e5cc5a9069f817cce76b5ac5676a327757b57573",
+   "last_modified_in": "e5cc5a9069f817cce76b5ac5676a327757b57573",
+   "role": "binding H3a target (form A), Lemma K5-L, near-zero expansion",
+   "sha256": "eca0cdaa6000261a474bad34c09ebe3d9a749ae57adf67f5cd54ed89dcc814d2"
+  }
+ },
+ "reviewed_context_files": {
+  "level4/closure_proofs/p5y_k5_feasibility/RESULT.md": {
+   "commits_touching": 1,
+   "git_blob": "09b9f4e04d87268fdb5d3eecfe1b4b56109c1623",
+   "introduced_in": "6f1d351bd12c57d6438c61dda4bdd6aa2b46528a",
+   "last_modified_in": "6f1d351bd12c57d6438c61dda4bdd6aa2b46528a",
+   "role": "original result record and independence recommendation",
+   "sha256": "b2d3cd1e6727a9e6aaab3ee42bc10c3cd949977940873abb8014140a9ab4c575"
+  },
+  "level4/closure_proofs/p5y_k5_feasibility/config/K5_FEASIBILITY_ORACLE.json": {
+   "commits_touching": 1,
+   "git_blob": "8d6bdd29f6e1131eef447a8fb0654b15cd0db7cf",
+   "introduced_in": "6f1d351bd12c57d6438c61dda4bdd6aa2b46528a",
+   "last_modified_in": "6f1d351bd12c57d6438c61dda4bdd6aa2b46528a",
+   "role": "frozen pre-result probe oracle (not executed)",
+   "sha256": "85fea44d899d17dd98b691bd8cf3b0ba4eb1f62fb92e94bc1c986dc47bdca2d1"
+  },
+  "level4/closure_proofs/p5y_k5_order3_readiness_audit/README.md": {
+   "commits_touching": 1,
+   "git_blob": "597c9b2d2fc5370d0ec40e55b3cc546b3f299837",
+   "introduced_in": "e86809982f4a47b96aa59aee4fd7a3b180402598",
+   "last_modified_in": "e86809982f4a47b96aa59aee4fd7a3b180402598",
+   "role": "readiness audit (K5_BRIDGE_THEOREM = PASS, not countersigned)",
+   "sha256": "735cd1f69623b47bd29985ad6aa6fdc6ece04573a4510cc116a36386065ee113"
+  },
+  "level4/closure_proofs/p5y_k5_order3_readiness_audit/code/k5_minimality.py": {
+   "commits_touching": 1,
+   "git_blob": "fbd624aaecbbfed4846970530e0c53db1f6d6a64",
+   "introduced_in": "e86809982f4a47b96aa59aee4fd7a3b180402598",
+   "last_modified_in": "e86809982f4a47b96aa59aee4fd7a3b180402598",
+   "role": "readiness implementation of the recurrences (gamma_0 = 0 variant)",
+   "sha256": "3a54f0fb290a9b8a07c861653d4399e6c588afdaef77ee51473f778c6c988885"
+  },
+  "level4/closure_proofs/p5y_k5_order3_readiness_audit/config/K5_READINESS_RECORD.json": {
+   "commits_touching": 1,
+   "git_blob": "41f78fb39fd92494c4edd4aa1d979b9f0735e03d",
+   "introduced_in": "e86809982f4a47b96aa59aee4fd7a3b180402598",
+   "last_modified_in": "e86809982f4a47b96aa59aee4fd7a3b180402598",
+   "role": "readiness record (B3_BRIDGE_NOT_INDEPENDENTLY_COUNTERSIGNED)",
+   "sha256": "e5d2da6bd7dcbbac3fadfa56479fbec6f09ffb1f3fd6d883cacf9b1be2899c9d"
+  },
+  "level4/closure_proofs/p5y_k5_order3_readiness_audit/evidence/CUSUM_MINIMALITY_R1.json": {
+   "commits_touching": 1,
+   "git_blob": "853088617f75679c095a0aabb4e78684fc6c5665",
+   "introduced_in": "e86809982f4a47b96aa59aee4fd7a3b180402598",
+   "last_modified_in": "e86809982f4a47b96aa59aee4fd7a3b180402598",
+   "role": "readiness evidence (all R2_interval.lo <= 0 for every m)",
+   "sha256": "7feb576b84508c91a79e605fc190ac5da5083662ad9640aea4976c566a0c2a30"
+  }
+ },
+ "schema": "rebaseguard.p5y.k5b.theorem-hash-inventory.v1",
+ "theorem_files": {
+  "level4/closure_proofs/p5y_k5_feasibility/K5_GLOBAL_BRIDGE.md": {
+   "commits_touching": 1,
+   "git_blob": "a7cf57c16a1023b930b0a803f15a41e8adefbbc2",
+   "introduced_in": "6f1d351bd12c57d6438c61dda4bdd6aa2b46528a",
+   "last_modified_in": "6f1d351bd12c57d6438c61dda4bdd6aa2b46528a",
+   "role": "Theorem K5-B: statement, recurrences, proof (the countersigned object)",
+   "sha256": "c1c62346dcd11b3a56b028e4aca7b61d7c4254353b1504701f16989205339d3f"
+  }
+ }
+}
