@@ -1,0 +1,233 @@
+{
+ "argv": [
+  "r5_mutations",
+  "--out",
+  "evidence/qualification_r4/part_r5_mutations.json"
+ ],
+ "body": {
+  "mutations": {
+   "B01_M5_USES_ODD_COMPONENT": {
+    "detected": true,
+    "group": "r5",
+    "trials": [
+     {
+      "first": [
+       "strategyB: m=1 misses"
+      ],
+      "kinds": [
+       "M5",
+       "strategyB"
+      ],
+      "trial": "FR4_01_tight_M5_a",
+      "violations": 6
+     }
+    ]
+   },
+   "B02_TRANSPORT_SIGN": {
+    "detected": true,
+    "group": "r5",
+    "trials": [
+     {
+      "first": [
+       "strategyB: m=1 misses"
+      ],
+      "kinds": [
+       "strategyB"
+      ],
+      "trial": "FR4_01_tight_M5_a",
+      "violations": 4
+     }
+    ]
+   },
+   "B03_TOWER_DROPS_RESOLVENT": {
+    "detected": true,
+    "group": "r5",
+    "trials": [
+     {
+      "first": [
+       "tower: F:0:0.o at e=0: 6.653e-01 > 3.550e-01"
+      ],
+      "kinds": [
+       "anchor",
+       "tower"
+      ],
+      "trial": "FR4_01_tight_M5_a",
+      "violations": 654
+     }
+    ]
+   },
+   "B04_PENALTY_SCALE": {
+    "detected": true,
+    "group": "r5",
+    "trials": [
+     {
+      "first": [
+       "strategyB: m=1 misses"
+      ],
+      "kinds": [
+       "strategyB"
+      ],
+      "trial": "FR4_01_tight_M5_a",
+      "violations": 3
+     }
+    ]
+   },
+   "B05_S0_TOWER_PARITY": {
+    "detected": true,
+    "group": "r5",
+    "trials": [
+     {
+      "first": [
+       "strategyB: m=1 misses"
+      ],
+      "kinds": [
+       "M5",
+       "anchor",
+       "strategyB",
+       "tower"
+      ],
+      "trial": "FR4_01_tight_M5_a",
+      "violations": 2035
+     }
+    ]
+   },
+   "B06_TOWER_J_AS_K": {
+    "detected": true,
+    "group": "r5",
+    "trials": [
+     {
+      "first": [
+       "tower: S:1:0.o at e=0: 4.688e-02 > 1.477e-04"
+      ],
+      "kinds": [
+       "anchor",
+       "tower"
+      ],
+      "trial": "FR4_01_tight_M5_a",
+      "violations": 4867
+     }
+    ]
+   },
+   "L01_WRONG_PARITY_DRIFT_DROPPED_EVEN": {
+    "detected": true,
+    "group": "local",
+    "trials": [
+     {
+      "first": [
+       "tower: h:1:0.o at e=1/64000: 2.414e-06 > 0.000e+00"
+      ],
+      "kinds": [
+       "anchor",
+       "tower"
+      ],
+      "trial": "FR4_01_tight_M5_a",
+      "violations": 2676
+     }
+    ]
+   },
+   "L02_POINT_ERROR_DROPPED": {
+    "detected": true,
+    "group": "local",
+    "trials": [
+     {
+      "first": [],
+      "kinds": [],
+      "trial": "FR4_01_tight_M5_a",
+      "violations": 0
+     },
+     {
+      "first": [],
+      "kinds": [],
+      "trial": "FR4_02_tight_M5_b",
+      "violations": 0
+     },
+     {
+      "first": [],
+      "kinds": [],
+      "trial": "FR4_03_tight_M5_c",
+      "violations": 0
+     },
+     {
+      "first": [
+       "tower: S:0:1.e at e=0: 8.400e-01 > 8.400e-01"
+      ],
+      "kinds": [
+       "anchor",
+       "tower"
+      ],
+      "trial": "FR4_04_parity_pure_cusum_like",
+      "violations": 506
+     }
+    ]
+   },
+   "L03_H_BASE_PARITY_FLIPPED": {
+    "detected": true,
+    "group": "local",
+    "trials": [
+     {
+      "first": [
+       "tower: h:1:0.e at e=0: 6.000e-01 > 0.000e+00"
+      ],
+      "kinds": [
+       "anchor",
+       "tower"
+      ],
+      "trial": "FR4_01_tight_M5_a",
+      "violations": 7850
+     }
+    ]
+   },
+   "L04_RIGHT_PARITY_DRIFT_DROPPED": {
+    "detected": true,
+    "group": "local",
+    "trials": [
+     {
+      "first": [
+       "tower: S:0:0.o at e=1/64000: 3.550e-01 > 3.550e-01"
+      ],
+      "kinds": [
+       "anchor",
+       "tower"
+      ],
+      "trial": "FR4_01_tight_M5_a",
+      "violations": 768
+     }
+    ]
+   },
+   "L05_ANCHOR_REPLACES_TOWER_WITHOUT_MIN": {
+    "detected": true,
+    "group": "local",
+    "trials": [
+     {
+      "first": [
+       "strategyB: m=1 misses"
+      ],
+      "kinds": [
+       "M5",
+       "anchor",
+       "strategyB",
+       "tower"
+      ],
+      "trial": "FR4_01_tight_M5_a",
+      "violations": 11048
+     }
+    ]
+   }
+  }
+ },
+ "metadata": {
+  "cpu_seconds": 8.533422574,
+  "peak_rss_kib": 49820,
+  "wall_seconds": 8.534212589263916
+ },
+ "part": "r5_mutations",
+ "protocol_sha256": "a9472e4660d67e60c856f713cadcc2db690f8e2feb8f3fa75bca2919d959eedf",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}

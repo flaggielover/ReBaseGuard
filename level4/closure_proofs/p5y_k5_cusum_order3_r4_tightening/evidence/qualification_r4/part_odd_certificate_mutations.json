@@ -1,0 +1,50 @@
+{
+ "argv": [
+  "odd_certificate_mutations",
+  "--out",
+  "evidence/qualification_r4/part_odd_certificate_mutations.json"
+ ],
+ "body": {
+  "rows": {
+   "O01_REFLECTED_HALF_SIGN": {
+    "accepts_control": false,
+    "artifact_replay_differs": true,
+    "detected": true
+   },
+   "O02_SPLIT_AT_ZERO_NOT_MINUS_HALF_D": {
+    "accepts_control": false,
+    "artifact_replay_differs": true,
+    "detected": true
+   },
+   "O03_H_COVER_DROPS_NEAR_DIAGONAL": {
+    "accepts_control": true,
+    "artifact_replay_differs": true,
+    "detected": true
+   },
+   "O04_TRUNCATION_ALLOWANCE_DROPPED": {
+    "accepts_control": false,
+    "artifact_replay_differs": true,
+    "detected": true
+   },
+   "frozen_verifier_rejects_control": {
+    "margin_lower": "[-0.134957738725859 +/- 1.78e-16]",
+    "pass": true
+   }
+  }
+ },
+ "metadata": {
+  "cpu_seconds": 1226.2730032289999,
+  "peak_rss_kib": 325884,
+  "wall_seconds": 1226.6230680942535
+ },
+ "part": "odd_certificate_mutations",
+ "protocol_sha256": "a9472e4660d67e60c856f713cadcc2db690f8e2feb8f3fa75bca2919d959eedf",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}

@@ -1,0 +1,48 @@
+{
+ "argv": [
+  "odd_certificate",
+  "--out",
+  "evidence/qualification_r4/part_odd_certificate.json"
+ ],
+ "body": {
+  "checks": {
+   "C_e0": {
+    "C_float": 469.76966683433835,
+    "C_upper_bound": "528913624126272035/1125899906842624",
+    "certified": true,
+    "identical": true,
+    "pass": true
+   },
+   "C_o0": {
+    "C_float": 5.360144767926632,
+    "C_upper_bound": "38791397580793375836869515062442065852852548338471315442955375279154060469759/7237005577332262213973186563042994240829374041602535252466099000494570602496",
+    "certified": true,
+    "identical": true,
+    "margin_lower": 0.09712297030519888,
+    "pass": true
+   },
+   "registry": {
+    "loaded": {
+     "C_e0": "528913624126272035/1125899906842624",
+     "C_o0": "38791397580793375836869515062442065852852548338471315442955375279154060469759/7237005577332262213973186563042994240829374041602535252466099000494570602496"
+    },
+    "pass": true
+   }
+  }
+ },
+ "metadata": {
+  "cpu_seconds": 234.18183949000002,
+  "peak_rss_kib": 320664,
+  "wall_seconds": 234.20425033569336
+ },
+ "part": "odd_certificate",
+ "protocol_sha256": "a9472e4660d67e60c856f713cadcc2db690f8e2feb8f3fa75bca2919d959eedf",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}

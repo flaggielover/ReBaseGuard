@@ -1,0 +1,54 @@
+{
+ "argv": [
+  "operator_audit",
+  "--out",
+  "evidence/qualification_r4/part_operator_audit.json"
+ ],
+ "body": {
+  "audit": {
+   "coupling_R3": {
+    "sup_E_tau_wedge_T0": 16.555411797364027
+   },
+   "full_space": {
+    "condition_inf": 1587.4934859224463,
+    "perron_eigenvalue": 0.9978234116866163,
+    "sup_resolvent_of_one": 465.4424545615308
+   },
+   "grid": "13x13 Chebyshev (degree 12), float64",
+   "non_evidence": true,
+   "notes": {
+    "componentwise": "for a POSITIVE operator the sup-norm resolvent norm equals sup of the resolvent of 1; the reflected odd kernel is positive, so the componentwise supersolution is exact in the limit",
+    "direct_odd_solve": "float odd-block solve = sup_resolvent_of_one; a certificate needs a sup-norm discretisation error bound for the continuous operator, which the supersolution avoids",
+    "interval_inverse_krawczyk_newton": "certify the MATRIX inverse only; the operator-to-matrix error in the sup norm is the missing load-bearing term",
+    "perron_separation": "Perron mode is even (R2); irrelevant for the odd block, dominant for C_e0",
+    "preconditioned_neumann": "||I - A(I - K_o)|| < 1 for the continuous operator needs the same projection error; matrix_defect_of_float_inverse is the (non-load-bearing) matrix part",
+    "schur_parity_block": "exact: sigma is a permutation symmetry, the odd block decouples at e = 0 (R4 reduction)",
+    "spectral_gap": "spectral radius < 1 does not bound the sup-norm resolvent of a non-normal operator"
+   },
+   "odd_block": {
+    "condition_inf": 16.58763988616674,
+    "matrix_defect_of_float_inverse": 3.4639925899640505e-15,
+    "neumann_terms_for_half": 5,
+    "row_sum_norm": 2.0239512054939484,
+    "spectral_radius": 0.707767489355356,
+    "sup_resolvent_of_one": 4.5955421131454735
+   }
+  },
+  "pass": true
+ },
+ "metadata": {
+  "cpu_seconds": 0.42235903199999997,
+  "peak_rss_kib": 81380,
+  "wall_seconds": 0.42310261726379395
+ },
+ "part": "operator_audit",
+ "protocol_sha256": "a9472e4660d67e60c856f713cadcc2db690f8e2feb8f3fa75bca2919d959eedf",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}

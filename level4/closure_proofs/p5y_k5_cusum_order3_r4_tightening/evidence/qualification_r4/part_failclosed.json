@@ -1,0 +1,58 @@
+{
+ "argv": [
+  "failclosed",
+  "--out",
+  "evidence/qualification_r4/part_failclosed.json"
+ ],
+ "body": {
+  "checks": {
+   "forged_authorization": {
+    "pass": true,
+    "refused": "REAL_CELL_NOT_AUTHORIZED: cell 0 (R4 registry is frozen empty)"
+   },
+   "gate_precedes_record_validation": {
+    "pass": true,
+    "refused": "REAL_CELL_NOT_AUTHORIZED: cell 0 (R4 registry is frozen empty)"
+   },
+   "local_r5_missing_input": {
+    "pass": true,
+    "refused": "missing tower input C_e0"
+   },
+   "local_r5_order4_anchor": {
+    "pass": true,
+    "refused": "anchors are restricted to orders <= 3"
+   },
+   "missing_C_o0_even_if_repinned": {
+    "pass": true,
+    "refused": "MISSING_OPERATOR_CERTIFICATE C_o0"
+   },
+   "missing_C_o0_registry_bytes_changed": {
+    "pass": true,
+    "refused": "OPERATOR_CERTIFICATE_REGISTRY_ALTERED"
+   },
+   "no_authorization": {
+    "pass": true,
+    "refused": "REAL_CELL_NOT_AUTHORIZED: cell 0 (R4 registry is frozen empty)"
+   },
+   "tampered_certificate_value_detected": {
+    "pass": true
+   }
+  },
+  "pass": true
+ },
+ "metadata": {
+  "cpu_seconds": 148.844813416,
+  "peak_rss_kib": 321480,
+  "wall_seconds": 148.86330699920654
+ },
+ "part": "failclosed",
+ "protocol_sha256": "a9472e4660d67e60c856f713cadcc2db690f8e2feb8f3fa75bca2919d959eedf",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}

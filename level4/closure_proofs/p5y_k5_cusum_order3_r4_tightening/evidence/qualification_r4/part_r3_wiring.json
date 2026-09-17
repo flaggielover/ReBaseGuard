@@ -1,0 +1,158 @@
+{
+ "argv": [
+  "r3_wiring",
+  "--out",
+  "evidence/qualification_r4/part_r3_wiring.json"
+ ],
+ "body": {
+  "C1_count": 0,
+  "C1_scalar_equivalence_problems": [],
+  "C2C3_count": 0,
+  "C2C3_graded_residual_violations": [],
+  "C5_graded_looser_m": [],
+  "C6_candidate_parity_violations": [],
+  "C6_count": 0,
+  "C7_count": 0,
+  "C7_leibniz_structure_problems": [],
+  "cpu_build_seconds": 1223.160734245,
+  "mutations": {
+   "RW01_PARITY_BASE_S_EVEN": {
+    "c1": 0,
+    "c23": 4,
+    "c6": 0,
+    "c7": 0,
+    "detected": true,
+    "first": [
+     "S_0:1@right odd 8.080e-03 > 7.976e-03 at 0.0,4.0"
+    ]
+   },
+   "RW02_F_ENVELOPE_ORDER_SHIFT": {
+    "c1": 0,
+    "c23": 0,
+    "c6": 0,
+    "c7": 15,
+    "detected": true,
+    "first": [
+     "dF_0: envelope terms [(1, 'K', 1, ('D', 0, 0)), (1, 'K', 1, ('F', 0, 0))] != Leibniz [(1, 'K', 1, ('D', 0, 0)), (1, 'K', 2, ('F', 0, 0))]"
+    ]
+   },
+   "RW03_F_ENVELOPE_DROPS_K1_TERM": {
+    "c1": 0,
+    "c23": 10,
+    "c6": 0,
+    "c7": 20,
+    "detected": true,
+    "first": [
+     "F_0@right even 8.510e-03 > 7.138e-03 at 0.0,3.0"
+    ]
+   },
+   "RW04_S_ENVELOPE_J_AS_K": {
+    "c1": 0,
+    "c23": 4,
+    "c6": 0,
+    "c7": 16,
+    "detected": true,
+    "first": [
+     "S_1:1@right odd 8.650e-03 > 7.817e-03 at 1.0,3.0"
+    ]
+   },
+   "RW05_ALLOWANCE_DROPPED": {
+    "c1": 25,
+    "c23": 0,
+    "c6": 0,
+    "c7": 0,
+    "detected": true,
+    "first": [
+     "h:3:0: engine 1.961220294509e+00 frozen 1.961220294647e+00"
+    ]
+   },
+   "RW06_LEAF_S0_PARITY": {
+    "c1": 0,
+    "c23": 4,
+    "c6": 0,
+    "c7": 0,
+    "detected": true,
+    "first": [
+     "S_0:1@right odd 8.080e-03 > 7.976e-03 at 0.0,4.0"
+    ]
+   },
+   "RW07_CELL_DROPS_RHO": {
+    "c1": 0,
+    "c23": 134,
+    "c6": 0,
+    "c7": 0,
+    "detected": true,
+    "first": [
+     "h_1:2@right odd 8.080e-03 > 6.600e-03 at 0.0,4.0"
+    ]
+   },
+   "RW08_NO_LEAKAGE_ETA": {
+    "c1": 0,
+    "c23": 8,
+    "c6": 0,
+    "c7": 0,
+    "detected": true,
+    "first": [
+     "h_2:1@left odd 1.443e+00 > 1.443e+00 at 5.0,0.0"
+    ]
+   },
+   "RW09_SCLOSED3_ALLOWANCE_DROPPED": {
+    "c1": 2,
+    "c23": 0,
+    "c6": 0,
+    "c7": 0,
+    "detected": true,
+    "first": [
+     "Sclosed:3: engine 0.000000000000e+00 frozen 8.084685530975e-51"
+    ]
+   },
+   "RW10_ENGINE_NAME_DF_H_SWAP": {
+    "c1": 15,
+    "c23": 144,
+    "c6": 0,
+    "c7": 0,
+    "detected": true,
+    "first": [
+     "F:0:1: engine 8.254239191914e+04 frozen 7.774957912821e+04"
+    ]
+   },
+   "RW11_CANDIDATE_SUP_PARITY_SWAP": {
+    "c1": 0,
+    "c23": 39,
+    "c6": 1740,
+    "c7": 0,
+    "detected": true,
+    "first": [
+     "h_2:1@right even 1.169e-02 > 9.674e-03 at 1.5,1.5"
+    ]
+   },
+   "RW12_RESIDUAL_RANGE_PARITY_SWAP": {
+    "c1": 0,
+    "c23": 1303,
+    "c6": 0,
+    "c7": 0,
+    "detected": true,
+    "first": [
+     "h_1:2@e0 even 1.513e+00 > 6.600e-03 at 0.0,0.0"
+    ]
+   }
+  },
+  "payload_sha256": "f6069e43a7f308bd70ee1bd6a801e4924ac1434e5f0efcf98475fbfb6dd571c6",
+  "residual_names": 83
+ },
+ "metadata": {
+  "cpu_seconds": 2554.53250185,
+  "peak_rss_kib": 270104,
+  "wall_seconds": 2555.284523487091
+ },
+ "part": "r3_wiring",
+ "protocol_sha256": "a9472e4660d67e60c856f713cadcc2db690f8e2feb8f3fa75bca2919d959eedf",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}
