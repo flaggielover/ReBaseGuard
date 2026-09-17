@@ -1,0 +1,500 @@
+{
+ "aggregate_routes": {
+  "CUSUM_H3A_TARGET_REFUTED_FOR_SOME_M": "SEEK_ALTERNATE_K5_ROUTE (the H3a target is refuted for CUSUM; a target change needs an explicit preregistered decision)",
+  "FIRST_CELL_SUPPORTED_ALL_M": "CONSUME_IN_FROZEN_K5B_CHECKER_THEN_PREREGISTER_NEXT_ORDER3_CELLS",
+  "FIRST_CELL_SUPPORTED_SOME_M_UNRESOLVED_OTHERS": "CONSUME_SUPPORTED_M_IN_FROZEN_K5B_CHECKER; UNRESOLVED_M_REQUIRE_NEW_SUCCESSOR_METHOD",
+  "FIRST_CELL_UNRESOLVED_ALL_M": "NEW_SUCCESSOR_METHOD_REQUIRED (no rerun under this protocol)",
+  "VOID": "NO_SCIENTIFIC_ROUTING (producer integrity failure; successor protocol required)"
+ },
+ "authorization_path": "level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/protocol/AUTHORIZATION_ACTIVE.json",
+ "authorization_rules": [
+  "the activated authorization equals AUTHORIZATION_TEMPLATE_R3.json in every non-activation field and carries no extra key",
+  "activation fields: EXECUTION_AUTHORIZED true, PROTOCOL_FREEZE_COMMIT, PRODUCER_R4_IDENTITY.executor_binding_sha256, AUTHORIZED_BY, AUTHORIZATION_UTC",
+  "committed once at the fixed path in a commit strictly after the amendment commit, which is strictly after the freeze commit; all three on the published ref",
+  "AUTHORIZATION_UTC not in the future, within the hour before the authorization commit, after the amendment commit",
+  "AUTHORIZATION_COMMIT is derived from git, never claimed by the file"
+ ],
+ "cell_selection": {
+  "candidates": [
+   {
+    "cell": "0 (C_1)",
+    "cost": "one point run for all m, ~3.0e3 CPU-s estimated",
+    "geometry_artifact": "none: left endpoint exactly 0, point e = 0 inside the cell, exact sigma symmetry",
+    "isolated_value": "yes: necessary condition; a negative certificate refutes H3a",
+    "k1_neighbours": "no: H_1 contains R''(0) = 0; cells 1..132+ also fail with L = -inf",
+    "signed_order3_exposure": "none",
+    "tests": "K5-B k = 1 premise L_1 > 0 and Lemma K5-L sign at 0",
+    "unlocks": "seeds ell_1, gamma_1 < 0 for every m; necessary for any K5-B H3a certificate",
+    "width_risk": "MARGINAL forecast (point 490.6 + penalty 330.1 for m = 1; assumption A1)"
+   },
+   {
+    "cell": "transition 132/144/145/148 (m = 1/2/3/5)",
+    "cost": "higher (whole cell, graded ranges)",
+    "geometry_artifact": "none",
+    "isolated_value": "no (no downstream effect without C_1)",
+    "k1_neighbours": "yes: the next cells (133/145/146/149) close directly by Gamma_k < 0",
+    "signed_order3_exposure": "none",
+    "tests": "K5-B k >= 2 chain step (U_k < 0)",
+    "unlocks": "only when the chain from C_1 is already seeded; a restart from H_k.lo ~ -2.6e3 cannot make U_k < 0",
+    "width_risk": "very high: whole-cell Strategy A at e ~ 0.11 without the e = 0 parity structure (R3 cell-0 A radius was 2.58e5)"
+   },
+   {
+    "cell": "tail 305-309 (m = 5)",
+    "cost": "higher, 5 cells",
+    "geometry_artifact": "cell 309 contains e = 2; the pass rule needs the whole closed cell (A10)",
+    "isolated_value": "conditional only",
+    "k1_neighbours": "cells 149-304 close by K1 alone",
+    "signed_order3_exposure": "none",
+    "tests": "restart island closing the m = 5 tail",
+    "unlocks": "possibly closes 305-309 for m = 5 by restart (H.lo ~ -5.5), but H3a for m = 5 still needs cells 0-148",
+    "width_risk": "high: no sigma symmetry at e ~ 1.7, Strategy B inapplicable (R''' not even there)"
+   }
+  ],
+  "downstream_disclosure": "A POSITIVE result closes only C_1 for that m. With L_k = -inf for k >= 2 the next cell still fails (mu_2 = H_2.lo ~ -4e3), and no qualified Strategy exists away from e = 0 (R4 Strategy-A cell radius with R4 C_o0 ~ 3.85e4). The immediate downstream value of POSITIVE is the necessary first step and a seeded chain, not further closures.",
+  "rationale": [
+   "K5-B bridge (K5_GLOBAL_BRIDGE.md lines 30-33 and line 56; countersignature README lines 69-70): theorem cell C_1 passes ONLY through L_1 > 0; the direct test Gamma_1 < 0 is structurally impossible (Gamma_1 >= g(0) = 0). Every m requires cell 0; no other cell can substitute and no restart covers C_1.",
+   "Lemma K5-L (K5_TARGET_AND_THIRD_ORDER.md section 2): R'''(0) > 0 is the only generic way H3a holds at 0 and a certified R'''(0) < 0 refutes H3a for that (D, m). Cell 0 is therefore decisive in both directions; any other cell is at most conditionally informative.",
+   "Readiness scan (CUSUM_MINIMALITY_R1.json): with L = -inf, cells 0-132/144/145/148 (m = 1/2/3/5) and 305-309 (m = 5) fail; K1 R'' bounds close 133/145/146/149 onward directly. Neighbouring prefix cells cannot pass by restart in practice (H_k.lo ~ -3.8e3 .. -2.6e3), so prefix order-3 evidence has value only after C_1 passes.",
+   "R4 was engineered for exactly this object (sigma symmetry at e = 0, certified C_o0 <= 5.3601, point R'''(0), local M5 on [0, x1]); pre-result forecast total radius 820.8 (m=1) .. 635.5 (m=5), MARGINAL, assumption A1. Other candidates have no qualified R4 method."
+  ],
+  "selected": {
+   "C_upper_source": "frozen CUSUM cell 0 C_upper (bound on ||(I-K_e)^-1|| for e in [0, x1]), as in 84aaa6a5",
+   "e0_k1_record": "5083/20000000",
+   "k1_cell_index": 0,
+   "left": "0/1",
+   "point_e": "0/1",
+   "rho_k1_record": "5083/20000000",
+   "right": "5083/10000000",
+   "theorem_cell": "C_1",
+   "x1": "5083/10000000"
+  }
+ },
+ "completion_semantics": {
+  "files": {
+   "ATTEMPT_LOG.jsonl": "gate events only (no endpoint, sign or majorant), including ARITHMETIC_STARTED",
+   "RUN_COMPLETE.json": "written by the supervisor last: pid, sealed record sha256, qualification gates",
+   "RUN_FAILED.json": "written by the supervisor: pid, arithmetic_started, supervisor_evidence (for failure_class), traceback without numbers",
+   "RUN_STATE.json": "written by the supervisor in <output_namespace>/slot-N: pid, argv, boot id, start epoch, authorization sha256",
+   "SCIENTIFIC_RECORD_SEALED.json": "atomic write (tmp + fsync + rename) of all m; the finalized scientific record",
+   "VOID_RECORD_SEALED.json": "atomic write when arithmetic started and an integrity or cost class ended the attempt"
+  },
+  "waiter": "poll RUN_COMPLETE.json / RUN_FAILED.json in the slot and /proc/<supervisor pid>/cmdline exact argv equality; never pgrep -f on a string present in the polling shell"
+ },
+ "cost_model": {
+  "basis": "committed pre-result measurements only: GammaTilde point run at e = 0 (order-2 path) 1160.5 CPU-s, 240 MB; Aux3 auxiliary order-3 evidence for cell 0 171.2 CPU-s; R1 order-3 candidate recompute ~170 CPU-s; R3 synthetic graded parity ranges ~1271 CPU-s; R4 certificate replays ~234 CPU-s; local_r5 + assembly < 60 CPU-s",
+  "estimate_peak_rss_mib": 600,
+  "estimate_per_attempt_cpu_seconds": 3060,
+  "estimate_per_m_cpu_seconds": "shared: ~3060 for all four m together (per-m marginal < 1 CPU-s)",
+  "estimate_wall_seconds": 3100,
+  "rungs": 1,
+  "worst_case_campaign_cpu_seconds": 32400
+ },
+ "cpu_ceiling": {
+  "campaign_cpu_seconds_hard": 32400,
+  "enforcement": "RLIMIT_CPU soft 9000 / hard 10800 set by the supervisor before arithmetic; the executor's SIGXCPU handler (soft limit) seals VOID_RECORD_SEALED (cost) before the hard limit; the supervisor's wall watchdog does the same; the prelaunch verifier refuses if the authorization's ceilings differ",
+  "max_attempts": 3,
+  "per_attempt_cpu_seconds_rlimit": 10800,
+  "per_attempt_cpu_seconds_soft": 9000,
+  "per_attempt_wall_seconds": 14400
+ },
+ "execution_authorized_by_this_document": false,
+ "executor_binding": {
+  "amendment": {
+   "allowed_keys": [
+    "schema",
+    "status",
+    "science_preregistration_sha256",
+    "executor_entry",
+    "consumption_adapter_entry",
+    "executor_sources_sha256",
+    "qualification_evidence_sha256",
+    "independent_review",
+    "independent_review_sha256",
+    "independent_review_verdict",
+    "amendment_rule_ack"
+   ],
+   "executor_obligations": [
+    "a supervisor process launches the executor, sets the CPU limits, derives the failure class from wait status and host evidence, and writes RUN_STATE.json / RUN_FAILED.json / RUN_COMPLETE.json",
+    "the executor refuses in-process unless the prelaunch verifier's LAUNCH_PERMITTED report for the same HEAD and authorization is present",
+    "SIGXCPU and wall-watchdog handlers seal VOID (cost)",
+    "the executor emits ARITHMETIC_STARTED before the first operator touch",
+    "the consumption adapter passes its frozen acceptance test"
+   ],
+   "executor_parameters_bound_here": "Q06 constants via constants_r4.load_certificates, Q08 relative 2^-200, Q09 12 local_r5 iterations, 256 bits, CPU ceilings: if executor qualification finds any of these infeasible, this preregistration is voided and replaced by a successor BEFORE authorization (no amendment may change them)",
+   "path": "level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/protocol/EXECUTION_BINDING_AMENDMENT.json",
+   "requirements": "committed once strictly after the freeze and before the authorization, published; status BOUND_QUALIFIED; this file's sha256; executor_entry and consumption_adapter_entry among executor_sources_sha256, which also contains the frozen adapter pins; every source, evidence and review file committed no later than the amendment; the review file itself carries the lines 'REVIEW_VERDICT: PASS|PASS_WITH_SCOPE_LIMITATION' and 'REVIEWED_AMENDMENT_SOURCES_SHA256: <sha256 of canonical executor_sources_sha256>'; the amendment's verdict equals the file's"
+  },
+  "file": "level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/protocol/EXECUTION_BINDING_R3.json",
+  "status": "PENDING_EXECUTOR_IMPLEMENTATION_AND_QUALIFICATION"
+ },
+ "executor_real_entry_note": "The executor composes R1/R3/R4 internals and therefore bypasses the R1/R3/R4 real-entry registries (all frozen empty); it must enforce THIS protocol's authorization in-process (Q14) before any operator touch.",
+ "governance_choice": "OPTION_B: a preregistered scientific probe that simultaneously serves as the first real end-to-end qualification of the R4 producer",
+ "host_runtime_contract": {
+  "cpu_model": "AMD EPYC-Milan Processor",
+  "flint_so_sha256": "1f7ef1f52024937f542772ff9190e2f74449228cd69a6746b6608fbbd449d138",
+  "glibc_package_version": "2.41-12+deb13u4",
+  "host": "rebaseguard-vultr-02",
+  "kernel_release": "6.12.107+deb13-amd64",
+  "libc_path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+  "libc_sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+  "logical_cpus": 8,
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "python": "3.12.3",
+  "python_flint": "0.9.0",
+  "scipy": "1.18.1",
+  "venv_prefix": "/root/work/rbg-cusum-aux5-venv"
+ },
+ "host_runtime_contract_evidence": "level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/review/PRELAUNCH_REFUSAL_REPORT_R1.json (live host facts at preparation, including flint .so sha256)",
+ "host_runtime_identity_sha256": "1d49bd4e36f8fc32c8d9987bda801ffce83cf5e3c9df3678f90b92960dcd206b",
+ "hypothesis": {
+  "inequality": "L1_m = L0_m - (x1^2/2) * M5_m > 0 with x1 = 5083/10000000 (strict, exact rational comparison)",
+  "meaning": "L1_m > 0 supplies the K5-B premise L_1 > 0 for (CUSUM, m)",
+  "primary_question": "For each m in {1,2,3,5}: is the certified transported lower bound L1_m > 0 ?"
+ },
+ "independent_adjudication": {
+  "oracle_divergence_disclosure": "The frozen, unexecuted K5 feasibility oracle (K5_FEASIBILITY_ORACLE.json) probes whole-cell [L, U] on CUSUM cells {0, 221, 309} and routes U < 0 to independent adjudication (Q2 COUNTEREXAMPLE_SIGNAL). This protocol uses a different object (point enclosure + transport) on cell 0 only; it adopts the oracle's independent-adjudication requirement for every consequence. Executing this protocol exposes cell 0, after which the oracle's CUSUM cell-0 probe is no longer independently preregistered.",
+  "rule": "No consequence (POSITIVE or NEGATIVE) is ADOPTED until (i) an independent replay in a separate process/session recomputes Q07 and Q11 and every per-m verdict from the sealed record with code/probe_rules.py, and (ii) an independent review of the attempt logs and gate evidence passes. Until then the status is PENDING_INDEPENDENT_ADJUDICATION (probe_rules.adoption_status). A failed replay or review makes the record NOT_ADOPTABLE (no rerun under this protocol)."
+ },
+ "k1_input_identity": {
+  "cells_json_sha256": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f",
+  "k1_producer_identity": "3692d0fe",
+  "manifest": "level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/evidence/closure_r1/COMPOSITE_EXPORT_MANIFEST.json",
+  "manifest_sha256": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334",
+  "record": "level4/closure_proofs/p5y_k5b_k1_premise_binding_audit/result_r1/records/aux5_CUSUM_0_256.json",
+  "record_sha256": "4f8df44c956309b109e174f7ea15deee39ffad863c459f1656d6e2470a7ff1fb"
+ },
+ "k5b_consumption_adapter": {
+  "acceptance_before_use": "with every L = None the adapter plus k5b_literal must reproduce exactly the per-m pass sets of p5y_k5_order3_readiness_audit/evidence/CUSUM_MINIMALITY_R1.json (the countersignature shows the readiness variant equals the literal theorem whenever every H_k.lo <= 0, which holds on all CUSUM data); otherwise POSITIVE consumption is refused",
+  "pins": {
+   "k5_minimality.py": "3a54f0fb290a9b8a07c861653d4399e6c588afdaef77ee51473f778c6c988885",
+   "k5b_check.py": "ddd54dc469375a2d64352782add8573231be07b94f7246dad83c4e55a2bf35a6"
+  },
+  "records_source": {
+   "files": "aux5_CUSUM_<i>_256.json for i = 0..309",
+   "host_directory": "/root/work/postk1-runs/closure-r1/COMPOSITE_EXPORT/k4_records",
+   "per_record_check": "sha256 of every record equals files['k4_records/aux5_CUSUM_<i>_256.json'] in COMPOSITE_EXPORT_MANIFEST.json (sha256 29ad1f9b...); cells.json sha256 pinned in references_sha256; any mismatch refuses consumption"
+  },
+  "specification": "records -> cells with the frozen readiness loader p5y_k5_order3_readiness_audit/code/k5_minimality.py (load_cells/record_path and the scan field mapping x_lo, x_hi, rho, e0, R, D, H, M from R_interval, D_interval, R2_interval, M_R2) -> k5b_check.k5b_literal(cells) per m",
+  "status": "TO_BE_BOUND_IN_THE_EXECUTOR_AMENDMENT"
+ },
+ "k5b_consumption_map": {
+  "INCONCLUSIVE": {
+   "cells_closed_by_theorem": "none beyond the existing K1-only closures",
+   "cells_remaining_open": "C_1 and every cell previously open for that m",
+   "h3a_viable": "yes (a failed premise says nothing against H3a)",
+   "k5b_step": "none for C_1 (L_1 := -inf); the K1-only scan is unchanged",
+   "next_order3_informative": "no other cell is informative for that m until C_1 passes; only a NEW successor method on cell 0 (tighter point radius or M5) under a new preregistration",
+   "per_m_condition": "INCONCLUSIVE",
+   "restart": "cannot help C_1 (Gamma_1 >= 0); no rerun under this protocol"
+  },
+  "NEGATIVE": {
+   "cells_closed_by_theorem": "none",
+   "cells_remaining_open": "irrelevant for that m",
+   "h3a_viable": "no: certified R'''(0) < 0 => a3 < 0 => H3a false for (CUSUM, m) (Lemma K5-L, K5_TARGET_AND_THIRD_ORDER.md lines 46, 50-52; bridge line 56). The frozen K5 target requires every (D, m) (K5_TARGET line 20), so the H3a TARGET is refuted for CUSUM; changing the K5 target needs an explicit preregistered decision (K5_TARGET lines 14-16). Governed next route: SEEK_ALTERNATE_K5_ROUTE. The result is published as valid evidence; the producer is not failed because of the sign.",
+   "k5b_step": "none",
+   "next_order3_informative": "no, for the H3a route of that (D, m)",
+   "per_m_condition": "CONTRADICTS_REQUIRED_POSITIVE_SIGN, or POINT_NEGATIVE",
+   "restart": "not meaningful"
+  },
+  "POSITIVE": {
+   "cells_closed_by_theorem": "exactly the cells marked pass by the frozen countersignature k5b_check.k5b_literal (sha256 pinned) on K1 CUSUM records 0-309 with L_1 := L1_m (exact) and L_k := None (-inf) for k >= 2, via the pinned consumption adapter; nothing else",
+   "cells_remaining_open": "every cell 1..309 the frozen checker does not mark pass; H3a for (CUSUM, m) is NOT established until every cell meeting (0,2] passes",
+   "h3a_viable": "yes",
+   "k5b_step": "k = 1 passes for (CUSUM, m) with L_1 := L1_m: ell_1 = max(H_1.lo, 2 rho_1 L_1), gamma_1 = -L_1 x1^3/3 < 0",
+   "next_order3_informative": "yes: the first failing cells after C_1 in the frozen checker output, each requiring its own new preregistration",
+   "per_m_condition": "SUPPORTS_K5B_FIRST_CELL",
+   "restart": "permitted as defined by the countersignature (ell restarts from H_k.lo, gamma from Gamma_k)"
+  },
+  "VOID": {
+   "cells_closed_by_theorem": "none",
+   "cells_remaining_open": "all",
+   "h3a_viable": "unchanged",
+   "k5b_step": "none",
+   "next_order3_informative": "successor protocol required",
+   "per_m_condition": "VOID_PRODUCER_INTEGRITY_FAILURE",
+   "restart": "no rerun under this protocol"
+  },
+  "aggregate": "code/probe_rules.py aggregate(): any H3A_FALSE_FOR_THIS_M => CUSUM_H3A_TARGET_REFUTED_FOR_SOME_M; all SUPPORTS => FIRST_CELL_SUPPORTED_ALL_M; mixed SUPPORTS/INCONCLUSIVE => per m; VOID only for the whole record; no post-result routing beyond this map"
+ },
+ "lineage": {
+  "frontier_head_at_preparation": "dcca5c468045d4dee78e02a4447f967c5d81e4ee",
+  "gammatilde_point_certificate": "84aaa6a5",
+  "k5b_countersignature": "d7d3c08b",
+  "l5_review": "879792d0",
+  "origin_main_at_preparation": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+  "r1": [
+   "e69a0224",
+   "4a1b20a8"
+  ],
+  "r2": [
+   "a1dcf1e8",
+   "327e0e13"
+  ],
+  "r3": [
+   "1089ea1e",
+   "57cbc249"
+  ],
+  "r4": [
+   "0a7ce2fd",
+   "dcca5c46"
+  ]
+ },
+ "m_values": {
+  "rationale": "H3a and K5-B are per (D, m) and each m needs C_1; the four m share one point run (the objects F_r, W_(r,j) are common, m enters only through the frozen assembly coefficients), so evaluating a subset saves < 1% of the CPU and would force an otherwise identical second exposure of cell 0. Each m receives its own scientific address and hash.",
+  "set": [
+   1,
+   2,
+   3,
+   5
+  ]
+ },
+ "negative_result_handling": [
+  "a technically valid negative certificate is valid evidence and is published in full",
+  "the producer is not judged failed because of the sign",
+  "no rerun with another method under this protocol",
+  "its consequence for H3a is adjudicated only by the NEGATIVE entry above"
+ ],
+ "non_claims": [
+  "no real R''' or R^(5) value exists or is implied",
+  "the MARGINAL forecast is not a scientific result",
+  "this document does not authorize execution",
+  "K5 and P5Y are not closed",
+  "the r1 preregistration (dbbd405a) is superseded, not executed",
+  "the r2 preregistration (c4716a88) is superseded, not executed"
+ ],
+ "output_namespace": "/root/work/k5-first-real-probe",
+ "packet_code_sha256": {
+  "level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/code/prelaunch_verify.py": "22e965c4c20e35b83be47ad4fdb69cd5bdd48bab8ae2cc9421f8d9192e5ae3f4",
+  "level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/code/probe_rules.py": "149ae03ee8d116598c23f3fdddf166dc81f4cc2fc71e161688a015d9ecb5c4c3",
+  "level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/tests/test_probe_protocol.py": "f38ae59e74667a7c738966f9c0f8612e35266cb7d9b1b3e95485c242f472037b"
+ },
+ "precision_ladder": {
+  "bits": [
+   256
+  ],
+  "escalation_allowed": false,
+  "justification": "the R1 real front-end refuses any precision other than 256; R1 and R2 precision studies classify the producer as STAGNATING (width floors are mathematical: truncation, residual and resolvent terms, not rounding); the R4 certificates are frozen at 256. Escalation cannot convert INCONCLUSIVE and would only add exposure.",
+  "rule": "one frozen rung. Execute at 256; the result at 256 is final for this protocol whatever its verdict."
+ },
+ "prior_exposure_audit": {
+  "cell_0_forecasts": "R2-R4 radius forecasts from committed unsigned magnitudes (no centre, no sign); not scientific results",
+  "oracle_relationship": "p5y_k5_feasibility/config/K5_FEASIBILITY_ORACLE.json stays frozen and unexecuted. Executing THIS protocol exposes CUSUM cell 0; afterwards the oracle's CUSUM cell-0 probe is no longer independently preregistered and must not be run as a fresh probe.",
+  "real_signed_R3_or_R5_for_any_real_cusum_cell_in_lineage": "NONE (R1-R4 RESULT.md, K1 records carry unsigned order-3 magnitudes only; GammaTilde point certificate carries R and R' at e = 0 only)"
+ },
+ "producer_identity": {
+  "aux5_producer_identity": "3692d0fe",
+  "r4_certificate_registry_sha256": "a645a15716e74b69c89e06f09dfdbddd9b5cee8f19d34ea5635c9c0d06de6413",
+  "r4_freeze_commit": "0a7ce2fd180d3c85e85a2b368996cd43586a7157",
+  "r4_protocol_sha256": "a9472e4660d67e60c856f713cadcc2db690f8e2feb8f3fa75bca2919d959eedf",
+  "r4_qualification_commit": "dcca5c468045d4dee78e02a4447f967c5d81e4ee",
+  "r4_result_sha256": "3095a83de874f5ba2977c9b2bf215b69604b193037062bcc7ad30eead5f39e76",
+  "r4_verdict": "QUALIFIED_FOR_GOVERNED_REAL_CELL_QUALIFICATION"
+ },
+ "producer_identity_sha256": "850232481ca459ade742a6efff63202da99c70626924cfcbcb71b081fc64277a",
+ "real_producer_qualification": {
+  "gates": [
+   {
+    "id": "Q01_PRELAUNCH_VERIFIED",
+    "rule": "prelaunch verifier LAUNCH_PERMITTED recorded before the first arithmetic"
+   },
+   {
+    "id": "Q02_K1_INPUT_BINDING",
+    "rule": "R1 k1_inputs.validate V01-V10 PASS for cell 0; record sha256 4f8df44c...; manifest 29ad1f9b"
+   },
+   {
+    "id": "Q03_EXACT_CELL_IDENTITY",
+    "rule": "point cell {0} derived from frozen cell 0 (left 0, right 5083/10^7, C_upper inherited); x1 exact"
+   },
+   {
+    "id": "Q04_RUNTIME_AND_AUX5_GATES",
+    "rule": "Aux5 manifest_v3 initial and final gates PASS (producer 3692d0fe, runtime contract), SciPy guard clean, host runtime identity equal to the frozen contract"
+   },
+   {
+    "id": "Q05_SOURCE_AND_MANIFEST_HASHES",
+    "rule": "R1-R4 pins, R4 protocol/result/registry sha256 and the executor binding sources equal at start and at seal"
+   },
+   {
+    "id": "Q06_CERTIFICATE_REPLAY",
+    "rule": "C_o0 (R4) and C_e0 (R3) artifacts replay exactly; constants loaded only via constants_r4.load_certificates"
+   },
+   {
+    "id": "Q07_INTERVAL_CONSISTENCY",
+    "rule": "per m: exact rationals, L0 <= U0, M5 >= 0 finite, L1 <= L0 <= U0 <= U1, L1/U1 recomputed by probe_rules.transport equal the sealed values"
+   },
+   {
+    "id": "Q08_GRADED_SCALAR_CONSISTENCY",
+    "rule": "scalar mode of the graded engine equals the frozen midpoint DAG on the real point certifier (R3 C1 rule, relative 2^-200); graded point radius <= scalar point radius per m"
+   },
+   {
+    "id": "Q09_R5_CERTIFICATE_VALIDITY",
+    "rule": "local_r5 completes its 12 frozen iterations on anchors of order <= 3 only; every tower component finite with e, o <= t; M5 per m finite"
+   },
+   {
+    "id": "Q10_ORDER2_CROSS_REPLAY",
+    "rule": "the point run's R and R' enclosures at e = 0 intersect the committed GammaTilde RUNG_256 enclosures (84aaa6a5) for every m"
+   },
+   {
+    "id": "Q11_DETERMINISTIC_SERIALIZATION",
+    "rule": "canonical JSON; per-m scientific hash recomputes; adjudication replay from the sealed record reproduces every verdict"
+   },
+   {
+    "id": "Q12_SCIENTIFIC_ADDRESS_UNIQUE",
+    "rule": "four distinct per-m addresses; no finalized record exists for any of them before the attempt"
+   },
+   {
+    "id": "Q13_NO_MUTATION",
+    "rule": "K1 record, manifest, cells.json and R1-R4 bytes identical before and after the attempt"
+   },
+   {
+    "id": "Q14_FAIL_CLOSED",
+    "rule": "executor refuses in-process without a matching active authorization before touching any operator"
+   },
+   {
+    "id": "Q15_COST_CEILING",
+    "rule": "attempt CPU and wall within the frozen ceilings"
+   },
+   {
+    "id": "Q16_TEMPORAL_INTEGRITY",
+    "rule": "PROTOCOL_FREEZE_COMMIT < amendment commit < AUTHORIZATION_COMMIT (derived from git by prelaunch P04) < ARITHMETIC_STARTED < seal; no result file predates authorization"
+   }
+  ],
+  "q15_consistency": "Q15 can fail only by the CPU soft limit or the wall watchdog, both of which terminate the attempt BEFORE any scientific seal and seal VOID (cost) instead. A SCIENTIFIC_RECORD_SEALED therefore implies Q15 PASS; science_requires omits Q15 only for that reason, and REAL_PRODUCER_QUALIFICATION requires Q15.",
+  "science_requires": [
+   "Q01_PRELAUNCH_VERIFIED",
+   "Q02_K1_INPUT_BINDING",
+   "Q03_EXACT_CELL_IDENTITY",
+   "Q04_RUNTIME_AND_AUX5_GATES",
+   "Q05_SOURCE_AND_MANIFEST_HASHES",
+   "Q06_CERTIFICATE_REPLAY",
+   "Q07_INTERVAL_CONSISTENCY",
+   "Q08_GRADED_SCALAR_CONSISTENCY",
+   "Q09_R5_CERTIFICATE_VALIDITY",
+   "Q10_ORDER2_CROSS_REPLAY",
+   "Q11_DETERMINISTIC_SERIALIZATION",
+   "Q12_SCIENTIFIC_ADDRESS_UNIQUE",
+   "Q13_NO_MUTATION",
+   "Q14_FAIL_CLOSED",
+   "Q16_TEMPORAL_INTEGRITY"
+  ],
+  "self_attestation_note": "Q02-Q13 are evaluated by the executor and re-verified by the independent replay/review of independent_adjudication before any adoption.",
+  "separation": "REAL_PRODUCER_QUALIFICATION depends only on implementation / certificate integrity and is computed without reading any sign. It may PASS with a positive, inconclusive or negative scientific verdict."
+ },
+ "references_sha256": {
+  "level4/closure_proofs/p5y_gammatilde_point_certificate/result/RUNG_256.json": "0bb1b47450926812ed682d7cc6089ce40447305575e420bdf45af47765b1012d",
+  "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/cells.json": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/evidence/closure_r1/COMPOSITE_EXPORT_MANIFEST.json": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r4_tightening/config/OPERATOR_CERTIFICATES_R4.json": "a645a15716e74b69c89e06f09dfdbddd9b5cee8f19d34ea5635c9c0d06de6413",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r4_tightening/config/QUALIFICATION_PROTOCOL_R4.json": "a9472e4660d67e60c856f713cadcc2db690f8e2feb8f3fa75bca2919d959eedf",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r4_tightening/evidence/qualification_r4/QUALIFICATION_RESULT_R4.json": "3095a83de874f5ba2977c9b2bf215b69604b193037062bcc7ad30eead5f39e76",
+  "level4/closure_proofs/p5y_k5_feasibility/K5_GLOBAL_BRIDGE.md": "c1c62346dcd11b3a56b028e4aca7b61d7c4254353b1504701f16989205339d3f",
+  "level4/closure_proofs/p5y_k5_feasibility/config/K5_FEASIBILITY_ORACLE.json": "85fea44d899d17dd98b691bd8cf3b0ba4eb1f62fb92e94bc1c986dc47bdca2d1",
+  "level4/closure_proofs/p5y_k5_order3_readiness_audit/evidence/CUSUM_MINIMALITY_R1.json": "7feb576b84508c91a79e605fc190ac5da5083662ad9640aea4976c566a0c2a30",
+  "level4/closure_proofs/p5y_k5b_independent_countersignature/code/k5b_check.py": "ddd54dc469375a2d64352782add8573231be07b94f7246dad83c4e55a2bf35a6",
+  "level4/closure_proofs/p5y_k5b_k1_premise_binding_audit/result_r1/records/aux5_CUSUM_0_256.json": "4f8df44c956309b109e174f7ea15deee39ffad863c459f1656d6e2470a7ff1fb",
+  "level4/closure_proofs/p5y_postk1_precompute_resolution/K5_TARGET_AND_THIRD_ORDER.md": "eca0cdaa6000261a474bad34c09ebe3d9a749ae57adf67f5cd54ed89dcc814d2"
+ },
+ "retry_policy": {
+  "attempt_start": "an arithmetic attempt starts at the executor's ARITHMETIC_STARTED event (first operator touch). A refusal before it is not an arithmetic attempt; it still consumes a launch slot (max_slots) and requires a new LAUNCH_NOTICE and a permitted prelaunch verification before relaunch.",
+  "failure_class_derivation": "code/probe_rules.failure_class over the SUPERVISOR's evidence (wait status signal, boot id comparison, kernel OOM record, ENOSPC, CPU soft-limit flag, wall-timeout flag, integrity refusal, exit code); never self-declared by the executor",
+  "max_attempts": 3,
+  "max_slots": 9,
+  "not_transient": [
+   "INTEGRITY_REFUSAL (VOID)",
+   "CPU_RLIMIT (SIGXCPU or soft limit; VOID of cost)",
+   "WALL_TIMEOUT (VOID of cost)",
+   "UNKNOWN_FAILURE",
+   "any sealed record"
+  ],
+  "rules": [
+   "A retry after arithmetic is permitted only for a transient class derived mechanically, only while no sealed record exists (anywhere, including the ledger), with identical inputs, rung and code.",
+   "The sealed record (all m at once) is written atomically; once it exists it is final: no retry, no rerun, no alternative method under this protocol, whatever the verdict.",
+   "The executor must not print, log or persist any endpoint, sign or majorant outside the sealed record."
+  ],
+  "slots_and_ledger": "each launch uses <output_namespace>/slot-N; before launch a LAUNCH_NOTICE {event, slot, authorization_sha256, utc} is appended to ledger/ATTEMPT_LEDGER.jsonl, committed and pushed; after the run the operator appends OUTCOME {slot, failure_class, arithmetic_started, sealed_record_sha256|null} and, if sealed, SCIENTIFIC_RECORD_SEALED or VOID_RECORD_SEALED {slot, sha256}, committed and pushed. The ledger is append-only (checked across its whole history).",
+  "transient_failure_classes_after_arithmetic": [
+   "HOST_REBOOT_OR_BOOT_ID_CHANGE",
+   "PROCESS_KILLED_OOM",
+   "PROCESS_KILLED_BY_EXTERNAL_SIGNAL",
+   "DISK_FULL_BEFORE_SEAL"
+  ]
+ },
+ "revision": "r3",
+ "route": "SCIENTIFIC_PROBE_PLUS_REAL_QUALIFICATION",
+ "schema": "rebaseguard.p5y.k5.cusum-first-real-probe.science-preregistration.v3",
+ "scientific_address": {
+  "attempts": "the address contains NO attempt id; attempts live in <output_namespace>/attempt-N (N = 1..max_attempts); a sealed record (scientific or VOID) anywhere in the namespace root, the packet tree or git history blocks every later attempt (prelaunch P09)",
+  "fields": [
+   "schema",
+   "detector",
+   "k",
+   "h",
+   "m",
+   "theorem_cell",
+   "k1_cell_index",
+   "left",
+   "right",
+   "point_e",
+   "object",
+   "k1_record_sha256",
+   "producer_identity_sha256",
+   "executor_binding_sha256",
+   "protocol_sha256",
+   "precision_bits"
+  ],
+  "hash": "sha256 of canonical JSON (sort_keys, separators (',', ':'), ensure_ascii)",
+  "per_m": true,
+  "schema": "rebaseguard.p5y.k5.cusum-first-real-probe.address.v2"
+ },
+ "scientific_object": {
+  "primary": {
+   "definition": "per m: I_0 = [L0, U0] certified enclosure of R'''_m(0) (point run at e = 0, degenerate cell {0}); M5_m certified absolute majorant of sup_[0,x1] |R_m^(5)| (R4 local_r5 on the hull [0, x1]); L1 = L0 - (x1^2/2) M5_m, U1 = U0 + (x1^2/2) M5_m",
+   "exactness": "all endpoints outward exact rationals; no midpoint value, float or estimate substitutes for any endpoint",
+   "name": "TRANSPORTED_FIRST_CELL_ENCLOSURE",
+   "relationship": "R odd (P5-T3) and C^5 (P5X L5, reviewed 879792d0) => R''' even, R''''(0) = 0 => for e in [0, x1]: |R'''(e) - R'''(0)| <= (e^2/2) sup |R^(5)| => L1 <= inf_[0,x1] R''' and sup_[0,x1] R''' <= U1. L1 is the K5-B input L_1."
+  },
+  "secondary": {
+   "definition": "I_0 = [L0, U0]",
+   "name": "POINT_ENCLOSURE_R3_AT_0",
+   "use": "reported per m; POINT_NEGATIVE (U0 < 0) certifies a3 < 0 (Lemma K5-L)"
+  }
+ },
+ "scientific_verdict": {
+  "code": "code/probe_rules.py (transport, scientific_verdict, point_sign, h3a_consequence, aggregate)",
+  "consumption_keying": "code/probe_rules.consumption_key: the K5-B consumption entry is keyed on h3a_consequence(verdict, point), so POINT_NEGATIVE maps to NEGATIVE even when the transported verdict is INCONCLUSIVE. This code and this file agree; if they ever differed, the prelaunch verifier refuses (packet_code_sha256).",
+  "forbidden": [
+   "converting INCONCLUSIVE using midpoints, estimates, floats or forecasts",
+   "reinterpreting a negative certificate after the fact",
+   "dropping or re-weighting any m after the result"
+  ],
+  "per_m": {
+   "CONTRADICTS_REQUIRED_POSITIVE_SIGN": "U1 < 0",
+   "INCONCLUSIVE": "L1 <= 0 <= U1 (including endpoints touching 0)",
+   "SUPPORTS_K5B_FIRST_CELL": "L1 > 0",
+   "VOID_PRODUCER_INTEGRITY_FAILURE": "any science_requires gate fails"
+  },
+  "secondary_point_sign": {
+   "POINT_NEGATIVE": "U0 < 0",
+   "POINT_POSITIVE": "L0 > 0",
+   "POINT_UNDETERMINED": "otherwise"
+  }
+ },
+ "status": "FROZEN_PRE_RESULT",
+ "supersedes": {
+  "earlier": {
+   "r1": "dbbd405a4f695d53c23db3f1caca3340f809a5d0"
+  },
+  "file": "level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/protocol/SCIENCE_PREREGISTRATION_R2.json",
+  "freeze_commit": "c4716a885bfcd5ac7b119c91ac8da919c5765101",
+  "reason": "independent static review of r2: science PASS; governance FAIL (a forged committed amendment + authorization obtained LAUNCH_PERMITTED: review verdict self-declared, commits not strictly ordered or published, genuine activation blocked by a template string). Superseded before any authorization or execution; no real result existed or exists.",
+  "review": "level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/review/STATIC_REVIEW_R2.md",
+  "sha256": "50d2f725d679f3b994515b48ddac82c6c373f198e9f678962f1fc91267a5facf"
+ },
+ "temporal_rule": "This r3 file must be committed and pushed before any real scientific arithmetic; its introducing commit is PROTOCOL_FREEZE_COMMIT and it must be recorded by FREEZE_RECORD_R3.json in a strictly later published commit. Any change to this file voids the preregistration. The packet code in packet_code_sha256 must be byte-equal at HEAD to its blob at PROTOCOL_FREEZE_COMMIT.",
+ "trust_model": "The prelaunch verifier prevents accidental, unreviewed, self-attested, uncommitted or unpublished launches: it anchors on the published remote-tracking ref origin/p5y-postk1-frontier (fetched by the operator), requires strictly ordered published commits freeze < amendment < authorization, reads the review verdict from the review file, and requires a committed, published, append-only attempt ledger. It cannot stop a party with push rights who publishes fabricated reviews; that residual is covered by the public append-only history and by independent adjudication before any adoption.",
+ "void_after_arithmetic": {
+  "exposure_disclosure": "A VOID record exposes cell 0 numbers; every successor protocol must disclose whether a VOID record exists and state that its preregistration was frozen before anyone inspected it.",
+  "rule": "If arithmetic started and the attempt ends with INTEGRITY_REFUSAL, CPU_RLIMIT or WALL_TIMEOUT, every scientific number already computed is sealed into VOID_RECORD_SEALED.json (atomic, hashed) with label VOID and the failing gate or class; it is published, never adopted as evidence, and not inspected for sign by anyone before the VOID label is committed to the ledger. VOID applies to the whole record (all m share one run). Its existence blocks further attempts under this protocol.",
+  "transient_kills": "a transient kill after arithmetic leaves no sealed record by construction; partial in-memory numbers are lost and never persisted"
+ }
+}

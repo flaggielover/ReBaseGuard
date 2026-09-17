@@ -1,4 +1,4 @@
-"""Pure, stdlib-only frozen rules of the first governed real CUSUM signed-R''' probe, r2 (no flint, no kernel, no I/O
+"""Pure, stdlib-only frozen rules of the first governed real CUSUM signed-R''' probe, r3 (no flint, no kernel, no I/O
 besides reading the frozen preregistration). Fixed BEFORE any real result exists; unit-tested on hypothetical inputs.
 
     transport(L0, U0, M5)              -> (L1, U1)   Strategy-B enclosure of R''' over C_1 = [0, x1], x1 from the prereg
@@ -8,7 +8,8 @@ besides reading the frozen preregistration). Fixed BEFORE any real result exists
     consumption_key(verdict, point)    -> POSITIVE | INCONCLUSIVE | NEGATIVE | VOID   (keyed on the consequence)
     k5b_consumption(verdict, point)    -> the frozen K5-B consumption entry
     aggregate(per_m)                   -> CUSUM-level consequence and route
-    scientific_address(...)            -> per-m address (NO attempt id) + sha256;  attempt_dir(n)
+    scientific_address(...)            -> per-m address (NO attempt id) + sha256;  slot_dir(n)
+    failure_class(evidence)            -> failure class derived mechanically from supervisor evidence
     producer_qualification(gates)      -> PASS | FAIL (sign independent);  science_usable(gates)
     retry_decision(state)              -> NOT_AN_ATTEMPT_RELAUNCH_AFTER_VERIFIER | RETRY_PERMITTED | NO_RETRY
     adoption_status(...)               -> ADOPTED | PENDING_INDEPENDENT_ADJUDICATION | NOT_ADOPTABLE
@@ -22,7 +23,7 @@ from fractions import Fraction as F
 from pathlib import Path
 
 NS = Path(__file__).resolve().parents[1]
-PREREG = NS / "protocol/SCIENCE_PREREGISTRATION_R2.json"
+PREREG = NS / "protocol/SCIENCE_PREREGISTRATION_R3.json"
 
 SUPPORTS = "SUPPORTS_K5B_FIRST_CELL"
 INCONCLUSIVE = "INCONCLUSIVE"
@@ -119,6 +120,8 @@ def aggregate(per_m: dict) -> dict:
     cons = {m: h3a_consequence(per_m[m]["verdict"], per_m[m]["point"]) for m in ms}
     vals = set(cons.values())
     routes = prereg["aggregate_routes"]
+    if "NO_SCIENTIFIC_CONSEQUENCE" in vals and vals != {"NO_SCIENTIFIC_CONSEQUENCE"}:
+        raise RuleViolation("VOID applies to the whole sealed record (all m share one run); mixed VOID is refused")
     if "NO_SCIENTIFIC_CONSEQUENCE" in vals:
         label = "VOID"
     elif "H3A_FALSE_FOR_THIS_M" in vals:
@@ -151,11 +154,35 @@ def scientific_address(*, m: int, k1_record_sha256: str, producer_identity_sha25
     return {"address": addr, "address_sha256": sha256(canonical(addr))}
 
 
-def attempt_dir(n: int) -> str:
+def slot_dir(n: int) -> str:
     rp = load_prereg()["retry_policy"]
-    if not 1 <= n <= rp["max_attempts"]:
-        raise RuleViolation(f"attempt {n} outside 1..{rp['max_attempts']}")
-    return f"attempt-{n}"
+    if not 1 <= n <= rp["max_slots"]:
+        raise RuleViolation(f"slot {n} outside 1..{rp['max_slots']}")
+    return f"slot-{n}"
+
+
+def failure_class(evidence: dict) -> str:
+    """Mechanical derivation from the SUPERVISOR's evidence (never self-declared by the executor), frozen order.
+    evidence keys: boot_id_changed, wall_timeout, signal (int|None), cpu_soft_limit_reached, kernel_oom_record,
+    enospc, integrity_refusal (str|None), exit_code (int|None)."""
+    e = evidence or {}
+    if e.get("boot_id_changed") is True:
+        return "HOST_REBOOT_OR_BOOT_ID_CHANGE"
+    if e.get("wall_timeout") is True:
+        return "WALL_TIMEOUT"
+    if e.get("signal") == 24 or e.get("cpu_soft_limit_reached") is True:
+        return "CPU_RLIMIT"
+    if e.get("integrity_refusal"):
+        return "INTEGRITY_REFUSAL"
+    if e.get("signal") == 9 and e.get("kernel_oom_record") is True:
+        return "PROCESS_KILLED_OOM"
+    if e.get("signal") in (1, 2, 9, 15) and e.get("kernel_oom_record") is not True:
+        return "PROCESS_KILLED_BY_EXTERNAL_SIGNAL"
+    if e.get("enospc") is True:
+        return "DISK_FULL_BEFORE_SEAL"
+    if e.get("exit_code") == 0 and e.get("signal") is None:
+        return "COMPLETED"
+    return "UNKNOWN_FAILURE"
 
 
 def producer_qualification(gates: dict) -> str:

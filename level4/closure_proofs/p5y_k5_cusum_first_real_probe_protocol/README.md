@@ -5,15 +5,19 @@
 | File | Purpose |
 |---|---|
 | `PROTOCOL.md` | Human-readable preregistration: cell selection, object, hypothesis, verdicts, qualification, ladder, retry, address, K5-B map, cost, host, completion, authorization, executor status |
-| `protocol/SCIENCE_PREREGISTRATION_R2.json` | **Authoritative** frozen protocol r2 (PROTOCOL_SHA256) |
-| `protocol/EXECUTION_BINDING_R2.json`, `protocol/AUTHORIZATION_TEMPLATE_R2.json` | r2 executor binding (PENDING) and authorization template (`EXECUTION_AUTHORIZED = false`) |
+| `protocol/SCIENCE_PREREGISTRATION_R3.json` | **Authoritative** frozen protocol r3 (PROTOCOL_SHA256) |
+| `protocol/EXECUTION_BINDING_R3.json`, `protocol/AUTHORIZATION_TEMPLATE_R3.json`, `protocol/FREEZE_RECORD_R3.json` | r3 executor binding (PENDING), authorization template (`EXECUTION_AUTHORIZED = false`), freeze record (published after the freeze) |
+| `protocol/R2_SUPERSEDED.json` | r2 superseded before authorization (review FAIL on governance) |
+| `protocol/SCIENCE_PREREGISTRATION_R2.json` | r2 (superseded, history only) |
+| `protocol/EXECUTION_BINDING_R2.json`, `protocol/AUTHORIZATION_TEMPLATE_R2.json` | r2 (superseded, history only) |
 | `protocol/R1_SUPERSEDED.json` | r1 superseded before authorization (review FAIL on governance) |
 | `protocol/SCIENCE_PREREGISTRATION.json` | r1 (superseded, history only) |
 | `protocol/EXECUTION_BINDING.json`, `protocol/AUTHORIZATION_TEMPLATE.json`, `protocol/PACKET_MANIFEST.json` | r1 (superseded, history only) |
 | `code/probe_rules.py` | Frozen pure rules: transport, three-way verdict, point sign, consequences, aggregate, K5-B map, address, qualification, retry, ladder |
-| `code/prelaunch_verify.py` | Read-only fail-closed prelaunch verifier r2 (P01–P12) |
+| `code/prelaunch_verify.py` | Read-only fail-closed prelaunch verifier r3 (P01–P12, published-ref anchored) |
 | `tests/test_probe_protocol.py` | Unit tests on hypothetical inputs only |
-| `review/` | r1 static review (FAIL) and host refusal report; r2 host refusal report and static review (added after the r2 freeze commit) |
+| `review/` | r1 and r2 static reviews (FAIL) with host refusal reports; r3 host refusal report and static review (added after the r3 freeze commit) |
+| `ledger/` | append-only attempt ledger (absent until a launch notice) |
 
 ```bash
 python3 -B tests/test_probe_protocol.py

@@ -1,0 +1,85 @@
+{
+ "authorization_commit_derived": null,
+ "authorization_path": "/root/work/k5probe-freeze-r2/level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/protocol/AUTHORIZATION_TEMPLATE_R2.json",
+ "authorization_sha256": "c354538b31d627fc9d07563ad03071f3de7e0cb92745a9dd59e192c86891dc74",
+ "checks": {
+  "P01": {
+   "detail": "EXECUTION_NOT_AUTHORIZED: EXECUTION_AUTHORIZED is not true",
+   "pass": false
+  },
+  "P02": {
+   "detail": "authorization is not at the fixed path protocol/AUTHORIZATION_ACTIVE.json; unfilled SET_AT_ACTIVATION field; AUTHORIZED_BY missing",
+   "pass": false
+  },
+  "P03": {
+   "detail": "PROTOCOL_FREEZE_COMMIT != introducing commit c4716a885bfc",
+   "pass": false
+  },
+  "P04": {
+   "detail": "AUTHORIZATION_ACTIVE.json is not committed and unmodified",
+   "pass": false
+  },
+  "P05": {
+   "detail": "all protected hashes match",
+   "pass": true
+  },
+  "P06": {
+   "detail": "EXECUTOR_BINDING_PENDING: no EXECUTION_BINDING_AMENDMENT.json (binding status PENDING_EXECUTOR_IMPLEMENTATION_AND_QUALIFICATION)",
+   "pass": false
+  },
+  "P07": {
+   "detail": "host runtime identity matches",
+   "pass": true
+  },
+  "P08": {
+   "detail": "no conflicting producer",
+   "pass": true
+  },
+  "P09": {
+   "detail": "no sealed record for this protocol",
+   "pass": true
+  },
+  "P10": {
+   "detail": "CPU ceiling valid",
+   "pass": true
+  },
+  "P11": {
+   "detail": "next attempt slot attempt-1",
+   "pass": true
+  },
+  "P12": {
+   "detail": "no valid AUTHORIZATION_UTC",
+   "pass": false
+  }
+ },
+ "failing_checks": [
+  "P01",
+  "P02",
+  "P03",
+  "P04",
+  "P06",
+  "P12"
+ ],
+ "head": "c4716a885bfcd5ac7b119c91ac8da919c5765101",
+ "live_host_facts": {
+  "cpu_model": "AMD EPYC-Milan Processor",
+  "flint_so_sha256": "1f7ef1f52024937f542772ff9190e2f74449228cd69a6746b6608fbbd449d138",
+  "glibc_package_version": "2.41-12+deb13u4",
+  "host": "rebaseguard-vultr-02",
+  "kernel_release": "6.12.107+deb13-amd64",
+  "libc_path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+  "libc_sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+  "logical_cpus": 8,
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "python": "3.12.3",
+  "python_flint": "0.9.0",
+  "scipy": "1.18.1",
+  "venv_prefix": "/root/work/rbg-cusum-aux5-venv"
+ },
+ "primary_reason": "P01: EXECUTION_NOT_AUTHORIZED: EXECUTION_AUTHORIZED is not true",
+ "read_only": true,
+ "schema": "rebaseguard.p5y.k5.cusum-first-real-probe.prelaunch-report.v2",
+ "science_sha256": "50d2f725d679f3b994515b48ddac82c6c373f198e9f678962f1fc91267a5facf",
+ "verdict": "REFUSED"
+}
