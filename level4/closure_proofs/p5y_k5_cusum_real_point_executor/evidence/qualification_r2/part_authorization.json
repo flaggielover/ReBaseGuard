@@ -1,0 +1,235 @@
+{
+ "body": {
+  "checks": {
+   "activation_changes_no_identity_file": {
+    "pass": true
+   },
+   "deny_refuses_real_backend_with_valid_bundle": {
+    "pass": true
+   },
+   "guard_policies": {
+    "checks": {
+     "frozen_deny_refuses_valid_bundle": true,
+     "policy_ALLOW_bundle_True": true,
+     "policy_DENY_bundle_True": true,
+     "policy_EXTERNAL_AUTHORIZATION_bundle_False": true,
+     "policy_EXTERNAL_AUTHORIZATION_bundle_True": true,
+     "policy_None_bundle_True": true
+    },
+    "pass": true
+   },
+   "mutations": {
+    "A01_IGNORE_EXECUTOR_IDENTITY": {
+     "detected": true,
+     "failing": [
+      "wrong_executor_identity"
+     ]
+    },
+    "A02_IGNORE_PRELAUNCH_BINDING": {
+     "detected": true,
+     "failing": [
+      "unsigned_change_after_prelaunch",
+      "prelaunch_names_other"
+     ]
+    },
+    "A03_ACCEPT_UNAUTHORIZED": {
+     "detected": true,
+     "failing": [
+      "execution_authorized_false"
+     ]
+    }
+   },
+   "suite": {
+    "context_other_slot": {
+     "pass": true,
+     "problems": [
+      "output namespace / attempt slot"
+     ]
+    },
+    "context_precision": {
+     "pass": true,
+     "problems": [
+      "precision"
+     ]
+    },
+    "countersignature_in_future": {
+     "pass": true,
+     "problems": [
+      "countersignature utc",
+      "prelaunch report predates the countersignature"
+     ]
+    },
+    "countersigner_not_independent": {
+     "pass": true,
+     "problems": [
+      "countersigner"
+     ]
+    },
+    "execution_authorized_false": {
+     "pass": true,
+     "problems": [
+      "EXECUTION_AUTHORIZED is not true"
+     ]
+    },
+    "missing_template_field": {
+     "pass": true,
+     "problems": [
+      "missing template fields ['trust_model']"
+     ]
+    },
+    "no_bundle_refused": {
+     "pass": true
+    },
+    "other_namespace": {
+     "pass": true,
+     "problems": [
+      "output namespace / attempt slot"
+     ]
+    },
+    "prelaunch_names_other": {
+     "pass": true,
+     "problems": [
+      "prelaunch report names another authorization"
+     ]
+    },
+    "prelaunch_predates_countersignature": {
+     "pass": true,
+     "problems": [
+      "prelaunch report predates the countersignature"
+     ]
+    },
+    "prelaunch_refused": {
+     "pass": true,
+     "problems": [
+      "prelaunch verdict"
+     ]
+    },
+    "result_blind_changed": {
+     "pass": true,
+     "problems": [
+      "result-blind statement differs from the template"
+     ]
+    },
+    "short_nonce": {
+     "pass": true,
+     "problems": [
+      "nonce"
+     ]
+    },
+    "slot_out_of_range": {
+     "pass": true,
+     "problems": [
+      "output namespace / attempt slot"
+     ]
+    },
+    "static_review_not_pass": {
+     "pass": true,
+     "problems": [
+      "executor static review is not PASS"
+     ]
+    },
+    "status_inactive": {
+     "pass": true,
+     "problems": [
+      "status is not COUNTERSIGNED"
+     ]
+    },
+    "unsigned_change_after_prelaunch": {
+     "pass": true,
+     "problems": [
+      "prelaunch report names another authorization"
+     ]
+    },
+    "valid_synthetic_bundle_accepted": {
+     "pass": true,
+     "problems": []
+    },
+    "wrong_cell": {
+     "pass": true,
+     "problems": [
+      "cell"
+     ]
+    },
+    "wrong_cpu_ceiling": {
+     "pass": true,
+     "problems": [
+      "CPU ceiling"
+     ]
+    },
+    "wrong_executor_identity": {
+     "pass": true,
+     "problems": [
+      "running executor identity"
+     ]
+    },
+    "wrong_k1_record": {
+     "pass": true,
+     "problems": [
+      "K1 record sha256"
+     ]
+    },
+    "wrong_m_set": {
+     "pass": true,
+     "problems": [
+      "m set"
+     ]
+    },
+    "wrong_precision": {
+     "pass": true,
+     "problems": [
+      "precision"
+     ]
+    },
+    "wrong_runtime_identity": {
+     "pass": true,
+     "problems": [
+      "host runtime identity"
+     ]
+    },
+    "wrong_science_sha": {
+     "pass": true,
+     "problems": [
+      "science sha256"
+     ]
+    }
+   }
+  },
+  "mutations_count": "3/3",
+  "pass": true
+ },
+ "metadata": {
+  "children_cpu_seconds": 0.006065,
+  "cpu_seconds": 5.305203498,
+  "incidental": true,
+  "peak_rss_kib": 79876,
+  "wall_seconds": 5.31269645690918
+ },
+ "part": "authorization",
+ "protocol_sha256": "f82ae62b2afe4dfadcc73e92d463e33502b719e0077eedfebc6d4eb97c005e17",
+ "runtime": {
+  "cpu_model": "AMD EPYC-Milan Processor",
+  "env": {
+   "MKL_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "PYTHONHASHSEED": "0"
+  },
+  "flint_library": "3.6.0",
+  "flint_so_sha256": "1f7ef1f52024937f542772ff9190e2f74449228cd69a6746b6608fbbd449d138",
+  "glibc_package_version": "2.41-12+deb13u4",
+  "host": "rebaseguard-vultr-02",
+  "kernel_release": "6.12.107+deb13-amd64",
+  "libc_path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+  "libc_sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+  "logical_cpus": 8,
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "numpy_module": "2.5.2",
+  "python": "3.12.3",
+  "python_flint": "0.9.0",
+  "python_flint_module": "0.9.0",
+  "python_impl": "CPython",
+  "scipy": "1.18.1",
+  "venv_prefix": "/root/work/rbg-cusum-aux5-venv"
+ }
+}

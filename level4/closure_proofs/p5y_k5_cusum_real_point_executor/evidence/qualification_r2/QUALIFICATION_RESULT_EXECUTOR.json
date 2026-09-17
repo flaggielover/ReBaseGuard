@@ -1,0 +1,640 @@
+{
+ "EXECUTION_AUTHORIZED": false,
+ "REAL_CELL_EXECUTED": "NO",
+ "REAL_INPUT_ARITHMETIC_GUARD": "DENY",
+ "REAL_POINT_EXECUTOR": "QUALIFIED_AWAITING_EXTERNAL_AUTHORIZATION",
+ "authorization_mutations": "3/3",
+ "cost": {
+  "ceiling": {
+   "campaign_cpu_seconds_hard": 32400,
+   "enforcement": "RLIMIT_CPU soft 9000 / hard 10800 set by the supervisor before arithmetic; the executor's SIGXCPU handler (soft limit) seals VOID_RECORD_SEALED (cost) before the hard limit; the supervisor's wall watchdog does the same; the prelaunch verifier refuses if the authorization's ceilings differ",
+   "max_attempts": 3,
+   "per_attempt_cpu_seconds_rlimit": 10800,
+   "per_attempt_cpu_seconds_soft": 9000,
+   "per_attempt_wall_seconds": 14400
+  },
+  "compatible": true,
+  "measured_manufactured_fixture_cpu_seconds_max": 0.21923377100000002,
+  "measured_real_arb_stages_cpu_seconds": 2424.7975701950004,
+  "projected_campaign_cpu_seconds_max_attempts": 19209.517701561006,
+  "projected_real_attempt_cpu_seconds": 6403.172567187002
+ },
+ "crosscheck": [
+  {
+   "enclosure_disagreements_m": [],
+   "fixture": "XF01_positive_L1",
+   "pass": true
+  },
+  {
+   "enclosure_disagreements_m": [],
+   "fixture": "XF03_negative_U1",
+   "pass": true
+  },
+  {
+   "enclosure_disagreements_m": [],
+   "fixture": "XF04_point_negative_U0",
+   "pass": true
+  },
+  {
+   "enclosure_disagreements_m": [],
+   "fixture": "XF08_parity_contamination",
+   "pass": true
+  }
+ ],
+ "executor_identity_sha256": "2bd98fde6bba1e2252b31c28a108c76b112f9924bd1b94a6f8fd237cc53a50f3",
+ "fixtures": {
+  "XF01_positive_L1": {
+   "M5_over_truth": {
+    "1": 4.833779441907846,
+    "2": 5.059938474495292,
+    "3": 4.793126420480264,
+    "5": 4.757119998934615
+   },
+   "pass": true,
+   "purpose": "decisively positive L1",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "2": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "3": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ]
+   }
+  },
+  "XF02_inconclusive_transport": {
+   "M5_over_truth": {
+    "1": 31.230449917748434,
+    "2": 27.945807083654334,
+    "3": 50.07713577766135,
+    "5": 409.7527538898639
+   },
+   "pass": true,
+   "purpose": "inconclusive transported interval (point positive)",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ],
+    "2": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ],
+    "3": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ]
+   }
+  },
+  "XF03_negative_U1": {
+   "M5_over_truth": {
+    "1": 9.791002287688054,
+    "2": 8.212083727000293,
+    "3": 9.96257678476563,
+    "5": 20.575565668060584
+   },
+   "pass": true,
+   "purpose": "decisively negative U1",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ],
+    "2": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ],
+    "3": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ],
+    "5": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ]
+   }
+  },
+  "XF04_point_negative_U0": {
+   "M5_over_truth": {
+    "1": 12.768529183657417,
+    "2": 12.327615993458373,
+    "3": 12.975539385795011,
+    "5": 16.506966765310143
+   },
+   "pass": true,
+   "purpose": "point-negative U0 with inconclusive transport",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "INCONCLUSIVE",
+     "POINT_NEGATIVE"
+    ],
+    "2": [
+     "INCONCLUSIVE",
+     "POINT_NEGATIVE"
+    ],
+    "3": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ]
+   }
+  },
+  "XF05_tight_M5": {
+   "M5_over_truth": {
+    "1": 9.475408034822237,
+    "2": 7.366341598121283,
+    "3": 7.4885717702010375,
+    "5": 12.649322107881181
+   },
+   "pass": true,
+   "purpose": "tight M5",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "2": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "3": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ]
+   }
+  },
+  "XF06_loose_valid_M5": {
+   "M5_over_truth": {
+    "1": 1669.4022776303493,
+    "2": 34.20118215656337,
+    "3": 20.304237478192192,
+    "5": 15.667961970166102
+   },
+   "pass": true,
+   "purpose": "loose but valid M5",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "2": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "3": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ]
+   }
+  },
+  "XF07_parity_pure": {
+   "M5_over_truth": {
+    "1": 47.187668247690645,
+    "2": 13.192110361808863,
+    "3": 22.47087032302885,
+    "5": 487.96738922288847
+   },
+   "pass": true,
+   "purpose": "parity-pure source (exact candidates)",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ],
+    "2": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ],
+    "3": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ],
+    "5": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ]
+   }
+  },
+  "XF08_parity_contamination": {
+   "M5_over_truth": {
+    "1": 614.2330160401955,
+    "2": 19.884696389495364,
+    "3": 16.189810465543502,
+    "5": 19.910341852112406
+   },
+   "pass": true,
+   "purpose": "controlled parity contamination (k_scale 2, noise)",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "2": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "3": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ]
+   }
+  },
+  "XF09_near_zero_boundary": {
+   "M5_over_truth": {
+    "1": 18.520651232019947,
+    "2": 19.30737386929937,
+    "3": 18.709612272589258,
+    "5": 19.232080673067504
+   },
+   "pass": true,
+   "purpose": "near-zero scientific boundary (m = 1, 2 straddle zero)",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ],
+    "2": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ],
+    "3": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ]
+   }
+  }
+ },
+ "gates": {
+  "EG01_manufactured_fixtures_truth_and_expected_verdicts": "PASS",
+  "EG02_fail_closed_refusals": "PASS",
+  "EG03_real_input_arithmetic_guard_deny": "PASS",
+  "EG04_qualification_science_separation": "PASS",
+  "EG05_independent_derivative_crosscheck": "PASS",
+  "EG06_executor_mutations_all_detected": "PASS",
+  "EG07_inherited_r4_gates": "PASS",
+  "EG08_deterministic_replay": "PASS",
+  "EG09_real_stage_smoke_no_enclosure": "PASS",
+  "EG10_runtime_identity": "PASS",
+  "EG11_fences_and_pins": "PASS",
+  "EG12_cost_within_frozen_ceiling": "PASS",
+  "EG13_preregistered_producer_gates_Q01_Q16": "PASS",
+  "EG14_external_authorization_interface": "PASS",
+  "EG15_attempt_supervision_and_void_sealing": "PASS",
+  "EG16_production_stack_mutations": "PASS",
+  "EG17_cramer_compatibility_contract": "PASS"
+ },
+ "mutation_detail": {
+  "E01_WRONG_M": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E02_WRONG_POINT_E": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E03_WRONG_CELL_ENDPOINT": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E04_WRONG_K1_IDENTITY_ACCEPTED": {
+   "detected": true,
+   "failing": [
+    "F11_wrong_k1_identity"
+   ]
+  },
+  "E05_ODD_EVEN_COMPONENT_SWAP": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E06_OMIT_DERIVATIVE_SOURCE_TERM": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E07_WRONG_GRADED_CONSTANT": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF06_loose_valid_M5",
+    "XF07_parity_pure"
+   ]
+  },
+  "E08_WRONG_LOCAL_M5_ANCHOR": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E09_WRONG_TRANSPORT_FACTOR": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E10_WRONG_L1_SIGN": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E11_WRONG_U1_SIGN": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E12_SERIALIZE_MIDPOINT": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E13_REUSE_STALE_CERTIFICATE": {
+   "detected": true,
+   "failing": [
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5",
+    "XF07_parity_pure"
+   ]
+  },
+  "E14_BYPASS_REAL_INPUT_GUARD": {
+   "detected": true,
+   "failing": [
+    "guard_deny_real_backend_real_binding"
+   ]
+  },
+  "E15_SILENT_PRECISION_CHANGE": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E16_MUTATE_SCIENTIFIC_ADDRESS": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  }
+ },
+ "mutations": "16/16",
+ "order2_reference": {
+  "comparator_mutant_refused": true,
+  "compare": {
+   "disjoint": [],
+   "identical_to_reference": true,
+   "pass": true,
+   "reference_sha256": "0bb1b47450926812ed682d7cc6089ce40447305575e420bdf45af47765b1012d"
+  },
+  "pass": true
+ },
+ "part_sha256": {
+  "authorization": "e6bc92037a3d2efd8fa9a4c0cbbeca180f50cb40a05c315058948365b4be1484",
+  "cramer_contract": "622e9e5c43ee55ecc6de94ba0a7465496f0ddecbd9f56302e1f661d061225c61",
+  "crosscheck": "57b90da6488830dc2c80d4e761ca2d762dad7a7ed85657d3182b853ddbdb20f1",
+  "fence": "05d75636d045d56d52d040736b2b0cbf5c1e463a9d79aac3242979e91ffdd0cf",
+  "fixtures": "5013e43f17ec07189efc79fa26ed26e57dfb9ae178c78528c0e3ef55130e77d4",
+  "fixtures_replay": "95a7d53486b835032f251c17a6b0e5928871813a7d1ce78f7209e96406e8b537",
+  "inherited_r4": "ffcae1100d6901b0846dcfa68f58ceeeb8c1ea67762419fcd4755a7e704ebaf3",
+  "mutations": "19d033e80ba2ac90e757f4a6a309657fd1fcbb83120dc42a78a483039879d350",
+  "order2_reference": "9bb05c7671eb14176fc7954cebc56c3f6b94d716727791a60ed75549250244bb",
+  "refusals": "c6b7dad11233b74b9c23bda8dfbd1ecef68d69e1f872cb1d3640b8cee154ef69",
+  "runtime": "57de635c85862bc79b981e77167e543e2ba08d241a78696d2953344495187440",
+  "separation": "890c8fa74e044b48a4b5e14c40c56b144022da38ceff524fed69339834309e58",
+  "smoke": "5d74664076871bc193695d0772c0f549f2d3ad857f479ab20e5a707d42692f14",
+  "supervisor": "ae33178e7d50afd4e1483fa31595819b0810373fa870ecd93e17802c1f378ebb"
+ },
+ "production_mutations": "4/4",
+ "protocol_sha256": "f82ae62b2afe4dfadcc73e92d463e33502b719e0077eedfebc6d4eb97c005e17",
+ "replay_payload_sha256": [
+  "cb28b9727470a6b4287aa412313284b433bd8c16c6c16bd39b948dfa56b1e7e0",
+  "cb28b9727470a6b4287aa412313284b433bd8c16c6c16bd39b948dfa56b1e7e0"
+ ],
+ "runner_failures": [],
+ "runtime": {
+  "cpu_model": "AMD EPYC-Milan Processor",
+  "env": {
+   "MKL_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "PYTHONHASHSEED": "0"
+  },
+  "flint_library": "3.6.0",
+  "flint_so_sha256": "1f7ef1f52024937f542772ff9190e2f74449228cd69a6746b6608fbbd449d138",
+  "glibc_package_version": "2.41-12+deb13u4",
+  "host": "rebaseguard-vultr-02",
+  "kernel_release": "6.12.107+deb13-amd64",
+  "libc_path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+  "libc_sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+  "logical_cpus": 8,
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "numpy_module": "2.5.2",
+  "python": "3.12.3",
+  "python_flint": "0.9.0",
+  "python_flint_module": "0.9.0",
+  "python_impl": "CPython",
+  "scipy": "1.18.1",
+  "venv_prefix": "/root/work/rbg-cusum-aux5-venv"
+ },
+ "schema": "rebaseguard.p5y.k5.cusum-real-point-executor.qualification-result.v2",
+ "scientific_leaf_differences": [],
+ "separation": {
+  "CONTRADICTS": {
+   "fixture": "XF03_negative_U1",
+   "gates_sign_invariant": true,
+   "qualification": "PASS",
+   "verdict_m1": "CONTRADICTS_REQUIRED_POSITIVE_SIGN"
+  },
+  "INCONCLUSIVE": {
+   "fixture": "XF02_inconclusive_transport",
+   "gates_sign_invariant": true,
+   "qualification": "PASS",
+   "verdict_m1": "INCONCLUSIVE"
+  },
+  "SUPPORTS": {
+   "fixture": "XF01_positive_L1",
+   "gates_sign_invariant": true,
+   "qualification": "PASS",
+   "verdict_m1": "SUPPORTS_K5B_FIRST_CELL"
+  },
+  "consumer_refuses_harness_modes_on_real_kind": {
+   "science_usable": false
+  },
+  "consumer_requires_every_science_gate": {
+   "science_usable": false
+  }
+ },
+ "smoke": {
+  "Q04": true,
+  "Q06": true,
+  "Q08": true,
+  "cost": {
+   "cpu_seconds_q06_certificate_replay": 222.26318667900023,
+   "cpu_seconds_q08": 0.015507150000303227,
+   "cpu_seconds_q10_path": 0.005447433999961504,
+   "cpu_seconds_real_arb_stages": 2424.7975701950004,
+   "peak_rss_kib": 504008,
+   "wall_seconds": 2675.486423969269
+  },
+  "enclosure_formed": false,
+  "float_containment_count": 0,
+  "observed_precision_bits": 256,
+  "structure_sha256": "a5956ed7a120a81e16a61ad5d5063d398c23dc174afed062534222555f70af80"
+ },
+ "supervisor": {
+  "cpu_limit_seals_void": {
+   "failure_class": "CPU_RLIMIT",
+   "pass": true
+  },
+  "external_kill_classified": {
+   "failure_class": "PROCESS_KILLED_BY_EXTERNAL_SIGNAL",
+   "pass": true
+  },
+  "manufactured_success": {
+   "failure_class": null,
+   "pass": true
+  },
+  "real_mode_refused_before_arithmetic": {
+   "failure_class": "INTEGRITY_REFUSAL",
+   "pass": true
+  },
+  "void_address_refused": {
+   "failure_class": null,
+   "pass": true
+  },
+  "void_wrapper_control": {
+   "failure_class": null,
+   "pass": true
+  },
+  "wall_timeout_seals_void": {
+   "failure_class": "WALL_TIMEOUT",
+   "pass": true
+  }
+ },
+ "void_mutations": "1/1"
+}

@@ -1,0 +1,213 @@
+{
+ "body": {
+  "checks": {
+   "cpu_limit_seals_void": {
+    "pass": true,
+    "result": {
+     "arithmetic_started": true,
+     "events": [
+      "VALIDATED",
+      "ARITHMETIC_STARTED",
+      "VOID"
+     ],
+     "evidence": {
+      "boot_id_changed": false,
+      "child_cpu_seconds": 20.033540000000002,
+      "cpu_soft_limit_reached": true,
+      "enospc": false,
+      "exit_code": 4,
+      "integrity_refusal": null,
+      "kernel_oom_record": false,
+      "signal": null,
+      "wall_seconds": 20.221070528030396,
+      "wall_timeout": false
+     },
+     "failure_class": "CPU_RLIMIT",
+     "refusal": "EXECUTOR_REFUSAL: ExecutorRefusal: CPU_RLIMIT: soft CPU limit reached (SIGXCPU)",
+     "sealed_files": [
+      "MANUFACTURED_VOID_RECORD_SEALED.json"
+     ]
+    }
+   },
+   "external_kill_classified": {
+    "pass": true,
+    "result": {
+     "arithmetic_started": true,
+     "events": [
+      "VALIDATED",
+      "ARITHMETIC_STARTED"
+     ],
+     "evidence": {
+      "boot_id_changed": false,
+      "child_cpu_seconds": 2.5029459999999997,
+      "cpu_soft_limit_reached": false,
+      "enospc": false,
+      "exit_code": null,
+      "integrity_refusal": null,
+      "kernel_oom_record": false,
+      "signal": 9,
+      "wall_seconds": 2.606696605682373,
+      "wall_timeout": false
+     },
+     "failure_class": "PROCESS_KILLED_BY_EXTERNAL_SIGNAL",
+     "refusal": null,
+     "sealed_files": []
+    },
+    "retry": {
+     "decision": "RETRY_PERMITTED",
+     "reason": "PROCESS_KILLED_BY_EXTERNAL_SIGNAL"
+    }
+   },
+   "manufactured_success": {
+    "pass": true,
+    "result": {
+     "arithmetic_started": true,
+     "events": [
+      "VALIDATED",
+      "ARITHMETIC_STARTED",
+      "SEALED"
+     ],
+     "evidence": {
+      "boot_id_changed": false,
+      "child_cpu_seconds": 0.557549,
+      "cpu_soft_limit_reached": false,
+      "enospc": false,
+      "exit_code": 0,
+      "integrity_refusal": null,
+      "kernel_oom_record": false,
+      "signal": null,
+      "wall_seconds": 0.6042041778564453,
+      "wall_timeout": false
+     },
+     "failure_class": null,
+     "refusal": null,
+     "sealed_files": [
+      "MANUFACTURED_RECORD_SEALED.json"
+     ]
+    }
+   },
+   "real_mode_refused_before_arithmetic": {
+    "pass": true,
+    "result": {
+     "arithmetic_started": false,
+     "events": [],
+     "evidence": {
+      "boot_id_changed": false,
+      "child_cpu_seconds": 0.35671200000000003,
+      "cpu_soft_limit_reached": false,
+      "enospc": false,
+      "exit_code": 3,
+      "integrity_refusal": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: REAL_INPUT_ARITHMETIC_GUARD = DENY",
+      "kernel_oom_record": false,
+      "signal": null,
+      "wall_seconds": 0.40459370613098145,
+      "wall_timeout": false
+     },
+     "failure_class": "INTEGRITY_REFUSAL",
+     "refusal": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: REAL_INPUT_ARITHMETIC_GUARD = DENY",
+     "sealed_files": []
+    }
+   },
+   "void_address_refused": {
+    "outcome": "FINALIZED_ADDRESS_EXISTS: /tmp/exec-sv-evlimf_4/cpu_limit/attempt/MANUFACTURED_VOID_RECORD_SEALED.json",
+    "pass": true
+   },
+   "void_wrapper_control": {
+    "pass": true
+   },
+   "wall_timeout_seals_void": {
+    "pass": true,
+    "result": {
+     "arithmetic_started": true,
+     "events": [
+      "VALIDATED",
+      "ARITHMETIC_STARTED",
+      "VOID"
+     ],
+     "evidence": {
+      "boot_id_changed": false,
+      "child_cpu_seconds": 15.044286,
+      "cpu_soft_limit_reached": false,
+      "enospc": false,
+      "exit_code": 4,
+      "integrity_refusal": null,
+      "kernel_oom_record": false,
+      "signal": null,
+      "wall_seconds": 15.216389417648315,
+      "wall_timeout": true
+     },
+     "failure_class": "WALL_TIMEOUT",
+     "refusal": "EXECUTOR_REFUSAL: ExecutorRefusal: WALL_TIMEOUT: terminated by the supervisor watchdog (SIGTERM)",
+     "sealed_files": [
+      "MANUFACTURED_VOID_RECORD_SEALED.json"
+     ]
+    }
+   }
+  },
+  "pass": true,
+  "void_mutations": {
+   "V01_VOID_SEAL_DROPPED": {
+    "detected": true,
+    "result": {
+     "arithmetic_started": true,
+     "events": [
+      "VALIDATED",
+      "ARITHMETIC_STARTED",
+      "VOID"
+     ],
+     "evidence": {
+      "boot_id_changed": false,
+      "child_cpu_seconds": 20.035601,
+      "cpu_soft_limit_reached": true,
+      "enospc": false,
+      "exit_code": 4,
+      "integrity_refusal": null,
+      "kernel_oom_record": false,
+      "signal": null,
+      "wall_seconds": 20.224122285842896,
+      "wall_timeout": false
+     },
+     "failure_class": "CPU_RLIMIT",
+     "refusal": "EXECUTOR_REFUSAL: ExecutorRefusal: CPU_RLIMIT: soft CPU limit reached (SIGXCPU)",
+     "sealed_files": []
+    },
+    "void_sealed_and_classified": false
+   }
+  }
+ },
+ "metadata": {
+  "children_cpu_seconds": 78.124651,
+  "cpu_seconds": 0.28912318400000003,
+  "incidental": true,
+  "peak_rss_kib": 77380,
+  "wall_seconds": 79.74155783653259
+ },
+ "part": "supervisor",
+ "protocol_sha256": "f82ae62b2afe4dfadcc73e92d463e33502b719e0077eedfebc6d4eb97c005e17",
+ "runtime": {
+  "cpu_model": "AMD EPYC-Milan Processor",
+  "env": {
+   "MKL_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "PYTHONHASHSEED": "0"
+  },
+  "flint_library": "3.6.0",
+  "flint_so_sha256": "1f7ef1f52024937f542772ff9190e2f74449228cd69a6746b6608fbbd449d138",
+  "glibc_package_version": "2.41-12+deb13u4",
+  "host": "rebaseguard-vultr-02",
+  "kernel_release": "6.12.107+deb13-amd64",
+  "libc_path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+  "libc_sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+  "logical_cpus": 8,
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "numpy_module": "2.5.2",
+  "python": "3.12.3",
+  "python_flint": "0.9.0",
+  "python_flint_module": "0.9.0",
+  "python_impl": "CPython",
+  "scipy": "1.18.1",
+  "venv_prefix": "/root/work/rbg-cusum-aux5-venv"
+ }
+}

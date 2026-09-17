@@ -1,0 +1,108 @@
+{
+ "body": {
+  "pass": true,
+  "tests": {
+   "F10_malformed_certificate_chain": {
+    "outcome": "INCOMPLETE_CERTIFICATE_CHAIN: graded inputs missing ['origin']",
+    "pass": true
+   },
+   "F11_wrong_k1_identity": {
+    "outcome": "K1_IDENTITY_MISMATCH",
+    "pass": true
+   },
+   "F11b_real_adapter_tampered_record": {
+    "outcome": "K1 validation refused: K1InputRefused: V02: record bytes do not match the export manifest entry k4_records/aux5_CUSUM_0_256.json",
+    "pass": true
+   },
+   "F12_wrong_m_identity": {
+    "outcome": "M_SET_MISMATCH: [1, 2, 3, 4]",
+    "pass": true
+   },
+   "finalized_address_exists": {
+    "outcome": "FINALIZED_ADDRESS_EXISTS: /tmp/exec-rf-h2ufcb1t/addr/first/MANUFACTURED_RECORD_SEALED.json",
+    "pass": true
+   },
+   "guard_deny_production_backend_direct": {
+    "outcome": "UNAUTHORIZED_REAL_ARITHMETIC: REAL_INPUT_ARITHMETIC_GUARD = DENY",
+    "pass": true
+   },
+   "guard_deny_real_backend_real_binding": {
+    "outcome": "UNAUTHORIZED_REAL_ARITHMETIC: REAL_INPUT_ARITHMETIC_GUARD = DENY",
+    "pass": true
+   },
+   "producer_hash_mismatch": {
+    "outcome": "PRODUCER_IDENTITY_MISMATCH",
+    "pass": true
+   },
+   "protocol_hash_mismatch": {
+    "outcome": "PROTOCOL_IDENTITY_MISMATCH",
+    "pass": true
+   },
+   "runtime_identity_mismatch_context": {
+    "outcome": "RUNTIME_IDENTITY_MISMATCH",
+    "pass": true
+   },
+   "runtime_match_on_frozen_host": {
+    "pass": true
+   },
+   "runtime_mismatch_detector": {
+    "pass": true
+   },
+   "stale_output_namespace": {
+    "outcome": "STALE_OUTPUT_NAMESPACE",
+    "pass": true
+   },
+   "unbound_input": {
+    "outcome": "UNBOUND_OR_MALFORMED_INPUT: binding does not have the adapter schema",
+    "pass": true
+   },
+   "unsupported_precision": {
+    "outcome": "UNSUPPORTED_PRECISION: 384",
+    "pass": true
+   },
+   "wrong_cell_endpoint": {
+    "outcome": "CELL_ENDPOINT_MISMATCH: fixture x1 differs from the binding",
+    "pass": true
+   },
+   "wrong_point": {
+    "outcome": "POINT_MISMATCH: 1/40",
+    "pass": true
+   }
+  }
+ },
+ "metadata": {
+  "children_cpu_seconds": 0.005575999999999999,
+  "cpu_seconds": 0.994636347,
+  "incidental": true,
+  "peak_rss_kib": 81704,
+  "wall_seconds": 1.0237152576446533
+ },
+ "part": "refusals",
+ "protocol_sha256": "f82ae62b2afe4dfadcc73e92d463e33502b719e0077eedfebc6d4eb97c005e17",
+ "runtime": {
+  "cpu_model": "AMD EPYC-Milan Processor",
+  "env": {
+   "MKL_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "PYTHONHASHSEED": "0"
+  },
+  "flint_library": "3.6.0",
+  "flint_so_sha256": "1f7ef1f52024937f542772ff9190e2f74449228cd69a6746b6608fbbd449d138",
+  "glibc_package_version": "2.41-12+deb13u4",
+  "host": "rebaseguard-vultr-02",
+  "kernel_release": "6.12.107+deb13-amd64",
+  "libc_path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+  "libc_sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+  "logical_cpus": 8,
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "numpy_module": "2.5.2",
+  "python": "3.12.3",
+  "python_flint": "0.9.0",
+  "python_flint_module": "0.9.0",
+  "python_impl": "CPython",
+  "scipy": "1.18.1",
+  "venv_prefix": "/root/work/rbg-cusum-aux5-venv"
+ }
+}
