@@ -1,0 +1,47 @@
+{
+ "argv": [
+  "certificates",
+  "--out",
+  "evidence/qualification_r3/part_certificates.json"
+ ],
+ "body": {
+  "checks": {
+   "C_e0": {
+    "C_float": 469.76966683433835,
+    "C_upper_bound": "528913624126272035/1125899906842624",
+    "artifact_sha256": "437372451855bb69cd7a25dc35466c47ef2fa0270de9140a573c343ad13371be",
+    "certified": true,
+    "identical": true,
+    "margin_lower": 0.004092907106321862,
+    "pass": true
+   },
+   "C_o0": {
+    "C_float": 20.432241055731772,
+    "C_upper_bound": "73934121238864033276486830243250016032592561338368687096855032226418579381791/3618502788666131106986593281521497120414687020801267626233049500247285301248",
+    "artifact_sha256": "3bd9aafe4be048937c37418f68f8f6bc1230837473cab7f1fc60a862f49e9bd5",
+    "certified": true,
+    "identical": true,
+    "margin_lower": 0.02049981225494952,
+    "pass": true
+   },
+   "registry_consistent": {
+    "pass": true
+   }
+  }
+ },
+ "metadata": {
+  "cpu_seconds": 109.754497073,
+  "peak_rss_kib": 318304,
+  "wall_seconds": 109.77115201950073
+ },
+ "part": "certificates",
+ "protocol_sha256": "c39fa090b08f21b2521d68f8a821538b2885077620f8c60a85b6dd510f823dca",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}

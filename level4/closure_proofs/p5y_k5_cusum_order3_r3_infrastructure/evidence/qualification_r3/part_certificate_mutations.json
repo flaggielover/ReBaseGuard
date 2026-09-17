@@ -1,0 +1,44 @@
+{
+ "argv": [
+  "certificate_mutations",
+  "--out",
+  "evidence/qualification_r3/part_certificate_mutations.json"
+ ],
+ "body": {
+  "rows": {
+   "CM01_BERNSTEIN_MIN_FROM_UPPER": {
+    "accepts_bad_payload": false,
+    "artifact_replay_differs": true,
+    "detected": true
+   },
+   "CM02_MARGIN_THRESHOLD_RELAXED": {
+    "accepts_bad_payload": true,
+    "artifact_replay_differs": false,
+    "detected": true
+   },
+   "CM03_ATOM_REMOVED_THRICE": {
+    "accepts_bad_payload": false,
+    "artifact_replay_differs": true,
+    "detected": true
+   },
+   "frozen_verifier_rejects_bad_payload": {
+    "pass": true
+   }
+  }
+ },
+ "metadata": {
+  "cpu_seconds": 210.363635149,
+  "peak_rss_kib": 148684,
+  "wall_seconds": 210.42130279541016
+ },
+ "part": "certificate_mutations",
+ "protocol_sha256": "c39fa090b08f21b2521d68f8a821538b2885077620f8c60a85b6dd510f823dca",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}

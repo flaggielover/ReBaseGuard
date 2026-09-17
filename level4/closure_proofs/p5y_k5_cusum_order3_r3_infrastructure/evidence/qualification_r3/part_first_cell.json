@@ -1,0 +1,350 @@
+{
+ "argv": [
+  "first_cell",
+  "--out",
+  "evidence/qualification_r3/part_first_cell.json"
+ ],
+ "body": {
+  "lemma": {
+   "control_not_odd": {
+    "first_failure": "1/200",
+    "holds_on_grid": false
+   },
+   "odd": {
+    "first_failure": null,
+    "holds_on_grid": true
+   },
+   "pass": true
+  },
+  "mutations": {
+   "B01_M5_USES_ODD_COMPONENT": {
+    "detected": false,
+    "trials": [
+     {
+      "first": [],
+      "trial": "FC5_C10_exact_x1_large",
+      "violations": 0
+     },
+     {
+      "first": [],
+      "trial": "FC2_C50_exact",
+      "violations": 0
+     },
+     {
+      "first": [],
+      "trial": "FC3_C4_wide",
+      "violations": 0
+     },
+     {
+      "first": [],
+      "trial": "FC1_cusum_cell0_analogue_C1233",
+      "violations": 0
+     },
+     {
+      "first": [],
+      "trial": "FC4_C100_small_odd_eigen",
+      "violations": 0
+     }
+    ]
+   },
+   "B02_TRANSPORT_SIGN": {
+    "detected": true,
+    "trials": [
+     {
+      "first": [
+       "m=1 strategy B misses"
+      ],
+      "trial": "FC5_C10_exact_x1_large",
+      "violations": 4
+     }
+    ]
+   },
+   "B03_TOWER_DROPS_RESOLVENT": {
+    "detected": true,
+    "trials": [
+     {
+      "first": [
+       "m=1 strategy B misses"
+      ],
+      "trial": "FC5_C10_exact_x1_large",
+      "violations": 1281
+     }
+    ]
+   },
+   "B04_PENALTY_SCALE": {
+    "detected": true,
+    "trials": [
+     {
+      "first": [
+       "m=1 strategy B misses"
+      ],
+      "trial": "FC5_C10_exact_x1_large",
+      "violations": 2
+     }
+    ]
+   },
+   "B05_S0_TOWER_PARITY": {
+    "detected": true,
+    "trials": [
+     {
+      "first": [
+       "tower S:0:0.o at e=0: 2.255e-01 > 2.443e-02"
+      ],
+      "trial": "FC5_C10_exact_x1_large",
+      "violations": 885
+     }
+    ]
+   },
+   "B06_TOWER_J_AS_K": {
+    "detected": true,
+    "trials": [
+     {
+      "first": [
+       "tower S:1:0.o at e=0: 2.523e-01 > 2.901e-02"
+      ],
+      "trial": "FC5_C10_exact_x1_large",
+      "violations": 1462
+     }
+    ]
+   }
+  },
+  "payload_sha256": "1e622ee2adc08e8fbee4687bca8dcc9306950e25723acd8265ed84b01a7bbe7b",
+  "rows": [
+   {
+    "C": 1538.3397688440039,
+    "C_e0": 1231.7682317682318,
+    "C_o0": 3.3270309527208126,
+    "id": "FC1_cusum_cell0_analogue_C1233",
+    "radii": {
+     "1": {
+      "M5": 448067924.628812,
+      "penalty_B": 57.85867554171423,
+      "radius_A": 5444.867434782671,
+      "radius_B": 60.703598002247574,
+      "radius_B_point": 2.844922460533347,
+      "true_max_abs_R5": 3525813.7556178477
+     },
+     "2": {
+      "M5": 262669175.0639238,
+      "penalty_B": 33.91827385864176,
+      "radius_A": 3946.9988043740013,
+      "radius_B": 46.247454637282814,
+      "radius_B_point": 12.329180778641053,
+      "true_max_abs_R5": 1750471.4820431045
+     },
+     "3": {
+      "M5": 213714025.78874603,
+      "penalty_B": 27.596732096072664,
+      "radius_A": 3596.5302426932813,
+      "radius_B": 43.38264009476383,
+      "radius_B_point": 15.785907998691169,
+      "true_max_abs_R5": 1261629.4259811104
+     },
+     "5": {
+      "M5": 193226629.2227082,
+      "penalty_B": 24.951209920856037,
+      "radius_A": 3612.3726207331247,
+      "radius_B": 48.272872848488646,
+      "radius_B_point": 23.32166292763261,
+      "true_max_abs_R5": 976747.7547927866
+     }
+    },
+    "tower_mode": "graded",
+    "violation_count": 0,
+    "violations": [],
+    "x1": "3133/6165000"
+   },
+   {
+    "C": 68.13961807744067,
+    "C_e0": 49.95004995004995,
+    "C_o0": 3.184571388536817,
+    "id": "FC2_C50_exact",
+    "radii": {
+     "1": {
+      "M5": 4144232.707621597,
+      "penalty_B": 828.8465415243195,
+      "radius_A": 1325.6817708460082,
+      "radius_B": 828.8465415243195,
+      "radius_B_point": 1.768687326672216e-74,
+      "true_max_abs_R5": 409260.3758926679
+     },
+     "2": {
+      "M5": 2599747.7653577426,
+      "penalty_B": 519.9495530715485,
+      "radius_A": 974.2419427983319,
+      "radius_B": 519.9495530715485,
+      "radius_B_point": 1.7963230660485182e-74,
+      "true_max_abs_R5": 208935.63673867707
+     },
+     "3": {
+      "M5": 2135378.2268030816,
+      "penalty_B": 427.07564536061636,
+      "radius_A": 863.7252332215863,
+      "radius_B": 427.07564536061636,
+      "radius_B_point": 6.012677090339059e-74,
+      "true_max_abs_R5": 128124.13106205958
+     },
+     "5": {
+      "M5": 1818762.479997432,
+      "penalty_B": 363.7524959994864,
+      "radius_A": 795.4773256171915,
+      "radius_B": 363.7524959994864,
+      "radius_B_point": 4.684057338033841e-74,
+      "true_max_abs_R5": 59068.606700872726
+     }
+    },
+    "tower_mode": "graded",
+    "violation_count": 0,
+    "violations": [],
+    "x1": "1/50"
+   },
+   {
+    "C": 4.7492753644697805,
+    "C_e0": 3.996003996003996,
+    "C_o0": 2.10448782027674,
+    "id": "FC3_C4_wide",
+    "radii": {
+     "1": {
+      "M5": 2556.3305140338207,
+      "penalty_B": 12.781652570169104,
+      "radius_A": 16.54886304365482,
+      "radius_B": 12.78188481116997,
+      "radius_B_point": 0.00023224100086594737,
+      "true_max_abs_R5": 77.73466227163837
+     },
+     "2": {
+      "M5": 1778.1887041513169,
+      "penalty_B": 8.890943520756585,
+      "radius_A": 12.273988222168628,
+      "radius_B": 8.891866474971504,
+      "radius_B_point": 0.0009229542149204455,
+      "true_max_abs_R5": 32.20795593167366
+     },
+     "3": {
+      "M5": 1536.6513108985644,
+      "penalty_B": 7.6832565544928215,
+      "radius_A": 10.934215141630075,
+      "radius_B": 7.684863638675635,
+      "radius_B_point": 0.0016070841828133302,
+      "true_max_abs_R5": 14.427314115483373
+     },
+     "5": {
+      "M5": 1403.2621600590785,
+      "penalty_B": 7.0163108002953924,
+      "radius_A": 10.387355928780675,
+      "radius_B": 7.018942062855329,
+      "radius_B_point": 0.0026312625599365434,
+      "true_max_abs_R5": 3.832472256325988
+     }
+    },
+    "tower_mode": "graded",
+    "violation_count": 0,
+    "violations": [],
+    "x1": "1/10"
+   },
+   {
+    "C": 125.22570773685173,
+    "C_e0": 99.9000999000999,
+    "C_o0": 1.9801784140751082,
+    "id": "FC4_C100_small_odd_eigen",
+    "radii": {
+     "1": {
+      "M5": 236462.61380377386,
+      "penalty_B": 4.642086954449902,
+      "radius_A": 111.71501825684715,
+      "radius_B": 4.642877344960848,
+      "radius_B_point": 0.0007903905109458245,
+      "true_max_abs_R5": 383.69767693556645
+     },
+     "2": {
+      "M5": 430935.36977740045,
+      "penalty_B": 8.459855137669924,
+      "radius_A": 149.85315093889113,
+      "radius_B": 8.464467764337943,
+      "radius_B_point": 0.0046126266680177165,
+      "true_max_abs_R5": 11063.735430626624
+     },
+     "3": {
+      "M5": 524274.87927888037,
+      "penalty_B": 10.292238331028068,
+      "radius_A": 158.66337152022598,
+      "radius_B": 10.301220286388604,
+      "radius_B_point": 0.008981955360535681,
+      "true_max_abs_R5": 17724.770310053183
+     },
+     "5": {
+      "M5": 587399.515136981,
+      "penalty_B": 11.531461918670795,
+      "radius_A": 164.0828027936695,
+      "radius_B": 11.548278529901156,
+      "radius_B_point": 0.016816611230360753,
+      "true_max_abs_R5": 22095.071018882467
+     }
+    },
+    "tower_mode": "graded",
+    "violation_count": 0,
+    "violations": [],
+    "x1": "3133/500000"
+   },
+   {
+    "C": 11.287358511197413,
+    "C_e0": 9.99000999000999,
+    "C_o0": 2.7021914772880806,
+    "id": "FC5_C10_exact_x1_large",
+    "radii": {
+     "1": {
+      "M5": 10637.480560842492,
+      "penalty_B": 13.296850701053115,
+      "radius_A": 25.369758914125548,
+      "radius_B": 13.296850701053115,
+      "radius_B_point": 2.7635739479253375e-76,
+      "true_max_abs_R5": 443.76723174783587
+     },
+     "2": {
+      "M5": 9903.71779039473,
+      "penalty_B": 12.379647237993412,
+      "radius_A": 24.981081198772674,
+      "radius_B": 12.379647237993412,
+      "radius_B_point": 2.7635739479253375e-76,
+      "true_max_abs_R5": 205.76223514357494
+     },
+     "3": {
+      "M5": 9664.390193793743,
+      "penalty_B": 12.080487742242179,
+      "radius_A": 25.348049105600953,
+      "radius_B": 12.080487742242179,
+      "radius_B_point": 9.140140263252233e-76,
+      "true_max_abs_R5": 96.64945591863805
+     },
+     "5": {
+      "M5": 9702.851652507356,
+      "penalty_B": 12.128564565634194,
+      "radius_A": 26.79546405522975,
+      "radius_B": 12.128564565634194,
+      "radius_B_point": 1.3249353476037046e-75,
+      "true_max_abs_R5": 20.5603090413925
+     }
+    },
+    "tower_mode": "graded",
+    "violation_count": 0,
+    "violations": [],
+    "x1": "1/20"
+   }
+  ]
+ },
+ "metadata": {
+  "cpu_seconds": 7.5983091300000005,
+  "peak_rss_kib": 49640,
+  "wall_seconds": 7.5990283489227295
+ },
+ "part": "first_cell",
+ "protocol_sha256": "c39fa090b08f21b2521d68f8a821538b2885077620f8c60a85b6dd510f823dca",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}

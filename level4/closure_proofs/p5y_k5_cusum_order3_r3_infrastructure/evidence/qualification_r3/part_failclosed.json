@@ -1,0 +1,53 @@
+{
+ "argv": [
+  "failclosed",
+  "--out",
+  "evidence/qualification_r3/part_failclosed.json"
+ ],
+ "body": {
+  "checks": {
+   "engine_missing_inputs": {
+    "pass": true
+   },
+   "forged_authorization": {
+    "pass": true,
+    "refused": "REAL_CELL_NOT_AUTHORIZED: cell 0"
+   },
+   "gate_precedes_record_validation": {
+    "pass": true,
+    "refused": "REAL_CELL_NOT_AUTHORIZED: cell 0"
+   },
+   "missing_C_o0_even_if_repinned": {
+    "pass": true,
+    "refused": "MISSING_OPERATOR_CERTIFICATE C_o0"
+   },
+   "missing_C_o0_registry_bytes_changed": {
+    "pass": true,
+    "refused": "operator certificate registry bytes differ from the pinned registry"
+   },
+   "no_authorization": {
+    "pass": true,
+    "refused": "REAL_CELL_NOT_AUTHORIZED: cell 0"
+   },
+   "tampered_certificate_value_detected": {
+    "pass": true
+   }
+  },
+  "pass": true
+ },
+ "metadata": {
+  "cpu_seconds": 31.265578257,
+  "peak_rss_kib": 149080,
+  "wall_seconds": 31.26851177215576
+ },
+ "part": "failclosed",
+ "protocol_sha256": "c39fa090b08f21b2521d68f8a821538b2885077620f8c60a85b6dd510f823dca",
+ "runtime": {
+  "host": "rebaseguard-vultr-02",
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "prefix": "/root/work/rbg-cusum-aux5-venv",
+  "python": "3.12.3",
+  "python_flint": "0.9.0"
+ }
+}
