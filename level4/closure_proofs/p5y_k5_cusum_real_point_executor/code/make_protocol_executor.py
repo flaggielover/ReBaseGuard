@@ -1,0 +1,147 @@
+"""Emit config/EXECUTOR_QUALIFICATION_PROTOCOL.json (frozen) or a DEV copy (python3 -B code/make_protocol_executor.py [--dev OUT])."""
+from __future__ import annotations
+
+import hashlib
+import json
+import sys
+from pathlib import Path
+
+NS = Path(__file__).resolve().parents[1]
+CP = NS.parents[0]
+REPO = NS.parents[2]
+REL = "level4/closure_proofs/p5y_k5_cusum_real_point_executor/"
+EXECUTOR_SOURCES = ["code/executor_core.py", "code/backends.py", "code/input_adapters.py", "code/paths.py"]
+QUALIFICATION_SOURCES = ["code/qualification_gates.py", "code/consumer.py", "code/smoke.py", "code/exec_fixtures.py",
+                         "code/qualify_executor.py", "code/make_protocol_executor.py", "config/REAL_INPUT_GUARD.json",
+                         "config/EXTERNAL_AUTHORIZATION_TEMPLATE.json", "EXECUTOR_SPEC.md", "TRUST_MODEL.md"]
+V = {"S": "SUPPORTS_K5B_FIRST_CELL", "I": "INCONCLUSIVE", "C": "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "P": "POINT_POSITIVE", "N": "POINT_NEGATIVE", "U": "POINT_UNDETERMINED"}
+
+
+def sha(p: Path) -> str:
+    return hashlib.sha256(p.read_bytes()).hexdigest()
+
+
+def vs(code: str) -> dict:
+    """'SP SP IN CN' -> per-m expected [verdict, point] for m = 1, 2, 3, 5."""
+    return {m: [V[c[0]], V[c[1]]] for m, c in zip(("1", "2", "3", "5"), code.split())}
+
+
+def fixtures():
+    return [
+        {"id": "XF01_positive_L1", "purpose": "decisively positive L1", "seed": 7001, "C_target": 3, "x1": "1/4000",
+         "noise": "0", "expect": {"verdicts": vs("SP SP SP SP")}},
+        {"id": "XF02_inconclusive_transport", "purpose": "inconclusive transported interval (point positive)", "seed": 7011,
+         "C_target": 5, "x1": "1/16", "noise": "1/100000", "expect": {"verdicts": vs("IP IP IP IP")}},
+        {"id": "XF03_negative_U1", "purpose": "decisively negative U1", "seed": 7003, "C_target": 3, "x1": "1/4000",
+         "noise": "0", "expect": {"verdicts": vs("CN CN CN CN")}},
+        {"id": "XF04_point_negative_U0", "purpose": "point-negative U0 with inconclusive transport", "seed": 7004,
+         "C_target": 5, "x1": "1/16", "noise": "1/100000", "expect": {"verdicts": vs("IN IN IP IP")}},
+        {"id": "XF05_tight_M5", "purpose": "tight M5", "seed": 7015, "C_target": 3, "x1": "1/4000", "noise": "0",
+         "expect": {"verdicts": vs("SP SP SP SP"), "M5_ratio_max": "DEV"}},
+        {"id": "XF06_loose_valid_M5", "purpose": "loose but valid M5", "seed": 7002, "C_target": 3, "x1": "1/4000",
+         "noise": "0", "expect": {"verdicts": vs("SP SP SP SP"), "M5_ratio_min_m1": "DEV"}},
+        {"id": "XF07_parity_pure", "purpose": "parity-pure source (exact candidates)", "seed": 7005, "C_target": 3,
+         "x1": "1/4000", "noise": "0", "expect": {"verdicts": vs("CN CN CN CN")}},
+        {"id": "XF08_parity_contamination", "purpose": "controlled parity contamination (k_scale 2, noise)", "seed": 7018,
+         "C_target": 20, "k_scale": "2", "x1": "1/100", "noise": "1/100000", "expect": {"verdicts": vs("SP SP SP SP")}},
+        {"id": "XF09_near_zero_boundary", "purpose": "near-zero scientific boundary (m = 1, 2 straddle zero)", "seed": 7002,
+         "C_target": 5, "x1": "1/50", "noise": "1/100000", "expect": {"verdicts": vs("IP IP SP SP")}},
+    ]
+
+
+def mutations():
+    M = [
+        ("E01_WRONG_M", "executor_core.py", 'L0, U0 = out0["m"][m]["R3_mid"]', 'L0, U0 = out0["m"][M_SET[M_SET.index(m) - 1]]["R3_mid"]'),
+        ("E02_WRONG_POINT_E", "backends.py", "gr0 = SS.GradedRig(sysm, F(0), F(0), seed=seed, noise=noise)",
+         "gr0 = SS.GradedRig(sysm, x1 / 2, F(0), seed=seed, noise=noise)"),
+        ("E03_WRONG_CELL_ENDPOINT", "executor_core.py", 'x1 = F(ctx.k1_binding["right"])', 'x1 = F(ctx.k1_binding["right"]) / 2'),
+        ("E04_WRONG_K1_IDENTITY_ACCEPTED", "executor_core.py", 'if b["record_sha256"] != want["record_sha256"] or',
+         'if False and b["record_sha256"] != want["record_sha256"] or'),
+        ("E05_ODD_EVEN_COMPONENT_SWAP", "backends.py", "out[node] = (ex(ge), ex(go))", "out[node] = (ex(go), ex(ge))"),
+        ("E06_OMIT_DERIVATIVE_SOURCE_TERM", "backends.py", '"S0": {n: ex(grH.rig.T["S", 0, n]) for n in range(7)},',
+         '"S0": {n: ex(grH.rig.T["S", 0, n]) * (n != 1) for n in range(7)},'),
+        ("E07_WRONG_GRADED_CONSTANT", "backends.py", '"C_e0": ex(grH.C_e0), "C_o0": ex(grH.C_o0),',
+         '"C_e0": ex(grH.C_o0), "C_o0": ex(grH.C_e0),'),
+        ("E08_WRONG_LOCAL_M5_ANCHOR", "executor_core.py", 'out0["mid"]["nodes"], x1=R1E.exact(x1))',
+         'out0["mid"]["nodes"], x1=R1E.exact(0))'),
+        ("E09_WRONG_TRANSPORT_FACTOR", "executor_core.py", "tf = x1 * x1 / 2", "tf = x1 * x1 / 4"),
+        ("E10_WRONG_L1_SIGN", "executor_core.py", '"L1": L0 - tf * M5', '"L1": L0 + tf * M5'),
+        ("E11_WRONG_U1_SIGN", "executor_core.py", '"U1": U0 + tf * M5', '"U1": U0 - tf * M5'),
+        ("E12_SERIALIZE_MIDPOINT", "executor_core.py", 'L0, U0 = out0["m"][m]["R3_mid"]',
+         'L0 = U0 = sum(out0["m"][m]["R3_mid"]) / 2'),
+        ("E13_REUSE_STALE_CERTIFICATE", "executor_core.py", "stages = run_stages_before_enclosure(backend, ctx)",
+         'stages = globals().setdefault("_STALE_STAGES", run_stages_before_enclosure(backend, ctx))'),
+        ("E14_BYPASS_REAL_INPUT_GUARD", "executor_core.py",
+         "    enforce_guard(backend)                                   # FIRST: before any backend method",
+         "    pass                                                     # FIRST: before any backend method"),
+        ("E15_SILENT_PRECISION_CHANGE", "executor_core.py", "with R1E.precision(ctx.precision_bits):", "with R1E.precision(128):"),
+        ("E16_MUTATE_SCIENTIFIC_ADDRESS", "executor_core.py", 'k1_record_sha256=ctx.k1_binding["record_sha256"],',
+         'k1_record_sha256="0" * 64,'),
+    ]
+    return [{"id": i, "file": f, "old": o, "new": n, "required": True} for i, f, o, n in M]
+
+
+def pins() -> dict:
+    r4 = json.loads((CP / "p5y_k5_cusum_order3_r4_tightening/config/QUALIFICATION_PROTOCOL_R4.json").read_text())
+    out = {}
+    for key in ("r1_bound_sha256", "r2_bound_sha256", "r3_bound_sha256", "bound_code_sha256", "bound_config_sha256"):
+        out.update(r4[key])
+    for rel in ("level4/closure_proofs/p5y_k5_cusum_order3_r4_tightening/config/QUALIFICATION_PROTOCOL_R4.json",
+                "level4/closure_proofs/p5y_k5_cusum_order3_r4_tightening/evidence/qualification_r4/QUALIFICATION_RESULT_R4.json",
+                "level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/protocol/SCIENCE_PREREGISTRATION_R4.json",
+                "level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/code/probe_rules.py",
+                "level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/code/prelaunch_verify.py",
+                "level4/closure_proofs/p5y_gammatilde_point_certificate/code/point_core.py"):
+        out[rel] = sha(REPO / rel)
+    return out
+
+
+def build(dev: bool) -> dict:
+    science = CP / "p5y_k5_cusum_first_real_probe_protocol/protocol/SCIENCE_PREREGISTRATION_R4.json"
+    prereg = json.loads(science.read_text())
+    ex_src = {REL + f: sha(NS / f) for f in EXECUTOR_SOURCES}
+    identity = {"executor_sources_sha256": ex_src, "r4_protocol_sha256": pins()[
+        "level4/closure_proofs/p5y_k5_cusum_order3_r4_tightening/config/QUALIFICATION_PROTOCOL_R4.json"],
+        "probe_rules_sha256": sha(CP / "p5y_k5_cusum_first_real_probe_protocol/code/probe_rules.py")}
+    fx = fixtures()
+    limits = json.loads((NS / "config/FIXTURE_LIMITS.json").read_text()) if (NS / "config/FIXTURE_LIMITS.json").exists() else {}
+    for f in fx:
+        for k in ("M5_ratio_max", "M5_ratio_min_m1"):
+            if f["expect"].get(k) == "DEV":
+                if k in limits.get(f["id"], {}):
+                    f["expect"][k] = limits[f["id"]][k]
+                elif dev:
+                    f["expect"].pop(k)
+                else:
+                    raise SystemExit(f"{f['id']}: {k} not calibrated")
+    return {
+        "schema": "rebaseguard.p5y.k5.cusum-real-point-executor.qualification-protocol.v1",
+        "status": "DEV_CALIBRATION_ONLY" if dev else "FROZEN_PRE_QUALIFICATION",
+        "scope": "manufactured systems, synthetic candidates and operator certificates only; REAL_INPUT_ARITHMETIC_GUARD = DENY; "
+                 "no real K1 cell executed; no real R''', R^(5), L1 or U1 formed",
+        "science_preregistration_sha256": sha(science),
+        "runtime_contract": prereg["host_runtime_contract"],
+        "cpu_ceiling": prereg["cpu_ceiling"],
+        "cost_model": {"committed_collocation_cpu_seconds": 1501.7,
+                       "committed_collocation_basis": "GammaTilde point run at e = 0 (order-2 collocation + stack) 1160.5 CPU-s + Aux3 auxiliary order-3 evidence of cell 0 171.2 CPU-s + R1 rung-3 candidate recompute ~170 CPU-s (all committed); the real Arb residual, graded-range, certificate-load and hull stages are MEASURED by the smoke",
+                       "enclosure_and_tower_allowance_cpu_seconds": 120, "safety_factor": 1.5},
+        "fixtures": fx,
+        "separation_fixtures": {"SUPPORTS": "XF01_positive_L1", "INCONCLUSIVE": "XF02_inconclusive_transport",
+                                "CONTRADICTS": "XF03_negative_U1"},
+        "crosscheck_fixtures": ["XF01_positive_L1", "XF03_negative_U1", "XF04_point_negative_U0", "XF08_parity_contamination"],
+        "smoke_seed": 9401 if not dev else 99401,
+        "mutations": mutations(),
+        "inherited_r4_parts": ["odd_certificate", "first_cell", "b01", "r5_mutations", "m5_crosscheck", "failclosed"],
+        "pins_sha256": pins(),
+        "executor_sources_sha256": {**ex_src, **{REL + f: sha(NS / f) for f in QUALIFICATION_SOURCES}},
+        "executor_identity": identity,
+        "executor_identity_sha256": hashlib.sha256(json.dumps(identity, sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
+    }
+
+
+if __name__ == "__main__":
+    if len(sys.argv) > 2 and sys.argv[1] == "--dev":
+        Path(sys.argv[2]).write_text(json.dumps(build(True), indent=1) + "\n")
+    else:
+        (NS / "config/EXECUTOR_QUALIFICATION_PROTOCOL.json").write_text(json.dumps(build(False), indent=1) + "\n")
