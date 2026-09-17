@@ -1,4 +1,35 @@
-# First governed real CUSUM signed-R''' probe: preregistered protocol (Option B)
+# First governed real CUSUM signed-R''' probe: preregistered protocol (Option B), revision r2
+
+**r2 supersedes r1 (`dbbd405a`) before any authorization or execution.**
+- **Authoritative files:** `protocol/SCIENCE_PREREGISTRATION_R2.json`, the r2 `code/probe_rules.py` and
+  `code/prelaunch_verify.py` (hash-bound in the r2 file), and `protocol/AUTHORIZATION_TEMPLATE_R2.json`.
+- **Why r1 was superseded:** its independent static review (`review/STATIC_REVIEW_R1.md`) passed the science but
+  failed the governance machinery.
+- **What r2 changes** (sections below this box describe r1 where they differ; the r2 JSON governs):
+  1. **Code binding.** The rule, verifier and test code are pinned by sha256 in the science file. The verifier also
+     requires them byte-equal to their blobs at the freeze commit.
+  2. **Authorization.** It exists only at the fixed committed path `protocol/AUTHORIZATION_ACTIVE.json`.
+     - `AUTHORIZATION_COMMIT` is derived from git (the file may not claim it). It must descend from the freeze commit
+       and the amendment commit.
+     - The UTC time must be within one hour of the commit.
+     - The output namespace is pinned (`/root/work/k5-first-real-probe`).
+  3. **Address and attempts.** The scientific address has no attempt id; attempts live in `attempt-N`. Any sealed
+     record (scientific or VOID) in the namespace, the packet or git history blocks further attempts.
+  4. **Consumption keying.** K5-B consumption is keyed on the H3a consequence, so POINT_NEGATIVE → NEGATIVE.
+  5. **Adapter.** A K1-record → `k5b_literal` consumption adapter is specified and pinned by its source hashes. Its
+     acceptance test must reproduce the L = −∞ readiness pass sets.
+  6. **Attempt model.** An attempt starts at ARITHMETIC_STARTED. Refusals before it are not attempts. Transient classes
+     after arithmetic are reboot, external kill/OOM and disk full; SIGXCPU is not transient. Numbers from an attempt
+     voided after arithmetic are sealed as VOID and never adopted.
+  7. **Amendment.** It has whitelisted keys, qualification evidence and an independent review pinned, the entry script
+     among its sources, and is committed once. If executor parameters in the science file prove infeasible, the
+     preregistration is voided before authorization.
+  8. **Adoption.** No consequence is adopted without independent replay and review (PENDING_INDEPENDENT_ADJUDICATION).
+     The divergence from the frozen oracle is disclosed.
+  9. **Target wording.** The negative route reads "H3a target refuted for CUSUM" (a target change needs a preregistered
+     decision), and POSITIVE's limited downstream value is disclosed.
+
+---
 
 **Status: FROZEN PRE-RESULT. NOT AUTHORIZED. NOT EXECUTED.**
 - **Route:** `SCIENTIFIC_PROBE_PLUS_REAL_QUALIFICATION`, i.e. one computation with two predeclared, logically
@@ -36,7 +67,7 @@ So there is no contamination and no retrospective construction.
 ## 1. Cell selection (pre-result evidence only): **K1 CUSUM cell 0 = theorem cell C₁ = [0, 5083/10⁷]**
 
 **Why cell 0 is objectively the most informative, not merely the engineering target:**
-1. **Bridge.** In the K5-B bridge (`K5_GLOBAL_BRIDGE.md` lines 30–35 and 49–51), `C₁` passes **only** through
+1. **Bridge.** In the K5-B bridge (`K5_GLOBAL_BRIDGE.md` lines 30–33 and 56; countersignature README lines 69–70), `C₁` passes **only** through
    `L₁ > 0`. `Γ₁ < 0` is impossible because `Γ₁ ≥ g(0) = 0`, and no restart covers `C₁`. Every m requires it.
 2. **Lemma K5-L.** `R'''(0) > 0` is the only generic way H3a holds at 0, and a certified `R'''(0) < 0` refutes H3a.
    Cell 0 is decisive in **both** directions; every other cell is at most conditionally informative.
