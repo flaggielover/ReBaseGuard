@@ -1,4 +1,4 @@
-"""Pure, stdlib-only frozen rules of the first governed real CUSUM signed-R''' probe, r3 (no flint, no kernel, no I/O
+"""Pure, stdlib-only frozen rules of the first governed real CUSUM signed-R''' probe, r4 (no flint, no kernel, no I/O
 besides reading the frozen preregistration). Fixed BEFORE any real result exists; unit-tested on hypothetical inputs.
 
     transport(L0, U0, M5)              -> (L1, U1)   Strategy-B enclosure of R''' over C_1 = [0, x1], x1 from the prereg
@@ -23,7 +23,7 @@ from fractions import Fraction as F
 from pathlib import Path
 
 NS = Path(__file__).resolve().parents[1]
-PREREG = NS / "protocol/SCIENCE_PREREGISTRATION_R3.json"
+PREREG = NS / "protocol/SCIENCE_PREREGISTRATION_R4.json"
 
 SUPPORTS = "SUPPORTS_K5B_FIRST_CELL"
 INCONCLUSIVE = "INCONCLUSIVE"
@@ -163,14 +163,18 @@ def slot_dir(n: int) -> str:
 
 def failure_class(evidence: dict) -> str:
     """Mechanical derivation from the SUPERVISOR's evidence (never self-declared by the executor), frozen order.
-    evidence keys: boot_id_changed, wall_timeout, signal (int|None), cpu_soft_limit_reached, kernel_oom_record,
-    enospc, integrity_refusal (str|None), exit_code (int|None)."""
+    evidence keys: boot_id_changed, child_cpu_seconds, wall_seconds, wall_timeout, signal (int|None),
+    cpu_soft_limit_reached, kernel_oom_record, enospc, integrity_refusal (str|None), exit_code (int|None).
+    Child CPU time (measured by the supervisor from the child's rusage) at or above the soft limit is CPU_RLIMIT whatever
+    the signal (a hard-limit SIGKILL is never an external kill); wall time at or above the wall limit is WALL_TIMEOUT."""
     e = evidence or {}
+    ceil = load_prereg()["cpu_ceiling"]
     if e.get("boot_id_changed") is True:
         return "HOST_REBOOT_OR_BOOT_ID_CHANGE"
-    if e.get("wall_timeout") is True:
+    if e.get("wall_timeout") is True or (e.get("wall_seconds") or 0) >= ceil["per_attempt_wall_seconds"]:
         return "WALL_TIMEOUT"
-    if e.get("signal") == 24 or e.get("cpu_soft_limit_reached") is True:
+    if e.get("signal") == 24 or e.get("cpu_soft_limit_reached") is True or \
+            (e.get("child_cpu_seconds") or 0) >= ceil["per_attempt_cpu_seconds_soft"]:
         return "CPU_RLIMIT"
     if e.get("integrity_refusal"):
         return "INTEGRITY_REFUSAL"

@@ -1,0 +1,53 @@
+{
+ "AUTHORIZATION_UTC": null,
+ "AUTHORIZED_BY": null,
+ "CELL_SET": [
+  0
+ ],
+ "CPU_CEILING": {
+  "campaign_cpu_seconds_hard": 32400,
+  "enforcement": "RLIMIT_CPU soft 9000 / hard 10800 set by the supervisor before arithmetic; the executor's SIGXCPU handler (soft limit) seals VOID_RECORD_SEALED (cost) before the hard limit; the supervisor's wall watchdog does the same; the prelaunch verifier refuses if the authorization's ceilings differ",
+  "max_attempts": 3,
+  "per_attempt_cpu_seconds_rlimit": 10800,
+  "per_attempt_cpu_seconds_soft": 9000,
+  "per_attempt_wall_seconds": 14400
+ },
+ "EXECUTION_AUTHORIZED": false,
+ "HOST_RUNTIME_IDENTITY": {
+  "host": "rebaseguard-vultr-02",
+  "sha256": "1d49bd4e36f8fc32c8d9987bda801ffce83cf5e3c9df3678f90b92960dcd206b"
+ },
+ "K1_INPUT_IDENTITY": {
+  "cells_json_sha256": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f",
+  "k1_producer_identity": "3692d0fe",
+  "manifest": "level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/evidence/closure_r1/COMPOSITE_EXPORT_MANIFEST.json",
+  "manifest_sha256": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334",
+  "record": "level4/closure_proofs/p5y_k5b_k1_premise_binding_audit/result_r1/records/aux5_CUSUM_0_256.json",
+  "record_sha256": "4f8df44c956309b109e174f7ea15deee39ffad863c459f1656d6e2470a7ff1fb"
+ },
+ "M_SET": [
+  1,
+  2,
+  3,
+  5
+ ],
+ "OUTPUT_NAMESPACE": "/root/work/k5-first-real-probe",
+ "POINT_E": "0/1",
+ "PRECISION_POLICY": {
+  "bits": [
+   256
+  ],
+  "escalation_allowed": false,
+  "justification": "the R1 real front-end refuses any precision other than 256; R1 and R2 precision studies classify the producer as STAGNATING (width floors are mathematical: truncation, residual and resolvent terms, not rounding); the R4 certificates are frozen at 256. Escalation cannot convert INCONCLUSIVE and would only add exposure.",
+  "rule": "one frozen rung. Execute at 256; the result at 256 is final for this protocol whatever its verdict."
+ },
+ "PRODUCER_R4_IDENTITY": {
+  "executor_binding_sha256": "SET_AT_ACTIVATION",
+  "producer_identity_sha256": "850232481ca459ade742a6efff63202da99c70626924cfcbcb71b081fc64277a"
+ },
+ "PROTOCOL_FREEZE_COMMIT": "SET_AT_ACTIVATION",
+ "PROTOCOL_SHA256": "9ace6896d70b7a17225c03cd6d8092e3d33089d001dd3e2736894dd866f3780a",
+ "THEOREM_CELL": "C_1",
+ "activation_rule": "Activation copies this template to protocol/AUTHORIZATION_ACTIVE.json (a regular file, not a symlink) changing ONLY the activation fields (EXECUTION_AUTHORIZED, PROTOCOL_FREEZE_COMMIT, PRODUCER_R4_IDENTITY.executor_binding_sha256, AUTHORIZED_BY, AUTHORIZATION_UTC), committed once and pushed strictly after the amendment commit, and only after a separate explicit user authorization message. This template is never edited.",
+ "schema": "rebaseguard.p5y.k5.cusum-first-real-probe.authorization.v4"
+}

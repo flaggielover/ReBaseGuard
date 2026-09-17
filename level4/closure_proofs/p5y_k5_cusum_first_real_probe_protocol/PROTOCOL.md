@@ -1,46 +1,37 @@
-# First governed real CUSUM signed-R''' probe: preregistered protocol (Option B), revision r3
+# First governed real CUSUM signed-R''' probe: preregistered protocol (Option B), revision r4
 
-**r3 supersedes r2 (`c4716a88`) and r1 (`dbbd405a`) before any authorization or execution.**
-- **Authoritative files:** `protocol/SCIENCE_PREREGISTRATION_R3.json`, the r3 `code/probe_rules.py` and
-  `code/prelaunch_verify.py` (hash-bound), `protocol/AUTHORIZATION_TEMPLATE_R3.json`, `protocol/EXECUTION_BINDING_R3.json`
-  and, after the freeze, `protocol/FREEZE_RECORD_R3.json`.
-- **Science.** The cell, m set, object, hypothesis, verdicts, K5-B map, single rung and cost basis are **unchanged**
-  since r1.
-- **Why re-freeze.** The independent static reviews of r1 and r2 (`review/STATIC_REVIEW_R1.md`, `STATIC_REVIEW_R2.md`)
-  passed the science but failed the governance machinery. In particular, a forged committed amendment plus
-  authorization passed the r2 verifier.
+**r4 supersedes r3 (`38234751`), r2 (`c4716a88`) and r1 (`dbbd405a`) before any authorization or execution.**
+- **Authoritative files:**
+  - `protocol/SCIENCE_PREREGISTRATION_R4.json`;
+  - the r4 `code/probe_rules.py`, `code/prelaunch_verify.py` and `tests/test_probe_protocol.py` (hash-bound);
+  - `protocol/AUTHORIZATION_TEMPLATE_R4.json` and `protocol/EXECUTION_BINDING_R4.json` (introduced by the freeze
+    commit);
+  - `protocol/FREEZE_RECORD_R4.json` (published after the freeze).
+- **Science is unchanged since r1:** cell 0 = C₁, m ∈ {1, 2, 3, 5}, point enclosure plus (x₁²/2)·M5 transport, the
+  three-way verdict with POINT_NEGATIVE, the K5-B consumption map keyed on the H3a consequence, a single 256-bit rung,
+  and the cost basis.
+- **Why each re-freeze.** Every re-freeze answers an independent static review that failed the governance machinery
+  (`review/STATIC_REVIEW_R1.md`, `R2`, `R3`).
 
-**What r3 changes.**
-1. **Trust model (stated).** The verifier anchors on the PUBLISHED ref `origin/p5y-postk1-frontier` (fetched first):
-   - commits must be strictly ordered: freeze < amendment < authorization, all published;
-   - a `FREEZE_RECORD_R3.json` in a strictly later published commit names the freeze commit and sha256;
-   - AUTHORIZATION_UTC must not be in the future, must fall within the hour before the authorization commit, and must
-     come after the amendment commit.
-
-   It cannot stop someone with push rights who publishes fabricated reviews; that residual is covered by the public
-   history and by independent adjudication before adoption.
-2. **Authorization.** It must equal the committed template in every non-activation field, with no extra keys. Only
-   the five activation fields change, so a genuine activation is now possible.
-3. **Executor amendment.**
-   - Verdicts are read from the review file's own `REVIEW_VERDICT` line, and `REVIEWED_AMENDMENT_SOURCES_SHA256` must
-     name the sources.
-   - Every source, evidence and review file must be committed before the amendment.
-   - The executor entry, the consumption adapter and the frozen adapter pins must be among the sources.
-4. **Slots, ledger, failure class.**
-   - Launches use `slot-N` (max 9 slots, max 3 arithmetic attempts).
-   - A committed, published LAUNCH_NOTICE naming the authorization must precede each launch; OUTCOME entries and seals
-     follow in an append-only ledger (checked across history).
-   - The failure class is derived mechanically from supervisor evidence: SIGXCPU and wall timeout are not transient;
-     reboot, OOM, external signal and ENOSPC are.
-5. **Cost and VOID.**
-   - CPU soft limit 9,000 s < hard limit 10,800 s. Cost failures seal VOID before any scientific seal, so a scientific
-     record implies Q15 PASS.
-   - VOID applies to the whole record.
-   - The VOID exposure of cell 0 must be disclosed by successors.
-6. **K5-B records source.** Named: the host export directory, with a per-record sha256 check against manifest
-   `29ad1f9b`.
-7. **Tests.** A throwaway git-repo harness, in which the r2 forgery is refused and a genuine strictly ordered published
-   activation passes the governance checks.
+**r4 changes from r3.**
+1. **Publication anchor.**
+   - The ref `origin/p5y-postk1-frontier` is pinned, with no CLI override.
+   - It must equal `git ls-remote` of an allow-listed origin (GitHub, or the host mirror `/root/work/postk1.git`).
+   - The freeze commit's first parent is the literal `5da170db`.
+2. **Freeze-time files.** The template and binding are introduced by the freeze commit and never change, so a
+   drifted template is refused.
+3. **No symlinks.** No governed path may be a symlink; git must store regular files.
+4. **Review file.** It needs exactly one `REVIEW_VERDICT` line and exactly one `REVIEWED_AMENDMENT_SOURCES_SHA256` line.
+5. **The committed ledger governs host files.**
+   - OUTCOME entries carry `arithmetic_started`, `failure_class`, `run_failed_sha256` and `sealed_record_sha256`.
+   - Host `RUN_FAILED.json` must match them.
+   - A non-null `sealed_record_sha256` blocks further launches even if the host seal is deleted.
+6. **Failure class.** A hard-limit kill is CPU_RLIMIT whenever child CPU time reaches the soft limit; wall time works
+   the same way.
+7. **Executor obligations.** The executor calls the verifier with its defaults only. The supervisor recovery mode
+   writes RUN_FAILED after a reboot. No qualification fixture may use sealed-record names.
+8. **Tests.** A git-repo harness covers F1 (the r2 forgery), F2 (a genuine activation, with P02/P03/P04/P06/P09/P11/P12
+   passing) and the r3 bypasses V05, V12, V21, V22, V23, S1 and S2, all refused.
 
 ---
 
