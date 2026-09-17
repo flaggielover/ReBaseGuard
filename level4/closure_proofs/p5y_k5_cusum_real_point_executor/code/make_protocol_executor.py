@@ -10,10 +10,12 @@ NS = Path(__file__).resolve().parents[1]
 CP = NS.parents[0]
 REPO = NS.parents[2]
 REL = "level4/closure_proofs/p5y_k5_cusum_real_point_executor/"
-EXECUTOR_SOURCES = ["code/executor_core.py", "code/backends.py", "code/input_adapters.py", "code/paths.py"]
-QUALIFICATION_SOURCES = ["code/qualification_gates.py", "code/consumer.py", "code/smoke.py", "code/exec_fixtures.py",
-                         "code/qualify_executor.py", "code/make_protocol_executor.py", "config/REAL_INPUT_GUARD.json",
-                         "config/EXTERNAL_AUTHORIZATION_TEMPLATE.json", "EXECUTOR_SPEC.md", "TRUST_MODEL.md"]
+EXECUTOR_SOURCES = ["code/paths.py", "code/executor_core.py", "code/backends.py", "code/input_adapters.py",
+                    "code/authorization_interface.py", "code/executor_cli.py", "code/supervisor.py",
+                    "code/qualification_gates.py", "code/consumer.py"]
+QUALIFICATION_SOURCES = ["code/smoke.py", "code/exec_fixtures.py", "code/qualify_executor.py", "code/make_protocol_executor.py",
+                         "config/REAL_INPUT_GUARD.json", "config/EXTERNAL_AUTHORIZATION_TEMPLATE.json",
+                         "config/FIXTURE_LIMITS.json", "EXECUTOR_SPEC.md", "EXECUTOR_SPEC_R2.md", "TRUST_MODEL.md"]
 V = {"S": "SUPPORTS_K5B_FIRST_CELL", "I": "INCONCLUSIVE", "C": "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
      "P": "POINT_POSITIVE", "N": "POINT_NEGATIVE", "U": "POINT_UNDETERMINED"}
 
@@ -73,13 +75,74 @@ def mutations():
         ("E13_REUSE_STALE_CERTIFICATE", "executor_core.py", "stages = run_stages_before_enclosure(backend, ctx)",
          'stages = globals().setdefault("_STALE_STAGES", run_stages_before_enclosure(backend, ctx))'),
         ("E14_BYPASS_REAL_INPUT_GUARD", "executor_core.py",
-         "    enforce_guard(backend)                                   # FIRST: before any backend method",
-         "    pass                                                     # FIRST: before any backend method"),
-        ("E15_SILENT_PRECISION_CHANGE", "executor_core.py", "with R1E.precision(ctx.precision_bits):", "with R1E.precision(128):"),
+         "    decision = enforce_guard(backend, ctx)                   # FIRST: before any backend method",
+         "    decision = guard_decision(None, ctx)                     # FIRST: before any backend method"),
+        ("E15_SILENT_PRECISION_CHANGE", "executor_core.py", "R1E.precision(ctx.precision_bits):", "R1E.precision(128):"),
         ("E16_MUTATE_SCIENTIFIC_ADDRESS", "executor_core.py", 'k1_record_sha256=ctx.k1_binding["record_sha256"],',
          'k1_record_sha256="0" * 64,'),
     ]
     return [{"id": i, "file": f, "old": o, "new": n, "required": True} for i, f, o, n in M]
+
+
+def production_mutations():
+    """P01-P04: the shared _CusumStack methods (detected in the real-stage smoke by the unmutated shared checks)."""
+    M = [
+        ("P01_CONSTANTS_ODD_EVEN_SWAP", "backends.py", '"C_e0": ex(c["C_e0"]), "C_o0": ex(c["C_o0"]),',
+         '"C_e0": ex(c["C_o0"]), "C_o0": ex(c["C_e0"]),'),
+        ("P02_HULL_BASE_WRONG_X1", "backends.py", '"eta": ex(x1), "S0": {n: H6.sup_S0_on(n, F(0), x1)',
+         '"eta": ex(x1 / 2), "S0": {n: H6.sup_S0_on(n, F(0), x1)'),
+        ("P03_ORIGIN_WRONG_ORDER", "backends.py", 'cert.origin(("W", (r, j), 3)) for r in range(4)',
+         'cert.origin(("W", (r, j), 2)) for r in range(4)'),
+        ("P04_CANDIDATE_PARITY_SWAP", "backends.py", "out[node] = (v.e, v.o)", "out[node] = (v.o, v.e)"),
+    ]
+    return [{"id": i, "file": f, "old": o, "new": n, "required": True} for i, f, o, n in M]
+
+
+def authorization_mutations():
+    """A01-A03: validator mutants (detected on synthetic bundles in the authorization part)."""
+    M = [
+        ("A01_IGNORE_EXECUTOR_IDENTITY", "authorization_interface.py",
+         'need(ex.get("identity_sha256") == executor_identity()["executor_identity_sha256"], "running executor identity")',
+         'need(True, "running executor identity")'),
+        ("A02_IGNORE_PRELAUNCH_BINDING", "authorization_interface.py",
+         'need(rep.get("authorization_sha256") == auth_sha, "prelaunch report names another authorization")',
+         'need(True, "prelaunch report names another authorization")'),
+        ("A03_ACCEPT_UNAUTHORIZED", "authorization_interface.py",
+         'need(a.get("EXECUTION_AUTHORIZED") is True, "EXECUTION_AUTHORIZED is not true")',
+         'need(a.get("EXECUTION_AUTHORIZED") in (True, False), "EXECUTION_AUTHORIZED is not true")'),
+    ]
+    return [{"id": i, "file": f, "old": o, "new": n, "required": True} for i, f, o, n in M]
+
+
+def void_mutations():
+    """V01: VOID sealing dropped (detected by the supervisor CPU-limit test)."""
+    return [{"id": "V01_VOID_SEAL_DROPPED", "file": "executor_core.py",
+             "old": '            seal(void, out, "VOID_RECORD_SEALED.json" if backend.real_input else "MANUFACTURED_VOID_RECORD_SEALED.json")',
+             "new": "            pass", "required": True}]
+
+
+def cramer_mutations():
+    """C01: the certificate stack first imported at 256 bits (detected by the fail-closed CRAMER contract check)."""
+    return [{"id": "C01_WRONG_FIRST_IMPORT_PRECISION", "file": "backends.py",
+             "old": '    with flint_ctx.workprec(CRAMER_CONTRACT["construction_precision_bits"]):\n        import odd_block_certificate',
+             "new": "    with flint_ctx.workprec(256):\n        import odd_block_certificate", "required": True}]
+
+
+def executor_pins() -> dict:
+    """config/EXECUTOR_PINS.json: every byte the real path or its gates depend on, except the guard policy file (the
+    one file activation changes) and this pins file itself (bound through the executor identity)."""
+    out = dict(pins())
+    prereg = json.loads((CP / "p5y_k5_cusum_first_real_probe_protocol/protocol/SCIENCE_PREREGISTRATION_R4.json").read_text())
+    ident = prereg["k1_input_identity"]
+    for rel in (ident["record"], ident["manifest"], "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/cells.json",
+                "level4/closure_proofs/p5y_gammatilde_point_certificate/result/RUNG_256.json",
+                "level4/closure_proofs/p5y_gammatilde_point_certificate/code/point_eval.py"):
+        out[rel] = sha(REPO / rel)
+    for f in sorted((NS / "code").glob("*.py")):
+        out[REL + "code/" + f.name] = sha(f)
+    for f in ("config/EXTERNAL_AUTHORIZATION_TEMPLATE.json", "config/FIXTURE_LIMITS.json"):
+        out[REL + f] = sha(NS / f)
+    return dict(sorted(out.items()))
 
 
 def pins() -> dict:
@@ -100,10 +163,16 @@ def pins() -> dict:
 def build(dev: bool) -> dict:
     science = CP / "p5y_k5_cusum_first_real_probe_protocol/protocol/SCIENCE_PREREGISTRATION_R4.json"
     prereg = json.loads(science.read_text())
+    pins_file = NS / "config/EXECUTOR_PINS.json"
+    pins_obj = {"schema": "rebaseguard.p5y.k5.cusum-real-point-executor.pins.v1",
+                "rule": "Q05/Q13: every listed file has this sha256 at attempt start and at seal; config/REAL_INPUT_GUARD.json is deliberately not listed (activation changes only it and the published authorization)",
+                "files": executor_pins()}
+    raw = (json.dumps(pins_obj, indent=1, sort_keys=True) + "\n").encode()
+    if not pins_file.exists() or pins_file.read_bytes() != raw:
+        pins_file.write_bytes(raw)
+    import authorization_interface as AI
     ex_src = {REL + f: sha(NS / f) for f in EXECUTOR_SOURCES}
-    identity = {"executor_sources_sha256": ex_src, "r4_protocol_sha256": pins()[
-        "level4/closure_proofs/p5y_k5_cusum_order3_r4_tightening/config/QUALIFICATION_PROTOCOL_R4.json"],
-        "probe_rules_sha256": sha(CP / "p5y_k5_cusum_first_real_probe_protocol/code/probe_rules.py")}
+    identity = AI.executor_identity()
     fx = fixtures()
     limits = json.loads((NS / "config/FIXTURE_LIMITS.json").read_text()) if (NS / "config/FIXTURE_LIMITS.json").exists() else {}
     for f in fx:
@@ -116,7 +185,7 @@ def build(dev: bool) -> dict:
                 else:
                     raise SystemExit(f"{f['id']}: {k} not calibrated")
     return {
-        "schema": "rebaseguard.p5y.k5.cusum-real-point-executor.qualification-protocol.v1",
+        "schema": "rebaseguard.p5y.k5.cusum-real-point-executor.qualification-protocol.v2",
         "status": "DEV_CALIBRATION_ONLY" if dev else "FROZEN_PRE_QUALIFICATION",
         "scope": "manufactured systems, synthetic candidates and operator certificates only; REAL_INPUT_ARITHMETIC_GUARD = DENY; "
                  "no real K1 cell executed; no real R''', R^(5), L1 or U1 formed",
@@ -132,11 +201,19 @@ def build(dev: bool) -> dict:
         "crosscheck_fixtures": ["XF01_positive_L1", "XF03_negative_U1", "XF04_point_negative_U0", "XF08_parity_contamination"],
         "smoke_seed": 9401 if not dev else 99401,
         "mutations": mutations(),
+        "production_mutations": production_mutations(),
+        "authorization_mutations": authorization_mutations(),
+        "void_mutations": void_mutations(),
+        "cramer_mutations": cramer_mutations(),
+        "supervisor_tests": {"cpu_limit": {"fixture": "XF01_positive_L1", "cpu_soft": 20, "cpu_hard": 40, "wall": 600},
+                             "wall_timeout": {"fixture": "XF01_positive_L1", "cpu_soft": 600, "cpu_hard": 900, "wall": 15},
+                             "external_kill": {"fixture": "XF01_positive_L1", "cpu_soft": 600, "cpu_hard": 900, "wall": 600}},
+        "executor_pins_sha256": sha(pins_file),
         "inherited_r4_parts": ["odd_certificate", "first_cell", "b01", "r5_mutations", "m5_crosscheck", "failclosed"],
         "pins_sha256": pins(),
         "executor_sources_sha256": {**ex_src, **{REL + f: sha(NS / f) for f in QUALIFICATION_SOURCES}},
         "executor_identity": identity,
-        "executor_identity_sha256": hashlib.sha256(json.dumps(identity, sort_keys=True, separators=(",", ":")).encode()).hexdigest(),
+        "executor_identity_sha256": identity["executor_identity_sha256"],
     }
 
 

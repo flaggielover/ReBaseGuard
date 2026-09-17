@@ -42,7 +42,10 @@ authenticate that operator.
    - the qualification result sha256 and gate PASS;
    - the review verdict.
 2. The reviewer fills a copy of the template (nonce, slot, countersigner, UTC) and publishes it in a new commit.
-3. A reviewed successor enables the real path of the guard for exactly that authorization. This executor's guard
-   recognizes only DENY.
+3. The host operator sets `config/REAL_INPUT_GUARD.json` to `{"policy": "EXTERNAL_AUTHORIZATION"}` and supplies the
+   bundle (the published countersigned object plus a prelaunch report naming its sha256). No source file changes, so
+   the executor identity that was reviewed and qualified is the identity that runs; the guard file is deliberately
+   outside the executor identity and the pins. `authorization_interface.validate` only checks the bundle for
+   consistency with the running executor, the preregistration and the host contract. It authenticates no one.
 4. The host operator runs once and publishes the sealed record (or VOID) plus the ledger entries.
 5. A separate session adjudicates (stage 5) before any scientific consequence is adopted.

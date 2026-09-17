@@ -37,7 +37,7 @@ def gates(record: dict, *, science_file_sha256: str) -> dict:
     try:
         ctx, b, per_m, it = s["context"], s["binding"], s["per_m"], s["intermediates"]
         g["QE01_SCHEMA"] = set(s) >= {"schema", "binding", "context", "backend", "guard", "per_m", "addresses",
-                                     "intermediates"}
+                                     "intermediates", "producer_qualification"}
     except (KeyError, TypeError):
         return {"QE01_SCHEMA": False}
     g["QE02_BINDING"] = (b.get("adapter") in ("RealInputAdapter", "ManufacturedInputAdapter") and b.get("redacted") is True
@@ -54,7 +54,16 @@ def gates(record: dict, *, science_file_sha256: str) -> dict:
     g["QE04_IDENTITIES"] = (ctx.get("producer_identity_sha256") == p["producer_identity_sha256"]
                             and ctx.get("protocol_sha256") == science_file_sha256
                             and ctx.get("runtime_identity_sha256") == p["host_runtime_identity_sha256"])
-    g["QE05_GUARD_RECORDED"] = s.get("guard", {}).get("real_arithmetic_permitted") is False
+    # r2: the DENY guard is a qualification-harness check, not a consumer condition (QE05 removed). QE05 now checks that
+    # the preregistered producer-qualification gate set is present with admissible evaluation modes: a record whose
+    # binding kind is real must carry REAL evaluations only; harness analogues are admissible only for manufactured input.
+    pq = s.get("producer_qualification") if isinstance(s.get("producer_qualification"), dict) else {}
+    ids = sorted(x["id"] for x in p["real_producer_qualification"]["gates"])
+    modes = pq.get("modes") if isinstance(pq.get("modes"), dict) else None
+    allowed = {"REAL"} if b.get("kind") == "real" else {"MANUFACTURED", "HARNESS_ANALOGUE", "NOT_APPLICABLE_MANUFACTURED"}
+    g["QE05_PRODUCER_GATES_AND_MODES"] = (isinstance(pq.get("gates"), dict) and sorted(pq["gates"]) == ids
+                                          and all(isinstance(v, bool) for v in pq["gates"].values())
+                                          and modes is not None and bool(modes) and set(modes.values()) <= allowed)
     try:
         vals = {int(m): {k: _frac(v[k]) for k in LEAVES} for m, v in per_m.items()}
         g["QE06_EXACT_RATIONALS"] = sorted(vals) == M_SET and all(set(per_m[str(m)]) == set(LEAVES) for m in M_SET)

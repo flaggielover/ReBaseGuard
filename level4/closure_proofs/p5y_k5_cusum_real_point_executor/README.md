@@ -10,22 +10,28 @@
 | File | Purpose |
 |---|---|
 | `EXECUTOR_SPEC.md` | Interface and pipeline, committed before implementation (`ac555bf2`) |
+| `EXECUTOR_SPEC_R2.md` | r2 addendum after the r1 static review FAIL (`6a1adbfe`), committed before the repair code |
+| `review/EXECUTOR_STATIC_REVIEW_R1.md` | r1 review (FAIL), preserved |
 | `TRUST_MODEL.md` | The five separated stages; trusted assumptions; no cryptographic claim |
-| `code/executor_core.py` | Guard, context validation, shared stages, enclosure/M5/transport, exact serialization, atomic seal (certificates only) |
-| `code/backends.py` | `CusumPointBackend` (production, guarded), `SyntheticCusumSmokeBackend` (real Arb stages, synthetic candidates), `ManufacturedPointBackend` (exact truth) |
+| `code/executor_core.py` | Guard (DENY / EXTERNAL_AUTHORIZATION), context validation, shared stages, enclosure/M5/transport, preregistered Q01–Q16 gates, attempt events, VOID sealing, SIGXCPU, exact serialization, atomic seal (certificates only) |
+| `code/authorization_interface.py` | Consistency validator of a countersigned result-blind authorization bundle (prepared, inactive; not a cryptographic authority) |
+| `code/supervisor.py`, `code/executor_cli.py` | Attempt supervisor (RLIMIT_CPU, wall watchdog, wait status, frozen `failure_class`) and the executor child process |
+| `code/backends.py` | `CusumPointBackend` (production, guarded), `SyntheticCusumSmokeBackend` (real Arb stages, synthetic candidates), `ManufacturedPointBackend` (exact truth); shared Q-gate helpers (Aux5 production gate, certificate replay, graded/scalar consistency, order-2 cross replay) |
 | `code/input_adapters.py` | `RealInputAdapter` (metadata only, R1 V01–V10, payload redacted) and `ManufacturedInputAdapter` |
 | `code/qualification_gates.py`, `code/consumer.py` | Sign-independent gates; the separate consumer that alone applies the frozen verdict rules |
-| `code/smoke.py` | Real-stage smoke that stops before any enclosure |
+| `code/smoke.py` | Real-stage smoke that stops before any enclosure; Q04/Q06/Q08/Q10 on the real stack; production-stack mutants P01–P04; order-2 reference replay |
 | `code/exec_fixtures.py`, `code/qualify_executor.py`, `code/make_protocol_executor.py` | Truth, qualification runner (PID/marker completion), protocol builder |
-| `config/REAL_INPUT_GUARD.json` | `{"policy": "DENY"}` |
+| `config/REAL_INPUT_GUARD.json` | `{"policy": "DENY"}` (the only file activation changes; outside the executor identity and pins) |
+| `config/EXECUTOR_PINS.json` | sha256 of every byte the real path and its gates depend on (Q05 / Q13) |
 | `config/EXTERNAL_AUTHORIZATION_TEMPLATE.json` | Result-blind authorization for an independent countersigner (INACTIVE) |
 | `config/EXECUTOR_QUALIFICATION_PROTOCOL.json`, `config/FIXTURE_LIMITS.json` | Frozen qualification protocol and DEV-calibrated M5 ratio limits |
 | `tests/test_executor.py` | Static development tests |
-| `evidence/qualification/`, `RESULT.md` | Frozen qualification and result |
+| `evidence/qualification/` | r1 frozen qualification (preserved) |
+| `evidence/qualification_r2/`, `RESULT.md` | r2 frozen qualification and result |
 
 ```bash
 python3 -B tests/test_executor.py
 # on rebaseguard-vultr-02, venv /root/work/rbg-cusum-aux5-venv, at the freeze commit:
-python -B code/qualify_executor.py run   --outdir evidence/qualification --workers 4
-python -B code/qualify_executor.py check --outdir evidence/qualification
+python -B code/qualify_executor.py run   --outdir evidence/qualification_r2 --workers 4
+python -B code/qualify_executor.py check --outdir evidence/qualification_r2
 ```

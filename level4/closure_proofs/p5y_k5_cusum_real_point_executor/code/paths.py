@@ -13,8 +13,9 @@ R3_NS = CP / "p5y_k5_cusum_order3_r3_infrastructure"
 R2_NS = CP / "p5y_k5_cusum_order3_r2_repair"
 R1_NS = CP / "p5y_k5_cusum_order3_real_producer"
 POINT_NS = CP / "p5y_gammatilde_point_certificate"
+AUX5_NS = CP / "p5y_k1_cusum_aux5_successor"
 
-for _p in (str(POINT_NS / "code"), str(PROTOCOL_NS / "code"), str(R1_NS / "code"), str(R2_NS / "code"),
+for _p in (str(AUX5_NS / "code"), str(POINT_NS / "code"), str(PROTOCOL_NS / "code"), str(R1_NS / "code"), str(R2_NS / "code"),
            str(R3_NS / "code"), str(R4_NS / "code"), str(NS / "code")):
     if _p in sys.path:
         sys.path.remove(_p)

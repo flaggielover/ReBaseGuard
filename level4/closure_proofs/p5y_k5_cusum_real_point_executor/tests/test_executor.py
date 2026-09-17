@@ -31,7 +31,7 @@ class Static(unittest.TestCase):
         tree = ast.parse((CODE / "executor_core.py").read_text())
         fn = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == "execute")
         body = [st for st in fn.body if not (isinstance(st, ast.Expr) and isinstance(st.value, ast.Constant))]
-        self.assertIn("enforce_guard(backend)", ast.unparse(body[0]))
+        self.assertIn("enforce_guard(backend, ctx)", ast.unparse(body[0]))
 
     def test_executor_never_interprets_signs(self):
         for mod in ("executor_core.py", "backends.py", "input_adapters.py"):
@@ -62,7 +62,36 @@ class Static(unittest.TestCase):
         cls = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == "CusumPointBackend")
         prep = next(n for n in cls.body if isinstance(n, ast.FunctionDef) and n.name == "prepare_point")
         body = [st for st in prep.body if not (isinstance(st, ast.Expr) and isinstance(st.value, ast.Constant))]
-        self.assertIn("enforce_guard(self)", ast.unparse(body[0]))
+        self.assertIn("enforce_guard(self, ctx)", ast.unparse(body[0]))
+
+    def test_r2_mutation_groups_match_once(self):
+        import make_protocol_executor as MP
+        groups = {"P": MP.production_mutations(), "A": MP.authorization_mutations(), "V": MP.void_mutations()}
+        self.assertEqual([len(groups[k]) for k in "PAV"], [4, 3, 1])
+        for muts in groups.values():
+            for m in muts:
+                self.assertEqual((CODE / m["file"]).read_text().count(m["old"]), 1, m["id"])
+
+    def test_guard_file_not_part_of_identity_or_pins(self):
+        import authorization_interface as AI
+        self.assertNotIn("config/REAL_INPUT_GUARD.json", AI.IDENTITY_FILES)
+        pins = NS / "config/EXECUTOR_PINS.json"
+        if pins.exists():
+            self.assertFalse(any(k.endswith("REAL_INPUT_GUARD.json") for k in json.loads(pins.read_text())["files"]))
+
+    def test_void_sealed_on_any_failure_after_arithmetic_started(self):
+        src = (CODE / "executor_core.py").read_text()
+        fn = next(n for n in ast.parse(src).body if isinstance(n, ast.FunctionDef) and n.name == "execute")
+        text = ast.unparse(fn)
+        self.assertIn("except BaseException", text)
+        self.assertIn("VOID_RECORD_SEALED.json", text)
+        self.assertLess(text.index("log.emit('ARITHMETIC_STARTED')"), text.index("run_stages_before_enclosure"))
+
+    def test_consumer_uses_frozen_producer_qualification(self):
+        src = (CODE / "consumer.py").read_text()
+        self.assertIn("PR.producer_qualification(", src)
+        self.assertIn("PR.science_usable(", src)
+        self.assertNotIn("QE05_GUARD_RECORDED", (CODE / "qualification_gates.py").read_text())
 
     def test_trust_model_does_not_claim_cryptographic_authority(self):
         text = (NS / "TRUST_MODEL.md").read_text()
