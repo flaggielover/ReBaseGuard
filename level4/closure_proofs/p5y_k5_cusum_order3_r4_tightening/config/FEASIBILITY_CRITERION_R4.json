@@ -1,0 +1,82 @@
+{
+ "schema": "rebaseguard.p5y.k5.order3-r4.feasibility-criterion.v1",
+ "status": "FROZEN_PRE_RESULT",
+ "principle": "Engineering labels on certified pre-result enclosure widths from committed K1 magnitudes and certified operator constants only. No category depends on the sign or size of any R''' or R^(5) value. Not scientific success criteria.",
+ "S_star": 33.40658350406061,
+ "S_star_source": "R3 frozen (config/FEASIBILITY_CRITERION_R3.json): max_r sup|Hhat_r| on cell 0; unchanged",
+ "metric": "m = 1, G-residual factor 1 (binding); Strategy B = point radius (assumption A1, R3) + (x1^2/2) M5",
+ "overall_classes_R3_scale": {
+  "PROMISING": "total <= S*",
+  "MARGINAL": "S* < total <= 100 S*",
+  "UNINFORMATIVE": "total > 100 S*"
+ },
+ "C_o0_R3": "73934121238864033276486830243250016032592561338368687096855032226418579381791/3618502788666131106986593281521497120414687020801267626233049500247285301248",
+ "M5_R3": "47055764068.13038",
+ "transport_penalty_R3": 6078.8727651923655,
+ "C_o0_classes": [
+  {
+   "label": "NEAR_NUMERICAL",
+   "min": null,
+   "max": 6
+  },
+  {
+   "label": "MATERIAL",
+   "min": 6,
+   "max": 10
+  },
+  {
+   "label": "MODEST",
+   "min": 10,
+   "max": 18
+  },
+  {
+   "label": "NO_IMPROVEMENT",
+   "min": 18,
+   "max": null
+  }
+ ],
+ "transport_classes": [
+  {
+   "label": "TIGHT",
+   "min": null,
+   "max": 1
+  },
+  {
+   "label": "PROMISING",
+   "min": 1,
+   "max": 10
+  },
+  {
+   "label": "MARGINAL",
+   "min": 10,
+   "max": 100
+  },
+  {
+   "label": "UNINFORMATIVE",
+   "min": 100,
+   "max": null
+  }
+ ],
+ "grid": {
+  "C_o0_hypothetical": [
+   "10",
+   "6",
+   "117/25"
+  ],
+  "M5_hypothetical": [
+   10000000000.0,
+   1000000000.0,
+   100000000.0,
+   10000000.0
+  ],
+  "note": "117/25 = 4.68 is the NON-CERTIFIED R2 float estimate; every row other than (certified_R4, model M5) is hypothetical and not evidence"
+ },
+ "dominant_blocker_rule": {
+  "ratio": 2,
+  "NEITHER_INFRASTRUCTURE_READY": "Strategy-B total <= S* (PROMISING)",
+  "R5_DOMINANT": "penalty >= 2 * point radius",
+  "C_O0_DOMINANT": "point radius >= 2 * penalty (the point radius is the certified resolvent-driven graded point cascade)",
+  "BOTH_COMPARABLE": "otherwise"
+ },
+ "verdict_inputs": "strategy_B_class (overall, R3 scale) of the certified binding forecast; best_grid_class for CURRENT_ROUTE_NUMERICALLY_UNINFORMATIVE"
+}

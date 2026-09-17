@@ -1,0 +1,28 @@
+{
+ "certificates": [
+  {
+   "artifact": "level4/closure_proofs/p5y_k5_cusum_order3_r4_tightening/config/operator_certificates/C_o0_odd_block_certificate.json",
+   "artifact_sha256": "077643c0fa4030010064bbc8e955085439eefc00e8ffb4b3bf81c958fac433f0",
+   "method": "exact sigma-odd block reduction to H = {p >= m} with the positive reflected kernel phi(z) - phi(-d - z), z > -d/2; polynomial supersolution of sum_j K_o^j 1 with the frozen kernel pieces; Bernstein on the H-part of the frozen reachable cover",
+   "name": "C_o0",
+   "statement": "||(I - K_0)^-1 f|| <= C ||f|| for every sigma-odd f",
+   "supersedes_for_R4": "R3 C_o0 <= 20.4322 (strong-Markov coupling bound), which remains valid",
+   "value_float": 5.360144767926632,
+   "value_upper": "38791397580793375836869515062442065852852548338471315442955375279154060469759/7237005577332262213973186563042994240829374041602535252466099000494570602496",
+   "verifier": "code/odd_block_certificate.py verify_artifact"
+  },
+  {
+   "artifact": "level4/closure_proofs/p5y_k5_cusum_order3_r3_infrastructure/config/operator_certificates/C_e0_certificate.json",
+   "artifact_sha256": "437372451855bb69cd7a25dc35466c47ef2fa0270de9140a573c343ad13371be",
+   "method": "polynomial supersolution of E_x[tau] with the frozen Pair kernel",
+   "name": "C_e0",
+   "statement": "||(I - K_0)^-1 f|| <= C ||f|| for every f (in particular sigma-even f)",
+   "value_float": 469.76966683433835,
+   "value_upper": "528913624126272035/1125899906842624",
+   "verifier": "R3 code/resolvent_certificate.py verify_artifact (R3, unchanged)"
+  }
+ ],
+ "rule": "Values are certified upper endpoints recomputed from the stored exact payloads by the named verifier; this registry's sha256 is pinned in code/constants_r4.py. No silent fallback to the R3 C_o0.",
+ "schema": "rebaseguard.p5y.k5.order3-r4.operator-certificate-registry.v1",
+ "status": "FROZEN"
+}

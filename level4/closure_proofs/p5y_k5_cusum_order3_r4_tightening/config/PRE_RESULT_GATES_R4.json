@@ -1,0 +1,49 @@
+{
+ "schema": "rebaseguard.p5y.k5.order3-r4.pre-result-gates.v1",
+ "status": "FROZEN_PRE_RESULT",
+ "principle": "Non-scientific qualification only. No gate depends on any R''' or R^(5) value; no gate is evaluated on a real CUSUM cell.",
+ "gates": {
+  "G01_R1_R2_R3_preserved": "every R1, R2 and R3 file byte-identical to the pins",
+  "G02_C_o0_odd_block_certificate_replayed": "odd_block_certificate.verify_artifact recomputes the stored bounds exactly from the exact payload (margin > 0, w >= 0); registry value equals the artifact",
+  "G03_C_e0_and_registry": "R3 C_e0 artifact replayed exactly by the R3 verifier; R4 registry sha256 pinned, artifact sha256 and values consistent; load_certificates succeeds",
+  "G04_C_o0_independent_crosscheck": "X1-X4: raw-kernel odd-extension quadrature margin >= certified margin - 1e-6 at every H sample; reflected kernel nonnegative; float sup w <= certified C; float odd-block norm <= C_o0(R4) <= C_o0(R3)",
+  "G05_operator_audit": "float architecture audit produced (non-evidence); float odd sup-resolvent-of-one <= C_o0(R4) and float full sup-resolvent-of-one <= C_e0",
+  "G06_R3_wiring_suite_reexecuted": "R3 part_synthetic_real with the frozen R3 protocol: C1, C2/C3, C6, C7 = 0, graded never looser, wiring mutations 12/12, payload sha256 identical to the frozen R3 evidence",
+  "G07_certificate_mutation_suites": "R3 certificate-verifier mutations 3/3 (R3 protocol) and R4 odd-block certificate mutations O01-O04 all detected (accept the non-supersolution control or fail the exact artifact replay); frozen R4 verifier rejects the control payload",
+  "G08_first_cell_manufactured_soundness": "every R4 fixture: 0 violations (point, strategyB, M5, tower, anchor, oddness); R3 FC1-FC5 rows 0 violations",
+  "G09_B01_test_power_fixture": "on every tight_M5 fixture: correct method 0 violations; B01 detected with violation kinds within {M5, strategyB} and no tower/anchor/point violations; both sham controls 0 violations; identical detection at 256 and 384 bits",
+  "G10_R5_and_local_mutation_suites": "R3 R^(5) mutations B01-B06 6/6 and local-R5 mutations L01-L05 all detected on the R4 fixture trials",
+  "G11_M5_independent_crosscheck": "Cauchy-integral acb derivatives agree with the exact Taylor truth (relative 1e-6) and M5 >= the Cauchy max |R^(5)| on the declared fixtures",
+  "G12_evenness_lemma": "R3 independent lemma check with the R4 seed: holds on odd polynomials, fails for the non-odd control",
+  "G13_determinism_replay": "forecast payload sha256 identical across two fresh processes; certificate replays identical; R3 synthetic payload identical to frozen R3 evidence",
+  "G14_fail_closed": "R4 real entry refuses without / with forged authorization before record validation; missing C_o0 refused even if the registry is re-pinned; tampered artifact detected; local_r5 refuses missing inputs and order > 3 anchors",
+  "G15_fences_and_registries": "pure-module import fences, no module attribute assignment (Aux3 detector), authorization gate first, authorization registry EMPTY and pinned, certificate registry pinned, protocol hash, bound code/config hashes",
+  "G16_runtime_identity": "python 3.12.3, python-flint 0.9.0, numpy 2.5.2, rebaseguard-vultr-02, /root/work/rbg-cusum-aux5-venv",
+  "G17_regressions": "R2 graded soundness, R3 real-kernel parity identities, R3 He_6 extension still PASS"
+ },
+ "soundness_gates": [
+  "G02",
+  "G03",
+  "G04",
+  "G06",
+  "G08",
+  "G11",
+  "G12",
+  "G14",
+  "G17"
+ ],
+ "verdict_rule": {
+  "QUALIFIED_FOR_GOVERNED_REAL_CELL_QUALIFICATION": "G01-G17 all PASS (all mutation suites complete, C_o0 and M5 certified, Strategy B fully certified, no heuristic load-bearing constant) AND the certified binding Strategy-B forecast class is MARGINAL or PROMISING on the frozen R3 scale. Does NOT authorize any real-cell evaluation.",
+  "CURRENT_ROUTE_NUMERICALLY_UNINFORMATIVE": "all soundness gates PASS but the certified binding class is UNINFORMATIVE and the best sensitivity-grid corner is also UNINFORMATIVE",
+  "PARTIALLY_QUALIFIED": "all soundness gates PASS but some other gate fails, or the certified binding class is UNINFORMATIVE while some grid corner is not",
+  "NOT_READY": "any soundness gate fails"
+ },
+ "b1_rule": "CLOSED_FOR_REAL_CELL_QUALIFICATION_ONLY iff the verdict is QUALIFIED_FOR_GOVERNED_REAL_CELL_QUALIFICATION; otherwise OPEN.",
+ "next_step_rule": {
+  "PREPARE_GOVERNED_REAL_CELL_QUALIFICATION": "verdict QUALIFIED_FOR_GOVERNED_REAL_CELL_QUALIFICATION (prepare a separate proposal; do not execute)",
+  "SEEK_ALTERNATE_K5_ROUTE": "verdict CURRENT_ROUTE_NUMERICALLY_UNINFORMATIVE",
+  "TIGHTEN_R5_AGAIN": "otherwise, if the dominant blocker is R5_DOMINANT, or BOTH_COMPARABLE with penalty >= point radius",
+  "TIGHTEN_C_o0_AGAIN": "otherwise"
+ },
+ "real_cell_qualification": "NOT_AUTHORIZED"
+}
