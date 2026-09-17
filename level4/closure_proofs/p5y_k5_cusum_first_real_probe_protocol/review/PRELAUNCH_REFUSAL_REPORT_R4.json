@@ -1,0 +1,94 @@
+{
+ "authorization_commit_derived": null,
+ "authorization_path": "/root/work/k5probe-freeze-r4/level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/protocol/AUTHORIZATION_TEMPLATE_R4.json",
+ "authorization_sha256": "e40de86efc15240c5fa3c07eb094c1e7462538df7475766c11231ed549f7a186",
+ "checks": {
+  "P01": {
+   "detail": "EXECUTION_NOT_AUTHORIZED: EXECUTION_AUTHORIZED is not true",
+   "pass": false
+  },
+  "P02": {
+   "detail": "authorization is not the regular file at protocol/AUTHORIZATION_ACTIVE.json; activation field PROTOCOL_FREEZE_COMMIT not filled; activation field AUTHORIZED_BY not filled; activation field AUTHORIZATION_UTC not filled; activation field executor_binding_sha256 not filled",
+   "pass": false
+  },
+  "P03": {
+   "detail": "PROTOCOL_FREEZE_COMMIT != introducing commit 852b2d65c933",
+   "pass": false
+  },
+  "P04": {
+   "detail": "AUTHORIZATION_ACTIVE.json not committed exactly once, unchanged and regular",
+   "pass": false
+  },
+  "P05": {
+   "detail": "all protected hashes match",
+   "pass": true
+  },
+  "P06": {
+   "detail": "EXECUTOR_BINDING_PENDING: no EXECUTION_BINDING_AMENDMENT.json (binding status PENDING_EXECUTOR_IMPLEMENTATION_AND_QUALIFICATION)",
+   "pass": false
+  },
+  "P07": {
+   "detail": "host runtime identity matches",
+   "pass": true
+  },
+  "P08": {
+   "detail": "no conflicting producer",
+   "pass": true
+  },
+  "P09": {
+   "detail": "no sealed record for this protocol",
+   "pass": true
+  },
+  "P10": {
+   "detail": "CPU ceiling valid",
+   "pass": true
+  },
+  "P11": {
+   "detail": "next slot slot-1 lacks exactly one committed LAUNCH_NOTICE (and nothing else) in the ledger",
+   "pass": false
+  },
+  "P12": {
+   "detail": "no valid AUTHORIZATION_UTC",
+   "pass": false
+  }
+ },
+ "failing_checks": [
+  "P01",
+  "P02",
+  "P03",
+  "P04",
+  "P06",
+  "P11",
+  "P12"
+ ],
+ "freeze_commit_derived": "852b2d65c9332facd59771da7940ab429a7e2f2f",
+ "head": "cf09d6fc8c11718d4fc402e13de4a153d4689a3c",
+ "live_host_facts": {
+  "cpu_model": "AMD EPYC-Milan Processor",
+  "flint_so_sha256": "1f7ef1f52024937f542772ff9190e2f74449228cd69a6746b6608fbbd449d138",
+  "glibc_package_version": "2.41-12+deb13u4",
+  "host": "rebaseguard-vultr-02",
+  "kernel_release": "6.12.107+deb13-amd64",
+  "libc_path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+  "libc_sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+  "logical_cpus": 8,
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "python": "3.12.3",
+  "python_flint": "0.9.0",
+  "scipy": "1.18.1",
+  "venv_prefix": "/root/work/rbg-cusum-aux5-venv"
+ },
+ "primary_reason": "P01: EXECUTION_NOT_AUTHORIZED: EXECUTION_AUTHORIZED is not true",
+ "publication_detail": {
+  "local_ref": "cf09d6fc8c11718d4fc402e13de4a153d4689a3c",
+  "ls_remote": "cf09d6fc8c11718d4fc402e13de4a153d4689a3c",
+  "origin_url": "/root/work/postk1.git"
+ },
+ "published_tip": "cf09d6fc8c11718d4fc402e13de4a153d4689a3c",
+ "read_only": true,
+ "remote_ref": "origin/p5y-postk1-frontier",
+ "schema": "rebaseguard.p5y.k5.cusum-first-real-probe.prelaunch-report.v4",
+ "science_sha256": "9ace6896d70b7a17225c03cd6d8092e3d33089d001dd3e2736894dd866f3780a",
+ "verdict": "REFUSED"
+}
