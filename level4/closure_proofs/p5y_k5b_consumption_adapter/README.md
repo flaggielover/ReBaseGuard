@@ -17,6 +17,7 @@ Nothing here is authorized to execute, and no real R''' or R^(5) is read or form
 | `code/consumption_adapter.py` | the adapter: frozen loader → frozen `k5b_literal`, per m; fail-closed |
 | `code/crosscheck.py` | independent cross-check: frozen scan reproduction (X-A), plus manifest-addressed records with the frozen readiness variant (X-B) |
 | `code/acceptance.py` | frozen acceptance run and read-only `check` (gates G01–G09, mutants M01–M14) |
+| `evidence/acceptance_r1/`, `RESULT.md` | frozen acceptance run (ACCEPTED, 9/9 gates, 14/14 mutants) and result |
 | `tests/test_adapter.py` | local synthetic tests (no K1 record is read) |
 
 ```bash

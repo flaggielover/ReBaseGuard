@@ -1,0 +1,386 @@
+{
+ "ACCEPTANCE_PROTOCOL_SHA256": "bbd655cbfe48de43494bcc9d9eae9f0f4649965b3f6148a0c7bfff616916f64f",
+ "ADAPTER_OUTPUT_SHA256": "d4c315d6f150c9ed676a0ad6bfed62ff182025580b441777aee270320fd6c0f7",
+ "ADAPTER_SHA256": "fbad7d33261fd47fc56c034d6a016f8427b81b51f9199f0e3a8f3e74df35973d",
+ "CELL_COUNT": 310,
+ "E6_K5B_CONSUMPTION_ADAPTER": "ACCEPTED",
+ "EXECUTION_AUTHORIZED": false,
+ "EXPECTED_PASS_SET": {
+  "1": [
+   [
+    133,
+    309
+   ]
+  ],
+  "2": [
+   [
+    145,
+    309
+   ]
+  ],
+  "3": [
+   [
+    146,
+    309
+   ]
+  ],
+  "5": [
+   [
+    149,
+    304
+   ]
+  ]
+ },
+ "FALSE_NEGATIVES": {
+  "1": [],
+  "2": [],
+  "3": [],
+  "5": []
+ },
+ "FALSE_POSITIVES": {
+  "1": [],
+  "2": [],
+  "3": [],
+  "5": []
+ },
+ "K5B_LITERAL_SHA256": "ddd54dc469375a2d64352782add8573231be07b94f7246dad83c4e55a2bf35a6",
+ "L": "None",
+ "LOADER_SHA256": "3a54f0fb290a9b8a07c861653d4399e6c588afdaef77ee51473f778c6c988885",
+ "OBSERVED_PASS_SET": {
+  "1": [
+   [
+    133,
+    309
+   ]
+  ],
+  "2": [
+   [
+    145,
+    309
+   ]
+  ],
+  "3": [
+   [
+    146,
+    309
+   ]
+  ],
+  "5": [
+   [
+    149,
+    304
+   ]
+  ]
+ },
+ "PROVENANCE_SHA256": "8a85327ffca624a5e220d16a7f975cb36648b8d9e3a231f7fdabe632794c4611",
+ "REAL_INPUT_ARITHMETIC_GUARD": "DENY",
+ "REAL_R3_VALUE_OBSERVED": "NO",
+ "REAL_R5_VALUE_OBSERVED": "NO",
+ "RECORDS_SHA256": "76fc2af5023f222e51b75e2a92e29a3d80ec84dab26057c2c9ae6ea549e96f51",
+ "RECORD_MANIFEST_SHA256": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334",
+ "gates": {
+  "G01_PRECONDITIONS": {
+   "absent": {
+    "ATTEMPT_LEDGER": true,
+    "AUTHORIZATION_ACTIVE": true,
+    "COUNTERSIGNATURE_ACTIVE": true,
+    "EXECUTION_BINDING_AMENDMENT": true,
+    "REAL_NAMESPACE": true
+   },
+   "adapter_pins_equal_protocol": true,
+   "component_pins_match": {
+    "level4/closure_proofs/p5y_k5_order3_readiness_audit/code/k5_minimality.py": true,
+    "level4/closure_proofs/p5y_k5b_independent_countersignature/code/k5b_check.py": true
+   },
+   "guard_policy": "DENY",
+   "ok": true,
+   "science_preregistration_unchanged": true,
+   "still_ok_at_end": true
+  },
+  "G02_INPUTS_BOUND": {
+   "ok": true,
+   "record_count": 310,
+   "record_manifest_mismatches": [],
+   "unchanged_after_run": true
+  },
+  "G03_ACCEPTANCE": {
+   "adapter_exit": 0,
+   "ok": true,
+   "per_m": {
+    "1": {
+     "EXPECTED_PASS_SET": [
+      [
+       133,
+       309
+      ]
+     ],
+     "FALSE_NEGATIVES": [],
+     "FALSE_POSITIVES": [],
+     "OBSERVED_PASS_SET": [
+      [
+       133,
+       309
+      ]
+     ],
+     "equal": true,
+     "strictly_increasing": true
+    },
+    "2": {
+     "EXPECTED_PASS_SET": [
+      [
+       145,
+       309
+      ]
+     ],
+     "FALSE_NEGATIVES": [],
+     "FALSE_POSITIVES": [],
+     "OBSERVED_PASS_SET": [
+      [
+       145,
+       309
+      ]
+     ],
+     "equal": true,
+     "strictly_increasing": true
+    },
+    "3": {
+     "EXPECTED_PASS_SET": [
+      [
+       146,
+       309
+      ]
+     ],
+     "FALSE_NEGATIVES": [],
+     "FALSE_POSITIVES": [],
+     "OBSERVED_PASS_SET": [
+      [
+       146,
+       309
+      ]
+     ],
+     "equal": true,
+     "strictly_increasing": true
+    },
+    "5": {
+     "EXPECTED_PASS_SET": [
+      [
+       149,
+       304
+      ]
+     ],
+     "FALSE_NEGATIVES": [],
+     "FALSE_POSITIVES": [],
+     "OBSERVED_PASS_SET": [
+      [
+       149,
+       304
+      ]
+     ],
+     "equal": true,
+     "strictly_increasing": true
+    }
+   },
+   "stderr": ""
+  },
+  "G04_DETERMINISM": {
+   "ok": true,
+   "run_1": {
+    "exit": 0,
+    "sha256": "d4c315d6f150c9ed676a0ad6bfed62ff182025580b441777aee270320fd6c0f7",
+    "stderr": ""
+   },
+   "run_2": {
+    "exit": 0,
+    "sha256": "d4c315d6f150c9ed676a0ad6bfed62ff182025580b441777aee270320fd6c0f7",
+    "stderr": ""
+   }
+  },
+  "G05_INDEPENDENT_CROSSCHECK": {
+   "checks": {
+    "1": {
+     "boundary_pass_ok": true,
+     "gamma_addresses_ok": true,
+     "premise_all_H_lo_le_0": true,
+     "variant_equals_adapter": true,
+     "variant_equals_expected": true
+    },
+    "2": {
+     "boundary_pass_ok": true,
+     "gamma_addresses_ok": true,
+     "premise_all_H_lo_le_0": true,
+     "variant_equals_adapter": true,
+     "variant_equals_expected": true
+    },
+    "3": {
+     "boundary_pass_ok": true,
+     "gamma_addresses_ok": true,
+     "premise_all_H_lo_le_0": true,
+     "variant_equals_adapter": true,
+     "variant_equals_expected": true
+    },
+    "5": {
+     "boundary_pass_ok": true,
+     "gamma_addresses_ok": true,
+     "premise_all_H_lo_le_0": true,
+     "variant_equals_adapter": true,
+     "variant_equals_expected": true
+    }
+   },
+   "ok": true,
+   "sha256": "08ff8153fe94116b35bc8ae9464fd836feb33c822893cc0825bfb340059e3546",
+   "status": "PASS"
+  },
+  "G06_SYNTHETIC_DIFFERENTIAL": {
+   "fixtures": [
+    {
+     "cells": 7,
+     "fixture": 0,
+     "ok": true,
+     "per_m_equal": {
+      "1": true,
+      "2": true,
+      "3": true,
+      "5": true
+     }
+    },
+    {
+     "cells": 12,
+     "fixture": 1,
+     "ok": true,
+     "per_m_equal": {
+      "1": true,
+      "2": true,
+      "3": true,
+      "5": true
+     }
+    },
+    {
+     "cells": 8,
+     "fixture": 2,
+     "ok": true,
+     "per_m_equal": {
+      "1": true,
+      "2": true,
+      "3": true,
+      "5": true
+     }
+    },
+    {
+     "cells": 6,
+     "fixture": 3,
+     "ok": true,
+     "per_m_equal": {
+      "1": true,
+      "2": true,
+      "3": true,
+      "5": true
+     }
+    },
+    {
+     "cells": 11,
+     "fixture": 4,
+     "ok": true,
+     "per_m_equal": {
+      "1": true,
+      "2": true,
+      "3": true,
+      "5": true
+     }
+    },
+    {
+     "cells": 7,
+     "fixture": 5,
+     "ok": true,
+     "per_m_equal": {
+      "1": true,
+      "2": true,
+      "3": true,
+      "5": true
+     }
+    }
+   ],
+   "ok": true
+  },
+  "G07_MUTATIONS": {
+   "declared": 14,
+   "detected": 14,
+   "ok": true,
+   "sha256": "a3af8777fb8b46466727ca2668d824ad7008c567e19eedc8bdc802a685393a33"
+  },
+  "G08_STATIC_FENCES": {
+   "disallowed_imports": [],
+   "forbidden_hits": [],
+   "ok": true
+  },
+  "G09_FAIL_CLOSED": {
+   "ok": true,
+   "rows": {
+    "L1_bool": {
+     "ok": true,
+     "reason": "L1[1] must be an exact Fraction or None",
+     "refused": true
+    },
+    "L1_extra_key": {
+     "ok": true,
+     "reason": "L1 must be None or a dict keyed by exactly the m values 1, 2, 3, 5",
+     "refused": true
+    },
+    "L1_float": {
+     "ok": true,
+     "reason": "L1[1] must be an exact Fraction or None",
+     "refused": true
+    },
+    "L1_int": {
+     "ok": true,
+     "reason": "L1[1] must be an exact Fraction or None",
+     "refused": true
+    },
+    "L1_list": {
+     "ok": true,
+     "reason": "L1 must be None or a dict keyed by exactly the m values 1, 2, 3, 5",
+     "refused": true
+    },
+    "L1_missing_key": {
+     "ok": true,
+     "reason": "L1 must be None or a dict keyed by exactly the m values 1, 2, 3, 5",
+     "refused": true
+    },
+    "L1_positive_exact_passes_cell_0": {
+     "ok": true
+    },
+    "L1_string": {
+     "ok": true,
+     "reason": "L1[1] must be an exact Fraction or None",
+     "refused": true
+    },
+    "missing_field": {
+     "ok": true,
+     "reason": "record 6 m 1 has no R2_interval",
+     "refused": true
+    },
+    "record_bytes_changed": {
+     "ok": true,
+     "reason": "record 0 does not match its manifest entry",
+     "refused": true
+    },
+    "symlinked_record": {
+     "ok": true,
+     "reason": "record 1 missing or not a regular file in the records directory",
+     "refused": true
+    },
+    "wrong_cells_binding": {
+     "ok": true,
+     "reason": "cells.json does not match its binding",
+     "refused": true
+    },
+    "wrong_universe": {
+     "ok": true,
+     "reason": "the loader universe differs from the bound universe",
+     "refused": true
+    }
+   }
+  }
+ },
+ "provenance_clean": true,
+ "schema": "rebaseguard.p5y.k5b.consumption-adapter.acceptance-result.v1"
+}
