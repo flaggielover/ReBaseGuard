@@ -341,149 +341,10 @@ def part_order2_reference(proto, args):
     return smoke.order2_reference()
 
 
-# ------------------------------------------------------------------ external authorization interface (R2-3)
-def synthetic_authorization(ns="/root/work/k5-first-real-probe", slot=1):
-    """A SYNTHETIC, qualification-only countersigned object; never written to disk, never used with a real backend."""
-    import authorization_interface as AI
-    import executor_core as EC
-    import input_adapters as IA
-    p = EC.prereg()
-    a = json.loads(AI.TEMPLATE_FILE.read_text())
-    a.update({"status": "COUNTERSIGNED", "EXECUTION_AUTHORIZED": True, "attempt_slot": slot, "nonce": "5a" * 16,
-              "host_runtime_identity_sha256": p["host_runtime_identity_sha256"], "output_namespace": ns,
-              "executor": {"freeze_commit": "0" * 40, "qualification_commit": "1" * 40, "qualification_result_sha256": "2" * 64,
-                           "identity_sha256": AI.executor_identity()["executor_identity_sha256"],
-                           "static_review": "PASS (SYNTHETIC QUALIFICATION BUNDLE)"},
-              "countersigner": {"identity": "SYNTHETIC-QUALIFICATION-ONLY", "independent_of_execution_host": True,
-                                "verified_from": "synthetic", "utc": time.time() - 100}})
-    report = {"verdict": "LAUNCH_PERMITTED", "authorization_sha256": sha(AI.canonical(a)), "utc_epoch": time.time() - 50}
-    binding = IA.RealInputAdapter().bind()
-    ctx = context_for(binding, Path(ns) / f"slot-{slot}")
-    return {"authorization": a, "prelaunch_report": report}, ctx
-
-
-def authorization_cases():
-    """(name, mutate(bundle, ctx)) — every case must be refused; 'valid' must be accepted."""
-    import authorization_interface as AI
-
-    def resign(b):
-        b["prelaunch_report"]["authorization_sha256"] = sha(AI.canonical(b["authorization"]))
-
-    def setk(path, value, sign=True):
-        def f(b, c):
-            obj = b["authorization"]
-            for k in path[:-1]:
-                obj = obj[k]
-            obj[path[-1]] = value
-            if sign:
-                resign(b)
-        return f
-
-    def drop(key):
-        def f(b, c):
-            b["authorization"].pop(key)
-            resign(b)
-        return f
-
-    def ctxset(**kw):
-        def f(b, c):
-            for k, v in kw.items():
-                setattr(c, k, v)
-        return f
-
-    def report(key, value):
-        def f(b, c):
-            b["prelaunch_report"][key] = value
-        return f
-
-    return [
-        ("status_inactive", setk(["status"], "INACTIVE_TEMPLATE")),
-        ("execution_authorized_false", setk(["EXECUTION_AUTHORIZED"], False)),
-        ("wrong_executor_identity", setk(["executor", "identity_sha256"], "0" * 64)),
-        ("static_review_not_pass", setk(["executor", "static_review"], "FAIL")),
-        ("wrong_science_sha", setk(["science_preregistration", "sha256"], "0" * 64)),
-        ("wrong_k1_record", setk(["k1_input", "record_sha256"], "0" * 64)),
-        ("wrong_cell", setk(["cell", "right"], "1/1000")),
-        ("wrong_m_set", setk(["m_set"], [1, 2, 3, 4])),
-        ("wrong_precision", setk(["precision_bits"], 384)),
-        ("wrong_cpu_ceiling", setk(["cpu_ceiling", "per_attempt_cpu_seconds_soft"], 90000)),
-        ("wrong_runtime_identity", setk(["host_runtime_identity_sha256"], "0" * 64)),
-        ("slot_out_of_range", setk(["attempt_slot"], 99)),
-        ("other_namespace", setk(["output_namespace"], "/tmp/elsewhere")),
-        ("short_nonce", setk(["nonce"], "abc")),
-        ("countersigner_not_independent", setk(["countersigner", "independent_of_execution_host"], False)),
-        ("countersignature_in_future", setk(["countersigner", "utc"], time.time() + 10 ** 6)),
-        ("result_blind_changed", setk(["result_blind"], "seen")),
-        ("missing_template_field", drop("trust_model")),
-        ("unsigned_change_after_prelaunch", setk(["nonce"], "6b" * 16, sign=False)),
-        ("prelaunch_refused", report("verdict", "LAUNCH_REFUSED")),
-        ("prelaunch_names_other", report("authorization_sha256", "0" * 64)),
-        ("prelaunch_predates_countersignature", report("utc_epoch", 0)),
-        ("context_other_slot", ctxset(output_dir=Path("/root/work/k5-first-real-probe/slot-2"))),
-        ("context_precision", ctxset(precision_bits=384)),
-    ]
-
-
-def authorization_suite(validate) -> dict:
-    rows = {}
-    b, c = synthetic_authorization()
-    ok, problems, _ = validate(b, c)
-    rows["valid_synthetic_bundle_accepted"] = {"pass": ok is True, "problems": problems}
-    ok, _, _ = validate(None, c)
-    rows["no_bundle_refused"] = {"pass": ok is False}
-    for name, mutate in authorization_cases():
-        b, c = synthetic_authorization()
-        mutate(b, c)
-        ok, problems, _ = validate(b, c)
-        rows[name] = {"pass": ok is False, "problems": problems[:3]}
-    return rows
-
-
+# ------------------------------------------------------------------ r3: D1 in-process prelaunch / authorization
 def part_authorization(proto, args):
-    import authorization_interface as AI
-    import backends as B
-    import executor_core as EC
-    out = {"suite": authorization_suite(AI.validate)}
-    # guard policies: the frozen guard file is only read; other policies go through the same pure decision function
-    b, c = synthetic_authorization()
-    g = {"frozen_deny_refuses_valid_bundle": EC.guard_decision(b, c)["real_arithmetic_permitted"] is False}
-    for policy, bundle, want in (("EXTERNAL_AUTHORIZATION", b, True), ("EXTERNAL_AUTHORIZATION", None, False),
-                                 ("ALLOW", b, False), (None, b, False), ("DENY", b, False)):
-        g[f"policy_{policy}_bundle_{bundle is not None}"] = EC.decide(policy, bundle, c)["real_arithmetic_permitted"] is want
-    out["guard_policies"] = {"pass": all(g.values()), "checks": g}
-
-    class Tripwire(B.CusumPointBackend):
-        def prepare_point(self, ctx_):
-            raise RuntimeError("TRIPWIRE_REACHED")
-
-    try:
-        EC.enforce_guard(Tripwire(c.k1_binding), c)
-        out["deny_refuses_real_backend_with_valid_bundle"] = {"pass": False}
-    except EC.ExecutorRefusal as exc:
-        out["deny_refuses_real_backend_with_valid_bundle"] = {"pass": "UNAUTHORIZED_REAL_ARITHMETIC" in str(exc)}
-    pins = json.loads((NS / "config/EXECUTOR_PINS.json").read_text())["files"]
-    rel_guard = "level4/closure_proofs/p5y_k5_cusum_real_point_executor/config/REAL_INPUT_GUARD.json"
-    out["activation_changes_no_identity_file"] = {"pass": "config/REAL_INPUT_GUARD.json" not in AI.IDENTITY_FILES
-                                                  and rel_guard not in pins
-                                                  and "EXTERNAL_AUTHORIZATION" in (NS / "code/executor_core.py").read_text()}
-    muts = {}
-    for mut in proto["authorization_mutations"]:
-        src = (NS / "code" / mut["file"]).read_text()
-        spec = importlib.util.spec_from_loader(f"ai_{mut['id']}", loader=None)
-        mod = importlib.util.module_from_spec(spec)
-        mod.__file__ = str(NS / "code" / mut["file"])
-        exec(compile(src.replace(mut["old"], mut["new"]), f"<{mut['id']}>", "exec"), mod.__dict__)
-        try:
-            rows = authorization_suite(mod.validate)
-            muts[mut["id"]] = {"detected": not all(r["pass"] for r in rows.values()),
-                               "failing": [k for k, r in rows.items() if not r["pass"]]}
-        except Exception as exc:
-            muts[mut["id"]] = {"detected": False, "crashed": f"{type(exc).__name__}: {str(exc)[:200]}"}
-    out["mutations"] = muts
-    suite_ok = all(r["pass"] for r in out["suite"].values())
-    return {"checks": out, "mutations_count": f"{sum(v['detected'] for v in muts.values())}/{len(muts)}",
-            "pass": suite_ok and out["guard_policies"]["pass"] and out["deny_refuses_real_backend_with_valid_bundle"]["pass"]
-            and out["activation_changes_no_identity_file"]["pass"] and len(muts) == 3 and all(v["detected"] for v in muts.values())}
+    import qualify_d1d4 as QD
+    return QD.d1_part(proto)
 
 
 # ------------------------------------------------------------------ CRAMER compatibility contract (r2 repair)
@@ -564,7 +425,7 @@ def part_cramer_contract(proto, args):
     return {"checks": checks, "children": res, "mutations": muts, "pass": all(checks.values())}
 
 
-# ------------------------------------------------------------------ attempt supervision (R2-2)
+# ------------------------------------------------------------------ r3: D2 marker lifecycle / D3 recovery
 WRAPPER = """import runpy, sys
 sys.path.insert(0, {code!r})
 import paths
@@ -575,80 +436,13 @@ runpy.run_path({cli!r}, run_name="__main__")
 
 
 def part_supervisor(proto, args):
-    import threading
-    import executor_core as EC
-    import probe_rules as PR
-    import supervisor as SV
-    root = Path(tempfile.mkdtemp(prefix="exec-sv-"))
-    T = proto["supervisor_tests"]
-    out = {}
+    import qualify_d1d4 as QD
+    return QD.d2_part(proto)
 
-    def sup(name, mode, t, cli=SV.CLI, fixture=True):
-        a = [mode, "--output-dir", str(root / name / "attempt")] + (["--fixture-id", t["fixture"]] if fixture else [])
-        return SV.supervise(a, root / name / "state", cpu_soft=t["cpu_soft"], cpu_hard=t["cpu_hard"], wall=t["wall"], cli=cli)
 
-    ceil = EC.prereg()["cpu_ceiling"]
-    full = {"fixture": T["cpu_limit"]["fixture"], "cpu_soft": ceil["per_attempt_cpu_seconds_soft"],
-            "cpu_hard": ceil["per_attempt_cpu_seconds_rlimit"], "wall": ceil["per_attempt_wall_seconds"]}
-    r = sup("success", "manufactured", full)
-    out["manufactured_success"] = {"pass": r["failure_class"] is None and r["sealed_files"] == ["MANUFACTURED_RECORD_SEALED.json"]
-                                   and r["events"] == ["VALIDATED", "ARITHMETIC_STARTED", "SEALED"], "result": r}
-    r = sup("real_refused", "real", full, fixture=False)
-    out["real_mode_refused_before_arithmetic"] = {
-        "pass": r["failure_class"] == "INTEGRITY_REFUSAL" and not r["arithmetic_started"] and r["sealed_files"] == []
-        and r["events"] == [] and "UNAUTHORIZED_REAL_ARITHMETIC" in (r["refusal"] or "")
-        and PR.retry_decision({"arithmetic_started": False, "sealed_record_exists": False, "failure_class": r["failure_class"],
-                               "attempts_started": 0})["decision"] == "NOT_AN_ATTEMPT_RELAUNCH_AFTER_VERIFIER", "result": r}
-    r = sup("cpu_limit", "burn", T["cpu_limit"])
-    out["cpu_limit_seals_void"] = {
-        "pass": r["failure_class"] == "CPU_RLIMIT" and r["sealed_files"] == ["MANUFACTURED_VOID_RECORD_SEALED.json"]
-        and r["events"] == ["VALIDATED", "ARITHMETIC_STARTED", "VOID"]
-        and PR.retry_decision({"arithmetic_started": True, "sealed_record_exists": True, "failure_class": r["failure_class"],
-                               "attempts_started": 1})["decision"] == "NO_RETRY", "result": r}
-    r = sup("wall_timeout", "burn", T["wall_timeout"])
-    out["wall_timeout_seals_void"] = {"pass": r["failure_class"] == "WALL_TIMEOUT"
-                                      and r["sealed_files"] == ["MANUFACTURED_VOID_RECORD_SEALED.json"], "result": r}
-    holder = {}
-    th = threading.Thread(target=lambda: holder.setdefault("r", sup("external_kill", "burn", T["external_kill"])))
-    th.start()
-    log = root / "external_kill" / "attempt" / "ATTEMPT_LOG.jsonl"
-    state = root / "external_kill" / "state" / "RUN_STATE.json"
-    for _ in range(600):
-        if state.exists() and log.exists() and "ARITHMETIC_STARTED" in log.read_text():
-            break
-        time.sleep(0.5)
-    time.sleep(2)
-    os.kill(json.loads(state.read_text())["child_pid"], 9)
-    th.join()
-    r = holder["r"]
-    out["external_kill_classified"] = {"pass": r["failure_class"] == "PROCESS_KILLED_BY_EXTERNAL_SIGNAL" and r["sealed_files"] == []
-                                       and r["arithmetic_started"] is True, "result": r,
-                                       "retry": PR.retry_decision({"arithmetic_started": True, "sealed_record_exists": False,
-                                                                   "failure_class": r["failure_class"], "attempts_started": 1})}
-    import backends as B
-    import input_adapters as IA
-    spec = next(f for f in proto["fixtures"] if f["id"] == T["cpu_limit"]["fixture"])
-    try:
-        EC.execute(B.ManufacturedPointBackend(spec), context_for(IA.ManufacturedInputAdapter().bind(spec), root / "cpu_limit" / "again"))
-        out["void_address_refused"] = {"pass": False, "outcome": "NOT_REFUSED"}
-    except EC.ExecutorRefusal as exc:
-        out["void_address_refused"] = {"pass": "FINALIZED_ADDRESS_EXISTS" in str(exc) and "VOID" in str(exc), "outcome": str(exc)[:200]}
-    muts = {}
-    for mut in [{"id": "CONTROL", "file": "executor_core.py", "old": "", "new": ""}] + proto["void_mutations"]:
-        md = Path(tempfile.mkdtemp(prefix=f"exec-sv-{mut['id']}-"))
-        if mut["id"] != "CONTROL":
-            src = (NS / "code" / mut["file"]).read_text()
-            (md / mut["file"]).write_text(src.replace(mut["old"], mut["new"]).replace(
-                "NS = Path(__file__).resolve().parents[1]", f'NS = Path("{NS}")'))
-        wrapper = md / "cli_wrapper.py"
-        wrapper.write_text(WRAPPER.format(code=str(NS / "code"), mut=str(md), cli=str(SV.CLI)))
-        r = sup(f"void_{mut['id']}", "burn", T["cpu_limit"], cli=wrapper)
-        void_ok = r["failure_class"] == "CPU_RLIMIT" and r["sealed_files"] == ["MANUFACTURED_VOID_RECORD_SEALED.json"]
-        muts[mut["id"]] = {"void_sealed_and_classified": void_ok, "detected": not void_ok, "result": r}
-    out["void_wrapper_control"] = {"pass": muts.pop("CONTROL")["void_sealed_and_classified"]}
-    return {"checks": out, "void_mutations": muts,
-            "pass": all(v["pass"] for v in out.values()) and len(muts) == len(proto["void_mutations"])
-            and all(v["detected"] for v in muts.values())}
+def part_recovery(proto, args):
+    import qualify_d1d4 as QD
+    return QD.d3_part(proto)
 
 
 def part_inherited_r4(proto, args):
@@ -762,9 +556,10 @@ def mutant_check(args):
 PARTS = {"fixtures": part_fixtures, "refusals": part_refusals, "separation": part_separation,
          "crosscheck": part_crosscheck, "smoke": part_smoke, "inherited_r4": part_inherited_r4, "runtime": part_runtime,
          "fence": part_fence, "mutations": part_mutations, "order2_reference": part_order2_reference,
-         "authorization": part_authorization, "supervisor": part_supervisor, "cramer_contract": part_cramer_contract}
+         "authorization": part_authorization, "supervisor": part_supervisor, "recovery": part_recovery,
+         "cramer_contract": part_cramer_contract}
 ORDER = ["smoke", "order2_reference", "mutations", "inherited_r4", "fixtures", "fixtures_replay", "refusals", "separation",
-         "crosscheck", "authorization", "supervisor", "cramer_contract", "runtime", "fence"]
+         "crosscheck", "authorization", "supervisor", "recovery", "cramer_contract", "runtime", "fence"]
 
 
 def run_part(args):
@@ -795,8 +590,9 @@ def assemble(proto, outdir: Path) -> dict:
         "EG02_fail_closed_refusals": B["refusals"]["pass"],
         "EG03_real_input_arithmetic_guard_deny": all(B["refusals"]["tests"][t]["pass"] for t in
                                                      ("guard_deny_real_backend_real_binding", "guard_deny_production_backend_direct"))
-        and B["supervisor"]["checks"]["real_mode_refused_before_arithmetic"]["pass"]
-        and B["authorization"]["checks"]["deny_refuses_real_backend_with_valid_bundle"]["pass"],
+        and B["supervisor"]["rows"]["pre_arithmetic_refusal"]["pass"]
+        and B["authorization"]["rows"]["guard_frozen_policy_deny"]["pass"]
+        and B["authorization"]["rows"]["guard_external_policy_refuses_live"]["pass"],
         "EG04_qualification_science_separation": B["separation"]["pass"],
         "EG05_independent_derivative_crosscheck": B["crosscheck"]["pass"],
         "EG06_executor_mutations_all_detected": B["mutations"]["pass"] and len(B["mutations"]["mutations"]) == 16,
@@ -808,26 +604,37 @@ def assemble(proto, outdir: Path) -> dict:
         "EG11_fences_and_pins": B["fence"]["pass"] and all(P[n]["protocol_sha256"] == sha(PROTOCOL.read_bytes()) for n in ORDER),
         "EG12_cost_within_frozen_ceiling": cost_ok,
         "EG13_preregistered_producer_gates_Q01_Q16": fx["pass"] and smk["pass"] and B["order2_reference"]["pass"] is True,
-        "EG14_external_authorization_interface": B["authorization"]["pass"],
-        "EG15_attempt_supervision_and_void_sealing": B["supervisor"]["pass"],
+        "EG14_external_authorization_interface": all(v["pass"] for k, v in B["authorization"]["rows"].items()
+                                                     if k.startswith(("countersignature_", "binding_")))
+        and all(B["authorization"]["mutations"][m["id"]]["detected"] for m in proto["authorization_mutations"]),
+        "EG15_attempt_supervision_and_void_sealing": all(B["supervisor"]["rows"][k]["pass"] for k in (
+            "success_complete_only", "pre_arithmetic_refusal", "cpu_ceiling", "wall_timeout", "external_kill"))
+        and all(B["supervisor"]["mutations"][m["id"]]["detected"] for m in proto["void_mutations"]),
         "EG16_production_stack_mutations": smk["production_mutations_pass"],
         "EG17_cramer_compatibility_contract": B["cramer_contract"]["pass"],
+        "EG18_D1_in_process_prelaunch_verification": B["authorization"]["pass"],
+        "EG19_D2_marker_lifecycle_and_ledger": B["supervisor"]["pass"],
+        "EG20_D3_reboot_recovery": B["recovery"]["pass"],
+        "EG21_D4_run_provenance": provenance_gate(proto, outdir),
     }
     verdict = "QUALIFIED_AWAITING_EXTERNAL_AUTHORIZATION" if all(gates.values()) else (
         "NOT_READY" if not (gates["EG01_manufactured_fixtures_truth_and_expected_verdicts"] and gates["EG02_fail_closed_refusals"]
                             and gates["EG03_real_input_arithmetic_guard_deny"] and gates["EG05_independent_derivative_crosscheck"])
         else "PARTIALLY_QUALIFIED")
-    return {"schema": "rebaseguard.p5y.k5.cusum-real-point-executor.qualification-result.v2",
+    return {"schema": "rebaseguard.p5y.k5.cusum-real-point-executor.qualification-result.v3",
             "protocol_sha256": sha(PROTOCOL.read_bytes()), "part_sha256": {n: sha((outdir / f"part_{n}.json").read_bytes()) for n in ORDER},
             "gates": {k: "PASS" if v else "FAIL" for k, v in gates.items()}, "REAL_POINT_EXECUTOR": verdict,
             "executor_identity_sha256": proto["executor_identity_sha256"],
             "mutations": B["mutations"]["count"], "mutation_detail": B["mutations"]["mutations"],
             "production_mutations": smk["production_mutations_count"],
-            "authorization_mutations": B["authorization"]["mutations_count"],
-            "void_mutations": f"{sum(v['detected'] for v in B['supervisor']['void_mutations'].values())}/{len(B['supervisor']['void_mutations'])}",
+            "d1_authorization_mutations": B["authorization"]["mutations_count"],
+            "d2_lifecycle_and_void_mutations": B["supervisor"]["mutations_count"],
+            "d3_recovery_mutations": B["recovery"]["mutations_count"],
             "order2_reference": {k: B["order2_reference"][k] for k in ("compare", "comparator_mutant_refused", "pass")},
-            "supervisor": {k: {x: v.get(x) for x in ("pass",)} | {"failure_class": v.get("result", {}).get("failure_class")}
-                           for k, v in B["supervisor"]["checks"].items()},
+            "supervisor_runs": B["supervisor"]["runs"],
+            "d1_rows": {k: v["pass"] for k, v in B["authorization"]["rows"].items()},
+            "d2_rows": {k: v["pass"] for k, v in B["supervisor"]["rows"].items()},
+            "d3_rows": {k: v["pass"] for k, v in B["recovery"]["rows"].items()},
             "fixtures": {k: {x: v.get(x) for x in ("purpose", "qualification", "verdicts", "truth_violations", "M5_over_truth", "pass")}
                          for k, v in fx["rows"].items()},
             "scientific_leaf_differences": diffs, "replay_payload_sha256": [fx["payload_sha256"], B["fixtures_replay"]["payload_sha256"]],
@@ -851,12 +658,27 @@ def jobs(outdir):
     return J
 
 
+PROVENANCE = "RUN_PROVENANCE.json"
+
+
+def provenance_gate(proto, outdir: Path) -> bool:
+    """EG21 (D4): the provenance snapshot written before any part ran is complete and consistent."""
+    import qualify_d1d4 as QD
+    path = outdir / PROVENANCE
+    if not path.exists():
+        return False
+    return QD.provenance_problems(json.loads(path.read_text()), proto, final=False) == []
+
+
 def cmd_run(args):
+    import qualify_d1d4 as QD
     outdir = Path(args.outdir)
     outdir.mkdir(parents=True, exist_ok=True)
     (outdir / "RUN_STATE.json").write_text(json.dumps({"pid": os.getpid(), "argv": sys.argv, "started_unix": time.time()}) + "\n")
     try:
         proto = load_protocol()
+        prov = QD.provenance_start(proto, outdir, sys.argv)
+        (outdir / PROVENANCE).write_text(json.dumps(prov, indent=1, sort_keys=True, default=str) + "\n")
         env = dict(os.environ, OMP_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1", MKL_NUM_THREADS="1", NUMEXPR_NUM_THREADS="1", PYTHONHASHSEED="0")
         pending, running, failures = list(jobs(outdir)), [], []
         while pending or running:
@@ -876,6 +698,12 @@ def cmd_run(args):
         result["runner_failures"] = failures
         raw = (json.dumps(result, indent=1, sort_keys=True, default=str) + "\n").encode()
         (outdir / "QUALIFICATION_RESULT_EXECUTOR.json").write_bytes(raw)
+        git = lambda *a: subprocess.run(["git", "-C", str(paths.REPO), *a], capture_output=True, text=True).stdout  # noqa: E731
+        rel_out = os.path.relpath(outdir.resolve(), paths.REPO.resolve())
+        prov.update({"finished_unix": time.time(), "qualification_result_sha256": sha(raw),
+                     "git_commit_at_end": git("rev-parse", "HEAD").strip(),
+                     "porcelain_after_run": [ln for ln in git("status", "--porcelain").splitlines() if rel_out not in ln]})
+        (outdir / PROVENANCE).write_text(json.dumps(prov, indent=1, sort_keys=True, default=str) + "\n")
         (outdir / "RUN_COMPLETE.json").write_text(json.dumps({"pid": os.getpid(), "result_sha256": sha(raw),
                                                               "runner_failures": len(failures)}) + "\n")
         print(json.dumps({"verdict": result["REAL_POINT_EXECUTOR"], "gates": result["gates"]}, indent=1))
@@ -895,8 +723,16 @@ def cmd_check(args):
     pins = json.loads((NS / "config/EXECUTOR_PINS.json").read_text())["files"]
     moved += [r for r, h in pins.items() if sha((paths.REPO / r).read_bytes()) != h]
     done = json.loads((outdir / "RUN_COMPLETE.json").read_text())
-    if done["result_sha256"] != sha((outdir / "QUALIFICATION_RESULT_EXECUTOR.json").read_bytes()):
+    result_sha = sha((outdir / "QUALIFICATION_RESULT_EXECUTOR.json").read_bytes())
+    if done["result_sha256"] != result_sha:
         problems.append("completion marker")
+    import qualify_d1d4 as QD
+    prov = json.loads((outdir / PROVENANCE).read_text()) if (outdir / PROVENANCE).exists() else {}
+    problems += [f"provenance: {x}" for x in QD.provenance_problems(prov, proto, final=True, result_sha=result_sha)]
+    if prov.get("git_commit") != prov.get("git_commit_at_end"):
+        problems.append("provenance: HEAD moved during the run")
+    if prov.get("qualification_mode") == "FROZEN_QUALIFICATION" and prov.get("porcelain_after_run"):
+        problems.append("provenance: frozen worktree changed during the run")
     print(json.dumps({"problems": problems + moved, "verdict": again["REAL_POINT_EXECUTOR"], "gates": again["gates"]}, indent=1))
     sys.exit(1 if problems or moved else 0)
 

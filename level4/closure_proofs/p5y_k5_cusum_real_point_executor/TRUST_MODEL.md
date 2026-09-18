@@ -10,7 +10,7 @@ authenticate that operator.
 |---|---|---|---|
 | 1. Scientific preregistration | `p5y_k5_cusum_first_real_probe_protocol/protocol/SCIENCE_PREREGISTRATION_R4.json` (sha256 `9ace6896…`, science content unchanged since `dbbd405a`) | The **public GitHub history** of `p5y-postk1-frontier` as a timestamp: third parties can see the commit existed before any result was published | Git commits are not signed; a writer with push rights could rewrite a branch (a force-push is visible to mirrors and clones but is not cryptographically prevented) |
 | 2. Executor qualification | this namespace: frozen executor sources, `EXECUTOR_QUALIFICATION_PROTOCOL.json`, `evidence/qualification/` | The frozen code together with **re-runnable** qualification: anyone can re-run it on manufactured and synthetic inputs and compare hashes; an independent review reads the code | That the host which later runs the executor runs these bytes |
-| 3. External authorization | `config/EXTERNAL_AUTHORIZATION_TEMPLATE.json` (INACTIVE) | A **person or session independent of the execution host** who checks stages 1–2 from their own clone of GitHub (not from the host) and countersigns a result-blind authorization naming exact hashes, host, slot and nonce | Nothing cryptographic: the countersignature is a published statement, not a signature verified by the executor |
+| 3. External authorization | The frozen protocol authorization `protocol/AUTHORIZATION_ACTIVE.json` (r4 template, no extra keys) and the executor binding `EXECUTION_BINDING_AMENDMENT.json`, both committed and published in the order the preregistration fixes; the executor verifies them by calling the frozen `prelaunch_verify.verify` IN PROCESS and consuming its returned object. A countersignature (`authorization/COUNTERSIGNATURE_ACTIVE.json`, from `config/EXTERNAL_AUTHORIZATION_TEMPLATE.json`) by a person or session independent of the execution host names the same authorization file bytes, the amendment, the slot and a nonce (r3, `EXECUTOR_SPEC_R3.md` R3-1) | Nothing cryptographic: the verifier and the countersignature are published statements checked for consistency, not signatures |
 | 4. Host execution | vultr-02, `CusumPointBackend` behind REAL_INPUT_ARITHMETIC_GUARD | The **host operator** is trusted to run the authorized bytes once, in the authorized slot, and publish every output (including VOID or uninformative ones) | The on-host prelaunch verifier and guard are **consistency and fail-closed mechanisms against accidents**, not trust roots; an operator who controls the host can bypass them |
 | 5. Independent result adjudication | a later, separate session | Re-derivation from the sealed record: re-run the frozen consumer, recompute hashes, compare executor sources and runtime facts with the authorization, check the certificate chain; optionally re-run the executor on a second host | That no unpublished run happened before the published one (only process discipline and the ledger speak to this) |
 
@@ -41,11 +41,21 @@ authenticate that operator.
    - the executor freeze commit and identity sha256;
    - the qualification result sha256 and gate PASS;
    - the review verdict.
-2. The reviewer fills a copy of the template (nonce, slot, countersigner, UTC) and publishes it in a new commit.
-3. The host operator sets `config/REAL_INPUT_GUARD.json` to `{"policy": "EXTERNAL_AUTHORIZATION"}` and supplies the
-   bundle (the published countersigned object plus a prelaunch report naming its sha256). No source file changes, so
-   the executor identity that was reviewed and qualified is the identity that runs; the guard file is deliberately
-   outside the executor identity and the pins. `authorization_interface.validate` only checks the bundle for
-   consistency with the running executor, the preregistration and the host contract. It authenticates no one.
-4. The host operator runs once and publishes the sealed record (or VOID) plus the ledger entries.
-5. A separate session adjudicates (stage 5) before any scientific consequence is adopted.
+2. The executor binding `protocol/EXECUTION_BINDING_AMENDMENT.json` is committed and published strictly after the
+   protocol freeze. Then `protocol/AUTHORIZATION_ACTIVE.json` (activation fields only) is committed and published
+   strictly after the amendment. The ledger's LAUNCH_NOTICE for the slot is committed and published as the
+   preregistration requires.
+3. The independent countersigner fills a copy of `config/EXTERNAL_AUTHORIZATION_TEMPLATE.json` naming the authorization
+   file bytes, the amendment, the slot and a fresh nonce, and it is committed at
+   `authorization/COUNTERSIGNATURE_ACTIVE.json`.
+4. The host operator sets `config/REAL_INPUT_GUARD.json` to `{"policy": "EXTERNAL_AUTHORIZATION"}` and launches
+   `code/supervisor.py launch --mode real`.
+   - No source file changes, so the executor identity that was reviewed and qualified is the identity that runs; the
+     guard file is deliberately outside the executor identity and the pins.
+   - The executor then calls the frozen verifier itself; no report is ever handed to it.
+   - Re-running `qualify_executor.py check` after activation reports exactly the guard file as changed; that is
+     expected, not tampering.
+5. The operator appends the OUTCOME derived by `lifecycle.outcome_entry` and publishes everything, including a VOID or
+   uninformative result.
+6. A separate session adjudicates (stage 5) before any scientific consequence is adopted. After a host reboot,
+   `code/supervisor.py recover` classifies every slot and never reruns a sealed address.

@@ -12,10 +12,14 @@
 | `EXECUTOR_SPEC.md` | Interface and pipeline, committed before implementation (`ac555bf2`) |
 | `EXECUTOR_SPEC_R2.md` | r2 addendum after the r1 static review FAIL (`6a1adbfe`), committed before the repair code |
 | `review/EXECUTOR_STATIC_REVIEW_R1.md` | r1 review (FAIL), preserved |
+| `review/EXECUTOR_STATIC_REVIEW_R2.md` | r2 review (FAIL: D1–D4), preserved |
+| `EXECUTOR_SPEC_R3.md` | r3 addendum repairing D1–D4 (`a5d63e71`), committed before the repair code |
 | `TRUST_MODEL.md` | The five separated stages; trusted assumptions; no cryptographic claim |
 | `code/executor_core.py` | Guard (DENY / EXTERNAL_AUTHORIZATION), context validation, shared stages, enclosure/M5/transport, preregistered Q01–Q16 gates, attempt events, VOID sealing, SIGXCPU, exact serialization, atomic seal (certificates only) |
-| `code/authorization_interface.py` | Consistency validator of a countersigned result-blind authorization bundle (prepared, inactive; not a cryptographic authority) |
-| `code/supervisor.py`, `code/executor_cli.py` | Attempt supervisor (RLIMIT_CPU, wall watchdog, wait status, frozen `failure_class`) and the executor child process |
+| `code/authorization_interface.py` | Real-mode authorization (prepared, inactive): the frozen `prelaunch_verify.verify` called in process, the executor binding and a countersignature as a second requirement (not a cryptographic authority) |
+| `code/supervisor.py`, `code/executor_cli.py` | Attempt supervisor in `<output_namespace>/slot-N` (RLIMIT_CPU, wall watchdog, frozen `failure_class`, exactly one terminal marker) with its reboot-recovery mode, and the executor child process |
+| `code/lifecycle.py` | The frozen slot marker contract: atomic no-overwrite writes, A–E slot classification, OUTCOME derivation, ledger reconciliation |
+| `code/qualify_d1d4.py` | r3 qualification suites for D1 (in-process prelaunch), D2 (lifecycle and ledger), D3 (recovery) and D4 (provenance) |
 | `code/backends.py` | `CusumPointBackend` (production, guarded), `SyntheticCusumSmokeBackend` (real Arb stages, synthetic candidates), `ManufacturedPointBackend` (exact truth); shared Q-gate helpers (Aux5 production gate, certificate replay, graded/scalar consistency, order-2 cross replay) |
 | `code/input_adapters.py` | `RealInputAdapter` (metadata only, R1 V01–V10, payload redacted) and `ManufacturedInputAdapter` |
 | `code/qualification_gates.py`, `code/consumer.py` | Sign-independent gates; the separate consumer that alone applies the frozen verdict rules |
@@ -27,11 +31,12 @@
 | `config/EXECUTOR_QUALIFICATION_PROTOCOL.json`, `config/FIXTURE_LIMITS.json` | Frozen qualification protocol and DEV-calibrated M5 ratio limits |
 | `tests/test_executor.py` | Static development tests |
 | `evidence/qualification/` | r1 frozen qualification (preserved) |
-| `evidence/qualification_r2/`, `RESULT.md` | r2 frozen qualification and result |
+| `evidence/qualification_r2/` | r2 frozen qualification (preserved) |
+| `evidence/qualification_r3/`, `RESULT.md` | r3 frozen qualification (with `RUN_PROVENANCE.json`) and result |
 
 ```bash
 python3 -B tests/test_executor.py
 # on rebaseguard-vultr-02, venv /root/work/rbg-cusum-aux5-venv, at the freeze commit:
-python -B code/qualify_executor.py run   --outdir evidence/qualification_r2 --workers 4
-python -B code/qualify_executor.py check --outdir evidence/qualification_r2
+python -B code/qualify_executor.py run   --outdir evidence/qualification_r3 --workers 4
+python -B code/qualify_executor.py check --outdir evidence/qualification_r3
 ```

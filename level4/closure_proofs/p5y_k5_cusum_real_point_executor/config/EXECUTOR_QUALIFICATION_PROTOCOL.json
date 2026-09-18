@@ -448,24 +448,24 @@
  ],
  "authorization_mutations": [
   {
-   "id": "A01_IGNORE_EXECUTOR_IDENTITY",
+   "id": "A01_COUNTERSIGNATURE_AUTHORIZATION_IGNORED",
    "file": "authorization_interface.py",
-   "old": "need(ex.get(\"identity_sha256\") == executor_identity()[\"executor_identity_sha256\"], \"running executor identity\")",
-   "new": "need(True, \"running executor identity\")",
+   "old": "if c.get(\"protocol_authorization_sha256\") != facts.get(\"auth_sha\"):",
+   "new": "if False:",
    "required": true
   },
   {
-   "id": "A02_IGNORE_PRELAUNCH_BINDING",
+   "id": "A02_CONTEXT_EXECUTOR_BINDING_IGNORED",
    "file": "authorization_interface.py",
-   "old": "need(rep.get(\"authorization_sha256\") == auth_sha, \"prelaunch report names another authorization\")",
-   "new": "need(True, \"prelaunch report names another authorization\")",
+   "old": "if ctx.executor_binding_sha256 != am_sha:",
+   "new": "if False:",
    "required": true
   },
   {
-   "id": "A03_ACCEPT_UNAUTHORIZED",
+   "id": "A03_COUNTERSIGNER_INDEPENDENCE_IGNORED",
    "file": "authorization_interface.py",
-   "old": "need(a.get(\"EXECUTION_AUTHORIZED\") is True, \"EXECUTION_AUTHORIZED is not true\")",
-   "new": "need(a.get(\"EXECUTION_AUTHORIZED\") in (True, False), \"EXECUTION_AUTHORIZED is not true\")",
+   "old": "if not cs.get(\"identity\") or cs.get(\"independent_of_execution_host\") is not True \\",
+   "new": "if not cs.get(\"identity\") \\",
    "required": true
   }
  ],
@@ -473,8 +473,84 @@
   {
    "id": "V01_VOID_SEAL_DROPPED",
    "file": "executor_core.py",
-   "old": "            seal(void, out, \"VOID_RECORD_SEALED.json\" if backend.real_input else \"MANUFACTURED_VOID_RECORD_SEALED.json\")",
+   "old": "            seal(void, out, VOID_NAMES[bool(backend.real_input)])",
    "new": "            pass",
+   "required": true
+  }
+ ],
+ "d1_mutations": [
+  {
+   "id": "D01_VERIFIER_SOURCE_NOT_CHECKED",
+   "file": "authorization_interface.py",
+   "old": "    problems = verifier_source_problems(module)\n",
+   "new": "    problems = []\n",
+   "required": true
+  },
+  {
+   "id": "D02_STALE_REPORT_ACCEPTED",
+   "file": "authorization_interface.py",
+   "old": "if not HEX40.match(str(report.get(\"head\"))) or report.get(\"head\") != facts.get(\"head\"):",
+   "new": "if not HEX40.match(str(report.get(\"head\"))):",
+   "required": true
+  },
+  {
+   "id": "D03_AUTHORIZATION_CHANGE_AFTER_VERIFY_IGNORED",
+   "file": "authorization_interface.py",
+   "old": "if a0 is None or report.get(\"authorization_sha256\") != a0 or a1 != a0:",
+   "new": "if a0 is None or report.get(\"authorization_sha256\") != a0:",
+   "required": true
+  },
+  {
+   "id": "D04_OPERATOR_MATERIAL_ACCEPTED",
+   "file": "authorization_interface.py",
+   "old": "    if ctx is None or present:\n",
+   "new": "    if ctx is None:\n",
+   "required": true
+  }
+ ],
+ "lifecycle_mutations": [
+  {
+   "id": "L01_COMPLETE_WITHOUT_VALID_SEAL",
+   "file": "supervisor.py",
+   "old": "valid_complete = (code == 0 and sci is not None and sci[\"valid\"] and void is None",
+   "new": "valid_complete = (code == 0 and sci is not None",
+   "required": true
+  },
+  {
+   "id": "L02_SCIENTIFIC_VOID_SEAL_CONFLICT_ALLOWED",
+   "file": "executor_core.py",
+   "old": "    if any((out / n).exists() for n in SEAL_NAMES):\n        raise ExecutorRefusal(\"SEAL_CONFLICT",
+   "new": "    if False:\n        raise ExecutorRefusal(\"SEAL_CONFLICT",
+   "required": true
+  },
+  {
+   "id": "L03_VOID_SEALED_ON_TRANSIENT_DISK_FULL",
+   "file": "executor_core.py",
+   "old": "    if isinstance(exc, OSError) and getattr(exc, \"errno\", None) in TRANSIENT_ERRNOS:",
+   "new": "    if False:",
+   "required": true
+  },
+  {
+   "id": "L04_LEDGER_DISAGREEMENT_IGNORED",
+   "file": "lifecycle.py",
+   "old": "        if out.get(k) != derived.get(k):",
+   "new": "        if False:",
+   "required": true
+  }
+ ],
+ "recovery_mutations": [
+  {
+   "id": "R01_SEALED_SLOT_MADE_RETRYABLE",
+   "file": "lifecycle.py",
+   "old": "\"C\": \"CONSUME_SEALED_RECORD_WRITE_RUN_COMPLETE_RECOVERED\"",
+   "new": "\"C\": \"WRITE_RUN_FAILED_INTERRUPTED\"",
+   "required": true
+  },
+  {
+   "id": "R02_TORN_STATE_ACCEPTED",
+   "file": "lifecycle.py",
+   "old": "    if out[\"problems\"]:\n        cls = \"E\"",
+   "new": "    if False:\n        cls = \"E\"",
    "required": true
   }
  ],
@@ -488,26 +564,24 @@
   }
  ],
  "supervisor_tests": {
+  "fixture": "XF01_positive_L1",
   "cpu_limit": {
-   "fixture": "XF01_positive_L1",
    "cpu_soft": 20,
    "cpu_hard": 40,
    "wall": 600
   },
   "wall_timeout": {
-   "fixture": "XF01_positive_L1",
    "cpu_soft": 600,
    "cpu_hard": 900,
    "wall": 15
   },
   "external_kill": {
-   "fixture": "XF01_positive_L1",
    "cpu_soft": 600,
    "cpu_hard": 900,
    "wall": 600
   }
  },
- "executor_pins_sha256": "19b51688994e354c8525a10178560736fc922de353c36689e201e3c30003bbc2",
+ "executor_pins_sha256": "c6ddb65be076b94f9bf52529dc953e0f9286550a86a0be6f73fd6428fcca61c2",
  "inherited_r4_parts": [
   "odd_certificate",
   "first_cell",
@@ -776,39 +850,42 @@
  },
  "executor_sources_sha256": {
   "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/paths.py": "7698c726b0001353418610b96a463eb8e704efafa4f69f82a8e390e6b4f96b1d",
-  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/executor_core.py": "3215b71c8072ad1472827ba090e6f53ddd48eb567773502c3c1d8fc2c0c80706",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/executor_core.py": "eff72887976cf077daac7ba5494b148c563c4a5a0521ac07e893ff8bafbaca01",
   "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/backends.py": "d19e855b7be0bf7af937206431e79e5f77c39c3722733689db8238ebe1c47bad",
   "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/input_adapters.py": "24cb975d380db7f6ec168b31eb1cb2e84b5195f5f3507c4dec6a586306b670db",
-  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/authorization_interface.py": "17de02a18d10de1963f7070b2917d364f68be1da6ad223d70baa216c7762ef7f",
-  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/executor_cli.py": "c6856c4968b8a2d6c316f4825cb1686063d01676bf5991355b06e563abbfef9d",
-  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/supervisor.py": "a581f8d49599e9d9a0583a14a365e5beee5ef18739f86a166fbec223cb99a1e5",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/authorization_interface.py": "f0375473e0a6e023c9249d03b1ce738630a2a2d78d2a45d2387a7a2653a6d909",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/lifecycle.py": "a3f7e4a2d93a0ce092b874286fafb31722459c477de29ab2a6fd188d0e624fc3",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/executor_cli.py": "ad02edc700c3076f8685868b7d7bd305c333420f31374b687989b1047dbb6556",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/supervisor.py": "dddc2c696020ee6e086799c7cc1925bf81d89120656c100c84443c8680fc3e54",
   "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/qualification_gates.py": "2c3c2d541e6a12e9866c176af1247ba522be4952d39742fa462621e228a6740a",
   "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/consumer.py": "92bdc792d8eadb45590bb8fd091f890bd3b8905f81de1243dc2d8f0446aae3fa",
   "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/smoke.py": "59814a377d1794bc82cb977af6b735552c621ef380578863f04e94cf783d3bb5",
   "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/exec_fixtures.py": "7443e6cc1cc5748457e4aad3663f913bdd9f9abe7e03883d7884e7ad742ab4ac",
-  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/qualify_executor.py": "79482d0ce629268494791b1f2becdd9a498fa1bb7c9f8d28f0db6e5073099218",
-  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/make_protocol_executor.py": "018112947dd56dbc54ca2fb1dba2cf2fd1e5960cb9d3241d1cda007bac83ee11",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/qualify_executor.py": "e9eb4d6e5f68481b41cd96f2ac11af597375a900fedde70961fc7c5314c6e144",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/make_protocol_executor.py": "5dea23e77f5c652e1b17e23b01b745b91079be64b0fafa50479d4b24d6310f9f",
   "level4/closure_proofs/p5y_k5_cusum_real_point_executor/config/REAL_INPUT_GUARD.json": "2dda1d8f4dd0c7a1990ba6f1f404b92293ed8ed0d155d76a4cdad80ac2355b75",
-  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/config/EXTERNAL_AUTHORIZATION_TEMPLATE.json": "1a5f1ed1a71efb0086ef49a8b79c790a8824a2ce728d0edf5169e1f5492c29cd",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/config/EXTERNAL_AUTHORIZATION_TEMPLATE.json": "ea9d329f397e65b81568b60345c5df52836cb5f975cca57d288f6d98adcf96d6",
   "level4/closure_proofs/p5y_k5_cusum_real_point_executor/config/FIXTURE_LIMITS.json": "7c817d398342413292ee1e87d9a3d2d38dcecbf929c9cb3459b8bf201c10de49",
   "level4/closure_proofs/p5y_k5_cusum_real_point_executor/EXECUTOR_SPEC.md": "3eb784dbb1072a0301670c79a21f251e4acaae7d44ca812d1707776adf106c9c",
   "level4/closure_proofs/p5y_k5_cusum_real_point_executor/EXECUTOR_SPEC_R2.md": "bdcdbc182d1d088b60e5b84c2d93fc06afcfc9eeedd8308f7cbd3c33f6f90590",
-  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/TRUST_MODEL.md": "30fb58f42aa9c4fa2f3ae694b2c9ab995eb4e0441c4c477ab761f35170e02916"
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/EXECUTOR_SPEC_R3.md": "4a6b6dff863b9509755a189a22bd5fe4185a820020b881c7974e4686f253bfff",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/TRUST_MODEL.md": "362264a6475e3e60a087dfaa2f83e2bb5375cfbcc597457f2156b57b2c5b5e08"
  },
  "executor_identity": {
   "files": {
    "code/paths.py": "7698c726b0001353418610b96a463eb8e704efafa4f69f82a8e390e6b4f96b1d",
-   "code/executor_core.py": "3215b71c8072ad1472827ba090e6f53ddd48eb567773502c3c1d8fc2c0c80706",
+   "code/executor_core.py": "eff72887976cf077daac7ba5494b148c563c4a5a0521ac07e893ff8bafbaca01",
    "code/backends.py": "d19e855b7be0bf7af937206431e79e5f77c39c3722733689db8238ebe1c47bad",
    "code/input_adapters.py": "24cb975d380db7f6ec168b31eb1cb2e84b5195f5f3507c4dec6a586306b670db",
-   "code/authorization_interface.py": "17de02a18d10de1963f7070b2917d364f68be1da6ad223d70baa216c7762ef7f",
-   "code/executor_cli.py": "c6856c4968b8a2d6c316f4825cb1686063d01676bf5991355b06e563abbfef9d",
-   "code/supervisor.py": "a581f8d49599e9d9a0583a14a365e5beee5ef18739f86a166fbec223cb99a1e5",
+   "code/authorization_interface.py": "f0375473e0a6e023c9249d03b1ce738630a2a2d78d2a45d2387a7a2653a6d909",
+   "code/lifecycle.py": "a3f7e4a2d93a0ce092b874286fafb31722459c477de29ab2a6fd188d0e624fc3",
+   "code/executor_cli.py": "ad02edc700c3076f8685868b7d7bd305c333420f31374b687989b1047dbb6556",
+   "code/supervisor.py": "dddc2c696020ee6e086799c7cc1925bf81d89120656c100c84443c8680fc3e54",
    "code/qualification_gates.py": "2c3c2d541e6a12e9866c176af1247ba522be4952d39742fa462621e228a6740a",
    "code/consumer.py": "92bdc792d8eadb45590bb8fd091f890bd3b8905f81de1243dc2d8f0446aae3fa",
-   "config/EXECUTOR_PINS.json": "19b51688994e354c8525a10178560736fc922de353c36689e201e3c30003bbc2"
+   "config/EXECUTOR_PINS.json": "c6ddb65be076b94f9bf52529dc953e0f9286550a86a0be6f73fd6428fcca61c2"
   },
-  "executor_identity_sha256": "2bd98fde6bba1e2252b31c28a108c76b112f9924bd1b94a6f8fd237cc53a50f3"
+  "executor_identity_sha256": "f6ac26767b034e9b44269bba82bab1c4523187b6a8d8a424f3c3dec2347db1d1"
  },
- "executor_identity_sha256": "2bd98fde6bba1e2252b31c28a108c76b112f9924bd1b94a6f8fd237cc53a50f3"
+ "executor_identity_sha256": "f6ac26767b034e9b44269bba82bab1c4523187b6a8d8a424f3c3dec2347db1d1"
 }

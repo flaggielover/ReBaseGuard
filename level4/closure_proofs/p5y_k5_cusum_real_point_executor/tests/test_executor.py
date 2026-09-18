@@ -23,9 +23,30 @@ class Static(unittest.TestCase):
         a = json.loads((NS / "config/EXTERNAL_AUTHORIZATION_TEMPLATE.json").read_text())
         self.assertIs(a["EXECUTION_AUTHORIZED"], False)
         self.assertEqual(a["status"], "INACTIVE_TEMPLATE")
-        for key in ("science_preregistration", "executor", "k1_input", "cell", "m_set", "precision_bits", "cpu_ceiling",
-                    "host_runtime_identity_sha256", "output_namespace", "attempt_slot", "nonce", "result_blind"):
+        for key in ("protocol_authorization_sha256", "execution_binding_amendment_sha256", "attempt_slot", "nonce",
+                    "countersigner", "result_blind"):
             self.assertIn(key, a)
+        self.assertFalse((NS / "authorization/COUNTERSIGNATURE_ACTIVE.json").exists())
+
+    def test_d1_validate_calls_frozen_verifier_in_process_only(self):
+        tree = ast.parse((CODE / "authorization_interface.py").read_text())
+        fns = {n.name: n for n in tree.body if isinstance(n, ast.FunctionDef)}
+        self.assertEqual([a.arg for a in fns["validate"].args.args], ["ctx"])
+        self.assertIn("return validate_with(ctx, PV, COUNTERSIGNATURE_FILE)", ast.unparse(fns["validate"]))
+        body = ast.unparse(fns["validate_with"])
+        self.assertIn("run_verifier(module.verify, module.AUTH_ACTIVE)", body)
+        self.assertLess(body.index("present"), body.index("verifier_source_problems(module)"))
+        self.assertLess(body.index("verifier_source_problems(module)"), body.index("run_verifier("))
+        cli = (CODE / "executor_cli.py").read_text()
+        self.assertNotIn("--authorization", cli)
+        core = (CODE / "executor_core.py").read_text()
+        self.assertNotIn("authorization_bundle", core)
+
+    def test_d2_markers_written_only_through_lifecycle(self):
+        sv = (CODE / "supervisor.py").read_text()
+        self.assertNotIn("write_text(", sv.split("def supervise")[1])
+        self.assertIn("LC.write_terminal(slot, LC.RUN_COMPLETE", sv)
+        self.assertIn("LC.write_terminal(slot, LC.RUN_FAILED", sv)
 
     def test_guard_checked_before_any_backend_method(self):
         tree = ast.parse((CODE / "executor_core.py").read_text())
@@ -66,8 +87,10 @@ class Static(unittest.TestCase):
 
     def test_r2_mutation_groups_match_once(self):
         import make_protocol_executor as MP
-        groups = {"P": MP.production_mutations(), "A": MP.authorization_mutations(), "V": MP.void_mutations()}
-        self.assertEqual([len(groups[k]) for k in "PAV"], [4, 3, 1])
+        groups = {"P": MP.production_mutations(), "A": MP.authorization_mutations(), "V": MP.void_mutations(),
+                  "C": MP.cramer_mutations(), "D": MP.d1_mutations(), "L": MP.lifecycle_mutations(),
+                  "R": MP.recovery_mutations()}
+        self.assertEqual([len(groups[k]) for k in "PAVCDLR"], [4, 3, 1, 1, 4, 4, 2])
         for muts in groups.values():
             for m in muts:
                 self.assertEqual((CODE / m["file"]).read_text().count(m["old"]), 1, m["id"])
@@ -84,7 +107,8 @@ class Static(unittest.TestCase):
         fn = next(n for n in ast.parse(src).body if isinstance(n, ast.FunctionDef) and n.name == "execute")
         text = ast.unparse(fn)
         self.assertIn("except BaseException", text)
-        self.assertIn("VOID_RECORD_SEALED.json", text)
+        self.assertIn("VOID_NAMES", text)
+        self.assertIn("void_class(exc)", text)
         self.assertLess(text.index("log.emit('ARITHMETIC_STARTED')"), text.index("run_stages_before_enclosure"))
 
     def test_consumer_uses_frozen_producer_qualification(self):

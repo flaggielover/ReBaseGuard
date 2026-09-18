@@ -88,3 +88,56 @@ replay payload cb28b972… twice with 0 scientific leaf differences; smoke forme
 stages, 221.2 CPU-s certificate replay); order-2 replay identical to RUNG_256; projected 6413.9 CPU-s per attempt and
 19241.7 for the campaign, within the frozen 9000 / 32400 ceilings.
 
+**Note on the DEV cost numbers above** (review r2, D12): 6413.9 / 19241.7 / 2433.0 / 221.2 are from the r2 DEV run.
+The committed r2 frozen evidence reports 6403.2 / 19209.5 / 2424.8 / 222.3. They are two different runs.
+
+# r3 DEV calibration (after the r2 static review FAIL, D1–D4)
+
+**Host and data.** Same discipline: rebaseguard-vultr-02, an untracked DEV clone, manufactured fixtures and
+qualification backends (burn, disk-full) only, and synthetic verifier reports and countersignatures in the pure
+layers. The real frozen verifier was called only on this host, where no `AUTHORIZATION_ACTIVE.json` exists.
+REAL_INPUT_ARITHMETIC_GUARD was DENY and EXECUTION_AUTHORIZED false throughout.
+
+## Findings while building r3
+
+1. **The r2 authorization model was parallel to the frozen one.** The protocol's authority is
+   `protocol/AUTHORIZATION_ACTIVE.json` (r4 template, no extra keys), identified by its file bytes and bound to the
+   executor through `EXECUTION_BINDING_AMENDMENT.json`. r2's own countersigned object could never pass the frozen
+   verifier's P02, which is the root of D1. r3 uses the frozen objects and keeps the countersignature only as a second
+   requirement naming the same file bytes.
+2. **The frozen verifier raises, rather than returning REFUSED, when `AUTHORIZATION_ACTIVE.json` is absent.** It cannot
+   read the file. The executor treats any raise as a refusal. The suite also feeds a *genuine* frozen-verifier REFUSED
+   object (the verifier run read-only on the committed r4 template) to the decision, which refuses it.
+3. **r2 sealed VOID on any post-arithmetic exception, including disk-full.** `void_after_arithmetic` limits VOID to
+   INTEGRITY_REFUSAL, CPU_RLIMIT and WALL_TIMEOUT, and a transient kill leaves no sealed record. r3 follows it: a
+   disk-full error seals nothing and is classified DISK_FULL_BEFORE_SEAL.
+4. **The watchdog signal was indistinguishable from an external SIGTERM.** r3's watchdog sends SIGUSR1 (WALL_TIMEOUT,
+   VOID); SIGTERM keeps its external-kill meaning.
+5. **Supervisor diagnostics must stay outside the namespace root,** because P11 admits only `slot-N` directories. They
+   now go to a private temporary directory.
+6. **RUN_STATE argv must be the kernel's exact cmdline** (interpreter included) so that the waiter's `/proc` equality
+   holds.
+
+## Harness defects fixed during r3 DEV (qualification code only; no executor change)
+
+- A copied-verifier fixture lacked enough parent directories for the verifier's own `REPO` computation.
+- The mutant loader did not register the module in `sys.modules`, so the dataclass in a mutated `executor_core`
+  crashed. Crashes count as NOT detected, so L02 and L03 first showed as undetected.
+- The "admits its own RUN_STATE" test wrote the test's pid, where the rule requires the parent's.
+- A sentinel bug made the "malformed None" case reuse the valid report.
+- One live row expected REFUSED only; see item 2.
+
+- **First full r3 DEV run: 20/21 gates.** EG11 failed because the inherited no-monkeypatch fence flagged the mutant loader's explicit `sys.modules[...]` assignment. The fence is right and load-bearing. Mutants are now imported normally from a private temporary directory with `importlib.import_module`, with path constants pinned, as in the r2 mutant-dir harness. The complete DEV run was repeated from a clean output directory.
+
+**Mutation group L is L01–L04** (the spec named L01–L03). L04, ledger disagreement ignored, was added and is required.
+
+**Final r3 DEV state** (clean run, 0 runner failures): 21/21 gates PASS,
+REAL_POINT_EXECUTOR = QUALIFIED_AWAITING_EXTERNAL_AUTHORIZATION.
+- **Mutations:** E 16/16, P 4/4, D01–D04 + A01–A03 7/7, L01–L04 + V01 5/5, R01–R02 2/2, C01 1/1.
+- **Suites:** D1 50/50, D2 35/35, D3 33/33 rows.
+- **Replay:** payload cb28b972… twice with 0 scientific leaf differences. This is byte-identical to the r2 payload, so
+  r3 changed no scientific leaf.
+- **Order-2 replay:** identical to RUNG_256.
+- **Cost:** 6418.4 CPU-s per attempt and 19255.3 for the campaign, within the frozen 9000 / 32400 ceilings.
+- These are DEV numbers; the frozen evidence is a separate run.
+

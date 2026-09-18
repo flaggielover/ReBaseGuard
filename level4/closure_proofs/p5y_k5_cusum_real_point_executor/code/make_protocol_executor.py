@@ -11,11 +11,11 @@ CP = NS.parents[0]
 REPO = NS.parents[2]
 REL = "level4/closure_proofs/p5y_k5_cusum_real_point_executor/"
 EXECUTOR_SOURCES = ["code/paths.py", "code/executor_core.py", "code/backends.py", "code/input_adapters.py",
-                    "code/authorization_interface.py", "code/executor_cli.py", "code/supervisor.py",
+                    "code/authorization_interface.py", "code/lifecycle.py", "code/executor_cli.py", "code/supervisor.py",
                     "code/qualification_gates.py", "code/consumer.py"]
 QUALIFICATION_SOURCES = ["code/smoke.py", "code/exec_fixtures.py", "code/qualify_executor.py", "code/make_protocol_executor.py",
                          "config/REAL_INPUT_GUARD.json", "config/EXTERNAL_AUTHORIZATION_TEMPLATE.json",
-                         "config/FIXTURE_LIMITS.json", "EXECUTOR_SPEC.md", "EXECUTOR_SPEC_R2.md", "TRUST_MODEL.md"]
+                         "config/FIXTURE_LIMITS.json", "EXECUTOR_SPEC.md", "EXECUTOR_SPEC_R2.md", "EXECUTOR_SPEC_R3.md", "TRUST_MODEL.md"]
 V = {"S": "SUPPORTS_K5B_FIRST_CELL", "I": "INCONCLUSIVE", "C": "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
      "P": "POINT_POSITIVE", "N": "POINT_NEGATIVE", "U": "POINT_UNDETERMINED"}
 
@@ -99,17 +99,60 @@ def production_mutations():
 
 
 def authorization_mutations():
-    """A01-A03: validator mutants (detected on synthetic bundles in the authorization part)."""
+    """A01-A03 (r3): countersignature / binding validator mutants (detected in the D1 authorization suite)."""
     M = [
-        ("A01_IGNORE_EXECUTOR_IDENTITY", "authorization_interface.py",
-         'need(ex.get("identity_sha256") == executor_identity()["executor_identity_sha256"], "running executor identity")',
-         'need(True, "running executor identity")'),
-        ("A02_IGNORE_PRELAUNCH_BINDING", "authorization_interface.py",
-         'need(rep.get("authorization_sha256") == auth_sha, "prelaunch report names another authorization")',
-         'need(True, "prelaunch report names another authorization")'),
-        ("A03_ACCEPT_UNAUTHORIZED", "authorization_interface.py",
-         'need(a.get("EXECUTION_AUTHORIZED") is True, "EXECUTION_AUTHORIZED is not true")',
-         'need(a.get("EXECUTION_AUTHORIZED") in (True, False), "EXECUTION_AUTHORIZED is not true")'),
+        ("A01_COUNTERSIGNATURE_AUTHORIZATION_IGNORED", "authorization_interface.py",
+         'if c.get("protocol_authorization_sha256") != facts.get("auth_sha"):', "if False:"),
+        ("A02_CONTEXT_EXECUTOR_BINDING_IGNORED", "authorization_interface.py",
+         "if ctx.executor_binding_sha256 != am_sha:", "if False:"),
+        ("A03_COUNTERSIGNER_INDEPENDENCE_IGNORED", "authorization_interface.py",
+         'if not cs.get("identity") or cs.get("independent_of_execution_host") is not True \\',
+         'if not cs.get("identity") \\'),
+    ]
+    return [{"id": i, "file": f, "old": o, "new": n, "required": True} for i, f, o, n in M]
+
+
+def d1_mutations():
+    """D01-D04: in-process prelaunch verification mutants (detected in the D1 authorization suite)."""
+    M = [
+        ("D01_VERIFIER_SOURCE_NOT_CHECKED", "authorization_interface.py",
+         "    problems = verifier_source_problems(module)\n", "    problems = []\n"),
+        ("D02_STALE_REPORT_ACCEPTED", "authorization_interface.py",
+         'if not HEX40.match(str(report.get("head"))) or report.get("head") != facts.get("head"):',
+         'if not HEX40.match(str(report.get("head"))):'),
+        ("D03_AUTHORIZATION_CHANGE_AFTER_VERIFY_IGNORED", "authorization_interface.py",
+         'if a0 is None or report.get("authorization_sha256") != a0 or a1 != a0:',
+         'if a0 is None or report.get("authorization_sha256") != a0:'),
+        ("D04_OPERATOR_MATERIAL_ACCEPTED", "authorization_interface.py",
+         "    if ctx is None or present:\n", "    if ctx is None:\n"),
+    ]
+    return [{"id": i, "file": f, "old": o, "new": n, "required": True} for i, f, o, n in M]
+
+
+def lifecycle_mutations():
+    """L01-L04: marker lifecycle / ledger mutants (detected in the D2 lifecycle suite)."""
+    M = [
+        ("L01_COMPLETE_WITHOUT_VALID_SEAL", "supervisor.py",
+         'valid_complete = (code == 0 and sci is not None and sci["valid"] and void is None',
+         "valid_complete = (code == 0 and sci is not None"),
+        ("L02_SCIENTIFIC_VOID_SEAL_CONFLICT_ALLOWED", "executor_core.py",
+         '    if any((out / n).exists() for n in SEAL_NAMES):\n        raise ExecutorRefusal("SEAL_CONFLICT',
+         '    if False:\n        raise ExecutorRefusal("SEAL_CONFLICT'),
+        ("L03_VOID_SEALED_ON_TRANSIENT_DISK_FULL", "executor_core.py",
+         '    if isinstance(exc, OSError) and getattr(exc, "errno", None) in TRANSIENT_ERRNOS:', "    if False:"),
+        ("L04_LEDGER_DISAGREEMENT_IGNORED", "lifecycle.py",
+         "        if out.get(k) != derived.get(k):", "        if False:"),
+    ]
+    return [{"id": i, "file": f, "old": o, "new": n, "required": True} for i, f, o, n in M]
+
+
+def recovery_mutations():
+    """R01-R02: reboot-recovery mutants (detected in the D3 recovery suite)."""
+    M = [
+        ("R01_SEALED_SLOT_MADE_RETRYABLE", "lifecycle.py",
+         '"C": "CONSUME_SEALED_RECORD_WRITE_RUN_COMPLETE_RECOVERED"', '"C": "WRITE_RUN_FAILED_INTERRUPTED"'),
+        ("R02_TORN_STATE_ACCEPTED", "lifecycle.py",
+         '    if out["problems"]:\n        cls = "E"', '    if False:\n        cls = "E"'),
     ]
     return [{"id": i, "file": f, "old": o, "new": n, "required": True} for i, f, o, n in M]
 
@@ -117,7 +160,7 @@ def authorization_mutations():
 def void_mutations():
     """V01: VOID sealing dropped (detected by the supervisor CPU-limit test)."""
     return [{"id": "V01_VOID_SEAL_DROPPED", "file": "executor_core.py",
-             "old": '            seal(void, out, "VOID_RECORD_SEALED.json" if backend.real_input else "MANUFACTURED_VOID_RECORD_SEALED.json")',
+             "old": "            seal(void, out, VOID_NAMES[bool(backend.real_input)])",
              "new": "            pass", "required": True}]
 
 
@@ -204,10 +247,13 @@ def build(dev: bool) -> dict:
         "production_mutations": production_mutations(),
         "authorization_mutations": authorization_mutations(),
         "void_mutations": void_mutations(),
+        "d1_mutations": d1_mutations(),
+        "lifecycle_mutations": lifecycle_mutations(),
+        "recovery_mutations": recovery_mutations(),
         "cramer_mutations": cramer_mutations(),
-        "supervisor_tests": {"cpu_limit": {"fixture": "XF01_positive_L1", "cpu_soft": 20, "cpu_hard": 40, "wall": 600},
-                             "wall_timeout": {"fixture": "XF01_positive_L1", "cpu_soft": 600, "cpu_hard": 900, "wall": 15},
-                             "external_kill": {"fixture": "XF01_positive_L1", "cpu_soft": 600, "cpu_hard": 900, "wall": 600}},
+        "supervisor_tests": {"fixture": "XF01_positive_L1", "cpu_limit": {"cpu_soft": 20, "cpu_hard": 40, "wall": 600},
+                             "wall_timeout": {"cpu_soft": 600, "cpu_hard": 900, "wall": 15},
+                             "external_kill": {"cpu_soft": 600, "cpu_hard": 900, "wall": 600}},
         "executor_pins_sha256": sha(pins_file),
         "inherited_r4_parts": ["odd_certificate", "first_cell", "b01", "r5_mutations", "m5_crosscheck", "failclosed"],
         "pins_sha256": pins(),

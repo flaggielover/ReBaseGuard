@@ -10,9 +10,10 @@ Pipeline after those stages (R2/R3/R4 reuse, no new mathematics):
     local_r5.local_tower(base, cands, point nodes, x1)          -> M5_m >= sup_[0,x1] |R_m^(5)|
     transport_factor = x1^2/2 (exact);  L1 = L0 - tf M5;  U1 = U0 + tf M5
 REAL_INPUT_ARITHMETIC_GUARD: config/REAL_INPUT_GUARD.json. Policy DENY (frozen) refuses a backend with real_input = True
-before any backend method is called; policy EXTERNAL_AUTHORIZATION (not active) permits it only for a bundle accepted by
-authorization_interface.validate (EXECUTOR_SPEC_R2.md R2-3). Every attempt appends VALIDATED / ARITHMETIC_STARTED /
-SEALED | VOID to ATTEMPT_LOG.jsonl; any failure after ARITHMETIC_STARTED (including SIGXCPU) seals a VOID record.
+before any backend method is called; policy EXTERNAL_AUTHORIZATION (not active) permits it only if
+authorization_interface.validate accepts the frozen prelaunch_verify.verify called IN PROCESS (EXECUTOR_SPEC_R3.md R3-1).
+Every attempt appends VALIDATED / ARITHMETIC_STARTED / SEALED | VOID (with the supervisor's attempt_uid) to
+ATTEMPT_LOG.jsonl; VOID is sealed only for an integrity or cost class after ARITHMETIC_STARTED (void_after_arithmetic).
 The sealed record carries the preregistered producer-qualification gates Q01..Q16 with their evidence.
 """
 from __future__ import annotations
@@ -67,33 +68,47 @@ def up(v) -> str:
 
 
 # ------------------------------------------------------------------ guard
-def guard_decision(bundle=None, ctx=None) -> dict:
+def guard_decision(ctx=None) -> dict:
     """REAL_INPUT_ARITHMETIC_GUARD read from the guard file (config/REAL_INPUT_GUARD.json, frozen policy DENY)."""
     try:
         policy = json.loads(GUARD_FILE.read_text()).get("policy")
     except (OSError, ValueError, AttributeError):
         return {"policy": None, "real_arithmetic_permitted": False, "reason": "guard file unreadable: DENY"}
-    return decide(policy, bundle, ctx)
+    return decide(policy, ctx)
 
 
-def decide(policy, bundle, ctx) -> dict:
-    """Pure decision. DENY denies always; EXTERNAL_AUTHORIZATION permits only a bundle accepted by
-    authorization_interface.validate; any other policy value denies."""
+def decide(policy, ctx) -> dict:
+    """Pure policy decision. DENY denies always. EXTERNAL_AUTHORIZATION permits only if authorization_interface.validate
+    accepts: the frozen prelaunch_verify.verify called IN PROCESS with its defaults, its returned object consumed
+    directly, the executor binding and the countersignature (EXECUTOR_SPEC_R3.md R3-1). Any other value denies."""
     if policy == "DENY":
         return {"policy": "DENY", "real_arithmetic_permitted": False, "reason": "REAL_INPUT_ARITHMETIC_GUARD = DENY"}
     if policy == "EXTERNAL_AUTHORIZATION":
         import authorization_interface as AI
-        ok, problems, auth_sha = AI.validate(bundle, ctx)
-        return {"policy": policy, "real_arithmetic_permitted": ok, "authorization_sha256": auth_sha,
-                "reason": "external authorization accepted" if ok else f"external authorization refused: {problems[:5]}"}
+        ok, problems, binding = AI.validate(ctx)
+        verified_utc = binding.pop("verified_utc_epoch", None)
+        return {"policy": policy, "real_arithmetic_permitted": ok, "binding": binding, "verified_utc_epoch": verified_utc,
+                "reason": "in-process prelaunch verification accepted" if ok
+                else f"authorization refused: {[mask(x) for x in problems[:5]]}"}
     return {"policy": policy, "real_arithmetic_permitted": False, "reason": f"unrecognized guard policy {policy!r}: DENY"}
 
 
+def mask(text) -> str:
+    """No numbers outside the sealed record: digits of free text are masked."""
+    import re
+    return re.sub(r"\d", "#", str(text))
+
+
 def enforce_guard(backend, ctx=None) -> dict:
-    decision = guard_decision(getattr(ctx, "authorization_bundle", None), ctx)
+    decision = guard_decision(ctx)
     if getattr(backend, "real_input", True) and not decision["real_arithmetic_permitted"]:
         raise ExecutorRefusal(f"UNAUTHORIZED_REAL_ARITHMETIC: {decision['reason']}")
     return decision
+
+
+def authorization_still_bound(decision: dict) -> bool:
+    import authorization_interface as AI
+    return AI.authorization_unchanged(decision.get("binding") or {})
 
 
 # ------------------------------------------------------------------ context
@@ -110,8 +125,7 @@ class ExecutionContext:
     runtime_identity_sha256: str = ""
     require_runtime_match: bool = False
     executor_binding_sha256: str = "UNBOUND_QUALIFICATION"
-    authorization_bundle: dict | None = None
-    cpu_soft_seconds: float | None = None
+    attempt_uid: str | None = None                        # set by the supervisor (RUN_STATE); None in-process
 
 
 BINDING_KEYS = {"kind", "detector", "k1_cell_index", "left", "right", "C_upper", "C_evaluation", "record_sha256",
@@ -180,10 +194,30 @@ def validate_context(ctx: ExecutionContext, backend) -> dict:
         diff = runtime_differences(p["host_runtime_contract"], PV.live_host_facts())
         if diff:
             raise ExecutorRefusal(f"RUNTIME_MISMATCH: {diff}")
-    out = Path(ctx.output_dir)
-    if out.exists() and (not out.is_dir() or any(out.iterdir())):
-        raise ExecutorRefusal("STALE_OUTPUT_NAMESPACE")
+    slot_problems = slot_admission(Path(ctx.output_dir), ctx.attempt_uid)
+    if slot_problems:
+        raise ExecutorRefusal(f"STALE_OUTPUT_NAMESPACE: {slot_problems}")
     return p
+
+
+def slot_admission(out: Path, attempt_uid) -> list:
+    """The executor's slot is empty (in-process) or holds exactly the supervisor's RUN_STATE for THIS attempt."""
+    import lifecycle as LC
+    if not out.exists():
+        return []
+    if not out.is_dir():
+        return ["output path is not a directory"]
+    entries = sorted(e.name for e in out.iterdir())
+    if not entries:
+        return [] if attempt_uid is None else ["no RUN_STATE for a supervised attempt"]
+    if attempt_uid is None or entries != [LC.RUN_STATE]:
+        return [f"unexpected entries {entries[:4]}"]
+    state, problem = LC.load_json(out / LC.RUN_STATE)
+    if problem or state is None or set(state) != LC.STATE_KEYS:
+        return ["RUN_STATE malformed"]
+    if state.get("attempt_uid") != attempt_uid or state.get("pid") != os.getppid():
+        return ["RUN_STATE belongs to another attempt or supervisor"]
+    return []
 
 
 def runtime_differences(contract: dict, live: dict) -> list:
@@ -199,6 +233,8 @@ def addresses(ctx: ExecutionContext) -> dict:
 
 
 SEAL_NAMES = (REAL_SEAL_NAME, MANUFACTURED_SEAL_NAME, "VOID_RECORD_SEALED.json", "MANUFACTURED_VOID_RECORD_SEALED.json")
+VOID_NAMES = {True: "VOID_RECORD_SEALED.json", False: "MANUFACTURED_VOID_RECORD_SEALED.json"}
+TRANSIENT_ERRNOS = (28, 122)                               # ENOSPC, EDQUOT: DISK_FULL_BEFORE_SEAL (transient, no seal)
 
 
 def refuse_finalized_addresses(ctx: ExecutionContext, addr: dict) -> None:
@@ -219,12 +255,13 @@ def refuse_finalized_addresses(ctx: ExecutionContext, addr: dict) -> None:
 
 # ------------------------------------------------------------------ attempt events
 class AttemptLog:
-    def __init__(self, out: Path):
+    def __init__(self, out: Path, attempt_uid=None):
         self.out = out
+        self.attempt_uid = attempt_uid
         self.events = []
 
     def emit(self, event: str, **fields):
-        entry = {"event": event, "utc_epoch": time.time(), **fields}
+        entry = {"event": event, "utc_epoch": time.time(), "attempt_uid": self.attempt_uid, **fields}
         self.events.append(entry)
         self.out.mkdir(parents=True, exist_ok=True)
         with open(self.out / "ATTEMPT_LOG.jsonl", "a") as fh:
@@ -313,7 +350,7 @@ def execute(backend, ctx: ExecutionContext) -> dict:
     addr = addresses(ctx)
     refuse_finalized_addresses(ctx, addr)
     out = Path(ctx.output_dir)
-    log = AttemptLog(out)
+    log = AttemptLog(out, ctx.attempt_uid)
     pins_start = pinned_hashes()
     log.emit("VALIDATED", guard_policy=decision["policy"], real_input=bool(backend.real_input))
     x1 = F(ctx.k1_binding["right"])
@@ -323,6 +360,8 @@ def execute(backend, ctx: ExecutionContext) -> dict:
         with _CpuLimit(), R1E.precision(ctx.precision_bits):
             from flint import ctx as flint_ctx
             observed_precision = flint_ctx.prec
+            if backend.real_input and not authorization_still_bound(decision):
+                raise ExecutorRefusal("AUTHORIZATION_CHANGED_AFTER_VERIFICATION")
             log.emit("ARITHMETIC_STARTED")
             stages = run_stages_before_enclosure(backend, ctx)
             enc = enclosure_stages(stages, x1)
@@ -347,7 +386,7 @@ def execute(backend, ctx: ExecutionContext) -> dict:
                         "runtime_identity_sha256": ctx.runtime_identity_sha256,
                         "executor_binding_sha256": ctx.executor_binding_sha256},
             "backend": backend.describe(),
-            "guard": decision,
+            "guard": {k: v for k, v in decision.items() if k != "verified_utc_epoch"},
             "per_m": per_m,
             "addresses": {str(m): a for m, a in addr.items()},
             "intermediates": intermediates,
@@ -356,23 +395,41 @@ def execute(backend, ctx: ExecutionContext) -> dict:
         cpu, wall = time.process_time() - t0, time.time() - w0
         pq = producer_gates(scientific, q_extra, pins_start, pinned_hashes(), log, p, cpu, wall, decision, backend, ctx)
         scientific["producer_qualification"] = {"gates": pq["gates"], "modes": pq["modes"]}
+        if backend.real_input and not authorization_still_bound(decision):
+            raise ExecutorRefusal("AUTHORIZATION_CHANGED_AFTER_VERIFICATION")
         record = {"scientific": scientific, "scientific_hash": sha(canonical(scientific)),
-                  "metadata": {"incidental": True, "cpu_seconds": cpu, "wall_seconds": wall,
+                  "metadata": {"incidental": True, "attempt_uid": ctx.attempt_uid, "cpu_seconds": cpu, "wall_seconds": wall,
                                "peak_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss,
                                "producer_qualification_evidence": pq["evidence"]}}
         seal(record, out, REAL_SEAL_NAME if backend.real_input else MANUFACTURED_SEAL_NAME)
         log.emit("SEALED", scientific_hash=record["scientific_hash"])
         return record
     except BaseException as exc:
-        if any(e["event"] == "ARITHMETIC_STARTED" for e in log.events) and not (out / REAL_SEAL_NAME).exists() \
-                and not (out / MANUFACTURED_SEAL_NAME).exists():
-            void = {"void": True, "failure": f"{type(exc).__name__}: {str(exc)[:300]}",
+        started = any(e["event"] == "ARITHMETIC_STARTED" for e in log.events)
+        if started and void_class(exc) is not None and not any((out / n).exists() for n in SEAL_NAMES):
+            void = {"void": True, "void_class": void_class(exc), "failure": mask(f"{type(exc).__name__}: {str(exc)[:300]}"),
                     "scientific": {"schema": RECORD_SCHEMA + "#void", "binding": {k: ctx.k1_binding.get(k) for k in sorted(BINDING_KEYS)},
-                                   "addresses": {str(m): a for m, a in addr.items()}, "computed_before_failure": partial}}
+                                   "addresses": {str(m): a for m, a in addr.items()}, "computed_before_failure": partial},
+                    "metadata": {"incidental": True, "attempt_uid": ctx.attempt_uid}}
             void["scientific_hash"] = sha(canonical(void["scientific"]))
-            seal(void, out, "VOID_RECORD_SEALED.json" if backend.real_input else "MANUFACTURED_VOID_RECORD_SEALED.json")
-            log.emit("VOID", failure=void["failure"][:120])
+            seal(void, out, VOID_NAMES[bool(backend.real_input)])
+            log.emit("VOID", void_class=void["void_class"])
         raise
+
+
+def void_class(exc) -> str | None:
+    """void_after_arithmetic: only an integrity or cost class seals VOID. A disk-full error or an interrupt is transient
+    and leaves no sealed record by construction (the supervisor derives its class from its own evidence)."""
+    if isinstance(exc, OSError) and getattr(exc, "errno", None) in TRANSIENT_ERRNOS:
+        return None
+    if isinstance(exc, KeyboardInterrupt):
+        return None
+    text = str(exc)
+    if text.startswith("CPU_RLIMIT"):
+        return "CPU_RLIMIT"
+    if text.startswith("WALL_TIMEOUT"):
+        return "WALL_TIMEOUT"
+    return "INTEGRITY_REFUSAL"
 
 
 def producer_gates(s: dict, extra: dict, pins_start: dict, pins_seal: dict, log: AttemptLog, p: dict, cpu: float,
@@ -403,15 +460,16 @@ def producer_gates(s: dict, extra: dict, pins_start: dict, pins_seal: dict, log:
         and pins_seal["live"] == pins_seal["pinned"]
     order_ok = events[:2] == ["VALIDATED", "ARITHMETIC_STARTED"] and "VOID" not in events and "SEALED" not in events
     if real:
-        bundle = ctx.authorization_bundle or {}
-        rep = bundle.get("prelaunch_report") or {}
-        auth_sha = decision.get("authorization_sha256")
+        b = decision.get("binding") or {}
+        verified = decision.get("verified_utc_epoch")
         q01 = {"pass": decision["policy"] == "EXTERNAL_AUTHORIZATION" and decision["real_arithmetic_permitted"] is True
-               and rep.get("verdict") == "LAUNCH_PERMITTED" and rep.get("authorization_sha256") == auth_sha
-               and isinstance(rep.get("utc_epoch"), (int, float)) and rep["utc_epoch"] <= started, "mode": "REAL"}
-        utc = ((bundle.get("authorization") or {}).get("countersigner") or {}).get("utc")
-        q16 = {"pass": order_ok and isinstance(utc, (int, float)) and utc <= started, "mode": "REAL",
-               "authorization_utc": utc, "arithmetic_started_utc": started}
+               and b.get("prelaunch_verdict") == "LAUNCH_PERMITTED" and bool(b.get("prelaunch_report_sha256"))
+               and isinstance(verified, (int, float)) and verified <= started, "mode": "REAL",
+               "prelaunch_report_sha256": b.get("prelaunch_report_sha256"), "authorization_sha256": b.get("authorization_sha256")}
+        q16 = {"pass": order_ok and isinstance(verified, (int, float)) and verified <= started
+               and authorization_still_bound(decision), "mode": "REAL",
+               "verified_utc": verified, "arithmetic_started_utc": started,
+               "note": "git ordering freeze < amendment < authorization is prelaunch P04, run in process"}
         q14 = {"pass": decision["real_arithmetic_permitted"] is True and order_ok, "mode": "REAL"}
     else:
         q01 = {"pass": decision["real_arithmetic_permitted"] is False and decision["policy"] is not None,
@@ -480,13 +538,9 @@ def check_certificate_chain(s: dict) -> None:
 
 
 def seal(record: dict, out: Path, name: str) -> Path:
+    """Atomic, no-overwrite seal (tmp + fsync + link + directory fsync). A scientific and a VOID seal never coexist."""
+    import lifecycle as LC
     out.mkdir(parents=True, exist_ok=True)
-    tmp = out / (name + ".tmp")
-    data = (json.dumps(record, indent=1, sort_keys=True) + "\n").encode()
-    with open(tmp, "wb") as fh:
-        fh.write(data)
-        fh.flush()
-        os.fsync(fh.fileno())
-    final = out / name
-    os.replace(tmp, final)
-    return final
+    if any((out / n).exists() for n in SEAL_NAMES):
+        raise ExecutorRefusal("SEAL_CONFLICT: a sealed record already exists in this slot")
+    return LC.write_new(out, name, record)
