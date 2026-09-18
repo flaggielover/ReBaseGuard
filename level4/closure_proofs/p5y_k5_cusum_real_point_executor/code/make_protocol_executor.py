@@ -15,7 +15,7 @@ EXECUTOR_SOURCES = ["code/paths.py", "code/executor_core.py", "code/backends.py"
                     "code/qualification_gates.py", "code/consumer.py"]
 QUALIFICATION_SOURCES = ["code/smoke.py", "code/exec_fixtures.py", "code/qualify_executor.py", "code/make_protocol_executor.py",
                          "config/REAL_INPUT_GUARD.json", "config/EXTERNAL_AUTHORIZATION_TEMPLATE.json",
-                         "config/FIXTURE_LIMITS.json", "EXECUTOR_SPEC.md", "EXECUTOR_SPEC_R2.md", "EXECUTOR_SPEC_R3.md", "EXECUTOR_SPEC_R4.md",
+                         "config/FIXTURE_LIMITS.json", "EXECUTOR_SPEC.md", "EXECUTOR_SPEC_R2.md", "EXECUTOR_SPEC_R3.md", "EXECUTOR_SPEC_R4.md", "EXECUTOR_SPEC_R5.md",
                          "TRUST_MODEL.md", "code/qualify_d1d4.py", "code/qualify_governed.py"]
 V = {"S": "SUPPORTS_K5B_FIRST_CELL", "I": "INCONCLUSIVE", "C": "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
      "P": "POINT_POSITIVE", "N": "POINT_NEGATIVE", "U": "POINT_UNDETERMINED"}
@@ -178,6 +178,20 @@ def governed_mutations():
     return [{"id": i, "file": f, "old": o, "new": n, "required": True} for i, f, o, n in M]
 
 
+def x1_mutations():
+    """X01-X05: r5 canonical-slot binding mutants (detected in the governed suite, EXECUTOR_SPEC_R5.md)."""
+    M = [
+        ("X01_TRUST_CLI_SLOT", "supervisor.py", "    if requested != canonical:", "    if False:"),
+        ("X02_IGNORE_COUNTERSIGNATURE_SLOT", "supervisor.py", "    if countersignature_slot != canonical:", "    if False:"),
+        ("X03_IGNORE_NOTICE_SLOT", "supervisor.py", '    mine = [e for e in ledger if e.get("slot") == canonical]',
+         '    mine = [e for e in ledger if e.get("event") == "LAUNCH_NOTICE"][:1]'),
+        ("X04_SKIP_POST_VERIFICATION_LAUNCH_STATE_CHECK", "supervisor.py",
+         "    toctou = launch_state_changes(before, after, decision)", "    toctou = []"),
+        ("X05_ALLOW_DUPLICATE_NOTICE", "supervisor.py", "    if len(notices) > 1:", "    if False:"),
+    ]
+    return [{"id": i, "file": f, "old": o, "new": n, "required": True} for i, f, o, n in M]
+
+
 def void_mutations():
     """V01: VOID sealing dropped (detected by the supervisor CPU-limit test)."""
     return [{"id": "V01_VOID_SEAL_DROPPED", "file": "executor_core.py",
@@ -272,6 +286,7 @@ def build(dev: bool) -> dict:
         "lifecycle_mutations": lifecycle_mutations(),
         "recovery_mutations": recovery_mutations(),
         "governed_mutations": governed_mutations(),
+        "x1_mutations": x1_mutations(),
         "cramer_mutations": cramer_mutations(),
         "supervisor_tests": {"fixture": "XF01_positive_L1", "cpu_limit": {"cpu_soft": 20, "cpu_hard": 40, "wall": 600},
                              "wall_timeout": {"cpu_soft": 600, "cpu_hard": 900, "wall": 15},

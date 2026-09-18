@@ -329,6 +329,8 @@ def bound_decision_problems(ctx) -> list:
         p.append("executor binding differs from the decision")
     if decision.get("slot") != slot.name or decision.get("namespace") != str(slot.parent) or state.get("slot") != slot.name:
         p.append("slot differs from the decision")
+    if (decision.get("launch_state") or {}).get("canonical_slot") != slot.name:
+        p.append("slot differs from the canonical launch slot of the decision")
     want = {"k1_record_sha256": ctx.k1_binding.get("record_sha256"), "binding_kind": ctx.k1_binding.get("kind"),
             "right": ctx.k1_binding.get("right"), "m_set": list(ctx.m_set), "point_e": ctx.point_e,
             "theorem_cell": ctx.theorem_cell, "precision_bits": ctx.precision_bits}

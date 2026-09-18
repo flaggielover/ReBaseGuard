@@ -59,6 +59,14 @@ class Static(unittest.TestCase):
         body = [st for st in fn.body if not (isinstance(st, ast.Expr) and isinstance(st.value, ast.Constant))]
         self.assertIn("EC.arithmetic_started()", ast.unparse(body[1]))
 
+    def test_r5_canonical_slot_before_verification(self):
+        sup = ast.unparse(ast.parse((CODE / "supervisor.py").read_text()))
+        body = sup.split("def governed_prelaunch")[1].split("def launch_state_changes")[0]
+        order = [body.find(x) for x in ("before, problems = launch_state(slot)", "AI.prelaunch_decision(ctx)",
+                                        "after, _ = launch_state(slot)", "toctou = launch_state_changes(before, after, decision)")]
+        self.assertTrue(all(i >= 0 for i in order) and order == sorted(order), order)
+        self.assertNotIn("slot_dir(len(", sup.split("def supervise")[1].split("def finish")[0])
+
     def test_d2_markers_written_only_through_lifecycle(self):
         sv = (CODE / "supervisor.py").read_text()
         self.assertNotIn("write_text(", sv.split("def supervise")[1])
@@ -106,8 +114,8 @@ class Static(unittest.TestCase):
         import make_protocol_executor as MP
         groups = {"P": MP.production_mutations(), "A": MP.authorization_mutations(), "V": MP.void_mutations(),
                   "C": MP.cramer_mutations(), "D": MP.d1_mutations(), "L": MP.lifecycle_mutations(),
-                  "R": MP.recovery_mutations(), "N": MP.governed_mutations()}
-        self.assertEqual([len(groups[k]) for k in "PAVCDLRN"], [4, 3, 1, 1, 4, 4, 2, 5])
+                  "R": MP.recovery_mutations(), "N": MP.governed_mutations(), "X": MP.x1_mutations()}
+        self.assertEqual([len(groups[k]) for k in "PAVCDLRNX"], [4, 3, 1, 1, 4, 4, 2, 5, 5])
         for muts in groups.values():
             for m in muts:
                 self.assertEqual((CODE / m["file"]).read_text().count(m["old"]), 1, m["id"])

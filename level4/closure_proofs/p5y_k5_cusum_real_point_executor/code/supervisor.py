@@ -93,8 +93,105 @@ def fixture_spec(fid: str) -> dict:
     return next(f for f in proto["fixtures"] if f["id"] == fid)
 
 
+# ------------------------------------------------------------------ r5: one canonical launch slot (EXECUTOR_SPEC_R5.md)
+NOTICE_KEYS = {"event", "slot", "authorization_sha256", "utc"}
+
+
+def _utc(text):
+    from datetime import datetime
+    try:
+        return datetime.fromisoformat(str(text).replace("Z", "+00:00")).timestamp()
+    except (ValueError, TypeError):
+        return None
+
+
+def namespace_slots(root: Path) -> tuple[list, list]:
+    """The slot-N directories of the preregistered namespace (frozen P11 shape: slot-N dirs only, contiguous)."""
+    entries = sorted(root.iterdir()) if root.exists() else []
+    problems = [f"unexpected namespace entry {d.name}" for d in entries
+                if d.is_symlink() or not d.is_dir() or not d.name.startswith("slot-")]
+    names = [d.name for d in entries]
+    if not problems and any(PR.slot_dir(n) not in names for n in range(1, len(names) + 1)):
+        problems.append("namespace slots are not contiguous from slot-1")
+    return names, problems
+
+
+def slot_binding_problems(requested: str, names: list, ledger: list, *, authorization_sha256, authorization_utc,
+                          countersignature_slot) -> tuple[list, str | None, dict | None]:
+    """PURE. Every clause is checked and reported (no short circuit): the canonical slot is slot_dir(len(names) + 1)
+    and the CLI slot, the countersignature slot and exactly one LAUNCH_NOTICE must all name it."""
+    p = []
+    try:
+        canonical = PR.slot_dir(len(names) + 1)
+    except Exception:
+        return ["no launch slot left under the frozen max_slots"], None, None
+    if requested != canonical:
+        p.append(f"requested slot {requested} is not the canonical slot {canonical}")
+    if countersignature_slot != canonical:
+        p.append(f"countersignature slot {countersignature_slot} is not the canonical slot {canonical}")
+    mine = [e for e in ledger if e.get("slot") == canonical]
+    notices = [e for e in mine if e.get("event") == "LAUNCH_NOTICE"]
+    if not notices:
+        p.append(f"no LAUNCH_NOTICE for the canonical slot {canonical}")
+    if len(notices) > 1:
+        p.append(f"duplicate LAUNCH_NOTICE for the canonical slot {canonical}")
+    if any(e.get("event") != "LAUNCH_NOTICE" for e in mine):
+        p.append(f"the ledger already records events other than its LAUNCH_NOTICE for {canonical}")
+    stray = sorted({e.get("slot") for e in ledger} - set(names) - {canonical})
+    if stray:
+        p.append(f"the ledger names slots absent from the namespace: {stray}")
+    notice = notices[0] if len(notices) == 1 else None
+    if notice is not None:
+        if set(notice) != NOTICE_KEYS:
+            p.append("malformed LAUNCH_NOTICE")
+        if notice.get("authorization_sha256") != authorization_sha256:
+            p.append("LAUNCH_NOTICE names another authorization")
+        t, a = _utc(notice.get("utc")), _utc(authorization_utc)
+        if t is None or a is None or t < a:
+            p.append("stale LAUNCH_NOTICE: it predates the authorization")
+    return p, canonical, notice
+
+
+def launch_state(slot: Path) -> tuple[dict, list]:
+    """The launch state the decision is bound to (read before AND after verification; compared for TOCTOU)."""
+    import authorization_interface as AI
+    import prelaunch_verify as PV
+    problems = []
+    names, ns_problems = namespace_slots(slot.parent)
+    problems += ns_problems
+    try:
+        ledger = PV.ledger_entries()                   # frozen semantics: committed, unmodified, append-only
+    except Exception as exc:
+        ledger, problems = [], problems + [f"ledger unreadable under the frozen rules: {type(exc).__name__}"]
+    auth_sha = _sha_file(AUTH_ACTIVE)
+    try:
+        auth_utc = json.loads(AUTH_ACTIVE.read_text()).get("AUTHORIZATION_UTC")
+    except (OSError, ValueError):
+        auth_utc = None
+    try:
+        cs = json.loads(AI.COUNTERSIGNATURE_FILE.read_text())
+        cs_slot = PR.slot_dir(cs["attempt_slot"]) if isinstance(cs.get("attempt_slot"), int) else None
+    except Exception:
+        cs_slot = None
+    bind, canonical, notice = slot_binding_problems(slot.name, names, ledger, authorization_sha256=auth_sha,
+                                                    authorization_utc=auth_utc, countersignature_slot=cs_slot)
+    problems += bind
+    state = {"canonical_slot": canonical, "namespace_slots": names, "ledger_sha256": _sha_file(PV.LEDGER),
+             "authorization_sha256": auth_sha, "countersignature_sha256": _sha_file(AI.COUNTERSIGNATURE_FILE),
+             "launch_notice": notice}
+    return state, problems
+
+
+def verifier_approved_slot(decision: dict) -> str | None:
+    """The slot the frozen verifier's own P11 approved ("next slot <slot-N> (...")."""
+    detail = (((decision or {}).get("prelaunch_report") or {}).get("checks") or {}).get("P11", {}).get("detail", "")
+    parts = str(detail).split()
+    return parts[2] if len(parts) > 2 and parts[:2] == ["next", "slot"] else None
+
+
 def governed_prelaunch(slot: Path, mode: str, fixture_id=None) -> dict:
-    """R4-1: the single authoritative pre-arithmetic launch decision, taken while slot-N does NOT exist."""
+    """R4-1 + R5: the single authoritative pre-arithmetic launch decision, taken while slot-N does NOT exist, for the
+    ONE canonical launch slot."""
     import authorization_interface as AI
     import executor_core as EC
     import input_adapters as IA
@@ -104,10 +201,29 @@ def governed_prelaunch(slot: Path, mode: str, fixture_id=None) -> dict:
     policy = EC.guard_policy()
     if policy != "EXTERNAL_AUTHORIZATION":
         return {"permitted": False, "problems": [f"guard policy {policy!r}: no verification attempted"], "decision": None}
+    before, problems = launch_state(slot)
+    if problems:
+        return {"permitted": False, "problems": problems, "decision": None, "refusal": "SLOT_BINDING_REFUSED"}
     binding = IA.RealInputAdapter().bind() if mode == "real" else IA.ManufacturedInputAdapter().bind(fixture_spec(fixture_id))
     ctx = EC.standard_context(binding, slot, executor_binding_sha256=EC.amendment_binding())
     ok, problems, decision = AI.prelaunch_decision(ctx)           # THE single authoritative verification
-    return {"permitted": ok, "problems": problems, "decision": decision}
+    if not ok:
+        return {"permitted": False, "problems": problems, "decision": None}
+    after, _ = launch_state(slot)                                 # TOCTOU: the same launch state, after PASS
+    toctou = launch_state_changes(before, after, decision)
+    if toctou:
+        return {"permitted": False, "problems": toctou, "decision": None, "refusal": "SLOT_BINDING_REFUSED"}
+    decision["launch_state"] = json.loads(json.dumps(before))
+    return {"permitted": True, "problems": [], "decision": decision}
+
+
+def launch_state_changes(before: dict, after: dict, decision: dict) -> list:
+    """PURE comparator: the launch state after verification equals the one verified, and the verifier's own P11 approved
+    exactly the canonical slot."""
+    p = [f"launch state changed during verification: {k}" for k in sorted(before) if before.get(k) != after.get(k)]
+    if verifier_approved_slot(decision) != before.get("canonical_slot"):
+        p.append(f"the verifier approved {verifier_approved_slot(decision)}, not the canonical slot {before.get('canonical_slot')}")
+    return p
 
 
 def supervise(slot: Path, mode: str, *, cpu_soft: int, cpu_hard: int, wall: float, fixture_id=None, cli: Path = CLI,
@@ -120,7 +236,8 @@ def supervise(slot: Path, mode: str, *, cpu_soft: int, cpu_hard: int, wall: floa
     if mode in GOVERNED:
         pre = governed_prelaunch(slot, mode, fixture_id)
         if not pre["permitted"]:
-            return {"terminal": None, "prelaunch": "PRELAUNCH_REFUSED", "failure_class": "PRELAUNCH_REFUSED",
+            refusal = pre.get("refusal", "PRELAUNCH_REFUSED")
+            return {"terminal": None, "prelaunch": refusal, "failure_class": refusal,
                     "problems": [LC.mask_digits(x) for x in pre["problems"][:6]], "slot_created": slot.exists(),
                     "arithmetic_started": False}
         decision = pre["decision"]
@@ -284,7 +401,7 @@ def main(argv=None) -> int:
     r = supervise(Path(a.namespace) / PR.slot_dir(a.slot), a.mode, cpu_soft=a.cpu_soft, cpu_hard=a.cpu_hard,
                   wall=a.wall, fixture_id=a.fixture_id)
     print(json.dumps({k: r.get(k) for k in ("terminal", "failure_class", "arithmetic_started", "prelaunch", "problems")}))
-    if r.get("prelaunch") == "PRELAUNCH_REFUSED":
+    if r.get("prelaunch") in ("PRELAUNCH_REFUSED", "SLOT_BINDING_REFUSED"):
         return 3
     return 0 if r["failure_class"] is None else 1
 

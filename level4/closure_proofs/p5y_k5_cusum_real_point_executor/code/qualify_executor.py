@@ -624,6 +624,10 @@ def assemble(proto, outdir: Path) -> dict:
         "EG20_D3_reboot_recovery": B["recovery"]["pass"],
         "EG21_D4_run_provenance": provenance_gate(proto, outdir),
         "EG22_R4_governed_launch_single_decision": B["governed"]["pass"],
+        "EG23_R5_canonical_launch_slot": bool(B["governed"]["rows"]) and all(
+            v["pass"] for k, v in B["governed"]["rows"].items() if k.startswith("x1_"))
+        and all(B["governed"]["mutations"].get(m["id"], {}).get("detected") for m in proto["x1_mutations"])
+        and len([k for k in B["governed"]["rows"] if k.startswith("x1_")]) >= 20,
     }
     verdict = "QUALIFIED_AWAITING_EXTERNAL_AUTHORIZATION" if all(gates.values()) else (
         "NOT_READY" if not (gates["EG01_manufactured_fixtures_truth_and_expected_verdicts"] and gates["EG02_fail_closed_refusals"]
@@ -639,6 +643,7 @@ def assemble(proto, outdir: Path) -> dict:
             "d2_lifecycle_and_void_mutations": B["supervisor"]["mutations_count"],
             "d3_recovery_mutations": B["recovery"]["mutations_count"],
             "r4_governed_mutations": B["governed"]["mutations_count"],
+            "r5_x1_mutations": f"{sum(B['governed']['mutations'].get(m['id'], {}).get('detected', False) for m in proto['x1_mutations'])}/{len(proto['x1_mutations'])}",
             "r4_governed_rows": {k: v["pass"] for k, v in B["governed"]["rows"].items()},
             "r4_real_namespace_untouched": B["governed"]["real_namespace_untouched"],
             "order2_reference": {k: B["order2_reference"][k] for k in ("compare", "comparator_mutant_refused", "pass")},

@@ -195,3 +195,50 @@ REAL_POINT_EXECUTOR = QUALIFIED_AWAITING_EXTERNAL_AUTHORIZATION.
 - **Cost:** 6452.0 CPU-s per attempt and 19356.0 for the campaign, within 9000 / 32400.
 - **Namespace:** the real `/root/work/k5-first-real-probe` was never created.
 
+# r5 DEV calibration (after the r4 static review: FAIL on X1 only)
+
+**Scope.** r5 closes only X1 (EXECUTOR_SPEC_R5.md, `59bd3268`). The discipline is unchanged: rebaseguard-vultr-02,
+the DEV clone, manufactured and synthetic input only, synthetic governance commits in throwaway clones, and the
+preregistered namespace kept virtual. `/root/work/k5-first-real-probe` was verified absent after every run.
+
+## Harness defects found during r5 DEV (qualification code only; no executor change)
+
+1. **The permitted step appended its own LAUNCH_NOTICE, as in r4,** after the new X1 rows had already committed it. The
+   executor correctly refused the duplicate ("duplicate LAUNCH_NOTICE", the X1-05 rule), which failed the control. The
+   step was removed.
+2. **The supervisor masks digits in its refusal texts (`slot-#`),** so reason needles written with digits never matched.
+   The needles are now masked the same way.
+
+With the control failing, the first focused run's mutant "detections" were vacuous and were not counted. The rerun had
+a passing control, and all 10 governed mutants (N01–N05, X01–X05) were detected by their own target rows.
+
+## Classification of the lower r4 findings X2–X8 (required before freeze)
+
+None is independently load-bearing for safe execution. All are preserved as documented, non-blocking review findings;
+r5 does not expand into a cleanup campaign.
+
+- **X2.** The D2 "prelaunch refused" row is refused by the namespace check, and the supervisor's DENY branch is not
+  exercised. Not load-bearing: DENY is also enforced by the child guard and by the verifier. This file's r4 item 3
+  describes that row as a DENY refusal; it is actually refused by the namespace check.
+- **X3.** A post-start verifier call is classified INTEGRITY_REFUSAL without a VOID. Not load-bearing: it is unreachable
+  (static fence plus runtime fence) and fails closed (non-transient).
+- **X4.** The `prepare_point` re-check runs after ARITHMETIC_STARTED, so a mismatch there seals VOID. Not load-bearing:
+  it arises only from genuine integrity drift within milliseconds, and a VOID is then the frozen-consistent outcome.
+- **X5.** Some documentation still describes the r3 design. Not load-bearing.
+- **X6.** Evidence granularity. Not load-bearing.
+- **X7.** The child re-check does not re-read HEAD. Not load-bearing: the authorization bytes, the executor identity and
+  the protocol are re-hashed.
+- **X8.** `governed_manufactured` is a production mode. After a live activation, running it in the canonical slot would
+  spend the authorized slot on a MANUFACTURED record. That cannot yield a wrong scientific record, and the frozen
+  P09/P11 then block the campaign (fail closed). It is an operator-procedure matter: the activation procedure must use
+  only `--mode real` on the execution host. It is recorded here and not engineered further in r5.
+
+**Final r5 DEV state** (clean run, 0 runner failures): 23/23 gates PASS,
+REAL_POINT_EXECUTOR = QUALIFIED_AWAITING_EXTERNAL_AUTHORIZATION.
+- **Mutations:** E 16/16, P 4/4, D+A 7/7, L+V 5/5, R 2/2, N01–N05 5/5, X01–X05 5/5, C01 1/1.
+- **Suites:** D1 50/50, D2 36/36, D3 33/33, governed 45/45 rows (28 of them X1).
+- **Replay:** payload cb28b972… with 0 scientific leaf differences, identical to r2–r4.
+- **Order-2 replay:** identical to RUNG_256.
+- **Cost:** 6460.4 CPU-s per attempt and 19381.2 for the campaign, within 9000 / 32400.
+- **Namespace:** the real namespace was never created.
+

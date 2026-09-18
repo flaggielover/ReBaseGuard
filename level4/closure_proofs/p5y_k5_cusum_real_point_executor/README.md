@@ -15,6 +15,7 @@
 | `review/EXECUTOR_STATIC_REVIEW_R2.md` | r2 review (FAIL: D1–D4), preserved |
 | `EXECUTOR_SPEC_R3.md` | r3 addendum repairing D1–D4 (`a5d63e71`), committed before the repair code |
 | `EXECUTOR_SPEC_R4.md` | r4 addendum repairing N1–N3 (`b0e3f6c6`), committed before the repair code |
+| `EXECUTOR_SPEC_R5.md` | r5 addendum closing X1: one canonical launch slot (`59bd3268`), committed before the repair code |
 | `code/qualify_governed.py` | r4 synthetic governed launch end to end (frozen verifier PASS -> slot -> RUN_STATE -> child re-check -> seal -> RUN_COMPLETE -> ledger), in a private mount namespace |
 | `TRUST_MODEL.md` | The five separated stages; trusted assumptions; no cryptographic claim |
 | `code/executor_core.py` | Guard (DENY / EXTERNAL_AUTHORIZATION), context validation, shared stages, enclosure/M5/transport, preregistered Q01–Q16 gates, attempt events, VOID sealing, SIGXCPU, exact serialization, atomic seal (certificates only) |
@@ -39,10 +40,11 @@
 | `evidence/qualification_r3/`, `RESULT_R3.md` | r3 frozen qualification (with `RUN_PROVENANCE.json`) and result |
 | `review/EXECUTOR_STATIC_REVIEW_R4.md` | r4 review (FAIL on new X1; N1–N3 and D1–D4 closed) |
 | `evidence/qualification_r4/`, `RESULT_R4.md` | r4 frozen qualification and result |
+| `evidence/qualification_r5/`, `RESULT_R5.md` | r5 frozen qualification and result |
 
 ```bash
 python3 -B tests/test_executor.py
 # on rebaseguard-vultr-02, venv /root/work/rbg-cusum-aux5-venv, at the freeze commit:
-python -B code/qualify_executor.py run   --outdir evidence/qualification_r4 --workers 4
-python -B code/qualify_executor.py check --outdir evidence/qualification_r4
+python -B code/qualify_executor.py run   --outdir evidence/qualification_r5 --workers 4
+python -B code/qualify_executor.py check --outdir evidence/qualification_r5
 ```
