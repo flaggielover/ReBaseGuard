@@ -1,0 +1,187 @@
+{
+ "adaptation": "none",
+ "channel": {
+  "cell_0": "adopted sealed L1",
+  "cells_1_40": "Lambda(k) = max(L0_m - sum_j M5_m(x_hi(j)) [(X - x_lo(j))^2 - (X - x_hi(j))^2]/2, -M3_m(X)), X = x_hi(k), j = 0..k, M5(x_hi(0)) = sealed",
+  "cells_ge_41": null
+ },
+ "consumptions": {
+  "C1": "channel only (E6 semantics otherwise)",
+  "C2": "channel + curvature tightening on cells 0..40: H' = H cap [-M2, M2], M' = min(M_R2, M2) with M2 = M2_m(x_hi(k)); the T-EXT result (dominates C1)"
+ },
+ "gates": {
+  "Q00_CLEAN_CHECKOUT": {
+   "requirement": "git status --porcelain empty at the freeze commit"
+  },
+  "Q01_PINS": {
+   "requirement": "every pin matches"
+  },
+  "Q02_REPLAY": {
+   "requirement": "hull norms equal sealed; M5, trace, L1 within relative 2^-160; mode graded; CRAMER"
+  },
+  "Q03_FIXTURES": {
+   "max_min_graded_positive_det": 0.06,
+   "min_max_eta_C_e0": 10.7,
+   "min_ran": 100,
+   "min_ran_eta_C_e0_ge_4": 3,
+   "min_ran_graded_det_in_0_0p1": 2,
+   "min_ran_scalar_fallback": 1,
+   "not_covered_by_fixtures": "the ee cap regime (hulls 33-40): the rule is min(graded, C) of two valid bounds; manufactured Neumann rigs have C above the graded value",
+   "violations": 0
+  },
+  "Q04_EVALUATE": {
+   "requirement": "hulls 0..40 (hull 0 reproduces the sealed M5 exactly), all modes graded"
+  },
+  "Q05_XA": {
+   "requirement": "independent re-derivation of M2..M5 and Lambda equal; M_n nondecreasing in k"
+  },
+  "Q06_MUTATIONS": {
+   "consumption": [
+    "CM01_PREVIOUS_CELL_L",
+    "CM02_M1_CHANNEL_FOR_ALL_M",
+    "CM03_SEALED_L1_DROPPED",
+    "CM04_M2_PREVIOUS_HULL",
+    "CM05_H_FLOOR_TOO_HIGH"
+   ],
+   "requirement": "shams reproduce; all mutants detected",
+   "transport": [
+    "TM01_ETA_FIXED_AT_X1",
+    "TM02_K_J_NORMS_ON_CELL0",
+    "TM03_S0_ON_CELL0",
+    "TM04_C_MIN_NOT_MAX",
+    "TM05_ANCHOR_DRIFT_X1",
+    "TM06_TRANSPORT_TO_LEFT_END",
+    "TM07_L_FROM_U0",
+    "TM08_M_OF_M1_FOR_ALL_M",
+    "TM09_HULL_ENDS_AT_LEFT",
+    "TM10_POINT_ERRORS_DROPPED",
+    "TM11_PIECEWISE_USES_OWN_HULL",
+    "TM12_PIECEWISE_PREVIOUS_HULL",
+    "TM13_M3_FLOOR_SIGN",
+    "TM14_M_EXPORT_WRONG_ORDER"
+   ]
+  },
+  "Q07_COST": {
+   "cpu_seconds_max": 3600
+  },
+  "Q08_DETERMINISM": {
+   "requirement": "second evaluate byte-identical"
+  }
+ },
+ "host": "rebaseguard-vultr-02, venv /root/work/rbg-cusum-aux5-venv, clean checkout of the freeze commit",
+ "hull_cells": [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15,
+  16,
+  17,
+  18,
+  19,
+  20,
+  21,
+  22,
+  23,
+  24,
+  25,
+  26,
+  27,
+  28,
+  29,
+  30,
+  31,
+  32,
+  33,
+  34,
+  35,
+  36,
+  37,
+  38,
+  39,
+  40
+ ],
+ "hull_rule": "eta = x_hi(k); C = max C_upper over cells 0..k; He6 hull norms and Hermite source sups on [0, eta]",
+ "new_real_scientific_addresses": 0,
+ "pins": {
+  "level4/closure_proofs/p5x_global_nonlinear_dynamics/certified_method_repair_ra/ra_certifier.py": "bda148a3a87cc155897a680aa3adb72a90fb8a32195a9fa36d7a88120b2dbc7e",
+  "level4/closure_proofs/p5x_global_nonlinear_dynamics/compute_optimization_r2/fast_range.py": "82e630bdbe31271dca057cf33dc069937ca4e54f509be34f823092675d4cdbc4",
+  "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/cusum_layer1.py": "efcc0f36632632577a24c4ddf1a7c2c3579d471cdba5a752dd72c708667cdc79",
+  "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/cusum_layer2.py": "42c3d98394a6a8536e05d50626b21c7c71c309f5f98e286bdf2a3f7b5badf5a7",
+  "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/intervals.py": "ea860c4ee1f421731b5e8c16c11184105926b7e2cf9fc36096bf77821bbfde9b",
+  "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/opnorms.py": "f195439876fe99bc6bfd5e1b7d35790c23a68f753c2ba1206508a27a11b9f67e",
+  "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/spec.py": "12914fb7c9654c510d54f1e8a95b9efb7e635005aec0d861b7c744f7bafb55ac",
+  "level4/closure_proofs/p5y_k1_cover_ledger_repair1/code/prior.py": "0389de7fe42ecfed5d15236119fdc3fcc674fe3cd91c3664d5d05c2fb2fdc17b",
+  "level4/closure_proofs/p5y_k1_cover_ledger_repair1/code/repair_layer2.py": "847d9e0f5221bae3c1e0df0d3d00cfd022e01f06e93875bb55bc12437113c308",
+  "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/cells.json": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f",
+  "level4/closure_proofs/p5y_k1_cusum_aux3_successor/code/ancestry.py": "49c10e7f5b4e9adcab0b1f43485234251dd8cb44a555bad32dfd0ff16f92fab5",
+  "level4/closure_proofs/p5y_k1_cusum_aux4_fullcover/code/ancestry4.py": "91d517955345e38592b11cabfe76edcf7594872c195950ff18c66aee2e50048a",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/evidence/closure_r1/COMPOSITE_EXPORT_MANIFEST.json": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334",
+  "level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/ancestry5.py": "0f340764f2952fcb2ee48f802177afb6949801646489c5a6eafd267b9f22b643",
+  "level4/closure_proofs/p5y_k1_cusum_completion_successor/code/order2.py": "101582c02f988af80a5c4b6861461fe09e0fafa01b788884318115e066345f1f",
+  "level4/closure_proofs/p5y_k1_final_completion/code/base.py": "29e503e1eeba8b14d719cb96e4fa8b81b3da7a75a9522a066705fee28a278e57",
+  "level4/closure_proofs/p5y_k1_final_completion/code/sharp_certifier.py": "c2f638fbc31253c8e905d09098ac7dd97a6d950ca28c3eb9a2b3d48ddfc2758c",
+  "level4/closure_proofs/p5y_k1_final_completion/code/sharp_norms.py": "0664d313054c007f270368057e0a26b62383866824ac0392814626284f125560",
+  "level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/code/probe_rules.py": "5ce87758f6caa773ce9fa0a77b65e5af0fff662b069c6ef62ac26accfb479fe6",
+  "level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/evidence/slot-1/SCIENTIFIC_RECORD_SEALED.json": "cf90f1ea577c09d718adddab9698f8f03995722dae51f68d1fd767e4339f73ae",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r2_repair/code/graded_dag.py": "e1e3a72fbd93061af5944be7c7cca7321078ededfb2eae290749c0293470b6ac",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r2_repair/code/sigma_systems.py": "ddf78e30a2f9c26890f962a98e1388b80a31f6bcb622c8d55803c91b56b991c8",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r3_infrastructure/code/first_cell.py": "dc6ae45a19e3531988e69c2eb918bd018e5ae83070b30566ff58a9489a843761",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r3_infrastructure/code/hermite6_ext.py": "28768ef00a134eb7e3a7df11a52ff44f4956e629d025ccfebd31330ad0308075",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r3_infrastructure/code/r5_majorant.py": "b87106c712c314fd6c0e2184563512eebd5e4868ab4078312df46d33b90e703e",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r3_infrastructure/code/resolvent_certificate.py": "038f026beaaa0813efcca1cb19f7a5e7bd7f7a7affe419d4813c4052936e4e0f",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r4_tightening/code/constants_r4.py": "8aed9d17ce3d5350acf7c59269fb87b4afbe49abae97c18f6b63e4ee73e16984",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r4_tightening/code/first_cell_r4.py": "26b21fc0891f44aff2c01e36075f208e0d6a6cc405c599031ac62c37df4c421f",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r4_tightening/code/local_r5.py": "25e7f00e531f56a7a7d26fdd070d5f8c5c26c4f0363f960ec08f09d4ea7c7ee9",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r4_tightening/code/odd_block_certificate.py": "94f10d13aa399d927924b94434ac03a4dc2aa38da7e0b224447e6f350d8dc62c",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r4_tightening/config/OPERATOR_CERTIFICATES_R4.json": "a645a15716e74b69c89e06f09dfdbddd9b5cee8f19d34ea5635c9c0d06de6413",
+  "level4/closure_proofs/p5y_k5_cusum_order3_r4_tightening/config/QUALIFICATION_PROTOCOL_R4.json": "a9472e4660d67e60c856f713cadcc2db690f8e2feb8f3fa75bca2919d959eedf",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/manufactured_chain.py": "31cd4ccf62dc2a4c00ee208cfaac9a8848e947c245dbc0a32918a8604f0988a3",
+  "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/rung3_engine.py": "6d7644c9eea8a94e43dc34ddb741af11ca3e66243548e78ce14177e3ed3f2d6b",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/backends.py": "d19e855b7be0bf7af937206431e79e5f77c39c3722733689db8238ebe1c47bad",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/executor_core.py": "12f192c5c87d8ba2867c766b80dedf73df14d871dfa0a3b071e19cfae2576305",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/paths.py": "7698c726b0001353418610b96a463eb8e704efafa4f69f82a8e390e6b4f96b1d",
+  "level4/closure_proofs/p5y_k5_feasibility/K5_GLOBAL_BRIDGE.md": "c1c62346dcd11b3a56b028e4aca7b61d7c4254353b1504701f16989205339d3f",
+  "level4/closure_proofs/p5y_k5_order3_readiness_audit/code/k5_minimality.py": "3a54f0fb290a9b8a07c861653d4399e6c588afdaef77ee51473f778c6c988885",
+  "level4/closure_proofs/p5y_k5_remaining_cell_closure/phase_a/OPEN_CELL_MAP.json": "9579f3adf411e619a2e9aa1af5b7fd03ae227ca87eee2f90792dd3742b235b17",
+  "level4/closure_proofs/p5y_k5_remaining_cell_closure/transport_extension/TEXT_SPEC.md": "b49658e0c1583ddd235800d290b56afb9404b5a99f7d7685707f75a5e88771d3",
+  "level4/closure_proofs/p5y_k5_remaining_cell_closure/transport_extension/code/make_text_protocol.py": "2801a38b59a7ea3ba6bf293f116cdb2f52bc8f6f4df8f6375a25f726d7d1731f",
+  "level4/closure_proofs/p5y_k5_remaining_cell_closure/transport_extension/code/qualify_text.py": "58e18e48fb2a254cda1b33e29a02d9d5890ca0ad67346002fe67f72793cd418c",
+  "level4/closure_proofs/p5y_k5_remaining_cell_closure/transport_extension/code/text_consume.py": "657458ade03c4283ae6d5bd97e5567603380bf0e6281d8483f9c1fd45a62d0ea",
+  "level4/closure_proofs/p5y_k5_remaining_cell_closure/transport_extension/code/text_crosscheck.py": "0b2b1889544ca4448087747201700e5469fef95b0b3adb36dfbbe19ba51ac063",
+  "level4/closure_proofs/p5y_k5_remaining_cell_closure/transport_extension/code/text_fixtures.py": "66f1ee2a8e7b43c88c46a6020084361fd42b806eac1a6993911925d6c44b0aee",
+  "level4/closure_proofs/p5y_k5_remaining_cell_closure/transport_extension/code/text_mutants.py": "ef6ae7bc58ec765abdf51f55c9e2a3512a89f9e8c499a83a9e684b881a25eac8",
+  "level4/closure_proofs/p5y_k5_remaining_cell_closure/transport_extension/code/text_transport.py": "273a682aea516469d6695d32ab0eb59e13b06076610e9caa557103b27d3a9c2e",
+  "level4/closure_proofs/p5y_k5b_consumption_adapter/code/consumption_adapter.py": "fbad7d33261fd47fc56c034d6a016f8427b81b51f9199f0e3a8f3e74df35973d",
+  "level4/closure_proofs/p5y_k5b_independent_countersignature/code/k5b_check.py": "ddd54dc469375a2d64352782add8573231be07b94f7246dad83c4e55a2bf35a6",
+  "rebaseguard-proof/src/rebaseguard_certify/__init__.py": "3fac033384a21584baed703f2b1356b60f1bf141da96889b9efbff5f083f787e",
+  "rebaseguard-proof/src/rebaseguard_certify/arb_backend.py": "7d587ca4c4310cb3b21f074419c2a3d11991d87f4596a5055a2220a474b5f9e5",
+  "rebaseguard-proof/src/rebaseguard_certify/polynomial.py": "478086844db21ea7c32b4c2623ee34b9d43cb2100f350d568f67008c57377e1b",
+  "rebaseguard-proof/src/rebaseguard_certify/residual.py": "22ed8c827ccdebd21d6e5a334d60cc0b152683325d60a71a40ce52206fd05e70",
+  "rebaseguard-proof/src/rebaseguard_certify/spectral_candidate.py": "bb5dab2992bcb08c615e956db68d37c09290521227362a3cad392db6f4c16457"
+ },
+ "post_seal": [
+  "text_consume.py consume (manifest-bound K1 records 0-309 on vultr-02)",
+  "text_crosscheck.py consumption (X-B)",
+  "independent adjudication (fresh context)"
+ ],
+ "precision_bits": 256,
+ "relation_to_slot1": "successor consumption of the sealed slot-1 record; the slot-1 result, its E6 output and its POSITIVE map are not amended",
+ "retry": "none; deterministic; any failed gate => T_EXT = NOT_QUALIFIED, nothing consumed",
+ "schema": "rebaseguard.p5y.k5.remaining-cell-closure.text-protocol.v1",
+ "scientific_question": "Deterministic wider-hull evenness transport of the adopted slot-1 point evidence; per-cell L_k for K1 cells 1..40; consumption by the frozen K5-B",
+ "statement": "TEXT_SPEC.md (pinned)",
+ "status": "FROZEN_PRE_RESULT",
+ "stopping_rule": "none (the whole frozen family is evaluated)",
+ "verdict_rule": "sign-blind; pre-evaluation gate failure -> NOT_QUALIFIED; post-evaluation gate failure -> VOID; no rerun under this protocol; consumption only after the TEXT_RESULT sha256 is committed"
+}
