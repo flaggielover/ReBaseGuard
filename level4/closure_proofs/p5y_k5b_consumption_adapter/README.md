@@ -14,3 +14,14 @@ Nothing here is authorized to execute, and no real R''' or R^(5) is read or form
 |---|---|
 | `E6_SPEC.md` | specification, committed before any adapter code |
 | `config/E6_ACCEPTANCE_PROTOCOL.json` | frozen acceptance protocol, with the expected pass sets, pins and gates |
+| `code/consumption_adapter.py` | the adapter: frozen loader → frozen `k5b_literal`, per m; fail-closed |
+| `code/crosscheck.py` | independent cross-check: frozen scan reproduction (X-A), plus manifest-addressed records with the frozen readiness variant (X-B) |
+| `code/acceptance.py` | frozen acceptance run and read-only `check` (gates G01–G09, mutants M01–M14) |
+| `tests/test_adapter.py` | local synthetic tests (no K1 record is read) |
+
+```bash
+python3 -B tests/test_adapter.py
+# on rebaseguard-vultr-02, at a clean checkout of the implementation commit:
+python3 -B code/acceptance.py run   --outdir evidence/acceptance_r1
+python3 -B code/acceptance.py check --outdir evidence/acceptance_r1
+```
