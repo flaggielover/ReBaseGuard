@@ -1,0 +1,479 @@
+{
+ "schema": "rebaseguard.p5y.k5.remaining-cell-closure.text-adjudication.v1",
+ "object": {
+  "repo": "https://github.com/flaggielover/ReBaseGuard",
+  "branch": "p5y-postk1-frontier",
+  "freeze": "d91bc7dea787a5f07dddd82b9f9c1f0aee19593b",
+  "seal": "20dc6b987f97280a01941b9bf532dd08fd2d90b3",
+  "consumption": "f65406380dd0aedc207ba8efb49ec1fd00a4e44b",
+  "TEXT_PROTOCOL_sha256": "ffe108e0d2691bd91e6ef92d3a42c0b650fd97c89e403f76267348fc27b329fd",
+  "TEXT_RESULT_sha256": "cb97cabcc3b5848665584e33ad4207c6d36ce835729725265d585dc8f3ee4f87",
+  "TEXT_CONSUMPTION_sha256": "9562eda87a36d22838c65eb281210938e234a8c930e04a946aaf43a5876aa33d",
+  "XB_sha256": "e656a44558376f4f0996bd83b9748e1ee6b5e239e90b17a0731708c164aa2b58"
+ },
+ "verdict": "ADOPTED",
+ "verdict_scope": "The T-EXT C2 pass set (cells 0-10 for every m) may enter the CUSUM K5 open-cell map. Adoption covers only the objects committed at f6540638. It does not establish H3a/K5 for any m.",
+ "checks": {
+  "T01_FREEZE_COMMIT_PRECEDES_EVALUATION": {
+   "pass": true,
+   "evidence": {
+    "freeze_commit": "d91bc7dea787a5f07dddd82b9f9c1f0aee19593b (committer date 2026-09-18T19:42:52Z)",
+    "github_push_d91bc7de": "2026-09-18T19:43:04Z (GitHub activity API, push 84299314->d91bc7de)",
+    "qualification_RUN_STATE_utc": "2026-09-18T19:43:55.64Z, head d91bc7de",
+    "first_EVALUATE_START_utc": "2026-09-18T19:45:42.53Z",
+    "host_clock_vs_github": "vultr-02 date -u and api.github.com Date header agree within seconds (checked 2026-09-18T20:13Z)",
+    "d91bc7de_tree_contains_evidence_files": 0
+   }
+  },
+  "T02_LEDGER_ONLY_FREEZE_HEAD_EVALUATIONS": {
+   "pass": true,
+   "evidence": {
+    "EVAL_LEDGER.jsonl": "4 lines: 2 x EVALUATE_START (head d91bc7de, protocol ffe108e0, code 273a682a) + 2 x EVALUATE_OUTPUT sha cb97cabc",
+    "evaluations": [
+     "19:45:42.53Z -> 19:45:45.45Z TEXT_RESULT.json",
+     "19:46:26.14Z -> 19:46:29.01Z TEXT_RESULT_RERUN.json"
+    ],
+    "host_evidence_dir": "/root/work/k5c-text-evidence/r1 file mtimes 19:43:55-19:46:29Z, identical in content to committed evidence"
+   }
+  },
+  "T03_TEXT_RESULT_SEALED_BEFORE_CONSUMPTION": {
+   "pass": true,
+   "evidence": {
+    "seal_commit": "20dc6b98 (commits TEXT_RESULT.json sha cb97cabc + ledger; no consumption_r1 files in this commit)",
+    "github_push_20dc6b98": "2026-09-18T19:49:58Z",
+    "consumption_output_mtime": "/root/work/k5c-text-evidence/consumption_r1/TEXT_CONSUMPTION.json 19:50:15.45Z, XB.json 19:50:16.04Z",
+    "github_push_f6540638": "2026-09-18T19:51:02Z"
+   }
+  },
+  "T04_GITHUB_COMMIT_AND_PUSH_ORDER": {
+   "pass": true,
+   "evidence": {
+    "push_sequence": [
+     "84299314->d91bc7de 19:43:04Z",
+     "d91bc7de->20dc6b98 19:49:58Z",
+     "20dc6b98->f6540638 19:51:02Z"
+    ],
+    "ancestry": "84299314 < d91bc7de < 20dc6b98 < f6540638, single-parent linear (git merge-base --is-ancestor on Mac clone)"
+   }
+  },
+  "T05_NO_PREFREEZE_WIDE_HULL_EVALUATION_FOUND": {
+   "pass": true,
+   "evidence": {
+    "scan": "find /root /var/tmp /tmp, files modified 2026-09-18 16:00Z..19:42:52Z (22,381 json/jsonl/log/txt/out files); grep for text-result|Lambda|L_simple|EVALUATE_START|TEXT_RESULT",
+    "hits": {
+     "/var/tmp/k5c-analysis/dev/REPLAY_dev.json, REPLAY_dev2.json": "replay at eta = x1 = 5083/10^7 only (allowed); REPLAY_dev2 byte-identical to the sealed REPLAY.json",
+     "/var/tmp/text-smoke-zrwlrjvw/PLACEHOLDER_TEXT_RESULT.json (19:42:00Z)": "host_smoke_consume placeholder: every M_n = 10^30 (single distinct value), no scientific content"
+    },
+    "other_prefreeze_files": "/var/tmp/k5c-analysis: extract.py/cells_min.json (K1 record extract), open_cell_map.py/OPEN_CELL_MAP.json (Phase A), horizon.py (graded-resolvent mode/det only: operator constants, no M_n, no Lambda); dev/FIXTURES_dev*.json and fix_*.py: manufactured sigma-systems only, 0 violations in every dev run (seed offsets 800000/900000), no reference to the sealed record",
+    "all_TEXT_RESULT_like_files_on_host": "only /root/work/k5c-text-evidence/r1/{TEXT_RESULT,TEXT_RESULT_RERUN}.json and the k5c-text-freeze checkout copies (post-freeze)",
+    "k5c_dev": "/root/work/k5c-dev at 84299314 with untracked T-EXT code, all 10 files mtime 19:41Z and byte-identical to the frozen files; no config/TEXT_PROTOCOL.json there (so evaluate would refuse); no __pycache__",
+    "limit": "an unguarded draft run printing only to stdout would leave no file; not auditable. Soundness does not depend on this (deterministic certificate, no adaptation)"
+   }
+  },
+  "T06_PREFREEZE_GUARD_EXERCISED": {
+   "pass": true,
+   "evidence": {
+    "protocol_modified_vs_HEAD": "evaluate -> TextRefusal PRE_FREEZE: config/TEXT_PROTOCOL.json differs from HEAD; X-A -> refused",
+    "protocol_untracked": "evaluate -> TextRefusal PRE_FREEZE: config/TEXT_PROTOCOL.json is not committed",
+    "restored": "worktree clean afterwards, protocol sha ffe108e0",
+    "note": "the guard is in evaluate()/X-A, not in tower() itself (module docstring overstates it); see observation N1"
+   }
+  },
+  "R01_PINS_55": {
+   "pass": true,
+   "evidence": {
+    "mac_clone_f6540638": "55/55 match",
+    "vultr_clone_f6540638": "55/55 match",
+    "protocol_sha256": "ffe108e0d2691bd91e6ef92d3a42c0b650fd97c89e403f76267348fc27b329fd"
+   }
+  },
+  "R02_REPLAY_BYTE_IDENTICAL": {
+   "pass": true,
+   "evidence": {
+    "my_replay_sha256": "3446a76e1abe84c2876bf8dca54437ba88dc733515664706e5bd4a6706f8fd67",
+    "committed": "byte-identical",
+    "content": "eta = x1, hull norms equal sealed, M5 rel 0 for all m, trace and L1 within 2^-160, mode graded, CRAMER pass"
+   }
+  },
+  "R03_TEXT_RESULT_BYTE_IDENTICAL": {
+   "pass": true,
+   "evidence": {
+    "run_from": "own worktree /var/tmp/k5c-adjudication-a1/freeze @ d91bc7de (clean), frozen venv, python-flint 0.9.0, Python 3.12.3",
+    "my_sha256": "cb97cabcc3b5848665584e33ad4207c6d36ce835729725265d585dc8f3ee4f87",
+    "committed_sha256": "cb97cabcc3b5848665584e33ad4207c6d36ce835729725265d585dc8f3ee4f87",
+    "my_ledger": "/var/tmp/k5c-adjudication-a1/out/ADJ_LEDGER.jsonl (EVALUATE_START head d91bc7de 20:02:41Z, OUTPUT cb97cabc)",
+    "wall_seconds": 3
+   }
+  },
+  "R04_XA_TRANSPORT_CROSSCHECK": {
+   "pass": true,
+   "evidence": {
+    "result": "X-A PASS [] (41 hulls), XA.json byte-identical to committed"
+   }
+  },
+  "R05_CONSUMPTION_BYTE_IDENTICAL": {
+   "pass": true,
+   "evidence": {
+    "my_sha256": "9562eda87a36d22838c65eb281210938e234a8c930e04a946aaf43a5876aa33d",
+    "committed": "byte-identical",
+    "records": "310 manifest-bound K1 records, records_sha256 76fc2af5 (same set as the adopted E6 output)"
+   }
+  },
+  "R06_XB_CONSUMPTION_CROSSCHECK": {
+   "pass": true,
+   "evidence": {
+    "result": "X-B PASS [], XB.json byte-identical (e656a445)"
+   }
+  },
+  "R07_STATIC_TESTS": {
+   "pass": true,
+   "evidence": {
+    "mac": "python3 -B tests/test_text_static.py -> ok 4",
+    "vultr": "ok 4"
+   }
+  },
+  "R08_HOST_SMOKE": {
+   "pass": true,
+   "evidence": {
+    "result": "C1/C2 equal E6: True, X-B: True [] (placeholder M = 10^30); temp dir redirected into my scratch dir"
+   }
+  },
+  "R09_FIXTURES_REPRODUCED": {
+   "pass": true,
+   "evidence": {
+    "result": "ran 176, wide 170, violations 0, max eta*C_e0 19.98, n(eta*C_e0>=4) 4, graded 0<det<=0.1: 5, min graded det 0.0211, scalar fallback 12; identical to committed FIXTURES.json except cpu_s",
+    "min_M5_over_true": 1.093
+   }
+  },
+  "R10_MUTATIONS_REPRODUCED": {
+   "pass": true,
+   "evidence": {
+    "result": "19/19 detected, shams reproduce; MUTATIONS.json identical to committed",
+    "how": "TM01/TM05 drift!=hull refusal; TM08/TM09/TM10 refusals; others output differs; CM01-CM05 detected by X-B"
+   }
+  },
+  "R11_DETERMINISM": {
+   "pass": true,
+   "evidence": {
+    "result": "three evaluations (producer x2, adjudicator x1) all sha cb97cabc"
+   }
+  },
+  "M01_EVENNESS_TRANSPORT_AND_WEIGHTS": {
+   "pass": true,
+   "evidence": {
+    "argument": "R odd => R''' even, R''''(0)=0; R'''(e) = R'''(0) + int_0^e (e-t) R5(t) dt; for t in C_j, |R5(t)| <= M5(x_hi(j)) since C_j is inside [0,x_hi(j)]; int_{C_j cap [0,e]} (e-t) dt = [(e-x_lo)^2-(e-min(x_hi,e))^2]/2; d/de of the penalty = sum_j M5_j |C_j cap [0,e]| >= 0, so the worst e in C_k is X = x_hi(k)",
+    "own_recompute": "Lambda(k) recomputed with own code from TEXT_RESULT M5/M3 for k=1..40, all m: exact equality; weights sum to X^2/2 exactly; Lambda >= L_simple everywhere"
+   }
+  },
+  "M02_TOWER_VALID_ON_HULL": {
+   "pass": true,
+   "evidence": {
+    "rules_checked": [
+     "operator rule: ||P_x K_i(e) P_y|| <= eta k_{i+1} for the parity-forbidden block (mean value from 0), k = hermite6_ext.norm_table(0, eta) i.e. sup over the hull",
+     "graded resolvent: Delta = K(e)-K(0); diag block <= eta^2 k2/2 (P_x K_1(0) P_x = 0), off-diag <= eta k1 (K_0(0) commutes with sigma); 2x2 nonnegative M with 1-M_xx>0 and det>0 => (I-M)^{-1}diag(C_e0,C_o0) valid for all |e|<=eta; entries capped by C; else scalar C",
+     "graded_true_sup: wrong parity vanishes at 0, moves <= eta sup||X^(n+1)|| with S0 = sup_S0_on(n,0,eta)",
+     "differentiated resolvent identity (I-K)F^(n) = S^(n) + sum_{i>=1} C(n,i) K_i F^(n-i)",
+     "local anchoring (a)-(c) with drift eta: only e=0 objects (candidate sup, point error) plus eta * tower(n+1) on the hull",
+     "export: evaluation at sigma-fixed x0 kills the odd part, M_n = sum |c| sup||P_e X^(n)||, n = 2..5"
+    ],
+    "norm_tables": "sharp_norms window W = [left-11/2, right+11/2] contains every (x,e) of [left,right]; valid for any window",
+    "premises_inherited_not_reproved": "P1a (oddness P5-T3, L5 C-infinity), P1b (sigma-parity at e=0, e-uniform kernel-derivative machinery), R1E coefficient representation of R_m"
+   }
+  },
+  "M03_C_HULL_VALID": {
+   "pass": true,
+   "evidence": {
+    "C_hull": "max C_upper over cells 0..k = C_upper(cell 0) = 5294989798955/2^32 ~ 1232.84 for every hull (C_upper decreasing)",
+    "why_valid": "C_upper(cell) = drift_monotone_resolvent at the cell's left |e| (P5X R1 lemma M2: bound at the smallest |e| is valid for all larger |e|); hull is the union of cells 0..k"
+   }
+  },
+  "M04_SEALED_E0_ANCHORS_HULL_INDEPENDENT": {
+   "pass": true,
+   "evidence": {
+    "evidence": "executor point cell = point_core.point_cell(frozen_cell(0), 0), graded inputs left=right=0, eta_mid asserted 0; candidate_graded_sups and point_nodes are e=0 objects; replay at x1 reproduces the sealed M5 exactly (rel 0)"
+   }
+  },
+  "M05_INDEXING_LAMBDA_K_TO_L_K_PLUS_1": {
+   "pass": true,
+   "evidence": {
+    "evidence": "k5b_literal treats cells[i] as theorem cell i+1 (docstring 'Cell 1 is cells[0]'); text_consume sets cells[k]['L'] = Lambda(k) with cover[k]['index'] == k checked; Lambda(k) bounds R''' on K1 cell k = [x_lo(k), x_hi(k)] = C_{k+1}; own chain uses the same mapping and reproduces the pass sets; CM01 (previous-cell L) is detected"
+   }
+  },
+  "M06_M3_FLOOR": {
+   "pass": true,
+   "evidence": {
+    "evidence": "|R'''| <= M3(X) on [0,X] which contains C_k, so R''' >= -M3(X); floor active for cells 30-40 (all m); not load-bearing for the pass set"
+   }
+  },
+  "M07_C2_CURVATURE_TIGHTENING": {
+   "pass": true,
+   "evidence": {
+    "evidence": "K5_GLOBAL_BRIDGE: H_k must contain R''(C_k), M_k >= sup_{C_k}|R''| (used in Gamma_k via sup|t R''| <= x_k M_k); M2(x_hi(k)) >= sup_{[0,x_hi(k)]}|R''| so H' = H cap [-M2,M2] and M' = min(M_R2,M2) remain valid; no empty intersection; own check M_R2 >= max|H| for all 310 records x 4 m",
+    "effect": "C2 pass sets equal C1 pass sets (tightening not load-bearing)"
+   }
+  },
+  "M08_CONSUMED_OBJECTS_EXACTLY_TEXT_RESULT": {
+   "pass": true,
+   "evidence": {
+    "evidence": "TEXT_CONSUMPTION bound to text sha cb97cabc; own script: L_used[0] = sealed L1, L_used[1..40] = Lambda(k) from TEXT_RESULT, L_used[41] = None; H_lo_used = max(H.lo,-M2(k)), M_used = min(M_R2,M2(k)) for k<=40, K1 values for k=41, all m, both variants"
+   }
+  },
+  "M09_OWN_INDEPENDENT_K5B_CHAIN": {
+   "pass": true,
+   "evidence": {
+    "evidence": "own implementation from K5_GLOBAL_BRIDGE.md (not k5b_literal, not X-B): E6 variant reproduces the adopted E6 open sets; C1 and C2 reproduce the claimed pass/open sets; via: cell 0 'L1', cells 1-10 'chain', cell 11 none",
+    "margins_U_k_m1": {
+     "1": -7.826e-08,
+     "5": -8.178e-06,
+     "9": -4.203e-05,
+     "10": -1.277e-05,
+     "11": 9.002e-05
+    },
+    "margins_U_10": {
+     "1": -1.277e-05,
+     "2": -1.002e-05,
+     "3": -1.004e-05,
+     "5": -7.354e-06
+    },
+    "note": "signs are decided in exact rational arithmetic; the small margins do not affect validity"
+   }
+  },
+  "M10_FALSIFICATION_CONSISTENCY": {
+   "pass": true,
+   "evidence": {
+    "vs_K1": "no contradiction between T-EXT bounds (M2, M3, M5, Lambda, U0-side) and K1 D/H intervals on cells 0-40 (pairwise D differences vs M2 and M3, channel-implied R'' lower bound vs H.hi, U0+M5 upper bound vs H.lo, channel-implied R' increase vs D) - low power: K1 H widths ~2e4-6e4, D widths ~7-17",
+    "cross_order": "channel-implied lower bound of R''(x_hi(k)) <= M2(k) for all k<=40, all m, min relative slack 0.366 (m1); L0 <= M3(k)"
+   }
+  },
+  "M11_LOAD_BEARING_REGIME": {
+   "pass": true,
+   "evidence": {
+    "evidence": "the claimed consequence (cells 1-10 pass) depends only on hulls 0..10 (K5-B chain is causal; Lambda(k<=10) uses M5 hulls 0..k and M3(k)); in hulls 0..10 the graded resolvent has det in [0.940,0.9995], eta*C_e0 in [0.239,2.682], no C cap; 160 RAN fixtures have eta*C_e0 in [0.2,3.0]; the fixture-uncovered ee-cap regime (hulls 33-40) and the small-det regime are not load-bearing"
+   }
+  },
+  "Q01_FIXTURE_ADEQUACY": {
+   "pass": true,
+   "evidence": {
+    "evidence": "exact-truth manufactured sigma-systems via unmodified first_cell_r4.run at widened hulls; checks every tower node and anchor component, Strategy-B bounds and M5 >= max|R5| on 17 points; all frozen Q03 thresholds met; 0 violations; dev calibration on disjoint seeds also 0 violations"
+   }
+  },
+  "Q02_MUTATION_ADEQUACY": {
+   "pass": true,
+   "evidence": {
+    "evidence": "19/19 detected, shams reproduce",
+    "caveat": "transport mutants are detected by 'output differs' (load-bearing-site test), not by a semantic oracle; semantic correctness of Lambda rests on X-A and my own recomputation"
+   }
+  },
+  "Q03_REPLAY_AND_DETERMINISM": {
+   "pass": true,
+   "evidence": {
+    "evidence": "replay rel 0, byte-identical across 3 evaluations on 2 checkouts' worth of runs (producer freeze checkout, adjudicator worktree)"
+   }
+  },
+  "Q04_SIGN_BLIND_VERDICT_RULE": {
+   "pass": true,
+   "evidence": {
+    "evidence": "qualify_text verdict uses pass flags only; Q04 reads resolvent mode (operator-only); Q05 reads equality and M_n monotonicity (direction-neutral w.r.t. passing cells); no gate reads a Lambda value or its sign; QUALIFIED/NOT_QUALIFIED/VOID with no rerun",
+    "note": "spec says no gate reads a value of M_n; Q05 monotonicity does read the ordering of M_n (observation N3)"
+   }
+  },
+  "S01_DIFF_ONLY_NEW_NAMESPACE": {
+   "pass": true,
+   "evidence": {
+    "evidence": "git diff --name-status 84299314..f6540638: 40 files, all 'A', all under level4/closure_proofs/p5y_k5_remaining_cell_closure/; 0 modified/deleted/renamed"
+   }
+  },
+  "S02_FROZEN_DEPENDENCIES_UNMODIFIED": {
+   "pass": true,
+   "evidence": {
+    "sealed_slot1_record": "cf90f1ea577c09d718adddab9698f8f03995722dae51f68d1fd767e4339f73ae (last touched 84299314)",
+    "E6_output": "file sha 8b150a51..., canonical sha 89017388681e05ec9b8e63ef8e22305af8bd7cf76d5ab1b571a7c948afcafb6a (last touched 84299314)",
+    "E6_adapter": "fbad7d33261fd47fc56c034d6a016f8427b81b51f9199f0e3a8f3e74df35973d",
+    "k5b_check": "ddd54dc469375a2d64352782add8573231be07b94f7246dad83c4e55a2bf35a6",
+    "K5_GLOBAL_BRIDGE": "c1c62346dcd11b3a56b028e4aca7b61d7c4254353b1504701f16989205339d3f",
+    "K1_records": "310 records sha-verified against manifest 29ad1f9b, read-only"
+   }
+  },
+  "S03_NO_NEW_SCIENTIFIC_ADDRESS_NO_SOLVE": {
+   "pass": true,
+   "evidence": {
+    "evidence": "text_transport imports only frozen certificate/tower code; no model solve, executor, supervisor or launch; protocol new_real_scientific_addresses = 0"
+   }
+  },
+  "C01_OPEN_SETS_CONFIRMED": {
+   "pass": true,
+   "evidence": {
+    "before_E6": {
+     "1": [
+      [
+       1,
+       132
+      ]
+     ],
+     "2": [
+      [
+       1,
+       144
+      ]
+     ],
+     "3": [
+      [
+       1,
+       145
+      ]
+     ],
+     "5": [
+      [
+       1,
+       148
+      ],
+      [
+       305,
+       309
+      ]
+     ]
+    },
+    "after_TEXT_C2": {
+     "1": [
+      [
+       11,
+       132
+      ]
+     ],
+     "2": [
+      [
+       11,
+       144
+      ]
+     ],
+     "3": [
+      [
+       11,
+       145
+      ]
+     ],
+     "5": [
+      [
+       11,
+       148
+      ],
+      [
+       305,
+       309
+      ]
+     ]
+    },
+    "newly_passing": "cells 1-10 for every m (via chain)"
+   }
+  },
+  "C02_H3A_K5_NOT_ESTABLISHED": {
+   "pass": true,
+   "evidence": {
+    "statement": "H3a/K5 is NOT established for any m: cells 11-132 (m1), 11-144 (m2), 11-145 (m3), 11-148 and 305-309 (m5) remain open"
+   }
+  }
+ },
+ "check_count": 37,
+ "failed_checks": [],
+ "observations_non_blocking": {
+  "N1": "text_transport.py docstring says any tower with eta != x1 refuses pre-freeze; in code only evaluate() (and X-A) call require_frozen, tower() does not. No evidence of misuse was found.",
+  "N2": "X-A re-derives base inputs and Lambda independently but calls the same frozen local_tower / r5_majorant / hermite6_ext / graded_dag; the tower itself has no second implementation. Its validity at wide hulls rests on the rule-wise proof, the inherited premises, and the manufactured fixtures.",
+  "N3": "TEXT_SPEC says no gate reads a value of M_n; the Q05 monotonicity gate reads the ordering of M_n (direction-neutral).",
+  "N4": "Transport mutants are detected by output difference; that shows each site is load-bearing, not that an oracle catches unsound variants.",
+  "N5": "The falsification checks against K1 have low power (K1 curvature enclosures near 0 are ~1e4 wide).",
+  "N6": "The Phase C review saw T-EXT drafts in /root/work/k5c-dev dated 19:01Z; they were overwritten at 19:41Z with the frozen bytes. A stdout-only draft run would not be auditable. This is a governance limit only: the result is a deterministic certificate with no adaptation.",
+  "N7": "C2 equals C1: the M2 curvature tightening adds no cell. M2-M4 for hulls 11-40 are sealed but not load-bearing for this adoption.",
+  "N8": "The producer worktree /Users/suzhe/ReBaseGuard-k5c has uncommitted interpretation files (transport_extension/RESULT.md, K5_STATUS.md, code/k5_coverage_map.py, phase_b/PERRON_FLOAT_DIAGNOSTIC.json, a modified phase_b/FRONT_BLOCKER.md). They are not adjudicated here."
+ },
+ "open_sets_after": {
+  "1": [
+   [
+    11,
+    132
+   ]
+  ],
+  "2": [
+   [
+    11,
+    144
+   ]
+  ],
+  "3": [
+   [
+    11,
+    145
+   ]
+  ],
+  "5": [
+   [
+    11,
+    148
+   ],
+   [
+    305,
+    309
+   ]
+  ]
+ },
+ "open_sets_before": {
+  "1": [
+   [
+    1,
+    132
+   ]
+  ],
+  "2": [
+   [
+    1,
+    144
+   ]
+  ],
+  "3": [
+   [
+    1,
+    145
+   ]
+  ],
+  "5": [
+   [
+    1,
+    148
+   ],
+   [
+    305,
+    309
+   ]
+  ]
+ },
+ "H3a_established": false,
+ "independence": "Fresh-context separate process of the same model family (Claude Opus 5), spawned as a subagent by the orchestrating session; not a human and not a different model family. The Mac scratchpad shared with that session already held Phase A analysis files (an1.py, cells_min.json); I did not use them. I made my own GitHub clones, re-ran the frozen code, and wrote my own Lambda recomputation, K5-B chain and consistency checks. I did not independently reimplement the frozen tower (local_r5 / r5_majorant / hermite6_ext / graded_dag); I judged it by a rule-by-rule reading. Inherited premises (P1a, P1b, K1 record semantics, C_upper drift-monotonicity, the K5-B theorem) were read, not re-proved.",
+ "adjudicator_clone_heads": {
+  "mac": {
+   "path": "/private/tmp/claude-501/-Users-suzhe-ReBaseGuard/921c7f27-71c3-43ca-adda-9b60adf978c2/scratchpad/adj-clone",
+   "head": "f65406380dd0aedc207ba8efb49ec1fd00a4e44b"
+  },
+  "vultr_02": {
+   "path": "/var/tmp/k5c-adjudication-a1/repo",
+   "head": "f65406380dd0aedc207ba8efb49ec1fd00a4e44b"
+  },
+  "vultr_02_freeze_worktree": {
+   "path": "/var/tmp/k5c-adjudication-a1/freeze",
+   "head": "d91bc7dea787a5f07dddd82b9f9c1f0aee19593b"
+  }
+ },
+ "adjudicator_artifacts_vultr": {
+  "/var/tmp/k5c-adjudication-a1/out/TEXT_RESULT.json": "cb97cabcc3b5848665584e33ad4207c6d36ce835729725265d585dc8f3ee4f87",
+  "/var/tmp/k5c-adjudication-a1/out/REPLAY.json": "3446a76e1abe84c2876bf8dca54437ba88dc733515664706e5bd4a6706f8fd67",
+  "/var/tmp/k5c-adjudication-a1/out/TEXT_CONSUMPTION.json": "9562eda87a36d22838c65eb281210938e234a8c930e04a946aaf43a5876aa33d",
+  "/var/tmp/k5c-adjudication-a1/out/XB.json": "e656a44558376f4f0996bd83b9748e1ee6b5e239e90b17a0731708c164aa2b58",
+  "/var/tmp/k5c-adjudication-a1/out/XA.json": "996fb357807e60fbf21bf06ad4b0df371835f9e3e0c2fc6e085d1d151007520a",
+  "/var/tmp/k5c-adjudication-a1/out/FIXTURES.json": "d81a8c12137aad6325a3efb4537fe1e98f5691fa2e477d2bec5560c8b7cecbfb",
+  "/var/tmp/k5c-adjudication-a1/out/MUTATIONS.json": "3e6632be48b49d3be79f8aea469f65ca6f294fcb94309dd6ee335991ff8b0101",
+  "/var/tmp/k5c-adjudication-a1/out/ADJ_LEDGER.jsonl": "1e7cac9a23f6168ca13fac72f7ae112b814a1699c925ef1a3f6e822c96475428",
+  "/var/tmp/k5c-adjudication-a1/own/adj_check.py": "b316a2a8d02bc760ea7a74f813f73c4bc138463b6d5278c690d89736b3850c22",
+  "/var/tmp/k5c-adjudication-a1/own/ADJ_OWN_CHECK.json": "2e6d3caa37d50856270583a4ff0c0e6c1c9d5c8147e4f9cd2cd0ba51bd29ac48",
+  "/var/tmp/k5c-adjudication-a1/own/margins.py": "ae656f9f12617c46d18fc386fd831e89041d07d7c1a360759b3bbbb2a029673d"
+ },
+ "cost": "about 160 CPU-s of frozen-code runs on vultr-02 (fixtures 105 s, mutants 36 s, evaluate, replay, X-A, consume, X-B about 3 s each), plus read-only filesystem scans; well under 0.5 CPU-h. No model solve, executor, supervisor or launch. No AWS access.",
+ "date_utc": "2026-09-18T20:15Z"
+}

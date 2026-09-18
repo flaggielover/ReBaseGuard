@@ -39,10 +39,19 @@ Near 0, g_m(e) ≈ −(R'''_m(0)/3)·e³ with R'''_m(0) ∈ [1074, 2790] (slot-1
 
 1. **Perron-deflated resolvent certificate on [0, 0.12].**
    - Needs a certified enclosure of the Perron eigenpair of K_e (eigenvalue gap to 1, eigenprojector) and a
-     certified bound on the deflated resolvent. The R2 float diagnostics put it at about 0.26 at e = 0.
-   - The e-derivatives of the eigenpair would then be handled exactly, and every error constant would drop by 2–3
-     orders of magnitude.
-   - Most likely to unblock the whole front with a K1-type or order-3 producer.
+     certified bound on the deflated resolvent. The Perron part of each object is then carried exactly through the
+     eigenpair and its e-derivatives.
+   - **Float diagnostic (NON-CERTIFIED, operator only, no R value; `PERRON_FLOAT_DIAGNOSTIC.json`).** It uses the frozen
+     R2 `e0_operator_estimate.kernel_matrix(drift)`, the same class of diagnostic R2 and R4 ran.
+     - Across the whole front, e ∈ {0, 5e-4, 0.0057, 0.0114, 0.0228, 0.05, 0.0964, 0.1135}, the Perron eigenvalue is
+       0.99782 → 0.99686 (gap 0.0022–0.0031).
+     - The full resolvent sup-norm is 466 → 325.
+     - The **Perron-deflated resolvent sup-norm is 11.1–11.3, flat**, with the second eigenvalue |λ₂| ≈ 0.71–0.74.
+     - So deflation would cut the dominant constant about 30–40× uniformly on the front. The width cross term scales
+       like C², so the possible gain is up to about 10³×. That covers the 18–51× needed at the graded boundary and the
+       few × on the upper front, if the Perron component can be certified exactly.
+   - This is the most promising lever for the whole front, with a K1-type producer (scalar zone) and possibly an order-3
+     producer (graded zone).
 2. **A higher-accuracy candidate producer.** The needed width reduction w/|g| is a few × on the upper front, 18–51×
    at cells 40–41 (the graded boundary; m = 1: 18.8/17.6, m = 5: 50.9/47.9), and about 10³× near cell 10, with the
    existing constants.
