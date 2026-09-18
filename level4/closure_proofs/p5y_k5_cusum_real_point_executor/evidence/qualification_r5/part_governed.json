@@ -1,0 +1,720 @@
+{
+ "body": {
+  "control": {
+   "rows": {
+    "child_changed_attempt_uid_refused": {
+     "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['RUN_STATE belongs to another attempt']",
+     "pass": true
+    },
+    "child_changed_decision_digest_refused": {
+     "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['prelaunch decision digest differs']",
+     "pass": true
+    },
+    "child_coherent_binding_runs": {
+     "err": "",
+     "pass": true
+    },
+    "child_missing_run_state_refused": {
+     "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['RUN_STATE missing or malformed']",
+     "pass": true
+    },
+    "child_rechecked_bound_decision": {
+     "pass": true
+    },
+    "child_stale_run_state_refused": {
+     "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['supervisor identity differs from RUN_STATE', 'slot differs from the decision', 'slot differs from the canonical launch slot of the decision', 'attempt parameters differ from the decision']",
+     "pass": true
+    },
+    "child_wrong_supervisor_argv_refused": {
+     "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['supervisor identity differs from RUN_STATE']",
+     "pass": true
+    },
+    "child_wrong_supervisor_pid_refused": {
+     "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['supervisor identity differs from RUN_STATE']",
+     "pass": true
+    },
+    "ledger_reconciles_permitted_attempt": {
+     "pass": true
+    },
+    "permitted_synthetic_end_to_end": {
+     "events": [
+      "VALIDATED",
+      "ARITHMETIC_STARTED",
+      "SEALED"
+     ],
+     "files": [
+      "ATTEMPT_LOG.jsonl",
+      "MANUFACTURED_RECORD_SEALED.json",
+      "RUN_COMPLETE.json",
+      "RUN_STATE.json"
+     ],
+     "got": {
+      "arithmetic_started": true,
+      "failure_class": null,
+      "prelaunch": null,
+      "problems": null,
+      "terminal": "RUN_COMPLETE.json"
+     },
+     "pass": true,
+     "primary": null
+    },
+    "post_start_full_verifier_unreachable": {
+     "pass": true
+    },
+    "prelaunch_refused_before_authorization_creates_no_slot": {
+     "got": {
+      "arithmetic_started": false,
+      "failure_class": "SLOT_BINDING_REFUSED",
+      "prelaunch": "SLOT_BINDING_REFUSED",
+      "problems": [
+       "countersignature slot None is not the canonical slot slot-#",
+       "no LAUNCH_NOTICE for the canonical slot slot-#"
+      ],
+      "terminal": null
+     },
+     "pass": true
+    },
+    "slot_admission_requires_supervisor": {
+     "pass": true
+    },
+    "static_single_verifier_call_site": {
+     "pass": true,
+     "refs": {
+      "backends.py": [],
+      "executor_cli.py": [],
+      "executor_core.py": [],
+      "input_adapters.py": []
+     }
+    },
+    "unsupervised_governed_mode_refused": {
+     "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['no supervised slot']",
+     "pass": true
+    },
+    "unsupervised_real_mode_refused": {
+     "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['no supervised slot']",
+     "pass": true
+    },
+    "verifier_refused_creates_no_slot": {
+     "got": {
+      "arithmetic_started": false,
+      "failure_class": "PRELAUNCH_REFUSED",
+      "prelaunch": "PRELAUNCH_REFUSED",
+      "problems": [
+       "verifier verdict 'REFUSED'",
+       "verifier checks P##..P## not all present and passing"
+      ],
+      "terminal": null
+     },
+     "pass": true
+    },
+    "x1_01_canonical_slot_bound_everywhere": {
+     "approved": "slot-1",
+     "launch_state": {
+      "authorization_sha256": "175a74b850b2efb45b9825796ff8fe9c40d4b09d57039fdadc7e0fd05334b450",
+      "canonical_slot": "slot-1",
+      "countersignature_sha256": "102f04f5c4ead8409c1d163733b6da806c09712b432db6dd096d2f6ad20d8ded",
+      "launch_notice": {
+       "authorization_sha256": "175a74b850b2efb45b9825796ff8fe9c40d4b09d57039fdadc7e0fd05334b450",
+       "event": "LAUNCH_NOTICE",
+       "slot": "slot-1",
+       "utc": "2026-09-18T11:05:52.118475+00:00"
+      },
+      "ledger_sha256": "bb769bf62666af01ec3509b1c41210a3cdba0ff236e3804de5b87037345467a1",
+      "namespace_slots": []
+     },
+     "pass": true
+    },
+    "x1_02_authorization_and_cli_slot_2_refused": {
+     "got": {
+      "arithmetic_started": false,
+      "failure_class": "SLOT_BINDING_REFUSED",
+      "prelaunch": "SLOT_BINDING_REFUSED",
+      "problems": [
+       "requested slot slot-# is not the canonical slot slot-#",
+       "countersignature slot slot-# is not the canonical slot slot-#"
+      ],
+      "terminal": null
+     },
+     "pass": true
+    },
+    "x1_02b_countersignature_slot_refused": {
+     "got": {
+      "arithmetic_started": false,
+      "failure_class": "SLOT_BINDING_REFUSED",
+      "prelaunch": "SLOT_BINDING_REFUSED",
+      "problems": [
+       "countersignature slot slot-# is not the canonical slot slot-#"
+      ],
+      "terminal": null
+     },
+     "pass": true
+    },
+    "x1_03_cli_slot_refused": {
+     "got": {
+      "arithmetic_started": false,
+      "failure_class": "SLOT_BINDING_REFUSED",
+      "prelaunch": "SLOT_BINDING_REFUSED",
+      "problems": [
+       "requested slot slot-# is not the canonical slot slot-#"
+      ],
+      "terminal": null
+     },
+     "pass": true
+    },
+    "x1_06_missing_notice_refused": {
+     "got": {
+      "arithmetic_started": false,
+      "failure_class": "SLOT_BINDING_REFUSED",
+      "prelaunch": "SLOT_BINDING_REFUSED",
+      "problems": [
+       "no LAUNCH_NOTICE for the canonical slot slot-#"
+      ],
+      "terminal": null
+     },
+     "pass": true
+    },
+    "x1_09_static_toctou_order": {
+     "order": [
+      696,
+      1111,
+      1233,
+      1267,
+      1326
+     ],
+     "pass": true
+    },
+    "x1_09_toctou_authorization_sha256_changed_refused": {
+     "pass": true
+    },
+    "x1_09_toctou_canonical_slot_changed_refused": {
+     "pass": true
+    },
+    "x1_09_toctou_countersignature_sha256_changed_refused": {
+     "pass": true
+    },
+    "x1_09_toctou_ledger_sha256_changed_refused": {
+     "pass": true
+    },
+    "x1_09_toctou_namespace_slots_changed_refused": {
+     "pass": true
+    },
+    "x1_09_toctou_unchanged_accepted": {
+     "pass": true
+    },
+    "x1_09_verifier_approved_other_slot_refused": {
+     "pass": true
+    },
+    "x1_10_run_state_slot_not_canonical_refused": {
+     "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['slot differs from the canonical launch slot of the decision']",
+     "pass": true
+    },
+    "x1_pure_01_all_slot_1_pass": {
+     "canonical": "slot-1",
+     "pass": true,
+     "problems": []
+    },
+    "x1_pure_02_authorization_and_cli_2": {
+     "canonical": "slot-1",
+     "pass": true,
+     "problems": [
+      "requested slot slot-2 is not the canonical slot slot-1",
+      "countersignature slot slot-2 is not the canonical slot slot-1"
+     ]
+    },
+    "x1_pure_02b_countersignature_2": {
+     "canonical": "slot-1",
+     "pass": true,
+     "problems": [
+      "countersignature slot slot-2 is not the canonical slot slot-1"
+     ]
+    },
+    "x1_pure_03_cli_2": {
+     "canonical": "slot-1",
+     "pass": true,
+     "problems": [
+      "requested slot slot-2 is not the canonical slot slot-1"
+     ]
+    },
+    "x1_pure_04_notice_for_slot_2": {
+     "canonical": "slot-1",
+     "pass": true,
+     "problems": [
+      "requested slot slot-2 is not the canonical slot slot-1",
+      "countersignature slot slot-2 is not the canonical slot slot-1",
+      "no LAUNCH_NOTICE for the canonical slot slot-1",
+      "the ledger names slots absent from the namespace: ['slot-2']"
+     ]
+    },
+    "x1_pure_05_duplicate_notice": {
+     "canonical": "slot-1",
+     "pass": true,
+     "problems": [
+      "duplicate LAUNCH_NOTICE for the canonical slot slot-1"
+     ]
+    },
+    "x1_pure_06_missing_notice": {
+     "canonical": "slot-1",
+     "pass": true,
+     "problems": [
+      "no LAUNCH_NOTICE for the canonical slot slot-1"
+     ]
+    },
+    "x1_pure_07_notice_other_authorization": {
+     "canonical": "slot-1",
+     "pass": true,
+     "problems": [
+      "LAUNCH_NOTICE names another authorization"
+     ]
+    },
+    "x1_pure_08_stale_notice": {
+     "canonical": "slot-1",
+     "pass": true,
+     "problems": [
+      "stale LAUNCH_NOTICE: it predates the authorization"
+     ]
+    },
+    "x1_pure_canonical_slot_already_has_outcome": {
+     "canonical": "slot-1",
+     "pass": true,
+     "problems": [
+      "the ledger already records events other than its LAUNCH_NOTICE for slot-1"
+     ]
+    },
+    "x1_pure_foreign_namespace_entry": {
+     "pass": true
+    },
+    "x1_pure_malformed_notice": {
+     "canonical": "slot-1",
+     "pass": true,
+     "problems": [
+      "malformed LAUNCH_NOTICE"
+     ]
+    },
+    "x1_pure_next_slot_after_a_completed_one": {
+     "canonical": "slot-2",
+     "pass": true,
+     "problems": []
+    },
+    "x1_pure_noncontiguous_namespace": {
+     "pass": true
+    }
+   }
+  },
+  "control_pass": true,
+  "mutations": {
+   "N01_SLOT_CREATED_BEFORE_VERIFICATION": {
+    "detected": true,
+    "failing": [
+     "child_changed_attempt_uid_refused",
+     "child_changed_decision_digest_refused",
+     "child_coherent_binding_runs",
+     "child_missing_run_state_refused",
+     "child_rechecked_bound_decision",
+     "child_stale_run_state_refused"
+    ]
+   },
+   "N02_CHILD_GUARD_RUNS_FULL_VERIFIER": {
+    "detected": true,
+    "failing": [
+     "child_changed_attempt_uid_refused",
+     "child_changed_decision_digest_refused",
+     "child_coherent_binding_runs",
+     "child_missing_run_state_refused",
+     "child_rechecked_bound_decision",
+     "child_stale_run_state_refused"
+    ]
+   },
+   "N03_MISSING_SLOT_ADMITTED": {
+    "detected": true,
+    "failing": [
+     "slot_admission_requires_supervisor"
+    ]
+   },
+   "N04_DECISION_DIGEST_NOT_CHECKED": {
+    "detected": true,
+    "failing": [
+     "child_changed_decision_digest_refused",
+     "child_coherent_binding_runs"
+    ]
+   },
+   "N05_POST_START_FENCE_REMOVED": {
+    "detected": true,
+    "failing": [
+     "post_start_full_verifier_unreachable"
+    ]
+   },
+   "X01_TRUST_CLI_SLOT": {
+    "detected": true,
+    "failing": [
+     "x1_02_authorization_and_cli_slot_2_refused",
+     "x1_03_cli_slot_refused",
+     "x1_pure_02_authorization_and_cli_2",
+     "x1_pure_03_cli_2"
+    ]
+   },
+   "X02_IGNORE_COUNTERSIGNATURE_SLOT": {
+    "detected": true,
+    "failing": [
+     "x1_02b_countersignature_slot_refused",
+     "x1_pure_02b_countersignature_2"
+    ]
+   },
+   "X03_IGNORE_NOTICE_SLOT": {
+    "detected": true,
+    "failing": [
+     "x1_pure_04_notice_for_slot_2",
+     "x1_pure_05_duplicate_notice",
+     "x1_pure_canonical_slot_already_has_outcome"
+    ]
+   },
+   "X04_SKIP_POST_VERIFICATION_LAUNCH_STATE_CHECK": {
+    "detected": true,
+    "failing": [
+     "x1_09_static_toctou_order"
+    ]
+   },
+   "X05_ALLOW_DUPLICATE_NOTICE": {
+    "detected": true,
+    "failing": [
+     "x1_pure_05_duplicate_notice"
+    ]
+   }
+  },
+  "mutations_count": "10/10",
+  "pass": true,
+  "real_namespace_untouched": true,
+  "rows": {
+   "child_changed_attempt_uid_refused": {
+    "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['RUN_STATE belongs to another attempt']",
+    "pass": true
+   },
+   "child_changed_decision_digest_refused": {
+    "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['prelaunch decision digest differs']",
+    "pass": true
+   },
+   "child_coherent_binding_runs": {
+    "err": "",
+    "pass": true
+   },
+   "child_missing_run_state_refused": {
+    "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['RUN_STATE missing or malformed']",
+    "pass": true
+   },
+   "child_rechecked_bound_decision": {
+    "pass": true
+   },
+   "child_stale_run_state_refused": {
+    "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['supervisor identity differs from RUN_STATE', 'slot differs from the decision', 'slot differs from the canonical launch slot of the decision', 'attempt parameters differ from the decision']",
+    "pass": true
+   },
+   "child_wrong_supervisor_argv_refused": {
+    "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['supervisor identity differs from RUN_STATE']",
+    "pass": true
+   },
+   "child_wrong_supervisor_pid_refused": {
+    "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['supervisor identity differs from RUN_STATE']",
+    "pass": true
+   },
+   "ledger_reconciles_permitted_attempt": {
+    "pass": true
+   },
+   "permitted_synthetic_end_to_end": {
+    "events": [
+     "VALIDATED",
+     "ARITHMETIC_STARTED",
+     "SEALED"
+    ],
+    "files": [
+     "ATTEMPT_LOG.jsonl",
+     "MANUFACTURED_RECORD_SEALED.json",
+     "RUN_COMPLETE.json",
+     "RUN_STATE.json"
+    ],
+    "got": {
+     "arithmetic_started": true,
+     "failure_class": null,
+     "prelaunch": null,
+     "problems": null,
+     "terminal": "RUN_COMPLETE.json"
+    },
+    "pass": true,
+    "primary": null
+   },
+   "post_start_full_verifier_unreachable": {
+    "pass": true
+   },
+   "prelaunch_refused_before_authorization_creates_no_slot": {
+    "got": {
+     "arithmetic_started": false,
+     "failure_class": "SLOT_BINDING_REFUSED",
+     "prelaunch": "SLOT_BINDING_REFUSED",
+     "problems": [
+      "countersignature slot None is not the canonical slot slot-#",
+      "no LAUNCH_NOTICE for the canonical slot slot-#"
+     ],
+     "terminal": null
+    },
+    "pass": true
+   },
+   "slot_admission_requires_supervisor": {
+    "pass": true
+   },
+   "static_single_verifier_call_site": {
+    "pass": true,
+    "refs": {
+     "backends.py": [],
+     "executor_cli.py": [],
+     "executor_core.py": [],
+     "input_adapters.py": []
+    }
+   },
+   "unsupervised_governed_mode_refused": {
+    "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['no supervised slot']",
+    "pass": true
+   },
+   "unsupervised_real_mode_refused": {
+    "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['no supervised slot']",
+    "pass": true
+   },
+   "verifier_refused_creates_no_slot": {
+    "got": {
+     "arithmetic_started": false,
+     "failure_class": "PRELAUNCH_REFUSED",
+     "prelaunch": "PRELAUNCH_REFUSED",
+     "problems": [
+      "verifier verdict 'REFUSED'",
+      "verifier checks P##..P## not all present and passing"
+     ],
+     "terminal": null
+    },
+    "pass": true
+   },
+   "x1_01_canonical_slot_bound_everywhere": {
+    "approved": "slot-1",
+    "launch_state": {
+     "authorization_sha256": "175a74b850b2efb45b9825796ff8fe9c40d4b09d57039fdadc7e0fd05334b450",
+     "canonical_slot": "slot-1",
+     "countersignature_sha256": "102f04f5c4ead8409c1d163733b6da806c09712b432db6dd096d2f6ad20d8ded",
+     "launch_notice": {
+      "authorization_sha256": "175a74b850b2efb45b9825796ff8fe9c40d4b09d57039fdadc7e0fd05334b450",
+      "event": "LAUNCH_NOTICE",
+      "slot": "slot-1",
+      "utc": "2026-09-18T11:05:52.118475+00:00"
+     },
+     "ledger_sha256": "bb769bf62666af01ec3509b1c41210a3cdba0ff236e3804de5b87037345467a1",
+     "namespace_slots": []
+    },
+    "pass": true
+   },
+   "x1_02_authorization_and_cli_slot_2_refused": {
+    "got": {
+     "arithmetic_started": false,
+     "failure_class": "SLOT_BINDING_REFUSED",
+     "prelaunch": "SLOT_BINDING_REFUSED",
+     "problems": [
+      "requested slot slot-# is not the canonical slot slot-#",
+      "countersignature slot slot-# is not the canonical slot slot-#"
+     ],
+     "terminal": null
+    },
+    "pass": true
+   },
+   "x1_02b_countersignature_slot_refused": {
+    "got": {
+     "arithmetic_started": false,
+     "failure_class": "SLOT_BINDING_REFUSED",
+     "prelaunch": "SLOT_BINDING_REFUSED",
+     "problems": [
+      "countersignature slot slot-# is not the canonical slot slot-#"
+     ],
+     "terminal": null
+    },
+    "pass": true
+   },
+   "x1_03_cli_slot_refused": {
+    "got": {
+     "arithmetic_started": false,
+     "failure_class": "SLOT_BINDING_REFUSED",
+     "prelaunch": "SLOT_BINDING_REFUSED",
+     "problems": [
+      "requested slot slot-# is not the canonical slot slot-#"
+     ],
+     "terminal": null
+    },
+    "pass": true
+   },
+   "x1_06_missing_notice_refused": {
+    "got": {
+     "arithmetic_started": false,
+     "failure_class": "SLOT_BINDING_REFUSED",
+     "prelaunch": "SLOT_BINDING_REFUSED",
+     "problems": [
+      "no LAUNCH_NOTICE for the canonical slot slot-#"
+     ],
+     "terminal": null
+    },
+    "pass": true
+   },
+   "x1_09_static_toctou_order": {
+    "order": [
+     696,
+     1111,
+     1233,
+     1267,
+     1326
+    ],
+    "pass": true
+   },
+   "x1_09_toctou_authorization_sha256_changed_refused": {
+    "pass": true
+   },
+   "x1_09_toctou_canonical_slot_changed_refused": {
+    "pass": true
+   },
+   "x1_09_toctou_countersignature_sha256_changed_refused": {
+    "pass": true
+   },
+   "x1_09_toctou_ledger_sha256_changed_refused": {
+    "pass": true
+   },
+   "x1_09_toctou_namespace_slots_changed_refused": {
+    "pass": true
+   },
+   "x1_09_toctou_unchanged_accepted": {
+    "pass": true
+   },
+   "x1_09_verifier_approved_other_slot_refused": {
+    "pass": true
+   },
+   "x1_10_run_state_slot_not_canonical_refused": {
+    "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['slot differs from the canonical launch slot of the decision']",
+    "pass": true
+   },
+   "x1_pure_01_all_slot_1_pass": {
+    "canonical": "slot-1",
+    "pass": true,
+    "problems": []
+   },
+   "x1_pure_02_authorization_and_cli_2": {
+    "canonical": "slot-1",
+    "pass": true,
+    "problems": [
+     "requested slot slot-2 is not the canonical slot slot-1",
+     "countersignature slot slot-2 is not the canonical slot slot-1"
+    ]
+   },
+   "x1_pure_02b_countersignature_2": {
+    "canonical": "slot-1",
+    "pass": true,
+    "problems": [
+     "countersignature slot slot-2 is not the canonical slot slot-1"
+    ]
+   },
+   "x1_pure_03_cli_2": {
+    "canonical": "slot-1",
+    "pass": true,
+    "problems": [
+     "requested slot slot-2 is not the canonical slot slot-1"
+    ]
+   },
+   "x1_pure_04_notice_for_slot_2": {
+    "canonical": "slot-1",
+    "pass": true,
+    "problems": [
+     "requested slot slot-2 is not the canonical slot slot-1",
+     "countersignature slot slot-2 is not the canonical slot slot-1",
+     "no LAUNCH_NOTICE for the canonical slot slot-1",
+     "the ledger names slots absent from the namespace: ['slot-2']"
+    ]
+   },
+   "x1_pure_05_duplicate_notice": {
+    "canonical": "slot-1",
+    "pass": true,
+    "problems": [
+     "duplicate LAUNCH_NOTICE for the canonical slot slot-1"
+    ]
+   },
+   "x1_pure_06_missing_notice": {
+    "canonical": "slot-1",
+    "pass": true,
+    "problems": [
+     "no LAUNCH_NOTICE for the canonical slot slot-1"
+    ]
+   },
+   "x1_pure_07_notice_other_authorization": {
+    "canonical": "slot-1",
+    "pass": true,
+    "problems": [
+     "LAUNCH_NOTICE names another authorization"
+    ]
+   },
+   "x1_pure_08_stale_notice": {
+    "canonical": "slot-1",
+    "pass": true,
+    "problems": [
+     "stale LAUNCH_NOTICE: it predates the authorization"
+    ]
+   },
+   "x1_pure_canonical_slot_already_has_outcome": {
+    "canonical": "slot-1",
+    "pass": true,
+    "problems": [
+     "the ledger already records events other than its LAUNCH_NOTICE for slot-1"
+    ]
+   },
+   "x1_pure_foreign_namespace_entry": {
+    "pass": true
+   },
+   "x1_pure_malformed_notice": {
+    "canonical": "slot-1",
+    "pass": true,
+    "problems": [
+     "malformed LAUNCH_NOTICE"
+    ]
+   },
+   "x1_pure_next_slot_after_a_completed_one": {
+    "canonical": "slot-2",
+    "pass": true,
+    "problems": []
+   },
+   "x1_pure_noncontiguous_namespace": {
+    "pass": true
+   }
+  }
+ },
+ "metadata": {
+  "children_cpu_seconds": 210.258162,
+  "cpu_seconds": 0.730399539,
+  "incidental": true,
+  "peak_rss_kib": 51384,
+  "wall_seconds": 302.7102806568146
+ },
+ "part": "governed",
+ "protocol_sha256": "59a91e20077ab14243e28d094a4ca5527bda692ec17e2f00108bf0f05dbd989a",
+ "runtime": {
+  "cpu_model": "AMD EPYC-Milan Processor",
+  "env": {
+   "MKL_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "PYTHONHASHSEED": "0"
+  },
+  "flint_library": "3.6.0",
+  "flint_so_sha256": "1f7ef1f52024937f542772ff9190e2f74449228cd69a6746b6608fbbd449d138",
+  "glibc_package_version": "2.41-12+deb13u4",
+  "host": "rebaseguard-vultr-02",
+  "kernel_release": "6.12.107+deb13-amd64",
+  "libc_path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+  "libc_sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+  "logical_cpus": 8,
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "numpy_module": "2.5.2",
+  "python": "3.12.3",
+  "python_flint": "0.9.0",
+  "python_flint_module": "0.9.0",
+  "python_impl": "CPython",
+  "scipy": "1.18.1",
+  "venv_prefix": "/root/work/rbg-cusum-aux5-venv"
+ }
+}

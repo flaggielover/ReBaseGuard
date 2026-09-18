@@ -1,0 +1,854 @@
+{
+ "EXECUTION_AUTHORIZED": false,
+ "REAL_CELL_EXECUTED": "NO",
+ "REAL_INPUT_ARITHMETIC_GUARD": "DENY",
+ "REAL_POINT_EXECUTOR": "QUALIFIED_AWAITING_EXTERNAL_AUTHORIZATION",
+ "cost": {
+  "ceiling": {
+   "campaign_cpu_seconds_hard": 32400,
+   "enforcement": "RLIMIT_CPU soft 9000 / hard 10800 set by the supervisor before arithmetic; the executor's SIGXCPU handler (soft limit) seals VOID_RECORD_SEALED (cost) before the hard limit; the supervisor's wall watchdog does the same; the prelaunch verifier refuses if the authorization's ceilings differ",
+   "max_attempts": 3,
+   "per_attempt_cpu_seconds_rlimit": 10800,
+   "per_attempt_cpu_seconds_soft": 9000,
+   "per_attempt_wall_seconds": 14400
+  },
+  "compatible": true,
+  "measured_manufactured_fixture_cpu_seconds_max": 0.23698110999999988,
+  "measured_real_arb_stages_cpu_seconds": 2456.690576246,
+  "projected_campaign_cpu_seconds_max_attempts": 19368.3874369275,
+  "projected_real_attempt_cpu_seconds": 6456.1291456425
+ },
+ "crosscheck": [
+  {
+   "enclosure_disagreements_m": [],
+   "fixture": "XF01_positive_L1",
+   "pass": true
+  },
+  {
+   "enclosure_disagreements_m": [],
+   "fixture": "XF03_negative_U1",
+   "pass": true
+  },
+  {
+   "enclosure_disagreements_m": [],
+   "fixture": "XF04_point_negative_U0",
+   "pass": true
+  },
+  {
+   "enclosure_disagreements_m": [],
+   "fixture": "XF08_parity_contamination",
+   "pass": true
+  }
+ ],
+ "d1_authorization_mutations": "7/7",
+ "d1_rows": {
+  "authorization_changed_after_verification": true,
+  "authorization_path_not_prereg_path": true,
+  "authorization_rehash_detects_change": true,
+  "binding_amendment_not_running_bytes": true,
+  "binding_authorization_names_other": true,
+  "binding_context_names_other": true,
+  "binding_no_amendment": true,
+  "binding_positive_control": true,
+  "correct_report_wrong_protocol_identity_in_context": true,
+  "countersignature_absent_on_host": true,
+  "countersignature_committed_before_authorization": true,
+  "countersignature_countersigned_in_future": true,
+  "countersignature_countersigner_not_independent": true,
+  "countersignature_extra_field": true,
+  "countersignature_inactive": true,
+  "countersignature_malformed": true,
+  "countersignature_names_other_amendment": true,
+  "countersignature_names_other_authorization": true,
+  "countersignature_not_committed": true,
+  "countersignature_other_slot": true,
+  "countersignature_positive_control": true,
+  "countersignature_result_blind_changed": true,
+  "countersignature_short_nonce": true,
+  "forged_operator_report_refused_before_verifier": true,
+  "forged_operator_report_refused_on_frozen_path": true,
+  "frozen_verifier_source_accepted": true,
+  "genuine_refused_report_is_refused": true,
+  "guard_external_policy_refuses_live": true,
+  "guard_frozen_policy_deny": true,
+  "live_verifier_refuses_unauthorized_host": true,
+  "no_cli_path_for_authorization_material": true,
+  "non_frozen_verifier_never_executed": true,
+  "positive_control_synthetic_permitted_report": true,
+  "production_path_calls_frozen_verifier_in_process": true,
+  "report_for_another_authorization_path": true,
+  "report_for_another_authorization_sha": true,
+  "report_without_derived_commits": true,
+  "stale_report_other_head": true,
+  "verifier_check_failed_but_verdict_permitted": true,
+  "verifier_failing_checks_nonempty": true,
+  "verifier_output_malformed_list": true,
+  "verifier_output_malformed_none": true,
+  "verifier_output_missing_check": true,
+  "verifier_output_not_read_only": true,
+  "verifier_output_wrong_schema": true,
+  "verifier_raises": true,
+  "verifier_returns_refused": true,
+  "wrong_protocol_identity_in_report": true,
+  "wrong_verifier_source_modified_copy": true,
+  "wrong_verifier_source_unmodified_copy_elsewhere": true
+ },
+ "d2_lifecycle_and_void_mutations": "5/5",
+ "d2_rows": {
+  "classify_terminal_cpu": true,
+  "classify_terminal_disk": true,
+  "classify_terminal_kill": true,
+  "classify_terminal_refusal": true,
+  "classify_terminal_success": true,
+  "classify_terminal_wall": true,
+  "cpu_ceiling": true,
+  "disk_full_transient_no_seal": true,
+  "duplicate_terminal_present_is_torn": true,
+  "duplicate_terminal_refused": true,
+  "executor_admits_own_run_state": true,
+  "executor_refuses_stale_run_state": true,
+  "external_kill": true,
+  "ledger_disagreement_failure_class": true,
+  "ledger_disagreement_run_failed_sha": true,
+  "ledger_disagreement_seal_missing_in_ledger": true,
+  "ledger_reconciles_cpu": true,
+  "ledger_reconciles_kill": true,
+  "ledger_reconciles_refusal": true,
+  "ledger_reconciles_success": true,
+  "ledger_seal_host_does_not_hold": true,
+  "malformed_marker_is_torn": true,
+  "no_complete_without_valid_seal": true,
+  "no_digits_in_failure_text_cpu": true,
+  "no_digits_in_failure_text_disk": true,
+  "no_digits_in_failure_text_kill": true,
+  "no_digits_in_failure_text_refusal": true,
+  "no_digits_in_failure_text_wall": true,
+  "pre_arithmetic_refusal": true,
+  "real_launch_prelaunch_refused_no_slot": true,
+  "scientific_void_conflict_present_is_torn": true,
+  "scientific_void_conflict_refused_at_seal": true,
+  "stale_terminal_marker_is_torn": true,
+  "success_complete_only": true,
+  "void_class_disk_full_is_transient": true,
+  "wall_timeout": true
+ },
+ "d3_recovery_mutations": "2/2",
+ "d3_rows": {
+  "base_runs": true,
+  "changed_boot_after_run_state": true,
+  "changed_boot_after_void_seal": true,
+  "changed_boot_before_run_complete": true,
+  "changed_boot_before_run_state": true,
+  "changed_boot_before_scientific_seal": true,
+  "changed_boot_during_attempt_log": true,
+  "changed_boot_during_terminal_write_tmp": true,
+  "changed_boot_during_terminal_write_truncated": true,
+  "changed_boot_idempotent": true,
+  "changed_boot_immediately_after_scientific_seal": true,
+  "live_crash_recovered": true,
+  "live_slot_left_alone": true,
+  "pure_classify_after_run_state": true,
+  "pure_classify_after_void_seal": true,
+  "pure_classify_before_run_complete": true,
+  "pure_classify_before_run_state": true,
+  "pure_classify_before_scientific_seal": true,
+  "pure_classify_during_attempt_log": true,
+  "pure_classify_during_terminal_write_tmp": true,
+  "pure_classify_during_terminal_write_truncated": true,
+  "pure_classify_immediately_after_scientific_seal": true,
+  "same_boot_after_run_state": true,
+  "same_boot_after_void_seal": true,
+  "same_boot_before_run_complete": true,
+  "same_boot_before_run_state": true,
+  "same_boot_before_scientific_seal": true,
+  "same_boot_during_attempt_log": true,
+  "same_boot_during_terminal_write_tmp": true,
+  "same_boot_during_terminal_write_truncated": true,
+  "same_boot_idempotent": true,
+  "same_boot_immediately_after_scientific_seal": true,
+  "sealed_address_never_rerun": true
+ },
+ "executor_identity_sha256": "ef1c86e40bff0b13e40e924ba27d0841aff71f7344d114f71f517ab3adfdd41b",
+ "fixtures": {
+  "XF01_positive_L1": {
+   "M5_over_truth": {
+    "1": 4.833779441907846,
+    "2": 5.059938474495292,
+    "3": 4.793126420480264,
+    "5": 4.757119998934615
+   },
+   "pass": true,
+   "purpose": "decisively positive L1",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "2": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "3": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ]
+   }
+  },
+  "XF02_inconclusive_transport": {
+   "M5_over_truth": {
+    "1": 31.230449917748434,
+    "2": 27.945807083654334,
+    "3": 50.07713577766135,
+    "5": 409.7527538898639
+   },
+   "pass": true,
+   "purpose": "inconclusive transported interval (point positive)",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ],
+    "2": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ],
+    "3": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ]
+   }
+  },
+  "XF03_negative_U1": {
+   "M5_over_truth": {
+    "1": 9.791002287688054,
+    "2": 8.212083727000293,
+    "3": 9.96257678476563,
+    "5": 20.575565668060584
+   },
+   "pass": true,
+   "purpose": "decisively negative U1",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ],
+    "2": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ],
+    "3": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ],
+    "5": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ]
+   }
+  },
+  "XF04_point_negative_U0": {
+   "M5_over_truth": {
+    "1": 12.768529183657417,
+    "2": 12.327615993458373,
+    "3": 12.975539385795011,
+    "5": 16.506966765310143
+   },
+   "pass": true,
+   "purpose": "point-negative U0 with inconclusive transport",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "INCONCLUSIVE",
+     "POINT_NEGATIVE"
+    ],
+    "2": [
+     "INCONCLUSIVE",
+     "POINT_NEGATIVE"
+    ],
+    "3": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ]
+   }
+  },
+  "XF05_tight_M5": {
+   "M5_over_truth": {
+    "1": 9.475408034822237,
+    "2": 7.366341598121283,
+    "3": 7.4885717702010375,
+    "5": 12.649322107881181
+   },
+   "pass": true,
+   "purpose": "tight M5",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "2": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "3": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ]
+   }
+  },
+  "XF06_loose_valid_M5": {
+   "M5_over_truth": {
+    "1": 1669.4022776303493,
+    "2": 34.20118215656337,
+    "3": 20.304237478192192,
+    "5": 15.667961970166102
+   },
+   "pass": true,
+   "purpose": "loose but valid M5",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "2": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "3": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ]
+   }
+  },
+  "XF07_parity_pure": {
+   "M5_over_truth": {
+    "1": 47.187668247690645,
+    "2": 13.192110361808863,
+    "3": 22.47087032302885,
+    "5": 487.96738922288847
+   },
+   "pass": true,
+   "purpose": "parity-pure source (exact candidates)",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ],
+    "2": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ],
+    "3": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ],
+    "5": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ]
+   }
+  },
+  "XF08_parity_contamination": {
+   "M5_over_truth": {
+    "1": 614.2330160401955,
+    "2": 19.884696389495364,
+    "3": 16.189810465543502,
+    "5": 19.910341852112406
+   },
+   "pass": true,
+   "purpose": "controlled parity contamination (k_scale 2, noise)",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "2": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "3": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ]
+   }
+  },
+  "XF09_near_zero_boundary": {
+   "M5_over_truth": {
+    "1": 18.520651232019947,
+    "2": 19.30737386929937,
+    "3": 18.709612272589258,
+    "5": 19.232080673067504
+   },
+   "pass": true,
+   "purpose": "near-zero scientific boundary (m = 1, 2 straddle zero)",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ],
+    "2": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ],
+    "3": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ]
+   }
+  }
+ },
+ "gates": {
+  "EG01_manufactured_fixtures_truth_and_expected_verdicts": "PASS",
+  "EG02_fail_closed_refusals": "PASS",
+  "EG03_real_input_arithmetic_guard_deny": "PASS",
+  "EG04_qualification_science_separation": "PASS",
+  "EG05_independent_derivative_crosscheck": "PASS",
+  "EG06_executor_mutations_all_detected": "PASS",
+  "EG07_inherited_r4_gates": "PASS",
+  "EG08_deterministic_replay": "PASS",
+  "EG09_real_stage_smoke_no_enclosure": "PASS",
+  "EG10_runtime_identity": "PASS",
+  "EG11_fences_and_pins": "PASS",
+  "EG12_cost_within_frozen_ceiling": "PASS",
+  "EG13_preregistered_producer_gates_Q01_Q16": "PASS",
+  "EG14_external_authorization_interface": "PASS",
+  "EG15_attempt_supervision_and_void_sealing": "PASS",
+  "EG16_production_stack_mutations": "PASS",
+  "EG17_cramer_compatibility_contract": "PASS",
+  "EG18_D1_in_process_prelaunch_verification": "PASS",
+  "EG19_D2_marker_lifecycle_and_ledger": "PASS",
+  "EG20_D3_reboot_recovery": "PASS",
+  "EG21_D4_run_provenance": "PASS",
+  "EG22_R4_governed_launch_single_decision": "PASS",
+  "EG23_R5_canonical_launch_slot": "PASS"
+ },
+ "mutation_detail": {
+  "E01_WRONG_M": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E02_WRONG_POINT_E": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E03_WRONG_CELL_ENDPOINT": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E04_WRONG_K1_IDENTITY_ACCEPTED": {
+   "detected": true,
+   "failing": [
+    "F11_wrong_k1_identity"
+   ]
+  },
+  "E05_ODD_EVEN_COMPONENT_SWAP": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E06_OMIT_DERIVATIVE_SOURCE_TERM": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E07_WRONG_GRADED_CONSTANT": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF06_loose_valid_M5",
+    "XF07_parity_pure"
+   ]
+  },
+  "E08_WRONG_LOCAL_M5_ANCHOR": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E09_WRONG_TRANSPORT_FACTOR": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E10_WRONG_L1_SIGN": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E11_WRONG_U1_SIGN": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E12_SERIALIZE_MIDPOINT": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E13_REUSE_STALE_CERTIFICATE": {
+   "detected": true,
+   "failing": [
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5",
+    "XF07_parity_pure"
+   ]
+  },
+  "E14_BYPASS_REAL_INPUT_GUARD": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E15_SILENT_PRECISION_CHANGE": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E16_MUTATE_SCIENTIFIC_ADDRESS": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  }
+ },
+ "mutations": "16/16",
+ "order2_reference": {
+  "comparator_mutant_refused": true,
+  "compare": {
+   "disjoint": [],
+   "identical_to_reference": true,
+   "pass": true,
+   "reference_sha256": "0bb1b47450926812ed682d7cc6089ce40447305575e420bdf45af47765b1012d"
+  },
+  "pass": true
+ },
+ "part_sha256": {
+  "authorization": "5a909d4213b84e4f2c96045c5af3b7e08893e85d0f8876a1991f9477bb662232",
+  "cramer_contract": "72bfc7d9d543a1e901a94bf2a45808bb49feef833fb226974ca68305cb91b531",
+  "crosscheck": "de01a4bc86a6fde2db0bc34fceef7eb3f4615044d6e6940ca77b7e83e2785449",
+  "fence": "46abde0e5db1cadf63f25062342d127f3c1187cf9a2edf3275eb3f505d033b74",
+  "fixtures": "f474d74bce42bc148a4f3fa7306c36338a355499df025425d8047e85f0ada841",
+  "fixtures_replay": "b8887a143080e6ba8887575c9a10bbfb28bf8b47f701bd012049a478b1439bcb",
+  "governed": "18c748a28cd6553cf5609b75ce44f1078d73889c0d6079c5f83856b784befdca",
+  "inherited_r4": "3554e1edc07cf3bd202e63d2e766087583bb5e6c3b77acf08efea037dfe12fb1",
+  "mutations": "d5a3a07303cf90e599eeee83210d6180b023f8efe06aff5be26fe9c51af0c99e",
+  "order2_reference": "5962645d2d91176f64f8c4789dfe04a937a070775a99218fff7b59202cd7eb5f",
+  "recovery": "ce723c5bd25a9aaaeee192fc033bc9a93d7d6312b6dad92225aeb93660cf97e6",
+  "refusals": "cb640f92ee22a2e28a9ae069d6d38a7bb12ec83cefc69181c2b19c08e85a68b6",
+  "runtime": "2f2e2054ba70ef129fface29f0dc6877cee1a7a05800eeecd42d0191a2b10787",
+  "separation": "e025e21ef3809e517ff70db91c9be1dd7f2066fb591ce44b271956ee819e4bc6",
+  "smoke": "120952e001a757974bf3cf75ab34d37af99889ac3883eeff92aabb67ed5cbad8",
+  "supervisor": "a19b2ab0f29b877a19022e406f8596c2ce1095b591e8d38c0306b95cc74d454c"
+ },
+ "production_mutations": "4/4",
+ "protocol_sha256": "59a91e20077ab14243e28d094a4ca5527bda692ec17e2f00108bf0f05dbd989a",
+ "r4_governed_mutations": "10/10",
+ "r4_governed_rows": {
+  "child_changed_attempt_uid_refused": true,
+  "child_changed_decision_digest_refused": true,
+  "child_coherent_binding_runs": true,
+  "child_missing_run_state_refused": true,
+  "child_rechecked_bound_decision": true,
+  "child_stale_run_state_refused": true,
+  "child_wrong_supervisor_argv_refused": true,
+  "child_wrong_supervisor_pid_refused": true,
+  "ledger_reconciles_permitted_attempt": true,
+  "permitted_synthetic_end_to_end": true,
+  "post_start_full_verifier_unreachable": true,
+  "prelaunch_refused_before_authorization_creates_no_slot": true,
+  "slot_admission_requires_supervisor": true,
+  "static_single_verifier_call_site": true,
+  "unsupervised_governed_mode_refused": true,
+  "unsupervised_real_mode_refused": true,
+  "verifier_refused_creates_no_slot": true,
+  "x1_01_canonical_slot_bound_everywhere": true,
+  "x1_02_authorization_and_cli_slot_2_refused": true,
+  "x1_02b_countersignature_slot_refused": true,
+  "x1_03_cli_slot_refused": true,
+  "x1_06_missing_notice_refused": true,
+  "x1_09_static_toctou_order": true,
+  "x1_09_toctou_authorization_sha256_changed_refused": true,
+  "x1_09_toctou_canonical_slot_changed_refused": true,
+  "x1_09_toctou_countersignature_sha256_changed_refused": true,
+  "x1_09_toctou_ledger_sha256_changed_refused": true,
+  "x1_09_toctou_namespace_slots_changed_refused": true,
+  "x1_09_toctou_unchanged_accepted": true,
+  "x1_09_verifier_approved_other_slot_refused": true,
+  "x1_10_run_state_slot_not_canonical_refused": true,
+  "x1_pure_01_all_slot_1_pass": true,
+  "x1_pure_02_authorization_and_cli_2": true,
+  "x1_pure_02b_countersignature_2": true,
+  "x1_pure_03_cli_2": true,
+  "x1_pure_04_notice_for_slot_2": true,
+  "x1_pure_05_duplicate_notice": true,
+  "x1_pure_06_missing_notice": true,
+  "x1_pure_07_notice_other_authorization": true,
+  "x1_pure_08_stale_notice": true,
+  "x1_pure_canonical_slot_already_has_outcome": true,
+  "x1_pure_foreign_namespace_entry": true,
+  "x1_pure_malformed_notice": true,
+  "x1_pure_next_slot_after_a_completed_one": true,
+  "x1_pure_noncontiguous_namespace": true
+ },
+ "r4_real_namespace_untouched": true,
+ "r5_x1_mutations": "5/5",
+ "replay_payload_sha256": [
+  "cb28b9727470a6b4287aa412313284b433bd8c16c6c16bd39b948dfa56b1e7e0",
+  "cb28b9727470a6b4287aa412313284b433bd8c16c6c16bd39b948dfa56b1e7e0"
+ ],
+ "runner_failures": [],
+ "runtime": {
+  "cpu_model": "AMD EPYC-Milan Processor",
+  "env": {
+   "MKL_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "PYTHONHASHSEED": "0"
+  },
+  "flint_library": "3.6.0",
+  "flint_so_sha256": "1f7ef1f52024937f542772ff9190e2f74449228cd69a6746b6608fbbd449d138",
+  "glibc_package_version": "2.41-12+deb13u4",
+  "host": "rebaseguard-vultr-02",
+  "kernel_release": "6.12.107+deb13-amd64",
+  "libc_path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+  "libc_sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+  "logical_cpus": 8,
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "numpy_module": "2.5.2",
+  "python": "3.12.3",
+  "python_flint": "0.9.0",
+  "python_flint_module": "0.9.0",
+  "python_impl": "CPython",
+  "scipy": "1.18.1",
+  "venv_prefix": "/root/work/rbg-cusum-aux5-venv"
+ },
+ "schema": "rebaseguard.p5y.k5.cusum-real-point-executor.qualification-result.v3",
+ "scientific_leaf_differences": [],
+ "separation": {
+  "CONTRADICTS": {
+   "fixture": "XF03_negative_U1",
+   "gates_sign_invariant": true,
+   "qualification": "PASS",
+   "verdict_m1": "CONTRADICTS_REQUIRED_POSITIVE_SIGN"
+  },
+  "INCONCLUSIVE": {
+   "fixture": "XF02_inconclusive_transport",
+   "gates_sign_invariant": true,
+   "qualification": "PASS",
+   "verdict_m1": "INCONCLUSIVE"
+  },
+  "SUPPORTS": {
+   "fixture": "XF01_positive_L1",
+   "gates_sign_invariant": true,
+   "qualification": "PASS",
+   "verdict_m1": "SUPPORTS_K5B_FIRST_CELL"
+  },
+  "consumer_refuses_harness_modes_on_real_kind": {
+   "science_usable": false
+  },
+  "consumer_requires_every_science_gate": {
+   "science_usable": false
+  }
+ },
+ "smoke": {
+  "Q04": true,
+  "Q06": true,
+  "Q08": true,
+  "cost": {
+   "cpu_seconds_q06_certificate_replay": 225.67191704699962,
+   "cpu_seconds_q08": 0.01795759900005578,
+   "cpu_seconds_q10_path": 0.005646202999741945,
+   "cpu_seconds_real_arb_stages": 2456.690576246,
+   "peak_rss_kib": 503524,
+   "wall_seconds": 2710.7114555835724
+  },
+  "enclosure_formed": false,
+  "float_containment_count": 0,
+  "observed_precision_bits": 256,
+  "structure_sha256": "a5956ed7a120a81e16a61ad5d5063d398c23dc174afed062534222555f70af80"
+ },
+ "supervisor_runs": {
+  "cpu_ceiling": {
+   "events": [
+    "VALIDATED",
+    "ARITHMETIC_STARTED",
+    "VOID"
+   ],
+   "failure_class": "CPU_RLIMIT",
+   "terminal": "RUN_FAILED.json"
+  },
+  "disk_full": {
+   "events": [
+    "VALIDATED",
+    "ARITHMETIC_STARTED"
+   ],
+   "failure_class": "DISK_FULL_BEFORE_SEAL",
+   "terminal": "RUN_FAILED.json"
+  },
+  "external_kill": {
+   "events": [
+    "VALIDATED",
+    "ARITHMETIC_STARTED"
+   ],
+   "failure_class": "PROCESS_KILLED_BY_EXTERNAL_SIGNAL",
+   "terminal": "RUN_FAILED.json"
+  },
+  "pre_arithmetic_refusal": {
+   "events": [],
+   "failure_class": "INTEGRITY_REFUSAL",
+   "terminal": "RUN_FAILED.json"
+  },
+  "real_launch_prelaunch_refused": {
+   "events": null,
+   "failure_class": "PRELAUNCH_REFUSED",
+   "terminal": null
+  },
+  "success": {
+   "events": [
+    "VALIDATED",
+    "ARITHMETIC_STARTED",
+    "SEALED"
+   ],
+   "failure_class": null,
+   "terminal": "RUN_COMPLETE.json"
+  },
+  "wall_timeout": {
+   "events": [
+    "VALIDATED",
+    "ARITHMETIC_STARTED",
+    "VOID"
+   ],
+   "failure_class": "WALL_TIMEOUT",
+   "terminal": "RUN_FAILED.json"
+  }
+ }
+}
