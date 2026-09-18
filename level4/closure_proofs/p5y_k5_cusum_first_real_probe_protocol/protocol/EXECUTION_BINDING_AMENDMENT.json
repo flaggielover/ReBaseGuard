@@ -1,0 +1,34 @@
+{
+ "schema": "rebaseguard.p5y.k5.cusum-first-real-probe.execution-binding-amendment.v1",
+ "status": "BOUND_QUALIFIED",
+ "science_preregistration_sha256": "9ace6896d70b7a17225c03cd6d8092e3d33089d001dd3e2736894dd866f3780a",
+ "executor_entry": "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/executor_cli.py",
+ "consumption_adapter_entry": "level4/closure_proofs/p5y_k5b_consumption_adapter/code/consumption_adapter.py",
+ "executor_sources_sha256": {
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/authorization_interface.py": "65263b98ae9f04d32bf33e81f034cdbcd537844130b5366c9d218478068d9710",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/backends.py": "d19e855b7be0bf7af937206431e79e5f77c39c3722733689db8238ebe1c47bad",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/consumer.py": "92bdc792d8eadb45590bb8fd091f890bd3b8905f81de1243dc2d8f0446aae3fa",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/executor_cli.py": "800b4b4c76ab6f9bf2f46e5ddfe64e912c9b371a5d4b3325b49c5011b73824d3",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/executor_core.py": "12f192c5c87d8ba2867c766b80dedf73df14d871dfa0a3b071e19cfae2576305",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/input_adapters.py": "24cb975d380db7f6ec168b31eb1cb2e84b5195f5f3507c4dec6a586306b670db",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/lifecycle.py": "16ef474b95951cabad71f73734d37c8654250eef57b54dfe09cc07482d61d5ff",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/paths.py": "7698c726b0001353418610b96a463eb8e704efafa4f69f82a8e390e6b4f96b1d",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/qualification_gates.py": "2c3c2d541e6a12e9866c176af1247ba522be4952d39742fa462621e228a6740a",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/supervisor.py": "cf862d92472ccecb34c36610fbf532ea504a9a3cdc7362949d29e62e3e95c2e9",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/config/EXECUTOR_PINS.json": "634e4da1c15312a49f2ff5eb89e074e95a20ce1755d63735eb3014e71c683de2",
+  "level4/closure_proofs/p5y_k5_order3_readiness_audit/code/k5_minimality.py": "3a54f0fb290a9b8a07c861653d4399e6c588afdaef77ee51473f778c6c988885",
+  "level4/closure_proofs/p5y_k5b_consumption_adapter/code/consumption_adapter.py": "fbad7d33261fd47fc56c034d6a016f8427b81b51f9199f0e3a8f3e74df35973d",
+  "level4/closure_proofs/p5y_k5b_independent_countersignature/code/k5b_check.py": "ddd54dc469375a2d64352782add8573231be07b94f7246dad83c4e55a2bf35a6"
+ },
+ "qualification_evidence_sha256": {
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/evidence/qualification_r5/QUALIFICATION_RESULT_EXECUTOR.json": "9c7ca7babdaba438b452aa98c7abbb7892d5ab1c11ffae67c47a854855b77229",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/evidence/qualification_r5/RUN_PROVENANCE.json": "f8cdba5b42f8083838183a989d174226cf6190eee560afebdd750e9d0913ff17",
+  "level4/closure_proofs/p5y_k5_cusum_real_point_executor/review/EXECUTOR_STATIC_REVIEW_R5.md": "f6207cfb6d17ca4902b2cc3ab3e3137b86426521dfb2d42b0f78d3c6dbfad255",
+  "level4/closure_proofs/p5y_k5b_consumption_adapter/evidence/acceptance_r1/ACCEPTANCE_RESULT.json": "0a35e0f2101e5927b69b88082028e21a08a721b73082ce001ce48c351a31376f",
+  "level4/closure_proofs/p5y_k5b_consumption_adapter/evidence/acceptance_r1/PROVENANCE.json": "8a85327ffca624a5e220d16a7f975cb36648b8d9e3a231f7fdabe632794c4611"
+ },
+ "independent_review": "level4/closure_proofs/p5y_k5_cusum_external_authorization/review/AMENDMENT_REVIEW.md",
+ "independent_review_sha256": "9240e7b5163144476b572b39404866d8787ac0befc8bb3951a98a1dd3fc692a9",
+ "independent_review_verdict": "PASS_WITH_SCOPE_LIMITATION",
+ "amendment_rule_ack": "Binds only the executor identity (r5 freeze a16d22b5, identity ef1c86e4), the accepted E6 K5-B consumption adapter (ff3b6a4a) and the two frozen adapter pins, with their qualification evidence, using only the allowed keys. It changes no field of SCIENCE_PREREGISTRATION_R4.json (sha256 9ace6896d70b7a17225c03cd6d8092e3d33089d001dd3e2736894dd866f3780a) and introduces no scientific rule, parameter or result-dependent consumption."
+}
