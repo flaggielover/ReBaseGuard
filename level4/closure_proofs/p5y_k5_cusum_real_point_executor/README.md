@@ -41,6 +41,7 @@
 | `review/EXECUTOR_STATIC_REVIEW_R4.md` | r4 review (FAIL on new X1; N1–N3 and D1–D4 closed) |
 | `evidence/qualification_r4/`, `RESULT_R4.md` | r4 frozen qualification and result |
 | `evidence/qualification_r5/`, `RESULT_R5.md` | r5 frozen qualification and result |
+| `review/EXECUTOR_STATIC_REVIEW_R5.md` | r5 review (PASS_WITH_SCOPE_LIMITATION; X1, N1–N3 and D1–D4 closed) |
 
 ```bash
 python3 -B tests/test_executor.py
