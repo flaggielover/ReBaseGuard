@@ -1,0 +1,211 @@
+{
+ "all_pass": true,
+ "checks": {
+  "_amendment": {
+   "commit": "842d35651f5616d20a1402d4d06b65b8ab22952e",
+   "review_commit": "585c9a01a5fdf753c64d50e2a24ee4e447785b0d",
+   "sha256": "0c6809a2d56fc15603fc15a27bf79cc0e94977bf4370cacee9740295f1972bb4",
+   "sources_sha256": "b437adba64cd4098d6f8998f01af159e7092c14b6597c219cc9ab130da97c015"
+  },
+  "_packet": {
+   "authorization_commit": "b2bc93d5472c0bfa951850946ecba1e77612b63f",
+   "authorization_sha256": "17a45ffdbb34c9d96e6a3adde8d2eff125dc2018c397d87689fc70d7ad990255",
+   "countersignature_commit": "dd75028688c735da51cb48afabef79c027551b4c",
+   "countersignature_sha256": "89a02599e568ed498070076f81fdb850b51a493a0765030b3c2036732769ff70",
+   "ledger_commit": "93a73313dfa797b8b39bb273aadfdb428b8b0b2c"
+  },
+  "amendment_equals_reviewed_draft": {
+   "detail": [
+    "independent_review_sha256",
+    "independent_review_verdict"
+   ],
+   "pass": true
+  },
+  "amendment_keys_allowed": {
+   "detail": [],
+   "pass": true
+  },
+  "amendment_once_after_freeze": {
+   "detail": "842d35651f5616d20a1402d4d06b65b8ab22952e",
+   "pass": true
+  },
+  "amendment_status_science": {
+   "detail": "",
+   "pass": true
+  },
+  "authorization_once_after_amendment": {
+   "detail": "b2bc93d5472c0bfa951850946ecba1e77612b63f",
+   "pass": true
+  },
+  "authorization_only_activation_fields": {
+   "detail": {
+    "changed": [
+     "AUTHORIZATION_UTC",
+     "AUTHORIZED_BY",
+     "EXECUTION_AUTHORIZED",
+     "PRODUCER_R4_IDENTITY",
+     "PROTOCOL_FREEZE_COMMIT"
+    ],
+    "producer_identity_changed": [
+     "executor_binding_sha256"
+    ]
+   },
+   "pass": true
+  },
+  "authorization_values": {
+   "detail": {
+    "AUTHORIZATION_UTC": "2026-09-18T15:26:49+00:00",
+    "AUTHORIZED_BY": "Jingzhe Su (repository owner, git user suzhe): explicit user authorization message in the Claude Code session of 2026-09-18 (NEXT_STEP = PREPARE_COUNTERSIGNED_EXTERNAL_AUTHORIZATION); packet prepared by Claude Code (claude-opus-5)"
+   },
+   "pass": true
+  },
+  "countersignature": {
+   "detail": {
+    "attempt_slot": 1,
+    "commit": "dd75028688c735da51cb48afabef79c027551b4c",
+    "identity": "Fresh-context Claude Code subagent session (model claude-opus-5, Anthropic), launched by the preparing Claude Code session on the repository owner's Mac to act as independent external countersigner; it verified the published packet itself from its own fresh GitHub clones on the Mac and is independent of the preparer's reasoning apart from the task brief, but it is not a human, not another model family, and was started by the preparer; it is independent of the execution host rebaseguard-vultr-02, which it used only for one supplementary read-only frozen-verifier run (P07/P08 host facts) in its own fresh clone",
+    "nonce_len": 64,
+    "utc": 1789746837
+   },
+   "pass": true
+  },
+  "entries": {
+   "detail": "",
+   "pass": true
+  },
+  "executor_identity_from_sources": {
+   "detail": "ef1c86e40bff0b13e40e924ba27d0841aff71f7344d114f71f517ab3adfdd41b",
+   "pass": true
+  },
+  "executor_pins_279": {
+   "detail": "",
+   "pass": true
+  },
+  "executor_unchanged_since_r5_freeze": {
+   "detail": "",
+   "pass": true
+  },
+  "frozen_P01": {
+   "detail": "authorized",
+   "pass": true
+  },
+  "frozen_P02": {
+   "detail": "authorization content matches the template and the preregistration",
+   "pass": true
+  },
+  "frozen_P03": {
+   "detail": "freeze commit 852b2d65c933 verified and published",
+   "pass": true
+  },
+  "frozen_P04": {
+   "detail": "authorization commit b2bc93d5472c ordered and published",
+   "pass": true
+  },
+  "frozen_P05_protected_hashes": {
+   "detail": "all protected hashes match",
+   "pass": true
+  },
+  "frozen_P06": {
+   "detail": "executor bound, qualified and independently reviewed",
+   "pass": true
+  },
+  "frozen_P06_amendment_integrity": {
+   "detail": "executor bound, qualified and independently reviewed",
+   "pass": true
+  },
+  "frozen_P09": {
+   "detail": "no sealed record for this protocol",
+   "pass": true
+  },
+  "frozen_P10": {
+   "detail": "CPU ceiling valid",
+   "pass": true
+  },
+  "frozen_P11": {
+   "detail": "next slot slot-1 (0 arithmetic attempts so far), launch notice committed and published",
+   "pass": true
+  },
+  "frozen_P12": {
+   "detail": "nothing predates authorization",
+   "pass": true
+  },
+  "frozen_probe_rules_bytes": {
+   "detail": "",
+   "pass": true
+  },
+  "frozen_verifier_bytes": {
+   "detail": "/private/tmp/claude-501/-Users-suzhe-ReBaseGuard/d147a70c-c932-42a4-be7e-a0bc9b5ceb26/scratchpad/final-verify/level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/code/prelaunch_verify.py",
+   "pass": true
+  },
+  "guard_DENY": {
+   "detail": "",
+   "pass": true
+  },
+  "launch_notice": {
+   "detail": {
+    "commit": "93a73313dfa797b8b39bb273aadfdb428b8b0b2c",
+    "entries": 1,
+    "notice": {
+     "authorization_sha256": "17a45ffdbb34c9d96e6a3adde8d2eff125dc2018c397d87689fc70d7ad990255",
+     "event": "LAUNCH_NOTICE",
+     "slot": "slot-1",
+     "utc": "2026-09-18T15:58:05+00:00"
+    }
+   },
+   "pass": true
+  },
+  "no_sealed_record_in_any_history": {
+   "detail": [],
+   "pass": true
+  },
+  "publication_github": {
+   "detail": {
+    "head": "93a73313dfa797b8b39bb273aadfdb428b8b0b2c",
+    "ls_remote": "93a73313dfa797b8b39bb273aadfdb428b8b0b2c",
+    "origin": "https://github.com/flaggielover/ReBaseGuard.git",
+    "origin_ref": "93a73313dfa797b8b39bb273aadfdb428b8b0b2c"
+   },
+   "pass": true
+  },
+  "r5_canonical_slot_binding": {
+   "detail": {
+    "namespace_exists": false,
+    "problems": [],
+    "slot-2_refusals": [
+     "requested slot slot-2 is not the canonical slot slot-1"
+    ]
+   },
+   "pass": true
+  },
+  "review_file_binding": {
+   "detail": {
+    "hashes": [
+     "b437adba64cd4098d6f8998f01af159e7092c14b6597c219cc9ab130da97c015"
+    ],
+    "review_intro": [
+     "585c9a01a5fdf753c64d50e2a24ee4e447785b0d"
+    ],
+    "verdicts": [
+     "PASS_WITH_SCOPE_LIMITATION"
+    ]
+   },
+   "pass": true
+  },
+  "science_frozen": {
+   "detail": "852b2d65c9332facd59771da7940ab429a7e2f2f",
+   "pass": true
+  },
+  "sources_canonical_sha": {
+   "detail": "b437adba64cd4098d6f8998f01af159e7092c14b6597c219cc9ab130da97c015",
+   "pass": true
+  },
+  "sources_exactly_14": {
+   "detail": 14,
+   "pass": true
+  }
+ },
+ "failing": [],
+ "repo_head": "93a73313dfa797b8b39bb273aadfdb428b8b0b2c",
+ "stage": "full",
+ "utc": "2026-09-19T01:18:40.278695+09:00"
+}
