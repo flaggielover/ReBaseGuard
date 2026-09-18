@@ -37,6 +37,7 @@
 | `RESULT.md` | r2 result (preserved) |
 | `review/EXECUTOR_STATIC_REVIEW_R3.md` | r3 review (FAIL: D1 open; D2–D4 closed) |
 | `evidence/qualification_r3/`, `RESULT_R3.md` | r3 frozen qualification (with `RUN_PROVENANCE.json`) and result |
+| `review/EXECUTOR_STATIC_REVIEW_R4.md` | r4 review (FAIL on new X1; N1–N3 and D1–D4 closed) |
 | `evidence/qualification_r4/`, `RESULT_R4.md` | r4 frozen qualification and result |
 
 ```bash
