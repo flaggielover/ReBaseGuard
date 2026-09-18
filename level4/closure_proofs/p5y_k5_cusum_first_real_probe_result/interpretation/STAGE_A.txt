@@ -1,0 +1,13 @@
+slot files ['ATTEMPT_LOG.jsonl', 'RUN_COMPLETE.json', 'RUN_STATE.json', 'SCIENTIFIC_RECORD_SEALED.json']
+ATTEMPT_LOG events ['VALIDATED', 'ARITHMETIC_STARTED', 'SEALED']
+  ATTEMPT_LOG.jsonl 63b00f64e923f0c9cf2cbb3577c769c2eb452b5739bbd50dcad84f73d4bf1137
+  RUN_COMPLETE.json d7088068535b80f866e2d1f82e7f15b44068f4f9378eda2b7772fe847426209c
+  RUN_STATE.json 63b038d083f876129761c098aa2afa20dba5079b9a7e95df60f8a015e9bddc39
+  SCIENTIFIC_RECORD_SEALED.json cf90f1ea577c09d718adddab9698f8f03995722dae51f68d1fd767e4339f73ae
+terminal ['RUN_COMPLETE.json']
+terminal marker (non-scientific fields): {"addresses_sha256": ["bf92080d39370230542ae21cddb963a77ddf8b641658e85776289e36db1ed3f6", "c33c7a1e043df8928f71fd82d8e9f2daea547bf5258690749b84ee3c19b4612f", "c81035452784fcaf49e4fb3d5f4d6d45316d7cf261b7a75e128842315106b0b1", "cc0ec18aadefd8bd1fb8655767fe61d8de85eeb571b84780b66eca14eeb71a6a"], "attempt_uid": "86e310e4d9c38723eed1ce9472babbd2", "authorization_sha256": "17a45ffdbb34c9d96e6a3adde8d2eff125dc2018c397d87689fc70d7ad990255", "executor_identity_sha256": "ef1c86e40bff0b13e40e924ba27d0841aff71f7344d114f71f517ab3adfdd41b", "pid": 512067, "protocol_sha256": "9ace6896d70b7a17225c03cd6d8092e3d33089d001dd3e2736894dd866f3780a", "recovered": false, "schema": "rebaseguard.p5y.k5.cusum-real-point-executor.run-complete.v1", "scientific_hash": "199867e310f7c95c32fc958aa60252578da6df9b3a872d35a4eca691d54ec090", "sealed_record": "SCIENTIFIC_RECORD_SEALED.json", "sealed_record_sha256": "cf90f1ea577c09d718adddab9698f8f03995722dae51f68d1fd767e4339f73ae", "slot": "slot-1"}
+qualification gates: {'Q01_PRELAUNCH_VERIFIED': True, 'Q02_K1_INPUT_BINDING': True, 'Q03_EXACT_CELL_IDENTITY': True, 'Q04_RUNTIME_AND_AUX5_GATES': True, 'Q05_SOURCE_AND_MANIFEST_HASHES': True, 'Q06_CERTIFICATE_REPLAY': True, 'Q07_INTERVAL_CONSISTENCY': True, 'Q08_GRADED_SCALAR_CONSISTENCY': True, 'Q09_R5_CERTIFICATE_VALIDITY': True, 'Q10_ORDER2_CROSS_REPLAY': True, 'Q11_DETERMINISTIC_SERIALIZATION': True, 'Q12_SCIENTIFIC_ADDRESS_UNIQUE': True, 'Q13_NO_MUTATION': True, 'Q14_FAIL_CLOSED': True, 'Q15_COST_CEILING': True, 'Q16_TEMPORAL_INTEGRITY': True}
+reconcile problems []
+NEW_LEDGER_LINES
+{"arithmetic_started": true, "event": "OUTCOME", "failure_class": "COMPLETED", "run_failed_sha256": null, "sealed_record_sha256": "cf90f1ea577c09d718adddab9698f8f03995722dae51f68d1fd767e4339f73ae", "slot": "slot-1"}
+{"event": "SCIENTIFIC_RECORD_SEALED", "sha256": "cf90f1ea577c09d718adddab9698f8f03995722dae51f68d1fd767e4339f73ae", "slot": "slot-1"}

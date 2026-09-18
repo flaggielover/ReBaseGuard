@@ -1,0 +1,487 @@
+{
+ "schema": "independent-adjudication.k5-cusum-first-real-probe.slot-1.v1",
+ "adjudication_date_utc": "2026-09-19",
+ "subject": {
+  "repository": "github.com/flaggielover/ReBaseGuard",
+  "branch": "p5y-postk1-frontier",
+  "tip": "44088f14b27b87b526c9b5e31eaf04cd60e0fda0",
+  "host": "rebaseguard-vultr-02",
+  "slot": "/root/work/k5-first-real-probe/slot-1",
+  "sealed_record_sha256": "cf90f1ea577c09d718adddab9698f8f03995722dae51f68d1fd767e4339f73ae",
+  "scientific_hash": "199867e310f7c95c32fc958aa60252578da6df9b3a872d35a4eca691d54ec090",
+  "attempt_uid": "86e310e4d9c38723eed1ce9472babbd2"
+ },
+ "frozen_rule": {
+  "file": "level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/protocol/SCIENCE_PREREGISTRATION_R4.json",
+  "key": "independent_adjudication.rule",
+  "status_function": "code/probe_rules.py adoption_status",
+  "prereg_sha256": "9ace6896d70b7a17225c03cd6d8092e3d33089d001dd3e2736894dd866f3780a",
+  "probe_rules_sha256": "5ce87758f6caa773ce9fa0a77b65e5af0fff662b069c6ef62ac26accfb479fe6",
+  "byte_equal_to_freeze_commit_852b2d65": true
+ },
+ "adoption_status": "ADOPTED",
+ "adoption_status_inputs": {
+  "sealed": true,
+  "science_usable_": true,
+  "independent_replay_pass": true,
+  "independent_review_pass": true
+ },
+ "checks": {
+  "1_record_integrity": {
+   "result": "PASS",
+   "sealed_record_sha256_equals_ledger_OUTCOME": true,
+   "sealed_record_sha256_equals_ledger_SCIENTIFIC_RECORD_SEALED": true,
+   "ledger_append_only": true,
+   "ledger_versions": {
+    "93a73313": 1,
+    "44088f14": 3
+   },
+   "exactly_one_LAUNCH_NOTICE_slot_1": true,
+   "first_version_with_OUTCOME": "44088f14",
+   "ledger_at_launch_head_69a162d0_has_no_OUTCOME": true,
+   "RUN_COMPLETE_agrees_with_record": true,
+   "lifecycle_reconcile_host_slot": [],
+   "lifecycle_reconcile_own_copy": [],
+   "lifecycle_classify": "C (no problems)",
+   "outcome_entry_equals_ledger": true,
+   "record_bytes_equal_frozen_writer_format": true,
+   "slot_files": [
+    "ATTEMPT_LOG.jsonl",
+    "RUN_COMPLETE.json",
+    "RUN_STATE.json",
+    "SCIENTIFIC_RECORD_SEALED.json"
+   ],
+   "slot_ctime_equals_mtime": true
+  },
+  "2_Q07_recomputed": {
+   "result": "PASS",
+   "x1": "5083/10000000",
+   "transport_factor": "25836889/200000000000000",
+   "per_m": {
+    "1": "PASS",
+    "2": "PASS",
+    "3": "PASS",
+    "5": "PASS"
+   },
+   "also_cross_machine_replay_on_mac": true
+  },
+  "3_Q11_recomputed": {
+   "result": "PASS",
+   "canonical_roundtrip_stable": true,
+   "scientific_hash_recomputed": "199867e310f7c95c32fc958aa60252578da6df9b3a872d35a4eca691d54ec090",
+   "equals_record_RUN_COMPLETE_and_SEALED_event": true,
+   "addresses_from_independent_inputs": {
+    "1": "c81035452784fcaf49e4fb3d5f4d6d45316d7cf261b7a75e128842315106b0b1",
+    "2": "bf92080d39370230542ae21cddb963a77ddf8b641658e85776289e36db1ed3f6",
+    "3": "cc0ec18aadefd8bd1fb8655767fe61d8de85eeb571b84780b66eca14eeb71a6a",
+    "5": "c33c7a1e043df8928f71fd82d8e9f2daea547bf5258690749b84ee3c19b4612f"
+   },
+   "addresses_equal_sealed": true,
+   "addresses_equal_RUN_COMPLETE_sorted": true,
+   "four_distinct": true,
+   "address_inputs": {
+    "k1_record_sha256": "4f8df44c956309b109e174f7ea15deee39ffad863c459f1656d6e2470a7ff1fb (file hash in clone)",
+    "producer_identity_sha256": "850232481ca459ade742a6efff63202da99c70626924cfcbcb71b081fc64277a (prereg)",
+    "executor_binding_sha256": "0c6809a2d56fc15603fc15a27bf79cc0e94977bf4370cacee9740295f1972bb4 (sha256 of committed EXECUTION_BINDING_AMENDMENT.json)",
+    "protocol_sha256": "9ace6896d70b7a17225c03cd6d8092e3d33089d001dd3e2736894dd866f3780a (sha256 of committed prereg)",
+    "precision_bits": 256
+   }
+  },
+  "4_verdicts_recomputed": {
+   "result": "PASS",
+   "frozen_consumer_interpret_agrees": true,
+   "consumer_REAL_PRODUCER_QUALIFICATION": "PASS",
+   "consumer_SCIENCE_USABLE": true,
+   "aggregate": {
+    "per_m": {
+     "1": "K5B_CELL_1_PASSES_FOR_THIS_M",
+     "2": "K5B_CELL_1_PASSES_FOR_THIS_M",
+     "3": "K5B_CELL_1_PASSES_FOR_THIS_M",
+     "5": "K5B_CELL_1_PASSES_FOR_THIS_M"
+    },
+    "label": "FIRST_CELL_SUPPORTED_ALL_M",
+    "route": "CONSUME_IN_FROZEN_K5B_CHECKER_THEN_PREREGISTER_NEXT_ORDER3_CELLS"
+   }
+  },
+  "5_gate_and_attempt_log_review": {
+   "result": "PASS",
+   "attempt_log_events": [
+    "VALIDATED",
+    "ARITHMETIC_STARTED",
+    "SEALED"
+   ],
+   "attempt_log_gate_fields_only": true,
+   "no_endpoint_digits_outside_record": true,
+   "run_state": {
+    "mode": "real",
+    "slot": "slot-1",
+    "authorization_sha256": "17a45ffdbb34c9d96e6a3adde8d2eff125dc2018c397d87689fc70d7ad990255",
+    "protocol_sha256": "9ace6896d70b7a17225c03cd6d8092e3d33089d001dd3e2736894dd866f3780a",
+    "executor_identity_sha256": "ef1c86e40bff0b13e40e924ba27d0841aff71f7344d114f71f517ab3adfdd41b",
+    "executor_identity_recomputed_from_clone_and_launch_checkout": true,
+    "prelaunch_decision_sha256_recomputes": true
+   },
+   "prelaunch": {
+    "verdict": "LAUNCH_PERMITTED",
+    "P01_P12": "all pass",
+    "report_sha256_recomputes": true,
+    "verified_utc": "2026-09-18T16:36:59.864Z",
+    "arithmetic_started_utc": "2026-09-18T16:37:00.272Z"
+   },
+   "producer_gates_Q01_Q16": "all true, modes all REAL",
+   "frozen_producer_qualification": "PASS",
+   "frozen_science_usable": true,
+   "structural_QE01_QE12": "all true",
+   "Q16_temporal": {
+    "git_commit_utc": {
+     "freeze_852b2d65": "2026-09-17T05:28:23Z",
+     "amendment_842d3565": "2026-09-18T15:13:31Z",
+     "authorization_b2bc93d5": "2026-09-18T15:26:49Z",
+     "countersignature_dd750286": "2026-09-18T15:55:56Z",
+     "launch_notice_93a73313": "2026-09-18T15:58:05Z",
+     "launch_head_69a162d0": "2026-09-18T16:20:26Z",
+     "ledger_outcome_44088f14": "2026-09-18T17:31:05Z"
+    },
+    "github_server_push_utc": {
+     "852b2d65": "2026-09-17T05:28:24Z",
+     "842d3565": "2026-09-18T15:14:12Z",
+     "b2bc93d5": "2026-09-18T15:27:20Z",
+     "dd750286": "2026-09-18T15:56:30Z",
+     "93a73313": "2026-09-18T15:59:34Z",
+     "69a162d0": "2026-09-18T16:20:29Z",
+     "44088f14": "2026-09-18T17:31:07Z",
+     "force_pushes_since_freeze": 0
+    },
+    "host_epochs_utc": {
+     "prelaunch_verified": "2026-09-18T16:36:59.864Z",
+     "ARITHMETIC_STARTED": "2026-09-18T16:37:00.272Z",
+     "SEALED": "2026-09-18T17:27:27.998Z"
+    },
+    "order_holds": true,
+    "git_ancestry_strict": true,
+    "authorization_utc_window": true
+   },
+   "Q04_runtime": {
+    "live_host_facts_at_launch_equal_frozen_contract": true,
+    "runtime_identity_sha256_is_hash_of_contract": true,
+    "host_facts_now_equal_contract": true,
+    "aux5_producer_identity_initial_final": "3692d0fe..., pass"
+   },
+   "argv_exact": true,
+   "cost": {
+    "cpu_seconds": 3026.95,
+    "wall_seconds": 3027.71,
+    "soft_limit": 9000,
+    "wall_limit": 14400
+   }
+  },
+  "6_publication_anchor": {
+   "result": "PASS",
+   "github_ls_remote_tip": "44088f14b27b87b526c9b5e31eaf04cd60e0fda0",
+   "on_github_frontier": {
+    "freeze": "852b2d65",
+    "amendment": "842d3565",
+    "authorization": "b2bc93d5",
+    "countersignature": "dd750286",
+    "launch_notice": "93a73313",
+    "launch_head": "69a162d0",
+    "ledger_outcome": "44088f14"
+   },
+   "governance_files_committed_once": true
+  },
+  "7_E6_consumption": {
+   "result": "PASS",
+   "adapter_sha256": "fbad7d33261fd47fc56c034d6a016f8427b81b51f9199f0e3a8f3e74df35973d",
+   "baseline_L_None_equals_frozen_acceptance": true,
+   "baseline_equals_committed_acceptance_output": true,
+   "positive_m": [
+    "1",
+    "2",
+    "3",
+    "5"
+   ],
+   "per_m": {
+    "1": {
+     "pass_ranges": [
+      [
+       0,
+       0
+      ],
+      [
+       133,
+       309
+      ]
+     ],
+     "pass_count": 178,
+     "open_ranges": [
+      [
+       1,
+       132
+      ]
+     ],
+     "open_count": 132,
+     "newly_closed_vs_L_None": [
+      0
+     ],
+     "rows_sha256": "2bdf2b0a1b71c9db7fc337cf31ab1eaf768530ddaabbbcfd5463a09184ee96ed",
+     "input_L1": "2467682966920851150638817218762197053573339521813393437463330999234773551188408439994891/1380349269358112757486951172455405090490221794434077311032504844759859200000000000000",
+     "lost_vs_L_None": []
+    },
+    "2": {
+     "pass_ranges": [
+      [
+       0,
+       0
+      ],
+      [
+       145,
+       309
+      ]
+     ],
+     "pass_count": 166,
+     "open_ranges": [
+      [
+       1,
+       144
+      ]
+     ],
+     "open_count": 144,
+     "newly_closed_vs_L_None": [
+      0
+     ],
+     "rows_sha256": "ec0c61e860b2c8b74bd7c42e7c0560f3aecd234cae78471c2b68c6336078727a",
+     "input_L1": "100058264965771765511663288440462507073537059996488775797020811776642196852905769238883/69017463467905637874347558622770254524511089721703865551625242237992960000000000000",
+     "lost_vs_L_None": []
+    },
+    "3": {
+     "pass_ranges": [
+      [
+       0,
+       0
+      ],
+      [
+       146,
+       309
+      ]
+     ],
+     "pass_count": 165,
+     "open_ranges": [
+      [
+       1,
+       145
+      ]
+     ],
+     "open_count": 145,
+     "newly_closed_vs_L_None": [
+      0
+     ],
+     "rows_sha256": "6047a7e181d154b98e398f7e0edf0b955db5d33ab378f4ca24bb81cc697a50f6",
+     "input_L1": "60040416018126482461640558539439560776319049147935274741935992494199177789097149664751288831233/46316835694926478169428394003475163141307993866256225615783033603165251855974400000000000000",
+     "lost_vs_L_None": []
+    },
+    "5": {
+     "pass_ranges": [
+      [
+       0,
+       0
+      ],
+      [
+       149,
+       304
+      ]
+     ],
+     "pass_count": 157,
+     "open_ranges": [
+      [
+       1,
+       148
+      ],
+      [
+       305,
+       309
+      ]
+     ],
+     "open_count": 153,
+     "newly_closed_vs_L_None": [
+      0
+     ],
+     "rows_sha256": "484f7d718d1e7e4835c1c9e8a69e89f6dadec45359e5d6fc67edca5e7c362d9b",
+     "input_L1": "24652420129503917585808661586724338623914712465274155728050613707569087997106069251910515924469/23158417847463239084714197001737581570653996933128112807891516801582625927987200000000000000",
+     "lost_vs_L_None": []
+    }
+   },
+   "output_sha256_canonical": "89017388681e05ec9b8e63ef8e22305af8bd7cf76d5ab1b571a7c948afcafb6a",
+   "baseline_L_None_sha256_canonical": "773999f5b47ea4e43e4ec8ba20d54821f424829897ebfaf1f7686829524f37c4",
+   "inputs": {
+    "manifest_sha256": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334",
+    "cells_json_sha256": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f",
+    "records_sha256": "76fc2af5023f222e51b75e2a92e29a3d80ec84dab26057c2c9ae6ea549e96f51",
+    "record_count": 310
+   }
+  },
+  "8_adoption_status": {
+   "result": "PASS",
+   "value": "ADOPTED"
+  }
+ },
+ "per_m": {
+  "1": {
+   "exact": {
+    "L0": "407406036661476549599971184823916182780747120864150545331718204467912460684155/226156424291633194186662080095093570025917938800079226639565593765455331328",
+    "U0": "631058490619046620834967279758566405193716170715402866655845060059012322079877/226156424291633194186662080095093570025917938800079226639565593765455331328",
+    "M5": "91565511049887843577522081704274853482294634789007097183226422074630210556357/862718293348820473429344482784628181556388621521298319395315527974912",
+    "transport_factor": "25836889/200000000000000",
+    "penalty_x1sq_over_2_times_M5": "2365767945224225676961800920042280214913309944339114790135233729009370466191224053373/172543658669764094685868896556925636311277724304259663879063105594982400000000000000",
+    "L1": "2467682966920851150638817218762197053573339521813393437463330999234773551188408439994891/1380349269358112757486951172455405090490221794434077311032504844759859200000000000000",
+    "U1": "3870601501344060778285367745730494523419234279331341743124823691481320093611591560005109/1380349269358112757486951172455405090490221794434077311032504844759859200000000000000"
+   },
+   "decimal": {
+    "L0": "1801.434727921407",
+    "U0": "2790.362876472101",
+    "M5": "1.061360489928378e+8",
+    "penalty": "13.71112658363256",
+    "L1": "1787.723601337775",
+    "U1": "2804.074003055734",
+    "point_radius": "494.4640742753471",
+    "transported_radius": "508.1752008589797"
+   },
+   "Q07": "PASS",
+   "scientific_verdict": "SUPPORTS_K5B_FIRST_CELL",
+   "point_sign": "POINT_POSITIVE",
+   "h3a_consequence": "K5B_CELL_1_PASSES_FOR_THIS_M",
+   "consumption_key": "POSITIVE",
+   "k5b_per_m_condition": "SUPPORTS_K5B_FIRST_CELL",
+   "robustness_note": {
+    "M5_that_would_make_L1_le_0": "1.394467e+10",
+    "factor_above_sealed_M5": "131.3849"
+   },
+   "address_sha256": "c81035452784fcaf49e4fb3d5f4d6d45316d7cf261b7a75e128842315106b0b1"
+  },
+  "2": {
+   "exact": {
+    "L0": "82637126275775990455427537397212896502490575282399237858510719927521077935217/56539106072908298546665520023773392506479484700019806659891398441363832832",
+    "U0": "136282910700616524574566936280910070462221901655190944205574855930794916397967/56539106072908298546665520023773392506479484700019806659891398441363832832",
+    "M5": "79066535457074363446705955133534263486091101543197727334890424006016793080445/862718293348820473429344482784628181556388621521298319395315527974912",
+    "transport_factor": "25836889/200000000000000",
+    "penalty_x1sq_over_2_times_M5": "408566660043798918623639835684820988677377766891865677240765942441278242991085107121/34508731733952818937173779311385127262255544860851932775812621118996480000000000000",
+    "L1": "100058264965771765511663288440462507073537059996488775797020811776642196852905769238883/69017463467905637874347558622770254524511089721703865551625242237992960000000000000",
+    "U1": "167178108296426128812060434311152442834559225327717989417927400941028694667094230761117/69017463467905637874347558622770254524511089721703865551625242237992960000000000000"
+   },
+   "decimal": {
+    "L0": "1461.592374120910",
+    "U0": "2410.418561002309",
+    "M5": "9.164814988466416e+7",
+    "penalty": "11.83951537812715",
+    "L1": "1449.752858742783",
+    "U1": "2422.258076380436",
+    "point_radius": "474.4130934406995",
+    "transported_radius": "486.2526088188267"
+   },
+   "Q07": "PASS",
+   "scientific_verdict": "SUPPORTS_K5B_FIRST_CELL",
+   "point_sign": "POINT_POSITIVE",
+   "h3a_consequence": "K5B_CELL_1_PASSES_FOR_THIS_M",
+   "consumption_key": "POSITIVE",
+   "k5b_per_m_condition": "SUPPORTS_K5B_FIRST_CELL",
+   "robustness_note": {
+    "M5_that_would_make_L1_le_0": "1.131400e+10",
+    "factor_above_sealed_M5": "123.4504"
+   },
+   "address_sha256": "bf92080d39370230542ae21cddb963a77ddf8b641658e85776289e36db1ed3f6"
+  },
+  "3": {
+   "exact": {
+    "L0": "9919048263574201335264715485086853148329908674844593863014408152732867219432068934489/7588550360256754183279148073529370729071901715047420004889892225542594864082845696",
+    "U0": "16702195550765245728696502101578811247977758776967571425780319745558263634253486429351/7588550360256754183279148073529370729071901715047420004889892225542594864082845696",
+    "M5": "4511637292186204538513365097312058308852372910310253164331798934437878548843/53919893334301279589334030174039261347274288845081144962207220498432",
+    "transport_factor": "25836889/200000000000000",
+    "penalty_x1sq_over_2_times_M5": "116566671926475533992866039035725848887346476270292966568739448239389745461937669427/10783978666860255917866806034807852269454857769016228992441444099686400000000000000",
+    "L1": "60040416018126482461640558539439560776319049147935274741935992494199177789097149664751288831233/46316835694926478169428394003475163141307993866256225615783033603165251855974400000000000000",
+    "U1": "102442761559628931747107107394799113517550991451504210663305266650644150175292226335248711168767/46316835694926478169428394003475163141307993866256225615783033603165251855974400000000000000"
+   },
+   "decimal": {
+    "L0": "1307.107127538203",
+    "U0": "2200.973144783892",
+    "M5": "8.367296396923906e+7",
+    "penalty": "10.80924541187115",
+    "L1": "1296.297882126332",
+    "U1": "2211.782390195763",
+    "point_radius": "446.9330086228446",
+    "transported_radius": "457.7422540347157"
+   },
+   "Q07": "PASS",
+   "scientific_verdict": "SUPPORTS_K5B_FIRST_CELL",
+   "point_sign": "POINT_POSITIVE",
+   "h3a_consequence": "K5B_CELL_1_PASSES_FOR_THIS_M",
+   "consumption_key": "POSITIVE",
+   "k5b_per_m_condition": "SUPPORTS_K5B_FIRST_CELL",
+   "robustness_note": {
+    "M5_that_would_make_L1_le_0": "1.011815e+10",
+    "factor_above_sealed_M5": "120.9249"
+   },
+   "address_sha256": "cc0ec18aadefd8bd1fb8655767fe61d8de85eeb571b84780b66eca14eeb71a6a"
+  },
+  "5": {
+   "exact": {
+    "L0": "4075032516560166652875459303178684095793870970662673127399952192245279953718095431725/3794275180128377091639574036764685364535950857523710002444946112771297432041422848",
+    "U0": "7326650139237359111587153086050946506180617141322560708801357024280718932400600201171/3794275180128377091639574036764685364535950857523710002444946112771297432041422848",
+    "M5": "15831831418416962962942583383875367137693445970365611904710571460391767609967/215679573337205118357336120696157045389097155380324579848828881993728",
+    "transport_factor": "25836889/200000000000000",
+    "penalty_x1sq_over_2_times_M5": "409045271024351627790658640262432250570833279563833604199085611948709996252512672663/43135914667441023671467224139231409077819431076064915969765776398745600000000000000",
+    "L1": "24652420129503917585808661586724338623914712465274155728050613707569087997106069251910515924469/23158417847463239084714197001737581570653996933128112807891516801582625927987200000000000000",
+    "U1": "44937928111447777753928962859257293468214731577604468760482767740953854423051985148089484075531/23158417847463239084714197001737581570653996933128112807891516801582625927987200000000000000"
+   },
+   "decimal": {
+    "L0": "1073.994985366952",
+    "U0": "1930.974900715943",
+    "M5": "7.340440809229820e+7",
+    "penalty": "9.482707719957052",
+    "L1": "1064.512277646995",
+    "U1": "1940.457608435900",
+    "point_radius": "428.4899576744953",
+    "transported_radius": "437.9726653944523"
+   },
+   "Q07": "PASS",
+   "scientific_verdict": "SUPPORTS_K5B_FIRST_CELL",
+   "point_sign": "POINT_POSITIVE",
+   "h3a_consequence": "K5B_CELL_1_PASSES_FOR_THIS_M",
+   "consumption_key": "POSITIVE",
+   "k5b_per_m_condition": "SUPPORTS_K5B_FIRST_CELL",
+   "robustness_note": {
+    "M5_that_would_make_L1_le_0": "8.313656e+9",
+    "factor_above_sealed_M5": "113.2583"
+   },
+   "address_sha256": "c33c7a1e043df8928f71fd82d8e9f2daea547bf5258690749b84ee3c19b4612f"
+  }
+ },
+ "aggregate": {
+  "per_m": {
+   "1": "K5B_CELL_1_PASSES_FOR_THIS_M",
+   "2": "K5B_CELL_1_PASSES_FOR_THIS_M",
+   "3": "K5B_CELL_1_PASSES_FOR_THIS_M",
+   "5": "K5B_CELL_1_PASSES_FOR_THIS_M"
+  },
+  "label": "FIRST_CELL_SUPPORTED_ALL_M",
+  "route": "CONSUME_IN_FROZEN_K5B_CHECKER_THEN_PREREGISTER_NEXT_ORDER3_CELLS"
+ },
+ "observations": [
+  "M5 is about 24x smaller than the pre-result forecast implied (forecast penalty 330.1 for m=1; sealed penalty 13.71). The sealed M5_1 equals the last of the 12-iteration local_r5 trace, the trace never increases, and QE11 ties each M5 to the even tower nodes. Even so, every verdict holds unless M5 were 113x to 131x larger than sealed. The forecast was not a scientific result.",
+  "The operator file SUPERVISOR_PID holds 512063, but RUN_STATE and RUN_COMPLETE give pid 512067. This most likely records the wrapper shell rather than the Python supervisor. No gate uses that file, and the executor's in-process re-check binds RUN_STATE.pid to its own parent.",
+  "AUTHORIZATION_UTC is the same second as the authorization commit time (15:26:49Z). This is inside the frozen P04 window [commit-3600 s, commit+60 s].",
+  "The launch checkout's REAL_INPUT_GUARD.json is back to policy DENY and byte-equal to the committed file (mtime 2026-09-18T17:29:56Z)."
+ ],
+ "independence_limits": [
+  "The adjudicator is Claude Code (claude-opus-5) in a separate session, working from a fresh GitHub clone with its own scripts. The operator packet was also prepared by claude-opus-5, so the independence is procedural (separate session and process), not institutional.",
+  "The main replay ran on the production host with the production venv, which QE11/consumer.interpret need because they use flint. The stdlib-only Q07, address and verdict replay was also repeated on a Mac (arm64, Python 3.14.5) from a second fresh clone. The full-record scientific_hash was recomputed on the host only.",
+  "No certificate was recomputed, per the hard limit. That L0, U0 and M5 are valid enclosures rests on the executor-evaluated gates Q02-Q10, re-checked here only through consistency and structure (QE01-QE12, gate evidence).",
+  "Host epochs come from the host clock. Git commit times are claimed by the committer, and GitHub push times (server side) corroborate them.",
+  "The operator STAGE_* files and post_run_stage_*.py were not read."
+ ],
+ "method_artifacts": {
+  "host_replay_script": "/var/tmp/adj-k5-1789753125/work/replay.py (sha256 a94ccae1fe9ff49c77384d16cb1d7edea0dac5a00e3b230b5c93a4426cd81c78)",
+  "host_replay_result": "/var/tmp/adj-k5-1789753125/work/REPLAY_RESULT.json (sha256 4e3a95cec103dd99e4172e9aad77eb6b5cbb62b539648476397cb91dd48dac08)",
+  "host_e6_output": "/var/tmp/adj-k5-1789753125/work/E6_OUTPUT.json",
+  "mac_crosscheck": "scratchpad/adj-mac/mac_crosscheck.py + mac_crosscheck_result.json",
+  "host_checks_run": 72
+ }
+}

@@ -1,0 +1,154 @@
+{
+ "argv": [
+  "/root/work/rbg-cusum-aux5-venv/bin/python",
+  "-B",
+  "/root/work/k5-real-launch-69a162d0/level4/closure_proofs/p5y_k5_cusum_real_point_executor/code/supervisor.py",
+  "launch",
+  "--namespace",
+  "/root/work/k5-first-real-probe",
+  "--slot",
+  "1",
+  "--mode",
+  "real"
+ ],
+ "attempt_uid": "86e310e4d9c38723eed1ce9472babbd2",
+ "authorization_sha256": "17a45ffdbb34c9d96e6a3adde8d2eff125dc2018c397d87689fc70d7ad990255",
+ "boot_id": "eefa85dc-14db-4ba0-912f-f95eeece9c2b",
+ "executor_identity_sha256": "ef1c86e40bff0b13e40e924ba27d0841aff71f7344d114f71f517ab3adfdd41b",
+ "mode": "real",
+ "pid": 512067,
+ "prelaunch_decision": {
+  "attempt": {
+   "binding_kind": "real",
+   "k1_record_sha256": "4f8df44c956309b109e174f7ea15deee39ffad863c459f1656d6e2470a7ff1fb",
+   "m_set": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "point_e": "0/1",
+   "precision_bits": 256,
+   "right": "5083/10000000",
+   "theorem_cell": "C_1"
+  },
+  "authorization_path": "/root/work/k5-real-launch-69a162d0/level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/protocol/AUTHORIZATION_ACTIVE.json",
+  "authorization_sha256": "17a45ffdbb34c9d96e6a3adde8d2eff125dc2018c397d87689fc70d7ad990255",
+  "countersignature_sha256": "89a02599e568ed498070076f81fdb850b51a493a0765030b3c2036732769ff70",
+  "execution_binding_amendment_sha256": "0c6809a2d56fc15603fc15a27bf79cc0e94977bf4370cacee9740295f1972bb4",
+  "executor_binding_sha256": "0c6809a2d56fc15603fc15a27bf79cc0e94977bf4370cacee9740295f1972bb4",
+  "executor_identity_sha256": "ef1c86e40bff0b13e40e924ba27d0841aff71f7344d114f71f517ab3adfdd41b",
+  "head": "69a162d0e81cf11c2ed1060f98dfd02469fb132e",
+  "launch_state": {
+   "authorization_sha256": "17a45ffdbb34c9d96e6a3adde8d2eff125dc2018c397d87689fc70d7ad990255",
+   "canonical_slot": "slot-1",
+   "countersignature_sha256": "89a02599e568ed498070076f81fdb850b51a493a0765030b3c2036732769ff70",
+   "launch_notice": {
+    "authorization_sha256": "17a45ffdbb34c9d96e6a3adde8d2eff125dc2018c397d87689fc70d7ad990255",
+    "event": "LAUNCH_NOTICE",
+    "slot": "slot-1",
+    "utc": "2026-09-18T15:58:05+00:00"
+   },
+   "ledger_sha256": "88627b05d2c2c88d9f02aa2f182a87b31bb2182f796f5d67159a1fbe0cacb472",
+   "namespace_slots": []
+  },
+  "namespace": "/root/work/k5-first-real-probe",
+  "prelaunch_report": {
+   "authorization_commit_derived": "b2bc93d5472c0bfa951850946ecba1e77612b63f",
+   "authorization_path": "/root/work/k5-real-launch-69a162d0/level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/protocol/AUTHORIZATION_ACTIVE.json",
+   "authorization_sha256": "17a45ffdbb34c9d96e6a3adde8d2eff125dc2018c397d87689fc70d7ad990255",
+   "checks": {
+    "P01": {
+     "detail": "authorized",
+     "pass": true
+    },
+    "P02": {
+     "detail": "authorization content matches the template and the preregistration",
+     "pass": true
+    },
+    "P03": {
+     "detail": "freeze commit 852b2d65c933 verified and published",
+     "pass": true
+    },
+    "P04": {
+     "detail": "authorization commit b2bc93d5472c ordered and published",
+     "pass": true
+    },
+    "P05": {
+     "detail": "all protected hashes match",
+     "pass": true
+    },
+    "P06": {
+     "detail": "executor bound, qualified and independently reviewed",
+     "pass": true
+    },
+    "P07": {
+     "detail": "host runtime identity matches",
+     "pass": true
+    },
+    "P08": {
+     "detail": "no conflicting producer",
+     "pass": true
+    },
+    "P09": {
+     "detail": "no sealed record for this protocol",
+     "pass": true
+    },
+    "P10": {
+     "detail": "CPU ceiling valid",
+     "pass": true
+    },
+    "P11": {
+     "detail": "next slot slot-1 (0 arithmetic attempts so far), launch notice committed and published",
+     "pass": true
+    },
+    "P12": {
+     "detail": "nothing predates authorization",
+     "pass": true
+    }
+   },
+   "failing_checks": [],
+   "freeze_commit_derived": "852b2d65c9332facd59771da7940ab429a7e2f2f",
+   "head": "69a162d0e81cf11c2ed1060f98dfd02469fb132e",
+   "live_host_facts": {
+    "cpu_model": "AMD EPYC-Milan Processor",
+    "flint_so_sha256": "1f7ef1f52024937f542772ff9190e2f74449228cd69a6746b6608fbbd449d138",
+    "glibc_package_version": "2.41-12+deb13u4",
+    "host": "rebaseguard-vultr-02",
+    "kernel_release": "6.12.107+deb13-amd64",
+    "libc_path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+    "libc_sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+    "logical_cpus": 8,
+    "machine": "x86_64",
+    "numpy": "2.5.2",
+    "python": "3.12.3",
+    "python_flint": "0.9.0",
+    "scipy": "1.18.1",
+    "venv_prefix": "/root/work/rbg-cusum-aux5-venv"
+   },
+   "primary_reason": null,
+   "publication_detail": {
+    "local_ref": "69a162d0e81cf11c2ed1060f98dfd02469fb132e",
+    "ls_remote": "69a162d0e81cf11c2ed1060f98dfd02469fb132e",
+    "origin_url": "https://github.com/flaggielover/ReBaseGuard.git"
+   },
+   "published_tip": "69a162d0e81cf11c2ed1060f98dfd02469fb132e",
+   "read_only": true,
+   "remote_ref": "origin/p5y-postk1-frontier",
+   "schema": "rebaseguard.p5y.k5.cusum-first-real-probe.prelaunch-report.v4",
+   "science_sha256": "9ace6896d70b7a17225c03cd6d8092e3d33089d001dd3e2736894dd866f3780a",
+   "verdict": "LAUNCH_PERMITTED"
+  },
+  "prelaunch_report_sha256": "d6386014c59b77b3ae6cdb9727746636b484c063d0d2e25b0e0955dcb90c2f4a",
+  "protocol_sha256": "9ace6896d70b7a17225c03cd6d8092e3d33089d001dd3e2736894dd866f3780a",
+  "schema": "rebaseguard.p5y.k5.cusum-real-point-executor.prelaunch-decision.v1",
+  "slot": "slot-1",
+  "verdict": "LAUNCH_PERMITTED",
+  "verified_utc_epoch": 1789749419.8644943
+ },
+ "prelaunch_decision_sha256": "5955d7a80d3fa56ab368d4fb45df7af5ffd7b80f38038ba7b7287ac07abd6760",
+ "protocol_sha256": "9ace6896d70b7a17225c03cd6d8092e3d33089d001dd3e2736894dd866f3780a",
+ "schema": "rebaseguard.p5y.k5.cusum-real-point-executor.run-state.v1",
+ "slot": "slot-1",
+ "start_epoch": 1789749419.8877425
+}
