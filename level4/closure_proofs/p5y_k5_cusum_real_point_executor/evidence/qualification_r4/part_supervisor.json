@@ -1,0 +1,255 @@
+{
+ "body": {
+  "control_pass": true,
+  "mutations": {
+   "L01_COMPLETE_WITHOUT_VALID_SEAL": {
+    "detected": true,
+    "failing": [
+     "no_complete_without_valid_seal"
+    ]
+   },
+   "L02_SCIENTIFIC_VOID_SEAL_CONFLICT_ALLOWED": {
+    "detected": true,
+    "failing": [
+     "scientific_void_conflict_refused_at_seal"
+    ]
+   },
+   "L03_VOID_SEALED_ON_TRANSIENT_DISK_FULL": {
+    "detected": true,
+    "failing": [
+     "void_class_disk_full_is_transient"
+    ]
+   },
+   "L04_LEDGER_DISAGREEMENT_IGNORED": {
+    "detected": true,
+    "failing": [
+     "ledger_disagreement_run_failed_sha",
+     "ledger_disagreement_seal_missing_in_ledger"
+    ]
+   },
+   "V01_VOID_SEAL_DROPPED": {
+    "detected": true
+   }
+  },
+  "mutations_count": "5/5",
+  "pass": true,
+  "rows": {
+   "classify_terminal_cpu": {
+    "pass": true,
+    "problems": []
+   },
+   "classify_terminal_disk": {
+    "pass": true,
+    "problems": []
+   },
+   "classify_terminal_kill": {
+    "pass": true,
+    "problems": []
+   },
+   "classify_terminal_refusal": {
+    "pass": true,
+    "problems": []
+   },
+   "classify_terminal_success": {
+    "pass": true,
+    "problems": []
+   },
+   "classify_terminal_wall": {
+    "pass": true,
+    "problems": []
+   },
+   "cpu_ceiling": {
+    "failure_class": "CPU_RLIMIT",
+    "pass": true
+   },
+   "disk_full_transient_no_seal": {
+    "failure_class": "DISK_FULL_BEFORE_SEAL",
+    "pass": true
+   },
+   "duplicate_terminal_present_is_torn": {
+    "pass": true
+   },
+   "duplicate_terminal_refused": {
+    "pass": true
+   },
+   "executor_admits_own_run_state": {
+    "pass": true
+   },
+   "executor_refuses_stale_run_state": {
+    "pass": true
+   },
+   "external_kill": {
+    "failure_class": "PROCESS_KILLED_BY_EXTERNAL_SIGNAL",
+    "pass": true
+   },
+   "ledger_disagreement_failure_class": {
+    "pass": true
+   },
+   "ledger_disagreement_run_failed_sha": {
+    "pass": true
+   },
+   "ledger_disagreement_seal_missing_in_ledger": {
+    "pass": true
+   },
+   "ledger_reconciles_cpu": {
+    "pass": true
+   },
+   "ledger_reconciles_kill": {
+    "pass": true
+   },
+   "ledger_reconciles_refusal": {
+    "pass": true
+   },
+   "ledger_reconciles_success": {
+    "pass": true
+   },
+   "ledger_seal_host_does_not_hold": {
+    "pass": true
+   },
+   "malformed_marker_is_torn": {
+    "pass": true
+   },
+   "no_complete_without_valid_seal": {
+    "pass": true
+   },
+   "no_digits_in_failure_text_cpu": {
+    "pass": true
+   },
+   "no_digits_in_failure_text_disk": {
+    "pass": true
+   },
+   "no_digits_in_failure_text_kill": {
+    "pass": true
+   },
+   "no_digits_in_failure_text_refusal": {
+    "pass": true
+   },
+   "no_digits_in_failure_text_wall": {
+    "pass": true
+   },
+   "pre_arithmetic_refusal": {
+    "got": "INTEGRITY_REFUSAL",
+    "pass": true
+   },
+   "real_launch_prelaunch_refused_no_slot": {
+    "got": {
+     "prelaunch": "PRELAUNCH_REFUSED",
+     "problems": [
+      "slot outside the preregistered output namespace"
+     ],
+     "slot_created": false
+    },
+    "pass": true
+   },
+   "scientific_void_conflict_present_is_torn": {
+    "pass": true
+   },
+   "scientific_void_conflict_refused_at_seal": {
+    "pass": true
+   },
+   "stale_terminal_marker_is_torn": {
+    "pass": true
+   },
+   "success_complete_only": {
+    "pass": true
+   },
+   "void_class_disk_full_is_transient": {
+    "pass": true
+   },
+   "wall_timeout": {
+    "failure_class": "WALL_TIMEOUT",
+    "pass": true
+   }
+  },
+  "runs": {
+   "cpu_ceiling": {
+    "events": [
+     "VALIDATED",
+     "ARITHMETIC_STARTED",
+     "VOID"
+    ],
+    "failure_class": "CPU_RLIMIT",
+    "terminal": "RUN_FAILED.json"
+   },
+   "disk_full": {
+    "events": [
+     "VALIDATED",
+     "ARITHMETIC_STARTED"
+    ],
+    "failure_class": "DISK_FULL_BEFORE_SEAL",
+    "terminal": "RUN_FAILED.json"
+   },
+   "external_kill": {
+    "events": [
+     "VALIDATED",
+     "ARITHMETIC_STARTED"
+    ],
+    "failure_class": "PROCESS_KILLED_BY_EXTERNAL_SIGNAL",
+    "terminal": "RUN_FAILED.json"
+   },
+   "pre_arithmetic_refusal": {
+    "events": [],
+    "failure_class": "INTEGRITY_REFUSAL",
+    "terminal": "RUN_FAILED.json"
+   },
+   "real_launch_prelaunch_refused": {
+    "events": null,
+    "failure_class": "PRELAUNCH_REFUSED",
+    "terminal": null
+   },
+   "success": {
+    "events": [
+     "VALIDATED",
+     "ARITHMETIC_STARTED",
+     "SEALED"
+    ],
+    "failure_class": null,
+    "terminal": "RUN_COMPLETE.json"
+   },
+   "wall_timeout": {
+    "events": [
+     "VALIDATED",
+     "ARITHMETIC_STARTED",
+     "VOID"
+    ],
+    "failure_class": "WALL_TIMEOUT",
+    "terminal": "RUN_FAILED.json"
+   }
+  }
+ },
+ "metadata": {
+  "children_cpu_seconds": 57.347129,
+  "cpu_seconds": 0.305073151,
+  "incidental": true,
+  "peak_rss_kib": 52316,
+  "wall_seconds": 58.940897941589355
+ },
+ "part": "supervisor",
+ "protocol_sha256": "1a62e5d1e2094da800743a1b189c2a4d8a07621c9581278133b0e2d19f2b1012",
+ "runtime": {
+  "cpu_model": "AMD EPYC-Milan Processor",
+  "env": {
+   "MKL_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "PYTHONHASHSEED": "0"
+  },
+  "flint_library": "3.6.0",
+  "flint_so_sha256": "1f7ef1f52024937f542772ff9190e2f74449228cd69a6746b6608fbbd449d138",
+  "glibc_package_version": "2.41-12+deb13u4",
+  "host": "rebaseguard-vultr-02",
+  "kernel_release": "6.12.107+deb13-amd64",
+  "libc_path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+  "libc_sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+  "logical_cpus": 8,
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "numpy_module": "2.5.2",
+  "python": "3.12.3",
+  "python_flint": "0.9.0",
+  "python_flint_module": "0.9.0",
+  "python_impl": "CPython",
+  "scipy": "1.18.1",
+  "venv_prefix": "/root/work/rbg-cusum-aux5-venv"
+ }
+}

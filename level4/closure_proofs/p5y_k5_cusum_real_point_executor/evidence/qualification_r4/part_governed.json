@@ -1,0 +1,300 @@
+{
+ "body": {
+  "control": {
+   "rows": {
+    "child_changed_attempt_uid_refused": {
+     "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['RUN_STATE belongs to another attempt']",
+     "pass": true
+    },
+    "child_changed_decision_digest_refused": {
+     "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['prelaunch decision digest differs']",
+     "pass": true
+    },
+    "child_coherent_binding_runs": {
+     "err": "",
+     "pass": true
+    },
+    "child_missing_run_state_refused": {
+     "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['RUN_STATE missing or malformed']",
+     "pass": true
+    },
+    "child_rechecked_bound_decision": {
+     "pass": true
+    },
+    "child_stale_run_state_refused": {
+     "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['supervisor identity differs from RUN_STATE', 'slot differs from the decision', 'attempt parameters differ from the decision']",
+     "pass": true
+    },
+    "child_wrong_supervisor_argv_refused": {
+     "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['supervisor identity differs from RUN_STATE']",
+     "pass": true
+    },
+    "child_wrong_supervisor_pid_refused": {
+     "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['supervisor identity differs from RUN_STATE']",
+     "pass": true
+    },
+    "ledger_reconciles_permitted_attempt": {
+     "pass": true
+    },
+    "permitted_synthetic_end_to_end": {
+     "events": [
+      "VALIDATED",
+      "ARITHMETIC_STARTED",
+      "SEALED"
+     ],
+     "files": [
+      "ATTEMPT_LOG.jsonl",
+      "MANUFACTURED_RECORD_SEALED.json",
+      "RUN_COMPLETE.json",
+      "RUN_STATE.json"
+     ],
+     "got": {
+      "arithmetic_started": true,
+      "failure_class": null,
+      "prelaunch": null,
+      "problems": null,
+      "terminal": "RUN_COMPLETE.json"
+     },
+     "pass": true,
+     "primary": null
+    },
+    "post_start_full_verifier_unreachable": {
+     "pass": true
+    },
+    "slot_admission_requires_supervisor": {
+     "pass": true
+    },
+    "static_single_verifier_call_site": {
+     "pass": true,
+     "refs": {
+      "backends.py": [],
+      "executor_cli.py": [],
+      "executor_core.py": [],
+      "input_adapters.py": []
+     }
+    },
+    "unsupervised_governed_mode_refused": {
+     "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['no supervised slot']",
+     "pass": true
+    },
+    "unsupervised_real_mode_refused": {
+     "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['no supervised slot']",
+     "pass": true
+    },
+    "verifier_exception_creates_no_slot": {
+     "got": {
+      "arithmetic_started": false,
+      "failure_class": "PRELAUNCH_REFUSED",
+      "prelaunch": "PRELAUNCH_REFUSED",
+      "problems": [
+       "verifier raised FileNotFoundError"
+      ],
+      "terminal": null
+     },
+     "pass": true
+    },
+    "verifier_refused_creates_no_slot": {
+     "got": {
+      "arithmetic_started": false,
+      "failure_class": "PRELAUNCH_REFUSED",
+      "prelaunch": "PRELAUNCH_REFUSED",
+      "problems": [
+       "verifier verdict 'REFUSED'",
+       "verifier checks P##..P## not all present and passing"
+      ],
+      "terminal": null
+     },
+     "pass": true
+    }
+   }
+  },
+  "control_pass": true,
+  "mutations": {
+   "N01_SLOT_CREATED_BEFORE_VERIFICATION": {
+    "detected": true,
+    "failing": [
+     "child_changed_attempt_uid_refused",
+     "child_changed_decision_digest_refused",
+     "child_coherent_binding_runs",
+     "child_missing_run_state_refused",
+     "child_rechecked_bound_decision",
+     "child_stale_run_state_refused"
+    ]
+   },
+   "N02_CHILD_GUARD_RUNS_FULL_VERIFIER": {
+    "detected": true,
+    "failing": [
+     "child_changed_attempt_uid_refused",
+     "child_changed_decision_digest_refused",
+     "child_coherent_binding_runs",
+     "child_missing_run_state_refused",
+     "child_rechecked_bound_decision",
+     "child_stale_run_state_refused"
+    ]
+   },
+   "N03_MISSING_SLOT_ADMITTED": {
+    "detected": true,
+    "failing": [
+     "slot_admission_requires_supervisor"
+    ]
+   },
+   "N04_DECISION_DIGEST_NOT_CHECKED": {
+    "detected": true,
+    "failing": [
+     "child_changed_decision_digest_refused",
+     "child_coherent_binding_runs"
+    ]
+   },
+   "N05_POST_START_FENCE_REMOVED": {
+    "detected": true,
+    "failing": [
+     "post_start_full_verifier_unreachable"
+    ]
+   }
+  },
+  "mutations_count": "5/5",
+  "pass": true,
+  "real_namespace_untouched": true,
+  "rows": {
+   "child_changed_attempt_uid_refused": {
+    "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['RUN_STATE belongs to another attempt']",
+    "pass": true
+   },
+   "child_changed_decision_digest_refused": {
+    "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['prelaunch decision digest differs']",
+    "pass": true
+   },
+   "child_coherent_binding_runs": {
+    "err": "",
+    "pass": true
+   },
+   "child_missing_run_state_refused": {
+    "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['RUN_STATE missing or malformed']",
+    "pass": true
+   },
+   "child_rechecked_bound_decision": {
+    "pass": true
+   },
+   "child_stale_run_state_refused": {
+    "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['supervisor identity differs from RUN_STATE', 'slot differs from the decision', 'attempt parameters differ from the decision']",
+    "pass": true
+   },
+   "child_wrong_supervisor_argv_refused": {
+    "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['supervisor identity differs from RUN_STATE']",
+    "pass": true
+   },
+   "child_wrong_supervisor_pid_refused": {
+    "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['supervisor identity differs from RUN_STATE']",
+    "pass": true
+   },
+   "ledger_reconciles_permitted_attempt": {
+    "pass": true
+   },
+   "permitted_synthetic_end_to_end": {
+    "events": [
+     "VALIDATED",
+     "ARITHMETIC_STARTED",
+     "SEALED"
+    ],
+    "files": [
+     "ATTEMPT_LOG.jsonl",
+     "MANUFACTURED_RECORD_SEALED.json",
+     "RUN_COMPLETE.json",
+     "RUN_STATE.json"
+    ],
+    "got": {
+     "arithmetic_started": true,
+     "failure_class": null,
+     "prelaunch": null,
+     "problems": null,
+     "terminal": "RUN_COMPLETE.json"
+    },
+    "pass": true,
+    "primary": null
+   },
+   "post_start_full_verifier_unreachable": {
+    "pass": true
+   },
+   "slot_admission_requires_supervisor": {
+    "pass": true
+   },
+   "static_single_verifier_call_site": {
+    "pass": true,
+    "refs": {
+     "backends.py": [],
+     "executor_cli.py": [],
+     "executor_core.py": [],
+     "input_adapters.py": []
+    }
+   },
+   "unsupervised_governed_mode_refused": {
+    "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['no supervised slot']",
+    "pass": true
+   },
+   "unsupervised_real_mode_refused": {
+    "err": "EXECUTOR_REFUSAL: ExecutorRefusal: UNAUTHORIZED_REAL_ARITHMETIC: authorization refused: ['no supervised slot']",
+    "pass": true
+   },
+   "verifier_exception_creates_no_slot": {
+    "got": {
+     "arithmetic_started": false,
+     "failure_class": "PRELAUNCH_REFUSED",
+     "prelaunch": "PRELAUNCH_REFUSED",
+     "problems": [
+      "verifier raised FileNotFoundError"
+     ],
+     "terminal": null
+    },
+    "pass": true
+   },
+   "verifier_refused_creates_no_slot": {
+    "got": {
+     "arithmetic_started": false,
+     "failure_class": "PRELAUNCH_REFUSED",
+     "prelaunch": "PRELAUNCH_REFUSED",
+     "problems": [
+      "verifier verdict 'REFUSED'",
+      "verifier checks P##..P## not all present and passing"
+     ],
+     "terminal": null
+    },
+    "pass": true
+   }
+  }
+ },
+ "metadata": {
+  "children_cpu_seconds": 108.073865,
+  "cpu_seconds": 0.371648782,
+  "incidental": true,
+  "peak_rss_kib": 51396,
+  "wall_seconds": 156.04374766349792
+ },
+ "part": "governed",
+ "protocol_sha256": "1a62e5d1e2094da800743a1b189c2a4d8a07621c9581278133b0e2d19f2b1012",
+ "runtime": {
+  "cpu_model": "AMD EPYC-Milan Processor",
+  "env": {
+   "MKL_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "PYTHONHASHSEED": "0"
+  },
+  "flint_library": "3.6.0",
+  "flint_so_sha256": "1f7ef1f52024937f542772ff9190e2f74449228cd69a6746b6608fbbd449d138",
+  "glibc_package_version": "2.41-12+deb13u4",
+  "host": "rebaseguard-vultr-02",
+  "kernel_release": "6.12.107+deb13-amd64",
+  "libc_path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+  "libc_sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+  "logical_cpus": 8,
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "numpy_module": "2.5.2",
+  "python": "3.12.3",
+  "python_flint": "0.9.0",
+  "python_flint_module": "0.9.0",
+  "python_impl": "CPython",
+  "scipy": "1.18.1",
+  "venv_prefix": "/root/work/rbg-cusum-aux5-venv"
+ }
+}
