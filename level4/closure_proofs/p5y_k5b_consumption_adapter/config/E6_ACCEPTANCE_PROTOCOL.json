@@ -1,0 +1,117 @@
+{
+ "L": "None for every cell and every m (L1 = None); L_k for k >= 2 is always None",
+ "cell_count": 310,
+ "cells_json": {
+  "path": "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/cells.json",
+  "sha256": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f"
+ },
+ "comparison_rule": "for every m: OBSERVED == EXPECTED as integer sets; FALSE_POSITIVES = OBSERVED - EXPECTED = {}; FALSE_NEGATIVES = EXPECTED - OBSERVED = {}; the expected sets read from the evidence file must equal expected_pass_ranges; not weakened after the result",
+ "component_pins": {
+  "level4/closure_proofs/p5y_k5_order3_readiness_audit/code/k5_minimality.py": "3a54f0fb290a9b8a07c861653d4399e6c588afdaef77ee51473f778c6c988885",
+  "level4/closure_proofs/p5y_k5b_independent_countersignature/code/k5b_check.py": "ddd54dc469375a2d64352782add8573231be07b94f7246dad83c4e55a2bf35a6"
+ },
+ "detector": "CUSUM",
+ "execution_authorized_by_this_document": false,
+ "expected_evidence": {
+  "field": "per_m[m].closed_by_k1",
+  "path": "level4/closure_proofs/p5y_k5_order3_readiness_audit/evidence/CUSUM_MINIMALITY_R1.json",
+  "sha256": "7feb576b84508c91a79e605fc190ac5da5083662ad9640aea4976c566a0c2a30"
+ },
+ "expected_pass_counts": {
+  "1": 177,
+  "2": 165,
+  "3": 164,
+  "5": 156
+ },
+ "expected_pass_ranges": {
+  "1": [
+   [
+    133,
+    309
+   ]
+  ],
+  "2": [
+   [
+    145,
+    309
+   ]
+  ],
+  "3": [
+   [
+    146,
+    309
+   ]
+  ],
+  "5": [
+   [
+    149,
+    304
+   ]
+  ]
+ },
+ "gates": {
+  "G01_PRECONDITIONS": "guard DENY; no AUTHORIZATION_ACTIVE / COUNTERSIGNATURE_ACTIVE / ATTEMPT_LEDGER / EXECUTION_BINDING_AMENDMENT; /root/work/k5-first-real-probe absent; component pins match",
+  "G02_INPUTS_BOUND": "manifest and cover pins; all 310 record sha256 equal the manifest; hashes unchanged after the run",
+  "G03_ACCEPTANCE": "OBSERVED == EXPECTED for every m; FP = FN = {}",
+  "G04_DETERMINISM": "two separate processes with different PYTHONHASHSEED give byte-identical canonical results",
+  "G05_INDEPENDENT_CROSSCHECK": "X-A frozen k5_minimality.verify reproduces CUSUM_MINIMALITY_R1 (problems = []); X-B manifest-addressed records + own cover + frozen k5b_readiness_variant pass sets equal EXPECTED and the adapter, per-cell Gamma equals the R1 boundary_rows Gamma, every H.lo <= 0",
+  "G06_SYNTHETIC_DIFFERENTIAL": "adapter pass sets equal frozen k5_minimality.scan on deterministic synthetic fixtures (frozen k5b_check generators, fixed seed, every H.lo <= 0)",
+  "G07_MUTATIONS": "M01-M14 all detected; a source replacement not matching exactly once is a harness error",
+  "G08_STATIC_FENCES": "adapter source references no evidence keys, no real-probe output, no float(/random/time; imports only stdlib and the two frozen components",
+  "G09_FAIL_CLOSED": "invalid L1 types, extra or missing m keys, missing field, symlinked record, wrong universe all refused"
+ },
+ "m_values": [
+  "1",
+  "2",
+  "3",
+  "5"
+ ],
+ "manifest": {
+  "path": "level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/evidence/closure_r1/COMPOSITE_EXPORT_MANIFEST.json",
+  "record_key": "k4_records/aux5_CUSUM_<i>_256.json",
+  "sha256": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334"
+ },
+ "mutations": {
+  "M01": "off-by-one cell indexing",
+  "M02": "final cell dropped",
+  "M03": "cell duplicated",
+  "M04": "wrong detector (SR)",
+  "M05": "wrong m",
+  "M06": "wrong L = None handling (None -> 1)",
+  "M07": "reversed inequality (non-passing rows reported)",
+  "M08": "wrong K1 record (record 200 <- record 201 bytes)",
+  "M09": "stale manifest",
+  "M10": "missing record 309",
+  "M11": "modified frozen loader",
+  "M12": "modified k5b_literal (strict -> non-strict in source)",
+  "M13": "result-dependent branch",
+  "M14": "non-deterministic ordering"
+ },
+ "obligation": "E6 of p5y_k5_cusum_first_real_probe_protocol/protocol/EXECUTION_BINDING_R4.json: implement the K5-B consumption adapter and pass its frozen acceptance test (reproduce CUSUM_MINIMALITY_R1 pass sets with L = None)",
+ "prohibitions": [
+  "no real R'''(0), R^(5), L0, U0, L1, U1 is read, formed or observed",
+  "no activation object, LAUNCH_NOTICE or slot is created",
+  "the executor is not launched",
+  "REAL_INPUT_ARITHMETIC_GUARD stays DENY"
+ ],
+ "records": {
+  "directory": "/root/work/postk1-runs/closure-r1/COMPOSITE_EXPORT/k4_records",
+  "files": "aux5_CUSUM_<i>_256.json",
+  "host": "rebaseguard-vultr-02",
+  "range": [
+   0,
+   309
+  ]
+ },
+ "schema": "rebaseguard.p5y.k5b.consumption-adapter.acceptance-protocol.v1",
+ "science_preregistration": {
+  "path": "level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/protocol/SCIENCE_PREREGISTRATION_R4.json",
+  "sha256": "9ace6896d70b7a17225c03cd6d8092e3d33089d001dd3e2736894dd866f3780a"
+ },
+ "status": "FROZEN_PRE_RESULT",
+ "universe": [
+  0,
+  309
+ ],
+ "verdict_rule": "E6_K5B_CONSUMPTION_ADAPTER = ACCEPTED iff G01-G09 all PASS; otherwise FAILED and POSITIVE consumption stays refused"
+}
