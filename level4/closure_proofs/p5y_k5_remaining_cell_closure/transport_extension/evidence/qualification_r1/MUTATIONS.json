@@ -1,0 +1,117 @@
+{
+ "detected": 19,
+ "pass": true,
+ "results": {
+  "consumption": {
+   "CM01_PREVIOUS_CELL_L": {
+    "detected": true,
+    "how": [
+     "C1 pass set m 1",
+     "C1 channel fed m 1",
+     "C1 pass set m 2"
+    ]
+   },
+   "CM02_M1_CHANNEL_FOR_ALL_M": {
+    "detected": true,
+    "how": [
+     "C1 channel fed m 2",
+     "C1 channel fed m 3",
+     "C1 channel fed m 5"
+    ]
+   },
+   "CM03_SEALED_L1_DROPPED": {
+    "detected": true,
+    "how": [
+     "C1 pass set m 1",
+     "C1 channel fed m 1",
+     "C1 pass set m 2"
+    ]
+   },
+   "CM04_M2_PREVIOUS_HULL": {
+    "detected": true,
+    "how": [
+     "C2 H.lo fed m 1",
+     "C2 M fed m 1",
+     "C2 H.lo fed m 2"
+    ]
+   },
+   "CM05_H_FLOOR_TOO_HIGH": {
+    "detected": true,
+    "how": [
+     "C2 pass set m 1",
+     "C2 H.lo fed m 1",
+     "C2 pass set m 2"
+    ]
+   },
+   "SHAM_CONSUME": {
+    "detected": false,
+    "how": []
+   }
+  },
+  "transport": {
+   "SHAM_TRANSPORT": {
+    "detected": false,
+    "how": null
+   },
+   "TM01_ETA_FIXED_AT_X1": {
+    "detected": true,
+    "how": "refused: TextRefusal: anchor drift x1 differs from the hull eta"
+   },
+   "TM02_K_J_NORMS_ON_CELL0": {
+    "detected": true,
+    "how": "output differs"
+   },
+   "TM03_S0_ON_CELL0": {
+    "detected": true,
+    "how": "output differs"
+   },
+   "TM04_C_MIN_NOT_MAX": {
+    "detected": true,
+    "how": "output differs"
+   },
+   "TM05_ANCHOR_DRIFT_X1": {
+    "detected": true,
+    "how": "refused: TextRefusal: anchor drift x1 differs from the hull eta"
+   },
+   "TM06_TRANSPORT_TO_LEFT_END": {
+    "detected": true,
+    "how": "output differs"
+   },
+   "TM07_L_FROM_U0": {
+    "detected": true,
+    "how": "output differs"
+   },
+   "TM08_M_OF_M1_FOR_ALL_M": {
+    "detected": true,
+    "how": "refused: TextRefusal: order-5 export differs from local_tower M5"
+   },
+   "TM09_HULL_ENDS_AT_LEFT": {
+    "detected": true,
+    "how": "refused: TextRefusal: hull 0 does not reproduce the sealed M5 exactly"
+   },
+   "TM10_POINT_ERRORS_DROPPED": {
+    "detected": true,
+    "how": "refused: TextRefusal: hull 0 does not reproduce the sealed M5 exactly"
+   },
+   "TM11_PIECEWISE_USES_OWN_HULL": {
+    "detected": true,
+    "how": "output differs"
+   },
+   "TM12_PIECEWISE_PREVIOUS_HULL": {
+    "detected": true,
+    "how": "output differs"
+   },
+   "TM13_M3_FLOOR_SIGN": {
+    "detected": true,
+    "how": "output differs"
+   },
+   "TM14_M_EXPORT_WRONG_ORDER": {
+    "detected": true,
+    "how": "output differs"
+   }
+  }
+ },
+ "schema": "rebaseguard.p5y.k5.remaining-cell-closure.text-mutations.v1",
+ "shams_reproduce": true,
+ "total": 19
+}
