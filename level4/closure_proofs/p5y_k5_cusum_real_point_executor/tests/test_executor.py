@@ -42,6 +42,23 @@ class Static(unittest.TestCase):
         core = (CODE / "executor_core.py").read_text()
         self.assertNotIn("authorization_bundle", core)
 
+    def test_r4_single_verifier_call_site(self):
+        for f in ("executor_core.py", "backends.py", "executor_cli.py", "input_adapters.py"):
+            t = ast.unparse(ast.parse((CODE / f).read_text()))
+            for x in ("prelaunch_decision(", "AI.validate(", "validate_with(", "run_verifier(", "PV.verify(",
+                  "prelaunch_verify.verify("):
+                self.assertNotIn(x, t, (f, x))
+        sup = ast.unparse(ast.parse((CODE / "supervisor.py").read_text()))
+        self.assertEqual(sup.count("AI.prelaunch_decision(ctx)"), 1)
+        body = sup.split("def supervise")[1].split("def finish")[0]
+        self.assertLess(body.index("governed_prelaunch("), body.index("slot.mkdir()"))
+
+    def test_r4_fence_first_in_validate_with(self):
+        tree = ast.parse((CODE / "authorization_interface.py").read_text())
+        fn = next(n for n in tree.body if isinstance(n, ast.FunctionDef) and n.name == "validate_with")
+        body = [st for st in fn.body if not (isinstance(st, ast.Expr) and isinstance(st.value, ast.Constant))]
+        self.assertIn("EC.arithmetic_started()", ast.unparse(body[1]))
+
     def test_d2_markers_written_only_through_lifecycle(self):
         sv = (CODE / "supervisor.py").read_text()
         self.assertNotIn("write_text(", sv.split("def supervise")[1])
@@ -89,8 +106,8 @@ class Static(unittest.TestCase):
         import make_protocol_executor as MP
         groups = {"P": MP.production_mutations(), "A": MP.authorization_mutations(), "V": MP.void_mutations(),
                   "C": MP.cramer_mutations(), "D": MP.d1_mutations(), "L": MP.lifecycle_mutations(),
-                  "R": MP.recovery_mutations()}
-        self.assertEqual([len(groups[k]) for k in "PAVCDLR"], [4, 3, 1, 1, 4, 4, 2])
+                  "R": MP.recovery_mutations(), "N": MP.governed_mutations()}
+        self.assertEqual([len(groups[k]) for k in "PAVCDLRN"], [4, 3, 1, 1, 4, 4, 2, 5])
         for muts in groups.values():
             for m in muts:
                 self.assertEqual((CODE / m["file"]).read_text().count(m["old"]), 1, m["id"])

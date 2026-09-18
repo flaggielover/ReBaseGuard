@@ -78,19 +78,42 @@ def guard_decision(ctx=None) -> dict:
 
 
 def decide(policy, ctx) -> dict:
-    """Pure policy decision. DENY denies always. EXTERNAL_AUTHORIZATION permits only if authorization_interface.validate
-    accepts: the frozen prelaunch_verify.verify called IN PROCESS with its defaults, its returned object consumed
-    directly, the executor binding and the countersignature (EXECUTOR_SPEC_R3.md R3-1). Any other value denies."""
+    """Pure policy decision. DENY denies always. EXTERNAL_AUTHORIZATION permits only if the running attempt matches the
+    single prelaunch decision the supervisor bound into RUN_STATE (authorization_interface.bound_decision_problems: a
+    PURE re-check; the full verifier is never called here, EXECUTOR_SPEC_R4.md R4-2). Any other value denies."""
     if policy == "DENY":
         return {"policy": "DENY", "real_arithmetic_permitted": False, "reason": "REAL_INPUT_ARITHMETIC_GUARD = DENY"}
     if policy == "EXTERNAL_AUTHORIZATION":
         import authorization_interface as AI
-        ok, problems, binding = AI.validate(ctx)
-        verified_utc = binding.pop("verified_utc_epoch", None)
-        return {"policy": policy, "real_arithmetic_permitted": ok, "binding": binding, "verified_utc_epoch": verified_utc,
-                "reason": "in-process prelaunch verification accepted" if ok
+        problems = AI.bound_decision_problems(ctx)
+        d = bound_decision(ctx) if not problems else {}
+        binding = {k: d.get(k) for k in ("authorization_path", "authorization_sha256", "execution_binding_amendment_sha256",
+                                         "countersignature_sha256", "head", "prelaunch_report_sha256")}
+        binding.update({"prelaunch_verdict": d.get("verdict"), "prelaunch_decision_sha256": ctx.prelaunch_decision_sha256
+                        if not problems else None})
+        return {"policy": policy, "real_arithmetic_permitted": not problems, "binding": binding,
+                "verified_utc_epoch": d.get("verified_utc_epoch"),
+                "reason": "bound prelaunch decision re-checked" if not problems
                 else f"authorization refused: {[mask(x) for x in problems[:5]]}"}
     return {"policy": policy, "real_arithmetic_permitted": False, "reason": f"unrecognized guard policy {policy!r}: DENY"}
+
+
+def bound_decision(ctx) -> dict:
+    import lifecycle as LC
+    state, _ = LC.load_json(Path(ctx.output_dir) / LC.RUN_STATE)
+    return (state or {}).get("prelaunch_decision") or {}
+
+
+_ARITHMETIC_STARTED = []
+
+
+def arithmetic_started() -> bool:
+    """Process latch: set immediately before ARITHMETIC_STARTED; the full verifier is unreachable afterwards."""
+    return bool(_ARITHMETIC_STARTED)
+
+
+def _mark_arithmetic_started() -> None:
+    _ARITHMETIC_STARTED.append(True)
 
 
 def mask(text) -> str:
@@ -101,7 +124,8 @@ def mask(text) -> str:
 
 def enforce_guard(backend, ctx=None) -> dict:
     decision = guard_decision(ctx)
-    if getattr(backend, "real_input", True) and not decision["real_arithmetic_permitted"]:
+    if (getattr(backend, "real_input", True) or getattr(backend, "governed", False)) \
+            and not decision["real_arithmetic_permitted"]:
         raise ExecutorRefusal(f"UNAUTHORIZED_REAL_ARITHMETIC: {decision['reason']}")
     return decision
 
@@ -126,6 +150,28 @@ class ExecutionContext:
     require_runtime_match: bool = False
     executor_binding_sha256: str = "UNBOUND_QUALIFICATION"
     attempt_uid: str | None = None                        # set by the supervisor (RUN_STATE); None in-process
+    prelaunch_decision_sha256: str | None = None          # governed attempts: the digest bound in RUN_STATE
+
+
+def standard_context(binding, out, **kw) -> "ExecutionContext":
+    """The preregistered context for a binding and an output slot (shared by the supervisor and the executor child)."""
+    p = prereg()
+    return ExecutionContext(k1_binding=binding, output_dir=out, producer_identity_sha256=p["producer_identity_sha256"],
+                            protocol_sha256=sha(SCIENCE_FILE.read_bytes()),
+                            runtime_identity_sha256=p["host_runtime_identity_sha256"], **kw)
+
+
+def amendment_binding() -> str:
+    """The executor binding of a governed attempt: sha256 of the protocol's EXECUTION_BINDING_AMENDMENT.json bytes."""
+    path = paths.PROTOCOL_NS / "protocol/EXECUTION_BINDING_AMENDMENT.json"
+    return sha(path.read_bytes()) if path.is_file() and not path.is_symlink() else "UNBOUND"
+
+
+def guard_policy():
+    try:
+        return json.loads(GUARD_FILE.read_text()).get("policy")
+    except (OSError, ValueError, AttributeError):
+        return None
 
 
 BINDING_KEYS = {"kind", "detector", "k1_cell_index", "left", "right", "C_upper", "C_evaluation", "record_sha256",
@@ -194,22 +240,24 @@ def validate_context(ctx: ExecutionContext, backend) -> dict:
         diff = runtime_differences(p["host_runtime_contract"], PV.live_host_facts())
         if diff:
             raise ExecutorRefusal(f"RUNTIME_MISMATCH: {diff}")
-    slot_problems = slot_admission(Path(ctx.output_dir), ctx.attempt_uid)
+    supervised = bool(backend.real_input or getattr(backend, "governed", False))
+    slot_problems = slot_admission(Path(ctx.output_dir), ctx.attempt_uid, require_supervisor=supervised)
     if slot_problems:
         raise ExecutorRefusal(f"STALE_OUTPUT_NAMESPACE: {slot_problems}")
     return p
 
 
-def slot_admission(out: Path, attempt_uid) -> list:
-    """The executor's slot is empty (in-process) or holds exactly the supervisor's RUN_STATE for THIS attempt."""
+def slot_admission(out: Path, attempt_uid, require_supervisor: bool = False) -> list:
+    """The executor's slot is empty (in-process) or holds exactly the supervisor's RUN_STATE for THIS attempt. A real or
+    governed attempt REQUIRES that supervised slot (EXECUTOR_SPEC_R4.md R4-3)."""
     import lifecycle as LC
     if not out.exists():
-        return []
+        return ["SUPERVISOR_REQUIRED: no supervised slot"] if require_supervisor else []
     if not out.is_dir():
         return ["output path is not a directory"]
     entries = sorted(e.name for e in out.iterdir())
     if not entries:
-        return [] if attempt_uid is None else ["no RUN_STATE for a supervised attempt"]
+        return [] if attempt_uid is None and not require_supervisor else ["no RUN_STATE for a supervised attempt"]
     if attempt_uid is None or entries != [LC.RUN_STATE]:
         return [f"unexpected entries {entries[:4]}"]
     state, problem = LC.load_json(out / LC.RUN_STATE)
@@ -362,6 +410,7 @@ def execute(backend, ctx: ExecutionContext) -> dict:
             observed_precision = flint_ctx.prec
             if backend.real_input and not authorization_still_bound(decision):
                 raise ExecutorRefusal("AUTHORIZATION_CHANGED_AFTER_VERIFICATION")
+            _mark_arithmetic_started()
             log.emit("ARITHMETIC_STARTED")
             stages = run_stages_before_enclosure(backend, ctx)
             enc = enclosure_stages(stages, x1)
@@ -424,6 +473,8 @@ def void_class(exc) -> str | None:
         return None
     if isinstance(exc, KeyboardInterrupt):
         return None
+    if type(exc).__name__ == "PostStartVerifierCall":          # an executor defect, never a protocol VOID
+        return None
     text = str(exc)
     if text.startswith("CPU_RLIMIT"):
         return "CPU_RLIMIT"
@@ -471,6 +522,12 @@ def producer_gates(s: dict, extra: dict, pins_start: dict, pins_seal: dict, log:
                "verified_utc": verified, "arithmetic_started_utc": started,
                "note": "git ordering freeze < amendment < authorization is prelaunch P04, run in process"}
         q14 = {"pass": decision["real_arithmetic_permitted"] is True and order_ok, "mode": "REAL"}
+    elif getattr(backend, "governed", False):                  # governed qualification path (manufactured input)
+        b = decision.get("binding") or {}
+        q01 = {"pass": decision["real_arithmetic_permitted"] is True and b.get("prelaunch_verdict") == "LAUNCH_PERMITTED",
+               "mode": "HARNESS_ANALOGUE", "note": "governed synthetic launch: bound prelaunch decision re-checked"}
+        q16 = {"pass": order_ok, "mode": "HARNESS_ANALOGUE", "note": "event order only"}
+        q14 = {"pass": decision["real_arithmetic_permitted"] is True and order_ok, "mode": "HARNESS_ANALOGUE"}
     else:
         q01 = {"pass": decision["real_arithmetic_permitted"] is False and decision["policy"] is not None,
                "mode": "HARNESS_ANALOGUE", "note": "guard decision recorded before arithmetic; no prelaunch for non-real input"}

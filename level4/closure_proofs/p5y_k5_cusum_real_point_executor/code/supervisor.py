@@ -1,10 +1,14 @@
 """Supervisor of one executor attempt and its recovery mode (EXECUTOR_SPEC_R2.md R2-2; EXECUTOR_SPEC_R3.md R3-2 / R3-3).
 
-    python -B code/supervisor.py launch  --namespace ROOT --slot N --mode real|manufactured|burn|diskfull
+    python -B code/supervisor.py launch  --namespace ROOT --slot N --mode real|governed_manufactured|manufactured|burn|diskfull
                                          [--fixture-id XF..] [--cpu-soft S --cpu-hard H --wall W]
     python -B code/supervisor.py recover --namespace ROOT
 
 LAUNCH (SCIENCE_PREREGISTRATION_R4.completion_semantics, retry_policy.slots_and_ledger):
+  governed modes (real; governed_manufactured for qualification), EXECUTOR_SPEC_R4.md R4-1: BEFORE anything exists, the
+  slot must be free and inside the preregistered namespace, the guard policy must be EXTERNAL_AUTHORIZATION, and THE
+  single authoritative verification (authorization_interface.prelaunch_decision: the frozen prelaunch_verify.verify in
+  process, defaults) must PASS; otherwise PRELAUNCH_REFUSED with no slot, no RUN_STATE and no VOID. Only then:
   creates <ROOT>/slot-N (refused if it exists) and writes RUN_STATE.json atomically (pid, exact argv, boot id, start
   epoch, authorization sha256, slot, attempt_uid, protocol sha256, executor identity); launches code/executor_cli.py
   with RLIMIT_CPU (soft, hard) set before exec; runs a wall watchdog (SIGUSR1 -> the executor seals VOID of cost;
@@ -81,21 +85,55 @@ def seal_summary(slot: Path, mode: str, uid: str) -> dict:
     return out
 
 
+GOVERNED = ("real", "governed_manufactured")
+
+
+def fixture_spec(fid: str) -> dict:
+    proto = json.loads((paths.NS / "config/EXECUTOR_QUALIFICATION_PROTOCOL.json").read_text())
+    return next(f for f in proto["fixtures"] if f["id"] == fid)
+
+
+def governed_prelaunch(slot: Path, mode: str, fixture_id=None) -> dict:
+    """R4-1: the single authoritative pre-arithmetic launch decision, taken while slot-N does NOT exist."""
+    import authorization_interface as AI
+    import executor_core as EC
+    import input_adapters as IA
+    p = EC.prereg()
+    if str(slot.parent) != p["output_namespace"]:
+        return {"permitted": False, "problems": ["slot outside the preregistered output namespace"], "decision": None}
+    policy = EC.guard_policy()
+    if policy != "EXTERNAL_AUTHORIZATION":
+        return {"permitted": False, "problems": [f"guard policy {policy!r}: no verification attempted"], "decision": None}
+    binding = IA.RealInputAdapter().bind() if mode == "real" else IA.ManufacturedInputAdapter().bind(fixture_spec(fixture_id))
+    ctx = EC.standard_context(binding, slot, executor_binding_sha256=EC.amendment_binding())
+    ok, problems, decision = AI.prelaunch_decision(ctx)           # THE single authoritative verification
+    return {"permitted": ok, "problems": problems, "decision": decision}
+
+
 def supervise(slot: Path, mode: str, *, cpu_soft: int, cpu_hard: int, wall: float, fixture_id=None, cli: Path = CLI,
               argv=None) -> dict:
     """`cli` differs from code/executor_cli.py only in qualification mutant tests (a mutant-shadowing wrapper)."""
     slot = Path(slot)
     if slot.exists() or slot.is_symlink():
         raise LC.MarkerError(f"SLOT_EXISTS: {slot}")
+    decision = None
+    if mode in GOVERNED:
+        pre = governed_prelaunch(slot, mode, fixture_id)
+        if not pre["permitted"]:
+            return {"terminal": None, "prelaunch": "PRELAUNCH_REFUSED", "failure_class": "PRELAUNCH_REFUSED",
+                    "problems": [LC.mask_digits(x) for x in pre["problems"][:6]], "slot_created": slot.exists(),
+                    "arithmetic_started": False}
+        decision = pre["decision"]
     slot.parent.mkdir(parents=True, exist_ok=True)
     slot.mkdir()
     uid = secrets.token_hex(16)
     boot0 = LC.boot_id()
     state = LC.build_run_state(pid=os.getpid(), argv=list(argv if argv is not None else own_cmdline()), boot=boot0,
                                start_epoch=time.time(),
-                               authorization_sha256=_sha_file(AUTH_ACTIVE) if mode == "real" else "NOT_APPLICABLE_MANUFACTURED",
+                               authorization_sha256=decision["authorization_sha256"] if decision else "NOT_APPLICABLE_MANUFACTURED",
                                slot=slot.name, attempt_uid=uid, protocol_sha256=_sha_file(SCIENCE_FILE),
-                               executor_identity_sha256=executor_identity(), mode="real" if mode == "real" else "manufactured")
+                               executor_identity_sha256=executor_identity(), mode="real" if mode == "real" else "manufactured",
+                               prelaunch_decision=decision)
     LC.write_new(slot, LC.RUN_STATE, state)
 
     def limits():
@@ -104,6 +142,8 @@ def supervise(slot: Path, mode: str, *, cpu_soft: int, cpu_hard: int, wall: floa
     env = dict(os.environ, OMP_NUM_THREADS="1", OPENBLAS_NUM_THREADS="1", MKL_NUM_THREADS="1", NUMEXPR_NUM_THREADS="1",
                PYTHONHASHSEED="0")
     cmd = [sys.executable, "-B", str(cli), mode, "--output-dir", str(slot), "--attempt-uid", uid]
+    if decision is not None:
+        cmd += ["--decision-sha256", state["prelaunch_decision_sha256"]]
     if fixture_id:
         cmd += ["--fixture-id", fixture_id]
     # child output goes to a private temporary directory OUTSIDE the namespace: the executor admits only RUN_STATE in
@@ -229,7 +269,7 @@ def main(argv=None) -> int:
     la = sub.add_parser("launch")
     la.add_argument("--namespace", required=True)
     la.add_argument("--slot", type=int, required=True)
-    la.add_argument("--mode", choices=("real", "manufactured", "burn", "diskfull"), required=True)
+    la.add_argument("--mode", choices=("real", "governed_manufactured", "manufactured", "burn", "diskfull"), required=True)
     la.add_argument("--fixture-id")
     la.add_argument("--cpu-soft", type=int, default=ceil["per_attempt_cpu_seconds_soft"])
     la.add_argument("--cpu-hard", type=int, default=ceil["per_attempt_cpu_seconds_rlimit"])
@@ -243,7 +283,9 @@ def main(argv=None) -> int:
         return 0 if all(v["action"] != "ADJUDICATION_REQUIRED" for v in r.values()) else 2
     r = supervise(Path(a.namespace) / PR.slot_dir(a.slot), a.mode, cpu_soft=a.cpu_soft, cpu_hard=a.cpu_hard,
                   wall=a.wall, fixture_id=a.fixture_id)
-    print(json.dumps({k: r[k] for k in ("terminal", "failure_class", "arithmetic_started")}))
+    print(json.dumps({k: r.get(k) for k in ("terminal", "failure_class", "arithmetic_started", "prelaunch", "problems")}))
+    if r.get("prelaunch") == "PRELAUNCH_REFUSED":
+        return 3
     return 0 if r["failure_class"] is None else 1
 
 

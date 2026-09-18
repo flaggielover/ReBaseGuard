@@ -445,6 +445,11 @@ def part_recovery(proto, args):
     return QD.d3_part(proto)
 
 
+def part_governed(proto, args):
+    import qualify_governed as QG4
+    return QG4.governed_part(proto)
+
+
 def part_inherited_r4(proto, args):
     os.environ.pop("O3R4_DEV_PROTOCOL_PATH", None)
     spec = importlib.util.spec_from_file_location("qualify_r4_inherited", paths.R4_NS / "code/qualify_r4.py")
@@ -556,10 +561,10 @@ def mutant_check(args):
 PARTS = {"fixtures": part_fixtures, "refusals": part_refusals, "separation": part_separation,
          "crosscheck": part_crosscheck, "smoke": part_smoke, "inherited_r4": part_inherited_r4, "runtime": part_runtime,
          "fence": part_fence, "mutations": part_mutations, "order2_reference": part_order2_reference,
-         "authorization": part_authorization, "supervisor": part_supervisor, "recovery": part_recovery,
+         "authorization": part_authorization, "supervisor": part_supervisor, "recovery": part_recovery, "governed": part_governed,
          "cramer_contract": part_cramer_contract}
 ORDER = ["smoke", "order2_reference", "mutations", "inherited_r4", "fixtures", "fixtures_replay", "refusals", "separation",
-         "crosscheck", "authorization", "supervisor", "recovery", "cramer_contract", "runtime", "fence"]
+         "crosscheck", "authorization", "supervisor", "recovery", "governed", "cramer_contract", "runtime", "fence"]
 
 
 def run_part(args):
@@ -591,6 +596,7 @@ def assemble(proto, outdir: Path) -> dict:
         "EG03_real_input_arithmetic_guard_deny": all(B["refusals"]["tests"][t]["pass"] for t in
                                                      ("guard_deny_real_backend_real_binding", "guard_deny_production_backend_direct"))
         and B["supervisor"]["rows"]["pre_arithmetic_refusal"]["pass"]
+        and B["supervisor"]["rows"]["real_launch_prelaunch_refused_no_slot"]["pass"]
         and B["authorization"]["rows"]["guard_frozen_policy_deny"]["pass"]
         and B["authorization"]["rows"]["guard_external_policy_refuses_live"]["pass"],
         "EG04_qualification_science_separation": B["separation"]["pass"],
@@ -608,7 +614,8 @@ def assemble(proto, outdir: Path) -> dict:
                                                      if k.startswith(("countersignature_", "binding_")))
         and all(B["authorization"]["mutations"][m["id"]]["detected"] for m in proto["authorization_mutations"]),
         "EG15_attempt_supervision_and_void_sealing": all(B["supervisor"]["rows"][k]["pass"] for k in (
-            "success_complete_only", "pre_arithmetic_refusal", "cpu_ceiling", "wall_timeout", "external_kill"))
+            "success_complete_only", "pre_arithmetic_refusal", "real_launch_prelaunch_refused_no_slot", "cpu_ceiling",
+            "wall_timeout", "external_kill"))
         and all(B["supervisor"]["mutations"][m["id"]]["detected"] for m in proto["void_mutations"]),
         "EG16_production_stack_mutations": smk["production_mutations_pass"],
         "EG17_cramer_compatibility_contract": B["cramer_contract"]["pass"],
@@ -616,6 +623,7 @@ def assemble(proto, outdir: Path) -> dict:
         "EG19_D2_marker_lifecycle_and_ledger": B["supervisor"]["pass"],
         "EG20_D3_reboot_recovery": B["recovery"]["pass"],
         "EG21_D4_run_provenance": provenance_gate(proto, outdir),
+        "EG22_R4_governed_launch_single_decision": B["governed"]["pass"],
     }
     verdict = "QUALIFIED_AWAITING_EXTERNAL_AUTHORIZATION" if all(gates.values()) else (
         "NOT_READY" if not (gates["EG01_manufactured_fixtures_truth_and_expected_verdicts"] and gates["EG02_fail_closed_refusals"]
@@ -630,6 +638,9 @@ def assemble(proto, outdir: Path) -> dict:
             "d1_authorization_mutations": B["authorization"]["mutations_count"],
             "d2_lifecycle_and_void_mutations": B["supervisor"]["mutations_count"],
             "d3_recovery_mutations": B["recovery"]["mutations_count"],
+            "r4_governed_mutations": B["governed"]["mutations_count"],
+            "r4_governed_rows": {k: v["pass"] for k, v in B["governed"]["rows"].items()},
+            "r4_real_namespace_untouched": B["governed"]["real_namespace_untouched"],
             "order2_reference": {k: B["order2_reference"][k] for k in ("compare", "comparator_mutant_refused", "pass")},
             "supervisor_runs": B["supervisor"]["runs"],
             "d1_rows": {k: v["pass"] for k, v in B["authorization"]["rows"].items()},

@@ -319,7 +319,11 @@ def supervisor_runs(proto, root: Path, SV=None, cli=None) -> dict:
         return SV.supervise(root / name / "slot-1", mode, fixture_id=fid if fixture else None, **lim, **kw)
 
     runs["success"] = run("success", "manufactured", full)
-    runs["pre_arithmetic_refusal"] = run("refusal", "real", full, fixture=False)
+    # r4 (EXECUTOR_SPEC_R4.md R4-1): a real launch under DENY is PRELAUNCH_REFUSED before any slot exists
+    runs["real_launch_prelaunch_refused"] = run("prelaunch", "real", full, fixture=False)
+    # a refusal AFTER the slot exists but before arithmetic (the D2 lifecycle case): a second attempt of an already
+    # sealed fixture in the same namespace is refused by the executor (FINALIZED_ADDRESS_EXISTS) -> RUN_FAILED
+    runs["pre_arithmetic_refusal"] = SV.supervise(root / "success" / "slot-2", "manufactured", fixture_id=fid, **full, **kw)
     runs["cpu_ceiling"] = run("cpu", "burn", T["cpu_limit"])
     runs["wall_timeout"] = run("wall", "burn", T["wall_timeout"])
     holder = {}
@@ -351,11 +355,18 @@ def expected_runs(runs: dict, root: Path) -> dict:
                                                                      "RUN_COMPLETE.json", "RUN_STATE.json"]
         and s["marker"]["sealed_record_sha256"] == sha((root / "success/slot-1/MANUFACTURED_RECORD_SEALED.json").read_bytes())
         and len(s["marker"]["qualification_gates"]) == 16 and s["events"] == ["VALIDATED", "ARITHMETIC_STARTED", "SEALED"])
+    r = runs["real_launch_prelaunch_refused"]
+    rows["real_launch_prelaunch_refused_no_slot"] = _row(
+        r.get("prelaunch") == "PRELAUNCH_REFUSED" and r.get("terminal") is None and r.get("slot_created") is False
+        and not (root / "prelaunch").exists(), got={k: r.get(k) for k in ("prelaunch", "problems", "slot_created")})
     r = runs["pre_arithmetic_refusal"]
-    rows["pre_arithmetic_refusal"] = _row(r["terminal"] == "RUN_FAILED.json" and r["failure_class"] == "INTEGRITY_REFUSAL"
-                                          and r["marker"]["arithmetic_started"] is False and r["events"] == []
-                                          and files("refusal") == ["RUN_FAILED.json", "RUN_STATE.json"]
-                                          and "UNAUTHORIZED_REAL_ARITHMETIC" in (r["marker"]["supervisor_evidence"]["integrity_refusal"] or ""))
+    refused_slot = root / "success" / "slot-2"
+    rows["pre_arithmetic_refusal"] = _row(
+        r["terminal"] == "RUN_FAILED.json" and r["failure_class"] == "INTEGRITY_REFUSAL"
+        and r["marker"]["arithmetic_started"] is False and r["events"] == []
+        and sorted(p.name for p in refused_slot.iterdir()) == ["RUN_FAILED.json", "RUN_STATE.json"]
+        and "FINALIZED_ADDRESS_EXISTS" in (r["marker"]["supervisor_evidence"]["integrity_refusal"] or ""),
+        got=r.get("failure_class"))
     for key, name, cls in (("cpu_ceiling", "cpu", "CPU_RLIMIT"), ("wall_timeout", "wall", "WALL_TIMEOUT")):
         r = runs[key]
         rows[key] = _row(r["terminal"] == "RUN_FAILED.json" and r["failure_class"] == cls and r["marker"]["arithmetic_started"]
@@ -373,11 +384,12 @@ def expected_runs(runs: dict, root: Path) -> dict:
     rows["disk_full_transient_no_seal"] = _row(r["failure_class"] == "DISK_FULL_BEFORE_SEAL" and r["marker"]["arithmetic_started"]
                                                and not any(n in LC.ALL_SEALS for n in files("disk")),
                                                failure_class=r["failure_class"])
-    for name in ("success", "refusal", "cpu", "wall", "kill", "disk"):
-        c = LC.classify(root / name / "slot-1", current_boot=LC.boot_id(), pid_alive_with_argv=lambda *a: False)
+    for name, slot_path in (("success", "success/slot-1"), ("refusal", "success/slot-2"), ("cpu", "cpu/slot-1"),
+                            ("wall", "wall/slot-1"), ("kill", "kill/slot-1"), ("disk", "disk/slot-1")):
+        c = LC.classify(root / slot_path, current_boot=LC.boot_id(), pid_alive_with_argv=lambda *a: False)
         rows[f"classify_terminal_{name}"] = _row(c["class"] != "E" and c["terminal"] is not None, problems=c["problems"][:2])
         # no numbers outside the sealed record: masked traceback / refusal, events without values
-        text = "".join((root / name / "slot-1" / f).read_text() for f in ("RUN_FAILED.json",) if (root / name / "slot-1" / f).exists())
+        text = "".join((root / slot_path / f).read_text() for f in ("RUN_FAILED.json",) if (root / slot_path / f).exists())
         if text:
             fail = json.loads(text)
             rows[f"no_digits_in_failure_text_{name}"] = _row(not any(ch.isdigit() for ch in fail["traceback"]
@@ -452,8 +464,8 @@ def marker_faults(root: Path, EC, LC, SV) -> dict:
     # ledger reconciliation
     led = _ledger_for(ok_slot)
     rows["ledger_reconciles_success"] = _row(LC.reconcile(ok_slot, led) == [])
-    for key, name in (("cpu", "cpu"), ("refusal", "refusal"), ("kill", "kill")):
-        sl = root / name / "slot-1"
+    for key, rel in (("cpu", "cpu/slot-1"), ("refusal", "success/slot-2"), ("kill", "kill/slot-1")):
+        sl = root / rel
         rows[f"ledger_reconciles_{key}"] = _row(LC.reconcile(sl, _ledger_for(sl)) == [])
     cpu_slot = root / "cpu" / "slot-1"
     bad = _ledger_for(cpu_slot)
@@ -502,8 +514,8 @@ def d2_part(proto) -> dict:
             mods = {"EC": EC, "LC": LC, "SV": SV}
             mods[targets[mut["file"]]] = variant(mut["file"], mut)
             sub = root / f"mut_{mut['id']}"
-            for name in ("success", "cpu", "refusal", "kill"):
-                _copy_slot(root / name / "slot-1", sub / name / "slot-1")
+            for rel in ("success/slot-1", "success/slot-2", "cpu/slot-1", "kill/slot-1"):
+                _copy_slot(root / rel, sub / rel)
             mr = marker_faults(sub, mods["EC"], mods["LC"], mods["SV"])
             failing = [k for k, v in mr.items() if not v["pass"]]
             muts[mut["id"]] = {"detected": bool(failing), "failing": failing[:6]}

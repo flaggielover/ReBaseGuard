@@ -15,7 +15,8 @@ EXECUTOR_SOURCES = ["code/paths.py", "code/executor_core.py", "code/backends.py"
                     "code/qualification_gates.py", "code/consumer.py"]
 QUALIFICATION_SOURCES = ["code/smoke.py", "code/exec_fixtures.py", "code/qualify_executor.py", "code/make_protocol_executor.py",
                          "config/REAL_INPUT_GUARD.json", "config/EXTERNAL_AUTHORIZATION_TEMPLATE.json",
-                         "config/FIXTURE_LIMITS.json", "EXECUTOR_SPEC.md", "EXECUTOR_SPEC_R2.md", "EXECUTOR_SPEC_R3.md", "TRUST_MODEL.md"]
+                         "config/FIXTURE_LIMITS.json", "EXECUTOR_SPEC.md", "EXECUTOR_SPEC_R2.md", "EXECUTOR_SPEC_R3.md", "EXECUTOR_SPEC_R4.md",
+                         "TRUST_MODEL.md", "code/qualify_d1d4.py", "code/qualify_governed.py"]
 V = {"S": "SUPPORTS_K5B_FIRST_CELL", "I": "INCONCLUSIVE", "C": "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
      "P": "POINT_POSITIVE", "N": "POINT_NEGATIVE", "U": "POINT_UNDETERMINED"}
 
@@ -157,6 +158,26 @@ def recovery_mutations():
     return [{"id": i, "file": f, "old": o, "new": n, "required": True} for i, f, o, n in M]
 
 
+def governed_mutations():
+    """N01-N05: r4 launch-orchestration mutants (detected in the governed end-to-end suite, EXECUTOR_SPEC_R4.md R4-4)."""
+    M = [
+        ("N01_SLOT_CREATED_BEFORE_VERIFICATION", "supervisor.py",
+         "    if mode in GOVERNED:\n        pre = governed_prelaunch(slot, mode, fixture_id)",
+         "    if mode in GOVERNED:\n        slot.mkdir(parents=True)\n        pre = governed_prelaunch(slot, mode, fixture_id)"),
+        ("N02_CHILD_GUARD_RUNS_FULL_VERIFIER", "executor_core.py",
+         "        problems = AI.bound_decision_problems(ctx)", "        problems = AI.validate(ctx)[1]"),
+        ("N03_MISSING_SLOT_ADMITTED", "executor_core.py",
+         '        return ["SUPERVISOR_REQUIRED: no supervised slot"] if require_supervisor else []', "        return []"),
+        ("N04_DECISION_DIGEST_NOT_CHECKED", "authorization_interface.py",
+         '    if digest != state.get("prelaunch_decision_sha256") or digest != ctx.prelaunch_decision_sha256:',
+         "    if False:"),
+        ("N05_POST_START_FENCE_REMOVED", "authorization_interface.py",
+         "    if EC.arithmetic_started():                                      # post-start fence: no verifier code runs",
+         "    if False:"),
+    ]
+    return [{"id": i, "file": f, "old": o, "new": n, "required": True} for i, f, o, n in M]
+
+
 def void_mutations():
     """V01: VOID sealing dropped (detected by the supervisor CPU-limit test)."""
     return [{"id": "V01_VOID_SEAL_DROPPED", "file": "executor_core.py",
@@ -250,6 +271,7 @@ def build(dev: bool) -> dict:
         "d1_mutations": d1_mutations(),
         "lifecycle_mutations": lifecycle_mutations(),
         "recovery_mutations": recovery_mutations(),
+        "governed_mutations": governed_mutations(),
         "cramer_mutations": cramer_mutations(),
         "supervisor_tests": {"fixture": "XF01_positive_L1", "cpu_limit": {"cpu_soft": 20, "cpu_hard": 40, "wall": 600},
                              "wall_timeout": {"cpu_soft": 600, "cpu_hard": 900, "wall": 15},

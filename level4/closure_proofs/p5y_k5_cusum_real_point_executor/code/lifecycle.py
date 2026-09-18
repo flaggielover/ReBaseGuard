@@ -32,7 +32,7 @@ COMPLETE_SCHEMA = "rebaseguard.p5y.k5.cusum-real-point-executor.run-complete.v1"
 FAILED_SCHEMA = "rebaseguard.p5y.k5.cusum-real-point-executor.run-failed.v1"
 OUTCOME_KEYS = {"event", "slot", "arithmetic_started", "failure_class", "run_failed_sha256", "sealed_record_sha256"}
 STATE_KEYS = {"schema", "pid", "argv", "boot_id", "start_epoch", "authorization_sha256", "slot", "attempt_uid",
-              "protocol_sha256", "executor_identity_sha256", "mode"}
+              "protocol_sha256", "executor_identity_sha256", "mode", "prelaunch_decision", "prelaunch_decision_sha256"}
 
 
 class MarkerError(RuntimeError):
@@ -146,10 +146,14 @@ def seal_valid(path: Path, attempt_uid) -> tuple[bool, str]:
 
 
 def build_run_state(*, pid, argv, boot, start_epoch, authorization_sha256, slot, attempt_uid, protocol_sha256,
-                    executor_identity_sha256, mode) -> dict:
+                    executor_identity_sha256, mode, prelaunch_decision=None) -> dict:
+    """r4: a governed attempt binds the single authoritative prelaunch decision (EXECUTOR_SPEC_R4.md R4-1); null for the
+    non-governed qualification modes."""
     return {"schema": STATE_SCHEMA, "pid": pid, "argv": list(argv), "boot_id": boot, "start_epoch": start_epoch,
             "authorization_sha256": authorization_sha256, "slot": slot, "attempt_uid": attempt_uid,
-            "protocol_sha256": protocol_sha256, "executor_identity_sha256": executor_identity_sha256, "mode": mode}
+            "protocol_sha256": protocol_sha256, "executor_identity_sha256": executor_identity_sha256, "mode": mode,
+            "prelaunch_decision": prelaunch_decision,
+            "prelaunch_decision_sha256": sha(canonical(prelaunch_decision)) if prelaunch_decision is not None else None}
 
 
 def seal_names(mode: str) -> tuple[str, str]:

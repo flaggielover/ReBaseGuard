@@ -1,14 +1,17 @@
 """Executor child process launched by supervisor.py (EXECUTOR_SPEC_R2.md R2-2, EXECUTOR_SPEC_R3.md R3-1 / R3-2).
 
-    python -B code/executor_cli.py real          --output-dir SLOT --attempt-uid U
+    python -B code/executor_cli.py real          --output-dir SLOT --attempt-uid U --decision-sha256 D
+    python -B code/executor_cli.py governed_manufactured --output-dir SLOT --attempt-uid U --decision-sha256 D
+                                                 --fixture-id XF..   (qualification: the governed path, manufactured input)
     python -B code/executor_cli.py manufactured  --output-dir SLOT --attempt-uid U --fixture-id XF..   (qualification)
     python -B code/executor_cli.py burn          --output-dir SLOT --attempt-uid U --fixture-id XF..   (qualification)
     python -B code/executor_cli.py diskfull      --output-dir SLOT --attempt-uid U --fixture-id XF..   (qualification)
 
 `real` builds the RealInputAdapter binding, CusumPointBackend and the preregistered context. Its executor binding is
-the sha256 of the protocol's EXECUTION_BINDING_AMENDMENT.json file bytes (or UNBOUND when it does not exist), and the
-authorization is established ONLY by executor_core's guard, which under EXTERNAL_AUTHORIZATION calls the frozen
-prelaunch_verify.verify in process. There is no option to pass an authorization object or a verifier report. With
+the sha256 of the protocol's EXECUTION_BINDING_AMENDMENT.json file bytes (or UNBOUND when it does not exist). The
+authorization decision was taken ONCE by the supervisor before the slot existed (EXECUTOR_SPEC_R4.md R4-1); this child
+only re-checks, purely, that it matches the decision bound in RUN_STATE (digest passed as --decision-sha256). It never
+calls the verifier, and there is no option to pass an authorization object or a verifier report. With
 REAL_INPUT_ARITHMETIC_GUARD = DENY (the frozen policy) it is refused before any backend method and exits 3.
 
 Signals: SIGXCPU (RLIMIT_CPU soft) -> CPU_RLIMIT inside execute (VOID); SIGUSR1 is the supervisor watchdog's wall signal
@@ -43,12 +46,10 @@ def _on_wall(signum, frame):
     raise EC.ExecutorRefusal("WALL_TIMEOUT: wall limit reached (supervisor watchdog)")
 
 
-def context(binding, out: Path, attempt_uid, executor_binding_sha256="UNBOUND_QUALIFICATION") -> EC.ExecutionContext:
-    p = EC.prereg()
-    return EC.ExecutionContext(k1_binding=binding, output_dir=out, producer_identity_sha256=p["producer_identity_sha256"],
-                               protocol_sha256=hashlib.sha256(EC.SCIENCE_FILE.read_bytes()).hexdigest(),
-                               runtime_identity_sha256=p["host_runtime_identity_sha256"], attempt_uid=attempt_uid,
-                               executor_binding_sha256=executor_binding_sha256)
+def context(binding, out: Path, attempt_uid, executor_binding_sha256="UNBOUND_QUALIFICATION",
+            decision_sha256=None) -> EC.ExecutionContext:
+    return EC.standard_context(binding, out, attempt_uid=attempt_uid, executor_binding_sha256=executor_binding_sha256,
+                               prelaunch_decision_sha256=decision_sha256)
 
 
 def fixture(fid: str) -> dict:
@@ -56,17 +57,13 @@ def fixture(fid: str) -> dict:
     return next(f for f in proto["fixtures"] if f["id"] == fid)
 
 
-def amendment_binding() -> str:
-    path = paths.PROTOCOL_NS / "protocol/EXECUTION_BINDING_AMENDMENT.json"
-    return hashlib.sha256(path.read_bytes()).hexdigest() if path.is_file() and not path.is_symlink() else "UNBOUND"
-
-
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("mode", choices=("real", "manufactured", "burn", "diskfull"))
+    ap.add_argument("mode", choices=("real", "governed_manufactured", "manufactured", "burn", "diskfull"))
     ap.add_argument("--output-dir", required=True)
     ap.add_argument("--attempt-uid", required=True)
     ap.add_argument("--fixture-id")
+    ap.add_argument("--decision-sha256")
     a = ap.parse_args(argv)
     signal.signal(signal.SIGUSR1, _on_wall)
     import backends as B
@@ -75,7 +72,14 @@ def main(argv=None) -> int:
     try:
         if a.mode == "real":
             binding = IA.RealInputAdapter().bind()
-            backend, ctx = B.CusumPointBackend(binding), context(binding, out, a.attempt_uid, amendment_binding())
+            backend = B.CusumPointBackend(binding)
+            ctx = context(binding, out, a.attempt_uid, EC.amendment_binding(), a.decision_sha256)
+        elif a.mode == "governed_manufactured":
+            spec = fixture(a.fixture_id)
+            binding = IA.ManufacturedInputAdapter().bind(spec)
+            backend = B.ManufacturedPointBackend(spec)
+            backend.governed = True                   # the governed path: permission required, supervisor required
+            ctx = context(binding, out, a.attempt_uid, EC.amendment_binding(), a.decision_sha256)
         else:
             spec = fixture(a.fixture_id)
             binding = IA.ManufacturedInputAdapter().bind(spec)

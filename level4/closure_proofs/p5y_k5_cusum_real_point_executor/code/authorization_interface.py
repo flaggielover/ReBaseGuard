@@ -1,4 +1,10 @@
-"""Real-mode authorization (EXECUTOR_SPEC_R3.md R3-1). PREPARED, NOT ACTIVE: the frozen guard policy is DENY.
+"""Real-mode authorization (EXECUTOR_SPEC_R3.md R3-1, EXECUTOR_SPEC_R4.md R4-1 / R4-2). PREPARED, NOT ACTIVE: the frozen
+guard policy is DENY.
+
+r4: validate / prelaunch_decision is called ONCE, by the supervisor, BEFORE slot-N exists; its decision record is
+bound into RUN_STATE. The executor child never calls the verifier: its guard runs bound_decision_problems, a pure local
+re-check of that decision. After ARITHMETIC_STARTED validate_with raises PostStartVerifierCall before any verifier code
+runs (an executor defect, never a VOID).
 
 Under the policy EXTERNAL_AUTHORIZATION, executor_core.decide permits real arithmetic only if validate(ctx) accepts.
 The AUTHORITY is the frozen protocol's own verifier, called here IN PROCESS with its defaults only:
@@ -40,6 +46,11 @@ IDENTITY_FILES = ["code/paths.py", "code/executor_core.py", "code/backends.py", 
                   "code/qualification_gates.py", "code/consumer.py", "config/EXECUTOR_PINS.json"]
 OPERATOR_MATERIAL_ATTRIBUTES = ("authorization_bundle", "prelaunch_report", "verifier_report")
 HEX64 = re.compile(r"^[0-9a-f]{64}$")
+DECISION_SCHEMA = "rebaseguard.p5y.k5.cusum-real-point-executor.prelaunch-decision.v1"
+
+
+class PostStartVerifierCall(BaseException):
+    """The full frozen verifier was reached after ARITHMETIC_STARTED: an executor defect (EXECUTOR_SPEC_R4.md R4-2)."""
 HEX40 = re.compile(r"^[0-9a-f]{40}$")
 
 
@@ -222,6 +233,9 @@ def validate(ctx) -> tuple[bool, list, dict]:
 def validate_with(ctx, module, countersignature_path) -> tuple[bool, list, dict]:
     """Every path fails closed. Operator-supplied material is refused, and a module that is not the frozen verifier is
     refused, BEFORE any verifier code runs."""
+    import executor_core as EC
+    if EC.arithmetic_started():                                      # post-start fence: no verifier code runs
+        raise PostStartVerifierCall("POST_START_VERIFIER_CALL: the full prelaunch verifier after ARITHMETIC_STARTED")
     present = [a for a in OPERATOR_MATERIAL_ATTRIBUTES if getattr(ctx, a, None) is not None]
     if ctx is None or present:
         return False, [f"operator-supplied authorization material is not accepted: {present}"], {}
@@ -241,8 +255,86 @@ def validate_with(ctx, module, countersignature_path) -> tuple[bool, list, dict]
                "execution_binding_amendment_sha256": facts.get("amendment_sha"), "head": facts.get("head"),
                "prelaunch_report_sha256": _sha(canonical(report)) if isinstance(report, dict) else None,
                "prelaunch_verdict": report.get("verdict") if isinstance(report, dict) else None,
-               "countersignature_sha256": _file_sha(countersignature_path), "verified_utc_epoch": time.time()}
+               "countersignature_sha256": _file_sha(countersignature_path), "verified_utc_epoch": time.time(),
+               "prelaunch_report": report if isinstance(report, dict) else None}
     return (not problems), problems, binding
+
+
+# ------------------------------------------------------------------ r4: the single decision and its pure re-check
+def prelaunch_decision(ctx) -> tuple[bool, list, dict | None]:
+    """THE single authoritative pre-arithmetic launch decision, taken by the supervisor before slot-N exists. The
+    returned decision record (JSON-native) is what RUN_STATE binds."""
+    ok, problems, binding = validate(ctx)
+    if not ok:
+        return False, problems, None
+    decision = {"schema": DECISION_SCHEMA, "verdict": binding["prelaunch_verdict"],
+                "prelaunch_report": binding["prelaunch_report"], "prelaunch_report_sha256": binding["prelaunch_report_sha256"],
+                "authorization_path": binding["authorization_path"], "authorization_sha256": binding["authorization_sha256"],
+                "execution_binding_amendment_sha256": binding["execution_binding_amendment_sha256"],
+                "countersignature_sha256": binding["countersignature_sha256"], "head": binding["head"],
+                "verified_utc_epoch": binding["verified_utc_epoch"],
+                "protocol_sha256": ctx.protocol_sha256, "executor_identity_sha256": executor_identity()["executor_identity_sha256"],
+                "executor_binding_sha256": ctx.executor_binding_sha256,
+                "slot": Path(ctx.output_dir).name, "namespace": str(Path(ctx.output_dir).parent),
+                "attempt": {"k1_record_sha256": ctx.k1_binding.get("record_sha256"), "binding_kind": ctx.k1_binding.get("kind"),
+                            "right": ctx.k1_binding.get("right"), "m_set": list(ctx.m_set), "point_e": ctx.point_e,
+                            "theorem_cell": ctx.theorem_cell, "precision_bits": ctx.precision_bits}}
+    return True, [], json.loads(json.dumps(decision, default=str))
+
+
+def _ppid_cmdline() -> list | None:
+    import os
+    try:
+        raw = Path(f"/proc/{os.getppid()}/cmdline").read_bytes()
+    except OSError:
+        return None
+    return [a.decode(errors="replace") for a in raw.split(b"\0") if a]
+
+
+def bound_decision_problems(ctx) -> list:
+    """PURE re-check in the child: does this running attempt still match the decision that authorized it? No git, no
+    network, no ledger, no slot creation, no new verdict (EXECUTOR_SPEC_R4.md R4-2)."""
+    import os
+    import lifecycle as LC
+    p = []
+    if ctx is None or not getattr(ctx, "attempt_uid", None) or not getattr(ctx, "prelaunch_decision_sha256", None):
+        return ["not a supervised governed attempt (no attempt_uid / decision digest)"]
+    slot = Path(ctx.output_dir)
+    if not slot.is_dir() or slot.is_symlink():
+        return ["no supervised slot"]
+    state, problem = LC.load_json(slot / LC.RUN_STATE)
+    if problem or state is None or set(state) != LC.STATE_KEYS:
+        return ["RUN_STATE missing or malformed"]
+    if state.get("attempt_uid") != ctx.attempt_uid:
+        p.append("RUN_STATE belongs to another attempt")
+    if state.get("pid") != os.getppid() or state.get("argv") != _ppid_cmdline():
+        p.append("supervisor identity differs from RUN_STATE")
+    decision = state.get("prelaunch_decision")
+    if not isinstance(decision, dict):
+        return p + ["RUN_STATE carries no prelaunch decision"]
+    digest = LC.sha(LC.canonical(decision))
+    if digest != state.get("prelaunch_decision_sha256") or digest != ctx.prelaunch_decision_sha256:
+        p.append("prelaunch decision digest differs")
+    if decision.get("schema") != DECISION_SCHEMA or decision.get("verdict") != "LAUNCH_PERMITTED":
+        p.append("decision is not a permitted launch")
+    if _file_sha(decision.get("authorization_path") or "/nonexistent") != decision.get("authorization_sha256") \
+            or state.get("authorization_sha256") != decision.get("authorization_sha256"):
+        p.append("authorization changed since the decision")
+    if decision.get("executor_identity_sha256") != executor_identity()["executor_identity_sha256"] \
+            or state.get("executor_identity_sha256") != decision.get("executor_identity_sha256"):
+        p.append("executor identity differs from the decision")
+    if decision.get("protocol_sha256") != ctx.protocol_sha256 or state.get("protocol_sha256") != ctx.protocol_sha256:
+        p.append("protocol identity differs from the decision")
+    if decision.get("executor_binding_sha256") != ctx.executor_binding_sha256:
+        p.append("executor binding differs from the decision")
+    if decision.get("slot") != slot.name or decision.get("namespace") != str(slot.parent) or state.get("slot") != slot.name:
+        p.append("slot differs from the decision")
+    want = {"k1_record_sha256": ctx.k1_binding.get("record_sha256"), "binding_kind": ctx.k1_binding.get("kind"),
+            "right": ctx.k1_binding.get("right"), "m_set": list(ctx.m_set), "point_e": ctx.point_e,
+            "theorem_cell": ctx.theorem_cell, "precision_bits": ctx.precision_bits}
+    if decision.get("attempt") != want:
+        p.append("attempt parameters differ from the decision")
+    return p
 
 
 def authorization_unchanged(binding: dict) -> bool:

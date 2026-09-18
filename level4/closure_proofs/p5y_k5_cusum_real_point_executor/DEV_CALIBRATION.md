@@ -141,3 +141,57 @@ REAL_POINT_EXECUTOR = QUALIFIED_AWAITING_EXTERNAL_AUTHORIZATION.
 - **Cost:** 6418.4 CPU-s per attempt and 19255.3 for the campaign, within the frozen 9000 / 32400 ceilings.
 - These are DEV numbers; the frozen evidence is a separate run.
 
+# r4 DEV calibration (after the r3 static review: D1 open via N1–N3)
+
+**Host and data.** Same discipline: rebaseguard-vultr-02, the untracked DEV clone, manufactured and synthetic input
+only. REAL_INPUT_ARITHMETIC_GUARD is DENY and EXECUTION_AUTHORIZED false in the repository throughout.
+
+**The synthetic governed launch.**
+- **Governance commits:** the SYNTHETIC amendment, review, authorization, countersignature, EXTERNAL_AUTHORIZATION
+  guard policy and ledger notice exist only in throwaway synthetic clones under `/tmp` and are never pushed.
+- **Namespace:** every scenario runs in a private mount namespace whose copy-on-write overlay over `/root/work` makes
+  the preregistered namespace virtual. `/root/work/k5-first-real-probe` was verified absent before and after every run.
+- **Publication read:** the frozen verifier's single network read (`git ls-remote origin`) is answered from a local
+  bare repository by a `git` shim; nothing else is doubled.
+- **Result:** the UNMODIFIED frozen verifier returned LAUNCH_PERMITTED with P01–P12 all passing on the first control
+  run.
+
+## Findings during r4 DEV
+
+1. **A test was vacuous, exposed by the mutation discipline.** N04 (decision digest not checked) first went
+   undetected: the child negatives ran after a coherent crafted attempt had sealed the same fixture's addresses, so every
+   negative was refused by FINALIZED_ADDRESS_EXISTS rather than by the pure re-check. The negatives now run first, and
+   each must be refused by the guard for its specific stated problem.
+2. **A harness crash masked a detection.** N01 (slot created before verification) was behaviourally detected, but the
+   harness then crashed on the missing decision, and a crash counts as not detected. The scenario now turns a missing
+   decision into failed rows.
+3. **Expected regression-suite change (N1 semantics).** The r3 D2 scenario "pre-arithmetic refusal" launched
+   `--mode real` under DENY and expected a slot holding RUN_FAILED. Under r4 that launch is PRELAUNCH_REFUSED with no
+   slot; the row `real_launch_prelaunch_refused_no_slot` checks this. The D2 lifecycle rule for a refusal after the slot
+   exists and before arithmetic is now exercised by a genuine case: a second attempt of an already sealed fixture,
+   refused FINALIZED_ADDRESS_EXISTS, gives RUN_FAILED / INTEGRITY_REFUSAL with no seal. No D2 lifecycle logic changed.
+4. **The static fence pattern `.verify(` also matched the legitimate `manifest_v3.verify()`** (the Aux5 gate). It is
+   now limited to `PV.verify(` and `prelaunch_verify.verify(`.
+5. **Harness Q01/Q14 for the governed manufactured path.** The manufactured analogue assumed permission is never
+   granted. A governed attempt is permitted, and its analogue now requires the bound decision to be permitted.
+6. **First full r4 DEV run: RUN_FAILED at assembly.** The governed part lost its result file because the RAM-backed
+   `/tmp` (tmpfs, 7.9 GB) filled to 100%.
+   - Synthetic clones and overlay upper directories had no cleanup on failure, and piled up beside the concurrently
+     running parts.
+   - The overlay uppers held about 437 MB each of git objects written into the *source* clone's alternates chain. The
+     overlay absorbed those writes, so the real repository was never modified.
+   - Fix (harness only): the scratch space moved to disk-backed `/var/tmp/k5gov`, outside `/root/work`. The synthetic
+     clone is removed in a `finally`, and the overlay upper is removed by the parent after the namespace exits.
+   - The leftovers were deleted, no overlay mount had leaked into the host namespace, and the complete DEV run was
+     repeated from a clean output directory.
+
+**Final r4 DEV state** (clean run, 0 runner failures): 22/22 gates PASS,
+REAL_POINT_EXECUTOR = QUALIFIED_AWAITING_EXTERNAL_AUTHORIZATION.
+- **Mutations:** E 16/16, P 4/4, D01–D04 + A01–A03 7/7, L01–L04 + V01 5/5, R01–R02 2/2, N01–N05 5/5, C01 1/1.
+- **Suites:** D1 50/50, D2 36/36, D3 33/33, governed 17/17 rows.
+- **Governed end to end:** the permitted synthetic launch ran with the unmodified frozen verifier (P01–P12 all PASS).
+- **Replay:** payload cb28b972… twice with 0 scientific leaf differences, identical to r2 and r3.
+- **Order-2 replay:** identical to RUNG_256.
+- **Cost:** 6452.0 CPU-s per attempt and 19356.0 for the campaign, within 9000 / 32400.
+- **Namespace:** the real `/root/work/k5-first-real-probe` was never created.
+
