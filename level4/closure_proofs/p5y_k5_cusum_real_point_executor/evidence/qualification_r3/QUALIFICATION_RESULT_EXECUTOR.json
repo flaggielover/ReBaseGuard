@@ -1,0 +1,795 @@
+{
+ "EXECUTION_AUTHORIZED": false,
+ "REAL_CELL_EXECUTED": "NO",
+ "REAL_INPUT_ARITHMETIC_GUARD": "DENY",
+ "REAL_POINT_EXECUTOR": "QUALIFIED_AWAITING_EXTERNAL_AUTHORIZATION",
+ "cost": {
+  "ceiling": {
+   "campaign_cpu_seconds_hard": 32400,
+   "enforcement": "RLIMIT_CPU soft 9000 / hard 10800 set by the supervisor before arithmetic; the executor's SIGXCPU handler (soft limit) seals VOID_RECORD_SEALED (cost) before the hard limit; the supervisor's wall watchdog does the same; the prelaunch verifier refuses if the authorization's ceilings differ",
+   "max_attempts": 3,
+   "per_attempt_cpu_seconds_rlimit": 10800,
+   "per_attempt_cpu_seconds_soft": 9000,
+   "per_attempt_wall_seconds": 14400
+  },
+  "compatible": true,
+  "measured_manufactured_fixture_cpu_seconds_max": 0.23078175699999998,
+  "measured_real_arb_stages_cpu_seconds": 2440.345745278,
+  "projected_campaign_cpu_seconds_max_attempts": 19279.158606926998,
+  "projected_real_attempt_cpu_seconds": 6426.386202308999
+ },
+ "crosscheck": [
+  {
+   "enclosure_disagreements_m": [],
+   "fixture": "XF01_positive_L1",
+   "pass": true
+  },
+  {
+   "enclosure_disagreements_m": [],
+   "fixture": "XF03_negative_U1",
+   "pass": true
+  },
+  {
+   "enclosure_disagreements_m": [],
+   "fixture": "XF04_point_negative_U0",
+   "pass": true
+  },
+  {
+   "enclosure_disagreements_m": [],
+   "fixture": "XF08_parity_contamination",
+   "pass": true
+  }
+ ],
+ "d1_authorization_mutations": "7/7",
+ "d1_rows": {
+  "authorization_changed_after_verification": true,
+  "authorization_path_not_prereg_path": true,
+  "authorization_rehash_detects_change": true,
+  "binding_amendment_not_running_bytes": true,
+  "binding_authorization_names_other": true,
+  "binding_context_names_other": true,
+  "binding_no_amendment": true,
+  "binding_positive_control": true,
+  "correct_report_wrong_protocol_identity_in_context": true,
+  "countersignature_absent_on_host": true,
+  "countersignature_committed_before_authorization": true,
+  "countersignature_countersigned_in_future": true,
+  "countersignature_countersigner_not_independent": true,
+  "countersignature_extra_field": true,
+  "countersignature_inactive": true,
+  "countersignature_malformed": true,
+  "countersignature_names_other_amendment": true,
+  "countersignature_names_other_authorization": true,
+  "countersignature_not_committed": true,
+  "countersignature_other_slot": true,
+  "countersignature_positive_control": true,
+  "countersignature_result_blind_changed": true,
+  "countersignature_short_nonce": true,
+  "forged_operator_report_refused_before_verifier": true,
+  "forged_operator_report_refused_on_frozen_path": true,
+  "frozen_verifier_source_accepted": true,
+  "genuine_refused_report_is_refused": true,
+  "guard_external_policy_refuses_live": true,
+  "guard_frozen_policy_deny": true,
+  "live_verifier_refuses_unauthorized_host": true,
+  "no_cli_path_for_authorization_material": true,
+  "non_frozen_verifier_never_executed": true,
+  "positive_control_synthetic_permitted_report": true,
+  "production_path_calls_frozen_verifier_in_process": true,
+  "report_for_another_authorization_path": true,
+  "report_for_another_authorization_sha": true,
+  "report_without_derived_commits": true,
+  "stale_report_other_head": true,
+  "verifier_check_failed_but_verdict_permitted": true,
+  "verifier_failing_checks_nonempty": true,
+  "verifier_output_malformed_list": true,
+  "verifier_output_malformed_none": true,
+  "verifier_output_missing_check": true,
+  "verifier_output_not_read_only": true,
+  "verifier_output_wrong_schema": true,
+  "verifier_raises": true,
+  "verifier_returns_refused": true,
+  "wrong_protocol_identity_in_report": true,
+  "wrong_verifier_source_modified_copy": true,
+  "wrong_verifier_source_unmodified_copy_elsewhere": true
+ },
+ "d2_lifecycle_and_void_mutations": "5/5",
+ "d2_rows": {
+  "classify_terminal_cpu": true,
+  "classify_terminal_disk": true,
+  "classify_terminal_kill": true,
+  "classify_terminal_refusal": true,
+  "classify_terminal_success": true,
+  "classify_terminal_wall": true,
+  "cpu_ceiling": true,
+  "disk_full_transient_no_seal": true,
+  "duplicate_terminal_present_is_torn": true,
+  "duplicate_terminal_refused": true,
+  "executor_admits_own_run_state": true,
+  "executor_refuses_stale_run_state": true,
+  "external_kill": true,
+  "ledger_disagreement_failure_class": true,
+  "ledger_disagreement_run_failed_sha": true,
+  "ledger_disagreement_seal_missing_in_ledger": true,
+  "ledger_reconciles_cpu": true,
+  "ledger_reconciles_kill": true,
+  "ledger_reconciles_refusal": true,
+  "ledger_reconciles_success": true,
+  "ledger_seal_host_does_not_hold": true,
+  "malformed_marker_is_torn": true,
+  "no_complete_without_valid_seal": true,
+  "no_digits_in_failure_text_cpu": true,
+  "no_digits_in_failure_text_disk": true,
+  "no_digits_in_failure_text_kill": true,
+  "no_digits_in_failure_text_refusal": true,
+  "no_digits_in_failure_text_wall": true,
+  "pre_arithmetic_refusal": true,
+  "scientific_void_conflict_present_is_torn": true,
+  "scientific_void_conflict_refused_at_seal": true,
+  "stale_terminal_marker_is_torn": true,
+  "success_complete_only": true,
+  "void_class_disk_full_is_transient": true,
+  "wall_timeout": true
+ },
+ "d3_recovery_mutations": "2/2",
+ "d3_rows": {
+  "base_runs": true,
+  "changed_boot_after_run_state": true,
+  "changed_boot_after_void_seal": true,
+  "changed_boot_before_run_complete": true,
+  "changed_boot_before_run_state": true,
+  "changed_boot_before_scientific_seal": true,
+  "changed_boot_during_attempt_log": true,
+  "changed_boot_during_terminal_write_tmp": true,
+  "changed_boot_during_terminal_write_truncated": true,
+  "changed_boot_idempotent": true,
+  "changed_boot_immediately_after_scientific_seal": true,
+  "live_crash_recovered": true,
+  "live_slot_left_alone": true,
+  "pure_classify_after_run_state": true,
+  "pure_classify_after_void_seal": true,
+  "pure_classify_before_run_complete": true,
+  "pure_classify_before_run_state": true,
+  "pure_classify_before_scientific_seal": true,
+  "pure_classify_during_attempt_log": true,
+  "pure_classify_during_terminal_write_tmp": true,
+  "pure_classify_during_terminal_write_truncated": true,
+  "pure_classify_immediately_after_scientific_seal": true,
+  "same_boot_after_run_state": true,
+  "same_boot_after_void_seal": true,
+  "same_boot_before_run_complete": true,
+  "same_boot_before_run_state": true,
+  "same_boot_before_scientific_seal": true,
+  "same_boot_during_attempt_log": true,
+  "same_boot_during_terminal_write_tmp": true,
+  "same_boot_during_terminal_write_truncated": true,
+  "same_boot_idempotent": true,
+  "same_boot_immediately_after_scientific_seal": true,
+  "sealed_address_never_rerun": true
+ },
+ "executor_identity_sha256": "f6ac26767b034e9b44269bba82bab1c4523187b6a8d8a424f3c3dec2347db1d1",
+ "fixtures": {
+  "XF01_positive_L1": {
+   "M5_over_truth": {
+    "1": 4.833779441907846,
+    "2": 5.059938474495292,
+    "3": 4.793126420480264,
+    "5": 4.757119998934615
+   },
+   "pass": true,
+   "purpose": "decisively positive L1",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "2": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "3": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ]
+   }
+  },
+  "XF02_inconclusive_transport": {
+   "M5_over_truth": {
+    "1": 31.230449917748434,
+    "2": 27.945807083654334,
+    "3": 50.07713577766135,
+    "5": 409.7527538898639
+   },
+   "pass": true,
+   "purpose": "inconclusive transported interval (point positive)",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ],
+    "2": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ],
+    "3": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ]
+   }
+  },
+  "XF03_negative_U1": {
+   "M5_over_truth": {
+    "1": 9.791002287688054,
+    "2": 8.212083727000293,
+    "3": 9.96257678476563,
+    "5": 20.575565668060584
+   },
+   "pass": true,
+   "purpose": "decisively negative U1",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ],
+    "2": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ],
+    "3": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ],
+    "5": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ]
+   }
+  },
+  "XF04_point_negative_U0": {
+   "M5_over_truth": {
+    "1": 12.768529183657417,
+    "2": 12.327615993458373,
+    "3": 12.975539385795011,
+    "5": 16.506966765310143
+   },
+   "pass": true,
+   "purpose": "point-negative U0 with inconclusive transport",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "INCONCLUSIVE",
+     "POINT_NEGATIVE"
+    ],
+    "2": [
+     "INCONCLUSIVE",
+     "POINT_NEGATIVE"
+    ],
+    "3": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ]
+   }
+  },
+  "XF05_tight_M5": {
+   "M5_over_truth": {
+    "1": 9.475408034822237,
+    "2": 7.366341598121283,
+    "3": 7.4885717702010375,
+    "5": 12.649322107881181
+   },
+   "pass": true,
+   "purpose": "tight M5",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "2": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "3": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ]
+   }
+  },
+  "XF06_loose_valid_M5": {
+   "M5_over_truth": {
+    "1": 1669.4022776303493,
+    "2": 34.20118215656337,
+    "3": 20.304237478192192,
+    "5": 15.667961970166102
+   },
+   "pass": true,
+   "purpose": "loose but valid M5",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "2": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "3": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ]
+   }
+  },
+  "XF07_parity_pure": {
+   "M5_over_truth": {
+    "1": 47.187668247690645,
+    "2": 13.192110361808863,
+    "3": 22.47087032302885,
+    "5": 487.96738922288847
+   },
+   "pass": true,
+   "purpose": "parity-pure source (exact candidates)",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ],
+    "2": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ],
+    "3": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ],
+    "5": [
+     "CONTRADICTS_REQUIRED_POSITIVE_SIGN",
+     "POINT_NEGATIVE"
+    ]
+   }
+  },
+  "XF08_parity_contamination": {
+   "M5_over_truth": {
+    "1": 614.2330160401955,
+    "2": 19.884696389495364,
+    "3": 16.189810465543502,
+    "5": 19.910341852112406
+   },
+   "pass": true,
+   "purpose": "controlled parity contamination (k_scale 2, noise)",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "2": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "3": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ]
+   }
+  },
+  "XF09_near_zero_boundary": {
+   "M5_over_truth": {
+    "1": 18.520651232019947,
+    "2": 19.30737386929937,
+    "3": 18.709612272589258,
+    "5": 19.232080673067504
+   },
+   "pass": true,
+   "purpose": "near-zero scientific boundary (m = 1, 2 straddle zero)",
+   "qualification": "PASS",
+   "truth_violations": [],
+   "verdicts": {
+    "1": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ],
+    "2": [
+     "INCONCLUSIVE",
+     "POINT_POSITIVE"
+    ],
+    "3": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ],
+    "5": [
+     "SUPPORTS_K5B_FIRST_CELL",
+     "POINT_POSITIVE"
+    ]
+   }
+  }
+ },
+ "gates": {
+  "EG01_manufactured_fixtures_truth_and_expected_verdicts": "PASS",
+  "EG02_fail_closed_refusals": "PASS",
+  "EG03_real_input_arithmetic_guard_deny": "PASS",
+  "EG04_qualification_science_separation": "PASS",
+  "EG05_independent_derivative_crosscheck": "PASS",
+  "EG06_executor_mutations_all_detected": "PASS",
+  "EG07_inherited_r4_gates": "PASS",
+  "EG08_deterministic_replay": "PASS",
+  "EG09_real_stage_smoke_no_enclosure": "PASS",
+  "EG10_runtime_identity": "PASS",
+  "EG11_fences_and_pins": "PASS",
+  "EG12_cost_within_frozen_ceiling": "PASS",
+  "EG13_preregistered_producer_gates_Q01_Q16": "PASS",
+  "EG14_external_authorization_interface": "PASS",
+  "EG15_attempt_supervision_and_void_sealing": "PASS",
+  "EG16_production_stack_mutations": "PASS",
+  "EG17_cramer_compatibility_contract": "PASS",
+  "EG18_D1_in_process_prelaunch_verification": "PASS",
+  "EG19_D2_marker_lifecycle_and_ledger": "PASS",
+  "EG20_D3_reboot_recovery": "PASS",
+  "EG21_D4_run_provenance": "PASS"
+ },
+ "mutation_detail": {
+  "E01_WRONG_M": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E02_WRONG_POINT_E": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E03_WRONG_CELL_ENDPOINT": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E04_WRONG_K1_IDENTITY_ACCEPTED": {
+   "detected": true,
+   "failing": [
+    "F11_wrong_k1_identity"
+   ]
+  },
+  "E05_ODD_EVEN_COMPONENT_SWAP": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E06_OMIT_DERIVATIVE_SOURCE_TERM": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E07_WRONG_GRADED_CONSTANT": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF06_loose_valid_M5",
+    "XF07_parity_pure"
+   ]
+  },
+  "E08_WRONG_LOCAL_M5_ANCHOR": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E09_WRONG_TRANSPORT_FACTOR": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E10_WRONG_L1_SIGN": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E11_WRONG_U1_SIGN": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E12_SERIALIZE_MIDPOINT": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E13_REUSE_STALE_CERTIFICATE": {
+   "detected": true,
+   "failing": [
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5",
+    "XF07_parity_pure"
+   ]
+  },
+  "E14_BYPASS_REAL_INPUT_GUARD": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E15_SILENT_PRECISION_CHANGE": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  },
+  "E16_MUTATE_SCIENTIFIC_ADDRESS": {
+   "detected": true,
+   "failing": [
+    "XF01_positive_L1",
+    "XF02_inconclusive_transport",
+    "XF03_negative_U1",
+    "XF04_point_negative_U0",
+    "XF05_tight_M5",
+    "XF06_loose_valid_M5"
+   ]
+  }
+ },
+ "mutations": "16/16",
+ "order2_reference": {
+  "comparator_mutant_refused": true,
+  "compare": {
+   "disjoint": [],
+   "identical_to_reference": true,
+   "pass": true,
+   "reference_sha256": "0bb1b47450926812ed682d7cc6089ce40447305575e420bdf45af47765b1012d"
+  },
+  "pass": true
+ },
+ "part_sha256": {
+  "authorization": "131b8fec620bb337f5a5d884bf1eceb50616afab1754a83f51df0778b08ecb70",
+  "cramer_contract": "d804c173e44ef4fc8e734ca57bac49d4d9764373a9b4aa11558a1332f6027ebf",
+  "crosscheck": "8126829b584c80ad3f7a90c4a640e5011f7d52235600ea71b286fdbbcf4b8f77",
+  "fence": "77ed54e7adc977f323db9ff879f48314b9fd03a28984352b2d1e5333a5d7071f",
+  "fixtures": "073fae2166b7d71ae105160e280e354ce0100b96a8284d00af4d41260183342f",
+  "fixtures_replay": "d12813a637c28e6334658c0c0978d1d32d28b4e00236ca4044921ec3000fc780",
+  "inherited_r4": "ce3d306ef21c025cd87285b27571fc863db4c3e01ba160e5dd39ba2ca7614955",
+  "mutations": "2cfc3fc5c6eb0d6353e9473abca43f59b189d7e70aee75810c94cd57f9e00d0b",
+  "order2_reference": "68c9c8cad8ec7f6fea44dfab692f7830995208753c968edaaf5640d7a6d47f00",
+  "recovery": "74fe0351586fd32f0b1998841919ea278460b2aadf4f1b807a830b12ead0ca08",
+  "refusals": "6256ef9c33af157069450c5046a38a7210831e29d022c297f77e3a7cd343a02d",
+  "runtime": "6bb79a18ca3dd2610aa1f96842f22757f0ce484567a54d52710c20ea09790a89",
+  "separation": "49e18dbbee0a565947191959ce8760cc4ad06a53a604eb20e127ba6de1df1776",
+  "smoke": "24884759b7831bf6e61d56d01cb42f262ce260533b51106bff9cb82209b29ad4",
+  "supervisor": "6a50ae059516bf2a12c81a8e72a25f84feb76dfc02398293fd500290489b9563"
+ },
+ "production_mutations": "4/4",
+ "protocol_sha256": "390c2a681ef2604fc956c749b9dc8dfa3b94b316038409e8594c62e8a31cda5d",
+ "replay_payload_sha256": [
+  "cb28b9727470a6b4287aa412313284b433bd8c16c6c16bd39b948dfa56b1e7e0",
+  "cb28b9727470a6b4287aa412313284b433bd8c16c6c16bd39b948dfa56b1e7e0"
+ ],
+ "runner_failures": [],
+ "runtime": {
+  "cpu_model": "AMD EPYC-Milan Processor",
+  "env": {
+   "MKL_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "PYTHONHASHSEED": "0"
+  },
+  "flint_library": "3.6.0",
+  "flint_so_sha256": "1f7ef1f52024937f542772ff9190e2f74449228cd69a6746b6608fbbd449d138",
+  "glibc_package_version": "2.41-12+deb13u4",
+  "host": "rebaseguard-vultr-02",
+  "kernel_release": "6.12.107+deb13-amd64",
+  "libc_path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+  "libc_sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+  "logical_cpus": 8,
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "numpy_module": "2.5.2",
+  "python": "3.12.3",
+  "python_flint": "0.9.0",
+  "python_flint_module": "0.9.0",
+  "python_impl": "CPython",
+  "scipy": "1.18.1",
+  "venv_prefix": "/root/work/rbg-cusum-aux5-venv"
+ },
+ "schema": "rebaseguard.p5y.k5.cusum-real-point-executor.qualification-result.v3",
+ "scientific_leaf_differences": [],
+ "separation": {
+  "CONTRADICTS": {
+   "fixture": "XF03_negative_U1",
+   "gates_sign_invariant": true,
+   "qualification": "PASS",
+   "verdict_m1": "CONTRADICTS_REQUIRED_POSITIVE_SIGN"
+  },
+  "INCONCLUSIVE": {
+   "fixture": "XF02_inconclusive_transport",
+   "gates_sign_invariant": true,
+   "qualification": "PASS",
+   "verdict_m1": "INCONCLUSIVE"
+  },
+  "SUPPORTS": {
+   "fixture": "XF01_positive_L1",
+   "gates_sign_invariant": true,
+   "qualification": "PASS",
+   "verdict_m1": "SUPPORTS_K5B_FIRST_CELL"
+  },
+  "consumer_refuses_harness_modes_on_real_kind": {
+   "science_usable": false
+  },
+  "consumer_requires_every_science_gate": {
+   "science_usable": false
+  }
+ },
+ "smoke": {
+  "Q04": true,
+  "Q06": true,
+  "Q08": true,
+  "cost": {
+   "cpu_seconds_q06_certificate_replay": 222.19050902400022,
+   "cpu_seconds_q08": 0.01577445999964766,
+   "cpu_seconds_q10_path": 0.005439443999875948,
+   "cpu_seconds_real_arb_stages": 2440.345745278,
+   "peak_rss_kib": 503348,
+   "wall_seconds": 2690.6110532283783
+  },
+  "enclosure_formed": false,
+  "float_containment_count": 0,
+  "observed_precision_bits": 256,
+  "structure_sha256": "a5956ed7a120a81e16a61ad5d5063d398c23dc174afed062534222555f70af80"
+ },
+ "supervisor_runs": {
+  "cpu_ceiling": {
+   "events": [
+    "VALIDATED",
+    "ARITHMETIC_STARTED",
+    "VOID"
+   ],
+   "failure_class": "CPU_RLIMIT",
+   "terminal": "RUN_FAILED.json"
+  },
+  "disk_full": {
+   "events": [
+    "VALIDATED",
+    "ARITHMETIC_STARTED"
+   ],
+   "failure_class": "DISK_FULL_BEFORE_SEAL",
+   "terminal": "RUN_FAILED.json"
+  },
+  "external_kill": {
+   "events": [
+    "VALIDATED",
+    "ARITHMETIC_STARTED"
+   ],
+   "failure_class": "PROCESS_KILLED_BY_EXTERNAL_SIGNAL",
+   "terminal": "RUN_FAILED.json"
+  },
+  "pre_arithmetic_refusal": {
+   "events": [],
+   "failure_class": "INTEGRITY_REFUSAL",
+   "terminal": "RUN_FAILED.json"
+  },
+  "success": {
+   "events": [
+    "VALIDATED",
+    "ARITHMETIC_STARTED",
+    "SEALED"
+   ],
+   "failure_class": null,
+   "terminal": "RUN_COMPLETE.json"
+  },
+  "wall_timeout": {
+   "events": [
+    "VALIDATED",
+    "ARITHMETIC_STARTED",
+    "VOID"
+   ],
+   "failure_class": "WALL_TIMEOUT",
+   "terminal": "RUN_FAILED.json"
+  }
+ }
+}

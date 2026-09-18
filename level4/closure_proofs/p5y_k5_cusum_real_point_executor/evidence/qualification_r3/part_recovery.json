@@ -1,0 +1,271 @@
+{
+ "body": {
+  "control_pass": true,
+  "mutations": {
+   "R01_SEALED_SLOT_MADE_RETRYABLE": {
+    "detected": true,
+    "failing": [
+     "classify_immediately_after_scientific_seal",
+     "classify_before_run_complete",
+     "classify_during_terminal_write_tmp"
+    ]
+   },
+   "R02_TORN_STATE_ACCEPTED": {
+    "detected": true,
+    "failing": [
+     "classify_during_terminal_write_truncated"
+    ]
+   }
+  },
+  "mutations_count": "2/2",
+  "pass": true,
+  "rows": {
+   "base_runs": {
+    "pass": true
+   },
+   "changed_boot_after_run_state": {
+    "got": [
+     "A",
+     "WRITE_RUN_FAILED_NOT_STARTED"
+    ],
+    "pass": true
+   },
+   "changed_boot_after_void_seal": {
+    "got": [
+     "D",
+     "WRITE_RUN_FAILED_VOID"
+    ],
+    "pass": true
+   },
+   "changed_boot_before_run_complete": {
+    "got": [
+     "C",
+     "CONSUME_SEALED_RECORD_WRITE_RUN_COMPLETE_RECOVERED"
+    ],
+    "pass": true
+   },
+   "changed_boot_before_run_state": {
+    "got": [
+     "A",
+     "WRITE_RUN_FAILED_NOT_STARTED"
+    ],
+    "pass": true
+   },
+   "changed_boot_before_scientific_seal": {
+    "got": [
+     "B",
+     "WRITE_RUN_FAILED_INTERRUPTED"
+    ],
+    "pass": true
+   },
+   "changed_boot_during_attempt_log": {
+    "got": [
+     "A",
+     "WRITE_RUN_FAILED_NOT_STARTED"
+    ],
+    "pass": true
+   },
+   "changed_boot_during_terminal_write_tmp": {
+    "got": [
+     "C",
+     "CONSUME_SEALED_RECORD_WRITE_RUN_COMPLETE_RECOVERED"
+    ],
+    "pass": true
+   },
+   "changed_boot_during_terminal_write_truncated": {
+    "got": [
+     "E",
+     "ADJUDICATION_REQUIRED"
+    ],
+    "pass": true
+   },
+   "changed_boot_idempotent": {
+    "pass": true
+   },
+   "changed_boot_immediately_after_scientific_seal": {
+    "got": [
+     "C",
+     "CONSUME_SEALED_RECORD_WRITE_RUN_COMPLETE_RECOVERED"
+    ],
+    "pass": true
+   },
+   "live_crash_recovered": {
+    "got": [
+     "B",
+     "WRITE_RUN_FAILED_INTERRUPTED"
+    ],
+    "pass": true
+   },
+   "live_slot_left_alone": {
+    "pass": true
+   },
+   "pure_classify_after_run_state": {
+    "got": [
+     "A",
+     "WRITE_RUN_FAILED_NOT_STARTED"
+    ],
+    "pass": true
+   },
+   "pure_classify_after_void_seal": {
+    "got": [
+     "D",
+     "WRITE_RUN_FAILED_VOID"
+    ],
+    "pass": true
+   },
+   "pure_classify_before_run_complete": {
+    "got": [
+     "C",
+     "CONSUME_SEALED_RECORD_WRITE_RUN_COMPLETE_RECOVERED"
+    ],
+    "pass": true
+   },
+   "pure_classify_before_run_state": {
+    "got": [
+     "A",
+     "WRITE_RUN_FAILED_NOT_STARTED"
+    ],
+    "pass": true
+   },
+   "pure_classify_before_scientific_seal": {
+    "got": [
+     "B",
+     "WRITE_RUN_FAILED_INTERRUPTED"
+    ],
+    "pass": true
+   },
+   "pure_classify_during_attempt_log": {
+    "got": [
+     "A",
+     "WRITE_RUN_FAILED_NOT_STARTED"
+    ],
+    "pass": true
+   },
+   "pure_classify_during_terminal_write_tmp": {
+    "got": [
+     "C",
+     "CONSUME_SEALED_RECORD_WRITE_RUN_COMPLETE_RECOVERED"
+    ],
+    "pass": true
+   },
+   "pure_classify_during_terminal_write_truncated": {
+    "got": [
+     "E",
+     "ADJUDICATION_REQUIRED"
+    ],
+    "pass": true
+   },
+   "pure_classify_immediately_after_scientific_seal": {
+    "got": [
+     "C",
+     "CONSUME_SEALED_RECORD_WRITE_RUN_COMPLETE_RECOVERED"
+    ],
+    "pass": true
+   },
+   "same_boot_after_run_state": {
+    "got": [
+     "A",
+     "WRITE_RUN_FAILED_NOT_STARTED"
+    ],
+    "pass": true
+   },
+   "same_boot_after_void_seal": {
+    "got": [
+     "D",
+     "WRITE_RUN_FAILED_VOID"
+    ],
+    "pass": true
+   },
+   "same_boot_before_run_complete": {
+    "got": [
+     "C",
+     "CONSUME_SEALED_RECORD_WRITE_RUN_COMPLETE_RECOVERED"
+    ],
+    "pass": true
+   },
+   "same_boot_before_run_state": {
+    "got": [
+     "A",
+     "WRITE_RUN_FAILED_NOT_STARTED"
+    ],
+    "pass": true
+   },
+   "same_boot_before_scientific_seal": {
+    "got": [
+     "B",
+     "WRITE_RUN_FAILED_INTERRUPTED"
+    ],
+    "pass": true
+   },
+   "same_boot_during_attempt_log": {
+    "got": [
+     "A",
+     "WRITE_RUN_FAILED_NOT_STARTED"
+    ],
+    "pass": true
+   },
+   "same_boot_during_terminal_write_tmp": {
+    "got": [
+     "C",
+     "CONSUME_SEALED_RECORD_WRITE_RUN_COMPLETE_RECOVERED"
+    ],
+    "pass": true
+   },
+   "same_boot_during_terminal_write_truncated": {
+    "got": [
+     "E",
+     "ADJUDICATION_REQUIRED"
+    ],
+    "pass": true
+   },
+   "same_boot_idempotent": {
+    "pass": true
+   },
+   "same_boot_immediately_after_scientific_seal": {
+    "got": [
+     "C",
+     "CONSUME_SEALED_RECORD_WRITE_RUN_COMPLETE_RECOVERED"
+    ],
+    "pass": true
+   },
+   "sealed_address_never_rerun": {
+    "pass": true
+   }
+  }
+ },
+ "metadata": {
+  "children_cpu_seconds": 20.500021,
+  "cpu_seconds": 0.382807528,
+  "incidental": true,
+  "peak_rss_kib": 78276,
+  "wall_seconds": 22.70827078819275
+ },
+ "part": "recovery",
+ "protocol_sha256": "390c2a681ef2604fc956c749b9dc8dfa3b94b316038409e8594c62e8a31cda5d",
+ "runtime": {
+  "cpu_model": "AMD EPYC-Milan Processor",
+  "env": {
+   "MKL_NUM_THREADS": "1",
+   "OMP_NUM_THREADS": "1",
+   "OPENBLAS_NUM_THREADS": "1",
+   "PYTHONHASHSEED": "0"
+  },
+  "flint_library": "3.6.0",
+  "flint_so_sha256": "1f7ef1f52024937f542772ff9190e2f74449228cd69a6746b6608fbbd449d138",
+  "glibc_package_version": "2.41-12+deb13u4",
+  "host": "rebaseguard-vultr-02",
+  "kernel_release": "6.12.107+deb13-amd64",
+  "libc_path": "/usr/lib/x86_64-linux-gnu/libc.so.6",
+  "libc_sha256": "9792e3cbb541c8f44c7acf5f14f4022ea62998ecc787d326bed4d8b6547dfd92",
+  "logical_cpus": 8,
+  "machine": "x86_64",
+  "numpy": "2.5.2",
+  "numpy_module": "2.5.2",
+  "python": "3.12.3",
+  "python_flint": "0.9.0",
+  "python_flint_module": "0.9.0",
+  "python_impl": "CPython",
+  "scipy": "1.18.1",
+  "venv_prefix": "/root/work/rbg-cusum-aux5-venv"
+ }
+}
