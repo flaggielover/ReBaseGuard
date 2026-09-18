@@ -32,7 +32,9 @@
 | `tests/test_executor.py` | Static development tests |
 | `evidence/qualification/` | r1 frozen qualification (preserved) |
 | `evidence/qualification_r2/` | r2 frozen qualification (preserved) |
-| `evidence/qualification_r3/`, `RESULT.md` | r3 frozen qualification (with `RUN_PROVENANCE.json`) and result |
+| `RESULT.md` | r2 result (preserved) |
+| `review/EXECUTOR_STATIC_REVIEW_R3.md` | r3 review (FAIL: D1 open; D2–D4 closed) |
+| `evidence/qualification_r3/`, `RESULT_R3.md` | r3 frozen qualification (with `RUN_PROVENANCE.json`) and result |
 
 ```bash
 python3 -B tests/test_executor.py
