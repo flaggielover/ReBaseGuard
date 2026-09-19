@@ -113,6 +113,39 @@ def build(outdir: Path, workers: int) -> dict:
     return reg
 
 
+def assemble(outdir: Path) -> dict:
+    """Rebuild REGISTRY.json deterministically from the artifacts already in outdir (no computation)."""
+    cov = cover()
+    btab = {}
+    for i in range(len(BLOCK_EDGES) - 1):
+        p = outdir / f"taboo_block_{i:02d}.json"
+        a = json.loads(p.read_text())
+        if F(a["e_lo"]) != BLOCK_EDGES[i] or F(a["e_hi"]) != BLOCK_EDGES[i + 1] or a.get("kind") != "taboo":
+            raise SystemExit(f"taboo block {i} does not match the frozen block edges")
+        btab[i] = {"e_lo": a["e_lo"], "e_hi": a["e_hi"], "certified": a["certified"], "C_T": a["C_T"], "tau": a["tau"],
+                   "artifact_sha256": sha(p.read_bytes())}
+    blocks, ok = [], all(b["certified"] for b in btab.values())
+    for k in CELLS:
+        x_lo, x_hi, e0, rho = cov[k]
+        hit = [b for b in btab.values() if F(b["e_lo"]) < x_hi and x_lo < F(b["e_hi"])]
+        tau, C = max(F(b["tau"]) for b in hit), max(F(b["C_T"]) for b in hit)
+        fp, dp = outdir / f"arl_cell_{k:03d}.json", outdir / f"taboo_cell_{k:03d}.json"
+        fa, da = json.loads(fp.read_text()), json.loads(dp.read_text())
+        if (F(fa["e_lo"]), F(fa["e_hi"])) != (x_lo, x_hi) or fa.get("kind") != "full":
+            raise SystemExit(f"ARL artifact of cell {k} is not bound to the cell")
+        if (F(da["e0"]), F(da["rho"]), F(da["tau"]), F(da["C_T"])) != (e0, rho, tau, C):
+            raise SystemExit(f"taboo cell artifact {k} is not bound to the cell and its blocks")
+        ok = ok and fa["certified"] and da["certified"]
+        blocks.append({"e_lo": str(x_lo), "e_hi": str(x_hi), "cell": k, "Abar": fa["tau"], "C_T": str(C),
+                       "tau": str(tau), "D_lo": da["D_lo"], "D1": da["D1"], "D2": da["D2"],
+                       "arl_artifact_sha256": sha(fp.read_bytes()), "taboo_cell_artifact_sha256": sha(dp.read_bytes())})
+    reg = {"schema": SCHEMA, "rule": "r2", "certified": ok, "operator_only": True,
+           "cells_json_sha256": CELLS_SHA256, "degree_taboo": DEGREE, "taboo_blocks": btab, "blocks": blocks,
+           "code_sha256": {p.name: sha(p.read_bytes()) for p in (HERE, HERE.parent / "taboo_certify.py")}}
+    (outdir / "REGISTRY.json").write_text(json.dumps(reg, indent=1, sort_keys=True) + "\n")
+    return reg
+
+
 def _verify_one(path: str):
     import taboo_certify as TC
     art = json.loads(Path(path).read_text())
@@ -136,11 +169,14 @@ def verify(outdir: Path, workers: int) -> dict:
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("cmd", choices=("build", "verify"))
+    ap.add_argument("cmd", choices=("build", "verify", "assemble"))
     ap.add_argument("--outdir", required=True)
     ap.add_argument("--workers", type=int, default=7)
     a = ap.parse_args()
-    out = build(Path(a.outdir), a.workers) if a.cmd == "build" else verify(Path(a.outdir), a.workers)
+    if a.cmd == "assemble":
+        out = assemble(Path(a.outdir))
+    else:
+        out = build(Path(a.outdir), a.workers) if a.cmd == "build" else verify(Path(a.outdir), a.workers)
     print(json.dumps({k: v for k, v in out.items() if k not in ("blocks", "taboo_blocks")}, indent=1))
     return 0
 
