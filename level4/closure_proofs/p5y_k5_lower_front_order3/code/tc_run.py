@@ -1,0 +1,123 @@
+"""Governed execution of the theorem-TC producer over exactly the pre-registered addresses (then the pre-registered
+2-cell reproduction). Evidence is written OUTSIDE the checkout (the producer refuses a dirty namespace).
+
+    python -B tc_run.py --protocol-sha256 SHA --evidence DIR [--workers 7]
+
+Writes DIR/cells/TC_CELL_<k>.json, DIR/repro/TC_CELL_<k>.json, DIR/RUN_LEDGER.jsonl (START / OUTPUT / REPRO lines
+with sha256, CPU seconds, head) and DIR/TC_INDEX.json. It never reads a scientific field of an output (no pass/open
+inspection before the seal): it hashes files and compares reproduction bytes.
+"""
+from __future__ import annotations
+
+import argparse
+import concurrent.futures as cf
+import datetime
+import hashlib
+import json
+import subprocess
+import sys
+from pathlib import Path
+
+HERE = Path(__file__).resolve()
+NS = HERE.parents[1]
+REPO = HERE.parents[4]
+PY = sys.executable
+RECORDS = Path("/root/work/postk1-runs/closure-r1/COMPOSITE_EXPORT/k4_records")
+REPRO = (11, 44)
+
+
+def sha(p: Path) -> str:
+    return hashlib.sha256(p.read_bytes()).hexdigest()
+
+
+def now() -> str:
+    return datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")
+
+
+def one(k: int, proto_sha: str, rec_sha: str, out: Path) -> dict:
+    cmd = [PY, "-B", str(NS / "code/tc_producer.py"), "real", "--cell", str(k),
+           "--record", str(RECORDS / f"aux5_CUSUM_{k}_256.json"), "--record-sha256", rec_sha,
+           "--protocol-sha256", proto_sha, "--out", str(out)]
+    p = subprocess.run(cmd, capture_output=True, text=True)
+    if p.returncode != 0:
+        return {"cell": k, "ok": False, "stderr": p.stderr[-2000:]}
+    meta = json.loads(p.stdout.strip().splitlines()[-1])
+    return {"cell": k, "ok": True, "sha256": sha(out), "cpu_seconds": meta["cpu_seconds"],
+            "peak_rss_kib": meta["peak_rss_kib"]}
+
+
+def main() -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--protocol-sha256", required=True)
+    ap.add_argument("--evidence", required=True)
+    ap.add_argument("--workers", type=int, default=7)
+    a = ap.parse_args()
+    proto = json.loads((NS / "config/TC_PROTOCOL.json").read_bytes())
+    if sha(NS / "config/TC_PROTOCOL.json") != a.protocol_sha256:
+        raise SystemExit("protocol sha mismatch")
+    cells = proto["addresses"]["cells"]
+    ev = Path(a.evidence)
+    (ev / "cells").mkdir(parents=True, exist_ok=False)
+    (ev / "repro").mkdir(parents=True, exist_ok=False)
+    head = subprocess.run(["git", "-C", str(REPO), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+    ledger = ev / "RUN_LEDGER.jsonl"
+
+    def log(rec):
+        with open(ledger, "a") as fh:
+            fh.write(json.dumps({"utc": now(), "head": head, **rec}, sort_keys=True) + "\n")
+    log({"event": "RUN_START", "protocol_sha256": a.protocol_sha256, "addresses": cells, "workers": a.workers})
+    cap = float(proto["budget"]["protocol_cap_new_real_cpu_hours"]) * 3600
+    results, queue, running, spent, est = {}, list(cells), {}, 0.0, 0.0
+    with cf.ThreadPoolExecutor(max_workers=a.workers) as pool:
+        while queue or running:
+            while queue and len(running) < a.workers:
+                reserve = (len(running) + 1) * est + len(REPRO) * est
+                if est and spent + reserve > cap:          # would exceed the protocol cap: launch nothing more
+                    log({"event": "CAP_STOP", "spent_cpu_seconds": spent, "estimate_per_cell": est,
+                         "not_launched": list(queue)})
+                    queue = []
+                    break
+                k = queue.pop(0)
+                log({"event": "START", "cell": k})
+                running[pool.submit(one, k, a.protocol_sha256, proto["k1_record_sha256"][str(k)],
+                                    ev / "cells" / f"TC_CELL_{k}.json")] = k
+            if not running:
+                break
+            done, _ = cf.wait(list(running), return_when=cf.FIRST_COMPLETED)
+            for f in done:
+                running.pop(f)
+                r = f.result()
+                results[r["cell"]] = r
+                if r["ok"]:
+                    spent += r["cpu_seconds"]
+                    est = max(est, r["cpu_seconds"])
+                log({"event": "OUTPUT", **r})
+    failed = sorted(k for k in cells if k not in results or not results[k]["ok"])
+    if failed:
+        log({"event": "RUN_VOID", "failed_or_not_run": failed, "spent_cpu_seconds": spent})
+        print("VOID: failed or not run", failed)
+        return 1
+    rep = {}
+    with cf.ThreadPoolExecutor(max_workers=len(REPRO)) as pool:
+        futs = {pool.submit(one, k, a.protocol_sha256, proto["k1_record_sha256"][str(k)],
+                            ev / "repro" / f"TC_CELL_{k}.json"): k for k in REPRO}
+        for f in cf.as_completed(futs):
+            r = f.result()
+            r["identical"] = r["ok"] and r["sha256"] == results[r["cell"]]["sha256"]
+            rep[r["cell"]] = r
+            log({"event": "REPRO", **r})
+    cpu = sum(r["cpu_seconds"] for r in results.values()) + sum(r.get("cpu_seconds", 0) for r in rep.values())
+    index = {"schema": "rebaseguard.p5y.k5.lower-front-order3.tc-index.v1", "protocol_sha256": a.protocol_sha256,
+             "head": head, "cells": {str(k): results[k]["sha256"] for k in sorted(results)},
+             "reproduction": {str(k): rep[k]["identical"] for k in sorted(rep)},
+             "cpu_seconds_total": cpu}
+    (ev / "TC_INDEX.json").write_text(json.dumps(index, sort_keys=True, indent=1) + "\n")
+    ok = all(r["identical"] for r in rep.values())
+    log({"event": "RUN_END", "reproduction_identical": ok, "cpu_seconds_total": cpu,
+         "index_sha256": sha(ev / "TC_INDEX.json")})
+    print({"cells": len(results), "reproduction_identical": ok, "cpu_hours": cpu / 3600})
+    return 0 if ok else 1
+
+
+if __name__ == "__main__":
+    sys.exit(main())
