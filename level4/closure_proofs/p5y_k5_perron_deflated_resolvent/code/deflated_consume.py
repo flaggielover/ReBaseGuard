@@ -88,6 +88,21 @@ def atom_constants(tau: F, C: F, Dlo: F, D1: F, D2: F, k1: F = K1_BOUND, k2: F =
     return {"A0": A0, "A1": A1, "A2": A2}
 
 
+def atom_constants_r2(Abar: F, tau: F, C: F, Dlo: F, D1: F, D2: F, k1: F = K1_BOUND, k2: F = K2_BOUND) -> dict:
+    """Lemma Dv' (r2): A_j = Abar_eff * (tame factor), Abar_eff = min(Abar, tau/Dlo) >= E_a[tau]."""
+    base = atom_constants(tau, C, Dlo, D1, D2, k1, k2)          # validates the constants
+    if not isinstance(Abar, F) or not Abar >= 1:
+        raise DeflationRefusal("Abar must be a Fraction >= 1")
+    ab = min(Abar, tau / Dlo)
+    d1, d2 = D1 / Dlo, D2 / Dlo
+    out = {"A0": ab, "A1": ab * (k1 * C + d1),
+           "A2": ab * (2 * k1 ** 2 * C ** 2 + k2 * C + 2 * k1 * C * d1 + 2 * d1 ** 2 + d2)}
+    for j in ("A0", "A1", "A2"):                                   # r2 never exceeds r1 by construction
+        if out[j] > base[j]:
+            raise DeflationRefusal(f"r2 constant {j} exceeds r1 (impossible)")
+    return out
+
+
 def source_node(r: int, k: int) -> str:
     """Frozen propagate._source_node: the closed form for r = 0, the candidate otherwise."""
     return f"Sclosed:{k}" if r == 0 else f"S:{r}:{k}"
@@ -123,8 +138,12 @@ def tighten(interval: tuple, eps_rec: list, eps_new: list, m: int) -> tuple:
 
 
 def block_for(registry: dict, x_lo: F, x_hi: F):
-    """Worst-case constants over every registry block meeting [x_lo, x_hi]; None if the cell is not covered."""
-    hit = [b for b in registry["blocks"] if F(b["e_lo"]) <= x_hi and x_lo <= F(b["e_hi"])]
+    """Worst-case constants over every registry block meeting [x_lo, x_hi] (r2 registries: meeting the open
+    interval (x_lo, x_hi), so a block ending at x_lo does not count); None if the cell is not covered."""
+    if registry.get("rule") == "r2":
+        hit = [b for b in registry["blocks"] if F(b["e_lo"]) < x_hi and x_lo < F(b["e_hi"])]
+    else:
+        hit = [b for b in registry["blocks"] if F(b["e_lo"]) <= x_hi and x_lo <= F(b["e_hi"])]
     if not hit:
         return None
     lo_cov = min(F(b["e_lo"]) for b in hit)
@@ -138,9 +157,12 @@ def block_for(registry: dict, x_lo: F, x_hi: F):
         if a > reach:
             return None
         reach = max(reach, b)
-    return {"tau": max(F(b["tau"]) for b in hit), "C": max(F(b["C_T"]) for b in hit),
-            "Dlo": min(F(b["D_lo"]) for b in hit), "D1": max(F(b["D1"]) for b in hit),
-            "D2": max(F(b["D2"]) for b in hit)}
+    out = {"tau": max(F(b["tau"]) for b in hit), "C": max(F(b["C_T"]) for b in hit),
+           "Dlo": min(F(b["D_lo"]) for b in hit), "D1": max(F(b["D1"]) for b in hit),
+           "D2": max(F(b["D2"]) for b in hit)}
+    if registry.get("rule") == "r2":
+        out["Abar"] = max(F(b["Abar"]) for b in hit)
+    return out
 
 
 def apply_deflation(cells: list, records: dict, registry: dict, m: str, cover: list, domain: tuple) -> dict:
@@ -155,7 +177,10 @@ def apply_deflation(cells: list, records: dict, registry: dict, m: str, cover: l
         if cons is None:
             continue
         rec = records[k]
-        A = atom_constants(cons["tau"], cons["C"], cons["Dlo"], cons["D1"], cons["D2"])
+        if registry.get("rule") == "r2":
+            A = atom_constants_r2(cons["Abar"], cons["tau"], cons["C"], cons["Dlo"], cons["D1"], cons["D2"])
+        else:
+            A = atom_constants(cons["tau"], cons["C"], cons["Dlo"], cons["D1"], cons["D2"])
         rad = deflated_radii(rec, A)
         em, er = rec["eps_mid"], rec["eps_cell_refined"]
         R = tighten(cells[i]["R"], [F(em[f"F:{r}"]) for r in range(mi)], [rad[r]["F"] for r in range(mi)], mi)

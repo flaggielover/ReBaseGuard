@@ -78,6 +78,20 @@ and |[R f](a)| ≤ A0 ‖f‖ with A0 = τ / D_lo.
 
 (k_{a,e}' does not appear: it cancels. The direct computation ν(K'h) = −D' − Dν(k_a') reproduces the same A1.)
 
+### Lemma Dv' (r2: the channel written as the ARL at the atom)
+
+Every term above is (τ_a(e)/D_e)·(tame factor) with |ν_e(g)| ≤ τ_a(e)‖g‖, and τ_a/D = E_a[τ] (Lemma SM(d)). Hence, if in
+addition Ā ≥ sup_E E_a[τ], and with δ₁ := D1/D_lo ≥ |D'|/D, δ₂ := D2/D_lo ≥ |D''|/D,
+
+    A0 = Ā_eff,   A1 = Ā_eff (κ₁C + δ₁),   A2 = Ā_eff (2κ₁²C² + κ₂C + 2κ₁Cδ₁ + 2δ₁² + δ₂),   Ā_eff := min(Ā, τ/D_lo)
+
+are also valid in Lemma Dv and Theorem AD. *Proof:* |ν'/D| ≤ (τ_a/D)κ₁C‖f‖, |νD'/D²| ≤ (τ_a/D)(|D'|/D)‖f‖,
+|ν''/D| ≤ (τ_a/D)(2κ₁²C² + κ₂C)‖f‖, |2ν'D'/D²| ≤ 2(τ_a/D)κ₁C(|D'|/D)‖f‖, |ν(2D'²/D³ − D''/D²)| ≤ (τ_a/D)(2(D'/D)² + |D''|/D)‖f‖. ∎
+
+**Whole-kernel supersolution (Lemma T with K in place of K̂).** If W ≥ 1 + K_e W on X for every e ∈ E, then
+(I − K_e)⁻¹1 ≤ W on X, so E_a[τ] ≤ W(a) =: Ā. (Same proof: W ≥ 1, K W ≤ θW, positivity.) The whole-kernel ARL function has
+no atom kink, so this bound is nearly sharp (the adopted R3 C_e0 is 469.8 against a float 466).
+
 ## 5. Theorem AD (deflated point errors of the frozen K1 DAG)
 
 Fix a K1 cell with midpoint e0 and half-width ρ, and a drift set E ⊇ [e0 − ρ, e0 + ρ] on which the hypotheses of
@@ -139,6 +153,7 @@ Per e-block B (a finite list of blocks covering the domain; a cell uses the wors
 
 | constant | meaning | certificate |
 |---|---|---|
+| Ā ≥ sup_B E_a[τ] | Lemma Dv' | W(a) of a whole-kernel polynomial supersolution W ≥ 1 + K_eW, uniform on B (r2) |
 | τ ≥ sup_B E_a[τ ∧ T_a] | Lemma T | w(a) of a polynomial supersolution w, uniform on B |
 | C ≥ sup_B ‖Ĝ_e‖ | Lemma T | sup_X w (Bernstein on the frozen reachable cover) |
 | D_lo ≤ inf_B D_e | Lemma SM | operator-only: candidate for d = Ĝ h_1 (d(a) = D) with tame error τ·residual, extended over B by \|D'\| |
