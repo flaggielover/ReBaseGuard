@@ -82,6 +82,12 @@ def run(repo: Path, out_dir: Path, protocol_sha256: str, py: str, records: str) 
         res["stderr"] = p.stderr[-800:]
         return res
     res["binding_head_is_run_head"] = binding["head"] == run_head
+    trun = [py, "-B", str(code / "tc_run.py"), "--protocol-sha256", protocol_sha256, "--preflight-only"]
+    p = subprocess.run(trun + ["--evidence", str(out_dir / "sim_run_evidence")], capture_output=True, text=True)
+    res["run_preflight_positive_pass"] = p.returncode == 0 and not (out_dir / "sim_run_evidence").exists()
+    inside = tmp / EVID / "run_evidence_inside"
+    p = subprocess.run(trun + ["--evidence", str(inside)], capture_output=True, text=True)
+    res["run_preflight_inside_checkout_refused"] = p.returncode == 2 and not inside.exists()
     cover = {c["index"]: c for c in json.loads((tmp / "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/"
                                                 "cells.json").read_bytes()) if c["detector"] == "CUSUM"}
     big = "1000000"
@@ -91,6 +97,7 @@ def run(repo: Path, out_dir: Path, protocol_sha256: str, py: str, records: str) 
         rec = {"schema": "rebaseguard.p5y.k5.lower-front-order3.tc-cell.v1", "mode": "real", "cell": k,
                "e0": str(F(c["e0"][0]) + F(c["e0"][1])), "rho": str(F(c["rho"][0]) + F(c["rho"][1])),
                "identity_gate": {"identical": True}, "k1_record_sha256": proto["k1_record_sha256"][str(k)],
+               "runtime_checks": {"runtime": proto["runtime"]},
                "binding": binding, "norms": {"k": ["1"] * 5, "j": ["1"] * 5}, "sup_S0": ["1"] * 5,
                "r": {str(r): {"delta_F": big, "delta_D": big, "delta_H": big, "delta_G": big, "eps_src": ["0"] * 4,
                               "sup": {"F": "1", "D": "1", "H": "1", "G": "1"}, "H_at_a": ["0", "0"],
@@ -104,10 +111,12 @@ def run(repo: Path, out_dir: Path, protocol_sha256: str, py: str, records: str) 
     index = {"schema": "rebaseguard.p5y.k5.lower-front-order3.tc-index.v1", "protocol_sha256": protocol_sha256,
              "head": run_head, "cells": shas, "reproduction": {"11": True, "44": True}, "cpu_seconds_total": 0}
     write(EVID + "/TC_INDEX.json", dump(index))
+    isha = sha((tmp / EVID / "TC_INDEX.json").read_bytes())
     lines = [{"event": "RUN_START"}] + [{"event": "START", "cell": k} for k in addrs] + \
             [{"event": "OUTPUT", "cell": k, "ok": True, "sha256": shas[str(k)]} for k in addrs] + \
             [{"event": "REPRO", "cell": k, "identical": True} for k in (11, 44)] + \
-            [{"event": "RUN_END", "reproduction_identical": True}]
+            [{"event": "RUN_END", "reproduction_identical": True, "index_sha256": isha}]
+    lines = [dict(x, head=run_head) for x in lines]
     write(EVID + "/RUN_LEDGER.jsonl", "".join(json.dumps(x, sort_keys=True) + "\n" for x in lines).encode())
     write(EVID + "/GUARD.json", dump(dict(guard, state="DENY")))
     seal = commit("sim: seal", EVID)

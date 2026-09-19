@@ -9,6 +9,14 @@ inspection before the seal): it hashes files and compares reproduction bytes.
 """
 from __future__ import annotations
 
+import os
+import sys as _sys
+
+if "numpy" not in _sys.modules:                         # same thread pin as the producer (children inherit it)
+    os.environ.update({"OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1", "MKL_NUM_THREADS": "1",
+                       "NUMEXPR_NUM_THREADS": "1"})
+    os.environ["K1_THREADS_PINNED"] = "1"
+
 import argparse
 import concurrent.futures as cf
 import datetime
@@ -46,10 +54,43 @@ def one(k: int, proto_sha: str, rec_sha: str, out: Path) -> dict:
             "peak_rss_kib": meta["peak_rss_kib"]}
 
 
+def preflight(proto: dict, protocol_sha256: str, ev: Path) -> list[str]:
+    """Review r3 N-R3-1: everything that would make every producer call refuse, checked BEFORE any write. A preflight
+    refusal is not a run (no producer invoked, nothing computed, no ledger written)."""
+    import platform
+    import socket
+    import numpy
+    import scipy
+    import flint
+    bad = []
+    try:
+        ev.resolve().relative_to(REPO.resolve())
+        bad.append(f"evidence directory {ev} is inside the checkout")
+    except ValueError:
+        pass
+    if ev.exists():
+        bad.append(f"evidence directory {ev} already exists")
+    rt = {"host": socket.gethostname(), "python": platform.python_version(), "numpy": numpy.__version__,
+          "scipy": scipy.__version__, "python_flint": flint.__version__, "venv": sys.prefix}
+    if rt != proto["runtime"]:
+        bad.append(f"runtime differs from the protocol: {rt}")
+    for k in proto["addresses"]["cells"]:
+        if sha(RECORDS / f"aux5_CUSUM_{k}_256.json") != proto["k1_record_sha256"][str(k)]:
+            bad.append(f"K1 record {k} differs from its pre-registered sha")
+    probe = ("import sys; sys.path.insert(0, %r); import tc_producer as T\n"
+             "[T.require_authorized(k, %r) for k in %r]") % (str(NS / "code"), protocol_sha256,
+                                                              proto["addresses"]["cells"])
+    p = subprocess.run([PY, "-B", "-c", probe], capture_output=True, text=True)
+    if p.returncode != 0:
+        bad.append("producer gate refuses: " + ((p.stderr.strip().splitlines() or [""])[-1]))
+    return bad
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--protocol-sha256", required=True)
     ap.add_argument("--evidence", required=True)
+    ap.add_argument("--preflight-only", action="store_true")
     a = ap.parse_args()
     proto = json.loads((NS / "config/TC_PROTOCOL.json").read_bytes())
     if sha(NS / "config/TC_PROTOCOL.json") != a.protocol_sha256:
@@ -57,6 +98,13 @@ def main() -> int:
     cells = proto["addresses"]["cells"]
     a.workers = int(proto["budget"]["workers"])          # frozen worker count (review r2 N-R2-9); no override
     ev = Path(a.evidence)
+    bad = preflight(proto, a.protocol_sha256, ev)
+    if bad:
+        print(json.dumps({"PREFLIGHT": "REFUSED", "reasons": bad}))
+        return 2
+    if a.preflight_only:
+        print(json.dumps({"PREFLIGHT": "PASS"}))
+        return 0
     (ev / "cells").mkdir(parents=True, exist_ok=False)
     (ev / "repro").mkdir(parents=True, exist_ok=False)
     head = subprocess.run(["git", "-C", str(REPO), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()

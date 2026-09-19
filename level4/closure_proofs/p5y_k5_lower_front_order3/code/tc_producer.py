@@ -71,8 +71,8 @@ def committed_json(rel: str) -> dict:
     except Exception:
         raise TCProducerRefusal(f"{rel} is not committed")
     disk = (REPO / rel).read_bytes()
-    head = _git("show", f"HEAD:{rel}").encode()
-    if disk != head:
+    head = subprocess.run(["git", "-C", str(REPO), "show", f"HEAD:{rel}"], check=True, capture_output=True).stdout
+    if disk != head:                                   # bytes vs bytes (review r3 N-R3-6)
         raise TCProducerRefusal(f"{rel} differs from its committed bytes")
     return json.loads(disk)
 

@@ -22,11 +22,14 @@ NS_REL = "level4/closure_proofs/p5y_k5_lower_front_order3"
 CP = "level4/closure_proofs/"
 OWN = ["code/tc_rule.py", "code/tc_producer.py", "code/tc_consume.py", "code/tc_crosscheck.py",
        "code/tc_manufactured.py", "code/tc_qualify.py", "code/tc_run.py", "code/tc_lifecycle_sim.py",
+       "code/tc_prefreeze.py",
        "code/lower_front_blocker_map.py",
        "theorem/THEOREM_TC.md", "config/FEASIBILITY_GATES_A.json", "phase_a/LOWER_FRONT_BLOCKER_MAP.json",
        "phase_b/ROUTE_COMPARISON.md", "evidence/forecast_r1/ROUTE_FORECAST.json", "evidence/forecast_r1/COST_NOTE.md",
        "TC_SUCCESSOR_SPEC.md", "review/REVIEW_R1.md", "review/REVIEW_R1_DISPOSITION.md", "review/REVIEW_R2.md",
-       "review/REVIEW_R2_DISPOSITION.md", "review/REVIEW_BRIEF_R1.md", "review/AUTHORIZATION_BRIEF.md"]
+       "review/REVIEW_R2_DISPOSITION.md", "review/REVIEW_BRIEF_R1.md", "review/AUTHORIZATION_BRIEF.md",
+       "review/ADJUDICATION_BRIEF.md", "review/REVIEW_R3.md", "review/REVIEW_R3_DISPOSITION.md",
+       "code/checkpoint.py", "evidence/dev/README.md"]
 PREDECESSORS = [
     CP + "p5y_k5_perron_deflated_resolvent/evidence/successor_r1/DEFLATED_CONSUMPTION.json",
     CP + "p5y_k5_perron_deflated_resolvent/evidence/successor_r1/K5_COVERAGE_MAP_R3.json",
@@ -132,12 +135,24 @@ def main() -> int:
                        "tc_rule and tc_crosscheck agree exactly on every cell and m",
                        "the consumer replay gate passes and no TC intersection is empty",
                        "A-constants of every address equal the adopted audit values"],
-        "budget": {"forecast_new_real_cpu_hours": 16.3, "protocol_cap_new_real_cpu_hours": 24,
+        "budget": {"forecast_new_real_cpu_hours": 16.3, "protocol_cap_new_real_cpu_hours": 30,
                    "campaign_hard_cap_cpu_hours": 40, "workers": 4,
                    "basis": "evidence/forecast_r1/COST_NOTE.md (measured dev replays of cells 11 and 44)"},
         "stopping_rule": "each address is evaluated exactly once (plus the pre-registered 2-cell reproduction); "
-                         "no re-run, no additional address, no adaptive choice; any refusal or failed acceptance item "
-                         "makes the run VOID (no consumption) and stops Campaign A execution",
+                         "no re-run, no additional address, no adaptive choice; any refusal of a producer invocation "
+                         "or failed acceptance item makes the run VOID (no consumption) and stops Campaign A "
+                         "execution; a tc_run PREFLIGHT refusal (no producer invoked, nothing computed, no ledger "
+                         "written) is not a run",
+        "governance_schema": {"QUALIFICATION_RESULT.json": "written by tc_qualify (QUALIFIED, protocol_sha256, S00.head)",
+                              "AUTHORIZATION.json": {"verdict": "AUTHORIZED", "protocol_sha256": "<protocol sha>",
+                                                     "addresses": "<exact int list of addresses.cells>",
+                                                     "qualification_result_sha256": "<sha of the committed file>",
+                                                     "review": "evidence/tc_r1/AUTHORIZATION_REVIEW.md"},
+                              "GUARD.json": {"state": "ALLOW | DENY", "protocol_sha256": "<protocol sha>",
+                                             "addresses": "<exact int list>",
+                                             "authorization_sha256": "<sha of the committed AUTHORIZATION.json>"},
+                              "order": "QUALIFICATION_RESULT, AUTHORIZATION and GUARD ALLOW in three commits, in this "
+                                       "order, fast-forward only on a full clone; LF line endings"},
         "seal_rule": "cells/, repro/, TC_INDEX.json and RUN_LEDGER.jsonl are committed once (with GUARD back to DENY) "
                      "before any consumption or pass/open inspection, and never modified afterwards",
         "runtime": {"host": socket.gethostname(), "python": platform.python_version(), "numpy": numpy.__version__,

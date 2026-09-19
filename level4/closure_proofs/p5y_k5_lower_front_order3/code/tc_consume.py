@@ -303,6 +303,9 @@ def governance_context(proto: dict, protocol_sha256: str) -> dict:
             or a.get("addresses") != proto["addresses"]["cells"] or a.get("qualification_result_sha256") != sha(qual):
         raise TCConsumeRefusal("AUTHORIZATION is not bound to this protocol, its addresses and its qualification")
     a_add = _git("log", "--diff-filter=A", "--format=%H", "--", EVID_REL + "/AUTHORIZATION.json").split()[-1]
+    q_add = _git("log", "--diff-filter=A", "--format=%H", "--", EVID_REL + "/QUALIFICATION_RESULT.json").split()[-1]
+    if q_add == a_add or not _ancestor(q_add, a_add):
+        raise TCConsumeRefusal("commit order qualification -> authorization is violated")
     if len(_git("log", "--format=%H", "--", EVID_REL + "/AUTHORIZATION.json").split()) != 1:
         raise TCConsumeRefusal("AUTHORIZATION was modified after it was committed")
     guard_now = json.loads(committed_bytes(EVID_REL + "/GUARD.json"))
@@ -311,7 +314,9 @@ def governance_context(proto: dict, protocol_sha256: str) -> dict:
     heads, guard_at = set(), {}
     for c in [a_add] + _git("rev-list", "--ancestry-path", f"{a_add}..HEAD").split():
         g = _show(c, EVID_REL + "/GUARD.json")
-        if g and json.loads(g).get("state") == "ALLOW" and json.loads(g).get("authorization_sha256") == sha(auth) \
+        gj = json.loads(g) if g else {}
+        if gj.get("state") == "ALLOW" and gj.get("authorization_sha256") == sha(auth) \
+                and gj.get("addresses") == proto["addresses"]["cells"] and gj.get("protocol_sha256") == protocol_sha256 \
                 and _show(c, EVID_REL + "/AUTHORIZATION.json") == auth:
             heads.add(c)
             guard_at[c] = sha(g)
@@ -341,15 +346,28 @@ def load_sealed_tc(proto: dict, protocol_sha256: str) -> tuple[dict, dict]:
         repro[k] = sha(sealed_once(f"{EVID_REL}/repro/TC_CELL_{int(k)}.json"))
     check_index(index, proto, protocol_sha256, cells, repro)
     ledger = [json.loads(x) for x in sealed_once(EVID_REL + "/RUN_LEDGER.jsonl").decode().splitlines() if x.strip()]
-    outs = {str(x["cell"]): x for x in ledger if x.get("event") == "OUTPUT"}
-    if sorted(outs) != sorted(index["cells"]) or any(not outs[k].get("ok") or outs[k].get("sha256") != v
-                                                     for k, v in index["cells"].items()):
+    starts = [str(x.get("cell")) for x in ledger if x.get("event") == "START"]
+    outs = [x for x in ledger if x.get("event") == "OUTPUT"]
+    want = sorted(index["cells"])
+    if sorted(starts) != want or sorted(str(x.get("cell")) for x in outs) != want:
+        raise TCConsumeRefusal("RUN_LEDGER must hold exactly one START and one OUTPUT per address (review r3 N-R3-4)")
+    if any(not x.get("ok") or x.get("sha256") != index["cells"][str(x["cell"])] for x in outs):
         raise TCConsumeRefusal("RUN_LEDGER OUTPUT lines do not match the sealed index")
-    if not any(x.get("event") == "RUN_END" and x.get("reproduction_identical") is True for x in ledger) \
+    runs = [x for x in ledger if x.get("event") == "RUN_START"]
+    ends = [x for x in ledger if x.get("event") == "RUN_END"]
+    if len(runs) != 1 or len(ends) != 1 or ends[0].get("reproduction_identical") is not True \
+            or ends[0].get("index_sha256") != sha(idx_raw) \
             or any(x.get("event") in ("RUN_VOID", "CAP_STOP") for x in ledger):
-        raise TCConsumeRefusal("RUN_LEDGER does not record a complete, non-void run")
-    if len([x for x in ledger if x.get("event") == "START"]) != len(index["cells"]):
-        raise TCConsumeRefusal("RUN_LEDGER does not record exactly one invocation per address")
+        raise TCConsumeRefusal("RUN_LEDGER does not record exactly one complete, non-void run of this index")
+    heads = {rec.get("binding", {}).get("head") for rec in cells.values()} if all(
+        isinstance(rec.get("binding"), dict) for rec in cells.values()) else {None}
+    if heads != {index.get("head")} or runs[0].get("head") != index.get("head") \
+            or any(x.get("head") != index.get("head") for x in ledger):
+        raise TCConsumeRefusal("records, index and ledger are not from one run head")
+    for k, rec in cells.items():
+        if rec.get("schema") != "rebaseguard.p5y.k5.lower-front-order3.tc-cell.v1" \
+                or (rec.get("runtime_checks") or {}).get("runtime") != proto["runtime"]:
+            raise TCConsumeRefusal(f"TC record {k}: schema or recorded runtime differs from the protocol")
     ctx = governance_context(proto, protocol_sha256)
     for k, rec in cells.items():
         check_binding(rec, k, proto, ctx)
@@ -367,6 +385,11 @@ def main() -> int:
     ap.add_argument("--out", required=True)
     ap.add_argument("--replay-only", action="store_true")
     a = ap.parse_args()
+    try:                                               # review r3 N-R3-3: outputs never go into the checkout
+        Path(a.out).resolve().relative_to(REPO.resolve())
+        raise TCConsumeRefusal("--out must be outside the checkout (copy the verified output in afterwards)")
+    except ValueError:
+        pass
     proto = load_protocol(a.protocol_sha256)
     if a.replay_only:
         tc, audit = {}, {"mode": "replay-only"}

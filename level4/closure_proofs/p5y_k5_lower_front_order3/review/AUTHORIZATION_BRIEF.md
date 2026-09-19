@@ -18,8 +18,11 @@ Check:
    40), stopping rule, seal rule. Does the freeze commit contain exactly the protocol, code and the pre-freeze refusal?
 3. (D) `evidence/tc_r1/QUALIFICATION_RESULT.json` (and the qualification evidence files): QUALIFIED true, S00 head equal
    to the freeze commit, every gate passed as the frozen gate definitions in `code/tc_qualify.py` require.
-4. Reviews: `review/REVIEW_R1.md` (NOT_READY), `review/REVIEW_R1_DISPOSITION.md`, `review/REVIEW_R2.md` (+ disposition if
-   any). Was every load-bearing finding resolved before the freeze?
+4. Reviews: `review/REVIEW_R1.md` (NOT_READY), `review/REVIEW_R1_DISPOSITION.md`, `review/REVIEW_R2.md` (NOT_READY),
+   `review/REVIEW_R2_DISPOSITION.md`, `review/REVIEW_R3.md` (PASS_WITH_NOTES), `review/REVIEW_R3_DISPOSITION.md`. Was
+   every BLOCKING and every load-bearing finding resolved before the freeze? Also accept or reject explicitly the
+   residual risks r3 lists (N-R3-7 cap headroom, N-R3-8 first real exercise of the order-3 path on cells 11–44,
+   N-R3-10 host drift during the run).
 5. The parallel channel: the TC producer calls the frozen order-3 producer's `Order3Certifier` directly, while that
    producer's own real-cell registry stays empty. Decide explicitly whether this protocol's authorization is an
    acceptable governing gate for these 34 addresses (the order-3 producer is frozen and its manifest is verified at run

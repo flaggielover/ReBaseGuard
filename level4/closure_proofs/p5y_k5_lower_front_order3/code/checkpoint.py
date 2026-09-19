@@ -42,7 +42,10 @@ def main() -> int:
            "new_real_cpu_hours": a.new_real_cpu_hours,
            "open_cells": dict(x.split("=", 1) for x in a.open.split(",") if x), "next_authorized_stage": a.next,
            "note": a.note}
-    out = NS / "checkpoints" / f"{a.name}.json"
+    # after the freeze (protocol present) only evidence/tc_r1/ may change (review r3 N-R3-2)
+    base = NS / "evidence/tc_r1/checkpoints" if (NS / "config/TC_PROTOCOL.json").exists() else NS / "checkpoints"
+    base.mkdir(parents=True, exist_ok=True)
+    out = base / f"{a.name}.json"
     out.write_text(json.dumps(rec, sort_keys=True, indent=1) + "\n")
     print(out)
     return 0
