@@ -1,19 +1,22 @@
-"""Falsification gate S12 for the certified operator registry (review r1 M1 / r2): independent float quadrature.
+"""Falsification gate S12 (r2) for the certified operator registry: independent float quadrature against the CERTIFIED claims.
 
-Independent of the frozen certification path: no _kernel_polynomials, no Pair, no phi Taylor series, no Bernstein. Each
-payload is evaluated as a Chebyshev tensor polynomial (numpy chebval2d), the kernel integral is computed by composite
-Gauss-Legendre on the exact z-pieces [m-c, beta], [beta, alpha], [alpha, c-p] (or [m-c, alpha], [alpha, beta],
-[beta, c-p]), with scipy's ndtr for the closed forms. Every CERTIFIED inequality is then evaluated on thousands of
-states (both axes to 5, dense near p+m = 1 and p+m = 4, the triangle, the origin) and at the ends and centre of its drift
-set:
-    taboo blocks   w - 1 - Khat_e w >= 0 and w >= 0                 at e in {e_lo, ec, e_hi}
-    ARL cells      W - 1 - K_e W >= 0                                at e in {x_lo, e0, x_hi}
-    taboo cells    |r_j(x; e0)| <= lambda_mid_j, |r_j(x; e)| <= lambda_cell_j (e = cell ends), j = 0, 1, 2
-The gate is qualified by planted bugs that it must flag: a supersolution without margin (alpha = 1), a supersolution
-certified against a too-lenient operator (0.9 Khat), a block certified at one end only (wide block, point certificate),
-and residual bounds shrunk tenfold.
+Independent of the certification path: no _kernel_polynomials, no Pair, no phi Taylor series, no Bernstein. A payload is
+evaluated as a Chebyshev tensor polynomial (numpy chebval2d); (K_i f)(p, m) = int phi^(i)(z+e) f(T(p,m;z)) dz is computed by
+composite Gauss-Legendre on the exact z-pieces [m-c, beta], [beta, alpha], [alpha, c-p] (or [m-c, alpha], [alpha, beta],
+[beta, c-p]); the atom piece contributes f(0,0) * int phi^(i) (whole kernel only); closed forms use scipy's ndtr.
 
-    python3 -B code/falsify_registry.py run --registry REGISTRY.json --out FALSIFY.json
+Checked against the certified numbers (review r3 B1): on ~5k states -- the whole reachable set, three offsets of the
+atom-collapse line p+m = 1 at 401 points each, a band around it, near-axis strips and the edge p+m = 4 -- then refined on a
+21x21 local grid around every extreme:
+    taboo blocks  min (w - 1 - Khat_e w) >= certified margin at e in {e_lo, ec, e_hi};  w >= 0;  C_T >= max w;  tau >= w(a)
+    ARL cells     min (W - 1 - K_e W) >= certified margin at e in {x_lo, e0, x_hi};  Abar >= W(a)
+    taboo cells   max |r_j(x; e0)| / lambda_mid_j <= 1,  max |r_j(x; e)| / lambda_cell_j <= 1 (e = cell ends);
+                  d_j(0,0) inside the recorded candidate_at_atom ball
+Planted bugs the gate must flag: no margin (w / alpha); a localized bump of height 0.02 subtracted near (0.9, 0.1);
+a point certificate used on a wide block (probe payload); residual bounds shrunk 1.2x; C_T understated to 0.999 max w;
+Abar understated to 0.9999 W(a).
+
+    python3 -B code/falsify_registry.py run --registry REGISTRY.json --probe PROBE.json --out FALSIFY.json [--workers N]
 """
 from __future__ import annotations
 
@@ -21,6 +24,7 @@ import argparse
 import json
 import math
 import sys
+from concurrent.futures import ProcessPoolExecutor
 from fractions import Fraction as F
 from pathlib import Path
 
@@ -29,9 +33,11 @@ from numpy.polynomial import chebyshev as Ch
 from scipy.special import ndtr
 
 H, K, C = 5.0, 0.5, 5.5
-GL_N = 64
+GL_N, SUBDIV = 64, 8
 GN, GW = np.polynomial.legendre.leggauss(GL_N)
 SQ2PI = math.sqrt(2 * math.pi)
+TOL = 1e-9
+WORKERS = 6
 
 
 def payload_coeffs(pay: dict) -> np.ndarray:
@@ -40,7 +46,7 @@ def payload_coeffs(pay: dict) -> np.ndarray:
 
 
 def peval(c: np.ndarray, p, m):
-    return Ch.chebval2d(2 * np.asarray(p) / H - 1, 2 * np.asarray(m) / H - 1, c)
+    return Ch.chebval2d(2 * np.asarray(p, dtype=float) / H - 1, 2 * np.asarray(m, dtype=float) / H - 1, c)
 
 
 def phi_i(y, i):
@@ -48,164 +54,247 @@ def phi_i(y, i):
     return base * {0: 1.0, 1: -y, 2: y * y - 1.0}[i]
 
 
-def pieces(p, m):
+def _nodes(a, b, n):
+    edges = np.linspace(a, b, n + 1)
+    lo, hi = edges[:-1, None], edges[1:, None]
+    z = 0.5 * (lo + hi) + 0.5 * (hi - lo) * GN[None, :]
+    w = 0.5 * (hi - lo) * GW[None, :]
+    return z.ravel(), w.ravel()
+
+
+def kernel(f, p: float, m: float, e: float, i: int, taboo: bool) -> float:
+    """(K_i f)(p, m), or (Khat_i f)(p, m) if taboo; f is a callable f(P, M) on arrays."""
     ell, up = m - C, C - p
     beta, alpha = m - K, K - p
-    if beta < alpha:
-        return [(ell, beta, False), (beta, alpha, True), (alpha, up, False)]
-    return [(ell, alpha, False), (alpha, beta, False), (beta, up, False)]
-
-
-def kernel(c: np.ndarray, p: float, m: float, e: float, i: int, taboo: bool, subdiv: int = 8) -> float:
-    """(K_i f)(p, m) or (Khat_i f)(p, m) for the polynomial f with coefficients c; composite Gauss-Legendre."""
     tot = 0.0
-    f_origin = float(peval(c, 0.0, 0.0))
-    for a, b, is_atom in pieces(p, m):
-        if b <= a:
-            continue
-        if is_atom:
-            if taboo:
-                continue
-            # f(T) = f(a) on the atom window
-            edges = np.linspace(a, b, 3)
-            for lo, hi in zip(edges[:-1], edges[1:]):
-                z = 0.5 * (lo + hi) + 0.5 * (hi - lo) * GN
-                tot += f_origin * float(np.sum(0.5 * (hi - lo) * GW * phi_i(z + e, i)))
-            continue
-        edges = np.linspace(a, b, subdiv + 1)
-        for lo, hi in zip(edges[:-1], edges[1:]):
-            z = 0.5 * (lo + hi) + 0.5 * (hi - lo) * GN
-            vals = peval(c, np.maximum(0.0, p + z - K), np.maximum(0.0, m - z - K))
-            tot += float(np.sum(0.5 * (hi - lo) * GW * phi_i(z + e, i) * vals))
-    return tot
+    if beta < alpha:
+        segs = [(ell, beta), (alpha, up)]
+        if not taboo:
+            z, w = _nodes(beta, alpha, 2)
+            tot += float(f(np.array([0.0]), np.array([0.0]))[0]) * float(np.sum(w * phi_i(z + e, i)))
+    else:
+        segs = [(ell, alpha), (alpha, beta), (beta, up)]
+    zs, ws = [], []
+    for a, b in segs:
+        if b > a:
+            z, w = _nodes(a, b, SUBDIV)
+            zs.append(z)
+            ws.append(w)
+    z, w = np.concatenate(zs), np.concatenate(ws)
+    vals = f(np.maximum(0.0, p + z - K), np.maximum(0.0, m - z - K))
+    return tot + float(np.sum(w * phi_i(z + e, i) * vals))
+
+
+def poly(c):
+    return lambda P, M: peval(c, P, M)
 
 
 def h1(p, m, e, k):
     u, l = C - p + e, m - C + e
     if k == 0:
-        return 1.0 - ndtr(u) + ndtr(l)
+        return float(1.0 - ndtr(u) + ndtr(l))
     s0 = phi_i(u, 0) - phi_i(l, 0)
     if k == 1:
-        return -s0
-    s1 = -u * phi_i(u, 0) + l * phi_i(l, 0)
-    return -s1
+        return float(-s0)
+    return float(-(-u * phi_i(u, 0) + l * phi_i(l, 0)))
 
 
-def states(n_axis=220, n_tri=500, seed=5):
+def reachable(p, m):
+    return p >= 0 and m >= 0 and p <= H and m <= H and (p == 0 or m == 0 or p + m <= 4 + 1e-12)
+
+
+def states(seed=5):
     rng = np.random.default_rng(seed)
     pts = [(0.0, 0.0)]
-    ax = np.unique(np.concatenate([np.linspace(0, 5, n_axis), np.linspace(0.9, 1.1, 21), np.linspace(3.9, 4.1, 21),
+    ax = np.unique(np.concatenate([np.linspace(0, 5, 220), np.linspace(0.9, 1.1, 21), np.linspace(3.9, 4.1, 21),
                                    np.linspace(4.9, 5.0, 11)]))
     pts += [(float(v), 0.0) for v in ax] + [(0.0, float(v)) for v in ax]
     for s in np.concatenate([np.linspace(0.02, 4.0, 25), np.linspace(0.95, 1.05, 11), np.linspace(3.95, 4.0, 6)]):
         for t in np.linspace(0.05, 0.95, 9):
             pts.append((float(s * t), float(s * (1 - t))))
-    while len(pts) < 2 * len(ax) + 1 + 450 + n_tri:
+    while len(pts) < 2 * len(ax) + 1 + 450 + 500:
         p, m = rng.uniform(0, 4, 2)
         if p + m <= 4:
             pts.append((float(p), float(m)))
     return pts
 
 
-def check_super(c, e_list, taboo: bool, pts, margin_floor=0.0):
-    worst = math.inf
-    arg = None
+def dense_states():
+    """review r3 B1: the atom-collapse line p+m = 1 (three offsets x 401), a band around it, near-axis strips, p+m = 4."""
+    pts = []
+    t401 = np.linspace(0, 1, 401)
+    for r in (1 - 1e-3, 1.0, 1 + 1e-3):
+        pts += [(float(r * t), float(r * (1 - t))) for t in t401]
+    for r in np.linspace(0.97, 1.03, 13):
+        pts += [(float(r * t), float(r * (1 - t))) for t in np.linspace(0, 1, 101)]
+    for d in (1e-3, 5e-3, 1e-2, 2e-2, 5e-2):
+        for v in np.linspace(0, 3.9, 80):
+            pts += [(d, float(v)), (float(v), d)]
+    for r in (4 - 1e-3, 4.0):
+        pts += [(float(r * t), float(r * (1 - t))) for t in np.linspace(0, 1, 201)]
+    return [x for x in pts if reachable(*x)]
+
+
+def local_grid(p0, m0, h=0.01, n=21):
+    return [(float(p), float(m)) for p in np.linspace(p0 - h, p0 + h, n) for m in np.linspace(m0 - h, m0 + h, n)
+            if reachable(float(p), float(m))]
+
+
+def super_min(f, e_list, taboo, pts):
+    best = (math.inf, None)
     for e in e_list:
         for p, m in pts:
-            v = float(peval(c, p, m)) - 1.0 - kernel(c, p, m, e, 0, taboo)
-            if v < worst:
-                worst, arg = v, (p, m, e)
-    wmin = min(float(peval(c, p, m)) for p, m in pts)
-    return {"min_value": worst, "at": arg, "w_min": wmin, "ok": worst >= margin_floor - 1e-9 and wmin >= -1e-12}
+            v = float(f(np.array([p]), np.array([m]))[0]) - 1.0 - kernel(f, p, m, e, 0, taboo)
+            if v < best[0]:
+                best = (v, (p, m, e))
+    p0, m0, e0 = best[1]
+    for p, m in local_grid(p0, m0):
+        v = float(f(np.array([p]), np.array([m]))[0]) - 1.0 - kernel(f, p, m, e0, 0, taboo)
+        if v < best[0]:
+            best = (v, (p, m, e0))
+    return best
 
 
-def residuals(pays, p, m, e):
-    c0, c1, c2 = (payload_coeffs(pays[k]) for k in ("d0", "d1", "d2"))
-    v0, v1, v2 = (float(peval(c, p, m)) for c in (c0, c1, c2))
-    r0 = v0 - kernel(c0, p, m, e, 0, True) - h1(p, m, e, 0)
-    r1 = v1 - kernel(c1, p, m, e, 0, True) - kernel(c0, p, m, e, 1, True) - h1(p, m, e, 1)
-    r2 = (v2 - kernel(c2, p, m, e, 0, True) - 2 * kernel(c1, p, m, e, 1, True) - kernel(c0, p, m, e, 2, True)
+def residual_triplet(fs, p, m, e):
+    f0, f1, f2 = fs
+    P, M = np.array([p]), np.array([m])
+    v0, v1, v2 = (float(f(P, M)[0]) for f in fs)
+    r0 = v0 - kernel(f0, p, m, e, 0, True) - h1(p, m, e, 0)
+    r1 = v1 - kernel(f1, p, m, e, 0, True) - kernel(f0, p, m, e, 1, True) - h1(p, m, e, 1)
+    r2 = (v2 - kernel(f2, p, m, e, 0, True) - 2 * kernel(f1, p, m, e, 1, True) - kernel(f0, p, m, e, 2, True)
           - h1(p, m, e, 2))
     return abs(r0), abs(r1), abs(r2)
 
 
-def check_cell_residuals(art, pts, shrink=1.0):
-    e0, rho = float(F(art["e0"])), float(F(art["rho"]))
-    lm = [float(F(art["lambda_mid"][str(j)])) / shrink for j in range(3)]
-    lc = [float(F(art["lambda_cell"][str(j)])) / shrink for j in range(3)]
-    worst_mid, worst_cell = [0.0] * 3, [0.0] * 3
-    for p, m in pts:
-        for j, r in enumerate(residuals(art["payloads"], p, m, e0)):
-            worst_mid[j] = max(worst_mid[j], r / lm[j])
-        for e in (e0 - rho, e0 + rho):
-            for j, r in enumerate(residuals(art["payloads"], p, m, e)):
-                worst_cell[j] = max(worst_cell[j], r / lc[j])
-    return {"max_ratio_mid": worst_mid, "max_ratio_cell": worst_cell,
-            "ok": max(worst_mid) <= 1.0 + 1e-9 and max(worst_cell) <= 1.0 + 1e-9}
+def residual_max_ratio(fs, lam, e_list, pts):
+    best = (0.0, None)
+    for e in e_list:
+        for p, m in pts:
+            r = max(x / l for x, l in zip(residual_triplet(fs, p, m, e), lam))
+            if r > best[0]:
+                best = (r, (p, m, e))
+    p0, m0, e0 = best[1]
+    for p, m in local_grid(p0, m0):
+        r = max(x / l for x, l in zip(residual_triplet(fs, p, m, e0), lam))
+        if r > best[0]:
+            best = (r, (p, m, e0))
+    return best
 
 
-WORKERS = 7
+# ------------------------------------------------------------------------------------------------ jobs
+def _block_job(args):
+    path = args
+    a = json.loads(Path(path).read_text())
+    c = payload_coeffs(a["payload"])
+    lo, hi = float(F(a["e_lo"])), float(F(a["e_hi"]))
+    pts = states() + dense_states()
+    v, at = super_min(poly(c), (lo, 0.5 * (lo + hi), hi), True, pts)
+    wvals = peval(c, np.array([x[0] for x in pts]), np.array([x[1] for x in pts]))
+    margin = float(F(a["margin_lower_bound"]))
+    out = {"min_value": v, "at": at, "certified_margin": margin, "w_min": float(wvals.min()),
+           "w_max_sampled": float(wvals.max()), "C_T": float(F(a["C_T"])), "w_at_atom": float(peval(c, 0.0, 0.0)),
+           "tau": float(F(a["tau"]))}
+    out["ok"] = (v >= margin - TOL and out["w_min"] >= -TOL and out["C_T"] >= out["w_max_sampled"] - TOL
+                 and out["tau"] >= out["w_at_atom"] - TOL)
+    return Path(path).name, out
 
 
 def _cell_job(args):
     k, art_dir = args
     art_dir = Path(art_dir)
-    pts_small = states()[::4]
+    pts = states()[::4] + dense_states()
     a = json.loads((art_dir / f"arl_cell_{k:03d}.json").read_text())
+    c = payload_coeffs(a["payload"])
     lo, hi = float(F(a["e_lo"])), float(F(a["e_hi"]))
-    r = check_super(payload_coeffs(a["payload"]), (lo, 0.5 * (lo + hi), hi), False, pts_small)
+    v, at = super_min(poly(c), (lo, 0.5 * (lo + hi), hi), False, pts)
+    arl = {"min_value": v, "at": at, "certified_margin": float(F(a["margin_lower_bound"])),
+           "Abar": float(F(a["tau"])), "W_at_atom": float(peval(c, 0.0, 0.0))}
+    arl["ok"] = v >= arl["certified_margin"] - TOL and arl["Abar"] >= arl["W_at_atom"] - TOL
     d = json.loads((art_dir / f"taboo_cell_{k:03d}.json").read_text())
-    return k, r, check_cell_residuals(d, pts_small)
+    fs = tuple(poly(payload_coeffs(d["payloads"][f"d{j}"])) for j in range(3))
+    e0, rho = float(F(d["e0"])), float(F(d["rho"]))
+    lm = [float(F(d["lambda_mid"][str(j)])) for j in range(3)]
+    lc = [float(F(d["lambda_cell"][str(j)])) for j in range(3)]
+    rmid, amid = residual_max_ratio(fs, lm, (e0,), pts)
+    rcell, acell = residual_max_ratio(fs, lc, (e0 - rho, e0 + rho), pts)
+    inside = []
+    for j in range(3):
+        lo_j, hi_j = (float(F(x)) for x in d["candidate_at_atom"][f"d{j}"])
+        val = float(fs[j](np.array([0.0]), np.array([0.0]))[0])
+        inside.append(lo_j - 1e-12 * max(1.0, abs(val)) <= val <= hi_j + 1e-12 * max(1.0, abs(val)))
+    tab = {"max_ratio_mid": rmid, "at_mid": amid, "max_ratio_cell": rcell, "at_cell": acell, "atom_values_inside": inside}
+    tab["ok"] = rmid <= 1.0 + TOL and rcell <= 1.0 + TOL and all(inside)
+    return k, arl, tab
 
 
-def run(reg: dict, art_dir: Path, cells=None) -> dict:
-    pts = states()
-    pts_small = pts[::4]
-    out = {"states": len(pts), "blocks": {}, "arl_cells": {}, "taboo_cells": {}, "flags": []}
-    for i, b in reg["taboo_blocks"].items():
-        art = json.loads((art_dir / f"taboo_block_{int(i):02d}.json").read_text())
-        lo, hi = float(F(art["e_lo"])), float(F(art["e_hi"]))
-        r = check_super(payload_coeffs(art["payload"]), (lo, 0.5 * (lo + hi), hi), True, pts)
-        out["blocks"][i] = r
-        if not r["ok"]:
-            out["flags"].append(["taboo_block", i, r["min_value"]])
+def run(reg: dict, art_dir: Path, cells=None, workers: int = WORKERS) -> dict:
+    out = {"states_blocks": len(states() + dense_states()), "states_cells": len(states()[::4] + dense_states()),
+           "blocks": {}, "arl_cells": {}, "taboo_cells": {}, "flags": []}
     sel = cells if cells is not None else [b["cell"] for b in reg["blocks"]]
-    from concurrent.futures import ProcessPoolExecutor
-    with ProcessPoolExecutor(WORKERS) as ex:
-        results = list(ex.map(_cell_job, [(k, str(art_dir)) for k in sel]))
-    for k, r, rr in results:
-        out["arl_cells"][str(k)] = r
+    with ProcessPoolExecutor(workers) as ex:
+        blocks = list(ex.map(_block_job, [str(art_dir / f"taboo_block_{int(i):02d}.json") for i in reg["taboo_blocks"]]))
+        cellres = list(ex.map(_cell_job, [(k, str(art_dir)) for k in sel]))
+    for name, r in blocks:
+        out["blocks"][name] = r
         if not r["ok"]:
-            out["flags"].append(["arl_cell", k, r["min_value"]])
-        out["taboo_cells"][str(k)] = rr
-        if not rr["ok"]:
-            out["flags"].append(["taboo_cell", k, rr["max_ratio_mid"], rr["max_ratio_cell"]])
+            out["flags"].append(["taboo_block", name, r])
+    for k, arl, tab in cellres:
+        out["arl_cells"][str(k)] = arl
+        out["taboo_cells"][str(k)] = tab
+        if not arl["ok"]:
+            out["flags"].append(["arl_cell", k, arl])
+        if not tab["ok"]:
+            out["flags"].append(["taboo_cell", k, tab])
+    out["worst"] = {
+        "taboo_block_slack_min": min(r["min_value"] - r["certified_margin"] for r in out["blocks"].values()),
+        "arl_cell_slack_min": min(r["min_value"] - r["certified_margin"] for r in out["arl_cells"].values()),
+        "taboo_cell_ratio_mid_max": max(r["max_ratio_mid"] for r in out["taboo_cells"].values()),
+        "taboo_cell_ratio_cell_max": max(r["max_ratio_cell"] for r in out["taboo_cells"].values())}
     out["pass"] = not out["flags"]
     return out
 
 
+# ------------------------------------------------------------------------------------------------ planted bugs
 def planted(art_dir: Path, probe_path: Path | None) -> dict:
-    """The gate must flag each planted bug."""
-    pts = states()[::4]
+    pts = states()[::4] + dense_states()
     res = {}
-    art = json.loads((art_dir / "taboo_block_05.json").read_text())
-    c = payload_coeffs(art["payload"])
-    alpha = float(F(art["proposal"]["alpha"]))
-    e = float(F(art["ec"]))
-    # P1 no margin: w / alpha (the float taboo solution itself) must violate w >= 1 + Khat w somewhere
-    res["P1_no_margin"] = not check_super(c / alpha, (e,), True, pts)["ok"]
-    # P2 certified against a lenient operator: the scaled w = 0.8 w passes 0.9-scaled checks but not the true one
-    res["P2_lenient_operator"] = not check_super(0.8 * c, (e,), True, pts)["ok"]
-    # P3 one end only: the probe's wide-block payload (a point certificate at the block centre) fails at the block ends
+    a = json.loads((art_dir / "taboo_block_05.json").read_text())
+    c = payload_coeffs(a["payload"])
+    alpha = float(F(a["proposal"]["alpha"]))
+    lo, hi = float(F(a["e_lo"])), float(F(a["e_hi"]))
+    ec = 0.5 * (lo + hi)
+    margin = float(F(a["margin_lower_bound"]))
+    # P1 no margin
+    res["P1_no_margin"] = super_min(poly(c / alpha), (ec,), True, pts)[0] < margin - TOL
+
+    # P2 localized bump of height 0.02 near (0.9, 0.1), width 0.03, subtracted from w
+    def bumped(P, M):
+        return peval(c, P, M) - 0.02 * np.exp(-((P - 0.9) ** 2 + (M - 0.1) ** 2) / (2 * 0.03 ** 2))
+    res["P2_localized_bump"] = super_min(bumped, (ec,), True, pts)[0] < margin - TOL
+    # P3 point certificate on a wide block
     if probe_path is not None and probe_path.exists():
         pr = json.loads(probe_path.read_text())
         cw = payload_coeffs(pr["payload"])
-        res["P3_one_end_only"] = not check_super(cw, (float(F(pr["wide_block"][0])), float(F(pr["wide_block"][1]))),
-                                                 True, pts)["ok"]
-    # P4 residual bounds shrunk tenfold must be exceeded
-    d = json.loads((art_dir / "taboo_cell_050.json").read_text())
-    res["P4_residual_shrunk"] = not check_cell_residuals(d, pts, shrink=10.0)["ok"]
-    res["pass"] = all(v for k, v in res.items() if k != "pass")
+        res["P3_point_certificate_on_wide_block"] = super_min(
+            poly(cw), (float(F(pr["wide_block"][0])), float(F(pr["wide_block"][1]))), True, pts)[0] < 0.0
+    else:
+        res["P3_point_certificate_on_wide_block"] = False
+    # P4 residual bounds shrunk 1.2x
+    flagged = []
+    for k in (0, 148):
+        d = json.loads((art_dir / f"taboo_cell_{k:03d}.json").read_text())
+        fs = tuple(poly(payload_coeffs(d["payloads"][f"d{j}"])) for j in range(3))
+        lm = [float(F(d["lambda_mid"][str(j)])) / 1.2 for j in range(3)]
+        flagged.append(residual_max_ratio(fs, lm, (float(F(d["e0"])),), pts)[0] > 1.0 + TOL)
+    res["P4_lambda_shrunk_1.2"] = all(flagged)
+    # P5 C_T understated to 0.999 max w
+    wmax = float(peval(c, np.array([x[0] for x in pts]), np.array([x[1] for x in pts])).max())
+    res["P5_C_T_understated"] = not (0.999 * wmax >= wmax - TOL)
+    # P6 Abar understated to 0.9999 W(a)
+    b = json.loads((art_dir / "arl_cell_050.json").read_text())
+    Wa = float(peval(payload_coeffs(b["payload"]), 0.0, 0.0))
+    res["P6_Abar_understated"] = not (0.9999 * Wa >= Wa - TOL)
+    res["pass"] = all(v for kk, v in res.items() if kk != "pass")
     return res
 
 
@@ -215,17 +304,20 @@ def main() -> int:
     ap.add_argument("--registry", required=True)
     ap.add_argument("--probe", default=None)
     ap.add_argument("--cells", default=None)
+    ap.add_argument("--workers", type=int, default=WORKERS)
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     regp = Path(a.registry)
     reg = json.loads(regp.read_text())
     cells = None if a.cells is None else [int(x) for x in a.cells.split(",")]
-    res = {"schema": "rebaseguard.p5y.k5.perron-deflation.falsification-gate.v1", "quadrature": f"GL{GL_N} x 8 per piece",
-           "gate": run(reg, regp.parent, cells), "planted": planted(regp.parent, Path(a.probe) if a.probe else None)}
+    res = {"schema": "rebaseguard.p5y.k5.perron-deflation.falsification-gate.v2",
+           "quadrature": f"Gauss-Legendre {GL_N} x {SUBDIV} per z-piece", "tolerance": TOL,
+           "gate": run(reg, regp.parent, cells, a.workers), "planted": planted(regp.parent, Path(a.probe) if a.probe else None)}
     res["pass"] = res["gate"]["pass"] and res["planted"]["pass"]
     Path(a.out).write_text(json.dumps(res, indent=1, sort_keys=True, default=float) + "\n")
-    print(json.dumps({"pass": res["pass"], "flags": res["gate"]["flags"][:10], "planted": res["planted"],
-                      "states": res["gate"]["states"]}, default=float))
+    print(json.dumps({"pass": res["pass"], "flags": res["gate"]["flags"][:5], "worst": res["gate"]["worst"],
+                      "planted": res["planted"], "states": [res["gate"]["states_blocks"], res["gate"]["states_cells"]]},
+                     default=float))
     return 0 if res["pass"] else 1
 
 

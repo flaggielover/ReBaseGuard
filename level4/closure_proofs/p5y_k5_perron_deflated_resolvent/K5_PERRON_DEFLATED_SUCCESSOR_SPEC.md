@@ -51,12 +51,14 @@ matching uses the open-interval intersection, so each cell uses exactly its own 
 | S05 | replay: the empty registry reproduces the adopted T-EXT C2 consumption exactly (pass ranges and rows sha256, every m) |
 | S06 | gate evaluation (`gate_eval.py`) at level USEFUL or better under the frozen FEASIBILITY_GATES |
 | S07 | determinism: two evaluations byte-identical; ledger shows both at the freeze head |
-| S08 | refusal-before-freeze exercised (a pre-freeze consume attempt is refused) |
+| S08 | refusal-before-freeze exercised: `deflated_consume.py prefreeze` at the freeze commit's parent is refused with "successor protocol is not tracked" for this protocol sha; the JSON log (command, HEAD, namespace status, message) is committed with the freeze |
 | S09 | record assembly semantics: every recorded half-width ≥ Σ(1/m)·recorded radii (R, R', R''); for m = 1 equal to within 1e-6 relative |
 | S10 | X-B: independent Fraction recomputation of every registry field from the artifacts' intermediates (envelopes, tame propagation, D composition, worst-block rule) |
 | S11 | Arb proof of the rational bounds κ₁ < 0.7978846, κ₂ < 0.9678830 used by the consumer |
-| S12 | falsification gate (`falsify_registry.py`): independent float quadrature of every certified inequality (taboo blocks, ARL cells) and residual bound (taboo cells) on ~1.5k states at the ends and centre of each drift set; the gate itself must flag four planted certifier bugs |
+| S12 | falsification gate r2 (`falsify_registry.py`): independent float quadrature compared against the CERTIFIED claims (supersolution minimum ≥ certified margin; residual/λ ≤ 1; C_T ≥ max w; τ ≥ w(a); Ā ≥ W(a); payloads at the atom inside `candidate_at_atom`) on ~5k states including three offsets of the atom-collapse line p+m = 1 (401 points each), a band around it, near-axis strips and p+m = 4, with local refinement at every extreme; six planted bugs (no margin, a localized 0.02 bump near (0.9, 0.1), a point certificate on a wide block, λ ÷ 1.2, understated C_T, understated Ā) must all be flagged |
 
+After the freeze the namespace may change only under `evidence/successor_r1/` (`frozen_guard`, review r3 F1); `consume`
+requires the qualification's S00 head to be the freeze commit and records `freeze_commit` and `evaluation_head` (F2).
 S00 also checks the certifier runtime (host, Python, python-flint, numpy, venv) against the protocol, and the protocol pins
 every repository module the certifier loads. S07 is checked at the evaluation (two runs, byte-identical). `consume`
 refuses unless a committed QUALIFICATION_RESULT with QUALIFIED = true exists for the same protocol sha256.

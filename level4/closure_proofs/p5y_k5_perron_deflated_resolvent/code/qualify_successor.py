@@ -80,8 +80,8 @@ def run(protocol_sha256: str, outdir: Path, workers: int) -> dict:
     import numpy
     rt = {"host": platform.node(), "python": platform.python_version(), "python_flint": flint.__version__,
           "numpy": numpy.__version__, "venv": sys.prefix}
-    res["S00"] = {"head": g["head"], "pins": len(proto["pins"]), "runtime": rt,
-                  "pass": rt == proto["certifier_runtime"]}
+    res["S00"] = {"head": g["head"], "freeze_commit": g["freeze_commit"], "pins": len(proto["pins"]), "runtime": rt,
+                  "pass": rt == proto["certifier_runtime"] and g["head"] == g["freeze_commit"]}
     regp = REPO / proto["registry"]
     reg = json.loads(regp.read_text())
     art_dir = REPO / proto["registry_artifacts_dir"]
@@ -116,8 +116,14 @@ def run(protocol_sha256: str, outdir: Path, workers: int) -> dict:
                          "--probe", str(outdir / "PROBE.json"), "--out", str(outdir / "FALSIFY.json")],
                         capture_output=True, text=True)
     res["S12"] = {"pass": fr.returncode == 0, "sha256": sha(outdir / "FALSIFY.json")}
-    log = NS / "evidence/successor_r1/PREFREEZE_REFUSAL.log"
-    res["S08"] = {"pass": log.exists() and "DeflationRefusal" in log.read_text(), "log": str(log.relative_to(REPO))}
+    log = NS / "evidence/successor_r1/PREFREEZE_REFUSAL.json"
+    pre = json.loads(log.read_text()) if log.exists() else {}
+    parent = subprocess.run(["git", "-C", str(REPO), "rev-parse", f"{g['freeze_commit']}^"], capture_output=True,
+                            text=True).stdout.strip()
+    res["S08"] = {"pass": (pre.get("refused") is True and pre.get("protocol_sha256") == protocol_sha256
+                           and "successor protocol is not tracked" in (pre.get("message") or "")
+                           and pre.get("head") == parent),
+                  "log": str(log.relative_to(REPO)), "prefreeze_head": pre.get("head"), "freeze_parent": parent}
     s09 = s09_assembly_semantics(reg)
     (outdir / "S09.json").write_text(json.dumps(s09, indent=1, sort_keys=True) + "\n")
     res["S09"] = {"pass": s09["pass"], "m1_max_relative_excess": s09["m1_max_relative_excess"]}

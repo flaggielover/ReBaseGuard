@@ -21,6 +21,12 @@ A recorded enclosure centre +- (sum |c| eps_rec + rest) is tightened by Delta = 
 """
 from __future__ import annotations
 
+if __name__ == "__main__":                 # review r3 F1: no file next to this script may shadow the standard library
+    import os as _os
+    import sys as _sys
+    _here = _os.path.dirname(_os.path.abspath(__file__))
+    _sys.path[:] = [p for p in _sys.path if _os.path.abspath(p or _os.curdir) != _here]
+
 import argparse
 import hashlib
 import importlib.util
@@ -308,11 +314,33 @@ def frozen_guard(repo: Path, protocol_sha256: str) -> dict:
     committed = _git(repo, "show", f"HEAD:{PROTOCOL_REL}").encode()
     if sha256_bytes(committed) != protocol_sha256:
         raise DeflationRefusal("committed protocol differs from the given sha256")
+    added = _git(repo, "log", "--diff-filter=A", "--format=%H", "--", PROTOCOL_REL).split()
+    if not added:
+        raise DeflationRefusal("cannot find the freeze commit that added the protocol")
+    freeze = added[-1]
+    changed = _git(repo, "diff", "--name-only", freeze, "HEAD", "--", NS_REL).split()
+    allowed = NS_REL + "/evidence/successor_r1/"
+    extra = [c for c in changed if not c.startswith(allowed)]
+    if extra:
+        raise DeflationRefusal(f"namespace changed after the freeze outside {allowed}: {extra[:5]} (review r3 F1)")
     proto = json.loads(raw)
     bad = [rel for rel, h in proto["pins"].items() if sha256_bytes((repo / rel).read_bytes()) != h]
     if bad:
         raise DeflationRefusal(f"pins do not match: {bad}")
-    return {"head": _git(repo, "rev-parse", "HEAD").strip(), "protocol": proto}
+    return {"head": _git(repo, "rev-parse", "HEAD").strip(), "freeze_commit": freeze, "protocol": proto}
+
+
+def prefreeze_exercise(repo: Path, protocol_sha256: str) -> dict:
+    """S08: attempt the guarded evaluation BEFORE the protocol is committed; it must be refused (review r3 F3)."""
+    rec = {"command": "deflated_consume.py prefreeze --protocol-sha256 " + protocol_sha256,
+           "protocol_sha256": protocol_sha256, "head": _git(repo, "rev-parse", "HEAD").strip(),
+           "namespace_status": _git(repo, "status", "--porcelain", "--", NS_REL).splitlines()}
+    try:
+        frozen_guard(repo, protocol_sha256)
+        rec.update({"refused": False, "message": None})
+    except DeflationRefusal as exc:
+        rec.update({"refused": True, "exception": "DeflationRefusal", "message": str(exc)})
+    return rec
 
 
 def replay_text(records_dir: Path, repo: Path = REPO) -> dict:
@@ -348,10 +376,18 @@ def main() -> int:
     c.add_argument("--records", default="/root/work/postk1-runs/closure-r1/COMPOSITE_EXPORT/k4_records")
     c.add_argument("--ledger", required=True)
     c.add_argument("--out", required=True)
+    pf = sub.add_parser("prefreeze")
+    pf.add_argument("--protocol-sha256", required=True)
+    pf.add_argument("--out", required=True)
     rp = sub.add_parser("replay")
     rp.add_argument("--records", default="/root/work/postk1-runs/closure-r1/COMPOSITE_EXPORT/k4_records")
     rp.add_argument("--out", required=True)
     a = ap.parse_args()
+    if a.cmd == "prefreeze":
+        rec = prefreeze_exercise(REPO, a.protocol_sha256)
+        Path(a.out).write_text(json.dumps(rec, sort_keys=True, indent=1) + "\n")
+        print(json.dumps(rec))
+        return 0 if rec["refused"] else 1
     if a.cmd == "replay":
         res = replay_text(Path(a.records))
         Path(a.out).write_text(json.dumps(res, sort_keys=True, indent=1) + "\n")
@@ -384,14 +420,18 @@ def main() -> int:
     qual = json.loads((REPO / proto["qualification_result"]).read_bytes())      # committed: the namespace is clean
     if qual.get("QUALIFIED") is not True or qual.get("protocol_sha256") != a.protocol_sha256:
         raise DeflationRefusal("no committed QUALIFIED qualification result for this protocol (review r2 N2)")
+    if qual.get("S00", {}).get("head") != g["freeze_commit"]:
+        raise DeflationRefusal("the qualification did not run at the freeze commit (review r3 F2)")
     res = run(reg, Path(a.records), domain=tuple(proto["domain"]), _guard=_GUARD_TOKEN)
     res["protocol_sha256"] = a.protocol_sha256
-    res["freeze_head"] = g["head"]
+    res["freeze_commit"] = g["freeze_commit"]
+    res["evaluation_head"] = g["head"]
     data = json.dumps(res, sort_keys=True, indent=1).encode() + b"\n"
     Path(a.out).write_bytes(data)
     import datetime
     with open(a.ledger, "a") as fh:
         fh.write(json.dumps({"utc": datetime.datetime.now(datetime.timezone.utc).isoformat(), "head": g["head"],
+                             "freeze_commit": g["freeze_commit"],
                              "protocol_sha256": a.protocol_sha256, "result_sha256": sha256_bytes(data)},
                             sort_keys=True) + "\n")
     print({m: x["open_ranges"] for m, x in res["consumptions"].items()}, "sha256", sha256_bytes(data))

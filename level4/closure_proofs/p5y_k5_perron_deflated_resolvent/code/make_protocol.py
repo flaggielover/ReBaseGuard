@@ -67,6 +67,8 @@ def main() -> int:
              "qualification_result": f"{NS_REL}/evidence/successor_r1/QUALIFICATION_RESULT.json",
              "evaluation": "code/deflated_consume.py consume --protocol-sha256 <sha of this file> (twice; byte-identical)",
              "seal_rule": "the consumption result is committed with its sha256 before any interpretation",
+             "post_freeze_allowed_prefix": f"{NS_REL}/evidence/successor_r1/",
+             "s12_comparison": "falsification outputs are compared by verdicts and values within tolerance, not bytes",
              "pins": pins}
     out = NS / "config/SUCCESSOR_PROTOCOL.json"
     out.write_text(json.dumps(proto, indent=1, sort_keys=True) + "\n")
