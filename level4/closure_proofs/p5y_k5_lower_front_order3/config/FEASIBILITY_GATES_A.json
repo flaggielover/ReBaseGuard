@@ -1,0 +1,27 @@
+{
+ "schema": "rebaseguard.p5y.k5.lower-front-order3.feasibility-gates.v1",
+ "campaign": "A (CUSUM K5 lower front: m1 11-35, m2 11-41, m3 11-42, m5 11-44; 122 open (m, cell) pairs)",
+ "frozen_before": "any route forecast of this campaign and any certified or real computation of this campaign",
+ "start_frontier": "7cb01e38e2831983ba8f29b3d8c14c189678e4ac",
+ "universe": {"pairs": 122, "per_m": {"1": [11, 35], "2": [11, 41], "3": [11, 42], "5": [11, 44]},
+              "source": "phase_a/LOWER_FRONT_BLOCKER_MAP.json (replay of the adopted map r3)"},
+ "scenarios": {
+  "NOMINAL": "adopted certified values as recorded; measured adopted-record inputs as recorded; every input that is NOT yet measured or certified (a quantity the route would newly compute) at its best available estimate, stated in the forecast",
+  "CONSERVATIVE": "as NOMINAL, but every not-yet-measured input multiplied by 4 in the unfavourable direction; adopted certified constants and adopted-record measured values unchanged"
+ },
+ "closure_rule": "a pair (m, cell) is forecast CLOSED iff the frozen K5-B (k5b_check.k5b_literal, ddd54dc4) run on the adopted inputs plus the route's forecast enclosures passes that cell; no other criterion",
+ "classes": {
+  "STRONG": "CONSERVATIVE closes 122/122 pairs",
+  "USEFUL": "not STRONG, and (CONSERVATIVE closes >= 61/122 pairs or NOMINAL closes 122/122 pairs)",
+  "MARGINAL": "not USEFUL, and NOMINAL closes >= 1 pair",
+  "INFEASIBLE": "NOMINAL closes 0 pairs, or the route is mathematically ruled out before forecasting"
+ },
+ "compute_gate": {
+  "new_real_cpu_hours_preferred": 20,
+  "new_real_cpu_hours_hard": 40,
+  "rule": "a route whose forecast new-real CPU-hours exceed the hard budget is not launched; a route over the preferred budget needs its excess justified in the route comparison"
+ },
+ "selection_rule": "select the route with the highest class; among equal classes prefer zero new real addresses, then the smaller forecast new-real CPU-hours; a route below USEFUL is never executed",
+ "stop_rule": "if every route is MARGINAL or INFEASIBLE, stop Campaign A scientific execution and write a costed continuation plan",
+ "no_redefinition": "these classes, scenarios and rules are not changed after any forecast or result is seen"
+}
