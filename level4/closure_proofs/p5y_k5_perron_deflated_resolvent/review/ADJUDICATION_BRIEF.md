@@ -13,7 +13,8 @@ The adjudicator is a fresh context with no access to the producer's reasoning. I
    Compare its outputs by verdict and by values within tolerance (≈ 1e-12 relative), not by bytes: float results depend on
    the host in the last digits (review r3 F5). S01 (Arb) must be byte-identical on the pinned runtime.
 5. Run the T-EXT replay (`deflated_consume.py replay`) and require byte identity with the adopted consumption.
-6. Run `deflated_consume.py consume` at the seal head and require the result to be byte-identical to the sealed result.
+6. Run `deflated_consume.py consume` at the seal head and require the result to be byte-identical to the sealed result
+   (the result is a pure function of the frozen inputs; the evaluation head is recorded only in the ledger).
 7. Independently re-derive, with its own code, the tightened R, R', R'' intervals of at least cells 11, 45, 100 and 148
    for every m from the raw records and the registry (theorem AD r2 formulas), and the frozen K5-B verdicts of those cells.
 8. Audit the theorem use: the frozen ERROR_ALGEBRA premises, the Aux5 producer chain (S09 evidence), Corollary T, the

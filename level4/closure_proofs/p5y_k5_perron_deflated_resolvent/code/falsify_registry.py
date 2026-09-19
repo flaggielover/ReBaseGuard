@@ -287,13 +287,22 @@ def planted(art_dir: Path, probe_path: Path | None) -> dict:
         lm = [float(F(d["lambda_mid"][str(j)])) / 1.2 for j in range(3)]
         flagged.append(residual_max_ratio(fs, lm, (float(F(d["e0"])),), pts)[0] > 1.0 + TOL)
     res["P4_lambda_shrunk_1.2"] = all(flagged)
-    # P5 C_T understated to 0.999 max w
-    wmax = float(peval(c, np.array([x[0] for x in pts]), np.array([x[1] for x in pts])).max())
-    res["P5_C_T_understated"] = not (0.999 * wmax >= wmax - TOL)
-    # P6 Abar understated to 0.9999 W(a)
-    b = json.loads((art_dir / "arl_cell_050.json").read_text())
-    Wa = float(peval(payload_coeffs(b["payload"]), 0.0, 0.0))
-    res["P6_Abar_understated"] = not (0.9999 * Wa >= Wa - TOL)
+    # P5 / P6 run the real job functions on mutated artifacts (review r4: no tautologies)
+    import shutil
+    import tempfile
+    with tempfile.TemporaryDirectory() as td:
+        tdp = Path(td)
+        a5 = dict(a)
+        wmax = float(peval(c, np.array([x[0] for x in pts]), np.array([x[1] for x in pts])).max())
+        a5["C_T"] = str(F(0.999 * wmax).limit_denominator(10 ** 12))
+        (tdp / "taboo_block_05.json").write_text(json.dumps(a5))
+        res["P5_C_T_understated"] = _block_job(str(tdp / "taboo_block_05.json"))[1]["ok"] is False
+        b = json.loads((art_dir / "arl_cell_050.json").read_text())
+        Wa = float(peval(payload_coeffs(b["payload"]), 0.0, 0.0))
+        b["tau"] = str(F(0.9999 * Wa).limit_denominator(10 ** 12))
+        (tdp / "arl_cell_050.json").write_text(json.dumps(b))
+        shutil.copy(art_dir / "taboo_cell_050.json", tdp / "taboo_cell_050.json")
+        res["P6_Abar_understated"] = _cell_job((50, td))[1]["ok"] is False
     res["pass"] = all(v for kk, v in res.items() if kk != "pass")
     return res
 

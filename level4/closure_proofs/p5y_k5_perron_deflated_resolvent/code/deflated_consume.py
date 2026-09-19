@@ -424,8 +424,7 @@ def main() -> int:
         raise DeflationRefusal("the qualification did not run at the freeze commit (review r3 F2)")
     res = run(reg, Path(a.records), domain=tuple(proto["domain"]), _guard=_GUARD_TOKEN)
     res["protocol_sha256"] = a.protocol_sha256
-    res["freeze_commit"] = g["freeze_commit"]
-    res["evaluation_head"] = g["head"]
+    res["freeze_commit"] = g["freeze_commit"]          # the evaluation head goes to the ledger only (review r4)
     data = json.dumps(res, sort_keys=True, indent=1).encode() + b"\n"
     Path(a.out).write_bytes(data)
     import datetime

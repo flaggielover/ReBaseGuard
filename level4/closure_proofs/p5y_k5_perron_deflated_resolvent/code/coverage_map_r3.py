@@ -46,8 +46,7 @@ def build(result_path: Path, result_sha256: str) -> dict:
     res, r2 = json.loads(raw), json.loads(r2raw)
     out = {"schema": "rebaseguard.p5y.k5.perron-deflation.coverage-map.v3", "detector": "CUSUM",
            "inputs": {"coverage_map_r2_sha256": R2_SHA256, "deflated_consumption_sha256": result_sha256,
-                      "protocol_sha256": res.get("protocol_sha256"), "freeze_commit": res.get("freeze_commit"),
-                      "evaluation_head": res.get("evaluation_head")},
+                      "protocol_sha256": res.get("protocol_sha256"), "freeze_commit": res.get("freeze_commit")},
            "attribution_rule": "cells passing now but OPEN in r2 are attributed to the Perron-deflated successor (theorem "
                                "AD, sealed consumption); every other cell keeps its r2 attribution", "per_m": {}}
     union_open = set()

@@ -58,7 +58,8 @@ matching uses the open-interval intersection, so each cell uses exactly its own 
 | S12 | falsification gate r2 (`falsify_registry.py`): independent float quadrature compared against the CERTIFIED claims (supersolution minimum ≥ certified margin; residual/λ ≤ 1; C_T ≥ max w; τ ≥ w(a); Ā ≥ W(a); payloads at the atom inside `candidate_at_atom`) on ~5k states including three offsets of the atom-collapse line p+m = 1 (401 points each), a band around it, near-axis strips and p+m = 4, with local refinement at every extreme; six planted bugs (no margin, a localized 0.02 bump near (0.9, 0.1), a point certificate on a wide block, λ ÷ 1.2, understated C_T, understated Ā) must all be flagged |
 
 After the freeze the namespace may change only under `evidence/successor_r1/` (`frozen_guard`, review r3 F1); `consume`
-requires the qualification's S00 head to be the freeze commit and records `freeze_commit` and `evaluation_head` (F2).
+requires the qualification's S00 head to be the freeze commit and records `freeze_commit` in the result and the evaluation
+head in the ledger only, so the result is a pure function of the frozen inputs (F2, review r4).
 S00 also checks the certifier runtime (host, Python, python-flint, numpy, venv) against the protocol, and the protocol pins
 every repository module the certifier loads. S07 is checked at the evaluation (two runs, byte-identical). `consume`
 refuses unless a committed QUALIFICATION_RESULT with QUALIFIED = true exists for the same protocol sha256.
