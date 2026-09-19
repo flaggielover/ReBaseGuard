@@ -1,8 +1,8 @@
 {
  "MUTATION_PASS": true,
  "Q_PASS": true,
- "code_sha256": "2f2e21bae109b7c3c6aa476f7034d021373e7e7b04f9c1ab1e067f77a5f13836",
- "consumer_code_sha256": "697f997ddf00b6404ab7ea496a40c214f6b3b92b1ff32a97257c1a3456273cb5",
+ "code_sha256": "6021643d695ac2306243269549839597d834b172624c4f95540419415cb9bb75",
+ "consumer_code_sha256": "57a67d1734e32ad45218d431b810adf5c9f74306ec6a2f1339876b6fcdf5a3f6",
  "dag": [
   {
    "adversarial": "all",
@@ -1246,7 +1246,6 @@
   "M04_ignore_moving_projection": 27,
   "M05_midpoint_eigen_as_exact": 23,
   "M06_gap_without_conditioning": 46,
-  "M07_block_outside_certified_cover": 1,
   "M08_point_certificate_as_whole_cell": 72,
   "M09_wrong_complement_norm": 5,
   "M10_suppress_new_radius": 114,
@@ -1255,14 +1254,18 @@
   "M13_drop_factor_two": 16,
   "M14_drop_order0_in_derivative": 20,
   "M15_coefficient_one": 117,
-  "M16_taboo_value_as_ARL": 10
+  "M17_r0_reads_candidate_source_node": 8,
+  "M18_wrong_recorded_radius": 200,
+  "M19_point_constants_as_cell_constants": 48
  },
  "refusals": {
   "Abar_below_one": true,
   "C_below_tau": true,
   "Dlo_nonpositive": true,
   "adjacent_block_not_used_r2": true,
-  "closed_class_no_taboo_resolvent": true,
+  "block_reuse_outside_cover_refused": true,
+  "harness_closed_class_no_resolvent": true,
+  "taboo_value_below_ARL_on_every_family": true,
   "tau_below_one": true,
   "uncovered_cell_returns_none": true
  },

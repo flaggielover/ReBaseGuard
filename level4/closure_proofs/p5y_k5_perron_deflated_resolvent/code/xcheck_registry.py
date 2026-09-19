@@ -37,16 +37,24 @@ def float_ops(e, deg=20):
     return {"ARL": float(arl[0]), "C": float(tab[reach].max()), "tau": float(tab[0]), "D": 1.0 - float((G @ ka)[0])}
 
 
+def _xa_row(b):
+    lo, hi = F(b["e_lo"]), F(b["e_hi"])
+    es = [float(lo + (hi - lo) * F(i, 4)) for i in range(5)]
+    vals = [float_ops(e) for e in es]
+    dd = 2e-3
+    dp = [float_ops(e + dd)["D"] for e in es]
+    dm = [float_ops(abs(e - dd))["D"] for e in es]
+    return b, vals, dp, dm, dd
+
+
 def xcheck(reg: dict) -> dict:
+    from concurrent.futures import ProcessPoolExecutor
     flags = []
     rows = []
-    for b in reg["blocks"]:
+    with ProcessPoolExecutor(7) as ex:
+        pre = list(ex.map(_xa_row, reg["blocks"]))
+    for b, vals, dp, dm, dd in pre:
         lo, hi = F(b["e_lo"]), F(b["e_hi"])
-        es = [float(lo + (hi - lo) * F(i, 4)) for i in range(5)]
-        vals = [float_ops(e) for e in es]
-        dd = 2e-3
-        dp = [float_ops(e + dd)["D"] for e in es]
-        dm = [float_ops(abs(e - dd))["D"] for e in es]
         D1 = max(abs(p - m) / (2 * dd) for p, m in zip(dp, dm))
         D2 = max(abs(p - 2 * v["D"] + m) / dd ** 2 for p, m, v in zip(dp, dm, vals))
         fl = {"ARL": max(v["ARL"] for v in vals), "C": max(v["C"] for v in vals), "tau": max(v["tau"] for v in vals),
@@ -68,7 +76,7 @@ def xcheck(reg: dict) -> dict:
 
 
 # ------------------------------------------------------------------------------------------------ X-B (review M1)
-K_UP = {0: F(1), 1: F(7978846, 10 ** 7), 2: F(9678830, 10 ** 7), 3: F(15100130, 10 ** 7)}
+K_UP = {0: F(1), 1: F(7978846, 10 ** 7), 2: F(9678830, 10 ** 7), 3: F(15100131, 10 ** 7)}   # review r2 N6
 
 
 def cheb_l1(payload: dict) -> F:
@@ -157,7 +165,7 @@ def probe() -> dict:
     good = TC.certify_block(lo, hi, payload, depth=2)
     # mutant: suppress the e-linear term by certifying the midpoint only (delta -> 0) and claiming the whole block
     mut = TC.certify_block((lo + hi) / 2, (lo + hi) / 2 + F(1, 10 ** 12), payload, depth=2)
-    return {"wide_block": [str(lo), str(hi)], "correct_certifier_certified": good["certified"],
+    return {"wide_block": [str(lo), str(hi)], "payload": payload, "correct_certifier_certified": good["certified"],
             "correct_margin": good["margin_lower_bound"], "mutant_certified": mut["certified"],
             "pass": (good["certified"] is False) and (mut["certified"] is True)}
 

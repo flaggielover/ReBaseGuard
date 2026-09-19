@@ -55,6 +55,11 @@ matching uses the open-interval intersection, so each cell uses exactly its own 
 | S09 | record assembly semantics: every recorded half-width ≥ Σ(1/m)·recorded radii (R, R', R''); for m = 1 equal to within 1e-6 relative |
 | S10 | X-B: independent Fraction recomputation of every registry field from the artifacts' intermediates (envelopes, tame propagation, D composition, worst-block rule) |
 | S11 | Arb proof of the rational bounds κ₁ < 0.7978846, κ₂ < 0.9678830 used by the consumer |
+| S12 | falsification gate (`falsify_registry.py`): independent float quadrature of every certified inequality (taboo blocks, ARL cells) and residual bound (taboo cells) on ~1.5k states at the ends and centre of each drift set; the gate itself must flag four planted certifier bugs |
+
+S00 also checks the certifier runtime (host, Python, python-flint, numpy, venv) against the protocol, and the protocol pins
+every repository module the certifier loads. S07 is checked at the evaluation (two runs, byte-identical). `consume`
+refuses unless a committed QUALIFICATION_RESULT with QUALIFIED = true exists for the same protocol sha256.
 
 ## 6. Seal and interpretation
 
@@ -66,7 +71,7 @@ theorem use; only then is an updated K5 coverage map built.
 
 Additive only. T-EXT's sealed TEXT_RESULT and its consumption are inputs, never modified; its C2 channel is applied
 unchanged. Slot-1 enters only through T-EXT (L1 and Λ(k)). Cells that pass under T-EXT C2 cannot fail under the successor
-(K5-B is monotone in tighter valid enclosures; S05 checks the base case).
+unless the consumption refuses as a whole (K5-B is monotone in tighter valid enclosures; S05 checks the base case).
 
 ## 8. Expected scientific addresses
 

@@ -194,7 +194,13 @@ def apply_deflation(cells: list, records: dict, registry: dict, m: str, cover: l
 
 
 # ------------------------------------------------------------------------------------------------ consumption
-def run(registry: dict, records_dir: Path, *, repo: Path = REPO, domain=(0, 309), with_text: bool = True) -> dict:
+_GUARD_TOKEN = object()
+
+
+def run(registry: dict, records_dir: Path, *, repo: Path = REPO, domain=(0, 309), with_text: bool = True,
+        _guard=None) -> dict:
+    if registry.get("certified") is True and registry.get("blocks") and _guard is not _GUARD_TOKEN:
+        raise DeflationRefusal("a certified registry is consumed only through the guarded `consume` (review r2 N5)")
     A = _load_pinned(repo, ADAPTER, ADAPTER_SHA256, "e6_adapter_for_deflation")
     TC = _load_pinned(repo, TEXT_CONSUME, TEXT_CONSUME_SHA256, "text_consume_for_deflation")
     traw = (repo / TEXT_RESULT).read_bytes()
@@ -312,7 +318,7 @@ def frozen_guard(repo: Path, protocol_sha256: str) -> dict:
 def replay_text(records_dir: Path, repo: Path = REPO) -> dict:
     """Empty registry: the consumer must reproduce the adopted T-EXT C2 consumption exactly (pass sets and rows)."""
     adopted = json.loads(TC_bytes(repo))
-    res = run({"rule": "r2", "certified": True, "blocks": []}, records_dir, repo=repo)
+    res = run({"rule": "r2", "certified": False, "blocks": []}, records_dir, repo=repo)
     cmp = {}
     for m in MS:
         a = adopted["consumptions"]["C2"][m]
@@ -375,7 +381,10 @@ def main() -> int:
     reg = json.loads(raw)
     if reg.get("certified") is not True or reg.get("rule") != "r2":
         raise DeflationRefusal("consume requires the certified r2 registry")
-    res = run(reg, Path(a.records), domain=tuple(proto["domain"]))
+    qual = json.loads((REPO / proto["qualification_result"]).read_bytes())      # committed: the namespace is clean
+    if qual.get("QUALIFIED") is not True or qual.get("protocol_sha256") != a.protocol_sha256:
+        raise DeflationRefusal("no committed QUALIFIED qualification result for this protocol (review r2 N2)")
+    res = run(reg, Path(a.records), domain=tuple(proto["domain"]), _guard=_GUARD_TOKEN)
     res["protocol_sha256"] = a.protocol_sha256
     res["freeze_head"] = g["head"]
     data = json.dumps(res, sort_keys=True, indent=1).encode() + b"\n"

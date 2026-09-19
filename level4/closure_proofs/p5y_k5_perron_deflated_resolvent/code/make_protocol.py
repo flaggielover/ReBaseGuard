@@ -16,6 +16,7 @@ NS_REL = "level4/closure_proofs/p5y_k5_perron_deflated_resolvent"
 CP = "level4/closure_proofs/"
 OWN = ["code/deflated_consume.py", "code/taboo_certify.py", "code/build_registry.py", "code/qualify_ad.py",
        "code/gate_eval.py", "code/xcheck_registry.py", "code/qualify_successor.py", "code/operator_float_diagnostic.py",
+       "code/falsify_registry.py", "code/coverage_map_r3.py",
        "code/make_protocol.py", "theorem/THEOREM_AD.md", "theorem/OPERATOR_AUDIT.md",
        "K5_PERRON_DEFLATED_SUCCESSOR_SPEC.md", "config/FEASIBILITY_GATES.json",
        "evidence/OPERATOR_FLOAT_PROFILE_deg20.json", "evidence/registry_r1/REGISTRY.json"]
@@ -29,7 +30,24 @@ PRED = [CP + "p5y_k5b_consumption_adapter/code/consumption_adapter.py",
         CP + "p5y_k5b_independent_countersignature/code/k5b_check.py",
         CP + "p5y_k5_order3_readiness_audit/code/k5_minimality.py",
         CP + "p5y_k1_cover_ledger_successor/ERROR_ALGEBRA.md",
-        CP + "p5y_k5_cusum_order3_r3_infrastructure/code/resolvent_certificate.py"]
+        CP + "p5y_k5_cusum_order3_r3_infrastructure/code/resolvent_certificate.py",
+        # certifier runtime dependencies, exactly the repository modules loaded by taboo_certify on the build host
+        CP + "p5x_global_nonlinear_dynamics/certified_method_repair_ra/ra_certifier.py",
+        CP + "p5x_global_nonlinear_dynamics/compute_optimization_r2/fast_range.py",
+        CP + "p5y_k1_cover_ledger_implementation/code/cusum_layer1.py",
+        CP + "p5y_k1_cover_ledger_implementation/code/cusum_layer2.py",
+        CP + "p5y_k1_cover_ledger_implementation/code/intervals.py",
+        CP + "p5y_k1_cover_ledger_implementation/code/opnorms.py",
+        CP + "p5y_k1_cover_ledger_implementation/code/spec.py",
+        CP + "p5y_k1_cusum_aux4_fullcover/code/ancestry4.py",
+        CP + "p5y_k1_cusum_aux5_successor/code/ancestry5.py",
+        "rebaseguard-proof/src/rebaseguard_certify/__init__.py",
+        "rebaseguard-proof/src/rebaseguard_certify/arb_backend.py",
+        "rebaseguard-proof/src/rebaseguard_certify/polynomial.py",
+        "rebaseguard-proof/src/rebaseguard_certify/residual.py",
+        "rebaseguard-proof/src/rebaseguard_certify/spectral_candidate.py"]
+RUNTIME = {"host": "rebaseguard-vultr-02", "python": "3.12.3", "python_flint": "0.9.0", "numpy": "2.5.2",
+           "venv": "/root/work/rbg-cusum-aux5-venv"}
 
 
 def sha(p: Path) -> str:
@@ -45,7 +63,8 @@ def main() -> int:
              "successor": "K5_PERRON_DEFLATED_SUCCESSOR", "rule": "r2",
              "registry": f"{NS_REL}/evidence/registry_r1/REGISTRY.json",
              "registry_artifacts_dir": f"{NS_REL}/evidence/registry_r1",
-             "domain": [0, 148], "new_real_scientific_addresses": 0,
+             "domain": [0, 148], "new_real_scientific_addresses": 0, "certifier_runtime": RUNTIME,
+             "qualification_result": f"{NS_REL}/evidence/successor_r1/QUALIFICATION_RESULT.json",
              "evaluation": "code/deflated_consume.py consume --protocol-sha256 <sha of this file> (twice; byte-identical)",
              "seal_rule": "the consumption result is committed with its sha256 before any interpretation",
              "pins": pins}

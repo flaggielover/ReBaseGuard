@@ -1,5 +1,5 @@
-"""Successor qualification S00-S09 (K5_PERRON_DEFLATED_SUCCESSOR_SPEC section 5). Sign-blind: no K5 pass/fail is read,
-except the replay of the ADOPTED T-EXT consumption (S05).
+"""Successor qualification S00-S06, S08-S12 (K5_PERRON_DEFLATED_SUCCESSOR_SPEC section 5; S07 determinism is checked at
+the evaluation). Sign-blind: no K5 pass/fail is read, except the replay of the ADOPTED T-EXT consumption (S05).
 
     python -B code/qualify_successor.py run --protocol-sha256 SHA --outdir DIR --workers 7      (vultr venv)
 """
@@ -75,14 +75,21 @@ def run(protocol_sha256: str, outdir: Path, workers: int) -> dict:
     res = {}
     g = DC.frozen_guard(REPO, protocol_sha256)
     proto = g["protocol"]
-    res["S00"] = {"head": g["head"], "pins": len(proto["pins"]), "pass": True}
+    import platform
+    import flint
+    import numpy
+    rt = {"host": platform.node(), "python": platform.python_version(), "python_flint": flint.__version__,
+          "numpy": numpy.__version__, "venv": sys.prefix}
+    res["S00"] = {"head": g["head"], "pins": len(proto["pins"]), "runtime": rt,
+                  "pass": rt == proto["certifier_runtime"]}
     regp = REPO / proto["registry"]
     reg = json.loads(regp.read_text())
     art_dir = REPO / proto["registry_artifacts_dir"]
     v = subprocess.run([py, "-B", str(HERE.parent / "build_registry.py"), "verify", "--outdir", str(art_dir),
                         "--workers", str(workers)], capture_output=True, text=True)
     vres = json.loads(v.stdout[v.stdout.index("{"):])
-    same_reg = sha(art_dir / "REGISTRY.json") == sha(regp)
+    same_reg = hashlib.sha256(subprocess.run(["git", "-C", str(REPO), "show", f"HEAD:{proto['registry']}"],
+                                             capture_output=True, check=True).stdout).hexdigest() == sha(regp)
     res["S01"] = {**vres, "registry_file_identical_to_committed": same_reg, "pass": vres["pass"] and same_reg}
     x = subprocess.run([py, "-B", str(HERE.parent / "xcheck_registry.py"), "xcheck", "--registry", str(regp),
                         "--out", str(outdir / "XA.json")], capture_output=True, text=True)
@@ -105,6 +112,12 @@ def run(protocol_sha256: str, outdir: Path, workers: int) -> dict:
                           "--out", str(outdir / "XB.json")], capture_output=True, text=True)
     res["S10"] = {"pass": xbr.returncode == 0, "sha256": sha(outdir / "XB.json")}
     res["S11"] = s11_kappa_bounds()
+    fr = subprocess.run([py, "-B", str(HERE.parent / "falsify_registry.py"), "run", "--registry", str(regp),
+                         "--probe", str(outdir / "PROBE.json"), "--out", str(outdir / "FALSIFY.json")],
+                        capture_output=True, text=True)
+    res["S12"] = {"pass": fr.returncode == 0, "sha256": sha(outdir / "FALSIFY.json")}
+    log = NS / "evidence/successor_r1/PREFREEZE_REFUSAL.log"
+    res["S08"] = {"pass": log.exists() and "DeflationRefusal" in log.read_text(), "log": str(log.relative_to(REPO))}
     s09 = s09_assembly_semantics(reg)
     (outdir / "S09.json").write_text(json.dumps(s09, indent=1, sort_keys=True) + "\n")
     res["S09"] = {"pass": s09["pass"], "m1_max_relative_excess": s09["m1_max_relative_excess"]}
