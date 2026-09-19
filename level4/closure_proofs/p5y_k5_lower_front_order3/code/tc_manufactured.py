@@ -181,6 +181,24 @@ def build(ch: Chain, e0: F, rho: F, family: str, eps: float, rnd: random.Random)
         err = row_sign(ea * R) * e
         src_err[2] = err
         Hh = Hh + R * err                                    # exact solution of the WRONG source equation
+    elif family == "SRC0":                                   # A2 cancellation driven by an order-0 SOURCE error
+        err = row_sign(ea * (R * K1 * R * K1 * R * 2 + R * K2 * R)) * e
+        src_err[0] = err
+        u = R * err                                          # F solves the wrong order-0 source exactly
+        dD = R * K1 * u
+        Fh, Dh = Fh + u, Dh + dD
+        Hh = Hh + R * (K1 * dD * 2 + K2 * u)
+    elif family == "SRC1":                                   # A1 cancellation driven by an order-1 SOURCE error
+        err = row_sign(ea * R * K1 * R) * e
+        src_err[1] = err
+        w = R * err
+        Dh = Dh + w
+        Hh = Hh + R * (K1 * w * 2)
+    elif family == "SRC3":                                   # G solves the wrong order-3 source exactly
+        err = row_sign(ea * R) * e
+        sgn = -1 if float(T[3][0, 0].mid()) > 0 else 1
+        src_err[3] = err * sgn
+        Gh = Gh + R * (err * sgn)
     elif family == "RAND":
         def rv(scale):
             return arb_mat([[arb(str(round(rnd.uniform(-1, 1) * scale, 12)))] for _ in range(N)])
@@ -239,6 +257,7 @@ def check(fix: dict, R) -> dict:
 
 FAMILIES = [("VAR", 0.0, F(1, 50)), ("A0", 1e-4, F(1, 10 ** 6)), ("A1", 1e-4, F(1, 10 ** 6)),
             ("A2", 1e-4, F(1, 10 ** 6)), ("G", 1e-3, F(1, 10 ** 4)), ("SRC", 1e-4, F(1, 10 ** 6)),
+            ("SRC0", 1e-4, F(1, 10 ** 6)), ("SRC1", 1e-4, F(1, 10 ** 6)), ("SRC3", 1e-3, F(1, 10 ** 4)),
             ("RAND", 1e-5, F(1, 1000)), ("RAND", 1e-3, F(1, 100)), ("RAND", 1e-6, F(1, 30))]
 
 
@@ -278,6 +297,13 @@ MUTANTS = {
                           "    p1 = rho * fH + rho ** 2 * fG / 2 + rho ** 3 * e4 / 6\n"),
     "M13_underestimate_env4": ("    return (sigma4 + 4 * k[1] * sG", "    return (sigma4 + 0 * k[1] * sG"),
     "M14_drop_fF_in_p0": ("    p0 = fF + rho * fD", "    p0 = rho * fD"),
+    "M15_drop_src0": ('fF = F(o["delta_F"]) + F(o["eps_src"][0])', 'fF = F(o["delta_F"])'),
+    "M16_drop_src1": ('fD = F(o["delta_D"]) + F(o["eps_src"][1])', 'fD = F(o["delta_D"])'),
+    "M17_drop_src3": ('fG = F(o["delta_G"]) + F(o["eps_src"][3])', 'fG = F(o["delta_G"])'),
+    "M18_h_tower_drop_K0": ("h[jj][n] = sum((comb(n, i) * k[i] * h[jj - 1][n - i] for i in range(n + 1)), F(0))",
+                            "h[jj][n] = sum((comb(n, i) * k[i] * h[jj - 1][n - i] for i in range(1, n + 1)), F(0))"),
+    "M19_W_endpoint_swap": ('            lo += c * w_lo\n            hi += c * w_hi', '            lo += c * w_hi\n            hi += c * w_lo'),
+    "M20_drop_W_terms": ('            lo += c * w_lo\n            hi += c * w_hi', '            pass'),
 }
 
 
@@ -288,6 +314,38 @@ def frozen_table_ok(R) -> bool:
     return all(sorted(R.coefficients(m)) == sorted(ref(m)) for m in (1, 2, 3, 5))
 
 
+def synthetic_records(fx_list, n: int = 20, seed: int = 7) -> list:
+    """All-m records assembled from fixture objects, with nonzero j norms, source sups and W intervals, so that the
+    r >= 1 source tower and the W assembly are exercised (they are compared against tc_crosscheck, not truth)."""
+    rnd = random.Random(seed)
+    out = []
+    for _ in range(n):
+        objs = [fx_list[rnd.randrange(len(fx_list))][1] for _ in range(5)]
+        rec = {"rho": objs[0]["rec"]["rho"], "norms": {"k": [str(F(rnd.randint(1, 9), 7)) for _ in range(5)],
+                                                     "j": [str(F(rnd.randint(1, 9), 7)) for _ in range(5)]},
+               "sup_S0": [str(F(rnd.randint(1, 9), 5)) for _ in range(5)],
+               "r": {str(r): objs[r]["rec"]["r"]["0"] for r in range(5)}, "W2": {}}
+        for r in range(4):
+            for j in range(4 - r):
+                a = F(rnd.randint(-1000, 1000), 997)
+                rec["W2"][f"{r}:{j}"] = [str(a), str(a + F(rnd.randint(1, 50), 10007))]
+        out.append((rec, objs[0]["A"]))
+    return out
+
+
+def crosscheck_ok(R, fx_list) -> bool:
+    sys.path.insert(0, str(HERE.parent))
+    import tc_crosscheck as X
+    for name, f in fx_list:
+        if R.cell_enclosure(f["rec"], f["A"], 1) != X.enclosure(f["rec"], f["A"], 1):
+            return False
+    for rec, A in synthetic_records(fx_list):
+        for m in (1, 2, 3, 5):
+            if R.cell_enclosure(rec, A, m) != X.enclosure(rec, A, m):
+                return False
+    return True
+
+
 def run(mutants: bool) -> dict:
     fx_list = fixtures()
     R = load_rule()
@@ -296,7 +354,7 @@ def run(mutants: bool) -> dict:
            "grid": GRID, "rule_sha256": hashlib.sha256(RULE.read_bytes()).hexdigest(),
            "correct": {n: {"violations": len(v["violations"]), "tightness": v["tightness"]} for n, v in base.items()},
            "correct_violations": sum(len(v["violations"]) for v in base.values()),
-           "frozen_table_ok": frozen_table_ok(R)}
+           "frozen_table_ok": frozen_table_ok(R), "crosscheck_ok": crosscheck_ok(R, fx_list)}
     tight = {fam: max(v["tightness"] for n, v in base.items() if n.startswith(fam + "_")) for fam, _, _ in FAMILIES}
     out["max_tightness_per_family"] = tight
     if mutants:
@@ -310,6 +368,11 @@ def run(mutants: bool) -> dict:
             caught_by = []
             if not frozen_table_ok(Rm):
                 caught_by.append("frozen_table")
+            try:
+                if not crosscheck_ok(Rm, fx_list):
+                    caught_by.append("crosscheck")
+            except Exception as exc:
+                caught_by.append(f"crosscheck_refusal:{type(exc).__name__}")
             nv = 0
             for n, f in fx_list:
                 try:
@@ -323,7 +386,7 @@ def run(mutants: bool) -> dict:
         out["mutants"] = res
         out["mutants_detected"] = sum(1 for v in res.values() if v.get("detected"))
         out["mutants_applied"] = sum(1 for v in res.values() if v.get("applied"))
-    out["pass"] = (out["correct_violations"] == 0 and out["frozen_table_ok"]
+    out["pass"] = (out["correct_violations"] == 0 and out["frozen_table_ok"] and out["crosscheck_ok"]
                    and (not mutants or out["mutants_detected"] == out["mutants_applied"] == len(MUTANTS)))
     return out
 

@@ -23,7 +23,8 @@ CP = "level4/closure_proofs/"
 OWN = ["code/tc_rule.py", "code/tc_producer.py", "code/tc_consume.py", "code/tc_crosscheck.py",
        "code/tc_manufactured.py", "code/tc_qualify.py", "code/tc_run.py", "code/lower_front_blocker_map.py",
        "theorem/THEOREM_TC.md", "config/FEASIBILITY_GATES_A.json", "phase_a/LOWER_FRONT_BLOCKER_MAP.json",
-       "phase_b/ROUTE_COMPARISON.md", "evidence/forecast_r1/ROUTE_FORECAST.json", "TC_SUCCESSOR_SPEC.md"]
+       "phase_b/ROUTE_COMPARISON.md", "evidence/forecast_r1/ROUTE_FORECAST.json", "evidence/forecast_r1/COST_NOTE.md",
+       "TC_SUCCESSOR_SPEC.md", "review/REVIEW_R1.md"]
 PREDECESSORS = [
     CP + "p5y_k5_perron_deflated_resolvent/evidence/successor_r1/DEFLATED_CONSUMPTION.json",
     CP + "p5y_k5_perron_deflated_resolvent/evidence/successor_r1/K5_COVERAGE_MAP_R3.json",
@@ -99,8 +100,20 @@ def main() -> int:
                      "frozen_chain": "cusum_order3.Order3Certifier + Aux3 residuals + frozen midpoint DAG, "
                                      "rung3_residual.g_residual; no whole-cell refine2",
                      "precision_bits": 256, "threads": "1 per process (pinned before numpy import)",
-                     "identity_gate": "every recomputed K1 object delta_mid, eps_mid node, eps_cell node, Aux3 "
-                                      "midpoint eps and Aux3 object delta_mid equals the sealed K1 record exactly"},
+                     "identity_gate": "every recomputed K1 object delta_mid, eps_mid node and eps_cell node equals the "
+                                      "sealed K1 record exactly at 256 bits; the Aux3 midpoint eps, Aux3 object "
+                                      "delta_mid and Aux3 candidate suprema equal the record's 53-bit rendering exactly "
+                                      "(the adopted qualify5._aux_record serialised them outside workprec(256)) and the "
+                                      "256-bit values are no larger",
+                     "real_mode_checks": "protocol committed and pin-exact; namespace clean; QUALIFICATION (QUALIFIED at "
+                                         "the freeze) -> AUTHORIZATION (bound to that qualification sha) -> GUARD ALLOW "
+                                         "(bound to that authorization sha), committed in that order; runtime equal to "
+                                         "this protocol; order-3 producer manifest and Aux5 manifest verify; K1 record sha "
+                                         "as pre-registered; no repository module loaded outside the frozen list",
+                     "parallel_channel": "the frozen Order3Certifier is called directly (its own real-cell registry "
+                                         "stays empty); this protocol's authorization is the governing gate",
+                     "published_order3": "only certified quantities: delta_mid(G_r) and the upper bound |Ghat_r(a)|; no "
+                                         "uncertified order-3 candidate value is recorded"},
         "consumer": {"code": f"{NS_REL}/code/tc_consume.py", "replay_gate": "empty-TC composition reproduces the "
                      "sealed DEFLATED_CONSUMPTION 5dcc9b7d exactly (rows sha, pass/open ranges, cells 0..159)"},
         "fields": {"per_cell": ["norms.k[0..4]", "norms.j[0..4]", "sup_S0[0..4]", "rho", "e0",
@@ -115,8 +128,9 @@ def main() -> int:
                        "tc_rule and tc_crosscheck agree exactly on every cell and m",
                        "the consumer replay gate passes and no TC intersection is empty",
                        "A-constants of every address equal the adopted audit values"],
-        "budget": {"forecast_new_real_cpu_hours": 9.0, "protocol_cap_new_real_cpu_hours": 20,
-                   "campaign_hard_cap_cpu_hours": 40, "workers": 7},
+        "budget": {"forecast_new_real_cpu_hours": 16.3, "protocol_cap_new_real_cpu_hours": 24,
+                   "campaign_hard_cap_cpu_hours": 40, "workers": 4,
+                   "basis": "evidence/forecast_r1/COST_NOTE.md (measured dev replays of cells 11 and 44)"},
         "stopping_rule": "each address is evaluated exactly once (plus the pre-registered 2-cell reproduction); "
                          "no re-run, no additional address, no adaptive choice; any refusal or failed acceptance item "
                          "makes the run VOID (no consumption) and stops Campaign A execution",

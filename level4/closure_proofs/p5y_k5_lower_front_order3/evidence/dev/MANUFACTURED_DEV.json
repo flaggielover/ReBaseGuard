@@ -64,52 +64,100 @@
    "tightness": 0.9837504299072588,
    "violations": 0
   },
-  "RAND_6_0": {
-   "tightness": 0.8502183322734574,
+  "RAND_10_0": {
+   "tightness": 0.024103278436655988,
    "violations": 0
   },
-  "RAND_6_1": {
-   "tightness": 0.8843859276160799,
+  "RAND_10_1": {
+   "tightness": 0.2203670485127423,
    "violations": 0
   },
-  "RAND_6_2": {
-   "tightness": 0.3909874622023404,
+  "RAND_10_2": {
+   "tightness": 0.06278590681609678,
    "violations": 0
   },
-  "RAND_6_3": {
-   "tightness": 0.8507942663086202,
+  "RAND_10_3": {
+   "tightness": 0.15655863360544128,
    "violations": 0
   },
-  "RAND_7_0": {
-   "tightness": 0.10486141924328603,
+  "RAND_11_0": {
+   "tightness": 0.6663318971870539,
    "violations": 0
   },
-  "RAND_7_1": {
-   "tightness": 0.14003501050620543,
+  "RAND_11_1": {
+   "tightness": 0.5943466812924937,
    "violations": 0
   },
-  "RAND_7_2": {
-   "tightness": 0.11393720923977572,
+  "RAND_11_2": {
+   "tightness": 0.5122587598736268,
    "violations": 0
   },
-  "RAND_7_3": {
-   "tightness": 0.21791623440088528,
+  "RAND_11_3": {
+   "tightness": 0.7024047983022179,
    "violations": 0
   },
-  "RAND_8_0": {
-   "tightness": 0.3952731198827583,
+  "RAND_9_0": {
+   "tightness": 0.4204065099646132,
    "violations": 0
   },
-  "RAND_8_1": {
-   "tightness": 0.7547292412566937,
+  "RAND_9_1": {
+   "tightness": 0.4644244893960355,
    "violations": 0
   },
-  "RAND_8_2": {
-   "tightness": 0.6323658669917718,
+  "RAND_9_2": {
+   "tightness": 0.35354539199280377,
    "violations": 0
   },
-  "RAND_8_3": {
-   "tightness": 0.4898953554534717,
+  "RAND_9_3": {
+   "tightness": 0.2857066941271392,
+   "violations": 0
+  },
+  "SRC0_6_0": {
+   "tightness": 0.9998144937552782,
+   "violations": 0
+  },
+  "SRC0_6_1": {
+   "tightness": 0.9999475186029271,
+   "violations": 0
+  },
+  "SRC0_6_2": {
+   "tightness": 0.9999581890029089,
+   "violations": 0
+  },
+  "SRC0_6_3": {
+   "tightness": 0.9999150979045496,
+   "violations": 0
+  },
+  "SRC1_7_0": {
+   "tightness": 0.9998957065719167,
+   "violations": 0
+  },
+  "SRC1_7_1": {
+   "tightness": 0.99999555172529,
+   "violations": 0
+  },
+  "SRC1_7_2": {
+   "tightness": 0.9999847421709295,
+   "violations": 0
+  },
+  "SRC1_7_3": {
+   "tightness": 0.9999685307424468,
+   "violations": 0
+  },
+  "SRC3_8_0": {
+   "tightness": 0.995790458990029,
+   "violations": 0
+  },
+  "SRC3_8_1": {
+   "tightness": 0.9990918562905531,
+   "violations": 0
+  },
+  "SRC3_8_2": {
+   "tightness": 0.998426526011034,
+   "violations": 0
+  },
+  "SRC3_8_3": {
+   "tightness": 0.9971727463526839,
    "violations": 0
   },
   "SRC_5_0": {
@@ -146,7 +194,8 @@
   }
  },
  "correct_violations": 0,
- "fixtures": 36,
+ "crosscheck_ok": true,
+ "fixtures": 48,
  "frozen_table_ok": true,
  "grid": 25,
  "max_tightness_per_family": {
@@ -154,70 +203,82 @@
   "A1": 0.999985402739153,
   "A2": 0.9999515832980386,
   "G": 0.9938678527709209,
-  "RAND": 0.8843859276160799,
+  "RAND": 0.7024047983022179,
   "SRC": 0.999993974783297,
+  "SRC0": 0.9999581890029089,
+  "SRC1": 0.99999555172529,
+  "SRC3": 0.9990918562905531,
   "VAR": 0.749015985530326
  },
  "mutants": {
   "M01_drop_env4_in_p2": {
    "applied": true,
    "caught_by": [
-    "containment:290"
+    "crosscheck",
+    "containment:315"
    ],
    "detected": true
   },
   "M02_drop_A2_term": {
    "applied": true,
    "caught_by": [
-    "containment:100"
+    "crosscheck",
+    "containment:200"
    ],
    "detected": true
   },
   "M03_single_A1": {
    "applied": true,
    "caught_by": [
-    "containment:100"
+    "crosscheck",
+    "containment:200"
    ],
    "detected": true
   },
   "M04_drop_A0_term": {
    "applied": true,
    "caught_by": [
-    "containment:215"
+    "crosscheck",
+    "containment:247"
    ],
    "detected": true
   },
   "M05_drop_rho_fG": {
    "applied": true,
    "caught_by": [
-    "containment:374"
+    "crosscheck",
+    "containment:582"
    ],
    "detected": true
   },
   "M06_drop_centre_motion": {
    "applied": true,
    "caught_by": [
-    "containment:386"
+    "crosscheck",
+    "containment:521"
    ],
    "detected": true
   },
   "M07_half_cell_domain": {
    "applied": true,
    "caught_by": [
-    "containment:168"
+    "crosscheck",
+    "containment:236"
    ],
    "detected": true
   },
   "M08_point_not_cell": {
    "applied": true,
    "caught_by": [
-    "containment:2564"
+    "crosscheck",
+    "containment:3459"
    ],
    "detected": true
   },
   "M09_wrong_source_node": {
    "applied": true,
    "caught_by": [
+    "crosscheck",
     "containment:392"
    ],
    "detected": true
@@ -225,7 +286,8 @@
   "M10_sign_flip_lower": {
    "applied": true,
    "caught_by": [
-    "containment:900"
+    "crosscheck",
+    "containment:1200"
    ],
    "detected": true
   },
@@ -233,34 +295,83 @@
    "applied": true,
    "caught_by": [
     "frozen_table",
-    "containment:819"
+    "crosscheck",
+    "containment:1156"
    ],
    "detected": true
   },
   "M12_drop_fD_in_p1": {
    "applied": true,
    "caught_by": [
-    "containment:400"
+    "crosscheck",
+    "containment:600"
    ],
    "detected": true
   },
   "M13_underestimate_env4": {
    "applied": true,
    "caught_by": [
-    "containment:138"
+    "crosscheck",
+    "containment:159"
    ],
    "detected": true
   },
   "M14_drop_fF_in_p0": {
    "applied": true,
    "caught_by": [
-    "containment:400"
+    "crosscheck",
+    "containment:600"
+   ],
+   "detected": true
+  },
+  "M15_drop_src0": {
+   "applied": true,
+   "caught_by": [
+    "crosscheck",
+    "containment:256"
+   ],
+   "detected": true
+  },
+  "M16_drop_src1": {
+   "applied": true,
+   "caught_by": [
+    "crosscheck",
+    "containment:365"
+   ],
+   "detected": true
+  },
+  "M17_drop_src3": {
+   "applied": true,
+   "caught_by": [
+    "crosscheck",
+    "containment:40"
+   ],
+   "detected": true
+  },
+  "M18_h_tower_drop_K0": {
+   "applied": true,
+   "caught_by": [
+    "crosscheck"
+   ],
+   "detected": true
+  },
+  "M19_W_endpoint_swap": {
+   "applied": true,
+   "caught_by": [
+    "crosscheck"
+   ],
+   "detected": true
+  },
+  "M20_drop_W_terms": {
+   "applied": true,
+   "caught_by": [
+    "crosscheck"
    ],
    "detected": true
   }
  },
- "mutants_applied": 14,
- "mutants_detected": 14,
+ "mutants_applied": 20,
+ "mutants_detected": 20,
  "pass": true,
  "rule_sha256": "8d402d11f6fc06ea2af88e3d3a01e376fefbe8ebacd8418f772116010e57afd5",
  "schema": "rebaseguard.p5y.k5.lower-front-order3.tc-manufactured.v1"

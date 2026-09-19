@@ -14,7 +14,8 @@ Gates (all must pass for QUALIFIED; any failure -> NOT_QUALIFIED, and nothing is
   S07 CONSUMER     tc_consume --replay-only reproduces the adopted deflated consumption exactly
   S08 REFUSALS     (a) mode real refuses at the freeze commit (no qualification / authorization / guard committed);
                    (b) mode real refuses a wrong protocol sha; (c) replay refuses a wrong record sha;
-                   (d) the consumer refuses a TC record of the wrong cell / geometry / without identity gate
+                   (d) the consumer refuses a TC record of the wrong cell / geometry / without identity gate;
+                   (e) positive path: a synthetic no-op TC record for cell 11 is consumed for every m and changes nothing
   S09 COST         CPU seconds of the qualification recorded
 
     python -B tc_qualify.py --protocol-sha256 SHA --out-dir DIR
@@ -145,21 +146,23 @@ def s06(out_dir, proto):
         rec = json.loads((out_dir / f"REPLAY_{k}.json").read_text()) if ok else {}
         meta = json.loads(so.strip().splitlines()[-1]) if ok else {}
         res[str(k)] = {"returncode": p.returncode, "identity": rec.get("identity_gate"),
+                       "extraction_code_path": rec.get("extraction_code_path"),
                        "has_scientific_fields": any(x in rec for x in ("r", "W2", "norms")),
                        "cpu_seconds": meta.get("cpu_seconds"), "stderr_tail": se[-400:] if not ok else ""}
     ok = all(v["returncode"] == 0 and v["identity"] and v["identity"].get("identical") and not v["has_scientific_fields"]
-             for v in res.values())
+             and (v["extraction_code_path"] or {}).get("complete") is True
+             and (v["extraction_code_path"] or {}).get("residuals_nonnegative") is True for v in res.values())
     return {"pass": ok, "cells": res}
 
 
 def s07(out_dir):
-    p, dt = run([PY, "-B", str(NS / "code/tc_consume.py"), "--replay-only", "--tc-rule-sha256",
-                 sha(NS / "code/tc_rule.py"), "--out", str(out_dir / "CONSUMER_REPLAY.json")])
+    p, dt = run([PY, "-B", str(NS / "code/tc_consume.py"), "--replay-only", "--protocol-sha256",
+                 sha(REPO / (NS_REL + "/config/TC_PROTOCOL.json")), "--out", str(out_dir / "CONSUMER_REPLAY.json")])
     return {"pass": p.returncode == 0, "returncode": p.returncode, "seconds": dt, "stdout": p.stdout[-600:],
             "stderr": p.stderr[-600:], "sha256": sha(out_dir / "CONSUMER_REPLAY.json") if p.returncode == 0 else None}
 
 
-def s08(out_dir, proto, proto_sha):
+def s08(out_dir, proto, proto_sha):  # noqa: C901
     out = {}
     rec11 = str(RECORDS / "aux5_CUSUM_11_256.json")
     r11 = proto["k1_record_sha256"]["11"]
@@ -180,11 +183,83 @@ def s08(out_dir, proto, proto_sha):
              "wrong_geometry": ({11: dict(fake, cell=11)})}
     for name, tc in cases.items():
         try:
-            tc_consume.compose(RECORDS, tc, sha(NS / "code/tc_rule.py"))
+            tc_consume.compose(RECORDS, tc, proto)
             out[f"d_{name}_refused"] = False
         except tc_consume.TCConsumeRefusal:
             out[f"d_{name}_refused"] = True
-    out["pass"] = all(v for k, v in out.items() if k.endswith("refused"))
+    # (e) positive path: a synthetic NO-OP TC record (huge radii) for cell 11 passes every binding check, is assembled
+    #     for every m, and leaves every pass set unchanged (the intersection returns the adopted enclosure).
+    cover = json.loads((REPO / "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/cells.json").read_bytes())
+    c11 = next(c for c in cover if c["detector"] == "CUSUM" and c["index"] == 11)
+    big = "1000000"
+    noop = {"mode": "real", "cell": 11, "identity_gate": {"identical": True},
+            "e0": str(F(c11["e0"][0]) + F(c11["e0"][1])), "rho": str(F(c11["rho"][0]) + F(c11["rho"][1])),
+            "k1_record_sha256": proto["k1_record_sha256"]["11"],
+            "norms": {"k": ["1"] * 5, "j": ["1"] * 5}, "sup_S0": ["1"] * 5,
+            "r": {str(r): {"delta_F": big, "delta_D": big, "delta_H": big, "delta_G": big, "eps_src": ["0"] * 4,
+                           "sup": {"F": "1", "D": "1", "H": "1", "G": "1"}, "H_at_a": ["0", "0"],
+                           "G_at_a": ["0", "0"], "abs_G_at_a": "0"} for r in range(5)},
+            "W2": {f"{r}:{j}": ["-1", "1"] for r in range(4) for j in range(4 - r)}}
+    base = json.loads((out_dir / "CONSUMER_REPLAY.json").read_text())
+    res = tc_consume.compose(RECORDS, {11: noop}, proto)
+    same = all(res["consumptions"][m]["pass_ranges"] == base["consumptions"][m]["pass_ranges"] and
+               res["consumptions"][m]["rows_sha256"] == base["consumptions"][m]["rows_sha256"] for m in ("1", "2", "3", "5"))
+    out["e_noop_path_unchanged"] = same and set(res["tc_audit"].get("11", {})) == {"1", "2", "3", "5"}
+    # (f) acceptance items 1-2 and the governance binding (review r1 B1/B2), on synthetic index / binding data
+    addrs = proto["addresses"]["cells"]
+    good_idx = {"protocol_sha256": proto_sha, "cells": {str(k): "x" for k in addrs},
+                "reproduction": {"11": True, "44": True}}
+    tcs = {k: {} for k in addrs}
+    bad_idx = {"wrong_protocol": dict(good_idx, protocol_sha256="0" * 64),
+               "missing_address": dict(good_idx, cells={str(k): "x" for k in addrs[1:]}),
+               "repro_false": dict(good_idx, reproduction={"11": True, "44": False}),
+               "repro_missing": dict(good_idx, reproduction={"11": True})}
+    for name, idx in bad_idx.items():
+        try:
+            tc_consume.check_index(idx, proto, proto_sha, tcs if name != "missing_address" else
+                                   {k: {} for k in addrs[1:]}, {"11": "x", "44": "x"})
+            out[f"f_index_{name}_refused"] = False
+        except tc_consume.TCConsumeRefusal:
+            out[f"f_index_{name}_refused"] = True
+    try:
+        tc_consume.check_index(good_idx, proto, proto_sha, tcs, {"11": "x", "44": "y"})
+        out["f_index_repro_bytes_refused"] = False
+    except tc_consume.TCConsumeRefusal:
+        out["f_index_repro_bytes_refused"] = True
+    ctx = {"freeze_commit": "F", "authorization_sha256": "A", "allow_guard_shas": ["G"], "run_heads": {"H"}}
+    good_b = {"k1_record_sha256": proto["k1_record_sha256"]["11"],
+              "binding": {"freeze_commit": "F", "authorization_sha256": "A", "guard_sha256": "G", "head": "H"}}
+    tc_consume.check_binding(good_b, 11, proto, ctx)                        # must not raise
+    for name, patch in {"freeze": ("freeze_commit", "X"), "auth": ("authorization_sha256", "X"),
+                        "guard": ("guard_sha256", "X"), "head": ("head", "X")}.items():
+        b = dict(good_b, binding=dict(good_b["binding"], **{patch[0]: patch[1]}))
+        try:
+            tc_consume.check_binding(b, 11, proto, ctx)
+            out[f"g_binding_{name}_refused"] = False
+        except tc_consume.TCConsumeRefusal:
+            out[f"g_binding_{name}_refused"] = True
+    try:
+        tc_consume.check_binding(dict(good_b, k1_record_sha256="0" * 64), 11, proto, ctx)
+        out["g_binding_k1_refused"] = False
+    except tc_consume.TCConsumeRefusal:
+        out["g_binding_k1_refused"] = True
+    # (h) acceptance item 3: a rule that disagrees with tc_crosscheck is refused by the consumer's cross-check
+    import tc_rule
+    import types as _t
+    src = (NS / "code/tc_rule.py").read_text().replace("half_r    = rho |Ghat(a)| + rad", "half_r = mutated")
+    src = src.replace('return _nonneg("rho", rho) * _nonneg("|G(a)|", abs_G_at_a) + _nonneg("rad", rad)',
+                      'return 2 * _nonneg("rho", rho) * _nonneg("|G(a)|", abs_G_at_a) + _nonneg("rad", rad)')
+    Rm = _t.ModuleType("tc_rule_mut")
+    exec(compile(src, "tc_rule_mut", "exec"), Rm.__dict__)
+    _, X = tc_consume.rule_modules(proto)
+    rec11 = dict(noop, r={str(r): dict(noop["r"][str(r)], abs_G_at_a="1") for r in range(5)})
+    A = {"A0": F(1), "A1": F(1), "A2": F(1)}
+    try:
+        tc_consume.crosscheck(Rm, X, rec11, A, 5, Rm.cell_enclosure(rec11, A, 5))
+        out["h_crosscheck_mismatch_refused"] = False
+    except tc_consume.TCConsumeRefusal:
+        out["h_crosscheck_mismatch_refused"] = True
+    out["pass"] = all(v for k, v in out.items() if k.endswith("refused")) and out["e_noop_path_unchanged"]
     return out
 
 

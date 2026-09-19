@@ -50,12 +50,14 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--protocol-sha256", required=True)
     ap.add_argument("--evidence", required=True)
-    ap.add_argument("--workers", type=int, default=7)
+    ap.add_argument("--workers", type=int, default=None)
     a = ap.parse_args()
     proto = json.loads((NS / "config/TC_PROTOCOL.json").read_bytes())
     if sha(NS / "config/TC_PROTOCOL.json") != a.protocol_sha256:
         raise SystemExit("protocol sha mismatch")
     cells = proto["addresses"]["cells"]
+    if a.workers is None:
+        a.workers = int(proto["budget"]["workers"])
     ev = Path(a.evidence)
     (ev / "cells").mkdir(parents=True, exist_ok=False)
     (ev / "repro").mkdir(parents=True, exist_ok=False)

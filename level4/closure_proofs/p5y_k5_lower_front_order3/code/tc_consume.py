@@ -44,7 +44,11 @@ PINS = {
     "sealed_deflated": (CP + "p5y_k5_perron_deflated_resolvent/evidence/successor_r1/DEFLATED_CONSUMPTION.json",
                         "5dcc9b7d26c92babbf1b19ad064b29969ea7bd829ea9629004e312520123274a"),
     "tc_rule": (CP + "p5y_k5_lower_front_order3/code/tc_rule.py", None),
+    "tc_crosscheck": (CP + "p5y_k5_lower_front_order3/code/tc_crosscheck.py", None),
 }
+NS_REL = "level4/closure_proofs/p5y_k5_lower_front_order3"
+PROTOCOL_REL = NS_REL + "/config/TC_PROTOCOL.json"
+EVID_REL = NS_REL + "/evidence/tc_r1"
 MS = ("1", "2", "3", "5")
 ADOPTED_DOMAIN = (0, 148)
 TEXT_CHANNEL = tuple(range(1, 41))
@@ -82,12 +86,63 @@ def module(key: str, name: str, pin_override=None):
     return mod
 
 
-def compose(records_dir: Path, tc_cells: dict, tc_rule_pin: str) -> dict:
-    pov = {PINS["tc_rule"][0]: tc_rule_pin}
+def load_protocol(protocol_sha256: str) -> dict:
+    raw = (REPO / PROTOCOL_REL).read_bytes()
+    if sha(raw) != protocol_sha256:
+        raise TCConsumeRefusal("TC protocol does not match the given sha256")
+    proto = json.loads(raw)
+    for key in ("tc_rule", "tc_crosscheck"):
+        if PINS[key][0] not in proto["pins"]:
+            raise TCConsumeRefusal(f"protocol does not pin {PINS[key][0]}")
+    return proto
+
+
+def rule_modules(proto: dict):
+    pov = {PINS[k][0]: proto["pins"][PINS[k][0]] for k in ("tc_rule", "tc_crosscheck")}
+    return module("tc_rule", "tc_rule_frozen", pov), module("tc_crosscheck", "tc_crosscheck_frozen", pov)
+
+
+def check_index(index: dict, proto: dict, protocol_sha256: str, tc_cells: dict, repro_sha: dict) -> None:
+    """Acceptance items 1 and 2 of the frozen spec."""
+    want = sorted(proto["addresses"]["cells"])
+    if index.get("protocol_sha256") != protocol_sha256:
+        raise TCConsumeRefusal("TC index was not produced under this protocol")
+    if sorted(int(k) for k in index.get("cells", {})) != want or sorted(tc_cells) != want:
+        raise TCConsumeRefusal("TC index does not list exactly the pre-registered addresses")
+    rep = index.get("reproduction", {})
+    if sorted(rep) != ["11", "44"] or not all(v is True for v in rep.values()):
+        raise TCConsumeRefusal("the pre-registered reproduction is missing or not byte-identical")
+    for k, h in repro_sha.items():
+        if h != index["cells"][k]:
+            raise TCConsumeRefusal(f"reproduction file of cell {k} differs from the first run")
+
+
+def check_binding(rec: dict, k: int, proto: dict, ctx: dict) -> None:
+    """Every record was produced by the gated real mode under this protocol, freeze, authorization and guard."""
+    b = rec.get("binding") or {}
+    if rec.get("k1_record_sha256") != proto["k1_record_sha256"].get(str(k)):
+        raise TCConsumeRefusal(f"TC record {k}: K1 record sha differs from the protocol")
+    if b.get("freeze_commit") != ctx["freeze_commit"]:
+        raise TCConsumeRefusal(f"TC record {k}: freeze commit differs")
+    if b.get("authorization_sha256") != ctx["authorization_sha256"]:
+        raise TCConsumeRefusal(f"TC record {k}: authorization differs")
+    if b.get("guard_sha256") not in ctx["allow_guard_shas"]:
+        raise TCConsumeRefusal(f"TC record {k}: not produced under a committed ALLOW guard")
+    if b.get("head") not in ctx["run_heads"]:
+        raise TCConsumeRefusal(f"TC record {k}: run head is not a commit of this history")
+
+
+def crosscheck(R, X, rec: dict, Ak: dict, m: int, lohi: tuple) -> None:
+    """Acceptance item 3: the independent implementation gives the identical enclosure."""
+    if X.enclosure(rec, {j: Ak[j] for j in ("A0", "A1", "A2")}, m) != lohi:
+        raise TCConsumeRefusal(f"tc_crosscheck disagrees with tc_rule on cell {rec.get('cell')} m {m}")
+
+
+def compose(records_dir: Path, tc_cells: dict, proto: dict) -> dict:
+    R, X = rule_modules(proto)
     A = module("adapter", "tc_adapter")
     DC = module("deflated", "tc_deflated")
     TCm = module("text_consume", "tc_text_consume")
-    R = module("tc_rule", "tc_rule_frozen", pov)
     registry = json.loads(pinned("registry"))
     text = json.loads(pinned("text_result"))
     per = json.loads(pinned("slot1"))["scientific"]["per_m"]
@@ -150,6 +205,7 @@ def compose(records_dir: Path, tc_cells: dict, tc_rule_pin: str) -> dict:
                     or any(str(Ak[j]) != s["audit"][str(k)][j] for j in ("A0", "A1", "A2")):
                 raise TCConsumeRefusal(f"A-constants of cell {k} differ from the adopted audit")
             lo, hi = R.cell_enclosure(rec, Ak, int(m))
+            crosscheck(R, X, rec, Ak, int(m), (lo, hi))
             a, b = max(cells[k]["H"][0], lo), min(cells[k]["H"][1], hi)
             if a > b:
                 raise TCConsumeRefusal(f"empty TC intersection cell {k} m {m} (evidence of unsoundness)")
@@ -171,31 +227,73 @@ def compose(records_dir: Path, tc_cells: dict, tc_rule_pin: str) -> dict:
                             for i in range(160)}}
     return {"schema": SCHEMA, "consumptions": out, "tc_audit": tc_audit, "tc_cells": sorted(tc_cells),
             "replay_gate": "PASS (empty-TC composition reproduced the sealed adopted consumption exactly)",
-            "inputs": {k: {"path": v[0], "sha256": v[1] if v[1] else tc_rule_pin} for k, v in PINS.items()}
+            "inputs": {k: {"path": v[0], "sha256": v[1] if v[1] else proto["pins"][v[0]]} for k, v in PINS.items()}
             | {"records_sha256": sha(canonical(hashes)), "record_count": len(hashes)}}
 
 
-def load_tc(tc_dir: Path, index: dict) -> dict:
-    cells = {}
-    for k, want in index["cells"].items():
-        raw = (tc_dir / f"TC_CELL_{int(k)}.json").read_bytes()
+def _git(*args) -> str:
+    import subprocess
+    return subprocess.run(["git", "-C", str(REPO), *args], check=True, capture_output=True, text=True).stdout
+
+
+def committed_bytes(rel: str) -> bytes:
+    """The file must be tracked and its working-tree bytes equal to HEAD (the sealed evidence)."""
+    try:
+        _git("ls-files", "--error-unmatch", rel)
+    except Exception:
+        raise TCConsumeRefusal(f"{rel} is not committed")
+    disk = (REPO / rel).read_bytes()
+    import subprocess
+    head = subprocess.run(["git", "-C", str(REPO), "show", f"HEAD:{rel}"], check=True, capture_output=True).stdout
+    if disk != head:
+        raise TCConsumeRefusal(f"{rel} differs from its committed bytes")
+    return disk
+
+
+def governance_context() -> dict:
+    """Freeze commit, committed authorization, every committed ALLOW guard version and the commits of this history."""
+    added = _git("log", "--diff-filter=A", "--format=%H", "--", PROTOCOL_REL).split()
+    if not added:
+        raise TCConsumeRefusal("no freeze commit")
+    auth = committed_bytes(EVID_REL + "/AUTHORIZATION.json")
+    shas = []
+    for c in _git("log", "--format=%H", "--", EVID_REL + "/GUARD.json").split():
+        import subprocess
+        b = subprocess.run(["git", "-C", str(REPO), "show", f"{c}:{EVID_REL}/GUARD.json"], capture_output=True).stdout
+        if b and json.loads(b).get("state") == "ALLOW":
+            shas.append(sha(b))
+    return {"freeze_commit": added[-1], "authorization_sha256": sha(auth), "allow_guard_shas": shas,
+            "run_heads": set(_git("rev-list", "HEAD").split())}
+
+
+def load_sealed_tc(proto: dict, protocol_sha256: str) -> dict:
+    index = json.loads(committed_bytes(EVID_REL + "/TC_INDEX.json"))
+    cells, repro = {}, {}
+    for k, want in index.get("cells", {}).items():
+        raw = committed_bytes(f"{EVID_REL}/cells/TC_CELL_{int(k)}.json")
         if sha(raw) != want:
             raise TCConsumeRefusal(f"TC cell {k} does not match the sealed index")
         cells[int(k)] = json.loads(raw)
+    for k in index.get("reproduction", {}):
+        repro[k] = sha(committed_bytes(f"{EVID_REL}/repro/TC_CELL_{int(k)}.json"))
+    check_index(index, proto, protocol_sha256, cells, repro)
+    ctx = governance_context()
+    for k, rec in cells.items():
+        check_binding(rec, k, proto, ctx)
     return cells
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--records", default="/root/work/postk1-runs/closure-r1/COMPOSITE_EXPORT/k4_records")
-    ap.add_argument("--tc-dir")
-    ap.add_argument("--tc-index")
-    ap.add_argument("--tc-rule-sha256", required=True)
+    ap.add_argument("--protocol-sha256", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--replay-only", action="store_true")
     a = ap.parse_args()
-    tc = {} if a.replay_only else load_tc(Path(a.tc_dir), json.loads(Path(a.tc_index).read_bytes()))
-    res = compose(Path(a.records), tc, a.tc_rule_sha256)
+    proto = load_protocol(a.protocol_sha256)
+    tc = {} if a.replay_only else load_sealed_tc(proto, a.protocol_sha256)
+    res = compose(Path(a.records), tc, proto)
+    res["protocol_sha256"] = a.protocol_sha256
     data = json.dumps(res, sort_keys=True, indent=1).encode() + b"\n"
     Path(a.out).write_bytes(data)
     print({m: v["open_ranges"] for m, v in res["consumptions"].items()}, "sha256", sha(data))

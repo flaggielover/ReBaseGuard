@@ -11,7 +11,9 @@ imported module):
 
 Modes
   replay  qualification only: recomputes the adopted K1/Aux3 midpoint quantities of a cell and checks them against the
-          sealed K1 record (identity gate). Computes NO order-3 value of F and writes no scientific field.
+          sealed K1 record (identity gate). No order-3 candidate of F is proposed: the extraction code path is exercised
+          with a SYNTHETIC G := Hhat (the real operator evaluates the order-3 right-hand side in memory; only a shape /
+          finiteness summary is written, no scientific field).
   real    the governed run: refuses unless the frozen protocol is committed and pin-exact, a committed QUALIFIED result
           exists for it at the freeze commit, a committed AUTHORIZATION covers exactly the pre-registered addresses and
           the committed GUARD is ALLOW for exactly those addresses; then computes the cell, applies the identity gate,
@@ -105,19 +107,29 @@ def require_authorized(cell: int, protocol_sha256: str) -> dict:
         raise TCProducerRefusal("no committed QUALIFIED qualification for this protocol")
     if qual.get("S00", {}).get("head") != g["freeze"]:
         raise TCProducerRefusal("qualification did not run at the freeze commit")
+    qual_sha = sha((REPO / (EVID_REL + "/QUALIFICATION_RESULT.json")).read_bytes())
     auth = committed_json(EVID_REL + "/AUTHORIZATION.json")
     if auth.get("verdict") != "AUTHORIZED" or auth.get("protocol_sha256") != protocol_sha256 \
-            or auth.get("addresses") != addresses:
-        raise TCProducerRefusal("no committed AUTHORIZATION for exactly the pre-registered addresses")
+            or auth.get("addresses") != addresses or auth.get("qualification_result_sha256") != qual_sha:
+        raise TCProducerRefusal("no committed AUTHORIZATION for exactly the pre-registered addresses and this "
+                                "qualification")
+    auth_sha = sha((REPO / (EVID_REL + "/AUTHORIZATION.json")).read_bytes())
     guard = committed_json(EVID_REL + "/GUARD.json")
     if guard.get("state") != "ALLOW" or guard.get("addresses") != addresses \
-            or guard.get("protocol_sha256") != protocol_sha256:
-        raise TCProducerRefusal("guard is not ALLOW for exactly the pre-registered addresses")
+            or guard.get("protocol_sha256") != protocol_sha256 or guard.get("authorization_sha256") != auth_sha:
+        raise TCProducerRefusal("guard is not ALLOW for exactly the pre-registered addresses and this authorization")
+    q_add = _git("log", "--diff-filter=A", "--format=%H", "--", EVID_REL + "/QUALIFICATION_RESULT.json").split()[-1]
+    a_add = _git("log", "--diff-filter=A", "--format=%H", "--", EVID_REL + "/AUTHORIZATION.json").split()[-1]
+    g_last = _git("log", "-1", "--format=%H", "--", EVID_REL + "/GUARD.json").strip()
+
+    def ancestor(x, y):
+        return subprocess.run(["git", "-C", str(REPO), "merge-base", "--is-ancestor", x, y]).returncode == 0
+    if q_add == a_add or not ancestor(q_add, a_add) or not ancestor(a_add, g_last):
+        raise TCProducerRefusal("commit order qualification -> authorization -> guard is violated")
     if cell not in addresses:
         raise TCProducerRefusal(f"cell {cell} is not a pre-registered address")
-    return {"head": g["head"], "freeze_commit": g["freeze"], "authorization_sha256": sha(
-        (REPO / (EVID_REL + "/AUTHORIZATION.json")).read_bytes()),
-        "guard_sha256": sha((REPO / (EVID_REL + "/GUARD.json")).read_bytes())}
+    return {"head": g["head"], "freeze_commit": g["freeze"], "authorization_sha256": auth_sha,
+            "guard_sha256": sha((REPO / (EVID_REL + "/GUARD.json")).read_bytes()), "protocol": proto}
 
 
 # ------------------------------------------------------------------ frozen chain
@@ -212,8 +224,7 @@ def extract(Z, cert, mid, aux_mid, cellwise, g) -> dict:
             "delta_G": _fstr(mag(g[r]["delta_mid"])),
             "eps_src": [_fstr(mag(mid.nodes[_src(r, k)])) for k in range(3)] + [_fstr(mag(aux_mid[_src(r, 3)]))],
             "sup": {fam: _fstr(mag(cert.sup[fam, r, 0])) for fam in ("F", "D", "H", "G")},
-            "H_at_a": [_fstr(lo(Ha)), _fstr(hi(Ha))],
-            "G_at_a": [_fstr(lo(Ga)), _fstr(hi(Ga))], "abs_G_at_a": _fstr(mag(Ga)),
+            "H_at_a": [_fstr(lo(Ha)), _fstr(hi(Ha))], "abs_G_at_a": _fstr(mag(Ga)),
         }
     for r in range(4):
         for j in range(0, 4 - r):
@@ -242,10 +253,45 @@ def _structure(fields: dict) -> dict:
             "residuals_nonnegative": nonneg, "complete": len(fields["r"]) == 5 and len(fields["W2"]) == 10}
 
 
-def compute(cell_index: int, record: dict, mode: str) -> dict:
+def runtime_checks(Z, proto: dict, cell_index: int, record_sha256: str) -> dict:
+    """Mode real: the frozen runtime, the frozen order-3 producer identity, the pre-registered K1 record and no
+    repository module outside the frozen pin list."""
+    import platform
+    import socket
+    import numpy
+    import scipy
+    import flint
+    rt = {"host": socket.gethostname(), "python": platform.python_version(), "numpy": numpy.__version__,
+          "scipy": scipy.__version__, "python_flint": flint.__version__, "venv": sys.prefix}
+    if rt != proto["runtime"]:
+        raise TCProducerRefusal(f"runtime differs from the protocol: {rt}")
+    if Z["O3"].producer_manifest_problems():
+        raise TCProducerRefusal("frozen order-3 producer manifest mismatch")
+    import manifest_v3
+    if not manifest_v3.verify()["ok"]:
+        raise TCProducerRefusal("frozen Aux5 producer manifest does not verify")
+    if proto["k1_record_sha256"].get(str(cell_index)) != record_sha256:
+        raise TCProducerRefusal("K1 record sha differs from the pre-registered one")
+    loaded = set()
+    for mod in list(sys.modules.values()):
+        f = getattr(mod, "__file__", None)
+        if f:
+            try:
+                loaded.add(str(Path(f).resolve().relative_to(REPO)))
+            except ValueError:
+                pass
+    extra = sorted(loaded - set(proto["loaded_repository_modules"]))
+    if extra:
+        raise TCProducerRefusal(f"repository modules loaded outside the frozen list: {extra[:5]}")
+    flint.ctx.threads = 1
+    return {"runtime": rt, "loaded_repository_modules": len(loaded)}
+
+
+def compute(cell_index: int, record: dict, mode: str, proto: dict | None = None, record_sha256: str = "") -> dict:
     Z = _import_chain()
     if os.environ.get("K1_THREADS_PINNED") != "1":
         raise TCProducerRefusal("thread environment was not pinned before numpy import")
+    checks = runtime_checks(Z, proto, cell_index, record_sha256) if mode == "real" else None
     if record.get("cell_index") != cell_index or record.get("detector") != "CUSUM":
         raise TCProducerRefusal("record does not identify itself as this CUSUM cell")
     cell = next(c for c in Z["spec"].CELLS if c["detector"] == "CUSUM" and c["index"] == cell_index)
@@ -268,7 +314,8 @@ def compute(cell_index: int, record: dict, mode: str) -> dict:
             ident = identity_gate(Z, cert, mid, aux_mid, cellwise, record)
             out = {"schema": SCHEMA, "mode": mode, "cell": cell_index, "e0": _fstr(F(cert.e0)),
                    "rho": _fstr(F(cert.rho)), "left": _fstr(F(cert.left)),
-                   "right": _fstr(F(cert.right)), "identity_gate": ident, "k1_record_sha256": None}
+                   "right": _fstr(F(cert.right)), "identity_gate": ident, "k1_record_sha256": None,
+                   "runtime_checks": checks}
             if mode == "real":
                 g = {r: Z["RR"].g_residual(cert, r) for r in range(5)}
                 out.update(extract(Z, cert, mid, aux_mid, cellwise, g))
@@ -302,7 +349,8 @@ def main() -> int:
     raw = Path(a.record).read_bytes()
     if sha(raw) != a.record_sha256:
         raise TCProducerRefusal("K1 record does not match the given sha256")
-    res = compute(a.cell, json.loads(raw), a.mode)
+    proto = binding.pop("protocol") if binding else None
+    res = compute(a.cell, json.loads(raw), a.mode, proto, a.record_sha256)
     meta = res.pop("metadata")                         # non-deterministic: never part of the sealed payload
     res["k1_record_sha256"] = a.record_sha256
     res["binding"] = binding
