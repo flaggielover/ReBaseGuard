@@ -113,7 +113,7 @@ def build(outdir: Path, workers: int) -> dict:
     return reg
 
 
-def assemble(outdir: Path) -> dict:
+def assemble(outdir: Path, write: bool = True) -> dict:
     """Rebuild REGISTRY.json deterministically from the artifacts already in outdir (no computation)."""
     cov = cover()
     btab = {}
@@ -141,8 +141,9 @@ def assemble(outdir: Path) -> dict:
                        "arl_artifact_sha256": sha(fp.read_bytes()), "taboo_cell_artifact_sha256": sha(dp.read_bytes())})
     reg = {"schema": SCHEMA, "rule": "r2", "certified": ok, "operator_only": True,
            "cells_json_sha256": CELLS_SHA256, "degree_taboo": DEGREE, "taboo_blocks": btab, "blocks": blocks,
-           "code_sha256": {p.name: sha(p.read_bytes()) for p in (HERE, HERE.parent / "taboo_certify.py")}}
-    (outdir / "REGISTRY.json").write_text(json.dumps(reg, indent=1, sort_keys=True) + "\n")
+           "code_sha256": {"taboo_certify.py": sha((HERE.parent / "taboo_certify.py").read_bytes())}}
+    if write:
+        (outdir / "REGISTRY.json").write_text(json.dumps(reg, indent=1, sort_keys=True) + "\n")
     return reg
 
 
@@ -160,11 +161,15 @@ def verify(outdir: Path, workers: int) -> dict:
             **{f"arl_cell_{b['cell']:03d}.json": b["arl_artifact_sha256"] for b in reg["blocks"]},
             **{f"taboo_cell_{b['cell']:03d}.json": b["taboo_cell_artifact_sha256"] for b in reg["blocks"]}}
     bad_hash = [n for n, h in want.items() if sha((outdir / n).read_bytes()) != h]
+    # review M2: every field the consumer reads must be re-derived from the artifacts (worst-block rule included)
+    rebuilt = (json.dumps(assemble(outdir, write=False), indent=1, sort_keys=True) + "\n").encode()
+    registry_identical = rebuilt == (outdir / "REGISTRY.json").read_bytes()
     with ProcessPoolExecutor(workers) as ex:
         res = list(ex.map(_verify_one, files))
-    return {"artifacts": len(res), "hash_mismatch": bad_hash,
+    return {"artifacts": len(res), "hash_mismatch": bad_hash, "registry_reassembled_identical": registry_identical,
             "not_identical": [n for n, same, _ in res if not same], "not_certified": [n for n, _, ok in res if not ok],
-            "pass": not bad_hash and all(s and c for _, s, c in res) and len(res) == len(want)}
+            "pass": (not bad_hash and registry_identical and all(s and c for _, s, c in res)
+                     and len(res) == len(want) and reg.get("certified") is True and reg.get("rule") == "r2")}
 
 
 def main() -> int:

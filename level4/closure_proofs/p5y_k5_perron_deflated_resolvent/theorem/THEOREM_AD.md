@@ -1,7 +1,7 @@
 # Theorem AD — atom-regenerative (rank-one) deflation of the CUSUM resolvent, and deflated K1 error propagation
 
 Status: DRAFT r1, written before any front-cell forecast. It uses no value of R or of any derivative of R.
-Notation follows `OPERATOR_AUDIT.md`. X is the reachable closure, B(X) the bounded functions with the sup norm,
+Notation follows `OPERATOR_AUDIT.md`. X is the reachable closure, B(X) the bounded Borel functions with the sup norm,
 a = (0,0) = x0 the evaluation point, e real.
 
 ## 0. Why not the spectral projection
@@ -100,6 +100,14 @@ and let the frozen certificate give (record fields):
 
 - λ_F, λ_D, λ_H: the local residuals (`objects[F_r|dF_r|H_r].delta_mid` at e0; `.delta_cell` uniformly on the cell);
 - σ_0, σ_1, σ_2: the source errors of `S_r^(k)` (`eps_mid` / `eps_cell` of node `Sclosed:k` for r = 0, `S:r:k` otherwise).
+
+**Producer binding (review note).** The adopted CUSUM records were produced by the Aux5 chain:
+`p5y_k1_cusum_aux3_successor/code/aux_propagate.py::cell_obligations` (the frozen DAG of `propagate.py`, midpoint
+traversal for F and D, whole-cell traversal with node refinement), the whole-cell refinement `refine2`
+(`p5y_k1_cusum_completion_successor/code/refine2.py`) for H, and the second-order Taylor residual bounds of
+`order2.py`. These change how tight delta_cell and eps_cell are, not what they mean: delta_cell is a certified bound of the
+fixed candidate's residual uniformly on the cell, and eps_cell of a source node bounds its error uniformly on the cell. The
+enclosures are `reviewed.enclosures(cert, mid, cellwise, refined)`: F, D with `eps_mid`, H with `eps_cell_refined`.
 
 Then, with f_F = λ_F + σ_0, f_D = λ_D + σ_1, f_H = λ_H + σ_2,
 

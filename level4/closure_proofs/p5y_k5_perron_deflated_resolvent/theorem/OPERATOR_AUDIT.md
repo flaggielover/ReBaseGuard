@@ -8,7 +8,7 @@ NON-CERTIFIED design inputs. They are never evidence.
 | item | frozen value / definition | source |
 |---|---|---|
 | state space | reachable closure X = {(p, m) ∈ [0,5]²: p = 0 or m = 0 or p + m ≤ h − 2k = 4} | `rebaseguard_certify/geometry.py::in_reachable_closure`; Bernstein cover `reachable_pieces` (triangle r = p+m ∈ [0,1] ∪ [1,4], axis pieces p ∈ [4,5], m ∈ [4,5]) |
-| function space | B(X), bounded functions, sup norm on X | every C certificate: "sup norm of bounded functions on the reachable CUSUM state set" |
+| function space | B(X), bounded Borel functions, sup norm on X | every C certificate: "sup norm of bounded functions on the reachable CUSUM state set" |
 | parameters | h = 5, k = 1/2, c = h + k = 11/2 | `ra_certifier` constants, `cusum_raw.py` |
 | kernel | (K_e f)(p, m) = ∫_{m−c}^{c−p} φ(z+e) f(T(p,m;z)) dz, T = (max(0, p+z−k), max(0, m−z−k)) | `cusum_raw.collocation`, `_kernel_polynomials(…, z_weight=0)` |
 | e-dependence | only through the weight φ(z+e); the survival window and T are e-free | same |
@@ -64,6 +64,7 @@ two-sided ARL of the (h, k) = (5, 1/2) CUSUM. So the "Perron mode" is the quasi-
 
 | audit field | answer |
 |---|---|
+| (all rows of this table are INFORMATIONAL; nothing in theorem AD uses λ_e) | |
 | PERRON_MODE_UNIQUE | YES in the region \|z\| > r(K̂_e) (renewal-equation root). Existence needs Φ_e(r(K̂_e)+) > 1; it is not needed by the deflation route, which never uses λ_e |
 | PERRON_MODE_SIMPLE | YES (Φ_e' < 0 at the root) |
 | PERRON_MODE_POSITIVE | YES (r_e > 0, ℓ_e ≥ 0) |

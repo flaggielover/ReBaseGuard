@@ -8,7 +8,8 @@ lemma of THEOREM_AD.md applies verbatim; the exact truth (resolvents, e-derivati
 Checks
   Q1  Lemma SM: (I-K)^-1 == Ghat + h (x) nu / D exactly; D == nu(h_1) > 0; sup_f |R f(a)| == tau_a / D == E_a[tau]
   Q2  Lemma Dv and Dv' (r1 and r2 constants): |[dR f](a)| <= A1 ||f||, |[d2R f](a)| <= A2 ||f|| for the extremal f
-      (the sign pattern of the row / of the exact functional), at every sample drift
+      (the sign pattern of the row / of the exact functional), at every sample drift (the "range" variant is implied by
+      the "point" variant through monotonicity; it is kept as a consistency check only)
   Q3  Theorem AD on a manufactured DAG (true S_e analytic; candidates = truth + perturbations, including the adversarial
       constant-residual perturbation that makes the order-0 bound attained): radii >= exact point errors; H uniformly on
       the cell (at every sample drift of the cell, constants taken over the cell)
@@ -405,6 +406,9 @@ def record_like(fx):
            for r in range(5) for i, k in ((0, "F"), (1, "dF"), (2, "H"))}
     em = {"Sclosed:0": str(lm[3]), "Sclosed:1": str(lm[4]), "Sclosed:2": str(lm[5])}
     ec = {"Sclosed:0": str(lc[3]), "Sclosed:1": str(lc[4]), "Sclosed:2": str(lc[5])}
+    for k in range(3):                     # the r = 0 CANDIDATE node exists but must not be read for F_0 / D_0 / H_0
+        em[f"S:0:{k}"] = "0"
+        ec[f"S:0:{k}"] = "0"
     for r in range(1, 5):
         for k in range(3):
             em[f"S:{r}:{k}"] = em[f"Sclosed:{k}"]
@@ -435,13 +439,22 @@ def radii_variant(rec, A, variant=None):
             r[k]["H"] = A["A0"] * fH_cell + A["A1"] * fD_cell + A["A2"] * fF_cell
         elif variant == "M14_drop_order0_in_derivative":
             r[k]["D"] = A["A1"] * fF_mid
+        elif variant == "M17_r0_reads_candidate_source_node":
+            src = (lambda kk: f"S:{k}:{kk}")
+            gF = F(obj[f"F_{k}"]["delta_mid"]) + F(em[src(0)])
+            gD = F(obj[f"dF_{k}"]["delta_mid"]) + F(em[src(1)])
+            cF = F(obj[f"F_{k}"]["delta_cell"]) + F(ec[src(0)])
+            cD = F(obj[f"dF_{k}"]["delta_cell"]) + F(ec[src(1)])
+            cH = F(obj[f"H_{k}"]["delta_cell"]) + F(ec[src(2)])
+            r[k] = {"F": A["A0"] * gF, "D": A["A0"] * gD + A["A1"] * gF,
+                    "H": A["A0"] * cH + 2 * A["A1"] * cD + A["A2"] * cF}
         else:
             raise KeyError(variant)
     return r
 
 
 RADII_MUTANTS = ("M08_point_certificate_as_whole_cell", "M12_drop_source_error", "M13_drop_factor_two",
-                 "M14_drop_order0_in_derivative")
+                 "M14_drop_order0_in_derivative", "M17_r0_reads_candidate_source_node")
 
 
 def check_dag(fam, seed, adversarial, rule):
@@ -449,7 +462,7 @@ def check_dag(fam, seed, adversarial, rule):
     cell_obs = [objects(fam, e) for e in fx["cell_drifts"]]
     A, _ = consts_over(fam, fx["cell_drifts"], rule, cell_obs)
     rec = record_like(fx)
-    viol, mut = [], {m: 0 for m in RADII_MUTANTS}
+    viol, mut = [], {m: 0 for m in RADII_MUTANTS + ("M19_point_constants_as_cell_constants",)}
     errF = abs(fx["Fh"][0] - fx["F0"][0])
     errD = abs(fx["Dh"][0] - fx["D0"][0])
     errH = max(abs(fx["Hh"][0] - fx["truth"](e)[2][0]) for e in fx["cell_drifts"])
@@ -461,6 +474,9 @@ def check_dag(fam, seed, adversarial, rule):
         rm = radii_variant(rec, A, m)[0]
         if errF > rm["F"] or errD > rm["D"] or errH > rm["H"]:
             mut[m] += 1
+    A_mid, _ = consts_over(fam, [fx["e0"]], rule)
+    rmid = radii_variant(rec, A_mid)[0]
+    mut["M19_point_constants_as_cell_constants"] = int(errH > rmid["H"])
     return viol, mut, {"errF": float(errF), "radF": float(rad["F"]), "errD": float(errD), "radD": float(rad["D"]),
                        "errH": float(errH), "radH": float(rad["H"])}
 
@@ -474,12 +490,14 @@ def tighten_variant(interval, eps_rec, eps_new, m, variant=None):
         d = sum((F(1, m) * a for a in eps_rec), F(0))
     elif variant == "M15_coefficient_one":
         d = sum((max(F(0), a - b) for a, b in zip(eps_rec, eps_new)), F(0))
+    elif variant == "M18_wrong_recorded_radius":
+        d = sum((F(1, m) * max(F(0), 3 * a - b) for a, b in zip(eps_rec, eps_new)), F(0))
     else:
         raise KeyError(variant)
     return lo + d, hi - d
 
 
-TIGHTEN_MUTANTS = ("M10_suppress_new_radius", "M15_coefficient_one")
+TIGHTEN_MUTANTS = ("M10_suppress_new_radius", "M15_coefficient_one", "M18_wrong_recorded_radius")
 
 
 def check_tighten(seed):
@@ -534,7 +552,7 @@ def check_refusals():
     # a closed class that is never killed and never reaches the atom: no taboo resolvent exists
     B = [[F(1, 2), F(1, 4), F(0)], [F(0), F(1, 2), F(1, 2)], [F(0), F(1, 2), F(1, 2)]]
     fam = Family("closed_class", B, [F(0)] * 3, [F(0)] * 3, (F(0), F(0)))
-    ok["closed_class_no_taboo_resolvent"] = refuses(lambda: objects(fam, F(0)))
+    ok["harness_closed_class_no_resolvent"] = refuses(lambda: objects(fam, F(0)))   # harness sanity, not a consumer refusal
     return ok
 
 
@@ -542,7 +560,7 @@ def run() -> dict:
     fams = make_families()
     fixtures = [check_fixture(f) for f in fams]
     dag = []
-    dag_mut = {m: 0 for m in RADII_MUTANTS}
+    dag_mut = {m: 0 for m in RADII_MUTANTS + ("M19_point_constants_as_cell_constants",)}
     for f in fams:
         for rule in ("r1", "r2"):
             for adv in ("all", "D_only", "H_only", False):
@@ -556,14 +574,14 @@ def run() -> dict:
     reg = {"rule": "r2", "blocks": [{"e_lo": "0", "e_hi": "1/100", "Abar": "400", "C_T": "20", "tau": "8",
                                      "D_lo": "1/100", "D1": "1/10", "D2": "2"}]}
     m07 = [b for b in reg["blocks"] if F(b["e_lo"]) < F(3, 200) and F(1, 200) < F(b["e_hi"])]
-    tmut["M07_block_outside_certified_cover"] = int(bool(m07) and DC.block_for(reg, F(1, 200), F(3, 200)) is None)
+    refusals["block_reuse_outside_cover_refused"] = bool(m07) and DC.block_for(reg, F(1, 200), F(3, 200)) is None
     # M16: the taboo value w(a) (tau) used as the whole-kernel ARL bound Abar
     m16 = 0
     for x in fixtures:
         c = x["constants"]
         if c["tau"] < c["ARL_max"]:
             m16 += 1
-    tmut["M16_taboo_value_as_ARL"] = m16
+    refusals["taboo_value_below_ARL_on_every_family"] = (m16 == len(fixtures))
     const_mut = {m: sum(x["mutant_violations"][m] for x in fixtures) for m in CONSTANT_MUTANTS}
     mutants = {**const_mut, **dag_mut, **tmut}
     violations = [v for x in fixtures for v in x["violations"]] + [v for d in dag for v in d["violations"]] + tv

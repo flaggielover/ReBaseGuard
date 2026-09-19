@@ -45,7 +45,7 @@ MS = ("1", "2", "3", "5")
 TEXT_CHANNEL = tuple(range(1, 41))
 TEXT_CURVATURE = tuple(range(0, 41))
 # Rational upper bounds of the whole-line Gaussian moments E|He_1(Y)| = sqrt(2/pi), E|He_2(Y)| = 4 phi(1)
-# (theorem AD, lemma K; the qualification re-proves both inequalities in Arb).
+# (theorem AD, lemma K). Both inequalities are proved in Arb by the successor qualification gate S11.
 K1_BOUND = F(7978846, 10 ** 7)
 K2_BOUND = F(9678830, 10 ** 7)
 SCHEMA = "rebaseguard.p5y.k5.perron-deflation.deflated-consumption.v1"
@@ -276,6 +276,59 @@ def forecast_registry(profile: dict, scale: F, width: F = F(1, 100), e_max: F = 
             "use": "FORECAST ONLY", "scale": str(scale), "blocks": blocks}
 
 
+# ------------------------------------------------------------------------------------------------ successor boundary
+PROTOCOL_REL = "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/config/SUCCESSOR_PROTOCOL.json"
+NS_REL = "level4/closure_proofs/p5y_k5_perron_deflated_resolvent"
+TEXT_CONSUMPTION = CP + "p5y_k5_remaining_cell_closure/transport_extension/evidence/consumption_r1/TEXT_CONSUMPTION.json"
+TEXT_CONSUMPTION_SHA256 = "9562eda87a36d22838c65eb281210938e234a8c930e04a946aaf43a5876aa33d"
+
+
+def _git(repo: Path, *args) -> str:
+    import subprocess
+    return subprocess.run(["git", "-C", str(repo), *args], check=True, capture_output=True, text=True).stdout
+
+
+def frozen_guard(repo: Path, protocol_sha256: str) -> dict:
+    """Refuse unless the successor protocol is COMMITTED, the namespace is clean and every pin matches (freeze first)."""
+    raw = (repo / PROTOCOL_REL).read_bytes()
+    if sha256_bytes(raw) != protocol_sha256:
+        raise DeflationRefusal("successor protocol does not match the given sha256")
+    try:
+        _git(repo, "ls-files", "--error-unmatch", PROTOCOL_REL)
+    except Exception:
+        raise DeflationRefusal("successor protocol is not tracked: the successor is not frozen")
+    if _git(repo, "status", "--porcelain", "--", NS_REL).strip():
+        raise DeflationRefusal("namespace has uncommitted changes: refuse (freeze first)")
+    committed = _git(repo, "show", f"HEAD:{PROTOCOL_REL}").encode()
+    if sha256_bytes(committed) != protocol_sha256:
+        raise DeflationRefusal("committed protocol differs from the given sha256")
+    proto = json.loads(raw)
+    bad = [rel for rel, h in proto["pins"].items() if sha256_bytes((repo / rel).read_bytes()) != h]
+    if bad:
+        raise DeflationRefusal(f"pins do not match: {bad}")
+    return {"head": _git(repo, "rev-parse", "HEAD").strip(), "protocol": proto}
+
+
+def replay_text(records_dir: Path, repo: Path = REPO) -> dict:
+    """Empty registry: the consumer must reproduce the adopted T-EXT C2 consumption exactly (pass sets and rows)."""
+    adopted = json.loads(TC_bytes(repo))
+    res = run({"rule": "r2", "certified": True, "blocks": []}, records_dir, repo=repo)
+    cmp = {}
+    for m in MS:
+        a = adopted["consumptions"]["C2"][m]
+        b = res["consumptions"][m]
+        cmp[m] = {"pass_ranges_equal": a["pass_ranges"] == b["pass_ranges"],
+                  "rows_sha256_equal": a["rows_sha256"] == b["rows_sha256"]}
+    return {"replay": cmp, "pass": all(v["pass_ranges_equal"] and v["rows_sha256_equal"] for v in cmp.values())}
+
+
+def TC_bytes(repo: Path) -> bytes:
+    raw = (repo / TEXT_CONSUMPTION).read_bytes()
+    if sha256_bytes(raw) != TEXT_CONSUMPTION_SHA256:
+        raise DeflationRefusal("adopted T-EXT consumption hash mismatch")
+    return raw
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     sub = ap.add_subparsers(dest="cmd", required=True)
@@ -285,11 +338,19 @@ def main() -> int:
     f.add_argument("--records", default="/root/work/postk1-runs/closure-r1/COMPOSITE_EXPORT/k4_records")
     f.add_argument("--out", required=True)
     c = sub.add_parser("consume")
-    c.add_argument("--registry", required=True)
-    c.add_argument("--registry-sha256", required=True)
+    c.add_argument("--protocol-sha256", required=True)
     c.add_argument("--records", default="/root/work/postk1-runs/closure-r1/COMPOSITE_EXPORT/k4_records")
+    c.add_argument("--ledger", required=True)
     c.add_argument("--out", required=True)
+    rp = sub.add_parser("replay")
+    rp.add_argument("--records", default="/root/work/postk1-runs/closure-r1/COMPOSITE_EXPORT/k4_records")
+    rp.add_argument("--out", required=True)
     a = ap.parse_args()
+    if a.cmd == "replay":
+        res = replay_text(Path(a.records))
+        Path(a.out).write_text(json.dumps(res, sort_keys=True, indent=1) + "\n")
+        print(json.dumps(res))
+        return 0 if res["pass"] else 1
     if a.cmd == "forecast":
         profile = json.loads(Path(a.profile).read_text())
         res = {"schema": SCHEMA + ".forecast", "certified": False, "label": "FORECAST (non-certified constants)",
@@ -306,15 +367,24 @@ def main() -> int:
                 res["detail_first_scale"] = r
         Path(a.out).write_text(json.dumps(res, sort_keys=True, indent=1) + "\n")
         return 0
-    raw = Path(a.registry).read_bytes()
-    if sha256_bytes(raw) != a.registry_sha256:
+    g = frozen_guard(REPO, a.protocol_sha256)
+    proto = g["protocol"]
+    raw = (REPO / proto["registry"]).read_bytes()
+    if sha256_bytes(raw) != proto["pins"][proto["registry"]]:
         raise DeflationRefusal("registry does not match its pin")
     reg = json.loads(raw)
-    if reg.get("certified") is not True:
-        raise DeflationRefusal("consume requires a certified registry")
-    res = run(reg, Path(a.records))
+    if reg.get("certified") is not True or reg.get("rule") != "r2":
+        raise DeflationRefusal("consume requires the certified r2 registry")
+    res = run(reg, Path(a.records), domain=tuple(proto["domain"]))
+    res["protocol_sha256"] = a.protocol_sha256
+    res["freeze_head"] = g["head"]
     data = json.dumps(res, sort_keys=True, indent=1).encode() + b"\n"
     Path(a.out).write_bytes(data)
+    import datetime
+    with open(a.ledger, "a") as fh:
+        fh.write(json.dumps({"utc": datetime.datetime.now(datetime.timezone.utc).isoformat(), "head": g["head"],
+                             "protocol_sha256": a.protocol_sha256, "result_sha256": sha256_bytes(data)},
+                            sort_keys=True) + "\n")
     print({m: x["open_ranges"] for m, x in res["consumptions"].items()}, "sha256", sha256_bytes(data))
     return 0
 
