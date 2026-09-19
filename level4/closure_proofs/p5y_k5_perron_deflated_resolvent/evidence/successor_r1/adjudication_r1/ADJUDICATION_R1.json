@@ -1,0 +1,192 @@
+{
+ "K5_STATUS_AFTER_ADJUDICATION": "PARTIAL",
+ "adjudication": "ADOPTED",
+ "adjudicator": "separate Claude session, fresh context, brief review/ADJUDICATION_BRIEF.md; independent by session only",
+ "adjudicator_clones": [
+  "Mac scratchpad adjudication/repo @ seal (clean)",
+  "rebaseguard-vultr-02:/root/work/k5p-adjudication @ seal (clean)"
+ ],
+ "checks": [
+  {
+   "check": "commit_order",
+   "n": 1,
+   "verdict": "PASS"
+  },
+  {
+   "check": "namespace_confinement",
+   "n": 2,
+   "verdict": "PASS"
+  },
+  {
+   "check": "protocol_pins_and_runtime",
+   "n": 3,
+   "verdict": "PASS"
+  },
+  {
+   "check": "seal_integrity",
+   "n": 4,
+   "verdict": "PASS"
+  },
+  {
+   "check": "qualification_result",
+   "n": 5,
+   "verdict": "PASS"
+  },
+  {
+   "check": "seeded_arb_registry_sample",
+   "n": 6,
+   "verdict": "PASS"
+  },
+  {
+   "check": "full_registry_verify_310",
+   "n": 7,
+   "verdict": "PASS"
+  },
+  {
+   "check": "xb_full",
+   "n": 8,
+   "verdict": "PASS"
+  },
+  {
+   "check": "falsification_gl64_sample",
+   "n": 9,
+   "verdict": "PASS"
+  },
+  {
+   "check": "falsification_gl128_sample",
+   "n": 10,
+   "verdict": "PASS"
+  },
+  {
+   "check": "qualification_gates_rerun_S03_S04_S06_S08_S09_S11",
+   "n": 11,
+   "verdict": "PASS"
+  },
+  {
+   "check": "text_replay",
+   "n": 12,
+   "verdict": "PASS"
+  },
+  {
+   "check": "reevaluation_at_seal_head",
+   "n": 13,
+   "verdict": "PASS"
+  },
+  {
+   "check": "independent_rederivation_cells_0_148",
+   "n": 14,
+   "verdict": "PASS"
+  },
+  {
+   "check": "premise_binding",
+   "n": 15,
+   "verdict": "PASS"
+  },
+  {
+   "check": "theorem_audit",
+   "n": 16,
+   "verdict": "PASS"
+  },
+  {
+   "check": "monotone_vs_coverage_map_r2",
+   "n": 17,
+   "verdict": "PASS"
+  },
+  {
+   "check": "float_markov_sanity_check",
+   "n": 18,
+   "verdict": "INFO"
+  }
+ ],
+ "coverage_map_r3_sha256": "6d598dc53293f91cdffb99f8fb3a0080542d8d0ca75c3110cc5fcc4db97a544d",
+ "evidence_files_sha256": {
+  "mac/arl_check.py": "359ce6fde62de12b20a40b7024fdc7e61b49c270a526d8fd328197df3c7c4a87",
+  "mac/clone.log": "ff2a2ab4a65425b14b4cfaa1bad1da9e694a141ab34ca6b8719bdeeabb93760b",
+  "vultr/FALSIFY_GL128_sample.json": "237e6cf46a25b9267634da0a99a82c6bb2d75f2be6f00b546038ad5dd0abf4c2",
+  "vultr/FALSIFY_GL64_sample.json": "c3e022e569509e4c4749ee2546a57c66ddf7ba88c4f30ee0d15b78f264bacd7a",
+  "vultr/GATE_RESULT.json": "969e8a0dd73c958618fb8d5ad455df0250bdcc5bd1b10bc801d817317d02b828",
+  "vultr/INDEP.json": "25e34e9146c2539d1d12ea78ffcccc3336dacaed2c1feadade969dbd76097c60",
+  "vultr/L.jsonl": "c8992d8ad9ce127444d13ad0096043d410dfb91e5b71ec37f1c934a69f3286a3",
+  "vultr/PREFREEZE.json": "5f074b1fb34440c8d8c52a65ea28df816840d405e53e0c94c62557b490869f52",
+  "vultr/PROBE.json": "ee49df837fcc326363ebb7c3ed6bc6174c89209dd752787086596d16f70b0c9e",
+  "vultr/QUALIFICATION_AD.json": "3995df32dc995c218c96220b022d650510281b91aa88c2ac47aadd813c8be484",
+  "vultr/REPLAY.json": "e77cc1e0f3f97fa2355aa4f8c914e5740b4fac212b7a2740480ac66229099374",
+  "vultr/SAMPLE_VERIFY.json": "f96933c80eecb85e88dae4edd3e494c1e67f5bee037adc3c40951e7ea79f9539",
+  "vultr/SHA256SUMS": "66e647ad43e0d0e77c5ce0dc688e21f160cc6efb2344e6d7cc99817d9eccd6f5",
+  "vultr/XB.json": "1d238286861a13ff8307a831be27519ae8a1845cf6cbb5933b6722193c3011df",
+  "vultr/clone.log": "96431026bf149ec006866ff47379501c327da13bab56a804178168d670d6d89a",
+  "vultr/cmp_falsify.py": "3ee0aea82d15621b26ee72ad7078ddcc778952e50c457d72984d1b20460c3174",
+  "vultr/consume.log": "b4f7cd38f016ee41f038954b63e62a43e495f288033188262a614938e532ce13",
+  "vultr/falsify128.log": "55582f084fbc4c311b4cc75505e04dec4287363301bbe64946f2f7e983a518b2",
+  "vultr/falsify64.log": "3a3816682c3cd42ac8e786e53ac39d48f50b3e3db1bb81f9dc7cfad6284ef5c6",
+  "vultr/falsify_gl128.py": "5fc84c8a4a10ccd47845a94f1d8144c5c53d99fb567bb4452d2ed8a488cc2470",
+  "vultr/full_verify.log": "ce2e8c832a327edc6bcbef7006b9e1972d0dbb5bb5804b98a5da4aed221c33ab",
+  "vultr/gate.log": "72a8f4a6cb349c925dc4048a6a0e51a5cf9459afe013423cae1c07c75865dea6",
+  "vultr/indep.log": "1d1346102bbe41bf08becf0fa715dba837ab397c09681d3b2f5c90be9f57d45f",
+  "vultr/indep.py": "e22bc0b3628881d2c67861d7afd4da63c2f77b84fbcdf955e473bf6103e28488",
+  "vultr/probe.log": "320d9319df4570b0b737ae11382ddc7f242fa0765d6f66a8b673b939d3967323",
+  "vultr/qad.log": "7ffe64321d15c496be41d328bd8beddc45e9ac542f2f9efc774cc545380d8041",
+  "vultr/replay.log": "d642ccbfa8a3ae5cf01031b8dd6ca9a6f3c2c0abc12fe23ac9fa13474d3b2348",
+  "vultr/sample_verify.log": "21ab7cd99e554915d9a69539a595a61b37a4546e819aa802737afe76ec3ae5d2",
+  "vultr/sample_verify.py": "d3b58b0d65aeaa2eaac1034013edfdfe92988c1c12c40e99267b29d99060f70b",
+  "vultr/xb.log": "013cd3c139a51f3c7d43177c9c47759e1f22361df646c8b484f2541f6d535023"
+ },
+ "freeze_commit": "730d6e8398499f7e5d5da0fb5e494616c65d1e22",
+ "notes": [
+  {
+   "blocking": false,
+   "disposition": "S03 gate is the probe exit status (qualify_successor.py: pass = returncode == 0); byte identity not required by the protocol",
+   "n": 1,
+   "note": "S03 PROBE.json not byte-reproducible (float proposal last digits); verdicts identical"
+  },
+  {
+   "blocking": false,
+   "disposition": "wording slip in a pinned file; left unchanged",
+   "n": 2,
+   "note": "spec S07 wording says ledger at the freeze head; ledger shows head 1f5edae9 with freeze_commit 730d6e83"
+  },
+  {
+   "blocking": false,
+   "disposition": "left unchanged (frozen); status is carried by the protocol pin and this record",
+   "n": 3,
+   "note": "stale DRAFT status labels in the pinned spec and THEOREM_AD.md"
+  }
+ ],
+ "protocol_sha256": "ef6c1d14d69c8cd857c6234aff3386c8f225e79c1224a20f7a0c83894e81cb1d",
+ "qualification_commit": "1f5edae9d1ead04e0aaa7461a475288755ad2e28",
+ "qualification_result_sha256": "90446aa69ecfe4d76744193771a07e5d0ee72242cead6ba0986e52ea9772fdce",
+ "reevaluation_result_sha256": "5dcc9b7d26c92babbf1b19ad064b29969ea7bd829ea9629004e312520123274a",
+ "schema": "rebaseguard.p5y.k5.perron-deflation.adjudication.v1",
+ "seal_commit": "2e9b1585ec6f56b4a347d2aa00287b37cc3e1dd2",
+ "sealed_open_ranges": {
+  "1": [
+   [
+    11,
+    35
+   ]
+  ],
+  "2": [
+   [
+    11,
+    41
+   ]
+  ],
+  "3": [
+   [
+    11,
+    42
+   ]
+  ],
+  "5": [
+   [
+    11,
+    44
+   ],
+   [
+    305,
+    309
+   ]
+  ]
+ },
+ "sealed_result_sha256": "5dcc9b7d26c92babbf1b19ad064b29969ea7bd829ea9629004e312520123274a"
+}
