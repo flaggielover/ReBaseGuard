@@ -129,7 +129,8 @@ def require_authorized(cell: int, protocol_sha256: str) -> dict:
     if cell not in addresses:
         raise TCProducerRefusal(f"cell {cell} is not a pre-registered address")
     return {"head": g["head"], "freeze_commit": g["freeze"], "authorization_sha256": auth_sha,
-            "guard_sha256": sha((REPO / (EVID_REL + "/GUARD.json")).read_bytes()), "protocol": proto}
+            "guard_sha256": sha((REPO / (EVID_REL + "/GUARD.json")).read_bytes()), "protocol_sha256": protocol_sha256,
+            "protocol": proto}
 
 
 # ------------------------------------------------------------------ frozen chain
@@ -253,6 +254,29 @@ def _structure(fields: dict) -> dict:
             "residuals_nonnegative": nonneg, "complete": len(fields["r"]) == 5 and len(fields["W2"]) == 10}
 
 
+def module_check(proto: dict) -> int:
+    """Every repository module file loaded so far is frozen: pinned by this protocol, or listed in the Aux5 producer
+    manifest or in the order-3 producer manifest, with a matching sha256 (review r2 N-R2-2: run before AND after the
+    computation, so a lazily imported module is covered too)."""
+    frozen = dict(proto["pins"])
+    for rel in ("level4/closure_proofs/p5y_k1_cusum_aux5_successor/manifests/producer_manifest_v3.json",
+                "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/config/ORDER3_PRODUCER_MANIFEST.json"):
+        for k, v in json.loads((REPO / rel).read_bytes())["files"].items():
+            frozen.setdefault(k, v)
+    loaded = set()
+    for mod in list(sys.modules.values()):
+        f = getattr(mod, "__file__", None)
+        if f:
+            try:
+                loaded.add(str(Path(f).resolve().relative_to(REPO)))
+            except ValueError:
+                pass
+    bad = sorted(rel for rel in loaded if rel not in frozen or sha((REPO / rel).read_bytes()) != frozen[rel])
+    if bad:
+        raise TCProducerRefusal(f"repository modules outside the frozen set (or changed): {bad[:5]}")
+    return len(loaded)
+
+
 def runtime_checks(Z, proto: dict, cell_index: int, record_sha256: str) -> dict:
     """Mode real: the frozen runtime, the frozen order-3 producer identity, the pre-registered K1 record and no
     repository module outside the frozen pin list."""
@@ -272,26 +296,27 @@ def runtime_checks(Z, proto: dict, cell_index: int, record_sha256: str) -> dict:
         raise TCProducerRefusal("frozen Aux5 producer manifest does not verify")
     if proto["k1_record_sha256"].get(str(cell_index)) != record_sha256:
         raise TCProducerRefusal("K1 record sha differs from the pre-registered one")
-    loaded = set()
-    for mod in list(sys.modules.values()):
-        f = getattr(mod, "__file__", None)
-        if f:
-            try:
-                loaded.add(str(Path(f).resolve().relative_to(REPO)))
-            except ValueError:
-                pass
-    extra = sorted(loaded - set(proto["loaded_repository_modules"]))
-    if extra:
-        raise TCProducerRefusal(f"repository modules loaded outside the frozen list: {extra[:5]}")
+    mods = module_check(proto)
     flint.ctx.threads = 1
-    return {"runtime": rt, "loaded_repository_modules": len(loaded)}
+    return {"runtime": rt, "loaded_repository_modules_before": mods}
 
 
-def compute(cell_index: int, record: dict, mode: str, proto: dict | None = None, record_sha256: str = "") -> dict:
+def compute(cell_index: int, record: dict, mode: str, protocol_sha256: str | None = None,
+            record_sha256: str = "") -> dict:
+    binding, proto = None, None
+    if mode == "real":                                 # FIRST: the governance gate lives inside compute (N-R2-9)
+        if not protocol_sha256:
+            raise TCProducerRefusal("mode real needs the protocol sha256")
+        binding = require_authorized(cell_index, protocol_sha256)
+        proto = binding.pop("protocol")
+    elif protocol_sha256:                              # replay with the protocol: runtime checks only, no gate
+        proto = json.loads((REPO / PROTOCOL_REL).read_bytes())
+        if sha((REPO / PROTOCOL_REL).read_bytes()) != protocol_sha256:
+            raise TCProducerRefusal("protocol does not match the given sha256")
     Z = _import_chain()
     if os.environ.get("K1_THREADS_PINNED") != "1":
         raise TCProducerRefusal("thread environment was not pinned before numpy import")
-    checks = runtime_checks(Z, proto, cell_index, record_sha256) if mode == "real" else None
+    checks = runtime_checks(Z, proto, cell_index, record_sha256) if proto is not None else None
     if record.get("cell_index") != cell_index or record.get("detector") != "CUSUM":
         raise TCProducerRefusal("record does not identify itself as this CUSUM cell")
     cell = next(c for c in Z["spec"].CELLS if c["detector"] == "CUSUM" and c["index"] == cell_index)
@@ -327,6 +352,9 @@ def compute(cell_index: int, record: dict, mode: str, proto: dict | None = None,
                 out["extraction_code_path"] = _structure(extract(Z, cert, mid, aux_mid, cellwise, g))
     if hasattr(guard, "require_clean"):
         guard.require_clean()
+    if proto is not None:
+        out["runtime_checks"]["loaded_repository_modules_after"] = module_check(proto)
+    out["binding"] = binding
     out["metadata"] = {"cpu_seconds": time.process_time() - t0,
                        "peak_rss_kib": resource.getrusage(resource.RUSAGE_SELF).ru_maxrss}
     return out
@@ -341,19 +369,14 @@ def main() -> int:
     ap.add_argument("--protocol-sha256")
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
-    binding = None
-    if a.mode == "real":                                   # FIRST: nothing precedes the gate
-        if not a.protocol_sha256:
-            raise TCProducerRefusal("mode real needs --protocol-sha256")
-        binding = require_authorized(a.cell, a.protocol_sha256)
+    if a.mode == "real" and not a.protocol_sha256:
+        raise TCProducerRefusal("mode real needs --protocol-sha256")
     raw = Path(a.record).read_bytes()
     if sha(raw) != a.record_sha256:
         raise TCProducerRefusal("K1 record does not match the given sha256")
-    proto = binding.pop("protocol") if binding else None
-    res = compute(a.cell, json.loads(raw), a.mode, proto, a.record_sha256)
+    res = compute(a.cell, json.loads(raw), a.mode, a.protocol_sha256, a.record_sha256)   # gate first inside
     meta = res.pop("metadata")                         # non-deterministic: never part of the sealed payload
     res["k1_record_sha256"] = a.record_sha256
-    res["binding"] = binding
     data = json.dumps(res, sort_keys=True, indent=1).encode() + b"\n"
     Path(a.out).write_bytes(data)
     print(json.dumps({"cell": a.cell, "mode": a.mode, "sha256": sha(data), **meta}))

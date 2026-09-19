@@ -21,10 +21,12 @@ REPO = HERE.parents[4]
 NS_REL = "level4/closure_proofs/p5y_k5_lower_front_order3"
 CP = "level4/closure_proofs/"
 OWN = ["code/tc_rule.py", "code/tc_producer.py", "code/tc_consume.py", "code/tc_crosscheck.py",
-       "code/tc_manufactured.py", "code/tc_qualify.py", "code/tc_run.py", "code/lower_front_blocker_map.py",
+       "code/tc_manufactured.py", "code/tc_qualify.py", "code/tc_run.py", "code/tc_lifecycle_sim.py",
+       "code/lower_front_blocker_map.py",
        "theorem/THEOREM_TC.md", "config/FEASIBILITY_GATES_A.json", "phase_a/LOWER_FRONT_BLOCKER_MAP.json",
        "phase_b/ROUTE_COMPARISON.md", "evidence/forecast_r1/ROUTE_FORECAST.json", "evidence/forecast_r1/COST_NOTE.md",
-       "TC_SUCCESSOR_SPEC.md", "review/REVIEW_R1.md"]
+       "TC_SUCCESSOR_SPEC.md", "review/REVIEW_R1.md", "review/REVIEW_R1_DISPOSITION.md", "review/REVIEW_R2.md",
+       "review/REVIEW_R2_DISPOSITION.md", "review/REVIEW_BRIEF_R1.md", "review/AUTHORIZATION_BRIEF.md"]
 PREDECESSORS = [
     CP + "p5y_k5_perron_deflated_resolvent/evidence/successor_r1/DEFLATED_CONSUMPTION.json",
     CP + "p5y_k5_perron_deflated_resolvent/evidence/successor_r1/K5_COVERAGE_MAP_R3.json",
@@ -112,14 +114,16 @@ def main() -> int:
                                          "as pre-registered; no repository module loaded outside the frozen list",
                      "parallel_channel": "the frozen Order3Certifier is called directly (its own real-cell registry "
                                          "stays empty); this protocol's authorization is the governing gate",
-                     "published_order3": "only certified quantities: delta_mid(G_r) and the upper bound |Ghat_r(a)|; no "
-                                         "uncertified order-3 candidate value is recorded"},
+                     "published_order3": "only certified quantities: delta_mid(G_r), the certified candidate supremum "
+                                         "sup.G (needed by Env4) and the upper bound |Ghat_r(a)|; no uncertified "
+                                         "order-3 candidate value is recorded"},
         "consumer": {"code": f"{NS_REL}/code/tc_consume.py", "replay_gate": "empty-TC composition reproduces the "
                      "sealed DEFLATED_CONSUMPTION 5dcc9b7d exactly (rows sha, pass/open ranges, cells 0..159)"},
         "fields": {"per_cell": ["norms.k[0..4]", "norms.j[0..4]", "sup_S0[0..4]", "rho", "e0",
                                 "r.{0..4}.{delta_F,delta_D,delta_H,delta_G,eps_src[0..3],sup.{F,D,H,G},H_at_a,"
-                                "G_at_a,abs_G_at_a}", "W2.{r:j}", "identity_gate"]},
+                                "abs_G_at_a}", "W2.{r:j}", "identity_gate", "runtime_checks", "binding"]},
         "expected_outputs": {"evidence/tc_r1/cells/TC_CELL_<k>.json": "one per address",
+                             "evidence/tc_r1/repro/TC_CELL_<11,44>.json": "the pre-registered reproduction",
                              "evidence/tc_r1/TC_INDEX.json": "sha256 of every cell file",
                              "evidence/tc_r1/RUN_LEDGER.jsonl": "START/OUTPUT lines per cell",
                              "evidence/tc_r1/TC_CONSUMPTION.json": "after the seal"},
@@ -134,8 +138,8 @@ def main() -> int:
         "stopping_rule": "each address is evaluated exactly once (plus the pre-registered 2-cell reproduction); "
                          "no re-run, no additional address, no adaptive choice; any refusal or failed acceptance item "
                          "makes the run VOID (no consumption) and stops Campaign A execution",
-        "seal_rule": "raw cell files, TC_INDEX and RUN_LEDGER are committed before any consumption or pass/open "
-                     "inspection",
+        "seal_rule": "cells/, repro/, TC_INDEX.json and RUN_LEDGER.jsonl are committed once (with GUARD back to DENY) "
+                     "before any consumption or pass/open inspection, and never modified afterwards",
         "runtime": {"host": socket.gethostname(), "python": platform.python_version(), "numpy": numpy.__version__,
                     "scipy": scipy.__version__, "python_flint": flint.__version__, "venv": sys.prefix},
         "post_freeze_allowed_prefix": f"{NS_REL}/evidence/tc_r1/",

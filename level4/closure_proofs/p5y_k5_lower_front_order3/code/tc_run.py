@@ -1,7 +1,7 @@
 """Governed execution of the theorem-TC producer over exactly the pre-registered addresses (then the pre-registered
 2-cell reproduction). Evidence is written OUTSIDE the checkout (the producer refuses a dirty namespace).
 
-    python -B tc_run.py --protocol-sha256 SHA --evidence DIR [--workers 7]
+    python -B tc_run.py --protocol-sha256 SHA --evidence DIR          (workers: the protocol's frozen count)
 
 Writes DIR/cells/TC_CELL_<k>.json, DIR/repro/TC_CELL_<k>.json, DIR/RUN_LEDGER.jsonl (START / OUTPUT / REPRO lines
 with sha256, CPU seconds, head) and DIR/TC_INDEX.json. It never reads a scientific field of an output (no pass/open
@@ -50,14 +50,12 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--protocol-sha256", required=True)
     ap.add_argument("--evidence", required=True)
-    ap.add_argument("--workers", type=int, default=None)
     a = ap.parse_args()
     proto = json.loads((NS / "config/TC_PROTOCOL.json").read_bytes())
     if sha(NS / "config/TC_PROTOCOL.json") != a.protocol_sha256:
         raise SystemExit("protocol sha mismatch")
     cells = proto["addresses"]["cells"]
-    if a.workers is None:
-        a.workers = int(proto["budget"]["workers"])
+    a.workers = int(proto["budget"]["workers"])          # frozen worker count (review r2 N-R2-9); no override
     ev = Path(a.evidence)
     (ev / "cells").mkdir(parents=True, exist_ok=False)
     (ev / "repro").mkdir(parents=True, exist_ok=False)

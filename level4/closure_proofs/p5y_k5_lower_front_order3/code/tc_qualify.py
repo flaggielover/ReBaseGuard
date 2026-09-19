@@ -4,23 +4,39 @@ of the FREEZE commit (the commit that adds config/TC_PROTOCOL.json). Evidence go
 Gates (all must pass for QUALIFIED; any failure -> NOT_QUALIFIED, and nothing is patched under this protocol):
   S00 CLEAN        head == freeze commit, namespace clean, protocol committed
   S01 PINS         every pin of TC_PROTOCOL.json matches
-  S02 RUNTIME      host / python / numpy / scipy / python-flint / venv equal the protocol; the frozen order-3 producer
-                   manifest has no problem; the Aux5 producer manifest verifies (manifest_v3.verify)
+  S02 RUNTIME      thread environment pinned before numpy import (K1_THREADS_PINNED = 1); host / python / numpy /
+                   scipy / python-flint / venv equal the protocol; the frozen order-3 producer manifest has no problem;
+                   the Aux5 producer manifest verifies (manifest_v3.verify)
   S03 PREDECESSORS adopted artifacts equal their pins (inside S01) and the 34 K1 records equal the export manifest
-  S04 THEOREM      tc_manufactured: 0 violations of p_j and of the enclosure on every fixture, frozen assembly table
-                   equal, all 14 mutants detected
+  S04 THEOREM      tc_manufactured: 0 violations of p_j and of the enclosure on every fixture, frozen assembly table and
+                   tc_crosscheck equality, all 20 mutants detected
   S05 CROSSCHECK   tc_rule == tc_crosscheck (exact) on every manufactured fixture and on synthetic all-m records
-  S06 REPLAY       tc_producer replay on cells 11 and 44: identity gate identical (no order-3 value is computed)
+  S06 REPLAY       tc_producer replay --protocol-sha256 on cells 11 and 44: identity gate identical, runtime_checks
+                   (runtime, both manifests, K1 record sha, frozen module set before and after) recorded, extraction
+                   code path complete (synthetic G; no order-3 candidate of F is proposed)
   S07 CONSUMER     tc_consume --replay-only reproduces the adopted deflated consumption exactly
-  S08 REFUSALS     (a) mode real refuses at the freeze commit (no qualification / authorization / guard committed);
-                   (b) mode real refuses a wrong protocol sha; (c) replay refuses a wrong record sha;
-                   (d) the consumer refuses a TC record of the wrong cell / geometry / without identity gate;
-                   (e) positive path: a synthetic no-op TC record for cell 11 is consumed for every m and changes nothing
+  S08 REFUSALS     (a) mode real refuses at the freeze commit; (b) wrong protocol sha; (c) wrong record sha;
+                   (d) consumer refuses a TC record of the wrong cell / geometry / without identity gate;
+                   (e) a synthetic no-op record is composed for every m and changes nothing;
+                   (f) check_index refuses wrong protocol / missing address / reproduction false or missing / differing
+                   reproduction bytes, and (k) accepts the correct index; (g) check_binding refuses a wrong freeze /
+                   authorization / guard / head / K1 sha / protocol sha and (j) a missing binding;
+                   (h) the consumer cross-check refuses a rule that disagrees with tc_crosscheck;
+                   (i) rule_modules refuses a tc_rule whose bytes differ from the protocol pin;
+                   (l) tc_lifecycle_sim: the full commit sequence in a throwaway clone, positive and four tamper cases
   S09 COST         CPU seconds of the qualification recorded
 
     python -B tc_qualify.py --protocol-sha256 SHA --out-dir DIR
 """
 from __future__ import annotations
+
+import os
+import sys as _sys
+
+_PINNED = {"OMP_NUM_THREADS": "1", "OPENBLAS_NUM_THREADS": "1", "MKL_NUM_THREADS": "1", "NUMEXPR_NUM_THREADS": "1"}
+if "numpy" not in _sys.modules:                     # review r2 B-R2-2: pin before anything can import numpy
+    os.environ.update(_PINNED)
+    os.environ["K1_THREADS_PINNED"] = "1"
 
 import argparse
 import hashlib
@@ -81,7 +97,9 @@ def s02(proto):
     o3 = Z["O3"].producer_manifest_problems()
     import manifest_v3
     mv = manifest_v3.verify()
-    return {"pass": rt == proto["runtime"] and not o3 and mv["ok"], "runtime": rt,
+    env = {v: os.environ.get(v) for v in list(_PINNED) + ["K1_THREADS_PINNED"]}
+    return {"pass": rt == proto["runtime"] and not o3 and mv["ok"] and env["K1_THREADS_PINNED"] == "1",
+            "runtime": rt, "thread_environment": env,
             "order3_manifest_problems": o3, "aux5_manifest_ok": mv["ok"], "aux5_problems": mv["problems"][:5]}
 
 
@@ -132,12 +150,12 @@ def s05():
     return {"pass": not bad, "fixtures": len(fx), "synthetic": synth, "mismatch": bad}
 
 
-def s06(out_dir, proto):
+def s06(out_dir, proto, proto_sha):
     procs = {}
     for k in (11, 44):
         cmd = [PY, "-B", str(NS / "code/tc_producer.py"), "replay", "--cell", str(k),
                "--record", str(RECORDS / f"aux5_CUSUM_{k}_256.json"), "--record-sha256", proto["k1_record_sha256"][str(k)],
-               "--out", str(out_dir / f"REPLAY_{k}.json")]
+               "--protocol-sha256", proto_sha, "--out", str(out_dir / f"REPLAY_{k}.json")]
         procs[k] = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     res = {}
     for k, p in procs.items():
@@ -147,11 +165,14 @@ def s06(out_dir, proto):
         meta = json.loads(so.strip().splitlines()[-1]) if ok else {}
         res[str(k)] = {"returncode": p.returncode, "identity": rec.get("identity_gate"),
                        "extraction_code_path": rec.get("extraction_code_path"),
+                       "runtime_checks": rec.get("runtime_checks"),
                        "has_scientific_fields": any(x in rec for x in ("r", "W2", "norms")),
                        "cpu_seconds": meta.get("cpu_seconds"), "stderr_tail": se[-400:] if not ok else ""}
     ok = all(v["returncode"] == 0 and v["identity"] and v["identity"].get("identical") and not v["has_scientific_fields"]
              and (v["extraction_code_path"] or {}).get("complete") is True
-             and (v["extraction_code_path"] or {}).get("residuals_nonnegative") is True for v in res.values())
+             and (v["extraction_code_path"] or {}).get("residuals_nonnegative") is True
+             and (v["runtime_checks"] or {}).get("runtime") == proto["runtime"]
+             and (v["runtime_checks"] or {}).get("loaded_repository_modules_after", 0) > 0 for v in res.values())
     return {"pass": ok, "cells": res}
 
 
@@ -198,7 +219,7 @@ def s08(out_dir, proto, proto_sha):  # noqa: C901
             "norms": {"k": ["1"] * 5, "j": ["1"] * 5}, "sup_S0": ["1"] * 5,
             "r": {str(r): {"delta_F": big, "delta_D": big, "delta_H": big, "delta_G": big, "eps_src": ["0"] * 4,
                            "sup": {"F": "1", "D": "1", "H": "1", "G": "1"}, "H_at_a": ["0", "0"],
-                           "G_at_a": ["0", "0"], "abs_G_at_a": "0"} for r in range(5)},
+                           "abs_G_at_a": "0"} for r in range(5)},
             "W2": {f"{r}:{j}": ["-1", "1"] for r in range(4) for j in range(4 - r)}}
     base = json.loads((out_dir / "CONSUMER_REPLAY.json").read_text())
     res = tc_consume.compose(RECORDS, {11: noop}, proto)
@@ -226,9 +247,11 @@ def s08(out_dir, proto, proto_sha):  # noqa: C901
         out["f_index_repro_bytes_refused"] = False
     except tc_consume.TCConsumeRefusal:
         out["f_index_repro_bytes_refused"] = True
-    ctx = {"freeze_commit": "F", "authorization_sha256": "A", "allow_guard_shas": ["G"], "run_heads": {"H"}}
+    ctx = {"freeze_commit": "F", "authorization_sha256": "A", "run_heads": {"H"}, "guard_sha_at": {"H": "G"},
+           "protocol_sha256": proto_sha}
     good_b = {"k1_record_sha256": proto["k1_record_sha256"]["11"],
-              "binding": {"freeze_commit": "F", "authorization_sha256": "A", "guard_sha256": "G", "head": "H"}}
+              "binding": {"freeze_commit": "F", "authorization_sha256": "A", "guard_sha256": "G", "head": "H",
+                          "protocol_sha256": proto_sha}}
     tc_consume.check_binding(good_b, 11, proto, ctx)                        # must not raise
     for name, patch in {"freeze": ("freeze_commit", "X"), "auth": ("authorization_sha256", "X"),
                         "guard": ("guard_sha256", "X"), "head": ("head", "X")}.items():
@@ -259,7 +282,33 @@ def s08(out_dir, proto, proto_sha):  # noqa: C901
         out["h_crosscheck_mismatch_refused"] = False
     except tc_consume.TCConsumeRefusal:
         out["h_crosscheck_mismatch_refused"] = True
-    out["pass"] = all(v for k, v in out.items() if k.endswith("refused")) and out["e_noop_path_unchanged"]
+    # (j) a record without a binding; wrong protocol sha in the binding
+    for name, rec in {"j_binding_null": dict(good_b, binding=None),
+                      "g_binding_protocol": dict(good_b, binding=dict(good_b["binding"], protocol_sha256="0" * 64))}.items():
+        try:
+            tc_consume.check_binding(rec, 11, proto, ctx)
+            out[f"{name}_refused"] = False
+        except tc_consume.TCConsumeRefusal:
+            out[f"{name}_refused"] = True
+    # (k) positive control of check_index
+    try:
+        tc_consume.check_index(good_idx, proto, proto_sha, tcs, {"11": "x", "44": "x"})
+        out["k_index_positive_accepted"] = True
+    except tc_consume.TCConsumeRefusal:
+        out["k_index_positive_accepted"] = False
+    # (i) tc_rule bytes that differ from the protocol pin
+    bad_proto = dict(proto, pins=dict(proto["pins"], **{NS_REL + "/code/tc_rule.py": "0" * 64}))
+    try:
+        tc_consume.rule_modules(bad_proto)
+        out["i_rule_pin_mismatch_refused"] = False
+    except tc_consume.TCConsumeRefusal:
+        out["i_rule_pin_mismatch_refused"] = True
+    # (l) the full lifecycle in a throwaway clone
+    import tc_lifecycle_sim
+    sim = tc_lifecycle_sim.run(REPO, out_dir, proto_sha, PY, str(RECORDS))
+    out["l_lifecycle_simulation"] = sim
+    out["pass"] = (all(v for k, v in out.items() if k.endswith("refused")) and out["e_noop_path_unchanged"]
+                   and out["k_index_positive_accepted"] and sim.get("pass") is True)
     return out
 
 
@@ -285,7 +334,7 @@ def main() -> int:
     if pre:
         res["S04"] = s04(out_dir)
         res["S05"] = s05()
-        res["S06"] = s06(out_dir, proto)
+        res["S06"] = s06(out_dir, proto, a.protocol_sha256)
         res["S07"] = s07(out_dir)
         res["S08"] = s08(out_dir, proto, a.protocol_sha256)
     res["S09"] = {"pass": True, "cpu_seconds_self": time.process_time() - t0, "wall_seconds": time.time() - wall0,

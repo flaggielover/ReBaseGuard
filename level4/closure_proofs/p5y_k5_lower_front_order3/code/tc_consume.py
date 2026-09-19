@@ -12,7 +12,8 @@ exactly — per m the rows sha256, the pass and open ranges, and every recorded 
 0..159). Otherwise it refuses. With the TC set, for every TC cell k and m: H_k <- H_k ∩ H_TC,m(k) (refuse if empty),
 M_k <- min(M_k, mag(H_k)); then k5b_literal per m on cells 0..309.
 
-    python -B tc_consume.py --records DIR --tc-dir DIR --tc-index TC_INDEX.json --out OUT.json [--replay-only]
+    python -B tc_consume.py --protocol-sha256 SHA --out OUT.json [--records DIR] [--replay-only]
+(run in a clean checkout at the seal commit; the sealed evidence is read from evidence/tc_r1/ and must be committed)
 """
 from __future__ import annotations
 
@@ -87,18 +88,39 @@ def module(key: str, name: str, pin_override=None):
 
 
 def load_protocol(protocol_sha256: str) -> dict:
-    raw = (REPO / PROTOCOL_REL).read_bytes()
+    """The COMMITTED protocol, equal to its bytes at the freeze commit, with the namespace unchanged since the freeze
+    outside evidence/tc_r1/ (no uncommitted or untracked change either) and every pin matching (review r2 B-R2-1)."""
+    raw = committed_bytes(PROTOCOL_REL)
     if sha(raw) != protocol_sha256:
         raise TCConsumeRefusal("TC protocol does not match the given sha256")
+    added = _git("log", "--diff-filter=A", "--format=%H", "--", PROTOCOL_REL).split()
+    if not added:
+        raise TCConsumeRefusal("no freeze commit")
+    freeze = added[-1]
+    import subprocess
+    at_freeze = subprocess.run(["git", "-C", str(REPO), "show", f"{freeze}:{PROTOCOL_REL}"], check=True,
+                               capture_output=True).stdout
+    if at_freeze != raw:
+        raise TCConsumeRefusal("protocol differs from its bytes at the freeze commit")
+    if _git("status", "--porcelain", "--untracked-files=all", "--", NS_REL).strip():
+        raise TCConsumeRefusal("namespace has uncommitted or untracked changes")
+    changed = _git("diff", "--name-only", freeze, "HEAD", "--", NS_REL).split()
+    extra = [c for c in changed if not c.startswith(EVID_REL + "/")]
+    if extra:
+        raise TCConsumeRefusal(f"namespace changed after the freeze outside {EVID_REL}: {extra[:5]}")
     proto = json.loads(raw)
+    bad = [rel for rel, h in proto["pins"].items() if sha((REPO / rel).read_bytes()) != h]
+    if bad:
+        raise TCConsumeRefusal(f"protocol pins do not match: {bad[:5]}")
     for key in ("tc_rule", "tc_crosscheck"):
         if PINS[key][0] not in proto["pins"]:
             raise TCConsumeRefusal(f"protocol does not pin {PINS[key][0]}")
+    proto["_freeze_commit"] = freeze
     return proto
 
 
 def rule_modules(proto: dict):
-    pov = {PINS[k][0]: proto["pins"][PINS[k][0]] for k in ("tc_rule", "tc_crosscheck")}
+    pov = {PINS[k][0]: proto["pins"][PINS[k][0]] for k in ("tc_rule", "tc_crosscheck")}      # frozen pins
     return module("tc_rule", "tc_rule_frozen", pov), module("tc_crosscheck", "tc_crosscheck_frozen", pov)
 
 
@@ -118,18 +140,24 @@ def check_index(index: dict, proto: dict, protocol_sha256: str, tc_cells: dict, 
 
 
 def check_binding(rec: dict, k: int, proto: dict, ctx: dict) -> None:
-    """Every record was produced by the gated real mode under this protocol, freeze, authorization and guard."""
-    b = rec.get("binding") or {}
+    """Every record was produced by the gated real mode under this protocol, freeze, authorization and ALLOW guard,
+    at a run head that descends from the authorization commit (review r2 B-R2-1, N-R2-5)."""
+    b = rec.get("binding")
+    if not isinstance(b, dict):
+        raise TCConsumeRefusal(f"TC record {k}: no governance binding")
     if rec.get("k1_record_sha256") != proto["k1_record_sha256"].get(str(k)):
         raise TCConsumeRefusal(f"TC record {k}: K1 record sha differs from the protocol")
+    if b.get("protocol_sha256") != ctx["protocol_sha256"]:
+        raise TCConsumeRefusal(f"TC record {k}: protocol sha differs")
     if b.get("freeze_commit") != ctx["freeze_commit"]:
         raise TCConsumeRefusal(f"TC record {k}: freeze commit differs")
     if b.get("authorization_sha256") != ctx["authorization_sha256"]:
         raise TCConsumeRefusal(f"TC record {k}: authorization differs")
-    if b.get("guard_sha256") not in ctx["allow_guard_shas"]:
-        raise TCConsumeRefusal(f"TC record {k}: not produced under a committed ALLOW guard")
-    if b.get("head") not in ctx["run_heads"]:
-        raise TCConsumeRefusal(f"TC record {k}: run head is not a commit of this history")
+    head = b.get("head")
+    if head not in ctx["run_heads"]:
+        raise TCConsumeRefusal(f"TC record {k}: run head is not a valid run head (after the authorization)")
+    if b.get("guard_sha256") != ctx["guard_sha_at"].get(head):
+        raise TCConsumeRefusal(f"TC record {k}: guard at the run head is not the bound ALLOW guard")
 
 
 def crosscheck(R, X, rec: dict, Ak: dict, m: int, lohi: tuple) -> None:
@@ -159,7 +187,7 @@ def compose(records_dir: Path, tc_cells: dict, proto: dict) -> dict:
     records, hashes = A.read_records(KM, Path(records_dir), cover, manifest)
     if registry.get("certified") is not True or registry.get("rule") != "r2":
         raise TCConsumeRefusal("adopted registry must be the certified r2 registry")
-    out, tc_audit = {}, {}
+    out, tc_audit, n_cross = {}, {}, [0]
     for m in MS:
         cells = A.cells_for_m(KM, cover, records, m, L1[m])
         audit = DC.apply_deflation(cells, records, registry, m, cover, ADOPTED_DOMAIN)
@@ -206,6 +234,7 @@ def compose(records_dir: Path, tc_cells: dict, proto: dict) -> dict:
                 raise TCConsumeRefusal(f"A-constants of cell {k} differ from the adopted audit")
             lo, hi = R.cell_enclosure(rec, Ak, int(m))
             crosscheck(R, X, rec, Ak, int(m), (lo, hi))
+            n_cross[0] += 1
             a, b = max(cells[k]["H"][0], lo), min(cells[k]["H"][1], hi)
             if a > b:
                 raise TCConsumeRefusal(f"empty TC intersection cell {k} m {m} (evidence of unsoundness)")
@@ -226,6 +255,7 @@ def compose(records_dir: Path, tc_cells: dict, proto: dict) -> dict:
                                      "H": [str(x) for x in cells[i]["H"]], "M": str(cells[i]["M"])}
                             for i in range(160)}}
     return {"schema": SCHEMA, "consumptions": out, "tc_audit": tc_audit, "tc_cells": sorted(tc_cells),
+            "crosscheck_comparisons": n_cross[0],
             "replay_gate": "PASS (empty-TC composition reproduced the sealed adopted consumption exactly)",
             "inputs": {k: {"path": v[0], "sha256": v[1] if v[1] else proto["pins"][v[0]]} for k, v in PINS.items()}
             | {"records_sha256": sha(canonical(hashes)), "record_count": len(hashes)}}
@@ -250,37 +280,84 @@ def committed_bytes(rel: str) -> bytes:
     return disk
 
 
-def governance_context() -> dict:
-    """Freeze commit, committed authorization, every committed ALLOW guard version and the commits of this history."""
-    added = _git("log", "--diff-filter=A", "--format=%H", "--", PROTOCOL_REL).split()
-    if not added:
-        raise TCConsumeRefusal("no freeze commit")
+def _show(commit: str, rel: str) -> bytes:
+    import subprocess
+    return subprocess.run(["git", "-C", str(REPO), "show", f"{commit}:{rel}"], capture_output=True).stdout
+
+
+def _ancestor(x: str, y: str) -> bool:
+    import subprocess
+    return subprocess.run(["git", "-C", str(REPO), "merge-base", "--is-ancestor", x, y]).returncode == 0
+
+
+def governance_context(proto: dict, protocol_sha256: str) -> dict:
+    """Freeze, qualification -> authorization -> guard chain, the valid run heads and the guard at each of them."""
+    qual = committed_bytes(EVID_REL + "/QUALIFICATION_RESULT.json")
+    q = json.loads(qual)
+    if q.get("QUALIFIED") is not True or q.get("protocol_sha256") != protocol_sha256 \
+            or q.get("S00", {}).get("head") != proto["_freeze_commit"]:
+        raise TCConsumeRefusal("no QUALIFIED qualification at the freeze commit for this protocol")
     auth = committed_bytes(EVID_REL + "/AUTHORIZATION.json")
-    shas = []
-    for c in _git("log", "--format=%H", "--", EVID_REL + "/GUARD.json").split():
-        import subprocess
-        b = subprocess.run(["git", "-C", str(REPO), "show", f"{c}:{EVID_REL}/GUARD.json"], capture_output=True).stdout
-        if b and json.loads(b).get("state") == "ALLOW":
-            shas.append(sha(b))
-    return {"freeze_commit": added[-1], "authorization_sha256": sha(auth), "allow_guard_shas": shas,
-            "run_heads": set(_git("rev-list", "HEAD").split())}
+    a = json.loads(auth)
+    if a.get("verdict") != "AUTHORIZED" or a.get("protocol_sha256") != protocol_sha256 \
+            or a.get("addresses") != proto["addresses"]["cells"] or a.get("qualification_result_sha256") != sha(qual):
+        raise TCConsumeRefusal("AUTHORIZATION is not bound to this protocol, its addresses and its qualification")
+    a_add = _git("log", "--diff-filter=A", "--format=%H", "--", EVID_REL + "/AUTHORIZATION.json").split()[-1]
+    if len(_git("log", "--format=%H", "--", EVID_REL + "/AUTHORIZATION.json").split()) != 1:
+        raise TCConsumeRefusal("AUTHORIZATION was modified after it was committed")
+    guard_now = json.loads(committed_bytes(EVID_REL + "/GUARD.json"))
+    if guard_now.get("state") != "DENY":
+        raise TCConsumeRefusal("GUARD must be DENY again at consumption")
+    heads, guard_at = set(), {}
+    for c in [a_add] + _git("rev-list", "--ancestry-path", f"{a_add}..HEAD").split():
+        g = _show(c, EVID_REL + "/GUARD.json")
+        if g and json.loads(g).get("state") == "ALLOW" and json.loads(g).get("authorization_sha256") == sha(auth) \
+                and _show(c, EVID_REL + "/AUTHORIZATION.json") == auth:
+            heads.add(c)
+            guard_at[c] = sha(g)
+    return {"protocol_sha256": protocol_sha256, "freeze_commit": proto["_freeze_commit"],
+            "qualification_sha256": sha(qual), "authorization_sha256": sha(auth), "authorization_commit": a_add,
+            "run_heads": heads, "guard_sha_at": guard_at}
 
 
-def load_sealed_tc(proto: dict, protocol_sha256: str) -> dict:
-    index = json.loads(committed_bytes(EVID_REL + "/TC_INDEX.json"))
+def sealed_once(rel: str) -> bytes:
+    """A sealed file: committed, and added in exactly one commit and never modified afterwards."""
+    data = committed_bytes(rel)
+    if len(_git("log", "--format=%H", "--", rel).split()) != 1:
+        raise TCConsumeRefusal(f"sealed file {rel} was modified after it was committed")
+    return data
+
+
+def load_sealed_tc(proto: dict, protocol_sha256: str) -> tuple[dict, dict]:
+    idx_raw = sealed_once(EVID_REL + "/TC_INDEX.json")
+    index = json.loads(idx_raw)
     cells, repro = {}, {}
     for k, want in index.get("cells", {}).items():
-        raw = committed_bytes(f"{EVID_REL}/cells/TC_CELL_{int(k)}.json")
+        raw = sealed_once(f"{EVID_REL}/cells/TC_CELL_{int(k)}.json")
         if sha(raw) != want:
             raise TCConsumeRefusal(f"TC cell {k} does not match the sealed index")
         cells[int(k)] = json.loads(raw)
     for k in index.get("reproduction", {}):
-        repro[k] = sha(committed_bytes(f"{EVID_REL}/repro/TC_CELL_{int(k)}.json"))
+        repro[k] = sha(sealed_once(f"{EVID_REL}/repro/TC_CELL_{int(k)}.json"))
     check_index(index, proto, protocol_sha256, cells, repro)
-    ctx = governance_context()
+    ledger = [json.loads(x) for x in sealed_once(EVID_REL + "/RUN_LEDGER.jsonl").decode().splitlines() if x.strip()]
+    outs = {str(x["cell"]): x for x in ledger if x.get("event") == "OUTPUT"}
+    if sorted(outs) != sorted(index["cells"]) or any(not outs[k].get("ok") or outs[k].get("sha256") != v
+                                                     for k, v in index["cells"].items()):
+        raise TCConsumeRefusal("RUN_LEDGER OUTPUT lines do not match the sealed index")
+    if not any(x.get("event") == "RUN_END" and x.get("reproduction_identical") is True for x in ledger) \
+            or any(x.get("event") in ("RUN_VOID", "CAP_STOP") for x in ledger):
+        raise TCConsumeRefusal("RUN_LEDGER does not record a complete, non-void run")
+    if len([x for x in ledger if x.get("event") == "START"]) != len(index["cells"]):
+        raise TCConsumeRefusal("RUN_LEDGER does not record exactly one invocation per address")
+    ctx = governance_context(proto, protocol_sha256)
     for k, rec in cells.items():
         check_binding(rec, k, proto, ctx)
-    return cells
+    audit = {"tc_index_sha256": sha(idx_raw), "governance": {k: (sorted(v) if isinstance(v, set) else v)
+                                                              for k, v in ctx.items()},
+             "acceptance": {"addresses": len(cells), "reproduction": index["reproduction"],
+                            "ledger_outputs": len(outs)}}
+    return cells, audit
 
 
 def main() -> int:
@@ -291,9 +368,14 @@ def main() -> int:
     ap.add_argument("--replay-only", action="store_true")
     a = ap.parse_args()
     proto = load_protocol(a.protocol_sha256)
-    tc = {} if a.replay_only else load_sealed_tc(proto, a.protocol_sha256)
+    if a.replay_only:
+        tc, audit = {}, {"mode": "replay-only"}
+    else:
+        tc, audit = load_sealed_tc(proto, a.protocol_sha256)
     res = compose(Path(a.records), tc, proto)
     res["protocol_sha256"] = a.protocol_sha256
+    res["freeze_commit"] = proto["_freeze_commit"]
+    res["verified"] = audit
     data = json.dumps(res, sort_keys=True, indent=1).encode() + b"\n"
     Path(a.out).write_bytes(data)
     print({m: v["open_ranges"] for m, v in res["consumptions"].items()}, "sha256", sha(data))

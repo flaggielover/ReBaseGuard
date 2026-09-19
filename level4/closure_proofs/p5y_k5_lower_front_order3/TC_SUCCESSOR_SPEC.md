@@ -66,15 +66,21 @@ runtime checks; the governance binding. Plus `TC_INDEX.json`, `RUN_LEDGER.jsonl`
   pre-registered one; no repository module outside the frozen list is loaded.
 - The frozen Order3Certifier is called directly; its own real-cell registry stays empty. This protocol's authorization
   is the governing gate for this parallel channel, and the authorization review must accept it explicitly.
-- The consumer is bound to the frozen protocol: it loads tc_rule and tc_crosscheck from the protocol's pins, refuses
-  unless the index lists exactly the 34 addresses under this protocol, the 2-cell reproduction is byte-identical, the
-  evidence files are committed, every record's binding (freeze commit, authorization sha, an ALLOW guard version, run
-  head in this history, K1 record sha) matches, and tc_crosscheck equals tc_rule on every cell and m.
+- The consumer is bound to the frozen protocol (review r2 B-R2-1): the protocol must be committed and equal to its bytes
+  at the freeze commit, the namespace unchanged since the freeze outside `evidence/tc_r1/` (no uncommitted or untracked
+  file either) and every pin matching; tc_rule and tc_crosscheck are loaded from the protocol's pins. It refuses unless
+  the index lists exactly the 34 addresses under this protocol, the 2-cell reproduction is byte-identical, every sealed
+  file (cells, repro, index, ledger) was committed once and never modified, the ledger records exactly one START and one
+  ok OUTPUT per address (index sha), a RUN_END with identical reproduction and no RUN_VOID/CAP_STOP, GUARD is DENY
+  again, the QUALIFICATION -> AUTHORIZATION chain is bound to this protocol, every record's binding (protocol sha,
+  freeze commit, authorization sha, a run head that descends from the authorization commit and carries the bound ALLOW
+  guard, K1 record sha) matches, and tc_crosscheck equals tc_rule on every cell and m.
 
 ## 8. Lifecycle
 
-pre-freeze refusal exercised → freeze commit (protocol + code + this spec) → qualification S00–S09 at the freeze commit
+pre-freeze refusal exercised → freeze commit (protocol + code + this spec + all review documents) → qualification S00–S09 at the freeze commit
 in a fresh clone on vultr-02 → fresh-context authorization review → AUTHORIZATION.json + GUARD.json (ALLOW, exactly
-the 34 addresses) committed → `tc_run` → GUARD back to DENY → seal (raw files, index, ledger committed; no inspection
+the 34 addresses; AUTHORIZATION after QUALIFICATION, GUARD bound to AUTHORIZATION) committed → `tc_run` → GUARD back to DENY
+→ seal (cells, repro, index, ledger committed once; no inspection
 of pass/open before) → consumption (`tc_consume`, twice, byte-identical) → independent adjudication → coverage map r4.
 After the freeze only `evidence/tc_r1/` may change.
