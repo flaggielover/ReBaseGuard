@@ -165,17 +165,30 @@ def identity_gate(Z, cert, mid, aux_mid, cellwise, record: dict) -> dict:
     for key, val in record["eps_cell"].items():
         if key not in cellwise.nodes or mag(cellwise.nodes[key]) != F(val):
             diffs.append(f"eps_cell {key}")
+    # The adopted Aux5 run serialised the Aux3 evidence (qualify5._aux_record) OUTSIDE its workprec(256) block, i.e.
+    # at python-flint's default 53-bit context, where mag_fraction rounds abs_upper up to 53 bits. Reproduce that
+    # rendering exactly, and require the 256-bit value to be no larger (same ball, finer rounding).
+    from flint import ctx as _ctx
     aux = record["auxiliary_evidence"]
-    for key, val in aux["midpoint_eps"].items():
-        if key not in aux_mid:
-            diffs.append(f"aux midpoint_eps {key} absent")
-        elif mag(aux_mid[key]) != F(val):
-            diffs.append(f"aux midpoint_eps {key} {float(mag(aux_mid[key])):.15g} != {float(F(val)):.15g}")
-    for key, val in aux["objects"].items():
-        if key not in cert.aux or mag(cert.aux[key]["delta_mid"]) != F(val["delta_mid"]):
-            diffs.append(f"aux object {key}")
-    checked = (len(cert.residuals) + len(record["eps_mid"]) + len(record["eps_cell"]) + len(aux["midpoint_eps"])
-               + len(aux["objects"]))
+    pairs = [(f"aux midpoint_eps {k}", aux_mid.get(k), v) for k, v in aux["midpoint_eps"].items()]
+    pairs += [(f"aux object {k}", (cert.aux.get(k) or {}).get("delta_mid"), v["delta_mid"])
+              for k, v in aux["objects"].items()]
+    pairs += [(f"aux candidate_sup {k}", cert.sup.get(tuple(int(x) if x.isdigit() else x for x in k.split(":")))
+               if not k.startswith("W:") else None, v) for k, v in aux["candidate_suprema"].items()
+              if not k.startswith("W:")]
+    fine = {name: (mag(x) if x is not None else None) for name, x, _ in pairs}
+    saved = _ctx.prec
+    try:
+        _ctx.prec = 53
+        coarse = {name: (mag(x) if x is not None else None) for name, x, _ in pairs}
+    finally:
+        _ctx.prec = saved
+    for name, _, val in pairs:
+        if coarse[name] is None:
+            diffs.append(f"{name} absent")
+        elif coarse[name] != F(val) or fine[name] > F(val):
+            diffs.append(f"{name} {float(coarse[name]):.17g} != {float(F(val)):.17g}")
+    checked = len(cert.residuals) + len(record["eps_mid"]) + len(record["eps_cell"]) + len(pairs)
     if checked < 150:
         raise TCProducerRefusal(f"identity gate compared only {checked} fields")
     if diffs:
