@@ -237,16 +237,20 @@ Four review rounds, and **each of C2's repairs has carried an error of its own**
 | 4 | wrote up r4 FAIL 1 | restated a reviewer's comparative claim unverified; it was false | **self-caught**, `1663f558` |
 
 Every instance has the same shape — **a correct primary argument or fix, with a second, unverified thing stacked
-on top of it.** The primary claim was sound every time; the decoration was not. Three times the decoration was an
-extra argument or restated claim; once an extra field; once an extra claim about the fix's own completeness; once
-a stale paragraph left behind by the fix.
+on top of it.** The primary claim was sound every time; the decoration was not. By kind: two unverified arguments
+or restated claims, two stale remnants left behind by a fix, one extra artifact field, one extra claim about a
+fix's own completeness, one set of extra summary figures.
 
-One was caught by C2 rather than a reviewer. Writing up r4 FAIL 1, C2 restated the review's remark that
+Three were caught by C2 rather than a reviewer, all in self-audits run before launching the next round. Writing up r4 FAIL 1, C2 restated the review's remark that
 renormalising by equal A0 effect makes D_lo "lead by a wider margin" — inherited from the reviewer's summary and
 not checked. It is false: that renormalisation divides both rows by the same constant, so the ratio is *identical*
 to `relative_gain`'s, 1.0674 at cell 309 either way. It is wider only than the inverted per-unit column. Caught in
 self-audit and corrected at `1663f558`. Inheriting a reviewer's unverified claim is the same failure mode as
-inheriting one's own.
+inheriting one's own — and C2 then did it twice more in the very commit disposing of r5, writing that the removed
+README counts "got two wrong" (only one was wrong; r1's transcription was faithful, as recorded above) and
+miscounting its own pattern table as five-and-two rather than four-and-three. Both caught in the same self-audit
+and corrected before the sixth review. **The self-audit is now finding these faster than the reviews are**, which
+is the only encouraging thing in this section.
 
 C2 did also check, at source, the two claims it inherited from r3: the D_lo cap at 1 genuinely never executes (max
 D_lo × 1.1 across the tail is **0.932851**), and `deflated_consume` genuinely does type-check its inputs and
@@ -255,8 +259,8 @@ shipped an unrequested field whose effect it had not computed, and the round aft
 unrequested decoration.
 
 The operational lesson for a successor is narrower than "be careful". It is: **when a review asks for one change,
-make that change and stop.** Five of the seven instances above are C2 doing more than was asked and not checking
-the extra part; the other two are C2 failing to clean up after a change it did make. Any sentence in this
+make that change and stop.** Four of the seven instances above are C2 doing more than was asked and not checking
+the extra part; the other three are C2 failing to clean up after a change it did make. Any sentence in this
 namespace beginning "a further reason", and any artifact field or summary figure not traceable to a specific
 review request or gate clause, should be treated as unverified until checked.
 
