@@ -1,0 +1,60 @@
+{
+ "schema": "rebaseguard.p5y.k5.tail-operator-registry.feasibility-gates.v1",
+ "campaign": "C1 (CUSUM K5, m = 5 tail: K1 cells 305-309). Theorem TC-T consumed with atom constants from a CERTIFIED OPERATOR-ONLY registry extension over the tail domain, instead of Lemma G's generic C_upper constants.",
+ "frozen_before": "any C1 forecast, any tail operator certification run, and any certified or real computation of Campaign C1. The freeze commit of this file is the temporal boundary: nothing in this namespace that reports a tail operator constant, a TC-T magnitude or a K5-B outcome may predate it.",
+ "start_frontier": "76c37de1d20e90e2543dad33f4649d6ed65b0dd1",
+
+ "universe": {
+  "pairs": 5,
+  "cells": [305, 306, 307, 308, 309],
+  "m": [5],
+  "status_in_authoritative_map": "all five are OPEN in coverage map r4 (a3bddd83...), which remains authoritative; Campaign B's TC-T derivation for cell 305 was never adopted",
+  "source": "p5y_k5_m5_tail_closure/evidence/forecast_r2/TAIL_FORECAST_R2.json and the adopted K1 records"
+ },
+
+ "closure_rule": "a pair (5, cell) is CLOSED iff the frozen K5-B (k5b_check.k5b_literal, ddd54dc4) passes that cell when the adopted post-Campaign-A state is composed with the theorem TC-T enclosure of that cell computed with C1's certified operator constants; no other criterion. The composition, the consumer and the predicate are the adopted/frozen ones.",
+
+ "baseline": {
+  "route": "TC-T with Lemma G generic constants (A0 = C_upper, A1 = k1 C^2, A2 = k2 C^2 + 2 k1^2 C^3)",
+  "closes": [305],
+  "magnitudes": {"305": 4.257155, "306": 4.151682, "307": 4.040057, "308": 4.005124, "309": 3.964274},
+  "required": {"305": 4.891579, "306": 3.905056, "307": 3.076148, "308": 2.432398, "309": 1.969828},
+  "uniform_atom_constant_reduction_still_needed": {"305": 1.0, "306": 1.071062, "307": 1.361618, "308": 1.771344, "309": 2.252903},
+  "note": "cell 305 is already closable by TC-T alone, so closing it is NOT by itself material progress for C1"
+ },
+
+ "scenarios": {
+  "CERTIFIED": "the atom constants the frozen operator machinery actually certifies over the tail domain, used exactly as theorem AD Lemma Dv' prescribes; nothing is estimated",
+  "DEGRADED": "as CERTIFIED with every C1-certified atom constant A0, A1, A2 multiplied by 5/4 (a 25 per cent unfavourable degradation). This is a robustness probe, not a second estimate: it exists so that a knife-edge closure cannot be reported as a clear one."
+ },
+
+ "classes": {
+  "STRONG": "CERTIFIED closes 5/5 AND every closed cell has margin (M_needed / M_after) >= 11/10 AND DEGRADED closes 5/5",
+  "USEFUL": "not STRONG and CERTIFIED closes >= 2 of the five AND at least one of the closed cells is in {306, 307, 308, 309} (i.e. a cell that TC-T alone cannot close) AND the material-improvement test below passes",
+  "MARGINAL": "not USEFUL and (CERTIFIED closes >= 1, or the material-improvement test passes)",
+  "INFEASIBLE": "CERTIFIED closes 0 and the material-improvement test fails, or the tail operator certification does not certify at all"
+ },
+
+ "material_improvement_test": "the uniform atom-constant reduction factor still required by the WORST still-open tail cell falls by at least 10 per cent relative to the baseline above (2.252903 at cell 309). Stated as a test so that 'materially improves the remaining blocker' is decided by arithmetic and not by narrative.",
+
+ "selection_rule": "C1 is executed through freeze, qualification, seal, consumption and adjudication only if its class is USEFUL or STRONG. Below USEFUL is never executed; MARGINAL and INFEASIBLE both stop before freeze.",
+
+ "stop_rule": "if C1 is MARGINAL or INFEASIBLE, stop before freeze and write a costed C2 continuation plan that distinguishes which of these the remaining cells need: stronger operator decomposition, a second renewal/atom mechanism, sparse positive-e certified anchors, a higher-order theorem, or genuinely new real scientific values.",
+
+ "execution_policy": {
+  "new_real_scientific_addresses": 0,
+  "rule": "C1 evaluates NO new real scientific value. Deterministic operator certification and registry construction are permitted; any step that would require a new real scientific address is an immediate STOP and a C2 design, never a silent escalation.",
+  "guard": "REAL_SCIENTIFIC_COMPUTE stays DENY for the whole campaign"
+ },
+
+ "compute_gate": {
+  "kind": "deterministic operator certification and replay; none of it is new-real scientific compute",
+  "forecast_cap_cpu_hours": 8,
+  "hard_cap_cpu_hours": 12,
+  "rule": "if the measured cost of certifying the tail operator domain exceeds the hard cap, stop and report; the cap is on operator certification, and it does not license any new real evaluation"
+ },
+
+ "partial_adoption": "a subset closure is a legitimate outcome. If C1 is USEFUL or STRONG, only the cells its own consumer certifies as passing may be adopted, and the coverage map may change only for those cells.",
+
+ "no_redefinition": "these classes, scenarios, the baseline, the closure rule, the material-improvement test, the selection rule and the stop rule are not changed after any C1 forecast or result is seen. If they are found to be wrong, the campaign stops and a successor owns the replacement gate."
+}
