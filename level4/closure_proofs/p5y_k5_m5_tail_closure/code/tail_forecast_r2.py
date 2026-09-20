@@ -172,9 +172,9 @@ def tail_enclosures(st, meas: dict, aux: dict, mode: str, scen: F, lf: dict):
                 if (lo, hi) != T.tail_enclosure_crosscheck(mk, ak, A, int(m)):
                     raise SystemExit(f"TCT0 crosscheck disagrees at cell {k} m {m}")
                 out[m][k] = (lo, hi)
-            detail[k] = {"A": {n: str(A[n]) for n in A},
-                         "per_r": {str(r): {n: str(obj[r][n]) for n in ("sigma3", "sigma4", "delta_G", "env4",
-                                                                        "rad", "half")} for r in range(5)}}
+            detail[k] = {"A": {n: float(A[n]) for n in A},
+                         "per_r": {str(r): {n: float(obj[r][n]) for n in ("sigma3", "sigma4", "delta_G", "env4",
+                                                                          "rad", "half")} for r in range(5)}}
             continue
         rec = {"rho": mk["rho"], "norms": mk["norms"], "sup_S0": mk["sup_S0"], "W2": mk["W2"], "r": {}}
         per_r = {}
@@ -198,13 +198,14 @@ def tail_enclosures(st, meas: dict, aux: dict, mode: str, scen: F, lf: dict):
                                 "delta_G": str(dG), "eps_src": o["eps_src"],
                                 "sup": {"F": str(sF), "D": str(sD), "H": str(sH), "G": str(sG)},
                                 "H_at_a": o["H_at_a"], "abs_G_at_a": str(aG)}
-            per_r[str(r)] = {"sup_G": str(sG), "abs_G_at_a": str(aG), "delta_G": str(dG)}
+            per_r[str(r)] = {"sup_G": float(sG), "abs_G_at_a": float(aG), "delta_G": float(dG),
+                             "sup_F": float(sF), "sup_D": float(sD), "sup_H": float(sH)}
         for m in MS:
             lo, hi = R.cell_enclosure(rec, A, int(m))
             if (lo, hi) != st["X"].enclosure(rec, A, int(m)):
                 raise SystemExit(f"{mode} crosscheck disagrees at cell {k} m {m}")
             out[m][k] = (lo, hi)
-        detail[k] = {"A": {n: str(A[n]) for n in A}, "per_r": per_r}
+        detail[k] = {"A": {n: float(A[n]) for n in A}, "per_r": per_r}
     return out, detail
 
 
@@ -328,12 +329,16 @@ def main() -> int:
                 lost = sorted(set(base[m]) - set(passed))
                 per_m[m] = {"pass_ranges": ranges(passed), "open_ranges": ranges(sorted(set(range(310)) - set(passed))),
                             "newly_passing": newly, "regressed": lost,
-                            "tail": {str(k): {"H_tail": audit[str(k)]["H_tail"],
-                                              "mag_tail": str(max(abs(F(audit[str(k)]["H_tail"][0])),
-                                                                  abs(F(audit[str(k)]["H_tail"][1])))),
-                                              "M_after": audit[str(k)]["M"], "empty": audit[str(k)]["empty"],
-                                              "pass": bool(k in passed), "via": rows[k]["via"],
-                                              "Gamma": str(rows[k]["Gamma"])} for k in TAIL}}
+                            "tail": {str(k): ({"H_tail_exact": audit[str(k)]["H_tail"],
+                                               "M_after_exact": audit[str(k)]["M"],
+                                               "Gamma_exact": str(rows[k]["Gamma"])} if m == "5" else {})
+                                              | {"H_tail": [float(F(x)) for x in audit[str(k)]["H_tail"]],
+                                                 "mag_tail": float(max(abs(F(audit[str(k)]["H_tail"][0])),
+                                                                       abs(F(audit[str(k)]["H_tail"][1])))),
+                                                 "M_after": float(F(audit[str(k)]["M"])),
+                                                 "empty": audit[str(k)]["empty"], "pass": bool(k in passed),
+                                                 "via": rows[k]["via"], "Gamma": float(rows[k]["Gamma"])}
+                                     for k in TAIL}}
             scen_out[sname] = {"closed_m5": sum(1 for k in TAIL if per_m["5"]["tail"][str(k)]["pass"]),
                                "per_m": per_m, "detail": {str(k): detail[k] for k in TAIL}}
         cls = classify(scen_out["NOMINAL"]["closed_m5"], scen_out["CONSERVATIVE"]["closed_m5"])
