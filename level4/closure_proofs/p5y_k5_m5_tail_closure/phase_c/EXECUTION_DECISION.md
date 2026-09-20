@@ -114,6 +114,14 @@ uniformly, by
 | uniform A0/A1/A2 reduction needed | 1.00× (already closes) | **1.053×** | **1.335×** | **1.731×** | **2.195×** |
 | A0-alone reduction needed | 1.00× | 1.068× | 1.462× | 2.132× | 3.153× |
 
+**C1 is not route T1.** The frozen route comparison classified T1 — "theorem-AD tightening at the tail (the adopted
+Perron rule, domain extended)" — INFEASIBLE, and that verdict stands: T1 feeds the registry constants the **whole-cell**
+residuals δ_cell = δ_mid + ρ·Env (0.05–0.09 per object at the tail), which is exactly the term theorem TC was invented
+to remove, and its radius is ≈ 45 per r however good the constants are. C1 feeds the same constants into theorem
+TC-T's **Taylor** residuals p0, p1, p2 (0.28, 0.008, 0.0002 at cell 309), where the radius is 2.08–4.07 per r and a
+2.2× constant reduction is decisive. The mechanism T1 was refused for is not the mechanism C1 uses; no frozen verdict
+is being re-litigated.
+
 Lemma G's A0 is the non-sharp one-sided block bound C_upper = 5.78–7.73. Theorem AD's Lemma Dv′ replaces it with
 Ā_eff = min(Ā, τ/D_lo) ≥ sup E_a[τ], which at e = 0 was 469.8 against C_upper = 1233 — a **2.6× reduction** — and at
 drift e ≈ 1.6–2.1 the mean time to alarm is far smaller relative to the block bound than at e = 0, so a 1.05×–2.20×

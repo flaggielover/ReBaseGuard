@@ -6,17 +6,22 @@ loader, frozen K5-B, adopted Perron consumer with certified registry r1 on [0, 1
 and the SEALED Campaign-A theorem-TC enclosures on cells 11-44). Replay gate: with no tail route applied, the pass
 and open ranges must equal the sealed Campaign-A consumption (1fa8d8de...) exactly.
 
-Routes scored on top of that state at cells 305-309:
-  TCT0    theorem TC with the ZERO order-3 candidate, Lemma-G atom constants and the adopted Aux3 order-3 evidence
-          (zero new real scientific addresses; nothing is estimated - this is a derivation, not a forecast)
-  T2_AUDIT        route T2 at the frozen route comparison's own NOMINAL inputs (sG = 10, sH = 5, delta_G = 1e-3)
-  T2_AUDIT_MEAS   the same, with the now-measured adopted candidate suprema in place of the assumed sH
+Routes scored on top of that state at cells 305-309, ALL of them through the same premise supply
+(`tct_rule.tail_enclosure`, Lemma G constants and the (P3') sigma3/sigma4; review r1 note N4: (P3') is a statement
+about the source and is independent of the choice of Ghat, so every route is entitled to it):
+  TCT0    theorem TC-T with the ZERO order-3 candidate (zero new real scientific addresses; nothing is estimated -
+          this is a derivation, not a forecast)
+  T2_AUDIT        route T2 at the frozen route comparison's own NOMINAL inputs (sG = 10, sH = 5, sD = 2, sF = 1,
+                  |Ghat(a)| = sG, delta_G = 1e-3). NOT a certified bound: sF = 1 is below the measured candidate
+                  supremum for two objects (review r1 note N8). It reconstructs what the comparison forecast.
+  T2_AUDIT_MEAS   the same order-3 inputs on the measured adopted candidate suprema
   T2_EVIDENCE     route T2 with the order-3 scale estimated from the ADOPTED Campaign-A records (the worst per-r
                   sup.G/sup.H ratio applied to the measured tail sup.H; |Ghat(a)| = 0.681 sup.G; delta_G the worst
                   adopted per-r value)
-  each with the frozen CONSERVATIVE variant (x4 on every not-yet-measured input) and a critical-ratio bisection.
+CONSERVATIVE multiplies every NOT-YET-MEASURED input of the route by 4 in the unfavourable direction, as the frozen
+gates define it - for T2_AUDIT that includes sF, sD and sH, which are assumed rather than measured there (note N3).
 
-    python3 -B tail_forecast_r2.py --records DIR --measurements DIR --out OUT.json
+    python3 -B tail_forecast_r2.py --records DIR --measurements DIR --adopted-inputs FILE --out OUT.json
 """
 from __future__ import annotations
 
@@ -59,6 +64,9 @@ ADOPTED_DOMAIN = (0, 148)
 TEXT_CHANNEL = tuple(range(1, 41))
 TEXT_CURVATURE = tuple(range(0, 41))
 SCEN = {"NOMINAL": F(1), "CONSERVATIVE": F(4)}
+AUDIT_SUP = {"F": F(1), "D": F(2), "H": F(5)}                 # the route comparison's own assumed suprema
+AUDIT_SG = F(10)
+AUDIT_DG = F(1, 1000)
 
 
 def sha(b: bytes) -> str:
@@ -91,6 +99,10 @@ def ranges(xs):
     return out
 
 
+def rat(p) -> F:
+    return F(p) if isinstance(p, str) else F(p[0]) + F(p[1])
+
+
 # ------------------------------------------------------------------ the adopted post-Campaign-A state
 def adopted_state(records_dir: Path):
     R = T.load_frozen("tc_rule", T.FROZEN["tc_rule"][1])
@@ -117,7 +129,7 @@ def adopted_state(records_dir: Path):
 
 
 def compose(st, m: str, tail: dict | None):
-    """Adopted composition for one m, then (optionally) the tail enclosures. Returns (cells, audit)."""
+    """Adopted composition for one m, then (optionally) the tail enclosures."""
     A, DC, KM, KB, R, X = st["A"], st["DC"], st["KM"], st["KB"], st["R"], st["X"]
     cover, records, registry = st["cover"], st["records"], st["registry"]
     cells = A.cells_for_m(KM, cover, records, m, st["L1"][m])
@@ -155,71 +167,63 @@ def compose(st, m: str, tail: dict | None):
 
 
 # ------------------------------------------------------------------ the routes
+def order3_inputs(mode: str, meas_r: dict, r: int, scen: F, lf: dict) -> dict | None:
+    """The order-3 supply of one route for one object. None means the zero candidate (P2')."""
+    if mode == "TCT0":
+        return None
+    sH_meas = F(meas_r["sup"]["H"])
+    if mode == "T2_AUDIT":                                   # assumed suprema too: all six inputs are unmeasured
+        q = {"sup_F": AUDIT_SUP["F"] * scen, "sup_D": AUDIT_SUP["D"] * scen, "sup_H": AUDIT_SUP["H"] * scen,
+             "sup_G": AUDIT_SG * scen, "abs_G_at_a": AUDIT_SG * scen, "delta_G": AUDIT_DG * scen}
+    elif mode == "T2_AUDIT_MEAS":                            # measured suprema; only the order-3 inputs are scaled
+        q = {"sup_G": AUDIT_SG * scen, "abs_G_at_a": AUDIT_SG * scen, "delta_G": AUDIT_DG * scen}
+    elif mode == "T2_EVIDENCE":
+        sG = lf[r]["gh_max"] * sH_meas * scen
+        q = {"sup_G": sG, "abs_G_at_a": lf[r]["ag_max"] * sG, "delta_G": lf[r]["dg_max"] * scen}
+    else:
+        raise SystemExit(f"unknown mode {mode}")
+    return {key: str(v) for key, v in q.items()}
+
+
 def tail_enclosures(st, meas: dict, aux: dict, mode: str, scen: F, lf: dict):
-    """The tail interval per (m, cell) for one route and scenario."""
+    """The tail interval per (m, cell) for one route and scenario, through the single premise supply."""
     R = st["R"]
     out = {m: {} for m in MS}
     detail = {}
     for k in TAIL:
         mk, ak = meas[k], aux[k]
-        rho = F(mk["rho"])
         kn = {i: F(mk["norms"]["k"][i]) for i in range(5)}
-        C = F(mk["C_upper"])
-        A = T.atom_constants_generic(C, kn[1], kn[2])
-        if mode == "TCT0":
-            for m in MS:
-                lo, hi, obj = T.tail_enclosure(R, mk, ak, A, int(m))
-                if (lo, hi) != T.tail_enclosure_crosscheck(mk, ak, A, int(m)):
-                    raise SystemExit(f"TCT0 crosscheck disagrees at cell {k} m {m}")
-                out[m][k] = (lo, hi)
-            detail[k] = {"A": {n: float(A[n]) for n in A},
-                         "per_r": {str(r): {n: float(obj[r][n]) for n in ("sigma3", "sigma4", "delta_G", "env4",
-                                                                          "rad", "half")} for r in range(5)}}
-            continue
-        rec = {"rho": mk["rho"], "norms": mk["norms"], "sup_S0": mk["sup_S0"], "W2": mk["W2"], "r": {}}
-        per_r = {}
-        for r in range(5):
-            o = mk["r"][str(r)]
-            sH_meas = F(o["sup"]["H"])
-            if mode == "T2_AUDIT":                      # the frozen route comparison's stated inputs, verbatim
-                sF, sD, sH = F(1), F(2), F(5)
-                sG, aG, dG = F(10) * scen, F(10) * scen, F(1, 1000) * scen
-            elif mode == "T2_AUDIT_MEAS":               # the same order-3 inputs on the measured adopted suprema
-                sF, sD, sH = (F(o["sup"][x]) for x in ("F", "D", "H"))
-                sG, aG, dG = F(10) * scen, F(10) * scen, F(1, 1000) * scen
-            elif mode == "T2_EVIDENCE":                 # the order-3 scale scaled from the adopted Campaign-A records
-                sF, sD, sH = (F(o["sup"][x]) for x in ("F", "D", "H"))
-                sG = lf[r]["gh_max"] * sH_meas * scen
-                aG = lf[r]["ag_max"] * sG
-                dG = lf[r]["dg_max"] * scen
-            else:
-                raise SystemExit(f"unknown mode {mode}")
-            rec["r"][str(r)] = {"delta_F": o["delta_F"], "delta_D": o["delta_D"], "delta_H": o["delta_H"],
-                                "delta_G": str(dG), "eps_src": o["eps_src"],
-                                "sup": {"F": str(sF), "D": str(sD), "H": str(sH), "G": str(sG)},
-                                "H_at_a": o["H_at_a"], "abs_G_at_a": str(aG)}
-            per_r[str(r)] = {"sup_G": float(sG), "abs_G_at_a": float(aG), "delta_G": float(dG),
-                             "sup_F": float(sF), "sup_D": float(sD), "sup_H": float(sH)}
+        A = T.atom_constants_generic(F(mk["C_upper"]), kn[1], kn[2])
+        o3 = None
+        if mode != "TCT0":
+            o3 = {str(r): order3_inputs(mode, mk["r"][str(r)], r, scen, lf) for r in range(5)}
+        obj = None
         for m in MS:
-            lo, hi = R.cell_enclosure(rec, A, int(m))
-            if (lo, hi) != st["X"].enclosure(rec, A, int(m)):
+            lo, hi, obj = T.tail_enclosure(R, mk, ak, A, int(m), o3)
+            if (lo, hi) != T.tail_enclosure_crosscheck(mk, ak, A, int(m), o3):
                 raise SystemExit(f"{mode} crosscheck disagrees at cell {k} m {m}")
             out[m][k] = (lo, hi)
-        detail[k] = {"A": {n: float(A[n]) for n in A}, "per_r": per_r}
+        detail[k] = {"A": {n: float(A[n]) for n in A},
+                     "per_r": {str(r): {"sigma3": float(obj[r]["sigma3"]), "sigma4": float(obj[r]["sigma4"]),
+                                        "order3_residual_bound": float(obj[r]["order3_residual_bound"]),
+                                        "f_G_incl_eps_src3": float(obj[r]["f_G"]),
+                                        "sup_G": float(obj[r]["sup_G"]),
+                                        "abs_G_at_a": float(obj[r]["abs_G_at_a"]),
+                                        "env4": float(obj[r]["env4"]), "rad": float(obj[r]["rad"]),
+                                        "half": float(obj[r]["half"])} for r in range(5)}}
     return out, detail
 
 
-def critical_ratio(st, meas: dict, lf: dict, k: int, m: str = "5"):
+def critical_ratio(st, meas: dict, aux: dict, lf: dict, k: int, m: str = "5"):
     """The largest sup.G / sup.H ratio (with |Ghat(a)| = 0.681 sup.G and the worst adopted delta_G) at which the
     frozen direct test still passes this cell, by exact bisection on the record's own R'' and M."""
     R = st["R"]
-    mk = meas[k]
+    mk, ak = meas[k], aux[k]
     kn = {i: F(mk["norms"]["k"][i]) for i in range(5)}
     A = T.atom_constants_generic(F(mk["C_upper"]), kn[1], kn[2])
     cov = {c["index"]: c for c in st["cover"]}[k]
     x_hi, rho, e0 = (st["KM"].rat(cov[t]) for t in ("right", "rho", "e0"))
-    rec0 = st["records"][k]
-    mm = rec0["m"][m]
+    mm = st["records"][k]["m"][m]
     Rr = (F(mm["R_interval"]["lo"]), F(mm["R_interval"]["hi"]))
     Dd = (F(mm["D_interval"]["lo"]), F(mm["D_interval"]["hi"]))
     Hh = (F(mm["R2_interval"]["lo"]), F(mm["R2_interval"]["hi"]))
@@ -227,13 +231,12 @@ def critical_ratio(st, meas: dict, lf: dict, k: int, m: str = "5"):
     g_hi = Rr[1] - e0 * Dd[0]
 
     def ok(ratio: F) -> bool:
-        rec = {"rho": mk["rho"], "norms": mk["norms"], "sup_S0": mk["sup_S0"], "W2": mk["W2"], "r": {}}
+        o3 = {}
         for r in range(5):
-            o = mk["r"][str(r)]
-            sG = ratio * F(o["sup"]["H"])
-            rec["r"][str(r)] = dict(o, delta_G=str(lf[r]["dg_max"]), abs_G_at_a=str(lf[r]["ag_max"] * sG),
-                                    sup={"F": o["sup"]["F"], "D": o["sup"]["D"], "H": o["sup"]["H"], "G": str(sG)})
-        lo, hi = R.cell_enclosure(rec, A, int(m))
+            sG = ratio * F(mk["r"][str(r)]["sup"]["H"])
+            o3[str(r)] = {"sup_G": str(sG), "abs_G_at_a": str(lf[r]["ag_max"] * sG),
+                          "delta_G": str(lf[r]["dg_max"])}
+        lo, hi, _ = T.tail_enclosure(R, mk, ak, A, int(m), o3)
         a, b = max(Hh[0], lo), min(Hh[1], hi)
         M = M0 if a > b else min(M0, max(abs(a), abs(b)))
         return g_hi + rho * x_hi * M < 0
@@ -252,6 +255,47 @@ def critical_ratio(st, meas: dict, lf: dict, k: int, m: str = "5"):
     return float(lo_r)
 
 
+def atom_constant_requirement(st, meas: dict, aux: dict, k: int, m: str = "5") -> dict:
+    """With Ghat := 0, the factor by which A0,A1,A2 (uniformly) and A0 alone must fall for the frozen direct test
+    to pass this cell. Exact bisection."""
+    R = st["R"]
+    mk, ak = meas[k], aux[k]
+    kn = {i: F(mk["norms"]["k"][i]) for i in range(5)}
+    A = T.atom_constants_generic(F(mk["C_upper"]), kn[1], kn[2])
+    cov = {c["index"]: c for c in st["cover"]}[k]
+    x_hi, rho, e0 = (st["KM"].rat(cov[t]) for t in ("right", "rho", "e0"))
+    mm = st["records"][k]["m"][m]
+    Rr = (F(mm["R_interval"]["lo"]), F(mm["R_interval"]["hi"]))
+    Dd = (F(mm["D_interval"]["lo"]), F(mm["D_interval"]["hi"]))
+    Hh = (F(mm["R2_interval"]["lo"]), F(mm["R2_interval"]["hi"]))
+    M0 = F(mm["M_R2"])
+    g_hi = Rr[1] - e0 * Dd[0]
+
+    def ok(all_s=F(1), a0_s=F(1)) -> bool:
+        Ax = {"A0": A["A0"] * all_s * a0_s, "A1": A["A1"] * all_s, "A2": A["A2"] * all_s}
+        lo, hi, _ = T.tail_enclosure(R, mk, ak, Ax, int(m), None)
+        a, b = max(Hh[0], lo), min(Hh[1], hi)
+        M = M0 if a > b else min(M0, max(abs(a), abs(b)))
+        return g_hi + rho * x_hi * M < 0
+
+    def bisect(which):
+        lo_s, hi_s = F(1, 1000), F(1)
+        if ok(**{which: hi_s}):
+            return 1.0
+        if not ok(**{which: lo_s}):
+            return None
+        for _ in range(40):
+            mid = (lo_s + hi_s) / 2
+            if ok(**{which: mid}):
+                lo_s = mid
+            else:
+                hi_s = mid
+        return float(1 / lo_s)
+
+    return {"uniform_A_reduction_needed": bisect("all_s"), "A0_only_reduction_needed": bisect("a0_s"),
+            "A0": float(A["A0"]), "A1": float(A["A1"]), "A2": float(A["A2"])}
+
+
 def classify(closed_nominal: int, closed_conservative: int) -> str:
     """The frozen classes of config/FEASIBILITY_GATES_B.json, applied mechanically."""
     if closed_conservative == 5:
@@ -267,21 +311,40 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--records", required=True)
     ap.add_argument("--measurements", required=True)
+    ap.add_argument("--adopted-inputs", required=True)
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     st = adopted_state(Path(a.records))
-    meas, aux = {}, {}
-    gates = {}
+    adopted_raw = Path(a.adopted_inputs).read_bytes()
+    adopted = json.loads(adopted_raw)
+    meas, aux, gates = {}, {}, {}
     for k in TAIL:
         raw = (Path(a.measurements) / f"TCT_INPUTS_{k}.json").read_bytes()
         d = json.loads(raw)
         if d["cell"] != k or not d["identity_gate"]["identical"] or d["order3_fields_present"]:
             raise SystemExit(f"measurement {k} is not a gated order-3-free replay")
         rec = st["records"][k]
-        if d["k1_record_sha256"] != st["hashes"][str(k)]:
-            raise SystemExit(f"measurement {k} was not taken against the adopted K1 record")
-        d["C_upper"] = str(F(rec["C_upper"]) if isinstance(rec["C_upper"], str)
-                           else F(rec["C_upper"][0]) + F(rec["C_upper"][1]))
+        ad = adopted["cells"][str(k)]
+        if d["k1_record_sha256"] != st["hashes"][str(k)] or ad["record_sha256"] != st["hashes"][str(k)]:
+            raise SystemExit(f"measurement or adopted extract {k} is not bound to the adopted K1 record")
+        # the committed extract must be byte-faithful to the record it claims to copy
+        for fam in ("candidate_suprema", "midpoint_eps"):
+            for key, v in ad["auxiliary_evidence"][fam].items():
+                if rec["auxiliary_evidence"][fam][key] != v:
+                    raise SystemExit(f"adopted extract {k}: {fam}[{key}] differs from the record")
+        for key, v in ad["eps_cell_refined"].items():
+            if rec["eps_cell_refined"][key] != v:
+                raise SystemExit(f"adopted extract {k}: eps_cell_refined[{key}] differs from the record")
+        for m in MS:
+            for fld in ("R_interval", "D_interval", "R2_interval"):
+                for t in ("lo", "hi"):
+                    if rec["m"][m][fld][t] != ad["m"][m][fld][t]:
+                        raise SystemExit(f"adopted extract {k}: m[{m}].{fld}.{t} differs from the record")
+            if rec["m"][m]["M_R2"] != ad["m"][m]["M_R2"]:
+                raise SystemExit(f"adopted extract {k}: m[{m}].M_R2 differs from the record")
+        d["C_upper"] = str(rat(rec["C_upper"]))
+        if rat(ad["C_upper"]) != rat(rec["C_upper"]):
+            raise SystemExit(f"adopted extract {k}: C_upper differs from the record")
         gates[str(k)] = T.derived_identity_gate(st["R"], d, rec) | {"measurement_sha256": sha(raw),
                                                                     "producer_identity_gate": d["identity_gate"]}
         meas[k], aux[k] = d, rec["auxiliary_evidence"]
@@ -298,7 +361,6 @@ def main() -> int:
             lf[r]["dg"].append(F(o["delta_G"]))
     LF = {r: {"gh_max": max(v["gh"]), "ag_max": max(v["ag"]), "dg_max": max(v["dg"])} for r, v in lf.items()}
 
-    # ---- replay gate: the adopted state with no tail route must reproduce the sealed Campaign-A consumption
     sealed = json.loads(pinned("tc_consumption"))["consumptions"]
     base = {}
     for m in MS:
@@ -306,10 +368,14 @@ def main() -> int:
         base[m] = passed
         if ranges(passed) != sealed[m]["pass_ranges"]:
             raise SystemExit(f"replay gate: pass ranges differ for m={m}")
-    out = {"schema": "rebaseguard.p5y.k5.m5-tail.forecast.v2", "label": "MEASUREMENT-ANCHORED (non-certified where "
-           "an input is estimated; the TCT0 route estimates nothing)",
+    out = {"schema": "rebaseguard.p5y.k5.m5-tail.forecast.v2",
+           "label": "MEASUREMENT-ANCHORED (non-certified where an input is estimated; the TCT0 route estimates "
+                    "nothing). T2_AUDIT is a reconstruction of the frozen route comparison's forecast, not a bound.",
            "gates": "config/FEASIBILITY_GATES_B.json (frozen before any Campaign-B forecast)",
+           "premise_supply": "every route uses tct_rule.tail_enclosure with the Lemma-G constants and the (P3') "
+                             "sigma3 (midpoint tower) / sigma4 (cell tower with the mean-value correction)",
            "replay_gate": "PASS (adopted post-Campaign-A state reproduces the sealed consumption pass ranges)",
+           "adopted_inputs_sha256": sha(adopted_raw),
            "derived_identity_gate": gates,
            "adopted_order3_evidence": {str(r): {n: str(v) for n, v in LF[r].items()} for r in range(5)},
            "routes": {}}
@@ -325,26 +391,27 @@ def main() -> int:
             per_m = {}
             for m in MS:
                 _, rows, passed, audit = compose(st, m, tail)
-                newly = sorted(set(passed) - set(base[m]))
-                lost = sorted(set(base[m]) - set(passed))
-                per_m[m] = {"pass_ranges": ranges(passed), "open_ranges": ranges(sorted(set(range(310)) - set(passed))),
-                            "newly_passing": newly, "regressed": lost,
+                per_m[m] = {"pass_ranges": ranges(passed),
+                            "open_ranges": ranges(sorted(set(range(310)) - set(passed))),
+                            "newly_passing": sorted(set(passed) - set(base[m])),
+                            "regressed": sorted(set(base[m]) - set(passed)),
                             "tail": {str(k): ({"H_tail_exact": audit[str(k)]["H_tail"],
                                                "M_after_exact": audit[str(k)]["M"],
                                                "Gamma_exact": str(rows[k]["Gamma"])} if m == "5" else {})
-                                              | {"H_tail": [float(F(x)) for x in audit[str(k)]["H_tail"]],
-                                                 "mag_tail": float(max(abs(F(audit[str(k)]["H_tail"][0])),
-                                                                       abs(F(audit[str(k)]["H_tail"][1])))),
-                                                 "M_after": float(F(audit[str(k)]["M"])),
-                                                 "empty": audit[str(k)]["empty"], "pass": bool(k in passed),
-                                                 "via": rows[k]["via"], "Gamma": float(rows[k]["Gamma"])}
+                                     | {"H_tail": [float(F(x)) for x in audit[str(k)]["H_tail"]],
+                                        "mag_tail": float(max(abs(F(audit[str(k)]["H_tail"][0])),
+                                                              abs(F(audit[str(k)]["H_tail"][1])))),
+                                        "M_after": float(F(audit[str(k)]["M"])),
+                                        "empty": audit[str(k)]["empty"], "pass": bool(k in passed),
+                                        "via": rows[k]["via"], "Gamma": float(rows[k]["Gamma"])}
                                      for k in TAIL}}
             scen_out[sname] = {"closed_m5": sum(1 for k in TAIL if per_m["5"]["tail"][str(k)]["pass"]),
                                "per_m": per_m, "detail": {str(k): detail[k] for k in TAIL}}
         cls = classify(scen_out["NOMINAL"]["closed_m5"], scen_out["CONSERVATIVE"]["closed_m5"])
         out["routes"][mode] = {"class_under_frozen_gates": cls, "scenarios": scen_out,
                                "new_real_addresses": 0 if mode == "TCT0" else 5}
-    out["critical_sup_G_over_sup_H_ratio"] = {str(k): critical_ratio(st, meas, LF, k) for k in TAIL}
+    out["critical_sup_G_over_sup_H_ratio"] = {str(k): critical_ratio(st, meas, aux, LF, k) for k in TAIL}
+    out["atom_constant_requirement"] = {str(k): atom_constant_requirement(st, meas, aux, k) for k in TAIL}
     out["selection"] = {
         "rule": "config/FEASIBILITY_GATES_B.json selection_rule and stop_rule, applied mechanically",
         "classes": {m: out["routes"][m]["class_under_frozen_gates"] for m in out["routes"]},
@@ -355,7 +422,13 @@ def main() -> int:
     print(json.dumps({"classes": out["selection"]["classes"], "verdict": out["selection"]["verdict"],
                       "closed_m5": {m: {s: out["routes"][m]["scenarios"][s]["closed_m5"] for s in SCEN}
                                     for m in out["routes"]},
-                      "critical_ratio": out["critical_sup_G_over_sup_H_ratio"], "sha256": sha(data)}, indent=1))
+                      "tct0_m5": {str(k): {n: out["routes"]["TCT0"]["scenarios"]["NOMINAL"]["per_m"]["5"]["tail"]
+                                           [str(k)][n] for n in ("mag_tail", "M_after", "Gamma", "pass")}
+                                  for k in TAIL},
+                      "critical_ratio": out["critical_sup_G_over_sup_H_ratio"],
+                      "atom_constant_requirement": {k: v["uniform_A_reduction_needed"]
+                                                    for k, v in out["atom_constant_requirement"].items()},
+                      "sha256": sha(data)}, indent=1))
     return 0
 
 
