@@ -106,7 +106,15 @@ def requirement(T, R, meas, aux, A, ad, cov, KM) -> F:
 
 
 def classify(closed: list, materially_tightened: dict, still_open: list) -> str:
-    """The frozen C2 D-stage classes, applied mechanically."""
+    """The frozen C2 D-stage classes, applied mechanically.
+
+    One case the frozen gate does not cover: it defines D_INSUFFICIENT as "closes no cell, AND no still-open cell is
+    materially tightened", so a run that closes no cell while tightening SOME of them matches none of the four
+    classes. This implementation resolves that gap to D_INSUFFICIENT, because the gate reserves every class above it
+    for a run that closes at least one cell. The case is unreachable in C2 (which closes two), the resolution is
+    recorded here rather than by amending the frozen gate, and a successor gate should close the hole explicitly.
+    An earlier version carried a redundant trailing branch that duplicated the D_PARTIAL test and masked a mutation
+    of it (adversarial suite M23); the redundancy is removed so that every branch is load-bearing."""
     n = len(closed)
     if n == 5:
         return "D_STRONG"
@@ -114,9 +122,7 @@ def classify(closed: list, materially_tightened: dict, still_open: list) -> str:
         return "D_USEFUL"
     if n >= 1:
         return "D_PARTIAL"
-    if not any(materially_tightened.values()):
-        return "D_INSUFFICIENT"
-    return "D_PARTIAL" if n >= 1 else "D_INSUFFICIENT"
+    return "D_INSUFFICIENT"
 
 
 def main() -> int:

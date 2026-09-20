@@ -1,0 +1,54 @@
+# C2 disposition of the carried-forward notes (N1, N3, N5) and of the repaired (P3′) logic
+
+Written before the C2 freeze. No predecessor namespace is edited.
+
+## N1 / C7 — the order-3 producer's registry says no real CUSUM cell may be evaluated by it
+
+**NOT LOAD-BEARING for C2 as executed. No bridge is issued, and the obligation is carried forward unchanged.**
+
+C2 evaluates no order-3 quantity. Its own contribution is the refined operator registry, produced by the adopted
+`taboo_certify`, which forms the kernel, its atom split, the one-step alarm probability and polynomial
+supersolutions, and touches no source, no candidate of F/D/H/G, no K1 record and no value of R. The order-3 producer
+namespace is never imported and its gated entry points are never reached. `NEW_REAL_ADDRESSES = 0`.
+
+**N1 becomes load-bearing the moment the R stage runs, and C2's R-stage design says so explicitly** (`phase_r/`
+§4). The bridge must be owned by the successor that evaluates the first real order-3 cell, must not edit the
+historical registry, must state why that successor may use the qualified executor, and must bind executor identity,
+protocol identity, runtime identity, the allowed address set, output schema, precision, resource cap, seal policy and
+consumer — under independent review. C2 does not pre-empt any of that.
+
+## N3 — the manufactured oracle covers r = 0 and m = 1
+
+**Not widened by C2.** C2 alters no source-tower quantity, no W enclosure and no order-3 field; σ₃, σ₄, the h-tower,
+`eps_src[*]`, `H_at_a` and `W2` are Campaign B's, byte-for-byte. C2 substitutes only A0, A1, A2.
+
+C2 does add a second locally re-runnable adversarial suite (`code/c2_mutations.py`, 25 real mutants and 8 static
+assertions, stdlib only) covering the source-node swap, the W endpoint swap, the order-3 field inserted at the wrong
+location, the midpoint/whole-cell substitution and the omitted mean-value correction.
+
+**Still open, and scoped to the R stage**: tail-geometry manufactured fixtures and exact independent cross-checks
+for the source tower, the W assembly, the order-3 injection, whole-cell transport and consumer composition. C2 does
+not need them because it proposes no candidate of F.
+
+## N5 — the four new order-3 fields have no identity gate
+
+**Remains retired for C2, by construction.** C2 inherits route TCT0 unchanged: Ĝ := 0, so `sup.G` and `abs_G_at_a`
+are exactly zero, `delta_G` is a closed-form combination of identity-gated quantities, and `eps_src[3]` is the
+adopted Aux3 value. The C2 consumer passes `order3 = None` on every call, and mutant `M09` confirms that inserting
+an order-3 field at the wrong location is detected.
+
+**For the R stage, N5 must be closed properly and "they can widen but not shift" is explicitly not enough**: the
+four fields need bound and verified field names, semantic roles, source hashes, expected signs and ranges, the exact
+insertion point, and mutation detection for each. C2's R-stage design lists this as a precondition, not an
+afterthought.
+
+## The repaired (P3′) logic
+
+Preserved byte-for-byte and re-tested: σ₃ takes the midpoint tower (a (P2) premise at e₀), σ₄ takes the cell tower
+with the mean-value correction (a (P3) premise, every e in the cell). Mutants `M01` and `M02` exercise exactly this
+and are detected.
+
+**C2's own new constants are whole-cell by construction and the refinement makes that tighter, not looser**: every
+one of the six operator quantities is certified uniformly on a sub-block, and a cell takes the worst over a cover of
+itself — an upper bound by maximum, a lower bound by minimum. Mutants `M11`–`M14` check that taking the best rather
+than the worst sub-block, or swapping min for max on D_lo, is detected.
