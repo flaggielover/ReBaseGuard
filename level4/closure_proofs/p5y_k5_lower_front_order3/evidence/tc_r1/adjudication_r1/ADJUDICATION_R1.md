@@ -8,12 +8,18 @@ Method: reproduce rather than trust. Everything below was recomputed locally fro
 stdlib Python (exact `Fraction` arithmetic). No remote host was contacted. No file was modified except this
 directory. Nothing was committed.
 
-**Verdict: `ADJUDICATION = ADOPTED`.** 27 PASS, 6 INFO, 3 NOT_CHECKABLE_LOCALLY, 0 FAIL.
+**Verdict: `ADJUDICATION = ADOPTED`.** 27 PASS, 7 INFO, 3 NOT_CHECKABLE_LOCALLY, 0 FAIL.
 
-> **State at adjudication.** The brief names `ad108619` as the current commit. The worktree HEAD advanced to
-> `7ee92476` (Campaign B, m = 5 tail) *while this adjudication was in progress*; I did not make that commit. I
-> re-checked and it disturbs nothing adjudicated here — see rows 1.5 and 8.3. All findings below are stated against
-> the sealed range `3f540a33 … ad108619`, which is fixed and unaffected.
+> **State at adjudication.** The brief names `ad108619` as the current commit. HEAD advanced three times *while this
+> adjudication was in progress*, none of it by me: `7ee92476` (Campaign B), `f2ac1eb3` (which committed an
+> **in-progress copy of this very file** and published coverage map r4 from it), and `79e7b3d3` (final checkpoint).
+> I re-checked all of it — see rows 1.5, 8.3 and 8.4. Nothing adjudicated was disturbed, the published map r4 is
+> exactly what this verdict permits, and every finding below is stated against the sealed range
+> `3f540a33 … ad108619`, which is fixed and unaffected.
+>
+> **This file is newer than the copy committed in `f2ac1eb3`.** That copy predates rows 1.5, 8.3, 8.4 and notes
+> N6–N7. All of those are INFO; no PASS became a FAIL and the verdict is unchanged. The working-tree version must be
+> committed so the record matches the adjudication that was actually performed.
 
 ---
 
@@ -25,6 +31,7 @@ directory. Nothing was committed.
 | 1.2 | After the freeze `3f540a33`, nothing outside `evidence/tc_r1/` changes | PASS | `git diff --name-only 3f540a33 ad108619` filtered on the prefix is **empty**; per-step `--name-status` shows only the expected additions (and one `M` on `GUARD.json` at the seal: ALLOW → DENY) |
 | 1.3 | Adopted namespaces byte-unchanged since the start frontier `7cb01e38` | PASS | `git diff --name-status 7cb01e38 ad108619` outside `p5y_k5_lower_front_order3/` is **empty**. Tree hashes identical for `p5y_k5_perron_deflated_resolvent` (`db967365`), `p5y_k5b_independent_countersignature` (`f238c648`), `p5y_k1_cusum_aux5_composite_closure` (`48dd56cd`); T-EXT, slot-1 and coverage map r3 are inside that unchanged set |
 | 1.4 | Working tree state | INFO | One untracked file: `evidence/tc_r1/checkpoints/CP_005_sealed_consumed.json`. It is a resume aid (README: "checkpoints — resume aids only, never evidence"), is not pinned, and is read by nothing. No tracked file is modified |
+| 1.5 | HEAD advanced during the adjudication (`ad108619` → `7ee92476`, Campaign B) | INFO | Not made by me. `git diff --name-status ad108619 HEAD` is **six `A` rows, all inside the new namespace `p5y_k5_m5_tail_closure/`**; zero paths outside it. It touches no pinned path (intersection with the 84 pins is empty), and nothing in `p5y_k5_lower_front_order3`, `p5y_k5_perron_deflated_resolvent`, `p5y_k5b_independent_countersignature`, `p5y_k5_remaining_cell_closure`, `p5y_k5_cusum_order3_real_producer` or `p5y_k1_cusum_aux5_composite_closure`. All **84/84 pins re-verified at `7ee92476`**. Rows 1.2 and 1.3 are stated over fixed commit ranges and are unaffected. No `K5_COVERAGE_MAP_R4.json` was added |
 | 2.1 | Every protocol pin matches at the seal | PASS | All **84/84** pins in `config/TC_PROTOCOL.json` recomputed locally at `ad108619`: 0 mismatches, 0 missing. All 41 `loaded_repository_modules` are in the pin set. **No pinned path lies under `evidence/tc_r1/`**, so the post-freeze mutable prefix cannot touch a pin — the 84 pins are freeze-immutable by construction |
 | 2.2 | Protocol identity | PASS | `sha256(config/TC_PROTOCOL.json) = 10ff7e37e9b6…924f`, equal to the value in SEAL, AUTHORIZATION, GUARD, TC_INDEX, every cell record's `binding`, and TC_CONSUMPTION |
 | 2.3 | Qualification ran at the freeze commit and passed S00–S09 | PASS (host-reported for the runtime steps) | `QUALIFICATION_RESULT.json` `S00.head = S00.freeze_commit = 3f540a33…`, `namespace_clean: true`, every `S0x.pass: true`, `verdict: QUALIFIED`; file sha `f95da15f…` equals the value bound by AUTHORIZATION and SEAL. S02/S06/S09 are the run host's own report (authorization Note C) — see 2.4 |
@@ -51,12 +58,14 @@ directory. Nothing was committed.
 | 7 | The manufactured suite is capable of failing | PASS (with note N3) | 48 fixtures × 25-point grid, ground truth computed by 256-bit Arb matrix solves on a finite analogue of the CUSUM structure — a genuine independent oracle, not a self-comparison. 0 containment violations; the structured families run at tightness 0.984–0.99999, i.e. the true value sits within ~1e-5 of the bound, so the fixtures are demanding and a dropped term must show. 20/20 mutants detected, each a real source-text edit to `tc_rule.py`. `frozen_table_ok` and `crosscheck_ok` both true. See note N3 for its one real blind spot |
 | 8.1 | K5 status wording: PARTIAL | PASS | m = 5 still open on the tail [305, 309], which this successor does not touch. `evidence/tc_r1/code/coverage_map_r4.py` sets `K5_COVERAGE_COMPLETE = not union_open`, so the r4 map would carry `false` and `union_open_ranges = [[305,309]]`. **K5 remains PARTIAL.** Authorization condition C8 is satisfied |
 | 8.2 | The authoritative coverage map has not been pre-emptively changed | PASS | No `K5_COVERAGE_MAP_R4.json` exists anywhere in the tree. The adopted `K5_COVERAGE_MAP_R3.json` (`union_open_ranges = [[11,44],[305,309]]`, `K5_COVERAGE_COMPLETE: false`) is byte-unchanged. The generator was committed but never run — this adjudication is the gate, as intended |
+| 8.3 | Campaign B forward references presume this verdict | INFO | `p5y_k5_m5_tail_closure/` correctly states "K5 stays PARTIAL", Phase C "**NOT STARTED**", "guard DENY", and adds no coverage map. But `phase_b/TAIL_ROUTE_COMPARISON.md` already describes the TC theorem as "frozen, qualified **and adjudicated**" and plans to compose "the adopted state (**map r4**)" — both written before any adjudication existed. Immaterial here because nothing was executed and the verdict is ADOPTED, but it is a pre-emption of this gate and should not become a habit. See note N6 |
+| 8.4 | The gate was consumed before the adjudicator finished; published map r4 re-verified | INFO | `f2ac1eb3` committed an in-progress copy of this adjudication (34 rows, no 1.5/8.3/N6) and published `K5_COVERAGE_MAP_R4.json` from it, before I had finished. I verified the published artifact directly: sha `a3bddd83…`, `K5_COVERAGE_COMPLETE: false`, `union_open_ranges [[305,309]]`, count 5; m = 1, 2, 3 all 310 PASS; m = 5 non-PASS exactly {305,…,309}; inputs bind `tc_consumption 1fa8d8de…`, `tc_index 51c5ca93…`, `protocol 10ff7e37…`, `freeze 3f540a33…`, `coverage_map_r3 6d598dc5…` (which I confirmed is the live adopted r3, still byte-unchanged since `7cb01e38`). **The published map is exactly what this verdict permits.** The defect is procedural only — see note N7 |
 | D1 | Disclosure: `PYTHONINTMAXSTRDIGITS=0` | INFO | Benign. CPython's 4300-digit int→str guard **raises `ValueError`; it never truncates**, and the note records that the first invocation raised before writing any output. The variable only affects decimal printing inside `consumption_adapter.row_json`; all comparisons are exact `Fraction` comparisons. I independently hit and lifted the same guard, and my results matched the seal exactly. See note N2 |
 | D2 | Disclosure C7: frozen `Order3Certifier` run on real cells 11–44 while the order-3 registry stays FROZEN_EMPTY | INFO (with obligation) | Not a soundness defect and not a mechanical gate breach — see note N1. Adoption carries an obligation |
 | D3 | `note_A_cap_discrepancy`: frozen prose 24 CPU-h vs binding protocol 30 | INFO | Immaterial to this run: the actual spend 14.203 CPU-h is under **both** numbers, and under the campaign hard cap 40. A documentation defect, correctly disclosed. See note N4 |
 | S1 | The certified values of the **new** order-3 fields | NOT_CHECKABLE_LOCALLY | See note N5 — the precise residual trust boundary of this adjudication |
 
-Counts: **PASS 27 · INFO 4 · NOT_CHECKABLE_LOCALLY 3 · FAIL 0.**
+Counts: **PASS 27 · INFO 7 · NOT_CHECKABLE_LOCALLY 3 · FAIL 0** (37 rows).
 
 ---
 
@@ -144,6 +153,30 @@ the manufactured suite, the cross-check and qualification S06 are aimed.
 
 This is the ordinary trust boundary of this campaign's model (authorization Note C), not a new one, and it is the same
 boundary the adopted Perron-deflated predecessor already stands on.
+
+### N6 — the gate was pre-empted in prose, not in substance
+
+Campaign B was committed during this adjudication and already refers to the TC theorem as "adjudicated" and to "map
+r4" as "the adopted state". Nothing was executed on that basis — Phase C is NOT STARTED, the guard is DENY, the
+coverage map r4 still does not exist, and the namespace correctly records K5 as PARTIAL — so no decision rode on the
+presumption. I record it because an adjudication gate that is described as passed before it is run loses its meaning
+if the phrasing is repeated. The forward references happen to be correct; they were not entitled to be.
+
+### N7 — the adjudication was acted on before it was finished
+
+`f2ac1eb3` committed a copy of this file while I was still working and generated the authoritative coverage map r4
+from it. The outcome is sound: the verdict in that copy is the verdict here, and I re-verified the published map
+against the sealed consumption myself (row 8.4). But the sequence inverts the control this gate exists to provide —
+the map was produced from an adjudication that had not been handed over, and a late FAIL would have found the
+artifact already published and the campaign checkpointed as closed.
+
+Two consequences to record:
+
+1. The committed `ADJUDICATION_R1.{md,json}` are stale. The working-tree versions (37 rows, notes N6–N7) are the
+   adjudication actually performed and should be committed in their place.
+2. For the next campaign, the coverage map must be generated **from a committed adjudication whose verdict line the
+   generator reads**, not in the same commit that introduces it. Campaign B is already drafted on this pattern
+   (note N6); the two findings share a root cause.
 
 ---
 

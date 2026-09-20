@@ -31,6 +31,13 @@
    "verdict": "INFO"
   },
   {
+   "check": "head_advanced_during_adjudication",
+   "evidence": "worktree HEAD moved ad108619 -> 7ee92476 (Campaign B, m=5 tail) during this adjudication; not made by the adjudicator. git diff ad108619..HEAD is six 'A' rows all inside the new namespace p5y_k5_m5_tail_closure/, zero paths outside it, zero pinned paths, and nothing in the TC or any adopted namespace. All 84/84 pins re-verified at 7ee92476. Rows 1.2/1.3 are stated over fixed commit ranges and are unaffected. No K5_COVERAGE_MAP_R4.json added.",
+   "id": "1.5",
+   "source": "state",
+   "verdict": "INFO"
+  },
+  {
    "check": "protocol_pins",
    "evidence": "84/84 pins verified locally; 41/41 loaded_repository_modules pinned; no pinned path under evidence/tc_r1/ so pins are freeze-immutable",
    "id": "2.1",
@@ -213,6 +220,20 @@
    "verdict": "PASS"
   },
   {
+   "check": "campaign_b_forward_references_presume_verdict",
+   "evidence": "p5y_k5_m5_tail_closure correctly records K5 PARTIAL, Phase C NOT STARTED, guard DENY and adds no coverage map; but phase_b/TAIL_ROUTE_COMPARISON.md already calls the TC theorem 'frozen, qualified and adjudicated' and plans to compose 'the adopted state (map r4)', both written before any adjudication existed. Immaterial here (nothing executed, verdict is ADOPTED) but it pre-empts this gate. See note N6.",
+   "id": "8.3",
+   "source": "scope",
+   "verdict": "INFO"
+  },
+  {
+   "check": "gate_consumed_before_adjudicator_finished",
+   "evidence": "f2ac1eb3 committed an in-progress copy of this adjudication (34 rows, no 1.5/8.3/N6) and published K5_COVERAGE_MAP_R4.json from it before the adjudicator finished. Published artifact re-verified directly: sha a3bddd83, K5_COVERAGE_COMPLETE false, union_open_ranges [[305,309]] count 5, m=1/2/3 all 310 PASS, m=5 non-PASS exactly {305..309}; inputs bind tc_consumption 1fa8d8de, tc_index 51c5ca93, protocol 10ff7e37, freeze 3f540a33, coverage_map_r3 6d598dc5 (confirmed the live adopted r3, byte-unchanged since 7cb01e38). The published map is exactly what this verdict permits; the defect is procedural only. See note N7.",
+   "id": "8.4",
+   "source": "state",
+   "verdict": "INFO"
+  },
+  {
    "check": "disclosure_pythonintmaxstrdigits",
    "evidence": "benign: CPython raises ValueError and never truncates; affects only decimal printing in consumption_adapter.row_json; all comparisons are exact Fractions; I hit and lifted the same guard and matched the seal exactly",
    "id": "D1",
@@ -258,10 +279,10 @@
  },
  "counts": {
   "FAIL": 0,
-  "INFO": 4,
+  "INFO": 7,
   "NOT_CHECKABLE_LOCALLY": 3,
   "PASS": 27,
-  "total": 34
+  "total": 37
  },
  "facts_confirmed": {
   "campaign_hard_cap_cpu_hours": 40,
@@ -357,7 +378,9 @@
   "N2_intmaxstrdigits": "Benign for this run, but records a durable property: the frozen consumption_adapter.row_json cannot serialize TC-sized exact rationals under default CPython >= 3.11. Any future theorem-TC-class consumption meets the same wall.",
   "N3_manufactured_blind_spot": "The suite's ground-truth oracle does not cover the r>=1 source tower or the W assembly (its own docstring says so); mutants M18, M19 and M20 were detected only by the crosscheck, i.e. by two implementations disagreeing rather than by an oracle. Closed by this adjudication's item-4 third implementation, which derives both independently and is demonstrably sensitive to norms.j, sup_S0[0], W2[3:0] and W2[0:3].",
   "N4_budget": "Enforced cap 30, frozen prose 24, forecast 16.3, actual 14.203 - under every number in play, so the discrepancy could not have changed a decision here. Repair before any future Campaign A run, where a cap between 24 and 30 could become load-bearing.",
-  "N5_trust_boundary": "The theorem's arithmetic is verified exactly and completely. The record's INPUTS split in two: K1/Aux3-derived fields are covered by the 262-field identity gate against the adopted K1 records (whose identity I verified per cell against the adopted composite manifest); the four new order-3 fields (delta_G, eps_src[3], sup.G, abs_G_at_a) have no such gate and rest on the frozen Order3Certifier running correctly on the host. Structural safeguard: all four are non-negative and enter H_TC only through the half-width rho*|Ghat(a)| + rad_r, while the enclosure centre stays the adopted order-2 Hhat_r(a) - so a wrong order-3 candidate cannot shift the enclosure off the true value, only fail to widen it, and only if its certified bounds are understated."
+  "N5_trust_boundary": "The theorem's arithmetic is verified exactly and completely. The record's INPUTS split in two: K1/Aux3-derived fields are covered by the 262-field identity gate against the adopted K1 records (whose identity I verified per cell against the adopted composite manifest); the four new order-3 fields (delta_G, eps_src[3], sup.G, abs_G_at_a) have no such gate and rest on the frozen Order3Certifier running correctly on the host. Structural safeguard: all four are non-negative and enter H_TC only through the half-width rho*|Ghat(a)| + rad_r, while the enclosure centre stays the adopted order-2 Hhat_r(a) - so a wrong order-3 candidate cannot shift the enclosure off the true value, only fail to widen it, and only if its certified bounds are understated.",
+  "N6_gate_preempted_in_prose": "Campaign B was committed during this adjudication and already refers to the TC theorem as 'adjudicated' and to map r4 as 'the adopted state'. Nothing was executed on that basis (Phase C NOT STARTED, guard DENY, no map r4, K5 recorded PARTIAL), so no decision rode on the presumption. Recorded because an adjudication gate described as passed before it is run loses its meaning if the phrasing is repeated.",
+  "N7_gate_consumed_before_handover": "f2ac1eb3 committed a copy of the adjudication while it was still in progress and generated the authoritative coverage map r4 from it. The outcome is sound - that copy's verdict is this verdict, and the published map was re-verified against the sealed consumption (row 8.4) - but the sequence inverts the control this gate provides: the map was produced from an adjudication that had not been handed over, and a late FAIL would have found the artifact already published and the campaign checkpointed as closed. Consequences: (1) the committed ADJUDICATION_R1.{md,json} are stale and the working-tree versions (37 rows, notes N6-N7) should be committed in their place; (2) the next campaign must generate the coverage map from a COMMITTED adjudication whose verdict line the generator reads, not in the same commit that introduces it."
  },
  "round": "r1",
  "schema": "rebaseguard.p5y.k5.lower-front-order3.adjudication.v1",
@@ -370,10 +393,39 @@
    309
   ]
  },
+ "state_at_adjudication": {
+  "actual_head_at_completion": "79e7b3d3",
+  "adjudication_files_committed_by_another_session": true,
+  "advanced_by_adjudicator": false,
+  "brief_head": "ad108619",
+  "commits_added_during_adjudication": [
+   "7ee92476 (Campaign B)",
+   "f2ac1eb3 (adjudication copy + coverage map r4)",
+   "79e7b3d3 (final checkpoint)"
+  ],
+  "committed_copy_counts": {
+   "FAIL": 0,
+   "INFO": 4,
+   "NOT_CHECKABLE_LOCALLY": 3,
+   "PASS": 27,
+   "total": 34
+  },
+  "committed_copy_is_stale": true,
+  "disturbs_anything_adjudicated": false,
+  "head_advanced_during_adjudication": true,
+  "new_commit_scope": "purely additive: 6 new files, all under level4/closure_proofs/p5y_k5_m5_tail_closure/",
+  "pins_reverified_at_head": "84/84",
+  "published_coverage_map_r4_sha256": "a3bddd83234f33983e07b005b4686a5f3971264bb6bdd64d2c639339de210a35",
+  "published_coverage_map_r4_verified_by_adjudicator": true,
+  "sealed_range_adjudicated": "3f540a33..ad108619",
+  "working_tree_copy_is_authoritative": true
+ },
  "utc": "2026-09-20T00:00:00+00:00",
  "verdict": "ADOPTED",
  "verdict_conditions": [
-  "note N1 obligation: cross-reference disclosure_C7 from the order-3 namespace (follow-up, not a blocker)"
+  "note N1 obligation: cross-reference disclosure_C7 from the order-3 namespace (follow-up, not a blocker)",
+  "note N7: commit the working-tree ADJUDICATION_R1.{md,json} in place of the stale copy committed in f2ac1eb3",
+  "notes N6/N7: generate the coverage map from a committed adjudication, and do not describe the gate as passed before it is run"
  ],
  "verdict_line": "ADJUDICATION = ADOPTED",
  "worktree": "/Users/suzhe/ReBaseGuard-k5lf"

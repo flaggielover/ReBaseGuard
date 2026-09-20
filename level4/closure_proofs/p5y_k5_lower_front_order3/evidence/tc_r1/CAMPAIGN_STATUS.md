@@ -11,7 +11,9 @@ SEAL                    = bc4235d0  TC_INDEX 51c5ca93…, 34 gated records, repr
                                     14.203 new-real CPU-hours
 CONSUMPTION             = ad108619  TC_CONSUMPTION sha256 1fa8d8de… (two runs byte-identical), replay gate PASS,
                                     136 cross-check comparisons, no empty intersection
-ADJUDICATION            = ADOPTED   (27 PASS, 4 INFO, 3 not checkable locally, 0 FAIL)
+ADJUDICATION            = ADOPTED   (27 PASS, 7 INFO, 3 not checkable locally, 0 FAIL; the adjudicator reproduced
+                                    theorem TC from its own implementation, 136/136 enclosures exact, and re-derived the
+                                    K5-B pass sets and the whole 160-entry via map)
 COVERAGE MAP            = r4, K5_COVERAGE_MAP_R4.json sha256 a3bddd83… (two generations byte-identical)
 NEW REAL ADDRESSES      = 34 (CUSUM cells 11-44, midpoint, orders <= 3, r = 0..4); guard DENY again
 K5_STATUS               = PARTIAL   (m = 5 tail 305-309 still open)
@@ -38,6 +40,13 @@ order-3 term being the only new object) and propagating the residual through the
 (theorem AD, registry r1) gives whole-cell enclosures of R''_m with half-widths 4.2–5.5 instead of 122–336. The certified
 lower ends are positive on every lower-front cell (e.g. cell 11: +9.50 for m = 1, +3.99 for m = 5), so μ_k ≥ 0 and the
 frozen K5-B chain carries from γ_10 < 0 across the whole front.
+
+Procedural defect (disclosed, adjudicator note N7): the coverage map r4 and a stale in-progress copy of the
+adjudication were committed at f2ac1eb3 before the adjudication was handed over. The final adjudicator re-verified the
+published map as exactly what the verdict permits, and regeneration after the final verdict is byte-identical
+(`adjudication_r1/SEQUENCING_DEFECT_NOTE.md`). Open obligations from the adjudication: N1/C7 cross-reference in the
+order-3 namespace (that namespace is adopted and must not be edited here), N3 oracle coverage, N5 no identity gate on
+the four new order-3 fields.
 
 Disclosures: the frozen `Order3Certifier` was executed on real cells 11–44 under this protocol while the order-3
 producer's own registry stays FROZEN EMPTY (SEAL C7); the consumption needed `PYTHONINTMAXSTRDIGITS=0` because CPython
