@@ -1,0 +1,82 @@
+{
+ "schema": "rebaseguard.p5y.k5.tail-c2.feasibility-gates.v1",
+ "campaign": "C2 (CUSUM K5, m = 5 tail: K1 cells 305-309). Two stages: D (deterministic / operator-only tightening) and R (minimal real order-3 computation), the second reachable only through a separately frozen sub-gate.",
+ "frozen_before": "any C2 forecast, any C2 operator certification run, and any C2 evaluation of a tail cell's pass/open status. The freeze commit of this file is the temporal boundary: nothing in this namespace that reports a C2 operator constant, a TC-T magnitude, a K5-B outcome or a class may predate it.",
+ "start_frontier": "5289b6cee7134dd66e3289c3a210c8de5abb6a2c",
+
+ "universe": {
+  "pairs": 5, "cells": [305, 306, 307, 308, 309], "m": [5],
+  "status_in_authoritative_map": "all five are OPEN in coverage map r4 (a3bddd83...), which remains authoritative. Campaign B and Campaign C1 each derived a sound closure of cell 305 and neither adopted it; C2 does not inherit those results and must re-derive anything it adopts through its own governed chain."
+ },
+
+ "closure_rule": "a pair (5, cell) is CLOSED iff the frozen K5-B (k5b_check.k5b_literal, ddd54dc4) passes that cell when the adopted post-Campaign-A state is composed with the theorem TC-T enclosure of that cell computed from C2's own certified constants under the combination rule below; no other criterion.",
+
+ "residual_measure": {
+  "quantity": "for each cell, the UNIFORM ATOM-CONSTANT reduction factor still required: the bisected uniform scale on (A0, A1, A2) at which the frozen direct test starts to pass, equal to 1 when the cell already passes",
+  "gap": "gap(cell) := requirement(cell) - 1, the distance that must still be eliminated for that cell to close",
+  "why_gap_and_not_ratio": "a cell closes when its requirement reaches 1, so the distance above 1 is exactly what remains to be removed. Measuring progress as a fraction of the raw requirement (as Campaign C1's gate did) flatters a cell that is already nearly closed and penalises one that is far from closing, and it is not scale-correct. C1's threshold is deliberately NOT inherited."
+ },
+
+ "baseline": {
+  "source": "p5y_k5_tail_operator_registry/evidence/forecast_r1/C1_FORECAST.json, material_improvement.per_cell_uniform_reduction_still_needed",
+  "requirement": {"305": 1.0, "306": 1.0, "307": 1.2620572570527464, "308": 1.663450928753142, "309": 2.1015967636536343},
+  "gap": {"305": 0.0, "306": 0.0, "307": 0.2620572570527464, "308": 0.663450928753142, "309": 1.1015967636536343},
+  "closes": [305, 306],
+  "note": "this is the state C1 left, reached with zero new real addresses. C2 measures itself against it. Cells 305 and 306 are at requirement 1 under C1's constants but are NOT adopted in coverage map r4, so they remain in C2's universe and C2 must re-derive them."
+ },
+
+ "material_tightening_test": {
+  "rule": "a still-open cell is MATERIALLY TIGHTENED iff its gap falls by at least 20 per cent relative to the baseline gap above: gap_C2(cell) <= 0.80 * gap_baseline(cell)",
+  "threshold": 0.20,
+  "justification": "the tail has now absorbed three campaigns (B, C1 and C2). A campaign that removes at least a fifth of the remaining distance-to-closure on every cell it does not close is converging at a rate under which a bounded number of further deterministic campaigns could finish, and it has earned the cost of its governed lifecycle. Below that, the deterministic direction is exhausted and the programme should route to the R stage rather than grind. The threshold is set on the gap, per cell, and is chosen here with no forecast in hand.",
+  "applies_to": "every cell that C2 does not close"
+ },
+
+ "D_stage_classes": {
+  "D_STRONG": "C2's deterministic route certifiably closes all 5 cells",
+  "D_USEFUL": "not D_STRONG, and C2 closes >= 2 of the five, and EVERY cell it does not close is materially tightened",
+  "D_PARTIAL": "not D_USEFUL, and C2 closes >= 1 cell",
+  "D_INSUFFICIENT": "C2 closes no cell, and no still-open cell is materially tightened"
+ },
+
+ "D_stage_decision_rule": {
+  "D_STRONG": "proceed to freeze, qualification, seal, consumption and adjudication with NO real scientific compute; adopt all five on ADOPTED",
+  "D_USEFUL": "proceed to freeze and adopt the closed subset on ADOPTED; then design a continuation for the remainder",
+  "D_PARTIAL": "ADOPT THE CLOSED SUBSET ANYWAY, and in the same campaign produce the R-stage design for the remainder. The comparison is pre-registered here and is not left to judgement after the fact: an adopted cell is permanent progress that costs no new real compute and removes that cell from every future campaign's universe, whereas declining to adopt it preserves nothing and has twice already left a soundly closed cell 305 unadopted. Adoption and R-stage design are therefore NOT exclusive, and a non-empty closed subset is always adopted when the adjudication chain completes.",
+  "D_INSUFFICIENT": "no freeze of a deterministic successor; proceed only to R-stage DESIGN and FORECAST"
+ },
+
+ "D_stage_design_fixed_now": {
+  "note": "these designs are fixed before any C2 certification runs, so that no partition or supply is chosen after seeing which one closes a cell",
+  "D2_partition": "each tail cell's e-interval [left, right] is split into N_k sub-blocks of equal width, with N_k = ceil(2*rho_k / (1/100)), i.e. sub-blocks no wider than 1/100 - the geometry of the ADOPTED registry r1, rather than a width tuned to the tail. Constants for a cell are the worst over the sub-blocks meeting it, exactly as the adopted block_for rule composes them.",
+  "D3_denominator": "the taboo cell artifact (d, d', d'') is certified per sub-block rather than once per cell, and D_lo is the minimum, D1 and D2 the maxima, over the sub-blocks covering the cell. A narrower sub-cell admits a tighter bound, and the worst over a cover of the cell is a valid whole-cell bound.",
+  "alpha_ladders": "taboo (6/5, 13/10, 7/5, 3/2, 2, 3) and ARL (5/4, 7/5, 3/2, 2, 3, 5), as in C1; first certifying rung taken; a sub-block that certifies at no rung is reported uncertified and never patched",
+  "forbidden": "no moving-eigenpair architecture; the atom / regenerative structure is preserved"
+ },
+
+ "D4_combination_rule": {
+  "rule": "A_j := min over the VALID certified supplies of A_j, componentwise and independently for j = 0, 1, 2",
+  "supplies": ["Lemma G generic constants from the frozen K1 block bound C_upper (A0 = C, A1 = k1 C^2, A2 = k2 C^2 + 2 k1^2 C^3)", "Lemma Dv' from the adopted C1 tail registry", "Lemma Dv' from C2's refined sub-block registry"],
+  "soundness": "each supply independently upper-bounds the same three quantities |[R f](a)|, |[dR f](a)|, |[d2R f](a)| divided by ||f||, so the componentwise minimum is itself a valid upper bound of each; the minimum preserves certification because each selected value carries its own certificate",
+  "provenance": "the selected supply is recorded per cell and per field in the forecast and in the consumption",
+  "pre_registration": "this rule is fixed here, before any C2 constant exists. Campaign C1 declined the componentwise minimum because its own gate specified a single supply; C2 specifies the minimum in advance, which is the legitimate way to obtain it."
+ },
+
+ "R_stage": {
+  "eligibility": "the R stage may be forecast only if BOTH: (a) the D stage does not close all five cells, and (b) for every cell the D stage leaves open, the pre-registered counterfactual test below attributes the residual blocker to a quantity a real order-3 candidate tightens",
+  "attribution_test": "recompute the cell's TC-T magnitude with the order-3 residual term f_G reduced to its eps_src[3] floor (its value with a perfect order-3 candidate) and every other input unchanged. The residual blocker is ORDER-3-ATTRIBUTABLE for that cell iff the cell then closes.",
+  "execution": "the R stage evaluates NO new real scientific address until a SEPARATE R-stage sub-gate and protocol are frozen, an independent fresh-context review passes, qualification passes, and a distinct authorization artifact is committed. The N1 authorization bridge must be closed by this successor first; no historical registry is edited.",
+  "address_minimality": "the R-stage address set is the minimum set the D-stage residual analysis supports, chosen before any real output is seen; an address that looks useful afterwards is a reason for another successor, never for expanding this one",
+  "guard": "REAL_SCIENTIFIC_COMPUTE stays DENY until the R-stage authorization is committed, and returns to DENY immediately after execution and before interpretation"
+ },
+
+ "compute_gate": {
+  "D_stage": {"kind": "deterministic operator certification and replay; not new-real scientific compute", "forecast_cap_cpu_hours": 12, "hard_cap_cpu_hours": 20},
+  "R_stage": {"preferred_cap_new_real_cpu_hours": 3, "hard_cap_new_real_cpu_hours": 6, "rule": "if the R-stage forecast exceeds the hard cap, do not launch; report and hand a design to a successor"},
+  "rule": "exceeding a D-stage cap stops the campaign and reports; it never licenses a real evaluation"
+ },
+
+ "partial_adoption": "a subset closure is a legitimate outcome at every class above D_INSUFFICIENT. Only the cells C2's own consumer certifies as passing may be adopted, and the coverage map may change only for those cells.",
+
+ "no_redefinition": "these classes, the residual measure, the baseline, the closure rule, the material-tightening test and its 20 per cent threshold, the D-stage decision rule, the D2/D3 designs, the D4 combination rule, the R-stage eligibility and attribution tests and the compute caps are not changed after any C2 forecast or result is seen. If one is found to be wrong, the campaign stops and a successor owns the replacement gate."
+}
