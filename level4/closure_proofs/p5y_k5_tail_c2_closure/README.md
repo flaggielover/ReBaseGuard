@@ -37,8 +37,11 @@ Each predecessor lost its campaign to a gate defect, and C2's gate is written ag
 | gate (frozen **before** any forecast) | `config/FEASIBILITY_GATES_C2.json` | frozen at `87309610`, sha `098dd7f5…`, never modified |
 | D1–D5 | `phase_d/` | **complete — `D_PARTIAL`** |
 | R-stage design | `phase_r/` | complete, **design only**, blocked on a precondition |
-| independent pre-freeze review | `review/REVIEW_C2_PREFREEZE.md` | **NOT_READY** — 60 PASS / 10 INFO / 3 N/A / 6 FAIL |
-| erratum and review disposition | `ERRATUM_C2.md` | all six FAILs dispositioned |
+| independent pre-freeze review r1 | `review/REVIEW_C2_PREFREEZE.md` | NOT_READY — 6 FAIL (60 PASS / 10 INFO / 3 N/A) |
+| independent pre-freeze review r2 | `review/REVIEW_C2_PREFREEZE_R2.md` | NOT_READY — 3 FAIL (55 PASS / 5 NOTE / 3 INFO) |
+| independent pre-freeze review r3 | `review/REVIEW_C2_PREFREEZE_R3.md` | NOT_READY — 1 FAIL (31 PASS / 7 NOTE) |
+| independent pre-freeze review r4 | `review/REVIEW_C2_PREFREEZE_R4.md` | NOT_READY — 3 FAIL (28 PASS / 5 NOTE) |
+| erratum and review disposition | `ERRATUM_C2.md` | all thirteen FAILs dispositioned |
 
 *(The rows above were "—" in the version frozen with the gate; this table is the only part of this README written
 after any C2 number existed.)*
@@ -57,11 +60,19 @@ after any C2 number existed.)*
 still-open cell to be materially tightened and fails on one cell by 1.6 percentage points. 2.69 CPU-h of
 deterministic operator certification; **0 new real scientific addresses**; guard DENY.
 
-**Read `ERRATUM_C2.md` before relying on anything here.** The independent pre-freeze review returned NOT_READY. It
-reproduced every published number bit-exactly and found no arithmetic error, but it found a critical-ratio column
-labelled with the wrong campaign (overstating C2's own contribution ~2×), a diagnosis document contradicting its
-own evidence file, a directionally inverted sentence in the frozen gate, and cell 306 being adopted on a margin
-judged sufficient after it was seen. All are dispositioned; no published number changed.
+**Read `ERRATUM_C2.md` before relying on anything here.** Four independent pre-freeze reviews have run, and each
+returned NOT_READY. Between them they reproduced every decision-relevant number bit-exactly and found **no
+arithmetic error in the D-stage result** — the class, the closed subset and the gap falls have never moved. What
+they found was a critical-ratio column labelled with the wrong campaign (overstating C2's own contribution ~2×),
+a diagnosis document contradicting its own evidence file, a directionally inverted sentence in the frozen gate,
+cell 306 being adopted on a margin judged sufficient after it was seen, a registry verifier that could never pass,
+sensitivity figures computed outside the Lemma Dv′ hypotheses, and — three separate times — an error introduced by
+a *repair* to a previous round.
+
+Two published numbers have changed as a result, both in the D1 diagnosis and both disclosed: the C_T sensitivity
+row for cells 307/308/309 (corrected to the admissible perturbation), and the dominant-blocker ranking of the
+three negligible terms. **No Γ, magnitude, margin, requirement, gap fall, class or adopted-subset value has
+changed at any point.**
 
 **The R stage is blocked, and not by C2's own finding.** A sound operator-level combination C2 did not pre-register
 clears the gate's own 20 % bar on all three still-open cells at zero cost — so "the deterministic direction is

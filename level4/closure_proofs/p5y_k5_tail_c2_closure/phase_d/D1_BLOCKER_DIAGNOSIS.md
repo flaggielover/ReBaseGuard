@@ -1,6 +1,6 @@
 # Campaign C2, Phase D1 — what actually blocks the tail
 
-Diagnosis only. Machine-readable: `evidence/phase_d1/C2_D1_BLOCKER.json` (sha256 `601f2f33…`), produced from
+Diagnosis only. Machine-readable: `evidence/phase_d1/C2_D1_BLOCKER.json` (sha256 `1d7715a2…`), produced from
 committed evidence with stdlib Python alone, after the C2 gate was frozen at `87309610`.
 
 ## 1. The decomposition
@@ -74,16 +74,24 @@ in this campaign, changes.
 
 **A clamped row is not a 10 % improvement, and reading it against the other columns as though it were is wrong
 (pre-freeze review r3).** The admissible cut is only **8.997 % (307), 7.490 % (308), 6.100 % (309)** against
-9.0909 % everywhere else, so `effective_improvement` and `gain_per_unit_of_input_moved` are now recorded per row
-in the evidence. Per unit of C_T actually removed the response is **flat, and slightly rising** across the tail:
-0.1496, 0.1504, 0.1521, 0.1536, 0.1530 on cells 305…309.
+9.0909 % on the other upper-bound rows, so `effective_improvement` is now recorded on each of the five operator
+rows, and `gain_per_unit_of_input_moved` on the C_T row. Per unit of C_T actually removed the response is
+**essentially flat** across the tail: 0.1496, 0.1504, 0.1521, 0.1536, 0.1530 on cells 305…309 — rising over the
+first four and easing very slightly at 309, a total spread of 0.004 against values near 0.15.
 
 So the earlier gloss — "C_T's real lever at 309 is 0.93 %, not 1.39 %" — was the wrong inference, and the review
 supplied the right one. **C_T is not a weaker lever at the far tail; it is a nearly exhausted one.** Its
-sensitivity per unit is essentially constant, and what collapses is the *headroom*: at cell 309 only 6.1 % of C_T
-can be removed at all before C_T meets τ and Lemma Dv′ stops applying. That sharpens finding 3 below rather than
-softening it — C_T is not merely a small lever, it is a lever with almost no travel left, for the same structural
-reason τ cannot fall: A0 = τ/D_lo ≥ τ, and τ bounds a genuine expected hitting time.
+sensitivity per unit of travel is essentially constant, and what collapses is the *headroom*: at cell 309 only
+6.1 % of C_T can be removed at all before C_T meets τ and Lemma Dv′ stops applying. That sharpens finding 3 below
+rather than softening it — C_T is not merely a small lever, it is a lever with almost no travel left.
+
+**The per-unit figure is comparable for C_T across cells and for nothing else**, which is why it is emitted on
+that row alone. The ÷1.1 convention is chosen so that D_lo × 1.1 and τ/1.1 each divide A0 = τ/D_lo by exactly
+1.1; that is *why* their input fractions differ, 10 % against 9.0909 %. Dividing each gain by its own input
+fraction therefore throws away the symmetry the convention exists for, and inflates τ by a factor 1.1 relative to
+D_lo — enough to **reverse the D_lo > τ ordering on all five cells**, the finding this section rests on. A version
+of this evidence published that ratio on all five operator rows, uncaveated; pre-freeze review r4 caught it and it
+is now restricted, with the comparability limit carried in the artifact itself.
 
 Three findings, and one of them corrects the plan C1 handed forward:
 

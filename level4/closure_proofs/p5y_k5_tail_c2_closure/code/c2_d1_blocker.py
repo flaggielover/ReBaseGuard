@@ -60,10 +60,14 @@ class PremiseRefusal(Exception):
 
 
 def atom_dv_prime(Abar, tau, C, Dlo, D1, D2) -> dict:
-    # The pinned consumer `deflated_consume.atom_constants` refuses unless these hold; this local copy did not,
-    # and so would happily return constants for an inadmissible tuple. Pre-freeze review r2 (notes 65/66) found
-    # the gap: the C_T row of the sensitivity table below perturbs C_T alone, and on cells 307-309 a 10 %
-    # improvement drives C_T under tau, which is outside Lemma Dv'. The guard is added so the two agree.
+    # The pinned consumer `deflated_consume.atom_constants_r2` validates these premises and refuses an
+    # inadmissible tuple; this local copy did not, and so would happily return constants for one. Pre-freeze
+    # review r2 (notes 65/66) found the gap: the C_T row of the sensitivity table below perturbs C_T alone, and on
+    # cells 307-309 a 10 % improvement drives C_T under tau, which is outside Lemma Dv'.
+    # This guard enforces the four premise inequalities ONLY. It is deliberately NOT a claim of equivalence with
+    # the pinned consumer, which additionally type-checks every input (non-Fraction or negative is refused) and
+    # post-checks that no r2 constant exceeds its r1 counterpart. An earlier version of this comment said "the
+    # guard is added so the two agree", which overclaimed; withdrawn on pre-freeze review r4.
     if not (Dlo > 0 and tau >= 1 and C >= tau and Abar >= 1):
         raise PremiseRefusal("constants violate tau >= 1, C >= tau, Dlo > 0, Abar >= 1")
     eff = Abar if Abar < tau / Dlo else tau / Dlo
@@ -200,8 +204,22 @@ def main() -> int:
             eff = abs(p[name] - op[name]) / op[name]
             sens[name] = {"magnitude": float(mg), "delta_vs_base": float(mg - mag),
                           "relative_gain": float((mag - mg) / mag),
-                          "effective_improvement": float(eff),
-                          "gain_per_unit_of_input_moved": float((mag - mg) / mag / eff) if eff else None}
+                          "effective_improvement": float(eff)}
+            if name == "C_T":
+                # Emitted for C_T ONLY, and this restriction is load-bearing. Per-unit normalisation is valid
+                # for comparing the SAME input across cells -- which is the headroom question it exists to
+                # answer, since the clamp gives 307/308/309 a smaller window than 305/306. It is INVALID across
+                # different inputs: the div-1.1 convention is chosen so that both D_lo * 1.1 and tau / 1.1
+                # divide A0 = tau/D_lo by exactly 1.1, which is precisely why their input fractions differ
+                # (10 % against 9.0909 %). Dividing each gain by its own input fraction therefore discards the
+                # symmetry the convention was chosen for, and inflates tau by 1.1 relative to D_lo -- enough to
+                # REVERSE the D_lo > tau ordering on all five cells, which is the finding section 2 rests on.
+                # An earlier version emitted this field on all five operator rows and did exactly that, in the
+                # machine-readable artifact, uncaveated. Found by pre-freeze review r4.
+                sens[name]["gain_per_unit_of_input_moved"] = float((mag - mg) / mag / eff) if eff else None
+                sens[name]["per_unit_comparability"] = (
+                    "same input across cells only; NOT comparable across different inputs, because the div-1.1 "
+                    "convention equalises the effect on A0 = tau/D_lo rather than the input fraction")
             if clamped:
                 sens[name]["admissibility_clamp"] = clamped
         for name, A_ in (("A0", {**A, "A0": A["A0"] * F(10, 11)}), ("A1", {**A, "A1": A["A1"] * F(10, 11)}),
