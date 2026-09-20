@@ -49,9 +49,15 @@ response, A1 0.165, A2 0.022. The 46 % improvement in A2 is worth about 1 % of m
 A0 is worth about 2.8 %.
 
 **The pre-registered combination rule changed nothing.** C2's supply is the minimum on all three fields of all five
-cells, so the componentwise minimum reduced to "use C2". Two selector mutants in the adversarial suite are recorded
-as *equivalent* for exactly this reason. Pre-registering the rule was still right — had C2's τ regression been larger
+cells, so the componentwise minimum reduced to "use C2". Two selector mutants (`M19`, `M20`) are recorded as
+*equivalent* for exactly this reason. Pre-registering the rule was still right — had C2's τ regression been larger
 than its D_lo gain, Lemma G or C1 would have been selected for A0 and the rule would have been load-bearing.
+
+That is demonstrated rather than asserted, on the pre-freeze review's suggestion (note 13). On the `{G, C1}`
+sub-family the componentwise minimum genuinely *does* mix — at cell 307, A0 comes from C1 while A1 and A2 come from
+Lemma G — so the same two bad selectors run against that sub-family, as `M34` and `M35`, are **detected**. The rule
+the gate calls its central innovation now has real mutants behind it, and the "equivalent" verdict on `M19`/`M20`
+is confined to the claim it actually supports: that this registry dominates on 15 of 15 fields.
 
 ## 3. Robustness and the thin cell (supplementary; not gate inputs)
 

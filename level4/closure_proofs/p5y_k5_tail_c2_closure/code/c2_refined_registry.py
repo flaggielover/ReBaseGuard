@@ -225,6 +225,7 @@ def main() -> int:
     ap.add_argument("--outdir", required=True)
     ap.add_argument("--cells", default=",".join(str(k) for k in TAIL))
     ap.add_argument("--workers", type=int, default=7)
+    ap.add_argument("--out", help="verify mode: write the result, with host and toolchain, as an evidence artifact")
     a = ap.parse_args()
     outdir = Path(a.outdir)
     cells = [int(x) for x in a.cells.split(",") if x]
@@ -248,6 +249,19 @@ def main() -> int:
         return 0 if reg["certified"] else 1
     reg = json.loads((outdir / "REGISTRY_C2.json").read_bytes())
     res = verify(outdir, reg)
+    if a.out:
+        import platform
+        try:
+            import flint
+            import numpy
+            tool = {"python_flint": flint.__version__, "numpy": numpy.__version__}
+        except Exception:                                   # pragma: no cover - only if the stack is absent
+            tool = {}
+        res = dict(res, host={"platform": platform.platform(), "machine": platform.machine(),
+                              "python": sys.version.split()[0], **tool},
+                   artifacts_rechecked=sum(2 * len(b["sub_rows"]) + 1 for b in reg["blocks"]),
+                   registry_sha256=sha((outdir / "REGISTRY_C2.json").read_bytes()))
+        Path(a.out).write_text(json.dumps(res, sort_keys=True, indent=1) + "\n")
     print(json.dumps(res))
     return 0 if res["pass"] else 1
 

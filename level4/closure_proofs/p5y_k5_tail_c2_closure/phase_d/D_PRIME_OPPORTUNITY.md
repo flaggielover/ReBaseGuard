@@ -15,7 +15,11 @@ Campaign C1 and Campaign C2 each certified the *same six operator quantities* ov
     tau, C_T, D1, D2   -- upper bounds        D_lo -- a lower bound        Abar -- an upper bound
 
 C1 certified them on one wide block per cell; C2 re-certified them on a partition into sub-blocks of width ≤ 1/100.
-Both are valid uniformly on the whole cell. Therefore the **componentwise best of the two** — min on the five upper
+Both are valid uniformly on the whole cell — **checked, not assumed**: C1's block on each tail cell is exactly
+[e₀ − ρ, e₀ + ρ], identical endpoint for endpoint to the frozen cover's own cell, on all five cells; and C2's
+sub-blocks tile that same interval exactly (verified by the tiling invariant in `code/c2_mutations.py`, with three
+mutants against it). If C1's block had been narrower than the cell, its constants would not have been whole-cell
+bounds and the combination below would be unsound. It is not narrower. Therefore the **componentwise best of the two** — min on the five upper
 bounds, max on D_lo — also holds uniformly on the whole cell, and satisfies all six Lemma Dv′ hypotheses
 simultaneously. It is a sound supply. (The producer does not take this on faith: it feeds the mixed tuple through
 `deflated_consume.atom_constants_r2`, which refuses unless τ ≥ 1, C ≥ τ, D_lo > 0 and Ā ≥ 1 all hold. It does not
