@@ -15,7 +15,7 @@ holds **no new real address**.
 | theorem | `theorem/THEOREM_TCT.md` | theorem TC with Lemma G atom constants, a zero order-3 candidate and adopted Aux3 order-3 evidence |
 | C. route scoring and execution decision | `code/tail_forecast_r2.py`, `evidence/forecast_r2/`, `phase_c/EXECUTION_DECISION.md` | **STOPPED** before freeze by the frozen `stop_rule`: every route is MARGINAL or INFEASIBLE |
 | open notes N1 / N3 / N5 | `CAMPAIGN_A_OPEN_NOTES_DISPOSITION.md` | dispositions recorded; N1's obligation reassigned, N3 answered, N5 retired for this route |
-| independent review | `review/REVIEW_R1.md` | r1 PASS_WITH_NOTES (43 PASS / 6 INFO / 3 NOT_CHECKABLE_LOCALLY / 4 FAIL); repairs applied, see below |
+| independent review | `review/REVIEW_R1.md`, `review/REVIEW_R2.md` | r1 PASS_WITH_NOTES (43/6/3/4); r2 PASS_WITH_NOTES (60/5/2/4) — all four r1 FAILs REPAIRED, four prose FAILs raised and corrected |
 
 ## The finding
 
@@ -41,10 +41,10 @@ Two results stand:
 K5 therefore stays **PARTIAL** with m = 5 open on [305, 309]; coverage map r4 (`a3bddd83…`) is untouched and no r5
 exists. The continuation plan is `phase_c/EXECUTION_DECISION.md` §5.
 
-## Review r1 and the repairs it forced
+## The two independent reviews and the repairs they forced
 
-The independent reviewer reproduced every published number from its own implementation and confirmed the stop
-decision, but raised four FAILs, all repaired before publication:
+**Round 1** reproduced every published number from its own implementation and confirmed the stop decision, but raised
+four FAILs, all repaired:
 
 - **N1** — premise (P3′) applied an adopted *midpoint* bound inside the order-4 recursion, which theorem TC (P3)
   needs uniformly on the cell. Repaired with two towers and a mean-value correction; the magnitudes moved from
@@ -57,3 +57,23 @@ decision, but raised four FAILs, all repaired before publication:
 
 Notes N2 (self-contained evidence), N3 (CONSERVATIVE scaling), N6, N7, N9, N10, N11 and N13 (the honest expectation
 for the continuation) were also addressed.
+
+**Round 2** checked the repairs themselves. It wrote its own exact-rational implementation of theorem TC-T from the
+theorem text *before* opening any namespace code, drove it from committed files alone, and reproduced **all 20
+published exact-rational strings as exact `Fraction` equalities**, both atom-constant series, all five critical ratios
+and the derived identity gate; 49 of 53 input perturbations move its output. It found **all four round-1 FAILs
+REPAIRED** and the (P3′) r2 mathematics sound, and raised four further FAILs — every one of them prose, none moving a
+headline number, a theorem step, the stop decision or cell 305's closure:
+
+- **M1** — §4's radius decomposition was wrong in both directions: the order-3 residual term is the largest single
+  term everywhere except r = 4 on cells 308–309, and the f_G share is 71.6–78.7 %, not "about two thirds". Replaced
+  with the exact eight-term decomposition; the C1-before-C2 ordering now rests on §3, where it belongs.
+- **M2** — the adopted registry's gain at e = 0 is 500.409 against 1232.836, i.e. **2.46×**, not 469.8 / 2.6×.
+- **M3** — the pure-tower σ₄ at r = 4 is 345.10 at cell 309; 355 is cell 305's.
+- **M4** — `THEOREM_TCT.md` §2 labelled the *closure* threshold (10.55–64.72) as the break-even between the two
+  enclosures; the break-even is 44.6–53.5.
+
+Its informational notes were acted on too: which half of (P3′) actually binds (M5), the `cells.json` index collision
+across detectors that traps third-party reproducers (M6), the defensive-only order-4 clamp (M7), the single hinge the
+T2 refutation turns on (M8), and re-*derivable* versus re-*runnable* (M9). Following M10, its review is committed on
+its own, before this response to it.

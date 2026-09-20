@@ -78,6 +78,13 @@ The reason the audit's arithmetic was optimistic: it charged the order-3 candida
 motion ρ·\|Ĝ(a)\| ≤ ρ·10, i.e. ≤ 0.54, whereas the adopted evidence puts \|Ĝ(a)\| at 0.681·s_G with s_G ≈ 20–107 on
 the measured tail, giving a centre motion of 0.6–4.2 on its own — before any radius.
 
+**The refutation has exactly one hinge, and it should be named.** With the measured suprema, s_G = 10 and
+δ_G = 10⁻³, the route closes 3/5 if \|Ĝ(a)\| = s_G, 4/5 if \|Ĝ(a)\| = 0.681·s_G, and **5/5 — i.e. USEFUL — only if
+\|Ĝ(a)\| = 0 exactly** (review r2 note M8). "No reading reaches USEFUL" is therefore a claim about every reading in
+which the order-3 candidate does not vanish exactly at the evaluation point, and it is justified twice over: by the
+frozen comparison's own "abs_G_at_a ≤ sup of the G candidate", and by the adopted ratio 0.680–0.681 measured on all
+170 Campaign-A objects.
+
 **The exact threshold.** The tail closes under T2 if and only if the tail's certified order-3 candidate supremum
 satisfies s_G ≤ ratio · s_H with (`critical_sup_G_over_sup_H_ratio`, exact bisection on the frozen test):
 
@@ -110,11 +117,26 @@ No previously passing cell regresses (m = 1, 2, 3 stay complete on 0–309); no 
 executing it under the *current* gate file. Closing cell 305 therefore needs a **new, separately frozen gate** owned by
 the next successor — frozen, as always, before its own forecast is computed.
 
-**Where the radius goes.** Per object at cell 309 the radii are 2.077, 3.157, 3.786, 4.498, 4.414. The order-3
-residual term A0·ρ·f_G dominates at r = 0, 1, 2 (≈ 74 %, 72 %, 65 % of the radius) but **not** at r = 3, 4, where the
-(P3) remainder A0·ρ²·Env4/2 is comparable or larger (σ₄ reaches 235 at r = 4 through the J/h tower, for which no
-adopted order-4 evidence exists). This *strengthens* the stop decision: a route that only removes f_G — which is
-exactly what a real order-3 candidate does — cannot recover more than about two thirds of the radius.
+**Where the radius goes.** Per object at cell 309 the radii are 2.077, 3.157, 3.786, 4.498, 4.414. Decomposing
+rad_r = A0·p2 + 2A1·p1 + A2·p0 into its eight terms (review r2 note M1):
+
+| cell | r | rad | A0·ρ·f_G | A0·ρ²·Env4/2 | next largest |
+|---|---|---|---|---|---|
+| 309 | 3 | 4.4978 | **2.463 (55 %)** | 1.139 (25 %) | 2A1·ρ²·f_G/2 = 0.615 (14 %) |
+| 309 | 4 | 4.4136 | 1.552 (35 %) | **2.049 (46 %)** | 2A1·ρ²·f_G/2 = 0.388 (9 %) |
+| 305 | 3 | 4.5217 | **2.741 (61 %)** | 0.852 (19 %) | 0.685 (15 %) |
+| 305 | 4 | 5.0786 | **2.535 (50 %)** | 1.546 (30 %) | 0.633 (12 %) |
+
+The order-3 residual term A0·ρ·f_G is the largest single term everywhere except at r = 4 on cells 308 and 309, where
+the (P3) remainder A0·ρ²·Env4/2 overtakes it (σ₄ reaches ≈ 235 at r = 4 through the J/h tower, for which no adopted
+order-4 evidence exists). Summing every f_G-bearing term over r gives **78.7 / 77.1 / 75.0 / 73.2 / 71.6 %** of the
+total radius on cells 305…309, and dropping f_G to its `eps_src[3]` floor would take the magnitude to 1.22–1.35, below
+every M_needed — so an order-3 residual that cost nothing would close all five cells.
+
+That is exactly why the ordering C1 before C2 rests on §3 and not on this decomposition: **a real Ĝ does not remove
+f_G for free.** It pays ‖Ĝ‖ through Env4 and \|Ĝ(a)\| through the centre motion, which is precisely why
+`T2_EVIDENCE` closes 0/5 and why the critical ratio at cell 309 is 10.55. C1 shrinks every one of the eight terms at
+once; C2 trades the largest of them for two new ones.
 
 ## 5. Costed continuation plan
 
@@ -145,10 +167,13 @@ into theorem TC-T's **Taylor** residuals p₀, p₁, p₂ (at cell 309, r = 0: 1
 re-litigated.
 
 **What C1 can be expected to deliver, honestly.** Lemma Dv′ gives A0 = Ā_eff ≥ sup_B E_a[τ]. At e = 0 the adopted
-registry bought 469.8 against C_upper = 1233, a 2.6× reduction. At tail drift e ≈ 1.6–2.1 with the frozen CUSUM
+registry bought **500.409** against `cells.json` cell 0's C_upper = 1232.836, a **2.46×** reduction — enough, as a
+historical precedent, to clear cells 306, 307 and 308 (1.091×, 1.502×, 2.206× on A0 alone) but not cell 309's 3.294×.
+At tail drift e ≈ 1.6–2.1 with the frozen CUSUM
 (h, k) = (5, ½) the mean increment is e − k ≈ 1.1–1.6, so a renewal estimate puts E_a[τ] at order h/(e − k) ≈ 3.1–4.5
 against C_upper = 5.78–7.73 — a ratio near **1.7**, which clears cells 306 and 307 and is **short of the 2.21× and
-3.29× that 308 and 309 need on A0 alone**. Gains in A1 and A2 (through C = sup‖Ĝ_e‖ and the D-derivative bounds) would
+3.29× that 308 and 309 need on A0 alone**. The renewal heuristic and the e = 0 precedent therefore disagree about
+cell 308 (1.7× against 2.46×) and agree that cell 309 is the hard one. Gains in A1 and A2 (through C = sup‖Ĝ_e‖ and the D-derivative bounds) would
 have to make up the rest. **Expected outcome: 3/5 (cells 305–307) securely; 4–5/5 only if the taboo constants are also
 favourable.** That is an estimate from a renewal heuristic, not a certificate, and the next campaign must freeze its
 gate before refining it.

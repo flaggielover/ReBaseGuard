@@ -39,8 +39,9 @@ its freeze. Recorded here so the obligation is not lost with Campaign B's stop.
 **Status: DOES NOT BECOME LOAD-BEARING for Campaign B as executed, and is partly retired.**
 
 The tail domain does introduce qualitatively new source-tower behaviour: the frozen J/h Leibniz tower, which was
-harmless at the lower front, is the *dominant* term at the tail (σ3 = 5.9–67.2 and σ4 up to 355 from the pure tower at
-cell 309, against whole-cell magnitudes of order 4). So the question the adjudicator raised is live at the tail.
+harmless at the lower front, is a *leading* term at the tail (σ3 = 5.9–67.2 and σ4 up to 345 from the pure tower at
+cell 309 — 355 is cell 305's value — against whole-cell magnitudes of order 4). So the question the adjudicator raised
+is live at the tail.
 
 Campaign B answers it without new manufactured fixtures, because it does not *trust* the tower — it **intersects the
 tower with adopted, independently certified evidence for the same objects** (theorem TC-T premise (P3′)):
@@ -50,9 +51,10 @@ a valid upper bound. Where the two disagree they disagree by 2–30× and the ad
 
 Review r1 note N1 found that r1 of (P3′) applied the adopted *midpoint* bounds to σ4, which premise (P3) needs
 uniformly on the cell. (P3′) r2 keeps a midpoint tower for σ3 and a cell tower carrying the mean-value correction
-ρ·sup_C‖h_j⁗‖ for σ4. After the repair σ4 still reaches ≈ 235 at r = 4 and the (P3) remainder A0·ρ²·Env4/2 is the
-*dominant* term of the radius at r = 3, 4 — so on the tail the tower remains a binding premise at order 4, where no
-adopted evidence exists at all, and that is now stated in `phase_c/EXECUTION_DECISION.md` §4 rather than glossed.
+ρ·sup_C‖h_j⁗‖ for σ4. After the repair σ4 still reaches ≈ 235 at r = 4, and the (P3) remainder A0·ρ²·Env4/2 it feeds
+is the largest single term of the radius at r = 4 on cells 308 and 309 — though not at r = 3 anywhere, where the
+order-3 residual term is 55–61 % (review r2 note M1). So on the tail the tower remains a binding premise at order 4,
+where no adopted evidence exists at all; `phase_c/EXECUTION_DECISION.md` §4 carries the full term decomposition.
 
 The W assembly and the order-2 centre — the other half of the blind spot — are now covered by a **new** gate this
 successor introduces, which Campaign A did not have: `tct_rule.derived_identity_gate` rebuilds the adopted record's

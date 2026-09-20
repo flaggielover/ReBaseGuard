@@ -63,8 +63,13 @@ the identity above already carries the **true** source — and it keeps the fiel
 **What is traded.** A real Ĝ makes f_G ≈ 10⁻³ but pays ‖Ĝ‖ and |Ĝ(a)|; Ĝ := 0 makes those zero but pays
 f_G ≈ 4.9–8.9. On the lower front, where ρ ≈ 2.7·10⁻⁴, the ρ·f_G term is negligible and the real candidate is
 strictly better. On the tail, where ρ ≈ 4.1–5.4·10⁻², the trade reverses unless the order-3 candidate's certified
-supremum is below ≈ 10.5–64.7 × s_H (per cell; `evidence/forecast_r2/TAIL_FORECAST_R2.json`
-`critical_sup_G_over_sup_H_ratio`). Both choices are valid enclosures, so a campaign may compute both and intersect.
+supremum is below ≈ 44.6–53.5 × s_H (per cell, under the adopted evidence model \|Ĝ(a)\| = 0.681 s_G) — that is the
+**break-even between the two enclosures**, and it must not be confused with
+`evidence/forecast_r2/TAIL_FORECAST_R2.json` `critical_sup_G_over_sup_H_ratio` (64.72 / 47.99 / 32.03 / 19.20 / 10.55),
+which is the quite different threshold at which the real-Ĝ route still **closes** each cell (review r2 note M4). The
+two coincide only near cell 305: at cell 309 a real candidate with s_G = 20·s_H gives a *smaller* enclosure than
+Ĝ := 0 and still fails to close, while at cell 305 s_G = 60·s_H gives a *larger* one and still closes, because Ĝ := 0
+closes there with margin. Both choices are valid enclosures, so a campaign may compute both and intersect.
 
 ## 3. Premise (P3′) — σ3 and σ4 from adopted Aux3 evidence
 
@@ -96,8 +101,20 @@ The cell tower's order-3 slot carries the mean-value correction ‖h_j'''(e)‖ 
 analytic on the cell), with sup_C‖h_j⁗‖ taken from the **unrefined** tower, which is cell-uniform by (P3); the
 order-4 entries are then re-derived from the corrected lower orders, which is valid because the Leibniz recursion
 holds pointwise in e, so cell-uniform inputs give a cell-uniform output. The minimum of two valid upper bounds is a
-valid upper bound, so (P3′) r2 is sound by construction. It reduces σ3 to 0.69–3.81 and σ4 from ≈ 355 to ≈ 235 at
-r = 4, and the resulting whole-cell magnitude from 4.2617 to 3.9643 at cell 309.
+valid upper bound, so (P3′) r2 is sound by construction. At cell 309 it reduces σ3 to 0.69–3.81 and σ4 at r = 4 from
+the pure tower's **345.10** to 235, and the resulting whole-cell magnitude from 4.2617 to 3.9643. (The pure-tower σ4
+at r = 4 runs 355.35 / 352.81 / 350.28 / 347.72 / 345.10 across cells 305…309; 355 is cell 305's, not cell 309's —
+review r2 note M3.)
+
+The order-4 clamp `t_cell[j,4] ← min(·, tower[j,4])` in the implementation is **defensive only** and never fires: the
+cell tower is ≤ the pure tower componentwise and the Leibniz recursion is monotone in its inputs, so the re-derived
+value is automatically ≤ `tower[j,4]`. The soundness comes entirely from the mean-value correction and the pointwise
+recursion (review r2 note M7).
+
+**Which half of (P3′) is live.** Two of the ten adopted inputs per cell never bind, in the safe direction (review r2
+note M5): `h:1:3` loses to the frozen `‖h_1'''‖ ≤ sup_C‖S_0''‖`, and the r = 0 source refinement loses to `sup_S0[3]`
+because `Sclosed:0:3` is the *same closed-form quantity computed twice* and agrees with it to 8.7·10⁻¹⁷. The live half
+of (P3′) is `S:r:3` for r = 1…4 and `h:j:3` for j = 2, 3, 4.
 
 ## 4. Statement and consumption
 
@@ -113,6 +130,12 @@ Consumption is theorem TC §6 unchanged: H_k ← H_k ∩ 𝓗_m(k) (refuse if em
 frozen `k5b_literal`.
 
 ## 5. Identity of the replayed inputs
+
+**A reproduction trap, for anyone re-deriving this from the committed evidence.** The frozen cover `cells.json` holds
+642 entries and its `index` field is **not unique**: it collides across detectors, so `index = 305` exists for both
+CUSUM (e ≈ 1.66, ρ = 0.0405, C_upper = 7.73) and SR (e ≈ 3.965, ρ = 0.1033, C_upper = 3033). A reader who keys on
+`index` alone silently loads the SR cell and gets a Γ wrong by ≈ 0.41 while every other quantity still matches. Filter
+on `detector == "CUSUM"` first; the namespace itself does, through the frozen loader (review r2 note M6).
 
 `cert.norms`, `cert.sup[F|D|H, r, 0]`, `sup_S0`, `Ĥ_r(a)` and the W enclosures are not stored in the adopted K1
 record; they are recomputed by the frozen chain in replay mode (`code/tct_inputs.py`), where the frozen producer's

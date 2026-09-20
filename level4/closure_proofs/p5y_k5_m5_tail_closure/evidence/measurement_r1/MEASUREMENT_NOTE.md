@@ -38,9 +38,12 @@ ran (the process itself survived and wrote its output). Its wall clock was 04:43
 
 `ADOPTED_TAIL_INPUTS.json` (sha256 `485fb125…`) carries, verbatim and manifest-checked, the adopted record fields the
 tail arithmetic consumes that are not in the measurement records — the Aux3 order-3 candidate suprema and midpoint
-errors (premise (P3′)), `eps_cell_refined`, `C_upper` and the per-m `R`/`D`/`R2` intervals and `M_R2`. With it the
-namespace can be re-derived from its own committed evidence (review r1 note N2); `tail_forecast_r2.py` re-verifies
-every one of those fields against the live record before using it.
+errors (premise (P3′)), `eps_cell_refined`, `C_upper` and the per-m `R`/`D`/`R2` intervals and `M_R2`. With it every
+published tail number can be **re-derived** from committed files alone, which review r2 did independently. It does not
+make the generator **re-runnable** off-host: `tail_forecast_r2.py` still reads the live sealed records and uses this
+extract only as a field-by-field checker — the safe direction, but a distinction worth keeping (review r2 note M9).
+Anyone re-deriving from `cells.json` must filter on `detector == "CUSUM"` first: its `index` field collides across
+detectors, and SR `index = 305` is a different cell entirely (note M6).
 
 ## What the numbers say
 
