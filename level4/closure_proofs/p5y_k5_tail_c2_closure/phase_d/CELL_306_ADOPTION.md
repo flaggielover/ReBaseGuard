@@ -6,7 +6,11 @@ found one delivered, one not, and one not — and was right on all three counts.
 **Cell 305 is not in question.** Γ = −0.088029, margin 1.353×, it survives the ×1.25 degradation (Γ_deg =
 −0.033733), and three independent derivations now close it — Campaign B under Lemma G, C1 under Lemma Dv′, and C2
 under its refined registry, plus the pre-freeze reviewer's own independent implementation. Neither reviewer has
-raised an objection to it. It is adopted.
+raised an objection to it. **It is carried to adoption unconditionally** — meaning C2 proposes it for adoption
+with no further condition attached, in both branches of the decision below. It is not *adopted* yet, and nothing
+in this campaign may say that it is: adoption is a terminal governance state that the freeze, qualification, seal,
+deterministic double consumption and independent adjudication chain confers, and none of those has happened. (Flagged
+by pre-freeze review r2, note 10, against exactly this sentence.)
 
 ## Condition 1 — a finer taboo block partition. **Delivered, and it worked.**
 
@@ -93,7 +97,7 @@ Written and committed **before** any adjudication exists, so that C2 is not choo
 - **If the adjudicator sets a margin floor that cell 306's margin meets** — adopt **{305, 306}**.
 - **If the adjudicator sets a floor cell 306 fails, or declines to set one** — adopt **305 only**. Cell 306 is
   carried to the successor with its refined registry intact, and closes there under a floor frozen in advance.
-- **In either branch cell 305 is adopted**, so the frozen `D_PARTIAL` rule — "a non-empty closed subset is always
+- **In either branch cell 305 is the one carried to adoption**, so the frozen `D_PARTIAL` rule — "a non-empty closed subset is always
   adopted when the adjudication chain completes" — is satisfied either way. C2 is not narrowing the rule; it is
   declining to be the one that decides a question it is disqualified from deciding.
 

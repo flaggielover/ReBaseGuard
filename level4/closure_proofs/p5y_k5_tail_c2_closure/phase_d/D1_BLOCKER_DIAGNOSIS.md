@@ -1,6 +1,6 @@
 # Campaign C2, Phase D1 — what actually blocks the tail
 
-Diagnosis only. Machine-readable: `evidence/phase_d1/C2_D1_BLOCKER.json` (sha256 `e929e857…`), produced from
+Diagnosis only. Machine-readable: `evidence/phase_d1/C2_D1_BLOCKER.json` (sha256 `62531bf5…`), produced from
 committed evidence with stdlib Python alone, after the C2 gate was frozen at `87309610`.
 
 ## 1. The decomposition
@@ -48,16 +48,29 @@ The review suggested the ordering reverses, quoting τ +8.82 % against D_lo +8.6
 convention consistently applied, D_lo > τ. Recomputed here rather than accepted, because it is the finding the
 whole section rests on.
 
-There is also a reason to prefer the tabulated convention beyond symmetry: × 0.9 is not uniformly applicable. At
-cell 307 it drives C_T below τ, violating the Lemma Dv′ premise C ≥ τ, and `deflated_consume.atom_constants`
-refuses outright. A sensitivity convention that puts the constants outside the lemma's hypotheses is the wrong one
-to publish.
+An earlier version of this paragraph claimed a further reason to prefer the tabulated convention: that × 0.9
+drives C_T below τ at cell 307 and so leaves the Lemma Dv′ hypotheses. **That was wrong, and the pre-freeze review
+was right to call it (note 65).** ÷ 1.1 does exactly the same thing, on exactly the same three cells — see the ◆
+note above. Neither convention is "uniformly applicable" in that sense, so this is not a reason to prefer either
+one. The reason to prefer ÷ 1.1 is symmetry in A0 = τ/D_lo, and that reason alone.
 
 | cell | D_lo | D2 | D1 | C_T | τ | A0 | A1 | A2 | all three A |
 |---|---|---|---|---|---|---|---|---|---|
 | 305 | **+8.60 %** | +0.07 % | +0.57 % | +1.36 % | **+8.02 %** | +6.15 % | +1.63 % | +0.23 % | +8.02 % |
-| 307 | **+8.67 %** | +0.07 % | +0.56 % | +1.38 % | **+8.10 %** | +6.23 % | +1.64 % | +0.23 % | +8.10 % |
-| 309 | **+8.72 %** | +0.07 % | +0.54 % | +1.39 % | **+8.17 %** | +6.30 % | +1.65 % | +0.22 % | +8.17 % |
+| 307 | **+8.67 %** | +0.07 % | +0.56 % | +1.37 %◆ | **+8.10 %** | +6.23 % | +1.64 % | +0.23 % | +8.10 % |
+| 309 | **+8.72 %** | +0.07 % | +0.54 % | **+0.93 %**◆ | **+8.17 %** | +6.30 % | +1.65 % | +0.22 % | +8.17 % |
+
+◆ **A 10 % improvement in C_T alone is not available at these cells, and the first published version of this table
+did not say so (pre-freeze review r2, notes 65/66).** Lemma Dv′ requires C ≥ τ. On cells 307, 308 and 309, C_T/1.1
+falls *below* τ — 4.846842 < 4.851873, 4.553601 < 4.633777, 4.277739 < 4.418493 — so the perturbation leaves the
+lemma's hypotheses. The pinned consumer `deflated_consume.atom_constants` refuses such a tuple; the local copy in
+`c2_d1_blocker.py` had no such guard and returned a number anyway. The guard is now present, and the C_T column
+reports the **admissible best, C_T = τ**, exactly as the D_lo column has always been capped at 1 because D is a
+probability. The corrected figures are +1.3681 % (307), +1.1502 % (308), +0.9335 % (309), against the
+inadmissible +1.3823 / +1.3945 / +1.3887 % published before — an overstatement of 0.01 / 0.24 / 0.46 percentage
+points. Cells 305 and 306 are unaffected; C_T/1.1 stays above τ there. Nothing else in the table, and no Γ,
+magnitude or blocker share anywhere in this campaign, changes. **The correction strengthens the section's
+conclusion**: C_T's real lever at cell 309 is 0.93 %, not 1.39 %, against D_lo's 8.72 %.
 
 Three findings, and one of them corrects the plan C1 handed forward:
 

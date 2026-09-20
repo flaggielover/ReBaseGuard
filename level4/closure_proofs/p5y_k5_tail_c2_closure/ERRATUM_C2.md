@@ -117,6 +117,29 @@ C2's pre-registration, not the deterministic direction. This is recorded in full
 `phase_d/D_PRIME_OPPORTUNITY.md`, and `phase_r/R_STAGE_DESIGN.md` now opens with it as a **blocking precondition**
 on any R-stage authorization.
 
+## Dispositions from the SECOND pre-freeze review
+
+A second independent fresh-context review ran on the repairs at `ef58310c`
+(`review/REVIEW_C2_PREFREEZE_R2.md`): 71 rows, 55 PASS, 5 NOTE, 3 INFO, **3 FAIL**. It confirmed every repair
+above independently — including re-certifying cell 306 artifacts on the Arb/FLINT stack, which neither earlier
+reviewer could do — and it found that on the one point where C2 corrected the *first* reviewer (the ×0.9
+convention and the D_lo-vs-τ ordering), **C2 was right**. Its three FAILs:
+
+| | finding | repair |
+|---|---|---|
+| **r2 FAIL 65** | C2's *newly added* claim that ×0.9 is disqualified because it drives C_T below τ is **wrong**: the published ÷1.1 convention does exactly the same thing on exactly the same three cells (307: 4.846842 < 4.851873; 308: 4.553601 < 4.633777; 309: 4.277739 < 4.418493). | Claim withdrawn in `phase_d/D1_BLOCKER_DIAGNOSIS.md`. The only reason to prefer ÷1.1 is symmetry in A0 = τ/D_lo, and the text now says that and nothing more. A repair that introduced a new error, caught before freeze. |
+| **r2 FAIL 66** | Consequently the published C_T sensitivity figures for 307/308/309 were computed **outside the Lemma Dv′ hypotheses**, reached only because `c2_d1_blocker.atom_dv_prime` is an unguarded local copy of the pinned consumer, which would have refused. Undisclosed. | Guard added, so the local copy now refuses exactly as `deflated_consume.atom_constants` does. The C_T column now reports the **admissible best C_T = τ** — the same treatment D_lo has always had at its cap of 1 — giving +1.3681 / +1.1502 / +0.9335 % against the inadmissible +1.3823 / +1.3945 / +1.3887 %. Evidence regenerated (`62531bf5…`). Γ, magnitudes, blocker shares and every other sensitivity row are bit-unchanged. **The correction strengthens §2's conclusion**: C_T's real lever at 309 is 0.93 %, not 1.39 %, against D_lo's 8.72 %. |
+| **r2 FAIL 10** | `phase_d/CELL_306_ADOPTION.md` asserted "It is adopted." of cell 305 — a terminal governance state the adjudication chain has not reached. | Rewritten: cell 305 is *carried to adoption unconditionally*, and the text now states that adoption is conferred only by the freeze → qualification → seal → double consumption → adjudication chain, none of which has happened. |
+
+On the question C2 asked the reviewer to attack — separating three internal diagnostics from asserted to measured
+*after* a test failed — the review found it **not a moved goalpost**, verified from the git history that the
+consumed-constant comparisons and the strict determinism branch are character-for-character unchanged across
+`12585997..8aee1fc5`, and supplied a stronger argument than C2's own: `certify_block` sets
+`ok = margin > 0 and wmin >= 0`, and `certified is True` is asserted unconditionally in **both** passes, so the
+load-bearing content of all three diagnostics was never relaxed — only their low-order digits. It also correctly
+criticised C2's wording: "not a bound anyone relies on" is wrong for `allowance_upper`, which *is* an input to the
+certification inequality. That wording is withdrawn here.
+
 ## Cell 306
 
 The predecessor's reviewer set three conditions before 306 may be adopted. The disposition is in

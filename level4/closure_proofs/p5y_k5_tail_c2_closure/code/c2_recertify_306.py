@@ -65,9 +65,15 @@ DIAGNOSTIC_NOTE = (
     "the far side of a rounding boundary rather than materially different. None was in a consumed constant. The "
     "separation is not a relaxed goalpost, and the reason is checkable: the consumed-constant test is UNCHANGED "
     "from the first version and passed 45/45 as originally written, at both precisions; the determinism pass is "
-    "also unchanged and requires bit-identity on EVERY field including the diagnostics, and passes. What changed "
-    "is only that a quantity which is not a bound anyone relies on is no longer required to land on the same side "
-    "of a rounding boundary at a different working precision, which was never a meaningful requirement.")
+    "also unchanged and requires bit-identity on EVERY field including the diagnostics, and passes. "
+    "An earlier version of this note called these 'a quantity no one relies on', which is WRONG and was "
+    "corrected after the second pre-freeze review: allowance_upper IS an input to the certification inequality. "
+    "The correct argument is stronger and is the reviewer's. certify_block sets ok = (margin > 0 and wmin >= 0), "
+    "and `certified is True` is asserted UNCONDITIONALLY in both passes of this module -- so the load-bearing "
+    "content of all three diagnostics is still fully checked at both precisions. What is no longer asserted is "
+    "only their low-order digits: that they land on the same side of a rounding boundary at a different working "
+    "precision. The worst violating deviation was allowance_upper at +5.19e-30 relative, which is +3.85e-34 "
+    "absolute against that block's certified margin of 0.156.")
 
 
 def load_taboo():

@@ -55,7 +55,17 @@ def rat(p) -> F:
     return F(p) if isinstance(p, str) else F(p[0]) + F(p[1])
 
 
+class PremiseRefusal(Exception):
+    """Lemma Dv' was asked for constants outside its own hypotheses."""
+
+
 def atom_dv_prime(Abar, tau, C, Dlo, D1, D2) -> dict:
+    # The pinned consumer `deflated_consume.atom_constants` refuses unless these hold; this local copy did not,
+    # and so would happily return constants for an inadmissible tuple. Pre-freeze review r2 (notes 65/66) found
+    # the gap: the C_T row of the sensitivity table below perturbs C_T alone, and on cells 307-309 a 10 %
+    # improvement drives C_T under tau, which is outside Lemma Dv'. The guard is added so the two agree.
+    if not (Dlo > 0 and tau >= 1 and C >= tau and Abar >= 1):
+        raise PremiseRefusal("constants violate tau >= 1, C >= tau, Dlo > 0, Abar >= 1")
     eff = Abar if Abar < tau / Dlo else tau / Dlo
     d1, d2 = D1 / Dlo, D2 / Dlo
     return {"A0": eff, "A1": eff * (K1_BOUND * C + d1),
@@ -168,13 +178,24 @@ def main() -> int:
         for name, better in (("D_lo", {"D_lo": op["D_lo"] * F(11, 10)}), ("D2", {"D2": op["D2"] * F(10, 11)}),
                              ("D1", {"D1": op["D1"] * F(10, 11)}), ("C_T", {"C_T": op["C_T"] * F(10, 11)}),
                              ("tau", {"tau": op["tau"] * F(10, 11)})):
-            p = dict(op) | better
+            p, clamped = dict(op) | better, None
             if name == "D_lo" and p["D_lo"] > 1:
                 p["D_lo"] = F(1)                     # D is a probability; it cannot exceed 1
+                clamped = "D_lo capped at 1"
+            if name == "C_T" and p["C_T"] < p["tau"]:
+                # Lemma Dv' needs C >= tau, so a full 10 % improvement in C_T alone is simply NOT AVAILABLE on
+                # this cell. The admissible best is C_T = tau, and that is what is reported. Reporting the
+                # unclamped number would be an extrapolation outside the lemma's hypotheses -- which is what the
+                # first published version of this table did on cells 307, 308 and 309.
+                clamped = (f"a 10 % improvement is inadmissible here (C_T/1.1 = {float(p['C_T']):.6f} < tau = "
+                           f"{float(p['tau']):.6f}); reported at the admissible best C_T = tau")
+                p["C_T"] = p["tau"]
             A2_ = atom_dv_prime(Abar=p["Abar"], tau=p["tau"], C=p["C_T"], Dlo=p["D_lo"], D1=p["D1"], D2=p["D2"])
             mg = direct_test(T, R, m, aux, A2_, ad, cov)[0]
             sens[name] = {"magnitude": float(mg), "delta_vs_base": float(mg - mag),
                           "relative_gain": float((mag - mg) / mag)}
+            if clamped:
+                sens[name]["admissibility_clamp"] = clamped
         for name, A_ in (("A0", {**A, "A0": A["A0"] * F(10, 11)}), ("A1", {**A, "A1": A["A1"] * F(10, 11)}),
                          ("A2", {**A, "A2": A["A2"] * F(10, 11)}),
                          ("A_all", {j: A[j] * F(10, 11) for j in A})):
