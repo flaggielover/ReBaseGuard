@@ -37,11 +37,16 @@ Each predecessor lost its campaign to a gate defect, and C2's gate is written ag
 | gate (frozen **before** any forecast) | `config/FEASIBILITY_GATES_C2.json` | frozen at `87309610`, sha `098dd7f5…`, never modified |
 | D1–D5 | `phase_d/` | **complete — `D_PARTIAL`** |
 | R-stage design | `phase_r/` | complete, **design only**, blocked on a precondition |
-| independent pre-freeze review r1 | `review/REVIEW_C2_PREFREEZE.md` | NOT_READY — 6 FAIL (60 PASS / 10 INFO / 3 N/A) |
-| independent pre-freeze review r2 | `review/REVIEW_C2_PREFREEZE_R2.md` | NOT_READY — 3 FAIL (55 PASS / 5 NOTE / 3 INFO) |
-| independent pre-freeze review r3 | `review/REVIEW_C2_PREFREEZE_R3.md` | NOT_READY — 1 FAIL (31 PASS / 7 NOTE) |
-| independent pre-freeze review r4 | `review/REVIEW_C2_PREFREEZE_R4.md` | NOT_READY — 3 FAIL (28 PASS / 5 NOTE) |
-| erratum and review disposition | `ERRATUM_C2.md` | all thirteen FAILs dispositioned |
+| independent pre-freeze review r1 | `review/REVIEW_C2_PREFREEZE.md` | NOT_READY — **6 FAIL** |
+| independent pre-freeze review r2 | `review/REVIEW_C2_PREFREEZE_R2.md` | NOT_READY — **3 FAIL** |
+| independent pre-freeze review r3 | `review/REVIEW_C2_PREFREEZE_R3.md` | NOT_READY — **1 FAIL** |
+| independent pre-freeze review r4 | `review/REVIEW_C2_PREFREEZE_R4.md` | NOT_READY — **3 FAIL** |
+| independent pre-freeze review r5 | `review/REVIEW_C2_PREFREEZE_R5.md` | NOT_READY — **2 FAIL** |
+| erratum and review disposition | `ERRATUM_C2.md` | all fifteen FAILs dispositioned |
+
+*FAIL counts only. Each review's PASS/NOTE/INFO breakdown is in its own file; they are deliberately not
+transcribed here, because a previous version did transcribe them and got two wrong — see `ERRATUM_C2.md`, r5
+FAIL 2. The FAIL counts are the ones that reconcile against the disposition rows in the erratum.*
 
 *(The rows above were "—" in the version frozen with the gate; this table is the only part of this README written
 after any C2 number existed.)*

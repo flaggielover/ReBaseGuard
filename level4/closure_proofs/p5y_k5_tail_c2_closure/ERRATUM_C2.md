@@ -198,6 +198,30 @@ rather than rising monotonically; and the ◆ note's closing clause "for the sam
 is removed as a non-sequitur — both its components are true and the τ/D_lo branch does bind on all five cells,
 but it supports finding 3, not the C_T headroom claim it was attached to.
 
+## Dispositions from the FIFTH pre-freeze review
+
+`review/REVIEW_C2_PREFREEZE_R5.md`, at `1663f558`: 34 rows, 27 PASS, 5 NOTE, **2 FAIL**. Both text-only, and both
+the documented shape again. It also did something no earlier round did: diffed **every leaf of
+`C2_D1_BLOCKER.json` across its entire commit history**, confirming that exactly nine leaves have ever changed in
+this campaign, all of them C_T sensitivity on cells 307–309.
+
+| | finding | repair |
+|---|---|---|
+| **r5 FAIL 1** | Round four replaced this section's opening with a table but **left the superseded r3-era paragraphs standing underneath**, claiming C2 had avoided "repeating the pattern a fourth time" — contradicted by the table twenty lines above and by the new paragraph saying "That was not enough". A stale self-contradicting remnant left by a repair, inside the section about stale remnants left by repairs. | Removed, with a marker recording what stood there. |
+| **r5 FAIL 2** | In the README row r4 asked C2 to rebuild, C2 added PASS/NOTE/INFO parentheticals **nobody requested** and got r2's wrong. | The parentheticals are **removed, not corrected** — that is the point of the lesson below. The README now carries FAIL counts only, which reconcile against the disposition rows here, and says why the rest is not transcribed. |
+
+**On r5 FAIL 2, the review is half right and the half it gets wrong matters.** Its claim that r1 has *zero*
+`NOT_CHECKABLE_LOCALLY` rows is **false**: the string occurs five times in that file and r1's own verdict table
+records `NOT_CHECKABLE_LOCALLY | 3` against a total of 79. C2's transcription of r1 was faithful. On r2 the review
+is right that the true breakdown is 62 PASS / 4 NOTE / 2 INFO — but C2's README faithfully transcribed **r2's own
+header**, which states 55 / 5 / 3 against a total of 71, and 55 + 5 + 3 + 3 = 66 ≠ 71. So the inconsistency
+originates in r2's self-report, not in C2's copying of it. Independently recounted here: r1 60/10/3/6, r2
+62/4/2/3, r3 31/7/1, r4 28/4/3.
+
+That does not rescue the decoration, and C2 is not going to argue it does. The counts were not asked for, were not
+needed, and propagated someone else's arithmetic error into the campaign's front door. **The fix is deletion, not
+correction.**
+
 ## The pattern, named
 
 Four review rounds, and **each of C2's repairs has carried an error of its own**:
@@ -208,37 +232,48 @@ Four review rounds, and **each of C2's repairs has carried an error of its own**
 | 2 | corrected that, and guarded the premise | left the same claim contradicting itself in this file, and drew the wrong inference from its own corrected numbers | r3 FAIL 6 |
 | 3 | corrected that, and added the field r3 asked for | added a **second** field r3 did not ask for, which reverses the ordering §2 rests on | r4 FAIL 1 |
 | 3 | said the overclaim was "corrected in both places" | corrected the prose, not the source comment r3 had explicitly named | r4 FAIL 2 |
+| 4 | replaced this section's opening with a table | left the superseded paragraphs underneath, contradicting the new table | r5 FAIL 1 |
+| 4 | rebuilt the README review row as r4 asked | added PASS/NOTE/INFO counts nobody asked for, propagating r2's own arithmetic error | r5 FAIL 2 |
+| 4 | wrote up r4 FAIL 1 | restated a reviewer's comparative claim unverified; it was false | **self-caught**, `1663f558` |
 
 Every instance has the same shape — **a correct primary argument or fix, with a second, unverified thing stacked
-on top of it.** The primary claim was sound every time; the decoration was not. Twice the decoration was an extra
-argument; once it was an extra field; once it was an extra claim about the completeness of the fix itself.
+on top of it.** The primary claim was sound every time; the decoration was not. Three times the decoration was an
+extra argument or restated claim; once an extra field; once an extra claim about the fix's own completeness; once
+a stale paragraph left behind by the fix.
 
-**And it happened a fifth time, inside this very disposition.** Writing up r4 FAIL 1, C2 restated the review's
-remark that renormalising by equal A0 effect makes D_lo "lead by a wider margin" — without checking it. It does
-not: that renormalisation divides both rows by the same constant, so the ratio is *identical* to `relative_gain`'s
-(1.0674 at cell 309 either way). It is wider only than the inverted per-unit column. C2 caught this in its own
-self-audit before the fifth review and corrected it above. The claim was inherited from a reviewer and restated
-unverified, which is the same failure mode as inheriting one's own unverified argument.
+One was caught by C2 rather than a reviewer. Writing up r4 FAIL 1, C2 restated the review's remark that
+renormalising by equal A0 effect makes D_lo "lead by a wider margin" — inherited from the reviewer's summary and
+not checked. It is false: that renormalisation divides both rows by the same constant, so the ratio is *identical*
+to `relative_gain`'s, 1.0674 at cell 309 either way. It is wider only than the inverted per-unit column. Caught in
+self-audit and corrected at `1663f558`. Inheriting a reviewer's unverified claim is the same failure mode as
+inheriting one's own.
 
-C2 did check, at source, the two claims it inherited from r3 rather than repeating the pattern there: the D_lo cap
-at 1 genuinely never executes (max D_lo × 1.1 across the tail is **0.932851**), and `deflated_consume` genuinely
-does type-check its inputs and post-check r2 ≤ r1. Both true, and r4 confirmed both to the digit. It also caught
-its own stale leaf-count before a reviewer had to. **That was not enough**: the same round still shipped an
-unrequested field whose effect it had not computed.
+C2 did also check, at source, the two claims it inherited from r3: the D_lo cap at 1 genuinely never executes (max
+D_lo × 1.1 across the tail is **0.932851**), and `deflated_consume` genuinely does type-check its inputs and
+post-check r2 ≤ r1. Both true, and r4 confirmed both to the digit. **That was not enough** — the same round still
+shipped an unrequested field whose effect it had not computed, and the round after it shipped two more pieces of
+unrequested decoration.
 
 The operational lesson for a successor is narrower than "be careful". It is: **when a review asks for one change,
-make that change and stop.** Three of the four instances above are C2 doing more than was asked and not checking
-the extra part. Any sentence in this namespace beginning "a further reason", and any artifact field not traceable
-to a specific review request or gate clause, should be treated as unverified until checked.
+make that change and stop.** Five of the seven instances above are C2 doing more than was asked and not checking
+the extra part; the other two are C2 failing to clean up after a change it did make. Any sentence in this
+namespace beginning "a further reason", and any artifact field or summary figure not traceable to a specific
+review request or gate clause, should be treated as unverified until checked.
 
-C2 has now checked, at source, the two claims it inherited from r3 rather than repeating the pattern a fourth
-time: the D_lo cap at 1 genuinely never executes (max D_lo × 1.1 across the tail is **0.932851**), and
-`deflated_consume` genuinely does type-check its inputs and post-check r2 ≤ r1 (`atom_constants` rejects any
-non-`Fraction` or negative constant; `atom_constants_r2` raises if any r2 constant exceeds its r1 counterpart).
-Both are true. It also corrected its own restatement of r3's leaf-diff count before a reviewer had to.
+The failure mode has a visible signature: it never touched a computed quantity. Across five rounds, **no Γ,
+magnitude, margin, requirement, gap fall, class or adopted-subset value has changed** — r5 confirmed by diffing
+every leaf of the D1 evidence across its whole history that exactly nine leaves have ever changed, all C_T
+sensitivity on 307–309. Every instance was in labelling, framing, or an ornament attached to a result that kept
+reproducing bit-exactly under four independent implementations. That is worth knowing about a campaign: its
+arithmetic was never the weak part, and its prose always was.
 
-A successor should expect this failure mode from this campaign's authorship specifically, and should treat any
-sentence beginning "a further reason" as unverified until it is checked.
+A successor should expect this failure mode from this campaign's authorship specifically.
+
+*(The two paragraphs that stood here until pre-freeze review r5 were the r3-era version of the text above, left
+in place when round four replaced the opening with the table. They claimed C2 had avoided "repeating the pattern
+a fourth time" — contradicted by the table twenty lines up, which records round three producing instances three
+and four — and re-asserted the leaf count r4 had already corrected. A stale, self-contradicting remnant left by a
+repair, inside the section about stale remnants left by repairs. Sixth instance; r5 FAIL 1.)*
 
 ## Cell 306
 
