@@ -132,8 +132,9 @@ frozen `k5b_literal`.
 ## 5. Identity of the replayed inputs
 
 **A reproduction trap, for anyone re-deriving this from the committed evidence.** The frozen cover `cells.json` holds
-642 entries and its `index` field is **not unique**: it collides across detectors, so `index = 305` exists for both
-CUSUM (e ≈ 1.66, ρ = 0.0405, C_upper = 7.73) and SR (e ≈ 3.965, ρ = 0.1033, C_upper = 3033). A reader who keys on
+642 entries (326 CUSUM, 316 SR) and its `index` field is **not unique**: it collides across detectors, so
+`index = 305` exists for both CUSUM (e₀ = 1.661402, ρ = 0.040521, C_upper = 7.732565) and SR (e₀ = 3.965268,
+ρ = 0.103301, C_upper = 3.033162). A reader who keys on
 `index` alone silently loads the SR cell and gets a Γ wrong by ≈ 0.41 while every other quantity still matches. Filter
 on `detector == "CUSUM"` first; the namespace itself does, through the frozen loader (review r2 note M6).
 
