@@ -1,0 +1,221 @@
+{
+ "ALL_PASS": true,
+ "G1_git": {
+  "branch": "p5y-k5-m5-tail-closure",
+  "dirty_paths": 9,
+  "frontier_is_ancestor_of_head": true,
+  "head": "006a126063271a2b8ec27e7a0c219272299f5334",
+  "merges_since_frontier": 0,
+  "origin_frontier": "3c1c6b9cae59ba09d96d1d90baa3ea9074822bca",
+  "origin_main": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+  "pass": true
+ },
+ "G2_coverage_map_r4": {
+  "K5_COVERAGE_COMPLETE": false,
+  "inputs": {
+   "coverage_map_r3_sha256": "6d598dc53293f91cdffb99f8fb3a0080542d8d0ca75c3110cc5fcc4db97a544d",
+   "freeze_commit": "3f540a33cf10ce5ea3fe0a35a2576a7368ad5f04",
+   "protocol_sha256": "10ff7e37e9b6e9ad1c39be4f32cceeeb7c413e50319efea4d0c7aa12ca76924f",
+   "tc_consumption_sha256": "1fa8d8dee78483c83d54bd90dba86a9316fb5c67c4acd43781a05103ab111f51",
+   "tc_index_sha256": "51c5ca9342afad54975f9f7d97e4d3ff006933fe60a231366b17c1c00b830cfd"
+  },
+  "open_per_m": {
+   "1": [],
+   "2": [],
+   "3": [],
+   "5": [
+    [
+     305,
+     309
+    ]
+   ]
+  },
+  "pass": true,
+  "r4_sha256": "a3bddd83234f33983e07b005b4686a5f3971264bb6bdd64d2c639339de210a35",
+  "union_open_ranges": [
+   [
+    305,
+    309
+   ]
+  ]
+ },
+ "G3_sealed_consumption": {
+  "consumption_sha256": "1fa8d8dee78483c83d54bd90dba86a9316fb5c67c4acd43781a05103ab111f51",
+  "crosscheck_comparisons": 136,
+  "open": {
+   "1": [],
+   "2": [],
+   "3": [],
+   "5": [
+    [
+     305,
+     309
+    ]
+   ]
+  },
+  "pass": true,
+  "pass_counts": {
+   "1": 310,
+   "2": 310,
+   "3": 310,
+   "5": 305
+  },
+  "replay_gate": "PASS (empty-TC composition reproduced the sealed adopted consumption exactly)",
+  "tc_cell_count": 34,
+  "tc_cells": [
+   11,
+   44
+  ]
+ },
+ "G4_campaign_A_adjudication": {
+  "counts_json": {},
+  "counts_md": [
+   27,
+   7,
+   3,
+   0
+  ],
+  "notes_present": {
+   "N1": true,
+   "N3": true,
+   "N5": true,
+   "N7": true
+  },
+  "pass": true,
+  "r4_regenerated_sha256": "a3bddd83234f33983e07b005b4686a5f3971264bb6bdd64d2c639339de210a35",
+  "r4_regeneration_byte_identical": true,
+  "sequencing_note_names_defect": true,
+  "sequencing_note_present": true,
+  "verdict_json": "ADOPTED",
+  "verdict_md": true
+ },
+ "G5_immutability": {
+  "adopted_namespace_changes": {
+   "p5y_k1_cover_ledger_successor": 0,
+   "p5y_k1_cusum_aux5_composite_closure": 0,
+   "p5y_k5_cusum_first_real_probe_protocol": 0,
+   "p5y_k5_cusum_order3_real_producer": 0,
+   "p5y_k5_perron_deflated_resolvent": 0,
+   "p5y_k5_remaining_cell_closure": 0,
+   "p5y_k5b_consumption_adapter": 0,
+   "p5y_k5b_independent_countersignature": 0
+  },
+  "campaign_A_changed_files_since_freeze": 64,
+  "campaign_A_changed_outside_evidence": [],
+  "pass": true
+ },
+ "G6_gates_and_blocker_map": {
+  "arithmetic_mismatches": [],
+  "blocker_map_sha256": "06a3d6ca4a891273d61105bb1dfe9fed676ed49fbf834b9a383abf78ab88a6cb",
+  "cells_json_matches_map": true,
+  "cells_json_sha256": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f",
+  "direct_fail_pairs": [
+   [
+    305,
+    5
+   ],
+   [
+    306,
+    5
+   ],
+   [
+    307,
+    5
+   ],
+   [
+    308,
+    5
+   ],
+   [
+    309,
+    5
+   ]
+  ],
+  "gates_frozen_before": "any route forecast of Campaign B and any certified or real computation of Campaign B",
+  "gates_sha256": "392101dd03b45ddf8feec5d4b986556ee474e77b5d0ec78488761ffb2cfafd94",
+  "gates_universe": {
+   "cells": [
+    305,
+    306,
+    307,
+    308,
+    309
+   ],
+   "m": [
+    5
+   ],
+   "pairs": 5,
+   "source": "phase_a/TAIL_BLOCKER_MAP.json (adopted K1 records, manifest-checked)"
+  },
+  "pass": true,
+  "rows": 40,
+  "tail_rows": {
+   "305": {
+    "C_upper": 7.732565297046676,
+    "Gamma": 0.04184057055161185,
+    "M_R2": 5.498290544160096,
+    "M_needed_for_direct_pass": 4.891579429929668,
+    "M_reduction_factor_needed": 1.12403174126504,
+    "penalty_rho_xhi_M": 0.3791781756264602,
+    "rho": 0.0405206,
+    "target_gate_status": "PASS"
+   },
+   "306": {
+    "C_upper": 7.230406258255243,
+    "Gamma": 0.11796363749135165,
+    "M_R2": 5.427004551140101,
+    "M_needed_for_direct_pass": 3.905055721051138,
+    "M_reduction_factor_needed": 1.3897380572278477,
+    "penalty_rho_xhi_M": 0.42063779338572466,
+    "rho": 0.0433348,
+    "target_gate_status": "PASS"
+   },
+   "307": {
+    "C_upper": 6.6792892997618765,
+    "Gamma": 0.1994837684313746,
+    "M_R2": 5.335183825031916,
+    "M_needed_for_direct_pass": 3.0761483479002325,
+    "M_reduction_factor_needed": 1.734371435198726,
+    "penalty_rho_xhi_M": 0.4711225589262594,
+    "rho": 0.04691045,
+    "target_gate_status": "PASS"
+   },
+   "308": {
+    "C_upper": 6.174137363908812,
+    "Gamma": 0.2883168090540232,
+    "M_R2": 5.296076774839419,
+    "M_needed_for_direct_pass": 2.432397764101128,
+    "M_reduction_factor_needed": 2.1773070395813896,
+    "penalty_rho_xhi_M": 0.5332119802886561,
+    "rho": 0.05074855,
+    "target_gate_status": "PASS"
+   },
+   "309": {
+    "C_upper": 5.782414324348792,
+    "Gamma": 0.374145054227244,
+    "M_R2": 5.269941292129297,
+    "M_needed_for_direct_pass": 1.969827744481147,
+    "M_reduction_factor_needed": 2.675331031809282,
+    "penalty_rho_xhi_M": 0.597471099721181,
+    "rho": 0.05418645,
+    "target_gate_status": "PASS"
+   }
+  }
+ },
+ "G7_audit_prose": {
+  "mismatches": [],
+  "pass": true,
+  "prose_rows_checked": 10
+ },
+ "G8_route_selection": {
+  "T1_infeasible": true,
+  "T4_infeasible": true,
+  "coverage_map_r5_anywhere": [],
+  "gate": true,
+  "not_started": true,
+  "pass": true,
+  "protocol_present": false,
+  "selected": true
+ },
+ "schema": "rebaseguard.p5y.k5.m5-tail.b0-state-verification.v1"
+}
