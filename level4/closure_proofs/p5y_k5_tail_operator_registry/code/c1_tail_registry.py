@@ -45,13 +45,18 @@ CP = REPO / "level4/closure_proofs"
 AD = CP / "p5y_k5_perron_deflated_resolvent"
 CELLS_JSON = CP / "p5y_k1_cover_ledger_successor/config/cells.json"
 CELLS_SHA256 = "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f"
-TABOO_SHA256 = None            # filled from the C1 protocol when one exists; None = record, do not enforce
+TABOO_SHA256 = "ced9422ca07981a9ad053acd79b72ef0d5007e93e49c16f2501f31c593fd0daa"           # the adopted taboo certifier; ENFORCED before any certification runs
 TAIL = (305, 306, 307, 308, 309)
 DEGREE_TABOO = 20
 DEGREE_ARL = 12
 SCHEMA = "rebaseguard.p5y.k5.tail-operator-registry.registry.v1"
 
-# deterministic, pre-registered alpha ladders (the frozen build_registry ladders, extended upward for the tail)
+# Deterministic, pre-registered alpha ladders. The taboo ladder EXTENDS the frozen build_registry ladder
+# (6/5, 13/10, 7/5) upward. The ARL ladder does NOT: the frozen one is rho-dependent,
+# full_alphas(rho) = (1 + 200 rho + 1/50, 1 + 400 rho + 1/20, 5/4, 7/5), whose first two rungs evaluate to about 9.1
+# and 18 at tail rho and are not sensible starting proposals, so a fixed ladder is used instead. alpha steers only
+# the FLOAT PROPOSAL for the candidate; certification is a verified inequality on the resulting exact payload, so a
+# badly chosen alpha costs CPU, not soundness (review C1-prefreeze note 12).
 TABOO_ALPHAS = (F(6, 5), F(13, 10), F(7, 5), F(3, 2), F(2), F(3))
 ARL_ALPHAS = (F(5, 4), F(7, 5), F(3, 2), F(2), F(3), F(5))
 
@@ -61,6 +66,8 @@ def sha(b: bytes) -> str:
 
 
 def _import():
+    if sha((AD / "code/taboo_certify.py").read_bytes()) != TABOO_SHA256:
+        raise SystemExit("the adopted taboo certifier does not match its pin")
     for p in (str(AD / "code"), str(CP / "p5y_k5_order3_readiness_audit/code")):
         if p not in sys.path:
             sys.path.insert(0, p)

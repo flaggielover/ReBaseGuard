@@ -198,19 +198,60 @@ def main() -> int:
                                    "per_m": per_m, "detail": {str(k): detail[k] for k in TAIL}}
         out["scenarios"][sname]["_margins_exact"] = {str(k): str(v) for k, v in margins.items()}
 
-    # --- material-improvement test, exactly as the gate states it
+    # --- material-improvement test, exactly as the gate states it.
+    # The gate's quantity is the UNIFORM ATOM-CONSTANT reduction factor still required, i.e. the bisected uniform
+    # scale on (A0, A1, A2) at which the frozen direct test starts to pass - the same construction that produced the
+    # baseline 2.252903 from Campaign B. Review C1-prefreeze note 1: an earlier version of this block used
+    # 1/margin = M_after/M_needed, a MAGNITUDE ratio, and compared it against an atom-constant baseline. The two are
+    # different quantities and the mixed comparison overstated the fall as 16.1 % where it is 6.72 %.
     cert = out["scenarios"]["CERTIFIED"]
     still_open = [k for k in TAIL if k not in cert["closed_m5"]]
     base_worst = F(str(gate["baseline"]["uniform_atom_constant_reduction_still_needed"]["309"]))
+
+    def uniform_reduction_still_needed(k: int) -> F:
+        """The factor by which A0, A1, A2 must fall UNIFORMLY for the frozen direct test to pass cell k, under C1's
+        certified constants. Exact bisection; 1 when the cell already passes."""
+        A = consts[k]["c1"]
+        ad = adopted["cells"][str(k)]["m"]["5"]
+        H = (F(ad["R2_interval"]["lo"]), F(ad["R2_interval"]["hi"]))
+        M0 = F(ad["M_R2"])
+        cov = {c["index"]: c for c in st["cover"]}[k]
+        x_hi, rho, e0 = (st["KM"].rat(cov[t]) for t in ("right", "rho", "e0"))
+        g_hi = F(ad["R_interval"]["hi"]) - e0 * F(ad["D_interval"]["lo"])
+
+        def passes(scale: F) -> bool:
+            lo, hi, _ = T.tail_enclosure(st["R"], meas[k], aux[k], {j: A[j] * scale for j in A}, 5, None)
+            a_, b_ = max(H[0], lo), min(H[1], hi)
+            M = M0 if a_ > b_ else min(M0, max(abs(a_), abs(b_)))
+            return g_hi + rho * x_hi * M < 0
+
+        if passes(F(1)):
+            return F(1)
+        lo_s, hi_s = F(1, 1000), F(1)
+        if not passes(lo_s):
+            return None
+        for _ in range(50):
+            mid = (lo_s + hi_s) / 2
+            if passes(mid):
+                lo_s = mid
+            else:
+                hi_s = mid
+        return 1 / lo_s
+
+    per_cell_reduction = {k: uniform_reduction_still_needed(k) for k in TAIL}
     worst_now = None
     if still_open:
-        worst_now = max(F(str(1)) / F(cert["_margins_exact"][str(k)]) for k in still_open)
+        worst_now = max(per_cell_reduction[k] for k in still_open)
     out["material_improvement"] = {
         "baseline_worst_required_uniform_reduction": float(base_worst),
         "still_open": still_open,
         "worst_required_uniform_reduction_now": (float(worst_now) if worst_now is not None else 0.0),
         "relative_fall": (float(1 - worst_now / base_worst) if worst_now is not None else 1.0),
         "threshold": 0.10,
+        "quantity": "uniform atom-constant reduction factor still required (bisected uniform scale on A0, A1, A2), "
+                    "the same construction that produced the gate's baseline",
+        "per_cell_uniform_reduction_still_needed": {str(k): (float(v) if v is not None else None)
+                                                    for k, v in per_cell_reduction.items()},
         "pass": bool(worst_now is None or (1 - worst_now / base_worst) >= F(1, 10))}
 
     cls = classify(gate, cert["closed_m5"], out["scenarios"]["DEGRADED"]["closed_m5"],

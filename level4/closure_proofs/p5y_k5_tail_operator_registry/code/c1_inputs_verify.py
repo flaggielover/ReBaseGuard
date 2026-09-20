@@ -51,7 +51,8 @@ PINS = {
                              "51c208cd80eaa901a3d8bad180268f7a23aeb43955c88a1502fc8eac5ec31f92"),
     # --- adopted Perron / atom machinery (the operator side C1 extends)
     "theorem_AD": ("p5y_k5_perron_deflated_resolvent/theorem/THEOREM_AD.md", None),
-    "taboo_certify": ("p5y_k5_perron_deflated_resolvent/code/taboo_certify.py", None),
+    "taboo_certify": ("p5y_k5_perron_deflated_resolvent/code/taboo_certify.py",
+                      "ced9422ca07981a9ad053acd79b72ef0d5007e93e49c16f2501f31c593fd0daa"),
     "build_registry": ("p5y_k5_perron_deflated_resolvent/code/build_registry.py", None),
     "xcheck_registry": ("p5y_k5_perron_deflated_resolvent/code/xcheck_registry.py", None),
     "falsify_registry": ("p5y_k5_perron_deflated_resolvent/code/falsify_registry.py", None),

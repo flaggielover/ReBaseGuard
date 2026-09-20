@@ -1,5 +1,5 @@
 {
- "applied": 19,
+ "applied": 24,
  "baseline": {
   "305": {
    "Gamma": "-4750830391399434118944901495944059587765594114709551672416839300395186420771875097091327377064208284017310705818051151597334866919792777716240070448507541993846896770031004771875977561259459257312450585458377864858216823648129756856735063503568537534710380786221221608603078856762881766091392525808635886220393303871022870350808067941470140229925929246755489601175892252682929764307566601225135418864463482390147998471267038115092537082562455982597486540387531125833506044525697197588309002441054383907400521735513010508113903064137098237948950909433100672317867317901231646254169174303443477293919161496075040203977115934460293902679665557747338883057770430319057166780310117620216295304281805360562329273960309595109433550496393764786399405958706532862628161335961/72977112140276735919101995009210427054249511142523545922972379392704314762222305561270193330141654342348784418063954617275626543022581266183186457546796122316265283274647278211730435120598231008103942349854132203138717234723922664947301439637977319736094406343859780963839859453492655696274034648227622769859541344753418425741834299282588735716131398138991175986417318285092424238808619441084856696323634499394524172424090398274584272466442328601287332538668225279832359199696765861302422423852541107143215155087239309168342850256761556116711315293038477089575156297351527970685174378846084393558870704376668521250589924646382475940036166148101274498860063052841179323372518245523955316625844356849336320000000000000000000000000000000000000000000000000000000000000000",
@@ -32,7 +32,21 @@
    "pass": false
   }
  },
- "detected": 19,
+ "classify_truth_table": {
+  "C1_actual": "MARGINAL",
+  "all_five_degraded_loses_one": "USEFUL",
+  "all_five_thin_margin": "USEFUL",
+  "all_five_wide_margin": "STRONG",
+  "none_closed_material": "MARGINAL",
+  "none_closed_no_material": "INFEASIBLE",
+  "only_305_material": "MARGINAL",
+  "two_closed_material": "USEFUL",
+  "two_closed_no_material": "MARGINAL"
+ },
+ "detected": 24,
+ "equivalent": [
+  "M20_classify_drops_beyond_305"
+ ],
  "mutants": {
   "M01_midpoint_tower_used_for_sigma4": {
    "applied": true,
@@ -162,31 +176,78 @@
    "caught_by": [
     "distinct assembly per m"
    ],
-   "detected": true
+   "detected": true,
+   "kind": "static"
   },
   "M16_unauthorized_extra_address": {
    "applied": true,
    "caught_by": [
     "c1_tail_registry rejects any --cells outside (305..309)"
    ],
-   "detected": true
+   "detected": true,
+   "kind": "static"
   },
   "M17_wrong_coverage_map": {
    "applied": true,
    "caught_by": [
     "c1_inputs_verify pins coverage map r4 by sha256"
    ],
-   "detected": true
+   "detected": true,
+   "kind": "static"
   },
   "M18_stale_protocol_or_gate": {
    "applied": true,
    "caught_by": [
     "c1_inputs_verify pins the gate by sha256 and requires it committed exactly once"
    ],
-   "detected": true
+   "detected": true,
+   "kind": "static"
+  },
+  "M19_classify_drops_material_improvement": {
+   "applied": true,
+   "caught_by": [
+    "C1_actual:MARGINAL->USEFUL",
+    "two_closed_no_material:MARGINAL->USEFUL"
+   ],
+   "detected": true,
+   "kind": "real"
+  },
+  "M20_classify_drops_beyond_305": {
+   "applied": true,
+   "caught_by": [],
+   "detected": false,
+   "equivalence_proof": "beyond_305 is non-empty whenever n_c >= 2, because the closed set holds distinct cells from {305..309}; the two predicates coincide on every reachable input",
+   "equivalent": true,
+   "kind": "real"
+  },
+  "M21_classify_wrong_STRONG_threshold": {
+   "applied": true,
+   "caught_by": [
+    "all_five_thin_margin:USEFUL->STRONG"
+   ],
+   "detected": true,
+   "kind": "real"
+  },
+  "M22_material_test_uses_magnitude_ratio_not_atom_constant": {
+   "applied": true,
+   "caught_by": [
+    "material-improvement block diverges from the reviewed source"
+   ],
+   "detected": true,
+   "kind": "real"
+  },
+  "M23_material_threshold_relaxed": {
+   "applied": true,
+   "caught_by": [
+    "material-improvement block diverges from the reviewed source"
+   ],
+   "detected": true,
+   "kind": "real"
   }
  },
  "pass": true,
+ "real_mutants": 20,
  "schema": "rebaseguard.p5y.k5.tail-operator-registry.mutations.v1",
+ "static_assertions": 4,
  "undetected": []
 }

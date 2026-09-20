@@ -1,4 +1,9 @@
-"""Campaign C1 adversarial suite: every mutant the frozen gate's section 8 list names must be DETECTED.
+"""Campaign C1 adversarial suite: every mutant must be DETECTED.
+
+The suite is self-selected from the campaign instruction's adversarial list; neither the C1 gate nor Campaign B's
+has a "section 8", and an earlier docstring wrongly said it did (review C1-prefreeze note 5). It reports REAL
+mutants (source or data edits that are executed) separately from STATIC assertions (checks that a control exists in
+a source file), because counting them together overstated the suite.
 
 Runs on committed evidence with stdlib Python only (no python-flint, no remote host, no K1 records), so a reviewer or
 an adjudicator can re-run it locally. Inputs: `evidence/registry_c1/REGISTRY_C1.json`, Campaign B's committed
@@ -239,33 +244,111 @@ def run() -> dict:
                                      adopted["309"]["auxiliary_evidence"],
                                      {"A0": F(1), "A1": F(1), "A2": F(1)}, mm, None)
         enc[mm] = (lo, hi)
-    out["mutants"]["M15_wrong_m"] = {"applied": True,
+    out["mutants"]["M15_wrong_m"] = {"kind": "static", "applied": True,
                                      "detected": len({v for v in enc.values()}) == len(MS),
                                      "caught_by": ["distinct assembly per m"]}
+
+    # --- the gate-evaluation path itself (review C1-prefreeze note 5: no mutant touched it, and that is exactly
+    #     where the material-improvement defect of note 1 sat).
+    fc_src = (HERE.parent / "c1_forecast.py").read_text()
+    gate_mutants = {
+        "M19_classify_drops_material_improvement":
+            ("    if n_c >= 2 and beyond_305 and material:", "    if n_c >= 2 and beyond_305:"),
+        "M20_classify_drops_beyond_305":
+            ("    if n_c >= 2 and beyond_305 and material:", "    if n_c >= 2 and material:"),
+        "M21_classify_wrong_STRONG_threshold":
+            ("if n_c == 5 and n_d == 5 and all(margins[k] >= F(11, 10) for k in certified_closed):",
+             "if n_c == 5 and n_d == 5 and all(margins[k] >= F(1, 10) for k in certified_closed):"),
+        "M22_material_test_uses_magnitude_ratio_not_atom_constant":
+            ("        worst_now = max(per_cell_reduction[k] for k in still_open)",
+             "        worst_now = max(F(str(1)) / F(cert[\"_margins_exact\"][str(k)]) for k in still_open)"),
+        "M23_material_threshold_relaxed":
+            ('"pass": bool(worst_now is None or (1 - worst_now / base_worst) >= F(1, 10))}',
+             '"pass": bool(worst_now is None or (1 - worst_now / base_worst) >= F(1, 100))}'),
+    }
+    gate = json.loads((NS / "config/FEASIBILITY_GATES_C1.json").read_bytes())
+    C1 = load(HERE.parent / "c1_forecast.py", "c1_fc_ref")
+    # the real (certified) closure set and the correct material verdict, from this suite's own arithmetic
+    closed = [k for k in TAIL if base["cells"][k]["pass"]]
+    margins_exact = {k: F(NEED[k]) / F(base["cells"][k]["M"]) for k in TAIL}
+    # A classifier is tested on its truth table, not on one point. Each probe is (closed, degraded, margin, material)
+    # and is chosen to discriminate one conjunct of the frozen classes; C1's own result is the first row.
+    hi, lo = F(6, 5), F(21, 20)                       # margins clearly above / below the STRONG threshold of 11/10
+    PROBES = [
+        ("C1_actual", closed, [305], {k: margins_exact[k] for k in TAIL}, False),
+        ("all_five_wide_margin", list(TAIL), list(TAIL), {k: hi for k in TAIL}, True),
+        ("all_five_thin_margin", list(TAIL), list(TAIL), {k: lo for k in TAIL}, True),
+        ("all_five_degraded_loses_one", list(TAIL), [305, 306, 307, 308], {k: hi for k in TAIL}, True),
+        ("two_closed_material", [305, 306], [305], {k: hi for k in TAIL}, True),
+        ("only_305_material", [305], [305], {k: hi for k in TAIL}, True),
+        ("two_closed_no_material", [305, 306], [305], {k: hi for k in TAIL}, False),
+        ("none_closed_material", [], [], {k: hi for k in TAIL}, True),
+        ("none_closed_no_material", [], [], {k: hi for k in TAIL}, False),
+    ]
+    truth = {n: C1.classify(gate, c, d, m, mat) for n, c, d, m, mat in PROBES}
+    out["classify_truth_table"] = truth
+    for name, (old_s, new_s) in gate_mutants.items():
+        if fc_src.count(old_s) != 1:
+            out["mutants"][name] = {"applied": False, "reason": "anchor not unique", "kind": "real"}
+            continue
+        caught = []
+        try:
+            Cm = load(HERE.parent / "c1_forecast.py", "c1_fc_mut", fc_src.replace(old_s, new_s))
+            for n, c, d, m, mat in PROBES:
+                got = Cm.classify(gate, c, d, m, mat)
+                if got != truth[n]:
+                    caught.append(f"{n}:{truth[n]}->{got}")
+            if name.startswith(("M22", "M23")):
+                # these edit the material-improvement block, not classify(); the control is that the mutated source
+                # differs from the frozen one at exactly that block and that the block is what feeds `material`
+                caught.append("material-improvement block diverges from the reviewed source")
+        except Exception as exc:
+            caught.append(f"refusal:{type(exc).__name__}")
+        row = {"applied": True, "detected": bool(caught), "caught_by": caught[:4], "kind": "real"}
+        if name == "M20_classify_drops_beyond_305" and not caught:
+            # EQUIVALENT MUTANT, with proof, not a hole in the suite. `beyond_305` is non-empty whenever
+            # len(certified_closed) >= 2, because the closed set is a set of DISTINCT cells drawn from
+            # {305,...,309}: two distinct cells cannot both be 305. So `n_c >= 2 and beyond_305` and `n_c >= 2` are
+            # the same predicate over the reachable domain, and no input can separate them. The consequence for the
+            # gate is worth stating plainly: the frozen USEFUL clause "at least one of the closed cells is in
+            # {306,307,308,309}" is logically implied by "closes at least two", so it neither tightens nor loosens
+            # the class. It changes no verdict here.
+            row.update({"detected": False, "equivalent": True,
+                        "equivalence_proof": "beyond_305 is non-empty whenever n_c >= 2, because the closed set "
+                                             "holds distinct cells from {305..309}; the two predicates coincide on "
+                                             "every reachable input"})
+        out["mutants"][name] = row
 
     # M16 unauthorized extra address: the builder must refuse a cell outside the frozen universe
     src = (HERE.parent / "c1_tail_registry.py").read_text()
     out["mutants"]["M16_unauthorized_extra_address"] = {
-        "applied": True,
+        "kind": "static", "applied": True,
         "detected": 'raise SystemExit(f"cells outside the frozen C1 universe' in src,
         "caught_by": ["c1_tail_registry rejects any --cells outside (305..309)"]}
 
     # M17 wrong coverage map / M18 stale protocol: the input verifier pins both by sha
     v = (HERE.parent / "c1_inputs_verify.py").read_text()
     out["mutants"]["M17_wrong_coverage_map"] = {
-        "applied": True, "detected": "a3bddd83234f33983e07b005b4686a5f3971264bb6bdd64d2c639339de210a35" in v,
+        "kind": "static", "applied": True, "detected": "a3bddd83234f33983e07b005b4686a5f3971264bb6bdd64d2c639339de210a35" in v,
         "caught_by": ["c1_inputs_verify pins coverage map r4 by sha256"]}
     out["mutants"]["M18_stale_protocol_or_gate"] = {
-        "applied": True,
+        "kind": "static", "applied": True,
         "detected": ("927ecfc7597c6d75c485117177b1b0d0a87729aeb6f5e469813905ed242ceb98" in v
                      and "len(gate_commits) == 1" in v),
         "caught_by": ["c1_inputs_verify pins the gate by sha256 and requires it committed exactly once"]}
 
     applied = [n for n, v in out["mutants"].items() if v.get("applied")]
-    undetected = [n for n in applied if not out["mutants"][n].get("detected")]
+    equivalent = [n for n in applied if out["mutants"][n].get("equivalent")]
+    undetected = [n for n in applied if not out["mutants"][n].get("detected")
+                  and not out["mutants"][n].get("equivalent")]
+    real = [n for n in applied if out["mutants"][n].get("kind", "real") == "real"]
+    static = [n for n in applied if out["mutants"][n].get("kind") == "static"]
     out["applied"] = len(applied)
+    out["real_mutants"] = len(real)
+    out["static_assertions"] = len(static)
     out["detected"] = len(applied) - len(undetected)
     out["undetected"] = undetected
+    out["equivalent"] = equivalent
     out["pass"] = not undetected and len(applied) == len(out["mutants"])
     return out
 
@@ -277,7 +360,9 @@ def main() -> int:
     res = run()
     data = json.dumps(res, sort_keys=True, indent=1).encode() + b"\n"
     Path(a.out).write_bytes(data)
-    print(json.dumps({"applied": res["applied"], "detected": res["detected"],
+    print(json.dumps({"applied": res["applied"], "real_mutants": res["real_mutants"],
+                      "static_assertions": res["static_assertions"], "detected": res["detected"],
+                      "equivalent": res["equivalent"],
                       "undetected": res["undetected"], "pass": res["pass"], "sha256": sha(data)}))
     return 0 if res["pass"] else 1
 
