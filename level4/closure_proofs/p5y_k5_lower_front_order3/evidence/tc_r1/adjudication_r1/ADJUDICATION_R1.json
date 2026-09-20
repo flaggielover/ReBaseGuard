@@ -1,0 +1,380 @@
+{
+ "adjudicator": "independent fresh-context adjudicator (did not write, review before the freeze, or authorize the successor)",
+ "brief": "level4/closure_proofs/p5y_k5_lower_front_order3/review/ADJUDICATION_BRIEF.md",
+ "checklist": [
+  {
+   "check": "commit_order_ancestry",
+   "evidence": "10/10 merge-base --is-ancestor links from 7cb01e38 to ad108619; log is linear, no merges",
+   "id": "1.1",
+   "source": "brief:1",
+   "verdict": "PASS"
+  },
+  {
+   "check": "post_freeze_confinement",
+   "evidence": "git diff 3f540a33..ad108619 has no path outside evidence/tc_r1/; only GUARD.json is modified (ALLOW -> DENY at the seal)",
+   "id": "1.2",
+   "source": "brief:1",
+   "verdict": "PASS"
+  },
+  {
+   "check": "adopted_namespaces_unchanged",
+   "evidence": "no path outside p5y_k5_lower_front_order3/ changed since 7cb01e38; tree hashes identical for Perron db967365, K5-B f238c648, K1 closure 48dd56cd",
+   "id": "1.3",
+   "source": "brief:1",
+   "verdict": "PASS"
+  },
+  {
+   "check": "working_tree_state",
+   "evidence": "one untracked file evidence/tc_r1/checkpoints/CP_005_sealed_consumed.json (resume aid, unpinned, read by nothing); no tracked file modified",
+   "id": "1.4",
+   "source": "brief:1",
+   "verdict": "INFO"
+  },
+  {
+   "check": "protocol_pins",
+   "evidence": "84/84 pins verified locally; 41/41 loaded_repository_modules pinned; no pinned path under evidence/tc_r1/ so pins are freeze-immutable",
+   "id": "2.1",
+   "source": "brief:2",
+   "verdict": "PASS"
+  },
+  {
+   "check": "protocol_identity",
+   "evidence": "sha256(config/TC_PROTOCOL.json)=10ff7e37e9b6e9ad1c39be4f32cceeeb7c413e50319efea4d0c7aa12ca76924f consistent across SEAL/AUTHORIZATION/GUARD/TC_INDEX/records/TC_CONSUMPTION",
+   "id": "2.2",
+   "source": "brief:2",
+   "verdict": "PASS"
+  },
+  {
+   "check": "qualification_at_freeze",
+   "evidence": "S00.head==S00.freeze_commit==3f540a33, namespace_clean, S00-S09 all pass, verdict QUALIFIED, sha f95da15f as bound; runtime steps are host-reported",
+   "id": "2.3",
+   "source": "brief:2",
+   "verdict": "PASS"
+  },
+  {
+   "check": "runtime_pins",
+   "evidence": "no python-flint/numpy locally and remote access forbidden; verified only that all 34 records' runtime block equals TC_PROTOCOL.runtime and S02.runtime, modules 40 before/after",
+   "id": "2.4",
+   "source": "brief:2",
+   "verdict": "NOT_CHECKABLE_LOCALLY"
+  },
+  {
+   "check": "cell_sha_vs_index_and_seal",
+   "evidence": "34/34 recomputed; addresses exactly 11..44; sha256(TC_INDEX.json)=51c5ca93",
+   "id": "3.1",
+   "source": "brief:3",
+   "verdict": "PASS"
+  },
+  {
+   "check": "reproduction_byte_identical",
+   "evidence": "repro/TC_CELL_11.json and repro/TC_CELL_44.json byte-equal to the cells/ originals; shas equal the index",
+   "id": "3.2",
+   "source": "brief:3",
+   "verdict": "PASS"
+  },
+  {
+   "check": "run_ledger_structure",
+   "evidence": "72 rows: 1 RUN_START, 34 START (11..44 once each), 34 ok OUTPUT (sha==index), 2 REPRO identical, 1 RUN_END; every head==74d67ef4; ledger sha dd43fd4d",
+   "id": "3.3",
+   "source": "brief:3",
+   "verdict": "PASS"
+  },
+  {
+   "check": "cpu_accounting_and_budget",
+   "evidence": "sum(34 OUTPUT + 2 REPRO)=51130.640857267 s = RUN_END total = TC_INDEX total = 14.20296 h = SEAL 14.203; under caps 30 (enforced), 24 (prose) and 40 (campaign)",
+   "id": "3.4",
+   "source": "brief:3",
+   "verdict": "PASS"
+  },
+  {
+   "check": "record_bindings",
+   "evidence": "all 34 bind protocol 10ff7e37, freeze 3f540a33, authorization 4b920423, head 74d67ef4, guard 619ca11b; GUARD.json at 74d67ef4 is ALLOW for 11..44 and hashes to 619ca11b; GUARD.json at bc4235d0 is DENY",
+   "id": "3.5",
+   "source": "brief:3",
+   "verdict": "PASS"
+  },
+  {
+   "check": "k1_records_are_adopted",
+   "evidence": "all 34 k1_record_sha256 equal TC_PROTOCOL.k1_record_sha256 AND, per cell, the COMPOSITE_EXPORT_MANIFEST (29ad1f9b) entry k4_records/aux5_CUSUM_<k>_256.json",
+   "id": "3.6",
+   "source": "brief:3",
+   "verdict": "PASS"
+  },
+  {
+   "check": "governance_file_hashes",
+   "evidence": "AUTHORIZATION 4b920423, AUTHORIZATION_REVIEW 5daf81f5, QUALIFICATION_RESULT f95da15f; commit order matches governance_schema.order",
+   "id": "3.7",
+   "source": "brief:3",
+   "verdict": "PASS"
+  },
+  {
+   "check": "independent_H_TC_recomputation",
+   "evidence": "own implementation written from THEOREM_TC.md without importing/reading tc_rule.py or tc_crosscheck.py; 136/136 EXACT rational equality with sealed tc_audit.H_TC",
+   "id": "4.1",
+   "source": "brief:4",
+   "verdict": "PASS"
+  },
+  {
+   "check": "own_implementation_falsifiable",
+   "evidence": "output changes under perturbation of delta_G, eps_src[3], sup.G, norms.k[4], norms.j[2], sup_S0[4], sup_S0[0], rho, abs_G_at_a, H_at_a, W2[3:0], W2[0:3], A1",
+   "id": "4.2",
+   "source": "brief:4",
+   "verdict": "PASS"
+  },
+  {
+   "check": "A_constants_equal_adopted_audit",
+   "evidence": "408/408 exact (34 cells x 4 m x {A0,A1,A2}) against DEFLATED_CONSUMPTION consumptions[m].audit[k]",
+   "id": "4.3",
+   "source": "brief:4 / acceptance:5",
+   "verdict": "PASS"
+  },
+  {
+   "check": "H_final_is_intersection_nonempty",
+   "evidence": "H_final == H_TC(mine) cap H_adopted on 136/136; no empty intersection; strictly tightening on all 136; mag(H) strictly decreases on all 136 (about 5x-16x)",
+   "id": "4.4",
+   "source": "brief:4",
+   "verdict": "PASS"
+  },
+  {
+   "check": "tc_rule_equals_tc_crosscheck",
+   "evidence": "ran both frozen modules locally (pins 8d402d11, 1c72117f): 136/136 agreement, equal to my independent path and to the sealed H_TC",
+   "id": "4.5",
+   "source": "brief:4 / acceptance:3",
+   "verdict": "PASS"
+  },
+  {
+   "check": "k5b_baseline_replay_no_TC",
+   "evidence": "frozen k5b_check.k5b_literal (pin ddd54dc4) on my own cell construction reproduces the adopted pass sets and the full 160-entry via map for m=1,2,3,5 (135/129/128/126 on 0-159)",
+   "id": "5.1",
+   "source": "brief:5",
+   "verdict": "PASS"
+  },
+  {
+   "check": "k5b_with_my_H_TC",
+   "evidence": "with H <- H cap H_TC(mine) and M <- min(M, mag(H)) on 11-44: 160/160 pass on 0-159 for every m, via map identical to the sealed consumption for all four m",
+   "id": "5.2",
+   "source": "brief:5",
+   "verdict": "PASS"
+  },
+  {
+   "check": "no_regression",
+   "evidence": "adopted-pass is a subset of TC-pass for every m over 0-309; declared newly_passing equals the actual difference; recurrence is monotone under narrowing H",
+   "id": "5.3",
+   "source": "brief:5",
+   "verdict": "PASS"
+  },
+  {
+   "check": "rows_sha256_full_universe",
+   "evidence": "rows 160-309 need the K1 records, host-only; checked pass/open ranges, counts, newly_passing and the complete via map on 0-159 instead",
+   "id": "5.4",
+   "source": "brief:5",
+   "verdict": "NOT_CHECKABLE_LOCALLY"
+  },
+  {
+   "check": "frozen_k5b_self_check",
+   "evidence": "python3 -B code/k5b_check.py run executed locally: status PASS (soundness fuzz, mutation sensitivity, symbolic spine, readiness cross-check, adversarial A1-A11)",
+   "id": "5.5",
+   "source": "brief:5",
+   "verdict": "PASS"
+  },
+  {
+   "check": "cell_geometry_vs_cells_json",
+   "evidence": "34/34: e0, rho, left, right exactly equal the frozen CUSUM cover entry (second component 0); left+rho==e0==right-rho",
+   "id": "6.1",
+   "source": "brief:6",
+   "verdict": "PASS"
+  },
+  {
+   "check": "assembly_coefficients_frozen_table",
+   "evidence": "re-derived from c(m,t)=1/t-1/m; identical to assembly.py::coefficients for m in {1,2,3,5}; the 10 W2 keys are exactly the (r,j) with r+j<=3",
+   "id": "6.2",
+   "source": "brief:6",
+   "verdict": "PASS"
+  },
+  {
+   "check": "manufactured_suite_capable_of_failing",
+   "evidence": "48 fixtures x 25-point grid against a 256-bit Arb ground-truth oracle; 0 violations; structured-family tightness 0.984-0.99999; 20/20 source-text mutants detected; frozen_table_ok and crosscheck_ok true. Blind spot: M18/M19/M20 caught only by crosscheck (see note N3)",
+   "id": "7",
+   "source": "brief:7",
+   "verdict": "PASS"
+  },
+  {
+   "check": "K5_remains_PARTIAL",
+   "evidence": "m=5 open on [305,309]; coverage_map_r4.py sets K5_COVERAGE_COMPLETE = not union_open, hence false; authorization condition C8 satisfied",
+   "id": "8.1",
+   "source": "brief:8",
+   "verdict": "PASS"
+  },
+  {
+   "check": "coverage_map_not_prechanged",
+   "evidence": "no K5_COVERAGE_MAP_R4.json exists; adopted K5_COVERAGE_MAP_R3.json byte-unchanged (union_open_ranges [[11,44],[305,309]], COMPLETE false)",
+   "id": "8.2",
+   "source": "brief:8",
+   "verdict": "PASS"
+  },
+  {
+   "check": "disclosure_pythonintmaxstrdigits",
+   "evidence": "benign: CPython raises ValueError and never truncates; affects only decimal printing in consumption_adapter.row_json; all comparisons are exact Fractions; I hit and lifted the same guard and matched the seal exactly",
+   "id": "D1",
+   "source": "disclosure",
+   "verdict": "INFO"
+  },
+  {
+   "check": "disclosure_C7_parallel_channel",
+   "evidence": "gated entry points certify_real_cell / rung3_engine.certify_order3 not executed; the frozen prose claim is namespace-scoped; the registry's why_empty rationale does not reach this use; only certified order-3 quantities recorded. Obligation recorded in note N1",
+   "id": "D2",
+   "source": "disclosure",
+   "verdict": "INFO"
+  },
+  {
+   "check": "disclosure_cap_24_vs_30",
+   "evidence": "actual spend 14.203 CPU-h is under both 24 and 30 and under the campaign hard cap 40; documentation defect only; must be repaired before any future Campaign A run",
+   "id": "D3",
+   "source": "disclosure",
+   "verdict": "INFO"
+  },
+  {
+   "check": "certified_order3_input_values",
+   "evidence": "delta_G, eps_src[3], sup.G, abs_G_at_a have no identity gate against prior adopted evidence; they enter H_TC only as a non-negative half-width while the centre stays the adopted order-2 Hhat_r(a). See note N5",
+   "id": "S1",
+   "source": "scope",
+   "verdict": "NOT_CHECKABLE_LOCALLY"
+  }
+ ],
+ "commit_chain": {
+  "ancestry_verified": true,
+  "authorization": "bb06260c",
+  "checkpoint": "6d5b6f15",
+  "consumption": "ad108619",
+  "freeze": "3f540a33",
+  "gates": "e89b33f2",
+  "guard_allow": "74d67ef4",
+  "linear_no_merges": true,
+  "prefreeze": "73ebd3ef",
+  "qualification": "2be00ddc",
+  "seal": "bc4235d0",
+  "start_frontier": "7cb01e38",
+  "tooling": "e1eac65e"
+ },
+ "counts": {
+  "FAIL": 0,
+  "INFO": 4,
+  "NOT_CHECKABLE_LOCALLY": 3,
+  "PASS": 27,
+  "total": 34
+ },
+ "facts_confirmed": {
+  "campaign_hard_cap_cpu_hours": 40,
+  "consumption_open_ranges": {
+   "1": [],
+   "2": [],
+   "3": [],
+   "5": [
+    [
+     305,
+     309
+    ]
+   ]
+  },
+  "consumption_pass": {
+   "1": 310,
+   "2": 310,
+   "3": 310,
+   "5": 305
+  },
+  "cpu_seconds_total": 51130.640857267004,
+  "cusum_cells": [
+   11,
+   44
+  ],
+  "empty_intersections": 0,
+  "guard_state_at_run_head": "ALLOW",
+  "guard_state_at_seal": "DENY",
+  "m_values": [
+   1,
+   2,
+   3,
+   5
+  ],
+  "new_real_cpu_hours": 14.203,
+  "protocol_cap_enforced_cpu_hours": 30,
+  "real_cell_records": 34,
+  "regressions": 0,
+  "reproduction_byte_identical": {
+   "11": true,
+   "44": true
+  }
+ },
+ "failures": [],
+ "hashes_verified": {
+  "adopted_deflated_consumption_sha256": "5dcc9b7d26c92babbf1b19ad064b29969ea7bd829ea9629004e312520123274a",
+  "authorization_sha256": "4b920423f4be2dd3bd85f6c5f5283ae571b3946a4124b9dd91f06fa839b9f4e9",
+  "composite_export_manifest_sha256": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334",
+  "guard_sha256_at_run_head": "619ca11b3dba53b17a18a3a999b2cf4a5751da202d1a6c596f5b41be786be358",
+  "k5b_check_pin": "ddd54dc469375a2d64352782add8573231be07b94f7246dad83c4e55a2bf35a6",
+  "protocol_sha256": "10ff7e37e9b6e9ad1c39be4f32cceeeb7c413e50319efea4d0c7aa12ca76924f",
+  "qualification_result_sha256": "f95da15f9cda7688b1a503a83476291d10de5d3523b3d6671987eeb63f7c6c98",
+  "run_ledger_sha256": "dd43fd4dc48d58e6ddca0883ea58a7cd785e1b8307f18bda99e2a538011bc4fd",
+  "tc_consumption_sha256": "1fa8d8dee78483c83d54bd90dba86a9316fb5c67c4acd43781a05103ab111f51",
+  "tc_crosscheck_pin": "1c72117f57197d7dfcf588447510fee43cdb37426ac5f7ca85892b0e10ad8938",
+  "tc_index_sha256": "51c5ca9342afad54975f9f7d97e4d3ff006933fe60a231366b17c1c00b830cfd",
+  "tc_rule_pin": "8d402d11f6fc06ea2af88e3d3a01e376fefbe8ebacd8418f772116010e57afd5"
+ },
+ "head": "ad108619",
+ "independent_recomputation": {
+  "A_constant_comparisons": 408,
+  "A_constant_matches": 408,
+  "comparisons": 136,
+  "exact_matches_vs_sealed_tc_audit": 136,
+  "exact_matches_vs_tc_rule": 136,
+  "falsification_probes": 13,
+  "falsification_probes_detected": 13,
+  "implementation": "written by the adjudicator from theorem/THEOREM_TC.md; tc_rule.py and tc_crosscheck.py neither imported nor read while writing it",
+  "k5b_independent_run": {
+   "baseline_reproduces_adopted": true,
+   "cells": "0-159",
+   "m_values": [
+    1,
+    2,
+    3,
+    5
+   ],
+   "via_map_identical": true,
+   "with_tc_reproduces_sealed": true
+  },
+  "tc_rule_vs_tc_crosscheck": 136
+ },
+ "method": "local reproduction only; exact Fraction arithmetic; no remote host contacted; no file modified outside evidence/tc_r1/adjudication_r1/; nothing committed",
+ "not_checked": [
+  "K1 record contents (host-only)",
+  "runtime versions python-flint 0.9.0 / numpy 2.5.2 / scipy 1.18.1 (not installable locally)",
+  "the producer's actual execution on the host",
+  "rows_sha256 over cells 160-309 (needs the K1 records)",
+  "the numerical correctness of the frozen Order3Certifier (see N5)"
+ ],
+ "notes": {
+  "N1_parallel_channel": "ACCEPTED. The gated entry points were not executed; the frozen prose claim is scoped 'IN THIS NAMESPACE'; the registry's own why_empty rationale (producer qualification vs scientific exclusion) does not reach a purely scientific K5 use; no uncertified order-3 value is recorded. OBLIGATION ON ADOPTION: add a cross-reference from p5y_k5_cusum_order3_real_producer to SEAL.json disclosure_C7_parallel_channel so the registry sentence 'no real CUSUM cell may be evaluated by this producer' is not read as a statement of fact about cells 11-44.",
+  "N2_intmaxstrdigits": "Benign for this run, but records a durable property: the frozen consumption_adapter.row_json cannot serialize TC-sized exact rationals under default CPython >= 3.11. Any future theorem-TC-class consumption meets the same wall.",
+  "N3_manufactured_blind_spot": "The suite's ground-truth oracle does not cover the r>=1 source tower or the W assembly (its own docstring says so); mutants M18, M19 and M20 were detected only by the crosscheck, i.e. by two implementations disagreeing rather than by an oracle. Closed by this adjudication's item-4 third implementation, which derives both independently and is demonstrably sensitive to norms.j, sup_S0[0], W2[3:0] and W2[0:3].",
+  "N4_budget": "Enforced cap 30, frozen prose 24, forecast 16.3, actual 14.203 - under every number in play, so the discrepancy could not have changed a decision here. Repair before any future Campaign A run, where a cap between 24 and 30 could become load-bearing.",
+  "N5_trust_boundary": "The theorem's arithmetic is verified exactly and completely. The record's INPUTS split in two: K1/Aux3-derived fields are covered by the 262-field identity gate against the adopted K1 records (whose identity I verified per cell against the adopted composite manifest); the four new order-3 fields (delta_G, eps_src[3], sup.G, abs_G_at_a) have no such gate and rest on the frozen Order3Certifier running correctly on the host. Structural safeguard: all four are non-negative and enter H_TC only through the half-width rho*|Ghat(a)| + rad_r, while the enclosure centre stays the adopted order-2 Hhat_r(a) - so a wrong order-3 candidate cannot shift the enclosure off the true value, only fail to widen it, and only if its certified bounds are understated."
+ },
+ "round": "r1",
+ "schema": "rebaseguard.p5y.k5.lower-front-order3.adjudication.v1",
+ "scope": {
+  "K5_status": "PARTIAL",
+  "coverage_map_r4_written": false,
+  "effect_if_adopted": "cells 11-44 close for m=1,2,3,5; the union open set becomes [[305,309]] and K5_COVERAGE_COMPLETE stays false",
+  "m5_tail_open": [
+   305,
+   309
+  ]
+ },
+ "utc": "2026-09-20T00:00:00+00:00",
+ "verdict": "ADOPTED",
+ "verdict_conditions": [
+  "note N1 obligation: cross-reference disclosure_C7 from the order-3 namespace (follow-up, not a blocker)"
+ ],
+ "verdict_line": "ADJUDICATION = ADOPTED",
+ "worktree": "/Users/suzhe/ReBaseGuard-k5lf"
+}
