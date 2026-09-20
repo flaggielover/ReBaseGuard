@@ -194,14 +194,19 @@ def verify(outdir: Path, reg: dict) -> dict:
                 got = fn(json.loads(p.read_bytes()))
                 if got.get("certified") is not True:
                     bad.append(f"{name} {k}.{i}: recomputation does not certify")
+                # The recomputed constants live under `recomputed`, not at the top level of verify_block /
+                # verify_cell's return. Reading them from the top level yielded None for every field, so every
+                # comparison failed and this verifier could never pass -- which is why no run of it was ever
+                # committed. Found by running it, as the pre-freeze review (row 79) asked for.
+                rec = got.get("recomputed", {})
                 for fld in fields:
-                    if str(got.get(fld)) != str(r[fld]):
+                    if F(str(rec[fld])) != F(str(r[fld])):
                         bad.append(f"{name} {k}.{i}: {fld} differs")
                 if sha(p.read_bytes()) != r[key]:
                     bad.append(f"{name} {k}.{i}: artifact sha differs")
         p = outdir / f"arl_cell_{k:03d}.json"
         got = TC.verify_block(json.loads(p.read_bytes()))
-        if got.get("certified") is not True or str(got.get("tau")) != str(b["Abar"]):
+        if got.get("certified") is not True or F(str(got.get("recomputed", {})["tau"])) != F(str(b["Abar"])):
             bad.append(f"arl_cell {k}: recomputation differs")
         if sha(p.read_bytes()) != b["arl"]["arl_artifact_sha256"]:
             bad.append(f"arl_cell {k}: artifact sha differs")

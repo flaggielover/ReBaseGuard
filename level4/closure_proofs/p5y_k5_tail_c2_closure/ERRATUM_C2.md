@@ -57,8 +57,20 @@ Two further gaps, neither raised as a FAIL, were closed at the same time:
   committed evidence alone on any machine with stdlib Python, and **refuses to emit anything** unless it first
   reproduces Campaign B's Lemma-G column and C2's own published Γ, perfect-candidate Γ and critical ratio
   bit-exactly. Those anchors are what license the new C1 column.
-- **The registry's re-verifiability was asserted, not demonstrated** (review row 79). `c2_refined_registry.py
-  verify` has now been run against the committed registry and its output is committed.
+- **The registry's re-verifiability was asserted, not demonstrated** (review row 79) — **and the assertion turned
+  out to be false.** Running `c2_refined_registry.py verify`, as the row asked, exposed a defect in C2's own
+  verifier: it read the recomputed constants from `got.get("C_T")` when `verify_block` / `verify_cell` return them
+  nested under `got["recomputed"]`. Every comparison was therefore `str(None) != "<value>"`, so **the verifier
+  reported a mismatch on every field of every sub-block and could never pass** — which is precisely why no run of
+  it had ever been committed. The defect is in the verifier only: it is not on the production path, `build()`
+  produced the registry without it, and no published number is affected. Confirmed directly by re-certifying
+  `taboo_block_305_00` on the independent host, which reproduces bit-identically. Fixed, and fixed structurally —
+  the repaired code indexes `rec[fld]`, so a missing field now raises instead of silently comparing against
+  `None`. A full verification run against the committed registry is committed with its output.
+
+  This one is worth stating plainly: a review row marked **INFO**, not FAIL, and phrased only as "not demonstrated
+  in-repo", led to the discovery that a verification tool this campaign pointed at as evidence of its own
+  soundness had never worked. The lesson is the row's, not C2's: a check nobody has run is not a check.
 
 ## Corrections arising from the INFO rows
 
