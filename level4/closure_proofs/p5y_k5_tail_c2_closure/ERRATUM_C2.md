@@ -1,16 +1,42 @@
-# Campaign C2 — erratum, and the disposition of the independent pre-freeze review
+# Campaign C2 — erratum, and the disposition of the independent pre-freeze reviews
 
-The independent fresh-context pre-freeze review (`review/REVIEW_C2_PREFREEZE.md`, at commit `5a94568a`) returned
-**NOT_READY**: 79 checks, 60 PASS, 10 INFO, 3 NOT_CHECKABLE_LOCALLY, **6 FAIL**. It reproduced every
-decision-relevant number bit-exactly from an implementation written independently from the theorem documents, and
-found no arithmetic error anywhere in C2. What it blocked the freeze on was what would have been frozen *alongside*
-the arithmetic.
+Five independent fresh-context pre-freeze reviews have run on this campaign, each returning **NOT_READY**, and
+this document dispositions every FAIL from all five.
 
-This document is the disposition of all six, plus the corrections that came out of the INFO rows. **No number C2
-published has changed.** The class is still `D_PARTIAL`, the closed subset is still {305, 306}, and the gate is
-untouched.
+| round | at | verdict | dispositioned in |
+|---|---|---|---|
+| r1 | `5a94568a` | 6 FAIL | §§ below, through "The finding that outranks all of the above" |
+| r2 | `ef58310c` | 3 FAIL | § "Dispositions from the SECOND pre-freeze review" |
+| r3 | `55c4cf00` | 1 FAIL | § "Dispositions from the THIRD pre-freeze review" |
+| r4 | `17123368` | 3 FAIL | § "Dispositions from the FOURTH pre-freeze review" |
+| r5 | `1663f558` | 2 FAIL | § "Dispositions from the FIFTH pre-freeze review" |
 
-## The one thing that cannot be repaired at source
+**The result has never moved.** Across all five rounds no Γ, magnitude, margin, requirement, gap fall, class or
+adopted-subset value has changed: the class is `D_PARTIAL`, the closed subset is {305, 306}, and the frozen gate
+is byte-untouched at `098dd7f5…`.
+
+Exactly **one** published *value* has changed in the whole campaign — the C_T sensitivity row on cells 307–309 of
+the D1 diagnosis, corrected to the admissible perturbation; r5 verified by diffing every leaf of that artifact
+across its entire history that those nine leaves are the only ones that have ever changed. One published *table*
+was additionally corrected against evidence that never changed: D1 §1's ranking of the three negligible blocker
+terms, which named the smallest of them and printed "~0" for the two larger, while the machine-readable file had
+said `order0_residual_fF` from the start. Both are disclosed below.
+
+(An earlier version of this paragraph said "two published numbers have changed", which conflated the two cases.
+Corrected in self-audit; the blocker evidence has never changed.)
+
+The open governance question the campaign ends on is in § "Cell 306", and the finding that matters most for what
+happens next is in § "The finding that outranks all of the above".
+
+## Dispositions from the FIRST pre-freeze review
+
+`review/REVIEW_C2_PREFREEZE.md`, at `5a94568a`: 79 checks — 60 PASS, 10 INFO, 3 NOT_CHECKABLE_LOCALLY, **6 FAIL**.
+It reproduced every decision-relevant number bit-exactly from an implementation written independently from the
+theorem documents, and found no arithmetic error anywhere in C2. What it blocked the freeze on was what would have
+been frozen *alongside* the arithmetic. The three sections that follow disposition all six, plus the corrections
+that came out of its INFO rows.
+
+### The one thing that cannot be repaired at source
 
 | | |
 |---|---|
@@ -39,7 +65,7 @@ the classes and the verdict are unaffected. `phase_d/MEASURE_CHANGE_SELF_AUDIT.m
 reported) already states the direction correctly, so C2 had the right direction in one document and the wrong one
 in the other; the gate is the copy that is frozen.
 
-## Repaired at source
+### Repaired at source
 
 | | finding | repair |
 |---|---|---|
@@ -76,7 +102,7 @@ Two further gaps, neither raised as a FAIL, were closed at the same time:
   in-repo", led to the discovery that a verification tool this campaign pointed at as evidence of its own
   soundness had never worked. The lesson is the row's, not C2's: a check nobody has run is not a check.
 
-## Corrections arising from the INFO rows
+### Corrections arising from the INFO rows
 
 - **Sensitivity convention stated** (row 32). "A 10 % improvement" means scale by 1.1 in the improving direction.
   The review also suggested that the other convention (× 0.9) reverses the D_lo-vs-τ ordering. **It does not**, and
@@ -244,8 +270,12 @@ fix's own completeness, one set of extra summary figures.
 Three were caught by C2 rather than a reviewer, all in self-audits run before launching the next round. Writing up r4 FAIL 1, C2 restated the review's remark that
 renormalising by equal A0 effect makes D_lo "lead by a wider margin" — inherited from the reviewer's summary and
 not checked. It is false: that renormalisation divides both rows by the same constant, so the ratio is *identical*
-to `relative_gain`'s, 1.0674 at cell 309 either way. It is wider only than the inverted per-unit column. Caught in
-self-audit and corrected at `1663f558`. Inheriting a reviewer's unverified claim is the same failure mode as
+to `relative_gain`'s, 1.0674 at cell 309 either way. It is wider only than the inverted per-unit column. (r5 note 8 adds the
+precise qualification, which belongs here so a successor does not conclude r4's table is in error: r4's remark is
+false of the **ratio**, which is what an ordering claim is about and what C2 checked, and true of the **absolute
+difference**, which the same renormalisation multiplies by 11 — 0.005505 to 0.060556 at cell 309. Both documents
+are arithmetically exact; they are describing different quantities.) Caught in self-audit and corrected at
+`1663f558`. Inheriting a reviewer's unverified claim is the same failure mode as
 inheriting one's own — and C2 then did it twice more in the very commit disposing of r5, writing that the removed
 README counts "got two wrong" (only one was wrong; r1's transcription was faithful, as recorded above) and
 miscounting its own pattern table as five-and-two rather than four-and-three. Both caught in the same self-audit

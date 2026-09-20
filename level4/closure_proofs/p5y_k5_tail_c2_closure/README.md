@@ -75,10 +75,11 @@ cell 306 being adopted on a margin judged sufficient after it was seen, a regist
 sensitivity figures computed outside the Lemma Dv′ hypotheses, and — three separate times — an error introduced by
 a *repair* to a previous round.
 
-Two published numbers have changed as a result, both in the D1 diagnosis and both disclosed: the C_T sensitivity
-row for cells 307/308/309 (corrected to the admissible perturbation), and the dominant-blocker ranking of the
-three negligible terms. **No Γ, magnitude, margin, requirement, gap fall, class or adopted-subset value has
-changed at any point.**
+Exactly **one published value** has changed as a result: the C_T sensitivity row for cells 307/308/309 of the D1
+diagnosis, corrected to the admissible perturbation. One published **table** was separately corrected against
+evidence that never changed — D1 §1's ranking of the three negligible blocker terms. **No Γ, magnitude, margin,
+requirement, gap fall, class or adopted-subset value has changed at any point**, which the fifth review confirmed
+by diffing every leaf of the D1 evidence across its entire commit history.
 
 **The R stage is blocked, and not by C2's own finding.** A sound operator-level combination C2 did not pre-register
 clears the gate's own 20 % bar on all three still-open cells at zero cost — so "the deterministic direction is
