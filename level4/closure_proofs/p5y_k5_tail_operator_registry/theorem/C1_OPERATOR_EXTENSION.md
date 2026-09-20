@@ -15,18 +15,34 @@ What is **new** is only: the domain (e ∈ [1.6209, 2.0923] instead of [0, 0.114
 tail cell, equal to that cell's own interval, so `block_for` resolves each cell to exactly one block with exact
 coverage), and the deterministic alpha ladders. **NEW_REAL_ADDRESSES = 0**; the guard stays DENY.
 
+**The block geometry is conservative, and that direction should be stated.** Lemma T is quantified over the drift
+set, so certifying `w ≥ 1 + K̂_e w` uniformly on one block of width 2ρ ≈ 0.081–0.108 is a *stronger* obligation than
+on the adopted r1's 1/100-wide blocks, and the resulting C_T and τ are whole-cell sup bounds by construction. The
+constants are therefore valid — but the conservatism costs accuracy: under the adopted rule a cell takes the worst
+over the sub-blocks meeting it, and nine 1/100-wide sub-blocks would each admit a tighter supersolution than one
+block nine times as wide. Since A0 = τ/D_lo is where C1's entire gain lives, this is the cheapest tightening C1
+leaves on the table, and it is the first item of the C2 plan.
+
 ## 1. What was certified
 
 `evidence/registry_c1/REGISTRY_C1.json` (sha256 `87bb1cfa…`), 1232.2 CPU-s, all five cells certified, every cell at
 the **first** alpha of its ladder:
 
-| cell | e-interval | C_T | τ | Ā | D_lo | D1 | D2 |
-|---|---|---|---|---|---|---|---|
-| 305 | [1.620881, 1.701923] | 6.028953 | 5.291155 | 8.221 | 0.7692 | 1.5875 | 28.507 |
-| 306 | [1.701923, 1.788592] | 5.670984 | 5.070746 | 7.912 | 0.7909 | 1.5192 | 25.788 |
-| 307 | [1.788592, 1.882413] | 5.331527 | 4.851873 | 7.556 | 0.8104 | 1.4480 | 23.555 |
-| 308 | [1.882413, 1.983910] | 5.008961 | 4.633777 | 7.218 | 0.8289 | 1.3772 | 21.469 |
-| 309 | [1.983910, 2.092283] | 4.705512 | 4.418493 | 6.901 | 0.8480 | 1.2844 | 19.336 |
+| cell | e-interval | C_T | τ | Ā | D_lo | D1 | D2 | τ/D_lo | Ā_eff |
+|---|---|---|---|---|---|---|---|---|---|
+| 305 | [1.620881, 1.701923] | 6.028953 | 5.291155 | 8.290719 | 0.768609 | 1.618684 | 28.506538 | 6.884064 | **6.884064** |
+| 306 | [1.701923, 1.788592] | 5.670984 | 5.070746 | 7.912417 | 0.790892 | 1.519245 | 25.787949 | 6.411423 | **6.411423** |
+| 307 | [1.788592, 1.882413] | 5.331527 | 4.851873 | 7.555613 | 0.810385 | 1.448025 | 23.555402 | 5.987123 | **5.987123** |
+| 308 | [1.882413, 1.983910] | 5.008961 | 4.633777 | 7.217875 | 0.828872 | 1.377221 | 21.469367 | 5.590460 | **5.590460** |
+| 309 | [1.983910, 2.092283] | 4.705512 | 4.418493 | 6.900983 | 0.848046 | 1.284353 | 19.336006 | 5.210202 | **5.210202** |
+
+Every cell certified at the **first** rung of both ladders (taboo α = 6/5, ARL α = 5/4).
+
+**Ā is inert.** Lemma Dv′ uses Ā_eff = min(Ā, τ/D_lo), and on all five tail cells τ/D_lo is the smaller, so the
+whole-kernel ARL supersolution — roughly half the 1232 CPU-s of the build — feeds nothing, and a wrong Ā would not
+show up in any published number. It is certified and recorded for completeness and as a consistency check
+(Ā ≥ Ā_eff holds on all five), not because anything depends on it. A successor that wants A0 lower should attack
+τ and D_lo, not Ā.
 
 ## 2. The result, and the honest shape of it
 
@@ -58,10 +74,11 @@ The net effect on the enclosure is nevertheless favourable, because the radius i
 
 No previously passing cell regresses; m = 1, 2, 3 remain complete on 0–309; no intersection is empty.
 
-**Cell 306 closes by a thin margin and should be read as such.** Γ = −0.005719 against a penalty term of ≈ 0.43;
-the margin is 1.9 %. The frozen DEGRADED scenario (every certified atom constant × 5/4) loses it, which is exactly
-why the gate reserves STRONG for a route that survives DEGRADED on all five. C1's class is USEFUL, not STRONG, and
-the thinness of 306 is the reason.
+**Cell 306 closes by a thin margin and should be read as such.** Γ(306) = −0.005719468 against a curvature penalty
+ρ·x_hi·M_after = 0.296955 and a drift term −0.302674; |Γ| is **1.93 %** of the penalty it has to overcome, and the
+K5-B margin M_needed/M_after is 1.0192605. The frozen DEGRADED scenario (every certified atom constant × 5/4) loses
+it. (An earlier draft of this paragraph quoted the penalty as ≈ 0.43, which is ρ·x_hi·M_R2 — the penalty *before*
+C1's tightening — and understated the margin as 1.3 %.)
 
 ## 3. Why a componentwise minimum was not taken
 

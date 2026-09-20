@@ -1,5 +1,5 @@
 {
- "C1_CLASS": "USEFUL",
+ "C1_CLASS": "MARGINAL",
  "atom_constant_crosscheck_cells": [
   305,
   306,
@@ -138,15 +138,23 @@
  "gate_sha256": "927ecfc7597c6d75c485117177b1b0d0a87729aeb6f5e469813905ed242ceb98",
  "material_improvement": {
   "baseline_worst_required_uniform_reduction": 2.252903,
-  "pass": true,
-  "relative_fall": 0.16098286237386297,
+  "pass": false,
+  "per_cell_uniform_reduction_still_needed": {
+   "305": 1.0,
+   "306": 1.0,
+   "307": 1.2620572570527464,
+   "308": 1.663450928753142,
+   "309": 2.1015967636536343
+  },
+  "quantity": "uniform atom-constant reduction factor still required (bisected uniform scale on A0, A1, A2), the same construction that produced the gate's baseline",
+  "relative_fall": 0.06716056410167942,
   "still_open": [
    307,
    308,
    309
   ],
   "threshold": 0.1,
-  "worst_required_uniform_reduction_now": 1.890224226409337
+  "worst_required_uniform_reduction_now": 2.1015967636536343
  },
  "registry_cpu_seconds": 1232.19342672,
  "registry_sha256": "87bb1cfacb09c2a144cab0270427d91980ea742b36fd80f8963265a22d2eebb3",
@@ -840,5 +848,5 @@
   }
  },
  "schema": "rebaseguard.p5y.k5.tail-operator-registry.forecast.v1",
- "selection_verdict": "EXECUTE"
+ "selection_verdict": "STOP_AND_WRITE_COSTED_C2_PLAN"
 }
