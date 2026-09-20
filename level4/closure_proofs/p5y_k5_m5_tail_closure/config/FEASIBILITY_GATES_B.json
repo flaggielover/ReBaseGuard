@@ -1,0 +1,18 @@
+{
+ "schema": "rebaseguard.p5y.k5.m5-tail.feasibility-gates.v1",
+ "campaign": "B (CUSUM K5, m = 5 tail: K1 cells 305-309; 5 open (m, cell) pairs after the theorem-TC lower-front successor)",
+ "frozen_before": "any route forecast of Campaign B and any certified or real computation of Campaign B",
+ "universe": {"pairs": 5, "cells": [305, 306, 307, 308, 309], "m": [5],
+              "source": "phase_a/TAIL_BLOCKER_MAP.json (adopted K1 records, manifest-checked)"},
+ "closure_rule": "a pair (5, cell) is forecast CLOSED iff the frozen K5-B (k5b_check.k5b_literal, ddd54dc4) passes that cell on the adopted inputs plus the route's forecast enclosures; no other criterion",
+ "scenarios": {"NOMINAL": "adopted certified values as recorded; not-yet-measured inputs at their best available estimate, stated in the forecast",
+               "CONSERVATIVE": "as NOMINAL with every not-yet-measured input multiplied by 4 in the unfavourable direction"},
+ "classes": {"STRONG": "CONSERVATIVE closes 5/5", "USEFUL": "not STRONG and (CONSERVATIVE closes >= 3/5 or NOMINAL closes 5/5)",
+             "MARGINAL": "not USEFUL and NOMINAL closes >= 1", "INFEASIBLE": "NOMINAL closes 0, or the route is ruled out before forecasting"},
+ "compute_gate": {"campaign_A_spent_new_real_cpu_hours": 14.203, "campaign_hard_cap_cpu_hours": 40,
+                  "remaining_new_real_cpu_hours": 25.797,
+                  "rule": "a route whose forecast new-real CPU exceeds the remaining budget is not launched"},
+ "selection_rule": "highest class; among equal classes prefer zero new real addresses, then fewer new-real CPU-hours; below USEFUL is never executed",
+ "stop_rule": "if every route is MARGINAL or INFEASIBLE, stop Campaign B execution and write a costed continuation plan",
+ "no_redefinition": "these classes, scenarios and rules are not changed after any forecast or result is seen"
+}
