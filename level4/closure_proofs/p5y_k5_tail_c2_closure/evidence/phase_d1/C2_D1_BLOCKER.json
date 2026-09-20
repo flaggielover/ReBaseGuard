@@ -1,0 +1,891 @@
+{
+ "cells": {
+  "305": {
+   "DOMINANT_BLOCKER_1": {
+    "share": 0.801118029936039,
+    "term": "order3_residual_fG"
+   },
+   "DOMINANT_BLOCKER_2": {
+    "share": 0.18795915630913926,
+    "term": "P3_envelope_Env4"
+   },
+   "DOMINANT_BLOCKER_3": {
+    "share": 0.006024755326775572,
+    "term": "order0_residual_fF"
+   },
+   "Gamma": -0.06510027941729703,
+   "M_after": 3.9475898394134616,
+   "M_needed": 4.891579429929668,
+   "atom_constants": {
+    "A0": 6.884064161921174,
+    "A1": 47.612938182348756,
+    "A2": 814.6298812805493
+   },
+   "closes_under_C1_constants": true,
+   "gap_above_1": 0.0,
+   "inside_Env4": {
+    "Env4_cand": 11.058888771458236,
+    "Env4_sigma4": 85.195178092117
+   },
+   "inside_fG": {
+    "fG_candidate_sups": 4.822242845583462,
+    "fG_eps_src3": 0.002705720404198115,
+    "fG_sigma3": 2.792835631979337
+   },
+   "magnitude": 3.9475898394134616,
+   "operator_constants": {
+    "Abar": 8.290718951469982,
+    "C_T": 6.028953464721635,
+    "D1": 1.618683689828106,
+    "D2": 28.50653838811174,
+    "D_lo": 0.7686092393986548,
+    "tau": 5.291155319465771
+   },
+   "order3_attribution": {
+    "Gamma": -0.2573901026865096,
+    "M_after": 1.1592824288601933,
+    "closes": true,
+    "magnitude_with_perfect_order3": 1.1592824288601933
+   },
+   "radius_grouped": {
+    "P3_envelope_Env4": {
+     "share": 0.18795915630913926,
+     "value": 0.6544280654968457
+    },
+    "order0_residual_fF": {
+     "share": 0.006024755326775572,
+     "value": 0.020976732663711375
+    },
+    "order1_residual_fD": {
+     "share": 0.0031989060525552298,
+     "value": 0.011137812814166578
+    },
+    "order2_residual_fH": {
+     "share": 0.001699152375490997,
+     "value": 0.0059160352914548325
+    },
+    "order3_residual_fG": {
+     "share": 0.801118029936039,
+     "value": 2.7892981265749275
+    }
+   },
+   "radius_mean_over_r": 3.4817567728411056,
+   "radius_terms": {
+    "A0_fH": {
+     "share": 0.0010250294193177155,
+     "value": 0.0035689031230708417
+    },
+    "A0_rho2_Env4": {
+     "share": 0.15623822909172705,
+     "value": 0.543983512316821
+    },
+    "A0_rho_fG": {
+     "share": 0.6103107410840664,
+     "value": 2.1249535563071222
+    },
+    "A1_fD": {
+     "share": 0.002375468735878816,
+     "value": 0.008270804359818367
+    },
+    "A1_rho2_fG": {
+     "share": 0.1710436492967966,
+     "value": 0.5955323843905804
+    },
+    "A1_rho3_Env4": {
+     "share": 0.02919120273720469,
+     "value": 0.10163666783764025
+    },
+    "A1_rho_fH": {
+     "share": 0.00057454264103318,
+     "value": 0.002000417731703291
+    },
+    "A2_fF": {
+     "share": 0.006024755326775572,
+     "value": 0.020976732663711375
+    },
+    "A2_rho2_fH": {
+     "share": 9.958031514010143e-05,
+     "value": 0.0003467144366806999
+    },
+    "A2_rho3_fG": {
+     "share": 0.019763639555176033,
+     "value": 0.06881218587722454
+    },
+    "A2_rho4_Env4": {
+     "share": 0.00252972448020752,
+     "value": 0.008807885342384478
+    },
+    "A2_rho_fD": {
+     "share": 0.0008234373166764137,
+     "value": 0.00286700845434821
+    }
+   },
+   "required_uniform_atom_constant_reduction": 1.0,
+   "sensitivity_10pct_improvement": {
+    "A0": {
+     "delta_vs_base": -0.24295508834063764,
+     "magnitude": 3.704634751072824,
+     "relative_gain": 0.061545170147853115
+    },
+    "A1": {
+     "delta_vs_base": -0.06431275221088566,
+     "magnitude": 3.883277087202576,
+     "relative_gain": 0.016291650051577126
+    },
+    "A2": {
+     "delta_vs_base": -0.009255502434031754,
+     "magnitude": 3.93833433697943,
+     "relative_gain": 0.002344595768694893
+    },
+    "A_all": {
+     "delta_vs_base": -0.31652334298555507,
+     "magnitude": 3.6310664964279065,
+     "relative_gain": 0.08018141596812513
+    },
+    "C_T": {
+     "delta_vs_base": -0.053681571918093564,
+     "magnitude": 3.8939082674953682,
+     "relative_gain": 0.01359856877280585
+    },
+    "C_upper_frozen": {
+     "note": "frozen K1 block bound; feeds the Lemma G supply only",
+     "value": 7.732565297046676
+    },
+    "D1": {
+     "delta_vs_base": -0.022491965605603365,
+     "magnitude": 3.9250978738078586,
+     "relative_gain": 0.005697645024069991
+    },
+    "D2": {
+     "delta_vs_base": -0.002900837859670874,
+     "magnitude": 3.9446890015537908,
+     "relative_gain": 0.0007348377054546994
+    },
+    "D_lo": {
+     "delta_vs_base": -0.33960770977216803,
+     "magnitude": 3.6079821296412935,
+     "relative_gain": 0.0860291275404203
+    },
+    "rho_frozen": {
+     "note": "frozen cover geometry; not a C2 lever",
+     "value": 0.0405206
+    },
+    "tau": {
+     "delta_vs_base": -0.31652334298555507,
+     "magnitude": 3.6310664964279065,
+     "relative_gain": 0.08018141596812513
+    }
+   }
+  },
+  "306": {
+   "DOMINANT_BLOCKER_1": {
+    "share": 0.78493144543567,
+    "term": "order3_residual_fG"
+   },
+   "DOMINANT_BLOCKER_2": {
+    "share": 0.20442175737043453,
+    "term": "P3_envelope_Env4"
+   },
+   "DOMINANT_BLOCKER_3": {
+    "share": 0.00545131822084894,
+    "term": "order0_residual_fF"
+   },
+   "Gamma": -0.005719468367263504,
+   "M_after": 3.8312640139165923,
+   "M_needed": 3.905055721051138,
+   "atom_constants": {
+    "A0": 6.411422920029179,
+    "A1": 41.326208144609154,
+    "A2": 665.5436573260256
+   },
+   "closes_under_C1_constants": true,
+   "gap_above_1": 0.0,
+   "inside_Env4": {
+    "Env4_cand": 10.318704600222183,
+    "Env4_sigma4": 85.60544674974768
+   },
+   "inside_fG": {
+    "fG_candidate_sups": 4.504057031287246,
+    "fG_eps_src3": 0.002959572434645126,
+    "fG_sigma3": 2.8083853299721975
+   },
+   "magnitude": 3.8312640139165923,
+   "operator_constants": {
+    "Abar": 7.9124167116351645,
+    "C_T": 5.670984263954273,
+    "D1": 1.519244732778201,
+    "D2": 25.787949325480753,
+    "D_lo": 0.7908924765725055,
+    "tau": 5.0707461515756025
+   },
+   "order3_attribution": {
+    "Gamma": -0.2122926056964896,
+    "M_after": 1.1660889534317747,
+    "closes": true,
+    "magnitude_with_perfect_order3": 1.1660889534317747
+   },
+   "radius_grouped": {
+    "P3_envelope_Env4": {
+     "share": 0.20442175737043453,
+     "value": 0.6943794623185656
+    },
+    "order0_residual_fF": {
+     "share": 0.00545131822084894,
+     "value": 0.018517028049324223
+    },
+    "order1_residual_fD": {
+     "share": 0.003403337191807574,
+     "value": 0.011560449727734855
+    },
+    "order2_residual_fH": {
+     "share": 0.0017921417812389827,
+     "value": 0.006087544019105192
+    },
+    "order3_residual_fG": {
+     "share": 0.78493144543567,
+     "value": 2.6662537395707964
+    }
+   },
+   "radius_mean_over_r": 3.3967982236855265,
+   "radius_terms": {
+    "A0_fH": {
+     "share": 0.0010821351524489965,
+     "value": 0.0036757947636264178
+    },
+    "A0_rho2_Env4": {
+     "share": 0.17000286433626902,
+     "value": 0.5774654275988902
+    },
+    "A0_rho_fG": {
+     "share": 0.5983560203231182,
+     "value": 2.0324946669651087
+    },
+    "A1_fD": {
+     "share": 0.0025229609414320047,
+     "value": 0.008569989244284197
+    },
+    "A1_rho2_fG": {
+     "share": 0.16713507280222797,
+     "value": 0.5677241184101591
+    },
+    "A1_rho3_Env4": {
+     "share": 0.03165722985688472,
+     "value": 0.10753322214467044
+    },
+    "A1_rho_fH": {
+     "share": 0.0006045321893435464,
+     "value": 0.002053473866922881
+    },
+    "A2_fF": {
+     "share": 0.00545131822084894,
+     "value": 0.018517028049324223
+    },
+    "A2_rho2_fH": {
+     "share": 0.00010547443944643973,
+     "value": 0.00035827538855589305
+    },
+    "A2_rho3_fG": {
+     "share": 0.019440352310323813,
+     "value": 0.06603495419552875
+    },
+    "A2_rho4_Env4": {
+     "share": 0.0027616631772807818,
+     "value": 0.009380812575005086
+    },
+    "A2_rho_fD": {
+     "share": 0.0008803762503755692,
+     "value": 0.002990460483450658
+    }
+   },
+   "required_uniform_atom_constant_reduction": 1.0,
+   "sensitivity_10pct_improvement": {
+    "A0": {
+     "delta_vs_base": -0.23760326266614776,
+     "magnitude": 3.593660751250445,
+     "relative_gain": 0.06201693796174925
+    },
+    "A1": {
+     "delta_vs_base": -0.06235280033327606,
+     "magnitude": 3.7689112135833165,
+     "relative_gain": 0.016274733379581054
+    },
+    "A2": {
+     "delta_vs_base": -0.008843775517442237,
+     "magnitude": 3.8224202383991503,
+     "relative_gain": 0.002308317955984844
+    },
+    "A_all": {
+     "delta_vs_base": -0.30879983851686604,
+     "magnitude": 3.5224641753997266,
+     "relative_gain": 0.08059998929731516
+    },
+    "C_T": {
+     "delta_vs_base": -0.05237923153208891,
+     "magnitude": 3.7788847823845035,
+     "relative_gain": 0.013671527553785862
+    },
+    "C_upper_frozen": {
+     "note": "frozen K1 block bound; feeds the Lemma G supply only",
+     "value": 7.230406258255243
+    },
+    "D1": {
+     "delta_vs_base": -0.02126342017967709,
+     "magnitude": 3.8100005937369152,
+     "relative_gain": 0.00554997517854169
+    },
+    "D2": {
+     "delta_vs_base": -0.0027778894002823333,
+     "magnitude": 3.82848612451631,
+     "relative_gain": 0.0007250582027738088
+    },
+    "D_lo": {
+     "delta_vs_base": -0.33065557449864735,
+     "magnitude": 3.5006084394179453,
+     "relative_gain": 0.08630456509851106
+    },
+    "rho_frozen": {
+     "note": "frozen cover geometry; not a C2 lever",
+     "value": 0.0433348
+    },
+    "tau": {
+     "delta_vs_base": -0.30879983851686604,
+     "magnitude": 3.5224641753997266,
+     "relative_gain": 0.08059998929731516
+    }
+   }
+  },
+  "307": {
+   "DOMINANT_BLOCKER_1": {
+    "share": 0.7644034300030144,
+    "term": "order3_residual_fG"
+   },
+   "DOMINANT_BLOCKER_2": {
+    "share": 0.22565840400321727,
+    "term": "P3_envelope_Env4"
+   },
+   "DOMINANT_BLOCKER_3": {
+    "share": 0.004749933361317941,
+    "term": "order0_residual_fF"
+   },
+   "Gamma": 0.061683080290831596,
+   "M_after": 3.7746726830452606,
+   "M_needed": 3.0761483479002325,
+   "atom_constants": {
+    "A0": 5.9871227639433435,
+    "A1": 36.16688750611022,
+    "A2": 550.8575787893827
+   },
+   "closes_under_C1_constants": false,
+   "gap_above_1": 0.26205725705274646,
+   "inside_Env4": {
+    "Env4_cand": 9.830878289181237,
+    "Env4_sigma4": 85.73811666557853
+   },
+   "inside_fG": {
+    "fG_candidate_sups": 4.293174334905271,
+    "fG_eps_src3": 0.0032360909916171066,
+    "fG_sigma3": 2.6550125239721796
+   },
+   "magnitude": 3.7746726830452606,
+   "operator_constants": {
+    "Abar": 7.5556132138736665,
+    "C_T": 5.331526554457764,
+    "D1": 1.4480248415255668,
+    "D2": 23.555401724114237,
+    "D_lo": 0.8103846744145569,
+    "tau": 4.851872531738208
+   },
+   "order3_attribution": {
+    "Gamma": -0.1652873724005606,
+    "M_after": 1.2043667933864657,
+    "closes": true,
+    "magnitude_with_perfect_order3": 1.2043667933864657
+   },
+   "radius_grouped": {
+    "P3_envelope_Env4": {
+     "share": 0.22565840400321727,
+     "value": 0.7591295904867352
+    },
+    "order0_residual_fF": {
+     "share": 0.004749933361317941,
+     "value": 0.015979085659779645
+    },
+    "order1_residual_fD": {
+     "share": 0.0034190511517508846,
+     "value": 0.011501911094987825
+    },
+    "order2_residual_fH": {
+     "share": 0.0017691814806995246,
+     "value": 0.005951641902603361
+    },
+    "order3_residual_fG": {
+     "share": 0.7644034300030144,
+     "value": 2.5715029996249146
+    }
+   },
+   "radius_mean_over_r": 3.3640652287690207,
+   "radius_terms": {
+    "A0_fH": {
+     "share": 0.0010606690845158242,
+     "value": 0.003568159986449954
+    },
+    "A0_rho2_Env4": {
+     "share": 0.18714575322592514,
+     "value": 0.6295705211391225
+    },
+    "A0_rho_fG": {
+     "share": 0.5803594595384862,
+     "value": 1.952367078020603
+    },
+    "A1_fD": {
+     "share": 0.0025191087518073355,
+     "value": 0.008474446159442785
+    },
+    "A1_rho2_fG": {
+     "share": 0.16445975489513068,
+     "value": 0.5532533429745848
+    },
+    "A1_rho3_Env4": {
+     "share": 0.03535503637656509,
+     "value": 0.1189366485362665
+    },
+    "A1_rho_fH": {
+     "share": 0.000601135640325502,
+     "value": 0.0020222595053928216
+    },
+    "A2_fF": {
+     "share": 0.004749933361317941,
+     "value": 0.015979085659779645
+    },
+    "A2_rho2_fH": {
+     "share": 0.00010737675585819846,
+     "value": 0.00036122241076058567
+    },
+    "A2_rho3_fG": {
+     "share": 0.019584215569397455,
+     "value": 0.06588257862972687
+    },
+    "A2_rho4_Env4": {
+     "share": 0.003157614400727044,
+     "value": 0.010622420811346178
+    },
+    "A2_rho_fD": {
+     "share": 0.0008999423999435496,
+     "value": 0.0030274649355450387
+    }
+   },
+   "required_uniform_atom_constant_reduction": 1.2620572570527464,
+   "sensitivity_10pct_improvement": {
+    "A0": {
+     "delta_vs_base": -0.23504597810419778,
+     "magnitude": 3.539626704941063,
+     "relative_gain": 0.06226923440539796
+    },
+    "A1": {
+     "delta_vs_base": -0.06206242701597154,
+     "magnitude": 3.712610256029289,
+     "relative_gain": 0.01644180362836175
+    },
+    "A2": {
+     "delta_vs_base": -0.008715706586105302,
+     "magnitude": 3.7659569764591554,
+     "relative_gain": 0.0023089966516179634
+    },
+    "A_all": {
+     "delta_vs_base": -0.3058241117062746,
+     "magnitude": 3.468848571338986,
+     "relative_gain": 0.08102003468537768
+    },
+    "C_T": {
+     "delta_vs_base": -0.05217871789165455,
+     "magnitude": 3.722493965153606,
+     "relative_gain": 0.01382337550114644
+    },
+    "C_upper_frozen": {
+     "note": "frozen K1 block bound; feeds the Lemma G supply only",
+     "value": 6.6792892997618765
+    },
+    "D1": {
+     "delta_vs_base": -0.020952684015705835,
+     "magnitude": 3.753719999029555,
+     "relative_gain": 0.005550861167332267
+    },
+    "D2": {
+     "delta_vs_base": -0.0027534724261513406,
+     "magnitude": 3.7719192106191093,
+     "relative_gain": 0.0007294599180795578
+    },
+    "D_lo": {
+     "delta_vs_base": -0.3273751630170539,
+     "magnitude": 3.4472975200282066,
+     "relative_gain": 0.08672941749029751
+    },
+    "rho_frozen": {
+     "note": "frozen cover geometry; not a C2 lever",
+     "value": 0.04691045
+    },
+    "tau": {
+     "delta_vs_base": -0.3058241117062746,
+     "magnitude": 3.468848571338986,
+     "relative_gain": 0.08102003468537768
+    }
+   }
+  },
+  "308": {
+   "DOMINANT_BLOCKER_1": {
+    "share": 0.7467227795739954,
+    "term": "order3_residual_fG"
+   },
+   "DOMINANT_BLOCKER_2": {
+    "share": 0.24466677951396842,
+    "term": "P3_envelope_Env4"
+   },
+   "DOMINANT_BLOCKER_3": {
+    "share": 0.0037842413351963137,
+    "term": "order0_residual_fF"
+   },
+   "Gamma": 0.13619454282611712,
+   "M_after": 3.7851369781202786,
+   "M_needed": 2.432397764101128,
+   "atom_constants": {
+    "A0": 5.590460453801663,
+    "A1": 31.631571724871883,
+    "A2": 455.61048487373813
+   },
+   "closes_under_C1_constants": false,
+   "gap_above_1": 0.6634509287531419,
+   "inside_Env4": {
+    "Env4_cand": 9.45019284400126,
+    "Env4_sigma4": 85.90146055484453
+   },
+   "inside_fG": {
+    "fG_candidate_sups": 4.123322084507262,
+    "fG_eps_src3": 0.0033829087502877772,
+    "fG_sigma3": 2.6252774251379756
+   },
+   "magnitude": 3.7851369781202786,
+   "operator_constants": {
+    "Abar": 7.2178752625084535,
+    "C_T": 5.008960897920824,
+    "D1": 1.3772214353143775,
+    "D2": 21.469367416986586,
+    "D_lo": 0.8288721452281043,
+    "tau": 4.6337769491554655
+   },
+   "order3_attribution": {
+    "Gamma": -0.11866602542315288,
+    "M_after": 1.2537588654292668,
+    "closes": true,
+    "magnitude_with_perfect_order3": 1.2537588654292668
+   },
+   "radius_grouped": {
+    "P3_envelope_Env4": {
+     "share": 0.24466677951396842,
+     "value": 0.8298321809101007
+    },
+    "order0_residual_fF": {
+     "share": 0.0037842413351963137,
+     "value": 0.01283494737828445
+    },
+    "order1_residual_fD": {
+     "share": 0.0032165036176635595,
+     "value": 0.010909360957189506
+    },
+    "order2_residual_fH": {
+     "share": 0.001609695959176348,
+     "value": 0.00545957857891052
+    },
+    "order3_residual_fG": {
+     "share": 0.7467227795739954,
+     "value": 2.5326470309540485
+    }
+   },
+   "radius_mean_over_r": 3.391683098778534,
+   "radius_terms": {
+    "A0_fH": {
+     "share": 0.0009585919708115995,
+     "value": 0.0032512401860265074
+    },
+    "A0_rho2_Env4": {
+     "share": 0.2023847668735945,
+     "value": 0.6864249932554042
+    },
+    "A0_rho_fG": {
+     "share": 0.5647903310157965,
+     "value": 1.9155898200598105
+    },
+    "A1_fD": {
+     "share": 0.0023555802661950165,
+     "value": 0.007989381776669876
+    },
+    "A1_rho2_fG": {
+     "share": 0.16217506600654977,
+     "value": 0.550046430417708
+    },
+    "A1_rho3_Env4": {
+     "share": 0.03874212089456774,
+     "value": 0.1314009966489401
+    },
+    "A1_rho_fH": {
+     "share": 0.0005505041697867585,
+     "value": 0.0018671356884728569
+    },
+    "A2_fF": {
+     "share": 0.0037842413351963137,
+     "value": 0.01283494737828445
+    },
+    "A2_rho2_fH": {
+     "share": 0.00010059981857799,
+     "value": 0.0003412027044111554
+    },
+    "A2_rho3_fG": {
+     "share": 0.0197573825516491,
+     "value": 0.06701078047653014
+    },
+    "A2_rho4_Env4": {
+     "share": 0.003539891745806189,
+     "value": 0.012006191005756488
+    },
+    "A2_rho_fD": {
+     "share": 0.0008609233514685433,
+     "value": 0.0029199791805196297
+    }
+   },
+   "required_uniform_atom_constant_reduction": 1.663450928753142,
+   "sensitivity_10pct_improvement": {
+    "A0": {
+     "delta_vs_base": -0.23684236850011284,
+     "magnitude": 3.5482946096201657,
+     "relative_gain": 0.06257167702758544
+    },
+    "A1": {
+     "delta_vs_base": -0.0628458131392537,
+     "magnitude": 3.722291164981025,
+     "relative_gain": 0.01660331277375946
+    },
+    "A2": {
+     "delta_vs_base": -0.008646645522318351,
+     "magnitude": 3.77649033259796,
+     "relative_gain": 0.0022843679296944033
+    },
+    "A_all": {
+     "delta_vs_base": -0.30833482716168487,
+     "magnitude": 3.476802150958594,
+     "relative_gain": 0.08145935773103931
+    },
+    "C_T": {
+     "delta_vs_base": -0.05278446801397618,
+     "magnitude": 3.7323525101063026,
+     "relative_gain": 0.013945193613624323
+    },
+    "C_upper_frozen": {
+     "note": "frozen K1 block bound; feeds the Lemma G supply only",
+     "value": 6.174137363908812
+    },
+    "D1": {
+     "delta_vs_base": -0.020982689269174584,
+     "magnitude": 3.764154288851104,
+     "relative_gain": 0.005543442520168639
+    },
+    "D2": {
+     "delta_vs_base": -0.0027481044038103215,
+     "magnitude": 3.7823888737164686,
+     "relative_gain": 0.0007260250869903911
+    },
+    "D_lo": {
+     "delta_vs_base": -0.32990827595530753,
+     "magnitude": 3.455228702164971,
+     "relative_gain": 0.08715887373754752
+    },
+    "rho_frozen": {
+     "note": "frozen cover geometry; not a C2 lever",
+     "value": 0.05074855
+    },
+    "tau": {
+     "delta_vs_base": -0.30833482716168487,
+     "magnitude": 3.476802150958594,
+     "relative_gain": 0.08145935773103931
+    }
+   }
+  },
+  "309": {
+   "DOMINANT_BLOCKER_1": {
+    "share": 0.7307909448688887,
+    "term": "order3_residual_fG"
+   },
+   "DOMINANT_BLOCKER_2": {
+    "share": 0.26220003761664684,
+    "term": "P3_envelope_Env4"
+   },
+   "DOMINANT_BLOCKER_3": {
+    "share": 0.0028459509917783594,
+    "term": "order0_residual_fF"
+   },
+   "Gamma": 0.19881031084487408,
+   "M_after": 3.7234166074594515,
+   "M_needed": 1.969827744481147,
+   "atom_constants": {
+    "A0": 5.210202027997067,
+    "A1": 27.452244760421934,
+    "A2": 372.56264240766563
+   },
+   "closes_under_C1_constants": false,
+   "gap_above_1": 1.1015967636536341,
+   "inside_Env4": {
+    "Env4_cand": 8.972695763341997,
+    "Env4_sigma4": 85.97280672173899
+   },
+   "inside_fG": {
+    "fG_candidate_sups": 3.913762350232831,
+    "fG_eps_src3": 0.0032869234251259464,
+    "fG_sigma3": 2.640850442051746
+   },
+   "magnitude": 3.7234166074594515,
+   "operator_constants": {
+    "Abar": 6.900982638677452,
+    "C_T": 4.705512371158392,
+    "D1": 1.2843531438847071,
+    "D2": 19.336005966519533,
+    "D_lo": 0.8480462995336464,
+    "tau": 4.418492549665612
+   },
+   "order3_attribution": {
+    "Gamma": -0.07822879162673159,
+    "M_after": 1.2798175675546322,
+    "closes": true,
+    "magnitude_with_perfect_order3": 1.2798175675546322
+   },
+   "radius_grouped": {
+    "P3_envelope_Env4": {
+     "share": 0.26220003761664684,
+     "value": 0.8771770649680417
+    },
+    "order0_residual_fF": {
+     "share": 0.0028459509917783594,
+     "value": 0.00952098619322446
+    },
+    "order1_residual_fD": {
+     "share": 0.0028166159558709824,
+     "value": 0.009422847303040214
+    },
+    "order2_residual_fH": {
+     "share": 0.0013464505668150117,
+     "value": 0.00450448278748974
+    },
+    "order3_residual_fG": {
+     "share": 0.7307909448688887,
+     "value": 2.444824424710972
+    }
+   },
+   "radius_mean_over_r": 3.345449805962768,
+   "radius_terms": {
+    "A0_fH": {
+     "share": 0.000803377284828607,
+     "value": 0.0026876583816447587
+    },
+    "A0_rho2_Env4": {
+     "share": 0.21708301545495404,
+     "value": 0.7262403319315885
+    },
+    "A0_rho_fG": {
+     "share": 0.553420848377577,
+     "value": 1.8514416698205152
+    },
+    "A1_fD": {
+     "share": 0.0020593960503728346,
+     "value": 0.00688960611712029
+    },
+    "A1_rho2_fG": {
+     "share": 0.15800452108364518,
+     "value": 0.5285961944005209
+    },
+    "A1_rho3_Env4": {
+     "share": 0.04131888416432524,
+     "value": 0.13823025301013997
+    },
+    "A1_rho_fH": {
+     "share": 0.0004587367588733088,
+     "value": 0.0015346808009607002
+    },
+    "A2_fF": {
+     "share": 0.0028459509917783594,
+     "value": 0.00952098619322446
+    },
+    "A2_rho2_fH": {
+     "share": 8.43365231130958e-05,
+     "value": 0.00028214360488428085
+    },
+    "A2_rho3_fG": {
+     "share": 0.019365575407666636,
+     "value": 0.0647865604899357
+    },
+    "A2_rho4_Env4": {
+     "share": 0.003798137997367598,
+     "value": 0.012706480026313246
+    },
+    "A2_rho_fD": {
+     "share": 0.0007572199054981478,
+     "value": 0.002533241185919924
+    }
+   },
+   "required_uniform_atom_constant_reduction": 2.1015967636536343,
+   "sensitivity_10pct_improvement": {
+    "A0": {
+     "delta_vs_base": -0.23457906001215895,
+     "magnitude": 3.4888375474472926,
+     "relative_gain": 0.06300102425879657
+    },
+    "A1": {
+     "delta_vs_base": -0.061386430393521985,
+     "magnitude": 3.6620301770659296,
+     "relative_gain": 0.016486586612559306
+    },
+    "A2": {
+     "delta_vs_base": -0.008166310136388874,
+     "magnitude": 3.715250297323063,
+     "relative_gain": 0.0021932303035949773
+    },
+    "A_all": {
+     "delta_vs_base": -0.3041318005420698,
+     "magnitude": 3.4192848069173816,
+     "relative_gain": 0.08168084117495086
+    },
+    "C_T": {
+     "delta_vs_base": -0.05170716861183401,
+     "magnitude": 3.6717094388476177,
+     "relative_gain": 0.013887022072213043
+    },
+    "C_upper_frozen": {
+     "note": "frozen K1 block bound; feeds the Lemma G supply only",
+     "value": 5.782414324348792
+    },
+    "D1": {
+     "delta_vs_base": -0.019943585347608577,
+     "magnitude": 3.703473022111843,
+     "relative_gain": 0.005356259438617162
+    },
+    "D2": {
+     "delta_vs_base": -0.002603924187523983,
+     "magnitude": 3.7208126832719275,
+     "relative_gain": 0.0006993373189310351
+    },
+    "D_lo": {
+     "delta_vs_base": -0.3246295364830994,
+     "magnitude": 3.398787070976352,
+     "relative_gain": 0.08718592913635831
+    },
+    "rho_frozen": {
+     "note": "frozen cover geometry; not a C2 lever",
+     "value": 0.05418645
+    },
+    "tau": {
+     "delta_vs_base": -0.3041318005420698,
+     "magnitude": 3.4192848069173816,
+     "relative_gain": 0.08168084117495086
+    }
+   }
+  }
+ },
+ "note": "diagnosis only; proposes nothing and closes nothing",
+ "schema": "rebaseguard.p5y.k5.tail-c2.d1-blocker.v1"
+}
