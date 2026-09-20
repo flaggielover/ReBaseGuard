@@ -17,9 +17,10 @@ Campaign B, as executed, never reaches that surface:
 - The selected route was abandoned before freeze (`phase_c/EXECUTION_DECISION.md`), so no authorization was requested
   and the guard never left DENY.
 - The one route this successor *derived* (TCT0, theorem TC-T) takes Ĝ := 0. It proposes no order-3 candidate of F,
-  calls no order-3 entry point, and records no order-3 field of F. `code/tct_inputs.py` asserts
-  `order3_fields_present = false` and refuses if any `G`-family key appears in its output; all five measurement records
-  carry that flag.
+  calls no order-3 entry point, and records no order-3 field of F. `code/tct_inputs.py` emits a fixed per-object
+  literal with no order-3 key, so `order3_fields_present: false` and its `G`-key refusal record the design rather than
+  test it (review r1 note N10); what makes the claim checkable is the *content* of the five measurement records, which
+  a reader can inspect directly.
 - `tct_inputs.py` does import the frozen chain through `tc_producer._import_chain()`, which imports `cusum_order3` for
   the Aux5 bootstrap and instantiates the *Aux3* certifier (`ReplayAux3Certifier`), exactly as Campaign A's
   qualification replay did. `certify_real_cell` and `rung3_engine.certify_order3` — the gated entry points that hold
@@ -45,9 +46,13 @@ Campaign B answers it without new manufactured fixtures, because it does not *tr
 tower with adopted, independently certified evidence for the same objects** (theorem TC-T premise (P3′)):
 `auxiliary_evidence.candidate_suprema['S:r:3'] + midpoint_eps['S:r:3']` for σ3, and `['h:j:3']` for the h-tower. Those
 Aux3 quantities are inside the frozen producer's 262-field identity gate, and the minimum of two valid upper bounds is
-a valid upper bound. Where the two disagree they disagree by 2–18× and the adopted evidence is the tighter, so the
-tower is no longer the binding premise on the tail; where only the tower exists (order 4) its contribution enters only
-through ρ²·Env4/2 ≈ 0.3 of a radius ≈ 3.9, i.e. 8%.
+a valid upper bound. Where the two disagree they disagree by 2–30× and the adopted evidence is the tighter.
+
+Review r1 note N1 found that r1 of (P3′) applied the adopted *midpoint* bounds to σ4, which premise (P3) needs
+uniformly on the cell. (P3′) r2 keeps a midpoint tower for σ3 and a cell tower carrying the mean-value correction
+ρ·sup_C‖h_j⁗‖ for σ4. After the repair σ4 still reaches ≈ 235 at r = 4 and the (P3) remainder A0·ρ²·Env4/2 is the
+*dominant* term of the radius at r = 3, 4 — so on the tail the tower remains a binding premise at order 4, where no
+adopted evidence exists at all, and that is now stated in `phase_c/EXECUTION_DECISION.md` §4 rather than glossed.
 
 The W assembly and the order-2 centre — the other half of the blind spot — are now covered by a **new** gate this
 successor introduces, which Campaign A did not have: `tct_rule.derived_identity_gate` rebuilds the adopted record's
@@ -77,8 +82,9 @@ Two further gates were added anyway, and both are reported in
 
 1. the **derived identity gate** above, which closes the Ĥ_r(a) / W gap that N5's cousin left open;
 2. **two independent rule paths** (`tct_rule.tail_enclosure` through the frozen `tc_rule`, and
-   `tct_rule.tail_enclosure_crosscheck` re-derived from `theorem/THEOREM_TCT.md` importing no `tc_rule`) that must
-   agree as exact rationals on every cell and every m; they agree 20/20.
+   `tct_rule.tail_enclosure_crosscheck`, which since review r1 note N15 re-derives both towers, both σ's, the Taylor
+   sums, the (P3) envelope and the assembly table itself and shares no function with the first path) that must agree
+   as exact rationals on every cell and every m; they agree 20/20.
 
 **If and when a route with a real Ĝ is executed** (continuation C2), N5 returns unchanged and an additional
 consistency gate becomes worthwhile, since the adopted records make two invariants available that Campaign A did not

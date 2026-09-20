@@ -63,7 +63,7 @@ the identity above already carries the **true** source — and it keeps the fiel
 **What is traded.** A real Ĝ makes f_G ≈ 10⁻³ but pays ‖Ĝ‖ and |Ĝ(a)|; Ĝ := 0 makes those zero but pays
 f_G ≈ 4.9–8.9. On the lower front, where ρ ≈ 2.7·10⁻⁴, the ρ·f_G term is negligible and the real candidate is
 strictly better. On the tail, where ρ ≈ 4.1–5.4·10⁻², the trade reverses unless the order-3 candidate's certified
-supremum is below ≈ 5.5–60 × s_H (per cell; `evidence/forecast_r2/TAIL_FORECAST_R2.json`
+supremum is below ≈ 10.5–64.7 × s_H (per cell; `evidence/forecast_r2/TAIL_FORECAST_R2.json`
 `critical_sup_G_over_sup_H_ratio`). Both choices are valid enclosures, so a campaign may compute both and intersect.
 
 ## 3. Premise (P3′) — σ3 and σ4 from adopted Aux3 evidence
@@ -71,18 +71,33 @@ supremum is below ≈ 5.5–60 × s_H (per cell; `evidence/forecast_r2/TAIL_FORE
 Theorem TC (P3) bounds the true source derivatives by the frozen J/h Leibniz tower
 ‖h_1‖ ≤ 1, ‖h_1^{(n)}‖ ≤ sup‖S_0^{(n−1)}‖ (h_1' = −S_0 exactly), ‖h_j‖ ≤ 1,
 ‖h_j^{(n)}‖ ≤ Σ_i C(n,i) k_i ‖h_{j−1}^{(n−i)}‖, and σ_n(r) = Σ_i C(n,i) j_i ‖h_r^{(n−i)}‖ for r ≥ 1.
-On the tail that tower is loose at order 3: σ3 = 5.9, 16.9, 36.5, 67.2 for r = 1…4 at cell 309.
+On the tail that tower is loose at order 3: σ3 = 5.9, 16.9, 36.5, 67.2 for r = 1…4 at cell 309, against
+adopted values of 3.04, 3.41, 3.81, 2.25.
 
 The adopted Aux3 evidence already carries certified order-3 quantities for the **same** objects
-(`auxiliary_evidence.candidate_suprema['S:r:3'], ['h:j:3']` and `auxiliary_evidence.midpoint_eps['S:r:3'], ['h:j:3']`,
-both inside the frozen producer's identity gate). Since ‖S_r'''‖ ≤ ‖Ŝ_r'''‖ + ‖S_r''' − Ŝ_r'''‖ and likewise for h_j,
+(`auxiliary_evidence.candidate_suprema['S:r:3'], ['Sclosed:0:3'], ['h:j:3']` and the matching
+`auxiliary_evidence.midpoint_eps` entries, all inside the frozen producer's identity gate). Since
+‖S_r'''(e0)‖ ≤ ‖Ŝ_r'''(e0)‖ + ‖S_r'''(e0) − Ŝ_r'''(e0)‖ and likewise for h_j,
 
-    σ3(r) ≤ min( tower, candidate_suprema['S:r:3'] + midpoint_eps['S:r:3'] )        (r ≥ 1)
-    ‖h_j'''‖ ≤ min( tower, candidate_suprema['h:j:3'] + midpoint_eps['h:j:3'] )
+    adopted3(r) := candidate_suprema['S:r:3'] + midpoint_eps['S:r:3']      bounds ‖S_r'''(e0)‖
+    adoptedh(j) := candidate_suprema['h:j:3'] + midpoint_eps['h:j:3']      bounds ‖h_j'''(e0)‖
 
-and the order-4 recursion is then seeded with the refined lower orders. The minimum of two valid upper bounds is a
-valid upper bound, so (P3′) is sound by construction. It reduces σ3 to 0.69–3.81 and σ4 from 355 to 201 at r = 4,
-and the resulting whole-cell magnitude from 4.26 to 3.87 at cell 309.
+**Those are MIDPOINT bounds, and the two premises they feed are not both midpoint premises.** σ3 enters only f_G,
+i.e. theorem TC premise (P2), which is stated at e0 — a midpoint bound is exactly the right object there. σ4 enters
+Env4, i.e. premise (P3), which must hold for **every** e in the cell. Review r1 note N1 found that (P3′) r1
+substituted the midpoint bound into the order-3 slot of the tower and then ran the order-4 recursion on it, which is
+unsound. (P3′) r2 therefore keeps **two** towers:
+
+    midpoint tower   t_mid[j,3] = min( tower[j,3], adoptedh(j) )                 -> sigma3 only
+    cell tower       t_cell[j,3] = min( tower[j,3], adoptedh(j) + rho * tower[j,4] )
+                     t_cell[j,4] = min( sum_i C(4,i) k_i t_cell[j-1,4-i] , tower[j,4] )    -> sigma4 only
+
+The cell tower's order-3 slot carries the mean-value correction ‖h_j'''(e)‖ ≤ ‖h_j'''(e0)‖ + ρ·sup_C‖h_j⁗‖ (h_j is
+analytic on the cell), with sup_C‖h_j⁗‖ taken from the **unrefined** tower, which is cell-uniform by (P3); the
+order-4 entries are then re-derived from the corrected lower orders, which is valid because the Leibniz recursion
+holds pointwise in e, so cell-uniform inputs give a cell-uniform output. The minimum of two valid upper bounds is a
+valid upper bound, so (P3′) r2 is sound by construction. It reduces σ3 to 0.69–3.81 and σ4 from ≈ 355 to ≈ 235 at
+r = 4, and the resulting whole-cell magnitude from 4.2617 to 3.9643 at cell 309.
 
 ## 4. Statement and consumption
 
@@ -111,11 +126,18 @@ cover the fields that one does not reach:
   ≤ 10⁻⁶. Measured worst gap: 2.7–3.6 · 10⁻⁸ (the record's enclosure adds its eps as an outward-rounded Arb radius,
   so it is very slightly wider). A wrong Ĥ_r(a) or W moves an endpoint by O(10⁻²–1).
 - **two independent rule paths**: `tct_rule.tail_enclosure` (through the frozen `tc_rule` functions) and
-  `tct_rule.tail_enclosure_crosscheck` (re-derived from this document in generic form, importing no `tc_rule`) must
-  agree as exact rationals on every cell and every m. They do, on all 20 pairs.
+  `tct_rule.tail_enclosure_crosscheck` (re-derived from this document in generic form) must agree as exact rationals
+  on every cell and every m. They do, on all 20 pairs. Since review r1 note N15 the second path shares **no function**
+  with the first — it imports no `tc_rule` and re-derives both towers, both σ's, the Taylor sums, the (P3) envelope
+  and the assembly table itself — because in r1 both paths called the same `h_tower`/`sigma_source` and the 20/20
+  agreement was therefore silent on exactly the (P3′) defect that note N1 found.
 
 ## 6. What is not claimed
 
 Nothing about R, R′ or R‴ values beyond this enclosure; no whole-function sup norm is improved; no order-3 candidate
 of F is proposed, computed or recorded, so the guard stays DENY and Campaign A's note N5 trust surface is not entered.
-The enclosure is **not** by itself sufficient for cells 306–309 — see `phase_c/EXECUTION_DECISION.md`.
+The enclosure is **not** by itself sufficient for cells 306–309: it reaches 0.94×, 0.76×, 0.61× and 0.50× of what
+the frozen K5-B needs there, and closes cell 305 with a margin of 1.149× — see `phase_c/EXECUTION_DECISION.md`.
+
+`tail_object` also accepts a **non-zero** order-3 supply, so a route that proposes a real Ĝ is scored on the same
+(P3′) premise supply; (P3′) is a statement about the source and is independent of the choice of Ĝ (review r1 note N4).
