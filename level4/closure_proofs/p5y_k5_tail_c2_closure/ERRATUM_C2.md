@@ -1,7 +1,8 @@
 # Campaign C2 — erratum, and the disposition of the independent pre-freeze reviews
 
-Five independent fresh-context pre-freeze reviews have run on this campaign, each returning **NOT_READY**, and
-this document dispositions every FAIL from all five.
+Independent fresh-context pre-freeze reviews have run on this campaign in successive rounds, each so far
+returning **NOT_READY**, and this document dispositions every FAIL from every one of them. The table below is the
+count; no sentence in this namespace states one, for the reason given in §"The pattern, named".
 
 | round | at | verdict | dispositioned in |
 |---|---|---|---|
@@ -10,6 +11,7 @@ this document dispositions every FAIL from all five.
 | r3 | `55c4cf00` | 1 FAIL | § "Dispositions from the THIRD pre-freeze review" |
 | r4 | `17123368` | 3 FAIL | § "Dispositions from the FOURTH pre-freeze review" |
 | r5 | `1663f558` | 2 FAIL | § "Dispositions from the FIFTH pre-freeze review" |
+| r6 | `ec5b08ca` | 1 FAIL | § "Dispositions from the SIXTH pre-freeze review" |
 
 **The result has never moved.** Across all five rounds no Γ, magnitude, margin, requirement, gap fall, class or
 adopted-subset value has changed: the class is `D_PARTIAL`, the closed subset is {305, 306}, and the frozen gate
@@ -215,7 +217,7 @@ shape §"The pattern, named" predicts.
 |---|---|---|
 | **r4 FAIL 1** | r3 asked for **one** new field, `effective_improvement`. C2 added that, correctly — and then added a second field r3 never requested and C2 never checked: `gain_per_unit_of_input_moved`, on all five operator rows. **It reverses the D_lo-vs-τ ordering on every cell** (309: τ 0.898489 against D_lo 0.871859), contradicting the one finding §2 states in bold that the whole section rests on — the point r1 attacked, C2 defended, and r2 confirmed C2 was right about — uncaveated, in the machine-readable artifact. | The field is now emitted **on the C_T row only**, where it answers the same-input headroom question it exists for, and the artifact carries a `per_unit_comparability` string stating the limit. Cause recorded in-source: the ÷1.1 convention equalises the effect on A0 = τ/D_lo, which is *why* the input fractions differ (10 % against 9.0909 %); dividing by the input fraction discards exactly that symmetry and inflates τ by 1.1. Renormalising by equal A0 effect instead divides **both** rows by the same constant 1 − 1/1.1, so it preserves `relative_gain`'s ordering and its ratio exactly — 1.0674 at cell 309 either way. That is the point: a normalisation consistent with the convention changes nothing, and only dividing by each input's own fraction inverts the result. |
 | **r4 FAIL 2** | The withdrawn "refuses exactly as `deflated_consume.atom_constants`" claim **survived verbatim in the source comment** at `c2_d1_blocker.py`, which r3's note 2 had explicitly named — while this file asserted "Corrected in both places". Same shape as r3 FAIL 6, one round later: the prose was fixed and the copy the reviewer pointed at was not. | Comment rewritten to state that the guard enforces the four premise inequalities **only**, and is deliberately not a claim of equivalence. The false "in both places" sentence is corrected above rather than deleted. |
-| **r4 FAIL 3** | `README.md` had been stale since `12585997`: it advertised one review of three and six FAILs of ten, and said "no published number changed" when nine had. | Rewritten to list all four reviews with their counts, and to state exactly which two published numbers changed (the C_T sensitivity row and the blocker ranking) and that **no Γ, magnitude, margin, requirement, gap fall, class or adopted-subset value has changed at any point**. |
+| **r4 FAIL 3** | `README.md` had been stale since `12585997`: it advertised one review of three and six FAILs of ten, and said "no published number changed" when nine had. | Rewritten to list every review, and to state which published numbers had changed. *(Both parts of that repair were themselves superseded later: the per-review PASS/NOTE/INFO counts it added were removed at r5 FAIL 2, and "two published numbers" was corrected to one value plus one table in self-audit — see the top of this document.)* |
 
 Non-blocking corrections from its notes, all applied: the leaf accounting is now exact (487 → 525; nine changed,
 38 added, none removed) rather than the double-counted "53"; "on every row" is corrected to five of the eleven
@@ -248,9 +250,37 @@ That does not rescue the decoration, and C2 is not going to argue it does. The c
 needed, and propagated someone else's arithmetic error into the campaign's front door. **The fix is deletion, not
 correction.**
 
+## Dispositions from the SIXTH pre-freeze review
+
+`review/REVIEW_C2_PREFREEZE_R6.md`, at `ec5b08ca`: 33 rows, 27 PASS, 5 NOTE, **1 FAIL**. It independently
+re-derived the gap falls (0.462852 / 0.245931 / 0.183898) and confirmed `D_PARTIAL` with closed = {305, 306} is
+mechanical under the frozen gate; ran its own leaf diff across **all four commits** that have ever touched
+`C2_D1_BLOCKER.json`, confirming exactly nine leaves have ever had a value replaced; verified that `5a94568a`'s
+copy already said `DOMINANT_BLOCKER_3 = order0_residual_fF`; and confirmed C2's correction of r5 — r1 does have
+three `NOT_CHECKABLE_LOCALLY` rows, and r2's own header genuinely does not reconcile with its own total.
+
+| | finding | repair |
+|---|---|---|
+| **r6 FAIL 1** | `README.md` still said "**Four** independent pre-freeze reviews" and "— **three separate times** — an error introduced by a repair", two lines above the paragraph `ec5b08ca` had just rewritten, which correctly says "the **fifth** review". The same file's own table listed five. | Both counts **removed rather than updated**. The review table is now the single place in this namespace that counts reviews, and the prose points at it. |
+
+**The repair is structural, not another number.** Three of the instances in the table below are a count left stale
+by a later edit; this was the fourth. Updating the number would have set the same trap for round seven. So every
+hand-maintained tally has been deleted from prose in both `README.md` and this section, and the two tables — the
+review list at the top of the README, and the instance table below — are now the only places a count appears.
+
+On the review's own closing point, which C2 accepts: what it blocked on was not prose quality but *a wrong count
+of how many independent reviews the campaign had survived, in the front-door document*. That is a claim about the
+campaign's reliability, in the document an adjudicator reads first, and failing it was consistent with r4 FAIL 3
+and r5 FAIL 2 rather than a softening of them.
+
 ## The pattern, named
 
-Four review rounds, and **each of C2's repairs has carried an error of its own**:
+**Every one of C2's repair rounds has carried an error of its own.** The table below is the campaign's only
+tally of them; no other sentence in this namespace states a count, because hand-maintained counts in prose are
+themselves one of the recurring defects — three separate instances below are a number left stale by a later
+edit.
+
+
 
 | round | the repair | the error it introduced | caught by |
 |---|---|---|---|
@@ -261,13 +291,16 @@ Four review rounds, and **each of C2's repairs has carried an error of its own**
 | 4 | replaced this section's opening with a table | left the superseded paragraphs underneath, contradicting the new table | r5 FAIL 1 |
 | 4 | rebuilt the README review row as r4 asked | added PASS/NOTE/INFO counts nobody asked for, propagating r2's own arithmetic error | r5 FAIL 2 |
 | 4 | wrote up r4 FAIL 1 | restated a reviewer's comparative claim unverified; it was false | **self-caught**, `1663f558` |
+| 5 | wrote the README footnote explaining the removal | said a previous version "got two wrong"; only one was wrong | **self-caught**, `a58bbdd8` |
+| 5 | rewrote this section's prose | miscounted its own table as five-and-two; it was four-and-three | **self-caught**, `a58bbdd8` |
+| 5 | summarised what had changed | said "two published numbers"; conflated one evidence change with one prose correction | **self-caught**, `ec5b08ca` |
+| 5 | rewrote the README's "one published value" paragraph | left the paragraph one line above saying "four reviews" and "three separate times" | r6 FAIL 1 |
 
-Every instance has the same shape — **a correct primary argument or fix, with a second, unverified thing stacked
-on top of it.** The primary claim was sound every time; the decoration was not. By kind: two unverified arguments
-or restated claims, two stale remnants left behind by a fix, one extra artifact field, one extra claim about a
-fix's own completeness, one set of extra summary figures.
+Every instance has the same shape — **a correct primary argument or fix, with a second unverified thing stacked
+on top of it, or a neighbouring sentence the fix failed to carry along.** The primary claim was sound every time;
+the decoration and the leftovers were not.
 
-Three were caught by C2 rather than a reviewer, all in self-audits run before launching the next round. Writing up r4 FAIL 1, C2 restated the review's remark that
+Several were caught by C2 rather than a reviewer, in self-audits run before launching the next round. Writing up r4 FAIL 1, C2 restated the review's remark that
 renormalising by equal A0 effect makes D_lo "lead by a wider margin" — inherited from the reviewer's summary and
 not checked. It is false: that renormalisation divides both rows by the same constant, so the ratio is *identical*
 to `relative_gain`'s, 1.0674 at cell 309 either way. It is wider only than the inverted per-unit column. (r5 note 8 adds the
@@ -289,8 +322,9 @@ shipped an unrequested field whose effect it had not computed, and the round aft
 unrequested decoration.
 
 The operational lesson for a successor is narrower than "be careful". It is: **when a review asks for one change,
-make that change and stop.** Four of the seven instances above are C2 doing more than was asked and not checking
-the extra part; the other three are C2 failing to clean up after a change it did make. Any sentence in this
+make that change and stop.** Most of the instances above are C2 doing more than was asked and not checking the
+extra part; the rest are C2 failing to clean up after a change it did make — usually a neighbouring sentence the
+fix should have carried along. Counting them by kind is left to the table, deliberately. Any sentence in this
 namespace beginning "a further reason", and any artifact field or summary figure not traceable to a specific
 review request or gate clause, should be treated as unverified until checked.
 
