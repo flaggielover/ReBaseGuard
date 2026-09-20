@@ -46,8 +46,42 @@ slightly *stricter* than C1's at cell 309 (20 % vs an equivalent 19.08 %) and su
 frozen before any of these numbers existed, with the justification recorded in the gate — but the profile is what it
 is, and a reader comparing C2's "materially tightened" flags against C1's would be misled without this table.
 
+## What this audit left out, and the pre-freeze review supplied
+
+This document was written before the review reported, and it audited **one** of the four things C2 changed. That
+was incomplete in C2's own disfavour, which is the better direction to err, but incomplete is still incomplete. C2
+changed four things at once, and two of them are strictly harder on C2:
+
+| | C1's gate | C2's gate | direction for C2 |
+|---|---|---|---|
+| measure | fraction of raw requirement | fraction of the gap above 1 | **looser** where the gap < 1 |
+| threshold | 10 % | 20 % | interacts with the row above |
+| scope | the **worst** still-open cell, one test | **every** still-open cell must pass | **harder** |
+| baseline | Campaign B (2.252903 at cell 309) | Campaign C1 (1.0 / 1.0 / 1.2621 / 1.6635 / 2.1016) | **harder** |
+
+Apply **C1's gate verbatim** to C2's result and the arithmetic is: the worst still-open requirement is 1.8990149
+against C1's frozen baseline 2.252903, a fall of **15.708 %**, comfortably past C1's 10 % bar; C2 closes 2 cells and
+306 lies in C1's qualifying set {306, 307, 308, 309}. C2's class under C1's gate would therefore have been
+**USEFUL**. Under its own gate it is **D_PARTIAL**. (C1's own fall on the same test was 6.716 %, which is why C1
+was MARGINAL and stopped.)
+
+So the complete answer to "does the measure change flatter C2?" has two halves that point opposite ways, and both
+belong in the record:
+
+- **On the measure alone — yes.** C2 reports the scale on which its numbers look 2.4× to 4.8× better, and that
+  scale is what earns 307 and 308 their "materially tightened" verdicts. Under C1's measure none of the three
+  would qualify.
+- **On the gate as a whole — no, the opposite.** C2 wrote a gate that places it in a *lower* class than its
+  predecessor's gate would have. Widening the scope from the single worst cell to every open cell, and moving the
+  baseline forward from Campaign B to Campaign C1, cost more than the measure change gained.
+
+What C2 should have done at publication, and did not, is state which way each of the four changes cuts, rather
+than auditing the one change and leaving the other three unexamined. That omission is the substance of the review's
+finding, and this section is the repair.
+
 ## Conclusion
 
-The measure change is sound in principle, more generous in effect, and immaterial to C2's class and decision. A
-successor gate should set the threshold per cell from the gap it starts with, rather than applying one number to
-gaps that differ by a factor of four.
+The measure change is sound in principle, more generous in effect, offset by two changes that cut the other way,
+and immaterial to C2's class and decision either way. A successor gate should set the threshold per cell from the
+gap it starts with, rather than applying one number to gaps that differ by a factor of four — and should state, at
+the moment of freezing, the direction of every change it makes to its predecessor's test.

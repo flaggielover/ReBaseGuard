@@ -5,6 +5,18 @@ D-stage adoption. **No new real scientific address is evaluated by this document
 DENY and there is no authorization artifact, because none may exist until the R-stage sub-gate, an independent
 review, qualification and a distinct authorization are all complete, with N1 closed first.
 
+> **BLOCKING PRECONDITION, added after the pre-freeze review (note 11).** A sound, cheaper, deterministic step
+> that this campaign did not pre-register already clears the gate's own 20 % bar on **all three** still-open cells,
+> including the cell 309 that cost C2 the `D_USEFUL` class. It uses constants that are already certified, committed
+> and reviewed, and costs **zero** new CPU and zero new real addresses. See
+> [`../phase_d/D_PRIME_OPPORTUNITY.md`](../phase_d/D_PRIME_OPPORTUNITY.md).
+>
+> The premise under which a real order-3 address would be spent — that the deterministic direction is exhausted —
+> is therefore **not established by this campaign**. What ran out is C2's pre-registration, not the deterministic
+> direction. **No address designed below may be authorized until a successor has frozen a D′ gate and run that step
+> first.** Everything else in this document — the attribution test, the minimal address set, the cost model, the
+> no-transport argument — is unaffected and remains usable as written.
+
 ## 1. Eligibility, as the gate pre-registered it
 
 - **(a)** the D stage did not close all five cells — 307, 308, 309 remain open. ✔
@@ -15,18 +27,46 @@ review, qualification and a distinct authorization are all complete, with N1 clo
 
 The attribution test uses a *perfect* order-3 candidate. A real one pays its own certified supremum through Env4 and
 its value at the atom through the centre motion ρ·|Ĝ(a)| — which is precisely what invalidated Campaign B's route
-T2. Modelled on the adopted Campaign-A evidence (|Ĝ(a)| = 0.681·s_G, δ_G at the worst adopted per-r value), the
-**critical ratio** — the largest s_G/s_H at which a real candidate still closes the cell — is:
+T2. Modelled on the adopted Campaign-A evidence — |Ĝ(a)| = 0.681·s_G, and δ_G at each Taylor index r's own worst
+adopted value across the 34 lower-front cells (a per-r maximum, not one maximum over all r) — the **critical
+ratio** is the largest s_G/s_H at which a real candidate still closes the cell:
 
-| cell | under C1 constants | **under C2 constants** | adopted lower-front s_G/s_H |
-|---|---|---|---|
-| 307 | 32.03 | **37.32** | 34.8 – 80.5 |
-| 308 | 19.20 | **23.26** | 34.8 – 80.5 |
-| 309 | 10.55 | **14.16** | 34.8 – 80.5 |
+| cell | Lemma G (Campaign B) | **C1 (true)** | **C2** | C2 over C1 | adopted lower-front s_G/s_H |
+|---|---|---|---|---|---|
+| 307 | 32.03283 | **34.55795** | **37.32219** | **+8.0 %** | 34.79 – 80.50 |
+| 308 | 19.19506 | **20.93621** | **23.26035** | **+11.1 %** | 34.79 – 80.50 |
+| 309 | 10.54598 | **12.18694** | **14.15799** | **+16.2 %** | 34.79 – 80.50 |
 
-C2's deterministic work raised every threshold by 16–34 %. Cell 307 is now **inside** the adopted range at its lower
-end; 308 and 309 remain below it. The tail's own s_G/s_H has never been measured, and this campaign does not
-pretend otherwise: it is the single quantity the R stage would buy.
+**Corrected after the pre-freeze review (notes 61 and 62), and this correction is the most important one in the
+campaign.** The first version of this table had two columns, headed "under C1 constants" and "under C2 constants",
+and concluded that *"C2's deterministic work raised every threshold by 16–34 %"*. The left column was not C1. It
+was Campaign B's **Lemma-G** column — digit for digit `TAIL_FORECAST_R2.critical_sup_G_over_sup_H_ratio`, a file
+whose own `premise_supply` field states that every route in it uses the Lemma-G constants. C1 never computed a
+critical ratio at all. So the improvement quoted was C2 over **Campaign B, two campaigns back**, presented under
+C1's name, and it overstated C2's own contribution by about a factor of two. The true improvement over the
+immediate predecessor is **+8.0 / +11.1 / +16.2 %**.
+
+This is the same defect class C1's own pre-freeze reviewer caught in C1 — a comparison computed on a different
+quantity than its label states — and it appeared here in the one document that would justify spending the
+programme's first real order-3 tail address. It is recorded rather than quietly patched for that reason.
+
+The repair also closed a provenance gap the review did not raise: these ratios were published from an uncommitted
+scratch script. They now have a committed producer, `code/c2_critical_ratio.py` → `evidence/phase_d5/
+C2_CRITICAL_RATIOS.json`, which computes the ratio under every supply **by name** so the labels cannot drift again,
+runs from committed evidence alone on any machine with stdlib Python (no record store, no compute host, no new real
+address), and **refuses to emit anything** unless it first reproduces two independently published anchors
+bit-exactly: Campaign B's Lemma-G column, and C2's own published Γ, Γ-with-a-perfect-candidate and critical ratio.
+Those two anchors are what license the C1 column, which nothing else in the programme has ever computed.
+
+**And the surviving claim is weaker than it first read.** Cell 307's C2 ratio of 37.32 does sit inside the adopted
+range, whose lower end is 34.786. But the componentwise minimum of the two supplies *already certified when C1
+stopped* — Lemma G and C1's registry — gives **34.82089**, which is already inside that range, marginally. What C2
+bought at 307 is therefore not entry into the adopted range; it is margin within it (37.32 against 34.82, +7.2 %).
+The word "now" in the original text carried more weight than the arithmetic supports. The recommendation below
+survives the correction; its justification is simply narrower than it was stated to be.
+
+The tail's own s_G/s_H has never been measured, and this campaign does not pretend otherwise: it is the single
+quantity the R stage would buy.
 
 ## 3. Minimal address set
 
@@ -61,6 +101,11 @@ Forecast cost is far inside the caps under either option, so the caps are not th
 and N5 obligations are.
 
 ## 5. Honest assessment
+
+**First, the precondition at the head of this document.** R-a is not authorized by anything here, and on the
+evidence now available it should not be the programme's next step: a deterministic D′ step that costs nothing
+clears the same bar on every open cell and must be tried first. The assessment below is what remains true *if* D′
+is run and still closes no further cell.
 
 R-a is worth doing and R-b is not yet. The measurement R-a buys is the one quantity that has blocked three
 campaigns, it costs one address, and its outcome determines whether 308 and 309 are reachable at all or whether the

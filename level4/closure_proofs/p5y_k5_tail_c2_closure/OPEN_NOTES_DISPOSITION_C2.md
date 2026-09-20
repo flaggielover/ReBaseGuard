@@ -22,8 +22,8 @@ consumer — under independent review. C2 does not pre-empt any of that.
 **Not widened by C2.** C2 alters no source-tower quantity, no W enclosure and no order-3 field; σ₃, σ₄, the h-tower,
 `eps_src[*]`, `H_at_a` and `W2` are Campaign B's, byte-for-byte. C2 substitutes only A0, A1, A2.
 
-C2 does add a second locally re-runnable adversarial suite (`code/c2_mutations.py`, 25 real mutants and 8 static
-assertions, stdlib only) covering the source-node swap, the W endpoint swap, the order-3 field inserted at the wrong
+C2 does add a second locally re-runnable adversarial suite (`code/c2_mutations.py`, **35 real mutants and 8 static
+assertions** after the pre-freeze review, stdlib only) covering the source-node swap, the W endpoint swap, the order-3 field inserted at the wrong
 location, the midpoint/whole-cell substitution and the omitted mean-value correction.
 
 **Still open, and scoped to the R stage**: tail-geometry manufactured fixtures and exact independent cross-checks
@@ -52,3 +52,30 @@ and are detected.
 one of the six operator quantities is certified uniformly on a sub-block, and a cell takes the worst over a cover of
 itself — an upper bound by maximum, a lower bound by minimum. Mutants `M11`–`M14` check that taking the best rather
 than the worst sub-block, or swapping min for max on D_lo, is detected.
+
+**That argument needs the cover to be a cover, and until the pre-freeze review nothing checked that it was.**
+`M11`–`M14` perturb which sub-block row is *selected*; none of them perturbed the *geometry*. A partition with a
+gap leaves part of the cell uncertified and the max/min composition is then not a whole-cell bound at all — a
+direct soundness hole with no probe. The suite now verifies the tiling invariant (exact count `N_k = ceil(2ρ/(1/100))`,
+row 0 starting at the cover's left edge, the last row ending at its right edge, contiguity, and every width
+≤ 1/100) and carries three mutants against it: `M28` a gap, `M29` an overlap, `M30` an off-by-one short cover. All
+three are detected, and the unmutated world is required to satisfy the invariant before any mutant runs.
+
+## Notes opened by the C2 pre-freeze review
+
+Full disposition in [`ERRATUM_C2.md`](ERRATUM_C2.md). Carried forward as open obligations on the successor:
+
+- **N6 — the frozen gate's `why_gap_and_not_ratio` is directionally inverted.** Recorded in the erratum, **not**
+  amended: a frozen pre-registration is not edited after a review, even to correct true errors in its prose. The
+  clause that carries the argument is sound and nothing the gate decides changes. A successor gate must not copy
+  the sentence.
+- **N7 — the deterministic direction is not established as exhausted.** A sound operator-level combination C2 did
+  not pre-register clears the gate's own 20 % bar on all three still-open cells at zero cost
+  (`phase_d/D_PRIME_OPPORTUNITY.md`). **This blocks any R-stage authorization** and must be discharged by a
+  successor D′ campaign, with its rule frozen first, before a real order-3 address is spent.
+- **N8 — cell 306 has no margin floor that C2 can honestly set**, having already seen the margin. Referred to the
+  adjudicator with C2's decision pre-committed in both directions (`phase_d/CELL_306_ADOPTION.md`).
+- **N9 — the Arb/FLINT supersolutions remain the residual trust surface.** C2 has now re-certified cell 306's
+  eighteen artifacts on a genuinely independent host and toolchain build, and re-run the whole-registry
+  verification, but this is still one implementation. A second, independently written certifier is the real
+  answer and no campaign has built one.

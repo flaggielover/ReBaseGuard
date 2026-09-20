@@ -8,17 +8,25 @@ committed evidence with stdlib Python alone, after the C2 gate was frozen at `87
 The theorem-TC-T radius expands into twelve terms. Grouped by what a successor could attack, averaged over r with
 the assembly weight 1/5, as a share of the total radius:
 
-| cell | required uniform A-reduction | gap above 1 | **order-3 residual f_G** | **(P3) envelope Env4** | order-2 f_H | order-1 f_D | order-0 f_F |
+| cell | required uniform A-reduction | gap above 1 | **order-3 residual f_G** | **(P3) envelope Env4** | order-0 f_F | order-1 f_D | order-2 f_H |
 |---|---|---|---|---|---|---|---|
-| 305 | 1.000 (closes) | 0.000 | **0.801** | 0.188 | 0.0017 | ~0 | ~0 |
-| 306 | 1.000 (closes) | 0.000 | **0.785** | 0.204 | 0.0018 | ~0 | ~0 |
-| 307 | 1.262057 | 0.262 | **0.764** | 0.226 | 0.0018 | ~0 | ~0 |
-| 308 | 1.663451 | 0.663 | **0.747** | 0.245 | 0.0016 | ~0 | ~0 |
-| 309 | 2.101597 | 1.102 | **0.731** | 0.262 | 0.0013 | ~0 | ~0 |
+| 305 | 1.000 (closes) | 0.000 | **80.11 %** | 18.80 % | 0.602 % | 0.320 % | 0.170 % |
+| 306 | 1.000 (closes) | 0.000 | **78.49 %** | 20.44 % | 0.545 % | 0.340 % | 0.179 % |
+| 307 | 1.262057 | 0.262 | **76.44 %** | 22.57 % | 0.475 % | 0.342 % | 0.177 % |
+| 308 | 1.663451 | 0.663 | **74.67 %** | 24.47 % | 0.378 % | 0.322 % | 0.161 % |
+| 309 | 2.101597 | 1.102 | **73.08 %** | 26.22 % | 0.285 % | 0.282 % | 0.135 % |
 
     DOMINANT_BLOCKER_1 = order-3 residual f_G        73-80 % of the radius, on every cell
     DOMINANT_BLOCKER_2 = (P3) envelope Env4          19-26 %
-    DOMINANT_BLOCKER_3 = order-2 residual f_H        0.13-0.18 %, i.e. nothing
+    DOMINANT_BLOCKER_3 = order-0 residual f_F        0.28-0.60 %, i.e. nothing
+
+**Corrected after the pre-freeze review (note 30).** The three columns above previously read `order-2 f_H | order-1
+f_D | order-0 f_F`, printed "~0" for f_D and f_F, and named **f_H** as `DOMINANT_BLOCKER_3`. That inverted the
+ranking of the three negligible terms and contradicted this document's own machine-readable evidence, which has
+always said `"DOMINANT_BLOCKER_3": {"term": "order0_residual_fF"}`. The true order is f_F > f_D > f_H on every
+cell. No conclusion moves — all three are under 1 % and "everything but f_G and Env4 is negligible" is what the
+diagnosis rests on — but a document that disagrees with its own evidence file should not be frozen, so it is fixed
+here rather than explained away. The JSON was right; the prose was wrong.
 
 Inside f_G (≈ 6.5–7.6): the candidate-supremum part 3k₁s_H + 3k₂s_D + k₃s_F is 3.91–4.82, σ₃ is 2.63–2.81, and the
 adopted Aux3 source error `eps_src[3]` is 0.0027–0.0034. Inside Env4 (≈ 95): **σ₄ is 85.2–86.0**, the candidate part
@@ -26,7 +34,24 @@ only 9.0–11.1. Both σ's come from the frozen J/h Leibniz tower, for which no 
 
 ## 2. Sensitivity — which certified input is worth attacking
 
-Relative gain in the whole-cell magnitude from a **10 % improvement in one input**, holding everything else fixed:
+Relative gain in the whole-cell magnitude from a **10 % improvement in one input**, holding everything else fixed.
+
+**The convention, which the first version of this table left unstated (pre-freeze review note 32).** "A 10 %
+improvement" means *scale by 1.1 in the improving direction*: τ, C_T, D1, D2 and each A_j are **divided** by 1.1;
+D_lo is **multiplied** by 1.1. That is the convention under which A0 = τ/D_lo responds symmetrically to its two
+factors, which is why it was chosen. Under the other natural reading — upper bounds × 0.9, lower bound ÷ 0.9 —
+every gain is about 10 % larger: at cell 305, D_lo +9.457 % and τ +8.820 % against the +8.603 % and +8.018 %
+tabulated here. **The ordering does not change:** D_lo outranks τ under both conventions, on every cell.
+
+The review suggested the ordering reverses, quoting τ +8.82 % against D_lo +8.60 %. Those two figures come from
+*different* conventions — τ scaled by 0.9 against D_lo scaled by 1/1.1 — so they are not comparable. Within either
+convention consistently applied, D_lo > τ. Recomputed here rather than accepted, because it is the finding the
+whole section rests on.
+
+There is also a reason to prefer the tabulated convention beyond symmetry: × 0.9 is not uniformly applicable. At
+cell 307 it drives C_T below τ, violating the Lemma Dv′ premise C ≥ τ, and `deflated_consume.atom_constants`
+refuses outright. A sensitivity convention that puts the constants outside the lemma's hypotheses is the wrong one
+to publish.
 
 | cell | D_lo | D2 | D1 | C_T | τ | A0 | A1 | A2 | all three A |
 |---|---|---|---|---|---|---|---|---|---|

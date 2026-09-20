@@ -36,11 +36,13 @@ The D2/D3 refinement (sub-blocks ≤ 1/100, denominator certified per sub-block,
 | 305 | 0.768609 → **0.821410** | 1.618684 → **0.520713** | 28.5065 → **6.2573** | 5.291155 → 5.391442 | 6.028953 → 6.197599 |
 | 309 | 0.848046 → **0.907807** | 1.284353 → **0.274845** | 19.3360 → **3.1019** | 4.418493 → 4.517254 | 4.705512 → 4.842907 |
 
-D2 improved 4.6–6.2×, D1 3.1–4.7×, D_lo about 7 % — **but τ and C_T got 2–3 % worse.** A narrower block does not
+D2 improved 4.6–6.2×, D1 3.1–4.7×, D_lo about 7 % — **but τ got 1.90–2.24 % worse and C_T 2.80–2.94 % worse.** A narrower block does not
 automatically admit a tighter supersolution: the degree-20 candidate is driven by the same α ladder on a different
 interval, and the worst sub-block can exceed the single wide-block bound. C2 reports this rather than presenting the
-refinement as uniformly favourable. The net on A0 = τ/D_lo is still a 4.5–4.9 % gain, because the D_lo gain
-outweighs the τ loss.
+refinement as uniformly favourable. The net on A0 = τ/D_lo is still a gain — 4.49–4.65 % measured as a
+fraction of C1's value, equivalently 4.71–4.88 % measured as C1/C2 − 1 — because the D_lo gain outweighs the τ
+loss. (The earlier "2–3 %" and "4.5–4.9 %" were loose rather than wrong; tightened after the pre-freeze review,
+note 15.)
 
 Phase D1's elasticities explain why the result is modest despite the large D2 win: A0 carries 0.63 of the magnitude
 response, A1 0.165, A2 0.022. The 46 % improvement in A2 is worth about 1 % of magnitude; the 4.5 % improvement in
@@ -94,7 +96,18 @@ Both conditions the gate pre-registered are satisfied:
 
 The design in `phase_r/` must model a *real* candidate, not a perfect one. Under C2's constants the critical ratio —
 the largest certified order-3 candidate supremum, as a multiple of the measured order-2 supremum, at which a real
-candidate still closes each cell — is **37.32 (307), 23.26 (308), 14.16 (309)**, against 32.03 / 19.20 / 10.55 under
-C1's constants and an adopted lower-front value of 34.8–80.5. C2's deterministic work has therefore moved the R
-stage from implausible toward borderline, and cell 307 is now at the edge of the adopted range rather than far below
-it.
+candidate still closes each cell — is **37.32 (307), 23.26 (308), 14.16 (309)**, against **34.56 / 20.94 / 12.19
+under C1's constants**, 32.03 / 19.20 / 10.55 under Campaign B's Lemma-G constants, and an adopted lower-front
+range of 34.79–80.50. C2's improvement over its immediate predecessor is therefore **+8.0 / +11.1 / +16.2 %**.
+
+**Corrected after the pre-freeze review (notes 61, 62).** This paragraph previously gave 32.03 / 19.20 / 10.55 as
+"C1's constants". They are Campaign B's Lemma-G values; C1 never computed a critical ratio. The improvement quoted
+elsewhere as "16–34 %" was C2 over Campaign B, two campaigns back, under C1's name — about a 2× overstatement of
+C2's own contribution. Producer and full analysis: `code/c2_critical_ratio.py`,
+`evidence/phase_d5/C2_CRITICAL_RATIOS.json`, and `phase_r/R_STAGE_DESIGN.md` §2.
+
+Two things that reading also over-claimed. Cell 307 is inside the adopted range, but the componentwise minimum of
+the two supplies already certified when C1 stopped gives 34.82, itself already marginally inside — so C2 bought
+margin within the range, not entry into it. And a sound operator-level combination that C2 did not pre-register
+beats C2 on every open cell at zero cost, so "the deterministic direction is exhausted" is **not** established:
+see `phase_d/D_PRIME_OPPORTUNITY.md`, which now gates the R-stage design.

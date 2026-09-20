@@ -1,5 +1,5 @@
 {
- "applied": 33,
+ "applied": 43,
  "baseline": {
   "305": {
    "Gamma": "-382865209204066853174371427031647915976111879968313683372748067996444399912047552389213917965191338370393406555329468263361769896340332290345075317185868220752525583263975232128902644769262076136723185912313172641974068229614358762793941776612369234492124529588418530521310143393068325091231178259385200182631599193835887215083569562886195330808564798333136011389359554544809500563969580710489609343323651380100460272165160088657204480228499815011595465981741476550228433392063681682726425249387617299906533446210725697556628861390888817395338721778309614357633125929049692966102151355762543301316685777086785435902918823197361845015193169141457104349255949919863288234281446325239691941081341162750809865313669161144266571284536455937409900357053032003417757851031/4349304317845316997953905062405294220200515705538045204737739557702495593217685194070219426901030741785783860097087863681175912550659509681261383807769877437233633895711534274253429418969931840571720283085485843205234011133425867164906101275512751885786798304299988514331309546980576759828217444559910594022870976752679025793395465268749937168865803534438919184126885837738052619279615086976378759298592225317549915482195903973000487601257357698952623648111202897153540400505642509016154046970544846531435742880304516238409231336608958382219414384721760090298155923761176840093357263998763179806642618195871454798399568863709206580053860057916019818671046447771909947963246904279568868195936688406528000000000000000000000000000000000000000000000000000000000000000000",
@@ -67,10 +67,11 @@
   "two_closed_all_tight": "D_USEFUL",
   "two_closed_one_slack": "D_PARTIAL"
  },
- "detected": 31,
+ "detected": 40,
  "equivalent": [
   "M19_selector_single_supply",
-  "M20_selector_min_by_A0_only"
+  "M20_selector_min_by_A0_only",
+  "M32_intersection_skipped"
  ],
  "mutants": {
   "M01_midpoint_tower_for_sigma4": {
@@ -161,6 +162,7 @@
   "M10_wrong_tail_cell": {
    "applied": true,
    "caught_by": [
+    "tiling",
     "value"
    ],
    "detected": true,
@@ -293,6 +295,101 @@
    "detected": true,
    "kind": "real"
   },
+  "M26_crosscheck_assembly_coefficient": {
+   "applied": true,
+   "caught_by": [
+    "xcheck"
+   ],
+   "detected": true,
+   "kind": "real"
+  },
+  "M27_crosscheck_weight_one_over_m": {
+   "applied": true,
+   "caught_by": [
+    "xcheck"
+   ],
+   "detected": true,
+   "kind": "real"
+  },
+  "M28_tiling_gap": {
+   "applied": true,
+   "caught_by": [
+    "tiling"
+   ],
+   "detected": true,
+   "kind": "real"
+  },
+  "M29_tiling_overlap": {
+   "applied": true,
+   "caught_by": [
+    "tiling"
+   ],
+   "detected": true,
+   "kind": "real"
+  },
+  "M30_tiling_short_cover": {
+   "applied": true,
+   "caught_by": [
+    "tiling"
+   ],
+   "detected": true,
+   "kind": "real"
+  },
+  "M31_M_after_max_not_min": {
+   "applied": true,
+   "caught_by": [
+    "Gamma@305",
+    "Gamma@306",
+    "Gamma@307"
+   ],
+   "detected": true,
+   "kind": "real"
+  },
+  "M32_intersection_skipped": {
+   "applied": true,
+   "caught_by": [],
+   "containment_verified": {
+    "305": true,
+    "306": true,
+    "307": true,
+    "308": true,
+    "309": true
+   },
+   "detected": false,
+   "equivalence_proof": "the TC-T enclosure is contained in the adopted record's R2_interval on all five tail cells, so intersecting with it is the identity and M is unchanged. That containment is why TC-T binds at all: M = mag(enclosure) < M_R2 on every cell, so the enclosure -- not the record -- is what sets Gamma. Verified in this run, not assumed; if containment fails this row reverts to an undetected miss.",
+   "equivalent": true,
+   "kind": "real"
+  },
+  "M33_emptiness_branch_inverted": {
+   "applied": true,
+   "caught_by": [
+    "Gamma@305",
+    "Gamma@306",
+    "Gamma@307"
+   ],
+   "detected": true,
+   "kind": "real"
+  },
+  "M34_selector_single_supply_on_G_C1": {
+   "applied": true,
+   "caught_by": [
+    "value",
+    "provenance"
+   ],
+   "detected": true,
+   "kind": "real",
+   "note": "run against the {G, C1} sub-family, where the componentwise minimum genuinely mixes; see M19/M20 for the same selectors on the full family"
+  },
+  "M35_selector_min_by_A0_only_on_G_C1": {
+   "applied": true,
+   "caught_by": [
+    "value",
+    "provenance"
+   ],
+   "detected": true,
+   "kind": "real",
+   "note": "run against the {G, C1} sub-family, where the componentwise minimum genuinely mixes; see M19/M20 for the same selectors on the full family"
+  },
   "S01_unauthorized_address_refused": {
    "applied": true,
    "detected": true,
@@ -335,7 +432,7 @@
   }
  },
  "pass": true,
- "real_mutants": 25,
+ "real_mutants": 35,
  "schema": "rebaseguard.p5y.k5.tail-c2.mutations.v1",
  "static_assertions": 8,
  "undetected": []

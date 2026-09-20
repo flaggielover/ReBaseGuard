@@ -34,8 +34,37 @@ Each predecessor lost its campaign to a gate defect, and C2's gate is written ag
 | phase | where | state |
 |---|---|---|
 | B0. read-only verification | `code/c2_b0_verify.py`, `evidence/phase_b0/` | 7/7 PASS |
-| gate (frozen **before** any forecast) | `config/FEASIBILITY_GATES_C2.json` | frozen at this commit |
-| D1–D5 | `phase_d/` | — |
-| R-stage design | `phase_r/` | — |
+| gate (frozen **before** any forecast) | `config/FEASIBILITY_GATES_C2.json` | frozen at `87309610`, sha `098dd7f5…`, never modified |
+| D1–D5 | `phase_d/` | **complete — `D_PARTIAL`** |
+| R-stage design | `phase_r/` | complete, **design only**, blocked on a precondition |
+| independent pre-freeze review | `review/REVIEW_C2_PREFREEZE.md` | **NOT_READY** — 60 PASS / 10 INFO / 3 N/A / 6 FAIL |
+| erratum and review disposition | `ERRATUM_C2.md` | all six FAILs dispositioned |
+
+*(The rows above were "—" in the version frozen with the gate; this table is the only part of this README written
+after any C2 number existed.)*
+
+## Result
+
+| cell | Γ | margin | gap fall vs the C1 baseline | outcome |
+|---|---|---|---|---|
+| 305 | **−0.088029** | 1.353× | — | **closes**, survives ×1.25 degradation |
+| 306 | **−0.030469** | 1.112× | — | **closes**, does *not* survive ×1.25 |
+| 307 | +0.033133 | 0.891× | 46.29 % | open, materially tightened |
+| 308 | +0.102700 | 0.705× | 24.59 % | open, materially tightened |
+| 309 | +0.162249 | 0.579× | **18.39 %** | open, **misses** the frozen 20 % bar |
+
+`D_STAGE_CLASS = D_PARTIAL`, closed = {305, 306}, still open = {307, 308, 309}. `D_USEFUL` requires every
+still-open cell to be materially tightened and fails on one cell by 1.6 percentage points. 2.69 CPU-h of
+deterministic operator certification; **0 new real scientific addresses**; guard DENY.
+
+**Read `ERRATUM_C2.md` before relying on anything here.** The independent pre-freeze review returned NOT_READY. It
+reproduced every published number bit-exactly and found no arithmetic error, but it found a critical-ratio column
+labelled with the wrong campaign (overstating C2's own contribution ~2×), a diagnosis document contradicting its
+own evidence file, a directionally inverted sentence in the frozen gate, and cell 306 being adopted on a margin
+judged sufficient after it was seen. All are dispositioned; no published number changed.
+
+**The R stage is blocked, and not by C2's own finding.** A sound operator-level combination C2 did not pre-register
+clears the gate's own 20 % bar on all three still-open cells at zero cost — so "the deterministic direction is
+exhausted" is not established. See `phase_d/D_PRIME_OPPORTUNITY.md`.
 
 K5 remains **PARTIAL** (m = 5 open on 305–309); coverage map r4 (`a3bddd83…`) is authoritative and no r5 exists.
