@@ -51,8 +51,9 @@ quantity than its label states — and it appeared here in the one document that
 programme's first real order-3 tail address. It is recorded rather than quietly patched for that reason.
 
 The repair also closed a provenance gap the review did not raise: these ratios were published from an uncommitted
-scratch script. They now have a committed producer, `code/c2_critical_ratio.py` → `evidence/phase_d5/
-C2_CRITICAL_RATIOS.json`, which computes the ratio under every supply **by name** so the labels cannot drift again,
+scratch script. They now have a committed producer — `code/c2_critical_ratio.py`, emitting
+`evidence/phase_d5/C2_CRITICAL_RATIOS.json` — which computes the ratio under every supply **by name** so the
+labels cannot drift again,
 runs from committed evidence alone on any machine with stdlib Python (no record store, no compute host, no new real
 address), and **refuses to emit anything** unless it first reproduces two independently published anchors
 bit-exactly: Campaign B's Lemma-G column, and C2's own published Γ, Γ-with-a-perfect-candidate and critical ratio.
