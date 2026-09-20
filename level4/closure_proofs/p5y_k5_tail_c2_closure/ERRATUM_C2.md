@@ -131,7 +131,7 @@ convention and the D_lo-vs-τ ordering), **C2 was right**. Its three FAILs:
 | | finding | repair |
 |---|---|---|
 | **r2 FAIL 65** | C2's *newly added* claim that ×0.9 is disqualified because it drives C_T below τ is **wrong**: the published ÷1.1 convention does exactly the same thing on exactly the same three cells (307: 4.846842 < 4.851873; 308: 4.553601 < 4.633777; 309: 4.277739 < 4.418493). | Claim withdrawn in `phase_d/D1_BLOCKER_DIAGNOSIS.md`. The only reason to prefer ÷1.1 is symmetry in A0 = τ/D_lo, and the text now says that and nothing more. A repair that introduced a new error, caught before freeze. |
-| **r2 FAIL 66** | Consequently the published C_T sensitivity figures for 307/308/309 were computed **outside the Lemma Dv′ hypotheses**, reached only because `c2_d1_blocker.atom_dv_prime` is an unguarded local copy of the pinned consumer, which would have refused. Undisclosed. | Guard added, enforcing the four premise inequalities that `deflated_consume.atom_constants_r2` validates (not a byte-for-byte copy: the pinned consumer also type-checks its inputs and post-checks r2 ≤ r1). The C_T column now reports the **admissible best C_T = τ**, giving +1.3681 / +1.1502 / +0.9335 % against the inadmissible +1.3823 / +1.3945 / +1.3887 %. Evidence regenerated (`601f2f33…`). Γ, magnitudes, blocker shares and every other sensitivity row are bit-unchanged — r3 confirmed the leaf-level diff is **exactly twelve** values, all in the three C_T rows. **The inference C2 drew from this was itself wrong and r3 corrected it**: a clamped row is not a 10 % improvement (the admissible cuts are 8.997 / 7.490 / 6.100 % against 9.0909 % elsewhere), and per unit of C_T removed the response is flat and slightly *rising* across the tail. C_T is not a weaker lever at 309; it is a **nearly exhausted** one, with only 6.1 % of travel left before it meets τ. `effective_improvement` and `gain_per_unit_of_input_moved` are now recorded per row so the columns cannot be misread as like-for-like. |
+| **r2 FAIL 66** | Consequently the published C_T sensitivity figures for 307/308/309 were computed **outside the Lemma Dv′ hypotheses**, reached only because `c2_d1_blocker.atom_dv_prime` is an unguarded local copy of the pinned consumer, which would have refused. Undisclosed. | Guard added, enforcing the four premise inequalities that `deflated_consume.atom_constants_r2` validates (not a byte-for-byte copy: the pinned consumer also type-checks its inputs and post-checks r2 ≤ r1). The C_T column now reports the **admissible best C_T = τ**, giving +1.3681 / +1.1502 / +0.9335 % against the inadmissible +1.3823 / +1.3945 / +1.3887 %. Evidence regenerated (`601f2f33…`). Γ, magnitudes, blocker shares and every other sensitivity row are bit-unchanged. Measured against `ef58310c`: **nine leaf values changed**, all of them `magnitude` / `delta_vs_base` / `relative_gain` on the C_T row of cells 307, 308 and 309, plus three `admissibility_clamp` strings added — the twelve r3 verified. The present round adds `effective_improvement` and `gain_per_unit_of_input_moved` on every row (53 further leaves) and changes nothing else; nothing is removed. **The inference C2 drew from this was itself wrong and r3 corrected it**: a clamped row is not a 10 % improvement (the admissible cuts are 8.997 / 7.490 / 6.100 % against 9.0909 % elsewhere), and per unit of C_T removed the response is flat and slightly *rising* across the tail. C_T is not a weaker lever at 309; it is a **nearly exhausted** one, with only 6.1 % of travel left before it meets τ. `effective_improvement` and `gain_per_unit_of_input_moved` are now recorded per row so the columns cannot be misread as like-for-like. |
 | **r2 FAIL 10** | `phase_d/CELL_306_ADOPTION.md` asserted "It is adopted." of cell 305 — a terminal governance state the adjudication chain has not reached. | Rewritten: cell 305 is *carried to adoption unconditionally*, and the text now states that adoption is conferred only by the freeze → qualification → seal → double consumption → adjudication chain, none of which has happened. |
 
 On the question C2 asked the reviewer to attack — separating three internal diagnostics from asserted to measured
@@ -171,6 +171,23 @@ One NOTE was a credit C2 had not claimed, and it belongs in the record because i
 minutes) and every field other than the note string and two `cpu_seconds` values came back **bit-identical**. That
 is a second, independent determinism replication of cell 306's eighteen artifacts on the macOS/arm64 FLINT build,
 obtained incidentally. It is recorded here because it strengthens the FAIL 51 disposition above.
+
+## The pattern, named
+
+Three review rounds, and each of C2's *repairs* carried an error of its own: round one's fix introduced the wrong
+×0.9 argument (r2 FAIL 65), round two's fix left the same claim contradicting itself in this file (r3 FAIL 6) and
+drew the wrong inference from its own corrected numbers. Every instance has the same shape — **a correct primary
+argument with a second, unverified supporting argument stacked on top of it.** The primary claim was sound each
+time; the decoration was not.
+
+C2 has now checked, at source, the two claims it inherited from r3 rather than repeating the pattern a fourth
+time: the D_lo cap at 1 genuinely never executes (max D_lo × 1.1 across the tail is **0.932851**), and
+`deflated_consume` genuinely does type-check its inputs and post-check r2 ≤ r1 (`atom_constants` rejects any
+non-`Fraction` or negative constant; `atom_constants_r2` raises if any r2 constant exceeds its r1 counterpart).
+Both are true. It also corrected its own restatement of r3's leaf-diff count before a reviewer had to.
+
+A successor should expect this failure mode from this campaign's authorship specifically, and should treat any
+sentence beginning "a further reason" as unverified until it is checked.
 
 ## Cell 306
 
