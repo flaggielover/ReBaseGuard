@@ -192,8 +192,16 @@ def main() -> int:
                 p["C_T"] = p["tau"]
             A2_ = atom_dv_prime(Abar=p["Abar"], tau=p["tau"], C=p["C_T"], Dlo=p["D_lo"], D1=p["D1"], D2=p["D2"])
             mg = direct_test(T, R, m, aux, A2_, ad, cov)[0]
+            # The fraction of the input actually moved. Nominally 1 - 1/1.1 = 9.0909 % for an upper bound and
+            # 10 % for D_lo, but LESS wherever a clamp bound the perturbation -- so a clamped row is not a
+            # like-for-like "10 % improvement" and must not be read against the unclamped columns as though it
+            # were. Added on pre-freeze review r3, which pointed out that without it the C_T column silently
+            # compares different-sized perturbations.
+            eff = abs(p[name] - op[name]) / op[name]
             sens[name] = {"magnitude": float(mg), "delta_vs_base": float(mg - mag),
-                          "relative_gain": float((mag - mg) / mag)}
+                          "relative_gain": float((mag - mg) / mag),
+                          "effective_improvement": float(eff),
+                          "gain_per_unit_of_input_moved": float((mag - mg) / mag / eff) if eff else None}
             if clamped:
                 sens[name]["admissibility_clamp"] = clamped
         for name, A_ in (("A0", {**A, "A0": A["A0"] * F(10, 11)}), ("A1", {**A, "A1": A["A1"] * F(10, 11)}),

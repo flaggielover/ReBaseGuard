@@ -1,6 +1,6 @@
 # Campaign C2, Phase D1 — what actually blocks the tail
 
-Diagnosis only. Machine-readable: `evidence/phase_d1/C2_D1_BLOCKER.json` (sha256 `62531bf5…`), produced from
+Diagnosis only. Machine-readable: `evidence/phase_d1/C2_D1_BLOCKER.json` (sha256 `601f2f33…`), produced from
 committed evidence with stdlib Python alone, after the C2 gate was frozen at `87309610`.
 
 ## 1. The decomposition
@@ -63,14 +63,27 @@ one. The reason to prefer ÷ 1.1 is symmetry in A0 = τ/D_lo, and that reason al
 ◆ **A 10 % improvement in C_T alone is not available at these cells, and the first published version of this table
 did not say so (pre-freeze review r2, notes 65/66).** Lemma Dv′ requires C ≥ τ. On cells 307, 308 and 309, C_T/1.1
 falls *below* τ — 4.846842 < 4.851873, 4.553601 < 4.633777, 4.277739 < 4.418493 — so the perturbation leaves the
-lemma's hypotheses. The pinned consumer `deflated_consume.atom_constants` refuses such a tuple; the local copy in
-`c2_d1_blocker.py` had no such guard and returned a number anyway. The guard is now present, and the C_T column
-reports the **admissible best, C_T = τ**, exactly as the D_lo column has always been capped at 1 because D is a
-probability. The corrected figures are +1.3681 % (307), +1.1502 % (308), +0.9335 % (309), against the
-inadmissible +1.3823 / +1.3945 / +1.3887 % published before — an overstatement of 0.01 / 0.24 / 0.46 percentage
-points. Cells 305 and 306 are unaffected; C_T/1.1 stays above τ there. Nothing else in the table, and no Γ,
-magnitude or blocker share anywhere in this campaign, changes. **The correction strengthens the section's
-conclusion**: C_T's real lever at cell 309 is 0.93 %, not 1.39 %, against D_lo's 8.72 %.
+lemma's hypotheses. The pinned consumer `deflated_consume.atom_constants_r2` validates those premises and refuses
+such a tuple; the local copy in `c2_d1_blocker.py` had no such check and returned a number anyway. A guard is now
+present (it enforces the four premise inequalities; it is not a byte-for-byte copy of the pinned consumer, which
+also type-checks its inputs and post-checks r2 ≤ r1), and the C_T column reports the **admissible best, C_T = τ**.
+Corrected figures +1.3681 % (307), +1.1502 % (308), +0.9335 % (309), against the inadmissible +1.3823 / +1.3945 /
++1.3887 % published before — an overstatement of 0.01 / 0.24 / 0.46 percentage points. Cells 305 and 306 are
+unaffected; C_T/1.1 stays above τ there. Nothing else in the table, and no Γ, magnitude or blocker share anywhere
+in this campaign, changes.
+
+**A clamped row is not a 10 % improvement, and reading it against the other columns as though it were is wrong
+(pre-freeze review r3).** The admissible cut is only **8.997 % (307), 7.490 % (308), 6.100 % (309)** against
+9.0909 % everywhere else, so `effective_improvement` and `gain_per_unit_of_input_moved` are now recorded per row
+in the evidence. Per unit of C_T actually removed the response is **flat, and slightly rising** across the tail:
+0.1496, 0.1504, 0.1521, 0.1536, 0.1530 on cells 305…309.
+
+So the earlier gloss — "C_T's real lever at 309 is 0.93 %, not 1.39 %" — was the wrong inference, and the review
+supplied the right one. **C_T is not a weaker lever at the far tail; it is a nearly exhausted one.** Its
+sensitivity per unit is essentially constant, and what collapses is the *headroom*: at cell 309 only 6.1 % of C_T
+can be removed at all before C_T meets τ and Lemma Dv′ stops applying. That sharpens finding 3 below rather than
+softening it — C_T is not merely a small lever, it is a lever with almost no travel left, for the same structural
+reason τ cannot fall: A0 = τ/D_lo ≥ τ, and τ bounds a genuine expected hitting time.
 
 Three findings, and one of them corrects the plan C1 handed forward:
 
