@@ -66,7 +66,11 @@ Two further gaps, neither raised as a FAIL, were closed at the same time:
   produced the registry without it, and no published number is affected. Confirmed directly by re-certifying
   `taboo_block_305_00` on the independent host, which reproduces bit-identically. Fixed, and fixed structurally —
   the repaired code indexes `rec[fld]`, so a missing field now raises instead of silently comparing against
-  `None`. A full verification run against the committed registry is committed with its output.
+  `None`. A full verification run against the committed registry is committed with its output:
+  `evidence/prefreeze/C2_REGISTRY_VERIFY.json` — **105 artifacts re-checked across all five cells, `pass: true`,
+  no problems**, on the same independent macOS/arm64 host, with host, toolchain and the registry's own sha256
+  recorded in the artifact. So the registry is now demonstrably re-verifiable, and separately the C1 reviewer's
+  complaint that `REGISTRY_C2.json` records no host or toolchain is answered by the two artifacts that do.
 
   This one is worth stating plainly: a review row marked **INFO**, not FAIL, and phrased only as "not demonstrated
   in-repo", led to the discovery that a verification tool this campaign pointed at as evidence of its own

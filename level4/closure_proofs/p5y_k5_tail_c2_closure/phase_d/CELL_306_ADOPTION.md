@@ -67,6 +67,10 @@ consumed-constant test is unchanged from the first version and passed 45/45 as o
 precisions**, and the determinism pass — also unchanged — still requires bit-identity on *every* field, diagnostics
 included, and passes. Nothing that carries a soundness claim was relaxed.
 
+The same host also re-ran the **whole** registry verification — `evidence/prefreeze/C2_REGISTRY_VERIFY.json`,
+105 artifacts across all five cells, `pass: true` — which was the C1 reviewer's third technical ask and which, in
+the doing, exposed that C2's verifier had never been able to pass at all (see `ERRATUM_C2.md`).
+
 This is still one implementation, run twice. A second, independently written certifier is the real answer, and no
 campaign in this programme has built one; it is carried forward as **N9**.
 
