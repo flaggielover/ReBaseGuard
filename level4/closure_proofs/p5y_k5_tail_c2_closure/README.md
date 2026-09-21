@@ -45,6 +45,7 @@ Each predecessor lost its campaign to a gate defect, and C2's gate is written ag
 | independent pre-freeze review r6 | `review/REVIEW_C2_PREFREEZE_R6.md` | NOT_READY — **1 FAIL** |
 | independent pre-freeze review r7 | `review/REVIEW_C2_PREFREEZE_R7.md` | NOT_READY — **2 FAIL** |
 | independent pre-freeze review r8 | `review/REVIEW_C2_PREFREEZE_R8.md` | NOT_READY — **3 FAIL** |
+| independent pre-freeze review r9 | `review/REVIEW_C2_PREFREEZE_R9.md` | NOT_READY — **3 FAIL** |
 | erratum and review disposition | `ERRATUM_C2.md` | every FAIL from every round dispositioned |
 
 *FAIL counts only. Each review's PASS/NOTE/INFO breakdown is in its own file and is deliberately not transcribed
@@ -52,9 +53,11 @@ here: a previous version did transcribe them, and one was wrong — not through 
 copying a self-report that did not reconcile with its own stated total. See `ERRATUM_C2.md`, r5 FAIL 2. The FAIL
 counts are the ones that reconcile against the disposition rows in the erratum.*
 
-*(The phase rows above read "—" in the version frozen with the gate. Everything in this README from this table
-onwards — the phase states, the Result section and these notes — was written after C2's numbers existed; only the
-material above the table is part of the pre-registration.)*
+*(This README was first written as a pre-registration and committed with the gate at `87309610`; it has been
+edited since. The phase table's D1–D5 and R-stage rows read "—" in that version, its B0 and gate rows already read
+`7/7 PASS` and `frozen at this commit`, and its closing line is unchanged from it. The review rows, the Result
+section and these notes were added after C2's numbers existed. To see exactly what was pre-registered, read
+`git show 87309610:…/README.md` rather than trusting a description of it here.)*
 
 ## Result
 
@@ -82,11 +85,13 @@ figures computed outside the Lemma Dv′ hypotheses, and — repeatedly — an e
 previous round. That last is a documented failure mode of this campaign's authorship; its anatomy and its running
 tally are in `ERRATUM_C2.md` §"The pattern, named".
 
-Exactly **one published value** has changed as a result: the C_T sensitivity row for cells 307/308/309 of the D1
-diagnosis, corrected to the admissible perturbation. One published **table** was separately corrected against
-evidence that never changed — D1 §1's ranking of the three negligible blocker terms. **No Γ, magnitude, margin,
-requirement, gap fall, class or adopted-subset value has changed at any point**, which the fifth review confirmed
-by diffing every leaf of the D1 evidence across its entire commit history.
+One published **scientific value** has changed as a result: the C_T sensitivity row for cells 307/308/309 of the
+D1 diagnosis, corrected to the admissible perturbation. One published **table** was separately corrected against
+evidence that never changed — D1 §1's ranking of the three negligible blocker terms. Separately, a later repair
+regenerated `C2_RECERTIFY_306.json` to strip an unsupported claim from its `host.note`, replacing that note and two
+wall-clock timings; see `ERRATUM_C2.md`. **No Γ, magnitude, margin, requirement, gap fall, class or adopted-subset
+value has changed at any point**, which two independent reviews confirmed by diffing every leaf of the D1 evidence
+across its entire commit history.
 
 **The R stage is blocked, and not by C2's own finding.** A sound operator-level combination C2 did not pre-register
 clears the gate's own 20 % bar on all three still-open cells at zero cost — so "the deterministic direction is

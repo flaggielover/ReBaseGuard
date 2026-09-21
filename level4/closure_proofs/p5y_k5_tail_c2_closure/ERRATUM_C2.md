@@ -15,20 +15,30 @@ count. Counts belong in the tables of this document and of `README.md`, not in p
 | r6 | `ec5b08ca` | 1 FAIL | § "Dispositions from the SIXTH pre-freeze review" |
 | r7 | `5a098ec6` | 2 FAIL | § "Dispositions from the SEVENTH pre-freeze review" |
 | r8 | `07c0b991` | 3 FAIL | § "Dispositions from the EIGHTH pre-freeze review" |
+| r9 | `5609358f` | 3 FAIL | § "Dispositions from the NINTH pre-freeze review" |
 
 **The result has never moved.** In every round so far, no Γ, magnitude, margin, requirement, gap fall, class or
 adopted-subset value has changed: the class is `D_PARTIAL`, the closed subset is {305, 306}, and the frozen gate
 is byte-untouched at `098dd7f5…`.
 
-Exactly **one** published *value* has changed in the whole campaign — the C_T sensitivity row on cells 307–309 of
-the D1 diagnosis, corrected to the admissible perturbation; r5 verified by diffing every leaf of that artifact
-across its entire history that those nine leaves are the only ones that have ever changed. One published *table*
-was additionally corrected against evidence that never changed: D1 §1's ranking of the three negligible blocker
-terms, which named the smallest of them and printed "~0" for the two larger, while the machine-readable file had
-said `order0_residual_fF` from the start. Both are disclosed below.
+**No scientific or decision value has ever been replaced except one**: the C_T sensitivity row on cells 307–309
+of the D1 diagnosis, corrected to the admissible perturbation. r5 and r9 each verified by diffing every leaf of
+that artifact across its entire history that those nine leaves are the only ones that have ever changed. One
+published *table* was additionally corrected against evidence that never changed: D1 §1's ranking of the three
+negligible blocker terms, which named the smallest of them and printed "~0" for the two larger, while the
+machine-readable file had said `order0_residual_fF` from the start.
 
-(An earlier version of this paragraph said "two published numbers have changed", which conflated the two cases.
-Corrected in self-audit; the blocker evidence has never changed.)
+Two **non-scientific** values were also replaced, by the r8 repair, and are recorded here because an earlier
+version of this paragraph said "exactly one published value has changed in the whole campaign" and that regeneration
+falsified it (r9 FAIL 2). Regenerating `C2_RECERTIFY_306.json` to remove an unsupported claim from its `host.note`
+replaced that note and the two wall-clock pass totals `cpu_seconds` (1153.9 → 1141.5 and 1204.2 → 1196.1): 3 of
+1224 leaves, nothing added or removed, every certified value bit-identical. **The `cpu_seconds` figures cited as
+build-host corroboration are not these**: those are 90.248 and 88.257, per-artifact values inside
+`taboo_block_306_02.json` and `taboo_block_305_00.json`, and `evidence/registry_c2/` is byte-unchanged throughout
+the campaign.
+
+(An earlier version of this paragraph also said "two published numbers have changed", conflating a value change
+with a table correction. Corrected in self-audit; the blocker evidence has never changed.)
 
 The open governance question the campaign ends on is in § "Cell 306", and the finding that matters most for what
 happens next is in § "The finding that outranks all of the above".
@@ -268,7 +278,7 @@ three `NOT_CHECKABLE_LOCALLY` rows, and r2's own header genuinely does not recon
 
 | | finding | repair |
 |---|---|---|
-| **r6 FAIL 1** | `README.md` still said "**Four** independent pre-freeze reviews" and "— **three separate times** — an error introduced by a repair", two lines above the paragraph `ec5b08ca` had just rewritten, which correctly says "the **fifth** review". The same file's own table listed five. | Both counts **removed rather than updated**. The review table is now the single place in this namespace that counts reviews, and the prose points at it. |
+| **r6 FAIL 1** | `README.md` still said "**Four** independent pre-freeze reviews" and "— **three separate times** — an error introduced by a repair", two lines above the paragraph `ec5b08ca` had just rewritten, which correctly says "the **fifth** review". The same file's own table listed five. | Both counts **removed rather than updated**, with the review table left to carry them and the prose pointing at it. *(That repair was incomplete and its claim to completeness was itself wrong twice more — see r7 FAIL 1, r8 FAIL 1 and r9 FAIL 1 below.)* |
 
 **The repair is structural, not another number.** Several of the instances in the register below are a count left
 stale by a later edit, and this was another. Updating the number would have set the same trap for the next round. So every
@@ -314,6 +324,23 @@ cited `cpu_seconds` corroboration (90.248 / 88.257) from the artifacts.
 | **r8 FAIL 2** | The unscoped claim survived in §"Cell 306", this document's own summary of the closing governance question: "the independent re-certification is now delivered on a **genuinely second host**" — the exact phrase r2's note 4 named, now contradicted by the repaired `CELL_306_ADOPTION.md`. It bears directly on whether C1's reviewer's adoption condition 2 is met. | Rewritten to the weaker sense the evidence supports: every field of all eighteen artifacts reproduces on a host whose OS, architecture, Python and Arb/FLINT build are recorded, the registry's build host is recorded nowhere, and **no second host is evidenced** (**N10**). |
 | **r8 FAIL 3** | **The committed evidence itself asserted the boundary N10 says is recorded nowhere.** `C2_RECERTIFY_306.json`'s `host.note` read "second host: a different OS, CPU architecture and compiled Arb/FLINT build than the registry" — a hardcoded editorial string sitting inside the `host` object beside five genuinely recorded fields, where any reader or machine consumer takes it as recorded, while `CELL_306_ADOPTION.md` says that difference "rests on C2's report, not on an artifact". | **Fixed at the source and the artifact regenerated**, rather than disclosed. The review proposed two disclosure clauses and no artifact rewrite; C2 deliberately took the heavier route, because an evidence file should contain only what was observed and a disclosure elsewhere leaves the misleading string where it is read as fact. The field now records that its values were observed on the re-certifying host and makes no claim about the build host, with the removal explained in-source. Regenerating also re-executed both Arb/FLINT passes, a third independent determinism replication. |
 
+## Dispositions from the NINTH pre-freeze review
+
+`review/REVIEW_C2_PREFREEZE_R9.md`, at `5609358f`: 37 rows, 33 PASS, 1 PARTIAL, **3 FAIL**. It reproduced the
+regeneration accounting independently — 1224 leaves both sides, 0 added, 0 removed, exactly 3 replaced, every
+certified value bit-identical — and confirmed the science, the gate and the integrity envelope.
+
+| | finding | repair |
+|---|---|---|
+| **r9 FAIL 1** | The false-absolute class again, with one instance **added by the commit that was repairing it**. `README.md`'s new footnote was false twice: "only the material above the table is part of the pre-registration" is refuted by the README's own closing line, which sits *below* the table and is byte-identical to `87309610`'s; and "the phase rows above read '—'" is false for two of the four rows that existed at the freeze (B0 read `7/7 PASS`, the gate row `frozen at this commit`). Surviving separately: the r6 disposition row's "the review table is now the single place in this namespace that counts reviews", contradicted five lines below. | The footnote no longer describes the pre-registration at all — it states which rows were what, and **points the reader at `git show 87309610:…/README.md`** rather than asking them to trust a description. The r6 row is rewritten in the past tense with its own incompleteness recorded. |
+| **r9 FAIL 2** | The r8 repair **replaced two published values and left "exactly one published value has changed in the whole campaign" standing** in two documents. `cpu_seconds` is not inert here: it is cited in `CELL_306_ADOPTION.md` as the only in-repo corroboration for the build host. The 3-of-1224 accounting existed only in a commit message, not in the namespace. | Both documents now separate the **scientific** value change (the C_T row, nine leaves, verified by r5 and r9) from the two **wall-clock** totals the regeneration replaced, with the accounting stated in the namespace. Checked and stated: the cited corroboration figures are **90.248 and 88.257**, per-artifact values inside `taboo_block_306_02.json` and `taboo_block_305_00.json`, not the pass totals — and `evidence/registry_c2/` is byte-unchanged throughout the campaign. |
+| **r9 FAIL 3** | r8 named **three** sites carrying the build-host assertion; the r8 repair fixed two and missed the docstring, leaving `c2_recertify_306.py` contradicting its own comment forty lines below. | Withdrawn in the docstring, which now states what the module does claim and cites **N10** for what it does not. No regeneration: the docstring is not captured in the artifact — verified by probing the output for its fragments, and the only free text the artifact carries is `taboo_sha256`, `verdict`, `host.note` and `diagnostic_policy.why`, none of them touched. |
+
+**On r9's judgement of the r8 deviation.** The review found that overriding its own recommendation — regenerating
+the artifact instead of disclosing around it — was **right**, and that the execution was merely unfinished: "Keep
+the regeneration and finish it — do not reverse it." It is finished here. That is the one place in nine rounds
+where C2 departed from a reviewer's explicit instruction, and the departure held up.
+
 ## The pattern, named
 
 **Every one of C2's repair rounds has carried an error of its own.** The two registers below are where this
@@ -337,6 +364,9 @@ instances below are a number left stale by a later edit — so counts are kept t
 | 5 | rewrote the README's "one published value" paragraph | left the paragraph one line above saying "four reviews" and "three separate times" | r6 FAIL 1 |
 | 6 | deleted every hand-maintained count from prose | cleaned `README.md`, left five counts in this document, and asserted twice that none remained | r7 FAIL 1 |
 | 7 | repaired r7 FAIL 1 | fixed four of the five counts r7 listed, and orphaned two more sentences by adding a second register | r8 FAIL 1 |
+| 8 | repaired r8 FAIL 1 | the replacement footnote was itself false twice over | r9 FAIL 1 |
+| 8 | repaired r8 FAIL 3 by regenerating the artifact | replaced two published values while leaving "exactly one published value has changed" standing | r9 FAIL 2 |
+| 8 | repaired r8 FAIL 3 | fixed two of the three sites r8 named, missing the docstring | r9 FAIL 3 |
 
 A separate register, for a different failure — a review note received and then never actioned, rather than
 decoration added:

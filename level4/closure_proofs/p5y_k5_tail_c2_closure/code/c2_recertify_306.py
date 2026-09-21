@@ -10,9 +10,12 @@ surface neither reviewer could check locally, because it needs numpy and python-
 This module attacks that surface directly, in two passes:
 
   PASS 1 -- DETERMINISM, at the artifacts' own 256 bits. `verify_block` / `verify_cell` re-run certification and
-  require BIT-IDENTICAL agreement with every published field. Run here on a different operating system, a different
-  CPU architecture, a different Python and a DIFFERENT COMPILED BUILD of the Arb/FLINT stack than produced the
-  registry. Identity across that gap is evidence the certification does not depend on the machine it ran on.
+  require BIT-IDENTICAL agreement with every published field, on a host whose OS, CPU architecture, Python and
+  compiled Arb/FLINT build are all recorded in the output. It makes NO claim about the machine that built the
+  registry: nothing in this repository records that (see OPEN_NOTES_DISPOSITION_C2.md N10). An earlier version of
+  this paragraph asserted the run happened on "a different operating system, a different CPU architecture ... than
+  produced the registry"; that was the same unsupported assertion removed from the `host` field, kept here one
+  round longer, and withdrawn on pre-freeze review r9.
 
   PASS 2 -- SAFE-SIDE DOMINATION, at 384 bits. Higher working precision yields tighter enclosures, so identity is
   neither expected nor required. What is required is that every published bound remains VALID: the recomputed
