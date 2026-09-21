@@ -1,4 +1,4 @@
-"""Independent re-certification of cell 306's eighteen operator artifacts, on a second host at higher precision.
+"""Re-certification of cell 306's eighteen operator artifacts on a fully recorded host, at two precisions.
 
 WHY. Campaign C1's pre-freeze reviewer set three conditions before cell 306 may be adopted: a finer taboo block
 partition, an independent re-certification, and a pre-frozen margin floor. C2 delivered the first (nine sub-blocks
@@ -95,7 +95,13 @@ def host() -> dict:
     return {"platform": platform.platform(), "machine": platform.machine(),
             "python": sys.version.split()[0], "numpy": numpy.__version__,
             "python_flint": flint.__version__,
-            "note": "second host: a different OS, CPU architecture and compiled Arb/FLINT build than the registry"}
+            # Recorded facts about THIS host only. It deliberately makes no claim about the host that built the
+            # registry: nothing in the repository records that, so a "second host" or "different build" assertion
+            # would not be an observation. An earlier version of this field asserted exactly that, inside the
+            # `host` object beside five genuinely recorded values, where a reader would take it as recorded.
+            # Removed on pre-freeze review r8; see OPEN_NOTES_DISPOSITION_C2.md N10.
+            "note": "observed on the host that ran this re-certification; the registry's build host is not "
+                    "recorded anywhere in this repository and no claim about it is made here"}
 
 
 def _norm(v):

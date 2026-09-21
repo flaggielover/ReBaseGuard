@@ -86,5 +86,4 @@ Full disposition in [`ERRATUM_C2.md`](ERRATUM_C2.md). Carried forward as open ob
   host is what the evidence establishes, not reproduction across a recorded host *boundary*. Raised as note 4 by
   pre-freeze review r2, left undispositioned for five rounds, and failed by review r7. **A successor must have the
   registry builder record its own host, toolchain and precision into the registry at build time** — it is nearly
-  free and it is the only thing standing between this evidence and the "second host" claim the C1 reviewer asked
-  for.
+  free, and without it the "second host" half of the C1 reviewer's condition cannot be evidenced at all.

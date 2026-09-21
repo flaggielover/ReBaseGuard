@@ -44,6 +44,7 @@ Each predecessor lost its campaign to a gate defect, and C2's gate is written ag
 | independent pre-freeze review r5 | `review/REVIEW_C2_PREFREEZE_R5.md` | NOT_READY — **2 FAIL** |
 | independent pre-freeze review r6 | `review/REVIEW_C2_PREFREEZE_R6.md` | NOT_READY — **1 FAIL** |
 | independent pre-freeze review r7 | `review/REVIEW_C2_PREFREEZE_R7.md` | NOT_READY — **2 FAIL** |
+| independent pre-freeze review r8 | `review/REVIEW_C2_PREFREEZE_R8.md` | NOT_READY — **3 FAIL** |
 | erratum and review disposition | `ERRATUM_C2.md` | every FAIL from every round dispositioned |
 
 *FAIL counts only. Each review's PASS/NOTE/INFO breakdown is in its own file and is deliberately not transcribed
@@ -51,8 +52,9 @@ here: a previous version did transcribe them, and one was wrong — not through 
 copying a self-report that did not reconcile with its own stated total. See `ERRATUM_C2.md`, r5 FAIL 2. The FAIL
 counts are the ones that reconcile against the disposition rows in the erratum.*
 
-*(The rows above were "—" in the version frozen with the gate; this table is the only part of this README written
-after any C2 number existed.)*
+*(The phase rows above read "—" in the version frozen with the gate. Everything in this README from this table
+onwards — the phase states, the Result section and these notes — was written after C2's numbers existed; only the
+material above the table is part of the pre-registration.)*
 
 ## Result
 

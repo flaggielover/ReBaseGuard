@@ -14,6 +14,7 @@ count. Counts belong in the tables of this document and of `README.md`, not in p
 | r5 | `1663f558` | 2 FAIL | § "Dispositions from the FIFTH pre-freeze review" |
 | r6 | `ec5b08ca` | 1 FAIL | § "Dispositions from the SIXTH pre-freeze review" |
 | r7 | `5a098ec6` | 2 FAIL | § "Dispositions from the SEVENTH pre-freeze review" |
+| r8 | `07c0b991` | 3 FAIL | § "Dispositions from the EIGHTH pre-freeze review" |
 
 **The result has never moved.** In every round so far, no Γ, magnitude, margin, requirement, gap fall, class or
 adopted-subset value has changed: the class is `D_PARTIAL`, the closed subset is {305, 306}, and the frozen gate
@@ -269,11 +270,11 @@ three `NOT_CHECKABLE_LOCALLY` rows, and r2's own header genuinely does not recon
 |---|---|---|
 | **r6 FAIL 1** | `README.md` still said "**Four** independent pre-freeze reviews" and "— **three separate times** — an error introduced by a repair", two lines above the paragraph `ec5b08ca` had just rewritten, which correctly says "the **fifth** review". The same file's own table listed five. | Both counts **removed rather than updated**. The review table is now the single place in this namespace that counts reviews, and the prose points at it. |
 
-**The repair is structural, not another number.** Three of the instances in the table below are a count left stale
-by a later edit; this was the fourth. Updating the number would have set the same trap for round seven. So every
-hand-maintained tally has been deleted from prose in both `README.md` and this section, and the two tables — the
-review list at the top of the README, the round table at the top of this document, and the instance table
-below — carry the counts, and prose does not.
+**The repair is structural, not another number.** Several of the instances in the register below are a count left
+stale by a later edit, and this was another. Updating the number would have set the same trap for the next round. So every
+hand-maintained tally has been deleted from prose in both `README.md` and this section. The tables carry the
+counts — the review list at the top of the README, the round table at the top of this document, and the registers
+below — and prose does not.
 
 On the review's own closing point, which C2 accepts: what it blocked on was not prose quality but *a wrong count
 of how many independent reviews the campaign had survived, in the front-door document*. That is a claim about the
@@ -291,7 +292,7 @@ commits to confirm nine leaves have ever changed.
 
 | | finding | repair |
 |---|---|---|
-| **r7 FAIL 1** | The de-counting commit `5a098ec6` cleaned `README.md` and **left four prose counts in `ERRATUM_C2.md`** — "Across all five rounds" twice, "three separate instances below", and a four-review recount tally — while asserting **twice** that no sentence in the namespace states a count. The claim that two tables are the only places a count appears was also false: this document's own round table is a third. | The four counts are removed or rescoped, and **both self-referential assertions are deleted rather than maintained**. Asserting "no sentence states a count" is itself a falsifiable claim about every sentence, and it had already been falsified twice; the text now states where counts belong, without claiming compliance. The recount is rescoped to the two self-reports actually in dispute (r1's reconciles; r2's does not), which is fixed historical fact rather than a running tally. |
+| **r7 FAIL 1** | The de-counting commit `5a098ec6` cleaned `README.md` and **left five prose counts in `ERRATUM_C2.md`** — "Across all five rounds" twice, "three separate instances below", and a four-review recount tally — while asserting **twice** that no sentence in the namespace states a count. The claim that two tables are the only places a count appears was also false: this document's own round table is a third. | The five counts are removed or rescoped, and **both self-referential assertions are deleted rather than maintained**. Asserting "no sentence states a count" is itself a falsifiable claim about every sentence, and it had already been falsified twice; the text now states where counts belong, without claiming compliance. The recount is rescoped to the two self-reports actually in dispute (r1's reconciles; r2's does not), which is fixed historical fact rather than a running tally. |
 | **r7 FAIL 2** | `phase_d/CELL_306_ADOPTION.md`'s comparison table presented a **build-host column that is recorded in no committed artifact**, and the bolded claim that the machinery "reproduces across the OS, architecture and FLINT build boundary" rested entirely on it. This document additionally claimed the provenance complaint "is answered by the two artifacts that do". **Review r2 asked for exactly this column to be marked reported-rather-than-recorded, in its note 4, and C2 left it undispositioned for five rounds.** | The column is now labelled **reported, not recorded** against a **recorded** right column; the bolded claim is scoped to what the artifacts establish — reproduction on a fully recorded host, not across a recorded boundary; the "is answered" sentence is corrected; and the gap is carried forward as **N10**, with the weak but real in-repo corroboration r2 found (build-host `cpu_seconds` 90.2 / 88.3 against 56.2 / 66.1 on the re-certifying host) cited as what it is. |
 
 **FAIL 2 is not an instance of the documented pattern, and C2 is not going to file it as one.** The pattern is
@@ -300,10 +301,23 @@ confidence in a claim, received, understood, and then simply never actioned acro
 claim stayed bolded. That is a distinct and arguably worse failure — the pattern produces wrong ornaments, this
 produced an unsupported load-bearing sentence — and the register below now tracks the two separately.
 
+## Dispositions from the EIGHTH pre-freeze review
+
+`review/REVIEW_C2_PREFREEZE_R8.md`, at `07c0b991`: 38 rows, 32 PASS, 8 NOTE, **3 FAIL**. It re-verified the science
+cold — all three producers byte-for-byte, the class and closed subset, the gap falls, both Γ, the gate at one
+commit, `REGISTRY_C2.json`'s 50 key paths carrying no host field — and confirmed the rescoped recount and the
+cited `cpu_seconds` corroboration (90.248 / 88.257) from the artifacts.
+
+| | finding | repair |
+|---|---|---|
+| **r8 FAIL 1** | r7's FAIL 1 was **not** repaired. r7 enumerated five surviving prose counts; C2 fixed four and never touched the fifth — "reproducing bit-exactly under **four** independent implementations" — which r7 had named explicitly. The repair then created two fresh self-contradictions: "the **two** tables — [three listed] — carry the counts", and "the table below is the campaign's **only** tally" left standing while the same commit added a second register 19 lines below. The disposition row itself said r7 found "four prose counts" where r7 found five, which is how the fifth survived. | All five counts now removed or rescoped; the two orphaned sentences rewritten to describe the tables as they are; the disposition row corrected to five in both halves. C2 also swept the namespace itself this round rather than trusting a grep for counts, and found **two more** survivors neither r7 nor r8 listed: `README.md`'s claim that its phase table "is the only part of this README written after any C2 number existed" — false, since the whole Result section was — and an absolute "the only thing standing between" in N10. Both corrected. |
+| **r8 FAIL 2** | The unscoped claim survived in §"Cell 306", this document's own summary of the closing governance question: "the independent re-certification is now delivered on a **genuinely second host**" — the exact phrase r2's note 4 named, now contradicted by the repaired `CELL_306_ADOPTION.md`. It bears directly on whether C1's reviewer's adoption condition 2 is met. | Rewritten to the weaker sense the evidence supports: every field of all eighteen artifacts reproduces on a host whose OS, architecture, Python and Arb/FLINT build are recorded, the registry's build host is recorded nowhere, and **no second host is evidenced** (**N10**). |
+| **r8 FAIL 3** | **The committed evidence itself asserted the boundary N10 says is recorded nowhere.** `C2_RECERTIFY_306.json`'s `host.note` read "second host: a different OS, CPU architecture and compiled Arb/FLINT build than the registry" — a hardcoded editorial string sitting inside the `host` object beside five genuinely recorded fields, where any reader or machine consumer takes it as recorded, while `CELL_306_ADOPTION.md` says that difference "rests on C2's report, not on an artifact". | **Fixed at the source and the artifact regenerated**, rather than disclosed. The review proposed two disclosure clauses and no artifact rewrite; C2 deliberately took the heavier route, because an evidence file should contain only what was observed and a disclosure elsewhere leaves the misleading string where it is read as fact. The field now records that its values were observed on the re-certifying host and makes no claim about the build host, with the removal explained in-source. Regenerating also re-executed both Arb/FLINT passes, a third independent determinism replication. |
+
 ## The pattern, named
 
-**Every one of C2's repair rounds has carried an error of its own.** The table below is the campaign's only
-tally of them. Hand-maintained counts in prose are themselves one of the recurring defects — several of the
+**Every one of C2's repair rounds has carried an error of its own.** The two registers below are where this
+campaign tallies its own defects; prose does not. Hand-maintained counts in prose are themselves one of the recurring defects — several of the
 instances below are a number left stale by a later edit — so counts are kept to tables.
 
 
@@ -321,7 +335,8 @@ instances below are a number left stale by a later edit — so counts are kept t
 | 5 | rewrote this section's prose | miscounted its own table as five-and-two; it was four-and-three | **self-caught**, `a58bbdd8` |
 | 5 | summarised what had changed | said "two published numbers"; conflated one evidence change with one prose correction | **self-caught**, `ec5b08ca` |
 | 5 | rewrote the README's "one published value" paragraph | left the paragraph one line above saying "four reviews" and "three separate times" | r6 FAIL 1 |
-| 6 | deleted every hand-maintained count from prose | cleaned `README.md`, left four counts in this document, and asserted twice that none remained | r7 FAIL 1 |
+| 6 | deleted every hand-maintained count from prose | cleaned `README.md`, left five counts in this document, and asserted twice that none remained | r7 FAIL 1 |
+| 7 | repaired r7 FAIL 1 | fixed four of the five counts r7 listed, and orphaned two more sentences by adding a second register | r8 FAIL 1 |
 
 A separate register, for a different failure — a review note received and then never actioned, rather than
 decoration added:
@@ -366,7 +381,8 @@ The failure mode has a visible signature: it never touched a computed quantity. 
 magnitude, margin, requirement, gap fall, class or adopted-subset value has changed** — r5 confirmed by diffing
 every leaf of the D1 evidence across its whole history that exactly nine leaves have ever changed, all C_T
 sensitivity on 307–309. Every instance was in labelling, framing, or an ornament attached to a result that kept
-reproducing bit-exactly under four independent implementations. That is worth knowing about a campaign: its
+reproducing bit-exactly under every independent implementation written against it. That is worth knowing about a
+campaign: its
 arithmetic was never the weak part, and its prose always was.
 
 A successor should expect this failure mode from this campaign's authorship specifically.
@@ -381,6 +397,9 @@ repair, inside the section about stale remnants left by repairs. Sixth instance;
 
 The predecessor's reviewer set three conditions before 306 may be adopted. The disposition is in
 `phase_d/CELL_306_ADOPTION.md`. In short: the finer partition was delivered and worked (margin 1.9 % → 11.2 %); the
-independent re-certification is now delivered on a genuinely second host; and the margin floor **cannot honestly be
+independent re-certification is delivered only in the weaker sense the evidence supports — every field of all
+eighteen artifacts reproduces on a host whose OS, architecture, Python and Arb/FLINT build are recorded, but the
+registry's build host is recorded nowhere, so no *second host* is evidenced (**N10**); and the margin floor
+**cannot honestly be
 set by C2**, because C2 has already seen the margin. It is therefore referred to the adjudicator, with C2's
 decision pre-committed in both directions before the answer is known.
