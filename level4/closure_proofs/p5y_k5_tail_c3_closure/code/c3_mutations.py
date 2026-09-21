@@ -152,8 +152,10 @@ def data_mutants():
 def tie_world(c1, c2, cover, meas):
     """A world where C1 and C2 report IDENTICAL values for every operator constant, so every field is a tie.
 
-    Tie resolution is unexercised on real data because the two registries agree on nothing; without this world a
-    nondeterministic tie-break would be invisible.
+    Ties DO occur on real data - Abar is bit-identical between C1 and C2 on all four cells - but only on that one
+    field, and Abar is inert because tau/D_lo binds. This world makes every field a tie so tie handling is
+    exercised on the fields that matter. An earlier version of this docstring claimed the registries agree on
+    nothing, which is false; flagged by the pre-forecast review, note N5.
     """
     b1 = {k: dict(v) for k, v in c1.items()}
     b2 = {k: dict(v) for k, v in c2.items()}
@@ -267,13 +269,19 @@ def main() -> int:
                 if all(doms.values()):
                     row.update({"equivalent": False})   # max != min here, so if undetected something is wrong
     applied = [n for n, v in out["mutants"].items() if v.get("applied")]
-    undetected = [n for n in applied if not out["mutants"][n].get("detected")
-                  and not out["mutants"][n].get("equivalent")]
-    out.update({"applied": len(applied), "detected": len(applied) - len(undetected),
-                "undetected": undetected, "pass": not undetected})
+    killed = [n for n in applied if out["mutants"][n].get("detected")]
+    equivalent = [n for n in applied if out["mutants"][n].get("equivalent")
+                  and not out["mutants"][n].get("detected")]
+    undetected = [n for n in applied if n not in killed and n not in equivalent]
+    out.update({"applied": len(applied), "killed": len(killed),
+                "proved_equivalent": equivalent, "undetected": undetected,
+                "pass": not undetected,
+                "reporting_note": ("killed and proved_equivalent are reported separately. An earlier version "
+                                   "merged them into a single 'detected' count, which overstated the kill rate "
+                                   "by one. Flagged by the pre-forecast review, note N4.")})
     data = json.dumps(out, sort_keys=True, indent=1) + "\n"
     Path(a.out).write_text(data)
-    print(json.dumps({k: out[k] for k in ("applied", "detected", "undetected", "pass")}
+    print(json.dumps({k: out[k] for k in ("applied", "killed", "proved_equivalent", "undetected", "pass")}
                      | {"sha256": hashlib.sha256(data.encode()).hexdigest()}, indent=1))
     return 0 if out["pass"] else 1
 

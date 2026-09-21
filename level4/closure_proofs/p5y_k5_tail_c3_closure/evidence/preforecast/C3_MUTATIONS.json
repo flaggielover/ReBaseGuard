@@ -66,7 +66,7 @@
    "rejected": {}
   }
  },
- "detected": 13,
+ "killed": 12,
  "mutants": {
   "M01_operator_best_takes_max_for_upper_bounds": {
    "applied": true,
@@ -243,6 +243,10 @@
   }
  },
  "pass": true,
+ "proved_equivalent": [
+  "M08_tie_resolution_nondeterministic"
+ ],
+ "reporting_note": "killed and proved_equivalent are reported separately. An earlier version merged them into a single 'detected' count, which overstated the kill rate by one. Flagged by the pre-forecast review, note N4.",
  "schema": "rebaseguard.p5y.k5.tail-c3.mutations.v1",
  "undetected": []
 }
