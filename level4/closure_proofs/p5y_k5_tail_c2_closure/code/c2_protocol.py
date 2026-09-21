@@ -186,6 +186,26 @@ def check(proto: dict, expect_bound: bool) -> tuple[bool, list]:
                     bad.append(f"missing pinned input: {rel}")
                 elif sha(p) != want:
                     bad.append(f"pin mismatch: {rel}")
+    # Binding may change only the freeze block. Compare the bound protocol against the UNBOUND one the freeze
+    # commit actually contains, so a binding cannot smuggle any other edit past the checker.
+    fr_rec = NS / "evidence/freeze/C2_FREEZE_RECORD.json"
+    if expect_bound and fr_rec.is_file():
+        rec = json.loads(fr_rec.read_bytes())
+        frozen = subprocess.run(["git", "show", f"{rec['freeze_commit']}:level4/closure_proofs/"
+                                 "p5y_k5_tail_c2_closure/config/C2_PROTOCOL.json"],
+                                capture_output=True, text=True, cwd=str(REPO))
+        if frozen.returncode != 0:
+            bad.append("cannot read the protocol at the freeze commit")
+        else:
+            raw = frozen.stdout.encode()
+            if hashlib.sha256(raw).hexdigest() != rec.get("protocol_sha256_unbound_at_freeze"):
+                bad.append("protocol at the freeze commit does not match its recorded unbound hash")
+            a_, b_ = json.loads(raw), dict(proto)
+            a_.pop("freeze", None); b_.pop("freeze", None)
+            if a_ != b_:
+                bad.append("bound protocol differs from the frozen one outside the freeze block")
+            if rec.get("freeze_commit") != fr.get("commit"):
+                bad.append("freeze record and protocol disagree on the freeze commit")
     g = proto.get("governance_provenance", {}).get("gate", {})
     if g.get("sha256") != GATE_SHA256 or sha(NS / "config/FEASIBILITY_GATES_C2.json") != GATE_SHA256:
         bad.append("frozen gate identity mismatch")

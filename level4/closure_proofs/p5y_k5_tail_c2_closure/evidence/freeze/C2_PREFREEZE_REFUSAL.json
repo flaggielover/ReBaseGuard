@@ -1,7 +1,7 @@
 {
  "command_refusal": "python3 -B code/c2_protocol.py check --protocol config/C2_PROTOCOL.json --expect-bound",
  "command_tamper": "c2_protocol.py check against a protocol with one evidence pin overwritten",
- "protocol_sha256": "ea1ff50a4be4be058aae42d9b249c2df148b995727b5ca6913e6e72a92ef3b73",
+ "protocol_sha256": "c1243194375f4e4b7cdcd9a41b0f67452f9235deba38783c3f47dd609ec6f613",
  "purpose": "demonstrates that the lifecycle refuses to run as frozen production while the protocol is UNBOUND, and that a single altered pin is caught",
  "refusal_exit_code": 1,
  "refusal_result": {
@@ -10,9 +10,13 @@
   "problems": [
    "REFUSED: protocol is not bound to a freeze commit; evidence/freeze/C2_FREEZE_RECORD.json must bind it before frozen production may run"
   ],
-  "protocol_sha256": "ea1ff50a4be4be058aae42d9b249c2df148b995727b5ca6913e6e72a92ef3b73"
+  "protocol_sha256": "c1243194375f4e4b7cdcd9a41b0f67452f9235deba38783c3f47dd609ec6f613"
  },
  "schema": "rebaseguard.p5y.k5.tail-c2.prefreeze-refusal.v1",
+ "superseded_freeze_attempt": {
+  "commit": "1efb76eebb86400699b57f4ba5089f340cdeb395",
+  "why": "its protocol pinned a c2_protocol.py that lacked the binding-integrity check. Adding that check after the commit changed the producer the protocol pins, and c2_protocol.py check refused with 'pin mismatch: code/c2_protocol.py'. The attempt is left in history and superseded rather than amended."
+ },
  "tamper_result": {
   "pass": false,
   "problems": [
