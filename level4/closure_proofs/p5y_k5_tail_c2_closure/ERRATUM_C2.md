@@ -20,6 +20,7 @@ count. Counts belong in the tables of this document and of `README.md`, not in p
 | r11 | `87004e2b` | 2 FAIL | § "Dispositions from the ELEVENTH pre-freeze review" |
 | r12 | `6aa2040a` | 2 FAIL | § "Dispositions from the TWELFTH pre-freeze review" |
 | r13 | `92bc9637` | 3 FAIL | § "Dispositions from the THIRTEENTH pre-freeze review" |
+| r14 | `75a97a18` | 4 FAIL | § "Dispositions from the FOURTEENTH pre-freeze review" |
 
 **The result has never moved.** In every round so far, no Γ, magnitude, margin, requirement, gap fall, class or
 adopted-subset value has changed: the class is `D_PARTIAL`, the closed subset is {305, 306}, and the frozen gate
@@ -307,8 +308,8 @@ three `NOT_CHECKABLE_LOCALLY` rows, and r2's own header genuinely does not recon
 **The repair is structural, not another number.** Several of the instances in the register below are a count left
 stale by a later edit, and this was another. Updating the number would have set the same trap for the next round. So every
 hand-maintained tally was deleted from the prose that carried it. Counts belong in the tables — the review list
-at the top of the README, the round table at the top of this document, and the registers below. *(C2 has twice
-written a sentence here claiming its prose contains no counts, and each time the claim was false while the
+at the top of the README, the round table at the top of this document, and the registers below. *(C2 has written a
+sentence here claiming its prose contains no counts more than once, and each time the claim was false while the
 sentence itself sat beside counts. No such claim is made now: where prose states a number it should simply be
 right, and checked before it is written.)*
 
@@ -395,7 +396,7 @@ claims sound and listed them so a later round need not re-derive them.
 | | finding | repair |
 |---|---|---|
 | **r11 FAIL 1** | The replacement ledger — the instrument built the previous round *to be* the complete provenance accounting — was **incomplete**. Its scope sentence claimed every replaced leaf; it omitted `evidence/prefreeze/C2_MUTATIONS.json` (`5a94568a → 12585997`, four leaves: `applied` 33 → 43, `detected` 31 → 40, `real_mutants` 25 → 35, `M10.caught_by[0]`). C2 had rebuilt the ledger over the two files it already knew about rather than over the corpus its own sentence named. | The ledger is rebuilt over **every** committed file under `evidence/` and `config/` and now carries all **19** leaves across **three** files, with the breakdown: nine scientific, four suite counts, six free text and timings. |
-| **r11 FAIL 2** | The repair introduced a new instance of the very class it was closing: `87004e2b` added "four independent reviews (r5, r6, r7, r8)" to the README while this document asserted "every hand-maintained tally has been deleted from prose … and prose does not". Compliance claimed, counts present. | The compliance clauses are deleted. *(The first repair removed one of the two and recorded both as gone — r12 FAIL 1. The second survived verbatim for a further round and is deleted now.)* C2 has written a sentence claiming its prose carries no counts three times, and each time the claim was false while sitting beside counts. No such claim is made any more: where prose states a number it should simply be right, and be checked before it is written. The accurate counts themselves are kept. |
+| **r11 FAIL 2** | The repair introduced a new instance of the very class it was closing: `87004e2b` added "four independent reviews (r5, r6, r7, r8)" to the README while this document asserted "every hand-maintained tally has been deleted from prose … and prose does not". Compliance claimed, counts present. | The compliance clauses are deleted. *(The first repair removed one of the two and recorded both as gone — r12 FAIL 1. The second survived verbatim for a further round and is deleted now.)* C2 has repeatedly written a sentence claiming its prose carries no counts, and each time the claim was false while sitting beside counts. No such claim is made any more: where prose states a number it should simply be right, and be checked before it is written. The accurate counts themselves are kept. |
 
 Also acted on: "exactly nine leaves have ever changed in this campaign" was true of `C2_D1_BLOCKER.json` and false
 campaign-wide, where the figure is 19. Both occurrences are now scoped to the artifact.
@@ -405,8 +406,7 @@ campaign-wide, where the figure is 19. Both occurrences are now scoped to the ar
 `review/REVIEW_C2_PREFREEZE_R12.md`, at `6aa2040a`: **2 FAIL**. It rebuilt the replacement ledger independently
 over all 115 committed files under `evidence/` and `config/`, taking no file list from C2, and confirmed
 **19 leaves / three files / 9 + 4 + 6 correct in every cell, with nothing missing** — r11 FAIL 1 fully repaired.
-It also listed all seven surviving instances of the corpus-claim class rather than leaving any for a later round,
-and disclosed that its own first draft of its verdict table was hand-tallied and wrong, which it re-extracted
+It also listed surviving instances of the corpus-claim class, and disclosed that its own first draft of its verdict table was hand-tallied and wrong, which it re-extracted
 mechanically before finishing — the same hazard it was auditing.
 
 | | finding | repair |
@@ -435,14 +435,37 @@ own verdict counts by script after finding its first hand-tally wrong, and discl
 | | finding | repair |
 |---|---|---|
 | **r13 FAIL 1** | The paragraph dispositioning r12 claimed "**every** transcribed per-review sub-count has been stripped" and "Only FAIL counts remain". One header still carried its sub-counts, and the count of headers given was wrong. **This is r12 FAIL 1's exact shape — all-but-one repaired and recorded as complete — committed in the paragraph dispositioning r12, in precisely the kind of sentence r12 asked C2 to stop writing.** | The surviving header is stripped, and **the exhaustiveness claim is deleted rather than corrected**. The paragraph now tells the reader how to check for themselves instead of asserting the result. |
-| **r13 FAIL 2** | Two statements of the same fact in this document disagreed: one said C2 had written a "prose contains no counts" sentence **twice**, the other **three times**. r12 had named both sites; only one was repaired. | The count is removed from the older statement, so the two cannot diverge again. |
+| **r13 FAIL 2** | Two statements of the same fact in this document disagreed: one said C2 had written a "prose contains no counts" sentence **twice**, the other **three times**. r12 had named both sites; only one was repaired. | *(The repair changed the older statement's wording and left its count standing, while this row certified that the count had been removed — r14 Note 1. Neither half was true.)* **Neither statement now carries a count**, so they cannot diverge. |
 | **r13 FAIL 3** | "**The self-audit is now finding these faster than the reviews are**" was false when written and had been false for six rounds. | Withdrawn, and replaced with what the register actually shows, re-derived here: of its instances, **four** were self-caught, all in rounds four and five, and **none** of the twelve added in rounds six to eleven. The self-audit stopped finding them; the reviews did not. That is the honest reading and it is not flattering. |
+
+## Dispositions from the FOURTEENTH pre-freeze review
+
+`review/REVIEW_C2_PREFREEZE_R14.md`, at `75a97a18`: **4 distinct FAILs**, all textual. It reproduced the science,
+the gate and the integrity envelope cold, script-verified that the narrative reduction preserved all 25 register
+rows and every figure it claimed, recomputed the retained r4 ratio-vs-difference point from the D1 artifact, and
+swept nine markdown files, seven Python files and the committed JSON free text by script. It also disclosed that
+its own first verdict table was hand-tallied and wrong on two columns.
+
+| | finding | repair |
+|---|---|---|
+| **r14 Note 1** | r13 FAIL 2 was **not repaired at all**, and its disposition row certified that it was. The repair changed "both times" to "each time" and left the **count** — "twice" — standing, while the other statement still said "three times". The row asserted "The count is removed from the older statement, so the two cannot diverge again"; neither half was true. Earlier rounds produced all-but-one repairs; this was none-of-one, recorded as complete. | **Neither statement now carries a count.** The row records what actually happened. |
+| **r14 Note 2** | The derivation offered for the r13 FAIL 3 withdrawal was falsified **by the commit that wrote it**: the text told the reader to run `grep -c 'self-caught'`, which returned 4 at the previous commit and 7 after, because that same commit added three further occurrences of the string. The figure itself is right; the check supplied contradicted the conclusion it was supposed to support. | The instruction is withdrawn and replaced by reading the register's **caught by** column, which is what the figure was derived from. |
+| **r14 Note 3** | A claim that r12 "listed all seven surviving instances … rather than leaving any for a later round" — an exhaustiveness claim **r12 never made**, and false: r13 listed eleven, at least two of which predate r12. | The exhaustiveness clause is deleted. |
+| **r14 Note 4** | "Sixth instance; r5 FAIL 1" — a hand-maintained ordinal in prose contradicting the register beside it, where that episode is the fifth row. Present since `fb4d688b` and unremarked by eight reviews. | The ordinal is deleted; the text points at the register row instead. |
+
+**On the narrative reduction**, r14 found nothing load-bearing lost — all 25 register rows, the second register,
+the operational lesson, the r13 withdrawal and all six figures verified present — and judged the direction right
+and the execution wrong in three ways: it mis-targeted (two of r13's three FAILs were **not** in that section, and
+the reduction left both r13 FAIL 2 sites untouched, which is why Note 1 exists); it cut too little in one place,
+leaving the stale ordinal of Note 4; and **it introduced two fresh self-descriptive claims in the commit whose
+purpose was to stop writing them** — an underived superlative and an absolute that was false of the section it
+introduced. Both are now removed, and the r5 note-8 attribution the reduction dropped is restored.
 
 ## The pattern, named
 
 **Every one of C2's repair rounds has carried an error of its own.** The registers below are the record; the prose
-after them is deliberately short, because this section's narrative has been the single largest source of the
-defects it describes. Where an episode is in a register row, it is not re-told.
+after them is deliberately short: the narrative here has itself produced many of the defects it describes, so
+episodes recorded in a register row are generally not re-told.
 
 | round | the repair | the error it introduced | caught by |
 |---|---|---|---|
@@ -471,6 +494,9 @@ defects it describes. Where an episode is in a register row, it is not re-told.
 | 11 | summarised the completed ledger in the README | wrote a breakdown summing to 11 of 19 | r12 FAIL 2 |
 | 12 | stripped the transcribed sub-counts | left one header, miscounted the headers, and claimed the removal was exhaustive | r13 FAIL 1 |
 | 12 | rewrote one of two statements of the same fact | left the other, so the document now contradicted itself on it | r13 FAIL 2 |
+| 13 | repaired r13 FAIL 2 | changed the wording, left the count, and certified the count removed | r14 Note 1 |
+| 13 | supplied a command to re-derive a figure | the same commit falsified the command | r14 Note 2 |
+| 13 | reduced this section's narrative | added a superlative and an absolute, both self-descriptive, both unchecked | r14 Notes 5-6 |
 
 A separate register, for a different failure — a review note received and then never actioned, rather than
 decoration added:
@@ -483,16 +509,17 @@ Every instance has the same shape — **a correct primary argument or fix, with 
 on top of it, or a neighbouring sentence the fix failed to carry along.** The primary claim was sound every time;
 the decoration and the leftovers were not.
 
-One substantive point from those episodes is kept because a successor re-reading r4 against this document would
-otherwise conclude one of them is in error: r4's remark that renormalising by equal A0 effect makes D_lo "lead by a
+One substantive point from those episodes is kept — it is r5's note 8 — because a successor re-reading r4
+against this document would otherwise conclude one of them is in error: r4's remark that renormalising by equal A0 effect makes D_lo "lead by a
 wider margin" is **false of the ratio** — that renormalisation divides both rows by the same constant, leaving it
 at 1.0674 at cell 309 either way — and **true of the absolute difference**, which the same renormalisation
 multiplies by eleven, 0.005505 to 0.060556. Both documents are arithmetically exact and are describing different
 quantities. The rest of those episodes are in the register rows above and are not re-told here.
 
 **C2 wrote here that "the self-audit is now finding these faster than the reviews are". That was false when
-written and had been false for six rounds** (r13 FAIL 3). Derive it from the register above —
-`grep -c 'self-caught' ERRATUM_C2.md` against the row count — and the position is: of the instances recorded,
+written and had been false for six rounds** (r13 FAIL 3). Derive it from the **caught by** column of the register above; a `grep -c` over this whole file does not work,
+and the version of this sentence that told the reader to run one was falsified by its own commit (r14 Note 2).
+The position is: of the instances recorded,
 **four** were self-caught, all of them in rounds four and five, and **none** of the twelve added in rounds six to
 eleven. The self-audit stopped finding them, and the reviews did not.
 
@@ -522,7 +549,7 @@ A successor should expect this failure mode from this campaign's authorship spec
 in place when round four replaced the opening with the table. They claimed C2 had avoided "repeating the pattern
 a fourth time" — contradicted by the table twenty lines up, which records round three producing instances three
 and four — and re-asserted the leaf count r4 had already corrected. A stale, self-contradicting remnant left by a
-repair, inside the section about stale remnants left by repairs. Sixth instance; r5 FAIL 1.)*
+repair, inside the section about stale remnants left by repairs. See r5 FAIL 1 and its register row.)*
 
 ## Cell 306
 
