@@ -274,7 +274,9 @@ def main() -> int:
         "signed_enclosure returns (-H_hi, -H_lo): well ordered, magnitude-preserving, and therefore invisible to "
         "the Gamma_frozen cross-check, to part (1) and to the inverted-interval guard",
         "DETECTED_BY_GUARD" if guard_msg else "NOT_DETECTED",
-        guard=guard_msg,
+        guard=(guard_msg if guard_msg is None or len(guard_msg) < 400
+               else guard_msg[:180] + f" ... [{len(guard_msg)} chars of exact-rational endpoints elided; the "
+                                      f"refusal fires on the signed endpoints disagreeing]"),
         penalty_true=float(true_P), penalty_mutant=float(mutant_P),
         understatement_percent=float(100 * (1 - mutant_P / true_P)),
         note="caught only because the forecast RE-DERIVES the signed endpoints; every other defence in the "

@@ -104,6 +104,13 @@ Two consequential field fixes in the same pass. `C5_MUTATIONS.json` recorded `in
 M12 and M13, contradicting its own prose: the comparison used the manufactured cell's mutant Γ against the real
 cells' Γ with the weights already restored, so it was true by construction. The honest value is **true** on both,
 and it is now computed with the mutation live on the same cells. And route E1's withdrawn phrase "provably useless
-for 309" survived in its primary `kill_reason` and in the phase-3 table row; it is now confined to
+for 309" survived in its primary `kill_reason` and in the phase-3 table row. It is now confined to
 `withdrawn_phrase`, and E1's `refuted_at_cells` is emptied in favour of `refuted_at_cells_diagnostic_only`,
 because that entry rests on C4's uncertified Monte-Carlo — the precise ground on which v1's E2 kill was condemned.
+
+**This paragraph was itself wrong when first written, and that is the third time in this campaign line.** It
+asserted the phrase was confined to `withdrawn_phrase` while the phase-3 table row still carried it verbatim; the
+round-3 reviewer found it, exactly as C4's round found two "Fixed at source" claims that had landed in one file
+and not the others. The repair is now verified in both places by the commit that carries this sentence. The
+lesson C4 recorded and C5 failed to apply: **grep for the withdrawn string across the namespace before writing
+that a withdrawal landed.**

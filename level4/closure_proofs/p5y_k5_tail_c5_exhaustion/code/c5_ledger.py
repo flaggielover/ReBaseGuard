@@ -212,6 +212,8 @@ def main() -> int:
     for r in ROUTES:
         r.setdefault("refuted_at_cells", [])
         r.setdefault("oracle_closes_at_cells", r.get("closure_possible_at_cells", []))
+        if r.get("kill_kind") == "MATH_PARTIAL" and not r["refuted_at_cells"]:
+            raise SystemExit(f"route {r['id']}: MATH_PARTIAL refutes no cell, which is vacuous")
         if r.get("kill_kind") == "MATH" and r["oracle_closes_at_cells"]:
             raise SystemExit(f"route {r['id']}: kill_kind MATH but the oracle closes {r['oracle_closes_at_cells']}")
 

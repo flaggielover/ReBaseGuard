@@ -289,11 +289,20 @@ def no_regression_sweep() -> dict:
             keeps = (gf >= 0) or t5["pass"]
             if not tighter or not keeps:
                 viol += 1
-            rows.append({"cell": k, "m": int(m), "Gamma_frozen": float(gf), "Gamma_C5T": float(t5["Gamma"]),
+            rows.append({"cell": k, "m": int(m),
+                         "enclosure": "sealed R2_interval / M_R2, NOT the authoritative TC-T-intersected M",
+                         "Gamma_frozen_at_that_enclosure": float(gf),
+                         "Gamma_C5T_at_that_enclosure": float(t5["Gamma"]),
                          "C5T_tighter": bool(tighter), "no_closure_lost": bool(keeps)})
     return {"rows": rows, "row_count": len(rows), "violations": viol,
             "claim": "Gamma_C5T <= Gamma_frozen at every tail cell and every m, and no row that closes under the "
                      "frozen clause fails to close under C5-T",
+            "these_are_not_the_authoritative_Gamma": "the sweep uses the sealed R2_interval so that it is "
+                     "independent of any TC-T supply and works at m = 1, 2, 3. At cell 309 m = 5 it reports "
+                     "+0.374145 where the AUTHORITATIVE Gamma is +0.153020. Do not quote these as the result.",
+            "violations_is_fail_closed": "a genuine violation would ABORT the run -- TR.penalty refuses when P "
+                     "exceeds the frozen penalty -- rather than be counted here, so `violations: 0` means the "
+                     "sweep completed, not that a counter stayed at zero",
             "status": "CERTIFIED (executed, not asserted)"}
 
 
