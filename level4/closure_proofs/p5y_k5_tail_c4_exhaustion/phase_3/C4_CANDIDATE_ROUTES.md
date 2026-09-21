@@ -1,5 +1,13 @@
 # Phase 3 — candidate routes, in the order the campaign was told to prefer them
 
+> **Two statements in this document and in `evidence/phase3/C4_ROUTES.json` are corrected by
+> `ERRATUM_C4_GATE.md` E4 and E5**, on the instruction of the independent adjudicator. The "Assumptions" line of
+> route L below cites Lemma T for `E[tau] < infinity`; Lemma T bounds the *taboo* time and the hypothesis is not
+> needed at all. And `C4_ROUTES.json`'s `DIAGNOSTIC_note` asserts of cell 308 that "the honest answer is that none
+> can" — an unhedged universal negative resting on uncertified diagnostics. Neither is load-bearing; both are
+> left in place so that the adjudicated evidence still reproduces byte-for-byte. **Neither may be quoted as
+> establishing anything.**
+
 Producers: `code/c4_lower_bound.py` (route L), `code/c4_routes.py` (all routes, and the diagnostics).
 Evidence: `evidence/phase3/C4_ROUTES.json`.
 

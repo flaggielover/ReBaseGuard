@@ -19,7 +19,7 @@ operator certification is run.
 | 1 target reconstruction | `phase_1/C4_TARGET_RECONSTRUCTION.md`, `evidence/phase1/C4_THRESHOLDS.json` |
 | 2 prior-evidence search | `phase_2/C4_PRIOR_EVIDENCE_SEARCH.md`, `evidence/phase2/C4_PRIOR_EVIDENCE.json` |
 | 3 candidate routes | `phase_3/C4_CANDIDATE_ROUTES.md`, `evidence/phase3/C4_ROUTES.json` |
-| 4 frozen gate | `config/FEASIBILITY_GATES_C4.json`, `evidence/freeze/C4_FREEZE_RECORD.json` |
+| 4 frozen gate | `config/FEASIBILITY_GATES_C4.json`, sha256 `d5b5b385…`, frozen in its own commit `376950be` |
 | 5 pre-result review | `review/REVIEW_C4_PRERESULT.md` |
 | 6 certificate | `evidence/certificate/C4_CERTIFICATE.json` |
 | 7 adversarial check | `evidence/mutations/C4_MUTATIONS.json` |

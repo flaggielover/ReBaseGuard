@@ -112,7 +112,15 @@ facts are exercised on a 21-point ladder per cell (`monotone` in the evidence fi
 
   This has an exact restatement that needs no diagnostic at all: **a certified upper bound on `Lambda_308` below
   4.375229 would itself be an admissible `A0` that closes cell 308 at `A1 = A2 = 0`.** So "308 cannot be excluded"
-  and "308 can be closed under the knockout" are the same statement. The two possibilities for 308 are exhaustive
-  and one of them is progress.
+  and "308 can be closed under the knockout" are the same statement, and the two possibilities are exhaustive.
+
+  **But the second is worth much less than it sounds, and the earlier wording here ("one of them is progress") is
+  struck on the adjudicator's instruction (condition 3).** The knockout sets `A1 = A2 = 0`, which no real supply
+  achieves. Measured against a real supply: at `A0 = 4.311` — the Monte-Carlo value of `Lambda_308`, reproduced
+  independently by both the pre-result reviewer and the adjudicator — closing cell 308 still requires an
+  **18.2496x reduction of `(A1, A2)`**; and at `A0 = 4.375229` it is impossible at **any** `(A1, A2)`. So the
+  branch in which 308 "can be closed" demands a certified upper bound essentially at the truth *and* an
+  eighteen-fold improvement in the first- and second-order atom constants. Nothing here licenses the sentence
+  "cell 308 is closable".
 * **309: in prospect, with room.** The threshold is 3.214236; the diagnostics put the truth near 3.92 at the
   midpoint and higher at `e_lo`. Phase 3 has to find a rigorous bound somewhere in between.

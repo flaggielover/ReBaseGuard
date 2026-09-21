@@ -52,3 +52,54 @@ a candidate for gate-fitting and concluded it is **logically forced rather than 
 `Gamma(A0_certified, 0, 0) < 0` then `A0` is not what keeps the cell open, so no floor under `A0` can bear on it,
 and a gate that counted such a cell as a failure would be measuring the wrong thing. It is recorded here because
 the coincidence is real and a later reader is entitled to see it flagged rather than discover it.
+
+## E3 correction — the carve-out could not have been outcome-fitting
+
+Recorded on the instruction of the independent adjudicator (condition 10), because E3 as written concedes more
+than the facts require. E3 flags the `cells_whose_blocker_is_not_A0` carve-out as removing "exactly the cells that
+would otherwise have counted against the campaign" and then argues it is logically forced. The argument is right,
+but the stakes are lower than E3 admits: **the class is `PARTIAL` with or without the carve-out** — 309 excluded,
+308 not — so the carve-out cannot have been outcome-fitting in the decisive sense. It moves the denominator from
+four to two, which is presentational.
+
+## E4 — an unhedged universal negative survives in Phase 3 evidence
+
+`evidence/phase3/C4_ROUTES.json`, field `DIAGNOSTIC_note`, and its producer `code/c4_routes.py:147`, both assert of
+cell 308:
+
+> "They are recorded because they decide whether any route could discharge cell 308, and the honest answer is that
+> none can."
+
+That is an **unhedged universal negative resting on uncertified float diagnostics**. C4 certifies no upper bound
+on `Lambda_308`; the correct statement is the one `phase_3/C4_CANDIDATE_ROUTES.md` and the certificate's
+`reason_not_excluded` field now carry — the certified answer at 308 is "the bound is too weak", and "the threshold
+exceeds the truth" is **corroborated, not proved**. The corroboration is strong (two committed float diagnostics
+agreeing to 5e-7; the pre-result reviewer's 2,000,000-path Monte-Carlo at `4.31108 ± 0.00102`; the adjudicator's
+independent 2,000,000-path Monte-Carlo at `4.30910 ± 0.00102`, about 65 standard errors below the 4.375229
+threshold) — and it is still not a certificate.
+
+**No successor may quote that sentence as establishing anything.**
+
+## E5 — the Lemma T mis-citation survives in Phase 3 evidence
+
+`evidence/phase3/C4_ROUTES.json`, field `routes.L_ladder_Wald.assumptions`, its producer `code/c4_routes.py:98`,
+and `phase_3/C4_CANDIDATE_ROUTES.md` §"Route L / Assumptions" all still list
+
+> `E[tau] < infinity`, which Lemma T already gives (`E_x[tau] <= C_T`)
+
+Lemma T bounds `Ghat_e 1 = E_x[tau ^ T_a]`, the **taboo** time killed on return to the atom — a different and
+smaller random variable than `tau`. The citation is wrong, and the hypothesis is not needed in any case: theorem L
+derives Wald from Tonelli as an identity in `[0, +infinity]`. `code/c4_lower_bound.py` was corrected before the
+certificate was evaluated; these three copies were missed.
+
+**Why E4 and E5 are errata rather than source fixes.** Both defects sit in artifacts the adjudicator read and
+verified reproduce byte-identically. Regenerating them would break that reproducibility for a correction that
+changes no number: `c4_certificate.py` never opens `C4_ROUTES.json`, and neither sentence is load-bearing for any
+result. The producer is therefore left unchanged so that a re-run still reproduces the adjudicated evidence
+exactly, and this erratum carries the correction. `phase_3/C4_CANDIDATE_ROUTES.md` carries a banner pointing here.
+
+**On how these were missed.** `OPEN_NOTES_DISPOSITION_C4.md` recorded both as "Fixed at source" after they were
+fixed in `code/c4_lower_bound.py` alone. That was an overstated disposition — the same failure mode this
+programme has repeatedly recorded: a claim about a corpus asserted without running the check that would have
+verified it. `grep -rn "Lemma T" level4/closure_proofs/p5y_k5_tail_c4_exhaustion` would have found it in seconds
+and was not run.

@@ -42,3 +42,52 @@ Every note it asked the campaign to address before adjudication is listed with w
   assertions, and a successor that wants them to be evidence should instrument them.
 * **C4-N5.** `_isqrt(0)` raises `ZeroDivisionError` rather than `Refusal`. Unreachable through `sqrt_iv`, which
   refuses a non-positive interval first. Cosmetic; left as found.
+
+---
+
+# Disposition of the C4 adjudication conditions
+
+Adjudication: `evidence/adjudication/C4_ADJUDICATION.md`, fresh context, verdict
+**ACCEPTED_WITH_SCOPE_LIMITATION**, excluded cell set **[309]**, 11 conditions. Every load-bearing figure in it was
+reproduced independently before any of this was acted on: 18.2496× at cell 308 under `A0 = 4.311`; `Gamma =
++0.000000008` at `A0 = 4.375229` with `A1 = A2 = 0`; 2.203053× and 1.111966× at cell 307; `B(e0) = 3.191359686`,
+0.7117 % **below** cell 309's threshold; `Gamma(B, A1_cert, A2_cert) = +0.064868395` at 309; `Gamma = −0.036197780`
+at cell 306's full certified triple.
+
+| # | condition | disposition |
+|---|---|---|
+| 1 | scope every restatement; `DETERMINISTIC_OPERATOR_ROUTE_EXHAUSTED` may not appear unqualified | **Binding. Adopted verbatim** as the campaign's standing form of words; the token appears nowhere in C4 unqualified, and the final report uses the adjudicator's narrowed sentence. |
+| 2 | erratum for the two repairs that did not land in Phase 3 evidence | **Done: `ERRATUM_C4_GATE.md` E4 and E5.** The producer and `C4_ROUTES.json` are deliberately left byte-intact so the adjudicated evidence still reproduces exactly; `phase_3/C4_CANDIDATE_ROUTES.md` carries a banner pointing at the errata. Neither sentence may be quoted as establishing anything. |
+| 3 | strike "one of them is progress"; replace with the 18.2× fact | **Done at source**, Phase 1 §5, with the figure reproduced independently (18.2496×) and with the `A0 = 4.375229` impossibility stated alongside. |
+| 4 | enforce the licence rather than record it; exercise monotonicity in A1 and A2, not only A0 | **Binding on the successor, not retrofitted.** Both facts hold — the adjudicator verified them structurally and numerically, and so did C4's own ladder for `A0` — but `is_excluded` does not consult `licence`, and the ladder varies `A0` only. Changing `c4_certificate.py` now would regenerate an adjudicated artifact to no numerical effect, so it is carried forward as **C4-N6** instead. |
+| 5 | the 2.6 % margin is the certificate's, not the fact's; state the midpoint fragility wherever it is quoted | **Binding. Adopted**, and stated in the final report: true `Lambda_309 ≈ 4.047` exceeds the threshold by 26 %, the route consumes 23 of those points, and the same route at the cell **midpoint** falls 0.7117 % *below* threshold — so the margin exists only by virtue of the sup-over-closed-cell quantifier and the left-endpoint evaluation. |
+| 6 | the R-stage premise is not available; guard stays DENY | **Binding, and uncontested.** C4 asserted no R-stage consequence at any point; the certificate emits the gate's PARTIAL `permitted_conclusions` verbatim, including "no R-stage consequence of any kind". |
+| 7 | the next successor should cost four mechanisms, in the adjudicator's order | **Recorded as C4-N7** below, in its order, which supersedes C4-N1's ordering. |
+| 8 | no coverage map revision; r5 remains authoritative | **Binding, and already satisfied.** No r6 exists; Phase 0 check 5 verifies it; the m = 5 open set is unchanged at {306, 307, 308, 309}. |
+| 9 | carry C3's conditions forward unchanged | **Binding.** In particular the K5 tail adoption floor with the C2 adjudicator's N9-lapse condition on F1, the prohibition on citing `C3_BLOCKER_ANALYSIS.md` §3, and C3's N9/N10. None was in C4's scope and none is discharged. |
+| 10 | correct erratum E3's framing | **Done: `ERRATUM_C4_GATE.md`, "E3 correction".** The class is `PARTIAL` with or without the carve-out, so it cannot have been outcome-fitting in the decisive sense. |
+| 11 | hygiene: the README advertised a non-existent freeze record; check `1_branch_head_clean` does not test cleanliness; the zero-counters are constants | **README fixed** (it now names the gate sha and freeze commit directly, and the empty directory is gone). The check name and the counters are carried forward as **C4-N8** and **C4-N4** rather than retrofitted into adjudicated artifacts. |
+
+## Further notes carried to a successor
+
+* **C4-N6.** `c4_certificate.evaluate` records `licence` but never consults it: a re-run on inputs where the
+  TC-T/K5-B intersection went empty at the bound would still emit `excluded: true`. And the monotonicity ladder
+  varies `A0` only, so "A1 = A2 = 0 is the most generous setting" is unexercised in C4's own machinery. Both hold
+  today. A successor must make the guard refuse rather than report, and must ladder `A1` and `A2` too.
+* **C4-N7.** The adjudicator's ordering for the next deterministic successor, which supersedes C4-N1's:
+  **(a)** a residual-specific, non-norm-only order-0 bound — `(Ghat|phi|)(a)/D_e` in place of `A0 ||phi||` — the
+  only named mechanism that escapes the `E_a[tau]` floor outright, and quantified by no one;
+  **(b)** tightening the candidate sup norms feeding the order-3 surrogate `resG`, which the adjudicator's
+  sensitivity probe shows is the *dominant* channel at cell 309 — halving them raises the critical `A0` to 4.160,
+  above both C4's certified bound and the Monte-Carlo truth, i.e. the cell would become closable under the
+  knockout;
+  **(c)** cell-width refinement at 309 (halving `rho` raises the critical `A0` to 7.534);
+  **(d)** cell 307's target: 2.203053× on `(A1, A2)` with `A0` unchanged, or 1.111966× uniform.
+  C4-N1's routes R1 and R5 remain the right starting point for a *sharper floor*, but a sharper floor is no longer
+  the highest-value work.
+* **C4-N8.** Phase 0's check `1_branch_head_clean` tests the branch name and ancestry but not tree cleanliness,
+  and the committed run records `uncommitted_files_at_audit: 12` while returning true. Rename or repair it.
+* **C4-N9.** The order-0 atom-constant channel C4 closed at cell 309 is **not** the dominant channel there. The
+  adjudicator's single-knob probe: a 10 % cut in the order-0/1/2 residuals moves the critical `A0` by 0.014 %,
+  while halving the candidate sup norms moves it by 29 % and halving `rho` moves it by 134 %. Any successor
+  reading C4 as "the operator direction is spent at 309" is misreading it.
