@@ -27,15 +27,29 @@ because it needs `numpy` and `python-flint` and neither had them. `REGISTRY_C2.j
 and no precision, so even "a second execution on a second host" could not be established from the artifact.
 
 `code/c2_recertify_306.py` → `evidence/prefreeze/C2_RECERTIFY_306.json` attacks that surface in two passes, on a
-host with a **different operating system, a different CPU architecture and a different compiled build of the
-Arb/FLINT stack** than produced the registry:
+host whose operating system, CPU architecture, Python and compiled Arb/FLINT build are all **recorded in the
+artifact**:
 
-| | the worker that built the registry | the host that re-certified |
+| | the worker that built the registry — **reported, not recorded** | the host that re-certified — **recorded** |
 |---|---|---|
 | OS / arch | Linux x86_64 (`rebaseguard-vultr-02`) | macOS 26.5.2 arm64 |
 | Python | 3.12.3 | 3.14.5 |
 | numpy | 2.5.2 | 2.5.3 |
 | python-flint | 0.9.0 (Linux x86_64 build) | 0.9.0 (macOS arm64 build) |
+
+**The left column is reported by this campaign and is recorded in no committed artifact — the asymmetry is
+deliberate and is stated here because pre-freeze review r2 (its note 4) asked for it and C2 did not do it until
+review r7 raised it as a FAIL.** `REGISTRY_C2.json` carries no host, toolchain or precision field; the build log on
+the worker records only the registry summary. So what the evidence establishes on its own is narrower than "a
+genuinely second host": **the re-certification host is fully recorded, and the artifacts it re-certified reproduce
+on it bit-identically.** That the *build* host differed rests on C2's report, not on an artifact.
+
+The one piece of in-repo corroboration is weak but real, and it was r2 that found it rather than C2: the committed
+artifacts record `cpu_seconds` of 90.2 (block 306_02) and 88.3 (block 305_00), where the same certifications took
+56.2 s and 66.1 s on the re-certifying host — consistent with a different and slower machine, and not something the
+re-certifying host could have produced. A successor that wants this properly evidenced should have the registry
+builder record its own host, toolchain and precision into `REGISTRY_C2.json` at build time; carried forward as
+**N10**.
 
 - **Pass 1 — determinism, at the artifacts' own 256 bits.** `verify_block` / `verify_cell` re-run certification and
   require **bit-identical** agreement on every published field. Identity across that gap is evidence the
@@ -52,9 +66,14 @@ Arb/FLINT stack** than produced the registry:
 | determinism, 256 bits | **bit-identical** on every field of all 18 artifacts | **18/18 identical**; the five consumed constants 45/45; `certified: true` everywhere |
 | safe-side, 384 bits | every consumed bound still valid | **45/45 valid**; `certified: true` on all 18 |
 
-**The Arb supersolution machinery reproduces exactly across the OS, architecture and FLINT build boundary, and its
-published bounds survive a 50 % increase in working precision.** That is the strongest statement available without
-a second implementation, and it is the one the C1 reviewer asked for.
+**On a host whose OS, architecture, Python and compiled Arb/FLINT build are all recorded in the artifact, the
+supersolution machinery reproduces every published field of all eighteen artifacts bit-identically, and every
+consumed bound survives a 50 % increase in working precision.** The stronger phrasing this paragraph carried until
+review r7 — that the machinery reproduces "across the OS, architecture and FLINT build boundary" — asserted a
+*difference* between two hosts, and only one of the two is recorded. Reproduction on a fully recorded host is what
+the artifacts establish; it is short of the independent re-certification the C1 reviewer asked for, which needs a
+second implementation, and it is short of a recorded second host, which needs the builder to record its own
+provenance (**N10**).
 
 **One thing is disclosed rather than presented as clean.** The first version of this module also asserted the
 one-sided inequality on three *internal* certification quantities — `margin_lower_bound`, `w_min_lower_bound`,

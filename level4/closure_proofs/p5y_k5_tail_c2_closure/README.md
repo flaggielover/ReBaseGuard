@@ -43,6 +43,7 @@ Each predecessor lost its campaign to a gate defect, and C2's gate is written ag
 | independent pre-freeze review r4 | `review/REVIEW_C2_PREFREEZE_R4.md` | NOT_READY — **3 FAIL** |
 | independent pre-freeze review r5 | `review/REVIEW_C2_PREFREEZE_R5.md` | NOT_READY — **2 FAIL** |
 | independent pre-freeze review r6 | `review/REVIEW_C2_PREFREEZE_R6.md` | NOT_READY — **1 FAIL** |
+| independent pre-freeze review r7 | `review/REVIEW_C2_PREFREEZE_R7.md` | NOT_READY — **2 FAIL** |
 | erratum and review disposition | `ERRATUM_C2.md` | every FAIL from every round dispositioned |
 
 *FAIL counts only. Each review's PASS/NOTE/INFO breakdown is in its own file and is deliberately not transcribed
@@ -68,7 +69,8 @@ still-open cell to be materially tightened and fails on one cell by 1.6 percenta
 deterministic operator certification; **0 new real scientific addresses**; guard DENY.
 
 **Read `ERRATUM_C2.md` before relying on anything here.** Every independent pre-freeze review so far has returned
-NOT_READY; they are listed in the table above, which is the only place in this namespace that counts them.
+NOT_READY; they are listed in the table above, and `ERRATUM_C2.md` carries the same list with each round's
+disposition.
 Between them they reproduced every decision-relevant number bit-exactly and found **no arithmetic error in the
 D-stage result** — the class, the closed subset and the gap falls have never moved. What they found was a
 critical-ratio column labelled with the wrong campaign (overstating C2's own contribution ~2×), a diagnosis

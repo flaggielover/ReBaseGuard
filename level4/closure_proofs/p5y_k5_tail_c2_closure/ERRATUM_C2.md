@@ -2,7 +2,8 @@
 
 Independent fresh-context pre-freeze reviews have run on this campaign in successive rounds, each so far
 returning **NOT_READY**, and this document dispositions every FAIL from every one of them. The table below is the
-count; no sentence in this namespace states one, for the reason given in §"The pattern, named".
+count. Counts belong in the tables of this document and of `README.md`, not in prose — for the reason given in
+§"The pattern, named".
 
 | round | at | verdict | dispositioned in |
 |---|---|---|---|
@@ -12,8 +13,9 @@ count; no sentence in this namespace states one, for the reason given in §"The 
 | r4 | `17123368` | 3 FAIL | § "Dispositions from the FOURTH pre-freeze review" |
 | r5 | `1663f558` | 2 FAIL | § "Dispositions from the FIFTH pre-freeze review" |
 | r6 | `ec5b08ca` | 1 FAIL | § "Dispositions from the SIXTH pre-freeze review" |
+| r7 | `5a098ec6` | 2 FAIL | § "Dispositions from the SEVENTH pre-freeze review" |
 
-**The result has never moved.** Across all five rounds no Γ, magnitude, margin, requirement, gap fall, class or
+**The result has never moved.** In every round so far, no Γ, magnitude, margin, requirement, gap fall, class or
 adopted-subset value has changed: the class is `D_PARTIAL`, the closed subset is {305, 306}, and the frozen gate
 is byte-untouched at `098dd7f5…`.
 
@@ -97,8 +99,11 @@ Two further gaps, neither raised as a FAIL, were closed at the same time:
   `None`. A full verification run against the committed registry is committed with its output:
   `evidence/prefreeze/C2_REGISTRY_VERIFY.json` — **105 artifacts re-checked across all five cells, `pass: true`,
   no problems**, on the same independent macOS/arm64 host, with host, toolchain and the registry's own sha256
-  recorded in the artifact. So the registry is now demonstrably re-verifiable, and separately the C1 reviewer's
-  complaint that `REGISTRY_C2.json` records no host or toolchain is answered by the two artifacts that do.
+  recorded in the artifact. So the registry is now demonstrably re-verifiable. The C1 reviewer's complaint that
+  `REGISTRY_C2.json` records no host or toolchain is **not** thereby answered, and an earlier version of this
+  sentence wrongly said it was: the two verification artifacts record the host that *re-certified*, not the host
+  that *built*, and nothing in the repository records the latter. See `phase_d/CELL_306_ADOPTION.md` and **N10**;
+  raised as note 4 by review r2 and as a FAIL by review r7.
 
   This one is worth stating plainly: a review row marked **INFO**, not FAIL, and phrased only as "not demonstrated
   in-repo", led to the discovery that a verification tool this campaign pointed at as evidence of its own
@@ -243,8 +248,9 @@ this campaign, all of them C_T sensitivity on cells 307–309.
 records `NOT_CHECKABLE_LOCALLY | 3` against a total of 79. C2's transcription of r1 was faithful. On r2 the review
 is right that the true breakdown is 62 PASS / 4 NOTE / 2 INFO — but C2's README faithfully transcribed **r2's own
 header**, which states 55 / 5 / 3 against a total of 71, and 55 + 5 + 3 + 3 = 66 ≠ 71. So the inconsistency
-originates in r2's self-report, not in C2's copying of it. Independently recounted here: r1 60/10/3/6, r2
-62/4/2/3, r3 31/7/1, r4 28/4/3.
+originates in r2's self-report, not in C2's copying of it. Independently recounted for the two documents in
+dispute: r1's own verdict table (60 PASS / 10 INFO / 3 NOT_CHECKABLE_LOCALLY / 6 FAIL) reconciles with its 79
+rows; r2's own header (55 / 5 / 3 against a stated total of 71) does not, and its true breakdown is 62 / 4 / 2.
 
 That does not rescue the decoration, and C2 is not going to argue it does. The counts were not asked for, were not
 needed, and propagated someone else's arithmetic error into the campaign's front door. **The fix is deletion, not
@@ -266,19 +272,39 @@ three `NOT_CHECKABLE_LOCALLY` rows, and r2's own header genuinely does not recon
 **The repair is structural, not another number.** Three of the instances in the table below are a count left stale
 by a later edit; this was the fourth. Updating the number would have set the same trap for round seven. So every
 hand-maintained tally has been deleted from prose in both `README.md` and this section, and the two tables — the
-review list at the top of the README, and the instance table below — are now the only places a count appears.
+review list at the top of the README, the round table at the top of this document, and the instance table
+below — carry the counts, and prose does not.
 
 On the review's own closing point, which C2 accepts: what it blocked on was not prose quality but *a wrong count
 of how many independent reviews the campaign had survived, in the front-door document*. That is a claim about the
 campaign's reliability, in the document an adjudicator reads first, and failing it was consistent with r4 FAIL 3
 and r5 FAIL 2 rather than a softening of them.
 
+## Dispositions from the SEVENTH pre-freeze review
+
+`review/REVIEW_C2_PREFREEZE_R7.md`, at `5a098ec6`: 41 rows, 33 PASS, 6 NOTE, **2 FAIL**. It re-derived the D-stage
+result independently (gap falls 0.462852 / 0.245931 / 0.183898, `classify()` a faithful transcription of the frozen
+gate), re-certified five artifacts across cells 305/306/309 on the Arb/FLINT stack itself — bit-identical at 256
+bits, safe-side-valid at 384 — reproduced the mixed-operator supply's 57.27 / 30.57 / 23.03 % and its whole-cell
+premise, verified the 384-bit separation from git history, and diffed the D1 evidence across all four of its
+commits to confirm nine leaves have ever changed.
+
+| | finding | repair |
+|---|---|---|
+| **r7 FAIL 1** | The de-counting commit `5a098ec6` cleaned `README.md` and **left four prose counts in `ERRATUM_C2.md`** — "Across all five rounds" twice, "three separate instances below", and a four-review recount tally — while asserting **twice** that no sentence in the namespace states a count. The claim that two tables are the only places a count appears was also false: this document's own round table is a third. | The four counts are removed or rescoped, and **both self-referential assertions are deleted rather than maintained**. Asserting "no sentence states a count" is itself a falsifiable claim about every sentence, and it had already been falsified twice; the text now states where counts belong, without claiming compliance. The recount is rescoped to the two self-reports actually in dispute (r1's reconciles; r2's does not), which is fixed historical fact rather than a running tally. |
+| **r7 FAIL 2** | `phase_d/CELL_306_ADOPTION.md`'s comparison table presented a **build-host column that is recorded in no committed artifact**, and the bolded claim that the machinery "reproduces across the OS, architecture and FLINT build boundary" rested entirely on it. This document additionally claimed the provenance complaint "is answered by the two artifacts that do". **Review r2 asked for exactly this column to be marked reported-rather-than-recorded, in its note 4, and C2 left it undispositioned for five rounds.** | The column is now labelled **reported, not recorded** against a **recorded** right column; the bolded claim is scoped to what the artifacts establish — reproduction on a fully recorded host, not across a recorded boundary; the "is answered" sentence is corrected; and the gap is carried forward as **N10**, with the weak but real in-repo corroboration r2 found (build-host `cpu_seconds` 90.2 / 88.3 against 56.2 / 66.1 on the re-certifying host) cited as what it is. |
+
+**FAIL 2 is not an instance of the documented pattern, and C2 is not going to file it as one.** The pattern is
+unverified decoration added on top of a correct fix. This was the opposite: a reviewer note that asked for *less*
+confidence in a claim, received, understood, and then simply never actioned across five subsequent rounds while the
+claim stayed bolded. That is a distinct and arguably worse failure — the pattern produces wrong ornaments, this
+produced an unsupported load-bearing sentence — and the register below now tracks the two separately.
+
 ## The pattern, named
 
 **Every one of C2's repair rounds has carried an error of its own.** The table below is the campaign's only
-tally of them; no other sentence in this namespace states a count, because hand-maintained counts in prose are
-themselves one of the recurring defects — three separate instances below are a number left stale by a later
-edit.
+tally of them. Hand-maintained counts in prose are themselves one of the recurring defects — several of the
+instances below are a number left stale by a later edit — so counts are kept to tables.
 
 
 
@@ -295,6 +321,14 @@ edit.
 | 5 | rewrote this section's prose | miscounted its own table as five-and-two; it was four-and-three | **self-caught**, `a58bbdd8` |
 | 5 | summarised what had changed | said "two published numbers"; conflated one evidence change with one prose correction | **self-caught**, `ec5b08ca` |
 | 5 | rewrote the README's "one published value" paragraph | left the paragraph one line above saying "four reviews" and "three separate times" | r6 FAIL 1 |
+| 6 | deleted every hand-maintained count from prose | cleaned `README.md`, left four counts in this document, and asserted twice that none remained | r7 FAIL 1 |
+
+A separate register, for a different failure — a review note received and then never actioned, rather than
+decoration added:
+
+| round asked | the note | what happened | caught by |
+|---|---|---|---|
+| r2 | note 4: mark the build-host column "reported rather than recorded" | never actioned; the bolded claim resting on it stayed unqualified for five rounds | r7 FAIL 2 |
 
 Every instance has the same shape — **a correct primary argument or fix, with a second unverified thing stacked
 on top of it, or a neighbouring sentence the fix failed to carry along.** The primary claim was sound every time;
@@ -328,7 +362,7 @@ fix should have carried along. Counting them by kind is left to the table, delib
 namespace beginning "a further reason", and any artifact field or summary figure not traceable to a specific
 review request or gate clause, should be treated as unverified until checked.
 
-The failure mode has a visible signature: it never touched a computed quantity. Across five rounds, **no Γ,
+The failure mode has a visible signature: it never touched a computed quantity. In every round, **no Γ,
 magnitude, margin, requirement, gap fall, class or adopted-subset value has changed** — r5 confirmed by diffing
 every leaf of the D1 evidence across its whole history that exactly nine leaves have ever changed, all C_T
 sensitivity on 307–309. Every instance was in labelling, framing, or an ornament attached to a result that kept

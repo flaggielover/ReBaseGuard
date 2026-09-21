@@ -75,7 +75,16 @@ Full disposition in [`ERRATUM_C2.md`](ERRATUM_C2.md). Carried forward as open ob
   successor D′ campaign, with its rule frozen first, before a real order-3 address is spent.
 - **N8 — cell 306 has no margin floor that C2 can honestly set**, having already seen the margin. Referred to the
   adjudicator with C2's decision pre-committed in both directions (`phase_d/CELL_306_ADOPTION.md`).
-- **N9 — the Arb/FLINT supersolutions remain the residual trust surface.** C2 has now re-certified cell 306's
-  eighteen artifacts on a genuinely independent host and toolchain build, and re-run the whole-registry
-  verification, but this is still one implementation. A second, independently written certifier is the real
-  answer and no campaign has built one.
+- **N9 — the Arb/FLINT supersolutions remain the residual trust surface.** C2 has re-certified cell 306's eighteen
+  artifacts, and re-run the whole-registry verification, on a host whose OS, architecture, Python and compiled
+  Arb/FLINT build are recorded in the artifact — but this is still **one implementation**. A second, independently
+  written certifier is the real answer and no campaign has built one.
+- **N10 — the registry does not record the host that built it.** `REGISTRY_C2.json` carries no host, toolchain or
+  precision field, and the worker's build log records only the registry summary, so the *build* host is reported by
+  this campaign and recorded nowhere. Both verification artifacts record the host that *re-certified*, which is a
+  different claim. The consequence is scoped in `phase_d/CELL_306_ADOPTION.md`: reproduction on a fully recorded
+  host is what the evidence establishes, not reproduction across a recorded host *boundary*. Raised as note 4 by
+  pre-freeze review r2, left undispositioned for five rounds, and failed by review r7. **A successor must have the
+  registry builder record its own host, toolchain and precision into the registry at build time** — it is nearly
+  free and it is the only thing standing between this evidence and the "second host" claim the C1 reviewer asked
+  for.
