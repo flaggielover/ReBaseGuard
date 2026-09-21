@@ -1,0 +1,285 @@
+{
+ "atom_constant_floor": {
+  "307": {
+   "A0_certified": 5.5979955104409465,
+   "at_diagnostic_Lambda_A1A2_zero": {
+    "A0": 4.5929,
+    "Gamma": -0.06023471904979815,
+    "closes": true,
+    "status": "DIAGNOSTIC"
+   }
+  },
+  "308": {
+   "A0_certified": 5.218548598870686,
+   "at_C4_certified_floor_A1A2_zero": {
+    "A0": 3.512733596022926,
+    "Gamma": -0.04046754262884166,
+    "closes": true,
+    "status": "CERTIFIED"
+   },
+   "at_diagnostic_Lambda_A1A2_zero": {
+    "A0": 4.311,
+    "Gamma": -0.0030135621984619903,
+    "closes": true,
+    "status": "DIAGNOSTIC"
+   }
+  },
+  "309": {
+   "A0_certified": 4.867216116723177,
+   "at_C4_certified_floor_A1A2_zero": {
+    "A0": 3.297250281519544,
+    "Gamma": 0.004661129657978103,
+    "closes": false,
+    "status": "CERTIFIED"
+   },
+   "at_diagnostic_Lambda_A1A2_zero": {
+    "A0": 4.0473,
+    "Gamma": 0.0467753283095086,
+    "closes": false,
+    "status": "DIAGNOSTIC"
+   }
+  }
+ },
+ "c4_anchor_reproduction": {
+  "baseline": {
+   "agrees_to_1e-5": true,
+   "c4_adjudicator_claimed": 3.214236,
+   "recomputed_critical_A0": 3.2142360226778806,
+   "status": "REPRODUCED"
+  },
+  "rho_halved": {
+   "agrees_to_1e-5": true,
+   "c4_adjudicator_claimed": 7.534321,
+   "recomputed_critical_A0": 7.534321390137776,
+   "status": "REPRODUCED"
+  },
+  "sup_FDH_halved": {
+   "agrees_to_1e-5": true,
+   "c4_adjudicator_claimed": 4.160309,
+   "recomputed_critical_A0": 4.160308598643784,
+   "status": "REPRODUCED"
+  }
+ },
+ "crosscheck_note": "every scaled row aligns the independent TC-T crosscheck to the frozen path and is therefore DIAGNOSTIC; the baseline and the A1=A2=0 rows scale no ingredient and run with the crosscheck live",
+ "guard": "REAL_SCIENTIFIC_COMPUTE = DENY",
+ "knockouts": [
+  {
+   "cells": {
+    "307": {
+     "Gamma": 0.026354631323170525,
+     "closes": false
+    },
+    "308": {
+     "Gamma": 0.09456414496566364,
+     "closes": false
+    },
+    "309": {
+     "Gamma": 0.15301968889418385,
+     "closes": false
+    }
+   },
+   "knob": "baseline",
+   "status": "CERTIFIED"
+  },
+  {
+   "cells": {
+    "307": {
+     "Gamma": -0.17332393366599289,
+     "closes": true
+    },
+    "308": {
+     "Gamma": -0.12867361039956238,
+     "closes": true
+    },
+    "309": {
+     "Gamma": -0.08975948061429817,
+     "closes": true
+    }
+   },
+   "knob": "fG -> 0 (perfect order-3 surrogate)",
+   "status": "DIAGNOSTIC"
+  },
+  {
+   "cells": {
+    "307": {
+     "Gamma": -0.033757385501968384,
+     "closes": true
+    },
+    "308": {
+     "Gamma": 0.019907692150553564,
+     "closes": false
+    },
+    "309": {
+     "Gamma": 0.06410357669287993,
+     "closes": false
+    }
+   },
+   "knob": "env4 -> 0 (perfect 4th-order envelope)",
+   "status": "DIAGNOSTIC"
+  },
+  {
+   "cells": {
+    "307": {
+     "Gamma": -0.2334359504911318,
+     "closes": true
+    },
+    "308": {
+     "Gamma": -0.20333006321467245,
+     "closes": true
+    },
+    "309": {
+     "Gamma": -0.17867559281560208,
+     "closes": true
+    }
+   },
+   "knob": "fG and env4 -> 0",
+   "status": "DIAGNOSTIC"
+  },
+  {
+   "cells": {
+    "307": {
+     "Gamma": -0.04994571890959114,
+     "closes": true
+    },
+    "308": {
+     "Gamma": 0.007722269290393314,
+     "closes": false
+    },
+    "309": {
+     "Gamma": 0.05520407454208675,
+     "closes": false
+    }
+   },
+   "knob": "sigma3 -> 0",
+   "status": "DIAGNOSTIC"
+  },
+  {
+   "cells": {
+    "307": {
+     "Gamma": -0.027573853683883456,
+     "closes": true
+    },
+    "308": {
+     "Gamma": 0.027306807435956794,
+     "closes": false
+    },
+    "309": {
+     "Gamma": 0.07250647311619228,
+     "closes": false
+    }
+   },
+   "knob": "sigma4 -> 0",
+   "status": "DIAGNOSTIC"
+  },
+  {
+   "cells": {
+    "307": {
+     "Gamma": -0.10387420391664512,
+     "closes": true
+    },
+    "308": {
+     "Gamma": -0.059535068239313524,
+     "closes": true
+    },
+    "309": {
+     "Gamma": -0.025309141235904817,
+     "closes": true
+    }
+   },
+   "knob": "sigma3 and sigma4 -> 0",
+   "status": "DIAGNOSTIC"
+  },
+  {
+   "cells": {
+    "307": {
+     "Gamma": -0.038426241964072815,
+     "closes": true
+    },
+    "308": {
+     "Gamma": 0.022666647477984164,
+     "closes": false
+    },
+    "309": {
+     "Gamma": 0.07633646310433521,
+     "closes": false
+    }
+   },
+   "knob": "sup F/D/H halved",
+   "status": "DIAGNOSTIC"
+  },
+  {
+   "cells": {
+    "307": {
+     "Gamma": -0.10320711525131615,
+     "closes": true
+    },
+    "308": {
+     "Gamma": -0.0492308500096953,
+     "closes": true
+    },
+    "309": {
+     "Gamma": -0.0003467626855134199,
+     "closes": true
+    }
+   },
+   "knob": "sup F/D/H -> 0",
+   "status": "DIAGNOSTIC"
+  },
+  {
+   "cells": {
+    "307": {
+     "Gamma": -0.021906451296815496,
+     "closes": true
+    },
+    "308": {
+     "Gamma": 0.039567845828196446,
+     "closes": false
+    },
+    "309": {
+     "Gamma": 0.09281242340665326,
+     "closes": false
+    }
+   },
+   "knob": "A1 = A2 = 0 (the C4 knockout)",
+   "status": "CERTIFIED"
+  },
+  {
+   "cells": {
+    "307": {
+     "Gamma": -0.13044835098940574,
+     "closes": true
+    },
+    "308": {
+     "Gamma": -0.08664698724276013,
+     "closes": true
+    },
+    "309": {
+     "Gamma": -0.05001973715651464,
+     "closes": true
+    }
+   },
+   "knob": "rho halved (cover refinement)",
+   "status": "DIAGNOSTIC"
+  },
+  {
+   "cells": {
+    "307": {
+     "Gamma": -0.23501051494782565,
+     "closes": true
+    },
+    "308": {
+     "Gamma": -0.20488625316897732,
+     "closes": true
+    },
+    "309": {
+     "Gamma": -0.18009173698770384,
+     "closes": true
+    }
+   },
+   "knob": "fG, env4, A1, A2 all -> 0",
+   "status": "DIAGNOSTIC"
+  }
+ ],
+ "new_real_scientific_addresses_evaluated": 0,
+ "schema": "rebaseguard.p5y.k5.tail-c5.sensitivity.v1"
+}

@@ -1,0 +1,115 @@
+{
+ "B0": "PASS",
+ "K5_COVERAGE_COMPLETE": false,
+ "LOCAL_MAIN_REF": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+ "REMOTE_MAIN_REF": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+ "branch": "p5y-k5-tail-c5",
+ "c2_manifest": {
+  "deviations": 0,
+  "entries": 156,
+  "paths": []
+ },
+ "c3_manifest": {
+  "deviations": 0,
+  "entries": 21,
+  "paths": []
+ },
+ "c4_adjudication_sha256": "5bd5d7b3f5e574b3895e079b8493756073967fe0837f8e4282a1a79bdb5d3788",
+ "c4_anchors_note": "the three sensitivity anchors are reproduced by code/c5_analysis.py into evidence/phase2/C5_SENSITIVITY.json and checked there against {'baseline': 3.214236, 'sup_FDH_halved': 4.160309, 'rho_halved': 7.534321}; B0 records the requirement, phase 2 executes it",
+ "c4_artifacts": {
+  "config/FEASIBILITY_GATES_C4.json": "d5b5b385d5c123ccd5993116901797f1ef2b75054a56617dfd07e860d526a647",
+  "evidence/adjudication/C4_ADJUDICATION.md": "5bd5d7b3f5e574b3895e079b8493756073967fe0837f8e4282a1a79bdb5d3788",
+  "evidence/certificate/C4_CERTIFICATE.json": "d1609759933976a8bbfd643dc3b9544342cb6a10ba3b05d4fe3f60dd0b566e01",
+  "evidence/mutations/C4_MUTATIONS.json": "cfb2463a03ceb0826ce9b9bed5eb2290b875cb182b7fa11a1401c34756f87164"
+ },
+ "c4_conditions": 11,
+ "c4_errata": [
+  "E1 \u2014 the disclosed diagnostic is not the decision-relevant one",
+  "E2 \u2014 how the freeze should be described",
+  "E3 \u2014 the carve-out for cells whose blocker is not A0",
+  "E3 correction \u2014 the carve-out could not have been outcome-fitting",
+  "E4 \u2014 an unhedged universal negative survives in Phase 3 evidence",
+  "E5 \u2014 the Lemma T mis-citation survives in Phase 3 evidence"
+ ],
+ "c4_excluded_set": [
+  309
+ ],
+ "c4_exclusion_reproduced": {
+  "308": {
+   "Gamma_at_C4_floor": -0.04046754262884166,
+   "Gamma_knockout": 0.039567845828196446,
+   "agrees": true,
+   "c4_claimed": 0.039567846,
+   "excluded": false
+  },
+  "309": {
+   "Gamma_at_C4_floor": 0.004661129657978103,
+   "Gamma_knockout": 0.09281242340665326,
+   "agrees": true,
+   "c4_claimed": 0.092812423,
+   "excluded": true
+  }
+ },
+ "c4_handover": true,
+ "c4_zero_fields": [
+  [
+   "kernel_evaluations",
+   0
+  ],
+  [
+   "new_real_scientific_addresses_evaluated",
+   0
+  ],
+  [
+   "operator_certifications_run",
+   0
+  ],
+  [
+   "remote_hosts_contacted",
+   0
+  ]
+ ],
+ "checks": {
+  "B0_01_branch_head": true,
+  "B0_02_worktree_clean_at_audit": true,
+  "B0_03_remote_C4_at_predecessor_head": true,
+  "B0_04_c4_adjudicated_with_handover": true,
+  "B0_05_c4_conditions_and_errata": true,
+  "B0_06_r5_authoritative": true,
+  "B0_07_no_r6": true,
+  "B0_08_open_set": true,
+  "B0_09_predecessor_integrity": true,
+  "B0_10_c4_final_invariants": true,
+  "B0_11_guard_deny": true,
+  "B0_12_zero_new_real_since_C4": true,
+  "B0_13a_local_main_ref_unchanged": true,
+  "B0_13b_remote_main_ref_unchanged": true,
+  "B0_14_neither_main_ref_touched_by_C4": true,
+  "B0_15_c4_exclusion_reproduced": true,
+  "B0_16_anchor_reproduction_delegated_to_phase2": true
+ },
+ "guard": "REAL_SCIENTIFIC_COMPUTE = DENY",
+ "guard_values": [
+  "REAL_SCIENTIFIC_COMPUTE = DENY",
+  "REAL_SCIENTIFIC_COMPUTE = DENY throughout"
+ ],
+ "head": "e12a09e8bb742726e2ca7af42e163c455915bb7d",
+ "main_ref_note": "LOCAL_MAIN_REF and REMOTE_MAIN_REF are DIFFERENT refs by design. C5 neither reconciles nor modifies either. No check in this audit asserts they are equal.",
+ "maps": [
+  "p5y_k5_lower_front_order3/evidence/tc_r1/K5_COVERAGE_MAP_R4.json",
+  "p5y_k5_perron_deflated_resolvent/evidence/successor_r1/K5_COVERAGE_MAP_R3.json",
+  "p5y_k5_tail_c2_closure/evidence/coverage/K5_COVERAGE_MAP_R5.json"
+ ],
+ "new_real_scientific_addresses_evaluated": 0,
+ "open_m5": [
+  306,
+  307,
+  308,
+  309
+ ],
+ "paths_changed_outside_c5": [],
+ "r5_sha256": "e2197051e493df898295a692c580ed676e771f7dfae5a1675d8d8e9b979f684c",
+ "remote_c4_head": "e12a09e8bb742726e2ca7af42e163c455915bb7d",
+ "schema": "rebaseguard.p5y.k5.tail-c5.b0-audit.v1",
+ "uncommitted": 1
+}
