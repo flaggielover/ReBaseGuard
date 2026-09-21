@@ -1,0 +1,114 @@
+{
+ "bound_to": {
+  "freeze_commit": "d41604c2bec0921be34743ea2e6760358f42d2fb",
+  "gate_commit": "24c038ec",
+  "gate_sha256": "f0bd87ecaeea4485560969770c95c9d4ad20bceedf9ac7ca11fb6d8d5de53ac7",
+  "protocol_sha256_bound": "5a06b2bf4e8be46066194acfab4a7b176a512f695967bc481931cb553b042b5a",
+  "protocol_sha256_unbound_at_freeze": "8c1644181f7ab6ec6437afd7c410468860d73b90ce7a4cf8da1cff622df99bef",
+  "qualification_sha256": "e94ea5a5d40d5aa2b23c392d8d435c512525f9cdb995387bf6e338ef3a3ce1e8",
+  "qualification_verdict": "QUALIFIED"
+ },
+ "execution_class": "ZERO_NEW_REAL",
+ "executor_note": "not part of the frozen set",
+ "executor_sha256": "dab4c02a9ee32f1816734b70c279a8e8ac14b7f448b00f1fa84894b550165cb1",
+ "frozen_rule_source": "code/c3_forecast.py::classify, loaded from the frozen tree",
+ "guard": "REAL_SCIENTIFIC_COMPUTE = DENY throughout",
+ "new_real_cpu_seconds": 0,
+ "new_real_scientific_addresses_evaluated": 0,
+ "per_cell": {
+  "306": {
+   "Gamma": -0.03619777996457939,
+   "adoption_floor": {
+    "F1_registry_independent_closure": false,
+    "F2_survives_x1.25": false,
+    "meets_floor": false,
+    "uniform_A_margin": 1.1554876238748288
+   },
+   "closes": true,
+   "gap_above_1": 0.0,
+   "gap_fall_vs_r5": null,
+   "requirement": 1.0
+  },
+  "307": {
+   "Gamma": 0.026354631323170525,
+   "adoption_floor": {
+    "F1_registry_independent_closure": false,
+    "F2_survives_x1.25": false,
+    "meets_floor": false,
+    "uniform_A_margin": null
+   },
+   "closes": false,
+   "gap_above_1": 0.11196623713704242,
+   "gap_fall_vs_r5": 0.20457947103091545,
+   "requirement": 1.1119662371370425
+  },
+  "308": {
+   "Gamma": 0.09456414496566364,
+   "adoption_floor": {
+    "F1_registry_independent_closure": false,
+    "F2_survives_x1.25": false,
+    "meets_floor": false,
+    "uniform_A_margin": null
+   },
+   "closes": false,
+   "gap_above_1": 0.4606547993946881,
+   "gap_fall_vs_r5": 0.07922036981652168,
+   "requirement": 1.4606547993946881
+  },
+  "309": {
+   "Gamma": 0.15301968889418385,
+   "adoption_floor": {
+    "F1_registry_independent_closure": false,
+    "F2_survives_x1.25": false,
+    "meets_floor": false,
+    "uniform_A_margin": null
+   },
+   "closes": false,
+   "gap_above_1": 0.8478734998440092,
+   "gap_fall_vs_r5": 0.05688601080597251,
+   "requirement": 1.8478734998440092
+  }
+ },
+ "producer_determinism": {
+  "c3_blocker.py": true,
+  "c3_forecast.py": true,
+  "c3_mutations.py": true
+ },
+ "recorded_in_forecast": {
+  "C3_CLASS": "PARTIAL",
+  "adoptable": [],
+  "closed": [
+   306
+  ],
+  "materially_tightened": {
+   "307": true,
+   "308": false,
+   "309": false
+  },
+  "still_open": [
+   307,
+   308,
+   309
+  ]
+ },
+ "rederivation_agrees": true,
+ "rederived": {
+  "C3_CLASS": "PARTIAL",
+  "adoptable": [],
+  "closed": [
+   306
+  ],
+  "materially_tightened": {
+   "307": true,
+   "308": false,
+   "309": false
+  },
+  "still_open": [
+   307,
+   308,
+   309
+  ]
+ },
+ "schema": "rebaseguard.p5y.k5.tail-c3.execution.v1",
+ "wall_clock_seconds": 4.9
+}

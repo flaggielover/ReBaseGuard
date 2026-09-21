@@ -1,0 +1,38 @@
+{
+ "authorizes": "deterministic consumption of already-certified evidence under the frozen C3 protocol, and nothing else",
+ "bound_to": {
+  "freeze_commit": "d41604c2bec0921be34743ea2e6760358f42d2fb",
+  "gate_commit": "24c038ec",
+  "gate_sha256": "f0bd87ecaeea4485560969770c95c9d4ad20bceedf9ac7ca11fb6d8d5de53ac7",
+  "protocol_sha256_bound": "5a06b2bf4e8be46066194acfab4a7b176a512f695967bc481931cb553b042b5a",
+  "protocol_sha256_unbound_at_freeze": "8c1644181f7ab6ec6437afd7c410468860d73b90ce7a4cf8da1cff622df99bef",
+  "qualification_sha256": "e94ea5a5d40d5aa2b23c392d8d435c512525f9cdb995387bf6e338ef3a3ce1e8",
+  "qualification_verdict": "QUALIFIED"
+ },
+ "c3_class": "PARTIAL",
+ "execution_class": "ZERO_NEW_REAL",
+ "expected_result": {
+  "C3_CLASS": "PARTIAL",
+  "adoptable": [],
+  "closed": [
+   306
+  ],
+  "note": "recorded before execution as an expectation, not a forced output"
+ },
+ "explicitly_not_authorized": [
+  "any real order-3 address",
+  "any R-stage execution",
+  "any new expensive numerical probe",
+  "any AWS interaction",
+  "any modification of C2, r4, r5 or predecessor namespaces",
+  "generation of coverage map r6 before an adjudicator hands over an adopting verdict",
+  "any assertion that deterministic exhaustion is established"
+ ],
+ "guard_after": "DENY",
+ "guard_before": "DENY",
+ "guard_during": "DENY (unchanged)",
+ "new_real_cpu_seconds_authorized": 0,
+ "new_real_scientific_addresses_authorized": 0,
+ "proposes_for_adoption": [],
+ "schema": "rebaseguard.p5y.k5.tail-c3.authorization.v1"
+}

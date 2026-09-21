@@ -1,0 +1,177 @@
+{
+ "binding_commit": "ecd07ae0",
+ "checks": {
+  "adoption_floor_reproduction": {
+   "detail": {
+    "306": {
+     "F1_registry_independent_closure": false,
+     "F2_survives_x1.25": false,
+     "meets_floor": false,
+     "uniform_A_margin": 1.1554876238748288
+    },
+    "307": {
+     "F1_registry_independent_closure": false,
+     "F2_survives_x1.25": false,
+     "meets_floor": false,
+     "uniform_A_margin": null
+    },
+    "308": {
+     "F1_registry_independent_closure": false,
+     "F2_survives_x1.25": false,
+     "meets_floor": false,
+     "uniform_A_margin": null
+    },
+    "309": {
+     "F1_registry_independent_closure": false,
+     "F2_survives_x1.25": false,
+     "meets_floor": false,
+     "uniform_A_margin": null
+    }
+   },
+   "verdict": "PASS"
+  },
+  "binding_changed_only_freeze_block": {
+   "detail": {},
+   "verdict": "PASS"
+  },
+  "c2_untouched": {
+   "detail": {
+    "changed_in_c2_namespace": []
+   },
+   "verdict": "PASS"
+  },
+  "class_reproduction": {
+   "detail": {
+    "C3_CLASS": "PARTIAL",
+    "adoptable": [],
+    "closed": [
+     306
+    ],
+    "materially_tightened": {
+     "307": true,
+     "308": false,
+     "309": false
+    },
+    "still_open": [
+     307,
+     308,
+     309
+    ]
+   },
+   "verdict": "PASS"
+  },
+  "clean_tree_at_freeze": {
+   "detail": {
+    "head": "d41604c2bec0921be34743ea2e6760358f42d2fb"
+   },
+   "verdict": "PASS"
+  },
+  "forecast_reproduction": {
+   "detail": {},
+   "verdict": "PASS"
+  },
+  "freeze_record_binds_this_tree": {
+   "detail": {
+    "freeze_commit": "d41604c2"
+   },
+   "verdict": "PASS"
+  },
+  "gate_frozen_before_forecast": {
+   "detail": {
+    "forecast_present_at_gate": false,
+    "gate_commit": "24c038ec"
+   },
+   "verdict": "PASS"
+  },
+  "gate_identity": {
+   "detail": {
+    "sha256": "f0bd87ecaeea4485"
+   },
+   "verdict": "PASS"
+  },
+  "guard_deny": {
+   "detail": {
+    "guard": "REAL_SCIENTIFIC_COMPUTE = DENY"
+   },
+   "verdict": "PASS"
+  },
+  "mutation_suite": {
+   "detail": {
+    "applied": 13,
+    "killed": 12,
+    "pass": true,
+    "proved_equivalent": [
+     "M08_tie_resolution_nondeterministic"
+    ],
+    "undetected": []
+   },
+   "verdict": "PASS"
+  },
+  "no_new_real": {
+   "detail": {
+    "authorized": 0,
+    "evaluated": 0
+   },
+   "verdict": "PASS"
+  },
+  "producer_determinism": {
+   "detail": {
+    "c3_blocker.py": {
+     "byte_identical": true,
+     "rc": 0
+    },
+    "c3_forecast.py": {
+     "byte_identical": true,
+     "rc": 0
+    },
+    "c3_mutations.py": {
+     "byte_identical": true,
+     "rc": 0
+    }
+   },
+   "verdict": "PASS"
+  },
+  "proposes_nothing": {
+   "detail": {},
+   "verdict": "PASS"
+  },
+  "protocol_pins": {
+   "detail": {
+    "pins_checked": 26,
+    "problems": []
+   },
+   "verdict": "PASS"
+  },
+  "r5_r4_intact_no_r6": {
+   "detail": {
+    "r4": "a3bddd83234f3398",
+    "r5": "e2197051e493df89",
+    "r6_found": 0
+   },
+   "verdict": "PASS"
+  },
+  "refusal_tampered_pin": {
+   "detail": {
+    "rc": 1
+   },
+   "verdict": "PASS"
+  },
+  "refusal_unbound": {
+   "detail": {
+    "rc": 1
+   },
+   "verdict": "PASS"
+  },
+  "selector_refusals": {
+   "detail": {},
+   "verdict": "PASS"
+  }
+ },
+ "failed": [],
+ "freeze_commit": "d41604c2bec0921be34743ea2e6760358f42d2fb",
+ "qualifier_note": "not part of the frozen set; audits it",
+ "qualifier_sha256": "5d641a72175a04d9d2725f20e30dbccdff62ed941191adb55f261694dfce700d",
+ "schema": "rebaseguard.p5y.k5.tail-c3.qualification.v1",
+ "skipped_load_bearing": [],
+ "verdict": "QUALIFIED"
+}

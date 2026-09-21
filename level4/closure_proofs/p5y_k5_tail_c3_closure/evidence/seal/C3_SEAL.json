@@ -1,0 +1,106 @@
+{
+ "chain": {
+  "authorization_sha256": "5a7d9a224e16d7e1ddc3f58780f27f669eec9a32e949993c3878769659c2f626",
+  "execution_sha256": "4ca9b7ca6cc5464a5a4c5fa4997f2bc1e03f9ff1227a0ae5e00be1b38a0c0a8e",
+  "freeze_commit": "d41604c2bec0921be34743ea2e6760358f42d2fb",
+  "gate_commit": "24c038ec",
+  "gate_sha256": "f0bd87ecaeea4485560969770c95c9d4ad20bceedf9ac7ca11fb6d8d5de53ac7",
+  "preforecast_review_sha256": "3431caede065b47b8c4e51d089ddb9e99b69c71de82b5bae0f2634143fdecc2a",
+  "protocol_sha256_bound": "5a06b2bf4e8be46066194acfab4a7b176a512f695967bc481931cb553b042b5a",
+  "protocol_sha256_unbound_at_freeze": "8c1644181f7ab6ec6437afd7c410468860d73b90ce7a4cf8da1cff622df99bef",
+  "qualification_sha256": "e94ea5a5d40d5aa2b23c392d8d435c512525f9cdb995387bf6e338ef3a3ce1e8",
+  "qualification_verdict": "QUALIFIED"
+ },
+ "deterministic_exhaustion": "NOT established by C3; C3 does not assert it",
+ "environment_invariants": {
+  "aws_sr_ps1": "not contacted",
+  "c2_namespace_files_changed_since_ae4cbc2c": 0,
+  "main_commit": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+  "r4_sha256": "a3bddd83234f33983e07b005b4686a5f3971264bb6bdd64d2c639339de210a35",
+  "r5_sha256": "e2197051e493df898295a692c580ed676e771f7dfae5a1675d8d8e9b979f684c",
+  "r6_exists": false
+ },
+ "execution_facts": {
+  "execution_class": "ZERO_NEW_REAL",
+  "guard": "REAL_SCIENTIFIC_COMPUTE = DENY throughout",
+  "new_real_cpu_seconds": 0,
+  "new_real_scientific_addresses_evaluated": 0
+ },
+ "namespace_files_sealed": 21,
+ "namespace_manifest_sha256": "b9df278a2f55427bfb422963b6a9a9cc9f02a05a78bb7ba3655e935fc8ec0917",
+ "schema": "rebaseguard.p5y.k5.tail-c3.seal.v1",
+ "sealed_before_interpretation": true,
+ "sealed_result": {
+  "C3_CLASS": "PARTIAL",
+  "adoptable": [],
+  "closed": [
+   306
+  ],
+  "materially_tightened": {
+   "307": true,
+   "308": false,
+   "309": false
+  },
+  "note": "sealed, not adopted. C3 proposes NOTHING for adoption: cell 306 closes but fails both components of the inherited adoption floor.",
+  "per_cell": {
+   "306": {
+    "Gamma": -0.03619777996457939,
+    "adoption_floor": {
+     "F1_registry_independent_closure": false,
+     "F2_survives_x1.25": false,
+     "meets_floor": false,
+     "uniform_A_margin": 1.1554876238748288
+    },
+    "closes": true,
+    "gap_above_1": 0.0,
+    "gap_fall_vs_r5": null,
+    "requirement": 1.0
+   },
+   "307": {
+    "Gamma": 0.026354631323170525,
+    "adoption_floor": {
+     "F1_registry_independent_closure": false,
+     "F2_survives_x1.25": false,
+     "meets_floor": false,
+     "uniform_A_margin": null
+    },
+    "closes": false,
+    "gap_above_1": 0.11196623713704242,
+    "gap_fall_vs_r5": 0.20457947103091545,
+    "requirement": 1.1119662371370425
+   },
+   "308": {
+    "Gamma": 0.09456414496566364,
+    "adoption_floor": {
+     "F1_registry_independent_closure": false,
+     "F2_survives_x1.25": false,
+     "meets_floor": false,
+     "uniform_A_margin": null
+    },
+    "closes": false,
+    "gap_above_1": 0.4606547993946881,
+    "gap_fall_vs_r5": 0.07922036981652168,
+    "requirement": 1.4606547993946881
+   },
+   "309": {
+    "Gamma": 0.15301968889418385,
+    "adoption_floor": {
+     "F1_registry_independent_closure": false,
+     "F2_survives_x1.25": false,
+     "meets_floor": false,
+     "uniform_A_margin": null
+    },
+    "closes": false,
+    "gap_above_1": 0.8478734998440092,
+    "gap_fall_vs_r5": 0.05688601080597251,
+    "requirement": 1.8478734998440092
+   }
+  },
+  "proposes_for_adoption": [],
+  "still_open": [
+   307,
+   308,
+   309
+  ]
+ }
+}
