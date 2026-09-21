@@ -70,3 +70,40 @@ erratum, because neither the ledger nor the mutation suite is frozen:
   forecast cross-check, because the leftward branch binds on none of the four tail cells (ratios 0.85–0.92). The
   suite now manufactures a leftward-binding cell and runs three mutants on it (M11–M13), and it refuses if that
   manufactured cell does not in fact bind leftward.
+
+## E6 — the sign-bearing input was defended only against a sign-blind check
+
+Found by the round-2 pre-forecast review, repaired at source. `signed_enclosure` was the **one** input the
+forecast took on trust from another module. Negate-and-swap — returning `(−H_hi, −H_lo)` — is well ordered, so the
+inverted-interval guard never fires; it preserves `max(|H_lo|, |H_hi|)`, so the forecast's
+`Gamma_frozen == d["Gamma"]` cross-check is blind to it; and part (1) of the mutation suite is self-consistent
+with whatever enclosure it is handed. At cell 309 it understates the penalty by **2.6238 %** — more than double
+C5-T's entire 1.295 % gain — and it survived every check in the campaign.
+
+The shipped code was correct, so no number in the tree was ever wrong. What failed was the assurance claim. The
+forecast now **re-derives** the signed endpoints from the sealed interval and the frozen consumer's own signed
+output and refuses on disagreement (`checked_enclosure`), and mutant **M14** exercises exactly this. With that,
+every input C5-T consumes is either computed in the forecast from a sealed artifact (`g_hi`) or cross-checked
+against the frozen consumer (`e0`, `rho`, `M`, and now the signed endpoints).
+
+## E7 — the ledger's guards were narrower than the ledger claimed
+
+Also round 2. The first repair said the producer "refuses any `MATH` kill whose oracle closes a cell and
+cross-checks each claimed refutation set against the gate". Neither held in general: the cross-check iterated a
+hardcoded two-route allowlist, and the `MATH` guard compared two hand-written fields of the same dict, so it could
+not detect a wrong `oracle_closes_at_cells`. The reviewer demonstrated both holes with fabricated routes the
+producer accepted.
+
+Now every route declares either a `kill_gate` naming a knob in the sensitivity evidence, or `argued_without_gate`;
+the refutation sets are **derived from the gate** rather than compared against copies; a gate-free `MATH` kill must
+carry an `argument` field or the producer refuses; and the artifact records `refuted_without_a_kill_gate` with a
+`headline_caveat`, because the two routes carrying the corrected headline — A4 and D2 — are both gate-free
+arguments rather than gate results.
+
+Two consequential field fixes in the same pass. `C5_MUTATIONS.json` recorded `invisible_on_real_cells: false` on
+M12 and M13, contradicting its own prose: the comparison used the manufactured cell's mutant Γ against the real
+cells' Γ with the weights already restored, so it was true by construction. The honest value is **true** on both,
+and it is now computed with the mutation live on the same cells. And route E1's withdrawn phrase "provably useless
+for 309" survived in its primary `kill_reason` and in the phase-3 table row; it is now confined to
+`withdrawn_phrase`, and E1's `refuted_at_cells` is emptied in favour of `refuted_at_cells_diagnostic_only`,
+because that entry rests on C4's uncertified Monte-Carlo — the precise ground on which v1's E2 kill was condemned.

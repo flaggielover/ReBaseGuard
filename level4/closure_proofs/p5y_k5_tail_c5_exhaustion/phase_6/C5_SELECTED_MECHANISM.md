@@ -61,6 +61,8 @@ touch the order-3 surrogate or `rho`. It corrects one inequality, by 1.2–1.3 %
 
 ## No-regression invariant
 
-Across all five tail cells and all four `m` values — twenty rows — `Gamma_C5T ≤ Gamma_frozen` holds with **zero**
-exceptions, and no row that closes under the frozen clause fails to close under C5-T. This is structural, not
-fortunate: the producer refuses any evaluation in which `P` exceeds the frozen penalty.
+This is **structural, not fortunate**: `P ≤ frozen` is proved above and the producer refuses any evaluation in
+which it is violated. It is also now **executed rather than asserted** — `c5_forecast.no_regression_sweep()` runs
+all five tail cells × all four `m` values (twenty rows) against the sealed record's own `R2_interval`, so the
+sweep is independent of any TC-T supply, and records `violations` in the committed forecast evidence. The earlier
+version of this paragraph claimed a sweep that no producer performed (round-2 pre-forecast review).

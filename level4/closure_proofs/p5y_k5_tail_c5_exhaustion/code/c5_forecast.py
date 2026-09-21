@@ -27,6 +27,33 @@ GATE_SHA = "d0deada65971c3658e7d3b39f8b2bbf5ea4849f25a1570d8f3d272a2f996aa58"
 C4_FLOOR = {308: F(3512733596022926, 10 ** 15), 309: F(3297250281519544, 10 ** 15)}
 
 
+def checked_enclosure(d, ad5):
+    """The signed whole-cell R'' enclosure, RE-DERIVED here and cross-checked against `signed_enclosure`.
+
+    This is the one input C5-T consumes that the forecast would otherwise take on trust from another module, and
+    the round-2 pre-forecast review showed exactly what that costs: negate-and-swap, returning (-H_hi, -H_lo),
+    preserves max(|H_lo|, |H_hi|) and therefore slips past the `Gamma_frozen == d["Gamma"]` cross-check, past
+    part (1) of the mutation suite (which is self-consistent with whatever enclosure it is handed), and past the
+    inverted-interval guard (the result is well ordered). At cell 309 it understated the penalty by 2.62 %, more
+    than double C5-T's entire gain.
+
+    So the endpoints are re-derived from the frozen consumer's own SIGNED output and the sealed interval, and any
+    disagreement is a refusal. Every other input the forecast uses is already either computed here from a sealed
+    artifact (g_hi) or cross-checked against the frozen consumer (e0, rho, M).
+    """
+    lo = max(F(ad5["R2_interval"]["lo"]), d["lo"])
+    hi = min(F(ad5["R2_interval"]["hi"]), d["hi"])
+    M0 = F(ad5["M_R2"])
+    if lo > hi:
+        want = (-M0, M0, True)
+    else:
+        want = (max(lo, -M0), min(hi, M0), False)
+    got = signed_enclosure(d, ad5)
+    if tuple(got) != want:
+        raise SystemExit(f"signed_enclosure disagrees with the re-derived signed endpoints: {got} vs {want}")
+    return want
+
+
 def frozen_gate() -> dict:
     p = NS / "config/FEASIBILITY_GATES_C5.json"
     if sha(p) != GATE_SHA:
@@ -46,7 +73,7 @@ def evaluate(gate, clause="C5T"):
         A = s["A"]
         d = FC.direct(T, R, meas, aux, A, ad5, cov, B)          # crosscheck LIVE: this is a real evaluation
         e0, rho, x_hi = (B.rat(cov[t]) for t in ("e0", "rho", "right"))
-        Hlo, Hhi, empty = signed_enclosure(d, ad5)
+        Hlo, Hhi, empty = checked_enclosure(d, ad5)
         g_hi = F(ad5["R_interval"]["hi"]) - e0 * F(ad5["D_interval"]["lo"])
         t5 = TR.gamma(g_hi, Hlo, Hhi, e0, rho)
         if t5["Gamma_frozen"] != d["Gamma"]:
@@ -129,7 +156,7 @@ def c4_recheck(gate) -> dict:
         meas, aux, ad5, cov, s = cell_supply(k, FC, B, T, R, DC, SEL, adopted, cover, c1, c2)
         d = FC.direct(T, R, meas, aux, {"A0": Bk, "A1": F(0), "A2": F(0)}, ad5, cov, B)
         e0, rho = (B.rat(cov[t]) for t in ("e0", "rho"))
-        Hlo, Hhi, _ = signed_enclosure(d, ad5)
+        Hlo, Hhi, _ = checked_enclosure(d, ad5)
         g_hi = F(ad5["R_interval"]["hi"]) - e0 * F(ad5["D_interval"]["lo"])
         t5 = TR.gamma(g_hi, Hlo, Hhi, e0, rho)
         held_before = d["Gamma"] >= 0
@@ -166,7 +193,7 @@ def exclusion_fragility(gate) -> dict:
         d = knock(FC, B, T, R, meas, aux, ad5, cov, {"A0": A0, "A1": F(0), "A2": F(0)}, sc)
         if clause == "frozen":
             return d["Gamma"], d
-        Hlo, Hhi, _ = signed_enclosure(d, ad5)
+        Hlo, Hhi, _ = checked_enclosure(d, ad5)
         return TR.gamma(g_hi, Hlo, Hhi, e0, rho)["Gamma"], d
 
     def critical_A0(clause):
@@ -183,7 +210,7 @@ def exclusion_fragility(gate) -> dict:
 
     cf, c5 = critical_A0("frozen"), critical_A0("C5T")
     G_c5, d0 = gam({})
-    t5 = TR.gamma(g_hi, *signed_enclosure(d0, ad5)[:2], e0, rho)
+    t5 = TR.gamma(g_hi, *checked_enclosure(d0, ad5)[:2], e0, rho)
 
     def voiding_cut(keys, clause="C5T"):
         if gam({k_: F(1) for k_ in keys}, Bk, clause)[0] < 0:
@@ -219,12 +246,14 @@ def exclusion_fragility(gate) -> dict:
             "candidate_sup_norms_under_the_FROZEN_clause": voiding_cut(["supF", "supD", "supH"], "frozen")},
         "5_can_a_tighter_transport_void_it": {
             "answer": "NO, not within the transport family",
-            "why": "C5-T's bound is attained by an admissible member of its input set (see `exhaustion`), so no "
-                   "transport using only g_hi and a whole-cell R'' enclosure can be smaller. The 0.76% is "
-                   "unreachable by a smarter transport on the present inputs.",
-            "but": "it IS comfortably reachable by an ENCLOSURE improvement, which is outside the transport "
-                   "family: a ~2% tightening of the candidate sup norms would void the exclusion, and route A1 "
-                   "which would deliver exactly that is DATA-blocked, not refuted."},
+            "why": f"C5-T's bound is attained by an admissible member of its input set (see `exhaustion`), so "
+                   f"no transport using only g_hi and a whole-cell R'' enclosure can be smaller. The "
+                   f"{float(100 * G_c5 / t5['P']):.6f}% in field 3 is unreachable by a smarter transport on the "
+                   f"present inputs.",
+            "but": f"it IS comfortably reachable by an ENCLOSURE improvement, which is outside the transport "
+                   f"family: a {voiding_cut(['supF', 'supD', 'supH']):.4f}% tightening of the candidate sup norms "
+                   f"would void the exclusion, and route A1 which would deliver exactly that is DATA-blocked, "
+                   f"not refuted."},
         "C4_scope_sentence_must_be_restated": (
             "C4's adjudicated verdict and its binding Condition 1 scope the cell-309 exclusion as holding "
             "'against the frozen measurement inputs and the frozen theorem TC-T / K5-B direct clause'. C5-T "
@@ -234,6 +263,38 @@ def exclusion_fragility(gate) -> dict:
         "consequence_for_the_ledger": "route E2, a sharper certified lower bound on Lambda_309, is RE-OPENED: it "
                                       "is the only lever that restores the margin C5-T consumed.",
     }
+
+
+def no_regression_sweep() -> dict:
+    """The 20-row sweep the phase-6 document claims: Gamma_C5T <= Gamma_frozen at every tail cell and every m.
+
+    Round 2 of the pre-forecast review pointed out that the document asserted this as a verified sweep while no
+    producer performed one -- `FC.direct` is hardwired to m = 5 and only four cells are ever evaluated. It is true
+    by theorem (P <= frozen is proved and enforced at runtime), but a claim phrased as a sweep should be a sweep.
+    This runs it, using the sealed record's OWN R2 enclosure so that it is independent of any TC-T supply.
+    """
+    FC, B, T, R, DC, SEL = frozen_stack()
+    adopted, cover, c1, c2 = committed_inputs(FC)
+    rows, viol = [], 0
+    for k in (305, 306, 307, 308, 309):
+        cov = cover[k]
+        e0, rho, x_hi = (B.rat(cov[t]) for t in ("e0", "rho", "right"))
+        for m in ("1", "2", "3", "5"):
+            mm = adopted[str(k)]["m"][m]
+            g_hi = F(mm["R_interval"]["hi"]) - e0 * F(mm["D_interval"]["lo"])
+            Hlo, Hhi, M0 = F(mm["R2_interval"]["lo"]), F(mm["R2_interval"]["hi"]), F(mm["M_R2"])
+            gf = g_hi + rho * x_hi * M0
+            t5 = TR.gamma(g_hi, Hlo, Hhi, e0, rho)
+            tighter = t5["Gamma"] <= gf
+            keeps = (gf >= 0) or t5["pass"]
+            if not tighter or not keeps:
+                viol += 1
+            rows.append({"cell": k, "m": int(m), "Gamma_frozen": float(gf), "Gamma_C5T": float(t5["Gamma"]),
+                         "C5T_tighter": bool(tighter), "no_closure_lost": bool(keeps)})
+    return {"rows": rows, "row_count": len(rows), "violations": viol,
+            "claim": "Gamma_C5T <= Gamma_frozen at every tail cell and every m, and no row that closes under the "
+                     "frozen clause fails to close under C5-T",
+            "status": "CERTIFIED (executed, not asserted)"}
 
 
 def main() -> int:
@@ -266,6 +327,17 @@ def main() -> int:
            "exhaustion": exhaustion_argument(per),
            "predecessor_recheck": rc,
            "c4_exclusion_fragility": exclusion_fragility(gate),
+           "no_regression_sweep": no_regression_sweep(),
+           "binding_conditions_on_any_successor": [
+               "No successor may restate the cell-309 exclusion without either (a) re-deriving the fragility "
+               "figures under its own clause, or (b) executing route E2 and certifying a sharper lower bound on "
+               "Lambda_309. A ranking can be ignored; this is a condition and it inherits.",
+               "C4's verdict is scoped verbatim to 'the frozen measurement inputs and the frozen theorem TC-T / "
+               "K5-B direct clause'. C5-T REPLACES that clause. Any restatement must name the C5-T clause and "
+               "carry the margins in `c4_exclusion_fragility`, not C4's 2.58%.",
+               "The exhaustion result is of the TRANSPORT FAMILY only. It may never be restated as deterministic "
+               "exhaustion of cell 309, of the tail, or of K5.",
+           ],
            "adopted_cells": [], "coverage_map_revision": None,
            "permitted_conclusions": gate["permitted_conclusions"].get(cls, []) + gate["permitted_conclusions"]["any_class"],
            "new_real_scientific_addresses_evaluated": 0,

@@ -220,7 +220,18 @@ def main() -> int:
             mg = TR.gamma(synth["g_hi"], synth["Hlo"], synth["Hhi"], synth["e0"], synth["rho"])["Gamma"]
         finally:
             TR.weights = ow
-        caught_real = any(TR.gamma(v["g_hi"], v["Hlo"], v["Hhi"], v["e0"], v["rho"])["Gamma"] != mg for v in st.values())
+        # Round 2 found this comparison was True by construction: it compared the MANUFACTURED cell's mutant
+        # Gamma against the REAL cells' Gamma, with TR.weights already restored by the finally block. The honest
+        # question is whether the mutation changes anything on the real cells, so the mutation must be LIVE and
+        # both sides must be the same cell.
+        ow2 = TR.weights
+        try:
+            TR.weights = lambda e0, rho, _o=ow2, _b=bad_wL: (_o(e0, rho)[0], _b(e0, rho), *_o(e0, rho)[2:])
+            mutated_real = {k: TR.gamma(v["g_hi"], v["Hlo"], v["Hhi"], v["e0"], v["rho"])["Gamma"]
+                            for k, v in st.items()}
+        finally:
+            TR.weights = ow2
+        caught_real = any(mutated_real[k] != base[k]["Gamma"] for k in st)
         add(tag, what,
             "DETECTED_BY_VERDICT" if mg < s_brute else "NOT_DETECTED",
             manufactured_cell_C5T=float(mg), manufactured_cell_brute_force=float(s_brute),
@@ -228,6 +239,46 @@ def main() -> int:
                 "the soundness violation; on the four real tail cells it is invisible, which is exactly why the "
                 "manufactured cell is required",
             invisible_on_real_cells=not caught_real)
+
+    # M14: the sign-bearing input. Round 2 exhibited negate-and-swap on `signed_enclosure` -> (-H_hi, -H_lo).
+    # It preserves max(|H_lo|, |H_hi|), so the forecast's Gamma_frozen cross-check (which compares against a
+    # magnitude) is blind to it; part (1) is self-consistent with whatever enclosure it is handed; and M03's
+    # inverted-interval guard never fires because the result is well ordered. At cell 309 it understates the
+    # penalty by 2.62%, more than double C5-T's entire gain. The forecast now RE-DERIVES the signed endpoints
+    # rather than trusting them, and that re-derivation is what this mutant must trip.
+    import c5_analysis as CA
+    import c5_forecast as CF
+    FC, B, T, R, DC, SEL = frozen_stack()
+    adopted, cover, c1, c2 = committed_inputs(FC)
+    meas, aux, ad5, cov, sup = cell_supply(309, FC, B, T, R, DC, SEL, adopted, cover, c1, c2)
+    d309 = FC.direct(T, R, meas, aux, sup["A"], ad5, cov, B)
+    true_lo, true_hi, _ = CA.signed_enclosure(d309, ad5)
+    osig = CA.signed_enclosure
+    guard_msg, mutant_P = None, None
+    try:
+        CA.signed_enclosure = lambda d, a: (-osig(d, a)[1], -osig(d, a)[0], osig(d, a)[2])
+        CF.signed_enclosure = CA.signed_enclosure
+        mlo, mhi, _ = CA.signed_enclosure(d309, ad5)
+        e0c, rhoc = (B.rat(cov[t]) for t in ("e0", "rho"))
+        mutant_P = TR.penalty(mlo, mhi, e0c, rhoc)["P"]
+        try:
+            CF.checked_enclosure(d309, ad5)
+        except SystemExit as exc:
+            guard_msg = str(exc)
+    finally:
+        CA.signed_enclosure = osig
+        CF.signed_enclosure = osig
+    true_P = TR.penalty(true_lo, true_hi, F(*(B.rat(cov["e0"]).as_integer_ratio())),
+                        F(*(B.rat(cov["rho"]).as_integer_ratio())))["P"]
+    add("M14_signed_enclosure_negate_and_swap",
+        "signed_enclosure returns (-H_hi, -H_lo): well ordered, magnitude-preserving, and therefore invisible to "
+        "the Gamma_frozen cross-check, to part (1) and to the inverted-interval guard",
+        "DETECTED_BY_GUARD" if guard_msg else "NOT_DETECTED",
+        guard=guard_msg,
+        penalty_true=float(true_P), penalty_mutant=float(mutant_P),
+        understatement_percent=float(100 * (1 - mutant_P / true_P)),
+        note="caught only because the forecast RE-DERIVES the signed endpoints; every other defence in the "
+             "campaign is sign-blind by construction (round-2 pre-forecast review, item I)")
 
     undetected = [r["mutant"] for r in rows if r["outcome"] == "NOT_DETECTED"]
     by = {}
