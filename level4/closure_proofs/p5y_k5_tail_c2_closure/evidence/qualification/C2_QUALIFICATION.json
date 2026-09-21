@@ -1,0 +1,462 @@
+{
+ "binding_commit": "2e53dca0",
+ "checks": {
+  "binding_changed_only_freeze_block": {
+   "detail": {
+    "bound_sha": "523d2eb35c000124"
+   },
+   "verdict": "PASS"
+  },
+  "clean_tree_at_freeze": {
+   "detail": {
+    "dirty": "",
+    "head": "637b59bc7deb5a836f403b010a336e60a76effb3"
+   },
+   "verdict": "PASS"
+  },
+  "consumer_refuses_order3_fields": {
+   "detail": {
+    "guard_present": true
+   },
+   "verdict": "PASS"
+  },
+  "freeze_record_binds_this_tree": {
+   "detail": {
+    "freeze_commit": "637b59bc7deb5a836f403b010a336e60a76effb3",
+    "unbound_sha_matches": true
+   },
+   "verdict": "PASS"
+  },
+  "gate_identity": {
+   "detail": {
+    "commits_in_history": 1,
+    "sha256": "098dd7f5c3cf31fb"
+   },
+   "verdict": "PASS"
+  },
+  "guard_deny": {
+   "detail": {
+    "guard": "REAL_SCIENTIFIC_COMPUTE = DENY"
+   },
+   "verdict": "PASS"
+  },
+  "input_map_r4_intact_no_r5": {
+   "detail": {
+    "r4_sha256": "a3bddd83234f3398",
+    "r5_found": []
+   },
+   "verdict": "PASS"
+  },
+  "mutation_suite": {
+   "detail": {
+    "applied": 43,
+    "detected": 40,
+    "pass": true,
+    "undetected": []
+   },
+   "verdict": "PASS"
+  },
+  "no_new_real": {
+   "detail": {
+    "authorized": 0
+   },
+   "verdict": "PASS"
+  },
+  "predecessor_B0": {
+   "detail": {
+    "B1_git": {
+     "dirty_outside_C2": [],
+     "frontier_is_ancestor": true,
+     "head": "637b59bc7deb5a836f403b010a336e60a76effb3",
+     "main_expected": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+     "merges_since_frontier": 0,
+     "origin_main": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+     "pass": true,
+     "start_frontier": "5289b6cee7134dd66e3289c3a210c8de5abb6a2c"
+    },
+    "B2_pins": {
+     "count": 34,
+     "inputs": {
+      "adopted_tail_inputs": {
+       "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/evidence/measurement_r1/ADOPTED_TAIL_INPUTS.json",
+       "sha256": "485fb1254e459683f48815c239d18d29119d651d0e77876f772c3fee9d29a37d"
+      },
+      "build_registry": {
+       "path": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/build_registry.py",
+       "sha256": "a470821f44e8a836c531d46b6c5ef8343de9e4997b63dd9e48a929c0da443ad8"
+      },
+      "c1_forecast": {
+       "path": "level4/closure_proofs/p5y_k5_tail_operator_registry/evidence/forecast_r1/C1_FORECAST.json",
+       "sha256": "e28611a5a4138306448674c2f9e89f8b3db58c0b7c5e20d80634f3c8ef32165b"
+      },
+      "c1_gates": {
+       "path": "level4/closure_proofs/p5y_k5_tail_operator_registry/config/FEASIBILITY_GATES_C1.json",
+       "sha256": "927ecfc7597c6d75c485117177b1b0d0a87729aeb6f5e469813905ed242ceb98"
+      },
+      "c1_notes": {
+       "path": "level4/closure_proofs/p5y_k5_tail_operator_registry/OPEN_NOTES_DISPOSITION_C1.md",
+       "sha256": "311e846d41a517d72b47bdac36a483a626db04277d95c205f57cca3d992f74a9"
+      },
+      "c1_registry": {
+       "path": "level4/closure_proofs/p5y_k5_tail_operator_registry/evidence/registry_c1/REGISTRY_C1.json",
+       "sha256": "87bb1cfacb09c2a144cab0270427d91980ea742b36fd80f8963265a22d2eebb3"
+      },
+      "c1_review": {
+       "path": "level4/closure_proofs/p5y_k5_tail_operator_registry/review/REVIEW_C1_PREFREEZE.md",
+       "sha256": "eda2017dd38be668589ee4e8c62975da83dcbb5525101d165e9866947b2f0c9d"
+      },
+      "c1_tail_registry_code": {
+       "path": "level4/closure_proofs/p5y_k5_tail_operator_registry/code/c1_tail_registry.py",
+       "sha256": "4f45869b4b94d6139f6085021a161fa00068b22811ef00bb095584ecf869cf52"
+      },
+      "campaign_A_adjudication": {
+       "path": "level4/closure_proofs/p5y_k5_lower_front_order3/evidence/tc_r1/adjudication_r1/ADJUDICATION_R1.json",
+       "sha256": "2848ba3964feb6067b504e9f431cffa8d8587ca59477c28faa6c9d7b4a14da90"
+      },
+      "campaign_A_consumption": {
+       "path": "level4/closure_proofs/p5y_k5_lower_front_order3/evidence/tc_r1/TC_CONSUMPTION.json",
+       "sha256": "1fa8d8dee78483c83d54bd90dba86a9316fb5c67c4acd43781a05103ab111f51"
+      },
+      "campaign_B_gates": {
+       "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/config/FEASIBILITY_GATES_B.json",
+       "sha256": "392101dd03b45ddf8feec5d4b986556ee474e77b5d0ec78488761ffb2cfafd94"
+      },
+      "campaign_B_notes": {
+       "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/CAMPAIGN_A_OPEN_NOTES_DISPOSITION.md",
+       "sha256": "535f4e6a118630491ea43b3cf5b06becdc23d10f17381cd575704ce3d82833f8"
+      },
+      "campaign_B_review_r1": {
+       "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/review/REVIEW_R1.md",
+       "sha256": "30680ab623a6e83e27a1e4f86a18f11463050c012d26b5e99a0479b81d75816e"
+      },
+      "campaign_B_review_r2": {
+       "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/review/REVIEW_R2.md",
+       "sha256": "51c208cd80eaa901a3d8bad180268f7a23aeb43955c88a1502fc8eac5ec31f92"
+      },
+      "cells_json": {
+       "path": "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/cells.json",
+       "sha256": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f"
+      },
+      "consumption_adapter": {
+       "path": "level4/closure_proofs/p5y_k5b_consumption_adapter/code/consumption_adapter.py",
+       "sha256": "fbad7d33261fd47fc56c034d6a016f8427b81b51f9199f0e3a8f3e74df35973d"
+      },
+      "coverage_map_r4": {
+       "path": "level4/closure_proofs/p5y_k5_lower_front_order3/evidence/tc_r1/K5_COVERAGE_MAP_R4.json",
+       "sha256": "a3bddd83234f33983e07b005b4686a5f3971264bb6bdd64d2c639339de210a35"
+      },
+      "deflated_consume": {
+       "path": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/deflated_consume.py",
+       "sha256": "ef5d0474183053bb7cde3075bda66f99211706a9bf7bf27e31fe994ff8b87e72"
+      },
+      "e6_adapter_spec": {
+       "path": "level4/closure_proofs/p5y_k5b_consumption_adapter/README.md",
+       "sha256": "4cecdf769fa27f9f48d3638dd3bbdf6f1660d382665f96877b12e533da815f82"
+      },
+      "export_manifest": {
+       "path": "level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/evidence/closure_r1/COMPOSITE_EXPORT_MANIFEST.json",
+       "sha256": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334"
+      },
+      "k5b_check": {
+       "path": "level4/closure_proofs/p5y_k5b_independent_countersignature/code/k5b_check.py",
+       "sha256": "ddd54dc469375a2d64352782add8573231be07b94f7246dad83c4e55a2bf35a6"
+      },
+      "order3_executor_registry": {
+       "path": "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/config/REAL_CELL_AUTHORIZATION_REGISTRY.json",
+       "sha256": "dfe0384b132c7769fb15245948461708264b2a1c8853fdcfe69688fcb148d3a3"
+      },
+      "order3_producer_manifest": {
+       "path": "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/config/ORDER3_PRODUCER_MANIFEST.json",
+       "sha256": "e9da8072b784735ebe28ae848b91f8e99f82e0f577baa24159f9c78db9e50fdf"
+      },
+      "registry_r1": {
+       "path": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/evidence/registry_r1/REGISTRY.json",
+       "sha256": "1b7f5da743a2ce0d7f557c2dae054ab358a9175212eaa1fa29dea63a25780cb5"
+      },
+      "taboo_certify": {
+       "path": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/taboo_certify.py",
+       "sha256": "ced9422ca07981a9ad053acd79b72ef0d5007e93e49c16f2501f31c593fd0daa"
+      },
+      "tail_forecast_r2": {
+       "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/evidence/forecast_r2/TAIL_FORECAST_R2.json",
+       "sha256": "0903715d6f20d812cc4cd90be3ad7f44c03d4d552610329b0d54ba73dcd9452d"
+      },
+      "tail_forecast_r2_code": {
+       "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/code/tail_forecast_r2.py",
+       "sha256": "5ab31ae56c0174697a7f5805e212b46334803e9e3371a77f82871d60716b96cd"
+      },
+      "tc_crosscheck": {
+       "path": "level4/closure_proofs/p5y_k5_lower_front_order3/code/tc_crosscheck.py",
+       "sha256": "1c72117f57197d7dfcf588447510fee43cdb37426ac5f7ca85892b0e10ad8938"
+      },
+      "tc_rule": {
+       "path": "level4/closure_proofs/p5y_k5_lower_front_order3/code/tc_rule.py",
+       "sha256": "8d402d11f6fc06ea2af88e3d3a01e376fefbe8ebacd8418f772116010e57afd5"
+      },
+      "tct_rule": {
+       "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/code/tct_rule.py",
+       "sha256": "f5a343e7f7bfb742d0a41c38512e27e7311d0919b38bcea0dfe98775c73d9a3e"
+      },
+      "text_consume": {
+       "path": "level4/closure_proofs/p5y_k5_remaining_cell_closure/transport_extension/code/text_consume.py",
+       "sha256": "657458ade03c4283ae6d5bd97e5567603380bf0e6281d8483f9c1fd45a62d0ea"
+      },
+      "theorem_AD": {
+       "path": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/theorem/THEOREM_AD.md",
+       "sha256": "e1895b3270a02fe57cadc37c87b03a6e49b67dc0cf66c3c5ef9121db216c82fd"
+      },
+      "theorem_TC": {
+       "path": "level4/closure_proofs/p5y_k5_lower_front_order3/theorem/THEOREM_TC.md",
+       "sha256": "bf854492e3b5128783e506adf63a99f8d11d5a0e987501cfcb489880fe027d96"
+      },
+      "theorem_TCT": {
+       "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/theorem/THEOREM_TCT.md",
+       "sha256": "545cba4f5f4a52a3d7c91627ffe0ddd1fd90dbd51842fd614e7179c58f112b10"
+      }
+     },
+     "mismatch": [],
+     "pass": true
+    },
+    "B3_immutability": {
+     "changed_files": {
+      "p5y_k1_cover_ledger_successor": 0,
+      "p5y_k1_cusum_aux3_successor": 0,
+      "p5y_k1_cusum_aux5_composite_closure": 0,
+      "p5y_k1_cusum_aux5_successor": 0,
+      "p5y_k5_cusum_first_real_probe_protocol": 0,
+      "p5y_k5_cusum_order3_real_producer": 0,
+      "p5y_k5_lower_front_order3": 0,
+      "p5y_k5_m5_tail_closure": 0,
+      "p5y_k5_perron_deflated_resolvent": 0,
+      "p5y_k5_remaining_cell_closure": 0,
+      "p5y_k5_tail_operator_registry": 0,
+      "p5y_k5b_consumption_adapter": 0,
+      "p5y_k5b_independent_countersignature": 0
+     },
+     "pass": true
+    },
+    "B4_coverage": {
+     "K5_COVERAGE_COMPLETE": false,
+     "open_per_m": {
+      "1": [],
+      "2": [],
+      "3": [],
+      "5": [
+       [
+        305,
+        309
+       ]
+      ]
+     },
+     "pass": true,
+     "r5_exists": [],
+     "union_open_ranges": [
+      [
+       305,
+       309
+      ]
+     ]
+    },
+    "B5_predecessors_stopped": {
+     "campaign_B_protocol_exists": false,
+     "campaign_B_seal_exists": false,
+     "campaign_C1_protocol_exists": false,
+     "campaign_C1_seal_exists": false,
+     "pass": true
+    },
+    "B6_c1_constants": {
+     "Abar_inert_on_all_cells": true,
+     "blocks": 5,
+     "certified": true,
+     "operator_only": true,
+     "pass": true,
+     "per_cell": {
+      "305": {
+       "Abar": 8.290718951469982,
+       "Abar_binds": false,
+       "Abar_eff": 6.884064161921174,
+       "C_T": 6.028953464721635,
+       "D1": 1.618683689828106,
+       "D2": 28.50653838811174,
+       "D_lo": 0.7686092393986548,
+       "arl_alpha": "5/4",
+       "d1": 2.10599041340504,
+       "d2": 37.08846696978912,
+       "e_hi": 1.7019225,
+       "e_lo": 1.6208813,
+       "taboo_alpha": "6/5",
+       "tau": 5.291155319465771,
+       "tau_over_D_lo": 6.884064161921174
+      },
+      "306": {
+       "Abar": 7.9124167116351645,
+       "Abar_binds": false,
+       "Abar_eff": 6.411422920029179,
+       "C_T": 5.670984263954273,
+       "D1": 1.519244732778201,
+       "D2": 25.787949325480753,
+       "D_lo": 0.7908924765725055,
+       "arl_alpha": "5/4",
+       "d1": 1.9209244970468793,
+       "d2": 32.606138115307544,
+       "e_hi": 1.7885921,
+       "e_lo": 1.7019225,
+       "taboo_alpha": "6/5",
+       "tau": 5.0707461515756025,
+       "tau_over_D_lo": 6.411422920029179
+      },
+      "307": {
+       "Abar": 7.5556132138736665,
+       "Abar_binds": false,
+       "Abar_eff": 5.9871227639433435,
+       "C_T": 5.331526554457764,
+       "D1": 1.4480248415255668,
+       "D2": 23.555401724114237,
+       "D_lo": 0.8103846744145569,
+       "arl_alpha": "5/4",
+       "d1": 1.786836408982756,
+       "d2": 29.066938785745517,
+       "e_hi": 1.882413,
+       "e_lo": 1.7885921,
+       "taboo_alpha": "6/5",
+       "tau": 4.851872531738208,
+       "tau_over_D_lo": 5.9871227639433435
+      },
+      "308": {
+       "Abar": 7.2178752625084535,
+       "Abar_binds": false,
+       "Abar_eff": 5.590460453801663,
+       "C_T": 5.008960897920824,
+       "D1": 1.3772214353143775,
+       "D2": 21.469367416986586,
+       "D_lo": 0.8288721452281043,
+       "arl_alpha": "5/4",
+       "d1": 1.6615607645198023,
+       "d2": 25.901904824028378,
+       "e_hi": 1.9839101,
+       "e_lo": 1.882413,
+       "taboo_alpha": "6/5",
+       "tau": 4.6337769491554655,
+       "tau_over_D_lo": 5.590460453801663
+      },
+      "309": {
+       "Abar": 6.900982638677452,
+       "Abar_binds": false,
+       "Abar_eff": 5.210202027997067,
+       "C_T": 4.705512371158392,
+       "D1": 1.2843531438847071,
+       "D2": 19.336005966519533,
+       "D_lo": 0.8480462995336464,
+       "arl_alpha": "5/4",
+       "d1": 1.5144846980536233,
+       "d2": 22.800648947059493,
+       "e_hi": 2.092283,
+       "e_lo": 1.9839101,
+       "taboo_alpha": "6/5",
+       "tau": 4.418492549665612,
+       "tau_over_D_lo": 5.210202027997067
+      }
+     },
+     "rule": "r2"
+    },
+    "B7_notes": {
+     "N1_still_open": true,
+     "campaign_B_disposition_present": true,
+     "campaign_C1_disposition_present": true,
+     "order3_registry_frozen_empty": true,
+     "pass": true
+    }
+   },
+   "verdict": "PASS"
+  },
+  "producer_determinism": {
+   "detail": {
+    "c2_critical_ratio.py": {
+     "byte_identical": true,
+     "rc": 0
+    },
+    "c2_d1_blocker.py": {
+     "byte_identical": true,
+     "rc": 0
+    },
+    "c2_mutations.py": {
+     "byte_identical": true,
+     "rc": 0
+    }
+   },
+   "verdict": "PASS"
+  },
+  "protocol_pins": {
+   "detail": {
+    "pins_checked": 152,
+    "problems": []
+   },
+   "verdict": "PASS"
+  },
+  "recertify_306": {
+   "detail": {
+    "passes": {
+     "determinism_256": true,
+     "safe_side_384": true
+    },
+    "verdict": "BOTH_PASSES_OK"
+   },
+   "verdict": "PASS"
+  },
+  "refusal_tampered_pin": {
+   "detail": {
+    "rc": 1
+   },
+   "verdict": "PASS"
+  },
+  "refusal_unbound": {
+   "detail": {
+    "rc": 1
+   },
+   "verdict": "PASS"
+  },
+  "registry_certification": {
+   "detail": {
+    "artifacts_rechecked": 105,
+    "cells_checked": 5,
+    "pass": true,
+    "problems": []
+   },
+   "verdict": "PASS"
+  },
+  "result_classification": {
+   "detail": {
+    "Gamma": {
+     "305": -0.08802906884054082,
+     "306": -0.030469257709306738
+    },
+    "class": "D_PARTIAL",
+    "closed": [
+     305,
+     306
+    ],
+    "gap_fall": {
+     "307": 0.46285183476411584,
+     "308": 0.24593099374719365,
+     "309": 0.18389841084966285
+    },
+    "gate_sha256_pinned_in_forecast": true,
+    "open": [
+     307,
+     308,
+     309
+    ]
+   },
+   "verdict": "PASS"
+  }
+ },
+ "failed": [],
+ "freeze_commit": "637b59bc7deb5a836f403b010a336e60a76effb3",
+ "protocol_sha256_unbound_at_freeze": "c1243194375f4e4b7cdcd9a41b0f67452f9235deba38783c3f47dd609ec6f613",
+ "qualifier_note": "not part of the frozen set; audits it",
+ "qualifier_sha256": "59a3c8899e7221573287345dabcec3988f4cfe1da7664fb472f8da2a2c17e55d",
+ "schema": "rebaseguard.p5y.k5.tail-c2.qualification.v1",
+ "skipped_load_bearing": [],
+ "tree": "<clean clone at the freeze commit; path elided as incidental>",
+ "verdict": "QUALIFIED"
+}
