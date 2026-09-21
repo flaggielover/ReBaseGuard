@@ -1,0 +1,94 @@
+{
+ "bound_to": {
+  "binding_commit": "2e53dca0",
+  "freeze_commit": "637b59bc7deb5a836f403b010a336e60a76effb3",
+  "gate_commit": "87309610",
+  "gate_sha256": "098dd7f5c3cf31fbbbc6987f887f25866cddb978e4caf6ece52ea0db797db28f",
+  "protocol_sha256_bound": "523d2eb35c000124bdf6beb7ae1f1ac119d74a41c84339f2d977f55ca4529c48",
+  "protocol_sha256_unbound_at_freeze": "c1243194375f4e4b7cdcd9a41b0f67452f9235deba38783c3f47dd609ec6f613",
+  "qualification_sha256": "336637a72f773fc0f1212dc2a91bff619c7a9039e9a0ff55a9111f2bd3e19245",
+  "qualification_verdict": "QUALIFIED"
+ },
+ "execution_class": "ZERO_NEW_REAL",
+ "executor_note": "not part of the frozen set",
+ "executor_sha256": "555c001c93879769abced4ec6d324992b196c6a05d0fb3fa11a02c51ecd05b4c",
+ "frozen_rule_source": "code/c2_d5_forecast.py::classify, loaded from the frozen tree",
+ "gate_threshold": "1/5",
+ "guard": "REAL_SCIENTIFIC_COMPUTE = DENY throughout",
+ "new_real_cpu_seconds": 0,
+ "new_real_scientific_addresses_evaluated": 0,
+ "per_cell": {
+  "305": {
+   "Gamma": -0.08802906884054082,
+   "gap_above_1": 0.0,
+   "gap_fall_fraction": null,
+   "pass": true
+  },
+  "306": {
+   "Gamma": -0.030469257709306738,
+   "gap_above_1": 0.0,
+   "gap_fall_fraction": null,
+   "pass": true
+  },
+  "307": {
+   "Gamma": 0.033132953404317905,
+   "gap_above_1": 0.1407635748126312,
+   "gap_fall_fraction": 0.46285183476411584,
+   "pass": false
+  },
+  "308": {
+   "Gamma": 0.10270008356594545,
+   "gap_above_1": 0.5002877825423833,
+   "gap_fall_fraction": 0.24593099374719365,
+   "pass": false
+  },
+  "309": {
+   "Gamma": 0.16224941061997425,
+   "gap_above_1": 0.8990148694205993,
+   "gap_fall_fraction": 0.18389841084966285,
+   "pass": false
+  }
+ },
+ "producer_determinism": {
+  "c2_critical_ratio.py": true,
+  "c2_d1_blocker.py": true,
+  "c2_mutations.py": true
+ },
+ "recorded_in_forecast": {
+  "D_STAGE_CLASS": "D_PARTIAL",
+  "closed": [
+   305,
+   306
+  ],
+  "materially_tightened": {
+   "307": true,
+   "308": true,
+   "309": false
+  },
+  "still_open": [
+   307,
+   308,
+   309
+  ]
+ },
+ "rederivation_agrees": true,
+ "rederived": {
+  "D_STAGE_CLASS": "D_PARTIAL",
+  "closed": [
+   305,
+   306
+  ],
+  "materially_tightened": {
+   "307": true,
+   "308": true,
+   "309": false
+  },
+  "still_open": [
+   307,
+   308,
+   309
+  ]
+ },
+ "schema": "rebaseguard.p5y.k5.tail-c2.execution.v1",
+ "wall_clock_seconds": 10.2
+}

@@ -1,0 +1,46 @@
+{
+ "authorizes": "deterministic consumption of already-certified C2 evidence under the frozen protocol, and nothing else",
+ "bound_to": {
+  "binding_commit": "2e53dca0",
+  "freeze_commit": "637b59bc7deb5a836f403b010a336e60a76effb3",
+  "gate_commit": "87309610",
+  "gate_sha256": "098dd7f5c3cf31fbbbc6987f887f25866cddb978e4caf6ece52ea0db797db28f",
+  "protocol_sha256_bound": "523d2eb35c000124bdf6beb7ae1f1ac119d74a41c84339f2d977f55ca4529c48",
+  "protocol_sha256_unbound_at_freeze": "c1243194375f4e4b7cdcd9a41b0f67452f9235deba38783c3f47dd609ec6f613",
+  "qualification_sha256": "336637a72f773fc0f1212dc2a91bff619c7a9039e9a0ff55a9111f2bd3e19245",
+  "qualification_verdict": "QUALIFIED"
+ },
+ "cell_306_margin_floor": "referred to the adjudicator; not decided here",
+ "execution_class": "ZERO_NEW_REAL",
+ "expected_result": {
+  "D_STAGE_CLASS": "D_PARTIAL",
+  "closed": [
+   305,
+   306
+  ],
+  "note": "an expectation recorded before execution, not a forced output",
+  "still_open": [
+   307,
+   308,
+   309
+  ]
+ },
+ "explicitly_not_authorized": [
+  "any evaluation of a real order-3 scientific address",
+  "any R-stage execution; the R-stage design is DESIGN ONLY and is additionally blocked by phase_d/D_PRIME_OPPORTUNITY.md",
+  "any modification of the frozen protocol, gate, registry or predecessor namespaces",
+  "any generation of coverage map r5 before an adjudicator hands over",
+  "any decision on the cell-306 margin floor by this campaign"
+ ],
+ "guard_after": "REAL_SCIENTIFIC_COMPUTE = DENY",
+ "guard_before": "REAL_SCIENTIFIC_COMPUTE = DENY",
+ "guard_during": "REAL_SCIENTIFIC_COMPUTE = DENY (unchanged; nothing here requires it to be lifted)",
+ "new_real_cpu_seconds_authorized": 0,
+ "new_real_scientific_addresses_authorized": 0,
+ "permitted_operations": [
+  "re-read sealed and committed C2 evidence",
+  "re-run the frozen producers for determinism",
+  "compute the consumption verdict from already-certified constants"
+ ],
+ "schema": "rebaseguard.p5y.k5.tail-c2.authorization.v1"
+}
