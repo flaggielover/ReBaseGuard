@@ -2,8 +2,8 @@
 
 Independent fresh-context pre-freeze reviews have run on this campaign in successive rounds, each so far
 returning **NOT_READY**, and this document dispositions every FAIL from every one of them. The table below is the
-count. Counts belong in the tables of this document and of `README.md`, not in prose — for the reason given in
-§"The pattern, named".
+count. Counts belong in the tables of this document and of `README.md` wherever they can; where prose carries
+one it must be checked before it is written — for the reason given in §"The pattern, named".
 
 | round | at | verdict | dispositioned in |
 |---|---|---|---|
@@ -22,6 +22,7 @@ count. Counts belong in the tables of this document and of `README.md`, not in p
 | r13 | `92bc9637` | 3 FAIL | § "Dispositions from the THIRTEENTH pre-freeze review" |
 | r14 | `75a97a18` | 4 FAIL | § "Dispositions from the FOURTEENTH pre-freeze review" |
 | r15 | `757db96a` | 1 FAIL | § "Dispositions from the FIFTEENTH pre-freeze review" |
+| **r16** | `36e8fa1d` | **0 FAIL — READY_TO_FREEZE_WITH_NOTES** | § "Dispositions from the SIXTEENTH pre-freeze review" |
 
 **The result has never moved.** In every round so far, no Γ, magnitude, margin, requirement, gap fall, class or
 adopted-subset value has changed: the class is `D_PARTIAL`, the closed subset is {305, 306}, and the frozen gate
@@ -29,7 +30,7 @@ is byte-untouched at `098dd7f5…`.
 
 **Of the leaves replaced in committed evidence — all of them in the ledger below — nine constitute the single
 scientific or decision change**: the C_T sensitivity row on cells 307–309 of the D1 diagnosis, corrected to the admissible
-perturbation. Reviews r5, r6, r7 and r8 — and later rounds — each independently
+perturbation. Reviews r5, r6, r7 and r8 each independently
 diffed every leaf of that artifact across its whole history and each found the same nine leaves. One published
 *table* was additionally corrected against evidence that never changed: D1 §1's ranking of the three negligible
 blocker terms, which named the smallest of them and printed "~0" for the two larger, while the machine-readable
@@ -407,8 +408,7 @@ campaign-wide, where the figure is 19. Both occurrences are now scoped to the ar
 `review/REVIEW_C2_PREFREEZE_R12.md`, at `6aa2040a`: **2 FAIL**. It rebuilt the replacement ledger independently
 over all 115 committed files under `evidence/` and `config/`, taking no file list from C2, and confirmed
 **19 leaves / three files / 9 + 4 + 6 correct in every cell, with nothing missing** — r11 FAIL 1 fully repaired.
-It also listed surviving instances of the corpus-claim class, and stated that its counts were extracted mechanically rather than hand-tallied. *(An earlier version of this sentence credited r12 with disclosing that its own first draft had been hand-tallied and wrong. It makes no such disclosure — r13 and r14 each did that about themselves. Flagged by r13 and carried unrepaired for three rounds; r15 D2.)* Its counts were re-extracted
-mechanically before finishing — the same hazard it was auditing.
+It also listed surviving instances of the corpus-claim class, and stated that its counts were extracted mechanically rather than hand-tallied. *(An earlier version of this sentence credited r12 with disclosing that its own first draft had been hand-tallied and wrong. It makes no such disclosure — r13 and r14 each did that about themselves. Flagged by r13 and carried unrepaired for three rounds; r15 D2.)* Its counts were extracted mechanically.
 
 | | finding | repair |
 |---|---|---|
@@ -494,13 +494,40 @@ falsehood in it. All eleven are actioned here:
   this document says was deleted rather than maintained. Rewritten as an instruction to a successor rather than a
   claim about the present text.
 - **D10** "Every one of C2's repair rounds has carried an error of its own" — true through round thirteen and
-  self-undermining thereafter. Bounded to what has been observed. **Also rated sound by r14 and moved by r15.**
+  self-undermining thereafter. Bounded to the rounds the register records. **Also rated sound by r14 and moved by r15.**
 - **D11** N9's "no campaign has built one" — unverifiable from inside the namespace; narrowed to "none exists in
   this repository".
 
+## Dispositions from the SIXTEENTH pre-freeze review
+
+`review/REVIEW_C2_PREFREEZE_R16.md`, at `36e8fa1d`: 68 checklist rows, **58 PASS, 0 FAIL, 9 NOTE, 1 INFO**.
+
+    VERDICT: READY_TO_FREEZE_WITH_NOTES
+
+**This is the first ready verdict in sixteen rounds, and the first round in ten whose own new prose contained no
+false claim about a committed file.** The review confirmed that all thirteen r15 edits landed, plus the four
+supporting ones, and that nothing was certified as done which was not done. It verified each substantive
+replacement at source — r8 does raise the ordinal as its own note 4; r9 records it twice, the second an express
+decision to leave it; r12 contains no hand-tally self-disclosure; "nine constitute the single scientific or
+decision change" reconciles with a ledger it rebuilt from the git object store over all 115 evidence and config
+files; and the round-13 register row is genuinely the none-of-one exception. It reproduced the science, the gate
+and the integrity envelope cold and found them exact.
+
+**Its nine notes are swept in this commit rather than carried**, because the failure r15 exposed was precisely
+that notes raised by r13 and r14 had been carried silently for rounds. Two were substantively inaccurate — a
+residual clause re-implying the narrative its own paragraph had withdrawn (E1), and an over-inclusive "and later
+rounds" that credited r9 and r10 with a diff they did not perform (E2, and a defect C2 introduced in the previous
+commit's repair). Three more (E3, E4, E5) were ambiguity or over-narrowness introduced by that same commit. The
+remaining four (E6–E9) were universals wider than what had been checked, narrowed to what was: N9 to "C2 has not
+built one", and the two repository-wide assertions in `c2_recertify_306.py` to this campaign's own `evidence/` and
+`config/`, which is the scope r10 actually verified.
+
+None of the nine touched a number, an artifact or the decision; the review said so, and C2 records it rather than
+letting the sweep imply otherwise.
+
 ## The pattern, named
 
-**Every one of C2's repair rounds through round thirteen carried an error of its own.** The registers below are the record; the prose
+**Every one of C2's repair rounds recorded below carried an error of its own.** The registers are the record; the prose
 after them is deliberately short: the narrative here has itself produced many of the defects it describes, so
 episodes recorded in a register row are generally not re-told.
 
@@ -535,6 +562,8 @@ episodes recorded in a register row are generally not re-told.
 | 13 | supplied a command to re-derive a figure | the same commit falsified the command | r14 Note 2 |
 | 13 | reduced this section's narrative | added a superlative and an absolute, both self-descriptive, both unchecked | r14 Notes 5-6 |
 | 14 | repaired r14 Note 4 | repeated r14's "unremarked by eight reviews" premise without checking it | r15 Note 1 |
+| 15 | repaired r15 D5 by adding "and later rounds" | over-inclusive: r9 and r10 did not perform that diff | r16 Note 2 |
+| 15 | bounded the round claim and named the exception | introduced an ambiguity and a narrowness in doing so | r16 Notes 4-5 |
 
 A separate register, for a different failure — a review note received and then never actioned, rather than
 decoration added:
@@ -545,8 +574,8 @@ decoration added:
 
 Most instances have the same shape — **a correct primary argument or fix, with a second unverified thing stacked
 on top of it, or a neighbouring sentence the fix failed to carry along** — and in those the primary claim was
-sound while the decoration and the leftovers were not. The round-13 row is not of that shape: there the repair
-did not land at all and was then certified as complete (r14 Note 1).
+sound while the decoration and the leftovers were not. The round-13 row recording the r14 Note 1 episode is not of that
+shape: there the repair did not land at all and was then certified as complete.
 
 One substantive point from those episodes is kept — it is r5's note 8 — because a successor re-reading r4
 against this document would otherwise conclude one of them is in error: r4's remark that renormalising by equal A0 effect makes D_lo "lead by a
@@ -577,10 +606,10 @@ review request or gate clause, should be treated as unverified until checked.
 The failure mode has a visible signature: it never touched a computed quantity. In every round, **no Γ,
 magnitude, margin, requirement, gap fall, class or adopted-subset value has changed** — r5 confirmed by diffing
 every leaf of the D1 evidence across its whole history that exactly nine leaves of it have ever changed, all C_T
-sensitivity on 307–309. Every instance was in labelling, framing, or an ornament attached to a result that kept
-reproducing bit-exactly under every independent implementation written against it. That is worth knowing about a
+sensitivity on 307–309. The instances recorded were in labelling, framing, or an ornament attached to a result that kept
+reproducing bit-exactly under the independent implementations written against it. That is worth knowing about a
 campaign: its
-arithmetic was never the weak part, and its prose always was.
+arithmetic was not the weak part on this record, and its prose was.
 
 A successor should expect this failure mode from this campaign's authorship specifically.
 

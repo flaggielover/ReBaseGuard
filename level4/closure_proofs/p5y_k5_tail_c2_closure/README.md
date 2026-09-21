@@ -52,6 +52,7 @@ Each predecessor lost its campaign to a gate defect, and C2's gate is written ag
 | independent pre-freeze review r13 | `review/REVIEW_C2_PREFREEZE_R13.md` | NOT_READY — **3 FAIL** |
 | independent pre-freeze review r14 | `review/REVIEW_C2_PREFREEZE_R14.md` | NOT_READY — **4 FAIL** |
 | independent pre-freeze review r15 | `review/REVIEW_C2_PREFREEZE_R15.md` | NOT_READY — **1 FAIL** |
+| **independent pre-freeze review r16** | `review/REVIEW_C2_PREFREEZE_R16.md` | **READY_TO_FREEZE_WITH_NOTES — 0 FAIL** |
 | erratum and review disposition | `ERRATUM_C2.md` | every FAIL from every round dispositioned |
 
 *FAIL counts only. Each review's PASS/NOTE/INFO breakdown is in its own file and is deliberately not transcribed

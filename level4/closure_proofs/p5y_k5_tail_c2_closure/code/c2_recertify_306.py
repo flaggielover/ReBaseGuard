@@ -12,7 +12,8 @@ This module attacks that surface directly, in two passes:
   PASS 1 -- DETERMINISM, at the artifacts' own 256 bits. `verify_block` / `verify_cell` re-run certification and
   require BIT-IDENTICAL agreement with every published field, on a host whose OS, CPU architecture, Python and
   compiled Arb/FLINT build are all recorded in the output. It makes NO claim about the machine that built the
-  registry: nothing in this repository records that (see OPEN_NOTES_DISPOSITION_C2.md N10). An earlier version of
+  registry: no artifact under this campaign's `evidence/` or `config/` records that (see
+  OPEN_NOTES_DISPOSITION_C2.md N10). An earlier version of
   this paragraph asserted the run happened on "a different operating system, a different CPU architecture ... than
   produced the registry"; that was the same unsupported assertion removed from the `host` field, kept here one
   round longer, and withdrawn on pre-freeze review r9.
@@ -99,7 +100,7 @@ def host() -> dict:
             "python": sys.version.split()[0], "numpy": numpy.__version__,
             "python_flint": flint.__version__,
             # Recorded facts about THIS host only. It deliberately makes no claim about the host that built the
-            # registry: nothing in the repository records that, so a "second host" or "different build" assertion
+            # registry: no artifact under this campaign's evidence/ or config/ records that, so a "second host"
             # would not be an observation. An earlier version of this field asserted exactly that, inside the
             # `host` object beside five genuinely recorded values, where a reader would take it as recorded.
             # Removed on pre-freeze review r8; see OPEN_NOTES_DISPOSITION_C2.md N10.
