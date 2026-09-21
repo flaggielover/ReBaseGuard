@@ -1,0 +1,94 @@
+{
+ "schema": "rebaseguard.p5y.k5.tail-c3.feasibility-gates.v1",
+ "campaign": "p5y_k5_tail_c3_closure",
+ "frozen_before_any_c3_forecast": true,
+ "universe": {
+  "detector": "CUSUM",
+  "m": 5,
+  "cells": [306, 307, 308, 309],
+  "source": "the open set of authoritative coverage map r5, sha256 e2197051e493df898295a692c580ed676e771f7dfae5a1675d8d8e9b979f684c",
+  "note": "cell 305 is adopted and out of scope. C2 is immutable and is not reopened."
+ },
+
+ "mechanism": {
+  "name": "operator-level componentwise-best supply, then A-level componentwise minimum",
+  "step_1_operator_tuple": {
+   "objects_combined": ["tau", "C_T", "D1", "D2", "D_lo", "Abar"],
+   "permitted_sources": ["the C1 registry (one block per cell)", "the C2 refined registry (sub-block cover)"],
+   "rule": "tau, C_T, D1, D2, Abar := min over sources; D_lo := max over sources",
+   "why_sound": "each source certifies the SAME six quantities uniformly over the SAME cell. tau <= tau_C1 and tau <= tau_C2 both hold pointwise on the cell, so tau <= min holds; D >= D_lo_C1 and D >= D_lo_C2 both hold, so D >= max holds. This is the intersection of two valid bound sets on one domain and requires NO independence assumption between the sources.",
+   "components_may_come_from_different_sources": true,
+   "dependency_constraints_enforced": "the mixed tuple must satisfy every Lemma Dv' premise in its own right: tau >= 1, C_T >= tau, D_lo > 0, Abar >= 1, and the r2 constants must not exceed their r1 counterparts. These are checked on the MIXED tuple by the pinned deflated_consume.atom_constants_r2, which raises DeflationRefusal otherwise. A mixed tuple that fails any premise is FORBIDDEN and the cell falls back to the best single source.",
+   "whole_cell_validity": "every source bound must be certified uniformly on the whole cell [e0-rho, e0+rho]. C1's block is exactly that interval; C2's sub-blocks tile it exactly at width <= 1/100 and are composed worst-over-cover. Both are therefore whole-cell bounds and their componentwise best is a whole-cell bound.",
+   "correlation_handling": "no statistical independence is assumed or needed; the combination is a conjunction of deterministic inequalities, not an averaging. Shared assumptions are therefore harmless to soundness - but they are NOT harmless to robustness, which is why the adoption floor below is stated separately."
+  },
+  "step_2_atom_constants": "Lemma Dv' applied to the mixed tuple by the pinned deflated_consume.atom_constants_r2, with the universal kappa_1, kappa_2. Drift-aware per-cell norms were considered and EXCLUDED: they are plausibly valid by (P1) and worth 0.02-0.2 %, but C3 has not independently verified that premise and will not rest on an unverified tightening.",
+  "step_3_A_level_minimum": {
+   "rule": "A_j := min over {Lemma G, C1, C2, operator-mixed} componentwise, j in {A0,A1,A2}, with provenance recorded per cell per field",
+   "known_to_be_inert": "C3 has established BEFORE freezing that the mixed supply dominates all three others componentwise on all four cells, so this minimum returns the mixed supply. It is pre-registered anyway, because a rule that is inert on this data must not be selected after observing that it is inert. If a future source broke the dominance, the rule would bind and would be the pre-registered one."
+  },
+  "determinism": "the selector is a total order on rationals with no tolerance; ties resolve to the lexicographically first source name, which is recorded in provenance. No result-dependent choice is permitted at any point.",
+  "forbidden": [
+   "mixing at the sub-block level and composing afterwards - proved identical to whole-cell mixing (min distributes over max), so any claimed gain would be spurious",
+   "taking a component from a source that does not certify it uniformly on the whole cell",
+   "substituting any order-3 quantity; C3 evaluates no candidate of F and passes order3 = None throughout",
+   "any selection made after the forecast is computed"
+  ]
+ },
+
+ "baseline": {
+  "measured_against": "authoritative r5, i.e. the requirement under C2's frozen D4 rule = min over {G, C1, C2}",
+  "requirement": {"306": 1.0, "307": 1.1407635748126312, "308": 1.5002877825423833, "309": 1.8990148694205993},
+  "gap": {"306": 0.0, "307": 0.1407635748126312, "308": 0.5002877825423833, "309": 0.8990148694205993},
+  "why_not_C1": "C1 is two campaigns back. Measuring against it would inflate the reported improvement by roughly a factor of three (57/31/23 % against C1 versus 20/8/6 % against r5) and is the stale-baseline defect C2's reviews caught repeatedly."
+ },
+
+ "material_tightening_test": {
+  "applies_to": "every cell C3 does not close whose baseline gap is > 0",
+  "rule": "a still-open cell is MATERIALLY TIGHTENED iff its gap falls by at least 20 per cent of the r5 baseline gap",
+  "threshold": 0.2,
+  "justification": "inherited unchanged from C2's frozen gate rather than chosen for C3. The incumbent standard is the non-fitted choice; raising or lowering it for a successor that already knows its approximate prior would be the suspicious move. Cell 306 has baseline gap 0 and is therefore governed by the adoption floor, not by this test."
+ },
+
+ "adoption_floor": {
+  "name": "K5 tail adoption floor",
+  "rule": "a cell whose Gamma < 0 is ADOPTABLE only if, in addition, EITHER (F1) Gamma < 0 also under a supply that does not rest on the Arb/FLINT taboo_certify surface - Lemma G is the only such supply presently available - OR (F2) Gamma < 0 survives inflating every atom constant by the factor 1.25.",
+  "degradation_factor": 1.25,
+  "provenance": "set prospectively by the INDEPENDENT C2 adjudicator as the standard for K5 tail adoption, before Campaign C3 existed. C3 inherits it verbatim and does not restate, reinterpret or soften it.",
+  "why_inherited_rather_than_invented": "C3 knows from committed C2 evidence, before this gate is frozen, that cell 306's best deterministic uniform-A margin is 1.1555 < 1.25 and that Lemma G does not close it - so C3 knows 306 will FAIL this floor. Inheriting an externally set floor unchanged is precisely what prevents that foreknowledge from being laundered into a weaker criterion. Any C3-authored floor that happened to admit 306 would be indistinguishable from outcome fitting.",
+  "applies_to_cell_306": "yes, identically to every other cell. No cell-specific carve-out exists."
+ },
+
+ "classification": {
+  "USEFUL": "at least one universe cell has Gamma < 0 AND meets the adoption floor",
+  "PARTIAL": "at least one universe cell has Gamma < 0 but no such cell meets the adoption floor",
+  "MATERIAL_TIGHTENING_ONLY": "no universe cell has Gamma < 0, and every still-open cell with baseline gap > 0 is materially tightened",
+  "MARGINAL": "no universe cell has Gamma < 0, and at least one still-open cell with baseline gap > 0 is not materially tightened",
+  "INVALID": "a Lemma Dv' premise fails on the mixed tuple, a whole-cell validity condition fails, or the mechanism cannot be executed as specified",
+  "ordering": "evaluated in the order USEFUL, PARTIAL, MATERIAL_TIGHTENING_ONLY, MARGINAL, INVALID; the first match wins"
+ },
+
+ "decision_rule": {
+  "USEFUL": "proceed to freeze, qualification, authorization, execution, seal, consumption and independent adjudication, proposing for adoption exactly the cells that meet the adoption floor.",
+  "PARTIAL": "proceed to the governed chain and propose NOTHING for adoption. Record the candidate closure and the exact floor component it fails. Publish the negative result. A candidate closure that fails the floor is not adopted merely because it exists.",
+  "MATERIAL_TIGHTENING_ONLY": "STOP after publishing the result. No adoption, no coverage map r6. The tightening is recorded for a successor.",
+  "MARGINAL": "STOP after publishing the result. No adoption, no r6.",
+  "INVALID": "STOP immediately and publish the refusal."
+ },
+
+ "r6_rule": "coverage map r6 is generated if and only if an independent adjudicator hands over an adopting verdict with a non-empty adopted set. r5 and r4 remain immutable in every branch.",
+
+ "guard": "REAL_SCIENTIFIC_COMPUTE = DENY throughout C3. No R-stage, no real order-3 address, no new expensive numerical probe, no AWS interaction. Deterministic exhaustion is NOT established by C3 and C3 may not assert it.",
+ "new_real_scientific_addresses_authorized": 0,
+
+ "no_redefinition": "after this gate is committed, no threshold, class, baseline, adoption floor or mechanism clause may be changed for Campaign C3. A successor needs a new gate frozen before its own forecast.",
+
+ "prior_evidence_known_at_freeze": {
+  "disclosed_so_the_gate_cannot_be_read_as_untainted": "C3 computed the following from committed C2 artifacts BEFORE freezing this gate, and records them so a reviewer can judge whether the gate was fitted to them.",
+  "operator_mixed_Gamma": {"306": -0.03619778, "307": 0.026354631, "308": 0.094564145, "309": 0.153019689},
+  "operator_mixed_closes": {"306": true, "307": false, "308": false, "309": false},
+  "cell_306_best_uniform_A_margin": 1.1555,
+  "gap_fall_vs_r5_baseline": {"307": 0.2046, "308": 0.0792, "309": 0.0569},
+  "implication_C3_accepts_in_advance": "on this prior, C3 expects PARTIAL: 306 closes but fails the inherited adoption floor, and 307-309 do not close, with 308 and 309 falling short of the inherited 20 % material-tightening threshold. C3 freezes the gate knowing this and does not adjust it."
+ }
+}

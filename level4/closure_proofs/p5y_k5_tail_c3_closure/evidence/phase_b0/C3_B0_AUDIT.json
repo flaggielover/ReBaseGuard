@@ -1,0 +1,85 @@
+{
+ "authoritative_coverage": {
+  "K5_COVERAGE_COMPLETE": false,
+  "m1_m2_m3_open": [],
+  "m5_open": [
+   306,
+   307,
+   308,
+   309
+  ],
+  "r4_sha256_immutable": "a3bddd83234f33983e07b005b4686a5f3971264bb6bdd64d2c639339de210a35",
+  "r5_sha256": "e2197051e493df898295a692c580ed676e771f7dfae5a1675d8d8e9b979f684c"
+ },
+ "b0_verdict": "PASS - no material mismatch",
+ "c2_predecessor": {
+  "adjudication_sha256": "f37dae47b3548bd4b24a0973ba57af869c076fb424c9b46bf4a86d67f74823ef",
+  "adjudication_verdict": "PARTIALLY_ADOPTED",
+  "adopted": [
+   305
+  ],
+  "authorization_sha256": "d0ebd06db78f7041423066efe3e0b3a88caf0b087715b589f2427b55fa66eb28",
+  "consumption_sha256": "4a89a719c8c97051cebf8c4fa94bf5bcaaf123c5a5d9ad2bac61362e225da393",
+  "execution_sha256": "3cd602540b6f14e53caebbb4cf4e8349d92fbcd7fa38c9e6eda21475d1be1d00",
+  "freeze_commit": "637b59bc7deb5a836f403b010a336e60a76effb3",
+  "gate_commit": "87309610",
+  "gate_sha256": "098dd7f5c3cf31fbbbc6987f887f25866cddb978e4caf6ece52ea0db797db28f",
+  "qualification_sha256": "336637a72f773fc0f1212dc2a91bff619c7a9039e9a0ff55a9111f2bd3e19245",
+  "seal_sha256": "abf463a85cb42003854926253adabb1088ab82c8d9b4d3359b9889cfdf85429e"
+ },
+ "environment": {
+  "aws_sr_ps1": "not contacted",
+  "c3_artifacts_preexisting": false,
+  "guard": "REAL_SCIENTIFIC_COMPUTE = DENY",
+  "main": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+  "order3_real_cell_registry": "FROZEN_EMPTY"
+ },
+ "prior_evidence_reproduced_from_committed_C2": {
+  "material_finding": "operator mixing closes ONLY 306 among the open cells; 307/308/309 retain Gamma > 0. The 57.27/30.57/23.03 percent figures are MATERIAL TIGHTENING, not closure.",
+  "note": "reproduced mechanically from evidence/phase_d5/C2_CRITICAL_RATIOS.json, not copied from prose. PRIOR EVIDENCE ONLY - not a C3 forecast.",
+  "per_cell": {
+   "306": {
+    "Gamma_C1": -0.005719468367263504,
+    "Gamma_C2": -0.030469257709306738,
+    "Gamma_G": 0.01911558504907568,
+    "Gamma_operator_mixed": -0.03619777996457939,
+    "gap_fall_vs_C2_baseline": null,
+    "operator_mixed_closes": true,
+    "operator_mixed_requirement": 1.0
+   },
+   "307": {
+    "Gamma_C1": 0.061683080290831596,
+    "Gamma_C2": 0.033132953404317905,
+    "Gamma_G": 0.08511776989151419,
+    "Gamma_operator_mixed": 0.026354631323170525,
+    "gap_fall_vs_C2_baseline": 0.5727413222732998,
+    "operator_mixed_closes": false,
+    "operator_mixed_requirement": 1.1119662371370425
+   },
+   "308": {
+    "Gamma_C1": 0.13619454282611712,
+    "Gamma_C2": 0.10270008356594545,
+    "Gamma_G": 0.15834296474510035,
+    "Gamma_operator_mixed": 0.09456414496566364,
+    "gap_fall_vs_C2_baseline": 0.3056686192897179,
+    "operator_mixed_closes": false,
+    "operator_mixed_requirement": 1.4606547993946881
+   },
+   "309": {
+    "Gamma_C1": 0.19881031084487408,
+    "Gamma_C2": 0.16224941061997425,
+    "Gamma_G": 0.2261171664714765,
+    "Gamma_operator_mixed": 0.15301968889418385,
+    "gap_fall_vs_C2_baseline": 0.23032317466884022,
+    "operator_mixed_closes": false,
+    "operator_mixed_requirement": 1.8478734998440092
+   }
+  }
+ },
+ "schema": "rebaseguard.p5y.k5.tail-c3.b0-audit.v1",
+ "start": {
+  "branch_audited": "p5y-k5-tail-c2",
+  "head": "ae4cbc2cc0160538ec8fed3554feaceba5d71ec4",
+  "worktree_clean": true
+ }
+}
