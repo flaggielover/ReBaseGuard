@@ -1,0 +1,108 @@
+{
+ "schema": "rebaseguard.p5y.k5.tail-c4.feasibility-gate.v1",
+ "campaign": "P5Y/K5 tail Campaign C4 — deterministic operator-level exhaustion",
+ "predecessor": {
+  "c3_adjudication_sha256": "71b50f6aca9f6f014051685d0446fd9e0013e065640f719d9d35df50bf72088d",
+  "c3_verdict": "REJECTED",
+  "c3_adopted_cells": [],
+  "authoritative_coverage_map": "r5",
+  "coverage_map_r5_sha256": "e2197051e493df898295a692c580ed676e771f7dfae5a1675d8d8e9b979f684c",
+  "coverage_map_r4_sha256": "a3bddd83234f33983e07b005b4686a5f3971264bb6bdd64d2c639339de210a35"
+ },
+
+ "universe": {
+  "cells": [306, 307, 308, 309],
+  "detector": "CUSUM",
+  "m": 5,
+  "note": "the m = 5 open set of coverage map r5. C4 changes no coverage map and adopts no cell."
+ },
+
+ "question": {
+  "asked": "is there a certified LOWER bound on E_a[tau], on the domain the K5 tail argument actually needs, strong enough to prove that no operator-level atom-constant certificate can close the cell?",
+  "not_asked": "whether the cell can be closed; whether any cell should be adopted; whether the R-stage should run"
+ },
+
+ "admissible_family": {
+  "definition": "an atom-constant supply (A0, A1, A2) is ADMISSIBLE on a cell iff its A0 is a valid uniform order-0 bound there, i.e. |[(I - K_e)^-1 f](a)| <= A0 ||f|| for every f in B(X) and every e in [e0 - rho, e0 + rho]",
+  "floor": "Lemma SM(d) makes admissibility equivalent to A0 >= Lambda := sup_{e in cell} E_a[tau](e); the supremum over ||f|| <= 1 IS E_a[tau], attained at f = 1",
+  "covers": ["Lemma G generic (A0 = C_upper)", "Lemma Dv' (A0 = min(Abar, tau/D_lo))", "the C3 operator-mixed supply", "any future supply of the same shape, named or not"],
+  "does_not_cover": ["a route that bounds the order-0 point value by something other than a norm-only argument", "any change to theorem TC-T, to the K5-B clause, or to the frozen measurement inputs", "order-3 candidates of F, i.e. the R-stage"]
+ },
+
+ "compute_policy": {
+  "new_real_scientific_addresses_authorized": 0,
+  "kernel_evaluations_authorized": 0,
+  "operator_certifications_authorized": 0,
+  "remote_hosts_contacted": "none; AWS SR/PS1 must not be contacted, and no compute worker may be used",
+  "permitted": "exact rational arithmetic on committed artifacts and on the frozen model constants; re-running frozen consumers (theorem TC-T, the K5-B direct clause) at chosen atom-constant triples",
+  "forbidden": ["Order3Certifier real evaluations", "R-stage computation of any kind", "new K1 numerical cells", "any new Arb or python-flint certification run", "any AWS computation", "any new expensive numerical probe"],
+  "refusal": "a route that requires a forbidden operation is INADMISSIBLE for C4 regardless of how strong its bound would be"
+ },
+
+ "exclusion_test": {
+  "statement": "cell k is EXCLUDED iff Gamma_k(A0 = B_k, A1 = 0, A2 = 0) >= 0, where B_k is the certified lower bound on E_a[tau] on an admissible domain for cell k",
+  "why_this_and_not_a_threshold_comparison": "Gamma is evaluated directly at B_k, so no rounded critical value is ever an input. A bisected critical A0 is REPORTED for orientation and is never load-bearing.",
+  "licence": "Gamma is nondecreasing in A0 once the TC-T/K5-B intersection is non-empty, and the TC-T enclosure [lo, hi] only widens as A0 grows, so non-emptiness at B_k persists for every A0 >= B_k. Both facts must be exercised per cell, not assumed.",
+  "knockout_setting": "A1 = A2 = 0 is the most generous possible setting for the cell; excluding it there excludes it for every non-negative (A1, A2)",
+  "domain_requirement": "B_k must be certified at a drift lying in the CLOSED cell [e0 - rho, e0 + rho] of cell k. A bound certified on another cell's drift range does not transfer.",
+  "strictness": "the inequality is non-strict (>= 0) because Gamma < 0 is the frozen closure condition; Gamma = 0 does not close"
+ },
+
+ "classification": {
+  "order": ["INVALID", "PASS", "PARTIAL", "FAIL_INCONCLUSIVE"],
+  "INVALID": "a premise of the lower-bound theorem is unsatisfied, a domain does not match, or an arithmetic guard refuses",
+  "PASS": "every cell of the universe whose blocker is A0 is EXCLUDED",
+  "PARTIAL": "at least one such cell is EXCLUDED and at least one is not",
+  "FAIL_INCONCLUSIVE": "no cell is EXCLUDED",
+  "cells_whose_blocker_is_not_A0": "cells that already close at A1 = A2 = 0 with A0 as certified are OUTSIDE the PASS/PARTIAL count, because no lower bound on E_a[tau] can bear on them; they must be listed explicitly with that reason, never counted as failures"
+ },
+
+ "permitted_conclusions": {
+  "PASS": [
+   "DETERMINISTIC_OPERATOR_ROUTE_EXHAUSTED may be asserted for every excluded cell, and ONLY for the admissible family defined above",
+   "PASS DOES NOT AUTHORIZE R-STAGE EXECUTION. It does not authorize a new-real address, a launch, an authorization packet or a countersignature.",
+   "whether ALL deterministic routes required by the R-stage premise are exhausted is a SEPARATE question that a later campaign must decide; C4 may not decide it"
+  ],
+  "PARTIAL": [
+   "the same assertion, restricted to the excluded cells and named cell by cell",
+   "for every non-excluded cell the report must say which of the two reasons applies: the bound is too weak, or the threshold is unreachable because it exceeds the truth",
+   "no R-stage consequence of any kind"
+  ],
+  "FAIL_INCONCLUSIVE": [
+   "exhaustion remains NOT ESTABLISHED, exactly as C3 left it",
+   "the campaign must still deliver the exact route a successor would need, and say what it would cost"
+  ],
+  "in_every_case": [
+   "C4 adopts no cell, closes no cell and generates no coverage map revision; r5 remains authoritative",
+   "the guard stays DENY and NEW_REAL_SCIENTIFIC_ADDRESSES stays 0",
+   "an exclusion is a statement about a family of certificates, never about the cell being unclosable by any means"
+  ]
+ },
+
+ "r6_rule": "C4 cannot produce a coverage map revision under any outcome. Excluding a cell removes a ROUTE, not the cell; the cell stays open in r5.",
+
+ "review_and_adjudication": {
+  "pre_result_review": "a fresh-context reviewer must clear items A-I of the campaign instruction with 0 blocking FAIL before the certificate is evaluated against this gate",
+  "adjudication": "a fresh-context adjudicator must answer the eight questions of the campaign instruction and hand over explicitly; C4 may not infer the R-stage decision itself",
+  "handover": "file existence is not completion; no adjudication output may be consumed before its explicit handover"
+ },
+
+ "prior_evidence_known_at_freeze": {
+  "disclosure": "this gate is frozen AFTER the Phase 3 route design, which the campaign instruction required to report each route's resulting bound and slack. Everything known at freeze is listed here so that no reader has to reconstruct what was visible when the classes were written.",
+  "critical_A0_bisected": {"308": "4.375228833136", "309": "3.214236022678", "306": null, "307": null},
+  "route_L_bounds": {"306": 3.959880291, "307": 3.734070431, "308": 3.512733596, "309": 3.297250282},
+  "route_L_Gamma_at_bound": {"306": -0.143881163, "307": -0.092985288, "308": -0.040467543, "309": 0.004661130},
+  "expected_class": "PARTIAL — cell 309 excluded, cell 308 not; 306 and 307 outside the count because A0 is not their blocker",
+  "diagnostic_true_E_a_tau_at_midpoints": {"306": 4.72993, "307": 4.44449, "308": 4.17430, "309": 3.92079},
+  "diagnostic_status": "measured, not asserted; candidate values read from committed artifacts, not certified bounds; no gate class, test or conclusion depends on them",
+  "what_the_disclosure_does_not_excuse": "the classes, the exclusion test and the permitted conclusions are written to be mechanical. If a reader judges any of them fitted to the expected class, that is a finding against C4 and the reviewer is asked for it explicitly."
+ },
+
+ "refusals": [
+  "no class, threshold, definition or permitted conclusion in this gate may be amended after freeze; an error is recorded in an erratum, as C3 did",
+  "no cell may be excluded on a bound certified outside its own closed cell",
+  "no cell may be excluded on a bound produced by a forbidden operation",
+  "the campaign may not report exhaustion for a family wider than the admissible family defined above",
+  "the campaign may not report K5 closed, adopt a cell, or authorize the R-stage under any outcome"
+ ]
+}
