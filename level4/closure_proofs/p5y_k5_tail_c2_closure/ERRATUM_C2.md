@@ -18,6 +18,7 @@ count. Counts belong in the tables of this document and of `README.md`, not in p
 | r9 | `5609358f` | 3 FAIL | § "Dispositions from the NINTH pre-freeze review" |
 | r10 | `575919cb` | 3 FAIL | § "Dispositions from the TENTH pre-freeze review" |
 | r11 | `87004e2b` | 2 FAIL | § "Dispositions from the ELEVENTH pre-freeze review" |
+| r12 | `6aa2040a` | 2 FAIL | § "Dispositions from the TWELFTH pre-freeze review" |
 
 **The result has never moved.** In every round so far, no Γ, magnitude, margin, requirement, gap fall, class or
 adopted-subset value has changed: the class is `D_PARTIAL`, the closed subset is {305, 306}, and the frozen gate
@@ -46,7 +47,9 @@ it, with the loop in `git log --reverse --all -- <file>` diffing consecutive rev
 **19 leaves, three files.** The first version of this ledger listed 15 and claimed to list every one; it omitted
 `C2_MUTATIONS.json` entirely (r11 FAIL 1). Of the 19, **nine** are the scientific correction, **four** are the
 adversarial suite's own counts after it was extended at r1's request, and **six** are free text and wall-clock
-timings. No certified constant, Γ, magnitude, requirement or gap fall appears anywhere in this table.
+timings. **No value of a certified operator constant, of Γ, of a cell magnitude, of a required reduction or of a
+gap fall was replaced.** (The D1 row names a field called `magnitude`; it is the magnitude of a *sensitivity probe*
+at a perturbed C_T, not a cell's magnitude, and its cell magnitudes are untouched — r12 S3.)
 
 `C2_RECERTIFY_306.json` has therefore been regenerated after a review **twice**, not once. A previous version of
 this section recorded only the second, because C2 took r9's premise — "the one place where the campaign rewrote
@@ -188,7 +191,7 @@ on any R-stage authorization.
 ## Dispositions from the SECOND pre-freeze review
 
 A second independent fresh-context review ran on the repairs at `ef58310c`
-(`review/REVIEW_C2_PREFREEZE_R2.md`): 71 rows, 55 PASS, 5 NOTE, 3 INFO, **3 FAIL**. It confirmed every repair
+(`review/REVIEW_C2_PREFREEZE_R2.md`): **3 FAIL**. It confirmed every repair
 above independently — including re-certifying cell 306 artifacts on the Arb/FLINT stack, which neither earlier
 reviewer could do — and it found that on the one point where C2 corrected the *first* reviewer (the ×0.9
 convention and the D_lo-vs-τ ordering), **C2 was right**. Its three FAILs:
@@ -210,8 +213,7 @@ certification inequality. That wording is withdrawn here.
 
 ## Dispositions from the THIRD pre-freeze review
 
-A third focused review ran on the r2 repairs at `55c4cf00` (`review/REVIEW_C2_PREFREEZE_R3.md`): 39 rows, 31 PASS,
-7 NOTE, **1 FAIL**. It re-ran all three producers and confirmed each reproduces **byte-for-byte**, verified the
+A third focused review ran on the r2 repairs at `55c4cf00` (`review/REVIEW_C2_PREFREEZE_R3.md`): **1 FAIL**. It re-ran all three producers and confirmed each reproduces **byte-for-byte**, verified the
 leaf-level diff of the regenerated D1 evidence is exactly twelve values, and confirmed both rewritten
 `DIAGNOSTIC_NOTE` claims against `taboo_certify.py` source.
 
@@ -241,7 +243,7 @@ obtained incidentally. It is recorded here because it strengthens the FAIL 51 di
 
 ## Dispositions from the FOURTH pre-freeze review
 
-`review/REVIEW_C2_PREFREEZE_R4.md`, at `17123368`: 36 rows, 28 PASS, 5 NOTE, **3 FAIL**. It verified both claims
+`review/REVIEW_C2_PREFREEZE_R4.md`, at `17123368`: **3 FAIL**. It verified both claims
 C2 had checked at source, confirmed all three producers reproduce byte-for-byte, re-certified cell-306 artifacts
 on FLINT at both precisions, and stress-tested the "nearly exhausted" reading harder than r3 had — recomputing at
 a common admissible cut and at the marginal slope, specifically hunting the refutation that it is an artifact of
@@ -265,7 +267,7 @@ but it supports finding 3, not the C_T headroom claim it was attached to.
 
 ## Dispositions from the FIFTH pre-freeze review
 
-`review/REVIEW_C2_PREFREEZE_R5.md`, at `1663f558`: 34 rows, 27 PASS, 5 NOTE, **2 FAIL**. Both text-only, and both
+`review/REVIEW_C2_PREFREEZE_R5.md`, at `1663f558`: **2 FAIL**. Both text-only, and both
 the documented shape again. It also did something no earlier round did: diffed **every leaf of
 `C2_D1_BLOCKER.json` across its entire commit history**, confirming that exactly nine leaves of that artifact have ever changed in
 this campaign, all of them C_T sensitivity on cells 307–309.
@@ -290,7 +292,7 @@ correction.**
 
 ## Dispositions from the SIXTH pre-freeze review
 
-`review/REVIEW_C2_PREFREEZE_R6.md`, at `ec5b08ca`: 33 rows, 27 PASS, 5 NOTE, **1 FAIL**. It independently
+`review/REVIEW_C2_PREFREEZE_R6.md`, at `ec5b08ca`: **1 FAIL**. It independently
 re-derived the gap falls (0.462852 / 0.245931 / 0.183898) and confirmed `D_PARTIAL` with closed = {305, 306} is
 mechanical under the frozen gate; ran its own leaf diff across **all four commits** that have ever touched
 `C2_D1_BLOCKER.json`, confirming exactly nine leaves have ever had a value replaced; verified that `5a94568a`'s
@@ -316,7 +318,7 @@ and r5 FAIL 2 rather than a softening of them.
 
 ## Dispositions from the SEVENTH pre-freeze review
 
-`review/REVIEW_C2_PREFREEZE_R7.md`, at `5a098ec6`: 41 rows, 33 PASS, 6 NOTE, **2 FAIL**. It re-derived the D-stage
+`review/REVIEW_C2_PREFREEZE_R7.md`, at `5a098ec6`: **2 FAIL**. It re-derived the D-stage
 result independently (gap falls 0.462852 / 0.245931 / 0.183898, `classify()` a faithful transcription of the frozen
 gate), re-certified five artifacts across cells 305/306/309 on the Arb/FLINT stack itself — bit-identical at 256
 bits, safe-side-valid at 384 — reproduced the mixed-operator supply's 57.27 / 30.57 / 23.03 % and its whole-cell
@@ -336,7 +338,7 @@ produced an unsupported load-bearing sentence — and the register below now tra
 
 ## Dispositions from the EIGHTH pre-freeze review
 
-`review/REVIEW_C2_PREFREEZE_R8.md`, at `07c0b991`: 38 rows, 32 PASS, 8 NOTE, **3 FAIL**. It re-verified the science
+`review/REVIEW_C2_PREFREEZE_R8.md`, at `07c0b991`: **3 FAIL**. It re-verified the science
 cold — all three producers byte-for-byte, the class and closed subset, the gap falls, both Γ, the gate at one
 commit, `REGISTRY_C2.json`'s 50 key paths carrying no host field — and confirmed the rescoped recount and the
 cited `cpu_seconds` corroboration (90.248 / 88.257) from the artifacts.
@@ -349,7 +351,7 @@ cited `cpu_seconds` corroboration (90.248 / 88.257) from the artifacts.
 
 ## Dispositions from the NINTH pre-freeze review
 
-`review/REVIEW_C2_PREFREEZE_R9.md`, at `5609358f`: 37 rows, 33 PASS, 1 PARTIAL, **3 FAIL**. It reproduced the
+`review/REVIEW_C2_PREFREEZE_R9.md`, at `5609358f`: **3 FAIL**. It reproduced the
 regeneration accounting independently — 1224 leaves both sides, 0 added, 0 removed, exactly 3 replaced, every
 certified value bit-identical — and confirmed the science, the gate and the integrity envelope.
 
@@ -361,12 +363,12 @@ certified value bit-identical — and confirmed the science, the gate and the in
 
 **On r9's judgement of the r8 deviation.** The review found that overriding its own recommendation — regenerating
 the artifact instead of disclosing around it — was **right**, and that the execution was merely unfinished: "Keep
-the regeneration and finish it — do not reverse it." It is finished here. That is the one place in nine rounds
-where C2 departed from a reviewer's explicit instruction, and the departure held up.
+the regeneration and finish it — do not reverse it." It is finished here. It is the only occasion on which C2 has
+departed from a reviewer's explicit instruction, and the departure held up.
 
 ## Dispositions from the TENTH pre-freeze review
 
-`review/REVIEW_C2_PREFREEZE_R10.md`, at `575919cb`: 36 rows, 31 PASS, 1 PARTIAL, 1 NOTE, **3 FAIL**. All three are
+`review/REVIEW_C2_PREFREEZE_R10.md`, at `575919cb`: **3 FAIL**. All three are
 the same class, and all three are claims C2 asserted **over a corpus without running the check**.
 
 | | finding | repair |
@@ -385,22 +387,44 @@ narrowed to the corroboration r2 identified, since C2 cannot establish it is the
 
 ## Dispositions from the ELEVENTH pre-freeze review
 
-`review/REVIEW_C2_PREFREEZE_R11.md`, at `87004e2b`: 36 rows, 30 PASS, 1 PARTIAL, 3 NOTE, **2 FAIL**. It rebuilt
+`review/REVIEW_C2_PREFREEZE_R11.md`, at `87004e2b`: **2 FAIL**. It rebuilt
 the replacement ledger itself over every committed evidence and config file, and separately verified ten corpus
 claims sound and listed them so a later round need not re-derive them.
 
 | | finding | repair |
 |---|---|---|
 | **r11 FAIL 1** | The replacement ledger — the instrument built the previous round *to be* the complete provenance accounting — was **incomplete**. Its scope sentence claimed every replaced leaf; it omitted `evidence/prefreeze/C2_MUTATIONS.json` (`5a94568a → 12585997`, four leaves: `applied` 33 → 43, `detected` 31 → 40, `real_mutants` 25 → 35, `M10.caught_by[0]`). C2 had rebuilt the ledger over the two files it already knew about rather than over the corpus its own sentence named. | The ledger is rebuilt over **every** committed file under `evidence/` and `config/` and now carries all **19** leaves across **three** files, with the breakdown: nine scientific, four suite counts, six free text and timings. |
-| **r11 FAIL 2** | The repair introduced a new instance of the very class it was closing: `87004e2b` added "four independent reviews (r5, r6, r7, r8)" to the README while this document asserted "every hand-maintained tally has been deleted from prose … and prose does not". Compliance claimed, counts present. | **Both compliance clauses are deleted.** C2 has now twice written a sentence claiming its prose carries no counts, and both times the claim was false while sitting beside counts. No such claim is made any more: where prose states a number it should simply be right, and be checked before it is written. The accurate counts themselves are kept. |
+| **r11 FAIL 2** | The repair introduced a new instance of the very class it was closing: `87004e2b` added "four independent reviews (r5, r6, r7, r8)" to the README while this document asserted "every hand-maintained tally has been deleted from prose … and prose does not". Compliance claimed, counts present. | The compliance clauses are deleted. *(The first repair removed one of the two and recorded both as gone — r12 FAIL 1. The second survived verbatim for a further round and is deleted now.)* C2 has written a sentence claiming its prose carries no counts three times, and each time the claim was false while sitting beside counts. No such claim is made any more: where prose states a number it should simply be right, and be checked before it is written. The accurate counts themselves are kept. |
 
 Also acted on: "exactly nine leaves have ever changed in this campaign" was true of `C2_D1_BLOCKER.json` and false
 campaign-wide, where the figure is 19. Both occurrences are now scoped to the artifact.
 
+## Dispositions from the TWELFTH pre-freeze review
+
+`review/REVIEW_C2_PREFREEZE_R12.md`, at `6aa2040a`: **2 FAIL**. It rebuilt the replacement ledger independently
+over all 115 committed files under `evidence/` and `config/`, taking no file list from C2, and confirmed
+**19 leaves / three files / 9 + 4 + 6 correct in every cell, with nothing missing** — r11 FAIL 1 fully repaired.
+It also listed all seven surviving instances of the corpus-claim class rather than leaving any for a later round,
+and disclosed that its own first draft of its verdict table was hand-tallied and wrong, which it re-extracted
+mechanically before finishing — the same hazard it was auditing.
+
+| | finding | repair |
+|---|---|---|
+| **r12 FAIL 1** | r11 named **two** compliance clauses. C2 deleted one, deleted a trailing fragment of a neighbouring sentence, and recorded both as gone. The second survived **verbatim** ("…prose does not") for a further round, in a document whose disposition row asserted "Both compliance clauses are deleted. … No such claim is made any more." | The surviving clause is deleted and the row rewritten to record that the first repair was partial. |
+| **r12 FAIL 2** | The new README provenance paragraph did not reconcile: "Nineteen leaves … exactly **one** of them is a scientific value … **Four** are … **six** are" — 1 + 4 + 6 = 11, not 19, and the "one" scientific correction is **nine** leaves. It contradicted this document eight sections away, in the front-door file. | Rewritten as 9 + 4 + 6 = 19, with the nine named as the one scientific correction. |
+
+Its NOTE-level findings are acted on rather than deferred: the claim that no "magnitude" appears in the ledger
+table is now stated as a claim about **values** (the D1 row does name a field called `magnitude`, but it is a
+sensitivity probe's magnitude at a perturbed C_T, not a cell's); "the one place in nine rounds" no longer carries a
+round count; and **every transcribed per-review PASS/NOTE/INFO sub-count has been stripped from this document**.
+That last is the r5 FAIL 2 lesson finally applied consistently — C2 had re-introduced the habit in six disposition
+headers, and r12 caught that the r11 header copied a self-report that does not reconcile with r11's own checklist
+(31/1/2/2 against a stated 30/1/3/2). Only FAIL counts remain, because those reconcile against the rows below.
+
 ## The pattern, named
 
 **Every one of C2's repair rounds has carried an error of its own.** The two registers below are where this
-campaign tallies its own defects; prose does not. Hand-maintained counts in prose are themselves one of the recurring defects — several of the
+campaign tallies its own defects. Hand-maintained counts in prose are themselves one of the recurring defects — several of the
 instances below are a number left stale by a later edit.
 
 
@@ -428,6 +452,8 @@ instances below are a number left stale by a later edit.
 | 9 | corrected the verifier attribution | named r9, which had not done the diff; four other rounds had | r10 FAIL 1 |
 | 10 | built the replacement ledger to be complete | rebuilt it over the two files C2 already knew of, not the corpus its own sentence named | r11 FAIL 1 |
 | 10 | applied the cite-don't-describe rule | added a new prose count in the same commit as a clause claiming none remained | r11 FAIL 2 |
+| 11 | deleted the compliance clauses r11 named | deleted one of two and recorded both as gone | r12 FAIL 1 |
+| 11 | summarised the completed ledger in the README | wrote a breakdown summing to 11 of 19 | r12 FAIL 2 |
 
 A separate register, for a different failure — a review note received and then never actioned, rather than
 decoration added:
