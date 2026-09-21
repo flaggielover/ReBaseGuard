@@ -1,0 +1,22 @@
+{
+ "command_refusal": "python3 -B code/c2_protocol.py check --protocol config/C2_PROTOCOL.json --expect-bound",
+ "command_tamper": "c2_protocol.py check against a protocol with one evidence pin overwritten",
+ "protocol_sha256": "ea1ff50a4be4be058aae42d9b249c2df148b995727b5ca6913e6e72a92ef3b73",
+ "purpose": "demonstrates that the lifecycle refuses to run as frozen production while the protocol is UNBOUND, and that a single altered pin is caught",
+ "refusal_exit_code": 1,
+ "refusal_result": {
+  "expect_bound": true,
+  "pass": false,
+  "problems": [
+   "REFUSED: protocol is not bound to a freeze commit; evidence/freeze/C2_FREEZE_RECORD.json must bind it before frozen production may run"
+  ],
+  "protocol_sha256": "ea1ff50a4be4be058aae42d9b249c2df148b995727b5ca6913e6e72a92ef3b73"
+ },
+ "schema": "rebaseguard.p5y.k5.tail-c2.prefreeze-refusal.v1",
+ "tamper_result": {
+  "pass": false,
+  "problems": [
+   "pin mismatch: evidence/phase_d5/C2_D5_FORECAST.json"
+  ]
+ }
+}
