@@ -44,8 +44,16 @@ Against the frozen gate's criteria, in order:
 2. **Does it affect the load-bearing blocker?** It attacks the transport constant, the only ingredient of
    `Gamma = g_hi + rho·x_hi·M` other than `M` that is not sealed record or cover geometry.
 3. **Certified scope** — whole-cell, from two already-certified inputs.
-4. **Independence** — it consumes no registry constant, no candidate polynomial, no Arb certificate and no atom
-   constant. It is independent of every surface C2, C3 and C4 argued about.
+4. **Independence — narrowed after adjudication (condition 4).** The *mechanism* consumes no registry constant,
+   no candidate polynomial, no Arb certificate and no atom constant, and the *improvement factor* is independent
+   of all of them: when the negative end of the enclosure binds it collapses to `(x_hi − rho/2)/x_hi`, pure cell
+   geometry (at 309: `(2.092283 − 0.027093)/2.092283 = 0.9870509`, i.e. the reported 1.294912 %).
+   **But every reported `Gamma_C5T`, every `M_factor_needed` and the whole `c4_exclusion_fragility` block are
+   NOT independent**: they are evaluated at the atom tuple `A` drawn from `REGISTRY_C1` / `REGISTRY_C2`, the
+   supply that rests on the Arb/FLINT `taboo_certify` surface whose independent certification has never been
+   written (C2 notes N9/N10, undischarged). C5 adds no new dependence and runs no Arb operation, so its exposure
+   is exactly C2's, C3's and C4's — but the earlier claim of independence "from every surface C2, C3 and C4
+   argued about" was true of the mechanism and false of the numbers.
 5. **Closure or exhaustion value** — it closes nothing, and it carries a constructive exhaustion result.
 6. **Robustness** — exact rationals throughout; no float reaches a load-bearing comparison.
 7/8. **Complexity and runtime** — a dozen lines and milliseconds.
@@ -53,6 +61,17 @@ Against the frozen gate's criteria, in order:
 It was selected because it is **the only route in the ledger with every input already certified**. That is not a
 recommendation of its power; routes B1 (cover refinement) and E1 (operator certification of `A0`) are far more
 powerful and are blocked on permissions and on a missing toolchain, not on mathematics.
+
+## Where C5-T does NOT apply — adjudicator condition 3
+
+C5-T's premise `x_lo > 0` is used three times in the proof and fails at exactly **two of the 642 cells** in the
+committed cover: **cell 0 of the CUSUM cover and cell 0 of the SR cover**, both of which have `left = 0`, hence
+`x_lo = 0` exactly. `c5_transport.weights` refuses both (verified: *"theorem C5-T needs the whole cell in e > 0
+(it integrates t, not |t|)"*).
+
+**So C5-T is not a blanket replacement of the K5-B direct clause.** It supersedes `rho·x_hi·M` on every cell with
+`x_lo > 0`; at cell 0 of either cover the frozen clause remains authoritative. This matters concretely rather than
+hypothetically: cell 0 is the one cell the single real order-3 probe closed.
 
 ## What C5-T does not do
 

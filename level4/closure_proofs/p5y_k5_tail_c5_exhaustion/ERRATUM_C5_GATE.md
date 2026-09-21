@@ -114,3 +114,57 @@ round-3 reviewer found it, exactly as C4's round found two "Fixed at source" cla
 and not the others. The repair is now verified in both places by the commit that carries this sentence. The
 lesson C4 recorded and C5 failed to apply: **grep for the withdrawn string across the namespace before writing
 that a withdrawal landed.**
+
+## E8 — the forecast was committed against a clearance that was not in committed evidence
+
+**This is the fourth instance in this campaign line of a repair or a state recorded as landed when it had not,
+and the first at the governance layer.**
+
+The commit that produced `evidence/forecast/C5_FORECAST.json` (`8b2be7ab`) asserts in its message:
+
+> "pre-forecast review READY at round 3 … Three rounds of fresh-context review … the reviewer's terminating
+> condition met … It re-ran its own attacks and none survived."
+
+All of that is **true of what happened** — the round-3 reviewer did return `READY_TO_FORECAST_WITH_NOTES`, did
+re-run its own attacks, and did record that none survived. But **the round-3 report was never committed.** The
+file at `review/REVIEW_C5_PREFORECAST.md` at that commit was the **round-2** report, headed "ROUND 2", recording
+two blocking FAILs and ending `HANDOVER: NOT_READY`. The frozen gate requires "0 blocking FAIL" before the
+forecast is evaluated and says "file existence is not completion". So the forecast stands on a clearance that an
+auditor reading the tree could not find, and on a commit message asserting one. Found by the independent
+adjudicator, not by C5.
+
+**Repair.** The round-3 report is now committed as `review/REVIEW_C5_PREFORECAST_R3.md` (the round-2 report is
+retained alongside as `..._R2.md`, because a campaign that discards the report that failed it is hiding the
+useful half). Both are in the tree; both handovers are machine-read by the self-check below.
+
+**Why the previous three responses were inadequate.** Each of the first three instances was answered with a note
+to the author — C4's Condition 2, then C5's E7 with its "grep before you claim" lesson. The lesson was written
+into E7 and the pattern recurred **in the very commit that recorded it**. Notes to the author have a demonstrated
+failure rate of 100 % in this line.
+
+**The mechanical replacement (adjudicator condition 6).** `code/c5_selfcheck.py` refuses rather than reports:
+
+1. every string in a machine-readable `withdrawn_strings` table must appear only inside a sentence that withdraws
+   it, across every tracked `.md`, `.json` and `.py` in the namespace;
+2. a forecast artifact may exist only if a reviewer artifact **in the tree** carries a clearing handover;
+3. every path the README advertises must exist.
+
+It is not decoration: on its first run it failed, catching a README that still advertised the pre-split review
+filename — a staleness introduced minutes earlier, by this same repair.
+
+## E9 — what was corrected after adjudication, and what was deliberately not
+
+The adjudicator's eleven conditions bind **successor** campaigns. Two classes were nonetheless actionable now,
+and they were treated differently on purpose:
+
+* **Documents were corrected.** `phase_6/C5_SELECTED_MECHANISM.md` now records the `x_lo > 0` domain exception
+  (condition 3 — verified independently: exactly **2 of the 642** committed cover cells fail it, cell 0 of the
+  CUSUM cover and cell 0 of the SR cover, both with `left = 0`, and `c5_transport` refuses both) and the narrowed
+  independence claim (condition 4 — the mechanism and the improvement factor are surface-independent; every
+  `Gamma_C5T`, every `M_factor_needed` and the whole fragility block are not).
+* **Adjudicated evidence was NOT regenerated.** Conditions 7 and 8 would have changed
+  `evidence/ledger/C5_ROUTE_LEDGER.json` and `evidence/forecast/C5_FORECAST.json`, whose exact bytes the
+  adjudicator verified (`C5_FORECAST.json` sha256 `69cceb89…`). Both edits were made, both were then **reverted**,
+  and the artifacts are byte-identical to what was adjudicated. The substance is carried in
+  `OPEN_NOTES_DISPOSITION_C5.md` instead. Regenerating an artifact after it has been adjudicated, to add caveats
+  the adjudication itself supplies, would destroy the reproducibility of the thing adjudicated for no gain.

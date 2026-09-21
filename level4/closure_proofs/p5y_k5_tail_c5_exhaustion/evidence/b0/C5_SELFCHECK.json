@@ -1,0 +1,29 @@
+{
+ "SELFCHECK": "PASS",
+ "blocking": [
+  "REVIEW_C5_PREFORECAST_R2.md"
+ ],
+ "checks": {
+  "a_no_live_withdrawn_string": true,
+  "b_forecast_has_a_clearing_review_in_the_tree": true,
+  "c_readme_advertises_only_existing_paths": true
+ },
+ "clearing": [
+  "REVIEW_C5_PREFORECAST_R3.md"
+ ],
+ "files_scanned": 26,
+ "findings": [],
+ "forecast_artifacts": [
+  "C5_FORECAST.json"
+ ],
+ "review_handovers_in_tree": {
+  "REVIEW_C5_PREFORECAST_R2.md": "HANDOVER: NOT_READY",
+  "REVIEW_C5_PREFORECAST_R3.md": "HANDOVER: READY_TO_FORECAST_WITH_NOTES"
+ },
+ "schema": "rebaseguard.p5y.k5.tail-c5.selfcheck.v1",
+ "why": "four instances in this line of a repair or state recorded as landed when it had not; this refuses instead of noting",
+ "withdrawn_strings": {
+  "provably useless for 309": "withdrawn in the route ledger (E1): it leaned on the C4 exclusion, which under C5-T retains only 0.94% of critical-A0 margin",
+  "zero verdict value": "withdrawn in the route ledger (E2): written in the same commit in which C5-T consumed 63% of the margin it claimed needed no defence"
+ }
+}

@@ -19,9 +19,11 @@ C5 modifies neither and reconciles neither, and every audit here names which one
 | 6 selected mechanism | `code/c5_transport.py` (theorem C5-T) |
 | 7 frozen gate | `config/FEASIBILITY_GATES_C5.json` |
 | 8 mutation suite | `evidence/mutations/C5_MUTATIONS.json` |
-| 9 pre-forecast review | `review/REVIEW_C5_PREFORECAST.md` |
+| 9 pre-forecast review | `review/REVIEW_C5_PREFORECAST_R2.md` (NOT_READY), `review/REVIEW_C5_PREFORECAST_R3.md` (the clearance) |
 | 10 forecast | `evidence/forecast/C5_FORECAST.json` |
-| 12 adjudication | `evidence/adjudication/C5_ADJUDICATION.md` |
+| 12 adjudication | `evidence/adjudication/C5_ADJUDICATION.md` — ACCEPTED_WITH_SCOPE_LIMITATION, adopted set [] |
+
+Post-adjudication corrections are in `ERRATUM_C5_GATE.md` (E1–E9) and `OPEN_NOTES_DISPOSITION_C5.md`.
 
 ## What C5 found, in one paragraph
 
