@@ -1,0 +1,117 @@
+{
+ "schema": "rebaseguard.p5y.k5.tail-c5.feasibility-gate.v1",
+ "campaign": "P5Y/K5 tail Campaign C5 — order-3-surrogate / rho deterministic exhaustion",
+
+ "predecessor": {
+  "branch": "p5y-k5-tail-c4",
+  "head": "e12a09e8bb742726e2ca7af42e163c455915bb7d",
+  "c4_verdict": "ACCEPTED_WITH_SCOPE_LIMITATION",
+  "c4_excluded_cells": [309],
+  "c4_adjudication_sha256": "5bd5d7b3f5e574b3895e079b8493756073967fe0837f8e4282a1a79bdb5d3788",
+  "authoritative_coverage_map": "r5",
+  "coverage_map_r5_sha256": "e2197051e493df898295a692c580ed676e771f7dfae5a1675d8d8e9b979f684c",
+  "coverage_map_r4_sha256": "a3bddd83234f33983e07b005b4686a5f3971264bb6bdd64d2c639339de210a35",
+  "LOCAL_MAIN_REF": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+  "REMOTE_MAIN_REF": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+  "main_ref_note": "these are DIFFERENT refs and are recorded separately on purpose. C5 modifies neither and reconciles neither. Any audit naming 'main' must say which one it means."
+ },
+
+ "universe": {"cells": [306, 307, 308, 309], "detector": "CUSUM", "m": 5,
+  "note": "the m = 5 open set of coverage map r5. C5 changes no coverage map unless a cell is formally adopted."},
+
+ "baseline": {
+  "authority": "coverage map r5 and the frozen K5-B direct clause as consumed at the C4 head",
+  "clause": "Gamma = g_hi + rho * x_hi * M  <  0, with g_hi = R.hi - e0 * D.lo",
+  "Gamma": {"306": -0.036197780, "307": 0.026354631, "308": 0.094564145, "309": 0.153019689},
+  "M_reduction_factor_needed": {"306": 0.880410, "307": 1.097020, "308": 1.386140, "309": 1.685190},
+  "note": "every improvement percentage in C5 is measured against THIS baseline unless another is named explicitly"
+ },
+
+ "deterministic_family_under_test": {
+  "name": "the K5-B midpoint-to-cell transport family",
+  "definition": "every bound on max_{e in cell} g(e) derivable from exactly two certified inputs: (i) an upper bound g_hi on g(e0), and (ii) a whole-cell enclosure [H_lo, H_hi] of R'' -- given that the cell lies in e > 0 and g'(e) = -e R''(e)",
+  "covers": ["the frozen clause's rho * x_hi * M", "theorem C5-T's exact-weight sign-aware penalty", "any other transport using only those two inputs"],
+  "does_not_cover": ["anything that improves g_hi itself", "anything that improves the R'' enclosure (that is the atom-constant / surrogate / rho work)", "a transport that consumes a third certified input, e.g. a midpoint enclosure of R'' or any bound on R'''"]
+ },
+
+ "compute_policy": {
+  "new_real_scientific_addresses_authorized": 0,
+  "kernel_evaluations_authorized": 0,
+  "operator_certifications_authorized": 0,
+  "remote_hosts_contacted": "none. AWS SR/PS1 must not be contacted; no compute worker may be used.",
+  "permitted": "exact rational arithmetic on committed artifacts; deterministic re-evaluation of the frozen consumers at chosen inputs; local mutation and manufactured tests; clearly-labelled local diagnostics",
+  "forbidden": ["Order3Certifier real evaluations", "R-stage computation of any kind", "new K1 numerical cells", "new CUSUM or SR/PS1 scientific addresses", "any Arb / python-flint certification run", "AWS or Vultr scientific computation", "any new expensive numerical probe"],
+  "refusal": "a route needing a forbidden operation is INADMISSIBLE for C5 whatever its gain, and is recorded in the ledger as a future route rather than pursued"
+ },
+
+ "closure_criterion": "a cell CLOSES iff Gamma < 0 under the selected clause, evaluated exactly in rationals",
+
+ "material_tightening_test": {
+  "metric": "the fall in the gap above 1 of the M-reduction factor still needed, against the baseline above",
+  "threshold": 0.20,
+  "inherited_from": "the C2 gate's 20% gap-fall threshold, carried unchanged through C3",
+  "note": "deliberately inherited rather than chosen, so that C5 cannot set a bar its own known result would clear"
+ },
+
+ "exhaustion_criterion": {
+  "statement": "a deterministic family is EXHAUSTED only if the campaign exhibits an ADMISSIBLE member of the family's input set that ATTAINS the proposed bound, so that no member can do better",
+  "not_sufficient": "showing that the campaign's own implementation cannot improve further",
+  "scope_rule": "an exhaustion verdict must name the exact family, the exact certified inputs it is relative to, and the cells and m it applies to; a family exhaustion is never deterministic exhaustion of the cell"
+ },
+
+ "classification": {
+  "primary_order": ["INVALID", "FULL_CLOSURE", "PARTIAL_CLOSURE", "MATERIAL_TIGHTENING", "MARGINAL", "INCONCLUSIVE"],
+  "INVALID": "a premise of the selected theorem is unsatisfied, a domain is violated, or a guard refuses",
+  "FULL_CLOSURE": "every cell of the universe closes",
+  "PARTIAL_CLOSURE": "at least one previously open cell closes",
+  "MATERIAL_TIGHTENING": "no new closure, but every still-open cell's gap falls by at least the threshold",
+  "MARGINAL": "a certified tightening that does not reach the threshold on every still-open cell",
+  "INCONCLUSIVE": "no certified tightening at all",
+  "exhaustion_is_separate": "the exhaustion verdict is recorded in its own field, EXHAUSTED / NOT_EXHAUSTED, against the exhaustion_criterion above, and does NOT change the primary class"
+ },
+
+ "permitted_conclusions": {
+  "any_class": [
+   "C5 adopts no cell and creates no coverage map revision unless the independent adjudicator formally adopts a cell as CLOSED",
+   "the guard stays DENY and NEW_REAL_SCIENTIFIC_ADDRESSES stays 0",
+   "NO VERDICT FROM C5 AUTHORIZES REAL R-STAGE EXECUTION. At most C5 may establish a prerequisite that a later, separately governed campaign can use.",
+   "a family exhaustion result may never be restated as deterministic exhaustion of a cell, of the tail, or of K5"
+  ],
+  "MARGINAL": [
+   "the tightening may be reported as certified and adopted into the authoritative clause, since a strictly tighter valid bound supersedes a looser one",
+   "the campaign must state plainly that it closes nothing and name what would"
+  ],
+  "if_a_predecessor_result_is_affected": [
+   "if the selected clause changes the value of a quantity a PREDECESSOR adjudication relied on, C5 must recompute that predecessor's load-bearing test under the new clause and report whether it still holds",
+   "if it no longer holds, that is a HARD STOP and must be reported, not absorbed"
+  ]
+ },
+
+ "r6_rule": "C5 may create coverage map r6 only if the independent adjudicator formally adopts one or more previously open cells as CLOSED. A tightened bound, a superseded clause and a family exhaustion are each insufficient. If the adopted set is empty, r5 remains authoritative.",
+
+ "review_and_adjudication": {
+  "pre_forecast_review": "a fresh-context reviewer must clear items A-L of the campaign instruction before the final forecast is evaluated against this gate; 0 blocking FAIL required",
+  "adjudication": "a fresh-context adjudicator must answer the campaign instruction's fifteen questions and hand over explicitly",
+  "handover": "file existence is not completion; no reviewer or adjudicator output may be consumed before its explicit handover"
+ },
+
+ "prior_evidence_known_at_freeze": {
+  "disclosure": "this gate is frozen AFTER phases 1-5, which the campaign instruction required to search routes broadly and to derive a cheap upper bound on each route's benefit before investing. Everything known at freeze is listed so that no reader must reconstruct it.",
+  "selected_route": "D1, theorem C5-T, the exact-weight sign-aware transport",
+  "C5T_penalty_improvement_percent": {"306": 1.211, "307": 1.246, "308": 1.279, "309": 1.295},
+  "C5T_Gamma": {"306": -0.039425934, "307": 0.022641576, "308": 0.090222449, "309": 0.148146343},
+  "expected_primary_class": "MARGINAL — a certified tightening of about 1.2-1.3% of the penalty, far below the inherited 20% threshold, closing no cell",
+  "expected_exhaustion_verdict": "EXHAUSTED for the transport family named above, by a constructive attainment argument",
+  "known_effect_on_C4": "under C5-T the C4 exclusion test at cell 309 falls from Gamma = +0.004661130 to +0.001708896, retaining about 36.7% of its margin. It is expected to HOLD, and the gate requires this to be recomputed and reported either way.",
+  "diagnostic_status": "the kill gates and the Lambda floors are DIAGNOSTIC: the sensitivity sweeps align the independent TC-T crosscheck to the frozen path, and the Lambda values are uncertified Monte-Carlo. No gate class, criterion or conclusion consumes them.",
+  "what_the_disclosure_does_not_excuse": "the classes, the thresholds and the exhaustion criterion are written to be mechanical and the tightening threshold is inherited unchanged. If a reader judges any of them fitted to the expected result, that is a finding against C5 and the reviewer is asked for it explicitly."
+ },
+
+ "refusals": [
+  "no class, threshold, criterion or permitted conclusion may be amended after freeze; an error is recorded in an erratum",
+  "no cell may be reported closed on a clause whose premises are not verified for that cell",
+  "no route may be pursued that requires a forbidden operation, whatever its gain",
+  "C5 may not report K5 closed or complete, adopt a cell, create r6, or authorize the R-stage under any outcome",
+  "C5 may not restate a family exhaustion as broader deterministic exhaustion"
+ ]
+}
