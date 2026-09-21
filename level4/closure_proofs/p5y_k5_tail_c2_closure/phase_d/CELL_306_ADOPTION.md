@@ -44,7 +44,8 @@ the worker records only the registry summary. So what the evidence establishes o
 genuinely second host": **the re-certification host is fully recorded, and the artifacts it re-certified reproduce
 on it bit-identically.** That the *build* host differed rests on C2's report, not on an artifact.
 
-The one piece of in-repo corroboration is weak but real, and it was r2 that found it rather than C2: the committed
+One piece of in-repo corroboration is weak but real, and it was r2 that found it rather than C2 — C2 does not
+claim it is the only such corroboration, only that it is the one identified: the committed
 artifacts record `cpu_seconds` of 90.2 (block 306_02) and 88.3 (block 305_00), where the same certifications took
 56.2 s and 66.1 s on the re-certifying host — consistent with a different and slower machine, and not something the
 re-certifying host could have produced. A successor that wants this properly evidenced should have the registry

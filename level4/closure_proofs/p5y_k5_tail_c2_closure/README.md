@@ -46,6 +46,7 @@ Each predecessor lost its campaign to a gate defect, and C2's gate is written ag
 | independent pre-freeze review r7 | `review/REVIEW_C2_PREFREEZE_R7.md` | NOT_READY — **2 FAIL** |
 | independent pre-freeze review r8 | `review/REVIEW_C2_PREFREEZE_R8.md` | NOT_READY — **3 FAIL** |
 | independent pre-freeze review r9 | `review/REVIEW_C2_PREFREEZE_R9.md` | NOT_READY — **3 FAIL** |
+| independent pre-freeze review r10 | `review/REVIEW_C2_PREFREEZE_R10.md` | NOT_READY — **3 FAIL** |
 | erratum and review disposition | `ERRATUM_C2.md` | every FAIL from every round dispositioned |
 
 *FAIL counts only. Each review's PASS/NOTE/INFO breakdown is in its own file and is deliberately not transcribed
@@ -87,11 +88,13 @@ tally are in `ERRATUM_C2.md` §"The pattern, named".
 
 One published **scientific value** has changed as a result: the C_T sensitivity row for cells 307/308/309 of the
 D1 diagnosis, corrected to the admissible perturbation. One published **table** was separately corrected against
-evidence that never changed — D1 §1's ranking of the three negligible blocker terms. Separately, a later repair
-regenerated `C2_RECERTIFY_306.json` to strip an unsupported claim from its `host.note`, replacing that note and two
-wall-clock timings; see `ERRATUM_C2.md`. **No Γ, magnitude, margin, requirement, gap fall, class or adopted-subset
-value has changed at any point**, which two independent reviews confirmed by diffing every leaf of the D1 evidence
-across its entire commit history.
+evidence that never changed — D1 §1's ranking of the three negligible blocker terms. Two later repairs regenerated
+`C2_RECERTIFY_306.json`, replacing free text and wall-clock timings but no certified value. The full ledger, and
+the command to regenerate it rather than trust it, are in `ERRATUM_C2.md` § "Replacement ledger".
+
+**No Γ, magnitude, margin, requirement, gap fall, class or adopted-subset value has changed at any point** — four
+independent reviews (r5, r6, r7, r8) each confirmed this by diffing every leaf of the D1 evidence across its whole
+commit history.
 
 **The R stage is blocked, and not by C2's own finding.** A sound operator-level combination C2 did not pre-register
 clears the gate's own 20 % bar on all three still-open cells at zero cost — so "the deterministic direction is
