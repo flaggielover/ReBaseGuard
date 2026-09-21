@@ -206,14 +206,92 @@
  "tree_sweep_adjudicated": {
   "manifests_and_checkpoints": "the remaining hits match only inside file listings or an unrelated algorithm name ('direct-left-minorant-integer-floor-v1'); no quantity is asserted by them.",
   "p5x_global_nonlinear_dynamics/compute_optimization_r1/drift_minorant.py": "its own docstring states it changes 'the rigorous upper bound used for ||(I - K_e)^{-1}||_inf'. A minorant of the hit probability; an UPPER bound on the resolvent. Wrong direction.",
-  "p5y_gate2e_sr_metric/results/sr_metric.json": "SR detector, not CUSUM; binding=false; e=1/4, not a tail cell; its own direction_audit records type=UPPER (a LOWER envelope of the hit probability yields an UPPER bound on sup_x E_x[tau]). Wrong detector, wrong drift, wrong direction."
+  "p5y_gate2e_sr_metric/results/sr_metric.json": "SR detector, not CUSUM; binding=false; e=1/4, not a tail cell; its own direction_audit records type=UPPER (a LOWER envelope of the hit probability yields an UPPER bound on sup_x E_x[tau]). Wrong detector, wrong drift, wrong direction.",
+  "p5y_k5_tail_c3_closure/evidence/adjudication/C3_ADJUDICATION.md": "the only .md hit that is not 'minorant'. It is the C3 adjudicator RECOMMENDING that a subsolution or direct ARL lower bound be computed -- the recommendation C4 exists to act on, not a committed certified quantity. It asserts no bound."
  },
+ "tree_sweep_extensions": [
+  ".json",
+  ".py",
+  ".md"
+ ],
  "tree_sweep_hits": [
   {
    "context": "ure. To optimize the GSR procedure, we exploit the fact that the GSR procedure provides a lower bound on Pollak's minimax Supremum (conditional) Average Detection Delay (SADD). Specifically, we propose to optimize the GS",
    "matched": "lower bound on Pollak's minimax Supremum (conditional) Average Detection Delay (SADD). Specifically, we propose to optimize the GSR procedure by choosing its head start and detection threshold so as to bring the lower bound as far up as is possible within the set tolerable Average Run Length (ARL) to false alarm level. We then follow through with this idea and carry out a case study where, in a specific exponential scenario, we solve the respective lower bound-vs-ARL tradeoff numerically, and tabulate the obtained optimal head start, detection threshold, and the maximized lower bound. The study is extensive in that it considers changes of diverse magnitudes and a wide range of levels of the ARL to false alarm, the latter are computed exactly. The study aids gain further insight into the GSR procedure as well as into the still-unsolved question of what minimizes Pollak's SADD for a given level of the ARL",
    "mentions_CUSUM_tail_cell": true,
    "path": "novelty_verification/results/snowball_evidence.json"
+  },
+  {
+   "context": "grid (`\"sampled_grid_used\": false`). 5. **Resolvent.** The monotone one-sided Bellman minorant plus pathwise-coupling monotonicity gives `\u2016(I-K_e)^{-1}\u2016_inf <= C",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/CERTIFICATE_PLAN.md"
+  },
+  {
+   "context": "and express the bound as a function of the `e`-interval, reusing the monotone Bellman minorant of `N-01`. 3. **Single-cell stop-gate.** Build the certified enclosur",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/CODEX_HANDOFF.md"
+  },
+  {
+   "context": "| content | |---|---| | frozen text | `PROOF_OBLIGATIONS.md` `L4`: \"the monotone Bellman minorant \u2026 extends to interval-valued `e`, with the worst case at the endpoint",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/DEFECT_REGISTER.md"
+  },
+  {
+   "context": "oes not need it (the resolvent bound is obtained per `e`-interval by the monotone Bellman minorant) | | a rigorous enclosure of the invariant density `pi` | far harder",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/FAILURE_ANALYSIS.md"
+  },
+  {
+   "context": "`L4` uniform resolvent bound `\u2016(I-K_e)^{-1}\u2016 <= sup_x E_x[tau]` and its monotone minorant in `|e|`; `L5` analyticity of the targets in `e`; `L6` stationary",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/FEASIBILITY_AUDIT.md"
+  },
+  {
+   "context": "}\u2016_inf = sup_x E_{x,e}[tau] <= C_D(e) < infinity` for every `e`; and the monotone Bellman minorant used for the `e = 0` certificates extends to interval-valued `e`, wit",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/PROOF_OBLIGATIONS.md"
+  },
+  {
+   "context": "ng** resolvent bound is loose there: `C(0) = 5323` against the already-certified monotone-minorant value `1315.79` at `e = 0` and a true `sup_x E_x[tau] ~ 465`. Since c",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/certified_method_repair_ra/RA_COVER_PROJECTION.md"
+  },
+  {
+   "context": "ift-explicit \u2014 and it is crude. Measured here: | `|e|` | block forcing (R-A\u2032) | monotone minorant | ratio | |---|---|---|---| | `0` | `5323.418` | `1232.836` | `4.32x`",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/compute_optimization_r1/NEUTRALITY_AUDIT.md"
+  },
+  {
+   "context": "on the declared cell).** For a cell `e in [e_lo, e_hi]` with `0 <= e_lo`, evaluating the minorant at `e_lo` gives a lower bound on `H_t(0; e)` valid for **every** `e`",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/compute_optimization_r1/PROOF.md"
+  },
+  {
+   "context": "s run | item | value | |---|---| | resolvent, optimized | `220.70751870968231` (monotone minorant, `t* = 52`, `H_52(0) >= 0.23560592907757061`) | | resolvent, baseline",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/compute_optimization_r1/R1_BENCHMARK.md"
+  },
+  {
+   "context": "a C(e))`, so cells per unit `e` is `2 a C(e)`: | `e` | `C` block forcing | `C` monotone minorant | gain | cells/unit `e` (optimized) | |---|---|---|---|---| | `0` | `",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/compute_optimization_r1/R1_COST_REPROJECTION.md"
+  },
+  {
+   "context": "lock forcing, C = 1239.2722762545090 on [0.24, 0.26] R1 (optimized) : monotone minorant, C = 220.70751870968231 at the cell's worst drift ``` Everything",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/compute_optimization_r1/R1_FROZEN_SPEC.md"
   },
   {
    "context": "\", \"note\": \"byte identity to the Checkpoint-C anchor is mandatory\", \"files\": { \"drift_minorant.py\": { \"sha256\": \"59c2bac36a5a35fba4ba6d0d7ec24ba5111e8e282a4dc4b2",
@@ -246,6 +324,18 @@
    "path": "p5x_global_nonlinear_dynamics/compute_optimization_r1/r1_stop_gate.py"
   },
   {
+   "context": "`/`t_powers` memoisation (addresses `O(deg^2)`, not the `O(deg^4)` loop); the SR softplus minorant (optimizes a part that already costs `0.1 s`). **Deferred to R3:** th",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/compute_optimization_r2/R2_FROZEN_SPEC.md"
+  },
+  {
+   "context": "e19c706b65ba354de7123fbe670c121acf1a861 (R1 result) clean ``` `ra_certifier`, `drift_minorant` and `rebaseguard_certify` all resolve **inside** this worktree; only",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/compute_optimization_r2/R2_PROFILE_AND_AUDIT.md"
+  },
+  {
    "context": "r2_certifier as R2C # noqa: E402 from drift_minorant import drift_monotone_resolvent # noqa: E402 CE",
    "matched": "minorant",
    "mentions_CUSUM_tail_cell": false,
@@ -268,6 +358,24 @@
    "matched": "minorant",
    "mentions_CUSUM_tail_cell": true,
    "path": "p5x_global_nonlinear_dynamics/results/integrity/protected_tree_manifest_r3_pre.json"
+  },
+  {
+   "context": "o extension after results) GATE2B_CPU_PREFERRED <= 0.05 CPU-hours ``` Geometry, resolvent minorant evaluations, deterministic counting and scalar interval arithmetic on",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": true,
+   "path": "p5y_gate2b_sr_cover/GATE2B_PREREGISTRATION.md"
+  },
+  {
+   "context": "`C_SR(e)` reconstructed \u2014 and validated to 17 significant figures R1 made the **CUSUM** minorant drift-explicit and recorded that the SR extension \"is not implemented",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": true,
+   "path": "p5y_gate2b_sr_cover/GATE2B_RESULT.md"
+  },
+  {
+   "context": "nistic run) | | `T4` | final report | `GATE2B_RESULT.md` | Cost calibration (0.397 s per minorant evaluation at `cells = 200`) was measured **before** `T0` on the hist",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_gate2b_sr_cover/TEMPORAL_LEDGER.md"
   },
   {
    "context": "}, \"level4/closure_proofs/p5x_global_nonlinear_dynamics/compute_optimization_r1/drift_minorant.py\": { \"purpose\": \"resolvent minorant\", \"sha256\": \"59c2bac36a5a",
@@ -306,6 +414,12 @@
    "path": "p5y_k1_binding_campaign/CHECKPOINT.json"
   },
   {
+   "context": "r, with direction audit Both detectors use a **drift-explicit monotone one-sided Bellman minorant**; they do **not** share a formula, and each is frozen separately. |",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": true,
+   "path": "p5y_k1_binding_campaign/CHECKPOINT.md"
+  },
+  {
    "context": "\"per_detector\": { \"CUSUM\": {\"source\": \"compute_optimization_r1/drift_minorant.py\", \"cells\": 100, \"n_max\": 250, \"bits\": 19",
    "matched": "minorant",
    "mentions_CUSUM_tail_cell": false,
@@ -340,6 +454,18 @@
    "matched": "minorant",
    "mentions_CUSUM_tail_cell": false,
    "path": "p5y_k1_binding_campaign/task1/task1_f0.py"
+  },
+  {
+   "context": "Taylor code](../p5x_global_nonlinear_dynamics/compute_optimization_r1/r1_stop_gate.py), [minorant proof](../p5x_global_nonlinear_dynamics/compute_optimization_r1/PROOF",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": true,
+   "path": "p5y_k1_cover_ledger_successor/CHECKPOINT.md"
+  },
+  {
+   "context": "ate-process byte identity, exact tiling and radius, directed rounding, four fresh Bellman minorant spot checks (first/last for each detector), all-m interval and deriva",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_k1_cover_ledger_successor/adjudication/VALIDATION.md"
   },
   {
    "context": "mization_r1/PROOF.md', 'p5x_global_nonlinear_dynamics/compute_optimization_r1/drift_minorant.py', 'p5x_global_nonlinear_dynamics/compute_optimization_r1/r1_",
@@ -394,6 +520,18 @@
    "matched": "minorant",
    "mentions_CUSUM_tail_cell": true,
    "path": "p5y_k1_successor_optimized/config/checkpoint_s.json"
+  },
+  {
+   "context": "ing \"not achieved\" into \"cannot be done\". That is a purely operator-level computation \u2014 a subsolution or a direct ARL lower bound \u2014 with no scientific address, no order-3",
+   "matched": "subsolution",
+   "mentions_CUSUM_tail_cell": true,
+   "path": "p5y_k5_tail_c3_closure/evidence/adjudication/C3_ADJUDICATION.md"
+  },
+  {
+   "context": "_kernel_polynomials`), the state square `[0,5]^2`, the reachable-set cover, the resolvent minorant (`drift_monotone_resolvent`), the Bernstein range bound (`max_abs_on_",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_micropilot_gate1/GATE1_PREREGISTRATION.md"
   },
   {
    "context": "_p5x\": [ \"certified_method_repair_ra/ra_certifier.py\", \"compute_optimization_r1/drift_minorant.py\", \"compute_optimization_r2/r2_certifier.py\", \"compute_optimiza",

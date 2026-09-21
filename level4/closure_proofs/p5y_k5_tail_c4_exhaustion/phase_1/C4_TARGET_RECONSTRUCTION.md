@@ -36,7 +36,11 @@ returns to.
 `E_a[tau]` is the expected number of steps to alarm from the atom. `(I - K_e)^{-1} 1 (x) = E_x[tau]`; the frozen
 CUSUM model that defines `tau` is read out of its pinned producer by `code/c4_model_identity.py`:
 
-    state      (s+, s-) in [0, H]^2,  atom a = (0, 0),  H = 5,  K = 1/2,  C = H + K = 11/2
+    state      the reachable closure X = {(p, m) in [0,5]^2 : p = 0 or m = 0 or p + m <= H - 2K = 4},
+               T-invariant, containing the atom a = (0, 0);   H = 5,  K = 1/2,  C = H + K = 11/2
+               (OPERATOR_AUDIT.md section 1. The ambient box [0, H]^2 is not the operator's state space, and
+               Lemma SM(d) is a statement about B(X). Corrected after pre-result review, item D.1; nothing in
+               theorem L changes, because its argument is pathwise and the chain started at a stays in X.)
     innovation z_i i.i.d. with density phi(. + e)
     update     s+ <- max(0, s+ + z - K),   s- <- max(0, s- - z - K)
     alarm      iff the unclipped update exceeds H in either coordinate
@@ -77,9 +81,13 @@ Reproduces the C3 adjudicator's figures (Phase 0 checks 11 and 12 compare them m
 **Does `E_a[tau] > 4.3752` discharge both required inequalities? No, and the question is the wrong way round.**
 Three separate reasons, each sufficient:
 
-1. **The thresholds belong to different cells over disjoint drift ranges.** Cell 308 is `e in [1.882413,
-   1.983910]`, cell 309 is `e in [1.983910, 2.092283]`. A bound proved on one says nothing about the other without
-   a monotonicity argument in `e` that no committed artifact supplies.
+1. **The thresholds belong to different cells.** Cell 308 is `e in [1.882413, 1.983910]`, cell 309 is
+   `e in [1.983910, 2.092283]`. These are *adjacent closed* intervals sharing the endpoint `e = 1.983910`, not
+   disjoint ones (corrected after pre-result review, item B), and the sharing has a consequence the campaign
+   should state rather than leave implicit: the number certified for cell 309 is evaluated exactly at that shared
+   endpoint, so it is simultaneously a valid lower bound on `Lambda_308` -- it is the same number that cell 308's
+   evaluation at `e_hi` produces. A bound proved at a drift in cell 309's *interior* would say nothing about 308
+   without a monotonicity argument in `e` that no committed artifact supplies.
 2. **309's requirement is the weaker one**, `3.2142 < 4.3752`. A bound that happened to hold uniformly over the
    union at level `4.3752` would discharge both — but only because it would be far stronger than 309 needs, not
    because 308's threshold implies 309's.

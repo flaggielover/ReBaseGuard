@@ -1,8 +1,11 @@
 """Rigorous rational enclosures of the standard normal phi and Phi, and of E[(|z| - K)^+].
 
-Exact `fractions.Fraction` arithmetic throughout with explicit outward rounding. No float is used in any value that
-reaches a certificate, no library special function is called, and nothing here touches an operator, a kernel, a K1
-record or a scientific address: the inputs are two rational numbers (a drift e and the frozen CUSUM reference K).
+Exact `fractions.Fraction` arithmetic throughout with explicit outward rounding. No float enters any load-bearing
+comparison -- every certified value and every decision is an exact rational, and floats appear in the evidence
+files only as printed companions beside the exact value they approximate. No library special function is called,
+and nothing here touches an operator, a kernel, a K1 record or a scientific address: the inputs are two rational
+numbers (a drift e and the frozen CUSUM reference K). (The earlier absolute phrasing "no float is used in any
+value that reaches a certificate" was false of the emitted JSON; corrected after pre-result review, finding 6.)
 
 Every series carries a proved remainder bound, and each is checked at run time rather than assumed:
 

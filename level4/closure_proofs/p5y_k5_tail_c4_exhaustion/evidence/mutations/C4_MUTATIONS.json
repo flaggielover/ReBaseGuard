@@ -1,0 +1,235 @@
+{
+ "applied": 13,
+ "baseline": {
+  "class": "PARTIAL",
+  "excluded": [
+   309
+  ],
+  "not_excluded": [
+   308
+  ],
+  "outside_the_count": [
+   306,
+   307
+  ]
+ },
+ "cross_check": {
+  "all_checks_pass": true,
+  "honest_resolution": "the independent intervals are ~1e-7 wide against production's ~1e-95; this is a cross-check that would catch a gross error, not a reproduction at certificate precision",
+  "method": "c4_independent.py: Bernoulli/AM-GM brackets for exp, Archimedes polygons for pi, composite midpoint with a second-derivative remainder for the erf integral. No series is shared with the production module.",
+  "per_cell": {
+   "306": {
+    "independent_E_excess_width": 2.0362511246261203e-07,
+    "independent_lower_bound": 3.9598799336679513,
+    "intervals_overlap": true,
+    "production_E_excess_width": 8.895185073915177e-96,
+    "production_enclosure_inside_independent": true,
+    "production_lower_bound": 3.959880291432561,
+    "verdict_survives_at_cross_check_resolution": true
+   },
+   "307": {
+    "independent_E_excess_width": 2.4013017563667683e-07,
+    "independent_lower_bound": 3.7340700604301458,
+    "intervals_overlap": true,
+    "production_E_excess_width": 8.427017438445957e-96,
+    "production_enclosure_inside_independent": true,
+    "production_lower_bound": 3.734070430633033,
+    "verdict_survives_at_cross_check_resolution": true
+   },
+   "308": {
+    "independent_E_excess_width": 2.8522141516294553e-07,
+    "independent_lower_bound": 3.5127332118947487,
+    "intervals_overlap": true,
+    "production_E_excess_width": 7.958849802976737e-96,
+    "production_enclosure_inside_independent": true,
+    "production_lower_bound": 3.512733596022926,
+    "verdict_survives_at_cross_check_resolution": true
+   },
+   "309": {
+    "independent_E_excess_width": 3.4117869354550194e-07,
+    "independent_lower_bound": 3.2972498816979323,
+    "intervals_overlap": true,
+    "production_E_excess_width": 8.427017438445957e-96,
+    "production_enclosure_inside_independent": true,
+    "production_lower_bound": 3.297250281519544,
+    "verdict_survives_at_cross_check_resolution": true
+   }
+  },
+  "shared_with_production": [
+   "the Iv interval container",
+   "the integer-square-root helper"
+  ]
+ },
+ "gate_sha256": "d5b5b385d5c123ccd5993116901797f1ef2b75054a56617dfd07e860d526a647",
+ "guard": "REAL_SCIENTIFIC_COMPUTE = DENY",
+ "mutants": [
+  {
+   "layer": "certificate",
+   "max_bound_shift": 0.0,
+   "mutant": "M01_inequality_direction_reversed",
+   "outcome": "DETECTED_BY_VERDICT",
+   "perturbs": "the exclusion test becomes Gamma <= 0 instead of Gamma >= 0",
+   "result": {
+    "class": "PARTIAL",
+    "excluded": [
+     308
+    ],
+    "not_excluded": [
+     309
+    ]
+   }
+  },
+  {
+   "layer": "certificate",
+   "max_bound_shift": 2.855822576362241e-95,
+   "mutant": "M03_upper_end_used_as_the_lower_bound",
+   "note": "the mutation is NOT equivalent -- it moves the certified bound by up to 2.856e-95 -- but that is far too small to flip this verdict, whose nearest margin is 0.083 in A0. Recorded as a value-level, not verdict-level, detection.",
+   "outcome": "VALUE_ONLY",
+   "perturbs": "the interval's UPPER end is reported as if it were the lower bound",
+   "result": {
+    "class": "PARTIAL",
+    "excluded": [
+     309
+    ],
+    "not_excluded": [
+     308
+    ]
+   }
+  },
+  {
+   "guard": "SystemExit: model inconsistency: K + H = 6 but the frozen producer's C_CUSUM = 11/2",
+   "layer": "certificate",
+   "mutant": "M04_threshold_C_instead_of_H",
+   "outcome": "DETECTED_BY_GUARD",
+   "perturbs": "the alarm threshold is taken as C = H + K = 11/2 rather than H = 5, which INFLATES the bound"
+  },
+  {
+   "guard": "SystemExit: model inconsistency: K + H = 5 but the frozen producer's C_CUSUM = 11/2",
+   "layer": "certificate",
+   "mutant": "M05_reference_K_dropped",
+   "outcome": "DETECTED_BY_GUARD",
+   "perturbs": "the CUSUM reference value K is set to 0, so the per-step majorant becomes |z|"
+  },
+  {
+   "guard": "SystemExit: cell 307: the bound is certified at e = 680769/400000, outside its closed cell [17885921/10000000, 1882413/1000000] -- the gate forbids this",
+   "layer": "certificate",
+   "mutant": "M06_domain_outside_the_closed_cell",
+   "outcome": "DETECTED_BY_GUARD",
+   "perturbs": "each cell is certified two cells to the left, i.e. at a drift genuinely outside its own closed cell"
+  },
+  {
+   "layer": "certificate",
+   "max_bound_shift": 0.22580986079952814,
+   "mutant": "M07_evaluated_at_the_far_endpoint",
+   "outcome": "DETECTED_BY_VERDICT",
+   "perturbs": "the bound is taken at e_hi instead of e_lo -- still inside the closed cell, but its weakest point",
+   "result": {
+    "class": "FAIL_INCONCLUSIVE",
+    "excluded": [],
+    "not_excluded": [
+     308,
+     309
+    ]
+   }
+  },
+  {
+   "layer": "certificate",
+   "max_bound_shift": 0.0,
+   "mutant": "M08_knockout_dropped",
+   "outcome": "DETECTED_BY_VERDICT",
+   "perturbs": "A1 and A2 are left at their certified values instead of 0, abandoning the generous setting",
+   "result": {
+    "class": "PARTIAL",
+    "excluded": [
+     308,
+     309
+    ],
+    "not_excluded": [
+     307
+    ]
+   }
+  },
+  {
+   "layer": "decision rule",
+   "mutant": "M02_strict_instead_of_non_strict",
+   "mutant_rule_excludes_at_witness": false,
+   "note": "the two rules are NOT equivalent; they differ exactly on Gamma = 0. C4's own run does not land there (Gamma = +0.004661 at the only excluded cell), so a verdict-level check could never have separated them. The gate fixes the non-strict form because Gamma < 0 is the frozen closure condition, so Gamma = 0 does not close and must count as excluded.",
+   "outcome": "DETECTED_BY_RULE",
+   "perturbs": "Gamma > 0 instead of Gamma >= 0 in the exclusion test",
+   "production_rule_excludes_at_witness": true,
+   "witness": "Gamma = 0"
+  },
+  {
+   "bound_shift": 1.0299687980322836e-95,
+   "detail": "lower end 3.297250281519544 vs 3.297250281519544",
+   "layer": "arithmetic",
+   "mutant": "M09_rounding_direction_flipped",
+   "outcome": "VALUE_ONLY",
+   "perturbs": "outward rounding replaced by inward rounding"
+  },
+  {
+   "bound_shift": null,
+   "detail": "exp series tail bound needs y < N + 2",
+   "layer": "arithmetic",
+   "mutant": "M10_exp_tail_bound_dropped",
+   "outcome": "DETECTED_BY_GUARD",
+   "perturbs": "exp(y) truncated with y >= N + 2, where the tail bound is invalid"
+  },
+  {
+   "bound_shift": null,
+   "detail": "the alternating series has not entered its decreasing regime",
+   "layer": "arithmetic",
+   "mutant": "M11_alternating_bound_before_the_decreasing_regime",
+   "outcome": "DETECTED_BY_GUARD",
+   "perturbs": "the I(t) series is truncated before its magnitudes decrease"
+  },
+  {
+   "bound_shift": -4.384436223416169e-12,
+   "detail": "lower end 3.297250281515160 vs 3.297250281519544",
+   "layer": "arithmetic",
+   "mutant": "M12_sqrt_misrounded_low",
+   "outcome": "VALUE_ONLY",
+   "perturbs": "sqrt(2 pi) understated by a relative 1e-12"
+  },
+  {
+   "bound_shift": null,
+   "detail": "division by an interval containing zero",
+   "layer": "arithmetic",
+   "mutant": "M13_division_by_a_zero_straddling_interval",
+   "outcome": "DETECTED_BY_GUARD",
+   "perturbs": "the division guard is bypassed"
+  }
+ ],
+ "new_real_scientific_addresses_evaluated": 0,
+ "outcomes": {
+  "DETECTED_BY_GUARD": [
+   "M04_threshold_C_instead_of_H",
+   "M05_reference_K_dropped",
+   "M06_domain_outside_the_closed_cell",
+   "M10_exp_tail_bound_dropped",
+   "M11_alternating_bound_before_the_decreasing_regime",
+   "M13_division_by_a_zero_straddling_interval"
+  ],
+  "DETECTED_BY_RULE": [
+   "M02_strict_instead_of_non_strict"
+  ],
+  "DETECTED_BY_VERDICT": [
+   "M01_inequality_direction_reversed",
+   "M07_evaluated_at_the_far_endpoint",
+   "M08_knockout_dropped"
+  ],
+  "VALUE_ONLY": [
+   "M03_upper_end_used_as_the_lower_bound",
+   "M09_rounding_direction_flipped",
+   "M12_sqrt_misrounded_low"
+  ]
+ },
+ "schema": "rebaseguard.p5y.k5.tail-c4.mutations.v2",
+ "undetected": [],
+ "value_only": [
+  "M03_upper_end_used_as_the_lower_bound",
+  "M09_rounding_direction_flipped",
+  "M12_sqrt_misrounded_low"
+ ],
+ "value_only_note": "mutants in VALUE_ONLY moved a certified value but by far too little to flip this verdict; they are recorded as such and are NOT credited as verdict-level detections (pre-result review, OTHER FINDINGS 3)"
+}

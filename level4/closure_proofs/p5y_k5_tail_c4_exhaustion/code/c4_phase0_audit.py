@@ -25,8 +25,16 @@ EXPECTED = {
 }
 
 
-def git(*a):
-    return subprocess.run(["git", "-C", str(REPO), *a], capture_output=True, text=True, check=True).stdout.strip()
+def git(*a, check=True):
+    r = subprocess.run(["git", "-C", str(REPO), *a], capture_output=True, text=True)
+    if check and r.returncode:
+        raise SystemExit(f"git {' '.join(a)} failed: {r.stderr.strip()}")
+    return r.stdout.strip()
+
+
+def is_ancestor(x, y):
+    return subprocess.run(["git", "-C", str(REPO), "merge-base", "--is-ancestor", x, y],
+                          capture_output=True).returncode == 0
 
 
 def manifest_ok(ns: Path, man: str) -> dict:
@@ -49,7 +57,7 @@ def main() -> int:
     out["branch"], out["head"] = branch, head
     checks.append(("1_branch_head_clean", branch == EXPECTED["branch"]
                    and git("rev-parse", EXPECTED["start_head"]) == EXPECTED["start_head"]
-                   and git("merge-base", "--is-ancestor", EXPECTED["start_head"], "HEAD") == ""))
+                   and is_ancestor(EXPECTED["start_head"], "HEAD")))
 
     # ---- 2, 3. C3 verdict and adopted set, parsed from the adjudication document -------------------
     adj = (C3 / "evidence/adjudication/C3_ADJUDICATION.md").read_text()
@@ -86,8 +94,7 @@ def main() -> int:
 
     # ---- 8. main untouched -------------------------------------------------------------------------
     out["main"] = git("rev-parse", "main")
-    checks.append(("8_main_untouched", out["main"] == EXPECTED["main"]
-                   and git("merge-base", "--is-ancestor", "main", "HEAD") == ""))
+    checks.append(("8_main_untouched", out["main"] == EXPECTED["main"] and is_ancestor("main", "HEAD")))
 
     # ---- 9, 10. guard and zero new-real since C3 ---------------------------------------------------
     guards = sorted({v for p in (C3 / "evidence").rglob("*.json")
@@ -96,10 +103,16 @@ def main() -> int:
                       for k, v in json.loads(p.read_bytes()).items() if k.startswith("new_real")})
     out["c3_guard_values"], out["c3_new_real_fields"] = guards, [list(x) for x in newreal]
     checks.append(("9_guard_deny", bool(guards) and all("DENY" in g for g in guards)))
+    # Two DIFFERENT facts, which the first version of this audit wrongly merged under one name (pre-result
+    # review, OTHER FINDINGS 5). Splitting them also makes the audit reproducible at any later HEAD: C4's own
+    # commits necessarily add paths, and that must not be allowed to read as a new-real finding.
     changed = git("diff", "--name-only", "ae4cbc2c", "HEAD").splitlines()
-    out["paths_changed_since_c3_start_outside_c3_ns"] = [p for p in changed if "p5y_k5_tail_c3_closure" not in p]
-    checks.append(("10_zero_new_real", all(v == 0 for _, v in newreal)
-                   and not out["paths_changed_since_c3_start_outside_c3_ns"]))
+    foreign = [p for p in changed
+               if "p5y_k5_tail_c3_closure" not in p and "p5y_k5_tail_c4_exhaustion" not in p]
+    out["c3_new_real_fields_all_zero"] = all(v == 0 for _, v in newreal)
+    out["paths_changed_since_c3_start_outside_c3_and_c4"] = foreign
+    checks.append(("10a_c3_declared_zero_new_real", out["c3_new_real_fields_all_zero"]))
+    checks.append(("10b_no_path_touched_outside_c3_and_c4", not foreign))
 
     # ---- 11, 12. the knockout and the critical A0, re-derived from the equations -------------------
     FC, B, T, R, DC, SEL = frozen_stack()

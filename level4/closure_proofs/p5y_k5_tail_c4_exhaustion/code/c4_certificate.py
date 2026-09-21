@@ -41,6 +41,13 @@ def evaluate(gate, *, evaluate_at="e_lo", knockout="zero", use_upper_end=False,
     m = model()
     K = F(K_override) if K_override is not None else m["K"]
     H = F(H_override) if H_override is not None else m["H"]
+    # The frozen producer defines C_CUSUM = H_FROZEN + K_FROZEN, and the model uses C in the alarm condition while
+    # the update uses K, so the threshold on the statistic is exactly C - K. Tying the (K, H) pair theorem L
+    # consumes back to that identity is what makes a mis-identified threshold detectable rather than merely wrong:
+    # taking H = C = 11/2 inflates the bound, which is the UNSOUND direction and is invisible to a verdict-only
+    # check (pre-result review, OTHER FINDINGS 3, mutant M04).
+    if K + H != m["C"]:
+        raise SystemExit(f"model inconsistency: K + H = {K + H} but the frozen producer's C_CUSUM = {m['C']}")
     geo = cell_geometry()
     FC, B, T, R, DC, SEL = frozen_stack()
     adopted, cover, c1, c2 = committed_inputs(FC)
@@ -64,13 +71,22 @@ def evaluate(gate, *, evaluate_at="e_lo", knockout="zero", use_upper_end=False,
         at_bound = gamma_at(FC, T, R, B, meas, aux, ad5, cov, Bk, *ko)
         blocker_is_A0 = not cert_ko["pass"]
 
-        # the licence for the direct test, exercised per cell rather than assumed
-        ladder = [Bk + (A["A0"] - Bk) * F(i, 16) for i in range(17)] if A["A0"] > Bk else [Bk]
+        # The licence for the direct test, exercised per cell rather than assumed. An ADMISSIBLE A0 is any valid
+        # upper bound on Lambda and may be arbitrarily larger than the certified one, so the ladder must cover
+        # [B_k, infinity), not just [B_k, A0_certified]. It runs to 10^5 times the certified value
+        # (pre-result review, OTHER FINDINGS 9).
+        top = max(A["A0"], Bk) * 100000
+        ladder = ([Bk + (A["A0"] - Bk) * F(i, 16) for i in range(17)] if A["A0"] > Bk else [Bk])
+        ladder += [A["A0"] * F(j) for j in (2, 5, 10, 100, 1000, 10000, 100000)]
+        ladder = sorted(set(ladder))
         lv = [gamma_at(FC, T, R, B, meas, aux, ad5, cov, x, *ko) for x in ladder]
         licence = {"intersection_nonempty_at_bound": intersection_nonempty(at_bound, ad5),
-                   "Gamma_nondecreasing_from_bound_to_certified": all(
+                   "intersection_nonempty_throughout": all(intersection_nonempty(v, ad5) for v in lv),
+                   "Gamma_nondecreasing_over_ladder": all(
                        lv[i]["Gamma"] <= lv[i + 1]["Gamma"] for i in range(len(lv) - 1)),
-                   "ladder_points": len(ladder)}
+                   "ladder_points": len(ladder),
+                   "ladder_top_multiple_of_certified_A0": float(top / A["A0"]),
+                   "Gamma_at_ladder_top": float(lv[-1]["Gamma"])}
 
         is_excluded = bool(blocker_is_A0 and exclude_if(at_bound["Gamma"]))
         row = {"evaluated_at_e": str(e), "e_in_closed_cell": in_closed_cell,
@@ -88,6 +104,16 @@ def evaluate(gate, *, evaluate_at="e_lo", knockout="zero", use_upper_end=False,
         elif is_excluded:
             excluded.append(k)
         else:
+            # the gate's PARTIAL clause requires this field for every non-excluded cell
+            row["reason_not_excluded"] = {
+                "certified": "the bound is too weak: Gamma(B, 0, 0) < 0, so an A0 at the certified floor would "
+                             "still close the cell under the knockout",
+                "is_the_threshold_above_the_truth": "NOT CERTIFIED EITHER WAY by C4. See the diagnostics in "
+                                                    "evidence/phase3/C4_ROUTES.json and ERRATUM_C4_GATE.md: they "
+                                                    "indicate the threshold exceeds the truth at this cell, which "
+                                                    "would make it unexcludable by ANY lower bound, but they are "
+                                                    "float candidate values and C4 certifies no upper bound on "
+                                                    "Lambda."}
             not_excluded.append(k)
         per[str(k)] = row
 
@@ -125,8 +151,10 @@ def main() -> int:
            "route": "L: E_a[tau] >= H / E[(|z| - K)^+], ladder/Wald minorant",
            "exclusion_test": gate["exclusion_test"]["statement"],
            "arithmetic": {"library": "fractions.Fraction only", "outward_rounding_grid": f"2^-{G.SCALE}"},
-           "monotonicity_of_E_excess": monotone_check(model()["K"], model()["H"],
-                                                      F("1701923/1000000"), F("2092283/1000000")),
+           "monotonicity_of_E_excess": monotone_check(
+               model()["K"], model()["H"],
+               min(g["e_lo"] for g in cell_geometry().values()),
+               max(g["e_hi"] for g in cell_geometry().values())),
            **r,
            "permitted_conclusions": gate["permitted_conclusions"][r["C4_CLASS"]],
            "family_exhausted": gate["admissible_family"]["definition"],

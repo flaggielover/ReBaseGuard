@@ -6,7 +6,8 @@ the pin is what makes the reading evidence. Any edit to the producer changes the
 
 The model these lines define, and the only thing C4 uses about it:
 
-    state      (s+, s-) in [0, H]^2 ;  the atom a = (0, 0)
+    state      the reachable closure X = {(p, m) in [0,H]^2 : p = 0 or m = 0 or p + m <= H - 2K},
+               which is T-invariant and contains the atom a = (0, 0)   (OPERATOR_AUDIT.md section 1)
     innovation z with density phi(z + e)   i.e.  z ~ N(-e, 1)
     update     s+ <- max(0, s+ + z - K),   s- <- max(0, s- - z - K)
     alarm      iff  z > C - s+  or  z < s- - C,  with C = H + K
@@ -52,7 +53,11 @@ def model(strict: bool = True) -> dict:
         raise SystemExit("C_CUSUM is no longer H_FROZEN + K_FROZEN")
     return {"source": MODEL_SOURCE.relative_to(MODEL_SOURCE.parents[3]).as_posix(), "source_sha256": got,
             "K": K, "H": H, "C": H + K,
-            "state_space": "[0, H]^2", "atom": "(0, 0)",
+            "state_space": "reachable closure X = {(p, m) in [0,H]^2 : p = 0 or m = 0 or p + m <= H - 2K}; "
+                            "B(X) is the space Lemma SM(d) is stated on. The ambient box [0,H]^2 is NOT the "
+                            "operator's state space (pre-result review, item D.1).",
+            "atom": "(0, 0), in X",
+            "state_space_source": "p5y_k5_perron_deflated_resolvent/theorem/OPERATOR_AUDIT.md section 1",
             "innovation": "z with density phi(z + e), i.e. z ~ N(-e, 1)",
             "update": "s+ <- max(0, s+ + z - K); s- <- max(0, s- - z - K)",
             "alarm": "z > C - s+  or  z < s- - C, i.e. unclipped s+ + z - K > H or s- - z - K > H",

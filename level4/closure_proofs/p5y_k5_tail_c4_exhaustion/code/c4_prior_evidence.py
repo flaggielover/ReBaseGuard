@@ -100,7 +100,9 @@ def main() -> int:
 
     # ---- (b) tree sweep for any lower-bound artifact anywhere -----------------------------------------
     hits = []
-    for p in sorted(list(CP.rglob("*.json")) + list(CP.rglob("*.py"))):
+    # .md is swept too: the conclusion is universal over the committed corpus, and the theorem texts live in .md
+    # (pre-result review, OTHER FINDINGS 6).
+    for p in sorted(list(CP.rglob("*.json")) + list(CP.rglob("*.py")) + list(CP.rglob("*.md"))):
         if p.is_relative_to(NS):
             continue                                   # C4's own output is not prior evidence
         try:
@@ -137,6 +139,7 @@ def main() -> int:
            "fields_by_direction": {k: sorted(v) for k, v in sorted(by_dir.items())},
            "unclassified_fields": sorted(unclassified),
            "tree_sweep_regex": SWEEP.pattern,
+           "tree_sweep_extensions": [".json", ".py", ".md"],
            "tree_sweep_hits": hits,
            "tree_sweep_adjudicated": {
                "p5y_gate2e_sr_metric/results/sr_metric.json":
@@ -146,6 +149,10 @@ def main() -> int:
                "p5x_global_nonlinear_dynamics/compute_optimization_r1/drift_minorant.py":
                    "its own docstring states it changes 'the rigorous upper bound used for ||(I - K_e)^{-1}||_inf'. "
                    "A minorant of the hit probability; an UPPER bound on the resolvent. Wrong direction.",
+               "p5y_k5_tail_c3_closure/evidence/adjudication/C3_ADJUDICATION.md":
+                   "the only .md hit that is not 'minorant'. It is the C3 adjudicator RECOMMENDING that a "
+                   "subsolution or direct ARL lower bound be computed -- the recommendation C4 exists to act on, "
+                   "not a committed certified quantity. It asserts no bound.",
                "manifests_and_checkpoints":
                    "the remaining hits match only inside file listings or an unrelated algorithm name "
                    "('direct-left-minorant-integer-floor-v1'); no quantity is asserted by them.",

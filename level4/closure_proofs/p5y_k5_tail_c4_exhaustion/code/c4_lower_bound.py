@@ -8,15 +8,30 @@ update exceeds H in either coordinate:
     E_a[tau]  >=  H / E[(|z| - K)^+].
 
 *Proof.* Write V_i := (|z_i| - K)^+ >= 0. Since s >= 0 always, max(0, s + z - K) <= s + (z - K)^+, so by induction
-from s+_0 = s-_0 = 0,
+from s+_0 = s-_0 = 0, for every t <= tau - 1 (which is all the argument uses),
 
     s+_t <= sum_{i<=t} (z_i - K)^+,      s-_t <= sum_{i<=t} (-z_i - K)^+.
 
-K > 0 makes (z - K)^+ and (-z - K)^+ never simultaneously positive, so each is at most V_i and therefore
-max(s+_t, s-_t) <= sum_{i<=t} V_i. At the alarm step the unclipped update exceeds H in one coordinate, and that
-unclipped value is bounded by the same sum, so H < sum_{i<=tau} V_i. The V_i are i.i.d., non-negative and
-integrable, and tau is a stopping time for the same filtration with E[tau] < infinity (Lemma T gives
-E_x[tau] <= C_T < infinity), so Wald's identity applies: H <= E[sum_{i<=tau} V_i] = E[V] E[tau]. Divide. QED
+Both (z - K)^+ and (-z - K)^+ are at most V_i, simply because +-z <= |z| and x -> (x - K)^+ is nondecreasing.
+Hence max(s+_t, s-_t) <= sum_{i<=t} V_i. At the alarm step the UNCLIPPED update exceeds H in one coordinate, and
+that unclipped value is s±_{tau-1} ± z_tau - K <= sum_{i<=tau} V_i, so H < sum_{i<=tau} V_i.
+
+The V_i are i.i.d. and non-negative, and tau is a stopping time for the filtration they generate, since the alarm
+at step t is a function of z_1, ..., z_t; so {tau >= i} is independent of V_i. Tonelli then gives
+
+    E[sum_{i<=tau} V_i] = sum_i E[V_i 1{tau >= i}] = E[V] sum_i P(tau >= i) = E[V] E[tau]
+
+as an identity in [0, +infinity], so no integrability or finiteness hypothesis is needed: H <= E[V] E[tau], and
+E[V] > 0 because the Gaussian has unbounded support. Divide. QED
+
+(E_a[tau] is in fact finite -- theorem AD section 4's whole-kernel supersolution gives E_a[tau] <= W(a) = Abar --
+but the proof above does not use it. Lemma T is NOT the right citation for that finiteness: Lemma T bounds
+Ghat_e 1 = E_x[tau ^ T_a], the TABOO time killed on return to the atom, which is a different and smaller random
+variable than tau. Corrected after pre-result review, item E.1.v.)
+
+Where disjointness IS used: K > 0 makes {z > K} and {z < -K} incompatible, which is what lets E[(|z| - K)^+] be
+written as the sum of the two one-sided expectations in `c4_rigorous_gaussian.E_excess`. It plays no part in the
+pathwise step above (pre-result review, item E.1.ii).
 
 WHY THIS IS THE RIGHT QUANTITY. Theorem AD's A0 is admissible only if |[(I - K_e)^-1 f](a)| <= A0 ||f|| uniformly
 on the cell, and Lemma SM(d) says the supremum of that ratio over ||f|| <= 1 is exactly E_a[tau], attained at

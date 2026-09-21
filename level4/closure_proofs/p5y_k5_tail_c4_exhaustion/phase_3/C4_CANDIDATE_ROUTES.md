@@ -59,8 +59,11 @@ They are rejected rather than pursued because **neither can change the verdict o
 * at 308, no bound can exclude, because the threshold is above the truth (Phase 1 §5);
 * at 306 and 307, `A0` is not the blocker at all.
 
-The set of cells this campaign can discharge is therefore `{309}` under route L and `{309}` under any route. Route
-L is not a compromise forced by the compute constraint; it is sufficient.
+The set of cells this campaign can discharge is therefore `{309}` under route L, and — on the strength of the
+float diagnostics below, which are **not certified** — `{309}` under any *lower-bound* route whatever. Route L is
+not a compromise forced by the compute constraint; it is sufficient. The qualification matters: C4 certifies no
+upper bound on `Lambda_308`, so "no route can discharge 308" is corroborated, not proved. (Tightened after
+pre-result review, item I.)
 
 **R2** is strictly weaker than R1: the committed whole-kernel proposal is shifted by `beta = 2`, so its defect
 carries `2 h_1` and the inversion loses more than the route gains. **R3** needs `n` kernel applications per cell
