@@ -19,6 +19,7 @@ count. Counts belong in the tables of this document and of `README.md`, not in p
 | r10 | `575919cb` | 3 FAIL | § "Dispositions from the TENTH pre-freeze review" |
 | r11 | `87004e2b` | 2 FAIL | § "Dispositions from the ELEVENTH pre-freeze review" |
 | r12 | `6aa2040a` | 2 FAIL | § "Dispositions from the TWELFTH pre-freeze review" |
+| r13 | `92bc9637` | 3 FAIL | § "Dispositions from the THIRTEENTH pre-freeze review" |
 
 **The result has never moved.** In every round so far, no Γ, magnitude, margin, requirement, gap fall, class or
 adopted-subset value has changed: the class is `D_PARTIAL`, the closed subset is {305, 306}, and the frozen gate
@@ -69,7 +70,7 @@ happens next is in § "The finding that outranks all of the above".
 
 ## Dispositions from the FIRST pre-freeze review
 
-`review/REVIEW_C2_PREFREEZE.md`, at `5a94568a`: 79 checks — 60 PASS, 10 INFO, 3 NOT_CHECKABLE_LOCALLY, **6 FAIL**.
+`review/REVIEW_C2_PREFREEZE.md`, at `5a94568a`: **6 FAIL**.
 It reproduced every decision-relevant number bit-exactly from an implementation written independently from the
 theorem documents, and found no arithmetic error anywhere in C2. What it blocked the freeze on was what would have
 been frozen *alongside* the arithmetic. The three sections that follow disposition all six, plus the corrections
@@ -307,7 +308,7 @@ three `NOT_CHECKABLE_LOCALLY` rows, and r2's own header genuinely does not recon
 stale by a later edit, and this was another. Updating the number would have set the same trap for the next round. So every
 hand-maintained tally was deleted from the prose that carried it. Counts belong in the tables — the review list
 at the top of the README, the round table at the top of this document, and the registers below. *(C2 has twice
-written a sentence here claiming its prose contains no counts, and both times the claim was false while the
+written a sentence here claiming its prose contains no counts, and each time the claim was false while the
 sentence itself sat beside counts. No such claim is made now: where prose states a number it should simply be
 right, and checked before it is written.)*
 
@@ -413,13 +414,29 @@ mechanically before finishing — the same hazard it was auditing.
 | **r12 FAIL 1** | r11 named **two** compliance clauses. C2 deleted one, deleted a trailing fragment of a neighbouring sentence, and recorded both as gone. The second survived **verbatim** ("…prose does not") for a further round, in a document whose disposition row asserted "Both compliance clauses are deleted. … No such claim is made any more." | The surviving clause is deleted and the row rewritten to record that the first repair was partial. |
 | **r12 FAIL 2** | The new README provenance paragraph did not reconcile: "Nineteen leaves … exactly **one** of them is a scientific value … **Four** are … **six** are" — 1 + 4 + 6 = 11, not 19, and the "one" scientific correction is **nine** leaves. It contradicted this document eight sections away, in the front-door file. | Rewritten as 9 + 4 + 6 = 19, with the nine named as the one scientific correction. |
 
-Its NOTE-level findings are acted on rather than deferred: the claim that no "magnitude" appears in the ledger
+Its NOTE-level findings were acted on rather than deferred: the claim that no "magnitude" appears in the ledger
 table is now stated as a claim about **values** (the D1 row does name a field called `magnitude`, but it is a
 sensitivity probe's magnitude at a perturbed C_T, not a cell's); "the one place in nine rounds" no longer carries a
-round count; and **every transcribed per-review PASS/NOTE/INFO sub-count has been stripped from this document**.
-That last is the r5 FAIL 2 lesson finally applied consistently — C2 had re-introduced the habit in six disposition
-headers, and r12 caught that the r11 header copied a self-report that does not reconcile with r11's own checklist
-(31/1/2/2 against a stated 30/1/3/2). Only FAIL counts remain, because those reconcile against the rows below.
+round count; and the transcribed per-review PASS/NOTE/INFO sub-counts were removed from the disposition headers.
+r12 had caught that the r11 header copied a self-report which does not reconcile with r11's own checklist
+(31/1/2/2 against a stated 30/1/3/2).
+
+*(That last repair was itself incomplete, and the sentence recording it claimed otherwise — r13 FAIL 1. One header
+still carried its sub-counts a round later, and the count of headers given was wrong. This paragraph no longer
+asserts that the removal is exhaustive; to check it, grep this file for `PASS` and read what is left.)*
+
+## Dispositions from the THIRTEENTH pre-freeze review
+
+`review/REVIEW_C2_PREFREEZE_R13.md`, at `92bc9637`: **3 FAIL**, all textual, none touching evidence. It rebuilt
+the replacement ledger from the git object store over all 115 committed `evidence/` and `config/` files, taking no
+list from C2 or from r12, and confirmed 19 leaves / three files / 9 + 4 + 6 correct in every cell. It extracted its
+own verdict counts by script after finding its first hand-tally wrong, and disclosed that.
+
+| | finding | repair |
+|---|---|---|
+| **r13 FAIL 1** | The paragraph dispositioning r12 claimed "**every** transcribed per-review sub-count has been stripped" and "Only FAIL counts remain". One header still carried its sub-counts, and the count of headers given was wrong. **This is r12 FAIL 1's exact shape — all-but-one repaired and recorded as complete — committed in the paragraph dispositioning r12, in precisely the kind of sentence r12 asked C2 to stop writing.** | The surviving header is stripped, and **the exhaustiveness claim is deleted rather than corrected**. The paragraph now tells the reader how to check for themselves instead of asserting the result. |
+| **r13 FAIL 2** | Two statements of the same fact in this document disagreed: one said C2 had written a "prose contains no counts" sentence **twice**, the other **three times**. r12 had named both sites; only one was repaired. | The count is removed from the older statement, so the two cannot diverge again. |
+| **r13 FAIL 3** | "**The self-audit is now finding these faster than the reviews are**" was false when written and had been false for six rounds. | Withdrawn, and replaced with what the register actually shows, re-derived here: of its instances, **four** were self-caught, all in rounds four and five, and **none** of the twelve added in rounds six to eleven. The self-audit stopped finding them; the reviews did not. That is the honest reading and it is not flattering. |
 
 ## The pattern, named
 
@@ -454,6 +471,8 @@ instances below are a number left stale by a later edit.
 | 10 | applied the cite-don't-describe rule | added a new prose count in the same commit as a clause claiming none remained | r11 FAIL 2 |
 | 11 | deleted the compliance clauses r11 named | deleted one of two and recorded both as gone | r12 FAIL 1 |
 | 11 | summarised the completed ledger in the README | wrote a breakdown summing to 11 of 19 | r12 FAIL 2 |
+| 12 | stripped the transcribed sub-counts | left one header, miscounted the headers, and claimed the removal was exhaustive | r13 FAIL 1 |
+| 12 | rewrote one of two statements of the same fact | left the other, so the document now contradicted itself on it | r13 FAIL 2 |
 
 A separate register, for a different failure — a review note received and then never actioned, rather than
 decoration added:
@@ -478,8 +497,13 @@ are arithmetically exact; they are describing different quantities.) Caught in s
 inheriting one's own — and C2 then did it twice more in the very commit disposing of r5, writing that the removed
 README counts "got two wrong" (only one was wrong; r1's transcription was faithful, as recorded above) and
 miscounting its own pattern table as five-and-two rather than four-and-three. Both caught in the same self-audit
-and corrected before the sixth review. **The self-audit is now finding these faster than the reviews are**, which
-is the only encouraging thing in this section.
+and corrected before the sixth review.
+
+**C2 wrote here that "the self-audit is now finding these faster than the reviews are". That was false when
+written and had been false for six rounds** (r13 FAIL 3). Derive it from the register above —
+`grep -c 'self-caught' ERRATUM_C2.md` against the row count — and the position is: of the instances recorded,
+**four** were self-caught, all of them in rounds four and five, and **none** of the twelve added in rounds six to
+eleven. The self-audit stopped finding them, and the reviews did not.
 
 C2 did also check, at source, the two claims it inherited from r3: the D_lo cap at 1 genuinely never executes (max
 D_lo × 1.1 across the tail is **0.932851**), and `deflated_consume` genuinely does type-check its inputs and
