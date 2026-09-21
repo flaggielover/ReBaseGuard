@@ -71,7 +71,7 @@
  ],
  "checks": {
   "B0_01_branch_head": true,
-  "B0_02_worktree_clean_at_audit": true,
+  "B0_02_worktree_state_recorded": true,
   "B0_03_remote_C4_at_predecessor_head": true,
   "B0_04_c4_adjudicated_with_handover": true,
   "B0_05_c4_conditions_and_errata": true,
@@ -84,7 +84,7 @@
   "B0_12_zero_new_real_since_C4": true,
   "B0_13a_local_main_ref_unchanged": true,
   "B0_13b_remote_main_ref_unchanged": true,
-  "B0_14_neither_main_ref_touched_by_C4": true,
+  "B0_14_local_main_not_advanced": true,
   "B0_15_c4_exclusion_reproduced": true,
   "B0_16_anchor_reproduction_delegated_to_phase2": true
  },
@@ -93,7 +93,7 @@
   "REAL_SCIENTIFIC_COMPUTE = DENY",
   "REAL_SCIENTIFIC_COMPUTE = DENY throughout"
  ],
- "head": "e12a09e8bb742726e2ca7af42e163c455915bb7d",
+ "head": "cd4a72d350297bf0554f93e1f917e82273e6ce93",
  "main_ref_note": "LOCAL_MAIN_REF and REMOTE_MAIN_REF are DIFFERENT refs by design. C5 neither reconciles nor modifies either. No check in this audit asserts they are equal.",
  "maps": [
   "p5y_k5_lower_front_order3/evidence/tc_r1/K5_COVERAGE_MAP_R4.json",
@@ -111,5 +111,5 @@
  "r5_sha256": "e2197051e493df898295a692c580ed676e771f7dfae5a1675d8d8e9b979f684c",
  "remote_c4_head": "e12a09e8bb742726e2ca7af42e163c455915bb7d",
  "schema": "rebaseguard.p5y.k5.tail-c5.b0-audit.v1",
- "uncommitted": 1
+ "uncommitted": 11
 }

@@ -7,8 +7,9 @@
     the constructive witness the gate's exhaustion criterion demands.
 
 (2) MUTATION. Each mutant perturbs exactly one mechanism and is classified as
-      DETECTED_BY_VERDICT / DETECTED_BY_GUARD / DETECTED_BY_RULE / VALUE_ONLY.
-    A mutant in none of those is an undetected defect and fails the phase. A mutant that makes the penalty SMALLER
+      DETECTED_BY_VERDICT / DETECTED_BY_GUARD / DETECTED_BY_RULE / DETECTED_BY_ARGUMENT / VALUE_ONLY /
+      PROVED_EQUIVALENT.
+    Only NOT_DETECTED fails the phase; PROVED_EQUIVALENT requires the equivalence to be argued in the row. A mutant that makes the penalty SMALLER
     is unsound and must be caught; one that makes it larger is merely looser and is recorded as such.
 
     python3 -B c5_mutations.py --out OUT.json
@@ -111,9 +112,10 @@ def main() -> int:
     unsound = {str(k): float(got[k]) for k in st}
     caught = all(got[k] < base[k]["Gamma"] for k in st)
     add("M02_weight_too_small_UNSOUND", "rho*(x_lo - rho/2): a penalty strictly below the attainable maximum",
-        "DETECTED_BY_RULE" if caught else "NOT_DETECTED",
-        how="the brute-force attainment check of part (1) exceeds this bound at every cell, which is exactly the "
-            "soundness violation it is designed to catch",
+        "DETECTED_BY_ARGUMENT" if caught else "NOT_DETECTED",
+        how="the bound falls strictly below the baseline at every cell, and the part-(1) attainment result then "
+            "makes it unsound by argument. Labelled DETECTED_BY_ARGUMENT, not _BY_RULE: part (1) is not re-run "
+            "against this formula (pre-forecast review, item I).",
         values=unsound)
 
     # M03 upper/lower bound swap
@@ -128,8 +130,9 @@ def main() -> int:
         return v["g_hi"] + max(-v["Hlo"], F(0)) * v["rho"]
     got, _ = verdict_of(m04)
     add("M04_missing_factor_of_e", "g' taken as -R'' instead of -e R'', dropping the |t| factor",
-        "DETECTED_BY_RULE",
-        how="the brute-force check exceeds it at every cell",
+        "DETECTED_BY_ARGUMENT",
+        how="strictly below the baseline at every cell, hence unsound by the part-(1) attainment result; "
+            "labelled by argument rather than by rule, as part (1) is not re-run against it",
         caught=bool(all(got[k] < base[k]["Gamma"] for k in st)))
 
     # M05 wrong cell: cell 309's weights applied to every cell
@@ -184,6 +187,47 @@ def main() -> int:
         "VALUE_ONLY" if any(sel[k] != base[k]["Gamma"] for k in st) else "PROVED_EQUIVALENT",
         note="C5-T is <= the frozen clause at every cell by theorem, so a min-selector is identically C5-T; the "
              "mutant is mathematically equivalent here and is recorded as such rather than as a detection")
+
+    # M11-M13: the leftward branch. The pre-forecast review constructed w_L := 0 and showed it survives every
+    # other check, because on all four tail cells the leftward branch never binds (ratios 0.85-0.92). A mutant of
+    # the theorem's novel sign-aware branch must be exercised on a cell where that branch ACTUALLY BINDS, so the
+    # suite manufactures one instead of relying on the four real cells.
+    synth = {"g_hi": F(-1, 5), "e0": F(2), "rho": F(1, 20), "Hlo": F(-1, 10), "Hhi": F(3)}   # H_hi dominates
+    s_true = TR.gamma(synth["g_hi"], synth["Hlo"], synth["Hhi"], synth["e0"], synth["rho"])
+    if s_true["binding_direction"] != "leftward":
+        raise SystemExit("the manufactured cell does not bind leftward; the w_L mutants would prove nothing")
+    s_brute = max(brute_max(synth["g_hi"], synth["Hlo"], synth["e0"], synth["rho"]),
+                  brute_max(synth["g_hi"], synth["Hhi"], synth["e0"], synth["rho"]))
+    add("M11_leftward_branch_is_exercised_at_all",
+        "a manufactured cell on which the leftward branch binds, since no real tail cell exercises it",
+        "DETECTED_BY_VERDICT" if s_true["binding_direction"] == "leftward" else "NOT_DETECTED",
+        binding_direction=s_true["binding_direction"],
+        C5T=float(s_true["Gamma"]), brute_force=float(s_brute),
+        sound=bool(s_brute <= s_true["Gamma"]),
+        attained=bool(abs(s_true["Gamma"] - s_brute) <= abs(s_true["Gamma"]) * F(1, 10 ** 6)),
+        real_cell_leftward_over_rightward={str(k): float((max(v["Hhi"], F(0)) * TR.weights(v["e0"], v["rho"])[1])
+                                                         / (max(-v["Hlo"], F(0)) * TR.weights(v["e0"], v["rho"])[0]))
+                                           for k, v in st.items()})
+
+    for tag, bad_wL, what in (
+            ("M12_wL_zeroed_UNSOUND", lambda e0, rho: F(0),
+             "w_L := 0, the mutant the pre-forecast review exhibited as surviving every earlier check"),
+            ("M13_wL_too_small_UNSOUND", lambda e0, rho: F(rho) * (F(e0) - F(rho) - F(rho) / 2),
+             "w_L := rho*(x_lo - rho/2), the mirror of the M02 unsoundness")):
+        ow = TR.weights
+        try:
+            TR.weights = lambda e0, rho, _o=ow, _b=bad_wL: (_o(e0, rho)[0], _b(e0, rho), *_o(e0, rho)[2:])
+            mg = TR.gamma(synth["g_hi"], synth["Hlo"], synth["Hhi"], synth["e0"], synth["rho"])["Gamma"]
+        finally:
+            TR.weights = ow
+        caught_real = any(TR.gamma(v["g_hi"], v["Hlo"], v["Hhi"], v["e0"], v["rho"])["Gamma"] != mg for v in st.values())
+        add(tag, what,
+            "DETECTED_BY_VERDICT" if mg < s_brute else "NOT_DETECTED",
+            manufactured_cell_C5T=float(mg), manufactured_cell_brute_force=float(s_brute),
+            how="on the manufactured leftward-binding cell the mutant falls BELOW the attained maximum, which is "
+                "the soundness violation; on the four real tail cells it is invisible, which is exactly why the "
+                "manufactured cell is required",
+            invisible_on_real_cells=not caught_real)
 
     undetected = [r["mutant"] for r in rows if r["outcome"] == "NOT_DETECTED"]
     by = {}

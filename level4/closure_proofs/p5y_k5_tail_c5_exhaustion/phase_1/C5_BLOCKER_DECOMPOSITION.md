@@ -31,8 +31,10 @@ far tighter than the sealed interval (≈5.3), so the intersection is decided by
 | 308 | −0.244895 | 3.371647 | 2.432398 | 1.386 | +0.094564 | 2.978193 | **31.54 %** |
 | 309 | −0.223326 | 3.319525 | 1.969828 | 1.685 | +0.153020 | 2.941558 | **45.88 %** |
 
-`M = |centre| + S` where the centre comes from the `H_at_a` and `W2` enclosures and `S` is the radius sum. The
-centre is small (≈0.38 at cell 309 against `S` ≈ 2.94), so **`S` is the target**.
+The centre is an **interval** `[C_lo, C_hi]` (at cell 309, `[−0.377967, +0.204985]`), and on all four cells the
+lower end binds, so `M = |C_lo| + S` **exactly** — not `|centre| + S`, which would be a category error
+(pre-forecast review, item B). `|C_lo|` ≈ 0.38 against `S` ≈ 2.94, so **`S` is the target**, and the
+"`S` must fall by `(M − M_needed)/S`" figures below are exact rather than first-order.
 
 ## 3. The decomposition of `S` — the result that redirects the whole campaign
 

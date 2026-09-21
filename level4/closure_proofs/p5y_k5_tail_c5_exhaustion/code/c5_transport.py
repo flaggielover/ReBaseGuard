@@ -34,7 +34,8 @@ C5-T IS NEVER WORSE THAN THE FROZEN CLAUSE, AND IS USUALLY STRICTLY BETTER. With
 
     P <= M * max(w_R, w_L) = M * w_R = M * rho * (x_hi - rho/2)  <  M * rho * x_hi,
 
-because rho > 0. The improvement factor on the penalty is at least (x_hi - rho/2)/x_hi. The sign-aware part adds
+because rho > 0. The improvement factor on the penalty, P/frozen, is at MOST (x_hi - rho/2)/x_hi -- the earlier "at least" had
+the inequality backwards for the quantity the code names `improvement_factor` (pre-forecast review, item D). The sign-aware part adds
 a further strict gain exactly when the POSITIVE end of the R'' enclosure dominates in magnitude; on the K5 tail
 cells the negative end dominates, so there the gain is the exact-weight factor alone.
 

@@ -8,10 +8,11 @@
   ],
   "MATH": [
    "A4",
+   "D2"
+  ],
+  "MATH_PARTIAL": [
    "A5",
-   "A6",
-   "D2",
-   "E2"
+   "A6"
   ],
   "NEW_REAL": [
    "A2",
@@ -33,14 +34,18 @@
    "D2",
    "D3",
    "D4",
-   "E1",
+   "E1"
+  ],
+  "RE_OPENED_LIVE": [
    "E2"
   ],
   "SELECTED": [
    "D1"
   ]
  },
+ "cell_scoping_note": "v1 of this ledger recorded A5 and A6 as MATH with closure_possible false, while its own kill gate showed both oracles CLOSE cell 307. The pre-forecast review failed the phase on it. Kill kinds are now cell-scoped and the producer refuses any MATH kill whose oracle closes a cell.",
  "future_routes_ranked": [
+  "E2 (a sharper CERTIFIED lower bound on Lambda_309 - re-opened; the only lever that restores the C4 exclusion margin C5-T consumed)",
   "B1 (cover refinement at 309 - the largest lever)",
   "E1 (operator certification of A0 - closes 307, nearly closes 308)",
   "A1 (tighten the K1 candidate sup norms - needs the record store)",
@@ -48,7 +53,6 @@
  ],
  "guard": "REAL_SCIENTIFIC_COMPUTE = DENY",
  "kill_gate_backing": {
-  "A4": "argued in the kill_reason",
   "A5": {
    "307": {
     "Gamma": -0.04994571890959114,
@@ -76,19 +80,39 @@
     "Gamma": 0.07250647311619228,
     "closes": false
    }
-  },
-  "D2": "argued in the kill_reason",
-  "E2": "argued in the kill_reason"
+  }
  },
  "kill_kinds": {
   "DATA": "inputs are not in the committed corpus (a live future route)",
-  "MATH": "the mathematics cannot deliver even at oracle-perfect",
+  "MATH": "the oracle closes NO still-open cell -- the route is refuted outright",
+  "MATH_PARTIAL": "the oracle refutes the route only at the named cells",
   "NEW_REAL": "would need a new scientific value at an unevaluated real address"
  },
  "new_real_scientific_addresses_evaluated": 0,
+ "re_opened": [
+  "E2"
+ ],
+ "refuted_on_mathematics_at_every_still_open_cell": [
+  "A4",
+  "D2"
+ ],
+ "refuted_on_mathematics_only_at_some_cells": {
+  "A5": [
+   308,
+   309
+  ],
+  "A6": [
+   308,
+   309
+  ]
+ },
  "routes": [
   {
-   "closure_possible": true,
+   "closure_possible_at_cells": [
+    307,
+    308,
+    309
+   ],
    "exhaustion_provable": false,
    "family": "order-3 surrogate",
    "id": "A1",
@@ -99,11 +123,20 @@
    "max_gain": "oracle: sup F/D/H -> 0 closes 307, 308 and (by 0.00035) 309",
    "mechanism": "tighten the candidate sup norms sF, sD, sH feeding f_G = k3*sF + 3k2*sD + 3k1*sH + sigma3 and env4",
    "new_real_required": false,
+   "oracle_closes_at_cells": [
+    307,
+    308,
+    309
+   ],
    "status": "KILLED",
    "target": "f_G and env4, jointly ~82% of the radius sum S"
   },
   {
-   "closure_possible": true,
+   "closure_possible_at_cells": [
+    307,
+    308,
+    309
+   ],
    "exhaustion_provable": false,
    "family": "order-3 surrogate",
    "id": "A2",
@@ -114,11 +147,20 @@
    "max_gain": "oracle: f_G -> 0 closes all three open cells",
    "mechanism": "replace the zero-candidate surrogate by a real order-3 candidate Ghat, so residual_G becomes delta_G instead of the triangle-inequality sum",
    "new_real_required": true,
+   "oracle_closes_at_cells": [
+    307,
+    308,
+    309
+   ],
    "status": "KILLED",
    "target": "f_G"
   },
   {
-   "closure_possible": true,
+   "closure_possible_at_cells": [
+    307,
+    308,
+    309
+   ],
    "exhaustion_provable": false,
    "family": "order-3 surrogate",
    "id": "A3",
@@ -129,11 +171,16 @@
    "max_gain": "unknown; bounded above by the f_G -> 0 oracle",
    "mechanism": "exploit cancellation in the identity phi''' = S''' + 3K1*Hhat + 3K2*Dhat + K3*Fhat instead of the triangle inequality",
    "new_real_required": false,
+   "oracle_closes_at_cells": [
+    307,
+    308,
+    309
+   ],
    "status": "KILLED",
    "target": "f_G"
   },
   {
-   "closure_possible": false,
+   "closure_possible_at_cells": [],
    "exhaustion_provable": false,
    "family": "order-3 surrogate",
    "id": "A4",
@@ -144,41 +191,68 @@
    "max_gain": "none at the tail",
    "mechanism": "reuse already-certified order-3 evidence (the first real probe, T-EXT, the GammaTilde point certificate)",
    "new_real_required": false,
+   "oracle_closes_at_cells": [],
    "status": "KILLED",
    "target": "f_G"
   },
   {
-   "closure_possible": false,
+   "closure_possible_at_cells": [
+    307
+   ],
    "exhaustion_provable": false,
    "family": "order-3 surrogate",
    "id": "A5",
    "inputs": "k, j, sup_S0, aux.candidate_suprema, aux.midpoint_eps -- all committed",
    "inputs_exist": true,
-   "kill_kind": "MATH",
+   "kill_kind": "MATH_PARTIAL",
+   "kill_kind_at_not_refuted_cells": "DATA",
    "kill_reason": "sigma3 is ALREADY measurement-improved: sigma_source takes the min of the pure tower and the adopted measured sup of S_r'''. At r = 3, 4 the measured value is 5-20x below the tower, so the tower is not what binds. And the oracle sigma3 -> 0 does not close 308 or 309.",
    "max_gain": "oracle: sigma3 -> 0 closes 307 only",
    "mechanism": "tighten sigma3, the (P3') midpoint source tower",
    "new_real_required": false,
+   "not_refuted_note": "the oracle CLOSES cell 307, so A5 is NOT refuted there; at 307 the binding reason is DATA -- sigma3 is already at the min of the pure tower and the adopted measurement, and no committed artifact offers a tighter one",
+   "oracle_closes_at_cells": [
+    307
+   ],
+   "refuted_at_cells": [
+    308,
+    309
+   ],
    "status": "KILLED",
    "target": "sigma3, 42-48% of f_G at r >= 1"
   },
   {
-   "closure_possible": false,
+   "closure_possible_at_cells": [
+    307
+   ],
    "exhaustion_provable": false,
    "family": "order-3 surrogate",
    "id": "A6",
    "inputs": "an order-4 measurement of the source, i.e. sup ||S_r''''||",
    "inputs_exist": false,
-   "kill_kind": "MATH",
+   "kill_kind": "MATH_PARTIAL",
+   "kill_kind_at_not_refuted_cells": "NEW_REAL",
    "kill_reason": "killed on MATH before NEW_REAL matters: the oracle sigma4 -> 0 leaves 308 at +0.0273 and 309 at +0.0725. The order-3 measured data already propagates into the order-4 tower (CL[(4,4)] = 99.5 against the pure 128.5, a 22.6% gain already taken), and no order-4 measurement exists.",
    "max_gain": "oracle: sigma4 -> 0 closes 307 only",
    "mechanism": "tighten sigma4, the (P3) whole-cell 4th-order envelope",
    "new_real_required": true,
+   "not_refuted_note": "the oracle CLOSES cell 307, so A6 is NOT refuted there; at 307 the binding reason is NEW_REAL -- tightening sigma4 needs an order-4 measurement of the source, and none exists",
+   "oracle_closes_at_cells": [
+    307
+   ],
+   "refuted_at_cells": [
+    308,
+    309
+   ],
    "status": "KILLED",
    "target": "sigma4, which reaches 235 at r = 4"
   },
   {
-   "closure_possible": true,
+   "closure_possible_at_cells": [
+    307,
+    308,
+    309
+   ],
    "exhaustion_provable": false,
    "family": "rho",
    "id": "B1",
@@ -189,11 +263,16 @@
    "max_gain": "oracle: rho halved closes all three open cells",
    "mechanism": "refine the cover: narrower cells, smaller rho",
    "new_real_required": true,
+   "oracle_closes_at_cells": [
+    307,
+    308,
+    309
+   ],
    "status": "KILLED",
    "target": "rho, which enters both the Taylor transport and the penalty"
   },
   {
-   "closure_possible": false,
+   "closure_possible_at_cells": [],
    "exhaustion_provable": false,
    "family": "rho",
    "id": "B2",
@@ -204,11 +283,12 @@
    "max_gain": "bounded by B1",
    "mechanism": "split the K5-B clause over sub-intervals of the existing cell, transporting R and D from e0 to each sub-midpoint",
    "new_real_required": true,
+   "oracle_closes_at_cells": [],
    "status": "KILLED",
    "target": "the effective transport half-width"
   },
   {
-   "closure_possible": false,
+   "closure_possible_at_cells": [],
    "exhaustion_provable": true,
    "family": "direct K5-B",
    "id": "D1",
@@ -219,11 +299,12 @@
    "max_gain": "1.211% to 1.295% of the penalty; closes nothing",
    "mechanism": "exact-weight, sign-aware transport (theorem C5-T): replace the penalty rho*x_hi*M by max((-H_lo)^+ * rho*(x_hi - rho/2), (H_hi)^+ * rho*(x_lo + rho/2))",
    "new_real_required": false,
+   "oracle_closes_at_cells": [],
    "status": "SELECTED",
    "target": "the transport constant in the K5-B direct clause"
   },
   {
-   "closure_possible": false,
+   "closure_possible_at_cells": [],
    "exhaustion_provable": false,
    "family": "direct K5-B",
    "id": "D2",
@@ -234,11 +315,12 @@
    "max_gain": "zero on these cells",
    "mechanism": "sign-awareness alone, keeping the weight rho*x_hi",
    "new_real_required": false,
+   "oracle_closes_at_cells": [],
    "status": "KILLED",
    "target": "the transport constant"
   },
   {
-   "closure_possible": false,
+   "closure_possible_at_cells": [],
    "exhaustion_provable": false,
    "family": "direct K5-B",
    "id": "D3",
@@ -249,11 +331,12 @@
    "max_gain": "unknown",
    "mechanism": "second-order transport of g using g'(e0) = -e0 R''(e0)",
    "new_real_required": true,
+   "oracle_closes_at_cells": [],
    "status": "KILLED",
    "target": "the transport constant"
   },
   {
-   "closure_possible": false,
+   "closure_possible_at_cells": [],
    "exhaustion_provable": false,
    "family": "direct K5-B",
    "id": "D4",
@@ -264,11 +347,15 @@
    "max_gain": "unknown",
    "mechanism": "tighten g_hi = R.hi - e0*D.lo by exploiting correlation between the R and D enclosures",
    "new_real_required": true,
+   "oracle_closes_at_cells": [],
    "status": "KILLED",
    "target": "g_hi, which is 59-60% of the closure deficit"
   },
   {
-   "closure_possible": true,
+   "closure_possible_at_cells": [
+    307,
+    308
+   ],
    "exhaustion_provable": true,
    "family": "atom constants",
    "id": "E1",
@@ -279,26 +366,37 @@
    "max_gain": "bounded by Lambda = sup_cell E_a[tau]: at the DIAGNOSTIC Lambda with A1 = A2 = 0, cell 307 closes (-0.0602), cell 308 barely closes (-0.0030), cell 309 does NOT (+0.0468)",
    "mechanism": "tighten A0 below the C3 operator-mixed value",
    "new_real_required": false,
+   "oracle_closes_at_cells": [
+    307,
+    308
+   ],
+   "refuted_at_cells": [
+    309
+   ],
    "status": "KILLED",
-   "target": "A0, which carries 82% of the radius sum"
+   "target": "A0, which carries 82% of the radius sum",
+   "withdrawn_phrase": "the earlier claim that E1 is PROVABLY USELESS for 309 is WITHDRAWN: it leaned on the C4 exclusion, which under C5-T retains only 0.94% of critical-A0 margin"
   },
   {
-   "closure_possible": false,
+   "closure_possible_at_cells": [],
    "exhaustion_provable": false,
    "family": "atom constants",
    "id": "E2",
    "inputs": "committed evidence plus exact analysis",
    "inputs_exist": true,
-   "kill_kind": "MATH",
+   "kill_kind": null,
    "kill_reason": "zero verdict value. 309 is already excluded by C4 and a better floor only widens a margin that is already positive; 308 can never be excluded because the C4 adjudicator's Monte-Carlo puts the truth (4.311) BELOW the threshold (4.375229). A sharper floor changes no cell.",
    "max_gain": "no verdict change",
    "mechanism": "certify a sharper LOWER bound on E_a[tau] than C4's ladder/Wald minorant, to strengthen the exclusion",
    "new_real_required": false,
-   "status": "KILLED",
+   "oracle_closes_at_cells": [],
+   "refuted_at_cells": [],
+   "reopened_because": "the first version of this ledger killed E2 as MATH / zero verdict value, in the SAME commit in which C5-T consumed 63% of the very margin it said needed no defence. Doubly wrong: the 308 leg rested on C4's UNCERTIFIED Monte-Carlo, which a MATH kill may not do, and the 309 leg is contradicted by C5's own result. Under C5-T the cell-309 exclusion stands on 0.94% of critical-A0 margin, down from 2.58%, and a sharper CERTIFIED lower bound on Lambda_309 is the only lever that restores it. Re-opened on the pre-forecast review's instruction (item C). C5 does NOT execute it -- the gate is frozen on route D1 and adding a mechanism after freeze would be scope creep -- and it is the top recommendation to the successor.",
+   "status": "RE_OPENED_LIVE",
    "target": "the exclusion margin, not closure"
   }
  ],
- "schema": "rebaseguard.p5y.k5.tail-c5.route-ledger.v1",
+ "schema": "rebaseguard.p5y.k5.tail-c5.route-ledger.v2",
  "selected": [
   "D1"
  ]

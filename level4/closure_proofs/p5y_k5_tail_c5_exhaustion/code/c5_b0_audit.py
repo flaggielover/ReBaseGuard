@@ -1,4 +1,4 @@
-"""Phase B0: the read-only successor audit, sixteen checks, every one executed.
+"""Phase B0: the read-only successor audit, seventeen checks, every one executed.
 
 Item 13 records LOCAL_MAIN_REF and REMOTE_MAIN_REF separately and never compares them for equality: at the end of
 C4 they are intentionally different refs, and conflating them is the trap this audit exists to avoid.
@@ -56,7 +56,9 @@ def main() -> int:
     out["head"] = git("rev-parse", "HEAD")
     out["uncommitted"] = len(git("status", "--porcelain").splitlines())
     checks.append(("B0_01_branch_head", out["branch"] == EXPECT["branch"]))
-    checks.append(("B0_02_worktree_clean_at_audit", True))       # recorded, not asserted; see uncommitted
+    # Named for what it does: it RECORDS the worktree state (see `uncommitted`) rather than asserting it. The
+    # earlier name said "clean" while the JSON beside it could read `uncommitted: 1` (pre-forecast review, A).
+    checks.append(("B0_02_worktree_state_recorded", True))
     out["remote_c4_head"] = git("ls-remote", "--heads", "origin", "p5y-k5-tail-c4").split("\t")[0]
     checks.append(("B0_03_remote_C4_at_predecessor_head",
                    out["remote_c4_head"] == EXPECT["predecessor_head"]))
@@ -117,7 +119,9 @@ def main() -> int:
                             "reconciles nor modifies either. No check in this audit asserts they are equal.")
     checks.append(("B0_13a_local_main_ref_unchanged", out["LOCAL_MAIN_REF"] == EXPECT["LOCAL_MAIN_REF"]))
     checks.append(("B0_13b_remote_main_ref_unchanged", out["REMOTE_MAIN_REF"] == EXPECT["REMOTE_MAIN_REF"]))
-    checks.append(("B0_14_neither_main_ref_touched_by_C4",
+    # Named for what its body tests: a purely LOCAL statement. The remote ref is covered by 13b, and conflating
+    # the two is the trap this audit exists to prevent (pre-forecast review, A).
+    checks.append(("B0_14_local_main_not_advanced",
                    len(git("rev-list", f"{EXPECT['LOCAL_MAIN_REF']}..main").splitlines()) == 0))
 
     # ---- 15, 16: reproduce the C4 exclusion and the adjudicator's anchors from the equations -----

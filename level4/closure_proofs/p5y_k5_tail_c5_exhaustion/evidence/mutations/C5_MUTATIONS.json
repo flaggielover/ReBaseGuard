@@ -1,5 +1,5 @@
 {
- "applied": 10,
+ "applied": 13,
  "baseline_closed_cells": [
   306
  ],
@@ -52,9 +52,9 @@
    "perturbs": "rho*(x_hi + rho/2) instead of rho*(x_hi - rho/2): LOOSER, still sound"
   },
   {
-   "how": "the brute-force attainment check of part (1) exceeds this bound at every cell, which is exactly the soundness violation it is designed to catch",
+   "how": "the bound falls strictly below the baseline at every cell, and the part-(1) attainment result then makes it unsound by argument. Labelled DETECTED_BY_ARGUMENT, not _BY_RULE: part (1) is not re-run against this formula (pre-forecast review, item I).",
    "mutant": "M02_weight_too_small_UNSOUND",
-   "outcome": "DETECTED_BY_RULE",
+   "outcome": "DETECTED_BY_ARGUMENT",
    "perturbs": "rho*(x_lo - rho/2): a penalty strictly below the attainable maximum",
    "values": {
     "306": -0.05233854852724164,
@@ -71,9 +71,9 @@
   },
   {
    "caught": true,
-   "how": "the brute-force check exceeds it at every cell",
+   "how": "strictly below the baseline at every cell, hence unsound by the part-(1) attainment result; labelled by argument rather than by rule, as part (1) is not re-run against it",
    "mutant": "M04_missing_factor_of_e",
-   "outcome": "DETECTED_BY_RULE",
+   "outcome": "DETECTED_BY_ARGUMENT",
    "perturbs": "g' taken as -R'' instead of -e R'', dropping the |t| factor"
   },
   {
@@ -115,19 +115,60 @@
    "note": "C5-T is <= the frozen clause at every cell by theorem, so a min-selector is identically C5-T; the mutant is mathematically equivalent here and is recorded as such rather than as a detection",
    "outcome": "PROVED_EQUIVALENT",
    "perturbs": "per cell, take whichever of the two clauses closes"
+  },
+  {
+   "C5T": 0.09625,
+   "attained": true,
+   "binding_direction": "leftward",
+   "brute_force": 0.09625,
+   "mutant": "M11_leftward_branch_is_exercised_at_all",
+   "outcome": "DETECTED_BY_VERDICT",
+   "perturbs": "a manufactured cell on which the leftward branch binds, since no real tail cell exercises it",
+   "real_cell_leftward_over_rightward": {
+    "306": 0.8528754370387018,
+    "307": 0.8774713314998818,
+    "308": 0.9019866576529529,
+    "309": 0.9230189493652686
+   },
+   "sound": true
+  },
+  {
+   "how": "on the manufactured leftward-binding cell the mutant falls BELOW the attained maximum, which is the soundness violation; on the four real tail cells it is invisible, which is exactly why the manufactured cell is required",
+   "invisible_on_real_cells": false,
+   "manufactured_cell_C5T": -0.189875,
+   "manufactured_cell_brute_force": 0.09625,
+   "mutant": "M12_wL_zeroed_UNSOUND",
+   "outcome": "DETECTED_BY_VERDICT",
+   "perturbs": "w_L := 0, the mutant the pre-forecast review exhibited as surviving every earlier check"
+  },
+  {
+   "how": "on the manufactured leftward-binding cell the mutant falls BELOW the attained maximum, which is the soundness violation; on the four real tail cells it is invisible, which is exactly why the manufactured cell is required",
+   "invisible_on_real_cells": false,
+   "manufactured_cell_C5T": 0.08875,
+   "manufactured_cell_brute_force": 0.09625,
+   "mutant": "M13_wL_too_small_UNSOUND",
+   "outcome": "DETECTED_BY_VERDICT",
+   "perturbs": "w_L := rho*(x_lo - rho/2), the mirror of the M02 unsoundness"
   }
  ],
  "new_real_scientific_addresses_evaluated": 0,
  "outcomes": {
+  "DETECTED_BY_ARGUMENT": [
+   "M02_weight_too_small_UNSOUND",
+   "M04_missing_factor_of_e"
+  ],
   "DETECTED_BY_GUARD": [
    "M03_R2_enclosure_ends_swapped",
    "M07_cell_not_in_e_gt_0",
    "M08_penalty_exceeds_frozen_tripwire"
   ],
   "DETECTED_BY_RULE": [
-   "M02_weight_too_small_UNSOUND",
-   "M04_missing_factor_of_e",
    "M09_closure_strictness"
+  ],
+  "DETECTED_BY_VERDICT": [
+   "M11_leftward_branch_is_exercised_at_all",
+   "M12_wL_zeroed_UNSOUND",
+   "M13_wL_too_small_UNSOUND"
   ],
   "PROVED_EQUIVALENT": [
    "M10_result_dependent_selector"

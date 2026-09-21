@@ -145,6 +145,97 @@ def c4_recheck(gate) -> dict:
     return out
 
 
+def exclusion_fragility(gate) -> dict:
+    """How much would void the C4 cell-309 exclusion, in five currencies. Required by the pre-forecast review.
+
+    C4 excluded cell 309 by Gamma(A0 = B, A1 = A2 = 0) >= 0, and reported 2.58% of slack -- measured in A0
+    against the critical A0. C5-T consumes 63% of that margin, and the currency matters enormously: a 0.94%
+    margin in A0 corresponds to well under 1% in the source supply. Every number below is computed here, not
+    quoted.
+    """
+    from c5_common import knock                                                      # noqa: E402
+    FC, B, T, R, DC, SEL = frozen_stack()
+    adopted, cover, c1, c2 = committed_inputs(FC)
+    k = 309
+    Bk = C4_FLOOR[k]
+    meas, aux, ad5, cov, s = cell_supply(k, FC, B, T, R, DC, SEL, adopted, cover, c1, c2)
+    e0, rho, x_hi = (B.rat(cov[t]) for t in ("e0", "rho", "right"))
+    g_hi = F(ad5["R_interval"]["hi"]) - e0 * F(ad5["D_interval"]["lo"])
+
+    def gam(sc, A0=Bk, clause="C5T"):
+        d = knock(FC, B, T, R, meas, aux, ad5, cov, {"A0": A0, "A1": F(0), "A2": F(0)}, sc)
+        if clause == "frozen":
+            return d["Gamma"], d
+        Hlo, Hhi, _ = signed_enclosure(d, ad5)
+        return TR.gamma(g_hi, Hlo, Hhi, e0, rho)["Gamma"], d
+
+    def critical_A0(clause):
+        lo, hi = F(0), F(100)
+        if gam({}, lo, clause)[0] >= 0:
+            return None
+        for _ in range(140):
+            mid = (lo + hi) / 2
+            if gam({}, mid, clause)[0] < 0:
+                lo = mid
+            else:
+                hi = mid
+        return lo
+
+    cf, c5 = critical_A0("frozen"), critical_A0("C5T")
+    G_c5, d0 = gam({})
+    t5 = TR.gamma(g_hi, *signed_enclosure(d0, ad5)[:2], e0, rho)
+
+    def voiding_cut(keys, clause="C5T"):
+        if gam({k_: F(1) for k_ in keys}, Bk, clause)[0] < 0:
+            return None
+        lo, hi = F(0), F(1)
+        for _ in range(60):
+            mid = (lo + hi) / 2
+            if gam({k_: mid for k_ in keys}, Bk, clause)[0] < 0:
+                lo = mid
+            else:
+                hi = mid
+        return float(100 * (1 - hi))
+
+    return {
+        "status": "CERTIFIED for the clause values; DIAGNOSTIC for every scaled sweep (the independent TC-T "
+                  "crosscheck is aligned to the frozen path whenever an ingredient is scaled)",
+        "1_margin_in_Gamma": {"frozen": float(gam({}, Bk, "frozen")[0]), "C5T": float(G_c5),
+                              "retained_percent": float(100 * G_c5 / gam({}, Bk, "frozen")[0])},
+        "2_margin_in_C4s_own_currency_critical_A0": {
+            "critical_A0_frozen_clause": float(cf), "critical_A0_C5T": float(c5),
+            "C4_certified_floor_B": float(Bk),
+            "slack_percent_frozen": float(100 * (Bk / cf - 1)),
+            "slack_percent_C5T": float(100 * (Bk / c5 - 1)),
+            "note": "C4 published 2.58%; under C5-T it is under 1%"},
+        "3_further_penalty_cut_that_would_void_it_percent": float(100 * G_c5 / t5["P"]),
+        "4_source_supply_cut_that_would_void_it_percent": {
+            "f_G_order3_surrogate": voiding_cut(["fG"]),
+            "env4_order4_envelope": voiding_cut(["env4"]),
+            "sigma3": voiding_cut(["sigma3"]),
+            "sigma4": voiding_cut(["sigma4"]),
+            "all_four_together": voiding_cut(["fG", "env4", "sigma3", "sigma4"]),
+            "candidate_sup_norms_supF_supD_supH": voiding_cut(["supF", "supD", "supH"]),
+            "candidate_sup_norms_under_the_FROZEN_clause": voiding_cut(["supF", "supD", "supH"], "frozen")},
+        "5_can_a_tighter_transport_void_it": {
+            "answer": "NO, not within the transport family",
+            "why": "C5-T's bound is attained by an admissible member of its input set (see `exhaustion`), so no "
+                   "transport using only g_hi and a whole-cell R'' enclosure can be smaller. The 0.76% is "
+                   "unreachable by a smarter transport on the present inputs.",
+            "but": "it IS comfortably reachable by an ENCLOSURE improvement, which is outside the transport "
+                   "family: a ~2% tightening of the candidate sup norms would void the exclusion, and route A1 "
+                   "which would deliver exactly that is DATA-blocked, not refuted."},
+        "C4_scope_sentence_must_be_restated": (
+            "C4's adjudicated verdict and its binding Condition 1 scope the cell-309 exclusion as holding "
+            "'against the frozen measurement inputs and the frozen theorem TC-T / K5-B direct clause'. C5-T "
+            "REPLACES that clause. The exclusion survives the replacement -- that is what the recheck above "
+            "establishes -- but any restatement must now name the C5-T clause, not the frozen one, and must "
+            "carry the margin figures above rather than C4's 2.58%."),
+        "consequence_for_the_ledger": "route E2, a sharper certified lower bound on Lambda_309, is RE-OPENED: it "
+                                      "is the only lever that restores the margin C5-T consumed.",
+    }
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", required=True)
@@ -174,10 +265,14 @@ def main() -> int:
            "C5_PRIMARY_CLASS": cls,
            "exhaustion": exhaustion_argument(per),
            "predecessor_recheck": rc,
+           "c4_exclusion_fragility": exclusion_fragility(gate),
            "adopted_cells": [], "coverage_map_revision": None,
            "permitted_conclusions": gate["permitted_conclusions"].get(cls, []) + gate["permitted_conclusions"]["any_class"],
            "new_real_scientific_addresses_evaluated": 0,
-           "kernel_evaluations": 0, "operator_certifications_run": 0, "remote_hosts_contacted": 0,
+           "kernel_evaluations": 0, "operator_certifications_run": 0,
+           "remote_hosts_contacted": "no compute host. The B0 audit makes two read-only `git ls-remote` calls to "
+                                     "the code host to read REMOTE_MAIN_REF and the published C4 head; no "
+                                     "scientific worker, no AWS, no Vultr (pre-forecast review, item E).",
            "guard": "REAL_SCIENTIFIC_COMPUTE = DENY"}
     data = json.dumps(out, sort_keys=True, indent=1) + "\n"
     Path(a.out).write_text(data)
