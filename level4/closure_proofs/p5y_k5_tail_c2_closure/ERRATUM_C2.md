@@ -21,14 +21,15 @@ count. Counts belong in the tables of this document and of `README.md`, not in p
 | r12 | `6aa2040a` | 2 FAIL | § "Dispositions from the TWELFTH pre-freeze review" |
 | r13 | `92bc9637` | 3 FAIL | § "Dispositions from the THIRTEENTH pre-freeze review" |
 | r14 | `75a97a18` | 4 FAIL | § "Dispositions from the FOURTEENTH pre-freeze review" |
+| r15 | `757db96a` | 1 FAIL | § "Dispositions from the FIFTEENTH pre-freeze review" |
 
 **The result has never moved.** In every round so far, no Γ, magnitude, margin, requirement, gap fall, class or
 adopted-subset value has changed: the class is `D_PARTIAL`, the closed subset is {305, 306}, and the frozen gate
 is byte-untouched at `098dd7f5…`.
 
-**Of the leaves replaced in committed evidence — all of them in the ledger below — one is a scientific or
-decision value**: the C_T sensitivity row on cells 307–309 of the D1 diagnosis, corrected to the admissible
-perturbation. Reviews r5, r6, r7 and r8 each independently
+**Of the leaves replaced in committed evidence — all of them in the ledger below — nine constitute the single
+scientific or decision change**: the C_T sensitivity row on cells 307–309 of the D1 diagnosis, corrected to the admissible
+perturbation. Reviews r5, r6, r7 and r8 — and later rounds — each independently
 diffed every leaf of that artifact across its whole history and each found the same nine leaves. One published
 *table* was additionally corrected against evidence that never changed: D1 §1's ranking of the three negligible
 blocker terms, which named the smallest of them and printed "~0" for the two larger, while the machine-readable
@@ -310,7 +311,7 @@ stale by a later edit, and this was another. Updating the number would have set 
 hand-maintained tally was deleted from the prose that carried it. Counts belong in the tables — the review list
 at the top of the README, the round table at the top of this document, and the registers below. *(C2 has written a
 sentence here claiming its prose contains no counts more than once, and each time the claim was false while the
-sentence itself sat beside counts. No such claim is made now: where prose states a number it should simply be
+sentence itself sat beside counts. C2 should not make such a claim again: where prose states a number it should simply be
 right, and checked before it is written.)*
 
 On the review's own closing point, which C2 accepts: what it blocked on was not prose quality but *a wrong count
@@ -365,8 +366,8 @@ certified value bit-identical — and confirmed the science, the gate and the in
 
 **On r9's judgement of the r8 deviation.** The review found that overriding its own recommendation — regenerating
 the artifact instead of disclosing around it — was **right**, and that the execution was merely unfinished: "Keep
-the regeneration and finish it — do not reverse it." It is finished here. It is the only occasion on which C2 has
-departed from a reviewer's explicit instruction, and the departure held up.
+the regeneration and finish it — do not reverse it." It is finished here. It is the one departure from a reviewer's explicit instruction that C2 has
+recorded, and the departure held up.
 
 ## Dispositions from the TENTH pre-freeze review
 
@@ -396,7 +397,7 @@ claims sound and listed them so a later round need not re-derive them.
 | | finding | repair |
 |---|---|---|
 | **r11 FAIL 1** | The replacement ledger — the instrument built the previous round *to be* the complete provenance accounting — was **incomplete**. Its scope sentence claimed every replaced leaf; it omitted `evidence/prefreeze/C2_MUTATIONS.json` (`5a94568a → 12585997`, four leaves: `applied` 33 → 43, `detected` 31 → 40, `real_mutants` 25 → 35, `M10.caught_by[0]`). C2 had rebuilt the ledger over the two files it already knew about rather than over the corpus its own sentence named. | The ledger is rebuilt over **every** committed file under `evidence/` and `config/` and now carries all **19** leaves across **three** files, with the breakdown: nine scientific, four suite counts, six free text and timings. |
-| **r11 FAIL 2** | The repair introduced a new instance of the very class it was closing: `87004e2b` added "four independent reviews (r5, r6, r7, r8)" to the README while this document asserted "every hand-maintained tally has been deleted from prose … and prose does not". Compliance claimed, counts present. | The compliance clauses are deleted. *(The first repair removed one of the two and recorded both as gone — r12 FAIL 1. The second survived verbatim for a further round and is deleted now.)* C2 has repeatedly written a sentence claiming its prose carries no counts, and each time the claim was false while sitting beside counts. No such claim is made any more: where prose states a number it should simply be right, and be checked before it is written. The accurate counts themselves are kept. |
+| **r11 FAIL 2** | The repair introduced a new instance of the very class it was closing: `87004e2b` added "four independent reviews (r5, r6, r7, r8)" to the README while this document asserted "every hand-maintained tally has been deleted from prose … and prose does not". Compliance claimed, counts present. | The compliance clauses are deleted. *(The first repair removed one of the two and recorded both as gone — r12 FAIL 1. The second survived verbatim for a further round and is deleted now.)* C2 has repeatedly written a sentence claiming its prose carries no counts, and each time the claim was false while sitting beside counts. C2 should not make such a claim again: where prose states a number it should simply be right, and be checked before it is written. The accurate counts themselves are kept. |
 
 Also acted on: "exactly nine leaves have ever changed in this campaign" was true of `C2_D1_BLOCKER.json` and false
 campaign-wide, where the figure is 19. Both occurrences are now scoped to the artifact.
@@ -406,7 +407,7 @@ campaign-wide, where the figure is 19. Both occurrences are now scoped to the ar
 `review/REVIEW_C2_PREFREEZE_R12.md`, at `6aa2040a`: **2 FAIL**. It rebuilt the replacement ledger independently
 over all 115 committed files under `evidence/` and `config/`, taking no file list from C2, and confirmed
 **19 leaves / three files / 9 + 4 + 6 correct in every cell, with nothing missing** — r11 FAIL 1 fully repaired.
-It also listed surviving instances of the corpus-claim class, and disclosed that its own first draft of its verdict table was hand-tallied and wrong, which it re-extracted
+It also listed surviving instances of the corpus-claim class, and stated that its counts were extracted mechanically rather than hand-tallied. *(An earlier version of this sentence credited r12 with disclosing that its own first draft had been hand-tallied and wrong. It makes no such disclosure — r13 and r14 each did that about themselves. Flagged by r13 and carried unrepaired for three rounds; r15 D2.)* Its counts were re-extracted
 mechanically before finishing — the same hazard it was auditing.
 
 | | finding | repair |
@@ -414,7 +415,7 @@ mechanically before finishing — the same hazard it was auditing.
 | **r12 FAIL 1** | r11 named **two** compliance clauses. C2 deleted one, deleted a trailing fragment of a neighbouring sentence, and recorded both as gone. The second survived **verbatim** ("…prose does not") for a further round, in a document whose disposition row asserted "Both compliance clauses are deleted. … No such claim is made any more." | The surviving clause is deleted and the row rewritten to record that the first repair was partial. |
 | **r12 FAIL 2** | The new README provenance paragraph did not reconcile: "Nineteen leaves … exactly **one** of them is a scientific value … **Four** are … **six** are" — 1 + 4 + 6 = 11, not 19, and the "one" scientific correction is **nine** leaves. It contradicted this document eight sections away, in the front-door file. | Rewritten as 9 + 4 + 6 = 19, with the nine named as the one scientific correction. |
 
-Its NOTE-level findings were acted on rather than deferred: the claim that no "magnitude" appears in the ledger
+Three of its NOTE-level findings were acted on rather than deferred: the claim that no "magnitude" appears in the ledger
 table is now stated as a claim about **values** (the D1 row does name a field called `magnitude`, but it is a
 sensitivity probe's magnitude at a perturbed C_T, not a cell's); "the one place in nine rounds" no longer carries a
 round count; and the transcribed per-review PASS/NOTE/INFO sub-counts were removed from the disposition headers.
@@ -451,7 +452,7 @@ its own first verdict table was hand-tallied and wrong on two columns.
 | **r14 Note 1** | r13 FAIL 2 was **not repaired at all**, and its disposition row certified that it was. The repair changed "both times" to "each time" and left the **count** — "twice" — standing, while the other statement still said "three times". The row asserted "The count is removed from the older statement, so the two cannot diverge again"; neither half was true. Earlier rounds produced all-but-one repairs; this was none-of-one, recorded as complete. | **Neither statement now carries a count.** The row records what actually happened. |
 | **r14 Note 2** | The derivation offered for the r13 FAIL 3 withdrawal was falsified **by the commit that wrote it**: the text told the reader to run `grep -c 'self-caught'`, which returned 4 at the previous commit and 7 after, because that same commit added three further occurrences of the string. The figure itself is right; the check supplied contradicted the conclusion it was supposed to support. | The instruction is withdrawn and replaced by reading the register's **caught by** column, which is what the figure was derived from. |
 | **r14 Note 3** | A claim that r12 "listed all seven surviving instances … rather than leaving any for a later round" — an exhaustiveness claim **r12 never made**, and false: r13 listed eleven, at least two of which predate r12. | The exhaustiveness clause is deleted. |
-| **r14 Note 4** | "Sixth instance; r5 FAIL 1" — a hand-maintained ordinal in prose contradicting the register beside it, where that episode is the fifth row. Present since `fb4d688b` and unremarked by eight reviews. | The ordinal is deleted; the text points at the register row instead. |
+| **r14 Note 4** | "Sixth instance; r5 FAIL 1" — a hand-maintained ordinal in prose contradicting the register beside it, where that episode is the fifth row. Present since `fb4d688b`. **r14 reported it as unremarked; that was wrong and C2 repeated it unchecked — r8 raised it as its own note 4 and said "Delete the ordinal", and r9 recorded it twice, the second time as a deliberate decision to leave it standing (r15 Note 1).** | The ordinal is deleted; the text points at the register row instead. |
 
 **On the narrative reduction**, r14 found nothing load-bearing lost — all 25 register rows, the second register,
 the operational lesson, the r13 withdrawal and all six figures verified present — and judged the direction right
@@ -461,9 +462,45 @@ leaving the stale ordinal of Note 4; and **it introduced two fresh self-descript
 purpose was to stop writing them** — an underived superlative and an absolute that was false of the section it
 introduced. Both are now removed, and the r5 note-8 attribution the reduction dropped is restored.
 
+## Dispositions from the FIFTEENTH pre-freeze review
+
+`review/REVIEW_C2_PREFREEZE_R15.md`, at `757db96a`: **1 FAIL**. It confirmed that **all eight** of the r14 repairs
+landed, verified in both directions at HEAD, and that the three residual strings appear only as historical
+quotations inside the r14 disposition rows. It reproduced the science, the gate and the integrity envelope cold.
+
+| | finding | repair |
+|---|---|---|
+| **r15 Note 1** | C2 wrote that the "Sixth instance" ordinal had been "**unremarked by eight reviews**". False, and inherited verbatim from r14's Note 4 without checking: **r8 raised it as its own note 4** and said "Delete the ordinal", and **r9 recorded it twice**, the second time as a deliberate decision to leave it standing so that a later round would not treat it as accumulating debt. One `grep -rn 'Sixth instance' review/` refutes it. C2's own documented failure mode — inheriting a reviewer's premise unverified — which already occupies two register rows. | Withdrawn, with what the two reviews actually did recorded in its place. |
+
+**The whole live list is swept in this commit, not only the FAIL.** r15 listed eleven live corpus claims (its
+D1–D11) and observed that five of them had been *silently carried forward* — raised by r13, re-raised by r14, and
+neither repaired nor acknowledged, with one commit rewriting the sentence containing a falsehood while leaving the
+falsehood in it. All eleven are actioned here:
+
+- **D2** the credit to r12 for disclosing a hand-tallied first draft — r12 makes no such disclosure; r13 and r14
+  each made one about themselves. Flagged by r13, carried three rounds. Withdrawn.
+- **D3** "its NOTE-level findings were acted on" — three of seven were. Narrowed.
+- **D4** "the only occasion on which C2 has departed from a reviewer's instruction" — unbounded; now "the one
+  departure C2 has recorded".
+- **D5** "four independent reviews (r5, r6, r7, r8) each confirmed" — true but drifting as rounds re-derive it;
+  now names them without implying exclusivity.
+- **D6** "one is a scientific or decision value" against "nine" eight lines away — now "nine constitute the single
+  scientific or decision change", which is what both meant.
+- **D7** "Every instance has the same shape … the primary claim was sound every time" — no longer true once the
+  round-13 row was added, which is the none-of-one case r14 expressly distinguished. **r14 had rated this claim
+  sound; r15 moved it.** Corrected to name the exception.
+- **D8** "the rest of those episodes … are not re-told here" — false; the paragraph below re-tells one. Softened.
+- **D9** the two "no such claim is made" compliance clauses — true today but stale-capable, and the same species
+  this document says was deleted rather than maintained. Rewritten as an instruction to a successor rather than a
+  claim about the present text.
+- **D10** "Every one of C2's repair rounds has carried an error of its own" — true through round thirteen and
+  self-undermining thereafter. Bounded to what has been observed. **Also rated sound by r14 and moved by r15.**
+- **D11** N9's "no campaign has built one" — unverifiable from inside the namespace; narrowed to "none exists in
+  this repository".
+
 ## The pattern, named
 
-**Every one of C2's repair rounds has carried an error of its own.** The registers below are the record; the prose
+**Every one of C2's repair rounds through round thirteen carried an error of its own.** The registers below are the record; the prose
 after them is deliberately short: the narrative here has itself produced many of the defects it describes, so
 episodes recorded in a register row are generally not re-told.
 
@@ -497,6 +534,7 @@ episodes recorded in a register row are generally not re-told.
 | 13 | repaired r13 FAIL 2 | changed the wording, left the count, and certified the count removed | r14 Note 1 |
 | 13 | supplied a command to re-derive a figure | the same commit falsified the command | r14 Note 2 |
 | 13 | reduced this section's narrative | added a superlative and an absolute, both self-descriptive, both unchecked | r14 Notes 5-6 |
+| 14 | repaired r14 Note 4 | repeated r14's "unremarked by eight reviews" premise without checking it | r15 Note 1 |
 
 A separate register, for a different failure — a review note received and then never actioned, rather than
 decoration added:
@@ -505,16 +543,17 @@ decoration added:
 |---|---|---|---|
 | r2 | note 4: mark the build-host column "reported rather than recorded" | never actioned; the bolded claim resting on it stayed unqualified for five rounds | r7 FAIL 2 |
 
-Every instance has the same shape — **a correct primary argument or fix, with a second unverified thing stacked
-on top of it, or a neighbouring sentence the fix failed to carry along.** The primary claim was sound every time;
-the decoration and the leftovers were not.
+Most instances have the same shape — **a correct primary argument or fix, with a second unverified thing stacked
+on top of it, or a neighbouring sentence the fix failed to carry along** — and in those the primary claim was
+sound while the decoration and the leftovers were not. The round-13 row is not of that shape: there the repair
+did not land at all and was then certified as complete (r14 Note 1).
 
 One substantive point from those episodes is kept — it is r5's note 8 — because a successor re-reading r4
 against this document would otherwise conclude one of them is in error: r4's remark that renormalising by equal A0 effect makes D_lo "lead by a
 wider margin" is **false of the ratio** — that renormalisation divides both rows by the same constant, leaving it
 at 1.0674 at cell 309 either way — and **true of the absolute difference**, which the same renormalisation
 multiplies by eleven, 0.005505 to 0.060556. Both documents are arithmetically exact and are describing different
-quantities. The rest of those episodes are in the register rows above and are not re-told here.
+quantities. The other episodes are in the register rows above and are mostly not re-told here.
 
 **C2 wrote here that "the self-audit is now finding these faster than the reviews are". That was false when
 written and had been false for six rounds** (r13 FAIL 3). Derive it from the **caught by** column of the register above; a `grep -c` over this whole file does not work,

@@ -51,6 +51,7 @@ Each predecessor lost its campaign to a gate defect, and C2's gate is written ag
 | independent pre-freeze review r12 | `review/REVIEW_C2_PREFREEZE_R12.md` | NOT_READY — **2 FAIL** |
 | independent pre-freeze review r13 | `review/REVIEW_C2_PREFREEZE_R13.md` | NOT_READY — **3 FAIL** |
 | independent pre-freeze review r14 | `review/REVIEW_C2_PREFREEZE_R14.md` | NOT_READY — **4 FAIL** |
+| independent pre-freeze review r15 | `review/REVIEW_C2_PREFREEZE_R15.md` | NOT_READY — **1 FAIL** |
 | erratum and review disposition | `ERRATUM_C2.md` | every FAIL from every round dispositioned |
 
 *FAIL counts only. Each review's PASS/NOTE/INFO breakdown is in its own file and is deliberately not transcribed
@@ -98,9 +99,9 @@ was extended at the first review's request. The **six** are free text and wall-c
 §1's ranking of the three negligible blocker terms. The full ledger, and the command to rebuild it rather than
 trust it, are in `ERRATUM_C2.md` § "Replacement ledger".
 
-**No Γ, magnitude, margin, requirement, gap fall, class or adopted-subset value has changed at any point** — four
-independent reviews (r5, r6, r7, r8) each confirmed this by diffing every leaf of the D1 evidence across its whole
-commit history.
+**No Γ, magnitude, margin, requirement, gap fall, class or adopted-subset value has changed at any point** — reviews r5, r6, r7 and r8
+each confirmed this by diffing every leaf of the D1 evidence across its whole commit history, and later rounds
+have re-derived it.
 
 **The R stage is blocked, and not by C2's own finding.** A sound operator-level combination C2 did not pre-register
 clears the gate's own 20 % bar on all three still-open cells at zero cost — so "the deterministic direction is

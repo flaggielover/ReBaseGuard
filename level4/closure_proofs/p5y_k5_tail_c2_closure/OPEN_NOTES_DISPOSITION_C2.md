@@ -78,7 +78,7 @@ Full disposition in [`ERRATUM_C2.md`](ERRATUM_C2.md). Carried forward as open ob
 - **N9 — the Arb/FLINT supersolutions remain the residual trust surface.** C2 has re-certified cell 306's eighteen
   artifacts, and re-run the whole-registry verification, on a host whose OS, architecture, Python and compiled
   Arb/FLINT build are recorded in the artifact — but this is still **one implementation**. A second, independently
-  written certifier is the real answer and no campaign has built one.
+  written certifier is the real answer, and none exists in this repository.
 - **N10 — the registry does not record the host that built it.** `REGISTRY_C2.json` carries no host, toolchain or
   precision field, and the worker's build log records only the registry summary, so the *build* host is reported by
   this campaign and recorded nowhere. Both verification artifacts record the host that *re-certified*, which is a
