@@ -47,6 +47,7 @@ Each predecessor lost its campaign to a gate defect, and C2's gate is written ag
 | independent pre-freeze review r8 | `review/REVIEW_C2_PREFREEZE_R8.md` | NOT_READY — **3 FAIL** |
 | independent pre-freeze review r9 | `review/REVIEW_C2_PREFREEZE_R9.md` | NOT_READY — **3 FAIL** |
 | independent pre-freeze review r10 | `review/REVIEW_C2_PREFREEZE_R10.md` | NOT_READY — **3 FAIL** |
+| independent pre-freeze review r11 | `review/REVIEW_C2_PREFREEZE_R11.md` | NOT_READY — **2 FAIL** |
 | erratum and review disposition | `ERRATUM_C2.md` | every FAIL from every round dispositioned |
 
 *FAIL counts only. Each review's PASS/NOTE/INFO breakdown is in its own file and is deliberately not transcribed
@@ -86,11 +87,12 @@ figures computed outside the Lemma Dv′ hypotheses, and — repeatedly — an e
 previous round. That last is a documented failure mode of this campaign's authorship; its anatomy and its running
 tally are in `ERRATUM_C2.md` §"The pattern, named".
 
-One published **scientific value** has changed as a result: the C_T sensitivity row for cells 307/308/309 of the
-D1 diagnosis, corrected to the admissible perturbation. One published **table** was separately corrected against
-evidence that never changed — D1 §1's ranking of the three negligible blocker terms. Two later repairs regenerated
-`C2_RECERTIFY_306.json`, replacing free text and wall-clock timings but no certified value. The full ledger, and
-the command to regenerate it rather than trust it, are in `ERRATUM_C2.md` § "Replacement ledger".
+Nineteen leaves of committed evidence have been replaced, across three files, and exactly one of them is a
+**scientific value**: the C_T sensitivity row for cells 307/308/309 of the D1 diagnosis, corrected to the
+admissible perturbation. Four are the adversarial suite's own counts after it was extended at the first review's
+request; six are free text and wall-clock timings in `C2_RECERTIFY_306.json`. A published **table** was separately
+corrected against evidence that never changed — D1 §1's ranking of the three negligible blocker terms. The full
+ledger, and the command to rebuild it rather than trust it, are in `ERRATUM_C2.md` § "Replacement ledger".
 
 **No Γ, magnitude, margin, requirement, gap fall, class or adopted-subset value has changed at any point** — four
 independent reviews (r5, r6, r7, r8) each confirmed this by diffing every leaf of the D1 evidence across its whole

@@ -17,13 +17,15 @@ count. Counts belong in the tables of this document and of `README.md`, not in p
 | r8 | `07c0b991` | 3 FAIL | § "Dispositions from the EIGHTH pre-freeze review" |
 | r9 | `5609358f` | 3 FAIL | § "Dispositions from the NINTH pre-freeze review" |
 | r10 | `575919cb` | 3 FAIL | § "Dispositions from the TENTH pre-freeze review" |
+| r11 | `87004e2b` | 2 FAIL | § "Dispositions from the ELEVENTH pre-freeze review" |
 
 **The result has never moved.** In every round so far, no Γ, magnitude, margin, requirement, gap fall, class or
 adopted-subset value has changed: the class is `D_PARTIAL`, the closed subset is {305, 306}, and the frozen gate
 is byte-untouched at `098dd7f5…`.
 
-**One scientific or decision value has been replaced in this campaign**: the C_T sensitivity row on cells
-307–309 of the D1 diagnosis, corrected to the admissible perturbation. Reviews r5, r6, r7 and r8 each independently
+**Of the leaves replaced in committed evidence — all of them in the ledger below — one is a scientific or
+decision value**: the C_T sensitivity row on cells 307–309 of the D1 diagnosis, corrected to the admissible
+perturbation. Reviews r5, r6, r7 and r8 each independently
 diffed every leaf of that artifact across its whole history and each found the same nine leaves. One published
 *table* was additionally corrected against evidence that never changed: D1 §1's ranking of the three negligible
 blocker terms, which named the smallest of them and printed "~0" for the two larger, while the machine-readable
@@ -36,9 +38,15 @@ it, with the loop in `git log --reverse --all -- <file>` diffing consecutive rev
 
 | file | commit pair | leaves replaced | what |
 |---|---|---|---|
-| `evidence/phase_d1/C2_D1_BLOCKER.json` | across its history | **9** | C_T `magnitude` / `delta_vs_base` / `relative_gain` on cells 307, 308, 309 — the one scientific change |
+| `evidence/phase_d1/C2_D1_BLOCKER.json` | `e71378a0 → 55c4cf00` | **9** | C_T `magnitude` / `delta_vs_base` / `relative_gain` on cells 307, 308, 309 — the one scientific change |
+| `evidence/prefreeze/C2_MUTATIONS.json` | `5a94568a → 12585997` | **4** | `applied` 33 → 43, `detected` 31 → 40, `real_mutants` 25 → 35, `M10.caught_by[0]` `value` → `tiling` — the r1-requested suite extension, disclosed below |
 | `evidence/prefreeze/C2_RECERTIFY_306.json` | `8aee1fc5 → 55c4cf00` | **3** | `diagnostic_policy.why`; `cpu_seconds` 1653.6 → 1153.9 and 1691.8 → 1204.2 |
 | `evidence/prefreeze/C2_RECERTIFY_306.json` | `55c4cf00 → 5609358f` | **3** | `host.note`; `cpu_seconds` 1153.9 → 1141.5 and 1204.2 → 1196.1 |
+
+**19 leaves, three files.** The first version of this ledger listed 15 and claimed to list every one; it omitted
+`C2_MUTATIONS.json` entirely (r11 FAIL 1). Of the 19, **nine** are the scientific correction, **four** are the
+adversarial suite's own counts after it was extended at r1's request, and **six** are free text and wall-clock
+timings. No certified constant, Γ, magnitude, requirement or gap fall appears anywhere in this table.
 
 `C2_RECERTIFY_306.json` has therefore been regenerated after a review **twice**, not once. A previous version of
 this section recorded only the second, because C2 took r9's premise — "the one place where the campaign rewrote
@@ -259,7 +267,7 @@ but it supports finding 3, not the C_T headroom claim it was attached to.
 
 `review/REVIEW_C2_PREFREEZE_R5.md`, at `1663f558`: 34 rows, 27 PASS, 5 NOTE, **2 FAIL**. Both text-only, and both
 the documented shape again. It also did something no earlier round did: diffed **every leaf of
-`C2_D1_BLOCKER.json` across its entire commit history**, confirming that exactly nine leaves have ever changed in
+`C2_D1_BLOCKER.json` across its entire commit history**, confirming that exactly nine leaves of that artifact have ever changed in
 this campaign, all of them C_T sensitivity on cells 307–309.
 
 | | finding | repair |
@@ -295,9 +303,11 @@ three `NOT_CHECKABLE_LOCALLY` rows, and r2's own header genuinely does not recon
 
 **The repair is structural, not another number.** Several of the instances in the register below are a count left
 stale by a later edit, and this was another. Updating the number would have set the same trap for the next round. So every
-hand-maintained tally has been deleted from prose in both `README.md` and this section. The tables carry the
-counts — the review list at the top of the README, the round table at the top of this document, and the registers
-below — and prose does not.
+hand-maintained tally was deleted from the prose that carried it. Counts belong in the tables — the review list
+at the top of the README, the round table at the top of this document, and the registers below. *(C2 has twice
+written a sentence here claiming its prose contains no counts, and both times the claim was false while the
+sentence itself sat beside counts. No such claim is made now: where prose states a number it should simply be
+right, and checked before it is written.)*
 
 On the review's own closing point, which C2 accepts: what it blocked on was not prose quality but *a wrong count
 of how many independent reviews the campaign had survived, in the front-door document*. That is a claim about the
@@ -373,11 +383,25 @@ remaining universals were each re-derived — `evidence/registry_c2/` has exactl
 build-host record exists anywhere in C2's `evidence/` or `config/`, and the "only in-repo corroboration" claim is
 narrowed to the corroboration r2 identified, since C2 cannot establish it is the only one.
 
+## Dispositions from the ELEVENTH pre-freeze review
+
+`review/REVIEW_C2_PREFREEZE_R11.md`, at `87004e2b`: 36 rows, 30 PASS, 1 PARTIAL, 3 NOTE, **2 FAIL**. It rebuilt
+the replacement ledger itself over every committed evidence and config file, and separately verified ten corpus
+claims sound and listed them so a later round need not re-derive them.
+
+| | finding | repair |
+|---|---|---|
+| **r11 FAIL 1** | The replacement ledger — the instrument built the previous round *to be* the complete provenance accounting — was **incomplete**. Its scope sentence claimed every replaced leaf; it omitted `evidence/prefreeze/C2_MUTATIONS.json` (`5a94568a → 12585997`, four leaves: `applied` 33 → 43, `detected` 31 → 40, `real_mutants` 25 → 35, `M10.caught_by[0]`). C2 had rebuilt the ledger over the two files it already knew about rather than over the corpus its own sentence named. | The ledger is rebuilt over **every** committed file under `evidence/` and `config/` and now carries all **19** leaves across **three** files, with the breakdown: nine scientific, four suite counts, six free text and timings. |
+| **r11 FAIL 2** | The repair introduced a new instance of the very class it was closing: `87004e2b` added "four independent reviews (r5, r6, r7, r8)" to the README while this document asserted "every hand-maintained tally has been deleted from prose … and prose does not". Compliance claimed, counts present. | **Both compliance clauses are deleted.** C2 has now twice written a sentence claiming its prose carries no counts, and both times the claim was false while sitting beside counts. No such claim is made any more: where prose states a number it should simply be right, and be checked before it is written. The accurate counts themselves are kept. |
+
+Also acted on: "exactly nine leaves have ever changed in this campaign" was true of `C2_D1_BLOCKER.json` and false
+campaign-wide, where the figure is 19. Both occurrences are now scoped to the artifact.
+
 ## The pattern, named
 
 **Every one of C2's repair rounds has carried an error of its own.** The two registers below are where this
 campaign tallies its own defects; prose does not. Hand-maintained counts in prose are themselves one of the recurring defects — several of the
-instances below are a number left stale by a later edit — so counts are kept to tables.
+instances below are a number left stale by a later edit.
 
 
 
@@ -402,6 +426,8 @@ instances below are a number left stale by a later edit — so counts are kept t
 | 9 | wrote the replacement ledger | took r9's "one place" premise unverified; there were two regenerations | r10 FAIL 3 |
 | 9 | justified not regenerating after the docstring fix | added a free-text bound wrong by two orders of magnitude | r10 FAIL 2 |
 | 9 | corrected the verifier attribution | named r9, which had not done the diff; four other rounds had | r10 FAIL 1 |
+| 10 | built the replacement ledger to be complete | rebuilt it over the two files C2 already knew of, not the corpus its own sentence named | r11 FAIL 1 |
+| 10 | applied the cite-don't-describe rule | added a new prose count in the same commit as a clause claiming none remained | r11 FAIL 2 |
 
 A separate register, for a different failure — a review note received and then never actioned, rather than
 decoration added:
@@ -444,7 +470,7 @@ review request or gate clause, should be treated as unverified until checked.
 
 The failure mode has a visible signature: it never touched a computed quantity. In every round, **no Γ,
 magnitude, margin, requirement, gap fall, class or adopted-subset value has changed** — r5 confirmed by diffing
-every leaf of the D1 evidence across its whole history that exactly nine leaves have ever changed, all C_T
+every leaf of the D1 evidence across its whole history that exactly nine leaves of it have ever changed, all C_T
 sensitivity on 307–309. Every instance was in labelling, framing, or an ornament attached to a result that kept
 reproducing bit-exactly under every independent implementation written against it. That is worth knowing about a
 campaign: its
