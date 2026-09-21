@@ -1,0 +1,86 @@
+{
+ "bisection_steps": 220,
+ "cells": {
+  "306": {
+   "A0_certified": "117430458176603967667728681357286729051660745174946786768036552236747857068032/19557105235657947718875749389024649202609108023513371334381293885046519803645",
+   "A0_certified_float": 6.0044907853998835,
+   "Gamma_A1A2_zero_at_certified_A0": -0.07927865947169882,
+   "closes_at_A1A2_zero": true,
+   "critical_A0": null,
+   "intersection_nonempty_at_certified_A0": true,
+   "monotone": {
+    "Gamma_at_A0_zero": -0.268999459368462,
+    "Gamma_nondecreasing": true,
+    "intersection_nonempty_from": 0.0,
+    "ladder_points": 21
+   },
+   "why_no_threshold": "A0 is not this cell's blocker: it already closes at A1 = A2 = 0 with A0 left exactly as certified, so no lower bound on E_a[tau] can exclude it."
+  },
+  "307": {
+   "A0_certified": "70226057145389233995258745270237751559868539351013368794105855382598115655680/12544857711016209770484137061076852749647969713976377339664597013034585977041",
+   "A0_certified_float": 5.5979955104409465,
+   "Gamma_A1A2_zero_at_certified_A0": -0.021906451296815496,
+   "closes_at_A1A2_zero": true,
+   "critical_A0": null,
+   "intersection_nonempty_at_certified_A0": true,
+   "monotone": {
+    "Gamma_at_A0_zero": -0.23538016456615932,
+    "Gamma_nondecreasing": true,
+    "intersection_nonempty_from": 0.0,
+    "ladder_points": 21
+   },
+   "why_no_threshold": "A0 is not this cell's blocker: it already closes at A1 = A2 = 0 with A0 left exactly as certified, so no lower bound on E_a[tau] can exclude it."
+  },
+  "308": {
+   "A0_certified": "178851571334142815496725946104409939135964521738489486636374251841038378336256/34272282406806943278568261389398528686887304703433940851350100858190576490135",
+   "A0_certified_float": 5.218548598870686,
+   "Gamma_A1A2_zero_at_certified_A0": 0.039567845828196446,
+   "closes_at_A1A2_zero": false,
+   "critical_A0": {
+    "A0_reduction_factor_needed_from_certified": 1.19274872192929,
+    "A0_reduction_percent_needed": 16.16004430652551,
+    "bracket_width": 3.0970676096947796e-66,
+    "closes_below": 4.375228833135616,
+    "closes_below_exact": "614191424158221342111543297913568474205584409236601787178778661622642678007056899/140379268738281239669015598650976373501490400065265421727130013115148601303592960",
+    "open_at_or_above": 4.375228833135616,
+    "open_at_or_above_exact": "491353139326577073689234638330854779364467527389281429743022929298461953674671095/112303414990624991735212478920781098801192320052212337381704010492118881042874368",
+    "outward_rounded_12dp": "4.375228833136"
+   },
+   "intersection_nonempty_at_certified_A0": true,
+   "monotone": {
+    "Gamma_at_A0_zero": -0.20528201397211823,
+    "Gamma_nondecreasing": true,
+    "intersection_nonempty_from": 0.0,
+    "ladder_points": 21
+   }
+  },
+  "309": {
+   "A0_certified": "56847387067255259134763074970392071190399188242225399431604903860546920513536/11679651304558757223068222466056012089131402306335319119922781674927218369307",
+   "A0_certified_float": 4.867216116723177,
+   "Gamma_A1A2_zero_at_certified_A0": 0.09281242340665326,
+   "closes_at_A1A2_zero": false,
+   "critical_A0": {
+    "A0_reduction_factor_needed_from_certified": 1.5142684240929347,
+    "A0_reduction_percent_needed": 33.9615101200428,
+    "bracket_width": 2.8885612730999286e-66,
+    "closes_below": 3.2142360226778806,
+    "closes_below_exact": "205024766391252092791560454142748755952338666369311131143439680727866350419949309/63786468991296892780916585627953900689442965128999289486938284987335848587575296",
+    "open_at_or_above": 3.2142360226778806,
+    "open_at_or_above_exact": "153768574793439069593670340607061566964253999776983348357579760546037951158019019/47839851743472669585687439220965425517082223846749467115203713740501886440681472",
+    "outward_rounded_12dp": "3.214236022678"
+   },
+   "intersection_nonempty_at_certified_A0": true,
+   "monotone": {
+    "Gamma_at_A0_zero": -0.18047466859423766,
+    "Gamma_nondecreasing": true,
+    "intersection_nonempty_from": 0.0,
+    "ladder_points": 21
+   }
+  }
+ },
+ "derivation": "theorem TC-T whole-cell enclosure -> frozen K5-B direct clause, exact rationals",
+ "guard": "REAL_SCIENTIFIC_COMPUTE = DENY",
+ "load_bearing_test": "Gamma(B, 0, 0) >= 0 evaluated directly; critical_A0 is reported, never an input",
+ "new_real_scientific_addresses_evaluated": 0,
+ "schema": "rebaseguard.p5y.k5.tail-c4.thresholds.v1"
+}

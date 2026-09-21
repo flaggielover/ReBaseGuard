@@ -1,0 +1,419 @@
+{
+ "ANSWER": "NO committed certified quantity lower-bounds E_a[tau]. Every field that constrains its LEVEL is an upper bound on the numerator or a lower bound on the denominator; the single two-sided object, D_mid, constrains only the denominator. A lower bound on E_a[tau] must therefore be produced, not reused.",
+ "D_enclosure_at_e0": {
+  "306": {
+   "C1": {
+    "hi": "1682655744640750411637628979798552910496640565860889925301089460094184342867/1809251394333065553493296640760748560207343510400633813116524750123642650624",
+    "hi_float": 0.9300287123785905,
+    "lo": "99202399507721650365687820601506778680608276156248561952349898946598172273471/115792089237316195423570985008687907853269984665640564039457584007913129639936",
+    "lo_float": 0.8567286432185023,
+    "sha256": "5082f96800200423a088edd0e0506670ce8ab20b32af59d35f4340fc2911d1fa"
+   }
+  },
+  "307": {
+   "C1": {
+    "hi": "1702724640989073565208549613607819685754930015514466026203963075690243301141/1809251394333065553493296640760748560207343510400633813116524750123642650624",
+    "hi_float": 0.9411210881596361,
+    "lo": "101701601322219070686950362506690249445664366990945665514145826173265785666239/115792089237316195423570985008687907853269984665640564039457584007913129639936",
+    "lo_float": 0.8783121713416999,
+    "sha256": "130309311c81c5e7e92d8a45a9c31adba19c996a9bfb9b0627cc76ee0d10a85f"
+   }
+  },
+  "308": {
+   "C1": {
+    "hi": "110159624600709212418691926950356125123953033164892554552136265307913368930671/115792089237316195423570985008687907853269984665640564039457584007913129639936",
+    "hi_float": 0.9513570860176533,
+    "lo": "6504361065656323245611680076354275028243974631052340202009788110293089826665/7237005577332262213973186563042994240829374041602535252466099000494570602496",
+    "lo_float": 0.8987641360992277,
+    "sha256": "8c15949ed7ab0b7624623b2d760fc644cf7ed5ee30177baf63910517acfc0594"
+   }
+  },
+  "309": {
+   "C1": {
+    "hi": "111229099756358819162462986648633117193889504240516595674026180651077286894743/115792089237316195423570985008687907853269984665640564039457584007913129639936",
+    "hi_float": 0.9605932537273292,
+    "lo": "13281943709947984355667693997084785187013590559781978914776206461615536847981/14474011154664524427946373126085988481658748083205070504932198000989141204992",
+    "lo_float": 0.9176408369470979,
+    "sha256": "bc03ead080036e20aa9dcf464faad6cdd559616f588ceab15029767c17a16f11"
+   }
+  }
+ },
+ "fields": {
+  "Abar": {
+   "direction": "UPPER",
+   "seen_in": [
+    "C1_registry",
+    "C2_registry"
+   ],
+   "why": "W(a) >= E_a[tau] directly (whole-kernel Lemma T). The wrong direction, by construction."
+  },
+  "C_T": {
+   "direction": "UPPER",
+   "seen_in": [
+    "C1_arl_cell",
+    "C1_registry",
+    "C1_taboo_cell",
+    "C2_registry"
+   ],
+   "why": "sup_X w >= ||Ghat_e||. Bounds an operator norm from ABOVE."
+  },
+  "D1": {
+   "direction": "OTHER",
+   "seen_in": [
+    "C1_registry",
+    "C1_taboo_cell",
+    "C2_registry"
+   ],
+   "why": "|D'| <= D1. Constrains the e-derivative, not the level."
+  },
+  "D1_mid_abs_upper": {
+   "direction": "OTHER",
+   "seen_in": [
+    "C1_taboo_cell"
+   ],
+   "why": "|D'(e0)| upper bound."
+  },
+  "D2": {
+   "direction": "OTHER",
+   "seen_in": [
+    "C1_registry",
+    "C1_taboo_cell",
+    "C2_registry"
+   ],
+   "why": "|D''| <= D2."
+  },
+  "D_lo": {
+   "direction": "LOWER_D",
+   "seen_in": [
+    "C1_registry",
+    "C1_taboo_cell",
+    "C2_registry"
+   ],
+   "why": "D_e >= D_lo. Lower-bounding the denominator upper-bounds tau_a/D."
+  },
+  "D_mid": {
+   "direction": "ENCLOSE",
+   "seen_in": [
+    "C1_taboo_cell"
+   ],
+   "why": "two-sided enclosure of D at e0. Its UPPER end is usable: it lower-bounds 1/D."
+  },
+  "allowance_upper": {
+   "direction": "OTHER",
+   "seen_in": [
+    "C1_arl_cell"
+   ],
+   "why": "truncation allowance of one operator application."
+  },
+  "arl": {
+   "direction": "OTHER",
+   "seen_in": [
+    "C2_registry"
+   ],
+   "why": "the nested whole-kernel sub-artifact; its own fields are classified on their own rows."
+  },
+  "candidate_at_atom": {
+   "direction": "OTHER",
+   "seen_in": [
+    "C1_taboo_cell"
+   ],
+   "why": "candidate VALUES at the atom; a candidate is not a bound."
+  },
+  "lambda_cell": {
+   "direction": "OTHER",
+   "seen_in": [
+    "C1_taboo_cell"
+   ],
+   "why": "certification allowances on the cell."
+  },
+  "lambda_mid": {
+   "direction": "OTHER",
+   "seen_in": [
+    "C1_taboo_cell"
+   ],
+   "why": "certification allowances at e0."
+  },
+  "margin_lower_bound": {
+   "direction": "OTHER",
+   "seen_in": [
+    "C1_arl_cell"
+   ],
+   "why": "inf_X of the supersolution defect. A lower bound on the defect's INFIMUM; inverting Lemma T needs an upper bound on its SUPREMUM, which is not recorded."
+  },
+  "sub_blocks": {
+   "direction": "OTHER",
+   "seen_in": [
+    "C2_registry"
+   ],
+   "why": "the count of e-sub-blocks tiling the cell; geometry, not a bound."
+  },
+  "sup_w_chebyshev": {
+   "direction": "UPPER",
+   "seen_in": [
+    "C1_arl_cell"
+   ],
+   "why": "sup of the candidate polynomial."
+  },
+  "tau": {
+   "direction": "UPPER",
+   "seen_in": [
+    "C1_arl_cell",
+    "C1_registry",
+    "C1_taboo_cell",
+    "C2_registry"
+   ],
+   "why": "w(a) >= tau_a(e) on the block (Lemma T). Bounds the numerator from ABOVE."
+  },
+  "w_min_lower_bound": {
+   "direction": "OTHER",
+   "seen_in": [
+    "C1_arl_cell"
+   ],
+   "why": "inf_X w >= 0, a validity condition of Lemma T."
+  }
+ },
+ "fields_by_direction": {
+  "ENCLOSE": [
+   "D_mid"
+  ],
+  "LOWER_D": [
+   "D_lo"
+  ],
+  "OTHER": [
+   "D1",
+   "D1_mid_abs_upper",
+   "D2",
+   "allowance_upper",
+   "arl",
+   "candidate_at_atom",
+   "lambda_cell",
+   "lambda_mid",
+   "margin_lower_bound",
+   "sub_blocks",
+   "w_min_lower_bound"
+  ],
+  "UPPER": [
+   "Abar",
+   "C_T",
+   "sup_w_chebyshev",
+   "tau"
+  ]
+ },
+ "guard": "REAL_SCIENTIFIC_COMPUTE = DENY",
+ "new_real_scientific_addresses_evaluated": 0,
+ "question": "does any committed certified quantity bound E_a[tau] from BELOW?",
+ "schema": "rebaseguard.p5y.k5.tail-c4.prior-evidence.v1",
+ "tree_sweep_adjudicated": {
+  "manifests_and_checkpoints": "the remaining hits match only inside file listings or an unrelated algorithm name ('direct-left-minorant-integer-floor-v1'); no quantity is asserted by them.",
+  "p5x_global_nonlinear_dynamics/compute_optimization_r1/drift_minorant.py": "its own docstring states it changes 'the rigorous upper bound used for ||(I - K_e)^{-1}||_inf'. A minorant of the hit probability; an UPPER bound on the resolvent. Wrong direction.",
+  "p5y_gate2e_sr_metric/results/sr_metric.json": "SR detector, not CUSUM; binding=false; e=1/4, not a tail cell; its own direction_audit records type=UPPER (a LOWER envelope of the hit probability yields an UPPER bound on sup_x E_x[tau]). Wrong detector, wrong drift, wrong direction."
+ },
+ "tree_sweep_hits": [
+  {
+   "context": "ure. To optimize the GSR procedure, we exploit the fact that the GSR procedure provides a lower bound on Pollak's minimax Supremum (conditional) Average Detection Delay (SADD). Specifically, we propose to optimize the GS",
+   "matched": "lower bound on Pollak's minimax Supremum (conditional) Average Detection Delay (SADD). Specifically, we propose to optimize the GSR procedure by choosing its head start and detection threshold so as to bring the lower bound as far up as is possible within the set tolerable Average Run Length (ARL) to false alarm level. We then follow through with this idea and carry out a case study where, in a specific exponential scenario, we solve the respective lower bound-vs-ARL tradeoff numerically, and tabulate the obtained optimal head start, detection threshold, and the maximized lower bound. The study is extensive in that it considers changes of diverse magnitudes and a wide range of levels of the ARL to false alarm, the latter are computed exactly. The study aids gain further insight into the GSR procedure as well as into the still-unsolved question of what minimizes Pollak's SADD for a given level of the ARL",
+   "mentions_CUSUM_tail_cell": true,
+   "path": "novelty_verification/results/snowball_evidence.json"
+  },
+  {
+   "context": "\", \"note\": \"byte identity to the Checkpoint-C anchor is mandatory\", \"files\": { \"drift_minorant.py\": { \"sha256\": \"59c2bac36a5a35fba4ba6d0d7ec24ba5111e8e282a4dc4b2",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/compute_optimization_r1/R1_SOURCE_MANIFEST.json"
+  },
+  {
+   "context": "\"\"\"P5X Compute Optimization R1 \u2014 drift-explicit monotone resolvent minorant. Proof-critical. This module changes ONE thing: the rigorous upper",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/compute_optimization_r1/drift_minorant.py"
+  },
+  {
+   "context": "x() PROTOCOL = [\"NEUTRALITY_AUDIT.md\", \"PROOF.md\", \"R1_FROZEN_SPEC.md\"] SOURCE = [\"drift_minorant.py\", \"r1_stop_gate.py\", \"r1_selftest.py\", \"make_r1_manifest",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/compute_optimization_r1/make_r1_manifests.py"
+  },
+  {
+   "context": "ra_certifier as RA # noqa: E402 from drift_minorant import block_forcing_resolvent, drift_monotone_resolvent # noqa: E40",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/compute_optimization_r1/r1_selftest.py"
+  },
+  {
+   "context": "ra_certifier as RA # noqa: E402 from drift_minorant import block_forcing_resolvent, drift_monotone_resolvent # noqa: E40",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/compute_optimization_r1/r1_stop_gate.py"
+  },
+  {
+   "context": "r2_certifier as R2C # noqa: E402 from drift_minorant import drift_monotone_resolvent # noqa: E402 CE",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/compute_optimization_r2/r2_benchmark.py"
+  },
+  {
+   "context": "r2_certifier as R2C # noqa: E402 from drift_minorant import drift_monotone_resolvent # noqa: E402 fro",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5x_global_nonlinear_dynamics/compute_optimization_r2/r2_selftest.py"
+  },
+  {
+   "context": "8615a31db3ff1447a2e28e928ffa7fcfbd33547cd36c924fc9575c\", \"compute_optimization_r1/drift_minorant.py\": \"59c2bac36a5a35fba4ba6d0d7ec24ba5111e8e282a4dc4b21cff9572a1c960c",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": true,
+   "path": "p5x_global_nonlinear_dynamics/results/integrity/protected_tree_manifest_r2_pre.json"
+  },
+  {
+   "context": "8615a31db3ff1447a2e28e928ffa7fcfbd33547cd36c924fc9575c\", \"compute_optimization_r1/drift_minorant.py\": \"59c2bac36a5a35fba4ba6d0d7ec24ba5111e8e282a4dc4b21cff9572a1c960c",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": true,
+   "path": "p5x_global_nonlinear_dynamics/results/integrity/protected_tree_manifest_r3_pre.json"
+  },
+  {
+   "context": "}, \"level4/closure_proofs/p5x_global_nonlinear_dynamics/compute_optimization_r1/drift_minorant.py\": { \"purpose\": \"resolvent minorant\", \"sha256\": \"59c2bac36a5a",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_gate2c_m2_assembly/GATE2C_SOURCE_MANIFEST.json"
+  },
+  {
+   "context": "rtifier as M2 # noqa: E402 from drift_minorant import drift_monotone_resolvent # noqa: E40",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_gate2c_m2_assembly/m2_assembly.py"
+  },
+  {
+   "context": "ertifier as M2B # noqa: E402 from drift_minorant import drift_monotone_resolvent # noqa: E40",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_gate2cbis_m2_assembly_b/m2b_assembly.py"
+  },
+  {
+   "context": "ation\": \"C = min_t t / H_t(0) with H_t a LOWER Bellman envelope of the hit probability; a lower bound on hitting gives an upper bound on sup_x E_x[tau] = ||(I-K_e)^{-1}||_inf\", \"C_SR_0\": 1205.9371382854872, \"certifie",
+   "matched": "lower bound on hitting gives an upper bound on sup_x E_x[tau",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_gate2e_sr_metric/results/sr_metric.json"
+  },
+  {
+   "context": "ation\": \"C = min_t t / H_t(0) with H_t a LOWER Bellman envelope of the hit probability; a lower bound on hitting gives an upper bound on sup_x E_x[tau] = ||(I-K_e)^{-1}||_inf\", \"C_SR_0\": 1205.9371382854872, \"certifie",
+   "matched": "lower bound on hitting gives an upper bound on sup_x E_x[tau",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_gate2f_sr_metric_b/results/sr_metric_b.json"
+  },
+  {
+   "context": "envelope\", \"per_detector\": { \"CUSUM\": { \"source\": \"compute_optimization_r1/drift_minorant.py\", \"cells\": 100, \"n_max\": 250, \"bits\": 192, \"C_at_0",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": true,
+   "path": "p5y_k1_binding_campaign/CHECKPOINT.json"
+  },
+  {
+   "context": "\"per_detector\": { \"CUSUM\": {\"source\": \"compute_optimization_r1/drift_minorant.py\", \"cells\": 100, \"n_max\": 250, \"bits\": 19",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_k1_binding_campaign/code/build_checkpoint_json.py"
+  },
+  {
+   "context": "mpute_optimization_r1/R1_COST_REPROJECTION.md\", \"source_note\": \"R1 optimized monotone-minorant cover: 334 over [0,12], \" \"323 over [0, e_star] =",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": true,
+   "path": "p5y_k1_binding_campaign/code/build_dag.py"
+  },
+  {
+   "context": "\"level4/closure_proofs/p5x_global_nonlinear_dynamics/\" \"compute_optimization_r1/drift_minorant.py\", \"level4/closure_proofs/p5x_global_nonlinear_dynamics/\" \"",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_k1_binding_campaign/code/freeze_manifest.py"
+  },
+  {
+   "context": "/compute_optimization_r1/R1_COST_REPROJECTION.md\", \"source_note\": \"R1 optimized monotone-minorant cover: 334 over [0,12], 323 over [0, e_star] = [0, 5.5]\", \"step_rule",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_k1_binding_campaign/manifests/cover_cusum.json"
+  },
+  {
+   "context": "7e\", \"level4/closure_proofs/p5x_global_nonlinear_dynamics/compute_optimization_r1/drift_minorant.py\": \"59c2bac36a5a35fba4ba6d0d7ec24ba5111e8e282a4dc4b21cff9572a1c960c",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_k1_binding_campaign/manifests/protected_inputs.json"
+  },
+  {
+   "context": "nd(e_num: int, e_den: int) -> dict: \"\"\"C_SR(e) from the frozen Gate-2B drift-monotone minorant, with the inequality DIRECTION audited explicitly (S04). H_t",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_k1_binding_campaign/task1/task1_f0.py"
+  },
+  {
+   "context": "mization_r1/PROOF.md', 'p5x_global_nonlinear_dynamics/compute_optimization_r1/drift_minorant.py', 'p5x_global_nonlinear_dynamics/compute_optimization_r1/r1_",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": true,
+   "path": "p5y_k1_cover_ledger_successor/code/build_spec.py"
+  },
+  {
+   "context": "cover') return out def generate(): \"\"\"Only Bellman geometry: 192-bit inherited minorants, no K1 object solves.\"\"\" import sys sys.path[:0] = [str(ROOT",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_k1_cover_ledger_successor/code/geometry.py"
+  },
+  {
+   "context": "pper_denominator\":1152921504606846976,\"adaptive_splitting\":false,\"algorithm\":\"direct-left-minorant-integer-floor-v1\",\"canonical_encoding\":\"ASCII JSON sort_keys=true sep",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": true,
+   "path": "p5y_k1_cover_ledger_successor/config/checkpoint.json"
+  },
+  {
+   "context": "7b558\",\"level4/closure_proofs/p5x_global_nonlinear_dynamics/compute_optimization_r1/drift_minorant.py\":\"59c2bac36a5a35fba4ba6d0d7ec24ba5111e8e282a4dc4b21cff9572a1c960c0",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_k1_cover_ledger_successor/manifests/authority.json"
+  },
+  {
+   "context": "}, \"level4/closure_proofs/p5x_global_nonlinear_dynamics/compute_optimization_r1/drift_minorant.py\": { \"git_oid\": \"e666637dec207af26a18225c2397ad81848d25dc\", \"",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": true,
+   "path": "p5y_k1_cover_ledger_successor/manifests/protected_start.json"
+  },
+  {
+   "context": "self.assertNotIn(323,constants);self.assertNotIn(12255,constants) def test_fresh_minorant_spotchecks(self): sys.path[:0]=[str(ROOT/'rebaseguard-proof/s",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_k1_cover_ledger_successor/tests/test_successor.py"
+  },
+  {
+   "context": "optimization_r1\")): if _p not in sys.path: sys.path.insert(0, _p) from drift_minorant import drift_monotone_resolvent # noqa: E402 Q = 1",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_k1_cusum_kernel/code/cover_walk.py"
+  },
+  {
+   "context": "in sys.path: sys.path.insert(0, p) import cusum_raw as CR from drift_minorant import drift_monotone_resolvent ck = _ck() e_num, e_den = _ce",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_k1_production_driver/k1prod/kernel.py"
+  },
+  {
+   "context": "ompute_optimization_r1/R1_COST_REPROJECTION.md\", \"source_note\": \"R1 optimized monotone-minorant cover: 334 over [0,12], 323 over [0, e_star] = [0, 5.5]\", \"step_ru",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": true,
+   "path": "p5y_k1_successor_optimized/config/checkpoint_s.json"
+  },
+  {
+   "context": "_p5x\": [ \"certified_method_repair_ra/ra_certifier.py\", \"compute_optimization_r1/drift_minorant.py\", \"compute_optimization_r2/r2_certifier.py\", \"compute_optimiza",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_micropilot_gate1/GATE1_SOURCE_MANIFEST.json"
+  },
+  {
+   "context": "ifier import certify_at_exact_drift_r2 # noqa: E402 from drift_minorant import drift_monotone_resolvent # noqa: E40",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_micropilot_gate1/m1_raw_2cell.py"
+  },
+  {
+   "context": "he recentred Hermite coefficients, the reachable-set Bernstein range bound, the resolvent minorant, the candidate solver's collocation geometry, the state square, the p",
+   "matched": "minorant",
+   "mentions_CUSUM_tail_cell": false,
+   "path": "p5y_micropilot_gate1/raw_certifier.py"
+  }
+ ],
+ "tree_sweep_regex": "subsolution|minorant|lower bound on .*(arl|tau|stopping)|arl_lower|tau_lower|E_a\\[tau\\] *>=",
+ "unclassified_fields": []
+}

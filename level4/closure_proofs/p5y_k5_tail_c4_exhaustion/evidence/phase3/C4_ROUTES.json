@@ -1,0 +1,178 @@
+{
+ "DIAGNOSTIC_note": "measured, not asserted. These are float candidate values read out of committed artifacts, not certified bounds, and nothing in the gate or the certificate depends on them. They are recorded because they decide whether any route could discharge cell 308, and the honest answer is that none can.",
+ "DIAGNOSTIC_true_E_a_tau_at_e0": {
+  "306": {
+   "agreement_abs": 1.941303802155403e-07,
+   "e0": "17452573/10000000",
+   "estimate_from_taboo_candidate": 4.729933563438516,
+   "estimate_from_whole_kernel_grid": 4.729933369308136
+  },
+  "307": {
+   "agreement_abs": 1.3903571449702667e-07,
+   "e0": "36710051/20000000",
+   "estimate_from_taboo_candidate": 4.444490710134643,
+   "estimate_from_whole_kernel_grid": 4.444490571098928
+  },
+  "308": {
+   "agreement_abs": 5.125037256803466e-07,
+   "e0": "38663231/20000000",
+   "estimate_from_taboo_candidate": 4.1743003050844845,
+   "estimate_from_whole_kernel_grid": 4.17430081758821
+  },
+  "309": {
+   "agreement_abs": 1.113695698329309e-06,
+   "e0": "40761931/20000000",
+   "estimate_from_taboo_candidate": 3.9207861714395795,
+   "estimate_from_whole_kernel_grid": 3.920787285135278
+  }
+ },
+ "R4_detail": {
+  "306": {
+   "D_at_e0_upper": "1682655744640750411637628979798552910496640565860889925301089460094184342867/1809251394333065553493296640760748560207343510400633813116524750123642650624",
+   "artifact_sha256": "5082f96800200423a088edd0e0506670ce8ab20b32af59d35f4340fc2911d1fa",
+   "lower_bound_E_a_tau": "1809251394333065553493296640760748560207343510400633813116524750123642650624/1682655744640750411637628979798552910496640565860889925301089460094184342867",
+   "lower_bound_float": 1.075235620890085,
+   "source": "C1"
+  },
+  "307": {
+   "D_at_e0_upper": "1702724640989073565208549613607819685754930015514466026203963075690243301141/1809251394333065553493296640760748560207343510400633813116524750123642650624",
+   "artifact_sha256": "130309311c81c5e7e92d8a45a9c31adba19c996a9bfb9b0627cc76ee0d10a85f",
+   "lower_bound_E_a_tau": "1809251394333065553493296640760748560207343510400633813116524750123642650624/1702724640989073565208549613607819685754930015514466026203963075690243301141",
+   "lower_bound_float": 1.062562525249011,
+   "source": "C1"
+  },
+  "308": {
+   "D_at_e0_upper": "110159624600709212418691926950356125123953033164892554552136265307913368930671/115792089237316195423570985008687907853269984665640564039457584007913129639936",
+   "artifact_sha256": "8c15949ed7ab0b7624623b2d760fc644cf7ed5ee30177baf63910517acfc0594",
+   "lower_bound_E_a_tau": "115792089237316195423570985008687907853269984665640564039457584007913129639936/110159624600709212418691926950356125123953033164892554552136265307913368930671",
+   "lower_bound_float": 1.051130027512555,
+   "source": "C1"
+  },
+  "309": {
+   "D_at_e0_upper": "111229099756358819162462986648633117193889504240516595674026180651077286894743/115792089237316195423570985008687907853269984665640564039457584007913129639936",
+   "artifact_sha256": "bc03ead080036e20aa9dcf464faad6cdd559616f588ceab15029767c17a16f11",
+   "lower_bound_E_a_tau": "115792089237316195423570985008687907853269984665640564039457584007913129639936/111229099756358819162462986648633117193889504240516595674026180651077286894743",
+   "lower_bound_float": 1.0410233427309252,
+   "source": "C1"
+  }
+ },
+ "guard": "REAL_SCIENTIFIC_COMPUTE = DENY",
+ "new_real_scientific_addresses_evaluated": 0,
+ "route_results": {
+  "306": {
+   "A0_certified_float": 6.0044907853998835,
+   "A0_is_the_blocker": false,
+   "L_ladder_Wald": {
+    "Gamma_at_bound": -0.14388116320706978,
+    "excludes_cell": false,
+    "lower_bound": 3.959880291432561
+   },
+   "R4_reuse_only": {
+    "Gamma_at_bound": -0.23502579376324878,
+    "excludes_cell": false,
+    "lower_bound": 1.075235620890085
+   },
+   "critical_A0_closes_below": null
+  },
+  "307": {
+   "A0_certified_float": 5.5979955104409465,
+   "A0_is_the_blocker": false,
+   "L_ladder_Wald": {
+    "Gamma_at_bound": -0.09298528787328704,
+    "excludes_cell": false,
+    "lower_bound": 3.734070430633033
+   },
+   "R4_reuse_only": {
+    "Gamma_at_bound": -0.19486045221149717,
+    "excludes_cell": false,
+    "lower_bound": 1.062562525249011
+   },
+   "critical_A0_closes_below": null
+  },
+  "308": {
+   "A0_certified_float": 5.218548598870686,
+   "A0_is_the_blocker": true,
+   "L_ladder_Wald": {
+    "Gamma_at_bound": -0.04046754262884166,
+    "excludes_cell": false,
+    "lower_bound": 3.512733596022926
+   },
+   "R4_reuse_only": {
+    "Gamma_at_bound": -0.15596388748690246,
+    "excludes_cell": false,
+    "lower_bound": 1.051130027512555
+   },
+   "critical_A0_closes_below": 4.375228833135616
+  },
+  "309": {
+   "A0_certified_float": 4.867216116723177,
+   "A0_is_the_blocker": true,
+   "L_ladder_Wald": {
+    "Gamma_at_bound": 0.004661129657978107,
+    "excludes_cell": true,
+    "lower_bound": 3.297250281519544
+   },
+   "R4_reuse_only": {
+    "Gamma_at_bound": -0.12202272497445896,
+    "excludes_cell": false,
+    "lower_bound": 1.0410233427309252
+   },
+   "critical_A0_closes_below": 3.2142360226778806
+  }
+ },
+ "routes": {
+  "L_ladder_Wald": {
+   "assumptions": "frozen CUSUM geometry; K > 0; start at the atom; E[tau] < infinity (Lemma T)",
+   "domain": "any single drift e in the closed cell; evaluated at e_lo",
+   "existing_inputs": "K, H from the pinned frozen producer; e_lo from the cover ledger",
+   "independent_of_disputed_surfaces": true,
+   "kernel_evaluations": 0,
+   "new_scientific_value_required": false,
+   "note": "uses no Arb certificate, no registry constant and no candidate polynomial, so it is independent of every surface C2 and C3 argued about",
+   "preference_class": "exact analytic inequality",
+   "rank": 1,
+   "status": "SELECTED",
+   "theorem": "E_a[tau] >= H / E[(|z| - K)^+] (c4_lower_bound.py, theorem L)"
+  },
+  "R1_taboo_defect_inversion": {
+   "existing_inputs": "the committed taboo candidate payload w and the frozen certifier",
+   "new_scientific_value_required": true,
+   "preference_class": "direct transformation of an existing certified bound",
+   "rank": 3,
+   "status": "REJECTED: needs a new operator certification, and cannot change the verdict on 308",
+   "theorem": "w = Ghat 1 + Ghat g with g := w - 1 - Khat w >= 0, and (Ghat g)(a) <= tau_a sup g, so tau_a >= w(a) / (1 + sup_X g); then E_a[tau] >= that / D_mid_hi",
+   "why": "the certifier records inf_X of the defect (margin_lower_bound) but discards sup_X, which is the quantity this route needs; obtaining it is a re-run of certify_block, i.e. a new operator certification, and python-flint is not present on this host"
+  },
+  "R2_whole_kernel_defect_inversion": {
+   "new_scientific_value_required": true,
+   "preference_class": "direct transformation of an existing certified bound",
+   "rank": 4,
+   "status": "REJECTED: the committed whole-kernel proposal is shifted (beta = 2), so sup G is at least 2 sup h_1 and the bound is strictly weaker than R1",
+   "theorem": "E_a[tau] >= Abar / (1 + sup_X G), G := W - 1 - K W"
+  },
+  "R3_truncated_neumann": {
+   "new_scientific_value_required": true,
+   "preference_class": "certified finite-state/operator inequality",
+   "rank": 5,
+   "status": "REJECTED: n kernel applications per cell, i.e. a new operator computation, with no advantage over R1",
+   "theorem": "E_a[tau] >= sum_{j<n} (K_e^j 1)(a), every term non-negative"
+  },
+  "R4_reuse_only": {
+   "kernel_evaluations": 0,
+   "new_scientific_value_required": false,
+   "note": "the only strictly-reuse route; reported with its numbers rather than dismissed",
+   "preference_class": "deterministic recombination of existing artifacts",
+   "rank": 2,
+   "status": "EVALUATED, INSUFFICIENT",
+   "theorem": "E_a[tau] = tau_a / D >= 1 / D, with tau_a >= 1 and D from D_mid's upper end"
+  },
+  "R5_two_sided_tau_certificate": {
+   "new_scientific_value_required": true,
+   "preference_class": "certified operator inequality",
+   "rank": 6,
+   "status": "REJECTED HERE, RECOMMENDED TO A SUCCESSOR: sharpest of all, but it is a new Chebyshev fit plus a new Arb certification, and it still cannot discharge 308",
+   "theorem": "a candidate t with |t - 1 - Khat t| <= eps gives tau_a in [t(a)/(1+eps), t(a)/(1-eps)]"
+  }
+ },
+ "schema": "rebaseguard.p5y.k5.tail-c4.routes.v1"
+}

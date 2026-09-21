@@ -1,0 +1,132 @@
+{
+ "K5_COVERAGE_COMPLETE": false,
+ "PHASE0": "PASS",
+ "branch": "p5y-k5-tail-c4",
+ "c2_manifest": {
+  "deviating_paths": [],
+  "deviations": 0,
+  "entries": 156
+ },
+ "c3_adjudication_sha256": "71b50f6aca9f6f014051685d0446fd9e0013e065640f719d9d35df50bf72088d",
+ "c3_adopted_set": [],
+ "c3_guard_values": [
+  "REAL_SCIENTIFIC_COMPUTE = DENY",
+  "REAL_SCIENTIFIC_COMPUTE = DENY throughout"
+ ],
+ "c3_manifest": {
+  "deviating_paths": [],
+  "deviations": 0,
+  "entries": 21
+ },
+ "c3_new_real_fields": [
+  [
+   "new_real_cpu_seconds",
+   0
+  ],
+  [
+   "new_real_cpu_seconds_authorized",
+   0
+  ],
+  [
+   "new_real_scientific_addresses_authorized",
+   0
+  ],
+  [
+   "new_real_scientific_addresses_evaluated",
+   0
+  ]
+ ],
+ "c3_verdict_rejected": true,
+ "checks": {
+  "10_zero_new_real": true,
+  "11_knockout_reproduced": true,
+  "12_critical_A0_reproduced": true,
+  "1_branch_head_clean": true,
+  "2_c3_rejected": true,
+  "3_adopted_set_empty": true,
+  "4_r5_authoritative": true,
+  "5_no_r6": true,
+  "6_open_set": true,
+  "7_namespaces_intact": true,
+  "8_main_untouched": true,
+  "9_guard_deny": true
+ },
+ "coverage_maps_present": [
+  "p5y_k5_lower_front_order3/evidence/tc_r1/K5_COVERAGE_MAP_R4.json",
+  "p5y_k5_perron_deflated_resolvent/evidence/successor_r1/K5_COVERAGE_MAP_R3.json",
+  "p5y_k5_tail_c2_closure/evidence/coverage/K5_COVERAGE_MAP_R5.json"
+ ],
+ "guard": "REAL_SCIENTIFIC_COMPUTE = DENY",
+ "head": "019ecce030ef294b95e98391c71715fb0b43d1cf",
+ "knockout": {
+  "306": {
+   "A0_certified": 6.0044907853998835,
+   "A1_certified": 30.40630157306247,
+   "A2_certified": 350.1239370594923,
+   "Gamma_A1A2_zero": -0.07927865947169882,
+   "Gamma_mixed": -0.03619777996457939,
+   "closes_A1A2_zero": true,
+   "closes_mixed": true,
+   "critical_A0_A1A2_zero": null
+  },
+  "307": {
+   "A0_certified": 5.5979955104409465,
+   "A1_certified": 26.335233477118695,
+   "A2_certified": 283.97569039450735,
+   "Gamma_A1A2_zero": -0.021906451296815496,
+   "Gamma_mixed": 0.026354631323170525,
+   "closes_A1A2_zero": true,
+   "closes_mixed": false,
+   "critical_A0_A1A2_zero": null
+  },
+  "308": {
+   "A0_certified": 5.218548598870686,
+   "A1_certified": 22.79374449569498,
+   "A2_certified": 230.3658154880664,
+   "Gamma_A1A2_zero": 0.039567845828196446,
+   "Gamma_mixed": 0.09456414496566364,
+   "closes_A1A2_zero": false,
+   "closes_mixed": false,
+   "critical_A0_A1A2_zero": {
+    "A0_reduction_factor_needed": 1.19274872192929,
+    "closes_below": "614191424158221342111543297913568474205584409236601787178778661622642678007056899/140379268738281239669015598650976373501490400065265421727130013115148601303592960",
+    "float_hi": 4.375228833135616,
+    "float_lo": 4.375228833135616,
+    "open_at_or_above": "491353139326577073689234638330854779364467527389281429743022929298461953674671095/112303414990624991735212478920781098801192320052212337381704010492118881042874368"
+   }
+  },
+  "309": {
+   "A0_certified": 4.867216116723177,
+   "A1_certified": 19.747331585357706,
+   "A2_certified": 187.97102636060654,
+   "Gamma_A1A2_zero": 0.09281242340665326,
+   "Gamma_mixed": 0.15301968889418385,
+   "closes_A1A2_zero": false,
+   "closes_mixed": false,
+   "critical_A0_A1A2_zero": {
+    "A0_reduction_factor_needed": 1.5142684240929347,
+    "closes_below": "205024766391252092791560454142748755952338666369311131143439680727866350419949309/63786468991296892780916585627953900689442965128999289486938284987335848587575296",
+    "float_hi": 3.2142360226778806,
+    "float_lo": 3.2142360226778806,
+    "open_at_or_above": "153768574793439069593670340607061566964253999776983348357579760546037951158019019/47839851743472669585687439220965425517082223846749467115203713740501886440681472"
+   }
+  }
+ },
+ "main": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+ "new_real_scientific_addresses_evaluated": 0,
+ "open_m1_m2_m3": {
+  "1": [],
+  "2": [],
+  "3": []
+ },
+ "open_m5": [
+  306,
+  307,
+  308,
+  309
+ ],
+ "paths_changed_since_c3_start_outside_c3_ns": [],
+ "r5_sha256": "e2197051e493df898295a692c580ed676e771f7dfae5a1675d8d8e9b979f684c",
+ "schema": "rebaseguard.p5y.k5.tail-c4.phase0-audit.v1",
+ "uncommitted_files_at_audit": 1
+}
