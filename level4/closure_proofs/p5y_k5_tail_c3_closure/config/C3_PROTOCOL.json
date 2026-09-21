@@ -1,0 +1,184 @@
+{
+ "campaign": "p5y_k5_tail_c3_closure",
+ "freeze": {
+  "commit": null,
+  "note": "bound by evidence/freeze/C3_FREEZE_RECORD.json after the commit introducing this file",
+  "state": "UNBOUND"
+ },
+ "governance_provenance": {
+  "authoritative_input_coverage_map": {
+   "files": {
+    "p5y_k5_lower_front_order3/evidence/tc_r1/K5_COVERAGE_MAP_R4.json": "a3bddd83234f33983e07b005b4686a5f3971264bb6bdd64d2c639339de210a35",
+    "p5y_k5_tail_c2_closure/evidence/coverage/K5_COVERAGE_MAP_R5.json": "e2197051e493df898295a692c580ed676e771f7dfae5a1675d8d8e9b979f684c"
+   },
+   "root": "closure_proofs"
+  },
+  "gate": {
+   "commit": "24c038ec",
+   "frozen_before_any_c3_forecast": true,
+   "path": "config/FEASIBILITY_GATES_C3.json",
+   "sha256": "f0bd87ecaeea4485560969770c95c9d4ad20bceedf9ac7ca11fb6d8d5de53ac7"
+  },
+  "gate_erratum": {
+   "files": {
+    "ERRATUM_C3_GATE.md": "8a8956864c34ffa177d1dbabbf645a387051be0da40c058fd477d7f77a718117"
+   },
+   "root": "namespace"
+  },
+  "guard": "REAL_SCIENTIFIC_COMPUTE = DENY",
+  "lifecycle_order": [
+   "gate",
+   "mechanism",
+   "mutations",
+   "preforecast_review",
+   "forecast",
+   "protocol",
+   "freeze",
+   "qualification",
+   "authorization",
+   "execution",
+   "seal",
+   "consumption",
+   "adjudication"
+  ],
+  "new_real_scientific_addresses_authorized": 0,
+  "predecessor_c2": {
+   "adjudication_sha256": "f37dae47b3548bd4b24a0973ba57af869c076fb424c9b46bf4a86d67f74823ef",
+   "adopted": [
+    305
+   ],
+   "seal_sha256": "abf463a85cb42003854926253adabb1088ab82c8d9b4d3359b9889cfdf85429e",
+   "verdict": "PARTIALLY_ADOPTED"
+  },
+  "preforecast_review": {
+   "files": {
+    "review/REVIEW_C3_PREFORECAST.md": "3431caede065b47b8c4e51d089ddb9e99b69c71de82b5bae0f2634143fdecc2a"
+   },
+   "root": "namespace"
+  },
+  "preforecast_verdict": "READY_WITH_NOTES (0 FAIL)",
+  "prohibition": "no new real scientific address, no R-stage, no AWS. C3 does not assert deterministic exhaustion.",
+  "proposes_for_adoption": [],
+  "r6_rule": "generated only on an adopting adjudication verdict with a non-empty adopted set"
+ },
+ "incidental_runtime": {
+  "note": "recorded, not required to reproduce"
+ },
+ "schema": "rebaseguard.p5y.k5.tail-c3.protocol.v1",
+ "scientific_load_bearing": {
+  "consumed_modules": {
+   "files": {
+    "p5y_k5_lower_front_order3/code/tc_rule.py": "8d402d11f6fc06ea2af88e3d3a01e376fefbe8ebacd8418f772116010e57afd5",
+    "p5y_k5_m5_tail_closure/code/tail_forecast_r2.py": "5ab31ae56c0174697a7f5805e212b46334803e9e3371a77f82871d60716b96cd",
+    "p5y_k5_m5_tail_closure/code/tct_rule.py": "f5a343e7f7bfb742d0a41c38512e27e7311d0919b38bcea0dfe98775c73d9a3e",
+    "p5y_k5_perron_deflated_resolvent/code/deflated_consume.py": "ef5d0474183053bb7cde3075bda66f99211706a9bf7bf27e31fe994ff8b87e72",
+    "p5y_k5_tail_c2_closure/code/c2_d5_forecast.py": "bd7854bce2434215c0a72eeb825ff87db4c729e80b0e4d125911e806a084f06b"
+   },
+   "root": "closure_proofs"
+  },
+  "consumed_predecessor_evidence": {
+   "files": {
+    "p5y_k1_cover_ledger_successor/config/cells.json": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f",
+    "p5y_k5_m5_tail_closure/evidence/measurement_r1/ADOPTED_TAIL_INPUTS.json": "485fb1254e459683f48815c239d18d29119d651d0e77876f772c3fee9d29a37d",
+    "p5y_k5_m5_tail_closure/evidence/measurement_r1/TCT_INPUTS_306.json": "57ff9280ca4d3b597ce4cdd6741d3a473e9f5d63e7c414696ce42c422b709a49",
+    "p5y_k5_m5_tail_closure/evidence/measurement_r1/TCT_INPUTS_307.json": "8212a2633d098757bb3ab36dc116b1ceea8bfe42eab3e22876311bd2817d9578",
+    "p5y_k5_m5_tail_closure/evidence/measurement_r1/TCT_INPUTS_308.json": "386f4a7774d69b0c319918fc6f4aa010ae6a8c349fca941c24e13a2111c418c2",
+    "p5y_k5_m5_tail_closure/evidence/measurement_r1/TCT_INPUTS_309.json": "57306bf575cc427368916afe5382feadaa4126e25fa5abc20d920072c0e4f792",
+    "p5y_k5_tail_c2_closure/evidence/registry_c2/REGISTRY_C2.json": "1b2b834939fcd80a81ddc8f029f46705b53cefeb46c0cc925a99c2b8e856fdd6",
+    "p5y_k5_tail_operator_registry/evidence/registry_c1/REGISTRY_C1.json": "87bb1cfacb09c2a144cab0270427d91980ea742b36fd80f8963265a22d2eebb3"
+   },
+   "root": "closure_proofs"
+  },
+  "evidence": {
+   "files": {
+    "evidence/forecast/C3_FORECAST.json": "ad36d408f62119ce78cdd978f0eb5a933be28dfe2750e8b68d24709615198381",
+    "evidence/phase_b0/C3_B0_AUDIT.json": "591d142fe1f6800b987a3de54673caf1c3017b021149adeecf896926d0493409",
+    "evidence/phase_c1/C3_BLOCKER.json": "d69a4500cb97bd09f04806d33481bf44ac8b393c4cfc160b8b987d289784d432",
+    "evidence/preforecast/C3_MUTATIONS.json": "33d3b5e516e8bee8af1ae83baa94b34abc99c1e95d31a0f0b8ba0e8b0e8d62ef"
+   },
+   "root": "namespace"
+  },
+  "expected_verdicts": {
+   "mutations": {
+    "applied": 13,
+    "killed": 12,
+    "pass": true,
+    "proved_equivalent": [
+     "M08_tie_resolution_nondeterministic"
+    ],
+    "undetected": []
+   }
+  },
+  "producers": {
+   "files": {
+    "code/c3_blocker.py": "4dc9441576f5f9ae1a1fac00c7ad802580f49f20bbede07964b559a712bd18d9",
+    "code/c3_forecast.py": "59e0d063833fb0dd3d9ff0091e343529753c6b85b36571a5ad81fd3e009b6416",
+    "code/c3_mutations.py": "bea876f72f7b0c262cddd07e440eb514989df4f63fba071e3d409def75a059e3",
+    "code/c3_protocol.py": "e0df4da8ddbaee58a7d0b7867e4b1fb67b25385d8099d2d084ee04a764d3af4a",
+    "code/c3_selector.py": "2601267414be303fec32935d7b2f87805ee2f38744460b70f693eb2818a5a522"
+   },
+   "root": "namespace"
+  },
+  "result": {
+   "C3_CLASS": "PARTIAL",
+   "Gamma": {
+    "306": -0.03619777996457939,
+    "307": 0.026354631323170525,
+    "308": 0.09456414496566364,
+    "309": 0.15301968889418385
+   },
+   "adoptable": [],
+   "adoption_floor": {
+    "306": {
+     "F1_registry_independent_closure": false,
+     "F2_survives_x1.25": false,
+     "meets_floor": false,
+     "uniform_A_margin": 1.1554876238748288
+    },
+    "307": {
+     "F1_registry_independent_closure": false,
+     "F2_survives_x1.25": false,
+     "meets_floor": false,
+     "uniform_A_margin": null
+    },
+    "308": {
+     "F1_registry_independent_closure": false,
+     "F2_survives_x1.25": false,
+     "meets_floor": false,
+     "uniform_A_margin": null
+    },
+    "309": {
+     "F1_registry_independent_closure": false,
+     "F2_survives_x1.25": false,
+     "meets_floor": false,
+     "uniform_A_margin": null
+    }
+   },
+   "closed": [
+    306
+   ],
+   "gap_fall_vs_r5": {
+    "306": null,
+    "307": 0.20457947103091545,
+    "308": 0.07922036981652168,
+    "309": 0.05688601080597251
+   },
+   "materially_tightened": {
+    "307": true,
+    "308": false,
+    "309": false
+   },
+   "requirement": {
+    "306": 1.0,
+    "307": 1.1119662371370425,
+    "308": 1.4606547993946881,
+    "309": 1.8478734998440092
+   },
+   "still_open": [
+    307,
+    308,
+    309
+   ]
+  }
+ }
+}

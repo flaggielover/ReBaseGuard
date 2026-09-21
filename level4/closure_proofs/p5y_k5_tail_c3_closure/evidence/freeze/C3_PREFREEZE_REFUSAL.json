@@ -1,0 +1,23 @@
+{
+ "command_refusal": "python3 -B code/c3_protocol.py check --protocol config/C3_PROTOCOL.json --expect-bound",
+ "command_tamper": "check against a protocol with one evidence pin overwritten",
+ "note": "binding-integrity check present BEFORE the freeze, per the C2 lesson; no superseded attempt occurred.",
+ "protocol_sha256": "8c1644181f7ab6ec6437afd7c410468860d73b90ce7a4cf8da1cff622df99bef",
+ "refusal_exit_code": 1,
+ "refusal_result": {
+  "expect_bound": true,
+  "pass": false,
+  "problems": [
+   "REFUSED: protocol is not bound to a freeze commit"
+  ],
+  "protocol_sha256": "8c1644181f7ab6ec6437afd7c410468860d73b90ce7a4cf8da1cff622df99bef"
+ },
+ "schema": "rebaseguard.p5y.k5.tail-c3.prefreeze-refusal.v1",
+ "tamper_exit_code": 1,
+ "tamper_result": {
+  "pass": false,
+  "problems": [
+   "pin mismatch: evidence/forecast/C3_FORECAST.json"
+  ]
+ }
+}
