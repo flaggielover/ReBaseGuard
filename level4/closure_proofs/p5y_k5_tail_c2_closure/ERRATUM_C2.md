@@ -440,11 +440,9 @@ own verdict counts by script after finding its first hand-tally wrong, and discl
 
 ## The pattern, named
 
-**Every one of C2's repair rounds has carried an error of its own.** The two registers below are where this
-campaign tallies its own defects. Hand-maintained counts in prose are themselves one of the recurring defects — several of the
-instances below are a number left stale by a later edit.
-
-
+**Every one of C2's repair rounds has carried an error of its own.** The registers below are the record; the prose
+after them is deliberately short, because this section's narrative has been the single largest source of the
+defects it describes. Where an episode is in a register row, it is not re-told.
 
 | round | the repair | the error it introduced | caught by |
 |---|---|---|---|
@@ -485,19 +483,12 @@ Every instance has the same shape — **a correct primary argument or fix, with 
 on top of it, or a neighbouring sentence the fix failed to carry along.** The primary claim was sound every time;
 the decoration and the leftovers were not.
 
-Several were caught by C2 rather than a reviewer, in self-audits run before launching the next round. Writing up r4 FAIL 1, C2 restated the review's remark that
-renormalising by equal A0 effect makes D_lo "lead by a wider margin" — inherited from the reviewer's summary and
-not checked. It is false: that renormalisation divides both rows by the same constant, so the ratio is *identical*
-to `relative_gain`'s, 1.0674 at cell 309 either way. It is wider only than the inverted per-unit column. (r5 note 8 adds the
-precise qualification, which belongs here so a successor does not conclude r4's table is in error: r4's remark is
-false of the **ratio**, which is what an ordering claim is about and what C2 checked, and true of the **absolute
-difference**, which the same renormalisation multiplies by 11 — 0.005505 to 0.060556 at cell 309. Both documents
-are arithmetically exact; they are describing different quantities.) Caught in self-audit and corrected at
-`1663f558`. Inheriting a reviewer's unverified claim is the same failure mode as
-inheriting one's own — and C2 then did it twice more in the very commit disposing of r5, writing that the removed
-README counts "got two wrong" (only one was wrong; r1's transcription was faithful, as recorded above) and
-miscounting its own pattern table as five-and-two rather than four-and-three. Both caught in the same self-audit
-and corrected before the sixth review.
+One substantive point from those episodes is kept because a successor re-reading r4 against this document would
+otherwise conclude one of them is in error: r4's remark that renormalising by equal A0 effect makes D_lo "lead by a
+wider margin" is **false of the ratio** — that renormalisation divides both rows by the same constant, leaving it
+at 1.0674 at cell 309 either way — and **true of the absolute difference**, which the same renormalisation
+multiplies by eleven, 0.005505 to 0.060556. Both documents are arithmetically exact and are describing different
+quantities. The rest of those episodes are in the register rows above and are not re-told here.
 
 **C2 wrote here that "the self-audit is now finding these faster than the reviews are". That was false when
 written and had been false for six rounds** (r13 FAIL 3). Derive it from the register above —
@@ -505,11 +496,10 @@ written and had been false for six rounds** (r13 FAIL 3). Derive it from the reg
 **four** were self-caught, all of them in rounds four and five, and **none** of the twelve added in rounds six to
 eleven. The self-audit stopped finding them, and the reviews did not.
 
-C2 did also check, at source, the two claims it inherited from r3: the D_lo cap at 1 genuinely never executes (max
-D_lo × 1.1 across the tail is **0.932851**), and `deflated_consume` genuinely does type-check its inputs and
-post-check r2 ≤ r1. Both true, and r4 confirmed both to the digit. **That was not enough** — the same round still
-shipped an unrequested field whose effect it had not computed, and the round after it shipped two more pieces of
-unrequested decoration.
+Checking inherited claims at source is necessary and has not been sufficient: C2 verified the two it took from r3
+(the D_lo cap at 1 never executes, max D_lo × 1.1 across the tail being **0.932851**; `deflated_consume` does
+type-check its inputs and post-check r2 ≤ r1), and r4 confirmed both to the digit — and that same round still
+shipped an unrequested field whose effect it had not computed.
 
 The operational lesson for a successor is narrower than "be careful". It is: **when a review asks for one change,
 make that change and stop.** Most of the instances above are C2 doing more than was asked and not checking the
