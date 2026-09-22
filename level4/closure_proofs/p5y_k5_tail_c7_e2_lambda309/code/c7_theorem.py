@@ -298,10 +298,17 @@ def lambda_lower_tier_k(e: F, K: F, H: F, U_cert, partition) -> dict:
 
     k = len(us)
     weights = [F(0)] * k
-    weights[0] = F(1) - q[0]                       # m_1
-    for j in range(1, k - 1):
-        weights[j] = q[j - 1] - q[j]               # m_{j+1}
-    weights[k - 1] += q[k - 2] if k >= 2 else F(0)  # m_k absorbs the surviving tail mass
+    if k == 1:
+        # Edge case: a single knot at H means the only subinterval is (0, H], which carries ALL the
+        # mass. There is no tail constraint, because the only tail is beyond H and mu([0,H]) = 1. The
+        # greedy formula below would wrongly leave m_1 = 1 - q_1 and lose mass q_1. Kill gate KG4,
+        # which requires tier-k at k = 1 to reproduce tier 1 exactly, is what surfaced this.
+        weights[0] = F(1)
+    else:
+        weights[0] = F(1) - q[0]                   # m_1
+        for j in range(1, k - 1):
+            weights[j] = q[j - 1] - q[j]           # m_{j+1}
+        weights[k - 1] += q[k - 2]                 # m_k absorbs the surviving tail mass
     if any(w < 0 for w in weights):
         raise TheoremRefusal("greedy LP solution is infeasible; a monotonicity assumption failed")
     tot = sum(weights)
