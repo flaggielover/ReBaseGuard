@@ -1,0 +1,76 @@
+{
+ "schema": "DECISION_GATE_C8/1",
+ "campaign": "C8 -- Operator-Information Feasibility and Route Selection",
+ "purpose": "select exactly ONE primary route for C9, by objective criteria fixed before selection",
+ "authoritative_open_set": {
+  "source": "p5y_k5_tail_c2_closure/evidence/coverage/K5_COVERAGE_MAP_R5.json",
+  "blob": "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
+  "m5_open": [306, 307, 308, 309],
+  "note": "reconstructed from per-cell verdicts; cell 305 is PASS and ADOPTED and is NOT open"
+ },
+
+ "compute_boundary": {
+  "NEW_REAL": 0, "SCIENTIFIC_KERNEL_EVALUATIONS": 0, "OPERATOR_CERTIFICATIONS_EXECUTED": 0,
+  "REMOTE_HOSTS_CONTACTED": 0, "TOOLCHAIN_PROVISIONED": 0, "guard": "DENY",
+  "permitted": ["repository forensics", "exact arithmetic over committed values",
+                "deterministic transformation of committed evidence",
+                "counterfactual calculation explicitly labelled COUNTERFACTUAL"],
+  "note": "driving the frozen TC-T rule at a non-certified (A0,A1,A2) is a deterministic transform of committed evidence and is labelled COUNTERFACTUAL; it evaluates no kernel and certifies no operator"
+ },
+
+ "the_decision_equation": {
+  "clause": "Gamma_k = g_hi + rho * x_hi * M,  pass iff Gamma_k < 0",
+  "A_enters_only_through": "M, via the TC-T whole-cell enclosure [lo,hi] of R''_m",
+  "A_supply": "Lemma Dv': A0 = min(Abar, tau/D_lo); A1, A2 are eff times fixed multipliers, so all three are PROPORTIONAL to eff",
+  "admissibility_floor": "Lemma SM(d): A0 is admissible iff A0 >= sup_{e in cell} E_a[tau]. A certified LOWER bound on E_a[tau] is therefore a FLOOR on any admissible A0."
+ },
+
+ "route_definitions": {
+  "R1": "clipping gap, Delta_clip = E[tau] - E[tau']",
+  "R2": "cell uniformization gap, Delta_cell = sup_{e in cell} Lambda(e) - Lambda(e_lo)",
+  "R3": "E1 / operator certification -- a better certified UPPER bound on sup E_a[tau] and better D1,D2,D_lo,C_T, i.e. smaller (A0,A1,A2)",
+  "R4": "order-3 surrogate information (discovered during C8; recorded because the frozen TC-T rule takes an order3 argument and committed evidence quantifies its effect)"
+ },
+
+ "leverage_test": {
+  "definition": "a route has LEVERAGE on closure iff perfect information within it can make Gamma_k < 0 for at least one currently open cell",
+  "rule": "a route whose perfect-information oracle leaves every open cell with Gamma_k >= 0 has ZERO closure leverage and MUST NOT be selected as a closure route, however cheap it is",
+  "rationale": "C8 exists to find what advances the tail, not what is convenient to compute"
+ },
+
+ "classes_permitted": ["MATHEMATICALLY_REFUTED", "LOW_LEVERAGE", "DATA_BLOCKED", "TOOLCHAIN_BLOCKED",
+                       "NEW_REAL_BLOCKED", "GOVERNANCE_BLOCKED", "PROMISING", "STRONG"],
+ "MATHEMATICALLY_REFUTED_requires": "a proof that even perfect information inside the route leaves Gamma_k >= 0; a merely unavailable input is BLOCKED, never REFUTED",
+
+ "decision_rule": {
+  "ordering": [
+   "1. If a cell is already passing under committed certified supplies, its blocker is ADOPTION, not information. Route = GOVERNANCE, and no new information may be requested for it.",
+   "2. Otherwise prefer a sound ZERO-NEW-REAL analytic route if it achieves a material fraction of the required improvement on at least one open cell.",
+   "3. Otherwise prefer ZERO-NEW-REAL operator certification (R3) if its perfect-information leverage is material AND the minimum useful improvement is realistic against historical certifier behaviour AND the exact producer/toolchain is known.",
+   "4. Do NOT recommend new-real while a materially competitive zero-new-real route remains untested.",
+   "5. Do NOT authorize the R-stage. Do NOT set guard ALLOW."
+  ],
+  "outcomes": ["NEXT_ROUTE_ANALYTIC", "NEXT_ROUTE_OPERATOR_CERT", "NEXT_ROUTE_NEW_REAL", "NO_ROUTE_READY"],
+  "material_fraction_definition": "closes at least one currently open cell outright, OR reduces the required improvement factor on some open cell by at least 25 percent",
+  "tie_break": "smallest sufficient information requirement, measured as the required improvement factor on the single quantity that must change"
+ },
+
+ "forbidden_conclusions": [
+  "that any cell is CLOSED or ADOPTED by C8",
+  "that K5 is complete",
+  "that the R-stage may launch",
+  "that a counterfactual value is certified evidence",
+  "that a route is REFUTED when it is merely BLOCKED",
+  "that C8 itself may execute any selected route"
+ ],
+
+ "disclosure_of_non_blindness": {
+  "statement": "This gate is frozen BEFORE any C8 result artifact is committed, but AFTER exploratory computation. The campaign already knows the approximate leverage of each route. The gate does not claim blindness.",
+  "why_this_does_not_compromise_soundness": [
+   "The leverage test and the refutation standard are structural, not numeric thresholds tuned to an answer: a route is refuted only by a perfect-information proof, and selected only by the fixed ordering above.",
+   "The one numeric threshold, `material_fraction_definition`, governs ROUTE PREFERENCE, not validity, and cannot make an unsound route appear sound.",
+   "Every Gamma used is reproduced from committed evidence and checked against all twenty committed (A, Gamma) supply tuples before any counterfactual is evaluated."
+  ],
+  "precedent": "C7 froze its gate after exploration and said so; concealing the order would be contradicted by the transcript."
+ }
+}
