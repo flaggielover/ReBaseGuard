@@ -235,7 +235,25 @@ def main() -> int:
         "R_stage": "NOT AUTHORIZED", "guard": "DENY",
     }
 
+    # The pre-C7 floor is load-bearing for the attribution claim: C8 must show that the cell-309
+    # refutation ALREADY held under C4's weaker floor, so that C7's strengthening is recorded as
+    # widening it rather than creating it. Emitted here because the README quotes it.
+    c4_floor_309 = F(c4["309"]["lower_bound_E_a_tau"])
+    ceil309 = F(str(inv["309"]["A0_ceiling_with_A1_A2_zero"]))
+    attribution = {
+        "A0_ceiling_309_C5T": float(ceil309),
+        "C4_floor_309_pre_C7": float(c4_floor_309),
+        "C7_PRIMARY_floor_309": float(floors[309]),
+        "refuted_under_C4_floor": bool(c4_floor_309 > ceil309),
+        "refuted_under_C7_floor": bool(floors[309] > ceil309),
+        "C7_raised_floor_by": float(floors[309] - c4_floor_309),
+        "conclusion": ("the refutation of cell 309 ALREADY held under C4's weaker floor; C7's "
+                       "strengthening WIDENED it and did not create it. C8 claims no credit for it, "
+                       "and the underlying exclusion is C4's published result."),
+    }
+
     out = {"schema": "C8_DECISION/1", "gate_sha256": GATE_SHA,
+           "cell_309_refutation_attribution": attribution,
            "authoritative_clause": "C5-T (adopted by C5's adjudication); C2 frozen clause cross-checks only",
            "M_reconstruction_crosscheck_vs_C5": xchk,
            "phase4_inversion_C5T": inv, "phase8_toolchain": toolchain,
