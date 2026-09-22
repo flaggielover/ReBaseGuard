@@ -31,12 +31,14 @@ def main() -> int:
 
     part = [F(j) * H / N_PARTITION for j in range(1, N_PARTITION + 1)]
     t1 = T.lambda_lower(E_LO, K, H)
-    U_el = T.U_elementary(E_LO, K, H, A_GRID)["best"]["U_upper"]
+    cert_el = T.certified_U("elementary", E_LO, K, H, A_GRID)
+    cert_rg = T.certified_U("registry", E_LO, K, H)
+    cert_lr = T.certified_U("lorden", E_LO, K, H)
+    U_el, U_rg = cert_el["value"], cert_rg["value"]
     U_lo = T.U_lorden(E_LO, K, H)
-    U_rg = F(str(c4["A0_certified_float"]))
-    L_el = T.lambda_lower_tier_k(E_LO, K, H, U_el, part)
-    L_rg = T.lambda_lower_tier_k(E_LO, K, H, U_rg, part)
-    L_lr = T.lambda_lower_tier_k(E_LO, K, H, U_lo["U_upper"], part)
+    L_el = T.lambda_lower_tier_k(E_LO, K, H, cert_el, part)
+    L_rg = T.lambda_lower_tier_k(E_LO, K, H, cert_rg, part)
+    L_lr = T.lambda_lower_tier_k(E_LO, K, H, cert_lr, part)
 
     # ---- Phase 1: the slack ledger -------------------------------------------------------------
     # S1: the overshoot C4 discards. Its provable RANGE is [E[R] recovered, Lorden's ceiling].
@@ -48,7 +50,7 @@ def main() -> int:
 
     # S6: LP discretisation, measured against a 4x finer partition rather than asserted small.
     fine = [F(j) * H / (4 * N_PARTITION) for j in range(1, 4 * N_PARTITION + 1)]
-    L_fine = T.lambda_lower_tier_k(E_LO, K, H, U_rg, fine)["L_lower"]
+    L_fine = T.lambda_lower_tier_k(E_LO, K, H, cert_rg, fine)["L_lower"]
 
     ledger = [
         {"id": "S1", "step": "C4 discards the overshoot R = S_tau' - H, replacing H + E[R] by H",

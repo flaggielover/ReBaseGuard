@@ -1,0 +1,155 @@
+{
+ "MUTATION_CLASS": "PASS",
+ "N_partition": 16,
+ "U_source": "lorden",
+ "baseline_bound": "7665325533695724142906717653717744205723544350046178990372181249729570260870267125510633501054145/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576",
+ "baseline_float": 3.588657330212163,
+ "coverage_limitation": {
+  "mitigation": "Three mutually independent U derivations are reported. Two of them -- elementary and Lorden -- share no code path beyond the Gaussian primitives, and the third is read from a committed file rather than computed. Agreement among them on the ORDER elementary > registry > lorden is recorded as a cross-check, not as proof.",
+  "residual_gap": "A mutation that understates U while keeping it ABOVE that floor -- e.g. Lorden's 4.679910 mutated to 4.0 -- inflates the bound by a small amount and is NOT detected by this suite. This is a real, acknowledged gap. It is bounded: the floor is C4's own published bound, so the worst undetectable understatement moves U within [3.297250281519544, 4.679910339516997] and the resulting inflation is at most the spread of the bound over that U range.",
+  "statement": "A mutation of a U DERIVATION ITSELF cannot be caught by re-derivation, because re-derivation re-runs the mutated code. M11 shows the independent floor H/E[V] on E[tau'] catches such a mutation once it pushes U below 3.297250281519544."
+ },
+ "mirror_equivalence_asserted": true,
+ "mirror_value": "7665325533695724142906717653717744205723544350046178990372181249729570260870267125510633501054145/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576",
+ "mutants": [
+  {
+   "detail": "formally the wrong rounding direction, but the effect is below the 2^-320 grid resolution and cannot reach any reported digit",
+   "expected_direction": "UP",
+   "id": "M01",
+   "inflation_percent": 5.479219351529656e-94,
+   "inflation_relative": "5.479e-96",
+   "name": "E[V] taken from below in the final division",
+   "outcome": "UNSOUND_BELOW_GRID",
+   "value": 3.588657330212163
+  },
+  {
+   "detail": "formally the wrong rounding direction, but the effect is below the 2^-320 grid resolution and cannot reach any reported digit",
+   "expected_direction": "UP",
+   "id": "M02",
+   "inflation_percent": 5.2835329461178825e-93,
+   "inflation_relative": "5.284e-95",
+   "name": "mean residual life r taken from above",
+   "outcome": "UNSOUND_BELOW_GRID",
+   "value": 3.588657330212163
+  },
+  {
+   "detail": "formally the wrong rounding direction, but the effect is below the 2^-320 grid resolution and cannot reach any reported digit",
+   "expected_direction": "UP",
+   "id": "M03",
+   "inflation_percent": 1.3045760360784896e-95,
+   "inflation_relative": "1.305e-97",
+   "name": "reflected tail ratio f taken from below",
+   "outcome": "UNSOUND_BELOW_GRID",
+   "value": 3.588657330212163
+  },
+  {
+   "detail": "formally the wrong rounding direction, but the effect is below the 2^-320 grid resolution and cannot reach any reported digit",
+   "expected_direction": "UP",
+   "id": "M04",
+   "inflation_percent": 6.522880180392447e-95,
+   "inflation_relative": "6.523e-97",
+   "name": "tail mass q taken from below (p_lower)",
+   "outcome": "UNSOUND_BELOW_GRID",
+   "value": 3.588657330212163
+  },
+  {
+   "detail": "greedy LP solution is infeasible; negative weight",
+   "expected_direction": "UP",
+   "id": "M05",
+   "name": "q clipping at 1 removed",
+   "outcome": "DETECTED_BY_RULE"
+  },
+  {
+   "detail": "psi_lo[0] = 1.6151230064930002 exceeds psi(0.3125) <= 1.3966430082797825",
+   "expected_direction": "UP",
+   "id": "M06",
+   "name": "psi evaluated at the LEFT endpoint of each subinterval",
+   "outcome": "DETECTED_BY_RULE"
+  },
+  {
+   "detail": "partition must end exactly at H",
+   "expected_direction": "UP",
+   "id": "M07",
+   "name": "threshold confusion: H := C_CUSUM = 11/2",
+   "outcome": "DETECTED_BY_RULE"
+  },
+  {
+   "detail": "U must be a certificate from certified_U(), not a bare value. Understating U inflates the bound in the unsound direction and is invisible to every self-consiste",
+   "expected_direction": "UP",
+   "id": "M08",
+   "name": "U passed as a bare number rather than a certificate",
+   "outcome": "DETECTED_BY_RULE"
+  },
+  {
+   "detail": "U certificate does not survive re-derivation from source 'lorden': presented 1, re-derived 999622781448053004570421316244026787819202853245601078733497579256610",
+   "expected_direction": "UP",
+   "id": "M09",
+   "name": "U certificate tampered after issuance",
+   "outcome": "DETECTED_BY_RULE"
+  },
+  {
+   "detail": "U source 'made_up' is not on the gate's admitted list ('elementary', 'registry', 'lorden')",
+   "expected_direction": "UP",
+   "id": "M10",
+   "name": "U drawn from a source not on the gate's admitted list",
+   "outcome": "DETECTED_BY_RULE"
+  },
+  {
+   "detail": "U = 63385954699610855057162549616276941321365114167062062167426128948518670628945264803477616680227167/213598703592091008239502170616955211460270452235665276994",
+   "expected_direction": "UP",
+   "id": "M11",
+   "name": "U understated below the certified floor H/E[V] on E[tau']",
+   "outcome": "DETECTED_BY_RULE"
+  },
+  {
+   "detail": "partition must end exactly at H",
+   "expected_direction": "UP",
+   "id": "M12",
+   "name": "partition does not terminate at H",
+   "outcome": "DETECTED_BY_RULE"
+  },
+  {
+   "detail": "partition must end exactly at H",
+   "expected_direction": "UP",
+   "id": "M13",
+   "name": "partition not strictly increasing",
+   "outcome": "DETECTED_BY_RULE"
+  },
+  {
+   "change_percent": -6.222038289535635,
+   "detail": "sound direction: weaker but still a valid certified lower bound",
+   "expected_direction": "DOWN",
+   "id": "M14",
+   "name": "evaluated at e_hi instead of e_lo",
+   "outcome": "VALUE_ONLY",
+   "value": 3.365369697046135
+  },
+  {
+   "change_percent": -0.9429080901795164,
+   "detail": "sound direction: weaker but still a valid certified lower bound",
+   "expected_direction": "DOWN",
+   "id": "M15",
+   "name": "U doubled (overstated)",
+   "outcome": "VALUE_ONLY",
+   "value": 3.554819589916772
+  }
+ ],
+ "required_detection_set": [
+  "M01",
+  "M02",
+  "M03",
+  "M04",
+  "M05",
+  "M06",
+  "M07",
+  "M08",
+  "M09",
+  "M10",
+  "M11",
+  "M12",
+  "M13"
+ ],
+ "schema": "C7_MUTATIONS/1",
+ "sha256": "38abffb0fd3676338fd87a8895e88f97f8e397e6d3ae4ea46aa4765b72e64833",
+ "undetected": []
+}

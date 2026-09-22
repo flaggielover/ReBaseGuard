@@ -263,9 +263,14 @@ saturates at the information content of U, which is what the family-exhaustion a
 """
 
 
-def lambda_lower_tier_k(e: F, K: F, H: F, U: F, partition) -> dict:
-    """`partition` is the interior-and-right knots u_1 < ... < u_k = H, fixed by the frozen gate."""
-    e, K, H, U = F(e), F(K), F(H), F(U)
+def lambda_lower_tier_k(e: F, K: F, H: F, U_cert, partition) -> dict:
+    """`partition` is the interior-and-right knots u_1 < ... < u_k = H, fixed by the frozen gate.
+
+    `U_cert` MUST be a certificate from certified_U(); a bare number is refused. See the U PROVENANCE
+    section below for why.
+    """
+    e, K, H = F(e), F(K), F(H)
+    U, U_deps = _resolve_U(U_cert, e, K, H)
     us = [F(u) for u in partition]
     if not us or us[-1] != H:
         raise TheoremRefusal("partition must end exactly at H")
@@ -275,6 +280,17 @@ def lambda_lower_tier_k(e: F, K: F, H: F, U: F, partition) -> dict:
     psi = [psi_lo_at(u, e, K) for u in us]
     if any(b > a for a, b in zip(psi, psi[1:])):
         raise TheoremRefusal("psi_lo must be non-increasing along the partition; monotonicity violated")
+
+    # INDEPENDENT admissibility check on every psi_lo the LP consumes. psi_lo[j] must lower-bound psi
+    # on the whole of (u_{j-1}, u_j], and u_j lies in that subinterval, so psi_lo[j] <= psi(u_j). psi is
+    # recomputed here from its definition, sharing no code path with psi_lo_at beyond the Gaussian
+    # primitives. This is the check that catches an endpoint error; see psi_exact's docstring.
+    for j, u in enumerate(us):
+        pe = psi_exact(u, e, K)
+        if psi[j] > pe.lo:
+            raise TheoremRefusal(
+                f"psi_lo[{j}] = {float(psi[j])} exceeds psi({float(u)}) <= {float(pe.hi)}, so it does "
+                f"not lower-bound psi on the subinterval ending at u_{j}")
 
     q = [min(F(1), p_upper(u, e, K) * U) for u in us]
     if any(b > a for a, b in zip(q, q[1:])):
@@ -299,7 +315,8 @@ def lambda_lower_tier_k(e: F, K: F, H: F, U: F, partition) -> dict:
 
     EV = G.E_excess(e, K)
     L = (G.Iv(H + ER, H + ER) / G.Iv(EV.hi, EV.hi)).lo
-    return {"k": k, "U_used": U, "E_V_upper": EV.hi, "E_R_lower": ER, "L_lower": L,
+    return {"k": k, "U_used": U, "U_source": U_cert["source"], "U_dependencies": U_deps,
+            "E_V_upper": EV.hi, "E_R_lower": ER, "L_lower": L,
             "tier1_floor_psi_lo_H": floor,
             "knots": [{"u": u, "psi_lo": ps, "q_upper": qq, "lp_weight": w}
                       for u, ps, qq, w in zip(us, psi, q, weights)]}
@@ -407,3 +424,97 @@ def U_lorden(e: F, K: F, H: F) -> dict:
     U = (G.Iv(H + ER, H + ER) / G.Iv(EV.lo, EV.lo)).hi
     return {"E_V2_upper": EV2.hi, "E_R_upper": ER, "U_upper": U,
             "dependency": "Lorden (1970) renewal overshoot inequality -- cited, NOT re-proved in C7"}
+
+
+# ==================================================================================================
+# U PROVENANCE -- a bare number is not admissible as U
+# ==================================================================================================
+"""Why this exists.
+
+`lambda_lower_tier_k` is monotone DECREASING in U, so understating U inflates the bound in the
+unsound direction. Probing the unguarded entry point showed the failure is invisible to every other
+check: U = 0.1, which is false by a factor of ~47, yields Lambda_309 >= 4.175, which is well-ordered,
+LP-consistent, and still below the certified A0 4.867216117 -- so even the kill gate that compares a
+lower bound against a certified upper bound does not fire. It is the same species of hole as C5's
+negate-and-swap, which survived every check C5 had because C5 checked self-consistency rather than
+provenance.
+
+The repair is structural rather than a note: U must arrive as a certificate produced by
+`certified_U`, and `lambda_lower_tier_k` RE-DERIVES the value from the declared source and refuses on
+mismatch. A mutated or invented U cannot survive re-derivation, and a source not on the gate's
+admitted list is refused outright.
+"""
+
+_U_TAG = "C7_CERTIFIED_U/1"
+_U_SOURCES = ("elementary", "registry", "lorden")
+
+
+def certified_U(source: str, e: F, K: F, H: F, a_grid=None) -> dict:
+    """Produce a U certificate. `source` must be on the gate's admitted list."""
+    if source not in _U_SOURCES:
+        raise TheoremRefusal(f"U source {source!r} is not on the gate's admitted list {_U_SOURCES}")
+    e, K, H = F(e), F(K), F(H)
+    if source == "elementary":
+        if a_grid is None:
+            raise TheoremRefusal("the elementary source requires the gate's frozen a-grid")
+        d = U_elementary(e, K, H, a_grid)
+        val, dep = d["best"]["U_upper"], []
+        deriv = f"Lemma C7-U at a = {d['best']['a']}"
+    elif source == "lorden":
+        d = U_lorden(e, K, H)
+        val, dep = d["U_upper"], ["Lorden (1970), cited but not re-proved in C7"]
+        deriv = "E[R] <= E[V^2]/E[V]"
+    else:
+        import c7_common as _C                     # local import: c7_common does not import this module
+        val = F(str(_C.c4_cell309()["A0_certified_float"]))
+        dep = ["Arb/FLINT operator certification surface"]
+        deriv = "certified admissible A0 at cell 309 via Lemma SM(d), read from C4_CERTIFICATE.json"
+    # An INDEPENDENT floor on E[tau'], so that a U understated by a mutation of the derivation code
+    # itself -- which re-derivation cannot catch, since it would re-run the mutated code -- is still
+    # refused once it falls below a value E[tau'] provably exceeds. E[tau'] = (H + E[R])/E[V] >= H/E[V]
+    # because R >= 0; this is exactly C4's own bound applied to tau' rather than tau.
+    floor = (G.Iv(H, H) / G.Iv(G.E_excess(e, K).hi, G.E_excess(e, K).hi)).lo
+    if val < floor:
+        raise TheoremRefusal(
+            f"U = {val} from source {source!r} is below the certified floor H/E[V] = {floor} on "
+            f"E[tau'], so it is provably not an upper bound")
+    return {"_tag": _U_TAG, "source": source, "value": val, "dependencies": dep,
+            "derivation": deriv, "E_tau_prime_floor": floor,
+            "a_grid": [str(F(x)) for x in a_grid] if a_grid else None}
+
+
+def _resolve_U(U_cert, e: F, K: F, H: F) -> tuple:
+    """Refuse anything that is not a certificate, and re-derive it from its declared source."""
+    if not isinstance(U_cert, dict) or U_cert.get("_tag") != _U_TAG:
+        raise TheoremRefusal(
+            "U must be a certificate from certified_U(), not a bare value. Understating U inflates "
+            "the bound in the unsound direction and is invisible to every self-consistency check.")
+    grid = [F(x) for x in U_cert["a_grid"]] if U_cert.get("a_grid") else None
+    fresh = certified_U(U_cert["source"], e, K, H, grid)
+    if fresh["value"] != U_cert["value"]:
+        raise TheoremRefusal(
+            f"U certificate does not survive re-derivation from source {U_cert['source']!r}: "
+            f"presented {U_cert['value']}, re-derived {fresh['value']}")
+    return fresh["value"], fresh["dependencies"]
+
+
+def psi_exact(u: F, e: F, K: F) -> G.Iv:
+    """psi(u) itself, as a rigorous interval -- not a bound on it.
+
+    psi(u) = [rho(s-e) + rho(s+e)] / [Phi(-(s-e)) + Phi(-(s+e))],  s = K + u,
+    which is the exact mean residual life of V = (|z|-K)^+ at u. This is used as an INDEPENDENT
+    admissibility check on the psi_lo values the LP consumes: whatever lower bound is assigned to the
+    subinterval ending at u_j must not exceed psi's true value there, since the assigned value has to
+    lower-bound psi on the WHOLE subinterval and u_j belongs to it.
+
+    This is what detects an endpoint error. psi_lo is built from r and f at one endpoint; if the wrong
+    endpoint is used the LP still runs, the weights still sum to 1, psi_lo is still non-increasing, and
+    the bound still lands below every certified upper bound -- it is simply wrong, by ~1%. No
+    self-consistency check reaches it, because nothing in the computation is inconsistent. Only an
+    independent recomputation of the quantity being bounded does.
+    """
+    u, s = F(u), F(K) + F(u)
+    e = F(e)
+    num = rho1(s - e) + rho1(s + e)
+    den = G.Phi(-(s - e)) + G.Phi(-(s + e))
+    return num / den
