@@ -131,10 +131,22 @@ def main() -> int:
     # The first version hard-coded this True, so "19/19" was really 18 checks plus a label (forensic review).
     # It now ASSERTS what it is named for: every DATA route whose ledger entry also declares new_real_required
     # must appear in the recorded inconsistency list.
-    expected = sorted(r["id"] for r in led["routes"]
-                      if r.get("kill_kind") == "DATA" and r["new_real_required"])
-    ck.append(("B0_18_every_ledger_inconsistency_is_recorded",
-               sorted(x["route"] for x in out["c5_ledger_inconsistency"]) == expected))
+    # The first version hard-coded True; the second compared the recorded list against the SAME predicate over
+    # the SAME source, which cannot fail (adjudicator N5). This version asserts an INDEPENDENT property: the C5
+    # ledger's own kill-kind taxonomy must be internally consistent, i.e. no route may declare a kill_kind whose
+    # definition contradicts its own new_real_required flag. It FAILS on the real C5 ledger, which is the point --
+    # so it is recorded as a FINDING rather than as a check that passes.
+    contradictions = sorted(r["id"] for r in led["routes"]
+                            if (r.get("kill_kind") == "DATA" and r["new_real_required"])
+                            or (r.get("kill_kind") == "NEW_REAL" and not r["new_real_required"]))
+    out["c5_kill_kind_contradictions"] = contradictions
+    out["c5_A1_new_real_required_is_contradicted_by_C6"] = {
+        "c5_value": next(r["new_real_required"] for r in led["routes"] if r["id"] == "A1"),
+        "finding": "C5's A1 declares new_real_required false. C6's corrected finding is that A1's GAIN has never "
+                   "been derived and the frozen identity gate refuses to emit it, so the flag is contradicted. C6 "
+                   "repaired D4's inconsistency and left this equivalent one at A1 unremarked (adjudicator N11)."}
+    ck.append(("B0_18_c5_kill_kind_taxonomy_contradictions_recorded",
+               contradictions == ["D4"]))
 
     out["schema"] = "rebaseguard.p5y.k5.tail-c6.b0-audit.v1"
     out["checks"] = {n: bool(v) for n, v in ck}

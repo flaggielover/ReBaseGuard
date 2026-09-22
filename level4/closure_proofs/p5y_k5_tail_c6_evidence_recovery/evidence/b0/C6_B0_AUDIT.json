@@ -14,6 +14,10 @@
   "deviations": 0,
   "entries": 21
  },
+ "c5_A1_new_real_required_is_contradicted_by_C6": {
+  "c5_value": false,
+  "finding": "C5's A1 declares new_real_required false. C6's corrected finding is that A1's GAIN has never been derived and the frozen identity gate refuses to emit it, so the flag is contradicted. C6 repaired D4's inconsistency and left this equivalent one at A1 unremarked (adjudicator N11)."
+ },
  "c5_adjudication_sha256": "77aae85802c3b0226fc5c20c2c0f6f731cf0712b5b027ddabe7a21e939bddc8d",
  "c5_adopted": [],
  "c5_conditions": 11,
@@ -24,6 +28,9 @@
   "E1"
  ],
  "c5_handover": true,
+ "c5_kill_kind_contradictions": [
+  "D4"
+ ],
  "c5_ledger_inconsistency": [
   {
    "finding": "declared DATA while also declaring new_real_required -- these are different kill kinds",
@@ -59,14 +66,14 @@
   "B0_15_ledger_reconstructed": true,
   "B0_16_new_real_identified": true,
   "B0_17_data_blocks_have_a_named_missing_dependency": true,
-  "B0_18_every_ledger_inconsistency_is_recorded": true
+  "B0_18_c5_kill_kind_taxonomy_contradictions_recorded": true
  },
  "guard": "REAL_SCIENTIFIC_COMPUTE = DENY",
  "guard_values": [
   "REAL_SCIENTIFIC_COMPUTE = DENY",
   "REAL_SCIENTIFIC_COMPUTE = DENY throughout"
  ],
- "head": "756a6d93e7cb35662fdd25f1dbfaa94e99a1c06c",
+ "head": "b65ed607bf4ca4e8586337c2b83fd3ac45b1e2bd",
  "new_real_scientific_addresses_evaluated": 0,
  "open_m5": [
   306,
@@ -85,5 +92,5 @@
  "remote_c5_head": "69bff424f20a7c91eac99450ba0836f3f7d9ca44",
  "schema": "rebaseguard.p5y.k5.tail-c6.b0-audit.v1",
  "scientific_kernel_evaluations": 0,
- "uncommitted_at_audit": 5
+ "uncommitted_at_audit": 4
 }

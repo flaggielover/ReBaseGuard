@@ -85,3 +85,63 @@ substrings, and the chain `c5_common` loads *does* contain a raw-record reader (
 → `read_records`). The **conclusion survives** on the call graph, which the reviewer re-derived: C5 never calls
 `adopted_state`, and the consumer touches only the derived committed extracts. C6's method did not establish its
 own correct answer.
+
+## E4 — what the independent adjudication found, and what was done
+
+Verdict **ACCEPTED_WITH_SCOPE_LIMITATION**, fourteen conditions, eleven findings C6's own forensic review had
+missed. Every finding was **re-measured by C6 before being acted on** — the adjudicator's condition 13 says
+verify before absorbing, and C6 had just been caught doing the opposite.
+
+**N1 — C6 shipped a false statement that arrived through a correction.** `subdivision_depth` is integer **`0`** at
+`/producer/runtime/subdivision_depth` in all four sealed records. C6 recorded it as **null**, copied verbatim from
+its forensic reviewer without checking. Re-measured read-only and corrected. B1's conclusion is *strengthened* —
+the schema has a subdivision slot and it was never filled — but for a campaign whose entire product is forensic
+accuracy, adopting a reviewer's figure unverified is a pointed failure, and it is the documented handover trap this
+programme has recorded before.
+
+**N4 — the defect that mattered most.** `A1.C6_CLASSIFICATION` still read `HISTORICAL_REPLAY_REQUIRED` beside
+A1's own prose saying the result *"has never been derived by anyone and still must be"*. A consumer reading the
+class got "replay"; a consumer reading the prose got "never derived". The forensic review's central objection was
+fixed **in prose and left standing in the field a machine reads**. A1 falls into exactly the same gate-class gap as
+E1 and now says so. The adjudicator **rejected the old class at route level**.
+
+**N9 — the ranking rested on a premise C6 never checked.** C6 said the toolchain is absent "on this host" and
+ranked E1 as needing "only a flint host". Re-measured: `rebaseguard-vultr-02` lacks **numpy, scipy, flint,
+python_flint, mpmath, sympy and gmpy2** as well. With AWS forbidden, **there is no certifying host in scope at
+all**. A C7 chartered on the old ranking would have opened, failed to import flint on either permitted host, and
+closed. The ranking is re-ordered with **E2 first** — it needs no recovery, no toolchain and no host — and host
+provisioning is recorded as a separately governed prerequisite requiring the user's decision, not a campaign's.
+
+**N5, N6, N7 — the unearned-assertion pattern survived its own repair.** The forensic review caught one hard-coded
+`True`; C6 replaced it with a **tautology** (`B0_18` compared the recorded list against the identical predicate
+over the identical source), left `all_committed` asserted from non-emptiness with no git consulted, and typed in
+six further conclusions. All were factually correct — the adjudicator verified each — but a forensic artifact whose
+conclusions are typed rather than computed cannot be audited by re-running it. Now: `all_committed` checks every
+module against `git ls-files`; the audit-link verdicts are computed and additionally **localise** the anomaly in
+the manifest (the committed and external audits agree at `2ec4dcbb…` and the manifest names a third value —
+a stronger reason to cap at P3 than C6 first gave); the external observations live in
+`evidence/inventory` with the read-only command that produced them; and `B0_18` now asserts an **independent**
+property of the C5 ledger's taxonomy.
+
+**N11 — a second C5 ledger inconsistency went unflagged.** C5's A1 declares `new_real_required: false`, which C6's
+own corrected finding contradicts. C6 repaired D4's inconsistency and left the equivalent one at A1 unremarked. Now
+recorded in the B0 audit.
+
+**N2, N3, N8, N10 — half-applied corrections.** Correction 6 was carried into the README and the graph but not
+into the classification's A1 entry; correction 7 not into the B1 entry, leaving two C6 artifacts in disagreement;
+the replacement for the "ONLY Chebyshev payloads" overclaim itself under-enumerated (316 files under
+`p5y_k5_perron_deflated_resolvent`, 105 under `p5y_k5_tail_c2_closure`); and the DIAGNOSTIC attribution
+over-unified two different reasons. All corrected.
+
+**The finding C6 established and never stated: A1 is HARDER than C5 believed.** C5 thought A1 was a retrieval —
+fetch payloads, tighten, done, `new_real_required: false`, Condition 11(b). Every part is false. The payloads never
+existed; a faithful regeneration returns the adopted numbers exactly, because `tc_producer.identity_gate` compares
+`eps_mid`/`eps_cell` by exact rational equality at 256 bits and `sup{F,D,H}` propagates into them; and the
+tightening has never been computed by anyone. C6 made A1 harder, not easier, and its own class field hid that until
+the adjudicator forced it out.
+
+**On the adjudicator's one correction to the forensic review:** the identity gate compares
+`candidate_suprema` at **53 bits** with the 256-bit value required to be no larger, so a sub-53-bit-ulp tightening
+would in principle pass that particular comparison. The conclusion is unaffected — the 2.0562 % tightening A1
+requires changes `eps_mid`/`eps_cell` at 256 bits with certainty, and those are compared exactly — but "bit-for-bit"
+overstated the suprema comparison and is corrected here.

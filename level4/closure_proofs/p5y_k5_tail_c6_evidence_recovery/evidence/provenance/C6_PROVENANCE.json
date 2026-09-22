@@ -3,8 +3,11 @@
   "manifest_to_audit": {
    "closes_against_committed": false,
    "closes_against_external": false,
+   "committed_and_external_agree_with_each_other": true,
    "committed_audit_sha256": "2ec4dcbb9f2bc27568742db053133c01a369863a21f9a4f066471fcd9cb4b670",
    "external_audit_sha256": "2ec4dcbb9f2bc27568742db053133c01a369863a21f9a4f066471fcd9cb4b670",
+   "external_hash_source": "recorded read-only observation, see evidence/inventory",
+   "localisation": "the committed and external audits AGREE and the manifest names a THIRD value, so the anomaly is localised in the MANIFEST -- the very artifact carrying the 326 record hashes that binding 1 rests on. That is a stronger reason to cap at P3 than the one C6 first gave, not a weaker one.",
    "manifest_names": "fa1d79b52c8ac6014c34ced67f1c53dd862b55c66cd6fcee47ab1797c7404266"
   },
   "producer_manifest": {
@@ -52,7 +55,8 @@
   },
   "measured_how": "read-only from the Vultr export for 306-308; from the committed copy for 309. The earlier version reported cell 309 alone and generalised silently (forensic review, C).",
   "production_run": false,
-  "result_bearing": false
+  "result_bearing": false,
+  "source": "read-only measurement on the worker for 306-308 and the committed copy for 309, recorded in evidence/inventory rather than typed into this producer (adjudicator N7)"
  },
  "schema": "rebaseguard.p5y.k5.tail-c6.provenance.v1",
  "tail_cell_records": {

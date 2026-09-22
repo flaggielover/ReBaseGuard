@@ -52,10 +52,26 @@ ROUTES = {
         existence="OBJECT_PROVEN_TO_HAVE_EXISTED",
         existence_proof="every one of the 63 objects in each sealed record carries its own bernstein_calls and "
                         "cpu_seconds, direct evidence the candidate was materialised and certified",
-        ever_serialized=False,
+        ever_serialized="THE POLYNOMIALS: never, anywhere. THE SUPREMA: yes, committed at exact rational "
+                        "precision in TCT_INPUTS_30{5..9}.json as sup.{F,D,H}. The earlier flat `false` was "
+                        "false of half of this route's own required_object (adjudicator N3; the forensic review "
+                        "asked for this in BOTH places and C6 fixed only one).",
         serialization_search="all 603 commits / 58 branches / 36 tags, plus 326/326 sealed records scanned "
-                             "read-only: 0 payload keys, and no candidate hash exists anywhere",
-        C6_CLASSIFICATION="HISTORICAL_REPLAY_REQUIRED",
+                             "read-only: 0 payload keys for the POLYNOMIALS, and no candidate-polynomial hash "
+                             "exists anywhere. The adjudicator re-ran this with a 12-alternative regex, wider "
+                             "than C6's five and the reviewer's eleven, and confirmed 0/326; the longest JSON "
+                             "array anywhere in a tail record is 10 elements, so a degree-12 multivariate "
+                             "candidate cannot hide there.",
+        C6_CLASSIFICATION="GATE_CLASS_GAP__inputs_regenerable_result_never_derived",
+        CLASS_REJECTED_BY_ADJUDICATION=(
+            "the earlier class HISTORICAL_REPLAY_REQUIRED was REJECTED at route level by the independent "
+            "adjudicator (N4): it sat beside this entry's own prose saying the result 'has never been derived by "
+            "anyone and still must be'. A consumer reading the class field got 'replay'; a consumer reading the "
+            "prose got 'never derived'. A1 falls into EXACTLY the same gate-class gap as E1 -- inputs present or "
+            "exactly regenerable, new certification work required, toolchain-blocked -- and C6 had recorded the "
+            "gap for E1 alone. The hazard the forensic review identified was fixed in prose and left standing in "
+            "the field a machine reads."),
+        replayable_scope="the INPUTS only. Never the gain.",
         missing_what="a TOOLCHAIN for the INPUTS. The RESULT has never been derived by anyone and still must be.",
         REPLAYABILITY_GETS_THE_INPUTS_NOT_THE_RESULT=(
             "tc_producer.identity_gate REQUIRES a replay to reproduce the sealed quantities exactly -- every "
@@ -133,9 +149,12 @@ ROUTES = {
         serialization_search="the operator taboo/arl Chebyshev candidate payloads are committed for every tail "
                              "cell in p5y_k5_tail_operator_registry/evidence/registry_c1 and the C2 refined "
                              "registry. (The first version said these were the ONLY committed Chebyshev payloads; "
-                             "p5y_k5_perron_deflated_resolvent/evidence/registry_r1 and three PROBE.json files "
-                             "also carry `numerators`. Same KIND of object at other cells, so the substance "
-                             "holds and the word ONLY does not -- forensic review, item J-E1.)",
+                             "many other artifacts carry `numerators` -- the adjudicator counted 316 files under "
+                             "p5y_k5_perron_deflated_resolvent and 105 under p5y_k5_tail_c2_closure alone, so "
+                             "C6's replacement text ('registry_r1 and three PROBE.json files') ALSO "
+                             "under-enumerated. Same KIND of object at other cells; E1's substance is unaffected "
+                             "and neither the word ONLY nor the short list was right -- forensic review J-E1, "
+                             "adjudicator N8.)",
         C6_CLASSIFICATION="GATE_CLASS_GAP__nearest_is_HISTORICAL_REPLAY_REQUIRED",
         GATE_DEFECT=(
             "E1 FITS NONE OF THE GATE'S SIX CLASSES, and the first version of this entry forced it into "
@@ -168,8 +187,12 @@ ALSO = {
     "B1": dict(c5_kill_kind="NEW_REAL", family="rho",
                C6_CLASSIFICATION="TRUE_NEW_REAL_REQUIRED",
                confirmed_how="no sub-interval structure anywhere in the sealed record (0 occurrences of "
-                             "sub_/partition/subinterval/e_lo/e_hi/split); whole_cell_refinement is a "
-                             "24-iteration fixed point on the WHOLE cell, not a partition. Restricting a "
+                             "sub_/partition/subinterval/e_lo/e_hi/split); whole_cell_refinement is a per-r "
+                             "fixed point on the WHOLE cell whose iteration count varies by cell (r=0: 25 at "
+                             "cell 306, 24 at 307/308/309 -- the earlier flat '24-iteration' was wrong, "
+                             "adjudicator N2), not a partition. And subdivision_depth exists at "
+                             "/producer/runtime/subdivision_depth with integer value 0 in all four records: the "
+                             "schema HAS a subdivision slot and it was never filled. Restricting a "
                              "whole-cell certificate to a sub-interval cannot tighten it: its value IS the "
                              "whole-cell supremum.",
                missing_what="SCIENCE, at addresses never evaluated",
@@ -250,6 +273,14 @@ def main() -> int:
                            "numpy and python-flint -- because tc_producer.identity_gate forces a faithful replay "
                            "to reproduce the adopted values exactly, so a replay delivers the inputs and none of "
                            "the gain. 'Missing a toolchain' is true of the INPUTS and false of the RESULTS.",
+               "A1_IS_HARDER_THAN_C5_THOUGHT": (
+                   "the adjudicator's finding, which C6 established and did not state plainly. C5 believed A1 was "
+                   "a RETRIEVAL -- fetch payloads from a 90 MB store, tighten, done, new_real_required false, "
+                   "Condition 11(b). Every part of that is false. The payloads never existed; a faithful "
+                   "regeneration yields the adopted numbers exactly; and the tightening has never been computed "
+                   "by anyone. A1 now needs a certifying host that exists nowhere in scope, a producer protocol "
+                   "permitting a non-identical sup which does not exist and would itself need governance, and an "
+                   "unknown amount of slack in the certifier's own sup routine. C6 made A1 HARDER, not easier."),
                "withdrawn_headline": "the first version ended 'Nothing was lost; nothing needs to be re-derived.' "
                                      "The second clause was false of A1's and E1's results and is WITHDRAWN "
                                      "(forensic review, the headline ruling). A reader who acted on it would have "
@@ -258,9 +289,11 @@ def main() -> int:
                                      "fifth time."},
            "leverage_figure_provenance": {
                "every_oracle_figure_quoted_here_is": ["DIAGNOSTIC", "computed under the SUPERSEDED FROZEN clause"],
-               "why_diagnostic": "C5 states it: every scaled knockout row aligns the independent TC-T crosscheck "
-                                 "to the frozen path and is therefore DIAGNOSTIC. The first version labelled only "
-                                 "E1's and presented the others bare (forensic review, item K).",
+               "why_diagnostic": "TWO DIFFERENT REASONS, which C6 first over-unified (adjudicator N10). The A1 "
+                                 "and A3 rows are DIAGNOSTIC because C5 aligns the independent TC-T crosscheck to "
+                                 "the frozen path whenever an ingredient is scaled. The E1 row is DIAGNOSTIC for "
+                                 "a different reason: it rests on C4's UNCERTIFIED Monte-Carlo Lambda. The first "
+                                 "version labelled only E1's and presented the others bare (forensic review K).",
                "why_frozen_clause": "C5's adjudicator adopted C5-T as the authoritative transport. At cell 309 the "
                                     "baseline Gamma moves from +0.004661130 (frozen) to +0.001708896 (C5-T), so "
                                     "every frozen-clause margin at 309 is about 0.00295 pessimistic; the A1 row "
@@ -273,10 +306,23 @@ def main() -> int:
            "phase_6_load_bearing_check": load,
            "provenance_summary": {c: v["PROVENANCE_LEVEL"] for c, v in prov["tail_cell_records"].items()},
            "external_evidence_unchecked": [],
+           "RANKING_PREMISE_CORRECTED": (
+               "the earlier ranking put E1 and A1 first on the premise that they need 'only a flint host'. THERE "
+               "IS NO CERTIFYING HOST IN SCOPE AT ALL: the local machine lacks numpy/scipy/flint/mpmath/sympy/"
+               "gmpy2, and so does the programme's worker rebaseguard-vultr-02 (re-measured read-only by this "
+               "campaign after the adjudicator raised it, N9), while AWS is forbidden. A C7 chartered on the old "
+               "ranking would open, fail to import flint on either permitted host, and close. Host provisioning "
+               "is a separately governed prerequisite and a change to the programme's compute surface requiring "
+               "the user's decision -- not a campaign's."),
            "planning_only_leverage_ranking": [
-               "E1 -- all inputs committed, needs only a flint host; closes 307, nearly closes 308",
-               "A1 -- regenerable from committed code, needs a flint host; oracle closes all three",
-               "E2 -- needs no recovery at all, only a theorem; the only lever that restores the 309 margin",
+               "E2 -- FIRST: needs no recovery, no toolchain and no host. Pure analysis. The only lever that "
+               "restores the cell-309 margin C5-T consumed (0.944% of critical A0), and the only item a C7 can "
+               "start today.",
+               "HOST PROVISIONING -- a separately governed prerequisite, not a parenthesis inside a route",
+               "E1 -- once a governed certifying host exists; zero-new-real; closes 307, barely 308, NOT 309",
+               "A1 -- only after the protocol question is settled, since a faithful replay is provably worthless: "
+               "it needs a host AND a producer protocol permitting a non-identical sup AND unknown slack in the "
+               "certifier's sup routine against a known 2.0562% (C5-T) requirement",
                "B1 -- genuinely new-real, the largest lever, a governed new K1 address and NOT the R-stage",
                "A3 -- doubly contingent", "D4 -- genuinely new-real, ceiling unknown"],
            "ranking_is_planning_only": "this ranking may not alter scientific adoption (frozen gate)",

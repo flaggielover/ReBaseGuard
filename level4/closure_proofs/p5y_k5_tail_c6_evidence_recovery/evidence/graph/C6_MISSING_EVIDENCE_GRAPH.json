@@ -37,8 +37,18 @@
    "subcell": 0,
    "subinterval": 0
   },
-  "subdivision_depth": "ABSENT at top level in all four sealed records. The forensic reviewer located the key nested and NULL in all four, which strengthens this conclusion: the schema has a slot for a subdivision and it was never filled.",
-  "whole_cell_refinement_is": "a fixed-point iteration on the WHOLE cell -- a contraction factor, a convergence flag and an iteration count that varies by r and by cell (r=0: 25 at cell 306, 24 at 307/308/309) -- not a partition into sub-intervals. The earlier flat '24 iterations' was wrong (forensic review, item J-B1).",
+  "subdivision_depth": {
+   "correction": "C6 first recorded this as NULL, adopted from its forensic reviewer WITHOUT CHECKING; the adjudicator caught it (N1) and it was re-measured as integer 0 in all four records. B1's conclusion is strengthened, not weakened: the schema HAS a subdivision slot and it was never filled. Adopting a reviewer's figure unverified is the exact handover trap this programme has recorded before, and C6 walked into it.",
+   "path": "/producer/runtime/subdivision_depth",
+   "type": "int",
+   "value_by_cell": {
+    "306": 0,
+    "307": 0,
+    "308": 0,
+    "309": 0
+   }
+  },
+  "whole_cell_refinement_is": "a fixed-point iteration on the WHOLE cell -- a contraction factor, a convergence flag and an iteration count that varies by r and by cell (r=0 by cell: {'306': 25, '307': 24, '308': 24, '309': 24}) -- not a partition into sub-intervals. The earlier flat '24 iterations' was wrong (forensic review, item J-B1).",
   "why": "no sub-interval structure exists anywhere in the sealed record. A finer cover means certifying the objects on NEW, narrower cells, i.e. at scientific addresses that were never evaluated. Restriction of an existing whole-cell certificate to a sub-interval would not tighten it: the certificate's value IS the whole-cell supremum."
  },
  "frozen_chain": {
@@ -111,6 +121,7 @@
  "frozen_chain_all_committed": true,
  "frozen_chain_transitive_closure": {
   "all_committed": true,
+  "all_committed_basis": "every module in the closure is checked against `git ls-files`. The earlier version returned `True if resolved else False`, i.e. asserted committedness from non-emptiness and consulted no git (adjudicator N6).",
   "external_non_first_party": [
    "flint",
    "numpy",
@@ -205,7 +216,8 @@
   },
   "unresolved_names": [
    "which"
-  ]
+  ],
+  "untracked_modules": []
  },
  "guard": "REAL_SCIENTIFIC_COMPUTE = DENY",
  "new_real_scientific_addresses_evaluated": 0,

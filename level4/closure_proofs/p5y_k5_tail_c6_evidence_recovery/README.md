@@ -27,7 +27,14 @@ ref even though it happens to equal the local one. C6 reconciles nothing.
 | 13 frozen classification gate | `config/FEASIBILITY_GATES_C6.json` |
 | 9 revised route ledger | `evidence/leverage/C6_CLASSIFICATION.json` |
 | 14 forensic review | `review/REVIEW_C6_FORENSIC.md` |
-| 17 adjudication | `evidence/adjudication/C6_ADJUDICATION.md` |
+| 17 adjudication | `evidence/adjudication/C6_ADJUDICATION.md` — ACCEPTED_WITH_SCOPE_LIMITATION, 14 conditions |
+
+Post-adjudication corrections are in `ERRATUM_C6_GATE.md` (E1–E4) and `OPEN_NOTES_DISPOSITION_C6.md`.
+
+**Two things a successor must not misread.** There is **no certifying host in scope** — the worker lacks the
+entire toolchain too, so A1 and E1 are blocked on *every* permitted host. And **A1 is harder than C5
+believed**, not easier: a faithful replay returns the adopted numbers exactly, so the tightening still has to
+be derived by someone for the first time.
 
 ## The two findings that matter
 

@@ -99,8 +99,15 @@ def transitive_chain() -> dict:
                 else:
                     unresolved.add(mod)
     outside = sorted(k for k in resolved if not k.startswith("level4/closure_proofs/"))
+    tracked = set(subprocess.run(["git", "-C", str(REPO), "ls-files"], capture_output=True,
+                                 text=True, check=True).stdout.split())
+    untracked = sorted(k for k in resolved if k not in tracked)
     return {"modules_in_closure": len(resolved),
-            "all_committed": True if resolved else False,
+            "all_committed": not untracked,
+            "all_committed_basis": "every module in the closure is checked against `git ls-files`. The earlier "
+                                   "version returned `True if resolved else False`, i.e. asserted committedness "
+                                   "from non-emptiness and consulted no git (adjudicator N6).",
+            "untracked_modules": untracked,
             "resolved_outside_level4_closure_proofs": outside,
             "external_non_first_party": sorted(external),
             "unresolved_names": sorted(unresolved),
@@ -112,12 +119,31 @@ def transitive_chain() -> dict:
             "sha256_by_module": resolved}
 
 
+def _audit_link(man, inv) -> dict:
+    """COMPUTED, not typed in. The earlier version hard-coded both verdicts and the external hash (adjudicator N7)."""
+    committed = sha(CP / "p5y_k1_cusum_aux5_composite_closure/evidence/closure_r1/COMPOSITE_AUDIT.json")
+    external = inv["recorded_external_observations"]["external_COMPOSITE_AUDIT_sha256"]
+    named = man["composite_audit_sha256"]
+    return {"manifest_names": named,
+            "committed_audit_sha256": committed,
+            "external_audit_sha256": external,
+            "external_hash_source": "recorded read-only observation, see evidence/inventory",
+            "closes_against_committed": named == committed,
+            "closes_against_external": named == external,
+            "committed_and_external_agree_with_each_other": committed == external,
+            "localisation": "the committed and external audits AGREE and the manifest names a THIRD value, so the "
+                            "anomaly is localised in the MANIFEST -- the very artifact carrying the 326 record "
+                            "hashes that binding 1 rests on. That is a stronger reason to cap at P3 than the one "
+                            "C6 first gave, not a weaker one."}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out-graph", required=True)
     ap.add_argument("--out-provenance", required=True)
     a = ap.parse_args()
     inv = json.loads((NS / "evidence/inventory/C6_EXTERNAL_INVENTORY.json").read_bytes())
+    obs = inv["recorded_external_observations"]
 
     # ---- PHASE 10: did the K1 object candidates ever get serialized, anywhere? ----------------------
     chain = {n: {"path": p, "committed": (CP / p).exists(), "sha256": sha(CP / p) if (CP / p).exists() else None}
@@ -182,12 +208,18 @@ def main() -> int:
         "sub_structure_keys_found_in_the_sealed_record": subkeys,
         "whole_cell_refinement_is": "a fixed-point iteration on the WHOLE cell -- a contraction factor, a "
                                     "convergence flag and an iteration count that varies by r and by cell "
-                                    "(r=0: 25 at cell 306, 24 at 307/308/309) -- not a partition into "
+                                    f"(r=0 by cell: {obs['whole_cell_refinement_iterations_r0']}) -- not a partition into "
                                     "sub-intervals. The earlier flat '24 iterations' was wrong "
                                     "(forensic review, item J-B1).",
-        "subdivision_depth": "ABSENT at top level in all four sealed records. The forensic reviewer located the "
-                             "key nested and NULL in all four, which strengthens this conclusion: the schema has "
-                             "a slot for a subdivision and it was never filled.",
+        "subdivision_depth": {
+            "path": "/producer/runtime/subdivision_depth",
+            "value_by_cell": obs["subdivision_depth"]["cells"],
+            "type": "int",
+            "correction": "C6 first recorded this as NULL, adopted from its forensic reviewer WITHOUT CHECKING; "
+                          "the adjudicator caught it (N1) and it was re-measured as integer 0 in all four "
+                          "records. B1's conclusion is strengthened, not weakened: the schema HAS a subdivision "
+                          "slot and it was never filled. Adopting a reviewer's figure unverified is the exact "
+                          "handover trap this programme has recorded before, and C6 walked into it."},
         "CLASSIFICATION": "TRUE_NEW_REAL_REQUIRED",
         "why": "no sub-interval structure exists anywhere in the sealed record. A finer cover means certifying "
                "the objects on NEW, narrower cells, i.e. at scientific addresses that were never evaluated. "
@@ -245,19 +277,12 @@ def main() -> int:
             "committed_file_sha256": sha(CP.parents[1] / rec309["producer_manifest_path"]),
             "closes": sha(CP.parents[1] / rec309["producer_manifest_path"]) == rec309["producer_manifest_hash"],
         },
-        "manifest_to_audit": {
-            "manifest_names": man["composite_audit_sha256"],
-            "committed_audit_sha256": sha(CP / "p5y_k1_cusum_aux5_composite_closure/evidence/closure_r1/COMPOSITE_AUDIT.json"),
-            "external_audit_sha256": "2ec4dcbb9f2bc27568742db053133c01a369863a21f9a4f066471fcd9cb4b670",
-            "closes_against_committed": False, "closes_against_external": False,
-        },
+        "manifest_to_audit": _audit_link(man, inv),
     }
     record_self_report = {
-        "measured_for_all_four_open_cells": {
-            "306": {"production_run": False, "result_bearing": False, "campaign": "p5y_k1_cusum_aux5_successor"},
-            "307": {"production_run": False, "result_bearing": False, "campaign": "p5y_k1_cusum_aux5_successor"},
-            "308": {"production_run": False, "result_bearing": False, "campaign": "p5y_k1_cusum_aux5_successor"},
-            "309": {"production_run": False, "result_bearing": False, "campaign": "p5y_k1_cusum_aux5_successor"}},
+        "measured_for_all_four_open_cells": obs["record_self_report"],
+        "source": "read-only measurement on the worker for 306-308 and the committed copy for 309, recorded in "
+                  "evidence/inventory rather than typed into this producer (adjudicator N7)",
         "measured_how": "read-only from the Vultr export for 306-308; from the committed copy for 309. The "
                         "earlier version reported cell 309 alone and generalised silently (forensic review, C).",
         "carried_as_an_open_blocker_for_C7": "any attempt to raise these records above P3 must FIRST establish "
