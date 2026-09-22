@@ -44,7 +44,7 @@ def main() -> int:
         {"producer_commits": len(q1["producer_timeline"]),
          "registry_rebuilds": q1["registry_rebuilt_since"]})
     rec("only main and verify changed; every build-path unit is identical",
-        "NUMERICAL", "AST unit comparison", "re-derived by parsing both blobs",
+        "NUMERICAL", "AST unit comparison", "read from the archaeology artifact, which performs the parse; this entry checks the RECORDED result, not a fresh parse",
         arch["Q1_diff_classification"]["units_changed"] == ["main", "verify"]
         and arch["Q1_diff_classification"]["BUILD_PATH_IDENTICAL"],
         arch["Q1_diff_classification"]["units_changed"])
@@ -86,12 +86,17 @@ def main() -> int:
         and best < c307["tightening_to_be_ADOPTABLE_under_the_inherited_floor"],
         {"best_alpha": best, "close": c307["tightening_to_close"],
          "adopt": c307["tightening_to_be_ADOPTABLE_under_the_inherited_floor"]})
-    rec("F1 is invariant under alpha, so alpha can never satisfy it",
-        "GOVERNANCE", "F1's definition vs what alpha moves",
-        "F1 requires a supply NOT using the Arb/FLINT registry; alpha tightens that registry's own "
-        "taboo supersolution, so no alpha value changes a registry-free supply",
-        c307["alpha_can_satisfy_F1"] is False and c307["F1_passes"] is False,
-        c307["F1_Gamma_under_Lemma_G"])
+    # The first version checked C10's own literal alpha_can_satisfy_F1 against itself. The testable
+    # content is that the F1 supply is built WITHOUT the registry that alpha moves, and that its
+    # Gamma is what C8 recorded.
+    g_indep = C.load(C.CLOSURE / "p5y_k5_tail_c3_closure" / "evidence" / "phase_c1" /
+                     "C3_BLOCKER.json")["cells"]["307"]["independence"]["G_is_registry_independent"]
+    rec("F1's supply is registry-independent, so alpha cannot move it",
+        "GOVERNANCE", "C3_BLOCKER independence flag + C8 Gamma_under_Lemma_G",
+        "read C3's own G_is_registry_independent flag and C8's recorded Lemma-G Gamma",
+        g_indep is True and c307["F1_passes"] is False,
+        {"G_is_registry_independent": g_indep,
+         "Gamma_under_Lemma_G": c307["F1_Gamma_under_Lemma_G"]})
 
     # scope discipline
     outside = [f for f in C.git("diff", "--name-only", f"{C.C9_HEAD}..HEAD").splitlines()
@@ -105,9 +110,39 @@ def main() -> int:
         rec(stmt, "GIT_HISTORY", "git", "diff/ls-tree/grep over the committed tree", ok)
 
     gsha = C.sha256_file(C.NS / GATE_SHA_FILE)
-    rec("the C10 decision gate predates the adjudication and is unchanged",
-        "GIT_HISTORY", "config/DECISION_GATE_C10.json", "sha256 of the committed blob",
-        (C.NS / GATE_SHA_FILE).exists(), gsha[:16])
+    gate_commit = C.git("log", "--format=%H", "--diff-filter=A", "--",
+                        f"level4/closure_proofs/p5y_k5_tail_c10_governance_provenance/"
+                        f"{GATE_SHA_FILE}").splitlines()
+    rec("the C10 decision gate was committed before any adjudication artifact exists",
+        "GIT_HISTORY", "config/DECISION_GATE_C10.json",
+        "git log --diff-filter=A for the gate, and absence of an adjudication artifact",
+        bool(gate_commit) and not (C.NS / "review" / "ADJUDICATION_C10.md").exists(),
+        {"gate_sha256": gsha[:16], "gate_added_in": gate_commit[-1][:12] if gate_commit else None})
+
+    # APPLY the frozen gate. It was frozen and then never used -- a gate that decides nothing is
+    # decoration.
+    gate = C.load(C.NS / GATE_SHA_FILE)
+    pc = arch["Q1_PROVENANCE_CLASS"]
+    provenance_clean = (pc in ("A_NO_DEFECT", "C_GOVERNANCE_DRIFT")
+                        and arch["Q1_diff_classification"]["BUILD_PATH_IDENTICAL"])
+    successor_allowed = (rule["declares_itself_prospective"]
+                         and rule["any_claim_of_permanence"] == []
+                         and bool(rule["PRIMARY_AUTHORITY_condition_1"]["quote"]))
+    bridge_required = rule["N9_status"]["state"] == "OPEN"
+    classes = []
+    if provenance_clean and successor_allowed:
+        classes.append("P2")
+    if bridge_required:
+        classes.append("P5")
+    applied = {"classes": classes,
+               "predicates": {"PROVENANCE_CLEAN": provenance_clean,
+                              "SUCCESSOR_RULE_ALLOWED": successor_allowed,
+                              "GOVERNANCE_BRIDGE_REQUIRED": bridge_required},
+               "combination_rule_used": gate["final_classes"]["combination_rule"],
+               "reading": ("P2 + P5: provenance is clean and a successor rule is permitted, but the "
+                           "replacement route the adjudication names is gated on N9, which is open. "
+                           "A bridge -- a second independent certifier -- is required before any "
+                           "successor adoption of 306 or 307.")}
 
     out = {"schema": "C10_HANDOVER_FACT_VERIFICATION/1",
            "WHAT_THIS_CANNOT_VERIFY": (
@@ -118,6 +153,7 @@ def main() -> int:
                "NUMERICAL entries, which are reproducible outright."),
            "load_bearing_claim_ledger": ledger,
            "claim_kinds": sorted({e["claim_kind"] for e in ledger}),
+           "APPLIED_DECISION_GATE": applied,
            "findings": findings,
            "FACT_CHECK_CLASS": "PASS" if not findings else "REFUSE"}
     s = C.write_evidence(C.NS / "evidence" / "governance" / "HANDOVER_FACT_VERIFICATION.json", out)

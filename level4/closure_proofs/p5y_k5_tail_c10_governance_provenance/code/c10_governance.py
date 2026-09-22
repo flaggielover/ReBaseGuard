@@ -21,8 +21,11 @@ def main() -> int:
     txt = ADJ.read_text()
 
     def quote(pat, span=260):
-        m = re.search(pat, txt)
-        return txt[m.start():m.start() + span].replace("\n", " ") if m else None
+        """Quote from the committed text. Returns None when the pattern misses, and callers must
+        treat None as ABSENT rather than publishing an unquoted claim -- the Campaign A precedent
+        quote silently came back None because the source line wraps."""
+        m = re.search(pat, txt, re.S)
+        return re.sub(r"\s+", " ", txt[m.start():m.start() + span]) if m else None
 
     # ---- Phase 5: where the rule comes from, and what it says about itself -------------------
     rule = {
@@ -57,11 +60,32 @@ def main() -> int:
 
     # ---- the adjudication ANTICIPATES a replacement floor ------------------------------------
     repl = quote(r"a \*\*second, independently written certifier\*\*", 430)
-    rule["adjudication_itself_directs_a_replacement"] = {
-        "quote": repl,
-        "reading": ("the adjudication that SET the floor names, in the same document, the condition "
-                    "under which a successor SHOULD FREEZE A REPLACEMENT FLOOR. A rule that "
-                    "provides for its own replacement is not immutable."),
+    # THE PRIMARY AUTHORITY. An earlier version rested Q2 on the "replacement floor" sentence in the
+    # cell-306 discharge bullets. The fresh-context review was right that this OVER-READS it: that
+    # sentence is one of three routes for discharging the floor FOR CELL 306, conditioned on closing
+    # N9. It is corroborating, not decisive. The decisive passage is Condition 1 of the verdict,
+    # which C10's first pass never cited at all.
+    cond1 = quote(r"\*\*The floor above is now the standard\*\*", 330)
+    rule["PRIMARY_AUTHORITY_condition_1"] = {
+        "quote": cond1,
+        "why_decisive": ("it is a CONDITION OF THE VERDICT, general to K5 m=5 tail adoptions rather "
+                         "than to cell 306, and it contemplates replacement in terms: 'A successor "
+                         "that wishes to replace it must freeze the replacement BEFORE recomputing "
+                         "any magnitude.' A rule that states how it may be replaced is not "
+                         "immutable."),
+        "BINDING_PRECONDITION_ON_ANY_SUCCESSOR": (
+            "the replacement must be frozen BEFORE the successor recomputes any magnitude. This is "
+            "a real constraint with teeth, not a formality: C8's own adjudicator used exactly this "
+            "condition to fault C8. A successor that computes first and freezes afterwards violates "
+            "Condition 1 even if its rule is otherwise defensible."),
+        "first_pass_omitted_it": True,
+    }
+    rule["corroborating_only_306_replacement_bullet"] = {
+        "quote": quote(r"a \*\*second, independently written certifier\*\*", 430),
+        "CORRECTED_READING": ("this is one of THREE routes for discharging the floor for CELL 306, "
+                              "conditioned on closing N9. C10's first pass called it decisive; that "
+                              "was an over-read and is withdrawn. It corroborates replaceability; "
+                              "it does not establish it."),
     }
 
     # ---- N9 status, which gates the replacement route ----------------------------------------
@@ -148,7 +172,12 @@ def main() -> int:
     # ---- Phase 7: precedent -------------------------------------------------------------------
     precedent = {
         "campaign_A_cells_11_44": {
-            "quote": quote(r"the programme's own precedent \(Campaign A's adjudication", 300),
+            "quote": quote(r"the programme's own precedent", 320),
+            "quote_was_None_in_the_first_pass_because": (
+                "the pattern spanned a line wrap and re.search without DOTALL missed it, so the "
+                "field published null while the README stated the precedent as quoted fact. The "
+                "quote function now uses DOTALL and normalises whitespace, and a None must be "
+                "treated as ABSENT."),
             "significance": ("the programme HAS adopted K5 cells under a DIFFERENT and weaker "
                              "standard -- a valid enclosure plus a frozen K5-B pass, with no "
                              "robustness requirement. So the r1 floor is not a programme-wide "

@@ -1,4 +1,17 @@
 {
+ "APPLIED_DECISION_GATE": {
+  "classes": [
+   "P2",
+   "P5"
+  ],
+  "combination_rule_used": "P5 may be carried TOGETHER with P1/P2/P3, because a bridge requirement is about what a successor must do next, not about whether provenance is clean. P4 and P6 are exclusive.",
+  "predicates": {
+   "GOVERNANCE_BRIDGE_REQUIRED": true,
+   "PROVENANCE_CLEAN": true,
+   "SUCCESSOR_RULE_ALLOWED": true
+  },
+  "reading": "P2 + P5: provenance is clean and a successor rule is permitted, but the replacement route the adjudication names is gated on N9, which is open. A bridge -- a second independent certifier -- is required before any successor adoption of 306 or 307."
+ },
  "FACT_CHECK_CLASS": "PASS",
  "WHAT_THIS_CANNOT_VERIFY": "governance READINGS are arguments, not facts. This ledger verifies that the quoted text EXISTS in the committed artifact and says what is claimed; it cannot verify that the programme's intent matches the reading. Those entries are marked claim_kind GOVERNANCE so a reader can weigh them differently from GIT_HISTORY and NUMERICAL entries, which are reproducible outright.",
  "claim_kinds": [
@@ -39,7 +52,7 @@
     "main",
     "verify"
    ],
-   "verification_method": "re-derived by parsing both blobs"
+   "verification_method": "read from the archaeology artifact, which performs the parse; this entry checks the RECORDED result, not a fresh parse"
   },
   {
    "claim_kind": "NUMERICAL",
@@ -116,10 +129,13 @@
    "claim_kind": "GOVERNANCE",
    "disposition": "ABSORBED",
    "result": "REPRODUCED",
-   "source": "F1's definition vs what alpha moves",
-   "statement": "F1 is invariant under alpha, so alpha can never satisfy it",
-   "value": 0.08511776989151419,
-   "verification_method": "F1 requires a supply NOT using the Arb/FLINT registry; alpha tightens that registry's own taboo supersolution, so no alpha value changes a registry-free supply"
+   "source": "C3_BLOCKER independence flag + C8 Gamma_under_Lemma_G",
+   "statement": "F1's supply is registry-independent, so alpha cannot move it",
+   "value": {
+    "G_is_registry_independent": true,
+    "Gamma_under_Lemma_G": 0.08511776989151419
+   },
+   "verification_method": "read C3's own G_is_registry_independent flag and C8's recorded Lemma-G Gamma"
   },
   {
    "claim_kind": "GIT_HISTORY",
@@ -153,11 +169,14 @@
    "disposition": "ABSORBED",
    "result": "REPRODUCED",
    "source": "config/DECISION_GATE_C10.json",
-   "statement": "the C10 decision gate predates the adjudication and is unchanged",
-   "value": "4ab7bdd6a2e77d26",
-   "verification_method": "sha256 of the committed blob"
+   "statement": "the C10 decision gate was committed before any adjudication artifact exists",
+   "value": {
+    "gate_added_in": "d2166f039575",
+    "gate_sha256": "4ab7bdd6a2e77d26"
+   },
+   "verification_method": "git log --diff-filter=A for the gate, and absence of an adjudication artifact"
   }
  ],
  "schema": "C10_HANDOVER_FACT_VERIFICATION/1",
- "sha256": "e321e1e41207488282b184642f79d7b3ec34e5c30bde2a31cc2288c39b433170"
+ "sha256": "2f746128518e844b8855ac1f01399bed14a5d937a69ff53badebb609ae207bd9"
 }

@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import ast
 import hashlib
+import re
 import json
 import pathlib
 import sys
@@ -140,12 +141,74 @@ def main() -> int:
     ua = units(C.blob_at(bound[0]["commit"], C.PRODUCER).decode()) if bound else {}
     ub = units(C.blob_at("HEAD", C.PRODUCER).decode())
     changed = sorted({n for n in set(ua) | set(ub) if ua.get(n) != ub.get(n)})
+
+    # AST coverage. Imports and module-level statements that are not simple Name assignments belong
+    # to no unit, so a change there would be invisible to the unit comparison and would wrongly yield
+    # A_NO_DEFECT. The residue is measured and diffed separately rather than assumed empty.
+    def covered_lines(src, units_map):
+        return sum(len((u or "").splitlines()) for u in units_map.values())
+    hist_src = C.blob_at(bound[0]["commit"], C.PRODUCER).decode() if bound else ""
+    cur_src = C.blob_at("HEAD", C.PRODUCER).decode()
+    cov = {"historical_total_lines": len(hist_src.splitlines()),
+           "historical_lines_in_units": covered_lines(hist_src, ua),
+           "current_total_lines": len(cur_src.splitlines()),
+           "current_lines_in_units": covered_lines(cur_src, ub)}
+    def residue(src, units_map):
+        body = src
+        for u in units_map.values():
+            if u:
+                body = body.replace(u, "")
+        return "\n".join(l for l in body.splitlines() if l.strip())
+    res_h, res_c = residue(hist_src, ua), residue(cur_src, ub)
+    cov["uncovered_residue_identical"] = res_h == res_c
+    cov["note"] = ("the residue is imports and module-level statements outside any unit, including "
+                   "the OMP/OPENBLAS/MKL thread-pinning block. It is compared directly so a change "
+                   "there cannot slip through as A_NO_DEFECT.")
     build_changed = sorted(set(changed) & BUILD_UNITS)
 
-    # is the pin ENFORCED anywhere, or is it a build-time record?
+    # Is the pin ENFORCED anywhere, or is it a build-time record? Both halves are now MEASURED.
     psrc = C.blob_at("HEAD", C.PRODUCER).decode()
     self_hash_is_build_time = 'sha(HERE.read_bytes())' in psrc
-    taboo_enforced = 'TABOO_SHA256' in psrc and 'raise' in psrc.split("TABOO_SHA256")[-1][:400]
+
+    # The enforcement site is the guard that RAISES, not the last mention of the token. An earlier
+    # version scanned psrc.split("TABOO_SHA256")[-1], i.e. after the LAST occurrence -- which is the
+    # output dict at line 177 -- and therefore published False two lines below a sibling string
+    # asserting the opposite. It now locates a comparison against the constant followed by a raise.
+    # The path expression contains nested parentheses, so a [^)]* pattern cannot span it. Match the
+    # comparison against the constant and require a raise on the following line.
+    enforce = re.search(r"!=\s*TABOO_SHA256\s*:\s*\n\s*raise", psrc)
+    taboo_enforced = bool(enforce)
+    taboo_enforcement_site = (psrc[:enforce.start()].count("\n") + 1) if enforce else None
+
+    # Does ANY consumer compare the producer self-hash to the working tree? Measured by scanning
+    # every committed python file for a read of code_sha256 combined with a live hash of that path.
+    # An earlier version hardcoded False -- the single fact that turns Q1 from a defect into a
+    # non-defect was asserted, not checked.
+    # A CONSUMER that enforces the pin would compare the recorded value against a freshly computed
+    # hash AND refuse on mismatch. The first version matched any file mentioning code_sha256 and
+    # c2_refined_registry, which returned five files -- four of them AUDITORS (including C10's own
+    # two modules, i.e. the scan matching itself) and the fifth the producer that WRITES the field.
+    # Mentioning a field is not enforcing it.
+    AUDIT_NS = ("p5y_k5_tail_c10_governance_provenance", "p5y_k5_tail_c9_e1_cell307")
+    enforcing_consumers, mentions = [], []
+    for f in C.git("ls-files", "--", "*.py").splitlines():
+        try:
+            body = C.blob_at("HEAD", f).decode("utf-8", "replace")
+        except Exception:
+            continue
+        if "code_sha256" not in body or "c2_refined_registry" not in body:
+            continue
+        mentions.append(f)
+        if any(ns in f for ns in AUDIT_NS):
+            continue                      # an auditor reporting the comparison is not a consumer
+        if f.endswith("c2_refined_registry.py"):
+            continue                      # the producer WRITES this field; it does not enforce it
+        if re.search(r"code_sha256[^\n]{0,120}\n?[^\n]{0,120}(raise|SystemExit|assert|bad\.append)",
+                     body):
+            enforcing_consumers.append(f)
+
+    any_consumer_enforces = bool(enforcing_consumers)
+
     taboo_now = C.sha256_bytes(C.blob_at(
         "HEAD", "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/taboo_certify.py"))
 
@@ -186,6 +249,7 @@ def main() -> int:
             "BUILD_PATH_IDENTICAL": not build_changed,
             "method": ("AST unit-level comparison of the bound version against HEAD, not a line diff: "
                        "every top-level function, class and constant is extracted and compared"),
+            "ast_coverage": cov,
             "scientific_constants_identical": all(
                 ua.get(k) == ub.get(k) for k in
                 ("CONST:SUB_BLOCK_MAX_WIDTH", "CONST:DEGREE_TABOO", "CONST:DEGREE_ARL",
@@ -193,12 +257,19 @@ def main() -> int:
         },
         "Q1_pin_semantics": {
             "producer_self_hash_written_at_build_time": self_hash_is_build_time,
-            "any_consumer_compares_it_to_HEAD": False,
+            "any_consumer_compares_it_to_HEAD": any_consumer_enforces,
+            "consumers_scanned_for_enforcement": len(C.git("ls-files", "--", "*.py").splitlines()),
+            "enforcing_consumers": enforcing_consumers,
+            "files_merely_mentioning_the_field": mentions,
+            "excluded_from_enforcement": ("this campaign's own audit modules and C9's, which report "
+                                          "the comparison, and the producer itself, which writes "
+                                          "the field"),
             "evidence": ("the field is emitted as sha(HERE.read_bytes()) inside the build, so it "
                          "RECORDS what built the registry. No consumer re-checks it against the "
                          "working tree. The dependency that IS enforced at run time is "
                          "TABOO_SHA256, and that one still matches."),
             "taboo_dependency_enforced_at_runtime": taboo_enforced,
+            "taboo_enforcement_site_line": taboo_enforcement_site,
         },
         "Q1_PROVENANCE_CLASS": cls,
         "Q1_ANSWER": (

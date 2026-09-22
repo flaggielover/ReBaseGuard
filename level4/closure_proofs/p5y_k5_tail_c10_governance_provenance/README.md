@@ -7,7 +7,17 @@ Two questions only.
 
 ## Q1 — Why does REGISTRY_C2 bind a hash that differs from the committed producer?
 
-**It is not broken. C9 misread a build-time record as a live integrity constraint.**
+**It is not broken.**
+
+*Prior art, cited.* C9's own stop-review had already established the bound commit, both divergence
+commits and the verify/main localisation (`REVIEW_C9_STOP.md`). C10's first pass reproduced that
+work without citing it, and also **mis-attributed a claim to C9**: C9 did not say the pin was a live
+integrity constraint. `C9_TOOLCHAIN.json` states a true mismatch plus a reproducibility requirement
+— *"any execution must resolve which producer actually built the registry"* — which this archaeology
+**satisfies**. Both corrections stand against C10, not against C9.
+
+C10's contribution is the *measurement*: the AST unit comparison with its coverage residue, the
+located enforcement site, and the consumer scan.
 
 | commit | date | producer content SHA-256 | |
 |---|---|---|---|
@@ -25,8 +35,15 @@ scientific constant (`SUB_BLOCK_MAX_WIDTH`, `DEGREE_TABOO`, `DEGREE_ARL`, `TABOO
 
 What settles it is what the field *means*: it is emitted inside the build as
 `sha(HERE.read_bytes())`, so it **records what built the registry**. No consumer compares it to HEAD.
-The dependency that *is* enforced at run time is `TABOO_SHA256`, which refuses if the certifier has
-moved — and that pin still matches exactly.
+The dependency that *is* enforced at run time is `TABOO_SHA256` — located at
+`c2_refined_registry.py:63`, where a mismatch raises — and that pin still matches exactly. A scan of
+all 1461 committed Python files finds **no consumer** that compares the producer self-hash to HEAD:
+five files mention the field, and all five are auditors (including C10's own two modules) or the
+producer that writes it.
+
+*Carried from C9's review and not dropped:* because `sha(HERE.read_bytes())` is written into every
+new registry, **a rebuild today could not reproduce `REGISTRY_C2.json` byte-for-byte regardless** —
+independently of this hash question.
 
 **Class: `C_GOVERNANCE_DRIFT`.** Not `E` (the binding resolves), not `D` (no scientific logic
 changed), not `B` (the edits are functional, not cosmetic). The drift is in governance instruments —
@@ -43,9 +60,19 @@ historical producer.
   adopted…"*
 - **F1 carries an explicit lapse condition**: *"available for as long as N9 … remains open, and
   lapses when N9 is closed."*
-- **The adjudication directs its own replacement**: on closing N9, *"a successor should freeze a
-  replacement floor requiring agreement between two independent certifier implementations rather
-  than F1."*
+- **The verdict's Condition 1 states the replacement procedure directly** — this is the primary
+  authority: *"**The floor above is now the standard** for K5 m = 5 tail adoptions, prospectively. A
+  successor that wishes to replace it must freeze the replacement **before** recomputing any
+  magnitude."*
+
+  > **Binding precondition, and it has teeth.** A successor must freeze its replacement rule
+  > **before** recomputing any magnitude. C8's own adjudicator used exactly this condition to fault
+  > C8. C10's first pass never cited Condition 1 at all and omitted this precondition — a successor
+  > following that draft could have computed first and frozen after, violating the verdict.
+
+- *Corroborating only:* the "replacement floor … two independent certifier implementations" sentence
+  is one of **three** routes for discharging the floor **for cell 306**, conditioned on closing N9.
+  C10's first pass called it decisive; that was an **over-read** and is withdrawn.
 - **Nothing claims permanence.** "Permanent" appears only about adopted *cells* — a statement about
   verdicts, not rules.
 - **Precedent**: the same document records that Campaign A adopted cells 11–44 on a valid enclosure
@@ -70,6 +97,10 @@ registry's own taboo supersolution.
 > adjudication says plainly that more margin is *"the wrong instrument for the risk that is actually
 > open."*
 
+*Caveat on the 306 margin figures.* C10 imports C8's 1.171431 / 1.067071. C8's own adjudicator
+flagged those as the most favourable of three unreconciled margin values. They are used here as
+C8 published them and are not independently re-derived.
+
 **Cell 306.** C8's frozen rule 1 bound *C9's* selection, not every future campaign. A future
 campaign that freezes its own gate before its own result may prospectively target 306. **C10 does not
 authorize that** and does not retroactively alter C8 or C9.
@@ -80,6 +111,11 @@ Three scans were repaired rather than trusted. The N9 detector twice read a *con
 **when** N9 is closed", whose own sentence says "remains open" — as an assertion that N9 had closed;
 the fix captures preceding context and reports **AMBIGUOUS** rather than voting. Mutant M05 was a
 tautology (`if ["build"]` is always truthy) and now re-runs the real classifier across every branch.
+
+**Applied decision gate: `P2 + P5`** — provenance clean and a successor rule permitted, but the
+replacement route is gated on N9, which is open. A governance bridge (a second independent certifier)
+is required before any successor adoption of 306 or 307. The gate was frozen before adjudication and
+is now actually *applied*; C10's first pass froze it and never used it.
 
 Mutations **14/14**, fact verification **15/15**. The ledger tags each claim `GIT_HISTORY`,
 `NUMERICAL` or `GOVERNANCE`, because a governance *reading* is an argument and not a reproducible

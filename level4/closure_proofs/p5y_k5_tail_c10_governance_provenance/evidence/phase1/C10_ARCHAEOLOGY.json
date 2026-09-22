@@ -5,6 +5,14 @@
  "Q1_PROVENANCE_CLASS": "C_GOVERNANCE_DRIFT",
  "Q1_diff_classification": {
   "BUILD_PATH_IDENTICAL": true,
+  "ast_coverage": {
+   "current_lines_in_units": 209,
+   "current_total_lines": 270,
+   "historical_lines_in_units": 190,
+   "historical_total_lines": 251,
+   "note": "the residue is imports and module-level statements outside any unit, including the OMP/OPENBLAS/MKL thread-pinning block. It is compared directly so a change there cannot slip through as A_NO_DEFECT.",
+   "uncovered_residue_identical": true
+  },
   "build_path_units_changed": [],
   "method": "AST unit-level comparison of the bound version against HEAD, not a line diff: every top-level function, class and constant is extracted and compared",
   "scientific_constants_identical": true,
@@ -62,9 +70,20 @@
  },
  "Q1_pin_semantics": {
   "any_consumer_compares_it_to_HEAD": false,
+  "consumers_scanned_for_enforcement": 1461,
+  "enforcing_consumers": [],
   "evidence": "the field is emitted as sha(HERE.read_bytes()) inside the build, so it RECORDS what built the registry. No consumer re-checks it against the working tree. The dependency that IS enforced at run time is TABOO_SHA256, and that one still matches.",
+  "excluded_from_enforcement": "this campaign's own audit modules and C9's, which report the comparison, and the producer itself, which writes the field",
+  "files_merely_mentioning_the_field": [
+   "level4/closure_proofs/p5y_k5_tail_c10_governance_provenance/code/c10_archaeology.py",
+   "level4/closure_proofs/p5y_k5_tail_c10_governance_provenance/code/c10_factcheck.py",
+   "level4/closure_proofs/p5y_k5_tail_c2_closure/code/c2_refined_registry.py",
+   "level4/closure_proofs/p5y_k5_tail_c9_e1_cell307/code/c9_factcheck.py",
+   "level4/closure_proofs/p5y_k5_tail_c9_e1_cell307/code/c9_toolchain.py"
+  ],
   "producer_self_hash_written_at_build_time": true,
-  "taboo_dependency_enforced_at_runtime": false
+  "taboo_dependency_enforced_at_runtime": true,
+  "taboo_enforcement_site_line": 63
  },
  "REMOTE_MAIN_REF": "1cb453826313c189f0bdafd5b84120c1edb74da9",
  "checks": [
@@ -79,7 +98,7 @@
   {
    "detail": {
     "expected": "fd3cb2d4cbf7c011e619fe6c794bec2ef9226d16",
-    "head": "fd3cb2d4cbf7c011e619fe6c794bec2ef9226d16"
+    "head": "b10cdc7d058c3df755cefa3feb968e2b995d51f5"
    },
    "id": "B0_02",
    "name": "descends from the expected C9 HEAD",
@@ -238,6 +257,6 @@
  ],
  "failed": [],
  "schema": "C10_ARCHAEOLOGY/1",
- "sha256": "566b41fb0e33d9ea02ecd4b3f21bc7e485e8fbf099fbe512df3bd409c0af702f",
+ "sha256": "669657b40278890c8ad939d86ab5e2fa4ec2ab7083cbd8fd8d9324bdede7d222",
  "unchecked": []
 }

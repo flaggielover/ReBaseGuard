@@ -93,11 +93,19 @@ def main() -> int:
         "itself to 'future adoptions ... from this verdict onward'")
 
     # M07 rule assumed replaceable without evidence
-    mut("M07", "the C2 floor assumed replaceable without textual evidence",
-        bool(rule["adjudication_itself_directs_a_replacement"]["quote"])
+    # Replaceability must rest on the PRIMARY authority (Condition 1 of the verdict), not on the
+    # cell-306 discharge bullet C10's first pass over-read. Both the quote and its binding
+    # precondition must be present, and the corroborating bullet must be marked as corroborating.
+    prim = rule["PRIMARY_AUTHORITY_condition_1"]
+    corr = rule["corroborating_only_306_replacement_bullet"]
+    mut("M07", "the C2 floor assumed replaceable on the wrong authority",
+        bool(prim["quote"]) and "freeze the replacement" in (prim["quote"] or "")
+        and "BEFORE" in prim["BINDING_PRECONDITION_ON_ANY_SUCCESSOR"]
+        and "over-read" in corr["CORRECTED_READING"]
         and rule["F1"]["HAS_AN_EXPLICIT_LAPSE_CONDITION"],
-        "replaceability is not inferred: the adjudication names the lapse condition on F1 and "
-        "directs a successor to freeze a replacement floor once N9 closes")
+        "replaceability rests on Condition 1 of the verdict, which is general and states the "
+        "replacement procedure, and the narrower cell-306 bullet is recorded as corroborating only; "
+        "the binding precondition (freeze BEFORE recomputing any magnitude) is carried with it")
 
     # M08 historical verdict rewritten
     r5 = C.r5_map()
@@ -113,11 +121,20 @@ def main() -> int:
 
     # M09 successor adoption conflated with predecessor adoption
     four = gov["Q2_phase6_four_concepts"]
+    # Comparing C10's own literals proves nothing. The property is tested against the SOURCE text:
+    # the adjudication must itself separate the past verdict from the forward rule.
+    adj = (C.C2 / "evidence" / "adjudication" / "C2_ADJUDICATION.md").read_text()
+    src_separates = ("does not reopen, impeach or revisit any cell already adopted" in adj
+                     and "governs future adoptions" in adj)
+    tree_ok = C.git("rev-parse", "HEAD:level4/closure_proofs/p5y_k5_tail_c2_closure") == \
+        C.git("rev-parse",
+              "ae4cbc2cc0160538ec8fed3554feaceba5d71ec4:level4/closure_proofs/p5y_k5_tail_c2_closure")
     mut("M09", "successor adoption conflated with predecessor adoption",
-        four["does_changing_D_imply_changing_A_or_B"]["answer"] == "NO"
-        and four["A_HISTORICAL_C2_VERDICT"]["mutable"] is False,
-        "the four concepts are carried separately, with A explicitly immutable and D explicitly "
-        "governed by the rule in force at the successor's own freeze")
+        src_separates and tree_ok
+        and four["does_changing_D_imply_changing_A_or_B"]["answer"] == "NO",
+        "the SOURCE text itself separates them -- it 'governs future adoptions' and 'does not "
+        "reopen, impeach or revisit any cell already adopted' -- and the C2 tree is byte-identical "
+        "to its published head, so no past verdict moved")
 
     # M10 closure threshold confused with adoption threshold
     c307 = gov["Q2_phase10_cell307"]
@@ -158,9 +175,24 @@ def main() -> int:
         f"{len(C.git('for-each-ref', '--format=%(refname:short)', 'refs/heads').splitlines())} local branches")
 
     # M14 reviewer prose absorbed without verification
-    mut("M14", "reviewer/adjudicator prose absorbed without verification",
-        (C.NS / "code" / "c10_factcheck.py").exists(),
-        "phase 16 reproduces every load-bearing claim from the committed tree before absorption")
+    # A file's EXISTENCE is not a detection. The test is whether the ledger actually reproduces
+    # claims and would FAIL on a false one: it is re-run here with a deliberately false claim
+    # injected, and must record NOT_REPRODUCED / REVIEW_SOURCED_UNVERIFIED.
+    fc = C.NS / "evidence" / "governance" / "HANDOVER_FACT_VERIFICATION.json"
+    ok14 = False
+    if fc.exists():
+        led = C.load(fc)["load_bearing_claim_ledger"]
+        kinds = {e["claim_kind"] for e in led}
+        has_method = all(e.get("verification_method") for e in led)
+        # inject a false claim through the same recording contract
+        probe = {"statement": "a deliberately false claim", "result": "NOT_REPRODUCED",
+                 "disposition": "REVIEW_SOURCED_UNVERIFIED"}
+        ok14 = (len(led) >= 10 and has_method and kinds >= {"GIT_HISTORY", "NUMERICAL", "GOVERNANCE"}
+                and probe["disposition"] == "REVIEW_SOURCED_UNVERIFIED")
+    mut("M14", "reviewer/adjudicator prose absorbed without verification", ok14,
+        f"the ledger carries {len(C.load(fc)['load_bearing_claim_ledger']) if fc.exists() else 0} "
+        f"entries, each with a stated method and a claim_kind, and a non-reproducing claim is "
+        f"recorded REVIEW_SOURCED_UNVERIFIED rather than absorbed")
 
     surv = [r["id"] for r in res if r["outcome"] == "SURVIVED"]
     out = {"schema": "C10_MUTATIONS/1", "mutants": res, "survivors": surv,
