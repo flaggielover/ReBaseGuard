@@ -1,0 +1,43 @@
+{
+ "FACT_CHECK_CLASS": "PASS",
+ "artifacts_scanned": [
+  "evidence/b0/C7_B0_AUDIT.json",
+  "evidence/certificate/C7_CERTIFICATE.json",
+  "evidence/governance/HANDOVER_FACT_VERIFICATION.json",
+  "evidence/mutations/C7_MUTATIONS.json",
+  "evidence/phase1/C7_LEDGER.json",
+  "config/FEASIBILITY_GATES_C7.json"
+ ],
+ "findings": [],
+ "gate_ordering": [
+  {
+   "artifact": "evidence/certificate/C7_CERTIFICATE.json",
+   "kind": "LOAD_BEARING",
+   "position": "AFTER_GATE"
+  },
+  {
+   "artifact": "evidence/phase1/C7_LEDGER.json",
+   "kind": "ANALYSIS",
+   "position": "SAME_COMMIT_AS_GATE"
+  },
+  {
+   "artifact": "evidence/mutations/C7_MUTATIONS.json",
+   "kind": "ANALYSIS",
+   "position": "AFTER_GATE"
+  },
+  {
+   "artifact": "evidence/b0/C7_B0_AUDIT.json",
+   "kind": "STATE_AUDIT",
+   "position": "BEFORE_GATE"
+  }
+ ],
+ "gate_ordering_note": "The LOAD-BEARING artifact is the certificate, and it is AFTER the gate, which is the requirement that matters. The ledger landed in the SAME COMMIT as the gate and was in fact produced BEFORE it in wall-clock order. That is disclosed here and in the gate's own disclosure_of_non_blindness section rather than presented as a clean freeze.",
+ "prose_scanned": [
+  "README.md",
+  "phase_3/C7_ROUTE_SEARCH.md",
+  "review/HANDOVER_C7_REVIEW.md"
+ ],
+ "purpose": "verify C7's own claims, and any claim a reviewer makes, against the committed tree BEFORE absorbing them",
+ "schema": "C7_HANDOVER_FACT_VERIFICATION/1",
+ "sha256": "55cc852b7143d48e21e51690b67a20ae1538050fd835b5cb75dc822fd84ba82d"
+}
