@@ -76,6 +76,19 @@ def moments(A: F, B: F, jmax: int) -> list[G.Iv]:
         raise CertRefusal("moment interval is inverted")
     phiA, phiB = G.phi(A), G.phi(B)
     out = [G.Phi(B) - G.Phi(A)]
+    # ERRATUM E5 (C11 adjudication finding 13). The reused rational Phi degrades silently far
+    # outside this campaign's operating range: c7_gaussian._erf_integral needs roughly t^2/2
+    # truncation terms, so for |t| ~ 20 it returns a SOUND but VACUOUS enclosure (width ~1e82)
+    # instead of refusing. Guard it here, where the result is consumed, with a fact that needs no
+    # knowledge of the series: M_0 is a probability mass, so it lies in [0, 1]. An enclosure wider
+    # than 1, or one that does not meet [0, 1], is vacuous and must refuse rather than propagate.
+    # Inside C11's range the width is ~1e-70, so this cannot affect any certified result.
+    m0 = out[0]
+    if m0.hi - m0.lo > F(1) or m0.hi < 0 or m0.lo > 1:
+        raise CertRefusal(
+            f"vacuous Gaussian enclosure on [{A}, {B}]: M_0 = [{float(m0.lo):.3e}, "
+            f"{float(m0.hi):.3e}] is not a usable subset of [0, 1]; the rational Phi series is "
+            f"out of range for this argument")
     if jmax >= 1:
         out.append(phiA - phiB)
     for j in range(2, jmax + 1):

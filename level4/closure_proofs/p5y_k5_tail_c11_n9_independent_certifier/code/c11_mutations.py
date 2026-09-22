@@ -115,17 +115,38 @@ def main() -> int:
         f"max separation {float(max(gaps)):.2e}, below the 1e-60 grid. A false identity would give "
         f"disjoint intervals.")
 
-    # M10 a post-hoc agreement threshold
+    # M10 a post-hoc agreement threshold.
+    # REWRITTEN in Phase 16 (erratum E11). The first version required `ratio > 2` and
+    # `verdict == AGREEMENT_INSUFFICIENT`, so it could only pass if the campaign's conclusion was
+    # negative; when the corrected comparator moved the ratio to 1.31 it SURVIVED, detecting
+    # nothing. A detector must not presuppose the outcome it is meant to police -- the same
+    # defect as gate erratum E1. This version is outcome-independent and decisive: the frozen
+    # threshold must be byte-identical to the one committed BEFORE the certified bound existed.
     gate = C.load(C.NS / "config" / "N9_GATE_C11.json")
     result = C.load(C.NS / "evidence" / "n9" / "C11_N9_RESULT.json")
+    GATE_FREEZE = "fed7f309"
+    frozen = json.loads(C.blob_at(
+        GATE_FREEZE, str((C.NS / "config" / "N9_GATE_C11.json").relative_to(C.REPO))).decode())
+    unchanged = frozen["N6_AGREEMENT_CRITERION"] == gate["N6_AGREEMENT_CRITERION"]
+
+    ratio = float(result["comparison"]["ratio"])
+    thresh = 2.0
+    separation = abs(thresh - ratio) / thresh
+    hugging = separation < 0.2                       # a fitted threshold sits next to the outcome
+    # negative control: the test must be able to fail
+    fitted = 1.32
+    control_fires = abs(fitted - ratio) / fitted < 0.2
+    # the frozen text must not quote any number this campaign later produced
+    defn = json.dumps(gate["N6_AGREEMENT_CRITERION"])
+    quotes_outcome = any(t in defn for t in ("9.9", "9000", "1.31", "1817", "0.08406"))
+
     mut("M10", "an agreement threshold chosen after seeing the outcome",
-        "factor of 2" in gate["N6_AGREEMENT_CRITERION"]["definition"]
-        and "2 * tau_original" in gate["N6_AGREEMENT_CRITERION"]["definition"]
-        and result["comparison"]["criterion"] == "ratio <= 2"
-        and result["comparison"]["ratio"] > 2
-        and result["N9_VERDICT"] == "AGREEMENT_INSUFFICIENT",
-        "the criterion is a factor of 2, the outcome is 1817x, and the verdict FAILS it -- a "
-        "post-hoc threshold would have been set above the observed ratio")
+        unchanged and not hugging and control_fires and not quotes_outcome,
+        f"the N6 criterion is byte-identical to the one frozen at {GATE_FREEZE}, before any "
+        f"certified bound existed; the threshold {thresh} sits {separation:.2f} away from the "
+        f"observed ratio {ratio:.4f} in relative terms, while a fitted threshold of {fitted} "
+        f"would be inside the 0.20 band and fire this detector; the frozen text quotes no number "
+        f"the campaign produced")
 
     # M11 declaring N9 closed on the weaker 'both bounds valid' rule
     mut("M11", "N9 declared closed on a weaker criterion than the frozen one",
@@ -142,6 +163,61 @@ def main() -> int:
     mut("M12", "adoption, coverage change or r6 smuggled into a verification campaign",
         not r6 and not outside and result["N9_STATUS_AFTER_C11"] == "OPEN",
         f"no r6; {len(outside)} files changed outside the C11 namespace; N9 left OPEN")
+
+    # ---- mutants added in Phase 16 repair. Adjudication finding 9 was that no mutant in the
+    # ---- original twelve could catch any of the defects that decided the campaign. These three
+    # ---- plant exactly those defects. Each carries a NEGATIVE CONTROL: the suite must be shown
+    # ---- to distinguish the mutated value from the true one, or the detector proves nothing.
+
+    runs = C.load(C.NS / "evidence" / "runs" / "C11_CERT_RUNS.json")
+    reg = C.load(C.C2 / "evidence" / "registry_c2" / "REGISTRY_C2.json")
+    blk = {b["cell"]: b for b in reg["blocks"]}[307]
+    tau_r, abar_r = F(blk["tau"]), F(blk["Abar"])
+
+    # M13 the comparator: a K_e supersolution must be compared against Abar, never against tau.
+    bound = F(str(result["independent_certified_bound"]["w_at_atom"]))
+    r_abar, r_tau = bound / abar_r, bound / tau_r
+    recorded = F(str(result["comparison"]["ratio"])).limit_denominator(10 ** 9)
+    distinguishes = abs(r_abar - r_tau) > F(1, 100)          # negative control
+    picks_abar = abs(recorded - r_abar) < abs(recorded - r_tau)
+    names_abar = "Abar" in result["comparator"]["why_Abar_and_not_tau"]
+    mut("M13", "the wrong comparator: dividing a whole-kernel bound by the atom-removed tau",
+        distinguishes and picks_abar and names_abar
+        and result["comparison"]["original_Abar"] == float(abar_r),
+        f"bound/Abar = {float(r_abar):.4f} vs bound/tau = {float(r_tau):.4f}; the two differ by "
+        f"{float(abs(r_abar - r_tau)):.4f} so the test can fail, and the record takes Abar")
+
+    # M14 a recorded margin the certifier did not produce, and settings that were never recorded.
+    cert_rows = [(k, v["certification"]) for k, v in runs["candidates"].items()
+                 if "depth" in v.get("certification", {})]
+    settings_complete = all(("depth" in c and "panels" in c and "boxes" in c and "seconds" in c)
+                            for _, c in cert_rows)
+    best = runs["candidates"][result["independent_certified_bound"]["candidate"]]["certification"]
+    traced = (result["independent_certified_bound"]["margin_lower_bound"]
+              == best["margin_lower_bound"])
+    fake = best["margin_lower_bound"] + 0.1                  # negative control
+    catches_fake = fake != best["margin_lower_bound"]
+    mut("M14", "a margin reported in the verdict that no recorded run produced",
+        settings_complete and traced and catches_fake and len(cert_rows) >= 2,
+        f"{len(cert_rows)} certification rows, all carrying depth/panels/boxes/seconds; the "
+        f"verdict's margin {best['margin_lower_bound']} is the artifact's; a 0.1 perturbation is "
+        f"distinguishable")
+
+    # M15 a structurally infeasible ansatz recorded as an engineering limit instead of refuted.
+    infeasible = {(0, 0): F(9), (1, 0): F(-13, 10), (0, 1): F(-13, 10)}
+    feasible = {(0, 0): F(99, 10), (0, 1): F(-3, 2)}
+    import c11_runs as R
+    bad = R.pointwise_refute(infeasible, E, n=9)
+    good = R.pointwise_refute(feasible, E, n=9)
+    no_spend = all(runs["candidates"][k].get("certification", {}).get("not_run")
+                   for k, v in runs["candidates"].items()
+                   if v["pointwise"]["REFUTED_AT_ANY_DEPTH"])
+    mut("M15", "blaming the box bound for a family that is infeasible pointwise at any depth",
+        bad["REFUTED_AT_ANY_DEPTH"] and not good["REFUTED_AT_ANY_DEPTH"] and no_spend,
+        f"w = 9 - 13/10(p+m) refuted pointwise at {bad['binding_state']} "
+        f"(min_L <= {bad['min_L_upper_bound']:.4f}); w = 99/10 - 3/2 m is NOT refuted "
+        f"({good['min_L_upper_bound']:+.4f}), so the detector can fail; no certification run was "
+        f"spent on any refuted candidate")
 
     surv = [r["id"] for r in res if r["outcome"] == "SURVIVED"]
     out = {"schema": "C11_MUTATIONS/1", "mutants": res, "survivors": surv,

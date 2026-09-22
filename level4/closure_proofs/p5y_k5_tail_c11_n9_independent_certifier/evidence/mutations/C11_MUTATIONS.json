@@ -2,13 +2,13 @@
  "MUTATION_CLASS": "PASS",
  "mutants": [
   {
-   "how": "AST import walk over all 5 C11 modules; forbidden set ['fast_range', 'intervals', 'opnorms', 'ra_certifier', 'rebaseguard_certify', 'resolvent_certificate', 'rung3_engine', 'spec', 'taboo_certify']; intersection empty",
+   "how": "AST import walk over all 8 C11 modules; forbidden set ['fast_range', 'intervals', 'opnorms', 'ra_certifier', 'rebaseguard_certify', 'resolvent_certificate', 'rung3_engine', 'spec', 'taboo_certify']; intersection empty",
    "id": "M01",
    "name": "hidden import of the original certifier's load-bearing graph",
    "outcome": "DETECTED"
   },
   {
-   "how": "C11 imports ['__future__', 'ast', 'c11_certifier', 'c11_common', 'c7_gaussian', 'fractions', 'hashlib', 'importlib', 'json', 'math', 'os', 'pathlib', 're', 'subprocess', 'sys']; the original's backend is numpy + flint.arb",
+   "how": "C11 imports ['__future__', 'ast', 'c11_certifier', 'c11_common', 'c11_runs', 'c7_gaussian', 'fractions', 'hashlib', 'importlib', 'json', 'math', 'os', 'pathlib', 're', 'subprocess', 'sys', 'time']; the original's backend is numpy + flint.arb",
    "id": "M02",
    "name": "using the original's arithmetic backend",
    "outcome": "DETECTED"
@@ -56,7 +56,7 @@
    "outcome": "DETECTED"
   },
   {
-   "how": "the criterion is a factor of 2, the outcome is 1817x, and the verdict FAILS it -- a post-hoc threshold would have been set above the observed ratio",
+   "how": "the N6 criterion is byte-identical to the one frozen at fed7f309, before any certified bound existed; the threshold 2.0 sits 0.34 away from the observed ratio 1.3103 in relative terms, while a fitted threshold of 1.32 would be inside the 0.20 band and fire this detector; the frozen text quotes no number the campaign produced",
    "id": "M10",
    "name": "an agreement threshold chosen after seeing the outcome",
    "outcome": "DETECTED"
@@ -72,9 +72,27 @@
    "id": "M12",
    "name": "adoption, coverage change or r6 smuggled into a verification campaign",
    "outcome": "DETECTED"
+  },
+  {
+   "how": "bound/Abar = 1.3103 vs bound/tau = 1.9992; the two differ by 0.6889 so the test can fail, and the record takes Abar",
+   "id": "M13",
+   "name": "the wrong comparator: dividing a whole-kernel bound by the atom-removed tau",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "3 certification rows, all carrying depth/panels/boxes/seconds; the verdict's margin 0.0840566422475828 is the artifact's; a 0.1 perturbation is distinguishable",
+   "id": "M14",
+   "name": "a margin reported in the verdict that no recorded run produced",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "w = 9 - 13/10(p+m) refuted pointwise at ('35/8', '0') (min_L <= -2.2317); w = 99/10 - 3/2 m is NOT refuted (+1.0197), so the detector can fail; no certification run was spent on any refuted candidate",
+   "id": "M15",
+   "name": "blaming the box bound for a family that is infeasible pointwise at any depth",
+   "outcome": "DETECTED"
   }
  ],
  "schema": "C11_MUTATIONS/1",
- "sha256": "41f7944859d4ced9162b8087f2ac3d66be091e6f409f9ad9acb68de192d02e7c",
+ "sha256": "cc88cd811212cae1715af3eb92aec1235ee19b13028d1c6f96ea8339e85cf4ae",
  "survivors": []
 }

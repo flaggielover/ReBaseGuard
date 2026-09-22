@@ -1,0 +1,254 @@
+{
+ "ABSORPTION": "the adjudication is absorbed in full. Its three CRITICAL findings are confirmed by independent computation, not merely re-read. One correction is made to it: it recommended not repairing C11 in place because the artifacts were 'frozen and published' -- they were committed locally and NEVER PUSHED, so Phase 16 repair-before-publication is the governed path and was taken.",
+ "FACT_CLASS": "PASS",
+ "SUMMARY": {
+  "confirmed": 15,
+  "refuted": 0,
+  "total": 15,
+  "unverified_or_partial": 0
+ },
+ "adjudication_sha256": "6cca1ed6044bf0ad7d2fb6adb2550645a726c54a4b03f2e55ed2200b03253914",
+ "facts": [
+  {
+   "VERDICT": "CONFIRMED",
+   "adjudication_finding": 1,
+   "claim": "taboo_certify distinguishes a WHOLE-kernel statement yielding Abar from an ATOM-REMOVED statement yielding (C_T, tau)",
+   "evidence": {
+    "file": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/taboo_certify.py",
+    "full_false": "w >= 1 + Khat_e w (taboo: C_T = sup w, tau = w(a)).",
+    "full_true": "w >= 1 + K_e w (whole kernel: E_x[tau] <= w(x); Abar = w(a) bounds the ARL at the atom).\"\"\"",
+    "sha256": "ced9422ca07981a9ad053acd79b72ef0d5007e93e49c16f2501f31c593fd0daa"
+   },
+   "id": "F1",
+   "verification_kind": "SOURCE_TEXT"
+  },
+  {
+   "VERDICT": "CONFIRMED",
+   "adjudication_finding": 1,
+   "claim": "REGISTRY_C2 block 307 carries tau and Abar as different values from different artifacts",
+   "evidence": {
+    "Abar": 7.5556132138736665,
+    "Abar_artifact_sha256": "67122df3cab930affbca0dc983be99f69c5c94aaf2649e400f0127d5acbd000d",
+    "Abar_cpu_seconds": 57.855912836000016,
+    "ratio_between_them": 1.525752717975021,
+    "tau": 4.952056204691856
+   },
+   "id": "F2",
+   "verification_kind": "REGISTRY_VALUE"
+  },
+  {
+   "VERDICT": "CONFIRMED",
+   "adjudication_finding": 1,
+   "claim": "the published C11 verdict computed its agreement ratio against tau",
+   "evidence": {
+    "commit": "832e27aa",
+    "line": "ratio = F(9000) / tau_orig"
+   },
+   "id": "F3",
+   "verification_kind": "GIT_BLOB"
+  },
+  {
+   "VERDICT": "CONFIRMED",
+   "adjudication_finding": 1,
+   "claim": "C11's certifier proves the whole-kernel statement, so it produces Abar",
+   "evidence": {
+    "certifier_statement": "w >= 1 + K_e w on R, from which E_x[tau] <= w(x)",
+    "implements_Khat_e": false
+   },
+   "id": "F4",
+   "verification_kind": "SOURCE_TEXT"
+  },
+  {
+   "VERDICT": "CONFIRMED",
+   "adjudication_finding": 7,
+   "claim": "a seal-then-compare ordering was available; the gate's reason for abandoning it is false",
+   "evidence": {
+    "modules_touching_the_registry": [
+     "c11_handover.py",
+     "c11_mutations.py",
+     "c11_result.py"
+    ],
+    "note": "c11_handover and c11_mutations read it only to verify this campaign's own corrections, after the certifier's numbers were already measured and sealed into evidence/runs/C11_CERT_RUNS.json",
+    "occurrences_in_B0_documents": {
+     "C2_ADJUDICATION.md": 0,
+     "OPEN_NOTES_DISPOSITION_C2.md": 0
+    }
+   },
+   "id": "F5",
+   "verification_kind": "GREP_COUNT + CODE_STRUCTURE"
+  },
+  {
+   "VERDICT": "CONFIRMED",
+   "adjudication_finding": 5,
+   "claim": "every drift parameter is a scalar rational; the original certifies on an e-block",
+   "evidence": {
+    "any_taking_an_interval": [],
+    "cell_307_e_block": [
+     1.7885921,
+     1.882413
+    ],
+    "functions_taking_a_drift": [
+     "alarm_prob",
+     "kernel_apply",
+     "kernel_box_upper",
+     "shifted_moments",
+     "supersolution_margin"
+    ],
+    "original_statement": "\"statement\": (\"for every e in [e_lo, e_hi]: w >= 1 + K_e w on X, hence E_x[tau] <= w(x); \""
+   },
+   "id": "F6",
+   "verification_kind": "CODE_STRUCTURE"
+  },
+  {
+   "VERDICT": "CONFIRMED",
+   "adjudication_finding": 6,
+   "claim": "N9 is worded about the six operator constants for cell 306",
+   "evidence": {
+    "C11_targeted": {
+     "cell": 307,
+     "constants": 1
+    },
+    "wording": "the six operator constants for cell 306 (closing N9),"
+   },
+   "id": "F7",
+   "verification_kind": "SOURCE_TEXT"
+  },
+  {
+   "VERDICT": "CONFIRMED",
+   "adjudication_finding": "extends 2",
+   "claim": "the frozen gate states N6's RESULT inside the criterion",
+   "evidence": {
+    "erratum": "E1 voids the clause; N6 is evaluated on the definition",
+    "frozen_text": "SEE BELOW -- this is the criterion C11 must and does fail"
+   },
+   "id": "F8",
+   "verification_kind": "SOURCE_TEXT"
+  },
+  {
+   "VERDICT": "CONFIRMED",
+   "adjudication_finding": 2,
+   "claim": "w = A - B(p+m) fails pointwise with the exact kernel and no box bound",
+   "evidence": {
+    "pm_A12_B2": {
+     "binding_state": [
+      "65/14",
+      "0"
+     ],
+     "min_L_upper_bound": -2.90333256350988
+    },
+    "pm_A20_B3": {
+     "binding_state": [
+      "65/14",
+      "0"
+     ],
+     "min_L_upper_bound": -3.8476622071149924
+    },
+    "pm_A9_B13_10": {
+     "binding_state": [
+      "65/14",
+      "0"
+     ],
+     "min_L_upper_bound": -2.2327641833915255
+    }
+   },
+   "id": "F9",
+   "verification_kind": "NUMERIC_REPRODUCTION"
+  },
+  {
+   "VERDICT": "CONFIRMED",
+   "adjudication_finding": 2,
+   "claim": "minimising required A over the whole family attains the constant threshold at B=0",
+   "evidence": {
+    "best_A": 8070.300707328612,
+    "best_B": 0.0,
+    "constant_threshold_1_over_min_h1": 8070.300707326595,
+    "method": "float shadow model, independent of the rigorous certifier",
+    "relative_gap": 2.498481564633701e-13
+   },
+   "id": "F10",
+   "verification_kind": "INDEPENDENT_RECOMPUTATION"
+  },
+  {
+   "VERDICT": "CONFIRMED",
+   "adjudication_finding": 3,
+   "claim": "C11's own unmodified certifier certifies a candidate inside the factor of 2",
+   "evidence": {
+    "candidate": "m_only_A99_10_B3_2",
+    "criterion": "<= 2",
+    "depth": 4,
+    "margin": 0.0840566422475828,
+    "panels": 16,
+    "ratio_vs_Abar": 1.310284118544019,
+    "ratio_vs_tau": 1.9991695551880417,
+    "seconds": 193.4,
+    "w_at_atom": 9.9
+   },
+   "id": "F11",
+   "verification_kind": "NUMERIC_REPRODUCTION"
+  },
+  {
+   "VERDICT": "CONFIRMED",
+   "adjudication_finding": 4,
+   "claim": "depth 4 is affordable; the recorded unaffordability claim does not survive",
+   "evidence": {
+    "compute_budget_recorded_anywhere": false,
+    "depth_4_seconds": {
+     "m_only_A12_B3_2": 190.5,
+     "m_only_A99_10_B3_2": 193.4
+    },
+    "recorded_claim": "depth 5 is ~16x and was not affordable here"
+   },
+   "id": "F12",
+   "verification_kind": "NUMERIC_REPRODUCTION"
+  },
+  {
+   "VERDICT": "CONFIRMED",
+   "adjudication_finding": 8,
+   "claim": "a margin recorded in the published verdict is not reproducible at any recorded setting, because no depth or panel count was recorded for that family",
+   "evidence": {
+    "measured_this_phase": "code/c11_runs.py now records depth, panels, boxes and seconds",
+    "published_value": -4.5243,
+    "reproduced_at_depth_3_panels_16": -4.35876,
+    "settings_recorded_in_published_artifact": null
+   },
+   "id": "F13",
+   "verification_kind": "NUMERIC_REPRODUCTION"
+  },
+  {
+   "VERDICT": "CONFIRMED",
+   "adjudication_finding": 3,
+   "claim": "the true E_x[tau] is ~4.445 at the atom, flat in p and decreasing in m",
+   "evidence": {
+    "delta": 4.555289478958002e-11,
+    "drop_in_m": 3.3281744785214564,
+    "spread_in_p": 0.044269851555426065,
+    "sweeps": 28,
+    "v_at_atom": 4.444955805348125
+   },
+   "id": "F14",
+   "verification_kind": "INDEPENDENT_RECOMPUTATION"
+  },
+  {
+   "VERDICT": "CONFIRMED",
+   "adjudication_finding": "11 and 12",
+   "claim": "independence holds and the certifier is sound",
+   "evidence": {
+    "identities": {
+     "box_bound_dominates": true,
+     "kernel_vs_alarm_probability": true,
+     "standard_normal_moments": true,
+     "vacuous_enclosure_guard": true
+    },
+    "note": "independence itself is re-checked every run by mutants M01-M03 over the AST of every C11 module"
+   },
+   "id": "F15",
+   "verification_kind": "NUMERIC_REPRODUCTION + CODE_STRUCTURE"
+  }
+ ],
+ "not_confirmed": [],
+ "phase": "16",
+ "policy": "no prose claim is accepted automatically; each load-bearing claim is re-established by something executable, and the verdict recorded is the one this module computed",
+ "schema": "C11_HANDOVER_FACT_VERIFICATION/1",
+ "sha256": "e8c6846cdc44cc3cb3d784985a942801247ca213bd7811d4817410b4f73dc518",
+ "subject": "the independent adjudication of C11, verdict REJECTED, review/ADJUDICATION_C11.md"
+}

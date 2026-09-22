@@ -1,43 +1,119 @@
 {
- "schema": "N9_GATE_C11/1",
- "campaign": "C11 -- N9 independent second-certifier closure",
- "purpose": "define, before the verdict, what would and would not close N9",
-
- "DISCLOSURE_OF_ORDERING": {
-  "statement": "This gate is frozen AFTER the second certifier was built and exercised, and after its achievable tightness was observed. C11 does NOT claim a blinded comparison and does not present one.",
-  "why_a_blinded_comparison_was_never_available": "the first certifier's tau and Abar are committed in REGISTRY_C2 and were read during phase B0, before any implementation began. The discipline that WAS maintained, and that matters, is that no candidate was chosen by fitting to the first certifier's value: the constant candidate comes from the theoretical threshold 1/min_R h1, and the drift-aware family from the structure of the chain.",
-  "consequence": "the ordering defect alone is sufficient reason not to claim N9 closure in this campaign, independently of the numerical outcome."
- },
-
- "closure_criteria_all_required": {
-  "N1_implementation_independence": "no import, call, wrap or replay of the original's load-bearing graph",
-  "N2_no_load_bearing_import": "forbidden set: taboo_certify, resolvent_certificate, opnorms, ra_certifier, fast_range, intervals, rebaseguard_certify, rung3_engine, spec",
-  "N3_no_use_of_original_outputs_in_construction": "no original certified payload, tau, A0/A1/A2 or registry value used to build or steer the candidate",
-  "N4_same_frozen_inputs": "same model constants, same reachable set, same cell geometry",
-  "N5_both_sound": "each certifier's output independently satisfies its own soundness checks",
-  "N6_agreement": "SEE BELOW -- this is the criterion C11 must and does fail",
-  "N7_precision_escalation": "the bound must not move materially under a finer subdivision",
-  "N8_manufactured_cases": "identities the implementation cannot satisfy by accident",
-  "N9_mutation_suite": "planted shared-path violations are caught",
-  "N10_seal_before_compare": "second-certifier output sealed before the first is loaded"
- },
-
- "N6_AGREEMENT_CRITERION": {
-  "problem": "no historical artifact specifies a tolerance; C11 must define one and cannot recover it",
-  "definition": "the two certifiers AGREE on a cell when both produce a valid upper bound on the same quantity and the independent bound is within a factor of 2 of the original's, i.e. tau_independent <= 2 * tau_original",
-  "rationale": "N9 guards against a systematic LOGIC error of unknown magnitude. A second route that lands within a small factor corroborates the first; a route that is valid but orders of magnitude weaker corroborates only that the first is not grossly wrong in the unsafe direction, which is much less than N9 asks for.",
-  "explicitly_not_adopted": "any criterion of the form 'both bounds are valid', which the constant supersolution already satisfies trivially and which would let N9 close without evidence of implementation agreement"
- },
-
- "permitted_verdicts": ["N9_CLOSED", "AGREEMENT_INSUFFICIENT", "SCIENTIFIC_DISAGREEMENT",
-                        "INDEPENDENCE_VIOLATION", "EXECUTION_INVALID"],
- "forbidden_conclusions": [
-  "that any cell is closed or adopted",
-  "that the C2 adoption floor may now be replaced",
-  "that F1 has lapsed",
-  "that r6 may be created",
-  "that a counterfactual or development value is certified evidence",
-  "that N9 is closed on a criterion weaker than N6 as frozen here"
- ],
- "guard": "DENY"
+  "schema": "N9_GATE_C11/1",
+  "campaign": "C11 -- N9 independent second-certifier closure",
+  "purpose": "define, before the verdict, what would and would not close N9",
+  "DISCLOSURE_OF_ORDERING": {
+    "statement": "This gate is frozen AFTER the second certifier was built and exercised, and after its achievable tightness was observed. C11 does NOT claim a blinded comparison and does not present one.",
+    "why_a_blinded_comparison_was_never_available": "the first certifier's tau and Abar are committed in REGISTRY_C2 and were read during phase B0, before any implementation began. The discipline that WAS maintained, and that matters, is that no candidate was chosen by fitting to the first certifier's value: the constant candidate comes from the theoretical threshold 1/min_R h1, and the drift-aware family from the structure of the chain.",
+    "consequence": "the ordering defect alone is sufficient reason not to claim N9 closure in this campaign, independently of the numerical outcome."
+  },
+  "closure_criteria_all_required": {
+    "N1_implementation_independence": "no import, call, wrap or replay of the original's load-bearing graph",
+    "N2_no_load_bearing_import": "forbidden set: taboo_certify, resolvent_certificate, opnorms, ra_certifier, fast_range, intervals, rebaseguard_certify, rung3_engine, spec",
+    "N3_no_use_of_original_outputs_in_construction": "no original certified payload, tau, A0/A1/A2 or registry value used to build or steer the candidate",
+    "N4_same_frozen_inputs": "same model constants, same reachable set, same cell geometry",
+    "N5_both_sound": "each certifier's output independently satisfies its own soundness checks",
+    "N6_agreement": "SEE BELOW -- this is the criterion C11 must and does fail",
+    "N7_precision_escalation": "the bound must not move materially under a finer subdivision",
+    "N8_manufactured_cases": "identities the implementation cannot satisfy by accident",
+    "N9_mutation_suite": "planted shared-path violations are caught",
+    "N10_seal_before_compare": "second-certifier output sealed before the first is loaded"
+  },
+  "N6_AGREEMENT_CRITERION": {
+    "problem": "no historical artifact specifies a tolerance; C11 must define one and cannot recover it",
+    "definition": "the two certifiers AGREE on a cell when both produce a valid upper bound on the same quantity and the independent bound is within a factor of 2 of the original's, i.e. tau_independent <= 2 * tau_original",
+    "rationale": "N9 guards against a systematic LOGIC error of unknown magnitude. A second route that lands within a small factor corroborates the first; a route that is valid but orders of magnitude weaker corroborates only that the first is not grossly wrong in the unsafe direction, which is much less than N9 asks for.",
+    "explicitly_not_adopted": "any criterion of the form 'both bounds are valid', which the constant supersolution already satisfies trivially and which would let N9 close without evidence of implementation agreement"
+  },
+  "permitted_verdicts": [
+    "N9_CLOSED",
+    "AGREEMENT_INSUFFICIENT",
+    "SCIENTIFIC_DISAGREEMENT",
+    "INDEPENDENCE_VIOLATION",
+    "EXECUTION_INVALID"
+  ],
+  "forbidden_conclusions": [
+    "that any cell is closed or adopted",
+    "that the C2 adoption floor may now be replaced",
+    "that F1 has lapsed",
+    "that r6 may be created",
+    "that a counterfactual or development value is certified evidence",
+    "that N9 is closed on a criterion weaker than N6 as frozen here"
+  ],
+  "guard": "DENY",
+  "ERRATA": {
+    "policy": "This gate was frozen at commit fed7f309 and its criteria are NOT edited. The entries below are errata raised by the independent adjudication of 2026-09-23 and verified mechanically before absorption. Where an erratum changes how a criterion is EVALUATED, the criterion text stands and the erratum governs.",
+    "E1_N6_TEXT_PRECOMMITS_THE_OUTCOME": {
+      "defect": "the frozen text of N6_agreement reads 'SEE BELOW -- this is the criterion C11 must and does fail'. A prospective gate must state a criterion, not its result; this one states its result.",
+      "why_it_matters": "it is the proximate cause of adjudication finding 2. Having written the failure into the gate, the campaign treated the failing candidate family as confirmation rather than as something to falsify, and never ran the sub-second pointwise screen that would have refuted the family outright.",
+      "disposition": "the clause 'must and does fail' is VOID and carries no evaluative force. N6 is evaluated solely against N6_AGREEMENT_CRITERION.definition.",
+      "found_by": "adjudication, extended -- the adjudicator found the consequence, not this clause"
+    },
+    "E2_N6_COMPARATOR_UNSPECIFIED": {
+      "defect": "N6's definition requires 'a valid upper bound on the same quantity' but never says WHICH constant. The original publishes two, from two separate certificates: taboo_certify.certify_block(full=False) yields (C_T, tau) against the ATOM-REMOVED kernel Khat_e, and full=True yields Abar against the WHOLE kernel K_e.",
+      "what_C11_did": "its certifier proves w >= 1 + K_e w, which is the full=True statement verbatim, and therefore bounds Abar. c11_result.py:56 divided by tau. The comparison was not like-for-like. Direction was safe -- Khat_e <= K_e pointwise for w >= 0, so a K_e-supersolution does bound tau -- but it is not the same quantity.",
+      "disposition": "N6 is evaluated Abar-to-Abar. REGISTRY_C2 block 307: Abar = 7.5556132138736665 (own artifact 67122df3..., 57.9 CPU-s), tau = 4.952056204691856.",
+      "found_by": "adjudication finding 1; verified against taboo_certify.py:202-203 and the registry"
+    },
+    "E3_CRITERION_NAMES_COLLIDE_WITH_OPEN_NOTES": {
+      "defect": "the gate reuses N1..N10 for its own criteria inside a campaign whose subject is the C2 open note N9, and the C2 open notes independently contain notes N9 and N10. The gate therefore contains a criterion literally named N9_mutation_suite, and reports 'N10 FAILED' about seal-before-compare, which a reader binds to open note N10.",
+      "disposition": "criterion names are retained for traceability with the frozen gate, and every downstream artifact now writes them as C11-N1..C11-N10. The successor must not reuse this numbering.",
+      "found_by": "adjudication finding 10"
+    },
+    "E4_N4_NOT_SATISFIED_POINT_DRIFT_VS_E_BLOCK": {
+      "defect": "C11 recorded N4_same_frozen_inputs as SATISFIED. The original's certificates are stated 'for every e in [e_lo, e_hi]' (taboo_certify.py:236-239); for cell 307 that block is [1.7885921, 1.882413]. Every drift parameter in c11_certifier is a scalar rational -- kernel_apply, alarm_prob and kernel_box_upper all take e: F -- and there is no interval-drift path anywhere.",
+      "consequence": "C11 solves a strictly easier problem. No number it produces corroborates the original's statement, however close it lands.",
+      "disposition": "N4 is recorded PARTIAL, not SATISFIED. This is a principal reason N9 stays OPEN.",
+      "found_by": "adjudication finding 5"
+    },
+    "E5_VACUOUS_ENCLOSURE_GUARD_ADDED": {
+      "defect": "the reused rational Phi from c7_gaussian degrades silently outside C11's operating range: at |t| ~ 20 it returns a SOUND but vacuous enclosure of width ~1e82 rather than refusing. c11_certifier added no range guard of its own.",
+      "repair": "c11_certifier.moments now refuses when the M_0 enclosure is not a usable subset of [0, 1]. The guard needs no knowledge of the series: M_0 is a probability mass. In C11's range the width is ~1e-96, so no certified result can be affected.",
+      "load_bearing": false,
+      "found_by": "adjudication finding 13"
+    },
+    "E6_N10_WAS_AVAILABLE_NOT_STRUCTURALLY_IMPOSSIBLE": {
+      "defect": "DISCLOSURE_OF_ORDERING states a blinded comparison 'was never available' because the original's tau and Abar 'were read during phase B0'. That is false about the campaign's own committed producers.",
+      "evidence": "REGISTRY_C2.json is read in exactly one place, c11_result.py:20. Phase B0 reads only OPEN_NOTES_DISPOSITION_C2.md and C2_ADJUDICATION.md, and grep for tau, Abar, 4.95 and 7.555 returns ZERO matches in both files.",
+      "disposition": "C11-N10 is recorded FAILED as a PROCESS OMISSION that was fixable, not as an inherent limitation. The verdict does not lean on it.",
+      "found_by": "adjudication finding 7; verified by grep count 0 on both documents"
+    },
+    "E7_N7_AFFORDABILITY_CLAIM_REFUTED_BY_MEASUREMENT": {
+      "defect": "C11 recorded 'precision escalation beyond depth 3 was not affordable' and booked N7 PARTIAL on it, on a campaign recording AWS 0, VULTR 0 and NEW_REAL 0, with no compute budget stated anywhere.",
+      "measurement": "depth 4 costs 190-197 s per candidate on this laptop, measured; the cover grows ~3.3x per level, not 4x, because boxes that miss R are dropped.",
+      "disposition": "the affordability claim is withdrawn. N7 is evaluated on measurement.",
+      "found_by": "adjudication finding 4"
+    },
+    "E8_RESULTS_WERE_LITERALS_AND_PARTLY_UNREPRODUCIBLE": {
+      "defect": "c11_result.py embedded every certifier result as a Python literal with no producer, and recorded no depth or panel count for the drift-aware family.",
+      "evidence": "the two constant-supersolution figures reproduce exactly (+0.1152 at w=9000, -0.2565 at w=6000). The drift-aware figure does NOT: the record says -4.5243 for A=9, B=13/10; re-running at depth 3, panels 16 gives -4.35876.",
+      "repair": "code/c11_runs.py measures every number and emits evidence/runs/C11_CERT_RUNS.json.",
+      "found_by": "adjudication finding 8; reproduced independently"
+    },
+    "E9_WHAT_BLOCKS_CLOSURE_WAS_FALSE": {
+      "defect": "C11 recorded the blocker as 'tightness, not soundness -- the box-uniform kernel bound is too loose at affordable subdivision depth', needing 'a sharper uniform bound or enough compute to subdivide far deeper'. This was the instruction the successor would have inherited, and it is false.",
+      "refutation": "the family w = A - B(p+m) fails POINTWISE, with the exact kernel, no box bound and no subdivision: rigorous margins -2.23303 at (23/5, 0), -2.9036 and -3.8480 for the three candidates tried. Minimising the required A over the whole family gives A_min = 8070.30 at B = 0, i.e. the drift-aware family is provably NEVER better than the constant. No sharpening and no compute could have certified it.",
+      "what_was_misread": "the campaign observed that 'the margin WORSENS as the candidate grows' and read it as a numerical artefact. It is the signature of a structurally infeasible ansatz: a loose bound gets relatively CHEAPER as the candidate grows. The pointwise margins worsen in the same monotone way.",
+      "actual_blocker": "the ansatz decreased in p. The true solution of v = 1 + K_e v is ~4.445 at the atom, flat in p and decreasing in m. Deleting the p term gives w = A - B*m, pointwise feasible at A = 4.885, B = 3/4.",
+      "found_by": "adjudication finding 2; reproduced with an independent float kernel and exactly"
+    },
+    "E10_N6_WAS_REACHABLE": {
+      "defect": "the verdict AGREEMENT_INSUFFICIENT asserts a scientific fact about achievable tightness. That fact is false.",
+      "evidence": "C11's own unmodified certifier, at its own drift, own panels and own cover, certifies w = 99/10 - 3/2 m at depth 4 in 190 s with margin +0.08406, and w = 12 - 3/2 m at depth 4 in 197 s with margin +0.09043.",
+      "ratios": {
+        "9.9_vs_Abar": 1.3103,
+        "9.9_vs_tau": 1.9992,
+        "12_vs_Abar": 1.5882,
+        "criterion": "<= 2"
+      },
+      "disposition": "C11-N6 is SATISFIED against the correct comparator Abar. The campaign's stated ground for its negative verdict does not survive. N9 nevertheless stays OPEN on E4 and on target scope -- see the result artifact.",
+      "found_by": "adjudication finding 3; reproduced by re-running the unmodified certifier"
+    },
+    "E11_A_DETECTOR_THAT_PRESUPPOSED_ITS_OWN_OUTCOME": {
+      "defect": "mutant M10, 'an agreement threshold chosen after seeing the outcome', required ratio > 2 AND verdict == AGREEMENT_INSUFFICIENT. It could therefore only pass while the campaign's conclusion was negative. When erratum E2 corrected the comparator and the ratio moved to 1.3103, M10 SURVIVED -- detecting nothing, having detected nothing all along.",
+      "class": "the same defect as erratum E1 and as the C8 'test that cannot fail' finding: a check that encodes the expected answer tests the answer, not the property.",
+      "repair": "M10 is rewritten outcome-independently and decisively: the N6 criterion must be BYTE-IDENTICAL to the one committed at fed7f309, before any certified bound existed; the threshold must not hug the observed ratio; and the check carries a negative control (a fitted threshold of 1.32 fires it) so it is shown to be able to fail.",
+      "found_by": "the Phase 16 re-run of the producer chain, not by the adjudication"
+    }
+  }
 }

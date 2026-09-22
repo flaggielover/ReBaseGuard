@@ -7,20 +7,53 @@
   "that r6 may be created"
  ],
  "N9_STATUS_AFTER_C11": "OPEN",
- "N9_VERDICT": "AGREEMENT_INSUFFICIENT",
- "WHAT_BLOCKS_CLOSURE": "tightness, not soundness. The box-uniform kernel bound is too loose at affordable subdivision depth. Closing N9 needs a sharper uniform bound -- one that tracks how the alarm-free window varies across a box instead of taking the union -- or enough compute to subdivide far deeper.",
+ "N9_VERDICT": "EXECUTION_INVALID",
+ "SUCCESSOR_GUIDANCE": [
+  "screen every candidate family POINTWISE first -- exact kernel, one state, ~0.4 s -- and only subdivide what survives; a negative verdict owes this check before it blames its own machinery",
+  "shape the supersolution like the solution: the true E_x[tau] is ~4.445 at the atom, flat in p and decreasing in m, so w = A - B*m is the family (pointwise feasible at A = 4.885, B = 3/4)",
+  "give the certifier an INTERVAL drift so it can state the block-uniform result",
+  "implement Khat_e -- the atom piece is already isolated in kernel_apply -- which yields tau and, as sup_R w, C_T: two of the six constants from machinery already validated",
+  "target cell 306 and all six constants, or amend N9 explicitly and say why",
+  "seal the independent bound before reading REGISTRY_C2",
+  "do not reuse the criterion names N1..N10 (erratum E3)"
+ ],
+ "WHAT_BLOCKS_CLOSURE": "NOT tightness and NOT compute -- that diagnosis is withdrawn as erratum E9. Two things block N9. (1) STATEMENT: this certifier takes a scalar drift and cannot express the block-uniform 'for every e in [e_lo, e_hi]' that the original proves; until it can, no number it produces corroborates the original's statement. (2) SCOPE: N9 is worded about six operator constants for cell 306; C11 produced one, for cell 307, and has never implemented the atom-removed kernel Khat_e that two of those six require.",
  "WHAT_C11_DID_ESTABLISH": [
   "a second certifier for this problem EXISTS, is implementationally independent, and is arithmetic-backend independent as well -- exact rationals against numpy + flint.arb",
-  "it is SOUND: standard-normal moments exact; (K_e 1) = 1 - h1 to 0.00e+00 at five states; the box bound dominates pointwise values; the certificate straddles the theoretical threshold exactly",
-  "it produces VALID certified upper bounds on the same quantity with no reuse of the first certifier",
-  "there is NO scientific disagreement: the independent bound is consistent with the original's, merely far weaker"
+  "it is SOUND: standard-normal moments exact 1,0,1,0,3; (K_e 1) = 1 - h1 at six states; the box bound dominates the pointwise kernel at interior points for a non-constant w; the constant certificate straddles the theoretical threshold 1/min_R h1 ~ 8070 exactly",
+  "it MEETS the frozen factor-of-2 agreement criterion against the correct comparator, at 1.3103x Abar, in 193.4 s of laptop time",
+  "there is no scientific disagreement with the original"
  ],
+ "WHAT_THE_SUCCESSOR_MUST_NOT_INHERIT": [
+  "that the box-uniform kernel bound is the binding looseness (false -- erratum E9)",
+  "that the drift-aware family w = A - B(p+m) needs more compute (false -- it is pointwise infeasible below A = 8070 for every B, so it is never better than a constant)",
+  "that depth beyond 3 is unaffordable (false -- depth 4 is ~190 s)",
+  "that a blinded comparison was structurally unavailable (false -- it was simply not arranged)"
+ ],
+ "comparator": {
+  "Abar": {
+   "artifact_sha256": "67122df3cab930affbca0dc983be99f69c5c94aaf2649e400f0127d5acbd000d",
+   "cpu_seconds": 57.855912836000016,
+   "float": 7.5556132138736665,
+   "value": "2126716053409815/281474976710656"
+  },
+  "ratios_of_the_certified_bound": {
+   "vs_Abar": 1.310284118544019,
+   "vs_tau": 1.9991695551880417
+  },
+  "tau": {
+   "float": 4.952056204691856,
+   "note": "the first draft divided by this. The direction was safe -- Khat_e <= K_e pointwise for w >= 0 -- but it is a different quantity, and C11 has never implemented Khat_e, so it cannot produce it.",
+   "value": "5575519619541999/1125899906842624"
+  },
+  "why_Abar_and_not_tau": "taboo_certify.certify_block states the distinction verbatim at lines 202-203. full=False proves w >= 1 + Khat_e w against the ATOM-REMOVED kernel and yields (C_T, tau); full=True proves w >= 1 + K_e w against the WHOLE kernel and yields Abar. C11's certifier proves the full=True statement word for word, so the constant it produces is Abar. The registry carries both, from two separate certificates."
+ },
  "comparison": {
-  "agrees": false,
+  "agrees": true,
   "criterion": "ratio <= 2",
-  "independent_bound": 9000,
-  "original_tau": 4.952056204691856,
-  "ratio": 1817.4268683527653
+  "independent_bound": 9.9,
+  "original_Abar": 7.5556132138736665,
+  "ratio": 1.310284118544019
  },
  "compute_boundary": {
   "AWS": 0,
@@ -31,81 +64,80 @@
   "guard": "DENY"
  },
  "criteria_status": {
-  "N10_seal_before_compare": "FAILED -- not available in this campaign",
-  "N1_implementation_independence": "SATISFIED",
-  "N2_no_load_bearing_import": "SATISFIED",
-  "N3_no_use_of_original_outputs": "SATISFIED",
-  "N4_same_frozen_inputs": "SATISFIED",
-  "N5_both_sound": "SATISFIED for the independent certifier; the original's soundness is not re-litigated by C11",
-  "N6_agreement": "FAILED",
-  "N7_precision_escalation": "PARTIAL",
-  "N8_manufactured_cases": "SATISFIED",
-  "N9_mutation_suite": "SATISFIED"
+  "C11-N10_seal_before_compare": "FAILED -- a fixable process omission (erratum E6)",
+  "C11-N1_implementation_independence": "SATISFIED",
+  "C11-N2_no_load_bearing_import": "SATISFIED",
+  "C11-N3_no_use_of_original_outputs": "SATISFIED",
+  "C11-N4_same_frozen_inputs": "PARTIAL -- point drift, not the e-block (erratum E4)",
+  "C11-N5_both_sound": "SATISFIED for the independent certifier; the original's soundness is not re-litigated by C11",
+  "C11-N6_agreement": "SATISFIED against Abar (erratum E2, E10)",
+  "C11-N7_precision_escalation": "SATISFIED -- depth 4 measured at 193.4 s (erratum E7)",
+  "C11-N8_manufactured_cases": "SATISFIED -- now with producers (erratum E8)",
+  "C11-N9_mutation_suite": "SATISFIED",
+  "SCOPE_CONFORMANCE": "FAILED -- cell 307 and one constant, where N9 is worded about 306 and six"
  },
- "gate_sha256_prefix": "84e1128d1fca20bb",
- "independent_certifier": {
-  "cell_centre_exact": "36710051/20000000",
-  "certified_constant_supersolution": {
-   "certified": true,
-   "depth": 3,
-   "margin_lower_bound": 0.1152,
-   "panels": 16,
-   "statement": "w >= 1 + K_e w on R, hence E_x[tau] <= w(x) and tau_independent <= 9000",
-   "w": 9000
+ "gate": {
+  "errata_appended_since_freeze": [
+   "E10_N6_WAS_REACHABLE",
+   "E11_A_DETECTOR_THAT_PRESUPPOSED_ITS_OWN_OUTCOME",
+   "E1_N6_TEXT_PRECOMMITS_THE_OUTCOME",
+   "E2_N6_COMPARATOR_UNSPECIFIED",
+   "E3_CRITERION_NAMES_COLLIDE_WITH_OPEN_NOTES",
+   "E4_N4_NOT_SATISFIED_POINT_DRIFT_VS_E_BLOCK",
+   "E5_VACUOUS_ENCLOSURE_GUARD_ADDED",
+   "E6_N10_WAS_AVAILABLE_NOT_STRUCTURALLY_IMPOSSIBLE",
+   "E7_N7_AFFORDABILITY_CLAIM_REFUTED_BY_MEASUREMENT",
+   "E8_RESULTS_WERE_LITERALS_AND_PARTLY_UNREPRODUCIBLE",
+   "E9_WHAT_BLOCKS_CLOSURE_WAS_FALSE"
+  ],
+  "freeze_commit": "fed7f309",
+  "frozen_sections_verified_unchanged": true,
+  "gate": "<criteria verified unchanged; not duplicated here>",
+  "sha256_prefix_at_freeze": "84e1128d1fca20bb",
+  "sha256_prefix_now": "b486e4e1f1a79311"
+ },
+ "independent_certified_bound": {
+  "boxes": 97,
+  "candidate": "m_only_A99_10_B3_2",
+  "depth": 4,
+  "margin_lower_bound": 0.0840566422475828,
+  "panels": 16,
+  "seconds": 193.4,
+  "statement": "w >= 1 + K_e w on R, hence E_x[tau] <= w(x); w(atom) bounds the ARL at the atom. This is the quantity the ORIGINAL certifier reports as Abar (taboo_certify.certify_block full=True), NOT its tau field.",
+  "w": {
+   "0,0": "99/10",
+   "0,1": "-3/2"
   },
-  "cost": {
-   "depth_3_panels_12_16_seconds": "110-121 per candidate",
-   "scaling": "4x boxes per depth level; depth 5 is ~16x and was not affordable here"
-  },
-  "drift_aware_family": {
-   "finding": "all fail, and the margin WORSENS as the candidate grows. The cause is identified and is an engineering limit, not a soundness problem: the box-uniform kernel bound takes the widest alarm-free window over each box, so at a computationally feasible subdivision depth it over-counts mass faster than the drift gain recovers.",
-   "form": "w = A - B(p+m)",
-   "tried": [
-    {
-     "A": 9,
-     "B": 1.3,
-     "certified": false,
-     "margin": -4.5243
-    },
-    {
-     "A": 12,
-     "B": 2.0,
-     "certified": false,
-     "margin": -6.4251
-    },
-    {
-     "A": 20,
-     "B": 3.0,
-     "certified": false,
-     "margin": -9.1343
-    }
-   ]
-  },
-  "drift_note": "the cell's centre to four places; chosen as a development value and therefore recorded as DEVELOPMENT, not as a governed target execution",
-  "drift_used": "18355/10000",
-  "failed_constant": {
-   "certified": false,
-   "margin_lower_bound": -0.2565,
-   "w": 6000
-  },
-  "theoretical_threshold": {
-   "agreement_with_measurement": "the certificate straddles it exactly -- 9000 certifies, 6000 does not -- which is a correctness signal for the implementation, not a tightness signal",
-   "value": "1 / min_R h1 ~ 8070"
+  "w_at_atom": "99/10"
+ },
+ "runs_artifact": {
+  "path": "evidence/runs/C11_CERT_RUNS.json",
+  "sha256": "40ffa6188db19dee8c9ebabf261fc79a66e74cbacaa0c5f38eaf95c5c94b5f55"
+ },
+ "schema": "C11_N9_RESULT/2",
+ "scope_conformance": {
+  "N9_as_worded": "a second, independently written certifier reproducing THE SIX OPERATOR CONSTANTS FOR CELL 306 (closing N9)",
+  "conforms": false,
+  "consequence": "even perfect agreement here would not close N9 as worded. The gate never stated which cell or how many constants closure requires, although phase B0 had already extracted the answer verbatim.",
+  "what_C11_targeted": {
+   "cell": 307,
+   "constants": 1,
+   "which": "Abar only"
   }
  },
- "original_certifier": {
-  "Abar": "2126716053409815/281474976710656",
-  "Abar_float": 7.5556132138736665,
-  "source": "REGISTRY_C2 block 307",
-  "tau": "5575519619541999/1125899906842624",
-  "tau_float": 4.952056204691856
+ "sha256": "bba4afd622c7b697f48a7b4538a82ecc175ea83e3b8c62ee3171b0faf5d7813e",
+ "statement_conformance": {
+  "conforms": false,
+  "consequence": "C11 solves a strictly easier problem. A certifier that cannot express block-uniformity cannot corroborate the original's statement however close its number lands. This, not tightness, is the real remaining engineering work.",
+  "independent": "at the single rational e = 3671/2000  (point)",
+  "original": "for every e in [1.7885921, 1.882413]  (block-uniform)"
  },
- "schema": "C11_N9_RESULT/1",
- "sha256": "8f1f5a4c26cbec281e09725ed59c9801dfc8a9c5c3e3461892e21a914a88262f",
+ "supersedes": "C11_N9_RESULT/1 at commit 832e27aa, whose verdict AGREEMENT_INSUFFICIENT and whose WHAT_BLOCKS_CLOSURE are both withdrawn",
  "target_quantity": "the K5 m=5 tail operator supply at cell 307",
  "verdict_reasons": [
-  "N6 fails: the independent bound 9000 is 1817x the original tau 4.952056, far outside the frozen factor-of-2 criterion",
-  "N10 fails independently of the numbers: no blinded comparison was available, because the original's tau is committed and was read in phase B0 before implementation began",
-  "N7 was only partially exercised: precision escalation beyond depth 3 was not affordable"
+  "C11-N6 is SATISFIED once the comparator is corrected: the certified bound 9.9 is 1.3103x Abar = 7.5556132, inside the frozen factor-of-2 criterion. It is also inside it against the tau the first draft wrongly used (1.9992x).",
+  "N9 does NOT close, on grounds the first draft did not identify: the statement is at a single drift where the original's is uniform on the e-block (C11-N4), and the target is cell 307 and one constant where N9 is worded about cell 306 and six (SCOPE).",
+  "The published verdict AGREEMENT_INSUFFICIENT asserted a scientific fact about achievable tightness. That fact is false, so the label is withdrawn rather than re-argued.",
+  "C11-N10 remains failed, but is booked as a process omission that was available and simply not arranged -- not as an inherent limitation, and the verdict does not lean on it."
  ]
 }
