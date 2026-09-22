@@ -128,7 +128,13 @@ def main() -> int:
     ck.append(("B0_16_new_real_identified", newr == ["A2", "B1", "B2", "D3"]))
     ck.append(("B0_17_data_blocks_have_a_named_missing_dependency",
                all(any(r["id"] == x and r["inputs"] for r in led["routes"]) for x in data)))
-    ck.append(("B0_18_ledger_inconsistencies_recorded", True))
+    # The first version hard-coded this True, so "19/19" was really 18 checks plus a label (forensic review).
+    # It now ASSERTS what it is named for: every DATA route whose ledger entry also declares new_real_required
+    # must appear in the recorded inconsistency list.
+    expected = sorted(r["id"] for r in led["routes"]
+                      if r.get("kill_kind") == "DATA" and r["new_real_required"])
+    ck.append(("B0_18_every_ledger_inconsistency_is_recorded",
+               sorted(x["route"] for x in out["c5_ledger_inconsistency"]) == expected))
 
     out["schema"] = "rebaseguard.p5y.k5.tail-c6.b0-audit.v1"
     out["checks"] = {n: bool(v) for n, v in ck}

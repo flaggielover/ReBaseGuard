@@ -3,7 +3,12 @@
 C6 is a **forensic** campaign. It does not improve a constant. It asks, for every route C5 classified
 `DATA_BLOCKED`, whether the project is missing **data** or missing **science**.
 
-**The answer is neither.** For the two highest-leverage DATA-blocked routes the project is missing a **toolchain**.
+**The answer is: not data.** For the two highest-leverage DATA-blocked routes (A1, E1) the inputs are either
+committed or exactly regenerable from committed code — nothing was lost. But **obtaining the gain still requires
+new certified work that no campaign has performed**, on a host with numpy and python-flint, because a faithful
+replay reproduces the adopted values *by construction*: `tc_producer.identity_gate` refuses anything else.
+"Missing a toolchain" is true of the **inputs** and false of the **results**, and the first version of this README
+conflated them.
 
 Successor to C5, which is complete and immutable. C2, C3, C4 and C5 are unmodified; no historical artifact is
 modified. `NEW_REAL_SCIENTIFIC_ADDRESSES = 0`, `SCIENTIFIC_KERNEL_EVALUATIONS = 0`, guard
@@ -26,8 +31,9 @@ ref even though it happens to equal the local one. C6 reconciles nothing.
 
 ## The two findings that matter
 
-**1. The K1 object candidates were never serialized — anywhere, ever.** Not in Git (all 603 commits, 58 branches,
-36 tags), and not in the historical store: all **326** sealed records were hash-verified read-only against their
+**1. The K1 candidate POLYNOMIALS were never serialized — anywhere, ever.** (Their *suprema* are committed, at
+exact rational precision, in `TCT_INPUTS_30{5..9}.json`; the earlier flat claim was false of half of the object as
+C6 itself defines it.) Not in Git (all 603 commits, 58 branches, 36 tags), and not in the historical store: all **326** sealed records were hash-verified read-only against their
 own manifest (326 OK, 0 mismatch, 93,093,045 bytes) and **0 of 326** contain any candidate-payload key. The
 `identity_gate` compares only scalars, because only scalars were ever stored. But the candidates are a
 **deterministic function of committed code and the committed cell spec** — the entire 13-module frozen chain is

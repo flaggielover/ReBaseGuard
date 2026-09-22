@@ -56,7 +56,17 @@ ROUTES = {
         serialization_search="all 603 commits / 58 branches / 36 tags, plus 326/326 sealed records scanned "
                              "read-only: 0 payload keys, and no candidate hash exists anywhere",
         C6_CLASSIFICATION="HISTORICAL_REPLAY_REQUIRED",
-        missing_what="A TOOLCHAIN. Not data and not science.",
+        missing_what="a TOOLCHAIN for the INPUTS. The RESULT has never been derived by anyone and still must be.",
+        REPLAYABILITY_GETS_THE_INPUTS_NOT_THE_RESULT=(
+            "tc_producer.identity_gate REQUIRES a replay to reproduce the sealed quantities exactly -- every "
+            "residual delta_mid, every eps_mid, every eps_cell and every candidate_suprema key -- and refuses "
+            "otherwise. So a FAITHFUL replay returns the adopted sup{F,D,H} bit-for-bit and delivers EXACTLY ZERO "
+            "of A1's gain, by construction: the identity gate is what makes it a replay rather than a new "
+            "evaluation. Obtaining A1's gain needs a DIFFERENT sup routine applied to the regenerated candidates, "
+            "producing a value the frozen identity gate would reject as non-identical. The first version of this "
+            "entry said 'A TOOLCHAIN. Not data and not science.' and the headline said 'nothing needs to be "
+            "re-derived'; both were false of the RESULT, and C6 had written the correct sentence for A3 while "
+            "omitting it here (forensic review, items G.2 and J-A1)."),
         why="the object is a deterministic function of committed code (the 13-module frozen chain, all verified "
             "committed) and the committed cell spec; the candidates are state-only polynomials constant in e; and "
             "tct_inputs.py's own docstring classifies exactly this recomputation as 'not a new real scientific "
@@ -66,9 +76,17 @@ ROUTES = {
         why_not="regeneration runs Aux3Certifier.prepare() + all_residuals(), i.e. Arb/Bernstein certification. "
                 "The frozen gate permits a replay only if it is provably serialization-only. This is not.",
         leverage_upper_bound="oracle sup F/D/H -> 0 closes 307, 308 and (by 0.00035) 309",
-        leverage_achievable="NOT QUANTIFIABLE without the replay. The stored sup already comes from the "
-                            "certifier's own sup routine, so the achievable gain is the slack in THAT routine, "
-                            "which no committed artifact exposes. C6 does not guess it.",
+        leverage_requirement_side_ALREADY_QUANTIFIED_BY_C5=(
+            "C5 quantified what A1 must deliver, to four decimals, in C5_FORECAST.json: a "
+            "2.0561597% tightening of the candidate sup norms under the C5-T clause (5.5356915% under the "
+            "superseded frozen clause) would void the cell-309 exclusion outright, and C5 names A1 as the route "
+            "that would deliver exactly that. The first version of this entry said 'NOT QUANTIFIABLE' without "
+            "that figure, which made A1 look less tractable than the committed record shows "
+            "(forensic review, item K)."),
+        leverage_delivery_side_not_quantifiable=(
+            "how much slack the certifier's own sup routine has is NOT quantifiable without the replay, because "
+            "the stored sup already comes from that routine and no committed artifact exposes its tightness. "
+            "C6 does not guess it."),
     ),
     "A3": dict(
         c5_kill_kind="DATA", family="order-3 surrogate",
@@ -112,11 +130,29 @@ ROUTES = {
         existence_proof="the taboo/arl Chebyshev candidate payloads ARE committed, in "
                         "p5y_k5_tail_operator_registry/evidence/registry_c1 and the C2 refined registry",
         ever_serialized=True,
-        serialization_search="the operator candidate payloads are the ONLY Chebyshev payloads committed under "
-                             "level4/closure_proofs, and they are present for every tail cell",
-        C6_CLASSIFICATION="HISTORICAL_REPLAY_REQUIRED",
-        missing_what="A TOOLCHAIN. Every input exists and is committed.",
-        why="this is the strongest reclassification in C6: E1's inputs are not missing at all. The operator "
+        serialization_search="the operator taboo/arl Chebyshev candidate payloads are committed for every tail "
+                             "cell in p5y_k5_tail_operator_registry/evidence/registry_c1 and the C2 refined "
+                             "registry. (The first version said these were the ONLY committed Chebyshev payloads; "
+                             "p5y_k5_perron_deflated_resolvent/evidence/registry_r1 and three PROBE.json files "
+                             "also carry `numerators`. Same KIND of object at other cells, so the substance "
+                             "holds and the word ONLY does not -- forensic review, item J-E1.)",
+        C6_CLASSIFICATION="GATE_CLASS_GAP__nearest_is_HISTORICAL_REPLAY_REQUIRED",
+        GATE_DEFECT=(
+            "E1 FITS NONE OF THE GATE'S SIX CLASSES, and the first version of this entry forced it into "
+            "HISTORICAL_REPLAY_REQUIRED anyway. The gate defines that class as requiring that the exact address "
+            "'was already evaluated ... and could be reproduced by a future governed replay'. E1's object is a "
+            "BETTER operator tuple, which C6's own `existence` field records as OBJECT_ONLY_HYPOTHESIZED: it was "
+            "never evaluated by anyone and there is nothing to replay. The honest class -- inputs present, new "
+            "ZERO-NEW-REAL certification work required, blocked by toolchain -- does not exist in the frozen "
+            "gate. Recorded in ERRATUM_C6_GATE.md E1 rather than by taking the nearest label silently "
+            "(forensic review, item J-E1)."),
+        missing_what="a TOOLCHAIN for the WORK. Every input exists and is committed; the result does not exist.",
+        NOT_a_C6_discovery=(
+            "the first version called this 'the strongest reclassification in C6'. It is not a discovery at all: "
+            "C5's ledger already recorded E1's kill_reason as 'operator certification needs python-flint, which "
+            "is absent on this host', and C5's adjudicator Condition 11(c) already said 'operator certification "
+            "of A0 on a host that has python-flint'. C6 changed the LABEL, not the facts."),
+        why="E1's inputs are not missing. The operator "
             "certification is operator-only, evaluates no scientific address, and the programme has consistently "
             "classified it zero-new-real (C1 and C2 each spent CPU-hours of it under ZERO_NEW_REAL). The single "
             "block is that python-flint is absent on this host.",
@@ -166,10 +202,23 @@ def main() -> int:
     recovered = {
         "objects": "the four open tail cells' sealed K1 records",
         "states": {c: {"EXISTS": True, "RECOVERED": True,
-                       "PROVENANCE_BOUND": v["independent_committed_bindings"] >= 2,
+                       "PROVENANCE_BOUND": v["root_bindings"] >= 1,
+                       "root_bindings": v["root_bindings"],
+                       "verified_transcriptions": v["verified_transcriptions"],
+                       "binding_note": "PROVENANCE_BOUND is now keyed to a ROOT binding, not to a count that "
+                                       "treated a verified transcription as a second independent witness "
+                                       "(forensic review, item B). 306-308 have one root binding plus one "
+                                       "verified transcription; 309 additionally has corroborating BYTES "
+                                       "committed in a different campaign.",
                        "PROVENANCE_LEVEL": v["PROVENANCE_LEVEL"],
-                       "SCIENTIFICALLY_IDENTICAL": True,
-                       "identity_basis": "sha256 equality with the bytes ADOPTED_TAIL_INPUTS already names",
+                       "BYTE_IDENTICAL_TO_ALREADY_ADOPTED_BYTES": True,
+                       "identity_argument": "the recovered file IS the already-adopted file: sha256 equality with "
+                                            "the bytes ADOPTED_TAIL_INPUTS names implies equality of every "
+                                            "attribute the gate lists, because each is a function of those "
+                                            "bytes. The field was previously called SCIENTIFICALLY_IDENTICAL on "
+                                            "a byte basis, which is the shape of reasoning the gate's "
+                                            "byte_identity_is_not_scientific_identity clause exists to forbid, "
+                                            "even though the conclusion holds here (forensic review, item D).",
                        "admissible_for_NEW_scientific_reuse": v["PROVENANCE_LEVEL"] in ("P4", "P5"),
                        "basis_invoked": "ALREADY_ADOPTED (the gate's already_adopted_exception), NOT a C6 P4"}
                    for c, v in prov["tail_cell_records"].items()},
@@ -195,9 +244,29 @@ def main() -> int:
                "question": "is the project missing DATA or missing SCIENCE?",
                "A1": "a TOOLCHAIN", "A3": "a TOOLCHAIN plus an unwritten theorem",
                "E1": "a TOOLCHAIN", "D4": "SCIENCE", "B1": "SCIENCE", "E2": "a THEOREM",
-               "headline": "for the two highest-leverage DATA-blocked routes (A1 and E1) the project is missing "
-                           "NEITHER data NOR science. It is missing numpy and python-flint on this host. Nothing "
-                           "was lost; nothing needs to be re-derived."},
+               "headline": "for A1 and E1 the project is NOT missing data: the inputs are committed (E1) or "
+                           "exactly regenerable from committed code (A1), and nothing was lost. But obtaining the "
+                           "gain still requires NEW CERTIFIED WORK THAT NO CAMPAIGN HAS PERFORMED, on a host with "
+                           "numpy and python-flint -- because tc_producer.identity_gate forces a faithful replay "
+                           "to reproduce the adopted values exactly, so a replay delivers the inputs and none of "
+                           "the gain. 'Missing a toolchain' is true of the INPUTS and false of the RESULTS.",
+               "withdrawn_headline": "the first version ended 'Nothing was lost; nothing needs to be re-derived.' "
+                                     "The second clause was false of A1's and E1's results and is WITHDRAWN "
+                                     "(forensic review, the headline ruling). A reader who acted on it would have "
+                                     "installed two packages, re-run the replay, obtained the adopted numbers to "
+                                     "the last bit, and spent a campaign confirming identity_gate.identical for a "
+                                     "fifth time."},
+           "leverage_figure_provenance": {
+               "every_oracle_figure_quoted_here_is": ["DIAGNOSTIC", "computed under the SUPERSEDED FROZEN clause"],
+               "why_diagnostic": "C5 states it: every scaled knockout row aligns the independent TC-T crosscheck "
+                                 "to the frozen path and is therefore DIAGNOSTIC. The first version labelled only "
+                                 "E1's and presented the others bare (forensic review, item K).",
+               "why_frozen_clause": "C5's adjudicator adopted C5-T as the authoritative transport. At cell 309 the "
+                                    "baseline Gamma moves from +0.004661130 (frozen) to +0.001708896 (C5-T), so "
+                                    "every frozen-clause margin at 309 is about 0.00295 pessimistic; the A1 row "
+                                    "'closes 309 by 0.00035' becomes about 0.0033 under C5-T.",
+               "consequence": "the planning ranking below is built on diagnostic, superseded-clause numbers and "
+                              "is planning-only for that reason too."},
            "routes": per,
            "classifications_changed_from_C5": changed,
            "recovered_evidence": recovered,

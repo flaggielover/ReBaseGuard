@@ -27,61 +27,101 @@
  "record_self_report": {
   "C6_does_not_interpret_these": "the record reports production_run=false and result_bearing=false. C6 records the fields verbatim and does NOT guess their semantics: they may refer to the Aux5 production-checkpoint classification rather than to scientific standing. Establishing their meaning is outside C6's scope and is a reason the provenance level is capped at P3.",
   "campaign": "p5y_k1_cusum_aux5_successor",
+  "carried_as_an_open_blocker_for_C7": "any attempt to raise these records above P3 must FIRST establish the semantics of production_run / result_bearing in the Aux5 schema. C6 does not establish it and does not guess it.",
+  "measured_for_all_four_open_cells": {
+   "306": {
+    "campaign": "p5y_k1_cusum_aux5_successor",
+    "production_run": false,
+    "result_bearing": false
+   },
+   "307": {
+    "campaign": "p5y_k1_cusum_aux5_successor",
+    "production_run": false,
+    "result_bearing": false
+   },
+   "308": {
+    "campaign": "p5y_k1_cusum_aux5_successor",
+    "production_run": false,
+    "result_bearing": false
+   },
+   "309": {
+    "campaign": "p5y_k1_cusum_aux5_successor",
+    "production_run": false,
+    "result_bearing": false
+   }
+  },
+  "measured_how": "read-only from the Vultr export for 306-308; from the committed copy for 309. The earlier version reported cell 309 alone and generalised silently (forensic review, C).",
   "production_run": false,
   "result_bearing": false
  },
  "schema": "rebaseguard.p5y.k5.tail-c6.provenance.v1",
  "tail_cell_records": {
   "306": {
+   "ADOPTED_TAIL_INPUTS_declares_the_export_manifest_as_its_source": true,
    "PROVENANCE_LEVEL": "P3",
    "but": "these bytes are hash-identical to evidence the programme ALREADY adopted: ADOPTED_TAIL_INPUTS (committed, sealed Campaign-B measurement) names this exact sha256, and C2, C3, C4 and C5 all consumed it. Their scientific standing derives from that existing adoption, not from C6's recovery. C6 recovers BYTES whose identity to already-adopted evidence is proved by hash.",
    "bytes": 279738,
-   "independent_committed_bindings": 2,
+   "independent_committed_bindings": 1,
    "links": {
-    "binds_committed_ADOPTED_TAIL_INPUTS_record_sha256": true,
-    "binds_committed_export_manifest": true,
-    "byte_identical_copy_committed_in_git": false
+    "byte_identical_copy_committed_in_git": false,
+    "root_binding__committed_export_manifest": true,
+    "verified_transcription__ADOPTED_TAIL_INPUTS_record_sha256": true
    },
    "recovered_sha256": "9c9da15bb7464411056bcaf8532365b261e6e185de0fe6cbb4c05cc6476bcd59",
+   "root_bindings": 1,
+   "third_hash_reference_not_counted": "TCT_INPUTS_30{5..9}.json each carry k1_record_sha256 equal to the same value -- same root, same campaign, so it adds no independence and is named rather than counted",
+   "verified_transcriptions": 1,
    "why_not_P4": "P4 needs producer + protocol + authorization binding. Two upstream links do NOT close by raw bytes: (a) the record's own producer_manifest_hash does not equal the sha256 of the committed producer_manifest_v3.json it names, and (b) the export manifest's composite_audit_sha256 matches NEITHER the committed nor the external COMPOSITE_AUDIT.json. C6 does not upgrade provenance by inference."
   },
   "307": {
+   "ADOPTED_TAIL_INPUTS_declares_the_export_manifest_as_its_source": true,
    "PROVENANCE_LEVEL": "P3",
    "but": "these bytes are hash-identical to evidence the programme ALREADY adopted: ADOPTED_TAIL_INPUTS (committed, sealed Campaign-B measurement) names this exact sha256, and C2, C3, C4 and C5 all consumed it. Their scientific standing derives from that existing adoption, not from C6's recovery. C6 recovers BYTES whose identity to already-adopted evidence is proved by hash.",
    "bytes": 280035,
-   "independent_committed_bindings": 2,
+   "independent_committed_bindings": 1,
    "links": {
-    "binds_committed_ADOPTED_TAIL_INPUTS_record_sha256": true,
-    "binds_committed_export_manifest": true,
-    "byte_identical_copy_committed_in_git": false
+    "byte_identical_copy_committed_in_git": false,
+    "root_binding__committed_export_manifest": true,
+    "verified_transcription__ADOPTED_TAIL_INPUTS_record_sha256": true
    },
    "recovered_sha256": "28bacf0a42fe7af89283082e81b478104e4dff7ebfe48c63f701d81f56d23d65",
+   "root_bindings": 1,
+   "third_hash_reference_not_counted": "TCT_INPUTS_30{5..9}.json each carry k1_record_sha256 equal to the same value -- same root, same campaign, so it adds no independence and is named rather than counted",
+   "verified_transcriptions": 1,
    "why_not_P4": "P4 needs producer + protocol + authorization binding. Two upstream links do NOT close by raw bytes: (a) the record's own producer_manifest_hash does not equal the sha256 of the committed producer_manifest_v3.json it names, and (b) the export manifest's composite_audit_sha256 matches NEITHER the committed nor the external COMPOSITE_AUDIT.json. C6 does not upgrade provenance by inference."
   },
   "308": {
+   "ADOPTED_TAIL_INPUTS_declares_the_export_manifest_as_its_source": true,
    "PROVENANCE_LEVEL": "P3",
    "but": "these bytes are hash-identical to evidence the programme ALREADY adopted: ADOPTED_TAIL_INPUTS (committed, sealed Campaign-B measurement) names this exact sha256, and C2, C3, C4 and C5 all consumed it. Their scientific standing derives from that existing adoption, not from C6's recovery. C6 recovers BYTES whose identity to already-adopted evidence is proved by hash.",
    "bytes": 280311,
-   "independent_committed_bindings": 2,
+   "independent_committed_bindings": 1,
    "links": {
-    "binds_committed_ADOPTED_TAIL_INPUTS_record_sha256": true,
-    "binds_committed_export_manifest": true,
-    "byte_identical_copy_committed_in_git": false
+    "byte_identical_copy_committed_in_git": false,
+    "root_binding__committed_export_manifest": true,
+    "verified_transcription__ADOPTED_TAIL_INPUTS_record_sha256": true
    },
    "recovered_sha256": "e8d7a412ed7f1f96dc5d7843d920eb5641b4ea21f315269dcbd89e955f2e5be5",
+   "root_bindings": 1,
+   "third_hash_reference_not_counted": "TCT_INPUTS_30{5..9}.json each carry k1_record_sha256 equal to the same value -- same root, same campaign, so it adds no independence and is named rather than counted",
+   "verified_transcriptions": 1,
    "why_not_P4": "P4 needs producer + protocol + authorization binding. Two upstream links do NOT close by raw bytes: (a) the record's own producer_manifest_hash does not equal the sha256 of the committed producer_manifest_v3.json it names, and (b) the export manifest's composite_audit_sha256 matches NEITHER the committed nor the external COMPOSITE_AUDIT.json. C6 does not upgrade provenance by inference."
   },
   "309": {
+   "ADOPTED_TAIL_INPUTS_declares_the_export_manifest_as_its_source": true,
    "PROVENANCE_LEVEL": "P3",
    "but": "these bytes are hash-identical to evidence the programme ALREADY adopted: ADOPTED_TAIL_INPUTS (committed, sealed Campaign-B measurement) names this exact sha256, and C2, C3, C4 and C5 all consumed it. Their scientific standing derives from that existing adoption, not from C6's recovery. C6 recovers BYTES whose identity to already-adopted evidence is proved by hash.",
    "bytes": 280226,
-   "independent_committed_bindings": 3,
+   "independent_committed_bindings": 2,
    "links": {
-    "binds_committed_ADOPTED_TAIL_INPUTS_record_sha256": true,
-    "binds_committed_export_manifest": true,
-    "byte_identical_copy_committed_in_git": true
+    "byte_identical_copy_committed_in_git": true,
+    "root_binding__committed_export_manifest": true,
+    "verified_transcription__ADOPTED_TAIL_INPUTS_record_sha256": true
    },
    "recovered_sha256": "95be4c65f95f4afdb1caba0be1868c7829700457ba85b292ac143a8e65cdacc0",
+   "root_bindings": 2,
+   "third_hash_reference_not_counted": "TCT_INPUTS_30{5..9}.json each carry k1_record_sha256 equal to the same value -- same root, same campaign, so it adds no independence and is named rather than counted",
+   "verified_transcriptions": 1,
    "why_not_P4": "P4 needs producer + protocol + authorization binding. Two upstream links do NOT close by raw bytes: (a) the record's own producer_manifest_hash does not equal the sha256 of the committed producer_manifest_v3.json it names, and (b) the export manifest's composite_audit_sha256 matches NEITHER the committed nor the external COMPOSITE_AUDIT.json. C6 does not upgrade provenance by inference."
   }
  }

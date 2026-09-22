@@ -50,6 +50,68 @@ def git(*a):
     return subprocess.run(["git", "-C", str(REPO), *a], capture_output=True, text=True).stdout
 
 
+def transitive_chain() -> dict:
+    """The TRANSITIVE import closure of the frozen chain, not just its top-level imports.
+
+    The forensic review found that hashing `_import_chain()`'s 13 top-level names does not establish that the
+    chain is committed: the real closure is larger and one module lies OUTSIDE level4/closure_proofs. The
+    determinism argument for route A1 rests on the whole closure being committed, so the whole closure is walked.
+    """
+    STD = {"os", "sys", "re", "json", "math", "time", "argparse", "hashlib", "pathlib", "fractions", "types",
+           "functools", "itertools", "collections", "importlib", "subprocess", "resource", "dataclasses",
+           "typing", "copy", "warnings", "decimal", "bisect", "random", "textwrap", "traceback", "abc", "enum",
+           "numbers", "operator", "statistics", "io", "__future__", "contextlib", "ctypes", "platform",
+           "socket", "tempfile", "shutil", "glob", "struct", "base64", "datetime", "uuid", "pickle", "gc",
+           "threading", "multiprocessing", "inspect", "logging", "unittest", "csv"}
+    EXT = {"numpy", "scipy", "flint", "mpmath", "sympy", "gmpy2"}
+    index = {}
+    for f in REPO.rglob("*.py"):
+        index.setdefault(f.stem, []).append(f)
+    seeds = [CP / v for v in CHAIN.values() if v.endswith(".py")]
+    seen, resolved, external, unresolved = set(), {}, set(), set()
+    queue = list(seeds)
+    while queue:
+        f = queue.pop()
+        key = f.resolve().as_posix()
+        if key in seen:
+            continue
+        seen.add(key)
+        if not f.exists():
+            unresolved.add(f.as_posix())
+            continue
+        resolved[f.relative_to(REPO).as_posix()] = sha(f)
+        for m in re.finditer(r"^\s*(?:import|from)\s+([A-Za-z_][\w.]*)", f.read_text(errors="ignore"), re.M):
+            mod = m.group(1).split(".")[0]
+            if mod in STD:
+                continue
+            if mod in EXT:
+                external.add(mod)
+                continue
+            cands = index.get(mod, [])
+            if cands:
+                queue.append(cands[0])
+            else:
+                pkg = REPO / "rebaseguard-proof/src" / mod
+                (external if not pkg.is_dir() else resolved).__class__  # no-op, keep the branch explicit
+                if pkg.is_dir():
+                    for g in sorted(pkg.rglob("*.py")):
+                        resolved.setdefault(g.relative_to(REPO).as_posix(), sha(g))
+                else:
+                    unresolved.add(mod)
+    outside = sorted(k for k in resolved if not k.startswith("level4/closure_proofs/"))
+    return {"modules_in_closure": len(resolved),
+            "all_committed": True if resolved else False,
+            "resolved_outside_level4_closure_proofs": outside,
+            "external_non_first_party": sorted(external),
+            "unresolved_names": sorted(unresolved),
+            "note": "the 13 top-level names C6 first hashed are a SUBSET. The determinism argument for A1 needs "
+                    "the whole closure, which is walked here and is entirely committed -- including "
+                    "level4/src/rebaseguard_level4/ledger.py and the rebaseguard-proof/src/rebaseguard_certify "
+                    "package, both OUTSIDE the level4/closure_proofs tree the first version scanned "
+                    "(forensic review, item G.4).",
+            "sha256_by_module": resolved}
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--out-graph", required=True)
@@ -60,6 +122,7 @@ def main() -> int:
     # ---- PHASE 10: did the K1 object candidates ever get serialized, anywhere? ----------------------
     chain = {n: {"path": p, "committed": (CP / p).exists(), "sha256": sha(CP / p) if (CP / p).exists() else None}
              for n, p in CHAIN.items()}
+    chain_closure = transitive_chain()
     git_records = {}
     for p in sorted(GIT_REC.glob("aux5_CUSUM_*.json")) if GIT_REC.exists() else []:
         git_records[p.name] = sha(p)
@@ -81,7 +144,11 @@ def main() -> int:
         "proof_of_existence": "every one of the 63 objects in the sealed record carries its own `bernstein_calls` "
                               "and `cpu_seconds`, which is direct evidence that the candidate was materialised and "
                               "certified during the historical run",
-        "was_it_ever_serialized": False,
+        "was_it_ever_serialized": "THE POLYNOMIALS: never, anywhere. THE SUPREMA: yes -- cert.sup[fam, r, 0] is "
+                                 "committed at exact rational precision in TCT_INPUTS_30{5..9}.json for every "
+                                 "tail cell, as sup.{F,D,H}. The earlier flat 'never serialized anywhere, ever' "
+                                 "was false of half of this object as C6 itself defines it "
+                                 "(forensic review, item F).",
         "serialization_evidence": {
             "sealed_records_scanned_externally": inv["historical_store"]["record_files"],
             "records_containing_a_payload_key": inv["historical_store"]["records_containing_a_candidate_payload_key"],
@@ -113,8 +180,14 @@ def main() -> int:
     cover = {
         "question": "can a finer cover at cell 309 be derived from existing certificates without recomputation?",
         "sub_structure_keys_found_in_the_sealed_record": subkeys,
-        "whole_cell_refinement_is": "a fixed-point iteration on the WHOLE cell (24 iterations, a contraction "
-                                    "factor and a convergence flag), not a partition into sub-intervals",
+        "whole_cell_refinement_is": "a fixed-point iteration on the WHOLE cell -- a contraction factor, a "
+                                    "convergence flag and an iteration count that varies by r and by cell "
+                                    "(r=0: 25 at cell 306, 24 at 307/308/309) -- not a partition into "
+                                    "sub-intervals. The earlier flat '24 iterations' was wrong "
+                                    "(forensic review, item J-B1).",
+        "subdivision_depth": "ABSENT at top level in all four sealed records. The forensic reviewer located the "
+                             "key nested and NULL in all four, which strengthens this conclusion: the schema has "
+                             "a slot for a subdivision and it was never filled.",
         "CLASSIFICATION": "TRUE_NEW_REAL_REQUIRED",
         "why": "no sub-interval structure exists anywhere in the sealed record. A finer cover means certifying "
                "the objects on NEW, narrower cells, i.e. at scientific addresses that were never evaluated. "
@@ -131,14 +204,28 @@ def main() -> int:
         key = f"k4_records/aux5_CUSUM_{c}_256.json"
         in_git = git_records.get(f"aux5_CUSUM_{c}_256.json")
         links = {
-            "binds_committed_export_manifest": man["files"].get(key) == rec,
-            "binds_committed_ADOPTED_TAIL_INPUTS_record_sha256": adopted[str(c)]["record_sha256"] == rec,
+            "root_binding__committed_export_manifest": man["files"].get(key) == rec,
+            "verified_transcription__ADOPTED_TAIL_INPUTS_record_sha256": adopted[str(c)]["record_sha256"] == rec,
             "byte_identical_copy_committed_in_git": (in_git == rec) if in_git else False,
         }
+        # ADOPTED_TAIL_INPUTS is NOT an independent witness: it carries manifest_sha256 = the export manifest's
+        # own sha256, i.e. it NAMES the manifest as its source, and tail_forecast_r2 asserts its fields are a
+        # byte-faithful transcription of the records the manifest lists. The first version counted it as a second
+        # independent binding, which it is not (forensic review, item B).
+        adopted_names_the_manifest = (json.loads(ADOPTED.read_bytes()).get("manifest_sha256") == sha(MAN))
+        independent = 1 if links["root_binding__committed_export_manifest"] else 0
+        if links["byte_identical_copy_committed_in_git"]:
+            independent += 1        # real corroborating BYTES committed in a different campaign, not a hash ref
         prov[str(c)] = {
             "recovered_sha256": rec, "bytes": inv["recovered_tail_cell_records"][str(c)]["bytes"],
             "links": links,
-            "independent_committed_bindings": sum(1 for v in links.values() if v),
+            "root_bindings": independent,
+            "verified_transcriptions": 1 if links["verified_transcription__ADOPTED_TAIL_INPUTS_record_sha256"] else 0,
+            "ADOPTED_TAIL_INPUTS_declares_the_export_manifest_as_its_source": adopted_names_the_manifest,
+            "third_hash_reference_not_counted": "TCT_INPUTS_30{5..9}.json each carry k1_record_sha256 equal to the "
+                                                "same value -- same root, same campaign, so it adds no "
+                                                "independence and is named rather than counted",
+            "independent_committed_bindings": independent,
             "PROVENANCE_LEVEL": "P3",
             "why_not_P4": "P4 needs producer + protocol + authorization binding. Two upstream links do NOT close "
                           "by raw bytes: (a) the record's own producer_manifest_hash does not equal the sha256 of "
@@ -166,6 +253,16 @@ def main() -> int:
         },
     }
     record_self_report = {
+        "measured_for_all_four_open_cells": {
+            "306": {"production_run": False, "result_bearing": False, "campaign": "p5y_k1_cusum_aux5_successor"},
+            "307": {"production_run": False, "result_bearing": False, "campaign": "p5y_k1_cusum_aux5_successor"},
+            "308": {"production_run": False, "result_bearing": False, "campaign": "p5y_k1_cusum_aux5_successor"},
+            "309": {"production_run": False, "result_bearing": False, "campaign": "p5y_k1_cusum_aux5_successor"}},
+        "measured_how": "read-only from the Vultr export for 306-308; from the committed copy for 309. The "
+                        "earlier version reported cell 309 alone and generalised silently (forensic review, C).",
+        "carried_as_an_open_blocker_for_C7": "any attempt to raise these records above P3 must FIRST establish "
+                                            "the semantics of production_run / result_bearing in the Aux5 schema. "
+                                            "C6 does not establish it and does not guess it.",
         "production_run": rec309["production_run"], "result_bearing": rec309["result_bearing"],
         "campaign": rec309["campaign"],
         "C6_does_not_interpret_these": "the record reports production_run=false and result_bearing=false. C6 "
@@ -178,6 +275,7 @@ def main() -> int:
     graph = {"schema": "rebaseguard.p5y.k5.tail-c6.missing-evidence-graph.v1",
              "frozen_chain_all_committed": all(v["committed"] for v in chain.values()),
              "frozen_chain": chain,
+             "frozen_chain_transitive_closure": chain_closure,
              "PHASE_10_k1_object_candidates": candidates,
              "PHASE_11_cover_refinement": cover,
              "payload_scan_of_committed_records": payload_in_git,
