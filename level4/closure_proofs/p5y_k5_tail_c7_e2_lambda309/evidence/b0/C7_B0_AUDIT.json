@@ -14,7 +14,7 @@
   {
    "detail": {
     "C6_head": "f494416f",
-    "current_head": "a6c2855b",
+    "current_head": "b472ff0d",
     "note": "ancestry, not equality, so the audit re-runs at any later C7 commit"
    },
    "id": "B0_02",
@@ -235,7 +235,7 @@
   {
    "detail": {
     "EXECUTION_AUTHORIZED": false,
-    "candidate_guard_files": [
+    "candidate_guard_files_seen": [
      "ReBaseGuard_Level4_StageD_TheoryBlueprint_and_Pilot_2026-08-22/rebaseguard_staged_blueprint.md",
      "level4/closure_proofs/d4_phase_map/src/rebaseguard_d4/__init__.py",
      "level4/closure_proofs/d4_phase_map/src/rebaseguard_d4/adversarial.py",
@@ -245,11 +245,12 @@
      "level4/closure_proofs/d4_phase_map/src/rebaseguard_d4/direct_map.py",
      "level4/closure_proofs/d4_phase_map/src/rebaseguard_d4/figures.py"
     ],
+    "dirty_guard_paths": [],
     "guard_declared": "DENY",
-    "note": "C7 neither reads nor writes the guard; it is recorded as an invariant of the campaign"
+    "guard_paths_in_branch_diff": []
    },
    "id": "B0_15",
-   "name": "guard state discoverable and C7 declares it will not touch it",
+   "name": "C7 has modified no guard or authorization file, working tree or history",
    "pass": true
   },
   {
@@ -257,10 +258,11 @@
     "certificate_present": true,
     "expected": "9f7083b9ef45f48ede9addcc8374005187785c789cf7a24403bed2e519d4a604",
     "gate_sha256": "9f7083b9ef45f48ede9addcc8374005187785c789cf7a24403bed2e519d4a604",
+    "ordering_tested_by": "c7_factcheck.py check 3 (gate_ordering)",
     "phase": "post-freeze"
    },
    "id": "B0_16",
-   "name": "gate matches its frozen sha256 and precedes the certificate",
+   "name": "gate matches its frozen sha256",
    "pass": true
   },
   {
@@ -323,5 +325,5 @@
  "failed": [],
  "m": 5,
  "schema": "C7_B0_AUDIT/1",
- "sha256": "812fb132d964eb338c10bc6607ae8c8d767e2b3147170a3c9481ba978d213873"
+ "sha256": "1eaf0b0769be27cc9631f3866b6c9d70ae96b84403d8ddd64aed3796f70dc755"
 }

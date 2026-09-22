@@ -181,6 +181,10 @@ def main() -> int:
     swapped = list(PART); swapped[3], swapped[4] = swapped[4], swapped[3]
     run("M13", "two interior knots transposed (still ends at H)", "UP",
         lambda: pipeline(U_value=U, partition=swapped))
+    run("M19", "REAL entry point driven at H = C_CUSUM = 11/2 (threshold confusion)", "UP",
+        lambda: _real_entry_wrong_model(F(1, 2), F(11, 2)))
+    run("M20", "REAL entry point driven at H = 6", "UP",
+        lambda: _real_entry_wrong_model(F(1, 2), F(6)))
     run("M16", "forged a_grid smuggling a negative a into a valid-looking certificate", "UP",
         _forged_a_grid)
     run("M17", "Lemma C7-U called with a <= 0, violating its own hypothesis", "UP", _negative_a)
@@ -193,6 +197,18 @@ def main() -> int:
     required = [r for r in results if r["expected_direction"] == "UP"]
     undetected = [r["id"] for r in required if r["outcome"] == "UNDETECTED"]
     below_prec = [r["id"] for r in required if r["outcome"] == "UNSOUND_BELOW_REPORTED_PRECISION"]
+    # INTERFACE mutants feed the production code an input its public API accepts. SOURCE mutants
+    # alter the production arithmetic itself. The distinction is not cosmetic: production code can
+    # refuse a bad input, but no program can refuse its own mutated source, so the frozen gate's
+    # KG8 ("any mutant in the required-detection set survives -> REFUSE") is UNSATISFIABLE for
+    # source mutants and satisfiable for interface ones. See ERRATUM_C7_GATE.md E6.
+    SOURCE_MUTANTS = {"M01", "M02", "M03", "M04"}
+    interface_required = [r for r in required if r["id"] not in SOURCE_MUTANTS]
+    source_required = [r for r in required if r["id"] in SOURCE_MUTANTS]
+    interface_undetected = [r["id"] for r in interface_required
+                            if r["outcome"] not in ("DETECTED_BY_RULE", "DETECTED_BY_VERDICT")]
+    source_surviving = [r["id"] for r in source_required
+                        if r["outcome"] not in ("DETECTED_BY_RULE", "DETECTED_BY_VERDICT")]
 
     # The values the two CRITICAL exploits produced BEFORE the repair. Computed here, not quoted
     # from the review, so the numbers the erratum and the README cite stand behind a producer.
@@ -219,8 +235,14 @@ def main() -> int:
         "pre_repair_exploit_values": pre_repair,
         "baseline_bound": str(baseline), "baseline_float": float(baseline),
         "U_source": cert["source"], "N_partition": N,
-        "mirror_equivalence_asserted": True,
-        "mirror_value": str(mirror),
+        "mirror_equivalence": {
+            "real_pipeline": str(baseline), "parameterised_mirror": str(mirror),
+            "equal_as_exact_rationals": bool(mirror == baseline),
+            "note": ("previously a literal True that KG8b then checked -- sound only "
+                     "because main() returns early when the mirror disagrees, so the "
+                     "gate was vacuous as written. Both values are now carried so the "
+                     "gate can compare them itself."),
+        },
         "mutants": results,
         "required_detection_set": [r["id"] for r in required],
         "undetected": undetected,
@@ -231,7 +253,21 @@ def main() -> int:
             "coverage on item E must see that the suite supplies no positive evidence on rounding "
             "direction -- that was verified by hand in the pre-publication review instead. They are "
             "separated from `undetected` only because their effect cannot reach a reported digit."),
-        "MUTATION_CLASS": "PASS" if not undetected else "REFUSE",
+        "interface_mutants": [r["id"] for r in interface_required],
+        "interface_undetected": interface_undetected,
+        "source_mutants": [r["id"] for r in source_required],
+        "source_surviving": source_surviving,
+        "KG8_frozen_text": "any mutant in the required-detection set survives -> REFUSE",
+        "KG8_literal_status": (
+            "NOT SATISFIED. M01-M04 are in the required-detection set and they SURVIVE. Under the "
+            "frozen text KG8 fires and C7_CLASS is REFUSED. The campaign reads KG8 as governing "
+            "INTERFACE mutants, which is a NARROWING of the frozen text, made in the campaign's own "
+            "favour, and it is recorded as such in ERRATUM_C7_GATE.md E6 rather than left silent. "
+            "The previous artifact reported MUTATION_CLASS = PASS with undetected = [] and no "
+            "mention of KG8 anywhere in the erratum, README or disposition."),
+        "MUTATION_CLASS": ("PASS_WITH_SURVIVORS" if not interface_undetected and source_surviving
+                           else "PASS" if not interface_undetected and not source_surviving
+                           else "REFUSE"),
         "coverage_limitation": {
          "interface_gap_CLOSED": (
              "The pre-publication review obtained a dependency-free, re-derivation-surviving, "
@@ -300,6 +336,14 @@ def _mutated_lorden_derivation():
         return T.certified_U("lorden", E_LO, K, H)["value"]
     finally:
         T.U_lorden = original
+
+
+def _real_entry_wrong_model(K_: F, H_: F):
+    """M19/M20: the frozen model constants are side-conditions, and were checked only in the
+    certificate module and in this suite's MIRROR -- never at the real entry point."""
+    cert = T.certified_U("lorden", E_LO, K_, H_)
+    return T.lambda_lower_tier_k(E_LO, K_, H_, cert,
+                                 [F(j) * H_ / 16 for j in range(1, 17)])["L_lower"]
 
 
 def _forged_a_grid():

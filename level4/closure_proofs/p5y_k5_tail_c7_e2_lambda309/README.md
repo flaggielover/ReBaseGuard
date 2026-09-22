@@ -126,18 +126,19 @@ rule contains **no tuned threshold**, only strict comparisons against C4's own p
 
 ## Layout
 
-    config/FEASIBILITY_GATES_C7.json   frozen gate, sha256 9f7083b9…, 9 kill gates
+    config/FEASIBILITY_GATES_C7.json   frozen gate, sha256 9f7083b9…, KG1–KG9 (see erratum E8)
     code/c7_gaussian.py                rigorous rational Φ, φ, π, √ (imports `fractions` and nothing else)
     code/c7_theorem.py                 Theorems C7-E2, C7-E2c; Lemma C7-U; U provenance; ψ guard
     code/c7_common.py                  committed-fact readers, canonical JSON
-    code/c7_b0_audit.py                16-check state audit (AST import walk)
+    code/c7_b0_audit.py                17-check state audit (AST import walk, all modules)
     code/c7_ledger.py                  phases 1–2: slack ledger, required improvement
-    code/c7_mutations.py               phase 7: 15 mutants, direction-organised
+    code/c7_mutations.py               phase 7: 20 mutants, interface vs source
     code/c7_certificate.py             phases 9–11: evaluation, downstream, exhaustion
     code/c7_factcheck.py               phase 13: governance fact verification
     code/c7_primitives_test.py         known-value tests for G.Phi / G.phi
     code/c7_psi_monotonicity.py        the psi monotonicity analysis behind N1
     phase_3/C7_ROUTE_SEARCH.md         families A–I and why eight were stopped
-    ERRATUM_C7_GATE.md                 E1–E5: corrections to the frozen gate's own statements
-    OPEN_NOTES_DISPOSITION_C7.md       N1–N4
+    ERRATUM_C7_GATE.md                 E1–E9: corrections to the frozen gate's own statements
+    OPEN_NOTES_DISPOSITION_C7.md       N1–N7
     review/REVIEW_C7_PREPUBLICATION.md the NOT_READY review, 17 findings
+    review/ADJUDICATION_C7.md          ACCEPTED_WITH_CONDITIONS, 9 further defects

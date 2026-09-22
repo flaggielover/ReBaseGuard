@@ -94,7 +94,9 @@ def main() -> int:
         "1.048343": "asymptotic stationary-excess mean E[V^2]/(2 E[V]), quoted for comparison",
     }
     prose = [q for q in sorted(C.NS.rglob("*.md")) if "review" not in q.parts]
+    review_docs = sorted((C.NS / "review").glob("*.md"))
     external_used: dict[str, str] = {}
+    review_sourced: dict[str, list] = {}
     for p in prose:
         for n in sorted(numbers_in(p.read_text())):
             if n in EXTERNAL_FIGURES:
@@ -102,6 +104,19 @@ def main() -> int:
                 continue
             backed = backed_by_rounding(n)
             if not backed:
+                # A figure MEASURED BY A REVIEWER and carried in a committed review document is
+                # backed -- by that document, not by a producer. This arises for the pre-repair
+                # values of defects whose repair REMOVED the code that produced them: reproducing
+                # `lambda_lower_tier2(e=1.90, U=0.1)` would mean reinstating a function deleted
+                # precisely because it was unguarded, and reproducing the K,H inflations would mean
+                # bypassing the guard just added. The provenance is recorded per figure so the
+                # distinction between "a producer emitted this" and "a reviewer measured this" stays
+                # visible instead of collapsing into a bare PASS.
+                src = next((str(q.relative_to(C.NS)) for q in review_docs if n in q.read_text()), None)
+                if src:
+                    review_sourced.setdefault(n, []).append(
+                        {"quoted_in": str(p.relative_to(C.NS)), "measured_in": src})
+                    continue
                 findings.append({"check": "PROSE_FIGURE_UNBACKED", "file": str(p.relative_to(C.NS)),
                                  "value": n,
                                  "detail": "asserted in prose but emitted by no committed producer"})
@@ -192,6 +207,10 @@ def main() -> int:
                                        "be would let C7 suppress a finding by not producing its "
                                        "number")},
         "external_figures_exempted": external_used,
+        "review_sourced_figures": review_sourced,
+        "review_sourced_note": ("figures C7 prose quotes from a committed review or adjudication "
+                                "document, traceable to that document but NOT emitted by any C7 "
+                                "producer. A figure with no source anywhere still fails."),
         "gate_ordering": ordering,
         "gate_ordering_note": (
             "The LOAD-BEARING artifact is the certificate, and it is AFTER the gate, which is the "

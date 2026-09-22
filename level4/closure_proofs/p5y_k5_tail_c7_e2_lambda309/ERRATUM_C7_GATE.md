@@ -100,3 +100,102 @@ reconcile "0" with a simulator that was written and run.
 **Correction.** The counters describe **the C7 evidence chain**: every committed producer and every
 number any C7 conclusion rests on. Out-of-tree cross-checking activity is counted separately under
 `external_non_evidence_activity`. Both are now reported.
+
+---
+
+# Second round — raised by the independent adjudication (`review/ADJUDICATION_C7.md`)
+
+The adjudication returned **ACCEPTED_WITH_CONDITIONS**: 15 findings LANDED, 2 PARTIAL, 0 NOT_LANDED.
+It also found nine defects that the pre-publication review had not. Four require errata.
+
+## E6 — KG8 was narrowed in the campaign's own favour, without an erratum
+
+This is the most serious governance defect in C7, and the campaign did not raise it. The frozen gate
+says:
+
+> `"KG8": "any mutant in the required-detection set survives -> REFUSE"`
+
+`M01`–`M04` are in the required-detection set. The mutation artifact's own prose stated plainly that
+they **survive and are not detected**. `MUTATION_CLASS` was nevertheless `"PASS"` with
+`undetected: []`, because the four had been moved into a sibling list, and `c7_certificate.py`'s KG8
+read exactly `MUTATION_CLASS == "PASS"`. **Under the frozen text, KG8 fires and `C7_CLASS` is
+`REFUSED`.** The string `KG8` appeared in the gate and in the certificate module and nowhere else —
+not in this erratum, not in the README, not in the disposition.
+
+So the first round of repairs fixed the *reporting* of finding 4 while quietly leaving a frozen kill
+gate narrowed from "survives" to "survives and alters a reported digit". In a campaign whose erratum
+instrument exists precisely for that act, doing it silently is worse than the original defect.
+
+**Why the narrowing is nonetheless the right reading — and it is still a narrowing.** `M01`–`M04` are
+**source mutants**: they alter the production arithmetic itself. No program can refuse its own mutated
+source, so KG8 applied to source mutants is **unsatisfiable in principle** — any campaign that
+includes a source mutant at all would be refused by its literal text. The other fourteen are
+**interface mutants**: inputs the public API accepts, which production code *can* refuse, and all
+fourteen are detected.
+
+**Correction.** The mutation artifact now partitions the required set into `interface_mutants` and
+`source_mutants`, reports `interface_undetected` and `source_surviving` separately, carries the
+frozen KG8 text alongside a `KG8_literal_status` field stating in terms that it is **NOT SATISFIED**,
+and reports `MUTATION_CLASS = "PASS_WITH_SURVIVORS"` — a class that does not assert cleanliness.
+`c7_certificate.py` enforces KG8 over interface mutants and states the narrowing at the call site.
+
+**Materiality: nil for the number.** The four mutants move the bound by ~1e-94 relative. This is a
+governance defect, not an arithmetic one. A successor gate should define its required-detection set
+over interface mutants and require source mutants to be *enumerated with measured effect*, which is
+the rule that was actually intended.
+
+A smaller overstatement, also corrected: "does not alter any digit of the reported value" was
+anchored on IEEE-double equality, while the certificate's authoritative field is an exact rational.
+It is true of the float and false of the rational.
+
+## E7 — `u0_ladder_for_tier2` is now inert
+
+The gate freezes `u0_ladder_for_tier2` for `lambda_lower_tier2`, the single-split precursor of the
+multi-tier theorem. That function had no caller, took a **bare** `U` with no certificate and no
+`_resolve_U`, and never checked cell membership — so both repaired exploits remained reachable
+through it: `lambda_lower_tier2(e = 1.90, U = 0.1)` returned **4.219038180** with no refusal. A dead
+public entry point bypassing the guards E1 says are "now enforced in code" falsifies that sentence.
+
+**Correction.** The function is removed. The gate's `u0_ladder_for_tier2` is consequently inert and
+binds nothing. Tier 2 survives only as the `k = 2` case of the multi-tier theorem, which is guarded.
+
+## E8 — kill gates were added that the frozen gate does not enumerate
+
+The gate enumerates KG1–KG9. The certificate had also been enforcing KG8b, KG9b, KG10, KG10b and
+KG11, none of them disclosed.
+
+**KG10/KG10b** (the Gaussian primitives test, and that it ran against the committed
+`c7_gaussian.py`) are conservative — they can only refuse, never admit — and are retained, now
+declared here.
+
+**KG11 is different in kind and is removed.** It made the verdict depend on
+`criterion_holds_at_every_knot` in the ψ-monotonicity artifact — an analysis the theorem explicitly
+**does not use**, since the bound consumes `ψ_lo` and never `ψ_exact`. A failure there could have
+refused an otherwise valid campaign on the strength of an unused diagnostic. It is now reported as a
+diagnostic under `psi_monotonicity_DIAGNOSTIC_NOT_A_GATE`.
+
+## E9 — `K` and `H` are side-conditions, and E1's list did not name them
+
+E1 corrected the gate's non-blindness claim and named the validity side-conditions for `e`, the
+a-grid and `U`. It did not name `K` and `H`, and neither did the code: they were free parameters of
+every entry point in `c7_theorem.py`. KG7 lived only in `c7_certificate.py`, where it tested that
+module's own constants, and in the mutation suite's *mirror*. Driving the **real** entry point:
+
+```
+  K = 1/2, H = 11/2  ->  3.925355098     no refusal   (C4's documented threshold-confusion mode)
+  K = 1/2, H = 6     ->  4.250984509     no refusal
+  tier-1 at H = 11/2 ->  3.774230652 ;  at H = 6 -> 4.090097516     no refusal
+```
+
+Both inflated values exceed the published PRIMARY and sit below the certified `A0` and the family
+ceiling, so **KG5 does not fire either**. At `+18.5 %` this is a larger inflation than either exploit
+the pre-publication review found, reachable through the public API with no mutation — and it is
+exactly the error KG7 exists to catch. That C4 documented this precise failure mode, and C7 inherited
+the constant-equality check only into the certificate module, is the whole lesson.
+
+**Correction.** `c7_theorem._require_frozen_model` enforces `K = 1/2` and `H = 5` at every entry
+point — `lambda_lower`, `lambda_lower_tier_k` and `certified_U`. Regression-tested by M19 and M20,
+which drive the **real** entry point rather than the mirror.
+
+**No published number was affected**: C7's producers hardcode the frozen constants. As with E1 and
+E2, the defect was in the mechanism.

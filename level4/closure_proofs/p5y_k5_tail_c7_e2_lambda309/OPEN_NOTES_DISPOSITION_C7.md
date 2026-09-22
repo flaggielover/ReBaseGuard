@@ -110,7 +110,7 @@ Repairs made in response, all re-run and re-verified:
 | 8, 9 | README's surface-independence and C4-margin claims narrowed to what is true |
 | 11 | `code/c7_primitives_test.py` commits known-value tests for `G.Phi` / `G.phi` |
 | 12 | M07 and M13 reordered so each reaches its own guard |
-| 13 | dead code removed, the accidental `and` in the certificate fixed |
+| 13 | the accidental `and` fixed; dead code **partly** removed — see N7, the adjudication found `lambda_lower_tier2` still present, public and unguarded |
 | 14 | the Monte Carlo breach disclosed and declared in the certificate (E4, E5) |
 | 15 | fact-check regex widened to 4 decimals; scope and blind spots stated in the artifact |
 | 17 | the ψ wording corrected in the README and backed by a producer |
@@ -135,3 +135,53 @@ claim rather than in the committed evaluation path.
    guard it named was never exercised by anything.
 4. **State what a passing check cannot see.** `FACT_CHECK_CLASS: PASS` was true and reached none of
    findings 3, 4 or 6, because no numeral-comparing check can reach a behavioural claim.
+
+## N7 — the independent adjudication: ACCEPTED_WITH_CONDITIONS
+
+`review/ADJUDICATION_C7.md`. **15 findings LANDED, 2 PARTIAL, 0 NOT_LANDED.** Both CRITICAL exploits
+were re-run by the adjudicator out of tree and confirmed closed *by the specific guard*, not
+incidentally — it ran eight variants to establish that the forged-grid refusal and the
+re-derivation-mismatch refusal are distinct guards. Lemma C7-U step 0 was verified by instrumentation
+to execute twice on the PRIMARY path and zero times on tier-1, which is correct. All four bounds,
+three `U`s, three `E_R`s, the ceiling, the PRIMARY selection and the verdict class were recomputed
+from the repaired modules and are **identical as exact rationals**.
+
+It also found **nine defects neither the review nor the campaign had found**. Four needed errata
+(E6–E9); all nine are repaired:
+
+| # | defect | repair |
+|---|---|---|
+| N1 | README layout block stale in four places | corrected; the fact-checker cannot see integers, by its own declared blind spot |
+| N2 | `lambda_lower_tier2` dead, **public and unguarded** — `e = 1.90, U = 0.1` returned 4.219038180 | function removed (E7); the disposition's "dead code removed" was false of it |
+| N3 | **`K` and `H` unchecked at every real entry point** — `H = 6` gives 4.250984509, above PRIMARY, and KG5 does not fire | `_require_frozen_model` at every entry point (E9); M19/M20 drive the real path |
+| N4 | a B0 check named a property it did not test; another's condition was the literal `True` | both now test real properties |
+| N5 | five kill gates enforced that the frozen gate does not enumerate | KG10/KG10b declared and kept; **KG11 removed** — it gated on an analysis the theorem does not use (E8) |
+| N6 | `MONTE_CARLO_RUNS` and `mirror_equivalence_asserted` were literals, the latter making its own gate vacuous | mirror equivalence now carries both values and is compared; the MC count is marked declared-not-measured |
+| N7 | within-commit ordering unverifiable | recorded as a limitation, below |
+| N8 | `finiteness` bound inside the loop, so step 0 reported the *last* source not the PRIMARY | bound explicitly from `"elementary"` and the source is named in the artifact |
+| N9 | the ledger predated the repairs | regenerated |
+
+**The one that should have been caught here, not there.** N3 is C4's own documented
+threshold-confusion failure mode — the error whose repair C4 made structural, and which this
+campaign's gate lists as KG7. C7 inherited the check into `c7_certificate.py`, where it tested that
+module's own constants, and into the mutation suite's *mirror*. The real entry points accepted any
+`K`, `H` at all, at a larger inflation (+18.5 %) than either exploit the review found. Three
+successive rounds of adversarial attention were needed to find a defect the programme had already
+documented once.
+
+**The one that is pure governance.** E6: `MUTATION_CLASS` read `PASS` while the artifact's own prose
+said four required mutants survive, and the frozen KG8 says any such survivor means REFUSE. The
+campaign had narrowed a frozen kill gate in its own favour and mentioned it nowhere. It is now
+reported as `PASS_WITH_SURVIVORS`, with the frozen text and a `KG8_literal_status` of **NOT
+SATISFIED** carried in the artifact.
+
+**Acknowledged limitation (adjudication N7).** The certificate gates on the mutation, primitives, ψ
+and B0 artifacts, and all were committed together, so commit-granular ordering cannot establish that
+the certificate was produced *after* the artifacts it consumes. Stated rather than inferred either
+way. What can be established: the certificate re-reads each artifact at run time and fires its kill
+gates on their contents, and the full chain has been re-run end to end in dependency order.
+
+**Disposition: ALL CONDITIONS ADDRESSED.** The published bounds are unchanged through both rounds —
+**3.586306094**, before the review, after the review, and after the adjudication. Every one of the 26
+findings across the two rounds was in a mechanism, a claim, or a presentation, and none in the
+committed evaluation path.

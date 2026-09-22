@@ -131,6 +131,7 @@ def lambda_lower(e: F, K: F, H: F) -> dict:
     A LOWER bound on (H + psi_min)/E[V] needs psi_min from below and E[V] from ABOVE.
     """
     e, K, H = F(e), F(K), F(H)
+    _require_frozen_model(K, H)
     _require_in_cell(e)
     pm = psi_min_lower(e, K, H)
     EV = G.E_excess(e, K)                     # interval; the upper end is the safe one here
@@ -150,37 +151,16 @@ def lambda_lower(e: F, K: F, H: F) -> dict:
 
 
 # ==================================================================================================
-# TIER 2 -- a sharper psi bound using a CERTIFIED UPPER bound on E[tau']
+# TIER 2 -- REMOVED
 # ==================================================================================================
-"""Theorem C7-E2b (two-tier overshoot bound).
+# lambda_lower_tier2 was the single-split precursor of the multi-tier theorem and had no caller. It
+# was removed rather than left in place: it took a BARE U with no certificate and no _resolve_U, and
+# never checked cell membership, so both repaired exploits stayed reachable through it
+# (lambda_lower_tier2(e=1.90, U=0.1) returned 4.219038180 with no refusal). A dead public entry point
+# that bypasses the guards the erratum says are "now enforced in code" falsifies that sentence. The
+# gate's u0_ladder_for_tier2 is consequently inert; see ERRATUM_C7_GATE.md E7.
 
-Tier 1 replaces E[R] by inf psi, which is attained only where the deficit D is near H -- an event of tiny
-probability. Tier 2 shows that directly, using a certified UPPER bound on E[tau'] and nothing else.
-
-From the tier-1 proof, E[R] = integral of psi against a PROBABILITY measure mu on [0, H], namely
-mu(du) = sum_n E[1{tau' >= n} p(D_n) 1{D_n in du}]  (it has total mass sum_n P(tau' = n) = 1).
-For any u0 in [0, H], since p is non-increasing and p(D_n) <= p(u0) whenever D_n > u0,
-
-    mu((u0, H])  =  sum_n E[1{tau' >= n} p(D_n) 1{D_n > u0}]
-                 <= p(u0) * sum_n P(tau' >= n)  =  p(u0) * E[tau']  <=  p(u0) * U
-
-for any certified U >= E[tau']. With q := min(1, p(u0) * U),
-
-    E[R]  >=  psi_lo(u0) * (1 - q)  +  psi_lo(H) * q,
-
-where psi_lo(u) := r(K + u - e) / (1 + f(K)) is the tier-1 uniform lower bound on psi over [0, u]
-(valid there because r and f are both decreasing -- (M1) and (M2); NO monotonicity of psi itself is
-needed). The expression is decreasing in q, so q must be taken from ABOVE.
-
-E[tau'] <= E[tau] because tau >= tau' pathwise, and E[tau] <= Lambda_309 <= A0 for any admissible
-atom constant A0 -- a certified upper bound, which is not circular: we use an upper bound on the
-quantity to sharpen a LOWER bound on it.
-
-Tier 2 therefore depends on a committed operator constant and so on the Arb/FLINT certification surface;
-tier 1 does not depend on any registry constant at all. Both are reported, and the surface-independent
-tier-1 value is the floor that survives if that surface is ever questioned.
-"""
-
+# --- shared helpers (these lived in the removed tier-2 block; tier k depends on them) ----------
 
 def p_upper(u: F, e: F, K: F) -> F:
     """An upper bound on p(u) = P(V > u) = Phi(-(s-e)) + Phi(-(s+e)), s = K + u."""
@@ -189,7 +169,12 @@ def p_upper(u: F, e: F, K: F) -> F:
 
 
 def psi_lo_at(u: F, e: F, K: F) -> F:
-    """r(K + u - e) / (1 + f(K)) -- a lower bound on psi(v) for EVERY v in [0, u]."""
+    """r(K + u - e) / (1 + f(K)) -- a lower bound on psi(v) for EVERY v in [0, u].
+
+    Valid on the whole subinterval because r and f are both decreasing -- (M1) and (M2) -- so
+    evaluating each at the endpoint that minimises the quotient bounds psi below throughout. No
+    monotonicity of psi itself is needed or claimed.
+    """
     t = F(K) + F(u) - F(e)
     # t may be NEGATIVE for small u: with e = 1.98 > K = 0.5 the lower reflected tail sits on the
     # favourable side. Both monotonicity facts hold on all of R -- (M1) because the Gaussian is
@@ -201,34 +186,6 @@ def psi_lo_at(u: F, e: F, K: F) -> F:
     if not r.lo > 0:
         raise TheoremRefusal(f"certified lower bound on the mean residual life at t={float(t)} is not positive")
     return (G.Iv(r.lo, r.lo) / (G.Iv(1, 1) + G.Iv(fk.hi, fk.hi))).lo
-
-
-def lambda_lower_tier2(e: F, K: F, H: F, U: F, ladder) -> dict:
-    """Tier 2, maximised over a PROSPECTIVELY FIXED ladder of split points u0.
-
-    `ladder` is fixed by the frozen gate before evaluation. Taking the max over a fixed finite set of
-    individually valid lower bounds is itself valid and is not result-dependent selection.
-    """
-    e, K, H, U = F(e), F(K), F(H), F(U)
-    EV = G.E_excess(e, K)
-    psi_H = psi_lo_at(H, e, K)
-    rows = []
-    for u0 in ladder:
-        u0 = F(u0)
-        if not (0 <= u0 <= H):
-            raise TheoremRefusal("split point outside [0, H]")
-        pu = p_upper(u0, e, K)
-        q = min(F(1), pu * U)                                  # q from ABOVE: the bound decreases in q
-        psi_u0 = psi_lo_at(u0, e, K)
-        ER = psi_u0 * (1 - q) + psi_H * q
-        if ER < psi_H:
-            raise TheoremRefusal("tier-2 E[R] fell below the tier-1 floor, which is impossible")
-        L = (G.Iv(H + ER, H + ER) / G.Iv(EV.hi, EV.hi)).lo
-        rows.append({"u0": u0, "p_upper": pu, "q_upper": q, "psi_lo_u0": psi_u0,
-                     "E_R_lower": ER, "L_lower": L})
-    best = max(rows, key=lambda r: r["L_lower"])
-    return {"U_used": U, "psi_lo_H": psi_H, "E_V_upper": EV.hi, "ladder": [str(F(x)) for x in ladder],
-            "rows": rows, "best": best}
 
 
 # ==================================================================================================
@@ -271,6 +228,7 @@ def lambda_lower_tier_k(e: F, K: F, H: F, U_cert, partition) -> dict:
     section below for why.
     """
     e, K, H = F(e), F(K), F(H)
+    _require_frozen_model(K, H)
     _require_in_cell(e)
     U, U_deps = _resolve_U(U_cert, e, K, H)
     us = [F(u) for u in partition]
@@ -482,6 +440,25 @@ GATE_E_LO, GATE_E_HI = F(19839101, 10000000), F(2092283, 1000000)
 GATE_C_FINITENESS = F(1)
 
 
+# The frozen CUSUM model. K and H are NOT free parameters: every derivation in this module is tied
+# to the alarm rule of the frozen kernel, and KG7 exists because mis-taking the threshold inflates
+# the bound in the UNSOUND direction while leaving every other check happy. That gate lived only in
+# c7_certificate.py, testing that module's own constants, and in the mutation suite's MIRROR -- so
+# the real entry points accepted any K, H at all. Driving lambda_lower_tier_k at H = 11/2 gave
+# 3.925355098 and at H = 6 gave 4.250984509, both above the published PRIMARY, both below the
+# certified A0 and the family ceiling, so KG5 did not fire either: a +18.5% inflation through the
+# public API with no mutation, and a larger one than either exploit the pre-publication review found.
+GATE_K, GATE_H = F(1, 2), F(5)
+
+
+def _require_frozen_model(K: F, H: F) -> None:
+    if F(K) != GATE_K or F(H) != GATE_H:
+        raise TheoremRefusal(
+            f"K = {K}, H = {H} are not the frozen CUSUM model constants K = {GATE_K}, H = {GATE_H} "
+            f"(K + H must equal the frozen threshold C_CUSUM = 11/2); every derivation here is tied "
+            f"to that kernel's alarm rule")
+
+
 def _require_in_cell(e: F) -> None:
     """Lambda_309 is a sup over the CLOSED cell, so any point in it gives a valid lower bound -- and
     any point OUTSIDE it gives a number that bounds nothing. e = 1.90 yields 3.642963840, above the
@@ -497,6 +474,8 @@ def certified_U(source: str, e: F, K: F, H: F, a_grid=None) -> dict:
     if source not in _U_SOURCES:
         raise TheoremRefusal(f"U source {source!r} is not on the gate's admitted list {_U_SOURCES}")
     e, K, H = F(e), F(K), F(H)
+    _require_frozen_model(K, H)
+    _require_in_cell(e)
     if source == "elementary":
         if a_grid is None:
             raise TheoremRefusal("the elementary source requires the gate's frozen a-grid")

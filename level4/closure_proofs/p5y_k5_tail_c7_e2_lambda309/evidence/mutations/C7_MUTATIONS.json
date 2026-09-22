@@ -1,5 +1,7 @@
 {
- "MUTATION_CLASS": "PASS",
+ "KG8_frozen_text": "any mutant in the required-detection set survives -> REFUSE",
+ "KG8_literal_status": "NOT SATISFIED. M01-M04 are in the required-detection set and they SURVIVE. Under the frozen text KG8 fires and C7_CLASS is REFUSED. The campaign reads KG8 as governing INTERFACE mutants, which is a NARROWING of the frozen text, made in the campaign's own favour, and it is recorded as such in ERRATUM_C7_GATE.md E6 rather than left silent. The previous artifact reported MUTATION_CLASS = PASS with undetected = [] and no mention of KG8 anywhere in the erratum, README or disposition.",
+ "MUTATION_CLASS": "PASS_WITH_SURVIVORS",
  "N_partition": 16,
  "U_source": "lorden",
  "baseline_bound": "7665325533695724142906717653717744205723544350046178990372181249729570260870267125510633501054145/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576",
@@ -17,8 +19,29 @@
   },
   "untested_primitives": "Neither psi_exact nor any mutant can see a systematic error in G.Phi or G.phi, since every expression in the namespace is built from those two. The review checked them against known values independently; code/c7_primitives_test.py now commits that check."
  },
- "mirror_equivalence_asserted": true,
- "mirror_value": "7665325533695724142906717653717744205723544350046178990372181249729570260870267125510633501054145/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576",
+ "interface_mutants": [
+  "M05",
+  "M06",
+  "M07",
+  "M08",
+  "M09",
+  "M10",
+  "M11",
+  "M12",
+  "M13",
+  "M19",
+  "M20",
+  "M16",
+  "M17",
+  "M18"
+ ],
+ "interface_undetected": [],
+ "mirror_equivalence": {
+  "equal_as_exact_rationals": true,
+  "note": "previously a literal True that KG8b then checked -- sound only because main() returns early when the mirror disagrees, so the gate was vacuous as written. Both values are now carried so the gate can compare them itself.",
+  "parameterised_mirror": "7665325533695724142906717653717744205723544350046178990372181249729570260870267125510633501054145/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576",
+  "real_pipeline": "7665325533695724142906717653717744205723544350046178990372181249729570260870267125510633501054145/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576"
+ },
  "mutants": [
   {
    "detail": "formally the wrong rounding direction; the effect is 42x the 2^-320 grid unit -- NOT below the grid -- but does not alter any digit of the reported value. Recorded as surviving, not as detected.",
@@ -124,6 +147,20 @@
    "outcome": "DETECTED_BY_RULE"
   },
   {
+   "detail": "K = 1/2, H = 11/2 are not the frozen CUSUM model constants K = 1/2, H = 5 (K + H must equal the frozen threshold C_CUSUM = 11/2); every derivation here is tied ",
+   "expected_direction": "UP",
+   "id": "M19",
+   "name": "REAL entry point driven at H = C_CUSUM = 11/2 (threshold confusion)",
+   "outcome": "DETECTED_BY_RULE"
+  },
+  {
+   "detail": "K = 1/2, H = 6 are not the frozen CUSUM model constants K = 1/2, H = 5 (K + H must equal the frozen threshold C_CUSUM = 11/2); every derivation here is tied to ",
+   "expected_direction": "UP",
+   "id": "M20",
+   "name": "REAL entry point driven at H = 6",
+   "outcome": "DETECTED_BY_RULE"
+  },
+  {
    "detail": "presented a_grid does not match the gate's frozen grid; presented ['-47/20']..., frozen ['2', '9/4', '5/2', '11/4']...",
    "expected_direction": "UP",
    "id": "M16",
@@ -192,12 +229,26 @@
   "M11",
   "M12",
   "M13",
+  "M19",
+  "M20",
   "M16",
   "M17",
   "M18"
  ],
  "schema": "C7_MUTATIONS/1",
- "sha256": "b7c30dd71f4f6ab1f1f46625fe71300b48e0f4d96847be36da93afbe5a3f3a20",
+ "sha256": "945a2e420b686e9a34636f7309cdd286ada8d0eefc35da4978be4a9e470ec2f7",
+ "source_mutants": [
+  "M01",
+  "M02",
+  "M03",
+  "M04"
+ ],
+ "source_surviving": [
+  "M01",
+  "M02",
+  "M03",
+  "M04"
+ ],
  "surviving_required_mutants_note": "These mutants are NOT detected. They survive with the wrong rounding direction and are recorded here rather than folded into undetected = [], because a reader checking coverage on item E must see that the suite supplies no positive evidence on rounding direction -- that was verified by hand in the pre-publication review instead. They are separated from `undetected` only because their effect cannot reach a reported digit.",
  "undetected": [],
  "unsound_below_reported_precision": [

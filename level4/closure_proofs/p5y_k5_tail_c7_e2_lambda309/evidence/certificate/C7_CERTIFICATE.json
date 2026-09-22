@@ -82,9 +82,10 @@
  "detector": "CUSUM",
  "evaluated_at_e": "19839101/10000000",
  "external_non_evidence_activity": {
-  "MONTE_CARLO_RUNS": 4,
+  "MONTE_CARLO_RUNS_declared": 4,
   "any_C7_conclusion_depends_on_it": false,
   "consistency": "falls inside the bracket C7's own certified arithmetic gives independently, E[tau'] in [3.586306, 4.679910]",
+  "count_is_declared_not_measured": "nothing in this tree can corroborate the count, or that there were not more. It ran out of tree, so no producer observed it. Recorded as a declaration by the campaign, which is the most this artifact can say.",
   "declared_because": "the frozen gate forbids 'Monte Carlo of any kind' unconditionally, and an out-of-tree Monte Carlo cross-check WAS commissioned and run. Declaring it here rather than leaving it in a note is the repair; the gate is not amended. See ERRATUM_C7_GATE.md E4.",
   "imports": "python3 standard library only; no campaign module imported",
   "result": "E[tau'] ~ 3.98842 +/- 0.00050, E[R] ~ 1.04797 +/- 0.00032",
@@ -108,6 +109,7 @@
   "geometric_stages": 6,
   "p_lower": "1465334603847317925517674635795023620427748464944894348007933137239361640795153982345737196388245/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576",
   "p_lower_float": 0.6860222366544247,
+  "source": "elementary",
   "why": "step 3 of Lemma C7-U divides by E[V] - g(a) after substituting Wald, which is invalid if E[R] = infinity. This was previously proved in a docstring and executed nowhere."
  },
  "m": 5,
@@ -144,11 +146,11 @@
   ]
  },
  "schema": "C7_CERTIFICATE/1",
- "sha256": "12a04aa0c05f9639a1535d1870a67f8e06eec1ab8894e59391c48918819f7832",
+ "sha256": "8ab7b640602c4118bf8f7f377f83c2742103503c8608e21fb2dbba1fb6e03594",
  "supporting_artifacts": {
   "mutations": {
-   "class": "PASS",
-   "count": 18,
+   "class": "PASS_WITH_SURVIVORS",
+   "count": 20,
    "max_undetectable_U_inflation_percent": 1.0985,
    "surviving_below_reported_precision": [
     "M01",
@@ -163,7 +165,7 @@
    "class": "PASS",
    "identities": 8
   },
-  "psi_monotonicity": {
+  "psi_monotonicity_DIAGNOSTIC_NOT_A_GATE": {
    "criterion_holds_at_every_knot": true,
    "tightening_declined_percent": 0.05624166044571126,
    "worst_psi_times_h": 0.9434434039746084

@@ -166,10 +166,17 @@ def main() -> int:
 
     # --- 15-16: guard state ----------------------------------------------------------------------
     guard_files = C.git("ls-files", "--", "*GUARD*", "*guard*").splitlines()
-    chk(15, "guard state discoverable and C7 declares it will not touch it", True,
+    # This was chk(..., True, ...) -- a check whose condition was the literal True, counting toward
+    # "17/17". It now tests a real property: that C7 has modified no guard or authorization file.
+    touched_guard = [ln for ln in C.git("status", "--porcelain").splitlines()
+                     if any(k in ln.lower() for k in ("guard", "authoriz", "execution"))]
+    guard_in_diff = [ln for ln in C.git("diff", "--name-only", "f494416f..HEAD").splitlines()
+                     if any(k in ln.lower() for k in ("guard", "authoriz", "execution"))]
+    chk(15, "C7 has modified no guard or authorization file, working tree or history",
+        not touched_guard and not guard_in_diff,
         {"guard_declared": "DENY", "EXECUTION_AUTHORIZED": False,
-         "candidate_guard_files": guard_files[:8],
-         "note": "C7 neither reads nor writes the guard; it is recorded as an invariant of the campaign"})
+         "dirty_guard_paths": touched_guard, "guard_paths_in_branch_diff": guard_in_diff,
+         "candidate_guard_files_seen": guard_files[:8]})
 
     # This check previously asserted that the gate and certificate did NOT exist, which was true only
     # before the freeze and made the audit permanently unreproducible afterwards. The durable
@@ -183,9 +190,12 @@ def main() -> int:
             {"phase": "pre-freeze"})
     else:
         gsha = C.sha256_file(gate_p)
-        chk(16, "gate matches its frozen sha256 and precedes the certificate", gsha == GATE_SHA,
+        # The name previously claimed an ordering property the boolean never evaluated. Ordering is
+        # tested by c7_factcheck.py check 3; this check tests gate INTEGRITY, and now says so.
+        chk(16, "gate matches its frozen sha256", gsha == GATE_SHA,
             {"phase": "post-freeze", "gate_sha256": gsha, "expected": GATE_SHA,
-             "certificate_present": cert_p.exists()})
+             "certificate_present": cert_p.exists(),
+             "ordering_tested_by": "c7_factcheck.py check 3 (gate_ordering)"})
 
     chk(17, "every module in code/ was walked by the import audit",
         set(imports) == {p.name for p in code} and len(code) >= 8,
