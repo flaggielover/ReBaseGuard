@@ -1,0 +1,326 @@
+{
+ "B0_CLASS": "PASS",
+ "LOCAL_MAIN_REF": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+ "N9_DOSSIER": {
+  "CLOSURE_CONDITION_AS_C11_READS_IT": "a second certifier, written independently of the first's load-bearing implementation, consuming the same frozen mathematical inputs, producing its own certified bound on the same operator quantity, agreeing with the first under a rule frozen before comparison",
+  "MODALITY_CLASSIFICATION": {
+   "EXAMPLE": [
+    "cell 305's existing second route (the registry-free Lemma G supply) is cited as an instance of 'a second, structurally independent route'"
+   ],
+   "INTERPRETATION": [
+    "NOT STATED ANYWHERE: whether arithmetic-BACKEND independence (not using Arb/FLINT) is required, or only implementation independence. The risk is worded as 'a single implementation of the Arb supersolution machinery', which a same-backend rewrite would only partly answer. C11 therefore targets BOTH and says so, rather than promoting either reading into a requirement the source does not state.",
+    "NOT STATED ANYWHERE: a numeric agreement tolerance. C11 must freeze one prospectively and cannot recover it from history."
+   ],
+   "MUST": [
+    "a second certifier must be INDEPENDENTLY WRITTEN",
+    "it must be a second route to THE SAME CONCLUSION",
+    "bit-identity on one stack does NOT count -- that is determinism"
+   ],
+   "SHOULD": [
+    "the replacement floor a successor freezes should require agreement between two independent certifier implementations"
+   ]
+  },
+  "ORIGIN": {
+   "artifact": "level4/closure_proofs/p5y_k5_tail_c2_closure/OPEN_NOTES_DISPOSITION_C2.md",
+   "commit": "a03b3f2ea9c895b8823accef4682d02a626ac46f",
+   "sha256": "94664ed65963132e984efa4aa74ce81a6a27450fd83a74d91b98fce089596a2a",
+   "status": "OPEN",
+   "wording": "**N9 \u2014 the Arb/FLINT supersolutions remain the residual trust surface.** C2 has re-certified cell 306's eighteen artifacts, and re-run the whole-registry verification, on a host whose OS, architecture, Python and compiled Arb/FLINT build are recorded in the artifact \u2014 but this is still **one implementation**. A second, independently written certifier is the real answer, and C2 has not built one. - **N10 \u2014 the registry does not record the host that bu"
+  },
+  "RELATION_TO_F1": {
+   "effect": "F1 is available while N9 is open and LAPSES when N9 closes",
+   "wording": "This limb is available for as long as **N9** (no second, independently written > certifier of the operator constants) remains open, and lapses when N9 is closed. > > **F2 \u2014 degradation survi"
+  },
+  "RELATION_TO_REPLACEMENT_FLOOR": {
+   "effect": "closing N9 is the named precondition for a successor freezing a replacement floor that requires two-implementation agreement instead of F1",
+   "wording": "a **second, independently written certifier** reproducing the six operator constants for cell 306 (closing N9), at which point the registry-dependence objection is answered and a successor should freeze a replacement floor requiring agreement between two independent certifier implementations rat"
+  },
+  "RISK_AS_STATED_BY_THE_ADJUDICATION": {
+   "artifact": "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/adjudication/C2_ADJUDICATION.md",
+   "sha256": "f37dae47b3548bd4b24a0973ba57af869c076fb424c9b46bf4a86d67f74823ef",
+   "wording": "The open risk is N9: a possible systematic error in a single implementation of the Arb supersolution machinery, of unknown magnitude. No percentage protects against an unknown-magnitude logic error. What does protect against it is a second, structurally independent route to the same conclusion. Cell 305 has one; cell 306 does no"
+  },
+  "WHAT_IS_MISSING": {
+   "reading": "implementation independence, not determinism",
+   "wording": null
+  }
+ },
+ "ORIGINAL_DEPENDENCY_GRAPH": {
+  "ALLOWED_SHARED": {
+   "caveat": "even for these, C11 prefers to re-derive the problem constants from the frozen model file rather than import the module, so that the shared surface is DATA rather than CODE.",
+   "modules": [
+    "ancestry4",
+    "ancestry5",
+    "cusum_layer1",
+    "cusum_layer2"
+   ],
+   "rule": "the frozen PROBLEM DEFINITION may be shared -- it is the thing both certifiers must agree about, and changing it would make them answer different questions. Infrastructure that touches no scientific value may be shared."
+  },
+  "FORBIDDEN_REUSE": {
+   "modules": [
+    "fast_range",
+    "intervals",
+    "opnorms",
+    "ra_certifier",
+    "rebaseguard_certify",
+    "resolvent_certificate",
+    "rung3_engine",
+    "spec",
+    "taboo_certify"
+   ],
+   "rule": "the second certifier may not import, call, wrap, or replay any of these, nor read any artifact they produced, during construction or verification"
+  },
+  "external_backend_note": "the original's arithmetic backend is numpy + flint.arb. Using a DIFFERENT backend is strictly stronger than N9's stated requirement and is what C11 targets: exact rational arithmetic via the standard library only.",
+  "external_backends": [
+   "flint",
+   "numpy",
+   "scipy"
+  ],
+  "original_certifier": {
+   "path": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/taboo_certify.py",
+   "sha256": "ced9422ca07981a9ad053acd79b72ef0d5007e93e49c16f2501f31c593fd0daa"
+  },
+  "transitive_modules": {
+   "ancestry4": {
+    "path": "level4/closure_proofs/p5y_k1_cusum_aux4_fullcover/code/ancestry4.py",
+    "role": "INFRASTRUCTURE_ONLY",
+    "sha256": "91d517955345e38592b11cabfe76edcf7594872c195950ff18c66aee2e50048a"
+   },
+   "ancestry5": {
+    "path": "level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/ancestry5.py",
+    "role": "INFRASTRUCTURE_ONLY",
+    "sha256": "0f340764f2952fcb2ee48f802177afb6949801646489c5a6eafd267b9f22b643"
+   },
+   "cusum_layer1": {
+    "path": "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/cusum_layer1.py",
+    "role": "PROBLEM_DEFINITION",
+    "sha256": "efcc0f36632632577a24c4ddf1a7c2c3579d471cdba5a752dd72c708667cdc79"
+   },
+   "cusum_layer2": {
+    "path": "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/cusum_layer2.py",
+    "role": "PROBLEM_DEFINITION",
+    "sha256": "42c3d98394a6a8536e05d50626b21c7c71c309f5f98e286bdf2a3f7b5badf5a7"
+   },
+   "fast_range": {
+    "path": "level4/closure_proofs/p5x_global_nonlinear_dynamics/compute_optimization_r2/fast_range.py",
+    "role": "SCIENTIFIC_LOAD_BEARING",
+    "sha256": "82e630bdbe31271dca057cf33dc069937ca4e54f509be34f823092675d4cdbc4"
+   },
+   "intervals": {
+    "path": "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/intervals.py",
+    "role": "SCIENTIFIC_LOAD_BEARING",
+    "sha256": "ea860c4ee1f421731b5e8c16c11184105926b7e2cf9fc36096bf77821bbfde9b"
+   },
+   "opnorms": {
+    "path": "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/opnorms.py",
+    "role": "SCIENTIFIC_LOAD_BEARING",
+    "sha256": "f195439876fe99bc6bfd5e1b7d35790c23a68f753c2ba1206508a27a11b9f67e"
+   },
+   "ra_certifier": {
+    "path": "level4/closure_proofs/p5x_global_nonlinear_dynamics/certified_method_repair_ra/ra_certifier.py",
+    "role": "SCIENTIFIC_LOAD_BEARING",
+    "sha256": "bda148a3a87cc155897a680aa3adb72a90fb8a32195a9fa36d7a88120b2dbc7e"
+   },
+   "rebaseguard_certify": {
+    "path": "rebaseguard-proof/src/rebaseguard_certify/__init__.py",
+    "role": "SCIENTIFIC_LOAD_BEARING",
+    "sha256": "3fac033384a21584baed703f2b1356b60f1bf141da96889b9efbff5f083f787e"
+   },
+   "resolvent_certificate": {
+    "path": "level4/closure_proofs/p5y_k5_cusum_order3_r3_infrastructure/code/resolvent_certificate.py",
+    "role": "SCIENTIFIC_LOAD_BEARING",
+    "sha256": "038f026beaaa0813efcca1cb19f7a5e7bd7f7a7affe419d4813c4052936e4e0f"
+   },
+   "rung3_engine": {
+    "path": "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/rung3_engine.py",
+    "role": "SCIENTIFIC_LOAD_BEARING",
+    "sha256": "6d7644c9eea8a94e43dc34ddb741af11ca3e66243548e78ce14177e3ed3f2d6b"
+   },
+   "spec": {
+    "path": "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/spec.py",
+    "role": "SCIENTIFIC_LOAD_BEARING",
+    "sha256": "12914fb7c9654c510d54f1e8a95b9efb7e635005aec0d861b7c744f7bafb55ac"
+   },
+   "taboo_certify": {
+    "path": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/taboo_certify.py",
+    "role": "SCIENTIFIC_LOAD_BEARING",
+    "sha256": "ced9422ca07981a9ad053acd79b72ef0d5007e93e49c16f2501f31c593fd0daa"
+   }
+  },
+  "unresolved": []
+ },
+ "REMOTE_MAIN_REF": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+ "checks": [
+  {
+   "detail": {
+    "branch": "p5y-k5-tail-c11-n9-independent-certifier"
+   },
+   "id": "B0_01",
+   "name": "C11 on its own branch",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "expected": "ec969db1fcd1f5f5249fa2864a81c0cb284fa66e",
+    "head": "ec969db1fcd1f5f5249fa2864a81c0cb284fa66e"
+   },
+   "id": "B0_02",
+   "name": "descends from the expected C10 HEAD",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "origin": "ec969db1fcd1f5f5249fa2864a81c0cb284fa66e"
+   },
+   "id": "B0_03",
+   "name": "origin C10 matches",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "FACT_CHECK": "PASS"
+   },
+   "id": "B0_04",
+   "name": "C10 published with fact check PASS and mutations PASS",
+   "status": "PASS"
+  },
+  {
+   "detail": [
+    "P2",
+    "P5"
+   ],
+   "id": "B0_05",
+   "name": "C10's applied decision gate is P2 + P5",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "closed_assertions": 0,
+    "open_assertions": 6,
+    "state": "OPEN"
+   },
+   "id": "B0_06",
+   "name": "N9 is OPEN, per C10's assertion scan",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "blob": "f978eeb6b41188eabaf3c6d590c9178d711f1ce6"
+   },
+   "id": "B0_07",
+   "name": "authoritative r5 reconstructs from per-cell verdicts",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "open": {
+     "1": [],
+     "2": [],
+     "3": [],
+     "5": [
+      306,
+      307,
+      308,
+      309
+     ]
+    }
+   },
+   "id": "B0_08",
+   "name": "m=5 open is exactly {306,307,308,309}; 1/2/3 complete",
+   "status": "PASS"
+  },
+  {
+   "detail": {},
+   "id": "B0_09",
+   "name": "cell 305 remains PASS and ADOPTED",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "hits": []
+   },
+   "id": "B0_10",
+   "name": "no r6 on any local branch",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "ALLOW": []
+   },
+   "id": "B0_11",
+   "name": "guard DENY: no ALLOW anywhere at C11 start",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "p5y_k5_tail_c10_governance_provenance": true,
+    "p5y_k5_tail_c2_closure": true,
+    "p5y_k5_tail_c3_closure": true,
+    "p5y_k5_tail_c4_exhaustion": true,
+    "p5y_k5_tail_c5_exhaustion": true,
+    "p5y_k5_tail_c6_evidence_recovery": true,
+    "p5y_k5_tail_c7_e2_lambda309": true,
+    "p5y_k5_tail_c8_operator_feasibility": true,
+    "p5y_k5_tail_c9_e1_cell307": true
+   },
+   "id": "B0_12",
+   "name": "C2-C10 namespace trees identical to published heads",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "LOCAL_MAIN_REF": "c123b9bb8f15d17650545b3fce4aca8a6b61093b"
+   },
+   "id": "B0_13",
+   "name": "LOCAL_MAIN_REF recorded",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "REMOTE_MAIN_REF": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+    "action": "recorded only; never synchronized",
+    "differ": true
+   },
+   "id": "B0_14",
+   "name": "REMOTE_MAIN_REF queried independently and as expected",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "foreign": 1,
+    "workers": []
+   },
+   "id": "B0_15",
+   "name": "no stale campaign process (executable identity, self-ancestry excluded)",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "importlib_find_spec": {
+     "flint": false,
+     "gmpy2": false,
+     "mpmath": false,
+     "numpy": false,
+     "scipy": false,
+     "sympy": false
+    },
+    "note": "the ORIGINAL certifier imports numpy and flint at module load"
+   },
+   "id": "B0_16",
+   "name": "no certifier process can be running: the original certifier's stack is absent",
+   "status": "PASS"
+  }
+ ],
+ "compute_boundary": {
+  "AWS": 0,
+  "NEW_REAL": 0,
+  "TARGET_CERTIFICATIONS": 0,
+  "TOOLCHAIN_PROVISIONED": 0,
+  "VULTR": 0,
+  "guard": "DENY"
+ },
+ "failed": [],
+ "schema": "C11_B0_N9/1",
+ "sha256": "49e9719b4dee5608ecf464b6566f4286e3f533bdee20881e7890681784628a1f",
+ "unchecked": []
+}
