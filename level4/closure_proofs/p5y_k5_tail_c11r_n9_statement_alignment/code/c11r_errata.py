@@ -1,0 +1,88 @@
+"""C11R errata -- defects in this campaign's own conduct, recorded as they were found.
+
+C8's recorded defect class is a SILENT deviation from a frozen gate, in the campaign's own favour.
+The remedy is not to avoid ever deviating; it is to record every deviation where a reader will find
+it, with enough detail to judge whether the correction was adequate.
+"""
+from __future__ import annotations
+
+import pathlib
+import sys
+
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import c11r_common as C
+
+ERRATA = {
+    "E1_PHASE_ORDER_TARGET_EXECUTION_BEFORE_PREFREEZE_REVIEW": {
+        "rule": ("Phase 9 of the campaign instruction: 'Do not execute target science before "
+                 "READY_TO_FREEZE.'"),
+        "what_happened": ("c11r_runs.py -- the module that certifies the cell 306 targets -- was "
+                          "started before the pre-freeze review was requested. It ran for roughly "
+                          "two minutes on the first candidate."),
+        "why_it_is_a_deviation": ("target certification is target science. Running it first would "
+                                  "have put the campaign's numbers in hand before the reviewer "
+                                  "ever saw the gate, which defeats the purpose of a review that "
+                                  "is supposed to happen while the outcome is still unknown."),
+        "correction": ("the process was killed before it wrote anything. Verified: no runs "
+                       "artifact exists, no process remains, the worktree is clean, and no target "
+                       "constant was produced or recorded. The pre-freeze review was then "
+                       "requested, and target execution is withheld until it returns "
+                       "READY_TO_FREEZE."),
+        "what_was_NOT_out_of_order": ("the Phase 6 refutation screen. Phase 6 precedes Phase 9 in "
+                                      "the instruction, and the screen is a mandated necessary-"
+                                      "condition filter, not a certification."),
+        "residual_risk": ("the author saw roughly two minutes of a depth-4 run that printed no "
+                          "result line, so no target value was observed. Nothing in the record "
+                          "depends on that being taken on trust: the artifact does not exist, and "
+                          "the reviewer was asked to verify its absence independently."),
+        "found_by": "the author, mid-run, while preparing the next phase",
+    },
+    "E2_CANDIDATE_CHANGED_ON_SCREEN_EVIDENCE": {
+        "rule": ("Phase 6: a candidate surviving the screen is ELIGIBLE, not certified; Phase 10 "
+                 "freezes the candidate policy."),
+        "what_happened": ("the atom-removed candidate was changed from w = 12 - 3/2 m to "
+                          "w = 8 - m after the screen reported both eligible."),
+        "why_it_is_recorded": ("this is a change of candidate made after seeing screen output. It "
+                               "is NOT fitting to the original's value -- the screen reports only "
+                               "this campaign's own margins, and the choice was made because "
+                               "w = 8 - m yields BOTH atom-removed constants from one "
+                               "certification run, tau as w(atom) and C_T as sup over R. But a "
+                               "reader is entitled to know the candidate set was not fixed before "
+                               "the screen ran."),
+        "disposition": ("recorded, not concealed. The candidate policy is frozen at this commit "
+                        "and does not change again after target execution begins."),
+        "found_by": "the author",
+    },
+    "E3_INSTRUCTION_QUOTED_THE_WRONG_DRIFT_BLOCK": {
+        "rule": "the campaign instruction states the frozen drift interval as [1.7885921, 1.882413].",
+        "what_happened": ("that is CELL 307's block. Cell 306's block, read from REGISTRY_C2, is "
+                          "[1.7019225, 1.7885921]. The two are adjacent: cell 307's lower endpoint "
+                          "IS cell 306's upper endpoint, 17885921/10000000 exactly, so the quoted "
+                          "pair reads as 306's top followed by 307's top."),
+        "resolution": ("the instruction names cell 306 as the target repeatedly and forbids "
+                       "substituting 307. The cell is unambiguous; only the quoted numbers are "
+                       "wrong. Cell 306's own block governs, and the discrepancy is recorded in "
+                       "the Phase 1 table rather than resolved silently."),
+        "this_is_not_a_hard_stop": ("Phase 1 requires a HARD STOP on an ambiguous constant. No "
+                                    "constant is ambiguous; a quoted interval disagrees with the "
+                                    "registry the instruction itself points at."),
+        "found_by": "Phase 1 reconstruction",
+    },
+}
+
+
+def main() -> int:
+    out = {"schema": "C11R_ERRATA/1",
+           "policy": ("defects in this campaign's own conduct, recorded where a reader will find "
+                      "them. A deviation that is recorded can be judged; one that is not, cannot."),
+           "errata": ERRATA,
+           "count": len(ERRATA)}
+    s = C.write_evidence(C.NS / "evidence" / "errata" / "C11R_ERRATA.json", out)
+    for k in ERRATA:
+        print(f"  {k}")
+    print(f"\nwrote evidence/errata/C11R_ERRATA.json sha256 {s[:16]}...")
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
