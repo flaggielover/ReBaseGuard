@@ -1,0 +1,132 @@
+{
+ "FACT_CHECK_CLASS": "PASS",
+ "WHAT_THIS_CANNOT_VERIFY": "the alpha-lever numbers are a COUNTERFACTUAL PROJECTION resting on the affine scaling of the certified surplus. No check here can establish that a sub-block actually certifies at a smaller alpha; only running the certifier can. Everything downstream of that projection inherits the same status.",
+ "findings": [],
+ "load_bearing_claim_ledger": [
+  {
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "registry_c2/taboo_block_307_*.json",
+   "statement": "cell 307 certified at the FIRST ladder rung 6/5 on all ten sub-blocks",
+   "value": [
+    "6/5"
+   ],
+   "verification_method": "read proposal.alpha on every sub-block"
+  },
+  {
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "same artifacts",
+   "statement": "each sub-block retains a margin of about 0.16",
+   "value": [
+    0.1608913749747931,
+    0.1663373317598909
+   ],
+   "verification_method": "read margin_lower_bound on every sub-block"
+  },
+  {
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "taboo_certify.py argparse",
+   "statement": "taboo_certify.py exposes --alpha/--beta/--depth/--degree as first-class arguments",
+   "value": [
+    "--alpha",
+    "--beta",
+    "--depth",
+    "--degree"
+   ],
+   "verification_method": "read the parser definitions"
+  },
+  {
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "C9 alpha-lever projection",
+   "statement": "at alpha = 21/20 the projected tightening is 1.119736x and cell 307 closes",
+   "value": 1.1197363175877808,
+   "verification_method": "recomputed from the registries via Lemma Dv' and C5-T"
+  },
+  {
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "C9 alpha-lever projection",
+   "statement": "NO admissible alpha reaches the adoption threshold 1.370009058",
+   "value": 1.1374057041669792,
+   "verification_method": "checked meets_adoption across the whole window"
+  },
+  {
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "C6_CLASSIFICATION route E1",
+   "statement": "C6 defines E1 as a BETTER tuple with nothing to replay, not as a replay",
+   "value": {
+    "existence": "OBJECT_ONLY_HYPOTHESIZED (a BETTER tuple); the CURRENT tuple",
+    "missing_what": "a TOOLCHAIN for the WORK. Every input exists and is committe"
+   },
+   "verification_method": "read existence/missing_what/required_object"
+  },
+  {
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "REGISTRY_C2.code_sha256 vs the file",
+   "statement": "REGISTRY_C2's recorded c2_refined_registry hash does not match the committed file",
+   "value": {
+    "actual": "0d1d8021a378",
+    "recorded": "4ac24d9e1826"
+   },
+   "verification_method": "recomputed sha256"
+  },
+  {
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "pip resolution in an isolated venv",
+   "statement": "numpy 2.5.2 requires Python >= 3.12, so python3.11 cannot satisfy the pin",
+   "value": "Requires-Python >=3.12 (observed in pip's resolver output)",
+   "verification_method": "built a venv on python3.11.15 and attempted install"
+  },
+  {
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "C9 config/",
+   "statement": "C9's first pass committed no charter or gate; one is now committed and marked retrospective",
+   "value": [
+    "CHARTER_C9.json"
+   ],
+   "verification_method": "directory listing plus the DISCLOSURE field"
+  },
+  {
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "git",
+   "statement": "no file outside the C9 namespace was changed",
+   "value": null,
+   "verification_method": "diff/ls-tree/grep over the committed tree"
+  },
+  {
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "git",
+   "statement": "no r6 was created",
+   "value": null,
+   "verification_method": "diff/ls-tree/grep over the committed tree"
+  },
+  {
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "git",
+   "statement": "guard never left DENY",
+   "value": null,
+   "verification_method": "diff/ls-tree/grep over the committed tree"
+  }
+ ],
+ "schema": "C9_HANDOVER_FACT_VERIFICATION/1",
+ "scope_discipline": {
+  "aws_contacts": 0,
+  "files_outside_the_C9_namespace": [],
+  "guard_ALLOW_anywhere": [],
+  "non_target_cells_evaluated": [],
+  "operator_certifications": 0,
+  "r6_created": [],
+  "target_executions": 0
+ },
+ "sha256": "cf925b2d11ee6b0ea54680e24c2cdcb12df4c550b1791152909a8fd3020af70f"
+}
