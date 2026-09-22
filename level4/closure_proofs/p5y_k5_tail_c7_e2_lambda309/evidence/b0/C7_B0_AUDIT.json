@@ -1,0 +1,246 @@
+{
+ "B0_CLASS": "PASS",
+ "campaign": "C7 -- E2 analytic lower-bound strengthening for Lambda_309",
+ "cell": 309,
+ "checks": [
+  {
+   "detail": {
+    "branch": "p5y-k5-tail-c7-e2"
+   },
+   "id": "B0_01",
+   "name": "on the C7 branch",
+   "pass": true
+  },
+  {
+   "detail": {
+    "head": "f494416f",
+    "subject": "p5y: K5 C6 adjudicated ACCEPTED_WITH_SCOPE_LIMITATION \u2014 14 conditions, 11 findings, all re-measured"
+   },
+   "id": "B0_02",
+   "name": "branched from the published C6 head",
+   "pass": true
+  },
+  {
+   "detail": {
+    "entries_on_main": []
+   },
+   "id": "B0_03",
+   "name": "C7 namespace absent from main",
+   "pass": true
+  },
+  {
+   "detail": {
+    "actual": "efcc0f36632632577a24c4ddf1a7c2c3579d471cdba5a752dd72c708667cdc79",
+    "expected": "efcc0f36632632577a24c4ddf1a7c2c3579d471cdba5a752dd72c708667cdc79"
+   },
+   "id": "B0_04",
+   "name": "frozen CUSUM model file unchanged since C4 pinned it",
+   "pass": true
+  },
+  {
+   "detail": {
+    "C_CUSUM = H_FROZEN + K_FROZEN": true,
+    "H_FROZEN = 5.0": true,
+    "K_FROZEN = 0.5": true
+   },
+   "id": "B0_05",
+   "name": "model constants present verbatim",
+   "pass": true
+  },
+  {
+   "detail": {
+    "H": "5",
+    "K": "1/2",
+    "K+H": "11/2"
+   },
+   "id": "B0_06",
+   "name": "K + H equals the frozen threshold C_CUSUM = 11/2",
+   "pass": true
+  },
+  {
+   "detail": {
+    "exact_num_digits": 97,
+    "float": 3.297250281519544,
+    "source": "p5y_k5_tail_c4_exhaustion/evidence/certificate/C4_CERTIFICATE.json#/cells/309"
+   },
+   "id": "B0_07",
+   "name": "C4 certified floor at cell 309 readable and consistent",
+   "pass": true
+  },
+  {
+   "detail": {
+    "blocker_is_A0": true,
+    "excluded": true
+   },
+   "id": "B0_08",
+   "name": "cell 309 is the cell C4 excluded, and its blocker is A0",
+   "pass": true
+  },
+  {
+   "detail": {
+    "e_hi": "2092283/1000000",
+    "e_hi_float": 2.092283,
+    "e_lo": "19839101/10000000",
+    "e_lo_float": 1.9839101
+   },
+   "id": "B0_09",
+   "name": "C4 evaluated at the cell's lower endpoint, inside the closed cell",
+   "pass": true
+  },
+  {
+   "detail": {
+    "C4_certified_floor_B": 3.297250281519544,
+    "critical_A0_C5T": 3.266415728267196,
+    "critical_A0_frozen_clause": 3.2142360226778806,
+    "slack_percent_C5T": 0.9439874105892017
+   },
+   "id": "B0_10",
+   "name": "C5-T critical A0 exceeds C4's frozen-clause critical A0, and C4's floor still clears it",
+   "pass": true
+  },
+  {
+   "detail": {
+    "A0_certified_float": 4.867216116723177,
+    "provenance_note": "operator-level, i.e. dependent on the Arb/FLINT certification surface",
+    "why_an_upper_bound": "Lemma SM(d): admissibility of A0 is equivalent to A0 >= sup_cell E_a[tau]"
+   },
+   "id": "B0_11",
+   "name": "a certified admissible A0 at cell 309 exists and upper-bounds Lambda_309",
+   "pass": true
+  },
+  {
+   "detail": {
+    "imports_per_module": {
+     "c7_b0_audit.py": [
+      "__future__",
+      "ast",
+      "c7_common",
+      "fractions",
+      "json",
+      "pathlib",
+      "sys"
+     ],
+     "c7_common.py": [
+      "__future__",
+      "fractions",
+      "hashlib",
+      "json",
+      "pathlib",
+      "subprocess"
+     ],
+     "c7_gaussian.py": [
+      "fractions"
+     ],
+     "c7_theorem.py": [
+      "c7_gaussian",
+      "fractions",
+      "pathlib",
+      "sys"
+     ]
+    },
+    "mechanism": "ast.Import / ast.ImportFrom over every module in code/",
+    "numerical_imported": [],
+    "unexpected": []
+   },
+   "id": "B0_12",
+   "name": "every C7 import resolves to an allowlisted stdlib module or a C7 module, by AST",
+   "pass": true
+  },
+  {
+   "detail": {
+    "network_imported": [],
+    "non_git_launches": {},
+    "subprocess_argv0": {
+     "c7_common.py": [
+      "git"
+     ]
+    }
+   },
+   "id": "B0_13",
+   "name": "no network module is imported, and every subprocess call launches local `git`",
+   "pass": true
+  },
+  {
+   "detail": {
+    "dirty": [],
+    "tracked_file_counts": {
+     "p5y_k1_cover_ledger_implementation": 40,
+     "p5y_k5_tail_c4_exhaustion": 27,
+     "p5y_k5_tail_c5_exhaustion": 25,
+     "p5y_k5_tail_c6_evidence_recovery": 14
+    }
+   },
+   "id": "B0_14",
+   "name": "every predecessor C7 reads is tracked and unmodified in this worktree",
+   "pass": true
+  },
+  {
+   "detail": {
+    "EXECUTION_AUTHORIZED": false,
+    "candidate_guard_files": [
+     "ReBaseGuard_Level4_StageD_TheoryBlueprint_and_Pilot_2026-08-22/rebaseguard_staged_blueprint.md",
+     "level4/closure_proofs/d4_phase_map/src/rebaseguard_d4/__init__.py",
+     "level4/closure_proofs/d4_phase_map/src/rebaseguard_d4/adversarial.py",
+     "level4/closure_proofs/d4_phase_map/src/rebaseguard_d4/common.py",
+     "level4/closure_proofs/d4_phase_map/src/rebaseguard_d4/config.py",
+     "level4/closure_proofs/d4_phase_map/src/rebaseguard_d4/decision.py",
+     "level4/closure_proofs/d4_phase_map/src/rebaseguard_d4/direct_map.py",
+     "level4/closure_proofs/d4_phase_map/src/rebaseguard_d4/figures.py"
+    ],
+    "guard_declared": "DENY",
+    "note": "C7 neither reads nor writes the guard; it is recorded as an invariant of the campaign"
+   },
+   "id": "B0_15",
+   "name": "guard state discoverable and C7 declares it will not touch it",
+   "pass": true
+  },
+  {
+   "detail": {
+    "certificate_present": false,
+    "gate_present": false
+   },
+   "id": "B0_16",
+   "name": "no C7 result artifact exists yet (the gate is not yet frozen)",
+   "pass": true
+  }
+ ],
+ "compute_boundary": {
+  "EXECUTION_AUTHORIZED": false,
+  "NEW_REAL": 0,
+  "REMOTE_HOSTS_CONTACTED": 0,
+  "SCIENTIFIC_KERNEL_EVALUATIONS": 0,
+  "TOOLCHAIN_PROVISIONED": 0,
+  "guard": "DENY"
+ },
+ "detector": "CUSUM",
+ "facts": {
+  "c4_cell309": {
+   "A0_certified_float": 4.867216116723177,
+   "E_excess_upper": "404880364991684904784549779004007277748145604629719893902520098690748103567805133322305996757249/266998379490113760299377713271194014325338065294581596243380200977777465722580068752870260867072",
+   "blocker_is_A0": true,
+   "critical_A0_frozen_clause": 3.2142360226778806,
+   "e_hi": "2092283/1000000",
+   "e_lo": "19839101/10000000",
+   "evaluated_at_e": "19839101/10000000",
+   "excluded": true,
+   "gate_sha256": "d5b5b385d5c123ccd5993116901797f1ef2b75054a56617dfd07e860d526a647",
+   "lower_bound_E_a_tau": "7042883855512317228573616624030771257929457129673562463047347660946518958771696089275290742247463/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576",
+   "lower_bound_float": 3.297250281519544,
+   "slack_over_critical_percent": 2.5827057582567217,
+   "source": "p5y_k5_tail_c4_exhaustion/evidence/certificate/C4_CERTIFICATE.json#/cells/309"
+  },
+  "c5_critical_a0": {
+   "C4_certified_floor_B": 3.297250281519544,
+   "critical_A0_C5T": 3.266415728267196,
+   "critical_A0_frozen_clause": 3.2142360226778806,
+   "slack_percent_C5T": 0.9439874105892017,
+   "slack_percent_frozen": 2.582705758256717,
+   "source": "p5y_k5_tail_c5_exhaustion/evidence/forecast/C5_FORECAST.json#/c4_exclusion_fragility/2_margin_in_C4s_own_currency_critical_A0"
+  },
+  "model_sha256": "efcc0f36632632577a24c4ddf1a7c2c3579d471cdba5a752dd72c708667cdc79"
+ },
+ "failed": [],
+ "m": 5,
+ "schema": "C7_B0_AUDIT/1",
+ "sha256": "948e27f7b2f771b42549ed7c0cfd8ae3e85ffeacc1e5f825baf4d4019b0fa169"
+}
