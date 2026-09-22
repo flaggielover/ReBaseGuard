@@ -1,0 +1,243 @@
+{
+ "B0_CLASS": "PASS",
+ "LOCAL_MAIN_REF": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+ "Q1_ANSWER": "The pin is NOT broken. REGISTRY_C2 records the producer's content sha256 as it stood when the registry was built, and that value matches the producer at that commit exactly. The file was then edited twice, AFTER the registry was sealed, and both edits are confined to verify() and main(). Every build-path unit and every scientific constant is byte-identical. The recorded field is a build-time RECORD, not a constraint on the current tree, and no consumer compares it to HEAD. C9 read a build-time self-hash as if it were a live integrity constraint.",
+ "Q1_PROVENANCE_CLASS": "C_GOVERNANCE_DRIFT",
+ "Q1_diff_classification": {
+  "BUILD_PATH_IDENTICAL": true,
+  "build_path_units_changed": [],
+  "method": "AST unit-level comparison of the bound version against HEAD, not a line diff: every top-level function, class and constant is extracted and compared",
+  "scientific_constants_identical": true,
+  "units_changed": [
+   "main",
+   "verify"
+  ]
+ },
+ "Q1_hash_archaeology": {
+  "commit_bound_by_the_pin": "e71378a09e34221e93b93e50907d8742d1d0f096",
+  "current_c2_refined_registry": "0d1d8021a3780e13c567f583c1e490025ea2ca43dbfa7082f7dd5905e965b623",
+  "current_taboo_certify": "ced9422ca07981a9ad053acd79b72ef0d5007e93e49c16f2501f31c593fd0daa",
+  "divergence_commit": "e9c230d3eb760cb4e234594805ffae77a6f810e7",
+  "divergence_subject": "p5y: K5 Campaign C2 \u2014 the registry verifier could never pass; fixed",
+  "hash_kinds_distinguished": {
+   "git_blob_id": "sha1 over 'blob <len>\\0' + content -- a DIFFERENT function; the timeline carries both so the two can never be confused",
+   "recorded": "CONTENT sha256"
+  },
+  "pin_path_claimed": "c2_refined_registry (the producer itself) and taboo_certify",
+  "producer_timeline": [
+   {
+    "commit": "e71378a09e34221e93b93e50907d8742d1d0f096",
+    "content_sha256": "4ac24d9e182656a45770fc02f58e96d9e0492456c7b1991c752426f9bcecdc91",
+    "date": "2026-09-20",
+    "git_blob_id_sha1": "3599cfbc3dc1a07726e825ada4ad5956baa0fa0f",
+    "matches_registry_pin": true,
+    "short": "e71378a09e34",
+    "subject": "p5y: K5 Campaign C2 \u2014 Phase D1 blocker diagnosis, and the D2/D3 refined operator registry builder"
+   },
+   {
+    "commit": "e9c230d3eb760cb4e234594805ffae77a6f810e7",
+    "content_sha256": "629715c0afdf845bf2931d5167cbd50b22836b31e915648af4105066ae714a11",
+    "date": "2026-09-21",
+    "git_blob_id_sha1": "864bc745af41f78e5cafad24ec67037bf35b3dcc",
+    "matches_registry_pin": false,
+    "short": "e9c230d3eb76",
+    "subject": "p5y: K5 Campaign C2 \u2014 the registry verifier could never pass; fixed"
+   },
+   {
+    "commit": "2b045564d137a21d2c74e19a6f21a073466190f4",
+    "content_sha256": "0d1d8021a3780e13c567f583c1e490025ea2ca43dbfa7082f7dd5905e965b623",
+    "date": "2026-09-21",
+    "git_blob_id_sha1": "3ef8fe6773dbff64199938ea9f933734340aebe3",
+    "matches_registry_pin": false,
+    "short": "2b045564d137",
+    "subject": "p5y: K5 Campaign C2 \u2014 record two claims as verified rather than asserted"
+   }
+  ],
+  "recorded_c2_refined_registry": "4ac24d9e182656a45770fc02f58e96d9e0492456c7b1991c752426f9bcecdc91",
+  "recorded_taboo_certify": "ced9422ca07981a9ad053acd79b72ef0d5007e93e49c16f2501f31c593fd0daa",
+  "registry_artifact": "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/registry_c2/REGISTRY_C2.json",
+  "registry_created_at_commit": "5a94568af69f775eaabdeb895dea19b9bf664935",
+  "registry_rebuilt_since": 0,
+  "taboo_pin_still_matches": true
+ },
+ "Q1_pin_semantics": {
+  "any_consumer_compares_it_to_HEAD": false,
+  "evidence": "the field is emitted as sha(HERE.read_bytes()) inside the build, so it RECORDS what built the registry. No consumer re-checks it against the working tree. The dependency that IS enforced at run time is TABOO_SHA256, and that one still matches.",
+  "producer_self_hash_written_at_build_time": true,
+  "taboo_dependency_enforced_at_runtime": false
+ },
+ "REMOTE_MAIN_REF": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+ "checks": [
+  {
+   "detail": {
+    "branch": "p5y-k5-tail-c10-governance-provenance"
+   },
+   "id": "B0_01",
+   "name": "C10 on its own branch",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "expected": "fd3cb2d4cbf7c011e619fe6c794bec2ef9226d16",
+    "head": "fd3cb2d4cbf7c011e619fe6c794bec2ef9226d16"
+   },
+   "id": "B0_02",
+   "name": "descends from the expected C9 HEAD",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "origin": "fd3cb2d4cbf7c011e619fe6c794bec2ef9226d16"
+   },
+   "id": "B0_03",
+   "name": "origin C9 matches",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "FACT_CHECK_CLASS": "PASS",
+    "PHASE5_RESULT": "EXECUTION_BLOCKED_ON_RUNTIME_AND_AUTHORIZATION"
+   },
+   "id": "B0_04",
+   "name": "C9 published with its fact check PASS",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "aws_contacts": 0,
+    "files_outside_the_C9_namespace": [],
+    "guard_ALLOW_anywhere": [],
+    "non_target_cells_evaluated": [],
+    "operator_certifications": 0,
+    "r6_created": [],
+    "target_executions": 0
+   },
+   "id": "B0_05",
+   "name": "C9 executed no certification and evaluated no non-target cell",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "ALLOW_files": []
+   },
+   "id": "B0_06",
+   "name": "guard DENY: no ALLOW declaration exists anywhere",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "blob": "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
+    "complete": false
+   },
+   "id": "B0_07",
+   "name": "authoritative r5 reconstructs from per-cell verdicts",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "open": {
+     "1": [],
+     "2": [],
+     "3": [],
+     "5": [
+      306,
+      307,
+      308,
+      309
+     ]
+    }
+   },
+   "id": "B0_08",
+   "name": "m=5 open is exactly {306,307,308,309} and 1/2/3 are complete",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "adopted": [
+     305
+    ],
+    "verdict": "PASS"
+   },
+   "id": "B0_09",
+   "name": "cell 305 remains PASS and ADOPTED",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "hits": []
+   },
+   "id": "B0_10",
+   "name": "no r6 on any local branch",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "p5y_k5_tail_c2_closure": true,
+    "p5y_k5_tail_c3_closure": true,
+    "p5y_k5_tail_c4_exhaustion": true,
+    "p5y_k5_tail_c5_exhaustion": true,
+    "p5y_k5_tail_c6_evidence_recovery": true,
+    "p5y_k5_tail_c7_e2_lambda309": true,
+    "p5y_k5_tail_c8_operator_feasibility": true,
+    "p5y_k5_tail_c9_e1_cell307": true
+   },
+   "id": "B0_11",
+   "name": "C2-C9 namespace trees identical to their published heads",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "LOCAL_MAIN_REF": "c123b9bb8f15d17650545b3fce4aca8a6b61093b"
+   },
+   "id": "B0_12",
+   "name": "LOCAL_MAIN_REF recorded",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "REMOTE_MAIN_REF": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+    "action": "recorded only; never synchronized",
+    "differ": true
+   },
+   "id": "B0_13",
+   "name": "REMOTE_MAIN_REF queried independently and as expected",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "campaign_workers": [],
+    "foreign": 1
+   },
+   "id": "B0_14",
+   "name": "no stale campaign process (executable identity, self-ancestry excluded)",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "importlib_find_spec_absent": {
+     "flint": true,
+     "numpy": true,
+     "scipy": true
+    },
+    "method": "measured with importlib.find_spec, not declared. The certifier imports numpy and flint at module load, so with both absent no certification process can exist on this host."
+   },
+   "id": "B0_15",
+   "name": "no certification process can be running: the certifier's toolchain is absent",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "AWS_contacts": 0,
+    "Vultr_contacts": 0,
+    "note": "C10 issues no ssh/mcp call; this records that its own namespace references neither"
+   },
+   "id": "B0_16",
+   "name": "C10 contacted no remote host",
+   "status": "PASS"
+  }
+ ],
+ "failed": [],
+ "schema": "C10_ARCHAEOLOGY/1",
+ "sha256": "566b41fb0e33d9ea02ecd4b3f21bc7e485e8fbf099fbe512df3bd409c0af702f",
+ "unchecked": []
+}
