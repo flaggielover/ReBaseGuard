@@ -1,0 +1,163 @@
+{
+ "Q2_ANSWER": "A future successor MAY define a different prospective adoption rule without retroactively altering C2. The floor declares itself prospective, scopes itself to adoptions 'from this verdict onward', gives F1 an explicit lapse condition tied to N9, and -- decisively -- the same adjudication directs that once N9 closes 'a successor should freeze a replacement floor requiring agreement between two independent certifier implementations rather than F1'. Nothing claims permanence. What a successor may NOT do is re-adjudicate 305 or 306 under a new rule, or apply its own rule to an adoption already made.",
+ "Q2_GATING_FACT": "N9 is still OPEN, so the replacement route the adjudication names is not yet reachable. The rational next purchase is a second, independently written certifier -- not an alpha run.",
+ "Q2_consequence_cases": {
+  "CASE_A_inherited_rule_applies": {
+   "cell307": "alpha-only closure is achievable in projection (up to 1.137406x vs 1.096007x needed) but CANNOT be adopted: F2 needs 1.370009x and F1 is invariant under alpha and currently fails.",
+   "governance_bridge_required_first": true,
+   "new_compute_rational": false,
+   "worth_certifying": "only if the programme values a CLOSED-but-unadoptable cell, which buys no coverage-map change"
+  },
+  "CASE_B_successor_rule_allowed_but_undefined": {
+   "cell307": "undecidable until the successor rule exists",
+   "governance_bridge_required_first": true,
+   "new_compute_rational": false,
+   "worth_certifying": false
+  },
+  "CASE_C_alternative_robustness_substitutes_for_F1_F2": {
+   "cell307": "the adjudication itself names the substitute -- two-implementation agreement replacing F1 -- but conditions it on closing N9",
+   "governance_bridge_required_first": true,
+   "new_compute_rational": "closing N9 is the rational purchase, not an alpha run; it unblocks BOTH 306 and 307 and answers the failure mode the floor exists for",
+   "worth_certifying": "only after N9 closes"
+  },
+  "CASE_D_rule_cannot_legally_change": {
+   "status": "CONTRADICTED BY THE COMMITTED TEXT",
+   "why": "the adjudication declares the floor prospective, gives F1 an explicit lapse condition, and directs a successor to freeze a replacement floor. A rule that provides for its own replacement is not immutable."
+  }
+ },
+ "Q2_phase10_cell307": {
+  "F1_Gamma_under_Lemma_G": 0.08511776989151419,
+  "F1_passes": false,
+  "F2_passes": false,
+  "alpha_can_close": true,
+  "alpha_can_satisfy_F1": false,
+  "alpha_can_satisfy_F2": false,
+  "best_alpha_tightening_projected": 1.1374057041669792,
+  "closes_now": false,
+  "tightening_to_be_ADOPTABLE_under_the_inherited_floor": 1.3700090576827373,
+  "tightening_to_close": 1.0960072461461898,
+  "uniform_A_margin": null,
+  "why_alpha_cannot_help_F1": "F1 asks for Gamma < 0 under a supply that does NOT use the Arb/FLINT registry. Alpha tightens the registry's own taboo supersolution, so it cannot move a registry-free supply at all. F1's verdict is invariant under alpha."
+ },
+ "Q2_phase11_cell306": {
+  "C8_frozen_rule_1_prohibited_selecting_it_in_C9": true,
+  "F1_Gamma_under_Lemma_G": 0.01911558504907567,
+  "F1_passes": false,
+  "F2_passes": false,
+  "closes_now": true,
+  "discharge_routes_named_by_the_C2_adjudication": [
+   "close N9 with a second independently written certifier, then freeze a REPLACEMENT floor requiring agreement between two independent implementations rather than F1",
+   "further deterministic tightening bringing the uniform-A margin to >= 1.25",
+   "a real order-3 candidate under the R-stage's own frozen gate, after N1, N5 and N7"
+  ],
+  "may_a_FUTURE_campaign_target_it": "YES, prospectively. C8's rule 1 bound C9's selection, not every future campaign. A future campaign that freezes its own gate before its own result may target 306. C10 does not authorize this and does not retroactively alter C8 or C9.",
+  "that_C8_decision_is_immutable": true,
+  "tightening_to_be_ADOPTABLE_under_the_inherited_floor": 1.0670710354836621,
+  "tightening_to_close": null,
+  "uniform_A_margin": 1.1714309154998508
+ },
+ "Q2_phase5_rule_reconstruction": {
+  "F1": {
+   "HAS_AN_EXPLICIT_LAPSE_CONDITION": true,
+   "content": "supply independence: Gamma < 0 also under a certified atom-constant supply NOT depending on the Arb/FLINT registry (Lemma G)",
+   "lapse_quote": "This limb is available for as long as **N9** (no second, independently written > certifier of the operator constants) remains open, and lapses when N9 is closed. > > **F2 \u2014 degradation survival.** \u0393 < 0 still holds when every atom constant of the chosen supply",
+   "lapses_when": "N9 is closed (a second, independently written certifier exists)"
+  },
+  "F2": {
+   "content": "degradation survival: Gamma < 0 still holds with every atom constant degraded uniformly by x1.25, i.e. uniform-A margin >= 1.25",
+   "severity_origin": "C2's own, published against its own interest before any adjudicator existed -- not invented by the adjudicator"
+  },
+  "N9_status": {
+   "closed_examples": [],
+   "consequence": "F1 remains AVAILABLE because it lapses only when N9 closes; and the replacement-floor route the adjudication names is NOT yet reachable, because it is conditioned on closing N9.",
+   "explicit_closed_assertions": 0,
+   "explicit_open_assertions": 6,
+   "method": "explicit status ASSERTIONS only; conditionals such as 'lapses when N9 is closed' and hypotheticals such as 'N9 ever closed' are excluded, because an earlier version read those as evidence that N9 had closed",
+   "open": true,
+   "open_examples": [
+    "rom a committed producer, and I confirm it    here a third time. 4. **N9 and N10 remain open and are now load-",
+    "er every registry-based supply and under no registry-independent one; N9 and N10 from C2 remain open",
+    "ere, not here.  ## Whether anything the gate decides changes  **No.** N9 is open \u2014 `p5y_k5_tail_c2_closure/OPE"
+   ],
+   "state": "OPEN",
+   "statements_by_successor": {
+    "c2_closure": [
+     "OPEN: rom a committed producer, and I confirm it    here a third time. 4. **N9 and N10 remain op"
+    ],
+    "c3_closure": [
+     "OPEN: er every registry-based supply and under no registry-independent one; N9 and N10 from C2 r",
+     "OPEN: ere, not here.  ## Whether anything the gate decides changes  **No.** N9 is open \u2014 `p5y_k5",
+     "OPEN: floor drops the adjudicator's clause that F1 is available only while N9 is open"
+    ],
+    "c4_exhaustion": [],
+    "c5_exhaustion": [],
+    "c6_evidence_recovery": [],
+    "c7_e2_lambda309": [],
+    "c8_operator_feasibility": [],
+    "c9_e1_cell307": []
+   }
+  },
+  "adjudication_itself_directs_a_replacement": {
+   "quote": "a **second, independently written certifier** reproducing the six operator constants for cell 306 (closing N9),   at which point the registry-dependence objection is answered and a successor should freeze a replacement floor   requiring agreement between two independent certifier implementations rather than F1; **or** - further deterministic tightening bringing 306's uniform-A margin to **\u2265 1.25**; **or** - a real order-3 cand",
+   "reading": "the adjudication that SET the floor names, in the same document, the condition under which a successor SHOULD FREEZE A REPLACEMENT FLOOR. A rule that provides for its own replacement is not immutable."
+  },
+  "any_claim_of_permanence": [],
+  "artifact": "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/adjudication/C2_ADJUDICATION.md",
+  "artifact_sha256": "f37dae47b3548bd4b24a0973ba57af869c076fb424c9b46bf4a86d67f74823ef",
+  "declares_itself_prospective": true,
+  "explicitly_does_not_reopen": "It does not reopen, impeach or revisit any cell already adopted in coverage map r4 or earlier.  > **K5 tail adoption floor (r1), set by this adjudication.** > > A pair (m, k) may be adopted only if the frozen K5-B certifies it (\u0393 < 0 under the campaign's own f",
+  "instrument": "an ADJUDICATION, not a scientific theorem and not a project-global invariant",
+  "name_in_text": "K5 tail adoption floor (r1), set by this adjudication",
+  "permanence_finding": "NONE. The word 'permanent' occurs only about adopted CELLS ('an adopted cell is permanent, is removed from every future campaign's universe, and is never revisited'), which concerns VERDICTS, not the rule. No text asserts the floor binds all future successors immutably.",
+  "prospectivity_quote": "It is **prospective**: it governs future adoptions of K5 m = 5 tail cells from this verdict onward. It does not reopen, impeach or revisit any cell already adopted in coverage map r4 or earlier.  > **K5 tail adoption floor (r1), set by this adjudication.** > >",
+  "stated_scope": "future adoptions of K5 m = 5 tail cells from this verdict onward",
+  "structure": "frozen K5-B pass (Gamma < 0) AND at least one of F1, F2"
+ },
+ "Q2_phase6_four_concepts": {
+  "A_HISTORICAL_C2_VERDICT": {
+   "content": "305 adopted; 306 deferred; D_PARTIAL",
+   "mutable": false,
+   "why": "verdicts are immutable in this programme and the adjudication says so directly"
+  },
+  "B_HISTORICAL_C2_ADOPTION_RULE": {
+   "content": "the r1 floor: frozen K5-B pass AND (F1 or F2)",
+   "mutable": "NOT RETROACTIVELY; it governs adoptions 'from this verdict onward'",
+   "why": "it is prospective by its own terms and carries a lapse condition on F1"
+  },
+  "C_SUCCESSOR_SCIENTIFIC_CLOSURE": {
+   "content": "Gamma < 0 under the authoritative consumer",
+   "governed_by": "the frozen K5-B clause, not by the adoption floor"
+  },
+  "D_SUCCESSOR_GOVERNANCE_ADOPTION": {
+   "content": "whether a closed cell may be added to the coverage map",
+   "governed_by": "the floor in force at the time of that successor's own freeze"
+  },
+  "does_changing_D_imply_changing_A_or_B": {
+   "answer": "NO",
+   "reason": "A is a past verdict about past cells and is untouched by any future rule. B governs adoptions from C2's verdict onward; a successor that freezes its own prospective rule BEFORE its own result exists does not alter what B required of adoptions made under B. Retroactivity would mean re-adjudicating 305 or 306 under a new rule, which is the thing that is forbidden."
+  }
+ },
+ "Q2_phase7_precedent": {
+  "campaign_A_cells_11_44": {
+   "quote": null,
+   "significance": "the programme HAS adopted K5 cells under a DIFFERENT and weaker standard -- a valid enclosure plus a frozen K5-B pass, with no robustness requirement. So the r1 floor is not a programme-wide invariant; it is a raised bar introduced for this line."
+  },
+  "implication": "adoption standards in this programme have already varied by campaign. That is descriptive precedent that a successor-specific rule is possible; it is not by itself a licence."
+ },
+ "Q2_phase9_purpose_of_the_floor": {
+  "F1_protects_against": "systematic error in the single Arb/FLINT supersolution surface -- the evidence surface the programme says has never been independently implemented (N9), with its build provenance recorded nowhere (N10)",
+  "F2_protects_against": "numerical fragility: being wrong about the constants by up to 25%",
+  "candidate_ingredients_audited": {
+   "disjoint decomposition": "partial -- same implementation",
+   "interval widening / degradation stress": "is F2; already available",
+   "precision escalation": "does not answer implementation independence",
+   "second independent certifier": "DIRECTLY answers N9 -- named by the adjudication itself",
+   "theorem-level robustness": "would answer it but no such theorem exists"
+  },
+  "reconstructed_from": "the adjudication's own reasoning",
+  "the_quote": "The open risk is N9: a possible systematic error in a single implementation of the Arb supersolution machinery, of unknown magnitude. No percentage protects against an unknown-magnitude logic error. What does protect against it is a second,",
+  "therefore_an_alternative_package_must": "answer IMPLEMENTATION INDEPENDENCE, not merely add margin. More margin is explicitly called 'the wrong instrument for the risk that is actually open'."
+ },
+ "schema": "C10_GOVERNANCE/1",
+ "sha256": "41ab52892974c8149b6b79c8391a53c5ece21c607079be1c32e4831d37b72216"
+}

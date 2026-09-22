@@ -1,0 +1,43 @@
+{
+ "schema": "DECISION_GATE_C10/1",
+ "campaign": "C10 -- C2 provenance repair and prospective adoption governance audit",
+ "DISCLOSURE": {
+  "statement": "Frozen AFTER the archaeology and the governance reconstruction, BEFORE adjudication. C10 does not claim blindness.",
+  "why_this_is_still_sound": [
+   "the classes below are decided by objective predicates over committed artifacts, not by a tuned threshold",
+   "C10 computes no scientific value, so no choice here can make an unsound result look sound",
+   "the one judgement that matters -- whether a successor may freeze a new prospective rule -- is decided by QUOTED TEXT from the C2 adjudication, which C10 cannot alter"
+  ]
+ },
+
+ "classification_predicates": {
+  "PROVENANCE_CLEAN": "the hash recorded in REGISTRY_C2 resolves to a real commit of the producer AND no build-path unit differs between that commit and HEAD",
+  "PROVENANCE_REPAIR_NEEDED": "the hash resolves but a build-path unit differs",
+  "PROVENANCE_BROKEN": "the hash resolves to no commit of the producer",
+  "C2_RULE_GLOBAL_BINDING": "some committed artifact asserts the floor binds all future successors immutably",
+  "SUCCESSOR_RULE_ALLOWED": "the floor declares itself prospective AND no artifact asserts permanence AND the adjudication itself provides for replacement",
+  "GOVERNANCE_BRIDGE_REQUIRED": "the replacement route named by the adjudication is conditioned on an open item that is not yet discharged"
+ },
+
+ "final_classes": {
+  "P1": "PROVENANCE_CLEAN + C2_RULE_GLOBAL_BINDING",
+  "P2": "PROVENANCE_CLEAN + SUCCESSOR_RULE_ALLOWED",
+  "P3": "PROVENANCE_REPAIR_NEEDED + GOVERNANCE_DECIDABLE",
+  "P4": "PROVENANCE_BROKEN + STOP",
+  "P5": "GOVERNANCE_BRIDGE_REQUIRED",
+  "P6": "UNRESOLVED",
+  "combination_rule": "P5 may be carried TOGETHER with P1/P2/P3, because a bridge requirement is about what a successor must do next, not about whether provenance is clean. P4 and P6 are exclusive."
+ },
+
+ "forbidden_conclusions": [
+  "that any cell is adopted, closed or re-adjudicated by C10",
+  "that C2's verdict, C8's frozen rule 1 or C9's selection is altered",
+  "that C9 is retroactively authorized to have targeted cell 306",
+  "that any counterfactual alpha projection is certified evidence",
+  "that r6 may be created",
+  "that scientific execution or host provisioning is authorized by C10"
+ ],
+ "guard": "DENY",
+ "compute_boundary": {"NEW_REAL": 0, "SCIENTIFIC_KERNEL": 0, "OPERATOR_CERTIFICATIONS": 0,
+                      "REMOTE_HOSTS": 0, "TOOLCHAIN_PROVISIONED": 0, "AWS": 0, "VULTR": 0}
+}
