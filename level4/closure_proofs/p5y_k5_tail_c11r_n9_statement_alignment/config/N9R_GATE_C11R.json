@@ -1,0 +1,121 @@
+{
+ "NO_EXPECTED_RESULT": "This gate states predicates only. No predicate below names, presupposes or favours any outcome. Whether each predicate holds is determined by running the campaign, and the verdict is whatever the predicates yield.",
+ "campaign": "C11R -- N9 statement-alignment repair",
+ "comparison_rule": {
+  "LOWER_BOUND": {
+   "AGREES": "original / 2 <= independent < original",
+   "INSUFFICIENT": "independent < original / 2",
+   "STRONGER": "independent >= original"
+  },
+  "UPPER_BOUND": {
+   "AGREES": "original < independent <= 2 * original",
+   "INSUFFICIENT": "independent > 2 * original",
+   "STRONGER": "independent <= original"
+  },
+  "factor": 2,
+  "statement_precedence": "SAME STATEMENT BEFORE SAME NUMBER. A numerically agreeing value certified over a narrower drift domain, at a scalar drift, on the wrong kernel, or at the wrong state does NOT count as agreement at any factor.",
+  "why_the_asymmetry_matters": "D_lo is the only LOWER bound of the six. For an upper bound a smaller independent value is stronger; for a lower bound a larger one is. Applying the upper-bound rule to D_lo would invert the verdict, so the direction field is load-bearing and is frozen here, before any independent value exists."
+ },
+ "comparison_rule_source": {
+  "artifact": "evidence/table/C11R_N9_TABLE.json",
+  "note": "frozen in Phase 1, before any independent value existed",
+  "sha256": "c4c617dc8b39254681ce20612ecb553c10662aa6a2987c8c86e739b13e3e5714"
+ },
+ "compute_policy": {
+  "AWS": "FORBIDDEN",
+  "SR_PS1_campaign": "MUST NOT BE TOUCHED",
+  "remote_provisioning": "only if local execution is shown inadequate"
+ },
+ "forbidden_conclusions": [
+  "that C11 is rewritten as success",
+  "that any cell is closed or adopted",
+  "that the C2 adoption floor may be replaced",
+  "that F1 has lapsed",
+  "that r6 may be created",
+  "that numerical proximity substitutes for statement equivalence",
+  "that a constant certified over a sub-interval of the block corroborates the original",
+  "that a constant certified at a scalar drift corroborates a block-uniform statement"
+ ],
+ "frozen_before": "any target certification run",
+ "governing_principle": "SAME STATEMENT BEFORE SAME NUMBER",
+ "guard": "DENY",
+ "per_target_classification": [
+  "AGREES",
+  "STRONGER",
+  "INSUFFICIENT",
+  "DISAGREES",
+  "INVALID"
+ ],
+ "permitted_N9_classifications": [
+  "N9_CLOSED",
+  "AGREEMENT_INSUFFICIENT",
+  "SCIENTIFIC_DISAGREEMENT",
+  "INDEPENDENCE_VIOLATION",
+  "EXECUTION_INVALID"
+ ],
+ "predecessor_state_preserved": {
+  "C11_verdict": "EXECUTION_INVALID",
+  "N9_entering_C11R": "OPEN",
+  "mismatch_A": "scalar drift versus the block-uniform statement",
+  "mismatch_B": "one constant for cell 307 versus six for cell 306, and no Khat_e"
+ },
+ "predicates": {
+  "G10_cheap_screen_before_expensive": "every candidate sent to a certification run has first been screened by the pointwise necessary condition, and no candidate classified POINTWISE_REFUTED has been sent to one",
+  "G11_manufactured_validation": "the manufactured identities are exercised by a producer and their outcomes are recorded, including scalar collapse of the interval-drift layer",
+  "G12_mutations": "each planted violation is classified by a detector that carries a negative control showing the detector can fail",
+  "G13_runtime_qualified": "producer hashes, imports and deterministic reproduction are recorded from a clean environment before target execution",
+  "G14_sealed_before_comparison": "every independent output is written and hashed before any original value for the same constant is read in the same process",
+  "G15_comparison_rule_frozen_before_results": "the per-direction comparison rule is fixed in an artifact whose hash predates every independent result it is applied to",
+  "G1_statement_table_complete": "every field of the Phase 1 table is resolved for all six constants: name, producer, mode, kernel, quantity, state convention, drift domain, norm, direction, certified value, artifact hash, comparison semantics",
+  "G2_statement_equivalence_exact": "for each target, the independent proposition matches the original on kernel, quantity, state, direction and bounded object, checked by a comparator that is demonstrated to reject planted mismatches",
+  "G3_drift_interval_exact": "the drift domain used equals the cell 306 block read from REGISTRY_C2, as exact rationals, with no rounding of the endpoints",
+  "G4_block_uniformity_rigorous": "the certification encloses the quantity simultaneously for every e in the block. Endpoint, midpoint or finite-grid evaluation satisfies this predicate only when accompanied by a proof that those checks bound the whole interval",
+  "G5_independent_K_e_implemented": "the whole kernel is implemented in this programme's independent line and its identities are exercised",
+  "G6_independent_Khat_e_implemented": "the atom-removed kernel is implemented independently, derived from the frozen model rather than transcribed from the original",
+  "G7_atom_decomposition_validated": "K_e equals Khat_e plus the atom contribution, under this project's own sign and normalisation, recovered by test rather than assumed",
+  "G8_six_targets_resolved": "each of the six constants has a recorded disposition: an independent statement with a value, a recorded refutation, or a recorded absence of any independent statement",
+  "G9_no_forbidden_reuse": "no module in this campaign imports, calls, wraps or replays the original certifier's load-bearing graph, and none imports its arithmetic backend"
+ },
+ "question": "can the independent C11 certifier prove the SAME mathematical certification statements N9 requires for cell 306?",
+ "result_language_scan": {
+  "hits_in_this_gate": 0,
+  "negative_control": {
+   "control_phrase_count": 1,
+   "scanner_can_fire": true,
+   "where_the_control_text_lives": "code/c11r_mutations.py, deliberately NOT here. Recording the planted phrase in the gate would put result-dependent language into the gate, and the scanner would then flag the gate on account of its own audit record -- which is exactly what happened on the first attempt."
+  },
+  "note": "the scanner reads only the emitted gate, never this module, because a scanner that reads its own forbidden list matches itself and always fires",
+  "patterns": 17
+ },
+ "schema": "C11R_GATE/1",
+ "sha256": "1425969bbd959680e5ed098779d7ce5311f21afe97b3d72a146e6fdb9f90e7e8",
+ "target": {
+  "cell": 306,
+  "constants": [
+   "C_T",
+   "tau",
+   "Abar",
+   "D_lo",
+   "D1",
+   "D2"
+  ],
+  "drift_domain": [
+   "680769/400000",
+   "17885921/10000000"
+  ],
+  "drift_domain_float": [
+   1.7019225,
+   1.7885921
+  ],
+  "substitutions_forbidden": [
+   "cell 307",
+   "cell 308",
+   "cell 309",
+   "a scalar drift",
+   "a strict sub-interval",
+   "Abar in place of tau",
+   "tau in place of Abar",
+   "fewer than the six constants"
+  ]
+ }
+}

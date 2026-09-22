@@ -1,0 +1,158 @@
+{
+ "B0_CLASS": "PASS",
+ "LOCAL_MAIN_REF": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+ "REMOTE_MAIN_REF": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+ "campaign": "C11R -- N9 statement-alignment repair",
+ "checks": [
+  {
+   "detail": {
+    "branch": "p5y-k5-tail-c11r-n9-statement-alignment"
+   },
+   "id": "B0_01",
+   "name": "on the C11R branch",
+   "pass": true
+  },
+  {
+   "detail": {
+    "expected_c11_head": "440bcd9183f4f883428cba41d47aa7780fd681c4",
+    "head": "440bcd9183f4f883428cba41d47aa7780fd681c4"
+   },
+   "id": "B0_02",
+   "name": "descends from the expected C11 HEAD 440bcd91",
+   "pass": true
+  },
+  {
+   "detail": {
+    "remote_c11_ref": "440bcd9183f4f883428cba41d47aa7780fd681c4"
+   },
+   "id": "B0_03",
+   "name": "C11 is published on origin at 440bcd91",
+   "pass": true
+  },
+  {
+   "detail": {
+    "schema": "C11_N9_RESULT/2",
+    "verdict": "EXECUTION_INVALID"
+   },
+   "id": "B0_04",
+   "name": "C11 verdict is EXECUTION_INVALID and is not rewritten as success",
+   "pass": true
+  },
+  {
+   "detail": {
+    "status": "OPEN"
+   },
+   "id": "B0_05",
+   "name": "N9 is OPEN entering C11R",
+   "pass": true
+  },
+  {
+   "detail": {
+    "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/coverage/K5_COVERAGE_MAP_R5.json",
+    "revision": null
+   },
+   "id": "B0_06",
+   "name": "r5 is the authoritative coverage map",
+   "pass": true
+  },
+  {
+   "detail": {
+    "open_m5": [
+     306,
+     307,
+     308,
+     309
+    ]
+   },
+   "id": "B0_07",
+   "name": "m=5 open set is exactly {306, 307, 308, 309}",
+   "pass": true
+  },
+  {
+   "detail": {
+    "hits": []
+   },
+   "id": "B0_08",
+   "name": "no r6 coverage map exists",
+   "pass": true
+  },
+  {
+   "detail": {
+    "LOCAL_MAIN_REF": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+    "REMOTE_MAIN_REF": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+    "divergence_is_known_and_not_reconciled_here": true,
+    "expected_remote": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+    "note": "recorded separately on purpose: in a --no-local scratch clone `ls-remote origin` reads the LOCAL repository, not GitHub. This runs from the primary checkout."
+   },
+   "id": "B0_09",
+   "name": "REMOTE main is untouched at the expected commit",
+   "pass": true
+  },
+  {
+   "detail": {
+    "allow_settings": [],
+    "json_files_scanned": 3340,
+    "method": "parsed guard keys in committed JSON; review prose mentioning the string is not a setting and is deliberately not matched"
+   },
+   "id": "B0_10",
+   "name": "guard DENY: no ALLOW guard SETTING anywhere at C11R start",
+   "pass": true
+  },
+  {
+   "detail": {
+    "moved": []
+   },
+   "id": "B0_11",
+   "name": "C2-C11 integrity: no predecessor file modified",
+   "pass": true
+  },
+  {
+   "detail": {
+    "hits": [],
+    "modules_scanned": [
+     "c11r_common.py"
+    ],
+    "policy": "AWS IS FORBIDDEN for this campaign; local execution only",
+    "self_excluded": "c11r_b0.py"
+   },
+   "id": "B0_12",
+   "name": "AWS untouched: no AWS, SSH or remote-worker surface in C11R code",
+   "pass": true
+  },
+  {
+   "detail": {
+    "importlib_find_spec": {
+     "flint": false,
+     "gmpy2": false,
+     "mpmath": false,
+     "numpy": false,
+     "scipy": false,
+     "sympy": false
+    }
+   },
+   "id": "B0_13",
+   "name": "the original certifier's backend is absent, so accidental reuse cannot run",
+   "pass": true
+  },
+  {
+   "detail": {
+    "foreign": 1,
+    "workers": []
+   },
+   "id": "B0_14",
+   "name": "no campaign worker is running at C11R start",
+   "pass": true
+  }
+ ],
+ "failed": [],
+ "predecessor": {
+  "branch": "p5y-k5-tail-c11-n9-independent-certifier",
+  "head": "440bcd9183f4f883428cba41d47aa7780fd681c4",
+  "n9_status": "OPEN",
+  "preserved_invalid": true,
+  "verdict": "EXECUTION_INVALID"
+ },
+ "purpose": "determine whether the already-independent C11 certifier can certify THE SAME STATEMENT N9 requires: block-uniform drift over the frozen e-block, and the six operator constants for cell 306",
+ "schema": "C11R_B0/1",
+ "sha256": "171823a93c47b35919db663881a3443d2715bcf1976017a5b0eef3017353de85"
+}

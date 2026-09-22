@@ -1,0 +1,133 @@
+{
+ "MUTATION_CLASS": "REFUSE",
+ "mutants": [
+  {
+   "how": "AST over 9 modules; imported roots ['__future__', 'ast', 'c11_certifier', 'c11r_common', 'c11r_equiv', 'c11r_gate', 'c11r_idrift', 'c7_gaussian', 'fractions', 'hashlib', 'importlib', 'json', 'math', 'os', 'pathlib', 're', 'subprocess', 'sys', 'time']",
+   "id": "M01",
+   "name": "hidden import of the original certifier's load-bearing graph",
+   "negative_control": "the forbidden set is non-empty (9 modules), so the test can fail",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "intersection with ['flint', 'gmpy2', 'mpmath', 'numpy', 'scipy', 'sympy'] is empty",
+   "id": "M02",
+   "name": "using the original's arithmetic backend",
+   "negative_control": "the backend set is non-empty, so the test can fail",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "modules that actually LOAD the registry: ['c11r_table.py'] (allowed ['c11r_compare.py', 'c11r_table.py']); modules that merely mention it in prose: ['c11r_gate.py', 'c11r_mutations.py', 'c11r_table.py']",
+   "id": "M03",
+   "name": "reading the original's certified constants during construction",
+   "negative_control": "a certifier or screen module appearing in the reader list would fail the test; the mentioner list is strictly larger, so prose alone does not trip it",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "block enclosure width 3.014e-05 strictly exceeds the point's 3.277e-96, and contains it; a scalar result cannot be mistaken for a block result",
+   "id": "M16",
+   "name": "a scalar drift substituted for the interval drift",
+   "negative_control": "a degenerate block reproduces the point exactly, so the widening test can fail",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "the equivalence checker classifies a midpoint domain as WEAKER",
+   "id": "M17",
+   "name": "the midpoint substituted for uniform drift over the block",
+   "negative_control": "an unmutated proposition classifies EQUIVALENT, so the test can fail",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "endpoint-only domain classifies WEAKER, and G4 admits sampling only with a proof that the samples bound the whole interval",
+   "id": "M18",
+   "name": "endpoints only, with no theorem bounding the interior",
+   "negative_control": "the unmutated domain classifies EQUIVALENT, so the test can fail",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "at the atom Khat_e = [0.896252, 0.914993] is strictly below K_e = [0.981186, 1.018638], and the checker rejects the swap",
+   "id": "M19",
+   "name": "K_e substituted for Khat_e",
+   "negative_control": "the two kernels coincide wherever the atom window is empty, so the numeric test is not vacuous only because it is taken at the atom, where the window is widest",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "checker returns NOT_EQUIVALENT; mismatching fields ['kernel', 'quantity', 'bounds']",
+   "id": "M20",
+   "name": "tau substituted for Abar",
+   "negative_control": "Abar compared with itself returns EQUIVALENT, so the test can fail",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "checker returns NOT_EQUIVALENT; mismatching fields ['kernel', 'quantity', 'bounds']",
+   "id": "M21",
+   "name": "Abar substituted for tau",
+   "negative_control": "tau compared with itself returns EQUIVALENT, so the test can fail",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "cell 307's block classifies NOT_COMPARABLE against cell 306's, and the gate binds cell 306",
+   "id": "M22",
+   "name": "cell 307 substituted for cell 306",
+   "negative_control": "cell 306's own block classifies EQUIVALENT, so the test can fail",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "the gate binds all six ['Abar', 'C_T', 'D1', 'D2', 'D_lo', 'tau'] and forbids substituting fewer",
+   "id": "M23",
+   "name": "one constant substituted for the six",
+   "negative_control": "a five-element target set would fail the equality test",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "Khat_e + atom agrees with K_e (separation -3.745e-02); Khat_e - atom does not (separation 1.511e-01)",
+   "id": "M24",
+   "name": "the atom contribution's sign flipped",
+   "negative_control": "the flipped decomposition is the negative control and is rejected",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "a half-block classifies WEAKER and a super-block STRONGER, so the direction of the domain rule is exercised both ways",
+   "id": "M25",
+   "name": "the drift interval narrowed",
+   "negative_control": "a widened block classifies STRONGER, so the test is not one-sided",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "no runs artifact exists yet, so the ordering cannot be checked",
+   "id": "M26",
+   "name": "comparison performed before the independent output was sealed",
+   "negative_control": "recorded UNDETERMINED rather than DETECTED: a check that passes for want of input proves nothing",
+   "outcome": "UNDETERMINED"
+  },
+  {
+   "how": "17 patterns, 0 hits in the frozen gate",
+   "id": "M27",
+   "name": "the prospective gate contains result-dependent language",
+   "negative_control": "a planted clause is caught: 'does fail'",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "no screen artifact exists yet",
+   "id": "M28",
+   "name": "a pointwise-refuted candidate still sent to expensive certification",
+   "negative_control": "recorded UNDETERMINED rather than DETECTED",
+   "outcome": "UNDETERMINED"
+  },
+  {
+   "how": "scalar collapse is bit-for-bit: 9 mismatches",
+   "id": "M29",
+   "name": "the interval layer silently widened instead of collapsing onto the scalar one",
+   "negative_control": "the pre-fix implementation produced 28 mismatches, so the test is known to fail when the layer widens",
+   "outcome": "SURVIVED"
+  }
+ ],
+ "schema": "C11R_MUTATIONS/1",
+ "sha256": "cfdadf710712f71f4e630585fab85d63a08ee595b0783181802b48b2705aca11",
+ "survivors": [
+  "M29"
+ ],
+ "undetermined": [
+  "M26",
+  "M28"
+ ]
+}
