@@ -1,0 +1,300 @@
+{
+ "B0_CLASS": "PASS",
+ "LOCAL_MAIN_REF": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+ "REMOTE_MAIN_REF": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+ "authoritative_r5": {
+  "K5_COVERAGE_COMPLETE": false,
+  "m5_open": [
+   306,
+   307,
+   308,
+   309
+  ]
+ },
+ "campaign": "C9 -- E1 zero-new-real operator certification, CUSUM m=5 cell 307",
+ "cell307_thresholds": {
+  "adoption_uniform_eff_factor": 1.3700090576827373,
+  "closure_uniform_eff_factor": 1.0960072461461898
+ },
+ "checks": [
+  {
+   "detail": {
+    "branch": "p5y-k5-tail-c9-e1-cell307"
+   },
+   "id": "B0_01",
+   "name": "C9 is on its own branch",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "c9_head": "63a3f8257f31f776a453a976c6308c713414ad28",
+    "expected_C8_HEAD": "63a3f8257f31f776a453a976c6308c713414ad28"
+   },
+   "id": "B0_02",
+   "name": "C9 descends from the expected C8 HEAD",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "expected": "63a3f8257f31f776a453a976c6308c713414ad28",
+    "origin": "63a3f8257f31f776a453a976c6308c713414ad28"
+   },
+   "id": "B0_03",
+   "name": "origin C8 branch equals the expected HEAD",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "B0": "PASS",
+    "FACT_CHECK": "PASS",
+    "MUTATION": "PASS",
+    "survivors": []
+   },
+   "id": "B0_04",
+   "name": "C8 publication state: fact check PASS, mutations PASS, B0 PASS",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "OUTCOME": "NEXT_ROUTE_OPERATOR_CERT",
+    "selected_route": "R3 -- E1 operator certification, targeted at cell 307 first, at a uniform eff tightening > 1.096007x",
+    "why_NOT_306_first": "cell 306 needs only 1.067071x and is cheaper, but the FROZEN gate's rule 1 routes any cell that passes the clause to GOVERNANCE and forbids requesting informati"
+   },
+   "id": "B0_05",
+   "name": "C8's final decision selects R3/E1 with cell 307 first",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "frozen": "55e743320987a1e031c586938216e70839ed8d0ef1e9d518304197563dde9a7a",
+    "gate_sha": "55e743320987a1e031c586938216e70839ed8d0ef1e9d518304197563dde9a7a"
+   },
+   "id": "B0_06",
+   "name": "C8's decision gate blob is unchanged from its freeze",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "entries": [
+     "E1",
+     "E2",
+     "E3",
+     "E4"
+    ],
+    "present": true
+   },
+   "id": "B0_07",
+   "name": "C8 errata exist and record the rule-1 false premise that forbids targeting 306",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "K5_COVERAGE_COMPLETE": false,
+    "blob": "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
+    "schema": "rebaseguard.p5y.k5.tail-c2.coverage-map.v5"
+   },
+   "id": "B0_08",
+   "name": "authoritative r5 reconstructs: schema, detector and all four m blocks",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "declared_ranges": [
+     [
+      306,
+      309
+     ]
+    ],
+    "per_cell_open": {
+     "1": [],
+     "2": [],
+     "3": [],
+     "5": [
+      306,
+      307,
+      308,
+      309
+     ]
+    }
+   },
+   "id": "B0_09",
+   "name": "m=5 open set, from PER-CELL verdicts, is exactly {306,307,308,309}",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "adopted_cells": [
+     305
+    ],
+    "verdict": "PASS"
+   },
+   "id": "B0_10",
+   "name": "cell 305 is PASS and ADOPTED (so it is not open and not a target)",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "highest_present": "K5_COVERAGE_MAP_R5.json",
+    "hits": []
+   },
+   "id": "B0_11",
+   "name": "no r6 coverage map exists on any local branch",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "Abar": "2126716053409815/281474976710656",
+    "D_lo": "12544857711016209770484137061076852749647969713976377339664597013034585977041/14474011154664524427946373126085988481658748083205070504932198000989141204992",
+    "cell": 307,
+    "e_hi": "1882413/1000000",
+    "e_lo": "17885921/10000000",
+    "operator_only": true,
+    "registry": "REGISTRY_C2",
+    "rule": "r2",
+    "tau": "5575519619541999/1125899906842624"
+   },
+   "id": "B0_12",
+   "name": "cell 307's current certified supply is readable and operator-only certified",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "meaning": "new eff must be <= old eff / this factor",
+    "uniform_eff_tightening_to_close": 1.0960072461461898
+   },
+   "id": "B0_13",
+   "name": "cell 307 CLOSURE threshold is committed and finite",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "adoption_floor": "C2_ADJUDICATION.md section K, 'K5 tail adoption floor (r1)': F1 supply independence OR F2 uniform-A margin >= 1.25",
+    "closure": 1.0960072461461898,
+    "distinct": true,
+    "uniform_eff_tightening_to_be_ADOPTABLE": 1.3700090576827373
+   },
+   "id": "B0_14",
+   "name": "cell 307 ADOPTION threshold is committed, distinct from closure, and larger",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "C6_classification": "GATE_CLASS_GAP__nearest_is_HISTORICAL_REPLAY_REQUIRED",
+    "certifier": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/taboo_certify.py",
+    "certifier_requires": {
+     "numpy": true,
+     "python_flint": true
+    },
+    "certifier_sha256": "ced9422ca07981a9ad053acd79b72ef0d5007e93e49c16f2501f31c593fd0daa",
+    "note": "verified from the producer's own source and the registry flag, not from C8 prose",
+    "producer": "p5y_k5_tail_c2_closure/code/c2_refined_registry.py",
+    "producer_declares": "operator only ... no source S_r, no candidate ..., no K1 record, no value of R; NEW_REAL_ADDRESSES = 0",
+    "registry_operator_only_flag": true
+   },
+   "id": "B0_15",
+   "name": "E1 is independently confirmed operator-only and zero-new-real at the PRODUCER, not merely inherited from C8",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "p5y_k5_tail_c2_closure": true,
+    "p5y_k5_tail_c3_closure": true,
+    "p5y_k5_tail_c4_exhaustion": true,
+    "p5y_k5_tail_c5_exhaustion": true,
+    "p5y_k5_tail_c6_evidence_recovery": true,
+    "p5y_k5_tail_c7_e2_lambda309": true,
+    "p5y_k5_tail_c8_operator_feasibility": true
+   },
+   "id": "B0_16",
+   "name": "C2-C8 namespace trees are identical to their published heads",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "LOCAL_MAIN_REF": "c123b9bb8f15d17650545b3fce4aca8a6b61093b"
+   },
+   "id": "B0_17",
+   "name": "LOCAL_MAIN_REF recorded",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "LOCAL_MAIN_REF": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+    "REMOTE_MAIN_REF": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+    "action": "NONE -- recorded only; C9 does not synchronize, modify or merge main",
+    "differ": true
+   },
+   "id": "B0_18",
+   "name": "REMOTE_MAIN_REF queried independently and equals the expected value",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "ALLOW_declarations": 0,
+    "C9_start_guard": "DENY",
+    "DENY_declarations": 6
+   },
+   "id": "B0_19",
+   "name": "guard is DENY wherever declared and no ALLOW exists anywhere at C9 start",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "campaign_workers": [],
+    "method": "ps -eo comm executable identity, self-ancestry excluded"
+   },
+   "id": "B0_20",
+   "name": "no stale C7/C8 campaign process remains",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "foreign_count": 1,
+    "interpreters": [
+     {
+      "classified": "FOREIGN_UNRELATED",
+      "cwd": "/Users/suzhe/.hermes",
+      "executable": "/Users/suzhe/.hermes/hermes-agent/venv/bin/python",
+      "pid": 2237
+     }
+    ]
+   },
+   "id": "B0_21",
+   "name": "every live interpreter is classified by executable AND cwd AND argv, not by substring",
+   "status": "PASS"
+  },
+  {
+   "detail": {
+    "aws_contacted_by_C9": false,
+    "aws_ssh_alias_exists_on_host": true,
+    "note": "this records that C9 has issued no AWS call; the alias may exist and is untouched",
+    "policy": "AWS SR/PS1 is a separate production campaign; C9 must not touch it"
+   },
+   "id": "B0_22",
+   "name": "AWS has not been contacted by C9 and no C9 artifact references AWS access",
+   "status": "PASS"
+  }
+ ],
+ "compute_boundary_at_B0": {
+  "AWS_CONTACTS": 0,
+  "NEW_REAL": 0,
+  "OPERATOR_CERTIFICATIONS": 0,
+  "TARGET_EXECUTIONS": 0,
+  "TOOLCHAIN_PROVISIONED": 0,
+  "guard": "DENY"
+ },
+ "failed": [],
+ "non_targets": [
+  306,
+  308,
+  309
+ ],
+ "schema": "C9_B0_AUDIT/1",
+ "sha256": "972b0285dc220105724d5e8d0b6c70c2956cd9cc641129ba5194959219db9920",
+ "target": {
+  "cell": 307,
+  "detector": "CUSUM",
+  "m": 5
+ },
+ "unchecked": []
+}
