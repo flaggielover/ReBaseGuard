@@ -1,0 +1,386 @@
+{
+ "authoritative_open_set": [
+  306,
+  307,
+  308,
+  309
+ ],
+ "chain_verification": {
+  "all_agree": true,
+  "cells_verified": [
+   306,
+   307,
+   308,
+   309
+  ],
+  "committed_supplies_reproduced": 20,
+  "max_Gamma_abs_err": 1.9695860613495026e-17
+ },
+ "gate_sha256": "55e743320987a1e031c586938216e70839ed8d0ef1e9d518304197563dde9a7a",
+ "phase1_dag": {
+  "equation": "Gamma_k = g_hi + rho * x_hi * M ;  pass iff Gamma_k < 0",
+  "nodes": {
+   "A0": {
+    "class": "COMMITTED_CERTIFIED",
+    "why": "Lemma Dv': min(Abar, tau/D_lo); tau/D_lo binds on the tail"
+   },
+   "A1": {
+    "class": "COMMITTED_CERTIFIED",
+    "why": "eff * (K1*C + d1)"
+   },
+   "A2": {
+    "class": "COMMITTED_CERTIFIED",
+    "why": "eff * (2*K1^2*C^2 + K2*C + 2*K1*C*d1 + 2*d1^2 + d2)"
+   },
+   "Abar, tau, C_T, D_lo, D1, D2": {
+    "class": "COMMITTED_CERTIFIED",
+    "why": "Arb/FLINT operator registry REGISTRY_C2 (and C1); certified, operator_only, rule r2"
+   },
+   "Lambda (lower bound on E_a[tau])": {
+    "class": "ANALYTIC_CERTIFIED",
+    "why": "C4 theorem L for 306-308; C7 PRIMARY for 309. Enters ONLY as an admissibility FLOOR on A0 via Lemma SM(d). It is NOT an input to Gamma."
+   },
+   "M": {
+    "class": "COMMITTED_DERIVED",
+    "why": "max(|lo|,|hi|) over the TC-T enclosure. The sealed clause also clips against the R2 interval; neither that interval nor M_R2 is carried in any committed artifact, so the clip is UNREACHABLE and is dropped. Dropping it can only RAISE Gamma, so every threshold here is at least as demanding as the sealed one, and the clip does not bind at any of the 20 committed supplies."
+   },
+   "g_hi": {
+    "class": "COMMITTED_DERIVED",
+    "why": "R_interval.hi - e0 * D_interval.lo; recovered exactly from the committed (Gamma_exact, M_after_exact) pair and cross-checked against all five committed supplies per cell"
+   },
+   "order-3 surrogate": {
+    "class": "MISSING",
+    "why": "the frozen TC-T rule accepts an `order3` argument; no certified order-3 value exists for the tail cells. Its effect IS quantified in committed evidence as Gamma_perfect_order3."
+   },
+   "order-4 envelope Env4": {
+    "class": "COMMITTED_CERTIFIED",
+    "why": "C3_BLOCKER fG_plus_Env4_mean"
+   },
+   "rho": {
+    "class": "COMMITTED_CERTIFIED",
+    "why": "cell half-width (e_hi - e_lo)/2, from REGISTRY_C2 blocks"
+   },
+   "x_hi": {
+    "class": "COMMITTED_CERTIFIED",
+    "why": "cell right endpoint e_hi, from REGISTRY_C2 blocks"
+   }
+  },
+  "per_cell": {
+   "306": {
+    "A_best_committed": {
+     "A0": 6.0044907853998835,
+     "A1": 30.40630157306247,
+     "A2": 350.1239370594923
+    },
+    "Gamma_now": -0.036197779964579395,
+    "Lambda_floor_on_A0": 3.959880291432561,
+    "Lambda_floor_source": "C4 certificate (theorem L)",
+    "M_budget_for_pass": 3.905055721051138,
+    "M_now": 3.4380374937355533,
+    "e0": "17452573/10000000",
+    "e_hi": "17885921/10000000",
+    "e_lo": "680769/400000",
+    "g_hi": "-2803781829532047442994213539266800315634643237457039869336510445463062403035507953339/9263367138985295633885678800695032628261598773251245123156606720633050371194880000000",
+    "g_hi_float": -0.302674155894373,
+    "rho": "108337/2500000",
+    "rho_times_x_hi": "1937707023377/25000000000000",
+    "x_hi": "17885921/10000000"
+   },
+   "307": {
+    "A_best_committed": {
+     "A0": 5.5979955104409465,
+     "A1": 26.335233477118695,
+     "A2": 283.97569039450735
+    },
+    "Gamma_now": 0.026354631323170518,
+    "Lambda_floor_on_A0": 3.734070430633033,
+    "Lambda_floor_source": "C4 certificate (theorem L)",
+    "M_budget_for_pass": 3.0761483479002325,
+    "M_now": 3.374598931694219,
+    "e0": "36710051/20000000",
+    "e_hi": "1882413/1000000",
+    "e_lo": "17885921/10000000",
+    "g_hi": "-10065159382176109631634201956015762859680608014012376878377627333045760443601447212091/37053468555941182535542715202780130513046395093004980492626426882532201484779520000000",
+    "g_hi_float": -0.2716387904948848,
+    "rho": "938209/20000000",
+    "rho_times_x_hi": "1766096818317/20000000000000",
+    "x_hi": "1882413/1000000"
+   },
+   "308": {
+    "A_best_committed": {
+     "A0": 5.218548598870686,
+     "A1": 22.79374449569498,
+     "A2": 230.3658154880664
+    },
+    "Gamma_now": 0.09456414496566366,
+    "Lambda_floor_on_A0": 3.512733596022926,
+    "Lambda_floor_source": "C4 certificate (theorem L)",
+    "M_budget_for_pass": 2.432397764101128,
+    "M_now": 3.3716470503119877,
+    "e0": "38663231/20000000",
+    "e_hi": "19839101/10000000",
+    "e_lo": "1882413/1000000",
+    "g_hi": "-4537107763422152169954396462895883836954440003044540962460743725651946406656248876961/18526734277970591267771357601390065256523197546502490246313213441266100742389760000000",
+    "g_hi_float": -0.24489517123463297,
+    "rho": "1014971/20000000",
+    "rho_times_x_hi": "20136112181071/200000000000000",
+    "x_hi": "19839101/10000000"
+   },
+   "309": {
+    "A_best_committed": {
+     "A0": 4.867216116723177,
+     "A1": 19.747331585357706,
+     "A2": 187.97102636060654
+    },
+    "Gamma_now": 0.15301968889418385,
+    "Lambda_floor_on_A0": 3.5863060938653875,
+    "Lambda_floor_source": "C7 PRIMARY (dependency-free, theorem C7-E2c + lemma C7-U)",
+    "M_budget_for_pass": 1.969827744481147,
+    "M_now": 3.3195244534743678,
+    "e0": "40761931/20000000",
+    "e_hi": "2092283/1000000",
+    "e_lo": "19839101/10000000",
+    "g_hi": "-517187787777017691419334715420125708613899853161606338210214951491066238669227015581/2315841784746323908471419700173758157065399693312811280789151680158262592798720000000",
+    "g_hi_float": -0.22332604549393695,
+    "rho": "1083729/20000000",
+    "rho_times_x_hi": "2267467763307/20000000000000",
+    "x_hi": "2092283/1000000"
+   }
+  }
+ },
+ "phase2_gap_anatomy": {
+  "A_pointwise_Lambda_e_lo": "C7 certifies Lambda(e_lo) >= 3.586306093865 for cell 309, and C4 certifies analogous pointwise bounds for 306-308.",
+  "B_uniform_sup_over_cell": "sup_{e in cell} Lambda(e) >= Lambda(e_lo). NOT certified.",
+  "C_tau_prime": "the alarm time of the unclipped pathwise majorant; tau >= tau' pathwise.",
+  "D_tau": "the true CUSUM alarm time; E[tau] >= E[tau'].",
+  "E_operator_A0": "A0 = min(Abar, tau/D_lo), a certified UPPER bound on sup_cell E_a[tau].",
+  "F_consumed_by_C5T_K5B": "Gamma consumes A0, A1, A2 through M only.",
+  "THE_CENTRAL_STRUCTURAL_FACT": "Lambda is a LOWER bound on E_a[tau] and A0 is an UPPER bound on the same quantity. Gamma depends on A0, never on Lambda. Lambda enters the decision ONLY as the floor below which no admissible A0 can go. Therefore any route that improves Lambda -- which is exactly what R1 and R2 do -- RAISES the floor and can never lower Gamma. R1 and R2 cannot close a cell. They can only strengthen an EXCLUSION, which is what C7 did.",
+  "exact_inequalities": [
+   "Lambda(e_lo) <= sup_{e in cell} E_a[tau]            (a point is at most the sup)",
+   "E[tau'] <= E[tau]                                    (pathwise majorant, tau >= tau')",
+   "sup_{e in cell} E_a[tau] <= A0                       (Lemma SM(d) admissibility)",
+   "hence  Lambda(e_lo) <= A0  for every admissible A0   (the FLOOR)"
+  ],
+  "role_of_Lambda_309": "Lambda_309 is a FEASIBILITY DIAGNOSTIC for the operator route, not an input to the closure clause. It answers 'how small could a perfect A0 ever be?'. When it exceeds the A0 ceiling the clause can tolerate, the operator route is refuted for that cell.",
+  "which_inequality_causes_which_gap": {
+   "G1_clipping": "E[tau'] <= E[tau] -- C7 bounds E[tau'], so Lambda understates E[tau]. Closing it RAISES Lambda.",
+   "G2_uniformization": "Lambda(e_lo) <= sup_cell -- C7 is pointwise. Closing it RAISES Lambda."
+  }
+ },
+ "phase4_minimum_information_inversion": {
+  "306": {
+   "A0_ceiling_with_A1_A2_zero": 8.51358826198496,
+   "A_now": {
+    "A0": 6.0044907853998835,
+    "A1": 30.40630157306247,
+    "A2": 350.1239370594923
+   },
+   "Gamma_now": -0.036197779964579395,
+   "Lambda_floor_on_A0": 3.959880291432561,
+   "already_passes": true,
+   "cheapest_sufficient_fact": "NONE -- already passes under committed certified supplies; the blocker is ADOPTION, not information",
+   "max_admissible_A0_others_fixed": 7.150117603163252,
+   "max_admissible_A1_others_fixed": 58.54543648719208,
+   "max_admissible_A2_others_fixed": 3545.191046252549,
+   "uniform_reduction_required": 1.0
+  },
+  "307": {
+   "A0_ceiling_with_A1_A2_zero": 6.172456010195964,
+   "A_now": {
+    "A0": 5.5979955104409465,
+    "A1": 26.335233477118695,
+    "A2": 283.97569039450735
+   },
+   "Gamma_now": 0.026354631323170518,
+   "Lambda_floor_on_A0": 3.734070430633033,
+   "already_passes": false,
+   "cheapest_sufficient_fact": "reduce A0 from 5.597996 to <= 4.906889 (1.1408x), which the floor 3.734070 permits",
+   "max_admissible_A0_others_fixed": 4.906888837085386,
+   "max_admissible_A1_others_fixed": 10.524131935422448,
+   "max_admissible_A2_others_fixed": null,
+   "required_A0_improvement_factor": 1.1408441675165535,
+   "required_A1_improvement_factor": 2.5023663365981528,
+   "uniform_reduction_required": 1.1119662371370418
+  },
+  "308": {
+   "A0_ceiling_with_A1_A2_zero": 4.375228833135616,
+   "A1_ceiling_at_perfect_A0": 16.190846990321823,
+   "A_now": {
+    "A0": 5.218548598870686,
+    "A1": 22.79374449569498,
+    "A2": 230.3658154880664
+   },
+   "Gamma_now": 0.09456414496566366,
+   "Lambda_floor_on_A0": 3.512733596022926,
+   "already_passes": false,
+   "cheapest_sufficient_fact": "A0 to its floor 3.512734 AND A1 from 22.793744 to <= 16.190847 (1.4078x)",
+   "max_admissible_A0_others_fixed": 3.203078438436744,
+   "max_admissible_A1_others_fixed": null,
+   "max_admissible_A2_others_fixed": null,
+   "required_A0_improvement_factor": 1.6292290991842175,
+   "uniform_reduction_required": 1.460654799394688
+  },
+  "309": {
+   "A0_ceiling_with_A1_A2_zero": 3.2142360226778806,
+   "A_now": {
+    "A0": 4.867216116723177,
+    "A1": 19.747331585357706,
+    "A2": 187.97102636060654
+   },
+   "Gamma_now": 0.15301968889418385,
+   "Lambda_floor_on_A0": 3.5863060938653875,
+   "already_passes": false,
+   "cheapest_sufficient_fact": "NONE within the atom-constant family: no (A0 >= floor, A1 >= 0, A2 >= 0) closes this cell",
+   "max_admissible_A0_others_fixed": 2.141950570850596,
+   "max_admissible_A1_others_fixed": null,
+   "max_admissible_A2_others_fixed": null,
+   "required_A0_improvement_factor": 2.2723288683502827,
+   "uniform_reduction_required": 1.8478734998440085
+  }
+ },
+ "phase5_perfect_information_oracles": {
+  "LABEL": "COUNTERFACTUAL_ONLY -- none of these is certified evidence",
+  "routes": {
+   "R1": {
+    "class": "LOW_LEVERAGE",
+    "effect_on_Gamma": {
+     "306": {
+      "Gamma_now": -0.036197779964579395,
+      "Gamma_with_Delta_cell_zero": -0.036197779964579395,
+      "Gamma_with_Delta_clip_zero": -0.036197779964579395,
+      "delta": 0.0
+     },
+     "307": {
+      "Gamma_now": 0.026354631323170518,
+      "Gamma_with_Delta_cell_zero": 0.026354631323170518,
+      "Gamma_with_Delta_clip_zero": 0.026354631323170518,
+      "delta": 0.0
+     },
+     "308": {
+      "Gamma_now": 0.09456414496566366,
+      "Gamma_with_Delta_cell_zero": 0.09456414496566366,
+      "Gamma_with_Delta_clip_zero": 0.09456414496566366,
+      "delta": 0.0
+     },
+     "309": {
+      "Gamma_now": 0.15301968889418385,
+      "Gamma_with_Delta_cell_zero": 0.15301968889418385,
+      "Gamma_with_Delta_clip_zero": 0.15301968889418385,
+      "delta": 0.0
+     }
+    },
+    "leverage": "ZERO",
+    "perfect_information": "Delta_clip = 0, i.e. E[tau] known exactly rather than via E[tau']",
+    "proof": "Gamma is a function of (g_hi, rho, x_hi, A0, A1, A2). Lambda appears in none of them. Perfect clipping information changes Lambda and therefore changes the FLOOR on A0; it changes no term of Gamma. The effect on every open cell is exactly 0.",
+    "what_it_DOES_do": "raises the A0 floor, strengthening exclusions and shrinking R3's room"
+   },
+   "R2": {
+    "class": "LOW_LEVERAGE",
+    "effect_on_Gamma": {
+     "306": {
+      "Gamma_now": -0.036197779964579395,
+      "Gamma_with_Delta_cell_zero": -0.036197779964579395,
+      "Gamma_with_Delta_clip_zero": -0.036197779964579395,
+      "delta": 0.0
+     },
+     "307": {
+      "Gamma_now": 0.026354631323170518,
+      "Gamma_with_Delta_cell_zero": 0.026354631323170518,
+      "Gamma_with_Delta_clip_zero": 0.026354631323170518,
+      "delta": 0.0
+     },
+     "308": {
+      "Gamma_now": 0.09456414496566366,
+      "Gamma_with_Delta_cell_zero": 0.09456414496566366,
+      "Gamma_with_Delta_clip_zero": 0.09456414496566366,
+      "delta": 0.0
+     },
+     "309": {
+      "Gamma_now": 0.15301968889418385,
+      "Gamma_with_Delta_cell_zero": 0.15301968889418385,
+      "Gamma_with_Delta_clip_zero": 0.15301968889418385,
+      "delta": 0.0
+     }
+    },
+    "leverage": "ZERO",
+    "perfect_information": "Delta_cell = 0, i.e. sup over the cell known and equal to the endpoint value",
+    "proof": "Gamma is a function of (g_hi, rho, x_hi, A0, A1, A2). Lambda appears in none of them. Perfect clipping information changes Lambda and therefore changes the FLOOR on A0; it changes no term of Gamma. The effect on every open cell is exactly 0.",
+    "what_it_DOES_do": "raises the A0 floor, strengthening exclusions and shrinking R3's room"
+   },
+   "R3": {
+    "class": "STRONG",
+    "note": "the A0 ceiling computed here for cell 309, 3.214236022678, independently reproduces C4's own critical_A0_reported_only 3.2142360226778806, and the refutation of 309 reproduces C4's published exclusion of 309. C8 claims neither as new; it extends the same test to 306, 307 and 308, which C4 did not decide.",
+    "per_cell": {
+     "306": {
+      "A0_ceiling_with_A1_A2_zero": 8.51358826198496,
+      "Gamma_at_A0_A1_A2_all_zero": -0.268999459368462,
+      "Gamma_at_A0_floor_A1_A2_zero": -0.14388116320706978,
+      "Lambda_floor": 3.959880291432561,
+      "closes": true,
+      "verdict": "FEASIBLE"
+     },
+     "307": {
+      "A0_ceiling_with_A1_A2_zero": 6.172456010195964,
+      "Gamma_at_A0_A1_A2_all_zero": -0.23538016456615932,
+      "Gamma_at_A0_floor_A1_A2_zero": -0.09298528787328704,
+      "Lambda_floor": 3.734070430633033,
+      "closes": true,
+      "verdict": "FEASIBLE"
+     },
+     "308": {
+      "A0_ceiling_with_A1_A2_zero": 4.375228833135616,
+      "Gamma_at_A0_A1_A2_all_zero": -0.20528201397211823,
+      "Gamma_at_A0_floor_A1_A2_zero": -0.04046754262884166,
+      "Lambda_floor": 3.512733596022926,
+      "closes": true,
+      "verdict": "FEASIBLE"
+     },
+     "309": {
+      "A0_ceiling_with_A1_A2_zero": 3.2142360226778806,
+      "Gamma_at_A0_A1_A2_all_zero": -0.18047466859423766,
+      "Gamma_at_A0_floor_A1_A2_zero": 0.020891192282592733,
+      "Lambda_floor": 3.5863060938653875,
+      "closes": false,
+      "verdict": "MATHEMATICALLY_REFUTED -- the certified floor on A0 exceeds the ceiling the clause tolerates even at A1 = A2 = 0"
+     }
+    },
+    "perfect_information": "A0 driven to its certified floor sup_cell E_a[tau] (the smallest value Lemma SM(d) admits) with A1 = A2 = 0 -- strictly better than any operator certification could ever supply"
+   },
+   "R4": {
+    "class": "NEW_REAL_BLOCKED",
+    "note": "this is the ONLY route whose perfect-information oracle closes cell 309. It is also the route the programme classifies as TRUE NEW-REAL (B1/D4), which the C8 boundary forbids and which the decision rule forbids recommending while a competitive zero-new-real route is untested.",
+    "per_cell": {
+     "306": {
+      "Gamma_now": -0.03619777996457939,
+      "Gamma_perfect_order3": -0.2187289297426247,
+      "closes_with_perfect_order3": true,
+      "critical_sG_over_sH": 55.72606777262523
+     },
+     "307": {
+      "Gamma_now": 0.026354631323170525,
+      "Gamma_perfect_order3": -0.17332393366599289,
+      "closes_with_perfect_order3": true,
+      "critical_sG_over_sH": 38.06517724640379
+     },
+     "308": {
+      "Gamma_now": 0.09456414496566364,
+      "Gamma_perfect_order3": -0.12867361039956238,
+      "closes_with_perfect_order3": true,
+      "critical_sG_over_sH": 23.899214127922175
+     },
+     "309": {
+      "Gamma_now": 0.15301968889418385,
+      "Gamma_perfect_order3": -0.08975948061429817,
+      "closes_with_perfect_order3": true,
+      "critical_sG_over_sH": 14.721818868199676
+     }
+    },
+    "perfect_information": "a certified order-3 surrogate at its eps_src floor",
+    "source": "committed C2_CRITICAL_RATIOS.json, field Gamma_perfect_order3 -- not recomputed here"
+   }
+  }
+ },
+ "schema": "C8_ROUTES/1",
+ "sha256": "9270c62c10a1a1a7fc2d205fdaed23d4639b3183727060a1ed4cc380e11fc0ba"
+}
