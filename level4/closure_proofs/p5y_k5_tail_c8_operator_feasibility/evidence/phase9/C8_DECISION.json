@@ -1,0 +1,277 @@
+{
+ "M_reconstruction_crosscheck_vs_C5": {
+  "306": {
+   "M_recomputed": 3.4380374937355533,
+   "M_used_committed": 3.4380374937355533,
+   "abs_err": 1.5856594374178312e-17
+  },
+  "307": {
+   "M_recomputed": 3.374598931694219,
+   "M_used_committed": 3.374598931694219,
+   "abs_err": 2.503753433759826e-16
+  },
+  "308": {
+   "M_recomputed": 3.3716470503119877,
+   "M_used_committed": 3.3716470503119877,
+   "abs_err": 1.8011702685193405e-16
+  },
+  "309": {
+   "M_recomputed": 3.3195244534743678,
+   "M_used_committed": 3.3195244534743678,
+   "abs_err": 5.653842138387527e-17
+  }
+ },
+ "authoritative_clause": "C5-T (adopted by C5's adjudication); C2 frozen clause cross-checks only",
+ "counterfactual_labelling": "every A tuple that is not a committed certified supply is COUNTERFACTUAL_ONLY and is not evidence",
+ "gate_sha256": "55e743320987a1e031c586938216e70839ed8d0ef1e9d518304197563dde9a7a",
+ "phase10_selection": {
+  "OUTCOME": "NEXT_ROUTE_OPERATOR_CERT",
+  "R_stage": "NOT AUTHORIZED",
+  "gate_sha256": "55e743320987a1e031c586938216e70839ed8d0ef1e9d518304197563dde9a7a",
+  "guard": "DENY",
+  "rule_1_adoption_first": {
+   "action_for_C9": "a governance adoption step, not a science campaign",
+   "cells": [
+    306
+   ],
+   "finding": "cell 306 passes the authoritative C5-T clause under committed certified supplies. Its blocker is ADOPTION, not information. Under the gate's rule 1 no new information may be bought for it."
+  },
+  "rule_2_analytic_zero_new_real": {
+   "candidates": [
+    "R1",
+    "R2"
+   ],
+   "result": "both have ZERO closure leverage by the gate's leverage test. They are excluded as closure routes. This is the decisive negative of C8.",
+   "selected": false
+  },
+  "rule_3_operator_certification": {
+   "blocked_by": "no certifying host in scope; provisioning is separately governed",
+   "candidate": "R3",
+   "cells_it_can_close": [
+    307,
+    308
+   ],
+   "cells_it_cannot": [
+    309
+   ],
+   "leverage_material": true,
+   "minimum_useful_improvement": "A0 tightening of 1.1203x at cell 307",
+   "producer_and_toolchain_known": true,
+   "selected": true,
+   "zero_new_real": true
+  },
+  "rule_4_new_real": {
+   "candidate": "R4",
+   "selected": false,
+   "why": "forbidden while R3, a materially competitive zero-new-real route, remains untested -- and R4 is the only route with leverage on 309, so it is the successor to R3, not its rival"
+  },
+  "selected_route": "R3 -- E1 operator certification, targeted at cell 307 first",
+  "why_307_first": "it has the smallest sufficient information requirement anywhere in the tail: a single A0 tightening of 1.1203x, with the certified floor 3.734070 leaving ample room"
+ },
+ "phase4_inversion_C5T": {
+  "306": {
+   "A0_ceiling_with_A1_A2_zero": 8.631057819972101,
+   "A1_ceiling_at_perfect_A0": 111.65091667826552,
+   "A_now": {
+    "A0": 6.0044907853998835,
+    "A1": 30.40630157306247,
+    "A2": 350.1239370594923
+   },
+   "Lambda_floor_on_A0": 3.959880291432561,
+   "M_at_perfect_A0": 2.604545859603179,
+   "M_needed_C5T": 3.9529425406367737,
+   "M_used": 3.4380374937355533,
+   "cheapest_sufficient_fact": "NONE -- passes under the authoritative C5-T clause with committed certified supplies. The blocker is ADOPTION, not information.",
+   "max_admissible_A0": 7.267587161150393,
+   "max_admissible_A1": 61.4307493039405,
+   "max_admissible_A2": 3872.804816493119,
+   "operator_route_verdict": "ALREADY_PASSES",
+   "passes_now": true,
+   "required_A0_factor": null
+  },
+  "307": {
+   "A0_ceiling_with_A1_A2_zero": 6.262333308183288,
+   "A1_ceiling_at_perfect_A0": 55.22311832740437,
+   "A_now": {
+    "A0": 5.5979955104409465,
+    "A1": 26.335233477118695,
+    "A2": 283.97569039450735
+   },
+   "Lambda_floor_on_A0": 3.734070430633033,
+   "M_at_perfect_A0": 2.5696732238929214,
+   "M_needed_C5T": 3.114961360548343,
+   "M_used": 3.374598931694219,
+   "cheapest_sufficient_fact": "a certified operator tuple giving A0 <= 4.996766 (from 5.597996, a 1.1203x tightening); the floor 3.734070 permits it",
+   "max_admissible_A0": 4.99676613507271,
+   "max_admissible_A1": 12.580339955916799,
+   "max_admissible_A2": null,
+   "operator_route_verdict": "FEASIBLE",
+   "passes_now": false,
+   "required_A0_factor": 1.1203236971905004
+  },
+  "308": {
+   "A0_ceiling_with_A1_A2_zero": 4.442851487961334,
+   "A1_ceiling_at_perfect_A0": 17.632791191529485,
+   "A_now": {
+    "A0": 5.218548598870686,
+    "A1": 22.79374449569498,
+    "A2": 230.3658154880664
+   },
+   "Lambda_floor_on_A0": 3.512733596022926,
+   "M_at_perfect_A0": 2.5767032425169996,
+   "M_needed_C5T": 2.463911269745421,
+   "M_used": 3.3716470503119877,
+   "cheapest_sufficient_fact": "A0 to its floor 3.512734 AND A1 <= 17.632791 (from 22.793744, 1.2927x)",
+   "max_admissible_A0": 3.270701093262461,
+   "max_admissible_A1": null,
+   "max_admissible_A2": null,
+   "operator_route_verdict": "FEASIBLE",
+   "passes_now": false,
+   "required_A0_factor": 1.5955443343999633
+  },
+  "309": {
+   "A0_ceiling_with_A1_A2_zero": 3.2664157282671957,
+   "A1_ceiling_at_perfect_A0": null,
+   "A_now": {
+    "A0": 4.867216116723177,
+    "A1": 19.747331585357706,
+    "A2": 187.97102636060654
+   },
+   "Lambda_floor_on_A0": 3.5863060938653875,
+   "M_at_perfect_A0": 2.68514955926051,
+   "M_needed_C5T": 1.9956699149869883,
+   "M_used": 3.3195244534743678,
+   "cheapest_sufficient_fact": "NONE within the atom-constant family -- refuted",
+   "max_admissible_A0": 2.1941302764399113,
+   "max_admissible_A1": null,
+   "max_admissible_A2": null,
+   "operator_route_verdict": "MATHEMATICALLY_REFUTED",
+   "passes_now": false,
+   "required_A0_factor": 2.218289483075036
+  }
+ },
+ "phase8_host_profiles": {
+  "BASIS": "C2 re-certified 5 tail cells in 9688 CPU-seconds total at degree 12, depth 2, sub-block width <= 1/100. Per-cell arl cost was 56.4-58.7 s.",
+  "CAVEAT": "ESTIMATES extrapolated from ONE committed measurement, not a benchmark. The dominant unknown is not CPU: it is whether a finer partition tightens A0 at all. C2 measured its own refinement as NON-MONOTONE -- D_lo improved but tau got 1.90-2.24% WORSE, and the net A0 gain was only 4.5-4.9%. The 1.1203x tightening cell 307 needs is therefore NOT guaranteed by buying more CPU, and no host profile can make it so.",
+  "FAST": {
+   "RAM_GB": 64,
+   "cores": 32,
+   "cpu_hours_estimate": 43.06,
+   "disk_GB": 100,
+   "parallel_efficiency_assumed": 0.75,
+   "scope": "all four open cells, deeper sub-block sweep, same scope as RECOMMENDED",
+   "wall_time_hours_estimate": 1.79,
+   "work_allowance_vs_C2_registry": "16x"
+  },
+  "MINIMUM": {
+   "RAM_GB": 4,
+   "cores": 2,
+   "cpu_hours_estimate": 10.76,
+   "disk_GB": 10,
+   "parallel_efficiency_assumed": 0.75,
+   "scope": "cells 307 and 308 only, at C2's degree and a modestly finer partition",
+   "wall_time_hours_estimate": 7.18,
+   "work_allowance_vs_C2_registry": "4x"
+  },
+  "RECOMMENDED": {
+   "RAM_GB": 16,
+   "cores": 8,
+   "cpu_hours_estimate": 43.06,
+   "disk_GB": 40,
+   "parallel_efficiency_assumed": 0.75,
+   "scope": "all four open cells, deeper sub-block sweep",
+   "wall_time_hours_estimate": 7.18,
+   "work_allowance_vs_C2_registry": "16x"
+  }
+ },
+ "phase8_toolchain": {
+  "SOURCE": "version pins read from committed evidence; nothing was installed or queried",
+  "addresses_already_defined": true,
+  "addresses_are_zero_new_real": "yes -- the programme has consistently classified operator certification as zero-new-real; C1 and C2 each spent CPU-hours of it under that classification",
+  "arb": "NOT REQUIRED as a separate install -- FLINT 3.x subsumes Arb",
+  "current_availability": {
+   "local": {
+    "flint": false,
+    "gmpy2": false,
+    "mpmath": false,
+    "numpy": false,
+    "scipy": false,
+    "sympy": false
+   },
+   "note": "C6 re-measured the programme's worker rebaseguard-vultr-02 read-only and found the same absence; AWS is forbidden. There is NO certifying host in scope."
+  },
+  "flint_library": "3.6.0",
+  "historical_cost_measured": {
+   "cell_309_bits": 256,
+   "cell_309_depth": 2,
+   "cell_309_kernel_calls": 2,
+   "cell_309_patches": 64,
+   "degree_arl": 12,
+   "degree_taboo": 20,
+   "per_cell_arl_cpu_seconds": [
+    56.41365505099998,
+    56.98908057099993,
+    57.855912836000016,
+    57.67998994300001,
+    58.69088448499997
+   ],
+   "registry_c2_cpu_seconds_total": 9687.626660387,
+   "sub_block_max_width": "1/100"
+  },
+  "numpy": "2.5.2",
+  "producer": "the operator taboo/arl Chebyshev certifier that produced REGISTRY_C1 and REGISTRY_C2 (rule r2, operator_only, certified)",
+  "python": "3.12.3 (the historical certifier host); 3.14.5 also appears in later records",
+  "python_flint": "0.9.0"
+ },
+ "phase9_frontier": {
+  "R1": {
+   "class": "LOW_LEVERAGE",
+   "cpu_hours": 0,
+   "governance": "none",
+   "max_leverage": "ZERO -- perfect information changes Gamma by exactly 0",
+   "minimum_useful_improvement": "n/a",
+   "needs_operator_cert": false,
+   "needs_remote": false,
+   "needs_toolchain": false,
+   "why": "raises the A0 floor; strengthens exclusions; cannot close a cell",
+   "zero_new_real": true
+  },
+  "R2": {
+   "class": "LOW_LEVERAGE",
+   "cpu_hours": 0,
+   "governance": "none",
+   "max_leverage": "ZERO -- perfect information changes Gamma by exactly 0",
+   "minimum_useful_improvement": "n/a",
+   "needs_operator_cert": false,
+   "needs_remote": false,
+   "needs_toolchain": false,
+   "why": "same structural reason as R1",
+   "zero_new_real": true
+  },
+  "R3": {
+   "class": "TOOLCHAIN_BLOCKED",
+   "cpu_hours": 43.06,
+   "cpu_hours_targeted_307_308": 10.76,
+   "governance": "host provisioning is a separately governed prerequisite (C6)",
+   "max_leverage": "closes 307 and 308; CANNOT close 309",
+   "minimum_useful_improvement": "A0 tightening of 1.1203x at cell 307",
+   "needs_operator_cert": true,
+   "needs_remote": "probably -- no certifying host is in scope",
+   "needs_toolchain": true,
+   "zero_new_real": true
+  },
+  "R4": {
+   "class": "NEW_REAL_BLOCKED",
+   "cpu_hours": "unknown",
+   "governance": "a new governed K1 address; NOT the R-stage",
+   "max_leverage": "closes every open cell INCLUDING 309",
+   "minimum_useful_improvement": "a certified order-3 surrogate",
+   "needs_operator_cert": true,
+   "needs_remote": true,
+   "needs_toolchain": true,
+   "zero_new_real": false
+  }
+ },
+ "schema": "C8_DECISION/1",
+ "sha256": "c07999f8c06934c36d4112520f15c15c3221706c25498686179a18b028315986"
+}
