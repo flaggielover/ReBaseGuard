@@ -1,0 +1,44 @@
+{
+ "schema": "rebaseguard.p5y.k5.tail-c6.external-inventory.v1",
+ "access_mode": "READ_ONLY_EVIDENCE_DISCOVERY",
+ "hosts": {
+  "AWS_SR_PS1": {"contacted": false, "reason": "forbidden by the campaign instruction; no tool loaded, no call made"},
+  "rebaseguard-vultr-02": {
+   "contacted": true, "mode": "read-only",
+   "commands_used": ["status", "ls/find/stat", "sha256sum", "python3 read-only hash+regex scan"],
+   "mutating_commands_used": [],
+   "host": "rebaseguard-vultr-02, Debian 13, 8 vCPU, disk 141G used 79G",
+   "repo_present": true,
+   "VULTR_WORKING_REF": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+   "VULTR_WORKING_REF_note": "this is a THIRD ref. It happens to equal LOCAL_MAIN_REF but is neither LOCAL_MAIN_REF nor REMOTE_MAIN_REF and must not be used as evidence about either."
+  }
+ },
+ "historical_store": {
+  "path": "/root/work/postk1-runs/closure-r1/COMPOSITE_EXPORT",
+  "exists": true,
+  "record_files": 326,
+  "total_bytes": 93093045,
+  "own_manifest": "COMPOSITE_EXPORT_MANIFEST.json (sha256 29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334)",
+  "integrity_vs_manifest": {"hash_ok": 326, "hash_mismatch": 0, "missing": 0},
+  "records_containing_a_candidate_payload_key": 0,
+  "payload_scan_regex": "\"(numerators|coeffs|coefficients|payload|cheb)\"",
+  "mutations_performed": 0
+ },
+ "recovered_tail_cell_records": {
+  "306": {"sha256": "9c9da15bb7464411056bcaf8532365b261e6e185de0fe6cbb4c05cc6476bcd59", "bytes": 279738},
+  "307": {"sha256": "28bacf0a42fe7af89283082e81b478104e4dff7ebfe48c63f701d81f56d23d65", "bytes": 280035},
+  "308": {"sha256": "e8d7a412ed7f1f96dc5d7843d920eb5641b4ea21f315269dcbd89e955f2e5be5", "bytes": 280311},
+  "309": {"sha256": "95be4c65f95f4afdb1caba0be1868c7829700457ba85b292ac143a8e65cdacc0", "bytes": 280226}
+ },
+ "other_locations_checked": {
+  "/root/work/postk1-runs": {"exists": true, "aux5_record_files": 7149,
+   "note": "acceptance/dev run trees. The tail-cell files found here first are ~9.7 kB acceptance stubs, NOT the ~280 kB sealed records, and must not be confused with them."},
+  "git_repository_all_history": {"k1_records_ever_committed": 10,
+   "sealed_production_records_committed": ["aux5_CUSUM_0_256.json", "aux5_CUSUM_309_256.json"],
+   "note": "the other 8 are qualification-run records for cells 318/323 whose hashes correctly MISMATCH the production manifest"}
+ },
+ "guard": "REAL_SCIENTIFIC_COMPUTE = DENY",
+ "new_real_scientific_addresses_evaluated": 0,
+ "scientific_kernel_evaluations": 0,
+ "external_evidence_mutations": 0
+}

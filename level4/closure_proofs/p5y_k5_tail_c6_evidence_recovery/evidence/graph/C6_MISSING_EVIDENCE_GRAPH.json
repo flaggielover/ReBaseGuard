@@ -1,0 +1,127 @@
+{
+ "PHASE_10_k1_object_candidates": {
+  "CLASSIFICATION": "REPLAYABLE_EXISTING_ADDRESS",
+  "OBJECT_PROVEN_TO_HAVE_EXISTED": true,
+  "depends_on_e": false,
+  "is_a_deterministic_function_of": [
+   "the committed frozen chain above",
+   "the committed cells.json"
+  ],
+  "logical_identity": "the frozen K1 object candidates F_r, D_r, H_r (state-only polynomials, r = 0..4), and their suprema cert.sup[fam, r, 0] which TCT_INPUTS records as sup.{F,D,H}",
+  "note_from_the_frozen_source": "aux_certifier: 'Every candidate is a state-only polynomial and is CONSTANT in e, so no term is lost by differentiating the candidates'",
+  "producer": "aux_certifier.Aux3Certifier.prepare() -> _candidates_order3(); order2 sets sup[fam, r, 0]",
+  "proof_of_existence": "every one of the 63 objects in the sealed record carries its own `bernstein_calls` and `cpu_seconds`, which is direct evidence that the candidate was materialised and certified during the historical run",
+  "serialization_evidence": {
+   "candidate_hash_exists_anywhere": false,
+   "identity_gate_compares": "record['objects'][name]['delta_mid'], record['eps_mid'], record['eps_cell'], auxiliary_evidence midpoint_eps / objects / candidate_suprema -- all SCALARS. No payload is compared because none is stored.",
+   "k1_record_paths_ever_in_git_history": 10,
+   "records_containing_a_payload_key": 0,
+   "records_in_git_scanned": 10,
+   "records_in_git_with_a_payload_key": 0,
+   "sealed_records_scanned_externally": 326
+  },
+  "was_it_ever_serialized": false,
+  "why": "the object is absent from every store, but it is not missing DATA: it is a deterministic function of committed code and the committed cell spec, at an address the historical campaign already evaluated and adopted. tct_inputs.py's own docstring classifies exactly this recomputation as 'not a new real scientific evaluation'.",
+  "why_C6_must_not_perform_it": "regeneration runs Aux3Certifier.prepare() + all_residuals(), i.e. Arb/Bernstein certification. That is NOT a purely deterministic serialization or materialization step, so the campaign instruction forbids C6 from running it. It also cannot run here: numpy and python-flint are absent."
+ },
+ "PHASE_11_cover_refinement": {
+  "CLASSIFICATION": "TRUE_NEW_REAL_REQUIRED",
+  "question": "can a finer cover at cell 309 be derived from existing certificates without recomputation?",
+  "sub_structure_keys_found_in_the_sealed_record": {
+   "e_hi": 0,
+   "e_lo": 0,
+   "partition": 0,
+   "split": 0,
+   "sub_": 0,
+   "sub_block": 0,
+   "subcell": 0,
+   "subinterval": 0
+  },
+  "whole_cell_refinement_is": "a fixed-point iteration on the WHOLE cell (24 iterations, a contraction factor and a convergence flag), not a partition into sub-intervals",
+  "why": "no sub-interval structure exists anywhere in the sealed record. A finer cover means certifying the objects on NEW, narrower cells, i.e. at scientific addresses that were never evaluated. Restriction of an existing whole-cell certificate to a sub-interval would not tighten it: the certificate's value IS the whole-cell supremum."
+ },
+ "frozen_chain": {
+  "assembly": {
+   "committed": true,
+   "path": "p5y_k1_cover_ledger_implementation/code/assembly.py",
+   "sha256": "c51918c8b4d3fbb5530ca6432a38bb94e55138c6168e2ea124868c8d7a5b128c"
+  },
+  "aux_certifier": {
+   "committed": true,
+   "path": "p5y_k1_cusum_aux3_successor/code/aux_certifier.py",
+   "sha256": "a6f6c27c510e6384178b94a605fc46c34e24e138873661902f6e7ffc184b07fb"
+  },
+  "aux_propagate": {
+   "committed": true,
+   "path": "p5y_k1_cusum_aux3_successor/code/aux_propagate.py",
+   "sha256": "6d8d9d1beaefdf86b1ad460acb57f5830b76353d0fd736d48717c247bc2333b8"
+  },
+  "aux_refine": {
+   "committed": true,
+   "path": "p5y_k1_cusum_aux3_successor/code/aux_refine.py",
+   "sha256": "99dc19102d0c9cfdbadb44e711d28243e092c6719376ec5100c84ddf1ff97f30"
+  },
+  "cells.json": {
+   "committed": true,
+   "path": "p5y_k1_cover_ledger_successor/config/cells.json",
+   "sha256": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f"
+  },
+  "cusum_order3": {
+   "committed": true,
+   "path": "p5y_k5_cusum_order3_real_producer/code/cusum_order3.py",
+   "sha256": "1ef06882c0f37c901b98b2200b523613d3e5a3fe4545759e5cdab206d0fad545"
+  },
+  "intervals": {
+   "committed": true,
+   "path": "p5y_k1_cover_ledger_implementation/code/intervals.py",
+   "sha256": "ea860c4ee1f421731b5e8c16c11184105926b7e2cf9fc36096bf77821bbfde9b"
+  },
+  "order2": {
+   "committed": true,
+   "path": "p5y_k1_cusum_completion_successor/code/order2.py",
+   "sha256": "101582c02f988af80a5c4b6861461fe09e0fafa01b788884318115e066345f1f"
+  },
+  "rung3_residual": {
+   "committed": true,
+   "path": "p5y_k5_cusum_order3_real_producer/code/rung3_residual.py",
+   "sha256": "a9c704a143166bcd5e1636c1b7b74c1d0254e790392463c567197af5b22ec9e9"
+  },
+  "scipy_guard": {
+   "committed": true,
+   "path": "p5y_k1_cusum_aux4_fullcover/code/scipy_guard.py",
+   "sha256": "d2bbd9cfd1aba67e82129ae6d6f4f6b65b65bbf0beaa3e9c995fbb801e5c75b1"
+  },
+  "spec": {
+   "committed": true,
+   "path": "p5y_k1_cover_ledger_implementation/code/spec.py",
+   "sha256": "12914fb7c9654c510d54f1e8a95b9efb7e635005aec0d861b7c744f7bafb55ac"
+  },
+  "tc_producer": {
+   "committed": true,
+   "path": "p5y_k5_lower_front_order3/code/tc_producer.py",
+   "sha256": "01de460ff13d6692ce68ed46fd7af81cd7cc1da66c4d47f9edaf613d90c77e41"
+  },
+  "tct_inputs": {
+   "committed": true,
+   "path": "p5y_k5_m5_tail_closure/code/tct_inputs.py",
+   "sha256": "1a8b15e68b10b89b47416cb629588395616f302c5373d0aa59bfe449af7ddc9d"
+  }
+ },
+ "frozen_chain_all_committed": true,
+ "guard": "REAL_SCIENTIFIC_COMPUTE = DENY",
+ "new_real_scientific_addresses_evaluated": 0,
+ "payload_scan_of_committed_records": {
+  "p5y_k1_cusum_aux5_glibc_successor/evidence/requalification_r1/qualification_r1/c318_A/aux5_CUSUM_318_256.json": false,
+  "p5y_k1_cusum_aux5_glibc_successor/evidence/requalification_r1/qualification_r1/c318_B/aux5_CUSUM_318_256.json": false,
+  "p5y_k1_cusum_aux5_glibc_successor/evidence/requalification_r1/qualification_r1/c323_A/aux5_CUSUM_323_256.json": false,
+  "p5y_k1_cusum_aux5_glibc_successor/evidence/requalification_r1/qualification_r1/c323_B/aux5_CUSUM_323_256.json": false,
+  "p5y_k1_cusum_aux5_successor/evidence/qualification_r1/c318_A/aux5_CUSUM_318_256.json": false,
+  "p5y_k1_cusum_aux5_successor/evidence/qualification_r1/c318_B/aux5_CUSUM_318_256.json": false,
+  "p5y_k1_cusum_aux5_successor/evidence/qualification_r1/c323_A/aux5_CUSUM_323_256.json": false,
+  "p5y_k1_cusum_aux5_successor/evidence/qualification_r1/c323_B/aux5_CUSUM_323_256.json": false,
+  "p5y_k5b_k1_premise_binding_audit/result_r1/records/aux5_CUSUM_0_256.json": false,
+  "p5y_k5b_k1_premise_binding_audit/result_r1/records/aux5_CUSUM_309_256.json": false
+ },
+ "schema": "rebaseguard.p5y.k5.tail-c6.missing-evidence-graph.v1",
+ "scientific_kernel_evaluations": 0
+}

@@ -1,0 +1,89 @@
+{
+ "B0": "PASS",
+ "K5_COVERAGE_COMPLETE": false,
+ "LOCAL_MAIN_REF": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+ "REMOTE_MAIN_REF": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+ "REMOTE_MAIN_REF_source": "git ls-remote --heads origin main (queried from GitHub, not inferred)",
+ "VULTR_WORKING_REF": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+ "branch": "p5y-k5-tail-c6",
+ "c2_manifest": {
+  "deviations": 0,
+  "entries": 156
+ },
+ "c3_manifest": {
+  "deviations": 0,
+  "entries": 21
+ },
+ "c5_adjudication_sha256": "77aae85802c3b0226fc5c20c2c0f6f731cf0712b5b027ddabe7a21e939bddc8d",
+ "c5_adopted": [],
+ "c5_conditions": 11,
+ "c5_data_blocked": [
+  "A1",
+  "A3",
+  "D4",
+  "E1"
+ ],
+ "c5_handover": true,
+ "c5_ledger_inconsistency": [
+  {
+   "finding": "declared DATA while also declaring new_real_required -- these are different kill kinds",
+   "kill_kind": "DATA",
+   "new_real_required": true,
+   "route": "D4"
+  }
+ ],
+ "c5_new_real_blocked": [
+  "A2",
+  "B1",
+  "B2",
+  "D3"
+ ],
+ "c5_selfcheck": "PASS",
+ "c5_verdict_scope_limited": true,
+ "checks": {
+  "B0_01_branch": true,
+  "B0_02_c5_handover": true,
+  "B0_03_c5_eleven_conditions": true,
+  "B0_04_c5_adopted_empty": true,
+  "B0_05_c5_selfcheck_pass": true,
+  "B0_06_c5_published_at_pred_head": true,
+  "B0_07_r5_authoritative": true,
+  "B0_08_no_r6": true,
+  "B0_09_open_set": true,
+  "B0_10_predecessor_integrity": true,
+  "B0_11_guard_deny": true,
+  "B0_12_zero_new_real_since_c5": true,
+  "B0_13a_local_main_unchanged": true,
+  "B0_13b_remote_main_unchanged": true,
+  "B0_14_local_main_not_advanced": true,
+  "B0_15_ledger_reconstructed": true,
+  "B0_16_new_real_identified": true,
+  "B0_17_data_blocks_have_a_named_missing_dependency": true,
+  "B0_18_ledger_inconsistencies_recorded": true
+ },
+ "guard": "REAL_SCIENTIFIC_COMPUTE = DENY",
+ "guard_values": [
+  "REAL_SCIENTIFIC_COMPUTE = DENY",
+  "REAL_SCIENTIFIC_COMPUTE = DENY throughout"
+ ],
+ "head": "69bff424f20a7c91eac99450ba0836f3f7d9ca44",
+ "new_real_scientific_addresses_evaluated": 0,
+ "open_m5": [
+  306,
+  307,
+  308,
+  309
+ ],
+ "paths_changed_outside_c6": [],
+ "predecessor_hashes": {
+  "C4_adjudication": "5bd5d7b3f5e574b3895e079b8493756073967fe0837f8e4282a1a79bdb5d3788",
+  "C5_forecast": "69cceb8977a22fef42f8fda7de1f662b8baccbe35c8f21aa4ca95d354d9b3999",
+  "C5_gate": "d0deada65971c3658e7d3b39f8b2bbf5ea4849f25a1570d8f3d272a2f996aa58"
+ },
+ "r5_sha256": "e2197051e493df898295a692c580ed676e771f7dfae5a1675d8d8e9b979f684c",
+ "ref_note": "THREE distinct refs are recorded. LOCAL_MAIN_REF and REMOTE_MAIN_REF are different by design and C6 reconciles neither. VULTR_WORKING_REF is the worker's own checkout and is evidence about neither main ref, even though it happens to equal LOCAL_MAIN_REF.",
+ "remote_c5_head": "69bff424f20a7c91eac99450ba0836f3f7d9ca44",
+ "schema": "rebaseguard.p5y.k5.tail-c6.b0-audit.v1",
+ "scientific_kernel_evaluations": 0,
+ "uncommitted_at_audit": 1
+}
