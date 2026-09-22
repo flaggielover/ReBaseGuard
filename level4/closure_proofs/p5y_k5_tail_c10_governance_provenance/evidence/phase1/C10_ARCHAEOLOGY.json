@@ -1,7 +1,7 @@
 {
  "B0_CLASS": "PASS",
  "LOCAL_MAIN_REF": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
- "Q1_ANSWER": "The pin is NOT broken. REGISTRY_C2 records the producer's content sha256 as it stood when the registry was built, and that value matches the producer at that commit exactly. The file was then edited twice, AFTER the registry was sealed, and both edits are confined to verify() and main(). Every build-path unit and every scientific constant is byte-identical. The recorded field is a build-time RECORD, not a constraint on the current tree, and no consumer compares it to HEAD. C9 read a build-time self-hash as if it were a live integrity constraint.",
+ "Q1_ANSWER": "The pin is NOT broken. REGISTRY_C2 records the producer's content sha256 as it stood when the registry was built, and that value matches the producer at that commit exactly. The file was then edited twice, AFTER the registry was sealed, and both edits are confined to verify() and main(). Every build-path unit and every scientific constant is byte-identical. The recorded field is a build-time RECORD, not a constraint on the current tree, and no consumer compares it to HEAD. ATTRIBUTION, CORRECTED: an earlier version of this artifact said C9 had read the self-hash as a live integrity constraint. C9 said no such thing -- it recorded a true mismatch plus a reproducibility requirement, 'any execution must resolve which producer actually built the registry', which this archaeology satisfies. C9's own stop-review had already located the bound commit and the verify/main localisation; C10's contribution is the measurement, not the discovery. A separate consequence from that review is carried here and not dropped: because sha(HERE.read_bytes()) is written into every new registry, a rebuild today could not reproduce REGISTRY_C2.json byte-for-byte regardless, and C9 further noted that numpy/BLAS participates in the certifier's result.",
  "Q1_PROVENANCE_CLASS": "C_GOVERNANCE_DRIFT",
  "Q1_diff_classification": {
   "BUILD_PATH_IDENTICAL": true,
@@ -15,6 +15,7 @@
   },
   "build_path_units_changed": [],
   "method": "AST unit-level comparison of the bound version against HEAD, not a line diff: every top-level function, class and constant is extracted and compared",
+  "residue_participates_in_classification": true,
   "scientific_constants_identical": true,
   "units_changed": [
    "main",
@@ -98,7 +99,7 @@
   {
    "detail": {
     "expected": "fd3cb2d4cbf7c011e619fe6c794bec2ef9226d16",
-    "head": "b10cdc7d058c3df755cefa3feb968e2b995d51f5"
+    "head": "7f255f3d07e7b4d981f9a6a42bd5768662bb239c"
    },
    "id": "B0_02",
    "name": "descends from the expected C9 HEAD",
@@ -257,6 +258,6 @@
  ],
  "failed": [],
  "schema": "C10_ARCHAEOLOGY/1",
- "sha256": "669657b40278890c8ad939d86ab5e2fa4ec2ab7083cbd8fd8d9324bdede7d222",
+ "sha256": "4aa5cd78e6142476db8329c5cb321bb223b9448668d60a13a0285fa50207adba",
  "unchecked": []
 }

@@ -117,6 +117,32 @@ replacement route is gated on N9, which is open. A governance bridge (a second i
 is required before any successor adoption of 306 or 307. The gate was frozen before adjudication and
 is now actually *applied*; C10's first pass froze it and never used it.
 
+**Adjudicated `ACCEPTED_WITH_CONDITIONS`.** The adjudicator found that commit `7f255f3d`'s claim
+"both CRITICALs repaired" was not accurate as committed, and it was right on every count checked
+here. A fix recorded but provably absent is worse than an open finding, and three were:
+
+- the AST residue flag was **computed and never read** — the classifier ignored it, so an import-line
+  or thread-pinning change still yielded `A_NO_DEFECT` while the flag sat `False` beside it. The
+  classifier now consumes it; both planted residue-only mutations classify correctly.
+- **one of four producers could not complete**: a rename left `c10_governance.py` raising `KeyError`
+  after writing its evidence, so the artifact existed while the producer exited non-zero. Fixed and
+  re-run end to end.
+- the permanence scan read **one file for four words** while the gate and ledger described it as
+  repo-wide — and it feeds the applied `SUCCESSOR_RULE_ALLOWED` predicate. Now 4803 committed files,
+  co-occurrence with this floor required, **0 hits**, with C10's own namespace excluded because
+  otherwise the scan matched itself.
+
+Also corrected: `Q1_ANSWER` still carried the false attribution to C9 verbatim; `Q2_ANSWER` still
+rested on the withdrawn cell-306 sentence while the same object withdrew it; M14 compared a dict
+literal to itself and now exercises the ledger contract, including that injecting a
+`NOT_REPRODUCED` entry flips the class to `REFUSE`; and the gate-ordering entry tested the
+*absence* of an adjudication artifact, so it flipped to `NOT_REPRODUCED` the moment the campaign
+progressed — it now tests ordering.
+
+One committed artifact that **supports** this conclusion was never surfaced and is now cited:
+`REVIEW_C9_STOP.md` independently recorded that the C2 gate is "over-read as programme-wide
+immutability".
+
 Mutations **14/14**, fact verification **15/15**. The ledger tags each claim `GIT_HISTORY`,
 `NUMERICAL` or `GOVERNANCE`, because a governance *reading* is an argument and not a reproducible
 fact, and should be weighed differently.

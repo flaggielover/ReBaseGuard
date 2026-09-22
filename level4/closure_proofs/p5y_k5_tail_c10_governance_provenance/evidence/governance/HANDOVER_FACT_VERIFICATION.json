@@ -168,15 +168,17 @@
    "claim_kind": "GIT_HISTORY",
    "disposition": "ABSORBED",
    "result": "REPRODUCED",
-   "source": "config/DECISION_GATE_C10.json",
-   "statement": "the C10 decision gate was committed before any adjudication artifact exists",
+   "source": "config/DECISION_GATE_C10.json vs review/ADJUDICATION_C10.md",
+   "statement": "the C10 decision gate was committed before any adjudication artifact",
    "value": {
+    "adjudication_committed": false,
     "gate_added_in": "d2166f039575",
-    "gate_sha256": "4ab7bdd6a2e77d26"
+    "gate_sha256": "4ab7bdd6a2e77d26",
+    "note": "an uncommitted adjudication trivially satisfies the ordering"
    },
-   "verification_method": "git log --diff-filter=A for the gate, and absence of an adjudication artifact"
+   "verification_method": "git log --diff-filter=A for both, compared by position in the commit order"
   }
  ],
  "schema": "C10_HANDOVER_FACT_VERIFICATION/1",
- "sha256": "2f746128518e844b8855ac1f01399bed14a5d937a69ff53badebb609ae207bd9"
+ "sha256": "97d50c914e5f577c88d4c4c607a3cf052d4492163d1cc88a53f43ff3942bee72"
 }

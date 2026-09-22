@@ -113,11 +113,23 @@ def main() -> int:
     gate_commit = C.git("log", "--format=%H", "--diff-filter=A", "--",
                         f"level4/closure_proofs/p5y_k5_tail_c10_governance_provenance/"
                         f"{GATE_SHA_FILE}").splitlines()
-    rec("the C10 decision gate was committed before any adjudication artifact exists",
-        "GIT_HISTORY", "config/DECISION_GATE_C10.json",
-        "git log --diff-filter=A for the gate, and absence of an adjudication artifact",
-        bool(gate_commit) and not (C.NS / "review" / "ADJUDICATION_C10.md").exists(),
-        {"gate_sha256": gsha[:16], "gate_added_in": gate_commit[-1][:12] if gate_commit else None})
+    # ORDERING, not absence. The first version required the adjudication artifact not to exist,
+    # which was true only until the adjudicator wrote its report -- so the entry flipped to
+    # NOT_REPRODUCED the moment the campaign progressed, for a reason that is not a defect. The
+    # durable property is that the gate was COMMITTED BEFORE the adjudication artifact was.
+    adj_p = f"level4/closure_proofs/p5y_k5_tail_c10_governance_provenance/review/ADJUDICATION_C10.md"
+    adj_commit = C.git("log", "--format=%H", "--diff-filter=A", "--", adj_p).splitlines()
+    order = C.git("log", "--format=%H", "--reverse").splitlines()
+    gi = order.index(gate_commit[-1]) if gate_commit and gate_commit[-1] in order else -1
+    ai = order.index(adj_commit[-1]) if adj_commit and adj_commit[-1] in order else None
+    gate_precedes = bool(gate_commit) and (ai is None or gi < ai)
+    rec("the C10 decision gate was committed before any adjudication artifact",
+        "GIT_HISTORY", "config/DECISION_GATE_C10.json vs review/ADJUDICATION_C10.md",
+        "git log --diff-filter=A for both, compared by position in the commit order",
+        gate_precedes,
+        {"gate_sha256": gsha[:16], "gate_added_in": gate_commit[-1][:12] if gate_commit else None,
+         "adjudication_committed": bool(adj_commit),
+         "note": "an uncommitted adjudication trivially satisfies the ordering"})
 
     # APPLY the frozen gate. It was frozen and then never used -- a gate that decides nothing is
     # decoration.

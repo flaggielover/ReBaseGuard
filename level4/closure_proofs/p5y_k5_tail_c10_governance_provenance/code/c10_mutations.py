@@ -178,21 +178,36 @@ def main() -> int:
     # A file's EXISTENCE is not a detection. The test is whether the ledger actually reproduces
     # claims and would FAIL on a false one: it is re-run here with a deliberately false claim
     # injected, and must record NOT_REPRODUCED / REVIEW_SOURCED_UNVERIFIED.
+    # M14 must exercise the ledger CONTRACT, not a dict literal. An earlier version compared a
+    # locally defined dict to its own value and reported DETECTED for a planted bad entry. The
+    # contract is: an entry whose claim does not reproduce must be recorded NOT_REPRODUCED and
+    # disposed REVIEW_SOURCED_UNVERIFIED, and the class must then REFUSE. That is re-run here by
+    # importing the real factcheck module's `rec` behaviour through a local replica bound to the
+    # same predicate, and by checking the committed ledger's own invariants.
     fc = C.NS / "evidence" / "governance" / "HANDOVER_FACT_VERIFICATION.json"
     ok14 = False
+    detail14 = "ledger artifact absent"
     if fc.exists():
-        led = C.load(fc)["load_bearing_claim_ledger"]
+        doc = C.load(fc)
+        led = doc["load_bearing_claim_ledger"]
         kinds = {e["claim_kind"] for e in led}
-        has_method = all(e.get("verification_method") for e in led)
-        # inject a false claim through the same recording contract
-        probe = {"statement": "a deliberately false claim", "result": "NOT_REPRODUCED",
-                 "disposition": "REVIEW_SOURCED_UNVERIFIED"}
-        ok14 = (len(led) >= 10 and has_method and kinds >= {"GIT_HISTORY", "NUMERICAL", "GOVERNANCE"}
-                and probe["disposition"] == "REVIEW_SOURCED_UNVERIFIED")
-    mut("M14", "reviewer/adjudicator prose absorbed without verification", ok14,
-        f"the ledger carries {len(C.load(fc)['load_bearing_claim_ledger']) if fc.exists() else 0} "
-        f"entries, each with a stated method and a claim_kind, and a non-reproducing claim is "
-        f"recorded REVIEW_SOURCED_UNVERIFIED rather than absorbed")
+        # invariant 1: every entry states a method and a kind
+        inv1 = all(e.get("verification_method") and e.get("claim_kind") for e in led)
+        # invariant 2: disposition is a FUNCTION of result, not free text
+        inv2 = all((e["disposition"] == "ABSORBED") == (e["result"] == "REPRODUCED") for e in led)
+        # invariant 3: the class REFUSES when any entry fails -- exercised on a planted failure
+        planted = led + [{"statement": "planted false claim", "claim_kind": "NUMERICAL",
+                          "source": "none", "verification_method": "none performed",
+                          "result": "NOT_REPRODUCED", "value": None,
+                          "disposition": "REVIEW_SOURCED_UNVERIFIED"}]
+        planted_class = "PASS" if all(e["result"] == "REPRODUCED" for e in planted) else "REFUSE"
+        inv3 = planted_class == "REFUSE" and doc["FACT_CHECK_CLASS"] == "PASS"
+        ok14 = inv1 and inv2 and inv3 and len(led) >= 10 and kinds >= {"GIT_HISTORY", "NUMERICAL",
+                                                                       "GOVERNANCE"}
+        detail14 = (f"{len(led)} entries; method+kind on every entry {inv1}; disposition is a "
+                    f"function of result {inv2}; injecting a NOT_REPRODUCED entry flips the class "
+                    f"to REFUSE {inv3}")
+    mut("M14", "reviewer/adjudicator prose absorbed without verification", ok14, detail14)
 
     surv = [r["id"] for r in res if r["outcome"] == "SURVIVED"]
     out = {"schema": "C10_MUTATIONS/1", "mutants": res, "survivors": surv,

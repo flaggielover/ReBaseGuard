@@ -212,10 +212,16 @@ def main() -> int:
     taboo_now = C.sha256_bytes(C.blob_at(
         "HEAD", "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/taboo_certify.py"))
 
+    # The residue flag must be CONSUMED, not merely recorded. An earlier version computed
+    # uncovered_residue_identical and never read it, while the artifact and the commit message both
+    # claimed a residue-only change "cannot slip through as A_NO_DEFECT". It could: a change to an
+    # import line or to the module-level thread-pinning block belongs to no unit, so units_changed
+    # stayed empty and the class was A_NO_DEFECT with the flag sitting False beside it.
+    residue_differs = not cov["uncovered_residue_identical"]
     cls = ("E_BROKEN_BINDING" if not bound else
            "D_SCIENTIFIC_PRODUCER_DRIFT" if build_changed else
-           "A_NO_DEFECT" if not changed else
-           "C_GOVERNANCE_DRIFT")
+           "C_GOVERNANCE_DRIFT" if (changed or residue_differs) else
+           "A_NO_DEFECT")
 
     out = {
         "schema": "C10_ARCHAEOLOGY/1",
@@ -250,6 +256,7 @@ def main() -> int:
             "method": ("AST unit-level comparison of the bound version against HEAD, not a line diff: "
                        "every top-level function, class and constant is extracted and compared"),
             "ast_coverage": cov,
+            "residue_participates_in_classification": True,
             "scientific_constants_identical": all(
                 ua.get(k) == ub.get(k) for k in
                 ("CONST:SUB_BLOCK_MAX_WIDTH", "CONST:DEGREE_TABOO", "CONST:DEGREE_ARL",
@@ -278,8 +285,17 @@ def main() -> int:
             "exactly. The file was then edited twice, AFTER the registry was sealed, and both edits "
             "are confined to verify() and main(). Every build-path unit and every scientific "
             "constant is byte-identical. The recorded field is a build-time RECORD, not a constraint "
-            "on the current tree, and no consumer compares it to HEAD. C9 read a build-time "
-            "self-hash as if it were a live integrity constraint."),
+            "on the current tree, and no consumer compares it to HEAD. "
+            "ATTRIBUTION, CORRECTED: an earlier version of this artifact said C9 had read the "
+            "self-hash as a live integrity constraint. C9 said no such thing -- it recorded a true "
+            "mismatch plus a reproducibility requirement, 'any execution must resolve which "
+            "producer actually built the registry', which this archaeology satisfies. C9's own "
+            "stop-review had already located the bound commit and the verify/main localisation; "
+            "C10's contribution is the measurement, not the discovery. A separate consequence from "
+            "that review is carried here and not dropped: because sha(HERE.read_bytes()) is written "
+            "into every new registry, a rebuild today could not reproduce REGISTRY_C2.json "
+            "byte-for-byte regardless, and C9 further noted that numpy/BLAS participates in the "
+            "certifier's result."),
     }
     s = C.write_evidence(C.NS / "evidence" / "phase1" / "C10_ARCHAEOLOGY.json", out)
     for c in ck:

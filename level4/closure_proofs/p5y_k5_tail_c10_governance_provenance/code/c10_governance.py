@@ -49,17 +49,45 @@ def main() -> int:
                                   "adjudicator existed -- not invented by the adjudicator"},
     }
 
-    # does anything claim permanence?
-    perm_hits = [l.strip() for l in txt.splitlines()
-                 if re.search(r"immutab|forever|never be changed|all future successors", l, re.I)]
+    # Permanence scan. The first version searched ONE file for four words, while the gate and the
+    # ledger both described the claim as repo-wide -- and this feeds the applied predicate
+    # SUCCESSOR_RULE_ALLOWED, so an under-scoped scan is load-bearing. It now scans every committed
+    # markdown and json in the repository, and keeps only permanence language that co-occurs with a
+    # reference to THIS floor, so that unrelated uses of "permanent" elsewhere are not counted.
+    PERM = re.compile(r"(immutab\w*|forever|in perpetuity|never be (changed|replaced|revised)|"
+                      r"binding on (all|every) (future )?successors?|permanently binding)", re.I)
+    FLOOR = re.compile(r"(adoption floor|K5 tail adoption|F1\b|F2\b|1\.25|uniform-A margin)", re.I)
+    perm_hits, scanned = [], 0
+    for f in C.git("ls-files", "--", "*.md", "*.json").splitlines():
+        # C10's own prose asks the permanence question and quotes the answer; it is not evidence
+        # ABOUT the floor. Without this the scan matches itself, exactly as C10's consumer scan did.
+        if "p5y_k5_tail_c10_governance_provenance" in f:
+            continue
+        try:
+            body = C.blob_at("HEAD", f).decode("utf-8", "replace")
+        except Exception:
+            continue
+        scanned += 1
+        for ln in body.splitlines():
+            if PERM.search(ln) and FLOOR.search(ln):
+                perm_hits.append({"file": f, "line": ln.strip()[:150]})
     rule["any_claim_of_permanence"] = perm_hits
+    rule["permanence_scan"] = {
+        "files_scanned": scanned,
+        "scope": "every committed .md and .json in the repository",
+        "rule": "permanence language AND a reference to this floor on the same line",
+        "hits": len(perm_hits),
+        "self_excluded": "this campaign's own namespace, which poses the question and quotes the answer",
+        "note": ("the earlier scan read one file for four words while claiming repo-wide coverage. "
+                 "Permanence language occurs widely in this repository about other objects; only "
+                 "co-occurrence with the floor is evidence about the floor."),
+    }
     rule["permanence_finding"] = (
         "NONE. The word 'permanent' occurs only about adopted CELLS ('an adopted cell is permanent, "
         "is removed from every future campaign's universe, and is never revisited'), which concerns "
         "VERDICTS, not the rule. No text asserts the floor binds all future successors immutably.")
 
     # ---- the adjudication ANTICIPATES a replacement floor ------------------------------------
-    repl = quote(r"a \*\*second, independently written certifier\*\*", 430)
     # THE PRIMARY AUTHORITY. An earlier version rested Q2 on the "replacement floor" sentence in the
     # cell-306 discharge bullets. The fresh-context review was right that this OVER-READS it: that
     # sentence is one of three routes for discharging the floor FOR CELL 306, conditioned on closing
@@ -128,6 +156,14 @@ def main() -> int:
         n9_state, closed = "OPEN", False
     else:
         n9_state, closed = "UNDETERMINED", None
+    rule["supporting_prior_finding"] = {
+        "source": "p5y_k5_tail_c9_e1_cell307/review/REVIEW_C9_STOP.md",
+        "finding": ("C9's own reviewer independently recorded that the C2 gate is 'over-read as "
+                    "programme-wide immutability'. C10 reached the same conclusion without citing "
+                    "it; it is cited here because a committed artifact that supports the "
+                    "conclusion should not be omitted merely because it was found later."),
+    }
+
     rule["N9_status"] = {
         "state": n9_state,
         "open": (closed is False),
@@ -295,11 +331,14 @@ def main() -> int:
            "Q2_consequence_cases": cases,
            "Q2_ANSWER": (
                "A future successor MAY define a different prospective adoption rule without "
-               "retroactively altering C2. The floor declares itself prospective, scopes itself to "
-               "adoptions 'from this verdict onward', gives F1 an explicit lapse condition tied to "
-               "N9, and -- decisively -- the same adjudication directs that once N9 closes 'a "
-               "successor should freeze a replacement floor requiring agreement between two "
-               "independent certifier implementations rather than F1'. Nothing claims permanence. "
+               "retroactively altering C2. The PRIMARY authority is Condition 1 of the C2 verdict: "
+               "'The floor above is now the standard for K5 m = 5 tail adoptions, prospectively. A "
+               "successor that wishes to replace it must freeze the replacement BEFORE recomputing "
+               "any magnitude.' That is general to the line, states the replacement procedure, and "
+               "carries a BINDING PRECONDITION. The floor also declares itself prospective, scopes "
+               "itself to adoptions 'from this verdict onward', and gives F1 an explicit lapse "
+               "condition tied to N9. The cell-306 'replacement floor' bullet is CORROBORATING "
+               "ONLY; an earlier version called it decisive, which was an over-read. "
                "What a successor may NOT do is re-adjudicate 305 or 306 under a new rule, or apply "
                "its own rule to an adoption already made."),
            "Q2_GATING_FACT": ("N9 is still OPEN, so the replacement route the adjudication names is "
@@ -315,8 +354,10 @@ def main() -> int:
           f"({rule['F1']['lapses_when']})")
     print(f"  claims of permanence  : {rule['any_claim_of_permanence'] or 'NONE'}")
     print(f"  N9 open               : {rule['N9_status']['open']}")
-    print(f"\n  adjudication directs a replacement floor: "
-          f"{bool(rule['adjudication_itself_directs_a_replacement']['quote'])}")
+    print(f"\n  PRIMARY authority (verdict Condition 1) quoted: "
+          f"{bool(rule['PRIMARY_AUTHORITY_condition_1']['quote'])}")
+    print(f"  binding precondition recorded                 : "
+          f"{'freeze BEFORE recomputing any magnitude' in rule['PRIMARY_AUTHORITY_condition_1']['BINDING_PRECONDITION_ON_ANY_SUCCESSOR']}")
     print(f"\ncell 307: closes now {cell307['closes_now']}, F1 {cell307['F1_passes']}, "
           f"F2 {cell307['F2_passes']}")
     print(f"  alpha can close: {cell307['alpha_can_close']}   "
