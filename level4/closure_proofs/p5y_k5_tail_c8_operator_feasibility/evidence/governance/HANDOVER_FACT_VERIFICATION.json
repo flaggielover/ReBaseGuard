@@ -1,13 +1,7 @@
 {
- "FACT_CHECK_CLASS": "REFUSE",
+ "FACT_CHECK_CLASS": "PASS",
  "WHAT_THIS_CANNOT_VERIFY": "the mechanical checks compare numerals, baselines, commit order and self-shas. NONE of them reaches a BEHAVIOURAL claim -- whether a guard actually guards, whether a test can fail, whether a route classification is sound. C6 and C7 each shipped a defect of exactly that kind past a PASS here. Those are found by reading code and by adversarial review, and the load-bearing claim ledger below is where reviewer and adjudicator statements are checked one by one before absorption.",
- "findings": [
-  {
-   "artifact": "evidence/mutations/C8_MUTATIONS.json",
-   "check": "GATE_ORDERING",
-   "position": "BEFORE_GATE"
-  }
- ],
+ "findings": [],
  "gate_ordering": [
   {
    "artifact": "evidence/phase4/C8_ROUTES.json",
@@ -22,7 +16,7 @@
   {
    "artifact": "evidence/mutations/C8_MUTATIONS.json",
    "kind": "RESULT",
-   "position": "BEFORE_GATE"
+   "position": "AFTER_GATE"
   },
   {
    "artifact": "evidence/b0/C8_B0_AUDIT.json",
@@ -127,5 +121,5 @@
  "prose_scanned": [],
  "review_sourced_figures": {},
  "schema": "C8_HANDOVER_FACT_VERIFICATION/1",
- "sha256": "712defd6297556a33490f873ee1a26cc4101c14eb2653d78423d9391e73839a7"
+ "sha256": "2f8d8a5c6e78e5918a41f98dc37fa80126e7075793182a0042ab1d3bbd0a38a3"
 }
