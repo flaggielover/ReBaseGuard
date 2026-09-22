@@ -228,3 +228,182 @@ def lambda_lower_tier2(e: F, K: F, H: F, U: F, ladder) -> dict:
     best = max(rows, key=lambda r: r["L_lower"])
     return {"U_used": U, "psi_lo_H": psi_H, "E_V_upper": EV.hi, "ladder": [str(F(x)) for x in ladder],
             "rows": rows, "best": best}
+
+
+# ==================================================================================================
+# TIER k -- the multi-tier bound. Tier 2 is the k = 2 case.
+# ==================================================================================================
+"""Theorem C7-E2c (multi-tier overshoot bound).
+
+Tier 2 splits [0, H] once. Splitting it k times is strictly better and costs nothing new: the same
+two monotonicity facts and the same certified U.
+
+Fix a partition 0 = u_0 < u_1 < ... < u_k = H and write m_j = mu((u_{j-1}, u_j]), so m_j >= 0 and
+sum_j m_j = 1. Two families of facts constrain m:
+
+  (i) psi >= psi_lo(u_j) on (u_{j-1}, u_j], because psi_lo(u) is a valid lower bound for psi on ALL
+      of [0, u] -- it is built from r and f at the right-hand endpoint, both decreasing.
+  (ii) sum_{j > i} m_j = mu((u_i, H]) <= p(u_i) * E[tau'] <= p(u_i) * U =: q_i, and also <= 1.
+
+So E[R] >= min { sum_j psi_lo(u_j) m_j : m >= 0, sum m_j = 1, sum_{j>i} m_j <= q_i for all i }.
+
+Because psi_lo(u_j) is non-increasing in j, the minimising m pushes as much mass as far RIGHT as the
+tail constraints allow, and the LP is solved in closed form by the greedy assignment
+
+    m_k = q_{k-1},   m_j = q_{j-1} - q_j  (1 < j < k),   m_1 = 1 - q_1,
+
+which is feasible exactly because q is non-increasing (p is decreasing) with q_0 = 1 after clipping,
+and telescopes to sum_j m_j = 1. Hence
+
+    E[R] >= psi_lo(u_1) (1 - q_1) + sum_{j=2}^{k-1} psi_lo(u_j) (q_{j-1} - q_j) + psi_lo(u_k) q_{k-1}.
+
+Every q_i is taken from ABOVE and every psi_lo from BELOW, so the whole expression is a certified
+lower bound. Refining the partition can only raise it -- it adds constraints to the same LP -- and it
+saturates at the information content of U, which is what the family-exhaustion argument then uses.
+"""
+
+
+def lambda_lower_tier_k(e: F, K: F, H: F, U: F, partition) -> dict:
+    """`partition` is the interior-and-right knots u_1 < ... < u_k = H, fixed by the frozen gate."""
+    e, K, H, U = F(e), F(K), F(H), F(U)
+    us = [F(u) for u in partition]
+    if not us or us[-1] != H:
+        raise TheoremRefusal("partition must end exactly at H")
+    if any(b <= a for a, b in zip(us, us[1:])) or us[0] <= 0:
+        raise TheoremRefusal("partition must be strictly increasing and positive")
+
+    psi = [psi_lo_at(u, e, K) for u in us]
+    if any(b > a for a, b in zip(psi, psi[1:])):
+        raise TheoremRefusal("psi_lo must be non-increasing along the partition; monotonicity violated")
+
+    q = [min(F(1), p_upper(u, e, K) * U) for u in us]
+    if any(b > a for a, b in zip(q, q[1:])):
+        raise TheoremRefusal("q must be non-increasing along the partition; p is not decreasing")
+
+    k = len(us)
+    weights = [F(0)] * k
+    weights[0] = F(1) - q[0]                       # m_1
+    for j in range(1, k - 1):
+        weights[j] = q[j - 1] - q[j]               # m_{j+1}
+    weights[k - 1] += q[k - 2] if k >= 2 else F(0)  # m_k absorbs the surviving tail mass
+    if any(w < 0 for w in weights):
+        raise TheoremRefusal("greedy LP solution is infeasible; a monotonicity assumption failed")
+    tot = sum(weights)
+    if tot != 1:
+        raise TheoremRefusal(f"LP weights must sum to exactly 1, got {tot}")
+
+    ER = sum((w * ps for w, ps in zip(weights, psi)), F(0))
+    floor = psi[-1]
+    if ER < floor:
+        raise TheoremRefusal("multi-tier E[R] fell below the tier-1 floor, which is impossible")
+
+    EV = G.E_excess(e, K)
+    L = (G.Iv(H + ER, H + ER) / G.Iv(EV.hi, EV.hi)).lo
+    return {"k": k, "U_used": U, "E_V_upper": EV.hi, "E_R_lower": ER, "L_lower": L,
+            "tier1_floor_psi_lo_H": floor,
+            "knots": [{"u": u, "psi_lo": ps, "q_upper": qq, "lp_weight": w}
+                      for u, ps, qq, w in zip(us, psi, q, weights)]}
+
+
+# ==================================================================================================
+# LEMMA C7-U -- a certified upper bound on E[tau'] that needs NO registry constant and NO citation
+# ==================================================================================================
+"""Lemma C7-U (elementary truncation bound on the overshoot, hence on E[tau']).
+
+The multi-tier theorem needs some certified U >= E[tau']. The obvious supply is a certified admissible
+atom constant A0 (Lemma SM(d) makes A0 >= sup_cell E_a[tau] >= E[tau] >= E[tau']), but that ties the
+result to the Arb/FLINT certification surface. Lorden's inequality E[R] <= E[V^2]/E[V] supplies a
+better one with no registry, but it is an external theorem C7 does not re-prove. This lemma supplies a
+third, weaker than both but proved here from scratch, so that a bound exists which depends on neither.
+
+STEP 0 (finiteness, which tiers 2+ need in any case). V >= 0 iid with E[V] > 0, so there is c > 0 with
+p := P(V > c) > 0. Reaching H needs at most ceil(H/c) increments exceeding c, so tau' is dominated by a
+sum of ceil(H/c) + 1 iid Geometric(p) variables and E[tau'] <= (ceil(H/c) + 1)/p < infinity. Both c and
+p are chosen and evaluated rigorously below, so the finiteness is certified, not assumed.
+
+STEP 1. S_{tau'-1} <= H by definition of tau', so the overshoot satisfies
+
+    R = S_{tau'} - H = S_{tau'-1} + V_{tau'} - H  <=  V_{tau'}.
+
+STEP 2. For any a > 0, V_{tau'} <= a + V_{tau'} 1{V_{tau'} > a}, and
+
+    E[V_{tau'} 1{V_{tau'} > a}]  =  sum_n E[1{tau' = n} V_n 1{V_n > a}]
+                                 <= sum_n E[1{tau' >= n} V_n 1{V_n > a}]
+                                  = sum_n P(tau' >= n) E[V 1{V > a}]  =  E[tau'] g(a),
+
+where g(a) := E[V 1{V > a}]. The factorisation is legitimate because {tau' >= n} = {S_{n-1} <= H} is
+measurable with respect to V_1, ..., V_{n-1} and hence independent of V_n. So E[R] <= a + E[tau'] g(a).
+
+STEP 3. Wald gives E[tau'] = (H + E[R])/E[V] (an identity in [0, infinity] by Tonelli, and finite by
+step 0). Substituting and rearranging, whenever g(a) < E[V],
+
+    E[R]  <=  (a E[V] + H g(a)) / (E[V] - g(a)),        U(a) := (H + that) / E[V]  >=  E[tau'].
+
+With s = K + a, g(a) = rho(s-e) + rho(s+e) + a [Phi(-(s-e)) + Phi(-(s+e))], where rho(t) = E[(Z-t)^+].
+Every a in a prospectively fixed grid yields a VALID U, so taking the minimum over that grid is sound
+and is not result-dependent selection.
+"""
+
+
+def rho1(t: F) -> G.Iv:
+    """E[(Z - t)^+] = phi(t) - t Phi(-t)."""
+    t = F(t)
+    return G.phi(t) - G.Iv(t, t) * G.Phi(-t)
+
+
+def rho2(t: F) -> G.Iv:
+    """E[((Z - t)^+)^2] = (1 + t^2) Phi(-t) - t phi(t)."""
+    t = F(t)
+    return G.Iv(1 + t * t, 1 + t * t) * G.Phi(-t) - G.Iv(t, t) * G.phi(t)
+
+
+def g_tail(a: F, e: F, K: F) -> F:
+    """An UPPER bound on g(a) = E[V 1{V > a}]."""
+    a, s = F(a), F(K) + F(a)
+    return (rho1(s - F(e)) + rho1(s + F(e))
+            + G.Iv(a, a) * (G.Phi(-(s - F(e))) + G.Phi(-(s + F(e))))).hi
+
+
+def E_tau_prime_finite(e: F, K: F, H: F, c: F) -> dict:
+    """Step 0: certify E[tau'] < infinity via an explicit geometric domination at threshold c."""
+    e, K, H, c = F(e), F(K), F(H), F(c)
+    s = K + c
+    p_lo = (G.Phi(-(s - e)) + G.Phi(-(s + e))).lo          # P(V > c) from BELOW
+    if not p_lo > 0:
+        raise TheoremRefusal("could not certify P(V > c) > 0")
+    n = -((-H) // c) + 1                                    # ceil(H/c) + 1, exact integer arithmetic
+    return {"c": c, "p_lower": p_lo, "geometric_stages": int(n),
+            "E_tau_prime_upper_crude": (G.Iv(n, n) / G.Iv(p_lo, p_lo)).hi}
+
+
+def U_elementary(e: F, K: F, H: F, grid) -> dict:
+    """Lemma C7-U: min over a prospectively fixed grid. No registry constant, no cited theorem."""
+    e, K, H = F(e), F(K), F(H)
+    EV = G.E_excess(e, K)
+    rows, best = [], None
+    for a in grid:
+        a = F(a)
+        gh = g_tail(a, e, K)
+        if gh >= EV.lo:
+            rows.append({"a": a, "g_upper": gh, "admissible": False})
+            continue
+        ER = ((G.Iv(a, a) * G.Iv(EV.hi, EV.hi) + G.Iv(H, H) * G.Iv(gh, gh))
+              / G.Iv(EV.lo - gh, EV.lo - gh)).hi
+        U = (G.Iv(H + ER, H + ER) / G.Iv(EV.lo, EV.lo)).hi
+        rows.append({"a": a, "g_upper": gh, "admissible": True, "E_R_upper": ER, "U_upper": U})
+        if best is None or U < best["U_upper"]:
+            best = rows[-1]
+    if best is None:
+        raise TheoremRefusal("no admissible a in the grid: g(a) >= E[V] throughout")
+    return {"grid": [str(F(x)) for x in grid], "rows": rows, "best": best,
+            "dependency": "NONE beyond C7's own rigorous Gaussian; no registry, no external citation"}
+
+
+def U_lorden(e: F, K: F, H: F) -> dict:
+    """Lorden's inequality E[R] <= E[V^2]/E[V]. NO registry, but an EXTERNAL theorem C7 does not prove."""
+    e, K, H = F(e), F(K), F(H)
+    EV, EV2 = G.E_excess(e, K), rho2(K - e) + rho2(K + e)
+    ER = (G.Iv(EV2.hi, EV2.hi) / G.Iv(EV.lo, EV.lo)).hi
+    U = (G.Iv(H + ER, H + ER) / G.Iv(EV.lo, EV.lo)).hi
+    return {"E_V2_upper": EV2.hi, "E_R_upper": ER, "U_upper": U,
+            "dependency": "Lorden (1970) renewal overshoot inequality -- cited, NOT re-proved in C7"}

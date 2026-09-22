@@ -1,0 +1,163 @@
+{
+ "H": "5",
+ "K": "1/2",
+ "N_partition": 64,
+ "a_grid": [
+  "2",
+  "9/4",
+  "5/2",
+  "11/4",
+  "3",
+  "13/4",
+  "7/2",
+  "15/4",
+  "4",
+  "17/4",
+  "9/2",
+  "19/4",
+  "5",
+  "21/4",
+  "11/2",
+  "23/4",
+  "6"
+ ],
+ "analytic_ceiling_of_the_E2_family": {
+  "certified_A0_at_309": 4.867216116723177,
+  "derivation": "(H + Lorden's upper bound on E[R]) / E[V]_lo",
+  "family_can_reach_certified_A0": false,
+  "float": 4.679910339516997,
+  "meaning": "no bound in the E2 family -- however the partition, the split points or U are chosen -- can exceed this, because it is what the family gives when E[R] is known exactly at its largest provable value",
+  "value": "9996227814480530045704213162440267878192028532456010787334975792566108689723757597164180518550531/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576"
+ },
+ "cell": 309,
+ "e_evaluated": "19839101/10000000",
+ "phase1_slack_ledger": [
+  {
+   "E_R_lower_float": 0.4383285884695285,
+   "E_R_lower_recovered": "1067912433702320005007504536169015303572022700536546934547648760899997737214867967571892593480669628521609663038861320345890335611391108524014147818709023467479606563563829099220554325586025155266198538187815064748850045898909012819113549683308504130722584083610783063029333754197007973031/2436328502849999770088345596968797077719056714398751881716976614303237172691606525616403766470502564806326229057852167045864792466300773511644496824078163354882819424989118257467697413872513412088199898369804594718421399481348718736436590903867241403206934700776069386770457147497978527744",
+   "E_R_upper_float": 2.096686541732967,
+   "E_R_upper_provable": "2239247635765731623714184974811326752465628072410036386490647773891065020348997051228976673458217/1067993517960455041197510853084776057301352261178326384973520803911109862890320275011481043468288",
+   "fraction_of_provable_range_recovered": 0.20905775839398402,
+   "id": "S1",
+   "note": "this is the whole of C7's improvement; the residual headroom is S1's own remainder",
+   "recoverable_by_C7": true,
+   "status": "RECOVERED",
+   "step": "C4 discards the overshoot R = S_tau' - H, replacing H + E[R] by H"
+  },
+  {
+   "id": "S2",
+   "reason": "E[tau] - E[tau'] depends on how often the clipped process is pinned at 0, which is a property of the CUSUM recursion and not of the increment law alone. Bounding it needs either a numerical kernel evaluation or new operator information; both are outside C7's compute boundary. Recorded as a known, unquantified, FAVOURABLE loss -- it can only make the true Lambda_309 larger than any bound C7 reports.",
+   "recoverable_by_C7": false,
+   "status": "UNMEASURABLE",
+   "step": "pathwise majorant: the CUSUM clipping at 0 is dropped, so tau >= tau'"
+  },
+  {
+   "E_V_hi": "404880364991684904784549779004007277748145604629719893902520098690748103567805133322305996757249/266998379490113760299377713271194014325338065294581596243380200977777465722580068752870260867072",
+   "E_V_lo": "1619521459966739619138199116016029110992582418518879575610080394762992414271220533289223987028987/1067993517960455041197510853084776057301352261178326384973520803911109862890320275011481043468288",
+   "id": "S3",
+   "note": "outward rounding on the 2^-320 grid; contributes below every digit reported",
+   "recoverable_by_C7": false,
+   "relative_interval_width": 5.557197124257208e-96,
+   "status": "NEGLIGIBLE_AND_MEASURED",
+   "step": "E[V] replaced by a certified upper bound"
+  },
+  {
+   "id": "S4",
+   "reason": "Lambda_309 = sup over the closed cell, so ANY point in the cell gives a valid lower bound. e_lo is the best single point because E[V] is increasing in e and the bound is decreasing in E[V]. The gap sup - value(e_lo) is not accessible without operator information.",
+   "recoverable_by_C7": false,
+   "status": "UNMEASURABLE_BUT_SOUND",
+   "step": "evaluated at the single point e = e_lo rather than at sup over the cell"
+  },
+  {
+   "f_K_upper": "7452836167829118691162174589704912640869185396574220155697252139926711721565310559420862218337/1067993517960455041197510853084776057301352261178326384973520803911109862890320275011481043468288",
+   "id": "S5",
+   "note": "bounded by f(K) = Phi(-(K+e))/Phi(-(K-e)); recovering it would change the last bound by at most 0.70%, which does not alter any verdict",
+   "recoverable_by_C7": true,
+   "relative_loss_upper_percent": 0.697835337246408,
+   "status": "MEASURED_AND_ACCEPTED",
+   "step": "the reflected tail rho(s+e) is dropped inside psi_lo"
+  },
+  {
+   "L_at_4N": "7691702276044788342603606235319389308307456410354439988645980265432974326297534146530921127769273/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576",
+   "L_at_N": "240161146778078932726368133788231016524886209179231124643682808337460929867297438271014799153851/66749594872528440074844428317798503581334516323645399060845050244444366430645017188217565216768",
+   "id": "S6",
+   "note": "a 4x finer partition is worth under 0.1%; N = 64 is fixed by the gate for reviewer reproducibility -- it re-runs in ~17s against ~75s at 4N",
+   "recoverable_by_C7": true,
+   "relative_gap_percent": 0.08517170702458252,
+   "status": "MEASURED_AND_ACCEPTED",
+   "step": "LP discretisation of the measure constraint at N = 64"
+  }
+ ],
+ "phase2_required_improvement": {
+  "C4_floor_B": "7042883855512317228573616624030771257929457129673562463047347660946518958771696089275290742247463/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576",
+  "C4_floor_float": 3.297250281519544,
+  "C4_margin_percent": 0.9439874105892059,
+  "critical_A0_C5T": "816603932066799/250000000000000",
+  "critical_A0_C5T_float": 3.266415728267196,
+  "exclusion_test": "cell 309 is EXCLUDED iff Gamma(A0 = B, A1 = A2 = 0) >= 0, i.e. iff the certified floor B exceeds the critical A0",
+  "improvement_needed_to_exist_at_all_percent": 0.0,
+  "thresholds": [
+   {
+    "C4_meets": true,
+    "floor_required": 3.266415728267196,
+    "margin_percent": 0.0,
+    "meaning": "the exclusion holds at all",
+    "name": "BARE"
+   },
+   {
+    "C4_meets": false,
+    "floor_required": 3.4297365146805556,
+    "margin_percent": 5.0,
+    "meaning": "survives a 5% adverse move in the critical A0",
+    "name": "ROBUST_5"
+   },
+   {
+    "C4_meets": false,
+    "floor_required": 3.5930573010939155,
+    "margin_percent": 10.0,
+    "meaning": "survives a 10% adverse move",
+    "name": "ROBUST_10"
+   }
+  ],
+  "why_C4_is_fragile": "C4 published 2.5827% margin against its own frozen-clause critical A0 3.2142360226778806. C5-T's exact-weight transport raised the critical A0 to 3.266415728267196, consuming 63% of that margin and leaving 0.9440%. A further move of that size in any successor would extinguish it."
+ },
+ "results_by_dependency_set": {
+  "L1_tier1": {
+   "dependencies": [],
+   "float": 3.461283496693919,
+   "margin_percent": 5.965798129746906,
+   "value": "7393256676585207586894836492215733799916835426406755713887603480554674916938241563113887486584361/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576",
+   "vs_C4_percent": 4.974848773044311
+  },
+  "L3_elementary": {
+   "U_used": "6340896872095264488586880555351741348845524663727720169992189053421653579217972007822976102655761/1067993517960455041197510853084776057301352261178326384973520803911109862890320275011481043468288",
+   "dependencies": [],
+   "float": 3.5863060938653875,
+   "margin_percent": 9.79331451382309,
+   "value": "7660303323340626150864744929702084417731474971475494104378592811169153073152668731378279937090639/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576",
+   "vs_C4_percent": 8.76657176939057
+  },
+  "L3_lorden": {
+   "U_used": "9996227814480530045704213162440267878192028532456010787334975792566108689723757597164180518550531/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576",
+   "dependencies": [
+    "Lorden (1970), cited but not re-proved in C7"
+   ],
+   "float": 3.6003376198767163,
+   "margin_percent": 10.22288402299186,
+   "value": "3845137240497505852276495821365795809975458538517284291772529158767470446166640757258062761948399/1067993517960455041197510853084776057301352261178326384973520803911109862890320275011481043468288",
+   "vs_C4_percent": 9.192124117963345
+  },
+  "L3_registry": {
+   "U_used": "4867216116723177/1000000000000000",
+   "dependencies": [
+    "Arb/FLINT operator certification surface"
+   ],
+   "float": 3.5979416389974226,
+   "margin_percent": 10.149532034800057,
+   "value": "240161146778078932726368133788231016524886209179231124643682808337460929867297438271014799153851/66749594872528440074844428317798503581334516323645399060845050244444366430645017188217565216768",
+   "vs_C4_percent": 9.119458087946676
+  }
+ },
+ "schema": "C7_LEDGER/1",
+ "sha256": "a7d52513ecf3cd5bd20ccb5e058bf94721897e9b754cf1c100022e9ee2122180"
+}

@@ -1,0 +1,103 @@
+{
+ "schema": "FEASIBILITY_GATES_C7/1",
+ "campaign": "C7 -- E2 analytic lower-bound strengthening for Lambda_309",
+ "namespace": "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309",
+ "branch": "p5y-k5-tail-c7-e2",
+ "target": {
+  "quantity": "Lambda_309 = E_a[tau] for the frozen CUSUM model, m = 5, cell 309",
+  "direction": "LOWER bound",
+  "baseline_to_beat": "3.297250281519544 (C4 certified floor, C4_CERTIFICATE.json#/cells/309)",
+  "critical_A0_to_clear": "3.266415728267196 (C5-T, C5_FORECAST.json)"
+ },
+
+ "compute_boundary": {
+  "NEW_REAL": 0,
+  "SCIENTIFIC_KERNEL_EVALUATIONS": 0,
+  "REMOTE_HOSTS_CONTACTED": 0,
+  "TOOLCHAIN_PROVISIONED": 0,
+  "guard": "DENY",
+  "EXECUTION_AUTHORIZED": false,
+  "forbidden": ["AWS access", "Vultr access", "any SSH", "any remote worker",
+                "numpy/flint/scipy/mpmath/sympy/gmpy2 installation or import",
+                "K1 replay", "Order3Certifier", "operator certification",
+                "new interval kernel evaluation", "Monte Carlo of any kind",
+                "new CUSUM/SR/PS1 scientific addresses", "R-stage", "changing the guard"],
+  "arithmetic": "python3 stdlib fractions.Fraction only, outward rounding on a 2^-320 grid",
+  "enforcement": "asserted by code/c7_b0_audit.py via an ast import walk, not merely declared"
+ },
+
+ "prospective_choices": {
+  "e_evaluated": "19839101/10000000 (the cell's lower endpoint e_lo; ANY point in the closed cell is valid, and e_lo is optimal because E[V] increases in e and the bound decreases in E[V])",
+  "K": "1/2", "H": "5", "K_plus_H_must_equal": "11/2",
+  "N_partition": 64,
+  "N_partition_rationale": "a uniform partition u_j = j*H/64. Fixed for reviewer reproducibility: it re-runs in ~17s against ~75s at N=256, and the convergence sweep shows 4x refinement is worth under 0.1%, which alters no verdict.",
+  "a_grid_for_lemma_C7_U": "{j/4 : j = 8..24}, a uniform untuned grid on [2, 6]",
+  "u0_ladder_for_tier2": "{j*H/8 : j = 1..8}, a uniform untuned grid (tier 2 is superseded by tier k and is retained only as a cross-check)",
+  "U_sources_admitted": [
+   {"id": "elementary", "dependencies": [], "origin": "Lemma C7-U, proved in code/c7_theorem.py"},
+   {"id": "registry", "dependencies": ["Arb/FLINT operator certification surface"], "origin": "certified admissible A0 at cell 309, via Lemma SM(d)"},
+   {"id": "lorden", "dependencies": ["Lorden (1970), cited but NOT re-proved in C7"], "origin": "E[R] <= E[V^2]/E[V]"}
+  ]
+ },
+
+ "selection_rule": {
+  "combination": "Lambda_309 >= max over all valid bounds, per the campaign instruction. Every bound in the family is individually valid, so the max is valid.",
+  "PRIMARY_bound": "the largest bound whose dependency set is EMPTY. C7's purpose is to restore robustness to an exclusion whose margin was questioned, so a bound that inherits the disputed Arb surface cannot be the headline.",
+  "reporting": "all four bounds are reported with their dependency sets, so an adjudicator may discount any surface and read off what survives."
+ },
+
+ "verdict": {
+  "classes": ["STRENGTHENED", "MARGINAL", "NO_IMPROVEMENT", "REFUSED"],
+  "rule": {
+   "STRENGTHENED": "the PRIMARY bound strictly exceeds C4's certified floor AND its margin over the C5-T critical A0 strictly exceeds C4's margin over the same critical A0",
+   "MARGINAL": "the PRIMARY bound strictly exceeds C4's floor but a dependency-free bound does not, i.e. the improvement exists only on a disputed surface",
+   "NO_IMPROVEMENT": "no bound strictly exceeds C4's floor",
+   "REFUSED": "any kill gate fires"
+  },
+  "no_tuned_threshold": "The verdict rule contains NO tuned numeric threshold. It compares C7's output against C4's own published numbers only. ROBUST_5 and ROBUST_10 in the ledger are DESCRIPTIVE reporting bands, not verdict inputs, precisely so that no threshold can be accused of having been set to the answer."
+ },
+
+ "kill_gates": {
+  "KG1": "any reported bound fails to strictly exceed C4's certified floor -> that route is NOT reported as an improvement",
+  "KG2": "any monotonicity premise (r decreasing, f decreasing, p decreasing, psi_lo non-increasing along the partition) is violated at evaluation -> REFUSE",
+  "KG3": "the LP weights fail to sum to exactly 1 in exact rational arithmetic -> REFUSE",
+  "KG4": "the tier-k bound at k = 1 fails to reproduce the tier-1 bound exactly -> REFUSE",
+  "KG5": "any LOWER bound produced exceeds a certified UPPER bound on the same quantity (the certified A0, or the E2-family analytic ceiling) -> REFUSE, since that is a contradiction and therefore an implementation error",
+  "KG6": "the frozen CUSUM model file sha256 differs from efcc0f36632632577a24c4ddf1a7c2c3579d471cdba5a752dd72c708667cdc79 -> REFUSE",
+  "KG7": "K + H != 11/2 -> REFUSE (C4's structural repair, inherited: mis-taking the threshold inflates the bound in the UNSOUND direction while leaving the verdict unchanged)",
+  "KG8": "any mutant in the required-detection set survives -> REFUSE",
+  "KG9": "any compute-boundary counter is non-zero -> REFUSE"
+ },
+
+ "permitted_conclusions": [
+  "a strengthened certified LOWER bound on Lambda_309, with its dependency set stated",
+  "a restatement of the cell-309 exclusion margin under C5-T",
+  "an exhaustion statement about the analytic ceiling of the E2 family"
+ ],
+ "forbidden_conclusions": [
+  "that cell 309 is CLOSED (the exclusion is a statement about the deterministic route, not a closure)",
+  "that K5 is closed or that the m=5 tail is complete",
+  "that any other cell's status changes",
+  "that the R-stage may launch, or that EXECUTION_AUTHORIZED may become true",
+  "that the Arb/FLINT surface is validated or invalidated by C7"
+ ],
+
+ "disclosure_of_non_blindness": {
+  "statement": "This gate was frozen AFTER exploratory evaluation of the theorem. At freeze time the campaign already knew approximate values for all four bounds. The gate does not claim blindness.",
+  "why_this_does_not_compromise_soundness": [
+   "Every prospective choice -- the partition, the a-grid, the u0 ladder, the point e, the choice of U -- affects only the TIGHTNESS of a bound, never its VALIDITY. Each choice yields a valid certified lower bound; a different choice yields a different valid certified lower bound. There is no setting of any of them that can make an invalid result appear valid.",
+   "The verdict rule contains no tuned threshold, only strict comparisons against C4's published numbers, so there is no bar that could have been positioned to admit the answer.",
+   "The kill gates are all soundness checks, not performance bars; none of them can be satisfied by a better number."
+  ],
+  "what_would_have_been_compromised_by_non_blindness": "a threshold-based verdict of the kind C1 and C2 used. C7 deliberately does not use one, for this reason.",
+  "precedent": "This programme has repeatedly recorded repairs as landed that had not, and has once shipped a reviewer's claim unverified. Disclosing the freeze order explicitly is cheaper than defending a blindness claim that the transcript would contradict."
+ },
+
+ "invariants_C7_must_not_change": [
+  "the frozen CUSUM model and its constants",
+  "any predecessor namespace (C4, C5, C6, K1 cover ledger)",
+  "the guard (DENY) and EXECUTION_AUTHORIZED (false)",
+  "the status of any cell other than the reported bound on 309",
+  "main"
+ ]
+}
