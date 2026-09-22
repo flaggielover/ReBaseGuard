@@ -18,8 +18,11 @@
   "why": "the largest bound with an EMPTY dependency set, per the gate's selection rule"
  },
  "baseline_C4": {
+  "C4_frozen_clause_critical_A0": 3.2142360226778806,
   "float": 3.297250281519544,
-  "margin_percent": 0.9439874105892059,
+  "margin_percent_as_C4_published": 2.5827057582567217,
+  "margin_percent_over_C5T_critical_A0": 0.9439874105892059,
+  "rebasing_note": "C4 PUBLISHED 2.5827% against its own frozen-clause critical A0 3.2142360226778806. The 0.9440% figure is that margin re-measured against C5-T's critical A0 3.266415728267196, i.e. what survived after C5-T. The field previously carried only the re-based number under the undifferentiated name `margin_percent`, so a reader diffing the two certificates saw 2.58 against 0.94 with nothing to explain it.",
   "value": "7042883855512317228573616624030771257929457129673562463047347660946518958771696089275290742247463/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576"
  },
  "bounds": {
@@ -75,8 +78,20 @@
   "TOOLCHAIN_PROVISIONED": 0,
   "guard": "DENY"
  },
+ "compute_boundary_scope": "These counters describe THE C7 EVIDENCE CHAIN: every committed producer, and every number any C7 conclusion rests on. Out-of-tree cross-checking activity is counted separately below. See ERRATUM_C7_GATE.md E5.",
  "detector": "CUSUM",
  "evaluated_at_e": "19839101/10000000",
+ "external_non_evidence_activity": {
+  "MONTE_CARLO_RUNS": 4,
+  "any_C7_conclusion_depends_on_it": false,
+  "consistency": "falls inside the bracket C7's own certified arithmetic gives independently, E[tau'] in [3.586306, 4.679910]",
+  "declared_because": "the frozen gate forbids 'Monte Carlo of any kind' unconditionally, and an out-of-tree Monte Carlo cross-check WAS commissioned and run. Declaring it here rather than leaving it in a note is the repair; the gate is not amended. See ERRATUM_C7_GATE.md E4.",
+  "imports": "python3 standard library only; no campaign module imported",
+  "result": "E[tau'] ~ 3.98842 +/- 0.00050, E[R] ~ 1.04797 +/- 0.00032",
+  "status": "a breach of the gate's TEXT, not of its purpose. The prohibition exists to keep uncertified numerics out of the evidence chain; nothing entered it.",
+  "where": "a scratch directory outside the repository, in a separate process",
+  "wrote_into_namespace": false
+ },
  "forbidden_conclusions": [
   "that cell 309 is CLOSED (the exclusion is a statement about the deterministic route, not a closure)",
   "that K5 is closed or that the m=5 tail is complete",
@@ -86,6 +101,15 @@
  ],
  "gate_sha256": "9f7083b9ef45f48ede9addcc8374005187785c789cf7a24403bed2e519d4a604",
  "kill_gates_fired": [],
+ "lemma_C7_U_step0_finiteness": {
+  "E_tau_prime_upper_crude": "18681496795243566770350924224482697848728133100374778981274914375332445820852196050843869723424645/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576",
+  "E_tau_prime_upper_crude_float": 8.74607218165499,
+  "c": "1",
+  "geometric_stages": 6,
+  "p_lower": "1465334603847317925517674635795023620427748464944894348007933137239361640795153982345737196388245/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576",
+  "p_lower_float": 0.6860222366544247,
+  "why": "step 3 of Lemma C7-U divides by E[V] - g(a) after substituting Wald, which is invalid if E[R] = infinity. This was previously proved in a docstring and executed nowhere."
+ },
  "m": 5,
  "model_sha256": "efcc0f36632632577a24c4ddf1a7c2c3579d471cdba5a752dd72c708667cdc79",
  "permitted_conclusions": [
@@ -94,6 +118,7 @@
   "an exhaustion statement about the analytic ceiling of the E2 family"
  ],
  "phase10_downstream_feasibility": {
+  "C4_gate_sha256": "d5b5b385d5c123ccd5993116901797f1ef2b75054a56617dfd07e860d526a647",
   "C4_margin_percent": 0.9439874105892059,
   "C5T_consumed_of_C4_margin_percent": 63.449672593506136,
   "C7_primary_margin_percent": 9.79331451382309,
@@ -119,5 +144,29 @@
   ]
  },
  "schema": "C7_CERTIFICATE/1",
- "sha256": "360e7076b5a6cf743fa2533236099801f98ce5db340378586eb6ea1095e8db67"
+ "sha256": "12a04aa0c05f9639a1535d1870a67f8e06eec1ab8894e59391c48918819f7832",
+ "supporting_artifacts": {
+  "mutations": {
+   "class": "PASS",
+   "count": 18,
+   "max_undetectable_U_inflation_percent": 1.0985,
+   "surviving_below_reported_precision": [
+    "M01",
+    "M02",
+    "M03",
+    "M04"
+   ],
+   "undetected": []
+  },
+  "primitives_test": {
+   "cases": 12,
+   "class": "PASS",
+   "identities": 8
+  },
+  "psi_monotonicity": {
+   "criterion_holds_at_every_knot": true,
+   "tightening_declined_percent": 0.05624166044571126,
+   "worst_psi_times_h": 0.9434434039746084
+  }
+ }
 }

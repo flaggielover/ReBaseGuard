@@ -1,13 +1,22 @@
 {
  "FACT_CHECK_CLASS": "PASS",
+ "WHAT_THIS_CANNOT_VERIFY": "Checks 1-5 compare numerals, predecessor baselines, commit order, self-shas and byte-equality of inherited code. NONE of them can reach a BEHAVIOURAL claim. A PASS here does NOT clear the prose. The pre-publication review demonstrated this precisely: it found that Lemma C7-U's step 0 was asserted as 'certified, not assumed' while being dead code, that C7_MUTATIONS.json carried a numerically false justification, and that the U-provenance mechanism did not close the hole it claimed to close -- and this module returned PASS across all three. Those classes of defect are found by reading the code and by adversarial review, not by this module.",
  "artifacts_scanned": [
   "evidence/b0/C7_B0_AUDIT.json",
   "evidence/certificate/C7_CERTIFICATE.json",
   "evidence/governance/HANDOVER_FACT_VERIFICATION.json",
   "evidence/mutations/C7_MUTATIONS.json",
   "evidence/phase1/C7_LEDGER.json",
+  "evidence/primitives/C7_PRIMITIVES_TEST.json",
+  "evidence/psi_monotonicity/C7_PSI_MONOTONICITY.json",
   "config/FEASIBILITY_GATES_C7.json"
  ],
+ "external_figures_exempted": {
+  "0.00050": "standard error of that estimate",
+  "1.04797": "Monte Carlo estimate of E[R] from the same cross-check",
+  "1.048343": "asymptotic stationary-excess mean E[V^2]/(2 E[V]), quoted for comparison",
+  "3.98842": "Monte Carlo estimate of E[tau'] from the independent cross-check (erratum E5)"
+ },
  "findings": [],
  "gate_ordering": [
   {
@@ -32,12 +41,18 @@
   }
  ],
  "gate_ordering_note": "The LOAD-BEARING artifact is the certificate, and it is AFTER the gate, which is the requirement that matters. The ledger landed in the SAME COMMIT as the gate and was in fact produced BEFORE it in wall-clock order. That is disclosed here and in the gate's own disclosure_of_non_blindness section rather than presented as a clean freeze.",
+ "inherited_gaussian_identical_to_C4": true,
+ "inherited_gaussian_sha256": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815",
+ "prose_excluded": {
+  "review/": "third-party documents; a reviewer's independently computed figures are not C7 producer outputs, and requiring them to be would let C7 suppress a finding by not producing its number"
+ },
  "prose_scanned": [
+  "ERRATUM_C7_GATE.md",
+  "OPEN_NOTES_DISPOSITION_C7.md",
   "README.md",
-  "phase_3/C7_ROUTE_SEARCH.md",
-  "review/HANDOVER_C7_REVIEW.md"
+  "phase_3/C7_ROUTE_SEARCH.md"
  ],
  "purpose": "verify C7's own claims, and any claim a reviewer makes, against the committed tree BEFORE absorbing them",
  "schema": "C7_HANDOVER_FACT_VERIFICATION/1",
- "sha256": "55cc852b7143d48e21e51690b67a20ae1538050fd835b5cb75dc822fd84ba82d"
+ "sha256": "7a3333dbe5bbfe9911b0a8e9dac4a7a3c0753ff718c919bd3e02346751f4dace"
 }

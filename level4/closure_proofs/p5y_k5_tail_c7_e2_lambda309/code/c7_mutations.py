@@ -41,12 +41,15 @@ def pipeline(e=E_LO, K_=K, H_=H, partition=None, U_value=None,
     """Parameterised reimplementation. All knobs default to the sound choice."""
     partition = PART if partition is None else partition
     us = [F(u) for u in partition]
-    if not us or us[-1] != H_:
-        raise T.TheoremRefusal("partition must end exactly at H")
-    if any(b <= a for a, b in zip(us, us[1:])) or us[0] <= 0:
-        raise T.TheoremRefusal("partition must be strictly increasing and positive")
+    # Order matters for the SUITE, not for soundness: with the ends-at-H test first, M07 (threshold
+    # confusion) and M13 (non-monotone partition) both refused with "must end exactly at H" and so
+    # exercised M12's guard rather than their own, overstating detection coverage by two.
     if K_ + H_ != F(11, 2):
         raise T.TheoremRefusal(f"K + H = {K_ + H_} != 11/2, the frozen CUSUM threshold")
+    if any(b <= a for a, b in zip(us, us[1:])) or us[0] <= 0:
+        raise T.TheoremRefusal("partition must be strictly increasing and positive")
+    if not us or us[-1] != H_:
+        raise T.TheoremRefusal("partition must end exactly at H")
 
     fk = T.f_ratio(K_, e)
     f_used = fk.lo if f_from_below else fk.hi
@@ -125,10 +128,18 @@ def main() -> int:
             # rounding, not a defect the suite can or should detect: the mutation is formally
             # unsound but moves the reported value by less than one unit in the last place of a
             # 2^-320 grid. It is recorded with its measured size rather than waved through.
-            if infl < F(1, 10) ** 60:
-                cls, det = "UNSOUND_BELOW_GRID", (
-                    "formally the wrong rounding direction, but the effect is below the 2^-320 grid "
-                    "resolution and cannot reach any reported digit")
+            # The previous rule declassified anything under a RELATIVE 1e-60 and justified it as
+            # "below the 2^-320 grid resolution". That justification was numerically false -- these
+            # mutants move the value by up to ~405 grid units -- and the threshold was ~1e37 times
+            # coarser than the grid it was named after, so a mutant inflating by up to 1e-60 would
+            # have been silently declassified. The anchor is now the only thing actually claimable:
+            # the mutation does not alter ANY digit of the reported value.
+            grid = F(1, 2) ** 320
+            if float(v) == float(baseline):
+                cls, det = "UNSOUND_BELOW_REPORTED_PRECISION", (
+                    f"formally the wrong rounding direction; the effect is {float((v-baseline)/grid):.0f}x "
+                    f"the 2^-320 grid unit -- NOT below the grid -- but does not alter any digit of "
+                    f"the reported value. Recorded as surviving, not as detected.")
             elif caught:
                 cls, det = "DETECTED_BY_VERDICT", "exceeds a certified upper bound, so KG5 fires"
             else:
@@ -163,12 +174,17 @@ def main() -> int:
         lambda: T.lambda_lower_tier_k(E_LO, K, H, {**cert, "value": F(1)}, PART))
     run("M10", "U drawn from a source not on the gate's admitted list", "UP",
         lambda: T.certified_U("made_up", E_LO, K, H))
-    run("M11", "U understated below the certified floor H/E[V] on E[tau']", "UP",
-        lambda: T.certified_U("registry", E_LO, K, H) if False else _force_low_U(E_LO, K, H))
+    run("M11", "a U DERIVATION mutated to understate U, driving the real floor guard", "UP",
+        _mutated_lorden_derivation)
     run("M12", "partition does not terminate at H", "UP",
         lambda: pipeline(U_value=U, partition=[F(j) * H / N for j in range(1, N)]))
-    run("M13", "partition not strictly increasing", "UP",
-        lambda: pipeline(U_value=U, partition=sorted(PART, reverse=True)))
+    swapped = list(PART); swapped[3], swapped[4] = swapped[4], swapped[3]
+    run("M13", "two interior knots transposed (still ends at H)", "UP",
+        lambda: pipeline(U_value=U, partition=swapped))
+    run("M16", "forged a_grid smuggling a negative a into a valid-looking certificate", "UP",
+        _forged_a_grid)
+    run("M17", "Lemma C7-U called with a <= 0, violating its own hypothesis", "UP", _negative_a)
+    run("M18", "evaluation point outside the closed cell for 309", "UP", _e_outside_cell)
     run("M14", "evaluated at e_hi instead of e_lo", "DOWN",
         lambda: pipeline(e=F(2092283, 1000000), U_value=U))
     run("M15", "U doubled (overstated)", "DOWN",
@@ -176,9 +192,31 @@ def main() -> int:
 
     required = [r for r in results if r["expected_direction"] == "UP"]
     undetected = [r["id"] for r in required if r["outcome"] == "UNDETECTED"]
+    below_prec = [r["id"] for r in required if r["outcome"] == "UNSOUND_BELOW_REPORTED_PRECISION"]
+
+    # The values the two CRITICAL exploits produced BEFORE the repair. Computed here, not quoted
+    # from the review, so the numbers the erratum and the README cite stand behind a producer.
+    ev_bad = F(19, 10)
+    pm = T.psi_min_lower(ev_bad, K, H)
+    EVb = G.E_excess(ev_bad, K)
+    num = H + pm["psi_min_lower"]
+    tier1_out_of_cell = (G.Iv(num, num) / G.Iv(EVb.hi, EVb.hi)).lo
+    forged_U_bound = pipeline(U_value=F(3549353697, 10 ** 9),
+                              partition=[F(j) * H / 64 for j in range(1, 65)])
+    pre_repair = {
+        "purpose": ("what each CRITICAL exploit yielded before its guard existed; both are now "
+                    "refused, by M16/M17 and M18 respectively"),
+        "forged_a_grid_bound": {"value": str(forged_U_bound), "float": float(forged_U_bound),
+                                "U_used": "3549353697/1000000000",
+                                "note": "dependency-free, re-derivation-surviving, kill-gate-clean"},
+        "e_outside_cell_tier1": {"value": str(tier1_out_of_cell), "float": float(tier1_out_of_cell),
+                                 "e_used": str(ev_bad),
+                                 "note": "above the published PRIMARY, fired no kill gate"},
+    }
 
     out = {
         "schema": "C7_MUTATIONS/1",
+        "pre_repair_exploit_values": pre_repair,
         "baseline_bound": str(baseline), "baseline_float": float(baseline),
         "U_source": cert["source"], "N_partition": N,
         "mirror_equivalence_asserted": True,
@@ -186,21 +224,51 @@ def main() -> int:
         "mutants": results,
         "required_detection_set": [r["id"] for r in required],
         "undetected": undetected,
+        "unsound_below_reported_precision": below_prec,
+        "surviving_required_mutants_note": (
+            "These mutants are NOT detected. They survive with the wrong rounding direction and are "
+            "recorded here rather than folded into undetected = [], because a reader checking "
+            "coverage on item E must see that the suite supplies no positive evidence on rounding "
+            "direction -- that was verified by hand in the pre-publication review instead. They are "
+            "separated from `undetected` only because their effect cannot reach a reported digit."),
         "MUTATION_CLASS": "PASS" if not undetected else "REFUSE",
         "coverage_limitation": {
-         "statement": ("A mutation of a U DERIVATION ITSELF cannot be caught by re-derivation, because "
-                       "re-derivation re-runs the mutated code. M11 shows the independent floor "
-                       "H/E[V] on E[tau'] catches such a mutation once it pushes U below 3.297250281519544."),
-         "residual_gap": ("A mutation that understates U while keeping it ABOVE that floor -- e.g. Lorden's "
-                          "4.679910 mutated to 4.0 -- inflates the bound by a small amount and is NOT "
-                          "detected by this suite. This is a real, acknowledged gap. It is bounded: the "
-                          "floor is C4's own published bound, so the worst undetectable understatement "
-                          "moves U within [3.297250281519544, 4.679910339516997] and the resulting "
-                          "inflation is at most the spread of the bound over that U range."),
-         "mitigation": ("Three mutually independent U derivations are reported. Two of them -- elementary "
-                        "and Lorden -- share no code path beyond the Gaussian primitives, and the third is "
-                        "read from a committed file rather than computed. Agreement among them on the "
-                        "ORDER elementary > registry > lorden is recorded as a cross-check, not as proof.")
+         "interface_gap_CLOSED": (
+             "The pre-publication review obtained a dependency-free, re-derivation-surviving, "
+             "kill-gate-clean bound of 3.619819606 (+0.9345% over PRIMARY) from U = 3.549353697 "
+             "WITHOUT mutating any code, by presenting a certificate whose a_grid carried a negative "
+             "a. Two root causes: Lemma C7-U's hypothesis a > 0 was unenforced, and _resolve_U "
+             "re-derived from the grid carried in the certificate under test rather than the gate's "
+             "frozen grid, so provenance constrained `source` -- the field the mutants exercised -- "
+             "and never the field carrying the payload. Both are now closed and are regression-tested "
+             "by M16 and M17."),
+         "residual_gap": (
+             "A mutation of a U DERIVATION itself cannot be caught by re-derivation, which re-runs "
+             "the mutated code. Only the independent floor E[tau'] >= H/E[V] = 3.297250281519544 "
+             "refuses it, and only once U falls below that floor (M11 drives that real guard)."),
+         "residual_gap_MEASURED": {
+          "statement": ("A derivation mutated to understate U while keeping it ABOVE the floor is "
+                        "NOT detected. The previous text called this 'a small amount' and never "
+                        "quantified it. Measured, at N = 64 and e = e_lo:"),
+          "U_range_undetectable": "[3.297250281519544, 4.867216116723177]",
+          "range_note": ("the top of the range is the REGISTRY U 4.867216117, not Lorden's "
+                         "4.679910340 as previously stated -- a mutation of the registry derivation "
+                         "spans a strictly wider range than was admitted"),
+          "max_undetectable_inflation_percent": 1.0985,
+          "why_this_matters": ("+1.0985% is LARGER than C4's entire margin over the C5-T critical "
+                               "A0 (0.9440%) -- larger than the quantity C7 exists to make robust. "
+                               "It is smaller than C7's own PRIMARY margin of 9.7933%, so the "
+                               "published conclusion survives the worst undetectable case, but "
+                               "'small' was the wrong word and the number belongs in the record.")
+         },
+         "mitigation": (
+             "Three mutually independent U derivations are reported. Two -- elementary and Lorden -- "
+             "share no code path beyond the Gaussian primitives, and the third is read from a "
+             "committed file rather than computed. This is a mitigation, not a closure."),
+         "untested_primitives": (
+             "Neither psi_exact nor any mutant can see a systematic error in G.Phi or G.phi, since "
+             "every expression in the namespace is built from those two. The review checked them "
+             "against known values independently; code/c7_primitives_test.py now commits that check."),
         },
     }
     p = C.NS / "evidence" / "mutations" / "C7_MUTATIONS.json"
@@ -215,16 +283,40 @@ def main() -> int:
     return 0 if not undetected else 1
 
 
-def _force_low_U(e, K_, H_):
-    """M11: simulate a mutated derivation returning a U below the certified floor."""
-    import c7_theorem as _T
-    floor = (G.Iv(H_, H_) / G.Iv(G.E_excess(e, K_).hi, G.E_excess(e, K_).hi)).lo
-    bad = floor * F(9, 10)
-    if bad < floor:
-        raise _T.TheoremRefusal(
-            f"U = {bad} is below the certified floor H/E[V] = {floor} on E[tau'], so it is provably "
-            f"not an upper bound (this is the guard certified_U applies to every source)")
-    return bad
+def _mutated_lorden_derivation():
+    """M11: mutate the DERIVATION and drive the real guard in certified_U.
+
+    The previous version of this mutant recomputed the floor inline and raised its own
+    TheoremRefusal, so the suite recorded DETECTED_BY_RULE for a rule the mutant had written for
+    itself, and the real guard at c7_theorem.certified_U was never exercised by anything. That is the
+    exact failure this module's docstring says it exists to avoid. Here U_lorden -- a real derivation
+    -- is replaced for the duration of the call, so re-derivation re-runs the MUTATED code (which is
+    why re-derivation cannot catch this class) and only the independent floor can refuse it.
+    """
+    original = T.U_lorden
+    try:
+        T.U_lorden = lambda e, K_, H_: {"E_V2_upper": F(0), "E_R_upper": F(0),
+                                        "U_upper": F(3), "dependency": "mutated"}
+        return T.certified_U("lorden", E_LO, K, H)["value"]
+    finally:
+        T.U_lorden = original
+
+
+def _forged_a_grid():
+    """M16: the reviewer's finding-1 attack -- a crafted a_grid carrying a negative a."""
+    return T.lambda_lower_tier_k(E_LO, K, H, {
+        "_tag": "C7_CERTIFIED_U/1", "source": "elementary", "value": F(3549353697, 10 ** 9),
+        "dependencies": [], "derivation": "Lemma C7-U at a = -47/20", "a_grid": ["-47/20"]}, PART)
+
+
+def _negative_a():
+    """M17: the same hypothesis violation reached directly through Lemma C7-U."""
+    return T.U_elementary(E_LO, K, H, [F(-47, 20)])["best"]["U_upper"]
+
+
+def _e_outside_cell():
+    """M18: an evaluation point outside the closed cell bounds nothing, and used to fire no gate."""
+    return T.lambda_lower(F(19, 10), K, H)["C7_bound_lower"]
 
 
 if __name__ == "__main__":

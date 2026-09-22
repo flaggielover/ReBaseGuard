@@ -131,6 +131,7 @@ def lambda_lower(e: F, K: F, H: F) -> dict:
     A LOWER bound on (H + psi_min)/E[V] needs psi_min from below and E[V] from ABOVE.
     """
     e, K, H = F(e), F(K), F(H)
+    _require_in_cell(e)
     pm = psi_min_lower(e, K, H)
     EV = G.E_excess(e, K)                     # interval; the upper end is the safe one here
     if EV.lo <= 0:
@@ -270,6 +271,7 @@ def lambda_lower_tier_k(e: F, K: F, H: F, U_cert, partition) -> dict:
     section below for why.
     """
     e, K, H = F(e), F(K), F(H)
+    _require_in_cell(e)
     U, U_deps = _resolve_U(U_cert, e, K, H)
     us = [F(u) for u in partition]
     if not us or us[-1] != H:
@@ -382,8 +384,20 @@ def rho2(t: F) -> G.Iv:
 
 
 def g_tail(a: F, e: F, K: F) -> F:
-    """An UPPER bound on g(a) = E[V 1{V > a}]."""
+    """An UPPER bound on g(a) = E[V 1{V > a}].
+
+    REQUIRES a > 0, which is Lemma C7-U's own hypothesis. The closed form below equals E[V 1{V>a}]
+    only when {V > a} = {|z| > K + a}; for a < 0 the event is all of Omega and g(a) = E[V], so the
+    formula silently returns something that is not g(a). Leaving this unchecked was exploitable: a
+    negative a sweeps U smoothly downward through the admissible window (a = -2.35 gives U = 3.5494,
+    below C7's own certified lower bound on E[tau']), producing a dependency-free, re-derivation-
+    surviving, kill-gate-clean bound that is unsound.
+    """
     a, s = F(a), F(K) + F(a)
+    if a <= 0:
+        raise TheoremRefusal(
+            f"Lemma C7-U requires a > 0; got a = {a}. For a <= 0 the closed form does not equal "
+            f"E[V 1{{V > a}}] and the resulting U is not an upper bound on E[tau'].")
     return (rho1(s - F(e)) + rho1(s + F(e))
             + G.Iv(a, a) * (G.Phi(-(s - F(e))) + G.Phi(-(s + F(e))))).hi
 
@@ -455,6 +469,28 @@ admitted list is refused outright.
 _U_TAG = "C7_CERTIFIED_U/1"
 _U_SOURCES = ("elementary", "registry", "lorden")
 
+# The gate freezes a_grid_for_lemma_C7_U = {j/4 : j = 8..24}. It is bound HERE, in code, because a
+# frozen value that only exists as prose in the gate binds nothing: _resolve_U previously re-derived
+# from the grid carried in the certificate under test, so the provenance check constrained `source`
+# -- the field the mutants exercised -- and never the field carrying the payload.
+GATE_A_GRID = tuple(F(j, 4) for j in range(8, 25))
+
+# The closed cell for 309, from C4's certificate. Validity of every bound requires e in this cell.
+GATE_E_LO, GATE_E_HI = F(19839101, 10000000), F(2092283, 1000000)
+
+# Erratum E3 fixes the finiteness threshold c that Lemma C7-U step 0 uses.
+GATE_C_FINITENESS = F(1)
+
+
+def _require_in_cell(e: F) -> None:
+    """Lambda_309 is a sup over the CLOSED cell, so any point in it gives a valid lower bound -- and
+    any point OUTSIDE it gives a number that bounds nothing. e = 1.90 yields 3.642963840, above the
+    published PRIMARY, and fires no kill gate. Enforced here rather than trusted to the caller."""
+    if not (GATE_E_LO <= F(e) <= GATE_E_HI):
+        raise TheoremRefusal(
+            f"e = {e} lies outside the closed cell [{GATE_E_LO}, {GATE_E_HI}] for cell 309; a bound "
+            f"evaluated there is not a lower bound on Lambda_309")
+
 
 def certified_U(source: str, e: F, K: F, H: F, a_grid=None) -> dict:
     """Produce a U certificate. `source` must be on the gate's admitted list."""
@@ -476,6 +512,14 @@ def certified_U(source: str, e: F, K: F, H: F, a_grid=None) -> dict:
         val = F(str(_C.c4_cell309()["A0_certified_float"]))
         dep = ["Arb/FLINT operator certification surface"]
         deriv = "certified admissible A0 at cell 309 via Lemma SM(d), read from C4_CERTIFICATE.json"
+    # Step 0 of Lemma C7-U: certify E[tau'] < infinity. Every tier >= 2 needs it, and step 3 of the
+    # lemma divides by E[V] - g(a) after substituting Wald, which is invalid if E[R] = infinity. This
+    # was previously proved in a docstring and executed nowhere, so the PRIMARY bound's EMPTY
+    # dependency set rested on an unexecuted step. c = 1 is fixed by erratum E3.
+    fin = E_tau_prime_finite(e, K, H, GATE_C_FINITENESS)
+    if not fin["p_lower"] > 0:
+        raise TheoremRefusal("could not certify P(V > c) > 0, so E[tau'] < infinity is not established")
+
     # An INDEPENDENT floor on E[tau'], so that a U understated by a mutation of the derivation code
     # itself -- which re-derivation cannot catch, since it would re-run the mutated code -- is still
     # refused once it falls below a value E[tau'] provably exceeds. E[tau'] = (H + E[R])/E[V] >= H/E[V]
@@ -487,6 +531,9 @@ def certified_U(source: str, e: F, K: F, H: F, a_grid=None) -> dict:
             f"E[tau'], so it is provably not an upper bound")
     return {"_tag": _U_TAG, "source": source, "value": val, "dependencies": dep,
             "derivation": deriv, "E_tau_prime_floor": floor,
+            "finiteness": {"c": str(fin["c"]), "p_lower": str(fin["p_lower"]),
+                           "geometric_stages": fin["geometric_stages"],
+                           "E_tau_prime_upper_crude": str(fin["E_tau_prime_upper_crude"])},
             "a_grid": [str(F(x)) for x in a_grid] if a_grid else None}
 
 
@@ -496,8 +543,17 @@ def _resolve_U(U_cert, e: F, K: F, H: F) -> tuple:
         raise TheoremRefusal(
             "U must be a certificate from certified_U(), not a bare value. Understating U inflates "
             "the bound in the unsound direction and is invisible to every self-consistency check.")
-    grid = [F(x) for x in U_cert["a_grid"]] if U_cert.get("a_grid") else None
-    fresh = certified_U(U_cert["source"], e, K, H, grid)
+    # Re-derive from the GATE's frozen grid, never from the grid the presented certificate carries.
+    presented = tuple(F(x) for x in U_cert["a_grid"]) if U_cert.get("a_grid") else None
+    if U_cert["source"] == "elementary":
+        if presented != GATE_A_GRID:
+            raise TheoremRefusal(
+                f"presented a_grid does not match the gate's frozen grid; presented "
+                f"{[str(x) for x in (presented or ())][:4]}..., frozen "
+                f"{[str(x) for x in GATE_A_GRID][:4]}...")
+    elif presented is not None:
+        raise TheoremRefusal(f"source {U_cert['source']!r} must not carry an a_grid")
+    fresh = certified_U(U_cert["source"], e, K, H, GATE_A_GRID if presented else None)
     if fresh["value"] != U_cert["value"]:
         raise TheoremRefusal(
             f"U certificate does not survive re-derivation from source {U_cert['source']!r}: "

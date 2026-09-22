@@ -27,10 +27,19 @@ def main() -> int:
     branch = C.git("rev-parse", "--abbrev-ref", "HEAD")
     chk(1, "on the C7 branch", branch == "p5y-k5-tail-c7-e2", {"branch": branch})
 
+    # Pinning HEAD made this audit unreproducible the moment C7 committed anything, which left the
+    # certificate-producing modules permanently unwalked while KG9b still read B0_CLASS == "PASS"
+    # out of the stale artifact. The invariant that actually matters is ANCESTRY.
     head = C.git("rev-parse", "--short=8", "HEAD")
-    subj = C.git("log", "-1", "--format=%s")
-    chk(2, "branched from the published C6 head", head == "f494416f" and "C6" in subj,
-        {"head": head, "subject": subj})
+    C6_HEAD = "f494416f"
+    try:
+        C.git("merge-base", "--is-ancestor", C6_HEAD, "HEAD")
+        descends = True
+    except Exception:
+        descends = False
+    chk(2, "branch descends from the published C6 head", descends,
+        {"C6_head": C6_HEAD, "current_head": head,
+         "note": "ancestry, not equality, so the audit re-runs at any later C7 commit"})
 
     ns_rel = "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309"
     on_main = C.git("ls-tree", "-r", "--name-only", "main", "--", ns_rel)
@@ -89,7 +98,7 @@ def main() -> int:
     code = sorted((C.NS / "code").glob("*.py"))
     local = {p.stem for p in code}
     STDLIB_ALLOWED = {"__future__", "fractions", "json", "pathlib", "sys", "hashlib", "ast",
-                      "subprocess", "itertools", "typing", "dataclasses", "argparse",
+                      "subprocess", "itertools", "typing", "dataclasses", "argparse", "re",
                       "textwrap", "collections", "copy", "traceback"}
     NUMERICAL = {"numpy", "scipy", "flint", "mpmath", "sympy", "gmpy2", "arb", "decimal",
                  "math", "cmath", "statistics", "random", "secrets"}
@@ -98,6 +107,8 @@ def main() -> int:
 
     imports: dict[str, list[str]] = {}
     subprocess_argv0: dict[str, list[str]] = {}
+    dynamic: dict[str, list[str]] = {}
+    bare_run: dict[str, list[str]] = {}
     for p in code:
         tree = ast.parse(p.read_text(), filename=str(p))
         roots: set[str] = set()
@@ -107,7 +118,16 @@ def main() -> int:
             elif isinstance(node, ast.ImportFrom):
                 if node.level == 0 and node.module:
                     roots.add(node.module.split(".")[0])
+                    if node.module.split(".")[0] == "subprocess":
+                        # `from subprocess import run` then run([...]) passed check 12 (subprocess is
+                        # allowlisted) and check 13 (argv0 scan only matched subprocess.<attr>).
+                        bare_run.setdefault(p.name, []).extend(a.name for a in node.names)
             # every subprocess.* call must launch `git` and nothing else
+            # Dynamic-import and eval escapes: __import__("numpy") is an ast.Call, invisible to the
+            # Import/ImportFrom walk above, as are importlib, exec and eval.
+            elif isinstance(node, ast.Call) and isinstance(node.func, ast.Name) \
+                    and node.func.id in ("__import__", "eval", "exec", "compile"):
+                dynamic.setdefault(p.name, []).append(node.func.id)
             elif isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute) \
                     and isinstance(node.func.value, ast.Name) and node.func.value.id == "subprocess":
                 argv = node.args[0] if node.args else None
@@ -128,10 +148,11 @@ def main() -> int:
          "mechanism": "ast.Import / ast.ImportFrom over every module in code/"})
 
     bad_argv = {k: v for k, v in subprocess_argv0.items() if any(a != "git" for a in v)}
-    chk(13, "no network module is imported, and every subprocess call launches local `git`",
-        not (all_roots & NETWORK) and not bad_argv,
+    chk(13, "no network module, no dynamic import or eval, and every subprocess call launches `git`",
+        not (all_roots & NETWORK) and not bad_argv and not dynamic and not bare_run,
         {"network_imported": sorted(all_roots & NETWORK),
-         "subprocess_argv0": subprocess_argv0, "non_git_launches": bad_argv})
+         "subprocess_argv0": subprocess_argv0, "non_git_launches": bad_argv,
+         "dynamic_import_or_eval": dynamic, "from_subprocess_import": bare_run})
 
     PREDS = ["level4/closure_proofs/p5y_k1_cover_ledger_implementation",
              "level4/closure_proofs/p5y_k5_tail_c4_exhaustion",
@@ -150,11 +171,27 @@ def main() -> int:
          "candidate_guard_files": guard_files[:8],
          "note": "C7 neither reads nor writes the guard; it is recorded as an invariant of the campaign"})
 
-    chk(16, "no C7 result artifact exists yet (the gate is not yet frozen)",
-        not (C.NS / "config" / "FEASIBILITY_GATES_C7.json").exists()
-        and not (C.NS / "evidence" / "certificate" / "C7_CERTIFICATE.json").exists(),
-        {"gate_present": (C.NS / "config" / "FEASIBILITY_GATES_C7.json").exists(),
-         "certificate_present": (C.NS / "evidence" / "certificate" / "C7_CERTIFICATE.json").exists()})
+    # This check previously asserted that the gate and certificate did NOT exist, which was true only
+    # before the freeze and made the audit permanently unreproducible afterwards. The durable
+    # invariant is gate INTEGRITY plus ORDERING: if the gate exists it must match its frozen sha, and
+    # no load-bearing artifact may predate it.
+    gate_p = C.NS / "config" / "FEASIBILITY_GATES_C7.json"
+    cert_p = C.NS / "evidence" / "certificate" / "C7_CERTIFICATE.json"
+    GATE_SHA = "9f7083b9ef45f48ede9addcc8374005187785c789cf7a24403bed2e519d4a604"
+    if not gate_p.exists():
+        chk(16, "pre-freeze: no gate and no certificate yet", not cert_p.exists(),
+            {"phase": "pre-freeze"})
+    else:
+        gsha = C.sha256_file(gate_p)
+        chk(16, "gate matches its frozen sha256 and precedes the certificate", gsha == GATE_SHA,
+            {"phase": "post-freeze", "gate_sha256": gsha, "expected": GATE_SHA,
+             "certificate_present": cert_p.exists()})
+
+    chk(17, "every module in code/ was walked by the import audit",
+        set(imports) == {p.name for p in code} and len(code) >= 8,
+        {"walked": sorted(imports), "module_count": len(code),
+         "note": "the first B0 run covered 4 of the then-existing modules; the producers that write "
+                 "the certificate were never walked because they did not yet exist"})
 
     failed = [c["id"] for c in checks if not c["pass"]]
     out = {

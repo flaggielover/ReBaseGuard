@@ -5,51 +5,59 @@
  "baseline_bound": "7665325533695724142906717653717744205723544350046178990372181249729570260870267125510633501054145/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576",
  "baseline_float": 3.588657330212163,
  "coverage_limitation": {
-  "mitigation": "Three mutually independent U derivations are reported. Two of them -- elementary and Lorden -- share no code path beyond the Gaussian primitives, and the third is read from a committed file rather than computed. Agreement among them on the ORDER elementary > registry > lorden is recorded as a cross-check, not as proof.",
-  "residual_gap": "A mutation that understates U while keeping it ABOVE that floor -- e.g. Lorden's 4.679910 mutated to 4.0 -- inflates the bound by a small amount and is NOT detected by this suite. This is a real, acknowledged gap. It is bounded: the floor is C4's own published bound, so the worst undetectable understatement moves U within [3.297250281519544, 4.679910339516997] and the resulting inflation is at most the spread of the bound over that U range.",
-  "statement": "A mutation of a U DERIVATION ITSELF cannot be caught by re-derivation, because re-derivation re-runs the mutated code. M11 shows the independent floor H/E[V] on E[tau'] catches such a mutation once it pushes U below 3.297250281519544."
+  "interface_gap_CLOSED": "The pre-publication review obtained a dependency-free, re-derivation-surviving, kill-gate-clean bound of 3.619819606 (+0.9345% over PRIMARY) from U = 3.549353697 WITHOUT mutating any code, by presenting a certificate whose a_grid carried a negative a. Two root causes: Lemma C7-U's hypothesis a > 0 was unenforced, and _resolve_U re-derived from the grid carried in the certificate under test rather than the gate's frozen grid, so provenance constrained `source` -- the field the mutants exercised -- and never the field carrying the payload. Both are now closed and are regression-tested by M16 and M17.",
+  "mitigation": "Three mutually independent U derivations are reported. Two -- elementary and Lorden -- share no code path beyond the Gaussian primitives, and the third is read from a committed file rather than computed. This is a mitigation, not a closure.",
+  "residual_gap": "A mutation of a U DERIVATION itself cannot be caught by re-derivation, which re-runs the mutated code. Only the independent floor E[tau'] >= H/E[V] = 3.297250281519544 refuses it, and only once U falls below that floor (M11 drives that real guard).",
+  "residual_gap_MEASURED": {
+   "U_range_undetectable": "[3.297250281519544, 4.867216116723177]",
+   "max_undetectable_inflation_percent": 1.0985,
+   "range_note": "the top of the range is the REGISTRY U 4.867216117, not Lorden's 4.679910340 as previously stated -- a mutation of the registry derivation spans a strictly wider range than was admitted",
+   "statement": "A derivation mutated to understate U while keeping it ABOVE the floor is NOT detected. The previous text called this 'a small amount' and never quantified it. Measured, at N = 64 and e = e_lo:",
+   "why_this_matters": "+1.0985% is LARGER than C4's entire margin over the C5-T critical A0 (0.9440%) -- larger than the quantity C7 exists to make robust. It is smaller than C7's own PRIMARY margin of 9.7933%, so the published conclusion survives the worst undetectable case, but 'small' was the wrong word and the number belongs in the record."
+  },
+  "untested_primitives": "Neither psi_exact nor any mutant can see a systematic error in G.Phi or G.phi, since every expression in the namespace is built from those two. The review checked them against known values independently; code/c7_primitives_test.py now commits that check."
  },
  "mirror_equivalence_asserted": true,
  "mirror_value": "7665325533695724142906717653717744205723544350046178990372181249729570260870267125510633501054145/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576",
  "mutants": [
   {
-   "detail": "formally the wrong rounding direction, but the effect is below the 2^-320 grid resolution and cannot reach any reported digit",
+   "detail": "formally the wrong rounding direction; the effect is 42x the 2^-320 grid unit -- NOT below the grid -- but does not alter any digit of the reported value. Recorded as surviving, not as detected.",
    "expected_direction": "UP",
    "id": "M01",
    "inflation_percent": 5.479219351529656e-94,
    "inflation_relative": "5.479e-96",
    "name": "E[V] taken from below in the final division",
-   "outcome": "UNSOUND_BELOW_GRID",
+   "outcome": "UNSOUND_BELOW_REPORTED_PRECISION",
    "value": 3.588657330212163
   },
   {
-   "detail": "formally the wrong rounding direction, but the effect is below the 2^-320 grid resolution and cannot reach any reported digit",
+   "detail": "formally the wrong rounding direction; the effect is 405x the 2^-320 grid unit -- NOT below the grid -- but does not alter any digit of the reported value. Recorded as surviving, not as detected.",
    "expected_direction": "UP",
    "id": "M02",
    "inflation_percent": 5.2835329461178825e-93,
    "inflation_relative": "5.284e-95",
    "name": "mean residual life r taken from above",
-   "outcome": "UNSOUND_BELOW_GRID",
+   "outcome": "UNSOUND_BELOW_REPORTED_PRECISION",
    "value": 3.588657330212163
   },
   {
-   "detail": "formally the wrong rounding direction, but the effect is below the 2^-320 grid resolution and cannot reach any reported digit",
+   "detail": "formally the wrong rounding direction; the effect is 1x the 2^-320 grid unit -- NOT below the grid -- but does not alter any digit of the reported value. Recorded as surviving, not as detected.",
    "expected_direction": "UP",
    "id": "M03",
    "inflation_percent": 1.3045760360784896e-95,
    "inflation_relative": "1.305e-97",
    "name": "reflected tail ratio f taken from below",
-   "outcome": "UNSOUND_BELOW_GRID",
+   "outcome": "UNSOUND_BELOW_REPORTED_PRECISION",
    "value": 3.588657330212163
   },
   {
-   "detail": "formally the wrong rounding direction, but the effect is below the 2^-320 grid resolution and cannot reach any reported digit",
+   "detail": "formally the wrong rounding direction; the effect is 5x the 2^-320 grid unit -- NOT below the grid -- but does not alter any digit of the reported value. Recorded as surviving, not as detected.",
    "expected_direction": "UP",
    "id": "M04",
    "inflation_percent": 6.522880180392447e-95,
    "inflation_relative": "6.523e-97",
    "name": "tail mass q taken from below (p_lower)",
-   "outcome": "UNSOUND_BELOW_GRID",
+   "outcome": "UNSOUND_BELOW_REPORTED_PRECISION",
    "value": 3.588657330212163
   },
   {
@@ -67,7 +75,7 @@
    "outcome": "DETECTED_BY_RULE"
   },
   {
-   "detail": "partition must end exactly at H",
+   "detail": "K + H = 6 != 11/2, the frozen CUSUM threshold",
    "expected_direction": "UP",
    "id": "M07",
    "name": "threshold confusion: H := C_CUSUM = 11/2",
@@ -95,10 +103,10 @@
    "outcome": "DETECTED_BY_RULE"
   },
   {
-   "detail": "U = 63385954699610855057162549616276941321365114167062062167426128948518670628945264803477616680227167/213598703592091008239502170616955211460270452235665276994",
+   "detail": "U = 3 from source 'lorden' is below the certified floor H/E[V] = 70428838555123172285736166240307712579294571296735624630473476609465189587716960892752907422474",
    "expected_direction": "UP",
    "id": "M11",
-   "name": "U understated below the certified floor H/E[V] on E[tau']",
+   "name": "a U DERIVATION mutated to understate U, driving the real floor guard",
    "outcome": "DETECTED_BY_RULE"
   },
   {
@@ -109,10 +117,31 @@
    "outcome": "DETECTED_BY_RULE"
   },
   {
-   "detail": "partition must end exactly at H",
+   "detail": "partition must be strictly increasing and positive",
    "expected_direction": "UP",
    "id": "M13",
-   "name": "partition not strictly increasing",
+   "name": "two interior knots transposed (still ends at H)",
+   "outcome": "DETECTED_BY_RULE"
+  },
+  {
+   "detail": "presented a_grid does not match the gate's frozen grid; presented ['-47/20']..., frozen ['2', '9/4', '5/2', '11/4']...",
+   "expected_direction": "UP",
+   "id": "M16",
+   "name": "forged a_grid smuggling a negative a into a valid-looking certificate",
+   "outcome": "DETECTED_BY_RULE"
+  },
+  {
+   "detail": "Lemma C7-U requires a > 0; got a = -47/20. For a <= 0 the closed form does not equal E[V 1{V > a}] and the resulting U is not an upper bound on E[tau'].",
+   "expected_direction": "UP",
+   "id": "M17",
+   "name": "Lemma C7-U called with a <= 0, violating its own hypothesis",
+   "outcome": "DETECTED_BY_RULE"
+  },
+  {
+   "detail": "e = 19/10 lies outside the closed cell [19839101/10000000, 2092283/1000000] for cell 309; a bound evaluated there is not a lower bound on Lambda_309",
+   "expected_direction": "UP",
+   "id": "M18",
+   "name": "evaluation point outside the closed cell for 309",
    "outcome": "DETECTED_BY_RULE"
   },
   {
@@ -134,6 +163,21 @@
    "value": 3.554819589916772
   }
  ],
+ "pre_repair_exploit_values": {
+  "e_outside_cell_tier1": {
+   "e_used": "19/10",
+   "float": 3.642963840184956,
+   "note": "above the published PRIMARY, fired no kill gate",
+   "value": "3890661767481860042328453842975650686671928923025028540436318735804541842591054875355793134369647/1067993517960455041197510853084776057301352261178326384973520803911109862890320275011481043468288"
+  },
+  "forged_a_grid_bound": {
+   "U_used": "3549353697/1000000000",
+   "float": 3.619819605678013,
+   "note": "dependency-free, re-derivation-surviving, kill-gate-clean",
+   "value": "7731887750100576548174190680886017330747175562840809664420226502580180377736484620265715458574311/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576"
+  },
+  "purpose": "what each CRITICAL exploit yielded before its guard existed; both are now refused, by M16/M17 and M18 respectively"
+ },
  "required_detection_set": [
   "M01",
   "M02",
@@ -147,9 +191,19 @@
   "M10",
   "M11",
   "M12",
-  "M13"
+  "M13",
+  "M16",
+  "M17",
+  "M18"
  ],
  "schema": "C7_MUTATIONS/1",
- "sha256": "38abffb0fd3676338fd87a8895e88f97f8e397e6d3ae4ea46aa4765b72e64833",
- "undetected": []
+ "sha256": "b7c30dd71f4f6ab1f1f46625fe71300b48e0f4d96847be36da93afbe5a3f3a20",
+ "surviving_required_mutants_note": "These mutants are NOT detected. They survive with the wrong rounding direction and are recorded here rather than folded into undetected = [], because a reader checking coverage on item E must see that the suite supplies no positive evidence on rounding direction -- that was verified by hand in the pre-publication review instead. They are separated from `undetected` only because their effect cannot reach a reported digit.",
+ "undetected": [],
+ "unsound_below_reported_precision": [
+  "M01",
+  "M02",
+  "M03",
+  "M04"
+ ]
 }

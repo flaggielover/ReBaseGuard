@@ -13,11 +13,12 @@
   },
   {
    "detail": {
-    "head": "f494416f",
-    "subject": "p5y: K5 C6 adjudicated ACCEPTED_WITH_SCOPE_LIMITATION \u2014 14 conditions, 11 findings, all re-measured"
+    "C6_head": "f494416f",
+    "current_head": "a6c2855b",
+    "note": "ancestry, not equality, so the audit re-runs at any later C7 commit"
    },
    "id": "B0_02",
-   "name": "branched from the published C6 head",
+   "name": "branch descends from the published C6 head",
    "pass": true
   },
   {
@@ -120,6 +121,16 @@
       "pathlib",
       "sys"
      ],
+     "c7_certificate.py": [
+      "__future__",
+      "c7_common",
+      "c7_gaussian",
+      "c7_theorem",
+      "fractions",
+      "json",
+      "pathlib",
+      "sys"
+     ],
      "c7_common.py": [
       "__future__",
       "fractions",
@@ -128,10 +139,55 @@
       "pathlib",
       "subprocess"
      ],
+     "c7_factcheck.py": [
+      "__future__",
+      "c7_common",
+      "fractions",
+      "json",
+      "pathlib",
+      "re",
+      "sys"
+     ],
      "c7_gaussian.py": [
       "fractions"
      ],
+     "c7_ledger.py": [
+      "__future__",
+      "c7_common",
+      "c7_gaussian",
+      "c7_theorem",
+      "fractions",
+      "pathlib",
+      "sys"
+     ],
+     "c7_mutations.py": [
+      "__future__",
+      "c7_common",
+      "c7_gaussian",
+      "c7_theorem",
+      "fractions",
+      "pathlib",
+      "sys"
+     ],
+     "c7_primitives_test.py": [
+      "__future__",
+      "c7_common",
+      "c7_gaussian",
+      "fractions",
+      "pathlib",
+      "sys"
+     ],
+     "c7_psi_monotonicity.py": [
+      "__future__",
+      "c7_common",
+      "c7_gaussian",
+      "c7_theorem",
+      "fractions",
+      "pathlib",
+      "sys"
+     ],
      "c7_theorem.py": [
+      "c7_common",
       "c7_gaussian",
       "fractions",
       "pathlib",
@@ -148,6 +204,8 @@
   },
   {
    "detail": {
+    "dynamic_import_or_eval": {},
+    "from_subprocess_import": {},
     "network_imported": [],
     "non_git_launches": {},
     "subprocess_argv0": {
@@ -157,7 +215,7 @@
     }
    },
    "id": "B0_13",
-   "name": "no network module is imported, and every subprocess call launches local `git`",
+   "name": "no network module, no dynamic import or eval, and every subprocess call launches `git`",
    "pass": true
   },
   {
@@ -196,11 +254,34 @@
   },
   {
    "detail": {
-    "certificate_present": false,
-    "gate_present": false
+    "certificate_present": true,
+    "expected": "9f7083b9ef45f48ede9addcc8374005187785c789cf7a24403bed2e519d4a604",
+    "gate_sha256": "9f7083b9ef45f48ede9addcc8374005187785c789cf7a24403bed2e519d4a604",
+    "phase": "post-freeze"
    },
    "id": "B0_16",
-   "name": "no C7 result artifact exists yet (the gate is not yet frozen)",
+   "name": "gate matches its frozen sha256 and precedes the certificate",
+   "pass": true
+  },
+  {
+   "detail": {
+    "module_count": 10,
+    "note": "the first B0 run covered 4 of the then-existing modules; the producers that write the certificate were never walked because they did not yet exist",
+    "walked": [
+     "c7_b0_audit.py",
+     "c7_certificate.py",
+     "c7_common.py",
+     "c7_factcheck.py",
+     "c7_gaussian.py",
+     "c7_ledger.py",
+     "c7_mutations.py",
+     "c7_primitives_test.py",
+     "c7_psi_monotonicity.py",
+     "c7_theorem.py"
+    ]
+   },
+   "id": "B0_17",
+   "name": "every module in code/ was walked by the import audit",
    "pass": true
   }
  ],
@@ -242,5 +323,5 @@
  "failed": [],
  "m": 5,
  "schema": "C7_B0_AUDIT/1",
- "sha256": "948e27f7b2f771b42549ed7c0cfd8ae3e85ffeacc1e5f825baf4d4019b0fa169"
+ "sha256": "812fb132d964eb338c10bc6607ae8c8d767e2b3147170a3c9481ba978d213873"
 }

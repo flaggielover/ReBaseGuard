@@ -17,7 +17,7 @@ import c7_theorem as T
 
 E_LO, E_HI, K, H = F(19839101, 10000000), F(2092283, 1000000), F(1, 2), F(5)
 N = 64
-A_GRID = [F(j, 4) for j in range(8, 25)]
+A_GRID = list(T.GATE_A_GRID)   # bound in code by the gate; see finding 1
 GATE_SHA = "9f7083b9ef45f48ede9addcc8374005187785c789cf7a24403bed2e519d4a604"
 
 
@@ -53,9 +53,20 @@ def main() -> int:
     for src in ("elementary", "registry", "lorden"):
         cert = T.certified_U(src, E_LO, K, H, A_GRID if src == "elementary" else None)
         r = T.lambda_lower_tier_k(E_LO, K, H, cert, part)
+        finiteness = cert["finiteness"]
         bounds[f"L3_{src}"] = {"value": r["L_lower"], "dependencies": r["U_dependencies"],
                                "derivation": f"Theorem C7-E2c multi-tier, N = {N}, U from {src}",
                                "U_used": str(cert["value"]), "E_R_lower": str(r["E_R_lower"])}
+
+    # Lemma C7-U step 0, now executed rather than asserted (erratum E3)
+    step0 = {"c": finiteness["c"], "p_lower": finiteness["p_lower"],
+             "p_lower_float": float(F(finiteness["p_lower"])),
+             "geometric_stages": finiteness["geometric_stages"],
+             "E_tau_prime_upper_crude": finiteness["E_tau_prime_upper_crude"],
+             "E_tau_prime_upper_crude_float": float(F(finiteness["E_tau_prime_upper_crude"])),
+             "why": ("step 3 of Lemma C7-U divides by E[V] - g(a) after substituting Wald, which is "
+                     "invalid if E[R] = infinity. This was previously proved in a docstring and "
+                     "executed nowhere.")}
 
     # KG4 -- tier-k at k = 1 must reproduce tier 1 exactly
     cert_l = T.certified_U("lorden", E_LO, K, H)
@@ -77,6 +88,20 @@ def main() -> int:
     kg("KG8", mut.get("MUTATION_CLASS") == "PASS",
        f"mutation class {mut.get('MUTATION_CLASS')!r}, undetected {mut.get('undetected')}")
     kg("KG8b", mut.get("mirror_equivalence_asserted") is True, "mirror equivalence not asserted")
+
+    # KG10 / KG11 -- artifacts added in response to the pre-publication review
+    prim_p = C.NS / "evidence" / "primitives" / "C7_PRIMITIVES_TEST.json"
+    prim = C.load(prim_p) if prim_p.exists() else {}
+    kg("KG10", prim.get("PRIMITIVES_CLASS") == "PASS",
+       f"Gaussian primitives test class {prim.get('PRIMITIVES_CLASS')!r}; every quantity in the "
+       f"namespace is built from G.Phi/G.phi and no other check can see an error in them")
+    kg("KG10b", prim.get("gaussian_sha256") == C.sha256_file(C.NS / "code" / "c7_gaussian.py"),
+       "the primitives test was run against a different c7_gaussian.py than the one committed")
+
+    psi_p = C.NS / "evidence" / "psi_monotonicity" / "C7_PSI_MONOTONICITY.json"
+    psim = C.load(psi_p) if psi_p.exists() else {}
+    kg("KG11", psim.get("criterion_holds_at_every_knot") is True,
+       "the psi monotonicity criterion does not hold at every knot")
 
     # KG9 -- compute boundary
     b0 = C.load(C.NS / "evidence" / "b0" / "C7_B0_AUDIT.json")
@@ -112,8 +137,9 @@ def main() -> int:
     # ---- Phase 10: downstream feasibility against C5-T (FEASIBILITY_ONLY) ----------------------
     downstream = {
         "scope": "FEASIBILITY_ONLY -- no cell status changes, no closure is claimed, guard stays DENY",
-        "exclusion_test": c4["gate_sha256"] and
-        "cell 309 is EXCLUDED iff the certified floor on E_a[tau] exceeds the critical A0",
+        "exclusion_test": ("cell 309 is EXCLUDED iff the certified floor on E_a[tau] exceeds the "
+                           "critical A0"),
+        "C4_gate_sha256": c4["gate_sha256"],
         "critical_A0_C5T": str(crit),
         "C4_margin_percent": c4_margin,
         "C7_primary_margin_percent": p_margin,
@@ -162,7 +188,19 @@ def main() -> int:
         "model_sha256": C.MODEL_SHA256,
         "evaluated_at_e": str(E_LO), "K": str(K), "H": str(H), "N_partition": N,
         "kill_gates_fired": [],
-        "baseline_C4": {"value": str(B4), "float": float(B4), "margin_percent": c4_margin},
+        "baseline_C4": {
+            "value": str(B4), "float": float(B4),
+            "margin_percent_over_C5T_critical_A0": c4_margin,
+            "margin_percent_as_C4_published": c4["slack_over_critical_percent"],
+            "C4_frozen_clause_critical_A0": c5["critical_A0_frozen_clause"],
+            "rebasing_note": ("C4 PUBLISHED 2.5827% against its own frozen-clause critical A0 "
+                              "3.2142360226778806. The 0.9440% figure is that margin re-measured "
+                              "against C5-T's critical A0 3.266415728267196, i.e. what survived "
+                              "after C5-T. The field previously carried only the re-based number "
+                              "under the undifferentiated name `margin_percent`, so a reader "
+                              "diffing the two certificates saw 2.58 against 0.94 with nothing to "
+                              "explain it."),
+        },
         "bounds": {k: {"value": str(v["value"]), "float": float(v["value"]),
                        "vs_C4_percent": pct(v["value"], B4),
                        "margin_over_critical_A0_percent": pct(v["value"], crit),
@@ -177,6 +215,43 @@ def main() -> int:
         "phase10_downstream_feasibility": downstream,
         "phase11_family_exhaustion": exhaustion,
         "compute_boundary": cb,
+        "lemma_C7_U_step0_finiteness": step0,
+        "compute_boundary_scope": (
+            "These counters describe THE C7 EVIDENCE CHAIN: every committed producer, and every "
+            "number any C7 conclusion rests on. Out-of-tree cross-checking activity is counted "
+            "separately below. See ERRATUM_C7_GATE.md E5."),
+        "external_non_evidence_activity": {
+            "declared_because": ("the frozen gate forbids 'Monte Carlo of any kind' unconditionally, "
+                                 "and an out-of-tree Monte Carlo cross-check WAS commissioned and "
+                                 "run. Declaring it here rather than leaving it in a note is the "
+                                 "repair; the gate is not amended. See ERRATUM_C7_GATE.md E4."),
+            "MONTE_CARLO_RUNS": 4,
+            "where": "a scratch directory outside the repository, in a separate process",
+            "imports": "python3 standard library only; no campaign module imported",
+            "wrote_into_namespace": False,
+            "any_C7_conclusion_depends_on_it": False,
+            "result": "E[tau'] ~ 3.98842 +/- 0.00050, E[R] ~ 1.04797 +/- 0.00032",
+            "consistency": ("falls inside the bracket C7's own certified arithmetic gives "
+                            "independently, E[tau'] in [3.586306, 4.679910]"),
+            "status": ("a breach of the gate's TEXT, not of its purpose. The prohibition exists to "
+                       "keep uncertified numerics out of the evidence chain; nothing entered it."),
+        },
+        "supporting_artifacts": {
+            "primitives_test": {"class": prim.get("PRIMITIVES_CLASS"),
+                                "cases": len(prim.get("known_value_cases", [])),
+                                "identities": len(prim.get("identities", []))},
+            "psi_monotonicity": {
+                "criterion_holds_at_every_knot": psim.get("criterion_holds_at_every_knot"),
+                "worst_psi_times_h": psim.get("worst_case", {}).get("psi_times_h_upper"),
+                "tightening_declined_percent": psim.get("value_of_using_it", {}).get("bound_gain_percent")},
+            "mutations": {"class": mut.get("MUTATION_CLASS"),
+                          "count": len(mut.get("mutants", [])),
+                          "undetected": mut.get("undetected"),
+                          "surviving_below_reported_precision": mut.get("unsound_below_reported_precision"),
+                          "max_undetectable_U_inflation_percent":
+                              mut.get("coverage_limitation", {}).get("residual_gap_MEASURED", {})
+                                 .get("max_undetectable_inflation_percent")},
+        },
         "permitted_conclusions": C.load(gate_path)["permitted_conclusions"],
         "forbidden_conclusions": C.load(gate_path)["forbidden_conclusions"],
     }

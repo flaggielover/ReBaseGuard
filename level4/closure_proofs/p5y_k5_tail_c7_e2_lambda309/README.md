@@ -16,14 +16,20 @@ each one depends on:
 | L3 registry | 3.597941639 | +9.1195 % | 10.1495 % | Arb/FLINT surface |
 | L3 Lorden | 3.600337620 | +9.1921 % | 10.2229 % | Lorden (1970), cited |
 
-C4's floor was 3.297250282, clearing the C5-T critical A0 `3.266415728` by **0.9440 %**. The PRIMARY
-bound clears it by **9.7933 %** — **10.37×** C4's margin — and does so **without depending on the
-Arb/FLINT certification surface at all**.
+C4 published a margin of **2.5827 %**, measured against its own frozen-clause critical A0
+`3.2142360226778806`. C5-T's exact-weight transport then raised the critical A0 to `3.266415728`,
+consuming 63 % of that margin and leaving C4's floor `3.297250282` clearing it by only **0.9440 %**.
+A second successor move of C5-T's size would have extinguished the exclusion.
 
-That independence is the point. C4's exclusion of cell 309 tolerated a 0.94 % adverse move in the
-critical A0, and a single successor — C5-T's exact-weight transport — had already consumed 63 % of
-C4's original margin. A second move of that size would have extinguished the exclusion. It no longer
-can, and that conclusion survives even if the operator certification surface is doubted entirely.
+The PRIMARY bound clears the same critical A0 by **9.7933 %** — **10.37×** what was left of C4's
+margin — and the **bound** does so without depending on the Arb/FLINT certification surface at all.
+
+One thing that independence does *not* buy, and an earlier draft of this file overclaimed: the
+**margin statement** is not surface-free. It is measured against `critical_A0_C5T`, itself an
+operator-level quantity read from C5's forecast. If that surface were doubted entirely, the *bound*
+would survive intact and the *comparison target* would be gone. What C7 establishes is that the
+exclusion no longer depends on the Arb/FLINT surface for its **margin**, not that it could be stated
+without that surface at all.
 
 ## What this is not
 
@@ -72,11 +78,31 @@ evaluates to 3.297250281519544 — exactly C4's published bound, reached by a di
 weights still summed to 1, `ψ_lo` was still non-increasing, the result still sat below every certified
 upper bound. Nothing was inconsistent; it was simply wrong — the C4 failure mode exactly. `ψ` is now
 recomputed independently from its own definition and every `ψ_lo` the LP consumes is checked against
-it. `psi_exact` is used **only** as a guard, never as the bound, because using it directly would
-require `ψ` to be decreasing, which is *not* proved: the weights in its mixture shift toward the
-larger term as `u` grows, so the monotonicity is genuinely unclear rather than merely unproved.
+it. `psi_exact` is used **only** as a guard, never as the bound. An earlier draft justified that by
+saying `ψ`'s monotonicity is "genuinely unclear". That was too weak, and both the pre-publication
+review and an independent numerical check corrected it: **`ψ` is decreasing.** The exact criterion is
+`ψ′(u) < 0 ⟺ ψ(u)·h(s) < 1`, which holds at all 65 knots with worst value 0.943443 at `u = H`; and
+log-concavity of the folded-normal density proves it outright for `u ≥ arccosh(e)/e − K = 0.159112`,
+i.e. on 96.8 % of the range, leaving exactly two of the 64 knots to the criterion.
+
+It is still not used, for a quantified reason rather than an uncertain one: substituting `ψ_exact`
+raises `E[R]` by 0.6978 % but only **+0.0562 %** on the reported bound, because `E[R]` is just 0.44
+of the `H + E[R] = 5.44` being divided. See `evidence/psi_monotonicity/` and
+`OPEN_NOTES_DISPOSITION_C7.md` → N1.
 
 A third defect, the `k = 1` edge case, was surfaced by kill gate KG4 rather than by inspection.
+
+**Two more, found by the fresh-context review, which returned NOT_READY.** The first repair above was
+incomplete in a way the campaign did not see. The review obtained a dependency-free,
+re-derivation-surviving, kill-gate-clean bound of **3.619819606** (+0.9345 % over PRIMARY) from
+`U = 3.549353697` — **without mutating any code**, using only the public API — because Lemma C7-U's
+own hypothesis `a > 0` was never enforced and `_resolve_U` re-derived `U` from the grid carried *in
+the certificate under test* rather than the gate's frozen one. Provenance constrained `source`, the
+field the mutants exercised, and never the field carrying the payload. Separately, nothing enforced
+that the evaluation point `e` lies in the closed cell: `e = 1.90` gives 3.642963840, above PRIMARY,
+firing nothing. Both are now enforced in code and regression-tested (M16, M17, M18), and both
+falsified a claim the frozen gate made about itself — see `ERRATUM_C7_GATE.md` E1 and E2. Neither
+affected the published numbers, which were always computed on the gate's own grid at `e = e_lo`.
 
 ## Exhaustion of the family
 
@@ -108,4 +134,10 @@ rule contains **no tuned threshold**, only strict comparisons against C4's own p
     code/c7_ledger.py                  phases 1–2: slack ledger, required improvement
     code/c7_mutations.py               phase 7: 15 mutants, direction-organised
     code/c7_certificate.py             phases 9–11: evaluation, downstream, exhaustion
+    code/c7_factcheck.py               phase 13: governance fact verification
+    code/c7_primitives_test.py         known-value tests for G.Phi / G.phi
+    code/c7_psi_monotonicity.py        the psi monotonicity analysis behind N1
     phase_3/C7_ROUTE_SEARCH.md         families A–I and why eight were stopped
+    ERRATUM_C7_GATE.md                 E1–E5: corrections to the frozen gate's own statements
+    OPEN_NOTES_DISPOSITION_C7.md       N1–N4
+    review/REVIEW_C7_PREPUBLICATION.md the NOT_READY review, 17 findings
