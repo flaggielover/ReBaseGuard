@@ -1,0 +1,80 @@
+{
+ "MUTATION_CLASS": "PASS",
+ "mutants": [
+  {
+   "how": "AST import walk over all 5 C11 modules; forbidden set ['fast_range', 'intervals', 'opnorms', 'ra_certifier', 'rebaseguard_certify', 'resolvent_certificate', 'rung3_engine', 'spec', 'taboo_certify']; intersection empty",
+   "id": "M01",
+   "name": "hidden import of the original certifier's load-bearing graph",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "C11 imports ['__future__', 'ast', 'c11_certifier', 'c11_common', 'c7_gaussian', 'fractions', 'hashlib', 'importlib', 'json', 'math', 'os', 'pathlib', 're', 'subprocess', 'sys']; the original's backend is numpy + flint.arb",
+   "id": "M02",
+   "name": "using the original's arithmetic backend",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "the certifier module references no original artifact; the registry is read only by the RESULT module, at comparison time, which is where the gate permits it",
+   "id": "M03",
+   "name": "reading the original registry or its certified constants in the certifier",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "checked on 3 boxes; domination [True, True, True]",
+   "id": "M04",
+   "name": "a box bound that does not dominate the pointwise kernel (midpoint-for-whole-box)",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "a large constant certifies and w = 1 does not; a reversal would invert that ordering",
+   "id": "M05",
+   "name": "lower/upper reversal in the supersolution margin",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "the atom is (Fraction(0, 1), Fraction(0, 1)), the origin of the two-arm CUSUM state, as the frozen model defines",
+   "id": "M06",
+   "name": "wrong atom",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "K, H and C are re-derived as data and cross-checked against the frozen model file's text",
+   "id": "M07",
+   "name": "wrong frozen model constants",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "every moment is an interval of exact Fractions; a float collapse would lose .lo/.hi",
+   "id": "M08",
+   "name": "interval arithmetic collapsed to floating point",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "(K_e 1) and 1 - h1 are rigorous intervals that INTERSECT at all 5 states; max separation 0.00e+00, below the 1e-60 grid. A false identity would give disjoint intervals.",
+   "id": "M09",
+   "name": "the kernel/alarm identity holding only approximately",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "the criterion is a factor of 2, the outcome is 1817x, and the verdict FAILS it -- a post-hoc threshold would have been set above the observed ratio",
+   "id": "M10",
+   "name": "an agreement threshold chosen after seeing the outcome",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "the gate explicitly rejects 'both bounds are valid', which the constant supersolution already satisfies trivially, and the result keeps N9 OPEN",
+   "id": "M11",
+   "name": "N9 declared closed on a weaker criterion than the frozen one",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "no r6; 0 files changed outside the C11 namespace; N9 left OPEN",
+   "id": "M12",
+   "name": "adoption, coverage change or r6 smuggled into a verification campaign",
+   "outcome": "DETECTED"
+  }
+ ],
+ "schema": "C11_MUTATIONS/1",
+ "sha256": "41f7944859d4ced9162b8087f2ac3d66be091e6f409f9ad9acb68de192d02e7c",
+ "survivors": []
+}
