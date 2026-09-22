@@ -1,0 +1,98 @@
+{
+ "DATA_BLOCKED_question": {
+  "answer": "NO. The certifier's CLI takes only --outdir/--cells/--workers and never a records directory, while the downstream CONSUMER c2_d5_forecast.py DOES take --records. The certification and the consumption have different input contracts, and only the consumer touches K1. The certifier builds its OWN Chebyshev supersolution; the `payload` field in arl_cell_*.json is its OUTPUT. C9 is NOT DATA_BLOCKED.",
+  "consumer_cli_takes_records_dir": true,
+  "method": "command-line contract plus an AST scan of the producer's file opens. A token scan was tried first and was WRONG: it fired on the producer's own docstring asserting 'no K1 record', i.e. on a negation of the thing being hunted.",
+  "needs_k1_candidate_payloads": false,
+  "producer_cli_takes_records_dir": false,
+  "producer_file_opens": [
+   "(AD / \"code/taboo_certify.py\").read_bytes()",
+   "(outdir / \"REGISTRY_C2.json\").read_bytes()",
+   "CELLS_JSON.read_bytes()",
+   "HERE.read_bytes()",
+   "dp.read_bytes()",
+   "p.read_bytes()",
+   "tp.read_bytes()"
+  ],
+  "producer_self_declaration": "operator only ... no source S_r, no candidate of any F / D / H / G object, no K1 record, no value of R",
+  "question": "does E1 need the K1 candidate polynomial payloads that C6 proved were never serialized anywhere?"
+ },
+ "certifier": {
+  "path": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/taboo_certify.py",
+  "sha256": "ced9422ca07981a9ad053acd79b72ef0d5007e93e49c16f2501f31c593fd0daa"
+ },
+ "determinism": {
+  "declared_new_real": true,
+  "exact_arithmetic": "fractions.Fraction plus flint.arb interval arithmetic",
+  "thread_pinning": "_PINNED sets OMP/OPENBLAS/MKL/NUMEXPR_NUM_THREADS=1 before numpy loads"
+ },
+ "entry_producer": {
+  "cli": "python -B c2_refined_registry.py build --outdir DIR --cells 307",
+  "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/code/c2_refined_registry.py",
+  "sha256": "0d1d8021a3780e13c567f583c1e490025ea2ca43dbfa7082f7dd5905e965b623"
+ },
+ "external_requirements": [
+  "flint",
+  "numpy",
+  "scipy"
+ ],
+ "module_graph": {
+  "ancestry4": {
+   "path": "level4/closure_proofs/p5y_k1_cusum_aux4_fullcover/code/ancestry4.py",
+   "sha256": "91d517955345e38592b11cabfe76edcf7594872c195950ff18c66aee2e50048a"
+  },
+  "ancestry5": {
+   "path": "level4/closure_proofs/p5y_k1_cusum_aux5_successor/code/ancestry5.py",
+   "sha256": "0f340764f2952fcb2ee48f802177afb6949801646489c5a6eafd267b9f22b643"
+  },
+  "cusum_layer1": {
+   "path": "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/cusum_layer1.py",
+   "sha256": "efcc0f36632632577a24c4ddf1a7c2c3579d471cdba5a752dd72c708667cdc79"
+  },
+  "cusum_layer2": {
+   "path": "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/cusum_layer2.py",
+   "sha256": "42c3d98394a6a8536e05d50626b21c7c71c309f5f98e286bdf2a3f7b5badf5a7"
+  },
+  "fast_range": {
+   "path": "level4/closure_proofs/p5x_global_nonlinear_dynamics/compute_optimization_r2/fast_range.py",
+   "sha256": "82e630bdbe31271dca057cf33dc069937ca4e54f509be34f823092675d4cdbc4"
+  },
+  "intervals": {
+   "path": "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/intervals.py",
+   "sha256": "ea860c4ee1f421731b5e8c16c11184105926b7e2cf9fc36096bf77821bbfde9b"
+  },
+  "opnorms": {
+   "path": "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/opnorms.py",
+   "sha256": "f195439876fe99bc6bfd5e1b7d35790c23a68f753c2ba1206508a27a11b9f67e"
+  },
+  "ra_certifier": {
+   "path": "level4/closure_proofs/p5x_global_nonlinear_dynamics/certified_method_repair_ra/ra_certifier.py",
+   "sha256": "bda148a3a87cc155897a680aa3adb72a90fb8a32195a9fa36d7a88120b2dbc7e"
+  },
+  "rebaseguard_certify": {
+   "path": "rebaseguard-proof/src/rebaseguard_certify/__init__.py",
+   "sha256": "3fac033384a21584baed703f2b1356b60f1bf141da96889b9efbff5f083f787e"
+  },
+  "resolvent_certificate": {
+   "path": "level4/closure_proofs/p5y_k5_cusum_order3_r3_infrastructure/code/resolvent_certificate.py",
+   "sha256": "038f026beaaa0813efcca1cb19f7a5e7bd7f7a7affe419d4813c4052936e4e0f"
+  },
+  "rung3_engine": {
+   "path": "level4/closure_proofs/p5y_k5_cusum_order3_real_producer/code/rung3_engine.py",
+   "sha256": "6d7644c9eea8a94e43dc34ddb741af11ca3e66243548e78ce14177e3ed3f2d6b"
+  },
+  "spec": {
+   "path": "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/spec.py",
+   "sha256": "12914fb7c9654c510d54f1e8a95b9efb7e635005aec0d861b7c744f7bafb55ac"
+  },
+  "taboo_certify": {
+   "path": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/taboo_certify.py",
+   "sha256": "ced9422ca07981a9ad053acd79b72ef0d5007e93e49c16f2501f31c593fd0daa"
+  }
+ },
+ "route": "R3 / E1 operator certification",
+ "schema": "C9_FORENSICS/1",
+ "sha256": "dcd321cad4e0a814e2b1d96bed2d68ceeef0553bf20c84ff5326402e58831807",
+ "transitive_modules_resolved": 13,
+ "unresolved": []
+}

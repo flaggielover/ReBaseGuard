@@ -1,0 +1,116 @@
+{
+ "PHASE5_RESULT": "QUALIFICATION_NOT_POSSIBLE",
+ "blocker_1_scientific": {
+  "consequence": "obtaining the required 1.096x needs a DIFFERENT producer configuration -- finer sub-blocks, higher degree, or a different alpha ladder. That is a source mutation of a geometry the C2 gate froze, so it is a new prospective protocol and a different campaign, not 'one authorized execution of the committed E1 producer'. C9's charter forbids improvising around a blocker.",
+  "finding": "Re-running the committed E1 producer on cell 307 reproduces the committed cell-307 block EXACTLY, so the achieved tightening is 1.0000x, which is below the required 1.0960072461462x. E1 AS COMMITTED CANNOT CLOSE CELL 307.",
+  "frozen_constants_in_the_producer": {
+   "ARL_ALPHAS": "ARL_ALPHAS = (F(5, 4), F(7, 5), F(3, 2), F(2), F(3), F(5))",
+   "DEGREE_ARL": "DEGREE_ARL = 12",
+   "DEGREE_TABOO": "DEGREE_TABOO = 20",
+   "SUB_BLOCK_MAX_WIDTH": "SUB_BLOCK_MAX_WIDTH = F(1, 100)",
+   "TABOO_ALPHAS": "TABOO_ALPHAS = (F(6, 5), F(13, 10), F(7, 5), F(3, 2), F(2), F(3))"
+  },
+  "gate_language": "the C2 gate fixes the partition as 'sub-blocks no wider than 1/100 - the geometry of the ADOPTED registry r1, rather than a width tuned to the tail', and fixes both alpha ladders",
+  "same_configuration_recorded_in_the_committed_registry": {
+   "arl_alphas": [
+    "5/4",
+    "7/5",
+    "3/2",
+    "2",
+    "3",
+    "5"
+   ],
+   "code_sha256": {
+    "c2_refined_registry": "4ac24d9e182656a45770fc02f58e96d9e0492456c7b1991c752426f9bcecdc91",
+    "taboo_certify": "ced9422ca07981a9ad053acd79b72ef0d5007e93e49c16f2501f31c593fd0daa"
+   },
+   "degree_arl": 12,
+   "degree_taboo": 20,
+   "sub_block_max_width": "1/100",
+   "taboo_alphas": [
+    "6/5",
+    "13/10",
+    "7/5",
+    "3/2",
+    "2",
+    "3"
+   ]
+  },
+  "status_of_this_finding": "STRUCTURAL INFERENCE from the committed producer, its recorded configuration and its arithmetic. It is NOT an executed verification, because executing it needs the toolchain that blocker 2 shows is absent. Labelled accordingly.",
+  "why": [
+   "every quantity that controls tightness is a hardcoded module constant, not a CLI knob",
+   "the CLI exposes only --outdir, --cells, --workers, --out -- none of which is scientific",
+   "the arithmetic is exact (fractions.Fraction) plus flint.arb interval arithmetic at a fixed precision, so the output is a deterministic function of the inputs",
+   "the committed registry records the exact configuration it was produced under, so the reproduction is checkable field by field"
+  ]
+ },
+ "blocker_2_toolchain_and_host": {
+  "C9_authorization_artifacts_present": [],
+  "architecture_note": "the local machine is macOS arm64; the historical certifier pins point at a Linux host. Architecture is part of the runtime identity manifest the charter requires, so a cross-architecture run would need its own qualification even if the libraries were present.",
+  "authorized_C9_host_artifacts": [],
+  "false_positive_note": "an earlier scan reported two 'authorized' artifacts; both were hex SHA digests containing the substring c9, in C3's authorization and in an unrelated countersignature. Neither authorizes a C9 host.",
+  "finding": "No qualified certification runtime exists and no certification host is authorized for C9.",
+  "flint_system_libraries_present": [],
+  "historical_pins_from_committed_evidence": {
+   "flint_library": {
+    "3.6.0": 82
+   },
+   "numpy": {
+    "2.5.2": 594,
+    "2.5.3": 4,
+    "ABSENT": 1
+   },
+   "python": {
+    "/home/ubuntu/work/ReBaseGuard/level4/.venv/bin/python": 5,
+    "/root/prov/tree/level4/.venv/bin/python": 4,
+    "3.12.3": 346,
+    "3.12.3 (the historical certifier host); 3.14.5 also appears in later records": 1,
+    "3.13.5": 1,
+    "3.14.5": 124,
+    "3.14.5 (v3.14.5:5607950ef23, May 10 2026, 07:38:09) [Clang 21.0.0 (clang-2100.0.123.102)]": 140,
+    "uv-managed CPython 3.12.3 (main, Apr 15 2024, 18:25:56) [Clang 17.0.6], glibc 2.41": 1
+   },
+   "python_flint": {
+    "0.9.0": 365,
+    "ABSENT": 1
+   }
+  },
+  "hosts": {
+   "AWS_SR_PS1": "ABSOLUTELY FORBIDDEN by the C9 charter; a separate production campaign",
+   "Vultr": "NOT authorized. The charter forbids assuming authorization from historical use, and no authorization or provenance artifact for a C9 certification host exists in the tree.",
+   "local_machine": "would require installing Python 3.12, FLINT 3.6.0, numpy 2.5.2, scipy and python-flint 0.9.0. A Homebrew install is system-wide and shared, so it is NOT the 'dedicated C9 certification host/environment' the charter requires, and brew does not pin FLINT to 3.6.0."
+  },
+  "local_runtime": {
+   "libs": {
+    "flint": false,
+    "gmpy2": false,
+    "mpmath": false,
+    "numpy": false,
+    "scipy": false,
+    "sympy": false
+   },
+   "machine": "arm64",
+   "python": "3.14.5",
+   "system": "Darwin"
+  },
+  "network_state": "this interpreter cannot verify TLS certificates (SSL CERTIFICATE_VERIFY_FAILED when querying package metadata), so package installation is not currently possible from it either",
+  "required_interpreter_present": {
+   "python3.11": "/Users/suzhe/.local/bin/python3.11",
+   "python3.12": null,
+   "python3.13": null
+  }
+ },
+ "charter_hard_stops_triggered": [
+  "qualification fails",
+  "required toolchain is absent and no dedicated certification environment is authorized"
+ ],
+ "independence": "the two blockers are independent. Blocker 1 holds even if a fully qualified host existed, because the committed producer would reproduce the committed result. Blocker 2 holds even if the producer could improve.",
+ "schema": "C9_TOOLCHAIN/1",
+ "sha256": "e70c886ba0e90747d6e3fe8ddd93f4a108a9dfb4c9bd337198083577666deb8d",
+ "what_C9_does_NOT_claim": [
+  "that cell 307 cannot ever be closed",
+  "that E1 is refuted",
+  "that a finer operator certification would fail",
+  "that any host should or should not be provisioned -- that is a governance decision"
+ ]
+}
