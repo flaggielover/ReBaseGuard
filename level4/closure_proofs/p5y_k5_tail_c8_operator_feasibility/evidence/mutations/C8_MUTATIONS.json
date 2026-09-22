@@ -1,0 +1,117 @@
+{
+ "MUTATION_CLASS": "PASS",
+ "mutants": [
+  {
+   "how": "open set is recomputed from per-cell verdicts every run: [306, 307, 308, 309]; the decision artifact covers exactly those cells",
+   "id": "M01",
+   "name": "stale r5 open set (e.g. inherited from an earlier map)",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "r5 per-cell verdict for 305 is PASS and it is absent from the decision set; the B0 audit records the C7 prose discrepancy explicitly",
+   "id": "M02",
+   "name": "accidentally treating cell 305 as open",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "the anatomy carries the inequality explicitly and the floor is labelled a LOWER bound; no step substitutes one for the other",
+   "id": "M03",
+   "name": "treating pointwise Lambda(e_lo) as the uniform sup over the cell",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "planted at cell 309: setting A0 to the floor still gives M=2.685149559 >= budget 1.995669915, so the reversal does not yield a pass and the refutation stands",
+   "id": "M04",
+   "name": "reversing sup/inf: using the Lambda floor as if it were an attainable A0",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "if Lambda were an upper bound one could set A0 below it and 309 would pass (M at A=0 is 0.377966801 < budget). The suite detects this because Lemma SM(d) is quoted as an admissibility FLOOR and the A0 ceiling 3.266415728 is compared AGAINST the floor, not substituted for it",
+   "id": "M05",
+   "name": "treating the certified LOWER bound as an UPPER bound on A0",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "the floor used is the ACHIEVED PRIMARY 3.586306094, not the unachieved ceiling 4.679910340; using the ceiling would have widened the refutation unearned",
+   "id": "M06",
+   "name": "treating C7's E2-family ceiling as an achieved bound",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "every oracle block carries COUNTERFACTUAL_ONLY and the decision artifact repeats the labelling rule",
+   "id": "M07",
+   "name": "treating a counterfactual oracle value as certified evidence",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "monotonicity of M in A0 is TESTED on a 50-point sweep at cell 307 rather than assumed: True. Every threshold is obtained by bisection that re-evaluates the real rule, so a non-monotone rule would produce a detectably wrong bracket",
+   "id": "M08",
+   "name": "assuming monotonicity of M in A0 instead of testing it",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "the budget is read from C5_FORECAST M_needed_C5T and the artifact names C5-T as authoritative; the frozen clause is retained only as a cross-check",
+   "id": "M09",
+   "name": "using C4's pre-C5-T margin instead of the authoritative C5-T budget",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "C6 records E1 as GATE_CLASS_GAP__nearest_is_HISTORICAL_REPLAY_REQUIRED, explicitly NOT a replay: 'the result does not exist'. C8 classifies R3 as TOOLCHAIN_BLOCKED, not replayable",
+   "id": "M10",
+   "name": "treating E1 as historical replay",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "R3 is recorded zero_new_real=True, consistent with C6 and with C1/C2 having spent CPU-hours of it under that classification",
+   "id": "M11",
+   "name": "treating zero-new-real operator certification as new-real",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "B1 and D4 are TRUE_NEW_REAL_REQUIRED in C6 and R4 carries zero_new_real=False",
+   "id": "M12",
+   "name": "treating B1/D4 (or R4 order-3) as zero-new-real",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "the artifact states no certifying host is in scope and blocks R3 on exactly that",
+   "id": "M13",
+   "name": "claiming a certifying host is available",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "availability is measured by importlib.find_spec at run time, not declared: {'numpy': False, 'scipy': False, 'flint': False, 'mpmath': False, 'sympy': False, 'gmpy2': False}",
+   "id": "M14",
+   "name": "claiming the toolchain is installed when it is not",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "both are recorded separately and they DIFFER (local c123b9bb, remote 1cb45382); a campaign that inferred remote from local would have recorded c123b9bb and been wrong",
+   "id": "M15",
+   "name": "inferring remote main from the local clone",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "no check carries a constant-true condition and UNCHECKED is empty; B0_15 was rewritten from a literal True into a real guard-file test during the audit",
+   "id": "M16",
+   "name": "a B0 check implemented as a tautology",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "identification is by EXECUTABLE with the whole self-ancestry chain removed; 1 interpreter(s) seen, 1 classified FOREIGN_UNRELATED, 0 campaign workers",
+   "id": "M17",
+   "name": "a process audit that matches its own diagnostic",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "phase 14 runs an independent fact verification over every load-bearing adopted claim before absorption; see HANDOVER_FACT_VERIFICATION.json",
+   "id": "M18",
+   "name": "absorbing a reviewer/adjudicator claim without verification",
+   "outcome": "DETECTED"
+  }
+ ],
+ "note": "each mutant plants a specific wrong belief about the DECISION, not about the arithmetic; detection means some check, guard or recomputation rejects it",
+ "schema": "C8_MUTATIONS/1",
+ "sha256": "c0e08f5b9230d62600211cc27b6188a861b3b19a5af9be90dfe662ae1e4c16b6",
+ "survivors": []
+}

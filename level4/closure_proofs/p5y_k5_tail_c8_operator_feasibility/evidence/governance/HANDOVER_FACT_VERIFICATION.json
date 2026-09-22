@@ -1,0 +1,131 @@
+{
+ "FACT_CHECK_CLASS": "REFUSE",
+ "WHAT_THIS_CANNOT_VERIFY": "the mechanical checks compare numerals, baselines, commit order and self-shas. NONE of them reaches a BEHAVIOURAL claim -- whether a guard actually guards, whether a test can fail, whether a route classification is sound. C6 and C7 each shipped a defect of exactly that kind past a PASS here. Those are found by reading code and by adversarial review, and the load-bearing claim ledger below is where reviewer and adjudicator statements are checked one by one before absorption.",
+ "findings": [
+  {
+   "artifact": "evidence/mutations/C8_MUTATIONS.json",
+   "check": "GATE_ORDERING",
+   "position": "BEFORE_GATE"
+  }
+ ],
+ "gate_ordering": [
+  {
+   "artifact": "evidence/phase4/C8_ROUTES.json",
+   "kind": "RESULT",
+   "position": "AFTER_GATE"
+  },
+  {
+   "artifact": "evidence/phase9/C8_DECISION.json",
+   "kind": "RESULT",
+   "position": "AFTER_GATE"
+  },
+  {
+   "artifact": "evidence/mutations/C8_MUTATIONS.json",
+   "kind": "RESULT",
+   "position": "BEFORE_GATE"
+  },
+  {
+   "artifact": "evidence/b0/C8_B0_AUDIT.json",
+   "kind": "STATE_AUDIT",
+   "position": "BEFORE_GATE"
+  }
+ ],
+ "load_bearing_claim_ledger": [
+  {
+   "disposition": "LANDED",
+   "result": "REPRODUCED",
+   "source": "C5_FORECAST.json#/cells/306/M_used",
+   "statement": "cell 306: M under the best committed supply equals C5's M_used",
+   "value": 3.4380374937355533,
+   "verification_method": "recomputed from the frozen TC-T rule over committed inputs; compared as exact rationals"
+  },
+  {
+   "disposition": "LANDED",
+   "result": "REPRODUCED",
+   "source": "C5_FORECAST.json#/cells/307/M_used",
+   "statement": "cell 307: M under the best committed supply equals C5's M_used",
+   "value": 3.374598931694219,
+   "verification_method": "recomputed from the frozen TC-T rule over committed inputs; compared as exact rationals"
+  },
+  {
+   "disposition": "LANDED",
+   "result": "REPRODUCED",
+   "source": "C5_FORECAST.json#/cells/308/M_used",
+   "statement": "cell 308: M under the best committed supply equals C5's M_used",
+   "value": 3.3716470503119877,
+   "verification_method": "recomputed from the frozen TC-T rule over committed inputs; compared as exact rationals"
+  },
+  {
+   "disposition": "LANDED",
+   "result": "REPRODUCED",
+   "source": "C5_FORECAST.json#/cells/309/M_used",
+   "statement": "cell 309: M under the best committed supply equals C5's M_used",
+   "value": 3.3195244534743678,
+   "verification_method": "recomputed from the frozen TC-T rule over committed inputs; compared as exact rationals"
+  },
+  {
+   "disposition": "LANDED",
+   "result": "REPRODUCED",
+   "source": "C5_FORECAST.json#/c4_exclusion_fragility/.../critical_A0_C5T",
+   "statement": "cell 309's A0 ceiling equals C5's published critical_A0_C5T",
+   "value": 3.2664157282671957,
+   "verification_method": "independent bisection on the reconstructed rule"
+  },
+  {
+   "disposition": "LANDED",
+   "result": "REPRODUCED",
+   "source": "K5_COVERAGE_MAP_R5.json per-cell verdicts",
+   "statement": "the authoritative m=5 open set is {306,307,308,309}",
+   "value": [
+    306,
+    307,
+    308,
+    309
+   ],
+   "verification_method": "reconstructed from per-cell verdict fields, not from summary ranges"
+  },
+  {
+   "disposition": "CORRECTED -- C8 uses the artifact, not the prose",
+   "result": "REPRODUCED",
+   "source": "C7 README / disposition prose vs r5",
+   "statement": "C7's prose claim 'm=5 open on [305,309]' is wrong",
+   "value": "PASS",
+   "verification_method": "r5 per-cell verdict for 305 read directly"
+  },
+  {
+   "disposition": "LANDED",
+   "result": "REPRODUCED",
+   "source": "C7_CERTIFICATE.json",
+   "statement": "C7 PRIMARY is dependency-free and equals 3.5863060938653875",
+   "value": 3.5863060938653875,
+   "verification_method": "exact rational read and float-compared"
+  },
+  {
+   "disposition": "LANDED",
+   "result": "REPRODUCED",
+   "source": "C8 phase-5 oracle",
+   "statement": "R1 and R2 have exactly zero leverage on Gamma",
+   "value": 0.0,
+   "verification_method": "Gamma is a function of (g_hi, rho, x_hi, A0, A1, A2); Lambda appears in none. Verified by inspecting the reconstructed chain, which reproduces 20 committed supplies."
+  },
+  {
+   "disposition": "LANDED",
+   "result": "REPRODUCED",
+   "source": "C6_CLASSIFICATION RANKING_PREMISE_CORRECTED + local importlib measurement",
+   "statement": "no certifying host or toolchain exists in scope",
+   "value": {
+    "flint": false,
+    "gmpy2": false,
+    "mpmath": false,
+    "numpy": false,
+    "scipy": false,
+    "sympy": false
+   },
+   "verification_method": "importlib.find_spec at run time for six libraries"
+  }
+ ],
+ "prose_scanned": [],
+ "review_sourced_figures": {},
+ "schema": "C8_HANDOVER_FACT_VERIFICATION/1",
+ "sha256": "712defd6297556a33490f873ee1a26cc4101c14eb2653d78423d9391e73839a7"
+}
