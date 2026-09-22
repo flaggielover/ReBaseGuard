@@ -26,7 +26,7 @@
    "outcome": "DETECTED"
   },
   {
-   "how": "if Lambda were an upper bound one could set A0 below it and 309 would pass (M at A=0 is 0.377966801 < budget). The suite detects this because Lemma SM(d) is quoted as an admissibility FLOOR and the A0 ceiling 3.266415728 is compared AGAINST the floor, not substituted for it",
+   "how": "if Lambda were an upper bound one could set A0 below it and 309 would pass (M at A=0 is 0.377966801 < budget). The suite detects this because Lemma SM(d) is quoted as an admissibility FLOOR and the the code compares the A0 ceiling 3.266415728 AGAINST the floor 3.586306094 and refuses; substituting the floor downward by 10% would give a pass (False), which is exactly the error being tested",
    "id": "M05",
    "name": "treating the certified LOWER bound as an UPPER bound on A0",
    "outcome": "DETECTED"
@@ -108,10 +108,34 @@
    "id": "M18",
    "name": "absorbing a reviewer/adjudicator claim without verification",
    "outcome": "DETECTED"
+  },
+  {
+   "how": "C2_ADJUDICATION section K sets a BINDING floor F1 or F2; cell 306 fails both (F1 Gamma_G = +0.019116, F2 margin 1.171431 < 1.25) and needs 1.067071x",
+   "id": "M19",
+   "name": "calling a passing cell 'adoption-blocked' while ignoring the binding F1/F2 floor",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "R5 (source-sup, C6 route A1) also bears on 309: C5 published a 2.0561597% sup-norm cut voiding the exclusion at C4's floor, reproduced here exactly, and classified it DATA-blocked rather than refuted",
+   "id": "M20",
+   "name": "claiming a route is the ONLY one with leverage on cell 309",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "the refutation is scoped to the atom-constant family at the committed sup norms; the escape route is recorded as BLOCKED, not refuted",
+   "id": "M21",
+   "name": "stating the cell-309 refutation as unconditional",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "the clip is implemented from ADOPTED_TAIL_INPUTS cells[k]['m']['5']; Gamma SATURATES at +0.374145054 (M_R2 = 5.269941), so an unclipped reconstruction would have reported Gamma growing without bound -- the opposite direction",
+   "id": "M22",
+   "name": "dropping the sealed M_R2 clip and calling it conservative",
+   "outcome": "DETECTED"
   }
  ],
  "note": "each mutant plants a specific wrong belief about the DECISION, not about the arithmetic; detection means some check, guard or recomputation rejects it",
  "schema": "C8_MUTATIONS/1",
- "sha256": "c0e08f5b9230d62600211cc27b6188a861b3b19a5af9be90dfe662ae1e4c16b6",
+ "sha256": "5c8b541fb48389cbe023cd961a193045b6e331318f03962f65dde68aa28c276a",
  "survivors": []
 }

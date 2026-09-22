@@ -40,40 +40,55 @@ at every open cell.
 > **R1 and R2 have zero leverage on closure.** They are exclusion-strengthening routes — which is
 > what C7 was. They cannot close a cell.
 
-### Per-cell, under the authoritative C5-T clause
+### Per-cell, under the authoritative C5-T clause and the binding adoption floor
 
-| cell | `M_used` | `M_needed_C5T` | verdict | cheapest sufficient fact |
-|---|---|---|---|---|
-| 306 | 3.438037494 | 3.952942541 | **ALREADY PASSES** | none — the blocker is **adoption** |
-| 307 | 3.374598932 | 3.114961361 | FEASIBLE | `A0` 5.597996 → ≤ 4.996766 (**1.1203×**) |
-| 308 | 3.371647050 | 2.463911270 | FEASIBLE | `A0` → floor **and** `A1` ≤ 17.632791 (1.2927×) |
-| 309 | 3.319524453 | 1.995669915 | **MATHEMATICALLY REFUTED** | none within the atom-constant family |
+C2's adjudication sets a **binding prospective adoption floor**: **F1** (Γ < 0 also under a
+registry-free supply) **or** **F2** (uniform-A margin ≥ 1.25). Closure alone is not adoption. The
+correct unit of operator improvement is **one uniform factor on `eff`**, because Lemma Dv′ makes
+`A0`, `A1` and `A2` all proportional to it.
 
-**Cell 309.** The perfect-information oracle — `A0` at its certified floor with `A1 = A2 = 0`,
-strictly better than any certification could supply — still fails. The clause tolerates
-`A0 ≤ 3.266416`; the floor forces `A0 ≥ 3.586306`. The refutation already held under C4's weaker
-floor 3.297250, so **C7's strengthening widened it rather than created it**, and C8 claims otherwise
-nowhere. This reproduces C4's published exclusion of 309; C8's contribution is extending the same
-test to 306, 307 and 308, which C4 did not decide.
+| cell | closes now | uniform-A margin | F1 | F2 | adoptable | ×`eff` to close | ×`eff` to be **adoptable** |
+|---|---|---|---|---|---|---|---|
+| 306 | **yes** | 1.171431 | fail | fail | **no** | — | **1.067071** |
+| 307 | no | — | fail | fail | no | 1.096007 | 1.370009 |
+| 308 | no | — | fail | fail | no | 1.438423 | 1.798029 |
+| 309 | no | — | fail | fail | no | 1.818354 | 2.272943 |
 
-**Cell 306 is the cheapest result in the tail and costs nothing.** It passes the authoritative clause
-under committed certified supplies *today*. It is listed OPEN in r5 only because C2's adjudication
-was `PARTIALLY_ADOPTED` and adopted 305 alone. No new science should be bought for it.
+**Cell 306 is the cheapest target in the tail — but it is not free.** An earlier version of this
+campaign called its blocker "adoption, not information". That was **wrong**: 306 fails *both* limbs
+of a binding floor, and C2's adjudicator anticipated the exact number, writing that 306 reaches
+"Γ = −0.036198 with a uniform-A margin of 1.1555 — still short of F2 … a D′ campaign alone will not
+discharge this floor." It needs a real **1.067071×** uniform tightening.
 
-### A fourth route, recorded rather than omitted
+**Cell 309 — refuted, but within a stated scope.** The perfect-information oracle for the
+atom-constant family fails: the clause tolerates `A0 ≤ 3.266416` and the floor forces
+`A0 ≥ 3.586306`. The refutation already held under C4's weaker floor 3.297250, so **C7 widened it
+rather than created it**, and this reproduces C4's published exclusion. But it is **not
+unconditional**: it holds *within the atom-constant family, at the committed sup norms*. A tightening
+of the candidate sup norms voids it — **19.612136 %** against the current floor, and C5 published
+**2.0561597 %** against C4's weaker floor, a figure reproduced here exactly. C7's stronger floor made
+the refutation roughly 9.5× more robust against that route.
 
-The frozen TC-T rule accepts an `order3` argument, and committed evidence
-(`C2_CRITICAL_RATIOS.json`, `Gamma_perfect_order3`) shows perfect order-3 information closes **every**
-open cell including 309, at `Γ = −0.089759481`. It is the only route with leverage on 309 — and it is
-**true new-real** (B1/D4), forbidden by the C8 boundary and by the gate's rule 4 while a competitive
-zero-new-real route is untested.
+### The route set
+
+| route | lever | leverage | class |
+|---|---|---|---|
+| R1 | clipping gap | **zero** | LOW_LEVERAGE |
+| R2 | cell uniformization | **zero** | LOW_LEVERAGE |
+| R3 | operator certification (E1) | closes 306/307/308; **not** 309 | TOOLCHAIN_BLOCKED |
+| R4 | order-3 surrogate | closes all four | NEW_REAL_BLOCKED |
+| R5 | source-sup norms (C6 route A1) | **voids the 309 refutation** | DATA_AND_TOOLCHAIN_BLOCKED |
+
+R5 was omitted from the first enumeration, which therefore wrongly called R4 "the only route with
+leverage on 309". C5 classifies R5 **DATA-blocked, not refuted**.
 
 ## Selected route for C9
 
-**`NEXT_ROUTE_OPERATOR_CERT` — R3 (E1 operator certification), targeted at cell 307 first.**
+**`NEXT_ROUTE_OPERATOR_CERT` — R3 (E1 operator certification), targeted at cell 306 first.**
 
-A `1.1203×` tightening of a single quantity is the smallest sufficient information requirement
-anywhere in the tail, and the certified floor `3.734070` leaves ample room.
+A **1.067071×** uniform tightening of `eff` is the smallest sufficient requirement anywhere in the
+tail — cheaper than 307's 1.096007× to close, and it converts a cell that already *passes* into one
+that is *adoptable*. 307 follows at 1.096007× (1.370009× to be adoptable).
 
 **The risk is not CPU.** C2 measured its own refinement as *non-monotone*: `D_lo` improved but `τ` got
 1.90–2.24 % **worse**, and the net `A0` gain was only 4.5–4.9 %. The 1.1203× is therefore **not

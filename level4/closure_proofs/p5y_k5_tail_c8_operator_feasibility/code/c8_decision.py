@@ -203,11 +203,14 @@ def main() -> int:
     selection = {
         "gate_sha256": GATE_SHA,
         "rule_1_adoption_first": {
-            "cells": adoption_only,
-            "finding": ("cell 306 passes the authoritative C5-T clause under committed certified "
-                        "supplies. Its blocker is ADOPTION, not information. Under the gate's rule 1 "
-                        "no new information may be bought for it."),
-            "action_for_C9": "a governance adoption step, not a science campaign"},
+            "cells_passing_the_clause": adoption_only,
+            "CORRECTED_BY_REVIEW": (
+                "an earlier version concluded cell 306's blocker was ADOPTION rather than "
+                "information. That was WRONG. C2_ADJUDICATION section K sets a BINDING prospective "
+                "adoption floor -- F1 supply independence OR F2 uniform-A margin >= 1.25 -- and 306 "
+                "fails BOTH limbs. See evidence/phase9/C8_ADOPTION.json for the repaired model; the "
+                "cell needs a real 1.067071x uniform tightening of eff."),
+            "action_for_C9": "information, not a governance step: 306 is the cheapest target, not a free one"},
         "rule_2_analytic_zero_new_real": {
             "candidates": ["R1", "R2"],
             "result": ("both have ZERO closure leverage by the gate's leverage test. They are "
@@ -227,7 +230,10 @@ def main() -> int:
                                     "route, remains untested -- and R4 is the only route with "
                                     "leverage on 309, so it is the successor to R3, not its rival")},
         "OUTCOME": "NEXT_ROUTE_OPERATOR_CERT",
-        "selected_route": "R3 -- E1 operator certification, targeted at cell 307 first",
+        "selected_route": "R3 -- E1 operator certification, targeted at cell 306 first",
+        "SUPERSEDED_BY": ("evidence/phase9/C8_ADOPTION.json -- the uniform-eff model and the binding "
+                          "adoption floor; the per-parameter thresholds below are retained as "
+                          "supplementary anatomy only"),
         "why_307_first": ("it has the smallest sufficient information requirement anywhere in the "
                           "tail: a single A0 tightening of "
                           f"{inv['307']['required_A0_factor']:.4f}x, with the certified floor "

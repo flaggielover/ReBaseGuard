@@ -84,17 +84,24 @@ class Chain:
             self.geom[k] = {"e_lo": e_lo, "e_hi": e_hi, "e0": F(blk["e0"]),
                             "rho": (e_hi - e_lo) / 2, "x_hi": e_hi}
 
-        # exact per-cell H and the sealed supply's (Gamma, M), used to recover g_hi
+        # The SEALED clip inputs. R2_interval and M_R2 are carried per m inside ADOPTED_TAIL_INPUTS
+        # at cells[k]["m"][str(m)] -- in the very file this class already opens. An earlier version
+        # of this module inspected only the TOP-LEVEL keys of that cell, missed the nested "m" block,
+        # and concluded the clip was "unreachable from committed evidence". That was FALSE, and the
+        # conservatism argument built on it was false too: above roughly twice the certified supply
+        # the sealed M SATURATES at M_R2 while an unclipped magnitude grows without bound, so
+        # dropping the clip reverses direction rather than being safe. The sealed clause is now
+        # implemented as written.
         self.g_hi, self.H, self.M0 = {}, {}, {}
         for k in CELLS:
             cell = d5["cells"][str(k)]
-            H = tuple(F(x) for x in cell["H_exact"])
             Mx = F(cell["M_after_exact"])
             Gx = F(cell["Gamma_exact"])
             g = self.geom[k]
-            self.H[k] = H
+            mblk = self.adopted[str(k)]["m"]["5"]
+            self.H[k] = (F(mblk["R2_interval"]["lo"]), F(mblk["R2_interval"]["hi"]))
+            self.M0[k] = F(mblk["M_R2"])
             self.g_hi[k] = Gx - g["rho"] * g["x_hi"] * Mx
-            self.M0[k] = None  # recovered below if the intersection ever clips
 
     # ---------------------------------------------------------------------------------------
     def enclosure(self, k: int, A: dict) -> tuple[F, F]:
@@ -102,23 +109,29 @@ class Chain:
         return lo, hi
 
     def M_of(self, k: int, A: dict) -> F:
-        """M = max(|lo|, |hi|) over the TC-T enclosure, i.e. the UNCLIPPED magnitude.
+        """The SEALED clause, as c2_d5_forecast.direct() writes it:
 
-        The sealed clause is M = min(M_R2, max(|a|,|b|)) over [a,b] = [max(H_lo,lo), min(H_hi,hi)],
-        where H is the R2 interval. Neither H nor M_R2 is carried in any committed artifact -- the
-        field named `H_exact` in C2_D5_FORECAST is the ENCLOSURE [lo,hi] at the sealed supply, not
-        the R2 interval, and mistaking it for H made this reconstruction clip where the sealed
-        computation did not. The clip is therefore UNREACHABLE from committed evidence.
+            [a, b] = [max(H_lo, lo), min(H_hi, hi)],  H = R2_interval
+            M      = M_R2                      if a > b   (empty intersection)
+                   = min(M_R2, max(|a|, |b|))  otherwise
 
-        Dropping it is CONSERVATIVE in the direction that matters. Clipping can only DECREASE M, and
-        Gamma increases with M, so M = magnitude is an upper bound on the sealed M and hence Gamma
-        computed here is an upper bound on the sealed Gamma. A cell that passes under this
-        reconstruction passes under the sealed clause; a threshold derived here is at least as
-        demanding as the true one. The verification below confirms the clip does not bind at ANY of
-        the twenty committed supplies, so nothing is lost at the operating point either.
+        Both H and M_R2 come from ADOPTED_TAIL_INPUTS cells[k]["m"]["5"]. Because M is capped at
+        M_R2, Gamma SATURATES: no amount of degradation in A can push it past
+        g_hi + rho * x_hi * M_R2. That saturation value is a real quantity C4 published, and an
+        unclipped reconstruction would have reported Gamma growing without bound instead.
         """
         lo, hi = self.enclosure(k, A)
-        return max(abs(lo), abs(hi))
+        Hlo, Hhi = self.H[k]
+        a, b = max(Hlo, lo), min(Hhi, hi)
+        if a > b:
+            return self.M0[k]
+        m = max(abs(a), abs(b))
+        return self.M0[k] if self.M0[k] < m else m
+
+    def gamma_saturation(self, k: int) -> F:
+        """The largest Gamma the clause can ever report at this cell, i.e. at M = M_R2."""
+        g = self.geom[k]
+        return self.g_hi[k] + g["rho"] * g["x_hi"] * self.M0[k]
 
     def gamma(self, k: int, A: dict) -> F:
         g = self.geom[k]

@@ -1,0 +1,242 @@
+{
+ "adoption_floor_source": "C2_ADJUDICATION.md section K, 'K5 tail adoption floor (r1)': F1 supply independence OR F2 uniform-A margin >= 1.25",
+ "cell_309_refutation_SCOPE": {
+  "correct_class": "MATHEMATICALLY_REFUTED_WITHIN_SCOPE; the escape route is BLOCKED, not refuted",
+  "does_NOT_hold_unconditionally": true,
+  "escape": "a tightening of the candidate sup norms voids it: 19.612136% against the current floor, and C5 published 2.0561597% against C4's weaker floor. C7's stronger floor therefore made the refutation roughly 9.5x more robust against this route.",
+  "holds": "within the atom-constant family (A0, A1, A2) AT THE COMMITTED SUP NORMS"
+ },
+ "per_cell": {
+  "306": {
+   "F1_supply_independence": {
+    "Gamma_under_Lemma_G": 0.01911558504907567,
+    "passes": false
+   },
+   "F2_degradation_survival": {
+    "actual_margin": 1.1714309154998508,
+    "passes": false,
+    "required_margin": 1.25
+   },
+   "Gamma_now": -0.036197779964579395,
+   "M_needed_C5T": 3.9529425406367737,
+   "M_now": 3.4380374937355533,
+   "adoption_floor_satisfied": false,
+   "closes_now": true,
+   "uniform_A_margin": 1.1714309154998508,
+   "uniform_eff_tightening_to_be_ADOPTABLE": 1.0670710354836621,
+   "uniform_eff_tightening_to_close": null
+  },
+  "307": {
+   "F1_supply_independence": {
+    "Gamma_under_Lemma_G": 0.08511776989151419,
+    "passes": false
+   },
+   "F2_degradation_survival": {
+    "actual_margin": null,
+    "passes": false,
+    "required_margin": 1.25
+   },
+   "Gamma_now": 0.026354631323170518,
+   "M_needed_C5T": 3.114961360548343,
+   "M_now": 3.374598931694219,
+   "adoption_floor_satisfied": false,
+   "closes_now": false,
+   "uniform_A_margin": null,
+   "uniform_eff_tightening_to_be_ADOPTABLE": 1.3700090576827373,
+   "uniform_eff_tightening_to_close": 1.0960072461461898
+  },
+  "308": {
+   "F1_supply_independence": {
+    "Gamma_under_Lemma_G": 0.15834296474510035,
+    "passes": false
+   },
+   "F2_degradation_survival": {
+    "actual_margin": null,
+    "passes": false,
+    "required_margin": 1.25
+   },
+   "Gamma_now": 0.09456414496566366,
+   "M_needed_C5T": 2.463911269745421,
+   "M_now": 3.3716470503119877,
+   "adoption_floor_satisfied": false,
+   "closes_now": false,
+   "uniform_A_margin": null,
+   "uniform_eff_tightening_to_be_ADOPTABLE": 1.798028532713239,
+   "uniform_eff_tightening_to_close": 1.4384228261705914
+  },
+  "309": {
+   "F1_supply_independence": {
+    "Gamma_under_Lemma_G": 0.22611716647147648,
+    "passes": false
+   },
+   "F2_degradation_survival": {
+    "actual_margin": null,
+    "passes": false,
+    "required_margin": 1.25
+   },
+   "Gamma_now": 0.15301968889418385,
+   "M_needed_C5T": 1.9956699149869883,
+   "M_now": 3.3195244534743678,
+   "adoption_floor_satisfied": false,
+   "closes_now": false,
+   "uniform_A_margin": null,
+   "uniform_eff_tightening_to_be_ADOPTABLE": 2.2729430600147893,
+   "uniform_eff_tightening_to_close": 1.8183544480118314
+  }
+ },
+ "repairs_from_review": [
+  "306 adoption floor F1/F2",
+  "route R5 source-sup added",
+  "309 refutation scoped",
+  "uniform-eff model replaces per-parameter",
+  "zero-leverage test made non-tautological"
+ ],
+ "route_R5_source_sup": {
+  "C5_published_figure_at_C4_floor_percent": 2.0561597034092847,
+  "class": "DATA_AND_TOOLCHAIN_BLOCKED -- explicitly NOT refuted (C5); C6 records A1 as GATE_CLASS_GAP, inputs regenerable but the result never derived",
+  "definition": "uniform tightening of the candidate sup norms sup.F/D/H (C6 route A1)",
+  "note": "this route has leverage on cell 309 and was omitted from C8's first enumeration, which wrongly called R4 the only such route",
+  "per_cell": {
+   "306": {
+    "excluded_at_C4_floor": false,
+    "excluded_at_current_floor": false,
+    "sup_cut_voiding_exclusion_at_C4_floor_percent": null,
+    "sup_cut_voiding_exclusion_at_current_floor_percent": null
+   },
+   "307": {
+    "excluded_at_C4_floor": false,
+    "excluded_at_current_floor": false,
+    "sup_cut_voiding_exclusion_at_C4_floor_percent": null,
+    "sup_cut_voiding_exclusion_at_current_floor_percent": null
+   },
+   "308": {
+    "excluded_at_C4_floor": false,
+    "excluded_at_current_floor": false,
+    "sup_cut_voiding_exclusion_at_C4_floor_percent": null,
+    "sup_cut_voiding_exclusion_at_current_floor_percent": null
+   },
+   "309": {
+    "excluded_at_C4_floor": true,
+    "excluded_at_current_floor": true,
+    "sup_cut_voiding_exclusion_at_C4_floor_percent": 2.056159703409304,
+    "sup_cut_voiding_exclusion_at_current_floor_percent": 19.612136316839443
+   }
+  }
+ },
+ "schema": "C8_ADOPTION_AND_ROUTES/2",
+ "sha256": "3bc882afefa2bb12033976b823b8095eeae295aeb681d8af149e43840c88d706",
+ "zero_leverage_structural_test": {
+  "chain_module_reads_any_Lambda_artifact": false,
+  "method": "Gamma is evaluated at a FIXED operator supply under four different Lambda floors, including two hypothetical ones. If Lambda influenced Gamma the value would move. It does not; only the exclusion VERDICT moves. This replaces the first version, which computed the three 'different' Gamma values from one identical expression and was a tautology.",
+  "per_cell": {
+   "306": {
+    "Gamma_invariant_across_four_floors": true,
+    "Gamma_value": -0.036197779964579395,
+    "detail": {
+     "C4 floor": {
+      "Gamma_at_operator_supply": -0.036197779964579395,
+      "exclusion_test_M": 2.0487229334928267,
+      "operator_route_excluded": false
+     },
+     "current floor": {
+      "Gamma_at_operator_supply": -0.036197779964579395,
+      "exclusion_test_M": 2.0487229334928267,
+      "operator_route_excluded": false
+     },
+     "hypothetical floor 0": {
+      "Gamma_at_operator_supply": -0.036197779964579395,
+      "exclusion_test_M": 0.4344657902310661,
+      "operator_route_excluded": false
+     },
+     "hypothetical floor 10": {
+      "Gamma_at_operator_supply": -0.036197779964579395,
+      "exclusion_test_M": 4.510995948868191,
+      "operator_route_excluded": true
+     }
+    },
+    "exclusion_verdict_varies_with_floor": true
+   },
+   "307": {
+    "Gamma_invariant_across_four_floors": true,
+    "Gamma_value": 0.026354631323170518,
+    "detail": {
+     "C4 floor": {
+      "Gamma_at_operator_supply": 0.026354631323170518,
+      "exclusion_test_M": 2.0231450594180385,
+      "operator_route_excluded": false
+     },
+     "current floor": {
+      "Gamma_at_operator_supply": 0.026354631323170518,
+      "exclusion_test_M": 2.0231450594180385,
+      "operator_route_excluded": false
+     },
+     "hypothetical floor 0": {
+      "Gamma_at_operator_supply": 0.026354631323170518,
+      "exclusion_test_M": 0.41060745427623985,
+      "operator_route_excluded": false
+     },
+     "hypothetical floor 10": {
+      "Gamma_at_operator_supply": 0.026354631323170518,
+      "exclusion_test_M": 4.72905199113632,
+      "operator_route_excluded": true
+     }
+    },
+    "exclusion_verdict_varies_with_floor": true
+   },
+   "308": {
+    "Gamma_invariant_across_four_floors": true,
+    "Gamma_value": 0.09456414496566366,
+    "detail": {
+     "C4 floor": {
+      "Gamma_at_operator_supply": 0.09456414496566366,
+      "exclusion_test_M": 2.030457784179053,
+      "operator_route_excluded": false
+     },
+     "current floor": {
+      "Gamma_at_operator_supply": 0.09456414496566366,
+      "exclusion_test_M": 2.030457784179053,
+      "operator_route_excluded": false
+     },
+     "hypothetical floor 0": {
+      "Gamma_at_operator_supply": 0.09456414496566366,
+      "exclusion_test_M": 0.3934538793417449,
+      "operator_route_excluded": false
+     },
+     "hypothetical floor 10": {
+      "Gamma_at_operator_supply": 0.09456414496566366,
+      "exclusion_test_M": 5.053653294095838,
+      "operator_route_excluded": true
+     }
+    },
+    "exclusion_verdict_varies_with_floor": true
+   },
+   "309": {
+    "Gamma_invariant_across_four_floors": true,
+    "Gamma_value": 0.15301968889418385,
+    "detail": {
+     "C4 floor": {
+      "Gamma_at_operator_supply": 0.15301968889418385,
+      "exclusion_test_M": 2.0109408287190464,
+      "operator_route_excluded": true
+     },
+     "current floor": {
+      "Gamma_at_operator_supply": 0.15301968889418385,
+      "exclusion_test_M": 2.1540966687910026,
+      "operator_route_excluded": true
+     },
+     "hypothetical floor 0": {
+      "Gamma_at_operator_supply": 0.15301968889418385,
+      "exclusion_test_M": 0.37796680149668355,
+      "operator_route_excluded": false
+     },
+     "hypothetical floor 10": {
+      "Gamma_at_operator_supply": 0.15301968889418385,
+      "exclusion_test_M": 5.269941292129297,
+      "operator_route_excluded": true
+     }
+    },
+    "exclusion_verdict_varies_with_floor": true
+   }
+  }
+ }
+}

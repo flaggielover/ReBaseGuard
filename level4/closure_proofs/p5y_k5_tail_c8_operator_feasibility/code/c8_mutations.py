@@ -73,13 +73,19 @@ def main() -> int:
     # M05 lower bound treated as upper bound: would make 309 'close'
     A309 = dict(ch.committed_supplies(309)["operator_mixed"]["A"])
     bad = ch.M_of(309, {**A309, "A0": F(0), "A1": F(0), "A2": F(0)}) < budget[309]
+    # The flag was the literal True. It is now the real property: if Lambda were treated as an upper
+    # bound one could set A0 BELOW it, and the test is that doing so changes the verdict while the
+    # code's actual comparison (ceiling vs floor) refuses it.
+    a0_below = ch.M_of(309, {**A309, "A0": floors[309] * F(9, 10)}) < budget[309]
+    ceiling309 = F(str(dec["phase4_inversion_C5T"]["309"]["A0_ceiling_with_A1_A2_zero"]))
     mut("M05", "treating the certified LOWER bound as an UPPER bound on A0",
-        True,
+        ceiling309 < floors[309],
         f"if Lambda were an upper bound one could set A0 below it and 309 would pass "
         f"(M at A=0 is {float(ch.M_of(309, {'A0': F(0), 'A1': F(0), 'A2': F(0)})):.9f} < budget). "
         f"The suite detects this because Lemma SM(d) is quoted as an admissibility FLOOR and the "
-        f"A0 ceiling {dec['phase4_inversion_C5T']['309']['A0_ceiling_with_A1_A2_zero']:.9f} is "
-        f"compared AGAINST the floor, not substituted for it")
+        f"the code compares the A0 ceiling {float(ceiling309):.9f} AGAINST the floor "
+        f"{float(floors[309]):.9f} and refuses; substituting the floor downward by 10% would give "
+        f"a pass ({a0_below}), which is exactly the error being tested")
 
     # M06 C7 family ceiling treated as achieved
     ceil = float(F(c7["phase11_family_exhaustion"]["analytic_ceiling"]))
@@ -175,6 +181,39 @@ def main() -> int:
         (C.NS / "code" / "c8_factcheck.py").exists(),
         "phase 14 runs an independent fact verification over every load-bearing adopted claim before "
         "absorption; see HANDOVER_FACT_VERIFICATION.json")
+
+    adopt = C.load(C.NS / "evidence" / "phase9" / "C8_ADOPTION.json")
+
+    # M19 -- ignoring the binding adoption floor (the review's CRITICAL 1)
+    mut("M19", "calling a passing cell 'adoption-blocked' while ignoring the binding F1/F2 floor",
+        adopt["per_cell"]["306"]["adoption_floor_satisfied"] is False
+        and adopt["per_cell"]["306"]["uniform_eff_tightening_to_be_ADOPTABLE"] is not None,
+        "C2_ADJUDICATION section K sets a BINDING floor F1 or F2; cell 306 fails both "
+        f"(F1 Gamma_G = {adopt['per_cell']['306']['F1_supply_independence']['Gamma_under_Lemma_G']:+.6f}, "
+        f"F2 margin {adopt['per_cell']['306']['uniform_A_margin']:.6f} < 1.25) and needs "
+        f"{adopt['per_cell']['306']['uniform_eff_tightening_to_be_ADOPTABLE']:.6f}x")
+
+    # M20 -- incomplete route enumeration (the review's CRITICAL 2)
+    mut("M20", "claiming a route is the ONLY one with leverage on cell 309",
+        adopt["route_R5_source_sup"]["per_cell"]["309"]["excluded_at_current_floor"] is True
+        and "NOT refuted" in adopt["route_R5_source_sup"]["class"],
+        "R5 (source-sup, C6 route A1) also bears on 309: C5 published a 2.0561597% sup-norm cut "
+        "voiding the exclusion at C4's floor, reproduced here exactly, and classified it "
+        "DATA-blocked rather than refuted")
+
+    # M21 -- unscoped refutation (the review's CRITICAL 3 consequence)
+    mut("M21", "stating the cell-309 refutation as unconditional",
+        adopt["cell_309_refutation_SCOPE"]["does_NOT_hold_unconditionally"] is True
+        and "WITHIN_SCOPE" in adopt["cell_309_refutation_SCOPE"]["correct_class"],
+        "the refutation is scoped to the atom-constant family at the committed sup norms; the "
+        "escape route is recorded as BLOCKED, not refuted")
+
+    # M22 -- the sealed clip dropped (the review's CRITICAL 3)
+    mut("M22", "dropping the sealed M_R2 clip and calling it conservative",
+        ch.M0[309] is not None and float(ch.gamma_saturation(309)) > 0,
+        f"the clip is implemented from ADOPTED_TAIL_INPUTS cells[k]['m']['5']; Gamma SATURATES at "
+        f"{float(ch.gamma_saturation(309)):+.9f} (M_R2 = {float(ch.M0[309]):.6f}), so an unclipped "
+        f"reconstruction would have reported Gamma growing without bound -- the opposite direction")
 
     survivors = [r["id"] for r in res if r["outcome"] == "SURVIVED"]
     out = {"schema": "C8_MUTATIONS/1", "mutants": res, "survivors": survivors,
