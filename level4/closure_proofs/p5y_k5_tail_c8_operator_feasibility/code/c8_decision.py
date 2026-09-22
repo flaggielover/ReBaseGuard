@@ -88,9 +88,11 @@ def main() -> int:
                                        else "MATHEMATICALLY_REFUTED"),
         }
         if passes:
-            row["cheapest_sufficient_fact"] = ("NONE -- passes under the authoritative C5-T clause "
-                                               "with committed certified supplies. The blocker is "
-                                               "ADOPTION, not information.")
+            row["cheapest_sufficient_fact"] = (
+                "passes the C5-T clause under committed certified supplies, but FAILS the binding "
+                "C2 adoption floor (F1 and F2 both). WITHDRAWN: an earlier version said 'the "
+                "blocker is ADOPTION, not information'. See C8_ADOPTION.json for the governing "
+                "model and the required uniform tightening.")
         elif a0 and a0 > floors[k]:
             row["cheapest_sufficient_fact"] = (
                 f"a certified operator tuple giving A0 <= {float(a0):.6f} (from {float(A['A0']):.6f}, "
@@ -227,17 +229,30 @@ def main() -> int:
             "selected": True},
         "rule_4_new_real": {"candidate": "R4", "selected": False,
                             "why": ("forbidden while R3, a materially competitive zero-new-real "
-                                    "route, remains untested -- and R4 is the only route with "
-                                    "leverage on 309, so it is the successor to R3, not its rival")},
+                                    "route, remains untested. R4 is NOT the only route with leverage "
+                                    "on 309 -- see C8_ADOPTION.json: C5 publishes six source-supply "
+                                    "levers that void the 309 exclusion, the cheapest being "
+                                    "all_four_together at 0.6076%. The earlier exclusivity claim is "
+                                    "WITHDRAWN.")},
         "OUTCOME": "NEXT_ROUTE_OPERATOR_CERT",
-        "selected_route": "R3 -- E1 operator certification, targeted at cell 306 first",
+        "selected_route": ("R3 -- E1 operator certification, targeted at cell 307 first, "
+                           "at a uniform eff tightening > 1.096007x"),
+        "why_NOT_306_first": (
+            "cell 306 needs only 1.067071x and is cheaper, but the FROZEN gate's rule 1 routes any "
+            "cell that passes the clause to GOVERNANCE and forbids requesting information for it. "
+            "Rule 1 rests on a premise that turns out to be FALSE -- that passing implies "
+            "adoption-blocked -- which C2's binding F1/F2 floor falsifies. C8 does NOT silently "
+            "override a frozen rule in its own favour. The deviation is recorded in "
+            "ERRATUM_C8_GATE.md as E1, the gate is left byte-identical, and 306-first becomes "
+            "available only if governance amends and re-freezes rule 1."),
         "SUPERSEDED_BY": ("evidence/phase9/C8_ADOPTION.json -- the uniform-eff model and the binding "
                           "adoption floor; the per-parameter thresholds below are retained as "
                           "supplementary anatomy only"),
-        "why_307_first": ("it has the smallest sufficient information requirement anywhere in the "
-                          "tail: a single A0 tightening of "
-                          f"{inv['307']['required_A0_factor']:.4f}x, with the certified floor "
-                          f"{inv['307']['Lambda_floor_on_A0']:.6f} leaving ample room"),
+        "why_307_first": ("it is the cheapest cell the frozen gate permits C8 to target: a uniform "
+                          "eff tightening of 1.096007x to close and 1.370009x to be adoptable, with "
+                          f"the certified floor {inv['307']['Lambda_floor_on_A0']:.6f} leaving room. "
+                          "The per-parameter A0 figure quoted by an earlier version (1.1203x) is "
+                          "SUPERSEDED by the uniform-eff model; see C8_ADOPTION.json."),
         "R_stage": "NOT AUTHORIZED", "guard": "DENY",
     }
 

@@ -77,18 +77,26 @@ the refutation roughly 9.5× more robust against that route.
 | R2 | cell uniformization | **zero** | LOW_LEVERAGE |
 | R3 | operator certification (E1) | closes 306/307/308; **not** 309 | TOOLCHAIN_BLOCKED |
 | R4 | order-3 surrogate | closes all four | NEW_REAL_BLOCKED |
-| R5 | source-sup norms (C6 route A1) | **voids the 309 refutation** | DATA_AND_TOOLCHAIN_BLOCKED |
+| R5 | source-sup norms (C6 route A1) | **voids the 309 refutation** | DATA_BLOCKED |
 
 R5 was omitted from the first enumeration, which therefore wrongly called R4 "the only route with
-leverage on 309". C5 classifies R5 **DATA-blocked, not refuted**.
+leverage on 309" — a claim now **withdrawn** in the live artifacts. C5 classifies R5 **DATA-blocked,
+not refuted**, and publishes **six** such levers; the cheapest, `all_four_together` at **0.6076 %**,
+is cheaper than the sup-norm lever at 2.0562 % that C8 itself found. All six are carried.
+
+Every scaled sweep is `COUNTERFACTUAL_ONLY` and inherits C5's **DIAGNOSTIC** status.
 
 ## Selected route for C9
 
-**`NEXT_ROUTE_OPERATOR_CERT` — R3 (E1 operator certification), targeted at cell 306 first.**
+**`NEXT_ROUTE_OPERATOR_CERT` — R3 (E1 operator certification), targeted at cell 307 first**, at a
+uniform `eff` tightening > **1.096007×** (1.370009× to be adoptable), then 308 at > 1.438423×.
 
-A **1.067071×** uniform tightening of `eff` is the smallest sufficient requirement anywhere in the
-tail — cheaper than 307's 1.096007× to close, and it converts a cell that already *passes* into one
-that is *adoptable*. 307 follows at 1.096007× (1.370009× to be adoptable).
+**Cell 306 is cheaper — 1.067071× — and C8 does not select it.** The frozen gate's rule 1 routes any
+cell that passes the clause to *governance* and forbids requesting information for it. That rule
+rests on a premise C2's binding floor falsifies, but a campaign does not override a frozen rule in
+its own favour, least of all when the override selects the outcome it prefers. Recorded as
+`ERRATUM_C8_GATE.md` E1; 306-first becomes available only if governance amends and re-freezes rule 1.
+Both numbers are published so the choice can be made on the numbers.
 
 **The risk is not CPU.** C2 measured its own refinement as *non-monotone*: `D_lo` improved but `τ` got
 1.90–2.24 % **worse**, and the net `A0` gain was only 4.5–4.9 %. The 1.1203× is therefore **not

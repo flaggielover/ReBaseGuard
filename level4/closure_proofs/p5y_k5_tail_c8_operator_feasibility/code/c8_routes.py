@@ -174,8 +174,10 @@ def main() -> int:
         # cheapest sufficient fact
         Af = {**A, "A0": floors[k]}
         if gam_now < 0:
-            row["cheapest_sufficient_fact"] = ("NONE -- already passes under committed certified "
-                                               "supplies; the blocker is ADOPTION, not information")
+            row["cheapest_sufficient_fact"] = (
+                "passes the clause under committed certified supplies but FAILS the binding C2 "
+                "adoption floor. WITHDRAWN: 'the blocker is ADOPTION, not information'. Governing "
+                "model: evidence/phase9/C8_ADOPTION.json")
         elif row.get("required_A0_improvement_factor") and \
                 F(row["max_admissible_A0_others_fixed"]).limit_denominator(10**12) > floors[k]:
             row["cheapest_sufficient_fact"] = (

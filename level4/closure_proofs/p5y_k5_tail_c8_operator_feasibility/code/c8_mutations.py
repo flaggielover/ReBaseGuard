@@ -194,12 +194,30 @@ def main() -> int:
         f"{adopt['per_cell']['306']['uniform_eff_tightening_to_be_ADOPTABLE']:.6f}x")
 
     # M20 -- incomplete route enumeration (the review's CRITICAL 2)
+    # The first version reported DETECTED merely because R5 existed in the artifact, while the
+    # exclusivity claim was STILL LIVE elsewhere in the tree. A presence check is not a detection.
+    # It now scans the live artifacts for an UNNEGATED exclusivity assertion.
+    live = ""
+    for q in sorted((C.NS / "evidence").rglob("*.json")):
+        live += q.read_text()
+    bad_claims = []
+    for phrase in ("only route with leverage", "the only lever", "only route that can"):
+        for i in range(len(live)):
+            j = live.find(phrase, i)
+            if j < 0:
+                break
+            ctx = live[max(0, j - 90):j + 40]
+            if "NOT the only" not in ctx and "WITHDRAWN" not in ctx:
+                bad_claims.append(ctx[-110:])
+            i = j + 1
+            break
     mut("M20", "claiming a route is the ONLY one with leverage on cell 309",
-        adopt["route_R5_source_sup"]["per_cell"]["309"]["excluded_at_current_floor"] is True
-        and "NOT refuted" in adopt["route_R5_source_sup"]["class"],
-        "R5 (source-sup, C6 route A1) also bears on 309: C5 published a 2.0561597% sup-norm cut "
-        "voiding the exclusion at C4's floor, reproduced here exactly, and classified it "
-        "DATA-blocked rather than refuted")
+        not bad_claims
+        and adopt["route_R5_source_sup"]["per_cell"]["309"]["excluded_at_current_floor"] is True
+        and len(adopt["route_R5_source_sup"]["ALL_C5_SOURCE_LEVERS_voiding_the_309_exclusion_percent"]) >= 7,
+        f"no unnegated exclusivity assertion survives in any live artifact ({len(bad_claims)} found); "
+        f"C5's SIX levers are carried, cheapest all_four_together at 0.6076%, and C8's reproduction "
+        f"of the sup-norm figure is exact")
 
     # M21 -- unscoped refutation (the review's CRITICAL 3 consequence)
     mut("M21", "stating the cell-309 refutation as unconditional",

@@ -184,6 +184,30 @@ def main() -> int:
     if C.sha256_file(C.NS / "config" / "DECISION_GATE_C8.json") != GATE_SHA:
         findings.append({"check": "GATE_BLOB_CHANGED"})
 
+    # STALE-CLAIM SCAN. A retracted sentence must not remain as a LIVE assertion anywhere. Quoting it
+    # inside an explicit withdrawal is correct and is permitted; asserting it is not. Both C6 and C7
+    # shipped a withdrawn claim that was still being emitted by a producer.
+    RETRACTED = ["blocker is ADOPTION, not information", "only route with leverage",
+                 "unreachable from committed evidence", "M = magnitude is conservative"]
+    stale = []
+    for a in sorted((C.NS / "evidence").rglob("*.json")):
+        # This module's OWN report quotes the phrases it hunts for, inside its finding records. A
+        # report about a claim is not a claim, and a scanner that flags its own output can never
+        # reach PASS. Same principle as excluding a reviewer's document from the prose scan.
+        if a.name == "HANDOVER_FACT_VERIFICATION.json":
+            continue
+        txt = a.read_text()
+        for phrase in RETRACTED:
+            pos = txt.find(phrase)
+            while pos >= 0:
+                ctx = txt[max(0, pos - 100):pos + 60]
+                if "WITHDRAWN" not in ctx and "NOT the only" not in ctx and "SUPERSEDED" not in ctx:
+                    stale.append({"file": str(a.relative_to(C.NS)), "phrase": phrase,
+                                  "context": ctx[-120:]})
+                pos = txt.find(phrase, pos + 1)
+    if stale:
+        findings.append({"check": "RETRACTED_CLAIM_STILL_LIVE", "hits": stale[:5]})
+
     out = {"schema": "C8_HANDOVER_FACT_VERIFICATION/1",
            "WHAT_THIS_CANNOT_VERIFY": (
                "the mechanical checks compare numerals, baselines, commit order and self-shas. NONE "
@@ -196,6 +220,8 @@ def main() -> int:
            "gate_ordering": ordering,
            "review_sourced_figures": review_sourced,
            "prose_scanned": [str(p.relative_to(C.NS)) for p in prose],
+           "stale_claim_scan": {"retracted_phrases_checked": 4,
+                               "self_excluded": "HANDOVER_FACT_VERIFICATION.json -- it quotes the phrases inside its own finding records"},
            "findings": findings,
            "FACT_CHECK_CLASS": "PASS" if not findings else "REFUSE"}
     s = C.write_evidence(C.NS / "evidence" / "governance" / "HANDOVER_FACT_VERIFICATION.json", out)
