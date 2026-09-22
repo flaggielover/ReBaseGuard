@@ -33,9 +33,22 @@ def main() -> int:
                                         "taboo_alphas", "arl_alphas", "code_sha256", "bits")
                 if k in reg}
     blocker1 = {
-        "finding": ("Re-running the committed E1 producer on cell 307 reproduces the committed "
+        "STATUS": "WITHDRAWN",
+        "withdrawn_because": (
+            "this blocker was MANUFACTURED by defining E1 as a replay of the committed producer. C6 "
+            "defines E1 as 'a BETTER tuple ... there is nothing to replay ... a TOOLCHAIN for the "
+            "WORK', and C8's gate defines R3 as 'a better certified upper bound'. Under the real "
+            "definition the certifier's SEARCH is the work. Moreover the dependency scan read only "
+            "the WRAPPER's CLI: taboo_certify.py exposes --alpha, --beta, --depth and --degree as "
+            "first-class arguments. See evidence/phase4/C9_ALPHA_LEVER.json for the lever that was "
+            "sitting in C9's own inputs, free and unmeasured."),
+        "superseded_by": "evidence/phase4/C9_ALPHA_LEVER.json",
+        "original_finding_RETAINED_FOR_THE_RECORD": ("Re-running the committed E1 producer on cell 307 reproduces the committed "
                     "cell-307 block EXACTLY, so the achieved tightening is 1.0000x, which is below "
                     "the required 1.0960072461462x. E1 AS COMMITTED CANNOT CLOSE CELL 307."),
+        "what_remains_true_of_it": ("a replay at the SAME ladder rung would indeed reproduce the "
+                                    "committed block. That is true and useless: it was never what "
+                                    "E1 meant."),
         "why": [
             "every quantity that controls tightness is a hardcoded module constant, not a CLI knob",
             "the CLI exposes only " + ", ".join(cli_args) + " -- none of which is scientific",
@@ -104,9 +117,20 @@ def main() -> int:
         "local_runtime": local,
         "required_interpreter_present": interp,
         "flint_system_libraries_present": flint_libs or [],
-        "network_state": ("this interpreter cannot verify TLS certificates (SSL "
-                          "CERTIFICATE_VERIFY_FAILED when querying package metadata), so package "
-                          "installation is not currently possible from it either"),
+        "network_state": ("CORRECTED. The TLS failure belongs to the 3.14 interpreter only. "
+                          "python3.11's pip reaches PyPI normally, so 'no network' was a "
+                          "misattribution and is withdrawn."),
+        "isolated_environment_TESTED": {
+            "python3.11": "/Users/suzhe/.local/bin/python3.11, 3.11.15, with pip, venv and a CA bundle",
+            "venv_created": True,
+            "result": "FAILED -- numpy 2.5.2 requires Python >= 3.12, so the pinned toolchain cannot "
+                      "be built on 3.11. Using a different numpy would break the runtime identity "
+                      "pin, and the taboo candidate comes from np.linalg.solve, so a different BLAS "
+                      "could change the candidate.",
+            "what_would_be_needed": "Python 3.12.x, which is absent; installing it via Homebrew is a "
+                                    "SHARED system change, not the dedicated certification "
+                                    "environment the charter requires, and brew does not pin FLINT "
+                                    "to 3.6.0."},
         "authorized_C9_host_artifacts": host_auth,
         "C9_authorization_artifacts_present": [str(x.name) for x in c9_auth_dir],
         "false_positive_note": ("an earlier scan reported two 'authorized' artifacts; both were hex "
@@ -128,9 +152,30 @@ def main() -> int:
                               "qualification even if the libraries were present."),
     }
 
+    # the recorded-vs-actual producer hash discrepancy, which any execution must resolve first
+    import hashlib as _h
+    rec = reg.get("code_sha256", {})
+    actual = {"c2_refined_registry": _h.sha256(prod.read_bytes()).hexdigest(),
+              "taboo_certify": _h.sha256((C.AD / "code" / "taboo_certify.py").read_bytes()).hexdigest()}
+    hash_discrepancy = {k: {"recorded": rec.get(k), "actual": actual.get(k),
+                            "match": rec.get(k) == actual.get(k)} for k in actual}
+
     out = {
-        "schema": "C9_TOOLCHAIN/1",
-        "PHASE5_RESULT": "QUALIFICATION_NOT_POSSIBLE",
+        "schema": "C9_TOOLCHAIN/2",
+        "PHASE5_RESULT": "EXECUTION_BLOCKED_ON_RUNTIME_AND_AUTHORIZATION",
+        "producer_hash_discrepancy": {
+            "detail": hash_discrepancy,
+            "why_it_matters": ("the committed registry records a c2_refined_registry hash that does "
+                               "NOT match the committed file. C9's first pass asserted the recorded "
+                               "configuration was 'checkable field by field' and never checked it. "
+                               "Any execution must resolve which producer actually built the "
+                               "registry before claiming to reproduce or improve on it."),
+            "determinism_claim_CORRECTED": ("the first pass called the output 'a deterministic "
+                                            "function of the inputs'. It is not purely so: the taboo "
+                                            "candidate is obtained via numpy linear algebra, so BLAS "
+                                            "and architecture participate. That also undercuts the "
+                                            "first pass's claim that the two blockers were "
+                                            "independent.")},
         "blocker_1_scientific": blocker1,
         "blocker_2_toolchain_and_host": blocker2,
         "independence": ("the two blockers are independent. Blocker 1 holds even if a fully "
@@ -148,8 +193,8 @@ def main() -> int:
         ],
     }
     s = C.write_evidence(C.NS / "evidence" / "phase5" / "C9_TOOLCHAIN.json", out)
-    print("BLOCKER 1 (scientific):")
-    print(f"  {blocker1['finding']}")
+    print(f"BLOCKER 1 (scientific): {blocker1['STATUS']}")
+    print(f"  {blocker1['withdrawn_because'][:150]}...")
     print(f"  CLI knobs: {cli_args}")
     for k, v in frozen_consts.items():
         print(f"    {v}")
@@ -160,6 +205,10 @@ def main() -> int:
         print(f"  pinned {k:<14} {top}")
     print(f"  python3.12 present: {interp['python3.12']}   FLINT libs: {flint_libs or 'none'}")
     print(f"  authorized C9 host artifacts: {host_auth or 'NONE'}")
+    print("\nproducer hash discrepancy:")
+    for k, v in hash_discrepancy.items():
+        print(f"  {k:<22} match={v['match']}  recorded {str(v['recorded'])[:12]}  "
+              f"actual {str(v['actual'])[:12]}")
     print(f"\nPHASE5_RESULT = {out['PHASE5_RESULT']}")
     print(f"wrote evidence/phase5/C9_TOOLCHAIN.json sha256 {s[:16]}...")
     return 0

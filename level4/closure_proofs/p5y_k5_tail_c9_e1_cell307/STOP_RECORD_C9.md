@@ -1,6 +1,12 @@
 # C9 stop record
 
-**Classification: `HARD_STOP_BEFORE_AUTHORIZATION`.**
+**Classification: `EXECUTION_BLOCKED_ON_RUNTIME_AND_AUTHORIZATION`.**
+
+> **Superseded in part.** This record's original claim that the route itself was dead is
+> WITHDRAWN. A fresh-context review returned STOP_PREMATURE and was correct: C9 had
+> manufactured its scientific blocker by misdefining E1. See README and
+> `evidence/phase4/C9_ALPHA_LEVER.json`. What survives is that C9 must not EXECUTE —
+> no host authorization exists and the pinned runtime cannot be built here.
 
 Reached at Phase 5 (toolchain qualification). Phases 6–16 — manufactured qualification, pre-execution
 review of an execution, freeze, frozen qualification, authorization, target execution, seal,
@@ -22,9 +28,11 @@ null.
 
 ## What was deliberately NOT done
 
-- **No producer source was modified** to chase the 1.096× target. Changing `SUB_BLOCK_MAX_WIDTH`,
-  `DEGREE_ARL` or an alpha ladder would have been improvising around the blocker, and would have
-  mutated a geometry the C2 gate froze.
+- **No producer source was modified and no certification was run.** The first pass justified this by
+  calling an α change "improvising around the blocker". That justification is **withdrawn**: varying
+  α is what E1 means, and `taboo_certify.py` exposes it as a first-class argument. The correct reason
+  for not running is narrower and still holds — no authorized host, and the pinned runtime cannot be
+  built on this machine.
 - **No host was provisioned.** Not AWS (forbidden), not Vultr (unauthorized; the charter forbids
   inferring authorization from historical use), not the local machine (a Homebrew install is shared
   system state, not a dedicated certification environment, and cannot pin FLINT 3.6.0).

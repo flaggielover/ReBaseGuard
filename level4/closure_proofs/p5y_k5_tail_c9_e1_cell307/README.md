@@ -1,6 +1,6 @@
 # C9 — E1 zero-new-real operator certification, CUSUM m=5 cell 307
 
-**Result: `HARD_STOP_BEFORE_AUTHORIZATION`.** No certification was executed. No scientific address
+**Result: `EXECUTION_BLOCKED_ON_RUNTIME_AND_AUTHORIZATION`.** No certification was executed. No scientific address
 was evaluated. Guard **DENY** throughout.
 
 Target executions **0**, operator certifications **0**, new-real addresses **0**, AWS contacts **0**,
@@ -11,52 +11,71 @@ toolchain provisioned **0**, r6 **not created**.
 C8 selected route **R3 / E1** — a tighter certified operator tuple — with **cell 307 first**. C9 was
 chartered to execute exactly that: one cell, one route, one authorized certification.
 
-## What C9 found
+## What C9 found — corrected after review
 
-Two **independent** blockers. The first is scientific and does not depend on any host.
+The first pass declared two blockers and stopped. A fresh-context review returned **STOP_PREMATURE**
+and was right about the important one. Both findings below were independently verified before being
+absorbed.
 
-### Blocker 1 — E1 *as committed* cannot close cell 307
+### Blocker 1 — **WITHDRAWN.** The lever was in C9's own inputs, free and unmeasured
 
-Re-running the committed producer on cell 307 reproduces the committed cell-307 block **exactly**.
-Every quantity that controls tightness is a hardcoded module constant:
+C9 defined E1 as "one authorized execution of the **committed** producer", then discovered that a
+replay replays. That definition is wrong. C6 defines E1 as *"a BETTER tuple … there is nothing to
+replay … a TOOLCHAIN for the WORK … the result does not exist"*, and C8's gate defines R3 as *"a
+better certified upper bound"*. Under the real definition the certifier's **search** is the work.
+C9's own B0_15 quoted the C6 entry it then contradicted. The dependency scan also read only the
+*wrapper's* CLI; `taboo_certify.py` exposes `--alpha`, `--beta`, `--depth`, `--degree` directly.
 
-    SUB_BLOCK_MAX_WIDTH = 1/100     DEGREE_TABOO = 20     DEGREE_ARL = 12
-    TABOO_ALPHAS = (6/5, 13/10, 7/5, 3/2, 2, 3)
-    ARL_ALPHAS   = (5/4, 7/5, 3/2, 2, 3, 5)
+**The lever.** The wrapper walks the ladder `(6/5, 13/10, 7/5, 3/2, 2, 3)` upward and takes the first
+rung that certifies. Cell 307 certified at the **very first** rung, `6/5`, on all ten sub-blocks —
+each with a recorded margin of ≈ **0.16 still in hand**. The ladder has no rung below `6/5`, so a
+smaller α was never tried. Since the candidate is `w = dyadic(α·g)` and certification is affine in
+`w`, a block still certifies whenever `c ≥ 1/(1+margin)`, and `τ` scales with `c`.
 
-The CLI exposes only `--outdir`, `--cells`, `--workers` — none of them scientific. The arithmetic is
-exact `Fraction` plus `flint.arb` at fixed precision, and the committed registry records the exact
-configuration it was produced under.
+| α | c | τ | eff | tightening | closes | adoptable |
+|---|---|---|---|---|---|---|
+| 1.033688 (floor) | 0.861407 | 4.265736064 | 4.921722733 | **1.137406** | yes | **no** |
+| 1.05 | 0.875000 | 4.333049179 | 4.999387287 | **1.119736** | yes | **no** |
+| 1.07 | 0.891667 | 4.415583449 | 5.094613711 | **1.098807** | yes | **no** |
+| 1.09 | 0.908333 | 4.498117719 | 5.189840136 | 1.078645 | no | no |
 
-> Achieved tightening would be **1.0000×** against a required **1.0960072461462×**.
+Required: closure **1.096007246**, adoption **1.370009058**. Same geometry, same degree, same depth,
+essentially the same cost.
 
-Obtaining 1.096× requires a **different producer configuration** — finer sub-blocks, higher degree,
-or a different alpha ladder. That is a source mutation of a geometry the C2 gate froze as *"the
-geometry of the ADOPTED registry r1, rather than a width tuned to the tail"*. It is a new prospective
-protocol and a different campaign, not "one authorized execution of the committed E1 producer". The
-charter is explicit: *document the blocker, do not improvise around it.*
+> **The α lever closes cell 307 — and cannot make it adoptable.** Even at the window floor the best
+> achievable tightening is 1.137406×, far below the 1.370009× the binding C2 adoption floor demands.
+> A successful execution would therefore land in class **SCIENTIFICALLY_CLOSED_NOT_ADOPTABLE**.
 
-This is labelled a **structural inference**, not an executed verification — executing it needs the
-toolchain that blocker 2 shows is absent.
+This is a **counterfactual projection**, not certified: `dyadic` rounding makes the scaling
+approximate, `D_lo` is held fixed conservatively, and every sub-block must actually still certify.
+Confirming it is exactly the one governed execution C9 was chartered to perform.
 
-### Blocker 2 — no qualified runtime, no authorized host
+### Blocker 2 — stands, for a more precise reason than first given
 
-| | pinned in committed evidence | present locally |
+| | pinned | local |
 |---|---|---|
-| python | 3.12.3 | 3.14.5 only |
+| python | 3.12.3 | 3.14.5, plus 3.11.15 |
 | numpy | 2.5.2 | absent |
 | python-flint | 0.9.0 | absent |
 | FLINT | 3.6.0 | absent |
 
-No `python3.12`, no FLINT system libraries, and the local interpreter cannot verify TLS certificates.
-**No C9 host authorization artifact exists.** AWS is forbidden by charter. Vultr is not authorized and
-the charter forbids assuming authorization from historical use. A Homebrew install is system-wide and
-shared, so it is not the *dedicated* certification environment the charter requires, and brew does
-not pin FLINT to 3.6.0. The local machine is also macOS/arm64 while the pins point at Linux, and
-architecture is part of the runtime identity manifest the charter mandates.
+An isolated venv **was built and tested** on python 3.11.15 (which has pip, venv and a working CA
+bundle). It failed: **numpy 2.5.2 requires Python ≥ 3.12**, which is not installed. A different numpy
+would break the runtime-identity pin, and the taboo candidate comes from `np.linalg.solve`, so a
+different BLAS could change it. Installing Python 3.12 via Homebrew is a *shared system* change, not
+the dedicated environment the charter requires, and brew cannot pin FLINT to 3.6.0.
 
-The two blockers are independent: blocker 1 holds with a perfect host; blocker 2 holds even if the
-producer could improve.
+Two first-pass claims here were wrong and are withdrawn: "no network" (the TLS failure belongs to the
+3.14 interpreter only) and "deterministic function of the inputs" (numpy linear algebra participates,
+which also undercuts the claimed independence of the two blockers).
+
+**And the governance half is dispositive on its own: no C9 host authorization artifact exists.**
+
+### A provenance discrepancy any execution must resolve first
+
+`REGISTRY_C2` records `c2_refined_registry = 4ac24d9e…`; the committed file hashes to `0d1d8021…`.
+`taboo_certify` matches. C9's first pass asserted the recorded configuration was "checkable field by
+field" and never checked it.
 
 ## Verified before the stop
 
@@ -81,13 +100,14 @@ untouched.
 
 ## What a successor needs
 
-1. A **governance decision on host provisioning** — still a separately governed prerequisite, exactly
-   as C6 and C8 recorded.
-2. A **new prospective protocol** for a finer operator certification, freezing the changed geometry
-   before any result exists.
-3. Honest expectations: C2's own refinement (one block → 1/100 sub-blocks) moved `A0` only 4.5–4.9 %
-   while making `τ` 1.90–2.24 % **worse**. A further halving is a much smaller step than that one,
-   and 8.76 % is required. **More CPU does not buy this.**
+1. **A governance decision on host provisioning** — still separately governed, as C6 and C8 recorded.
+   Python 3.12.x plus FLINT 3.6.0, numpy 2.5.2 and python-flint 0.9.0, in a dedicated environment.
+2. **Resolve the producer-hash discrepancy** before claiming to reproduce or improve the registry.
+3. **Run the α search**, not a finer partition. The first pass told a successor "more CPU does not
+   buy this" and pointed at finer sub-blocks; that advice was wrong and is withdrawn. The cheap lever
+   is a lower α rung at the same geometry.
+4. **Decide, before spending anything, whether closure without adoption is worth it.** Cell 307 can
+   be closed but not adopted by this route. That is a programme judgement, not a campaign's.
 
 ## Layout
 

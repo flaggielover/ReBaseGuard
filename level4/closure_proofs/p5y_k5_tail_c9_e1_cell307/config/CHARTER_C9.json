@@ -1,0 +1,55 @@
+{
+ "schema": "CHARTER_C9/1",
+ "campaign": "C9 -- E1 zero-new-real operator certification, CUSUM m=5 cell 307",
+ "DISCLOSURE": {
+  "statement": "This charter is committed AFTER the campaign's findings, not before them. The first pass ran with NO committed charter at all -- config/ and protocol/ were empty while the stop record quoted authority from a gate that did not exist. That was a governance defect found by the fresh-context review, and it is repaired by committing the charter and saying plainly that it is retrospective.",
+  "consequence": "nothing in this file may be read as a prospective gate. It records the scope C9 actually operated under and the thresholds it inherited, which are themselves prospective because C8 froze them."
+ },
+
+ "target": {"detector": "CUSUM", "m": 5, "cell": 307, "route": "R3 / E1 operator certification"},
+ "non_targets": [306, 308, 309],
+ "scope_rules": [
+  "cell 306 is NOT a target: C8's frozen rule 1 placed it out of scope and C9 may not be a disguised governance repair for it",
+  "cells 308 and 309 are NOT targets and no spare compute may be spent on them",
+  "no second scientific address under any circumstances"
+ ],
+
+ "inherited_thresholds": {
+  "source": "C8 evidence/phase9/C8_ADOPTION.json, per_cell.307",
+  "SCIENTIFIC_CLOSURE_uniform_eff_tightening": 1.0960072461461898,
+  "GOVERNANCE_ADOPTION_uniform_eff_tightening": 1.3700090576827373,
+  "adoption_floor_origin": "C2_ADJUDICATION section K: F1 supply-independence OR F2 uniform-A margin >= 1.25",
+  "DISTINCTION": "closure is Gamma < 0; adoption additionally requires the binding C2 floor. These must never be substituted for one another."
+ },
+
+ "what_E1_IS": {
+  "definition": "obtain a BETTER certified operator tuple (tau, D_lo, Abar) for cell 307",
+  "authorities": [
+   "C6 C6_CLASSIFICATION route E1: 'a BETTER tuple', existence OBJECT_ONLY_HYPOTHESIZED, 'there is nothing to replay', 'a TOOLCHAIN for the WORK ... the result does not exist'",
+   "C8 DECISION_GATE_C8 route R3: 'a better certified UPPER bound'"
+  ],
+  "what_E1_IS_NOT": "a replay of the committed producer at its committed search parameters. C9's first pass defined it that way, discovered that a replay replays, and called the route dead. That definition was wrong and the conclusion drawn from it is withdrawn.",
+  "search_parameters_are_first_class": "taboo_certify.py exposes --alpha, --beta, --depth and --degree; only the WRAPPER hardcodes a ladder"
+ },
+
+ "execution_preconditions_all_required": [
+  "B0 passes",
+  "producer identity frozen AND the recorded/actual producer hash discrepancy resolved",
+  "scientific address frozen to exactly (CUSUM, m=5, cell 307)",
+  "runtime identity qualified against the committed pins",
+  "qualification passes",
+  "execution authorization committed",
+  "guard explicitly ALLOW for that one address"
+ ],
+ "forbidden": [
+  "AWS SSH, process inspection, file access, restart, package installation or resource use",
+  "assuming Vultr is authorized from historical use",
+  "retrying because a scientific result is unfavourable",
+  "tuning after seeing a result",
+  "broadening scope after seeing cell 307",
+  "creating r6 unless an independent adjudication ADOPTS cell 307"
+ ],
+ "result_classes": ["ADOPTABLE", "SCIENTIFICALLY_CLOSED_NOT_ADOPTABLE", "IMPROVED_NOT_CLOSED",
+                    "NO_MATERIAL_IMPROVEMENT", "CERTIFICATION_FAILED", "EXECUTION_INVALID"],
+ "guard_at_start_and_end": "DENY"
+}

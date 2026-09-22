@@ -1,0 +1,134 @@
+{
+ "LABEL": "COUNTERFACTUAL_PROJECTION -- not certified evidence",
+ "admissible_alpha_window": {
+  "alpha_max_exclusive": 1.2,
+  "alpha_min": 1.0336884448177213,
+  "c_min_required": 0.8614070373481011,
+  "sufficient_condition": "c >= 1/(1+margin_lower_bound) on EVERY sub-block"
+ },
+ "assumptions_that_must_be_DISCHARGED_BY_EXECUTION": [
+  "the affine scaling of the certified surplus in w (dyadic rounding makes it approximate)",
+  "that tau scales with c exactly rather than approximately",
+  "that D_lo does not degrade at the smaller alpha (held FIXED here, conservatively)",
+  "that every sub-block still certifies at the chosen alpha"
+ ],
+ "certifier_cli_exposes": [
+  "--lo",
+  "--hi",
+  "--alpha",
+  "--beta",
+  "--depth",
+  "--degree",
+  "--full"
+ ],
+ "committed_state_of_cell_307": {
+  "alpha_rung_taken": "6/5",
+  "current_eff": 5.5979955104409465,
+  "ladder": [
+   "6/5",
+   "13/10",
+   "7/5",
+   "3/2",
+   "2",
+   "3"
+  ],
+  "ladder_has_no_rung_below": "6/5",
+  "margin_lower_bound_max": 0.1663373317598909,
+  "margin_lower_bound_min": 0.1608913749747931,
+  "sub_blocks": 10,
+  "tau_worst_sub_block": 4.952056204691856
+ },
+ "cost": {
+  "note": "a re-run at one alpha costs about what the committed run cost",
+  "recorded_cell_307_taboo_cpu_seconds": 887.2741409359999,
+  "same_degree": true,
+  "same_depth": true,
+  "same_geometry": true
+ },
+ "projection": [
+  {
+   "Gamma_negative_projected": true,
+   "alpha": "21/20",
+   "alpha_float": 1.05,
+   "eff_projected": 4.999387286553824,
+   "meets_adoption": false,
+   "meets_closure": true,
+   "scale_c": 0.875,
+   "tau_projected": 4.333049179105374,
+   "tightening": 1.1197363175877808
+  },
+  {
+   "Gamma_negative_projected": true,
+   "alpha": "53/50",
+   "alpha_float": 1.06,
+   "eff_projected": 5.047000498806717,
+   "meets_adoption": false,
+   "meets_closure": true,
+   "scale_c": 0.8833333333333333,
+   "tau_projected": 4.3743163141444725,
+   "tightening": 1.1091727674218583
+  },
+  {
+   "Gamma_negative_projected": true,
+   "alpha": "107/100",
+   "alpha_float": 1.07,
+   "eff_projected": 5.094613711059611,
+   "meets_adoption": false,
+   "meets_closure": true,
+   "scale_c": 0.8916666666666667,
+   "tau_projected": 4.415583449183572,
+   "tightening": 1.0988066667917475
+  },
+  {
+   "Gamma_negative_projected": false,
+   "alpha": "109/100",
+   "alpha_float": 1.09,
+   "eff_projected": 5.189840135565398,
+   "meets_adoption": false,
+   "meets_closure": false,
+   "scale_c": 0.9083333333333333,
+   "tau_projected": 4.498117719261769,
+   "tightening": 1.0786450765753852
+  },
+  {
+   "Gamma_negative_projected": false,
+   "alpha": "11/10",
+   "alpha_float": 1.1,
+   "eff_projected": 5.237453347818292,
+   "meets_adoption": false,
+   "meets_closure": false,
+   "scale_c": 0.9166666666666666,
+   "tau_projected": 4.539384854300868,
+   "tightening": 1.0688392122428818
+  },
+  {
+   "Gamma_negative_projected": true,
+   "alpha": "926336713898529563388567880069503262826159877325124512315660672063305037119488/896146917906079617554283210132318514769707316517499749840559334777787159383675",
+   "alpha_float": 1.0336884448177213,
+   "eff_projected": 4.921722732646962,
+   "meets_adoption": false,
+   "meets_closure": true,
+   "scale_c": 0.8614070373481011,
+   "tau_projected": 4.265736064064893,
+   "tightening": 1.1374057041669792
+  }
+ ],
+ "recommended_target": {
+  "Gamma_negative_projected": true,
+  "alpha": "107/100",
+  "alpha_float": 1.07,
+  "eff_projected": 5.094613711059611,
+  "meets_adoption": false,
+  "meets_closure": true,
+  "scale_c": 0.8916666666666667,
+  "tau_projected": 4.415583449183572,
+  "tightening": 1.0988066667917475
+ },
+ "retracts": "C9's 'blocker 1', which claimed E1 as committed cannot close cell 307. That blocker was manufactured by defining E1 as a replay of the committed producer. It is WITHDRAWN.",
+ "schema": "C9_ALPHA_LEVER/1",
+ "sha256": "091af720585149ff932d758d1c782a4c31303f26b960eac368d1f682bf0d67c2",
+ "thresholds": {
+  "adoption": 1.3700090576827373,
+  "closure": 1.0960072461461898
+ }
+}
