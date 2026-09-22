@@ -1,0 +1,95 @@
+{
+ "schema": "rebaseguard.p5y.k5.tail-c6.classification-gate.v1",
+ "campaign": "P5Y/K5 tail Campaign C6 — evidence recovery and DATA-vs-NEW_REAL classification",
+ "what_this_gate_is_about": "EVIDENCE STATUS, not K5 closure. C6 classifies and recovers; a later C7 consumes scientifically. This gate may not be used to close, adopt or tighten anything.",
+
+ "predecessor": {
+  "branch": "p5y-k5-tail-c5", "head": "69bff424f20a7c91eac99450ba0836f3f7d9ca44",
+  "c5_verdict": "ACCEPTED_WITH_SCOPE_LIMITATION", "c5_adopted_cells": [],
+  "c5_forecast_sha256": "69cceb8977a22fef42f8fda7de1f662b8baccbe35c8f21aa4ca95d354d9b3999",
+  "coverage_map_r5_sha256": "e2197051e493df898295a692c580ed676e771f7dfae5a1675d8d8e9b979f684c",
+  "LOCAL_MAIN_REF": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+  "REMOTE_MAIN_REF": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+  "VULTR_WORKING_REF": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+  "ref_rule": "three distinct refs. No audit may compare any two. REMOTE_MAIN_REF must be queried from GitHub origin, never inferred from a clone's origin. VULTR_WORKING_REF is evidence about neither main ref."
+ },
+
+ "universe": {"routes": ["A1", "A3", "D4", "E1"], "source": "the C5 route ledger's kill_kind == DATA set",
+  "also_examined": ["B1 (cover refinement)", "E2 (Lambda_309)"],
+  "note": "C5 also declared D4 new_real_required true while classifying it DATA; that inconsistency is in scope."},
+
+ "classification_classes": {
+  "RECOVERED_ADMISSIBLE": "a provenance-complete copy of the required object exists and meets the minimum provenance level below AND the scientific identity requirements below",
+  "RECONSTRUCTED_ADMISSIBLE": "the exact object is a deterministic, lossless function of committed/recovered scientific values, with input hashes, transformation and output hash all recorded, and NO scientific kernel evaluation",
+  "HISTORICAL_REPLAY_REQUIRED": "the object is absent from every store, but the exact scientific address was already evaluated under an authorized historical campaign and could be reproduced by a future governed replay without creating a new address",
+  "TRUE_NEW_REAL_REQUIRED": "obtaining the object needs evaluation at an address never evaluated under an authorized historical campaign",
+  "PROVENANCE_INSUFFICIENT": "a candidate exists but cannot be bound strongly enough to an authorized historical execution",
+  "NOT_LOAD_BEARING": "the object cannot materially improve the load-bearing bound even if recovered perfectly"
+ },
+
+ "minimum_provenance_for_scientific_reuse": {
+  "level": "P4",
+  "P4_definition": "hash + producer + protocol + authorization + address binding",
+  "P5_definition": "P4 plus seal/adjudication or equivalent immutable historical closure",
+  "rule": "only P4 or P5 may be a candidate for NEW scientific reuse. A P0-P3 object may be classified and recorded but may NOT be adopted as new scientific evidence unless an independent review proves the lower class sufficient for a narrowly defined purpose.",
+  "no_inference_rule": "provenance is NEVER upgraded by inference. A link that does not close by raw bytes does not close. A plausible filename, a plausible schema and a plausible run identity are P1/P2 and stay there.",
+  "already_adopted_exception": "bytes that are hash-identical to evidence the programme has ALREADY adopted derive their standing from that existing adoption, not from C6's recovery. C6 must state which of the two bases it is invoking, every time, and may not use the exception to manufacture a P4."
+ },
+
+ "scientific_identity_requirements": {
+  "must_match_exactly": ["model", "m", "cell / scientific address", "precision bits", "convention", "derivative order", "normalization", "frozen producer semantics", "the scientific fields consumed"],
+  "byte_identity_is_not_scientific_identity": "runtime/incidental leaves may differ ONLY where a historical protocol already classifies them incidental. C6 may not invent a new incidental classification."
+ },
+
+ "compute_policy": {
+  "new_real_scientific_addresses_authorized": 0,
+  "scientific_kernel_evaluations_authorized": 0,
+  "external_evidence_mutations_authorized": 0,
+  "AWS_SR_PS1": "MUST NOT BE CONTACTED. Not by SSH, not by tool, not by poll.",
+  "vultr": "READ-ONLY evidence discovery only: ls/find/stat, hashes, reading manifests and evidence, copying a file to a local scratch area. No kernel execution, no producer that computes a new scientific quantity, no certification, no modification, no cleanup, no package or service change.",
+  "replay_rule": "C6 may CLASSIFY a route as HISTORICAL_REPLAY_REQUIRED but MUST NOT perform the replay unless it is proven to be a purely deterministic serialization/materialization operation with zero scientific kernel evaluation. Running a certifier is not such an operation.",
+  "ambiguity_rule": "if it is unclear whether a command performs scientific compute, it is not run."
+ },
+
+ "what_C6_may_conclude": [
+  "the evidence status of each route, per the classes above",
+  "whether the project is missing DATA or missing SCIENCE for that route",
+  "a FEASIBILITY_ONLY statement about whether a future C7 should pursue a route",
+  "a planning-only leverage ranking, which may NOT alter scientific adoption"
+ ],
+ "what_C6_may_NOT_conclude": [
+  "that any K5 cell closes, or should be adopted",
+  "that a coverage map revision is warranted -- C6 cannot produce r6 under any outcome",
+  "that broader deterministic exhaustion is established -- evidence recovery alone can never establish it",
+  "that the R-stage prerequisite is satisfied",
+  "that a recovered object is scientifically usable without stating its provenance level and its basis"
+ ],
+
+ "r6_rule": "C6 creates no coverage map revision under any outcome. r5 remains authoritative.",
+ "closure_separation": "C6 must NOT close K5 cells. A closure forecast requires a SEPARATE prospective closure gate frozen BEFORE that forecast, which C6 does not create. The default and preferred behaviour is: C6 classifies and recovers, C7 consumes.",
+
+ "review_and_adjudication": {
+  "forensic_review": "a fresh-context reviewer must attack items A-L of the campaign instruction; explicit handover required",
+  "adjudication": "a fresh-context adjudicator must answer the instruction's ten questions; explicit handover required",
+  "handover": "file existence is not completion"
+ },
+
+ "prior_evidence_known_at_freeze": {
+  "disclosure": "this gate is frozen AFTER phases B0-5, 10 and 11, which the campaign instruction ordered before it. Everything known at freeze is listed here.",
+  "A1_A3_expected": "HISTORICAL_REPLAY_REQUIRED -- the candidates were never serialized anywhere (326/326 sealed records scanned, 0 payload keys) but are a deterministic function of the fully committed frozen chain plus the committed cell spec",
+  "B1_expected": "TRUE_NEW_REAL_REQUIRED -- no sub-interval structure exists in the sealed record",
+  "D4_expected": "TRUE_NEW_REAL_REQUIRED, reclassified from C5's DATA",
+  "E1_expected": "HISTORICAL_REPLAY_REQUIRED -- its inputs, the taboo/arl Chebyshev payloads, ARE committed; the block is the absent python-flint toolchain",
+  "recovered_records_expected": "the four open tail cells' sealed K1 records, at P3, with two independent committed bindings each",
+  "expected_headline": "the project is missing a TOOLCHAIN, not DATA and not SCIENCE, for the two highest-leverage DATA-blocked routes",
+  "what_the_disclosure_does_not_excuse": "the classes, the minimum provenance level and the identity requirements are written to be mechanical. If a reader judges any of them fitted to the expected outcome, that is a finding against C6 and the reviewer is asked for it explicitly."
+ },
+
+ "refusals": [
+  "no class, provenance threshold, identity requirement or permitted conclusion may be amended after freeze; an error is recorded in an erratum",
+  "no object may be adopted as new scientific evidence below P4 without an independent review proving the lower class sufficient for a narrowly defined purpose",
+  "no route may be classified TRUE_NEW_REAL merely because an access attempt failed -- that is EXTERNAL_EVIDENCE_UNCHECKED",
+  "no route may be classified RECOVERABLE merely because a plausible file exists",
+  "C6 may not report K5 closed or complete, adopt a cell, create r6, or authorize the R-stage under any outcome"
+ ]
+}
