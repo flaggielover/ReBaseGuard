@@ -1,0 +1,92 @@
+{
+ "MUTATION_CLASS": "PASS",
+ "mutants": [
+  {
+   "how": "both are carried as separate fields and the current one is recomputed here: recorded 4ac24d9e1826, current 0d1d8021a378",
+   "id": "M01",
+   "name": "historical pin mistaken for the current file hash",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "the timeline carries BOTH per commit and they differ in length and value (blob 3ef8fe6773db is sha1; content 0d1d8021a378 is sha256)",
+   "id": "M02",
+   "name": "git blob SHA-1 confused with content SHA-256",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "recomputed at the bound commit e71378a09e34: differs from HEAD, and the difference is localised by AST to ['main', 'verify']",
+   "id": "M03",
+   "name": "current producer assumed identical to the historically bound producer",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "classification is driven by an AST unit-level comparison, not by a line diff: build-path units changed = NONE, so class D is not reachable",
+   "id": "M04",
+   "name": "a non-scientific change treated as scientific producer drift",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "the REAL classifier is re-run with planted inputs and every branch is exercised: actual C_GOVERNANCE_DRIFT; +build -> D_SCIENTIFIC_PRODUCER_DRIFT; +DEGREE_ARL -> D_SCIENTIFIC_PRODUCER_DRIFT; empty -> A_NO_DEFECT; unbound -> E_BROKEN_BINDING",
+   "id": "M05",
+   "name": "a scientific change treated as cosmetic",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "no committed text asserts permanence; the floor declares itself prospective and scopes itself to 'future adoptions ... from this verdict onward'",
+   "id": "M06",
+   "name": "the C2 floor assumed globally binding without textual evidence",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "replaceability is not inferred: the adjudication names the lapse condition on F1 and directs a successor to freeze a replacement floor once N9 closes",
+   "id": "M07",
+   "name": "the C2 floor assumed replaceable without textual evidence",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "cell 305 remains PASS and ADOPTED and the whole C2 namespace tree is identical to its published head",
+   "id": "M08",
+   "name": "a historical verdict rewritten",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "the four concepts are carried separately, with A explicitly immutable and D explicitly governed by the rule in force at the successor's own freeze",
+   "id": "M09",
+   "name": "successor adoption conflated with predecessor adoption",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "they are separate fields with different values (1.096007 vs 1.370009) and alpha satisfies the first but not the second",
+   "id": "M10",
+   "name": "the closure threshold confused with the adoption threshold",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "C9 evaluated no non-target cell, C8's decision is recorded immutable, and the future-target statement explicitly declines to authorize anything",
+   "id": "M11",
+   "name": "cell 306 retroactively authorized in C9",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "C9's artifact is labelled COUNTERFACTUAL_PROJECTION -- not certifi and C10 carries the figure under 'best_alpha_tightening_projected'",
+   "id": "M12",
+   "name": "the cell-307 alpha projection called certified evidence",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "no COVERAGE_MAP_R6 exists on any of 38 local branches",
+   "id": "M13",
+   "name": "an r6 coverage map created without an adoption",
+   "outcome": "DETECTED"
+  },
+  {
+   "how": "phase 16 reproduces every load-bearing claim from the committed tree before absorption",
+   "id": "M14",
+   "name": "reviewer/adjudicator prose absorbed without verification",
+   "outcome": "DETECTED"
+  }
+ ],
+ "schema": "C10_MUTATIONS/1",
+ "sha256": "4fe7e63bcbae1e9e67c236f6e6fa7fb345df397bd623e0b4d78ccd75adf2c8d7",
+ "survivors": []
+}

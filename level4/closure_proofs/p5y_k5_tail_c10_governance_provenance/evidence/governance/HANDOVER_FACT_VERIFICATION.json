@@ -1,0 +1,163 @@
+{
+ "FACT_CHECK_CLASS": "PASS",
+ "WHAT_THIS_CANNOT_VERIFY": "governance READINGS are arguments, not facts. This ledger verifies that the quoted text EXISTS in the committed artifact and says what is claimed; it cannot verify that the programme's intent matches the reading. Those entries are marked claim_kind GOVERNANCE so a reader can weigh them differently from GIT_HISTORY and NUMERICAL entries, which are reproducible outright.",
+ "claim_kinds": [
+  "GIT_HISTORY",
+  "GOVERNANCE",
+  "NUMERICAL"
+ ],
+ "findings": [],
+ "load_bearing_claim_ledger": [
+  {
+   "claim_kind": "GIT_HISTORY",
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "REGISTRY_C2.code_sha256 vs git object",
+   "statement": "REGISTRY_C2's recorded producer hash equals the producer at the bound commit",
+   "value": "4ac24d9e182656a4",
+   "verification_method": "recomputed sha256 of the blob at that commit"
+  },
+  {
+   "claim_kind": "GIT_HISTORY",
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "git log over the producer path",
+   "statement": "the producer changed twice after the registry was sealed",
+   "value": {
+    "producer_commits": 3,
+    "registry_rebuilds": 0
+   },
+   "verification_method": "counted commits after the registry commit"
+  },
+  {
+   "claim_kind": "NUMERICAL",
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "AST unit comparison",
+   "statement": "only main and verify changed; every build-path unit is identical",
+   "value": [
+    "main",
+    "verify"
+   ],
+   "verification_method": "re-derived by parsing both blobs"
+  },
+  {
+   "claim_kind": "NUMERICAL",
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "REGISTRY_C2 vs the committed certifier",
+   "statement": "the enforced taboo_certify pin still matches",
+   "value": "ced9422ca07981a9",
+   "verification_method": "recomputed sha256"
+  },
+  {
+   "claim_kind": "GOVERNANCE",
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "C2_ADJUDICATION.md",
+   "statement": "the C2 floor declares itself prospective",
+   "value": "It is **prospective**: it governs future adoptions of K5 m = 5 tail cells from this verdict onward.",
+   "verification_method": "exact substring present in the committed text"
+  },
+  {
+   "claim_kind": "GOVERNANCE",
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "C2_ADJUDICATION.md",
+   "statement": "F1 carries an explicit lapse condition tied to N9",
+   "value": "This limb is available for as long as **N9** ... remains open, and lapses when N9 is closed.",
+   "verification_method": "exact substring present"
+  },
+  {
+   "claim_kind": "GOVERNANCE",
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "C2_ADJUDICATION.md",
+   "statement": "the adjudication directs a successor to freeze a REPLACEMENT floor",
+   "value": "a successor should freeze a replacement floor requiring agreement between two independent certifier implementations rather than F1",
+   "verification_method": "exact substring present"
+  },
+  {
+   "claim_kind": "GOVERNANCE",
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "C2_ADJUDICATION.md",
+   "statement": "no committed artifact claims the floor is immutable for all future successors",
+   "value": [],
+   "verification_method": "regex scan for permanence language"
+  },
+  {
+   "claim_kind": "GOVERNANCE",
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "C2-C9 prose",
+   "statement": "N9 is OPEN, by explicit assertions with conditionals excluded",
+   "value": {
+    "closed": 0,
+    "open": 6,
+    "state": "OPEN"
+   },
+   "verification_method": "assertion scan with preceding context and conditional filter"
+  },
+  {
+   "claim_kind": "NUMERICAL",
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "C9 alpha projection vs C8 thresholds",
+   "statement": "alpha can close cell 307 but cannot satisfy F2",
+   "value": {
+    "adopt": 1.3700090576827373,
+    "best_alpha": 1.1374057041669792,
+    "close": 1.0960072461461898
+   },
+   "verification_method": "recomputed max over the projection"
+  },
+  {
+   "claim_kind": "GOVERNANCE",
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "F1's definition vs what alpha moves",
+   "statement": "F1 is invariant under alpha, so alpha can never satisfy it",
+   "value": 0.08511776989151419,
+   "verification_method": "F1 requires a supply NOT using the Arb/FLINT registry; alpha tightens that registry's own taboo supersolution, so no alpha value changes a registry-free supply"
+  },
+  {
+   "claim_kind": "GIT_HISTORY",
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "git",
+   "statement": "no file outside the C10 namespace was changed",
+   "value": null,
+   "verification_method": "diff/ls-tree/grep over the committed tree"
+  },
+  {
+   "claim_kind": "GIT_HISTORY",
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "git",
+   "statement": "no r6 was created",
+   "value": null,
+   "verification_method": "diff/ls-tree/grep over the committed tree"
+  },
+  {
+   "claim_kind": "GIT_HISTORY",
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "git",
+   "statement": "guard never left DENY",
+   "value": null,
+   "verification_method": "diff/ls-tree/grep over the committed tree"
+  },
+  {
+   "claim_kind": "GIT_HISTORY",
+   "disposition": "ABSORBED",
+   "result": "REPRODUCED",
+   "source": "config/DECISION_GATE_C10.json",
+   "statement": "the C10 decision gate predates the adjudication and is unchanged",
+   "value": "4ab7bdd6a2e77d26",
+   "verification_method": "sha256 of the committed blob"
+  }
+ ],
+ "schema": "C10_HANDOVER_FACT_VERIFICATION/1",
+ "sha256": "e321e1e41207488282b184642f79d7b3ec34e5c30bde2a31cc2288c39b433170"
+}
