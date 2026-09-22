@@ -1,0 +1,43 @@
+{
+ "schema": "N9_GATE_C11/1",
+ "campaign": "C11 -- N9 independent second-certifier closure",
+ "purpose": "define, before the verdict, what would and would not close N9",
+
+ "DISCLOSURE_OF_ORDERING": {
+  "statement": "This gate is frozen AFTER the second certifier was built and exercised, and after its achievable tightness was observed. C11 does NOT claim a blinded comparison and does not present one.",
+  "why_a_blinded_comparison_was_never_available": "the first certifier's tau and Abar are committed in REGISTRY_C2 and were read during phase B0, before any implementation began. The discipline that WAS maintained, and that matters, is that no candidate was chosen by fitting to the first certifier's value: the constant candidate comes from the theoretical threshold 1/min_R h1, and the drift-aware family from the structure of the chain.",
+  "consequence": "the ordering defect alone is sufficient reason not to claim N9 closure in this campaign, independently of the numerical outcome."
+ },
+
+ "closure_criteria_all_required": {
+  "N1_implementation_independence": "no import, call, wrap or replay of the original's load-bearing graph",
+  "N2_no_load_bearing_import": "forbidden set: taboo_certify, resolvent_certificate, opnorms, ra_certifier, fast_range, intervals, rebaseguard_certify, rung3_engine, spec",
+  "N3_no_use_of_original_outputs_in_construction": "no original certified payload, tau, A0/A1/A2 or registry value used to build or steer the candidate",
+  "N4_same_frozen_inputs": "same model constants, same reachable set, same cell geometry",
+  "N5_both_sound": "each certifier's output independently satisfies its own soundness checks",
+  "N6_agreement": "SEE BELOW -- this is the criterion C11 must and does fail",
+  "N7_precision_escalation": "the bound must not move materially under a finer subdivision",
+  "N8_manufactured_cases": "identities the implementation cannot satisfy by accident",
+  "N9_mutation_suite": "planted shared-path violations are caught",
+  "N10_seal_before_compare": "second-certifier output sealed before the first is loaded"
+ },
+
+ "N6_AGREEMENT_CRITERION": {
+  "problem": "no historical artifact specifies a tolerance; C11 must define one and cannot recover it",
+  "definition": "the two certifiers AGREE on a cell when both produce a valid upper bound on the same quantity and the independent bound is within a factor of 2 of the original's, i.e. tau_independent <= 2 * tau_original",
+  "rationale": "N9 guards against a systematic LOGIC error of unknown magnitude. A second route that lands within a small factor corroborates the first; a route that is valid but orders of magnitude weaker corroborates only that the first is not grossly wrong in the unsafe direction, which is much less than N9 asks for.",
+  "explicitly_not_adopted": "any criterion of the form 'both bounds are valid', which the constant supersolution already satisfies trivially and which would let N9 close without evidence of implementation agreement"
+ },
+
+ "permitted_verdicts": ["N9_CLOSED", "AGREEMENT_INSUFFICIENT", "SCIENTIFIC_DISAGREEMENT",
+                        "INDEPENDENCE_VIOLATION", "EXECUTION_INVALID"],
+ "forbidden_conclusions": [
+  "that any cell is closed or adopted",
+  "that the C2 adoption floor may now be replaced",
+  "that F1 has lapsed",
+  "that r6 may be created",
+  "that a counterfactual or development value is certified evidence",
+  "that N9 is closed on a criterion weaker than N6 as frozen here"
+ ],
+ "guard": "DENY"
+}
