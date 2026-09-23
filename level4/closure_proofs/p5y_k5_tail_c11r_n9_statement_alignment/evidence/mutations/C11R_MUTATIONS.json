@@ -309,11 +309,13 @@
  "base_verdict_on_synthetic_magnitudes": "AGREEMENT_INSUFFICIENT",
  "comparator_self_test": {
   "PASS": true,
-  "cases": 9,
+  "cases": 10,
   "used_real_magnitudes": false
  },
  "detector_kinds": {
-  "PRODUCTION_GUARD": 26,
+  "DEFENSE_IN_DEPTH_HEURISTIC": 1,
+  "PHASE12_QUALIFICATION_GATE": 2,
+  "PRODUCTION_GUARD": 24,
   "PRODUCTION_SCIENCE": 3,
   "SUITE_LOCAL_AUDIT": 4,
   "SUITE_LOCAL_PROPERTY": 7
@@ -328,7 +330,7 @@
    "detail": {
     "modules_in_closure": 26
    },
-   "detector_kind": "PRODUCTION_GUARD",
+   "detector_kind": "PHASE12_QUALIFICATION_GATE",
    "id": "M01",
    "input_artifact": null,
    "input_sha256": null,
@@ -341,12 +343,12 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_qualify.py",
-   "verifier_sha256": "2a963affac7c6c6f419d7298bcfe05cd194fa433068b3858dd1c6d7d0f3e2e55"
+   "verifier_sha256": "0be06547d2393e9e6ecc52158b33003d3de1926db7ad61e488839c7aa6b4ac7a"
   },
   {
    "clean_control_flagged": false,
    "detail": null,
-   "detector_kind": "PRODUCTION_GUARD",
+   "detector_kind": "PHASE12_QUALIFICATION_GATE",
    "id": "M02",
    "input_artifact": null,
    "input_sha256": null,
@@ -359,7 +361,7 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_qualify.py",
-   "verifier_sha256": "2a963affac7c6c6f419d7298bcfe05cd194fa433068b3858dd1c6d7d0f3e2e55"
+   "verifier_sha256": "0be06547d2393e9e6ecc52158b33003d3de1926db7ad61e488839c7aa6b4ac7a"
   },
   {
    "clean_control_flagged": false,
@@ -368,10 +370,10 @@
     "offenders": [],
     "real_tree_class": "PASS"
    },
-   "detector_kind": "PRODUCTION_GUARD",
+   "detector_kind": "DEFENSE_IN_DEPTH_HEURISTIC",
    "id": "M03",
    "input_artifact": "evidence/firewall/C11R_FIREWALL.json",
-   "input_sha256": "e0a7103f3b3d5ee82338950647f23e7760a3a0217a20348a35614c2521882a5d",
+   "input_sha256": "d3ce9d65ec78b74fbf862c7d4a8418ef969006bdbde54eee9f978297af5b519f",
    "mutant_flagged": true,
    "mutated_path": "<34 planted module sources>",
    "mutated_value": "['L10_review_md_with_values', 'L12_subprocess_cat', 'L13_with_open', 'L14_direct_quarantine_load', 'L1_glob_loads_quarantine', 'L2_string_concat_name', 'L3_fstr",
@@ -381,7 +383,7 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_firewall.py",
-   "verifier_sha256": "283468aa2309325cd568b2bdc4b742cc1022fb57f1cf8b841050249b075c4c54"
+   "verifier_sha256": "d2e0ccb17de4a6370046f41dc5c01061bc9fbfa7378e4d5bbd778578cf55ef0c"
   },
   {
    "clean_control_flagged": false,
@@ -464,7 +466,7 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_mutations.py",
-   "verifier_sha256": "5c18979a33d3b885a364f332a1bcf9725fecfe0f682764c9b111ad67c55c36cb"
+   "verifier_sha256": "32914b8fbcdeb695abc88414e833e1aedaf5352269699e3e24c047dd5ed13544"
   },
   {
    "clean_control_flagged": false,
@@ -482,7 +484,7 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_mutations.py",
-   "verifier_sha256": "5c18979a33d3b885a364f332a1bcf9725fecfe0f682764c9b111ad67c55c36cb"
+   "verifier_sha256": "32914b8fbcdeb695abc88414e833e1aedaf5352269699e3e24c047dd5ed13544"
   },
   {
    "clean_control_flagged": false,
@@ -502,7 +504,7 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_mutations.py",
-   "verifier_sha256": "5c18979a33d3b885a364f332a1bcf9725fecfe0f682764c9b111ad67c55c36cb"
+   "verifier_sha256": "32914b8fbcdeb695abc88414e833e1aedaf5352269699e3e24c047dd5ed13544"
   },
   {
    "clean_control_flagged": false,
@@ -512,7 +514,7 @@
    "detector_kind": "PRODUCTION_GUARD",
    "id": "M10",
    "input_artifact": "config/C11R_CONTRACT.json",
-   "input_sha256": "e501f1a725e0c7e113595e435d48f5f4afd20152aca0f4186fabdb54faae7d66",
+   "input_sha256": "4f37acf902c5fcd9e295f34be4ed988e08767a5fc40d3459fbe7ab182c14fd80",
    "mutant_flagged": true,
    "mutated_path": "$.comparison_semantics_frozen_before_results.factor",
    "mutated_value": "3",
@@ -522,7 +524,7 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "7cdbc6eb466d11800f7d3eca8ddc3fae94df31d344b581b09d60cd84ecb07d16"
+   "verifier_sha256": "f484a108d4cbfda647480616d85ffbb1d14850811de8daa4d96f87437bf6027c"
   },
   {
    "clean_control_flagged": false,
@@ -539,15 +541,15 @@
    "name": "N9 declared closed on a weaker criterion (NOT_IMPLEMENTED counted as pass)",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400",
+   "producer_sha256": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "7cdbc6eb466d11800f7d3eca8ddc3fae94df31d344b581b09d60cd84ecb07d16"
+   "verifier_sha256": "f484a108d4cbfda647480616d85ffbb1d14850811de8daa4d96f87437bf6027c"
   },
   {
    "clean_control_flagged": false,
    "detail": {
-    "files_changed_since_C11": 37
+    "files_changed_since_C11": 44
    },
    "detector_kind": "SUITE_LOCAL_AUDIT",
    "id": "M12",
@@ -562,7 +564,7 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_mutations.py",
-   "verifier_sha256": "5c18979a33d3b885a364f332a1bcf9725fecfe0f682764c9b111ad67c55c36cb"
+   "verifier_sha256": "32914b8fbcdeb695abc88414e833e1aedaf5352269699e3e24c047dd5ed13544"
   },
   {
    "clean_control_flagged": false,
@@ -580,17 +582,17 @@
    "detector_kind": "PRODUCTION_GUARD",
    "id": "M13",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "b3dd25637fc26be7d74895778517356f7e14c1f3fa7efd16f7767357a9fd5e24",
+   "input_sha256": "c6226603505eb5ab8e014a915ea75260cd05f1bef8ae87f267eb0437f60c6ba7",
    "mutant_flagged": true,
    "mutated_path": "$.targets.tau.certificate_id",
    "mutated_value": "'F_K'",
    "name": "a whole-kernel (K_e) certificate cited for the atom-removed tau",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400",
+   "producer_sha256": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "7cdbc6eb466d11800f7d3eca8ddc3fae94df31d344b581b09d60cd84ecb07d16"
+   "verifier_sha256": "f484a108d4cbfda647480616d85ffbb1d14850811de8daa4d96f87437bf6027c"
   },
   {
    "clean_control_flagged": false,
@@ -608,17 +610,17 @@
    "detector_kind": "PRODUCTION_GUARD",
    "id": "M16",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "b3dd25637fc26be7d74895778517356f7e14c1f3fa7efd16f7767357a9fd5e24",
+   "input_sha256": "c6226603505eb5ab8e014a915ea75260cd05f1bef8ae87f267eb0437f60c6ba7",
    "mutant_flagged": true,
    "mutated_path": "$.certificates.F_K.inputs.drift_block",
    "mutated_value": "'[18355/10000] x 2'",
    "name": "a scalar drift substituted for the block (C11's development drift)",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400",
+   "producer_sha256": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "7cdbc6eb466d11800f7d3eca8ddc3fae94df31d344b581b09d60cd84ecb07d16"
+   "verifier_sha256": "f484a108d4cbfda647480616d85ffbb1d14850811de8daa4d96f87437bf6027c"
   },
   {
    "clean_control_flagged": false,
@@ -636,17 +638,17 @@
    "detector_kind": "PRODUCTION_GUARD",
    "id": "M17",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "b3dd25637fc26be7d74895778517356f7e14c1f3fa7efd16f7767357a9fd5e24",
+   "input_sha256": "c6226603505eb5ab8e014a915ea75260cd05f1bef8ae87f267eb0437f60c6ba7",
    "mutant_flagged": true,
    "mutated_path": "$.certificates.F_K.inputs.drift_block",
    "mutated_value": "'[mid, mid]'",
    "name": "the midpoint substituted for uniform drift",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400",
+   "producer_sha256": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "7cdbc6eb466d11800f7d3eca8ddc3fae94df31d344b581b09d60cd84ecb07d16"
+   "verifier_sha256": "f484a108d4cbfda647480616d85ffbb1d14850811de8daa4d96f87437bf6027c"
   },
   {
    "clean_control_flagged": false,
@@ -664,17 +666,17 @@
    "detector_kind": "PRODUCTION_GUARD",
    "id": "M18",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "b3dd25637fc26be7d74895778517356f7e14c1f3fa7efd16f7767357a9fd5e24",
+   "input_sha256": "c6226603505eb5ab8e014a915ea75260cd05f1bef8ae87f267eb0437f60c6ba7",
    "mutant_flagged": true,
    "mutated_path": "$.certificates.F_K.inputs.drift_block",
    "mutated_value": "'[e_lo, e_lo]'",
    "name": "endpoints only",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400",
+   "producer_sha256": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "7cdbc6eb466d11800f7d3eca8ddc3fae94df31d344b581b09d60cd84ecb07d16"
+   "verifier_sha256": "f484a108d4cbfda647480616d85ffbb1d14850811de8daa4d96f87437bf6027c"
   },
   {
    "clean_control_flagged": false,
@@ -715,17 +717,17 @@
    "detector_kind": "PRODUCTION_GUARD",
    "id": "M19",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "b3dd25637fc26be7d74895778517356f7e14c1f3fa7efd16f7767357a9fd5e24",
+   "input_sha256": "c6226603505eb5ab8e014a915ea75260cd05f1bef8ae87f267eb0437f60c6ba7",
    "mutant_flagged": true,
    "mutated_path": "$.certificates.F_H.certifier_result.kernel",
    "mutated_value": "'K_e'",
    "name": "K_e substituted for Khat_e in the certifier's reported kernel",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400",
+   "producer_sha256": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "7cdbc6eb466d11800f7d3eca8ddc3fae94df31d344b581b09d60cd84ecb07d16"
+   "verifier_sha256": "f484a108d4cbfda647480616d85ffbb1d14850811de8daa4d96f87437bf6027c"
   },
   {
    "clean_control_flagged": false,
@@ -743,17 +745,17 @@
    "detector_kind": "PRODUCTION_GUARD",
    "id": "M20",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "b3dd25637fc26be7d74895778517356f7e14c1f3fa7efd16f7767357a9fd5e24",
+   "input_sha256": "c6226603505eb5ab8e014a915ea75260cd05f1bef8ae87f267eb0437f60c6ba7",
    "mutant_flagged": true,
    "mutated_path": "$.targets.Abar.certificate_id",
    "mutated_value": "'F_H'",
    "name": "tau's certificate cited for Abar",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400",
+   "producer_sha256": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "7cdbc6eb466d11800f7d3eca8ddc3fae94df31d344b581b09d60cd84ecb07d16"
+   "verifier_sha256": "f484a108d4cbfda647480616d85ffbb1d14850811de8daa4d96f87437bf6027c"
   },
   {
    "clean_control_flagged": false,
@@ -771,17 +773,17 @@
    "detector_kind": "PRODUCTION_GUARD",
    "id": "M21",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "b3dd25637fc26be7d74895778517356f7e14c1f3fa7efd16f7767357a9fd5e24",
+   "input_sha256": "c6226603505eb5ab8e014a915ea75260cd05f1bef8ae87f267eb0437f60c6ba7",
    "mutant_flagged": true,
    "mutated_path": "$.targets.tau.certificate_id",
    "mutated_value": "'F_K'",
    "name": "Abar's certificate cited for tau, with Abar's value",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400",
+   "producer_sha256": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "7cdbc6eb466d11800f7d3eca8ddc3fae94df31d344b581b09d60cd84ecb07d16"
+   "verifier_sha256": "f484a108d4cbfda647480616d85ffbb1d14850811de8daa4d96f87437bf6027c"
   },
   {
    "clean_control_flagged": false,
@@ -803,17 +805,17 @@
    "detector_kind": "PRODUCTION_GUARD",
    "id": "M22",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "b3dd25637fc26be7d74895778517356f7e14c1f3fa7efd16f7767357a9fd5e24",
+   "input_sha256": "c6226603505eb5ab8e014a915ea75260cd05f1bef8ae87f267eb0437f60c6ba7",
    "mutant_flagged": true,
    "mutated_path": "$.certificates.F_K.inputs.drift_block",
    "mutated_value": "['17885921/10000000', '1882413/1000000']",
    "name": "cell 307's block substituted for cell 306's",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400",
+   "producer_sha256": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "7cdbc6eb466d11800f7d3eca8ddc3fae94df31d344b581b09d60cd84ecb07d16"
+   "verifier_sha256": "f484a108d4cbfda647480616d85ffbb1d14850811de8daa4d96f87437bf6027c"
   },
   {
    "clean_control_flagged": false,
@@ -828,7 +830,7 @@
    "name": "fewer than the six constants",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400",
+   "producer_sha256": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_schema.py",
    "verifier_sha256": "bc3302632f36fc8afdb18a9154cc0fb65938b17f37db284872c0895115f29114"
@@ -871,17 +873,17 @@
    "detector_kind": "PRODUCTION_GUARD",
    "id": "M25",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "b3dd25637fc26be7d74895778517356f7e14c1f3fa7efd16f7767357a9fd5e24",
+   "input_sha256": "c6226603505eb5ab8e014a915ea75260cd05f1bef8ae87f267eb0437f60c6ba7",
    "mutant_flagged": true,
    "mutated_path": "$.certificates.F_K.inputs.drift_block",
    "mutated_value": "'[e_lo, mid]'",
    "name": "the drift interval narrowed",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400",
+   "producer_sha256": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "7cdbc6eb466d11800f7d3eca8ddc3fae94df31d344b581b09d60cd84ecb07d16"
+   "verifier_sha256": "f484a108d4cbfda647480616d85ffbb1d14850811de8daa4d96f87437bf6027c"
   },
   {
    "clean_control_flagged": false,
@@ -889,14 +891,14 @@
    "detector_kind": "PRODUCTION_GUARD",
    "id": "M14",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "b3dd25637fc26be7d74895778517356f7e14c1f3fa7efd16f7767357a9fd5e24",
+   "input_sha256": "c6226603505eb5ab8e014a915ea75260cd05f1bef8ae87f267eb0437f60c6ba7",
    "mutant_flagged": true,
    "mutated_path": "$.targets.Abar.value",
    "mutated_value": "'value - 1/10'",
    "name": "a reported value that its certificate did not produce",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400",
+   "producer_sha256": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_certificate.py",
    "verifier_sha256": "f99dcb12159972014d093589498db0b7a338cc130e3b887a347709a455fdd0f6"
@@ -950,10 +952,10 @@
    "name": "comparison performed before the independent output is sealed",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400",
+   "producer_sha256": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "7cdbc6eb466d11800f7d3eca8ddc3fae94df31d344b581b09d60cd84ecb07d16"
+   "verifier_sha256": "f484a108d4cbfda647480616d85ffbb1d14850811de8daa4d96f87437bf6027c"
   },
   {
    "clean_control_flagged": false,
@@ -961,7 +963,7 @@
    "detector_kind": "PRODUCTION_GUARD",
    "id": "M27",
    "input_artifact": "config/N9R_GATE_C11R.json",
-   "input_sha256": "264fe7989ab18c3514760f9c9eaf076bd95a4d842fe60916f528f66d469ffe8c",
+   "input_sha256": "0e412d0c90f88d70af79ca45853e4dd29010c1b989fe448b3dad2903eb362a78",
    "mutant_flagged": true,
    "mutated_path": "$.predicates.G_probe",
    "mutated_value": "'this is the criterion C11R must and does fail'",
@@ -971,7 +973,7 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_gate.py",
-   "verifier_sha256": "fe231828af027d810aff15e89c657e6b96ea08b5ed82e874f503d457f0c3524f"
+   "verifier_sha256": "59aad80f5e33165087df7f1441e8e01a49d424491636b90639114bf9c6ca1f09"
   },
   {
    "clean_control_flagged": false,
@@ -981,14 +983,14 @@
    "detector_kind": "PRODUCTION_GUARD",
    "id": "M28",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "b3dd25637fc26be7d74895778517356f7e14c1f3fa7efd16f7767357a9fd5e24",
+   "input_sha256": "c6226603505eb5ab8e014a915ea75260cd05f1bef8ae87f267eb0437f60c6ba7",
    "mutant_flagged": true,
    "mutated_path": "$.certificates.F_K.screen_classification (sent True)",
    "mutated_value": "'POINTWISE_INFEASIBLE'",
    "name": "a pointwise-refuted member still sent to certification",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400",
+   "producer_sha256": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_certificate.py",
    "verifier_sha256": "f99dcb12159972014d093589498db0b7a338cc130e3b887a347709a455fdd0f6"
@@ -1003,7 +1005,7 @@
    "detector_kind": "SUITE_LOCAL_PROPERTY",
    "id": "M29",
    "input_artifact": "evidence/validation/C11R_VALIDATION.json",
-   "input_sha256": "088b59c44b49fed746b4136a6c0751d23e660b2c1ceca0c436aca13704326524",
+   "input_sha256": "91d259eba458a25b220c5de4f58939336aa5c635d4f62bff7fa056db7360d1ef",
    "mutant_flagged": true,
    "mutated_path": "kernel_apply_iv result .hi",
    "mutated_value": "'+ 2^-320'",
@@ -1031,7 +1033,7 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_status.py",
-   "verifier_sha256": "397507a1349acb7fde3cbf89e993b460259f9b5a2762bcac66d9fc7b41be67a6"
+   "verifier_sha256": "a64c18e45108b16e78e2dfbe7088c4a52af0cc6e148ef3c603153c9d28065ad8"
   },
   {
    "clean_control_flagged": false,
@@ -1049,7 +1051,7 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_status.py",
-   "verifier_sha256": "397507a1349acb7fde3cbf89e993b460259f9b5a2762bcac66d9fc7b41be67a6"
+   "verifier_sha256": "a64c18e45108b16e78e2dfbe7088c4a52af0cc6e148ef3c603153c9d28065ad8"
   },
   {
    "clean_control_flagged": false,
@@ -1104,7 +1106,7 @@
    "detector_kind": "PRODUCTION_GUARD",
    "id": "M34",
    "input_artifact": "config/C11R_POLICY.json",
-   "input_sha256": "1f42617d80220b332aef289779b04d88eca06b282933f749f3d66bf8ec4b30ac",
+   "input_sha256": "7abcbbcdfbc56708a2726e12f527f3911be0a43ac803016aa60503cb20a57598",
    "mutant_flagged": true,
    "mutated_path": "$.magnitudes",
    "mutated_value": "{'tau': 'planted'}",
@@ -1132,7 +1134,7 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_gate.py",
-   "verifier_sha256": "fe231828af027d810aff15e89c657e6b96ea08b5ed82e874f503d457f0c3524f"
+   "verifier_sha256": "59aad80f5e33165087df7f1441e8e01a49d424491636b90639114bf9c6ca1f09"
   },
   {
    "clean_control_flagged": false,
@@ -1146,7 +1148,7 @@
    "detector_kind": "PRODUCTION_GUARD",
    "id": "M36",
    "input_artifact": "evidence/chain/C11R_CHAIN_CONTROLS.json",
-   "input_sha256": "029d37cc9383d1cc3c583c232cb028e296be2a6e0cbc62d4f6a9c02ab41a199a",
+   "input_sha256": "9096a550022b8d91c2bd06306e32b05189fd811dabb096963c80798cbb2d22b1",
    "mutant_flagged": true,
    "mutated_path": "config/C11R_AUTHORIZATION.json",
    "mutated_value": "'<absent>'",
@@ -1156,7 +1158,7 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_runs.py",
-   "verifier_sha256": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400"
+   "verifier_sha256": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad"
   },
   {
    "clean_control_flagged": false,
@@ -1174,17 +1176,17 @@
    "detector_kind": "PRODUCTION_GUARD",
    "id": "M37",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "b3dd25637fc26be7d74895778517356f7e14c1f3fa7efd16f7767357a9fd5e24",
+   "input_sha256": "c6226603505eb5ab8e014a915ea75260cd05f1bef8ae87f267eb0437f60c6ba7",
    "mutant_flagged": true,
    "mutated_path": "$.targets.D1",
    "mutated_value": "'CERTIFIED via F_K'",
    "name": "D1 claimed from a supersolution certificate, which cannot bound it",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400",
+   "producer_sha256": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "7cdbc6eb466d11800f7d3eca8ddc3fae94df31d344b581b09d60cd84ecb07d16"
+   "verifier_sha256": "f484a108d4cbfda647480616d85ffbb1d14850811de8daa4d96f87437bf6027c"
   },
   {
    "clean_control_flagged": false,
@@ -1192,14 +1194,14 @@
    "detector_kind": "PRODUCTION_GUARD",
    "id": "M38",
    "input_artifact": "config/C11R_POLICY.json",
-   "input_sha256": "1f42617d80220b332aef289779b04d88eca06b282933f749f3d66bf8ec4b30ac",
+   "input_sha256": "7abcbbcdfbc56708a2726e12f527f3911be0a43ac803016aa60503cb20a57598",
    "mutant_flagged": true,
    "mutated_path": "$.targets.Abar.status",
    "mutated_value": "'NOT_IMPLEMENTED'",
    "name": "a constant the policy implements marked NOT_IMPLEMENTED (G8)",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400",
+   "producer_sha256": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_certificate.py",
    "verifier_sha256": "f99dcb12159972014d093589498db0b7a338cc130e3b887a347709a455fdd0f6"
@@ -1210,17 +1212,39 @@
    "detector_kind": "PRODUCTION_GUARD",
    "id": "M39",
    "input_artifact": "config/C11R_POLICY.json",
-   "input_sha256": "1f42617d80220b332aef289779b04d88eca06b282933f749f3d66bf8ec4b30ac",
+   "input_sha256": "7abcbbcdfbc56708a2726e12f527f3911be0a43ac803016aa60503cb20a57598",
    "mutant_flagged": true,
    "mutated_path": "$.certificates.*.inputs.panels",
    "mutated_value": "'2 x frozen panels'",
    "name": "certificates made at another configuration than the frozen one (G19)",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400",
+   "producer_sha256": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_certificate.py",
    "verifier_sha256": "f99dcb12159972014d093589498db0b7a338cc130e3b887a347709a455fdd0f6"
+  },
+  {
+   "clean_control_flagged": false,
+   "detail": {
+    "clean_verdict": "AGREEMENT_INSUFFICIENT",
+    "mutant_class": "INVALID",
+    "mutant_verdict": "EXECUTION_INVALID"
+   },
+   "detector_kind": "PRODUCTION_GUARD",
+   "id": "M40",
+   "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
+   "input_sha256": "c6226603505eb5ab8e014a915ea75260cd05f1bef8ae87f267eb0437f60c6ba7",
+   "mutant_flagged": true,
+   "mutated_path": "$.targets.Abar.status",
+   "mutated_value": "'NOT_CERTIFIED'",
+   "name": "a target DEMOTED to NOT_CERTIFIED although its certificate proves it (N4-8)",
+   "outcome": "DETECTED",
+   "producer": "c11r_runs.py",
+   "producer_sha256": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
+   "unrelated_mutation_flagged": false,
+   "verifier": "c11r_compare.py",
+   "verifier_sha256": "f484a108d4cbfda647480616d85ffbb1d14850811de8daa4d96f87437bf6027c"
   }
  ],
  "not_detected": [],
@@ -1230,43 +1254,43 @@
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_common.py": "c55e97b9e2dc626992d3fa25ef23833fcccee88e787a916aa02dc23c2f0ab1b2",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_certificate.py": "f99dcb12159972014d093589498db0b7a338cc130e3b887a347709a455fdd0f6",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "5507e1fc6e4b8f50981cc791eb8c32761598f29236f572d28b6986d7a022cee9",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_compare.py": "7cdbc6eb466d11800f7d3eca8ddc3fae94df31d344b581b09d60cd84ecb07d16",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_contract.py": "1a951ab23add2370949251f226c4da89ee343cffbe93ff3f9b58ae834af5ec19",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_cost.py": "e2961a1a9150bda3eb60047dda542b91013ab885e69a71bbd48a4a35e80fc922",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "8895e64c21059671373383e3e0e231ab82a3a184318f890f5a8ed6e529d4d93a",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_compare.py": "f484a108d4cbfda647480616d85ffbb1d14850811de8daa4d96f87437bf6027c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_contract.py": "e5bb1801d4d530a5883d67658b94af639a6eed0e76e515bbe41e85b224461f13",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_cost.py": "6a3ca12192b28f9d3a247dfe411f04c1377bb033410c2cead9c412b6f25d151a",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_equiv.py": "6d2941b8fc0c56be135da1a82ead2109ef808842a5f82c7bde4b6dafd3d6f929",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_firewall.py": "283468aa2309325cd568b2bdc4b742cc1022fb57f1cf8b841050249b075c4c54",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_gate.py": "fe231828af027d810aff15e89c657e6b96ea08b5ed82e874f503d457f0c3524f",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_firewall.py": "d2e0ccb17de4a6370046f41dc5c01061bc9fbfa7378e4d5bbd778578cf55ef0c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_gate.py": "59aad80f5e33165087df7f1441e8e01a49d424491636b90639114bf9c6ca1f09",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_mutations.py": "5c18979a33d3b885a364f332a1bcf9725fecfe0f682764c9b111ad67c55c36cb",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py": "208b22bfb440ead6065f405b2aa746f869d81cb63a6d17ea73b44cec0060dedb",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "bdd2717082640c99a5cce3a0d9adb7999724f2d1d3291f3745475d3eb8ccfe97",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_qualify.py": "2a963affac7c6c6f419d7298bcfe05cd194fa433068b3858dd1c6d7d0f3e2e55",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_runs.py": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_mutations.py": "32914b8fbcdeb695abc88414e833e1aedaf5352269699e3e24c047dd5ed13544",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py": "c484c2ca58a759b3db9cbab8694cae76a5729b213258a4daa6755edf3eb3a045",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "5f67a1360dd78686b2f3a683b21daed15f2a0b22889c5cdfe5075def4d9f1d64",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_qualify.py": "0be06547d2393e9e6ecc52158b33003d3de1926db7ad61e488839c7aa6b4ac7a",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_runs.py": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "bc3302632f36fc8afdb18a9154cc0fb65938b17f37db284872c0895115f29114",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_status.py": "397507a1349acb7fde3cbf89e993b460259f9b5a2762bcac66d9fc7b41be67a6",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_status.py": "a64c18e45108b16e78e2dfbe7088c4a52af0cc6e148ef3c603153c9d28065ad8",
    "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
   },
   "inputs": {
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_POLICY.json": "1f42617d80220b332aef289779b04d88eca06b282933f749f3d66bf8ec4b30ac",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/N9R_GATE_C11R.json": "264fe7989ab18c3514760f9c9eaf076bd95a4d842fe60916f528f66d469ffe8c",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/chain/C11R_CHAIN_CONTROLS.json": "029d37cc9383d1cc3c583c232cb028e296be2a6e0cbc62d4f6a9c02ab41a199a",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/firewall/C11R_FIREWALL.json": "e0a7103f3b3d5ee82338950647f23e7760a3a0217a20348a35614c2521882a5d",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "b3dd25637fc26be7d74895778517356f7e14c1f3fa7efd16f7767357a9fd5e24",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/validation/C11R_VALIDATION.json": "088b59c44b49fed746b4136a6c0751d23e660b2c1ceca0c436aca13704326524"
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_POLICY.json": "7abcbbcdfbc56708a2726e12f527f3911be0a43ac803016aa60503cb20a57598",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/N9R_GATE_C11R.json": "0e412d0c90f88d70af79ca45853e4dd29010c1b989fe448b3dad2903eb362a78",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/chain/C11R_CHAIN_CONTROLS.json": "9096a550022b8d91c2bd06306e32b05189fd811dabb096963c80798cbb2d22b1",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/firewall/C11R_FIREWALL.json": "d3ce9d65ec78b74fbf862c7d4a8418ef969006bdbde54eee9f978297af5b519f",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "c6226603505eb5ab8e014a915ea75260cd05f1bef8ae87f267eb0437f60c6ba7",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/validation/C11R_VALIDATION.json": "91d259eba458a25b220c5de4f58939336aa5c635d4f62bff7fa056db7360d1ef"
   },
   "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_mutations.py",
-  "producer_sha256": "5c18979a33d3b885a364f332a1bcf9725fecfe0f682764c9b111ad67c55c36cb"
+  "producer_sha256": "32914b8fbcdeb695abc88414e833e1aedaf5352269699e3e24c047dd5ed13544"
  },
  "rules": [
-  "every detector is a production function; this module defines no guard",
+  "each row calls the detector named in its verifier; detector_kind states how that detector is enforced",
   "run artifacts built by c11r_runs.assemble from c11r_certificate certificates",
   "each mutant: mutant flagged AND clean accepted AND unrelated not flagged",
   "numerical mutants on the NON-TARGET block only",
   "UNDETERMINED is never a pass"
  ],
- "schema": "C11R_MUTATIONS/4",
- "sha256": "cef7a2e98f2629d3a04b8f3a52567fec6e6ca5e8b5b79420aad1badf6edb81ef",
+ "schema": "C11R_MUTATIONS/5",
+ "sha256": "4b5087ac3da7500239b2effcb05c874df5e49a7f9915292e1a530b0216bdda62",
  "statement_vs_number_separation": {
   "numeric_clean": "AGREES",
   "numeric_far": "INSUFFICIENT",
@@ -1274,6 +1298,6 @@
   "statement_status_clean": "EQUIVALENT",
   "statement_status_far": "EQUIVALENT"
  },
- "supersedes": "C11R_MUTATIONS/2 at affdf8a3, whose value-trace, screen-order and disposition detectors were test-only copies (erratum E17)); C11R_MUTATIONS/3 at eaca931e, which overstated that it defined no guard (erratum E30)",
- "what_demonstrates_production_enforcement": "only rows with detector_kind PRODUCTION_GUARD or PRODUCTION_SCIENCE"
+ "supersedes": "C11R_MUTATIONS/2 at affdf8a3, whose value-trace, screen-order and disposition detectors were test-only copies (erratum E17); C11R_MUTATIONS/3 at eaca931e, which overstated its detectors (erratum E30); C11R_MUTATIONS/4 at bd00c1f6, which mislabelled M01-M03 and kept the retracted rule text (erratum E37)",
+ "what_demonstrates_production_enforcement": "rows with detector_kind PRODUCTION_GUARD or PRODUCTION_SCIENCE (enforced on the execution path); PHASE12_QUALIFICATION_GATE rows are enforced before execution through qualification item Q5, which the typed schema requires; DEFENSE_IN_DEPTH_HEURISTIC and SUITE_LOCAL_* rows demonstrate no enforcement"
 }

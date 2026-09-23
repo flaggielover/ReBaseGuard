@@ -1,17 +1,19 @@
 {
  "DETECTOR_CLASS": "PASS",
- "campaign_relevance": "argv tokens only: a campaign script basename, -m campaign module, or a -c payload naming a campaign module",
+ "campaign_relevance": "argv (option clusters parsed): a campaign script basename, a -m campaign module, a -c payload naming the campaign, any argument naming the campaign namespace or a campaign module, or a script whose own source imports campaign code",
  "campaign_workers_at_write": [],
  "interpreter_identity": "executable basename matching ^python(\\d+(\\.\\d+)*)?w?$ case-insensitively, or an executable inside a Python.framework / Python.app bundle",
  "live_controls_on_this_host": {
   "ALL_PASS": true,
   "child_class": "CAMPAIGN_ADHOC",
   "child_executable": "/Library/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+  "dash_Bc_child_detected": true,
   "detector_itself_not_detected": true,
   "exited_child_not_detected": true,
   "framework_child_with_campaign_argv_detected": true,
   "interpreter_under_test": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
-  "shell_mentioning_a_script_not_detected": true
+  "shell_mentioning_a_script_not_detected": true,
+  "wrapper_script_importing_campaign_detected": true
  },
  "mechanism": "ps -axww (pid, ppid, comm) + (pid, args); no /proc on this platform",
  "not_checked": [
@@ -19,11 +21,84 @@
   "other hosts/containers",
   "campaign work run by a non-Python executable",
   "interpreters renamed outside the recognised forms",
-  "argv tokens containing spaces"
+  "argv tokens containing spaces",
+  "a program read from stdin, or an interactive interpreter",
+  "a wrapper whose campaign import is indirect (through another module, or code built at run time)",
+  "a script this user cannot read"
  ],
  "planted_controls": {
   "ALL_PASS": true,
   "cases": {
+   "PD10_shell_with_the_name_in_diagnostic_text": {
+    "expected": "NOT_AN_INTERPRETER",
+    "got": "NOT_AN_INTERPRETER",
+    "pass": true
+   },
+   "PD1_direct_script": {
+    "expected": "NON_TARGET_PRODUCER",
+    "got": "NON_TARGET_PRODUCER",
+    "pass": true
+   },
+   "PD2_framework_build_Python": {
+    "expected": "NON_TARGET_PRODUCER",
+    "got": "NON_TARGET_PRODUCER",
+    "pass": true
+   },
+   "PD3_wrapper_script_importing_campaign": {
+    "expected": "CAMPAIGN_WRAPPER",
+    "got": "CAMPAIGN_WRAPPER",
+    "pass": true
+   },
+   "PD3b_wrapper_given_the_code_directory": {
+    "expected": "CAMPAIGN_WRAPPER",
+    "got": "CAMPAIGN_WRAPPER",
+    "pass": true
+   },
+   "PD4_dash_c_import": {
+    "expected": "CAMPAIGN_ADHOC",
+    "got": "CAMPAIGN_ADHOC",
+    "pass": true
+   },
+   "PD5_dash_Bc_import": {
+    "expected": "CAMPAIGN_ADHOC",
+    "got": "CAMPAIGN_ADHOC",
+    "pass": true
+   },
+   "PD5b_dash_c_attached_payload": {
+    "expected": "CAMPAIGN_ADHOC",
+    "got": "CAMPAIGN_ADHOC",
+    "pass": true
+   },
+   "PD5c_dash_Bm_module": {
+    "expected": "TARGET",
+    "got": "TARGET",
+    "pass": true
+   },
+   "PD6_unrelated_Python": {
+    "expected": "FOREIGN_PYTHON",
+    "got": "FOREIGN_PYTHON",
+    "pass": true
+   },
+   "PD6b_unrelated_wrapper_script": {
+    "expected": "FOREIGN_PYTHON",
+    "got": "FOREIGN_PYTHON",
+    "pass": true
+   },
+   "PD7_current_process": {
+    "expected": "EXCLUDED_SELF_CHAIN",
+    "got": "EXCLUDED_SELF_CHAIN",
+    "pass": true
+   },
+   "PD8_parent_process": {
+    "expected": "EXCLUDED_SELF_CHAIN",
+    "got": "EXCLUDED_SELF_CHAIN",
+    "pass": true
+   },
+   "PD9_vanished_pid": {
+    "expected": "VANISHED",
+    "got": "VANISHED",
+    "pass": true
+   },
    "Python_capital": {
     "expected": "NON_TARGET_PRODUCER",
     "got": "NON_TARGET_PRODUCER",
@@ -74,6 +149,11 @@
     "got": "VANISHED",
     "pass": true
    },
+   "stdin_program_undetectable_by_design": {
+    "expected": "FOREIGN_PYTHON",
+    "got": "FOREIGN_PYTHON",
+    "pass": true
+   },
    "target_worker_argv": {
     "expected": "TARGET",
     "got": "TARGET",
@@ -93,20 +173,21 @@
  },
  "provenance": {
   "code_closure": {
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "5507e1fc6e4b8f50981cc791eb8c32761598f29236f572d28b6986d7a022cee9",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "bdd2717082640c99a5cce3a0d9adb7999724f2d1d3291f3745475d3eb8ccfe97"
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "8895e64c21059671373383e3e0e231ab82a3a184318f890f5a8ed6e529d4d93a",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "5f67a1360dd78686b2f3a683b21daed15f2a0b22889c5cdfe5075def4d9f1d64"
   },
   "inputs": {},
   "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py",
-  "producer_sha256": "bdd2717082640c99a5cce3a0d9adb7999724f2d1d3291f3745475d3eb8ccfe97"
+  "producer_sha256": "5f67a1360dd78686b2f3a683b21daed15f2a0b22889c5cdfe5075def4d9f1d64"
  },
- "schema": "C11R_PROCESS_DETECTOR/2",
+ "schema": "C11R_PROCESS_DETECTOR/3",
  "self_exclusion": "this process and its whole ppid ancestor chain",
- "sha256": "4850c775b267e393c7b0b10b9a197525d72bd1dd3dcf9ebcd5479341bd2a2ff4",
+ "sha256": "f363787f7742a731a222673f8f737cbb144f77fdfcce98b2b21c82f719eff92f",
  "snapshot_at_write": {
   "foreign_python": 5,
   "interpreters_seen": 7,
-  "processes_seen": 431
+  "processes_seen": 479
  },
- "supersedes": "common.classified_processes (revision 1), blind to framework Python"
+ "supersedes": "revision 2 (bd00c1f6), blind to wrapper scripts and to -Bc / -cpayload (review round 4, N4-6); revision 1 (common.classified_processes), blind to framework Python",
+ "what_it_gates": "concurrency only (cost measurement, runner pre-flight, B0, regeneration); it cannot prove no competing computation ran"
 }

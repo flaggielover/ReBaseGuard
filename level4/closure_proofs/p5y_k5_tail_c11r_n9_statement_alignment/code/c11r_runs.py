@@ -32,7 +32,12 @@ WHAT main() DOES, exactly as config/C11R_POLICY.json freezes it:
   4  each selected member is screened pointwise (G10), and only a member that passes is certified:
      F_K and F_H by the REVIEWED supersolution_margin_iv, F_D by subsolution_margin_iv;
   5  targets assembled from the reconstructions, guards evaluated, artifact written; then STOP.
-     No escalation, no retry. The resource cap is enforced before every certification.
+     No escalation, no retry. The resource cap is checked before every stage and every
+     certification; a certification already running is NOT interrupted, so the wall clock can
+     exceed the cap by the duration of that one certification (review 4, N4-9). "No retry" is
+     enforced against COMMITTED runs (c11r_contract.protocol_history refuses a second one anywhere
+     in reachable history); a run never committed is invisible to git and is excluded by the
+     protocol and the pre-flight's process detector, not proved absent.
 """
 from __future__ import annotations
 

@@ -1,16 +1,23 @@
-"""C11R round 4 -- THE FROZEN EXECUTION CONTRACT and the end-to-end identity chain (R3-1).
+"""C11R rounds 4-5 -- THE FROZEN EXECUTION CONTRACT and the end-to-end identity chain (R3-1, R4-1).
 
-WHAT WAS WRONG (review round 3, blocker R3-1; erratum E25). Execution, seal and comparison were
-linked only by the hash of c11r_runs.py and by the SELF-DECLARED `sha256` fields of the policy and
-the statement table. The comparator took its "expected" certifier and producer hashes from the
-seal commit's own tree, so a certifier edited, committed, used and reverted before the seal was
-accepted; a policy edited in place with its sha256 field left alone passed authorization.
+ROUND 5 (review round 4; errata E32-E36, E38). Blocker R4-1: the "untouched by every later commit"
+check used `git log A..HEAD -- <paths>`, whose default history simplification hides a side branch
+that edited, used and reverted a frozen file and was then merged. Now history is COMPLETE:
+`frozen_state` enumerates every commit reachable after A with `git rev-list` (no pathspec, so no
+simplification) and requires each to hold every frozen path in exactly A's state (HISTORY PURITY),
+separately from TREE IDENTITY (the bytes now); `protocol_history` does the same for the runs,
+comparison, authorization and qualification artifacts, and fixes their order (N4-10). Also: the
+frozen path set now includes every pre-result artifact and the quarantine and is bound in the
+contract; the qualification has a TYPED Q1-Q18 schema whose disposition is recomputed (N4-4);
+`verify_loaded_modules` and `code_dir_shadows` check what a process actually imported (N4-3);
+the gate is cross-checked against the contract's policy and statement table, and the run's code
+closure must equal the runner's (N4-1).
 
 THE ROOT OF TRUST. config/C11R_CONTRACT.json, as committed at the REVIEWED commit A. A commit
 cannot contain its own hash, so A is not written into the contract: the Phase 13 authorization
 names A, the runner and the comparator are given A, and every boundary checks that the contract
-(and every other frozen path) in the tree is byte-identical to its version at A and that no commit
-after A touched any of them.
+(and every other frozen path) in the tree is byte-identical to its version at A and that EVERY
+commit reachable after A holds each of them in exactly that state.
 
 WHAT THE CONTRACT BINDS, by CONTENT (sha256 of the bytes and the git blob id), never by name:
   * code: the transitive import closure of every load-bearing module (gate, policy, statement
@@ -40,20 +47,26 @@ Every function takes the repository root `repo`, so the controls can run the rea
 a synthetic git repository; production passes the real one. This module reads only allowlisted
 artifacts and Python source; it never reads the runs artifact (the comparator passes it in).
 
-WHAT THE CHAIN DOES NOT COVER, stated exactly. (1) The runner's pre-flight hashes the files ON
-DISK after the process has imported them: a deliberately malicious operator who swaps a module
-between import and pre-flight, and restores it, is not detected by the pre-flight (the process
-detector and the clean-tree and range checks bound, but do not close, that window). (2) A runs
-artifact hand-written without running the frozen runner at all is detectable only by
-re-executing the certifiers (see c11r_certificate). (3) The root of trust is the reviewed commit
-as named by the user's Phase 13 authorization and supplied to the comparator; a wrong commit
-supplied by the operator is refused only if its contract differs from the one the authorization
-and the frozen paths carry.
+WHAT THE CHAIN DOES NOT COVER, stated exactly. (1) History is what is REACHABLE from HEAD (and,
+for the pre-result check, from any ref or reflog): a run made and discarded in a commit reachable
+from nothing, on an unmerged branch, or never committed at all is invisible to git; the protocol,
+the runner's pre-flight and the process detector bound that, they do not prove its absence.
+(2) The loaded-module check establishes what the import system loaded, from which file, when it
+runs; a module swapped on disk and restored between import and check, code run through exec or
+under another module name, and in-memory patching of a module or of this verifier are NOT
+detected -- arbitrary malicious runtime modification is out of scope. (3) A runs artifact
+hand-written without running the frozen runner at all is detectable only by re-executing the
+certifiers (see c11r_certificate). (4) The root of trust is the reviewed commit as named by the
+user's Phase 13 authorization and supplied to the comparator; a wrong commit supplied by the
+operator is refused only if its contract differs from the one the authorization and the frozen
+paths carry.
 """
 from __future__ import annotations
 
 import json
+import os
 import pathlib
+import subprocess
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
@@ -61,8 +74,8 @@ import c11r_common as C
 import c11r_procs as PR
 import c11r_schema as S
 
-CONTRACT_SCHEMA = "C11R_CONTRACT/1"
-QUAL_SCHEMA = "C11R_QUALIFICATION/4"
+CONTRACT_SCHEMA = "C11R_CONTRACT/2"
+QUAL_SCHEMA = "C11R_QUALIFICATION/5"
 AUTH_SCHEMA = "C11R_AUTHORIZATION/4"
 CONTRACT_REL = "config/C11R_CONTRACT.json"
 GATE_REL = "config/N9R_GATE_C11R.json"
@@ -93,6 +106,36 @@ REQUIRED_PREDICATES = {
     "G20": "c11r_contract.py:verify_run_identity",
 }
 HOST_KEYS = ("node", "machine", "cpu_brand", "ncpu", "python", "implementation")
+# THE QUALIFICATION SCHEMA (review round 4, N4-4): exactly these items, each exactly once, each
+# PASS or FAIL, each bound to the same contract, approved commit and qualifier. An item not in
+# this table REFUSES the qualification (the frozen rule for unknown items). The overall
+# disposition is RECOMPUTED from the items; a stored class is never trusted.
+QUAL_ITEMS = {
+    "Q1": "the execution contract and the gate verify from bytes",
+    "Q2": "every frozen path equals the approved commit in the tree and in all reachable history",
+    "Q3": "the frozen policy re-derives its configuration from the committed evidence",
+    "Q4": "the certifiers and every loaded load-bearing module are the contract's",
+    "Q5": "no forbidden import graph and no forbidden backend in the code closure",
+    "Q6": "the original certifier's backend is absent from this environment",
+    "Q7": "VALIDATION_CLASS = PASS",
+    "Q8": "MUTATION_CLASS = PASS",
+    "Q9": "FIREWALL_CLASS = PASS (a defence-in-depth heuristic)",
+    "Q10": "LEAK_CLASS = PASS",
+    "Q11": "the status verifier, RUN now, reports CONSISTENT",
+    "Q12": "the equivalence comparator's self-test passes",
+    "Q13": "scalar collapse re-exercised at the NON-TARGET scalar 5/2",
+    "Q14": "K_e = Khat_e + atom re-exercised on NT",
+    "Q15": "the chain controls pass",
+    "Q16": "this host is the host the cost model was measured on",
+    "Q17": "guard prerequisites: gate DENY, no authorization, no runs, no campaign worker",
+    "Q18": "disk space for the run",
+}
+QUAL_ITEM_STATUSES = ("PASS", "FAIL")
+QUAL_UNKNOWN_ITEM_RULE = "REFUSE"
+# The protocol artifacts whose appearance in ANY reachable commit is governed (review 4, R4-1).
+PROTOCOL_PATHS = {"runs": "evidence/runs/C11R_RUNS.json",
+                  "comparison": "evidence/comparison/C11R_COMPARISON.json",
+                  "authorization": AUTH_REL, "qualification": QUAL_REL}
 
 
 # ---------------------------------------------------------------------------------------------
@@ -172,6 +215,12 @@ def ns_path(rel: str) -> str:
 # ---------------------------------------------------------------------------------------------
 def contract_body(repo=None) -> dict:
     """Everything the contract binds, recomputed from the bytes in `repo`."""
+    body = _contract_body(repo)
+    body["frozen_paths"] = frozen_paths(body)
+    return body
+
+
+def _contract_body(repo=None) -> dict:
     paths = closure_paths()
     code = {rel: code_identity(repo, rel) for rel in paths}
     arts = {name: artifact_identity(repo, rel) for name, rel in BOUND_ARTIFACTS.items()}
@@ -209,22 +258,28 @@ def contract_body(repo=None) -> dict:
         "comparison_rule": {"factor": rule.get("factor"), "rule_sha256": C.sha256_obj(rule)},
         "cost_host": {k: cost["host"].get(k) for k in HOST_KEYS},
         "required_predicates": dict(REQUIRED_PREDICATES),
+        "qualification_items": dict(QUAL_ITEMS),
+        "qualification_unknown_item_rule": QUAL_UNKNOWN_ITEM_RULE,
+        "protocol_paths": {k: ns_path(v) for k, v in sorted(PROTOCOL_PATHS.items())},
         "contains_target_results": False,
     }
 
 
 COMPARED_KEYS = ("schema", "scope", "roles", "code", "artifacts", "scientific_inputs", "schemas",
                  "configuration", "comparison_rule", "cost_host", "required_predicates",
-                 "contains_target_results")
+                 "qualification_items", "qualification_unknown_item_rule", "protocol_paths",
+                 "frozen_paths", "contains_target_results")
 
 
 def frozen_paths(contract: dict) -> list[str]:
     """Every path whose bytes the reviewed commit fixes: the code closure, the bound artifacts and
-    the namespace artifacts they declare as inputs, the contract itself and the gate."""
+    the namespace artifacts they declare as inputs, EVERY pre-result artifact (the qualifier reads
+    them: review 4, N4-4), the quarantine (by object id only), the contract itself and the gate."""
     declared = {inp for a in contract["artifacts"].values()
                 for inp in a.get("declared_inputs", {}) if inp.startswith(C.NS_REL + "/")}
     return sorted(set(contract["code"]) | {ns_path(a["path"]) for a in contract["artifacts"].values()}
-                  | declared | {ns_path(CONTRACT_REL), ns_path(GATE_REL)})
+                  | declared | {ns_path(r) for r in C.PRE_RESULT_ARTIFACTS}
+                  | {ns_path(C.QUARANTINE_REL), ns_path(CONTRACT_REL), ns_path(GATE_REL)})
 
 
 def verify_artifact_record(repo, name: str, rec: dict, code: dict) -> list[str]:
@@ -282,29 +337,206 @@ def verify_contract(repo=None) -> dict:
             "file_sha256": C.sha256_bytes(raw)}
 
 
-def verify_frozen_at(repo, approved_commit: str, contract: dict) -> list[str]:
-    """Every frozen path is byte-identical to its version at the approved commit, HEAD descends
-    from it, no later commit touched a frozen path, and none has uncommitted changes."""
-    p = []
+# ---------------------------------------------------------------------------------------------
+# COMPLETE reachable history (review round 4, blocker R4-1)
+# ---------------------------------------------------------------------------------------------
+# WHAT WAS WRONG. `git log A..HEAD -- <paths>` applies git's default history simplification: a
+# merge whose tree equals one parent's (TREESAME) is followed down that parent only, so a side
+# branch that edited a frozen file, used it and reverted it -- then merged with --no-ff -- was
+# never listed. The seal check (`git log -- <runs path>`) had the same hole.
+# THE METHOD NOW. No path-limited traversal anywhere. `git rev-list` WITHOUT a pathspec lists
+# every commit reachable from HEAD and not from A -- side branches, merge commits and every
+# parent of an octopus merge included; nothing is simplified. For EVERY such commit, the object
+# id of EVERY frozen path is read with one `git cat-file --batch-check` (ids only, no content)
+# and compared with A's. This is a STATE check, stronger than a per-parent-edge diff: it refuses
+# any commit that ever held a frozen path in another state, whichever edge introduced it, and it
+# needs no rename or TREESAME rule. Commits NOT reachable from HEAD (reset-away commits, unmerged
+# branches, stashes, reflog-only objects) are outside history and are not examined; that is a
+# stated limit, not a claim.
+def _batch_ids(repo, pairs: list[tuple[str, str]]) -> dict[tuple[str, str], str | None]:
+    """Object id of `commit:path` for many pairs in ONE git process; None when absent."""
+    if not pairs:
+        return {}
+    r = subprocess.run(["git", "-C", str(_root(repo)), "cat-file",
+                        "--batch-check=%(objectname) %(objecttype)"],
+                       input="".join(f"{c}:{path}\n" for c, path in pairs),
+                       capture_output=True, text=True, check=True)
+    lines = r.stdout.splitlines()
+    if len(lines) != len(pairs):
+        raise RuntimeError("git cat-file answered a different number of queries than it was asked")
+    out = {}
+    for pair, ln in zip(pairs, lines):
+        parts = ln.split()
+        if len(parts) == 2 and parts[1] in ("blob", "tree", "commit"):
+            out[pair] = "gitobj:" + parts[0] + ("" if parts[1] == "blob" else f":{parts[1]}")
+        else:
+            out[pair] = None                     # "<query> missing": the path is absent there
+    return out
+
+
+def reachable_since(repo, approved_commit: str) -> list[str]:
+    """EVERY commit reachable from HEAD and not from the approved commit (no pathspec, so no
+    history simplification)."""
+    return [x for x in C.git_in(_root(repo), "rev-list", f"{approved_commit}..HEAD").split() if x]
+
+
+def parent_map(repo, approved_commit: str) -> dict[str, list[str]]:
+    """commit -> parents, for every commit reachable after the approved one (one git call)."""
+    out = {}
+    for ln in C.git_in(_root(repo), "rev-list", "--parents", f"{approved_commit}..HEAD").splitlines():
+        ids = ln.split()
+        if ids:
+            out[ids[0]] = ids[1:]
+    return out
+
+
+def contract_at(repo, commit: str) -> dict | None:
+    """The execution contract AS COMMITTED at `commit` -- the root of trust when `commit` is the
+    approved commit. None when that commit carries no contract."""
+    rel = ns_path(CONTRACT_REL)
+    if C.git_object_at(commit, rel, repo=_root(repo)) is None:
+        return None
+    return json.loads(C.blob_at_in(_root(repo), commit, rel))
+
+
+def frozen_state(repo, approved_commit: str) -> dict:
+    """Three SEPARATE properties, each required (review 4, R4-1):
+      ANCESTRY        -- HEAD descends from the approved commit;
+      TREE IDENTITY   -- the bytes NOW equal the approved bytes (every frozen path, and no
+                         uncommitted change to any of them);
+      HISTORY PURITY  -- EVERY commit reachable after the approved commit holds every frozen
+                         path in exactly the approved state; an edit that was used and reverted
+                         -- on any branch, merged in any way -- is refused although the tree is
+                         identical again."""
     root = _root(repo)
-    if not approved_commit or not C.git_ok_in(root, "cat-file", "-e", f"{approved_commit}^{{commit}}"):
-        return [f"approved commit {approved_commit!r} does not exist in this repository"]
+    out = {"ancestry": [], "tree_identity": [], "history_purity": [], "commits_checked": 0,
+           "paths_checked": 0, "method": "rev-list A..HEAD (no pathspec) + cat-file state check"}
+    if not approved_commit or not C.git_ok_in(root, "cat-file", "-e",
+                                               f"{approved_commit}^{{commit}}"):
+        out["ancestry"].append(f"approved commit {approved_commit!r} does not exist in this "
+                               f"repository")
+        return out
     if not C.git_ok_in(root, "merge-base", "--is-ancestor", approved_commit, "HEAD"):
-        p.append("HEAD does not descend from the approved commit")
+        out["ancestry"].append("HEAD does not descend from the approved commit")
+    contract = contract_at(repo, approved_commit)       # the frozen path set is A's, not the tree's
+    if contract is None:
+        out["ancestry"].append("the approved commit carries no execution contract")
+        return out
     paths = frozen_paths(contract)
+    out["paths_checked"] = len(paths)
+    approved = {rel: v for (_, rel), v in
+                _batch_ids(repo, [(approved_commit, rel) for rel in paths]).items()}
     for rel in paths:
-        at = C.git_object_at(approved_commit, rel, repo=root)
-        now = C.content_free_id(root / rel)
-        if at != now:
-            p.append(f"frozen path {pathlib.PurePosixPath(rel).name} differs from the approved commit")
-    touched = C.git_in(root, "log", "--format=%H", f"{approved_commit}..HEAD", "--", *paths)
-    if touched:
-        p.append(f"{len(touched.split())} commit(s) after the approved commit touched a frozen path "
-                 f"(edited-then-reverted changes included)")
-    dirty = C.git_in(root, "status", "--porcelain", "--", *paths)
-    if dirty:
-        p.append("a frozen path has uncommitted changes")
-    return p
+        if approved.get(rel) != C.content_free_id(root / rel):
+            out["tree_identity"].append(f"tree identity: frozen path "
+                                        f"{pathlib.PurePosixPath(rel).name} differs from the "
+                                        f"approved commit")
+    if C.git_in(root, "status", "--porcelain", "--untracked-files=all", "--", *paths):
+        out["tree_identity"].append("tree identity: a frozen path has uncommitted changes")
+    commits = reachable_since(repo, approved_commit)
+    out["commits_checked"] = len(commits)
+    ids = _batch_ids(repo, [(c, rel) for c in commits for rel in paths])
+    for c in commits:
+        bad = sorted({pathlib.PurePosixPath(rel).name for rel in paths
+                      if ids[(c, rel)] != approved.get(rel)})
+        if bad:
+            out["history_purity"].append(f"history purity: commit {c[:12]} touched a frozen path: "
+                                         f"it holds {bad} in a state other than the approved "
+                                         f"commit's")
+    return out
+
+
+def protocol_artifacts_anywhere(repo=None) -> dict:
+    """Every commit reachable from ANY ref, from HEAD or from any reflog entry that holds a
+    protocol artifact (runs, comparison, authorization, qualification) -- the PRE-RESULT state
+    check. Enumerated with `rev-list --all --reflog` (no pathspec, so no simplification) and one
+    cat-file batch; replaces `git log --all -- <glob>`, which simplified merges (review 4, R4-1).
+    Dangling objects referenced by nothing are outside every history and are not examined."""
+    names = {k: ns_path(v) for k, v in PROTOCOL_PATHS.items()}
+    commits = sorted(set(C.git_in(_root(repo), "rev-list", "--all", "--reflog", "HEAD").split()))
+    ids = _batch_ids(repo, [(c, rel) for c in commits for rel in names.values()])
+    return {"commits_checked": len(commits),
+            "holders": {k: sorted(c for c in commits if ids[(c, rel)] is not None)
+                        for k, rel in sorted(names.items())}}
+
+
+def verify_frozen_at(repo, approved_commit: str) -> list[str]:
+    st = frozen_state(repo, approved_commit)
+    return st["ancestry"] + st["tree_identity"] + st["history_purity"]
+
+
+def protocol_history(repo, approved_commit: str, stage: str) -> dict:
+    """The protocol artifacts across COMPLETE reachable history (review 4, R4-1 and N4-10).
+      at A and before: no protocol artifact exists at the approved commit;
+      comparison     : in NO commit after A, at any stage (a prior comparison saw the values);
+      runs           : stage authorize/run -- in no commit (a prior, discarded execution);
+                       stage compare -- every commit holds either nothing or exactly the sealed
+                       content, introduced by exactly ONE commit: the seal;
+      authorization  : stage authorize -- in no commit (a prior one); later -- only the current
+                       content, introduced once, and committed (present at HEAD);
+      qualification  : at every stage only the current content, introduced once, committed at
+                       HEAD (a discarded qualification attempt is refused).
+    ORDER (stage compare): qualification introducer <= authorization introducer < seal, by
+    ancestry. An "introducer" is a commit holding the current content none of whose parents
+    holds it."""
+    root = _root(repo)
+    names = {k: ns_path(v) for k, v in PROTOCOL_PATHS.items()}
+    kinds = sorted(names)
+    parents = parent_map(repo, approved_commit)
+    commits = list(parents)
+    extra = sorted({q for ps in parents.values() for q in ps} - set(commits))
+    ids = _batch_ids(repo, [(c, names[k]) for c in commits + extra + [approved_commit, "HEAD"]
+                            for k in kinds])
+    current = {k: C.content_free_id(root / names[k]) for k in kinds}
+    p, intro, foreign = [], {}, {k: [] for k in kinds}
+    for k in kinds:
+        if ids[(approved_commit, names[k])] is not None:
+            p.append(f"protocol history: the approved commit already holds a {k} artifact")
+    for c in commits:
+        held = {k for k in kinds if ids[(c, names[k])] is not None}
+        if "comparison" in held:
+            p.append(f"protocol history: commit {c[:12]} holds a comparison artifact (a prior "
+                     f"comparison)")
+        if "runs" in held and stage in ("authorize", "run"):
+            p.append(f"protocol history: commit {c[:12]} holds a runs artifact (a prior "
+                     f"execution)")
+        if "authorization" in held and stage == "authorize":
+            p.append(f"protocol history: commit {c[:12]} holds an authorization (a prior one)")
+        for k in ("runs", "authorization", "qualification"):
+            if k in held and ids[(c, names[k])] != current[k]:
+                foreign[k].append(c)
+                p.append(f"protocol history: commit {c[:12]} holds a {k} artifact other than the "
+                         f"current one (a discarded or replaced {k})")
+    for k in ("runs", "authorization", "qualification"):
+        if current[k] is None:
+            intro[k] = []
+            continue
+        intro[k] = [c for c in commits if ids[(c, names[k])] == current[k]
+                    and not any(ids.get((q, names[k])) == current[k] for q in parents[c])]
+        if len(intro[k]) > 1:
+            p.append(f"protocol history: the {k} artifact was introduced by {len(intro[k])} "
+                     f"commits")
+    need = {"authorize": ("qualification",), "run": ("qualification", "authorization"),
+            "compare": ("qualification", "authorization", "runs")}[stage]
+    for k in need:
+        if current[k] is not None and ids[("HEAD", names[k])] != current[k]:
+            p.append(f"protocol history: the {k} artifact is not committed at HEAD")
+    if stage == "compare":
+        if len(intro["runs"]) != 1:
+            p.append("protocol history: the runs artifact has no single sealing commit")
+        else:
+            seal = intro["runs"][0]
+            for k in ("qualification", "authorization"):
+                if len(intro[k]) != 1 or intro[k][0] == seal or not C.git_ok_in(
+                        root, "merge-base", "--is-ancestor", intro[k][0], seal):
+                    p.append(f"protocol history: the {k} was not committed before the seal")
+            if len(intro["qualification"]) == 1 and len(intro["authorization"]) == 1 and \
+                    not C.git_ok_in(root, "merge-base", "--is-ancestor",
+                                    intro["qualification"][0], intro["authorization"][0]):
+                p.append("protocol history: the authorization was committed before the "
+                         "qualification it binds")
+    return {"problems": p, "introducers": intro, "foreign": foreign,
+            "commits_checked": len(commits)}
 
 
 def verify_gate(repo, contract_digest: str, contract: dict) -> dict:
@@ -319,6 +551,11 @@ def verify_gate(repo, contract_digest: str, contract: dict) -> dict:
         p.append("gate: bound to another execution contract")
     if gate.get("guard") != "DENY":
         p.append(f"gate: guard is {gate.get('guard')!r}, not DENY")
+    arts = contract["artifacts"]
+    if gate.get("statements_sha256") != arts["statements"].get("body_sha256") or \
+            gate.get("policy_sha256") != arts["policy"].get("body_sha256"):
+        p.append("gate: bound to another policy or statement table than the contract's (review 4, "
+                 "N4-1)")
     ev = gate.get("predicate_evaluators", {})
     for pid, fn in contract["required_predicates"].items():
         if ev.get(pid) != fn:
@@ -358,10 +595,67 @@ def chain_roots(repo=None) -> dict:
     return out
 
 
-def verify_qualification(repo, q: dict | None, roots: dict, *, allow_fixture=False) -> dict:
+def qualifier_sha(roots: dict) -> str | None:
+    code = (roots.get("contract") or {}).get("code", {})
+    qrel = next((r for r in code if r.endswith("/c11r_qualify.py")), None)
+    return code.get(qrel, {}).get("sha256") if qrel else None
+
+
+def item_binding(roots: dict, approved_commit: str | None) -> dict:
+    """What EVERY qualification item must carry: the same contract, approved commit, qualifier."""
+    return {"execution_contract_sha256": roots.get("contract_digest"),
+            "approved_commit": approved_commit, "qualifier_sha256": qualifier_sha(roots)}
+
+
+def qualification_disposition(items, binding: dict) -> dict:
+    """THE TYPED SCHEMA (review 4, N4-4), applied to the item list. The overall disposition is
+    DERIVED here, mechanically: PASS only when exactly the items Q1-Q18 are present, each once,
+    each with its canonical name, an allowed status and the same binding, and every status is
+    PASS. Nothing stored in the artifact (a class, a failed list) is consulted."""
+    p = []
+    if not isinstance(items, list):
+        return {"disposition": "FAIL", "problems": ["qualification: items is not a list"],
+                "failing": [], "missing": list(QUAL_ITEMS), "duplicates": [], "unknown": []}
+    ids = [i.get("id") if isinstance(i, dict) else None for i in items]
+    if None in ids:
+        p.append("qualification: an item is not a record with an id")
+    missing = [k for k in QUAL_ITEMS if k not in ids]
+    duplicates = sorted({x for x in ids if x is not None and ids.count(x) > 1}, key=str)
+    unknown = sorted({x for x in ids if x is not None and x not in QUAL_ITEMS}, key=str)
+    if missing:
+        p.append(f"qualification: required item(s) missing: {missing}")
+    if duplicates:
+        p.append(f"qualification: duplicate item(s): {duplicates}")
+    if unknown:
+        p.append(f"qualification: unknown item(s) {unknown} -- the frozen schema rule is "
+                 f"{QUAL_UNKNOWN_ITEM_RULE}")
+    failing = []
+    for i in items:
+        if not isinstance(i, dict) or i.get("id") not in QUAL_ITEMS:
+            continue
+        iid = i["id"]
+        if i.get("name") != QUAL_ITEMS[iid]:
+            p.append(f"qualification: item {iid} does not carry its canonical name")
+        if i.get("status") not in QUAL_ITEM_STATUSES:
+            p.append(f"qualification: item {iid} has status {i.get('status')!r}, not one of "
+                     f"{list(QUAL_ITEM_STATUSES)}")
+        b = i.get("bound") or {}
+        for key, want in binding.items():
+            if b.get(key) != want:
+                p.append(f"qualification: item {iid} is bound to another {key}")
+        if i.get("status") != "PASS":
+            failing.append(iid)
+    if failing:
+        p.append(f"qualification: failing item(s) {failing}")
+    return {"disposition": "PASS" if not p else "FAIL", "problems": p, "failing": failing,
+            "missing": missing, "duplicates": duplicates, "unknown": unknown}
+
+
+def verify_qualification(repo, q: dict | None, roots: dict, *, approved_commit: str | None = None,
+                         allow_fixture=False) -> dict:
     p = []
     if q is None:
-        return {"problems": ["no qualification artifact"], "digest": None}
+        return {"problems": ["no qualification artifact"], "digest": None, "disposition": None}
     digest = body_digest(q)
     if q.get("sha256") != digest:
         p.append("qualification: stored sha256 field does not equal the recomputed body digest")
@@ -371,24 +665,20 @@ def verify_qualification(repo, q: dict | None, roots: dict, *, allow_fixture=Fal
     for key, want in (("execution_contract_sha256", roots.get("contract_digest")),
                       ("gate_sha256", roots.get("gate_digest")),
                       ("policy_sha256", roots.get("policy_digest")),
-                      ("statements_sha256", roots.get("statements_digest"))):
+                      ("statements_sha256", roots.get("statements_digest")),
+                      ("approved_commit", approved_commit)):
         if b.get(key) != want:
             p.append(f"qualification: {key} belongs to another contract or tree")
-    code = (roots.get("contract") or {}).get("code", {})
-    qrel = next((r for r in code if r.endswith("/c11r_qualify.py")), None)
-    qsha = code.get(qrel, {}).get("sha256") if qrel else None
+    qsha = qualifier_sha(roots)
     if b.get("qualifier_sha256") != qsha:
         p.append("qualification: produced by another qualifier than the bound one")
     if q.get("provenance", {}).get("producer_sha256") != qsha:
         p.append("qualification: provenance producer is not the bound qualifier")
-    items = q.get("items", [])
-    failed = [i.get("id") for i in items if not i.get("pass")]
-    if not items:
-        p.append("qualification: no items")
-    if q.get("QUALIFICATION_CLASS") != "PASS":
-        p.append(f"qualification: class {q.get('QUALIFICATION_CLASS')!r}")
-    if failed or q.get("failed"):
-        p.append(f"qualification: PASS claimed with failing items {failed or q.get('failed')}")
+    d = qualification_disposition(q.get("items"), item_binding(roots, approved_commit))
+    p += d["problems"]
+    if q.get("QUALIFICATION_CLASS") != d["disposition"]:
+        p.append(f"qualification: stored class {q.get('QUALIFICATION_CLASS')!r} is not the "
+                 f"recomputed disposition {d['disposition']!r}")
     env = q.get("environment", {}).get("host", {})
     if env != (roots.get("contract") or {}).get("cost_host"):
         p.append("qualification: environment is not the host the cost model was measured on")
@@ -396,7 +686,133 @@ def verify_qualification(repo, q: dict | None, roots: dict, *, allow_fixture=Fal
         p.append("qualification: environment is not this host")
     if q.get("fixture") and not allow_fixture:
         p.append("qualification: a synthetic fixture is not a qualification")
-    return {"problems": p, "digest": digest}
+    return {"problems": p, "digest": digest, "disposition": d["disposition"]}
+
+
+# ---------------------------------------------------------------------------------------------
+# WHAT WAS ACTUALLY LOADED (review round 4, N4-3)
+# ---------------------------------------------------------------------------------------------
+# The contract binds source files by path and content; a process can nevertheless import a
+# DIFFERENT file under the same module name (a stray copy earlier on sys.path, a symlink, a copy
+# in another checkout, a zip or hook loader). At the runner's pre-flight, in the qualifier (Q4)
+# and in the comparator (before the magnitude loader) every LOADED module whose file name is a
+# contract module's is checked:
+#   * its __file__ resolves (realpath) to exactly <execution root>/<contract path>, and that
+#     expected path itself contains no symlink below the root;
+#   * it was loaded by the standard SourceFileLoader (no zip importer, no custom hook loader);
+#   * the bytes of that file hash to the contract's sha256;
+#   * if a cached bytecode file exists that CPython's loader would ACCEPT for it (a timestamp
+#     header matching the source's mtime and size -- trusted on those alone -- or an unchecked
+#     hash-based header), the code object it holds EQUALS the compilation of the verified source;
+#     a stale cache the loader ignores (it recompiles from source) is not a finding;
+#   * no two loaded modules share a contract file name (a duplicate from another directory);
+#   * PYTHONPATH is unset and assertions are not stripped (-O).
+# SCOPE, exactly: this establishes what the import system loaded, from which file, at the moment
+# of the check. It does not detect a module swapped on disk and restored between import and
+# check, code executed through exec/eval or a renamed module, or in-memory patching of a loaded
+# module or of this verifier: arbitrary malicious runtime modification is NOT covered.
+def _pyc_matches_source(cached: str | None, source: bytes, filename: str) -> bool | None:
+    """The cached bytecode CPython's source loader WOULD ACCEPT for this source, compared with the
+    compilation of the verified source. None when there is no such cache: no file, another magic
+    number, a timestamp header whose mtime or size does not match the source file (the loader
+    then recompiles from source and ignores the cache), or a checked hash-based header whose
+    source hash does not match. An UNCHECKED hash-based cache, or a timestamp cache whose header
+    matches, is what the loader executes, so its code object must equal the source's."""
+    import importlib.util as U
+    import marshal
+    if not cached or not os.path.exists(cached):
+        return None
+    try:
+        data = pathlib.Path(cached).read_bytes()
+        if len(data) < 16 or data[:4] != U.MAGIC_NUMBER:
+            return None
+        flags = int.from_bytes(data[4:8], "little")
+        if flags & 0b1:                                   # hash-based
+            if flags & 0b10 and data[8:16] != U.source_hash(source):
+                return None                               # checked, stale: recompiled
+        else:                                             # timestamp-based
+            st = os.stat(filename)
+            if (int.from_bytes(data[8:12], "little") != (int(st.st_mtime) & 0xFFFFFFFF)
+                    or int.from_bytes(data[12:16], "little") != (st.st_size & 0xFFFFFFFF)):
+                return None                               # stale: the loader ignores it
+        loaded = marshal.loads(data[16:])
+        fresh = compile(source, filename, "exec", dont_inherit=True, optimize=sys.flags.optimize)
+        return loaded == fresh
+    except Exception:
+        return False
+
+
+def code_dir_shadows(contract: dict, repo=None) -> list[str]:
+    """STATIC shadow candidates in the directories the campaign puts on sys.path (review 4,
+    N4-3: R4 planted an untracked copy of a load-bearing module in C11's code directory, which
+    c11r_idrift's sys.path order imports first): any Python file git does not track (ignored
+    files included), and any contract module name present in more than one code directory."""
+    root = _root(repo)
+    dirs = [str(pathlib.Path(d).relative_to(C.REPO)) for d in C.CODE_DIRS]
+    p = []
+    untracked = [x for x in C.git_in(root, "ls-files", "--others", "--",
+                                     *[f"{d}/*.py" for d in dirs]).splitlines() if x]
+    if untracked:
+        p.append(f"code directories: untracked Python source "
+                 f"{sorted(pathlib.PurePosixPath(x).name for x in untracked)}")
+    names = {pathlib.PurePosixPath(rel).name for rel in contract["code"]}
+    tracked = [x for x in C.git_in(root, "ls-files", "--", *[f"{d}/*.py" for d in dirs]).splitlines()
+               if x]
+    where: dict[str, set] = {}
+    for x in tracked:
+        n = pathlib.PurePosixPath(x)
+        if n.name in names:
+            where.setdefault(n.name, set()).add(str(n.parent))
+    dup = sorted(n for n, ds in where.items() if len(ds) > 1)
+    if dup:
+        p.append(f"code directories: contract module names present in more than one directory {dup}")
+    return p
+
+
+def verify_loaded_modules(contract: dict, exec_root=None, modules: dict | None = None) -> dict:
+    import importlib.machinery as M
+    root = pathlib.Path(os.path.realpath(exec_root or C.REPO))
+    mods = dict(sys.modules if modules is None else modules)
+    by_name = {pathlib.PurePosixPath(rel).name: rel for rel in contract["code"]}
+    p, checked, seen = [], [], {}
+    if os.environ.get("PYTHONPATH"):
+        p.append("loaded modules: PYTHONPATH is set; the import path is not the contract's")
+    if sys.flags.optimize:
+        p.append("loaded modules: assertions are stripped (-O)")
+    for key, m in sorted(mods.items(), key=lambda kv: kv[0]):
+        f = getattr(m, "__file__", None)
+        if not f:
+            continue
+        name = os.path.basename(f)
+        if name not in by_name:
+            continue
+        rel = by_name[name]
+        where = f"{name} (as module {key!r})"
+        expected = root / rel
+        real = os.path.realpath(f)
+        if seen.setdefault(name, real) != real:
+            p.append(f"loaded modules: two different files named {name} are loaded")
+        if os.path.realpath(expected) != str(expected):
+            p.append(f"loaded modules: the contract path of {name} is reached through a symlink")
+        if real != str(expected):
+            p.append(f"loaded modules: {where} was loaded from another file than "
+                     f"<execution root>/{rel}")
+            continue
+        spec = getattr(m, "__spec__", None)
+        loader = getattr(spec, "loader", None) if spec is not None else getattr(m, "__loader__",
+                                                                               None)
+        if type(loader) is not M.SourceFileLoader:
+            p.append(f"loaded modules: {where} was not loaded by the standard source loader "
+                     f"({type(loader).__name__})")
+        src = code_bytes(root, rel)                    # the file just shown to BE root/rel
+        if C.sha256_bytes(src) != contract["code"][rel]["sha256"]:
+            p.append(f"loaded modules: {where} is not the contract's bytes")
+        pyc = _pyc_matches_source(getattr(m, "__cached__", None), src, f)
+        if pyc is False:
+            p.append(f"loaded modules: {where} has cached bytecode that is not the compilation "
+                     f"of its verified source")
+        checked.append(name)
+    return {"problems": p, "checked": sorted(set(checked)), "execution_root": str(root)}
 
 
 # ---------------------------------------------------------------------------------------------
@@ -410,10 +826,15 @@ def _authorization_facts(repo, approved_commit: str, *, allow_fixture=False,
     roots = chain_roots(repo)
     p = list(roots["problems"])
     contract = roots.get("contract")
+    history = {"problems": [], "introducers": {}, "commits_checked": 0}
     if contract is not None:
-        p += verify_frozen_at(repo, approved_commit, contract)
+        p += verify_frozen_at(repo, approved_commit)
+        if not any("does not exist in this repository" in x for x in p):
+            history = protocol_history(repo, approved_commit, stage)
+            p += history["problems"]
     q = load_artifact(repo, QUAL_REL) if artifact_exists(repo, QUAL_REL) else None
-    qv = verify_qualification(repo, q, roots, allow_fixture=allow_fixture)
+    qv = verify_qualification(repo, q, roots, approved_commit=approved_commit,
+                              allow_fixture=allow_fixture)
     p += qv["problems"]
     if stage in ("authorize", "run"):
         for rel, what in (("evidence/runs", "a runs artifact already exists"),
@@ -433,7 +854,7 @@ def _authorization_facts(repo, approved_commit: str, *, allow_fixture=False,
             p.append("the runner is not the bound c11r_runs.py")
     head = C.git_in(_root(repo), "rev-parse", "HEAD")
     return {"problems": p, "roots": roots, "qualification_digest": qv["digest"],
-            "runner_sha256": runner, "head": head,
+            "runner_sha256": runner, "head": head, "protocol_history": history,
             "configuration": (contract or {}).get("configuration")}
 
 
@@ -481,7 +902,32 @@ def verify_authorization(repo, a: dict | None, *, allow_fixture=False,
                       ("configuration", f["configuration"])):
         if a.get(key) != want:
             p.append(f"authorization: {key} does not match the recomputed value")
+    p += _issue_order(repo, a, f)
     return {"problems": p, "digest": digest, "facts": f}
+
+
+def _issue_order(repo, a: dict, facts: dict) -> list[str]:
+    """COMMIT ORDERING (review 4, N4-10): the authorization was issued at a commit that descends
+    from the approved commit and from the commit introducing the qualification it binds, and is
+    itself an ancestor of HEAD; the authorization is introduced after that issue point."""
+    root = _root(repo)
+    p = []
+    issued = a.get("issued_at_head")
+    approved = a.get("approved_commit")
+    if not issued or not C.git_ok_in(root, "cat-file", "-e", f"{issued}^{{commit}}"):
+        return ["authorization: issued_at_head is not a commit of this repository"]
+    if not approved or not C.git_ok_in(root, "merge-base", "--is-ancestor", approved, issued):
+        p.append("authorization: issued at a commit that does not descend from the approved commit")
+    if not C.git_ok_in(root, "merge-base", "--is-ancestor", issued, "HEAD"):
+        p.append("authorization: issued at a commit that is not in HEAD's history")
+    intro = (facts.get("protocol_history") or {}).get("introducers", {})
+    q = intro.get("qualification") or []
+    if len(q) == 1 and not C.git_ok_in(root, "merge-base", "--is-ancestor", q[0], issued):
+        p.append("authorization: issued before the qualification it binds was committed")
+    au = intro.get("authorization") or []
+    if len(au) == 1 and not C.git_ok_in(root, "merge-base", "--is-ancestor", issued, au[0]):
+        p.append("authorization: committed before the commit it claims to be issued at")
+    return p
 
 
 # ---------------------------------------------------------------------------------------------
@@ -499,6 +945,9 @@ def runner_preflight(repo=None, *, allow_fixture=False, check_processes=True) ->
             if code_identity(repo, rel) != rec:
                 p.append(f"runner pre-flight: {pathlib.PurePosixPath(rel).name} is not the bound "
                          f"version")
+        # what THIS process actually imported (N4-3): the code executing is the real checkout's
+        p += [f"runner pre-flight: {x}" for x in verify_loaded_modules(contract)["problems"]]
+        p += [f"runner pre-flight: {x}" for x in code_dir_shadows(contract, repo)]
         if (_root(repo) / C.NS_REL / "evidence" / "runs").exists():
             p.append("runner pre-flight: a runs artifact already exists")
         if check_processes:
@@ -548,7 +997,15 @@ def verify_run_identity(runs: dict, facts: dict, auth_digest: str | None) -> lis
     prov = runs.get("provenance", {})
     if prov.get("producer_sha256") != facts["runner_sha256"]:
         p.append("run: produced by another runner than the bound c11r_runs.py")
-    for rel, sha in prov.get("code_closure", {}).items():
+    # N4-1: the run's recorded code closure is EXACTLY the runner's closure, every file at the
+    # contract's hash -- a missing, extra or foreign module refuses, not only a changed one.
+    closure = prov.get("code_closure", {})
+    want_set = runner_closure(contract)
+    if set(closure) != want_set:
+        p.append(f"run: recorded code closure is not the runner's closure (missing "
+                 f"{sorted(pathlib.PurePosixPath(x).name for x in want_set - set(closure))}, "
+                 f"extra {sorted(pathlib.PurePosixPath(x).name for x in set(closure) - want_set)})")
+    for rel, sha in closure.items():
         if rel in contract["code"] and contract["code"][rel]["sha256"] != sha:
             p.append(f"run: executed with another {pathlib.PurePosixPath(rel).name} than the bound one")
     cert_code = {pathlib.PurePosixPath(rel).name: rec["sha256"]
@@ -558,6 +1015,12 @@ def verify_run_identity(runs: dict, facts: dict, auth_digest: str | None) -> lis
         if mod in cert_code and c["certifier"].get("module_sha256") != cert_code[mod]:
             p.append(f"run: certificate {cid} was made by another {mod} than the bound one")
     return p
+
+
+def runner_closure(contract: dict) -> set[str]:
+    """The runner's transitive import closure, as bound: every member must be a contract file."""
+    got = set(C.code_closure(C.HERE / "c11r_runs.py"))
+    return got if got <= set(contract["code"]) else got | {"<outside the contract>"}
 
 
 def expected_certifier_sha(contract: dict) -> dict:

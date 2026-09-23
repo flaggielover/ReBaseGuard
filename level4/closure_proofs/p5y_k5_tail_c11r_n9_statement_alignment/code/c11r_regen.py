@@ -39,7 +39,7 @@ ORDER = [
     ("c11r_contract.py",),                 # the frozen execution contract (R3-1)
     ("c11r_gate.py",),                     # binds the recomputed contract digest
     ("c11r_firewall.py",),                 # defence-in-depth heuristic + runtime guard controls
-    ("c11r_chain.py",),                    # R3A-R3T on synthetic repositories
+    ("c11r_chain.py",),                    # R3/MHT/LS/QF/IMP/ORD execution-integrity controls
     ("c11r_mutations.py",),                # production guards under mutation
     ("c11r_table.py", "--leak-check"),     # value-based leak check over everything above
     ("c11r_status.py",),                   # freshness, contradictions, pre-result state -- last

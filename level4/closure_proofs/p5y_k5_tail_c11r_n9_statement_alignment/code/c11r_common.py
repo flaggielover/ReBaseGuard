@@ -149,20 +149,65 @@ def is_protected(rel: str) -> bool:
 
 
 # ---------------------------------------------------------------------------------------------
-# THE RUNTIME OPEN-GUARD (round 4, review round 3 N-1). DEFENSE IN DEPTH, not a proof.
-# The static firewall is a heuristic (it missed 14 of 20 paths the third reviewer planted). This
-# guard is enforced at RUNTIME in every process that imports this module: a CPython audit hook
-# refuses any Python-level `open` (open, io.open, os.open, Path.read_text/read_bytes, json.load of
-# an opened file, linecache, fileinput, ...) of a PROTECTED path unless the running program is one
-# of the two sanctioned readers. It does NOT see content read by a subprocess (git show, cat, a
-# `python -c` child that does not import this module); the static analysis and the allowlists
-# cover those. The refusal fires on the open event, before any byte is read.
+# THE RUNTIME OPEN-GUARD. DEFENSE IN DEPTH, not a proof and not the trust boundary: the load-
+# bearing protection is the execution chain (c11r_contract / c11r_compare), which refuses before
+# the quarantine is opened. A CPython audit hook, installed in every process importing this
+# module, refuses a Python-level `open` (open, io.open, os.open, Path.read_*, linecache, ...) of a
+# PROTECTED path unless BOTH hold: the code is inside `sanctioned_protected_access(...)` -- used
+# only by the extractor's and the comparator's loaders -- AND the running program is one of the
+# two readers. REVISION 2 (review round 4, N4-2): the path is judged as given, as an absolute
+# path and as its REALPATH, so a symlink with an innocent name, or chdir + a bare name, no longer
+# bypasses it; and the program NAME no longer identifies a reader: the running program is a
+# reader only when the __main__ module's file RESOLVES to this directory's c11r_table.py or
+# c11r_compare.py, so neither a faked sys.argv[0] nor another file named c11r_compare.py is one.
+# What it still does not see: content read by a subprocess (git show, cat, a python child that
+# does not import this module), a file descriptor opened elsewhere, and code that deliberately
+# rewrites __main__.__file__ AND enters the sanctioned context -- deliberately malicious code in
+# the process, which no in-process guard can stop.
 # ---------------------------------------------------------------------------------------------
 READER_PROGRAMS = frozenset({"c11r_table.py", "c11r_compare.py"})
+_SANCTIONED = {"depth": 0}
 
 
 def running_program() -> str:
+    """For messages only: the program name as invoked."""
     return pathlib.PurePath(sys.argv[0]).name if sys.argv and sys.argv[0] else ""
+
+
+def running_reader() -> str | None:
+    """The reader this process IS, by the realpath of its __main__ module's file -- or None."""
+    main_file = getattr(sys.modules.get("__main__"), "__file__", None)
+    if not main_file:
+        return None
+    real = os.path.realpath(main_file)
+    for name in sorted(READER_PROGRAMS):
+        if real == os.path.realpath(HERE / name):
+            return name
+    return None
+
+
+class sanctioned_protected_access:
+    """The only context in which a protected file may be opened, and only by a reader program."""
+
+    def __init__(self, reason: str):
+        self.reason = reason
+
+    def __enter__(self):
+        if running_reader() is None:
+            raise PermissionError(f"C11R runtime open-guard: {running_program() or 'this process'}"
+                                  f" is not a sanctioned reader ({self.reason})")
+        _SANCTIONED["depth"] += 1
+        return self
+
+    def __exit__(self, *exc):
+        _SANCTIONED["depth"] -= 1
+        return False
+
+
+def guard_judges_protected(path: str) -> bool:
+    """The path as given, as an absolute path, and as its realpath (symlinks resolved)."""
+    absolute = os.path.abspath(path)
+    return any(is_protected(x) for x in (path, absolute, os.path.realpath(absolute)))
 
 
 def _open_guard(event, args):
@@ -173,7 +218,8 @@ def _open_guard(event, args):
         path = os.fsdecode(path)
     if not isinstance(path, str):
         return                                    # a file descriptor, not a path
-    if is_protected(path) and running_program() not in READER_PROGRAMS:
+    if guard_judges_protected(path) and not (
+            _SANCTIONED["depth"] > 0 and running_reader() is not None):
         raise PermissionError(f"C11R runtime open-guard: {running_program() or 'this process'} "
                               f"may not open protected file {pathlib.PurePath(path).name}")
 

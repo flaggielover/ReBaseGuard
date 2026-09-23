@@ -66,6 +66,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import c11r_boxdata as BD
 import c11r_common as C
 import c11r_idrift as I
+import c11r_procs as PR
 
 X, G = I.X, I.G
 
@@ -117,10 +118,10 @@ def cost_model(cost: dict) -> dict:
     if cost["block"] != "NON-TARGET [5/2, 5/2 + 108337/1250000] only":
         raise SystemExit("REFUSE: the cost artifact was not measured on the non-target block")
     seq = cost["sequential"]
-    if seq.get("detector") != "code/c11r_procs.py (revision 2)" or seq.get("campaign_workers_seen") \
+    if seq.get("detector") != PR.DETECTOR_LABEL or seq.get("campaign_workers_seen") \
             or not seq.get("samples"):
-        raise SystemExit("REFUSE: the cost artifact is not certified sequential by the revision-2 "
-                         "detector")
+        raise SystemExit(f"REFUSE: the cost artifact is not certified sequential by the current "
+                         f"detector ({PR.DETECTOR_LABEL})")
     der = cost["derived"]
     per = {int(k): F(v["per_box_panel_seconds_max"]) for k, v in der["per_panels"].items()}
     rss = {int(k): v["peak_rss_mb"] for k, v in der["per_panels"].items()}
@@ -400,9 +401,12 @@ def main() -> int:
                 "cost was measured on; any difference -> NO_TARGET_EXECUTION. A new "
                 "configuration needs a new prospective policy revision and a fresh review, never "
                 "an in-place edit",
-                "AT EXECUTION (Phase 14): the runner checks the cap before every certification; "
-                "an overrun stops the run as RESOURCE_CAP, finished families are kept, unfinished "
-                "ones are NOT_REACHED, and nothing is retried"],
+                "AT EXECUTION (Phase 14): the runner checks the cap BEFORE each stage and each "
+                "certification starts; a certification already running is not interrupted, so "
+                "the wall clock can exceed the cap by at most the duration of the one "
+                "certification in progress (review 4, N4-9); once the cap is exceeded nothing "
+                "further starts: the run stops as RESOURCE_CAP, finished families are kept, "
+                "unfinished ones are NOT_REACHED, and nothing is retried"],
             "known_risk": ("the calibration is a proxy measured on NON-TARGET geometry; it is not a "
                            "prediction that any family will certify on cell 306. The runs module "
                            "enforces the cap before every certification."),
@@ -418,9 +422,15 @@ def main() -> int:
             "5  every output written and hashed under the frozen run schema; then guard DENY",
         ],
         "stop_conditions": [
-            "after ONE execution at the chosen configuration. There is no escalation and no retry.",
-            "if the wall clock exceeds the cap or RSS exceeds its cap: STOP; unfinished families "
-            "are NOT_REACHED with reason RESOURCE_CAP",
+            "after ONE execution at the chosen configuration. There is no escalation and no retry. "
+            "What enforces it, exactly (review 4, N4-9): a second COMMITTED execution anywhere in "
+            "HEAD's reachable history is refused by c11r_contract.protocol_history; an execution "
+            "that is never committed, or committed only outside HEAD's history, cannot be seen by "
+            "git and is excluded by the protocol, not proved absent",
+            "if the wall clock exceeds the cap or RSS exceeds its cap when a stage or a "
+            "certification is about to start: STOP; unfinished families are NOT_REACHED with "
+            "reason RESOURCE_CAP. A certification already running is not interrupted: the overrun "
+            "is bounded by that one certification's duration, not by the cap",
             "if a family's selection is infeasible, or its certificate fails: that family is "
             "NOT_CERTIFIED, with the reason recorded; nothing is re-run",
             "a selected member that the reviewed certifier REJECTS although the selector accepted "

@@ -170,17 +170,21 @@ def build(tbl: dict, policy: dict, contract_digest: str) -> dict:
                 "closure and inputs match the committed tree, and no two artifacts contradict "
                 "each other"),
             "G14_sealed_before_comparison": (
-                "the runs artifact is committed, unmodified, schema-valid and bound to the "
-                "committed runs producer before any original magnitude is loaded"),
+                "the runs artifact is introduced by exactly ONE commit in COMPLETE reachable "
+                "history (no reachable commit holds other runs content), is unmodified since, "
+                "schema-valid and bound to the committed runs producer -- all before any "
+                "original magnitude is loaded"),
             "G15_comparison_rule_frozen_before_results": (
                 "the direction-aware comparison rule is fixed in the statement table, whose hash "
                 "this gate binds, before any independent result exists"),
             "G16_original_value_firewall": (
                 "the original values are reachable only through the two sanctioned readers: "
-                "production reads go through explicit allowlists; the RUNTIME open-guard refuses "
-                "any Python-level open of a protected path outside c11r_table.py and "
-                "c11r_compare.py (exercised on a planted file); the comparator opens the "
-                "quarantine only after G20; the value-based leak check (LEAK_CLASS = PASS) finds "
+                "production reads go through explicit allowlists; the RUNTIME open-guard "
+                "(defence in depth) refuses any Python-level open of a protected path -- judged "
+                "as given, absolute and realpath -- except inside the sanctioned context of a "
+                "reader identified by the realpath of its __main__ file (exercised on planted "
+                "files); the comparator opens the quarantine only after its twelve verification "
+                "steps pass; the value-based leak check (LEAK_CLASS = PASS) finds "
                 "no original in any pre-result artifact or module. The static load-path analysis "
                 "(FIREWALL_CLASS) is a DEFENSE_IN_DEPTH_HEURISTIC with recorded known misses, not "
                 "a proof"),
@@ -197,14 +201,19 @@ def build(tbl: dict, policy: dict, contract_digest: str) -> dict:
                 "made at exactly the depth and panel count the frozen policy selected and the "
                 "execution contract binds. Evaluated in production by "
                 "c11r_certificate.configuration_adherence, called by the runner's self-check and "
-                "by the comparator; a failure makes the comparison EXECUTION_INVALID"),
+                "by the comparator BEFORE any original magnitude is loaded; a failure makes the "
+                "comparison EXECUTION_INVALID"),
             "G20_execution_identity_chain": (
                 "the executed identity is the approved one, end to end: the comparator RECOMPUTES "
                 "the execution contract from bytes, requires every frozen path to be "
-                "byte-identical to its version at the approved commit and untouched by every "
-                "later commit, and requires the gate, qualification, authorization, runner, code "
-                "closure, certifiers and configuration recorded in the runs artifact to equal the "
-                "recomputed ones -- all BEFORE any original magnitude is loaded. Evaluated in "
+                "byte-identical to its version at the approved commit (TREE IDENTITY) and held in "
+                "exactly that state by EVERY commit reachable after it, merges and side branches "
+                "included (HISTORY PURITY), the protocol artifacts to appear in history only as "
+                "the protocol allows, the qualification to satisfy the typed Q1-Q18 schema, the "
+                "loaded modules to be the contract's files, and the gate, qualification, "
+                "authorization, runner, code closure, certifiers and configuration recorded in "
+                "the runs artifact to equal the recomputed ones -- all BEFORE any original "
+                "magnitude is loaded. Evaluated in "
                 "production by c11r_contract.verify_run_identity and the chain checks it depends "
                 "on; a failure is EXECUTION_INVALID and the quarantine is not opened"),
         },

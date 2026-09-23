@@ -89,9 +89,27 @@ EXEMPTED_CALLS = {"c11r_chain.py": ("c11r_compare.execute_comparison", "c11r_com
 # PLANTED dummy file (written by a subprocess into a fresh temporary directory, with a protected
 # NAME) precisely to prove the runtime guard refuses it; the analysis cannot see that the path is
 # a temporary directory. The real quarantine is never touched.
-EXEMPTED_FUNCTIONS = {"c11r_firewall.py": ("runtime_open_guard_controls",)}
+#
+# Round 5 (review round 4, N4-3): c11r_contract._pyc_matches_source reads a contract module's
+# CACHED BYTECODE file and compiles the module's VERIFIED source bytes to compare the two code
+# objects; the compiled object is compared, never executed. c11r_chain's IMP controls (c_IMP,
+# its helpers one / forged_pyc, and _driver) launch subprocess DRIVERS from a fresh temporary
+# directory that import campaign modules and call verify_loaded_modules; forged_pyc compiles a
+# modified source only to WRITE a forged bytecode file into a temporary pycache prefix, which the
+# driver subprocess then loads -- that is the attack the control demonstrates; stale_pyc does the
+# same with a header the loader must REJECT (the no-false-refusal control IMP6b). The drivers read
+# Python source only; the quarantine is never touched.
+EXEMPTED_FUNCTIONS = {"c11r_firewall.py": ("runtime_open_guard_controls",),
+                      "c11r_contract.py": ("_pyc_matches_source",),
+                      "c11r_chain.py": ("c_IMP", "one", "forged_pyc", "stale_pyc",
+                                        "_driver")}
 FORBIDDEN_LAUNCH = ("c11r_compare.py",)
-EXEMPT_FUNCTIONS = frozenset({("c11r_common", "content_free_id")})
+# Functions whose CALLS are not reads of campaign data: content_free_id hashes through a git
+# subprocess (an id, never content); _pyc_matches_source reads only the cached BYTECODE of a
+# module verify_loaded_modules has just shown to be a contract module at its contract path (round
+# 5, N4-3), and its own body is exempted above with that reason.
+EXEMPT_FUNCTIONS = frozenset({("c11r_common", "content_free_id"),
+                              ("c11r_contract", "_pyc_matches_source")})
 MAGNITUDE_KEYS = S.FORBIDDEN_PAYLOAD_KEYS
 # the m=5 tail cells 305-309 span [1.6208813, 2.0922830] in drift. Written as integer numerators
 # over 10**7 so that this checker does not itself carry a literal its own rule would flag.
@@ -106,6 +124,7 @@ HYPOTHETICAL = (f"{C.NS_REL}/evidence/comparison/C11R_COMPARISON.json",
                 f"{C.NS_REL}/evidence/procs/C11R_PROCESS_DETECTOR.json",
                 f"{C.NS_REL}/evidence/runs/C11R_RUNS.json",
                 f"{C.NS_REL}/review/REVIEW_C11R_PREFREEZE_R3.md",
+                f"{C.NS_REL}/review/REVIEW_C11R_PREFREEZE_R5.md",
                 f"{C.NS_REL}/review/ADJUDICATION_C11R.md",
                 f"{C.NS_REL}/config/C11R_AUTHORIZATION.json",
                 f"{C.NS_REL}/evidence/qualification/C11R_QUALIFICATION.json")
@@ -230,8 +249,10 @@ def inventory() -> dict[str, str]:
         names |= set(C.git("ls-files", "--others", "--exclude-standard", C.NS_REL).splitlines())
         # every name this namespace EVER held (names only), so a blob read of a deleted artifact --
         # the revision-1 mixed table, the retired screen -- is still classified
-        names |= set(C.git("log", "--all", "--name-only", "--pretty=format:", "--",
-                           C.NS_REL).splitlines())
+        # --full-history -m: no merge simplification (review 4, R4-1), so a name that existed
+        # only on a merged side branch is still listed
+        names |= set(C.git("log", "--all", "--full-history", "-m", "--name-only",
+                           "--pretty=format:", "--", C.NS_REL).splitlines())
         names |= set(HYPOTHETICAL)
         _INVENTORY = {n: classify_file(n) for n in names if n and "__pycache__" not in n}
     return _INVENTORY
@@ -1435,19 +1456,25 @@ def run_controls() -> dict:
 
 
 def runtime_open_guard_controls() -> dict:
-    """The RUNTIME layer, exercised in this (non-reader) process on a PLANTED dummy file with a
-    protected name -- the real quarantine is never touched. The file is created by a subprocess,
-    because this process may not open it even to write."""
+    """The RUNTIME layer, exercised on PLANTED dummy files with protected names -- the real
+    quarantine is never touched. The files are created by a subprocess, because this process may
+    not open them even to write. Revision 2 (review round 4, N4-2): symlink, chdir + bare name, a
+    faked program name, an impostor file named c11r_compare.py, and the sanctioned context outside
+    a reader are all exercised; the one residual bypass (code that rewrites __main__.__file__ AND
+    enters the sanctioned context) is DEMONSTRATED and recorded, not hidden."""
     import os
     import subprocess
     import tempfile
     d = pathlib.Path(tempfile.mkdtemp(prefix="c11r_guard_"))
     (d / "quarantine").mkdir()
     planted = d / "quarantine" / "C11R_ORIGINAL_MAGNITUDES.json"
-    subprocess.run(["/bin/sh", "-c", 'printf "{}" > "$0"', str(planted)], check=True)
+    innocent_in_protected_dir = d / "quarantine" / "innocent_name.json"
+    for f in (planted, innocent_in_protected_dir, d / "ordinary.json"):
+        subprocess.run(["/bin/sh", "-c", 'printf "{}" > "$0"', str(f)], check=True)
     plain = d / "ordinary.json"
-    subprocess.run(["/bin/sh", "-c", 'printf "{}" > "$0"', str(plain)], check=True)
-    res = {}
+    link = d / "innocent_link.json"
+    link.symlink_to(planted)
+    res, residual = {}, {}
 
     def refused(fn):
         try:
@@ -1455,21 +1482,67 @@ def runtime_open_guard_controls() -> dict:
             return False
         except PermissionError:
             return True
+
+    def sanctioned_read(p):
+        with C.sanctioned_protected_access("guard control"):
+            return pathlib.Path(p).read_text()
     res["open_refused"] = refused(lambda: open(planted).read())
     res["read_text_refused"] = refused(lambda: planted.read_text())
     res["os_open_refused"] = refused(lambda: os.open(str(planted), os.O_RDONLY))
     res["common_load_refused"] = refused(lambda: C.load(planted))
     res["ordinary_file_allowed"] = not refused(lambda: plain.read_text())
+    res["symlink_with_innocent_name_refused"] = refused(lambda: link.read_text())
+    cwd = os.getcwd()
+    try:
+        os.chdir(d / "quarantine")
+        res["chdir_then_bare_name_refused"] = refused(lambda: open("innocent_name.json").read())
+    finally:
+        os.chdir(cwd)
+    res["sanctioned_context_outside_a_reader_refused"] = refused(lambda: sanctioned_read(planted))
     saved = sys.argv[0]
     try:
-        sys.argv[0] = "code/c11r_table.py"          # the reader exemption, on the dummy file only
-        res["sanctioned_reader_allowed"] = not refused(lambda: planted.read_text())
+        sys.argv[0] = str(C.HERE / "c11r_table.py")         # a FAKED program name
+        res["faked_program_name_refused"] = refused(lambda: planted.read_text())
+        res["faked_program_name_in_the_sanctioned_context_refused"] = refused(
+            lambda: sanctioned_read(planted))
     finally:
         sys.argv[0] = saved
+    imp = d / "impostor"
+    imp.mkdir()
+    (imp / "c11r_compare.py").write_text(
+        "import sys, pathlib\nsys.path.insert(0, sys.argv[1])\nimport c11r_common as C\n"
+        "try:\n    with C.sanctioned_protected_access('impostor'):\n"
+        "        pathlib.Path(sys.argv[2]).read_text()\n    print('OPENED')\n"
+        "except PermissionError:\n    print('REFUSED')\n")
+    r = subprocess.run([sys.executable, str(imp / "c11r_compare.py"), str(C.HERE), str(planted)],
+                       capture_output=True, text=True)
+    res["impostor_file_named_c11r_compare_refused"] = r.stdout.strip().endswith("REFUSED")
+    main = sys.modules["__main__"]
+    had = hasattr(main, "__file__")
+    saved_file = getattr(main, "__file__", None)
+    try:
+        main.__file__ = str(C.HERE / "c11r_table.py")      # the reader identity, simulated
+        res["reader_in_the_sanctioned_context_allowed"] = not refused(
+            lambda: sanctioned_read(planted))
+        res["reader_outside_the_sanctioned_context_refused"] = refused(
+            lambda: planted.read_text())
+        residual["rewriting___main__.__file___and_entering_the_context_opens"] = \
+            res["reader_in_the_sanctioned_context_allowed"]
+    finally:
+        if had:
+            main.__file__ = saved_file
+        else:
+            del main.__file__
     subprocess.run(["rm", "-rf", str(d)], check=True)
     res["ALL_PASS"] = all(res.values())
-    res["scope"] = ("Python-level opens in any process importing c11r_common; NOT subprocess "
-                    "reads (git, cat, a python -c child that does not import it)")
+    res["residual_bypass_demonstrated"] = residual
+    res["scope"] = ("DEFENSE IN DEPTH. Python-level opens in any process importing c11r_common, "
+                    "judged on the path as given, absolute and realpath; a reader is identified by "
+                    "the realpath of __main__.__file__. NOT covered: subprocess reads (git, cat, a "
+                    "python child that does not import it), descriptors opened elsewhere, and "
+                    "in-process code that rewrites __main__.__file__ and enters the sanctioned "
+                    "context (demonstrated above). The load-bearing protection is the execution "
+                    "chain, which refuses before the comparator's loader runs.")
     return res
 
 
@@ -1544,10 +1617,15 @@ def main() -> int:
                                       "guard does not see subprocess reads"),
            "load_bearing_protections": ["explicit production allowlists",
                                         "the quarantine architecture: two sanctioned readers",
-                                        "the runtime open-guard (c11r_common)",
                                         "the frozen execution contract, recomputed at every "
-                                        "boundary", "the comparator refusing before quarantine "
-                                        "access when the execution identity fails"],
+                                        "boundary, over COMPLETE reachable history (round 5, "
+                                        "R4-1)",
+                                        "the comparator's twelve verification steps, all "
+                                        "before the magnitude loader (round 5, N4-5; exercised "
+                                        "by the chain controls' loader spy)"],
+           "defence_in_depth": ["this static analysis (a heuristic)",
+                                "the runtime open-guard (c11r_common), with the residual bypass "
+                                "recorded in runtime_open_guard_controls"],
            "runtime_open_guard_controls": guard,
            "exempted_calls": {"rules": {k: list(v) for k, v in EXEMPTED_CALLS.items()},
                               "functions": {k: list(v) for k, v in EXEMPTED_FUNCTIONS.items()},

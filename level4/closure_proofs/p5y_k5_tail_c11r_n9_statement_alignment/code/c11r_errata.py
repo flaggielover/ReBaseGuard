@@ -537,6 +537,16 @@ ERRATA = {
         "not_tailored": ("the rule does not name a configuration; the result follows from the "
                          "committed cost artifact and calibration, whatever it is"),
         "found_by": "the author and review round 3 (N-8), resolving E24",
+        "addendum_round_5": ("review round 4 (N4-12): the calibration workload's supersolution "
+                             "weight w = 12 - 3/2 m is the revision-1 K_e candidate that E9 records "
+                             "as written with the original values in view (the cost artifact uses "
+                             "it too). It enters only as a fixed probe weight, but it is disclosed "
+                             "here. Review round 4 re-ran the whole calibration on the non-target "
+                             "block with NEUTRAL weights that were never candidates (w = 20 - 2m, "
+                             "u = 1/4 + m/10) and under six loss criteria, and obtained the same "
+                             "ranking (D5/P32 first) every time: the weight does not steer the "
+                             "choice. The rule, the family, the cap, the safety factor and the "
+                             "workload are unchanged in round 5."),
     },
     "E29_THE_FIREWALL_CLAIM_IS_A_HEURISTIC_NOT_A_PROOF": {
         "what_happened": ("rounds 2 and 3 presented FIREWALL_CLASS = PASS, G16 and mutant M03 "
@@ -582,6 +592,159 @@ ERRATA = {
                    "argument tokens and code-shaped fallback paths, all listed in the artifact"),
         "found_by": "the author, before commit",
     },
+    "E32_HISTORY_SIMPLIFICATION_HID_MERGED_SIDE_BRANCHES": {
+        "what_happened": ("round 4's 'untouched by every later commit' (c11r_contract."
+                          "verify_frozen_at) was `git log A..HEAD -- <frozen paths>` and its seal "
+                          "(c11r_compare.verify_seal) was `git log -- <runs path>`. Both apply git's "
+                          "default history simplification: a merge whose tree equals one parent's "
+                          "is followed down that parent only, so a side branch that edited a "
+                          "frozen file, used it and reverted it -- merged with --no-ff -- and an "
+                          "earlier run committed and deleted on a merged side branch were never "
+                          "listed. Review round 4 demonstrated the comparator reaching the "
+                          "magnitude loader on such a history. The status report's pre-result "
+                          "check (`git log --all -- <glob>`) had the same defect."),
+        "repair": ("no load-bearing check uses a path-limited log any more. `git rev-list` with no "
+                   "pathspec enumerates EVERY commit reachable after the approved commit, and one "
+                   "`git cat-file --batch-check` reads the object id of every frozen path in every "
+                   "one of them: HISTORY PURITY requires each to equal the approved commit's, "
+                   "separately from TREE IDENTITY (the bytes now). protocol_history applies the "
+                   "same enumeration to the runs, comparison, authorization and qualification "
+                   "artifacts: no comparison ever, no prior run, a single sealing commit, the "
+                   "qualification and the authorization introduced once and in order before the "
+                   "seal. The status report's pre-result check enumerates `rev-list --all "
+                   "--reflog`. The frozen path set now includes every pre-result artifact and "
+                   "the quarantine, and is bound in the contract."),
+        "controls": ("code/c11r_chain.py MHT1-MHT10, MHT4_preflight, MHT5_comparison, "
+                     "MHT_octopus, MHT_S3d, MHT_Sa: each records whether tree identity and history "
+                     "purity flag it, and what the round-4 path-limited logs listed (0 for the "
+                     "hidden topologies)"),
+        "limit": ("commits reachable from nothing (reset away, never merged, stashed) and runs "
+                  "never committed are outside history and invisible to git"),
+        "found_by": "review round 4 (R4-1)",
+    },
+    "E33_THE_COMPARATOR_OPENED_THE_MAGNITUDES_BEFORE_ITS_GUARDS": {
+        "what_happened": ("c11r_compare.execute_comparison called the magnitude loader after the "
+                          "seal and the identity chain but BEFORE G8, G10, G19 and value tracing "
+                          "ran, contrary to its own documented order: a run failing G19 or G10 "
+                          "with a valid identity opened the quarantine before being declared "
+                          "EXECUTION_INVALID."),
+        "repair": ("the comparator follows a frozen twelve-step order (c11r_compare.STEPS): "
+                   "approved commit, complete history, contract, gate, qualification, "
+                   "authorization, run, seal, G8, G10, G19, then value tracing, reconstruction, "
+                   "independence, statement equivalence, loaded-module identity and the "
+                   "comparison rule; the loader is called only when all twelve pass, and each "
+                   "step is recorded. run_comparison is split into pre_numeric (no magnitude) and "
+                   "numeric_phase."),
+        "controls": ("LS_G8, LS_G10, LS_G19, LS_DEMOTE, LS_SEAL, LS_CONTRACT, LS_HISTORY refuse at "
+                     "their named step with the loader spy at 0 calls; LS_VALID reaches it "
+                     "exactly once"),
+        "found_by": "review round 4 (N4-5)",
+    },
+    "E34_ANY_PASS_CLASS_QUALIFICATION_WAS_ACCEPTED": {
+        "what_happened": ("verify_qualification checked the bindings and that no item failed, but "
+                          "never which items existed: a qualification with ONE arbitrary item and "
+                          "class PASS passed the authorization and the runner pre-flight "
+                          "(demonstrated by review round 4). Q11 read the committed status class "
+                          "instead of running the verifier, and Q7-Q12/Q15 read artifacts that no "
+                          "frozen path fixed."),
+        "repair": ("a TYPED schema (c11r_contract.QUAL_ITEMS, bound in the contract): exactly "
+                   "Q1-Q18, once each, canonical names, status PASS or FAIL, every item bound to "
+                   "the same contract, approved commit and qualifier; an unknown item REFUSES "
+                   "(the frozen rule); the disposition is recomputed from the items and a stored "
+                   "class that differs is refused. Q2 checks tree identity and history purity, Q4 "
+                   "the loaded modules, Q11 runs `c11r_status.py --verify-only` now; every "
+                   "pre-result artifact the qualifier reads is a frozen path."),
+        "controls": "code/c11r_chain.py QF1-QF8 (QF7 the valid case), R3E, R3F, R3R",
+        "found_by": "review round 4 (N4-4)",
+    },
+    "E35_EXECUTED_CODE_WAS_NOT_VERIFIED_AGAINST_THE_CONTRACT": {
+        "what_happened": ("the contract bound source files by path and content, but nothing "
+                          "checked which file a process actually imported: review round 4 placed "
+                          "an untracked c11r_certificate.py in C11's code directory, which "
+                          "c11r_idrift's sys.path order imports first, and every contract check "
+                          "still passed."),
+        "repair": ("c11r_contract.verify_loaded_modules, run by the runner's pre-flight, the "
+                   "qualifier (Q4) and the comparator (step 12): every loaded module whose file "
+                   "name is a contract module's must resolve (realpath) to exactly "
+                   "<execution root>/<contract path> with no symlink on the way, be loaded by the "
+                   "standard source loader, hash to the contract's bytes, and -- if cached "
+                   "bytecode exists that CPython's loader would ACCEPT for that source (a "
+                   "timestamp header matching its mtime and size, which the loader trusts on "
+                   "those alone, or an unchecked hash-based header) -- that bytecode must equal "
+                   "the compilation of the verified source; a stale cache the loader ignores is "
+                   "not a finding (the author's first regeneration refused one falsely; fixed "
+                   "before commit, control IMP6b); no two "
+                   "loaded files may share a contract name; PYTHONPATH must be unset and -O "
+                   "off. code_dir_shadows refuses untracked Python source in the campaign's code "
+                   "directories."),
+        "controls": ("IMP1-IMP8 (subprocess drivers: stray copy, symlink, identical bytes at a "
+                     "wrong path, shadowed transitive helper, forged timestamp .pyc -- shown to "
+                     "execute -- PYTHONPATH, zip archive; IMP3 the correct case; IMP6b a stale "
+                     "cache the loader ignores, accepted) and IMP_stray (R4's demonstration)"),
+        "limit": ("what the import system loaded, when the check runs. Not detected: a module "
+                  "swapped on disk and restored between import and check, code run through exec "
+                  "or under another name, in-memory patching of a module or of the verifier. "
+                  "Arbitrary malicious runtime modification is out of scope."),
+        "found_by": "review round 4 (N4-3)",
+    },
+    "E36_THE_DETECTOR_LIMITS_OF_E27_WERE_INCOMPLETE": {
+        "what_happened": ("E27 listed what revision 2 did not check, but omitted what review round "
+                          "4 then demonstrated: a wrapper script importing campaign modules was "
+                          "FOREIGN_PYTHON (seen live at ~98% CPU running a calibration probe), as "
+                          "were `python -Bc ...`, `-c<payload>` and stdin."),
+        "repair": ("revision 3 (code/c11r_procs.py): option clusters are parsed (-Bc, -c<payload>, "
+                   "-m, -Bm); a -c payload naming a campaign module is CAMPAIGN_ADHOC; a script "
+                   "whose argv names campaign modules, or whose readable source (<= 1 MB, a .py "
+                   "file) imports one, is CAMPAIGN_WRAPPER. PD1-PD10 plus variants are planted; a "
+                   "live wrapper child and a live -Bc child are seen. The cost artifact is "
+                   "re-measured under revision 3 and records the detector label from the "
+                   "detector module itself (c11r_procs.DETECTOR_LABEL), which the policy checks; "
+                   "the author's first round-5 regeneration still carried a hard-coded "
+                   "'revision 2' label -- caught before commit -- and the artifact now states "
+                   "what_it_establishes and what_it_does_not_establish."),
+        "still_not_checked": ["programs read from stdin and interactive sessions",
+                              "imports by computed names (importlib with a constructed string)",
+                              "wrapper sources that are unreadable, not .py, or over 1 MB",
+                              "campaign work run by a non-Python executable",
+                              "processes invisible to ps for this user; other hosts"],
+        "what_sequential_means": ("no process the detector RECOGNISES as campaign work ran at any "
+                                  "sample; not a proof that no competing computation ran"),
+        "found_by": "review round 4 (N4-6)",
+    },
+    "E37_RETRACTED_WORDING_LEFT_LIVE_AND_AN_UNWIRED_DEMOTION_CHECK": {
+        "what_happened": ("(N4-7) the mutations artifact's rules, emitted by revision-4 code, and "
+                          "the module docstring still carried the sentence E30 retracted ('every "
+                          "detector is a production function; this module defines no guard'), and "
+                          "M01/M02/M03 were labelled PRODUCTION_GUARD although nothing at Phase "
+                          "14/15 re-runs them. (N4-8) the N-5 demotion check was computed and "
+                          "reported as a value-trace violation, but the verdict ignored value "
+                          "tracing: a demoted target gave AGREEMENT_INSUFFICIENT, as the honest "
+                          "run does."),
+        "repair": ("the rule text now says each row calls the detector named in its verifier and "
+                   "detector_kind states how it is enforced; M01/M02 are "
+                   "PHASE12_QUALIFICATION_GATE (enforced before execution through item Q5 of the "
+                   "typed schema), M03 DEFENSE_IN_DEPTH_HEURISTIC. The comparator's guards now "
+                   "include the value trace, a demoted target is INVALID, and it is refused "
+                   "before the loader (step 12)."),
+        "controls": "mutant M40, chain control LS_DEMOTE, comparator self-test case",
+        "found_by": "review round 4 (N4-7, N4-8)",
+    },
+    "E38_THE_RUNTIME_OPEN_GUARD_JUDGED_A_PATH_STRING_AND_A_PROGRAM_NAME": {
+        "what_happened": ("the audit-hook guard tested the path as given and the program's NAME: "
+                          "a symlink with an innocent name, chdir + a bare name, sys.argv[0] set to "
+                          "c11r_compare.py, or any file so named, bypassed it (review round 4)."),
+        "repair": ("the path is judged as given, absolute and realpath; a reader is identified by "
+                   "the REALPATH of its __main__ file (this directory's c11r_table.py or "
+                   "c11r_compare.py), and a protected open is allowed only inside "
+                   "sanctioned_protected_access, which the two loaders use. Controls on planted "
+                   "files: symlink, chdir, faked argv[0], an impostor c11r_compare.py, the "
+                   "sanctioned context outside a reader."),
+        "residual": ("in-process code that rewrites __main__.__file__ and enters the sanctioned "
+                     "context opens a protected file; this is demonstrated and recorded. The guard "
+                     "is defence in depth; the execution chain, which refuses before the loader, "
+                     "is the load-bearing protection."),
+        "found_by": "review round 4 (N4-2)",
+    },
 }
 
 
@@ -613,13 +776,52 @@ REVIEW_3_FINDINGS_DISPOSITION = {
 }
 
 
+REVIEW_4_FINDINGS_DISPOSITION = {
+    "R4-1": ("FIX_NOW_LOAD_BEARING", "complete reachable history: tree identity and history "
+             "purity separately, protocol-artifact history, full-history seal; MHT controls (E32)"),
+    "N4-1": ("FIX_NOW_CHEAP", "the run's recorded code closure must EQUAL the runner's closure at "
+             "the contract's hashes; the gate is cross-checked against the contract's policy and "
+             "statement table. Certificates still record only the two certifier digests: "
+             "DOCUMENT_LIMITATION -- every other closure file is bound at run level"),
+    "N4-2": ("FIX_NOW_CHEAP", "realpath judgement, reader by __main__ realpath, sanctioned "
+             "context, controls; residual bypass demonstrated (E38)"),
+    "N4-3": ("FIX_NOW_LOAD_BEARING", "loaded-module identity and code-directory shadow checks at "
+             "pre-flight, qualification and comparison; IMP controls (E35)"),
+    "N4-4": ("FIX_NOW_LOAD_BEARING", "typed Q1-Q18 schema, recomputed disposition; QF controls "
+             "(E34)"),
+    "N4-5": ("FIX_NOW_LOAD_BEARING", "twelve verification steps before the loader; loader-spy "
+             "controls (E33)"),
+    "N4-6": ("FIX_NOW_CHEAP", "detector revision 3 and the omitted limits disclosed; the rest "
+             "DOCUMENT_LIMITATION (E36)"),
+    "N4-7": ("FIX_NOW_CHEAP", "labels and rule text corrected (E37)"),
+    "N4-8": ("FIX_NOW_CHEAP", "demotion wired into the verdict and refused before the loader "
+             "(E37)"),
+    "N4-9": ("DOCUMENT_LIMITATION", "the policy's stop_conditions and the runner now state that a "
+             "running certification is not interrupted (overrun bounded by that one "
+             "certification) and that 'no retry' is enforced against COMMITTED runs only; no "
+             "hard interrupt is added in a pre-result repair round"),
+    "N4-10": ("FIX_NOW_CHEAP", "qualification introduced before the authorization, both before "
+              "the seal; issued_at_head verified against the approved commit, HEAD and the "
+              "qualification's commit"),
+    "N4-11": ("FIX_NOW_CHEAP", "the chain controls' two copy loops use distinct variable names, so "
+              "the flow-insensitive firewall no longer pairs code paths with the artifact reader "
+              "(the forced-.py data-artifact patterns came from that pairing)"),
+    "N4-12": ("FIX_NOW_CHEAP", "E28 addendum: the calibration weight is an E9 candidate; the "
+              "neutral-weight robustness is the answer"),
+    "N4-13": ("FIX_NOW_CHEAP", "every chain control carries an exact expected reason and, at the "
+              "comparator, the step at which it must refuse; merge-topology controls added"),
+}
+
+
 def main() -> int:
-    out = {"schema": "C11R_ERRATA/4",
-           "supersedes": ("C11R_ERRATA/3 at eaca931e (E1-E24, all preserved; E24 gains a "
-                          "later_resolution note) and C11R_ERRATA/2 at 9801276c (which restated "
-                          "original values in E2)"),
+    out = {"schema": "C11R_ERRATA/5",
+           "supersedes": ("C11R_ERRATA/4 at bd00c1f6 (E1-E31, all preserved; E28 gains an "
+                          "addendum), C11R_ERRATA/3 at eaca931e and C11R_ERRATA/2 at 9801276c "
+                          "(which restated original values in E2)"),
            "review_3_findings_disposition": {k: {"classification": v[0], "action": v[1]}
                                              for k, v in REVIEW_3_FINDINGS_DISPOSITION.items()},
+           "review_4_findings_disposition": {k: {"classification": v[0], "action": v[1]}
+                                             for k, v in REVIEW_4_FINDINGS_DISPOSITION.items()},
            "policy": ("defects in this campaign's own conduct, recorded where a reader will find "
                       "them. A deviation that is recorded can be judged; one that is not, cannot."),
            "reviews_answered": [
@@ -628,7 +830,9 @@ def main() -> int:
                {"path": "review/REVIEW_C11R_PREFREEZE_R2.md", "verdict": "NOT_READY",
                 "preserved_at": "6ae05833"},
                {"path": "review/REVIEW_C11R_PREFREEZE_R3.md", "verdict": "NOT_READY",
-                "preserved_at": "f6c737c3"}],
+                "preserved_at": "f6c737c3"},
+               {"path": "review/REVIEW_C11R_PREFREEZE_R4.md", "verdict": "NOT_READY",
+                "preserved_at": "5c5203c1"}],
            "CONTAINS_NO_ORIGINAL_MAGNITUDE": True,
            "errata": ERRATA,
            "count": len(ERRATA)}

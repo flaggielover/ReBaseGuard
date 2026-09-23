@@ -5,13 +5,21 @@
    "attack": "all identities correct: the synthetic path runs to a verdict",
    "expected": "ACCEPT",
    "expected_reason": null,
+   "expected_step": null,
+   "group": "R3",
    "id": "R3T",
-   "loader_called_exactly_once": true,
    "pass": true,
    "problems": [],
    "refused": false,
+   "refused_at_step": null,
    "refused_for_the_expected_reason": true,
+   "required": {
+    "all_twelve_steps_passed": true,
+    "loader_called_exactly_once": true
+   },
    "stage": "comparator",
+   "steps_failed": [],
+   "steps_not_evaluated": [],
    "stub_loader_calls": 1,
    "verdict": "AGREEMENT_INSUFFICIENT"
   },
@@ -19,400 +27,1967 @@
    "attack": "an unrelated commit (no frozen path) between approval and seal",
    "expected": "ACCEPT",
    "expected_reason": null,
+   "expected_step": null,
+   "group": "R3",
    "id": "R3T_unrelated",
    "pass": true,
    "problems": [],
    "refused": false,
+   "refused_at_step": null,
    "refused_for_the_expected_reason": true,
+   "required": {
+    "all_twelve_steps_passed": true,
+    "loader_called_exactly_once": true
+   },
    "stage": "comparator",
-   "stub_loader_calls": 1
+   "steps_failed": [],
+   "steps_not_evaluated": [],
+   "stub_loader_calls": 1,
+   "verdict": "AGREEMENT_INSUFFICIENT"
   },
   {
    "attack": "certifier edited -> committed -> used -> reverted before the seal",
    "expected": "REFUSE",
-   "expected_reason": "touched a frozen path",
+   "expected_reason": "touched a frozen path: it holds ['c11r_boxdata.py']",
+   "expected_step": "complete frozen history",
+   "group": "R3",
    "id": "R3A",
    "pass": true,
    "problems": [
-    "2 commit(s) after the approved commit touched a frozen path (edited-then-reverted changes included)",
+    "history purity: commit 1b0e4cf53d24 touched a frozen path: it holds ['c11r_boxdata.py'] in a state other than the approved commit's",
+    "history purity: commit f3b7ce3b5de9 touched a frozen path: it holds ['c11r_boxdata.py'] in a state other than the approved commit's",
     "run: certificate F_D was made by another c11r_boxdata.py than the bound one"
    ],
    "refused": true,
+   "refused_at_step": "complete frozen history",
    "refused_for_the_expected_reason": true,
+   "required": {
+    "runner_preflight_at_the_edit_refused": true
+   },
    "runner_preflight_at_the_edit_refused": true,
    "stage": "comparator",
-   "stub_loader_calls": 0
+   "steps_failed": [
+    "complete frozen history",
+    "run"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
   },
   {
    "attack": "policy edited in place after the freeze (sha256 field kept)",
    "expected": "REFUSE",
-   "expected_reason": "policy",
+   "expected_reason": "tree identity: frozen path C11R_POLICY.json differs",
+   "expected_step": null,
+   "group": "R3",
    "id": "R3B",
    "pass": true,
    "problems": [
     "contract: artifact identity differs for ['policy']",
     "contract: configuration differs from the recomputed value",
     "policy: stored sha256 field does not equal the recomputed body digest",
-    "frozen path C11R_POLICY.json differs from the approved commit",
-    "a frozen path has uncommitted changes",
+    "tree identity: frozen path C11R_POLICY.json differs from the approved commit",
+    "tree identity: a frozen path has uncommitted changes",
     "the policy's selected configuration is not the contract's"
    ],
    "refused": true,
+   "refused_at_step": null,
    "refused_for_the_expected_reason": true,
+   "required": {},
    "stage": "authorization",
    "stub_loader_calls": 0
   },
   {
    "attack": "statement-semantics artifact edited after the freeze",
    "expected": "REFUSE",
-   "expected_reason": "statements",
+   "expected_reason": "tree identity: frozen path C11R_N9_STATEMENTS.json differs",
+   "expected_step": null,
+   "group": "R3",
    "id": "R3C",
    "pass": true,
    "problems": [
     "contract: artifact identity differs for ['statements']",
     "policy: declared input C11R_N9_STATEMENTS.json changed",
     "statements: stored sha256 field does not equal the recomputed body digest",
-    "frozen path C11R_N9_STATEMENTS.json differs from the approved commit",
-    "a frozen path has uncommitted changes"
+    "tree identity: frozen path C11R_N9_STATEMENTS.json differs from the approved commit",
+    "tree identity: a frozen path has uncommitted changes"
    ],
    "refused": true,
+   "refused_at_step": null,
    "refused_for_the_expected_reason": true,
+   "required": {},
    "stage": "authorization",
    "stub_loader_calls": 0
   },
   {
    "attack": "gate artifact edited after the freeze (re-stamped)",
    "expected": "REFUSE",
-   "expected_reason": "N9R_GATE_C11R",
+   "expected_reason": "tree identity: frozen path N9R_GATE_C11R.json differs",
+   "expected_step": null,
+   "group": "R3",
    "id": "R3D",
    "pass": true,
    "problems": [
-    "frozen path N9R_GATE_C11R.json differs from the approved commit",
-    "a frozen path has uncommitted changes",
+    "tree identity: frozen path N9R_GATE_C11R.json differs from the approved commit",
+    "tree identity: a frozen path has uncommitted changes",
     "qualification: gate_sha256 belongs to another contract or tree"
    ],
    "refused": true,
+   "refused_at_step": null,
    "refused_for_the_expected_reason": true,
+   "required": {},
    "stage": "authorization",
    "stub_loader_calls": 0
   },
   {
    "attack": "qualification bound to a different contract",
    "expected": "REFUSE",
-   "expected_reason": "qualification: execution_contract_sha256",
+   "expected_reason": "qualification: execution_contract_sha256 belongs to another contract",
+   "expected_step": null,
+   "group": "R3",
    "id": "R3E",
    "pass": true,
    "problems": [
     "qualification: execution_contract_sha256 belongs to another contract or tree"
    ],
    "refused": true,
+   "refused_at_step": null,
    "refused_for_the_expected_reason": true,
+   "required": {},
    "stage": "authorization",
    "stub_loader_calls": 0
   },
   {
    "attack": "qualification PASS forged over a failing item (re-stamped); and a body edited without re-stamping",
    "expected": "REFUSE",
-   "expected_reason": "PASS claimed with failing items",
+   "expected_reason": "is not the recomputed disposition 'FAIL'",
+   "expected_step": null,
+   "group": "R3",
    "id": "R3F",
    "pass": true,
    "problems": [
-    "qualification: PASS claimed with failing items ['FX2']",
+    "qualification: failing item(s) ['Q5']",
+    "qualification: stored class 'PASS' is not the recomputed disposition 'FAIL'",
     "qualification: stored sha256 field does not equal the recomputed body digest"
    ],
    "refused": true,
+   "refused_at_step": null,
    "refused_for_the_expected_reason": true,
+   "required": {
+    "unstamped_body_edit_refused": true
+   },
    "stage": "authorization",
    "stub_loader_calls": 0
   },
   {
    "attack": "authorization bound to a different contract",
    "expected": "REFUSE",
-   "expected_reason": "authorization: execution_contract_sha256",
+   "expected_reason": "authorization: execution_contract_sha256 does not match the recomputed value",
+   "expected_step": null,
+   "group": "R3",
    "id": "R3G",
    "pass": true,
    "problems": [
     "authorization: execution_contract_sha256 does not match the recomputed value"
    ],
    "refused": true,
+   "refused_at_step": null,
    "refused_for_the_expected_reason": true,
+   "required": {},
    "stage": "runner pre-flight",
    "stub_loader_calls": 0
   },
   {
    "attack": "runner code changed after authorization",
    "expected": "REFUSE",
-   "expected_reason": "c11r_runs.py",
+   "expected_reason": "runner pre-flight: c11r_runs.py is not the bound version",
+   "expected_step": null,
+   "group": "R3",
    "id": "R3H",
    "pass": true,
    "problems": [
     "contract: code identity differs for ['c11r_runs.py']",
-    "frozen path c11r_runs.py differs from the approved commit",
-    "1 commit(s) after the approved commit touched a frozen path (edited-then-reverted changes included)",
+    "tree identity: frozen path c11r_runs.py differs from the approved commit",
+    "history purity: commit 3d41b9e1b15c touched a frozen path: it holds ['c11r_runs.py'] in a state other than the approved commit's",
     "the runner is not the bound c11r_runs.py",
     "authorization: runner_sha256 does not match the recomputed value",
     "runner pre-flight: c11r_runs.py is not the bound version"
    ],
    "refused": true,
+   "refused_at_step": null,
    "refused_for_the_expected_reason": true,
+   "required": {},
    "stage": "runner pre-flight",
    "stub_loader_calls": 0
   },
   {
    "attack": "certificate reconstruction module changed after authorization",
    "expected": "REFUSE",
-   "expected_reason": "c11r_certificate.py",
+   "expected_reason": "runner pre-flight: c11r_certificate.py is not the bound version",
+   "expected_step": null,
+   "group": "R3",
    "id": "R3I",
    "pass": true,
    "problems": [
     "contract: code identity differs for ['c11r_certificate.py']",
-    "frozen path c11r_certificate.py differs from the approved commit",
-    "1 commit(s) after the approved commit touched a frozen path (edited-then-reverted changes included)",
+    "tree identity: frozen path c11r_certificate.py differs from the approved commit",
+    "history purity: commit 255a9624ce2b touched a frozen path: it holds ['c11r_certificate.py'] in a state other than the approved commit's",
     "runner pre-flight: c11r_certificate.py is not the bound version"
    ],
    "refused": true,
+   "refused_at_step": null,
    "refused_for_the_expected_reason": true,
+   "required": {},
    "stage": "runner pre-flight",
    "stub_loader_calls": 0
   },
   {
    "attack": "selected depth changed (policy re-stamped)",
    "expected": "REFUSE",
-   "expected_reason": "policy",
+   "expected_reason": "the policy's selected configuration is not the contract's",
+   "expected_step": null,
+   "group": "R3",
    "id": "R3J",
    "pass": true,
    "problems": [
     "contract: artifact identity differs for ['policy']",
     "contract: configuration differs from the recomputed value",
-    "frozen path C11R_POLICY.json differs from the approved commit",
-    "1 commit(s) after the approved commit touched a frozen path (edited-then-reverted changes included)",
+    "tree identity: frozen path C11R_POLICY.json differs from the approved commit",
+    "history purity: commit d3cda3f1d13e touched a frozen path: it holds ['C11R_POLICY.json'] in a state other than the approved commit's",
     "the policy's selected configuration is not the contract's"
    ],
    "refused": true,
+   "refused_at_step": null,
    "refused_for_the_expected_reason": true,
+   "required": {},
    "stage": "authorization",
    "stub_loader_calls": 0
   },
   {
    "attack": "selected panel count changed (policy re-stamped)",
    "expected": "REFUSE",
-   "expected_reason": "policy",
+   "expected_reason": "the policy's selected configuration is not the contract's",
+   "expected_step": null,
+   "group": "R3",
    "id": "R3K",
    "pass": true,
    "problems": [
     "contract: artifact identity differs for ['policy']",
     "contract: configuration differs from the recomputed value",
-    "frozen path C11R_POLICY.json differs from the approved commit",
-    "1 commit(s) after the approved commit touched a frozen path (edited-then-reverted changes included)",
+    "tree identity: frozen path C11R_POLICY.json differs from the approved commit",
+    "history purity: commit 2b3a5ddaba64 touched a frozen path: it holds ['C11R_POLICY.json'] in a state other than the approved commit's",
     "the policy's selected configuration is not the contract's"
    ],
    "refused": true,
+   "refused_at_step": null,
    "refused_for_the_expected_reason": true,
+   "required": {},
    "stage": "authorization",
    "stub_loader_calls": 0
   },
   {
    "attack": "resource-cap policy changed (policy re-stamped)",
    "expected": "REFUSE",
-   "expected_reason": "policy",
+   "expected_reason": "contract: configuration differs from the recomputed value",
+   "expected_step": null,
+   "group": "R3",
    "id": "R3L",
    "pass": true,
    "problems": [
     "contract: artifact identity differs for ['policy']",
     "contract: configuration differs from the recomputed value",
-    "frozen path C11R_POLICY.json differs from the approved commit",
-    "1 commit(s) after the approved commit touched a frozen path (edited-then-reverted changes included)"
+    "tree identity: frozen path C11R_POLICY.json differs from the approved commit",
+    "history purity: commit 132d2a65b473 touched a frozen path: it holds ['C11R_POLICY.json'] in a state other than the approved commit's"
    ],
    "refused": true,
+   "refused_at_step": null,
    "refused_for_the_expected_reason": true,
+   "required": {},
    "stage": "authorization",
    "stub_loader_calls": 0
   },
   {
    "attack": "run artifact body changed after execution and re-committed",
    "expected": "REFUSE",
-   "expected_reason": "changed after it was sealed",
+   "expected_reason": "the runs artifact was changed after it was sealed",
+   "expected_step": "complete frozen history",
+   "group": "R3",
    "id": "R3M",
    "pass": true,
    "problems": [
-    "the file on disk differs from the committed blob",
-    "the runs artifact was changed after it was sealed (2 commits touch it)"
+    "protocol history: commit 049e8dba94a8 holds a runs artifact other than the current one (a discarded or replaced runs)",
+    "the runs artifact was changed after it was sealed, or another run was committed and discarded (1 reachable commits hold other runs content)"
    ],
    "refused": true,
+   "refused_at_step": "complete frozen history",
    "refused_for_the_expected_reason": true,
+   "required": {},
    "stage": "comparator",
-   "stub_loader_calls": 0
+   "steps_failed": [
+    "complete frozen history",
+    "seal"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
   },
   {
    "attack": "seal copied from another synthetic run (another authorization)",
    "expected": "REFUSE",
-   "expected_reason": "authorization_sha256",
+   "expected_reason": "execution_identity.authorization_sha256 does not match",
+   "expected_step": "run",
+   "group": "R3",
    "id": "R3N",
    "pass": true,
    "problems": [
     "run: execution_identity.authorization_sha256 does not match the recomputed chain"
    ],
    "refused": true,
+   "refused_at_step": "run",
    "refused_for_the_expected_reason": true,
+   "required": {},
    "stage": "comparator",
-   "stub_loader_calls": 0
+   "steps_failed": [
+    "run"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
   },
   {
    "attack": "stored hash field changed while the body is unchanged (policy)",
    "expected": "REFUSE",
-   "expected_reason": "policy",
+   "expected_reason": "policy: stored sha256 field does not equal the recomputed body digest",
+   "expected_step": null,
+   "group": "R3",
    "id": "R3O",
    "pass": true,
    "problems": [
     "contract: artifact identity differs for ['policy']",
     "policy: stored sha256 field does not equal the recomputed body digest",
-    "frozen path C11R_POLICY.json differs from the approved commit",
-    "a frozen path has uncommitted changes"
+    "tree identity: frozen path C11R_POLICY.json differs from the approved commit",
+    "tree identity: a frozen path has uncommitted changes"
    ],
    "refused": true,
+   "refused_at_step": null,
    "refused_for_the_expected_reason": true,
+   "required": {},
    "stage": "authorization",
    "stub_loader_calls": 0
   },
   {
    "attack": "stored hash field changed while the body is unchanged (runs)",
    "expected": "REFUSE",
-   "expected_reason": "stored sha256",
+   "expected_reason": "stored sha256 does not equal its recomputed canonical body digest",
+   "expected_step": "run",
+   "group": "R3",
    "id": "R3O_run",
    "pass": true,
    "problems": [
     "the runs artifact's stored sha256 does not equal its recomputed canonical body digest"
    ],
    "refused": true,
+   "refused_at_step": "run",
    "refused_for_the_expected_reason": true,
+   "required": {},
    "stage": "comparator",
-   "stub_loader_calls": 0
+   "steps_failed": [
+    "run"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
   },
   {
    "attack": "stored hash field unchanged while the body changes (policy)",
    "expected": "REFUSE",
-   "expected_reason": "policy: stored sha256",
+   "expected_reason": "policy: stored sha256 field does not equal the recomputed body digest",
+   "expected_step": null,
+   "group": "R3",
    "id": "R3P",
    "pass": true,
    "problems": [
     "contract: artifact identity differs for ['policy']",
     "policy: stored sha256 field does not equal the recomputed body digest",
-    "frozen path C11R_POLICY.json differs from the approved commit",
-    "a frozen path has uncommitted changes"
+    "tree identity: frozen path C11R_POLICY.json differs from the approved commit",
+    "tree identity: a frozen path has uncommitted changes"
    ],
    "refused": true,
+   "refused_at_step": null,
    "refused_for_the_expected_reason": true,
+   "required": {},
    "stage": "authorization",
    "stub_loader_calls": 0
   },
   {
    "attack": "stored hash field unchanged while the body changes (runs)",
    "expected": "REFUSE",
-   "expected_reason": "stored sha256",
+   "expected_reason": "stored sha256 does not equal its recomputed canonical body digest",
+   "expected_step": "run",
+   "group": "R3",
    "id": "R3P_run",
    "pass": true,
    "problems": [
     "the runs artifact's stored sha256 does not equal its recomputed canonical body digest"
    ],
    "refused": true,
+   "refused_at_step": "run",
    "refused_for_the_expected_reason": true,
+   "required": {},
    "stage": "comparator",
-   "stub_loader_calls": 0
+   "steps_failed": [
+    "run"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
   },
   {
    "attack": "one transitive helper changed (c7_gaussian.py)",
    "expected": "REFUSE",
-   "expected_reason": "c7_gaussian.py",
+   "expected_reason": "touched a frozen path: it holds ['c7_gaussian.py']",
+   "expected_step": null,
+   "group": "R3",
    "id": "R3Q",
    "pass": true,
    "problems": [
     "contract: code identity differs for ['c7_gaussian.py']",
-    "frozen path c7_gaussian.py differs from the approved commit",
-    "1 commit(s) after the approved commit touched a frozen path (edited-then-reverted changes included)"
+    "tree identity: frozen path c7_gaussian.py differs from the approved commit",
+    "history purity: commit 2e919932e082 touched a frozen path: it holds ['c7_gaussian.py'] in a state other than the approved commit's"
    ],
    "refused": true,
+   "refused_at_step": null,
    "refused_for_the_expected_reason": true,
+   "required": {},
    "stage": "authorization",
    "stub_loader_calls": 0
   },
   {
    "attack": "qualification stale after a legitimate policy replacement and re-freeze",
    "expected": "REFUSE",
-   "expected_reason": "qualification: execution_contract_sha256",
+   "expected_reason": "qualification: execution_contract_sha256 belongs to another contract",
+   "expected_step": null,
+   "group": "R3",
    "id": "R3R",
    "pass": true,
    "problems": [
+    "protocol history: the approved commit already holds a qualification artifact",
     "qualification: execution_contract_sha256 belongs to another contract or tree",
     "qualification: gate_sha256 belongs to another contract or tree",
-    "qualification: policy_sha256 belongs to another contract or tree"
+    "qualification: policy_sha256 belongs to another contract or tree",
+    "qualification: approved_commit belongs to another contract or tree",
+    "qualification: item Q1 is bound to another execution_contract_sha256",
+    "qualification: item Q1 is bound to another approved_commit",
+    "qualification: item Q2 is bound to another execution_contract_sha256",
+    "qualification: item Q2 is bound to another approved_commit",
+    "qualification: item Q3 is bound to another execution_contract_sha256"
    ],
    "refused": true,
+   "refused_at_step": null,
    "refused_for_the_expected_reason": true,
+   "required": {},
    "stage": "authorization",
    "stub_loader_calls": 0
   },
   {
    "attack": "comparator invoked against a valid-looking seal from the wrong contract",
    "expected": "REFUSE",
-   "expected_reason": "another approved commit",
+   "expected_reason": "the authorization names another approved commit than the operator supplied",
+   "expected_step": "approved commit",
+   "group": "R3",
    "id": "R3S",
    "pass": true,
    "problems": [
-    "the authorization names another approved commit than the operator supplied"
+    "the authorization names another approved commit than the operator supplied",
+    "tree identity: frozen path C11R_CONTRACT.json differs from the approved commit",
+    "tree identity: frozen path C11R_POLICY.json differs from the approved commit",
+    "tree identity: frozen path N9R_GATE_C11R.json differs from the approved commit",
+    "history purity: commit 422442970e15 touched a frozen path: it holds ['C11R_CONTRACT.json', 'C11R_POLICY.json', 'N9R_GATE_C11R.json'] in a state other than the approved commit's",
+    "history purity: commit fe36bf1cf58c touched a frozen path: it holds ['C11R_CONTRACT.json', 'C11R_POLICY.json', 'N9R_GATE_C11R.json'] in a state other than the approved commit's",
+    "history purity: commit 3f280be2c6a8 touched a frozen path: it holds ['C11R_CONTRACT.json', 'C11R_POLICY.json', 'N9R_GATE_C11R.json'] in a state other than the approved commit's",
+    "history purity: commit 94e98d875e55 touched a frozen path: it holds ['C11R_CONTRACT.json', 'C11R_POLICY.json', 'N9R_GATE_C11R.json'] in a state other than the approved commit's",
+    "history purity: commit c870646f67eb touched a frozen path: it holds ['C11R_POLICY.json'] in a state other than the approved commit's",
+    "the contract in the tree is not the contract at the approved commit"
    ],
    "refused": true,
+   "refused_at_step": "approved commit",
    "refused_for_the_expected_reason": true,
+   "required": {
+    "the_same_chain_under_its_own_contract_is_accepted": true
+   },
    "stage": "comparator",
+   "steps_failed": [
+    "approved commit",
+    "complete frozen history",
+    "contract",
+    "qualification"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
    "stub_loader_calls": 0,
-   "the_same_chain_under_its_own_contract_is_accepted": true
+   "the_same_chain_under_its_own_contract_is_accepted": true,
+   "verdict": "EXECUTION_INVALID"
   },
   {
-   "attack": "a non-comparator program calls the seal check on the REAL repository",
+   "attack": "a non-comparator program calls the comparator's seal / full path on the REAL repository",
    "expected": "REFUSE",
-   "expected_reason": "Phase 15",
+   "expected_reason": "the real runs artifact is read only by c11r_compare.py",
+   "expected_step": null,
+   "group": "R3",
    "id": "GUARD_real_repository",
    "pass": true,
    "problems": [
     "the real runs artifact is read only by c11r_compare.py as Phase 15"
    ],
    "refused": true,
+   "refused_at_step": null,
    "refused_for_the_expected_reason": true,
+   "required": {},
    "stage": "runtime guard",
    "stub_loader_calls": 0
+  },
+  {
+   "attack": "a non-comparator program calls the comparator's seal / full path on the REAL repository",
+   "expected": "REFUSE",
+   "expected_reason": "the real runs artifact is read only by c11r_compare.py",
+   "expected_step": null,
+   "group": "R3",
+   "id": "GUARD_real_repository_compare",
+   "pass": true,
+   "problems": [
+    "the real runs artifact is read only by c11r_compare.py as Phase 15"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "runtime guard",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "linear frozen-file edit, never reverted",
+   "commits_checked": 4,
+   "default_path_limited_git_log_lists": 1,
+   "expected": "REFUSE",
+   "expected_reason": "tree identity: frozen path c11r_boxdata.py differs",
+   "expected_step": "complete frozen history",
+   "full_history_path_limited_git_log_lists": 1,
+   "full_history_seal_log_lists": 1,
+   "group": "MHT",
+   "history_purity_flags": true,
+   "id": "MHT1",
+   "merge_commits_in_range": 0,
+   "pass": true,
+   "problems": [
+    "tree identity: frozen path c11r_boxdata.py differs from the approved commit",
+    "history purity: commit 7cc82321efc9 touched a frozen path: it holds ['c11r_boxdata.py'] in a state other than the approved commit's",
+    "history purity: commit c25d0a17048a touched a frozen path: it holds ['c11r_boxdata.py'] in a state other than the approved commit's",
+    "contract: code identity differs for ['c11r_boxdata.py']"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "history_purity_flags": true,
+    "tree_identity_flags": true
+   },
+   "round4_seal_log_lists": 1,
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history",
+    "contract"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "tree_identity_flags": true,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "linear frozen-file edit, then revert",
+   "commits_checked": 5,
+   "default_path_limited_git_log_lists": 2,
+   "expected": "REFUSE",
+   "expected_reason": "touched a frozen path: it holds ['c11r_boxdata.py']",
+   "expected_step": "complete frozen history",
+   "full_history_path_limited_git_log_lists": 2,
+   "full_history_seal_log_lists": 1,
+   "group": "MHT",
+   "history_purity_flags": true,
+   "id": "MHT2",
+   "merge_commits_in_range": 0,
+   "pass": true,
+   "problems": [
+    "history purity: commit 7e72b2b95cb7 touched a frozen path: it holds ['c11r_boxdata.py'] in a state other than the approved commit's"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "history_purity_flags": true,
+    "tree_identity_flags": true
+   },
+   "round4_seal_log_lists": 1,
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "tree_identity_flags": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "side branch: edit -> use -> revert; no-ff merge",
+   "commits_checked": 7,
+   "default_path_limited_git_log_lists": 0,
+   "expected": "REFUSE",
+   "expected_reason": "touched a frozen path: it holds ['c11r_boxdata.py']",
+   "expected_step": "complete frozen history",
+   "full_history_path_limited_git_log_lists": 2,
+   "full_history_seal_log_lists": 1,
+   "group": "MHT",
+   "history_purity_flags": true,
+   "id": "MHT3",
+   "merge_commits_in_range": 1,
+   "pass": true,
+   "problems": [
+    "history purity: commit 8e83298a5940 touched a frozen path: it holds ['c11r_boxdata.py'] in a state other than the approved commit's"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "default_path_limited_git_log_lists": true,
+    "history_purity_flags": true,
+    "tree_identity_flags": true
+   },
+   "round4_seal_log_lists": 1,
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "tree_identity_flags": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "side branch: a run artifact -> delete -> merge (an earlier, discarded execution) -- at the runner pre-flight",
+   "expected": "REFUSE",
+   "expected_reason": "holds a runs artifact (a prior execution)",
+   "expected_step": null,
+   "group": "MHT",
+   "id": "MHT4_preflight",
+   "pass": true,
+   "problems": [
+    "protocol history: commit 39114d79f39e holds a runs artifact (a prior execution)",
+    "protocol history: commit 39114d79f39e holds a runs artifact other than the current one (a discarded or replaced runs)",
+    "a runs artifact already exists",
+    "runner pre-flight: a runs artifact already exists"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "runner pre-flight",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "side branch: a run artifact -> delete -> merge (an earlier, discarded execution)",
+   "commits_checked": 7,
+   "default_path_limited_git_log_lists": 0,
+   "expected": "REFUSE",
+   "expected_reason": "holds a runs artifact other than the current one",
+   "expected_step": "complete frozen history",
+   "full_history_path_limited_git_log_lists": 0,
+   "full_history_seal_log_lists": 3,
+   "group": "MHT",
+   "history_purity_flags": false,
+   "id": "MHT4",
+   "merge_commits_in_range": 1,
+   "pass": true,
+   "problems": [
+    "protocol history: commit 39114d79f39e holds a runs artifact other than the current one (a discarded or replaced runs)",
+    "the runs artifact was changed after it was sealed, or another run was committed and discarded (1 reachable commits hold other runs content)"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "history_purity_flags": true,
+    "round4_seal_log_lists": true,
+    "tree_identity_flags": true
+   },
+   "round4_seal_log_lists": 1,
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history",
+    "seal"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "tree_identity_flags": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "side branch: the SAME sealed run artifact -> delete -> merge, then sealed again",
+   "commits_checked": 7,
+   "default_path_limited_git_log_lists": 0,
+   "expected": "REFUSE",
+   "expected_reason": "the runs artifact was introduced by 2 commits",
+   "expected_step": "complete frozen history",
+   "full_history_path_limited_git_log_lists": 0,
+   "full_history_seal_log_lists": 3,
+   "group": "MHT",
+   "history_purity_flags": false,
+   "id": "MHT5",
+   "merge_commits_in_range": 1,
+   "pass": true,
+   "problems": [
+    "protocol history: the runs artifact was introduced by 2 commits",
+    "protocol history: the runs artifact has no single sealing commit",
+    "the runs artifact was never committed, so no ordering can be established",
+    "the runs artifact was introduced by 2 commits: an earlier seal exists in reachable history"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "history_purity_flags": true,
+    "round4_seal_log_lists": true,
+    "tree_identity_flags": true
+   },
+   "round4_seal_log_lists": 1,
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history",
+    "seal"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "tree_identity_flags": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "side branch: a comparison artifact -> delete -> merge",
+   "commits_checked": 7,
+   "default_path_limited_git_log_lists": 0,
+   "expected": "REFUSE",
+   "expected_reason": "holds a comparison artifact (a prior comparison)",
+   "expected_step": "complete frozen history",
+   "full_history_path_limited_git_log_lists": 0,
+   "full_history_seal_log_lists": 1,
+   "group": "MHT",
+   "history_purity_flags": false,
+   "id": "MHT5_comparison",
+   "merge_commits_in_range": 1,
+   "pass": true,
+   "problems": [
+    "protocol history: commit 3b5e74c08ab5 holds a comparison artifact (a prior comparison)"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "history_purity_flags": true,
+    "tree_identity_flags": true
+   },
+   "round4_seal_log_lists": 1,
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "tree_identity_flags": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "`-s ours` merge: the final bytes equal the approved bytes, the merged history holds a mutation",
+   "commits_checked": 6,
+   "default_path_limited_git_log_lists": 0,
+   "expected": "REFUSE",
+   "expected_reason": "touched a frozen path: it holds ['c11r_policy.py']",
+   "expected_step": "complete frozen history",
+   "full_history_path_limited_git_log_lists": 2,
+   "full_history_seal_log_lists": 1,
+   "group": "MHT",
+   "history_purity_flags": true,
+   "id": "MHT6",
+   "merge_commits_in_range": 1,
+   "pass": true,
+   "problems": [
+    "history purity: commit 7c4ce16fea8b touched a frozen path: it holds ['c11r_policy.py'] in a state other than the approved commit's"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "default_path_limited_git_log_lists": true,
+    "history_purity_flags": true,
+    "tree_identity_flags": true
+   },
+   "round4_seal_log_lists": 1,
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "tree_identity_flags": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "a clean no-ff merge that never touches a frozen path",
+   "commits_checked": 6,
+   "default_path_limited_git_log_lists": 0,
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "full_history_path_limited_git_log_lists": 0,
+   "full_history_seal_log_lists": 1,
+   "group": "MHT",
+   "history_purity_flags": false,
+   "id": "MHT7",
+   "merge_commits_in_range": 1,
+   "pass": true,
+   "problems": [],
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "all_twelve_steps_passed": true,
+    "history_purity_flags": true,
+    "loader_called_exactly_once": true,
+    "tree_identity_flags": true
+   },
+   "round4_seal_log_lists": 1,
+   "stage": "comparator",
+   "steps_failed": [],
+   "steps_not_evaluated": [],
+   "stub_loader_calls": 1,
+   "tree_identity_flags": false,
+   "verdict": "AGREEMENT_INSUFFICIENT"
+  },
+  {
+   "attack": "a merged branch mutating only files outside the frozen namespace",
+   "commits_checked": 6,
+   "default_path_limited_git_log_lists": 0,
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "full_history_path_limited_git_log_lists": 0,
+   "full_history_seal_log_lists": 1,
+   "group": "MHT",
+   "history_purity_flags": false,
+   "id": "MHT8",
+   "merge_commits_in_range": 1,
+   "pass": true,
+   "problems": [],
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "all_twelve_steps_passed": true,
+    "history_purity_flags": true,
+    "loader_called_exactly_once": true,
+    "tree_identity_flags": true
+   },
+   "round4_seal_log_lists": 1,
+   "stage": "comparator",
+   "steps_failed": [],
+   "steps_not_evaluated": [],
+   "stub_loader_calls": 1,
+   "tree_identity_flags": false,
+   "verdict": "AGREEMENT_INSUFFICIENT"
+  },
+  {
+   "attack": "side branch: transitive helper c7_gaussian.py edited -> reverted; merged",
+   "commits_checked": 7,
+   "default_path_limited_git_log_lists": 0,
+   "expected": "REFUSE",
+   "expected_reason": "touched a frozen path: it holds ['c7_gaussian.py']",
+   "expected_step": "complete frozen history",
+   "full_history_path_limited_git_log_lists": 2,
+   "full_history_seal_log_lists": 1,
+   "group": "MHT",
+   "history_purity_flags": true,
+   "id": "MHT9",
+   "merge_commits_in_range": 1,
+   "pass": true,
+   "problems": [
+    "history purity: commit 4cbdc5c80471 touched a frozen path: it holds ['c7_gaussian.py'] in a state other than the approved commit's"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "default_path_limited_git_log_lists": true,
+    "history_purity_flags": true,
+    "tree_identity_flags": true
+   },
+   "round4_seal_log_lists": 1,
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "tree_identity_flags": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "a valid, clean linear history",
+   "commits_checked": 4,
+   "default_path_limited_git_log_lists": 0,
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "full_history_path_limited_git_log_lists": 0,
+   "full_history_seal_log_lists": 1,
+   "group": "MHT",
+   "history_purity_flags": false,
+   "id": "MHT10",
+   "merge_commits_in_range": 0,
+   "pass": true,
+   "problems": [],
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "all_twelve_steps_passed": true,
+    "history_purity_flags": true,
+    "loader_called_exactly_once": true,
+    "tree_identity_flags": true
+   },
+   "round4_seal_log_lists": 1,
+   "stage": "comparator",
+   "steps_failed": [],
+   "steps_not_evaluated": [],
+   "stub_loader_calls": 1,
+   "tree_identity_flags": false,
+   "verdict": "AGREEMENT_INSUFFICIENT"
+  },
+  {
+   "attack": "octopus merge of three branches, one of which edited and reverted a certificate module",
+   "commits_checked": 8,
+   "default_path_limited_git_log_lists": 0,
+   "expected": "REFUSE",
+   "expected_reason": "touched a frozen path: it holds ['c11r_certificate.py']",
+   "expected_step": "complete frozen history",
+   "full_history_path_limited_git_log_lists": 2,
+   "full_history_seal_log_lists": 1,
+   "group": "MHT",
+   "history_purity_flags": true,
+   "id": "MHT_octopus",
+   "merge_commits_in_range": 1,
+   "pass": true,
+   "problems": [
+    "history purity: commit 1e083dfa5735 touched a frozen path: it holds ['c11r_certificate.py'] in a state other than the approved commit's"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "default_path_limited_git_log_lists": true,
+    "history_purity_flags": true,
+    "tree_identity_flags": true
+   },
+   "round4_seal_log_lists": 1,
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "tree_identity_flags": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "side branch: the policy consistently re-stamped, then restored; merged",
+   "commits_checked": 7,
+   "default_path_limited_git_log_lists": 0,
+   "expected": "REFUSE",
+   "expected_reason": "touched a frozen path: it holds ['C11R_POLICY.json']",
+   "expected_step": "complete frozen history",
+   "full_history_path_limited_git_log_lists": 2,
+   "full_history_seal_log_lists": 1,
+   "group": "MHT",
+   "history_purity_flags": true,
+   "id": "MHT_S3d",
+   "merge_commits_in_range": 1,
+   "pass": true,
+   "problems": [
+    "history purity: commit 139dc14a97e8 touched a frozen path: it holds ['C11R_POLICY.json'] in a state other than the approved commit's"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "default_path_limited_git_log_lists": true,
+    "history_purity_flags": true,
+    "tree_identity_flags": true
+   },
+   "round4_seal_log_lists": 1,
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "tree_identity_flags": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "linear retry: a run sealed, discarded, and another run sealed",
+   "commits_checked": 5,
+   "default_path_limited_git_log_lists": 0,
+   "expected": "REFUSE",
+   "expected_reason": "another run was committed and discarded",
+   "expected_step": "complete frozen history",
+   "full_history_path_limited_git_log_lists": 0,
+   "full_history_seal_log_lists": 3,
+   "group": "MHT",
+   "history_purity_flags": false,
+   "id": "MHT_Sa",
+   "merge_commits_in_range": 0,
+   "pass": true,
+   "problems": [
+    "protocol history: commit ae5ce9d7eb8e holds a runs artifact other than the current one (a discarded or replaced runs)",
+    "the runs artifact was changed after it was sealed, or another run was committed and discarded (1 reachable commits hold other runs content)"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "history_purity_flags": true,
+    "tree_identity_flags": true
+   },
+   "round4_seal_log_lists": 3,
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history",
+    "seal"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "tree_identity_flags": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "G8 fails (a not-implemented constant reported NOT_CERTIFIED); everything else valid",
+   "expected": "REFUSE",
+   "expected_reason": "G8: D1: the policy does not implement it",
+   "expected_step": "G8",
+   "group": "LS",
+   "id": "LS_G8",
+   "pass": true,
+   "problems": [
+    "G8: D1: the policy does not implement it, yet it is NOT_CERTIFIED"
+   ],
+   "refused": true,
+   "refused_at_step": "G8",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "G8"
+   ],
+   "steps_not_evaluated": [],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "G10 fails (a POINTWISE_INFEASIBLE certificate sent on)",
+   "expected": "REFUSE",
+   "expected_reason": "G10: F_D: POINTWISE_INFEASIBLE yet sent to certification",
+   "expected_step": "G10",
+   "group": "LS",
+   "id": "LS_G10",
+   "pass": true,
+   "problems": [
+    "G10: F_D: POINTWISE_INFEASIBLE yet sent to certification",
+    "G10: F_D: certified without passing the pointwise screen",
+    "value trace: D_lo: [\"its certificate proves nothing: ['certified without having passed the pointwise screen (G10)']\"]",
+    "D_lo: the target does not trace to its certificate: [\"its certificate proves nothing: ['certified without having passed the pointwise screen (G10)']\"]"
+   ],
+   "refused": true,
+   "refused_at_step": "G10",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "G10",
+    "other execution-integrity predicates"
+   ],
+   "steps_not_evaluated": [],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "G19 fails (internally consistent certificates at another depth)",
+   "expected": "REFUSE",
+   "expected_reason": "G19: F_",
+   "expected_step": "G19",
+   "group": "LS",
+   "id": "LS_G19",
+   "pass": true,
+   "problems": [
+    "G19: F_D: made at depth/panels (6, 32), not the frozen (5, 32)",
+    "G19: F_H: made at depth/panels (6, 32), not the frozen (5, 32)",
+    "G19: F_K: made at depth/panels (6, 32), not the frozen (5, 32)"
+   ],
+   "refused": true,
+   "refused_at_step": "G19",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "G19"
+   ],
+   "steps_not_evaluated": [],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "a target demoted to NOT_CERTIFIED although its certificate proves it (N4-8)",
+   "expected": "REFUSE",
+   "expected_reason": "reported NOT_CERTIFIED (demoted)",
+   "expected_step": "other execution-integrity predicates",
+   "group": "LS",
+   "id": "LS_DEMOTE",
+   "pass": true,
+   "problems": [
+    "value trace: Abar: [\"its certificate 'F_K' proves Abar, yet it is reported NOT_CERTIFIED (demoted)\"]",
+    "Abar: the target does not trace to its certificate: [\"its certificate 'F_K' proves Abar, yet it is reported NOT_CERTIFIED (demoted)\"]"
+   ],
+   "refused": true,
+   "refused_at_step": "other execution-integrity predicates",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "other execution-integrity predicates"
+   ],
+   "steps_not_evaluated": [],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "bad seal: the sealed runs artifact changed on disk afterwards",
+   "expected": "REFUSE",
+   "expected_reason": "the runs artifact has uncommitted changes",
+   "expected_step": "complete frozen history",
+   "group": "LS",
+   "id": "LS_SEAL",
+   "pass": true,
+   "problems": [
+    "protocol history: commit da58eb99e16b holds a runs artifact other than the current one (a discarded or replaced runs)",
+    "protocol history: the runs artifact is not committed at HEAD",
+    "protocol history: the runs artifact has no single sealing commit",
+    "the runs artifact was never committed, so no ordering can be established",
+    "the runs artifact has uncommitted changes",
+    "the runs artifact was changed after it was sealed, or another run was committed and discarded (1 reachable commits hold other runs content)"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history",
+    "seal"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "bad contract: the contract edited (re-stamped) after the seal",
+   "expected": "REFUSE",
+   "expected_reason": "tree identity: frozen path C11R_CONTRACT.json differs",
+   "expected_step": "complete frozen history",
+   "group": "LS",
+   "id": "LS_CONTRACT",
+   "pass": true,
+   "problems": [
+    "tree identity: frozen path C11R_CONTRACT.json differs from the approved commit",
+    "tree identity: a frozen path has uncommitted changes",
+    "contract: configuration differs from the recomputed value",
+    "the contract in the tree is not the contract at the approved commit",
+    "gate: bound to another execution contract",
+    "qualification: execution_contract_sha256 belongs to another contract or tree",
+    "qualification: item Q1 is bound to another execution_contract_sha256",
+    "qualification: item Q2 is bound to another execution_contract_sha256",
+    "qualification: item Q3 is bound to another execution_contract_sha256",
+    "qualification: item Q4 is bound to another execution_contract_sha256"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history",
+    "contract",
+    "gate",
+    "qualification",
+    "authorization",
+    "run"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "bad history: a side-branch edit and revert, merged",
+   "expected": "REFUSE",
+   "expected_reason": "touched a frozen path: it holds ['c7_gaussian.py']",
+   "expected_step": "complete frozen history",
+   "group": "LS",
+   "id": "LS_HISTORY",
+   "pass": true,
+   "problems": [
+    "history purity: commit d2c89376b9a6 touched a frozen path: it holds ['c7_gaussian.py'] in a state other than the approved commit's"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "the valid chain: the only case that may reach the loader",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "group": "LS",
+   "id": "LS_VALID",
+   "pass": true,
+   "problems": [],
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "all_twelve_steps_passed": true,
+    "loader_called_exactly_once": true
+   },
+   "stage": "comparator",
+   "steps_failed": [],
+   "steps_not_evaluated": [],
+   "stub_loader_calls": 1,
+   "verdict": "AGREEMENT_INSUFFICIENT"
+  },
+  {
+   "attack": "missing Q7",
+   "expected": "REFUSE",
+   "expected_reason": "required item(s) missing: ['Q7']",
+   "expected_step": null,
+   "group": "QF",
+   "id": "QF1",
+   "pass": true,
+   "problems": [
+    "qualification: required item(s) missing: ['Q7']"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "duplicate Q12",
+   "expected": "REFUSE",
+   "expected_reason": "duplicate item(s): ['Q12']",
+   "expected_step": null,
+   "group": "QF",
+   "id": "QF2",
+   "pass": true,
+   "problems": [
+    "qualification: duplicate item(s): ['Q12']"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "forged overall PASS with one failing item (re-stamped)",
+   "expected": "REFUSE",
+   "expected_reason": "stored class 'PASS' is not the recomputed disposition 'FAIL'",
+   "expected_step": null,
+   "group": "QF",
+   "id": "QF3",
+   "pass": true,
+   "problems": [
+    "qualification: failing item(s) ['Q3']",
+    "qualification: stored class 'PASS' is not the recomputed disposition 'FAIL'"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "wrong contract on one item (re-stamped)",
+   "expected": "REFUSE",
+   "expected_reason": "item Q4 is bound to another execution_contract_sha256",
+   "expected_step": null,
+   "group": "QF",
+   "id": "QF4",
+   "pass": true,
+   "problems": [
+    "qualification: item Q4 is bound to another execution_contract_sha256",
+    "qualification: stored class 'PASS' is not the recomputed disposition 'FAIL'"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "wrong approved commit on one item (re-stamped)",
+   "expected": "REFUSE",
+   "expected_reason": "item Q9 is bound to another approved_commit",
+   "expected_step": null,
+   "group": "QF",
+   "id": "QF5",
+   "pass": true,
+   "problems": [
+    "qualification: item Q9 is bound to another approved_commit",
+    "qualification: stored class 'PASS' is not the recomputed disposition 'FAIL'"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "unknown extra item Q19 (frozen rule: REFUSE)",
+   "expected": "REFUSE",
+   "expected_reason": "unknown item(s) ['Q19']",
+   "expected_step": null,
+   "group": "QF",
+   "id": "QF6",
+   "pass": true,
+   "problems": [
+    "qualification: unknown item(s) ['Q19'] -- the frozen schema rule is REFUSE"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "R4's demonstration: a PASS-class qualification with one arbitrary item",
+   "expected": "REFUSE",
+   "expected_reason": "required item(s) missing",
+   "expected_step": null,
+   "group": "QF",
+   "id": "QF8",
+   "pass": true,
+   "problems": [
+    "qualification: required item(s) missing: ['Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6', 'Q7', 'Q8', 'Q9', 'Q10', 'Q11', 'Q12', 'Q13', 'Q14', 'Q15', 'Q16', 'Q17', 'Q18']",
+    "qualification: unknown item(s) ['FX1'] -- the frozen schema rule is REFUSE"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "a valid Q1-Q18 qualification",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "group": "QF",
+   "id": "QF7",
+   "pass": true,
+   "problems": [],
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "exactly_Q1_to_Q18": true,
+    "recomputed_disposition_PASS": true
+   },
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "a stray same-name module earlier on sys.path",
+   "expected": "REFUSE",
+   "expected_reason": "c11r_idrift.py (as module 'c11r_idrift') was loaded from another file",
+   "expected_step": null,
+   "files": {
+    "c11r_idrift": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/c11r_imp_yoigz62x/stray/c11r_idrift.py",
+    "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
+    "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
+   },
+   "group": "IMP",
+   "id": "IMP1",
+   "modules_checked": [
+    "c11_certifier.py",
+    "c11_common.py",
+    "c11r_common.py",
+    "c11r_contract.py",
+    "c11r_procs.py",
+    "c11r_schema.py",
+    "c7_gaussian.py"
+   ],
+   "pass": true,
+   "problems": [
+    "loaded modules: c11r_idrift.py (as module 'c11r_idrift') was loaded from another file than <execution root>/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "driver_ran": true
+   },
+   "stage": "loaded-module identity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "a symlinked alternate module (an external file of identical bytes)",
+   "expected": "REFUSE",
+   "expected_reason": "c11r_idrift.py (as module 'c11r_idrift') was loaded from another file",
+   "expected_step": null,
+   "files": {
+    "c11r_idrift": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/c11r_imp_r0grx0nx/links/c11r_idrift.py",
+    "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
+    "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
+   },
+   "group": "IMP",
+   "id": "IMP2",
+   "modules_checked": [
+    "c11_certifier.py",
+    "c11_common.py",
+    "c11r_common.py",
+    "c11r_contract.py",
+    "c11r_procs.py",
+    "c11r_schema.py",
+    "c7_gaussian.py"
+   ],
+   "pass": true,
+   "problems": [
+    "loaded modules: c11r_idrift.py (as module 'c11r_idrift') was loaded from another file than <execution root>/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "driver_ran": true
+   },
+   "stage": "loaded-module identity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "the correct modules from the contract paths",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "files": {
+    "c11r_idrift": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py",
+    "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
+    "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
+   },
+   "group": "IMP",
+   "id": "IMP3",
+   "modules_checked": [
+    "c11_certifier.py",
+    "c11_common.py",
+    "c11r_common.py",
+    "c11r_contract.py",
+    "c11r_idrift.py",
+    "c11r_procs.py",
+    "c11r_schema.py",
+    "c7_gaussian.py"
+   ],
+   "pass": true,
+   "problems": [],
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "driver_ran": true,
+    "non_vacuous": true
+   },
+   "stage": "loaded-module identity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "identical bytes at a wrong path (not allowed by the contract)",
+   "expected": "REFUSE",
+   "expected_reason": "c11r_idrift.py (as module 'c11r_idrift') was loaded from another file",
+   "expected_step": null,
+   "files": {
+    "c11r_idrift": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/c11r_imp_y8rdr0om/copy/c11r_idrift.py",
+    "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
+    "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
+   },
+   "group": "IMP",
+   "id": "IMP4",
+   "modules_checked": [
+    "c11_certifier.py",
+    "c11_common.py",
+    "c11r_common.py",
+    "c11r_contract.py",
+    "c11r_procs.py",
+    "c11r_schema.py",
+    "c7_gaussian.py"
+   ],
+   "pass": true,
+   "problems": [
+    "loaded modules: c11r_idrift.py (as module 'c11r_idrift') was loaded from another file than <execution root>/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "driver_ran": true
+   },
+   "stage": "loaded-module identity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "a transitive helper (c7_gaussian.py) shadowed",
+   "expected": "REFUSE",
+   "expected_reason": "c7_gaussian.py (as module 'c7_gaussian') was loaded from another file",
+   "expected_step": null,
+   "files": {
+    "c11r_idrift": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py",
+    "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
+    "c7_gaussian": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/c11r_imp_o32m5fp2/helper/c7_gaussian.py"
+   },
+   "group": "IMP",
+   "id": "IMP5",
+   "modules_checked": [
+    "c11_certifier.py",
+    "c11_common.py",
+    "c11r_common.py",
+    "c11r_contract.py",
+    "c11r_idrift.py",
+    "c11r_procs.py",
+    "c11r_schema.py"
+   ],
+   "pass": true,
+   "problems": [
+    "loaded modules: c7_gaussian.py (as module 'c7_gaussian') was loaded from another file than <execution root>/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "driver_ran": true
+   },
+   "stage": "loaded-module identity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "a forged timestamp .pyc (matching mtime and size) for c11r_schema",
+   "expected": "REFUSE",
+   "expected_reason": "c11r_schema.py (as module 'c11r_schema') has cached bytecode that is not the compilation of its verified source",
+   "expected_step": null,
+   "files": {
+    "c11r_idrift": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py",
+    "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
+    "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
+   },
+   "group": "IMP",
+   "id": "IMP6",
+   "modules_checked": [
+    "c11_certifier.py",
+    "c11_common.py",
+    "c11r_common.py",
+    "c11r_contract.py",
+    "c11r_idrift.py",
+    "c11r_procs.py",
+    "c11r_schema.py",
+    "c7_gaussian.py"
+   ],
+   "pass": true,
+   "problems": [
+    "loaded modules: c11r_schema.py (as module 'c11r_schema') has cached bytecode that is not the compilation of its verified source"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "driver_ran": true,
+    "the_forged_code_really_ran": true
+   },
+   "stage": "loaded-module identity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "a STALE .pyc (header mtime does not match) that the loader ignores: no false refusal",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "files": {
+    "c11r_idrift": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py",
+    "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
+    "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
+   },
+   "group": "IMP",
+   "id": "IMP6b",
+   "modules_checked": [
+    "c11_certifier.py",
+    "c11_common.py",
+    "c11r_common.py",
+    "c11r_contract.py",
+    "c11r_idrift.py",
+    "c11r_procs.py",
+    "c11r_schema.py",
+    "c7_gaussian.py"
+   ],
+   "pass": true,
+   "problems": [],
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "driver_ran": true,
+    "the_stale_code_did_not_run": true
+   },
+   "stage": "loaded-module identity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "PYTHONPATH set in the environment",
+   "expected": "REFUSE",
+   "expected_reason": "PYTHONPATH is set",
+   "expected_step": null,
+   "files": {
+    "c11r_idrift": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py",
+    "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
+    "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
+   },
+   "group": "IMP",
+   "id": "IMP7",
+   "modules_checked": [
+    "c11_certifier.py",
+    "c11_common.py",
+    "c11r_common.py",
+    "c11r_contract.py",
+    "c11r_idrift.py",
+    "c11r_procs.py",
+    "c11r_schema.py",
+    "c7_gaussian.py"
+   ],
+   "pass": true,
+   "problems": [
+    "loaded modules: PYTHONPATH is set; the import path is not the contract's"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "driver_ran": true
+   },
+   "stage": "loaded-module identity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "a zip archive earlier on sys.path",
+   "expected": "REFUSE",
+   "expected_reason": "c11r_idrift.py (as module 'c11r_idrift') was loaded from another file",
+   "expected_step": null,
+   "files": {
+    "c11r_idrift": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/c11r_imp_xxcimlia/shadow.zip/c11r_idrift.py",
+    "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
+    "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
+   },
+   "group": "IMP",
+   "id": "IMP8",
+   "modules_checked": [
+    "c11_certifier.py",
+    "c11_common.py",
+    "c11r_common.py",
+    "c11r_contract.py",
+    "c11r_procs.py",
+    "c11r_schema.py",
+    "c7_gaussian.py"
+   ],
+   "pass": true,
+   "problems": [
+    "loaded modules: c11r_idrift.py (as module 'c11r_idrift') was loaded from another file than <execution root>/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "driver_ran": true
+   },
+   "stage": "loaded-module identity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "R4's demonstration: an untracked c11r_certificate.py in C11's code directory",
+   "expected": "REFUSE",
+   "expected_reason": "untracked Python source ['c11r_certificate.py']",
+   "expected_step": null,
+   "group": "IMP",
+   "id": "IMP_stray",
+   "pass": true,
+   "problems": [
+    "runner pre-flight: code directories: untracked Python source ['c11r_certificate.py']"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "runner pre-flight",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "authorization claims to be issued at the approved commit, before the qualification it binds existed (re-stamped)",
+   "expected": "REFUSE",
+   "expected_reason": "authorization: issued before the qualification it binds was committed",
+   "expected_step": null,
+   "group": "ORD",
+   "id": "ORD1",
+   "pass": true,
+   "problems": [
+    "authorization: issued before the qualification it binds was committed"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "runner pre-flight",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "a failed qualification attempt committed, then replaced by a passing one",
+   "expected": "REFUSE",
+   "expected_reason": "holds a qualification artifact other than the current one",
+   "expected_step": null,
+   "group": "ORD",
+   "id": "ORD2",
+   "pass": true,
+   "problems": [
+    "protocol history: commit eaa43a4642f0 holds a qualification artifact other than the current one (a discarded or replaced qualification)"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "the authorization committed in the same commit as the seal",
+   "expected": "REFUSE",
+   "expected_reason": "the authorization was not committed before the seal",
+   "expected_step": "complete frozen history",
+   "group": "ORD",
+   "id": "ORD3",
+   "pass": true,
+   "problems": [
+    "protocol history: the authorization was not committed before the seal"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
   }
  ],
  "failed": [],
+ "groups": {
+  "IMP": {
+   "controls": 10,
+   "passed": 10
+  },
+  "LS": {
+   "controls": 8,
+   "passed": 8
+  },
+  "MHT": {
+   "controls": 15,
+   "passed": 15
+  },
+  "ORD": {
+   "controls": 3,
+   "passed": 3
+  },
+  "QF": {
+   "controls": 8,
+   "passed": 8
+  },
+  "R3": {
+   "controls": 25,
+   "passed": 25
+  }
+ },
+ "not_covered": [
+  "commits not reachable from HEAD (reset-away commits, unmerged branches, stashes) are outside history: a run made and discarded there, or never committed at all, is undetectable by git",
+  "the loaded-module check sees what the import system loaded at the moment of the check; in-memory patching, exec of other code and modules swapped on disk and restored between import and check are not detected"
+ ],
  "provenance": {
   "code_closure": {
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py": "fc88fb0dcc0f757d9ed42b08ecdd9e7ca2c65320181320f009390d67e3155741",
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_common.py": "c55e97b9e2dc626992d3fa25ef23833fcccee88e787a916aa02dc23c2f0ab1b2",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_certificate.py": "f99dcb12159972014d093589498db0b7a338cc130e3b887a347709a455fdd0f6",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_chain.py": "4fabf63a5155b837a8d7bf51e3782e784a588b6d35b108deb6e7d7a45a619a4d",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "5507e1fc6e4b8f50981cc791eb8c32761598f29236f572d28b6986d7a022cee9",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_compare.py": "7cdbc6eb466d11800f7d3eca8ddc3fae94df31d344b581b09d60cd84ecb07d16",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_contract.py": "1a951ab23add2370949251f226c4da89ee343cffbe93ff3f9b58ae834af5ec19",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_cost.py": "e2961a1a9150bda3eb60047dda542b91013ab885e69a71bbd48a4a35e80fc922",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_chain.py": "075998bc49d2d6fd3f0da56d316d326bd291a5cb2667eb1958fcf8e7a96cdb48",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "8895e64c21059671373383e3e0e231ab82a3a184318f890f5a8ed6e529d4d93a",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_compare.py": "f484a108d4cbfda647480616d85ffbb1d14850811de8daa4d96f87437bf6027c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_contract.py": "e5bb1801d4d530a5883d67658b94af639a6eed0e76e515bbe41e85b224461f13",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_cost.py": "6a3ca12192b28f9d3a247dfe411f04c1377bb033410c2cead9c412b6f25d151a",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_equiv.py": "6d2941b8fc0c56be135da1a82ead2109ef808842a5f82c7bde4b6dafd3d6f929",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_gate.py": "fe231828af027d810aff15e89c657e6b96ea08b5ed82e874f503d457f0c3524f",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_gate.py": "59aad80f5e33165087df7f1441e8e01a49d424491636b90639114bf9c6ca1f09",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py": "208b22bfb440ead6065f405b2aa746f869d81cb63a6d17ea73b44cec0060dedb",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "bdd2717082640c99a5cce3a0d9adb7999724f2d1d3291f3745475d3eb8ccfe97",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_qualify.py": "2a963affac7c6c6f419d7298bcfe05cd194fa433068b3858dd1c6d7d0f3e2e55",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_runs.py": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py": "c484c2ca58a759b3db9cbab8694cae76a5729b213258a4daa6755edf3eb3a045",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "5f67a1360dd78686b2f3a683b21daed15f2a0b22889c5cdfe5075def4d9f1d64",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_qualify.py": "0be06547d2393e9e6ecc52158b33003d3de1926db7ad61e488839c7aa6b4ac7a",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_runs.py": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "bc3302632f36fc8afdb18a9154cc0fb65938b17f37db284872c0895115f29114",
    "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
   },
   "inputs": {},
   "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_chain.py",
-  "producer_sha256": "4fabf63a5155b837a8d7bf51e3782e784a588b6d35b108deb6e7d7a45a619a4d"
+  "producer_sha256": "075998bc49d2d6fd3f0da56d316d326bd291a5cb2667eb1958fcf8e7a96cdb48"
  },
- "purpose": "R3-1: the frozen execution identity binds end to end",
+ "purpose": "R3-1 and R4-1: the frozen execution identity binds end to end over COMPLETE reachable history; N4-5: the loader is reached only by a valid chain; N4-4: the typed qualification schema; N4-3: loaded-module identity",
  "quarantine_access_ordering": {
+  "comparator_accepts": 6,
+  "comparator_refusals": 25,
   "loader_never_called_on_a_refused_chain": true,
-  "rule": "the comparator calls the magnitude loader only after seal and chain verify"
+  "rule": "the comparator calls the magnitude loader only after steps 1-12 of c11r_compare.STEPS all pass"
  },
- "schema": "C11R_CHAIN_CONTROLS/1",
- "sha256": "bc01c75152f6a8e01991fc7b477033f0ff31c758c250f2cba5f10fbbe0ec36cf",
- "synthetic": "temporary git repositories; fixture qualification and authorization (accepted only with allow_fixture=True); synthetic certificates; a stub magnitude loader; the quarantine is never copied or opened"
+ "schema": "C11R_CHAIN_CONTROLS/2",
+ "sha256": "8c8b438f709e0ce077280358b4d8df81ed80bacec15ecdab08e8bb0e8f8ad33b",
+ "synthetic": "temporary git repositories; fixture Q1-Q18 qualification and authorization (accepted only with allow_fixture=True); synthetic certificates; a stub magnitude loader; subprocess drivers for the loaded-module controls; the quarantine is never copied or opened"
 }

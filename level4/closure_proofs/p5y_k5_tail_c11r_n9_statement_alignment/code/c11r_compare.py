@@ -1,32 +1,44 @@
-"""C11R Phase 15 -- the sealed comparison. Revision 4 (R3-1; B-1, B-3, B-4 kept).
+"""C11R Phase 15 -- the sealed comparison. Revision 5 (R4-1, N4-5, N4-8; R3-1, B-1, B-3, B-4 kept).
 
 ONE OF EXACTLY TWO MODULES PERMITTED TO LOAD AN ORIGINAL MAGNITUDE, and it does so only through
-the `loader` that `execute_comparison` calls AFTER the seal and the whole identity chain verify.
+the `loader` that `execute_comparison` calls AFTER every verification step has passed.
 
-THE ROOT OF TRUST (round 4, erratum E25). Revision 3 took the certifier and producer hashes it
-"expected" from the seal commit's own tree, so a certifier edited, committed, used and reverted
-before the seal was accepted. Now the operator supplies the APPROVED commit A (the one the review
-passed); the frozen execution contract at A is the authority, and nothing is taken from the tree
-being checked without being recomputed and compared with it.
+THE ROOT OF TRUST (round 4, erratum E25). The operator supplies the APPROVED commit A (the one the
+review passed); the frozen execution contract AS COMMITTED AT A is the authority, and nothing is
+taken from the tree being checked without being recomputed and compared with it.
 
-ORDER OF OPERATIONS IN `execute_comparison`:
-  1  the SEAL: the runs artifact is committed by exactly one commit and never touched again, the
-     file on disk is that commit's blob with no uncommitted change, its canonical body hashes to
-     its stored sha256, and it passes c11r_schema.validate_runs (typed seal fields: erratum E15);
-  2  the CHAIN (c11r_contract): the authorization names A; the execution contract recomputed from
-     bytes; every frozen path byte-identical to A and untouched by every later commit; the gate,
-     the qualification and the authorization verified against the recomputed identities; the run's
-     execution_identity, code closure, certifier hashes, runner and configuration equal to them
-     (predicate G20); the comparison rule's factor equal to this module's and to the gate's.
-     ANY failure -> EXECUTION_INVALID, and the quarantine is NOT opened;
-  3  every production guard (c11r_certificate.evaluate_run) with the certifier hashes the FROZEN
-     CONTRACT fixes: reconstruction; value tracing, G8, G10, G19;
-  4  only then the ORIGINAL statements (semantics) and the ORIGINAL magnitudes (the quarantine,
-     first checked against the content-free id the statement table recorded for it);
-  4  per target: STATEMENT EQUIVALENCE first (the reconstructed proposition against the original),
-     then, only for an equivalent-or-stronger statement, NUMERICAL AGREEMENT. The two results are
-     recorded separately and never conflated;
-  5  the N9 classification by a frozen precedence, and only then any prose.
+REVISION 5. Review round 4 found (R4-1) that the seal was located with `git log -- <runs path>`,
+whose default history simplification hides a run committed and discarded on a merged side
+branch, and (N4-5) that the magnitude loader ran BEFORE the G8/G10/G19 guards were evaluated,
+and (N4-8) that a demoted target never reached the verdict. Now:
+
+THE ORDER IN `execute_comparison` (STEPS; each recorded, in order, with its problems):
+   1  approved commit   -- A exists, the authorization names A, HEAD descends from A, A carries
+                           a contract;
+   2  complete history  -- c11r_contract.frozen_state (tree identity AND history purity over
+                           EVERY commit reachable after A) and protocol_history (no comparison,
+                           no discarded run, qualification and authorization introduced once
+                           and in order before the seal);
+   3  contract          -- recomputed from bytes; equal to the contract at A;
+   4  gate              -- bound to that contract, the policy and the statement table;
+   5  qualification     -- the typed Q1-Q18 schema, bound to the contract and to A;
+   6  authorization     -- every identity recomputed (stage "compare");
+   7  run               -- the run's schema, stored digest, execution identity and code closure
+                           (G20);
+   8  seal              -- exactly one sealing commit in complete history, the file is its blob,
+                           no uncommitted change;
+   9  G8, 10 G10, 11 G19 -- the production guards, with the certifier hashes the FROZEN contract
+                           fixes;
+  12  other predicates  -- value tracing (including the demotion check), reconstruction,
+                           independence, STATEMENT equivalence, the loaded-module identity and the
+                           frozen comparison rule;
+  13  ONLY THEN the loader (the original magnitudes; the quarantine, first checked against the
+      content-free id the statement table recorded);
+  14  numerical agreement per statement-equivalent target, the opposite-direction check, and the
+      N9 classification by the frozen precedence; only then any prose.
+ANY failure in 1-12 -> EXECUTION_INVALID (INDEPENDENCE_VIOLATION when the chain verified and a
+certificate uses the original's graph), and the loader is NOT called; the chain controls prove it
+with a loader spy for each refusal class.
 
 NOTHING HERE IS A PRE-WRITTEN CONCLUSION: every sentence is rendered from computed fields.
 
@@ -77,27 +89,36 @@ def _real_repository_guard(root: pathlib.Path) -> None:
     """The REAL runs artifact carries prospective target values: in the real repository it is
     read only by this module run as Phase 15. Any other program may exercise the seal and chain
     checks only on a synthetic repository (the chain controls do)."""
-    if root.resolve() == C.REPO.resolve() and C.running_program() != "c11r_compare.py":
+    if root.resolve() == C.REPO.resolve() and C.running_reader() != "c11r_compare.py":
         raise PermissionError("the real runs artifact is read only by c11r_compare.py as Phase 15")
 
 
-def verify_seal(repo=None) -> dict:
-    """The seal, recomputed: the runs artifact was committed by exactly one commit, is unchanged
-    since, and its canonical body hashes to its stored sha256. Nothing is trusted."""
+def verify_seal(repo=None, *, approved_commit: str) -> dict:
+    """The seal, recomputed over COMPLETE reachable history (review 4, R4-1): the runs artifact
+    was introduced by exactly ONE commit after the approved commit (the seal), no reachable
+    commit holds any other runs content (a replaced, hidden or discarded run on any branch), the
+    file on disk is the sealed blob with no uncommitted change, and its canonical body hashes to
+    its stored sha256. Nothing is trusted."""
     import json
     root = pathlib.Path(repo) if repo is not None else C.REPO
     _real_repository_guard(root)
     path = root / C.NS_REL / RUNS_REL
     rel = f"{C.NS_REL}/{RUNS_REL}"
     disk = path.read_bytes() if path.exists() else None
-    commits = C.git_in(root, "log", "--format=%H", "--", rel).splitlines() if disk else []
-    seal_commit = commits[-1] if commits else None
+    hist = CT.protocol_history(repo, approved_commit, "compare")
+    intro = hist["introducers"].get("runs", [])
+    seal_commit = intro[0] if len(intro) == 1 else None
     committed = C.blob_at_in(root, seal_commit, rel) if seal_commit else None
     dirty = bool(C.git_in(root, "status", "--porcelain", "--", rel)) if disk is not None else False
     problems = verify_seal_bytes(disk, committed, dirty)
-    if len(commits) > 1:
-        problems.append(f"the runs artifact was changed after it was sealed ({len(commits)} "
-                        f"commits touch it)")
+    if len(intro) > 1:
+        problems.append(f"the runs artifact was introduced by {len(intro)} commits: an earlier "
+                        f"seal exists in reachable history")
+    other = hist["foreign"].get("runs", [])
+    if other:
+        problems.append(f"the runs artifact was changed after it was sealed, or another run was "
+                        f"committed and discarded ({len(other)} reachable commits hold other "
+                        f"runs content)")
     runs = None
     if disk is not None:
         runs = json.loads(disk)
@@ -107,32 +128,6 @@ def verify_seal(repo=None) -> dict:
                             "canonical body digest")
     return {"problems": problems, "seal_commit": seal_commit, "runs": runs,
             "runs_file_sha256": C.sha256_bytes(disk) if disk else None}
-
-
-def verify_chain(repo, runs: dict, seal_commit: str, *, approved_commit: str,
-                 allow_fixture: bool = False) -> dict:
-    """contract -> gate -> qualification -> authorization -> run -> seal, all recomputed."""
-    root = pathlib.Path(repo) if repo is not None else C.REPO
-    a = CT.load_artifact(repo, CT.AUTH_REL) if CT.artifact_exists(repo, CT.AUTH_REL) else None
-    av = CT.verify_authorization(repo, a, allow_fixture=allow_fixture, stage="compare")
-    p = list(av["problems"])
-    if a is not None and a.get("approved_commit") != approved_commit:
-        p.append("the authorization names another approved commit than the operator supplied")
-    facts = av.get("facts")
-    contract = (facts or {}).get("roots", {}).get("contract") if facts else None
-    if facts and contract is not None:
-        p += CT.verify_run_identity(runs, facts, av["digest"])
-        if seal_commit and not C.git_ok_in(root, "merge-base", "--is-ancestor", approved_commit,
-                                           seal_commit):
-            p.append("the seal commit does not descend from the approved commit")
-        for rel in (CT.AUTH_REL, CT.QUAL_REL):
-            if not C.git_in(root, "log", "--format=%H", "-1", "--", f"{C.NS_REL}/{rel}"):
-                p.append(f"{rel} was never committed")
-        stmt = CT.load_artifact(repo, CT.STMT_REL)
-        p += comparison_rule_problems(stmt, facts["roots"].get("gate") or {}, contract)
-    elif not p:
-        p.append("the chain could not be reconstructed")
-    return {"problems": p, "contract": contract, "facts": facts}
 
 
 def comparison_rule_problems(stmt: dict, gate: dict, contract: dict) -> list[str]:
@@ -151,32 +146,133 @@ def comparison_rule_problems(stmt: dict, gate: dict, contract: dict) -> list[str
     return p
 
 
+# ---------------------------------------------------------------------------------------------
+# 2. THE ORDER (review round 4, N4-5). Every step below runs BEFORE the magnitude loader, in this
+#    order; the loader is called only when ALL of them pass. A step whose prerequisite failed is
+#    recorded as not evaluated. Nothing before step 13 reads the quarantine.
+# ---------------------------------------------------------------------------------------------
+STEPS = ("approved commit", "complete frozen history", "contract", "gate", "qualification",
+         "authorization", "run", "seal", "G8", "G10", "G19",
+         "other execution-integrity predicates")
+
+
 def execute_comparison(repo=None, *, approved_commit: str, loader, allow_fixture: bool = False) -> dict:
-    """The whole Phase 15 path. The loader -- the ONLY access to original magnitudes -- is called
-    only after the seal and the chain verify; otherwise the verdict is EXECUTION_INVALID and the
-    quarantine is never opened."""
-    seal = verify_seal(repo)
-    problems = list(seal["problems"])
-    chain = None
-    if not problems:
-        chain = verify_chain(repo, seal["runs"], seal["seal_commit"],
-                             approved_commit=approved_commit, allow_fixture=allow_fixture)
-        problems += chain["problems"]
-    if problems:
-        return {"N9_VERDICT": "EXECUTION_INVALID", "identity_problems": problems,
-                "loader_called": False, "seal": {k: seal[k] for k in ("seal_commit",
-                                                                       "runs_file_sha256")}}
-    contract, facts = chain["contract"], chain["facts"]
-    stmt = CT.load_artifact(repo, CT.STMT_REL)
-    policy = CT.load_artifact(repo, CT.POLICY_REL)
-    mags = loader(stmt)                                   # only now, only here
-    result = run_comparison(seal["runs"], stmt, mags, policy,
-                            expected_certifier_sha=CT.expected_certifier_sha(contract),
-                            runs_producer={"module": "c11r_runs.py",
-                                           "sha256": facts["runner_sha256"]})
-    result["loader_called"] = True
-    result["identity_problems"] = []
-    result["seal"] = {k: seal[k] for k in ("seal_commit", "runs_file_sha256")}
+    """The whole Phase 15 path. Steps 1-12 (STEPS) verify; step 13 -- the loader, the ONLY
+    access to original magnitudes -- runs only when all twelve pass; step 14 classifies."""
+    import json
+    root = pathlib.Path(repo) if repo is not None else C.REPO
+    _real_repository_guard(root)
+    steps, seen = [], []
+
+    def step(name, problems, evaluated=True):
+        new = [x for x in problems if x not in seen]
+        seen.extend(new)
+        steps.append({"step": len(steps) + 1, "name": name, "evaluated": evaluated,
+                      "problems": new, "pass": bool(evaluated and not new)})
+        assert steps[-1]["name"] == STEPS[len(steps) - 1]
+
+    a = CT.load_artifact(repo, CT.AUTH_REL) if CT.artifact_exists(repo, CT.AUTH_REL) else None
+    # 1 approved commit
+    p = []
+    a_exists = bool(approved_commit) and C.git_ok_in(root, "cat-file", "-e",
+                                                     f"{approved_commit}^{{commit}}")
+    if not a_exists:
+        p.append(f"approved commit {approved_commit!r} does not exist in this repository")
+    if a is None:
+        p.append("no authorization; guard is DENY")
+    elif a.get("approved_commit") != approved_commit:
+        p.append("the authorization names another approved commit than the operator supplied")
+    if a_exists and not C.git_ok_in(root, "merge-base", "--is-ancestor", approved_commit, "HEAD"):
+        p.append("HEAD does not descend from the approved commit")
+    frozen = CT.contract_at(repo, approved_commit) if a_exists else None
+    if a_exists and frozen is None:
+        p.append("the approved commit carries no execution contract")
+    step("approved commit", p)
+    # 2 complete frozen history
+    if frozen is not None:
+        fs = CT.frozen_state(repo, approved_commit)
+        ph = CT.protocol_history(repo, approved_commit, "compare")
+        step("complete frozen history", fs["tree_identity"] + fs["history_purity"] + ph["problems"])
+    else:
+        step("complete frozen history", [], evaluated=False)
+    # 3 contract, 4 gate -- recomputed from bytes; the tree's contract must BE the frozen one
+    cv = CT.verify_contract(repo)
+    p = list(cv["problems"])
+    if frozen is not None and cv["contract"] is not None and cv["contract"] != frozen:
+        p.append("the contract in the tree is not the contract at the approved commit")
+    step("contract", p)
+    roots = CT.chain_roots(repo) if cv["contract"] is not None else None
+    step("gate", [x for x in (roots or {}).get("problems", []) if x.startswith("gate")],
+         evaluated=roots is not None)
+    # 5 qualification
+    if roots is not None:
+        q = CT.load_artifact(repo, CT.QUAL_REL) if CT.artifact_exists(repo, CT.QUAL_REL) else None
+        step("qualification", CT.verify_qualification(repo, q, roots,
+                                                      approved_commit=approved_commit,
+                                                      allow_fixture=allow_fixture)["problems"])
+    else:
+        step("qualification", [], evaluated=False)
+    # 6 authorization (it recomputes everything above again, independently; only NEW problems
+    #   are listed here)
+    av = CT.verify_authorization(repo, a, allow_fixture=allow_fixture, stage="compare")
+    step("authorization", av["problems"])
+    facts = av.get("facts")
+    contract = frozen if frozen is not None else (facts or {}).get("roots", {}).get("contract")
+    # 7 run -- the run artifact's own integrity and its execution identity (G20)
+    path = root / C.NS_REL / RUNS_REL
+    runs = json.loads(path.read_bytes()) if path.exists() else None
+    if runs is not None and facts and contract is not None:
+        p = S.validate_runs(runs)
+        if runs.get("sha256") != CT.body_digest(runs):
+            p.append("the runs artifact's stored sha256 does not equal its recomputed canonical "
+                     "body digest")
+        p += CT.verify_run_identity(runs, facts, av["digest"])
+        step("run", p)
+    else:
+        step("run", ["no runs artifact"] if runs is None else [], evaluated=runs is None)
+    # 8 seal
+    seal = verify_seal(repo, approved_commit=approved_commit) if a_exists else \
+        {"problems": ["no approved commit to seal against"], "seal_commit": None,
+         "runs_file_sha256": None}
+    step("seal", seal["problems"])
+    chain_ok = all(s_["pass"] for s_ in steps)
+    pre = None
+    if chain_ok:
+        stmt = CT.load_artifact(repo, CT.STMT_REL)
+        policy = CT.load_artifact(repo, CT.POLICY_REL)
+        pre = pre_numeric(runs, stmt, policy,
+                          expected_certifier_sha=CT.expected_certifier_sha(contract),
+                          runs_producer={"module": "c11r_runs.py",
+                                         "sha256": facts["runner_sha256"]})
+        g = pre["guards"]
+        step("G8", [f"G8: {x}" for x in g["G8"]["violations"]])
+        step("G10", [f"G10: {x}" for x in g["G10"]["violations"]])
+        step("G19", [f"G19: {x}" for x in g["G19"]["violations"]])
+        p = [f"value trace: {k}: {v}" for k, v in g["value_trace"]["violations"].items()]
+        p += [f"{k}: {pre['per'][k]['why']}" for k in S.SIX_CONSTANTS
+              if pre["per"][k]["CLASS"] == "INVALID"]
+        p += [f"independence violation: {k}" for k in pre["violations"]]
+        p += CT.verify_loaded_modules(contract)["problems"]
+        p += CT.code_dir_shadows(contract, repo)
+        p += comparison_rule_problems(stmt, facts["roots"].get("gate") or {}, contract)
+        step("other execution-integrity predicates", p)
+    else:
+        for name in STEPS[len(steps):]:
+            step(name, [], evaluated=False)
+    problems = [x for s_ in steps for x in s_["problems"]]
+    out = {"steps": steps, "seal": {k: seal.get(k) for k in ("seal_commit", "runs_file_sha256")}}
+    if problems or not all(s_["pass"] for s_ in steps):
+        verdict = ("INDEPENDENCE_VIOLATION" if chain_ok and pre and pre["violations"]
+                   else "EXECUTION_INVALID")
+        refused = next(s_ for s_ in steps if not s_["pass"])
+        out.update(N9_VERDICT=verdict, identity_problems=problems or ["a step was not evaluated"],
+                   loader_called=False, refused_at_step=refused["step"],
+                   refused_at=refused["name"])
+        return out
+    mags = loader(stmt)                                   # 13: only now, only here
+    result = numeric_phase(pre, stmt, mags)               # 14
+    result.update(out, loader_called=True, identity_problems=[], refused_at_step=None,
+                  refused_at=None)
     return result
 
 
@@ -189,7 +285,8 @@ def load_original_magnitudes(stmt_table: dict) -> dict:
     now = C.content_free_id(qpath)
     if not recorded or now != recorded:
         raise SystemExit("REFUSE: the quarantine is not the one the statement table recorded")
-    q = C.load(qpath)
+    with C.sanctioned_protected_access("load the originals after the chain and guards verify"):
+        q = C.load(qpath)
     return {k: F(v["value"]) for k, v in q["magnitudes"].items()}
 
 
@@ -208,10 +305,12 @@ def classify_numeric(direction: str, indep: F, orig: F, factor: int = FACTOR) ->
     raise ValueError(f"unknown direction {direction!r}")
 
 
-def run_comparison(runs: dict, stmt_table: dict, mags: dict, policy: dict, *,
-                   expected_certifier_sha: dict, runs_producer: dict,
-                   deductions: dict | None = None) -> dict:
-    """Everything after the seal, as a pure function. main() and the self-tests both call it."""
+def pre_numeric(runs: dict, stmt_table: dict, policy: dict, *, expected_certifier_sha: dict,
+                runs_producer: dict, deductions: dict | None = None) -> dict:
+    """Everything that needs NO original magnitude: every production guard, reconstruction, value
+    tracing (including the demotion check), independence and STATEMENT equivalence. A target is
+    INVALID here when its certificate does not prove what it claims -- or when a target reported
+    NOT_CERTIFIED is in fact proved by its certificate (demoted; review 4, N4-8)."""
     ev = CV.evaluate_run(runs, policy, expected_certifier_sha=expected_certifier_sha,
                          runs_producer=runs_producer, deductions=deductions)
     per, violations = {}, []
@@ -220,16 +319,16 @@ def run_comparison(runs: dict, stmt_table: dict, mags: dict, policy: dict, *,
         et = ev["targets"][k]
         orig_st = EQ.original_statement(stmt_table, k)
         rec = {"target_status": t["status"], "independent_value": t.get("value"),
-               "original_value": str(mags[k])}
-        if t["status"] != "CERTIFIED":
-            rec.update(statement={"STATUS": "NO_INDEPENDENT_STATEMENT"}, numeric=None,
-                       CLASS="INSUFFICIENT", why=f"no certified value (status {t['status']})")
-        elif not et["ok"]:
+               "direction": orig_st["direction"]}
+        if et["ok"] is False:                  # a bad certified claim, or a demoted target
             if et.get("independence"):
                 violations.append(k)
             rec.update(statement={"STATUS": "NOT_PROVED", "reasons": et["problems"]},
                        numeric=None, CLASS="INVALID",
-                       why=f"the cited certificate does not prove this value: {et['problems']}")
+                       why=f"the target does not trace to its certificate: {et['problems']}")
+        elif t["status"] != "CERTIFIED":
+            rec.update(statement={"STATUS": "NO_INDEPENDENT_STATEMENT"}, numeric=None,
+                       CLASS="INSUFFICIENT", why=f"no certified value (status {t['status']})")
         else:
             cmp = EQ.compare(orig_st, et["proposition"])
             if cmp.get("independence_violation"):
@@ -239,23 +338,38 @@ def run_comparison(runs: dict, stmt_table: dict, mags: dict, policy: dict, *,
                 rec.update(numeric=None, CLASS="INVALID",
                            why=f"statement {cmp['STATUS']}; the number is not compared")
             else:
-                v, o = F(t["value"]), mags[k]
-                num = classify_numeric(orig_st["direction"], v, o)
-                rec["numeric"] = {"class": num, "ratio": str(v / o),
-                                  "direction": orig_st["direction"], "factor": FACTOR}
-                if v == o:
-                    rec.update(CLASS="INVALID", why="the independent value equals the original "
-                                                     "EXACTLY -- copied, not certified")
-                else:
-                    rec.update(CLASS=num, why=f"statement {cmp['STATUS']}; {num} at ratio "
-                                              f"{float(v / o):.6f}")
+                rec.update(CLASS=None, why="awaiting the numerical comparison")
         per[k] = rec
+    guards = {"G8": ev["G8"], "G10": ev["G10"], "G19": ev["G19"], "value_trace": ev["value_trace"]}
+    return {"ev": ev, "per": per, "violations": violations, "guards": guards,
+            "guards_ok": all(g["PASS"] for g in guards.values())}
+
+
+def numeric_phase(pre: dict, stmt_table: dict, mags: dict) -> dict:
+    """Step 14: numerical agreement for the statement-equivalent targets, the opposite-direction
+    check, and the N9 classification by the frozen precedence."""
+    import copy
+    per = copy.deepcopy(pre["per"])
+    for k in S.SIX_CONSTANTS:
+        rec = per[k]
+        rec["original_value"] = str(mags[k])
+        if rec["CLASS"] is None:
+            v, o = F(rec["independent_value"]), mags[k]
+            num = classify_numeric(rec["direction"], v, o)
+            rec["numeric"] = {"class": num, "ratio": str(v / o), "direction": rec["direction"],
+                              "factor": FACTOR}
+            if v == o:
+                rec.update(CLASS="INVALID", why="the independent value equals the original "
+                                                 "EXACTLY -- copied, not certified")
+            else:
+                rec.update(CLASS=num, why=f"statement {rec['statement']['STATUS']}; {num} at "
+                                          f"ratio {float(v / o):.6f}")
 
     # DISAGREES: an independent bound whose quantity the original bounds from the other side
     orig_by_q = {v["quantity"]: (kk, v["direction"])
                  for kk, v in stmt_table["original_statements"].items()}
     pairs = []
-    for cid, r in ev["reconstructed"].items():
+    for cid, r in pre["ev"]["reconstructed"].items():
         for const, prop in r["propositions"].items():
             hit = orig_by_q.get(prop["quantity"])
             if hit and hit[1] != prop["direction"]:
@@ -269,22 +383,30 @@ def run_comparison(runs: dict, stmt_table: dict, mags: dict, policy: dict, *,
                                        why=f"certificate {cid}'s {prop['direction']} excludes the "
                                            f"original's {hit[1]}")
     classes = {k: v["CLASS"] for k, v in per.items()}
-    guards_ok = ev["G8"]["PASS"] and ev["G10"]["PASS"] and ev["G19"]["PASS"]
-    if violations:
+    # guards_ok includes the VALUE TRACE (and so the demotion check): review 4, N4-8
+    if pre["violations"]:
         verdict = "INDEPENDENCE_VIOLATION"
     elif any(c == "DISAGREES" for c in classes.values()):
         verdict = "SCIENTIFIC_DISAGREEMENT"
-    elif any(c == "INVALID" for c in classes.values()) or not guards_ok:
+    elif any(c == "INVALID" for c in classes.values()) or not pre["guards_ok"]:
         verdict = "EXECUTION_INVALID"
     elif all(c in ("AGREES", "STRONGER") for c in classes.values()):
         verdict = "N9_CLOSED"
     else:
         verdict = "AGREEMENT_INSUFFICIENT"
     return {"per_target": per, "classes": classes, "opposite_direction_pairs": pairs,
-            "independence_violations": violations,
-            "guards": {"G8": ev["G8"], "G10": ev["G10"], "G19": ev["G19"],
-                       "value_trace": ev["value_trace"]},
+            "independence_violations": pre["violations"], "guards": pre["guards"],
             "N9_VERDICT": verdict, "precedence": list(PRECEDENCE)}
+
+
+def run_comparison(runs: dict, stmt_table: dict, mags: dict, policy: dict, *,
+                   expected_certifier_sha: dict, runs_producer: dict,
+                   deductions: dict | None = None) -> dict:
+    """Steps 9-14 as ONE pure function of their arguments (the self-tests and the mutation suite
+    call it; execute_comparison calls the two halves with the loader between them)."""
+    pre = pre_numeric(runs, stmt_table, policy, expected_certifier_sha=expected_certifier_sha,
+                      runs_producer=runs_producer, deductions=deductions)
+    return numeric_phase(pre, stmt_table, mags)
 
 
 def render(result: dict) -> list[str]:
@@ -393,6 +515,9 @@ def self_test(stmt_table: dict, policy: dict) -> dict:
     case("consistent certificates at another depth than the frozen one: G19 -> EXECUTION_INVALID",
          g19, "EXECUTION_INVALID",
          {"Abar": "AGREES", "tau": "STRONGER", "C_T": "STRONGER", "D_lo": "STRONGER"})
+    case("a target demoted to NOT_CERTIFIED although its certificate proves it (review 4, N4-8)",
+         run(synthetic_certs(stmt_table, policy), mutate=lambda r: r["targets"]["Abar"].update(
+             status="NOT_CERTIFIED")), "EXECUTION_INVALID", {"Abar": "INVALID"})
     case("a G10 violation makes the run EXECUTION_INVALID",
          run(synthetic_certs(stmt_table, policy), mutate=lambda r: r["certificates"]["F_D"].update(
              screen_classification="POINTWISE_INFEASIBLE")), "EXECUTION_INVALID")

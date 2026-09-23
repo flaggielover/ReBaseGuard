@@ -87,7 +87,8 @@ def leak_check() -> int:
     The historical review files are not scanned -- they are immutable evidence known to quote
     rounded originals -- and the firewall forbids any production module from reading them.
     """
-    q = C.load(C.NS / C.QUARANTINE_REL)
+    with C.sanctioned_protected_access("the value-based leak check"):
+        q = C.load(C.NS / C.QUARANTINE_REL)
     pats = leak_patterns(q["magnitudes"])
     files = []
     for rel in C.PRE_RESULT_ARTIFACTS:
@@ -147,7 +148,8 @@ def leak_check() -> int:
 
 def main() -> int:
     src = (C.REPO / C.ORIGINAL_CERTIFIER).read_text()
-    reg = C.load(C.C2 / "evidence" / "registry_c2" / "REGISTRY_C2.json")
+    with C.sanctioned_protected_access("extract the originals into the quarantine"):
+        reg = C.load(C.C2 / "evidence" / "registry_c2" / "REGISTRY_C2.json")
     blk = {b["cell"]: b for b in reg["blocks"]}[CELL]
     rows = blk["sub_rows"]
 
@@ -421,7 +423,8 @@ def main() -> int:
                                  "this by AST."),
                   "cell": CELL, "magnitudes": magnitudes,
                   "source": "p5y_k5_tail_c2_closure/evidence/registry_c2/REGISTRY_C2.json"}
-    q = C.write_evidence(C.NS / C.QUARANTINE_REL, quarantine, producer=__file__)
+    with C.sanctioned_protected_access("write the quarantine"):
+        q = C.write_evidence(C.NS / C.QUARANTINE_REL, quarantine, producer=__file__)
     out["quarantine"] = {"path": C.QUARANTINE_REL,
                          "content_free_id": C.content_free_id(C.NS / C.QUARANTINE_REL),
                          "note": ("verify with c11r_common.content_free_id; never read it")}

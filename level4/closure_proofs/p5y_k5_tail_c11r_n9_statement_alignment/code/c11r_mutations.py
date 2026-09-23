@@ -1,4 +1,15 @@
-"""C11R -- the mutation suite, revision 4.
+"""C11R -- the mutation suite, revision 5.
+
+REVISION 5 (review round 4, N4-7 and N4-8; errata E37). Revision 4 still labelled M01/M02/M03
+PRODUCTION_GUARD although nothing at Phase 14/15 re-runs them, and its artifact's `rules` and the
+"THE RULES" section below still carried the sentence E30 retracted ("every detector is a production
+function; this module defines no guard"). Now: M01/M02 are PHASE12_QUALIFICATION_GATE (the
+production import rule, enforced BEFORE execution because the typed qualification schema derives
+PASS only when item Q5 -- that rule over the whole closure -- passes, and authorization requires a
+PASS qualification); M03 is DEFENSE_IN_DEPTH_HEURISTIC (the dataflow firewall); the retracted
+sentence is gone from the rules. M40 is new: a target DEMOTED to NOT_CERTIFIED although its
+certificate proves it must make the production verdict EXECUTION_INVALID (N4-8: the check existed
+and was reported, but the verdict ignored it).
 
 REVISION 4 (review round 3, N-3; erratum E30). Revision 3 claimed this module "defines no guard".
 That was inaccurate: M01, M02, M07, M08, M10 and M12 were decided by logic local to this suite, and
@@ -21,13 +32,14 @@ never ran -- so a mutant "detected" by them proved nothing about the gate, the r
 comparator. Its run-artifact mutants edited target STATEMENTS that the runner wrote itself, which
 the template-built comparator then read back (erratum E16).
 
-THE RULES NOW
-  * Every detector is a PRODUCTION function: c11r_certificate.reconstruct / evaluate_run /
-    screen_order / dispositions / configuration_adherence, c11r_compare.run_comparison,
-    c11r_schema.validate_runs / seal_problems / forbidden_payload, c11r_equiv.compare,
-    c11r_status.freshness / contradictions, c11r_gate.scan_for_result_language /
-    scan_source_for_result_language, c11r_runs.preflight, c11r_firewall. This module
-    builds inputs, mutates them, and calls those functions. It defines no guard.
+THE RULES (revision 3's list, as corrected by revisions 4 and 5)
+  * Every row calls the detector named in its `verifier` -- c11r_certificate.reconstruct /
+    evaluate_run / screen_order / dispositions / configuration_adherence,
+    c11r_compare.run_comparison, c11r_schema.validate_runs / seal_problems / forbidden_payload,
+    c11r_equiv.compare, c11r_status.freshness / contradictions, c11r_gate.scan_for_result_language
+    / scan_source_for_result_language, c11r_runs.preflight, c11r_qualify.forbidden_imports,
+    c11r_firewall -- and its `detector_kind` says whether that detector is enforced in production,
+    before execution through the qualification, as a heuristic, or only by this suite.
   * Run artifacts are built by c11r_runs.assemble from certificates made by
     c11r_certificate.make_certificate -- the runner's own emission path -- with SYNTHETIC values.
   * Every mutant records the producer, verifier and input hashes, the exact path and value it
@@ -71,9 +83,11 @@ CODE = C.NS / "code"
 RES: list[dict] = []
 ADV: list[dict] = []
 KIND = {
-    "PRODUCTION_GUARD": ("M01", "M02", "M03", "M10", "M13", "M14", "M16", "M17", "M18", "M19",
+    "PRODUCTION_GUARD": ("M10", "M13", "M14", "M16", "M17", "M18", "M19",
                          "M20", "M21", "M22", "M23", "M25", "M26", "M27", "M28", "M30", "M31",
-                         "M34", "M35", "M36", "M37", "M38", "M39"),
+                         "M34", "M35", "M36", "M37", "M38", "M39", "M40"),
+    "PHASE12_QUALIFICATION_GATE": ("M01", "M02"),
+    "DEFENSE_IN_DEPTH_HEURISTIC": ("M03",),
     "PRODUCTION_SCIENCE": ("M15", "M32", "M33"),
     "SUITE_LOCAL_PROPERTY": ("M04", "M05", "M06", "M09", "M18b", "M24", "M29"),
     "SUITE_LOCAL_AUDIT": ("M07", "M08", "M11", "M12"),
@@ -545,6 +559,19 @@ def main() -> int:
                            and compare(m)["N9_VERDICT"] == "EXECUTION_INVALID"),
            clean_flagged=not guards(base)["G19"]["PASS"],
            unrelated_flagged=not guards(unrel)["G19"]["PASS"])
+    m = copy.deepcopy(base)
+    m["targets"]["Abar"]["status"] = "NOT_CERTIFIED"
+    dem = compare(m)
+    record("M40", "a target DEMOTED to NOT_CERTIFIED although its certificate proves it (N4-8)",
+           verifier="c11r_compare.py", producer="c11r_runs.py", input_artifact=RUNS_IN,
+           mutated_path="$.targets.Abar.status", mutated_value="NOT_CERTIFIED",
+           mutant_flagged=(dem["N9_VERDICT"] == "EXECUTION_INVALID"
+                           and dem["classes"]["Abar"] == "INVALID"
+                           and not dem["guards"]["value_trace"]["PASS"]),
+           clean_flagged=base_cmp["N9_VERDICT"] == "EXECUTION_INVALID",
+           unrelated_flagged=compare(unrel)["N9_VERDICT"] != base_cmp["N9_VERDICT"],
+           detail={"clean_verdict": base_cmp["N9_VERDICT"], "mutant_verdict": dem["N9_VERDICT"],
+                   "mutant_class": dem["classes"]["Abar"]})
 
     # ============================ the thirteen adversarial certificate controls ============
     def adv(aid, attack, target, mutate, *, deductions=None, exp=None, note=None):
@@ -641,12 +668,14 @@ def main() -> int:
     es = EQ.self_test(stmt)
     bad = [r["id"] for r in RES if r["outcome"] != "DETECTED"]
     adv_missed = [r["id"] for r in ADV if not r["caught"]]
-    out = {"schema": "C11R_MUTATIONS/4",
+    out = {"schema": "C11R_MUTATIONS/5",
            "supersedes": ("C11R_MUTATIONS/2 at affdf8a3, whose value-trace, screen-order and "
-                          "disposition detectors were test-only copies (erratum E17)); "
-                          "C11R_MUTATIONS/3 at eaca931e, which overstated that it defined no "
-                          "guard (erratum E30)"),
-           "rules": ["every detector is a production function; this module defines no guard",
+                          "disposition detectors were test-only copies (erratum E17); "
+                          "C11R_MUTATIONS/3 at eaca931e, which overstated its detectors (erratum "
+                          "E30); C11R_MUTATIONS/4 at bd00c1f6, which mislabelled M01-M03 and kept "
+                          "the retracted rule text (erratum E37)"),
+           "rules": ["each row calls the detector named in its verifier; detector_kind states how "
+                     "that detector is enforced",
                      "run artifacts built by c11r_runs.assemble from c11r_certificate certificates",
                      "each mutant: mutant flagged AND clean accepted AND unrelated not flagged",
                      "numerical mutants on the NON-TARGET block only",
@@ -655,8 +684,11 @@ def main() -> int:
            "base_verdict_on_synthetic_magnitudes": base_cmp["N9_VERDICT"],
            "mutants": RES,
            "detector_kinds": {k: sum(1 for r in RES if r["detector_kind"] == k) for k in KIND},
-           "what_demonstrates_production_enforcement": ("only rows with detector_kind "
-                                                        "PRODUCTION_GUARD or PRODUCTION_SCIENCE"),
+           "what_demonstrates_production_enforcement": (
+               "rows with detector_kind PRODUCTION_GUARD or PRODUCTION_SCIENCE (enforced on the "
+               "execution path); PHASE12_QUALIFICATION_GATE rows are enforced before execution "
+               "through qualification item Q5, which the typed schema requires; "
+               "DEFENSE_IN_DEPTH_HEURISTIC and SUITE_LOCAL_* rows demonstrate no enforcement"),
            "adversarial_controls": ADV,
            "adversarial_controls_missed": adv_missed,
            "statement_vs_number_separation": separation,

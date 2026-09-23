@@ -19,10 +19,13 @@ The weights are manufactured; no certified value is produced or recorded.
 
 SEQUENTIAL. It refuses to start, and refuses to write, if any other campaign worker is running:
 the round-2 constants were taken while a validation job ran alongside. REVISION 2 (round 4, errata
-E26/E27): the check now uses the revision-2 detector (code/c11r_procs.py), which sees the
-framework build of Python this host runs; the revision-1 detector could not, so the round-3
-artifact's "sequential" fields were vacuous. The detector is sampled before the measurement,
-between every stage, and after it, and every sample is recorded.
+E26/E27) used the revision-2 detector, which sees the framework build of Python this host runs
+(the revision-1 detector could not, so the round-3 artifact's "sequential" fields were vacuous).
+ROUND 5 (review 4, N4-6; erratum E36): the detector is revision 3 (code/c11r_procs.py
+DETECTOR_LABEL, recorded in the artifact), which also recognises -c / -Bc payloads and wrapper
+scripts; the artifact states exactly what that establishes and what it does not. The detector is
+sampled before the measurement, between every stage, every 10 s in the background, and after it,
+and every sample is recorded.
 
 DERIVATION (mechanical, in `derive`): per panel count, the per-box-panel constant is the MAXIMUM
 over sampled boxes of (data + certification seconds) / (P + 1); the pointwise constant is the
@@ -194,7 +197,7 @@ def main() -> int:
     out = {"schema": "C11R_COST/2",
            "block": "NON-TARGET [5/2, 5/2 + 108337/1250000] only",
            "host": host_identity(),
-           "sequential": {"detector": "code/c11r_procs.py (revision 2)",
+           "sequential": {"detector": PR.DETECTOR_LABEL,
                           "samples": samples,
                           "background_samples": len(sampler.log),
                           "background_sample_period_seconds": sampler.period,
@@ -202,10 +205,21 @@ def main() -> int:
                           "campaign_workers_seen": sum(len(x["workers"]) for x in samples)
                           + sum(len(x["workers"]) for x in sampler.log),
                           "foreign_python_max": max(x["foreign_python"] for x in samples),
+                          "what_it_establishes": (
+                              "at every sample (before, between every stage, every "
+                              f"{sampler.period:g} s in the background, after) no process that "
+                              "the recorded detector revision RECOGNISES as campaign work was "
+                              "running: a campaign script, -m of a campaign module, a -c / -Bc "
+                              "payload naming one, or a wrapper script whose argv names one or "
+                              "whose readable .py source (<= 1 MB) imports one"),
                           "what_it_does_not_establish": (
-                              "no campaign worker was running at any sample; foreign Python "
-                              "processes and other load are counted, not excluded, and the "
-                              "load average is recorded at every sample")},
+                              "the absence of competing computation in general: foreign Python "
+                              "processes and other load are COUNTED, not excluded (the load "
+                              "average is recorded at every sample); work between samples, "
+                              "programs read from stdin or run interactively, imports by "
+                              "computed names, unreadable or non-.py wrapper sources, "
+                              "non-Python executables and other users or hosts are not "
+                              "recognised (the detector artifact's not_checked list)")},
            "sample_boxes": [[str(x) for x in b] for b in boxes],
            "manufactured_weights": {"K_e": "12 - 3/2 m", "Khat_e": "8 - m",
                                     "sub-solution": "1/2 + m/20"},

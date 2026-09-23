@@ -40,7 +40,8 @@ SELF_REL = "evidence/status/C11R_STATUS.json"
 VERIFY_ONLY = sys.argv[1:] == ["--verify-only"]
 PRESERVED_REVIEWS = {"review/REVIEW_C11R_PREFREEZE.md": "6d7cd546",
                      "review/REVIEW_C11R_PREFREEZE_R2.md": "6ae05833",
-                     "review/REVIEW_C11R_PREFREEZE_R3.md": "f6c737c3"}
+                     "review/REVIEW_C11R_PREFREEZE_R3.md": "f6c737c3",
+                     "review/REVIEW_C11R_PREFREEZE_R4.md": "5c5203c1"}
 REVIEWED_MACHINERY = {f"{C.NS_REL}/code/c11r_idrift.py": "49b17ab4",
                       "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/"
                       "c11_certifier.py": C.C11_HEAD,
@@ -261,15 +262,17 @@ def main() -> int:
         contra.append(f"a preserved review was edited: {reviews}")
 
     qs = Q.self_test()
+    # complete history, not `git log --all -- <glob>` (review 4, R4-1: that simplifies merges)
+    anywhere = CT.protocol_artifacts_anywhere(C.REPO)
     pre_result = {
         "evidence_runs_absent": not (C.NS / "evidence" / "runs").exists(),
-        "no_runs_artifact_in_any_commit": not C.git("log", "--all", "--format=%H", "--",
-                                                    "*C11R_RUNS.json"),
+        "no_runs_artifact_in_any_commit": not anywhere["holders"]["runs"],
         "no_authorization_artifact": not (C.NS / "config" / "C11R_AUTHORIZATION.json").exists(),
-        "no_authorization_in_any_commit": not C.git("log", "--all", "--format=%H", "--",
-                                                    "*C11R_AUTHORIZATION.json"),
+        "no_authorization_in_any_commit": not anywhere["holders"]["authorization"],
         "no_comparison_artifact": not (C.NS / "evidence" / "comparison").exists(),
+        "no_comparison_in_any_commit": not anywhere["holders"]["comparison"],
         "no_qualification_artifact": not (C.NS / "evidence" / "qualification").exists(),
+        "no_qualification_in_any_commit": not anywhere["holders"]["qualification"],
         "gate_guard_DENY": gate.get("guard") == "DENY",
     }
     classes = {
@@ -315,6 +318,10 @@ def main() -> int:
         "chain_controls": len(A.get("chain", {}).get("controls", [])),
         "chain_controls_passed": sum(1 for r in A.get("chain", {}).get("controls", [])
                                      if r.get("pass")),
+        "chain_control_groups": A.get("chain", {}).get("groups"),
+        "chain_loader_ordering_holds": A.get("chain", {}).get("quarantine_access_ordering", {})
+        .get("loader_never_called_on_a_refused_chain"),
+        "qualification_schema_items": len(CT.QUAL_ITEMS),
         "detector_planted_controls": len(A.get("procs", {}).get("planted_controls", {})
                                          .get("cases", {})),
         "firewall_known_miss_probes": {k: fw.get("controls", {}).get("known_miss_probes", {})
@@ -343,6 +350,7 @@ def main() -> int:
            "preserved_reviews_unedited": reviews,
            "qualifier_self_test": qs,
            "pre_result_state": pre_result,
+           "pre_result_history_commits_checked": anywhere["commits_checked"],
            "controls": ctl,
            "handover_counts": counts,
            "structural_scan_of_every_artifact": {"forbidden_payload_keys": payload,
