@@ -1,5 +1,18 @@
 {
- "NO_EXPECTED_RESULT": "This gate states predicates only. No predicate below names, presupposes or favours any outcome. Whether each predicate holds is determined by running the campaign, and the verdict is whatever the predicates yield.",
+ "N9_classification_precedence": [
+  "INDEPENDENCE_VIOLATION",
+  "SCIENTIFIC_DISAGREEMENT",
+  "EXECUTION_INVALID",
+  "N9_CLOSED",
+  "AGREEMENT_INSUFFICIENT"
+ ],
+ "NO_EXPECTED_RESULT": "This gate states predicates only. No predicate names, presupposes or favours any outcome, and each can fail on substance. The verdict is whatever they yield.",
+ "SCOPE": {
+  "D1_D2": "a later prospective derivative-system extension would be needed; the D_lo sub-solution route does not establish D1 or D2",
+  "N9_closure_requires": "all six constants for cell 306 classified AGREES or STRONGER, each with an EQUIVALENT or STRONGER statement",
+  "consequence_stated_conditionally": "if D1 and D2 are not independently certified, N9 remains OPEN whatever the other four constants yield",
+  "what_a_subset_would_mean": "independent same-statement certification of a SUBSET of the six is scientific and governance evidence. It is not N9 closure."
+ },
  "campaign": "C11R -- N9 statement-alignment repair",
  "comparison_rule": {
   "LOWER_BOUND": {
@@ -17,14 +30,13 @@
   "why_the_asymmetry_matters": "D_lo is the only LOWER bound of the six. For an upper bound a smaller independent value is stronger; for a lower bound a larger one is. Applying the upper-bound rule to D_lo would invert the verdict, so the direction field is load-bearing and is frozen here, before any independent value exists."
  },
  "comparison_rule_source": {
-  "artifact": "evidence/table/C11R_N9_TABLE.json",
-  "note": "frozen in Phase 1, before any independent value existed",
-  "sha256": "c4c617dc8b39254681ce20612ecb553c10662aa6a2987c8c86e739b13e3e5714"
+  "artifact": "evidence/table/C11R_N9_STATEMENTS.json",
+  "sha256": "bd98e16fce898415cff009fc0f993b88b86077d532c54e5b41d637fb28bd54aa"
  },
  "compute_policy": {
   "AWS": "FORBIDDEN",
   "SR_PS1_campaign": "MUST NOT BE TOUCHED",
-  "remote_provisioning": "only if local execution is shown inadequate"
+  "remote_provisioning": "not required; the policy's cap is local"
  },
  "forbidden_conclusions": [
   "that C11 is rewritten as success",
@@ -32,6 +44,7 @@
   "that the C2 adoption floor may be replaced",
   "that F1 has lapsed",
   "that r6 may be created",
+  "that N9 is closed while any of the six constants lacks an independent statement",
   "that numerical proximity substitutes for statement equivalence",
   "that a constant certified over a sub-interval of the block corroborates the original",
   "that a constant certified at a scalar drift corroborates a block-uniform statement"
@@ -53,28 +66,43 @@
   "INDEPENDENCE_VIOLATION",
   "EXECUTION_INVALID"
  ],
+ "policy_sha256": "1835667afb82064aecb4db3f20b470ba9f4c01427ce22819cb2bff977f0a1fdc",
  "predecessor_state_preserved": {
   "C11_verdict": "EXECUTION_INVALID",
+  "C2_to_C10": "historical verdicts immutable",
   "N9_entering_C11R": "OPEN",
-  "mismatch_A": "scalar drift versus the block-uniform statement",
-  "mismatch_B": "one constant for cell 307 versus six for cell 306, and no Khat_e"
+  "coverage": "r5 authoritative; open m=5 cells {306, 307, 308, 309}; K5 PARTIAL"
  },
  "predicates": {
-  "G10_cheap_screen_before_expensive": "every candidate sent to a certification run has first been screened by the pointwise necessary condition, and no candidate classified POINTWISE_REFUTED has been sent to one",
-  "G11_manufactured_validation": "the manufactured identities are exercised by a producer and their outcomes are recorded, including scalar collapse of the interval-drift layer",
-  "G12_mutations": "each planted violation is classified by a detector that carries a negative control showing the detector can fail",
-  "G13_runtime_qualified": "producer hashes, imports and deterministic reproduction are recorded from a clean environment before target execution",
-  "G14_sealed_before_comparison": "every independent output is written and hashed before any original value for the same constant is read in the same process",
-  "G15_comparison_rule_frozen_before_results": "the per-direction comparison rule is fixed in an artifact whose hash predates every independent result it is applied to",
-  "G1_statement_table_complete": "every field of the Phase 1 table is resolved for all six constants: name, producer, mode, kernel, quantity, state convention, drift domain, norm, direction, certified value, artifact hash, comparison semantics",
-  "G2_statement_equivalence_exact": "for each target, the independent proposition matches the original on kernel, quantity, state, direction and bounded object, checked by a comparator that is demonstrated to reject planted mismatches",
-  "G3_drift_interval_exact": "the drift domain used equals the cell 306 block read from REGISTRY_C2, as exact rationals, with no rounding of the endpoints",
-  "G4_block_uniformity_rigorous": "the certification encloses the quantity simultaneously for every e in the block. Endpoint, midpoint or finite-grid evaluation satisfies this predicate only when accompanied by a proof that those checks bound the whole interval",
-  "G5_independent_K_e_implemented": "the whole kernel is implemented in this programme's independent line and its identities are exercised",
-  "G6_independent_Khat_e_implemented": "the atom-removed kernel is implemented independently, derived from the frozen model rather than transcribed from the original",
-  "G7_atom_decomposition_validated": "K_e equals Khat_e plus the atom contribution, under this project's own sign and normalisation, recovered by test rather than assumed",
-  "G8_six_targets_resolved": "each of the six constants has a recorded disposition: an independent statement with a value, a recorded refutation, or a recorded absence of any independent statement",
-  "G9_no_forbidden_reuse": "no module in this campaign imports, calls, wraps or replays the original certifier's load-bearing graph, and none imports its arithmetic backend"
+  "G10_cheap_screen_before_expensive": "every selected member is checked against the pointwise necessary condition before certification, and a member failing it is recorded POINTWISE_INFEASIBLE and not certified",
+  "G11_manufactured_validation_passes": "VALIDATION_CLASS = PASS",
+  "G12_mutations_pass": "MUTATION_CLASS = PASS: no survivor and no undetermined mutant, every detector carrying an executed negative control",
+  "G13_evidence_fresh_and_consistent": "c11r_status reports STATUS_CLASS = CONSISTENT: every artifact's producer, code closure and inputs match the committed tree, and no two artifacts contradict each other",
+  "G14_sealed_before_comparison": "the runs artifact is committed, unmodified, schema-valid and bound to the committed runs producer before any original magnitude is loaded",
+  "G15_comparison_rule_frozen_before_results": "the direction-aware comparison rule is fixed in the statement table, whose hash this gate binds, before any independent result exists",
+  "G16_original_value_firewall": "FIREWALL_CLASS = PASS: only c11r_table.py and c11r_compare.py can load an original magnitude, proved by AST with planted positive and negative controls",
+  "G17_policy_prospective": "the frozen policy references no original magnitude and no comparison threshold, chooses no candidate by hand, and fixes its configuration before target execution",
+  "G1_statement_table_complete": "C11R_N9_STATEMENTS reports TABLE_CLASS = RESOLVED with no unresolved field for any of the six constants",
+  "G2_statement_equivalence_exact": "for each target, the independent proposition is reconstructed ONLY from the runs artifact's own record and is EQUIVALENT or STRONGER than the original's under c11r_equiv.compare, whose self-test rejects every planted mismatch and accepts every honest control",
+  "G3_drift_interval_exact": "every independent statement's drift domain, compared as exact rationals, equals or contains [680769/400000, 17885921/10000000]",
+  "G4_block_uniformity_rigorous": "certification encloses the quantity simultaneously for every e in the block by carrying e as an interval; no endpoint, midpoint or grid of drifts is used",
+  "G5_independent_K_e_implemented": "the whole-kernel certificate is produced by the reviewed c11r_idrift.supersolution_margin_iv, and c11r_idrift.py is byte-identical to the version the first pre-freeze review found sound",
+  "G6_independent_Khat_e_implemented": "the atom-removed certificates are produced by the same reviewed module with atom_removed=True, and by c11r_boxdata for the sub-solution route",
+  "G7_atom_decomposition_validated": "validation V4 passes: K_e = Khat_e + atom for four weights at seven states",
+  "G8_six_targets_dispositioned_consistently": "the runs artifact assigns each of the six constants exactly one of CERTIFIED, NOT_CERTIFIED or NOT_IMPLEMENTED, and NOT_IMPLEMENTED appears only for constants the frozen policy lists as not implemented",
+  "G9_no_forbidden_reuse": "no module in the campaign's code closure imports, calls, wraps or replays the original certifier's load-bearing graph or its arithmetic backend"
+ },
+ "provenance": {
+  "code_closure": {
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "2576efe0b80a0c73f1164d7b0e8538ee6c71a5c5c61b68d755a2e763d58cde4e",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_gate.py": "3caef9ef504ec7a0340bb73704c26b8a866af849ff44d5018aee36c388b5d281"
+  },
+  "inputs": {
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_POLICY.json": "d7c48b283ab878e6b6bb1ad410addf978bc8a204f077bf6aa14d5a83813002bf",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "373458b4b2eb6206b87494a95dbcf5bda2e925b5ce27d3993a9922ba415ff02c"
+  },
+  "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_gate.py",
+  "producer_sha256": "3caef9ef504ec7a0340bb73704c26b8a866af849ff44d5018aee36c388b5d281"
  },
  "question": "can the independent C11 certifier prove the SAME mathematical certification statements N9 requires for cell 306?",
  "result_language_scan": {
@@ -87,8 +115,10 @@
   "note": "the scanner reads only the emitted gate, never this module, because a scanner that reads its own forbidden list matches itself and always fires",
   "patterns": 17
  },
- "schema": "C11R_GATE/1",
- "sha256": "1425969bbd959680e5ed098779d7ce5311f21afe97b3d72a146e6fdb9f90e7e8",
+ "schema": "C11R_GATE/2",
+ "sha256": "38c475c580173d80b316da691a0a248e566a63c7440f909fc54bdffadd9912db",
+ "statements_sha256": "bd98e16fce898415cff009fc0f993b88b86077d532c54e5b41d637fb28bd54aa",
+ "supersedes": "C11R_GATE/1 (49b17ab4), reviewed NOT_READY. Four of its predicates -- G8, G11, G12, G13 -- were satisfied by merely RECORDING an outcome, including a failing one, so they could not fail on substance (review item 9).",
  "target": {
   "cell": 306,
   "constants": [
@@ -115,7 +145,7 @@
    "a strict sub-interval",
    "Abar in place of tau",
    "tau in place of Abar",
-   "fewer than the six constants"
+   "the original's C_T or tau as a premise"
   ]
  }
 }

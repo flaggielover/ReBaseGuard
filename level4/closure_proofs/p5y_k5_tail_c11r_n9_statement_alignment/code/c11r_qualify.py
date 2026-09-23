@@ -6,6 +6,13 @@ certify anything about cell 306. Timing a target candidate "just to see how long
 target science wearing a stopwatch.
 
 If any mandatory item fails, the artifact records NO_TARGET_EXECUTION and the campaign stops here.
+
+REVISION 2 (pre-freeze review item 11 and firewall repair): Q7 now requires MUTATION_CLASS == PASS
+-- revision 1 accepted INCOMPLETE because it checked only for survivors. The module reads the
+magnitude-free statement table, never the retired mixed table. Its cost probe runs on the
+NON-TARGET block [5/2, 5/2 + 108337/1250000], not on cell 306's block: revision 1 ran w = 1 over
+the target block, which is a target-block computation this repair turn does not make. The module
+is NOT RUN before READY_TO_FREEZE.
 """
 from __future__ import annotations
 
@@ -34,9 +41,8 @@ def item(iid, name, ok, detail, mandatory=True):
 
 def main() -> int:
     t0 = time.time()
-    tbl = C.load(C.NS / "evidence" / "table" / "C11R_N9_TABLE.json")
-    e_lo, e_hi = F(tbl["drift_domain"]["e_lo"]), F(tbl["drift_domain"]["e_hi"])
-    BLOCK = I.Blk(e_lo, e_hi)
+    tbl = C.load(C.NS / "evidence" / "table" / "C11R_N9_STATEMENTS.json")
+    NT = I.Blk(F(5, 2), F(5, 2) + F(108337, 1250000))       # NON-TARGET block for every probe here
 
     # Q1 -- producer hashes
     mods = sorted((C.NS / "code").glob("*.py"))
@@ -87,9 +93,9 @@ def main() -> int:
 
     # Q6 -- the atom decomposition, re-exercised
     one = {(0, 0): F(1)}
-    full = I.kernel_apply_iv(one, F(0), F(0), BLOCK)
-    hat = I.kernel_apply_iv(one, F(0), F(0), BLOCK, atom_removed=True)
-    at = I.atom_contribution_iv(one, F(0), F(0), BLOCK)
+    full = I.kernel_apply_iv(one, F(0), F(0), NT)
+    hat = I.kernel_apply_iv(one, F(0), F(0), NT, atom_removed=True)
+    at = I.atom_contribution_iv(one, F(0), F(0), NT)
     sep = max(full.lo - (hat + at).hi, (hat + at).lo - full.hi)
     item("Q6", "K_e = Khat_e + atom re-verified in this environment", sep <= 0,
          {"separation": float(sep), "K_e": [float(full.lo), float(full.hi)],
@@ -97,11 +103,11 @@ def main() -> int:
 
     # Q7 -- mutations
     mut = C.load(C.NS / "evidence" / "mutations" / "C11R_MUTATIONS.json")
-    item("Q7", "no mutant survived", not mut["survivors"],
-         {"class": mut["MUTATION_CLASS"], "survivors": mut["survivors"],
-          "undetermined": mut["undetermined"],
-          "note": ("UNDETERMINED entries depend on the runs artifact and are resolved after "
-                   "execution; they are not counted as passes")})
+    item("Q7", "MUTATION_CLASS is PASS: every mutant DETECTED, none undetermined",
+         mut["MUTATION_CLASS"] == "PASS",
+         {"class": mut["MUTATION_CLASS"], "not_detected": mut.get("not_detected"),
+          "note": ("revision 1 tested only for survivors and so accepted INCOMPLETE; a class "
+                   "other than PASS now fails qualification")})
 
     # Q8 -- deterministic reproduction: a deterministic producer twice, byte-identical
     eqp = C.NS / "evidence" / "equivalence" / "C11R_EQUIVALENCE.json"
@@ -128,7 +134,7 @@ def main() -> int:
     costs = {}
     for depth in (1, 2, 3):
         t = time.time()
-        r = I.supersolution_margin_iv(probe_w, BLOCK, depth=depth, panels=16)
+        r = I.supersolution_margin_iv(probe_w, NT, depth=depth, panels=16)
         costs[depth] = {"boxes": r["boxes"], "seconds": round(time.time() - t, 1)}
     growth = (costs[3]["seconds"] / costs[2]["seconds"]) if costs[2]["seconds"] else None
     est_d4 = round(costs[3]["seconds"] * growth, 0) if growth else None
@@ -167,7 +173,8 @@ def main() -> int:
            "QUALIFICATION_CLASS": "PASS" if not mand_fail else "NO_TARGET_EXECUTION",
            "resource_estimate": estimate,
            "seconds": round(time.time() - t0, 1)}
-    s = C.write_evidence(C.NS / "evidence" / "qualification" / "C11R_QUALIFICATION.json", out)
+    s = C.write_evidence(C.NS / "evidence" / "qualification" / "C11R_QUALIFICATION.json", out,
+                         producer=__file__)
     for i in items:
         print(f"  {'PASS' if i['pass'] else 'FAIL'}  {i['id']}  {i['name'][:66]}")
     print(f"\ncost probe (non-target w = 1, panels 16): " +

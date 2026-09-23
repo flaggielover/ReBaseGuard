@@ -1,0 +1,560 @@
+{
+ "CONTAINS_NO_ORIGINAL_MAGNITUDE": true,
+ "DEPENDENCY_FINDING": {
+  "additional_machinery_D_requires": [
+   "drift derivatives of the kernel, Khat' and Khat'' (Hermite-weighted densities)",
+   "closed forms of h_1, h_1' and h_1''",
+   "operator norm bounds kernel_norm(0..3)",
+   "a residual-to-error propagation theorem (the lambda/prop machinery)",
+   "sup_source_derivative bounds"
+  ],
+  "consequence_for_independence": "an independent certifier cannot produce D_lo, D1 or D2 by feeding in the ORIGINAL's C_T and tau -- that would consume the original's outputs and violate the independence N9 exists to establish. It must first certify its own C_T and tau via Khat_e, then propagate with those.",
+  "finding": "the six constants are not six instances of one statement. D_lo, D1 and D2 are CONDITIONAL on C_T and tau -- the cell certificate's own statement says so verbatim: 'given ||Ghat_e|| <= C_T and (Ghat_e 1)(a) <= tau on the same set'.",
+  "ordering_forced": [
+   "Khat_e supersolution -> C_T, tau",
+   "K_e supersolution -> Abar",
+   "independent C_T, tau -> D_lo, D1, D2"
+  ]
+ },
+ "N9_wording": {
+  "constant_count": 6,
+  "scope_note": "the disposition file OPEN_NOTES_DISPOSITION_C2.md frames the trust surface as the SUPERSOLUTIONS, which produce only C_T, tau and Abar; D_lo, D1 and D2 come from certify_cell. The adjudicator's 'six' governs closure, so the six-constant requirement is WIDER than the surface the disposition file names (pre-freeze review, item 1).",
+  "source": "p5y_k5_tail_c2_closure/evidence/adjudication/C2_ADJUDICATION.md:501",
+  "target_cell": 306,
+  "text": "a second, independently written certifier reproducing the six operator constants for cell 306 (closing N9)"
+ },
+ "TABLE_CLASS": "RESOLVED",
+ "aggregation_verified": {
+  "C_T": true,
+  "D1": true,
+  "D2": true,
+  "D_lo": true,
+  "tau": true
+ },
+ "atom_convention": {
+  "atom_state": "a = (p, m) = (0, 0)",
+  "atom_z_window": "[beta, alpha] = [m - K, K - p]",
+  "decomposition_to_recover": "K_e = Khat_e + (atom contribution); sign and normalisation MUST be recovered by test, not assumed",
+  "evidence_in_code": "dv = {k: bi_eval(P[k], arb(0), arb(0)) ...}  -- evaluated at (0, 0)",
+  "meaning": "the z-window on which BOTH arms clamp to zero, so the chain lands exactly on the atom; Khat_e is K_e with that piece removed",
+  "removal_in_code": "if beta < alpha and a >= beta - 1e-15 and b <= alpha + 1e-15:",
+  "window_nonempty_iff": "m - K < K - p, i.e. p + m < 2K = 1"
+ },
+ "authoritative_for": "the whole C11R campaign",
+ "comparison_semantics_frozen_before_results": {
+  "LOWER_BOUND": {
+   "AGREES": "original / 2 <= independent < original",
+   "INSUFFICIENT": "independent < original / 2",
+   "STRONGER": "independent >= original"
+  },
+  "UPPER_BOUND": {
+   "AGREES": "original < independent <= 2 * original",
+   "INSUFFICIENT": "independent > 2 * original",
+   "STRONGER": "independent <= original"
+  },
+  "factor": 2,
+  "statement_precedence": "SAME STATEMENT BEFORE SAME NUMBER. A numerically agreeing value certified over a narrower drift domain, at a scalar drift, on the wrong kernel, or at the wrong state does NOT count as agreement at any factor.",
+  "why_the_asymmetry_matters": "D_lo is the only LOWER bound of the six. For an upper bound a smaller independent value is stronger; for a lower bound a larger one is. Applying the upper-bound rule to D_lo would invert the verdict, so the direction field is load-bearing and is frozen here, before any independent value exists."
+ },
+ "constants": {
+  "Abar": {
+   "THIS_IS_WHAT_C11_PROVED": true,
+   "aggregation": "single cell-level artifact (not sub-blocked)",
+   "alpha": "5/4",
+   "artifacts": [
+    "bdf05e570b80dbe9d1437285408aefa012b1cc125098734e38ec14a38cf6eb7d"
+   ],
+   "bounds": "E_a[tau] <= Abar -- the ARL at the atom",
+   "depends_on": [],
+   "direction": "UPPER_BOUND",
+   "drift_domain": "[680769/400000, 17885921/10000000] block-uniform",
+   "drift_domain_float": [
+    1.7019225,
+    1.7885921
+   ],
+   "kernel": "K_e",
+   "mode": "full=True",
+   "norm": "point evaluation",
+   "producer": "taboo_certify.certify_block",
+   "proposition": "w >= 1 + K_e w on X, uniformly on the e-block",
+   "quantity": "Abar = w(a)",
+   "state_convention": "point value at the atom a = (0, 0)"
+  },
+  "C_T": {
+   "aggregation": "max over the 9 sub-blocks",
+   "alpha": "6/5",
+   "artifacts": [
+    "2db0beecd5967d1f517ed3bd3fae37e94b4b5be8e23f2adc41e4307c454f6cc1",
+    "44abb75f40559f70bb15357db2153c1389c05625d3fb02c92069ba6099e11bcc",
+    "4dc886c07c33855d12f97edb0024e4e51979fd4552e732f4a7c9f1635125365b",
+    "584da4bebca81ca7576191a2f4bea776464195fc4e3923e283344ee4a9fbc453",
+    "7ac6bd56718a8c31c1af8391b1f89e82d122aa2da081a4d2e3d433acb223302f",
+    "b84a187c368caba9c5091ce46620e7014373f3b50fd3836b10c3f4749c47b0d5",
+    "cd4b60251050e6a45dfd7ca0c5ad79e819ccd6847ed34de80f06f52c0aff7aa6",
+    "d956c39694ef85f2f9deb68789a5fe4c7cc2b8dc378da94ba190dd53bd4781e3",
+    "e03f5e8f569f396c772dd1a1d897dd30dd6dfb9655d4b1179ba4677d637f7293"
+   ],
+   "bounds": "the induced sup-norm of the taboo resolvent: ||Ghat_e|| <= C_T",
+   "depends_on": [],
+   "direction": "UPPER_BOUND",
+   "drift_domain": "[680769/400000, 17885921/10000000] block-uniform",
+   "drift_domain_float": [
+    1.7019225,
+    1.7885921
+   ],
+   "kernel": "Khat_e",
+   "mode": "full=False",
+   "norm": "sup-norm on the reachable set R",
+   "producer": "taboo_certify.certify_block",
+   "proposition": "w >= 1 + Khat_e w on X, uniformly on the e-block",
+   "quantity": "C_T = sup over the reachable set R of w",
+   "state_convention": "supremum over R, not a point value"
+  },
+  "D1": {
+   "aggregation": "max over the 9 sub-blocks",
+   "alpha": null,
+   "artifacts": [
+    "04ac44954421671c1726d0bbac8dee264aee619d919ea72b2468932fd87ae3e3",
+    "0885c51b2cce29cad3bc95a666f973a6e13d6305eeca82cca01c5cdd84da1b5f",
+    "0d4d21fe86859492852598c0a7a68a025a7cc8994071f78639ad53d80f83244f",
+    "0f6b45df407b3a311d36ec74bd1a72b19dc501cb177838f42809960c7dfd17ab",
+    "26129ff4d4f28f0043d787aa3795450f1a7afa307dc924ff8aebd350679c2b07",
+    "683c879eefcec393f34f25b6d5cfcf438d7315ec88b2b1c8477cf919ea9b68ee",
+    "902e336a7e84a15ed5d7dacea6818e770e9bea60cc03c1aa38727d0e0bacc36d",
+    "adff2640a8ea2937ed7bd81e3f7383522f05aae4894e07c4eb2e49937d984b32",
+    "dc3f4ab9a99912ef082e72650be131d5182b73c906b2d2cf5516d87dad09e58c"
+   ],
+   "bounds": "|D_e'| <= D1 for every e in the block",
+   "depends_on": [
+    "C_T",
+    "tau"
+   ],
+   "direction": "UPPER_BOUND",
+   "drift_domain": "[680769/400000, 17885921/10000000] block-uniform",
+   "drift_domain_float": [
+    1.7019225,
+    1.7885921
+   ],
+   "kernel": "Khat_e",
+   "mode": "n/a",
+   "norm": "absolute value, point evaluation",
+   "producer": "taboo_certify.certify_cell",
+   "proposition": "d' = Ghat (Khat' d + h_1') ; derivative with respect to the DRIFT e",
+   "quantity": "D1, an UPPER bound on |D_e'|",
+   "state_convention": "point value at the atom a = (0, 0)"
+  },
+  "D2": {
+   "aggregation": "max over the 9 sub-blocks",
+   "alpha": null,
+   "artifacts": [
+    "04ac44954421671c1726d0bbac8dee264aee619d919ea72b2468932fd87ae3e3",
+    "0885c51b2cce29cad3bc95a666f973a6e13d6305eeca82cca01c5cdd84da1b5f",
+    "0d4d21fe86859492852598c0a7a68a025a7cc8994071f78639ad53d80f83244f",
+    "0f6b45df407b3a311d36ec74bd1a72b19dc501cb177838f42809960c7dfd17ab",
+    "26129ff4d4f28f0043d787aa3795450f1a7afa307dc924ff8aebd350679c2b07",
+    "683c879eefcec393f34f25b6d5cfcf438d7315ec88b2b1c8477cf919ea9b68ee",
+    "902e336a7e84a15ed5d7dacea6818e770e9bea60cc03c1aa38727d0e0bacc36d",
+    "adff2640a8ea2937ed7bd81e3f7383522f05aae4894e07c4eb2e49937d984b32",
+    "dc3f4ab9a99912ef082e72650be131d5182b73c906b2d2cf5516d87dad09e58c"
+   ],
+   "bounds": "|D_e''| <= D2 for every e in the block",
+   "depends_on": [
+    "C_T",
+    "tau"
+   ],
+   "direction": "UPPER_BOUND",
+   "drift_domain": "[680769/400000, 17885921/10000000] block-uniform",
+   "drift_domain_float": [
+    1.7019225,
+    1.7885921
+   ],
+   "kernel": "Khat_e",
+   "mode": "n/a",
+   "norm": "absolute value, point evaluation",
+   "producer": "taboo_certify.certify_cell",
+   "proposition": "d'' = Ghat (Khat'' d + 2 Khat' d' + h_1'') ; second drift derivative",
+   "quantity": "D2, an UPPER bound on |D_e''|",
+   "state_convention": "point value at the atom a = (0, 0)"
+  },
+  "D_lo": {
+   "aggregation": "min over the 9 sub-blocks",
+   "alpha": null,
+   "artifacts": [
+    "04ac44954421671c1726d0bbac8dee264aee619d919ea72b2468932fd87ae3e3",
+    "0885c51b2cce29cad3bc95a666f973a6e13d6305eeca82cca01c5cdd84da1b5f",
+    "0d4d21fe86859492852598c0a7a68a025a7cc8994071f78639ad53d80f83244f",
+    "0f6b45df407b3a311d36ec74bd1a72b19dc501cb177838f42809960c7dfd17ab",
+    "26129ff4d4f28f0043d787aa3795450f1a7afa307dc924ff8aebd350679c2b07",
+    "683c879eefcec393f34f25b6d5cfcf438d7315ec88b2b1c8477cf919ea9b68ee",
+    "902e336a7e84a15ed5d7dacea6818e770e9bea60cc03c1aa38727d0e0bacc36d",
+    "adff2640a8ea2937ed7bd81e3f7383522f05aae4894e07c4eb2e49937d984b32",
+    "dc3f4ab9a99912ef082e72650be131d5182b73c906b2d2cf5516d87dad09e58c"
+   ],
+   "bounds": "D_e >= D_lo for every e in the block",
+   "depends_on": [
+    "C_T",
+    "tau"
+   ],
+   "direction": "LOWER_BOUND",
+   "drift_domain": "[680769/400000, 17885921/10000000] block-uniform",
+   "drift_domain_float": [
+    1.7019225,
+    1.7885921
+   ],
+   "kernel": "Khat_e",
+   "mode": "n/a",
+   "norm": "point evaluation",
+   "producer": "taboo_certify.certify_cell",
+   "proposition": "d = Ghat h_1 ; D_e = d(a) = P_a(tau < T_a)",
+   "quantity": "D_lo, a LOWER bound on D_e",
+   "state_convention": "point value at the atom a = (0, 0)"
+  },
+  "tau": {
+   "aggregation": "max over the 9 sub-blocks",
+   "alpha": "6/5",
+   "artifacts": [
+    "2db0beecd5967d1f517ed3bd3fae37e94b4b5be8e23f2adc41e4307c454f6cc1",
+    "44abb75f40559f70bb15357db2153c1389c05625d3fb02c92069ba6099e11bcc",
+    "4dc886c07c33855d12f97edb0024e4e51979fd4552e732f4a7c9f1635125365b",
+    "584da4bebca81ca7576191a2f4bea776464195fc4e3923e283344ee4a9fbc453",
+    "7ac6bd56718a8c31c1af8391b1f89e82d122aa2da081a4d2e3d433acb223302f",
+    "b84a187c368caba9c5091ce46620e7014373f3b50fd3836b10c3f4749c47b0d5",
+    "cd4b60251050e6a45dfd7ca0c5ad79e819ccd6847ed34de80f06f52c0aff7aa6",
+    "d956c39694ef85f2f9deb68789a5fe4c7cc2b8dc378da94ba190dd53bd4781e3",
+    "e03f5e8f569f396c772dd1a1d897dd30dd6dfb9655d4b1179ba4677d637f7293"
+   ],
+   "bounds": "(Ghat_e 1)(a) <= tau",
+   "depends_on": [],
+   "direction": "UPPER_BOUND",
+   "drift_domain": "[680769/400000, 17885921/10000000] block-uniform",
+   "drift_domain_float": [
+    1.7019225,
+    1.7885921
+   ],
+   "kernel": "Khat_e",
+   "mode": "full=False",
+   "norm": "point evaluation",
+   "producer": "taboo_certify.certify_block",
+   "proposition": "w >= 1 + Khat_e w on X, uniformly on the e-block",
+   "quantity": "tau = w(a), the same supersolution evaluated at the atom",
+   "state_convention": "point value at the atom a = (0, 0)"
+  }
+ },
+ "drift_domain": {
+  "CAMPAIGN_INSTRUCTION_DISCREPANCY": {
+   "cell_306_actual": [
+    1.7019225,
+    1.7885921
+   ],
+   "instruction_quoted": "[1.7885921, 1.882413]",
+   "resolution": "the campaign states the target is cell 306 repeatedly and forbids substituting 307, so the governing interval is cell 306's own block read from REGISTRY_C2. The quoted numbers are treated as a carry-over from the C11 report, which discussed 307.",
+   "resolved_without_stop": true,
+   "that_interval_is": "cell 307's block, not cell 306's",
+   "why_confusable": "the blocks are adjacent -- cell 307's e_lo equals cell 306's e_hi exactly (17885921/10000000), so the quoted pair is 306's upper endpoint followed by 307's upper endpoint"
+  },
+  "cell": 306,
+  "e0": "17452573/10000000",
+  "e_hi": "17885921/10000000",
+  "e_hi_float": 1.7885921,
+  "e_lo": "680769/400000",
+  "e_lo_float": 1.7019225,
+  "midpoint_form_matches_block": true,
+  "rho": "108337/2500000",
+  "sub_block_bounds": [
+   [
+    "680769/400000",
+    "154039721/90000000"
+   ],
+   [
+    "154039721/90000000",
+    "154906417/90000000"
+   ],
+   [
+    "154906417/90000000",
+    "51924371/30000000"
+   ],
+   [
+    "51924371/30000000",
+    "156639809/90000000"
+   ],
+   [
+    "156639809/90000000",
+    "31501301/18000000"
+   ],
+   [
+    "31501301/18000000",
+    "52791067/30000000"
+   ],
+   [
+    "52791067/30000000",
+    "159239897/90000000"
+   ],
+   [
+    "159239897/90000000",
+    "160106593/90000000"
+   ],
+   [
+    "160106593/90000000",
+    "17885921/10000000"
+   ]
+  ],
+  "sub_block_max_width": "1/100",
+  "sub_blocks": 9,
+  "sub_blocks_contiguous": true,
+  "sub_blocks_cover_exactly": true,
+  "width": 0.0866696
+ },
+ "leak_check": {
+  "magnitudes_found": 0,
+  "method": "every original magnitude, as an exact rational and as a float at 3, 4 and 6 decimals and full repr, searched for in the serialised statement table"
+ },
+ "original_certifier": {
+  "path": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/taboo_certify.py",
+  "registry_recorded_sha256": "ced9422ca07981a9ad053acd79b72ef0d5007e93e49c16f2501f31c593fd0daa",
+  "sha256": "ced9422ca07981a9ad053acd79b72ef0d5007e93e49c16f2501f31c593fd0daa"
+ },
+ "original_statements": {
+  "Abar": {
+   "aggregation": {
+    "artifacts": [
+     "bdf05e570b80dbe9d1437285408aefa012b1cc125098734e38ec14a38cf6eb7d"
+    ],
+    "method": "single_certificate_whole_block",
+    "sub_blocks": 1
+   },
+   "constant": "Abar",
+   "convention": "full",
+   "dependencies": [],
+   "direction": "UPPER_BOUND",
+   "drift_domain": [
+    "680769/400000",
+    "17885921/10000000"
+   ],
+   "kernel": "K_e",
+   "producer": {
+    "file": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/taboo_certify.py",
+    "file_sha256": "ced9422ca07981a9ad053acd79b72ef0d5007e93e49c16f2501f31c593fd0daa",
+    "mode": "full=True",
+    "module": "taboo_certify.certify_block",
+    "route": "original_certify_block"
+   },
+   "proposition": "for every e in the block: E_atom[tau] <= value",
+   "quantity": "w(atom), for a K_e supersolution w",
+   "state_set": "R = {(p, m) in [0,5]^2 : p + m <= 4 or p = 0 or m = 0}; atom a = (0, 0); certified over a box cover that is a superset of R"
+  },
+  "C_T": {
+   "aggregation": {
+    "artifacts": [
+     "2db0beecd5967d1f517ed3bd3fae37e94b4b5be8e23f2adc41e4307c454f6cc1",
+     "44abb75f40559f70bb15357db2153c1389c05625d3fb02c92069ba6099e11bcc",
+     "4dc886c07c33855d12f97edb0024e4e51979fd4552e732f4a7c9f1635125365b",
+     "584da4bebca81ca7576191a2f4bea776464195fc4e3923e283344ee4a9fbc453",
+     "7ac6bd56718a8c31c1af8391b1f89e82d122aa2da081a4d2e3d433acb223302f",
+     "b84a187c368caba9c5091ce46620e7014373f3b50fd3836b10c3f4749c47b0d5",
+     "cd4b60251050e6a45dfd7ca0c5ad79e819ccd6847ed34de80f06f52c0aff7aa6",
+     "d956c39694ef85f2f9deb68789a5fe4c7cc2b8dc378da94ba190dd53bd4781e3",
+     "e03f5e8f569f396c772dd1a1d897dd30dd6dfb9655d4b1179ba4677d637f7293"
+    ],
+    "method": "max_over_sub_blocks",
+    "sub_blocks": 9
+   },
+   "constant": "C_T",
+   "convention": "atom_removed",
+   "dependencies": [],
+   "direction": "UPPER_BOUND",
+   "drift_domain": [
+    "680769/400000",
+    "17885921/10000000"
+   ],
+   "kernel": "Khat_e",
+   "producer": {
+    "file": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/taboo_certify.py",
+    "file_sha256": "ced9422ca07981a9ad053acd79b72ef0d5007e93e49c16f2501f31c593fd0daa",
+    "mode": "full=False",
+    "module": "taboo_certify.certify_block",
+    "route": "original_certify_block"
+   },
+   "proposition": "for every e in the block: ||Ghat_e|| <= value",
+   "quantity": "sup over R of w, for a Khat_e supersolution w",
+   "state_set": "R = {(p, m) in [0,5]^2 : p + m <= 4 or p = 0 or m = 0}; atom a = (0, 0); certified over a box cover that is a superset of R"
+  },
+  "D1": {
+   "aggregation": {
+    "artifacts": [
+     "04ac44954421671c1726d0bbac8dee264aee619d919ea72b2468932fd87ae3e3",
+     "0885c51b2cce29cad3bc95a666f973a6e13d6305eeca82cca01c5cdd84da1b5f",
+     "0d4d21fe86859492852598c0a7a68a025a7cc8994071f78639ad53d80f83244f",
+     "0f6b45df407b3a311d36ec74bd1a72b19dc501cb177838f42809960c7dfd17ab",
+     "26129ff4d4f28f0043d787aa3795450f1a7afa307dc924ff8aebd350679c2b07",
+     "683c879eefcec393f34f25b6d5cfcf438d7315ec88b2b1c8477cf919ea9b68ee",
+     "902e336a7e84a15ed5d7dacea6818e770e9bea60cc03c1aa38727d0e0bacc36d",
+     "adff2640a8ea2937ed7bd81e3f7383522f05aae4894e07c4eb2e49937d984b32",
+     "dc3f4ab9a99912ef082e72650be131d5182b73c906b2d2cf5516d87dad09e58c"
+    ],
+    "method": "max_over_sub_blocks",
+    "sub_blocks": 9
+   },
+   "constant": "D1",
+   "convention": "atom_removed",
+   "dependencies": [
+    "C_T",
+    "tau"
+   ],
+   "dependency_granularity": "PER SUB-BLOCK: each of the 9 certify_cell artifacts was run with its OWN sub-block's C_T and tau (verified 9/9 by content hash in the pre-freeze review, item 2). A block-uniform C_T/tau pair is also sound, since the propagation is increasing in both.",
+   "direction": "UPPER_BOUND",
+   "drift_domain": [
+    "680769/400000",
+    "17885921/10000000"
+   ],
+   "kernel": "Khat_e",
+   "producer": {
+    "file": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/taboo_certify.py",
+    "file_sha256": "ced9422ca07981a9ad053acd79b72ef0d5007e93e49c16f2501f31c593fd0daa",
+    "mode": "n/a",
+    "module": "taboo_certify.certify_cell",
+    "route": "original_certify_cell"
+   },
+   "proposition": "for every e in the block: |D_e'| <= value",
+   "quantity": "|d'(atom)|, the first drift derivative of d",
+   "state_set": "R = {(p, m) in [0,5]^2 : p + m <= 4 or p = 0 or m = 0}; atom a = (0, 0); certified over a box cover that is a superset of R"
+  },
+  "D2": {
+   "aggregation": {
+    "artifacts": [
+     "04ac44954421671c1726d0bbac8dee264aee619d919ea72b2468932fd87ae3e3",
+     "0885c51b2cce29cad3bc95a666f973a6e13d6305eeca82cca01c5cdd84da1b5f",
+     "0d4d21fe86859492852598c0a7a68a025a7cc8994071f78639ad53d80f83244f",
+     "0f6b45df407b3a311d36ec74bd1a72b19dc501cb177838f42809960c7dfd17ab",
+     "26129ff4d4f28f0043d787aa3795450f1a7afa307dc924ff8aebd350679c2b07",
+     "683c879eefcec393f34f25b6d5cfcf438d7315ec88b2b1c8477cf919ea9b68ee",
+     "902e336a7e84a15ed5d7dacea6818e770e9bea60cc03c1aa38727d0e0bacc36d",
+     "adff2640a8ea2937ed7bd81e3f7383522f05aae4894e07c4eb2e49937d984b32",
+     "dc3f4ab9a99912ef082e72650be131d5182b73c906b2d2cf5516d87dad09e58c"
+    ],
+    "method": "max_over_sub_blocks",
+    "sub_blocks": 9
+   },
+   "constant": "D2",
+   "convention": "atom_removed",
+   "dependencies": [
+    "C_T",
+    "tau"
+   ],
+   "dependency_granularity": "PER SUB-BLOCK: each of the 9 certify_cell artifacts was run with its OWN sub-block's C_T and tau (verified 9/9 by content hash in the pre-freeze review, item 2). A block-uniform C_T/tau pair is also sound, since the propagation is increasing in both.",
+   "direction": "UPPER_BOUND",
+   "drift_domain": [
+    "680769/400000",
+    "17885921/10000000"
+   ],
+   "kernel": "Khat_e",
+   "producer": {
+    "file": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/taboo_certify.py",
+    "file_sha256": "ced9422ca07981a9ad053acd79b72ef0d5007e93e49c16f2501f31c593fd0daa",
+    "mode": "n/a",
+    "module": "taboo_certify.certify_cell",
+    "route": "original_certify_cell"
+   },
+   "proposition": "for every e in the block: |D_e''| <= value",
+   "quantity": "|d''(atom)|, the second drift derivative of d",
+   "state_set": "R = {(p, m) in [0,5]^2 : p + m <= 4 or p = 0 or m = 0}; atom a = (0, 0); certified over a box cover that is a superset of R"
+  },
+  "D_lo": {
+   "aggregation": {
+    "artifacts": [
+     "04ac44954421671c1726d0bbac8dee264aee619d919ea72b2468932fd87ae3e3",
+     "0885c51b2cce29cad3bc95a666f973a6e13d6305eeca82cca01c5cdd84da1b5f",
+     "0d4d21fe86859492852598c0a7a68a025a7cc8994071f78639ad53d80f83244f",
+     "0f6b45df407b3a311d36ec74bd1a72b19dc501cb177838f42809960c7dfd17ab",
+     "26129ff4d4f28f0043d787aa3795450f1a7afa307dc924ff8aebd350679c2b07",
+     "683c879eefcec393f34f25b6d5cfcf438d7315ec88b2b1c8477cf919ea9b68ee",
+     "902e336a7e84a15ed5d7dacea6818e770e9bea60cc03c1aa38727d0e0bacc36d",
+     "adff2640a8ea2937ed7bd81e3f7383522f05aae4894e07c4eb2e49937d984b32",
+     "dc3f4ab9a99912ef082e72650be131d5182b73c906b2d2cf5516d87dad09e58c"
+    ],
+    "method": "min_over_sub_blocks",
+    "sub_blocks": 9
+   },
+   "constant": "D_lo",
+   "convention": "atom_removed",
+   "dependencies": [
+    "C_T",
+    "tau"
+   ],
+   "dependency_granularity": "PER SUB-BLOCK: each of the 9 certify_cell artifacts was run with its OWN sub-block's C_T and tau (verified 9/9 by content hash in the pre-freeze review, item 2). A block-uniform C_T/tau pair is also sound, since the propagation is increasing in both.",
+   "direction": "LOWER_BOUND",
+   "drift_domain": [
+    "680769/400000",
+    "17885921/10000000"
+   ],
+   "kernel": "Khat_e",
+   "producer": {
+    "file": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/taboo_certify.py",
+    "file_sha256": "ced9422ca07981a9ad053acd79b72ef0d5007e93e49c16f2501f31c593fd0daa",
+    "mode": "n/a",
+    "module": "taboo_certify.certify_cell",
+    "route": "original_certify_cell"
+   },
+   "proposition": "for every e in the block: D_e >= value",
+   "quantity": "d(atom), where d = Ghat_e h_1 = P_x(alarm before reaching the atom)",
+   "state_set": "R = {(p, m) in [0,5]^2 : p + m <= 4 or p = 0 or m = 0}; atom a = (0, 0); certified over a box cover that is a superset of R"
+  },
+  "tau": {
+   "aggregation": {
+    "artifacts": [
+     "2db0beecd5967d1f517ed3bd3fae37e94b4b5be8e23f2adc41e4307c454f6cc1",
+     "44abb75f40559f70bb15357db2153c1389c05625d3fb02c92069ba6099e11bcc",
+     "4dc886c07c33855d12f97edb0024e4e51979fd4552e732f4a7c9f1635125365b",
+     "584da4bebca81ca7576191a2f4bea776464195fc4e3923e283344ee4a9fbc453",
+     "7ac6bd56718a8c31c1af8391b1f89e82d122aa2da081a4d2e3d433acb223302f",
+     "b84a187c368caba9c5091ce46620e7014373f3b50fd3836b10c3f4749c47b0d5",
+     "cd4b60251050e6a45dfd7ca0c5ad79e819ccd6847ed34de80f06f52c0aff7aa6",
+     "d956c39694ef85f2f9deb68789a5fe4c7cc2b8dc378da94ba190dd53bd4781e3",
+     "e03f5e8f569f396c772dd1a1d897dd30dd6dfb9655d4b1179ba4677d637f7293"
+    ],
+    "method": "max_over_sub_blocks",
+    "sub_blocks": 9
+   },
+   "constant": "tau",
+   "convention": "atom_removed",
+   "dependencies": [],
+   "direction": "UPPER_BOUND",
+   "drift_domain": [
+    "680769/400000",
+    "17885921/10000000"
+   ],
+   "kernel": "Khat_e",
+   "producer": {
+    "file": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/taboo_certify.py",
+    "file_sha256": "ced9422ca07981a9ad053acd79b72ef0d5007e93e49c16f2501f31c593fd0daa",
+    "mode": "full=False",
+    "module": "taboo_certify.certify_block",
+    "route": "original_certify_block"
+   },
+   "proposition": "for every e in the block: (Ghat_e 1)(atom) <= value",
+   "quantity": "w(atom), for a Khat_e supersolution w",
+   "state_set": "R = {(p, m) in [0,5]^2 : p + m <= 4 or p = 0 or m = 0}; atom a = (0, 0); certified over a box cover that is a superset of R"
+  }
+ },
+ "propositions": {
+  "cell": "for every e in [e0 - rho, e0 + rho]: D_e >= D_lo, |D_e'| <= D1, |D_e''| <= D2 \" \"(given ||Ghat_e|| <= C_T and (Ghat_e 1)(a) <= tau on the same set)",
+  "full_true": "for every e in [e_lo, e_hi]: w >= 1 + K_e w on X, hence E_x[tau] <= w(x); \" \"Abar := tau field = w(a) >= E_a[tau]",
+  "taboo_full_false": "||Ghat_e|| <= C_T and \" \"(Ghat_e 1)(a) <= tau (Lemma T)"
+ },
+ "provenance": {
+  "code_closure": {
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "2576efe0b80a0c73f1164d7b0e8538ee6c71a5c5c61b68d755a2e763d58cde4e",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "1a686218bac9d214a36745831ef406b8019ff7f455bee25cc06568e463e69cfa",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_table.py": "ef3a3ba5c73e8dfe09ee60f4c632435d6ffbccf68dc4bb6557652d4dfaf13e20"
+  },
+  "inputs": {
+   "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/registry_c2/REGISTRY_C2.json": "1b2b834939fcd80a81ddc8f029f46705b53cefeb46c0cc925a99c2b8e856fdd6"
+  },
+  "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_table.py",
+  "producer_sha256": "ef3a3ba5c73e8dfe09ee60f4c632435d6ffbccf68dc4bb6557652d4dfaf13e20"
+ },
+ "schema": "C11R_N9_STATEMENTS/1",
+ "sha256": "bd98e16fce898415cff009fc0f993b88b86077d532c54e5b41d637fb28bd54aa",
+ "state_set": "R = {(p, m) in [0,5]^2 : p + m <= 4 or p = 0 or m = 0}; atom a = (0, 0); certified over a box cover that is a superset of R",
+ "supersedes": "C11R_N9_TABLE/1 (38f59993), which mixed magnitudes with semantics",
+ "unresolved_fields": []
+}

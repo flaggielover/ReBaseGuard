@@ -15,7 +15,7 @@
   {
    "detail": {
     "expected_c11_head": "440bcd9183f4f883428cba41d47aa7780fd681c4",
-    "head": "440bcd9183f4f883428cba41d47aa7780fd681c4"
+    "head": "6d7cd546f26dbd1e7e95de04e8dcb5b296ab50f2"
    },
    "id": "B0_02",
    "name": "descends from the expected C11 HEAD 440bcd91",
@@ -91,7 +91,7 @@
   {
    "detail": {
     "allow_settings": [],
-    "json_files_scanned": 3340,
+    "json_files_scanned": 3350,
     "method": "parsed guard keys in committed JSON; review prose mentioning the string is not a setting and is deliberately not matched"
    },
    "id": "B0_10",
@@ -110,7 +110,23 @@
    "detail": {
     "hits": [],
     "modules_scanned": [
-     "c11r_common.py"
+     "c11r_boxdata.py",
+     "c11r_common.py",
+     "c11r_compare.py",
+     "c11r_equiv.py",
+     "c11r_errata.py",
+     "c11r_firewall.py",
+     "c11r_gate.py",
+     "c11r_idrift.py",
+     "c11r_mutations.py",
+     "c11r_policy.py",
+     "c11r_qualify.py",
+     "c11r_regen.py",
+     "c11r_runs.py",
+     "c11r_schema.py",
+     "c11r_status.py",
+     "c11r_table.py",
+     "c11r_validate.py"
     ],
     "policy": "AWS IS FORBIDDEN for this campaign; local execution only",
     "self_excluded": "c11r_b0.py"
@@ -152,7 +168,16 @@
   "preserved_invalid": true,
   "verdict": "EXECUTION_INVALID"
  },
+ "provenance": {
+  "code_closure": {
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_b0.py": "221339a8d3df444db0c9c466a0a974e7a8594f92a2f4e17b0ebad8e22cf401f0",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "2576efe0b80a0c73f1164d7b0e8538ee6c71a5c5c61b68d755a2e763d58cde4e"
+  },
+  "inputs": {},
+  "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_b0.py",
+  "producer_sha256": "221339a8d3df444db0c9c466a0a974e7a8594f92a2f4e17b0ebad8e22cf401f0"
+ },
  "purpose": "determine whether the already-independent C11 certifier can certify THE SAME STATEMENT N9 requires: block-uniform drift over the frozen e-block, and the six operator constants for cell 306",
  "schema": "C11R_B0/1",
- "sha256": "171823a93c47b35919db663881a3443d2715bcf1976017a5b0eef3017353de85"
+ "sha256": "f1c20e4bff7908588729c65247dc1f8956c8723810e7672bc22c86644f1221ea"
 }

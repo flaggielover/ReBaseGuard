@@ -1,0 +1,270 @@
+{
+ "chooses_a_candidate_now": false,
+ "configuration": {
+  "boxes_at_depth": {
+   "4": 97,
+   "5": 363,
+   "6": 1402
+  },
+  "candidates": [
+   {
+    "atom_removal_fraction_origin_box": 0.0,
+    "boxes": 97,
+    "depth": 4,
+    "estimated_seconds": 1344.0,
+    "lambda1": "29825121/40000000",
+    "lambda1_float": 0.745628025,
+    "panels": 32,
+    "within_cap": true
+   },
+   {
+    "atom_removal_fraction_origin_box": 0.1151011875,
+    "boxes": 97,
+    "depth": 4,
+    "estimated_seconds": 2807.7,
+    "lambda1": "9158381/16000000",
+    "lambda1_float": 0.5723988125,
+    "panels": 64,
+    "within_cap": true
+   },
+   {
+    "atom_removal_fraction_origin_box": 0.20171579375,
+    "boxes": 97,
+    "depth": 4,
+    "estimated_seconds": 5665.3,
+    "lambda1": "77725473/160000000",
+    "lambda1_float": 0.48578420625,
+    "panels": 128,
+    "within_cap": true
+   },
+   {
+    "atom_removal_fraction_origin_box": 0.254371975,
+    "boxes": 363,
+    "depth": 5,
+    "estimated_seconds": 4591.8,
+    "lambda1": "23575121/40000000",
+    "lambda1_float": 0.589378025,
+    "panels": 32,
+    "within_cap": true
+   },
+   {
+    "atom_removal_fraction_origin_box": 0.4276011875,
+    "boxes": 363,
+    "depth": 5,
+    "estimated_seconds": 10069.5,
+    "lambda1": "6658381/16000000",
+    "lambda1_float": 0.4161488125,
+    "panels": 64,
+    "within_cap": true
+   },
+   {
+    "atom_removal_fraction_origin_box": 0.51421579375,
+    "boxes": 363,
+    "depth": 5,
+    "estimated_seconds": 20763.5,
+    "lambda1": "52725473/160000000",
+    "lambda1_float": 0.32953420625,
+    "panels": 128,
+    "within_cap": false
+   },
+   {
+    "atom_removal_fraction_origin_box": 0.410621975,
+    "boxes": 1402,
+    "depth": 6,
+    "estimated_seconds": 17278.0,
+    "lambda1": "20450121/40000000",
+    "lambda1_float": 0.511253025,
+    "panels": 32,
+    "within_cap": false
+   },
+   {
+    "atom_removal_fraction_origin_box": 0.5838511875,
+    "boxes": 1402,
+    "depth": 6,
+    "estimated_seconds": 38434.2,
+    "lambda1": "5408381/16000000",
+    "lambda1_float": 0.3380238125,
+    "panels": 64,
+    "within_cap": false
+   },
+   {
+    "atom_removal_fraction_origin_box": 0.67046579375,
+    "boxes": 1402,
+    "depth": 6,
+    "estimated_seconds": 79737.1,
+    "lambda1": "40225473/160000000",
+    "lambda1_float": 0.25140920625,
+    "panels": 128,
+    "within_cap": false
+   }
+  ],
+  "cap_rss_mb": 8192,
+  "cap_seconds": 10800,
+  "chosen": {
+   "depth": 5,
+   "panels": 64
+  },
+  "cost_model": {
+   "deterministic": true,
+   "live_probe_validates_only": {
+    "P128": {
+     "frozen_per_box_panel": 0.44,
+     "live_per_box_panel": 0.4648,
+     "within_tolerance": true
+    },
+    "P32": {
+     "frozen_per_box_panel": 0.37,
+     "live_per_box_panel": 0.4294,
+     "within_tolerance": true
+    },
+    "P64": {
+     "frozen_per_box_panel": 0.42,
+     "live_per_box_panel": 0.4505,
+     "within_tolerance": true
+    },
+    "screen": {
+     "frozen_per_state": 1.9,
+     "live_per_state": 1.558,
+     "within_tolerance": true
+    }
+   },
+   "per_box_panel_seconds": {
+    "128": "11/25",
+    "32": "37/100",
+    "64": "21/50"
+   },
+   "screen_seconds_per_state": "19/10",
+   "source": "first measurement, policy evidence 2bfbe5a304f35dc3, taken under concurrent load and rounded up"
+  },
+  "known_risk": "the chosen configuration's modelled cost is close to the cap. The model is pessimistic (measured under load) and the runs module enforces the cap before every certification, so an overrun stops cleanly as RESOURCE_CAP with finished families kept -- but a slower machine at Phase 14 could cost the later families.",
+  "rule": "minimise lambda1 = h_D + step_P + W over the candidate set, subject to the estimated Phase 14 wall clock <= CAP and peak RSS <= CAP_RSS; ties to lower cost. Geometry and NT cost only.",
+  "screen_grid": 15
+ },
+ "consistency_checks_at_execution": [
+  "certified A >= the pointwise lower bound A_pw_min for the same family",
+  "certified alpha <= the pointwise upper bound alpha_pw_max",
+  "Abar certified value >= tau certified value (Khat_e <= K_e)"
+ ],
+ "families": {
+  "F_D": {
+   "constraints": "alpha > 0, beta >= 0",
+   "form": "u = alpha + beta*m",
+   "kernel": "Khat_e",
+   "read_out": {
+    "D_lo": "u(atom) = alpha"
+   },
+   "route": "sub-solution",
+   "targets": [
+    "D_lo"
+   ]
+  },
+  "F_H": {
+   "constraints": "A, B >= 0; A >= 5B",
+   "form": "w = A - B*m",
+   "kernel": "Khat_e",
+   "read_out": {
+    "C_T": "sup over the cover of w = A",
+    "tau": "w(atom) = A"
+   },
+   "targets": [
+    "tau",
+    "C_T"
+   ]
+  },
+  "F_K": {
+   "constraints": "A, B >= 0; A >= 5B",
+   "form": "w = A - B*m",
+   "kernel": "K_e",
+   "read_out": {
+    "Abar": "w(atom) = A"
+   },
+   "targets": [
+    "Abar"
+   ]
+  },
+  "why_these_families": "C11 found the true E_x[tau] flat in p and decreasing in m, and d is driven by the m-arm under positive drift; linear-in-m families are the simplest that respect those shapes, and they keep every box constraint linear so the selection is exact. They were fixed on structural grounds, before and without any target computation."
+ },
+ "provenance": {
+  "code_closure": {
+   "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py": "fc88fb0dcc0f757d9ed42b08ecdd9e7ca2c65320181320f009390d67e3155741",
+   "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_common.py": "c55e97b9e2dc626992d3fa25ef23833fcccee88e787a916aa02dc23c2f0ab1b2",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "a3633f61bcefd4ba3d09f616e12d5ce96a73af576c351fbbd50c56a77e130de8",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "2576efe0b80a0c73f1164d7b0e8538ee6c71a5c5c61b68d755a2e763d58cde4e",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py": "532df9631a758ca90bb5868633f01d1dff405afbe469a83c1bd95744f5b29d6b",
+   "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
+  },
+  "inputs": {
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "373458b4b2eb6206b87494a95dbcf5bda2e925b5ce27d3993a9922ba415ff02c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/validation/C11R_VALIDATION.json": "55c119f67bb23f957acc555ed7d40e7c800be3fea0564a6448753b29ff1a09e3"
+  },
+  "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py",
+  "producer_sha256": "532df9631a758ca90bb5868633f01d1dff405afbe469a83c1bd95744f5b29d6b"
+ },
+ "references_comparison_threshold": false,
+ "references_original_magnitudes": false,
+ "schema": "C11R_POLICY/1",
+ "selection_chronology": [
+  "38f59993: w = 12 - 3/2 m (K_e) and w = 8 - m (Khat_e) -- the second chosen after the screen with the original values in view. DISCARDED (erratum E2).",
+  "revision 1: the seven screened candidates, all written after the original values were in the table. SUPERSEDED, not re-ranked (erratum E9).",
+  "revision 2 (this policy): no candidate is chosen by hand, now or later. The configuration is chosen here from geometry and NON-TARGET cost; the member of each family is chosen at Phase 14 by exact optimisation of the certified bound.",
+  "no quantity on cell 306's drift block was computed in this repair turn."
+ ],
+ "selector": {
+  "b_max": "4",
+  "beta_max": "1",
+  "certificate": "the selected upper members are certified by the REVIEWED c11r_idrift.supersolution_margin_iv; the lower member by c11r_boxdata.subsolution_margin_iv. The selector only chooses.",
+  "grid": 1000,
+  "lower": "maximise alpha over beta in {0, 1/1000, ..., 1}; alpha_max concave; DOWN",
+  "mu": "2^-60 -- strictness far above the ~1e-95 outward rounding",
+  "objective": "the tightest certifiable bound. This objective is the certifier's own; it references neither an original value nor the factor-2 comparator.",
+  "tie_break": "the smaller slope",
+  "upper": "minimise A over B in {0, 1/1000, ..., 4}; A_req(B) is convex; A rounded UP"
+ },
+ "sha256": "1835667afb82064aecb4db3f20b470ba9f4c01427ce22819cb2bff977f0a1fdc",
+ "stages": [
+  "1  pointwise coefficients on a 15x15 grid of R over the block (the cheap screen)",
+  "2  one box-data pass at the chosen configuration: upper coefficients for K_e and Khat_e together, and lower coefficients for the sub-solution",
+  "3  exact selection within each family",
+  "4  each selected member is first screened pointwise (G10) -- a POINTWISE_REFUTED member is recorded and NOT sent on -- then certified",
+  "5  every output written and hashed under the frozen run schema; then guard DENY"
+ ],
+ "statements_sha256": "bd98e16fce898415cff009fc0f993b88b86077d532c54e5b41d637fb28bd54aa",
+ "status": "FROZEN at the commit that introduces it; applied only in Phase 14",
+ "stop_conditions": [
+  "after ONE execution at the chosen configuration. There is no escalation and no retry.",
+  "if the wall clock exceeds the cap or RSS exceeds its cap: STOP; unfinished families are NOT_CERTIFIED with reason RESOURCE_CAP",
+  "if a family's selection is infeasible, or its certificate fails: that family is NOT_CERTIFIED, with the reason recorded; nothing is re-run",
+  "a selected member that the reviewed certifier REJECTS although the selector accepted it would indicate an inconsistency between the two; it is recorded as SELECTOR_CERTIFIER_MISMATCH and stops that family"
+ ],
+ "target_scope": {
+  "D1": "PROSPECTIVELY_REACHABLE_BUT_NOT_IMPLEMENTED",
+  "D1_D2_require": [
+   "the drift-derivative kernels Khat' and Khat'' (Hermite-weighted densities)",
+   "h_1' and h_1''",
+   "operator norm bounds kernel_norm(0..3) over the block",
+   "a residual-to-error propagation argument consuming THIS campaign's own C_T and tau, never the original's",
+   "an independent candidate for d' and d'' -- the D_lo sub-solution gives neither"
+  ],
+  "D2": "PROSPECTIVELY_REACHABLE_BUT_NOT_IMPLEMENTED",
+  "D_lo": "INDEPENDENT_STATEMENT_IMPLEMENTED (sub-solution route; target run pending)",
+  "F_D_non_target_tightness": {
+   "certified_alpha": "69/200",
+   "float_reference_d_at_atom": [
+    0.9820852239034809,
+    0.9779091362427059,
+    0.9800909020481963
+   ],
+   "ratio_alpha_to_reference_min": 0.3512933415582134,
+   "reading": "on the non-target block the linear sub-solution family is SOUND but LOOSE: it certifies a lower bound near a third of an independent float solution. The family is kept as frozen on structural grounds. Replacing it with a richer one right after learning that it is loose -- by an author who knows the original D_lo -- is the move erratum E2 records, so it is not made here. A richer family is a candidate for a successor. This is a NON-TARGET fact, not a prediction about cell 306.",
+   "source": "validation V14, NON-TARGET block, read mechanically (not transcribed)"
+  },
+  "N9": "N9 concerns all six constants for cell 306. If D1 and D2 are not independently certified, N9 remains OPEN, whatever the other four yield.",
+  "implementable_under_this_policy": [
+   "Abar",
+   "tau",
+   "C_T",
+   "D_lo"
+  ]
+ }
+}

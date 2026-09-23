@@ -1,171 +1,270 @@
-"""C11R Phase 2 -- the statement-equivalence checker.
+"""C11R Repair B -- the statement-equivalence comparator, rebuilt.
 
-SAME STATEMENT BEFORE SAME NUMBER. A second certifier corroborates the first only if it proves the
-same proposition, or a strictly stronger one. Numerical similarity is not evidence of anything if
-the two sides are bounding different quantities, on different kernels, at different states, over
-different drift domains, or in different directions.
+SAME STATEMENT BEFORE SAME NUMBER.
 
-A proposition is recorded as a tuple of fields that must MATCH EXACTLY:
+WHAT WAS WRONG (erratum E6). Revision 1 built the "independent" proposition as a copy of the
+original's and overwrote only its drift domain -- with the original's own domain. It compared the
+original against itself and could only return EQUIVALENT; no field of the runs artifact was read.
 
-    kernel          K_e or Khat_e        -- C11 proved K_e and compared against a Khat_e constant
-    quantity        w(atom) or sup_R w   -- tau and C_T come from the SAME certificate
-    state           the atom, or a set
-    direction       UPPER_BOUND or LOWER_BOUND   -- D_lo is the only lower bound of the six
-    bounds          the object being bounded
+WHAT THIS MODULE DOES INSTEAD
+  * `independent_statement` reads the independent proposition from the RUNS ARTIFACT'S OWN target
+    record. It never touches the original.
+  * `original_statement` reads the original's proposition from the statement table -- semantics
+    only; that table carries no magnitude.
+  * `check_internal` validates the independent record on its own before any comparison: kernel
+    and convention must agree; the aggregation must preserve "for every e in the block" for its
+    direction; the declared dependencies must include every premise its ROUTE necessarily
+    consumes; the producer must be in the independent line and must declare its file hash; and it
+    may not depend on an ORIGINAL constant. A record failing any of these is INVALID.
+  * `compare` then decides EQUIVALENT / STRONGER / WEAKER / NOT_COMPARABLE / NOT_EQUIVALENT.
+    Exact fields must match. The drift domain is compared as EXACT rationals (revision 1 compared
+    binary floats). Premises are compared as sets: FEWER premises is logically STRONGER, so an
+    unconditional statement is stronger than the original's conditional one.
 
-and one field that must match OR IMPROVE:
-
-    drift_domain    the independent domain must CONTAIN the original's; a proper superset is
-                    STRONGER, a proper subset is WEAKER, anything else is NOT_COMPARABLE.
-
-Every comparison here is computed, and the checker is exercised against planted mismatches so that
-it is shown to be able to fail.
+Neither side is built from the other. This module holds no magnitude and loads none.
 """
 from __future__ import annotations
 
+import copy
 import pathlib
 import sys
 from fractions import Fraction as F
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import c11r_common as C
+import c11r_schema as S
 
-EXACT_FIELDS = ("kernel", "quantity", "state", "direction", "bounds")
-
-
-def _interval(d) -> tuple[F, F]:
-    return F(d[0]), F(d[1])
+INDEPENDENT_SUFFIX = "_independent"
 
 
-def compare_domains(orig, indep) -> tuple[str, str]:
-    (olo, ohi), (ilo, ihi) = _interval(orig), _interval(indep)
+# ---------------------------------------------------------------------------------------------
+# the two readers -- deliberately separate, neither consults the other
+# ---------------------------------------------------------------------------------------------
+def independent_statement(runs: dict, constant: str) -> dict | None:
+    t = S.targets(runs)[constant]
+    return copy.deepcopy(t["statement"]) if t.get("statement") else None
+
+
+def original_statement(statements_table: dict, constant: str) -> dict:
+    return copy.deepcopy(statements_table["original_statements"][constant])
+
+
+# ---------------------------------------------------------------------------------------------
+def check_internal(st: dict) -> list[str]:
+    """Problems with an INDEPENDENT statement taken on its own. Empty means consistent."""
+    p = []
+    for f in S.STATEMENT_FIELDS:
+        if f not in st:
+            p.append(f"missing field {f!r}")
+    if p:
+        return p
+    if S.CONVENTION.get(st["kernel"]) != st["convention"]:
+        p.append(f"kernel {st['kernel']} requires convention "
+                 f"{S.CONVENTION.get(st['kernel'])!r}, record says {st['convention']!r}")
+    method = st["aggregation"].get("method")
+    if method not in S.VALID_AGGREGATION.get(st["direction"], set()):
+        p.append(f"aggregation {method!r} does not preserve 'for every e in the block' for an "
+                 f"{st['direction']}")
+    prod = st["producer"]
+    route = prod.get("route")
+    if route not in S.INDEPENDENT_ROUTES:
+        p.append(f"route {route!r} is not an independent route")
+    mod = str(prod.get("module", "")).split(".")[0].split("/")[-1].removesuffix(".py")
+    if mod in S.FORBIDDEN_PRODUCERS:
+        p.append(f"producer {prod.get('module')!r} is in the original's load-bearing graph")
+    if not prod.get("file_sha256"):
+        p.append("producer declares no file hash, so what generated the result is unknowable")
+    if st["constant"] not in S.ROUTE_CAN_PRODUCE.get(route, frozenset()):
+        p.append(f"route {route!r} cannot produce {st['constant']!r}")
+    required = S.ROUTE_REQUIRED_DEPENDENCIES.get(route, frozenset())
+    missing = sorted(required - set(st["dependencies"]))
+    if missing:
+        p.append(f"route {route!r} necessarily consumes {missing}, which the record omits")
+    originals = sorted(d for d in st["dependencies"] if d in S.SIX_CONSTANTS)
+    if originals:
+        p.append(f"depends on ORIGINAL constants {originals} -- an independence violation")
+    return p
+
+
+def _domain(orig: list, indep: list) -> str:
+    olo, ohi = F(orig[0]), F(orig[1])
+    ilo, ihi = F(indep[0]), F(indep[1])
     if (ilo, ihi) == (olo, ohi):
-        return "EQUAL", "the independent domain is exactly the original's"
+        return "EQUAL"
     if ilo <= olo and ihi >= ohi:
-        return "SUPERSET", "the independent domain strictly contains the original's"
+        return "SUPERSET"
     if ilo >= olo and ihi <= ohi:
-        return "SUBSET", ("the independent domain is contained in the original's, so it proves "
-                          "strictly less and cannot corroborate the original's statement")
-    return "INCOMPARABLE", "the domains overlap partially or not at all"
+        return "SUBSET"
+    return "INCOMPARABLE"
 
 
-def check(name: str, orig: dict, indep: dict | None) -> dict:
-    """Compare one target's two propositions. Returns a status and the reasons for it."""
+def _premises(orig: list, indep: list) -> str:
+    norm = {d.removesuffix(INDEPENDENT_SUFFIX) for d in indep}
+    o = set(orig)
+    if norm == o:
+        return "SAME"
+    if norm < o:
+        return "FEWER"
+    if norm > o:
+        return "MORE"
+    return "DIFFERENT"
+
+
+def compare(orig: dict, indep: dict | None) -> dict:
     if indep is None:
-        return {"target": name, "STATUS": "NO_INDEPENDENT_STATEMENT",
-                "reason": ("this campaign produced no independent proposition for this constant, "
-                           "so there is nothing to compare; it cannot contribute to N9 closure"),
-                "field_mismatches": None, "domain": None}
-    mism = [{"field": f, "original": orig.get(f), "independent": indep.get(f)}
-            for f in EXACT_FIELDS if orig.get(f) != indep.get(f)]
-    dom, dom_why = compare_domains(orig["drift_domain"], indep["drift_domain"])
+        return {"STATUS": "NO_INDEPENDENT_STATEMENT", "reasons": ["no independent statement"]}
+    internal = check_internal(indep)
+    if internal:
+        return {"STATUS": "INVALID", "reasons": internal,
+                "independence_violation": any("independence violation" in r or
+                                              "load-bearing graph" in r for r in internal)}
+    mism = [f for f in S.EXACT_FIELDS if orig.get(f) != indep.get(f)]
     if mism:
-        status = "NOT_EQUIVALENT"
-    elif dom == "EQUAL":
-        status = "EQUIVALENT"
-    elif dom == "SUPERSET":
-        status = "STRONGER"
-    elif dom == "SUBSET":
-        status = "WEAKER"
-    else:
+        return {"STATUS": "NOT_EQUIVALENT", "reasons": [f"{f} differs" for f in mism],
+                "field_mismatches": mism}
+    dom = _domain(orig["drift_domain"], indep["drift_domain"])
+    prem = _premises(orig["dependencies"], indep["dependencies"])
+    if dom == "INCOMPARABLE" or prem == "DIFFERENT":
         status = "NOT_COMPARABLE"
-    return {"target": name, "STATUS": status,
-            "field_mismatches": mism,
-            "domain": {"comparison": dom, "why": dom_why,
-                       "original": orig["drift_domain"], "independent": indep["drift_domain"]},
-            "reason": ("every exact field matches and " + dom_why) if not mism else
-                      f"{len(mism)} exact field(s) differ: {[m['field'] for m in mism]}"}
+    else:
+        stronger = (dom == "SUPERSET") or (prem == "FEWER")
+        weaker = (dom == "SUBSET") or (prem == "MORE")
+        if stronger and weaker:
+            status = "NOT_COMPARABLE"
+        elif weaker:
+            status = "WEAKER"
+        elif stronger:
+            status = "STRONGER"
+        else:
+            status = "EQUIVALENT"
+    return {"STATUS": status, "domain": dom, "premises": prem, "reasons": [],
+            "aggregation": {"original": orig["aggregation"].get("method"),
+                            "independent": indep["aggregation"].get("method")}}
 
 
-def original_propositions(tbl: dict) -> dict:
-    """The original's six propositions, from the Phase 1 table -- not restated by hand."""
-    # The quantity field must DISTINGUISH the six. An earlier draft derived it from the state
-    # convention, which collapsed D_lo, D1 and D2 onto one label -- so swapping D1 for D2 would
-    # have passed the exact-field check on quantity and been caught only by direction. The
-    # quantity is now the constant's own name plus what it bounds, which cannot collide.
-    QUANTITY = {
-        "C_T": "sup_over_R of w",
-        "tau": "w(atom), atom-removed supersolution",
-        "Abar": "w(atom), whole-kernel supersolution",
-        "D_lo": "d(atom) = P_a(tau < T_a)",
-        "D1": "|d'(atom)|, first drift derivative",
-        "D2": "|d''(atom)|, second drift derivative",
-    }
-    out = {}
-    for k, v in tbl["constants"].items():
-        q = QUANTITY.get(k)
-        if q is None:
-            raise SystemExit(f"REFUSE: no distinct quantity label for constant {k!r}")
-        out[k] = {"kernel": v["kernel"],
-                  "quantity": q,
-                  "state": "atom" if "atom" in v["state_convention"] else "reachable_set",
-                  "direction": v["direction"],
-                  "bounds": v["bounds"],
-                  "drift_domain": v["drift_domain_float"]}
-    if len({v["quantity"] for v in out.values()}) != len(out):
-        raise SystemExit("REFUSE: quantity labels are not distinct across the six constants")
-    return out
+# ---------------------------------------------------------------------------------------------
+# negative controls, run through the SAME `compare` used in production
+# ---------------------------------------------------------------------------------------------
+def honest_independent(constant: str, drift: tuple[str, str], route: str,
+                       deps=()) -> dict:
+    """An independent statement built with the producer's own constructor, S.statement.
+
+    It is NOT derived from the original record: every field comes from the schema's semantic
+    definitions and an independent producer identity.
+    """
+    return S.statement(constant, drift_domain=drift,
+                       aggregation={"method": "single_certificate_whole_block", "sub_blocks": 1},
+                       dependencies=deps,
+                       producer={"module": "c11r_runs.py", "route": route,
+                                 "file_sha256": "0" * 64, "certificate_id": "synthetic"})
 
 
-def self_test(orig: dict) -> dict:
-    """Negative controls. A checker that cannot fail proves nothing (C8/C11 lesson)."""
-    base = dict(orig["Abar"])
+def self_test(stmt_table: dict) -> dict:
+    d = stmt_table["drift_domain"]
+    drift = (d["e_lo"], d["e_hi"])
+    mid = str((F(d["e_lo"]) + F(d["e_hi"])) / 2)
+    O = {k: original_statement(stmt_table, k) for k in S.SIX_CONSTANTS}
     cases = []
 
-    def case(label, mutate, expect_not):
-        m = dict(base)
-        mutate(m)
-        r = check("Abar", orig["Abar"], m)
-        cases.append({"planted": label, "status": r["STATUS"],
-                      "caught": r["STATUS"] != expect_not})
+    def case(label, target, indep, expect):
+        r = compare(O[target], indep)
+        ok = (r["STATUS"] in expect) if isinstance(expect, (set, tuple)) else r["STATUS"] == expect
+        cases.append({"case": label, "target": target, "status": r["STATUS"],
+                      "expected": sorted(expect) if isinstance(expect, (set, tuple)) else expect,
+                      "caught_or_accepted_as_expected": ok, "reasons": r.get("reasons", [])})
 
-    case("identical proposition", lambda m: None, None)
-    case("Khat_e swapped for K_e", lambda m: m.update(kernel="Khat_e"), "EQUIVALENT")
-    case("tau's quantity swapped in", lambda m: m.update(quantity="sup_R_w"), "EQUIVALENT")
-    case("direction flipped to LOWER_BOUND",
-         lambda m: m.update(direction="LOWER_BOUND"), "EQUIVALENT")
-    case("state moved off the atom", lambda m: m.update(state="reachable_set"), "EQUIVALENT")
-    case("drift narrowed to the midpoint",
-         lambda m: m.update(drift_domain=[1.7452573, 1.7452573]), "EQUIVALENT")
-    case("drift narrowed to one endpoint",
-         lambda m: m.update(drift_domain=[1.7019225, 1.7019225]), "EQUIVALENT")
-    case("drift replaced by cell 307's block",
-         lambda m: m.update(drift_domain=[1.7885921, 1.882413]), "EQUIVALENT")
+    sup = "independent_supersolution"
+    # positive controls: honest statements must NOT be rejected
+    case("POSITIVE honest Abar supersolution", "Abar", honest_independent("Abar", drift, sup),
+         "EQUIVALENT")
+    case("POSITIVE honest tau supersolution", "tau", honest_independent("tau", drift, sup),
+         "EQUIVALENT")
+    case("POSITIVE honest D_lo sub-solution (no premises -> stronger)", "D_lo",
+         honest_independent("D_lo", drift, "independent_subsolution"), "STRONGER")
+    case("POSITIVE honest D1 derivative route (own C_T, tau)", "D1",
+         honest_independent("D1", drift, "independent_derivative_propagation",
+                            ("C_T_independent", "tau_independent")), "EQUIVALENT")
 
-    # the six must also be distinguishable FROM EACH OTHER, not merely from a mutated Abar
-    for a, b in (("D1", "D2"), ("D_lo", "D1"), ("tau", "Abar"), ("tau", "C_T")):
-        r = check(a, orig[a], orig[b])
-        cases.append({"planted": f"{b} substituted for {a}", "status": r["STATUS"],
-                      "caught": r["STATUS"] != "EQUIVALENT"})
-    identical_ok = cases[0]["status"] == "EQUIVALENT"
-    all_caught = all(c["caught"] for c in cases[1:])
-    return {"identical_case_is_EQUIVALENT": identical_ok,
-            "all_planted_mismatches_caught": all_caught,
-            "cases": cases,
-            "PASS": identical_ok and all_caught}
+    def mutated(target, route, f, deps=()):
+        s = honest_independent(target, drift, route, deps)
+        f(s)
+        return s
+
+    # the eleven the campaign requires, plus more
+    case("cell 306 replaced by cell 307", "Abar",
+         mutated("Abar", sup, lambda s: s.update(drift_domain=["17885921/10000000",
+                                                               "1882413/1000000"])),
+         "NOT_COMPARABLE")
+    case("drift narrowed to the midpoint", "Abar",
+         mutated("Abar", sup, lambda s: s.update(drift_domain=[mid, mid])), "WEAKER")
+    case("K_e <-> Khat_e (kernel and convention both swapped)", "tau",
+         mutated("tau", sup, lambda s: s.update(kernel="K_e", convention="full")),
+         "NOT_EQUIVALENT")
+    case("full <-> atom-removed (convention alone swapped)", "tau",
+         mutated("tau", sup, lambda s: s.update(convention="full")), "INVALID")
+    case("D_lo <-> D1", "D_lo", honest_independent("D1", drift,
+                                                   "independent_derivative_propagation",
+                                                   ("C_T_independent", "tau_independent")),
+         "NOT_EQUIVALENT")
+    case("D1 <-> D2", "D1", honest_independent("D2", drift,
+                                               "independent_derivative_propagation",
+                                               ("C_T_independent", "tau_independent")),
+         "NOT_EQUIVALENT")
+    case("upper <-> lower direction", "Abar",
+         mutated("Abar", sup, lambda s: s.update(direction="LOWER_BOUND")),
+         {"NOT_EQUIVALENT", "INVALID"})
+    case("changed reachable/state set", "C_T",
+         mutated("C_T", sup, lambda s: s.update(state_set="R' = {p + m <= 5}")),
+         "NOT_EQUIVALENT")
+    case("aggregation max <-> min on an upper bound", "C_T",
+         mutated("C_T", sup, lambda s: s.update(aggregation={"method": "min_over_sub_blocks",
+                                                             "sub_blocks": 9})), "INVALID")
+    case("missing dependency on C_T/tau for the derivative route", "D1",
+         honest_independent("D1", drift, "independent_derivative_propagation", ()), "INVALID")
+    case("altered provenance: producer is the original's taboo_certify", "tau",
+         mutated("tau", sup, lambda s: s["producer"].update(module="taboo_certify.certify_block")),
+         "INVALID")
+    case("altered provenance: an original route", "tau",
+         mutated("tau", sup, lambda s: s["producer"].update(route="original_certify_block")),
+         "INVALID")
+    case("altered provenance: no producer file hash", "Abar",
+         mutated("Abar", sup, lambda s: s["producer"].update(file_sha256="")), "INVALID")
+    case("consumed the ORIGINAL C_T and tau", "D1",
+         honest_independent("D1", drift, "independent_derivative_propagation",
+                            ("C_T", "tau", "C_T_independent", "tau_independent")), "INVALID")
+    case("D1 claimed through the supersolution route, which cannot bound a derivative", "D1",
+         honest_independent("D1", drift, sup), "INVALID")
+    case("drift WIDENED beyond the block (a genuine strengthening)", "Abar",
+         mutated("Abar", sup, lambda s: s.update(drift_domain=["17/10", "18/10"])), "STRONGER")
+
+    pos = [c for c in cases if c["case"].startswith("POSITIVE")]
+    neg = [c for c in cases if not c["case"].startswith("POSITIVE")]
+    return {"cases": cases,
+            "positives_accepted": all(c["caught_or_accepted_as_expected"] for c in pos),
+            "negatives_caught": all(c["caught_or_accepted_as_expected"] for c in neg),
+            "PASS": all(c["caught_or_accepted_as_expected"] for c in cases)}
 
 
 def main() -> int:
-    tbl = C.load(C.NS / "evidence" / "table" / "C11R_N9_TABLE.json")
-    orig = original_propositions(tbl)
-    st = self_test(orig)
-    out = {"schema": "C11R_EQUIVALENCE/1",
+    tbl = C.load(C.NS / "evidence" / "table" / "C11R_N9_STATEMENTS.json")
+    st = self_test(tbl)
+    out = {"schema": "C11R_EQUIVALENCE/2",
+           "supersedes": "C11R_EQUIVALENCE/1, whose comparator was fed a copy of the original",
            "principle": "SAME STATEMENT BEFORE SAME NUMBER",
-           "exact_match_fields": list(EXACT_FIELDS),
-           "domain_rule": ("the independent drift domain must contain the original's; "
-                           "EQUAL -> EQUIVALENT, SUPERSET -> STRONGER, SUBSET -> WEAKER"),
-           "original_propositions": orig,
-           "checker_self_test": st,
+           "exact_fields": list(S.EXACT_FIELDS),
+           "domain_rule": "exact rationals: EQUAL, SUPERSET (stronger), SUBSET (weaker)",
+           "premise_rule": "fewer premises is stronger; an ORIGINAL constant as a premise is INVALID",
+           "independent_side_built_from": "the runs artifact's own target statement records",
+           "original_side_built_from": "evidence/table/C11R_N9_STATEMENTS.json (no magnitudes)",
+           "self_test": st,
            "EQUIV_CLASS": "READY" if st["PASS"] else "REFUSE"}
-    s = C.write_evidence(C.NS / "evidence" / "equivalence" / "C11R_EQUIVALENCE.json", out)
-    print("original propositions:")
-    for k, v in orig.items():
-        print(f"  {k:5s} kernel={v['kernel']:7s} quantity={v['quantity']:11s} "
-              f"state={v['state']:13s} dir={v['direction']}")
-    print("\nchecker self-test (negative controls):")
+    s = C.write_evidence(C.NS / "evidence" / "equivalence" / "C11R_EQUIVALENCE.json", out,
+                         producer=__file__)
     for c in st["cases"]:
-        print(f"  {'OK ' if c['caught'] else 'MISS'}  {c['planted']:38s} -> {c['status']}")
-    print(f"\nEQUIV_CLASS = {out['EQUIV_CLASS']}")
+        print(f"  {'ok  ' if c['caught_or_accepted_as_expected'] else 'FAIL'} "
+              f"{c['case'][:60]:60s} -> {c['status']}")
+    print(f"\npositives accepted {st['positives_accepted']}  negatives caught "
+          f"{st['negatives_caught']}   EQUIV_CLASS = {out['EQUIV_CLASS']}")
     print(f"wrote evidence/equivalence/C11R_EQUIVALENCE.json sha256 {s[:16]}...")
     return 0 if st["PASS"] else 1
 

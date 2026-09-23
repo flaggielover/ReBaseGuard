@@ -1,149 +1,234 @@
 {
  "EQUIV_CLASS": "READY",
- "checker_self_test": {
+ "domain_rule": "exact rationals: EQUAL, SUPERSET (stronger), SUBSET (weaker)",
+ "exact_fields": [
+  "constant",
+  "quantity",
+  "kernel",
+  "convention",
+  "direction",
+  "state_set",
+  "proposition"
+ ],
+ "independent_side_built_from": "the runs artifact's own target statement records",
+ "original_side_built_from": "evidence/table/C11R_N9_STATEMENTS.json (no magnitudes)",
+ "premise_rule": "fewer premises is stronger; an ORIGINAL constant as a premise is INVALID",
+ "principle": "SAME STATEMENT BEFORE SAME NUMBER",
+ "provenance": {
+  "code_closure": {
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "2576efe0b80a0c73f1164d7b0e8538ee6c71a5c5c61b68d755a2e763d58cde4e",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_equiv.py": "475f6f299aafb3dfa0c88d0257efbfc2751e6554e67765dd22c7b741a56e0fe3",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "1a686218bac9d214a36745831ef406b8019ff7f455bee25cc06568e463e69cfa"
+  },
+  "inputs": {
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "373458b4b2eb6206b87494a95dbcf5bda2e925b5ce27d3993a9922ba415ff02c"
+  },
+  "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_equiv.py",
+  "producer_sha256": "475f6f299aafb3dfa0c88d0257efbfc2751e6554e67765dd22c7b741a56e0fe3"
+ },
+ "schema": "C11R_EQUIVALENCE/2",
+ "self_test": {
   "PASS": true,
-  "all_planted_mismatches_caught": true,
   "cases": [
    {
-    "caught": true,
-    "planted": "identical proposition",
-    "status": "EQUIVALENT"
+    "case": "POSITIVE honest Abar supersolution",
+    "caught_or_accepted_as_expected": true,
+    "expected": "EQUIVALENT",
+    "reasons": [],
+    "status": "EQUIVALENT",
+    "target": "Abar"
    },
    {
-    "caught": true,
-    "planted": "Khat_e swapped for K_e",
-    "status": "NOT_EQUIVALENT"
+    "case": "POSITIVE honest tau supersolution",
+    "caught_or_accepted_as_expected": true,
+    "expected": "EQUIVALENT",
+    "reasons": [],
+    "status": "EQUIVALENT",
+    "target": "tau"
    },
    {
-    "caught": true,
-    "planted": "tau's quantity swapped in",
-    "status": "NOT_EQUIVALENT"
+    "case": "POSITIVE honest D_lo sub-solution (no premises -> stronger)",
+    "caught_or_accepted_as_expected": true,
+    "expected": "STRONGER",
+    "reasons": [],
+    "status": "STRONGER",
+    "target": "D_lo"
    },
    {
-    "caught": true,
-    "planted": "direction flipped to LOWER_BOUND",
-    "status": "NOT_EQUIVALENT"
+    "case": "POSITIVE honest D1 derivative route (own C_T, tau)",
+    "caught_or_accepted_as_expected": true,
+    "expected": "EQUIVALENT",
+    "reasons": [],
+    "status": "EQUIVALENT",
+    "target": "D1"
    },
    {
-    "caught": true,
-    "planted": "state moved off the atom",
-    "status": "NOT_EQUIVALENT"
+    "case": "cell 306 replaced by cell 307",
+    "caught_or_accepted_as_expected": true,
+    "expected": "NOT_COMPARABLE",
+    "reasons": [],
+    "status": "NOT_COMPARABLE",
+    "target": "Abar"
    },
    {
-    "caught": true,
-    "planted": "drift narrowed to the midpoint",
-    "status": "WEAKER"
+    "case": "drift narrowed to the midpoint",
+    "caught_or_accepted_as_expected": true,
+    "expected": "WEAKER",
+    "reasons": [],
+    "status": "WEAKER",
+    "target": "Abar"
    },
    {
-    "caught": true,
-    "planted": "drift narrowed to one endpoint",
-    "status": "WEAKER"
+    "case": "K_e <-> Khat_e (kernel and convention both swapped)",
+    "caught_or_accepted_as_expected": true,
+    "expected": "NOT_EQUIVALENT",
+    "reasons": [
+     "kernel differs",
+     "convention differs"
+    ],
+    "status": "NOT_EQUIVALENT",
+    "target": "tau"
    },
    {
-    "caught": true,
-    "planted": "drift replaced by cell 307's block",
-    "status": "NOT_COMPARABLE"
+    "case": "full <-> atom-removed (convention alone swapped)",
+    "caught_or_accepted_as_expected": true,
+    "expected": "INVALID",
+    "reasons": [
+     "kernel Khat_e requires convention 'atom_removed', record says 'full'"
+    ],
+    "status": "INVALID",
+    "target": "tau"
    },
    {
-    "caught": true,
-    "planted": "D2 substituted for D1",
-    "status": "NOT_EQUIVALENT"
+    "case": "D_lo <-> D1",
+    "caught_or_accepted_as_expected": true,
+    "expected": "NOT_EQUIVALENT",
+    "reasons": [
+     "constant differs",
+     "quantity differs",
+     "direction differs",
+     "proposition differs"
+    ],
+    "status": "NOT_EQUIVALENT",
+    "target": "D_lo"
    },
    {
-    "caught": true,
-    "planted": "D1 substituted for D_lo",
-    "status": "NOT_EQUIVALENT"
+    "case": "D1 <-> D2",
+    "caught_or_accepted_as_expected": true,
+    "expected": "NOT_EQUIVALENT",
+    "reasons": [
+     "constant differs",
+     "quantity differs",
+     "proposition differs"
+    ],
+    "status": "NOT_EQUIVALENT",
+    "target": "D1"
    },
    {
-    "caught": true,
-    "planted": "Abar substituted for tau",
-    "status": "NOT_EQUIVALENT"
+    "case": "upper <-> lower direction",
+    "caught_or_accepted_as_expected": true,
+    "expected": [
+     "INVALID",
+     "NOT_EQUIVALENT"
+    ],
+    "reasons": [
+     "direction differs"
+    ],
+    "status": "NOT_EQUIVALENT",
+    "target": "Abar"
    },
    {
-    "caught": true,
-    "planted": "C_T substituted for tau",
-    "status": "NOT_EQUIVALENT"
+    "case": "changed reachable/state set",
+    "caught_or_accepted_as_expected": true,
+    "expected": "NOT_EQUIVALENT",
+    "reasons": [
+     "state_set differs"
+    ],
+    "status": "NOT_EQUIVALENT",
+    "target": "C_T"
+   },
+   {
+    "case": "aggregation max <-> min on an upper bound",
+    "caught_or_accepted_as_expected": true,
+    "expected": "INVALID",
+    "reasons": [
+     "aggregation 'min_over_sub_blocks' does not preserve 'for every e in the block' for an UPPER_BOUND"
+    ],
+    "status": "INVALID",
+    "target": "C_T"
+   },
+   {
+    "case": "missing dependency on C_T/tau for the derivative route",
+    "caught_or_accepted_as_expected": true,
+    "expected": "INVALID",
+    "reasons": [
+     "route 'independent_derivative_propagation' necessarily consumes ['C_T_independent', 'tau_independent'], which the record omits"
+    ],
+    "status": "INVALID",
+    "target": "D1"
+   },
+   {
+    "case": "altered provenance: producer is the original's taboo_certify",
+    "caught_or_accepted_as_expected": true,
+    "expected": "INVALID",
+    "reasons": [
+     "producer 'taboo_certify.certify_block' is in the original's load-bearing graph"
+    ],
+    "status": "INVALID",
+    "target": "tau"
+   },
+   {
+    "case": "altered provenance: an original route",
+    "caught_or_accepted_as_expected": true,
+    "expected": "INVALID",
+    "reasons": [
+     "route 'original_certify_block' is not an independent route"
+    ],
+    "status": "INVALID",
+    "target": "tau"
+   },
+   {
+    "case": "altered provenance: no producer file hash",
+    "caught_or_accepted_as_expected": true,
+    "expected": "INVALID",
+    "reasons": [
+     "producer declares no file hash, so what generated the result is unknowable"
+    ],
+    "status": "INVALID",
+    "target": "Abar"
+   },
+   {
+    "case": "consumed the ORIGINAL C_T and tau",
+    "caught_or_accepted_as_expected": true,
+    "expected": "INVALID",
+    "reasons": [
+     "depends on ORIGINAL constants ['C_T', 'tau'] -- an independence violation"
+    ],
+    "status": "INVALID",
+    "target": "D1"
+   },
+   {
+    "case": "D1 claimed through the supersolution route, which cannot bound a derivative",
+    "caught_or_accepted_as_expected": true,
+    "expected": "INVALID",
+    "reasons": [
+     "route 'independent_supersolution' cannot produce 'D1'"
+    ],
+    "status": "INVALID",
+    "target": "D1"
+   },
+   {
+    "case": "drift WIDENED beyond the block (a genuine strengthening)",
+    "caught_or_accepted_as_expected": true,
+    "expected": "STRONGER",
+    "reasons": [],
+    "status": "STRONGER",
+    "target": "Abar"
    }
   ],
-  "identical_case_is_EQUIVALENT": true
+  "negatives_caught": true,
+  "positives_accepted": true
  },
- "domain_rule": "the independent drift domain must contain the original's; EQUAL -> EQUIVALENT, SUPERSET -> STRONGER, SUBSET -> WEAKER",
- "exact_match_fields": [
-  "kernel",
-  "quantity",
-  "state",
-  "direction",
-  "bounds"
- ],
- "original_propositions": {
-  "Abar": {
-   "bounds": "E_a[tau] <= Abar -- the ARL at the atom",
-   "direction": "UPPER_BOUND",
-   "drift_domain": [
-    1.7019225,
-    1.7885921
-   ],
-   "kernel": "K_e",
-   "quantity": "w(atom), whole-kernel supersolution",
-   "state": "atom"
-  },
-  "C_T": {
-   "bounds": "the induced sup-norm of the taboo resolvent: ||Ghat_e|| <= C_T",
-   "direction": "UPPER_BOUND",
-   "drift_domain": [
-    1.7019225,
-    1.7885921
-   ],
-   "kernel": "Khat_e",
-   "quantity": "sup_over_R of w",
-   "state": "reachable_set"
-  },
-  "D1": {
-   "bounds": "|D_e'| <= D1 for every e in the block",
-   "direction": "UPPER_BOUND",
-   "drift_domain": [
-    1.7019225,
-    1.7885921
-   ],
-   "kernel": "Khat_e",
-   "quantity": "|d'(atom)|, first drift derivative",
-   "state": "atom"
-  },
-  "D2": {
-   "bounds": "|D_e''| <= D2 for every e in the block",
-   "direction": "UPPER_BOUND",
-   "drift_domain": [
-    1.7019225,
-    1.7885921
-   ],
-   "kernel": "Khat_e",
-   "quantity": "|d''(atom)|, second drift derivative",
-   "state": "atom"
-  },
-  "D_lo": {
-   "bounds": "D_e >= D_lo for every e in the block",
-   "direction": "LOWER_BOUND",
-   "drift_domain": [
-    1.7019225,
-    1.7885921
-   ],
-   "kernel": "Khat_e",
-   "quantity": "d(atom) = P_a(tau < T_a)",
-   "state": "atom"
-  },
-  "tau": {
-   "bounds": "(Ghat_e 1)(a) <= tau",
-   "direction": "UPPER_BOUND",
-   "drift_domain": [
-    1.7019225,
-    1.7885921
-   ],
-   "kernel": "Khat_e",
-   "quantity": "w(atom), atom-removed supersolution",
-   "state": "atom"
-  }
- },
- "principle": "SAME STATEMENT BEFORE SAME NUMBER",
- "schema": "C11R_EQUIVALENCE/1",
- "sha256": "7a6a4b48865913e747bf636649916198bc1937a78754d7a2ce2ec49642e7d8f4"
+ "sha256": "28c9a131848a2f48dc29101cece1109df82a363eb52a2dfe27ace6dfa397be55",
+ "supersedes": "C11R_EQUIVALENCE/1, whose comparator was fed a copy of the original"
 }

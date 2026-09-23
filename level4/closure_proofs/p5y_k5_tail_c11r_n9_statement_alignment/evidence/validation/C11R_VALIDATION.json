@@ -1,5 +1,6 @@
 {
  "VALIDATION_CLASS": "PASS",
+ "block": "NON-TARGET [5/2, 5/2 + 108337/1250000]; scalar e = 5/2",
  "checks": [
   {
    "detail": {
@@ -39,11 +40,11 @@
   },
   {
    "detail": {
-    "states": [
+    "rows": [
      {
       "h1": [
-       7.291136687211759e-05,
-       0.00010305483072163569
+       0.0013498980316304012,
+       0.0017879801261189694
       ],
       "in01": true,
       "state": [
@@ -53,8 +54,8 @@
      },
      {
       "h1": [
-       0.0025793792699948795,
-       0.0033631404202607434
+       0.022750314151105892,
+       0.027853170805698563
       ],
       "in01": true,
       "state": [
@@ -64,8 +65,8 @@
      },
      {
       "h1": [
-       0.8853032219428222,
-       0.9012300343416006
+       0.9772498680518211,
+       0.9815409944656077
       ],
       "in01": true,
       "state": [
@@ -75,8 +76,8 @@
      },
      {
       "h1": [
-       0.011124443035601589,
-       0.013938446503683782
+       0.002361960236894473,
+       0.0031378781577484417
       ],
       "in01": true,
       "state": [
@@ -86,8 +87,8 @@
      },
      {
       "h1": [
-       0.03608242525267456,
-       0.04350301854270734
+       0.1586552545078747,
+       0.18053440024366402
       ],
       "in01": true,
       "state": [
@@ -97,8 +98,8 @@
      },
      {
       "h1": [
-       0.0036606133025635047,
-       0.004738194766774095
+       0.0015944356153471588,
+       0.002124909391795228
       ],
       "in01": true,
       "state": [
@@ -108,8 +109,8 @@
      },
      {
       "h1": [
-       0.00019402701162361555,
-       0.0002686789764985927
+       0.00297976323505687,
+       0.0038685701742634223
       ],
       "in01": true,
       "state": [
@@ -120,63 +121,56 @@
     ]
    },
    "id": "V2",
-   "name": "the alarm probability lies in [0, 1] uniformly over the drift block",
+   "name": "the alarm probability lies in [0, 1] uniformly over the block",
    "pass": true
   },
   {
    "detail": {
-    "states": [
+    "rows": [
      {
-      "intersect": true,
-      "separation": -0.018740815866860737,
+      "separation": -0.005067044334640582,
       "state": [
        "0",
        "0"
       ]
      },
      {
-      "intersect": true,
-      "separation": -0.02957061487215024,
+      "separation": -0.03997362190653574,
       "state": [
        "3",
        "1"
       ]
      },
      {
-      "intersect": true,
-      "separation": -0.01871067252186019,
+      "separation": -0.004628962240745253,
       "state": [
        "0",
        "5"
       ]
      },
      {
-      "intersect": true,
-      "separation": -0.01952033459162211,
+      "separation": -0.010169796540587743,
       "state": [
        "5",
        "0"
       ]
      },
      {
-      "intersect": true,
-      "separation": -0.04114159783029366,
+      "separation": -0.041952763595478434,
       "state": [
        "2",
        "2"
       ]
      },
      {
-      "intersect": true,
-      "separation": -0.019168872505559358,
+      "separation": -0.01512018571115037,
       "state": [
        "23/5",
        "0"
       ]
      },
      {
-      "intersect": true,
-      "separation": -0.01611260164129656,
+      "separation": -0.00408551964639582,
       "state": [
        "1/4",
        "1/4"
@@ -185,161 +179,245 @@
     ]
    },
    "id": "V3",
-   "name": "kernel/alarm identity holds uniformly over the drift block",
+   "name": "kernel/alarm identity holds uniformly over the block",
    "pass": true
   },
   {
    "detail": {
-    "states": [
+    "rows": [
      {
-      "K_e": [
-       0.9811862727662671,
-       1.018637761036139
-      ],
-      "Khat_e": [
-       0.89625169878083,
-       0.9149925146476907
-      ],
-      "atom": [
-       0.08493457398543716,
-       0.10364524638844838
-      ],
-      "ok": true,
-      "separation": -0.037451488269871956,
+      "separation": -0.08726405917313337,
       "state": [
        "0",
        "0"
-      ]
+      ],
+      "w": "const9"
      },
      {
-      "K_e": [
-       0.9678500058578549,
-       1.0262074744518894
-      ],
-      "Khat_e": [
-       0.9678500058578549,
-       1.0262074744518894
-      ],
-      "atom": [
-       0.0,
-       0.0
-      ],
-      "ok": true,
-      "separation": -0.058357468594034616,
+      "separation": -0.6735994844263095,
       "state": [
        "3",
        "1"
-      ]
+      ],
+      "w": "const9"
      },
      {
-      "K_e": [
-       0.09598610553531767,
-       0.1174806381802595
-      ],
-      "Khat_e": [
-       0.09598610553531767,
-       0.1174806381802595
-      ],
-      "atom": [
-       0.0,
-       0.0
-      ],
-      "ok": true,
-      "separation": -0.021494532644941843,
+      "separation": -0.04470118260933503,
       "state": [
        "0",
        "5"
-      ]
+      ],
+      "w": "const9"
      },
      {
-      "K_e": [
-       0.9693552223727763,
-       1.0055818880879384
-      ],
-      "Khat_e": [
-       0.9693552223727763,
-       1.0055818880879384
-      ],
-      "atom": [
-       0.0,
-       0.0
-      ],
-      "ok": true,
-      "separation": -0.036226665715162025,
+      "separation": -0.17607307644289363,
       "state": [
        "5",
        "0"
-      ]
+      ],
+      "w": "const9"
      },
      {
-      "K_e": [
-       0.9227759769170317,
-       0.9976385792875864
-      ],
-      "Khat_e": [
-       0.9227759769170317,
-       0.9976385792875864
-      ],
-      "atom": [
-       0.0,
-       0.0
-      ],
-      "ok": true,
-      "separation": -0.07486260237055455,
+      "separation": -0.558237433096508,
       "state": [
        "2",
        "2"
-      ]
+      ],
+      "w": "const9"
      },
      {
-      "K_e": [
-       0.9771705141918772,
-       1.0144306777387853
-      ],
-      "Khat_e": [
-       0.9771705141918772,
-       1.0144306777387853
-      ],
-      "atom": [
-       0.0,
-       0.0
-      ],
-      "ok": true,
-      "separation": -0.03726016354690812,
+      "separation": -0.26738907881267404,
       "state": [
        "23/5",
        "0"
-      ]
+      ],
+      "w": "const9"
      },
      {
-      "K_e": [
-       0.9836933713470798,
-       1.015843922664798
-      ],
-      "Khat_e": [
-       0.9472151204111758,
-       0.9633277220524724
-      ],
-      "atom": [
-       0.03647825093590401,
-       0.0525162006123256
-      ],
-      "ok": true,
-      "separation": -0.03215055131771815,
+      "separation": -0.0655400911822658,
       "state": [
        "1/4",
        "1/4"
-      ]
+      ],
+      "w": "const9"
+     },
+     {
+      "separation": -0.2597868226500362,
+      "state": [
+       "0",
+       "0"
+      ],
+      "w": "m_only"
+     },
+     {
+      "separation": -1.1168784954721078,
+      "state": [
+       "3",
+       "1"
+      ],
+      "w": "m_only"
+     },
+     {
+      "separation": -0.05349904393450155,
+      "state": [
+       "0",
+       "5"
+      ],
+      "w": "m_only"
+     },
+     {
+      "separation": -0.43399928869293425,
+      "state": [
+       "5",
+       "0"
+      ],
+      "w": "m_only"
+     },
+     {
+      "separation": -0.9132669168013348,
+      "state": [
+       "2",
+       "2"
+      ],
+      "w": "m_only"
+     },
+     {
+      "separation": -0.6000147355643959,
+      "state": [
+       "23/5",
+       "0"
+      ],
+      "w": "m_only"
+     },
+     {
+      "separation": -0.2265980873133685,
+      "state": [
+       "1/4",
+       "1/4"
+      ],
+      "w": "m_only"
+     },
+     {
+      "separation": -0.09374684647638891,
+      "state": [
+       "0",
+       "0"
+      ],
+      "w": "mixed"
+     },
+     {
+      "separation": -0.46927563666442784,
+      "state": [
+       "3",
+       "1"
+      ],
+      "w": "mixed"
+     },
+     {
+      "separation": -0.02167380761840264,
+      "state": [
+       "0",
+       "5"
+      ],
+      "w": "mixed"
+     },
+     {
+      "separation": -0.20069560630292482,
+      "state": [
+       "5",
+       "0"
+      ],
+      "w": "mixed"
+     },
+     {
+      "separation": -0.3708576506653446,
+      "state": [
+       "2",
+       "2"
+      ],
+      "w": "mixed"
+     },
+     {
+      "separation": -0.26907364132812,
+      "state": [
+       "23/5",
+       "0"
+      ],
+      "w": "mixed"
+     },
+     {
+      "separation": -0.08138816056741391,
+      "state": [
+       "1/4",
+       "1/4"
+      ],
+      "w": "mixed"
+     },
+     {
+      "separation": -0.16212596158248488,
+      "state": [
+       "0",
+       "0"
+      ],
+      "w": "deg2"
+     },
+     {
+      "separation": -0.9842047356158484,
+      "state": [
+       "3",
+       "1"
+      ],
+      "w": "deg2"
+     },
+     {
+      "separation": -0.10913945023943399,
+      "state": [
+       "0",
+       "5"
+      ],
+      "w": "deg2"
+     },
+     {
+      "separation": -0.6984671532660791,
+      "state": [
+       "5",
+       "0"
+      ],
+      "w": "deg2"
+     },
+     {
+      "separation": -0.8875106906422957,
+      "state": [
+       "2",
+       "2"
+      ],
+      "w": "deg2"
+     },
+     {
+      "separation": -0.8374722253089921,
+      "state": [
+       "23/5",
+       "0"
+      ],
+      "w": "deg2"
+     },
+     {
+      "separation": -0.1336420400346189,
+      "state": [
+       "1/4",
+       "1/4"
+      ],
+      "w": "deg2"
      }
     ]
    },
    "id": "V4",
-   "name": "atom decomposition K_e = Khat_e + atom, and Khat_e <= K_e",
+   "name": "atom decomposition K_e = Khat_e + atom (4 weights x 7 states)",
    "pass": true
   },
   {
    "detail": {
-    "cases": [
+    "rows": [
      {
       "atom_window": true,
       "predicted": true,
@@ -396,8 +474,7 @@
        "9/10"
       ]
      }
-    ],
-    "derivation": "m - K <= z <= K - p is non-empty iff m - K < K - p"
+    ]
    },
    "id": "V5",
    "name": "the atom window is non-empty exactly when p + m < 2K = 1",
@@ -405,18 +482,18 @@
   },
   {
    "detail": {
+    "comparisons": 51,
     "mismatch_count": 0,
     "mismatches": [],
-    "why_it_matters": "bit-equality, not containment. Containment would pass even if the interval extension had changed the mathematics and then widened enough to hide it."
+    "scalar": "5/2"
    },
    "id": "V6",
-   "name": "scalar collapse: a degenerate drift interval reproduces C11 BIT FOR BIT",
+   "name": "scalar collapse: a degenerate block reproduces C11 BIT FOR BIT",
    "pass": true
   },
   {
    "detail": {
     "failures": [],
-    "note": "a NECESSARY condition only -- containment at sample points does not establish uniformity. Uniformity comes from carrying e as an interval, not from probing.",
     "probes": 12
    },
    "id": "V7",
@@ -426,51 +503,266 @@
   {
    "detail": {
     "Phi_increasing": true,
-    "even_monomial_straddling_zero_has_infimum_0": true,
     "phi_even": true,
-    "phi_peak_at_zero": true
+    "phi_peak": true,
+    "straddle": true
    },
    "id": "V8",
-   "name": "the facts the interval extension rests on: Phi increasing, phi even and peaked at 0, monomial extrema",
+   "name": "Phi increasing, phi even and peaked at 0, monomial extrema",
    "pass": true
   },
   {
    "detail": {
     "narrow": [
-     7.838631774872189,
-     8.129813713903507
+     6.7864676580368455,
+     6.918718781626236
     ],
     "wide": [
-     7.669774250597018,
-     8.240302866288665
+     6.690584242361664,
+     6.9503710650117005
     ]
    },
    "id": "V9",
-   "name": "a wider drift block gives a wider enclosure (monotone in the block)",
+   "name": "a wider drift block gives a wider enclosure",
    "pass": true
   },
   {
    "detail": {
-    "panels_16": 10.546515395094255,
-    "panels_32": 10.335007429859331,
-    "panels_8": 10.857090460251992,
-    "tightening_8_to_32": 0.5220830303926628
+    "16": 9.481169317271174,
+    "32": 9.233000359188672,
+    "8": 9.921150916242475
    },
    "id": "V10",
    "name": "precision escalation: the box bound tightens monotonically with panels",
    "pass": true
+  },
+  {
+   "detail": {
+    "comparisons": 32,
+    "max_abs_difference": 2.9108084906139924e-96
+   },
+   "id": "V11",
+   "name": "the factored box margin equals the REVIEWED kernel_box_upper_iv",
+   "pass": true
+  },
+  {
+   "detail": {
+    "A": "5909/1000",
+    "B": "951/1000",
+    "block": "NON-TARGET",
+    "config": [
+     3,
+     16
+    ],
+    "margin_one_step_below": -0.0003642541624131341,
+    "reviewed_margin": 0.00027017609433560666
+   },
+   "id": "V12",
+   "name": "the selector's choice certifies, and one grid step less violates a box",
+   "pass": true
+  },
+  {
+   "detail": {
+    "checks": 27,
+    "smallest_slack": 0.026573912883645877
+   },
+   "id": "V13",
+   "name": "the Khat_e box LOWER bound never exceeds the pointwise value",
+   "pass": true
+  },
+  {
+   "detail": {
+    "alpha": "69/200",
+    "beta": "27/1000",
+    "block": "NON-TARGET",
+    "certified": true,
+    "config": [
+     3,
+     16
+    ],
+    "float_d_at_atom_reference": {
+     "3233337/1250000": 0.9820852239034809,
+     "5/2": 0.9779091362427059,
+     "6358337/2500000": 0.9800909020481963
+    },
+    "gaps_reference_minus_alpha": {
+     "3233337/1250000": 0.6370852239034809,
+     "5/2": 0.632909136242706,
+     "6358337/2500000": 0.6350909020481963
+    },
+    "h_min": 0.0013498980316304012,
+    "inflated_by_one_tenth_certified": false,
+    "note": "the float reference is not rigorous (grid 41x41); it is a soundness check"
+   },
+   "id": "V14",
+   "name": "the D_lo sub-solution bound is certified, lies below an independent float d(atom) at every probed drift, and an inflated u fails",
+   "pass": true
+  },
+  {
+   "detail": {},
+   "id": "V15",
+   "name": "the Phi cache changes no bit",
+   "pass": true
+  },
+  {
+   "detail": {
+    "rows": [
+     {
+      "A": "12",
+      "B": "3/2",
+      "coefficient_form": 2.222891336607505,
+      "direct": 2.222891336607505,
+      "kernel": "K",
+      "state": [
+       "0",
+       "0"
+      ]
+     },
+     {
+      "A": "12",
+      "B": "3/2",
+      "coefficient_form": 2.483748173522483,
+      "direct": 2.428200626640659,
+      "kernel": "H",
+      "state": [
+       "0",
+       "0"
+      ]
+     },
+     {
+      "A": "9",
+      "B": "1",
+      "coefficient_form": 1.1550111667712744,
+      "direct": 1.1550111667712744,
+      "kernel": "K",
+      "state": [
+       "0",
+       "0"
+      ]
+     },
+     {
+      "A": "9",
+      "B": "1",
+      "coefficient_form": 1.3506537944575079,
+      "direct": 1.3089931342961396,
+      "kernel": "H",
+      "state": [
+       "0",
+       "0"
+      ]
+     },
+     {
+      "A": "12",
+      "B": "3/2",
+      "coefficient_form": 2.326711297945743,
+      "direct": 2.319852160275317,
+      "kernel": "K",
+      "state": [
+       "5/14",
+       "15/14"
+      ]
+     },
+     {
+      "A": "12",
+      "B": "3/2",
+      "coefficient_form": 2.326711297945743,
+      "direct": 2.319852160275317,
+      "kernel": "H",
+      "state": [
+       "5/14",
+       "15/14"
+      ]
+     },
+     {
+      "A": "9",
+      "B": "1",
+      "coefficient_form": 1.2517626832439483,
+      "direct": 1.2471899247969973,
+      "kernel": "K",
+      "state": [
+       "5/14",
+       "15/14"
+      ]
+     },
+     {
+      "A": "9",
+      "B": "1",
+      "coefficient_form": 1.2517626832439483,
+      "direct": 1.2471899247969973,
+      "kernel": "H",
+      "state": [
+       "5/14",
+       "15/14"
+      ]
+     },
+     {
+      "A": "12",
+      "B": "3/2",
+      "coefficient_form": 2.739114838431183,
+      "direct": 2.739114838431183,
+      "kernel": "K",
+      "state": [
+       "5/2",
+       "0"
+      ]
+     },
+     {
+      "A": "12",
+      "B": "3/2",
+      "coefficient_form": 2.739114838431183,
+      "direct": 2.739114838431183,
+      "kernel": "H",
+      "state": [
+       "5/2",
+       "0"
+      ]
+     },
+     {
+      "A": "9",
+      "B": "1",
+      "coefficient_form": 1.5286470756098387,
+      "direct": 1.5286470756098387,
+      "kernel": "K",
+      "state": [
+       "5/2",
+       "0"
+      ]
+     },
+     {
+      "A": "9",
+      "B": "1",
+      "coefficient_form": 1.5286470756098387,
+      "direct": 1.5286470756098387,
+      "kernel": "H",
+      "state": [
+       "5/2",
+       "0"
+      ]
+     }
+    ]
+   },
+   "id": "V16",
+   "name": "the pointwise coefficient form upper-bounds L, so the screen is conservative",
+   "pass": true
   }
  ],
- "drift_block": {
-  "e_hi": "17885921/10000000",
-  "e_lo": "680769/400000",
-  "float": [
-   1.7019225,
-   1.7885921
-  ]
- },
  "failed": [],
- "schema": "C11R_VALIDATION/1",
- "seconds": 168.8,
- "sha256": "3fed0d22cfdcec81a3163d9913743094c3c54bb9b4df03d149ac710b79869292"
+ "provenance": {
+  "code_closure": {
+   "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py": "fc88fb0dcc0f757d9ed42b08ecdd9e7ca2c65320181320f009390d67e3155741",
+   "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_common.py": "c55e97b9e2dc626992d3fa25ef23833fcccee88e787a916aa02dc23c2f0ab1b2",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "a3633f61bcefd4ba3d09f616e12d5ce96a73af576c351fbbd50c56a77e130de8",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "2576efe0b80a0c73f1164d7b0e8538ee6c71a5c5c61b68d755a2e763d58cde4e",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_validate.py": "db33c288c0f5e105202b2b47e92105f73a63047f0544791115f7fa7db9566bac",
+   "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
+  },
+  "inputs": {},
+  "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_validate.py",
+  "producer_sha256": "db33c288c0f5e105202b2b47e92105f73a63047f0544791115f7fa7db9566bac"
+ },
+ "schema": "C11R_VALIDATION/2",
+ "seconds": 421.4,
+ "sha256": "34988dcc8bc0d967ccd6fa5c56359c4c614ff5d7e763f173838b2c2b28ef60c6",
+ "why_non_target": "every check is drift-independent mathematics; running them off every open cell removes all contact with target-block quantities"
 }

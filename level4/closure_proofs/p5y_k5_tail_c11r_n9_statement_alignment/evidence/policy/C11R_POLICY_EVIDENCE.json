@@ -1,0 +1,137 @@
+{
+ "block_used": "NON-TARGET [5/2, 5/2 + 108337/1250000] only",
+ "cost_probe_per_panel_count": {
+  "128": {
+   "cached_certification_seconds_per_box": 27.408,
+   "data_pass_seconds_per_box": 32.55,
+   "peak_rss_mb": 23.8
+  },
+  "32": {
+   "cached_certification_seconds_per_box": 6.492,
+   "data_pass_seconds_per_box": 7.677,
+   "peak_rss_mb": 23.8
+  },
+  "64": {
+   "cached_certification_seconds_per_box": 13.388,
+   "data_pass_seconds_per_box": 15.897,
+   "peak_rss_mb": 23.8
+  }
+ },
+ "demonstration_on_worst_boxes": {
+  "box": "(0, 5/16, 15/16, 5/4)",
+  "contains_binding_state_(0,15/14)": true,
+  "reading": "the pure-geometry loss bound B*(h + step + W) exceeds the observed loss on this box for both discarded candidates, and exceeds their disclosed pointwise margins, so geometry alone would have flagged depth 4 / 16 panels as unable to certify them -- which is what the review found. The bound at the chosen configuration is smaller. That is a statement about STRUCTURAL LOSS, not a prediction that anything will certify: a screen or loss figure is never evidence of certifiability (erratum E10). Under this policy a hand-picked candidate is never submitted at all; the selector enforces every box constraint, so an uncertifiable member cannot be selected.",
+  "rows": [
+   {
+    "bound_covers_observed_loss": true,
+    "candidate (discarded, E2/E9)": "K_e  w=12-3/2m",
+    "disclosed_box_margin_at_4_16": -0.11084,
+    "disclosed_outcome_at_4_16": "FAILED",
+    "disclosed_pointwise_min": 1.0429908260546443,
+    "geometric_loss_bound_at_4_16": 1.55024,
+    "geometric_loss_bound_at_chosen_config": 0.60225,
+    "geometry_predicts_failure_at_4_16": true,
+    "observed_loss_at_4_16": 1.15383,
+    "slope_B": "3/2"
+   },
+   {
+    "bound_covers_observed_loss": true,
+    "candidate (discarded, E2/E9)": "Khat w=8-1m",
+    "disclosed_box_margin_at_4_16": -0.40723,
+    "disclosed_outcome_at_4_16": "FAILED",
+    "disclosed_pointwise_min": 0.36199388403642946,
+    "geometric_loss_bound_at_4_16": 1.03349,
+    "geometric_loss_bound_at_chosen_config": 0.4015,
+    "geometry_predicts_failure_at_4_16": true,
+    "observed_loss_at_4_16": 0.76922,
+    "slope_B": "1"
+   }
+  ]
+ },
+ "disclosed_failures": {
+  "binding_state_from_revision_1_screen": {
+   "K_e  w=12-3/2m": [
+    "0",
+    "15/14"
+   ],
+   "Khat w=8-1m": [
+    "0",
+    "15/14"
+   ]
+  },
+  "box_margins_from_review": {
+   "K_e  w=12-3/2m @ 0,5/16,0,5/16": -0.01527,
+   "K_e  w=12-3/2m @ 0,5/16,15/16,5/4": -0.11084,
+   "K_e  w=12-3/2m @ 5/2,45/16,0,5/16": 0.08024,
+   "Khat w=8-1m @ 0,5/16,0,5/16": -0.34351,
+   "Khat w=8-1m @ 0,5/16,15/16,5/4": -0.40723,
+   "Khat w=8-1m @ 5/2,45/16,0,5/16": -0.27984
+  },
+  "pointwise_min_from_revision_1_screen": {
+   "K_e  w=12-3/2m": 1.0429908260546443,
+   "Khat w=8-1m": 0.36199388403642946
+  },
+  "review_sha256": "fcf33fdc3b525f865c45068caeddbf0578119e7e4c5649743a3c2580b9c711f4",
+  "rows_parsed": 6,
+  "screen_blob_sha256": "75b4040ead13b93c3f13dbb3ba0116424702001bcbd80aa36cc6f57f0d466966"
+ },
+ "nt_loss_validation": {
+  "block": "NON-TARGET [5/2, 5/2 + 108337/1250000]",
+  "note": "the slope term ignores the window-end over-count and the drift-range width, so it need not dominate everywhere; it is a figure of merit for ranking configurations, not a certificate. Correctness never depends on it: the selector and the reviewed certifier are rigorous whatever lambda1 says.",
+  "rows": [
+   {
+    "actual_worst_loss": 0.90447,
+    "bound_covers_actual": true,
+    "box": [
+     "0",
+     "5/16",
+     "1",
+     "21/16"
+    ],
+    "config": [
+     4,
+     16
+    ],
+    "geometric_slope_bound": 1.02959
+   },
+   {
+    "actual_worst_loss": 0.43636,
+    "bound_covers_actual": false,
+    "box": [
+     "0",
+     "5/32",
+     "1",
+     "37/32"
+    ],
+    "config": [
+     5,
+     64
+    ],
+    "geometric_slope_bound": 0.40052
+   }
+  ],
+  "weight": "w = 10 - m (B = 1)"
+ },
+ "policy_sha256": "1835667afb82064aecb4db3f20b470ba9f4c01427ce22819cb2bff977f0a1fdc",
+ "provenance": {
+  "code_closure": {
+   "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py": "fc88fb0dcc0f757d9ed42b08ecdd9e7ca2c65320181320f009390d67e3155741",
+   "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_common.py": "c55e97b9e2dc626992d3fa25ef23833fcccee88e787a916aa02dc23c2f0ab1b2",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "a3633f61bcefd4ba3d09f616e12d5ce96a73af576c351fbbd50c56a77e130de8",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "2576efe0b80a0c73f1164d7b0e8538ee6c71a5c5c61b68d755a2e763d58cde4e",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py": "532df9631a758ca90bb5868633f01d1dff405afbe469a83c1bd95744f5b29d6b",
+   "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
+  },
+  "inputs": {
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "373458b4b2eb6206b87494a95dbcf5bda2e925b5ce27d3993a9922ba415ff02c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/validation/C11R_VALIDATION.json": "55c119f67bb23f957acc555ed7d40e7c800be3fea0564a6448753b29ff1a09e3"
+  },
+  "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py",
+  "producer_sha256": "532df9631a758ca90bb5868633f01d1dff405afbe469a83c1bd95744f5b29d6b"
+ },
+ "schema": "C11R_POLICY_EVIDENCE/1",
+ "screen_seconds_per_state": 1.558,
+ "seconds": 328.7,
+ "sha256": "6390d47c5b689d58ea0cfa655a4a95dfc945aef566d9253746851338317d4f9c"
+}

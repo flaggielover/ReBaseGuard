@@ -1,0 +1,486 @@
+{
+ "FIREWALL_CLASS": "PASS",
+ "allowed_readers": [
+  "c11r_compare.py",
+  "c11r_table.py"
+ ],
+ "controls": {
+  "all_positives_flagged": true,
+  "negative": {
+   "N1_docstring_mention": {
+    "flagged": false,
+    "why": []
+   },
+   "N2_print_mention": {
+    "flagged": false,
+    "why": []
+   },
+   "N3_semantic_label": {
+    "flagged": false,
+    "why": []
+   },
+   "N4_load_the_statement_table": {
+    "flagged": false,
+    "why": []
+   },
+   "N5_launch_the_extractor": {
+    "flagged": false,
+    "why": []
+   },
+   "N6_store_a_magnitude_key_into_a_local_dict": {
+    "flagged": false,
+    "why": []
+   }
+  },
+  "no_negative_flagged": true,
+  "positive": {
+   "P1_direct_registry_load": {
+    "flagged": true,
+    "why": [
+     "1 protected load(s)"
+    ]
+   },
+   "P2_load_through_a_variable": {
+    "flagged": true,
+    "why": [
+     "1 protected load(s)"
+    ]
+   },
+   "P3_load_through_the_receiver": {
+    "flagged": true,
+    "why": [
+     "1 protected load(s)"
+    ]
+   },
+   "P4_git_blob_of_the_old_mixed_table": {
+    "flagged": true,
+    "why": [
+     "1 protected load(s)"
+    ]
+   },
+   "P5_via_a_loader_function_in_another_module": {
+    "flagged": true,
+    "why": [
+     "1 protected load(s)"
+    ]
+   },
+   "P6_launch_the_comparator": {
+    "flagged": true,
+    "why": [
+     "launches the comparator"
+    ]
+   },
+   "P7_read_a_magnitude_key": {
+    "flagged": true,
+    "why": [
+     "1 magnitude-key read(s)"
+    ]
+   },
+   "P8_loader_hidden_in_a_local_helper": {
+    "flagged": true,
+    "why": [
+     "1 protected load(s)"
+    ]
+   }
+  }
+ },
+ "modules_scanned": 21,
+ "offenders": [],
+ "per_module": {
+  "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py": {
+   "allowed_reader": false,
+   "exports_loader_functions": [],
+   "loads": [],
+   "magnitude_key_reads": [],
+   "module": "c11_certifier.py",
+   "prose_mentions": 0,
+   "semantic_references": 0,
+   "subprocess_compare": [],
+   "tainted_names": [],
+   "violations": []
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_common.py": {
+   "allowed_reader": false,
+   "exports_loader_functions": [],
+   "loads": [],
+   "magnitude_key_reads": [],
+   "module": "c11_common.py",
+   "prose_mentions": 0,
+   "semantic_references": 0,
+   "subprocess_compare": [],
+   "tainted_names": [],
+   "violations": []
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_b0.py": {
+   "allowed_reader": false,
+   "exports_loader_functions": [],
+   "loads": [],
+   "magnitude_key_reads": [],
+   "module": "c11r_b0.py",
+   "prose_mentions": 0,
+   "semantic_references": 0,
+   "subprocess_compare": [],
+   "tainted_names": [],
+   "violations": []
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": {
+   "allowed_reader": false,
+   "exports_loader_functions": [],
+   "loads": [],
+   "magnitude_key_reads": [],
+   "module": "c11r_boxdata.py",
+   "prose_mentions": 0,
+   "semantic_references": 0,
+   "subprocess_compare": [],
+   "tainted_names": [],
+   "violations": []
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": {
+   "allowed_reader": false,
+   "exports_loader_functions": [],
+   "loads": [],
+   "magnitude_key_reads": [],
+   "module": "c11r_common.py",
+   "prose_mentions": 0,
+   "semantic_references": 0,
+   "subprocess_compare": [],
+   "tainted_names": [],
+   "violations": []
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_compare.py": {
+   "allowed_reader": true,
+   "exports_loader_functions": [
+    "load_original_magnitudes",
+    "main"
+   ],
+   "loads": [
+    {
+     "call": "C.load(C.NS / 'evidence' / 'quarantine' / 'C11R_ORIGINAL_MAGNITUDES.json')",
+     "kind": "direct",
+     "line": 89
+    }
+   ],
+   "magnitude_key_reads": [
+    {
+     "expr": "q['magnitudes']",
+     "line": 90
+    }
+   ],
+   "module": "c11r_compare.py",
+   "prose_mentions": 0,
+   "semantic_references": 2,
+   "subprocess_compare": [],
+   "tainted_names": [
+    "q",
+    "s"
+   ],
+   "violations": [
+    "1 protected load(s)",
+    "1 magnitude-key read(s)"
+   ]
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_equiv.py": {
+   "allowed_reader": false,
+   "exports_loader_functions": [],
+   "loads": [],
+   "magnitude_key_reads": [],
+   "module": "c11r_equiv.py",
+   "prose_mentions": 0,
+   "semantic_references": 0,
+   "subprocess_compare": [],
+   "tainted_names": [],
+   "violations": []
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_errata.py": {
+   "allowed_reader": false,
+   "exports_loader_functions": [],
+   "loads": [],
+   "magnitude_key_reads": [],
+   "module": "c11r_errata.py",
+   "prose_mentions": 0,
+   "semantic_references": 2,
+   "subprocess_compare": [],
+   "tainted_names": [
+    "ERRATA",
+    "out",
+    "s"
+   ],
+   "violations": []
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_firewall.py": {
+   "allowed_reader": false,
+   "exports_loader_functions": [],
+   "loads": [],
+   "magnitude_key_reads": [],
+   "module": "c11r_firewall.py",
+   "prose_mentions": 1,
+   "semantic_references": 14,
+   "subprocess_compare": [],
+   "tainted_names": [
+    "NEGATIVE",
+    "POSITIVE",
+    "PROTECTED",
+    "load_const_ids",
+    "neg",
+    "out",
+    "pos",
+    "s",
+    "skip"
+   ],
+   "violations": []
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_gate.py": {
+   "allowed_reader": false,
+   "exports_loader_functions": [],
+   "loads": [],
+   "magnitude_key_reads": [],
+   "module": "c11r_gate.py",
+   "prose_mentions": 0,
+   "semantic_references": 0,
+   "subprocess_compare": [],
+   "tainted_names": [],
+   "violations": []
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py": {
+   "allowed_reader": false,
+   "exports_loader_functions": [],
+   "loads": [],
+   "magnitude_key_reads": [],
+   "module": "c11r_idrift.py",
+   "prose_mentions": 0,
+   "semantic_references": 0,
+   "subprocess_compare": [],
+   "tainted_names": [],
+   "violations": []
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_mutations.py": {
+   "allowed_reader": false,
+   "exports_loader_functions": [],
+   "loads": [],
+   "magnitude_key_reads": [],
+   "module": "c11r_mutations.py",
+   "prose_mentions": 0,
+   "semantic_references": 0,
+   "subprocess_compare": [],
+   "tainted_names": [],
+   "violations": []
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py": {
+   "allowed_reader": false,
+   "exports_loader_functions": [],
+   "loads": [],
+   "magnitude_key_reads": [],
+   "module": "c11r_policy.py",
+   "prose_mentions": 0,
+   "semantic_references": 0,
+   "subprocess_compare": [],
+   "tainted_names": [],
+   "violations": []
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_qualify.py": {
+   "allowed_reader": false,
+   "exports_loader_functions": [],
+   "loads": [],
+   "magnitude_key_reads": [],
+   "module": "c11r_qualify.py",
+   "prose_mentions": 0,
+   "semantic_references": 0,
+   "subprocess_compare": [],
+   "tainted_names": [],
+   "violations": []
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_regen.py": {
+   "allowed_reader": false,
+   "exports_loader_functions": [],
+   "loads": [],
+   "magnitude_key_reads": [],
+   "module": "c11r_regen.py",
+   "prose_mentions": 0,
+   "semantic_references": 0,
+   "subprocess_compare": [],
+   "tainted_names": [],
+   "violations": []
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_runs.py": {
+   "allowed_reader": false,
+   "exports_loader_functions": [],
+   "loads": [],
+   "magnitude_key_reads": [],
+   "module": "c11r_runs.py",
+   "prose_mentions": 0,
+   "semantic_references": 0,
+   "subprocess_compare": [],
+   "tainted_names": [],
+   "violations": []
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": {
+   "allowed_reader": false,
+   "exports_loader_functions": [],
+   "loads": [],
+   "magnitude_key_reads": [],
+   "module": "c11r_schema.py",
+   "prose_mentions": 0,
+   "semantic_references": 0,
+   "subprocess_compare": [],
+   "tainted_names": [],
+   "violations": []
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_status.py": {
+   "allowed_reader": false,
+   "exports_loader_functions": [],
+   "loads": [],
+   "magnitude_key_reads": [],
+   "module": "c11r_status.py",
+   "prose_mentions": 0,
+   "semantic_references": 0,
+   "subprocess_compare": [],
+   "tainted_names": [],
+   "violations": []
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_table.py": {
+   "allowed_reader": true,
+   "exports_loader_functions": [
+    "main"
+   ],
+   "loads": [
+    {
+     "call": "C.load(C.C2 / 'evidence' / 'registry_c2' / 'REGISTRY_C2.json')",
+     "kind": "direct",
+     "line": 44
+    }
+   ],
+   "magnitude_key_reads": [
+    {
+     "expr": "mv['value_float']",
+     "line": 315
+    }
+   ],
+   "module": "c11r_table.py",
+   "prose_mentions": 1,
+   "semantic_references": 3,
+   "subprocess_compare": [],
+   "tainted_names": [
+    "agg",
+    "agg_ok",
+    "blk",
+    "cell_route",
+    "centred",
+    "common_block",
+    "consts",
+    "contiguous",
+    "covers",
+    "drift",
+    "e0",
+    "e_hi",
+    "e_lo",
+    "k",
+    "leaks",
+    "magnitudes",
+    "needles",
+    "original_statements",
+    "out",
+    "q",
+    "quarantine",
+    "reg",
+    "rho",
+    "rows",
+    "s",
+    "serial",
+    "sub",
+    "v"
+   ],
+   "violations": [
+    "1 protected load(s)",
+    "1 magnitude-key read(s)"
+   ]
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_validate.py": {
+   "allowed_reader": false,
+   "exports_loader_functions": [],
+   "loads": [],
+   "magnitude_key_reads": [],
+   "module": "c11r_validate.py",
+   "prose_mentions": 0,
+   "semantic_references": 0,
+   "subprocess_compare": [],
+   "tainted_names": [],
+   "violations": []
+  },
+  "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py": {
+   "allowed_reader": false,
+   "exports_loader_functions": [],
+   "loads": [],
+   "magnitude_key_reads": [],
+   "module": "c7_gaussian.py",
+   "prose_mentions": 0,
+   "semantic_references": 0,
+   "subprocess_compare": [],
+   "tainted_names": [],
+   "violations": []
+  }
+ },
+ "principle": "original magnitudes may enter only at c11r_table.py (extraction into quarantine) and c11r_compare.py (after seal)",
+ "protected_artifacts": [
+  "REGISTRY_C2.json",
+  "C11R_ORIGINAL_MAGNITUDES.json",
+  "C11R_N9_TABLE.json",
+  "C11R_COMPARISON.json"
+ ],
+ "provenance": {
+  "code_closure": {
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "2576efe0b80a0c73f1164d7b0e8538ee6c71a5c5c61b68d755a2e763d58cde4e",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_firewall.py": "892b87ceb524406cefe55cb841bdf62a7d5378a20209a5e9a0717765f5b74042"
+  },
+  "inputs": {
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "373458b4b2eb6206b87494a95dbcf5bda2e925b5ce27d3993a9922ba415ff02c"
+  },
+  "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_firewall.py",
+  "producer_sha256": "892b87ceb524406cefe55cb841bdf62a7d5378a20209a5e9a0717765f5b74042"
+ },
+ "schema": "C11R_FIREWALL/1",
+ "sha256": "3301a5a05eb9f84bbcd88e71cf7fee496d23efc3d983441ddfacb9d7522c5a4d",
+ "statement_table_declares_no_magnitude": true,
+ "structural_artifact_scan": [
+  {
+   "artifact": "evidence/b0/C11R_B0.json",
+   "magnitude_keys": []
+  },
+  {
+   "artifact": "evidence/equivalence/C11R_EQUIVALENCE.json",
+   "magnitude_keys": []
+  },
+  {
+   "artifact": "evidence/errata/C11R_ERRATA.json",
+   "magnitude_keys": []
+  },
+  {
+   "artifact": "evidence/firewall/C11R_FIREWALL.json",
+   "magnitude_keys": []
+  },
+  {
+   "artifact": "evidence/mutations/C11R_MUTATIONS.json",
+   "magnitude_keys": []
+  },
+  {
+   "artifact": "evidence/policy/C11R_POLICY_EVIDENCE.json",
+   "magnitude_keys": []
+  },
+  {
+   "artifact": "evidence/table/C11R_N9_STATEMENTS.json",
+   "magnitude_keys": []
+  },
+  {
+   "artifact": "evidence/validation/C11R_VALIDATION.json",
+   "magnitude_keys": []
+  },
+  {
+   "artifact": "config/C11R_POLICY.json",
+   "magnitude_keys": []
+  },
+  {
+   "artifact": "config/N9R_GATE_C11R.json",
+   "magnitude_keys": []
+  }
+ ],
+ "structural_offenders": []
+}

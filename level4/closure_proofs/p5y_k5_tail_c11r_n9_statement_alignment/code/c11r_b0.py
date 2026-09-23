@@ -163,7 +163,7 @@ def main() -> int:
            "LOCAL_MAIN_REF": local_main, "REMOTE_MAIN_REF": remote_main,
            "checks": checks, "failed": failed,
            "B0_CLASS": "PASS" if not failed else "REFUSE"}
-    s = C.write_evidence(C.NS / "evidence" / "b0" / "C11R_B0.json", out)
+    s = C.write_evidence(C.NS / "evidence" / "b0" / "C11R_B0.json", out, producer=__file__)
     for c in checks:
         print(f"  {'PASS' if c['pass'] else 'FAIL'}  {c['id']}  {c['name']}")
     print(f"\nB0_CLASS = {out['B0_CLASS']}   checks={len(checks)}  failed={failed}")
