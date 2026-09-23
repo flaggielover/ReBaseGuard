@@ -64,12 +64,81 @@ def sha256_obj(o) -> str:
     return hashlib.sha256(json.dumps(o, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
+# ---------------------------------------------------------------------------------------------
+# PROVENANCE (repair E, erratum E4). The first freeze carried a mutation artifact produced by
+# older code than the validation artifact beside it, and nothing recorded which code produced
+# either, so the contradiction could not be traced from the evidence. Every artifact now binds:
+#   * the sha256 of its producer module,
+#   * the sha256 of every campaign module the producer imports, transitively,
+#   * the sha256 of every artifact it read through load().
+# code/c11r_status.py recomputes all of them and refuses on any mismatch.
+# ---------------------------------------------------------------------------------------------
+CODE_DIRS = (HERE, C11 / "code", C7 / "code")
+_READS: dict[str, str] = {}
+
+
+def _rel(p: pathlib.Path) -> str:
+    return str(pathlib.Path(p).resolve().relative_to(REPO))
+
+
 def load(p: pathlib.Path):
-    return json.loads(p.read_text())
+    """Load a JSON artifact, and record what was read so the writer can bind it."""
+    p = pathlib.Path(p)
+    raw = p.read_bytes()
+    _READS[_rel(p)] = sha256_bytes(raw)
+    return json.loads(raw)
 
 
-def write_evidence(p: pathlib.Path, obj: dict) -> str:
-    body = {k: v for k, v in obj.items() if k != "sha256"}
+def _resolve_module(name: str) -> pathlib.Path | None:
+    for d in CODE_DIRS:
+        cand = d / f"{name}.py"
+        if cand.exists():
+            return cand
+    return None
+
+
+def code_closure(producer: pathlib.Path) -> dict[str, str]:
+    """sha256 of the producer and of every campaign module it imports, transitively."""
+    import ast
+    seen: dict[str, str] = {}
+    stack = [pathlib.Path(producer).resolve()]
+    while stack:
+        f = stack.pop()
+        rel = _rel(f)
+        if rel in seen:
+            continue
+        seen[rel] = sha256_file(f)
+        for n in ast.walk(ast.parse(f.read_text())):
+            names = []
+            if isinstance(n, ast.Import):
+                names = [a.name.split(".")[0] for a in n.names]
+            elif isinstance(n, ast.ImportFrom) and n.level == 0 and n.module:
+                names = [n.module.split(".")[0]]
+            for nm in names:
+                r = _resolve_module(nm)
+                if r is not None:
+                    stack.append(r.resolve())
+    return dict(sorted(seen.items()))
+
+
+def provenance(producer) -> dict:
+    prod = pathlib.Path(producer).resolve()
+    return {"producer": _rel(prod),
+            "producer_sha256": sha256_file(prod),
+            "code_closure": code_closure(prod),
+            "inputs": dict(sorted(_READS.items()))}
+
+
+def write_evidence(p: pathlib.Path, obj: dict, *, producer) -> str:
+    """Write an artifact bound to the code and inputs that produced it.
+
+    `producer` is MANDATORY. An artifact that cannot say which code made it is exactly the kind
+    that let a REFUSE mutation record sit unnoticed beside a PASS validation (erratum E4).
+    """
+    if not producer:
+        raise ValueError("write_evidence requires the producer module path")
+    body = {k: v for k, v in obj.items() if k not in ("sha256", "provenance")}
+    body["provenance"] = provenance(producer)
     body["sha256"] = sha256_obj(body)
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_text(json.dumps(body, indent=1, sort_keys=True) + "\n")
