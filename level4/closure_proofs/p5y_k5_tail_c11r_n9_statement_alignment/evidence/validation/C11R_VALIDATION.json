@@ -744,6 +744,32 @@
    "id": "V16",
    "name": "the pointwise coefficient form upper-bounds L, so the screen is conservative",
    "pass": true
+  },
+  {
+   "detail": {
+    "at_beta": "3/500",
+    "block": "NON-TARGET",
+    "ceiling_alpha": 0.974762782544852,
+    "ceiling_to_reference_min": 0.992543985816705,
+    "float_reference_d_at_atom": {
+     "3233337/1250000": 0.9820852239034809,
+     "5/2": 0.9779091362427059,
+     "6358337/2500000": 0.9800909020481963
+    },
+    "grid": "15x15 on R",
+    "reading": "the ceiling is what the FAMILY can reach at the pointwise level; the gap between it and V14's certified alpha is box and panel loss at the coarse V14 configuration. Neither figure is a statement about cell 306.",
+    "states": 84,
+    "states_skipped_nonpositive_coefficient": 28,
+    "v14_alpha_below_ceiling": true,
+    "v14_certified_alpha": 0.345,
+    "v14_config": [
+     3,
+     16
+    ]
+   },
+   "id": "V17",
+   "name": "the D_lo family's own pointwise ceiling on NT bounds what V14 certified",
+   "pass": true
   }
  ],
  "failed": [],
@@ -751,18 +777,18 @@
   "code_closure": {
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py": "fc88fb0dcc0f757d9ed42b08ecdd9e7ca2c65320181320f009390d67e3155741",
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_common.py": "c55e97b9e2dc626992d3fa25ef23833fcccee88e787a916aa02dc23c2f0ab1b2",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "a3633f61bcefd4ba3d09f616e12d5ce96a73af576c351fbbd50c56a77e130de8",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "2576efe0b80a0c73f1164d7b0e8538ee6c71a5c5c61b68d755a2e763d58cde4e",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "5b2b39e7a448e898cd8c6ef03abf0fce59f65bb44b4a776d0e73b0ea023cca63",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_validate.py": "db33c288c0f5e105202b2b47e92105f73a63047f0544791115f7fa7db9566bac",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_validate.py": "b1ba30d7855849767421f44193e9baf3f13fd0d5784279b2f5143fc68e715138",
    "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
   },
   "inputs": {},
   "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_validate.py",
-  "producer_sha256": "db33c288c0f5e105202b2b47e92105f73a63047f0544791115f7fa7db9566bac"
+  "producer_sha256": "b1ba30d7855849767421f44193e9baf3f13fd0d5784279b2f5143fc68e715138"
  },
- "schema": "C11R_VALIDATION/2",
- "seconds": 421.4,
- "sha256": "34988dcc8bc0d967ccd6fa5c56359c4c614ff5d7e763f173838b2c2b28ef60c6",
+ "schema": "C11R_VALIDATION/3",
+ "seconds": 470.4,
+ "sha256": "188e9f4ee8af8ca777dde1ba00436eee824ac57b13ee6bae32fe249dbffab310",
  "why_non_target": "every check is drift-independent mathematics; running them off every open cell removes all contact with target-block quantities"
 }

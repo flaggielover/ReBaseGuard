@@ -1,5 +1,303 @@
 {
  "MUTATION_CLASS": "PASS",
+ "adversarial_controls": [
+  {
+   "attack": "forged certificate: certified=True over a negative margin",
+   "caught": true,
+   "clean_class": "AGREES",
+   "id": "ADV01",
+   "mutant_class": "INVALID",
+   "note": null,
+   "numeric_result": null,
+   "statement_result": {
+    "STATUS": "NOT_PROVED",
+    "reasons": [
+     "its certificate proves nothing: ['certified=True contradicts the reported margins', \"the certifier's own result does not establish the inequality\"]"
+    ]
+   },
+   "target": "Abar",
+   "unrelated_mutation_changes_class": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "value halved after certification",
+   "caught": true,
+   "clean_class": "AGREES",
+   "id": "ADV02",
+   "mutant_class": "INVALID",
+   "note": null,
+   "numeric_result": null,
+   "statement_result": {
+    "STATUS": "NOT_PROVED",
+    "reasons": [
+     "value 1111/200 does not trace to the certificate, which proves 1111/100"
+    ]
+   },
+   "target": "Abar",
+   "unrelated_mutation_changes_class": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "K_e certificate relabelled Khat_e (reported kernel)",
+   "caught": true,
+   "clean_class": "AGREES",
+   "id": "ADV03",
+   "mutant_class": "INVALID",
+   "note": "a CONSISTENT relabel -- the atom-removal argument changed too and the digest recomputed -- is a record indistinguishable from a real Khat_e run; only re-execution detects it. See c11r_certificate, 'what reconstruction cannot see'.",
+   "numeric_result": null,
+   "statement_result": {
+    "STATUS": "NOT_PROVED",
+    "reasons": [
+     "its certificate proves nothing: [\"atom_removed_argument False contradicts the kernel the certifier reported ('Khat_e')\"]"
+    ]
+   },
+   "target": "Abar",
+   "unrelated_mutation_changes_class": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "Khat_e certificate relabelled K_e (reported kernel)",
+   "caught": true,
+   "clean_class": "STRONGER",
+   "id": "ADV04",
+   "mutant_class": "INVALID",
+   "note": null,
+   "numeric_result": null,
+   "statement_result": {
+    "STATUS": "NOT_PROVED",
+    "reasons": [
+     "its certificate proves nothing: [\"atom_removed_argument True contradicts the kernel the certifier reported ('K_e')\"]"
+    ]
+   },
+   "target": "tau",
+   "unrelated_mutation_changes_class": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "direction swapped: the LOWER-bound target cites an UPPER-bound certificate",
+   "caught": true,
+   "clean_class": "STRONGER",
+   "id": "ADV05a",
+   "mutant_class": "INVALID",
+   "note": null,
+   "numeric_result": null,
+   "statement_result": {
+    "STATUS": "NOT_PROVED",
+    "reasons": [
+     "its certificate proves ['C_T', 'tau'], not 'D_lo'"
+    ]
+   },
+   "target": "D_lo",
+   "unrelated_mutation_changes_class": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "direction swapped in the deduction: a sub-solution read as an UPPER bound",
+   "caught": true,
+   "clean_class": "STRONGER",
+   "id": "ADV05b",
+   "mutant_class": "INVALID",
+   "note": null,
+   "numeric_result": null,
+   "statement_result": {
+    "STATUS": "NOT_EQUIVALENT",
+    "field_mismatches": [
+     "direction"
+    ],
+    "reasons": [
+     "direction differs"
+    ]
+   },
+   "target": "D_lo",
+   "unrelated_mutation_changes_class": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "cell 306 -> cell 307 (consistent re-digested certificate)",
+   "caught": true,
+   "clean_class": "AGREES",
+   "id": "ADV06",
+   "mutant_class": "INVALID",
+   "note": null,
+   "numeric_result": null,
+   "statement_result": {
+    "STATUS": "NOT_COMPARABLE",
+    "aggregation": {
+     "independent": "single_certificate_whole_block",
+     "original": "single_certificate_whole_block"
+    },
+    "domain": "INCOMPARABLE",
+    "premises": "SAME",
+    "reasons": []
+   },
+   "target": "Abar",
+   "unrelated_mutation_changes_class": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "reachable set changed: the certificate's cover is not the certified one",
+   "caught": true,
+   "clean_class": "STRONGER",
+   "id": "ADV07",
+   "mutant_class": "INVALID",
+   "note": null,
+   "numeric_result": null,
+   "statement_result": {
+    "STATUS": "NOT_PROVED",
+    "reasons": [
+     "its certificate proves nothing: [\"cover {'function': 'c11_certifier.cover_without_axes', 'depth': 4} is not c11_certifier.cover at the certified depth, so the state set is not the one the certifier covered\"]"
+    ]
+   },
+   "target": "tau",
+   "unrelated_mutation_changes_class": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "aggregation swapped: an UPPER bound aggregated by MIN over sub-blocks",
+   "caught": true,
+   "clean_class": "AGREES",
+   "id": "ADV08",
+   "mutant_class": "INVALID",
+   "note": null,
+   "numeric_result": null,
+   "statement_result": {
+    "STATUS": "NOT_PROVED",
+    "reasons": [
+     "its certificate proves nothing: [\"aggregation 'min_over_sub_blocks' does not follow from ONE interval-drift certificate, which proves the whole block at once\"]"
+    ]
+   },
+   "target": "Abar",
+   "unrelated_mutation_changes_class": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "the D_lo sub-solution relabelled as D1",
+   "caught": true,
+   "clean_class": "INSUFFICIENT",
+   "id": "ADV09",
+   "mutant_class": "INVALID",
+   "note": null,
+   "numeric_result": null,
+   "statement_result": {
+    "STATUS": "NOT_PROVED",
+    "reasons": [
+     "its certificate proves ['D_lo'], not 'D1'"
+    ]
+   },
+   "target": "D1",
+   "unrelated_mutation_changes_class": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "missing dependency: a conditional derivation omits one premise",
+   "caught": true,
+   "clean_class": "INSUFFICIENT",
+   "id": "ADV10",
+   "mutant_class": "INVALID",
+   "note": null,
+   "numeric_result": null,
+   "statement_result": {
+    "STATUS": "NOT_PROVED",
+    "reasons": [
+     "its certificate proves nothing: [\"a conditional derivation is presented without its premises ['tau_independent']\"]"
+    ]
+   },
+   "target": "D1",
+   "unrelated_mutation_changes_class": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "candidate function changed after certification (digest not recomputed)",
+   "caught": true,
+   "clean_class": "AGREES",
+   "id": "ADV11a",
+   "mutant_class": "INVALID",
+   "note": null,
+   "numeric_result": null,
+   "statement_result": {
+    "STATUS": "NOT_PROVED",
+    "reasons": [
+     "its certificate proves nothing: ['input digest does not match the recorded weight, inputs and certifier']"
+    ]
+   },
+   "target": "Abar",
+   "unrelated_mutation_changes_class": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "candidate function changed and re-digested; the value no longer traces",
+   "caught": true,
+   "clean_class": "AGREES",
+   "id": "ADV11b",
+   "mutant_class": "INVALID",
+   "note": null,
+   "numeric_result": null,
+   "statement_result": {
+    "STATUS": "NOT_PROVED",
+    "reasons": [
+     "value 1111/100 does not trace to the certificate, which proves 20"
+    ]
+   },
+   "target": "Abar",
+   "unrelated_mutation_changes_class": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "certifier hash changed (re-digested)",
+   "caught": true,
+   "clean_class": "AGREES",
+   "id": "ADV12a",
+   "mutant_class": "INVALID",
+   "note": null,
+   "numeric_result": null,
+   "statement_result": {
+    "STATUS": "NOT_PROVED",
+    "reasons": [
+     "its certificate proves nothing: ['certifier hash 000000000000 differs from the expected dd611a71d1a2']"
+    ]
+   },
+   "target": "Abar",
+   "unrelated_mutation_changes_class": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "the certifier that ran is not the one bound at the seal",
+   "caught": true,
+   "clean_class": "AGREES",
+   "id": "ADV12b",
+   "mutant_class": "INVALID",
+   "note": null,
+   "numeric_result": null,
+   "statement_result": {
+    "STATUS": "NOT_PROVED",
+    "reasons": [
+     "its certificate proves nothing: ['certifier hash dd611a71d1a2 differs from the expected 111111111111']"
+    ]
+   },
+   "target": "Abar",
+   "unrelated_mutation_changes_class": false,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "conditional derivation presented as unconditional (no premises declared)",
+   "caught": true,
+   "clean_class": "INSUFFICIENT",
+   "id": "ADV13",
+   "mutant_class": "INVALID",
+   "note": null,
+   "numeric_result": null,
+   "statement_result": {
+    "STATUS": "NOT_PROVED",
+    "reasons": [
+     "its certificate proves nothing: [\"a conditional derivation is presented without its premises ['C_T_independent', 'tau_independent']\"]"
+    ]
+   },
+   "target": "D1",
+   "unrelated_mutation_changes_class": false,
+   "verdict": "EXECUTION_INVALID"
+  }
+ ],
+ "adversarial_controls_missed": [],
  "base_artifact_classes_on_synthetic_magnitudes": {
   "Abar": "AGREES",
   "C_T": "STRONGER",
@@ -8,6 +306,7 @@
   "D_lo": "STRONGER",
   "tau": "STRONGER"
  },
+ "base_verdict_on_synthetic_magnitudes": "AGREEMENT_INSUFFICIENT",
  "comparator_self_test": {
   "PASS": true,
   "cases": 9,
@@ -27,17 +326,22 @@
      "c11_certifier",
      "c11_common",
      "c11r_boxdata",
+     "c11r_certificate",
      "c11r_common",
      "c11r_compare",
+     "c11r_cost",
      "c11r_equiv",
      "c11r_firewall",
      "c11r_gate",
      "c11r_idrift",
+     "c11r_policy",
+     "c11r_qualify",
      "c11r_runs",
      "c11r_schema",
      "c11r_status",
      "c7_gaussian",
      "copy",
+     "decimal",
      "fractions",
      "functools",
      "hashlib",
@@ -52,9 +356,10 @@
      "shutil",
      "subprocess",
      "sys",
+     "tempfile",
      "time"
     ],
-    "modules_in_closure": 21
+    "modules_in_closure": 23
    },
    "id": "M01",
    "input_artifact": null,
@@ -68,7 +373,7 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_mutations.py",
-   "verifier_sha256": "e0c819a5bb06492aac702097f0e997bf3c1dafd8375dbfd9e5ae85b5785b45ab"
+   "verifier_sha256": "e59e750e1d8c132b155f9e38be8061f79607afe5735006d8bb31bd7b2a25941a"
   },
   {
    "clean_control_flagged": false,
@@ -85,27 +390,28 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_mutations.py",
-   "verifier_sha256": "e0c819a5bb06492aac702097f0e997bf3c1dafd8375dbfd9e5ae85b5785b45ab"
+   "verifier_sha256": "e59e750e1d8c132b155f9e38be8061f79607afe5735006d8bb31bd7b2a25941a"
   },
   {
    "clean_control_flagged": false,
    "detail": {
+    "negatives_clean": true,
     "offenders": [],
     "real_tree_class": "PASS"
    },
    "id": "M03",
    "input_artifact": "evidence/firewall/C11R_FIREWALL.json",
-   "input_sha256": "a3b86fd874d1ed70b50abc45b31f34ea6410987bf943d57ce70e1ba8ec06f7fe",
+   "input_sha256": "829ad0a5b3791a787edd296f8e30cfcf871ca90db708d5d4337edbac5bb52134",
    "mutant_flagged": true,
-   "mutated_path": "<8 planted module sources>",
-   "mutated_value": "['P1_direct_registry_load', 'P2_load_through_a_variable', 'P3_load_through_the_receiver', 'P4_git_blob_of_the_old_mixed_table', 'P5_via_a_loader_function_in_ano",
-   "name": "reading original magnitudes from ANY path (registry, quarantine, old table, proxy function, subprocess, magnitude key)",
+   "mutated_path": "<34 planted module sources>",
+   "mutated_value": "['L10_review_md_with_values', 'L12_subprocess_cat', 'L13_with_open', 'L14_direct_quarantine_load', 'L1_glob_loads_quarantine', 'L2_string_concat_name', 'L3_fstr",
+   "name": "reading original magnitudes, review prose or the runs artifact by ANY path",
    "outcome": "DETECTED",
    "producer": null,
    "producer_sha256": null,
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_firewall.py",
-   "verifier_sha256": "892b87ceb524406cefe55cb841bdf62a7d5378a20209a5e9a0717765f5b74042"
+   "verifier_sha256": "0213107bd5db256ad18743bc74981d4f542b7099261e6178b0f258f935dd5d5f"
   },
   {
    "clean_control_flagged": false,
@@ -184,7 +490,7 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_mutations.py",
-   "verifier_sha256": "e0c819a5bb06492aac702097f0e997bf3c1dafd8375dbfd9e5ae85b5785b45ab"
+   "verifier_sha256": "e59e750e1d8c132b155f9e38be8061f79607afe5735006d8bb31bd7b2a25941a"
   },
   {
    "clean_control_flagged": false,
@@ -201,7 +507,7 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_mutations.py",
-   "verifier_sha256": "e0c819a5bb06492aac702097f0e997bf3c1dafd8375dbfd9e5ae85b5785b45ab"
+   "verifier_sha256": "e59e750e1d8c132b155f9e38be8061f79607afe5735006d8bb31bd7b2a25941a"
   },
   {
    "clean_control_flagged": false,
@@ -220,26 +526,27 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_mutations.py",
-   "verifier_sha256": "e0c819a5bb06492aac702097f0e997bf3c1dafd8375dbfd9e5ae85b5785b45ab"
+   "verifier_sha256": "e59e750e1d8c132b155f9e38be8061f79607afe5735006d8bb31bd7b2a25941a"
   },
   {
    "clean_control_flagged": false,
    "detail": {
-    "frozen_at": "49b17ab4 (revision-1 gate), before any independent result"
+    "comparator_factor": 2,
+    "frozen_in": "config/N9R_GATE_C11R.json"
    },
    "id": "M10",
-   "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "373458b4b2eb6206b87494a95dbcf5bda2e925b5ce27d3993a9922ba415ff02c",
+   "input_artifact": "config/N9R_GATE_C11R.json",
+   "input_sha256": "285f4d7e7275af454a9765d6cfd620aa0c1129c8f22b472e68237fda692edd9d",
    "mutant_flagged": true,
    "mutated_path": "$.comparison_semantics_frozen_before_results.factor",
    "mutated_value": "3",
-   "name": "an agreement threshold changed after the fact",
+   "name": "an agreement threshold changed after the gate froze it",
    "outcome": "DETECTED",
    "producer": null,
    "producer_sha256": null,
-   "unrelated_mutation_flagged": null,
-   "verifier": "c11r_mutations.py",
-   "verifier_sha256": "e0c819a5bb06492aac702097f0e997bf3c1dafd8375dbfd9e5ae85b5785b45ab"
+   "unrelated_mutation_flagged": false,
+   "verifier": "c11r_gate.py",
+   "verifier_sha256": "44e3b5d9a4ee9066aa4fd805f43ea7ab482961c417994ece0d84c412a6ddb0f7"
   },
   {
    "clean_control_flagged": false,
@@ -255,15 +562,15 @@
    "name": "N9 declared closed on a weaker criterion (NOT_IMPLEMENTED counted as pass)",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "663bef43724b81c5c3bd9f5465c405cf24459064e5b35af433cb2f32c5a9e7de",
+   "producer_sha256": "778b84ff0a4883e1d492683d2bd518af3e281c3fa55aeb90e7f35f37e85d84ce",
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "59259ccf9f661a99db89390dbee43789007cc8f07c70d9720444328e0af244cc"
+   "verifier_sha256": "de5e9b4de4294d15d171afa3cbaa502ffeb11943753c660c0c8be1743f1c5395"
   },
   {
    "clean_control_flagged": false,
    "detail": {
-    "files_changed_since_C11": 22
+    "files_changed_since_C11": 32
    },
    "id": "M12",
    "input_artifact": null,
@@ -277,125 +584,115 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_mutations.py",
-   "verifier_sha256": "e0c819a5bb06492aac702097f0e997bf3c1dafd8375dbfd9e5ae85b5785b45ab"
+   "verifier_sha256": "e59e750e1d8c132b155f9e38be8061f79607afe5735006d8bb31bd7b2a25941a"
   },
   {
    "clean_control_flagged": false,
    "detail": {
     "clean_class": "STRONGER",
-    "mutant_class": "INVALID"
+    "mutant_class": "INVALID",
+    "mutant_statement": {
+     "STATUS": "NOT_PROVED",
+     "reasons": [
+      "its certificate proves ['Abar'], not 'tau'"
+     ]
+    },
+    "mutant_verdict": "EXECUTION_INVALID"
    },
    "id": "M13",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "373458b4b2eb6206b87494a95dbcf5bda2e925b5ce27d3993a9922ba415ff02c",
+   "input_sha256": "06b3efe2211a7554d25be8e7b4359057ea1c54fa4a44cf5d34c01fe75e88348b",
    "mutant_flagged": true,
-   "mutated_path": "$.targets.tau.statement.kernel",
-   "mutated_value": "'K_e'",
-   "name": "a whole-kernel certificate read as the atom-removed tau",
+   "mutated_path": "$.targets.tau.certificate_id",
+   "mutated_value": "'F_K'",
+   "name": "a whole-kernel (K_e) certificate cited for the atom-removed tau",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "663bef43724b81c5c3bd9f5465c405cf24459064e5b35af433cb2f32c5a9e7de",
+   "producer_sha256": "778b84ff0a4883e1d492683d2bd518af3e281c3fa55aeb90e7f35f37e85d84ce",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "59259ccf9f661a99db89390dbee43789007cc8f07c70d9720444328e0af244cc"
-  },
-  {
-   "clean_control_flagged": false,
-   "detail": null,
-   "id": "M14",
-   "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "373458b4b2eb6206b87494a95dbcf5bda2e925b5ce27d3993a9922ba415ff02c",
-   "mutant_flagged": true,
-   "mutated_path": "$.targets.Abar.value",
-   "mutated_value": "'value - 1/10'",
-   "name": "a reported value that its certificate did not produce",
-   "outcome": "DETECTED",
-   "producer": "c11r_runs.py",
-   "producer_sha256": "663bef43724b81c5c3bd9f5465c405cf24459064e5b35af433cb2f32c5a9e7de",
-   "unrelated_mutation_flagged": false,
-   "verifier": "c11r_mutations.py",
-   "verifier_sha256": "e0c819a5bb06492aac702097f0e997bf3c1dafd8375dbfd9e5ae85b5785b45ab"
-  },
-  {
-   "clean_control_flagged": false,
-   "detail": {
-    "bad": -0.967915288168645,
-    "block": "NON-TARGET",
-    "good": 31.08471183135492
-   },
-   "id": "M15",
-   "input_artifact": null,
-   "input_sha256": null,
-   "mutant_flagged": true,
-   "mutated_path": "candidate",
-   "mutated_value": "'w = 5 (infeasible) vs w = 5000'",
-   "name": "a pointwise-infeasible member not refuted",
-   "outcome": "DETECTED",
-   "producer": null,
-   "producer_sha256": null,
-   "unrelated_mutation_flagged": null,
-   "verifier": "c11r_idrift.py",
-   "verifier_sha256": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b"
+   "verifier_sha256": "de5e9b4de4294d15d171afa3cbaa502ffeb11943753c660c0c8be1743f1c5395"
   },
   {
    "clean_control_flagged": false,
    "detail": {
     "clean_class": "AGREES",
-    "mutant_class": "INVALID"
+    "mutant_class": "INVALID",
+    "mutant_statement": {
+     "STATUS": "NOT_PROVED",
+     "reasons": [
+      "its certificate proves nothing: ['drift block is empty or a single point']"
+     ]
+    },
+    "mutant_verdict": "EXECUTION_INVALID"
    },
    "id": "M16",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "373458b4b2eb6206b87494a95dbcf5bda2e925b5ce27d3993a9922ba415ff02c",
+   "input_sha256": "06b3efe2211a7554d25be8e7b4359057ea1c54fa4a44cf5d34c01fe75e88348b",
    "mutant_flagged": true,
-   "mutated_path": "$.targets.Abar.statement.drift_domain",
-   "mutated_value": "['18355/10000', '18355/10000']",
-   "name": "a scalar drift substituted for the block (C11's e = 18355/10000)",
+   "mutated_path": "$.certificates.F_K.inputs.drift_block",
+   "mutated_value": "'[18355/10000] x 2'",
+   "name": "a scalar drift substituted for the block (C11's development drift)",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "663bef43724b81c5c3bd9f5465c405cf24459064e5b35af433cb2f32c5a9e7de",
+   "producer_sha256": "778b84ff0a4883e1d492683d2bd518af3e281c3fa55aeb90e7f35f37e85d84ce",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "59259ccf9f661a99db89390dbee43789007cc8f07c70d9720444328e0af244cc"
+   "verifier_sha256": "de5e9b4de4294d15d171afa3cbaa502ffeb11943753c660c0c8be1743f1c5395"
   },
   {
    "clean_control_flagged": false,
    "detail": {
     "clean_class": "AGREES",
-    "mutant_class": "INVALID"
+    "mutant_class": "INVALID",
+    "mutant_statement": {
+     "STATUS": "NOT_PROVED",
+     "reasons": [
+      "its certificate proves nothing: ['drift block is empty or a single point']"
+     ]
+    },
+    "mutant_verdict": "EXECUTION_INVALID"
    },
    "id": "M17",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "373458b4b2eb6206b87494a95dbcf5bda2e925b5ce27d3993a9922ba415ff02c",
+   "input_sha256": "06b3efe2211a7554d25be8e7b4359057ea1c54fa4a44cf5d34c01fe75e88348b",
    "mutant_flagged": true,
-   "mutated_path": "$.targets.Abar.statement.drift_domain",
-   "mutated_value": "['17452573/10000000', '17452573/10000000']",
+   "mutated_path": "$.certificates.F_K.inputs.drift_block",
+   "mutated_value": "'[mid, mid]'",
    "name": "the midpoint substituted for uniform drift",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "663bef43724b81c5c3bd9f5465c405cf24459064e5b35af433cb2f32c5a9e7de",
+   "producer_sha256": "778b84ff0a4883e1d492683d2bd518af3e281c3fa55aeb90e7f35f37e85d84ce",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "59259ccf9f661a99db89390dbee43789007cc8f07c70d9720444328e0af244cc"
+   "verifier_sha256": "de5e9b4de4294d15d171afa3cbaa502ffeb11943753c660c0c8be1743f1c5395"
   },
   {
    "clean_control_flagged": false,
    "detail": {
     "clean_class": "AGREES",
-    "mutant_class": "INVALID"
+    "mutant_class": "INVALID",
+    "mutant_statement": {
+     "STATUS": "NOT_PROVED",
+     "reasons": [
+      "its certificate proves nothing: ['drift block is empty or a single point']"
+     ]
+    },
+    "mutant_verdict": "EXECUTION_INVALID"
    },
    "id": "M18",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "373458b4b2eb6206b87494a95dbcf5bda2e925b5ce27d3993a9922ba415ff02c",
+   "input_sha256": "06b3efe2211a7554d25be8e7b4359057ea1c54fa4a44cf5d34c01fe75e88348b",
    "mutant_flagged": true,
-   "mutated_path": "$.targets.Abar.statement.drift_domain",
-   "mutated_value": "['680769/400000', '680769/400000']",
+   "mutated_path": "$.certificates.F_K.inputs.drift_block",
+   "mutated_value": "'[e_lo, e_lo]'",
    "name": "endpoints only",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "663bef43724b81c5c3bd9f5465c405cf24459064e5b35af433cb2f32c5a9e7de",
+   "producer_sha256": "778b84ff0a4883e1d492683d2bd518af3e281c3fa55aeb90e7f35f37e85d84ce",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "59259ccf9f661a99db89390dbee43789007cc8f07c70d9720444328e0af244cc"
+   "verifier_sha256": "de5e9b4de4294d15d171afa3cbaa502ffeb11943753c660c0c8be1743f1c5395"
   },
   {
    "clean_control_flagged": false,
@@ -423,75 +720,113 @@
    "clean_control_flagged": false,
    "detail": {
     "clean_class": "STRONGER",
-    "mutant_class": "INVALID"
+    "mutant_class": "INVALID",
+    "mutant_statement": {
+     "STATUS": "NOT_PROVED",
+     "reasons": [
+      "its certificate proves nothing: [\"atom_removed_argument True contradicts the kernel the certifier reported ('K_e')\"]"
+     ]
+    },
+    "mutant_verdict": "EXECUTION_INVALID"
    },
    "id": "M19",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "373458b4b2eb6206b87494a95dbcf5bda2e925b5ce27d3993a9922ba415ff02c",
+   "input_sha256": "06b3efe2211a7554d25be8e7b4359057ea1c54fa4a44cf5d34c01fe75e88348b",
    "mutant_flagged": true,
-   "mutated_path": "$.targets.tau.statement.kernel",
+   "mutated_path": "$.certificates.F_H.certifier_result.kernel",
    "mutated_value": "'K_e'",
-   "name": "K_e substituted for Khat_e (kernel and convention)",
+   "name": "K_e substituted for Khat_e in the certifier's reported kernel",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "663bef43724b81c5c3bd9f5465c405cf24459064e5b35af433cb2f32c5a9e7de",
+   "producer_sha256": "778b84ff0a4883e1d492683d2bd518af3e281c3fa55aeb90e7f35f37e85d84ce",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "59259ccf9f661a99db89390dbee43789007cc8f07c70d9720444328e0af244cc"
-  },
-  {
-   "clean_control_flagged": false,
-   "detail": null,
-   "id": "M20",
-   "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "373458b4b2eb6206b87494a95dbcf5bda2e925b5ce27d3993a9922ba415ff02c",
-   "mutant_flagged": true,
-   "mutated_path": "$.targets.Abar.statement",
-   "mutated_value": "'tau'",
-   "name": "tau substituted for Abar",
-   "outcome": "DETECTED",
-   "producer": "c11r_runs.py",
-   "producer_sha256": "663bef43724b81c5c3bd9f5465c405cf24459064e5b35af433cb2f32c5a9e7de",
-   "unrelated_mutation_flagged": null,
-   "verifier": "c11r_compare.py",
-   "verifier_sha256": "59259ccf9f661a99db89390dbee43789007cc8f07c70d9720444328e0af244cc"
-  },
-  {
-   "clean_control_flagged": false,
-   "detail": null,
-   "id": "M21",
-   "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "373458b4b2eb6206b87494a95dbcf5bda2e925b5ce27d3993a9922ba415ff02c",
-   "mutant_flagged": true,
-   "mutated_path": "$.targets.tau.statement",
-   "mutated_value": "'Abar'",
-   "name": "Abar substituted for tau",
-   "outcome": "DETECTED",
-   "producer": "c11r_runs.py",
-   "producer_sha256": "663bef43724b81c5c3bd9f5465c405cf24459064e5b35af433cb2f32c5a9e7de",
-   "unrelated_mutation_flagged": null,
-   "verifier": "c11r_compare.py",
-   "verifier_sha256": "59259ccf9f661a99db89390dbee43789007cc8f07c70d9720444328e0af244cc"
+   "verifier_sha256": "de5e9b4de4294d15d171afa3cbaa502ffeb11943753c660c0c8be1743f1c5395"
   },
   {
    "clean_control_flagged": false,
    "detail": {
     "clean_class": "AGREES",
-    "mutant_class": "INVALID"
+    "mutant_class": "INVALID",
+    "mutant_statement": {
+     "STATUS": "NOT_PROVED",
+     "reasons": [
+      "its certificate proves ['C_T', 'tau'], not 'Abar'"
+     ]
+    },
+    "mutant_verdict": "EXECUTION_INVALID"
+   },
+   "id": "M20",
+   "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
+   "input_sha256": "06b3efe2211a7554d25be8e7b4359057ea1c54fa4a44cf5d34c01fe75e88348b",
+   "mutant_flagged": true,
+   "mutated_path": "$.targets.Abar.certificate_id",
+   "mutated_value": "'F_H'",
+   "name": "tau's certificate cited for Abar",
+   "outcome": "DETECTED",
+   "producer": "c11r_runs.py",
+   "producer_sha256": "778b84ff0a4883e1d492683d2bd518af3e281c3fa55aeb90e7f35f37e85d84ce",
+   "unrelated_mutation_flagged": false,
+   "verifier": "c11r_compare.py",
+   "verifier_sha256": "de5e9b4de4294d15d171afa3cbaa502ffeb11943753c660c0c8be1743f1c5395"
+  },
+  {
+   "clean_control_flagged": false,
+   "detail": {
+    "clean_class": "STRONGER",
+    "mutant_class": "INVALID",
+    "mutant_statement": {
+     "STATUS": "NOT_PROVED",
+     "reasons": [
+      "its certificate proves ['Abar'], not 'tau'"
+     ]
+    },
+    "mutant_verdict": "EXECUTION_INVALID"
+   },
+   "id": "M21",
+   "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
+   "input_sha256": "06b3efe2211a7554d25be8e7b4359057ea1c54fa4a44cf5d34c01fe75e88348b",
+   "mutant_flagged": true,
+   "mutated_path": "$.targets.tau.certificate_id",
+   "mutated_value": "'F_K'",
+   "name": "Abar's certificate cited for tau, with Abar's value",
+   "outcome": "DETECTED",
+   "producer": "c11r_runs.py",
+   "producer_sha256": "778b84ff0a4883e1d492683d2bd518af3e281c3fa55aeb90e7f35f37e85d84ce",
+   "unrelated_mutation_flagged": false,
+   "verifier": "c11r_compare.py",
+   "verifier_sha256": "de5e9b4de4294d15d171afa3cbaa502ffeb11943753c660c0c8be1743f1c5395"
+  },
+  {
+   "clean_control_flagged": false,
+   "detail": {
+    "clean_class": "AGREES",
+    "mutant_class": "INVALID",
+    "mutant_statement": {
+     "STATUS": "NOT_COMPARABLE",
+     "aggregation": {
+      "independent": "single_certificate_whole_block",
+      "original": "single_certificate_whole_block"
+     },
+     "domain": "INCOMPARABLE",
+     "premises": "SAME",
+     "reasons": []
+    },
+    "mutant_verdict": "EXECUTION_INVALID"
    },
    "id": "M22",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "373458b4b2eb6206b87494a95dbcf5bda2e925b5ce27d3993a9922ba415ff02c",
+   "input_sha256": "06b3efe2211a7554d25be8e7b4359057ea1c54fa4a44cf5d34c01fe75e88348b",
    "mutant_flagged": true,
-   "mutated_path": "$.targets.Abar.statement.drift_domain",
+   "mutated_path": "$.certificates.F_K.inputs.drift_block",
    "mutated_value": "['17885921/10000000', '1882413/1000000']",
-   "name": "cell 307 substituted for cell 306",
+   "name": "cell 307's block substituted for cell 306's",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "663bef43724b81c5c3bd9f5465c405cf24459064e5b35af433cb2f32c5a9e7de",
+   "producer_sha256": "778b84ff0a4883e1d492683d2bd518af3e281c3fa55aeb90e7f35f37e85d84ce",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "59259ccf9f661a99db89390dbee43789007cc8f07c70d9720444328e0af244cc"
+   "verifier_sha256": "de5e9b4de4294d15d171afa3cbaa502ffeb11943753c660c0c8be1743f1c5395"
   },
   {
    "clean_control_flagged": false,
@@ -505,10 +840,10 @@
    "name": "fewer than the six constants",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "663bef43724b81c5c3bd9f5465c405cf24459064e5b35af433cb2f32c5a9e7de",
-   "unrelated_mutation_flagged": null,
+   "producer_sha256": "778b84ff0a4883e1d492683d2bd518af3e281c3fa55aeb90e7f35f37e85d84ce",
+   "unrelated_mutation_flagged": false,
    "verifier": "c11r_schema.py",
-   "verifier_sha256": "1a686218bac9d214a36745831ef406b8019ff7f455bee25cc06568e463e69cfa"
+   "verifier_sha256": "60a1ec4f2fabc78b6d82981a4eee77e43cd73f9bd5df91a9095712d80e7cdaec"
   },
   {
    "clean_control_flagged": false,
@@ -531,52 +866,108 @@
    "clean_control_flagged": false,
    "detail": {
     "clean_class": "AGREES",
-    "mutant_class": "INVALID"
+    "mutant_class": "INVALID",
+    "mutant_statement": {
+     "STATUS": "WEAKER",
+     "aggregation": {
+      "independent": "single_certificate_whole_block",
+      "original": "single_certificate_whole_block"
+     },
+     "domain": "SUBSET",
+     "premises": "SAME",
+     "reasons": []
+    },
+    "mutant_verdict": "EXECUTION_INVALID"
    },
    "id": "M25",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "373458b4b2eb6206b87494a95dbcf5bda2e925b5ce27d3993a9922ba415ff02c",
+   "input_sha256": "06b3efe2211a7554d25be8e7b4359057ea1c54fa4a44cf5d34c01fe75e88348b",
    "mutant_flagged": true,
-   "mutated_path": "$.targets.Abar.statement.drift_domain",
-   "mutated_value": "['680769/400000', '17452573/10000000']",
+   "mutated_path": "$.certificates.F_K.inputs.drift_block",
+   "mutated_value": "'[e_lo, mid]'",
    "name": "the drift interval narrowed",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "663bef43724b81c5c3bd9f5465c405cf24459064e5b35af433cb2f32c5a9e7de",
+   "producer_sha256": "778b84ff0a4883e1d492683d2bd518af3e281c3fa55aeb90e7f35f37e85d84ce",
    "unrelated_mutation_flagged": false,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "59259ccf9f661a99db89390dbee43789007cc8f07c70d9720444328e0af244cc"
+   "verifier_sha256": "de5e9b4de4294d15d171afa3cbaa502ffeb11943753c660c0c8be1743f1c5395"
+  },
+  {
+   "clean_control_flagged": false,
+   "detail": null,
+   "id": "M14",
+   "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
+   "input_sha256": "06b3efe2211a7554d25be8e7b4359057ea1c54fa4a44cf5d34c01fe75e88348b",
+   "mutant_flagged": true,
+   "mutated_path": "$.targets.Abar.value",
+   "mutated_value": "'value - 1/10'",
+   "name": "a reported value that its certificate did not produce",
+   "outcome": "DETECTED",
+   "producer": "c11r_runs.py",
+   "producer_sha256": "778b84ff0a4883e1d492683d2bd518af3e281c3fa55aeb90e7f35f37e85d84ce",
+   "unrelated_mutation_flagged": false,
+   "verifier": "c11r_certificate.py",
+   "verifier_sha256": "cccc251f99083dae047271565580eefa83cedb1ca67055bf85924ac13ba582f0"
   },
   {
    "clean_control_flagged": false,
    "detail": {
-    "quarantine_read_by_the_seal_check": false,
-    "real_seal_path_refuses": true,
-    "real_tree_seal_problems": [
-     "no runs artifact on disk",
-     "the runs artifact was never committed, so no ordering can be established"
-    ]
+    "bad": -0.967915288168645,
+    "block": "NON-TARGET",
+    "good": 31.08471183135492
+   },
+   "id": "M15",
+   "input_artifact": null,
+   "input_sha256": null,
+   "mutant_flagged": true,
+   "mutated_path": "candidate",
+   "mutated_value": "'w = 5 (infeasible) vs w = 5000'",
+   "name": "a pointwise-infeasible member not refuted",
+   "outcome": "DETECTED",
+   "producer": null,
+   "producer_sha256": null,
+   "unrelated_mutation_flagged": null,
+   "verifier": "c11r_idrift.py",
+   "verifier_sha256": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b"
+  },
+  {
+   "clean_control_flagged": false,
+   "detail": {
+    "note": "the real seal path (c11r_compare.verify_seal) reads the runs artifact, so only the comparator may call it; the firewall forbids it here",
+    "ordering_controls": {
+     "edited": true,
+     "never_committed": true,
+     "sealed": false,
+     "uncommitted": true
+    },
+    "typed_seal_controls": {
+     "false_seal_accepted": true,
+     "real_payload_key_rejected": true,
+     "true_seal_rejected": true,
+     "unrelated_text_with_the_word_accepted": true
+    }
    },
    "id": "M26",
    "input_artifact": null,
    "input_sha256": null,
    "mutant_flagged": true,
-   "mutated_path": "$.provenance (and: uncommitted / edited / never committed)",
+   "mutated_path": "$.provenance (and: uncommitted / edited / never committed / true seal)",
    "mutated_value": "'<removed>'",
    "name": "comparison performed before the independent output is sealed",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "663bef43724b81c5c3bd9f5465c405cf24459064e5b35af433cb2f32c5a9e7de",
-   "unrelated_mutation_flagged": null,
+   "producer_sha256": "778b84ff0a4883e1d492683d2bd518af3e281c3fa55aeb90e7f35f37e85d84ce",
+   "unrelated_mutation_flagged": false,
    "verifier": "c11r_compare.py",
-   "verifier_sha256": "59259ccf9f661a99db89390dbee43789007cc8f07c70d9720444328e0af244cc"
+   "verifier_sha256": "de5e9b4de4294d15d171afa3cbaa502ffeb11943753c660c0c8be1743f1c5395"
   },
   {
    "clean_control_flagged": false,
    "detail": null,
    "id": "M27",
    "input_artifact": "config/N9R_GATE_C11R.json",
-   "input_sha256": "e34618937b522d80661a19d514d76bb6076924d046babbee1b182a02114ccf7a",
+   "input_sha256": "285f4d7e7275af454a9765d6cfd620aa0c1129c8f22b472e68237fda692edd9d",
    "mutant_flagged": true,
    "mutated_path": "$.predicates.G_probe",
    "mutated_value": "'this is the criterion C11R must and does fail'",
@@ -584,9 +975,9 @@
    "outcome": "DETECTED",
    "producer": null,
    "producer_sha256": null,
-   "unrelated_mutation_flagged": null,
+   "unrelated_mutation_flagged": false,
    "verifier": "c11r_gate.py",
-   "verifier_sha256": "3caef9ef504ec7a0340bb73704c26b8a866af849ff44d5018aee36c388b5d281"
+   "verifier_sha256": "44e3b5d9a4ee9066aa4fd805f43ea7ab482961c417994ece0d84c412a6ddb0f7"
   },
   {
    "clean_control_flagged": false,
@@ -595,17 +986,17 @@
    },
    "id": "M28",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "373458b4b2eb6206b87494a95dbcf5bda2e925b5ce27d3993a9922ba415ff02c",
+   "input_sha256": "06b3efe2211a7554d25be8e7b4359057ea1c54fa4a44cf5d34c01fe75e88348b",
    "mutant_flagged": true,
-   "mutated_path": "$.certificates.F_K.screen_classification (sent_to_box_pass True)",
+   "mutated_path": "$.certificates.F_K.screen_classification (sent True)",
    "mutated_value": "'POINTWISE_INFEASIBLE'",
    "name": "a pointwise-refuted member still sent to certification",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "663bef43724b81c5c3bd9f5465c405cf24459064e5b35af433cb2f32c5a9e7de",
+   "producer_sha256": "778b84ff0a4883e1d492683d2bd518af3e281c3fa55aeb90e7f35f37e85d84ce",
    "unrelated_mutation_flagged": false,
-   "verifier": "c11r_mutations.py",
-   "verifier_sha256": "e0c819a5bb06492aac702097f0e997bf3c1dafd8375dbfd9e5ae85b5785b45ab"
+   "verifier": "c11r_certificate.py",
+   "verifier_sha256": "cccc251f99083dae047271565580eefa83cedb1ca67055bf85924ac13ba582f0"
   },
   {
    "cites_v6_mismatch_count": 0,
@@ -616,7 +1007,7 @@
    },
    "id": "M29",
    "input_artifact": "evidence/validation/C11R_VALIDATION.json",
-   "input_sha256": "55c119f67bb23f957acc555ed7d40e7c800be3fea0564a6448753b29ff1a09e3",
+   "input_sha256": "615c9fa1bd2076f0e9042da1cf43257d7f32482cb91b217410639530629c0ce6",
    "mutant_flagged": true,
    "mutated_path": "kernel_apply_iv result .hi",
    "mutated_value": "'+ 2^-320'",
@@ -643,7 +1034,7 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_status.py",
-   "verifier_sha256": "af6c5ff081a16ba009f83fbc6e220c549ee0285461d856370f47099fad72ec1d"
+   "verifier_sha256": "828ed254d82d2ca483ad6656f41ebaa9be3f926aed3b7036aaedf33896083230"
   },
   {
    "clean_control_flagged": false,
@@ -660,7 +1051,7 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_status.py",
-   "verifier_sha256": "af6c5ff081a16ba009f83fbc6e220c549ee0285461d856370f47099fad72ec1d"
+   "verifier_sha256": "828ed254d82d2ca483ad6656f41ebaa9be3f926aed3b7036aaedf33896083230"
   },
   {
    "clean_control_flagged": false,
@@ -685,7 +1076,7 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_boxdata.py",
-   "verifier_sha256": "a3633f61bcefd4ba3d09f616e12d5ce96a73af576c351fbbd50c56a77e130de8"
+   "verifier_sha256": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177"
   },
   {
    "clean_control_flagged": false,
@@ -705,31 +1096,28 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_boxdata.py",
-   "verifier_sha256": "a3633f61bcefd4ba3d09f616e12d5ce96a73af576c351fbbd50c56a77e130de8"
+   "verifier_sha256": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177"
   },
   {
    "clean_control_flagged": false,
    "detail": null,
    "id": "M34",
    "input_artifact": "config/C11R_POLICY.json",
-   "input_sha256": "d7c48b283ab878e6b6bb1ad410addf978bc8a204f077bf6aa14d5a83813002bf",
+   "input_sha256": "db28703fb02f8f50450a87d6eddd100a669127253f98865bb08b9858317a5391",
    "mutant_flagged": true,
    "mutated_path": "$.magnitudes",
    "mutated_value": "{'tau': 'planted'}",
-   "name": "the policy carrying an original magnitude",
+   "name": "the policy carrying an original-magnitude payload",
    "outcome": "DETECTED",
    "producer": null,
    "producer_sha256": null,
-   "unrelated_mutation_flagged": null,
-   "verifier": "c11r_firewall.py",
-   "verifier_sha256": "892b87ceb524406cefe55cb841bdf62a7d5378a20209a5e9a0717765f5b74042"
+   "unrelated_mutation_flagged": false,
+   "verifier": "c11r_schema.py",
+   "verifier_sha256": "60a1ec4f2fabc78b6d82981a4eee77e43cd73f9bd5df91a9095712d80e7cdaec"
   },
   {
    "clean_control_flagged": false,
-   "detail": {
-    "a_docstring_quoting_the_phrase_is_not_flagged": true,
-    "hits_in_real_comparator_output_strings": []
-   },
+   "detail": null,
    "id": "M35",
    "input_artifact": null,
    "input_sha256": null,
@@ -741,8 +1129,8 @@
    "producer": null,
    "producer_sha256": null,
    "unrelated_mutation_flagged": false,
-   "verifier": "c11r_mutations.py",
-   "verifier_sha256": "e0c819a5bb06492aac702097f0e997bf3c1dafd8375dbfd9e5ae85b5785b45ab"
+   "verifier": "c11r_gate.py",
+   "verifier_sha256": "44e3b5d9a4ee9066aa4fd805f43ea7ab482961c417994ece0d84c412a6ddb0f7"
   },
   {
    "clean_control_flagged": false,
@@ -763,41 +1151,68 @@
    "producer_sha256": null,
    "unrelated_mutation_flagged": null,
    "verifier": "c11r_runs.py",
-   "verifier_sha256": "663bef43724b81c5c3bd9f5465c405cf24459064e5b35af433cb2f32c5a9e7de"
+   "verifier_sha256": "778b84ff0a4883e1d492683d2bd518af3e281c3fa55aeb90e7f35f37e85d84ce"
   },
   {
    "clean_control_flagged": false,
-   "detail": null,
+   "detail": {
+    "clean_class": "INSUFFICIENT",
+    "mutant_class": "INVALID",
+    "mutant_statement": {
+     "STATUS": "NOT_PROVED",
+     "reasons": [
+      "its certificate proves ['Abar'], not 'D1'"
+     ]
+    },
+    "mutant_verdict": "EXECUTION_INVALID"
+   },
    "id": "M37",
    "input_artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-   "input_sha256": "373458b4b2eb6206b87494a95dbcf5bda2e925b5ce27d3993a9922ba415ff02c",
+   "input_sha256": "06b3efe2211a7554d25be8e7b4359057ea1c54fa4a44cf5d34c01fe75e88348b",
    "mutant_flagged": true,
    "mutated_path": "$.targets.D1",
-   "mutated_value": "'CERTIFIED via independent_supersolution'",
-   "name": "D1 claimed through a route that cannot bound a derivative",
+   "mutated_value": "'CERTIFIED via F_K'",
+   "name": "D1 claimed from a supersolution certificate, which cannot bound it",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "663bef43724b81c5c3bd9f5465c405cf24459064e5b35af433cb2f32c5a9e7de",
-   "unrelated_mutation_flagged": null,
-   "verifier": "c11r_equiv.py",
-   "verifier_sha256": "475f6f299aafb3dfa0c88d0257efbfc2751e6554e67765dd22c7b741a56e0fe3"
+   "producer_sha256": "778b84ff0a4883e1d492683d2bd518af3e281c3fa55aeb90e7f35f37e85d84ce",
+   "unrelated_mutation_flagged": false,
+   "verifier": "c11r_compare.py",
+   "verifier_sha256": "de5e9b4de4294d15d171afa3cbaa502ffeb11943753c660c0c8be1743f1c5395"
   },
   {
    "clean_control_flagged": false,
    "detail": null,
    "id": "M38",
    "input_artifact": "config/C11R_POLICY.json",
-   "input_sha256": "d7c48b283ab878e6b6bb1ad410addf978bc8a204f077bf6aa14d5a83813002bf",
+   "input_sha256": "db28703fb02f8f50450a87d6eddd100a669127253f98865bb08b9858317a5391",
    "mutant_flagged": true,
    "mutated_path": "$.targets.Abar.status",
    "mutated_value": "'NOT_IMPLEMENTED'",
    "name": "a constant the policy implements marked NOT_IMPLEMENTED (G8)",
    "outcome": "DETECTED",
    "producer": "c11r_runs.py",
-   "producer_sha256": "663bef43724b81c5c3bd9f5465c405cf24459064e5b35af433cb2f32c5a9e7de",
-   "unrelated_mutation_flagged": null,
-   "verifier": "c11r_mutations.py",
-   "verifier_sha256": "e0c819a5bb06492aac702097f0e997bf3c1dafd8375dbfd9e5ae85b5785b45ab"
+   "producer_sha256": "778b84ff0a4883e1d492683d2bd518af3e281c3fa55aeb90e7f35f37e85d84ce",
+   "unrelated_mutation_flagged": false,
+   "verifier": "c11r_certificate.py",
+   "verifier_sha256": "cccc251f99083dae047271565580eefa83cedb1ca67055bf85924ac13ba582f0"
+  },
+  {
+   "clean_control_flagged": false,
+   "detail": null,
+   "id": "M39",
+   "input_artifact": "config/C11R_POLICY.json",
+   "input_sha256": "db28703fb02f8f50450a87d6eddd100a669127253f98865bb08b9858317a5391",
+   "mutant_flagged": true,
+   "mutated_path": "$.certificates.*.inputs.panels",
+   "mutated_value": "'2 x frozen panels'",
+   "name": "certificates made at another configuration than the frozen one (G19)",
+   "outcome": "DETECTED",
+   "producer": "c11r_runs.py",
+   "producer_sha256": "778b84ff0a4883e1d492683d2bd518af3e281c3fa55aeb90e7f35f37e85d84ce",
+   "unrelated_mutation_flagged": false,
+   "verifier": "c11r_certificate.py",
+   "verifier_sha256": "cccc251f99083dae047271565580eefa83cedb1ca67055bf85924ac13ba582f0"
   }
  ],
  "not_detected": [],
@@ -805,36 +1220,48 @@
   "code_closure": {
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py": "fc88fb0dcc0f757d9ed42b08ecdd9e7ca2c65320181320f009390d67e3155741",
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_common.py": "c55e97b9e2dc626992d3fa25ef23833fcccee88e787a916aa02dc23c2f0ab1b2",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "a3633f61bcefd4ba3d09f616e12d5ce96a73af576c351fbbd50c56a77e130de8",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "2576efe0b80a0c73f1164d7b0e8538ee6c71a5c5c61b68d755a2e763d58cde4e",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_compare.py": "59259ccf9f661a99db89390dbee43789007cc8f07c70d9720444328e0af244cc",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_equiv.py": "475f6f299aafb3dfa0c88d0257efbfc2751e6554e67765dd22c7b741a56e0fe3",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_firewall.py": "892b87ceb524406cefe55cb841bdf62a7d5378a20209a5e9a0717765f5b74042",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_gate.py": "3caef9ef504ec7a0340bb73704c26b8a866af849ff44d5018aee36c388b5d281",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_certificate.py": "cccc251f99083dae047271565580eefa83cedb1ca67055bf85924ac13ba582f0",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "5b2b39e7a448e898cd8c6ef03abf0fce59f65bb44b4a776d0e73b0ea023cca63",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_compare.py": "de5e9b4de4294d15d171afa3cbaa502ffeb11943753c660c0c8be1743f1c5395",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_cost.py": "8e75433c2a771f6b26114511c801736850385ba61f76101e1b596ee50e342ae2",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_equiv.py": "6d2941b8fc0c56be135da1a82ead2109ef808842a5f82c7bde4b6dafd3d6f929",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_firewall.py": "0213107bd5db256ad18743bc74981d4f542b7099261e6178b0f258f935dd5d5f",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_gate.py": "44e3b5d9a4ee9066aa4fd805f43ea7ab482961c417994ece0d84c412a6ddb0f7",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_mutations.py": "e0c819a5bb06492aac702097f0e997bf3c1dafd8375dbfd9e5ae85b5785b45ab",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_runs.py": "663bef43724b81c5c3bd9f5465c405cf24459064e5b35af433cb2f32c5a9e7de",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "1a686218bac9d214a36745831ef406b8019ff7f455bee25cc06568e463e69cfa",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_status.py": "af6c5ff081a16ba009f83fbc6e220c549ee0285461d856370f47099fad72ec1d",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_mutations.py": "e59e750e1d8c132b155f9e38be8061f79607afe5735006d8bb31bd7b2a25941a",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py": "c25a2ede2dc9547db30bdff78ce53717aab3ef4cb64fb256242009f42d8cb35c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_qualify.py": "be0e38cac7abea3c12c50ff6f3c054c871ffea7fda2f9a7ed7e8b5867d68e73c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_runs.py": "778b84ff0a4883e1d492683d2bd518af3e281c3fa55aeb90e7f35f37e85d84ce",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "60a1ec4f2fabc78b6d82981a4eee77e43cd73f9bd5df91a9095712d80e7cdaec",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_status.py": "828ed254d82d2ca483ad6656f41ebaa9be3f926aed3b7036aaedf33896083230",
    "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
   },
   "inputs": {
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_POLICY.json": "d7c48b283ab878e6b6bb1ad410addf978bc8a204f077bf6aa14d5a83813002bf",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/N9R_GATE_C11R.json": "e34618937b522d80661a19d514d76bb6076924d046babbee1b182a02114ccf7a",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/firewall/C11R_FIREWALL.json": "a3b86fd874d1ed70b50abc45b31f34ea6410987bf943d57ce70e1ba8ec06f7fe",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "373458b4b2eb6206b87494a95dbcf5bda2e925b5ce27d3993a9922ba415ff02c",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/validation/C11R_VALIDATION.json": "55c119f67bb23f957acc555ed7d40e7c800be3fea0564a6448753b29ff1a09e3"
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_POLICY.json": "db28703fb02f8f50450a87d6eddd100a669127253f98865bb08b9858317a5391",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/N9R_GATE_C11R.json": "285f4d7e7275af454a9765d6cfd620aa0c1129c8f22b472e68237fda692edd9d",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/firewall/C11R_FIREWALL.json": "829ad0a5b3791a787edd296f8e30cfcf871ca90db708d5d4337edbac5bb52134",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "06b3efe2211a7554d25be8e7b4359057ea1c54fa4a44cf5d34c01fe75e88348b",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/validation/C11R_VALIDATION.json": "615c9fa1bd2076f0e9042da1cf43257d7f32482cb91b217410639530629c0ce6"
   },
   "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_mutations.py",
-  "producer_sha256": "e0c819a5bb06492aac702097f0e997bf3c1dafd8375dbfd9e5ae85b5785b45ab"
+  "producer_sha256": "e59e750e1d8c132b155f9e38be8061f79607afe5735006d8bb31bd7b2a25941a"
  },
  "rules": [
-  "run-artifact mutants use c11r_runs.assemble, the producer's own emission",
+  "every detector is a production function; this module defines no guard",
+  "run artifacts built by c11r_runs.assemble from c11r_certificate certificates",
   "each mutant: mutant flagged AND clean accepted AND unrelated not flagged",
   "numerical mutants on the NON-TARGET block only",
   "UNDETERMINED is never a pass"
  ],
- "schema": "C11R_MUTATIONS/2",
- "sha256": "584f9851d1e048a4d42bc76e80da864e8b61ef61d059de4f1d7420cb765d2207",
- "supersedes": "C11R_MUTATIONS/1 (stale; REFUSE with M29 SURVIVED -- erratum E4)"
+ "schema": "C11R_MUTATIONS/3",
+ "sha256": "afcaf33ed37fcdf6d166fae0ba1fae13770addd4bc357f0bf266402993813363",
+ "statement_vs_number_separation": {
+  "numeric_clean": "AGREES",
+  "numeric_far": "INSUFFICIENT",
+  "pass": true,
+  "statement_status_clean": "EQUIVALENT",
+  "statement_status_far": "EQUIVALENT"
+ },
+ "supersedes": "C11R_MUTATIONS/2 at affdf8a3, whose value-trace, screen-order and disposition detectors were test-only copies (erratum E17)"
 }

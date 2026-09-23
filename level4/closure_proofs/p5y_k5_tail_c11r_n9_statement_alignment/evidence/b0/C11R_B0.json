@@ -15,7 +15,7 @@
   {
    "detail": {
     "expected_c11_head": "440bcd9183f4f883428cba41d47aa7780fd681c4",
-    "head": "6d7cd546f26dbd1e7e95de04e8dcb5b296ab50f2"
+    "head": "6ae05833ebab7c2e68c43cadc868e1d432a583e5"
    },
    "id": "B0_02",
    "name": "descends from the expected C11 HEAD 440bcd91",
@@ -31,8 +31,9 @@
   },
   {
    "detail": {
-    "schema": "C11_N9_RESULT/2",
-    "verdict": "EXECUTION_INVALID"
+    "key_occurrences": 1,
+    "method": "count-only git grep at the C11 HEAD; no content read",
+    "occurrences_with_EXECUTION_INVALID": 1
    },
    "id": "B0_04",
    "name": "C11 verdict is EXECUTION_INVALID and is not rewritten as success",
@@ -40,7 +41,9 @@
   },
   {
    "detail": {
-    "status": "OPEN"
+    "key_occurrences": 1,
+    "method": "count-only git grep at the C11 HEAD; no content read",
+    "occurrences_with_OPEN": 1
    },
    "id": "B0_05",
    "name": "N9 is OPEN entering C11R",
@@ -91,8 +94,20 @@
   {
    "detail": {
     "allow_settings": [],
-    "json_files_scanned": 3350,
-    "method": "parsed guard keys in committed JSON; review prose mentioning the string is not a setting and is deliberately not matched"
+    "coverage_exact": true,
+    "json_files_scanned": 3343,
+    "json_files_total": 3353,
+    "method": "names-only git grep for an unescaped \"guard\": \"ALLOW\" key/value over every JSON file in the closure tree, tracked and untracked; protected files excluded; no content enters this process",
+    "pattern_control": {
+     "expected": [
+      "setting.json"
+     ],
+     "matched": [
+      "setting.json"
+     ],
+     "pass": true
+    },
+    "protected_json_excluded": 10
    },
    "id": "B0_10",
    "name": "guard DENY: no ALLOW guard SETTING anywhere at C11R start",
@@ -111,8 +126,10 @@
     "hits": [],
     "modules_scanned": [
      "c11r_boxdata.py",
+     "c11r_certificate.py",
      "c11r_common.py",
      "c11r_compare.py",
+     "c11r_cost.py",
      "c11r_equiv.py",
      "c11r_errata.py",
      "c11r_firewall.py",
@@ -170,14 +187,14 @@
  },
  "provenance": {
   "code_closure": {
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_b0.py": "221339a8d3df444db0c9c466a0a974e7a8594f92a2f4e17b0ebad8e22cf401f0",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "2576efe0b80a0c73f1164d7b0e8538ee6c71a5c5c61b68d755a2e763d58cde4e"
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_b0.py": "bc169e4f7a1e51a2a52b34b5af36911c73bb0798975bd9e9a9b8b0bd9762941c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "5b2b39e7a448e898cd8c6ef03abf0fce59f65bb44b4a776d0e73b0ea023cca63"
   },
   "inputs": {},
   "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_b0.py",
-  "producer_sha256": "221339a8d3df444db0c9c466a0a974e7a8594f92a2f4e17b0ebad8e22cf401f0"
+  "producer_sha256": "bc169e4f7a1e51a2a52b34b5af36911c73bb0798975bd9e9a9b8b0bd9762941c"
  },
  "purpose": "determine whether the already-independent C11 certifier can certify THE SAME STATEMENT N9 requires: block-uniform drift over the frozen e-block, and the six operator constants for cell 306",
  "schema": "C11R_B0/1",
- "sha256": "f1c20e4bff7908588729c65247dc1f8956c8723810e7672bc22c86644f1221ea"
+ "sha256": "0ecad497e8ce9e63fb112ecfd7e1d17ecb8562fc97516d4a6cd4acf4055c9177"
 }

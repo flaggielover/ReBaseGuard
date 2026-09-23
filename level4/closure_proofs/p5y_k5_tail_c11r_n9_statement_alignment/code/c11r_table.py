@@ -39,6 +39,104 @@ def need(field: str, value, why: str = ""):
     return value
 
 
+LEAK_METHOD = ("each original magnitude as its exact rational string, and as a decimal ROUNDED and "
+               "TRUNCATED to 4, 5, 6, 7 and 8 places; each pattern is left-bounded so that it cannot "
+               "match inside a longer number (12.3456 does not match 2.3456)")
+
+
+def leak_patterns(magnitudes: dict) -> dict:
+    """constant -> compiled patterns for its value. Built only inside this sanctioned module."""
+    import re
+    from decimal import Decimal, ROUND_DOWN, ROUND_HALF_EVEN
+    pats = {}
+    for k, mv in magnitudes.items():
+        exact = F(mv["value"])
+        forms = {mv["value"]}
+        d = Decimal(exact.numerator) / Decimal(exact.denominator)
+        for n in range(4, 9):
+            q = Decimal(1).scaleb(-n)
+            forms.add(str(d.quantize(q, rounding=ROUND_HALF_EVEN)))
+            forms.add(str(d.quantize(q, rounding=ROUND_DOWN)))
+        pats[k] = [re.compile(r"(?<![0-9])" + re.escape(f)) for f in sorted(forms)]
+    return pats
+
+
+def scan_text(text: str, pats: dict) -> dict:
+    """constant -> number of matches. Returns counts only; never the matched text."""
+    out = {}
+    for k, ps in pats.items():
+        n = sum(len(p.findall(text)) for p in ps)
+        if n:
+            out[k] = n
+    return out
+
+
+def leak_check() -> int:
+    """Scan every allowlisted pre-result artifact and every campaign module for original values.
+
+    Run by c11r_regen.py after the mutation suite. The magnitudes are loaded HERE, in the
+    sanctioned extractor, and never leave it: the artifact records only per-file match counts.
+    The historical review files are not scanned -- they are immutable evidence known to quote
+    rounded originals -- and the firewall forbids any production module from reading them.
+    """
+    q = C.load(C.NS / C.QUARANTINE_REL)
+    pats = leak_patterns(q["magnitudes"])
+    files = []
+    for rel in C.PRE_RESULT_ARTIFACTS:
+        if rel in ("evidence/leakcheck/C11R_LEAKCHECK.json", "evidence/status/C11R_STATUS.json"):
+            continue
+        path = C.NS / rel
+        if path.exists():
+            files.append(path)
+    closure = {}
+    for m in sorted(C.HERE.glob("c11r_*.py")):
+        closure.update(C.code_closure(m))
+    files += [C.REPO / rel for rel in sorted(closure)]
+    rows, total = [], 0
+    for path in files:
+        text = path.read_text()
+        hits = scan_text(text, pats)
+        n = sum(hits.values())
+        total += n
+        rows.append({"file": str(path.relative_to(C.REPO)), "sha256": C.sha256_file(path),
+                     "matches": n, "constants_matched": sorted(hits)})
+    # the declared external input every pre-comparison module may read (the r5 coverage map)
+    for ext in C.DECLARED_EXTERNAL_INPUTS:
+        hits = scan_text(C.git("show", f"HEAD:{ext}"), pats)
+        n = sum(hits.values())
+        total += n
+        rows.append({"file": ext, "git_object": C.git("rev-parse", f"HEAD:{ext}"),
+                     "matches": n, "constants_matched": sorted(hits)})
+    # DISCLOSURE, not part of the class: this campaign's own commit messages. They are history
+    # (never rewritten) and no production module reads them; any match is reported, not hidden.
+    msgs = C.git("log", "--format=%H%n%B%n----", f"{C.C11_HEAD}..HEAD")
+    msg_hits = scan_text(msgs, pats)
+    out = {"schema": "C11R_LEAKCHECK/1",
+           "method": LEAK_METHOD,
+           "scope": ("every allowlisted pre-result artifact produced before this step, and every "
+                     "module in the campaign's code closure"),
+           "not_scanned": ["the historical review files (immutable, known to quote rounded "
+                           "originals; no production module may read them)",
+                           "the quarantine itself", "this artifact and the status report"],
+           "files": rows, "files_scanned": len(rows), "total_matches": total,
+           "disclosure_commit_messages_since_C11": {
+               "commits": len([x for x in C.git("rev-list", f"{C.C11_HEAD}..HEAD").splitlines()
+                               if x]),
+               "matches": sum(msg_hits.values()), "constants_matched": sorted(msg_hits),
+               "counts_toward_class": False},
+           "LEAK_CLASS": "PASS" if total == 0 else "REFUSE"}
+    sh = C.write_evidence(C.NS / "evidence" / "leakcheck" / "C11R_LEAKCHECK.json", out,
+                          producer=__file__)
+    bad = [r for r in rows if r["matches"]]
+    for r in bad:
+        print(f"  LEAK  {r['file']}  constants {r['constants_matched']}  ({r['matches']} matches)")
+    print(f"leak check: {len(rows)} files, {total} matches -> LEAK_CLASS = {out['LEAK_CLASS']}")
+    print(f"disclosure: commit messages since C11 carry {sum(msg_hits.values())} matches "
+          f"{sorted(msg_hits)}")
+    print(f"wrote evidence/leakcheck/C11R_LEAKCHECK.json sha256 {sh[:16]}...")
+    return 0 if total == 0 else 1
+
+
 def main() -> int:
     src = (C.REPO / C.ORIGINAL_CERTIFIER).read_text()
     reg = C.load(C.C2 / "evidence" / "registry_c2" / "REGISTRY_C2.json")
@@ -306,26 +404,8 @@ def main() -> int:
            "DEPENDENCY_FINDING": dependency_finding,
            "unresolved_fields": unresolved,
            "TABLE_CLASS": "RESOLVED" if not unresolved else "HARD_STOP"}
-    # VALUE-BASED LEAK CHECK, done here because this module already legitimately holds the
-    # magnitudes. Doing it anywhere else would make a third module load them; the firewall
-    # scanner therefore checks the statement table STRUCTURALLY and never loads a value.
-    serial = json.dumps(out, sort_keys=True)
-    needles = []
-    for k, mv in magnitudes.items():
-        vf = mv["value_float"]
-        needles += [(k, mv["value"]), (k, repr(vf)), (k, f"{vf:.6f}"), (k, f"{vf:.4f}"),
-                    (k, f"{vf:.3f}")]
-    leaks = sorted({k for k, n in needles if n in serial})
-    if leaks:
-        raise SystemExit(f"REFUSE: original magnitudes would leak into the statement table: "
-                         f"{leaks}")
-    out["leak_check"] = {"method": ("every original magnitude, as an exact rational and as a "
-                                    "float at 3, 4 and 6 decimals and full repr, searched for in "
-                                    "the serialised statement table"),
-                         "magnitudes_found": 0}
-    s = C.write_evidence(C.NS / "evidence" / "table" / "C11R_N9_STATEMENTS.json", out,
-                         producer=__file__)
-
+    # The quarantine is written FIRST, so that the statement table can record its content-free id.
+    # Later modules verify the quarantine by that id (git hash-object) without reading it.
     quarantine = {"schema": "C11R_ORIGINAL_MAGNITUDES/1",
                   "QUARANTINE": ("the six original magnitudes for cell 306. Loadable ONLY by "
                                  "c11r_table.py (which extracts them) and c11r_compare.py (after "
@@ -333,8 +413,21 @@ def main() -> int:
                                  "this by AST."),
                   "cell": CELL, "magnitudes": magnitudes,
                   "source": "p5y_k5_tail_c2_closure/evidence/registry_c2/REGISTRY_C2.json"}
-    q = C.write_evidence(C.NS / "evidence" / "quarantine" / "C11R_ORIGINAL_MAGNITUDES.json",
-                         quarantine, producer=__file__)
+    q = C.write_evidence(C.NS / C.QUARANTINE_REL, quarantine, producer=__file__)
+    out["quarantine"] = {"path": C.QUARANTINE_REL,
+                         "content_free_id": C.content_free_id(C.NS / C.QUARANTINE_REL),
+                         "note": ("verify with c11r_common.content_free_id; never read it")}
+
+    # VALUE-BASED LEAK CHECK of the statement table, here because this module already holds the
+    # magnitudes legitimately. `--leak-check` runs the same scan over EVERY allowlisted artifact
+    # and every campaign module at the end of the regeneration.
+    hits = scan_text(json.dumps(out, sort_keys=True), leak_patterns(magnitudes))
+    if hits:
+        raise SystemExit(f"REFUSE: original magnitudes would leak into the statement table: "
+                         f"{sorted(hits)}")
+    out["leak_check"] = {"method": LEAK_METHOD, "magnitudes_found": 0}
+    s = C.write_evidence(C.NS / "evidence" / "table" / "C11R_N9_STATEMENTS.json", out,
+                         producer=__file__)
 
     print(f"drift domain (cell {CELL}) = [{e_lo}, {e_hi}]  width {e_hi - e_lo}, "
           f"{len(sub)} sub-blocks, contiguous={contiguous}")
@@ -352,4 +445,4 @@ def main() -> int:
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(leak_check() if "--leak-check" in sys.argv[1:] else main())

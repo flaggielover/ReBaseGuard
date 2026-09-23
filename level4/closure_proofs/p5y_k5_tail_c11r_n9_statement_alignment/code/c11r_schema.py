@@ -105,15 +105,70 @@ def statement(constant: str, *, drift_domain: tuple[str, str], aggregation: dict
 # ---------------------------------------------------------------------------------------------
 # The target run artifact. Paths are constants; producer and verifiers share them.
 # ---------------------------------------------------------------------------------------------
-RUNS_SCHEMA = "C11R_RUNS/2"
+RUNS_SCHEMA = "C11R_RUNS/3"
 P_CERTS = "certificates"
 P_TARGETS = "targets"
 P_SEAL = "seal"
-CERT_FIELDS = ("route", "kernel", "family", "screen_classification", "sent_to_box_pass",
-               "ladder_level", "depth", "panels", "boxes", "selected", "certified",
-               "margin_lower_bound", "w_min_lower_bound", "seconds")
+SEAL_KEY = "contains_original_magnitudes"
+
+# A CERTIFICATE records FACTS about a certification call, not claims about constants: which
+# certifier ran (module, function, and the module's hash), exactly what it was given (the weight,
+# the drift block, the depth and panels, the atom-removal argument), a digest binding those inputs,
+# and what the certifier ITSELF returned. Which constants a certificate proves is not stored here:
+# c11r_certificate.reconstruct DERIVES it from these facts (round 3, blocker B-3).
+CERT_FIELDS = ("certificate_id", "family", "weight", "inputs", "input_digest", "certifier",
+               "certifier_result", "cover", "aggregation", "premises",
+               "screen_classification", "sent_to_certification", "seconds")
+CERT_INPUT_FIELDS = ("drift_block", "depth", "panels", "atom_removed_argument")
+CERT_CERTIFIER_FIELDS = ("module", "function", "module_sha256")
+CERT_RESULT_FIELDS = ("kernel", "certified", "margin_lower_bound", "boxes")
+# A TARGET names a constant, a status, a value and the certificate said to support it. It carries
+# NO statement: a producer-declared statement is exactly the template that made round 2's
+# comparison circular.
+TARGET_FIELDS = ("constant", "status", "value", "certificate_id", "reason")
 TARGET_STATUS = ("CERTIFIED", "NOT_CERTIFIED", "NOT_IMPLEMENTED")
-SCREEN_CLASSES = ("POINTWISE_FEASIBLE", "POINTWISE_INFEASIBLE")
+# NOT_REACHED: the family was never screened (the run stopped first). It may be neither sent
+# nor certified; the G10 guard enforces that.
+SCREEN_CLASSES = ("POINTWISE_FEASIBLE", "POINTWISE_INFEASIBLE", "NOT_REACHED")
+
+# FORBIDDEN PAYLOAD is identified by EXACT KEY NAME in the parsed structure. Round 2 scanned the
+# artifact's TEXT for the substring "magnitudes", which matched this schema's own SEAL_KEY and so
+# refused every genuine artifact (blocker B-1, erratum E15). Keys are compared whole; values and
+# prose are never scanned.
+FORBIDDEN_PAYLOAD_KEYS = frozenset({"magnitudes", "value_float", "original_value",
+                                    "original_values", "original_magnitudes"})
+
+
+def forbidden_payload(obj) -> list[str]:
+    """JSON paths of every key that names forbidden original-value payload. Exact key match."""
+    hits = []
+
+    def walk(o, path):
+        if isinstance(o, dict):
+            for k, v in o.items():
+                if k in FORBIDDEN_PAYLOAD_KEYS:
+                    hits.append(f"{path}.{k}")
+                walk(v, f"{path}.{k}")
+        elif isinstance(o, list):
+            for i, v in enumerate(o):
+                walk(v, f"{path}[{i}]")
+    walk(obj, "$")
+    return hits
+
+
+def seal_problems(obj: dict) -> list[str]:
+    """The seal, checked on typed fields. Shared by the producer (via emit_runs) and the comparator."""
+    p = []
+    seal = obj.get(P_SEAL)
+    if not isinstance(seal, dict):
+        return ["no seal record"]
+    if seal.get(SEAL_KEY) is not False:
+        p.append(f"seal.{SEAL_KEY} is {seal.get(SEAL_KEY)!r}; it must be exactly false")
+    if seal.get("sealed_before_comparison") is not True:
+        p.append("seal.sealed_before_comparison is not exactly true")
+    for path in forbidden_payload(obj):
+        p.append(f"forbidden original-value payload at {path}")
+    return p
 
 
 def emit_runs(*, policy_sha256: str, statements_sha256: str, drift_block: tuple[str, str],
@@ -126,8 +181,7 @@ def emit_runs(*, policy_sha256: str, statements_sha256: str, drift_block: tuple[
            "drift_block": [str(F(drift_block[0])), str(F(drift_block[1]))],
            P_CERTS: certificates,
            P_TARGETS: targets,
-           P_SEAL: {"sealed_before_comparison": True,
-                    "contains_original_magnitudes": False}}
+           P_SEAL: {"sealed_before_comparison": True, SEAL_KEY: False}}
     if extra:
         obj.update(extra)
     problems = validate_runs(obj, check_provenance=False)
@@ -143,13 +197,13 @@ def certificate(**kw) -> dict:
     return {f: kw[f] for f in CERT_FIELDS}
 
 
-def target(constant: str, *, status: str, value, stmt: dict | None, reason: str | None,
+def target(constant: str, *, status: str, value, reason: str | None,
            certificate_id: str | None) -> dict:
     if status not in TARGET_STATUS:
         raise ValueError(f"unknown target status {status!r}")
     return {"constant": constant, "status": status,
             "value": None if value is None else str(F(value)),
-            "statement": stmt, "reason": reason, "certificate_id": certificate_id}
+            "certificate_id": certificate_id, "reason": reason}
 
 
 # ---------------------------------------------------------------------------------------------
@@ -164,11 +218,11 @@ def targets(runs: dict) -> dict:
 
 
 def cert_depth(cert: dict):
-    return cert["depth"]
+    return cert["inputs"]["depth"]
 
 
-def cert_sent_to_box_pass(cert: dict) -> bool:
-    return bool(cert["sent_to_box_pass"])
+def cert_sent(cert: dict) -> bool:
+    return bool(cert["sent_to_certification"])
 
 
 def cert_screen_class(cert: dict) -> str:
@@ -180,7 +234,7 @@ def seal_record(runs: dict) -> dict:
 
 
 def validate_runs(obj: dict, *, check_provenance: bool = True) -> list[str]:
-    """Return a list of structural problems; empty means the artifact has exactly this shape."""
+    """Structural problems; empty means the artifact has exactly this shape."""
     p = []
     if obj.get("schema") != RUNS_SCHEMA:
         p.append(f"schema is {obj.get('schema')!r}, expected {RUNS_SCHEMA!r}")
@@ -193,20 +247,31 @@ def validate_runs(obj: dict, *, check_provenance: bool = True) -> list[str]:
         for f in CERT_FIELDS:
             if f not in c:
                 p.append(f"certificate {cid!r} missing {f!r}")
+        for grp, fields in (("inputs", CERT_INPUT_FIELDS), ("certifier", CERT_CERTIFIER_FIELDS),
+                            ("certifier_result", CERT_RESULT_FIELDS)):
+            if isinstance(c.get(grp), dict):
+                for f in fields:
+                    if f not in c[grp]:
+                        p.append(f"certificate {cid!r} missing {grp}.{f}")
         if c.get("screen_classification") not in SCREEN_CLASSES:
             p.append(f"certificate {cid!r} has screen class {c.get('screen_classification')!r}")
     if set(obj[P_TARGETS]) != set(SIX_CONSTANTS):
         p.append(f"targets are {sorted(obj[P_TARGETS])}, expected all six")
     for k, t in obj[P_TARGETS].items():
+        for f in TARGET_FIELDS:
+            if f not in t:
+                p.append(f"target {k!r} missing {f!r}")
+        if "statement" in t:
+            p.append(f"target {k!r} carries a declared statement; statements are reconstructed "
+                     f"from certificates, never declared")
         if t.get("status") not in TARGET_STATUS:
             p.append(f"target {k!r} status {t.get('status')!r}")
-        if t.get("status") == "CERTIFIED" and (t.get("value") is None or not t.get("statement")):
-            p.append(f"target {k!r} CERTIFIED without a value and statement")
+        if t.get("status") == "CERTIFIED" and (t.get("value") is None
+                                              or not t.get("certificate_id")):
+            p.append(f"target {k!r} CERTIFIED without a value and a certificate")
         if t.get("certificate_id") and t["certificate_id"] not in obj[P_CERTS]:
             p.append(f"target {k!r} cites unknown certificate {t['certificate_id']!r}")
-    seal = obj[P_SEAL]
-    if seal.get("contains_original_magnitudes") is not False:
-        p.append("seal does not declare the artifact free of original magnitudes")
+    p += seal_problems(obj)
     if check_provenance:
         prov = obj.get("provenance")
         if not prov or not prov.get("producer_sha256"):

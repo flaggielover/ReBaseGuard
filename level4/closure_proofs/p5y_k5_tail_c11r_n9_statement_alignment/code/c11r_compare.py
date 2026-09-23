@@ -1,27 +1,31 @@
-"""C11R Phase 15 -- the sealed comparison. Rebuilt in revision 2 (erratum E6).
+"""C11R Phase 15 -- the sealed comparison. Revision 3 (blockers B-1, B-3, B-4).
 
 ONE OF EXACTLY TWO MODULES PERMITTED TO LOAD AN ORIGINAL MAGNITUDE, and it does so only inside
 `load_original_magnitudes`, which only `main` calls, and only after `verify_seal` has passed.
 
-ORDER OF OPERATIONS IN `main`, and why it cannot be reordered silently:
-  1. verify the seal -- the runs artifact is committed, the file on disk is the committed blob, it
-     has no uncommitted change, it has exactly the frozen run schema, its producer hash equals the
-     committed c11r_runs.py at the seal commit, and it declares and contains no original magnitude;
-  2. build every INDEPENDENT statement from the runs artifact's own target records;
-  3. only then load the ORIGINAL statements (semantics) and the ORIGINAL magnitudes (quarantine);
-  4. classify each target -- statement first, number second;
-  5. derive the N9 classification by a frozen precedence, and only then render any prose.
+ORDER OF OPERATIONS IN `main`:
+  1  the SEAL: the runs artifact is committed, the file on disk is the committed blob, it has no
+     uncommitted change, it passes c11r_schema.validate_runs -- which checks the seal on TYPED
+     fields (round 2 scanned the artifact's text for "magnitudes" and so refused every genuine
+     artifact, whose schema key is "contains_original_magnitudes": erratum E15) -- and its producer
+     hash equals c11r_runs.py as committed at the seal;
+  2  every production guard (c11r_certificate.evaluate_run) with the certifier hashes AS COMMITTED
+     AT THE SEAL: each certificate is RECONSTRUCTED into what it proves; value tracing, G8 and G10;
+  3  only then the ORIGINAL statements (semantics) and the ORIGINAL magnitudes (the quarantine,
+     first checked against the content-free id the statement table recorded for it);
+  4  per target: STATEMENT EQUIVALENCE first (the reconstructed proposition against the original),
+     then, only for an equivalent-or-stronger statement, NUMERICAL AGREEMENT. The two results are
+     recorded separately and never conflated;
+  5  the N9 classification by a frozen precedence, and only then any prose.
 
-NOTHING HERE IS A PRE-WRITTEN CONCLUSION. Revision 1 carried "agreement is established" and "No
-target is INVALID and none DISAGREES" before any run existed. Every sentence this module emits is
-rendered from computed fields by `render`, and the mutation suite scans this module's own string
-constants for result-dependent language.
+NOTHING HERE IS A PRE-WRITTEN CONCLUSION: every sentence is rendered from computed fields.
 
-DISAGREES IS A REAL RETURN. It arises when an independent rigorous bound EXCLUDES the original's
-claim on the same quantity -- an independent upper bound below an original lower bound, or an
-independent lower bound above an original upper bound. Two bounds in the same direction cannot
-contradict. Whether any such opposite-direction pair exists in a given runs artifact is COMPUTED
-here (`opposite_direction_pairs`), not asserted.
+REACHABILITY, stated per path rather than claimed wholesale (erratum E19). In production, D1 and D2
+are NOT_IMPLEMENTED, so N9_CLOSED is unreachable by scope. INVALID, INDEPENDENCE_VIOLATION and
+EXECUTION_INVALID are reachable from genuine artifacts whose certificates do not establish what
+their targets claim. DISAGREES requires an independent bound on an original quantity in the
+OPPOSITE direction; no implemented certifier produces one, so it is reachable only through a
+deduction no production certifier has, and the self-test exercises it that way.
 """
 from __future__ import annotations
 
@@ -30,6 +34,7 @@ import sys
 from fractions import Fraction as F
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import c11r_certificate as CV
 import c11r_common as C
 import c11r_equiv as EQ
 import c11r_schema as S
@@ -44,7 +49,7 @@ PRECEDENCE = ("INDEPENDENCE_VIOLATION", "SCIENTIFIC_DISAGREEMENT", "EXECUTION_IN
 # 1. the seal
 # ---------------------------------------------------------------------------------------------
 def verify_seal_bytes(disk: bytes | None, committed: bytes | None, dirty: bool) -> list[str]:
-    """Pure seal check, testable without any runs artifact existing."""
+    """The ORDERING part of the seal, testable without any runs artifact existing."""
     p = []
     if disk is None:
         p.append("no runs artifact on disk")
@@ -67,26 +72,30 @@ def verify_seal() -> dict:
     committed = C.blob_at(seal_commit, rel) if seal_commit else None
     dirty = bool(C.git("status", "--porcelain", "--", rel)) if disk is not None else False
     problems = verify_seal_bytes(disk, committed, dirty)
-    runs = None
+    runs, runs_producer = None, None
     if not problems:
         runs = json.loads(disk)
-        problems += S.validate_runs(runs)
-        runs_code = str((C.NS / "code" / "c11r_runs.py").relative_to(C.REPO))
-        at_seal = C.sha256_bytes(C.blob_at(seal_commit, runs_code))
+        problems += S.validate_runs(runs)               # typed seal + structure, schema-owned
+        code = str((C.NS / "code" / "c11r_runs.py").relative_to(C.REPO))
+        at_seal = C.sha256_bytes(C.blob_at(seal_commit, code))
         if runs.get("provenance", {}).get("producer_sha256") != at_seal:
             problems.append("producer hash differs from c11r_runs.py as committed at the seal")
-        for key in ("magnitudes", "value_float", "original_value", "original_values"):
-            if key in disk.decode():
-                problems.append(f"the runs artifact contains a {key!r} field")
+        runs_producer = {"module": "c11r_runs.py", "sha256": at_seal}
     return {"problems": problems, "seal_commit": seal_commit, "runs": runs,
+            "runs_producer": runs_producer,
             "runs_sha256": C.sha256_bytes(disk) if disk else None}
 
 
 # ---------------------------------------------------------------------------------------------
-# 3. the ONLY magnitude load in the campaign outside the table producer
+# 3. the ONLY magnitude load in the campaign outside the extractor
 # ---------------------------------------------------------------------------------------------
-def load_original_magnitudes() -> dict:
-    q = C.load(C.NS / "evidence" / "quarantine" / "C11R_ORIGINAL_MAGNITUDES.json")
+def load_original_magnitudes(stmt_table: dict) -> dict:
+    qpath = C.NS / C.QUARANTINE_REL
+    recorded = stmt_table.get("quarantine", {}).get("content_free_id")
+    now = C.content_free_id(qpath)
+    if not recorded or now != recorded:
+        raise SystemExit("REFUSE: the quarantine is not the one the statement table recorded")
+    q = C.load(qpath)
     return {k: F(v["value"]) for k, v in q["magnitudes"].items()}
 
 
@@ -105,91 +114,96 @@ def classify_numeric(direction: str, indep: F, orig: F, factor: int = FACTOR) ->
     raise ValueError(f"unknown direction {direction!r}")
 
 
-def opposite_direction_pairs(runs: dict, stmt_table: dict) -> list[dict]:
-    """Independent bounds whose quantity the original bounds from the OTHER side."""
-    orig_by_q = {v["quantity"]: (k, v["direction"]) for k, v in
-                 stmt_table["original_statements"].items()}
-    pairs = []
-    for k, t in S.targets(runs).items():
-        st = t.get("statement")
-        if not st or t.get("value") is None:
-            continue
-        hit = orig_by_q.get(st["quantity"])
-        if hit and hit[1] != st["direction"]:
-            pairs.append({"independent": k, "original": hit[0], "quantity": st["quantity"],
-                          "independent_direction": st["direction"],
-                          "original_direction": hit[1]})
-    return pairs
-
-
-def disagreement(pair: dict, indep_value: F, orig_value: F) -> bool:
-    if pair["independent_direction"] == "UPPER_BOUND":     # independent says X <= v
-        return indep_value < orig_value                    # original says X >= orig
-    return indep_value > orig_value                        # independent X >= v, original X <= orig
-
-
-def run_comparison(runs: dict, stmt_table: dict, mags: dict) -> dict:
-    """Everything after the seal, as a pure function. main() and self_test() both call this."""
-    per = {}
-    violations = []
+def run_comparison(runs: dict, stmt_table: dict, mags: dict, policy: dict, *,
+                   expected_certifier_sha: dict, runs_producer: dict,
+                   deductions: dict | None = None) -> dict:
+    """Everything after the seal, as a pure function. main() and the self-tests both call it."""
+    ev = CV.evaluate_run(runs, policy, expected_certifier_sha=expected_certifier_sha,
+                         runs_producer=runs_producer, deductions=deductions)
+    per, violations = {}, []
     for k in S.SIX_CONSTANTS:
         t = S.targets(runs)[k]
-        indep_st = EQ.independent_statement(runs, k)
+        et = ev["targets"][k]
         orig_st = EQ.original_statement(stmt_table, k)
-        cmp = EQ.compare(orig_st, indep_st)
-        if cmp.get("independence_violation"):
-            violations.append(k)
-        rec = {"target_status": t["status"], "statement": cmp,
-               "independent_value": t.get("value"), "original_value": str(mags[k])}
-        if t["status"] != "CERTIFIED" or t.get("value") is None:
-            rec["CLASS"] = "INSUFFICIENT"
-            rec["why"] = f"no independent certified value (status {t['status']})"
-        elif cmp["STATUS"] not in ("EQUIVALENT", "STRONGER"):
-            rec["CLASS"] = "INVALID"
-            rec["why"] = f"statement is {cmp['STATUS']}; its number is not compared"
+        rec = {"target_status": t["status"], "independent_value": t.get("value"),
+               "original_value": str(mags[k])}
+        if t["status"] != "CERTIFIED":
+            rec.update(statement={"STATUS": "NO_INDEPENDENT_STATEMENT"}, numeric=None,
+                       CLASS="INSUFFICIENT", why=f"no certified value (status {t['status']})")
+        elif not et["ok"]:
+            if et.get("independence"):
+                violations.append(k)
+            rec.update(statement={"STATUS": "NOT_PROVED", "reasons": et["problems"]},
+                       numeric=None, CLASS="INVALID",
+                       why=f"the cited certificate does not prove this value: {et['problems']}")
         else:
-            v, o = F(t["value"]), mags[k]
-            rec["numeric"] = classify_numeric(orig_st["direction"], v, o)
-            rec["ratio"] = str(v / o)
-            rec["CLASS"] = rec["numeric"]
-            rec["why"] = f"statement {cmp['STATUS']}; {orig_st['direction']} ratio {float(v / o):.6f}"
+            cmp = EQ.compare(orig_st, et["proposition"])
+            if cmp.get("independence_violation"):
+                violations.append(k)
+            rec["statement"] = cmp
+            if cmp["STATUS"] not in ("EQUIVALENT", "STRONGER"):
+                rec.update(numeric=None, CLASS="INVALID",
+                           why=f"statement {cmp['STATUS']}; the number is not compared")
+            else:
+                v, o = F(t["value"]), mags[k]
+                num = classify_numeric(orig_st["direction"], v, o)
+                rec["numeric"] = {"class": num, "ratio": str(v / o),
+                                  "direction": orig_st["direction"], "factor": FACTOR}
+                if v == o:
+                    rec.update(CLASS="INVALID", why="the independent value equals the original "
+                                                     "EXACTLY -- copied, not certified")
+                else:
+                    rec.update(CLASS=num, why=f"statement {cmp['STATUS']}; {num} at ratio "
+                                              f"{float(v / o):.6f}")
         per[k] = rec
 
-    pairs = opposite_direction_pairs(runs, stmt_table)
-    for pr in pairs:
-        iv = F(S.targets(runs)[pr["independent"]]["value"])
-        pr["disagrees"] = disagreement(pr, iv, mags[pr["original"]])
-        if pr["disagrees"]:
-            per[pr["independent"]]["CLASS"] = "DISAGREES"
-            per[pr["independent"]]["why"] = (f"its {pr['independent_direction']} excludes the "
-                                              f"original's {pr['original_direction']}")
-
+    # DISAGREES: an independent bound whose quantity the original bounds from the other side
+    orig_by_q = {v["quantity"]: (kk, v["direction"])
+                 for kk, v in stmt_table["original_statements"].items()}
+    pairs = []
+    for cid, r in ev["reconstructed"].items():
+        for const, prop in r["propositions"].items():
+            hit = orig_by_q.get(prop["quantity"])
+            if hit and hit[1] != prop["direction"]:
+                iv, ov = r["values"][const], mags[hit[0]]
+                dis = iv < ov if prop["direction"] == "UPPER_BOUND" else iv > ov
+                pairs.append({"certificate": cid, "quantity": prop["quantity"],
+                              "original": hit[0], "independent_direction": prop["direction"],
+                              "disagrees": dis})
+                if dis:
+                    per[hit[0]].update(CLASS="DISAGREES",
+                                       why=f"certificate {cid}'s {prop['direction']} excludes the "
+                                           f"original's {hit[1]}")
     classes = {k: v["CLASS"] for k, v in per.items()}
+    guards_ok = ev["G8"]["PASS"] and ev["G10"]["PASS"] and ev["G19"]["PASS"]
     if violations:
         verdict = "INDEPENDENCE_VIOLATION"
     elif any(c == "DISAGREES" for c in classes.values()):
         verdict = "SCIENTIFIC_DISAGREEMENT"
-    elif any(c == "INVALID" for c in classes.values()):
+    elif any(c == "INVALID" for c in classes.values()) or not guards_ok:
         verdict = "EXECUTION_INVALID"
     elif all(c in ("AGREES", "STRONGER") for c in classes.values()):
         verdict = "N9_CLOSED"
     else:
         verdict = "AGREEMENT_INSUFFICIENT"
     return {"per_target": per, "classes": classes, "opposite_direction_pairs": pairs,
-            "independence_violations": violations, "N9_VERDICT": verdict,
-            "precedence": list(PRECEDENCE)}
+            "independence_violations": violations,
+            "guards": {"G8": ev["G8"], "G10": ev["G10"], "G19": ev["G19"],
+                       "value_trace": ev["value_trace"]},
+            "N9_VERDICT": verdict, "precedence": list(PRECEDENCE)}
 
 
 def render(result: dict) -> list[str]:
     """Prose, rendered ONLY from computed fields, after classification."""
-    lines = []
-    for k in S.SIX_CONSTANTS:
-        r = result["per_target"][k]
-        lines.append(f"{k}: {r['CLASS']} -- {r['why']}")
+    lines = [f"{k}: {result['per_target'][k]['CLASS']} -- {result['per_target'][k]['why']}"
+             for k in S.SIX_CONSTANTS]
     counts = {}
     for c in result["classes"].values():
         counts[c] = counts.get(c, 0) + 1
     lines.append(f"class counts: {dict(sorted(counts.items()))}")
+    lines.append(f"G8 {result['guards']['G8']['PASS']}; G10 {result['guards']['G10']['PASS']}; "
+                 f"G19 {result['guards']['G19']['PASS']}; "
+                 f"value trace {result['guards']['value_trace']['PASS']}")
     lines.append(f"opposite-direction pairs found: {len(result['opposite_direction_pairs'])}")
     lines.append(f"N9 classification by frozen precedence {result['precedence']}: "
                  f"{result['N9_VERDICT']}")
@@ -197,95 +211,120 @@ def render(result: dict) -> list[str]:
 
 
 # ---------------------------------------------------------------------------------------------
-# self-test -- SYNTHETIC runs and SYNTHETIC magnitudes only; never loads the quarantine
+# self-test -- SYNTHETIC certificates and SYNTHETIC magnitudes; never loads the quarantine
 # ---------------------------------------------------------------------------------------------
-def synthetic_runs(stmt_table: dict, values: dict, status: dict | None = None,
-                   statements: dict | None = None) -> dict:
+def synthetic_certs(stmt_table: dict, policy: dict, *, A_K=F(1111, 100), A_H=F(999, 100),
+                    alpha=F(3, 5), kernel_H="Khat_e", certified_K=True) -> dict:
+    """SYNTHETIC certificates at the frozen configuration. Values deliberately round; no
+    certifier ran. Used only by self-tests and the mutation suite."""
     d = stmt_table["drift_domain"]
-    drift = (d["e_lo"], d["e_hi"])
-    status = status or {}
-    routes = {"Abar": "independent_supersolution", "tau": "independent_supersolution",
-              "C_T": "independent_supersolution", "D_lo": "independent_subsolution",
-              "D1": "independent_derivative_propagation",
-              "D2": "independent_derivative_propagation"}
-    deps = {"D1": ("C_T_independent", "tau_independent"),
-            "D2": ("C_T_independent", "tau_independent")}
-    tg = {}
-    for k in S.SIX_CONSTANTS:
-        stt = status.get(k, "CERTIFIED")
-        st = (statements or {}).get(k) or EQ.honest_independent(k, drift, routes[k],
-                                                                deps.get(k, ()))
-        tg[k] = S.target(k, status=stt, value=values.get(k) if stt == "CERTIFIED" else None,
-                         stmt=st if stt == "CERTIFIED" else None,
-                         reason=None if stt == "CERTIFIED" else "synthetic",
-                         certificate_id=None)
-    return S.emit_runs(policy_sha256="0" * 64, statements_sha256="0" * 64,
-                       drift_block=drift, certificates={}, targets=tg)
+    E = (d["e_lo"], d["e_hi"])
+    ch = policy["configuration"]["chosen"]
+
+    def mk(cid, fam, w, ar, mod, fn, kern, cert_ok, extra):
+        res = dict(kernel=kern, certified=cert_ok,
+                   margin_lower_bound=F(1, 1000) if cert_ok else F(-1, 1000), boxes=363, **extra)
+        return CV.make_certificate(cid=cid, family=fam, w=w, drift_block=E, depth=ch["depth"],
+                                   panels=ch["panels"],
+                                   atom_removed=ar, certifier_module=mod, certifier_function=fn,
+                                   result=res, screen="POINTWISE_FEASIBLE", sent=True, seconds=0.0)
+    return {"F_K": mk("F_K", "w = A - B*m", {(0, 0): A_K, (0, 1): F(-3, 2)}, False,
+                      "c11r_idrift.py", "supersolution_margin_iv", "K_e", certified_K,
+                      {"w_min_lower_bound": F(1)}),
+            "F_H": mk("F_H", "w = A - B*m", {(0, 0): A_H, (0, 1): F(-3, 2)}, kernel_H == "Khat_e",
+                      "c11r_idrift.py", "supersolution_margin_iv", kernel_H, True,
+                      {"w_min_lower_bound": F(1)}),
+            "F_D": mk("F_D", "u = alpha + beta*m", {(0, 0): alpha, (0, 1): F(1, 20)}, True,
+                      "c11r_boxdata.py", "subsolution_margin_iv", "Khat_e", True,
+                      {"h_min_lower_bound": F(1, 10000), "u_nonnegative": True})}
 
 
-def self_test(stmt_table: dict) -> dict:
-    """Exercise every branch of run_comparison on synthetic inputs. Loads no real magnitude."""
-    fake = {k: F(10) for k in S.SIX_CONSTANTS}             # synthetic magnitudes, deliberately
-    fake["D_lo"] = F(1, 2)                                 # round and meaningless
+def self_test(stmt_table: dict, policy: dict) -> dict:
+    """Every branch of run_comparison on synthetic inputs. Loads no real magnitude."""
+    import copy
+    import c11r_runs as R
+    fake = {"Abar": F(10), "tau": F(10), "C_T": F(10), "D_lo": F(1, 2), "D1": F(10),
+            "D2": F(10)}                                     # synthetic, deliberately round
+    me = {"module": "c11r_runs.py", "sha256": C.sha256_file(C.HERE / "c11r_runs.py")}
+    exp = CV.certifier_hashes()
     cases = []
 
-    def case(label, runs, expect_verdict, expect_classes=None):
-        r = run_comparison(runs, stmt_table, fake)
-        ok = r["N9_VERDICT"] == expect_verdict and all(
-            r["classes"][k] == v for k, v in (expect_classes or {}).items())
-        cases.append({"case": label, "verdict": r["N9_VERDICT"], "classes": r["classes"],
-                      "expected_verdict": expect_verdict, "ok": ok,
-                      "render": render(r)})
+    def run(certs, deductions=None, mutate=None):
+        r = R.assemble(policy=policy, stmt=stmt_table, certs=certs, stop_reason=None, extra={},
+                       deductions=deductions)
+        if mutate:
+            mutate(r)
+        return run_comparison(r, stmt_table, fake, policy, expected_certifier_sha=exp,
+                              runs_producer=me, deductions=deductions)
 
-    good = {"Abar": F(12), "tau": F(11), "C_T": F(9), "D_lo": F(2, 5), "D1": F(15),
-            "D2": F(5)}
-    case("all six within factor 2", synthetic_runs(stmt_table, good), "N9_CLOSED",
-         {"Abar": "AGREES", "C_T": "STRONGER", "D_lo": "AGREES", "D2": "STRONGER"})
-    case("D1 and D2 not implemented", synthetic_runs(stmt_table, good,
-                                                     {"D1": "NOT_IMPLEMENTED",
-                                                      "D2": "NOT_IMPLEMENTED"}),
-         "AGREEMENT_INSUFFICIENT", {"D1": "INSUFFICIENT", "D2": "INSUFFICIENT"})
-    far = dict(good, Abar=F(25))
-    case("Abar outside factor 2", synthetic_runs(stmt_table, far), "AGREEMENT_INSUFFICIENT",
-         {"Abar": "INSUFFICIENT"})
-    low = dict(good, D_lo=F(1, 5))
-    case("D_lo LOWER bound below half the original", synthetic_runs(stmt_table, low),
-         "AGREEMENT_INSUFFICIENT", {"D_lo": "INSUFFICIENT"})
-    hi = dict(good, D_lo=F(3, 4))
-    case("D_lo LOWER bound above the original is STRONGER, not INSUFFICIENT",
-         synthetic_runs(stmt_table, hi), "N9_CLOSED", {"D_lo": "STRONGER"})
-    d = stmt_table["drift_domain"]
-    mid = str((F(d["e_lo"]) + F(d["e_hi"])) / 2)
-    bad_st = EQ.honest_independent("Abar", (mid, mid), "independent_supersolution")
-    case("a midpoint statement is INVALID whatever its number",
-         synthetic_runs(stmt_table, good, statements={"Abar": bad_st}), "EXECUTION_INVALID",
+    def case(label, res, expect_verdict, expect=None):
+        ok = res["N9_VERDICT"] == expect_verdict and all(
+            res["classes"][k] == v for k, v in (expect or {}).items())
+        cases.append({"case": label, "verdict": res["N9_VERDICT"], "classes": res["classes"],
+                      "expected_verdict": expect_verdict, "ok": ok, "render": render(res)})
+
+    honest = run(synthetic_certs(stmt_table, policy))
+    case("honest certificates; D1, D2 not implemented", honest, "AGREEMENT_INSUFFICIENT",
+         {"Abar": "AGREES", "tau": "STRONGER", "C_T": "STRONGER", "D_lo": "STRONGER",
+          "D1": "INSUFFICIENT"})
+    # SEPARATION: a different value under the SAME legitimately proved proposition
+    far = run(synthetic_certs(stmt_table, policy, A_K=F(25)))
+    sep = (honest["per_target"]["Abar"]["statement"]["STATUS"]
+           == far["per_target"]["Abar"]["statement"]["STATUS"] == "EQUIVALENT")
+    cases.append({"case": "same proposition, different value: statement unchanged, number moves",
+                  "verdict": far["N9_VERDICT"], "classes": far["classes"],
+                  "expected_verdict": "Abar statement EQUIVALENT both times; numeric AGREES -> "
+                                      "INSUFFICIENT",
+                  "ok": sep and honest["classes"]["Abar"] == "AGREES"
+                  and far["classes"]["Abar"] == "INSUFFICIENT", "render": render(far)})
+    case("a K_e certificate cited for tau is refused, not EQUIVALENT",
+         run(synthetic_certs(stmt_table, policy), mutate=lambda r: r["targets"]["tau"].update(
+             certificate_id="F_K")), "EXECUTION_INVALID", {"tau": "INVALID"})
+    case("a value halved after certification is refused (value trace)",
+         run(synthetic_certs(stmt_table, policy), mutate=lambda r: r["targets"]["Abar"].update(
+             value=str(F(r["targets"]["Abar"]["value"]) / 2))), "EXECUTION_INVALID",
          {"Abar": "INVALID"})
-    viol = EQ.honest_independent("D1", (d["e_lo"], d["e_hi"]),
-                                 "independent_derivative_propagation",
-                                 ("C_T", "tau", "C_T_independent", "tau_independent"))
-    case("consuming the original C_T/tau is an INDEPENDENCE_VIOLATION",
-         synthetic_runs(stmt_table, good, statements={"D1": viol}), "INDEPENDENCE_VIOLATION")
-    # DISAGREES: an independent UPPER bound on d(atom) below the original's LOWER bound
-    ub = EQ.honest_independent("D_lo", (d["e_lo"], d["e_hi"]), "independent_subsolution")
-    ub["direction"] = "UPPER_BOUND"
-    ub["aggregation"] = {"method": "single_certificate_whole_block", "sub_blocks": 1}
-    ub["proposition"] = S.PROPOSITION["D_lo"]
-    dis_runs = synthetic_runs(stmt_table, dict(good, D_lo=F(1, 10)), statements={"D_lo": ub})
-    r = run_comparison(dis_runs, stmt_table, fake)
-    cases.append({"case": "an independent UPPER bound below the original LOWER bound DISAGREES",
-                  "verdict": r["N9_VERDICT"], "classes": r["classes"],
-                  "expected_verdict": "SCIENTIFIC_DISAGREEMENT",
-                  "ok": r["N9_VERDICT"] == "SCIENTIFIC_DISAGREEMENT"
-                  and r["classes"]["D_lo"] == "DISAGREES",
-                  "render": render(r)})
-    # the same opposite-direction pair, but compatible, must NOT disagree
-    ok_runs = synthetic_runs(stmt_table, dict(good, D_lo=F(9, 10)), statements={"D_lo": ub})
-    r2 = run_comparison(ok_runs, stmt_table, fake)
-    cases.append({"case": "an independent UPPER bound ABOVE the original LOWER bound is compatible",
-                  "verdict": r2["N9_VERDICT"], "classes": r2["classes"],
-                  "expected_verdict": "not SCIENTIFIC_DISAGREEMENT",
-                  "ok": r2["N9_VERDICT"] != "SCIENTIFIC_DISAGREEMENT",
-                  "render": render(r2)})
+    case("an independent value EQUAL to the original is refused as copied",
+         run(synthetic_certs(stmt_table, policy, alpha=fake["D_lo"])), "EXECUTION_INVALID",
+         {"D_lo": "INVALID"})
+    case("an original-graph certifier is an INDEPENDENCE_VIOLATION",
+         run(synthetic_certs(stmt_table, policy), mutate=lambda r: r["certificates"]["F_K"][
+             "certifier"].update(module="taboo_certify.py")), "INDEPENDENCE_VIOLATION")
+    # G19 in isolation: certificates internally CONSISTENT, but made at another configuration
+    other = copy.deepcopy(policy)
+    other["configuration"]["chosen"] = dict(policy["configuration"]["chosen"],
+                                            depth=policy["configuration"]["chosen"]["depth"] + 1)
+    g19 = run(synthetic_certs(stmt_table, other))
+    case("consistent certificates at another depth than the frozen one: G19 -> EXECUTION_INVALID",
+         g19, "EXECUTION_INVALID",
+         {"Abar": "AGREES", "tau": "STRONGER", "C_T": "STRONGER", "D_lo": "STRONGER"})
+    case("a G10 violation makes the run EXECUTION_INVALID",
+         run(synthetic_certs(stmt_table, policy), mutate=lambda r: r["certificates"]["F_D"].update(
+             screen_classification="POINTWISE_INFEASIBLE")), "EXECUTION_INVALID")
+    # DISAGREES: only through a deduction no production certifier has
+    dd = dict(CV.DEDUCTIONS)
+    dd[("c11r_testonly.py", "d_upper", "Khat_e")] = {
+        "kind": CV.SUPER, "route": "independent_supersolution", "direction": "UPPER_BOUND",
+        "family": "w = A - B*m", "premises": (), "implemented": True, "inequality": "test only",
+        "yields": {"D_lo": "w_at_atom"}}
+    certs = synthetic_certs(stmt_table, policy)
+    extra_cert = copy.deepcopy(certs["F_K"])
+    extra_cert["certificate_id"] = "F_X"
+    extra_cert["certifier"] = {"module": "c11r_testonly.py", "function": "d_upper",
+                               "module_sha256": "t"}
+    extra_cert["certifier_result"]["kernel"] = "Khat_e"
+    extra_cert["inputs"]["atom_removed_argument"] = True
+    extra_cert["weight"] = CV.weight_json({(0, 0): F(1, 10), (0, 1): F(0)})
+    extra_cert["input_digest"] = CV.input_digest(extra_cert["weight"], extra_cert["inputs"],
+                                                 extra_cert["certifier"])
+    certs["F_X"] = extra_cert
+    r_dis = R.assemble(policy=policy, stmt=stmt_table, certs=certs, stop_reason=None, extra={},
+                       deductions=dd)
+    res_dis = run_comparison(r_dis, stmt_table, fake, policy,
+                             expected_certifier_sha=dict(exp, **{"c11r_testonly.py": "t"}),
+                             runs_producer=me, deductions=dd)
+    case("an independent UPPER bound below the original LOWER bound DISAGREES", res_dis,
+         "SCIENTIFIC_DISAGREEMENT", {"D_lo": "DISAGREES"})
 
     seal = {
         "absent": verify_seal_bytes(None, None, False),
@@ -294,13 +333,26 @@ def self_test(stmt_table: dict) -> dict:
         "uncommitted_change": verify_seal_bytes(b"x", b"x", True),
         "sealed": verify_seal_bytes(b"x", b"x", False),
     }
-    seal_ok = all(seal[k] for k in ("absent", "never_committed", "edited_after_commit",
-                                    "uncommitted_change")) and not seal["sealed"]
-    renders_differ = len({tuple(c["render"]) for c in cases}) == len(cases)
-    return {"cases": cases, "seal_controls": seal, "seal_controls_ok": seal_ok,
-            "renders_depend_on_inputs": renders_differ,
+    base = R.assemble(policy=policy, stmt=stmt_table, certs=synthetic_certs(stmt_table, policy),
+                      stop_reason=None, extra={})
+    typed = {
+        "producer_built_false_seal_accepted": not S.seal_problems(base),
+        "true_seal_rejected": bool(S.seal_problems(dict(base, seal=dict(
+            base["seal"], contains_original_magnitudes=True)))),
+        "unrelated_text_with_the_word_accepted": not S.seal_problems(dict(
+            base, note="these magnitudes and original_value words are prose")),
+        "real_payload_key_rejected": bool(S.seal_problems(dict(
+            base, targets=dict(base["targets"], Abar=dict(base["targets"]["Abar"],
+                                                          original_value="1/1"))))),
+    }
+    seal_ok = (all(seal[k] for k in ("absent", "never_committed", "edited_after_commit",
+                                     "uncommitted_change")) and not seal["sealed"]
+               and all(typed.values()))
+    return {"cases": cases, "seal_ordering_controls": seal, "seal_typed_controls": typed,
+            "seal_controls_ok": seal_ok,
+            "renders_depend_on_inputs": len({tuple(c["render"]) for c in cases}) == len(cases),
             "used_real_magnitudes": False,
-            "PASS": all(c["ok"] for c in cases) and seal_ok and renders_differ}
+            "PASS": all(c["ok"] for c in cases) and seal_ok}
 
 
 # ---------------------------------------------------------------------------------------------
@@ -312,15 +364,17 @@ def main() -> int:
             print(f"  - {p}")
         return 2
     runs = seal["runs"]
-    stmt_table = C.load(C.NS / "evidence" / "table" / "C11R_N9_STATEMENTS.json")
-    mags = load_original_magnitudes()                     # only now, only here
-    result = run_comparison(runs, stmt_table, mags)
-    out = {"schema": "C11R_COMPARISON/2",
+    stmt_table = C.load_allowlisted("evidence/table/C11R_N9_STATEMENTS.json")
+    policy = C.load_allowlisted("config/C11R_POLICY.json")
+    exp = CV.certifier_hashes(seal["seal_commit"])
+    mags = load_original_magnitudes(stmt_table)          # only now, only here
+    result = run_comparison(runs, stmt_table, mags, policy, expected_certifier_sha=exp,
+                            runs_producer=seal["runs_producer"])
+    out = {"schema": "C11R_COMPARISON/3",
            "seal": {"commit": seal["seal_commit"], "runs_sha256": seal["runs_sha256"]},
            "comparison_rule_source": {"artifact": "evidence/table/C11R_N9_STATEMENTS.json",
                                       "sha256": stmt_table["sha256"]},
-           "result": result,
-           "rendered": render(result)}
+           "result": result, "rendered": render(result)}
     s = C.write_evidence(C.NS / "evidence" / "comparison" / "C11R_COMPARISON.json", out,
                          producer=__file__)
     for line in out["rendered"]:

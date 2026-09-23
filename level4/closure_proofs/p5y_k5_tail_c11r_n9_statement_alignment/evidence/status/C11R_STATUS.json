@@ -3,6 +3,7 @@
  "artifacts": {
   "p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_POLICY.json": {
    "inputs": [
+    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/cost/C11R_COST.json",
     "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json",
     "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/validation/C11R_VALIDATION.json"
    ],
@@ -22,6 +23,11 @@
    "state": "FRESH",
    "why": []
   },
+  "p5y_k5_tail_c11r_n9_statement_alignment/evidence/cost/C11R_COST.json": {
+   "inputs": [],
+   "state": "FRESH",
+   "why": []
+  },
   "p5y_k5_tail_c11r_n9_statement_alignment/evidence/equivalence/C11R_EQUIVALENCE.json": {
    "inputs": [
     "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json"
@@ -36,7 +42,22 @@
   },
   "p5y_k5_tail_c11r_n9_statement_alignment/evidence/firewall/C11R_FIREWALL.json": {
    "inputs": [
-    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json"
+    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_POLICY.json",
+    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/N9R_GATE_C11R.json",
+    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/b0/C11R_B0.json",
+    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/cost/C11R_COST.json",
+    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/equivalence/C11R_EQUIVALENCE.json",
+    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/errata/C11R_ERRATA.json",
+    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/policy/C11R_POLICY_EVIDENCE.json",
+    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json",
+    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/validation/C11R_VALIDATION.json"
+   ],
+   "state": "FRESH",
+   "why": []
+  },
+  "p5y_k5_tail_c11r_n9_statement_alignment/evidence/leakcheck/C11R_LEAKCHECK.json": {
+   "inputs": [
+    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/quarantine/C11R_ORIGINAL_MAGNITUDES.json"
    ],
    "state": "FRESH",
    "why": []
@@ -54,15 +75,9 @@
   },
   "p5y_k5_tail_c11r_n9_statement_alignment/evidence/policy/C11R_POLICY_EVIDENCE.json": {
    "inputs": [
+    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/cost/C11R_COST.json",
     "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json",
     "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/validation/C11R_VALIDATION.json"
-   ],
-   "state": "FRESH",
-   "why": []
-  },
-  "p5y_k5_tail_c11r_n9_statement_alignment/evidence/quarantine/C11R_ORIGINAL_MAGNITUDES.json": {
-   "inputs": [
-    "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/registry_c2/REGISTRY_C2.json"
    ],
    "state": "FRESH",
    "why": []
@@ -86,7 +101,9 @@
   "EQUIVALENCE": "READY",
   "FIREWALL": "PASS",
   "GATE_RESULT_LANGUAGE_HITS": 0,
+  "LEAK": "PASS",
   "MUTATIONS": "PASS",
+  "QUALIFIER_SELF_TEST": true,
   "TABLE": "RESOLVED",
   "VALIDATION": "PASS"
  },
@@ -95,7 +112,9 @@
   "EQUIVALENCE": "READY",
   "FIREWALL": "PASS",
   "GATE_RESULT_LANGUAGE_HITS": 0,
+  "LEAK": "PASS",
   "MUTATIONS": "PASS",
+  "QUALIFIER_SELF_TEST": true,
   "TABLE": "RESOLVED",
   "VALIDATION": "PASS"
  },
@@ -104,34 +123,171 @@
   "clean_pair_accepted": true,
   "corrupt_body_detected": true,
   "fresh_accepted": true,
+  "policy_against_other_cost_artifact": true,
   "stale_input_detected": true,
   "stale_producer_detected": true,
   "unbound_detected": true,
   "validation_0_vs_mutation_9": true
  },
- "generated_from": "the committed artifacts; no line of this report is typed by hand",
+ "generated_from": "the allowlisted artifacts; no line of this report is typed by hand",
+ "handover_counts": {
+  "adversarial_certificate_controls": 16,
+  "adversarial_controls_caught": 16,
+  "artifacts_checked": 12,
+  "b0_checks": 14,
+  "errata_entries": 24,
+  "firewall_modules_scanned": 23,
+  "firewall_negative_controls": 16,
+  "firewall_positive_controls": 34,
+  "gate_predicates": 18,
+  "leak_files_scanned": 35,
+  "mutants": 40,
+  "mutants_detected": 40,
+  "validation_checks": 17
+ },
+ "inventory": {
+  "files_listed": 14,
+  "retired_present": [],
+  "unexpected": []
+ },
+ "leak_check_covers_current_bytes": true,
  "not_fresh": {},
+ "not_scanned_by_the_leak_check": "this status artifact: it carries classes, booleans, file names, hashes and counts only, and its keys pass the structural scan below",
+ "post_seal_toolchain_matches_gate": {
+  "c11r_boxdata.py": true,
+  "c11r_certificate.py": true,
+  "c11r_common.py": true,
+  "c11r_compare.py": true,
+  "c11r_equiv.py": true,
+  "c11r_idrift.py": true,
+  "c11r_runs.py": true,
+  "c11r_schema.py": true
+ },
  "pre_result_state": {
   "evidence_runs_absent": true,
-  "no_authorization_with_guard_ALLOW": true,
+  "gate_guard_DENY": true,
+  "no_authorization_artifact": true,
+  "no_authorization_in_any_commit": true,
   "no_comparison_artifact": true,
+  "no_qualification_artifact": true,
   "no_runs_artifact_in_any_commit": true
+ },
+ "preserved_reviews_unedited": {
+  "review/REVIEW_C11R_PREFREEZE.md": true,
+  "review/REVIEW_C11R_PREFREEZE_R2.md": true
  },
  "provenance": {
   "code_closure": {
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "2576efe0b80a0c73f1164d7b0e8538ee6c71a5c5c61b68d755a2e763d58cde4e",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_firewall.py": "892b87ceb524406cefe55cb841bdf62a7d5378a20209a5e9a0717765f5b74042",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_status.py": "af6c5ff081a16ba009f83fbc6e220c549ee0285461d856370f47099fad72ec1d"
+   "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py": "fc88fb0dcc0f757d9ed42b08ecdd9e7ca2c65320181320f009390d67e3155741",
+   "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_common.py": "c55e97b9e2dc626992d3fa25ef23833fcccee88e787a916aa02dc23c2f0ab1b2",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_certificate.py": "cccc251f99083dae047271565580eefa83cedb1ca67055bf85924ac13ba582f0",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "5b2b39e7a448e898cd8c6ef03abf0fce59f65bb44b4a776d0e73b0ea023cca63",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_cost.py": "8e75433c2a771f6b26114511c801736850385ba61f76101e1b596ee50e342ae2",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_firewall.py": "0213107bd5db256ad18743bc74981d4f542b7099261e6178b0f258f935dd5d5f",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py": "c25a2ede2dc9547db30bdff78ce53717aab3ef4cb64fb256242009f42d8cb35c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_qualify.py": "be0e38cac7abea3c12c50ff6f3c054c871ffea7fda2f9a7ed7e8b5867d68e73c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "60a1ec4f2fabc78b6d82981a4eee77e43cd73f9bd5df91a9095712d80e7cdaec",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_status.py": "828ed254d82d2ca483ad6656f41ebaa9be3f926aed3b7036aaedf33896083230",
+   "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
   },
-  "inputs": {},
+  "inputs": {
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_POLICY.json": "db28703fb02f8f50450a87d6eddd100a669127253f98865bb08b9858317a5391",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/N9R_GATE_C11R.json": "285f4d7e7275af454a9765d6cfd620aa0c1129c8f22b472e68237fda692edd9d",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/b0/C11R_B0.json": "a4881ffcda46eb95c8642efbd08cd9ff362b91854dbc0265e75e84f9e77bf55f",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/cost/C11R_COST.json": "097d9e9b03176b7e3e50a675708ff27883001cb8a596fd8f87f14757f356607f",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/equivalence/C11R_EQUIVALENCE.json": "51ca2e6593a694f4066d655b73705be27e1a29c7134af5854dd23b90666124e8",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/errata/C11R_ERRATA.json": "2a130a7e3285e1c53c97b7b6570377c3bdb74b3e7d9395df42ad3bf73a56308f",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/firewall/C11R_FIREWALL.json": "829ad0a5b3791a787edd296f8e30cfcf871ca90db708d5d4337edbac5bb52134",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/leakcheck/C11R_LEAKCHECK.json": "cd888bfa60055966912408e6e8e794cb163eb4ba5922fd6c3985e453d9936ea7",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/mutations/C11R_MUTATIONS.json": "ca62444295f4c25efaa2235c1f5a5d0864af481a0d8551faf14f871d93c204f9",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/policy/C11R_POLICY_EVIDENCE.json": "a992b769c60d30bf6282f06d5672d8b82d2180546f460e55ba33bc281f6d7918",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "06b3efe2211a7554d25be8e7b4359057ea1c54fa4a44cf5d34c01fe75e88348b",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/validation/C11R_VALIDATION.json": "615c9fa1bd2076f0e9042da1cf43257d7f32482cb91b217410639530629c0ce6"
+  },
   "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_status.py",
-  "producer_sha256": "af6c5ff081a16ba009f83fbc6e220c549ee0285461d856370f47099fad72ec1d"
+  "producer_sha256": "828ed254d82d2ca483ad6656f41ebaa9be3f926aed3b7036aaedf33896083230"
  },
+ "qualifier_self_test": {
+  "ALL_PASS": true,
+  "computes_on_open_cells": false,
+  "rows": {
+   "atom_decomposition_nt": {
+    "pass": true
+   },
+   "host_other_cpu_rejected": {
+    "pass": true
+   },
+   "host_same": {
+    "pass": true
+   },
+   "import_scan": {
+    "pass": true
+   },
+   "rederive_honest": {
+    "detail": {
+     "frozen": {
+      "depth": 4,
+      "panels": 128
+     },
+     "problems": [],
+     "rederived": {
+      "depth": 4,
+      "panels": 128
+     }
+    },
+    "pass": true
+   },
+   "rederive_rejects_a_raised_cap": {
+    "detail": {
+     "frozen": {
+      "depth": 4,
+      "panels": 128
+     },
+     "problems": [
+      "the frozen cap differs from the policy module's"
+     ],
+     "rederived": {
+      "depth": 4,
+      "panels": 128
+     }
+    },
+    "pass": true
+   },
+   "rederive_rejects_a_tampered_choice": {
+    "detail": {
+     "frozen": {
+      "depth": 6,
+      "panels": 128
+     },
+     "problems": [
+      "re-derived configuration {'depth': 4, 'panels': 128} != frozen {'depth': 6, 'panels': 128}"
+     ],
+     "rederived": {
+      "depth": 4,
+      "panels": 128
+     }
+    },
+    "pass": true
+   },
+   "scalar_collapse_nt": {
+    "pass": true
+   }
+  },
+  "writes_nothing": true
+ },
+ "quarantine_matches_recorded_id": true,
+ "reads": "common.PRE_RESULT_ARTIFACTS only; protected files by content-free id",
  "reviewed_machinery_unchanged": {
-  "c11_certifier_identical_to_C11_HEAD": true,
-  "c11r_idrift_identical_to_first_reviewed_commit_49b17ab4": true,
-  "c7_gaussian_identical_to_C11_HEAD": true
+  "c11_certifier.py": true,
+  "c11r_idrift.py": true,
+  "c7_gaussian.py": true
  },
- "schema": "C11R_STATUS/1",
- "sha256": "93fb4bc188147912de4c011d04e61dd1c486e44365ba6ed6059f7fbf9e25155d"
+ "schema": "C11R_STATUS/2",
+ "sha256": "e4a65a6517f972a3f91a9e7ab49a4eaa4cb369c8d439c878ea6eaa95bd21ef74",
+ "structural_scan_of_every_artifact": {
+  "artifacts_scanned": 12,
+  "forbidden_payload_keys": {}
+ }
 }

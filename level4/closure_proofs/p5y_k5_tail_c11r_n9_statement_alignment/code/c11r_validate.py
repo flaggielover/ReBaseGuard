@@ -1,4 +1,4 @@
-"""C11R Phase 7 -- manufactured validation. Revision 2.
+"""C11R Phase 7 -- manufactured validation. Revision 3 (adds V17).
 
 Identities the implementation cannot satisfy by accident, and soundness checks on the machinery
 revision 2 adds. The decisive old check is V6, SCALAR COLLAPSE: with a degenerate drift interval
@@ -20,6 +20,11 @@ V14     the D_lo sub-solution route is SOUND: its certified lower bound does not
         independent float solution of d = h_1 + Khat_e d, and an inflated u fails certification.
 V15     the Phi cache changes no bit.
 V16     the pointwise coefficient form is conservative (an upper bound on L) for the screen.
+V17     the D_lo family's OWN pointwise ceiling on NT (erratum E13): the largest alpha that
+        u = alpha + beta m can have at any beta in the frozen grid without being refuted at a
+        state of the 15x15 screen. It separates what the FAMILY can reach from what a coarse box
+        configuration certifies (V14). A state whose coefficient 1 - Khat_e 1 is not positive
+        gives no upper bound on alpha and is skipped; skipping can only RAISE the ceiling.
 """
 from __future__ import annotations
 
@@ -316,8 +321,49 @@ def main() -> int:
     rec("V16", "the pointwise coefficient form upper-bounds L, so the screen is conservative",
         ok, {"rows": rows})
 
+    # V17 -- the D_lo family's own pointwise ceiling on NT (erratum E13)
+    with BD.PhiCache():
+        pwc = [BD.pointwise_coeffs(p, m, NT) for (p, m) in BD.pointwise_grid(15)]
+    skipped = sum(1 for c in pwc if 1 - (c["K1"][1] - c["atom1"][0]) <= 0)
+
+    def alpha_cap(j: int) -> F:
+        beta, best = F(j, 1000), None
+        for c in pwc:
+            den = 1 - (c["K1"][1] - c["atom1"][0])
+            if den <= 0:
+                continue
+            v = (c["h1"][1] + beta * (c["Km"][1] - c["m"])) / den
+            best = v if best is None or v < best else best
+        return best
+
+    lo, hi = 0, 1000                          # alpha_cap is concave in beta: a min of lines
+    while hi - lo > 2:
+        m1, m2 = lo + (hi - lo) // 3, hi - (hi - lo) // 3
+        if alpha_cap(m1) < alpha_cap(m2):
+            lo = m1 + 1
+        else:
+            hi = m2
+    j_best = max(range(lo, hi + 1), key=lambda j: (alpha_cap(j), -j))
+    ceiling = alpha_cap(j_best)
+    neighbours_lower = all(alpha_cap(j) <= ceiling for j in (max(0, j_best - 1),
+                                                              min(1000, j_best + 1)))
+    v14_alpha = F(sl["alpha"])
+    consistent = v14_alpha <= ceiling
+    rec("V17", "the D_lo family's own pointwise ceiling on NT bounds what V14 certified",
+        consistent and neighbours_lower and ceiling > 0,
+        {"block": "NON-TARGET", "grid": "15x15 on R", "states": len(pwc),
+         "states_skipped_nonpositive_coefficient": skipped,
+         "ceiling_alpha": float(ceiling), "at_beta": str(F(j_best, 1000)),
+         "float_reference_d_at_atom": refs,
+         "ceiling_to_reference_min": min(float(ceiling) / r for r in refs.values()),
+         "v14_certified_alpha": float(v14_alpha), "v14_config": [D14, P14],
+         "v14_alpha_below_ceiling": consistent,
+         "reading": ("the ceiling is what the FAMILY can reach at the pointwise level; the gap "
+                     "between it and V14's certified alpha is box and panel loss at the coarse "
+                     "V14 configuration. Neither figure is a statement about cell 306.")})
+
     failed = [r["id"] for r in results if not r["pass"]]
-    out = {"schema": "C11R_VALIDATION/2",
+    out = {"schema": "C11R_VALIDATION/3",
            "block": "NON-TARGET [5/2, 5/2 + 108337/1250000]; scalar e = 5/2",
            "why_non_target": ("every check is drift-independent mathematics; running them off "
                               "every open cell removes all contact with target-block quantities"),

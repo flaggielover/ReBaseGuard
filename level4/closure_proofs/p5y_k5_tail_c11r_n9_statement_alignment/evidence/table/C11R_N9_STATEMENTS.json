@@ -306,7 +306,7 @@
  },
  "leak_check": {
   "magnitudes_found": 0,
-  "method": "every original magnitude, as an exact rational and as a float at 3, 4 and 6 decimals and full repr, searched for in the serialised statement table"
+  "method": "each original magnitude as its exact rational string, and as a decimal ROUNDED and TRUNCATED to 4, 5, 6, 7 and 8 places; each pattern is left-bounded so that it cannot match inside a longer number (12.3456 does not match 2.3456)"
  },
  "original_certifier": {
   "path": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/taboo_certify.py",
@@ -542,18 +542,23 @@
  },
  "provenance": {
   "code_closure": {
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "2576efe0b80a0c73f1164d7b0e8538ee6c71a5c5c61b68d755a2e763d58cde4e",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "1a686218bac9d214a36745831ef406b8019ff7f455bee25cc06568e463e69cfa",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_table.py": "ef3a3ba5c73e8dfe09ee60f4c632435d6ffbccf68dc4bb6557652d4dfaf13e20"
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "5b2b39e7a448e898cd8c6ef03abf0fce59f65bb44b4a776d0e73b0ea023cca63",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "60a1ec4f2fabc78b6d82981a4eee77e43cd73f9bd5df91a9095712d80e7cdaec",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_table.py": "9b2729c0202a7385bcc0fc8fa120a9d1f8c3b59eb1cf08b10372d7d84d2c235d"
   },
   "inputs": {
-   "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/registry_c2/REGISTRY_C2.json": "1b2b834939fcd80a81ddc8f029f46705b53cefeb46c0cc925a99c2b8e856fdd6"
+   "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/registry_c2/REGISTRY_C2.json": "gitobj:1a3adfd3d893790498f9776d32121deb76469077"
   },
   "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_table.py",
-  "producer_sha256": "ef3a3ba5c73e8dfe09ee60f4c632435d6ffbccf68dc4bb6557652d4dfaf13e20"
+  "producer_sha256": "9b2729c0202a7385bcc0fc8fa120a9d1f8c3b59eb1cf08b10372d7d84d2c235d"
+ },
+ "quarantine": {
+  "content_free_id": "gitobj:d748f152b82694f3349945def5781c54e7cf5292",
+  "note": "verify with c11r_common.content_free_id; never read it",
+  "path": "evidence/quarantine/C11R_ORIGINAL_MAGNITUDES.json"
  },
  "schema": "C11R_N9_STATEMENTS/1",
- "sha256": "bd98e16fce898415cff009fc0f993b88b86077d532c54e5b41d637fb28bd54aa",
+ "sha256": "54503785ec4c7554da2f89d4a213abd7a9cef1f4887017f48f14d243adb45630",
  "state_set": "R = {(p, m) in [0,5]^2 : p + m <= 4 or p = 0 or m = 0}; atom a = (0, 0); certified over a box cover that is a superset of R",
  "supersedes": "C11R_N9_TABLE/1 (38f59993), which mixed magnitudes with semantics",
  "unresolved_fields": []

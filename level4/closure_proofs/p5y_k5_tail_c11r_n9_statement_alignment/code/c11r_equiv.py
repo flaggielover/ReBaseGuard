@@ -6,9 +6,15 @@ WHAT WAS WRONG (erratum E6). Revision 1 built the "independent" proposition as a
 original's and overwrote only its drift domain -- with the original's own domain. It compared the
 original against itself and could only return EQUIVALENT; no field of the runs artifact was read.
 
+ROUND 3 (blocker B-3, erratum E16). Round 2's independent side was still a template: the runs
+producer declared each target's statement with c11r_schema.statement(constant) -- the same
+name-keyed template the original side uses -- so the comparison could not fail. Now:
+
 WHAT THIS MODULE DOES INSTEAD
-  * `independent_statement` reads the independent proposition from the RUNS ARTIFACT'S OWN target
-    record. It never touches the original.
+  * `independent_statement` RECONSTRUCTS the independent proposition from the certificate the
+    target cites, through c11r_certificate.reconstruct: which constants the certificate proves, and
+    every field of the proposition, are derived from the certifier's identity, hash, inputs and
+    its own result -- never from the target's constant name. It never touches the original.
   * `original_statement` reads the original's proposition from the statement table -- semantics
     only; that table carries no magnitude.
   * `check_internal` validates the independent record on its own before any comparison: kernel
@@ -40,9 +46,17 @@ INDEPENDENT_SUFFIX = "_independent"
 # ---------------------------------------------------------------------------------------------
 # the two readers -- deliberately separate, neither consults the other
 # ---------------------------------------------------------------------------------------------
-def independent_statement(runs: dict, constant: str) -> dict | None:
+def independent_statement(runs: dict, constant: str, *, expected_certifier_sha: dict,
+                          runs_producer: dict, deductions: dict | None = None) -> dict | None:
+    """The proposition the cited certificate PROVES for `constant`, or None if it proves none."""
+    import c11r_certificate as CV
     t = S.targets(runs)[constant]
-    return copy.deepcopy(t["statement"]) if t.get("statement") else None
+    cert = S.certificates(runs).get(t.get("certificate_id") or "")
+    if t.get("status") != "CERTIFIED" or cert is None:
+        return None
+    r = CV.reconstruct(cert, expected_certifier_sha=expected_certifier_sha,
+                       runs_producer=runs_producer, deductions=deductions)
+    return copy.deepcopy(r["propositions"].get(constant)) if not r["problems"] else None
 
 
 def original_statement(statements_table: dict, constant: str) -> dict:
@@ -246,7 +260,7 @@ def self_test(stmt_table: dict) -> dict:
 
 
 def main() -> int:
-    tbl = C.load(C.NS / "evidence" / "table" / "C11R_N9_STATEMENTS.json")
+    tbl = C.load_allowlisted("evidence/table/C11R_N9_STATEMENTS.json")
     st = self_test(tbl)
     out = {"schema": "C11R_EQUIVALENCE/2",
            "supersedes": "C11R_EQUIVALENCE/1, whose comparator was fed a copy of the original",
@@ -254,7 +268,13 @@ def main() -> int:
            "exact_fields": list(S.EXACT_FIELDS),
            "domain_rule": "exact rationals: EQUAL, SUPERSET (stronger), SUBSET (weaker)",
            "premise_rule": "fewer premises is stronger; an ORIGINAL constant as a premise is INVALID",
-           "independent_side_built_from": "the runs artifact's own target statement records",
+           "independent_side_built_from": ("c11r_certificate.reconstruct of the certificate each "
+                                           "target cites -- never a declared statement"),
+           "note_on_this_self_test": ("these cases exercise compare() on statement RECORDS. The "
+                                      "certificate-level adversarial controls -- forged, relabelled "
+                                      "and altered certificates -- run through the production "
+                                      "reconstruction in the mutation suite and the comparator's "
+                                      "self-test."),
            "original_side_built_from": "evidence/table/C11R_N9_STATEMENTS.json (no magnitudes)",
            "self_test": st,
            "EQUIV_CLASS": "READY" if st["PASS"] else "REFUSE"}

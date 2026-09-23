@@ -227,8 +227,10 @@ def subsolution_margin_iv(u: dict, E: I.Blk, depth: int, panels: int) -> dict:
         m = h + kl - uh
         mn = m if mn is None or m < mn else mn
         h_min = h if h_min is None or h < h_min else h_min
+    # the certifier reports its OWN kernel, as the reviewed supersolution certifier does: the lower
+    # bound removes the atom union, so what this function certifies is always about Khat_e
     return {"margin_lower_bound": mn, "h_min_lower_bound": h_min, "u_nonnegative": nonneg,
-            "boxes": len(boxes),
+            "boxes": len(boxes), "kernel": "Khat_e",
             "certified": bool(mn is not None and mn > 0 and nonneg and h_min > 0)}
 
 

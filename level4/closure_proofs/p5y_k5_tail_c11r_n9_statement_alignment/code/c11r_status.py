@@ -1,45 +1,54 @@
-"""C11R Repair E -- evidence freshness, cross-artifact consistency, and the generated status report.
+"""C11R -- evidence freshness, cross-artifact consistency, and the generated status report. Rev. 2.
 
 WHY (errata E4 and E5). The first freeze carried a mutation artifact produced by older code than
 the validation artifact beside it: validation said V6 had 0 mismatches, mutations said 9, and the
 class was REFUSE. Nothing recorded which code produced either, so it went unnoticed -- and the
 author's status report, typed from memory, said something else again.
 
-WHAT THIS MODULE DOES
-  1  FRESHNESS. For every artifact under evidence/ and config/, recompute the sha256 of its
-     producer, of every module in its recorded code closure, and of every input it read, and
-     compare with what the artifact recorded. Any difference is STALE. An artifact whose own
-     sha256 no longer matches its body is CORRUPT. One without provenance is UNBOUND.
-  2  PROPAGATION. An artifact is FRESH only if every campaign artifact it read is FRESH.
-  3  CONTRADICTIONS. Cross-artifact claims are checked against each other -- a validation reporting
-     0 scalar-collapse mismatches beside a mutation record citing any other number is REFUSE.
-  4  PRE-RESULT STATE. No evidence/runs/, no authorization with guard ALLOW, no comparison.
-  5  The status report is GENERATED from the artifacts. Nothing in it is typed by hand.
+REVISION 2 (review round 2, B-2; erratum E14). Revision 1 json-loaded every file under evidence/
+and config/ by directory glob -- the quarantine included -- and compared historical blobs by
+reading them. It now reads ONLY the explicit allowlist (common.PRE_RESULT_ARTIFACTS). A protected
+file is checked by CONTENT-FREE identity: `git hash-object` of the file against the id recorded
+for it, and `git rev-parse <commit>:<path>` for a historical version. No byte of the quarantine, a
+review report or a predecessor's artifact enters this process.
 
-Planted controls show the checker refusing a stale producer, a stale input, a corrupted body, and
-the exact contradiction that slipped through revision 1.
+WHAT THIS MODULE DOES
+  1  FRESHNESS. For every allowlisted artifact, recompute the sha256 of its producer, of every
+     module in its recorded code closure, and of every input it read (a protected input by its
+     content-free id), and compare with what the artifact recorded. Any difference is STALE; a
+     body that no longer hashes to its sha256 is CORRUPT; one without provenance is UNBOUND.
+  2  PROPAGATION. An artifact is FRESH only if every campaign artifact it read is FRESH.
+  3  CONTRADICTIONS. Cross-artifact claims are checked against each other.
+  4  INVENTORY. Every file under evidence/ and config/ (names only, `git ls-files`) must be an
+     allowlisted artifact or the quarantine; the retired artifacts must be absent.
+  5  PRE-RESULT STATE. No evidence/runs/, no authorization, no comparison, in the tree or in any
+     commit.
+  6  The report and the handover counts are GENERATED from the artifacts.
 """
 from __future__ import annotations
 
 import copy
-import json
 import pathlib
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import c11r_common as C
 import c11r_firewall as FW
+import c11r_qualify as Q
 
-SELF_OUT = C.NS / "evidence" / "status" / "C11R_STATUS.json"
-
-
-def _artifacts() -> list[pathlib.Path]:
-    out = sorted((C.NS / "evidence").rglob("*.json")) + sorted((C.NS / "config").glob("*.json"))
-    return [p for p in out if p.resolve() != SELF_OUT.resolve()]
+SELF_REL = "evidence/status/C11R_STATUS.json"
+VERIFY_ONLY = sys.argv[1:] == ["--verify-only"]
+PRESERVED_REVIEWS = {"review/REVIEW_C11R_PREFREEZE.md": "6d7cd546",
+                     "review/REVIEW_C11R_PREFREEZE_R2.md": "6ae05833"}
+REVIEWED_MACHINERY = {f"{C.NS_REL}/code/c11r_idrift.py": "49b17ab4",
+                      "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/"
+                      "c11_certifier.py": C.C11_HEAD,
+                      "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py":
+                          C.C11_HEAD}
 
 
 def freshness(obj: dict, now_sha) -> dict:
-    """now_sha(relpath) -> current sha256 or None if absent. Pure given that function."""
+    """now_sha(relpath) -> current id or None if absent. Pure given that function."""
     body = {k: v for k, v in obj.items() if k != "sha256"}
     if C.sha256_obj(body) != obj.get("sha256"):
         return {"state": "CORRUPT", "why": ["the body no longer hashes to its recorded sha256"]}
@@ -79,10 +88,9 @@ def contradictions(A: dict) -> list[str]:
                            f"validation reports {n_val}")
         if v6 and v6["pass"] is False and mut.get("MUTATION_CLASS") == "PASS":
             out.append("mutations PASS while validation V6 FAILS")
-    stmt, pol = A.get("statements"), A.get("policy")
+    stmt, pol, gate = A.get("statements"), A.get("policy"), A.get("gate")
     if stmt and pol and pol.get("statements_sha256") != stmt.get("sha256"):
         out.append("the policy was frozen against a different statement table")
-    gate = A.get("gate")
     if gate and pol and gate.get("policy_sha256") != pol.get("sha256"):
         out.append("the gate is bound to a different policy")
     if gate and stmt and gate.get("statements_sha256") != stmt.get("sha256"):
@@ -91,11 +99,18 @@ def contradictions(A: dict) -> list[str]:
         out.append("the statement table does not declare itself magnitude-free")
     if pol and pol.get("references_original_magnitudes") is not False:
         out.append("the policy does not declare itself free of original magnitudes")
+    cost = A.get("cost")
+    if pol and cost and pol["configuration"]["cost_model"]["source_artifact_sha256"] != \
+            cost.get("sha256"):
+        out.append("the policy was frozen against a different cost artifact")
+    err = A.get("errata")
+    if err and err.get("CONTAINS_NO_ORIGINAL_MAGNITUDE") is not True:
+        out.append("the errata do not declare themselves free of original magnitudes")
     return out
 
 
 def _controls(A: dict) -> dict:
-    """Planted defects the checker must refuse; and one clean case it must accept."""
+    """Planted defects the checker must refuse; and clean cases it must accept."""
     res = {}
     if "validation" in A and "mutations" in A:
         planted = copy.deepcopy(A)
@@ -103,6 +118,10 @@ def _controls(A: dict) -> dict:
             {"id": "PLANTED", "cites_v6_mismatch_count": 9}]
         res["validation_0_vs_mutation_9"] = bool(contradictions(planted))
         res["clean_pair_accepted"] = not contradictions(A)
+    if "policy" in A and "cost" in A:
+        planted = copy.deepcopy(A)
+        planted["cost"]["sha256"] = "0" * 64
+        res["policy_against_other_cost_artifact"] = bool(contradictions(planted))
     base = {"x": 1}
     base["sha256"] = C.sha256_obj(base)
     corrupt = dict(base, x=2)
@@ -123,77 +142,124 @@ def _controls(A: dict) -> dict:
 
 
 def main() -> int:
-    def now_sha(rel: str):
-        p = C.REPO / rel
-        return C.sha256_file(p) if p.exists() else None
+    # current identities, from STATIC lists only: allowlisted artifacts by sha256 of their bytes
+    current = {f"{C.NS_REL}/{rel}": C.sha256_file(C.NS / rel)
+               for rel in C.ALLOWED_NS_INPUTS if (C.NS / rel).exists()}
 
+    def now_sha(rel: str):
+        if rel.endswith(".py"):
+            return C.sha256_code(rel) if (C.REPO / rel).exists() else None
+        if C.is_protected(rel):
+            return C.content_free_id(C.REPO / rel)             # an id; no content is read
+        return current.get(rel, "UNVERIFIABLE: not an allowlisted input")
+
+    # the analysis that proves this module's reads is flow-insensitive, so every load-path
+    # variable here has a single purpose and a name used for nothing else
     arts, rows = {}, {}
-    for p in _artifacts():
-        obj = json.loads(p.read_text())
-        rel = str(p.relative_to(C.REPO))
-        arts[rel] = obj
-        rows[rel] = freshness(obj, now_sha)
-    # propagation: FRESH only if every campaign artifact it read is FRESH
+    for art in C.PRE_RESULT_ARTIFACTS:
+        if art == SELF_REL:
+            continue
+        if not (C.NS / art).exists():
+            rows[f"{C.NS_REL}/{art}"] = {"state": "MISSING", "why": ["not written"]}
+            continue
+        obj = C.load_allowlisted(art)
+        arts[art] = obj
+        rows[f"{C.NS_REL}/{art}"] = freshness(obj, now_sha)
     changed = True
     while changed:
         changed = False
-        for rel, r in rows.items():
-            if r["state"] != "FRESH":
+        for key, row in rows.items():
+            if row["state"] != "FRESH":
                 continue
-            bad = [i for i in r.get("inputs", []) if i in rows and rows[i]["state"] != "FRESH"]
+            bad = [i for i in row.get("inputs", []) if i in rows and rows[i]["state"] != "FRESH"]
             if bad:
-                r["state"] = "STALE"
-                r["why"] = [f"reads non-fresh input {b.split('/')[-1]}" for b in bad]
+                row["state"] = "STALE"
+                row["why"] = [f"reads non-fresh input {b.split('/')[-1]}" for b in bad]
                 changed = True
 
-    def pick(suffix):
-        for rel, o in arts.items():
-            if rel.endswith(suffix):
-                return o
-        return None
-    A = {"validation": pick("validation/C11R_VALIDATION.json"),
-         "mutations": pick("mutations/C11R_MUTATIONS.json"),
-         "statements": pick("table/C11R_N9_STATEMENTS.json"),
-         "policy": pick("config/C11R_POLICY.json"),
-         "gate": pick("config/N9R_GATE_C11R.json"),
-         "firewall": pick("firewall/C11R_FIREWALL.json"),
-         "equivalence": pick("equivalence/C11R_EQUIVALENCE.json"),
-         "errata": pick("errata/C11R_ERRATA.json"),
-         "b0": pick("b0/C11R_B0.json")}
+    A = {"b0": arts.get("evidence/b0/C11R_B0.json"),
+         "errata": arts.get("evidence/errata/C11R_ERRATA.json"),
+         "statements": arts.get("evidence/table/C11R_N9_STATEMENTS.json"),
+         "equivalence": arts.get("evidence/equivalence/C11R_EQUIVALENCE.json"),
+         "validation": arts.get("evidence/validation/C11R_VALIDATION.json"),
+         "cost": arts.get("evidence/cost/C11R_COST.json"),
+         "policy": arts.get("config/C11R_POLICY.json"),
+         "policy_evidence": arts.get("evidence/policy/C11R_POLICY_EVIDENCE.json"),
+         "gate": arts.get("config/N9R_GATE_C11R.json"),
+         "firewall": arts.get("evidence/firewall/C11R_FIREWALL.json"),
+         "mutations": arts.get("evidence/mutations/C11R_MUTATIONS.json"),
+         "leakcheck": arts.get("evidence/leakcheck/C11R_LEAKCHECK.json")}
     A = {k: v for k, v in A.items() if v is not None}
     contra = contradictions(A)
     ctl = _controls(A)
+    from c11r_schema import forbidden_payload
+    payload = {art: forbidden_payload(obj) for art, obj in arts.items() if forbidden_payload(obj)}
+    if payload:
+        contra.append(f"forbidden payload keys in pre-result artifacts: {payload}")
 
-    # the firewall's STRUCTURAL scan re-run here, over the FINAL artifact set (the firewall
-    # producer runs before the mutation suite, so this is the scan that sees every artifact)
-    struct = [r for r in FW.scan_structural_artifacts() if r["magnitude_keys"]]
-    if struct:
-        contra.append(f"magnitude-bearing keys in pre-result artifacts: {struct}")
+    # the quarantine: by content-free id only, against the id the statement table recorded
+    q_now = C.content_free_id(C.NS / C.QUARANTINE_REL)
+    q_rec = A.get("statements", {}).get("quarantine", {}).get("content_free_id")
+    quarantine_ok = q_now is not None and q_now == q_rec
+    if not quarantine_ok:
+        contra.append("the quarantine is not the file the statement table recorded")
 
-    runs_dir = C.NS / "evidence" / "runs"
-    auth = C.NS / "config" / "C11R_AUTHORIZATION.json"
-    auth_allow = auth.exists() and json.loads(auth.read_text()).get("guard") == "ALLOW"
-    def same_as(commit, path):
-        rel = str(path.relative_to(C.REPO))
-        return C.sha256_bytes(C.blob_at(commit, rel)) == C.sha256_file(path)
-    reviewed_machinery = {
-        # G5/G6 assert the drift layer is the one the first pre-freeze review found sound (it
-        # reviewed 49b17ab4); checked here, not asserted
-        "c11r_idrift_identical_to_first_reviewed_commit_49b17ab4":
-            same_as("49b17ab4", C.HERE / "c11r_idrift.py"),
-        "c11_certifier_identical_to_C11_HEAD": same_as(C.C11_HEAD,
-                                                       C.C11 / "code" / "c11_certifier.py"),
-        "c7_gaussian_identical_to_C11_HEAD": same_as(C.C11_HEAD, C.C7 / "code" / "c7_gaussian.py"),
-    }
+    # the leak check covered the CURRENT bytes of every file it scanned
+    leak = A.get("leakcheck", {})
+    leak_stale = []
+    for r in leak.get("files", []):
+        f = r["file"]
+        if "git_object" in r:
+            ok = C.git_object_at("HEAD", f) == "gitobj:" + r["git_object"]
+        elif f.endswith(".py"):
+            ok = C.sha256_code(f) == r["sha256"]
+        else:
+            ok = current.get(f) == r["sha256"]
+        if not ok:
+            leak_stale.append(f.split("/")[-1])
+    if leak_stale:
+        contra.append(f"the leak check scanned other bytes than the current: {leak_stale}")
+
+    # the post-seal toolchain is what the gate froze
+    gate = A.get("gate", {})
+    tool = {m: C.sha256_file(C.HERE / m) == v
+            for m, v in gate.get("post_seal_toolchain_sha256", {}).items()}
+    if not tool or not all(tool.values()):
+        contra.append(f"the post-seal toolchain differs from the gate's binding: {tool}")
+
+    # inventory: names only
+    listed = C.git("ls-files", "--cached", "--others", "--exclude-standard", "--",
+                   f"{C.NS_REL}/evidence", f"{C.NS_REL}/config").splitlines()
+    expected = {f"{C.NS_REL}/{r}" for r in C.PRE_RESULT_ARTIFACTS} | {
+        f"{C.NS_REL}/{C.QUARANTINE_REL}"}
+    unexpected = sorted(x for x in listed if x and x not in expected)
+    retired_present = sorted(x for x in listed if x.split("/")[-1] in C.RETIRED_FILES
+                             or x.split("/")[-1] == "C11R_N9_TABLE.json")
+    if unexpected:
+        contra.append(f"unexpected artifacts in evidence/ or config/: {unexpected}")
+
+    # historical and reviewed files, by object id only
+    reviewed_machinery = {rel.split("/")[-1]: C.content_free_id(C.REPO / rel)
+                          == C.git_object_at(commit, rel)
+                          for rel, commit in REVIEWED_MACHINERY.items()}
     if not all(reviewed_machinery.values()):
         contra.append(f"reviewed machinery changed: {reviewed_machinery}")
+    reviews = {rel: C.content_free_id(C.NS / rel) == C.git_object_at(commit, f"{C.NS_REL}/{rel}")
+               for rel, commit in PRESERVED_REVIEWS.items()}
+    if not all(reviews.values()):
+        contra.append(f"a preserved review was edited: {reviews}")
 
+    qs = Q.self_test()
     pre_result = {
-        "evidence_runs_absent": not runs_dir.exists(),
+        "evidence_runs_absent": not (C.NS / "evidence" / "runs").exists(),
         "no_runs_artifact_in_any_commit": not C.git("log", "--all", "--format=%H", "--",
                                                     "*C11R_RUNS.json"),
-        "no_authorization_with_guard_ALLOW": not auth_allow,
+        "no_authorization_artifact": not (C.NS / "config" / "C11R_AUTHORIZATION.json").exists(),
+        "no_authorization_in_any_commit": not C.git("log", "--all", "--format=%H", "--",
+                                                    "*C11R_AUTHORIZATION.json"),
         "no_comparison_artifact": not (C.NS / "evidence" / "comparison").exists(),
+        "no_qualification_artifact": not (C.NS / "evidence" / "qualification").exists(),
+        "gate_guard_DENY": gate.get("guard") == "DENY",
     }
     classes = {
         "B0": A.get("b0", {}).get("B0_CLASS"),
@@ -202,40 +268,94 @@ def main() -> int:
         "VALIDATION": A.get("validation", {}).get("VALIDATION_CLASS"),
         "FIREWALL": A.get("firewall", {}).get("FIREWALL_CLASS"),
         "MUTATIONS": A.get("mutations", {}).get("MUTATION_CLASS"),
-        "GATE_RESULT_LANGUAGE_HITS": A.get("gate", {}).get("result_language_scan", {})
-        .get("hits_in_this_gate"),
+        "LEAK": leak.get("LEAK_CLASS"),
+        "GATE_RESULT_LANGUAGE_HITS": gate.get("result_language_scan", {}).get("hits_in_this_gate"),
+        "QUALIFIER_SELF_TEST": qs["ALL_PASS"],
     }
     required = {"B0": "PASS", "TABLE": "RESOLVED", "EQUIVALENCE": "READY",
-                "VALIDATION": "PASS", "FIREWALL": "PASS", "MUTATIONS": "PASS",
-                "GATE_RESULT_LANGUAGE_HITS": 0}
+                "VALIDATION": "PASS", "FIREWALL": "PASS", "MUTATIONS": "PASS", "LEAK": "PASS",
+                "GATE_RESULT_LANGUAGE_HITS": 0, "QUALIFIER_SELF_TEST": True}
     class_fail = {k: v for k, v in classes.items() if v != required[k]}
     not_fresh = {r.split("/")[-1]: x for r, x in rows.items() if x["state"] != "FRESH"}
-    ok = (not not_fresh and not contra and not class_fail and all(pre_result.values())
-          and all(ctl.values()))
 
-    out = {"schema": "C11R_STATUS/1",
-           "generated_from": "the committed artifacts; no line of this report is typed by hand",
+    # handover counts, generated from the artifacts
+    mut = A.get("mutations", {})
+    fw = A.get("firewall", {})
+    counts = {
+        "errata_entries": A.get("errata", {}).get("count"),
+        "b0_checks": len(A.get("b0", {}).get("checks", [])),
+        "validation_checks": len(A.get("validation", {}).get("checks", [])),
+        "mutants": len(mut.get("mutants", [])),
+        "mutants_detected": sum(1 for m in mut.get("mutants", []) if m["outcome"] == "DETECTED"),
+        "adversarial_certificate_controls": len(mut.get("adversarial_controls", [])),
+        "adversarial_controls_caught": sum(1 for m in mut.get("adversarial_controls", [])
+                                           if m.get("caught")),
+        "firewall_positive_controls": len(fw.get("controls", {}).get("positive", {})),
+        "firewall_negative_controls": len(fw.get("controls", {}).get("negative", {})),
+        "firewall_modules_scanned": fw.get("modules_scanned"),
+        "leak_files_scanned": leak.get("files_scanned"),
+        "gate_predicates": len(gate.get("predicates", {})),
+        "artifacts_checked": len(rows),
+    }
+    ok = (not not_fresh and not contra and not class_fail and all(pre_result.values())
+          and all(ctl.values()) and not retired_present)
+
+    out = {"schema": "C11R_STATUS/2",
+           "generated_from": "the allowlisted artifacts; no line of this report is typed by hand",
+           "reads": "common.PRE_RESULT_ARTIFACTS only; protected files by content-free id",
            "artifacts": {r.split("closure_proofs/")[-1]: x for r, x in rows.items()},
            "not_fresh": not_fresh,
            "contradictions": contra,
            "classes": classes, "classes_required": required, "class_failures": class_fail,
-           "pre_result_state": pre_result,
+           "quarantine_matches_recorded_id": quarantine_ok,
+           "leak_check_covers_current_bytes": not leak_stale,
+           "post_seal_toolchain_matches_gate": tool,
+           "inventory": {"files_listed": len(listed), "unexpected": unexpected,
+                         "retired_present": retired_present},
            "reviewed_machinery_unchanged": reviewed_machinery,
+           "preserved_reviews_unedited": reviews,
+           "qualifier_self_test": qs,
+           "pre_result_state": pre_result,
            "controls": ctl,
+           "handover_counts": counts,
+           "structural_scan_of_every_artifact": {"forbidden_payload_keys": payload,
+                                                 "artifacts_scanned": len(arts)},
+           "not_scanned_by_the_leak_check": ("this status artifact: it carries classes, booleans, "
+                                             "file names, hashes and counts only, and its keys "
+                                             "pass the structural scan below"),
            "STATUS_CLASS": "CONSISTENT" if ok else "REFUSE"}
-    s = C.write_evidence(SELF_OUT, out, producer=__file__)
+    if forbidden_payload(out):
+        out["STATUS_CLASS"] = "REFUSE"
+        out["contradictions"].append("the status report itself carries a forbidden payload key")
+    if VERIFY_ONLY:
+        # read-only verification against a commit: recompute everything, write nothing, and check
+        # the committed status report itself is fresh
+        self_state = freshness(C.load_allowlisted(SELF_REL), now_sha)["state"] \
+            if (C.NS / SELF_REL).exists() else "MISSING"
+        verdict = out["STATUS_CLASS"] if self_state == "FRESH" else "REFUSE"
+        print(f"VERIFY-ONLY: artifacts {len(rows)}, not fresh {sorted(not_fresh)}, "
+              f"contradictions {contra}, class failures {class_fail}, "
+              f"committed status report {self_state}")
+        print(f"VERIFY-ONLY STATUS_CLASS = {verdict}")
+        return 0 if verdict == "CONSISTENT" else 1
+    s = C.write_evidence(C.NS / SELF_REL, out, producer=__file__)
     print(f"artifacts checked: {len(rows)}")
     for r, x in sorted(rows.items()):
         print(f"  {x['state']:8s} {r.split('/')[-1]:34s} {'; '.join(x['why'])[:90]}")
     print(f"\nclasses: {classes}")
     print(f"class failures: {class_fail}")
     print(f"contradictions: {contra}")
-    print(f"pre-result state: {pre_result}")
+    print(f"quarantine id matches: {quarantine_ok}; leak check current: {not leak_stale}")
+    print(f"inventory unexpected: {unexpected}; retired present: {retired_present}")
     print(f"reviewed machinery unchanged: {reviewed_machinery}")
+    print(f"preserved reviews unedited: {reviews}")
+    print(f"qualifier self-test: {qs['ALL_PASS']}")
+    print(f"pre-result state: {pre_result}")
     print(f"controls: {ctl}")
+    print(f"handover counts: {counts}")
     print(f"\nSTATUS_CLASS = {out['STATUS_CLASS']}")
     print(f"wrote evidence/status/C11R_STATUS.json sha256 {s[:16]}...")
-    return 0 if ok else 1
+    return 0 if out["STATUS_CLASS"] == "CONSISTENT" else 1
 
 
 if __name__ == "__main__":

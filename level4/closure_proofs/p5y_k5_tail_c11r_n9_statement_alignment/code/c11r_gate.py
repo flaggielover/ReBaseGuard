@@ -12,13 +12,26 @@ matches itself and always fires (the C10 self-scan lesson, reproduced in C11R's 
 """
 from __future__ import annotations
 
-import json
 import pathlib
 import re
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
+import c11r_certificate as CV
 import c11r_common as C
+
+# THE POST-SEAL TOOLCHAIN (review round 2, B-4). Every module that turns a sealed runs artifact
+# into a verdict is bound here by sha256, so a change to any of them after the freeze is visible
+# to the qualifier and to the status checker. The production evaluators each predicate names are
+# bound by module and function, and must exist.
+POST_SEAL_TOOLCHAIN = ("c11r_compare.py", "c11r_certificate.py", "c11r_runs.py",
+                       "c11r_schema.py", "c11r_equiv.py", "c11r_boxdata.py", "c11r_idrift.py",
+                       "c11r_common.py")
+EVALUATORS = {"G2": ("c11r_certificate.py", "reconstruct"),
+              "G8": ("c11r_certificate.py", "dispositions"),
+              "G10": ("c11r_certificate.py", "screen_order"),
+              "G18": ("c11r_certificate.py", "evaluate_target"),
+              "run": ("c11r_certificate.py", "evaluate_run")}
 
 # Phrases that assert an outcome rather than state a test. Kept as fragments so that tense and
 # subject do not matter: "must fail", "does fail", "will fail" all reduce to the same stem.
@@ -29,6 +42,35 @@ RESULT_LANGUAGE = [
     r"\bis expected\b", r"\bwe expect\b", r"\banticipate[ds]? (failure|success)\b",
     r"\bthe answer is\b", r"\bknown to (fail|pass)\b",
 ]
+
+
+# phrases that would be a pre-written CONCLUSION in the comparator's output
+OUTPUT_CONCLUSIONS = RESULT_LANGUAGE + [r"\bagreement is established\b", r"\bno target is invalid\b",
+                                        r"\bnone disagrees\b", r"\bwill agree\b"]
+
+
+def scan_source_for_result_language(src: str) -> list[str]:
+    """Result-dependent phrases in the string constants of a module that can reach OUTPUT.
+
+    Docstrings are excluded: the defect class is pre-written OUTPUT prose, and the comparator's
+    docstring legitimately QUOTES the revision-1 phrases in order to document their removal.
+    Production: main() runs it over c11r_compare.py and refuses to freeze on any hit.
+    """
+    import ast
+    tree = ast.parse(src)
+    docs = set()
+    for n in ast.walk(tree):
+        if isinstance(n, (ast.Module, ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)) and \
+                n.body and isinstance(n.body[0], ast.Expr) and isinstance(n.body[0].value,
+                                                                          ast.Constant):
+            docs.add(id(n.body[0].value))
+    hits = []
+    for n in ast.walk(tree):
+        if isinstance(n, ast.Constant) and isinstance(n.value, str) and id(n) not in docs:
+            for pat in OUTPUT_CONCLUSIONS:
+                if re.search(pat, n.value, re.I):
+                    hits.append(n.value[:60])
+    return hits
 
 
 def scan_for_result_language(obj) -> list[dict]:
@@ -55,10 +97,11 @@ def scan_for_result_language(obj) -> list[dict]:
 def build(tbl: dict, policy: dict) -> dict:
     d = tbl["drift_domain"]
     return {
-        "schema": "C11R_GATE/2",
-        "supersedes": ("C11R_GATE/1 (49b17ab4), reviewed NOT_READY. Four of its predicates -- G8, "
-                       "G11, G12, G13 -- were satisfied by merely RECORDING an outcome, including a "
-                       "failing one, so they could not fail on substance (review item 9)."),
+        "schema": "C11R_GATE/3",
+        "supersedes": ("C11R_GATE/1 (49b17ab4) and C11R_GATE/2 (affdf8a3), both reviewed NOT_READY. "
+                       "Gate 1's G8, G11, G12 and G13 could not fail on substance (review 1 item "
+                       "9). Gate 2's G8 and G10 were evaluated only by test-only copies in the "
+                       "mutation suite, never by the production path (review 2, B-4)."),
         "campaign": "C11R -- N9 statement-alignment repair",
         "frozen_before": "any target certification run",
         "question": ("can the independent C11 certifier prove the SAME mathematical certification "
@@ -84,10 +127,12 @@ def build(tbl: dict, policy: dict) -> dict:
                 "C11R_N9_STATEMENTS reports TABLE_CLASS = RESOLVED with no unresolved field for "
                 "any of the six constants"),
             "G2_statement_equivalence_exact": (
-                "for each target, the independent proposition is reconstructed ONLY from the runs "
-                "artifact's own record and is EQUIVALENT or STRONGER than the original's under "
-                "c11r_equiv.compare, whose self-test rejects every planted mismatch and accepts "
-                "every honest control"),
+                "for each target, the independent proposition is RECONSTRUCTED from the "
+                "certificate by c11r_certificate.reconstruct -- verified certifier hash, reported "
+                "kernel, margins, premises, family, input digest and the frozen deduction table -- "
+                "never read from a label the runner wrote, and is EQUIVALENT or STRONGER than the "
+                "original's under c11r_equiv.compare. Statement equivalence is decided before, "
+                "and separately from, numerical agreement"),
             "G3_drift_interval_exact": (
                 "every independent statement's drift domain, compared as exact rationals, equals "
                 "or contains [680769/400000, 17885921/10000000]"),
@@ -106,14 +151,18 @@ def build(tbl: dict, policy: dict) -> dict:
             "G8_six_targets_dispositioned_consistently": (
                 "the runs artifact assigns each of the six constants exactly one of CERTIFIED, "
                 "NOT_CERTIFIED or NOT_IMPLEMENTED, and NOT_IMPLEMENTED appears only for constants "
-                "the frozen policy lists as not implemented"),
+                "the frozen policy lists as not implemented. Evaluated in production by "
+                "c11r_certificate.dispositions, called by the runner's self-check and by the "
+                "comparator; a failure makes the comparison EXECUTION_INVALID"),
             "G9_no_forbidden_reuse": (
                 "no module in the campaign's code closure imports, calls, wraps or replays the "
                 "original certifier's load-bearing graph or its arithmetic backend"),
             "G10_cheap_screen_before_expensive": (
                 "every selected member is checked against the pointwise necessary condition "
                 "before certification, and a member failing it is recorded POINTWISE_INFEASIBLE "
-                "and not certified"),
+                "and not certified. Evaluated in production by c11r_certificate.screen_order, "
+                "called by the runner's self-check and by the comparator; a failure makes the "
+                "comparison EXECUTION_INVALID"),
             "G11_manufactured_validation_passes": "VALIDATION_CLASS = PASS",
             "G12_mutations_pass": ("MUTATION_CLASS = PASS: no survivor and no undetermined "
                                    "mutant, every detector carrying an executed negative control"),
@@ -128,12 +177,19 @@ def build(tbl: dict, policy: dict) -> dict:
                 "the direction-aware comparison rule is fixed in the statement table, whose hash "
                 "this gate binds, before any independent result exists"),
             "G16_original_value_firewall": (
-                "FIREWALL_CLASS = PASS: only c11r_table.py and c11r_compare.py can load an original "
-                "magnitude, proved by AST with planted positive and negative controls"),
+                "FIREWALL_CLASS = PASS: every content read in every pre-comparison module resolves, "
+                "by load-path dataflow, to an allowlisted input, Python source or the declared R5 "
+                "map; only c11r_table.py and c11r_compare.py can read an original magnitude; the "
+                "reviewer's planted leak paths are positive controls; and the value-based leak "
+                "check (LEAK_CLASS = PASS) finds no original in any pre-result artifact or module"),
             "G17_policy_prospective": (
-                "the frozen policy references no original magnitude and no comparison threshold, "
-                "chooses no candidate by hand, and fixes its configuration before target "
-                "execution"),
+                "the frozen policy references no original magnitude, no comparison threshold, no "
+                "review prose and no target history, chooses no candidate by hand, and fixes its "
+                "configuration before target execution from the committed NON-TARGET cost "
+                "artifact with its declared safety factor"),
+            "G18_every_value_traced_to_a_certificate": (
+                "every CERTIFIED target's value equals the value reconstructed from a certificate "
+                "that verifies; evaluated in production by c11r_certificate.evaluate_target"),
         },
 
         "comparison_rule": tbl["comparison_semantics_frozen_before_results"],
@@ -177,6 +233,8 @@ def build(tbl: dict, policy: dict) -> dict:
             "N9_entering_C11R": "OPEN",
             "coverage": "r5 authoritative; open m=5 cells {306, 307, 308, 309}; K5 PARTIAL"},
 
+        "post_seal_toolchain_sha256": {m: C.sha256_file(C.HERE / m) for m in POST_SEAL_TOOLCHAIN},
+        "production_evaluators": {k: f"{m}:{f}" for k, (m, f) in EVALUATORS.items()},
         "guard": "DENY",
         "compute_policy": {"AWS": "FORBIDDEN", "SR_PS1_campaign": "MUST NOT BE TOUCHED",
                            "remote_provisioning": "not required; the policy's cap is local"},
@@ -184,9 +242,17 @@ def build(tbl: dict, policy: dict) -> dict:
 
 
 def main() -> int:
-    tbl = C.load(C.NS / "evidence" / "table" / "C11R_N9_STATEMENTS.json")
-    policy = C.load(C.NS / "config" / "C11R_POLICY.json")
+    tbl = C.load_allowlisted("evidence/table/C11R_N9_STATEMENTS.json")
+    policy = C.load_allowlisted("config/C11R_POLICY.json")
+    missing = [f"{m}:{f}" for m, f in EVALUATORS.values() if not callable(getattr(CV, f, None))]
+    if missing:
+        print(f"REFUSE: a production evaluator the gate names does not exist: {missing}")
+        return 1
     gate = build(tbl, policy)
+    cmp_hits = scan_source_for_result_language(C.read_code(f"{C.NS_REL}/code/c11r_compare.py"))
+    if cmp_hits:
+        print(f"REFUSE: the comparator's output strings carry a pre-written conclusion: {cmp_hits}")
+        return 1
 
     hits = scan_for_result_language(gate)
     # negative control: the scanner must fire on a gate that DOES contain result language
@@ -219,6 +285,9 @@ def main() -> int:
                 "happened on the first attempt.")},
         "note": ("the scanner reads only the emitted gate, never this module, because a scanner "
                  "that reads its own forbidden list matches itself and always fires")}
+    gate["comparator_output_strings_scan"] = {
+        "module": "c11r_compare.py", "hits": 0,
+        "method": "scan_source_for_result_language: non-docstring string constants only"}
 
     s = C.write_evidence(C.NS / "config" / "N9R_GATE_C11R.json", gate, producer=__file__)
     print(f"predicates: {len(gate['predicates'])}")

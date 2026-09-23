@@ -76,17 +76,115 @@ def sha256_obj(o) -> str:
 CODE_DIRS = (HERE, C11 / "code", C7 / "code")
 _READS: dict[str, str] = {}
 
+# ---------------------------------------------------------------------------------------------
+# WHAT IS PROTECTED (round 3, blocker B-2). One definition, imported by the firewall, the status
+# checker, B0 and the leak check. A PROTECTED artifact carries original cell 306 magnitudes, or
+# is historical review prose that quotes them. No pre-comparison module may load one.
+# ---------------------------------------------------------------------------------------------
+PROTECTED_FILES = ("REGISTRY_C2.json", "C11R_ORIGINAL_MAGNITUDES.json", "C11R_N9_TABLE.json",
+                   "C11R_COMPARISON.json", "C11R_SCREEN.json")
+# Review and adjudication reports are untrusted prose, and several quote original values. No
+# production module parses one, in this campaign or in any predecessor's.
+PROTECTED_PREFIXES = ("REVIEW_", "ADJUDICATION_")
+PROTECTED_DIR_SEGMENTS = ("quarantine", "review")
+RETIRED_FILES = ("C11R_SCREEN.json",)
+QUARANTINE_REL = "evidence/quarantine/C11R_ORIGINAL_MAGNITUDES.json"
+NS_REL = "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment"
+
+# THE EXPLICIT ALLOWLIST of pre-result artifacts (relative to NS). It replaces every directory
+# glob: the round-2 status checker and B0 json-loaded whole directory trees, which reached the
+# quarantine and the registry. A checker walks THIS list and nothing else.
+PRE_RESULT_ARTIFACTS = (
+    "evidence/b0/C11R_B0.json",
+    "evidence/errata/C11R_ERRATA.json",
+    "evidence/table/C11R_N9_STATEMENTS.json",
+    "evidence/equivalence/C11R_EQUIVALENCE.json",
+    "evidence/validation/C11R_VALIDATION.json",
+    "evidence/cost/C11R_COST.json",
+    "config/C11R_POLICY.json",
+    "evidence/policy/C11R_POLICY_EVIDENCE.json",
+    "config/N9R_GATE_C11R.json",
+    "evidence/firewall/C11R_FIREWALL.json",
+    "evidence/mutations/C11R_MUTATIONS.json",
+    "evidence/leakcheck/C11R_LEAKCHECK.json",
+    "evidence/status/C11R_STATUS.json",
+)
+# What a module that runs BEFORE the comparison may content-read inside this namespace: the
+# pre-result artifacts, and the two post-freeze inputs the runner itself needs. The runs artifact
+# is deliberately absent: it carries prospective cell 306 values and only the comparator reads it.
+ALLOWED_NS_INPUTS = PRE_RESULT_ARTIFACTS + ("config/C11R_AUTHORIZATION.json",
+                                            "evidence/qualification/C11R_QUALIFICATION.json")
+# What such a module may content-read OUTSIDE this namespace, besides Python source. Each entry is
+# value-scanned for every original magnitude by the leak check (c11r_table.py --leak-check).
+DECLARED_EXTERNAL_INPUTS = (R5_PATH,)
+
+
+def is_protected(rel: str) -> bool:
+    name = pathlib.PurePosixPath(rel).name
+    parts = pathlib.PurePosixPath(rel).parts
+    return (name in PROTECTED_FILES or any(name.startswith(x) for x in PROTECTED_PREFIXES)
+            or any(seg in parts for seg in PROTECTED_DIR_SEGMENTS))
+
+
+def content_free_id(path) -> str | None:
+    """Identity of a file WITHOUT its content entering this process.
+
+    `git hash-object` reads the file in a git subprocess and returns only its object id. This is
+    how a pre-comparison module checks that a PROTECTED file is unchanged: it compares ids, never
+    bytes. It is the only sanctioned way for such a module to refer to a protected file.
+    """
+    path = pathlib.Path(path)
+    if not path.exists():
+        return None
+    r = subprocess.run(["git", "hash-object", "--", str(path)], capture_output=True, text=True)
+    return "gitobj:" + r.stdout.strip() if r.returncode == 0 else None
+
 
 def _rel(p: pathlib.Path) -> str:
     return str(pathlib.Path(p).resolve().relative_to(REPO))
 
 
 def load(p: pathlib.Path):
-    """Load a JSON artifact, and record what was read so the writer can bind it."""
+    """Load a JSON artifact, and record what was read so the writer can bind it.
+
+    A PROTECTED input is recorded by its content-free id, so that verifying the record later never
+    requires reading the protected content. Only the two sanctioned readers ever call this on a
+    protected path; the firewall proves it.
+    """
     p = pathlib.Path(p)
     raw = p.read_bytes()
-    _READS[_rel(p)] = sha256_bytes(raw)
+    rel = _rel(p)
+    _READS[rel] = content_free_id(p) if is_protected(rel) else sha256_bytes(raw)
     return json.loads(raw)
+
+
+def load_allowlisted(rel: str):
+    """Load a pre-result artifact by its allowlist entry. Refuses anything off the list."""
+    if rel not in PRE_RESULT_ARTIFACTS:
+        raise ValueError(f"{rel!r} is not an allowlisted pre-result artifact")
+    return load(NS / rel)
+
+
+def read_code(rel: str) -> str:
+    """Source of a module by repo-relative path. Python source only, by construction: the path is
+    forced to end in .py, so the firewall can see that no data artifact is read through here."""
+    if not rel.endswith(".py"):
+        raise ValueError(f"read_code reads Python source only, not {rel!r}")
+    return (REPO / rel).with_suffix(".py").read_text()
+
+
+def sha256_code(rel: str) -> str:
+    """sha256 of a module's bytes, by repo-relative path; Python source only, as read_code."""
+    if not rel.endswith(".py"):
+        raise ValueError(f"sha256_code hashes Python source only, not {rel!r}")
+    return sha256_bytes((REPO / rel).with_suffix(".py").read_bytes())
+
+
+def git_object_at(commit: str, rel: str) -> str | None:
+    """The git object id of a path at a commit: `rev-parse`, which prints an id, never content."""
+    r = subprocess.run(["git", "-C", str(REPO), "rev-parse", f"{commit}:{rel}"],
+                       capture_output=True, text=True)
+    return "gitobj:" + r.stdout.strip() if r.returncode == 0 else None
 
 
 def _resolve_module(name: str) -> pathlib.Path | None:

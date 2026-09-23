@@ -1,33 +1,42 @@
-"""C11R Repair D -- the mutation suite, rebuilt (revision 2).
+"""C11R -- the mutation suite, revision 3: it mutates PRODUCTION INPUTS and holds no rule of its own.
 
-WHAT WAS WRONG (erratum E7). M26 read a key the runs producer never wrote and was guaranteed to
-report SURVIVED; M28 read a path the producer never wrote and could never fire; M03 missed the
-screen reading original magnitudes through the table; M29's control was a transcribed number. And
-the committed mutation artifact was stale beside the validation it contradicted (erratum E4).
+WHAT WAS WRONG IN REVISION 2 (review round 2, B-4; erratum E17). Its value-trace, screen-order and
+disposition checks were functions defined HERE -- test-only copies of rules the production path
+never ran -- so a mutant "detected" by them proved nothing about the gate, the runner or the
+comparator. Its run-artifact mutants edited target STATEMENTS that the runner wrote itself, which
+the template-built comparator then read back (erratum E16).
 
 THE RULES NOW
-  * Run-artifact mutants operate on artifacts built by c11r_runs.assemble -- the producer's own
-    emission function -- read through c11r_schema's accessors. A path mismatch cannot arise.
-  * Every mutant records the producer, verifier and input hashes, the exact JSON path and value it
-    mutated, and three outcomes: the MUTANT must be flagged, the CLEAN control must be accepted,
-    and (where meaningful) an UNRELATED mutation must NOT be flagged. A false positive on either
+  * Every detector is a PRODUCTION function: c11r_certificate.reconstruct / evaluate_run /
+    screen_order / dispositions / configuration_adherence, c11r_compare.run_comparison,
+    c11r_schema.validate_runs / seal_problems / forbidden_payload, c11r_equiv.compare,
+    c11r_status.freshness / contradictions, c11r_gate.scan_for_result_language /
+    scan_source_for_result_language, c11r_runs.check_authorization, c11r_firewall. This module
+    builds inputs, mutates them, and calls those functions. It defines no guard.
+  * Run artifacts are built by c11r_runs.assemble from certificates made by
+    c11r_certificate.make_certificate -- the runner's own emission path -- with SYNTHETIC values.
+  * Every mutant records the producer, verifier and input hashes, the exact path and value it
+    mutated, and three outcomes: the MUTANT must be flagged, the CLEAN control accepted, and
+    (where meaningful) an UNRELATED mutation must NOT be flagged. A false positive on either
     control marks the detector DETECTOR_BROKEN, which counts against the suite like a survivor.
+  * The thirteen ADVERSARIAL CERTIFICATE CONTROLS (review round 2, B-3) run end to end through
+    c11r_compare.run_comparison, and statement equivalence is reported separately from numerical
+    agreement.
   * Numerical mutants run on the NON-TARGET block NT = [5/2, 5/2 + 108337/1250000] only.
-  * UNDETERMINED is never a pass. MUTATION_CLASS = PASS requires every mutant DETECTED.
-  * No count is transcribed: M29 cites the V6 mismatch count it READS from the validation
-    artifact, and c11r_status cross-checks the two.
+  * UNDETERMINED is never a pass. MUTATION_CLASS = PASS requires every mutant DETECTED and every
+    adversarial control caught.
 """
 from __future__ import annotations
 
 import ast
 import copy
-import json
 import pathlib
 import sys
 from fractions import Fraction as F
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import c11r_boxdata as BD
+import c11r_certificate as CV
 import c11r_common as C
 import c11r_compare as K
 import c11r_equiv as EQ
@@ -43,6 +52,10 @@ W = F(108337, 1250000)
 NT = I.Blk(F(5, 2), F(5, 2) + W)
 CODE = C.NS / "code"
 RES: list[dict] = []
+ADV: list[dict] = []
+FAKE_MAGS = {"Abar": F(10), "tau": F(10), "C_T": F(10), "D_lo": F(1, 2), "D1": F(10),
+             "D2": F(10)}                                    # synthetic, deliberately round
+CELL_307_BLOCK = ("17885921/10000000", "1882413/1000000")    # a label from r5 geometry; no computation
 
 
 def _sha(mod: str) -> str:
@@ -73,88 +86,6 @@ def record(mid, name, *, verifier, producer=None, input_artifact=None, mutated_p
     RES.append(row)
 
 
-def _set(obj, path: list, value):
-    o = obj
-    for k in path[:-1]:
-        o = o[k]
-    o[path[-1]] = value
-
-
-# ---------------------------------------------------------------------------------------------
-# the base artifact: built by the PRODUCER'S OWN emission function, with SYNTHETIC values
-# ---------------------------------------------------------------------------------------------
-def base_runs(policy: dict, stmt: dict) -> dict:
-    e_lo, e_hi = F(stmt["drift_domain"]["e_lo"]), F(stmt["drift_domain"]["e_hi"])
-    D = policy["configuration"]["chosen"]["depth"]
-    P = policy["configuration"]["chosen"]["panels"]
-
-    def cert(route, kernel, family, sel):
-        return S.certificate(route=route, kernel=kernel, family=family,
-                             screen_classification="POINTWISE_FEASIBLE", sent_to_box_pass=True,
-                             ladder_level="single", depth=D, panels=P, boxes=0, selected=sel,
-                             certified=True, margin_lower_bound="1/1000",
-                             w_min_lower_bound="1", seconds=0.0)
-    A_K, B_K, A_H, B_H = F(1111, 100), F(3, 2), F(999, 100), F(3, 2)   # synthetic
-    al, be = F(1, 2), F(1, 20)                                           # synthetic
-    certs = {"F_K": cert("independent_supersolution", "K_e", "w = A - B*m",
-                         {"A": str(A_K), "B": str(B_K)}),
-             "F_H": cert("independent_supersolution", "Khat_e", "w = A - B*m",
-                         {"A": str(A_H), "B": str(B_H)}),
-             "F_D": cert("independent_subsolution", "Khat_e", "u = alpha + beta*m",
-                         {"alpha": str(al), "beta": str(be)})}
-    selected = {"F_K": {"A": A_K, "B": B_K, "w": {(0, 0): A_K, (0, 1): -B_K},
-                        "pointwise_A_min": F(5)},
-                "F_H": {"A": A_H, "B": B_H, "w": {(0, 0): A_H, (0, 1): -B_H},
-                        "pointwise_A_min": F(5)},
-                "F_D": {"alpha": al, "beta": be}}
-    return R.assemble(policy=policy, stmt=stmt, e_lo=e_lo, e_hi=e_hi, D=D, P=P, n_boxes=0,
-                      certs=certs, selected=selected, stop_reason=None, timings={"x": 0.0},
-                      total_seconds=0.0, peak_rss_mb=0.0)
-
-
-FAKE_MAGS = {"Abar": F(10), "tau": F(10), "C_T": F(10), "D_lo": F(1, 2), "D1": F(10),
-             "D2": F(10)}                                                # synthetic, deliberately
-
-
-def trace_values(runs: dict) -> list[str]:
-    """Each CERTIFIED target's value must be REPRODUCED from what its certificate selected.
-
-    Abar and tau are w(atom) = A; D_lo is u(atom) = alpha; C_T is sup over the cover of the
-    certified w, recomputed here exactly as the producer computes it (interval evaluation over
-    X.cover at the run's depth), and required to match bit for bit. A tolerance would accept a
-    value no certificate produced; this does not.
-    """
-    bad = []
-    cm = S.certificates(runs)
-    depth = runs["configuration"]["depth"]
-    for k, t in S.targets(runs).items():
-        if t["status"] != "CERTIFIED":
-            continue
-        sel = cm[t["certificate_id"]]["selected"] or {}
-        if k == "D_lo":
-            want = F(sel["alpha"]) if "alpha" in sel else None
-        elif k == "C_T":
-            w = {(0, 0): F(sel["A"]), (0, 1): -F(sel["B"])}
-            want = max(X.poly_eval_iv(w, G.Iv(a, b), G.Iv(c, d)).hi
-                       for (a, b, c, d) in X.cover(depth))
-        else:
-            want = F(sel["A"]) if "A" in sel else None
-        if want is None or F(t["value"]) != want:
-            bad.append(f"{k}: value {t['value']} is not reproduced from certificate {sel}")
-    return bad
-
-
-def refuted_but_sent(runs: dict) -> list[str]:
-    return [cid for cid, c in S.certificates(runs).items()
-            if S.cert_screen_class(c) == "POINTWISE_INFEASIBLE" and S.cert_sent_to_box_pass(c)]
-
-
-def dispositions_consistent(runs: dict, policy: dict) -> list[str]:
-    implementable = set(policy["target_scope"]["implementable_under_this_policy"])
-    return [k for k, t in S.targets(runs).items()
-            if t["status"] == "NOT_IMPLEMENTED" and k in implementable]
-
-
 def imports_in(src: str) -> set[str]:
     roots = set()
     for n in ast.walk(ast.parse(src)):
@@ -165,66 +96,68 @@ def imports_in(src: str) -> set[str]:
     return roots
 
 
-RESULT_PHRASES = GA.RESULT_LANGUAGE + [r"\bagreement is established\b", r"\bno target is invalid\b",
-                                       r"\bnone disagrees\b", r"\bwill agree\b"]
-
-
-def result_phrases_in(src: str) -> list[str]:
-    """Result-dependent phrases in strings that can reach OUTPUT.
-
-    Docstrings are excluded: the defect class is pre-written OUTPUT prose, and the comparator's
-    docstring legitimately QUOTES the revision-1 phrases in order to document their removal. The
-    first version of this detector read that quotation as an assertion (the C10 lesson) and
-    flagged the clean comparator.
-    """
-    import re
-    tree = ast.parse(src)
-    docs = FW._docstring_nodes(tree)
-    hits = []
-    for n in ast.walk(tree):
-        if isinstance(n, ast.Constant) and isinstance(n.value, str) and id(n) not in docs:
-            for pat in RESULT_PHRASES:
-                if re.search(pat, n.value, re.I):
-                    hits.append(n.value[:60])
-    return hits
+def redigest(cert: dict) -> dict:
+    """Make a mutated certificate internally CONSISTENT again, so only the semantic check can
+    catch it -- the harder forgery."""
+    cert["input_digest"] = CV.input_digest(cert["weight"], cert["inputs"], cert["certifier"])
+    return cert
 
 
 def main() -> int:
-    stmt = C.load(C.NS / "evidence" / "table" / "C11R_N9_STATEMENTS.json")
-    policy = C.load(C.NS / "config" / "C11R_POLICY.json")
-    gate = C.load(C.NS / "config" / "N9R_GATE_C11R.json")
-    val = C.load(C.NS / "evidence" / "validation" / "C11R_VALIDATION.json")
-    base = base_runs(policy, stmt)
+    stmt = C.load_allowlisted("evidence/table/C11R_N9_STATEMENTS.json")
+    policy = C.load_allowlisted("config/C11R_POLICY.json")
+    gate = C.load_allowlisted("config/N9R_GATE_C11R.json")
+    val = C.load_allowlisted("evidence/validation/C11R_VALIDATION.json")
+    fw_art = C.load_allowlisted("evidence/firewall/C11R_FIREWALL.json")
+    RUNS_IN = "evidence/table/C11R_N9_STATEMENTS.json"
     e_lo, e_hi = stmt["drift_domain"]["e_lo"], stmt["drift_domain"]["e_hi"]
     mid = str((F(e_lo) + F(e_hi)) / 2)
-    RUNS_IN = "evidence/table/C11R_N9_STATEMENTS.json"
+    ME = {"module": "c11r_runs.py", "sha256": C.sha256_file(CODE / "c11r_runs.py")}
+    EXP = CV.certifier_hashes()
 
-    def classes(r):
-        return K.run_comparison(r, stmt, FAKE_MAGS)["classes"]
+    def build(certs=None, deductions=None):
+        return R.assemble(policy=policy, stmt=stmt, certs=certs or K.synthetic_certs(stmt, policy),
+                          stop_reason=None, extra={"timings_seconds": {"x": 0.0}},
+                          deductions=deductions)
 
-    base_cls = classes(base)
+    def compare(runs, deductions=None, exp=None):
+        return K.run_comparison(runs, stmt, FAKE_MAGS, policy,
+                                expected_certifier_sha=exp or EXP, runs_producer=ME,
+                                deductions=deductions)
 
-    def stmt_mutant(mid_, name, target, path_tail, value, expect_class="INVALID"):
+    def guards(runs, deductions=None):
+        return CV.evaluate_run(runs, policy, expected_certifier_sha=EXP, runs_producer=ME,
+                               deductions=deductions)
+
+    base = build()
+    base_cmp = compare(base)
+    base_cls = base_cmp["classes"]
+    unrel = copy.deepcopy(base)
+    unrel["timings_seconds"] = {"x": 1.0}                     # a mutation no guard should see
+    unrel_cls = compare(unrel)["classes"]
+
+    def run_mutant(mid_, name, target, mutate, *, expect=("INVALID", "DISAGREES"), deductions=None,
+                   exp=None, path, value, verifier="c11r_compare.py"):
         m = copy.deepcopy(base)
-        _set(m, ["targets", target, "statement"] + path_tail, value)
-        u = copy.deepcopy(base)
-        u["timings_seconds"] = {"x": 1.0}                   # an unrelated mutation
-        record(mid_, name, verifier="c11r_compare.py", producer="c11r_runs.py",
-               input_artifact=RUNS_IN,
-               mutated_path="$.targets." + target + ".statement." + ".".join(map(str, path_tail)),
-               mutated_value=value,
-               mutant_flagged=classes(m)[target] == expect_class,
+        mutate(m)
+        res = compare(m, deductions=deductions, exp=exp)
+        record(mid_, name, verifier=verifier, producer="c11r_runs.py", input_artifact=RUNS_IN,
+               mutated_path=path, mutated_value=value,
+               mutant_flagged=res["classes"][target] in expect and res["N9_VERDICT"] != "N9_CLOSED",
                clean_flagged=base_cls[target] in ("INVALID", "DISAGREES"),
-               unrelated_flagged=classes(u)[target] != base_cls[target],
-               detail={"clean_class": base_cls[target], "mutant_class": classes(m)[target]})
+               unrelated_flagged=unrel_cls[target] != base_cls[target],
+               detail={"clean_class": base_cls[target], "mutant_class": res["classes"][target],
+                       "mutant_verdict": res["N9_VERDICT"],
+                       "mutant_statement": res["per_target"][target].get("statement")})
+        return res
 
-    # ---------------- independence and backend -------------------------------------------
+    # ============================ independence and backend =================================
     closure = {}
-    for m in sorted(CODE.glob("c11r_*.py")):
-        closure.update(C.code_closure(m))
+    for mfile in sorted(CODE.glob("c11r_*.py")):
+        closure.update(C.code_closure(mfile))
     roots = set()
     for rel in closure:
-        roots |= imports_in((C.REPO / rel).read_text())
+        roots |= imports_in(C.read_code(rel))
     forb = set(S.FORBIDDEN_PRODUCERS)
     planted = "import taboo_certify\nfrom opnorms import kernel_norm\n"
     record("M01", "hidden import of the original certifier's load-bearing graph",
@@ -237,18 +170,18 @@ def main() -> int:
     record("M02", "the original's arithmetic backend", verifier="c11r_mutations.py",
            mutated_path="<synthetic module source>", mutated_value=planted,
            mutant_flagged=bool(imports_in(planted) & backend), clean_flagged=bool(roots & backend))
-    fw = FW.run_controls()
-    real_fw = C.load(C.NS / "evidence" / "firewall" / "C11R_FIREWALL.json")
-    record("M03", "reading original magnitudes from ANY path (registry, quarantine, old table, "
-                  "proxy function, subprocess, magnitude key)",
+    fwc = FW.run_controls()
+    record("M03", "reading original magnitudes, review prose or the runs artifact by ANY path",
            verifier="c11r_firewall.py", input_artifact="evidence/firewall/C11R_FIREWALL.json",
-           mutated_path="<8 planted module sources>", mutated_value=sorted(FW.POSITIVE),
-           mutant_flagged=fw["all_positives_flagged"],
-           clean_flagged=(not fw["no_negative_flagged"]) or real_fw["FIREWALL_CLASS"] != "PASS",
-           detail={"real_tree_class": real_fw["FIREWALL_CLASS"],
-                   "offenders": real_fw["offenders"]})
+           mutated_path=f"<{len(FW.POSITIVE)} planted module sources>",
+           mutated_value=sorted(FW.POSITIVE),
+           mutant_flagged=fwc["all_positives_flagged"],
+           clean_flagged=(not fwc["no_negative_flagged"]) or fw_art["FIREWALL_CLASS"] != "PASS",
+           detail={"real_tree_class": fw_art["FIREWALL_CLASS"],
+                   "offenders": fw_art["offenders"],
+                   "negatives_clean": fwc["no_negative_flagged"]})
 
-    # ---------------- soundness of the reviewed machinery (NT) ----------------------------
+    # ============================ reviewed machinery on NT =================================
     w = {(0, 0): F(12), (0, 1): F(-3, 2)}
     bx = (F(0), F(1), F(0), F(1))
     pts = [(bx[0], bx[2]), (bx[1], bx[3]), ((bx[0] + bx[1]) / 2, (bx[2] + bx[3]) / 2),
@@ -257,45 +190,42 @@ def main() -> int:
         pw = {pt: I.kernel_apply_iv(w, *pt, NT) for pt in pts}
         real_ub = I.kernel_box_upper_iv(w, *bx, NT, 16).hi
     mid_pt = ((bx[0] + bx[1]) / 2, (bx[2] + bx[3]) / 2)
-    planted_ub = pw[mid_pt].hi                                  # midpoint-for-whole-box
+    planted_ub = pw[mid_pt].hi
     record("M04", "a box bound that does not dominate the pointwise kernel (midpoint-for-box)",
            verifier="c11r_idrift.py", mutated_path="kernel_box_upper_iv -> kernel at box centre",
            mutated_value=float(planted_ub),
            mutant_flagged=any(planted_ub < v.hi for v in pw.values()),
            clean_flagged=any(real_ub < v.hi for v in pw.values()),
            detail={"block": "NON-TARGET", "real_bound": float(real_ub)})
-
     wv = X.poly_eval_iv(w, G.Iv(bx[0], bx[1]), G.Iv(bx[2], bx[3]))
     with BD.PhiCache():
         kv = I.kernel_box_upper_iv(w, *bx, NT, 16)
     real_L = wv.lo - 1 - kv.hi
-    reversed_L = wv.hi - 1 - kv.lo                              # lower/upper reversed
+    reversed_L = wv.hi - 1 - kv.lo
     pw_L = min(X.poly_eval_iv(w, G.Iv(p, p), G.Iv(m, m)).hi - 1 - v.lo for (p, m), v in pw.items())
     record("M05", "lower/upper reversal in the supersolution margin", verifier="c11r_idrift.py",
            mutated_path="L_lo = w.lo - 1 - Kw.hi  ->  w.hi - 1 - Kw.lo",
            mutated_value=float(reversed_L),
            mutant_flagged=reversed_L > pw_L, clean_flagged=real_L > pw_L,
            detail={"real_margin": float(real_L), "pointwise_min": float(pw_L)})
-
     one = {(0, 0): F(1)}
     with BD.PhiCache():
         full = I.kernel_apply_iv(one, F(0), F(0), NT)
         hat = I.kernel_apply_iv(one, F(0), F(0), NT, atom_removed=True)
         atom = I.atom_contribution_iv(one, F(0), F(0), NT)
-        shifted = I.shifted_moments_iv(-I.K + F(1, 4), I.K, NT, 0)[0]   # a shifted "atom"
+        shifted = I.shifted_moments_iv(-I.K + F(1, 4), I.K, NT, 0)[0]
     sep = lambda a, b: max(a.lo - b.hi, b.lo - a.hi)             # noqa: E731
     record("M06", "wrong atom window", verifier="c11r_idrift.py",
            mutated_path="atom window [m-K, K-p] -> [m-K+1/4, K-p]", mutated_value="(0,0)",
            mutant_flagged=sep(full, hat + shifted) > 0, clean_flagged=sep(full, hat + atom) > 0,
            detail={"block": "NON-TARGET"})
-
     import re
-    txt = (C.REPO / "level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/"
-           "cusum_layer1.py").read_text()
+    txt = C.read_code("level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/"
+                      "cusum_layer1.py")
     kf = F(re.search(r"K_FROZEN\s*=\s*([0-9.]+)", txt).group(1))
     hf = F(re.search(r"H_FROZEN\s*=\s*([0-9.]+)", txt).group(1))
     record("M07", "wrong frozen model constants", verifier="c11r_mutations.py",
-           input_artifact=None, mutated_path="K", mutated_value="1/3",
+           mutated_path="K", mutated_value="1/3",
            mutant_flagged=F(1, 3) != kf, clean_flagged=(I.K != kf or I.H != hf
                                                         or I.CC != kf + hf),
            detail={"frozen_K": str(kf), "frozen_H": str(hf)})
@@ -308,10 +238,6 @@ def main() -> int:
     record("M08", "interval arithmetic collapsed to floating point", verifier="c11r_mutations.py",
            mutated_path="Iv endpoints", mutated_value="float",
            mutant_flagged=not rigorous(FloatIv), clean_flagged=not rigorous(full))
-
-    # at a SCALAR drift (non-target e = 5/2) both enclosures are ~1e-95 wide, so a 1e-6 shift is
-    # detectable; over the whole block they are ~0.06 wide and would swallow it (the first
-    # version of this mutant was set there and SURVIVED for exactly that reason)
     PT = I.Blk(F(5, 2), F(5, 2))
     k1 = I.kernel_apply_iv(one, F(0), F(0), PT)
     rhs = G.Iv(1, 1) - I.alarm_prob_iv(F(0), F(0), PT)
@@ -322,28 +248,30 @@ def main() -> int:
            mutant_flagged=sep(k1, off) > 0, clean_flagged=sep(k1, rhs) > 0,
            detail={"enclosure_width": float(k1.hi - k1.lo)})
 
-    # ---------------- governance --------------------------------------------------------
-    r1_gate = json.loads(C.blob_at("49b17ab4", str((C.NS / "config" / "N9R_GATE_C11R.json")
-                                                   .relative_to(C.REPO))))
-    now_rule = stmt["comparison_semantics_frozen_before_results"]
-    planted_rule = copy.deepcopy(now_rule)
+    # ============================ governance ================================================
+    rule = stmt["comparison_semantics_frozen_before_results"]
+    planted_rule = copy.deepcopy(rule)
     planted_rule["factor"] = 3
-    record("M10", "an agreement threshold changed after the fact", verifier="c11r_mutations.py",
-           input_artifact="evidence/table/C11R_N9_STATEMENTS.json",
+    unrelated_stmt_rule = copy.deepcopy(rule)
+
+    def rule_changed(r):
+        return r != gate["comparison_rule"] or r.get("factor") != K.FACTOR
+    record("M10", "an agreement threshold changed after the gate froze it",
+           verifier="c11r_gate.py", input_artifact="config/N9R_GATE_C11R.json",
            mutated_path="$.comparison_semantics_frozen_before_results.factor", mutated_value=3,
-           mutant_flagged=planted_rule != r1_gate["comparison_rule"],
-           clean_flagged=now_rule != r1_gate["comparison_rule"],
-           detail={"frozen_at": "49b17ab4 (revision-1 gate), before any independent result"})
+           mutant_flagged=rule_changed(planted_rule), clean_flagged=rule_changed(rule),
+           unrelated_flagged=rule_changed(unrelated_stmt_rule),
+           detail={"frozen_in": "config/N9R_GATE_C11R.json", "comparator_factor": K.FACTOR})
 
     def weaker_verdict(runs):
         certified = [t for t in S.targets(runs).values() if t["status"] != "NOT_CERTIFIED"]
         return "N9_CLOSED" if len(certified) == 6 else "AGREEMENT_INSUFFICIENT"
-    closed_by_real = K.run_comparison(base, stmt, FAKE_MAGS)["N9_VERDICT"] == "N9_CLOSED"
     record("M11", "N9 declared closed on a weaker criterion (NOT_IMPLEMENTED counted as pass)",
            verifier="c11r_compare.py", producer="c11r_runs.py",
            mutated_path="verdict rule", mutated_value="count NOT_IMPLEMENTED as satisfied",
-           mutant_flagged=weaker_verdict(base) == "N9_CLOSED", clean_flagged=closed_by_real,
-           detail={"real_verdict_on_base": K.run_comparison(base, stmt, FAKE_MAGS)["N9_VERDICT"]})
+           mutant_flagged=weaker_verdict(base) == "N9_CLOSED",
+           clean_flagged=base_cmp["N9_VERDICT"] == "N9_CLOSED",
+           detail={"real_verdict_on_base": base_cmp["N9_VERDICT"]})
 
     def scope_problems(paths):
         return [p for p in paths if "COVERAGE_MAP_R6" in p.upper() or
@@ -355,35 +283,24 @@ def main() -> int:
            clean_flagged=bool(scope_problems(changed)),
            detail={"files_changed_since_C11": len(changed)})
 
-    stmt_mutant("M13", "a whole-kernel certificate read as the atom-removed tau", "tau",
-                ["kernel"], "K_e")
-    # M14 -- a value no certificate produced
-    m = copy.deepcopy(base)
-    _set(m, ["targets", "Abar", "value"], str(F(base["targets"]["Abar"]["value"]) - F(1, 10)))
-    u = copy.deepcopy(base)
-    u["timings_seconds"] = {"x": 2.0}
-    record("M14", "a reported value that its certificate did not produce",
-           verifier="c11r_mutations.py", producer="c11r_runs.py", input_artifact=RUNS_IN,
-           mutated_path="$.targets.Abar.value", mutated_value="value - 1/10",
-           mutant_flagged=bool(trace_values(m)), clean_flagged=bool(trace_values(base)),
-           unrelated_flagged=bool(trace_values(u)))
+    # ============================ certificate-level mutants ================================
+    run_mutant("M13", "a whole-kernel (K_e) certificate cited for the atom-removed tau", "tau",
+               lambda r: r["targets"]["tau"].update(certificate_id="F_K"),
+               path="$.targets.tau.certificate_id", value="F_K")
 
-    with BD.PhiCache():
-        bad = I.pointwise_refute_iv({(0, 0): F(5)}, NT, n=5)
-        good = I.pointwise_refute_iv({(0, 0): F(5000)}, NT, n=5)
-    record("M15", "a pointwise-infeasible member not refuted", verifier="c11r_idrift.py",
-           mutated_path="candidate", mutated_value="w = 5 (infeasible) vs w = 5000",
-           mutant_flagged=bad["POINTWISE_REFUTED"], clean_flagged=good["POINTWISE_REFUTED"],
-           detail={"block": "NON-TARGET", "bad": bad["min_L_upper_bound"],
-                   "good": good["min_L_upper_bound"]})
-
-    # ---------------- the campaign's required mutants M16-M28 ---------------------------
-    stmt_mutant("M16", "a scalar drift substituted for the block (C11's e = 18355/10000)", "Abar",
-                ["drift_domain"], ["18355/10000", "18355/10000"])
-    stmt_mutant("M17", "the midpoint substituted for uniform drift", "Abar",
-                ["drift_domain"], [mid, mid])
-    stmt_mutant("M18", "endpoints only", "Abar", ["drift_domain"], [e_lo, e_lo])
-    # and the mathematics behind M18: an endpoint hull misses an interior extremum of phi
+    def set_block(cid, blk):
+        def f(r):
+            r["certificates"][cid]["inputs"]["drift_block"] = list(blk)
+            redigest(r["certificates"][cid])
+        return f
+    run_mutant("M16", "a scalar drift substituted for the block (C11's development drift)",
+               "Abar", set_block("F_K", ("18355/10000", "18355/10000")),
+               path="$.certificates.F_K.inputs.drift_block", value="[18355/10000] x 2")
+    run_mutant("M17", "the midpoint substituted for uniform drift", "Abar",
+               set_block("F_K", (mid, mid)), path="$.certificates.F_K.inputs.drift_block",
+               value="[mid, mid]")
+    run_mutant("M18", "endpoints only", "Abar", set_block("F_K", (e_lo, e_lo)),
+               path="$.certificates.F_K.inputs.drift_block", value="[e_lo, e_lo]")
     z = -(NT.lo + NT.hi) / 2
     lo_e, hi_e = G.phi(z + NT.lo), G.phi(z + NT.hi)
     hull_hi = max(lo_e.hi, hi_e.hi)
@@ -395,40 +312,65 @@ def main() -> int:
            clean_flagged=interior > true_iv.hi,
            detail={"block": "NON-TARGET", "phi(0)": float(interior),
                    "endpoint_hull_hi": float(hull_hi), "interval_hi": float(true_iv.hi)})
-    stmt_mutant("M19", "K_e substituted for Khat_e (kernel and convention)", "tau",
-                ["kernel"], "K_e")
-    abar_st = copy.deepcopy(base["targets"]["Abar"]["statement"])
-    tau_st = copy.deepcopy(base["targets"]["tau"]["statement"])
-    for mid_, name, tgt, repl in (("M20", "tau substituted for Abar", "Abar", tau_st),
-                                  ("M21", "Abar substituted for tau", "tau", abar_st)):
-        m = copy.deepcopy(base)
-        m["targets"][tgt]["statement"] = repl
-        record(mid_, name, verifier="c11r_compare.py", producer="c11r_runs.py",
-               input_artifact=RUNS_IN, mutated_path=f"$.targets.{tgt}.statement",
-               mutated_value=repl["constant"],
-               mutant_flagged=classes(m)[tgt] == "INVALID",
-               clean_flagged=base_cls[tgt] == "INVALID")
-    stmt_mutant("M22", "cell 307 substituted for cell 306", "Abar", ["drift_domain"],
-                ["17885921/10000000", "1882413/1000000"])
+    run_mutant("M19", "K_e substituted for Khat_e in the certifier's reported kernel", "tau",
+               lambda r: r["certificates"]["F_H"]["certifier_result"].update(kernel="K_e"),
+               path="$.certificates.F_H.certifier_result.kernel", value="K_e")
+    run_mutant("M20", "tau's certificate cited for Abar", "Abar",
+               lambda r: r["targets"]["Abar"].update(certificate_id="F_H",
+                                                     value=r["targets"]["tau"]["value"]),
+               path="$.targets.Abar.certificate_id", value="F_H")
+    run_mutant("M21", "Abar's certificate cited for tau, with Abar's value", "tau",
+               lambda r: r["targets"]["tau"].update(certificate_id="F_K",
+                                                    value=r["targets"]["Abar"]["value"]),
+               path="$.targets.tau.certificate_id", value="F_K")
+    run_mutant("M22", "cell 307's block substituted for cell 306's", "Abar",
+               set_block("F_K", CELL_307_BLOCK), path="$.certificates.F_K.inputs.drift_block",
+               value=list(CELL_307_BLOCK))
     m = copy.deepcopy(base)
     del m["targets"]["D2"]
     record("M23", "fewer than the six constants", verifier="c11r_schema.py",
            producer="c11r_runs.py", mutated_path="$.targets.D2", mutated_value="<deleted>",
            mutant_flagged=bool(S.validate_runs(m, check_provenance=False)),
-           clean_flagged=bool(S.validate_runs(base, check_provenance=False)))
+           clean_flagged=bool(S.validate_runs(base, check_provenance=False)),
+           unrelated_flagged=bool(S.validate_runs(unrel, check_provenance=False)))
     record("M24", "the atom contribution's sign flipped", verifier="c11r_idrift.py",
            mutated_path="Khat_e + atom -> Khat_e - atom", mutated_value="(0,0) on NT",
            mutant_flagged=sep(full, hat - atom) > 0, clean_flagged=sep(full, hat + atom) > 0)
-    stmt_mutant("M25", "the drift interval narrowed", "Abar", ["drift_domain"], [e_lo, mid])
+    run_mutant("M25", "the drift interval narrowed", "Abar", set_block("F_K", (e_lo, mid)),
+               path="$.certificates.F_K.inputs.drift_block", value="[e_lo, mid]")
 
-    # M26 -- comparison before seal: the pure seal check, the real seal path, and a real-schema
-    # artifact stripped of its provenance
+    # M14 -- value trace (production: c11r_certificate.evaluate_target inside evaluate_run)
+    m = copy.deepcopy(base)
+    m["targets"]["Abar"]["value"] = str(F(base["targets"]["Abar"]["value"]) - F(1, 10))
+    record("M14", "a reported value that its certificate did not produce",
+           verifier="c11r_certificate.py", producer="c11r_runs.py", input_artifact=RUNS_IN,
+           mutated_path="$.targets.Abar.value", mutated_value="value - 1/10",
+           mutant_flagged=not guards(m)["value_trace"]["PASS"],
+           clean_flagged=not guards(base)["value_trace"]["PASS"],
+           unrelated_flagged=not guards(unrel)["value_trace"]["PASS"])
+    with BD.PhiCache():
+        bad = I.pointwise_refute_iv({(0, 0): F(5)}, NT, n=5)
+        good = I.pointwise_refute_iv({(0, 0): F(5000)}, NT, n=5)
+    record("M15", "a pointwise-infeasible member not refuted", verifier="c11r_idrift.py",
+           mutated_path="candidate", mutated_value="w = 5 (infeasible) vs w = 5000",
+           mutant_flagged=bad["POINTWISE_REFUTED"], clean_flagged=good["POINTWISE_REFUTED"],
+           detail={"block": "NON-TARGET", "bad": bad["min_L_upper_bound"],
+                   "good": good["min_L_upper_bound"]})
+
+    # M26 -- the seal: ordering (pure) and typed (production schema)
     sealbits = {k: bool(K.verify_seal_bytes(*a)) for k, a in (
         ("never_committed", (b"x", None, False)), ("edited", (b"n", b"o", False)),
         ("uncommitted", (b"x", b"x", True)), ("sealed", (b"x", b"x", False)))}
-    reads_before = set(C._READS)
-    real = K.verify_seal()
-    quarantine_read = any("ORIGINAL_MAGNITUDES" in k for k in set(C._READS) - reads_before)
+    typed = {
+        "false_seal_accepted": not S.seal_problems(base),
+        "true_seal_rejected": bool(S.seal_problems(dict(base, seal=dict(
+            base["seal"], contains_original_magnitudes=True)))),
+        "unrelated_text_with_the_word_accepted": not S.seal_problems(dict(
+            base, note="these magnitudes and original_value words are prose")),
+        "real_payload_key_rejected": bool(S.seal_problems(dict(
+            base, targets=dict(base["targets"], Abar=dict(base["targets"]["Abar"],
+                                                          original_value="1/1"))))),
+    }
     prov = copy.deepcopy(base)
     prov["provenance"] = C.provenance(CODE / "c11r_runs.py")
     prov["sha256"] = C.sha256_obj({k: v for k, v in prov.items() if k != "sha256"})
@@ -436,36 +378,46 @@ def main() -> int:
     del stripped["provenance"]
     record("M26", "comparison performed before the independent output is sealed",
            verifier="c11r_compare.py", producer="c11r_runs.py",
-           mutated_path="$.provenance (and: uncommitted / edited / never committed)",
+           mutated_path="$.provenance (and: uncommitted / edited / never committed / true seal)",
            mutated_value="<removed>",
            mutant_flagged=(bool(S.validate_runs(stripped)) and sealbits["never_committed"]
-                           and sealbits["edited"] and sealbits["uncommitted"]),
-           clean_flagged=bool(S.validate_runs(prov)) or sealbits["sealed"],
-           detail={"real_tree_seal_problems": real["problems"],
-                   "real_seal_path_refuses": bool(real["problems"]),
-                   "quarantine_read_by_the_seal_check": quarantine_read})
+                           and sealbits["edited"] and sealbits["uncommitted"]
+                           and typed["true_seal_rejected"] and typed["real_payload_key_rejected"]),
+           clean_flagged=(bool(S.validate_runs(prov)) or sealbits["sealed"]
+                          or not typed["false_seal_accepted"]),
+           unrelated_flagged=not typed["unrelated_text_with_the_word_accepted"],
+           detail={"typed_seal_controls": typed, "ordering_controls": sealbits,
+                   "note": ("the real seal path (c11r_compare.verify_seal) reads the runs "
+                            "artifact, so only the comparator may call it; the firewall forbids "
+                            "it here")})
     probe = copy.deepcopy(gate)
     probe["predicates"]["G_probe"] = "this is the criterion C11R must and does fail"
+    unrel_gate = copy.deepcopy(gate)
+    unrel_gate["predicates"]["G_probe"] = "a predicate that states a test and no outcome"
     record("M27", "the prospective gate contains result-dependent language",
            verifier="c11r_gate.py", input_artifact="config/N9R_GATE_C11R.json",
            mutated_path="$.predicates.G_probe", mutated_value=probe["predicates"]["G_probe"],
            mutant_flagged=bool(GA.scan_for_result_language(probe)),
-           clean_flagged=bool(GA.scan_for_result_language(gate)))
-    m = copy.deepcopy(base)
-    _set(m, ["certificates", "F_K", "screen_classification"], "POINTWISE_INFEASIBLE")
-    ok_ref = copy.deepcopy(m)
-    _set(ok_ref, ["certificates", "F_K", "sent_to_box_pass"], False)
-    u = copy.deepcopy(base)
-    _set(u, ["certificates", "F_K", "margin_lower_bound"], "2/1000")
-    record("M28", "a pointwise-refuted member still sent to certification",
-           verifier="c11r_mutations.py", producer="c11r_runs.py", input_artifact=RUNS_IN,
-           mutated_path="$.certificates.F_K.screen_classification (sent_to_box_pass True)",
-           mutated_value="POINTWISE_INFEASIBLE", mutant_flagged=bool(refuted_but_sent(m)),
-           clean_flagged=bool(refuted_but_sent(base)) or bool(refuted_but_sent(ok_ref)),
-           unrelated_flagged=bool(refuted_but_sent(u)),
-           detail={"refuted_and_withheld_is_accepted": not refuted_but_sent(ok_ref)})
+           clean_flagged=bool(GA.scan_for_result_language(gate)),
+           unrelated_flagged=bool(GA.scan_for_result_language(unrel_gate)))
 
-    # M29 -- executed scalar collapse; the V6 count is READ, not transcribed
+    # M28 -- G10 (production: c11r_certificate.screen_order; the comparator acts on it)
+    m = copy.deepcopy(base)
+    m["certificates"]["F_K"]["screen_classification"] = "POINTWISE_INFEASIBLE"
+    withheld = copy.deepcopy(base)
+    withheld["certificates"]["F_K"].update(screen_classification="POINTWISE_INFEASIBLE",
+                                           sent_to_certification=False)
+    withheld["certificates"]["F_K"]["certifier_result"].update(certified=False)
+    record("M28", "a pointwise-refuted member still sent to certification",
+           verifier="c11r_certificate.py", producer="c11r_runs.py", input_artifact=RUNS_IN,
+           mutated_path="$.certificates.F_K.screen_classification (sent True)",
+           mutated_value="POINTWISE_INFEASIBLE",
+           mutant_flagged=(not guards(m)["G10"]["PASS"]
+                           and compare(m)["N9_VERDICT"] == "EXECUTION_INVALID"),
+           clean_flagged=not guards(base)["G10"]["PASS"] or not guards(withheld)["G10"]["PASS"],
+           unrelated_flagged=not guards(unrel)["G10"]["PASS"],
+           detail={"refuted_and_withheld_is_accepted": guards(withheld)["G10"]["PASS"]})
+
     v6 = next(c for c in val["checks"] if c["id"] == "V6")
     e = F(5, 2)
     a = X.kernel_apply({(0, 0): F(99, 10), (0, 1): F(-3, 2)}, F(3), F(1), e)
@@ -479,7 +431,6 @@ def main() -> int:
            cites_v6_mismatch_count=v6["detail"]["mismatch_count"],
            detail={"scalar": "5/2 (non-target)", "v6_pass": v6["pass"]})
 
-    # ---------------- revision-2 machinery -----------------------------------------------
     st_ok = {"x": 1, "provenance": {"producer": "p.py", "producer_sha256": "a",
                                     "code_closure": {}, "inputs": {}}}
     st_ok["sha256"] = C.sha256_obj({k: v for k, v in st_ok.items() if k != "sha256"})
@@ -506,7 +457,6 @@ def main() -> int:
            verifier="c11r_boxdata.py", mutated_path="selected A", mutated_value="A - 1/1000",
            mutant_flagged=low < F(1, 2 ** 60), clean_flagged=s["min_factored_margin"] < F(1, 2 ** 60),
            detail={"block": "NON-TARGET", "config": [2, 8], "A": str(s["A"]), "B": str(s["B"])})
-
     with BD.PhiCache():
         lrows = [BD.box_lower_coeffs(*b_, NT, 8) for b_ in X.cover(2)]
         sl = BD.select_lower(lrows, grid=1000, beta_max=F(1), mu=F(1, 2 ** 60))
@@ -521,96 +471,194 @@ def main() -> int:
 
     planted_pol = copy.deepcopy(policy)
     planted_pol["magnitudes"] = {"tau": "planted"}
+    unrel_pol = copy.deepcopy(policy)
+    unrel_pol["note"] = "the word magnitudes in prose is not a payload key"
+    record("M34", "the policy carrying an original-magnitude payload",
+           verifier="c11r_schema.py", input_artifact="config/C11R_POLICY.json",
+           mutated_path="$.magnitudes", mutated_value={"tau": "planted"},
+           mutant_flagged=bool(S.forbidden_payload(planted_pol)),
+           clean_flagged=bool(S.forbidden_payload(policy))
+           or policy["references_original_magnitudes"] is not False,
+           unrelated_flagged=bool(S.forbidden_payload(unrel_pol)))
 
-    def has_mag_keys(o):
-        found = []
-
-        def walk(x):
-            if isinstance(x, dict):
-                for k2, v2 in x.items():
-                    if k2 in FW.MAGNITUDE_KEYS:
-                        found.append(k2)
-                    walk(v2)
-            elif isinstance(x, list):
-                for v2 in x:
-                    walk(v2)
-        walk(o)
-        return bool(found)
-    record("M34", "the policy carrying an original magnitude", verifier="c11r_firewall.py",
-           input_artifact="config/C11R_POLICY.json", mutated_path="$.magnitudes",
-           mutated_value={"tau": "planted"}, mutant_flagged=has_mag_keys(planted_pol),
-           clean_flagged=has_mag_keys(policy) or policy["references_original_magnitudes"])
-
-    cmp_src = (CODE / "c11r_compare.py").read_text()
+    cmp_src = C.read_code(f"{C.NS_REL}/code/c11r_compare.py")
     planted_src = 'MSG = "agreement is established with statements equal to the original"\n'
     quoting_doc = ('"""Revision 1 carried \'agreement is established\' before any run."""\n'
                    'x = 1\n')
     record("M35", "a pre-written scientific conclusion in the comparator's output prose",
-           verifier="c11r_mutations.py", mutated_path="<synthetic comparator source>",
-           mutated_value=planted_src, mutant_flagged=bool(result_phrases_in(planted_src)),
-           clean_flagged=bool(result_phrases_in(cmp_src)),
-           unrelated_flagged=bool(result_phrases_in(quoting_doc)),
-           detail={"hits_in_real_comparator_output_strings": result_phrases_in(cmp_src),
-                   "a_docstring_quoting_the_phrase_is_not_flagged":
-                       not result_phrases_in(quoting_doc)})
+           verifier="c11r_gate.py", mutated_path="<synthetic comparator source>",
+           mutated_value=planted_src,
+           mutant_flagged=bool(GA.scan_source_for_result_language(planted_src)),
+           clean_flagged=bool(GA.scan_source_for_result_language(cmp_src)),
+           unrelated_flagged=bool(GA.scan_source_for_result_language(quoting_doc)))
 
     self_sha = C.sha256_file(CODE / "c11r_runs.py")
     good_auth = {"guard": "ALLOW", "cell": 306, "policy_sha256": policy["sha256"],
                  "statements_sha256": stmt["sha256"], "runs_producer_sha256": self_sha}
     bad_auth = dict(good_auth, policy_sha256="0" * 64)
-    real_block = R.authorised(policy, stmt)
     record("M36", "target execution without a bound Phase 13 authorization",
            verifier="c11r_runs.py", mutated_path="authorization.policy_sha256",
            mutated_value="0" * 16,
            mutant_flagged=bool(R.check_authorization(bad_auth, policy, stmt, self_sha))
            and bool(R.check_authorization(None, policy, stmt, self_sha)),
            clean_flagged=bool(R.check_authorization(good_auth, policy, stmt, self_sha)),
-           detail={"real_tree_refuses": real_block})
-
+           detail={"real_tree_refuses": R.authorised(policy, stmt)})
+    run_mutant("M37", "D1 claimed from a supersolution certificate, which cannot bound it", "D1",
+               lambda r: r["targets"].update(D1=S.target("D1", status="CERTIFIED", value=F(3),
+                                                         reason=None, certificate_id="F_K")),
+               path="$.targets.D1", value="CERTIFIED via F_K")
     m = copy.deepcopy(base)
-    m["targets"]["D1"] = S.target("D1", status="CERTIFIED", value=F(3),
-                                  stmt=EQ.honest_independent("D1", (e_lo, e_hi),
-                                                             "independent_supersolution"),
-                                  reason=None, certificate_id="F_K")
-    record("M37", "D1 claimed through a route that cannot bound a derivative",
-           verifier="c11r_equiv.py", producer="c11r_runs.py", input_artifact=RUNS_IN,
-           mutated_path="$.targets.D1", mutated_value="CERTIFIED via independent_supersolution",
-           mutant_flagged=classes(m)["D1"] == "INVALID",
-           clean_flagged=base_cls["D1"] == "INVALID")
-    m = copy.deepcopy(base)
-    m["targets"]["Abar"] = S.target("Abar", status="NOT_IMPLEMENTED", value=None, stmt=None,
-                                    reason="planted", certificate_id=None)
+    m["targets"]["Abar"] = S.target("Abar", status="NOT_IMPLEMENTED", value=None, reason="planted",
+                                    certificate_id=None)
     record("M38", "a constant the policy implements marked NOT_IMPLEMENTED (G8)",
-           verifier="c11r_mutations.py", producer="c11r_runs.py",
+           verifier="c11r_certificate.py", producer="c11r_runs.py",
            input_artifact="config/C11R_POLICY.json", mutated_path="$.targets.Abar.status",
-           mutated_value="NOT_IMPLEMENTED", mutant_flagged=bool(dispositions_consistent(m, policy)),
-           clean_flagged=bool(dispositions_consistent(base, policy)))
+           mutated_value="NOT_IMPLEMENTED",
+           mutant_flagged=(not guards(m)["G8"]["PASS"]
+                           and compare(m)["N9_VERDICT"] == "EXECUTION_INVALID"),
+           clean_flagged=not guards(base)["G8"]["PASS"],
+           unrelated_flagged=not guards(unrel)["G8"]["PASS"])
+    other = copy.deepcopy(policy)
+    other["configuration"]["chosen"] = dict(policy["configuration"]["chosen"],
+                                            panels=policy["configuration"]["chosen"]["panels"] * 2)
+    m = build(K.synthetic_certs(stmt, other))
+    record("M39", "certificates made at another configuration than the frozen one (G19)",
+           verifier="c11r_certificate.py", producer="c11r_runs.py",
+           input_artifact="config/C11R_POLICY.json", mutated_path="$.certificates.*.inputs.panels",
+           mutated_value="2 x frozen panels",
+           mutant_flagged=(not guards(m)["G19"]["PASS"]
+                           and compare(m)["N9_VERDICT"] == "EXECUTION_INVALID"),
+           clean_flagged=not guards(base)["G19"]["PASS"],
+           unrelated_flagged=not guards(unrel)["G19"]["PASS"])
 
-    # the comparator's and the equivalence checker's own self-tests, through their real code
-    ks = K.self_test(stmt)
+    # ============================ the thirteen adversarial certificate controls ============
+    def adv(aid, attack, target, mutate, *, deductions=None, exp=None, note=None):
+        mm = copy.deepcopy(base)
+        mutate(mm)
+        res = compare(mm, deductions=deductions, exp=exp)
+        cls = res["classes"][target]
+        caught = cls in ("INVALID", "DISAGREES") and res["N9_VERDICT"] != "N9_CLOSED"
+        ADV.append({"id": aid, "attack": attack, "target": target,
+                    "clean_class": base_cls[target], "mutant_class": cls,
+                    "verdict": res["N9_VERDICT"], "caught": caught,
+                    "statement_result": res["per_target"][target].get("statement"),
+                    "numeric_result": res["per_target"][target].get("numeric"),
+                    "unrelated_mutation_changes_class": unrel_cls[target] != base_cls[target],
+                    "note": note})
+
+    def forge_certified_with_negative_margin(r):
+        r["certificates"]["F_K"]["certifier_result"].update(margin_lower_bound="-1/1000")
+    adv("ADV01", "forged certificate: certified=True over a negative margin", "Abar",
+        forge_certified_with_negative_margin)
+    adv("ADV02", "value halved after certification", "Abar",
+        lambda r: r["targets"]["Abar"].update(value=str(F(r["targets"]["Abar"]["value"]) / 2)))
+    adv("ADV03", "K_e certificate relabelled Khat_e (reported kernel)", "Abar",
+        lambda r: r["certificates"]["F_K"]["certifier_result"].update(kernel="Khat_e"),
+        note=("a CONSISTENT relabel -- the atom-removal argument changed too and the digest "
+              "recomputed -- is a record indistinguishable from a real Khat_e run; only "
+              "re-execution detects it. See c11r_certificate, 'what reconstruction cannot see'."))
+    adv("ADV04", "Khat_e certificate relabelled K_e (reported kernel)", "tau",
+        lambda r: r["certificates"]["F_H"]["certifier_result"].update(kernel="K_e"))
+    adv("ADV05a", "direction swapped: the LOWER-bound target cites an UPPER-bound certificate",
+        "D_lo", lambda r: r["targets"]["D_lo"].update(certificate_id="F_H",
+                                                      value=r["targets"]["tau"]["value"]))
+    flipped = copy.deepcopy(CV.DEDUCTIONS)
+    flipped[("c11r_boxdata.py", "subsolution_margin_iv", "Khat_e")]["direction"] = "UPPER_BOUND"
+    adv("ADV05b", "direction swapped in the deduction: a sub-solution read as an UPPER bound",
+        "D_lo", lambda r: None, deductions=flipped)
+    adv("ADV06", "cell 306 -> cell 307 (consistent re-digested certificate)", "Abar",
+        set_block("F_K", CELL_307_BLOCK))
+    adv("ADV07", "reachable set changed: the certificate's cover is not the certified one",
+        "tau", lambda r: r["certificates"]["F_H"].update(
+            cover={"function": "c11_certifier.cover_without_axes",
+                   "depth": r["certificates"]["F_H"]["inputs"]["depth"]}))
+    adv("ADV08", "aggregation swapped: an UPPER bound aggregated by MIN over sub-blocks", "Abar",
+        lambda r: r["certificates"]["F_K"].update(aggregation="min_over_sub_blocks"))
+    adv("ADV09", "the D_lo sub-solution relabelled as D1", "D1",
+        lambda r: r["targets"].update(D1=S.target("D1", status="CERTIFIED",
+                                                  value=F(r["targets"]["D_lo"]["value"]),
+                                                  reason=None, certificate_id="F_D")))
+    conditional = copy.deepcopy(CV.DEDUCTIONS)
+    conditional[("c11r_derivative.py", "derivative_propagation", "Khat_e")].update(
+        implemented=True, family="w = A - B*m", kind=CV.SUPER,
+        yields={"D1": "w_at_atom"})                       # a TEST-ONLY implemented route
+
+    def add_conditional(premises):
+        def f(r):
+            c = copy.deepcopy(r["certificates"]["F_H"])
+            c.update(certificate_id="F_DV", premises=sorted(premises))
+            c["certifier"] = {"module": "c11r_derivative.py", "function": "derivative_propagation",
+                              "module_sha256": "t"}
+            redigest(c)
+            r["certificates"]["F_DV"] = c
+            r["targets"]["D1"] = S.target("D1", status="CERTIFIED", value=F(c["weight"]["0,0"]),
+                                          reason=None, certificate_id="F_DV")
+        return f
+    exp_t = dict(EXP, **{"c11r_derivative.py": "t"})
+    adv("ADV10", "missing dependency: a conditional derivation omits one premise", "D1",
+        add_conditional(["C_T_independent"]), deductions=conditional, exp=exp_t)
+    adv("ADV11a", "candidate function changed after certification (digest not recomputed)",
+        "Abar", lambda r: r["certificates"]["F_K"]["weight"].update({"0,0": "20"}))
+    adv("ADV11b", "candidate function changed and re-digested; the value no longer traces",
+        "Abar", lambda r: redigest(r["certificates"]["F_K"]) if r["certificates"]["F_K"][
+            "weight"].update({"0,0": "20"}) is None else None)
+    adv("ADV12a", "certifier hash changed (re-digested)", "Abar",
+        lambda r: redigest(r["certificates"]["F_K"]) if r["certificates"]["F_K"][
+            "certifier"].update(module_sha256="0" * 64) is None else None)
+    adv("ADV12b", "the certifier that ran is not the one bound at the seal", "Abar",
+        lambda r: None, exp=dict(EXP, **{"c11r_idrift.py": "1" * 64}))
+    adv("ADV13", "conditional derivation presented as unconditional (no premises declared)",
+        "D1", add_conditional([]), deductions=conditional, exp=exp_t)
+    # the separation of STATEMENT EQUIVALENCE from NUMERICAL AGREEMENT
+    far = compare(build(K.synthetic_certs(stmt, policy, A_K=F(25))))
+    separation = {
+        "statement_status_clean": base_cmp["per_target"]["Abar"]["statement"]["STATUS"],
+        "statement_status_far": far["per_target"]["Abar"]["statement"]["STATUS"],
+        "numeric_clean": base_cmp["per_target"]["Abar"]["numeric"]["class"],
+        "numeric_far": far["per_target"]["Abar"]["numeric"]["class"]}
+    separation["pass"] = (separation["statement_status_clean"] == separation[
+        "statement_status_far"] == "EQUIVALENT" and separation["numeric_clean"]
+        != separation["numeric_far"])
+    adv_ok = all(r["caught"] and not r["unrelated_mutation_changes_class"] for r in ADV) \
+        and base_cmp["N9_VERDICT"] != "N9_CLOSED" and separation["pass"]
+
+    ks = K.self_test(stmt, policy)
     es = EQ.self_test(stmt)
-
     bad = [r["id"] for r in RES if r["outcome"] != "DETECTED"]
-    out = {"schema": "C11R_MUTATIONS/2",
-           "supersedes": "C11R_MUTATIONS/1 (stale; REFUSE with M29 SURVIVED -- erratum E4)",
-           "rules": ["run-artifact mutants use c11r_runs.assemble, the producer's own emission",
+    adv_missed = [r["id"] for r in ADV if not r["caught"]]
+    out = {"schema": "C11R_MUTATIONS/3",
+           "supersedes": ("C11R_MUTATIONS/2 at affdf8a3, whose value-trace, screen-order and "
+                          "disposition detectors were test-only copies (erratum E17)"),
+           "rules": ["every detector is a production function; this module defines no guard",
+                     "run artifacts built by c11r_runs.assemble from c11r_certificate certificates",
                      "each mutant: mutant flagged AND clean accepted AND unrelated not flagged",
                      "numerical mutants on the NON-TARGET block only",
                      "UNDETERMINED is never a pass"],
            "base_artifact_classes_on_synthetic_magnitudes": base_cls,
+           "base_verdict_on_synthetic_magnitudes": base_cmp["N9_VERDICT"],
            "mutants": RES,
+           "adversarial_controls": ADV,
+           "adversarial_controls_missed": adv_missed,
+           "statement_vs_number_separation": separation,
            "comparator_self_test": {"PASS": ks["PASS"], "cases": len(ks["cases"]),
                                     "used_real_magnitudes": ks["used_real_magnitudes"]},
            "equivalence_self_test": {"PASS": es["PASS"], "cases": len(es["cases"])},
            "not_detected": bad,
-           "MUTATION_CLASS": "PASS" if not bad and ks["PASS"] and es["PASS"] else "REFUSE"}
+           "MUTATION_CLASS": "PASS" if (not bad and adv_ok and ks["PASS"] and es["PASS"])
+           else "REFUSE"}
     sh = C.write_evidence(C.NS / "evidence" / "mutations" / "C11R_MUTATIONS.json", out,
                           producer=__file__)
     for r in RES:
         print(f"  {r['outcome']:15s} {r['id']:5s} {r['name'][:78]}")
-    print(f"\ncomparator self-test {ks['PASS']} ({len(ks['cases'])} cases); equivalence self-test "
+    print("\nadversarial certificate controls:")
+    for r in ADV:
+        print(f"  {'caught ' if r['caught'] else 'MISSED '} {r['id']:7s} {r['attack'][:62]:62s} "
+              f"{r['clean_class']:>10s} -> {r['mutant_class']:9s} {r['verdict']}")
+    print(f"\nseparation (same proposition, different value): {separation}")
+    print(f"comparator self-test {ks['PASS']} ({len(ks['cases'])} cases); equivalence self-test "
           f"{es['PASS']} ({len(es['cases'])} cases)")
-    print(f"MUTATION_CLASS = {out['MUTATION_CLASS']}   not detected: {bad}")
+    print(f"MUTATION_CLASS = {out['MUTATION_CLASS']}   not detected: {bad}   adversarial missed: "
+          f"{adv_missed}")
     print(f"wrote evidence/mutations/C11R_MUTATIONS.json sha256 {sh[:16]}...")
     return 0 if out["MUTATION_CLASS"] == "PASS" else 1
 
