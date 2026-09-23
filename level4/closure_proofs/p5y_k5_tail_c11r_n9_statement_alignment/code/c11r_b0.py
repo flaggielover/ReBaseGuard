@@ -17,6 +17,7 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import c11r_common as C
+import c11r_procs as PR
 
 checks = []
 
@@ -67,8 +68,18 @@ def main() -> int:
     # 6, 7 -- r5 authoritative, m=5 open set
     m5 = C.r5_open_by_verdict("5")
     r5 = C.r5_map()
-    chk(6, "r5 is the authoritative coverage map", r5.get("revision") in ("r5", 5, "5")
-        or "R5" in C.R5_PATH, {"revision": r5.get("revision"), "path": C.R5_PATH})
+    # 6 -- r5 is authoritative: its object id is unchanged since the C11 HEAD, and no coverage map
+    # of a later revision exists anywhere in the tree. Round 3's version could not fail (review 3,
+    # N-7): the map's `revision` field is null and the path constant contains "R5".
+    import re as _re
+    r5_head, r5_c11 = C.git_object_at("HEAD", C.R5_PATH), C.git_object_at(C.C11_HEAD, C.R5_PATH)
+    maps = [f for f in C.git("ls-tree", "-r", "--name-only", "HEAD").splitlines()
+            if _re.search(r"K5_COVERAGE_MAP_R(\d+)\.json$", f)]
+    revs = sorted(int(_re.search(r"_R(\d+)\.json$", f).group(1)) for f in maps)
+    chk(6, "r5 is the authoritative coverage map: unchanged since C11, and the latest revision",
+        r5_head is not None and r5_head == r5_c11 and revs and max(revs) == 5,
+        {"r5_object_at_HEAD": r5_head, "r5_object_at_C11_HEAD": r5_c11,
+         "coverage_map_revisions_present": revs, "schema": r5.get("schema")})
     chk(7, "m=5 open set is exactly {306, 307, 308, 309}", tuple(m5) == C.OPEN_CELLS,
         {"open_m5": m5})
 
@@ -173,9 +184,11 @@ def main() -> int:
     chk(13, "the original certifier's backend is absent, so accidental reuse cannot run",
         not tc["numpy"] and not tc["flint"], {"importlib_find_spec": tc})
 
-    procs = C.classified_processes()
-    chk(14, "no campaign worker is running at C11R start", not procs["campaign_workers"],
-        {"workers": procs["campaign_workers"], "foreign": len(procs["foreign"])})
+    procs = PR.campaign_workers()
+    chk(14, "no campaign worker is running (detector revision 2, framework Python included)",
+        not procs["workers"],
+        {"workers": procs["workers"], "foreign_python": procs["foreign_python"],
+         "interpreters_seen": procs["interpreters_seen"], "mechanism": procs["mechanism"]})
 
     failed = [c["id"] for c in checks if not c["pass"]]
     out = {"schema": "C11R_B0/1",

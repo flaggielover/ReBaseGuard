@@ -1,6 +1,6 @@
 {
  "CONTAINS_NO_ORIGINAL_MAGNITUDE": true,
- "count": 24,
+ "count": 31,
  "errata": {
   "E10_ELIGIBILITY_WAS_READ_AS_EVIDENCE_OF_CERTIFIABILITY": {
    "found_by": "the independent pre-freeze review (finding 13(a)), reproduced to 5 decimals",
@@ -102,9 +102,63 @@
   "E24_THE_DECLARED_CONFIGURATION_RULE_MISRANKS_ON_NON_TARGET_EVIDENCE": {
    "consequence": "the frozen configuration may carry more structural loss than an available feasible one. That can make a family fail to certify that would certify elsewhere; it cannot make a certificate unsound. Whether it matters for cell 306 is unknown and is NOT estimated.",
    "found_by": "the author, round 3, from the extended non-target demonstration",
+   "later_resolution": "round 4: the rule was REPLACED prospectively, on non-target evidence only, on the user's instruction and with review round 3's judgement (N-8) that this is legitimate -- see E28. The text above is preserved as written in round 3.",
    "status": "OPEN -- DISCLOSED FOR REVIEW; NOT REPAIRED IN THIS ROUND",
    "what_happened": "re-applied with the committed cost artifact, the configuration rule declared in revision 2 -- minimise lambda1 = h_D + step_P + W subject to the cap -- chooses depth 4 / 128 panels. The policy's non-target loss demonstration, extended in round 3 to every feasible configuration, finds a DIFFERENT feasible configuration with lower actual worst loss on NT for both manufactured weights, at lower cost (evidence/policy/C11R_POLICY_EVIDENCE.json, nt_loss_validation.ranking_check). lambda1 weights box height and panel width equally; on NT the height term costs more than lambda1 counts, and the slope bound does not cover the actual loss at the finer configurations.",
    "why_not_repaired": "the round-3 instruction permits only the ALREADY-DECLARED policy logic or NOT_READY. Replacing the ranking rule after seeing which configuration it picks -- even on non-target evidence -- is a new prospective decision that belongs to the user and a review, not to the author in a repair round."
+  },
+  "E25_THE_FROZEN_IDENTITY_DID_NOT_BIND_EXECUTION_TO_COMPARISON": {
+   "also_wrong_in_the_record": "c11r_certificate's docstring argued that a consistently forged record is covered by the seal and the producer binding; as implemented that argument did not hold",
+   "demonstrated_by": "review round 3 (R3-1): a certifier edited, committed, used and reverted before the seal was sealed and compared normally; a policy edited in place (depth 6, cap 10^6, sha256 field left alone) passed check_authorization",
+   "found_by": "review round 3 (R3-1)",
+   "repair": "code/c11r_contract.py: a canonical FROZEN EXECUTION CONTRACT binding by content the transitive code closure, the policy, statement table and cost artifacts, the configuration and cap policy, the schemas and the predicates; the root of trust is that contract at the REVIEWED commit, named by the authorization and supplied to the comparator; every boundary (qualifier, authorization, runner pre-flight, seal, comparator) RECOMPUTES identities from bytes, requires every frozen path to be byte-identical to the approved commit and untouched by every later commit, and the comparator refuses (EXECUTION_INVALID) before opening the quarantine. The R3A-R3T controls (code/c11r_chain.py) replay R3's two attacks and eighteen more against those production checks.",
+   "what_happened": "through round 3 the chain Phase 12 -> 13 -> 14 -> 15 was linked only by the hash of c11r_runs.py and by the SELF-DECLARED sha256 fields of the policy and the statement table. The comparator took the certifier and producer hashes it 'expected' from the seal commit's own tree; the authorization compared stored hash strings; the runner checked neither the gate nor the qualification. The gate's post_seal_toolchain_sha256 was never consulted on the execution path."
+  },
+  "E26_THE_SEQUENTIALITY_CLAIMS_OF_ROUND_3_WERE_VACUOUS": {
+   "claims_that_were_therefore_unsupported": [
+    "evidence/cost/C11R_COST.json (round 3): 'sequential' with 0 campaign workers before and after",
+    "the round-3 policy's refusal of a non-sequential cost artifact",
+    "B0_14: no campaign worker running",
+    "the round-3 regeneration pre-flight: no_campaign_worker_running",
+    "the author's round-3 report that the cost measurement was sequential"
+   ],
+   "found_by": "review round 3 (N-2), confirmed by the author on the host",
+   "repair": "code/c11r_procs.py (E27); the cost artifact is re-measured under it, sampled before, between every stage, every 10 s in the background, and after",
+   "what_happened": "the round-3 process detector (common.classified_processes) accepted an interpreter only if its executable's basename was exactly python3, python, python3.14, python3.12 or python3.11. On the recorded host every campaign process runs under a framework build whose executable's basename is 'Python' (capital P). It could never see a campaign process.",
+   "what_is_still_true": "the author ran nothing else deliberately during that measurement; that is testimony, not evidence, and is not relied on"
+  },
+  "E27_THE_PROCESS_DETECTOR_REVISION_2_AND_ITS_LIMITS": {
+   "controls": "13 planted rows (python, Python, python3, venv, framework build, target and non-target argv, -c payload, unrelated shell, foreign Python, stale PID, the detector itself, its parent shell) and live controls on this host (a real framework-build child with campaign argv is seen; a shell mentioning a script is not; the detector is not; the child is gone after it exits)",
+   "design": "platform-native `ps -axww` (pid, ppid, comm) + (pid, args); interpreter identity from the executable path, case-insensitive, including framework and venv builds; campaign relevance from argv tokens only; explicit exclusion of this process and its ppid ancestor chain; vanished PIDs classified, never counted; shells never classified as workers",
+   "does_not_check": [
+    "processes invisible to ps for this user",
+    "other hosts/containers",
+    "campaign work run by a non-Python executable",
+    "interpreters renamed outside the recognised forms",
+    "argv tokens containing spaces"
+   ],
+   "found_by": "review round 3 (N-2)"
+  },
+  "E28_THE_CONFIGURATION_RULE_WAS_REPLACED_PROSPECTIVELY": {
+   "authority": "the user's round-4 instruction, and review round 3's judgement (N-8) that replacing the rule now, on NON-TARGET evidence only and before any target science, is a legitimate prospective choice and not post-result tuning",
+   "chronology_disclosed": "while writing the rule the author ran ONE calibration of ONE configuration (depth 5 / 32 panels) on the non-target block. Its raw gaps showed that a maximum of raw losses is set by the supersolution family's scale alone (the sub-solution's losses were an order of magnitude smaller in absolute terms). The metric was then declared RELATIVE to each family's atom value, BEFORE any other configuration was calibrated, i.e. before any cross-configuration comparison existed. No target quantity was involved.",
+   "found_by": "the author and review round 3 (N-8), resolving E24",
+   "new_rule": "config/C11R_POLICY.json configuration.rule: from the predeclared 3x3 family, reject cap violators (estimate x 3/2 > cap, or RSS); evaluate the rest on a fixed non-target calibration workload; choose the lexicographic minimum of (worst relative calibration box loss, estimated seconds, boxes x (panels + 1), depth, panels)",
+   "not_tailored": "the rule does not name a configuration; the result follows from the committed cost artifact and calibration, whatever it is",
+   "old_rule": "minimise lambda1 = h_D + step_P + W subject to the cap (revisions 2-3)",
+   "why_superseded": "E24: on non-target evidence the lambda1 surrogate ranked the feasible configurations differently from the measured box loss"
+  },
+  "E29_THE_FIREWALL_CLAIM_IS_A_HEURISTIC_NOT_A_PROOF": {
+   "added": "a RUNTIME open-guard in c11r_common (a CPython audit hook refusing any Python-level open of a protected path outside the two sanctioned readers), exercised on a planted dummy file; it does not see subprocess reads",
+   "correction": "the firewall artifact now carries CLAIM = DEFENSE_IN_DEPTH_HEURISTIC, states what PASS means and what it does not prove, and records the reviewer's 20 probes as known-miss probes whose outcome is recorded, not asserted",
+   "found_by": "review round 3 (N-1)",
+   "load_bearing_instead": [
+    "explicit production allowlists",
+    "the quarantine architecture",
+    "the frozen execution contract, recomputed at every boundary",
+    "the comparator refusing before quarantine access on an identity failure"
+   ],
+   "what_happened": "rounds 2 and 3 presented FIREWALL_CLASS = PASS, G16 and mutant M03 ('reading original magnitudes ... by ANY path') as if the static analysis proved no leak path exists. Review round 3 planted 20 further leak paths; the analysis caught 6."
   },
   "E2_CANDIDATE_CHANGED_AFTER_SCREEN_WITH_ORIGINAL_VALUES_IN_VIEW": {
    "RETRACTED_sentence_from_revision_1": {
@@ -125,6 +179,17 @@
    "found_by": "the independent pre-freeze review (finding 13(c)), confirmed by the author",
    "status": "REVISED in revision 2 (the revision-1 version contained a false sentence) and in revision 3 (revision 2 restated the original values; this one does not).",
    "the_stated_rationale_does_not_discriminate": "revision 1 justified the change as 'w = 8 - m yields BOTH atom-removed constants from one certification run'. That is equally true of the dropped w = 12 - 3/2 m, which is also a Khat_e supersolution read at the atom and as a sup over R. The rationale therefore does not explain why one was replaced by the other."
+  },
+  "E30_THE_MUTATION_SUITE_OVERSTATED_THAT_IT_DEFINED_NO_GUARD": {
+   "found_by": "review round 3 (N-3, N-6)",
+   "repair": "c11r_compare.comparison_rule_problems is now a production check, run by the comparator's chain verification before any quarantine access; M10, M01 and M02 call production functions; every mutant is labelled with its detector_kind, and only PRODUCTION_* rows are claimed to demonstrate production enforcement",
+   "what_happened": "revision 3 said it 'defines no guard'. M01, M02, M07, M08, M10 and M12 were decided by logic local to the suite, and M10 (a changed factor-2 threshold) had no production detector at all; the comparator's FACTOR was hard-coded and never checked against the frozen rule (N-6)."
+  },
+  "E31_A_SECOND_VACUOUS_RESOLUTION_IN_THE_FIREWALL_HEURISTIC": {
+   "found_by": "the author, before commit",
+   "how_it_was_caught": "the author inspected the recorded list of read patterns resolving to no file (added in round 3 for exactly this purpose) before commit",
+   "repair": "a leading wildcard directory now stands for any repository root, including none; the reads classify as ALLOWLISTED; the remaining unresolved patterns are argument tokens and code-shaped fallback paths, all listed in the artifact",
+   "what_happened": "during round 4 the new repository-parameterised reads -- `repo / NS_REL / rel`, used by the execution-contract verifiers -- folded to patterns with a leading wildcard DIRECTORY, which the matcher required to be followed by a slash before 'level4'. Inventory paths are repo-relative, so these reads resolved to NO file and passed without being classified: the E23 defect class again, in new code."
   },
   "E3_INSTRUCTION_QUOTED_THE_WRONG_DRIFT_BLOCK": {
    "found_by": "Phase 1 reconstruction",
@@ -184,12 +249,58 @@
  "policy": "defects in this campaign's own conduct, recorded where a reader will find them. A deviation that is recorded can be judged; one that is not, cannot.",
  "provenance": {
   "code_closure": {
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "5b2b39e7a448e898cd8c6ef03abf0fce59f65bb44b4a776d0e73b0ea023cca63",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_errata.py": "32fbd69abfef56e6e0ece07481925e6f54e1d6e196021a5fa1d5bf7b1c4f5a8a"
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "5507e1fc6e4b8f50981cc791eb8c32761598f29236f572d28b6986d7a022cee9",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_errata.py": "7dab9bf28463f3cbc0ac05f47974809bfa7a52aad917f38745fa38e60e499a01"
   },
   "inputs": {},
   "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_errata.py",
-  "producer_sha256": "32fbd69abfef56e6e0ece07481925e6f54e1d6e196021a5fa1d5bf7b1c4f5a8a"
+  "producer_sha256": "7dab9bf28463f3cbc0ac05f47974809bfa7a52aad917f38745fa38e60e499a01"
+ },
+ "review_3_findings_disposition": {
+  "N-1": {
+   "action": "claim downgraded to DEFENSE_IN_DEPTH_HEURISTIC; known-miss probes recorded; runtime open-guard added (E29)",
+   "classification": "FIX_NOW_CHEAP_GOVERNANCE"
+  },
+  "N-10": {
+   "action": "two OTHER campaigns' authorization files carry EXECUTION_AUTHORIZED: true; they are outside C11R, unchanged since the C11 HEAD, and not touched",
+   "classification": "DOCUMENT_LIMITATION"
+  },
+  "N-2": {
+   "action": "process detector revision 2; cost artifact re-measured (E26, E27)",
+   "classification": "FIX_NOW_LOAD_BEARING"
+  },
+  "N-3": {
+   "action": "M10 moved to production; detector kinds labelled (E30)",
+   "classification": "FIX_NOW_CHEAP_GOVERNANCE"
+  },
+  "N-4": {
+   "action": "leak forms: 1-3 dp for |v| >= 10, 4-8 significant figures, scientific notation",
+   "classification": "FIX_NOW_CHEAP_GOVERNANCE"
+  },
+  "N-5": {
+   "action": "box count cross-checked against the cover; certificate key checked against certificate_id; a demoted NOT_CERTIFIED target flagged; the run's drift block checked against the contract; G19 and G20 stated in the gate",
+   "classification": "FIX_NOW_CHEAP_GOVERNANCE"
+  },
+  "N-6": {
+   "action": "FACTOR checked against the frozen rule, the contract and the gate at run time; D1/D2 requirement list adds sup_source_derivative bounds",
+   "classification": "FIX_NOW_CHEAP_GOVERNANCE"
+  },
+  "N-7": {
+   "action": "B0_06 now checks the r5 object id against the C11 HEAD and that no later coverage-map revision exists. B0_10's key-only match is a DOCUMENT_LIMITATION: it detects a JSON key 'guard' set to ALLOW, not other spellings",
+   "classification": "FIX_NOW_CHEAP_GOVERNANCE"
+  },
+  "N-8": {
+   "action": "the configuration rule replaced prospectively (E28)",
+   "classification": "FIX_NOW_LOAD_BEARING"
+  },
+  "N-9": {
+   "action": "the unmatched-pattern list is computed on the real code only; the stale c11r_screen .pyc is git-ignored residue, removed from the working copy",
+   "classification": "FIX_NOW_CHEAP_GOVERNANCE"
+  },
+  "R3-1": {
+   "action": "the frozen execution contract and the recomputed chain; R3A-R3T controls (E25)",
+   "classification": "FIX_NOW_LOAD_BEARING"
+  }
  },
  "reviews_answered": [
   {
@@ -201,9 +312,14 @@
    "path": "review/REVIEW_C11R_PREFREEZE_R2.md",
    "preserved_at": "6ae05833",
    "verdict": "NOT_READY"
+  },
+  {
+   "path": "review/REVIEW_C11R_PREFREEZE_R3.md",
+   "preserved_at": "f6c737c3",
+   "verdict": "NOT_READY"
   }
  ],
- "schema": "C11R_ERRATA/3",
- "sha256": "c1a30069cc12980b5cfd338fe305632fd42fefe45e2e2056ecb78bd1283977bc",
- "supersedes": "C11R_ERRATA/2 at 9801276c (which restated original values in E2)"
+ "schema": "C11R_ERRATA/4",
+ "sha256": "1d1ee4189998fc7dab76a76693d31440f758dd7051550e859f1ec75b8f8fb6bb",
+ "supersedes": "C11R_ERRATA/3 at eaca931e (E1-E24, all preserved; E24 gains a later_resolution note) and C11R_ERRATA/2 at 9801276c (which restated original values in E2)"
 }

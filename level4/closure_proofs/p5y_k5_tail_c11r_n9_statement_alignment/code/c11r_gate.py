@@ -19,19 +19,15 @@ import sys
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import c11r_certificate as CV
 import c11r_common as C
+import c11r_contract as CT
 
-# THE POST-SEAL TOOLCHAIN (review round 2, B-4). Every module that turns a sealed runs artifact
-# into a verdict is bound here by sha256, so a change to any of them after the freeze is visible
-# to the qualifier and to the status checker. The production evaluators each predicate names are
-# bound by module and function, and must exist.
-POST_SEAL_TOOLCHAIN = ("c11r_compare.py", "c11r_certificate.py", "c11r_runs.py",
-                       "c11r_schema.py", "c11r_equiv.py", "c11r_boxdata.py", "c11r_idrift.py",
-                       "c11r_common.py")
-EVALUATORS = {"G2": ("c11r_certificate.py", "reconstruct"),
-              "G8": ("c11r_certificate.py", "dispositions"),
-              "G10": ("c11r_certificate.py", "screen_order"),
-              "G18": ("c11r_certificate.py", "evaluate_target"),
-              "run": ("c11r_certificate.py", "evaluate_run")}
+# THE EXECUTION CONTRACT (round 4, R3-1). The gate no longer lists a toolchain of its own
+# (revision 3's post_seal_toolchain_sha256 was never consulted on the execution path). It binds
+# the RECOMPUTED digest of config/C11R_CONTRACT.json, which binds every load-bearing file by
+# content, and it states every predicate execution depends on with its production evaluator --
+# the same map the contract requires (c11r_contract.REQUIRED_PREDICATES), checked both ways.
+EVALUATORS = dict(CT.REQUIRED_PREDICATES)
+EVALUATORS["run"] = "c11r_certificate.py:evaluate_run"
 
 # Phrases that assert an outcome rather than state a test. Kept as fragments so that tense and
 # subject do not matter: "must fail", "does fail", "will fail" all reduce to the same stem.
@@ -94,14 +90,17 @@ def scan_for_result_language(obj) -> list[dict]:
     return hits
 
 
-def build(tbl: dict, policy: dict) -> dict:
+def build(tbl: dict, policy: dict, contract_digest: str) -> dict:
     d = tbl["drift_domain"]
     return {
-        "schema": "C11R_GATE/3",
-        "supersedes": ("C11R_GATE/1 (49b17ab4) and C11R_GATE/2 (affdf8a3), both reviewed NOT_READY. "
-                       "Gate 1's G8, G11, G12 and G13 could not fail on substance (review 1 item "
-                       "9). Gate 2's G8 and G10 were evaluated only by test-only copies in the "
-                       "mutation suite, never by the production path (review 2, B-4)."),
+        "schema": "C11R_GATE/4",
+        "supersedes": ("C11R_GATE/1 (49b17ab4), C11R_GATE/2 (affdf8a3) and C11R_GATE/3 (eaca931e), "
+                       "all reviewed NOT_READY. Gate 1's G8, G11, G12 and G13 could not fail on "
+                       "substance; gate 2's G8 and G10 lived only in the mutation suite; gate 3 "
+                       "listed a toolchain that nothing on the execution path consulted, and "
+                       "stated no G19 (review 3, R3-1 and N-5)."),
+        "execution_contract_sha256": contract_digest,
+        "execution_contract_source": CT.CONTRACT_REL,
         "campaign": "C11R -- N9 statement-alignment repair",
         "frozen_before": "any target certification run",
         "question": ("can the independent C11 certifier prove the SAME mathematical certification "
@@ -177,11 +176,14 @@ def build(tbl: dict, policy: dict) -> dict:
                 "the direction-aware comparison rule is fixed in the statement table, whose hash "
                 "this gate binds, before any independent result exists"),
             "G16_original_value_firewall": (
-                "FIREWALL_CLASS = PASS: every content read in every pre-comparison module resolves, "
-                "by load-path dataflow, to an allowlisted input, Python source or the declared R5 "
-                "map; only c11r_table.py and c11r_compare.py can read an original magnitude; the "
-                "reviewer's planted leak paths are positive controls; and the value-based leak "
-                "check (LEAK_CLASS = PASS) finds no original in any pre-result artifact or module"),
+                "the original values are reachable only through the two sanctioned readers: "
+                "production reads go through explicit allowlists; the RUNTIME open-guard refuses "
+                "any Python-level open of a protected path outside c11r_table.py and "
+                "c11r_compare.py (exercised on a planted file); the comparator opens the "
+                "quarantine only after G20; the value-based leak check (LEAK_CLASS = PASS) finds "
+                "no original in any pre-result artifact or module. The static load-path analysis "
+                "(FIREWALL_CLASS) is a DEFENSE_IN_DEPTH_HEURISTIC with recorded known misses, not "
+                "a proof"),
             "G17_policy_prospective": (
                 "the frozen policy references no original magnitude, no comparison threshold, no "
                 "review prose and no target history, chooses no candidate by hand, and fixes its "
@@ -190,7 +192,23 @@ def build(tbl: dict, policy: dict) -> dict:
             "G18_every_value_traced_to_a_certificate": (
                 "every CERTIFIED target's value equals the value reconstructed from a certificate "
                 "that verifies; evaluated in production by c11r_certificate.evaluate_target"),
+            "G19_configuration_adherence": (
+                "ONE execution at ONE configuration: every certificate in the runs artifact was "
+                "made at exactly the depth and panel count the frozen policy selected and the "
+                "execution contract binds. Evaluated in production by "
+                "c11r_certificate.configuration_adherence, called by the runner's self-check and "
+                "by the comparator; a failure makes the comparison EXECUTION_INVALID"),
+            "G20_execution_identity_chain": (
+                "the executed identity is the approved one, end to end: the comparator RECOMPUTES "
+                "the execution contract from bytes, requires every frozen path to be "
+                "byte-identical to its version at the approved commit and untouched by every "
+                "later commit, and requires the gate, qualification, authorization, runner, code "
+                "closure, certifiers and configuration recorded in the runs artifact to equal the "
+                "recomputed ones -- all BEFORE any original magnitude is loaded. Evaluated in "
+                "production by c11r_contract.verify_run_identity and the chain checks it depends "
+                "on; a failure is EXECUTION_INVALID and the quarantine is not opened"),
         },
+        "predicate_evaluators": dict(EVALUATORS),
 
         "comparison_rule": tbl["comparison_semantics_frozen_before_results"],
         "comparison_rule_source": {"artifact": "evidence/table/C11R_N9_STATEMENTS.json",
@@ -233,8 +251,6 @@ def build(tbl: dict, policy: dict) -> dict:
             "N9_entering_C11R": "OPEN",
             "coverage": "r5 authoritative; open m=5 cells {306, 307, 308, 309}; K5 PARTIAL"},
 
-        "post_seal_toolchain_sha256": {m: C.sha256_file(C.HERE / m) for m in POST_SEAL_TOOLCHAIN},
-        "production_evaluators": {k: f"{m}:{f}" for k, (m, f) in EVALUATORS.items()},
         "guard": "DENY",
         "compute_policy": {"AWS": "FORBIDDEN", "SR_PS1_campaign": "MUST NOT BE TOUCHED",
                            "remote_provisioning": "not required; the policy's cap is local"},
@@ -244,11 +260,20 @@ def build(tbl: dict, policy: dict) -> dict:
 def main() -> int:
     tbl = C.load_allowlisted("evidence/table/C11R_N9_STATEMENTS.json")
     policy = C.load_allowlisted("config/C11R_POLICY.json")
-    missing = [f"{m}:{f}" for m, f in EVALUATORS.values() if not callable(getattr(CV, f, None))]
+    missing = []
+    for spec in EVALUATORS.values():
+        mod, fn = spec.split(":")
+        target = {"c11r_certificate.py": CV, "c11r_contract.py": CT}.get(mod)
+        if target is None or not callable(getattr(target, fn, None)):
+            missing.append(spec)
     if missing:
         print(f"REFUSE: a production evaluator the gate names does not exist: {missing}")
         return 1
-    gate = build(tbl, policy)
+    cv = CT.verify_contract(C.REPO)
+    if cv["problems"]:
+        print(f"REFUSE: the execution contract does not verify: {cv['problems']}")
+        return 1
+    gate = build(tbl, policy, cv["digest"])
     cmp_hits = scan_source_for_result_language(C.read_code(f"{C.NS_REL}/code/c11r_compare.py"))
     if cmp_hits:
         print(f"REFUSE: the comparator's output strings carry a pre-written conclusion: {cmp_hits}")

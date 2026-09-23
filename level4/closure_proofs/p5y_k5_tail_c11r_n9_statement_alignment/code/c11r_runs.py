@@ -1,9 +1,17 @@
-"""C11R Phase 14 -- target execution under the frozen policy. Revision 3.
+"""C11R Phase 14 -- target execution under the frozen policy. Revision 4.
 
-NOT RUN BEFORE AN AUTHORIZATION. main() REFUSES at its first step unless
-config/C11R_AUTHORIZATION.json exists with guard ALLOW, bound to cell 306 and to the exact policy,
-statement table and this module's own hash. No such artifact exists, so an accidental run -- the
-erratum E1 lapse -- stops before touching anything.
+NOT RUN BEFORE AN AUTHORIZATION. main() REFUSES at its first step unless the runner pre-flight
+(c11r_contract.runner_preflight) passes. REVISION 4 (review round 3, R3-1; erratum E25): revision 3
+checked only that the authorization's stored hash FIELDS equalled the policy's and table's stored
+hash FIELDS, and bound only this module's own hash -- a policy edited in place passed. The
+pre-flight now RECOMPUTES, independently of the authorization, the execution contract from bytes,
+requires every frozen path to be byte-identical to the approved commit and untouched since,
+verifies the gate, the qualification and the authorization against the recomputed identities,
+requires every module of the bound code closure (this runner, the certifiers, the reconstruction
+and guards included) to be the bound version, and refuses if another campaign worker is running
+-- all BEFORE any target computation. The recomputed identity is recorded in the runs artifact
+(`execution_identity`) for the comparator to check again. No authorization exists, so an
+accidental run -- the erratum E1 lapse -- stops before touching anything.
 
 It reads no original magnitude: only the statement table (semantics) and the frozen policy.
 
@@ -38,11 +46,11 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import c11r_boxdata as BD
 import c11r_certificate as CV
 import c11r_common as C
+import c11r_contract as CT
 import c11r_idrift as I
 import c11r_schema as S
 
 X, G = I.X, I.G
-AUTH = C.NS / "config" / "C11R_AUTHORIZATION.json"
 TARGET_MAP = {"Abar": "F_K", "tau": "F_H", "C_T": "F_H", "D_lo": "F_D"}
 NOT_IMPLEMENTED_REASON = (
     "PROSPECTIVELY_REACHABLE_BUT_NOT_IMPLEMENTED: requires the drift-derivative kernels Khat' and "
@@ -56,33 +64,15 @@ def _rss_mb() -> float:
     return r / (1024 * 1024) if sys.platform == "darwin" else r / 1024
 
 
-def authorised(policy: dict, stmt: dict) -> list[str]:
-    """Problems preventing execution. Empty means Phase 13 authorised exactly this run."""
-    a = C.load(AUTH) if AUTH.exists() else None
-    return check_authorization(a, policy, stmt, C.sha256_file(pathlib.Path(__file__)))
-
-
-def check_authorization(a: dict | None, policy: dict, stmt: dict, self_sha: str) -> list[str]:
-    """Pure: testable with a synthetic authorization, so no real one ever has to be written."""
-    if a is None:
-        return ["no Phase 13 authorization artifact exists; guard is DENY"]
-    p = []
-    if a.get("guard") != "ALLOW":
-        p.append(f"guard is {a.get('guard')!r}")
-    if a.get("cell") != 306:
-        p.append(f"authorization names cell {a.get('cell')!r}, not 306")
-    if a.get("policy_sha256") != policy["sha256"]:
-        p.append("authorization is not bound to this policy")
-    if a.get("statements_sha256") != stmt["sha256"]:
-        p.append("authorization is not bound to this statement table")
-    if a.get("runs_producer_sha256") != self_sha:
-        p.append("authorization is not bound to this producer's hash")
-    return p
+def preflight(repo=None, *, allow_fixture=False, check_processes=True) -> dict:
+    """The runner's own pre-flight: the production chain check, run HERE, before any science.
+    It does not rely on the authorization having checked anything (defence in depth)."""
+    return CT.runner_preflight(repo, allow_fixture=allow_fixture, check_processes=check_processes)
 
 
 def assemble(*, policy: dict, stmt: dict, certs: dict, stop_reason, extra: dict,
              producer_sha256: str | None = None, expected_certifier_sha: dict | None = None,
-             deductions: dict | None = None) -> dict:
+             deductions: dict | None = None, identity: dict | None = None) -> dict:
     """Build the runs artifact from certificates. The ONLY emission path.
 
     main() calls it with real certificates; the mutation suite calls it with certificates built by
@@ -115,6 +105,7 @@ def assemble(*, policy: dict, stmt: dict, certs: dict, stop_reason, extra: dict,
     d = stmt["drift_domain"]
     runs = S.emit_runs(policy_sha256=policy["sha256"], statements_sha256=stmt["sha256"],
                        drift_block=(d["e_lo"], d["e_hi"]), certificates=certs, targets=targets,
+                       identity=identity or S.NO_IDENTITY,
                        extra=dict(extra, stop_reason=stop_reason))
     ev = CV.evaluate_run(runs, policy, expected_certifier_sha=exp, runs_producer=me,
                          deductions=deductions)
@@ -126,14 +117,15 @@ def assemble(*, policy: dict, stmt: dict, certs: dict, stop_reason, extra: dict,
 
 def main() -> int:
     t0 = time.time()
-    policy = C.load(C.NS / "config" / "C11R_POLICY.json")
-    stmt = C.load(C.NS / "evidence" / "table" / "C11R_N9_STATEMENTS.json")
-    blocked = authorised(policy, stmt)
-    if blocked:
-        print("REFUSE: target execution is not authorised.")
-        for b in blocked:
+    pf = preflight(C.REPO)
+    if pf["problems"]:
+        print("REFUSE: target execution is not authorised by the recomputed chain.")
+        for b in pf["problems"]:
             print(f"  - {b}")
         return 2
+    identity = pf["identity"]
+    policy = C.load(C.NS / "config" / "C11R_POLICY.json")
+    stmt = C.load(C.NS / "evidence" / "table" / "C11R_N9_STATEMENTS.json")
     if policy["statements_sha256"] != stmt["sha256"]:
         raise SystemExit("REFUSE: the policy was frozen against a different statement table")
 
@@ -220,6 +212,7 @@ def main() -> int:
                                     round(time.time() - t, 1))
 
     runs = assemble(policy=policy, stmt=stmt, certs=certs, stop_reason=stop_reason,
+                    identity=identity,
                     extra={"configuration": {"depth": D, "panels": P, "boxes": len(boxes)},
                            "timings_seconds": timings, "selection_detail": sel_detail,
                            "peak_rss_mb": round(_rss_mb(), 1),

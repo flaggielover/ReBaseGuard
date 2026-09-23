@@ -423,6 +423,10 @@ ERRATA = {
     },
     "E24_THE_DECLARED_CONFIGURATION_RULE_MISRANKS_ON_NON_TARGET_EVIDENCE": {
         "status": "OPEN -- DISCLOSED FOR REVIEW; NOT REPAIRED IN THIS ROUND",
+        "later_resolution": ("round 4: the rule was REPLACED prospectively, on non-target "
+                             "evidence only, on the user's instruction and with review round 3's "
+                             "judgement (N-8) that this is legitimate -- see E28. The text above "
+                             "is preserved as written in round 3."),
         "what_happened": ("re-applied with the committed cost artifact, the configuration rule "
                           "declared in revision 2 -- minimise lambda1 = h_D + step_P + W subject "
                           "to the cap -- chooses depth 4 / 128 panels. The policy's non-target "
@@ -445,19 +449,186 @@ ERRATA = {
                         "it matters for cell 306 is unknown and is NOT estimated."),
         "found_by": "the author, round 3, from the extended non-target demonstration",
     },
+    "E25_THE_FROZEN_IDENTITY_DID_NOT_BIND_EXECUTION_TO_COMPARISON": {
+        "what_happened": ("through round 3 the chain Phase 12 -> 13 -> 14 -> 15 was linked only by "
+                          "the hash of c11r_runs.py and by the SELF-DECLARED sha256 fields of the "
+                          "policy and the statement table. The comparator took the certifier and "
+                          "producer hashes it 'expected' from the seal commit's own tree; the "
+                          "authorization compared stored hash strings; the runner checked neither "
+                          "the gate nor the qualification. The gate's post_seal_toolchain_sha256 "
+                          "was never consulted on the execution path."),
+        "demonstrated_by": ("review round 3 (R3-1): a certifier edited, committed, used and "
+                            "reverted before the seal was sealed and compared normally; a policy "
+                            "edited in place (depth 6, cap 10^6, sha256 field left alone) passed "
+                            "check_authorization"),
+        "also_wrong_in_the_record": ("c11r_certificate's docstring argued that a consistently "
+                                     "forged record is covered by the seal and the producer "
+                                     "binding; as implemented that argument did not hold"),
+        "repair": ("code/c11r_contract.py: a canonical FROZEN EXECUTION CONTRACT binding by "
+                   "content the transitive code closure, the policy, statement table and cost "
+                   "artifacts, the configuration and cap policy, the schemas and the predicates; "
+                   "the root of trust is that contract at the REVIEWED commit, named by the "
+                   "authorization and supplied to the comparator; every boundary (qualifier, "
+                   "authorization, runner pre-flight, seal, comparator) RECOMPUTES identities "
+                   "from bytes, requires every frozen path to be byte-identical to the approved "
+                   "commit and untouched by every later commit, and the comparator refuses "
+                   "(EXECUTION_INVALID) before opening the quarantine. The R3A-R3T controls "
+                   "(code/c11r_chain.py) replay R3's two attacks and eighteen more against those "
+                   "production checks."),
+        "found_by": "review round 3 (R3-1)",
+    },
+    "E26_THE_SEQUENTIALITY_CLAIMS_OF_ROUND_3_WERE_VACUOUS": {
+        "what_happened": ("the round-3 process detector (common.classified_processes) accepted an "
+                          "interpreter only if its executable's basename was exactly python3, "
+                          "python, python3.14, python3.12 or python3.11. On the recorded host every "
+                          "campaign process runs under a framework build whose executable's "
+                          "basename is 'Python' (capital P). It could never see a campaign process."),
+        "claims_that_were_therefore_unsupported": [
+            "evidence/cost/C11R_COST.json (round 3): 'sequential' with 0 campaign workers "
+            "before and after",
+            "the round-3 policy's refusal of a non-sequential cost artifact",
+            "B0_14: no campaign worker running",
+            "the round-3 regeneration pre-flight: no_campaign_worker_running",
+            "the author's round-3 report that the cost measurement was sequential"],
+        "what_is_still_true": ("the author ran nothing else deliberately during that measurement; "
+                               "that is testimony, not evidence, and is not relied on"),
+        "repair": ("code/c11r_procs.py (E27); the cost artifact is re-measured under it, sampled "
+                   "before, between every stage, every 10 s in the background, and after"),
+        "found_by": "review round 3 (N-2), confirmed by the author on the host",
+    },
+    "E27_THE_PROCESS_DETECTOR_REVISION_2_AND_ITS_LIMITS": {
+        "design": ("platform-native `ps -axww` (pid, ppid, comm) + (pid, args); interpreter "
+                   "identity from the executable path, case-insensitive, including framework and "
+                   "venv builds; campaign relevance from argv tokens only; explicit exclusion of "
+                   "this process and its ppid ancestor chain; vanished PIDs classified, never "
+                   "counted; shells never classified as workers"),
+        "controls": ("13 planted rows (python, Python, python3, venv, framework build, target and "
+                     "non-target argv, -c payload, unrelated shell, foreign Python, stale PID, the "
+                     "detector itself, its parent shell) and live controls on this host (a real "
+                     "framework-build child with campaign argv is seen; a shell mentioning a "
+                     "script is not; the detector is not; the child is gone after it exits)"),
+        "does_not_check": ["processes invisible to ps for this user", "other hosts/containers",
+                           "campaign work run by a non-Python executable",
+                           "interpreters renamed outside the recognised forms",
+                           "argv tokens containing spaces"],
+        "found_by": "review round 3 (N-2)",
+    },
+    "E28_THE_CONFIGURATION_RULE_WAS_REPLACED_PROSPECTIVELY": {
+        "old_rule": "minimise lambda1 = h_D + step_P + W subject to the cap (revisions 2-3)",
+        "why_superseded": ("E24: on non-target evidence the lambda1 surrogate ranked the feasible "
+                           "configurations differently from the measured box loss"),
+        "authority": ("the user's round-4 instruction, and review round 3's judgement (N-8) that "
+                      "replacing the rule now, on NON-TARGET evidence only and before any target "
+                      "science, is a legitimate prospective choice and not post-result tuning"),
+        "new_rule": ("config/C11R_POLICY.json configuration.rule: from the predeclared 3x3 family, "
+                     "reject cap violators (estimate x 3/2 > cap, or RSS); evaluate the rest on a "
+                     "fixed non-target calibration workload; choose the lexicographic minimum of "
+                     "(worst relative calibration box loss, estimated seconds, boxes x (panels "
+                     "+ 1), depth, panels)"),
+        "chronology_disclosed": ("while writing the rule the author ran ONE calibration of ONE "
+                                 "configuration (depth 5 / 32 panels) on the non-target block. Its "
+                                 "raw gaps showed that a maximum of raw losses is set by the "
+                                 "supersolution family's scale alone (the sub-solution's losses "
+                                 "were an order of magnitude smaller in absolute terms). The "
+                                 "metric was then declared RELATIVE to each family's atom value, "
+                                 "BEFORE any other configuration was calibrated, i.e. before any "
+                                 "cross-configuration comparison existed. No target quantity was "
+                                 "involved."),
+        "not_tailored": ("the rule does not name a configuration; the result follows from the "
+                         "committed cost artifact and calibration, whatever it is"),
+        "found_by": "the author and review round 3 (N-8), resolving E24",
+    },
+    "E29_THE_FIREWALL_CLAIM_IS_A_HEURISTIC_NOT_A_PROOF": {
+        "what_happened": ("rounds 2 and 3 presented FIREWALL_CLASS = PASS, G16 and mutant M03 "
+                          "('reading original magnitudes ... by ANY path') as if the static "
+                          "analysis proved no leak path exists. Review round 3 planted 20 further "
+                          "leak paths; the analysis caught 6."),
+        "correction": ("the firewall artifact now carries CLAIM = DEFENSE_IN_DEPTH_HEURISTIC, "
+                       "states what PASS means and what it does not prove, and records the "
+                       "reviewer's 20 probes as known-miss probes whose outcome is recorded, not "
+                       "asserted"),
+        "added": ("a RUNTIME open-guard in c11r_common (a CPython audit hook refusing any "
+                  "Python-level open of a protected path outside the two sanctioned readers), "
+                  "exercised on a planted dummy file; it does not see subprocess reads"),
+        "load_bearing_instead": ["explicit production allowlists", "the quarantine architecture",
+                                 "the frozen execution contract, recomputed at every boundary",
+                                 "the comparator refusing before quarantine access on an identity "
+                                 "failure"],
+        "found_by": "review round 3 (N-1)",
+    },
+    "E30_THE_MUTATION_SUITE_OVERSTATED_THAT_IT_DEFINED_NO_GUARD": {
+        "what_happened": ("revision 3 said it 'defines no guard'. M01, M02, M07, M08, M10 and M12 "
+                          "were decided by logic local to the suite, and M10 (a changed factor-2 "
+                          "threshold) had no production detector at all; the comparator's FACTOR "
+                          "was hard-coded and never checked against the frozen rule (N-6)."),
+        "repair": ("c11r_compare.comparison_rule_problems is now a production check, run by the "
+                   "comparator's chain verification before any quarantine access; M10, M01 and "
+                   "M02 call production functions; every mutant is labelled with its "
+                   "detector_kind, and only PRODUCTION_* rows are claimed to demonstrate "
+                   "production enforcement"),
+        "found_by": "review round 3 (N-3, N-6)",
+    },
+    "E31_A_SECOND_VACUOUS_RESOLUTION_IN_THE_FIREWALL_HEURISTIC": {
+        "what_happened": ("during round 4 the new repository-parameterised reads -- `repo / NS_REL "
+                          "/ rel`, used by the execution-contract verifiers -- folded to patterns "
+                          "with a leading wildcard DIRECTORY, which the matcher required to be "
+                          "followed by a slash before 'level4'. Inventory paths are repo-relative, "
+                          "so these reads resolved to NO file and passed without being classified: "
+                          "the E23 defect class again, in new code."),
+        "how_it_was_caught": ("the author inspected the recorded list of read patterns resolving to "
+                              "no file (added in round 3 for exactly this purpose) before commit"),
+        "repair": ("a leading wildcard directory now stands for any repository root, including "
+                   "none; the reads classify as ALLOWLISTED; the remaining unresolved patterns are "
+                   "argument tokens and code-shaped fallback paths, all listed in the artifact"),
+        "found_by": "the author, before commit",
+    },
+}
+
+
+REVIEW_3_FINDINGS_DISPOSITION = {
+    "R3-1": ("FIX_NOW_LOAD_BEARING", "the frozen execution contract and the recomputed chain; "
+             "R3A-R3T controls (E25)"),
+    "N-1": ("FIX_NOW_CHEAP_GOVERNANCE", "claim downgraded to DEFENSE_IN_DEPTH_HEURISTIC; known-miss "
+            "probes recorded; runtime open-guard added (E29)"),
+    "N-2": ("FIX_NOW_LOAD_BEARING", "process detector revision 2; cost artifact re-measured "
+            "(E26, E27)"),
+    "N-3": ("FIX_NOW_CHEAP_GOVERNANCE", "M10 moved to production; detector kinds labelled (E30)"),
+    "N-4": ("FIX_NOW_CHEAP_GOVERNANCE", "leak forms: 1-3 dp for |v| >= 10, 4-8 significant figures, "
+            "scientific notation"),
+    "N-5": ("FIX_NOW_CHEAP_GOVERNANCE", "box count cross-checked against the cover; certificate key "
+            "checked against certificate_id; a demoted NOT_CERTIFIED target flagged; the run's "
+            "drift block checked against the contract; G19 and G20 stated in the gate"),
+    "N-6": ("FIX_NOW_CHEAP_GOVERNANCE", "FACTOR checked against the frozen rule, the contract and "
+            "the gate at run time; D1/D2 requirement list adds sup_source_derivative bounds"),
+    "N-7": ("FIX_NOW_CHEAP_GOVERNANCE", "B0_06 now checks the r5 object id against the C11 HEAD and "
+            "that no later coverage-map revision exists. B0_10's key-only match is a DOCUMENT_"
+            "LIMITATION: it detects a JSON key 'guard' set to ALLOW, not other spellings"),
+    "N-8": ("FIX_NOW_LOAD_BEARING", "the configuration rule replaced prospectively (E28)"),
+    "N-9": ("FIX_NOW_CHEAP_GOVERNANCE", "the unmatched-pattern list is computed on the real code "
+            "only; the stale c11r_screen .pyc is git-ignored residue, removed from the working "
+            "copy"),
+    "N-10": ("DOCUMENT_LIMITATION", "two OTHER campaigns' authorization files carry "
+             "EXECUTION_AUTHORIZED: true; they are outside C11R, unchanged since the C11 HEAD, and "
+             "not touched"),
 }
 
 
 def main() -> int:
-    out = {"schema": "C11R_ERRATA/3",
-           "supersedes": "C11R_ERRATA/2 at 9801276c (which restated original values in E2)",
+    out = {"schema": "C11R_ERRATA/4",
+           "supersedes": ("C11R_ERRATA/3 at eaca931e (E1-E24, all preserved; E24 gains a "
+                          "later_resolution note) and C11R_ERRATA/2 at 9801276c (which restated "
+                          "original values in E2)"),
+           "review_3_findings_disposition": {k: {"classification": v[0], "action": v[1]}
+                                             for k, v in REVIEW_3_FINDINGS_DISPOSITION.items()},
            "policy": ("defects in this campaign's own conduct, recorded where a reader will find "
                       "them. A deviation that is recorded can be judged; one that is not, cannot."),
            "reviews_answered": [
                {"path": "review/REVIEW_C11R_PREFREEZE.md", "verdict": "NOT_READY",
                 "preserved_at": "6d7cd546"},
                {"path": "review/REVIEW_C11R_PREFREEZE_R2.md", "verdict": "NOT_READY",
-                "preserved_at": "6ae05833"}],
+                "preserved_at": "6ae05833"},
+               {"path": "review/REVIEW_C11R_PREFREEZE_R3.md", "verdict": "NOT_READY",
+                "preserved_at": "f6c737c3"}],
            "CONTAINS_NO_ORIGINAL_MAGNITUDE": True,
            "errata": ERRATA,
            "count": len(ERRATA)}

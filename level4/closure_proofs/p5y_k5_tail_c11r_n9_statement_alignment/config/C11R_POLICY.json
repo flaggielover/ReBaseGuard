@@ -6,110 +6,218 @@
    "5": 363,
    "6": 1402
   },
+  "calibration": {
+   "D4/P128": {
+    "metric": "3330616242109258871556429135159506514509594927501777947531554133366627190079112168707333416499183323299709836038985452784685980796983895143262847730447561925753761377261500214206578966212446503/11406101544055488046602929014250728312233071268121399826447981294748187918021693466264782028293428499446605773933986018276721761803438594995631653299305535470629986685900662375207185480616509440",
+    "metric_float": 0.29200303269657235
+   },
+   "D4/P32": {
+    "metric": "848868840456651557624312378092205937777915526413783549906372340990325660189520020033745843877414564745280207017220559641022387005602730573207787162746639505049190988833439442555187485071959667/2851525386013872011650732253562682078058267817030349956611995323687046979505423366566195507073357124861651443483496504569180440450859648748907913324826383867657496671475165593801796370154127360",
+    "metric_float": 0.29768938569516984
+   },
+   "D4/P64": {
+    "metric": "3352017779551228084552512908135587572942147659247684493298271930159691674244638530179203263547236890914913837769106754613457140074395820900674047700956124597013988892242086125441712097695688383/11406101544055488046602929014250728312233071268121399826447981294748187918021693466264782028293428499446605773933986018276721761803438594995631653299305535470629986685900662375207185480616509440",
+    "metric_float": 0.2938793562905108
+   },
+   "D5/P32": {
+    "metric": "627706773938687206942576142498527090556939195631777118137612741094633277172422995256278922325579655914736263050299192588178409372195086640364414361855960867715795269847181052012215533154038011/2851525386013872011650732253562682078058267817030349956611995323687046979505423366566195507073357124861651443483496504569180440450859648748907913324826383867657496671475165593801796370154127360",
+    "metric_float": 0.22013017208875502
+   }
+  },
+  "calibration_workload": {
+   "block": "NON-TARGET [5/2, 5/2 + 108337/1250000]",
+   "evaluated_for": "every cap-feasible candidate, and only those",
+   "metric": "max over states and margins of ([min over sample points of the rigorous pointwise UPPER bound of the margin] - [the rigorous box LOWER bound of the margin]) / (the family's atom value: 12 for w, 1/2 for u)",
+   "normalisation_declared_when": "before any cross-configuration comparison; the only calibration seen beforehand was one configuration's raw gaps, which showed the raw maximum was set by the supersolution scale alone (erratum E28)",
+   "sample_points_per_box": "4 corners + centre",
+   "states": [
+    [
+     "0",
+     "0"
+    ],
+    [
+     "0",
+     "5/4"
+    ],
+    [
+     "0",
+     "5/2"
+    ],
+    [
+     "5/4",
+     "0"
+    ],
+    [
+     "5/4",
+     "5/4"
+    ],
+    [
+     "5/2",
+     "0"
+    ],
+    [
+     "5/4",
+     "5/2"
+    ],
+    [
+     "5/2",
+     "5/4"
+    ]
+   ],
+   "subsolution_weight": "u = 1/2 + m/20, kernel Khat_e",
+   "supersolution_weight": "w = 12 - 3/2 m, kernels K_e and Khat_e"
+  },
+  "candidate_family": [
+   [
+    4,
+    32
+   ],
+   [
+    4,
+    64
+   ],
+   [
+    4,
+    128
+   ],
+   [
+    5,
+    32
+   ],
+   [
+    5,
+    64
+   ],
+   [
+    5,
+    128
+   ],
+   [
+    6,
+    32
+   ],
+   [
+    6,
+    64
+   ],
+   [
+    6,
+    128
+   ]
+  ],
   "candidates": [
    {
-    "atom_removal_fraction_origin_box": 0.0,
     "boxes": 97,
-    "cap_fraction_with_safety_factor": 0.2049,
+    "cap_fraction_with_safety_factor": 0.1983,
+    "complexity_boxes_x_panels": 3201,
     "depth": 4,
-    "estimated_seconds": 1475.4,
-    "estimated_seconds_with_safety_factor": 2213.1,
+    "estimated_seconds": 1427.6,
+    "estimated_seconds_exact": "3568969/2500",
+    "estimated_seconds_with_safety_factor": 2141.4,
     "lambda1": "29825121/40000000",
     "lambda1_float": 0.745628025,
     "panels": 32,
     "within_cap": true
    },
    {
-    "atom_removal_fraction_origin_box": 0.1151011875,
     "boxes": 97,
-    "cap_fraction_with_safety_factor": 0.4134,
+    "cap_fraction_with_safety_factor": 0.4004,
+    "complexity_boxes_x_panels": 6305,
     "depth": 4,
-    "estimated_seconds": 2976.2,
-    "estimated_seconds_with_safety_factor": 4464.4,
+    "estimated_seconds": 2882.6,
+    "estimated_seconds_exact": "7206469/2500",
+    "estimated_seconds_with_safety_factor": 4323.9,
     "lambda1": "9158381/16000000",
     "lambda1_float": 0.5723988125,
     "panels": 64,
     "within_cap": true
    },
    {
-    "atom_removal_fraction_origin_box": 0.20171579375,
     "boxes": 97,
-    "cap_fraction_with_safety_factor": 0.8106,
+    "cap_fraction_with_safety_factor": 0.8101,
+    "complexity_boxes_x_panels": 12513,
     "depth": 4,
-    "estimated_seconds": 5836.7,
-    "estimated_seconds_with_safety_factor": 8755.0,
+    "estimated_seconds": 5832.8,
+    "estimated_seconds_exact": "58327941/10000",
+    "estimated_seconds_with_safety_factor": 8749.2,
     "lambda1": "77725473/160000000",
     "lambda1_float": 0.48578420625,
     "panels": 128,
     "within_cap": true
    },
    {
-    "atom_removal_fraction_origin_box": 0.254371975,
     "boxes": 363,
-    "cap_fraction_with_safety_factor": 0.7449,
+    "cap_fraction_with_safety_factor": 0.72,
+    "complexity_boxes_x_panels": 11979,
     "depth": 5,
-    "estimated_seconds": 5363.3,
-    "estimated_seconds_with_safety_factor": 8044.9,
+    "estimated_seconds": 5183.7,
+    "estimated_seconds_exact": "12959301/2500",
+    "estimated_seconds_with_safety_factor": 7775.6,
     "lambda1": "23575121/40000000",
     "lambda1_float": 0.589378025,
     "panels": 32,
     "within_cap": true
    },
    {
-    "atom_removal_fraction_origin_box": 0.4276011875,
     "boxes": 363,
-    "cap_fraction_with_safety_factor": 1.525,
+    "cap_fraction_with_safety_factor": 1.4762,
+    "complexity_boxes_x_panels": 23595,
     "depth": 5,
-    "estimated_seconds": 10979.8,
-    "estimated_seconds_with_safety_factor": 16469.6,
+    "estimated_seconds": 10628.7,
+    "estimated_seconds_exact": "26571801/2500",
+    "estimated_seconds_with_safety_factor": 15943.1,
     "lambda1": "6658381/16000000",
     "lambda1_float": 0.4161488125,
     "panels": 64,
     "within_cap": false
    },
    {
-    "atom_removal_fraction_origin_box": 0.51421579375,
     "boxes": 363,
-    "cap_fraction_with_safety_factor": 3.0117,
+    "cap_fraction_with_safety_factor": 3.0096,
+    "complexity_boxes_x_panels": 46827,
     "depth": 5,
-    "estimated_seconds": 21684.2,
-    "estimated_seconds_with_safety_factor": 32526.3,
+    "estimated_seconds": 21669.2,
+    "estimated_seconds_exact": "216691839/10000",
+    "estimated_seconds_with_safety_factor": 32503.8,
     "lambda1": "52725473/160000000",
     "lambda1_float": 0.32953420625,
     "panels": 128,
     "within_cap": false
    },
    {
-    "atom_removal_fraction_origin_box": 0.410621975,
     "boxes": 1402,
-    "cap_fraction_with_safety_factor": 2.8541,
+    "cap_fraction_with_safety_factor": 2.7577,
+    "complexity_boxes_x_panels": 46266,
     "depth": 6,
-    "estimated_seconds": 20549.3,
-    "estimated_seconds_with_safety_factor": 30823.9,
+    "estimated_seconds": 19855.2,
+    "estimated_seconds_exact": "49638079/2500",
+    "estimated_seconds_with_safety_factor": 29782.8,
     "lambda1": "20450121/40000000",
     "lambda1_float": 0.511253025,
     "panels": 32,
     "within_cap": false
    },
    {
-    "atom_removal_fraction_origin_box": 0.5838511875,
     "boxes": 1402,
-    "cap_fraction_with_safety_factor": 5.8669,
+    "cap_fraction_with_safety_factor": 5.6785,
+    "complexity_boxes_x_panels": 91130,
     "depth": 6,
-    "estimated_seconds": 42241.6,
-    "estimated_seconds_with_safety_factor": 63362.4,
+    "estimated_seconds": 40885.2,
+    "estimated_seconds_exact": "102213079/2500",
+    "estimated_seconds_with_safety_factor": 61327.8,
     "lambda1": "5408381/16000000",
     "lambda1_float": 0.3380238125,
     "panels": 64,
     "within_cap": false
    },
    {
-    "atom_removal_fraction_origin_box": 0.67046579375,
     "boxes": 1402,
-    "cap_fraction_with_safety_factor": 11.609,
+    "cap_fraction_with_safety_factor": 11.6009,
+    "complexity_boxes_x_panels": 180858,
     "depth": 6,
-    "estimated_seconds": 83584.9,
-    "estimated_seconds_with_safety_factor": 125377.3,
+    "estimated_seconds": 83526.4,
+    "estimated_seconds_exact": "417631803/5000",
+    "estimated_seconds_with_safety_factor": 125289.5,
     "lambda1": "40225473/160000000",
     "lambda1_float": 0.25140920625,
     "panels": 128,
@@ -118,29 +226,39 @@
   ],
   "cap_rss_mb": 8192,
   "cap_seconds": 10800,
-  "change_from_revision_2": {
-   "consequence": "lambda1 at the chosen configuration is 0.4858 against 0.4161 at depth 5 / 64 panels: a larger structural loss per unit slope. Whether that matters for cell 306 is unknown and is NOT estimated here.",
-   "revision_2_choice": {
-    "depth": 5,
-    "panels": 64
+  "change_history": [
+   {
+    "basis": "lambda1 with optimistic, uncommitted cost constants (E12)",
+    "choice": {
+     "depth": 5,
+     "panels": 64
+    },
+    "revision": 2
    },
-   "revision_2_under_the_corrected_model": {
-    "estimated_seconds": 10979.8,
-    "with_safety_factor": 16469.6,
-    "within_cap": false
+   {
+    "basis": "lambda1 with the committed cost artifact and SF 3/2 (E24 disclosed)",
+    "choice": {
+     "depth": 4,
+     "panels": 128
+    },
+    "revision": 3
    },
-   "revision_3_choice": {
-    "depth": 4,
-    "panels": 128
-   },
-   "why": "the corrected, committed cost model and the prospective safety factor, applied by the unchanged rule. No target quantity, original magnitude or review value informed it; the cap was not raised."
-  },
+   {
+    "basis": "the replacement rule on committed non-target calibration (E28)",
+    "choice": {
+     "depth": 5,
+     "panels": 32
+    },
+    "revision": 4
+   }
+  ],
   "chosen": {
-   "depth": 4,
-   "panels": 128
+   "depth": 5,
+   "panels": 32
   },
+  "chosen_cap_fraction_with_safety_factor": 0.72,
   "cost_model": {
-   "deterministic": "the policy performs no timing; its choice is a function of the committed cost artifact and geometry",
+   "deterministic": "the policy performs no timing; its choice is a function of the committed cost artifact, geometry and the deterministic interval-arithmetic calibration",
    "estimate": "boxes(D) x (P + 1) x per_box_panel(P) + screen_seconds",
    "host": {
     "cpu_brand": "Apple A18 Pro",
@@ -154,24 +272,42 @@
     "python": "3.14.5"
    },
    "per_box_panel_seconds": {
-    "128": "148943/322500",
-    "32": "609/1375",
-    "64": "75221/162500"
+    "128": "198451/430000",
+    "32": "17651/41250",
+    "64": "36401/81250"
    },
-   "screen_seconds": "11533/200",
+   "screen_seconds": "5787/100",
    "source_artifact": "evidence/cost/C11R_COST.json",
-   "source_artifact_sha256": "6158d2332e989a6d340f4952c7f6b71423c9c4896e9bdce5225d79c0d0b36afd",
-   "source_producer_sha256": "8e75433c2a771f6b26114511c801736850385ba61f76101e1b596ee50e342ae2"
+   "source_artifact_sha256": "cb1266ec1da938bad19d1e40257c2121d027302dc2572e17fa485864ca9e88e7",
+   "source_producer_sha256": "e2961a1a9150bda3eb60047dda542b91013ab885e69a71bbd48a4a35e80fc922"
   },
   "if_the_estimate_exceeds_the_cap": [
    "AT FREEZE: no candidate passes -> this policy REFUSES to freeze (NOT_READY); the cap is never raised",
-   "AT QUALIFICATION (Phase 12): the qualifier re-derives the configuration from the committed cost artifact by this same rule and requires the frozen choice, and requires the execution host to be the host the cost was measured on; any difference -> NO_TARGET_EXECUTION. A new configuration needs a new prospective policy revision and a fresh review, never an in-place edit",
+   "AT QUALIFICATION (Phase 12): the qualifier re-derives the configuration from the committed cost artifact and the recorded calibration by this same rule and requires the frozen choice, and requires the execution host to be the host the cost was measured on; any difference -> NO_TARGET_EXECUTION. A new configuration needs a new prospective policy revision and a fresh review, never an in-place edit",
    "AT EXECUTION (Phase 14): the runner checks the cap before every certification; an overrun stops the run as RESOURCE_CAP, finished families are kept, unfinished ones are NOT_REACHED, and nothing is retried"
   ],
-  "known_risk": "the runs module enforces the cap before every certification, so an overrun stops cleanly as RESOURCE_CAP with finished families kept; the qualifier refuses if the execution host differs from the cost artifact's host.",
-  "known_risk_ranking": "the declared lambda1 ranking and the non-target loss evidence DISAGREE on the best feasible configuration (policy evidence nt_loss_validation.ranking_check; erratum E24). The rule is applied unchanged; revising it is a prospective decision for the user and a review.",
-  "rule": "minimise lambda1 = h_D + step_P + W over the candidate set, subject to estimated Phase 14 wall clock x SAFETY_FACTOR <= CAP and peak RSS <= CAP_RSS; ties to lower cost. Geometry and NON-TARGET cost only. If no candidate passes, the policy REFUSES; the cap is never raised.",
-  "rule_unchanged_since": "revision 2 (the safety factor is new in revision 3)",
+  "known_risk": "the calibration is a proxy measured on NON-TARGET geometry; it is not a prediction that any family will certify on cell 306. The runs module enforces the cap before every certification.",
+  "ranking": [
+   "D5/P32",
+   "D4/P128",
+   "D4/P64",
+   "D4/P32"
+  ],
+  "rule": "from the predeclared finite family CONFIG_CANDIDATES, reject every candidate whose committed-cost estimate x SAFETY_FACTOR exceeds CAP or whose peak RSS exceeds CAP_RSS; evaluate every remaining candidate on the fixed NON-TARGET calibration workload; choose the lexicographic minimum of (worst RELATIVE calibration box loss as defined in calibration_workload.metric, estimated seconds, boxes x (panels + 1), depth, panels). If no candidate passes, the policy REFUSES; the cap is never raised.",
+  "rule_history": {
+   "authority": "review round 3 (N-8) judged that replacing the rule now, on NON-TARGET evidence only and before any target science, is a legitimate prospective choice and not post-result tuning",
+   "errata": [
+    "E24",
+    "E28"
+   ],
+   "superseded_rule": "revisions 2-3: minimise lambda1 = h_D + step_P + W subject to the cap",
+   "superseded_rule_would_choose": {
+    "depth": 4,
+    "panels": 128
+   },
+   "why_superseded": "lambda1 is a geometric surrogate; revision 3 disclosed (erratum E24) that it ranked the feasible configurations differently from the non-target loss evidence"
+  },
+  "rule_revision": 4,
   "safety_factor": "3/2",
   "screen_grid": 15
  },
@@ -224,28 +360,29 @@
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py": "fc88fb0dcc0f757d9ed42b08ecdd9e7ca2c65320181320f009390d67e3155741",
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_common.py": "c55e97b9e2dc626992d3fa25ef23833fcccee88e787a916aa02dc23c2f0ab1b2",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "5b2b39e7a448e898cd8c6ef03abf0fce59f65bb44b4a776d0e73b0ea023cca63",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "5507e1fc6e4b8f50981cc791eb8c32761598f29236f572d28b6986d7a022cee9",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py": "c25a2ede2dc9547db30bdff78ce53717aab3ef4cb64fb256242009f42d8cb35c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py": "208b22bfb440ead6065f405b2aa746f869d81cb63a6d17ea73b44cec0060dedb",
    "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
   },
   "inputs": {
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/cost/C11R_COST.json": "097d9e9b03176b7e3e50a675708ff27883001cb8a596fd8f87f14757f356607f",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "06b3efe2211a7554d25be8e7b4359057ea1c54fa4a44cf5d34c01fe75e88348b",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/validation/C11R_VALIDATION.json": "615c9fa1bd2076f0e9042da1cf43257d7f32482cb91b217410639530629c0ce6"
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/cost/C11R_COST.json": "d95dda55d6fc41ba188c4835c014bb4e2d23307e6c98dd489e455015af94bfda",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "b3dd25637fc26be7d74895778517356f7e14c1f3fa7efd16f7767357a9fd5e24",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/validation/C11R_VALIDATION.json": "088b59c44b49fed746b4136a6c0751d23e660b2c1ceca0c436aca13704326524"
   },
   "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py",
-  "producer_sha256": "c25a2ede2dc9547db30bdff78ce53717aab3ef4cb64fb256242009f42d8cb35c"
+  "producer_sha256": "208b22bfb440ead6065f405b2aa746f869d81cb63a6d17ea73b44cec0060dedb"
  },
  "reads_review_prose_or_target_history": false,
  "references_comparison_threshold": false,
  "references_original_magnitudes": false,
- "schema": "C11R_POLICY/3",
+ "schema": "C11R_POLICY/4",
  "selection_chronology": [
   "38f59993: w = 12 - 3/2 m (K_e) and w = 8 - m (Khat_e) -- the second chosen after the screen with the original values in view. DISCARDED (erratum E2).",
   "revision 1: the seven screened candidates, all written after the original values were in the table. SUPERSEDED, not re-ranked (erratum E9).",
   "revision 2: no candidate is chosen by hand, now or later; the configuration from geometry and NON-TARGET cost; the member of each family at Phase 14 by exact optimisation of the certified bound.",
-  "revision 3 (this policy): the same rule, re-applied with the committed cost artifact and a prospective safety factor; no review prose or target history is read.",
+  "revision 3: the lambda1 rule, re-applied with the committed cost artifact and a prospective safety factor; no review prose or target history is read.",
+  "revision 4 (this policy): the lambda1 surrogate is REPLACED by a rule on committed NON-TARGET calibration evidence (review 3, N-8; errata E24, E28); the configuration follows from that rule mechanically.",
   "no quantity on cell 306's drift block was computed in any repair turn."
  ],
  "selector": {
@@ -256,11 +393,11 @@
   "lower": "maximise alpha over beta in {0, 1/1000, ..., 1}; alpha_max concave; DOWN",
   "mu": "2^-60 -- strictness far above the ~1e-95 outward rounding",
   "objective": "the tightest certifiable bound. This objective is the certifier's own; it references neither an original value nor the factor-2 comparator.",
-  "ruling": "review round 2 ruled the selector legitimate; unchanged in revision 3",
+  "ruling": "review round 2 ruled the selector legitimate; unchanged in revisions 3 and 4",
   "tie_break": "the smaller slope",
   "upper": "minimise A over B in {0, 1/1000, ..., 4}; A_req(B) is convex; A rounded UP"
  },
- "sha256": "09a7d5719983a108fe693429d71e12a139df506a4b51ca0081595485f67f3f38",
+ "sha256": "a3174a853456ab40cbcddf3089c0ef2ff518e89a353ed0b6849639f171ccfff0",
  "stages": [
   "1  pointwise coefficients on a 15x15 grid of R over the block (the cheap screen)",
   "2  one box-data pass at the chosen configuration: upper coefficients for K_e and Khat_e together, and lower coefficients for the sub-solution",
@@ -268,7 +405,7 @@
   "4  each selected member is first screened pointwise (G10) -- a POINTWISE_INFEASIBLE member is recorded and NOT sent on -- then certified",
   "5  every output written and hashed under the frozen run schema; then guard DENY"
  ],
- "statements_sha256": "54503785ec4c7554da2f89d4a213abd7a9cef1f4887017f48f14d243adb45630",
+ "statements_sha256": "f9941a3d5b928ca4ee805300618d902a40e2a782fbd2f191581c8c46e9ed67ce",
  "status": "FROZEN at the commit that introduces it; applied only in Phase 14",
  "stop_conditions": [
   "after ONE execution at the chosen configuration. There is no escalation and no retry.",
@@ -283,7 +420,8 @@
    "h_1' and h_1''",
    "operator norm bounds kernel_norm(0..3) over the block",
    "a residual-to-error propagation argument consuming THIS campaign's own C_T and tau, never the original's",
-   "an independent candidate for d' and d'' -- the D_lo sub-solution gives neither"
+   "an independent candidate for d' and d'' -- the D_lo sub-solution gives neither",
+   "bounds on the drift derivatives of the alarm source (sup_source_derivative), which the original's derivative propagation also consumes (review 3, N-6)"
   ],
   "D2": "PROSPECTIVELY_REACHABLE_BUT_NOT_IMPLEMENTED",
   "D_lo": "INDEPENDENT_STATEMENT_IMPLEMENTED (sub-solution route; target run pending)",

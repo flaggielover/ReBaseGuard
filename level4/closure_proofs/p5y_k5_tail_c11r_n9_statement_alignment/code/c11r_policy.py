@@ -30,6 +30,28 @@ Revision 2 also parsed the first review report (which quotes original values) an
 the revision-1 screen (a TARGET computation) to "demonstrate" its configuration. Both reads are
 gone. The demonstration is now on NT only.
 
+REVISION 4 (review round 3, N-8; errata E24, E28). The configuration RULE is replaced. Revision 3
+disclosed (E24) that lambda1 = h_D + step_P + W, a geometric surrogate, ranked the feasible
+configurations differently from the non-target evidence. The third reviewer judged that replacing
+the rule now, on NON-TARGET evidence only and before any target science, is a legitimate
+prospective choice. The new rule, declared here and applied mechanically:
+  1  the candidate family is the predeclared finite set CONFIG_CANDIDATES (depth 4-6 x panels
+     32/64/128), unchanged since revision 2;
+  2  a candidate whose committed-cost estimate x SAFETY_FACTOR exceeds the cap, or whose peak RSS
+     exceeds its cap, is rejected (the cap is never raised);
+  3  every remaining candidate is evaluated on the fixed NON-TARGET CALIBRATION WORKLOAD below:
+     its metric is the WORST RELATIVE box-discretisation loss -- over eight fixed states spanning
+     R, both supersolution kernels and the sub-solution -- of the rigorous box bound against the
+     tightest rigorous pointwise bound at the box's corners and centre, each loss measured in units
+     of the quantity its family certifies at the atom (A for w = A - B m, alpha for
+     u = alpha + beta m) so that neither family's scale swamps the other's;
+  4  the winner is the lexicographic minimum of (calibration loss, estimated seconds,
+     boxes x (panels + 1), depth, panels);
+  5  the rule and all its inputs are frozen in the policy; nothing is revisited after a target run.
+The workload and metric were declared without reference to which candidate they would favour: they
+measure the quantity every certificate pays for -- the margin a box bound gives up against the
+states it covers -- on both certified families, at fixed states chosen as a regular pattern.
+
 The rule makes ONE execution at ONE configuration and then stops. There is no escalation, so no
 decision is ever conditioned on a target certification outcome.
 """
@@ -94,8 +116,11 @@ def cost_model(cost: dict) -> dict:
                          "as it stands; re-measure")
     if cost["block"] != "NON-TARGET [5/2, 5/2 + 108337/1250000] only":
         raise SystemExit("REFUSE: the cost artifact was not measured on the non-target block")
-    if cost["sequential"]["campaign_workers_before"] or cost["sequential"]["campaign_workers_after"]:
-        raise SystemExit("REFUSE: the cost artifact was not measured sequentially")
+    seq = cost["sequential"]
+    if seq.get("detector") != "code/c11r_procs.py (revision 2)" or seq.get("campaign_workers_seen") \
+            or not seq.get("samples"):
+        raise SystemExit("REFUSE: the cost artifact is not certified sequential by the revision-2 "
+                         "detector")
     der = cost["derived"]
     per = {int(k): F(v["per_box_panel_seconds_max"]) for k, v in der["per_panels"].items()}
     rss = {int(k): v["peak_rss_mb"] for k, v in der["per_panels"].items()}
@@ -108,57 +133,115 @@ def estimate(model: dict, depth: int, panels: int, boxes: int) -> F:
     return boxes * (panels + 1) * model["per_box_panel"][panels] + model["screen_seconds"]
 
 
-def choose(model: dict, boxes_at: dict) -> tuple[list[dict], dict | None]:
+def feasibility(model: dict, boxes_at: dict) -> list[dict]:
+    """Steps 1-2: the predeclared family, each with its committed-cost estimate and cap test."""
     table = []
     for (d, p) in CONFIG_CANDIDATES:
         est = estimate(model, d, p, boxes_at[d])
         fits = est * SAFETY_FACTOR <= CAP_SECONDS and model["rss_mb"][p] <= CAP_RSS_MB
         table.append({"depth": d, "panels": p, "boxes": boxes_at[d],
+                      "complexity_boxes_x_panels": boxes_at[d] * (p + 1),
                       "lambda1": str(lambda1(d, p)), "lambda1_float": float(lambda1(d, p)),
-                      "atom_removal_fraction_origin_box": float(atom_removal_fraction(d, p)),
                       "estimated_seconds": round(float(est), 1),
-                      "estimated_seconds_with_safety_factor": round(float(est * SAFETY_FACTOR),
-                                                                    1),
+                      "estimated_seconds_exact": str(est),
+                      "estimated_seconds_with_safety_factor": round(float(est * SAFETY_FACTOR), 1),
                       "cap_fraction_with_safety_factor": round(float(est * SAFETY_FACTOR
                                                                      / CAP_SECONDS), 4),
                       "within_cap": fits})
-    feasible = [r for r in table if r["within_cap"]]
-    best = min(feasible, key=lambda r: (F(r["lambda1"]), r["estimated_seconds"])) \
-        if feasible else None
-    return table, best
+    return table
 
 
 # ---------------------------------------------------------------------------------------------
-# the demonstration, on NT only: does the geometric slope loss bound the ACTUAL box loss?
+# step 3: the fixed NON-TARGET calibration workload
 # ---------------------------------------------------------------------------------------------
-def nt_loss_validation(configs: list[tuple[int, int]]) -> dict:
+CALIBRATION_STATES = ((F(0), F(0)), (F(0), F(5, 4)), (F(0), F(5, 2)), (F(5, 4), F(0)),
+                      (F(5, 4), F(5, 4)), (F(5, 2), F(0)), (F(5, 4), F(5, 2)),
+                      (F(5, 2), F(5, 4)))            # a regular pattern: {0, 5/4, 5/2}^2 in R
+CAL_W = {(0, 0): F(12), (0, 1): F(-3, 2)}            # supersolution family member, NT only
+CAL_U = {(0, 0): F(1, 2), (0, 1): F(1, 20)}          # sub-solution family member, NT only
+# each margin's loss in units of what its family certifies at the atom: A = 12, alpha = 1/2
+CAL_SCALE = {"supersolution": CAL_W[(0, 0)], "subsolution": CAL_U[(0, 0)]}
+_PW: dict = {}                                       # pointwise bounds do not depend on panels
+
+
+def _pointwise_upper(x: F, y: F, ar: bool) -> F:
+    k = ("w", ar, x, y)
+    if k not in _PW:
+        _PW[k] = (X.poly_eval_iv(CAL_W, G.Iv(x, x), G.Iv(y, y)).hi - 1
+                  - I.kernel_apply_iv(CAL_W, x, y, NT, atom_removed=ar).lo)
+    return _PW[k]
+
+
+def _pointwise_lower(x: F, y: F) -> F:
+    k = ("u", x, y)
+    if k not in _PW:
+        _PW[k] = BD.pointwise_lower_hi(BD.pointwise_coeffs(x, y, NT), CAL_U[(0, 0)],
+                                       CAL_U[(0, 1)])
+    return _PW[k]
+
+
+def box_containing(depth: int, p: F, m: F) -> tuple:
+    for bx in X.cover(depth):
+        a, b, c, d = bx
+        if a <= p <= b and c <= m <= d:
+            return tuple(bx)
+    raise ValueError(f"no depth-{depth} cover box contains ({p}, {m})")
+
+
+def calibration(depth: int, panels: int) -> dict:
+    """The worst RELATIVE box-discretisation loss on the calibration workload, on NT, rigorous
+    throughout: for each state's cover box, min over its corners and centre of the pointwise UPPER
+    bound of the margin, minus the box LOWER bound of the margin, divided by the family's atom
+    value -- for K_e and Khat_e supersolution margins (w = 12 - 3/2 m) and the sub-solution
+    margin (u = 1/2 + m/20)."""
     rows = []
-    for name, w, B in (("w = 10 - m", {(0, 0): F(10), (0, 1): F(-1)}, F(1)),
-                       ("w = 12 - 3/2 m", {(0, 0): F(12), (0, 1): F(-3, 2)}, F(3, 2))):
-        for (D, P) in configs:
-            h = F(5, 2 ** D)
-            bx = (F(0), h, F(1), F(1) + h)                # the box at m ~ 1, where screens bind
-            with BD.PhiCache():
-                wlo = X.poly_eval_iv(w, G.Iv(bx[0], bx[1]), G.Iv(bx[2], bx[3])).lo
-                kv = I.kernel_box_upper_iv(w, *bx, NT, P)
-                L_box = wlo - 1 - kv.hi
-                worst = None
-                for (pp, mm) in ((bx[0], bx[2]), (bx[1], bx[3]),
-                                 ((bx[0] + bx[1]) / 2, (bx[2] + bx[3]) / 2)):
-                    Lp = X.poly_eval_iv(w, G.Iv(pp, pp), G.Iv(mm, mm)).hi - 1 - \
-                        I.kernel_apply_iv(w, pp, mm, NT).lo
-                    loss = Lp - L_box
-                    worst = loss if worst is None or loss > worst else worst
-            lam = B * (h + step_of(bx[0], bx[2], P) + W)
-            rows.append({"weight": name, "config": [D, P], "box": [str(x) for x in bx],
-                         "actual_worst_loss": round(float(worst), 5),
-                         "geometric_slope_bound": round(float(lam), 5),
-                         "bound_covers_actual": worst <= lam})
-    return {"block": "NON-TARGET [5/2, 5/2 + 108337/1250000]", "rows": rows,
-            "reading": ("lambda1 is a figure of merit for RANKING configurations, from geometry "
-                        "alone; it is not a certificate and not a prediction that anything will "
-                        "certify. Correctness never depends on it: the selector and the reviewed "
-                        "certifier are rigorous whatever lambda1 says.")}
+    with BD.PhiCache():
+        for (p, m) in CALIBRATION_STATES:
+            a, b, c, d = box_containing(depth, p, m)
+            pts = ((a, c), (a, d), (b, c), (b, d), ((a + b) / 2, (c + d) / 2))
+            wbox = X.poly_eval_iv(CAL_W, G.Iv(a, b), G.Iv(c, d))
+            for kern, ar in (("K_e", False), ("Khat_e", True)):
+                kv = I.kernel_box_upper_iv(CAL_W, a, b, c, d, NT, panels, atom_removed=ar)
+                box_lo = wbox.lo - 1 - kv.hi
+                pt_hi = min(_pointwise_upper(x, y, ar) for (x, y) in pts)
+                rows.append({"state": [str(p), str(m)], "box": [str(t) for t in (a, b, c, d)],
+                             "margin": f"supersolution/{kern}", "gap": pt_hi - box_lo,
+                             "relative": (pt_hi - box_lo) / CAL_SCALE["supersolution"]})
+            ubox = X.poly_eval_iv(CAL_U, G.Iv(a, b), G.Iv(c, d))
+            box_lo = (BD.h1_box_lower(a, b, c, d, NT)
+                      + BD.kernel_box_lower_iv(CAL_U, a, b, c, d, NT, panels) - ubox.hi)
+            pt_hi = min(_pointwise_lower(x, y) for (x, y) in pts)
+            rows.append({"state": [str(p), str(m)], "box": [str(t) for t in (a, b, c, d)],
+                         "margin": "subsolution/Khat_e", "gap": pt_hi - box_lo,
+                         "relative": (pt_hi - box_lo) / CAL_SCALE["subsolution"]})
+    worst = max(r["relative"] for r in rows)
+    return {"depth": depth, "panels": panels, "metric": str(worst), "metric_float": float(worst),
+            "rows": [dict(r, gap=str(r["gap"]), gap_float=float(r["gap"]),
+                          relative=str(r["relative"]), relative_float=float(r["relative"]))
+                     for r in rows]}
+
+
+def rank_key(row: dict, cal: dict) -> tuple:
+    """Step 4, lexicographic: calibration loss, estimated seconds, complexity, depth, panels."""
+    k = f"D{row['depth']}/P{row['panels']}"
+    return (F(cal[k]["metric"]), F(row["estimated_seconds_exact"]),
+            row["complexity_boxes_x_panels"], row["depth"], row["panels"])
+
+
+def choose(model: dict, boxes_at: dict, cal: dict) -> tuple[list[dict], dict | None]:
+    """The whole rule, from the committed cost artifact and the recorded calibration."""
+    table = feasibility(model, boxes_at)
+    feasible = [r for r in table if r["within_cap"]]
+    if not feasible or any(f"D{r['depth']}/P{r['panels']}" not in cal for r in feasible):
+        return table, None
+    return table, min(feasible, key=lambda r: rank_key(r, cal))
+
+
+def old_lambda1_choice(table: list[dict]) -> dict | None:
+    """The SUPERSEDED revision-2/3 rule, kept only as a record: minimise lambda1 over the feasible."""
+    feasible = [r for r in table if r["within_cap"]]
+    return min(feasible, key=lambda r: (F(r["lambda1"]), r["estimated_seconds"])) if feasible \
+        else None
 
 
 def main() -> int:
@@ -168,15 +251,28 @@ def main() -> int:
     cost = C.load_allowlisted(COST_ARTIFACT)
     model = cost_model(cost)
     boxes_at = {d: len(X.cover(d)) for d in (4, 5, 6)}
-    table, best = choose(model, boxes_at)
-    if best is None:
+    table = feasibility(model, boxes_at)
+    feasible = [r for r in table if r["within_cap"]]
+    if not feasible:
         raise SystemExit("REFUSE: no configuration fits the cap with the safety factor. The cap "
                          "is not raised; the policy does not freeze (NOT_READY).")
+    print(f"calibrating {len(feasible)} cap-feasible configurations on the NON-TARGET workload ...",
+          flush=True)
+    cal = {}
+    for r in feasible:
+        t = time.time()
+        k = f"D{r['depth']}/P{r['panels']}"
+        cal[k] = calibration(r["depth"], r["panels"])
+        cal[k]["seconds"] = round(time.time() - t, 1)
+        print(f"  {k:9s} worst box loss {cal[k]['metric_float']:.6f}  ({cal[k]['seconds']}s)",
+              flush=True)
+    table, best = choose(model, boxes_at, cal)
+    if best is None:
+        raise SystemExit("REFUSE: the rule selected nothing")
     chosen = (best["depth"], best["panels"])
-    rev2 = next(r for r in table if (r["depth"], r["panels"]) == (5, 64))
-    print(f"chosen configuration: depth {chosen[0]}, panels {chosen[1]} (lambda1 "
-          f"{best['lambda1_float']:.4f}, est {best['estimated_seconds']:.0f}s, x{SAFETY_FACTOR} = "
-          f"{best['estimated_seconds_with_safety_factor']:.0f}s of {CAP_SECONDS}s)", flush=True)
+    old = old_lambda1_choice(table)
+    ranking = sorted(feasible, key=lambda r: rank_key(r, cal))
+    print(f"chosen configuration: depth {chosen[0]}, panels {chosen[1]}", flush=True)
 
     checks = {c["id"]: c for c in val["checks"]}
     v14, v17 = checks["V14"]["detail"], checks["V17"]["detail"]
@@ -194,30 +290,8 @@ def main() -> int:
                     "refined when it looked loose nor is it changed now. These are NON-TARGET "
                     "facts, not predictions about cell 306."),
     }
-
-    feasible_cfgs = [(r["depth"], r["panels"]) for r in table if r["within_cap"]]
-    ntv = nt_loss_validation(sorted({(4, 16), (5, 64)} | set(feasible_cfgs)))
-    # DISCLOSURE, not a decision: does the declared lambda1 ranking agree with the ACTUAL
-    # non-target loss among the feasible configurations? The rule is not changed either way.
-    worst_by_cfg = {}
-    for r in ntv["rows"]:
-        k = tuple(r["config"])
-        worst_by_cfg[k] = max(worst_by_cfg.get(k, 0), r["actual_worst_loss"])
-    nt_best = min(feasible_cfgs, key=lambda c: worst_by_cfg[c])
-    ntv["ranking_check"] = {
-        "feasible_configurations": [list(c) for c in feasible_cfgs],
-        "worst_actual_nt_loss_by_configuration": {f"D{c[0]}/P{c[1]}": worst_by_cfg[c]
-                                                   for c in feasible_cfgs},
-        "chosen_by_the_declared_rule": list(chosen),
-        "lowest_actual_nt_loss": list(nt_best),
-        "agree": nt_best == chosen,
-        "disposition": ("recorded for review; the declared rule (minimise lambda1) is applied "
-                        "unchanged whatever this shows, because changing the rule after "
-                        "seeing its outcome would be the move the prospective policy exists to "
-                        "prevent. Non-target evidence only.")}
-
     policy = {
-        "schema": "C11R_POLICY/3",
+        "schema": "C11R_POLICY/4",
         "status": "FROZEN at the commit that introduces it; applied only in Phase 14",
         "statements_sha256": stmt["sha256"],
         "references_original_magnitudes": False,
@@ -250,17 +324,54 @@ def main() -> int:
             "certificate": ("the selected upper members are certified by the REVIEWED "
                             "c11r_idrift.supersolution_margin_iv; the lower member by "
                             "c11r_boxdata.subsolution_margin_iv. The selector only chooses."),
-            "ruling": "review round 2 ruled the selector legitimate; unchanged in revision 3",
+            "ruling": "review round 2 ruled the selector legitimate; unchanged in revisions 3 and 4",
         },
         "configuration": {
-            "rule": ("minimise lambda1 = h_D + step_P + W over the candidate set, subject to "
-                     "estimated Phase 14 wall clock x SAFETY_FACTOR <= CAP and peak RSS <= "
-                     "CAP_RSS; ties to lower cost. Geometry and NON-TARGET cost only. If no "
+            "rule": ("from the predeclared finite family CONFIG_CANDIDATES, reject every "
+                     "candidate whose committed-cost estimate x SAFETY_FACTOR exceeds CAP or whose "
+                     "peak RSS exceeds CAP_RSS; evaluate every remaining candidate on the fixed "
+                     "NON-TARGET calibration workload; choose the lexicographic minimum of "
+                     "(worst RELATIVE calibration box loss as defined in calibration_workload."
+                     "metric, estimated seconds, boxes x (panels + 1), depth, panels). If no "
                      "candidate passes, the policy REFUSES; the cap is never raised."),
-            "rule_unchanged_since": "revision 2 (the safety factor is new in revision 3)",
-            "candidates": table, "chosen": {"depth": chosen[0], "panels": chosen[1]},
+            "rule_revision": 4,
+            "rule_history": {
+                "superseded_rule": ("revisions 2-3: minimise lambda1 = h_D + step_P + W subject "
+                                    "to the cap"),
+                "superseded_rule_would_choose": ({"depth": old["depth"], "panels": old["panels"]}
+                                                 if old else None),
+                "why_superseded": ("lambda1 is a geometric surrogate; revision 3 disclosed "
+                                   "(erratum E24) that it ranked the feasible configurations "
+                                   "differently from the non-target loss evidence"),
+                "authority": ("review round 3 (N-8) judged that replacing the rule now, on "
+                              "NON-TARGET evidence only and before any target science, is a "
+                              "legitimate prospective choice and not post-result tuning"),
+                "errata": ["E24", "E28"]},
+            "candidate_family": [list(c) for c in CONFIG_CANDIDATES],
+            "candidates": table,
+            "calibration_workload": {
+                "block": "NON-TARGET [5/2, 5/2 + 108337/1250000]",
+                "states": [[str(a), str(b)] for a, b in CALIBRATION_STATES],
+                "supersolution_weight": "w = 12 - 3/2 m, kernels K_e and Khat_e",
+                "subsolution_weight": "u = 1/2 + m/20, kernel Khat_e",
+                "sample_points_per_box": "4 corners + centre",
+                "metric": ("max over states and margins of ([min over sample points of the "
+                           "rigorous pointwise UPPER bound of the margin] - [the rigorous box "
+                           "LOWER bound of the margin]) / (the family's atom value: 12 for w, "
+                           "1/2 for u)"),
+                "normalisation_declared_when": ("before any cross-configuration comparison; "
+                                                "the only calibration seen beforehand was one "
+                                                "configuration's raw gaps, which showed the raw "
+                                                "maximum was set by the supersolution scale "
+                                                "alone (erratum E28)"),
+                "evaluated_for": "every cap-feasible candidate, and only those"},
+            "calibration": {k: {"metric": v["metric"], "metric_float": v["metric_float"]}
+                            for k, v in sorted(cal.items())},
+            "ranking": [f"D{r['depth']}/P{r['panels']}" for r in ranking],
+            "chosen": {"depth": chosen[0], "panels": chosen[1]},
             "cap_seconds": CAP_SECONDS, "cap_rss_mb": CAP_RSS_MB,
             "safety_factor": str(SAFETY_FACTOR),
+            "chosen_cap_fraction_with_safety_factor": best["cap_fraction_with_safety_factor"],
             "cost_model": {
                 "source_artifact": COST_ARTIFACT,
                 "source_artifact_sha256": model["cost_artifact_sha256"],
@@ -271,45 +382,30 @@ def main() -> int:
                 "screen_seconds": str(model["screen_seconds"]),
                 "estimate": "boxes(D) x (P + 1) x per_box_panel(P) + screen_seconds",
                 "deterministic": ("the policy performs no timing; its choice is a function of "
-                                  "the committed cost artifact and geometry"),
-            },
-            "change_from_revision_2": {
-                "revision_2_choice": {"depth": 5, "panels": 64},
-                "revision_2_under_the_corrected_model": {
-                    "estimated_seconds": rev2["estimated_seconds"],
-                    "with_safety_factor": rev2["estimated_seconds_with_safety_factor"],
-                    "within_cap": rev2["within_cap"]},
-                "revision_3_choice": {"depth": chosen[0], "panels": chosen[1]},
-                "why": ("the corrected, committed cost model and the prospective safety factor, "
-                        "applied by the unchanged rule. No target quantity, original magnitude or "
-                        "review value informed it; the cap was not raised."),
-                "consequence": ("lambda1 at the chosen configuration is "
-                                f"{best['lambda1_float']:.4f} against {rev2['lambda1_float']:.4f} "
-                                "at depth 5 / 64 panels: a larger structural loss per unit slope. "
-                                "Whether that matters for cell 306 is unknown and is NOT "
-                                "estimated here."),
-            },
+                                  "the committed cost artifact, geometry and the deterministic "
+                                  "interval-arithmetic calibration")},
+            "change_history": [
+                {"revision": 2, "choice": {"depth": 5, "panels": 64},
+                 "basis": "lambda1 with optimistic, uncommitted cost constants (E12)"},
+                {"revision": 3, "choice": {"depth": 4, "panels": 128},
+                 "basis": "lambda1 with the committed cost artifact and SF 3/2 (E24 disclosed)"},
+                {"revision": 4, "choice": {"depth": chosen[0], "panels": chosen[1]},
+                 "basis": "the replacement rule on committed non-target calibration (E28)"}],
             "if_the_estimate_exceeds_the_cap": [
                 "AT FREEZE: no candidate passes -> this policy REFUSES to freeze (NOT_READY); the "
                 "cap is never raised",
                 "AT QUALIFICATION (Phase 12): the qualifier re-derives the configuration from the "
-                "committed cost artifact by this same rule and requires the frozen choice, and "
-                "requires the execution host to be the host the cost was measured on; any "
-                "difference -> NO_TARGET_EXECUTION. A new configuration needs a new prospective "
-                "policy revision and a fresh review, never an in-place edit",
+                "committed cost artifact and the recorded calibration by this same rule and "
+                "requires the frozen choice, and requires the execution host to be the host the "
+                "cost was measured on; any difference -> NO_TARGET_EXECUTION. A new "
+                "configuration needs a new prospective policy revision and a fresh review, never "
+                "an in-place edit",
                 "AT EXECUTION (Phase 14): the runner checks the cap before every certification; "
                 "an overrun stops the run as RESOURCE_CAP, finished families are kept, unfinished "
                 "ones are NOT_REACHED, and nothing is retried"],
-            "known_risk_ranking": (
-                "the declared lambda1 ranking and the non-target loss evidence DISAGREE on the "
-                "best feasible configuration (policy evidence nt_loss_validation.ranking_check; "
-                "erratum E24). The rule is applied unchanged; revising it is a prospective "
-                "decision for the user and a review." if not ntv["ranking_check"]["agree"] else
-                "the declared lambda1 ranking and the non-target loss evidence agree"),
-            "known_risk": ("the runs module enforces the cap before every certification, so an "
-                           "overrun stops cleanly as RESOURCE_CAP with finished families kept; "
-                           "the qualifier refuses if the execution host differs from the cost "
-                           "artifact's host."),
+            "known_risk": ("the calibration is a proxy measured on NON-TARGET geometry; it is not a "
+                           "prediction that any family will certify on cell 306. The runs module "
+                           "enforces the cap before every certification."),
             "boxes_at_depth": boxes_at, "screen_grid": SCREEN_N,
         },
         "stages": [
@@ -344,8 +440,11 @@ def main() -> int:
             "revision 2: no candidate is chosen by hand, now or later; the configuration from "
             "geometry and NON-TARGET cost; the member of each family at Phase 14 by exact "
             "optimisation of the certified bound.",
-            "revision 3 (this policy): the same rule, re-applied with the committed cost artifact "
-            "and a prospective safety factor; no review prose or target history is read.",
+            "revision 3: the lambda1 rule, re-applied with the committed cost artifact and a "
+            "prospective safety factor; no review prose or target history is read.",
+            "revision 4 (this policy): the lambda1 surrogate is REPLACED by a rule on committed "
+            "NON-TARGET calibration evidence (review 3, N-8; errata E24, E28); the configuration "
+            "follows from that rule mechanically.",
             "no quantity on cell 306's drift block was computed in any repair turn.",
         ],
         "target_scope": {
@@ -360,17 +459,19 @@ def main() -> int:
                 "operator norm bounds kernel_norm(0..3) over the block",
                 "a residual-to-error propagation argument consuming THIS campaign's own C_T and "
                 "tau, never the original's",
-                "an independent candidate for d' and d'' -- the D_lo sub-solution gives neither"],
+                "an independent candidate for d' and d'' -- the D_lo sub-solution gives neither",
+                "bounds on the drift derivatives of the alarm source (sup_source_derivative), "
+                "which the original's derivative propagation also consumes (review 3, N-6)"],
             "N9": ("N9 concerns all six constants for cell 306. If D1 and D2 are not independently "
                    "certified, N9 remains OPEN, whatever the other four yield."),
         },
     }
     s = C.write_evidence(C.NS / "config" / "C11R_POLICY.json", policy, producer=__file__)
 
-    evidence = {"schema": "C11R_POLICY_EVIDENCE/3",
+    evidence = {"schema": "C11R_POLICY_EVIDENCE/4",
                 "block_used": "NON-TARGET [5/2, 5/2 + 108337/1250000] only",
                 "cost_artifact_sha256": model["cost_artifact_sha256"],
-                "nt_loss_validation": ntv,
+                "calibration_raw": cal,
                 "policy_sha256": s,
                 "seconds": round(time.time() - t0, 1)}
     e = C.write_evidence(C.NS / "evidence" / "policy" / "C11R_POLICY_EVIDENCE.json", evidence,
@@ -378,17 +479,15 @@ def main() -> int:
 
     print(f"\ncandidate configurations (NON-TARGET cost, safety factor {SAFETY_FACTOR}):")
     for r in table:
+        k = f"D{r['depth']}/P{r['panels']}"
         mark = "<- chosen" if (r["depth"], r["panels"]) == chosen else ""
-        print(f"  D{r['depth']} P{r['panels']:<4d} boxes {r['boxes']:5d}  lambda1 "
-              f"{r['lambda1_float']:.4f}  est {r['estimated_seconds']:8.0f}s  x SF "
+        calv = f"{cal[k]['metric_float']:.6f}" if k in cal else "   (not evaluated)"
+        print(f"  {k:9s} boxes {r['boxes']:5d}  est {r['estimated_seconds']:8.0f}s  x SF "
               f"{r['estimated_seconds_with_safety_factor']:8.0f}s "
-              f"({100 * r['cap_fraction_with_safety_factor']:5.1f}% of cap)  "
-              f"{'ok ' if r['within_cap'] else 'CAP'} {mark}")
-    print("\nNT loss validation:")
-    for r in ntv["rows"]:
-        print(f"  {r['weight']:15s} config {r['config']}  actual worst loss "
-              f"{r['actual_worst_loss']:.4f}  slope bound {r['geometric_slope_bound']:.4f}  "
-              f"covers={r['bound_covers_actual']}")
+              f"({100 * r['cap_fraction_with_safety_factor']:6.1f}% of cap)  "
+              f"{'ok ' if r['within_cap'] else 'CAP'}  calibration {calv} {mark}")
+    print(f"superseded lambda1 rule would choose: "
+          f"{'D%d/P%d' % (old['depth'], old['panels']) if old else None}")
     print(f"\nwrote config/C11R_POLICY.json sha256 {s[:16]}...")
     print(f"wrote evidence/policy/C11R_POLICY_EVIDENCE.json sha256 {e[:16]}...")
     return 0

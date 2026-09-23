@@ -1,4 +1,20 @@
-"""C11R -- the original-value firewall, revision 3: a load-path dataflow analysis.
+"""C11R -- the original-value firewall, revision 4: a load-path dataflow HEURISTIC.
+
+WHAT THIS IS, AND IS NOT (round 4; review round 3 N-1; erratum E29). This analysis is
+DEFENSE_IN_DEPTH_HEURISTIC. It is NOT a proof that no leak path exists: the third reviewer planted
+20 further leak paths (multi-argument Path, %-formatting, `python -c` children, higher-order and
+aliased loaders or open, linecache, fileinput, urlopen, methods with path parameters, shell
+substitution, ...) and revision 3 caught only 6. Those 20 are carried below as KNOWN-MISS probes
+whose outcome is recorded, not asserted. FIREWALL_CLASS = PASS means exactly: every planted
+positive control is flagged, no negative control is, and this analysis finds no violating read in
+the campaign's code -- nothing more.
+
+THE LOAD-BEARING PROTECTIONS are elsewhere, and this module does not replace them: the explicit
+allowlists of production reads (common.ALLOWED_NS_INPUTS, load_allowlisted), the quarantine
+architecture (two sanctioned readers), the RUNTIME open-guard in c11r_common (an audit hook that
+refuses any Python-level open of a protected path outside the two readers -- exercised below), the
+frozen execution contract with recomputed provenance, and the comparator refusing, before it
+opens the quarantine, whenever the execution identity fails (c11r_compare.execute_comparison).
 
 The six original magnitudes may enter this campaign at exactly two places: c11r_table.py, which
 extracts them into the quarantine, and c11r_compare.py, which reads them only after the
@@ -63,6 +79,17 @@ import c11r_common as C
 import c11r_schema as S
 
 ALLOWED_READERS = frozenset({"c11r_table.py", "c11r_compare.py"})
+# Calls to a sanctioned reader's functions that this analysis flags, exempted EXPLICITLY with the
+# reason. c11r_chain.py drives the comparator's seal and chain checks on SYNTHETIC repositories;
+# the analysis cannot see that its `repo` argument is a temporary repository, but a RUNTIME guard
+# in c11r_compare (_real_repository_guard) raises unless the running program is the comparator
+# itself whenever the repository is the real one, and c11r_chain exercises that guard.
+EXEMPTED_CALLS = {"c11r_chain.py": ("c11r_compare.execute_comparison", "c11r_compare.verify_seal")}
+# Whole functions exempted, with the reason: this module's runtime_open_guard_controls opens a
+# PLANTED dummy file (written by a subprocess into a fresh temporary directory, with a protected
+# NAME) precisely to prove the runtime guard refuses it; the analysis cannot see that the path is
+# a temporary directory. The real quarantine is never touched.
+EXEMPTED_FUNCTIONS = {"c11r_firewall.py": ("runtime_open_guard_controls",)}
 FORBIDDEN_LAUNCH = ("c11r_compare.py",)
 EXEMPT_FUNCTIONS = frozenset({("c11r_common", "content_free_id")})
 MAGNITUDE_KEYS = S.FORBIDDEN_PAYLOAD_KEYS
@@ -74,6 +101,9 @@ VIOLATION_CLASSES = ("PROTECTED", "EXTERNAL", "NS_OFF_ALLOWLIST")
 
 # files this campaign will create later; they are in no inventory yet but must be classified now
 HYPOTHETICAL = (f"{C.NS_REL}/evidence/comparison/C11R_COMPARISON.json",
+                f"{C.NS_REL}/config/C11R_CONTRACT.json",
+                f"{C.NS_REL}/evidence/chain/C11R_CHAIN_CONTROLS.json",
+                f"{C.NS_REL}/evidence/procs/C11R_PROCESS_DETECTOR.json",
                 f"{C.NS_REL}/evidence/runs/C11R_RUNS.json",
                 f"{C.NS_REL}/review/REVIEW_C11R_PREFREEZE_R3.md",
                 f"{C.NS_REL}/review/ADJUDICATION_C11R.md",
@@ -217,6 +247,11 @@ def _canon(s: str) -> str:
     m = re.match(r"^[^/:]*:(?!\()(.*)$", s)
     if m and not s.startswith(":"):
         s = m.group(1)
+    # a leading wildcard DIRECTORY (an unknown repository root: `repo / NS_REL / rel`) stands for
+    # any prefix, including none; the match is anchored at a path boundary anyway (erratum E31 --
+    # without this, repository-parameterised reads resolved to no file and passed vacuously)
+    while s.startswith("\x00/"):
+        s = s[2:]
     return s
 
 
@@ -738,6 +773,8 @@ class World:
         m = self.mods.get(mod)
         if m is None:
             return [(W,)]
+        if attr == "__file__":
+            return [(m.selfpath,)]                    # another campaign module's own source
         if attr in m.module_env:
             return m.module_env[attr]
         return [(W,)]
@@ -785,7 +822,9 @@ class World:
                     sinks = m.sinks_in(fn, env)
                     judged = judge(self, m, sinks)
                     param_sinks = [j for j in judged if j.get("deferred")]
-                    loader = _is_loader(judged)
+                    loader = _is_loader([j for j in judged if not _exempted(
+                        m.stem + ".py", {"function": name, "why": j.get("violation", []),
+                                         "call": j.get("call", "")})])
                     new = {"returns": rets, "param_sinks": param_sinks, "loader": loader}
                     old = {k: summ.get(k) for k in new}
                     if repr(new) != repr(old):
@@ -1304,6 +1343,58 @@ NEGATIVE = {
     "N15_small_denominator_constants_inside_the_span":
         'from fractions import Fraction as F\nweights = (4.0, 2.0)\nz = F(7, 4)\nc = F(19, 10)\n',
 }
+# The third reviewer's twenty leak paths (review round 3, N-1), verbatim in substance. Their
+# outcomes are RECORDED, not asserted: this analysis is a heuristic, and several are known misses.
+KNOWN_MISS_PROBES = {
+    "R1_pathlib_Path_multi_arg":
+        'import c11r_common as C, pathlib\nx = C.load(pathlib.Path(C.NS, "evidence", "quarantine", '
+        '"C11R_ORIGINAL_MAGNITUDES.json"))\n',
+    "R2_percent_format":
+        'import c11r_common as C\nx = C.load("%s/evidence/quarantine/C11R_ORIGINAL_MAGNITUDES.json" '
+        '% C.NS)\n',
+    "R3_python_dash_c_subprocess":
+        'import subprocess, sys\nsubprocess.run([sys.executable, "-c", "print(open(\'evidence/'
+        'quarantine/C11R_ORIGINAL_MAGNITUDES.json\').read())"])\n',
+    "R4_python3_literal_dash_c":
+        'import subprocess\nsubprocess.run(["python3", "-c", "import json; print(json.load(open('
+        '\'evidence/quarantine/C11R_ORIGINAL_MAGNITUDES.json\')))"])\n',
+    "R5_function_via_dict_dispatch":
+        f'import c11r_common as C\ndef f(p):\n    return C.load(p)\nT = {{"a": f}}\nx = T["a"]({_Q})\n',
+    "R6_aliased_loader": f'import c11r_common as C\nL = C.load\nx = L({_Q})\n',
+    "R7_aliased_open":
+        'o = open\nx = o("evidence/quarantine/C11R_ORIGINAL_MAGNITUDES.json").read()\n',
+    "R8_linecache":
+        'import linecache\nx = linecache.getlines("evidence/quarantine/C11R_ORIGINAL_MAGNITUDES.json")\n',
+    "R9_fileinput":
+        'import fileinput\nx = list(fileinput.input("evidence/quarantine/C11R_ORIGINAL_MAGNITUDES.json"))\n',
+    "R10_urlopen_file_url":
+        'import urllib.request\nx = urllib.request.urlopen("file:///x/evidence/quarantine/'
+        'C11R_ORIGINAL_MAGNITUDES.json").read()\n',
+    "R11_map_over_paths": f'import c11r_common as C\nxs = list(map(C.load, [{_Q}]))\n',
+    "R12_functools_partial":
+        f'import c11r_common as C, functools\ng = functools.partial(C.load, {_Q})\nx = g()\n',
+    "R13_os_open_os_read":
+        'import os\nfd = os.open("evidence/quarantine/C11R_ORIGINAL_MAGNITUDES.json", os.O_RDONLY)\n'
+        'x = os.read(fd, 9999)\n',
+    "R14_method_on_class_instance_with_param":
+        f'import c11r_common as C\nclass R:\n    def get(self, p):\n        return C.load(p)\n'
+        f'x = R().get({_Q})\n',
+    "R15_lambda_param": f'import c11r_common as C\ng = lambda p: C.load(p)\nx = g({_Q})\n',
+    "R16_str_replace":
+        'import c11r_common as C\nx = C.load(C.NS / "evidence/table/C11R_N9_STATEMENTS.json".replace('
+        '"table/C11R_N9_STATEMENTS", "quarantine/C11R_ORIGINAL_MAGNITUDES"))\n',
+    "R17_git_show_via_subprocess_pipe_shell":
+        'import subprocess\nsubprocess.run("git show HEAD:$(git ls-files | grep MAGNITUDES)", '
+        'shell=True)\n',
+    "R18_varargs_loader":
+        f'import c11r_common as C\ndef g(*ps):\n    return [C.load(p) for p in ps]\nx = g({_Q})\n',
+    "R19_sorted_listdir_of_quarantine_names_then_load":
+        'import c11r_common as C, os\nfor n in os.listdir(str(C.NS / "evidence" / "quarantine")):\n'
+        '    x = C.load(C.NS / "evidence" / "quarantine" / n)\n',
+    "R20_blob_at_via_rev_parse_path":
+        'import c11r_common as C\nb = C.blob_at("HEAD", C.NS_REL + "/" + C.QUARANTINE_REL)\n',
+}
+
 CONTROL_NOTES = {
     "L11_errata_json_is_value_free": (
         "the reviewer planted this as a leak because revision 2 of the errata restated original "
@@ -1321,21 +1412,76 @@ def run_controls() -> dict:
         return module_violations(analyse(w, m))
     pos = {k: one(k, s) for k, s in POSITIVE.items()}
     neg = {k: one(k, s) for k, s in NEGATIVE.items()}
+    probes = {}
+    for k, s in KNOWN_MISS_PROBES.items():
+        try:
+            probes[k] = one(k, s)
+        except Exception as e:                       # the analyser failing is a recorded miss
+            probes[k] = []
+            probes[k + "_analyser_error"] = [f"{type(e).__name__}"]
+    known = {k: {"flagged": bool(v), "why": v} for k, v in probes.items()
+             if not k.endswith("_analyser_error")}
     return {"positive": {k: {"flagged": bool(v), "why": v} for k, v in pos.items()},
             "negative": {k: {"flagged": bool(v), "why": v} for k, v in neg.items()},
+            "known_miss_probes": {"cases": known,
+                                  "flagged": sum(1 for v in known.values() if v["flagged"]),
+                                  "missed": sum(1 for v in known.values() if not v["flagged"]),
+                                  "asserted": False,
+                                  "note": ("the third reviewer's 20 paths; recorded, not "
+                                           "asserted -- this analysis is a heuristic")},
             "notes": CONTROL_NOTES,
             "all_positives_flagged": all(pos.values()),
             "no_negative_flagged": not any(neg.values())}
 
 
+def runtime_open_guard_controls() -> dict:
+    """The RUNTIME layer, exercised in this (non-reader) process on a PLANTED dummy file with a
+    protected name -- the real quarantine is never touched. The file is created by a subprocess,
+    because this process may not open it even to write."""
+    import os
+    import subprocess
+    import tempfile
+    d = pathlib.Path(tempfile.mkdtemp(prefix="c11r_guard_"))
+    (d / "quarantine").mkdir()
+    planted = d / "quarantine" / "C11R_ORIGINAL_MAGNITUDES.json"
+    subprocess.run(["/bin/sh", "-c", 'printf "{}" > "$0"', str(planted)], check=True)
+    plain = d / "ordinary.json"
+    subprocess.run(["/bin/sh", "-c", 'printf "{}" > "$0"', str(plain)], check=True)
+    res = {}
+
+    def refused(fn):
+        try:
+            fn()
+            return False
+        except PermissionError:
+            return True
+    res["open_refused"] = refused(lambda: open(planted).read())
+    res["read_text_refused"] = refused(lambda: planted.read_text())
+    res["os_open_refused"] = refused(lambda: os.open(str(planted), os.O_RDONLY))
+    res["common_load_refused"] = refused(lambda: C.load(planted))
+    res["ordinary_file_allowed"] = not refused(lambda: plain.read_text())
+    saved = sys.argv[0]
+    try:
+        sys.argv[0] = "code/c11r_table.py"          # the reader exemption, on the dummy file only
+        res["sanctioned_reader_allowed"] = not refused(lambda: planted.read_text())
+    finally:
+        sys.argv[0] = saved
+    subprocess.run(["rm", "-rf", str(d)], check=True)
+    res["ALL_PASS"] = all(res.values())
+    res["scope"] = ("Python-level opens in any process importing c11r_common; NOT subprocess "
+                    "reads (git, cat, a python -c child that does not import it)")
+    return res
+
+
 def scan_structural_artifacts() -> list[dict]:
     """Every allowlisted pre-result artifact produced BEFORE this one carries no forbidden payload
-    key. The four produced after it (this artifact, the mutations, the leak check and the status
-    report) are not read here -- reading them would make this artifact depend on its own
+    key. The five produced after it (this artifact, the chain controls, the mutations, the leak
+    check and the status report) are not read here -- reading them would make this artifact depend on its own
     consumers -- and the status report, which runs last, scans every artifact's keys."""
     rows = []
-    later = ("evidence/firewall/C11R_FIREWALL.json", "evidence/mutations/C11R_MUTATIONS.json",
-             "evidence/leakcheck/C11R_LEAKCHECK.json", "evidence/status/C11R_STATUS.json")
+    later = ("evidence/firewall/C11R_FIREWALL.json", "evidence/chain/C11R_CHAIN_CONTROLS.json",
+             "evidence/mutations/C11R_MUTATIONS.json", "evidence/leakcheck/C11R_LEAKCHECK.json",
+             "evidence/status/C11R_STATUS.json")
     for rel in C.PRE_RESULT_ARTIFACTS:
         if rel in later:
             continue
@@ -1347,27 +1493,65 @@ def scan_structural_artifacts() -> list[dict]:
     return rows
 
 
+def _exempted(module: str, row: dict) -> bool:
+    """An explicit exemption (EXEMPTED_CALLS / EXEMPTED_FUNCTIONS), with its reason recorded."""
+    calls = EXEMPTED_CALLS.get(module, ())
+    funcs = EXEMPTED_FUNCTIONS.get(module, ())
+    if row.get("function") in funcs:
+        return True
+    why = set(row.get("why") or [])
+    return bool(why) and why <= {"CALLS_A_FORBIDDEN_READER", "NS_OFF_ALLOWLIST"} and (
+        any(c.split(".")[1] + "(" in row.get("call", "") for c in calls)
+        or any(f + "(" in row.get("call", "") for f in funcs))
+
+
 def main() -> int:
     world, stems = real_world_cached()
-    ctl = run_controls()
-    results, offenders = {}, []
+    results, offenders, exemptions = {}, [], []
     for stem, m in sorted(world.mods.items()):
         r = analyse(world, m)
-        v = module_violations(r)
         allowed = stem + ".py" in ALLOWED_READERS
+        kept = []
+        for row in r["violations"]:
+            if _exempted(stem + ".py", row):
+                exemptions.append({"module": stem + ".py", "line": row["line"],
+                                   "call": row["call"][:100]})
+            else:
+                kept.append(row)
+        r["violations"] = kept
+        v = module_violations(r)
         r["allowed_reader"] = allowed
         r["module_violations"] = v
         results[stems[stem]] = r
         if v and not allowed:
             offenders.append({"module": stems[stem], "violations": v})
+    real_unmatched = sorted({c["pattern"] for c in _MATCH_CACHE.values() if not c["classes"]})
+    ctl = run_controls()
+    guard = runtime_open_guard_controls()
     struct = scan_structural_artifacts()
     struct_bad = [r for r in struct if r["forbidden_keys"]]
     missing = [r["artifact"] for r in struct if not r["exists"]]
     inv = inventory()
-    unmatched = sorted({c["pattern"] for c in _MATCH_CACHE.values() if not c["classes"]})
     ok = (ctl["all_positives_flagged"] and ctl["no_negative_flagged"] and not offenders
-          and not struct_bad)
-    out = {"schema": "C11R_FIREWALL/3",
+          and not struct_bad and guard["ALL_PASS"])
+    out = {"schema": "C11R_FIREWALL/4",
+           "CLAIM": "DEFENSE_IN_DEPTH_HEURISTIC",
+           "what_PASS_means": ("every planted positive is flagged, no negative is, this analysis "
+                               "finds no violating read in the campaign's code, and the runtime "
+                               "open-guard refuses a planted protected open"),
+           "what_it_does_not_prove": ("that no leak path exists: the analysis is a heuristic "
+                                      "with known misses (known_miss_probes), and the runtime "
+                                      "guard does not see subprocess reads"),
+           "load_bearing_protections": ["explicit production allowlists",
+                                        "the quarantine architecture: two sanctioned readers",
+                                        "the runtime open-guard (c11r_common)",
+                                        "the frozen execution contract, recomputed at every "
+                                        "boundary", "the comparator refusing before quarantine "
+                                        "access when the execution identity fails"],
+           "runtime_open_guard_controls": guard,
+           "exempted_calls": {"rules": {k: list(v) for k, v in EXEMPTED_CALLS.items()},
+                              "functions": {k: list(v) for k, v in EXEMPTED_FUNCTIONS.items()},
+                              "applied": exemptions},
            "principle": ("original magnitudes may enter only at c11r_table.py (extraction into "
                          "quarantine) and c11r_compare.py (after seal); every other module's "
                          "content reads must resolve to allowlisted inputs, Python source or the "
@@ -1390,7 +1574,8 @@ def main() -> int:
            "structural_offenders": struct_bad,
            "artifacts_not_yet_written": missing,
            "read_patterns_resolving_to_no_file": {
-               "patterns": unmatched,
+               "patterns": real_unmatched,
+               "scope": "the real campaign code only (control sources are analysed afterwards)",
                "note": ("recorded so that a vacuous resolution is visible (erratum E23). Expected "
                         "here: argument tokens that the subprocess rule treats as candidate paths "
                         "(flags, revisions, planted control words), and code-shaped paths of a "
@@ -1416,7 +1601,12 @@ def main() -> int:
                 print(f"           L{x['line']} open-cell literal {x['expr']}")
             for x in r["magnitude_key_reads"]:
                 print(f"           L{x['line']} magnitude key {x['expr']}")
-    print(f"\nread patterns resolving to no file: {len(unmatched)}")
+    print(f"\nknown-miss probes (recorded, not asserted): "
+          f"{ctl['known_miss_probes']['flagged']} flagged, "
+          f"{ctl['known_miss_probes']['missed']} missed")
+    print(f"runtime open-guard controls: {guard}")
+    print(f"exempted calls: {exemptions}")
+    print(f"read patterns resolving to no file (real code): {len(real_unmatched)}")
     print(f"offending modules: {[o['module'].split('/')[-1] for o in offenders]}")
     print(f"structural offenders: {[r['artifact'] for r in struct_bad]}")
     print(f"\nFIREWALL_CLASS = {out['FIREWALL_CLASS']}")

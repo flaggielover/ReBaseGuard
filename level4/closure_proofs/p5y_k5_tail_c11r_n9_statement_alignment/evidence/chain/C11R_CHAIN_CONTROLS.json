@@ -1,0 +1,418 @@
+{
+ "CHAIN_CLASS": "PASS",
+ "controls": [
+  {
+   "attack": "all identities correct: the synthetic path runs to a verdict",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "id": "R3T",
+   "loader_called_exactly_once": true,
+   "pass": true,
+   "problems": [],
+   "refused": false,
+   "refused_for_the_expected_reason": true,
+   "stage": "comparator",
+   "stub_loader_calls": 1,
+   "verdict": "AGREEMENT_INSUFFICIENT"
+  },
+  {
+   "attack": "an unrelated commit (no frozen path) between approval and seal",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "id": "R3T_unrelated",
+   "pass": true,
+   "problems": [],
+   "refused": false,
+   "refused_for_the_expected_reason": true,
+   "stage": "comparator",
+   "stub_loader_calls": 1
+  },
+  {
+   "attack": "certifier edited -> committed -> used -> reverted before the seal",
+   "expected": "REFUSE",
+   "expected_reason": "touched a frozen path",
+   "id": "R3A",
+   "pass": true,
+   "problems": [
+    "2 commit(s) after the approved commit touched a frozen path (edited-then-reverted changes included)",
+    "run: certificate F_D was made by another c11r_boxdata.py than the bound one"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "runner_preflight_at_the_edit_refused": true,
+   "stage": "comparator",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "policy edited in place after the freeze (sha256 field kept)",
+   "expected": "REFUSE",
+   "expected_reason": "policy",
+   "id": "R3B",
+   "pass": true,
+   "problems": [
+    "contract: artifact identity differs for ['policy']",
+    "contract: configuration differs from the recomputed value",
+    "policy: stored sha256 field does not equal the recomputed body digest",
+    "frozen path C11R_POLICY.json differs from the approved commit",
+    "a frozen path has uncommitted changes",
+    "the policy's selected configuration is not the contract's"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "statement-semantics artifact edited after the freeze",
+   "expected": "REFUSE",
+   "expected_reason": "statements",
+   "id": "R3C",
+   "pass": true,
+   "problems": [
+    "contract: artifact identity differs for ['statements']",
+    "policy: declared input C11R_N9_STATEMENTS.json changed",
+    "statements: stored sha256 field does not equal the recomputed body digest",
+    "frozen path C11R_N9_STATEMENTS.json differs from the approved commit",
+    "a frozen path has uncommitted changes"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "gate artifact edited after the freeze (re-stamped)",
+   "expected": "REFUSE",
+   "expected_reason": "N9R_GATE_C11R",
+   "id": "R3D",
+   "pass": true,
+   "problems": [
+    "frozen path N9R_GATE_C11R.json differs from the approved commit",
+    "a frozen path has uncommitted changes",
+    "qualification: gate_sha256 belongs to another contract or tree"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "qualification bound to a different contract",
+   "expected": "REFUSE",
+   "expected_reason": "qualification: execution_contract_sha256",
+   "id": "R3E",
+   "pass": true,
+   "problems": [
+    "qualification: execution_contract_sha256 belongs to another contract or tree"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "qualification PASS forged over a failing item (re-stamped); and a body edited without re-stamping",
+   "expected": "REFUSE",
+   "expected_reason": "PASS claimed with failing items",
+   "id": "R3F",
+   "pass": true,
+   "problems": [
+    "qualification: PASS claimed with failing items ['FX2']",
+    "qualification: stored sha256 field does not equal the recomputed body digest"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "authorization bound to a different contract",
+   "expected": "REFUSE",
+   "expected_reason": "authorization: execution_contract_sha256",
+   "id": "R3G",
+   "pass": true,
+   "problems": [
+    "authorization: execution_contract_sha256 does not match the recomputed value"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "runner pre-flight",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "runner code changed after authorization",
+   "expected": "REFUSE",
+   "expected_reason": "c11r_runs.py",
+   "id": "R3H",
+   "pass": true,
+   "problems": [
+    "contract: code identity differs for ['c11r_runs.py']",
+    "frozen path c11r_runs.py differs from the approved commit",
+    "1 commit(s) after the approved commit touched a frozen path (edited-then-reverted changes included)",
+    "the runner is not the bound c11r_runs.py",
+    "authorization: runner_sha256 does not match the recomputed value",
+    "runner pre-flight: c11r_runs.py is not the bound version"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "runner pre-flight",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "certificate reconstruction module changed after authorization",
+   "expected": "REFUSE",
+   "expected_reason": "c11r_certificate.py",
+   "id": "R3I",
+   "pass": true,
+   "problems": [
+    "contract: code identity differs for ['c11r_certificate.py']",
+    "frozen path c11r_certificate.py differs from the approved commit",
+    "1 commit(s) after the approved commit touched a frozen path (edited-then-reverted changes included)",
+    "runner pre-flight: c11r_certificate.py is not the bound version"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "runner pre-flight",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "selected depth changed (policy re-stamped)",
+   "expected": "REFUSE",
+   "expected_reason": "policy",
+   "id": "R3J",
+   "pass": true,
+   "problems": [
+    "contract: artifact identity differs for ['policy']",
+    "contract: configuration differs from the recomputed value",
+    "frozen path C11R_POLICY.json differs from the approved commit",
+    "1 commit(s) after the approved commit touched a frozen path (edited-then-reverted changes included)",
+    "the policy's selected configuration is not the contract's"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "selected panel count changed (policy re-stamped)",
+   "expected": "REFUSE",
+   "expected_reason": "policy",
+   "id": "R3K",
+   "pass": true,
+   "problems": [
+    "contract: artifact identity differs for ['policy']",
+    "contract: configuration differs from the recomputed value",
+    "frozen path C11R_POLICY.json differs from the approved commit",
+    "1 commit(s) after the approved commit touched a frozen path (edited-then-reverted changes included)",
+    "the policy's selected configuration is not the contract's"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "resource-cap policy changed (policy re-stamped)",
+   "expected": "REFUSE",
+   "expected_reason": "policy",
+   "id": "R3L",
+   "pass": true,
+   "problems": [
+    "contract: artifact identity differs for ['policy']",
+    "contract: configuration differs from the recomputed value",
+    "frozen path C11R_POLICY.json differs from the approved commit",
+    "1 commit(s) after the approved commit touched a frozen path (edited-then-reverted changes included)"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "run artifact body changed after execution and re-committed",
+   "expected": "REFUSE",
+   "expected_reason": "changed after it was sealed",
+   "id": "R3M",
+   "pass": true,
+   "problems": [
+    "the file on disk differs from the committed blob",
+    "the runs artifact was changed after it was sealed (2 commits touch it)"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "comparator",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "seal copied from another synthetic run (another authorization)",
+   "expected": "REFUSE",
+   "expected_reason": "authorization_sha256",
+   "id": "R3N",
+   "pass": true,
+   "problems": [
+    "run: execution_identity.authorization_sha256 does not match the recomputed chain"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "comparator",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "stored hash field changed while the body is unchanged (policy)",
+   "expected": "REFUSE",
+   "expected_reason": "policy",
+   "id": "R3O",
+   "pass": true,
+   "problems": [
+    "contract: artifact identity differs for ['policy']",
+    "policy: stored sha256 field does not equal the recomputed body digest",
+    "frozen path C11R_POLICY.json differs from the approved commit",
+    "a frozen path has uncommitted changes"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "stored hash field changed while the body is unchanged (runs)",
+   "expected": "REFUSE",
+   "expected_reason": "stored sha256",
+   "id": "R3O_run",
+   "pass": true,
+   "problems": [
+    "the runs artifact's stored sha256 does not equal its recomputed canonical body digest"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "comparator",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "stored hash field unchanged while the body changes (policy)",
+   "expected": "REFUSE",
+   "expected_reason": "policy: stored sha256",
+   "id": "R3P",
+   "pass": true,
+   "problems": [
+    "contract: artifact identity differs for ['policy']",
+    "policy: stored sha256 field does not equal the recomputed body digest",
+    "frozen path C11R_POLICY.json differs from the approved commit",
+    "a frozen path has uncommitted changes"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "stored hash field unchanged while the body changes (runs)",
+   "expected": "REFUSE",
+   "expected_reason": "stored sha256",
+   "id": "R3P_run",
+   "pass": true,
+   "problems": [
+    "the runs artifact's stored sha256 does not equal its recomputed canonical body digest"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "comparator",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "one transitive helper changed (c7_gaussian.py)",
+   "expected": "REFUSE",
+   "expected_reason": "c7_gaussian.py",
+   "id": "R3Q",
+   "pass": true,
+   "problems": [
+    "contract: code identity differs for ['c7_gaussian.py']",
+    "frozen path c7_gaussian.py differs from the approved commit",
+    "1 commit(s) after the approved commit touched a frozen path (edited-then-reverted changes included)"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "qualification stale after a legitimate policy replacement and re-freeze",
+   "expected": "REFUSE",
+   "expected_reason": "qualification: execution_contract_sha256",
+   "id": "R3R",
+   "pass": true,
+   "problems": [
+    "qualification: execution_contract_sha256 belongs to another contract or tree",
+    "qualification: gate_sha256 belongs to another contract or tree",
+    "qualification: policy_sha256 belongs to another contract or tree"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "authorization",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "comparator invoked against a valid-looking seal from the wrong contract",
+   "expected": "REFUSE",
+   "expected_reason": "another approved commit",
+   "id": "R3S",
+   "pass": true,
+   "problems": [
+    "the authorization names another approved commit than the operator supplied"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "comparator",
+   "stub_loader_calls": 0,
+   "the_same_chain_under_its_own_contract_is_accepted": true
+  },
+  {
+   "attack": "a non-comparator program calls the seal check on the REAL repository",
+   "expected": "REFUSE",
+   "expected_reason": "Phase 15",
+   "id": "GUARD_real_repository",
+   "pass": true,
+   "problems": [
+    "the real runs artifact is read only by c11r_compare.py as Phase 15"
+   ],
+   "refused": true,
+   "refused_for_the_expected_reason": true,
+   "stage": "runtime guard",
+   "stub_loader_calls": 0
+  }
+ ],
+ "failed": [],
+ "provenance": {
+  "code_closure": {
+   "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py": "fc88fb0dcc0f757d9ed42b08ecdd9e7ca2c65320181320f009390d67e3155741",
+   "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_common.py": "c55e97b9e2dc626992d3fa25ef23833fcccee88e787a916aa02dc23c2f0ab1b2",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_certificate.py": "f99dcb12159972014d093589498db0b7a338cc130e3b887a347709a455fdd0f6",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_chain.py": "4fabf63a5155b837a8d7bf51e3782e784a588b6d35b108deb6e7d7a45a619a4d",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "5507e1fc6e4b8f50981cc791eb8c32761598f29236f572d28b6986d7a022cee9",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_compare.py": "7cdbc6eb466d11800f7d3eca8ddc3fae94df31d344b581b09d60cd84ecb07d16",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_contract.py": "1a951ab23add2370949251f226c4da89ee343cffbe93ff3f9b58ae834af5ec19",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_cost.py": "e2961a1a9150bda3eb60047dda542b91013ab885e69a71bbd48a4a35e80fc922",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_equiv.py": "6d2941b8fc0c56be135da1a82ead2109ef808842a5f82c7bde4b6dafd3d6f929",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_gate.py": "fe231828af027d810aff15e89c657e6b96ea08b5ed82e874f503d457f0c3524f",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py": "208b22bfb440ead6065f405b2aa746f869d81cb63a6d17ea73b44cec0060dedb",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "bdd2717082640c99a5cce3a0d9adb7999724f2d1d3291f3745475d3eb8ccfe97",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_qualify.py": "2a963affac7c6c6f419d7298bcfe05cd194fa433068b3858dd1c6d7d0f3e2e55",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_runs.py": "fa4f3ede5ae0ddcc678748793ff32b888383f72a2db9f6bf145951718e566400",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "bc3302632f36fc8afdb18a9154cc0fb65938b17f37db284872c0895115f29114",
+   "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
+  },
+  "inputs": {},
+  "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_chain.py",
+  "producer_sha256": "4fabf63a5155b837a8d7bf51e3782e784a588b6d35b108deb6e7d7a45a619a4d"
+ },
+ "purpose": "R3-1: the frozen execution identity binds end to end",
+ "quarantine_access_ordering": {
+  "loader_never_called_on_a_refused_chain": true,
+  "rule": "the comparator calls the magnitude loader only after seal and chain verify"
+ },
+ "schema": "C11R_CHAIN_CONTROLS/1",
+ "sha256": "bc01c75152f6a8e01991fc7b477033f0ff31c758c250f2cba5f10fbbe0ec36cf",
+ "synthetic": "temporary git repositories; fixture qualification and authorization (accepted only with allow_fixture=True); synthetic certificates; a stub magnitude loader; the quarantine is never copied or opened"
+}

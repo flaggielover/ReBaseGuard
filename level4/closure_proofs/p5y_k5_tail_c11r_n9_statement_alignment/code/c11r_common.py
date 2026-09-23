@@ -6,8 +6,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import pathlib
 import subprocess
+import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
 NS = HERE.parent
@@ -39,6 +41,17 @@ def git_ok(*a: str) -> bool:
     return subprocess.run(["git", "-C", str(REPO), *a], capture_output=True, text=True).returncode == 0
 
 
+def git_in(repo, *a: str) -> str:
+    """git in an explicit repository root (the real one, or a synthetic rehearsal repository)."""
+    return subprocess.run(["git", "-C", str(repo), *a], capture_output=True, text=True,
+                          check=True).stdout.strip()
+
+
+def git_ok_in(repo, *a: str) -> bool:
+    return subprocess.run(["git", "-C", str(repo), *a], capture_output=True,
+                          text=True).returncode == 0
+
+
 def git_grep(pattern: str, *paths: str) -> list[str]:
     r = subprocess.run(["git", "-C", str(REPO), "grep", "-l", "-E", pattern, "HEAD", "--", *paths],
                        capture_output=True, text=True)
@@ -49,6 +62,11 @@ def git_grep(pattern: str, *paths: str) -> list[str]:
 
 def blob_at(commit: str, path: str) -> bytes:
     return subprocess.run(["git", "-C", str(REPO), "show", f"{commit}:{path}"],
+                          capture_output=True, check=True).stdout
+
+
+def blob_at_in(repo, commit: str, path: str) -> bytes:
+    return subprocess.run(["git", "-C", str(repo), "show", f"{commit}:{path}"],
                           capture_output=True, check=True).stdout
 
 
@@ -95,6 +113,7 @@ NS_REL = "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment"
 # glob: the round-2 status checker and B0 json-loaded whole directory trees, which reached the
 # quarantine and the registry. A checker walks THIS list and nothing else.
 PRE_RESULT_ARTIFACTS = (
+    "evidence/procs/C11R_PROCESS_DETECTOR.json",
     "evidence/b0/C11R_B0.json",
     "evidence/errata/C11R_ERRATA.json",
     "evidence/table/C11R_N9_STATEMENTS.json",
@@ -103,8 +122,10 @@ PRE_RESULT_ARTIFACTS = (
     "evidence/cost/C11R_COST.json",
     "config/C11R_POLICY.json",
     "evidence/policy/C11R_POLICY_EVIDENCE.json",
+    "config/C11R_CONTRACT.json",
     "config/N9R_GATE_C11R.json",
     "evidence/firewall/C11R_FIREWALL.json",
+    "evidence/chain/C11R_CHAIN_CONTROLS.json",
     "evidence/mutations/C11R_MUTATIONS.json",
     "evidence/leakcheck/C11R_LEAKCHECK.json",
     "evidence/status/C11R_STATUS.json",
@@ -120,10 +141,46 @@ DECLARED_EXTERNAL_INPUTS = (R5_PATH,)
 
 
 def is_protected(rel: str) -> bool:
+    """By name and path segment, so it applies to relative and absolute paths alike."""
     name = pathlib.PurePosixPath(rel).name
     parts = pathlib.PurePosixPath(rel).parts
     return (name in PROTECTED_FILES or any(name.startswith(x) for x in PROTECTED_PREFIXES)
             or any(seg in parts for seg in PROTECTED_DIR_SEGMENTS))
+
+
+# ---------------------------------------------------------------------------------------------
+# THE RUNTIME OPEN-GUARD (round 4, review round 3 N-1). DEFENSE IN DEPTH, not a proof.
+# The static firewall is a heuristic (it missed 14 of 20 paths the third reviewer planted). This
+# guard is enforced at RUNTIME in every process that imports this module: a CPython audit hook
+# refuses any Python-level `open` (open, io.open, os.open, Path.read_text/read_bytes, json.load of
+# an opened file, linecache, fileinput, ...) of a PROTECTED path unless the running program is one
+# of the two sanctioned readers. It does NOT see content read by a subprocess (git show, cat, a
+# `python -c` child that does not import this module); the static analysis and the allowlists
+# cover those. The refusal fires on the open event, before any byte is read.
+# ---------------------------------------------------------------------------------------------
+READER_PROGRAMS = frozenset({"c11r_table.py", "c11r_compare.py"})
+
+
+def running_program() -> str:
+    return pathlib.PurePath(sys.argv[0]).name if sys.argv and sys.argv[0] else ""
+
+
+def _open_guard(event, args):
+    if event != "open" or not args:
+        return
+    path = args[0]
+    if isinstance(path, bytes):
+        path = os.fsdecode(path)
+    if not isinstance(path, str):
+        return                                    # a file descriptor, not a path
+    if is_protected(path) and running_program() not in READER_PROGRAMS:
+        raise PermissionError(f"C11R runtime open-guard: {running_program() or 'this process'} "
+                              f"may not open protected file {pathlib.PurePath(path).name}")
+
+
+if not getattr(sys, "_c11r_open_guard_installed", False):
+    sys.addaudithook(_open_guard)
+    sys._c11r_open_guard_installed = True
 
 
 def content_free_id(path) -> str | None:
@@ -180,9 +237,9 @@ def sha256_code(rel: str) -> str:
     return sha256_bytes((REPO / rel).with_suffix(".py").read_bytes())
 
 
-def git_object_at(commit: str, rel: str) -> str | None:
+def git_object_at(commit: str, rel: str, repo=None) -> str | None:
     """The git object id of a path at a commit: `rev-parse`, which prints an id, never content."""
-    r = subprocess.run(["git", "-C", str(REPO), "rev-parse", f"{commit}:{rel}"],
+    r = subprocess.run(["git", "-C", str(repo or REPO), "rev-parse", f"{commit}:{rel}"],
                        capture_output=True, text=True)
     return "gitobj:" + r.stdout.strip() if r.returncode == 0 else None
 
@@ -233,14 +290,20 @@ def write_evidence(p: pathlib.Path, obj: dict, *, producer) -> str:
     `producer` is MANDATORY. An artifact that cannot say which code made it is exactly the kind
     that let a REFUSE mutation record sit unnoticed beside a PASS validation (erratum E4).
     """
+    body = evidence_body(obj, producer=producer)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps(body, indent=1, sort_keys=True) + "\n")
+    return body["sha256"]
+
+
+def evidence_body(obj: dict, *, producer) -> dict:
+    """Exactly what write_evidence writes: the body, its provenance and its sha256."""
     if not producer:
         raise ValueError("write_evidence requires the producer module path")
     body = {k: v for k, v in obj.items() if k not in ("sha256", "provenance")}
     body["provenance"] = provenance(producer)
     body["sha256"] = sha256_obj(body)
-    p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(body, indent=1, sort_keys=True) + "\n")
-    return body["sha256"]
+    return body
 
 
 def r5_map() -> dict:
@@ -251,40 +314,9 @@ def r5_open_by_verdict(m: str = "5") -> list[int]:
     return sorted(c["cell"] for c in r5_map()["per_m"][m]["cells"] if c.get("verdict") == "OPEN")
 
 
-def classified_processes(interp=("python3", "python", "python3.14", "python3.12", "python3.11")) -> dict:
-    """Executable identity, whole self-ancestry removed. Never pgrep -f or ps|grep alone."""
-    import os
-    out = subprocess.run(["ps", "-eo", "pid=,ppid=,comm="], capture_output=True, text=True).stdout
-    table = {}
-    for ln in out.splitlines():
-        parts = ln.split(None, 2)
-        if len(parts) == 3:
-            table[int(parts[0])] = (int(parts[1]), parts[2].strip())
-    chain, cur = set(), os.getpid()
-    for _ in range(64):
-        chain.add(cur)
-        if cur not in table or cur <= 1:
-            break
-        cur = table[cur][0]
-    rows = []
-    for pid, (ppid, comm) in table.items():
-        if pid in chain or pathlib.PurePath(comm).name not in interp:
-            continue
-        argv = subprocess.run(["ps", "-o", "args=", "-p", str(pid)],
-                              capture_output=True, text=True).stdout.strip()
-        cwd = ""
-        for ln in subprocess.run(["lsof", "-a", "-p", str(pid), "-d", "cwd", "-Fn"],
-                                 capture_output=True, text=True).stdout.splitlines():
-            if ln.startswith("n"):
-                cwd = ln[1:]
-        sig = {"executable_in_repo": "ReBaseGuard" in comm, "cwd_in_repo": "ReBaseGuard" in cwd,
-               "argv_references_campaign": any(t in argv for t in
-                                               ("c11r_", "c11_", "taboo_certify", "closure_proofs"))}
-        rows.append({"pid": pid, "ppid": ppid, "executable": comm, "cwd": cwd, "signals": sig,
-                     "classified": "CAMPAIGN_WORKER" if any(sig.values()) else "FOREIGN_UNRELATED"})
-    return {"interpreters": rows,
-            "campaign_workers": [r for r in rows if r["classified"] == "CAMPAIGN_WORKER"],
-            "foreign": [r for r in rows if r["classified"] == "FOREIGN_UNRELATED"]}
+# The revision-1 process detector (classified_processes) lived here. It was blind to the framework
+# build of Python on the recorded host (errata E26, E27) and is removed; code/c11r_procs.py
+# replaces it.
 
 
 def toolchain_present() -> dict:

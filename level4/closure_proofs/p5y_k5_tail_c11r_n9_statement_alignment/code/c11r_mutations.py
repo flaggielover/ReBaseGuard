@@ -1,4 +1,19 @@
-"""C11R -- the mutation suite, revision 3: it mutates PRODUCTION INPUTS and holds no rule of its own.
+"""C11R -- the mutation suite, revision 4.
+
+REVISION 4 (review round 3, N-3; erratum E30). Revision 3 claimed this module "defines no guard".
+That was inaccurate: M01, M02, M07, M08, M10 and M12 were decided by logic local to this suite, and
+M10 (a changed factor-2 threshold) had no production detector at all. Now:
+  * M10 calls the PRODUCTION check c11r_compare.comparison_rule_problems, which the comparator
+    runs on the chain before any quarantine access; M01/M02 call the production import rule
+    c11r_qualify.forbidden_imports; M36 calls the real runner pre-flight;
+  * every row carries `detector_kind`: PRODUCTION_GUARD (a production function refuses a mutated
+    input), PRODUCTION_SCIENCE (a production certifier or screen refuses a mutated candidate),
+    SUITE_LOCAL_PROPERTY (the suite checks a mathematical property of the reviewed machinery on
+    NT against a planted wrong value) or SUITE_LOCAL_AUDIT (a scope or record audit). Only the
+    PRODUCTION_* rows demonstrate production enforcement, and the artifact says so.
+The end-to-end identity chain (R3-1) is exercised by code/c11r_chain.py, not here.
+
+REVISION 3 (preserved below): it mutated PRODUCTION INPUTS for the run-artifact guards.
 
 WHAT WAS WRONG IN REVISION 2 (review round 2, B-4; erratum E17). Its value-trace, screen-order and
 disposition checks were functions defined HERE -- test-only copies of rules the production path
@@ -11,7 +26,7 @@ THE RULES NOW
     screen_order / dispositions / configuration_adherence, c11r_compare.run_comparison,
     c11r_schema.validate_runs / seal_problems / forbidden_payload, c11r_equiv.compare,
     c11r_status.freshness / contradictions, c11r_gate.scan_for_result_language /
-    scan_source_for_result_language, c11r_runs.check_authorization, c11r_firewall. This module
+    scan_source_for_result_language, c11r_runs.preflight, c11r_firewall. This module
     builds inputs, mutates them, and calls those functions. It defines no guard.
   * Run artifacts are built by c11r_runs.assemble from certificates made by
     c11r_certificate.make_certificate -- the runner's own emission path -- with SYNTHETIC values.
@@ -39,10 +54,12 @@ import c11r_boxdata as BD
 import c11r_certificate as CV
 import c11r_common as C
 import c11r_compare as K
+import c11r_contract as CT
 import c11r_equiv as EQ
 import c11r_firewall as FW
 import c11r_gate as GA
 import c11r_idrift as I
+import c11r_qualify as Q
 import c11r_runs as R
 import c11r_schema as S
 import c11r_status as ST
@@ -53,6 +70,15 @@ NT = I.Blk(F(5, 2), F(5, 2) + W)
 CODE = C.NS / "code"
 RES: list[dict] = []
 ADV: list[dict] = []
+KIND = {
+    "PRODUCTION_GUARD": ("M01", "M02", "M03", "M10", "M13", "M14", "M16", "M17", "M18", "M19",
+                         "M20", "M21", "M22", "M23", "M25", "M26", "M27", "M28", "M30", "M31",
+                         "M34", "M35", "M36", "M37", "M38", "M39"),
+    "PRODUCTION_SCIENCE": ("M15", "M32", "M33"),
+    "SUITE_LOCAL_PROPERTY": ("M04", "M05", "M06", "M09", "M18b", "M24", "M29"),
+    "SUITE_LOCAL_AUDIT": ("M07", "M08", "M11", "M12"),
+}
+KIND_OF = {m: k for k, ms in KIND.items() for m in ms}
 FAKE_MAGS = {"Abar": F(10), "tau": F(10), "C_T": F(10), "D_lo": F(1, 2), "D1": F(10),
              "D2": F(10)}                                    # synthetic, deliberately round
 CELL_307_BLOCK = ("17885921/10000000", "1882413/1000000")    # a label from r5 geometry; no computation
@@ -73,6 +99,7 @@ def record(mid, name, *, verifier, producer=None, input_artifact=None, mutated_p
     else:
         outcome = "SURVIVED"
     row = {"id": mid, "name": name, "outcome": outcome,
+           "detector_kind": KIND_OF.get(mid, "UNCLASSIFIED"),
            "mutated_path": mutated_path, "mutated_value": repr(mutated_value)[:160],
            "mutant_flagged": bool(mutant_flagged), "clean_control_flagged": bool(clean_flagged),
            "unrelated_mutation_flagged": None if unrelated_flagged is None
@@ -84,16 +111,6 @@ def record(mid, name, *, verifier, producer=None, input_artifact=None, mutated_p
            "detail": detail}
     row.update(extra)
     RES.append(row)
-
-
-def imports_in(src: str) -> set[str]:
-    roots = set()
-    for n in ast.walk(ast.parse(src)):
-        if isinstance(n, ast.Import):
-            roots |= {a.name.split(".")[0] for a in n.names}
-        elif isinstance(n, ast.ImportFrom) and n.level == 0 and n.module:
-            roots.add(n.module.split(".")[0])
-    return roots
 
 
 def redigest(cert: dict) -> dict:
@@ -152,26 +169,23 @@ def main() -> int:
         return res
 
     # ============================ independence and backend =================================
-    closure = {}
-    for mfile in sorted(CODE.glob("c11r_*.py")):
-        closure.update(C.code_closure(mfile))
-    roots = set()
-    for rel in closure:
-        roots |= imports_in(C.read_code(rel))
-    forb = set(S.FORBIDDEN_PRODUCERS)
+    scan = Q.import_scan()                         # the production rule over the real closure
     planted = "import taboo_certify\nfrom opnorms import kernel_norm\n"
     record("M01", "hidden import of the original certifier's load-bearing graph",
-           verifier="c11r_mutations.py", mutated_path="<synthetic module source>",
-           mutated_value=planted, mutant_flagged=bool(imports_in(planted) & forb),
-           clean_flagged=bool(roots & forb),
-           detail={"modules_in_closure": len(closure), "imported_roots": sorted(roots)})
-    backend = {"numpy", "flint", "scipy", "mpmath", "sympy", "gmpy2"}
+           verifier="c11r_qualify.py", mutated_path="<synthetic module source>",
+           mutated_value=planted, mutant_flagged=bool(Q.forbidden_imports(planted)["graph"]),
+           clean_flagged=bool(scan["forbidden_graph_hits"]),
+           unrelated_flagged=bool(Q.forbidden_imports("import json\n")["graph"]),
+           detail={"modules_in_closure": scan["modules"]})
     planted = "import numpy as np\nfrom flint import arb\n"
-    record("M02", "the original's arithmetic backend", verifier="c11r_mutations.py",
+    record("M02", "the original's arithmetic backend", verifier="c11r_qualify.py",
            mutated_path="<synthetic module source>", mutated_value=planted,
-           mutant_flagged=bool(imports_in(planted) & backend), clean_flagged=bool(roots & backend))
+           mutant_flagged=bool(Q.forbidden_imports(planted)["backend"]),
+           clean_flagged=bool(scan["forbidden_backend_hits"]),
+           unrelated_flagged=bool(Q.forbidden_imports("import fractions\n")["backend"]))
     fwc = FW.run_controls()
-    record("M03", "reading original magnitudes, review prose or the runs artifact by ANY path",
+    record("M03", "reading original magnitudes, review prose or the runs artifact by any PLANTED "
+                  "path (a heuristic: known misses are recorded in the firewall artifact)",
            verifier="c11r_firewall.py", input_artifact="evidence/firewall/C11R_FIREWALL.json",
            mutated_path=f"<{len(FW.POSITIVE)} planted module sources>",
            mutated_value=sorted(FW.POSITIVE),
@@ -249,19 +263,19 @@ def main() -> int:
            detail={"enclosure_width": float(k1.hi - k1.lo)})
 
     # ============================ governance ================================================
-    rule = stmt["comparison_semantics_frozen_before_results"]
-    planted_rule = copy.deepcopy(rule)
-    planted_rule["factor"] = 3
-    unrelated_stmt_rule = copy.deepcopy(rule)
-
-    def rule_changed(r):
-        return r != gate["comparison_rule"] or r.get("factor") != K.FACTOR
-    record("M10", "an agreement threshold changed after the gate froze it",
-           verifier="c11r_gate.py", input_artifact="config/N9R_GATE_C11R.json",
+    contract = CT.load_artifact(C.REPO, CT.CONTRACT_REL)
+    planted_stmt = copy.deepcopy(stmt)
+    planted_stmt["comparison_semantics_frozen_before_results"]["factor"] = 3
+    unrelated_stmt = copy.deepcopy(stmt)
+    unrelated_stmt["note"] = "a field outside the comparison rule"
+    record("M10", "an agreement threshold changed after the freeze",
+           verifier="c11r_compare.py", input_artifact="config/C11R_CONTRACT.json",
            mutated_path="$.comparison_semantics_frozen_before_results.factor", mutated_value=3,
-           mutant_flagged=rule_changed(planted_rule), clean_flagged=rule_changed(rule),
-           unrelated_flagged=rule_changed(unrelated_stmt_rule),
-           detail={"frozen_in": "config/N9R_GATE_C11R.json", "comparator_factor": K.FACTOR})
+           mutant_flagged=bool(K.comparison_rule_problems(planted_stmt, gate, contract)),
+           clean_flagged=bool(K.comparison_rule_problems(stmt, gate, contract)),
+           unrelated_flagged=bool(K.comparison_rule_problems(unrelated_stmt, gate, contract)),
+           detail={"production_check": "c11r_compare.comparison_rule_problems, run by "
+                                       "verify_chain before any quarantine access"})
 
     def weaker_verdict(runs):
         certified = [t for t in S.targets(runs).values() if t["status"] != "NOT_CERTIFIED"]
@@ -492,17 +506,18 @@ def main() -> int:
            clean_flagged=bool(GA.scan_source_for_result_language(cmp_src)),
            unrelated_flagged=bool(GA.scan_source_for_result_language(quoting_doc)))
 
-    self_sha = C.sha256_file(CODE / "c11r_runs.py")
-    good_auth = {"guard": "ALLOW", "cell": 306, "policy_sha256": policy["sha256"],
-                 "statements_sha256": stmt["sha256"], "runs_producer_sha256": self_sha}
-    bad_auth = dict(good_auth, policy_sha256="0" * 64)
+    chain = C.load_allowlisted("evidence/chain/C11R_CHAIN_CONTROLS.json")
+    real_pf = R.preflight(C.REPO, check_processes=False)
+    valid_synthetic = next((r for r in chain["controls"] if r["id"] == "R3T"), {})
     record("M36", "target execution without a bound Phase 13 authorization",
-           verifier="c11r_runs.py", mutated_path="authorization.policy_sha256",
-           mutated_value="0" * 16,
-           mutant_flagged=bool(R.check_authorization(bad_auth, policy, stmt, self_sha))
-           and bool(R.check_authorization(None, policy, stmt, self_sha)),
-           clean_flagged=bool(R.check_authorization(good_auth, policy, stmt, self_sha)),
-           detail={"real_tree_refuses": R.authorised(policy, stmt)})
+           verifier="c11r_runs.py", input_artifact="evidence/chain/C11R_CHAIN_CONTROLS.json",
+           mutated_path="config/C11R_AUTHORIZATION.json", mutated_value="<absent>",
+           mutant_flagged=bool(real_pf["problems"]),
+           clean_flagged=not valid_synthetic.get("pass", False),
+           detail={"real_tree_preflight": real_pf["problems"][:3],
+                   "clean_control": "chain control R3T: a fully bound synthetic chain is "
+                                    "accepted by the same pre-flight",
+                   "wrong_contract_and_tamper_controls": "chain controls R3B-R3S"})
     run_mutant("M37", "D1 claimed from a supersolution certificate, which cannot bound it", "D1",
                lambda r: r["targets"].update(D1=S.target("D1", status="CERTIFIED", value=F(3),
                                                          reason=None, certificate_id="F_K")),
@@ -626,9 +641,11 @@ def main() -> int:
     es = EQ.self_test(stmt)
     bad = [r["id"] for r in RES if r["outcome"] != "DETECTED"]
     adv_missed = [r["id"] for r in ADV if not r["caught"]]
-    out = {"schema": "C11R_MUTATIONS/3",
+    out = {"schema": "C11R_MUTATIONS/4",
            "supersedes": ("C11R_MUTATIONS/2 at affdf8a3, whose value-trace, screen-order and "
-                          "disposition detectors were test-only copies (erratum E17)"),
+                          "disposition detectors were test-only copies (erratum E17)); "
+                          "C11R_MUTATIONS/3 at eaca931e, which overstated that it defined no "
+                          "guard (erratum E30)"),
            "rules": ["every detector is a production function; this module defines no guard",
                      "run artifacts built by c11r_runs.assemble from c11r_certificate certificates",
                      "each mutant: mutant flagged AND clean accepted AND unrelated not flagged",
@@ -637,6 +654,9 @@ def main() -> int:
            "base_artifact_classes_on_synthetic_magnitudes": base_cls,
            "base_verdict_on_synthetic_magnitudes": base_cmp["N9_VERDICT"],
            "mutants": RES,
+           "detector_kinds": {k: sum(1 for r in RES if r["detector_kind"] == k) for k in KIND},
+           "what_demonstrates_production_enforcement": ("only rows with detector_kind "
+                                                        "PRODUCTION_GUARD or PRODUCTION_SCIENCE"),
            "adversarial_controls": ADV,
            "adversarial_controls_missed": adv_missed,
            "statement_vs_number_separation": separation,

@@ -1,4 +1,13 @@
-"""C11R Phase 12 -- qualification before any target execution. Revision 3. NOT RUN IN THIS TURN.
+"""C11R Phase 12 -- qualification before any target execution. Revision 4. NOT RUN IN THIS TURN.
+
+REVISION 4 (review round 3, R3-1; erratum E25). The qualification artifact is built by ONE builder,
+emit_qualification, which binds RECOMPUTED identities -- the execution contract, the gate, the
+policy, the statement table and this qualifier's own code -- and the host facts the cost model
+depends on. c11r_contract.verify_qualification refuses a qualification built under another
+contract, tree or host, one whose class does not follow from its items, and a synthetic fixture.
+main() runs only with --approved-commit <the reviewed commit>, and checks every frozen path against
+it. The configuration is re-derived by the policy's revision-4 rule from the committed cost
+artifact and the recorded non-target calibration.
 
 It produces no target constant and computes nothing on cells 306-309. Every numerical re-exercise
 runs on the NON-TARGET block NT = [5/2, 5/2 + 108337/1250000] or at the non-target scalar e = 5/2.
@@ -23,7 +32,6 @@ from __future__ import annotations
 import ast
 import pathlib
 import shutil
-import subprocess
 import sys
 import time
 from fractions import Fraction as F
@@ -31,15 +39,15 @@ from fractions import Fraction as F
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import c11r_certificate as CV
 import c11r_common as C
+import c11r_contract as CT
 import c11r_cost as K
 import c11r_idrift as I
 import c11r_policy as POL
+import c11r_procs as PR
 
 X = I.X
 NT = I.Blk(F(5, 2), F(5, 2) + F(108337, 1250000))
 E_NT = F(5, 2)
-FROZEN_ARTIFACTS = ("config/C11R_POLICY.json", "config/N9R_GATE_C11R.json",
-                    "evidence/table/C11R_N9_STATEMENTS.json", "evidence/cost/C11R_COST.json")
 FORBIDDEN_GRAPH = frozenset({"taboo_certify", "resolvent_certificate", "opnorms", "ra_certifier",
                              "fast_range", "intervals", "rebaseguard_certify", "rung3_engine",
                              "spec"})
@@ -63,7 +71,8 @@ def rederive_configuration(policy: dict, cost: dict) -> dict:
         problems.append("the policy was frozen against a different cost artifact")
     model = POL.cost_model(cost)
     boxes_at = {int(k): v for k, v in cfg["boxes_at_depth"].items()}
-    _table, best = POL.choose(model, boxes_at)
+    cal = {k: {"metric": v["metric"]} for k, v in cfg.get("calibration", {}).items()}
+    _table, best = POL.choose(model, boxes_at, cal)
     derived = None if best is None else {"depth": best["depth"], "panels": best["panels"]}
     if derived != cfg["chosen"]:
         problems.append(f"re-derived configuration {derived} != frozen {cfg['chosen']}")
@@ -77,20 +86,35 @@ def host_matches(cost_host: dict, now_host: dict) -> dict:
     return {"match": not diff, "differences": diff}
 
 
-def import_scan() -> dict:
+def imported_roots(src: str) -> set[str]:
     roots = set()
+    for n in ast.walk(ast.parse(src)):
+        if isinstance(n, ast.Import):
+            roots |= {a.name.split(".")[0] for a in n.names}
+        elif isinstance(n, ast.ImportFrom) and n.level == 0 and n.module:
+            roots.add(n.module.split(".")[0])
+    return roots
+
+
+def forbidden_imports(src: str) -> dict:
+    """The production import rule for ONE source: the original certifier's load-bearing graph and
+    its arithmetic backend are forbidden. import_scan applies it to the whole closure; the mutation
+    suite applies it to planted sources."""
+    roots = imported_roots(src)
+    return {"graph": sorted(roots & FORBIDDEN_GRAPH), "backend": sorted(roots & FORBIDDEN_BACKEND)}
+
+
+def import_scan() -> dict:
     closure = {}
     for m in sorted(C.HERE.glob("c11r_*.py")):
         closure.update(C.code_closure(m))
+    graph, backend = set(), set()
     for rel in closure:
-        for n in ast.walk(ast.parse(C.read_code(rel))):
-            if isinstance(n, ast.Import):
-                roots |= {a.name.split(".")[0] for a in n.names}
-            elif isinstance(n, ast.ImportFrom) and n.level == 0 and n.module:
-                roots.add(n.module.split(".")[0])
-    return {"modules": len(closure), "forbidden_graph_hits": sorted(roots & FORBIDDEN_GRAPH),
-            "forbidden_backend_hits": sorted(roots & FORBIDDEN_BACKEND),
-            "pass": not (roots & FORBIDDEN_GRAPH) and not (roots & FORBIDDEN_BACKEND)}
+        f = forbidden_imports(C.read_code(rel))
+        graph |= set(f["graph"])
+        backend |= set(f["backend"])
+    return {"modules": len(closure), "forbidden_graph_hits": sorted(graph),
+            "forbidden_backend_hits": sorted(backend), "pass": not graph and not backend}
 
 
 def scalar_collapse_nt() -> dict:
@@ -143,18 +167,51 @@ def self_test() -> dict:
 # ---------------------------------------------------------------------------------------------
 # the full qualification -- Phase 12 only, NOT run in this turn
 # ---------------------------------------------------------------------------------------------
-items = []
+# the qualification artifact -- ONE builder, used by main() and by the synthetic chain controls
+# ---------------------------------------------------------------------------------------------
+def emit_qualification(repo, items: list, *, fixture: bool = False) -> dict:
+    """A qualification record bound to RECOMPUTED identities (round 4, R3-1): the execution
+    contract, the gate, the policy, the statement table and THIS qualifier's own code, plus the
+    host facts the cost model depends on. A qualification built under another contract, another
+    tree or another host is refused by c11r_contract.verify_qualification."""
+    roots = CT.chain_roots(repo)
+    code = (roots.get("contract") or {}).get("code", {})
+    qrel = next((r for r in code if r.endswith("/c11r_qualify.py")), None)
+    me_now = CT.code_identity(repo, qrel)["sha256"] if qrel else None
+    me_bound = code.get(qrel, {}).get("sha256") if qrel else None
+    failed = [i["id"] for i in items if not i["pass"]]
+    if roots["problems"]:
+        failed.append("CHAIN_ROOTS")
+    if me_now is None or me_now != me_bound:
+        failed.append("QUALIFIER_IDENTITY")
+    return {"schema": CT.QUAL_SCHEMA,
+            "fixture": bool(fixture),
+            "runs_before": "any target execution",
+            "produces_target_constants": False,
+            "computes_on_open_cells": False,
+            "bound": {"execution_contract_sha256": roots.get("contract_digest"),
+                      "gate_sha256": roots.get("gate_digest"),
+                      "policy_sha256": roots.get("policy_digest"),
+                      "statements_sha256": roots.get("statements_digest"),
+                      "qualifier_sha256": me_now},
+            "environment": {"host": CT.current_host()},
+            "nt_configuration": {"block": "NON-TARGET [5/2, 5/2 + 108337/1250000]",
+                                 "scalar_drift": "5/2", "import_scan": "full code closure"},
+            "chain_root_problems": roots["problems"],
+            "items": items, "failed": failed,
+            "QUALIFICATION_CLASS": "PASS" if not failed else "NO_TARGET_EXECUTION"}
 
 
-def item(iid, name, ok, detail):
-    items.append({"id": iid, "name": name, "pass": bool(ok), "detail": detail})
+def main(approved_commit: str) -> int:
+    """Phase 12 only, on the reviewed commit, on the user's instruction. NOT run in this turn."""
+    items = []
 
+    def item(iid, name, ok, detail):
+        items.append({"id": iid, "name": name, "pass": bool(ok), "detail": detail})
 
-def main() -> int:
     t0 = time.time()
     policy = C.load_allowlisted("config/C11R_POLICY.json")
     gate = C.load_allowlisted("config/N9R_GATE_C11R.json")
-    stmt = C.load_allowlisted("evidence/table/C11R_N9_STATEMENTS.json")
     cost = C.load_allowlisted("evidence/cost/C11R_COST.json")
     val = C.load_allowlisted("evidence/validation/C11R_VALIDATION.json")
     mut = C.load_allowlisted("evidence/mutations/C11R_MUTATIONS.json")
@@ -162,31 +219,24 @@ def main() -> int:
     leak = C.load_allowlisted("evidence/leakcheck/C11R_LEAKCHECK.json")
     st = C.load_allowlisted("evidence/status/C11R_STATUS.json")
     eq = C.load_allowlisted("evidence/equivalence/C11R_EQUIVALENCE.json")
+    chain = C.load_allowlisted("evidence/chain/C11R_CHAIN_CONTROLS.json")
 
+    roots = CT.chain_roots(C.REPO)
+    item("Q1", "the execution contract and the gate verify from bytes", not roots["problems"],
+         {"problems": roots["problems"]})
+    fz = CT.verify_frozen_at(C.REPO, approved_commit, roots["contract"]) \
+        if roots.get("contract") else ["no contract"]
+    item("Q2", "every frozen path is byte-identical to the approved commit and untouched since",
+         not fz, {"approved_commit": approved_commit, "problems": fz})
     rd = rederive_configuration(policy, cost)
-    item("Q1", "the frozen policy is the sole configuration authority and re-derives exactly",
-         not rd["problems"] and policy["statements_sha256"] == stmt["sha256"], rd)
-
-    dirty = {rel: bool(C.git("status", "--porcelain", "--", f"{C.NS_REL}/{rel}"))
-             for rel in FROZEN_ARTIFACTS}
-    committed = {rel: bool(C.git("log", "--format=%H", "-1", "--", f"{C.NS_REL}/{rel}"))
-                 for rel in FROZEN_ARTIFACTS}
-    item("Q2", "policy, gate, statement table and cost artifact are committed and unmodified",
-         all(committed.values()) and not any(dirty.values()),
-         {"committed": committed, "dirty": dirty})
-
-    tool = {m: C.sha256_file(C.HERE / m) == v
-            for m, v in gate["post_seal_toolchain_sha256"].items()}
-    item("Q3", "every post-seal toolchain module matches the hash the gate froze", all(tool.values()),
-         {"match": tool})
-
-    head_cert = CV.certifier_hashes("HEAD")
+    item("Q3", "the frozen policy re-derives its configuration from the committed evidence",
+         not rd["problems"], rd)
+    exp = CT.expected_certifier_sha(roots["contract"]) if roots.get("contract") else {}
     tree_cert = {m: C.sha256_file(C.HERE / m) for m in CV.CERTIFIER_MODULES}
     reviewed = C.sha256_bytes(C.blob_at(REVIEWED_IDRIFT_COMMIT, f"{C.NS_REL}/code/c11r_idrift.py"))
-    item("Q4", "certifier hashes agree at HEAD and in the tree; c11r_idrift is the reviewed version",
-         head_cert == tree_cert and tree_cert["c11r_idrift.py"] == reviewed,
-         {"head": head_cert, "tree": tree_cert, "reviewed_idrift": reviewed})
-
+    item("Q4", "the certifiers are the contract's; c11r_idrift is the round-1 reviewed version",
+         exp == tree_cert and tree_cert["c11r_idrift.py"] == reviewed,
+         {"contract": exp, "tree": tree_cert, "reviewed_idrift": reviewed})
     sc = import_scan()
     item("Q5", "no forbidden import graph and no forbidden backend in the code closure", sc["pass"],
          sc)
@@ -197,7 +247,8 @@ def main() -> int:
          {"failed": val["failed"]})
     item("Q8", "MUTATION_CLASS = PASS", mut["MUTATION_CLASS"] == "PASS",
          {"class": mut["MUTATION_CLASS"]})
-    item("Q9", "FIREWALL_CLASS = PASS", fw["FIREWALL_CLASS"] == "PASS", {})
+    item("Q9", "FIREWALL_CLASS = PASS (a defence-in-depth heuristic, not a proof)",
+         fw["FIREWALL_CLASS"] == "PASS", {})
     item("Q10", "LEAK_CLASS = PASS", leak["LEAK_CLASS"] == "PASS", {})
     item("Q11", "STATUS_CLASS = CONSISTENT", st["STATUS_CLASS"] == "CONSISTENT", {})
     item("Q12", "the equivalence comparator's self-test passes",
@@ -206,43 +257,29 @@ def main() -> int:
          scalar_collapse_nt()["pass"], scalar_collapse_nt())
     item("Q14", "K_e = Khat_e + atom re-exercised on NT", atom_decomposition_nt()["pass"],
          atom_decomposition_nt())
-
-    eqp = C.NS / "evidence" / "equivalence" / "C11R_EQUIVALENCE.json"
-    before = C.sha256_file(eqp)
-    subprocess.run([sys.executable, "-B", str(C.HERE / "c11r_equiv.py")], capture_output=True,
-                   cwd=str(C.NS))
-    item("Q15", "a deterministic producer reproduces byte-identically",
-         before == C.sha256_file(eqp), {})
-
+    item("Q15", "the R3A-R3T chain controls pass", chain.get("CHAIN_CLASS") == "PASS", {})
     hm = host_matches(cost["host"], K.host_identity())
     item("Q16", "this host is the host the cost model was measured on", hm["match"], hm)
-
-    auth_exists = (C.NS / "config" / "C11R_AUTHORIZATION.json").exists()
+    workers = PR.campaign_workers()["workers"]
+    auth_exists = CT.artifact_exists(C.REPO, CT.AUTH_REL)
     runs_exists = (C.NS / "evidence" / "runs").exists()
-    item("Q17", "guard prerequisites: gate DENY, no authorization yet, no runs artifact",
-         gate["guard"] == "DENY" and not auth_exists and not runs_exists,
+    item("Q17", "guard prerequisites: gate DENY, no authorization, no runs, no campaign worker",
+         gate["guard"] == "DENY" and not auth_exists and not runs_exists and not workers,
          {"gate_guard": gate["guard"], "authorization_exists": auth_exists,
-          "runs_exists": runs_exists})
-
+          "runs_exists": runs_exists, "workers": workers})
     du = shutil.disk_usage(str(C.REPO))
     item("Q18", "disk space for the run", du.free > 2 * 1024 ** 3,
          {"disk_free_gb": round(du.free / 1024 ** 3, 1)})
 
-    failed = [i["id"] for i in items if not i["pass"]]
-    out = {"schema": "C11R_QUALIFICATION/3",
-           "runs_before": "any target execution",
-           "produces_target_constants": False,
-           "computes_on_open_cells": False,
-           "items": items, "failed": failed,
-           "QUALIFICATION_CLASS": "PASS" if not failed else "NO_TARGET_EXECUTION",
-           "seconds": round(time.time() - t0, 1)}
+    out = emit_qualification(C.REPO, items)
+    out["seconds"] = round(time.time() - t0, 1)
     s = C.write_evidence(C.NS / "evidence" / "qualification" / "C11R_QUALIFICATION.json", out,
                          producer=__file__)
     for i in items:
         print(f"  {'PASS' if i['pass'] else 'FAIL'}  {i['id']:4s} {i['name'][:80]}")
-    print(f"\nQUALIFICATION_CLASS = {out['QUALIFICATION_CLASS']}  failed={failed}")
+    print(f"\nQUALIFICATION_CLASS = {out['QUALIFICATION_CLASS']}  failed={out['failed']}")
     print(f"wrote evidence/qualification/C11R_QUALIFICATION.json sha256 {s[:16]}...")
-    return 0 if not failed else 1
+    return 0 if not out["failed"] else 1
 
 
 if __name__ == "__main__":
@@ -252,4 +289,8 @@ if __name__ == "__main__":
             print(f"  {'PASS' if v['pass'] else 'FAIL'}  {k}")
         print(f"\nqualifier self-test ALL_PASS = {r['ALL_PASS']} (wrote nothing)")
         raise SystemExit(0 if r["ALL_PASS"] else 1)
-    raise SystemExit(main())
+    if len(sys.argv) == 3 and sys.argv[1] == "--approved-commit":
+        raise SystemExit(main(sys.argv[2]))
+    print("c11r_qualify.py runs only as Phase 12, on the reviewed commit, on the user's "
+          "instruction: --approved-commit <sha>. Use --self-test for the pure non-target checks.")
+    raise SystemExit(2)

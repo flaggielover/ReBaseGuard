@@ -44,11 +44,16 @@ object that can be re-checked cheaply. Reconstruction verifies the record's inte
 (certifier hash, digest over weight + inputs + certifier, reported kernel against the atom-removal
 argument, margins against the certified flag, family shape, cover, aggregation, premises) and
 derives the proposition from it. A record forged CONSISTENTLY -- a different weight, a recomputed
-digest, a matching target value, all written before the seal -- is detectable only by re-executing
-the certifier on the recorded inputs. The integrity of the record therefore rests on the seal (the
-runs artifact is committed before any original value is loaded, by a producer whose hash is bound
-at the seal) and on the authorization binding the producer's hash. This limit is stated, not
-hidden: the mutation suite's forged-certificate controls cover the inconsistent forgeries.
+digest, a matching target value -- is detectable only by re-executing the certifier on the
+recorded inputs. What binds the record is therefore the EXECUTION CHAIN (round 4, c11r_contract;
+revision 3's version of this paragraph claimed a binding that did not exist -- erratum E25): the
+runner refuses to start unless every load-bearing file is the frozen contract's version, the run
+records the recomputed identity, and the comparator recomputes the whole chain (G20), requiring
+every frozen path to be untouched since the approved commit -- so modified code can neither pass
+the pre-flight nor be reverted unseen. A record hand-written without running the frozen runner at
+all remains detectable only by re-execution. This limit is stated, not hidden: the mutation
+suite's forged-certificate controls cover the inconsistent forgeries, the chain controls
+(c11r_chain.py) the identity attacks.
 
 This module reads no original magnitude and loads no artifact.
 """
@@ -234,6 +239,10 @@ def reconstruct(cert: dict, *, expected_certifier_sha: dict, runs_producer: dict
     if cov.get("function") != COVER_FUNCTION or cov.get("depth") != inp.get("depth"):
         problems.append(f"cover {cov} is not {COVER_FUNCTION} at the certified depth, so the "
                         f"state set is not the one the certifier covered")
+    elif res.get("certified") and isinstance(inp.get("depth"), int) and \
+            res.get("boxes") != len(X.cover(inp["depth"])):
+        problems.append(f"the certifier reports {res.get('boxes')} boxes; the cover at depth "
+                        f"{inp['depth']} has {len(X.cover(inp['depth']))} (review 3, N-5)")
     if cert.get("family") != ded["family"]:
         problems.append(f"family {cert.get('family')!r} is not the certifier's {ded['family']!r}")
     try:
@@ -283,7 +292,14 @@ def reconstruct(cert: dict, *, expected_certifier_sha: dict, runs_producer: dict
 # the production guards
 # ---------------------------------------------------------------------------------------------
 def evaluate_target(constant: str, t: dict, recon: dict | None) -> dict:
-    """Derivability and VALUE TRACING for one target, against its certificate's reconstruction."""
+    """Derivability and VALUE TRACING for one target, against its certificate's reconstruction.
+    Also the converse (review 3, N-5): a target reported NOT_CERTIFIED whose cited certificate
+    cleanly proves it was DEMOTED, which misreports the run as surely as an invented value."""
+    if t.get("status") == "NOT_CERTIFIED" and recon is not None and not recon["problems"] \
+            and constant in recon["propositions"]:
+        return {"certified_claim": False, "ok": False, "independence": False,
+                "problems": [f"its certificate {t.get('certificate_id')!r} proves {constant}, yet "
+                             f"it is reported NOT_CERTIFIED (demoted)"]}
     if t.get("status") != "CERTIFIED":
         return {"certified_claim": False, "ok": None, "problems": []}
     p = []

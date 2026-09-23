@@ -39,9 +39,11 @@ def need(field: str, value, why: str = ""):
     return value
 
 
-LEAK_METHOD = ("each original magnitude as its exact rational string, and as a decimal ROUNDED and "
-               "TRUNCATED to 4, 5, 6, 7 and 8 places; each pattern is left-bounded so that it cannot "
-               "match inside a longer number (12.3456 does not match 2.3456)")
+LEAK_METHOD = ("each original magnitude as its exact rational string; as a decimal ROUNDED and "
+               "TRUNCATED to 4, 5, 6, 7 and 8 places; to 1, 2 and 3 places when its magnitude is at "
+               "least 10; to 4-8 SIGNIFICANT figures; and in scientific notation to 4-8 significant "
+               "figures (review 3, N-4). Each pattern is left-bounded so that it cannot match "
+               "inside a longer number (12.3456 does not match 2.3456)")
 
 
 def leak_patterns(magnitudes: dict) -> dict:
@@ -53,10 +55,16 @@ def leak_patterns(magnitudes: dict) -> dict:
         exact = F(mv["value"])
         forms = {mv["value"]}
         d = Decimal(exact.numerator) / Decimal(exact.denominator)
-        for n in range(4, 9):
+        places = list(range(4, 9)) + ([1, 2, 3] if abs(d) >= 10 else [])
+        for n in places:
             q = Decimal(1).scaleb(-n)
             forms.add(str(d.quantize(q, rounding=ROUND_HALF_EVEN)))
             forms.add(str(d.quantize(q, rounding=ROUND_DOWN)))
+        for sig in range(4, 9):
+            forms.add(format(d, f".{sig}g"))
+            forms.add(format(float(exact), f".{sig}g"))
+            forms.add(format(float(exact), f".{sig - 1}e"))
+            forms.add(format(d, f".{sig - 1}e"))
         pats[k] = [re.compile(r"(?<![0-9])" + re.escape(f)) for f in sorted(forms)]
     return pats
 

@@ -1,17 +1,27 @@
-"""C11R Phase 15 -- the sealed comparison. Revision 3 (blockers B-1, B-3, B-4).
+"""C11R Phase 15 -- the sealed comparison. Revision 4 (R3-1; B-1, B-3, B-4 kept).
 
-ONE OF EXACTLY TWO MODULES PERMITTED TO LOAD AN ORIGINAL MAGNITUDE, and it does so only inside
-`load_original_magnitudes`, which only `main` calls, and only after `verify_seal` has passed.
+ONE OF EXACTLY TWO MODULES PERMITTED TO LOAD AN ORIGINAL MAGNITUDE, and it does so only through
+the `loader` that `execute_comparison` calls AFTER the seal and the whole identity chain verify.
 
-ORDER OF OPERATIONS IN `main`:
-  1  the SEAL: the runs artifact is committed, the file on disk is the committed blob, it has no
-     uncommitted change, it passes c11r_schema.validate_runs -- which checks the seal on TYPED
-     fields (round 2 scanned the artifact's text for "magnitudes" and so refused every genuine
-     artifact, whose schema key is "contains_original_magnitudes": erratum E15) -- and its producer
-     hash equals c11r_runs.py as committed at the seal;
-  2  every production guard (c11r_certificate.evaluate_run) with the certifier hashes AS COMMITTED
-     AT THE SEAL: each certificate is RECONSTRUCTED into what it proves; value tracing, G8 and G10;
-  3  only then the ORIGINAL statements (semantics) and the ORIGINAL magnitudes (the quarantine,
+THE ROOT OF TRUST (round 4, erratum E25). Revision 3 took the certifier and producer hashes it
+"expected" from the seal commit's own tree, so a certifier edited, committed, used and reverted
+before the seal was accepted. Now the operator supplies the APPROVED commit A (the one the review
+passed); the frozen execution contract at A is the authority, and nothing is taken from the tree
+being checked without being recomputed and compared with it.
+
+ORDER OF OPERATIONS IN `execute_comparison`:
+  1  the SEAL: the runs artifact is committed by exactly one commit and never touched again, the
+     file on disk is that commit's blob with no uncommitted change, its canonical body hashes to
+     its stored sha256, and it passes c11r_schema.validate_runs (typed seal fields: erratum E15);
+  2  the CHAIN (c11r_contract): the authorization names A; the execution contract recomputed from
+     bytes; every frozen path byte-identical to A and untouched by every later commit; the gate,
+     the qualification and the authorization verified against the recomputed identities; the run's
+     execution_identity, code closure, certifier hashes, runner and configuration equal to them
+     (predicate G20); the comparison rule's factor equal to this module's and to the gate's.
+     ANY failure -> EXECUTION_INVALID, and the quarantine is NOT opened;
+  3  every production guard (c11r_certificate.evaluate_run) with the certifier hashes the FROZEN
+     CONTRACT fixes: reconstruction; value tracing, G8, G10, G19;
+  4  only then the ORIGINAL statements (semantics) and the ORIGINAL magnitudes (the quarantine,
      first checked against the content-free id the statement table recorded for it);
   4  per target: STATEMENT EQUIVALENCE first (the reconstructed proposition against the original),
      then, only for an equivalent-or-stronger statement, NUMERICAL AGREEMENT. The two results are
@@ -36,6 +46,7 @@ from fractions import Fraction as F
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import c11r_certificate as CV
 import c11r_common as C
+import c11r_contract as CT
 import c11r_equiv as EQ
 import c11r_schema as S
 
@@ -62,28 +73,111 @@ def verify_seal_bytes(disk: bytes | None, committed: bytes | None, dirty: bool) 
     return p
 
 
-def verify_seal() -> dict:
+def _real_repository_guard(root: pathlib.Path) -> None:
+    """The REAL runs artifact carries prospective target values: in the real repository it is
+    read only by this module run as Phase 15. Any other program may exercise the seal and chain
+    checks only on a synthetic repository (the chain controls do)."""
+    if root.resolve() == C.REPO.resolve() and C.running_program() != "c11r_compare.py":
+        raise PermissionError("the real runs artifact is read only by c11r_compare.py as Phase 15")
+
+
+def verify_seal(repo=None) -> dict:
+    """The seal, recomputed: the runs artifact was committed by exactly one commit, is unchanged
+    since, and its canonical body hashes to its stored sha256. Nothing is trusted."""
     import json
-    path = C.NS / RUNS_REL
-    rel = str(path.relative_to(C.REPO))
+    root = pathlib.Path(repo) if repo is not None else C.REPO
+    _real_repository_guard(root)
+    path = root / C.NS_REL / RUNS_REL
+    rel = f"{C.NS_REL}/{RUNS_REL}"
     disk = path.read_bytes() if path.exists() else None
-    commits = C.git("log", "--format=%H", "--", rel).splitlines() if disk is not None else []
+    commits = C.git_in(root, "log", "--format=%H", "--", rel).splitlines() if disk else []
     seal_commit = commits[-1] if commits else None
-    committed = C.blob_at(seal_commit, rel) if seal_commit else None
-    dirty = bool(C.git("status", "--porcelain", "--", rel)) if disk is not None else False
+    committed = C.blob_at_in(root, seal_commit, rel) if seal_commit else None
+    dirty = bool(C.git_in(root, "status", "--porcelain", "--", rel)) if disk is not None else False
     problems = verify_seal_bytes(disk, committed, dirty)
-    runs, runs_producer = None, None
-    if not problems:
+    if len(commits) > 1:
+        problems.append(f"the runs artifact was changed after it was sealed ({len(commits)} "
+                        f"commits touch it)")
+    runs = None
+    if disk is not None:
         runs = json.loads(disk)
-        problems += S.validate_runs(runs)               # typed seal + structure, schema-owned
-        code = str((C.NS / "code" / "c11r_runs.py").relative_to(C.REPO))
-        at_seal = C.sha256_bytes(C.blob_at(seal_commit, code))
-        if runs.get("provenance", {}).get("producer_sha256") != at_seal:
-            problems.append("producer hash differs from c11r_runs.py as committed at the seal")
-        runs_producer = {"module": "c11r_runs.py", "sha256": at_seal}
+        problems += S.validate_runs(runs)
+        if runs.get("sha256") != CT.body_digest(runs):
+            problems.append("the runs artifact's stored sha256 does not equal its recomputed "
+                            "canonical body digest")
     return {"problems": problems, "seal_commit": seal_commit, "runs": runs,
-            "runs_producer": runs_producer,
-            "runs_sha256": C.sha256_bytes(disk) if disk else None}
+            "runs_file_sha256": C.sha256_bytes(disk) if disk else None}
+
+
+def verify_chain(repo, runs: dict, seal_commit: str, *, approved_commit: str,
+                 allow_fixture: bool = False) -> dict:
+    """contract -> gate -> qualification -> authorization -> run -> seal, all recomputed."""
+    root = pathlib.Path(repo) if repo is not None else C.REPO
+    a = CT.load_artifact(repo, CT.AUTH_REL) if CT.artifact_exists(repo, CT.AUTH_REL) else None
+    av = CT.verify_authorization(repo, a, allow_fixture=allow_fixture, stage="compare")
+    p = list(av["problems"])
+    if a is not None and a.get("approved_commit") != approved_commit:
+        p.append("the authorization names another approved commit than the operator supplied")
+    facts = av.get("facts")
+    contract = (facts or {}).get("roots", {}).get("contract") if facts else None
+    if facts and contract is not None:
+        p += CT.verify_run_identity(runs, facts, av["digest"])
+        if seal_commit and not C.git_ok_in(root, "merge-base", "--is-ancestor", approved_commit,
+                                           seal_commit):
+            p.append("the seal commit does not descend from the approved commit")
+        for rel in (CT.AUTH_REL, CT.QUAL_REL):
+            if not C.git_in(root, "log", "--format=%H", "-1", "--", f"{C.NS_REL}/{rel}"):
+                p.append(f"{rel} was never committed")
+        stmt = CT.load_artifact(repo, CT.STMT_REL)
+        p += comparison_rule_problems(stmt, facts["roots"].get("gate") or {}, contract)
+    elif not p:
+        p.append("the chain could not be reconstructed")
+    return {"problems": p, "contract": contract, "facts": facts}
+
+
+def comparison_rule_problems(stmt: dict, gate: dict, contract: dict) -> list[str]:
+    """The agreement rule this comparator applies must be the FROZEN one (review 3, N-3/N-6):
+    its factor equals the statement table's, the contract's and the gate's, and the gate's rule
+    is the table's. A threshold changed after the freeze is EXECUTION_INVALID."""
+    p = []
+    rule = stmt.get("comparison_semantics_frozen_before_results", {})
+    if rule.get("factor") != FACTOR or contract.get("comparison_rule", {}).get("factor") != FACTOR:
+        p.append(f"the frozen comparison factor {rule.get('factor')} is not this "
+                 f"comparator's {FACTOR}")
+    if contract.get("comparison_rule", {}).get("rule_sha256") != C.sha256_obj(rule):
+        p.append("the statement table's comparison rule is not the one the contract froze")
+    if gate.get("comparison_rule") != rule:
+        p.append("the gate's comparison rule is not the statement table's")
+    return p
+
+
+def execute_comparison(repo=None, *, approved_commit: str, loader, allow_fixture: bool = False) -> dict:
+    """The whole Phase 15 path. The loader -- the ONLY access to original magnitudes -- is called
+    only after the seal and the chain verify; otherwise the verdict is EXECUTION_INVALID and the
+    quarantine is never opened."""
+    seal = verify_seal(repo)
+    problems = list(seal["problems"])
+    chain = None
+    if not problems:
+        chain = verify_chain(repo, seal["runs"], seal["seal_commit"],
+                             approved_commit=approved_commit, allow_fixture=allow_fixture)
+        problems += chain["problems"]
+    if problems:
+        return {"N9_VERDICT": "EXECUTION_INVALID", "identity_problems": problems,
+                "loader_called": False, "seal": {k: seal[k] for k in ("seal_commit",
+                                                                       "runs_file_sha256")}}
+    contract, facts = chain["contract"], chain["facts"]
+    stmt = CT.load_artifact(repo, CT.STMT_REL)
+    policy = CT.load_artifact(repo, CT.POLICY_REL)
+    mags = loader(stmt)                                   # only now, only here
+    result = run_comparison(seal["runs"], stmt, mags, policy,
+                            expected_certifier_sha=CT.expected_certifier_sha(contract),
+                            runs_producer={"module": "c11r_runs.py",
+                                           "sha256": facts["runner_sha256"]})
+    result["loader_called"] = True
+    result["identity_problems"] = []
+    result["seal"] = {k: seal[k] for k in ("seal_commit", "runs_file_sha256")}
+    return result
 
 
 # ---------------------------------------------------------------------------------------------
@@ -223,7 +317,8 @@ def synthetic_certs(stmt_table: dict, policy: dict, *, A_K=F(1111, 100), A_H=F(9
 
     def mk(cid, fam, w, ar, mod, fn, kern, cert_ok, extra):
         res = dict(kernel=kern, certified=cert_ok,
-                   margin_lower_bound=F(1, 1000) if cert_ok else F(-1, 1000), boxes=363, **extra)
+                   margin_lower_bound=F(1, 1000) if cert_ok else F(-1, 1000),
+                   boxes=len(CV.X.cover(ch["depth"])), **extra)
         return CV.make_certificate(cid=cid, family=fam, w=w, drift_block=E, depth=ch["depth"],
                                    panels=ch["panels"],
                                    atom_removed=ar, certifier_module=mod, certifier_function=fn,
@@ -356,32 +451,24 @@ def self_test(stmt_table: dict, policy: dict) -> dict:
 
 
 # ---------------------------------------------------------------------------------------------
-def main() -> int:
-    seal = verify_seal()
-    if seal["problems"]:
-        print("REFUSE: the independent outputs are not sealed, so no original value is loaded.")
-        for p in seal["problems"]:
-            print(f"  - {p}")
-        return 2
-    runs = seal["runs"]
-    stmt_table = C.load_allowlisted("evidence/table/C11R_N9_STATEMENTS.json")
-    policy = C.load_allowlisted("config/C11R_POLICY.json")
-    exp = CV.certifier_hashes(seal["seal_commit"])
-    mags = load_original_magnitudes(stmt_table)          # only now, only here
-    result = run_comparison(runs, stmt_table, mags, policy, expected_certifier_sha=exp,
-                            runs_producer=seal["runs_producer"])
-    out = {"schema": "C11R_COMPARISON/3",
-           "seal": {"commit": seal["seal_commit"], "runs_sha256": seal["runs_sha256"]},
-           "comparison_rule_source": {"artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-                                      "sha256": stmt_table["sha256"]},
-           "result": result, "rendered": render(result)}
-    s = C.write_evidence(C.NS / "evidence" / "comparison" / "C11R_COMPARISON.json", out,
-                         producer=__file__)
+def main(approved_commit: str) -> int:
+    """Phase 15, on the user's instruction, with the approved commit the review passed."""
+    result = execute_comparison(C.REPO, approved_commit=approved_commit,
+                                loader=load_original_magnitudes)
+    out = {"schema": "C11R_COMPARISON/4", "approved_commit": approved_commit,
+           "result": result,
+           "rendered": render(result) if result.get("loader_called") else
+           [f"EXECUTION_INVALID -- {p}" for p in result["identity_problems"]]}
+    s_ = C.write_evidence(C.NS / "evidence" / "comparison" / "C11R_COMPARISON.json", out,
+                          producer=__file__)
     for line in out["rendered"]:
         print(line)
-    print(f"wrote evidence/comparison/C11R_COMPARISON.json sha256 {s[:16]}...")
+    print(f"wrote evidence/comparison/C11R_COMPARISON.json sha256 {s_[:16]}...")
     return 0
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    if len(sys.argv) == 3 and sys.argv[1] == "--approved-commit":
+        raise SystemExit(main(sys.argv[2]))
+    print("c11r_compare.py runs only as Phase 15, after a sealed run, with --approved-commit <sha>")
+    raise SystemExit(2)

@@ -18,7 +18,11 @@ on a deterministic box sample, and the full pointwise stage (every state of the 
 The weights are manufactured; no certified value is produced or recorded.
 
 SEQUENTIAL. It refuses to start, and refuses to write, if any other campaign worker is running:
-the round-2 constants were taken while a validation job ran alongside.
+the round-2 constants were taken while a validation job ran alongside. REVISION 2 (round 4, errata
+E26/E27): the check now uses the revision-2 detector (code/c11r_procs.py), which sees the
+framework build of Python this host runs; the revision-1 detector could not, so the round-3
+artifact's "sequential" fields were vacuous. The detector is sampled before the measurement,
+between every stage, and after it, and every sample is recorded.
 
 DERIVATION (mechanical, in `derive`): per panel count, the per-box-panel constant is the MAXIMUM
 over sampled boxes of (data + certification seconds) / (P + 1); the pointwise constant is the
@@ -39,6 +43,7 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import c11r_boxdata as BD
 import c11r_common as C
 import c11r_idrift as I
+import c11r_procs as PR
 
 X, G = I.X, I.G
 
@@ -133,31 +138,74 @@ def derive(raw: dict) -> dict:
             "screen_states": raw["screen"]["states"]}
 
 
+def sample(stage: str, log: list) -> None:
+    """One detector sample; refuse at once if any other campaign worker is running."""
+    w = PR.campaign_workers()
+    log.append({"stage": stage, "t": round(time.time(), 1), "workers": w["workers"],
+                "foreign_python": w["foreign_python"],
+                "interpreters_seen": w["interpreters_seen"],
+                "load_average": [round(x, 2) for x in os.getloadavg()]})
+    if w["workers"]:
+        raise SystemExit(f"REFUSE: not sequential at {stage}; campaign workers: {w['workers']}")
+
+
+class Sampler:
+    """Samples the detector every `period` seconds in a background thread for the whole
+    measurement, so a worker that starts and stops between stages is still seen."""
+    def __init__(self, period: float = 10.0):
+        import threading
+        self.period, self.log, self._stop = period, [], threading.Event()
+        self._t = threading.Thread(target=self._run, daemon=True)
+
+    def _run(self):
+        while not self._stop.wait(self.period):
+            w = PR.campaign_workers()
+            self.log.append({"t": round(time.time(), 1), "workers": w["workers"],
+                             "foreign_python": w["foreign_python"]})
+
+    def __enter__(self):
+        self._t.start()
+        return self
+
+    def __exit__(self, *exc):
+        self._stop.set()
+        self._t.join()
+        return False
+
+
 def main() -> int:
-    procs = C.classified_processes()
-    if procs["campaign_workers"]:
-        raise SystemExit(f"REFUSE: not sequential; campaign workers running: "
-                         f"{procs['campaign_workers']}")
+    samples: list = []
+    sample("before", samples)
+    sampler = Sampler().__enter__()
     t0 = time.time()
-    load_before = os.getloadavg()
     boxes = sample_boxes()
     raw = {"panels": {}, "screen": None}
     for P in PANELS:
         print(f"measuring P={P} on {len(boxes)} NT boxes ...", flush=True)
         raw["panels"][str(P)] = measure_panels(P, boxes)
+        sample(f"after P={P}", samples)
     print("measuring the pointwise stage on NT ...", flush=True)
     raw["screen"] = measure_screen()
-    load_after = os.getloadavg()
-    procs_after = C.classified_processes()
-    if procs_after["campaign_workers"]:
-        raise SystemExit("REFUSE: a campaign worker started during the measurement")
-    out = {"schema": "C11R_COST/1",
+    sampler.__exit__(None, None, None)
+    sample("after", samples)
+    seen_bg = [x for x in sampler.log if x["workers"]]
+    if seen_bg:
+        raise SystemExit(f"REFUSE: not sequential; the background sampler saw workers: {seen_bg}")
+    out = {"schema": "C11R_COST/2",
            "block": "NON-TARGET [5/2, 5/2 + 108337/1250000] only",
            "host": host_identity(),
-           "sequential": {"campaign_workers_before": 0, "campaign_workers_after": 0,
-                          "foreign_interpreters_before": len(procs["foreign"]),
-                          "load_average_before": [round(x, 2) for x in load_before],
-                          "load_average_after": [round(x, 2) for x in load_after]},
+           "sequential": {"detector": "code/c11r_procs.py (revision 2)",
+                          "samples": samples,
+                          "background_samples": len(sampler.log),
+                          "background_sample_period_seconds": sampler.period,
+                          "background_workers_seen": sum(len(x["workers"]) for x in sampler.log),
+                          "campaign_workers_seen": sum(len(x["workers"]) for x in samples)
+                          + sum(len(x["workers"]) for x in sampler.log),
+                          "foreign_python_max": max(x["foreign_python"] for x in samples),
+                          "what_it_does_not_establish": (
+                              "no campaign worker was running at any sample; foreign Python "
+                              "processes and other load are counted, not excluded, and the "
+                              "load average is recorded at every sample")},
            "sample_boxes": [[str(x) for x in b] for b in boxes],
            "manufactured_weights": {"K_e": "12 - 3/2 m", "Khat_e": "8 - m",
                                     "sub-solution": "1/2 + m/20"},

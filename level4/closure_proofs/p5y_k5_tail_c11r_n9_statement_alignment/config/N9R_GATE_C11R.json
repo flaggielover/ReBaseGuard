@@ -36,13 +36,15 @@
  },
  "comparison_rule_source": {
   "artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-  "sha256": "54503785ec4c7554da2f89d4a213abd7a9cef1f4887017f48f14d243adb45630"
+  "sha256": "f9941a3d5b928ca4ee805300618d902a40e2a782fbd2f191581c8c46e9ed67ce"
  },
  "compute_policy": {
   "AWS": "FORBIDDEN",
   "SR_PS1_campaign": "MUST NOT BE TOUCHED",
   "remote_provisioning": "not required; the policy's cap is local"
  },
+ "execution_contract_sha256": "bba7be9c353138dce70db048e924ca1a86ce4d861bea427dc407e61e52956f59",
+ "execution_contract_source": "config/C11R_CONTRACT.json",
  "forbidden_conclusions": [
   "that C11 is rewritten as success",
   "that any cell is closed or adopted",
@@ -71,22 +73,21 @@
   "INDEPENDENCE_VIOLATION",
   "EXECUTION_INVALID"
  ],
- "policy_sha256": "09a7d5719983a108fe693429d71e12a139df506a4b51ca0081595485f67f3f38",
- "post_seal_toolchain_sha256": {
-  "c11r_boxdata.py": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177",
-  "c11r_certificate.py": "cccc251f99083dae047271565580eefa83cedb1ca67055bf85924ac13ba582f0",
-  "c11r_common.py": "5b2b39e7a448e898cd8c6ef03abf0fce59f65bb44b4a776d0e73b0ea023cca63",
-  "c11r_compare.py": "de5e9b4de4294d15d171afa3cbaa502ffeb11943753c660c0c8be1743f1c5395",
-  "c11r_equiv.py": "6d2941b8fc0c56be135da1a82ead2109ef808842a5f82c7bde4b6dafd3d6f929",
-  "c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
-  "c11r_runs.py": "778b84ff0a4883e1d492683d2bd518af3e281c3fa55aeb90e7f35f37e85d84ce",
-  "c11r_schema.py": "60a1ec4f2fabc78b6d82981a4eee77e43cd73f9bd5df91a9095712d80e7cdaec"
- },
+ "policy_sha256": "a3174a853456ab40cbcddf3089c0ef2ff518e89a353ed0b6849639f171ccfff0",
  "predecessor_state_preserved": {
   "C11_verdict": "EXECUTION_INVALID",
   "C2_to_C10": "historical verdicts immutable",
   "N9_entering_C11R": "OPEN",
   "coverage": "r5 authoritative; open m=5 cells {306, 307, 308, 309}; K5 PARTIAL"
+ },
+ "predicate_evaluators": {
+  "G10": "c11r_certificate.py:screen_order",
+  "G18": "c11r_certificate.py:evaluate_target",
+  "G19": "c11r_certificate.py:configuration_adherence",
+  "G2": "c11r_certificate.py:reconstruct",
+  "G20": "c11r_contract.py:verify_run_identity",
+  "G8": "c11r_certificate.py:dispositions",
+  "run": "c11r_certificate.py:evaluate_run"
  },
  "predicates": {
   "G10_cheap_screen_before_expensive": "every selected member is checked against the pointwise necessary condition before certification, and a member failing it is recorded POINTWISE_INFEASIBLE and not certified. Evaluated in production by c11r_certificate.screen_order, called by the runner's self-check and by the comparator; a failure makes the comparison EXECUTION_INVALID",
@@ -95,10 +96,12 @@
   "G13_evidence_fresh_and_consistent": "c11r_status reports STATUS_CLASS = CONSISTENT: every artifact's producer, code closure and inputs match the committed tree, and no two artifacts contradict each other",
   "G14_sealed_before_comparison": "the runs artifact is committed, unmodified, schema-valid and bound to the committed runs producer before any original magnitude is loaded",
   "G15_comparison_rule_frozen_before_results": "the direction-aware comparison rule is fixed in the statement table, whose hash this gate binds, before any independent result exists",
-  "G16_original_value_firewall": "FIREWALL_CLASS = PASS: every content read in every pre-comparison module resolves, by load-path dataflow, to an allowlisted input, Python source or the declared R5 map; only c11r_table.py and c11r_compare.py can read an original magnitude; the reviewer's planted leak paths are positive controls; and the value-based leak check (LEAK_CLASS = PASS) finds no original in any pre-result artifact or module",
+  "G16_original_value_firewall": "the original values are reachable only through the two sanctioned readers: production reads go through explicit allowlists; the RUNTIME open-guard refuses any Python-level open of a protected path outside c11r_table.py and c11r_compare.py (exercised on a planted file); the comparator opens the quarantine only after G20; the value-based leak check (LEAK_CLASS = PASS) finds no original in any pre-result artifact or module. The static load-path analysis (FIREWALL_CLASS) is a DEFENSE_IN_DEPTH_HEURISTIC with recorded known misses, not a proof",
   "G17_policy_prospective": "the frozen policy references no original magnitude, no comparison threshold, no review prose and no target history, chooses no candidate by hand, and fixes its configuration before target execution from the committed NON-TARGET cost artifact with its declared safety factor",
   "G18_every_value_traced_to_a_certificate": "every CERTIFIED target's value equals the value reconstructed from a certificate that verifies; evaluated in production by c11r_certificate.evaluate_target",
+  "G19_configuration_adherence": "ONE execution at ONE configuration: every certificate in the runs artifact was made at exactly the depth and panel count the frozen policy selected and the execution contract binds. Evaluated in production by c11r_certificate.configuration_adherence, called by the runner's self-check and by the comparator; a failure makes the comparison EXECUTION_INVALID",
   "G1_statement_table_complete": "C11R_N9_STATEMENTS reports TABLE_CLASS = RESOLVED with no unresolved field for any of the six constants",
+  "G20_execution_identity_chain": "the executed identity is the approved one, end to end: the comparator RECOMPUTES the execution contract from bytes, requires every frozen path to be byte-identical to its version at the approved commit and untouched by every later commit, and requires the gate, qualification, authorization, runner, code closure, certifiers and configuration recorded in the runs artifact to equal the recomputed ones -- all BEFORE any original magnitude is loaded. Evaluated in production by c11r_contract.verify_run_identity and the chain checks it depends on; a failure is EXECUTION_INVALID and the quarantine is not opened",
   "G2_statement_equivalence_exact": "for each target, the independent proposition is RECONSTRUCTED from the certificate by c11r_certificate.reconstruct -- verified certifier hash, reported kernel, margins, premises, family, input digest and the frozen deduction table -- never read from a label the runner wrote, and is EQUIVALENT or STRONGER than the original's under c11r_equiv.compare. Statement equivalence is decided before, and separately from, numerical agreement",
   "G3_drift_interval_exact": "every independent statement's drift domain, compared as exact rationals, equals or contains [680769/400000, 17885921/10000000]",
   "G4_block_uniformity_rigorous": "certification encloses the quantity simultaneously for every e in the block by carrying e as an interval; no endpoint, midpoint or grid of drifts is used",
@@ -108,30 +111,27 @@
   "G8_six_targets_dispositioned_consistently": "the runs artifact assigns each of the six constants exactly one of CERTIFIED, NOT_CERTIFIED or NOT_IMPLEMENTED, and NOT_IMPLEMENTED appears only for constants the frozen policy lists as not implemented. Evaluated in production by c11r_certificate.dispositions, called by the runner's self-check and by the comparator; a failure makes the comparison EXECUTION_INVALID",
   "G9_no_forbidden_reuse": "no module in the campaign's code closure imports, calls, wraps or replays the original certifier's load-bearing graph or its arithmetic backend"
  },
- "production_evaluators": {
-  "G10": "c11r_certificate.py:screen_order",
-  "G18": "c11r_certificate.py:evaluate_target",
-  "G2": "c11r_certificate.py:reconstruct",
-  "G8": "c11r_certificate.py:dispositions",
-  "run": "c11r_certificate.py:evaluate_run"
- },
  "provenance": {
   "code_closure": {
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py": "fc88fb0dcc0f757d9ed42b08ecdd9e7ca2c65320181320f009390d67e3155741",
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_common.py": "c55e97b9e2dc626992d3fa25ef23833fcccee88e787a916aa02dc23c2f0ab1b2",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_certificate.py": "cccc251f99083dae047271565580eefa83cedb1ca67055bf85924ac13ba582f0",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "5b2b39e7a448e898cd8c6ef03abf0fce59f65bb44b4a776d0e73b0ea023cca63",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_gate.py": "44e3b5d9a4ee9066aa4fd805f43ea7ab482961c417994ece0d84c412a6ddb0f7",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_certificate.py": "f99dcb12159972014d093589498db0b7a338cc130e3b887a347709a455fdd0f6",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "5507e1fc6e4b8f50981cc791eb8c32761598f29236f572d28b6986d7a022cee9",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_contract.py": "1a951ab23add2370949251f226c4da89ee343cffbe93ff3f9b58ae834af5ec19",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_cost.py": "e2961a1a9150bda3eb60047dda542b91013ab885e69a71bbd48a4a35e80fc922",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_gate.py": "fe231828af027d810aff15e89c657e6b96ea08b5ed82e874f503d457f0c3524f",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "60a1ec4f2fabc78b6d82981a4eee77e43cd73f9bd5df91a9095712d80e7cdaec",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "bdd2717082640c99a5cce3a0d9adb7999724f2d1d3291f3745475d3eb8ccfe97",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "bc3302632f36fc8afdb18a9154cc0fb65938b17f37db284872c0895115f29114",
    "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
   },
   "inputs": {
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_POLICY.json": "db28703fb02f8f50450a87d6eddd100a669127253f98865bb08b9858317a5391",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "06b3efe2211a7554d25be8e7b4359057ea1c54fa4a44cf5d34c01fe75e88348b"
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_POLICY.json": "1f42617d80220b332aef289779b04d88eca06b282933f749f3d66bf8ec4b30ac",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "b3dd25637fc26be7d74895778517356f7e14c1f3fa7efd16f7767357a9fd5e24"
   },
   "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_gate.py",
-  "producer_sha256": "44e3b5d9a4ee9066aa4fd805f43ea7ab482961c417994ece0d84c412a6ddb0f7"
+  "producer_sha256": "fe231828af027d810aff15e89c657e6b96ea08b5ed82e874f503d457f0c3524f"
  },
  "question": "can the independent C11 certifier prove the SAME mathematical certification statements N9 requires for cell 306?",
  "result_language_scan": {
@@ -144,10 +144,10 @@
   "note": "the scanner reads only the emitted gate, never this module, because a scanner that reads its own forbidden list matches itself and always fires",
   "patterns": 17
  },
- "schema": "C11R_GATE/3",
- "sha256": "a575366143a1afe340ce46e1f46ccac3d253093733228b543e7d66dec75b98e0",
- "statements_sha256": "54503785ec4c7554da2f89d4a213abd7a9cef1f4887017f48f14d243adb45630",
- "supersedes": "C11R_GATE/1 (49b17ab4) and C11R_GATE/2 (affdf8a3), both reviewed NOT_READY. Gate 1's G8, G11, G12 and G13 could not fail on substance (review 1 item 9). Gate 2's G8 and G10 were evaluated only by test-only copies in the mutation suite, never by the production path (review 2, B-4).",
+ "schema": "C11R_GATE/4",
+ "sha256": "b71d4314d4d48b8aa64711bdb802474a1ee78a6650474a0feb5c7746770cda9a",
+ "statements_sha256": "f9941a3d5b928ca4ee805300618d902a40e2a782fbd2f191581c8c46e9ed67ce",
+ "supersedes": "C11R_GATE/1 (49b17ab4), C11R_GATE/2 (affdf8a3) and C11R_GATE/3 (eaca931e), all reviewed NOT_READY. Gate 1's G8, G11, G12 and G13 could not fail on substance; gate 2's G8 and G10 lived only in the mutation suite; gate 3 listed a toolchain that nothing on the execution path consulted, and stated no G19 (review 3, R3-1 and N-5).",
  "target": {
   "cell": 306,
   "constants": [

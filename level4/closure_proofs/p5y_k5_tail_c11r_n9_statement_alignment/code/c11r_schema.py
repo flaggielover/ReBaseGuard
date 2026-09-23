@@ -105,10 +105,17 @@ def statement(constant: str, *, drift_domain: tuple[str, str], aggregation: dict
 # ---------------------------------------------------------------------------------------------
 # The target run artifact. Paths are constants; producer and verifiers share them.
 # ---------------------------------------------------------------------------------------------
-RUNS_SCHEMA = "C11R_RUNS/3"
+RUNS_SCHEMA = "C11R_RUNS/4"
 P_CERTS = "certificates"
 P_TARGETS = "targets"
 P_SEAL = "seal"
+P_IDENTITY = "execution_identity"
+# What the runner's pre-flight recomputed and the comparator recomputes again (round 4, R3-1).
+IDENTITY_FIELDS = ("approved_commit", "execution_contract_sha256", "gate_sha256",
+                   "qualification_sha256", "authorization_sha256", "policy_sha256",
+                   "statements_sha256", "runner_sha256", "configuration", "code_sha256")
+# A synthetic artifact built without a pre-flight carries this; the comparator refuses it.
+NO_IDENTITY = {f: None for f in IDENTITY_FIELDS}
 SEAL_KEY = "contains_original_magnitudes"
 
 # A CERTIFICATE records FACTS about a certification call, not claims about constants: which
@@ -172,7 +179,8 @@ def seal_problems(obj: dict) -> list[str]:
 
 
 def emit_runs(*, policy_sha256: str, statements_sha256: str, drift_block: tuple[str, str],
-              certificates: dict, targets: dict, extra: dict | None = None) -> dict:
+              certificates: dict, targets: dict, identity: dict | None = None,
+              extra: dict | None = None) -> dict:
     """The ONLY constructor of a runs artifact. c11r_runs.py emits through it; mutants build
     synthetic artifacts through it; so both see exactly one shape."""
     obj = {"schema": RUNS_SCHEMA,
@@ -181,7 +189,8 @@ def emit_runs(*, policy_sha256: str, statements_sha256: str, drift_block: tuple[
            "drift_block": [str(F(drift_block[0])), str(F(drift_block[1]))],
            P_CERTS: certificates,
            P_TARGETS: targets,
-           P_SEAL: {"sealed_before_comparison": True, SEAL_KEY: False}}
+           P_SEAL: {"sealed_before_comparison": True, SEAL_KEY: False},
+           P_IDENTITY: dict(identity) if identity is not None else dict(NO_IDENTITY)}
     if extra:
         obj.update(extra)
     problems = validate_runs(obj, check_provenance=False)
@@ -238,11 +247,17 @@ def validate_runs(obj: dict, *, check_provenance: bool = True) -> list[str]:
     p = []
     if obj.get("schema") != RUNS_SCHEMA:
         p.append(f"schema is {obj.get('schema')!r}, expected {RUNS_SCHEMA!r}")
-    for key in ("policy_sha256", "statements_sha256", "drift_block", P_CERTS, P_TARGETS, P_SEAL):
+    for key in ("policy_sha256", "statements_sha256", "drift_block", P_CERTS, P_TARGETS, P_SEAL,
+                P_IDENTITY):
         if key not in obj:
             p.append(f"missing top-level {key!r}")
     if p:
         return p
+    if not isinstance(obj[P_IDENTITY], dict) or set(obj[P_IDENTITY]) != set(IDENTITY_FIELDS):
+        p.append(f"{P_IDENTITY} does not have exactly the fields {list(IDENTITY_FIELDS)}")
+    for cid, c in obj[P_CERTS].items():
+        if isinstance(c, dict) and c.get("certificate_id") != cid:
+            p.append(f"certificate stored under {cid!r} is {c.get('certificate_id')!r}")
     for cid, c in obj[P_CERTS].items():
         for f in CERT_FIELDS:
             if f not in c:

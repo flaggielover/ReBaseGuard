@@ -1,6 +1,8 @@
 {
+ "CLAIM": "DEFENSE_IN_DEPTH_HEURISTIC",
  "FIREWALL_CLASS": "PASS",
  "allowed_ns_inputs": [
+  "evidence/procs/C11R_PROCESS_DETECTOR.json",
   "evidence/b0/C11R_B0.json",
   "evidence/errata/C11R_ERRATA.json",
   "evidence/table/C11R_N9_STATEMENTS.json",
@@ -9,8 +11,10 @@
   "evidence/cost/C11R_COST.json",
   "config/C11R_POLICY.json",
   "evidence/policy/C11R_POLICY_EVIDENCE.json",
+  "config/C11R_CONTRACT.json",
   "config/N9R_GATE_C11R.json",
   "evidence/firewall/C11R_FIREWALL.json",
+  "evidence/chain/C11R_CHAIN_CONTROLS.json",
   "evidence/mutations/C11R_MUTATIONS.json",
   "evidence/leakcheck/C11R_LEAKCHECK.json",
   "evidence/status/C11R_STATUS.json",
@@ -24,6 +28,110 @@
  "artifacts_not_yet_written": [],
  "controls": {
   "all_positives_flagged": true,
+  "known_miss_probes": {
+   "asserted": false,
+   "cases": {
+    "R10_urlopen_file_url": {
+     "flagged": false,
+     "why": []
+    },
+    "R11_map_over_paths": {
+     "flagged": false,
+     "why": []
+    },
+    "R12_functools_partial": {
+     "flagged": false,
+     "why": []
+    },
+    "R13_os_open_os_read": {
+     "flagged": true,
+     "why": [
+      "PROTECTED"
+     ]
+    },
+    "R14_method_on_class_instance_with_param": {
+     "flagged": false,
+     "why": []
+    },
+    "R15_lambda_param": {
+     "flagged": true,
+     "why": [
+      "EXTERNAL",
+      "NS_OFF_ALLOWLIST",
+      "PROTECTED"
+     ]
+    },
+    "R16_str_replace": {
+     "flagged": true,
+     "why": [
+      "NS_OFF_ALLOWLIST",
+      "PROTECTED"
+     ]
+    },
+    "R17_git_show_via_subprocess_pipe_shell": {
+     "flagged": false,
+     "why": []
+    },
+    "R18_varargs_loader": {
+     "flagged": true,
+     "why": [
+      "CALLS_A_FORBIDDEN_READER"
+     ]
+    },
+    "R19_sorted_listdir_of_quarantine_names_then_load": {
+     "flagged": true,
+     "why": [
+      "PROTECTED",
+      "TRAVERSAL_OF_NON_CODE_DIR"
+     ]
+    },
+    "R1_pathlib_Path_multi_arg": {
+     "flagged": false,
+     "why": []
+    },
+    "R20_blob_at_via_rev_parse_path": {
+     "flagged": true,
+     "why": [
+      "PROTECTED"
+     ]
+    },
+    "R2_percent_format": {
+     "flagged": false,
+     "why": []
+    },
+    "R3_python_dash_c_subprocess": {
+     "flagged": false,
+     "why": []
+    },
+    "R4_python3_literal_dash_c": {
+     "flagged": false,
+     "why": []
+    },
+    "R5_function_via_dict_dispatch": {
+     "flagged": false,
+     "why": []
+    },
+    "R6_aliased_loader": {
+     "flagged": false,
+     "why": []
+    },
+    "R7_aliased_open": {
+     "flagged": false,
+     "why": []
+    },
+    "R8_linecache": {
+     "flagged": false,
+     "why": []
+    },
+    "R9_fileinput": {
+     "flagged": false,
+     "why": []
+    }
+   },
+   "flagged": 6,
+   "missed": 14,
+   "note": "the third reviewer's 20 paths; recorded, not asserted -- this analysis is a heuristic"
+  },
   "negative": {
    "L11_errata_json_is_value_free": {
     "flagged": false,
@@ -313,19 +421,86 @@
  "exempt_functions": [
   "c11r_common.content_free_id"
  ],
+ "exempted_calls": {
+  "applied": [
+   {
+    "call": "K.verify_seal(C.REPO)",
+    "line": 494,
+    "module": "c11r_chain.py"
+   },
+   {
+    "call": "K.execute_comparison(self.root, approved_commit=approved or self.approved, loader=loader, allow_fixt",
+    "line": 153,
+    "module": "c11r_chain.py"
+   },
+   {
+    "call": "subprocess.run(['/bin/sh', '-c', 'printf \"{}\" > \"$0\"', str(planted)], check=True)",
+    "line": 1447,
+    "module": "c11r_firewall.py"
+   },
+   {
+    "call": "open(planted)",
+    "line": 1458,
+    "module": "c11r_firewall.py"
+   },
+   {
+    "call": "planted.read_text()",
+    "line": 1459,
+    "module": "c11r_firewall.py"
+   },
+   {
+    "call": "os.open(str(planted), os.O_RDONLY)",
+    "line": 1460,
+    "module": "c11r_firewall.py"
+   },
+   {
+    "call": "C.load(planted)",
+    "line": 1461,
+    "module": "c11r_firewall.py"
+   },
+   {
+    "call": "planted.read_text()",
+    "line": 1466,
+    "module": "c11r_firewall.py"
+   },
+   {
+    "call": "subprocess.run(['rm', '-rf', str(d)], check=True)",
+    "line": 1469,
+    "module": "c11r_firewall.py"
+   }
+  ],
+  "functions": {
+   "c11r_firewall.py": [
+    "runtime_open_guard_controls"
+   ]
+  },
+  "rules": {
+   "c11r_chain.py": [
+    "c11r_compare.execute_comparison",
+    "c11r_compare.verify_seal"
+   ]
+  }
+ },
  "inventory": {
   "by_class": {
-   "ALLOWLISTED": 15,
-   "CODE": 1277,
+   "ALLOWLISTED": 18,
+   "CODE": 1280,
    "DECLARED_EXTERNAL": 1,
    "EXTERNAL": 5605,
    "NS_OFF_ALLOWLIST": 1,
    "PROTECTED": 88
   },
-  "files": 6987
+  "files": 6993
  },
+ "load_bearing_protections": [
+  "explicit production allowlists",
+  "the quarantine architecture: two sanctioned readers",
+  "the runtime open-guard (c11r_common)",
+  "the frozen execution contract, recomputed at every boundary",
+  "the comparator refusing before quarantine access when the execution identity fails"
+ ],
  "method": "load-path dataflow: constant folding + taint through assignment, walrus, loops, comprehensions, containers, parameters and returns, across modules; resolved patterns matched against the git file inventory",
- "modules_scanned": 23,
+ "modules_scanned": 26,
  "offenders": [],
  "per_module": {
   "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py": {
@@ -358,7 +533,7 @@
    "module": "c11r_b0",
    "module_violations": [],
    "open_cell_literals": [],
-   "sinks": 43,
+   "sinks": 46,
    "violations": []
   },
   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": {
@@ -383,21 +558,33 @@
    "sinks": 27,
    "violations": []
   },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_chain.py": {
+   "allowed_reader": false,
+   "deferred_param_sinks": 20,
+   "loader_functions": [],
+   "magnitude_key_reads": [],
+   "module": "c11r_chain",
+   "module_violations": [],
+   "open_cell_literals": [],
+   "sinks": 90,
+   "violations": []
+  },
   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": {
    "allowed_reader": false,
-   "deferred_param_sinks": 16,
+   "deferred_param_sinks": 20,
    "loader_functions": [],
    "magnitude_key_reads": [],
    "module": "c11r_common",
    "module_violations": [],
    "open_cell_literals": [],
-   "sinks": 29,
+   "sinks": 33,
    "violations": []
   },
   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_compare.py": {
    "allowed_reader": true,
-   "deferred_param_sinks": 1,
+   "deferred_param_sinks": 14,
    "loader_functions": [
+    "execute_comparison",
     "load_original_magnitudes",
     "main",
     "verify_seal"
@@ -405,7 +592,7 @@
    "magnitude_key_reads": [
     {
      "expr": "q['magnitudes']",
-     "line": 99
+     "line": 193
     }
    ],
    "module": "c11r_compare",
@@ -416,13 +603,13 @@
     "MAGNITUDE_KEY_READ"
    ],
    "open_cell_literals": [],
-   "sinks": 74,
+   "sinks": 85,
    "violations": [
     {
-     "call": "main()",
+     "call": "main(sys.argv[2])",
      "function": null,
      "kind": "call",
-     "line": 387,
+     "line": 472,
      "why": [
       "CALLS_A_FORBIDDEN_READER"
      ]
@@ -431,48 +618,50 @@
      "call": "path.read_bytes()",
      "function": "verify_seal",
      "kind": "read",
-     "line": 69,
+     "line": 92,
      "why": [
       "NS_OFF_ALLOWLIST"
      ]
     },
     {
-     "call": "C.blob_at(seal_commit, rel)",
-     "function": "verify_seal",
-     "kind": "call",
-     "line": 72,
+     "call": "verify_seal(repo)",
+     "function": "execute_comparison",
+     "kind": "argv",
+     "line": 158,
      "why": [
-      "NS_OFF_ALLOWLIST"
+      "CALLS_A_FORBIDDEN_READER"
      ]
     },
     {
      "call": "C.load(qpath)",
      "function": "load_original_magnitudes",
      "kind": "call",
-     "line": 98,
+     "line": 192,
      "why": [
       "PROTECTED"
      ]
     },
     {
-     "call": "verify_seal()",
+     "call": "execute_comparison(C.REPO, approved_commit=approved_commit, loader=load_original_magnitudes)",
      "function": "main",
      "kind": "call",
-     "line": 360,
-     "why": [
-      "CALLS_A_FORBIDDEN_READER"
-     ]
-    },
-    {
-     "call": "load_original_magnitudes(stmt_table)",
-     "function": "main",
-     "kind": "call",
-     "line": 370,
+     "line": 456,
      "why": [
       "CALLS_A_FORBIDDEN_READER"
      ]
     }
    ]
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_contract.py": {
+   "allowed_reader": false,
+   "deferred_param_sinks": 33,
+   "loader_functions": [],
+   "magnitude_key_reads": [],
+   "module": "c11r_contract",
+   "module_violations": [],
+   "open_cell_literals": [],
+   "sinks": 79,
+   "violations": []
   },
   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_cost.py": {
    "allowed_reader": false,
@@ -482,7 +671,7 @@
    "module": "c11r_cost",
    "module_violations": [],
    "open_cell_literals": [],
-   "sinks": 21,
+   "sinks": 24,
    "violations": []
   },
   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_equiv.py": {
@@ -515,7 +704,7 @@
    "module": "c11r_firewall",
    "module_violations": [],
    "open_cell_literals": [],
-   "sinks": 121,
+   "sinks": 140,
    "violations": []
   },
   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_gate.py": {
@@ -548,7 +737,7 @@
    "module": "c11r_mutations",
    "module_violations": [],
    "open_cell_literals": [],
-   "sinks": 190,
+   "sinks": 187,
    "violations": []
   },
   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py": {
@@ -559,18 +748,29 @@
    "module": "c11r_policy",
    "module_violations": [],
    "open_cell_literals": [],
-   "sinks": 19,
+   "sinks": 29,
+   "violations": []
+  },
+  "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": {
+   "allowed_reader": false,
+   "deferred_param_sinks": 0,
+   "loader_functions": [],
+   "magnitude_key_reads": [],
+   "module": "c11r_procs",
+   "module_violations": [],
+   "open_cell_literals": [],
+   "sinks": 20,
    "violations": []
   },
   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_qualify.py": {
    "allowed_reader": false,
-   "deferred_param_sinks": 0,
+   "deferred_param_sinks": 3,
    "loader_functions": [],
    "magnitude_key_reads": [],
    "module": "c11r_qualify",
    "module_violations": [],
    "open_cell_literals": [],
-   "sinks": 69,
+   "sinks": 73,
    "violations": []
   },
   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_regen.py": {
@@ -586,13 +786,13 @@
   },
   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_runs.py": {
    "allowed_reader": false,
-   "deferred_param_sinks": 1,
+   "deferred_param_sinks": 2,
    "loader_functions": [],
    "magnitude_key_reads": [],
    "module": "c11r_runs",
    "module_violations": [],
    "open_cell_literals": [],
-   "sinks": 41,
+   "sinks": 39,
    "violations": []
   },
   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": {
@@ -627,11 +827,11 @@
    "magnitude_key_reads": [
     {
      "expr": "q['magnitudes']",
-     "line": 83
+     "line": 91
     },
     {
      "expr": "v.pop('value_float')",
-     "line": 294
+     "line": 302
     }
    ],
    "module": "c11r_table",
@@ -650,7 +850,7 @@
      "call": "leak_check()",
      "function": null,
      "kind": "call",
-     "line": 448,
+     "line": 456,
      "why": [
       "CALLS_A_FORBIDDEN_READER"
      ]
@@ -659,7 +859,7 @@
      "call": "main()",
      "function": null,
      "kind": "call",
-     "line": 448,
+     "line": 456,
      "why": [
       "CALLS_A_FORBIDDEN_READER"
      ]
@@ -668,7 +868,7 @@
      "call": "C.load(C.NS / C.QUARANTINE_REL)",
      "function": "leak_check",
      "kind": "call",
-     "line": 82,
+     "line": 90,
      "why": [
       "PROTECTED"
      ]
@@ -677,7 +877,7 @@
      "call": "path.read_text()",
      "function": "leak_check",
      "kind": "read",
-     "line": 97,
+     "line": 105,
      "why": [
       "EXTERNAL",
       "NS_OFF_ALLOWLIST",
@@ -688,7 +888,7 @@
      "call": "C.sha256_file(path)",
      "function": "leak_check",
      "kind": "call",
-     "line": 101,
+     "line": 109,
      "why": [
       "EXTERNAL",
       "NS_OFF_ALLOWLIST",
@@ -699,7 +899,7 @@
      "call": "C.git('log', '--format=%H%n%B%n----', f'{C.C11_HEAD}..HEAD')",
      "function": "leak_check",
      "kind": "call",
-     "line": 112,
+     "line": 120,
      "why": [
       "READS_COMMIT_MESSAGES"
      ]
@@ -708,7 +908,7 @@
      "call": "C.load(C.C2 / 'evidence' / 'registry_c2' / 'REGISTRY_C2.json')",
      "function": "main",
      "kind": "call",
-     "line": 142,
+     "line": 150,
      "why": [
       "PROTECTED"
      ]
@@ -741,32 +941,39 @@
  "principle": "original magnitudes may enter only at c11r_table.py (extraction into quarantine) and c11r_compare.py (after seal); every other module's content reads must resolve to allowlisted inputs, Python source or the declared R5 map",
  "provenance": {
   "code_closure": {
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "5b2b39e7a448e898cd8c6ef03abf0fce59f65bb44b4a776d0e73b0ea023cca63",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_firewall.py": "0213107bd5db256ad18743bc74981d4f542b7099261e6178b0f258f935dd5d5f",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "60a1ec4f2fabc78b6d82981a4eee77e43cd73f9bd5df91a9095712d80e7cdaec"
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "5507e1fc6e4b8f50981cc791eb8c32761598f29236f572d28b6986d7a022cee9",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_firewall.py": "283468aa2309325cd568b2bdc4b742cc1022fb57f1cf8b841050249b075c4c54",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "bc3302632f36fc8afdb18a9154cc0fb65938b17f37db284872c0895115f29114"
   },
   "inputs": {
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_POLICY.json": "db28703fb02f8f50450a87d6eddd100a669127253f98865bb08b9858317a5391",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/N9R_GATE_C11R.json": "285f4d7e7275af454a9765d6cfd620aa0c1129c8f22b472e68237fda692edd9d",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/b0/C11R_B0.json": "a4881ffcda46eb95c8642efbd08cd9ff362b91854dbc0265e75e84f9e77bf55f",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/cost/C11R_COST.json": "097d9e9b03176b7e3e50a675708ff27883001cb8a596fd8f87f14757f356607f",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/equivalence/C11R_EQUIVALENCE.json": "51ca2e6593a694f4066d655b73705be27e1a29c7134af5854dd23b90666124e8",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/errata/C11R_ERRATA.json": "2a130a7e3285e1c53c97b7b6570377c3bdb74b3e7d9395df42ad3bf73a56308f",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/policy/C11R_POLICY_EVIDENCE.json": "a992b769c60d30bf6282f06d5672d8b82d2180546f460e55ba33bc281f6d7918",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "06b3efe2211a7554d25be8e7b4359057ea1c54fa4a44cf5d34c01fe75e88348b",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/validation/C11R_VALIDATION.json": "615c9fa1bd2076f0e9042da1cf43257d7f32482cb91b217410639530629c0ce6"
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_CONTRACT.json": "e501f1a725e0c7e113595e435d48f5f4afd20152aca0f4186fabdb54faae7d66",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_POLICY.json": "1f42617d80220b332aef289779b04d88eca06b282933f749f3d66bf8ec4b30ac",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/N9R_GATE_C11R.json": "264fe7989ab18c3514760f9c9eaf076bd95a4d842fe60916f528f66d469ffe8c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/b0/C11R_B0.json": "1869354a614dccdfbb9bfcddde9b13b7ac56efac9cc3c28778cff4d7363555a9",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/cost/C11R_COST.json": "d95dda55d6fc41ba188c4835c014bb4e2d23307e6c98dd489e455015af94bfda",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/equivalence/C11R_EQUIVALENCE.json": "5839dacacecaeb76ba7c36eedf88eb385c3a88fdaa0b3b82f67dab2a899945a8",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/errata/C11R_ERRATA.json": "c4f8b6ec11ab12b037415c2ba88a4c4c965003764d9ccbc46db3e722633b9888",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/policy/C11R_POLICY_EVIDENCE.json": "90a0e1b26674f455e8d5b0db2393c2b304f12b6846f722016781477fb0eaa8d3",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/procs/C11R_PROCESS_DETECTOR.json": "8299289a1df4d0b00d448e950a41683d407129227dad6cced6b407e9b6933d7c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "b3dd25637fc26be7d74895778517356f7e14c1f3fa7efd16f7767357a9fd5e24",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/validation/C11R_VALIDATION.json": "088b59c44b49fed746b4136a6c0751d23e660b2c1ceca0c436aca13704326524"
   },
   "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_firewall.py",
-  "producer_sha256": "0213107bd5db256ad18743bc74981d4f542b7099261e6178b0f258f935dd5d5f"
+  "producer_sha256": "283468aa2309325cd568b2bdc4b742cc1022fb57f1cf8b841050249b075c4c54"
  },
  "read_patterns_resolving_to_no_file": {
   "note": "recorded so that a vacuous resolution is visible (erratum E23). Expected here: argument tokens that the subprocess rule treats as candidate paths (flags, revisions, planted control words), and code-shaped paths of a fallback branch. A data-artifact path in this list would be a defect.",
   "patterns": [
+   " c11r_live_detector_probe.py",
+   "*^{commit}",
    "--leak-check",
    "-B",
    "-c",
-   "200",
-   "HEAD",
+   "-rf",
+   "config/C11R_POLICY.py",
+   "evidence/cost/C11R_COST.py",
+   "evidence/table/C11R_N9_STATEMENTS.py",
+   "evidence/validation/C11R_VALIDATION.py",
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11r_boxdata.py",
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11r_certificate.py",
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11r_compare.py",
@@ -774,16 +981,34 @@
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11r_gate.py",
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11r_idrift.py",
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11r_mutations.py",
+   "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11r_qualify.py",
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11r_runs.py",
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11r_schema.py",
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11r_status.py",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/--leak-check",
-   "tau"
-  ]
+   "ordinary.json",
+   "printf \"{}\" > \"$0\""
+  ],
+  "scope": "the real campaign code only (control sources are analysed afterwards)"
  },
- "schema": "C11R_FIREWALL/3",
- "sha256": "d4038d645574ac14fd03609f2465447517d8ad5981fa3f5c6754a0d6baa34f41",
+ "runtime_open_guard_controls": {
+  "ALL_PASS": true,
+  "common_load_refused": true,
+  "open_refused": true,
+  "ordinary_file_allowed": true,
+  "os_open_refused": true,
+  "read_text_refused": true,
+  "sanctioned_reader_allowed": true,
+  "scope": "Python-level opens in any process importing c11r_common; NOT subprocess reads (git, cat, a python -c child that does not import it)"
+ },
+ "schema": "C11R_FIREWALL/4",
+ "sha256": "3e0c4bcc010a17f2e4be0190e47742f2b4ba452cde5261352d1d971d82b701bd",
  "structural_artifact_scan": [
+  {
+   "artifact": "evidence/procs/C11R_PROCESS_DETECTOR.json",
+   "exists": true,
+   "forbidden_keys": []
+  },
   {
    "artifact": "evidence/b0/C11R_B0.json",
    "exists": true,
@@ -825,10 +1050,17 @@
    "forbidden_keys": []
   },
   {
+   "artifact": "config/C11R_CONTRACT.json",
+   "exists": true,
+   "forbidden_keys": []
+  },
+  {
    "artifact": "config/N9R_GATE_C11R.json",
    "exists": true,
    "forbidden_keys": []
   }
  ],
- "structural_offenders": []
+ "structural_offenders": [],
+ "what_PASS_means": "every planted positive is flagged, no negative is, this analysis finds no violating read in the campaign's code, and the runtime open-guard refuses a planted protected open",
+ "what_it_does_not_prove": "that no leak path exists: the analysis is a heuristic with known misses (known_miss_probes), and the runtime guard does not see subprocess reads"
 }

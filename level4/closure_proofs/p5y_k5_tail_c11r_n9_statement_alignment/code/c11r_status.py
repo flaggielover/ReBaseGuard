@@ -33,13 +33,14 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import c11r_common as C
-import c11r_firewall as FW
+import c11r_contract as CT
 import c11r_qualify as Q
 
 SELF_REL = "evidence/status/C11R_STATUS.json"
 VERIFY_ONLY = sys.argv[1:] == ["--verify-only"]
 PRESERVED_REVIEWS = {"review/REVIEW_C11R_PREFREEZE.md": "6d7cd546",
-                     "review/REVIEW_C11R_PREFREEZE_R2.md": "6ae05833"}
+                     "review/REVIEW_C11R_PREFREEZE_R2.md": "6ae05833",
+                     "review/REVIEW_C11R_PREFREEZE_R3.md": "f6c737c3"}
 REVIEWED_MACHINERY = {f"{C.NS_REL}/code/c11r_idrift.py": "49b17ab4",
                       "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/"
                       "c11_certifier.py": C.C11_HEAD,
@@ -188,7 +189,10 @@ def main() -> int:
          "gate": arts.get("config/N9R_GATE_C11R.json"),
          "firewall": arts.get("evidence/firewall/C11R_FIREWALL.json"),
          "mutations": arts.get("evidence/mutations/C11R_MUTATIONS.json"),
-         "leakcheck": arts.get("evidence/leakcheck/C11R_LEAKCHECK.json")}
+         "leakcheck": arts.get("evidence/leakcheck/C11R_LEAKCHECK.json"),
+         "contract": arts.get("config/C11R_CONTRACT.json"),
+         "chain": arts.get("evidence/chain/C11R_CHAIN_CONTROLS.json"),
+         "procs": arts.get("evidence/procs/C11R_PROCESS_DETECTOR.json")}
     A = {k: v for k, v in A.items() if v is not None}
     contra = contradictions(A)
     ctl = _controls(A)
@@ -220,12 +224,19 @@ def main() -> int:
     if leak_stale:
         contra.append(f"the leak check scanned other bytes than the current: {leak_stale}")
 
-    # the post-seal toolchain is what the gate froze
+    # the execution contract and the gate, RECOMPUTED from bytes (round 4, R3-1)
     gate = A.get("gate", {})
-    tool = {m: C.sha256_file(C.HERE / m) == v
-            for m, v in gate.get("post_seal_toolchain_sha256", {}).items()}
-    if not tool or not all(tool.values()):
-        contra.append(f"the post-seal toolchain differs from the gate's binding: {tool}")
+    roots = CT.chain_roots(C.REPO)
+    contract_problems = list(roots["problems"])
+    cfg = (roots.get("contract") or {}).get("configuration", {})
+    ch = A.get("policy", {}).get("configuration", {}).get("chosen", {})
+    if (cfg.get("depth"), cfg.get("panels")) != (ch.get("depth"), ch.get("panels")):
+        contract_problems.append("the policy's selected configuration is not the contract's")
+    if contract_problems:
+        contra.append(f"the execution contract or gate does not verify: {contract_problems}")
+    fwa = A.get("firewall", {})
+    if fwa.get("CLAIM") != "DEFENSE_IN_DEPTH_HEURISTIC":
+        contra.append("the firewall artifact does not scope its claim as a heuristic")
 
     # inventory: names only
     listed = C.git("ls-files", "--cached", "--others", "--exclude-standard", "--",
@@ -269,11 +280,16 @@ def main() -> int:
         "FIREWALL": A.get("firewall", {}).get("FIREWALL_CLASS"),
         "MUTATIONS": A.get("mutations", {}).get("MUTATION_CLASS"),
         "LEAK": leak.get("LEAK_CLASS"),
+        "CHAIN_CONTROLS": A.get("chain", {}).get("CHAIN_CLASS"),
+        "PROCESS_DETECTOR": A.get("procs", {}).get("DETECTOR_CLASS"),
+        "CONTRACT_AND_GATE_VERIFY": not contract_problems,
         "GATE_RESULT_LANGUAGE_HITS": gate.get("result_language_scan", {}).get("hits_in_this_gate"),
         "QUALIFIER_SELF_TEST": qs["ALL_PASS"],
     }
     required = {"B0": "PASS", "TABLE": "RESOLVED", "EQUIVALENCE": "READY",
                 "VALIDATION": "PASS", "FIREWALL": "PASS", "MUTATIONS": "PASS", "LEAK": "PASS",
+                "CHAIN_CONTROLS": "PASS", "PROCESS_DETECTOR": "PASS",
+                "CONTRACT_AND_GATE_VERIFY": True,
                 "GATE_RESULT_LANGUAGE_HITS": 0, "QUALIFIER_SELF_TEST": True}
     class_fail = {k: v for k, v in classes.items() if v != required[k]}
     not_fresh = {r.split("/")[-1]: x for r, x in rows.items() if x["state"] != "FRESH"}
@@ -296,6 +312,15 @@ def main() -> int:
         "leak_files_scanned": leak.get("files_scanned"),
         "gate_predicates": len(gate.get("predicates", {})),
         "artifacts_checked": len(rows),
+        "chain_controls": len(A.get("chain", {}).get("controls", [])),
+        "chain_controls_passed": sum(1 for r in A.get("chain", {}).get("controls", [])
+                                     if r.get("pass")),
+        "detector_planted_controls": len(A.get("procs", {}).get("planted_controls", {})
+                                         .get("cases", {})),
+        "firewall_known_miss_probes": {k: fw.get("controls", {}).get("known_miss_probes", {})
+                                       .get(k) for k in ("flagged", "missed")},
+        "mutation_detector_kinds": mut.get("detector_kinds"),
+        "contract_code_files": len((roots.get("contract") or {}).get("code", {})),
     }
     ok = (not not_fresh and not contra and not class_fail and all(pre_result.values())
           and all(ctl.values()) and not retired_present)
@@ -309,7 +334,9 @@ def main() -> int:
            "classes": classes, "classes_required": required, "class_failures": class_fail,
            "quarantine_matches_recorded_id": quarantine_ok,
            "leak_check_covers_current_bytes": not leak_stale,
-           "post_seal_toolchain_matches_gate": tool,
+           "execution_contract_verification": {"problems": contract_problems,
+                                               "digest": roots.get("contract_digest"),
+                                               "gate_digest": roots.get("gate_digest")},
            "inventory": {"files_listed": len(listed), "unexpected": unexpected,
                          "retired_present": retired_present},
            "reviewed_machinery_unchanged": reviewed_machinery,
