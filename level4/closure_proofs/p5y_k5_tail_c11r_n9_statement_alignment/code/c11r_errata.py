@@ -1054,6 +1054,97 @@ ERRATA = {
                   "on the paths it covers, not on digit coincidence"),
         "found_by": "review round 6 (N6-7, N6-8, N6-9, N6-10)",
     },
+    "E56_LAUNCH_POLICY_AND_LAUNCHER": {
+        "what_happened": ("the interpreter's own configuration was not bound. Reproduced by the "
+                          "reviewer and by the author: with `--check-hash-based-pycs never` a "
+                          "forged CHECKED cache of a contract module executed and every check "
+                          "stayed green (N7-1); PYTHONPYCACHEPREFIX made a forged cache of the "
+                          "STANDARD LIBRARY's fractions execute with every check green, "
+                          "PYTHONCASEOK let a case-variant shadow pass the barrier, and PYTHONPATH "
+                          "was checked only after the imports it redirected had run (N7-2)"),
+        "repair": ("THE LAUNCH POLICY (L0), bound in the contract (`launch_policy`): a boundary "
+                   "program runs only in the frozen interpreter started isolated and without site "
+                   "(-I -S), with default hash-based .pyc checking, no pycache prefix, no warning "
+                   "options, only the frozen -X option, and an EXPLICIT environment (the frozen "
+                   "name allowlist, PATH frozen). code/c11r_launch.py -- executed by the KERNEL "
+                   "through its first line, `#!<frozen interpreter> -IS`, so no environment "
+                   "variable acts before its first statement -- refuses PYTHON*, "
+                   "__PYVENV_LAUNCHER__, DYLD_* and LD_* variables, builds the child's "
+                   "environment explicitly and execs the program under CHILD_FLAGS. The "
+                   "program's pre-import barrier re-checks the policy (run as a program) BEFORE "
+                   "any other import; runner_preflight, comparator step 12 and Q4 check it again "
+                   "(launch_policy_problems). The regeneration and the qualifier's Q11 start "
+                   "their interpreters the same way"),
+        "controls": "c11r_chain N71-*, N72-* (every hostile-environment control requires the "
+                    "sentinel file ABSENT)",
+        "detector": ("the process detector (revision 4) is unchanged: it recognises a program "
+                     "started by the frozen invocation as a campaign worker through its argv "
+                     "rule, but reads the value of `--check-hash-based-pycs default` as the "
+                     "script (the stated N6-8 limit), so the role label is imprecise -- the "
+                     "concurrency gate holds (N71-6)"),
+        "status": ("REPAIRED on the supported path (the launcher): no hostile environment "
+                   "variable or interpreter option executes code before the refusal. STATED, "
+                   "reproduced (N72 stated-limit controls): a boundary program started some "
+                   "other way is refused by its barrier before any campaign import, but what the "
+                   "interpreter itself ran at start-up -- a sitecustomize on PYTHONPATH, a "
+                   "user-site .pth, a forged cache of a start-up stdlib module (encodings, "
+                   "linecache) -- has then already run; native injection (DYLD_*) acts before "
+                   "any Python"),
+        "found_by": "review round 7 (N7-1, N7-2), reproduced by the author",
+    },
+    "E57_HASH_BASED_PYC_MODE_MODELLED": {
+        "what_happened": ("_pyc_matches_source modelled the loader only for "
+                          "`--check-hash-based-pycs default`: under `never` it judged a forged "
+                          "checked cache 'stale' although CPython executed it (N7-1)"),
+        "repair": ("the check now follows _imp.check_hash_based_pycs: 'always' validates every "
+                   "hash-based cache, 'default' the checked ones, 'never' none -- a cache the "
+                   "loader accepts must equal the compilation of its verified source. On the "
+                   "supported path the mode is 'default' (L0)"),
+        "controls": "c11r_chain N71-3b (a non-boundary driver under `never`: refused after the "
+                    "fact, defence in depth), N71-4, N71-5",
+        "status": "REPAIRED",
+        "found_by": "review round 7 (N7-1)",
+    },
+    "E58_BARRIER_NEEDS_NO_STDLIB_ENUMERATION": {
+        "what_happened": ("the barrier admitted a *.py whose name was not in "
+                          "sys.stdlib_module_names; `_sysconfigdata__darwin_darwin` is a genuine "
+                          "stdlib module absent from that list, and it was first imported INSIDE "
+                          "verify_loaded_modules, after its sys.modules snapshot, so L1 never saw "
+                          "it (N7-3); the barrier docstring, L3's text and G20 overstated "
+                          "coverage"),
+        "repair": ("the barrier's rule is POSITIVE: a code directory holds only __pycache__ and "
+                   "regular, lower-case *.py files carrying that directory's campaign prefix "
+                   "(c11r_, c11_, c7_; LAUNCH_POLICY.code_directory_prefixes) -- no stdlib, "
+                   "third-party or start-up name can satisfy it, and no enumeration is "
+                   "involved. The inventory must carry the same prefixes. verify_loaded_modules "
+                   "runs its import-path check (which imports sysconfig and its data module) "
+                   "BEFORE the snapshot. The stdlib-name report in (S) stays as defence in depth "
+                   "only; the texts say so"),
+        "controls": "c11r_chain N73-1 .. N73-6",
+        "status": "REPAIRED",
+        "found_by": "review round 7 (N7-3)",
+    },
+    "E59_REFUSAL_VERDICT_AND_NESTED_JSON": {
+        "N7_4": ("a pre-load refusal now prints its verdict class and whether a retry can help at "
+                 "all: a cause in the sealed run (run step, G8/G10/G19, value trace, per-target, "
+                 "independence) is INTRINSIC -- no retry can change it -- while a cause outside "
+                 "it (a stray file, the tree, the environment) can be removed "
+                 "(c11r_compare.refusal_is_intrinsic)"),
+        "N7_5": ("read_runs catches RecursionError: a pathologically nested runs artifact is a "
+                 "typed refusal, never an exception"),
+        "controls": "c11r_chain CMP7 (intrinsic and extrinsic refusal lines), CMP8 (nested JSON)",
+        "found_by": "review round 7 (N7-4, N7-5)",
+    },
+    "E60_REVIEW_7_NOTES": {
+        "N7_6": ("DOCUMENT_LIMITATION: a Finder .DS_Store in a code or protocol directory is "
+                 "refused, fail-closed; the barrier's refusal names the entry"),
+        "N7_7": "ACCEPT_BY_DESIGN: the stated lifecycle limits reproduce exactly as stated",
+        "N7_8": ("FIX_NOW_CHEAP: the N71/N72 controls run non-default interpreters and hostile "
+                 "environments"),
+        "N7_9": ("ACCEPT_BY_DESIGN: an approved frozen_code module loaded at a boundary is "
+                 "byte-verified and frozen"),
+        "found_by": "review round 7 (N7-6 .. N7-9)",
+    },
 }
 
 
@@ -1174,9 +1265,27 @@ REVIEW_6_FINDINGS_DISPOSITION = {
 }
 
 
+REVIEW_7_FINDINGS_DISPOSITION = {
+    "N7-1": ("FIX_NOW_CHEAP", "the launch policy requires default hash-based .pyc checking before "
+             "any campaign import (E56); the cache check models the actual mode (E57)"),
+    "N7-2": ("FIX_NOW_CHEAP", "the kernel-started isolated launcher, the explicit environment and "
+             "the barrier's launch-policy check (E56); a non-launcher start's interpreter start-up "
+             "hooks are a stated, reproduced limit"),
+    "N7-3": ("FIX_NOW_CHEAP", "positive campaign-prefix rule, snapshot after the check's own "
+             "imports, texts corrected (E58)"),
+    "N7-4": ("FIX_NOW_CHEAP", "verdict class and retry applicability printed (E59)"),
+    "N7-5": ("FIX_NOW_CHEAP", "nested JSON is a typed refusal (E59)"),
+    "N7-6": ("DOCUMENT_LIMITATION", "fail-closed .DS_Store refusal (E60)"),
+    "N7-7": ("ACCEPT_BY_DESIGN", "stated limits (E60)"),
+    "N7-8": ("FIX_NOW_CHEAP", "non-default-interpreter controls added (E60)"),
+    "N7-9": ("ACCEPT_BY_DESIGN", "approved producers are byte-verified (E60)"),
+}
+
+
 def main() -> int:
-    out = {"schema": "C11R_ERRATA/7",
-           "supersedes": ("C11R_ERRATA/6 at cc93e470 (E1-E48, all preserved), "
+    out = {"schema": "C11R_ERRATA/8",
+           "supersedes": ("C11R_ERRATA/7 at dbd6cd89 (E1-E55, all preserved), "
+                          "C11R_ERRATA/6 at cc93e470 (E1-E48), "
                           "C11R_ERRATA/5 at 5d89686e (E1-E38), C11R_ERRATA/4 at "
                           "bd00c1f6, C11R_ERRATA/3 at eaca931e and C11R_ERRATA/2 at 9801276c "
                           "(which restated original values in E2)"),
@@ -1188,6 +1297,8 @@ def main() -> int:
                                              for k, v in REVIEW_5_FINDINGS_DISPOSITION.items()},
            "review_6_findings_disposition": {k: {"classification": v[0], "action": v[1]}
                                              for k, v in REVIEW_6_FINDINGS_DISPOSITION.items()},
+           "review_7_findings_disposition": {k: {"classification": v[0], "action": v[1]}
+                                             for k, v in REVIEW_7_FINDINGS_DISPOSITION.items()},
            "policy": ("defects in this campaign's own conduct, recorded where a reader will find "
                       "them. A deviation that is recorded can be judged; one that is not, cannot."),
            "reviews_answered": [
@@ -1202,7 +1313,9 @@ def main() -> int:
                {"path": "review/REVIEW_C11R_PREFREEZE_R5.md", "verdict": "NOT_READY",
                 "preserved_at": "ebf08c0f"},
                {"path": "review/REVIEW_C11R_PREFREEZE_R6.md", "verdict": "NOT_READY",
-                "preserved_at": "63402106"}],
+                "preserved_at": "63402106"},
+               {"path": "review/REVIEW_C11R_PREFREEZE_R7.md", "verdict": "READY_TO_FREEZE",
+                "preserved_at": "ac75c198"}],
            "CONTAINS_NO_ORIGINAL_MAGNITUDE": True,
            "errata": ERRATA,
            "count": len(ERRATA)}

@@ -117,6 +117,14 @@ EXEMPTED_CALLS = {"c11r_chain.py": ("c11r_compare.execute_comparison", "c11r_com
 # the NAMES in the three code directories with `os` alone, BEFORE any import -- it cannot use the
 # campaign's path helpers by design, and it reads no content; its text is canonical
 # (c11r_contract.PREIMPORT_BARRIER, checked by preimport_barrier_problems).
+#
+# Round 8 (review round 7, N7-1..N7-3): the launch-policy controls start SYNTHETIC repositories'
+# launchers (_run_launcher, executed through their first line) and boundary programs (_run_direct)
+# with a fixed key and hostile ENVIRONMENTS, run neutral one-liners to prove planted attack
+# material is live (_plain_python), and compile a module's own source plus a sentinel only to
+# WRITE a forged cache that the attack then offers to the interpreter (_forged_cache, exactly as
+# forged_pyc does); `hostile` is c_N72's per-attack driver of the two launch helpers. Nothing reads
+# campaign data; the real checkout's programs are never launched.
 EXEMPTED_FUNCTIONS = {"c11r_firewall.py": ("runtime_open_guard_controls",),
                       "c11r_runs.py": ("_c11r_preimport_barrier",),
                       "c11r_qualify.py": ("_c11r_preimport_barrier",),
@@ -124,11 +132,18 @@ EXEMPTED_FUNCTIONS = {"c11r_firewall.py": ("runtime_open_guard_controls",),
                       "c11r_contract.py": ("_pyc_matches_source",),
                       "c11r_chain.py": ("c_IMP", "one", "forged_pyc", "stale_pyc",
                                         "_driver", "c_CF", "_plant_file", "_r61_driver",
-                                        "_launch_boundary_programs")}
+                                        "_launch_boundary_programs", "_run_launcher",
+                                        "_run_direct", "_plain_python", "_forged_cache",
+                                        "_r61_driver_flags", "hostile")}
 FORBIDDEN_LAUNCH = ("c11r_compare.py",)
-# Calls to these launchers (their own bodies exempted above, with the reason) are exempt from
-# LAUNCHES_COMPARATOR ONLY: they launch a SYNTHETIC repository's boundary programs with no argument.
-EXEMPTED_LAUNCHERS = {"c11r_chain.py": ("_launch_boundary_programs",)}
+# Calls to these launchers (their own bodies exempted above, with the reason) are exempt from the
+# violations their LAUNCHED ARGUMENT LIST produces (LAUNCHES_COMPARATOR, and the unresolved argv
+# tokens judged as reads) ONLY: they start a SYNTHETIC repository's launcher or boundary program
+# with a fixed key and no data argument (round 8: the N71/N72/N73 launch-policy controls).
+EXEMPTED_LAUNCHERS = {"c11r_chain.py": ("_launch_boundary_programs", "_run_launcher",
+                                        "_run_direct", "_plain_python", "hostile")}
+LAUNCH_VIOLATIONS = frozenset({"LAUNCHES_COMPARATOR", "EXTERNAL", "NS_OFF_ALLOWLIST",
+                               "PROTECTED"})
 # Functions whose CALLS are not reads of campaign data: content_free_id hashes through a git
 # subprocess (an id, never content); _pyc_matches_source reads only the cached BYTECODE of a
 # module verify_loaded_modules has just shown to be a contract module at its contract path (round
@@ -1635,7 +1650,7 @@ def _exempted(module: str, row: dict) -> bool:
     if row.get("function") in funcs:
         return True
     why = set(row.get("why") or [])
-    if why == {"LAUNCHES_COMPARATOR"} and any(
+    if why and why <= LAUNCH_VIOLATIONS and any(
             f + "(" in row.get("call", "") for f in EXEMPTED_LAUNCHERS.get(module, ())):
         return True
     return bool(why) and why <= {"CALLS_A_FORBIDDEN_READER", "NS_OFF_ALLOWLIST"} and (

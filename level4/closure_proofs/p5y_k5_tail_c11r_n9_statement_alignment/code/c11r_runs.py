@@ -60,20 +60,46 @@ WHAT main() DOES, exactly as config/C11R_POLICY.json freezes it:
      excluded by the protocol and the pre-flight's process detector, not proved absent
      (c11r_contract.LIFECYCLE_SCOPE).
 """
-# --- C11R PRE-IMPORT BARRIER (review 6, R6-1): the first statement, before any other import ---
+# --- C11R PRE-IMPORT BARRIER (reviews 6-7: R6-1, N7-1, N7-2, N7-3): the first statement ---
 import os as _os
 import sys as _sys
+import _imp as _c11r_imp
 
 
 def _c11r_preimport_barrier():
-    """Refuse to start while a campaign code directory holds anything a standard-library import
-    could resolve to. Only `os` and `sys` are used: the interpreter loaded both before this
-    script's directory was put on sys.path (c11r_contract.PREIMPORT_BARRIER)."""
+    """Run as a PROGRAM, refuse to start unless the interpreter was started as c11r_launch.py
+    starts it (isolated, no site, default hash-based .pyc checking, the frozen interpreter, the
+    explicit environment); always refuse while a campaign code directory holds anything but
+    __pycache__ and regular lower-case *.py files carrying its campaign prefix. Only `os`, `sys`
+    and the built-in `_imp` are used: nothing here is resolved through sys.path
+    (c11r_contract.PREIMPORT_BARRIER, generated from c11r_launch.py)."""
+    bad = []
+    if __name__ == "__main__":
+        f = _sys.flags
+        if not (f.isolated and f.ignore_environment and f.no_user_site and f.safe_path
+                and f.no_site):
+            bad.append("not started isolated and without site (-I -S): use c11r_launch.py")
+        if f.optimize:
+            bad.append("assertions stripped (-O)")
+        if _c11r_imp.check_hash_based_pycs != "default":
+            bad.append("hash-based .pyc policy " + repr(_c11r_imp.check_hash_based_pycs))
+        if _sys.pycache_prefix is not None:
+            bad.append("a pycache prefix is set")
+        if _sys._xoptions and dict(_sys._xoptions) != {'int_max_str_digits': '0'}:
+            bad.append("-X options other than the frozen ones")
+        if _sys.warnoptions:
+            bad.append("warning options are set")
+        if _os.path.realpath(_sys.executable) != _os.path.realpath('/Library/Frameworks/Python.framework/Versions/3.14/bin/python3.14'):
+            bad.append("not the frozen interpreter")
+        extra = sorted(k for k in _os.environ if k not in ('HOME', 'LANG', 'LC_ALL', 'LC_CTYPE', 'LOGNAME', 'PATH', 'TMPDIR', 'USER', '__CF_USER_TEXT_ENCODING'))
+        if extra:
+            bad.append("environment names outside the frozen allowlist: " + ", ".join(extra))
+        if _os.environ.get("PATH") != '/usr/bin:/bin:/usr/sbin:/sbin':
+            bad.append("PATH is not the frozen one")
     here = _os.path.dirname(_os.path.realpath(__file__))
     closure = _os.path.dirname(_os.path.dirname(here))
-    bad = []
-    for d in (here, _os.path.join(closure, "p5y_k5_tail_c11_n9_independent_certifier", "code"),
-              _os.path.join(closure, "p5y_k5_tail_c7_e2_lambda309", "code")):
+    for d, prefix in ((here, "c11r_"), (_os.path.join(closure, 'p5y_k5_tail_c11_n9_independent_certifier', "code"), "c11_"),
+                      (_os.path.join(closure, 'p5y_k5_tail_c7_e2_lambda309', "code"), "c7_")):
         if _os.path.islink(d) or not _os.path.isdir(d):
             bad.append(d)
             continue
@@ -81,13 +107,13 @@ def _c11r_preimport_barrier():
             p = _os.path.join(d, e)
             if e == "__pycache__" and _os.path.isdir(p) and not _os.path.islink(p):
                 continue
-            if (not e.endswith(".py") or _os.path.islink(p) or not _os.path.isfile(p)
-                    or e[:-3] in _sys.stdlib_module_names or e[:-3] in _sys.builtin_module_names):
+            stem = e[:-3]
+            if not (e.endswith(".py") and stem.startswith(prefix) and stem.isascii()
+                    and stem.replace("_", "").isalnum() and stem == stem.lower()
+                    and _os.path.isfile(p) and not _os.path.islink(p)):
                 bad.append(_os.path.basename(_os.path.dirname(d)) + "/code/" + e)
     if bad:
-        raise SystemExit("REFUSE (pre-import barrier, review 6 R6-1): a campaign code directory "
-                         "holds an entry a standard-library import could resolve to: "
-                         + ", ".join(bad))
+        raise SystemExit("REFUSE (pre-import barrier, reviews 6-7): " + "; ".join(bad))
 
 
 _c11r_preimport_barrier()
@@ -121,8 +147,8 @@ NEXT_STEPS = (
     "history -- HEAD's, and every branch, tag, stash and reflog entry -- no forward transition "
     "admits another execution; that is the whole claim (c11r_contract.LIFECYCLE_SCOPE: an "
     "execution never committed, or made in another clone, is outside it)",
-    f"then run: python3 {C.NS_REL}/code/c11r_compare.py --approved-commit <the approved commit, "
-    f"full 40-hex id>")
+    f"then run: {C.NS_REL}/code/c11r_launch.py compare --approved-commit <the approved commit, "
+    f"full 40-hex id> (the launcher is the only supported way to start a boundary program)")
 NOT_IMPLEMENTED_REASON = (
     "PROSPECTIVELY_REACHABLE_BUT_NOT_IMPLEMENTED: requires the drift-derivative kernels Khat' and "
     "Khat'', h_1' and h_1'', operator norm bounds kernel_norm(0..3), a residual-to-error "

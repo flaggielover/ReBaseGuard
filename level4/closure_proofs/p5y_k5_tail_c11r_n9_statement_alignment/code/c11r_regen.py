@@ -10,6 +10,10 @@ execution) or c11r_qualify.py (target qualification). The firewall scanner check
 those mechanically; the other two are simply absent from ORDER. The qualifier's PURE, non-target
 self-test runs inside c11r_status.py; its main() is never called here.
 
+Revision 4 (review 7, N7-1/N7-2) starts every producer exactly as c11r_launch.py starts a boundary
+program (L.child_argv, L.child_env): the chain controls call the production pre-flight and
+comparator in-process, which check that launch policy.
+
 Revision 3 adds the committed non-target cost measurement (c11r_cost.py, ~13 minutes; it must run
 alone, and it refuses if any other campaign worker is running) and the value-based leak check,
 which runs after every artifact it scans exists and before the status report.
@@ -25,6 +29,7 @@ import time
 HERE = pathlib.Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 import c11r_common as C  # noqa: E402
+import c11r_launch as L  # noqa: E402
 import c11r_procs as PR  # noqa: E402
 
 ORDER = [
@@ -62,12 +67,15 @@ def main() -> int:
     if not all(pre.values()):
         print("REGEN REFUSED: pre-flight failed")
         return 1
-    env = {**os.environ, "PYTHONINTMAXSTRDIGITS": "0"}
+    # every producer runs under the LAUNCH POLICY (review 7, N7-1/N7-2): the frozen interpreter,
+    # isolated and without site, default hash-based .pyc checking, an EXPLICIT environment
+    # (-X int_max_str_digits=0 replaces the PYTHONINTMAXSTRDIGITS variable -I would ignore)
+    env = L.child_env(os.environ)
     log = []
     for step in ORDER:
         mod, args = step[0], list(step[1:])
         t = time.time()
-        r = subprocess.run([sys.executable, "-B", str(HERE / mod), *args], cwd=str(HERE.parent),
+        r = subprocess.run(L.child_argv(HERE / mod, args), cwd=str(HERE.parent),
                            env=env, capture_output=True, text=True)
         dt = round(time.time() - t, 1)
         tail = (r.stdout.strip().splitlines() or [""])[-1][:110]

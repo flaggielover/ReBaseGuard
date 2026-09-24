@@ -46,7 +46,13 @@ GROUPS
   RC*   the required proving certificates (N6-4);
   CG*   the commit-graph file is not read (N6-6);
   WD*, LG*  what the lifecycle claims, and the repository-wide lineage (N6-2), with the stated
-        limit reproduced as stated.
+        limit reproduced as stated;
+  N71*, N72*, N73*  the LAUNCH POLICY (review 7, N7-1..N7-3): synthetic repositories' launchers
+        executed through their first line, direct starts, `--check-hash-based-pycs never`, hostile
+        PYTHON* variables, user-site hooks, names absent from the stdlib enumeration -- every
+        hostile control requires its SENTINEL file ABSENT on the launcher path; the stated limits
+        of a direct start are reproduced as stated (expected STATED_LIMIT);
+  CMP7*, CMP8  the refusal's verdict class and retry applicability (N7-4), nested JSON (N7-5).
 
 EVERY CONTROL MUST REFUSE FOR ITS EXPECTED REASON (and, for the comparator, at its expected
 step): a refusal for some other reason proves nothing about its attack.
@@ -76,6 +82,8 @@ import c11r_common as C
 import c11r_compare as K
 import c11r_contract as CT
 import c11r_gate as GA
+import c11r_launch as L
+import c11r_procs as PR
 import c11r_qualify as Q
 import c11r_runs as R
 
@@ -124,6 +132,8 @@ class Chain:
         for other_rel in CT.namespace_code():
             if not (self.root / other_rel).exists():
                 self.write(other_rel, CT.code_bytes(C.REPO, other_rel))
+        # the launcher is committed EXECUTABLE: the kernel starts it through its first line
+        os.chmod(self.root / CT.LAUNCH_POLICY["launcher"], 0o755)
         for art_rel in COPIED_ARTIFACTS:
             self.write(CT.ns_path(art_rel), CT.artifact_bytes(C.REPO, art_rel))
         self.stmt = CT.load_artifact(self.root, CT.STMT_REL)
@@ -469,6 +479,26 @@ EXPECTED_REASON = {
     "LG1": "hold a runs artifact that stage run does not admit",
     "LG2": "hold a runs artifact that stage compare does not admit",
     "LG4": "hold a permission artifact that stage run does not admit",
+    # N71, N72, N73: the launch policy (review 7)
+    "N71-2": "hash-based .pyc policy 'never'",
+    "N71-3": "hash-based .pyc policy 'never'",
+    "N71-3b": "c11r_schema.py (as module 'c11r_schema') has cached bytecode that is not the "
+              "compilation of its verified source",
+    "N72-2": "the environment carries ['PYTHONPYCACHEPREFIX']",
+    "N72-3": "the environment carries ['PYTHONPYCACHEPREFIX']",
+    "N72-4": "the environment carries ['PYTHONCASEOK']",
+    "N72-5": "the environment carries ['PYTHONPATH']",
+    "N72-9": "launch policy: the interpreter was not started isolated and without site",
+    "N72-10": "the environment carries ['LD_PRELOAD']",
+    "N73-1": "_sysconfigdata__darwin_darwin.py",
+    "N73-1b": "module '_sysconfigdata__darwin_darwin' was loaded from "
+              "p5y_k5_tail_c11r_n9_statement_alignment/code/_sysconfigdata__darwin_darwin.py, "
+              "inside a campaign code directory",
+    "N73-2": "p5y_k5_tail_c11_n9_independent_certifier/code/sitecustomize.py",
+    "N73-6": "c11r_pkg",
+    "CMP7a": "an unexpected file under a protocol directory on disk",
+    "CMP7b": "G8: D1",
+    "CMP8": "the runs artifact is not readable JSON (RecursionError)",
 }
 EXPECTED_STEP = {
     "R3A": "complete frozen history", "R3M": "complete frozen history",
@@ -498,7 +528,8 @@ EXPECTED_STEP = {
     "CMP6": "complete frozen history", "CMP6b": "complete frozen history",
     "RC2": "run", "RC3": "run", "RC4": "run", "RC5": "run", "RC7": "run",
     "RC6": "other execution-integrity predicates",
-    "LG2": "complete frozen history"}
+    "LG2": "complete frozen history", "CMP7a": "complete frozen history", "CMP7b": "G8",
+    "CMP8": "complete frozen history"}
 
 
 def record(cid, group, attack, *, expected, refused_at, refused, problems, loader_calls=0,
@@ -514,6 +545,8 @@ def record(cid, group, attack, *, expected, refused_at, refused, problems, loade
         ok = refused and has_reason and step_ok and loader_calls == 0 and all(must.values())
     elif expected == "POST_LOAD_FAILURE":        # the loader WAS entered, by construction (N6-3)
         ok = refused and has_reason and all(must.values())
+    elif expected == "STATED_LIMIT":             # a stated limit, reproduced exactly as stated
+        ok = all(must.values())
     else:
         ok = (not refused) and all(must.values())
     RESULTS.append({"id": cid, "group": group, "attack": attack, "expected": expected,
@@ -2162,12 +2195,11 @@ def _launch_boundary_programs(ch, *, with_runner: bool) -> dict:
     never launched."""
     assert ch.root.resolve() != C.REPO.resolve()
     out = {}
-    for prog in CT.BOUNDARY_PROGRAMS:
+    for key, prog in L.PROGRAMS.items():                  # through the synthetic LAUNCHER
         if prog == "c11r_runs.py" and not with_runner:
             continue
-        r = subprocess.run([sys.executable, "-B", str(ch.root / NSC / prog)], capture_output=True,
-                           text=True, cwd=str(ch.root),
-                           env={k: v for k, v in os.environ.items() if k != "PYTHONPATH"})
+        r = subprocess.run([str(ch.root / NSC / "c11r_launch.py"), key], capture_output=True,
+                           text=True, cwd=str(ch.root), env=L.child_env(os.environ))
         out[prog] = {"rc": r.returncode, "barrier": "REFUSE (pre-import barrier" in r.stderr,
                      "shadow_ran": "C11R-SHADOW-RAN" in (r.stderr + r.stdout)}
     return out
@@ -2847,10 +2879,515 @@ def c_LG():
         ch.cleanup()
 
 
+# ---------------------------------------------------------------------------------------------
+# N71, N72, N73: the LAUNCH POLICY (review 7, N7-1, N7-2, N7-3). Every control plants its
+# material in a SYNTHETIC repository and starts that repository's launcher -- executed by the
+# kernel through its first line, exactly as the operator runs it -- or, for the direct-start
+# controls, its boundary program. A planted HOSTILE module writes a SENTINEL file when it executes:
+# a defended control requires the sentinel ABSENT ("never executed"), not merely a refusal.
+# ---------------------------------------------------------------------------------------------
+def _sentinel_code(marker: pathlib.Path) -> bytes:
+    """Creates `marker` when executed -- with the built-in `posix` only, so it works even inside a
+    module the interpreter loads at start-up (before `open` exists)."""
+    return (f"\nimport posix as _c11r_p\n"
+            f"_c11r_p.close(_c11r_p.open({str(marker)!r}, "
+            f"_c11r_p.O_WRONLY | _c11r_p.O_CREAT, 0o644))\n").encode()
+
+
+def _clean_env() -> dict:
+    """A clean operator environment: exactly what the launcher itself would pass on."""
+    return L.child_env(os.environ)
+
+
+def _run_launcher(ch, key: str, *, extra_env=None, env=None, pre=()) -> dict:
+    """The SYNTHETIC repository's launcher, executed through its first line (`pre` empty) or by
+    an explicit interpreter command (`pre`). Only its no-argument forms are used: `compare` and
+    `qualify` print their usage; `run` is used only where the barrier refuses."""
+    assert ch.root.resolve() != C.REPO.resolve()
+    launcher = ch.root / NSC / "c11r_launch.py"
+    e = dict(_clean_env() if env is None else env, **(extra_env or {}))
+    r = subprocess.run([*pre, str(launcher), key], capture_output=True, text=True, env=e,
+                       cwd=str(ch.root))
+    return {"rc": r.returncode, "stdout": r.stdout[-400:], "stderr": r.stderr[-3000:],
+            "launcher_refused": "REFUSE (launcher)" in r.stderr,
+            "barrier_refused": "REFUSE (pre-import barrier" in r.stderr,
+            "usage_reached": "runs only as Phase" in r.stdout}
+
+
+def _run_direct(ch, prog: str, *, flags=(), extra_env=None) -> dict:
+    """A SYNTHETIC repository's boundary program started DIRECTLY -- not through the launcher --
+    by the frozen interpreter with `flags`, no argument (usage, or a refusal)."""
+    assert ch.root.resolve() != C.REPO.resolve()
+    e = dict(_clean_env(), **(extra_env or {}))
+    r = subprocess.run([L.FROZEN_INTERPRETER, *flags, str(ch.root / NSC / prog)],
+                       capture_output=True, text=True, env=e, cwd=str(ch.root))
+    return {"rc": r.returncode, "stderr": r.stderr[-3000:],
+            "barrier_refused": "REFUSE (pre-import barrier" in r.stderr,
+            "usage_reached": "runs only as Phase" in r.stdout}
+
+
+def _plain_python(code: str, *, extra_env=None, flags=()) -> int:
+    """DEMONSTRATION ONLY: the frozen interpreter running a neutral one-liner in the given
+    environment -- proves that planted attack material is LIVE (its sentinel appears)."""
+    e = dict(_clean_env(), **(extra_env or {}))
+    return subprocess.run([L.FROZEN_INTERPRETER, *flags, "-c", code], capture_output=True,
+                          text=True, env=e).returncode
+
+
+def _forged_cache(source_path: pathlib.Path, cache_path: pathlib.Path, extra: bytes, *,
+                  kind: str) -> None:
+    """A forged cache for `source_path` (its own code plus `extra`): 'timestamp' (a header matching
+    the source's mtime and size) or 'checked' (a checked hash-based header with a WRONG hash)."""
+    import importlib._bootstrap_external as BE
+    code = compile(source_path.read_bytes() + extra, str(source_path), "exec", dont_inherit=True)
+    cache_path.parent.mkdir(parents=True, exist_ok=True)
+    if kind == "timestamp":
+        st = source_path.stat()
+        data = BE._code_to_timestamp_pyc(code, int(st.st_mtime), st.st_size)
+    else:
+        data = BE._code_to_hash_pyc(code, b"\x00" * 8, checked=True)
+    cache_path.write_bytes(bytes(data))
+
+
+def _cache_path_for(source: pathlib.Path, prefix=None) -> pathlib.Path:
+    import importlib.util as U
+    old = sys.pycache_prefix
+    sys.pycache_prefix = str(prefix) if prefix else None
+    try:
+        return pathlib.Path(U.cache_from_source(str(source)))
+    finally:
+        sys.pycache_prefix = old
+
+
+DIRECT_FLAGS = tuple(f for f in L.CHILD_FLAGS if f not in ("-I", "-S"))   # isolation dropped
+
+
+def c_N71():
+    import sysconfig
+    tmp = pathlib.Path(tempfile.mkdtemp(prefix="n71_"))
+    try:
+        ch = Chain()
+        try:
+            a, b = _run_launcher(ch, "compare"), _run_launcher(ch, "qualify")
+            record("N71-1", "N71", "the approved interpreter through the launcher (clean "
+                                   "environment): no refusal, the programs reach their usage",
+                   expected="ACCEPT", refused_at="launcher + barrier",
+                   refused=a["launcher_refused"] or a["barrier_refused"] or b["barrier_refused"],
+                   problems=[a["stderr"], b["stderr"]],
+                   must={"compare_usage": a["usage_reached"], "qualify_usage": b["usage_reached"]})
+            never = [*[f for f in L.CHILD_FLAGS if f != "default"][:4], "never",
+                     *L.CHILD_FLAGS[5:]]
+            d = _run_direct(ch, "c11r_compare.py", flags=never)
+            ln = _run_launcher(ch, "compare",
+                               pre=[L.FROZEN_INTERPRETER, "-IS", "--check-hash-based-pycs",
+                                    "never"])
+            record("N71-2", "N71", "`--check-hash-based-pycs never`: the program refuses at its "
+                                   "barrier, the launcher refuses itself",
+                   expected="REFUSE", refused_at="pre-import barrier", refused=d["barrier_refused"],
+                   problems=[d["stderr"]],
+                   must={"launcher_refuses_too": ln["launcher_refused"]
+                         and "'never'" in ln["stderr"]})
+        finally:
+            ch.cleanup()
+        ch = Chain()
+        try:
+            marker = tmp / "n71_3.sentinel"
+            schema = ch.root / NSC / "c11r_schema.py"
+            _forged_cache(schema, _cache_path_for(schema), _sentinel_code(marker), kind="checked")
+            never = ["-I", "-S", "-B", "--check-hash-based-pycs", "never",
+                     "-X", "int_max_str_digits=0"]
+            d = _run_direct(ch, "c11r_compare.py", flags=never)
+            absent = not marker.exists()
+            # the material is LIVE under `never`: a plain process importing the module runs it
+            live = _plain_python(f"import sys; sys.path.insert(0, {str(ch.root / NSC)!r}); "
+                                 f"import c11r_schema", flags=never) == 0 and marker.exists()
+            record("N71-3", "N71", "a forged CHECKED cache of a contract module + `never`: refused "
+                                   "at the barrier BEFORE the forged code runs",
+                   expected="REFUSE", refused_at="pre-import barrier", refused=d["barrier_refused"],
+                   problems=[d["stderr"]],
+                   must={"sentinel_absent_at_the_refusal": absent,
+                         "the_forged_cache_is_live_under_never": live})
+            if marker.exists():
+                marker.unlink()
+            res = _r61_driver_flags(ch, ["c11r_idrift", "c11r_schema"], flags=never)
+            record("N71-3b", "N71", "the same forged cache in a NON-boundary process under `never` "
+                                    "(defence in depth, after the fact): the cache check models "
+                                    "the mode and refuses",
+                   expected="REFUSE", refused_at="loaded-module identity",
+                   refused=bool(res["problems"]), problems=res["problems"],
+                   must={"driver_ran": not res.get("driver_failed")})
+            if marker.exists():
+                marker.unlink()
+            u = _run_launcher(ch, "compare")
+            record("N71-4", "N71", "the same forged checked cache under the APPROVED policy: "
+                                   "CPython validates the hash and ignores it -- never executed, "
+                                   "no false refusal (forged ACCEPTED caches: PYC4/IMP6)",
+                   expected="ACCEPT", refused_at="launcher + barrier",
+                   refused=u["launcher_refused"] or u["barrier_refused"], problems=[u["stderr"]],
+                   must={"usage_reached": u["usage_reached"],
+                         "sentinel_absent": not marker.exists()})
+        finally:
+            ch.cleanup()
+        ch = Chain()
+        try:
+            marker = tmp / "n71_5.sentinel"
+            schema = ch.root / NSC / "c11r_schema.py"
+            cache = _cache_path_for(schema)
+            _forged_cache(schema, cache, _sentinel_code(marker), kind="timestamp")
+            os.utime(schema, (schema.stat().st_atime, schema.stat().st_mtime + 7))   # now stale
+            u = _run_launcher(ch, "compare")
+            record("N71-5", "N71", "a STALE cache (header mtime no longer matches): ignored by "
+                                   "CPython, no false refusal",
+                   expected="ACCEPT", refused_at="launcher + barrier",
+                   refused=u["launcher_refused"] or u["barrier_refused"], problems=[u["stderr"]],
+                   must={"usage_reached": u["usage_reached"],
+                         "the_stale_code_did_not_run": not marker.exists()})
+        finally:
+            ch.cleanup()
+        roles = {prog: PR.campaign_role(" ".join(L.child_argv(C.HERE / prog)), None)
+                 for prog in L.PROGRAMS.values()}
+        record("N71-6", "N71", "the process detector (revision 4, unchanged) still recognises a "
+                               "boundary program started by the frozen invocation as a campaign "
+                               "worker (its argv rule; the long option's value is read as the "
+                               "script -- the N6-8 limit -- so the role label is imprecise)",
+               expected="ACCEPT", refused_at="process detector",
+               refused=not all(v not in (None, "FOREIGN_PYTHON") for v in roles.values()),
+               problems=[f"{k}: {v}" for k, v in roles.items()], extra={"roles": roles})
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def _r61_driver_flags(ch, imports, *, flags) -> dict:
+    """_r61_driver with explicit interpreter flags (a NON-boundary process)."""
+    tmp = pathlib.Path(tempfile.mkdtemp(prefix="r61f_"))
+    try:
+        drv = tmp / "r61_driver.py"
+        drv.write_text(R61_DRIVER)
+        cfg = {"code": str(ch.root / NSC), "imports": list(imports), "role": None, "report": [],
+               "prepend": []}
+        r = subprocess.run([L.FROZEN_INTERPRETER, *flags, str(drv), json.dumps(cfg)],
+                           capture_output=True, text=True, env=_clean_env(), cwd=str(tmp))
+        if r.returncode != 0 or not r.stdout.strip():
+            return {"problems": [f"driver failed: {r.stderr.strip()[-400:]}"],
+                    "driver_failed": True}
+        out = json.loads(r.stdout.strip().splitlines()[-1])
+        out["problems"] = out["problems"] + out.get("static", [])
+        return out
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def c_N72():
+    import sysconfig
+    std = pathlib.Path(sysconfig.get_paths()["stdlib"])
+    tmp = pathlib.Path(tempfile.mkdtemp(prefix="n72_"))
+    try:
+        ch = Chain()
+        try:
+            u = _run_launcher(ch, "compare")
+            record("N72-1", "N72", "a clean environment through the launcher: accepted",
+                   expected="ACCEPT", refused_at="launcher + barrier",
+                   refused=u["launcher_refused"] or u["barrier_refused"], problems=[u["stderr"]],
+                   must={"usage_reached": u["usage_reached"]})
+            minimal = {"PATH": "/usr/bin:/bin", "HOME": os.environ.get("HOME", "/tmp")}
+            u = _run_launcher(ch, "compare", env=minimal)
+            record("N72-6", "N72", "a minimal operator environment (no Python variable at all): "
+                                   "accepted", expected="ACCEPT", refused_at="launcher + barrier",
+                   refused=u["launcher_refused"] or u["barrier_refused"], problems=[u["stderr"]],
+                   must={"usage_reached": u["usage_reached"]})
+
+            def hostile(cid, attack, env, marker, *, direct_prog="c11r_compare.py", live=None,
+                        limit=False):
+                if marker.exists():
+                    marker.unlink()
+                ln = _run_launcher(ch, "compare", extra_env=env)
+                via_launcher = marker.exists()
+                if marker.exists():
+                    marker.unlink()
+                d = _run_direct(ch, direct_prog, flags=DIRECT_FLAGS, extra_env=env)
+                via_direct = marker.exists()
+                if marker.exists():
+                    marker.unlink()
+                is_live = live() if live else None
+                if marker.exists():
+                    marker.unlink()
+                m = {"launcher_refused": ln["launcher_refused"],
+                     "sentinel_absent_on_the_launcher_path": not via_launcher,
+                     "direct_start_refused_by_the_barrier": d["barrier_refused"]}
+                if is_live is not None:
+                    m["the_attack_material_is_live"] = is_live
+                if limit:
+                    m["STATED_LIMIT_reproduced_direct_start_hook_ran"] = via_direct
+                    record(cid, "N72", attack, expected="STATED_LIMIT",
+                           refused_at="launcher / barrier", refused=True,
+                           problems=[ln["stderr"], d["stderr"]], must=m,
+                           extra={"stated_limit": True})
+                else:
+                    m["sentinel_absent_on_the_direct_path"] = not via_direct
+                    record(cid, "N72", attack, expected="REFUSE", refused_at="launcher",
+                           refused=ln["launcher_refused"], problems=[ln["stderr"], d["stderr"]],
+                           must=m)
+
+            empty = tmp / "prefix_empty"
+            empty.mkdir()
+            hostile("N72-2", "PYTHONPYCACHEPREFIX set (an empty directory)",
+                    {"PYTHONPYCACHEPREFIX": str(empty)}, tmp / "none.sentinel")
+            m3 = tmp / "n72_3.sentinel"
+            prefix = tmp / "prefix_forged"
+            _forged_cache(std / "fractions.py", _cache_path_for(std / "fractions.py", prefix),
+                          _sentinel_code(m3), kind="timestamp")
+            hostile("N72-3", "a forged STANDARD-LIBRARY cache (fractions) through "
+                             "PYTHONPYCACHEPREFIX", {"PYTHONPYCACHEPREFIX": str(prefix)}, m3,
+                    live=lambda: _plain_python("import fractions",
+                                               extra_env={"PYTHONPYCACHEPREFIX": str(prefix)})
+                    == 0 and m3.exists())
+            m3l = tmp / "n72_3l.sentinel"
+            prefix_l = tmp / "prefix_startup"
+            _forged_cache(std / "encodings" / "__init__.py",
+                          _cache_path_for(std / "encodings" / "__init__.py", prefix_l),
+                          _sentinel_code(m3l), kind="timestamp")
+            hostile("N72-3L", "STATED LIMIT: a forged cache of a START-UP stdlib module "
+                              "(encodings) through PYTHONPYCACHEPREFIX -- the launcher path never "
+                              "runs it; a DIRECT start runs it at interpreter start-up, before any "
+                              "program statement, then the barrier refuses",
+                    {"PYTHONPYCACHEPREFIX": str(prefix_l)}, m3l, limit=True)
+            m4 = tmp / "n72_4.sentinel"
+            ch.write(f"{NSC}/Fractions.py", _stdlib_source("fractions") + _sentinel_code(m4))
+            hostile("N72-4", "PYTHONCASEOK=1 and a case-variant Fractions.py in the campaign's "
+                             "code directory", {"PYTHONCASEOK": "1"}, m4,
+                    live=lambda: _plain_python(f"import sys; sys.path.insert(0, "
+                                               f"{str(ch.root / NSC)!r}); import fractions",
+                                               extra_env={"PYTHONCASEOK": "1"}) == 0
+                    and m4.exists())
+            ch.remove(f"{NSC}/Fractions.py")
+            m5 = tmp / "n72_5.sentinel"
+            hp = tmp / "hostile_path"
+            hp.mkdir()
+            (hp / "fractions.py").write_bytes(_stdlib_source("fractions") + _sentinel_code(m5))
+            hostile("N72-5", "PYTHONPATH naming a directory with a fractions.py",
+                    {"PYTHONPATH": str(hp)}, m5,
+                    live=lambda: _plain_python("import fractions",
+                                               extra_env={"PYTHONPATH": str(hp)}) == 0
+                    and m5.exists())
+            m5l = tmp / "n72_5l.sentinel"
+            hs = tmp / "hostile_site"
+            hs.mkdir()
+            (hs / "sitecustomize.py").write_bytes(_sentinel_code(m5l))
+            hostile("N72-5L", "STATED LIMIT: PYTHONPATH naming a directory with a sitecustomize.py "
+                              "-- the launcher path never runs it; a DIRECT start runs it at "
+                              "interpreter start-up, then the barrier refuses",
+                    {"PYTHONPATH": str(hs)}, m5l, limit=True)
+            m7 = tmp / "n72_7.sentinel"
+            home = tmp / "home"
+            site_dir = home / "Library" / "Python" / f"{sys.version_info[0]}.{sys.version_info[1]}" \
+                / "lib" / "python" / "site-packages"
+            site_dir.mkdir(parents=True)
+            (site_dir / "c11r_hostile.pth").write_text(
+                f"import os; open({str(m7)!r}, 'w').write('user-site .pth executed')\n")
+            u = _run_launcher(ch, "compare", extra_env={"HOME": str(home)})
+            via_launcher = m7.exists()
+            if m7.exists():
+                m7.unlink()
+            d = _run_direct(ch, "c11r_compare.py", flags=DIRECT_FLAGS,
+                            extra_env={"HOME": str(home)})
+            via_direct = m7.exists()
+            record("N72-7", "N72", "a USER-SITE .pth hook (through HOME, no Python variable): the "
+                                   "launcher path never runs it and is accepted (-I -S: no user "
+                                   "site, no site); a DIRECT start runs it at start-up "
+                                   "(STATED LIMIT) and is refused",
+                   expected="STATED_LIMIT", refused_at="launcher / barrier", refused=True,
+                   problems=[u["stderr"], d["stderr"]],
+                   must={"launcher_path_accepted": u["usage_reached"],
+                         "sentinel_absent_on_the_launcher_path": not via_launcher,
+                         "STATED_LIMIT_reproduced_direct_start_hook_ran": via_direct,
+                         "direct_start_refused_by_the_barrier": d["barrier_refused"]},
+                   extra={"stated_limit": True})
+            noisy = {"FOO": "1", "GIT_DIR": "/nonexistent", "GIT_CONFIG_PARAMETERS": "'x.y=z'",
+                     "SSH_AUTH_SOCK": "/nonexistent", "TERM_PROGRAM": "x"}
+            u = _run_launcher(ch, "compare", extra_env=noisy)
+            env_out = L.child_env(dict(os.environ, PYTHONPATH="/x", PYTHONCASEOK="1",
+                                       PATH="/evil:/usr/bin", **noisy))
+            q_src = C.read_code(f"{C.NS_REL}/code/c11r_qualify.py")
+            record("N72-8", "N72", "the child's environment is EXPLICIT: variables the launcher "
+                                   "does not refuse are not passed on (the child's barrier would "
+                                   "refuse any name outside the allowlist); the qualifier's own "
+                                   "subprocess uses the same frozen invocation",
+                   expected="ACCEPT", refused_at="launcher + barrier",
+                   refused=u["launcher_refused"] or u["barrier_refused"], problems=[u["stderr"]],
+                   must={"usage_reached": u["usage_reached"],
+                         "child_env_is_the_allowlist": set(env_out) <= set(L.ENV_ALLOWED)
+                         and env_out["PATH"] == L.FROZEN_PATH,
+                         "qualifier_Q11_uses_the_frozen_invocation":
+                             "L.child_argv(C.HERE / \"c11r_status.py\"" in q_src
+                             and "env=L.child_env(os.environ)" in q_src})
+            u = _run_launcher(ch, "compare", extra_env={"LD_PRELOAD": "/nonexistent.so"})
+            record("N72-10", "N72", "a native-injection variable (LD_PRELOAD) in the operator's "
+                                    "environment: the launcher refuses it by name",
+                   expected="REFUSE", refused_at="launcher", refused=u["launcher_refused"],
+                   problems=[u["stderr"]])
+        finally:
+            ch.cleanup()
+        # L0 at the boundary check: a NON-compliant process calling the production pre-flight
+        ch = Chain()
+        try:
+            ch.qualify()
+            ch.authorize()
+            drv = tmp / "l0_driver.py"
+            drv.write_text("import sys, json\nsys.path.insert(0, sys.argv[1])\n"
+                           "import c11r_runs as R\n"
+                           "pf = R.preflight(sys.argv[2], allow_fixture=True, "
+                           "check_processes=False)\nprint(json.dumps(pf['problems']))\n")
+            r = subprocess.run([L.FROZEN_INTERPRETER, "-B", str(drv), str(C.HERE), str(ch.root)],
+                               capture_output=True, text=True,
+                               env=dict(_clean_env(), FOO="1"))
+            probs = json.loads(r.stdout.strip().splitlines()[-1]) if r.returncode == 0 else \
+                [f"driver failed: {r.stderr[-300:]}"]
+            pf = ch.preflight()
+            record("N72-9", "N72", "L0: a process NOT started under the launch policy calls the "
+                                   "production runner pre-flight: refused (the same pre-flight "
+                                   "accepts in this compliant process)",
+                   expected="REFUSE", refused_at="runner pre-flight", refused=bool(probs),
+                   problems=probs, must={"compliant_process_accepts": not pf["problems"]})
+        finally:
+            ch.cleanup()
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def c_N73():
+    tmp = pathlib.Path(tempfile.mkdtemp(prefix="n73_"))
+    try:
+        def barrier_case(cid, attack, plant, marker, *, expect_refuse=True, must=None):
+            ch = Chain()
+            try:
+                plant(ch)
+                u = _run_launcher(ch, "compare")
+                static = CT.code_dir_shadows(CT.load_artifact(ch.root, CT.CONTRACT_REL), ch.root)
+                m = dict(must(ch, u, static) if must else {},
+                         sentinel_absent=not (marker and marker.exists()))
+                if expect_refuse:
+                    record(cid, "N73", attack, expected="REFUSE", refused_at="pre-import barrier",
+                           refused=u["barrier_refused"], problems=[u["stderr"]] + static[:4],
+                           must=m)
+                else:
+                    record(cid, "N73", attack, expected="ACCEPT", refused_at="launcher + barrier",
+                           refused=u["barrier_refused"] or u["launcher_refused"],
+                           problems=[u["stderr"]], must=dict(m, usage_reached=u["usage_reached"]))
+            finally:
+                ch.cleanup()
+        m1 = tmp / "n73_1.sentinel"
+        barrier_case("N73-1", "_sysconfigdata__darwin_darwin.py (a genuine stdlib name ABSENT "
+                              "from sys.stdlib_module_names) in the campaign's code directory",
+                     lambda ch: ch.write(f"{NSC}/_sysconfigdata__darwin_darwin.py",
+                                         _sentinel_code(m1)), m1,
+                     must=lambda ch, u, st: {"S_refuses_too": any(
+                         "_sysconfigdata__darwin_darwin.py" in x for x in st)})
+        m2 = tmp / "n73_2.sentinel"
+        barrier_case("N73-2", "sitecustomize.py (another name no enumeration lists) in C11's code "
+                              "directory", lambda ch: ch.write(f"{C11C}/sitecustomize.py",
+                                                               _sentinel_code(m2)), m2)
+        barrier_case("N73-3", "the approved campaign sources only: no false refusal", lambda ch: None,
+                     None, expect_refuse=False)
+        m5 = tmp / "n73_5.sentinel"
+
+        def committed(ch):
+            ch.write(f"{NSC}/c11r_extra.py", _sentinel_code(m5))
+            ch.commit("an unexpected campaign-prefixed source, committed after the approval")
+        barrier_case("N73-5", "a COMMITTED unexpected source carrying the campaign prefix: the "
+                              "barrier admits the name, nothing imports it (sentinel absent), and "
+                              "the frozen inventory refuses it", committed, m5,
+                     expect_refuse=False,
+                     must=lambda ch, u, st: {"S_refuses_it": any(
+                         "c11r_extra.py in p5y_k5_tail_c11r_n9_statement_alignment/code is not "
+                         "in the directory inventory" in x for x in st)})
+
+        def variants(ch):
+            ch.write(f"{NSC}/c11r_pkg/__init__.py", b"X = 1\n")
+            ch.write(f"{NSC}/c11r_blob.pyc", b"\x00")
+            ch.write(f"{C11C}/c11_archive.zip", b"PK\x05\x06" + b"\x00" * 18)
+            ch.write(f"{NSC}/c11r_Upper.py", b"X = 1\n")
+            os.symlink(ch.root / NSC / "c11r_schema.py", ch.root / NSC / "c11r_link.py")
+        barrier_case("N73-6", "package, sourceless .pyc, archive, upper-case and symlinked "
+                              "entries carrying the campaign prefix: refused by KIND, not by name",
+                     variants, None,
+                     must=lambda ch, u, st: {f"names_{n}": n in u["stderr"] for n in (
+                         "c11r_pkg", "c11r_blob.pyc", "c11_archive.zip", "c11r_Upper.py",
+                         "c11r_link.py")})
+        ch = Chain()
+        try:
+            m1b = tmp / "n73_1b.sentinel"
+            # a WORKING copy of the genuine platform data module, plus the sentinel
+            ch.write(f"{NSC}/_sysconfigdata__darwin_darwin.py",
+                     _stdlib_source("_sysconfigdata__darwin_darwin") + _sentinel_code(m1b))
+            res = _r61_driver(ch, ["c11r_idrift"])
+            record("N73-1b", "N73", "the same file in a NON-boundary process (no barrier): the "
+                                    "loaded-module snapshot is now taken AFTER the check's own "
+                                    "imports, so L1 sees the module the check itself loaded",
+                   expected="REFUSE", refused_at="loaded-module identity",
+                   refused=bool(res["problems"]), problems=res["problems"],
+                   must={"driver_ran": not res.get("driver_failed"),
+                         "the_check_itself_loaded_it": m1b.exists()})
+        finally:
+            ch.cleanup()
+        ch = Chain()
+        try:
+            res = _r61_driver(ch, ["c11r_idrift", "fractions", "ast", "sysconfig"],
+                              report=["fractions", "ast"])
+            record("N73-4", "N73", "genuine standard-library modules (sysconfig and its platform "
+                                   "data module included) from the standard library: accepted",
+                   expected="ACCEPT", refused_at="loaded-module identity",
+                   refused=bool(res["problems"] + res.get("static", [])),
+                   problems=res["problems"] + res.get("static", []),
+                   must={"driver_ran": not res.get("driver_failed")})
+        finally:
+            ch.cleanup()
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def c_CMP78():
+    ch = _sealed_chain()
+    try:
+        ch.write(f"{C.NS_REL}/evidence/runs/.DS_Store", b"\x00\x00\x00\x01Bud1")
+        t = _phase15(ch)
+        r = t["r"] or {}
+        lines = " ".join(r.get("lines") or [])
+        _record_cmp("CMP7a", "an EXTRINSIC pre-load refusal (.DS_Store): the verdict class is "
+                             "printed and a retry is said to help once the cause is removed", t,
+                    must={"verdict_class_printed": "verdict class EXECUTION_INVALID" in lines,
+                          "retry_can_help": r.get("retry_can_help") is True})
+    finally:
+        ch.cleanup()
+    ch = Chain()
+    try:
+        ch.qualify()
+        ch.authorize()
+        pf = ch.preflight()
+        ch.run(pf["identity"], restamp=True, mutate=lambda o: o["targets"]["D1"].update(
+            status="NOT_CERTIFIED"))
+        t = _phase15(ch)
+        r = t["r"] or {}
+        lines = " ".join(r.get("lines") or [])
+        _record_cmp("CMP7b", "an INTRINSIC pre-load refusal (G8): the verdict class is printed "
+                             "and the message says a retry cannot help", t,
+                    must={"verdict_class_printed": "verdict class EXECUTION_INVALID" in lines,
+                          "retry_cannot_help": r.get("retry_can_help") is False
+                          and "retry CANNOT help" in lines})
+    finally:
+        ch.cleanup()
+    ch = _sealed_chain()
+    try:
+        (ch.root / RUNS_PATH).write_text("[" * 200000 + "]" * 200000)
+        _record_cmp("CMP8", "a pathologically nested runs artifact: a typed refusal, no exception, "
+                            "nothing written", _phase15(ch))
+    finally:
+        ch.cleanup()
+
+
 CONTROLS = (c_R3T, c_unrelated, c_R3A, c_R3B, c_R3C, c_R3D, c_R3E, c_R3F, c_R3G, c_R3H, c_R3I,
             c_R3JKL, c_R3M, c_R3N, c_R3O, c_R3P, c_R3Q, c_R3R, c_R3S, c_real_repository_guard,
             c_MHT, c_LS, c_QF, c_IMP, c_ORD, c_GS, c_CF, c_PB, c_GR, c_DM, c_AC,
-            c_R61, c_TP, c_CMP, c_RC, c_CG, c_WD, c_LG)
+            c_R61, c_TP, c_CMP, c_RC, c_CG, c_WD, c_LG, c_N71, c_N72, c_N73, c_CMP78)
 
 
 def main() -> int:
@@ -2888,9 +3425,12 @@ def main() -> int:
                    r["id"]: {"loader_calls": r["stub_loader_calls"], "pass": r["pass"],
                              "output_exists": r.get("output_exists")} for r in post_load},
                "post_load_rule": CT.COMPARISON_TRANSACTION},
+           "stated_limits_reproduced": sorted(r["id"] for r in RESULTS
+                                              if r["expected"] == "STATED_LIMIT"),
            "not_covered": [
                CT.LIFECYCLE_SCOPE,
-               CT.MODULE_IDENTITY_POLICY["not_covered"]],
+               CT.MODULE_IDENTITY_POLICY["not_covered"],
+               CT.LAUNCH_POLICY["not_covered"]],
            "failed": failed,
            "CHAIN_CLASS": "PASS" if not failed and ordering else "REFUSE"}
     s = C.write_evidence(C.NS / "evidence" / "chain" / "C11R_CHAIN_CONTROLS.json", out,

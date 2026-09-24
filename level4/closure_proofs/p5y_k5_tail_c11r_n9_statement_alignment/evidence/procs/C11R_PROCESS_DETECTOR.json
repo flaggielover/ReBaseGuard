@@ -14,8 +14,8 @@
   "detector_itself_not_detected": true,
   "exited_child_not_detected": true,
   "framework_child_with_campaign_argv_detected": true,
-  "interpreter_under_test": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
-  "neutral_temporary_directory": "detprobe_3uuwi84m",
+  "interpreter_under_test": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+  "neutral_temporary_directory": "detprobe_58dd26x2",
   "shell_mentioning_a_script_not_detected": true,
   "wrapper_detected_through_its_source_not_its_argv": true,
   "wrapper_script_importing_campaign_detected": true
@@ -251,11 +251,11 @@
  },
  "schema": "C11R_PROCESS_DETECTOR/4",
  "self_exclusion": "this process and its whole ppid ancestor chain",
- "sha256": "e45161244f5371e0b3fe2ed55f0631453d9504fc70b3b12f7812914a69c11318",
+ "sha256": "48862c017fbf65886735996c833d8c6c30568e83d49d8f62c11038da724808ad",
  "snapshot_at_write": {
   "foreign_python": 5,
   "interpreters_seen": 7,
-  "processes_seen": 527
+  "processes_seen": 480
  },
  "supersedes": "revision 3 (5d89686e), blind to `-m <tool> <wrapper>` and with a live wrapper control satisfied through its temporary directory's name (review round 5, N5-9); revision 2 (bd00c1f6), blind to wrapper scripts and to -Bc / -cpayload (review round 4, N4-6); revision 1 (common.classified_processes), blind to framework Python",
  "what_it_gates": "concurrency only (cost measurement, runner pre-flight, B0, regeneration); it cannot prove no competing computation ran"

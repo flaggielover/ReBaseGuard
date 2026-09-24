@@ -3,28 +3,28 @@
  "derived": {
   "per_panels": {
    "128": {
-    "peak_rss_mb": 28.1,
-    "per_box_panel_seconds_max": "197927/430000",
-    "per_box_panel_seconds_mean": "200867/451500"
+    "peak_rss_mb": 25.0,
+    "per_box_panel_seconds_max": "2487/5375",
+    "per_box_panel_seconds_mean": "68729/150500"
    },
    "32": {
-    "peak_rss_mb": 28.1,
-    "per_box_panel_seconds_max": "139651/330000",
-    "per_box_panel_seconds_mean": "944861/2310000"
+    "peak_rss_mb": 25.0,
+    "per_box_panel_seconds_max": "48491/110000",
+    "per_box_panel_seconds_mean": "326327/770000"
    },
    "64": {
-    "peak_rss_mb": 28.1,
-    "per_box_panel_seconds_max": "72071/162500",
-    "per_box_panel_seconds_mean": "244017/568750"
+    "peak_rss_mb": 25.0,
+    "per_box_panel_seconds_max": "307941/650000",
+    "per_box_panel_seconds_mean": "1029641/2275000"
    }
   },
   "rule": "per_box_panel = max over sampled boxes of (data + certification seconds) / (P + 1); screen = measured total for the full 15x15 grid",
   "screen_states": 84,
-  "screen_total_seconds": "57709/1000"
+  "screen_total_seconds": "5759/100"
  },
  "host": {
   "cpu_brand": "Apple A18 Pro",
-  "executable": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
+  "executable": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
   "implementation": "CPython",
   "machine": "arm64",
   "memsize": "8589934592",
@@ -57,7 +57,7 @@
   "panels": {
    "128": {
     "panels": 128,
-    "peak_rss_mb": 28.1,
+    "peak_rss_mb": 25.0,
     "per_box": [
      {
       "box": [
@@ -66,8 +66,8 @@
        "0",
        "5/16"
       ],
-      "certification_seconds": 25.2046,
-      "data_seconds": 29.6971
+      "certification_seconds": 25.4634,
+      "data_seconds": 32.8616
      },
      {
       "box": [
@@ -76,8 +76,8 @@
        "15/16",
        "5/4"
       ],
-      "certification_seconds": 25.4246,
-      "data_seconds": 30.1536
+      "certification_seconds": 25.7613,
+      "data_seconds": 32.8602
      },
      {
       "box": [
@@ -86,8 +86,8 @@
        "0",
        "5/16"
       ],
-      "certification_seconds": 26.1351,
-      "data_seconds": 31.2524
+      "certification_seconds": 26.4539,
+      "data_seconds": 32.334
      },
      {
       "box": [
@@ -96,8 +96,8 @@
        "5/4",
        "25/16"
       ],
-      "certification_seconds": 26.3696,
-      "data_seconds": 31.3618
+      "certification_seconds": 26.6163,
+      "data_seconds": 32.2798
      },
      {
       "box": [
@@ -106,8 +106,8 @@
        "5/16",
        "5/8"
       ],
-      "certification_seconds": 26.2688,
-      "data_seconds": 31.2415
+      "certification_seconds": 26.4676,
+      "data_seconds": 32.2975
      },
      {
       "box": [
@@ -116,8 +116,8 @@
        "15/16",
        "35/32"
       ],
-      "certification_seconds": 27.1073,
-      "data_seconds": 32.1395
+      "certification_seconds": 26.8032,
+      "data_seconds": 32.4872
      },
      {
       "box": [
@@ -126,14 +126,14 @@
        "0",
        "5/32"
       ],
-      "certification_seconds": 27.0891,
-      "data_seconds": 32.289
+      "certification_seconds": 27.1427,
+      "data_seconds": 32.5453
      }
     ]
    },
    "32": {
     "panels": 32,
-    "peak_rss_mb": 28.1,
+    "peak_rss_mb": 25.0,
     "per_box": [
      {
       "box": [
@@ -142,8 +142,8 @@
        "0",
        "5/16"
       ],
-      "certification_seconds": 6.0027,
-      "data_seconds": 7.0361
+      "certification_seconds": 6.073,
+      "data_seconds": 7.2886
      },
      {
       "box": [
@@ -152,8 +152,8 @@
        "15/16",
        "5/4"
       ],
-      "certification_seconds": 5.9826,
-      "data_seconds": 7.0203
+      "certification_seconds": 6.0375,
+      "data_seconds": 7.2987
      },
      {
       "box": [
@@ -162,8 +162,8 @@
        "0",
        "5/16"
       ],
-      "certification_seconds": 6.1843,
-      "data_seconds": 7.3243
+      "certification_seconds": 6.2666,
+      "data_seconds": 7.6028
      },
      {
       "box": [
@@ -172,8 +172,8 @@
        "5/4",
        "25/16"
       ],
-      "certification_seconds": 6.2301,
-      "data_seconds": 7.3141
+      "certification_seconds": 6.3984,
+      "data_seconds": 7.8415
      },
      {
       "box": [
@@ -182,8 +182,8 @@
        "5/16",
        "5/8"
       ],
-      "certification_seconds": 6.1985,
-      "data_seconds": 7.3197
+      "certification_seconds": 6.3098,
+      "data_seconds": 7.9333
      },
      {
       "box": [
@@ -192,8 +192,8 @@
        "15/16",
        "35/32"
       ],
-      "certification_seconds": 6.3478,
-      "data_seconds": 7.5605
+      "certification_seconds": 6.3956,
+      "data_seconds": 8.1517
      },
      {
       "box": [
@@ -202,14 +202,14 @@
        "0",
        "5/32"
       ],
-      "certification_seconds": 6.3763,
-      "data_seconds": 7.5888
+      "certification_seconds": 6.4279,
+      "data_seconds": 7.8727
      }
     ]
    },
    "64": {
     "panels": 64,
-    "peak_rss_mb": 28.1,
+    "peak_rss_mb": 25.0,
     "per_box": [
      {
       "box": [
@@ -218,8 +218,8 @@
        "0",
        "5/16"
       ],
-      "certification_seconds": 12.2875,
-      "data_seconds": 14.4032
+      "certification_seconds": 12.4355,
+      "data_seconds": 14.6606
      },
      {
       "box": [
@@ -228,8 +228,8 @@
        "15/16",
        "5/4"
       ],
-      "certification_seconds": 12.4317,
-      "data_seconds": 14.6271
+      "certification_seconds": 13.5861,
+      "data_seconds": 14.9807
      },
      {
       "box": [
@@ -238,8 +238,8 @@
        "0",
        "5/16"
       ],
-      "certification_seconds": 12.7598,
-      "data_seconds": 15.1633
+      "certification_seconds": 14.3156,
+      "data_seconds": 15.6161
      },
      {
       "box": [
@@ -248,8 +248,8 @@
        "5/4",
        "25/16"
       ],
-      "certification_seconds": 12.7736,
-      "data_seconds": 15.3274
+      "certification_seconds": 14.4183,
+      "data_seconds": 15.3757
      },
      {
       "box": [
@@ -258,8 +258,8 @@
        "5/16",
        "5/8"
       ],
-      "certification_seconds": 12.7369,
-      "data_seconds": 15.3131
+      "certification_seconds": 14.2717,
+      "data_seconds": 15.3034
      },
      {
       "box": [
@@ -268,8 +268,8 @@
        "15/16",
        "35/32"
       ],
-      "certification_seconds": 13.0159,
-      "data_seconds": 15.5457
+      "certification_seconds": 14.9965,
+      "data_seconds": 15.7976
      },
      {
       "box": [
@@ -278,15 +278,15 @@
        "0",
        "5/32"
       ],
-      "certification_seconds": 13.2046,
-      "data_seconds": 15.6238
+      "certification_seconds": 14.4132,
+      "data_seconds": 15.7572
      }
     ]
    }
   },
   "screen": {
    "states": 84,
-   "total_seconds": 57.709
+   "total_seconds": 57.59
   }
  },
  "sample_boxes": [
@@ -336,7 +336,7 @@
  "schema": "C11R_COST/2",
  "sequential": {
   "background_sample_period_seconds": 10.0,
-  "background_samples": 72,
+  "background_samples": 75,
   "background_workers_seen": 0,
   "campaign_workers_seen": 0,
   "detector": "code/c11r_procs.py (revision 4)",
@@ -346,66 +346,66 @@
     "foreign_python": 5,
     "interpreters_seen": 7,
     "load_average": [
-     2.27,
-     2.55,
-     2.57
+     2.2,
+     2.21,
+     2.25
     ],
     "stage": "before",
-    "t": 1790247790.5,
+    "t": 1790266649.4,
     "workers": []
    },
    {
     "foreign_python": 5,
     "interpreters_seen": 7,
     "load_average": [
-     2.06,
-     2.41,
-     2.52
+     1.81,
+     2.11,
+     2.2
     ],
     "stage": "after P=32",
-    "t": 1790247885.0,
+    "t": 1790266747.3,
     "workers": []
    },
    {
     "foreign_python": 5,
     "interpreters_seen": 7,
     "load_average": [
-     2.22,
-     2.4,
-     2.49
+     2.35,
+     2.57,
+     2.42
     ],
     "stage": "after P=64",
-    "t": 1790248080.2,
+    "t": 1790266953.3,
     "workers": []
    },
    {
     "foreign_python": 5,
     "interpreters_seen": 7,
     "load_average": [
-     2.62,
-     2.64,
-     2.59
+     2.1,
+     2.02,
+     2.18
     ],
     "stage": "after P=128",
-    "t": 1790248482.0,
+    "t": 1790267365.7,
     "workers": []
    },
    {
     "foreign_python": 5,
     "interpreters_seen": 7,
     "load_average": [
-     2.51,
-     2.61,
-     2.58
+     1.65,
+     1.9,
+     2.12
     ],
     "stage": "after",
-    "t": 1790248539.8,
+    "t": 1790267423.3,
     "workers": []
    }
   ],
   "what_it_does_not_establish": "the absence of competing computation in general: foreign Python processes and other load are COUNTED, not excluded (the load average is recorded at every sample); work between samples, programs read from stdin or run interactively, imports by computed names, unreadable or non-.py wrapper sources, non-Python executables and other users or hosts are not recognised (the detector artifact's not_checked list)",
   "what_it_establishes": "at every sample (before, between every stage, every 10 s in the background, after) no process that the recorded detector revision RECOGNISES as campaign work was running: a campaign script, -m of a campaign module, a -c / -Bc payload naming one, or a wrapper script whose argv names one or whose readable .py source (<= 1 MB) imports one"
  },
- "sha256": "e6215996ee241b21a7da726a747dbdad241b1dba33d4d499a7482afa136f45ff",
- "wall_seconds": 749.3
+ "sha256": "ba72331bde04418a5fa781138f03de1883f75b84970faab8ba143eb6cb345046",
+ "wall_seconds": 774.1
 }

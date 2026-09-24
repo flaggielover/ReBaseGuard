@@ -158,8 +158,8 @@
   "validation_0_vs_mutation_9": true
  },
  "execution_contract_verification": {
-  "digest": "2ce6fc557566283a618ecca39c328e7736f4551e49b4eed23df979adfe1a9040",
-  "gate_digest": "0f282aa081849f4dc593be775daa8ad04c3ebaea57b2520d07dcb9d6f15395d6",
+  "digest": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+  "gate_digest": "2d23a8b8005dc48312c9088311bc28dcabfd5a3c128e83e48baca1a557e5e453",
   "problems": []
  },
  "generated_from": "the allowlisted artifacts; no line of this report is typed by hand",
@@ -182,8 +182,8 @@
     "passed": 1
    },
    "CMP": {
-    "controls": 9,
-    "passed": 9
+    "controls": 12,
+    "passed": 12
    },
    "DM": {
     "controls": 5,
@@ -212,6 +212,18 @@
    "MHT": {
     "controls": 15,
     "passed": 15
+   },
+   "N71": {
+    "controls": 7,
+    "passed": 7
+   },
+   "N72": {
+    "controls": 12,
+    "passed": 12
+   },
+   "N73": {
+    "controls": 7,
+    "passed": 7
    },
    "ORD": {
     "controls": 3,
@@ -250,21 +262,21 @@
     "passed": 1
    }
   },
-  "chain_controls": 175,
-  "chain_controls_passed": 175,
+  "chain_controls": 204,
+  "chain_controls_passed": 204,
   "chain_loader_ordering_holds": true,
-  "contract_code_files": 18,
+  "contract_code_files": 19,
   "detector_planted_controls": 40,
-  "errata_entries": 55,
+  "errata_entries": 60,
   "firewall_known_miss_probes": {
    "flagged": 6,
    "missed": 14
   },
-  "firewall_modules_scanned": 26,
+  "firewall_modules_scanned": 27,
   "firewall_negative_controls": 16,
   "firewall_positive_controls": 34,
   "gate_predicates": 21,
-  "leak_files_scanned": 41,
+  "leak_files_scanned": 42,
   "mutants": 42,
   "mutants_detected": 42,
   "mutation_detector_kinds": {
@@ -286,12 +298,13 @@
  "leak_check_covers_current_bytes": true,
  "not_fresh": {},
  "not_scanned_by_the_leak_check": "this status artifact: it carries classes, booleans, file names, hashes and counts only, and its keys pass the structural scan below",
- "pre_result_history_commits_checked": 724,
+ "pre_result_history_commits_checked": 726,
  "pre_result_state": {
   "code_directories_hold_exactly_the_frozen_inventory": true,
   "evidence_runs_absent": true,
   "gate_guard_DENY": true,
   "history_integrity": true,
+  "launcher_committed_executable_with_the_frozen_first_line": true,
   "no_authorization_artifact": true,
   "no_authorization_in_any_commit": true,
   "no_comparison_artifact": true,
@@ -310,7 +323,8 @@
   "review/REVIEW_C11R_PREFREEZE_R3.md": true,
   "review/REVIEW_C11R_PREFREEZE_R4.md": true,
   "review/REVIEW_C11R_PREFREEZE_R5.md": true,
-  "review/REVIEW_C11R_PREFREEZE_R6.md": true
+  "review/REVIEW_C11R_PREFREEZE_R6.md": true,
+  "review/REVIEW_C11R_PREFREEZE_R7.md": true
  },
  "provenance": {
   "code_closure": {
@@ -319,35 +333,36 @@
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_certificate.py": "af108978de7c25ecb4d9ee235789b064b7445447d59223532355e1663fb930d1",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "df853733230543539721e40e720c50355bd905dc9e571d9ccb93c1eec0d42f90",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_contract.py": "2cc00d4504202ee4806419ccc8e61ac64c785c20bf29a5054431063a7a6d8c96",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_contract.py": "72181ca7faa364139861c41eab4b7550de5ea2166a0cb5e8c2ba56c810e6cb47",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_cost.py": "6a3ca12192b28f9d3a247dfe411f04c1377bb033410c2cead9c412b6f25d151a",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_launch.py": "839faeae408d60f2acc95364988974d9a05eb25254284c32f56642924ff09806",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py": "61eef77bc7d99ce0cdf59bfc31a18a874355c33698f818166d04ff5f4f6b9c77",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "1aa2d89a790ddfa4db0c3e7d2b8061093633809085cfa833774cd5641fa6c1c6",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_qualify.py": "a0c03f2e23de023063b5314e41eb96b7f9f8e8666b3ac0da2e000ae9181e9b80",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_qualify.py": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "2f2fcfe718d86ba74fb8a8a03c5d0628456959d201d374739759e73f070239a0",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_status.py": "9c5545353804d8e29bfa086623f964669a64a5d8affc7bb6ea8bb8690f33aad2",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_status.py": "907ba2e18496c23207704d0b5b78bfed5c4bc1d13fc85cd21ae8b9ad2dec2ea7",
    "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
   },
   "inputs": {
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_CONTRACT.json": "b9a9759bbfe9c68b41b16a8f1076f52f29e878771c80adf013d07fce25146006",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_POLICY.json": "bc5f0c963e4b8b2f148692bcadb50ab061207cbb58cac5112337449a95458ccd",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/N9R_GATE_C11R.json": "d60c4190a03e04c2e9bc44398779edb7c5f0236e404b55bce1788c7d258d7bec",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/b0/C11R_B0.json": "16a84aecf65f980e3ebcf14bfde934fb0a6b71c106de225ccf512e5e3e915b4d",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/chain/C11R_CHAIN_CONTROLS.json": "34027d93a8525980b70daecab94345f055253f8bf1d15b6d2db42582be1b9237",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/cost/C11R_COST.json": "dd9e6738cdc9895512206fb2556eb5d5ead3e5132b165e9e0e90272b0e04ef21",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_CONTRACT.json": "399c935027758352f9fbea26f03c176afd55a9f0ae1b5e77552b5bb3dba25771",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_POLICY.json": "b8ed06a05cf7bb3ffe8fff2488f58935381eff187610275dff3d7ad30565482c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/N9R_GATE_C11R.json": "a65b13157f34311fefa92b9ebce005772ac6220ed22106848550b299269727bd",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/b0/C11R_B0.json": "25965ae4c43db9a1b407a30023d7812db8d36dc939c7d46e11597bd9e55ca6c2",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/chain/C11R_CHAIN_CONTROLS.json": "cf955451b96e1f8c40b9f3eb4901455b7fad3a69ef54dca0e2825d9b6704f0dd",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/cost/C11R_COST.json": "b275b96fad948a96620ad5be352dd7335754372f9a62c4ee762deea3e4d1c3e8",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/equivalence/C11R_EQUIVALENCE.json": "3a8d2cf3d1335365910e1d2caef6f387301e79c120b524df4c768fbfed685cb8",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/errata/C11R_ERRATA.json": "758127bc9ee4cbfb54fa9d813eb8753e87e9b4185e6c3aa4cb85f5cdbf01d149",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/firewall/C11R_FIREWALL.json": "f40223a082ffe6f9d18f4e7e9c800be921ff7c54248f7522baef1d52eaf11a3e",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/leakcheck/C11R_LEAKCHECK.json": "4a1439942b8c89905960ee9549457eb686c73ea4807b6add9f70b6fc855b8118",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/mutations/C11R_MUTATIONS.json": "23c90a92c611ef49a035f19d9824d8bfeacf3075afd4227b1e8ab59c3eaf88ae",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/policy/C11R_POLICY_EVIDENCE.json": "192564ae8ce5d4da7b2f4abdbcb353a17fc1312277859e2a8339d4939bbe1a92",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/procs/C11R_PROCESS_DETECTOR.json": "5a3f5659c4275ad7adacbc741a7f0a9e4725a821a136c3d3c36705e3492a7f01",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/errata/C11R_ERRATA.json": "b1124314dd80beccc7fba1266258b0df57e5545ff370e3d386cb18955b5b3375",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/firewall/C11R_FIREWALL.json": "77f096c5dbb0252ede13d93828b3c5c312d18ec914c807bc47e9d51a5e8de49a",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/leakcheck/C11R_LEAKCHECK.json": "7152d23a57f940b0dbfb82b4aeb387024a42bcd466c3bcd100e0ef5f740c5dc3",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/mutations/C11R_MUTATIONS.json": "4f373216680330d32740e55484e2a42ff3b433934e7844cf0697f203a472121c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/policy/C11R_POLICY_EVIDENCE.json": "e8b6047f1c194f9bd7d451c15c64c98f24d4dec4275ea10f003e7e4048674995",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/procs/C11R_PROCESS_DETECTOR.json": "b180f278a4eb5bee574d41491f3caf36e3a316932b877ea1d764d6bfc6ff1659",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "2e0f7dc4ceb796289d083ba09129116f128f54dc172ad31d45129a255c0487b7",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/validation/C11R_VALIDATION.json": "cad44700613073710efb311853b003b25e14511c156ed59488e59a75fa0c7e65"
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/validation/C11R_VALIDATION.json": "adbdd477447965fb09f64bf3fce0fda71370e88aa004488b994649904aa0defc"
   },
   "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_status.py",
-  "producer_sha256": "9c5545353804d8e29bfa086623f964669a64a5d8affc7bb6ea8bb8690f33aad2"
+  "producer_sha256": "907ba2e18496c23207704d0b5b78bfed5c4bc1d13fc85cd21ae8b9ad2dec2ea7"
  },
  "qualifier_self_test": {
   "ALL_PASS": true,
@@ -425,7 +440,7 @@
   "c7_gaussian.py": true
  },
  "schema": "C11R_STATUS/2",
- "sha256": "30fc4f63d296efbe446f923a78325dc65a168f867003f4d25f349fd5cd02635b",
+ "sha256": "3b055edf34bb1281d9c45f6418120027d2d5bbd64580393819f7146cf99a70ea",
  "structural_scan_of_every_artifact": {
   "artifacts_scanned": 15,
   "forbidden_payload_keys": {}

@@ -1,4 +1,12 @@
-"""C11R rounds 4-7 -- THE FROZEN EXECUTION CONTRACT and the end-to-end identity chain.
+"""C11R rounds 4-8 -- THE FROZEN EXECUTION CONTRACT and the end-to-end identity chain.
+
+ROUND 8 (review round 7; errata E56-E60). N7-1/N7-2: a boundary program runs only in an interpreter
+started exactly as c11r_launch.py starts it (LAUNCH_POLICY, bound in the contract; L0) -- checked
+by the pre-import barrier BEFORE any other import and again at every boundary
+(launch_policy_problems); the launcher itself is started isolated by the kernel. N7-1 also: the
+cache check models the interpreter's actual hash-based .pyc mode. N7-3: the barrier's rule is a
+POSITIVE campaign-prefix rule (no standard-library enumeration), and the loaded-module snapshot is
+taken after the check's own imports. Contract schema C11R_CONTRACT/5.
 
 ROUND 7 (review round 6; errata E49-E55). R6-1: module identity is now keyed on LOCATION -- any
 module loaded from a campaign code directory must be an approved, byte-verified source whatever
@@ -97,10 +105,11 @@ import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 import c11r_common as C
+import c11r_launch as L
 import c11r_procs as PR
 import c11r_schema as S
 
-CONTRACT_SCHEMA = "C11R_CONTRACT/4"
+CONTRACT_SCHEMA = "C11R_CONTRACT/5"
 QUAL_SCHEMA = "C11R_QUALIFICATION/5"
 AUTH_SCHEMA = "C11R_AUTHORIZATION/5"
 PERMISSION_SCHEMA = "C11R_EXECUTION_PERMISSION/1"
@@ -125,6 +134,7 @@ ROLES = {
     "run_schema": "c11r_schema.py", "comparator": "c11r_compare.py",
     "statement_equivalence": "c11r_equiv.py", "execution_contract": "c11r_contract.py",
     "cost_producer": "c11r_cost.py", "process_detector": "c11r_procs.py",
+    "launcher": "c11r_launch.py",
 }
 CODE_ROOTS = tuple(sorted(set(ROLES.values())))
 REQUIRED_PREDICATES = {
@@ -203,14 +213,15 @@ PERMISSION_TRANSITIONS = {"GRANT": "ALLOW", "EXECUTION_STARTED": "DENY",
 LIFECYCLE_STATES = ("FROZEN", "QUALIFIED", "AUTHORIZED", "EXECUTING", "EXECUTED_UNSEALED",
                     "SEALED", "COMPARED", "ABANDONED", "REVOKED_BEFORE_EXECUTION", "MALFORMED")
 LIFECYCLE = [
-    {"from": "FROZEN", "to": "QUALIFIED", "actor": "Phase 12: c11r_qualify.py",
+    {"from": "FROZEN", "to": "QUALIFIED", "actor": "Phase 12: c11r_launch.py qualify",
      "event": "the qualification is written and committed", "writes": [QUAL_REL],
      "execution_permission_after": None},
     {"from": "QUALIFIED", "to": "AUTHORIZED",
      "actor": "Phase 13: build_authorization (authorization + permission GRANT)",
      "event": "the authorization AND the execution permission GRANT are committed in ONE commit",
      "writes": [AUTH_REL, PERMISSION_REL], "execution_permission_after": "ALLOW"},
-    {"from": "AUTHORIZED", "to": "EXECUTING", "actor": "Phase 14: c11r_runs.begin_execution",
+    {"from": "AUTHORIZED", "to": "EXECUTING",
+     "actor": "Phase 14: c11r_launch.py run -> c11r_runs.begin_execution",
      "event": "after the pre-flight passes and BEFORE any science, the runner replaces the "
               "permission on disk with DENY/EXECUTION_STARTED (not committed)",
      "writes": [PERMISSION_REL], "execution_permission_after": "DENY"},
@@ -223,7 +234,7 @@ LIFECYCLE = [
      "event": "the runs artifact and the DENY/EXECUTION_COMPLETED record are committed in ONE "
               "commit -- the seal; the authorization is not touched", "writes": [],
      "execution_permission_after": "DENY"},
-    {"from": "SEALED", "to": "COMPARED", "actor": "Phase 15: c11r_compare.py",
+    {"from": "SEALED", "to": "COMPARED", "actor": "Phase 15: c11r_launch.py compare",
      "event": "the comparator verifies under execution permission DENY and, only when every "
               "step passed and the comparison completed, writes the comparison exactly once "
               "(a refusal writes nothing and the state stays SEALED: COMPARISON_TRANSACTION)",
@@ -354,6 +365,7 @@ def contract_body(repo=None) -> dict:
     body["frozen_code"] = frozen_code(repo, body["code"])
     body["code_directories"] = code_directories(repo)
     body["module_identity"] = dict(MODULE_IDENTITY_POLICY)
+    body["launch_policy"] = dict(LAUNCH_POLICY)             # review 7, N7-1 / N7-2 (L0)
     return body
 
 
@@ -418,7 +430,7 @@ COMPARED_KEYS = ("schema", "scope", "roles", "code", "artifacts", "scientific_in
                  "qualification_items", "qualification_unknown_item_rule",
                  "qualification_proves", "protocol_paths", "protocol_dirs", "lifecycle",
                  "frozen_paths", "frozen_code", "code_directories", "module_identity",
-                 "contains_target_results")
+                 "launch_policy", "contains_target_results")
 
 
 def namespace_code() -> list[str]:
@@ -1099,22 +1111,37 @@ def verify_qualification(repo, q: dict | None, roots: dict, *, approved_commit: 
 #        directory, and every entry that precedes the standard library is a campaign code
 #        directory or lies inside the interpreter's own installation -- so a standard-library
 #        name can be resolved ahead of the standard library only in a campaign code directory,
-#        which (L1), (S) and (B) cover;
+#        which (S) and (B) cover and (L1) examines when it is loaded (review 7, N7-3: a module a
+#        boundary check itself imports is loaded before the snapshot is taken);
 #   (S)  STATIC INVENTORY (code_dir_shadows): each campaign code directory holds EXACTLY the
 #        entries the contract froze (`code_directories`: tracked, regular *.py files) and at most a
 #        real `__pycache__` whose entries are regular files named <inventory stem>.<cache
 #        tag>[.opt-N].pyc (CPython reads that directory only for a source it has already found).
 #        Anything else -- a .pyc, an extension, a zip or egg, a package or namespace directory, a
 #        symlink, metadata, an unexpected or untracked .py, a COMMITTED addition -- is refused by
-#        name and kind, and no entry may carry a standard-library or built-in module name;
+#        name and kind. (A standard-library or built-in name is ALSO reported, as defence in depth
+#        only: `sys.stdlib_module_names` is not complete -- review 7, N7-3,
+#        `_sysconfigdata__darwin_darwin` -- and no rule depends on it.)
 #   (B)  PRE-IMPORT BARRIER: the three boundary programs (c11r_runs, c11r_compare, c11r_qualify)
 #        execute PREIMPORT_BARRIER as their first statement, before any other import (they no
 #        longer begin with `from __future__ import annotations`, itself an import resolved through
-#        sys.path). Using only `os` and `sys` -- loaded by the interpreter before the script's
-#        directory was on sys.path -- it refuses to start while a campaign code directory holds
-#        anything but regular *.py files and __pycache__, or a *.py with a standard-library name.
-#        A shadow must therefore be ABSENT WHEN THE PROGRAM STARTS, not merely detected after it
-#        has run.
+#        sys.path). Using only `os`, `sys` and the built-in `_imp`, it refuses to start while a
+#        campaign code directory holds anything but __pycache__ and regular, lower-case *.py files
+#        carrying that DIRECTORY'S CAMPAIGN PREFIX (c11r_, c11_, c7_) -- a POSITIVE rule that no
+#        standard-library, third-party or start-up module name can satisfy, so it depends on no
+#        enumeration of the standard library (review 7, N7-3). A shadow must be ABSENT WHEN THE
+#        PROGRAM STARTS, not merely detected after it has run.
+# ROUND 8 (review 7, N7-1 and N7-2). (L0) THE LAUNCH POLICY: a boundary program runs only in an
+# interpreter started exactly as c11r_launch.py starts it -- the frozen executable, isolated and
+# without site (-I -S: no PYTHON* variable is honoured, no user site, no .pth hook, the script's
+# directory is not on sys.path), DEFAULT hash-based .pyc checking (`--check-hash-based-pycs never`
+# executes a forged checked cache: N7-1), no pycache prefix, no warning options, only the frozen -X
+# option, and an EXPLICIT environment (the frozen name allowlist, PATH frozen). The barrier checks
+# it when the file runs as a program, BEFORE any other import; runner_preflight, comparator step 12
+# and Q4 check it again (launch_policy_problems). The launcher is started isolated by the KERNEL
+# (its first line), so the environment never acts before a campaign statement on the supported
+# path; a direct start is refused by the barrier before any campaign import, but what the
+# interpreter executed at its own start-up has then already run (LAUNCH_POLICY.not_covered).
 # SCOPE, exactly: what the code directories hold when a boundary program starts and when it is
 # checked, and what the import system loaded, from which file, at the moment of the check. A file
 # placed between the barrier and the import that uses it and removed before the check, code
@@ -1144,34 +1171,104 @@ MODULE_IDENTITY_POLICY = {
                               "entries ahead of the standard library are campaign code "
                               "directories or inside the interpreter's installation (L3)",
     "code_directory_inventory": "exactly the frozen regular, tracked *.py entries and at most a "
-                                "real __pycache__; no entry carries a standard-library or "
-                                "built-in module name (S)",
+                                "real __pycache__ (S); a standard-library or built-in name is "
+                                "reported too, as defence in depth only (the enumeration is not "
+                                "complete: review 7, N7-3)",
     "cache_policy": "__pycache__ holds only regular files named <inventory stem>.<cache tag>"
                     "[.opt-N].pyc; a cache CPython would accept must equal the compilation of "
                     "its verified source; a stale cache is ignored by CPython and not a finding",
-    "preimport_barrier": "the boundary programs refuse to start while a code directory holds "
-                         "anything but regular *.py files and __pycache__, or a *.py with a "
-                         "standard-library name (B)",
+    "preimport_barrier": "the boundary programs, run as programs, refuse to start unless the "
+                         "launch policy holds (L0), and always refuse while a code directory "
+                         "holds anything but __pycache__ and regular lower-case *.py files "
+                         "carrying the directory's campaign prefix (B; no standard-library "
+                         "enumeration involved)",
+    "launch_policy": "c11r_launch.py, started isolated by the kernel, execs the program under "
+                     "LAUNCH_POLICY; the barrier, runner_preflight, comparator step 12 and Q4 "
+                     "verify it (L0)",
     "not_covered": "a file placed after the barrier and removed before the check; exec/eval; a "
                    "module that rewrites its own metadata or deletes its file once executing; "
                    "in-memory patching -- arbitrary malicious runtime modification"}
 
-# The block every boundary program executes FIRST (after its docstring). Its text is canonical:
-# preimport_barrier_problems() requires it verbatim, first, in all three programs.
-PREIMPORT_BARRIER = '''# --- C11R PRE-IMPORT BARRIER (review 6, R6-1): the first statement, before any other import ---
+# (L0) THE LAUNCH POLICY, bound in the contract: c11r_launch.py's constants ARE the policy.
+CODE_DIR_PREFIXES = {f"{C.NS_REL}/code": "c11r_",
+                     str((C.C11 / "code").relative_to(C.REPO)): "c11_",
+                     str((C.C7 / "code").relative_to(C.REPO)): "c7_"}
+LAUNCH_POLICY = {
+    "launcher": f"{C.NS_REL}/code/c11r_launch.py",
+    "launcher_first_line": f"#!{L.FROZEN_INTERPRETER} -IS",
+    "interpreter": L.FROZEN_INTERPRETER,
+    "child_flags": list(L.CHILD_FLAGS),
+    "required": "isolated (-I: environment ignored, no user site, safe path) and no site (-S); "
+                "optimize 0; check_hash_based_pycs 'default'; no pycache prefix; no warning "
+                "options; -X options only " + repr(L.ALLOWED_XOPTIONS),
+    "environment_allowed": list(L.ENV_ALLOWED), "path": L.FROZEN_PATH,
+    "launcher_refuses_prefixes": list(L.ENV_REFUSED_PREFIXES),
+    "code_directory_prefixes": dict(CODE_DIR_PREFIXES),
+    "not_covered": "a boundary program started some other way is refused by its barrier before any "
+                   "campaign import, but what the interpreter itself executed at start-up (a "
+                   "sitecustomize or user-site .pth hook, a forged cache of a start-up stdlib "
+                   "module under PYTHONPYCACHEPREFIX) has then already run; native code injected "
+                   "by the dynamic linker (DYLD_*, refused by the launcher) acts before any "
+                   "Python; the interpreter binary and its standard library are the host's"}
+
+
+def launch_policy_problems() -> list[str]:
+    """(L0): THIS process was started as c11r_launch.py starts a boundary program -- the frozen
+    interpreter policy and the explicit environment (review 7, N7-1, N7-2)."""
+    import _imp
+    p = L.interpreter_problems(sys.flags, _imp.check_hash_based_pycs, sys.pycache_prefix,
+                               sys._xoptions, sys.warnoptions, sys.executable)
+    extra = sorted(k for k in os.environ if k not in L.ENV_ALLOWED)
+    if extra:
+        p.append(f"the environment carries names outside the frozen allowlist {extra}")
+    if os.environ.get("PATH") != L.FROZEN_PATH:
+        p.append("PATH is not the frozen one")
+    return [f"launch policy: {x}" for x in p]
+
+
+# The block every boundary program executes FIRST (after its docstring). Its text is canonical,
+# generated from the launch policy's constants: preimport_barrier_problems() requires it verbatim,
+# first, in all three programs.
+_BARRIER_TEMPLATE = """# --- C11R PRE-IMPORT BARRIER (reviews 6-7: R6-1, N7-1, N7-2, N7-3): the first statement ---
 import os as _os
 import sys as _sys
+import _imp as _c11r_imp
 
 
 def _c11r_preimport_barrier():
-    """Refuse to start while a campaign code directory holds anything a standard-library import
-    could resolve to. Only `os` and `sys` are used: the interpreter loaded both before this
-    script's directory was put on sys.path (c11r_contract.PREIMPORT_BARRIER)."""
+    \"\"\"Run as a PROGRAM, refuse to start unless the interpreter was started as c11r_launch.py
+    starts it (isolated, no site, default hash-based .pyc checking, the frozen interpreter, the
+    explicit environment); always refuse while a campaign code directory holds anything but
+    __pycache__ and regular lower-case *.py files carrying its campaign prefix. Only `os`, `sys`
+    and the built-in `_imp` are used: nothing here is resolved through sys.path
+    (c11r_contract.PREIMPORT_BARRIER, generated from c11r_launch.py).\"\"\"
+    bad = []
+    if __name__ == "__main__":
+        f = _sys.flags
+        if not (f.isolated and f.ignore_environment and f.no_user_site and f.safe_path
+                and f.no_site):
+            bad.append("not started isolated and without site (-I -S): use c11r_launch.py")
+        if f.optimize:
+            bad.append("assertions stripped (-O)")
+        if _c11r_imp.check_hash_based_pycs != "default":
+            bad.append("hash-based .pyc policy " + repr(_c11r_imp.check_hash_based_pycs))
+        if _sys.pycache_prefix is not None:
+            bad.append("a pycache prefix is set")
+        if _sys._xoptions and dict(_sys._xoptions) != @XOPTIONS@:
+            bad.append("-X options other than the frozen ones")
+        if _sys.warnoptions:
+            bad.append("warning options are set")
+        if _os.path.realpath(_sys.executable) != _os.path.realpath(@INTERPRETER@):
+            bad.append("not the frozen interpreter")
+        extra = sorted(k for k in _os.environ if k not in @ENV_ALLOWED@)
+        if extra:
+            bad.append("environment names outside the frozen allowlist: " + ", ".join(extra))
+        if _os.environ.get("PATH") != @PATH@:
+            bad.append("PATH is not the frozen one")
     here = _os.path.dirname(_os.path.realpath(__file__))
     closure = _os.path.dirname(_os.path.dirname(here))
-    bad = []
-    for d in (here, _os.path.join(closure, "p5y_k5_tail_c11_n9_independent_certifier", "code"),
-              _os.path.join(closure, "p5y_k5_tail_c7_e2_lambda309", "code")):
+    for d, prefix in ((here, "c11r_"), (_os.path.join(closure, @C11@, "code"), "c11_"),
+                      (_os.path.join(closure, @C7@, "code"), "c7_")):
         if _os.path.islink(d) or not _os.path.isdir(d):
             bad.append(d)
             continue
@@ -1179,26 +1276,46 @@ def _c11r_preimport_barrier():
             p = _os.path.join(d, e)
             if e == "__pycache__" and _os.path.isdir(p) and not _os.path.islink(p):
                 continue
-            if (not e.endswith(".py") or _os.path.islink(p) or not _os.path.isfile(p)
-                    or e[:-3] in _sys.stdlib_module_names or e[:-3] in _sys.builtin_module_names):
+            stem = e[:-3]
+            if not (e.endswith(".py") and stem.startswith(prefix) and stem.isascii()
+                    and stem.replace("_", "").isalnum() and stem == stem.lower()
+                    and _os.path.isfile(p) and not _os.path.islink(p)):
                 bad.append(_os.path.basename(_os.path.dirname(d)) + "/code/" + e)
     if bad:
-        raise SystemExit("REFUSE (pre-import barrier, review 6 R6-1): a campaign code directory "
-                         "holds an entry a standard-library import could resolve to: "
-                         + ", ".join(bad))
+        raise SystemExit("REFUSE (pre-import barrier, reviews 6-7): " + "; ".join(bad))
 
 
 _c11r_preimport_barrier()
 # --- end of the pre-import barrier ---
-'''
+"""
+PREIMPORT_BARRIER = (_BARRIER_TEMPLATE
+                     .replace("@XOPTIONS@", repr(dict(L.ALLOWED_XOPTIONS)))
+                     .replace("@INTERPRETER@", repr(L.FROZEN_INTERPRETER))
+                     .replace("@ENV_ALLOWED@", repr(tuple(L.ENV_ALLOWED)))
+                     .replace("@PATH@", repr(L.FROZEN_PATH))
+                     .replace("@C11@", repr(C.C11.name))
+                     .replace("@C7@", repr(C.C7.name)))
 
 
 def preimport_barrier_problems(repo=None) -> list[str]:
-    """(B): each boundary program starts with PREIMPORT_BARRIER verbatim, immediately after its
+    """(B, L0): each boundary program starts with PREIMPORT_BARRIER verbatim, immediately after its
     docstring, and imports nothing from __future__ (such an import must come first and is
-    resolved through sys.path)."""
+    resolved through sys.path); the launcher's first line starts the frozen interpreter with
+    -IS; every inventory entry carries its directory's campaign prefix."""
     import ast
     p = []
+    try:
+        first = code_bytes(repo, LAUNCH_POLICY["launcher"]).decode().splitlines()[0]
+    except (OSError, ValueError, IndexError):
+        first = None
+    if first != LAUNCH_POLICY["launcher_first_line"]:
+        p.append("launch policy: c11r_launch.py does not start with the frozen interpreter line")
+    inv = code_directories(repo)
+    for rel_d, prefix in CODE_DIR_PREFIXES.items():
+        off = [e for e in inv.get(rel_d, []) if not (e.startswith(prefix) and e == e.lower())]
+        if off:
+            p.append(f"pre-import barrier: {off} in {rel_d} do not carry the campaign prefix "
+                     f"{prefix!r}")
     for name in BOUNDARY_PROGRAMS:
         rel = f"{C.NS_REL}/code/{name}"
         try:
@@ -1306,6 +1423,7 @@ def _pyc_matches_source(cached: str | None, source: bytes, filename: str) -> boo
     then recompiles from source and ignores the cache), or a checked hash-based header whose
     source hash does not match. An UNCHECKED hash-based cache, or a timestamp cache whose header
     matches, is what the loader executes, so its code object must equal the source's."""
+    import _imp
     import importlib.util as U
     import marshal
     if not cached or not os.path.exists(cached):
@@ -1316,8 +1434,12 @@ def _pyc_matches_source(cached: str | None, source: bytes, filename: str) -> boo
             return None
         flags = int.from_bytes(data[4:8], "little")
         if flags & 0b1:                                   # hash-based
-            if flags & 0b10 and data[8:16] != U.source_hash(source):
-                return None                               # checked, stale: recompiled
+            # the loader validates the source hash in mode 'always', and in 'default' only for a
+            # CHECKED cache; in mode 'never' it validates nothing (review 7, N7-1)
+            mode = _imp.check_hash_based_pycs
+            validated = mode == "always" or (mode == "default" and flags & 0b10)
+            if validated and data[8:16] != U.source_hash(source):
+                return None                               # validated, stale: recompiled
         else:                                             # timestamp-based
             st = os.stat(filename)
             if (int.from_bytes(data[8:12], "little") != (int(st.st_mtime) & 0xFFFFFFFF)
@@ -1552,6 +1674,11 @@ def verify_loaded_modules(contract: dict, exec_root=None, modules: dict | None =
     `role`, every module its program imports at module level is present."""
     root = pathlib.Path(os.path.realpath(exec_root or C.REPO))
     lex_root = pathlib.Path(os.path.abspath(exec_root or C.REPO))
+    dirs = [(os.path.abspath(lex_root / d), os.path.realpath(lex_root / d))
+            for d in code_dir_rels()]
+    # (L3) FIRST: it imports sysconfig and its platform data module; the snapshot below must
+    # include whatever this check itself caused to be loaded (review 7, N7-3)
+    path_problems = _import_path_problems(dirs, lex_root)
     mods = dict(sys.modules if modules is None else modules)
     stems = {pathlib.PurePosixPath(rel).stem: rel for rel in contract["code"]}
     approved = approved_sources(contract)
@@ -1560,13 +1687,11 @@ def verify_loaded_modules(contract: dict, exec_root=None, modules: dict | None =
     if not isinstance(inv, dict) or sorted(inv) != code_dir_rels():
         p.append("loaded modules: the contract binds no inventory of the campaign code "
                  "directories")
-    dirs = [(os.path.abspath(lex_root / d), os.path.realpath(lex_root / d))
-            for d in code_dir_rels()]
     if os.environ.get("PYTHONPATH"):
         p.append("loaded modules: PYTHONPATH is set; the import path is not the contract's")
     if sys.flags.optimize:
         p.append("loaded modules: assertions are stripped (-O)")
-    p += _import_path_problems(dirs, lex_root)
+    p += path_problems
     for key, m in sorted(mods.items(), key=lambda kv: kv[0]):
         if m is None:
             continue
@@ -1965,6 +2090,7 @@ def _runner_preflight(repo=None, *, allow_fixture=False, check_processes=True) -
         # checkout's, source-backed, and every module the runner imports at module level is there
         p += [f"runner pre-flight: {x}"
               for x in verify_loaded_modules(contract, role="runner")["problems"]]
+        p += [f"runner pre-flight: {x}" for x in launch_policy_problems()]    # L0 (N7-1, N7-2)
         p += [f"runner pre-flight: {x}" for x in code_dir_shadows(contract, repo)]
         if (_root(repo) / C.NS_REL / "evidence" / "runs").exists():
             p.append("runner pre-flight: a runs artifact already exists")

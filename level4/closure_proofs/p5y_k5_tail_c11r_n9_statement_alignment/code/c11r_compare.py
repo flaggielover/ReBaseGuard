@@ -1,6 +1,10 @@
 """C11R Phase 15 -- the sealed comparison. Revision 7 (N6-3, N6-5; R5-1, N5-2, N5-7, E45; R4-1,
 N4-5, N4-8 kept).
 
+REVISION 8 (review 7; errata E56, E59). The comparator is started only through c11r_launch.py and
+step 12 checks the launch policy (N7-1, N7-2). N7-4: a pre-load refusal prints its verdict class
+and whether a retry can help at all. N7-5: deeply nested runs JSON is a typed refusal.
+
 REVISION 7 (review 6; errata E50, E52). N6-3: round 6 wrote the comparison artifact even when the
 chain refused BEFORE the loader; `phase15` is now ONE transaction -- verify, load iff every step
 passed, compute, write exactly once -- and a refusal writes NOTHING (c11r_contract.
@@ -62,20 +66,46 @@ deduction no production certifier has -- and, since revision 7, through a certif
 frozen F_K, F_H, F_D, which the run step refuses (N6-4) -- and the self-test exercises it that way,
 on the pure classification functions.
 """
-# --- C11R PRE-IMPORT BARRIER (review 6, R6-1): the first statement, before any other import ---
+# --- C11R PRE-IMPORT BARRIER (reviews 6-7: R6-1, N7-1, N7-2, N7-3): the first statement ---
 import os as _os
 import sys as _sys
+import _imp as _c11r_imp
 
 
 def _c11r_preimport_barrier():
-    """Refuse to start while a campaign code directory holds anything a standard-library import
-    could resolve to. Only `os` and `sys` are used: the interpreter loaded both before this
-    script's directory was put on sys.path (c11r_contract.PREIMPORT_BARRIER)."""
+    """Run as a PROGRAM, refuse to start unless the interpreter was started as c11r_launch.py
+    starts it (isolated, no site, default hash-based .pyc checking, the frozen interpreter, the
+    explicit environment); always refuse while a campaign code directory holds anything but
+    __pycache__ and regular lower-case *.py files carrying its campaign prefix. Only `os`, `sys`
+    and the built-in `_imp` are used: nothing here is resolved through sys.path
+    (c11r_contract.PREIMPORT_BARRIER, generated from c11r_launch.py)."""
+    bad = []
+    if __name__ == "__main__":
+        f = _sys.flags
+        if not (f.isolated and f.ignore_environment and f.no_user_site and f.safe_path
+                and f.no_site):
+            bad.append("not started isolated and without site (-I -S): use c11r_launch.py")
+        if f.optimize:
+            bad.append("assertions stripped (-O)")
+        if _c11r_imp.check_hash_based_pycs != "default":
+            bad.append("hash-based .pyc policy " + repr(_c11r_imp.check_hash_based_pycs))
+        if _sys.pycache_prefix is not None:
+            bad.append("a pycache prefix is set")
+        if _sys._xoptions and dict(_sys._xoptions) != {'int_max_str_digits': '0'}:
+            bad.append("-X options other than the frozen ones")
+        if _sys.warnoptions:
+            bad.append("warning options are set")
+        if _os.path.realpath(_sys.executable) != _os.path.realpath('/Library/Frameworks/Python.framework/Versions/3.14/bin/python3.14'):
+            bad.append("not the frozen interpreter")
+        extra = sorted(k for k in _os.environ if k not in ('HOME', 'LANG', 'LC_ALL', 'LC_CTYPE', 'LOGNAME', 'PATH', 'TMPDIR', 'USER', '__CF_USER_TEXT_ENCODING'))
+        if extra:
+            bad.append("environment names outside the frozen allowlist: " + ", ".join(extra))
+        if _os.environ.get("PATH") != '/usr/bin:/bin:/usr/sbin:/sbin':
+            bad.append("PATH is not the frozen one")
     here = _os.path.dirname(_os.path.realpath(__file__))
     closure = _os.path.dirname(_os.path.dirname(here))
-    bad = []
-    for d in (here, _os.path.join(closure, "p5y_k5_tail_c11_n9_independent_certifier", "code"),
-              _os.path.join(closure, "p5y_k5_tail_c7_e2_lambda309", "code")):
+    for d, prefix in ((here, "c11r_"), (_os.path.join(closure, 'p5y_k5_tail_c11_n9_independent_certifier', "code"), "c11_"),
+                      (_os.path.join(closure, 'p5y_k5_tail_c7_e2_lambda309', "code"), "c7_")):
         if _os.path.islink(d) or not _os.path.isdir(d):
             bad.append(d)
             continue
@@ -83,13 +113,13 @@ def _c11r_preimport_barrier():
             p = _os.path.join(d, e)
             if e == "__pycache__" and _os.path.isdir(p) and not _os.path.islink(p):
                 continue
-            if (not e.endswith(".py") or _os.path.islink(p) or not _os.path.isfile(p)
-                    or e[:-3] in _sys.stdlib_module_names or e[:-3] in _sys.builtin_module_names):
+            stem = e[:-3]
+            if not (e.endswith(".py") and stem.startswith(prefix) and stem.isascii()
+                    and stem.replace("_", "").isalnum() and stem == stem.lower()
+                    and _os.path.isfile(p) and not _os.path.islink(p)):
                 bad.append(_os.path.basename(_os.path.dirname(d)) + "/code/" + e)
     if bad:
-        raise SystemExit("REFUSE (pre-import barrier, review 6 R6-1): a campaign code directory "
-                         "holds an entry a standard-library import could resolve to: "
-                         + ", ".join(bad))
+        raise SystemExit("REFUSE (pre-import barrier, reviews 6-7): " + "; ".join(bad))
 
 
 _c11r_preimport_barrier()
@@ -211,7 +241,7 @@ def read_runs(root: pathlib.Path) -> tuple[dict | None, bytes | None, list[str]]
     try:
         raw = path.read_bytes()
         obj = json.loads(raw)
-    except (OSError, ValueError) as e:
+    except (OSError, ValueError, RecursionError) as e:   # RecursionError: review 7, N7-5
         return None, None, [f"the runs artifact is not readable JSON ({type(e).__name__})"]
     if not isinstance(obj, dict):
         return None, raw, ["the runs artifact is not a JSON object"]
@@ -343,6 +373,7 @@ def execute_comparison(repo=None, *, approved_commit: str, loader, allow_fixture
                       if pre_["per"][k]["CLASS"] == "INVALID"]
             other += [f"independence violation: {k}" for k in pre_["violations"]]
             other += CT.verify_loaded_modules(contract, role="comparator")["problems"]
+            other += CT.launch_policy_problems()                  # L0 (review 7, N7-1, N7-2)
             other += CT.code_dir_shadows(contract, repo)
             other += comparison_rule_problems(stmt_, facts["roots"].get("gate") or {}, contract)
             return stmt_, pre_, other
@@ -705,6 +736,20 @@ def write_comparison(repo, out: dict) -> str:
 # comparison refuse. Now: verify -> load iff every step passed -> compute -> write ONCE. Nothing is
 # written on any other path; the refusal is printed, typed, with its own exit code.
 EXIT = {"COMPARED": 0, "REFUSED_BEFORE_LOAD": 3, "POST_LOAD_FAILURE": 4}
+# A pre-load refusal whose cause lies IN the sealed run cannot be cured by a retry (review 7,
+# N7-4): the run step (schema, execution identity), G8/G10/G19, and the value-trace, per-target and
+# independence problems of the last step.
+INTRINSIC_STEPS = ("run", "G8", "G10", "G19")
+INTRINSIC_PREFIXES = ("value trace:", "independence violation:") + tuple(
+    f"{k}: " for k in S.SIX_CONSTANTS)
+
+
+def refusal_is_intrinsic(result: dict) -> bool:
+    if result.get("refused_at") in INTRINSIC_STEPS:
+        return True
+    last = next((s_ for s_ in result.get("steps", []) if s_["name"] == STEPS[-1]), None)
+    return bool(last and last["evaluated"] and any(
+        str(x).startswith(INTRINSIC_PREFIXES) for x in last["problems"]))
 
 
 def phase15(repo=None, *, approved_commit: str, loader, allow_fixture: bool = False,
@@ -730,11 +775,19 @@ def phase15(repo=None, *, approved_commit: str, loader, allow_fixture: bool = Fa
                           f"({type(e).__name__}); NOTHING was written. Do not run the comparator "
                           f"again without the user's instruction (COMPARISON_TRANSACTION)."]}
     if not result.get("loader_called"):
+        intrinsic = refusal_is_intrinsic(result)
+        retry = ("retry CANNOT help: the cause is intrinsic to the sealed run (its schema, "
+                 "identity, guards, value trace, statements or independence), which no retry "
+                 "may change -- the run stays " + result["N9_VERDICT"] if intrinsic else
+                 "a retry can help only once a cause OUTSIDE the sealed run is removed (the "
+                 "tree, a stray file, the environment), without changing any frozen path or "
+                 "protocol record")
         return {"outcome": "REFUSED_BEFORE_LOAD", "written": False, "result": result,
+                "verdict_class": result["N9_VERDICT"], "retry_can_help": not intrinsic,
                 "lines": [f"REFUSED before the loader at step {result['refused_at_step']} "
-                          f"({result['refused_at']}); NOTHING was written, the state stays "
-                          f"SEALED, and once the cause is removed the comparator may be run "
-                          f"again (COMPARISON_TRANSACTION):"]
+                          f"({result['refused_at']}): verdict class {result['N9_VERDICT']}; "
+                          f"NOTHING was written and the state stays SEALED; {retry} "
+                          f"(COMPARISON_TRANSACTION):"]
                 + [f"  - {p}" for p in result["identity_problems"]]}
     out = {"schema": "C11R_COMPARISON/6", "approved_commit": approved_commit, "result": result,
            "rendered": render(result)}
