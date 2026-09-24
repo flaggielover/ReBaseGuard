@@ -182,7 +182,8 @@ def main() -> int:
         not tc["numpy"] and not tc["flint"], {"importlib_find_spec": tc})
 
     procs = PR.campaign_workers()
-    chk(14, "no campaign worker is running (detector revision 2, framework Python included)",
+    chk(14, f"no campaign worker is running (detector {PR.DETECTOR_LABEL}, framework Python "
+            f"included)",
         not procs["workers"],
         {"workers": procs["workers"], "foreign_python": procs["foreign_python"],
          "interpreters_seen": procs["interpreters_seen"], "mechanism": procs["mechanism"]})

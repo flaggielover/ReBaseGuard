@@ -36,14 +36,14 @@
  },
  "comparison_rule_source": {
   "artifact": "evidence/table/C11R_N9_STATEMENTS.json",
-  "sha256": "02ee99dfdb5c57321f80357f7468631f0dfdf9598f527252710bcbe330c798eb"
+  "sha256": "b937cace6ae29701b8271a8d659d8817b017cde7094231b1339e4cd3e22a2ca1"
  },
  "compute_policy": {
   "AWS": "FORBIDDEN",
   "SR_PS1_campaign": "MUST NOT BE TOUCHED",
   "remote_provisioning": "not required; the policy's cap is local"
  },
- "execution_contract_sha256": "ccf8b93d64b051a9bfe0fb7828fca0b042f43c9fd109b92062e8c5704bc1b5ae",
+ "execution_contract_sha256": "2ce6fc557566283a618ecca39c328e7736f4551e49b4eed23df979adfe1a9040",
  "execution_contract_source": "config/C11R_CONTRACT.json",
  "forbidden_conclusions": [
   "that C11 is rewritten as success",
@@ -73,7 +73,7 @@
   "INDEPENDENCE_VIOLATION",
   "EXECUTION_INVALID"
  ],
- "policy_sha256": "2089ef0c54f481299eaa5fb8262034a4d1609a734907716c46ce5789e27ddc66",
+ "policy_sha256": "0bd0347a2ea5d795416bb0c591fe1977650fdf9011c2cb850eefccd1e5fb139a",
  "predecessor_state_preserved": {
   "C11_verdict": "EXECUTION_INVALID",
   "C2_to_C10": "historical verdicts immutable",
@@ -102,8 +102,8 @@
   "G18_every_value_traced_to_a_certificate": "every CERTIFIED target's value equals the value reconstructed from a certificate that verifies; evaluated in production by c11r_certificate.evaluate_target",
   "G19_configuration_adherence": "ONE execution at ONE configuration: every certificate in the runs artifact was made at exactly the depth and panel count the frozen policy selected and the execution contract binds. Evaluated in production by c11r_certificate.configuration_adherence, called by the runner's self-check and by the comparator BEFORE any original magnitude is loaded; a failure makes the comparison EXECUTION_INVALID",
   "G1_statement_table_complete": "C11R_N9_STATEMENTS reports TABLE_CLASS = RESOLVED with no unresolved field for any of the six constants",
-  "G20_execution_identity_chain": "the executed identity is the approved one, end to end: the comparator RECOMPUTES the execution contract from bytes, requires every frozen path to be byte-identical to its version at the approved commit (TREE IDENTITY) and held in exactly that state by EVERY commit reachable after it, merges and side branches included (HISTORY PURITY), the protocol artifacts to appear in history only as the protocol allows, the qualification to satisfy the typed Q1-Q18 schema, every loaded load-bearing module -- by name and by origin -- to be the contract's SOURCE file (sourceless bytecode refused), and the gate, qualification, authorization, runner, code closure, certifiers and configuration recorded in the runs artifact to equal the recomputed ones -- all BEFORE any original magnitude is loaded. Evaluated in production by c11r_contract.verify_run_identity and the chain checks it depends on; a failure is EXECUTION_INVALID and the quarantine is not opened",
-  "G21_execution_lifecycle": "execution PERMISSION is separate from the authorization EVIDENCE: the gate's guard stays DENY; the authorization is introduced once and never modified or removed; the execution-permission record moves only forward through the frozen transition table (GRANT committed with the authorization; EXECUTION_STARTED before any science; EXECUTION_COMPLETED bound to the run, committed with it as the seal); the state is DERIVED from committed and on-disk facts; the runner requires AUTHORIZED and the comparator SEALED -- execution permission DENY. Evaluated in production by c11r_contract.lifecycle; any other state is refused before any science and before any original magnitude is loaded",
+  "G20_execution_identity_chain": "the executed identity is the approved one, end to end: the comparator RECOMPUTES the execution contract from bytes, requires every frozen path to be byte-identical to its version at the approved commit (TREE IDENTITY) and held in exactly that state by EVERY commit reachable after it, merges and side branches included (HISTORY PURITY), the protocol artifacts to appear in history only as the protocol allows, the qualification to satisfy the typed Q1-Q18 schema, every loaded load-bearing module -- by name and by origin -- to be the contract's SOURCE file (sourceless bytecode refused), every module loaded from a campaign code directory -- WHATEVER ITS NAME -- to be an approved, byte-verified source, the import path to admit nothing ahead of the standard library but those directories, the directories to hold exactly their frozen inventory, and the boundary programs to start behind the pre-import barrier (review 6, R6-1), and the gate, qualification, authorization, runner, code closure, certifiers and configuration recorded in the runs artifact to equal the recomputed ones -- all BEFORE any original magnitude is loaded. Evaluated in production by c11r_contract.verify_run_identity and the chain checks it depends on; a failure is EXECUTION_INVALID and the quarantine is not opened",
+  "G21_execution_lifecycle": "execution PERMISSION is separate from the authorization EVIDENCE: the gate's guard stays DENY; the authorization is introduced once and never modified or removed; the execution-permission record moves only forward through the frozen transition table (GRANT committed with the authorization; EXECUTION_STARTED before any science; EXECUTION_COMPLETED bound to the run, committed with it as the seal); the state is DERIVED from committed and on-disk facts; the runner requires AUTHORIZED and the comparator SEALED -- execution permission DENY. SCOPE (review 6, N6-2): within this repository -- HEAD's history and every branch, tag, stash and reflog entry -- no forward transition admits another execution; an execution never committed, or made in another clone, is outside it (c11r_contract.LIFECYCLE_SCOPE). The comparison is ONE transaction: a refusal writes nothing (c11r_contract.COMPARISON_TRANSACTION). Evaluated in production by c11r_contract.lifecycle and protocol_history; any other state is refused before any science and before any original magnitude is loaded",
   "G2_statement_equivalence_exact": "for each target, the independent proposition is RECONSTRUCTED from the certificate by c11r_certificate.reconstruct -- verified certifier hash, reported kernel, margins, premises, family, input digest and the frozen deduction table -- never read from a label the runner wrote, and is EQUIVALENT or STRONGER than the original's under c11r_equiv.compare. Statement equivalence is decided before, and separately from, numerical agreement",
   "G3_drift_interval_exact": "every independent statement's drift domain, compared as exact rationals, equals or contains [680769/400000, 17885921/10000000]",
   "G4_block_uniformity_rigorous": "certification encloses the quantity simultaneously for every e in the block by carrying e as an interval; no endpoint, midpoint or grid of drifts is used",
@@ -118,22 +118,22 @@
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py": "fc88fb0dcc0f757d9ed42b08ecdd9e7ca2c65320181320f009390d67e3155741",
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_common.py": "c55e97b9e2dc626992d3fa25ef23833fcccee88e787a916aa02dc23c2f0ab1b2",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_certificate.py": "a3e105100ca1a7b6eae2355c764c97d62611cd4ffcfd76a34d8fdcad9b601952",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "bdf7398da6f395c1f0e7b4d7f1bae548e08d9315ebb83d305291b28063d4ff4d",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_contract.py": "ea02362f914161ec9910d6db985338b1ebe75505a88061986d27289c8abe2959",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_certificate.py": "af108978de7c25ecb4d9ee235789b064b7445447d59223532355e1663fb930d1",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "df853733230543539721e40e720c50355bd905dc9e571d9ccb93c1eec0d42f90",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_contract.py": "2cc00d4504202ee4806419ccc8e61ac64c785c20bf29a5054431063a7a6d8c96",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_cost.py": "6a3ca12192b28f9d3a247dfe411f04c1377bb033410c2cead9c412b6f25d151a",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_gate.py": "2bb7679a8e6a32209c361f129cf5a09bdaecc52ba5a7d497994bd6681372972c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_gate.py": "148aaa63002f28fd14a71ff6d4e2e2819d3c5b503382f28436be6179e7c272ef",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "2232fc458be2ab0be6d21e2d0d2ce9241c6ad21847987f642d074239c85dc5e9",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "48acc03e9cada71597a079f6cd1974594606705e3d7c1ba9e0a82cc504742c1d",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "1aa2d89a790ddfa4db0c3e7d2b8061093633809085cfa833774cd5641fa6c1c6",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "2f2fcfe718d86ba74fb8a8a03c5d0628456959d201d374739759e73f070239a0",
    "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
   },
   "inputs": {
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_POLICY.json": "12270a2cd916d27b3c6b25d6d03fe907433a5f17bad1f9434cba7ba612b8fe6b",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "8c238beb5f4d57c30b439315763ac4ddb095f6efd9a2101f7133625b7aca8115"
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_POLICY.json": "bc5f0c963e4b8b2f148692bcadb50ab061207cbb58cac5112337449a95458ccd",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "2e0f7dc4ceb796289d083ba09129116f128f54dc172ad31d45129a255c0487b7"
   },
   "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_gate.py",
-  "producer_sha256": "2bb7679a8e6a32209c361f129cf5a09bdaecc52ba5a7d497994bd6681372972c"
+  "producer_sha256": "148aaa63002f28fd14a71ff6d4e2e2819d3c5b503382f28436be6179e7c272ef"
  },
  "question": "can the independent C11 certifier prove the SAME mathematical certification statements N9 requires for cell 306?",
  "result_language_scan": {
@@ -147,8 +147,8 @@
   "patterns": 17
  },
  "schema": "C11R_GATE/4",
- "sha256": "631dcf06d5de1ae0afac8de850378eb8204c11f9c97bb9cb6e46a9ac68266484",
- "statements_sha256": "02ee99dfdb5c57321f80357f7468631f0dfdf9598f527252710bcbe330c798eb",
+ "sha256": "0f282aa081849f4dc593be775daa8ad04c3ebaea57b2520d07dcb9d6f15395d6",
+ "statements_sha256": "b937cace6ae29701b8271a8d659d8817b017cde7094231b1339e4cd3e22a2ca1",
  "supersedes": "C11R_GATE/1 (49b17ab4), C11R_GATE/2 (affdf8a3) and C11R_GATE/3 (eaca931e), all reviewed NOT_READY. Gate 1's G8, G11, G12 and G13 could not fail on substance; gate 2's G8 and G10 lived only in the mutation suite; gate 3 listed a toolchain that nothing on the execution path consulted, and stated no G19 (review 3, R3-1 and N-5).",
  "target": {
   "cell": 306,

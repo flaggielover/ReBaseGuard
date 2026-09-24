@@ -18,6 +18,11 @@ SIX_CONSTANTS = ("C_T", "tau", "Abar", "D_lo", "D1", "D2")
 # The certificate each implementable target must cite -- ONE frozen rule, used by the runner to
 # assemble targets and by the production guards to check them (review 5, N5-11).
 TARGET_CERTIFICATE = {"Abar": "F_K", "tau": "F_H", "C_T": "F_H", "D_lo": "F_D"}
+# The certificates a runs artifact must carry -- EXACTLY these (review 6, N6-4). The frozen runner
+# always emits all three (NOT_REACHED or POINTWISE_INFEASIBLE included), so a run without one of
+# them, or with another, was not produced by it: a hand-edited artifact that DROPS the proving
+# certificate, demotes its target and nulls the citation is refused here, by shape.
+REQUIRED_CERTIFICATES = tuple(sorted(set(TARGET_CERTIFICATE.values())))
 
 # ---------------------------------------------------------------------------------------------
 # The state set. C_T is a supremum over it, so it is part of the statement, not background.
@@ -273,6 +278,10 @@ def validate_runs(obj: dict, *, check_provenance: bool = True) -> list[str]:
                         p.append(f"certificate {cid!r} missing {grp}.{f}")
         if c.get("screen_classification") not in SCREEN_CLASSES:
             p.append(f"certificate {cid!r} has screen class {c.get('screen_classification')!r}")
+    if set(obj[P_CERTS]) != set(REQUIRED_CERTIFICATES):
+        p.append(f"certificates are {sorted(obj[P_CERTS])}, expected exactly "
+                 f"{list(REQUIRED_CERTIFICATES)}: the frozen runner always emits every proving "
+                 f"certificate (review 6, N6-4)")
     if set(obj[P_TARGETS]) != set(SIX_CONSTANTS):
         p.append(f"targets are {sorted(obj[P_TARGETS])}, expected all six")
     for k, t in obj[P_TARGETS].items():
@@ -289,6 +298,9 @@ def validate_runs(obj: dict, *, check_provenance: bool = True) -> list[str]:
             p.append(f"target {k!r} CERTIFIED without a value and a certificate")
         if t.get("certificate_id") and t["certificate_id"] not in obj[P_CERTS]:
             p.append(f"target {k!r} cites unknown certificate {t['certificate_id']!r}")
+        if "certificate_id" in t and t.get("certificate_id") != TARGET_CERTIFICATE.get(k):
+            p.append(f"target {k!r} cites {t.get('certificate_id')!r}; its frozen citation is "
+                     f"{TARGET_CERTIFICATE.get(k)!r} (review 6, N6-4)")
     p += seal_problems(obj)
     if check_provenance:
         prov = obj.get("provenance")

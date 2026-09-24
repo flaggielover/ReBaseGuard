@@ -362,9 +362,12 @@ def citation_problems(runs: dict, policy: dict, recon: dict) -> dict[str, list[s
     SEMANTICS, not from what the target chooses to cite. Round 5's demotion check looked only at
     the certificate a target cites, so a NOT_CERTIFIED target whose id was also nulled escaped it.
     Now, for every implementable constant k:
-      * if the frozen certificate for k (c11r_schema.TARGET_CERTIFICATE) exists in the run, the
-        target MUST cite exactly it -- a null or foreign id is a violation;
-      * if it does not exist, the target may cite nothing;
+      * the target MUST cite exactly its frozen certificate (c11r_schema.TARGET_CERTIFICATE) --
+        a null, missing or foreign id is a violation;
+      * that certificate MUST exist in the run (review 6, N6-4: round 6 let a target "cite
+        nothing" when its certificate was absent, so a hand-edited run could DROP the proving
+        certificate, demote the target and null the citation; the frozen runner always emits
+        it);
       * a target reported NOT_CERTIFIED while ANY certificate of the run cleanly proves k (under
         any id -- a renamed copy included) is a violation (demoted).
     A constant the policy does not implement may cite nothing (G8 fixes its status)."""
@@ -382,9 +385,10 @@ def citation_problems(runs: dict, policy: dict, recon: dict) -> dict[str, list[s
             if want in certs and cited != want:
                 p.append(f"{k} must cite its frozen certificate {want!r}, which exists; it cites "
                          f"{cited!r}")
-            if want not in certs and cited is not None:
-                p.append(f"{k} cites {cited!r} although its frozen certificate {want!r} does not "
-                         f"exist")
+            if want not in certs:
+                p.append(f"{k} must cite its frozen certificate {want!r}, which is ABSENT from the "
+                         f"run although the frozen runner always emits it (review 6, N6-4); it "
+                         f"cites {cited!r}")
             if t.get("status") == "NOT_CERTIFIED":
                 provers = sorted(cid for cid, r in recon.items()
                                  if not r["problems"] and k in r["propositions"])

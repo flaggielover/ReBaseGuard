@@ -1,4 +1,11 @@
-"""C11R Phase 14 -- target execution under the frozen policy. Revision 5.
+"""C11R Phase 14 -- target execution under the frozen policy. Revision 6.
+
+REVISION 6 (review round 6; errata E49, E51, E53). R6-1: the program starts with the canonical
+pre-import barrier (c11r_contract.PREIMPORT_BARRIER) and no longer imports from __future__. N6-1:
+NEXT_STEPS names the files by REPOSITORY-relative path. N6-2: the closing message no longer claims
+that execution can never be re-enabled anywhere; it states the scope the lifecycle proves
+(c11r_contract.LIFECYCLE_SCOPE), and begin_execution prints what to do if the process stops
+(c11r_contract.INTERRUPTED_EXECUTION).
 
 REVISION 5 (review round 5; errata E39, E41, E44). R5-1: revision 4's closing instruction "set the
 guard back to DENY" could only be carried out by deleting the authorization -- the evidence the
@@ -48,10 +55,43 @@ WHAT main() DOES, exactly as config/C11R_POLICY.json freezes it:
      certification; a certification already running is NOT interrupted, so the wall clock can
      exceed the cap by the duration of that one certification (review 4, N4-9). "No retry" is
      enforced against COMMITTED runs (c11r_contract.protocol_history refuses a second one anywhere
-     in reachable history); a run never committed is invisible to git and is excluded by the
-     protocol and the pre-flight's process detector, not proved absent.
+     in HEAD's history and, since revision 6, in any branch, tag, stash or reflog entry of this
+     repository); a run never committed, or made in another clone, is invisible to it and is
+     excluded by the protocol and the pre-flight's process detector, not proved absent
+     (c11r_contract.LIFECYCLE_SCOPE).
 """
-from __future__ import annotations
+# --- C11R PRE-IMPORT BARRIER (review 6, R6-1): the first statement, before any other import ---
+import os as _os
+import sys as _sys
+
+
+def _c11r_preimport_barrier():
+    """Refuse to start while a campaign code directory holds anything a standard-library import
+    could resolve to. Only `os` and `sys` are used: the interpreter loaded both before this
+    script's directory was put on sys.path (c11r_contract.PREIMPORT_BARRIER)."""
+    here = _os.path.dirname(_os.path.realpath(__file__))
+    closure = _os.path.dirname(_os.path.dirname(here))
+    bad = []
+    for d in (here, _os.path.join(closure, "p5y_k5_tail_c11_n9_independent_certifier", "code"),
+              _os.path.join(closure, "p5y_k5_tail_c7_e2_lambda309", "code")):
+        if _os.path.islink(d) or not _os.path.isdir(d):
+            bad.append(d)
+            continue
+        for e in sorted(_os.listdir(d)):
+            p = _os.path.join(d, e)
+            if e == "__pycache__" and _os.path.isdir(p) and not _os.path.islink(p):
+                continue
+            if (not e.endswith(".py") or _os.path.islink(p) or not _os.path.isfile(p)
+                    or e[:-3] in _sys.stdlib_module_names or e[:-3] in _sys.builtin_module_names):
+                bad.append(_os.path.basename(_os.path.dirname(d)) + "/code/" + e)
+    if bad:
+        raise SystemExit("REFUSE (pre-import barrier, review 6 R6-1): a campaign code directory "
+                         "holds an entry a standard-library import could resolve to: "
+                         + ", ".join(bad))
+
+
+_c11r_preimport_barrier()
+# --- end of the pre-import barrier ---
 
 import json
 import pathlib
@@ -73,13 +113,16 @@ TARGET_MAP = S.TARGET_CERTIFICATE             # the frozen citation rule (review
 # What the operator does after the runner exits -- printed verbatim, and followed literally by
 # the chain controls (review 5, R5-1).
 NEXT_STEPS = (
-    f"commit {CT.RUNS_REL} and {CT.PERMISSION_REL} TOGETHER, in ONE commit: that commit is the "
-    f"seal",
-    f"do NOT modify, remove or re-commit {CT.AUTH_REL}: it is immutable evidence the comparator "
-    f"verifies",
-    "execution permission is now DENY (EXECUTION_COMPLETED); nothing re-enables execution under "
-    "this approved commit",
-    "then run: c11r_compare.py --approved-commit <the approved commit, full 40-hex id>")
+    f"commit {CT.ns_path(CT.RUNS_REL)} and {CT.ns_path(CT.PERMISSION_REL)} (repository-relative "
+    f"paths) TOGETHER, in ONE commit: that commit is the seal",
+    f"do NOT modify, remove or re-commit {CT.ns_path(CT.AUTH_REL)}: it is immutable evidence the "
+    f"comparator verifies",
+    "execution permission is now DENY (EXECUTION_COMPLETED). Within this repository's committed "
+    "history -- HEAD's, and every branch, tag, stash and reflog entry -- no forward transition "
+    "admits another execution; that is the whole claim (c11r_contract.LIFECYCLE_SCOPE: an "
+    "execution never committed, or made in another clone, is outside it)",
+    f"then run: python3 {C.NS_REL}/code/c11r_compare.py --approved-commit <the approved commit, "
+    f"full 40-hex id>")
 NOT_IMPLEMENTED_REASON = (
     "PROSPECTIVELY_REACHABLE_BUT_NOT_IMPLEMENTED: requires the drift-derivative kernels Khat' and "
     "Khat'', h_1' and h_1'', operator norm bounds kernel_norm(0..3), a residual-to-error "
@@ -111,6 +154,7 @@ def begin_execution(repo, identity: dict) -> dict:
                                grant_sha256=CT.body_digest(grant),
                                fixture=bool(grant.get("fixture")))
     CT.write_record(repo, CT.PERMISSION_REL, rec)
+    print(f"execution permission is now DENY (EXECUTION_STARTED). {CT.INTERRUPTED_EXECUTION}")
     return rec
 
 

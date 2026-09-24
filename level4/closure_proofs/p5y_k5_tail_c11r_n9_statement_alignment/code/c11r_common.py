@@ -42,7 +42,15 @@ SIX_CONSTANTS = ("C_T", "tau", "Abar", "D_lo", "D1", "D2")
 #     GIT_NAMESPACE, GIT_CONFIG_*, ...) can redirect or rewrite what is read;
 #   * a legacy grafts file is NOT disabled by --no-replace-objects (measured), and a shallow
 #     repository has no history beyond its boundary: history_integrity() REFUSES both, and every
-#     history verifier calls it.
+#     history verifier calls it;
+#   * the COMMIT-GRAPH file is NOT read (core.commitGraph=false, set through git_env's
+#     GIT_CONFIG_* variables; review 6, N6-6). It is a cache git TRUSTS: a forged graph that
+#     drops a merge's second parent made `git rev-list HEAD` and `rev-list --all` omit the side
+#     commit and `log -1 %P` report one parent (measured, git 2.50.1), while range walks happened
+#     to re-parse the commit. The real commit objects are now read by construction, not by
+#     observation. The object database itself (loose objects, packs, their indexes) and the
+#     repository configuration beyond these settings are trusted: forging object storage is
+#     arbitrary tampering with the repository, out of scope like in-memory patching.
 # Every wrapper below spells the same literal argv prefix (git --no-replace-objects -C <repo>) and
 # the same env=git_env(); the chain controls parse every campaign module and require that each git
 # subprocess call is one of these, with exactly that prefix and environment.
@@ -52,6 +60,8 @@ SIX_CONSTANTS = ("C_T", "tau", "Abar", "D_lo", "D1", "D2")
 def git_env() -> dict:
     env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
     env["GIT_NO_REPLACE_OBJECTS"] = "1"
+    env.update(GIT_CONFIG_COUNT="1", GIT_CONFIG_KEY_0="core.commitGraph",
+               GIT_CONFIG_VALUE_0="false")          # the real commits, never the graph cache
     return env
 
 
@@ -215,9 +225,11 @@ def is_protected(rel: str) -> bool:
 # c11r_compare.py, so neither a faked sys.argv[0] nor another file named c11r_compare.py is one.
 # REVISION 3 (review round 5, N5-10; erratum E47): a PathLike argument (io.FileIO(Path(...)))
 # is judged like a string (os.fspath), and the two MAGNITUDE-BEARING files -- the quarantine and
-# the registry -- are also recognised by INODE, so a hard link or a renamed copy of either under
-# an innocent name is refused too.
-# What it still does not see: content read by a subprocess (git show, cat, a python child that
+# the registry -- are also recognised by INODE, so a hard link to either, or either file itself
+# renamed, under an innocent name is refused too. A COPY is a new inode with an innocent name and
+# is NOT refused (review 6, N6-7: the round-6 wording "a renamed copy" overstated this).
+# What it still does not see: a COPY of a protected file under an innocent name (made, for
+# instance, by a subprocess), content read by a subprocess (git show, cat, a python child that
 # does not import this module), a file descriptor opened elsewhere, an open relative to a
 # directory descriptor (dir_fd), hard links or renames of the OTHER protected files (review
 # prose, recognised by name and directory only), a magnitude-bearing file replaced by a new inode
@@ -333,7 +345,49 @@ def content_free_id(path) -> str | None:
 
 
 def _rel(p: pathlib.Path) -> str:
-    return str(pathlib.Path(p).resolve().relative_to(REPO))
+    """Repository-relative name of a path: LEXICALLY first (a symlink inside the repository keeps
+    its own name even when it resolves outside -- review 6, N6-5: resolving first raised
+    ValueError inside verify_contract instead of producing a typed refusal), then resolved."""
+    absolute = pathlib.Path(os.path.abspath(p))
+    try:
+        return str(absolute.relative_to(REPO))
+    except ValueError:
+        return str(absolute.resolve().relative_to(REPO))
+
+
+# The kind of a directory entry, from lstat -- never following it (review 6, N6-5). Every
+# load-bearing path check names one of these instead of raising.
+PATH_KINDS = ("ABSENT", "FILE", "DIRECTORY", "SYMLINK_INSIDE", "SYMLINK_OUTSIDE",
+              "SYMLINK_DANGLING", "SYMLINK_LOOP", "OTHER")
+
+
+def path_kind(path, *, inside=None) -> str:
+    """lstat-based kind of `path`. A symlink is classified by where it resolves: inside `inside`
+    (default: the repository), outside it, dangling, or a loop."""
+    import stat as _stat
+    path = os.path.abspath(path)
+    try:
+        st = os.lstat(path)
+    except FileNotFoundError:
+        return "ABSENT"
+    except OSError:
+        return "OTHER"
+    if _stat.S_ISLNK(st.st_mode):
+        try:
+            os.stat(path)
+        except FileNotFoundError:
+            return "SYMLINK_DANGLING"
+        except OSError:
+            return "SYMLINK_LOOP"
+        base = os.path.realpath(inside if inside is not None else REPO)
+        real = os.path.realpath(path)
+        return "SYMLINK_INSIDE" if real == base or real.startswith(base + os.sep) \
+            else "SYMLINK_OUTSIDE"
+    if _stat.S_ISREG(st.st_mode):
+        return "FILE"
+    if _stat.S_ISDIR(st.st_mode):
+        return "DIRECTORY"
+    return "OTHER"
 
 
 def load(p: pathlib.Path):
@@ -383,7 +437,7 @@ def git_object_at(commit: str, rel: str, repo=None) -> str | None:
 def _resolve_module(name: str) -> pathlib.Path | None:
     for d in CODE_DIRS:
         cand = d / f"{name}.py"
-        if cand.exists():
+        if cand.is_file():                      # a directory named x.py is not source (N6-5)
             return cand
     return None
 
@@ -392,7 +446,9 @@ def code_closure(producer: pathlib.Path) -> dict[str, str]:
     """sha256 of the producer and of every campaign module it imports, transitively."""
     import ast
     seen: dict[str, str] = {}
-    stack = [pathlib.Path(producer).resolve()]
+    # lexical paths (review 6, N6-5): a module file that is a symlink keeps its in-repository name
+    # here; the code-directory checks refuse the symlink itself, with a typed reason
+    stack = [pathlib.Path(producer).absolute()]
     while stack:
         f = stack.pop()
         rel = _rel(f)
@@ -408,7 +464,7 @@ def code_closure(producer: pathlib.Path) -> dict[str, str]:
             for nm in names:
                 r = _resolve_module(nm)
                 if r is not None:
-                    stack.append(r.resolve())
+                    stack.append(r.absolute())
     return dict(sorted(seen.items()))
 
 

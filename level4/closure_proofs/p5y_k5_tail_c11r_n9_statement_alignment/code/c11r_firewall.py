@@ -84,7 +84,8 @@ ALLOWED_READERS = frozenset({"c11r_table.py", "c11r_compare.py"})
 # the analysis cannot see that its `repo` argument is a temporary repository, but a RUNTIME guard
 # in c11r_compare (_real_repository_guard) raises unless the running program is the comparator
 # itself whenever the repository is the real one, and c11r_chain exercises that guard.
-EXEMPTED_CALLS = {"c11r_chain.py": ("c11r_compare.execute_comparison", "c11r_compare.verify_seal")}
+EXEMPTED_CALLS = {"c11r_chain.py": ("c11r_compare.execute_comparison", "c11r_compare.verify_seal",
+                                     "c11r_compare.phase15")}
 # Whole functions exempted, with the reason: this module's runtime_open_guard_controls opens a
 # PLANTED dummy file (written by a subprocess into a fresh temporary directory, with a protected
 # NAME) precisely to prove the runtime guard refuses it; the analysis cannot see that the path is
@@ -107,11 +108,27 @@ EXEMPTED_CALLS = {"c11r_chain.py": ("c11r_compare.execute_comparison", "c11r_com
 # once; CF5b passes the comparator's PATH as an argument to a driver that simulates the reader's
 # identity (the recorded residual) and writes into a temporary directory. The real comparison path
 # is never touched and the comparator's main() is never launched.
+#
+# Round 7 (review round 6, R6-1 and N6-3): c11r_chain's R61 controls run DRIVERS (_r61_driver) whose
+# execution root is a SYNTHETIC repository, exactly as _driver does for IMP, and launch a synthetic
+# repository's BOUNDARY PROGRAMS with no argument (_launch_boundary_programs: usage, or a refusal at
+# the pre-import barrier); CMP drives c11r_compare.phase15 on synthetic repositories (the same
+# runtime guard as execute_comparison). The three boundary programs' _c11r_preimport_barrier lists
+# the NAMES in the three code directories with `os` alone, BEFORE any import -- it cannot use the
+# campaign's path helpers by design, and it reads no content; its text is canonical
+# (c11r_contract.PREIMPORT_BARRIER, checked by preimport_barrier_problems).
 EXEMPTED_FUNCTIONS = {"c11r_firewall.py": ("runtime_open_guard_controls",),
+                      "c11r_runs.py": ("_c11r_preimport_barrier",),
+                      "c11r_qualify.py": ("_c11r_preimport_barrier",),
+                      "c11r_compare.py": ("_c11r_preimport_barrier",),
                       "c11r_contract.py": ("_pyc_matches_source",),
                       "c11r_chain.py": ("c_IMP", "one", "forged_pyc", "stale_pyc",
-                                        "_driver", "c_CF", "_plant_file")}
+                                        "_driver", "c_CF", "_plant_file", "_r61_driver",
+                                        "_launch_boundary_programs")}
 FORBIDDEN_LAUNCH = ("c11r_compare.py",)
+# Calls to these launchers (their own bodies exempted above, with the reason) are exempt from
+# LAUNCHES_COMPARATOR ONLY: they launch a SYNTHETIC repository's boundary programs with no argument.
+EXEMPTED_LAUNCHERS = {"c11r_chain.py": ("_launch_boundary_programs",)}
 # Functions whose CALLS are not reads of campaign data: content_free_id hashes through a git
 # subprocess (an id, never content); _pyc_matches_source reads only the cached BYTECODE of a
 # module verify_loaded_modules has just shown to be a contract module at its contract path (round
@@ -878,8 +895,11 @@ def _defaults(m: "Module", fn) -> dict[str, list]:
 
 
 def _code_dir(p: tuple) -> bool:
+    """A campaign code directory, or its own __pycache__ (round 7, R6-1: the static inventory
+    lists the cache directory's entry NAMES to hold them to the frozen cache policy)."""
     s = _canon(_render(p))
-    return "\x00" not in s and (s.endswith("/code") or s == "code")
+    return "\x00" not in s and (s.endswith("/code") or s == "code"
+                                 or s.endswith("/code/__pycache__"))
 
 
 def _classify_argv(argv: list[list[tuple]]) -> dict:
@@ -1615,6 +1635,9 @@ def _exempted(module: str, row: dict) -> bool:
     if row.get("function") in funcs:
         return True
     why = set(row.get("why") or [])
+    if why == {"LAUNCHES_COMPARATOR"} and any(
+            f + "(" in row.get("call", "") for f in EXEMPTED_LAUNCHERS.get(module, ())):
+        return True
     return bool(why) and why <= {"CALLS_A_FORBIDDEN_READER", "NS_OFF_ALLOWLIST"} and (
         any(c.split(".")[1] + "(" in row.get("call", "") for c in calls)
         or any(f + "(" in row.get("call", "") for f in funcs))
@@ -1671,6 +1694,7 @@ def main() -> int:
            "runtime_open_guard_controls": guard,
            "exempted_calls": {"rules": {k: list(v) for k, v in EXEMPTED_CALLS.items()},
                               "functions": {k: list(v) for k, v in EXEMPTED_FUNCTIONS.items()},
+                              "launchers": {k: list(v) for k, v in EXEMPTED_LAUNCHERS.items()},
                               "applied": exemptions},
            "principle": ("original magnitudes may enter only at c11r_table.py (extraction into "
                          "quarantine) and c11r_compare.py (after seal); every other module's "

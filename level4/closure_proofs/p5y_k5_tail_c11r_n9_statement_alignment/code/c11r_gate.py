@@ -217,7 +217,12 @@ def build(tbl: dict, policy: dict, contract_digest: str) -> dict:
                 "included (HISTORY PURITY), the protocol artifacts to appear in history only as "
                 "the protocol allows, the qualification to satisfy the typed Q1-Q18 schema, "
                 "every loaded load-bearing module -- by name and by origin -- to be the "
-                "contract's SOURCE file (sourceless bytecode refused), and the gate, "
+                "contract's SOURCE file (sourceless bytecode refused), every module loaded from a "
+                "campaign code directory -- WHATEVER ITS NAME -- to be an approved, byte-verified "
+                "source, the import path to admit nothing ahead of the standard library but those "
+                "directories, the directories to hold exactly their frozen inventory, and the "
+                "boundary programs to start behind the pre-import barrier (review 6, R6-1), and "
+                "the gate, "
                 "qualification, "
                 "authorization, runner, code closure, certifiers and configuration recorded in "
                 "the runs artifact to equal the recomputed ones -- all BEFORE any original "
@@ -232,8 +237,14 @@ def build(tbl: dict, policy: dict, contract_digest: str) -> dict:
                 "before any science; EXECUTION_COMPLETED bound to the run, committed with it as "
                 "the seal); the state is DERIVED from committed and on-disk facts; the runner "
                 "requires AUTHORIZED and the comparator SEALED -- execution permission DENY. "
-                "Evaluated in production by c11r_contract.lifecycle; any other state is "
-                "refused before any science and before any original magnitude is loaded"),
+                "SCOPE (review 6, N6-2): within this repository -- HEAD's history and every "
+                "branch, tag, stash and reflog entry -- no forward transition admits another "
+                "execution; an execution never committed, or made in another clone, is outside "
+                "it (c11r_contract.LIFECYCLE_SCOPE). The comparison is ONE transaction: a refusal "
+                "writes nothing (c11r_contract.COMPARISON_TRANSACTION). "
+                "Evaluated in production by c11r_contract.lifecycle and protocol_history; any "
+                "other state is refused before any science and before any original magnitude is "
+                "loaded"),
         },
         "predicate_evaluators": dict(EVALUATORS),
 

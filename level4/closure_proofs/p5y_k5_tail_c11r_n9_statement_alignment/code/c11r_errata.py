@@ -909,6 +909,151 @@ ERRATA = {
                  "is refused by the state check; the protocol needs no such merge"),
         "found_by": "review round 5 (N5-5, N5-6, N5-7, N5-8, N5-12)",
     },
+    "E49_CAMPAIGN_DIRECTORY_IMPORT_CLOSURE": {
+        "what_happened": ("the round-6 module-identity repair (E40) examined only modules whose "
+                          "NAME, or whose origin's import name, was a contract stem, and the "
+                          "static scan refused only contract-named entries and untracked *.py. "
+                          "The campaign itself puts its code directories AHEAD of the standard "
+                          "library on sys.path (the script's directory; c11r_idrift and "
+                          "c11_certifier insert C11's and C7's), so a sourceless fractions.pyc in "
+                          "the campaign's code directory, or ast.pyc in C11's, was executed by the "
+                          "runner and the comparator -- the certification arithmetic and the "
+                          "numerical classification ran on the shadow's Fraction -- while the "
+                          "pre-flight, Q4 and comparator step 12 reported nothing. A committed "
+                          "stdlib-named package passed too. Round 5's minimum fix had named the "
+                          "missing clause; round 6 did not implement it"),
+        "why_it_mattered": ("a file on disk in the repository's own code directory, found through "
+                            "a path order the campaign sets up, could contaminate or mis-classify "
+                            "a target run with every identity check green (R6-1)"),
+        "repair": ("c11r_contract, round 7, keyed on LOCATION: (L1) any loaded module with ANY "
+                   "origin inside a campaign code directory must be an APPROVED source -- the "
+                   "contract's `code` or `frozen_code`, byte-verified -- source-backed, loaded "
+                   "from exactly that regular file under its own name, whatever its name; (L2) "
+                   "__file__, __spec__.origin and the loader's path name one file for every "
+                   "module; (L3) repository directories on sys.path are code directories and "
+                   "nothing but code directories and the interpreter precedes the standard "
+                   "library; (S) code_dir_shadows compares every entry, from lstat, with the "
+                   "inventory the contract now binds (`code_directories`): symlinks, packages, "
+                   "namespace directories, non-.py material, stdlib or built-in names, contract "
+                   "names away from their path, untracked or COMMITTED additions, missing entries "
+                   "and a __pycache__ outside the frozen cache policy are refused by name and kind; "
+                   "(B) the three boundary programs start with PREIMPORT_BARRIER (verbatim, first, "
+                   "no `from __future__` import) and refuse to start while a code directory holds "
+                   "anything a stdlib import could resolve to. Contract schema C11R_CONTRACT/4 "
+                   "(frozen_code, code_directories, module_identity)"),
+        "controls": ("c11r_chain R61-0..R61-18b, R61-B, R61-B0, R61-P (24 controls; drivers whose "
+                     "execution root is a synthetic repository, the real checkout untouched)"),
+        "status": ("REPAIRED for files present when a boundary program starts and at the check; "
+                   "a file placed after the barrier and removed before the check, exec/eval, a "
+                   "module that rewrites its own metadata or deletes its file, and in-memory "
+                   "patching are arbitrary malicious runtime modification, NOT covered "
+                   "(MODULE_IDENTITY_POLICY.not_covered)"),
+        "found_by": "review round 6 (R6-1), reproduced by the author in temporary directories",
+    },
+    "E50_COMPARISON_TRANSACTION": {
+        "what_happened": ("c11r_compare.main wrote the comparison artifact even when the chain "
+                          "refused before the loader; the file then made every later comparison "
+                          "refuse, and no rule said whether a pre-load refusal could be retried. A "
+                          "Finder .DS_Store in evidence/runs was enough (N6-3)"),
+        "repair": ("c11r_compare.phase15: verify steps 1-12 -> load iff all pass -> compute -> "
+                   "write exactly once (exclusive create). A pre-load refusal writes NOTHING, "
+                   "prints a typed refusal (exit 3) and leaves SEALED; it may be retried once its "
+                   "cause is removed. A failure after the loader was entered writes nothing, is "
+                   "POST_LOAD_FAILURE (exit 4), and the comparator is not run again without the "
+                   "user's instruction (c11r_contract.COMPARISON_TRANSACTION, bound in the "
+                   "contract's lifecycle). Comparison schema C11R_COMPARISON/6"),
+        "controls": "c11r_chain CMP1, CMP2, CMP2b, CMP3, CMP4, CMP4b, CMP5, CMP6, CMP6b",
+        "status": ("REPAIRED. The retry prohibition after a post-load failure is a protocol "
+                   "rule, not mechanically enforced: nothing is written, so nothing records the "
+                   "attempt"),
+        "found_by": "review round 6 (N6-3)",
+    },
+    "E51_LIFECYCLE_SCOPE_AND_REPOSITORY_WIDE_LINEAGE": {
+        "what_happened": ("the runner printed 'nothing re-enables execution under this approved "
+                          "commit'; the reviewer re-executed on a SIBLING branch forked at the "
+                          "authorization commit (pre-flight passed, second seal compared), and "
+                          "after restoring the GRANT over an uncommitted EXECUTION_STARTED. "
+                          "NEXT_STEPS also named its files by namespace-relative path (N6-1, "
+                          "N6-2)"),
+        "repair": ("protocol_history now checks every commit reachable from ANY ref, HEAD or "
+                   "reflog entry (_protocol_elsewhere): at authorize nothing, at run only the "
+                   "current authorization and its GRANT, at compare only those, the final record "
+                   "and the sealed run -- the sibling-branch execution is refused at the "
+                   "pre-flight and at the comparator. The claim is SCOPED and bound in the "
+                   "contract (LIFECYCLE_SCOPE); NEXT_STEPS prints repository-relative paths and "
+                   "the scope; begin_execution prints INTERRUPTED_EXECUTION (commit the "
+                   "EXECUTION_STARTED record: ABANDONED)"),
+        "controls": "c11r_chain LG1, LG2, LG4 (refused), LG3 (the stated limit, reproduced), WD1",
+        "status": ("REPAIRED within this repository's refs and reflogs. NOT covered and stated: an "
+                   "execution never committed (the GRANT restored from git over an uncommitted "
+                   "EXECUTION_STARTED leaves no trace), another clone, commits reachable from "
+                   "nothing"),
+        "found_by": "review round 6 (N6-1, N6-2)",
+    },
+    "E52_TYPED_PATH_REFUSALS": {
+        "what_happened": ("a contract path replaced by a symlink to an identical file OUTSIDE the "
+                          "repository made c11r_common._rel raise ValueError inside "
+                          "verify_contract: fail-closed, but an exception, not a refusal. A "
+                          "directory where a protocol file belongs, or malformed runs JSON, raised "
+                          "the same way (N6-5)"),
+        "repair": ("_rel is lexical first and code_closure keeps lexical paths; "
+                   "c11r_common.path_kind classifies from lstat (FILE, DIRECTORY, symlink inside / "
+                   "outside / dangling / loop, OTHER); bound_path_problems names every code, "
+                   "frozen and protocol path of the contract that is not what it must be; "
+                   "verify_contract, runner_preflight and every comparator step turn any residual "
+                   "OSError/ValueError into a typed 'not evaluable' refusal; the runs artifact is "
+                   "read with its shape checked (read_runs)"),
+        "controls": "c11r_chain TP1, TP2, TP3, TP4, TP1c, TP2c, CMP2, CMP2b",
+        "status": "REPAIRED",
+        "found_by": "review round 6 (N6-5)",
+    },
+    "E53_REQUIRED_PROVING_CERTIFICATES": {
+        "what_happened": ("a re-stamped runs artifact that REMOVED the proving certificate, "
+                          "demoted its target and nulled the citation passed the citation rule "
+                          "('if it does not exist, the target may cite nothing') and reached the "
+                          "loader; the chain control DM2 accepted exactly that shape (N6-4)"),
+        "repair": ("c11r_schema.REQUIRED_CERTIFICATES: a runs artifact carries EXACTLY F_D, F_H "
+                   "and F_K (the frozen runner always emits all three), and every target cites "
+                   "exactly its TARGET_CERTIFICATE entry (D1, D2: none) -- refused at the run "
+                   "step, and at emission (emit_runs validates); the citation rule no longer "
+                   "admits a null citation for an absent certificate. DM2 is now a refusal; DM4 "
+                   "and DM5 are refused earlier, by the schema, the step-12 demotion rule staying "
+                   "in force behind it (DM3, LS_DEMOTE)"),
+        "controls": "c11r_chain RC1-RC7, DM2, DM4, DM5",
+        "status": "REPAIRED",
+        "found_by": "review round 6 (N6-4)",
+    },
+    "E54_COMMIT_GRAPH_NOT_READ": {
+        "what_happened": ("history_integrity ignored the commit-graph file. Measured (git "
+                          "2.50.1): a forged graph that drops a merge's second parent makes "
+                          "`rev-list HEAD` and `rev-list --all` omit the side commits and "
+                          "`log -1 %P` report one parent; range walks (A..HEAD) happened to "
+                          "re-parse them. The pre-result state check (protocol_artifacts_anywhere) "
+                          "and the new repository-wide lineage check walk --all: a merged run "
+                          "hidden this way would have been invisible to them (N6-6)"),
+        "repair": ("c11r_common.git_env sets core.commitGraph=false (GIT_CONFIG_COUNT/KEY/VALUE) "
+                   "for every campaign git call: the real commit objects are read by "
+                   "construction. The object database itself and the repository configuration "
+                   "beyond the sanitized settings are trusted (stated in c11r_common)"),
+        "controls": "c11r_chain CG1 (forged graph; unprotected git sees fewer commits; the "
+                    "campaign sees them all and finds the run)",
+        "status": "REPAIRED",
+        "found_by": "review round 6 (N6-6); the semantic effect measured by the author",
+    },
+    "E55_WORDING_LABELS_AND_DETECTOR_NOTES": {
+        "N6_7": ("c11r_common's guard comment said a 'renamed copy' of a magnitude-bearing file "
+                 "is refused; a COPY is a new inode and is not. Corrected; the copy is listed "
+                 "among what the guard does not see"),
+        "N6_8": ("detector revision 4 is unchanged (its detection logic is untouched); its "
+                 "not_checked list adds a wrapper script without a .py suffix and a long "
+                 "interpreter option with a value before the script, and known_false_positives "
+                 "states the fail-safe false positives"),
+        "N6_9": "B0_14's label is derived from c11r_procs.DETECTOR_LABEL (it said revision 2)",
+        "N6_10": ("ACCEPT_BY_DESIGN: 4-5-character coincidences in measured timing fields are "
+                  "not leaks; the leak check's conclusion rests on the value forms it scans and "
+                  "on the paths it covers, not on digit coincidence"),
+        "found_by": "review round 6 (N6-7, N6-8, N6-9, N6-10)",
+    },
 }
 
 
@@ -1005,9 +1150,34 @@ REVIEW_5_FINDINGS_DISPOSITION = {
 }
 
 
+REVIEW_6_FINDINGS_DISPOSITION = {
+    "R6-1": ("FIX_NOW_LOAD_BEARING", "location-keyed campaign-directory closure (L1-L3), the "
+             "frozen code-directory inventory (S) and the pre-import barrier (B) (E49); R61 "
+             "controls"),
+    "N6-1": ("FIX_NOW_CHEAP", "NEXT_STEPS prints repository-relative paths (E51)"),
+    "N6-2": ("FIX_NOW_CHEAP", "repository-wide lineage check (sibling branches, tags, stashes, "
+             "reflogs) at authorize, run and compare; the claim scoped and bound "
+             "(LIFECYCLE_SCOPE); the interrupted-and-restored case and other clones are "
+             "DOCUMENT_LIMITATION, reproduced as stated (LG3) (E51)"),
+    "N6-3": ("FIX_NOW_CHEAP", "the comparison transaction; a refusal writes nothing; retry rule "
+             "stated (E50)"),
+    "N6-4": ("FIX_NOW_CHEAP", "exact certificate set and frozen citations in the run schema and "
+             "at emission (E53)"),
+    "N6-5": ("FIX_NOW_CHEAP", "typed path refusals everywhere on the boundaries (E52)"),
+    "N6-6": ("FIX_NOW_LOAD_BEARING", "a forged commit-graph measurably hides merged commits from "
+             "`rev-list --all`; commit-graph reading disabled for every campaign git call (E54)"),
+    "N6-7": ("FIX_NOW_CHEAP", "guard comment corrected (E55)"),
+    "N6-8": ("DOCUMENT_LIMITATION", "detector misses and fail-safe false positives listed; "
+             "detection logic and revision unchanged (E55)"),
+    "N6-9": ("FIX_NOW_CHEAP", "B0_14 label derived from the detector label (E55)"),
+    "N6-10": ("ACCEPT_BY_DESIGN", "timing-digit coincidences are not leaks (E55)"),
+}
+
+
 def main() -> int:
-    out = {"schema": "C11R_ERRATA/6",
-           "supersedes": ("C11R_ERRATA/5 at 5d89686e (E1-E38, all preserved), C11R_ERRATA/4 at "
+    out = {"schema": "C11R_ERRATA/7",
+           "supersedes": ("C11R_ERRATA/6 at cc93e470 (E1-E48, all preserved), "
+                          "C11R_ERRATA/5 at 5d89686e (E1-E38), C11R_ERRATA/4 at "
                           "bd00c1f6, C11R_ERRATA/3 at eaca931e and C11R_ERRATA/2 at 9801276c "
                           "(which restated original values in E2)"),
            "review_3_findings_disposition": {k: {"classification": v[0], "action": v[1]}
@@ -1016,6 +1186,8 @@ def main() -> int:
                                              for k, v in REVIEW_4_FINDINGS_DISPOSITION.items()},
            "review_5_findings_disposition": {k: {"classification": v[0], "action": v[1]}
                                              for k, v in REVIEW_5_FINDINGS_DISPOSITION.items()},
+           "review_6_findings_disposition": {k: {"classification": v[0], "action": v[1]}
+                                             for k, v in REVIEW_6_FINDINGS_DISPOSITION.items()},
            "policy": ("defects in this campaign's own conduct, recorded where a reader will find "
                       "them. A deviation that is recorded can be judged; one that is not, cannot."),
            "reviews_answered": [
@@ -1028,7 +1200,9 @@ def main() -> int:
                {"path": "review/REVIEW_C11R_PREFREEZE_R4.md", "verdict": "NOT_READY",
                 "preserved_at": "5c5203c1"},
                {"path": "review/REVIEW_C11R_PREFREEZE_R5.md", "verdict": "NOT_READY",
-                "preserved_at": "ebf08c0f"}],
+                "preserved_at": "ebf08c0f"},
+               {"path": "review/REVIEW_C11R_PREFREEZE_R6.md", "verdict": "NOT_READY",
+                "preserved_at": "63402106"}],
            "CONTAINS_NO_ORIGINAL_MAGNITUDE": True,
            "errata": ERRATA,
            "count": len(ERRATA)}

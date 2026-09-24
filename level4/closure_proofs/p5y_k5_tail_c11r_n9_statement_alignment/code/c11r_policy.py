@@ -422,14 +422,19 @@ def main() -> int:
             "5  every output written and hashed under the frozen run schema; the runner then "
             "writes execution permission DENY/EXECUTION_COMPLETED bound to the run, and the run "
             "and that record are committed together (the seal); the authorization is never "
-            "modified or removed (c11r_contract.LIFECYCLE)",
+            "modified or removed (c11r_contract.LIFECYCLE). If the runner stops before it "
+            "finishes, its DENY/EXECUTION_STARTED record is committed as it is (ABANDONED, "
+            "c11r_contract.INTERRUPTED_EXECUTION). The comparison is one transaction: a refusal "
+            "writes nothing (c11r_contract.COMPARISON_TRANSACTION)",
         ],
         "stop_conditions": [
             "after ONE execution at the chosen configuration. There is no escalation and no retry. "
-            "What enforces it, exactly (review 4, N4-9): a second COMMITTED execution anywhere in "
-            "HEAD's reachable history is refused by c11r_contract.protocol_history; an execution "
-            "that is never committed, or committed only outside HEAD's history, cannot be seen by "
-            "git and is excluded by the protocol, not proved absent",
+            "What enforces it, exactly (review 4, N4-9; review 6, N6-2): a second COMMITTED "
+            "execution anywhere in HEAD's reachable history, or in any branch, tag, stash or "
+            "reflog entry of this repository, is refused by c11r_contract.protocol_history; an "
+            "execution that is never committed, made in another clone, or reachable from nothing "
+            "cannot be seen by git and is excluded by the protocol, not proved absent "
+            "(c11r_contract.LIFECYCLE_SCOPE)",
             "if the wall clock exceeds the cap or RSS exceeds its cap when a stage or a "
             "certification is about to start: STOP; unfinished families are NOT_REACHED with "
             "reason RESOURCE_CAP. A certification already running is not interrupted: the overrun "

@@ -34,7 +34,19 @@ GROUPS
   PB*   the policy bytes the runner uses (N5-3);
   GR*   replace refs, grafts, shallow history, and a scan for any unsanitized git call (N5-4);
   DM*   target disposition from certificate semantics, the null-id demotion (N5-11);
-  AC*   the approved commit as a full, immutable commit id (N5-7).
+  AC*   the approved commit as a full, immutable commit id (N5-7);
+  R61*  the campaign-directory import closure (review 6, R6-1): stdlib-named sourceless,
+        source, package, namespace, zip/egg, extension, symlinked and wrong-directory material in
+        a SYNTHETIC repository's code directories, drivers whose execution root is that
+        repository, the static inventory, the cache policy, the import-path precedence and the
+        boundary programs' pre-import barrier;
+  TP*   typed path refusals (N6-5): symlinks outside the repository, dangling, looping, a
+        directory where a file belongs -- never an exception;
+  CMP*  the comparison transaction (N6-3): a refusal writes nothing, the valid chain writes once;
+  RC*   the required proving certificates (N6-4);
+  CG*   the commit-graph file is not read (N6-6);
+  WD*, LG*  what the lifecycle claims, and the repository-wide lineage (N6-2), with the stated
+        limit reproduced as stated.
 
 EVERY CONTROL MUST REFUSE FOR ITS EXPECTED REASON (and, for the comparator, at its expected
 step): a refusal for some other reason proves nothing about its attack.
@@ -107,6 +119,11 @@ class Chain:
         # code paths with the artifact reader and vice versa (review 4, N4-11)
         for code_rel in CT.closure_paths():
             self.write(code_rel, CT.code_bytes(C.REPO, code_rel))
+        # every other approved source too (review 6, R6-1: the contract binds `frozen_code`, and
+        # a module loaded from a campaign code directory must be one of them)
+        for other_rel in CT.namespace_code():
+            if not (self.root / other_rel).exists():
+                self.write(other_rel, CT.code_bytes(C.REPO, other_rel))
         for art_rel in COPIED_ARTIFACTS:
             self.write(CT.ns_path(art_rel), CT.artifact_bytes(C.REPO, art_rel))
         self.stmt = CT.load_artifact(self.root, CT.STMT_REL)
@@ -374,9 +391,13 @@ EXPECTED_REASON = {
     "GR6": "a grafts file rewrites commit parentage",
     "GR7": "the repository is shallow",
     # DM: disposition follows certificate semantics (N5-11)
+    "DM2": "certificates are ['F_H', 'F_K'], expected exactly ['F_D', 'F_H', 'F_K']",
     "DM3": "reported NOT_CERTIFIED (demoted)",
-    "DM4": "Abar must cite its frozen certificate 'F_K', which exists",
-    "DM5": "certificate(s) ['F_K2'] prove it (demoted)",
+    # since review 6 (N6-4) the run SCHEMA refuses DM4/DM5 first, at step "run": a null
+    # citation and a renamed proving certificate are shapes the frozen runner never emits; the
+    # step-12 demotion rule (DM3, LS_DEMOTE) stays in force behind it
+    "DM4": "target 'Abar' cites None; its frozen citation is 'F_K'",
+    "DM5": "certificates are ['F_D', 'F_H', 'F_K2'], expected exactly ['F_D', 'F_H', 'F_K']",
     # AC: approved commit as a full id (N5-7)
     "AC1": "is not a full 40-hex commit id",
     "AC2": "is not a full 40-hex commit id",
@@ -385,6 +406,69 @@ EXPECTED_REASON = {
     "ORD1": "authorization: issued before the qualification it binds was committed",
     "ORD2": "holds a qualification artifact other than the current one",
     "ORD3": "the authorization was not committed before the seal",
+    # R61: the campaign-directory import closure (review 6, R6-1)
+    "R61-2": "module 'fractions' was loaded from p5y_k5_tail_c11r_n9_statement_alignment/code/"
+             "fractions.pyc, inside a campaign code directory, which is not an approved contract "
+             "source",
+    "R61-3": "module 'ast' was loaded from p5y_k5_tail_c11_n9_independent_certifier/code/ast.pyc, "
+             "inside a campaign code directory, which is not an approved contract source",
+    "R61-4": "module 'fractions' was loaded from p5y_k5_tail_c11r_n9_statement_alignment/code/"
+             "fractions.py, inside a campaign code directory, which is not an approved contract "
+             "source",
+    "R61-5": "module 'fractions' was loaded from p5y_k5_tail_c11r_n9_statement_alignment/code/"
+             "fractions/__init__.py, inside a campaign code directory",
+    "R61-6": "module 'fractions' was loaded from p5y_k5_tail_c11r_n9_statement_alignment/code/"
+             "fractions/__init__.py, inside a campaign code directory",
+    "R61-7": "module 'c11x_nsdata' is a namespace package inside a campaign code directory",
+    "R61-8": "sys.path holds a repository directory that is not a campaign code directory "
+             "(shadow.egg)",
+    "R61-9": "module 'c11x_helper' was loaded from p5y_k5_tail_c11r_n9_statement_alignment/code/"
+             "c11x_helper.py, inside a campaign code directory, which is not an approved contract "
+             "source",
+    "R61-9b": "the contract path of c11r_schema.py is reached through a symlink",
+    "R61-11": "module 'c11_extra' was loaded from p5y_k5_tail_c11_n9_independent_certifier/code/"
+              "c11_extra.py, inside a campaign code directory, which is not an approved contract "
+              "source",
+    "R61-14": "module 'c11r_certificate' was loaded from p5y_k5_tail_c11_n9_independent_certifier/"
+              "code/c11r_certificate.py, inside a campaign code directory, which is not an "
+              "approved contract source",
+    "R61-15": "module 'fractions': its __file__, __spec__.origin and loader path disagree",
+    "R61-16": "c11x_pkg/ in p5y_k5_tail_c11r_n9_statement_alignment/code is a directory (a package "
+              "or namespace package)",
+    "R61-17": "is not Python source: sourceless bytecode, extensions, archives and import "
+              "metadata are refused",
+    "R61-18b": "__pycache__/fractions.",
+    "R61-P": "precedes the standard library and is neither a campaign code directory nor part of "
+             "the interpreter",
+    "R61-B": "barrier True",
+    "R61-0b": "c11r_compare.py does not begin with the canonical pre-import barrier",
+    # TP: typed path refusals (N6-5)
+    "TP1": "c11r_schema.py is a symlink resolving OUTSIDE the repository",
+    "TP1c": "c11r_schema.py is a symlink resolving OUTSIDE the repository",
+    "TP2": "c11r_schema.py is a dangling symlink",
+    "TP2c": "the runs artifact path is a dangling symlink",
+    "TP3": "c11r_schema.py is a symlink loop",
+    "TP4": "C11R_AUTHORIZATION.json is a directory",
+    # CMP: the comparison transaction (N6-3)
+    "CMP1": "an unexpected file under a protocol directory on disk",
+    "CMP2": "the runs artifact path is a directory",
+    "CMP2b": "the runs artifact is not readable JSON",
+    "CMP3": "tree identity: frozen path c11r_boxdata.py differs",
+    "CMP4": "POST_LOAD_FAILURE -- the loader was entered",
+    "CMP4b": "POST_LOAD_FAILURE -- the comparison was computed but could not be written",
+    "CMP6": "a comparison file already exists at the comparison output path",
+    "CMP6b": "holds a comparison artifact (a prior comparison)",
+    # RC: required proving certificates (N6-4)
+    "RC2": "target 'Abar' missing 'certificate_id'",
+    "RC3": "target 'Abar' cites None; its frozen citation is 'F_K'",
+    "RC4": "target 'Abar' cites unknown certificate 'F_Kx'",
+    "RC5": "target 'Abar' cites 'F_H'; its frozen citation is 'F_K'",
+    "RC6": "value trace: Abar: ['its certificate proves nothing",
+    "RC7": "certificates are ['F_D', 'F_H'], expected exactly ['F_D', 'F_H', 'F_K']",
+    # LG: repository-wide lineage (N6-2)
+    "LG1": "hold a runs artifact that stage run does not admit",
+    "LG2": "hold a runs artifact that stage compare does not admit",
+    "LG4": "hold a permission artifact that stage run does not admit",
 }
 EXPECTED_STEP = {
     "R3A": "complete frozen history", "R3M": "complete frozen history",
@@ -406,9 +490,15 @@ EXPECTED_STEP = {
     "CF3": "complete frozen history", "CF4": "complete frozen history",
     "GR1": "complete frozen history", "GR2": "complete frozen history",
     "GR3": "complete frozen history", "GR6": "complete frozen history",
-    "DM3": "other execution-integrity predicates", "DM4": "other execution-integrity predicates",
-    "DM5": "other execution-integrity predicates",
-    "AC1": "approved commit", "AC2": "approved commit"}
+    "DM3": "other execution-integrity predicates", "DM4": "run", "DM5": "run",
+    "AC1": "approved commit", "AC2": "approved commit",
+    "TP1c": "complete frozen history", "TP2c": "complete frozen history",
+    "CMP1": "complete frozen history", "CMP2": "complete frozen history",
+    "CMP2b": "complete frozen history", "CMP3": "complete frozen history",
+    "CMP6": "complete frozen history", "CMP6b": "complete frozen history",
+    "RC2": "run", "RC3": "run", "RC4": "run", "RC5": "run", "RC7": "run",
+    "RC6": "other execution-integrity predicates",
+    "LG2": "complete frozen history"}
 
 
 def record(cid, group, attack, *, expected, refused_at, refused, problems, loader_calls=0,
@@ -422,6 +512,8 @@ def record(cid, group, attack, *, expected, refused_at, refused, problems, loade
     must = must or {}
     if expected == "REFUSE":
         ok = refused and has_reason and step_ok and loader_calls == 0 and all(must.values())
+    elif expected == "POST_LOAD_FAILURE":        # the loader WAS entered, by construction (N6-3)
+        ok = refused and has_reason and all(must.values())
     else:
         ok = (not refused) and all(must.values())
     RESULTS.append({"id": cid, "group": group, "attack": attack, "expected": expected,
@@ -1072,6 +1164,9 @@ def c_QF():
 DRIVER = r'''
 import json, os, sys
 cfg = json.loads(sys.argv[1])
+# as a boundary program would be: its own directory is not on sys.path (review 6, R6-1, L3)
+_me = os.path.dirname(os.path.realpath(__file__))
+sys.path[:] = [p for p in sys.path if os.path.realpath(p or ".") != _me]
 if cfg.get("pycache_prefix"):
     sys.pycache_prefix = cfg["pycache_prefix"]
 sys.path.insert(0, cfg["code"])
@@ -1438,9 +1533,11 @@ def c_GS():
         path.append(_state(ch)["state"])
         R.finish_execution(ch.root, body)
         path.append(_state(ch)["state"])
-        # NEXT_STEPS[0], literally: exactly the two files it names, in ONE commit
-        named = [x for x in (CT.RUNS_REL, CT.PERMISSION_REL) if x in R.NEXT_STEPS[0]]
-        ch.commit_paths([CT.ns_path(x) for x in named], "the seal, exactly as NEXT_STEPS says")
+        # NEXT_STEPS[0], literally: exactly the two REPOSITORY-relative paths it names (N6-1), in
+        # ONE commit
+        named = [CT.ns_path(x) for x in (CT.RUNS_REL, CT.PERMISSION_REL)
+                 if CT.ns_path(x) in R.NEXT_STEPS[0]]
+        ch.commit_paths(named, "the seal, exactly as NEXT_STEPS says")
         st = _state(ch)
         path.append(st["state"])
         auth_after = C.git_object_at("HEAD", AUTH_PATH, repo=ch.root)
@@ -1752,8 +1849,8 @@ def git_call_scan() -> dict:
         for n, where in git_calls(ast.parse(C.read_code(C._rel(f)))):
             calls += 1
             sites.append((f.name, where))
-            if f.name == "c11r_chain.py" and where == "_plain_git_rev_list":
-                continue                                  # the labelled demonstration
+            if f.name == "c11r_chain.py" and where in ("_plain_git_rev_list", "_plain_git"):
+                continue                                  # the labelled demonstrations
             if f.name != "c11r_common.py":
                 hits.append(f"{f.name}:{n.lineno} ({where}): git outside c11r_common")
             elif not sanitized(n):
@@ -1919,13 +2016,17 @@ def c_DM():
         ch.authorize()
         pf = ch.preflight()
         certs = K.synthetic_certs(ch.stmt, ch.policy)
-        del certs["F_D"]                                  # genuinely absent: no D_lo certificate
-        ch.run(pf["identity"], certs=certs)
-        res = ch.compare()
-        record_compare("DM2", "DM", "a genuinely absent certificate: D_lo NOT_CERTIFIED citing "
-                                    "nothing", res, expected="ACCEPT",
-                       must={"D_lo_INSUFFICIENT": res.get("classes", {}).get("D_lo")
-                             == "INSUFFICIENT"})
+        del certs["F_D"]                                  # absent: no D_lo certificate
+        try:
+            ch.run(pf["identity"], certs=certs)
+            refused, why = False, ["the runner emitted a run without F_D"]
+        except ValueError as e:
+            refused, why = True, [str(e)]
+        record("DM2", "DM", "an ABSENT proving certificate (D_lo citing nothing): the runner's own "
+                            "emission refuses it since review 6, N6-4 (round 6 accepted it at the "
+                            "comparator); a hand-edited run of that shape is RC7",
+               expected="REFUSE", refused_at="runner emission (c11r_schema.emit_runs)",
+               refused=refused, problems=why)
     finally:
         ch.cleanup()
     _compare_after("DM3", "NOT_CERTIFIED while citing a certificate that proves it",
@@ -1977,9 +2078,779 @@ def c_AC():
         ch.cleanup()
 
 
+# ---------------------------------------------------------------------------------------------
+# R61: the campaign-directory import closure (review 6, blocker R6-1). Every control plants its
+# material in a SYNTHETIC repository and runs a driver whose EXECUTION ROOT is that repository
+# (its code imported from there, its code directory first on sys.path, as a boundary program's
+# would be): the real checkout's code directories are never touched.
+# ---------------------------------------------------------------------------------------------
+R61_DRIVER = r'''
+import json, os, sys
+cfg = json.loads(sys.argv[1])
+_me = os.path.dirname(os.path.realpath(__file__))
+sys.path[:] = [p for p in sys.path if os.path.realpath(p or ".") != _me]
+sys.path.insert(0, cfg["code"])
+for d in cfg.get("prepend", []):
+    sys.path.insert(0, d)
+out = {"imported": [], "errors": {}}
+for m in cfg["imports"]:
+    try:
+        __import__(m)
+        out["imported"].append(m)
+    except BaseException as e:
+        out["errors"][m] = type(e).__name__ + ": " + str(e)[:300]
+import c11r_common as C
+import c11r_contract as CT
+contract = CT.load_artifact(C.REPO, CT.CONTRACT_REL)
+out.update(CT.verify_loaded_modules(contract, role=cfg.get("role")))
+out["static"] = CT.code_dir_shadows(contract, C.REPO)
+out["files"] = {m: getattr(sys.modules.get(m), "__file__", None) for m in cfg.get("report", [])}
+out["markers"] = {m: bool(getattr(sys.modules.get(m), "C11R_SHADOW_MARKER", False))
+                  for m in cfg.get("report", [])}
+print(json.dumps(out))
+'''
+SHADOW_MARKER = (b"\nimport sys as _s\n_s.stderr.write('C11R-SHADOW-RAN\\n')\n"
+                 b"C11R_SHADOW_MARKER = True\n")
+NSC = f"{C.NS_REL}/code"
+C11C = str((C.C11 / "code").relative_to(C.REPO))
+
+
+def _r61_driver(ch, imports, *, role=None, report=(), prepend=(), no_write=True) -> dict:
+    tmp = pathlib.Path(tempfile.mkdtemp(prefix="r61drv_"))
+    try:
+        drv = tmp / "r61_driver.py"
+        drv.write_text(R61_DRIVER)
+        cfg = {"code": str(ch.root / NSC), "imports": list(imports), "role": role,
+               "report": list(report), "prepend": [str(x) for x in prepend]}
+        e = {k: v for k, v in os.environ.items() if k != "PYTHONPATH"}
+        r = subprocess.run([sys.executable, *(["-B"] if no_write else []), str(drv),
+                            json.dumps(cfg)], capture_output=True, text=True, env=e, cwd=str(tmp))
+        if r.returncode != 0 or not r.stdout.strip():
+            return {"problems": [f"driver failed: {r.stderr.strip()[-400:]}"], "static": [],
+                    "driver_failed": True}
+        out = json.loads(r.stdout.strip().splitlines()[-1])
+        out["shadow_ran"] = "C11R-SHADOW-RAN" in r.stderr
+        return out
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def _stdlib_source(name: str) -> bytes:
+    """The interpreter's own source of a standard-library module (never a campaign file)."""
+    import sysconfig
+    return (pathlib.Path(sysconfig.get_paths()["stdlib"]) / f"{name}.py").read_bytes()
+
+
+def _plant_sourceless(dest: pathlib.Path, source: bytes) -> None:
+    import py_compile
+    tmp = pathlib.Path(tempfile.mkdtemp(prefix="r61src_"))
+    try:
+        src = tmp / (dest.name.split(".")[0] + ".py")
+        src.write_bytes(source)
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        py_compile.compile(str(src), cfile=str(dest), doraise=True)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def _launch_boundary_programs(ch, *, with_runner: bool) -> dict:
+    """A SYNTHETIC repository's boundary programs, each launched with NO argument: c11r_compare.py
+    and c11r_qualify.py can then only print their usage (or refuse at the pre-import barrier);
+    c11r_runs.py (with_runner) is launched only with a planted shadow present, where the barrier
+    refuses before any import -- and even past it, a synthetic repository carries no
+    authorization, so its pre-flight refuses before any science. The real checkout's programs are
+    never launched."""
+    assert ch.root.resolve() != C.REPO.resolve()
+    out = {}
+    for prog in CT.BOUNDARY_PROGRAMS:
+        if prog == "c11r_runs.py" and not with_runner:
+            continue
+        r = subprocess.run([sys.executable, "-B", str(ch.root / NSC / prog)], capture_output=True,
+                           text=True, cwd=str(ch.root),
+                           env={k: v for k, v in os.environ.items() if k != "PYTHONPATH"})
+        out[prog] = {"rc": r.returncode, "barrier": "REFUSE (pre-import barrier" in r.stderr,
+                     "shadow_ran": "C11R-SHADOW-RAN" in (r.stderr + r.stdout)}
+    return out
+
+
+def _tracked(ch, rel: str) -> bool:
+    return bool(C.git_in(ch.root, "ls-files", "--", rel))
+
+
+def c_R61():
+    import importlib.machinery as M
+    import sysconfig
+    import zipfile
+    frac = _stdlib_source("fractions")
+    stdlib_dir = os.path.realpath(sysconfig.get_paths()["stdlib"])
+    cert_rel = next(r for r in CT.closure_paths() if r.endswith("/c11r_certificate.py"))
+
+    def has(res, text, where="static"):
+        return any(text in x for x in res.get(where) or [])
+
+    def one(cid, attack, setup, imports, *, expected="REFUSE", role=None, report=(),
+            must=None, prepend=None, no_write=True):
+        ch = Chain()
+        try:
+            if setup:
+                setup(ch)
+            res = _r61_driver(ch, imports, role=role, report=report, no_write=no_write,
+                              prepend=prepend(ch) if prepend else ())
+            probs = res["problems"] + res.get("static", [])
+            m = dict(must(res, ch) if must else {}, driver_ran=not res.get("driver_failed"))
+            record(cid, "R61", attack, expected=expected,
+                   refused_at="loaded-module identity + code directories", refused=bool(probs),
+                   problems=probs, must=m,
+                   extra={"campaign_origin_modules": res.get("campaign_origin_modules"),
+                          "modules_examined": res.get("modules_examined"),
+                          "files": {k: (pathlib.PurePosixPath(v).name if v else v)
+                                    for k, v in (res.get("files") or {}).items()},
+                          "shadow_ran": res.get("shadow_ran"),
+                          "import_errors": res.get("errors")})
+        finally:
+            ch.cleanup()
+
+    def from_stdlib(res, m):
+        f = (res.get("files") or {}).get(m)
+        return bool(f) and os.path.realpath(f).startswith(stdlib_dir + os.sep)
+
+    one("R61-1", "the normal approved source closure (campaign modules and the standard library)",
+        None, ["c11r_idrift", "c11r_certificate", "c11r_schema"], expected="ACCEPT",
+        report=["fractions"],
+        must=lambda r, ch: {"non_vacuous": {"c11r_idrift", "c11_certifier", "c7_gaussian"}
+                            <= set(r.get("campaign_origin_modules") or []),
+                            "fractions_from_the_stdlib": from_stdlib(r, "fractions")})
+    one("R61-2", "a sourceless fractions.pyc in the campaign's code directory (R6-1)",
+        lambda ch: _plant_sourceless(ch.root / NSC / "fractions.pyc", frac + SHADOW_MARKER),
+        ["c11r_idrift"], report=["fractions"],
+        must=lambda r, ch: {"the_shadow_really_ran": r.get("shadow_ran") is True,
+                            "static_refuses_the_kind": has(r, "fractions.pyc in "
+                                                              "p5y_k5_tail_c11r_n9_statement_"
+                                                              "alignment/code is not Python "
+                                                              "source"),
+                            "static_names_the_stdlib_name": has(
+                                r, "carries the standard-library import name 'fractions'")})
+    one("R61-3", "a sourceless ast.pyc in C11's code directory (R6-1; ast is imported lazily)",
+        lambda ch: _plant_sourceless(ch.root / C11C / "ast.pyc",
+                                     _stdlib_source("ast") + SHADOW_MARKER),
+        ["c11r_idrift", "ast"], report=["ast"],
+        must=lambda r, ch: {"the_shadow_really_ran": r.get("shadow_ran") is True,
+                            "static_refuses": has(r, "ast.pyc in p5y_k5_tail_c11_n9_independent_"
+                                                     "certifier/code is not Python source")})
+    one("R61-4", "an unexpected fractions.py SOURCE in the campaign's code directory",
+        lambda ch: ch.write(f"{NSC}/fractions.py", frac + SHADOW_MARKER), ["c11r_idrift"],
+        report=["fractions"],
+        must=lambda r, ch: {"the_shadow_really_ran": r.get("shadow_ran") is True,
+                            "static_untracked": has(r, "untracked Python source ['fractions.py']"),
+                            "static_not_in_inventory": has(r, "fractions.py in p5y_k5_tail_c11r_n9"
+                                                              "_statement_alignment/code is not "
+                                                              "in the directory inventory")})
+
+    def committed_package(ch):
+        ch.write(f"{NSC}/fractions/__init__.py", frac + SHADOW_MARKER)
+        ch.commit("a stdlib-named package committed after the approval")
+    one("R61-5", "a COMMITTED standard-library-named package fractions/__init__.py",
+        committed_package, ["c11r_idrift"], report=["fractions"],
+        must=lambda r, ch: {"the_package_is_tracked": _tracked(ch, f"{NSC}/fractions/__init__.py"),
+                            "the_shadow_really_ran": r.get("shadow_ran") is True,
+                            "static_refuses_the_directory": has(
+                                r, "fractions/ in p5y_k5_tail_c11r_n9_statement_alignment/code "
+                                   "is a directory")})
+    one("R61-6", "an UNTRACKED standard-library-named package fractions/__init__.py",
+        lambda ch: ch.write(f"{NSC}/fractions/__init__.py", frac + SHADOW_MARKER),
+        ["c11r_idrift"], report=["fractions"],
+        must=lambda r, ch: {"the_shadow_really_ran": r.get("shadow_ran") is True,
+                            "static_refuses_the_directory": has(r, "is a directory (a package")})
+    one("R61-7", "an unexpected NAMESPACE-package directory, imported",
+        lambda ch: ch.write(f"{NSC}/c11x_nsdata/notes.txt", b"not code\n"),
+        ["c11r_idrift", "c11x_nsdata"],
+        must=lambda r, ch: {"static_refuses_the_directory": has(
+            r, "c11x_nsdata/ in p5y_k5_tail_c11r_n9_statement_alignment/code is a directory")})
+
+    def egg(ch):
+        z = ch.root / NSC / "shadow.egg"
+        with zipfile.ZipFile(z, "w") as f:
+            f.writestr("fractions.py", frac + SHADOW_MARKER)
+    one("R61-8", "a zip/egg import container in the campaign's code directory, on sys.path",
+        egg, ["c11r_idrift"], report=["fractions"],
+        prepend=lambda ch: [ch.root / NSC / "shadow.egg"],
+        must=lambda r, ch: {"the_shadow_really_ran": r.get("shadow_ran") is True,
+                            "L1_refuses_the_module": has(
+                                r, "module 'fractions' was loaded from "
+                                   "p5y_k5_tail_c11r_n9_statement_alignment/code/shadow.egg",
+                                "problems"),
+                            "static_refuses_the_container": has(
+                                r, "shadow.egg in p5y_k5_tail_c11r_n9_statement_alignment/code "
+                                   "is not Python source")})
+
+    def symlinked_inside(ch):
+        ch.write("notes/helper_src.py", b"HELPER = 1\n")
+        os.symlink(ch.root / "notes/helper_src.py", ch.root / NSC / "c11x_helper.py")
+    one("R61-9", "a symlinked source in the campaign's code directory resolving elsewhere in "
+                 "the repository", symlinked_inside, ["c11r_idrift", "c11x_helper"],
+        must=lambda r, ch: {"static_refuses_the_symlink": has(
+            r, "c11x_helper.py in p5y_k5_tail_c11r_n9_statement_alignment/code is a symlink "
+               "(resolving inside the repository)")})
+
+    def approved_name_symlinked(ch):
+        rel = f"{NSC}/c11r_schema.py"
+        ch.write("notes/c11r_schema_copy.py", CT.code_bytes(ch.root, rel))
+        (ch.root / rel).unlink()
+        os.symlink(ch.root / "notes/c11r_schema_copy.py", ch.root / rel)
+    one("R61-9b", "an APPROVED name (c11r_schema.py) replaced by a symlink to identical bytes "
+                  "elsewhere in the repository", approved_name_symlinked,
+        ["c11r_idrift", "c11r_schema"],
+        must=lambda r, ch: {"static_refuses_the_symlink": has(
+            r, "c11r_schema.py in p5y_k5_tail_c11r_n9_statement_alignment/code is a symlink")})
+    one("R61-11", "a TRACKED but unbound module in C11's code directory, loaded (tracking does "
+                  "not approve)",
+        lambda ch: (ch.write(f"{C11C}/c11_extra.py", b"VALUE = 1\n"),
+                    ch.commit("a tracked, unbound module in C11's code directory")),
+        ["c11r_idrift", "c11_extra"],
+        must=lambda r, ch: {"it_is_tracked": _tracked(ch, f"{C11C}/c11_extra.py"),
+                            "static_not_in_inventory": has(
+                                r, "c11_extra.py in p5y_k5_tail_c11_n9_independent_certifier/code"
+                                   " is not in the directory inventory the contract froze")})
+    one("R61-12", "standard-library modules loaded from the standard library", None,
+        ["c11r_idrift", "json", "ast", "fractions", "decimal"], expected="ACCEPT",
+        report=["fractions", "ast", "decimal"],
+        must=lambda r, ch: {"fractions_from_the_stdlib": from_stdlib(r, "fractions"),
+                            "ast_from_the_stdlib": from_stdlib(r, "ast")})
+    one("R61-13", "every contract module of the runner boundary from its exact source (role "
+                  "runner, the pre-import barrier passing)", None, ["c11r_runs"],
+        expected="ACCEPT", role="runner",
+        must=lambda r, ch: {"required_all_present": bool(r.get("required"))
+                            and set(r["required"]) <= set(r.get("checked") or []),
+                            "non_vacuous": len(r.get("required") or []) >= 10})
+    one("R61-14", "an approved NAME (c11r_certificate) loaded from the wrong campaign directory",
+        lambda ch: ch.write(f"{C11C}/c11r_certificate.py", CT.code_bytes(C.REPO, cert_rel)),
+        ["c11r_idrift", "c11r_certificate"], report=["c11r_certificate"],
+        must=lambda r, ch: {"name_check_also_refuses": has(
+            r, "c11r_certificate.py (as module 'c11r_certificate') was loaded from another file",
+            "problems"),
+            "static_contract_name": has(r, "carries the import name of contract module "
+                                           "c11r_certificate")})
+    stdlib_fractions = str(pathlib.Path(sysconfig.get_paths()["stdlib"]) / "fractions.py")
+    one("R61-15", "a campaign-directory fractions.py that rewrites its own __file__ to the "
+                  "standard library's",
+        lambda ch: ch.write(f"{NSC}/fractions.py", frac + SHADOW_MARKER
+                            + f"\n__file__ = {stdlib_fractions!r}\n".encode()),
+        ["c11r_idrift"], report=["fractions"],
+        must=lambda r, ch: {"the_rewrite_took_effect": (r.get("files") or {}).get("fractions")
+                            == stdlib_fractions,
+                            "L1_refuses_too": has(r, "inside a campaign code directory, which is "
+                                                     "not an approved contract source",
+                                                  "problems")})
+    one("R61-16", "a COMMITTED unexpected package (a non-stdlib name), not imported",
+        lambda ch: (ch.write(f"{NSC}/c11x_pkg/__init__.py", b"X = 1\n"),
+                    ch.commit("an unexpected package committed after the approval")),
+        ["c11r_idrift"],
+        must=lambda r, ch: {"it_is_tracked": _tracked(ch, f"{NSC}/c11x_pkg/__init__.py")})
+    ext = M.EXTENSION_SUFFIXES[0]
+    ch = Chain()
+    try:
+        # static only: a broken extension named `fractions` would break every import of the
+        # driver itself; the import system's own finder shows it is found AHEAD of the stdlib
+        ch.write(f"{NSC}/fractions{ext}", b"\x00 not a real extension\n")
+        finder = M.FileFinder(str(ch.root / NSC),
+                              (M.ExtensionFileLoader, M.EXTENSION_SUFFIXES),
+                              (M.SourceFileLoader, M.SOURCE_SUFFIXES),
+                              (M.SourcelessFileLoader, M.BYTECODE_SUFFIXES))
+        spec = finder.find_spec("fractions")
+        probs = CT.code_dir_shadows(CT.load_artifact(ch.root, CT.CONTRACT_REL), ch.root)
+        record("R61-17", "R61", f"an extension-module file fractions{ext} in the campaign's code "
+                                f"directory", expected="REFUSE", refused_at="code directories",
+               refused=bool(probs), problems=probs,
+               must={"the_finder_resolves_it_first": spec is not None
+                     and type(spec.loader).__name__ == "ExtensionFileLoader",
+                     "static_names_the_stdlib_name": any(
+                         "carries the standard-library import name 'fractions'" in x
+                         for x in probs)})
+    finally:
+        ch.cleanup()
+
+    def cached(ch):
+        _r61_driver(ch, ["c11r_idrift", "c11r_certificate"], no_write=False)
+    one("R61-18", "ordinary valid __pycache__ caches written by CPython for the sources: "
+                  "accepted by the frozen cache policy", cached,
+        ["c11r_idrift", "c11r_certificate"], expected="ACCEPT",
+        must=lambda r, ch: {"caches_exist": any(
+            (ch.root / NSC / "__pycache__").glob("c11r_idrift.*.pyc"))})
+    one("R61-18b", "a cache file in __pycache__ that is no inventory source's (an orphan named "
+                   "like a standard-library module)",
+        lambda ch: ch.write(f"{NSC}/__pycache__/fractions.{sys.implementation.cache_tag}.pyc",
+                            b"not a cache\n"),
+        ["c11r_idrift"])
+    one("R61-P", "a foreign directory ahead of the standard library on sys.path",
+        lambda ch: None, ["c11r_idrift"],
+        prepend=lambda ch: [ch.root.parent])
+
+    # (B) the pre-import barrier: the boundary PROGRAMS refuse to start
+    ch = Chain()
+    try:
+        _plant_sourceless(ch.root / NSC / "fractions.pyc", frac + SHADOW_MARKER)
+        outs = _launch_boundary_programs(ch, with_runner=True)
+        refused = all(o["barrier"] and o["rc"] != 0 for o in outs.values())
+        record("R61-B", "R61", "fractions.pyc present: each boundary program refuses at its "
+                               "pre-import barrier, BEFORE the shadow can execute",
+               expected="REFUSE", refused_at="pre-import barrier", refused=refused,
+               problems=[f"{k}: rc {v['rc']}, barrier {v['barrier']}" for k, v in outs.items()],
+               must={"no_shadow_ran": not any(o["shadow_ran"] for o in outs.values())},
+               extra={"programs": outs})
+    finally:
+        ch.cleanup()
+    ch = Chain()
+    try:
+        outs = _launch_boundary_programs(ch, with_runner=False)   # usage, nothing run
+        record("R61-B0", "R61", "clean code directories: the barrier passes (the programs reach "
+                                "their own usage message)", expected="ACCEPT",
+               refused_at="pre-import barrier", refused=any(o["barrier"] for o in outs.values()),
+               problems=[], must={"usage_reached": all(o["rc"] == 2 for o in outs.values())},
+               extra={"programs": outs})
+        real = CT.preimport_barrier_problems()
+        record("R61-0", "R61", "the canonical barrier opens all three boundary programs, "
+                               "verbatim, with no __future__ import", expected="ACCEPT",
+               refused_at="pre-import barrier text", refused=bool(real), problems=real)
+        rel = f"{NSC}/c11r_compare.py"
+        src = CT.code_bytes(ch.root, rel).decode()
+        doc_end = src.index('"""', 3) + 3
+        ch.write(rel, (src[:doc_end] + "\nimport json\n" + src[doc_end:]).encode())
+        moved = CT.preimport_barrier_problems(ch.root)
+        record("R61-0b", "R61", "an import placed before the barrier", expected="REFUSE",
+               refused_at="pre-import barrier text", refused=bool(moved), problems=moved)
+    finally:
+        ch.cleanup()
+
+
+# ---------------------------------------------------------------------------------------------
+# TP: typed path refusals (review 6, N6-5) -- never an exception
+# ---------------------------------------------------------------------------------------------
+def _typed(fn):
+    try:
+        return fn(), None
+    except Exception as e:                               # the control's own failure record
+        return None, f"{type(e).__name__}: {str(e)[:200]}"
+
+
+_OUTSIDE: list[pathlib.Path] = []
+
+
+def c_TP():
+    schema_rel = f"{NSC}/c11r_schema.py"
+
+    def outside_symlink(ch):
+        ext = pathlib.Path(tempfile.mkdtemp(prefix="tp_outside_"))
+        _OUTSIDE.append(ext)
+        (ext / "c11r_schema.py").write_bytes(CT.code_bytes(ch.root, schema_rel))
+        (ch.root / schema_rel).unlink()
+        os.symlink(ext / "c11r_schema.py", ch.root / schema_rel)
+
+    def dangling(ch):
+        (ch.root / schema_rel).unlink()
+        os.symlink(ch.root / "nowhere" / "c11r_schema.py", ch.root / schema_rel)
+
+    def loop(ch):
+        (ch.root / schema_rel).unlink()
+        os.symlink(ch.root / schema_rel, ch.root / schema_rel)
+
+    def auth_directory(ch):
+        (ch.root / AUTH_PATH).unlink()
+        (ch.root / AUTH_PATH).mkdir()
+    for cid, attack, change in (
+            ("TP1", "a contract path replaced by a symlink to identical bytes OUTSIDE the "
+                    "repository", outside_symlink),
+            ("TP2", "a contract path replaced by a DANGLING symlink", dangling),
+            ("TP3", "a contract path replaced by a symlink LOOP", loop),
+            ("TP4", "a DIRECTORY where the authorization file belongs", auth_directory)):
+        ch = Chain()
+        try:
+            ch.qualify()
+            ch.authorize()
+            change(ch)
+            pf, exc = _typed(ch.preflight)
+            record(cid, "TP", attack + " (runner pre-flight)", expected="REFUSE",
+                   refused_at="runner pre-flight", refused=bool(pf and pf["problems"]),
+                   problems=(pf or {}).get("problems") or [exc], must={"no_exception": exc is None})
+        finally:
+            ch.cleanup()
+
+    def runs_dangling(ch):
+        (ch.root / RUNS_PATH).unlink()
+        os.symlink(ch.root / "nowhere.json", ch.root / RUNS_PATH)
+    for cid, attack, after in (
+            ("TP1c", "a contract path symlinked OUTSIDE the repository after the seal",
+             outside_symlink),
+            ("TP2c", "the runs artifact replaced by a DANGLING symlink after the seal",
+             runs_dangling)):
+        ch = Chain()
+        try:
+            ch.qualify()
+            ch.authorize()
+            pf = ch.preflight()
+            ch.run(pf["identity"])
+            after(ch)
+            res, exc = _typed(ch.compare)
+            if res is None:
+                record(cid, "TP", attack, expected="REFUSE", refused_at="comparator",
+                       refused=False, problems=[exc], must={"no_exception": False})
+            else:
+                record_compare(cid, "TP", attack, res, must={"no_exception": True})
+        finally:
+            ch.cleanup()
+    for ext in _OUTSIDE:
+        shutil.rmtree(ext, ignore_errors=True)
+
+
+# ---------------------------------------------------------------------------------------------
+# CMP: the comparison transaction (review 6, N6-3) -- a refusal writes NOTHING
+# ---------------------------------------------------------------------------------------------
+WRITER_DRIVER = r'''
+import json, os, sys
+_me = os.path.dirname(os.path.realpath(__file__))
+sys.path[:] = [p for p in sys.path if os.path.realpath(p or ".") != _me]
+sys.path.insert(0, sys.argv[1])
+sys.modules["__main__"].__file__ = sys.argv[2]   # the reader identity, simulated (the residual)
+import c11r_compare as K
+print(K.write_comparison(sys.argv[3], json.loads(sys.stdin.read())))
+'''
+
+
+def _subprocess_writer(repo, out) -> str:
+    """write_comparison in a process whose __main__ resolves to c11r_compare.py -- the recorded
+    open-guard residual the chain uses; the payload is the synthetic chain's own result."""
+    tmp = pathlib.Path(tempfile.mkdtemp(prefix="cmpwriter_"))
+    try:
+        drv = tmp / "cmp_writer.py"
+        drv.write_text(WRITER_DRIVER)
+        r = subprocess.run([sys.executable, "-B", str(drv), str(C.HERE),
+                            str(C.HERE / "c11r_compare.py"), str(repo)],
+                           input=json.dumps(out), capture_output=True, text=True)
+        if r.returncode != 0:
+            raise OSError(f"the writer process failed: {r.stderr.strip()[-300:]}")
+        return r.stdout.strip().splitlines()[-1]
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+
+
+def _refusing_writer(repo, out):
+    raise AssertionError("a refused or failed comparison reached the writer")
+
+
+class RaisingLoader(StubLoader):
+    def __call__(self, stmt):
+        self.calls += 1
+        raise ValueError("synthetic post-load failure")
+
+
+def _phase15(ch, *, writer=None, loader=None) -> dict:
+    loader = loader or StubLoader()
+    calls = {"writer": 0}
+
+    def w(repo, out):
+        calls["writer"] += 1
+        return (writer or _refusing_writer)(repo, out)
+    r, exc = _typed(lambda: K.phase15(ch.root, approved_commit=ch.approved, loader=loader,
+                                      allow_fixture=True, writer=w))
+    listed = C.git_in(ch.root, "ls-files", "--cached", "--others", "--",
+                      f"{C.NS_REL}/evidence/comparison").splitlines()     # names only
+    return {"r": r, "exception": exc, "loader_calls": loader.calls,
+            "writer_calls": calls["writer"],
+            "output_exists": os.path.lexists(ch.root / COMPARISON_PATH),
+            "comparison_dir_entries": sorted(pathlib.PurePosixPath(x).name for x in listed)}
+
+
+def _record_cmp(cid, attack, t, *, expected="REFUSE", must=None, prior_output=False):
+    """`prior_output`: a valid comparison was ALREADY written by an earlier invocation; the
+    refusal must leave it exactly as it was (checked by the caller) and write nothing new."""
+    r = t["r"] or {}
+    res = r.get("result") or {}
+    outcome = r.get("outcome")
+    must = dict(must or {}, no_exception=t["exception"] is None)
+    if expected == "REFUSE":
+        must.update(writer_never_called=t["writer_calls"] == 0,
+                    outcome_REFUSED_BEFORE_LOAD=outcome == "REFUSED_BEFORE_LOAD")
+        if prior_output:
+            must.update(still_exactly_one_file=t["comparison_dir_entries"]
+                        == [pathlib.PurePosixPath(COMPARISON_PATH).name])
+        else:
+            must.update(no_result_file=not t["output_exists"])
+    record(cid, "CMP", attack, expected=expected, refused_at="comparison transaction",
+           refused=outcome != "COMPARED", problems=res.get("identity_problems") or r.get("lines")
+           or [t["exception"]], loader_calls=t["loader_calls"], step=res.get("refused_at"),
+           must=must, extra={"outcome": outcome, "writer_calls": t["writer_calls"],
+                             "output_exists": t["output_exists"],
+                             "comparison_dir_entries": t["comparison_dir_entries"]})
+
+
+def _sealed_chain() -> Chain:
+    ch = Chain()
+    ch.qualify()
+    ch.authorize()
+    pf = ch.preflight()
+    ch.run(pf["identity"])
+    return ch
+
+
+def c_CMP():
+    for cid, attack, after in (
+            ("CMP1", "a stray Finder .DS_Store in evidence/runs",
+             lambda ch: ch.write(f"{C.NS_REL}/evidence/runs/.DS_Store", b"\x00\x00\x00\x01Bud1")),
+            ("CMP2", "a DIRECTORY where the runs artifact belongs",
+             lambda ch: ((ch.root / RUNS_PATH).unlink(), (ch.root / RUNS_PATH).mkdir())),
+            ("CMP2b", "the runs artifact is not valid JSON",
+             lambda ch: ch.write(RUNS_PATH, b"{ not json\n")),
+            ("CMP3", "a pre-load failure: a frozen code file edited after the seal",
+             lambda ch: ch.edit_code("c11r_boxdata.py"))):
+        ch = _sealed_chain()
+        try:
+            after(ch)
+            _record_cmp(cid, attack, _phase15(ch))
+        finally:
+            ch.cleanup()
+    ch = _sealed_chain()
+    try:
+        t = _phase15(ch, loader=RaisingLoader())
+        _record_cmp("CMP4", "a failure AFTER the loader was entered (the loader raises)", t,
+                    expected="POST_LOAD_FAILURE",
+                    must={"outcome_POST_LOAD_FAILURE": (t["r"] or {}).get("outcome")
+                          == "POST_LOAD_FAILURE", "loader_entered_once": t["loader_calls"] == 1,
+                          "no_result_file": not t["output_exists"],
+                          "writer_never_called": t["writer_calls"] == 0})
+    finally:
+        ch.cleanup()
+    ch = _sealed_chain()
+    try:
+        def failing(repo, out):
+            raise OSError("synthetic write failure")
+        t = _phase15(ch, writer=failing)
+        _record_cmp("CMP4b", "the write itself fails after the comparison was computed", t,
+                    expected="POST_LOAD_FAILURE",
+                    must={"outcome_POST_LOAD_FAILURE": (t["r"] or {}).get("outcome")
+                          == "POST_LOAD_FAILURE", "no_result_file": not t["output_exists"]})
+    finally:
+        ch.cleanup()
+    ch = _sealed_chain()
+    try:
+        t = _phase15(ch, writer=_subprocess_writer)
+        _record_cmp("CMP5", "the valid chain: ONE comparison artifact, written exactly once", t,
+                    expected="ACCEPT",
+                    must={"outcome_COMPARED": (t["r"] or {}).get("outcome") == "COMPARED",
+                          "written_once": t["writer_calls"] == 1,
+                          "exactly_one_file": t["comparison_dir_entries"]
+                          == [pathlib.PurePosixPath(COMPARISON_PATH).name],
+                          "loader_called_once": t["loader_calls"] == 1})
+        before = C.content_free_id(ch.root / COMPARISON_PATH)
+        t = _phase15(ch)
+        _record_cmp("CMP6", "a second comparator invocation meets the existing output", t,
+                    prior_output=True,
+                    must={"output_unchanged": C.content_free_id(ch.root / COMPARISON_PATH)
+                          == before})
+        ch.commit_paths([COMPARISON_PATH], "the comparison, committed")
+        t = _phase15(ch)
+        _record_cmp("CMP6b", "a third invocation after the comparison was committed (COMPARED)", t,
+                    prior_output=True,
+                    must={"output_unchanged": C.content_free_id(ch.root / COMPARISON_PATH)
+                          == before})
+    finally:
+        ch.cleanup()
+
+
+# ---------------------------------------------------------------------------------------------
+# RC: the required proving certificates (review 6, N6-4)
+# ---------------------------------------------------------------------------------------------
+def c_RC():
+    ch = Chain()
+    try:
+        record_compare("RC1", "RC", "every required certificate present and cited as frozen",
+                       full_valid(ch), expected="ACCEPT")
+    finally:
+        ch.cleanup()
+    _compare_after("RC2", "the certificate_id field deleted from Abar",
+                   run_mutate=lambda o: o["targets"]["Abar"].pop("certificate_id"), restamp=True,
+                   group="RC")
+    _compare_after("RC3", "Abar's certificate nulled",
+                   run_mutate=lambda o: o["targets"]["Abar"].update(certificate_id=None),
+                   restamp=True, group="RC")
+    _compare_after("RC4", "Abar citing a certificate that does not exist",
+                   run_mutate=lambda o: o["targets"]["Abar"].update(certificate_id="F_Kx"),
+                   restamp=True, group="RC")
+    _compare_after("RC5", "Abar citing another target's certificate (F_H)",
+                   run_mutate=lambda o: o["targets"]["Abar"].update(certificate_id="F_H"),
+                   restamp=True, group="RC")
+
+    def not_proving(o):
+        o["targets"]["Abar"].update(status="CERTIFIED", value="1111/100", reason=None)
+    _compare_after("RC6", "Abar claimed CERTIFIED from a certificate that does not prove it",
+                   certs=lambda ch: K.synthetic_certs(ch.stmt, ch.policy, certified_K=False),
+                   run_mutate=not_proving, restamp=True, group="RC")
+
+    def dropped(o):
+        o["certificates"].pop("F_K")
+        o["targets"]["Abar"].update(status="NOT_CERTIFIED", value=None, certificate_id=None)
+    _compare_after("RC7", "R6's N6-4: the proving certificate REMOVED, Abar demoted, the "
+                          "citation nulled", run_mutate=dropped, restamp=True, group="RC")
+
+
+# ---------------------------------------------------------------------------------------------
+# CG: the commit-graph file is not read (review 6, N6-6)
+# ---------------------------------------------------------------------------------------------
+def _plain_git(root, *a) -> subprocess.CompletedProcess:
+    """DEMONSTRATION ONLY (exempted, by name, from the git-call scan): git as an UNPROTECTED
+    caller runs it -- commit-graph honoured -- and the graph writer."""
+    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+    return subprocess.run(["git", "-C", str(root), *a], capture_output=True, text=True, env=env)
+
+
+def _forge_commit_graph(root: pathlib.Path, commit: str) -> bool:
+    """Rewrite the commit-graph so that `commit` (a merge) has NO second parent; the trailer is
+    re-hashed, so git trusts the file."""
+    import hashlib
+    import struct
+    gp = root / ".git" / "objects" / "info" / "commit-graph"
+    data = bytearray(gp.read_bytes())
+    if data[:4] != b"CGPH":
+        return False
+    chunks = {}
+    for i in range(data[6] + 1):
+        chunks[bytes(data[8 + 12 * i:12 + 12 * i])] = struct.unpack(
+            ">Q", data[12 + 12 * i:20 + 12 * i])[0]
+    fan = chunks[b"OIDF"]
+    n = struct.unpack(">I", data[fan + 255 * 4:fan + 256 * 4])[0]
+    oids = [bytes(data[chunks[b"OIDL"] + 20 * i:chunks[b"OIDL"] + 20 * i + 20]).hex()
+            for i in range(n)]
+    if commit not in oids:
+        return False
+    at = chunks[b"CDAT"] + 36 * oids.index(commit) + 24
+    data[at:at + 4] = struct.pack(">I", 0x70000000)          # GRAPH_PARENT_NONE
+    data[-20:] = hashlib.sha1(bytes(data[:-20])).digest()
+    os.chmod(gp, 0o644)
+    gp.write_bytes(bytes(data))
+    return True
+
+
+def c_CG():
+    ch = Chain()
+    try:
+        ch.branch("side")
+        ch.write(RUNS_PATH, b'{"synthetic": "a run merged in and hidden"}\n')
+        ch.commit("a run on a side branch")
+        ch.remove(RUNS_PATH)
+        ch.commit("the run removed again on the side branch")
+        ch.checkout(TRUNK)
+        ch.write("notes/TRUNK.md", b"trunk moves\n")
+        ch.commit("trunk moves")
+        merge = ch.merge("side")                   # the merged tree holds no run: only the
+        #                                            side commit does, through parent 2
+        C.git_in(ch.root, "branch", "-q", "-D", "side")
+        C.git_in(ch.root, "reflog", "expire", "--expire=now", "--all")
+        wrote = _plain_git(ch.root, "commit-graph", "write", "--reachable").returncode == 0
+        forged = wrote and _forge_commit_graph(ch.root, merge)
+        raw = len(_plain_git(ch.root, "rev-list", "--all", "--reflog", "HEAD").stdout.split())
+        real = len(C.git_in(ch.root, "rev-list", "--all", "--reflog", "HEAD").split())
+        anywhere = CT.protocol_artifacts_anywhere(ch.root)
+        record("CG1", "CG", "a merged run hidden by a FORGED commit-graph (the merge's second "
+                            "parent dropped): the pre-result state check still finds it",
+               expected="REFUSE", refused_at="pre-result state check",
+               refused=bool(anywhere["holders"]["runs"]),
+               problems=[f"commits holding a runs artifact: {len(anywhere['holders']['runs'])}"],
+               must={"the_graph_was_forged": forged,
+                     "an_unprotected_git_trusts_the_forged_graph": raw < real,
+                     "the_campaign_reads_every_commit": real == anywhere["commits_checked"]},
+               extra={"unprotected_rev_list_all": raw, "campaign_rev_list_all": real})
+    finally:
+        ch.cleanup()
+
+
+# ---------------------------------------------------------------------------------------------
+# WD, LG: what the lifecycle claims, and the repository-wide lineage (review 6, N6-2)
+# ---------------------------------------------------------------------------------------------
+def c_WD():
+    overstated = "nothing re-enables execution"
+    scanned, hits = 0, []
+    for f in sorted(C.HERE.glob("*.py")):
+        if f.name in ("c11r_errata.py", "c11r_chain.py"):  # the errata quote it; this control
+            continue                                       # names it
+        scanned += 1
+        if overstated in C.read_code(C._rel(f)):
+            hits.append(f.name)
+    record("WD1", "WD", "the overstated 'nothing re-enables execution' is gone; the printed "
+                        "message states the proved scope", expected="ACCEPT",
+           refused_at="wording", refused=bool(hits), problems=hits,
+           must={"files_scanned": scanned >= 20,
+                 "NEXT_STEPS_names_the_scope": "LIFECYCLE_SCOPE" in R.NEXT_STEPS[2],
+                 "the_scope_states_what_is_not_covered": "NOT covered" in CT.LIFECYCLE_SCOPE,
+                 "the_contract_binds_the_scope":
+                     CT.contract_body(C.REPO)["lifecycle"]["scope"] == CT.LIFECYCLE_SCOPE,
+                 "guard_comment_no_longer_claims_copies": "a hard link or a renamed copy of "
+                 "either under an innocent name is refused" not in C.read_code(
+                     f"{C.NS_REL}/code/c11r_common.py")})
+
+
+def c_LG():
+    ch = Chain()
+    try:
+        ch.qualify()
+        ch.authorize()
+        auth_commit = C.git_in(ch.root, "rev-parse", "HEAD")
+        pf = ch.preflight()
+        ch.run(pf["identity"])                             # sealed on the trunk
+        C.git_in(ch.root, "checkout", "-q", "-b", "sibling", auth_commit)
+        again = ch.preflight()
+        record("LG1", "LG", "a SIBLING branch forked at the authorization commit while the first "
+                            "seal sits on another branch: the pre-flight refuses",
+               expected="REFUSE", refused_at="runner pre-flight", refused=bool(again["problems"]),
+               problems=again["problems"], extra={"lifecycle": _state(ch)["state"]})
+        ch.run(pf["identity"], restamp=True,               # a second, forced execution
+               mutate=lambda b: b.update(note="a second execution on a sibling branch"))
+        record_compare("LG2", "LG", "the sibling's second seal is compared: refused",
+                       ch.compare())
+    finally:
+        ch.cleanup()
+    ch = Chain()
+    try:
+        ch.qualify()
+        ch.authorize()
+        pf = ch.preflight()
+        R.begin_execution(ch.root, pf["identity"])
+        C.git_in(ch.root, "checkout", "--", PERMISSION_PATH)   # the GRANT restored from git
+        st = _state(ch)["state"]
+        again = ch.preflight()
+        record("LG3", "LG", "STATED LIMIT (LIFECYCLE_SCOPE): an interrupted execution whose "
+                            "EXECUTION_STARTED was never committed and the GRANT restored from "
+                            "git leaves no trace; the pre-flight passes again -- not claimed",
+               expected="ACCEPT", refused_at="runner pre-flight", refused=bool(again["problems"]),
+               problems=again["problems"],
+               must={"state_is_AUTHORIZED_again": st == "AUTHORIZED",
+                     "the_limit_is_stated": "GRANT restored from git" in CT.LIFECYCLE_SCOPE,
+                     "the_protocol_instruction_exists": "ABANDONED" in CT.INTERRUPTED_EXECUTION},
+               extra={"stated_limit": True})
+    finally:
+        ch.cleanup()
+    ch = Chain()
+    try:
+        ch.qualify()
+        ch.authorize()
+        auth_commit = C.git_in(ch.root, "rev-parse", "HEAD")
+        pf = ch.preflight()
+        ch.branch("attempt")
+        R.begin_execution(ch.root, pf["identity"])
+        ch.commit_paths([PERMISSION_PATH], "an interrupted execution, committed (ABANDONED)")
+        ch.checkout(TRUNK)
+        again = ch.preflight()
+        record("LG4", "LG", "an execution ABANDONED on another branch; the trunk still holds the "
+                            "GRANT: the pre-flight refuses", expected="REFUSE",
+               refused_at="runner pre-flight", refused=bool(again["problems"]),
+               problems=again["problems"],
+               extra={"trunk_is_authorization_commit":
+                      C.git_in(ch.root, "rev-parse", "HEAD") == auth_commit})
+    finally:
+        ch.cleanup()
+
+
 CONTROLS = (c_R3T, c_unrelated, c_R3A, c_R3B, c_R3C, c_R3D, c_R3E, c_R3F, c_R3G, c_R3H, c_R3I,
             c_R3JKL, c_R3M, c_R3N, c_R3O, c_R3P, c_R3Q, c_R3R, c_R3S, c_real_repository_guard,
-            c_MHT, c_LS, c_QF, c_IMP, c_ORD, c_GS, c_CF, c_PB, c_GR, c_DM, c_AC)
+            c_MHT, c_LS, c_QF, c_IMP, c_ORD, c_GS, c_CF, c_PB, c_GR, c_DM, c_AC,
+            c_R61, c_TP, c_CMP, c_RC, c_CG, c_WD, c_LG)
 
 
 def main() -> int:
@@ -1987,6 +2858,7 @@ def main() -> int:
         f()
     failed = [r["id"] for r in RESULTS if not r["pass"]]
     refusals = [r for r in RESULTS if r["expected"] == "REFUSE"]
+    post_load = [r for r in RESULTS if r["expected"] == "POST_LOAD_FAILURE"]
     accepts = [r for r in RESULTS if r["expected"] == "ACCEPT" and r["stage"] == "comparator"]
     ordering = all(r["stub_loader_calls"] == 0 for r in refusals) and all(
         r["stub_loader_calls"] == 1 for r in accepts)
@@ -2011,14 +2883,14 @@ def main() -> int:
                "comparator_refusals": sum(1 for r in refusals if r["stage"] == "comparator"),
                "comparator_accepts": len(accepts),
                "rule": "the comparator calls the magnitude loader only after steps 1-12 of "
-                       "c11r_compare.STEPS all pass"},
+                       "c11r_compare.STEPS all pass",
+               "post_load_controls_documented_separately": {
+                   r["id"]: {"loader_calls": r["stub_loader_calls"], "pass": r["pass"],
+                             "output_exists": r.get("output_exists")} for r in post_load},
+               "post_load_rule": CT.COMPARISON_TRANSACTION},
            "not_covered": [
-               "commits not reachable from HEAD (reset-away commits, unmerged branches, stashes) "
-               "are outside history: a run made and discarded there, or never committed at "
-               "all, is undetectable by git",
-               "the loaded-module check sees what the import system loaded at the moment of the "
-               "check; in-memory patching, exec of other code and modules swapped on disk and "
-               "restored between import and check are not detected"],
+               CT.LIFECYCLE_SCOPE,
+               CT.MODULE_IDENTITY_POLICY["not_covered"]],
            "failed": failed,
            "CHAIN_CLASS": "PASS" if not failed and ordering else "REFUSE"}
     s = C.write_evidence(C.NS / "evidence" / "chain" / "C11R_CHAIN_CONTROLS.json", out,

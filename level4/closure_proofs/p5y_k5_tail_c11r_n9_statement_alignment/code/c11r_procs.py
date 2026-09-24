@@ -481,7 +481,18 @@ def main() -> int:
                            "or code built at run time)", "a script this user cannot read",
                            "under `-m <tool>`, a script argument that does not end in .py, or a "
                            "tool that takes its script from elsewhere (a file, stdin, the "
-                           "environment)", "work between two samples"],
+                           "environment)",
+                           "a plain wrapper script whose file name does not end in .py (review 6, "
+                           "N6-8)",
+                           "a long interpreter option that takes a value placed before the script "
+                           "(`--check-hash-based-pycs default wrap.py`): the option's value is "
+                           "taken as the script (review 6, N6-8)",
+                           "work between two samples"],
+           "known_false_positives": ("fail-safe, they block and never admit (review 6, N6-8): an "
+                                     "unrelated program given an argument such as `C11_notes` "
+                                     "(the case-insensitive c11r?_ token), and an unrelated "
+                                     "script whose source merely names the campaign namespace, "
+                                     "in a comment for instance"),
            "what_it_gates": ("concurrency only (cost measurement, runner pre-flight, B0, "
                              "regeneration); it cannot prove no competing computation ran"),
            "planted_controls": planted,

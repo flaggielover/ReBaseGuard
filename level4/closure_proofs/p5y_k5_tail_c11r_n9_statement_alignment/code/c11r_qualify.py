@@ -35,7 +35,38 @@ host-identity rule, the import scan, scalar collapse and the atom decomposition 
 writing anything. It is what this turn runs. `main()` runs the full qualification and writes
 evidence/qualification/C11R_QUALIFICATION.json; it is for Phase 12, after READY_TO_FREEZE.
 """
-from __future__ import annotations
+# --- C11R PRE-IMPORT BARRIER (review 6, R6-1): the first statement, before any other import ---
+import os as _os
+import sys as _sys
+
+
+def _c11r_preimport_barrier():
+    """Refuse to start while a campaign code directory holds anything a standard-library import
+    could resolve to. Only `os` and `sys` are used: the interpreter loaded both before this
+    script's directory was put on sys.path (c11r_contract.PREIMPORT_BARRIER)."""
+    here = _os.path.dirname(_os.path.realpath(__file__))
+    closure = _os.path.dirname(_os.path.dirname(here))
+    bad = []
+    for d in (here, _os.path.join(closure, "p5y_k5_tail_c11_n9_independent_certifier", "code"),
+              _os.path.join(closure, "p5y_k5_tail_c7_e2_lambda309", "code")):
+        if _os.path.islink(d) or not _os.path.isdir(d):
+            bad.append(d)
+            continue
+        for e in sorted(_os.listdir(d)):
+            p = _os.path.join(d, e)
+            if e == "__pycache__" and _os.path.isdir(p) and not _os.path.islink(p):
+                continue
+            if (not e.endswith(".py") or _os.path.islink(p) or not _os.path.isfile(p)
+                    or e[:-3] in _sys.stdlib_module_names or e[:-3] in _sys.builtin_module_names):
+                bad.append(_os.path.basename(_os.path.dirname(d)) + "/code/" + e)
+    if bad:
+        raise SystemExit("REFUSE (pre-import barrier, review 6 R6-1): a campaign code directory "
+                         "holds an entry a standard-library import could resolve to: "
+                         + ", ".join(bad))
+
+
+_c11r_preimport_barrier()
+# --- end of the pre-import barrier ---
 
 import ast
 import pathlib

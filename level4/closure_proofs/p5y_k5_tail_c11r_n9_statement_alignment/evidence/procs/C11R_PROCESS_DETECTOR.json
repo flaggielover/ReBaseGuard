@@ -3,6 +3,7 @@
  "campaign_relevance": "argv (option clusters parsed): a campaign script basename, a -m campaign module, a -c payload naming the campaign, any argument naming the campaign namespace or a campaign module, or a script whose own source imports campaign code",
  "campaign_workers_at_write": [],
  "interpreter_identity": "executable basename matching ^python(\\d+(\\.\\d+)*)?w?$ case-insensitively, or an executable inside a Python.framework / Python.app bundle",
+ "known_false_positives": "fail-safe, they block and never admit (review 6, N6-8): an unrelated program given an argument such as `C11_notes` (the case-insensitive c11r?_ token), and an unrelated script whose source merely names the campaign namespace, in a comment for instance",
  "live_controls_on_this_host": {
   "ALL_PASS": true,
   "child_class": "CAMPAIGN_ADHOC",
@@ -14,7 +15,7 @@
   "exited_child_not_detected": true,
   "framework_child_with_campaign_argv_detected": true,
   "interpreter_under_test": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3",
-  "neutral_temporary_directory": "detprobe_pljxktqo",
+  "neutral_temporary_directory": "detprobe_3uuwi84m",
   "shell_mentioning_a_script_not_detected": true,
   "wrapper_detected_through_its_source_not_its_argv": true,
   "wrapper_script_importing_campaign_detected": true
@@ -30,6 +31,8 @@
   "a wrapper whose campaign import is indirect (through another module, or code built at run time)",
   "a script this user cannot read",
   "under `-m <tool>`, a script argument that does not end in .py, or a tool that takes its script from elsewhere (a file, stdin, the environment)",
+  "a plain wrapper script whose file name does not end in .py (review 6, N6-8)",
+  "a long interpreter option that takes a value placed before the script (`--check-hash-based-pycs default wrap.py`): the option's value is taken as the script (review 6, N6-8)",
   "work between two samples"
  ],
  "planted_controls": {
@@ -239,20 +242,20 @@
  },
  "provenance": {
   "code_closure": {
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "bdf7398da6f395c1f0e7b4d7f1bae548e08d9315ebb83d305291b28063d4ff4d",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "2232fc458be2ab0be6d21e2d0d2ce9241c6ad21847987f642d074239c85dc5e9"
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "df853733230543539721e40e720c50355bd905dc9e571d9ccb93c1eec0d42f90",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "1aa2d89a790ddfa4db0c3e7d2b8061093633809085cfa833774cd5641fa6c1c6"
   },
   "inputs": {},
   "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py",
-  "producer_sha256": "2232fc458be2ab0be6d21e2d0d2ce9241c6ad21847987f642d074239c85dc5e9"
+  "producer_sha256": "1aa2d89a790ddfa4db0c3e7d2b8061093633809085cfa833774cd5641fa6c1c6"
  },
  "schema": "C11R_PROCESS_DETECTOR/4",
  "self_exclusion": "this process and its whole ppid ancestor chain",
- "sha256": "de1a249c0cc62afc35aa26dbfbe5eddb566823af24577c030c324bc79845bce7",
+ "sha256": "e45161244f5371e0b3fe2ed55f0631453d9504fc70b3b12f7812914a69c11318",
  "snapshot_at_write": {
   "foreign_python": 5,
   "interpreters_seen": 7,
-  "processes_seen": 456
+  "processes_seen": 527
  },
  "supersedes": "revision 3 (5d89686e), blind to `-m <tool> <wrapper>` and with a live wrapper control satisfied through its temporary directory's name (review round 5, N5-9); revision 2 (bd00c1f6), blind to wrapper scripts and to -Bc / -cpayload (review round 4, N4-6); revision 1 (common.classified_processes), blind to framework Python",
  "what_it_gates": "concurrency only (cost measurement, runner pre-flight, B0, regeneration); it cannot prove no competing computation ran"

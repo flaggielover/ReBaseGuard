@@ -42,7 +42,8 @@ PRESERVED_REVIEWS = {"review/REVIEW_C11R_PREFREEZE.md": "6d7cd546",
                      "review/REVIEW_C11R_PREFREEZE_R2.md": "6ae05833",
                      "review/REVIEW_C11R_PREFREEZE_R3.md": "f6c737c3",
                      "review/REVIEW_C11R_PREFREEZE_R4.md": "5c5203c1",
-                     "review/REVIEW_C11R_PREFREEZE_R5.md": "ebf08c0f"}
+                     "review/REVIEW_C11R_PREFREEZE_R5.md": "ebf08c0f",
+                     "review/REVIEW_C11R_PREFREEZE_R6.md": "63402106"}
 REVIEWED_MACHINERY = {f"{C.NS_REL}/code/c11r_idrift.py": "49b17ab4",
                       "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/"
                       "c11_certifier.py": C.C11_HEAD,
@@ -281,6 +282,11 @@ def main() -> int:
         "no_qualification_artifact": not (C.NS / "evidence" / "qualification").exists(),
         "no_qualification_in_any_commit": not anywhere["holders"]["qualification"],
         "gate_guard_DENY": gate.get("guard") == "DENY",
+        # review 6, R6-1: the code directories hold exactly what the committed contract froze,
+        # and the boundary programs start behind the canonical pre-import barrier
+        "code_directories_hold_exactly_the_frozen_inventory": bool(roots.get("contract")) and not
+        CT.code_dir_shadows(roots["contract"], C.REPO),
+        "preimport_barrier_in_place": not CT.preimport_barrier_problems(C.REPO),
     }
     classes = {
         "B0": A.get("b0", {}).get("B0_CLASS"),

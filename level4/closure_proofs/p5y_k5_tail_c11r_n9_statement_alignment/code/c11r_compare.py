@@ -1,4 +1,11 @@
-"""C11R Phase 15 -- the sealed comparison. Revision 6 (R5-1, N5-2, N5-7, E45; R4-1, N4-5, N4-8 kept).
+"""C11R Phase 15 -- the sealed comparison. Revision 7 (N6-3, N6-5; R5-1, N5-2, N5-7, E45; R4-1,
+N4-5, N4-8 kept).
+
+REVISION 7 (review 6; errata E50, E52). N6-3: round 6 wrote the comparison artifact even when the
+chain refused BEFORE the loader; `phase15` is now ONE transaction -- verify, load iff every step
+passed, compute, write exactly once -- and a refusal writes NOTHING (c11r_contract.
+COMPARISON_TRANSACTION states the retry rule). N6-5: every step is typed; a directory, a symlink or
+malformed JSON where the runs artifact belongs refuses with a reason instead of raising.
 
 ONE OF EXACTLY TWO MODULES PERMITTED TO LOAD AN ORIGINAL MAGNITUDE, and it does so only through
 the `loader` that `execute_comparison` calls AFTER every verification step has passed.
@@ -42,7 +49,7 @@ THE ORDER IN `execute_comparison` (STEPS; each recorded, in order, with its prob
       N9 classification by the frozen precedence; only then any prose.
 ANY failure in 1-12 -> EXECUTION_INVALID (INDEPENDENCE_VIOLATION when the chain verified and a
 certificate uses the original's graph), and the loader is NOT called; the chain controls prove it
-with a loader spy for each refusal class.
+with a loader spy for each refusal class. Such a refusal is REPORTED, never written (revision 7).
 
 NOTHING HERE IS A PRE-WRITTEN CONCLUSION: every sentence is rendered from computed fields.
 
@@ -51,9 +58,42 @@ are NOT_IMPLEMENTED, so N9_CLOSED is unreachable by scope. INVALID, INDEPENDENCE
 EXECUTION_INVALID are reachable from genuine artifacts whose certificates do not establish what
 their targets claim. DISAGREES requires an independent bound on an original quantity in the
 OPPOSITE direction; no implemented certifier produces one, so it is reachable only through a
-deduction no production certifier has, and the self-test exercises it that way.
+deduction no production certifier has -- and, since revision 7, through a certificate beyond the
+frozen F_K, F_H, F_D, which the run step refuses (N6-4) -- and the self-test exercises it that way,
+on the pure classification functions.
 """
-from __future__ import annotations
+# --- C11R PRE-IMPORT BARRIER (review 6, R6-1): the first statement, before any other import ---
+import os as _os
+import sys as _sys
+
+
+def _c11r_preimport_barrier():
+    """Refuse to start while a campaign code directory holds anything a standard-library import
+    could resolve to. Only `os` and `sys` are used: the interpreter loaded both before this
+    script's directory was put on sys.path (c11r_contract.PREIMPORT_BARRIER)."""
+    here = _os.path.dirname(_os.path.realpath(__file__))
+    closure = _os.path.dirname(_os.path.dirname(here))
+    bad = []
+    for d in (here, _os.path.join(closure, "p5y_k5_tail_c11_n9_independent_certifier", "code"),
+              _os.path.join(closure, "p5y_k5_tail_c7_e2_lambda309", "code")):
+        if _os.path.islink(d) or not _os.path.isdir(d):
+            bad.append(d)
+            continue
+        for e in sorted(_os.listdir(d)):
+            p = _os.path.join(d, e)
+            if e == "__pycache__" and _os.path.isdir(p) and not _os.path.islink(p):
+                continue
+            if (not e.endswith(".py") or _os.path.islink(p) or not _os.path.isfile(p)
+                    or e[:-3] in _sys.stdlib_module_names or e[:-3] in _sys.builtin_module_names):
+                bad.append(_os.path.basename(_os.path.dirname(d)) + "/code/" + e)
+    if bad:
+        raise SystemExit("REFUSE (pre-import barrier, review 6 R6-1): a campaign code directory "
+                         "holds an entry a standard-library import could resolve to: "
+                         + ", ".join(bad))
+
+
+_c11r_preimport_barrier()
+# --- end of the pre-import barrier ---
 
 import os
 import pathlib
@@ -104,18 +144,16 @@ def verify_seal(repo=None, *, approved_commit: str) -> dict:
     commit holds any other runs content (a replaced, hidden or discarded run on any branch), the
     file on disk is the sealed blob with no uncommitted change, and its canonical body hashes to
     its stored sha256. Nothing is trusted."""
-    import json
     root = pathlib.Path(repo) if repo is not None else C.REPO
     _real_repository_guard(root)
-    path = root / C.NS_REL / RUNS_REL
     rel = f"{C.NS_REL}/{RUNS_REL}"
-    disk = path.read_bytes() if path.exists() else None
+    runs, disk, shape = read_runs(root)                   # typed shape (N6-5), read once
     hist = CT.protocol_history(repo, approved_commit, "compare")
     intro = hist["introducers"].get("runs", [])
     seal_commit = intro[0] if len(intro) == 1 else None
     committed = C.blob_at_in(root, seal_commit, rel) if seal_commit else None
     dirty = bool(C.git_in(root, "status", "--porcelain", "--", rel)) if disk is not None else False
-    problems = verify_seal_bytes(disk, committed, dirty)
+    problems = shape + verify_seal_bytes(disk, committed, dirty)
     if len(intro) > 1:
         problems.append(f"the runs artifact was introduced by {len(intro)} commits: an earlier "
                         f"seal exists in reachable history")
@@ -124,9 +162,7 @@ def verify_seal(repo=None, *, approved_commit: str) -> dict:
         problems.append(f"the runs artifact was changed after it was sealed, or another run was "
                         f"committed and discarded ({len(other)} reachable commits hold other "
                         f"runs content)")
-    runs = None
-    if disk is not None:
-        runs = json.loads(disk)
+    if runs is not None:
         problems += S.validate_runs(runs)
         if runs.get("sha256") != CT.body_digest(runs):
             problems.append("the runs artifact's stored sha256 does not equal its recomputed "
@@ -161,10 +197,32 @@ STEPS = ("approved commit", "complete frozen history", "contract", "gate", "qual
          "other execution-integrity predicates")
 
 
+def read_runs(root: pathlib.Path) -> tuple[dict | None, bytes | None, list[str]]:
+    """The runs artifact, read ONCE, with its SHAPE refused by a typed reason (review 6, N6-3 and
+    N6-5): a directory, a symlink (inside, outside, dangling, a loop), unreadable or malformed
+    JSON never raises."""
+    import json
+    path = root / C.NS_REL / RUNS_REL
+    k = C.path_kind(path, inside=root)
+    if k == "ABSENT":
+        return None, None, []
+    if k != "FILE":
+        return None, None, [f"the runs artifact path is {CT.KIND_TEXT[k]}"]
+    try:
+        raw = path.read_bytes()
+        obj = json.loads(raw)
+    except (OSError, ValueError) as e:
+        return None, None, [f"the runs artifact is not readable JSON ({type(e).__name__})"]
+    if not isinstance(obj, dict):
+        return None, raw, ["the runs artifact is not a JSON object"]
+    return obj, raw, []
+
+
 def execute_comparison(repo=None, *, approved_commit: str, loader, allow_fixture: bool = False) -> dict:
     """The whole Phase 15 path. Steps 1-12 (STEPS) verify; step 13 -- the loader, the ONLY
-    access to original magnitudes -- runs only when all twelve pass; step 14 classifies."""
-    import json
+    access to original magnitudes -- runs only when all twelve pass; step 14 classifies. A step
+    that cannot be evaluated on the tree in front of it REFUSES with a typed reason (review 6,
+    N6-5): no path through steps 1-12 raises."""
     root = pathlib.Path(repo) if repo is not None else C.REPO
     _real_repository_guard(root)
     steps, seen = [], []
@@ -176,95 +234,129 @@ def execute_comparison(repo=None, *, approved_commit: str, loader, allow_fixture
                       "problems": new, "pass": bool(evaluated and not new)})
         assert steps[-1]["name"] == STEPS[len(steps) - 1]
 
-    a = CT.load_artifact(repo, CT.AUTH_REL) if CT.artifact_exists(repo, CT.AUTH_REL) else None
+    def attempt(where, fn, default=None):
+        try:
+            return fn(), []
+        except CT.TYPED_ERRORS as e:
+            return default, [CT.not_evaluable(where, e)]
+
+    a, p = attempt("authorization artifact", lambda: CT.load_artifact(repo, CT.AUTH_REL)
+                   if CT.artifact_exists(repo, CT.AUTH_REL) else None)
     # 1 approved commit -- a full, self-naming commit id (review 5, N5-7), never a movable ref
-    p = CT.approved_commit_problems(repo, approved_commit)
-    a_exists = not p
+    bad, q = attempt("approved commit", lambda: CT.approved_commit_problems(repo, approved_commit),
+                     ["the approved commit could not be checked"])
+    p += bad + q
+    a_exists = not (bad or q)
     if a is None:
         p.append("no authorization artifact")
     elif a.get("approved_commit") != approved_commit:
         p.append("the authorization names another approved commit than the operator supplied")
     if a_exists and not C.git_ok_in(root, "merge-base", "--is-ancestor", approved_commit, "HEAD"):
         p.append("HEAD does not descend from the approved commit")
-    frozen = CT.contract_at(repo, approved_commit) if a_exists else None
+    frozen, q = attempt("approved commit", lambda: CT.contract_at(repo, approved_commit)
+                        if a_exists else None)
+    p += q
     if a_exists and frozen is None:
         p.append("the approved commit carries no execution contract")
     step("approved commit", p)
     # the run artifact is read HERE (the comparator is its only reader) so that its recomputed
-    # digest can be checked against the DENY/EXECUTION_COMPLETED record in step 2
-    path = root / C.NS_REL / RUNS_REL
-    runs = json.loads(path.read_bytes()) if path.exists() and not path.is_symlink() else None
+    # digest can be checked against the DENY/EXECUTION_COMPLETED record in step 2; its SHAPE is
+    # refused with a typed reason (N6-3, N6-5)
+    runs, _, runs_problems = read_runs(root)
     # 2 complete frozen history, protocol history, and the LIFECYCLE: SEALED, execution
     #   permission DENY/EXECUTION_COMPLETED bound to THIS run, the authorization untouched, and no
     #   comparison file already at the output path (review 5, R5-1, N5-2)
     if frozen is not None:
-        fs = CT.frozen_state(repo, approved_commit)
-        ph = CT.protocol_history(repo, approved_commit, "compare")
-        lc = CT.lifecycle_problems(repo, approved_commit, "compare", allow_fixture=allow_fixture,
-                                   runs_sha256=CT.body_digest(runs) if runs is not None else None)
-        step("complete frozen history", fs["ancestry"] + fs["tree_identity"] + fs["history_purity"]
-             + ph["problems"] + lc)
+        def history():
+            fs = CT.frozen_state(repo, approved_commit)
+            ph = CT.protocol_history(repo, approved_commit, "compare")
+            lc = CT.lifecycle_problems(repo, approved_commit, "compare",
+                                       allow_fixture=allow_fixture,
+                                       runs_sha256=CT.body_digest(runs) if runs is not None
+                                       else None)
+            return fs["ancestry"] + fs["tree_identity"] + fs["history_purity"] + ph["problems"] + lc
+        hp, q = attempt("complete frozen history", history, [])
+        step("complete frozen history", runs_problems + hp + q)
     else:
         step("complete frozen history", [], evaluated=False)
     # 3 contract, 4 gate -- recomputed from bytes; the tree's contract must BE the frozen one
-    cv = CT.verify_contract(repo)
+    cv = CT.verify_contract(repo)                         # typed by construction (N6-5)
     p = list(cv["problems"])
     if frozen is not None and cv["contract"] is not None and cv["contract"] != frozen:
         p.append("the contract in the tree is not the contract at the approved commit")
     step("contract", p)
-    roots = CT.chain_roots(repo) if cv["contract"] is not None else None
-    step("gate", [x for x in (roots or {}).get("problems", []) if x.startswith("gate")],
-         evaluated=roots is not None)
+    roots, q = attempt("gate", lambda: CT.chain_roots(repo) if cv["contract"] is not None
+                       else None)
+    step("gate", [x for x in (roots or {}).get("problems", []) if x.startswith("gate")] + q,
+         evaluated=roots is not None or bool(q))
     # 5 qualification
     if roots is not None:
-        q = CT.load_artifact(repo, CT.QUAL_REL) if CT.artifact_exists(repo, CT.QUAL_REL) else None
-        step("qualification", CT.verify_qualification(repo, q, roots,
-                                                      approved_commit=approved_commit,
-                                                      allow_fixture=allow_fixture)["problems"])
+        qv, q = attempt("qualification", lambda: CT.verify_qualification(
+            repo, CT.load_artifact(repo, CT.QUAL_REL) if CT.artifact_exists(repo, CT.QUAL_REL)
+            else None, roots, approved_commit=approved_commit, allow_fixture=allow_fixture),
+            {"problems": []})
+        step("qualification", qv["problems"] + q)
     else:
         step("qualification", [], evaluated=False)
     # 6 authorization (it recomputes everything above again, independently; only NEW problems
     #   are listed here)
-    av = CT.verify_authorization(repo, a, allow_fixture=allow_fixture, stage="compare")
-    step("authorization", av["problems"])
+    av, q = attempt("authorization", lambda: CT.verify_authorization(
+        repo, a, allow_fixture=allow_fixture, stage="compare"),
+        {"problems": [], "digest": None, "facts": None})
+    step("authorization", av["problems"] + q)
     facts = av.get("facts")
     contract = frozen if frozen is not None else (facts or {}).get("roots", {}).get("contract")
     # 7 run -- the run artifact's own integrity and its execution identity (G20)
     if runs is not None and facts and contract is not None:
-        p = S.validate_runs(runs)
-        if runs.get("sha256") != CT.body_digest(runs):
-            p.append("the runs artifact's stored sha256 does not equal its recomputed canonical "
-                     "body digest")
-        p += CT.verify_run_identity(runs, facts, av["digest"])
-        step("run", p)
+        def run_checks():
+            r = S.validate_runs(runs)
+            if runs.get("sha256") != CT.body_digest(runs):
+                r.append("the runs artifact's stored sha256 does not equal its recomputed "
+                         "canonical body digest")
+            return r + CT.verify_run_identity(runs, facts, av["digest"])
+        rp, q = attempt("run", run_checks, [])
+        step("run", rp + q)
     else:
         step("run", ["no runs artifact"] if runs is None else [], evaluated=runs is None)
     # 8 seal
-    seal = verify_seal(repo, approved_commit=approved_commit) if a_exists else \
-        {"problems": ["no approved commit to seal against"], "seal_commit": None,
-         "runs_file_sha256": None}
+    if a_exists:
+        seal, q = attempt("seal", lambda: verify_seal(repo, approved_commit=approved_commit),
+                          {"problems": [], "seal_commit": None, "runs_file_sha256": None})
+        seal["problems"] = seal["problems"] + q
+    else:
+        seal = {"problems": ["no approved commit to seal against"], "seal_commit": None,
+                "runs_file_sha256": None}
     step("seal", seal["problems"])
     chain_ok = all(s_["pass"] for s_ in steps)
     pre = None
     if chain_ok:
-        stmt = CT.load_artifact(repo, CT.STMT_REL)
-        policy = CT.load_artifact(repo, CT.POLICY_REL)
-        pre = pre_numeric(runs, stmt, policy,
-                          expected_certifier_sha=CT.expected_certifier_sha(contract),
-                          runs_producer={"module": "c11r_runs.py",
-                                         "sha256": facts["runner_sha256"]})
-        g = pre["guards"]
-        step("G8", [f"G8: {x}" for x in g["G8"]["violations"]])
-        step("G10", [f"G10: {x}" for x in g["G10"]["violations"]])
-        step("G19", [f"G19: {x}" for x in g["G19"]["violations"]])
-        p = [f"value trace: {k}: {v}" for k, v in g["value_trace"]["violations"].items()]
-        p += [f"{k}: {pre['per'][k]['why']}" for k in S.SIX_CONSTANTS
-              if pre["per"][k]["CLASS"] == "INVALID"]
-        p += [f"independence violation: {k}" for k in pre["violations"]]
-        p += CT.verify_loaded_modules(contract, role="comparator")["problems"]
-        p += CT.code_dir_shadows(contract, repo)
-        p += comparison_rule_problems(stmt, facts["roots"].get("gate") or {}, contract)
-        step("other execution-integrity predicates", p)
+        def guards_and_predicates():
+            stmt_ = CT.load_artifact(repo, CT.STMT_REL)
+            policy = CT.load_artifact(repo, CT.POLICY_REL)
+            pre_ = pre_numeric(runs, stmt_, policy,
+                               expected_certifier_sha=CT.expected_certifier_sha(contract),
+                               runs_producer={"module": "c11r_runs.py",
+                                              "sha256": facts["runner_sha256"]})
+            g = pre_["guards"]
+            other = [f"value trace: {k}: {v}" for k, v in g["value_trace"]["violations"].items()]
+            other += [f"{k}: {pre_['per'][k]['why']}" for k in S.SIX_CONSTANTS
+                      if pre_["per"][k]["CLASS"] == "INVALID"]
+            other += [f"independence violation: {k}" for k in pre_["violations"]]
+            other += CT.verify_loaded_modules(contract, role="comparator")["problems"]
+            other += CT.code_dir_shadows(contract, repo)
+            other += comparison_rule_problems(stmt_, facts["roots"].get("gate") or {}, contract)
+            return stmt_, pre_, other
+        res, q = attempt("guards and predicates", guards_and_predicates)
+        if res is None:
+            for name in STEPS[len(steps):]:
+                step(name, q if name == STEPS[-1] else [], evaluated=name == STEPS[-1])
+        else:
+            stmt, pre, other = res
+            g = pre["guards"]
+            step("G8", [f"G8: {x}" for x in g["G8"]["violations"]])
+            step("G10", [f"G10: {x}" for x in g["G10"]["violations"]])
+            step("G19", [f"G19: {x}" for x in g["G19"]["violations"]])
+            step("other execution-integrity predicates", other)
     else:
         for name in STEPS[len(steps):]:
             step(name, [], evaluated=False)
@@ -546,9 +638,12 @@ def self_test(stmt_table: dict, policy: dict) -> dict:
     extra_cert["weight"] = CV.weight_json({(0, 0): F(1, 10), (0, 1): F(0)})
     extra_cert["input_digest"] = CV.input_digest(extra_cert["weight"], extra_cert["inputs"],
                                                  extra_cert["certifier"])
-    certs["F_X"] = extra_cert
+    # the frozen runner emits exactly F_K, F_H, F_D (review 6, N6-4: emit_runs refuses anything
+    # else, and the comparator's run step refuses it too); the test-only certificate is therefore
+    # added AFTER emission, to exercise the pure classification below
     r_dis = R.assemble(policy=policy, stmt=stmt_table, certs=certs, stop_reason=None, extra={},
                        deductions=dd)
+    r_dis["certificates"]["F_X"] = extra_cert
     res_dis = run_comparison(r_dis, stmt_table, fake, policy,
                              expected_certifier_sha=dict(exp, **{"c11r_testonly.py": "t"}),
                              runs_producer=me, deductions=dd)
@@ -604,19 +699,62 @@ def write_comparison(repo, out: dict) -> str:
     return body["sha256"]
 
 
+# THE TRANSACTION (review 6, N6-3; c11r_contract.COMPARISON_TRANSACTION). Round 6's main()
+# wrote the comparison artifact even when the chain refused BEFORE the loader, so a harmless cause
+# (a Finder .DS_Store in evidence/runs) left an EXECUTION_INVALID file that made every later
+# comparison refuse. Now: verify -> load iff every step passed -> compute -> write ONCE. Nothing is
+# written on any other path; the refusal is printed, typed, with its own exit code.
+EXIT = {"COMPARED": 0, "REFUSED_BEFORE_LOAD": 3, "POST_LOAD_FAILURE": 4}
+
+
+def phase15(repo=None, *, approved_commit: str, loader, allow_fixture: bool = False,
+            writer=None) -> dict:
+    """Phase 15 as ONE transaction. Returns the outcome, the lines to print and whether the
+    comparison artifact was written; the artifact is written (by `writer`, default
+    write_comparison) only after the loader ran AND the classification completed."""
+    writer = writer or write_comparison
+    entered = {"loader": False}
+
+    def counted(stmt):
+        entered["loader"] = True
+        return loader(stmt)
+    try:
+        result = execute_comparison(repo, approved_commit=approved_commit, loader=counted,
+                                    allow_fixture=allow_fixture)
+    except BaseException as e:
+        if not entered["loader"]:
+            raise                                       # steps 1-12 are typed: not expected
+        return {"outcome": "POST_LOAD_FAILURE", "written": False, "result": None,
+                "lines": [f"POST_LOAD_FAILURE -- the loader was entered (the original "
+                          f"magnitudes may have been read) and the comparison did not complete "
+                          f"({type(e).__name__}); NOTHING was written. Do not run the comparator "
+                          f"again without the user's instruction (COMPARISON_TRANSACTION)."]}
+    if not result.get("loader_called"):
+        return {"outcome": "REFUSED_BEFORE_LOAD", "written": False, "result": result,
+                "lines": [f"REFUSED before the loader at step {result['refused_at_step']} "
+                          f"({result['refused_at']}); NOTHING was written, the state stays "
+                          f"SEALED, and once the cause is removed the comparator may be run "
+                          f"again (COMPARISON_TRANSACTION):"]
+                + [f"  - {p}" for p in result["identity_problems"]]}
+    out = {"schema": "C11R_COMPARISON/6", "approved_commit": approved_commit, "result": result,
+           "rendered": render(result)}
+    try:
+        digest = writer(repo, out)
+    except BaseException as e:
+        return {"outcome": "POST_LOAD_FAILURE", "written": False, "result": None,
+                "lines": [f"POST_LOAD_FAILURE -- the comparison was computed but could not be "
+                          f"written ({type(e).__name__}: {str(e)[:120]}); do not run the "
+                          f"comparator again without the user's instruction."]}
+    return {"outcome": "COMPARED", "written": True, "result": result, "sha256": digest,
+            "lines": out["rendered"] + [f"wrote {CT.COMPARISON_REL} sha256 {digest[:16]}..."]}
+
+
 def main(approved_commit: str) -> int:
     """Phase 15, on the user's instruction, with the approved commit the review passed."""
-    result = execute_comparison(C.REPO, approved_commit=approved_commit,
-                                loader=load_original_magnitudes)
-    out = {"schema": "C11R_COMPARISON/5", "approved_commit": approved_commit,
-           "result": result,
-           "rendered": render(result) if result.get("loader_called") else
-           [f"EXECUTION_INVALID -- {p}" for p in result["identity_problems"]]}
-    s_ = write_comparison(C.REPO, out)
-    for line in out["rendered"]:
+    r = phase15(C.REPO, approved_commit=approved_commit, loader=load_original_magnitudes)
+    for line in r["lines"]:
         print(line)
-    print(f"wrote {CT.COMPARISON_REL} sha256 {s_[:16]}...")
-    return 0
+    return EXIT[r["outcome"]]
 
 
 if __name__ == "__main__":

@@ -1,4 +1,14 @@
-"""C11R rounds 4-6 -- THE FROZEN EXECUTION CONTRACT and the end-to-end identity chain.
+"""C11R rounds 4-7 -- THE FROZEN EXECUTION CONTRACT and the end-to-end identity chain.
+
+ROUND 7 (review round 6; errata E49-E55). R6-1: module identity is now keyed on LOCATION -- any
+module loaded from a campaign code directory must be an approved, byte-verified source whatever
+its name; origins must agree; nothing but those directories and the interpreter may precede the
+standard library on sys.path; the code directories must hold exactly the inventory the contract
+binds (`code_directories`, `frozen_code`, `module_identity`); and the boundary programs start
+behind PREIMPORT_BARRIER. N6-2: protocol_history also checks every ref, stash and reflog entry of
+the repository, and the lifecycle's claim is scoped (LIFECYCLE_SCOPE). N6-3: the comparison is
+one transaction (COMPARISON_TRANSACTION). N6-5: every boundary refuses with a typed reason instead
+of raising (TYPED_ERRORS, bound_path_problems). Contract schema C11R_CONTRACT/4.
 
 ROUND 6 (review round 5; errata E39-E48). R5-1: execution PERMISSION was the authorization file
 itself, so "guard DENY" after the run could only mean deleting the evidence the comparator needs;
@@ -59,14 +69,17 @@ Every function takes the repository root `repo`, so the controls can run the rea
 a synthetic git repository; production passes the real one. This module reads only allowlisted
 artifacts and Python source; it never reads the runs artifact (the comparator passes it in).
 
-WHAT THE CHAIN DOES NOT COVER, stated exactly. (1) History is what is REACHABLE from HEAD (and,
-for the pre-result check, from any ref or reflog): a run made and discarded in a commit reachable
-from nothing, on an unmerged branch, or never committed at all is invisible to git; the protocol,
-the runner's pre-flight and the process detector bound that, they do not prove its absence.
+WHAT THE CHAIN DOES NOT COVER, stated exactly. (1) History is what is REACHABLE from HEAD and, for
+the protocol artifacts, from any ref, stash or reflog entry of this repository (round 7, N6-2): a
+run never committed, made in another clone, or reachable from nothing (deleted refs, expired
+reflogs) is invisible to git; the protocol, the runner's pre-flight and the process detector bound
+that, they do not prove its absence (LIFECYCLE_SCOPE).
 (2) The loaded-module check establishes what the import system loaded, from which file, when it
-runs; a module swapped on disk and restored between import and check, code run through exec or
-under another module name, and in-memory patching of a module or of this verifier are NOT
-detected -- arbitrary malicious runtime modification is out of scope. (3) A runs artifact
+runs, and what the code directories hold when a boundary program starts and when it is checked
+(MODULE_IDENTITY_POLICY); a file placed after the pre-import barrier and removed before the check,
+code run through exec/eval, a module that rewrites its own metadata or deletes its file once
+executing, and in-memory patching of a module or of this verifier are NOT detected -- arbitrary
+malicious runtime modification is out of scope. (3) A runs artifact
 hand-written without running the frozen runner at all is detectable only by re-executing the
 certifiers (see c11r_certificate). (4) The root of trust is the reviewed commit as named by the
 user's Phase 13 authorization and supplied to the comparator; a wrong commit supplied by the
@@ -79,6 +92,7 @@ import json
 import os
 import pathlib
 import re
+import subprocess
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
@@ -86,7 +100,7 @@ import c11r_common as C
 import c11r_procs as PR
 import c11r_schema as S
 
-CONTRACT_SCHEMA = "C11R_CONTRACT/3"
+CONTRACT_SCHEMA = "C11R_CONTRACT/4"
 QUAL_SCHEMA = "C11R_QUALIFICATION/5"
 AUTH_SCHEMA = "C11R_AUTHORIZATION/5"
 PERMISSION_SCHEMA = "C11R_EXECUTION_PERMISSION/1"
@@ -210,8 +224,10 @@ LIFECYCLE = [
               "commit -- the seal; the authorization is not touched", "writes": [],
      "execution_permission_after": "DENY"},
     {"from": "SEALED", "to": "COMPARED", "actor": "Phase 15: c11r_compare.py",
-     "event": "the comparator verifies under execution permission DENY and writes the "
-              "comparison", "writes": [COMPARISON_REL], "execution_permission_after": "DENY"},
+     "event": "the comparator verifies under execution permission DENY and, only when every "
+              "step passed and the comparison completed, writes the comparison exactly once "
+              "(a refusal writes nothing and the state stays SEALED: COMPARISON_TRANSACTION)",
+     "writes": [COMPARISON_REL], "execution_permission_after": "DENY"},
     {"from": "AUTHORIZED", "to": "REVOKED_BEFORE_EXECUTION", "actor": "operator (terminal)",
      "event": "a DENY/REVOKED_BEFORE_EXECUTION record is committed; nothing runs under A",
      "writes": [PERMISSION_REL], "execution_permission_after": "DENY"},
@@ -222,6 +238,37 @@ LIFECYCLE = [
 # the state each production boundary requires; no boundary ever requires execution permission
 # ALLOW except the runner's pre-flight
 STAGE_STATE = {"authorize": "QUALIFIED", "run": "AUTHORIZED", "compare": "SEALED"}
+# WHAT THE LIFECYCLE PROVES, and where (review 6, N6-2). Round 6's runner printed "nothing
+# re-enables execution under this approved commit"; the reviewer re-executed on a SIBLING branch
+# forked at the authorization, and after restoring the GRANT over an uncommitted
+# EXECUTION_STARTED. protocol_history now also checks every commit reachable from ANY ref, from
+# HEAD or from any reflog entry (the sibling branch is refused); the rest is stated, not claimed.
+LIFECYCLE_SCOPE = (
+    "Within this repository -- HEAD's complete history after the approved commit, and every "
+    "commit reachable from any ref, from HEAD or from any reflog entry -- no valid forward "
+    "transition re-enables execution: a runs artifact, a permission record other than the GRANT, "
+    "or a comparison anywhere there refuses a new pre-flight (c11r_contract.protocol_history). "
+    "NOT covered, and not claimed: an execution never committed (a process interrupted after "
+    "EXECUTION_STARTED whose record is discarded and the GRANT restored from git leaves no trace "
+    "-- the protocol requires committing that record instead: INTERRUPTED_EXECUTION), an "
+    "execution in another clone of the repository, and commits reachable from nothing (deleted "
+    "refs, expired reflogs, dangling objects).")
+INTERRUPTED_EXECUTION = (
+    f"if the runner stops before it prints its NEXT steps, commit {C.NS_REL}/{PERMISSION_REL} "
+    f"exactly as it is on disk (DENY/EXECUTION_STARTED): the state becomes ABANDONED (terminal). "
+    f"Restoring the GRANT from git instead erases the only record of the attempt and is outside "
+    f"the protocol.")
+# THE COMPARISON TRANSACTION (review 6, N6-3). Round 6's comparator wrote its artifact even when
+# it refused before the loader, so a harmless cause (a Finder .DS_Store in evidence/runs) left an
+# EXECUTION_INVALID file that made every later comparison refuse.
+COMPARISON_TRANSACTION = (
+    "verify steps 1-12 -> load the original magnitudes IF AND ONLY IF all pass -> compute -> "
+    "write the comparison artifact exactly once (exclusive create). A refusal before the loader "
+    "writes NOTHING and leaves the state SEALED; once its cause is removed -- without changing any "
+    "frozen path or protocol record -- the comparator may be run again: a pre-load refusal saw no "
+    "magnitude. A failure after the loader was entered writes nothing either and is reported as "
+    "POST_LOAD_FAILURE; the magnitudes have then been read, so the comparator is not run again "
+    "without the user's instruction.")
 
 
 # ---------------------------------------------------------------------------------------------
@@ -303,6 +350,10 @@ def contract_body(repo=None) -> dict:
     """Everything the contract binds, recomputed from the bytes in `repo`."""
     body = _contract_body(repo)
     body["frozen_paths"] = frozen_paths(body)
+    # review 6, R6-1: every approved source, and the exact inventory of the code directories
+    body["frozen_code"] = frozen_code(repo, body["code"])
+    body["code_directories"] = code_directories(repo)
+    body["module_identity"] = dict(MODULE_IDENTITY_POLICY)
     return body
 
 
@@ -355,7 +406,9 @@ def _contract_body(repo=None) -> dict:
                       "stage_state": dict(STAGE_STATE),
                       "authorization_is": "immutable evidence, introduced once, never modified "
                                           "or removed",
-                      "gate_guard_is": "frozen at the approved commit, always DENY"},
+                      "gate_guard_is": "frozen at the approved commit, always DENY",
+                      "scope": LIFECYCLE_SCOPE, "interrupted_execution": INTERRUPTED_EXECUTION,
+                      "comparison_transaction": COMPARISON_TRANSACTION},
         "contains_target_results": False,
     }
 
@@ -364,7 +417,8 @@ COMPARED_KEYS = ("schema", "scope", "roles", "code", "artifacts", "scientific_in
                  "configuration", "comparison_rule", "cost_host", "required_predicates",
                  "qualification_items", "qualification_unknown_item_rule",
                  "qualification_proves", "protocol_paths", "protocol_dirs", "lifecycle",
-                 "frozen_paths", "contains_target_results")
+                 "frozen_paths", "frozen_code", "code_directories", "module_identity",
+                 "contains_target_results")
 
 
 def namespace_code() -> list[str]:
@@ -408,8 +462,57 @@ def verify_artifact_record(repo, name: str, rec: dict, code: dict) -> list[str]:
     return p
 
 
+# TYPED REFUSALS (review 6, N6-5): a load-bearing check that cannot be evaluated on the tree in
+# front of it -- a symlink resolving outside the repository, a dangling one, a loop, a directory
+# where a file belongs, unreadable JSON -- REFUSES with a typed reason; it never raises.
+TYPED_ERRORS = (OSError, ValueError, KeyError, TypeError, AttributeError, RuntimeError,
+                subprocess.CalledProcessError)
+
+
+def not_evaluable(where: str, e: BaseException) -> str:
+    return (f"{where}: refused -- not evaluable on this tree ({type(e).__name__}: "
+            f"{str(e)[:160]})")
+
+
+def bound_path_problems(repo, contract: dict | None) -> list[str]:
+    """Path SHAPES, from lstat (review 6, N6-5): every code path of the contract is a regular
+    FILE; every frozen path and protocol path is ABSENT or a regular FILE; every protocol directory
+    is ABSENT or a real DIRECTORY. Never a symlink (inside, outside, dangling, a loop) or anything
+    else -- each named with its kind instead of an exception."""
+    root = _root(repo)
+    if not isinstance(contract, dict):
+        return []
+    code = set(contract.get("code") or {}) | set(contract.get("frozen_code") or {})
+    paths = sorted(set(contract.get("frozen_paths") or []) | code
+                   | {ns_path(v) for v in PROTOCOL_PATHS.values()})
+    p = []
+    for rel in paths:
+        k = C.path_kind(root / rel, inside=root)
+        if k == "FILE" or (k == "ABSENT" and rel not in code):
+            continue
+        p.append(f"paths: {pathlib.PurePosixPath(rel).name} is {KIND_TEXT[k]}")
+    for d in sorted(PROTOCOL_DIRS):
+        k = C.path_kind(root / C.NS_REL / d, inside=root)
+        if k not in ("ABSENT", "DIRECTORY"):
+            p.append(f"paths: the protocol directory {d} is {KIND_TEXT[k]}")
+    return p
+
+
 def verify_contract(repo=None) -> dict:
-    """Recompute the contract from bytes and compare it with the committed one."""
+    """Recompute the contract from bytes and compare it with the committed one; a tree on which
+    that cannot be done is REFUSED with a typed reason (N6-5)."""
+    try:
+        return _verify_contract(repo)
+    except TYPED_ERRORS as e:
+        try:
+            committed = load_artifact(repo, CONTRACT_REL)
+        except TYPED_ERRORS:
+            committed = None
+        return {"problems": [not_evaluable("contract", e)] + bound_path_problems(repo, committed),
+                "digest": None, "contract": None}
+
+
+def _verify_contract(repo=None) -> dict:
     problems = []
     if not artifact_exists(repo, CONTRACT_REL):
         return {"problems": ["no execution contract"], "digest": None, "contract": None}
@@ -438,6 +541,8 @@ def verify_contract(repo=None) -> dict:
     me = now["code"].get(prov.get("producer"), {})
     if not me or me.get("sha256") != prov.get("producer_sha256"):
         problems.append("contract: produced by other code than the bound c11r_contract.py")
+    problems += bound_path_problems(repo, obj)                 # N6-5
+    problems += preimport_barrier_problems(repo)               # R6-1 (B)
     return {"problems": problems, "digest": digest, "contract": obj,
             "file_sha256": C.sha256_bytes(raw)}
 
@@ -755,8 +860,49 @@ def protocol_history(repo, approved_commit: str, stage: str) -> dict:
                             root, "merge-base", "--is-ancestor", seal, c):
                         p.append(f"protocol history: commit {c[:12]} restores the execution "
                                  f"permission GRANT after the seal")
+    elsewhere = _protocol_elsewhere(repo, stage, current, grant_id, final_perm)
+    p += elsewhere["problems"]
     return {"problems": p, "introducers": intro, "foreign": foreign,
-            "commits_checked": len(commits)}
+            "commits_checked": len(commits), "repository_commits_checked": elsewhere["commits"]}
+
+
+ELSEWHERE_WHY = {"runs": "a prior or parallel execution",
+                 "permission": "an execution started, completed or revoked there",
+                 "comparison": "a prior comparison",
+                 "authorization": "another authorization"}
+
+
+def _protocol_elsewhere(repo, stage: str, current: dict, grant_id, final_perm) -> dict:
+    """REPOSITORY-WIDE (review 6, N6-2): every commit reachable from ANY ref, from HEAD or from any
+    reflog entry -- a sibling branch forked at the authorization commit, a tag, a stash, a reset --
+    may hold a runs, permission, comparison or authorization artifact only as the stage admits:
+      authorize -- none of them;
+      run       -- the current authorization and its GRANT only (no run, no DENY, no comparison);
+      compare   -- the current authorization, the GRANT, the final EXECUTION_COMPLETED record and
+                   the sealed runs content only; no comparison.
+    Commits reachable from nothing (deleted refs, expired reflogs) and other clones are outside
+    this repository's refs: LIFECYCLE_SCOPE states it."""
+    names = {k: ns_path(PROTOCOL_PATHS[k]) for k in ELSEWHERE_WHY}
+    every = sorted(set(C.git_in(_root(repo), "rev-list", "--all", "--reflog", "HEAD").split()))
+    ids = _batch_ids(repo, [(c, names[k]) for c in every for k in names])
+    admitted = {"authorize": {"runs": set(), "permission": set(), "comparison": set(),
+                              "authorization": set()},
+                "run": {"runs": set(), "permission": {grant_id}, "comparison": set(),
+                        "authorization": {current.get("authorization")}},
+                "compare": {"runs": {current.get("runs")}, "permission": {grant_id, final_perm},
+                            "comparison": set(), "authorization": {current.get("authorization")}}
+                }[stage]
+    p = []
+    for k in names:
+        ok = admitted[k] - {None}
+        extra = sorted(c for c in every if ids[(c, names[k])] is not None
+                       and ids[(c, names[k])] not in ok)
+        if extra:
+            p.append(f"protocol lineage: {len(extra)} commit(s) of this repository -- other "
+                     f"branches, tags, stashes and reflog entries included -- hold a {k} artifact "
+                     f"that stage {stage} does not admit (e.g. {extra[0][:12]}): "
+                     f"{ELSEWHERE_WHY[k]}")
+    return {"problems": p, "commits": len(every)}
 
 
 def verify_gate(repo, contract_digest: str, contract: dict) -> dict:
@@ -910,14 +1056,15 @@ def verify_qualification(repo, q: dict | None, roots: dict, *, approved_commit: 
 
 
 # ---------------------------------------------------------------------------------------------
-# WHAT WAS ACTUALLY LOADED (review round 4, N4-3; review round 5, R5-2 -- erratum E40)
+# WHAT WAS ACTUALLY LOADED (review round 4, N4-3; review round 5, R5-2 -- erratum E40; review
+# round 6, R6-1 -- erratum E49)
 # ---------------------------------------------------------------------------------------------
 # The contract binds source files by path and content; a process can nevertheless import a
 # DIFFERENT file under the same module name (a stray copy earlier on sys.path, a symlink, a copy
 # in another checkout, a zip, a SOURCELESS .pyc, a package directory, an extension, a hook).
 # Round 5 selected the modules to check by the BASENAME of `__file__`, so any contract module
-# loaded from a file not named `<stem>.py` silently left the check (R5-2). Now the check is
-# keyed on the contract's module NAMES (import stems) and on the ORIGIN of every loaded module:
+# loaded from a file not named `<stem>.py` silently left the check (R5-2). Round 6 keyed the check
+# on the contract's module NAMES (import stems) and on the ORIGIN of every loaded module:
 #   * every entry of sys.modules whose name, or whose origin's import name, is a contract stem --
 #     and __main__ when its file is one -- is examined; a module can no longer drop out;
 #   * FROZEN POLICY: a load-bearing module must be SOURCE-BACKED (the exact SourceFileLoader).
@@ -931,14 +1078,145 @@ def verify_qualification(repo, q: dict | None, roots: dict, *, approved_commit: 
 #   * every module the boundary's program imports at module level (its import-time closure) must
 #     be present and verified (PRESENCE);
 #   * PYTHONPATH is unset and assertions are not stripped (-O).
-# code_dir_shadows refuses, statically, ANY file or directory in the campaign's code directories
-# (tracked, untracked or ignored; .py, .pyc, .so, packages, archives) that carries a contract
-# module's import name anywhere but at the contract path.
-# SCOPE, exactly: this establishes what the import system loaded, from which file, at the moment
-# of the check. It does not detect a module swapped on disk and restored between import and
-# check, code executed through exec/eval or a renamed module, or in-memory patching of a loaded
-# module or of this verifier: arbitrary malicious runtime modification is NOT covered.
+# ROUND 7 (review 6, R6-1). Round 6 examined only CONTRACT-NAMED modules and refused statically
+# only contract-named entries and untracked *.py. The campaign itself puts its code directories
+# AHEAD of the standard library on sys.path (the script's own directory; c11r_idrift and
+# c11_certifier insert C11's and C7's), so a sourceless `fractions.pyc` there -- the arithmetic of
+# every certifier and of the comparator's classification -- ran with every check green. The rules
+# now start from LOCATION, not from names:
+#   (L1) CAMPAIGN-DIRECTORY CLOSURE: a loaded module ANY of whose origins (__file__,
+#        __spec__.origin, the loader's path, a package's search locations; lexically or by
+#        realpath) lies inside a campaign code directory of the execution root must be an
+#        APPROVED SOURCE, source-backed, loaded from exactly that regular file under its own
+#        name -- whatever the name, standard-library-looking or not. APPROVED = a file whose bytes
+#        the contract binds: the load-bearing closure (`code`) and the campaign's other frozen
+#        Python files (`frozen_code`: producers, harnesses, the status verifier), both verified
+#        byte for byte. Tracked but unbound files of the predecessors' code directories are NOT
+#        approved;
+#   (L2) ORIGIN AGREEMENT: for EVERY loaded module, __file__, __spec__.origin and the loader's
+#        path, where they are filesystem paths, name one file;
+#   (L3) IMPORT-PATH PRECEDENCE: every sys.path entry inside the repository is a campaign code
+#        directory, and every entry that precedes the standard library is a campaign code
+#        directory or lies inside the interpreter's own installation -- so a standard-library
+#        name can be resolved ahead of the standard library only in a campaign code directory,
+#        which (L1), (S) and (B) cover;
+#   (S)  STATIC INVENTORY (code_dir_shadows): each campaign code directory holds EXACTLY the
+#        entries the contract froze (`code_directories`: tracked, regular *.py files) and at most a
+#        real `__pycache__` whose entries are regular files named <inventory stem>.<cache
+#        tag>[.opt-N].pyc (CPython reads that directory only for a source it has already found).
+#        Anything else -- a .pyc, an extension, a zip or egg, a package or namespace directory, a
+#        symlink, metadata, an unexpected or untracked .py, a COMMITTED addition -- is refused by
+#        name and kind, and no entry may carry a standard-library or built-in module name;
+#   (B)  PRE-IMPORT BARRIER: the three boundary programs (c11r_runs, c11r_compare, c11r_qualify)
+#        execute PREIMPORT_BARRIER as their first statement, before any other import (they no
+#        longer begin with `from __future__ import annotations`, itself an import resolved through
+#        sys.path). Using only `os` and `sys` -- loaded by the interpreter before the script's
+#        directory was on sys.path -- it refuses to start while a campaign code directory holds
+#        anything but regular *.py files and __pycache__, or a *.py with a standard-library name.
+#        A shadow must therefore be ABSENT WHEN THE PROGRAM STARTS, not merely detected after it
+#        has run.
+# SCOPE, exactly: what the code directories hold when a boundary program starts and when it is
+# checked, and what the import system loaded, from which file, at the moment of the check. A file
+# placed between the barrier and the import that uses it and removed before the check, code
+# executed through exec/eval, a module that -- once executing -- rewrites its own metadata or
+# deletes its file, and in-memory patching of a loaded module or of this verifier are arbitrary
+# malicious runtime modification: NOT covered.
 SOURCE_BACKED = "SOURCE"
+STDLIB_NAMES = frozenset(sys.stdlib_module_names) | frozenset(sys.builtin_module_names)
+SOURCE_NAME = re.compile(r"[A-Za-z_][A-Za-z0-9_]*\.py")
+CACHE_NAME = re.compile(r"(?P<stem>[A-Za-z_][A-Za-z0-9_]*)\.[A-Za-z0-9_-]+(\.opt-[12])?\.pyc")
+BOUNDARY_PROGRAMS = ("c11r_runs.py", "c11r_compare.py", "c11r_qualify.py")
+KIND_TEXT = {"ABSENT": "missing", "FILE": "a regular file", "DIRECTORY": "a directory",
+             "SYMLINK_INSIDE": "a symlink (resolving inside the repository)",
+             "SYMLINK_OUTSIDE": "a symlink resolving OUTSIDE the repository",
+             "SYMLINK_DANGLING": "a dangling symlink", "SYMLINK_LOOP": "a symlink loop",
+             "OTHER": "not a regular file or directory"}
+MODULE_IDENTITY_POLICY = {
+    "approved_sources": "the contract's `code` (load-bearing closure) and `frozen_code` (every "
+                        "other Python file of the campaign's code directory), byte-verified",
+    "campaign_directory_closure": "a loaded module with ANY origin inside a campaign code "
+                                  "directory must be an approved source, source-backed, loaded "
+                                  "from exactly that regular file under its own name; refused "
+                                  "whatever its name (L1)",
+    "origin_agreement": "__file__, __spec__.origin and the loader's path name one file, for every "
+                        "loaded module (L2)",
+    "import_path_precedence": "repository directories on sys.path are campaign code directories; "
+                              "entries ahead of the standard library are campaign code "
+                              "directories or inside the interpreter's installation (L3)",
+    "code_directory_inventory": "exactly the frozen regular, tracked *.py entries and at most a "
+                                "real __pycache__; no entry carries a standard-library or "
+                                "built-in module name (S)",
+    "cache_policy": "__pycache__ holds only regular files named <inventory stem>.<cache tag>"
+                    "[.opt-N].pyc; a cache CPython would accept must equal the compilation of "
+                    "its verified source; a stale cache is ignored by CPython and not a finding",
+    "preimport_barrier": "the boundary programs refuse to start while a code directory holds "
+                         "anything but regular *.py files and __pycache__, or a *.py with a "
+                         "standard-library name (B)",
+    "not_covered": "a file placed after the barrier and removed before the check; exec/eval; a "
+                   "module that rewrites its own metadata or deletes its file once executing; "
+                   "in-memory patching -- arbitrary malicious runtime modification"}
+
+# The block every boundary program executes FIRST (after its docstring). Its text is canonical:
+# preimport_barrier_problems() requires it verbatim, first, in all three programs.
+PREIMPORT_BARRIER = '''# --- C11R PRE-IMPORT BARRIER (review 6, R6-1): the first statement, before any other import ---
+import os as _os
+import sys as _sys
+
+
+def _c11r_preimport_barrier():
+    """Refuse to start while a campaign code directory holds anything a standard-library import
+    could resolve to. Only `os` and `sys` are used: the interpreter loaded both before this
+    script's directory was put on sys.path (c11r_contract.PREIMPORT_BARRIER)."""
+    here = _os.path.dirname(_os.path.realpath(__file__))
+    closure = _os.path.dirname(_os.path.dirname(here))
+    bad = []
+    for d in (here, _os.path.join(closure, "p5y_k5_tail_c11_n9_independent_certifier", "code"),
+              _os.path.join(closure, "p5y_k5_tail_c7_e2_lambda309", "code")):
+        if _os.path.islink(d) or not _os.path.isdir(d):
+            bad.append(d)
+            continue
+        for e in sorted(_os.listdir(d)):
+            p = _os.path.join(d, e)
+            if e == "__pycache__" and _os.path.isdir(p) and not _os.path.islink(p):
+                continue
+            if (not e.endswith(".py") or _os.path.islink(p) or not _os.path.isfile(p)
+                    or e[:-3] in _sys.stdlib_module_names or e[:-3] in _sys.builtin_module_names):
+                bad.append(_os.path.basename(_os.path.dirname(d)) + "/code/" + e)
+    if bad:
+        raise SystemExit("REFUSE (pre-import barrier, review 6 R6-1): a campaign code directory "
+                         "holds an entry a standard-library import could resolve to: "
+                         + ", ".join(bad))
+
+
+_c11r_preimport_barrier()
+# --- end of the pre-import barrier ---
+'''
+
+
+def preimport_barrier_problems(repo=None) -> list[str]:
+    """(B): each boundary program starts with PREIMPORT_BARRIER verbatim, immediately after its
+    docstring, and imports nothing from __future__ (such an import must come first and is
+    resolved through sys.path)."""
+    import ast
+    p = []
+    for name in BOUNDARY_PROGRAMS:
+        rel = f"{C.NS_REL}/code/{name}"
+        try:
+            src = code_bytes(repo, rel).decode()
+            tree = ast.parse(src)
+        except (OSError, ValueError, SyntaxError) as e:
+            p.append(f"pre-import barrier: {name} is not readable Python source ({type(e).__name__})")
+            continue
+        doc = tree.body[0] if tree.body and isinstance(tree.body[0], ast.Expr) \
+            and isinstance(getattr(tree.body[0], "value", None), ast.Constant) else None
+        after = "\n".join(src.splitlines()[doc.end_lineno:]).lstrip("\n") if doc else src
+        if not after.startswith(PREIMPORT_BARRIER):
+            p.append(f"pre-import barrier: {name} does not begin with the canonical pre-import "
+                     f"barrier immediately after its docstring")
+        if any(isinstance(n, ast.ImportFrom) and n.module == "__future__" for n in ast.walk(tree)):
+            p.append(f"pre-import barrier: {name} imports from __future__ (an import resolved "
+                     f"through sys.path before the barrier could run)")
+    return p
 
 
 def import_time_closure(root_name: str) -> set[str]:
@@ -996,6 +1274,22 @@ def _origins(m) -> list[str]:
     return [x for x in out if isinstance(x, str) and x]
 
 
+def _file_origins(m) -> list[str]:
+    """The origins that are FILESYSTEM PATHS ('frozen' and 'built-in' are not)."""
+    return [x for x in _origins(m) if os.sep in x]
+
+
+def _search_locations(m) -> list[str]:
+    """A package's search locations -- a namespace package has nothing else."""
+    spec = getattr(m, "__spec__", None)
+    locs = getattr(spec, "submodule_search_locations", None) if spec is not None else \
+        getattr(m, "__path__", None)
+    try:
+        return [x for x in list(locs or []) if isinstance(x, str) and x]
+    except TypeError:
+        return []
+
+
 def _import_name_of_file(path: str) -> str:
     """The import name a file or directory provides: `x.py`, `x.pyc`, `x.cpython-314-darwin.so`
     and `x/__init__.py` all provide `x`."""
@@ -1003,6 +1297,8 @@ def _import_name_of_file(path: str) -> str:
     if pp.name.startswith("__init__."):
         return pp.parent.name
     return pp.name.split(".")[0]
+
+
 def _pyc_matches_source(cached: str | None, source: bytes, filename: str) -> bool | None:
     """The cached bytecode CPython's source loader WOULD ACCEPT for this source, compared with the
     compilation of the verified source. None when there is no such cache: no file, another magic
@@ -1034,54 +1330,258 @@ def _pyc_matches_source(cached: str | None, source: bytes, filename: str) -> boo
         return False
 
 
+def code_dir_rels() -> list[str]:
+    """The campaign code directories (the ones the campaign puts on sys.path), repo-relative."""
+    return sorted(str(pathlib.Path(d).relative_to(C.REPO)) for d in C.CODE_DIRS)
+
+
+def code_directories(repo=None) -> dict[str, list[str]]:
+    """The INVENTORY of each campaign code directory (review 6, R6-1): the regular *.py files it
+    holds. The contract binds it at the approved commit; code_dir_shadows refuses anything else."""
+    root = _root(repo)
+    out = {}
+    for rel_d in code_dir_rels():
+        here = root / rel_d
+        names = []
+        if C.path_kind(here, inside=root) == "DIRECTORY":
+            names = [e for e in sorted(os.listdir(here)) if SOURCE_NAME.fullmatch(e)
+                     and C.path_kind(here / e, inside=root) == "FILE"]
+        out[rel_d] = names
+    return out
+
+
+def frozen_code(repo=None, code: dict | None = None) -> dict[str, str | None]:
+    """sha256 of every Python file of the campaign's code directory OUTSIDE the load-bearing
+    closure (producers, harnesses, the status verifier): approved sources for (L1)."""
+    code = code if code is not None else {}
+    return {rel: code_identity(repo, rel)["sha256"] for rel in namespace_code() if rel not in code}
+
+
+def approved_sources(contract: dict) -> dict[str, str | None]:
+    out = {rel: rec.get("sha256") for rel, rec in contract.get("code", {}).items()}
+    out.update(contract.get("frozen_code") or {})
+    return out
+
+
+def _cache_dir_problems(path: pathlib.Path, where: str, allowed: set, root) -> list[str]:
+    k = C.path_kind(path, inside=root)
+    if k != "DIRECTORY":
+        return [f"code directories: __pycache__ in {where} is {KIND_TEXT[k]}, not a real "
+                f"directory"]
+    stems = {e[:-3] for e in allowed}
+    p = []
+    for e in sorted(os.listdir(path)):
+        m = CACHE_NAME.fullmatch(e)
+        ek = C.path_kind(path / e, inside=root)
+        if ek != "FILE" or m is None or m.group("stem") not in stems:
+            p.append(f"code directories: __pycache__/{e} in {where} is not a cache of one of the "
+                     f"directory's inventory sources ({KIND_TEXT[ek]}): the frozen cache policy "
+                     f"admits only regular <stem>.<cache tag>[.opt-N].pyc files")
+    return p
+
+
 def code_dir_shadows(contract: dict, repo=None) -> list[str]:
-    """STATIC shadow candidates in the directories the campaign puts on sys.path (review 4,
-    N4-3; review 5, R5-2): every entry of each code directory is listed from the FILESYSTEM
-    (tracked, untracked and ignored alike), and any file or directory whose IMPORT NAME is a
-    contract module's -- `x.py` elsewhere, `x.pyc`, `x.*.so`, `x/`, `x.zip` -- anywhere but at
-    that module's contract path is refused; so is untracked Python source. `__pycache__` is not
-    an import location (CPython reads it only for a source it has found) and is not listed."""
+    """STATIC (S) -- review 4, N4-3; review 5, R5-2; review 6, R6-1. Every entry of each campaign
+    code directory is listed from the FILESYSTEM (tracked, untracked and ignored alike, lstat,
+    never following a link) and compared with the inventory the contract froze. Refused, each by
+    name and kind: a symlink, a directory (package or namespace package), anything that is not a
+    regular *.py file (.pyc, extension, zip, egg, metadata), an entry carrying a standard-library
+    or built-in module name, an entry carrying a contract module's import name away from its
+    contract path, an entry not in the frozen inventory (a COMMITTED addition included), an
+    untracked source, a missing inventory entry, and a __pycache__ that is not a real directory
+    of regular caches of the directory's own sources."""
     root = _root(repo)
     stems = {pathlib.PurePosixPath(rel).stem: rel for rel in contract["code"]}
-    p = []
-    for d in C.CODE_DIRS:
-        rel_d = str(pathlib.Path(d).relative_to(C.REPO))
+    inv = contract.get("code_directories")
+    if not isinstance(inv, dict) or sorted(inv) != code_dir_rels():
+        return ["code directories: the contract binds no inventory of the campaign code "
+                "directories"]
+    p, untracked = [], []
+    for rel_d in code_dir_rels():
         here = root / rel_d
-        if not here.is_dir():
+        where = f"{pathlib.PurePosixPath(rel_d).parent.name}/code"
+        k = C.path_kind(here, inside=root)
+        if k != "DIRECTORY":
+            p.append(f"code directories: {where} is {KIND_TEXT[k]}, not a directory")
             continue
-        for entry in sorted(os.listdir(here)):
-            if entry == "__pycache__":
+        allowed = set(inv.get(rel_d) or [])
+        tracked = set(C.git_in(root, "ls-files", "--", f"{rel_d}/").splitlines())
+        entries = sorted(os.listdir(here))
+        for e in entries:
+            path = here / e
+            k = C.path_kind(path, inside=root)
+            if e == "__pycache__":
+                p += _cache_dir_problems(here / "__pycache__", where, allowed, root)
                 continue
-            stem = _import_name_of_file(f"{rel_d}/{entry}/__init__.py") \
-                if (here / entry).is_dir() else _import_name_of_file(entry)
-            if stem in stems and f"{rel_d}/{entry}" != stems[stem]:
-                p.append(f"code directories: {entry} in {pathlib.PurePosixPath(rel_d).parent.name}"
-                         f"/code carries the import name of contract module {stem}")
-    dirs = [str(pathlib.Path(d).relative_to(C.REPO)) for d in C.CODE_DIRS]
-    untracked = [x for x in C.git_in(root, "ls-files", "--others", "--",
-                                     *[f"{d}/*.py" for d in dirs]).splitlines() if x]
+            name = e if k == "DIRECTORY" else _import_name_of_file(e)
+            if k.startswith("SYMLINK"):
+                p.append(f"code directories: {e} in {where} is {KIND_TEXT[k]}: a campaign code "
+                         f"directory holds no symlink")
+            elif k == "DIRECTORY":
+                p.append(f"code directories: {e}/ in {where} is a directory (a package or "
+                         f"namespace package): a campaign code directory holds no package")
+            elif k != "FILE":
+                p.append(f"code directories: {e} in {where} is {KIND_TEXT[k]}")
+            elif not SOURCE_NAME.fullmatch(e):
+                p.append(f"code directories: {e} in {where} is not Python source: sourceless "
+                         f"bytecode, extensions, archives and import metadata are refused")
+            elif f"{rel_d}/{e}" not in tracked:
+                untracked.append(e)
+            if name in STDLIB_NAMES:
+                p.append(f"code directories: {e} in {where} carries the standard-library import "
+                         f"name {name!r}")
+            if name in stems and f"{rel_d}/{e}" != stems[name]:
+                p.append(f"code directories: {e} in {where} carries the import name of contract "
+                         f"module {name}")
+            if e not in allowed:
+                p.append(f"code directories: {e} in {where} is not in the directory inventory "
+                         f"the contract froze")
+        for e in sorted(allowed - set(entries)):
+            p.append(f"code directories: {e}, in the frozen inventory of {where}, is missing")
     if untracked:
-        p.append(f"code directories: untracked Python source "
-                 f"{sorted(pathlib.PurePosixPath(x).name for x in untracked)}")
+        p.append(f"code directories: untracked Python source {sorted(untracked)}")
+    return p
+
+
+def _parent_resolved(path: str) -> str:
+    """The path with its DIRECTORIES resolved and its last component kept: a symlinked file keeps
+    its own name (so it is judged where it sits), a symlinked parent (/var -> /private/var) does
+    not move it."""
+    a = os.path.abspath(path)
+    return os.path.join(os.path.realpath(os.path.dirname(a)), os.path.basename(a))
+
+
+def _in_dirs(path: str, dirs) -> bool:
+    """Inside one of `dirs` ((lexical, real) pairs) -- lexically, with its parents resolved, or by
+    realpath: a module reached through a symlink in a code directory is inside it, and so is one
+    whose file lies there under another name."""
+    forms = (os.path.abspath(path), _parent_resolved(path), os.path.realpath(path))
+    return any(x == d or x.startswith(d + os.sep) for x in forms for pair in dirs for d in pair)
+
+
+def _where_in_dirs(path: str, dirs) -> str:
+    """`<campaign>/code/<path inside the code directory>`, for messages."""
+    for form in (os.path.abspath(path), _parent_resolved(path), os.path.realpath(path)):
+        for pair in dirs:
+            for d in pair:
+                if form.startswith(d + os.sep):
+                    return f"{pathlib.PurePosixPath(d).parent.name}/code/{form[len(d) + 1:]}"
+    return pathlib.PurePosixPath(path).name
+
+
+def _import_path_problems(dirs, lex_root: pathlib.Path) -> list[str]:
+    """(L3): which directories can supply a module ahead of the standard library."""
+    import sysconfig
+    paths = sysconfig.get_paths()
+    std = {os.path.realpath(paths[k]) for k in ("stdlib", "platstdlib") if paths.get(k)}
+    prefixes = {os.path.realpath(x) for x in (sys.base_prefix, sys.prefix, sys.base_exec_prefix,
+                                              sys.exec_prefix)}
+    code_real = {real for _, real in dirs}
+    repo_real = os.path.realpath(lex_root)
+    p, seen_std = [], False
+    for entry in sys.path:
+        real = os.path.realpath(entry or os.getcwd())
+        if real in std:
+            seen_std = True
+            continue
+        if real in code_real:
+            continue
+        name = pathlib.PurePosixPath(real).name
+        if real == repo_real or real.startswith(repo_real + os.sep):
+            p.append(f"loaded modules: sys.path holds a repository directory that is not a "
+                     f"campaign code directory ({name})")
+        elif not seen_std and not any(real == x or real.startswith(x + os.sep) for x in prefixes):
+            p.append(f"loaded modules: sys.path entry {name!r} precedes the standard library and "
+                     f"is neither a campaign code directory nor part of the interpreter "
+                     f"(review 6, R6-1)")
+    if not seen_std:
+        p.append("loaded modules: the standard library is not on sys.path")
+    return p
+
+
+def _campaign_module_problems(key: str, m, files: list[str], locs: list[str], dirs,
+                              approved: dict, contract_code: dict,
+                              lex_root: pathlib.Path) -> list[str]:
+    """(L1) for one module with an origin inside a campaign code directory."""
+    inside = [o for o in files + locs if _in_dirs(o, dirs)]
+    where = _where_in_dirs(inside[0], dirs)
+    files = [o for o in files if _in_dirs(o, dirs)] + [o for o in files if not _in_dirs(o, dirs)]
+    if not files:
+        return [f"loaded modules: module {key!r} is a namespace package inside a campaign code "
+                f"directory ({where}): refused whatever its name (review 6, R6-1)"]
+    rel = None
+    for form in (_parent_resolved(files[0]), os.path.realpath(files[0])):
+        r = os.path.relpath(form, os.path.realpath(lex_root))
+        if not r.startswith(".."):
+            rel = str(pathlib.PurePosixPath(r))
+            break
+    if rel is None or rel not in approved:
+        return [f"loaded modules: module {key!r} was loaded from {where}, inside a campaign code "
+                f"directory, which is not an approved contract source (review 6, R6-1)"]
+    p = []
+    kind, loader_type = module_kind(m)
+    if kind != SOURCE_BACKED:
+        p.append(f"loaded modules: module {key!r} from {where} is {kind} ({loader_type}): a module "
+                 f"of a campaign code directory must be loaded from its source by the standard "
+                 f"source loader")
+    real_root = pathlib.Path(os.path.realpath(lex_root))
+    k = C.path_kind(real_root / rel, inside=real_root)
+    if k != "FILE":
+        p.append(f"loaded modules: module {key!r} from {where} is reached through {KIND_TEXT[k]}")
+    if key != "__main__" and key.rsplit(".", 1)[-1] != pathlib.PurePosixPath(rel).stem:
+        p.append(f"loaded modules: {where} is loaded under another module name, {key!r}")
+    if rel not in contract_code:                         # frozen, not load-bearing: bytes here
+        try:
+            src = code_bytes(real_root, rel)
+        except OSError:
+            src = None
+        if src is None or C.sha256_bytes(src) != approved[rel]:
+            p.append(f"loaded modules: module {key!r} from {where} is not the approved bytes")
+        elif _pyc_matches_source(getattr(m, "__cached__", None), src,
+                                 str(real_root / rel)) is False:
+            p.append(f"loaded modules: module {key!r} from {where} has cached bytecode that is "
+                     f"not the compilation of its verified source")
     return p
 
 
 def verify_loaded_modules(contract: dict, exec_root=None, modules: dict | None = None,
                           role: str | None = None) -> dict:
-    """Every loaded module that IS, by name or by origin, a contract module -- verified; and,
-    for a boundary `role`, every module its program imports at module level -- present."""
+    """What THIS process loaded: (L1) every module with an origin inside a campaign code
+    directory is an approved source; every loaded module that IS, by name or by origin, a
+    contract module is verified; (L2) origins agree; (L3) the import path; and, for a boundary
+    `role`, every module its program imports at module level is present."""
     root = pathlib.Path(os.path.realpath(exec_root or C.REPO))
+    lex_root = pathlib.Path(os.path.abspath(exec_root or C.REPO))
     mods = dict(sys.modules if modules is None else modules)
     stems = {pathlib.PurePosixPath(rel).stem: rel for rel in contract["code"]}
-    p, checked, origin_seen = [], set(), {}
+    approved = approved_sources(contract)
+    inv = contract.get("code_directories")
+    p, checked, origin_seen, campaign = [], set(), {}, []
+    if not isinstance(inv, dict) or sorted(inv) != code_dir_rels():
+        p.append("loaded modules: the contract binds no inventory of the campaign code "
+                 "directories")
+    dirs = [(os.path.abspath(lex_root / d), os.path.realpath(lex_root / d))
+            for d in code_dir_rels()]
     if os.environ.get("PYTHONPATH"):
         p.append("loaded modules: PYTHONPATH is set; the import path is not the contract's")
     if sys.flags.optimize:
         p.append("loaded modules: assertions are stripped (-O)")
+    p += _import_path_problems(dirs, lex_root)
     for key, m in sorted(mods.items(), key=lambda kv: kv[0]):
         if m is None:
             continue
         origins = _origins(m)
+        files = _file_origins(m)
+        locs = _search_locations(m)
+        if len({os.path.realpath(o) for o in files}) > 1:                          # (L2)
+            p.append(f"loaded modules: module {key!r}: its __file__, __spec__.origin and loader "
+                     f"path disagree "
+                     f"({sorted({pathlib.PurePosixPath(o).name for o in files})}): one module, "
+                     f"one file")
+        if any(_in_dirs(o, dirs) for o in files + locs):                            # (L1)
+            campaign.append(key)
+            p += _campaign_module_problems(key, m, files, locs, dirs, approved,
+                                           contract["code"], lex_root)
         by_origin = {_import_name_of_file(o) for o in origins} & set(stems)
         by_key = {key.rsplit(".", 1)[-1]} & set(stems) if key != "__main__" else set()
         for stem in sorted(by_origin | by_key):
@@ -1122,7 +1622,8 @@ def verify_loaded_modules(contract: dict, exec_root=None, modules: dict | None =
                      f"{role} boundary but is not loaded")
     return {"problems": p, "checked": sorted(pathlib.PurePosixPath(stems[s]).name for s in checked),
             "required": sorted(pathlib.PurePosixPath(stems[s]).name for s in required),
-            "execution_root": str(root)}
+            "modules_examined": len(mods), "campaign_origin_modules": sorted(campaign),
+            "approved_sources": len(approved), "execution_root": str(root)}
 
 
 # ---------------------------------------------------------------------------------------------
@@ -1433,6 +1934,22 @@ def _issue_order(repo, a: dict, facts: dict) -> list[str]:
 # the runner's pre-flight (defence in depth: it recomputes everything the authorization did)
 # ---------------------------------------------------------------------------------------------
 def runner_preflight(repo=None, *, allow_fixture=False, check_processes=True) -> dict:
+    """The runner's pre-flight; a tree on which it cannot be evaluated is REFUSED with a typed
+    reason, never an exception (review 6, N6-5)."""
+    try:
+        return _runner_preflight(repo, allow_fixture=allow_fixture,
+                                 check_processes=check_processes)
+    except TYPED_ERRORS as e:
+        try:
+            committed = load_artifact(repo, CONTRACT_REL)
+        except TYPED_ERRORS:
+            committed = None
+        return {"problems": [not_evaluable("runner pre-flight", e)]
+                + [f"runner pre-flight: {x}" for x in bound_path_problems(repo, committed)],
+                "identity": None}
+
+
+def _runner_preflight(repo=None, *, allow_fixture=False, check_processes=True) -> dict:
     a = load_artifact(repo, AUTH_REL) if artifact_exists(repo, AUTH_REL) else None
     av = verify_authorization(repo, a, allow_fixture=allow_fixture)
     p = list(av["problems"])
