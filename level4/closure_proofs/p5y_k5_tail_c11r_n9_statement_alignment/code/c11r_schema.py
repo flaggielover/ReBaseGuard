@@ -15,6 +15,9 @@ from __future__ import annotations
 from fractions import Fraction as F
 
 SIX_CONSTANTS = ("C_T", "tau", "Abar", "D_lo", "D1", "D2")
+# The certificate each implementable target must cite -- ONE frozen rule, used by the runner to
+# assemble targets and by the production guards to check them (review 5, N5-11).
+TARGET_CERTIFICATE = {"Abar": "F_K", "tau": "F_H", "C_T": "F_H", "D_lo": "F_D"}
 
 # ---------------------------------------------------------------------------------------------
 # The state set. C_T is a supremum over it, so it is part of the statement, not background.

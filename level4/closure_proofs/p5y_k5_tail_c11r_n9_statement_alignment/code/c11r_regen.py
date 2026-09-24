@@ -53,6 +53,8 @@ def main() -> int:
     workers = PR.campaign_workers()["workers"]
     pre = {"no_campaign_worker_running": not workers,
            "no_authorization": not (C.NS / "config" / "C11R_AUTHORIZATION.json").exists(),
+           "no_execution_permission": not os.path.lexists(
+               C.NS / "config" / "C11R_EXECUTION_PERMISSION.json"),
            "no_evidence_runs": not (C.NS / "evidence" / "runs").exists(),
            "no_comparison": not (C.NS / "evidence" / "comparison").exists(),
            "no_qualification": not (C.NS / "evidence" / "qualification").exists()}

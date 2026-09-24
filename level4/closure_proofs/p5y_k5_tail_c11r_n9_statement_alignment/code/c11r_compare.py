@@ -1,4 +1,4 @@
-"""C11R Phase 15 -- the sealed comparison. Revision 5 (R4-1, N4-5, N4-8; R3-1, B-1, B-3, B-4 kept).
+"""C11R Phase 15 -- the sealed comparison. Revision 6 (R5-1, N5-2, N5-7, E45; R4-1, N4-5, N4-8 kept).
 
 ONE OF EXACTLY TWO MODULES PERMITTED TO LOAD AN ORIGINAL MAGNITUDE, and it does so only through
 the `loader` that `execute_comparison` calls AFTER every verification step has passed.
@@ -13,12 +13,16 @@ branch, and (N4-5) that the magnitude loader ran BEFORE the G8/G10/G19 guards we
 and (N4-8) that a demoted target never reached the verdict. Now:
 
 THE ORDER IN `execute_comparison` (STEPS; each recorded, in order, with its problems):
-   1  approved commit   -- A exists, the authorization names A, HEAD descends from A, A carries
-                           a contract;
+   1  approved commit   -- A is a full, self-naming 40-hex commit id (round 6, N5-7), the
+                           authorization names A, HEAD descends from A, A carries a contract;
    2  complete history  -- c11r_contract.frozen_state (tree identity AND history purity over
-                           EVERY commit reachable after A) and protocol_history (no comparison,
-                           no discarded run, qualification and authorization introduced once
-                           and in order before the seal);
+                           EVERY commit reachable after A; replace objects disabled; grafts and
+                           shallow history refused) and protocol_history (no comparison, no
+                           discarded run, qualification and authorization introduced once and
+                           in order before the seal) and the LIFECYCLE (round 6, R5-1): SEALED,
+                           execution permission DENY/EXECUTION_COMPLETED bound to THIS run's
+                           recomputed digest, the authorization untouched, nothing at the
+                           comparison output path (N5-2);
    3  contract          -- recomputed from bytes; equal to the contract at A;
    4  gate              -- bound to that contract, the policy and the statement table;
    5  qualification     -- the typed Q1-Q18 schema, bound to the contract and to A;
@@ -51,6 +55,7 @@ deduction no production certifier has, and the self-test exercises it that way.
 """
 from __future__ import annotations
 
+import os
 import pathlib
 import sys
 from fractions import Fraction as F
@@ -62,7 +67,7 @@ import c11r_contract as CT
 import c11r_equiv as EQ
 import c11r_schema as S
 
-RUNS_REL = "evidence/runs/C11R_RUNS.json"
+RUNS_REL = CT.RUNS_REL
 FACTOR = 2
 PRECEDENCE = ("INDEPENDENCE_VIOLATION", "SCIENTIFIC_DISAGREEMENT", "EXECUTION_INVALID",
               "N9_CLOSED", "AGREEMENT_INSUFFICIENT")
@@ -172,14 +177,11 @@ def execute_comparison(repo=None, *, approved_commit: str, loader, allow_fixture
         assert steps[-1]["name"] == STEPS[len(steps) - 1]
 
     a = CT.load_artifact(repo, CT.AUTH_REL) if CT.artifact_exists(repo, CT.AUTH_REL) else None
-    # 1 approved commit
-    p = []
-    a_exists = bool(approved_commit) and C.git_ok_in(root, "cat-file", "-e",
-                                                     f"{approved_commit}^{{commit}}")
-    if not a_exists:
-        p.append(f"approved commit {approved_commit!r} does not exist in this repository")
+    # 1 approved commit -- a full, self-naming commit id (review 5, N5-7), never a movable ref
+    p = CT.approved_commit_problems(repo, approved_commit)
+    a_exists = not p
     if a is None:
-        p.append("no authorization; guard is DENY")
+        p.append("no authorization artifact")
     elif a.get("approved_commit") != approved_commit:
         p.append("the authorization names another approved commit than the operator supplied")
     if a_exists and not C.git_ok_in(root, "merge-base", "--is-ancestor", approved_commit, "HEAD"):
@@ -188,11 +190,20 @@ def execute_comparison(repo=None, *, approved_commit: str, loader, allow_fixture
     if a_exists and frozen is None:
         p.append("the approved commit carries no execution contract")
     step("approved commit", p)
-    # 2 complete frozen history
+    # the run artifact is read HERE (the comparator is its only reader) so that its recomputed
+    # digest can be checked against the DENY/EXECUTION_COMPLETED record in step 2
+    path = root / C.NS_REL / RUNS_REL
+    runs = json.loads(path.read_bytes()) if path.exists() and not path.is_symlink() else None
+    # 2 complete frozen history, protocol history, and the LIFECYCLE: SEALED, execution
+    #   permission DENY/EXECUTION_COMPLETED bound to THIS run, the authorization untouched, and no
+    #   comparison file already at the output path (review 5, R5-1, N5-2)
     if frozen is not None:
         fs = CT.frozen_state(repo, approved_commit)
         ph = CT.protocol_history(repo, approved_commit, "compare")
-        step("complete frozen history", fs["tree_identity"] + fs["history_purity"] + ph["problems"])
+        lc = CT.lifecycle_problems(repo, approved_commit, "compare", allow_fixture=allow_fixture,
+                                   runs_sha256=CT.body_digest(runs) if runs is not None else None)
+        step("complete frozen history", fs["ancestry"] + fs["tree_identity"] + fs["history_purity"]
+             + ph["problems"] + lc)
     else:
         step("complete frozen history", [], evaluated=False)
     # 3 contract, 4 gate -- recomputed from bytes; the tree's contract must BE the frozen one
@@ -219,8 +230,6 @@ def execute_comparison(repo=None, *, approved_commit: str, loader, allow_fixture
     facts = av.get("facts")
     contract = frozen if frozen is not None else (facts or {}).get("roots", {}).get("contract")
     # 7 run -- the run artifact's own integrity and its execution identity (G20)
-    path = root / C.NS_REL / RUNS_REL
-    runs = json.loads(path.read_bytes()) if path.exists() else None
     if runs is not None and facts and contract is not None:
         p = S.validate_runs(runs)
         if runs.get("sha256") != CT.body_digest(runs):
@@ -252,7 +261,7 @@ def execute_comparison(repo=None, *, approved_commit: str, loader, allow_fixture
         p += [f"{k}: {pre['per'][k]['why']}" for k in S.SIX_CONSTANTS
               if pre["per"][k]["CLASS"] == "INVALID"]
         p += [f"independence violation: {k}" for k in pre["violations"]]
-        p += CT.verify_loaded_modules(contract)["problems"]
+        p += CT.verify_loaded_modules(contract, role="comparator")["problems"]
         p += CT.code_dir_shadows(contract, repo)
         p += comparison_rule_problems(stmt, facts["roots"].get("gate") or {}, contract)
         step("other execution-integrity predicates", p)
@@ -576,19 +585,37 @@ def self_test(stmt_table: dict, policy: dict) -> dict:
 
 
 # ---------------------------------------------------------------------------------------------
+def write_comparison(repo, out: dict) -> str:
+    """Write the comparison artifact ONCE (erratum E45). The output path must not exist -- not
+    even as a symlink or an untracked leftover (review 5, N5-2) -- and it is created exclusively
+    ('x'), so nothing written in between can be overwritten or adopted. C11R_COMPARISON.json is a
+    PROTECTED name: round 5's open-guard revision refused this very write outside the sanctioned
+    context, which the round-5 comparator never entered, so its final write would have failed
+    after the magnitudes were loaded. The write is now done inside the context, by the reader."""
+    import json
+    path = (pathlib.Path(repo) if repo is not None else C.REPO) / C.NS_REL / CT.COMPARISON_REL
+    if os.path.lexists(path):
+        raise SystemExit("REFUSE: a file already exists at the comparison output path")
+    body = C.evidence_body(out, producer=__file__)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with C.sanctioned_protected_access("write the comparison artifact, once"):
+        with open(path, "x") as fh:
+            fh.write(json.dumps(body, indent=1, sort_keys=True) + "\n")
+    return body["sha256"]
+
+
 def main(approved_commit: str) -> int:
     """Phase 15, on the user's instruction, with the approved commit the review passed."""
     result = execute_comparison(C.REPO, approved_commit=approved_commit,
                                 loader=load_original_magnitudes)
-    out = {"schema": "C11R_COMPARISON/4", "approved_commit": approved_commit,
+    out = {"schema": "C11R_COMPARISON/5", "approved_commit": approved_commit,
            "result": result,
            "rendered": render(result) if result.get("loader_called") else
            [f"EXECUTION_INVALID -- {p}" for p in result["identity_problems"]]}
-    s_ = C.write_evidence(C.NS / "evidence" / "comparison" / "C11R_COMPARISON.json", out,
-                          producer=__file__)
+    s_ = write_comparison(C.REPO, out)
     for line in out["rendered"]:
         print(line)
-    print(f"wrote evidence/comparison/C11R_COMPARISON.json sha256 {s_[:16]}...")
+    print(f"wrote {CT.COMPARISON_REL} sha256 {s_[:16]}...")
     return 0
 
 

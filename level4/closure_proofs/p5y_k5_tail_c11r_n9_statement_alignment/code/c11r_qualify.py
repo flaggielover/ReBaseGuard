@@ -253,7 +253,8 @@ def main(approved_commit: str) -> int:
     exp = CT.expected_certifier_sha(contract) if contract["code"] else {}
     tree_cert = {m: C.sha256_file(C.HERE / m) for m in CV.CERTIFIER_MODULES}
     reviewed = C.sha256_bytes(C.blob_at(REVIEWED_IDRIFT_COMMIT, f"{C.NS_REL}/code/c11r_idrift.py"))
-    loaded = CT.verify_loaded_modules(contract) if contract["code"] else {"problems": ["no contract"]}
+    loaded = CT.verify_loaded_modules(contract, role="qualifier") if contract["code"] else \
+        {"problems": ["no contract"]}
     loaded["problems"] = loaded["problems"] + (CT.code_dir_shadows(contract, C.REPO)
                                                if contract["code"] else [])
     item("Q4", exp == tree_cert and tree_cert["c11r_idrift.py"] == reviewed
@@ -278,10 +279,16 @@ def main(approved_commit: str) -> int:
     item("Q16", hm["match"], hm)
     workers = PR.campaign_workers()["workers"]
     auth_exists = CT.artifact_exists(C.REPO, CT.AUTH_REL)
+    perm_exists = CT.artifact_exists(C.REPO, CT.PERMISSION_REL)
     runs_exists = (C.NS / "evidence" / "runs").exists()
-    item("Q17", gate["guard"] == "DENY" and not auth_exists and not runs_exists and not workers,
+    state = CT.lifecycle(C.REPO, approved_commit)["state"]
+    item("Q17", gate["guard"] == "DENY" and not auth_exists and not perm_exists
+         and not runs_exists and not workers and state == "FROZEN",
          {"gate_guard": gate["guard"], "authorization_exists": auth_exists,
-          "runs_exists": runs_exists, "workers": workers})
+          "execution_permission_exists": perm_exists, "runs_exists": runs_exists,
+          "workers": workers, "lifecycle_state": state,
+          "note": "evaluated before THIS qualification is written: the lifecycle must be FROZEN; "
+                  "it is re-derived (QUALIFIED) at authorization"})
     du = shutil.disk_usage(str(C.REPO))
     item("Q18", du.free > 2 * 1024 ** 3, {"disk_free_gb": round(du.free / 1024 ** 3, 1)})
 

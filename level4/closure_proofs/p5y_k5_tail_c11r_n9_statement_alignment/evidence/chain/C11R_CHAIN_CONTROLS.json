@@ -54,8 +54,8 @@
    "id": "R3A",
    "pass": true,
    "problems": [
-    "history purity: commit 1b0e4cf53d24 touched a frozen path: it holds ['c11r_boxdata.py'] in a state other than the approved commit's",
-    "history purity: commit f3b7ce3b5de9 touched a frozen path: it holds ['c11r_boxdata.py'] in a state other than the approved commit's",
+    "history purity: commit a4342eeeeed2 touched a frozen path: it holds ['c11r_boxdata.py'] in a state other than the approved commit's",
+    "history purity: commit e193aafa5327 touched a frozen path: it holds ['c11r_boxdata.py'] in a state other than the approved commit's",
     "run: certificate F_D was made by another c11r_boxdata.py than the bound one"
    ],
    "refused": true,
@@ -213,7 +213,7 @@
    "problems": [
     "contract: code identity differs for ['c11r_runs.py']",
     "tree identity: frozen path c11r_runs.py differs from the approved commit",
-    "history purity: commit 3d41b9e1b15c touched a frozen path: it holds ['c11r_runs.py'] in a state other than the approved commit's",
+    "history purity: commit 2868845d0afe touched a frozen path: it holds ['c11r_runs.py'] in a state other than the approved commit's",
     "the runner is not the bound c11r_runs.py",
     "authorization: runner_sha256 does not match the recomputed value",
     "runner pre-flight: c11r_runs.py is not the bound version"
@@ -236,7 +236,7 @@
    "problems": [
     "contract: code identity differs for ['c11r_certificate.py']",
     "tree identity: frozen path c11r_certificate.py differs from the approved commit",
-    "history purity: commit 255a9624ce2b touched a frozen path: it holds ['c11r_certificate.py'] in a state other than the approved commit's",
+    "history purity: commit f186d184cd5d touched a frozen path: it holds ['c11r_certificate.py'] in a state other than the approved commit's",
     "runner pre-flight: c11r_certificate.py is not the bound version"
    ],
    "refused": true,
@@ -258,7 +258,7 @@
     "contract: artifact identity differs for ['policy']",
     "contract: configuration differs from the recomputed value",
     "tree identity: frozen path C11R_POLICY.json differs from the approved commit",
-    "history purity: commit d3cda3f1d13e touched a frozen path: it holds ['C11R_POLICY.json'] in a state other than the approved commit's",
+    "history purity: commit 6c7d0cd42575 touched a frozen path: it holds ['C11R_POLICY.json'] in a state other than the approved commit's",
     "the policy's selected configuration is not the contract's"
    ],
    "refused": true,
@@ -280,7 +280,7 @@
     "contract: artifact identity differs for ['policy']",
     "contract: configuration differs from the recomputed value",
     "tree identity: frozen path C11R_POLICY.json differs from the approved commit",
-    "history purity: commit 2b3a5ddaba64 touched a frozen path: it holds ['C11R_POLICY.json'] in a state other than the approved commit's",
+    "history purity: commit 8fd5793d6030 touched a frozen path: it holds ['C11R_POLICY.json'] in a state other than the approved commit's",
     "the policy's selected configuration is not the contract's"
    ],
    "refused": true,
@@ -302,7 +302,7 @@
     "contract: artifact identity differs for ['policy']",
     "contract: configuration differs from the recomputed value",
     "tree identity: frozen path C11R_POLICY.json differs from the approved commit",
-    "history purity: commit 132d2a65b473 touched a frozen path: it holds ['C11R_POLICY.json'] in a state other than the approved commit's"
+    "history purity: commit bf6bffb162f8 touched a frozen path: it holds ['C11R_POLICY.json'] in a state other than the approved commit's"
    ],
    "refused": true,
    "refused_at_step": null,
@@ -320,7 +320,10 @@
    "id": "R3M",
    "pass": true,
    "problems": [
-    "protocol history: commit 049e8dba94a8 holds a runs artifact other than the current one (a discarded or replaced runs)",
+    "protocol history: commit 6fa73647e05b holds a runs artifact other than the current one (a discarded or replaced runs)",
+    "protocol history: the DENY/EXECUTION_COMPLETED permission record was not introduced in the sealing commit",
+    "lifecycle: permission at HEAD: permission: EXECUTION_COMPLETED is bound to another runs artifact",
+    "lifecycle: permission on disk: permission: EXECUTION_COMPLETED is bound to another runs artifact",
     "the runs artifact was changed after it was sealed, or another run was committed and discarded (1 reachable commits hold other runs content)"
    ],
    "refused": true,
@@ -478,7 +481,7 @@
    "problems": [
     "contract: code identity differs for ['c7_gaussian.py']",
     "tree identity: frozen path c7_gaussian.py differs from the approved commit",
-    "history purity: commit 2e919932e082 touched a frozen path: it holds ['c7_gaussian.py'] in a state other than the approved commit's"
+    "history purity: commit 3992a417eaf0 touched a frozen path: it holds ['c7_gaussian.py'] in a state other than the approved commit's"
    ],
    "refused": true,
    "refused_at_step": null,
@@ -527,12 +530,12 @@
     "tree identity: frozen path C11R_CONTRACT.json differs from the approved commit",
     "tree identity: frozen path C11R_POLICY.json differs from the approved commit",
     "tree identity: frozen path N9R_GATE_C11R.json differs from the approved commit",
-    "history purity: commit 422442970e15 touched a frozen path: it holds ['C11R_CONTRACT.json', 'C11R_POLICY.json', 'N9R_GATE_C11R.json'] in a state other than the approved commit's",
-    "history purity: commit fe36bf1cf58c touched a frozen path: it holds ['C11R_CONTRACT.json', 'C11R_POLICY.json', 'N9R_GATE_C11R.json'] in a state other than the approved commit's",
-    "history purity: commit 3f280be2c6a8 touched a frozen path: it holds ['C11R_CONTRACT.json', 'C11R_POLICY.json', 'N9R_GATE_C11R.json'] in a state other than the approved commit's",
-    "history purity: commit 94e98d875e55 touched a frozen path: it holds ['C11R_CONTRACT.json', 'C11R_POLICY.json', 'N9R_GATE_C11R.json'] in a state other than the approved commit's",
-    "history purity: commit c870646f67eb touched a frozen path: it holds ['C11R_POLICY.json'] in a state other than the approved commit's",
-    "the contract in the tree is not the contract at the approved commit"
+    "history purity: commit 9146f2595a5f touched a frozen path: it holds ['C11R_CONTRACT.json', 'C11R_POLICY.json', 'N9R_GATE_C11R.json'] in a state other than the approved commit's",
+    "history purity: commit f201f550bd32 touched a frozen path: it holds ['C11R_CONTRACT.json', 'C11R_POLICY.json', 'N9R_GATE_C11R.json'] in a state other than the approved commit's",
+    "history purity: commit e9e6cb458204 touched a frozen path: it holds ['C11R_CONTRACT.json', 'C11R_POLICY.json', 'N9R_GATE_C11R.json'] in a state other than the approved commit's",
+    "history purity: commit ccb6c006868e touched a frozen path: it holds ['C11R_CONTRACT.json', 'C11R_POLICY.json', 'N9R_GATE_C11R.json'] in a state other than the approved commit's",
+    "history purity: commit 59e6ac53e691 touched a frozen path: it holds ['C11R_POLICY.json'] in a state other than the approved commit's",
+    "lifecycle: GRANT permission: bound to another cell or approved commit"
    ],
    "refused": true,
    "refused_at_step": "approved commit",
@@ -609,8 +612,8 @@
    "pass": true,
    "problems": [
     "tree identity: frozen path c11r_boxdata.py differs from the approved commit",
-    "history purity: commit 7cc82321efc9 touched a frozen path: it holds ['c11r_boxdata.py'] in a state other than the approved commit's",
-    "history purity: commit c25d0a17048a touched a frozen path: it holds ['c11r_boxdata.py'] in a state other than the approved commit's",
+    "history purity: commit a77fe6956eb0 touched a frozen path: it holds ['c11r_boxdata.py'] in a state other than the approved commit's",
+    "history purity: commit a6d7f6e7747e touched a frozen path: it holds ['c11r_boxdata.py'] in a state other than the approved commit's",
     "contract: code identity differs for ['c11r_boxdata.py']"
    ],
    "refused": true,
@@ -651,7 +654,7 @@
    "merge_commits_in_range": 0,
    "pass": true,
    "problems": [
-    "history purity: commit 7e72b2b95cb7 touched a frozen path: it holds ['c11r_boxdata.py'] in a state other than the approved commit's"
+    "history purity: commit 8e344ec41dc7 touched a frozen path: it holds ['c11r_boxdata.py'] in a state other than the approved commit's"
    ],
    "refused": true,
    "refused_at_step": "complete frozen history",
@@ -690,7 +693,7 @@
    "merge_commits_in_range": 1,
    "pass": true,
    "problems": [
-    "history purity: commit 8e83298a5940 touched a frozen path: it holds ['c11r_boxdata.py'] in a state other than the approved commit's"
+    "history purity: commit 9dce5d3f6507 touched a frozen path: it holds ['c11r_boxdata.py'] in a state other than the approved commit's"
    ],
    "refused": true,
    "refused_at_step": "complete frozen history",
@@ -724,8 +727,8 @@
    "id": "MHT4_preflight",
    "pass": true,
    "problems": [
-    "protocol history: commit 39114d79f39e holds a runs artifact (a prior execution)",
-    "protocol history: commit 39114d79f39e holds a runs artifact other than the current one (a discarded or replaced runs)",
+    "protocol history: commit d6e95e6a20ff holds a runs artifact (a prior execution)",
+    "protocol history: commit d6e95e6a20ff holds a runs artifact other than the current one (a discarded or replaced runs)",
     "a runs artifact already exists",
     "runner pre-flight: a runs artifact already exists"
    ],
@@ -751,7 +754,8 @@
    "merge_commits_in_range": 1,
    "pass": true,
    "problems": [
-    "protocol history: commit 39114d79f39e holds a runs artifact other than the current one (a discarded or replaced runs)",
+    "protocol history: commit d6e95e6a20ff holds a runs artifact other than the current one (a discarded or replaced runs)",
+    "protocol history: commit d6e95e6a20ff holds the runs artifact without the DENY/EXECUTION_COMPLETED permission record",
     "the runs artifact was changed after it was sealed, or another run was committed and discarded (1 reachable commits hold other runs content)"
    ],
    "refused": true,
@@ -793,6 +797,7 @@
    "merge_commits_in_range": 1,
    "pass": true,
    "problems": [
+    "protocol history: commit 63c2ea73dfbe holds the runs artifact without the DENY/EXECUTION_COMPLETED permission record",
     "protocol history: the runs artifact was introduced by 2 commits",
     "protocol history: the runs artifact has no single sealing commit",
     "the runs artifact was never committed, so no ordering can be established",
@@ -837,7 +842,7 @@
    "merge_commits_in_range": 1,
    "pass": true,
    "problems": [
-    "protocol history: commit 3b5e74c08ab5 holds a comparison artifact (a prior comparison)"
+    "protocol history: commit de2cda3a6c68 holds a comparison artifact (a prior comparison)"
    ],
    "refused": true,
    "refused_at_step": "complete frozen history",
@@ -876,7 +881,7 @@
    "merge_commits_in_range": 1,
    "pass": true,
    "problems": [
-    "history purity: commit 7c4ce16fea8b touched a frozen path: it holds ['c11r_policy.py'] in a state other than the approved commit's"
+    "history purity: commit 9ceae5544d1e touched a frozen path: it holds ['c11r_policy.py'] in a state other than the approved commit's"
    ],
    "refused": true,
    "refused_at_step": "complete frozen history",
@@ -980,7 +985,7 @@
    "merge_commits_in_range": 1,
    "pass": true,
    "problems": [
-    "history purity: commit 4cbdc5c80471 touched a frozen path: it holds ['c7_gaussian.py'] in a state other than the approved commit's"
+    "history purity: commit 86fe7cf8733f touched a frozen path: it holds ['c7_gaussian.py'] in a state other than the approved commit's"
    ],
    "refused": true,
    "refused_at_step": "complete frozen history",
@@ -1052,7 +1057,7 @@
    "merge_commits_in_range": 1,
    "pass": true,
    "problems": [
-    "history purity: commit 1e083dfa5735 touched a frozen path: it holds ['c11r_certificate.py'] in a state other than the approved commit's"
+    "history purity: commit 75024578edbb touched a frozen path: it holds ['c11r_certificate.py'] in a state other than the approved commit's"
    ],
    "refused": true,
    "refused_at_step": "complete frozen history",
@@ -1092,7 +1097,7 @@
    "merge_commits_in_range": 1,
    "pass": true,
    "problems": [
-    "history purity: commit 139dc14a97e8 touched a frozen path: it holds ['C11R_POLICY.json'] in a state other than the approved commit's"
+    "history purity: commit 77889e9333f2 touched a frozen path: it holds ['C11R_POLICY.json'] in a state other than the approved commit's"
    ],
    "refused": true,
    "refused_at_step": "complete frozen history",
@@ -1132,7 +1137,8 @@
    "merge_commits_in_range": 0,
    "pass": true,
    "problems": [
-    "protocol history: commit ae5ce9d7eb8e holds a runs artifact other than the current one (a discarded or replaced runs)",
+    "protocol history: commit 71f3ae389411 holds a runs artifact other than the current one (a discarded or replaced runs)",
+    "protocol history: commit 71f3ae389411 holds the runs artifact without the DENY/EXECUTION_COMPLETED permission record",
     "the runs artifact was changed after it was sealed, or another run was committed and discarded (1 reachable commits hold other runs content)"
    ],
    "refused": true,
@@ -1242,8 +1248,8 @@
    "id": "LS_DEMOTE",
    "pass": true,
    "problems": [
-    "value trace: Abar: [\"its certificate 'F_K' proves Abar, yet it is reported NOT_CERTIFIED (demoted)\"]",
-    "Abar: the target does not trace to its certificate: [\"its certificate 'F_K' proves Abar, yet it is reported NOT_CERTIFIED (demoted)\"]"
+    "value trace: Abar: [\"its certificate 'F_K' proves Abar, yet it is reported NOT_CERTIFIED (demoted)\", \"Abar is reported NOT_CERTIFIED while certificate(s) ['F_K'] prove it (demoted)\"]",
+    "Abar: the target does not trace to its certificate: [\"its certificate 'F_K' proves Abar, yet it is reported NOT_CERTIFIED (demoted)\", \"Abar is reported NOT_CERTIFIED while certificate(s) ['F_K'] prove it (demoted)\"]"
    ],
    "refused": true,
    "refused_at_step": "other execution-integrity predicates",
@@ -1266,9 +1272,13 @@
    "id": "LS_SEAL",
    "pass": true,
    "problems": [
-    "protocol history: commit da58eb99e16b holds a runs artifact other than the current one (a discarded or replaced runs)",
+    "protocol history: commit ceeaf8d8b714 holds a runs artifact other than the current one (a discarded or replaced runs)",
     "protocol history: the runs artifact is not committed at HEAD",
     "protocol history: the runs artifact has no single sealing commit",
+    "lifecycle: the protocol files present (['authorization', 'permission', 'qualification', 'runs']; permission at HEAD EXECUTION_COMPLETED, on disk EXECUTION_COMPLETED) are no state of the frozen transition table",
+    "lifecycle: permission at HEAD: permission: EXECUTION_COMPLETED is bound to another runs artifact",
+    "lifecycle: permission on disk: permission: EXECUTION_COMPLETED is bound to another runs artifact",
+    "lifecycle: the state is MALFORMED; stage compare requires SEALED",
     "the runs artifact was never committed, so no ordering can be established",
     "the runs artifact has uncommitted changes",
     "the runs artifact was changed after it was sealed, or another run was committed and discarded (1 reachable commits hold other runs content)"
@@ -1342,7 +1352,7 @@
    "id": "LS_HISTORY",
    "pass": true,
    "problems": [
-    "history purity: commit d2c89376b9a6 touched a frozen path: it holds ['c7_gaussian.py'] in a state other than the approved commit's"
+    "history purity: commit f5ce5e0f727a touched a frozen path: it holds ['c7_gaussian.py'] in a state other than the approved commit's"
    ],
    "refused": true,
    "refused_at_step": "complete frozen history",
@@ -1538,7 +1548,7 @@
    "expected_reason": "c11r_idrift.py (as module 'c11r_idrift') was loaded from another file",
    "expected_step": null,
    "files": {
-    "c11r_idrift": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/c11r_imp_yoigz62x/stray/c11r_idrift.py",
+    "c11r_idrift": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/impctl_1ge6gtr7/stray/c11r_idrift.py",
     "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
     "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
    },
@@ -1549,6 +1559,7 @@
     "c11_common.py",
     "c11r_common.py",
     "c11r_contract.py",
+    "c11r_idrift.py",
     "c11r_procs.py",
     "c11r_schema.py",
     "c7_gaussian.py"
@@ -1572,7 +1583,7 @@
    "expected_reason": "c11r_idrift.py (as module 'c11r_idrift') was loaded from another file",
    "expected_step": null,
    "files": {
-    "c11r_idrift": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/c11r_imp_r0grx0nx/links/c11r_idrift.py",
+    "c11r_idrift": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/impctl_xup3h3nx/links/c11r_idrift.py",
     "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
     "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
    },
@@ -1583,6 +1594,7 @@
     "c11_common.py",
     "c11r_common.py",
     "c11r_contract.py",
+    "c11r_idrift.py",
     "c11r_procs.py",
     "c11r_schema.py",
     "c7_gaussian.py"
@@ -1640,7 +1652,7 @@
    "expected_reason": "c11r_idrift.py (as module 'c11r_idrift') was loaded from another file",
    "expected_step": null,
    "files": {
-    "c11r_idrift": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/c11r_imp_y8rdr0om/copy/c11r_idrift.py",
+    "c11r_idrift": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/impctl_745o4mmd/copy/c11r_idrift.py",
     "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
     "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
    },
@@ -1651,6 +1663,7 @@
     "c11_common.py",
     "c11r_common.py",
     "c11r_contract.py",
+    "c11r_idrift.py",
     "c11r_procs.py",
     "c11r_schema.py",
     "c7_gaussian.py"
@@ -1676,7 +1689,7 @@
    "files": {
     "c11r_idrift": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py",
     "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
-    "c7_gaussian": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/c11r_imp_o32m5fp2/helper/c7_gaussian.py"
+    "c7_gaussian": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/impctl_olkb2m95/helper/c7_gaussian.py"
    },
    "group": "IMP",
    "id": "IMP5",
@@ -1687,7 +1700,8 @@
     "c11r_contract.py",
     "c11r_idrift.py",
     "c11r_procs.py",
-    "c11r_schema.py"
+    "c11r_schema.py",
+    "c7_gaussian.py"
    ],
    "pass": true,
    "problems": [
@@ -1810,10 +1824,10 @@
   {
    "attack": "a zip archive earlier on sys.path",
    "expected": "REFUSE",
-   "expected_reason": "c11r_idrift.py (as module 'c11r_idrift') was loaded from another file",
+   "expected_reason": "c11r_idrift.py (as module 'c11r_idrift') is ZIP (zipimporter",
    "expected_step": null,
    "files": {
-    "c11r_idrift": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/c11r_imp_xxcimlia/shadow.zip/c11r_idrift.py",
+    "c11r_idrift": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/impctl_dxo76ylu/shadow.zip/c11r_idrift.py",
     "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
     "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
    },
@@ -1824,18 +1838,410 @@
     "c11_common.py",
     "c11r_common.py",
     "c11r_contract.py",
+    "c11r_idrift.py",
     "c11r_procs.py",
     "c11r_schema.py",
     "c7_gaussian.py"
    ],
    "pass": true,
    "problems": [
-    "loaded modules: c11r_idrift.py (as module 'c11r_idrift') was loaded from another file than <execution root>/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py"
+    "loaded modules: c11r_idrift.py (as module 'c11r_idrift') is ZIP (zipimporter, origin c11r_idrift.py): a load-bearing module must be loaded from its source file by the standard source loader -- sourceless bytecode, archiv"
    ],
    "refused": true,
    "refused_at_step": null,
    "refused_for_the_expected_reason": true,
    "required": {
+    "driver_ran": true
+   },
+   "stage": "loaded-module identity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "a normal source import of every module",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "files": {
+    "c11r_idrift": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py",
+    "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
+    "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
+   },
+   "group": "PYC",
+   "id": "PYC1",
+   "modules_checked": [
+    "c11_certifier.py",
+    "c11_common.py",
+    "c11r_common.py",
+    "c11r_contract.py",
+    "c11r_idrift.py",
+    "c11r_procs.py",
+    "c11r_schema.py",
+    "c7_gaussian.py"
+   ],
+   "pass": true,
+   "problems": [],
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "driver_ran": true,
+    "non_vacuous": true
+   },
+   "stage": "loaded-module identity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "an ordinary CPython cache that corresponds to the correct source",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "files": {
+    "c11r_idrift": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py",
+    "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
+    "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
+   },
+   "group": "PYC",
+   "id": "PYC2",
+   "modules_checked": [
+    "c11_certifier.py",
+    "c11_common.py",
+    "c11r_common.py",
+    "c11r_contract.py",
+    "c11r_idrift.py",
+    "c11r_procs.py",
+    "c11r_schema.py",
+    "c7_gaussian.py"
+   ],
+   "pass": true,
+   "problems": [],
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "an_accepted_cache_existed": true,
+    "driver_ran": true
+   },
+   "stage": "loaded-module identity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "a stale cache CPython ignores (IMP6b semantics)",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "files": {
+    "c11r_idrift": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py",
+    "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
+    "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
+   },
+   "group": "PYC",
+   "id": "PYC3",
+   "modules_checked": [
+    "c11_certifier.py",
+    "c11_common.py",
+    "c11r_common.py",
+    "c11r_contract.py",
+    "c11r_idrift.py",
+    "c11r_procs.py",
+    "c11r_schema.py",
+    "c7_gaussian.py"
+   ],
+   "pass": true,
+   "problems": [],
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "driver_ran": true,
+    "the_stale_code_did_not_run": true
+   },
+   "stage": "loaded-module identity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "a forged cache CPython would accept",
+   "expected": "REFUSE",
+   "expected_reason": "c11r_schema.py (as module 'c11r_schema') has cached bytecode that is not the compilation of its verified source",
+   "expected_step": null,
+   "files": {
+    "c11r_idrift": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py",
+    "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
+    "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
+   },
+   "group": "PYC",
+   "id": "PYC4",
+   "modules_checked": [
+    "c11_certifier.py",
+    "c11_common.py",
+    "c11r_common.py",
+    "c11r_contract.py",
+    "c11r_idrift.py",
+    "c11r_procs.py",
+    "c11r_schema.py",
+    "c7_gaussian.py"
+   ],
+   "pass": true,
+   "problems": [
+    "loaded modules: c11r_schema.py (as module 'c11r_schema') has cached bytecode that is not the compilation of its verified source"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "driver_ran": true,
+    "the_forged_code_really_ran": true
+   },
+   "stage": "loaded-module identity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "a sourceless c11r_schema.pyc earlier on sys.path",
+   "expected": "REFUSE",
+   "expected_reason": "c11r_schema.py (as module 'c11r_schema') is SOURCELESS_BYTECODE",
+   "expected_step": null,
+   "files": {
+    "c11r_idrift": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py",
+    "c11r_schema": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/impctl_hac7v963/shadow/c11r_schema.pyc",
+    "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
+   },
+   "group": "PYC",
+   "id": "PYC5",
+   "modules_checked": [
+    "c11_certifier.py",
+    "c11_common.py",
+    "c11r_common.py",
+    "c11r_contract.py",
+    "c11r_idrift.py",
+    "c11r_procs.py",
+    "c11r_schema.py",
+    "c7_gaussian.py"
+   ],
+   "pass": true,
+   "problems": [
+    "loaded modules: c11r_schema.py (as module 'c11r_schema') is SOURCELESS_BYTECODE (SourcelessFileLoader, origin c11r_schema.pyc): a load-bearing module must be loaded from its source file by the standard source loader -- s"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "c11r_schema.py_is_in_the_checked_set": true,
+    "driver_ran": true
+   },
+   "stage": "loaded-module identity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "a sourceless transitive helper c7_gaussian.pyc",
+   "expected": "REFUSE",
+   "expected_reason": "c7_gaussian.py (as module 'c7_gaussian') is SOURCELESS_BYTECODE",
+   "expected_step": null,
+   "files": {
+    "c11r_idrift": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py",
+    "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
+    "c7_gaussian": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/impctl_bk2jrz3z/shadow/c7_gaussian.pyc"
+   },
+   "group": "PYC",
+   "id": "PYC6",
+   "modules_checked": [
+    "c11_certifier.py",
+    "c11_common.py",
+    "c11r_common.py",
+    "c11r_contract.py",
+    "c11r_idrift.py",
+    "c11r_procs.py",
+    "c11r_schema.py",
+    "c7_gaussian.py"
+   ],
+   "pass": true,
+   "problems": [
+    "loaded modules: c7_gaussian.py (as module 'c7_gaussian') is SOURCELESS_BYTECODE (SourcelessFileLoader, origin c7_gaussian.pyc): a load-bearing module must be loaded from its source file by the standard source loader -- s"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "c7_gaussian.py_is_in_the_checked_set": true,
+    "driver_ran": true
+   },
+   "stage": "loaded-module identity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "the SAME code, compiled sourceless, at a wrong path",
+   "expected": "REFUSE",
+   "expected_reason": "c11r_schema.py (as module 'c11r_schema') is SOURCELESS_BYTECODE",
+   "expected_step": null,
+   "files": {
+    "c11r_idrift": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py",
+    "c11r_schema": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/impctl_tpibyq1i/shadow/c11r_schema.pyc",
+    "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
+   },
+   "group": "PYC",
+   "id": "PYC7",
+   "modules_checked": [
+    "c11_certifier.py",
+    "c11_common.py",
+    "c11r_common.py",
+    "c11r_contract.py",
+    "c11r_idrift.py",
+    "c11r_procs.py",
+    "c11r_schema.py",
+    "c7_gaussian.py"
+   ],
+   "pass": true,
+   "problems": [
+    "loaded modules: c11r_schema.py (as module 'c11r_schema') is SOURCELESS_BYTECODE (SourcelessFileLoader, origin c11r_schema.pyc): a load-bearing module must be loaded from its source file by the standard source loader -- s"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "c11r_schema.py_is_in_the_checked_set": true,
+    "driver_ran": true
+   },
+   "stage": "loaded-module identity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "a symlinked alternate origin (a .pyc symlink to an external file)",
+   "expected": "REFUSE",
+   "expected_reason": "c11r_schema.py (as module 'c11r_schema') is SOURCELESS_BYTECODE",
+   "expected_step": null,
+   "files": {
+    "c11r_idrift": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py",
+    "c11r_schema": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/impctl_uiw1e6i_/shadow/c11r_schema.pyc",
+    "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
+   },
+   "group": "PYC",
+   "id": "PYC8",
+   "modules_checked": [
+    "c11_certifier.py",
+    "c11_common.py",
+    "c11r_common.py",
+    "c11r_contract.py",
+    "c11r_idrift.py",
+    "c11r_procs.py",
+    "c11r_schema.py",
+    "c7_gaussian.py"
+   ],
+   "pass": true,
+   "problems": [
+    "loaded modules: c11r_schema.py (as module 'c11r_schema') is SOURCELESS_BYTECODE (SourcelessFileLoader, origin c11r_schema.pyc): a load-bearing module must be loaded from its source file by the standard source loader -- s"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "c11r_schema.py_is_in_the_checked_set": true,
+    "driver_ran": true
+   },
+   "stage": "loaded-module identity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "a package directory c11r_schema/__init__.py: the module may not drop out of the check",
+   "expected": "REFUSE",
+   "expected_reason": "c11r_schema.py (as module 'c11r_schema') was loaded from another file",
+   "expected_step": null,
+   "files": {
+    "c11r_idrift": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py",
+    "c11r_schema": "/var/folders/vj/p2sw9zkx0rv2b_0rmdtq4hlh0000gn/T/impctl_a5783453/shadow/c11r_schema/__init__.py",
+    "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
+   },
+   "group": "PYC",
+   "id": "PYC9",
+   "modules_checked": [
+    "c11_certifier.py",
+    "c11_common.py",
+    "c11r_common.py",
+    "c11r_contract.py",
+    "c11r_idrift.py",
+    "c11r_procs.py",
+    "c11r_schema.py",
+    "c7_gaussian.py"
+   ],
+   "pass": true,
+   "problems": [
+    "loaded modules: c11r_schema.py (as module 'c11r_schema') was loaded from another file than <execution root>/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "c11r_schema.py_is_in_the_checked_set": true,
+    "driver_ran": true
+   },
+   "stage": "loaded-module identity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "a boundary program whose load-bearing module is absent (runner role, c11r_boxdata never imported)",
+   "expected": "REFUSE",
+   "expected_reason": "c11r_boxdata.py is required at the runner boundary but is not loaded",
+   "expected_step": null,
+   "files": {
+    "c11r_idrift": null,
+    "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
+    "c7_gaussian": null
+   },
+   "group": "PYC",
+   "id": "PYC10",
+   "modules_checked": [
+    "c11r_common.py",
+    "c11r_contract.py",
+    "c11r_procs.py",
+    "c11r_schema.py"
+   ],
+   "pass": true,
+   "problems": [
+    "loaded modules: c11_certifier.py is required at the runner boundary but is not loaded",
+    "loaded modules: c11_common.py is required at the runner boundary but is not loaded",
+    "loaded modules: c11r_boxdata.py is required at the runner boundary but is not loaded",
+    "loaded modules: c11r_certificate.py is required at the runner boundary but is not loaded",
+    "loaded modules: c11r_idrift.py is required at the runner boundary but is not loaded",
+    "loaded modules: c11r_runs.py is required at the runner boundary but is not loaded",
+    "loaded modules: c7_gaussian.py is required at the runner boundary but is not loaded"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "driver_ran": true
+   },
+   "stage": "loaded-module identity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "a .py shadow that rewrites its own __file__ to the contract path",
+   "expected": "REFUSE",
+   "expected_reason": "c11r_schema.py (as module 'c11r_schema') was loaded from another file",
+   "expected_step": null,
+   "files": {
+    "c11r_idrift": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py",
+    "c11r_schema": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
+    "c7_gaussian": "/Users/suzhe/ReBaseGuard-k5c11r/level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py"
+   },
+   "group": "IMP",
+   "id": "IMP9",
+   "modules_checked": [
+    "c11_certifier.py",
+    "c11_common.py",
+    "c11r_common.py",
+    "c11r_contract.py",
+    "c11r_idrift.py",
+    "c11r_procs.py",
+    "c11r_schema.py",
+    "c7_gaussian.py"
+   ],
+   "pass": true,
+   "problems": [
+    "loaded modules: c11r_schema.py (as module 'c11r_schema') was loaded from another file than <execution root>/level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "c11r_schema.py_is_in_the_checked_set": true,
     "driver_ran": true
    },
    "stage": "loaded-module identity",
@@ -1850,7 +2256,26 @@
    "id": "IMP_stray",
    "pass": true,
    "problems": [
+    "runner pre-flight: code directories: c11r_certificate.py in p5y_k5_tail_c11_n9_independent_certifier/code carries the import name of contract module c11r_certificate",
     "runner pre-flight: code directories: untracked Python source ['c11r_certificate.py']"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "runner pre-flight",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "R5's construction: a sourceless c11r_certificate.pyc in C11's code directory (static check)",
+   "expected": "REFUSE",
+   "expected_reason": "c11r_certificate.pyc in p5y_k5_tail_c11_n9_independent_certifier/code carries the import name of contract module c11r_certificate",
+   "expected_step": null,
+   "group": "PYC",
+   "id": "PYC_R5_location",
+   "pass": true,
+   "problems": [
+    "runner pre-flight: code directories: c11r_certificate.pyc in p5y_k5_tail_c11_n9_independent_certifier/code carries the import name of contract module c11r_certificate"
    ],
    "refused": true,
    "refused_at_step": null,
@@ -1886,7 +2311,7 @@
    "id": "ORD2",
    "pass": true,
    "problems": [
-    "protocol history: commit eaa43a4642f0 holds a qualification artifact other than the current one (a discarded or replaced qualification)"
+    "protocol history: commit 0c52a4aa95fa holds a qualification artifact other than the current one (a discarded or replaced qualification)"
    ],
    "refused": true,
    "refused_at_step": null,
@@ -1904,7 +2329,14 @@
    "id": "ORD3",
    "pass": true,
    "problems": [
-    "protocol history: the authorization was not committed before the seal"
+    "protocol history: commit 7e28364a816e holds the runs artifact without the DENY/EXECUTION_COMPLETED permission record",
+    "protocol history: execution permission at HEAD is still the GRANT (ALLOW): comparison requires DENY/EXECUTION_COMPLETED, never ALLOW",
+    "protocol history: the authorization was not committed before the seal",
+    "protocol history: the DENY/EXECUTION_COMPLETED permission record was not introduced in the sealing commit",
+    "lifecycle: GRANT permission: EXECUTION_COMPLETED does not end the committed GRANT",
+    "lifecycle: the permission committed with the authorization is not a GRANT",
+    "lifecycle: permission at HEAD: permission: EXECUTION_COMPLETED does not end the committed GRANT",
+    "lifecycle: permission on disk: permission: EXECUTION_COMPLETED does not end the committed GRANT"
    ],
    "refused": true,
    "refused_at_step": "complete frozen history",
@@ -1922,13 +2354,1163 @@
    ],
    "stub_loader_calls": 0,
    "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "valid authorization + execution permission ALLOW (GRANT): the runner may execute",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "group": "GS",
+   "id": "GS1",
+   "lifecycle": "AUTHORIZED",
+   "pass": true,
+   "problems": [],
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "lifecycle_AUTHORIZED": true
+   },
+   "stage": "runner pre-flight",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "execution permission ALLOW without an authorization",
+   "expected": "REFUSE",
+   "expected_reason": "no authorization artifact",
+   "expected_step": null,
+   "group": "GS",
+   "id": "GS2",
+   "lifecycle": "MALFORMED",
+   "pass": true,
+   "problems": [
+    "no authorization artifact"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "runner pre-flight",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "authorization present, execution permission DENY before any run",
+   "expected": "REFUSE",
+   "expected_reason": "the state is REVOKED_BEFORE_EXECUTION; stage run requires AUTHORIZED",
+   "expected_step": null,
+   "group": "GS",
+   "id": "GS3",
+   "lifecycle": "REVOKED_BEFORE_EXECUTION",
+   "pass": true,
+   "problems": [
+    "protocol history: commit d05c0d024f3b holds an execution permission other than the GRANT and the final record (a discarded or replaced permission)",
+    "lifecycle: the state is REVOKED_BEFORE_EXECUTION; stage run requires AUTHORIZED"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "runner pre-flight",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "after a valid run execution permission is DENY while the authorization stays, unchanged",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "group": "GS",
+   "id": "GS4",
+   "pass": true,
+   "problems": [],
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "authorization_unchanged": true,
+    "execution_permission_DENY": true,
+    "permission_at_HEAD_is_EXECUTION_COMPLETED": true,
+    "the_runner_refuses_again": true
+   },
+   "stage": "lifecycle",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "sealed valid run + DENY + the preserved authorization: the comparator reaches the loader boundary",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "group": "GS",
+   "id": "GS5",
+   "pass": true,
+   "problems": [],
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "all_twelve_steps_passed": true,
+    "loader_called_exactly_once": true
+   },
+   "stage": "comparator",
+   "steps_failed": [],
+   "steps_not_evaluated": [],
+   "stub_loader_calls": 1,
+   "verdict": "AGREEMENT_INSUFFICIENT"
+  },
+  {
+   "attack": "the valid lifecycle follows ONE path of the frozen transition table, the runner's NEXT_STEPS followed literally",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "group": "GS",
+   "id": "GS12",
+   "pass": true,
+   "path": [
+    "FROZEN",
+    "QUALIFIED",
+    "AUTHORIZED",
+    "EXECUTING",
+    "EXECUTED_UNSEALED",
+    "SEALED"
+   ],
+   "problems": [],
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "NEXT_STEPS_names_both_files": true,
+    "comparison_accepted": true,
+    "every_step_is_in_the_table": true,
+    "path_is_the_prescribed_one": true
+   },
+   "stage": "lifecycle",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "the authorization deleted after the seal ('guard DENY' read literally)",
+   "expected": "REFUSE",
+   "expected_reason": "no authorization artifact",
+   "expected_step": "approved commit",
+   "group": "GS",
+   "id": "GS6",
+   "pass": true,
+   "problems": [
+    "no authorization artifact",
+    "protocol history: commit 614c13fe8087 holds a authorization artifact other than the current one (a discarded or replaced authorization)",
+    "protocol history: commit 5c4f7050ba0c holds a authorization artifact other than the current one (a discarded or replaced authorization)",
+    "protocol history: commit 5c4f7050ba0c holds an execution permission other than the GRANT and the final record (a discarded or replaced permission)",
+    "protocol history: no execution permission GRANT was committed together with the authorization",
+    "protocol history: the authorization was not committed before the seal",
+    "lifecycle: the protocol files present (['permission', 'qualification', 'runs']; permission at HEAD EXECUTION_COMPLETED, on disk EXECUTION_COMPLETED) are no state of the frozen transition table",
+    "lifecycle: no execution permission GRANT was committed with the authorization",
+    "lifecycle: permission at HEAD: permission: bound to another authorization",
+    "lifecycle: permission at HEAD: permission: EXECUTION_COMPLETED does not end the committed GRANT"
+   ],
+   "refused": true,
+   "refused_at_step": "approved commit",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "approved commit",
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "run",
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "the authorization deleted, then recreated with identical bytes",
+   "expected": "REFUSE",
+   "expected_reason": "the authorization artifact was introduced by 2 commits",
+   "expected_step": "complete frozen history",
+   "group": "GS",
+   "id": "GS7",
+   "pass": true,
+   "problems": [
+    "protocol history: commit a4078791f71d holds an execution permission other than the GRANT and the final record (a discarded or replaced permission)",
+    "protocol history: the authorization artifact was introduced by 2 commits",
+    "protocol history: no execution permission GRANT was committed together with the authorization",
+    "protocol history: the authorization was not committed before the seal",
+    "lifecycle: no execution permission GRANT was committed with the authorization",
+    "lifecycle: permission at HEAD: permission: EXECUTION_COMPLETED does not end the committed GRANT",
+    "lifecycle: permission on disk: permission: EXECUTION_COMPLETED does not end the committed GRANT"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "the deletion reverted with git revert",
+   "expected": "REFUSE",
+   "expected_reason": "the authorization artifact was introduced by 2 commits",
+   "expected_step": "complete frozen history",
+   "group": "GS",
+   "id": "GS8",
+   "pass": true,
+   "problems": [
+    "protocol history: commit 1235a9862e51 holds an execution permission other than the GRANT and the final record (a discarded or replaced permission)",
+    "protocol history: the authorization artifact was introduced by 2 commits",
+    "protocol history: no execution permission GRANT was committed together with the authorization",
+    "protocol history: the authorization was not committed before the seal",
+    "lifecycle: no execution permission GRANT was committed with the authorization",
+    "lifecycle: permission at HEAD: permission: EXECUTION_COMPLETED does not end the committed GRANT",
+    "lifecycle: permission on disk: permission: EXECUTION_COMPLETED does not end the committed GRANT"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "a second execution attempt after the sealed run",
+   "expected": "REFUSE",
+   "expected_reason": "the state is SEALED; stage run requires AUTHORIZED",
+   "expected_step": null,
+   "group": "GS",
+   "id": "GS9",
+   "pass": true,
+   "problems": [
+    "protocol history: commit a1667d028d4a holds a runs artifact (a prior execution)",
+    "protocol history: commit a1667d028d4a holds an execution permission other than the GRANT and the final record (a discarded or replaced permission)",
+    "lifecycle: the state is SEALED; stage run requires AUTHORIZED",
+    "a runs artifact already exists",
+    "runner pre-flight: a runs artifact already exists"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "runner pre-flight",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "a retry after an interrupted execution (EXECUTION_STARTED on disk)",
+   "expected": "REFUSE",
+   "expected_reason": "the state is EXECUTING; stage run requires AUTHORIZED",
+   "expected_step": null,
+   "group": "GS",
+   "id": "GS9b",
+   "pass": true,
+   "problems": [
+    "protocol history: the permission artifact is not committed at HEAD",
+    "lifecycle: the state is EXECUTING; stage run requires AUTHORIZED"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "runner pre-flight",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "the interrupted execution committed (ABANDONED): no run, no comparison",
+   "expected": "REFUSE",
+   "expected_reason": "the state is ABANDONED; stage run requires AUTHORIZED",
+   "expected_step": null,
+   "group": "GS",
+   "id": "GS9c",
+   "pass": true,
+   "problems": [
+    "protocol history: commit c5b29a59f96d holds an execution permission other than the GRANT and the final record (a discarded or replaced permission)",
+    "lifecycle: the state is ABANDONED; stage run requires AUTHORIZED"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "comparator_refuses_too": true
+   },
+   "stage": "runner pre-flight",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "a sealed run while execution permission is still ALLOW: comparison requires DENY, never ALLOW",
+   "expected": "REFUSE",
+   "expected_reason": "holds the runs artifact without the DENY/EXECUTION_COMPLETED permission record",
+   "expected_step": "complete frozen history",
+   "group": "GS",
+   "id": "GS10",
+   "pass": true,
+   "problems": [
+    "protocol history: commit e6648bc3cf0d holds the runs artifact without the DENY/EXECUTION_COMPLETED permission record",
+    "protocol history: execution permission at HEAD is still the GRANT (ALLOW): comparison requires DENY/EXECUTION_COMPLETED, never ALLOW",
+    "protocol history: the DENY/EXECUTION_COMPLETED permission record was not introduced in the sealing commit",
+    "lifecycle: the protocol files present (['authorization', 'permission', 'qualification', 'runs']; permission at HEAD GRANT, on disk GRANT) are no state of the frozen transition table",
+    "lifecycle: the state is MALFORMED; stage compare requires SEALED"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "no_boundary_but_the_runner_requires_ALLOW": true
+   },
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "malformed: EXECUTION_COMPLETED bound to another runs artifact",
+   "expected": "REFUSE",
+   "expected_reason": "EXECUTION_COMPLETED is bound to another runs artifact",
+   "expected_step": "complete frozen history",
+   "group": "GS",
+   "id": "GS11a",
+   "pass": true,
+   "problems": [
+    "lifecycle: permission at HEAD: permission: EXECUTION_COMPLETED is bound to another runs artifact",
+    "lifecycle: permission on disk: permission: EXECUTION_COMPLETED is bound to another runs artifact"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "malformed: the GRANT re-bound to another authorization",
+   "expected": "REFUSE",
+   "expected_reason": "bound to another authorization",
+   "expected_step": null,
+   "group": "GS",
+   "id": "GS11b",
+   "pass": true,
+   "problems": [
+    "protocol history: commit 805511f02cde holds an execution permission other than the GRANT and the final record (a discarded or replaced permission)",
+    "lifecycle: GRANT permission: bound to another authorization"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "runner pre-flight",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "malformed: a run committed with REVOKED_BEFORE_EXECUTION",
+   "expected": "REFUSE",
+   "expected_reason": "no state of the frozen transition table",
+   "expected_step": "complete frozen history",
+   "group": "GS",
+   "id": "GS11c",
+   "pass": true,
+   "problems": [
+    "lifecycle: the protocol files present (['authorization', 'permission', 'qualification', 'runs']; permission at HEAD REVOKED_BEFORE_EXECUTION, on disk REVOKED_BEFORE_EXECUTION) are no state of the frozen transition table",
+    "lifecycle: the state is MALFORMED; stage compare requires SEALED"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "an untracked comparison file already at the comparison output path",
+   "expected": "REFUSE",
+   "expected_reason": "a comparison file already exists at the comparison output path",
+   "expected_step": "complete frozen history",
+   "group": "CF",
+   "id": "CF1",
+   "pass": true,
+   "problems": [
+    "lifecycle: a comparison file already exists at the comparison output path and is not committed (untracked, modified or foreign): a stale comparison may not masquerade as the current one",
+    "lifecycle: the protocol files present (['authorization', 'comparison', 'permission', 'qualification', 'runs']; permission at HEAD EXECUTION_COMPLETED, on disk EXECUTION_COMPLETED) are no state of the frozen transition ta",
+    "lifecycle: the state is MALFORMED; stage compare requires SEALED"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "a committed comparison file, modified on disk",
+   "expected": "REFUSE",
+   "expected_reason": "holds a comparison artifact (a prior comparison)",
+   "expected_step": "complete frozen history",
+   "group": "CF",
+   "id": "CF2",
+   "pass": true,
+   "problems": [
+    "protocol history: commit 9be830de7bdc holds a comparison artifact (a prior comparison)",
+    "lifecycle: a comparison file already exists at the comparison output path and is not committed (untracked, modified or foreign): a stale comparison may not masquerade as the current one",
+    "lifecycle: the protocol files present (['authorization', 'comparison', 'permission', 'qualification', 'runs']; permission at HEAD EXECUTION_COMPLETED, on disk EXECUTION_COMPLETED) are no state of the frozen transition ta",
+    "lifecycle: the state is MALFORMED; stage compare requires SEALED"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "a comparison file from an earlier attempt, committed and deleted",
+   "expected": "REFUSE",
+   "expected_reason": "holds a comparison artifact (a prior comparison)",
+   "expected_step": "complete frozen history",
+   "group": "CF",
+   "id": "CF3",
+   "pass": true,
+   "problems": [
+    "protocol history: commit 5cd3189ad615 holds a comparison artifact (a prior comparison)"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "a symlink at the comparison output path",
+   "expected": "REFUSE",
+   "expected_reason": "the comparison path is a symlink",
+   "expected_step": "complete frozen history",
+   "group": "CF",
+   "id": "CF4",
+   "pass": true,
+   "problems": [
+    "lifecycle: the comparison path is a symlink",
+    "lifecycle: a comparison file already exists at the comparison output path and is not committed (untracked, modified or foreign): a stale comparison may not masquerade as the current one",
+    "lifecycle: the protocol files present (['authorization', 'comparison', 'permission', 'qualification', 'runs']; permission at HEAD EXECUTION_COMPLETED, on disk EXECUTION_COMPLETED) are no state of the frozen transition ta",
+    "lifecycle: the state is MALFORMED; stage compare requires SEALED"
+   ],
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "the comparator's writer meets an existing file at the output path",
+   "expected": "REFUSE",
+   "expected_reason": "a file already exists at the comparison output path",
+   "expected_step": null,
+   "group": "CF",
+   "id": "CF5a",
+   "pass": true,
+   "problems": [
+    "REFUSE: a file already exists at the comparison output path"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator writer",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "the comparator (reader identity simulated, the recorded residual) writes its artifact inside the sanctioned context ONCE; a second write is refused",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "group": "CF",
+   "id": "CF5b",
+   "pass": true,
+   "problems": [
+    "WROTE",
+    "REFUSED",
+    ""
+   ],
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "first_write_succeeded": true,
+    "second_write_refused": true
+   },
+   "stage": "comparator writer",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "the policy and statement bytes the runner uses, unchanged",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "group": "PB",
+   "id": "PB1",
+   "pass": true,
+   "problems": [],
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "recomputed_digest_recorded": true
+   },
+   "stage": "runner inputs",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "the policy edited in place after the pre-flight (stored sha256 re-stamped)",
+   "expected": "REFUSE",
+   "expected_reason": "the policy bytes in use are not the pre-flight's",
+   "expected_step": null,
+   "group": "PB",
+   "id": "PB2",
+   "pass": true,
+   "problems": [
+    "runner inputs: the policy bytes in use are not the pre-flight's (recomputed digest differs)",
+    "runner inputs: the configuration derived from the policy bytes in use is not the bound one"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "recomputed_digest_recorded": true
+   },
+   "stage": "runner inputs",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "the policy bytes changed after the pre-flight, stored sha256 unchanged",
+   "expected": "REFUSE",
+   "expected_reason": "a stored sha256 field does not equal the recomputed digest of the bytes in use",
+   "expected_step": null,
+   "group": "PB",
+   "id": "PB3",
+   "pass": true,
+   "problems": [
+    "runner inputs: the policy bytes in use are not the pre-flight's (recomputed digest differs)",
+    "runner inputs: a stored sha256 field does not equal the recomputed digest of the bytes in use"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "recomputed_digest_recorded": true
+   },
+   "stage": "runner inputs",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "git replace --graft hides a merged side-branch frozen-path edit",
+   "expected": "REFUSE",
+   "expected_reason": "touched a frozen path: it holds ['c11r_boxdata.py']",
+   "expected_step": "complete frozen history",
+   "group": "GR",
+   "id": "GR1",
+   "pass": true,
+   "plain_git_rev_list": 5,
+   "problems": [
+    "history purity: commit b2a4a882909a touched a frozen path: it holds ['c11r_boxdata.py'] in a state other than the approved commit's"
+   ],
+   "production_rev_list": 7,
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "production_sees_the_real_graph": true,
+    "the_graft_really_hides_commits_from_plain_git": true
+   },
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "git replace --graft hides a discarded run on a merged side branch",
+   "expected": "REFUSE",
+   "expected_reason": "holds a runs artifact other than the current one",
+   "expected_step": "complete frozen history",
+   "group": "GR",
+   "id": "GR2",
+   "pass": true,
+   "plain_git_rev_list": 5,
+   "problems": [
+    "protocol history: commit 56539bddcef0 holds a runs artifact other than the current one (a discarded or replaced runs)",
+    "protocol history: commit 56539bddcef0 holds the runs artifact without the DENY/EXECUTION_COMPLETED permission record",
+    "the runs artifact was changed after it was sealed, or another run was committed and discarded (1 reachable commits hold other runs content)"
+   ],
+   "production_rev_list": 7,
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "production_sees_the_real_graph": true,
+    "the_graft_really_hides_commits_from_plain_git": true
+   },
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history",
+    "seal"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "git replace --graft hides an earlier seal of the same run",
+   "expected": "REFUSE",
+   "expected_reason": "the runs artifact was introduced by 2 commits",
+   "expected_step": "complete frozen history",
+   "group": "GR",
+   "id": "GR3",
+   "pass": true,
+   "plain_git_rev_list": 5,
+   "problems": [
+    "protocol history: commit 2fc777b88684 holds the runs artifact without the DENY/EXECUTION_COMPLETED permission record",
+    "protocol history: the runs artifact was introduced by 2 commits",
+    "protocol history: the runs artifact has no single sealing commit",
+    "the runs artifact was never committed, so no ordering can be established",
+    "the runs artifact was introduced by 2 commits: an earlier seal exists in reachable history"
+   ],
+   "production_rev_list": 7,
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "production_sees_the_real_graph": true,
+    "the_graft_really_hides_commits_from_plain_git": true
+   },
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history",
+    "seal"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "no replace ref: the valid chain",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "group": "GR",
+   "id": "GR4",
+   "pass": true,
+   "plain_git_rev_list": 3,
+   "problems": [],
+   "production_rev_list": 3,
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "all_twelve_steps_passed": true,
+    "loader_called_exactly_once": true,
+    "production_sees_the_real_graph": true
+   },
+   "stage": "comparator",
+   "steps_failed": [],
+   "steps_not_evaluated": [],
+   "stub_loader_calls": 1,
+   "verdict": "AGREEMENT_INSUFFICIENT"
+  },
+  {
+   "attack": "an unrelated replace ref cannot alter the verification",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "group": "GR",
+   "id": "GR5",
+   "pass": true,
+   "plain_git_rev_list": 4,
+   "problems": [],
+   "production_rev_list": 4,
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "all_twelve_steps_passed": true,
+    "loader_called_exactly_once": true,
+    "production_sees_the_real_graph": true
+   },
+   "stage": "comparator",
+   "steps_failed": [],
+   "steps_not_evaluated": [],
+   "stub_loader_calls": 1,
+   "verdict": "AGREEMENT_INSUFFICIENT"
+  },
+  {
+   "attack": "a legacy grafts file (NOT disabled by --no-replace-objects)",
+   "expected": "REFUSE",
+   "expected_reason": "a grafts file rewrites commit parentage",
+   "expected_step": "complete frozen history",
+   "group": "GR",
+   "id": "GR6",
+   "pass": true,
+   "plain_git_rev_list": 5,
+   "problems": [
+    "history integrity: a grafts file rewrites commit parentage (not disabled by --no-replace-objects)"
+   ],
+   "production_rev_list": 5,
+   "refused": true,
+   "refused_at_step": "complete frozen history",
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "production_sees_the_real_graph": true
+   },
+   "stage": "comparator",
+   "steps_failed": [
+    "complete frozen history"
+   ],
+   "steps_not_evaluated": [
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "a shallow clone (history beyond its boundary missing)",
+   "expected": "REFUSE",
+   "expected_reason": "the repository is shallow",
+   "expected_step": null,
+   "group": "GR",
+   "id": "GR7",
+   "pass": true,
+   "problems": [
+    "history integrity: the repository is shallow -- history beyond its boundary is missing"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "history integrity",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "every git subprocess in the campaign goes through the sanitized helper",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "group": "GR",
+   "id": "GR8",
+   "pass": true,
+   "problems": [],
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "non_vacuous": true
+   },
+   "scan": {
+    "files_scanned": 26,
+    "frozen_predecessor_git_helpers_never_called": {
+     "c11_common": [
+      "blob_at",
+      "git",
+      "git_grep",
+      "git_ok",
+      "r5_map",
+      "r5_open_by_verdict"
+     ]
+    },
+    "git_call_sites_in_c11r": [
+     "c11r_chain.py:_plain_git_rev_list",
+     "c11r_common.py:blob_at",
+     "c11r_common.py:blob_at_in",
+     "c11r_common.py:content_free_id",
+     "c11r_common.py:git",
+     "c11r_common.py:git_grep",
+     "c11r_common.py:git_in",
+     "c11r_common.py:git_object_at",
+     "c11r_common.py:git_ok",
+     "c11r_common.py:git_ok_in",
+     "c11r_common.py:git_run"
+    ],
+    "literal_git_calls_in_c11r": 11,
+    "offending": []
+   },
+   "stage": "static scan",
+   "stub_loader_calls": 0
+  },
+  {
+   "attack": "valid certified targets citing their frozen certificates",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "group": "DM",
+   "id": "DM1",
+   "pass": true,
+   "problems": [],
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "all_twelve_steps_passed": true,
+    "loader_called_exactly_once": true
+   },
+   "stage": "comparator",
+   "steps_failed": [],
+   "steps_not_evaluated": [],
+   "stub_loader_calls": 1,
+   "verdict": "AGREEMENT_INSUFFICIENT"
+  },
+  {
+   "attack": "a genuinely absent certificate: D_lo NOT_CERTIFIED citing nothing",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "group": "DM",
+   "id": "DM2",
+   "pass": true,
+   "problems": [],
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "D_lo_INSUFFICIENT": true,
+    "all_twelve_steps_passed": true,
+    "loader_called_exactly_once": true
+   },
+   "stage": "comparator",
+   "steps_failed": [],
+   "steps_not_evaluated": [],
+   "stub_loader_calls": 1,
+   "verdict": "AGREEMENT_INSUFFICIENT"
+  },
+  {
+   "attack": "NOT_CERTIFIED while citing a certificate that proves it",
+   "expected": "REFUSE",
+   "expected_reason": "reported NOT_CERTIFIED (demoted)",
+   "expected_step": "other execution-integrity predicates",
+   "group": "DM",
+   "id": "DM3",
+   "pass": true,
+   "problems": [
+    "value trace: Abar: [\"its certificate 'F_K' proves Abar, yet it is reported NOT_CERTIFIED (demoted)\", \"Abar is reported NOT_CERTIFIED while certificate(s) ['F_K'] prove it (demoted)\"]",
+    "Abar: the target does not trace to its certificate: [\"its certificate 'F_K' proves Abar, yet it is reported NOT_CERTIFIED (demoted)\", \"Abar is reported NOT_CERTIFIED while certificate(s) ['F_K'] prove it (demoted)\"]"
+   ],
+   "refused": true,
+   "refused_at_step": "other execution-integrity predicates",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "other execution-integrity predicates"
+   ],
+   "steps_not_evaluated": [],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "NOT_CERTIFIED with the certificate id nulled while the proof exists",
+   "expected": "REFUSE",
+   "expected_reason": "Abar must cite its frozen certificate 'F_K', which exists",
+   "expected_step": "other execution-integrity predicates",
+   "group": "DM",
+   "id": "DM4",
+   "pass": true,
+   "problems": [
+    "value trace: Abar: [\"Abar must cite its frozen certificate 'F_K', which exists; it cites None\", \"Abar is reported NOT_CERTIFIED while certificate(s) ['F_K'] prove it (demoted)\"]",
+    "Abar: the target does not trace to its certificate: [\"Abar must cite its frozen certificate 'F_K', which exists; it cites None\", \"Abar is reported NOT_CERTIFIED while certificate(s) ['F_K'] prove it (demoted)\"]"
+   ],
+   "refused": true,
+   "refused_at_step": "other execution-integrity predicates",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "other execution-integrity predicates"
+   ],
+   "steps_not_evaluated": [],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "forged nulling: the proving certificate renamed and the id nulled",
+   "expected": "REFUSE",
+   "expected_reason": "certificate(s) ['F_K2'] prove it (demoted)",
+   "expected_step": "other execution-integrity predicates",
+   "group": "DM",
+   "id": "DM5",
+   "pass": true,
+   "problems": [
+    "value trace: Abar: [\"Abar is reported NOT_CERTIFIED while certificate(s) ['F_K2'] prove it (demoted)\"]",
+    "Abar: the target does not trace to its certificate: [\"Abar is reported NOT_CERTIFIED while certificate(s) ['F_K2'] prove it (demoted)\"]"
+   ],
+   "refused": true,
+   "refused_at_step": "other execution-integrity predicates",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "other execution-integrity predicates"
+   ],
+   "steps_not_evaluated": [],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "the approved commit named by a TAG (movable)",
+   "expected": "REFUSE",
+   "expected_reason": "is not a full 40-hex commit id",
+   "expected_step": "approved commit",
+   "group": "AC",
+   "id": "AC1",
+   "pass": true,
+   "problems": [
+    "approved commit 'approved-A' is not a full 40-hex commit id (a tag, branch, abbreviation or expression can move)",
+    "the authorization names another approved commit than the operator supplied",
+    "qualification: approved_commit belongs to another contract or tree",
+    "qualification: item Q1 is bound to another approved_commit",
+    "qualification: item Q2 is bound to another approved_commit",
+    "qualification: item Q3 is bound to another approved_commit",
+    "qualification: item Q4 is bound to another approved_commit",
+    "qualification: item Q5 is bound to another approved_commit",
+    "qualification: item Q6 is bound to another approved_commit",
+    "qualification: item Q7 is bound to another approved_commit"
+   ],
+   "refused": true,
+   "refused_at_step": "approved commit",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "approved commit",
+    "qualification",
+    "seal"
+   ],
+   "steps_not_evaluated": [
+    "complete frozen history",
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "the approved commit named by an ABBREVIATED id",
+   "expected": "REFUSE",
+   "expected_reason": "is not a full 40-hex commit id",
+   "expected_step": "approved commit",
+   "group": "AC",
+   "id": "AC2",
+   "pass": true,
+   "problems": [
+    "approved commit 'f0bac4c3ef05' is not a full 40-hex commit id (a tag, branch, abbreviation or expression can move)",
+    "the authorization names another approved commit than the operator supplied",
+    "qualification: approved_commit belongs to another contract or tree",
+    "qualification: item Q1 is bound to another approved_commit",
+    "qualification: item Q2 is bound to another approved_commit",
+    "qualification: item Q3 is bound to another approved_commit",
+    "qualification: item Q4 is bound to another approved_commit",
+    "qualification: item Q5 is bound to another approved_commit",
+    "qualification: item Q6 is bound to another approved_commit",
+    "qualification: item Q7 is bound to another approved_commit"
+   ],
+   "refused": true,
+   "refused_at_step": "approved commit",
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "comparator",
+   "steps_failed": [
+    "approved commit",
+    "qualification",
+    "seal"
+   ],
+   "steps_not_evaluated": [
+    "complete frozen history",
+    "G8",
+    "G10",
+    "G19",
+    "other execution-integrity predicates"
+   ],
+   "stub_loader_calls": 0,
+   "verdict": "EXECUTION_INVALID"
+  },
+  {
+   "attack": "the approved commit as its full 40-hex id",
+   "expected": "ACCEPT",
+   "expected_reason": null,
+   "expected_step": null,
+   "group": "AC",
+   "id": "AC3",
+   "pass": true,
+   "problems": [],
+   "refused": false,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {
+    "all_twelve_steps_passed": true,
+    "loader_called_exactly_once": true
+   },
+   "stage": "comparator",
+   "steps_failed": [],
+   "steps_not_evaluated": [],
+   "stub_loader_calls": 1,
+   "verdict": "AGREEMENT_INSUFFICIENT"
+  },
+  {
+   "attack": "an authorization issued against a tag",
+   "expected": "REFUSE",
+   "expected_reason": "is not a full 40-hex commit id",
+   "expected_step": null,
+   "group": "AC",
+   "id": "AC4",
+   "pass": true,
+   "problems": [
+    "approved commit 'approved-A' is not a full 40-hex commit id (a tag, branch, abbreviation or expression can move)",
+    "qualification: approved_commit belongs to another contract or tree",
+    "qualification: item Q1 is bound to another approved_commit",
+    "qualification: item Q2 is bound to another approved_commit",
+    "qualification: item Q3 is bound to another approved_commit",
+    "qualification: item Q4 is bound to another approved_commit",
+    "qualification: item Q5 is bound to another approved_commit",
+    "qualification: item Q6 is bound to another approved_commit",
+    "qualification: item Q7 is bound to another approved_commit",
+    "qualification: item Q8 is bound to another approved_commit"
+   ],
+   "refused": true,
+   "refused_at_step": null,
+   "refused_for_the_expected_reason": true,
+   "required": {},
+   "stage": "authorization",
+   "stub_loader_calls": 0
   }
  ],
  "failed": [],
  "groups": {
+  "AC": {
+   "controls": 4,
+   "passed": 4
+  },
+  "CF": {
+   "controls": 6,
+   "passed": 6
+  },
+  "DM": {
+   "controls": 5,
+   "passed": 5
+  },
+  "GR": {
+   "controls": 8,
+   "passed": 8
+  },
+  "GS": {
+   "controls": 16,
+   "passed": 16
+  },
   "IMP": {
-   "controls": 10,
-   "passed": 10
+   "controls": 11,
+   "passed": 11
   },
   "LS": {
    "controls": 8,
@@ -1941,6 +3523,14 @@
   "ORD": {
    "controls": 3,
    "passed": 3
+  },
+  "PB": {
+   "controls": 3,
+   "passed": 3
+  },
+  "PYC": {
+   "controls": 11,
+   "passed": 11
   },
   "QF": {
    "controls": 8,
@@ -1960,34 +3550,34 @@
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py": "fc88fb0dcc0f757d9ed42b08ecdd9e7ca2c65320181320f009390d67e3155741",
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_common.py": "c55e97b9e2dc626992d3fa25ef23833fcccee88e787a916aa02dc23c2f0ab1b2",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_certificate.py": "f99dcb12159972014d093589498db0b7a338cc130e3b887a347709a455fdd0f6",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_chain.py": "075998bc49d2d6fd3f0da56d316d326bd291a5cb2667eb1958fcf8e7a96cdb48",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "8895e64c21059671373383e3e0e231ab82a3a184318f890f5a8ed6e529d4d93a",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_compare.py": "f484a108d4cbfda647480616d85ffbb1d14850811de8daa4d96f87437bf6027c",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_contract.py": "e5bb1801d4d530a5883d67658b94af639a6eed0e76e515bbe41e85b224461f13",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_certificate.py": "a3e105100ca1a7b6eae2355c764c97d62611cd4ffcfd76a34d8fdcad9b601952",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_chain.py": "5705c8520fc081a2c89b97f719e2ca618c3e987d440f0572ed44b93c96376306",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "bdf7398da6f395c1f0e7b4d7f1bae548e08d9315ebb83d305291b28063d4ff4d",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_compare.py": "ef73558842105a555d7440c54b1af23436621a523e2722aab7593db526dfa1dd",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_contract.py": "ea02362f914161ec9910d6db985338b1ebe75505a88061986d27289c8abe2959",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_cost.py": "6a3ca12192b28f9d3a247dfe411f04c1377bb033410c2cead9c412b6f25d151a",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_equiv.py": "6d2941b8fc0c56be135da1a82ead2109ef808842a5f82c7bde4b6dafd3d6f929",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_gate.py": "59aad80f5e33165087df7f1441e8e01a49d424491636b90639114bf9c6ca1f09",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_gate.py": "2bb7679a8e6a32209c361f129cf5a09bdaecc52ba5a7d497994bd6681372972c",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py": "c484c2ca58a759b3db9cbab8694cae76a5729b213258a4daa6755edf3eb3a045",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "5f67a1360dd78686b2f3a683b21daed15f2a0b22889c5cdfe5075def4d9f1d64",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_qualify.py": "0be06547d2393e9e6ecc52158b33003d3de1926db7ad61e488839c7aa6b4ac7a",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_runs.py": "6b9fcab56cbb563eaa7acf3fa7a843e216ffd183038dbc2af859248a3e3f02ad",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "bc3302632f36fc8afdb18a9154cc0fb65938b17f37db284872c0895115f29114",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py": "b7be67f1374d16f6eec62a8a8a5c37bcc61c3e77f93d256b8a5de34974b9d6ca",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "2232fc458be2ab0be6d21e2d0d2ce9241c6ad21847987f642d074239c85dc5e9",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_qualify.py": "850766c7be1c502c34455be4e67e4b6134838add8d1618ae47d1c7b3cfd9a2e3",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_runs.py": "80f7ede6775e8e49937e9d39578bcdfeaa0443ac1b0674e09f5ac72fab63b811",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "48acc03e9cada71597a079f6cd1974594606705e3d7c1ba9e0a82cc504742c1d",
    "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
   },
   "inputs": {},
   "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_chain.py",
-  "producer_sha256": "075998bc49d2d6fd3f0da56d316d326bd291a5cb2667eb1958fcf8e7a96cdb48"
+  "producer_sha256": "5705c8520fc081a2c89b97f719e2ca618c3e987d440f0572ed44b93c96376306"
  },
  "purpose": "R3-1 and R4-1: the frozen execution identity binds end to end over COMPLETE reachable history; N4-5: the loader is reached only by a valid chain; N4-4: the typed qualification schema; N4-3: loaded-module identity",
  "quarantine_access_ordering": {
-  "comparator_accepts": 6,
-  "comparator_refusals": 25,
+  "comparator_accepts": 12,
+  "comparator_refusals": 44,
   "loader_never_called_on_a_refused_chain": true,
   "rule": "the comparator calls the magnitude loader only after steps 1-12 of c11r_compare.STEPS all pass"
  },
  "schema": "C11R_CHAIN_CONTROLS/2",
- "sha256": "8c8b438f709e0ce077280358b4d8df81ed80bacec15ecdab08e8bb0e8f8ad33b",
+ "sha256": "f702e34f1a3fb981728249484d1e2a75ee41c981887f03efbb388ace99c8a1e0",
  "synthetic": "temporary git repositories; fixture Q1-Q18 qualification and authorization (accepted only with allow_fixture=True); synthetic certificates; a stub magnitude loader; subprocess drivers for the loaded-module controls; the quarantine is never copied or opened"
 }

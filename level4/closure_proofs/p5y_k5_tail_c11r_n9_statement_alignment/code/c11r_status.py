@@ -41,7 +41,8 @@ VERIFY_ONLY = sys.argv[1:] == ["--verify-only"]
 PRESERVED_REVIEWS = {"review/REVIEW_C11R_PREFREEZE.md": "6d7cd546",
                      "review/REVIEW_C11R_PREFREEZE_R2.md": "6ae05833",
                      "review/REVIEW_C11R_PREFREEZE_R3.md": "f6c737c3",
-                     "review/REVIEW_C11R_PREFREEZE_R4.md": "5c5203c1"}
+                     "review/REVIEW_C11R_PREFREEZE_R4.md": "5c5203c1",
+                     "review/REVIEW_C11R_PREFREEZE_R5.md": "ebf08c0f"}
 REVIEWED_MACHINERY = {f"{C.NS_REL}/code/c11r_idrift.py": "49b17ab4",
                       "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/"
                       "c11_certifier.py": C.C11_HEAD,
@@ -269,6 +270,12 @@ def main() -> int:
         "no_runs_artifact_in_any_commit": not anywhere["holders"]["runs"],
         "no_authorization_artifact": not (C.NS / "config" / "C11R_AUTHORIZATION.json").exists(),
         "no_authorization_in_any_commit": not anywhere["holders"]["authorization"],
+        "no_execution_permission_artifact": not (C.NS / "config" /
+                                                 "C11R_EXECUTION_PERMISSION.json").exists(),
+        "no_execution_permission_in_any_commit": not anywhere["holders"]["permission"],
+        "no_protocol_directory_in_any_commit": not any(
+            v for k, v in anywhere["holders"].items() if k.startswith("dir:")),
+        "history_integrity": not anywhere["history_integrity"]["problems"],
         "no_comparison_artifact": not (C.NS / "evidence" / "comparison").exists(),
         "no_comparison_in_any_commit": not anywhere["holders"]["comparison"],
         "no_qualification_artifact": not (C.NS / "evidence" / "qualification").exists(),

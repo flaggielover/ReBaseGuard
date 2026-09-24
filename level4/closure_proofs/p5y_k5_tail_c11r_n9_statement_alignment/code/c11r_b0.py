@@ -12,7 +12,6 @@ own process and returns file names and match counts, never a line of content.
 from __future__ import annotations
 
 import pathlib
-import subprocess
 import sys
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
@@ -38,9 +37,8 @@ def main() -> int:
         {"expected_c11_head": C.C11_HEAD, "head": head})
 
     # 3 -- C11 published: the branch exists on origin at that HEAD
-    ls = subprocess.run(["git", "-C", str(C.REPO), "ls-remote", "origin",
-                         "refs/heads/p5y-k5-tail-c11-n9-independent-certifier"],
-                        capture_output=True, text=True).stdout.split()
+    ls = C.git_run(C.REPO, "ls-remote", "origin",
+                   "refs/heads/p5y-k5-tail-c11-n9-independent-certifier", check=False).stdout.split()
     chk(3, "C11 is published on origin at 440bcd91", bool(ls) and ls[0] == C.C11_HEAD,
         {"remote_c11_ref": ls[0] if ls else None})
 
@@ -91,8 +89,7 @@ def main() -> int:
     # 9 -- main untouched, LOCAL and REMOTE recorded SEPARATELY
     local_main = C.git("rev-parse", "refs/heads/main") if C.git_ok(
         "rev-parse", "--verify", "refs/heads/main") else None
-    rm = subprocess.run(["git", "-C", str(C.REPO), "ls-remote", "origin", "refs/heads/main"],
-                        capture_output=True, text=True).stdout.split()
+    rm = C.git_run(C.REPO, "ls-remote", "origin", "refs/heads/main", check=False).stdout.split()
     remote_main = rm[0] if rm else None
     chk(9, "REMOTE main is untouched at the expected commit",
         remote_main == C.REMOTE_MAIN_EXPECTED,
@@ -129,8 +126,8 @@ def main() -> int:
         (pathlib.Path(td) / "prose.json").write_text(
             '{"note": "the phrase \\"guard\\": \\"ALLOW\\" is quoted prose"}\n')
         (pathlib.Path(td) / "deny.json").write_text('{"guard": "DENY"}\n')
-        ctl = subprocess.run(["git", "-C", td, "grep", "--no-index", "-l", "-E", guard_rx, "--",
-                              "."], capture_output=True, text=True).stdout.split()
+        ctl = C.git_run(td, "grep", "--no-index", "-l", "-E", guard_rx, "--", ".",
+                        check=False).stdout.split()
     guard_ctl = {"matched": sorted(ctl), "expected": ["setting.json"],
                  "pass": sorted(ctl) == ["setting.json"]}
     chk(10, "guard DENY: no ALLOW guard SETTING anywhere at C11R start",

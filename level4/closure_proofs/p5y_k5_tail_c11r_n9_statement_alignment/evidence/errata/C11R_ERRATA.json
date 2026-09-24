@@ -1,6 +1,6 @@
 {
  "CONTAINS_NO_ORIGINAL_MAGNITUDE": true,
- "count": 38,
+ "count": 48,
  "errata": {
   "E10_ELIGIBILITY_WAS_READ_AS_EVIDENCE_OF_CERTIFIABILITY": {
    "found_by": "the independent pre-freeze review (finding 13(a)), reproduced to 5 decimals",
@@ -243,12 +243,118 @@
    "residual": "in-process code that rewrites __main__.__file__ and enters the sanctioned context opens a protected file; this is demonstrated and recorded. The guard is defence in depth; the execution chain, which refuses before the loader, is the load-bearing protection.",
    "what_happened": "the audit-hook guard tested the path as given and the program's NAME: a symlink with an innocent name, chdir + a bare name, sys.argv[0] set to c11r_compare.py, or any file so named, bypassed it (review round 4)."
   },
+  "E39_EXECUTION_PERMISSION_WAS_THE_AUTHORIZATION_ITSELF": {
+   "controls": "GS1-GS12 (with GS9b, GS9c, GS11a-c) in evidence/chain/C11R_CHAIN_CONTROLS.json",
+   "found_by": "review round 5 (R5-1)",
+   "repair": "c11r_contract.LIFECYCLE, bound in the contract: the gate's guard stays DENY for ever; the authorization is immutable evidence (introduced once, never modified or removed, carries no guard); execution permission is a SEPARATE record, config/C11R_EXECUTION_PERMISSION.json, with typed forward-only transitions GRANT (ALLOW, committed with the authorization) -> EXECUTION_STARTED (DENY, written by the runner before any science) -> EXECUTION_COMPLETED (DENY, bound to the runs artifact's digest, committed with it: the seal), or REVOKED_BEFORE_EXECUTION. The state (FROZEN, QUALIFIED, AUTHORIZED, EXECUTING, EXECUTED_UNSEALED, SEALED, COMPARED, ABANDONED, REVOKED_BEFORE_EXECUTION, MALFORMED) is DERIVED by c11r_contract.lifecycle from committed and on-disk facts, never stored; each boundary requires its state (authorize: QUALIFIED; run: AUTHORIZED; compare: SEALED, i.e. permission DENY). The runner prints NEXT_STEPS, which the controls follow literally.",
+   "round_5_state_machine_reconstructed": {
+    "ALLOW_meant": "config/C11R_AUTHORIZATION.json exists and verifies",
+    "DENY_meant": "the authorization does not exist: verify_authorization and execute_comparison reported its absence as 'no authorization; guard is DENY'",
+    "defect": "ONE file was both the PERMISSION to execute and the HISTORICAL EVIDENCE the comparator verifies; following the frozen runner's own instruction made a valid run EXECUTION_INVALID, irrecoverably (review 5, R5-1)",
+    "guard_representation": "the gate's `guard` (config/N9R_GATE_C11R.json), frozen at A and always DENY (verify_gate refuses anything else); the authorization's own `guard: ALLOW` field",
+    "method": "mechanical enumeration at 5d89686e of every reference to the guard, ALLOW, DENY, the authorization path and every stage-dependent verifier (65 references in the campaign code)",
+    "transitions": [
+     {
+      "effect": "ALLOW",
+      "event": "Phase 13 build_authorization",
+      "writes": "the authorization"
+     },
+     {
+      "effect": "DENY could only be carried out by DELETING the authorization",
+      "event": "Phase 14 runner, printed NEXT step (c11r_runs.py:228) and policy stage 5",
+      "writes": "nothing; instructs 'set the guard back to DENY'"
+     },
+     {
+      "effect": "refuses after the prescribed DENY",
+      "event": "Phase 15 comparator",
+      "requires": "the authorization present, committed at HEAD, introduced once, before the seal"
+     }
+    ],
+    "verifiers_depending_on_authorization": [
+     "c11r_contract._authorization_facts (stages authorize/run/compare)",
+     "c11r_contract.protocol_history (the `need` table, introducers, order)",
+     "c11r_contract._issue_order",
+     "c11r_compare.execute_comparison step 1",
+     "c11r_qualify Q17, c11r_regen pre-flight, c11r_status pre-result (absence)"
+    ]
+   }
+  },
   "E3_INSTRUCTION_QUOTED_THE_WRONG_DRIFT_BLOCK": {
    "found_by": "Phase 1 reconstruction",
    "independent_check": "confirmed by the pre-freeze reviewer (item 2), including that cell 307 has 10 sub-blocks to cell 306's 9.",
    "resolution": "cell 306 is named as the target throughout and substituting 307 is forbidden, so cell 306's own registry block governs. Not a hard stop: no constant is ambiguous, only a quoted interval disagrees with the registry the instruction points at.",
    "rule": "the campaign instruction states the drift interval as [1.7885921, 1.882413].",
    "what_happened": "that is CELL 307's block. Cell 306's block, read from REGISTRY_C2, is [680769/400000, 17885921/10000000] = [1.7019225, 1.7885921]. The two are adjacent; cell 307's lower endpoint IS cell 306's upper endpoint."
+  },
+  "E40_LOADED_MODULE_IDENTITY_WAS_KEYED_ON_PY_FILE_NAMES": {
+   "controls": "PYC1-PYC10, PYC_R5_location, IMP9 (and IMP1-IMP8, IMP6b kept)",
+   "found_by": "review round 5 (R5-2, N5-13)",
+   "repair": "the check is keyed on the contract's module NAMES and on every loaded module's ORIGIN (__file__, __spec__.origin, the loader's path): a module can no longer drop out; FROZEN POLICY -- a load-bearing module must be loaded by the standard SourceFileLoader from its contract path; sourceless bytecode, archives, extensions and hook loaders are refused; an ordinary cache is accepted only when it compiles to the same code as the verified source; every module a boundary program imports at module level must be present (runner, comparator, qualifier); code_dir_shadows refuses any file or directory with a contract module's import name anywhere but its contract path, whatever its suffix",
+   "what_happened": "verify_loaded_modules selected the modules to check by the basename of __file__ and code_dir_shadows listed only *.py, so a sourceless c11r_schema.pyc (or c11r_certificate.pyc in C11's code directory) was loaded, executed and silently dropped from the checked set (review 5, R5-2); a .py shadow rewriting its own __file__ passed as well (N5-13)"
+  },
+  "E41_THE_RUNNER_RECORDED_STORED_DIGESTS": {
+   "controls": "PB1-PB3",
+   "found_by": "review round 5 (N5-3)",
+   "repair": "load_verified_inputs reads each document ONCE, recomputes its body digest, requires it to equal the pre-flight's recomputed identity and its stored field to equal the recomputation, re-derives the configuration from those bytes, and the run records the RECOMPUTED digests",
+   "what_happened": "after its pre-flight, c11r_runs.main re-read the policy and the statement table and recorded their STORED sha256 fields (review 5, N5-3)"
+  },
+  "E42_REPLACE_REFS_GRAFTS_AND_SHALLOW_HISTORY": {
+   "controls": "GR1-GR8",
+   "found_by": "review round 5 (N5-4)",
+   "measured": "--no-replace-objects (and GIT_NO_REPLACE_OBJECTS) disables replace refs but NOT a legacy info/grafts file",
+   "repair": "every campaign git call goes through c11r_common.git_run: `git --no-replace-objects`, GIT_NO_REPLACE_OBJECTS=1, every inherited GIT_* variable dropped; history_integrity REFUSES a grafts file and a shallow repository and reports the (ignored) replace refs; content ids are taken with hash-object --no-filters; a static scan requires that no other git subprocess exists",
+   "what_happened": "git calls honoured replace refs and the inherited GIT_* environment: `git replace --graft` hid a merged side-branch edit and the comparator accepted (review 5, N5-4)"
+  },
+  "E43_A_STALE_COMPARISON_FILE_WAS_NOT_REFUSED": {
+   "controls": "CF1-CF5b",
+   "found_by": "review round 5 (N5-2)",
+   "repair": "the lifecycle refuses any comparison file, symlink or unexpected file at the output path or under a protocol directory, on disk or in any reachable commit; the comparator's writer creates the file exclusively",
+   "what_happened": "at stage compare nothing refused an uncommitted comparison file already at the output path (review 5, N5-2)"
+  },
+  "E44_DEMOTION_BYPASS_BY_A_NULL_CERTIFICATE_ID": {
+   "controls": "DM1-DM5, mutant M41",
+   "found_by": "review round 5 (N5-11)",
+   "repair": "c11r_certificate.citation_problems: an implementable target MUST cite its frozen certificate (c11r_schema.TARGET_CERTIFICATE) whenever that certificate exists, may cite nothing only when it does not, and may not be NOT_CERTIFIED while ANY certificate of the run (under any id) proves it",
+   "what_happened": "the demotion check looked only at the certificate a target cites; nulling the id as well escaped it (review 5, N5-11)"
+  },
+  "E45_THE_ROUND_5_COMPARATOR_COULD_NOT_WRITE_ITS_OWN_OUTPUT": {
+   "controls": "CF5a (existing path refused), CF5b (the reader writes once, a second write is refused)",
+   "found_by": "the author, round 6, before commit",
+   "repair": "c11r_compare.write_comparison: refuses an existing path, creates the file exclusively ('x') inside the sanctioned context",
+   "what_happened": "round 5's open-guard revision requires the sanctioned context for ANY open of a protected name, and C11R_COMPARISON.json is one; the round-5 comparator wrote it with write_evidence OUTSIDE that context, so its final write -- after the magnitudes were loaded -- would have raised and recorded nothing. Not found by review 5; found by the author while repairing N5-2."
+  },
+  "E46_DETECTOR_REVISION_4": {
+   "found_by": "review round 5 (N5-9)",
+   "repair": "script_token locates the script a `-m <tool>` form runs (the first .py argument) and its source is read; the live controls run from a neutral directory and assert that argv ALONE does not flag the wrapper; a live `-m cProfile` wrapper is seen and the same form around a neutral script is not",
+   "still_not_checked": [
+    "a -m tool's script that does not end in .py or comes from a file, stdin or the environment",
+    "work between two samples",
+    "the E36 list"
+   ],
+   "what_happened": "revision 3 did not see `python -m cProfile|trace ... wrapper.py`, and its live wrapper control passed through its temporary directory's name, not through the source read (review 5, N5-9)"
+  },
+  "E47_OPEN_GUARD_REVISION_3": {
+   "found_by": "review round 5 (N5-10)",
+   "not_covered": [
+    "hard links or renames of review prose (name and directory only)",
+    "a magnitude-bearing file replaced by a new inode after start",
+    "subprocess reads"
+   ],
+   "repair": "os.fspath on PathLike arguments; the quarantine and the registry are also recognised by INODE",
+   "residual_demonstrated": [
+    "an open relative to a directory descriptor (dir_fd)",
+    "in-process rewriting of __main__.__file__ inside the sanctioned context"
+   ],
+   "status": "DEFENCE IN DEPTH; the execution chain is the load-bearing protection",
+   "what_happened": "the guard skipped PathLike arguments (io.FileIO(Path)) and did not see hard links or renames (review 5, N5-10)"
+  },
+  "E48_ROOT_OF_TRUST_FROZEN_SET_AND_TOPOLOGY": {
+   "N5_12": "evidence/runs, evidence/comparison and evidence/qualification may hold only their canonical file, in every reachable commit and on disk; a run renamed OUTSIDE those directories is not seen (stated limit)",
+   "N5_5": "TOPOLOGY POLICY, stated: any branch that forked before A and is merged after it is refused by the state check; the protocol needs no such merge",
+   "N5_6": "the history checks use the frozen path list BOUND in the contract at A",
+   "N5_7": "the approved commit must be a full 40-hex id that rev-parse maps to itself; a tag, branch, abbreviation or expression is refused at every boundary",
+   "N5_8": "every Python file of the campaign's code directory is a frozen path, c11r_status.py (which Q11 runs) included",
+   "found_by": "review round 5 (N5-5, N5-6, N5-7, N5-8, N5-12)"
   },
   "E4_STALE_MUTATION_EVIDENCE_FROZEN_BESIDE_THE_GATE": {
    "cause": "the mutation suite was run while an earlier c11r_idrift.py produced 9 V6 mismatches. _piece_integral was then repaired and validation and the screen were re-run -- but the mutation suite was not. 38f59993 carried the same stale artifact forward.",
@@ -301,12 +407,12 @@
  "policy": "defects in this campaign's own conduct, recorded where a reader will find them. A deviation that is recorded can be judged; one that is not, cannot.",
  "provenance": {
   "code_closure": {
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "8895e64c21059671373383e3e0e231ab82a3a184318f890f5a8ed6e529d4d93a",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_errata.py": "5551ba59ae8f7ad30bdb986e8db86e874588b7306e08ace625bf9aa74a1f67e9"
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "bdf7398da6f395c1f0e7b4d7f1bae548e08d9315ebb83d305291b28063d4ff4d",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_errata.py": "72058d7f33a80e10e3ebe25a9345dd1118c743528af3a4254a1f26238e107634"
   },
   "inputs": {},
   "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_errata.py",
-  "producer_sha256": "5551ba59ae8f7ad30bdb986e8db86e874588b7306e08ace625bf9aa74a1f67e9"
+  "producer_sha256": "72058d7f33a80e10e3ebe25a9345dd1118c743528af3a4254a1f26238e107634"
  },
  "review_3_findings_disposition": {
   "N-1": {
@@ -412,6 +518,68 @@
    "classification": "FIX_NOW_LOAD_BEARING"
   }
  },
+ "review_5_findings_disposition": {
+  "N5-1": {
+   "action": "the qualification is an ATTESTATION record: its typed schema proves shape, bindings (contract, approved commit, qualifier code, host) and recorded statuses, not that each check ran; Q1, Q2, Q16 and Q17 facts are recomputed at authorization, pre-flight and comparison, the rest rest on the operator running the frozen qualifier (stated in the contract's qualification_proves)",
+   "classification": "DOCUMENT_LIMITATION"
+  },
+  "N5-10": {
+   "action": "open-guard revision 3; residuals demonstrated and listed (E47)",
+   "classification": "FIX_NOW_CHEAP"
+  },
+  "N5-11": {
+   "action": "citation rule (E44)",
+   "classification": "FIX_NOW_CHEAP"
+  },
+  "N5-12": {
+   "action": "protocol directories hold only their canonical file; outside them DOCUMENT_LIMITATION (E48)",
+   "classification": "FIX_NOW_CHEAP"
+  },
+  "N5-13": {
+   "action": "part of the R5-2 repair (E40)",
+   "classification": "FIX_NOW_LOAD_BEARING"
+  },
+  "N5-2": {
+   "action": "comparison output path lifecycle and exclusive write (E43, E45)",
+   "classification": "FIX_NOW_CHEAP"
+  },
+  "N5-3": {
+   "action": "load_verified_inputs (E41)",
+   "classification": "FIX_NOW_CHEAP"
+  },
+  "N5-4": {
+   "action": "one sanitized git entry point; grafts and shallow refused (E42)",
+   "classification": "FIX_NOW_LOAD_BEARING"
+  },
+  "N5-5": {
+   "action": "topology policy stated in frozen_state and E48",
+   "classification": "ACCEPT_BY_DESIGN"
+  },
+  "N5-6": {
+   "action": "the bound frozen path list is used (E48)",
+   "classification": "FIX_NOW_CHEAP"
+  },
+  "N5-7": {
+   "action": "full commit id required (E48)",
+   "classification": "FIX_NOW_CHEAP"
+  },
+  "N5-8": {
+   "action": "all namespace code frozen (E48)",
+   "classification": "FIX_NOW_CHEAP"
+  },
+  "N5-9": {
+   "action": "detector revision 4, remaining limits listed (E46)",
+   "classification": "FIX_NOW_CHEAP"
+  },
+  "R5-1": {
+   "action": "execution permission separated from the authorization: a derived, typed lifecycle (E39); GS1-GS12",
+   "classification": "FIX_NOW_LOAD_BEARING"
+  },
+  "R5-2": {
+   "action": "module identity by name and origin, source-backed only, presence per boundary; static shadow scan by import name (E40); PYC1-PYC10",
+   "classification": "FIX_NOW_LOAD_BEARING"
+  }
+ },
  "reviews_answered": [
   {
    "path": "review/REVIEW_C11R_PREFREEZE.md",
@@ -432,9 +600,14 @@
    "path": "review/REVIEW_C11R_PREFREEZE_R4.md",
    "preserved_at": "5c5203c1",
    "verdict": "NOT_READY"
+  },
+  {
+   "path": "review/REVIEW_C11R_PREFREEZE_R5.md",
+   "preserved_at": "ebf08c0f",
+   "verdict": "NOT_READY"
   }
  ],
- "schema": "C11R_ERRATA/5",
- "sha256": "18348dae1ac28d8bb5748883b025e8ac62f3271b7b9b1507a229fbe846f0522e",
- "supersedes": "C11R_ERRATA/4 at bd00c1f6 (E1-E31, all preserved; E28 gains an addendum), C11R_ERRATA/3 at eaca931e and C11R_ERRATA/2 at 9801276c (which restated original values in E2)"
+ "schema": "C11R_ERRATA/6",
+ "sha256": "ca692571d783f07f5e53e7c9b905f060f128eb57ffe5b240d21220acad3653ba",
+ "supersedes": "C11R_ERRATA/5 at 5d89686e (E1-E38, all preserved), C11R_ERRATA/4 at bd00c1f6, C11R_ERRATA/3 at eaca931e and C11R_ERRATA/2 at 9801276c (which restated original values in E2)"
 }

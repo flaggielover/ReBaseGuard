@@ -158,8 +158,8 @@
   "validation_0_vs_mutation_9": true
  },
  "execution_contract_verification": {
-  "digest": "6056d238301e1fac95e08e22b890ee6fdedaf0757030adb0e3f3b1850004aa09",
-  "gate_digest": "fe70321af68611cf37d64342627bcd26c7225c49b0f64f5c822d5e80d63acc65",
+  "digest": "ccf8b93d64b051a9bfe0fb7828fca0b042f43c9fd109b92062e8c5704bc1b5ae",
+  "gate_digest": "631dcf06d5de1ae0afac8de850378eb8204c11f9c97bb9cb6e46a9ac68266484",
   "problems": []
  },
  "generated_from": "the allowlisted artifacts; no line of this report is typed by hand",
@@ -169,9 +169,29 @@
   "artifacts_checked": 15,
   "b0_checks": 14,
   "chain_control_groups": {
+   "AC": {
+    "controls": 4,
+    "passed": 4
+   },
+   "CF": {
+    "controls": 6,
+    "passed": 6
+   },
+   "DM": {
+    "controls": 5,
+    "passed": 5
+   },
+   "GR": {
+    "controls": 8,
+    "passed": 8
+   },
+   "GS": {
+    "controls": 16,
+    "passed": 16
+   },
    "IMP": {
-    "controls": 10,
-    "passed": 10
+    "controls": 11,
+    "passed": 11
    },
    "LS": {
     "controls": 8,
@@ -185,6 +205,14 @@
     "controls": 3,
     "passed": 3
    },
+   "PB": {
+    "controls": 3,
+    "passed": 3
+   },
+   "PYC": {
+    "controls": 11,
+    "passed": 11
+   },
    "QF": {
     "controls": 8,
     "passed": 8
@@ -194,12 +222,12 @@
     "passed": 25
    }
   },
-  "chain_controls": 69,
-  "chain_controls_passed": 69,
+  "chain_controls": 123,
+  "chain_controls_passed": 123,
   "chain_loader_ordering_holds": true,
   "contract_code_files": 18,
-  "detector_planted_controls": 28,
-  "errata_entries": 38,
+  "detector_planted_controls": 40,
+  "errata_entries": 48,
   "firewall_known_miss_probes": {
    "flagged": 6,
    "missed": 14
@@ -207,14 +235,14 @@
   "firewall_modules_scanned": 26,
   "firewall_negative_controls": 16,
   "firewall_positive_controls": 34,
-  "gate_predicates": 20,
+  "gate_predicates": 21,
   "leak_files_scanned": 41,
-  "mutants": 41,
-  "mutants_detected": 41,
+  "mutants": 42,
+  "mutants_detected": 42,
   "mutation_detector_kinds": {
    "DEFENSE_IN_DEPTH_HEURISTIC": 1,
    "PHASE12_QUALIFICATION_GATE": 2,
-   "PRODUCTION_GUARD": 24,
+   "PRODUCTION_GUARD": 25,
    "PRODUCTION_SCIENCE": 3,
    "SUITE_LOCAL_AUDIT": 4,
    "SUITE_LOCAL_PROPERTY": 7
@@ -230,14 +258,18 @@
  "leak_check_covers_current_bytes": true,
  "not_fresh": {},
  "not_scanned_by_the_leak_check": "this status artifact: it carries classes, booleans, file names, hashes and counts only, and its keys pass the structural scan below",
- "pre_result_history_commits_checked": 720,
+ "pre_result_history_commits_checked": 722,
  "pre_result_state": {
   "evidence_runs_absent": true,
   "gate_guard_DENY": true,
+  "history_integrity": true,
   "no_authorization_artifact": true,
   "no_authorization_in_any_commit": true,
   "no_comparison_artifact": true,
   "no_comparison_in_any_commit": true,
+  "no_execution_permission_artifact": true,
+  "no_execution_permission_in_any_commit": true,
+  "no_protocol_directory_in_any_commit": true,
   "no_qualification_artifact": true,
   "no_qualification_in_any_commit": true,
   "no_runs_artifact_in_any_commit": true
@@ -246,44 +278,45 @@
   "review/REVIEW_C11R_PREFREEZE.md": true,
   "review/REVIEW_C11R_PREFREEZE_R2.md": true,
   "review/REVIEW_C11R_PREFREEZE_R3.md": true,
-  "review/REVIEW_C11R_PREFREEZE_R4.md": true
+  "review/REVIEW_C11R_PREFREEZE_R4.md": true,
+  "review/REVIEW_C11R_PREFREEZE_R5.md": true
  },
  "provenance": {
   "code_closure": {
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py": "fc88fb0dcc0f757d9ed42b08ecdd9e7ca2c65320181320f009390d67e3155741",
    "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_common.py": "c55e97b9e2dc626992d3fa25ef23833fcccee88e787a916aa02dc23c2f0ab1b2",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_certificate.py": "f99dcb12159972014d093589498db0b7a338cc130e3b887a347709a455fdd0f6",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "8895e64c21059671373383e3e0e231ab82a3a184318f890f5a8ed6e529d4d93a",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_contract.py": "e5bb1801d4d530a5883d67658b94af639a6eed0e76e515bbe41e85b224461f13",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_certificate.py": "a3e105100ca1a7b6eae2355c764c97d62611cd4ffcfd76a34d8fdcad9b601952",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "bdf7398da6f395c1f0e7b4d7f1bae548e08d9315ebb83d305291b28063d4ff4d",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_contract.py": "ea02362f914161ec9910d6db985338b1ebe75505a88061986d27289c8abe2959",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_cost.py": "6a3ca12192b28f9d3a247dfe411f04c1377bb033410c2cead9c412b6f25d151a",
    "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py": "c484c2ca58a759b3db9cbab8694cae76a5729b213258a4daa6755edf3eb3a045",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "5f67a1360dd78686b2f3a683b21daed15f2a0b22889c5cdfe5075def4d9f1d64",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_qualify.py": "0be06547d2393e9e6ecc52158b33003d3de1926db7ad61e488839c7aa6b4ac7a",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "bc3302632f36fc8afdb18a9154cc0fb65938b17f37db284872c0895115f29114",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_status.py": "a64c18e45108b16e78e2dfbe7088c4a52af0cc6e148ef3c603153c9d28065ad8",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py": "b7be67f1374d16f6eec62a8a8a5c37bcc61c3e77f93d256b8a5de34974b9d6ca",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "2232fc458be2ab0be6d21e2d0d2ce9241c6ad21847987f642d074239c85dc5e9",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_qualify.py": "850766c7be1c502c34455be4e67e4b6134838add8d1618ae47d1c7b3cfd9a2e3",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "48acc03e9cada71597a079f6cd1974594606705e3d7c1ba9e0a82cc504742c1d",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_status.py": "3891537b02c07b1f00e7e51f9e9c61221a9837a7b32544ea7ebda788823d74e0",
    "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
   },
   "inputs": {
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_CONTRACT.json": "4f37acf902c5fcd9e295f34be4ed988e08767a5fc40d3459fbe7ab182c14fd80",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_POLICY.json": "7abcbbcdfbc56708a2726e12f527f3911be0a43ac803016aa60503cb20a57598",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/N9R_GATE_C11R.json": "0e412d0c90f88d70af79ca45853e4dd29010c1b989fe448b3dad2903eb362a78",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/b0/C11R_B0.json": "2b2dc405850d847d209021625d37addab068569f848e9a3e51cc1255e9ff07ce",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/chain/C11R_CHAIN_CONTROLS.json": "9096a550022b8d91c2bd06306e32b05189fd811dabb096963c80798cbb2d22b1",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/cost/C11R_COST.json": "d0525a7ce64742c0f0507e7cdd7915387e51203cb262c34ba080342960b4b8d3",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/equivalence/C11R_EQUIVALENCE.json": "87a1a951a56f0c4c9c8fe3c24ea7c78edb056bc3eeaf16feb2f8a91359ad61dd",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/errata/C11R_ERRATA.json": "6f9223b004261f71b10ed80d584cbf3c8cd47fab71fe17f665f6d659398dcf9c",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/firewall/C11R_FIREWALL.json": "d3ce9d65ec78b74fbf862c7d4a8418ef969006bdbde54eee9f978297af5b519f",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/leakcheck/C11R_LEAKCHECK.json": "31e137f3019299d20802f46b43ac2b2b32a74e83ca29a8469c9bfec1a5713e5d",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/mutations/C11R_MUTATIONS.json": "9243b0741c45e209d18176fb296b0a4eb2a7ece4d207c77236555ca7895a64ba",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/policy/C11R_POLICY_EVIDENCE.json": "4de0abb52da8a6500fa862768ef321490c3d049a192f04d9c36e8b40b8e67748",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/procs/C11R_PROCESS_DETECTOR.json": "7ce5b825bcf8b3117ef735215a43231e1fc673148369048491f67ddb866e6daf",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "c6226603505eb5ab8e014a915ea75260cd05f1bef8ae87f267eb0437f60c6ba7",
-   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/validation/C11R_VALIDATION.json": "91d259eba458a25b220c5de4f58939336aa5c635d4f62bff7fa056db7360d1ef"
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_CONTRACT.json": "c36f5b09e2feffda9723582985d4a6c37cd33a44fd6c6a56e26e4a23f7e32ed4",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_POLICY.json": "12270a2cd916d27b3c6b25d6d03fe907433a5f17bad1f9434cba7ba612b8fe6b",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/N9R_GATE_C11R.json": "dbea90ede0f9ff60571450a011fe074836791ecec12196bd9711fe9db90e79f3",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/b0/C11R_B0.json": "aa2e139981260eb5085197de15978143302fed77ef398a2de5063d218d83442a",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/chain/C11R_CHAIN_CONTROLS.json": "0e62bf379033947442eca0d3e386db24b7895809631fc463ed209ad4510f3ddb",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/cost/C11R_COST.json": "c3570d53763ab1960da042aa66aca2c1bb3aea4d00081ff60f91b1f7e8d1cc56",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/equivalence/C11R_EQUIVALENCE.json": "291e66515a226c0f8527a0cc4f1844e3b8c5a339f533dd8d30b8d0d6947203a9",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/errata/C11R_ERRATA.json": "81fbcfd4c22673c613832405ceb03cba135dc4936e0ff2b0d1c7c8378f264d54",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/firewall/C11R_FIREWALL.json": "ff3cc1aa2513ab1c5ccb5f842f1cd5aa415d2f41c1b847c8b174420f04359e86",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/leakcheck/C11R_LEAKCHECK.json": "4338c94012bd15ddd7ba1676227b88c4a3b55a62197c50df8c9ba988b251dd37",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/mutations/C11R_MUTATIONS.json": "f1720668b9d004e6799965c5624d72fbcdbfb96034a4f7ecf3a797797f7d1ecf",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/policy/C11R_POLICY_EVIDENCE.json": "c94df6eb343d2f503b12ba8ca466c91bc15c532a0d32f0bb3fde2ae30d763044",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/procs/C11R_PROCESS_DETECTOR.json": "659ad1e40597d2c5e116eb117150a81b8fd0e6e9cf43abecd2c354bfd3c3cdee",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "8c238beb5f4d57c30b439315763ac4ddb095f6efd9a2101f7133625b7aca8115",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/validation/C11R_VALIDATION.json": "85ee51a0fdae45c9bc7ec4efe5ace1a3e74db18a5d76bc9a27c59d404f7ecbd7"
   },
   "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_status.py",
-  "producer_sha256": "a64c18e45108b16e78e2dfbe7088c4a52af0cc6e148ef3c603153c9d28065ad8"
+  "producer_sha256": "3891537b02c07b1f00e7e51f9e9c61221a9837a7b32544ea7ebda788823d74e0"
  },
  "qualifier_self_test": {
   "ALL_PASS": true,
@@ -361,7 +394,7 @@
   "c7_gaussian.py": true
  },
  "schema": "C11R_STATUS/2",
- "sha256": "9b19983dc7471ac32fe024139b1ceae1b16ca870aa413599645032d7a2d8f2f2",
+ "sha256": "e90f2e8d1c31b5b125c907e741aa05c8332a6c964a03be5c026e90470cc3718e",
  "structural_scan_of_every_artifact": {
   "artifacts_scanned": 15,
   "forbidden_payload_keys": {}

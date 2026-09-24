@@ -99,10 +99,18 @@ EXEMPTED_CALLS = {"c11r_chain.py": ("c11r_compare.execute_comparison", "c11r_com
 # driver subprocess then loads -- that is the attack the control demonstrates; stale_pyc does the
 # same with a header the loader must REJECT (the no-false-refusal control IMP6b). The drivers read
 # Python source only; the quarantine is never touched.
+#
+# Round 6 (review round 5, N5-2 and erratum E45): c11r_chain's CF controls (c_CF, _plant_file)
+# write files with the PROTECTED NAME C11R_COMPARISON.json -- by a subprocess, into synthetic
+# repositories and temporary directories only -- to prove that the comparator refuses a stale,
+# modified, symlinked or earlier comparison file and that its writer creates the file exactly
+# once; CF5b passes the comparator's PATH as an argument to a driver that simulates the reader's
+# identity (the recorded residual) and writes into a temporary directory. The real comparison path
+# is never touched and the comparator's main() is never launched.
 EXEMPTED_FUNCTIONS = {"c11r_firewall.py": ("runtime_open_guard_controls",),
                       "c11r_contract.py": ("_pyc_matches_source",),
                       "c11r_chain.py": ("c_IMP", "one", "forged_pyc", "stale_pyc",
-                                        "_driver")}
+                                        "_driver", "c_CF", "_plant_file")}
 FORBIDDEN_LAUNCH = ("c11r_compare.py",)
 # Functions whose CALLS are not reads of campaign data: content_free_id hashes through a git
 # subprocess (an id, never content); _pyc_matches_source reads only the cached BYTECODE of a
@@ -127,6 +135,7 @@ HYPOTHETICAL = (f"{C.NS_REL}/evidence/comparison/C11R_COMPARISON.json",
                 f"{C.NS_REL}/review/REVIEW_C11R_PREFREEZE_R5.md",
                 f"{C.NS_REL}/review/ADJUDICATION_C11R.md",
                 f"{C.NS_REL}/config/C11R_AUTHORIZATION.json",
+                f"{C.NS_REL}/config/C11R_EXECUTION_PERMISSION.json",
                 f"{C.NS_REL}/evidence/qualification/C11R_QUALIFICATION.json")
 
 W = ("W",)                     # a wildcard: any string
@@ -921,8 +930,9 @@ def _classify_argv(argv: list[list[tuple]]) -> dict:
 
 def _classify_git(lits: list, alts: list) -> dict:
     i = 0
-    while i < len(lits) and lits[i] in ("-C", "-c", "--git-dir", "--work-tree"):
-        i += 2
+    while i < len(lits) and lits[i] in ("-C", "-c", "--git-dir", "--work-tree",
+                                        "--no-replace-objects", "--no-pager"):
+        i += 1 if lits[i] in ("--no-replace-objects", "--no-pager") else 2
     if i >= len(lits):
         return {"violation": [], "reads": [], "unresolved_git": True}
     sub = lits[i]
@@ -1533,16 +1543,48 @@ def runtime_open_guard_controls() -> dict:
             main.__file__ = saved_file
         else:
             del main.__file__
+    # revision 3 (review round 5, N5-10): PathLike arguments, hard links and renames. The planted
+    # files' inodes are registered exactly as production registers the quarantine and registry.
+    import io
+    res["io_FileIO_of_a_Path_refused"] = refused(lambda: io.FileIO(planted).read())
+    C.protect_inode(planted)
+    hard = d / "innocent_hardlink.json"
+    os.link(planted, hard)                                # os.link raises no "open" event
+    res["hard_link_with_innocent_name_refused"] = refused(lambda: hard.read_text())
+    moved_src = d / "quarantine" / "C11R_ORIGINAL_MAGNITUDES_2.json"
+    subprocess.run(["/bin/sh", "-c", 'printf "{}" > "$0"', str(moved_src)], check=True)
+    C.protect_inode(moved_src)
+    moved = d / "renamed_innocent.json"
+    os.replace(moved_src, moved)
+    res["rename_then_open_refused"] = refused(lambda: moved.read_text())
+    plain_dir = d / "plain_dir"
+    plain_dir.mkdir()
+    os.link(planted, plain_dir / "innocent.json")
+    dfd = os.open(str(plain_dir), os.O_RDONLY)
+    try:
+        fd = os.open("innocent.json", os.O_RDONLY, dir_fd=dfd)
+        os.close(fd)
+        residual["dir_fd_relative_open_of_a_hard_link_opens"] = True
+    except PermissionError:
+        residual["dir_fd_relative_open_of_a_hard_link_opens"] = False
+    finally:
+        os.close(dfd)
     subprocess.run(["rm", "-rf", str(d)], check=True)
     res["ALL_PASS"] = all(res.values())
     res["residual_bypass_demonstrated"] = residual
     res["scope"] = ("DEFENSE IN DEPTH. Python-level opens in any process importing c11r_common, "
-                    "judged on the path as given, absolute and realpath; a reader is identified by "
-                    "the realpath of __main__.__file__. NOT covered: subprocess reads (git, cat, a "
-                    "python child that does not import it), descriptors opened elsewhere, and "
-                    "in-process code that rewrites __main__.__file__ and enters the sanctioned "
-                    "context (demonstrated above). The load-bearing protection is the execution "
-                    "chain, which refuses before the comparator's loader runs.")
+                    "judged on the path as given (a PathLike through os.fspath), absolute and "
+                    "realpath, and -- for the two magnitude-bearing files, the quarantine and the "
+                    "registry -- by INODE, so a hard link or a rename of either is refused; a "
+                    "reader is identified by the realpath of __main__.__file__. NOT covered: "
+                    "subprocess reads (git, cat, a python child that does not import it), "
+                    "descriptors opened elsewhere, an open relative to a directory descriptor "
+                    "(dir_fd; demonstrated above), hard links or renames of the other protected "
+                    "files (review prose: name and directory only), a magnitude-bearing file "
+                    "replaced by a new inode after the process started, and in-process code that "
+                    "rewrites __main__.__file__ and enters the sanctioned context (demonstrated "
+                    "above). The load-bearing protection is the execution chain, which refuses "
+                    "before the comparator's loader runs.")
     return res
 
 

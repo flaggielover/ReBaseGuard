@@ -85,7 +85,7 @@ ADV: list[dict] = []
 KIND = {
     "PRODUCTION_GUARD": ("M10", "M13", "M14", "M16", "M17", "M18", "M19",
                          "M20", "M21", "M22", "M23", "M25", "M26", "M27", "M28", "M30", "M31",
-                         "M34", "M35", "M36", "M37", "M38", "M39", "M40"),
+                         "M34", "M35", "M36", "M37", "M38", "M39", "M40", "M41"),
     "PHASE12_QUALIFICATION_GATE": ("M01", "M02"),
     "DEFENSE_IN_DEPTH_HEURISTIC": ("M03",),
     "PRODUCTION_SCIENCE": ("M15", "M32", "M33"),
@@ -572,6 +572,19 @@ def main() -> int:
            unrelated_flagged=compare(unrel)["N9_VERDICT"] != base_cmp["N9_VERDICT"],
            detail={"clean_verdict": base_cmp["N9_VERDICT"], "mutant_verdict": dem["N9_VERDICT"],
                    "mutant_class": dem["classes"]["Abar"]})
+    m = copy.deepcopy(base)
+    m["targets"]["Abar"].update(status="NOT_CERTIFIED", value=None, certificate_id=None)
+    nul = compare(m)
+    record("M41", "a target DEMOTED with its certificate id also nulled (review 5, N5-11)",
+           verifier="c11r_certificate.py", producer="c11r_runs.py", input_artifact=RUNS_IN,
+           mutated_path="$.targets.Abar.{status,certificate_id}",
+           mutated_value="NOT_CERTIFIED, null",
+           mutant_flagged=(nul["N9_VERDICT"] == "EXECUTION_INVALID"
+                           and nul["classes"]["Abar"] == "INVALID"
+                           and not nul["guards"]["value_trace"]["PASS"]),
+           clean_flagged=base_cmp["N9_VERDICT"] == "EXECUTION_INVALID",
+           unrelated_flagged=compare(unrel)["N9_VERDICT"] != base_cmp["N9_VERDICT"],
+           detail={"mutant_verdict": nul["N9_VERDICT"], "mutant_class": nul["classes"]["Abar"]})
 
     # ============================ the thirteen adversarial certificate controls ============
     def adv(aid, attack, target, mutate, *, deductions=None, exp=None, note=None):

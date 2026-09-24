@@ -106,8 +106,13 @@ def campaign_role(args: str | None, script_source: str | None = None) -> str | N
                     return "CAMPAIGN_ADHOC" if CAMPAIGN_TOKEN.search(payload) else None
                 if ch == "m":                              # -m, -Bm, -mmodule
                     mod = rest if rest else (toks[i + 1] if i + 1 < len(toks) else "")
+                    # a campaign module; argv naming the campaign; or a tool (cProfile, trace,
+                    # pdb, ...) running a SCRIPT whose source imports campaign code (review 5,
+                    # N5-9: `-m cProfile wrapper.py` never reached the source read)
                     return _module_role(mod) or (
-                        "CAMPAIGN_WRAPPER" if CAMPAIGN_TOKEN.search(" ".join(toks[i:])) else None)
+                        "CAMPAIGN_WRAPPER" if CAMPAIGN_TOKEN.search(" ".join(toks[i:])) else None) \
+                        or ("CAMPAIGN_WRAPPER" if script_source
+                            and CAMPAIGN_IMPORT.search(script_source) else None)
                 if ch in OPTIONS_WITH_ARGUMENT:
                     if not rest:
                         i += 1                             # its argument is the next token
@@ -187,41 +192,68 @@ def _process_cwd(pid: int) -> str | None:
     return None
 
 
+def script_token(args: str) -> str | None:
+    """PURE: the script argument an interpreter's argv runs, or None. Plain form: the first
+    non-option argument. `-m <tool> ...` form (revision 4, review 5 N5-9): the first argument
+    ending in .py after the module name -- the script a profiler, tracer or debugger runs. A -c
+    payload has no script (the argv rule judges the payload itself)."""
+    toks = args.split()
+    i, after_m = 1, False
+    while i < len(toks):
+        t = toks[i]
+        if not after_m and t.startswith("-") and len(t) > 1 and not t.startswith("--"):
+            letters = t[1:]
+            for j, ch in enumerate(letters):
+                rest = letters[j + 1:]
+                if ch == "c":
+                    return None
+                if ch == "m":
+                    after_m = True
+                    if not rest:
+                        i += 1                             # the module name is the next token
+                    break
+                if ch in OPTIONS_WITH_ARGUMENT:
+                    if not rest:
+                        i += 1
+                    break
+            i += 1
+            continue
+        if not after_m and t.startswith("--"):
+            i += 1
+            continue
+        if after_m:
+            if t.endswith(".py"):
+                return t
+            i += 1
+            continue
+        return t if t.endswith(".py") else None
+    return None
+
+
 def script_source_of(pid: int, args: str) -> str | None:
     """The source of the script an interpreter runs (a .py file, <= 1 MB), for wrapper detection.
     Python source only: data files are never read here."""
-    toks = args.split()
-    i = 1
-    while i < len(toks):
-        t = toks[i]
-        if t.startswith("-") and len(t) > 1:
-            if any(ch in "cm" for ch in t[1:]):
-                return None
-            if t[1:] and t[-1] in OPTIONS_WITH_ARGUMENT and len(t) == 2:
-                i += 1
-            i += 1
-            continue
-        if not t.endswith(".py"):
+    t = script_token(args)
+    if t is None:
+        return None
+    path = pathlib.Path(t)
+    if not path.is_absolute():
+        cwd = _process_cwd(pid)
+        if cwd is None:
             return None
-        path = pathlib.Path(t)
-        if not path.is_absolute():
-            cwd = _process_cwd(pid)
-            if cwd is None:
-                return None
-            path = pathlib.Path(cwd) / path
-        try:
-            if path.stat().st_size > 1 << 20:
-                return None
-            return path.with_suffix(".py").read_text(errors="replace")
-        except OSError:
+        path = pathlib.Path(cwd) / path
+    try:
+        if path.stat().st_size > 1 << 20:
             return None
-    return None
+        return path.with_suffix(".py").read_text(errors="replace")
+    except OSError:
+        return None
 
 
 WORKER_CLASSES = ("TARGET", "NON_TARGET_PRODUCER", "CAMPAIGN_ADHOC", "CAMPAIGN_WRAPPER")
 # ONE source for the revision: the cost artifact records DETECTOR_LABEL and the policy refuses a
 # cost artifact certified sequential by any other revision (review 4 found a stale label class)
-DETECTOR_REVISION = 3
+DETECTOR_REVISION = 4
 DETECTOR_LABEL = f"code/c11r_procs.py (revision {DETECTOR_REVISION})"
 
 
@@ -310,6 +342,32 @@ PLANTED = [
         "args": "/bin/zsh -c echo c11r_runs.py finished; tail log"}, "NOT_AN_INTERPRETER"),
     ("stdin_program_undetectable_by_design", {"pid": 313, "ppid": 1, "exe": FW_PY,
                                               "args": f"{FW_PY} -"}, "FOREIGN_PYTHON"),
+    # review round 5, N5-9: a tool module running a wrapper script
+    ("PD11_dash_m_cProfile_wrapper", {
+        "pid": 314, "ppid": 1, "exe": FW_PY,
+        "args": f"{FW_PY} -m cProfile -o /dev/null /tmp/nt_probe.py",
+        "script_source": "import time\nimport c11r_boxdata\n"}, "CAMPAIGN_WRAPPER"),
+    ("PD11b_dash_m_trace_wrapper", {
+        "pid": 315, "ppid": 1, "exe": FW_PY,
+        "args": f"{FW_PY} -m trace --count -C /tmp /tmp/nt_probe.py",
+        "script_source": "from c11r_idrift import X\n"}, "CAMPAIGN_WRAPPER"),
+    ("PD11c_dash_Bm_cProfile_wrapper", {
+        "pid": 316, "ppid": 1, "exe": FW_PY, "args": f"{FW_PY} -Bm cProfile /tmp/nt_probe.py",
+        "script_source": "import c11r_policy\n"}, "CAMPAIGN_WRAPPER"),
+    ("PD11d_dash_m_cProfile_neutral_script", {
+        "pid": 317, "ppid": 1, "exe": FW_PY, "args": f"{FW_PY} -m cProfile /tmp/server.py",
+        "script_source": "import http.server\n"}, "FOREIGN_PYTHON"),
+]
+# the pure script locator, on the forms above (it decides WHICH file's source is read)
+SCRIPT_TOKEN_CASES = [
+    (f"{FW_PY} -B /tmp/nt_probe.py 5 32", "/tmp/nt_probe.py"),
+    (f"{FW_PY} -m cProfile -o /dev/null /tmp/nt_probe.py", "/tmp/nt_probe.py"),
+    (f"{FW_PY} -m trace --count -C /tmp /tmp/nt_probe.py", "/tmp/nt_probe.py"),
+    (f"{FW_PY} -Bm cProfile /tmp/nt_probe.py", "/tmp/nt_probe.py"),
+    (f"{FW_PY} -X importtime /tmp/nt_probe.py", "/tmp/nt_probe.py"),
+    (f"{FW_PY} -Bc import c11r_boxdata", None),
+    (f"{FW_PY} -m pip list", None),
+    (f"{FW_PY} -", None),
 ]
 
 
@@ -318,21 +376,36 @@ def planted_controls() -> dict:
     got = {r["pid"]: r["class"] for r in classify(rows, self_chain={200, 199, 1})}
     res = {name: {"expected": exp, "got": got[r["pid"]], "pass": got[r["pid"]] == exp}
            for name, r, exp in PLANTED}
+    for args, want in SCRIPT_TOKEN_CASES:
+        res[f"script_token: {args.split(' ', 1)[1]}"] = {"expected": want,
+                                                         "got": script_token(args),
+                                                         "pass": script_token(args) == want}
     return {"cases": res, "ALL_PASS": all(v["pass"] for v in res.values())}
 
 
 def live_controls() -> dict:
     """On THIS host: a real framework-build child with campaign argv must be seen; a shell whose
-    command string mentions a campaign script must not; after the child exits it must be gone."""
+    command string mentions a campaign script must not; after the child exits it must be gone.
+    Revision 4 (review round 5, N5-9): the wrapper scripts live in a NEUTRAL directory (no campaign
+    token anywhere in their argv), so a wrapper can be seen ONLY by reading its source -- which
+    the control asserts; `-m cProfile <wrapper>` is exercised live, and the same form around a
+    neutral script must stay FOREIGN_PYTHON."""
     import tempfile
     marker = "c11r_live_detector_probe.py"
-    tmp = pathlib.Path(tempfile.mkdtemp(prefix="c11r_procs_"))
-    wrapper = tmp / "nt_wrapper_probe.py"
+    tmp = pathlib.Path(tempfile.mkdtemp(prefix="detprobe_"))
+    wrapper = tmp / "nt_probe.py"
     wrapper.write_text("import time\nif False:\n    import c11r_boxdata\ntime.sleep(30)\n")
+    neutral = tmp / "neutral_probe.py"
+    neutral.write_text("import time\ntime.sleep(30)\n")
     child = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(30)", marker])
     shell = subprocess.Popen(["/bin/sh", "-c", f"sleep 30; : {marker}"])
     wrap = subprocess.Popen([sys.executable, "-B", str(wrapper)])
+    prof = subprocess.Popen([sys.executable, "-B", "-m", "cProfile", "-o", "/dev/null",
+                             str(wrapper)])
+    prof_neutral = subprocess.Popen([sys.executable, "-B", "-m", "cProfile", "-o", "/dev/null",
+                                     str(neutral)])
     bc = subprocess.Popen([sys.executable, "-Bc", "import time; time.sleep(30); x = 'c11r_live'"])
+    procs = (child, shell, wrap, prof, prof_neutral, bc)
     try:
         seen = None
         for _ in range(20):
@@ -341,13 +414,17 @@ def live_controls() -> dict:
             if seen:
                 break
             time.sleep(0.2)
+        snap_rows, _chain = snapshot()
+        by_pid = {r["pid"]: r for r in snap_rows}
         w2 = campaign_workers()["workers"]
-        shell_seen = [x for x in w2 if x["pid"] == shell.pid]
+        pick = lambda pr: [x for x in w2 if x["pid"] == pr.pid]
+        shell_seen, wrap_seen, prof_seen = pick(shell), pick(wrap), pick(prof)
+        neutral_seen, bc_seen = pick(prof_neutral), pick(bc)
         self_seen = [x for x in w2 if x["pid"] == os.getpid()]
-        wrap_seen = [x for x in w2 if x["pid"] == wrap.pid]
-        bc_seen = [x for x in w2 if x["pid"] == bc.pid]
+        wrap_args = (by_pid.get(wrap.pid) or {}).get("args")
+        prof_args = (by_pid.get(prof.pid) or {}).get("args")
     finally:
-        for proc in (child, shell, wrap, bc):
+        for proc in procs:
             proc.kill()
             proc.wait()
         shutil.rmtree(tmp, ignore_errors=True)
@@ -360,9 +437,17 @@ def live_controls() -> dict:
            "exited_child_not_detected": not gone,
            "wrapper_script_importing_campaign_detected": bool(wrap_seen)
            and wrap_seen[0]["class"] == "CAMPAIGN_WRAPPER",
+           # the attribution the round-5 control lacked: argv ALONE must not flag the wrapper
+           "wrapper_detected_through_its_source_not_its_argv": bool(wrap_args)
+           and campaign_role(wrap_args, None) is None and bool(wrap_seen),
+           "dash_m_cProfile_wrapper_detected": bool(prof_seen)
+           and prof_seen[0]["class"] == "CAMPAIGN_WRAPPER"
+           and bool(prof_args) and campaign_role(prof_args, None) is None,
+           "dash_m_cProfile_neutral_script_not_detected": not neutral_seen,
            "dash_Bc_child_detected": bool(bc_seen) and bc_seen[0]["class"] == "CAMPAIGN_ADHOC",
+           "neutral_temporary_directory": tmp.name,
            "interpreter_under_test": sys.executable}
-    res["ALL_PASS"] = all(v for k, v in res.items() if k.endswith(("detected", "_detected"))
+    res["ALL_PASS"] = all(v for k, v in res.items() if k.endswith(("detected", "_argv"))
                           and isinstance(v, bool))
     return res
 
@@ -373,9 +458,11 @@ def main() -> int:
     now = campaign_workers()
     ok = planted["ALL_PASS"] and live["ALL_PASS"]
     out = {"schema": f"C11R_PROCESS_DETECTOR/{DETECTOR_REVISION}",
-           "supersedes": ("revision 2 (bd00c1f6), blind to wrapper scripts and to -Bc / -cpayload "
-                          "(review round 4, N4-6); revision 1 (common.classified_processes), blind "
-                          "to framework Python"),
+           "supersedes": ("revision 3 (5d89686e), blind to `-m <tool> <wrapper>` and with a live "
+                          "wrapper control satisfied through its temporary directory's name "
+                          "(review round 5, N5-9); revision 2 (bd00c1f6), blind to wrapper scripts "
+                          "and to -Bc / -cpayload (review round 4, N4-6); revision 1 "
+                          "(common.classified_processes), blind to framework Python"),
            "mechanism": now["mechanism"],
            "interpreter_identity": ("executable basename matching ^python(\\d+(\\.\\d+)*)?w?$ "
                                     "case-insensitively, or an executable inside a "
@@ -391,7 +478,10 @@ def main() -> int:
                            "argv tokens containing spaces",
                            "a program read from stdin, or an interactive interpreter",
                            "a wrapper whose campaign import is indirect (through another module, "
-                           "or code built at run time)", "a script this user cannot read"],
+                           "or code built at run time)", "a script this user cannot read",
+                           "under `-m <tool>`, a script argument that does not end in .py, or a "
+                           "tool that takes its script from elsewhere (a file, stdin, the "
+                           "environment)", "work between two samples"],
            "what_it_gates": ("concurrency only (cost measurement, runner pre-flight, B0, "
                              "regeneration); it cannot prove no competing computation ran"),
            "planted_controls": planted,

@@ -357,6 +357,45 @@ def configuration_adherence(runs: dict, policy: dict) -> list[str]:
     return bad
 
 
+def citation_problems(runs: dict, policy: dict, recon: dict) -> dict[str, list[str]]:
+    """THE CITATION RULE (review 5, N5-11): a target's disposition follows from certificate
+    SEMANTICS, not from what the target chooses to cite. Round 5's demotion check looked only at
+    the certificate a target cites, so a NOT_CERTIFIED target whose id was also nulled escaped it.
+    Now, for every implementable constant k:
+      * if the frozen certificate for k (c11r_schema.TARGET_CERTIFICATE) exists in the run, the
+        target MUST cite exactly it -- a null or foreign id is a violation;
+      * if it does not exist, the target may cite nothing;
+      * a target reported NOT_CERTIFIED while ANY certificate of the run cleanly proves k (under
+        any id -- a renamed copy included) is a violation (demoted).
+    A constant the policy does not implement may cite nothing (G8 fixes its status)."""
+    implementable = set(policy["target_scope"]["implementable_under_this_policy"])
+    certs = S.certificates(runs)
+    out: dict[str, list[str]] = {}
+    for k, t in S.targets(runs).items():
+        cited = t.get("certificate_id")
+        p = []
+        if k not in implementable:
+            if cited is not None:
+                p.append(f"{k} is not implemented yet cites certificate {cited!r}")
+        else:
+            want = S.TARGET_CERTIFICATE.get(k)
+            if want in certs and cited != want:
+                p.append(f"{k} must cite its frozen certificate {want!r}, which exists; it cites "
+                         f"{cited!r}")
+            if want not in certs and cited is not None:
+                p.append(f"{k} cites {cited!r} although its frozen certificate {want!r} does not "
+                         f"exist")
+            if t.get("status") == "NOT_CERTIFIED":
+                provers = sorted(cid for cid, r in recon.items()
+                                 if not r["problems"] and k in r["propositions"])
+                if provers:
+                    p.append(f"{k} is reported NOT_CERTIFIED while certificate(s) {provers} prove "
+                             f"it (demoted)")
+        if p:
+            out[k] = p
+    return out
+
+
 def evaluate_run(runs: dict, policy: dict, *, expected_certifier_sha: dict,
                  runs_producer: dict, deductions: dict | None = None) -> dict:
     """Every production guard over one runs artifact."""
@@ -365,6 +404,13 @@ def evaluate_run(runs: dict, policy: dict, *, expected_certifier_sha: dict,
              for cid, c in S.certificates(runs).items()}
     tg = {k: evaluate_target(k, t, recon.get(t.get("certificate_id")))
           for k, t in S.targets(runs).items()}
+    for k, probs in citation_problems(runs, policy, recon).items():
+        old = tg.get(k, {})
+        tg[k] = {**old, "ok": False, "independence": old.get("independence", False),
+                 "certified_claim": old.get("certified_claim", False),
+                 "problems": list(old.get("problems", [])) + [x for x in probs
+                                                              if x not in old.get("problems", [])],
+                 "proposition": None}
     g10, g8 = screen_order(runs), dispositions(runs, policy)
     g19 = configuration_adherence(runs, policy)
     vt = {k: v["problems"] for k, v in tg.items() if v["ok"] is False}

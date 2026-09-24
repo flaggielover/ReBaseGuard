@@ -171,7 +171,9 @@ def build(tbl: dict, policy: dict, contract_digest: str) -> dict:
                 "each other"),
             "G14_sealed_before_comparison": (
                 "the runs artifact is introduced by exactly ONE commit in COMPLETE reachable "
-                "history (no reachable commit holds other runs content), is unmodified since, "
+                "history (replace objects disabled; grafts and shallow history refused), "
+                "together with the DENY/EXECUTION_COMPLETED record bound to it (no reachable "
+                "commit holds other runs content), is unmodified since, "
                 "schema-valid and bound to the committed runs producer -- all before any "
                 "original magnitude is loaded"),
             "G15_comparison_rule_frozen_before_results": (
@@ -180,10 +182,14 @@ def build(tbl: dict, policy: dict, contract_digest: str) -> dict:
             "G16_original_value_firewall": (
                 "the original values are reachable only through the two sanctioned readers: "
                 "production reads go through explicit allowlists; the RUNTIME open-guard "
-                "(defence in depth) refuses any Python-level open of a protected path -- judged "
-                "as given, absolute and realpath -- except inside the sanctioned context of a "
+                "(defence in depth) refuses Python-level opens of a protected path -- judged "
+                "as given (a PathLike through os.fspath), absolute and realpath, and for the "
+                "quarantine and the registry by inode -- except inside the sanctioned context of a "
                 "reader identified by the realpath of its __main__ file (exercised on planted "
-                "files); the comparator opens the quarantine only after its twelve verification "
+                "files; its residual bypasses -- subprocess reads, dir_fd-relative opens, hard "
+                "links of review prose, in-process rewriting of __main__.__file__ -- are recorded "
+                "in the firewall artifact); the comparator opens the quarantine only after its "
+                "twelve verification "
                 "steps pass; the value-based leak check (LEAK_CLASS = PASS) finds "
                 "no original in any pre-result artifact or module. The static load-path analysis "
                 "(FIREWALL_CLASS) is a DEFENSE_IN_DEPTH_HEURISTIC with recorded known misses, not "
@@ -209,13 +215,25 @@ def build(tbl: dict, policy: dict, contract_digest: str) -> dict:
                 "byte-identical to its version at the approved commit (TREE IDENTITY) and held in "
                 "exactly that state by EVERY commit reachable after it, merges and side branches "
                 "included (HISTORY PURITY), the protocol artifacts to appear in history only as "
-                "the protocol allows, the qualification to satisfy the typed Q1-Q18 schema, the "
-                "loaded modules to be the contract's files, and the gate, qualification, "
+                "the protocol allows, the qualification to satisfy the typed Q1-Q18 schema, "
+                "every loaded load-bearing module -- by name and by origin -- to be the "
+                "contract's SOURCE file (sourceless bytecode refused), and the gate, "
+                "qualification, "
                 "authorization, runner, code closure, certifiers and configuration recorded in "
                 "the runs artifact to equal the recomputed ones -- all BEFORE any original "
                 "magnitude is loaded. Evaluated in "
                 "production by c11r_contract.verify_run_identity and the chain checks it depends "
                 "on; a failure is EXECUTION_INVALID and the quarantine is not opened"),
+            "G21_execution_lifecycle": (
+                "execution PERMISSION is separate from the authorization EVIDENCE: the gate's "
+                "guard stays DENY; the authorization is introduced once and never modified or "
+                "removed; the execution-permission record moves only forward through the frozen "
+                "transition table (GRANT committed with the authorization; EXECUTION_STARTED "
+                "before any science; EXECUTION_COMPLETED bound to the run, committed with it as "
+                "the seal); the state is DERIVED from committed and on-disk facts; the runner "
+                "requires AUTHORIZED and the comparator SEALED -- execution permission DENY. "
+                "Evaluated in production by c11r_contract.lifecycle; any other state is "
+                "refused before any science and before any original magnitude is loaded"),
         },
         "predicate_evaluators": dict(EVALUATORS),
 

@@ -419,7 +419,10 @@ def main() -> int:
             "3  exact selection within each family",
             "4  each selected member is first screened pointwise (G10) -- a POINTWISE_INFEASIBLE "
             "member is recorded and NOT sent on -- then certified",
-            "5  every output written and hashed under the frozen run schema; then guard DENY",
+            "5  every output written and hashed under the frozen run schema; the runner then "
+            "writes execution permission DENY/EXECUTION_COMPLETED bound to the run, and the run "
+            "and that record are committed together (the seal); the authorization is never "
+            "modified or removed (c11r_contract.LIFECYCLE)",
         ],
         "stop_conditions": [
             "after ONE execution at the chosen configuration. There is no escalation and no retry. "

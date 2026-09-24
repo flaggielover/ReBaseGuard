@@ -32,42 +32,93 @@ TARGET_CELL = 306
 SIX_CONSTANTS = ("C_T", "tau", "Abar", "D_lo", "D1", "D2")
 
 
+# ---------------------------------------------------------------------------------------------
+# EVERY git call of this campaign goes through git_run (review round 5, N5-4; erratum E42).
+#   * `--no-replace-objects` and GIT_NO_REPLACE_OBJECTS=1: a repository-local replace ref
+#     (`git replace`, `git replace --graft`) cannot substitute the objects or the parentage being
+#     verified -- the REAL graph is read;
+#   * no inherited GIT_* variable (GIT_DIR, GIT_WORK_TREE, GIT_OBJECT_DIRECTORY,
+#     GIT_ALTERNATE_OBJECT_DIRECTORIES, GIT_GRAFT_FILE, GIT_REPLACE_REF_BASE, GIT_INDEX_FILE,
+#     GIT_NAMESPACE, GIT_CONFIG_*, ...) can redirect or rewrite what is read;
+#   * a legacy grafts file is NOT disabled by --no-replace-objects (measured), and a shallow
+#     repository has no history beyond its boundary: history_integrity() REFUSES both, and every
+#     history verifier calls it.
+# Every wrapper below spells the same literal argv prefix (git --no-replace-objects -C <repo>) and
+# the same env=git_env(); the chain controls parse every campaign module and require that each git
+# subprocess call is one of these, with exactly that prefix and environment.
+# ---------------------------------------------------------------------------------------------
+
+
+def git_env() -> dict:
+    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+    env["GIT_NO_REPLACE_OBJECTS"] = "1"
+    return env
+
+
+def git_run(repo, *a: str, input=None, text: bool = True, check: bool = True):
+    """The ONE git entry point: sanitized environment, replace objects disabled."""
+    return subprocess.run(["git", "--no-replace-objects", "-C", str(repo), *a], input=input,
+                          capture_output=True, text=text, check=check, env=git_env())
+
+
 def git(*a: str) -> str:
-    return subprocess.run(["git", "-C", str(REPO), *a], capture_output=True, text=True,
-                          check=True).stdout.strip()
+    return subprocess.run(["git", "--no-replace-objects", "-C", str(REPO), *a],
+                          capture_output=True, text=True, check=True, env=git_env()).stdout.strip()
 
 
 def git_ok(*a: str) -> bool:
-    return subprocess.run(["git", "-C", str(REPO), *a], capture_output=True, text=True).returncode == 0
+    return subprocess.run(["git", "--no-replace-objects", "-C", str(REPO), *a],
+                          capture_output=True, text=True, env=git_env()).returncode == 0
 
 
 def git_in(repo, *a: str) -> str:
     """git in an explicit repository root (the real one, or a synthetic rehearsal repository)."""
-    return subprocess.run(["git", "-C", str(repo), *a], capture_output=True, text=True,
-                          check=True).stdout.strip()
+    return subprocess.run(["git", "--no-replace-objects", "-C", str(repo), *a],
+                          capture_output=True, text=True, check=True, env=git_env()).stdout.strip()
 
 
 def git_ok_in(repo, *a: str) -> bool:
-    return subprocess.run(["git", "-C", str(repo), *a], capture_output=True,
-                          text=True).returncode == 0
+    return subprocess.run(["git", "--no-replace-objects", "-C", str(repo), *a],
+                          capture_output=True, text=True, env=git_env()).returncode == 0
+
+
+def history_integrity(repo) -> dict:
+    """What would make git's view of history differ from the objects: refused (grafts, shallow)
+    or neutralised (replace refs, ignored by every campaign git call and reported here)."""
+    p = []
+    if git_in(repo, "rev-parse", "--is-shallow-repository") == "true":
+        p.append("history integrity: the repository is shallow -- history beyond its boundary "
+                 "is missing")
+    grafts = pathlib.Path(git_in(repo, "rev-parse", "--git-path", "info/grafts"))
+    if not grafts.is_absolute():
+        grafts = pathlib.Path(repo) / grafts
+    if grafts.exists():
+        p.append("history integrity: a grafts file rewrites commit parentage (not disabled by "
+                 "--no-replace-objects)")
+    replace = [x for x in git_in(repo, "for-each-ref", "--format=%(refname)",
+                                 "refs/replace/").splitlines() if x]
+    return {"problems": p, "replace_refs_ignored": len(replace)}
 
 
 def git_grep(pattern: str, *paths: str) -> list[str]:
-    r = subprocess.run(["git", "-C", str(REPO), "grep", "-l", "-E", pattern, "HEAD", "--", *paths],
-                       capture_output=True, text=True)
+    r = subprocess.run(["git", "--no-replace-objects", "-C", str(REPO), "grep", "-l", "-E",
+                        pattern, "HEAD", "--", *paths], capture_output=True, text=True,
+                       env=git_env())
     if r.returncode > 1:
         raise RuntimeError(f"git grep failed: {r.stderr[:200]}")
     return [x for x in r.stdout.strip().splitlines() if x]
 
 
 def blob_at(commit: str, path: str) -> bytes:
-    return subprocess.run(["git", "-C", str(REPO), "show", f"{commit}:{path}"],
-                          capture_output=True, check=True).stdout
+    return subprocess.run(["git", "--no-replace-objects", "-C", str(REPO), "show",
+                           f"{commit}:{path}"], capture_output=True, check=True,
+                          env=git_env()).stdout
 
 
 def blob_at_in(repo, commit: str, path: str) -> bytes:
-    return subprocess.run(["git", "-C", str(repo), "show", f"{commit}:{path}"],
-                          capture_output=True, check=True).stdout
+    return subprocess.run(["git", "--no-replace-objects", "-C", str(repo), "show",
+                           f"{commit}:{path}"], capture_output=True, check=True,
+                          env=git_env()).stdout
 
 
 def sha256_bytes(b: bytes) -> str:
@@ -131,9 +182,11 @@ PRE_RESULT_ARTIFACTS = (
     "evidence/status/C11R_STATUS.json",
 )
 # What a module that runs BEFORE the comparison may content-read inside this namespace: the
-# pre-result artifacts, and the two post-freeze inputs the runner itself needs. The runs artifact
-# is deliberately absent: it carries prospective cell 306 values and only the comparator reads it.
+# pre-result artifacts, and the three post-freeze inputs the chain itself needs (the
+# authorization, the execution-permission record, the qualification). The runs artifact is
+# deliberately absent: it carries prospective cell 306 values and only the comparator reads it.
 ALLOWED_NS_INPUTS = PRE_RESULT_ARTIFACTS + ("config/C11R_AUTHORIZATION.json",
+                                            "config/C11R_EXECUTION_PERMISSION.json",
                                             "evidence/qualification/C11R_QUALIFICATION.json")
 # What such a module may content-read OUTSIDE this namespace, besides Python source. Each entry is
 # value-scanned for every original magnitude by the leak check (c11r_table.py --leak-check).
@@ -160,13 +213,33 @@ def is_protected(rel: str) -> bool:
 # bypasses it; and the program NAME no longer identifies a reader: the running program is a
 # reader only when the __main__ module's file RESOLVES to this directory's c11r_table.py or
 # c11r_compare.py, so neither a faked sys.argv[0] nor another file named c11r_compare.py is one.
+# REVISION 3 (review round 5, N5-10; erratum E47): a PathLike argument (io.FileIO(Path(...)))
+# is judged like a string (os.fspath), and the two MAGNITUDE-BEARING files -- the quarantine and
+# the registry -- are also recognised by INODE, so a hard link or a renamed copy of either under
+# an innocent name is refused too.
 # What it still does not see: content read by a subprocess (git show, cat, a python child that
-# does not import this module), a file descriptor opened elsewhere, and code that deliberately
-# rewrites __main__.__file__ AND enters the sanctioned context -- deliberately malicious code in
-# the process, which no in-process guard can stop.
+# does not import this module), a file descriptor opened elsewhere, an open relative to a
+# directory descriptor (dir_fd), hard links or renames of the OTHER protected files (review
+# prose, recognised by name and directory only), a magnitude-bearing file replaced by a new inode
+# after this process started, and code that deliberately rewrites __main__.__file__ AND enters
+# the sanctioned context -- deliberately malicious code in the process, which no in-process guard
+# can stop. It is DEFENCE IN DEPTH: the load-bearing protection is the execution chain, which
+# refuses before the comparator's loader runs.
 # ---------------------------------------------------------------------------------------------
 READER_PROGRAMS = frozenset({"c11r_table.py", "c11r_compare.py"})
 _SANCTIONED = {"depth": 0}
+_PROTECTED_INODES: set[tuple[int, int]] = set()
+
+
+def protect_inode(path) -> bool:
+    """Register a file's (device, inode): a hard link to it, or the file renamed, is then judged
+    protected like the file itself. Production registers the quarantine and the registry."""
+    try:
+        st = os.stat(path)
+    except OSError:
+        return False
+    _PROTECTED_INODES.add((st.st_dev, st.st_ino))
+    return True
 
 
 def running_program() -> str:
@@ -205,15 +278,26 @@ class sanctioned_protected_access:
 
 
 def guard_judges_protected(path: str) -> bool:
-    """The path as given, as an absolute path, and as its realpath (symlinks resolved)."""
+    """The path as given, as an absolute path, as its realpath (symlinks resolved), and -- for the
+    magnitude-bearing files -- by the inode it names (hard links, renames)."""
     absolute = os.path.abspath(path)
-    return any(is_protected(x) for x in (path, absolute, os.path.realpath(absolute)))
+    if any(is_protected(x) for x in (path, absolute, os.path.realpath(absolute))):
+        return True
+    if _PROTECTED_INODES:
+        try:
+            st = os.stat(path)
+        except OSError:
+            return False
+        return (st.st_dev, st.st_ino) in _PROTECTED_INODES
+    return False
 
 
 def _open_guard(event, args):
     if event != "open" or not args:
         return
     path = args[0]
+    if hasattr(path, "__fspath__"):
+        path = os.fspath(path)                    # io.FileIO(pathlib.Path(...)) (N5-10)
     if isinstance(path, bytes):
         path = os.fsdecode(path)
     if not isinstance(path, str):
@@ -225,6 +309,8 @@ def _open_guard(event, args):
 
 
 if not getattr(sys, "_c11r_open_guard_installed", False):
+    protect_inode(NS / QUARANTINE_REL)                                   # the magnitude-bearing
+    protect_inode(C2 / "evidence" / "registry_c2" / "REGISTRY_C2.json")  # files, by inode
     sys.addaudithook(_open_guard)
     sys._c11r_open_guard_installed = True
 
@@ -239,7 +325,10 @@ def content_free_id(path) -> str | None:
     path = pathlib.Path(path)
     if not path.exists():
         return None
-    r = subprocess.run(["git", "hash-object", "--", str(path)], capture_output=True, text=True)
+    # --no-filters: the id of the RAW bytes (no clean filter or attribute can mask a change)
+    r = subprocess.run(["git", "--no-replace-objects", "-C", str(path.parent), "hash-object",
+                        "--no-filters", "--", str(path.resolve())], capture_output=True, text=True,
+                       env=git_env())
     return "gitobj:" + r.stdout.strip() if r.returncode == 0 else None
 
 
@@ -285,8 +374,9 @@ def sha256_code(rel: str) -> str:
 
 def git_object_at(commit: str, rel: str, repo=None) -> str | None:
     """The git object id of a path at a commit: `rev-parse`, which prints an id, never content."""
-    r = subprocess.run(["git", "-C", str(repo or REPO), "rev-parse", f"{commit}:{rel}"],
-                       capture_output=True, text=True)
+    r = subprocess.run(["git", "--no-replace-objects", "-C", str(repo or REPO), "rev-parse",
+                        "--verify", "--quiet", f"{commit}:{rel}"], capture_output=True, text=True,
+                       env=git_env())
     return "gitobj:" + r.stdout.strip() if r.returncode == 0 else None
 
 
