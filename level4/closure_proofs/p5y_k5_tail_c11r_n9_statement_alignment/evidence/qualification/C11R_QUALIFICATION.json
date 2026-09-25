@@ -1,0 +1,423 @@
+{
+ "QUALIFICATION_CLASS": "PASS",
+ "bound": {
+  "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+  "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+  "gate_sha256": "2d23a8b8005dc48312c9088311bc28dcabfd5a3c128e83e48baca1a557e5e453",
+  "policy_sha256": "a6b33ef384376a485d781aa6f6a4f8cca554909f44bdabc33c39623ab2f85e9f",
+  "qualifier_sha256": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9",
+  "statements_sha256": "b937cace6ae29701b8271a8d659d8817b017cde7094231b1339e4cd3e22a2ca1"
+ },
+ "chain_root_problems": [],
+ "computes_on_open_cells": false,
+ "environment": {
+  "host": {
+   "cpu_brand": "Apple A18 Pro",
+   "implementation": "CPython",
+   "machine": "arm64",
+   "ncpu": "6",
+   "node": "suzhedeMacBook.local",
+   "python": "3.14.5"
+  }
+ },
+ "fixture": false,
+ "items": [
+  {
+   "bound": {
+    "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+    "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+    "qualifier_sha256": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9"
+   },
+   "detail": {
+    "problems": []
+   },
+   "id": "Q1",
+   "name": "the execution contract and the gate verify from bytes",
+   "status": "PASS"
+  },
+  {
+   "bound": {
+    "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+    "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+    "qualifier_sha256": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9"
+   },
+   "detail": {
+    "ancestry": [],
+    "commits_checked": 1,
+    "history_purity": [],
+    "method": "rev-list A..HEAD (no pathspec, replace objects disabled) + cat-file state check",
+    "paths_checked": 44,
+    "replace_refs_ignored": 0,
+    "tree_identity": []
+   },
+   "id": "Q2",
+   "name": "every frozen path equals the approved commit in the tree and in all reachable history",
+   "status": "PASS"
+  },
+  {
+   "bound": {
+    "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+    "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+    "qualifier_sha256": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9"
+   },
+   "detail": {
+    "frozen": {
+     "depth": 5,
+     "panels": 32
+    },
+    "problems": [],
+    "rederived": {
+     "depth": 5,
+     "panels": 32
+    }
+   },
+   "id": "Q3",
+   "name": "the frozen policy re-derives its configuration from the committed evidence",
+   "status": "PASS"
+  },
+  {
+   "bound": {
+    "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+    "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+    "qualifier_sha256": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9"
+   },
+   "detail": {
+    "contract": {
+     "c11r_boxdata.py": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177",
+     "c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b"
+    },
+    "loaded_modules": {
+     "approved_sources": 27,
+     "campaign_origin_modules": [
+      "__main__",
+      "c11_certifier",
+      "c11_common",
+      "c11r_boxdata",
+      "c11r_certificate",
+      "c11r_common",
+      "c11r_contract",
+      "c11r_cost",
+      "c11r_idrift",
+      "c11r_launch",
+      "c11r_policy",
+      "c11r_procs",
+      "c11r_schema",
+      "c7_gaussian"
+     ],
+     "checked": [
+      "c11_certifier.py",
+      "c11_common.py",
+      "c11r_boxdata.py",
+      "c11r_certificate.py",
+      "c11r_common.py",
+      "c11r_contract.py",
+      "c11r_cost.py",
+      "c11r_idrift.py",
+      "c11r_launch.py",
+      "c11r_policy.py",
+      "c11r_procs.py",
+      "c11r_qualify.py",
+      "c11r_schema.py",
+      "c7_gaussian.py"
+     ],
+     "execution_root": "/Users/suzhe/ReBaseGuard-k5c11r",
+     "modules_examined": 119,
+     "problems": [],
+     "required": [
+      "c11_certifier.py",
+      "c11_common.py",
+      "c11r_boxdata.py",
+      "c11r_certificate.py",
+      "c11r_common.py",
+      "c11r_contract.py",
+      "c11r_cost.py",
+      "c11r_idrift.py",
+      "c11r_launch.py",
+      "c11r_policy.py",
+      "c11r_procs.py",
+      "c11r_qualify.py",
+      "c11r_schema.py",
+      "c7_gaussian.py"
+     ]
+    },
+    "reviewed_idrift": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
+    "tree": {
+     "c11r_boxdata.py": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177",
+     "c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b"
+    }
+   },
+   "id": "Q4",
+   "name": "the certifiers and every loaded load-bearing module are the contract's",
+   "status": "PASS"
+  },
+  {
+   "bound": {
+    "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+    "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+    "qualifier_sha256": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9"
+   },
+   "detail": {
+    "forbidden_backend_hits": [],
+    "forbidden_graph_hits": [],
+    "modules": 27,
+    "pass": true
+   },
+   "id": "Q5",
+   "name": "no forbidden import graph and no forbidden backend in the code closure",
+   "status": "PASS"
+  },
+  {
+   "bound": {
+    "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+    "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+    "qualifier_sha256": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9"
+   },
+   "detail": {
+    "importlib_find_spec": {
+     "flint": false,
+     "gmpy2": false,
+     "mpmath": false,
+     "numpy": false,
+     "scipy": false,
+     "sympy": false
+    }
+   },
+   "id": "Q6",
+   "name": "the original certifier's backend is absent from this environment",
+   "status": "PASS"
+  },
+  {
+   "bound": {
+    "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+    "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+    "qualifier_sha256": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9"
+   },
+   "detail": {
+    "failed": []
+   },
+   "id": "Q7",
+   "name": "VALIDATION_CLASS = PASS",
+   "status": "PASS"
+  },
+  {
+   "bound": {
+    "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+    "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+    "qualifier_sha256": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9"
+   },
+   "detail": {
+    "class": "PASS"
+   },
+   "id": "Q8",
+   "name": "MUTATION_CLASS = PASS",
+   "status": "PASS"
+  },
+  {
+   "bound": {
+    "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+    "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+    "qualifier_sha256": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9"
+   },
+   "detail": {},
+   "id": "Q9",
+   "name": "FIREWALL_CLASS = PASS (a defence-in-depth heuristic)",
+   "status": "PASS"
+  },
+  {
+   "bound": {
+    "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+    "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+    "qualifier_sha256": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9"
+   },
+   "detail": {},
+   "id": "Q10",
+   "name": "LEAK_CLASS = PASS",
+   "status": "PASS"
+  },
+  {
+   "bound": {
+    "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+    "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+    "qualifier_sha256": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9"
+   },
+   "detail": {
+    "exit": 0,
+    "last_line": "VERIFY-ONLY STATUS_CLASS = CONSISTENT",
+    "pass": true
+   },
+   "id": "Q11",
+   "name": "the status verifier, RUN now, reports CONSISTENT",
+   "status": "PASS"
+  },
+  {
+   "bound": {
+    "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+    "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+    "qualifier_sha256": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9"
+   },
+   "detail": {},
+   "id": "Q12",
+   "name": "the equivalence comparator's self-test passes",
+   "status": "PASS"
+  },
+  {
+   "bound": {
+    "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+    "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+    "qualifier_sha256": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9"
+   },
+   "detail": {
+    "drift": "5/2 (non-target)",
+    "pass": true,
+    "probes": [
+     {
+      "bit_equal": true,
+      "state": [
+       "0",
+       "0"
+      ]
+     },
+     {
+      "bit_equal": true,
+      "state": [
+       "3",
+       "1"
+      ]
+     },
+     {
+      "bit_equal": true,
+      "state": [
+       "0",
+       "0"
+      ]
+     },
+     {
+      "bit_equal": true,
+      "state": [
+       "3",
+       "1"
+      ]
+     }
+    ]
+   },
+   "id": "Q13",
+   "name": "scalar collapse re-exercised at the NON-TARGET scalar 5/2",
+   "status": "PASS"
+  },
+  {
+   "bound": {
+    "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+    "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+    "qualifier_sha256": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9"
+   },
+   "detail": {
+    "block": "NON-TARGET",
+    "pass": true,
+    "separation": -0.009696006574792597
+   },
+   "id": "Q14",
+   "name": "K_e = Khat_e + atom re-exercised on NT",
+   "status": "PASS"
+  },
+  {
+   "bound": {
+    "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+    "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+    "qualifier_sha256": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9"
+   },
+   "detail": {
+    "failed": []
+   },
+   "id": "Q15",
+   "name": "the chain controls pass",
+   "status": "PASS"
+  },
+  {
+   "bound": {
+    "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+    "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+    "qualifier_sha256": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9"
+   },
+   "detail": {
+    "differences": {},
+    "match": true
+   },
+   "id": "Q16",
+   "name": "this host is the host the cost model was measured on",
+   "status": "PASS"
+  },
+  {
+   "bound": {
+    "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+    "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+    "qualifier_sha256": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9"
+   },
+   "detail": {
+    "authorization_exists": false,
+    "execution_permission_exists": false,
+    "gate_guard": "DENY",
+    "lifecycle_state": "FROZEN",
+    "note": "evaluated before THIS qualification is written: the lifecycle must be FROZEN; it is re-derived (QUALIFIED) at authorization",
+    "runs_exists": false,
+    "workers": []
+   },
+   "id": "Q17",
+   "name": "guard prerequisites: gate DENY, lifecycle FROZEN (no authorization, no execution permission, no runs), no campaign worker",
+   "status": "PASS"
+  },
+  {
+   "bound": {
+    "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+    "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+    "qualifier_sha256": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9"
+   },
+   "detail": {
+    "disk_free_gb": 215.5
+   },
+   "id": "Q18",
+   "name": "disk space for the run",
+   "status": "PASS"
+  }
+ ],
+ "nt_configuration": {
+  "block": "NON-TARGET [5/2, 5/2 + 108337/1250000]",
+  "import_scan": "full code closure",
+  "scalar_drift": "5/2"
+ },
+ "produces_target_constants": false,
+ "provenance": {
+  "code_closure": {
+   "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py": "fc88fb0dcc0f757d9ed42b08ecdd9e7ca2c65320181320f009390d67e3155741",
+   "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_common.py": "c55e97b9e2dc626992d3fa25ef23833fcccee88e787a916aa02dc23c2f0ab1b2",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_certificate.py": "af108978de7c25ecb4d9ee235789b064b7445447d59223532355e1663fb930d1",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "df853733230543539721e40e720c50355bd905dc9e571d9ccb93c1eec0d42f90",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_contract.py": "72181ca7faa364139861c41eab4b7550de5ea2166a0cb5e8c2ba56c810e6cb47",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_cost.py": "6a3ca12192b28f9d3a247dfe411f04c1377bb033410c2cead9c412b6f25d151a",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_launch.py": "839faeae408d60f2acc95364988974d9a05eb25254284c32f56642924ff09806",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py": "61eef77bc7d99ce0cdf59bfc31a18a874355c33698f818166d04ff5f4f6b9c77",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "1aa2d89a790ddfa4db0c3e7d2b8061093633809085cfa833774cd5641fa6c1c6",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_qualify.py": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "2f2fcfe718d86ba74fb8a8a03c5d0628456959d201d374739759e73f070239a0",
+   "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
+  },
+  "inputs": {
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_POLICY.json": "b8ed06a05cf7bb3ffe8fff2488f58935381eff187610275dff3d7ad30565482c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/N9R_GATE_C11R.json": "a65b13157f34311fefa92b9ebce005772ac6220ed22106848550b299269727bd",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/chain/C11R_CHAIN_CONTROLS.json": "cf955451b96e1f8c40b9f3eb4901455b7fad3a69ef54dca0e2825d9b6704f0dd",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/cost/C11R_COST.json": "b275b96fad948a96620ad5be352dd7335754372f9a62c4ee762deea3e4d1c3e8",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/equivalence/C11R_EQUIVALENCE.json": "3a8d2cf3d1335365910e1d2caef6f387301e79c120b524df4c768fbfed685cb8",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/firewall/C11R_FIREWALL.json": "77f096c5dbb0252ede13d93828b3c5c312d18ec914c807bc47e9d51a5e8de49a",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/leakcheck/C11R_LEAKCHECK.json": "7152d23a57f940b0dbfb82b4aeb387024a42bcd466c3bcd100e0ef5f740c5dc3",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/mutations/C11R_MUTATIONS.json": "4f373216680330d32740e55484e2a42ff3b433934e7844cf0697f203a472121c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/validation/C11R_VALIDATION.json": "adbdd477447965fb09f64bf3fce0fda71370e88aa004488b994649904aa0defc"
+  },
+  "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_qualify.py",
+  "producer_sha256": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9"
+ },
+ "runs_before": "any target execution",
+ "schema": "C11R_QUALIFICATION/5",
+ "seconds": 15.0,
+ "sha256": "114713efdc00900c4d2f352bccf512e412b8362096fa8c655649de12f83de0e5"
+}
