@@ -1,0 +1,73 @@
+{
+ "accounting_input_identities": {
+  "cap": {
+   "cap_cpu_h": 6600.0,
+   "cap_refusal": null,
+   "charged_cpu_h": 5620.616607432249,
+   "governed_overhead_cpu_h": 102.123,
+   "headroom_cpu_h": 979.3833925677509,
+   "overhead_factor": 1.15
+  },
+  "committed_cpu_h": 4785.369702115,
+  "identity": "committed_cpu_h == scientific_record_cpu_h + settlement_or_operational_cpu_h + imported_predecessor_cpu_h",
+  "identity_residual_cpu_h": -9.094947017729282e-13,
+  "import_counted_once": true,
+  "imported_predecessor_cpu_h": 92.32,
+  "predecessor_measured_cpu_h": 92.31983374805556,
+  "scientific_record_cpu_h": 4688.0961789944695,
+  "settlement_or_operational_cpu_h": 4.953523120531673,
+  "tolerance": 1e-06
+ },
+ "evidence_roots": {
+  "/home/ubuntu/rbg-runtime/p5y_k1_ps1_generation2/evidence": 353,
+  "/home/ubuntu/rbg-runtime/p5y_k1_ps1_production/evidence": 16,
+  "relocation": "PROHIBITED: consumed at their bound paths"
+ },
+ "frozen_utc": "2026-09-25T16:51:44Z",
+ "k1_closure": "NOT DECIDED BY ASSEMBLY",
+ "production_inputs": {
+  "generation_transition_sha256": "039aecfe2e25284f492704cc363b70a7cf6dc89c629c868973038b8af20178d9",
+  "operational_contract_sha256": "49d2144ace5bdc1dd4fc0f9c486c218337a1ec99b5c9738e795b823164159591",
+  "predecessor_ledger_sha256": "0557bc229c3fcdb10cb0dd0b5836fa62a6b0e6c2512656e6ec7e49294b4d6cab",
+  "production_authorization_sha256": "fc7cb93465916c3a7842066701b0e11fb6799bfdfc7fff55073a3f6e4cfc03ef",
+  "production_ledger_sha256": "988725cd8dd02d28f52ef18e3b1add8063825cc42ee828c99d556a12b06d0dd8",
+  "shard_manifest_sha256": "6450aff37d975a308f5fba5c799ab1163f6f2ab9e678312b53f0ec686b1c9e9c",
+  "successor_cells_sha256": "dfaced89653bd71a0bab4a61729407694768456b1e841f042df84c4544bfe349"
+ },
+ "result_bearing": false,
+ "route": "AWS_ONLY",
+ "schema": "rebaseguard.p5y.k1.ps1.aws-only-assembly.freeze.v1",
+ "scientific_executor": {
+  "checkpoint_sha256": "1c2a6825f19e19de6fb588647ca3fc4618068087ef0976292ca7bbeca701f13f",
+  "drift": [],
+  "files": 39,
+  "integrated_source_manifest_sha256": "13ba2ecd1c8afdaafb3463233f246716f599dd935c5b3722f4074327d8eec5fd",
+  "live_patches_sha256": "fccd4db30b52c641d3cd83012659fa7ed6d7cd20374f7c4f60e2b6f6004c8291",
+  "producer_commit": "c9b12670d4da677d384747aa703c725c58bac65a",
+  "protocol_sha256": "890cf5365fbec0dd9649c4b91d24ff5c30853d48e5b11fc8a01cde82cc4f1162"
+ },
+ "shard": {
+  "cells_completed": 369,
+  "far_field": {
+   "campaign_obligations": 10332,
+   "global_obligations": 10333,
+   "status": "INHERITED (P5X-T3 far field and splice obligations, unchanged)",
+   "units": 1,
+   "work_id": "SR:-1:far_field:all_m"
+  },
+  "ledger_state": {
+   "completed": 369,
+   "runs": 3,
+   "settlements": 3,
+   "torn_attempts": {}
+  },
+  "obligations": 10332,
+  "pending": 0
+ },
+ "successor": {
+  "assembly_contract_sha256": "f4b047c046f73d24ce80987ac797582740d67c9a1a932f4e2c28dfa64663f6f6",
+  "namespace": "p5y_k1_ps1_aws_only_assembly",
+  "source_manifest_sha256": "c269754bf620eb869e4d85502cc35e34c74c311241d48fef541410e295a9b646",
+  "worktree_commit_at_freeze": "6f99f7cc68888bbfbf1d0144e0e1774142985905"
+ }
+}
