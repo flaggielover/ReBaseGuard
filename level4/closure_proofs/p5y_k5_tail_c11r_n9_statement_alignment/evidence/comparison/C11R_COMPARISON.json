@@ -1,0 +1,295 @@
+{
+ "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+ "provenance": {
+  "code_closure": {
+   "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py": "fc88fb0dcc0f757d9ed42b08ecdd9e7ca2c65320181320f009390d67e3155741",
+   "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_common.py": "c55e97b9e2dc626992d3fa25ef23833fcccee88e787a916aa02dc23c2f0ab1b2",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_certificate.py": "af108978de7c25ecb4d9ee235789b064b7445447d59223532355e1663fb930d1",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "df853733230543539721e40e720c50355bd905dc9e571d9ccb93c1eec0d42f90",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_compare.py": "7065cc6af21e2a51f32e82199ff3886af78b2dc35ee9a39e4ba757e8222a9150",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_contract.py": "72181ca7faa364139861c41eab4b7550de5ea2166a0cb5e8c2ba56c810e6cb47",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_cost.py": "6a3ca12192b28f9d3a247dfe411f04c1377bb033410c2cead9c412b6f25d151a",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_equiv.py": "6d2941b8fc0c56be135da1a82ead2109ef808842a5f82c7bde4b6dafd3d6f929",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_launch.py": "839faeae408d60f2acc95364988974d9a05eb25254284c32f56642924ff09806",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "1aa2d89a790ddfa4db0c3e7d2b8061093633809085cfa833774cd5641fa6c1c6",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_runs.py": "d958a45793506613e7749953530eafb1f728a61e828b741f262f90ee41041f7c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "2f2fcfe718d86ba74fb8a8a03c5d0628456959d201d374739759e73f070239a0",
+   "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
+  },
+  "inputs": {
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/quarantine/C11R_ORIGINAL_MAGNITUDES.json": "gitobj:219e0122a7febf4347ce9205e5e5ed9f18b20ffb"
+  },
+  "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_compare.py",
+  "producer_sha256": "7065cc6af21e2a51f32e82199ff3886af78b2dc35ee9a39e4ba757e8222a9150"
+ },
+ "rendered": [
+  "C_T: AGREES -- statement EQUIVALENT; AGREES at ratio 1.176352",
+  "tau: AGREES -- statement EQUIVALENT; AGREES at ratio 1.326545",
+  "Abar: STRONGER -- statement EQUIVALENT; STRONGER at ratio 0.866739",
+  "D_lo: AGREES -- statement STRONGER; AGREES at ratio 0.597992",
+  "D1: INSUFFICIENT -- no certified value (status NOT_IMPLEMENTED)",
+  "D2: INSUFFICIENT -- no certified value (status NOT_IMPLEMENTED)",
+  "class counts: {'AGREES': 3, 'INSUFFICIENT': 2, 'STRONGER': 1}",
+  "G8 True; G10 True; G19 True; value trace True",
+  "opposite-direction pairs found: 0",
+  "N9 classification by frozen precedence ['INDEPENDENCE_VIOLATION', 'SCIENTIFIC_DISAGREEMENT', 'EXECUTION_INVALID', 'N9_CLOSED', 'AGREEMENT_INSUFFICIENT']: AGREEMENT_INSUFFICIENT"
+ ],
+ "result": {
+  "N9_VERDICT": "AGREEMENT_INSUFFICIENT",
+  "classes": {
+   "Abar": "STRONGER",
+   "C_T": "AGREES",
+   "D1": "INSUFFICIENT",
+   "D2": "INSUFFICIENT",
+   "D_lo": "AGREES",
+   "tau": "AGREES"
+  },
+  "guards": {
+   "G10": {
+    "PASS": true,
+    "violations": []
+   },
+   "G19": {
+    "PASS": true,
+    "violations": []
+   },
+   "G8": {
+    "PASS": true,
+    "violations": []
+   },
+   "value_trace": {
+    "PASS": true,
+    "violations": {}
+   }
+  },
+  "identity_problems": [],
+  "independence_violations": [],
+  "loader_called": true,
+  "opposite_direction_pairs": [],
+  "per_target": {
+   "Abar": {
+    "CLASS": "STRONGER",
+    "direction": "UPPER_BOUND",
+    "independent_value": "3429/500",
+    "numeric": {
+     "class": "STRONGER",
+     "direction": "UPPER_BOUND",
+     "factor": 2,
+     "ratio": "965177695140839424/1113573654816256625"
+    },
+    "original_value": "8908589238530053/1125899906842624",
+    "statement": {
+     "STATUS": "EQUIVALENT",
+     "aggregation": {
+      "independent": "single_certificate_whole_block",
+      "original": "single_certificate_whole_block"
+     },
+     "domain": "EQUAL",
+     "premises": "SAME",
+     "reasons": []
+    },
+    "target_status": "CERTIFIED",
+    "why": "statement EQUIVALENT; STRONGER at ratio 0.866739"
+   },
+   "C_T": {
+    "CLASS": "AGREES",
+    "direction": "UPPER_BOUND",
+    "independent_value": "14648599092345601345065058860910788401945347614321924696296811346444782879403632892057473992211039/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576",
+    "numeric": {
+     "class": "AGREES",
+     "direction": "UPPER_BOUND",
+     "factor": 2,
+     "ratio": "4882866364115200448355019620303596133981782538107308232098937115481594293134544297352491330737013/4150855030293607615111147843005468859441764936458580767157911364737883727377737360498473255829504"
+    },
+    "original_value": "21095465819609595450698122630186153845288983044658004293586238845106329308901/3618502788666131106986593281521497120414687020801267626233049500247285301248",
+    "statement": {
+     "STATUS": "EQUIVALENT",
+     "aggregation": {
+      "independent": "single_certificate_whole_block",
+      "original": "max_over_sub_blocks"
+     },
+     "domain": "EQUAL",
+     "premises": "SAME",
+     "reasons": []
+    },
+    "target_status": "CERTIFIED",
+    "why": "statement EQUIVALENT; AGREES at ratio 1.176352"
+   },
+   "D1": {
+    "CLASS": "INSUFFICIENT",
+    "direction": "UPPER_BOUND",
+    "independent_value": null,
+    "numeric": null,
+    "original_value": "52719672969043720654858680174619515077065995833190128413083040719278027613915/115792089237316195423570985008687907853269984665640564039457584007913129639936",
+    "statement": {
+     "STATUS": "NO_INDEPENDENT_STATEMENT"
+    },
+    "target_status": "NOT_IMPLEMENTED",
+    "why": "no certified value (status NOT_IMPLEMENTED)"
+   },
+   "D2": {
+    "CLASS": "INSUFFICIENT",
+    "direction": "UPPER_BOUND",
+    "independent_value": null,
+    "numeric": null,
+    "original_value": "4899774310917772398354664907631803292270499402460593710700653382425705563791/904625697166532776746648320380374280103671755200316906558262375061821325312",
+    "statement": {
+     "STATUS": "NO_INDEPENDENT_STATEMENT"
+    },
+    "target_status": "NOT_IMPLEMENTED",
+    "why": "no certified value (status NOT_IMPLEMENTED)"
+   },
+   "D_lo": {
+    "CLASS": "AGREES",
+    "direction": "LOWER_BOUND",
+    "independent_value": "101/200",
+    "numeric": {
+     "class": "AGREES",
+     "direction": "LOWER_BOUND",
+     "factor": 2,
+     "ratio": "1461875126621116967222583685734684836647533556403712120998151998099903261704192/2444638154457243464859468673628081150326138502939171416797661735630814975455625"
+    },
+    "original_value": "97785526178289738594378746945123246013045540117566856671906469425232599018225/115792089237316195423570985008687907853269984665640564039457584007913129639936",
+    "statement": {
+     "STATUS": "STRONGER",
+     "aggregation": {
+      "independent": "single_certificate_whole_block",
+      "original": "min_over_sub_blocks"
+     },
+     "domain": "EQUAL",
+     "premises": "FEWER",
+     "reasons": []
+    },
+    "target_status": "CERTIFIED",
+    "why": "statement STRONGER; AGREES at ratio 0.597992"
+   },
+   "tau": {
+    "CLASS": "AGREES",
+    "direction": "UPPER_BOUND",
+    "independent_value": "3429/500",
+    "numeric": {
+     "class": "AGREES",
+     "direction": "UPPER_BOUND",
+     "factor": 2,
+     "ratio": "965177695140839424/727587454752165625"
+    },
+    "original_value": "5820699638017325/1125899906842624",
+    "statement": {
+     "STATUS": "EQUIVALENT",
+     "aggregation": {
+      "independent": "single_certificate_whole_block",
+      "original": "max_over_sub_blocks"
+     },
+     "domain": "EQUAL",
+     "premises": "SAME",
+     "reasons": []
+    },
+    "target_status": "CERTIFIED",
+    "why": "statement EQUIVALENT; AGREES at ratio 1.326545"
+   }
+  },
+  "precedence": [
+   "INDEPENDENCE_VIOLATION",
+   "SCIENTIFIC_DISAGREEMENT",
+   "EXECUTION_INVALID",
+   "N9_CLOSED",
+   "AGREEMENT_INSUFFICIENT"
+  ],
+  "refused_at": null,
+  "refused_at_step": null,
+  "seal": {
+   "runs_file_sha256": "1552dfa99d2250da2bc7e6269957168f89f08e4d60e32eaca2387c6800438f59",
+   "seal_commit": "5ff4cc5b310b31bc7b61213598aade9a5188964e"
+  },
+  "steps": [
+   {
+    "evaluated": true,
+    "name": "approved commit",
+    "pass": true,
+    "problems": [],
+    "step": 1
+   },
+   {
+    "evaluated": true,
+    "name": "complete frozen history",
+    "pass": true,
+    "problems": [],
+    "step": 2
+   },
+   {
+    "evaluated": true,
+    "name": "contract",
+    "pass": true,
+    "problems": [],
+    "step": 3
+   },
+   {
+    "evaluated": true,
+    "name": "gate",
+    "pass": true,
+    "problems": [],
+    "step": 4
+   },
+   {
+    "evaluated": true,
+    "name": "qualification",
+    "pass": true,
+    "problems": [],
+    "step": 5
+   },
+   {
+    "evaluated": true,
+    "name": "authorization",
+    "pass": true,
+    "problems": [],
+    "step": 6
+   },
+   {
+    "evaluated": true,
+    "name": "run",
+    "pass": true,
+    "problems": [],
+    "step": 7
+   },
+   {
+    "evaluated": true,
+    "name": "seal",
+    "pass": true,
+    "problems": [],
+    "step": 8
+   },
+   {
+    "evaluated": true,
+    "name": "G8",
+    "pass": true,
+    "problems": [],
+    "step": 9
+   },
+   {
+    "evaluated": true,
+    "name": "G10",
+    "pass": true,
+    "problems": [],
+    "step": 10
+   },
+   {
+    "evaluated": true,
+    "name": "G19",
+    "pass": true,
+    "problems": [],
+    "step": 11
+   },
+   {
+    "evaluated": true,
+    "name": "other execution-integrity predicates",
+    "pass": true,
+    "problems": [],
+    "step": 12
+   }
+  ]
+ },
+ "schema": "C11R_COMPARISON/6",
+ "sha256": "142259bf814641eb38a607beb28c5d69c68935b9708adc753a021bca085bf952"
+}
