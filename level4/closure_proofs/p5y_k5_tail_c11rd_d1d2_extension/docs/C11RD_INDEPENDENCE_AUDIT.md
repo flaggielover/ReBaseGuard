@@ -45,12 +45,16 @@ frozen before any C11R result.
   resolvent_certificate, opnorms, ra_certifier, fast_range, intervals, rebaseguard_certify,
   rung3_engine, spec, cusum_layer1, cusum_layer2, ancestry5, numpy, flint, mpmath, scipy, sympy,
   gmpy2`; a fresh isolated interpreter that imports every certifier module has none of them in
-  `sys.modules`; no certifier module names `REGISTRY_C2`, a quarantine, a C11R comparison, an
-  adjudication or a review. A planted forbidden import is caught.
+  `sys.modules`; no science module (`tm`, `model`, `float`, `kernel`, `certify`) names `REGISTRY_C2`,
+  a quarantine, a C11R comparison, an adjudication or any review; the runner names only the PRE-RESULT
+  governance verdicts it must read (qualification and authorization reviews) and none of the
+  execution, comparison or C11R reviews (C11RD-R1). Planted forbidden imports and data references
+  are caught.
 * V17: every numeric literal in the certifier modules is in a structural allowlist; no string
   literal carries a >= 3-decimal number or a >= 4-digit rational other than cell 306's block. A
   planted magnitude is caught.
-* V18: no original value in any file (above).
+* V18: no original value in any file (above); decimal, bare-point and scientific-notation renderings
+  are normalised before matching (C11RD-R1), with planted controls.
 * V19/V20: the statements and the comparison rule are C11R's frozen ones (equality and a 32-case
   battery run through C11R's own `c11r_equiv.compare`).
 

@@ -517,24 +517,46 @@ def _one_box_bound(bx, cands, kappa, which: int):
     return (av[1] + pr["err_D1"]) if which == 1 else (av[2] + pr["err_D2"]), lam, av
 
 
+def _runs_record_one_sub(block, cands, lam, kappa, *, claim_D1=None, claim_D2=None) -> dict:
+    """A synthetic runs record (the shape c11rd_runs writes) for ONE sub-block equal to `block`,
+    with the honest bounds recomputed from its ingredients unless a claim overrides them."""
+    de = (block[1] - block[0]) / 2
+    av = CE.atom_values(cands, de)
+    pr = CE.propagate(lam, F(3429, 500), F(3429, 500), kappa)
+    d1 = av[1] + pr["err_D1"] if claim_D1 is None else claim_D1
+    d2 = av[2] + pr["err_D2"] if claim_D2 is None else claim_D2
+    sub = {"e_lo": str(block[0]), "e_hi": str(block[1]), "atom_candidate_values": [str(x) for x in av[0]],
+           "lam": [str(x) for x in lam], "D1": str(d1), "D2": str(d2),
+           "candidates": {f"D{j}": {"0": {"0,0": str(av[0][j])}} for j in range(4)}}
+    return {"execution": {"sub_blocks": [sub]}, "targets": {"D1": {"value": str(d1)}, "D2": {"value": str(d2)}}}
+
+
 def v15_invalid_bounds():
-    """Deliberately invalid derivative bounds must be REFUSED. Every refusal below is by strict
-    comparison with the bound recomputed from the claimed ingredients; no tolerance factor."""
+    """Deliberately invalid derivative bounds must be REFUSED BY PRODUCTION CODE: every claim is put
+    in a runs record and judged by the comparator's exact recomputation (c11rd_compare.recompute, step
+    U3), the production rejection path; no validation-local verifier is involved (review N-2)."""
+    import c11rd_compare as CM
     prop, cands = nt_candidates()
     kap = MD.kernel_norms()
-    CT = F(3429, 500)
-    bx = KR.Box(4, (F(17, 4), F(9, 2)), NTB, axis="m", order=4)       # h_1' is large here
+    prem = {"C_T": F(3429, 500), "tau": F(3429, 500)}
     out = {}
-    B_h, lam_h, av_h = _one_box_bound(bx, cands, kap, 1)
-    # (a) a claim computed with the honest candidate, presented for a sign-flipped D1 candidate, on
-    #     a band-1 box where D1 is not small
+
+    def lam_of(bx, cs):
+        R = KR.residuals_box(bx, cs)
+        return [R[k].abs_upper() for k in ("r0", "r1", "r2")]
+    bx4 = KR.Box(4, (F(17, 4), F(9, 2)), NTB, axis="m", order=4)       # h_1' is large here
     bx1 = KR.Box(1, (F(1), F(5, 4)), NTB, theta=(F(-1, 4), F(0)), order=4)
-    B1h, lam1h, av1h = _one_box_bound(bx1, cands, kap, 1)
+    lam_h4, lam_h1 = lam_of(bx4, cands), lam_of(bx1, cands)
+    honest = _runs_record_one_sub(NTB, cands, lam_h4, kap)
+    out["honest_record_accepted"] = CM.recompute(honest, prem, kap, NTB) == []
+    # (a) the honest claim presented with the lam of a sign-flipped D1 candidate (band-1 box)
     flipped = [cands[0], {k: {kk: -v for kk, v in pol.items()} for k, pol in cands[1].items()},
                cands[2], cands[3]]
-    B_f, lam_f, _ = _one_box_bound(bx1, flipped, kap, 1)
-    out["flipped_D1_candidate_refused"] = lam_f[1] > lam1h[1] and \
-        not verify_claim(B1h, av1h[1], lam_f, CT, CT, kap)
+    lam_f = lam_of(bx1, flipped)
+    rec_h1 = _runs_record_one_sub(NTB, cands, lam_h1, kap)
+    rec_a = _runs_record_one_sub(NTB, flipped, lam_f, kap, claim_D1=F(rec_h1["targets"]["D1"]["value"]),
+                                 claim_D2=F(rec_h1["targets"]["D2"]["value"]))
+    out["flipped_D1_candidate_refused"] = lam_f[1] > lam_h1[1] and bool(CM.recompute(rec_a, prem, kap, NTB))
     # (b) the sign of h_1' flipped in the source: the honest candidate's r1 moves by 2 h_1'
     real_sources = KR.sources
     try:
@@ -542,39 +564,32 @@ def v15_invalid_bounds():
             s = real_sources(b)
             return [s[0], -s[1], s[2]]
         KR.sources = flipped_sources
-        R_bad = KR.residuals_box(bx, cands)
+        lam_bad = lam_of(bx4, cands)
     finally:
         KR.sources = real_sources
-    lam_bad = [R_bad[k].abs_upper() for k in ("r0", "r1", "r2")]
-    out["flipped_h1prime_sign_refused"] = lam_bad[1] > lam_h[1] and \
-        not verify_claim(B_h, av_h[1], lam_bad, CT, CT, kap)
-    # (c) a claim computed with a WRONG kappa (zero) is refused under the true kappa
-    wrong = CE.propagate(lam_h, CT, CT, {1: F(0), 2: F(0)})
-    out["zero_kappa_claim_refused"] = not verify_claim(av_h[1] + wrong["err_D1"], av_h[1], lam_h, CT, CT, kap)
-    # (d) a claimed D1 one unit in the 12th place below the recomputed bound is refused; the exact
-    #     recomputed bound is accepted
-    out["under_claimed_D1_refused"] = verify_claim(B_h, av_h[1], lam_h, CT, CT, kap) and \
-        not verify_claim(B_h - F(1, 10 ** 12), av_h[1], lam_h, CT, CT, kap)
-    out["under_claimed_D2_refused"] = verify_claim(B2 := _one_box_bound(bx, cands, kap, 2)[0], None,
-                                                   lam_h, CT, CT, kap, which=2, cands=cands, de=bx.de) and \
-        not verify_claim(B2 - F(1, 10 ** 12), None, lam_h, CT, CT, kap, which=2, cands=cands, de=bx.de)
+    rec_b = _runs_record_one_sub(NTB, cands, lam_bad, kap, claim_D1=F(honest["targets"]["D1"]["value"]),
+                                 claim_D2=F(honest["targets"]["D2"]["value"]))
+    out["flipped_h1prime_sign_refused"] = lam_bad[1] > lam_h4[1] and bool(CM.recompute(rec_b, prem, kap, NTB))
+    # (c) a claim computed with a WRONG (zero) kappa
+    wrong = CE.propagate(lam_h4, prem["C_T"], prem["tau"], {1: F(0), 2: F(0)})
+    av = CE.atom_values(cands, (NTB[1] - NTB[0]) / 2)
+    rec_c = _runs_record_one_sub(NTB, cands, lam_h4, kap, claim_D1=av[1] + wrong["err_D1"],
+                                 claim_D2=av[2] + wrong["err_D2"])
+    out["zero_kappa_claim_refused"] = bool(CM.recompute(rec_c, prem, kap, NTB))
+    # (d) claims one unit in the 12th place below the recomputed bounds
+    B1, B2 = F(honest["targets"]["D1"]["value"]), F(honest["targets"]["D2"]["value"])
+    out["under_claimed_D1_refused"] = bool(CM.recompute(
+        _runs_record_one_sub(NTB, cands, lam_h4, kap, claim_D1=B1 - F(1, 10 ** 12)), prem, kap, NTB))
+    out["under_claimed_D2_refused"] = bool(CM.recompute(
+        _runs_record_one_sub(NTB, cands, lam_h4, kap, claim_D2=B2 - F(1, 10 ** 12)), prem, kap, NTB))
     # (e) kernel norms are rigorous upper enclosures of the closed forms 2 phi(0), 4 phi(1)
     p0, p1 = T.phi_point(F(0)), T.phi_point(F(1))
     out["kernel_norms_rigorous"] = kap[1] >= 2 * p0[1] and kap[2] >= 4 * p1[1] and \
         kap[1] - 2 * p0[0] < F(1, 10 ** 20) and kap[2] - 4 * p1[0] < F(1, 10 ** 20)
-    return {"pass": all(out.values()), "checks": out, "honest_lam_band4": [float(x) for x in lam_h],
-            "honest_lam_band1": [float(x) for x in lam1h], "flipped_D1_lam_band1": [float(x) for x in lam_f],
+    out["no_validation_local_verifier"] = "verify_claim" not in globals()
+    return {"pass": all(out.values()), "checks": out, "production_path": "c11rd_compare.recompute (U3)",
+            "honest_lam_band4": [float(x) for x in lam_h4], "flipped_D1_lam_band1": [float(x) for x in lam_f],
             "flipped_h1prime_lam_band4": [float(x) for x in lam_bad]}
-
-
-def verify_claim(claimed: F, atom_bound, lam: list, C_T: F, tau: F, kappa: dict, *, which: int = 1,
-                 cands=None, de=None) -> bool:
-    """A claimed D_which is accepted only if it is >= the bound RECOMPUTED from its ingredients
-    (the atom bound is recomputed from the candidates when they are given)."""
-    if cands is not None:
-        atom_bound = CE.atom_values(cands, de)[which]
-    rec = CE.propagate(lam, C_T, tau, kappa)
-    return claimed >= atom_bound + rec["err_D1" if which == 1 else "err_D2"]
 
 
 # ---------------------------------------------------------------------------------------------
@@ -587,6 +602,28 @@ CERTIFIER_MODULES = ("c11rd_tm.py", "c11rd_model.py", "c11rd_float.py", "c11rd_k
                      "c11rd_certify.py", "c11rd_runs.py")
 FORBIDDEN_DATA = ("REGISTRY_C2", "C11R_ORIGINAL_MAGNITUDES", "C11R_COMPARISON", "quarantine",
                   "taboo_cell", "denominator_artifact", "ADJUDICATION_", "REVIEW_")
+# C11RD-R1: the runner (orchestration, not science) must read the PRE-RESULT governance verdicts --
+# the qualification and authorization reviews -- and nothing else review-like; the science modules
+# may name no review at all.
+SCIENCE_MODULES = ("c11rd_tm.py", "c11rd_model.py", "c11rd_float.py", "c11rd_kernel.py", "c11rd_certify.py")
+RUNNER_FORBIDDEN_DATA = ("REGISTRY_C2", "C11R_ORIGINAL_MAGNITUDES", "C11R_COMPARISON", "quarantine", "taboo_cell",
+                         "denominator_artifact", "ADJUDICATION", "EXECUTION_REVIEW", "COMPARISON_REVIEW",
+                         "PRE_EXECUTION_REVIEW", "C11R_N9", "c11r_n9_statement_alignment/review")
+RUNNER_ALLOWED_REVIEWS = frozenset({"QUALIFICATION_ACCEPTED", "QUALIFICATION_REJECTED", "AUTHORIZATION_ACCEPTED",
+                                    "AUTHORIZATION_REJECTED", "review/C11RD_AUTHORIZATION_REVIEW.md"})
+
+
+def _data_scan(name: str, txt: str) -> list:
+    if name in SCIENCE_MODULES:
+        return [s for s in FORBIDDEN_DATA if s in txt] + (["REVIEW"] if "REVIEW" in txt else [])
+    if name == "c11rd_runs.py":
+        import re
+        bad = [s for s in RUNNER_FORBIDDEN_DATA if s in txt]
+        strings = {n.value for n in ast.walk(ast.parse(txt)) if isinstance(n, ast.Constant) and isinstance(n.value, str)}
+        bad += sorted(s for s in strings if re.search(r"REVIEW|ACCEPTED|REJECTED", s) and s not in RUNNER_ALLOWED_REVIEWS
+                      and not s.startswith(("REFUSE", "the ", "\n")) and "{" not in s and len(s) < 60)
+        return bad
+    return []
 
 
 def _import_roots(path: pathlib.Path) -> set:
@@ -613,7 +650,7 @@ def v16_independence():
             hits[f.name] = bad
         scanned.append(f.name)
         if f.name in CERTIFIER_MODULES:
-            found = [s for s in FORBIDDEN_DATA if s in f.read_text()]
+            found = _data_scan(f.name, f.read_text())
             if found:
                 data_hits[f.name] = found
     mods = [m[:-3] for m in CERTIFIER_MODULES if (HERE / m).exists()]
@@ -629,6 +666,9 @@ def v16_independence():
         planted = pathlib.Path(td) / "planted.py"
         planted.write_text("import taboo_certify\nfrom opnorms import x\nimport numpy.linalg\n")
         control = sorted(_import_roots(planted) & FORBIDDEN_IMPORTS) == ["numpy", "opnorms", "taboo_certify"]
+    control &= _data_scan("c11rd_runs.py", 'X = "review/C11RD_EXECUTION_REVIEW.md"\n') != [] and \
+        _data_scan("c11rd_kernel.py", 'X = "review/C11RD_AUTHORIZATION_REVIEW.md"\n') != [] and \
+        _data_scan("c11rd_runs.py", 'X = "COMPARISON_ACCEPTED"\n') != []
     ok = not hits and not data_hits and out.returncode == 0 and not runtime_bad and len(loaded) > 10 and control
     return {"pass": ok, "scanned": scanned, "forbidden_imports": hits,
             "forbidden_data_references_in_certifier": data_hits, "runtime_modules_checked": len(loaded),
@@ -636,7 +676,9 @@ def v16_independence():
             "runtime_returncode": out.returncode, "negative_control_flagged": control}
 
 
-NUMERIC_ALLOWLIST = {0, 1, 2, 3, 4, 5, 6, 9, 10, 11, 20, 30, 34, 40, 50, 52, 100, 160, 200000, 306,
+# structural constants only: model integers, bands and splits, precisions (52, 160), cache sizes, the
+# cell number, log cadences, commit-id display width (12) and subprocess/pool timeouts in seconds (30, 60)
+NUMERIC_ALLOWLIST = {0, 1, 2, 3, 4, 5, 6, 9, 10, 11, 12, 20, 30, 34, 40, 50, 52, 60, 100, 160, 200000, 306,
                      0.25, 0.5, 1.0, 2.0, 4.5, 5.0, 5.5, 1e-16}
 RATIONAL_STRING_ALLOWLIST = {"680769/400000", "17885921/10000000"}     # cell 306's block (checked vs table)
 
@@ -712,7 +754,7 @@ def _hashed_leak_scan(files: list, hashes: frozenset) -> dict:
             txt = f.read_text()
         except UnicodeDecodeError:
             continue
-        for tok in CM.NUMERIC_TOKEN.findall(txt):
+        for tok in CM.normalized_numeric_tokens(txt):
             if any(hashlib.sha256(x.encode()).hexdigest() in hashes for x in CM.token_prefixes(tok)):
                 hits.setdefault(str(f.relative_to(f.parents[len(f.relative_to(HERE.parent).parts) - 1])), []).append(tok)
     return hits
@@ -731,12 +773,16 @@ def v18_no_original_values_anywhere():
         d.mkdir()
         planted = d / "planted.md"
         planted.write_text("a bound of 0.123456789 here, 7.25 there\n")
+        sci = d / "planted_sci.md"
+        sci.write_text("scientific 1.23456789e-01 and bare .1234567 forms\n")
         import c11rd_compare as CM
         decoy = frozenset(hashlib.sha256(x.encode()).hexdigest() for x in CM.value_patterns("0.123456789"))
         caught = _hashed_leak_scan_plain([planted], decoy)
         missed = _hashed_leak_scan_plain([planted], frozenset(hashlib.sha256(x.encode()).hexdigest()
                                                               for x in CM.value_patterns("0.987654321")))
-    return {"pass": not hits and caught == ["0.123456789"] and not missed and len(ORIGINAL_PATTERN_SHA256) == 17,
+        caught_sci = _hashed_leak_scan_plain([sci], decoy)
+    return {"pass": not hits and caught == ["0.123456789"] and not missed and len(ORIGINAL_PATTERN_SHA256) == 17
+            and caught_sci == ["0.123456789", "0.1234567"], "negative_control_scientific_and_bare": caught_sci,
             "files_scanned": len(files), "hits": hits, "negative_control_caught": caught,
             "negative_control_non_match": missed}
 
@@ -746,7 +792,7 @@ def _hashed_leak_scan_plain(files: list, hashes: frozenset) -> list:
     import c11rd_compare as CM
     out = []
     for f in files:
-        for tok in CM.NUMERIC_TOKEN.findall(f.read_text()):
+        for tok in CM.normalized_numeric_tokens(f.read_text()):
             if any(hashlib.sha256(x.encode()).hexdigest() in hashes for x in CM.token_prefixes(tok)):
                 out.append(tok)
     return out
@@ -891,28 +937,9 @@ def v21_lifecycle_refusals():
     import c11rd_runs as RN
     import c11rd_compare as CM
     lo, hi = MD.cell_block()
-    fz = {"code_sha256": {"code/c11rd_runs.py": "0" * 64}, "target": {"cell": 306, "drift_block": [str(lo), str(hi)]}}
-    good = {"decision": "ALLOW", "campaign": "C11RD", "code_sha256": fz["code_sha256"],
-            "target": {"cell": 306, "e_lo": str(lo), "e_hi": str(hi)}, "max_executions": 1,
-            "host": {"platform": sys.platform, "python": sys.version.split()[0]},
-            "freeze_commit": MD.C11R_FINAL_HEAD}
     out = {}
     with tempfile.TemporaryDirectory() as td:
-        def grant_refused(g):
-            gp = pathlib.Path(td) / "g.json"
-            gp.write_text(json.dumps(g))
-            try:
-                RN.verify_grant(fz, gp)
-                return False
-            except SystemExit as exc:
-                return "REFUSE R2" in str(exc)
-        out["grant_deny"] = grant_refused(dict(good, decision="DENY"))
-        out["grant_two_executions"] = grant_refused(dict(good, max_executions=2))
-        out["grant_other_cell"] = grant_refused(dict(good, target={"cell": 307, "e_lo": str(lo), "e_hi": str(hi)}))
-        out["grant_other_code"] = grant_refused(dict(good, code_sha256={"code/c11rd_runs.py": "1" * 64}))
-        out["grant_bogus_freeze_commit"] = grant_refused(dict(good, freeze_commit="f" * 40))
-        out["grant_other_host"] = grant_refused(dict(good, host={"platform": "linux", "python": "3.12.0"}))
-        out["grant_without_freeze_file"] = grant_refused(good)      # C11R's final HEAD has no C11RD freeze
+        # (the grant binding is V26)
         # the lock is exclusive and permanent
         real_ns = RN.NS
         try:
@@ -936,7 +963,7 @@ def v21_lifecycle_refusals():
         finally:
             RN.NS = real_ns
     # R1: a changed C11RD file or a changed C7 primitive is refused
-    fzp = HERE.parent / "protocol" / "C11RD_FREEZE.json"
+    fzp = HERE.parent / RN.FREEZE_REL
     if fzp.exists():
         real = json.loads(fzp.read_text())
         try:
@@ -1095,9 +1122,9 @@ def v23_preimport_barrier():
     rc, msg = run(lambda c, s: (c / "notes.txt").write_text("x"), script="c11rd_compare.py",
                   args=("--seal-commit", "0" * 40, "--execution-review-commit", "0" * 40))
     out["comparator_barrier_refuses_extra_file"] = "REFUSE R0" in msg
-    frozen = set(json.loads((HERE.parent / "protocol" / "C11RD_FREEZE.json").read_text())["code_sha256"]) \
-        if (HERE.parent / "protocol" / "C11RD_FREEZE.json").exists() else None
     import c11rd_runs as RN
+    frozen = set(json.loads((HERE.parent / RN.FREEZE_REL).read_text())["code_sha256"]) \
+        if (HERE.parent / RN.FREEZE_REL).exists() else None
     import types
     import importlib.machinery as IM
     try:                                   # the honest process: every loaded module passes
@@ -1123,13 +1150,614 @@ def v23_preimport_barrier():
     return {"pass": all(out.values()), "checks": out}
 
 
+# ---------------------------------------------------------------------------------------------
+# V24 band-line ownership: a candidate with JUMPS at s = 1, 2, 3, 4 (C11RD-R1, review B-1)
+# ---------------------------------------------------------------------------------------------
+JUMP = {0: F(1), 1: F(10), 2: F(100), 3: F(1000), 4: F(10000)}
+FROZEN_SPLITS = {"s": 4, "theta": [4, 8, 12, 16], "s4": 4}
+
+
+def jump_candidate() -> dict:
+    """Band k's polynomial is the constant JUMP[k]; the band-4 axis polynomials are JUMP[4]."""
+    c = {k: {(0, 0): JUMP[k]} for k in range(4)}
+    c[("A", "p")] = {0: JUMP[4]}
+    c[("A", "m")] = {0: JUMP[4]}
+    return c
+
+
+def frozen_convention_owner(p: F, m: F) -> int:
+    """The FROZEN statement of the convention, written out independently of production code:
+    [0, 1] -> 0; (k, k + 1] -> k; axis (4, 5] -> 4."""
+    s = p + m
+    if s <= 1:
+        return 0
+    k = int(s) if s == int(s) else int(s) + 1
+    return k - 1
+
+
+def reversed_convention_owner(p: F, m: F) -> int:
+    """The predecessor's lower-closed reading: [0, 1) -> 0; [k, k + 1) -> k; s = 5 -> 4."""
+    s = p + m
+    return 0 if s < 1 else min(4, int(s))
+
+
+def khat_reference(p: F, m: F, e: F, owner) -> tuple:
+    """(Khat_e f)(p, m) EXACTLY for the piecewise-constant f = JUMP[owner(x')], by splitting the
+    window at every point where the image's owning band can change (the two kinks and every
+    integer crossing of an arm image), with C7's rational Phi. Independent of c11rd_kernel."""
+    K, C = F(1, 2), F(11, 2)
+    lo_z, hi_z = m - C, C - p
+    cuts = {lo_z, hi_z, K - p, m - K} | {m - K - j for j in range(6)} | {j + K - p for j in range(6)}
+    cuts = sorted(z for z in cuts if lo_z <= z <= hi_z)
+    acc = (F(0), F(0))
+    for a, b in zip(cuts, cuts[1:]):
+        if b <= a:
+            continue
+        zm = (a + b) / 2
+        if p + m < 1 and m - K < zm < K - p:          # the atom window is removed
+            continue
+        pp, mm = max(F(0), p + zm - K), max(F(0), m - zm - K)
+        c = JUMP[owner(pp, mm)]
+        acc = iv_add(acc, iv_scale(iv_sub(c7_Phi(b + e), c7_Phi(a + e)), c))
+    return acc
+
+
+def _tiny_box_in(bx, p: F, m: F):
+    """A tiny box of bx's band, inside bx, with (p, m) at a corner; returns (box, u)."""
+    s = p + m
+    s0, s1 = F(bx.s[0]), F(bx.s[1])
+    sb, us = ((s, s + TINY), -1) if s + TINY <= s1 else ((s - TINY, s), 1)
+    e = (E_NT, E_NT)
+    if bx.band == 4:
+        return KR.Box(4, sb, e, axis=bx.axis, order=4), (us, 0, 0)
+    t0, t1 = F(bx.theta[0]), F(bx.theta[1])
+    th = (p - m) / s if s > 0 else t0
+    tb, ut = ((th, th + TINY), -1) if th + TINY <= t1 else ((th - TINY, th), 1)
+    return KR.Box(bx.band, sb, e, theta=tb, order=4), (us, ut, 0)
+
+
+def _line_points() -> list:
+    d = F(1, 64)
+    pts = [("atom", F(0), F(0))]
+    for L in (1, 2, 3, 4):
+        for tag, s in (("below", L - d), ("on", F(L)), ("above", L + d)):
+            if s <= 4:
+                for th in (F(0), F(1, 3)):
+                    pts.append((f"interior s={L} {tag} theta={th}", s * (1 + th) / 2, s * (1 - th) / 2))
+            pts.append((f"p-axis s={L} {tag}", s, F(0)))
+            pts.append((f"m-axis s={L} {tag}", F(0), s))
+    pts.append(("p-axis s=5 (end)", F(5), F(0)))
+    pts.append(("m-axis s=5 (end)", F(0), F(5)))
+    return pts
+
+
+def v24_band_line_ownership():
+    """PRODUCTION machinery (c11rd_certify.owner_band / owning_boxes / verify_cover / initial_boxes,
+    c11rd_kernel.Box / state_values / kernel_box) on a candidate with deliberate jumps at s = 1, 2,
+    3, 4: just below, ON and just above every line, interior (two directions) and both axes, plus the
+    atom and the s = 5 axis ends. At every point: production ownership = the frozen upper-closed
+    convention; an owning box exists; its enclosures contain the candidate value and the EXACT Khat
+    of the upper-closed candidate; on every line where the reversed (lower-closed) reading differs,
+    the enclosure EXCLUDES the reversed value. Negative controls: the reversed convention fed to the
+    production ownership verifier FAILS (interior s = 4); a cover with a box removed FAILS
+    verify_cover."""
+    boxes = CE.initial_boxes(E_NT, E_NT, FROZEN_SPLITS, 4)
+    cand = jump_candidate()
+    rows, ok = [], True
+    for label, p, m in _line_points():
+        k = CE.owner_band(p, m)
+        want = frozen_convention_owner(p, m)
+        own = CE.owning_boxes(boxes, p, m)
+        row = {"point": label, "owner": k, "frozen_convention_owner": want, "owning_boxes": len(own)}
+        good = k == want and len(own) > 0
+        if own:
+            bx, u = _tiny_box_in(own[0], p, m)
+            Dx = tm_at(KR.state_values(bx, [cand])[0], u)
+            KD = tm_at(KR.kernel_box(bx, [cand], orders=(0,))[(0, 0)], u)
+            ref_up = khat_reference(p, m, E_NT, frozen_convention_owner)
+            ref_rev = khat_reference(p, m, E_NT, reversed_convention_owner) if (p + m) < 5 or p == 0 or m == 0 else None
+            good &= contains(Dx, JUMP[want]) and overlap(KD, ref_up)
+            differs = reversed_convention_owner(p, m) != want or (ref_rev is not None and not overlap(ref_rev, ref_up))
+            if differs and label != "p-axis s=5 (end)" and label != "m-axis s=5 (end)":
+                rev_state = JUMP[reversed_convention_owner(p, m)]
+                excluded = (not contains(Dx, rev_state)) or (ref_rev is not None and not overlap(KD, ref_rev))
+                row["reversed_value_excluded"] = excluded
+                good &= excluded
+            row.update(state=[float(Dx[0]), float(Dx[1])], khat=[float(KD[0]), float(KD[1])],
+                       khat_ref_upper_closed=[float(ref_up[0]), float(ref_up[1])])
+        row["pass"] = good
+        ok &= good
+        rows.append(row)
+    on_lines = [r for r in rows if " on" in r["point"]]
+    neg_rev = CE.verify_ownership(boxes, [(p, m) for _, p, m in _line_points()], owner=reversed_convention_owner)
+    pos = CE.verify_ownership(boxes, [(p, m) for _, p, m in _line_points()])
+    neg_gap = CE.verify_cover([b for b in boxes if not (b.band == 3 and F(b.s[1]) == 4 and F(b.theta[0]) == 0)])
+    checks = {"all_points": ok, "cover_complete": CE.verify_cover(boxes) == [],
+              "production_ownership_complete": pos == [],
+              "reversed_convention_fails": any("band-4" in x for x in neg_rev),
+              "cover_with_box_removed_fails": bool(neg_gap),
+              "lines_exercised": sorted({r["point"].split(" ")[1] for r in on_lines if "s=" in r["point"]}) ==
+              ["s=1", "s=2", "s=3", "s=4"],
+              "reversed_excluded_somewhere_on_each_line": all(
+                  any(r.get("reversed_value_excluded") for r in on_lines if f"s={L} on" in r["point"]) for L in (1, 2, 3, 4))
+              }
+    return {"pass": all(checks.values()), "checks": checks, "points": len(rows), "rows": rows,
+            "negative_control_reversed": neg_rev[:4], "negative_control_gap": neg_gap[:2]}
+
+
+# ---------------------------------------------------------------------------------------------
+# V25 sub-block endpoints (C11RD-R1, review N-1)
+# ---------------------------------------------------------------------------------------------
+def v25_subblock_endpoints():
+    """The frozen 4-way tiling of a non-target block is closed and exact (neighbours share their
+    endpoint); on its first sub-block the residual Taylor models evaluated at u_e = -1 and +1 (every
+    state corner and the centre) contain an independent float evaluation of the SAME candidate's
+    residual at the exact endpoints e_lo and e_hi; the box's drift coordinate reaches both endpoints
+    exactly; and the atom bounds dominate the atom polynomials at h = -de, +de."""
+    subs = CE.sub_blocks(NTB[0], NTB[1], 4)
+    tiling = subs[0][0] == NTB[0] and subs[-1][1] == NTB[1] and \
+        all(subs[i][1] == subs[i + 1][0] for i in range(3)) and all(a < b for a, b in subs)
+    a, b = subs[0]
+    ec = (a + b) / 2
+    prop = FL.propose(float(ec), n=6, n4=6, ns=9, nt=9)
+    cands = [FL.exact_candidate(prop["basis"], c) for c in prop["coeffs"]]
+    boxes = [KR.Box(1, (F(5, 4), F(3, 2)), (a, b), theta=(F(0), F(1, 4)), order=4),
+             KR.Box(4, (F(17, 4), F(9, 2)), (a, b), axis="m", order=4)]
+    fails, n = [], 0
+    for bx in boxes:
+        exact_ends = bx.ec - bx.de == a and bx.ec + bx.de == b
+        if not exact_ends:
+            fails.append("drift coordinate does not reach the endpoints")
+        R = KR.residuals_box(bx, cands)
+        for ue, ee in ((-1, a), (1, b)):
+            for us in (-1, 0, 1):
+                for ut in ((-1, 0, 1) if bx.band < 4 else (0,)):
+                    s = F(bx.s[0]) + (F(bx.s[1]) - F(bx.s[0])) * (us + 1) / 2
+                    if bx.band == 4:
+                        pp, mm = (F(0), s)
+                    else:
+                        th = F(bx.theta[0]) + (F(bx.theta[1]) - F(bx.theta[0])) * (ut + 1) / 2
+                        pp, mm = s * (1 + th) / 2, s * (1 - th) / 2
+                    fr = float_residuals(prop, float(pp), float(mm), bx.band, float(ee), float(ec))
+                    for kk, key in enumerate(("r0", "r1", "r2")):
+                        lo_, hi_ = tm_at(R[key], (F(us), F(ut), F(ue)))
+                        n += 1
+                        if not float(lo_) - 1e-9 <= fr[kk] <= float(hi_) + 1e-9:
+                            fails.append((bx.band, ue, us, ut, key))
+    av = CE.atom_values(cands, (b - a) / 2)
+    at, de = av[0], (b - a) / 2
+    atom_ok = all(abs(at[1] + h * at[2] + h * h / 2 * at[3]) <= av[1] and abs(at[2] + h * at[3]) <= av[2]
+                  for h in (-de, de))
+    # band-1 box: 2 endpoints x 3 x 3 state points x 3 residuals = 54; band-4 box: 2 x 3 x 3 = 18
+    return {"pass": tiling and not fails and atom_ok and n == 72, "tiling_closed_exact": tiling, "endpoint_checks": n,
+            "failures": fails[:10], "atom_bound_at_endpoints": atom_ok}
+
+
+# ---------------------------------------------------------------------------------------------
+# V26 host / canonical-worktree / freeze / qualification / authorization binding (review N-6)
+# ---------------------------------------------------------------------------------------------
+def _git(td, *a):
+    import subprocess
+    return subprocess.run(["git", "-C", str(td), *a], capture_output=True, text=True)
+
+
+def _new_repo(td) -> pathlib.Path:
+    r = pathlib.Path(td)
+    r.mkdir(parents=True, exist_ok=True)
+    if _git(r, "init", "-q", "-b", "main").returncode != 0 or not (r / ".git").is_dir():
+        raise RuntimeError(f"scratch repository not created at {r}")
+    _git(r, "config", "user.email", "t@example.invalid")
+    _git(r, "config", "user.name", "t")
+    _git(r, "config", "commit.gpgsign", "false")
+    return r
+
+
+def _commit(repo, files: dict, msg: str) -> str:
+    for rel, content in files.items():
+        f = pathlib.Path(repo) / rel
+        f.parent.mkdir(parents=True, exist_ok=True)
+        if content is None:
+            _git(repo, "rm", "-q", rel)
+        else:
+            f.write_bytes(content if isinstance(content, bytes) else content.encode())
+            _git(repo, "add", "-f", rel)
+    _git(repo, "commit", "-qm", msg, "--allow-empty")
+    return _git(repo, "rev-parse", "HEAD").stdout.strip()
+
+
+def v26_execution_binding():
+    """c11rd_runs.grant_problems with a FULL synthetic lineage in a scratch repository (freeze ->
+    qualification -> QUALIFICATION_ACCEPTED -> grant -> AUTHORIZATION_ACCEPTED): the honest grant is
+    authorized (positive control), and every single deviation is refused with its own reason --
+    hostname, hardware UUID, Python, canonical worktree path, a symlink alias in the grant, a
+    different checkout reached through a symlink, freeze commit, freeze sha256, code hashes, cell,
+    constants, execution count, qualification artifact changed after review, REJECTED or duplicated
+    verdicts, lineage out of order, grant edited after its authorization review, shallow history.
+    The production identity functions are exercised on this host (values not recorded)."""
+    import copy
+    import os
+    import shutil
+    import subprocess
+    import tempfile
+    import c11rd_runs as RN
+    out = {}
+    real_host = RN.host_identity()
+    real_wt = RN.worktree_identity()
+    out["production_host_identity"] = bool(real_host["hostname"]) and len(real_host["platform_uuid"]) == 36
+    out["production_worktree_canonical"] = real_wt["canonical_path"] == os.path.realpath(MD.REPO)
+    fz_path = HERE.parent / RN.FREEZE_REL
+    if not fz_path.exists():
+        return {"pass": False, "checks": {"successor_freeze_present": False}}
+    fz = json.loads(fz_path.read_text())
+    lo, hi = MD.cell_block()
+    with tempfile.TemporaryDirectory() as td:
+        td = pathlib.Path(os.path.realpath(td))
+        repo = _new_repo(td / "wt")
+        ns_rel = MD.NS_REL
+        ns = repo / ns_rel
+        (ns / "code").mkdir(parents=True)
+        freeze_bytes = fz_path.read_bytes()
+        F0 = _commit(repo, {f"{ns_rel}/{RN.FREEZE_REL}": freeze_bytes}, "freeze")
+        Q = _commit(repo, {f"{ns_rel}/evidence/qualification/Q.json": "{}\n"}, "qualification")
+        QR = _commit(repo, {f"{ns_rel}/review/C11RD_QUALIFICATION_REVIEW.md": "# review\nQUALIFICATION_ACCEPTED\n"}, "qreview")
+        wt = RN.worktree_identity(repo=repo)
+        host = dict(real_host)
+        grant = {"campaign": "C11RD", "decision": "ALLOW",
+                 "target": {"cell": 306, "e_lo": str(lo), "e_hi": str(hi), "constants": ["D1", "D2"]},
+                 "max_executions": 1, "freeze_commit": F0,
+                 "freeze_sha256": __import__("hashlib").sha256(freeze_bytes).hexdigest(),
+                 "code_sha256": fz["code_sha256"], "input_bindings": fz["input_bindings"],
+                 "host": host, "worktree": wt,
+                 "qualification": {"commit": Q, "artifact_path": f"{ns_rel}/evidence/qualification/Q.json",
+                                   "artifact_blob": _git(repo, "rev-parse", f"{Q}:{ns_rel}/evidence/qualification/Q.json").stdout.strip(),
+                                   "review_commit": QR, "review_path": f"{ns_rel}/review/C11RD_QUALIFICATION_REVIEW.md"}}
+        gbytes = json.dumps(grant, indent=1, sort_keys=True) + "\n"
+        _commit(repo, {f"{ns_rel}/{RN.GRANT_REL}": gbytes}, "grant")
+        AR = _commit(repo, {f"{ns_rel}/{RN.AUTH_REVIEW_REL}": "# auth review\nAUTHORIZATION_ACCEPTED\n"}, "areview")
+        code_dir = ns / "code"
+
+        def probs(g=None, host_=None, wt_=None, ar=AR, repo_=repo):
+            return RN.grant_problems(fz, g or grant, host=host_ or host, worktree=wt_ or wt,
+                                     auth_review_commit=ar, repo=repo_, ns=ns, code_dir=code_dir)
+        base = probs()
+        out["positive_control_authorized"] = base == []
+
+        def refused(reason, **kw):
+            p = probs(**kw)
+            return any(reason in x for x in p)
+        g = copy.deepcopy
+        out["hostname_refused"] = refused("host identity", host_=dict(host, hostname="other.local"))
+        out["hardware_uuid_refused"] = refused("host identity", host_=dict(host, platform_uuid="0" * 8 + host["platform_uuid"][8:]))
+        out["python_refused"] = refused("host identity", host_=dict(host, python="3.12.0"))
+        other = _new_repo(td / "other")
+        _commit(other, {"x": "x\n"}, "x")
+        out["other_checkout_refused"] = refused("canonical worktree", wt_=RN.worktree_identity(repo=other))
+        alias = td / "alias_to_other"
+        os.symlink(other, alias)
+        out["symlink_alias_to_other_checkout_refused"] = refused("canonical worktree", wt_=RN.worktree_identity(repo=alias))
+        alias_same = td / "alias_to_bound"
+        os.symlink(repo, alias_same)
+        out["symlink_alias_resolves_to_the_bound_checkout"] = RN.worktree_identity(repo=alias_same) == wt
+        g1 = g(grant)
+        g1["worktree"]["canonical_path"] = str(alias_same)
+        out["grant_with_alias_path_refused"] = refused("not canonical", g=g1)
+        out["freeze_commit_refused"] = refused("freeze commit is not an ancestor", g=dict(g(grant), freeze_commit="f" * 40))
+        out["freeze_sha_refused"] = refused("freeze identity differs", g=dict(g(grant), freeze_sha256="0" * 64))
+        g2 = g(grant)
+        g2["code_sha256"] = dict(g2["code_sha256"], **{"code/c11rd_tm.py": "0" * 64})
+        out["code_hash_refused"] = refused("code and input hashes", g=g2)
+        g3 = g(grant)
+        g3["target"] = dict(g3["target"], cell=307)
+        out["other_cell_refused"] = refused("target", g=g3)
+        g4 = g(grant)
+        g4["target"] = dict(g4["target"], constants=["D1"])
+        out["partial_campaign_refused"] = refused("target", g=g4)
+        out["two_executions_refused"] = refused("exactly one execution", g=dict(g(grant), max_executions=2))
+        out["deny_refused"] = refused("not an ALLOW", g=dict(g(grant), decision="DENY"))
+        # lineage / verdict / post-review edits, on the scratch history
+        out["auth_review_not_given_refused"] = refused("authorization review commit", ar=None)
+        out["auth_review_before_qualification_refused"] = refused("authorization review commit", ar=Q)
+        g5 = g(grant)
+        g5["qualification"] = dict(g5["qualification"], review_commit=Q, commit=QR)
+        out["qualification_lineage_out_of_order_refused"] = refused("qualification lineage", g=g5)
+        _commit(repo, {f"{ns_rel}/evidence/qualification/Q.json": "{\"edited\": 1}\n"}, "edit qual")
+        out["qualification_artifact_changed_refused"] = refused("qualification artifact", repo_=repo)
+        _commit(repo, {f"{ns_rel}/evidence/qualification/Q.json": "{}\n"}, "restore qual")
+        _commit(repo, {f"{ns_rel}/{RN.GRANT_REL}": gbytes.replace('"max_executions": 1', '"max_executions": 1 ')}, "edit grant")
+        out["grant_edited_after_authorization_refused"] = refused("byte-identical to the one the authorization review")
+        _commit(repo, {f"{ns_rel}/{RN.GRANT_REL}": gbytes}, "restore grant")
+        AR2 = _commit(repo, {f"{ns_rel}/{RN.AUTH_REVIEW_REL}": "AUTHORIZATION_ACCEPTED\nAUTHORIZATION_REJECTED\n"}, "mixed")
+        out["mixed_verdict_refused"] = refused("verdict line", ar=AR2)
+        AR3 = _commit(repo, {f"{ns_rel}/{RN.AUTH_REVIEW_REL}": "AUTHORIZATION_ACCEPTED\nAUTHORIZATION_ACCEPTED\n"}, "dup")
+        out["duplicated_verdict_refused"] = refused("verdict line", ar=AR3)
+        AR4 = _commit(repo, {f"{ns_rel}/{RN.AUTH_REVIEW_REL}": "# auth review\nAUTHORIZATION_ACCEPTED\n"}, "clean again")
+        out["positive_control_after_history_noise"] = probs(ar=AR4) == []
+        shallow = td / "shallow"
+        subprocess.run(["git", "clone", "-q", "--depth", "1", f"file://{repo}", str(shallow)], capture_output=True)
+        out["shallow_clone_refused"] = any("shallow" in x for x in RN.grant_problems(
+            fz, grant, host=host, worktree=RN.worktree_identity(repo=shallow), auth_review_commit=AR4,
+            repo=shallow, ns=shallow / ns_rel, code_dir=shallow / ns_rel / "code"))
+        shutil.rmtree(shallow, ignore_errors=True)
+    return {"pass": all(out.values()), "checks": out}
+
+
+# ---------------------------------------------------------------------------------------------
+# V27 comparison run-once over the repository history (review N-10)
+# ---------------------------------------------------------------------------------------------
+def v27_comparison_history():
+    """c11rd_compare.run_once_problems (step U0) in scratch repositories: a clean history passes;
+    an artifact on disk, committed-then-deleted, reverted, merged in from a side branch (also with
+    '-s ours', so it never reached the main tree), sitting on an unmerged branch, hidden behind a
+    replace ref, or kept only in a stash is REFUSED; a shallow clone and a grafts file make the
+    history ambiguous and are REFUSED (fail closed). The runner's lock check uses the same reader."""
+    import os
+    import subprocess
+    import tempfile
+    import c11rd_compare as CM
+    import c11rd_runs as RN
+    ns_rel = MD.NS_REL
+    art = f"{ns_rel}/{CM.OUT_REL}"
+    out = {}
+
+    def check(repo):
+        return CM.run_once_problems(repo=repo, ns=pathlib.Path(repo) / ns_rel, ns_rel=ns_rel)
+    with tempfile.TemporaryDirectory() as td:
+        td = pathlib.Path(os.path.realpath(td))
+
+        def fresh(name):
+            r = _new_repo(td / name)
+            _commit(r, {"README": "x\n"}, "base")
+            return r
+        r = fresh("clean")
+        out["clean_history_passes"] = check(r) == [] and (r / ".git").is_dir()
+        r = fresh("disk")
+        (r / art).parent.mkdir(parents=True)
+        (r / art).write_text("{}\n")
+        out["on_disk_refused"] = any("on disk" in x for x in check(r))
+        r = fresh("deleted")
+        _commit(r, {art: "{}\n"}, "compare")
+        _commit(r, {art: None}, "delete")
+        out["committed_then_deleted_refused"] = any("reachable history" in x for x in check(r)) and not (r / art).exists()
+        r = fresh("reverted")
+        c = _commit(r, {art: "{}\n"}, "compare")
+        _git(r, "revert", "--no-edit", c)
+        out["reverted_refused"] = any("reachable history" in x for x in check(r)) and not (r / art).exists()
+        r = fresh("merged")
+        _git(r, "checkout", "-q", "-b", "side")
+        _commit(r, {art: "{}\n"}, "side compare")
+        _git(r, "checkout", "-q", "main")
+        _git(r, "merge", "-q", "--no-ff", "-m", "merge", "side")
+        _commit(r, {art: None}, "delete")
+        _git(r, "branch", "-q", "-D", "side")
+        _git(r, "reflog", "expire", "--expire=now", "--all")
+        out["merged_side_branch_refused"] = any("reachable history" in x for x in check(r))
+        r = fresh("ours")
+        _git(r, "checkout", "-q", "-b", "side")
+        _commit(r, {art: "{}\n"}, "side compare")
+        _git(r, "checkout", "-q", "main")
+        _git(r, "merge", "-q", "-s", "ours", "-m", "merge ours", "side")
+        _git(r, "branch", "-q", "-D", "side")
+        _git(r, "reflog", "expire", "--expire=now", "--all")
+        out["merged_with_strategy_ours_refused"] = any("reachable history" in x for x in check(r)) and not (r / art).exists()
+        r = fresh("unmerged")
+        _git(r, "checkout", "-q", "-b", "side")
+        _commit(r, {art: "{}\n"}, "side compare")
+        _git(r, "checkout", "-q", "main")
+        out["unmerged_branch_refused"] = any("reachable history" in x for x in check(r))
+        r = fresh("replaced")
+        x = _commit(r, {art: "{}\n"}, "compare")
+        _commit(r, {art: None}, "delete")
+        y = _git(r, "rev-parse", "HEAD~2").stdout.strip()
+        _git(r, "replace", x, y)
+        out["replace_ref_does_not_hide"] = any("reachable history" in x_ for x_ in check(r))
+        r = fresh("stash")
+        (r / art).parent.mkdir(parents=True)
+        (r / art).write_text("{}\n")
+        _git(r, "add", "-f", art)
+        _git(r, "stash", "-q")
+        out["stashed_artifact_refused"] = any("reachable history" in x for x in check(r)) and not (r / art).exists()
+        base = fresh("forshallow")
+        _commit(base, {"b": "b\n"}, "b")
+        sh = td / "shallowclone"
+        subprocess.run(["git", "clone", "-q", "--depth", "1", f"file://{base}", str(sh)], capture_output=True)
+        out["shallow_history_refused"] = any("ambiguous" in x for x in check(sh))
+        r = fresh("grafts")
+        (r / ".git" / "info").mkdir(exist_ok=True)
+        (r / ".git" / "info" / "grafts").write_text("")
+        out["grafts_file_refused"] = any("ambiguous" in x for x in check(r))
+        # the runner's R4 uses the same fail-closed reader
+        try:
+            RN.ever_committed([art], repo=sh)
+            out["runner_R4_refuses_shallow"] = False
+        except SystemExit as exc:
+            out["runner_R4_refuses_shallow"] = "REFUSE R4" in str(exc)
+    out["real_repository_has_no_comparison"] = CM.run_once_problems() == []
+    return {"pass": all(out.values()), "checks": out}
+
+
+# ---------------------------------------------------------------------------------------------
+# V28 memory accounting over the LIVE process tree (review N-11)
+# ---------------------------------------------------------------------------------------------
+_V28_CHILD = r"""
+import multiprocessing as mp, sys, time
+def task(i):
+    b = b'\x01' * (40 * 1024 * 1024)
+    time.sleep(0.8)
+    return len(b)
+if __name__ == '__main__':
+    with mp.get_context('spawn').Pool(2, maxtasksperchild=1) as pool:
+        print(sum(pool.map(task, range(6), chunksize=1)), flush=True)
+    time.sleep(0.3)
+"""
+
+
+def v28_memory_accounting():
+    """c11rd_runs.process_tree_rss_kb / memory_status (what parallel_cover calls every 30 s) on a
+    synthetic process tree whose workers REPLACE each other (maxtasksperchild=1) and hold 40 MB each:
+    the live tree is accounted at every sample; replacement workers (new PIDs, started after
+    monitoring began) are included; two concurrent workers' memory is seen; a low cap is reported;
+    the PIDs of the first sample miss later workers (the defect of a start-time PID list); unreadable
+    process tables, a missing root and a malformed table FAIL CLOSED. No science is run."""
+    import ast as _ast
+    import os
+    import subprocess
+    import tempfile
+    import time as _t
+    import c11rd_runs as RN
+    out = {}
+    with tempfile.TemporaryDirectory() as td:
+        script = pathlib.Path(td) / "tree.py"
+        script.write_text(_V28_CHILD)
+        proc = subprocess.Popen([sys.executable, "-I", "-S", "-B", str(script)], stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE, cwd=td)
+        samples, first, seen, peak, failures, cap_hit = 0, None, set(), 0, 0, False
+        t0 = _t.time()
+        while proc.poll() is None and _t.time() - t0 < 120:
+            st, acct = RN.memory_status(proc.pid, 2097152)
+            if acct is None:
+                if proc.poll() is None:
+                    failures += 1
+            else:
+                samples += 1
+                workers = set(acct[1]) - {proc.pid}
+                if first is None and len(workers) >= 2:
+                    first = set(acct[1])
+                seen |= set(acct[1])
+                peak = max(peak, acct[0])
+                if not cap_hit and acct[0] > 60 * 1024:
+                    cap_hit = RN.memory_status(proc.pid, 10 * 1024)[0] == "RESOURCE_CAP_MEMORY"
+            _t.sleep(0.05)
+        proc.communicate(timeout=60)
+        out["tree_accounted_while_alive"] = samples > 10 and failures == 0
+        out["replacement_workers_seen"] = len(seen - {proc.pid}) >= 5
+        out["concurrent_worker_memory_counted"] = peak >= 70 * 1024
+        out["low_cap_reported"] = cap_hit
+        out["start_time_pid_list_would_miss_workers"] = first is not None and len(seen - first) >= 2
+        bad = pathlib.Path(td) / "badps"
+        bad.write_text("#!/bin/sh\necho 'garbage line'\n")
+        bad.chmod(0o755)
+        out["unreadable_table_fails_closed"] = RN.memory_status(os.getpid(), 2097152, ps=str(pathlib.Path(td) / "nope"))[0] \
+            == "RESOURCE_ACCOUNTING_FAILED"
+        out["malformed_table_fails_closed"] = RN.memory_status(os.getpid(), 2097152, ps=str(bad))[0] == "RESOURCE_ACCOUNTING_FAILED"
+    out["missing_root_fails_closed"] = RN.memory_status(proc.pid, 2097152)[0] == "RESOURCE_ACCOUNTING_FAILED"
+    src = (HERE / "c11rd_runs.py").read_text()
+    fn = next(n for n in _ast.walk(_ast.parse(src)) if isinstance(n, _ast.FunctionDef) and n.name == "parallel_cover")
+    calls = {n.func.id for n in _ast.walk(fn) if isinstance(n, _ast.Call) and isinstance(n.func, _ast.Name)}
+    defined = {n.name for n in _ast.walk(_ast.parse(src)) if isinstance(n, _ast.FunctionDef)}
+    out["parallel_cover_uses_live_tree_monitor"] = "memory_status" in calls and "_rss_kb" not in defined and \
+        "_rss_kb" not in calls
+    return {"pass": all(out.values()), "checks": out, "samples": samples, "distinct_pids": len(seen),
+            "peak_tree_rss_mb": round(peak / 1024, 1)}
+
+
+# ---------------------------------------------------------------------------------------------
+# V29 scientific identity against the predecessor freeze 71495747 (C11RD-R1)
+# ---------------------------------------------------------------------------------------------
+PREDECESSOR_FREEZE_COMMIT = "71495747504670dbe90ec0ee2f7dd4702fd47001"
+IDENTITY_FIELDS = ("frozen_parameters", "resource_caps", "target", "nontarget_rehearsal_block",
+                   "C_drift_block", "D_sub_block_partition", "F_derivative_recurrence", "G_arithmetic_backend",
+                   "H_rounding_policy", "I_certificate_schema", "J_aggregation_rule", "K_success_failure",
+                   "L_agreement_criterion", "M_resource_cap", "N_memory_cap", "O_retry_policy",
+                   "P_execution_count", "Q_target", "R_no_cells_307_309", "S_no_adoption", "T_no_r6",
+                   "input_bindings")
+
+
+def _strip_docstrings(tree):
+    import ast as _ast
+    for n in _ast.walk(tree):
+        if isinstance(n, (_ast.Module, _ast.FunctionDef, _ast.ClassDef, _ast.AsyncFunctionDef)) and n.body and \
+                isinstance(n.body[0], _ast.Expr) and isinstance(getattr(n.body[0], "value", None), _ast.Constant) \
+                and isinstance(n.body[0].value.value, str):
+            n.body = n.body[1:] or [_ast.Pass()]
+    return tree
+
+
+def _defs(src: str) -> dict:
+    import ast as _ast
+    tree = _strip_docstrings(_ast.parse(src))
+    out = {}
+    for n in tree.body:
+        if isinstance(n, _ast.FunctionDef):
+            out[n.name] = n
+        elif isinstance(n, _ast.ClassDef):          # methods one by one; the rest of the class body as one item
+            rest = []
+            for m in n.body:
+                if isinstance(m, _ast.FunctionDef):
+                    out[f"{n.name}.{m.name}"] = m
+                else:
+                    rest.append(m)
+            out[f"{n.name}.<bases,decorators,body>"] = _ast.Module(body=[_ast.Expr(value=_ast.Tuple(elts=list(n.bases), ctx=_ast.Load()))]
+                                                                    + list(n.decorator_list and [_ast.Expr(value=d) for d in n.decorator_list]) + rest,
+                                                                    type_ignores=[])
+        elif isinstance(n, _ast.Assign):
+            for tg in n.targets:
+                if isinstance(tg, _ast.Name):
+                    out[f"={tg.id}"] = n
+    return out
+
+
+def v29_scientific_identity():
+    """Mechanical identity with the predecessor freeze: (a) every load-bearing freeze field equals
+    the predecessor's (except the E partition's text, which differs only by the added band-ownership
+    clarification: its box numbers must be equal); (b) every function, method, class and module-level
+    constant of the science modules c11rd_tm, c11rd_kernel, c11rd_float, c11rd_model and c11rd_certify
+    that existed at 71495747 has an IDENTICAL syntax tree now (docstrings ignored), except the dead
+    c11rd_float.Basis.band_of, which is removed and had no call site; (c) c11rd_runs.certify_block
+    is identical up to the added bookkeeping key 'resource_accounting'."""
+    import ast as _ast
+    import subprocess
+    import c11rd_runs as RN
+    rel_ns = MD.NS_REL
+    old_fz = json.loads(subprocess.run(["git", "-C", str(MD.REPO), "show", f"{PREDECESSOR_FREEZE_COMMIT}:{rel_ns}/protocol/C11RD_FREEZE.json"],
+                                       capture_output=True, text=True, check=True).stdout)
+    new_fz = json.loads((HERE.parent / RN.FREEZE_REL).read_text())
+    field_diff = [f for f in IDENTITY_FIELDS if old_fz.get(f) != new_fz.get(f)]
+    eo, en = old_fz["E_state_domain_partition"], new_fz["E_state_domain_partition"]
+    e_same = eo["initial_boxes"] == en["initial_boxes"] and eo["refinement"] == en["refinement"]
+    changed, removed, compared = [], [], 0
+    for mod in ("c11rd_tm", "c11rd_kernel", "c11rd_float", "c11rd_model", "c11rd_certify"):
+        old_src = subprocess.run(["git", "-C", str(MD.REPO), "show", f"{PREDECESSOR_FREEZE_COMMIT}:{rel_ns}/code/{mod}.py"],
+                                 capture_output=True, text=True, check=True).stdout
+        new_src = (HERE / f"{mod}.py").read_text()
+        od, nd = _defs(old_src), _defs(new_src)
+        for name, node in od.items():
+            compared += 1
+            if name not in nd:
+                removed.append(f"{mod}.{name}")
+            elif _ast.dump(node) != _ast.dump(nd[name]):
+                changed.append(f"{mod}.{name}")
+    old_all = "".join(subprocess.run(["git", "-C", str(MD.REPO), "show", f"{PREDECESSOR_FREEZE_COMMIT}:{rel_ns}/code/{m}.py"],
+                                     capture_output=True, text=True, check=True).stdout for m in
+                      ("c11rd_tm", "c11rd_kernel", "c11rd_float", "c11rd_model", "c11rd_certify", "c11rd_runs",
+                       "c11rd_compare", "c11rd_validate"))
+    band_of_uncalled = old_all.count("band_of") == 1       # its definition only
+
+    def cb(src):
+        fn = next(n for n in _strip_docstrings(_ast.parse(src)).body if isinstance(n, _ast.FunctionDef) and n.name == "certify_block")
+        for n in _ast.walk(fn):
+            if isinstance(n, _ast.Dict):
+                keep = [(k, v) for k, v in zip(n.keys, n.values)
+                        if not (isinstance(k, _ast.Constant) and k.value == "resource_accounting")]
+                n.keys, n.values = [k for k, _ in keep], [v for _, v in keep]
+        return _ast.dump(fn)
+    old_runs = subprocess.run(["git", "-C", str(MD.REPO), "show", f"{PREDECESSOR_FREEZE_COMMIT}:{rel_ns}/code/c11rd_runs.py"],
+                              capture_output=True, text=True, check=True).stdout
+    cb_same = cb(old_runs) == cb((HERE / "c11rd_runs.py").read_text())
+    ok = not field_diff and e_same and not changed and removed == ["c11rd_float.Basis.band_of"] and band_of_uncalled and cb_same
+    return {"pass": ok, "freeze_fields_compared": list(IDENTITY_FIELDS), "freeze_field_differences": field_diff,
+            "state_partition_numbers_equal": e_same, "definitions_compared": compared,
+            "definitions_changed": changed, "definitions_removed": removed, "band_of_had_no_call_site": band_of_uncalled,
+            "certify_block_identical_up_to_bookkeeping": cb_same}
+
+
 TESTS = [v01_gaussian_moments, v02_kernel_of_one, v03_vs_c11_kernel, v04_finite_difference,
          v05_scalar_collapse, v06_block_uniform, v07_atom_distinction, v08_full_kernel_negative_control,
          v09_premise, v10_zero_cases, v11_symmetry, v12_known_signs, v13_kinks, v14_tiny_drift,
          v15_invalid_bounds, v16_independence, v17_no_embedded_magnitudes,
          v18_no_original_values_anywhere, v19_statement_semantics_equal_c11r_schema,
          v20_comparator_fidelity, v21_lifecycle_refusals, v22_cover_invariants,
-         v23_preimport_barrier]
+         v23_preimport_barrier, v24_band_line_ownership, v25_subblock_endpoints, v26_execution_binding,
+         v27_comparison_history, v28_memory_accounting, v29_scientific_identity]
 
 
 def run_all() -> dict:

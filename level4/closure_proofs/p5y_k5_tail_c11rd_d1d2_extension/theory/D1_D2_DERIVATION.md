@@ -46,11 +46,55 @@ restricted to an axis on the arms), `Khat^(i)_e f(x)` is a finite sum of integra
 in `(p, m, e)`, and `alpha, beta` affine in `(p, m, e)`. The piece structure is the same for all
 `x` in a closed band, so these formulas are analytic in `(p, m, e)` on each closed band.
 
-**Half-open convention.** A value of `f` on a band line `s' = j` is band `j`'s. By Lemma 1, the
-formula of band `k` evaluated at `s = k + 1` uses band `k - 1`'s polynomial on the middle line
-`s' = k`, whereas the true value there (by the convention) is band `k + 1`'s formula at its lower
-edge. A cover that uses CLOSED band boxes on both sides therefore contains the true residual at every
-point of R (and one extra, harmless, value on each band line).
+**Upper-closed convention (C11RD-R1; replaces the lower-closed "half-open convention" of the
+predecessor freeze, review B-1).** The candidate is ONE function on R. Its value at a state
+`x = (p, m)` of R is the polynomial of the band that OWNS `x`:
+
+    own(x) = 0  if s in [0, 1];     own(x) = k  if s in (k, k + 1], k = 1, 2, 3 (axis points included);
+    own(x) = 4  if x is an axis point with s in (4, 5].
+
+Interior points (`p, m > 0`) of R have `s <= 4`, so band 4 is owned only on the axes; the axis
+polynomial of band `j <= 3` is band `j`'s polynomial restricted to the axis. (`code/c11rd_certify.py:
+owner_band`.)
+
+**Proposition 1 (the closed-box cover evaluates exactly this candidate).** Let the cover consist of
+closed boxes, each inside ONE closed band: for `k = 0..3`, `{s in [s0, s1] subset [k, k + 1],
+theta in [t0, t1] subset [-1, 1]}` with `p = s (1 + theta)/2`, `m = s (1 - theta)/2`; for band 4,
+axis segments `s in [s0, s1] subset [4, 5]`. On a box of band `k` the certifier evaluates (Lemma 1)
+the state value with band `k`'s polynomial, the MIDDLE piece with band `k - 1`'s polynomial, and
+the arm piece of image band `j` with band `j`'s axis polynomial. Suppose that for each `k = 0..3` the
+band-`k` boxes partition the closed strip `[k, k + 1] x [-1, 1]` in `(s, theta)`, and for each axis
+the band-4 boxes partition `[4, 5]`. Then:
+(a) every `x in R` lies in a box of band `own(x)` (no gap, band lines included);
+(b) on every box of band `own(x)` that contains `x`, the certifier's residual formula at `x` is
+    EXACTLY the residual of the single-valued candidate at `x`;
+(c) a box of any other band that contains `x` (necessarily at its lower edge `s = own(x) + 1`, or a
+    band-4 box at `s = 4` on an axis) computes a quantity that is not the candidate's residual; its
+    bound only enlarges `lam_k = max over boxes`, so it can never make a certified bound smaller.
+Hence `sup_R |r_k| <= lam_k`, as Theorem 5 requires. Refinement bisects a box into boxes of the SAME
+band that partition it (validation V22), so the leaves satisfy the partition hypothesis whenever the
+initial boxes do.
+*Proof.* (a) If `own(x) = k <= 3`, then `s in [0, 1]` or `s in (k, k + 1]`, so `(s, theta)` lies
+in the closed strip `[k, k + 1] x [-1, 1]` (theta is arbitrary at the atom `s = 0`), which band
+`k`'s boxes partition; if `own(x) = 4`, `x` is an axis point with `s in (4, 5] subset [4, 5]`. (b)
+The state value is band `own(x)`'s polynomial, which is the candidate's value. The middle image
+lies on `s' = s - 1`: for `s in (k, k + 1]` it lies in `(k - 1, k]` (off the axes), which band
+`k - 1` owns: the certifier's choice. For `own(x) = 0` there is no middle (`s <= 1`; at `s = 1` it
+has length zero). An arm piece of image band `j` has image `m'` (or `p'`) in `[j, j + 1]` on an axis;
+`own` gives band `j` on `(j, j + 1]`, and the single point `m' = j` has measure zero for the
+integral. The partial piece `[s - 1, k]` is band `k - 1`'s for the same reason, and the band-4 arm
+pieces use the band-4 axis polynomial on `(4, 5]`. So every integrand coincides with the
+candidate's almost everywhere on its piece. (c) is immediate. ∎
+
+The predecessor's lower-closed reading (`s = k + 1` owned by band `k + 1`) fails exactly on the
+INTERIOR line `s = 4`: those points would be owned by a band 4 that has no interior boxes, and the
+only boxes containing them (band 3) use band 2 on the middle (review B-1). Under the upper-closed
+convention the same cover and the same code are complete. Mechanical checks:
+`c11rd_certify.verify_cover` proves the partition hypothesis EXACTLY for the frozen cover (and the
+runner refuses to start without it, guard R6); `c11rd_certify.owning_boxes` / `verify_ownership`
+implement (a); validation V24 evaluates a candidate with deliberate jumps at `s = 1, 2, 3, 4` just
+below, on, and just above every line (interior and axes) through the production owner, cover and
+kernel code, and shows the reversed convention failing.
 
 ## 2. Drift derivatives of the kernel
 
@@ -80,13 +124,40 @@ m-coefficient is negative and `m >= 0` on R; (iii) iterate: `g = sum_{n<N} Khat^
 **Lemma 4.** Let `d_e = Ghat_e h_1(.; e)`. On E, `e -> d_e` is twice differentiable in `B(R)` and
 `d' = Ghat(Khat' d + h_1')`, `d'' = Ghat(Khat'' d + 2 Khat' d' + h_1'')`; equivalently
 `d = Khat d + h_1`, `d' = Khat d' + Khat' d + h_1'`, `d'' = Khat d'' + 2 Khat' d' + Khat'' d + h_1''`.
-*Proof.* For `e, f in E`, Lemma 3(iii) gives the resolvent identity `Ghat_f - Ghat_e = Ghat_f
-(Khat_f - Khat_e) Ghat_e`, with `||Ghat|| <= C_T` uniformly. By Lemma 2, `||Khat_f - Khat_e -
-(f - e) Khat'_e|| <= kappa_2 (f - e)^2 / 2`, so `e -> Ghat_e` is differentiable in operator norm with
-`Ghat' = Ghat Khat' Ghat`, and twice with the product rule. `e -> h_1(.; e)` is smooth in `B(R)`.
-The formulas follow by the product rule. At the endpoints of E the derivatives are two-sided:
-`Ghat_e` exists for `|e - e_0| < 1/(kappa_1 C_T)` around any `e_0 in E` by the Neumann series of
-`Ghat_{e_0} (Khat_e - Khat_{e_0})`. ∎
+*Proof (C11RD-R1: explicit at the endpoints of E and of every sub-block; review N-1).* Four steps,
+no appeal to "continuity".
+
+(a) *A geometric rate on E.* For `e in E`, `w >= 1 + Khat_e w` with `Khat_e w >= 0` gives `w >= 1`,
+and `w <= C_T := sup_R w`. Hence `1 >= w / C_T` and `w >= w / C_T + Khat_e w`, i.e.
+`Khat_e w <= q w` with `q := 1 - 1/C_T < 1`. Positivity gives `Khat_e^N w <= q^N w`, and since
+`1 <= w`: `||Khat_e^N|| = ||Khat_e^N 1|| <= ||Khat_e^N w|| <= q^N C_T`.
+
+(b) *An open neighbourhood U of E on which the SAME Neumann series converges.* `||Khat_f|| <= 1`
+for every drift `f` (`Khat_f 1 <= 1`), and `||Khat_f - Khat_e|| <= kappa_1 |f - e|` (Lemma 2, mean
+value). Fix `N` with `q^N C_T <= 1/2`. For `e_0 in E` and `|f - e_0| <= rho := 1/(4 N kappa_1)`,
+`||Khat_f^N - Khat_{e_0}^N|| <= sum_{i<N} ||Khat_f||^i ||Khat_f - Khat_{e_0}|| ||Khat_{e_0}||^(N-1-i)
+<= N kappa_1 rho = 1/4`, so `||Khat_f^N|| <= 3/4`. Then `Ghat_f := sum_n Khat_f^n` converges in
+operator norm with `||Ghat_f|| <= 4 N`, equals `(I - Khat_f)^(-1)`, and is the same probabilistic
+object that defines `d` (the Neumann series), on `U := E + (-rho, rho)`.
+
+(c) *Differentiability on U.* For `e, f in U` the resolvent identity `Ghat_f - Ghat_e = Ghat_f
+(Khat_f - Khat_e) Ghat_e` holds (both are genuine inverses) with the uniform bound `4 N`. By Lemma 2,
+`||Khat_f - Khat_e - (f - e) Khat'_e|| <= kappa_2 (f - e)^2 / 2`, so `e -> Ghat_e` is differentiable
+in operator norm on U with `Ghat' = Ghat Khat' Ghat`, and twice by the product rule; `e -> h_1(.; e)`
+is smooth. The derivative formulas and equations above hold at every `e in U`. Because E is a
+closed subset of the OPEN set U, the derivatives at `e_lo` and `e_hi` are ordinary TWO-SIDED
+derivatives: the statement "for every e in the block: |D_e'| <= D1" involves no one-sided
+convention at the endpoints.
+
+(d) *The certificate at the endpoints of E and of every sub-block.* The sub-blocks `E_j` are CLOSED
+and tile E exactly (neighbours share their endpoint; `c11rd_certify.sub_blocks`, exact rationals).
+Each residual Taylor model is a polynomial in `u_e in [-1, 1]` plus a remainder valid for every
+`u_e` in the closed interval, so it encloses the residual at `e = e_c +- de` (`u_e = +-1`), both
+endpoints of `E_j`. F_H is certified for every `e` of the CLOSED block E (C11R's statement), so
+Lemma 3 holds at the endpoints too. Theorem 5 is pointwise in `e`: at every `e in E_j`, endpoints
+included, all its hypotheses are verified directly; at a shared endpoint the bounds of both
+neighbouring sub-blocks hold, and the cell bound (their maximum) holds there. Validation V25 checks
+the endpoint enclosures (`u_e = +-1`) against an independent evaluation at the exact endpoints. ∎
 
 ## 5. Candidates, residuals and error propagation (the certificate)
 

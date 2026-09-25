@@ -3,6 +3,10 @@
 
     python3 -I -S -B c11rd_compare.py --seal-commit SHA --execution-review-commit SHA
 
+U0 RUN ONCE. No comparison artifact on disk AND none ever in reachable history (any ref, any reflog
+   entry, full history: committed-then-deleted, reverted, or introduced on a merged or unmerged side
+   branch) -- c11rd_model.history_commits, which ignores replace refs, does not trust a commit-graph
+   and REFUSES a shallow repository, a grafts file or any git error.
 U1 SEAL. evidence/runs/C11RD_RUNS.json at HEAD is byte-identical to the file at the seal commit; the
    seal commit descends from the runs artifact's freeze commit; the review commit descends from the
    seal commit and its tree holds review/C11RD_EXECUTION_REVIEW.md whose verdict line is exactly
@@ -20,7 +24,9 @@ U5 NUMBER. Only now are the originals loaded -- from C11R's quarantine, blob-bou
    table and required to be 2).
 U6 An independent value EXACTLY equal to the original is INVALID (copied, not certified).
 U7 POST-HOC LEAK CHECK. No file of the C11RD namespace at the freeze commit contains the original D1
-   or D2 decimal string truncated to 4 or more significant digits.
+   or D2 rendered with 4 or more significant digits: decimal tokens, tokens with a bare leading point
+   and scientific notation are normalised to plain decimals first (exact rational strings are not
+   scanned: see the freeze's N-9 disposition).
 U8 N9 REASSEMBLY. The C_T, tau, Abar and D_lo classes are READ from C11R's accepted comparison
    (blob-bound, never recomputed) and combined with D1, D2 by C11R's precedence:
    INDEPENDENCE_VIOLATION > SCIENTIFIC_DISAGREEMENT > EXECUTION_INVALID > N9_CLOSED >
@@ -83,7 +89,7 @@ import c11rd_model as MD  # noqa: E402
 
 NS = HERE.parent
 RUNS_REL = "evidence/runs/C11RD_RUNS.json"
-FREEZE_REL = "protocol/C11RD_FREEZE.json"
+FREEZE_REL = "protocol/C11RD_FREEZE_R1.json"
 REVIEW_REL = "review/C11RD_EXECUTION_REVIEW.md"
 OUT_REL = "evidence/comparison/C11RD_COMPARISON.json"
 QUARANTINE_REL = f"{MD.C11R_NS}/evidence/quarantine/C11R_ORIGINAL_MAGNITUDES.json"
@@ -251,7 +257,26 @@ def recompute(runs: dict, premise: dict, kappa: dict, block: tuple) -> list:
     return p
 
 
-NUMERIC_TOKEN = re.compile(r"(?<![0-9.])[0-9]+[.][0-9]+")
+NUMERIC_TOKEN = re.compile(r"(?<![0-9.])([0-9]*[.][0-9]+)(?:[eE]([+-]?[0-9]+))?")
+
+
+def normalized_numeric_tokens(text: str) -> list:
+    """Every decimal token of `text` as a plain decimal string: '.25' -> '0.25', '4.5e-01' -> '0.45'."""
+    from decimal import Decimal
+    out = []
+    for mant, exp in NUMERIC_TOKEN.findall(text):
+        if mant.startswith("."):
+            mant = "0" + mant
+        if exp:
+            try:
+                d = Decimal(mant).scaleb(int(exp))
+            except (ArithmeticError, ValueError):
+                continue
+            mant = format(d, "f")
+            if "." not in mant:
+                continue
+        out.append(mant)
+    return out
 
 
 def value_patterns(s: str) -> set:
@@ -277,7 +302,7 @@ def leak_hits(texts: dict, originals: dict) -> dict:
     pats = {k: value_patterns(v) for k, v in originals.items()}
     hits = {}
     for name, txt in texts.items():
-        for tok in NUMERIC_TOKEN.findall(txt):
+        for tok in normalized_numeric_tokens(txt):
             pre = token_prefixes(tok)
             for k, ps in pats.items():
                 if pre & ps and k not in hits.get(name, []):
@@ -331,14 +356,32 @@ def verify_seal(seal: str, review: str) -> dict:
     return {"runs": runs, "freeze": fz, "freeze_commit": fc}
 
 
+def run_once_problems(repo=None, ns=None, ns_rel: str | None = None) -> list:
+    """U0: the comparison may run only if its artifact is absent from disk AND from every reachable
+    history (fail-closed on an incomplete or unreadable history)."""
+    ns = pathlib.Path(ns or NS)
+    rel = f"{ns_rel or MD.NS_REL}/{OUT_REL}"
+    p = []
+    if os.path.lexists(ns / OUT_REL):
+        p.append("a comparison artifact exists on disk")
+    try:
+        hist = MD.history_commits([rel], repo=repo)
+    except MD.ModelError as exc:
+        return p + [f"history is ambiguous: {exc}"]
+    if hist:
+        p.append(f"a comparison artifact was in reachable history ({len(hist)} commits, e.g. {hist[0][:12]})")
+    return p
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--seal-commit", required=True)
     ap.add_argument("--execution-review-commit", required=True)
     a = ap.parse_args(argv)
     out_path = NS / OUT_REL
-    if os.path.lexists(out_path):
-        print("REFUSE: a comparison artifact already exists")
+    once = run_once_problems()
+    if once:
+        print(f"REFUSE U0: the comparison has already run or cannot be shown not to have: {once}")
         return 3
     try:
         s = verify_seal(a.seal_commit, a.execution_review_commit)

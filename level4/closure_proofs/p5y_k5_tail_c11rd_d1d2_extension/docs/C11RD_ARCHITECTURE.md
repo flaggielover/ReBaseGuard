@@ -54,29 +54,42 @@ load-bearing graph (`taboo_certify`, `resolvent_certificate`, `opnorms`, `ra_cer
 
 | phase | artifact | gate |
 |---|---|---|
-| freeze (this turn) | `protocol/C11RD_FREEZE.json` + `.md`, committed | freeze commit recorded |
-| pre-execution review (this turn) | `review/C11RD_PRE_EXECUTION_REVIEW.md` | `READY_TO_QUALIFY` |
+| freeze (historical) | `protocol/C11RD_FREEZE.json` + `.md` @ `71495747` | reviewed NOT_READY (B-1), preserved `663f8fe7` |
+| successor freeze (C11RD-R1) | `protocol/C11RD_FREEZE_R1.json` + `.md`, committed | freeze commit recorded |
+| pre-execution review (R1) | `review/C11RD_R1_PRE_EXECUTION_REVIEW.md` | `READY_TO_QUALIFY` |
 | qualification (later, on instruction) | qualification record | `QUALIFICATION_ACCEPTED` |
-| authorization (later) | `config/C11RD_GRANT.json` | `AUTHORIZATION_ACCEPTED` |
+| authorization (later) | `config/C11RD_GRANT.json` (fixed path) | `review/C11RD_AUTHORIZATION_REVIEW.md`: `AUTHORIZATION_ACCEPTED` |
 | execution (once) | `evidence/runs/C11RD_RUNS.json` + lock | seal commit |
 | execution review | `review/C11RD_EXECUTION_REVIEW.md` | `EXECUTION_ACCEPTED` |
 | comparison | `evidence/comparison/C11RD_COMPARISON.json` | classes for D1, D2 |
 | N9 reassembly / adjudication | adjudication record | `N9_CLOSED` or `N9_REMAINS_OPEN` |
 
-Runner guards (`--mode real`): R0 a PRE-IMPORT BARRIER (the first statements of the runner and the
-comparator, using only the built-in modules `sys` and `posix`): the interpreter must be
-`python3 -I -S -B` without a pycache prefix, the code directory must hold exactly the eight frozen
-files (no `__pycache__`, no `.pyc`, nothing else) and C7's code directory no `__pycache__`, no `.pyc`
-and nothing named like a standard-library module — so no stale or forged bytecode and no shadowing
-module can run; after the imports every module loaded from either directory must be a frozen source
-with no cache (checked again before the lock and before the artifact is written); R1 frozen code hashes
-(the eight C11RD files and C7's `c7_gaussian.py`); R2 grant (ALLOW, binds freeze commit, code
-hashes, cell-306 block, `max_executions = 1`, host/runtime; freeze commit an ancestor of HEAD; freeze file
-byte-identical to the freeze commit's; not a shallow repository); R3 clean namespace (untracked and
-ignored files included); R4 no lock and no runs artifact on disk, and neither was EVER committed on any
-ref or reflog entry (full history), then the lock is created EXCLUSIVELY and never removed; R5 the F_H premise verifies; R6 the statement table's
-block equals the frozen target. Every git call runs with `--no-replace-objects` and
-`core.commitGraph=false`, so replace refs or a forged commit-graph cannot hide history.
+Runner guards (`--mode real --authorization-review-commit SHA`; the full text is the freeze's
+`runner_guards`):
+* R0 PRE-IMPORT BARRIER (first statements of runner and comparator, built-in `sys`/`posix` only):
+  `python3 -I -S -B` without a pycache prefix; the code directory holds exactly the eight frozen files;
+  C7's code directory holds no `__pycache__`, `.pyc` or standard-library-named entry. After the imports
+  (and again before the lock and before the artifact) every module from either directory must be a
+  frozen source without a cache.
+* R1 code hashes: the eight C11RD files and C7's `c7_gaussian.py`.
+* R2 grant `config/C11RD_GRANT.json` (fixed path): ALLOW for C11RD, target {cell 306, the frozen
+  block, [D1, D2]}, one execution, the frozen code and input hashes, THIS host (hostname, hardware
+  UUID, platform, Python), THIS canonical worktree (realpath; git common dir — a symlink alias resolves,
+  another checkout is refused), the freeze commit (ancestor of HEAD, freeze file byte-identical there,
+  sha256 bound), the qualification commit + artifact blob (unchanged at HEAD) + a review with exactly
+  one QUALIFICATION_ACCEPTED line; the authorization review commit with exactly one
+  AUTHORIZATION_ACCEPTED line and the byte-identical grant; lineage freeze <= qualification <= its
+  review <= authorization review <= HEAD; not a shallow repository.
+* R3 clean namespace (untracked and ignored files included).
+* R4 no lock and no runs artifact on disk and NEVER in reachable history (`c11rd_model.history_commits`,
+  fail-closed), then the exclusive, permanent lock.
+* R5 the F_H premise verifies. R6 the statement table's block equals the frozen target AND
+  `c11rd_certify.verify_cover` proves the frozen cover complete for the upper-closed band convention
+  (theory Proposition 1). R7 the live process tree's memory can be accounted.
+* Memory is monitored every 30 s (and at pool start) over the parent and ALL live descendants from
+  one process-table snapshot, so replacement or late workers are counted; if the table cannot be read
+  the run ends NOT_CERTIFIED (RESOURCE_ACCOUNTING_FAILED).
+* Every git call runs with `--no-replace-objects` and `core.commitGraph=false`.
 
 One-execution rule. The lock is taken before any science, after R0–R6 pass: from then on the
 execution is consumed, whatever happens next. The log prints progress counters and timings only
@@ -87,9 +100,11 @@ authorization that addresses the fault — and is permitted only if no magnitude
 
 ## 5. Where originals may appear
 
-The comparator first checks its own code, the other C11RD files and C7's `c7_gaussian.py`
-against the freeze (U2). Originals appear only in `c11rd_compare.py` step U5, from C11R's quarantine (blob `219e0122…`), after the seal, the
+The comparator first refuses if a comparison artifact exists on disk or was ever in reachable history
+(U0, the same fail-closed history reader as R4), and checks its own code, the other C11RD files and
+C7's `c7_gaussian.py` against the freeze (U2). Originals appear only in `c11rd_compare.py` step U5, from C11R's quarantine (blob `219e0122…`), after the seal, the
 execution review, the exact recomputation (U3) and the statement comparison (U4). No certifier
 module, document, protocol file or evidence file of this namespace contains an original value: V18
-scans every file for all renderings (4–9 significant digits) of both disclosed values by hash, and
-the comparator repeats the scan at the freeze commit (U7).
+scans every file for all renderings (4–9 significant digits; decimal, bare-point and scientific
+notation normalised) of both disclosed values by hash, and the comparator repeats the scan at the
+freeze commit (U7).

@@ -1,6 +1,6 @@
 """C11RD -- the D1/D2 certifier: cover, adaptive refinement, error propagation, bounds.
 
-THEOREM USED (theory/D1_D2_DERIVATION.md, Theorem 4). Let E_j be a drift interval on which, for every
+THEOREM USED (theory/D1_D2_DERIVATION.md, Theorem 5). Let E_j be a drift interval on which, for every
 e, Ghat_e 1 <= w on R with sup_R w <= C_T and w(a) <= tau (the ACCEPTED C11R F_H premise), and let
 D0(e), D1(e), D2(e) be the e-Taylor candidates with residuals |r_k(x, e)| <= lam_k on R x E_j. Then
 for every e in E_j, with kappa_1 = 2 phi(0), kappa_2 = 4 phi(1),
@@ -17,6 +17,7 @@ met (the refinement rule only affects tightness, never soundness).
 """
 from __future__ import annotations
 
+import math
 import time
 from fractions import Fraction as F
 
@@ -24,6 +25,92 @@ import c11rd_float as FL
 import c11rd_kernel as KR
 import c11rd_model as MD
 import c11rd_tm as T
+
+
+# ---------------------------------------------------------------------------------------------
+# band ownership: the UPPER-CLOSED convention (theory section 1, Proposition 1)
+# ---------------------------------------------------------------------------------------------
+def owner_band(p: F, m: F) -> int:
+    """The band whose polynomial IS the candidate's value at the state (p, m) of R:
+        band 0 for s = p + m in [0, 1];  band k for s in (k, k + 1], k = 1, 2, 3 (axis points
+        included);  band 4 for the axis points with s in (4, 5].
+    Interior points have s <= 4 on R, so band 4 is reached only on the axes. Refuses points
+    outside R."""
+    p, m = F(p), F(m)
+    if not MD.in_R(p, m):
+        raise ValueError(f"({p}, {m}) is not in R")
+    s = p + m
+    if s <= 1:
+        return 0
+    return math.ceil(s) - 1            # s in (k, k + 1]  ->  k
+
+
+def box_contains(bx: KR.Box, p: F, m: F) -> bool:
+    """Is the state (p, m) a point of the CLOSED box bx (edges included)?"""
+    p, m = F(p), F(m)
+    s = p + m
+    s0, s1 = F(bx.s[0]), F(bx.s[1])
+    if not s0 <= s <= s1:
+        return False
+    if bx.band == 4:
+        return m == 0 if bx.axis == "p" else p == 0
+    if s == 0:                          # the atom: every theta gives (0, 0)
+        return True
+    th = (p - m) / s
+    return F(bx.theta[0]) <= th <= F(bx.theta[1])
+
+
+def owning_boxes(boxes: list, p: F, m: F) -> list:
+    """The boxes of the cover whose band OWNS (p, m) and which contain it. On such a box the
+    certifier's residual formula is exactly the candidate's residual at (p, m) (Proposition 1)."""
+    k = owner_band(p, m)
+    return [bx for bx in boxes if bx.band == k and box_contains(bx, p, m)]
+
+
+def verify_cover(boxes: list) -> list:
+    """EXACT completeness of a cover for the upper-closed convention (no sampling): for each band
+    k = 0..3 the band-k boxes form a grid partition of the CLOSED strip {k <= s <= k + 1} x
+    [-1, 1] in (s, theta) -- s-rows partitioning [k, k + 1] and, in every row, theta-cells
+    partitioning [-1, 1]; for each axis the band-4 boxes partition [4, 5]. Every state owned by
+    band k lies in that closed strip, so it lies in some band-k box. Returns the problems found
+    (empty = complete)."""
+    problems = []
+
+    def partition(intervals, lo, hi):
+        iv = sorted((F(a), F(b)) for a, b in intervals)
+        if not iv or iv[0][0] != lo or iv[-1][1] != hi:
+            return False
+        return all(iv[i][1] == iv[i + 1][0] and iv[i][0] < iv[i][1] for i in range(len(iv) - 1)) \
+            and iv[-1][0] < iv[-1][1]
+    for k in range(4):
+        rows = {}
+        for bx in boxes:
+            if bx.band == k:
+                rows.setdefault((F(bx.s[0]), F(bx.s[1])), []).append(bx.theta)
+        if not partition(list(rows), F(k), F(k + 1)):
+            problems.append(f"band {k}: the s-rows do not partition [{k}, {k + 1}]")
+        for row, thetas in rows.items():
+            if not partition(thetas, F(-1), F(1)):
+                problems.append(f"band {k}, s-row {row}: the theta-cells do not partition [-1, 1]")
+    for ax in ("p", "m"):
+        segs = [bx.s for bx in boxes if bx.band == 4 and bx.axis == ax]
+        if not partition(segs, F(4), F(5)):
+            problems.append(f"band 4, axis {ax}: the segments do not partition [4, 5]")
+    if any(bx.band not in (0, 1, 2, 3, 4) for bx in boxes):
+        problems.append("a box has an unknown band")
+    return problems
+
+
+def verify_ownership(boxes: list, points: list, owner=owner_band) -> list:
+    """For every state in `points`, a box of the band `owner` assigns to it must contain it. With
+    the frozen owner (upper-closed) this holds for every point of R (Proposition 1); a reversed
+    convention fails on the interior line s = 4, where no band-4 box exists."""
+    bad = []
+    for p, m in points:
+        k = owner(p, m)
+        if not any(bx.band == k and box_contains(bx, p, m) for bx in boxes):
+            bad.append(f"no band-{k} box contains ({p}, {m})")
+    return bad
 
 
 def initial_boxes(e_lo: F, e_hi: F, splits: dict, order: int) -> list:

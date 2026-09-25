@@ -13,8 +13,11 @@ one).
 REPRESENTATION. Band k = 0..3 (k <= p + m <= k + 1, p, m >= 0): a bivariate polynomial of total degree
 <= n in X = (p - c_k)/r_k, Y = (m - c_k)/r_k with c_k = r_k = (k + 1)/2, in the tensor Chebyshev basis
 T_a(X) T_b(Y), a + b <= n. Band 4 (4 <= s <= 5; on the axes only): one univariate polynomial per axis
-in x = 2 (s - 9/2), Chebyshev T_a(x), a <= n4. A value at an axis point (0, m') or (p', 0) with
-s' in [j, j + 1) is band j's (half-open bands; band 4 closed at 5).
+in x = 2 (s - 9/2), Chebyshev T_a(x), a <= n4. This module only FITS each band's polynomial on its
+closed strip; it never decides which band owns a point. The certified candidate's ownership is the
+UPPER-CLOSED convention of theory section 1 (band 0 = [0, 1], band k = (k, k + 1], band 4 = axis
+points with s in (4, 5]), implemented by c11rd_certify.owner_band; a point on a band line is
+fitted by both adjacent bands here, which affects only the tightness of the proposal.
 
 THE KERNEL (docs/D1_D2_STATEMENT_AUDIT.md section 2; theory section 1). For x = (p, m) in band k:
   left arm   z in [m - C, z_L], image (0, m - z - K)       (z_L = m - K if s <= 1 else K - p)
@@ -107,12 +110,6 @@ class Basis:
                 idx += 1
         self.size = idx
 
-    @staticmethod
-    def band_of(s: float) -> int:
-        if s < 1.0:
-            return 0
-        return min(4, int(math.floor(s)))
-
     def eval_band(self, k: int, p: float, m: float) -> dict:
         if k == 4:
             ax = "p" if m == 0.0 else "m"
@@ -204,8 +201,9 @@ def cheb_lobatto(n: int, a: float, b: float) -> list:
 
 def nodes(ns: int, nt: int, n4: int) -> list:
     """[(p, m, band)]: tensor Chebyshev-Lobatto nodes in (s, theta) per band, s = p + m,
-    theta = (p - m)/s; a node on a band's upper edge s = k + 1 is fitted by band k (it is an image
-    point of band k's polynomial) AND by band k + 1 (whose value it is by convention)."""
+    theta = (p - m)/s. Each band's grid spans its CLOSED strip, so a node on a band line s = k + 1 is
+    fitted by band k (which owns it under the upper-closed convention, theory section 1) AND by band
+    k + 1 (whose closed box also contains it). Fitting only; ownership is c11rd_certify.owner_band."""
     pts = []
     for k in range(4):
         for s in cheb_lobatto(ns, float(k), float(k + 1)):

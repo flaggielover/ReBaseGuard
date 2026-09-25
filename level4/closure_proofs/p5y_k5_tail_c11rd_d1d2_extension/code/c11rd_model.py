@@ -68,6 +68,36 @@ def git_blob(path: pathlib.Path) -> str:
                           ).stdout.strip()
 
 
+GIT_HARD = ("git", "--no-replace-objects", "-c", "core.commitGraph=false")
+GIT_ENV = {"PATH": "/usr/bin:/bin", "GIT_NO_REPLACE_OBJECTS": "1"}
+
+
+def history_commits(rels: list, repo=None) -> list:
+    """Every commit reachable from ANY ref or reflog entry (all worktrees' HEADs included) that ever
+    touched one of the paths, over the FULL history (--full-history: a path added on a side branch
+    that was merged, or added and later deleted or reverted, is still found). Replace refs are
+    ignored and a commit-graph file is not trusted. FAILS CLOSED (ModelError) when the history is
+    not complete or not readable: a shallow repository, a grafts file, or any git error."""
+    repo = str(repo or REPO)
+
+    def run(*args):
+        return subprocess.run([*GIT_HARD, "-C", repo, *args], capture_output=True, text=True, env=GIT_ENV)
+    sh = run("rev-parse", "--is-shallow-repository")
+    if sh.returncode != 0 or sh.stdout.strip() != "false":
+        raise ModelError(f"history not complete: shallow check {sh.stdout.strip() or sh.stderr.strip()!r}")
+    cd = run("rev-parse", "--path-format=absolute", "--git-common-dir")
+    if cd.returncode != 0:
+        raise ModelError(f"history not readable: {cd.stderr.strip()}")
+    common = pathlib.Path(cd.stdout.strip())
+    for leaf in ("info/grafts", "shallow"):
+        if (common / leaf).exists():
+            raise ModelError(f"history not trustworthy: {leaf} present")
+    r = run("rev-list", "--all", "--reflog", "--full-history", "--", *rels)
+    if r.returncode != 0:
+        raise ModelError(f"history not readable: {r.stderr.strip()}")
+    return r.stdout.split()
+
+
 def _load_bound(rel: str, blob: str) -> dict:
     p = REPO / rel
     got = git_blob(p)
