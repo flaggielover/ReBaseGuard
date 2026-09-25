@@ -1,0 +1,41 @@
+{
+ "schema": "c11rd.calibration.v1",
+ "NON_TARGET_ONLY": "Every run below is at a drift block disjoint from cells 306-309: C11R's frozen non-target block NT = [5/2, 3233337/1250000] and the synthetic low block LOW = [1, 1 + 108337/1250000] (below every open cell; width = the cell width). No run touched cell 306's block [680769/400000, 17885921/10000000]; no original D1/D2 value was used. The C_T = tau = 3429/500 in the scripts is a SIZING constant (the F_H premise does not hold on these blocks); only the residual sizes lam_k are calibration data.",
+ "sources": {
+  "scripts": ["scripts/calib1.py", "scripts/calib2.py", "scripts/calib3.py", "scripts/t_order.py"],
+  "logs": ["logs/calib1_d1.log", "logs/calib2_NT.log", "logs/calib2_LOW.log", "logs/calib3_LOW4.log", "logs/t_order_NT.log"],
+  "note": "calib1 ran on an earlier pre-freeze revision in which splits.theta was one integer for every band (the per-band list replaced it after this run); the other scripts run on the frozen code."
+ },
+ "runs": [
+  {"id": "C1", "script": "calib1.py 1", "block": "NT (full width)", "tm_order": 4, "splits": {"s": 4, "theta": 4, "s4": 4},
+   "tolerances": ["1/100000", "1/10000", "1/1000"], "max_depth": 1,
+   "lam": [7.92e-04, 2.68e-03, 9.13e-03], "boxes_evaluated": 328, "leaves": 264, "leaves_over_tolerance": 232, "seconds": 738,
+   "finding": "order 4 on theta-uniform strips is too loose; the worst boxes are in band 3, where a theta-width spans the largest physical extent"},
+  {"id": "C2", "script": "t_order.py", "block": "NT, one band-3 box family", "finding": "order study on the C1 worst box: N=4/5/6 give r2 = 9.13e-03 / 1.41e-03 / 2.15e-04 on the depth-1 box and 2.13e-03 / 2.64e-04 / 3.58e-05 on a uniform 1/4 x 1/8 box; order 6 with physically uniform boxes (theta splits growing with the band) chosen; per-box cost 2.5-2.8 s here"},
+  {"id": "C3", "script": "calib2.py NT 8", "block": "NT (full width, one sub-block)", "tm_order": 6, "splits": {"s": 4, "theta": [4, 8, 12, 16], "s4": 4},
+   "tolerances": ["1/100000", "1/20000", "1/2000"], "max_depth": 2, "float": {"n": 8, "n4": 8, "ns": 11, "nt": 11, "q": 20, "bits": 52},
+   "lam": [9.14e-06, 3.57e-05, 2.78e-04], "boxes_evaluated": 172, "leaves": 171, "leaves_over_tolerance": 0, "seconds": 1038,
+   "float_discrete_residual": [1.09e-09, 8.74e-09, 3.96e-08, 3.02e-07], "atom_float_values_D0_to_D3": [0.980, 0.0481, -0.0997, 0.164],
+   "finding": "the frozen configuration meets every tolerance at NT with one sub-block"},
+  {"id": "C4", "script": "calib2.py LOW 8", "block": "LOW (full width, one sub-block)", "same_configuration_as": "C3",
+   "status": "STOPPED (superseded by C5) after 550 box evaluations, 3022 s; partial maxima are LOWER bounds of the final lam",
+   "lam_partial": [1.55e-06, 8.78e-05, 5.81e-03],
+   "finding": "lam2 does not decrease under (s, theta) refinement: it is the e-truncation of the e-Taylor candidate D2(e) = D2 + h D3 (error ~ h^2/2 d''''), which only a narrower drift sub-block reduces (theory section 8)"},
+  {"id": "C5", "script": "calib3.py LOW4 1 1 4 8 4", "block": "LOW, first quarter [1, 5108337/5000000] (the sub-block width of a 4-way tiling)", "same_configuration_as": "C3", "workers": 4,
+   "lam": [9.24e-06, 3.64e-05, 4.97e-04], "boxes_evaluated": 200, "leaves": 192, "leaves_over_tolerance": 0, "seconds": 511, "proposal_seconds": 1.9,
+   "float_discrete_residual": [6.15e-07, 4.87e-06, 1.01e-05, 1.33e-04], "atom_float_values_D0_to_D3": [0.648, 0.536, -0.839, 2.02],
+   "finding": "a quarter-width sub-block cuts lam2 by 11.7x (h^2 scaling predicts 16x) and every tolerance is met at LOW"}
+ ],
+ "decisions": {
+  "sub_blocks": {"value": 4, "why": "C4/C5: at LOW the e-truncation needs a quarter-width sub-block to meet the r2 tolerance; NT meets it with one. The target lies between LOW and NT."},
+  "tm_order": {"value": 6, "why": "C1/C2"},
+  "splits": {"value": {"s": 4, "theta": [4, 8, 12, 16], "s4": 4}, "why": "C2: physically uniform boxes; 168 initial boxes"},
+  "tolerances": {"value": ["1/100000", "1/20000", "1/2000"], "why": "set before C3; met by every leaf in C3 and C5 (tightness only, never soundness)"},
+  "max_depth": {"value": 2, "why": "bounds the worst-case cost (cost model); C3/C5 needed at most 1 level"},
+  "polynomial_degree": {"value": {"n": 8, "n4": 8}, "why": "discrete residuals 1e-9 (NT) to 1e-4 (LOW, D3) with every tolerance met; not the limiting error"},
+  "collocation": {"value": {"ns": 11, "nt": 11, "q": 20, "bits": 52}, "why": "fixed before calibration; untrusted, tightness only"},
+  "moment_terms": {"value": 34, "why": "Lemma 6 remainder at |v| <= 1 negligible against the tolerances (validation V01)"},
+  "sizing_err_at_calibration_blocks": {"NT_one_sub_block": {"err_D1": 5.9e-04, "err_D2": 8.8e-03}, "LOW_quarter": {"err_D1": 6.0e-04, "err_D2": 1.04e-02}}
+ },
+ "not_used": ["cell 306's drift block", "any original D1/D2 value", "any C11R or original D1/D2 artifact", "cells 307-309"]
+}

@@ -1,0 +1,415 @@
+{
+ "schema": "c11rd.freeze.v1",
+ "campaign": "C11RD -- Independent Derivative-System Extension for N9 D1/D2",
+ "entry_head": "7375b9cdb1d770ba836335164f205e26b445035e",
+ "branch": "p5y-k5-tail-c11rd-d1d2-extension",
+ "FROZEN_BEFORE_ANY_TARGET_MAGNITUDE": true,
+ "A_D1_statement": {
+  "mathematics": "for every e in [680769/400000, 17885921/10000000]: |d'_e(a)| <= D1, where d_e = Ghat_e h_1, Ghat_e = (I - Khat_e)^(-1) on bounded functions on R, h_1(p, m) = 1 - Phi(C - p + e) + Phi(m - C + e), Khat_e the one-step kernel with density phi(z + e) on the alarm-free window [m - C, C - p] minus the atom window [m - K, K - p], K = 1/2, C = 11/2, a = (0, 0), ' = d/de",
+  "record": {
+   "constant": "D1",
+   "quantity": "|d'(atom)|, the first drift derivative of d",
+   "kernel": "Khat_e",
+   "convention": "atom_removed",
+   "direction": "UPPER_BOUND",
+   "state_set": "R = {(p, m) in [0,5]^2 : p + m <= 4 or p = 0 or m = 0}; atom a = (0, 0); certified over a box cover that is a superset of R",
+   "proposition": "for every e in the block: |D_e'| <= value",
+   "drift_domain": [
+    "680769/400000",
+    "17885921/10000000"
+   ],
+   "aggregation": {
+    "method": "max_over_sub_blocks",
+    "sub_blocks": 4
+   },
+   "dependencies": [
+    "C_T_independent",
+    "tau_independent"
+   ],
+   "route": "independent_derivative_propagation"
+  },
+  "source_of_semantics": "C11R statement table (blob 58b4066f5cce7efd139154c1b50e8661b4b5861b) and C11R's frozen schema c11r_schema.py (blob 0526426cf15647bcc44bc5ab901df0ba408ddef6); equality is validation V19"
+ },
+ "B_D2_statement": {
+  "mathematics": "for every e in [680769/400000, 17885921/10000000]: |d''_e(a)| <= D2 (same objects as A)",
+  "record": {
+   "constant": "D2",
+   "quantity": "|d''(atom)|, the second drift derivative of d",
+   "kernel": "Khat_e",
+   "convention": "atom_removed",
+   "direction": "UPPER_BOUND",
+   "state_set": "R = {(p, m) in [0,5]^2 : p + m <= 4 or p = 0 or m = 0}; atom a = (0, 0); certified over a box cover that is a superset of R",
+   "proposition": "for every e in the block: |D_e''| <= value",
+   "drift_domain": [
+    "680769/400000",
+    "17885921/10000000"
+   ],
+   "aggregation": {
+    "method": "max_over_sub_blocks",
+    "sub_blocks": 4
+   },
+   "dependencies": [
+    "C_T_independent",
+    "tau_independent"
+   ],
+   "route": "independent_derivative_propagation"
+  }
+ },
+ "C_drift_block": {
+  "cell": 306,
+  "e_lo": "680769/400000",
+  "e_hi": "17885921/10000000",
+  "decimal": [
+   "1.7019225",
+   "1.7885921"
+  ],
+  "read_from": "C11R statement table drift_domain (blob-bound); runner guard R6"
+ },
+ "D_sub_block_partition": {
+  "count": 4,
+  "rule": "equal closed sub-blocks, exact rationals, tiling the block exactly",
+  "sub_blocks": [
+   [
+    "680769/400000",
+    "17235899/10000000"
+   ],
+   [
+    "17235899/10000000",
+    "17452573/10000000"
+   ],
+   [
+    "17452573/10000000",
+    "17669247/10000000"
+   ],
+   [
+    "17669247/10000000",
+    "17885921/10000000"
+   ]
+  ],
+  "per_sub_block": "own float proposal at the exact centre e_c; e-Taylor candidates about e_c; boxes never split in e"
+ },
+ "E_state_domain_partition": {
+  "state_set": "R = bands 0-3 (closed strips k <= p + m <= k + 1, p, m >= 0) and band 4 (the axis segments p + m in [4, 5] with p = 0 or m = 0)",
+  "initial_boxes": {
+   "s": 4,
+   "theta": [
+    4,
+    8,
+    12,
+    16
+   ],
+   "s4": 4,
+   "count": 168,
+   "coordinates": "p = s (1 + theta)/2, m = s (1 - theta)/2; band 4 by s on each axis"
+  },
+  "refinement": {
+   "rule": "bisect (s, theta) (band 4: s) while some |r_k| bound exceeds its tolerance and depth < max_depth; lam_k = max over ALL leaves",
+   "tolerances": [
+    "1/100000",
+    "1/20000",
+    "1/2000"
+   ],
+   "max_depth": 2
+  },
+  "kink_rule": "every box lies in ONE closed band (Box refuses otherwise); piece structure fixed per band (theory Lemma 1)"
+ },
+ "F_derivative_recurrence": {
+  "chain": [
+   "d = Khat d + h_1",
+   "d' = Khat d' + Khat' d + h_1'",
+   "d'' = Khat d'' + 2 Khat' d' + Khat'' d + h_1''"
+  ],
+  "derivative_kernels": "Khat^(i) f(x) = int_window-minus-atom f(x'(z)) (-1)^i He_i(z + e) phi(z + e) dz",
+  "residuals": [
+   "r0 = D0(e) - Khat D0(e) - h_1",
+   "r1 = D1(e) - Khat D1(e) - Khat' D0(e) - h_1'",
+   "r2 = D2(e) - Khat D2(e) - 2 Khat' D1(e) - Khat'' D0(e) - h_1''"
+  ],
+  "candidates": "D0(e) = D0 + h D1 + h^2/2 D2 + h^3/6 D3, D1(e) = D1 + h D2 + h^2/2 D3, D2(e) = D2 + h D3, h = e - e_c",
+  "propagation": {
+   "n0": "C_T lam0",
+   "n1": "C_T (lam1 + kappa_1 n0)",
+   "D1_j": "|D1(a)| + |D2(a)| de + |D3(a)| de^2/2 + tau (lam1 + kappa_1 n0)",
+   "D2_j": "|D2(a)| + |D3(a)| de + tau (lam2 + 2 kappa_1 n1 + kappa_2 n0)"
+  },
+  "kappa": {
+   "kappa_1": "2 phi(0) (upper end of C7's enclosure)",
+   "kappa_2": "4 phi(1) (upper end of C7's enclosure)"
+  },
+  "premise": {
+   "certificate": "C11R F_H (ACCEPTED; sealed runs blob a53516031948cf44255d7980dc5c7af5ae8b2afd at seal 5ff4cc5b310b31bc7b61213598aade9a5188964e)",
+   "use": "Ghat_e 1 <= w = A - B m on R for every e in the block => ||Ghat_e|| <= A = C_T and (Ghat_e 1)(a) <= A = tau",
+   "C_T": "3429/500",
+   "tau": "3429/500",
+   "kind": "DEPENDENCY on an accepted C11R certificate, consumed as a frozen input; NOT an independent reproduction and NOT a recomputation"
+  },
+  "theory": "theory/D1_D2_DERIVATION.md (Lemmas 0-4, 6; Theorem 5; sections 7-8)"
+ },
+ "G_arithmetic_backend": {
+  "language": "CPython 3.14 standard library only",
+  "exact": "fractions.Fraction for every constant, candidate, box coordinate, atom bound, propagation, aggregate",
+  "taylor_models": {
+   "order": 6,
+   "variables": [
+    "u_s",
+    "u_theta",
+    "u_e"
+   ],
+   "scale": "2^-160 integers",
+   "moment_terms_J": 34
+  },
+  "gaussian_point_values": "C7 c7_gaussian (rational enclosures; sha256 bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815)",
+  "float_proposal_untrusted": {
+   "n": 8,
+   "n4": 8,
+   "ns": 11,
+   "nt": 11,
+   "q": 20,
+   "bits": 52
+  }
+ },
+ "H_rounding_policy": "Taylor-model coefficients rounded by floor with the error added to the remainder; products truncated at order 6 with the dropped terms and the cross remainder bounded outward; |r_k| bounds rounded UP to rationals; phi/Phi enclosures outward (C7); the float proposal is rounded to 52-bit dyadics and then used EXACTLY (its error is part of the rigorously enclosed residual)",
+ "I_certificate_schema": {
+  "artifact": "evidence/runs/C11RD_RUNS.json",
+  "schema": "c11rd.runs.v1",
+  "fields": [
+   "campaign",
+   "cell",
+   "mode",
+   "started_utc",
+   "finished_utc",
+   "head",
+   "freeze_commit",
+   "code_sha256",
+   "premise",
+   "kernel_norms",
+   "status",
+   "targets{D1,D2}{status,value,statement}",
+   "execution{status,D1,D2,sub_blocks[e_lo,e_hi,D1,D2,abs_D1e_atom_bound,abs_D2e_atom_bound,atom_candidate_values,lam,propagation,cover,float_proposal,candidates],seconds}",
+   "host"
+  ],
+  "values": "exact rationals as strings"
+ },
+ "J_aggregation_rule": "cell D1 = max over the 4 sub-blocks of D1_j; cell D2 = max of D2_j (upper bounds: max preserves 'for every e in the block'); within a sub-block lam_k = max over all leaves; atom bound = sup over h in [-de, de]. Never min, mean or a subset.",
+ "K_success_failure": {
+  "CERTIFIED": "all 4 sub-blocks complete within the caps with guards R0-R6 passed; the values are whatever the propagation yields (no size threshold)",
+  "NOT_CERTIFIED": "a resource cap ended the run; artifact written without values; both targets INSUFFICIENT at comparison",
+  "NO_RESULT": "the process died before writing its artifact; the execution is consumed (see O)"
+ },
+ "L_agreement_criterion": {
+  "rule": "C11R's factor-2 rule frozen before any result (statement table comparison_semantics_frozen_before_results), UNCHANGED: for an UPPER_BOUND, STRONGER if independent <= original; AGREES if original < independent <= 2 original; INSUFFICIENT if independent > 2 original",
+  "statement_first": "SAME STATEMENT BEFORE SAME NUMBER (C11R precedence): a statement that is not EQUIVALENT or STRONGER is INVALID and its number is not compared",
+  "classes": [
+   "STRONGER",
+   "AGREES",
+   "INSUFFICIENT",
+   "INVALID",
+   "DISAGREES"
+  ],
+  "opposite_direction": "C11R's DISAGREES class (an independent bound whose quantity the original bounds from the other side); not reachable here since both sides are UPPER_BOUND of the same quantity",
+  "copied": "an independent value exactly equal to the original is INVALID",
+  "n9": "N9_CLOSED iff all six constants (C_T, tau, Abar, D_lo from C11R's accepted comparison, read not recomputed; D1, D2 from C11RD) are AGREES or STRONGER; precedence INDEPENDENCE_VIOLATION > SCIENTIFIC_DISAGREEMENT > EXECUTION_INVALID > N9_CLOSED > AGREEMENT_INSUFFICIENT; otherwise N9_REMAINS_OPEN"
+ },
+ "M_resource_cap": {
+  "wall_seconds": 43200,
+  "workers": 5,
+  "why": "worst case 13,664 box evaluations ~ 7.6 h at 10 CPU-s each on 5 workers (docs/C11RD_COST_MODEL.md)"
+ },
+ "N_memory_cap": {
+  "rss_kb": 2097152,
+  "measured": "~30 MB per worker (C5)",
+  "check": "every 30 s over the parent and all workers"
+ },
+ "O_retry_policy": "none automatic. The lock is taken before any science and never removed. Cap reached: NOT_CERTIFIED artifact, no retry. Host fault before the artifact: a second execution only under a new, independently reviewed authorization, and only if no magnitude was ever written or printed (the log carries counters and timings only). After a valid execution: never.",
+ "P_execution_count": 1,
+ "Q_target": "cell 306 only",
+ "R_no_cells_307_309": true,
+ "S_no_adoption": true,
+ "T_no_r6": true,
+ "U_comparison_procedure": {
+  "module": "code/c11rd_compare.py",
+  "steps": [
+   "U1 seal and review lineage",
+   "U2 identity: the comparator's own code, the other C11RD files and C7 c7_gaussian.py equal the freeze; the run's code hashes equal the freeze's; status",
+   "U3 exact recomputation of every sub-block bound and of the max",
+   "U4 statement equivalence before any number",
+   "U5 originals loaded ONLY now, from C11R's quarantine blob 219e0122a7febf4347ce9205e5e5ed9f18b20ffb; factor-2 classification",
+   "U6 exact equality INVALID",
+   "U7 post-hoc leak check of the namespace at the freeze commit",
+   "U8 N9 reassembly with C11R's accepted classes (C11R comparison blob 5269c2aaa354385b714c669ec516ecc22f36c59d)"
+  ],
+  "runs_once": "the output is created exclusively; a refusal before U5 writes nothing"
+ },
+ "V_reviewer_procedure": {
+  "rule": "every review is by a FRESH read-only reviewer with no stake in the result; its output is read only after its completion notification and preserved verbatim in its own commit",
+  "reviews": {
+   "pre_execution (this turn)": [
+    "READY_TO_QUALIFY",
+    "NOT_READY"
+   ],
+   "qualification": [
+    "QUALIFICATION_ACCEPTED",
+    "QUALIFICATION_REJECTED"
+   ],
+   "authorization": [
+    "AUTHORIZATION_ACCEPTED",
+    "AUTHORIZATION_REJECTED"
+   ],
+   "execution": [
+    "EXECUTION_ACCEPTED",
+    "EXECUTION_REJECTED"
+   ],
+   "comparison": [
+    "COMPARISON_ACCEPTED",
+    "COMPARISON_REJECTED"
+   ]
+  },
+  "blockers": "a NOT_READY or REJECTED verdict is repaired prospectively; no D1/D2 target computation while any blocker is open"
+ },
+ "FORBIDDEN": [
+  "changing derivative architecture after seeing target values",
+  "changing partition after seeing target values",
+  "changing thresholds",
+  "changing safety factors",
+  "changing aggregation direction",
+  "substituting scalar-drift for block-uniform statements",
+  "reading original target values during execution logic",
+  "rerunning after a valid target execution",
+  "running the old C11R cell-306 runner in any form",
+  "recomputing or replacing C_T, tau, Abar or D_lo",
+  "executing cells 307-309; adoption; coverage-map r6; mutating r5 or cell 306 coverage; automatic K5 or P5Y closure"
+ ],
+ "frozen_parameters": {
+  "sub_blocks": 4,
+  "float": {
+   "n": 8,
+   "n4": 8,
+   "ns": 11,
+   "nt": 11,
+   "q": 20,
+   "bits": 52
+  },
+  "tm_order": 6,
+  "moment_terms": 34,
+  "splits": {
+   "s": 4,
+   "theta": [
+    4,
+    8,
+    12,
+    16
+   ],
+   "s4": 4
+  },
+  "tolerances": [
+   "1/100000",
+   "1/20000",
+   "1/2000"
+  ],
+  "max_depth": 2
+ },
+ "resource_caps": {
+  "workers": 5,
+  "wall_seconds": 43200,
+  "rss_kb": 2097152
+ },
+ "runner_guards": {
+  "R0": "pre-import barrier (python3 -I -S -B, no pycache prefix; code dir = exactly the 8 frozen files; C7 code dir without __pycache__, .pyc or stdlib-named entries) + loaded-module check (every module from either dir is a frozen source without cache), before the lock and before the artifact",
+  "R1": "frozen code sha256 of the 8 C11RD files and of C7 c7_gaussian.py; the frozen file set equals the barrier's",
+  "R2": "grant: ALLOW, C11RD, code hashes, cell-306 block, max_executions 1, host/runtime, freeze commit ancestor of HEAD with a byte-identical freeze file, repository not shallow",
+  "R3": "no uncommitted, untracked or ignored file in the namespace",
+  "R4": "no lock or runs artifact on disk and none ever committed (rev-list --all --reflog --full-history); exclusive permanent lock",
+  "R5": "C11R F_H premise verified (blob-bound)",
+  "R6": "statement-table block equals the frozen target",
+  "git": "every git call with --no-replace-objects and core.commitGraph=false"
+ },
+ "target": {
+  "cell": 306,
+  "drift_block": [
+   "680769/400000",
+   "17885921/10000000"
+  ]
+ },
+ "nontarget_rehearsal_block": [
+  "5/2",
+  "3233337/1250000"
+ ],
+ "code_sha256": {
+  "code/c11rd_certify.py": "95abd98fa70220bdb7e43576aea730416bd7b66b94209f7990da78671b147b23",
+  "code/c11rd_compare.py": "86533476ffe053da9303cf33459b16dcf9c0c3b4585247f81c96f3b89121a047",
+  "code/c11rd_float.py": "a7c56ad613c8ab1c9256f7e397e77c64f8f4f9458d6f673194f074f43e4b817a",
+  "code/c11rd_kernel.py": "bca5d3fe07ab0498f1a654477406e00a4d3c70e0597d5e78fcc967caa2548f12",
+  "code/c11rd_model.py": "0b8ce81f9a64eb0988dc2e945f536a0e724f8109c235065266adcaad39c7a08c",
+  "code/c11rd_runs.py": "aa56dddda3e823911c1cbcda2bb38338be9f29ae9e5703c1c327c53bccaa7017",
+  "code/c11rd_tm.py": "a7254b250956cf6509c005477ca14f8af3a5d019d42e21fd83b629ccbae8246f",
+  "code/c11rd_validate.py": "7bb3671a1c885dd05d1ede34fa7b03a9d6b7aad16bdbd2ebbbef8bd48e5f9071"
+ },
+ "input_bindings": {
+  "c11r_statement_table": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json",
+   "blob": "58b4066f5cce7efd139154c1b50e8661b4b5861b"
+  },
+  "c11r_sealed_runs_F_H": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/runs/C11R_RUNS.json",
+   "blob": "a53516031948cf44255d7980dc5c7af5ae8b2afd",
+   "seal_commit": "5ff4cc5b310b31bc7b61213598aade9a5188964e"
+  },
+  "c11r_schema": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py",
+   "blob": "0526426cf15647bcc44bc5ab901df0ba408ddef6"
+  },
+  "c11r_equiv_used_only_by_validation_V20": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_equiv.py",
+   "blob": "6531eb8d0b70b6dd3d30e755c13295d3ebcdf314"
+  },
+  "c7_gaussian": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py",
+   "sha256": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815",
+   "blob": "be492720abb628184962b54440c99a971c8d9f0a"
+  },
+  "c11_certifier_used_only_by_validation_V03": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py",
+   "blob": "36e60c96777bfab1d7e96527bbb7347c818e3707"
+  },
+  "comparison_only_c11r_quarantine": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/quarantine/C11R_ORIGINAL_MAGNITUDES.json",
+   "blob": "219e0122a7febf4347ce9205e5e5ed9f18b20ffb",
+   "opened_before_comparison": false
+  },
+  "comparison_only_c11r_comparison": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/comparison/C11R_COMPARISON.json",
+   "blob": "5269c2aaa354385b714c669ec516ecc22f36c59d",
+   "opened_before_comparison": false
+  }
+ },
+ "document_sha256": {
+  "docs/D1_D2_STATEMENT_AUDIT.md": "3ff049f89e25fb1282b7dd0152ac3c1f005ff4d9524dd06a55d5de0f1d3e54b7",
+  "theory/D1_D2_DERIVATION.md": "34396b8ab89b57f490023fa0378167185181559d7fb276b4175cab4f7974e84c",
+  "docs/C11RD_ARCHITECTURE.md": "4bb92e40bfa8c564bec48b8a7301db90c278af91e89d75e6af686bea16ce6362",
+  "docs/C11RD_COST_MODEL.md": "d4876930f0ea5bfc7ff9db75faabb48e98712946282685bf6b010524c496a6df",
+  "docs/C11RD_INDEPENDENCE_AUDIT.md": "968abc5063a6bfd3a20b7eef672308bc222bdba71752bca7e45f52cae9686a83",
+  "protocol/C11RD_FREEZE.md": "afce7611e31c5590cea28792b7a29cc4ee05422bc01d8eabfee326078a19066c",
+  "evidence/calibration/C11RD_CALIBRATION.json": "2f802099e67276e0aa503c72237de268d889696c874774226b8397cd42313e56"
+ },
+ "validation_evidence": {
+  "path": "evidence/validation/C11RD_VALIDATION.json",
+  "rule": "produced by `python3 -I -S -B code/c11rd_validate.py --out ...` on this freeze file and the code above; committed in the freeze commit; must be VALIDATION_CLASS = PASS (23/23)"
+ },
+ "rehearsal_evidence": {
+  "path": "evidence/rehearsal/C11RD_REHEARSAL_NT.json",
+  "rule": "the frozen runner in --mode nontarget on the non-target block; sizing only, not a certificate"
+ },
+ "governance_at_freeze": {
+  "N9": "OPEN",
+  "K5": "PARTIAL",
+  "coverage_map": "r5 authoritative",
+  "r6": "none",
+  "adoption": "none",
+  "target_D1_computed": false,
+  "target_D2_computed": false,
+  "old_cell306_runner_started": false,
+  "cells_307_309_executed": false,
+  "LOCAL_MAIN_REF": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+  "REMOTE_MAIN_REF": "1cb453826313c189f0bdafd5b84120c1edb74da9"
+ }
+}
