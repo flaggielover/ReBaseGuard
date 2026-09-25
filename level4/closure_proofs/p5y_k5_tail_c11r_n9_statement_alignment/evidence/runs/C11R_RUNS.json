@@ -1,0 +1,339 @@
+{
+ "certificates": {
+  "F_D": {
+   "aggregation": "single_certificate_whole_block",
+   "certificate_id": "F_D",
+   "certifier": {
+    "function": "subsolution_margin_iv",
+    "module": "c11r_boxdata.py",
+    "module_sha256": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177"
+   },
+   "certifier_result": {
+    "boxes": 363,
+    "certified": true,
+    "h_min_lower_bound": "38934433602529119472676283919256317545773376940129830660429284193363754624234416171286142193/533996758980227520598755426542388028650676130589163192486760401955554931445160137505740521734144",
+    "kernel": "Khat_e",
+    "margin_lower_bound": "1087191309011083617796811486575558277664844842985080185082086216116044629311329542969151232429655561398458175735131261371547387887340409040312570047119643715811725160916304677363846445232879/4562440617622195218641171605700291324893228507248559930579192517899275167208677386505912811317371399778642309573594407310688704721375437998252661319722214188251994674360264950082874192246603776",
+    "u_nonnegative": true
+   },
+   "cover": {
+    "depth": 5,
+    "function": "c11_certifier.cover"
+   },
+   "family": "u = alpha + beta*m",
+   "input_digest": "e587367b8328de91448ac51632dde0ac260736995351168c8059cef426f8ec2b",
+   "inputs": {
+    "atom_removed_argument": true,
+    "depth": 5,
+    "drift_block": [
+     "680769/400000",
+     "17885921/10000000"
+    ],
+    "panels": 32
+   },
+   "premises": [],
+   "screen_classification": "POINTWISE_FEASIBLE",
+   "seconds": 758.8,
+   "sent_to_certification": true,
+   "weight": {
+    "0,0": "101/200",
+    "0,1": "21/250"
+   }
+  },
+  "F_H": {
+   "aggregation": "single_certificate_whole_block",
+   "certificate_id": "F_H",
+   "certifier": {
+    "function": "supersolution_margin_iv",
+    "module": "c11r_idrift.py",
+    "module_sha256": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b"
+   },
+   "certifier_result": {
+    "boxes": 363,
+    "certified": true,
+    "kernel": "Khat_e",
+    "margin_lower_bound": "5021650334501535701958637129422132127187864637868735763367933259665281755859203747604747343/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576",
+    "w_min_lower_bound": "690457809361434184134190766519307721045324236851788007885381199728532526358592057794922494602247/533996758980227520598755426542388028650676130589163192486760401955554931445160137505740521734144"
+   },
+   "cover": {
+    "depth": 5,
+    "function": "c11_certifier.cover"
+   },
+   "family": "w = A - B*m",
+   "input_digest": "913fa6aa074bc78637344e33ba1d9416ecd1226251072b45d5da21145e203bb3",
+   "inputs": {
+    "atom_removed_argument": true,
+    "depth": 5,
+    "drift_block": [
+     "680769/400000",
+     "17885921/10000000"
+    ],
+    "panels": 32
+   },
+   "premises": [],
+   "screen_classification": "POINTWISE_FEASIBLE",
+   "seconds": 761.1,
+   "sent_to_certification": true,
+   "weight": {
+    "0,0": "3429/500",
+    "0,1": "-1113/1000"
+   }
+  },
+  "F_K": {
+   "aggregation": "single_certificate_whole_block",
+   "certificate_id": "F_K",
+   "certifier": {
+    "function": "supersolution_margin_iv",
+    "module": "c11r_idrift.py",
+    "module_sha256": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b"
+   },
+   "certifier_result": {
+    "boxes": 363,
+    "certified": true,
+    "kernel": "K_e",
+    "margin_lower_bound": "5021650334501535701958637129422132127187864637868735763367933259665281755859203747604747343/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576",
+    "w_min_lower_bound": "690457809361434184134190766519307721045324236851788007885381199728532526358592057794922494602247/533996758980227520598755426542388028650676130589163192486760401955554931445160137505740521734144"
+   },
+   "cover": {
+    "depth": 5,
+    "function": "c11_certifier.cover"
+   },
+   "family": "w = A - B*m",
+   "input_digest": "927411e08f87b7d3859bef3d78ca8391a558994c5b1854a8ccbdb8b8e59d5e14",
+   "inputs": {
+    "atom_removed_argument": false,
+    "depth": 5,
+    "drift_block": [
+     "680769/400000",
+     "17885921/10000000"
+    ],
+    "panels": 32
+   },
+   "premises": [],
+   "screen_classification": "POINTWISE_FEASIBLE",
+   "seconds": 799.9,
+   "sent_to_certification": true,
+   "weight": {
+    "0,0": "3429/500",
+    "0,1": "-1113/1000"
+   }
+  }
+ },
+ "configuration": {
+  "boxes": 363,
+  "depth": 5,
+  "panels": 32
+ },
+ "drift_block": [
+  "680769/400000",
+  "17885921/10000000"
+ ],
+ "execution_identity": {
+  "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+  "authorization_sha256": "193b012227bcfd4970dea5c58ea902f71f102656cb5c8cff300a3531714bd088",
+  "code_sha256": {
+   "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py": "fc88fb0dcc0f757d9ed42b08ecdd9e7ca2c65320181320f009390d67e3155741",
+   "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_common.py": "c55e97b9e2dc626992d3fa25ef23833fcccee88e787a916aa02dc23c2f0ab1b2",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_certificate.py": "af108978de7c25ecb4d9ee235789b064b7445447d59223532355e1663fb930d1",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "df853733230543539721e40e720c50355bd905dc9e571d9ccb93c1eec0d42f90",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_compare.py": "7065cc6af21e2a51f32e82199ff3886af78b2dc35ee9a39e4ba757e8222a9150",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_contract.py": "72181ca7faa364139861c41eab4b7550de5ea2166a0cb5e8c2ba56c810e6cb47",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_cost.py": "6a3ca12192b28f9d3a247dfe411f04c1377bb033410c2cead9c412b6f25d151a",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_equiv.py": "6d2941b8fc0c56be135da1a82ead2109ef808842a5f82c7bde4b6dafd3d6f929",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_gate.py": "bca20d13ba3b9fea20f704def96188e5112737c7284dbb6ab2a1ebdb4bcf0da7",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_launch.py": "839faeae408d60f2acc95364988974d9a05eb25254284c32f56642924ff09806",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_policy.py": "61eef77bc7d99ce0cdf59bfc31a18a874355c33698f818166d04ff5f4f6b9c77",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "1aa2d89a790ddfa4db0c3e7d2b8061093633809085cfa833774cd5641fa6c1c6",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_qualify.py": "95520529eff3632d711c615b1ccf6c4ff7f7606f0e06c2b57bd71e8f762bdbc9",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_runs.py": "d958a45793506613e7749953530eafb1f728a61e828b741f262f90ee41041f7c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "2f2fcfe718d86ba74fb8a8a03c5d0628456959d201d374739759e73f070239a0",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_table.py": "30c40e3d5f941d31dac4fb217f8b189b76c4b66ea25c091f11661c6e078b3e9f",
+   "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
+  },
+  "configuration": {
+   "cap_rss_mb": 8192,
+   "cap_seconds": 10800,
+   "depth": 5,
+   "panels": 32,
+   "rule": "from the predeclared finite family CONFIG_CANDIDATES, reject every candidate whose committed-cost estimate x SAFETY_FACTOR exceeds CAP or whose peak RSS exceeds CAP_RSS; evaluate every remaining candidate on the fixed NON-TARGET calibration workload; choose the lexicographic minimum of (worst RELATIVE calibration box loss as defined in calibration_workload.metric, estimated seconds, boxes x (panels + 1), depth, panels). If no candidate passes, the policy REFUSES; the cap is never raised.",
+   "safety_factor": "3/2"
+  },
+  "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+  "gate_sha256": "2d23a8b8005dc48312c9088311bc28dcabfd5a3c128e83e48baca1a557e5e453",
+  "policy_sha256": "a6b33ef384376a485d781aa6f6a4f8cca554909f44bdabc33c39623ab2f85e9f",
+  "qualification_sha256": "114713efdc00900c4d2f352bccf512e412b8362096fa8c655649de12f83de0e5",
+  "runner_sha256": "d958a45793506613e7749953530eafb1f728a61e828b741f262f90ee41041f7c",
+  "statements_sha256": "b937cace6ae29701b8271a8d659d8817b017cde7094231b1339e4cd3e22a2ca1"
+ },
+ "peak_rss_mb": 48.5,
+ "policy_sha256": "a6b33ef384376a485d781aa6f6a4f8cca554909f44bdabc33c39623ab2f85e9f",
+ "provenance": {
+  "code_closure": {
+   "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py": "fc88fb0dcc0f757d9ed42b08ecdd9e7ca2c65320181320f009390d67e3155741",
+   "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_common.py": "c55e97b9e2dc626992d3fa25ef23833fcccee88e787a916aa02dc23c2f0ab1b2",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_boxdata.py": "6bd427f9e1c0b0da46810dd7a41259cf508031d8d72789147559584a26545177",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_certificate.py": "af108978de7c25ecb4d9ee235789b064b7445447d59223532355e1663fb930d1",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_common.py": "df853733230543539721e40e720c50355bd905dc9e571d9ccb93c1eec0d42f90",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_contract.py": "72181ca7faa364139861c41eab4b7550de5ea2166a0cb5e8c2ba56c810e6cb47",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_cost.py": "6a3ca12192b28f9d3a247dfe411f04c1377bb033410c2cead9c412b6f25d151a",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_idrift.py": "dd611a71d1a24373b0631cb2e6e35381300da2c50535f37488068232f3f19a1b",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_launch.py": "839faeae408d60f2acc95364988974d9a05eb25254284c32f56642924ff09806",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_procs.py": "1aa2d89a790ddfa4db0c3e7d2b8061093633809085cfa833774cd5641fa6c1c6",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_runs.py": "d958a45793506613e7749953530eafb1f728a61e828b741f262f90ee41041f7c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py": "2f2fcfe718d86ba74fb8a8a03c5d0628456959d201d374739759e73f070239a0",
+   "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
+  },
+  "inputs": {
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/config/C11R_POLICY.json": "b8ed06a05cf7bb3ffe8fff2488f58935381eff187610275dff3d7ad30565482c",
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": "2e0f7dc4ceb796289d083ba09129116f128f54dc172ad31d45129a255c0487b7"
+  },
+  "producer": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_runs.py",
+  "producer_sha256": "d958a45793506613e7749953530eafb1f728a61e828b741f262f90ee41041f7c"
+ },
+ "schema": "C11R_RUNS/4",
+ "seal": {
+  "contains_original_magnitudes": false,
+  "sealed_before_comparison": true
+ },
+ "selection_detail": {
+  "F_D": {
+   "alpha": "101/200",
+   "alpha_max_exact": "1557910764190949959903715370029590140645064279169336385332792232237113793904245006936821318277376983672553/3082452068771968222197447426704305824601678045703565557492898079927470236352129896741632720013835000000000",
+   "beta": "21/250",
+   "beta_max": "1",
+   "feasible": "True",
+   "grid": "1000",
+   "min_factored_margin": "1272469461106012325687989036563516164056266436552092929678088499363886124722769398821980267830308672553/5339967589802275205987554265423880286506761305891631924867604019555549314451601375057405217341440000000000",
+   "reason": "None"
+  },
+  "F_H": {
+   "A": "3429/500",
+   "A_req_exact": "199722989875123334520821905404718150610724106360588625228865702681451476377407650767107531630863733501988447/29122692083143371001447842883394882388023177928060775742063360956938304257175916901386005282998048000000000",
+   "B": "1113/1000",
+   "b_max": "4",
+   "feasible": "True",
+   "grid": "1000",
+   "min_factored_margin": "25108251672507678509793185647110660635939323189343678816839666298326408779296018738023736812654109983/10679935179604550411975108530847760573013522611783263849735208039111098628903202750114810434682880000000000",
+   "ternary_evaluations": "integer ternary search on a convex function"
+  },
+  "F_K": {
+   "A": "3429/500",
+   "A_req_exact": "199722989875123334520821905404718150610724106360588625228865702681451476377407650767107531630863733501988447/29122692083143371001447842883394882388023177928060775742063360956938304257175916901386005282998048000000000",
+   "B": "1113/1000",
+   "b_max": "4",
+   "feasible": "True",
+   "grid": "1000",
+   "min_factored_margin": "25108251672507678509793185647110660635939323189343678816839666298326408779296018738023736812654109983/10679935179604550411975108530847760573013522611783263849735208039111098628903202750114810434682880000000000",
+   "ternary_evaluations": "integer ternary search on a convex function"
+  }
+ },
+ "self_check": {
+  "ALL_GUARDS_PASS": true,
+  "G10": {
+   "PASS": true,
+   "violations": []
+  },
+  "G19": {
+   "PASS": true,
+   "violations": []
+  },
+  "G8": {
+   "PASS": true,
+   "violations": []
+  },
+  "reconstructions": {
+   "F_D": {
+    "deduction": {
+     "kind": "subsolution",
+     "route": "independent_subsolution",
+     "yields": [
+      "D_lo"
+     ]
+    },
+    "independence_violation": false,
+    "problems": []
+   },
+   "F_H": {
+    "deduction": {
+     "kind": "supersolution",
+     "route": "independent_supersolution",
+     "yields": [
+      "C_T",
+      "tau"
+     ]
+    },
+    "independence_violation": false,
+    "problems": []
+   },
+   "F_K": {
+    "deduction": {
+     "kind": "supersolution",
+     "route": "independent_supersolution",
+     "yields": [
+      "Abar"
+     ]
+    },
+    "independence_violation": false,
+    "problems": []
+   }
+  },
+  "value_trace": {
+   "PASS": true,
+   "violations": {}
+  }
+ },
+ "sha256": "1e0d82ac5cbe6fce07e667d8995bc1ecdf8c766295e07a281bff17c668de7e9d",
+ "statements_sha256": "b937cace6ae29701b8271a8d659d8817b017cde7094231b1339e4cd3e22a2ca1",
+ "stop_reason": null,
+ "targets": {
+  "Abar": {
+   "certificate_id": "F_K",
+   "constant": "Abar",
+   "reason": null,
+   "status": "CERTIFIED",
+   "value": "3429/500"
+  },
+  "C_T": {
+   "certificate_id": "F_H",
+   "constant": "C_T",
+   "reason": null,
+   "status": "CERTIFIED",
+   "value": "14648599092345601345065058860910788401945347614321924696296811346444782879403632892057473992211039/2135987035920910082395021706169552114602704522356652769947041607822219725780640550022962086936576"
+  },
+  "D1": {
+   "certificate_id": null,
+   "constant": "D1",
+   "reason": "PROSPECTIVELY_REACHABLE_BUT_NOT_IMPLEMENTED: requires the drift-derivative kernels Khat' and Khat'', h_1' and h_1'', operator norm bounds kernel_norm(0..3), a residual-to-error propagation argument consuming this campaign's own C_T and tau, and independent candidates for d' and d''",
+   "status": "NOT_IMPLEMENTED",
+   "value": null
+  },
+  "D2": {
+   "certificate_id": null,
+   "constant": "D2",
+   "reason": "PROSPECTIVELY_REACHABLE_BUT_NOT_IMPLEMENTED: requires the drift-derivative kernels Khat' and Khat'', h_1' and h_1'', operator norm bounds kernel_norm(0..3), a residual-to-error propagation argument consuming this campaign's own C_T and tau, and independent candidates for d' and d''",
+   "status": "NOT_IMPLEMENTED",
+   "value": null
+  },
+  "D_lo": {
+   "certificate_id": "F_D",
+   "constant": "D_lo",
+   "reason": null,
+   "status": "CERTIFIED",
+   "value": "101/200"
+  },
+  "tau": {
+   "certificate_id": "F_H",
+   "constant": "tau",
+   "reason": null,
+   "status": "CERTIFIED",
+   "value": "3429/500"
+  }
+ },
+ "timings_seconds": {
+  "box_data": 2549.1,
+  "pointwise": 66.8
+ },
+ "total_seconds": 4938.1
+}
