@@ -1,0 +1,24 @@
+{
+ "approved_commit": "ee1a6a8aab8ff57360249bc813a44b3c724200aa",
+ "authorizes": "ONE_EXECUTION",
+ "cell": 306,
+ "configuration": {
+  "cap_rss_mb": 8192,
+  "cap_seconds": 10800,
+  "depth": 5,
+  "panels": 32,
+  "rule": "from the predeclared finite family CONFIG_CANDIDATES, reject every candidate whose committed-cost estimate x SAFETY_FACTOR exceeds CAP or whose peak RSS exceeds CAP_RSS; evaluate every remaining candidate on the fixed NON-TARGET calibration workload; choose the lexicographic minimum of (worst RELATIVE calibration box loss as defined in calibration_workload.metric, estimated seconds, boxes x (panels + 1), depth, panels). If no candidate passes, the policy REFUSES; the cap is never raised.",
+  "safety_factor": "3/2"
+ },
+ "execution_contract_sha256": "8e86b50925c709f053a0be5b0c7be44ce1e7f3dcf3da2c9b453beb3ca3108cd8",
+ "fixture": false,
+ "gate_sha256": "2d23a8b8005dc48312c9088311bc28dcabfd5a3c128e83e48baca1a557e5e453",
+ "issued_at_head": "445fd84e20d63529319b616e5d6397118716f5cf",
+ "operator": "suzhe (explicit Phase 13 instruction, 2026-09-25; executed by Claude Code, Claude Opus 5.5)",
+ "policy_sha256": "a6b33ef384376a485d781aa6f6a4f8cca554909f44bdabc33c39623ab2f85e9f",
+ "qualification_sha256": "114713efdc00900c4d2f352bccf512e412b8362096fa8c655649de12f83de0e5",
+ "runner_sha256": "d958a45793506613e7749953530eafb1f728a61e828b741f262f90ee41041f7c",
+ "schema": "C11R_AUTHORIZATION/5",
+ "sha256": "193b012227bcfd4970dea5c58ea902f71f102656cb5c8cff300a3531714bd088",
+ "statements_sha256": "b937cace6ae29701b8271a8d659d8817b017cde7094231b1339e4cd3e22a2ca1"
+}
