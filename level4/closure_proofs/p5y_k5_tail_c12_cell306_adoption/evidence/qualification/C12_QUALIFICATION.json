@@ -1,0 +1,295 @@
+{
+ "F_function_controls": {
+  "F01 mixed supply I1 + I2 refused": true,
+  "F01b I1-tagged set in an I2 supply refused": true,
+  "F01c duplicate set name refused": true,
+  "F02 consumer validation refuses Abar < 1": true,
+  "F02 consumer validation refuses C < tau": true,
+  "F02 consumer validation refuses D_lo <= 0": true,
+  "F02 consumer validation refuses non-exact value": true,
+  "F02 consumer validation refuses tau < 1": true,
+  "F03 C11R class INSUFFICIENT": true,
+  "F03b C11R statement WEAKER": true,
+  "F03c C11R domain SUBSET": true,
+  "F03d C11R target not certified": true,
+  "F03e C11R D_lo direction flipped": true,
+  "F03f C11RD N9 verdict not CLOSED": true,
+  "F03g C11RD class INSUFFICIENT": true,
+  "F03h C11RD statement WEAKER": true,
+  "F03i C11RD value not the sealed run's": true,
+  "F03j C11RD runs for another cell": true,
+  "F04 I2 domain for cell 307 refused": true,
+  "F04b I2 domain endpoint altered refused": true,
+  "F04c I2 domain equals cell 306's cover cell (positive)": true,
+  "F05 control mismatch is detected (perturbed expected record)": true,
+  "F06 cell 307 refused by cell_inputs": true,
+  "F06b cell 309 refused by cell_inputs": true,
+  "F07 verdict line: a second verdict line is refused": true,
+  "F07b verdict line: wrong line 2 is refused": true,
+  "F07c verdict line: the right line 2 is accepted (positive)": true
+ },
+ "G_r6_generator": {
+  "G01 refuses in the real repository (no sealed result, no reviews)": true,
+  "G02 synthetic chain: r6 moves exactly (5, 306), keeps 307-309 open, records r5 lineage": true,
+  "G03 refuses CELL306_NOT_ADOPTED": true,
+  "G04 refuses an adopted set other than [306]": true,
+  "G05 refuses when Gamma(S_I2) >= 0": true,
+  "G06 refuses without the adjudication review": true
+ },
+ "L_leak": {
+  "checks": {
+   "no rendering of the independent D1/D2 values": true,
+   "no rendering of the original D1/D2 values": true,
+   "the scanner detects a planted decoy (not vacuous)": true
+  },
+  "files_scanned": [
+   "code/c12_cell306.py",
+   "code/c12_r6_from_adjudication.py",
+   "code/c12_verify.py",
+   "evidence/qualification/PREFLIGHT.json",
+   "evidence/qualification/REHEARSE_305.json",
+   "evidence/qualification/REHEARSE_306.json",
+   "protocol/C12_FREEZE.json",
+   "protocol/C12_PROTOCOL.md"
+  ]
+ },
+ "N_cli_controls": {
+  "N00 sandbox baseline: preflight passes (controls below are not vacuous)": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 0,
+   "out": "C12 PREFLIGHT PASS",
+   "pass": true
+  },
+  "N00b sandbox baseline: the I1 control rehearsal reproduces C2": {
+   "argv": [
+    "rehearse",
+    "--cell",
+    "306"
+   ],
+   "exit": 0,
+   "out": "C12 REHEARSE cell 306: reproduces C2 exactly = True",
+   "pass": true
+  },
+  "N01 altered input (ADOPTED_TAIL_INPUTS.json)": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12 REFUSED PIN_MISMATCH: level4/closure_proofs/p5y_k5_m5_tail_closure/evidence/measurement_r1/ADOPTED_TAIL_INPUTS.json",
+   "pass": true
+  },
+  "N02 wrong cell 307 (rehearse)": {
+   "argv": [
+    "rehearse",
+    "--cell",
+    "307"
+   ],
+   "exit": 2,
+   "out": "C12 REFUSED CELL_OUT_OF_SCOPE: 307",
+   "pass": true
+  },
+  "N02b wrong cell 308 (rehearse)": {
+   "argv": [
+    "rehearse",
+    "--cell",
+    "308"
+   ],
+   "exit": 2,
+   "out": "C12 REFUSED CELL_OUT_OF_SCOPE: 308",
+   "pass": true
+  },
+  "N02c wrong cell 309 (rehearse)": {
+   "argv": [
+    "rehearse",
+    "--cell",
+    "309"
+   ],
+   "exit": 2,
+   "out": "C12 REFUSED CELL_OUT_OF_SCOPE: 309",
+   "pass": true
+  },
+  "N02d a cell passed to execute": {
+   "argv": [
+    "execute",
+    "--cell",
+    "307"
+   ],
+   "exit": 2,
+   "out": "C12 REFUSED CELL_OUT_OF_SCOPE: only rehearse takes --cell; execute is cell 306 only",
+   "pass": true
+  },
+  "N03 wrong bytes (REGISTRY_C1 replaced by REGISTRY_C2)": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12 REFUSED PIN_MISMATCH: level4/closure_proofs/p5y_k5_tail_operator_registry/evidence/registry_c1/REGISTRY_C1.json",
+   "pass": true
+  },
+  "N03b wrong blob at HEAD, pinned bytes in the working tree": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12 REFUSED BLOB_MISMATCH: level4/closure_proofs/p5y_k5_tail_operator_registry/evidence/registry_c1/REGISTRY_C1.json",
+   "pass": true
+  },
+  "N04 wrong statement (C11R C_T statement WEAKER)": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12 REFUSED PIN_MISMATCH: level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/comparison/C11R_COMPARISON.json",
+   "pass": true
+  },
+  "N05 missing review (floor r2 review deleted)": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12 REFUSED INPUT_MISSING: level4/closure_proofs/p5y_k5_tail_floor_r2/review/FLOOR_R2_REVIEW.md",
+   "pass": true
+  },
+  "N05b missing review (N9 adjudication review deleted)": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12 REFUSED INPUT_MISSING: level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/review/C11RD_ADJUDICATION_REVIEW.md",
+   "pass": true
+  },
+  "N05c execute with a grant but no qualification review": {
+   "argv": [
+    "execute"
+   ],
+   "exit": 2,
+   "out": "C12 REFUSED REVIEW_MISSING: level4/closure_proofs/p5y_k5_tail_c12_cell306_adoption/review/C12_QUALIFICATION_REVIEW.md",
+   "pass": true
+  },
+  "N07 premature target artifact in the working tree": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12 REFUSED TARGET_ARTIFACT_EXISTS: level4/closure_proofs/p5y_k5_tail_c12_cell306_adoption/evidence/execution/C12_CELL306_RESULT.json",
+   "pass": true
+  },
+  "N07b premature target artifact in history": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12 REFUSED TARGET_ARTIFACT_EXISTS: level4/closure_proofs/p5y_k5_tail_c12_cell306_adoption/evidence/execution/C12_CELL306_RESULT.json",
+   "pass": true
+  },
+  "N07c consumed ref already present": {
+   "argv": [
+    "rehearse",
+    "--cell",
+    "306"
+   ],
+   "exit": 2,
+   "out": "C12 REFUSED CONSUMED: refs/c12/cell306-target-consumed already exists: the target was evaluated or attempted",
+   "pass": true
+  },
+  "N08 execute without a grant": {
+   "argv": [
+    "execute"
+   ],
+   "exit": 2,
+   "out": "C12 REFUSED GRANT_MISSING",
+   "pass": true
+  },
+  "N09 execute where HEAD is not the grant commit": {
+   "argv": [
+    "execute"
+   ],
+   "exit": 2,
+   "out": "C12 REFUSED GRANT_INVALID: HEAD is not the grant commit",
+   "pass": true
+  },
+  "N10 execute with a grant for different driver bytes": {
+   "argv": [
+    "execute"
+   ],
+   "exit": 2,
+   "out": "C12 REFUSED GRANT_INVALID: driver bytes differ from the granted driver",
+   "pass": true
+  },
+  "N11 execute on a dirty tree": {
+   "argv": [
+    "execute"
+   ],
+   "exit": 2,
+   "out": "C12 REFUSED DIRTY_TREE",
+   "pass": true
+  },
+  "N12 an r6 file in the working tree": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12 REFUSED R6_EXISTS: an r6 file exists in the working tree",
+   "pass": true
+  }
+ },
+ "R_real": {
+  "checks": {
+   "I1 control reproduces C2's committed cell-305 record exactly (non-target)": true,
+   "I1 control reproduces C2's committed cell-306 record exactly": true,
+   "preflight PASS": true,
+   "the runs changed nothing but the qualification outputs": true
+  },
+  "preflight": {
+   "exit": 0,
+   "reproduces_C2_exactly": null,
+   "stdout": "C12 PREFLIGHT PASS",
+   "wall_seconds": 0.914
+  },
+  "rehearse_305": {
+   "exit": 0,
+   "reproduces_C2_exactly": true,
+   "stdout": "C12 REHEARSE cell 305: reproduces C2 exactly = True",
+   "wall_seconds": 0.948
+  },
+  "rehearse_306": {
+   "exit": 0,
+   "reproduces_C2_exactly": true,
+   "stdout": "C12 REHEARSE cell 306: reproduces C2 exactly = True",
+   "wall_seconds": 0.88
+  }
+ },
+ "S_static": {
+  "evaluate_target is called only from run_execute": true,
+  "no numpy/flint import": true,
+  "no print of a computed value": true,
+  "prepare_target is called only from run_execute": true,
+  "run_execute order: grant < control < CONTROL_FAILED exit < prepare < consumed ref < evaluate": true,
+  "supply refuses mixed implementations before any atom constant": true
+ },
+ "T_temporal": {
+  "HEAD": "b9ffc87fd7f42a922a688facae7e0b6987239c91",
+  "checks": {
+   "HEAD is the freeze commit of code/ and protocol/": true,
+   "no consumed ref": true,
+   "no r6 anywhere": true,
+   "no result artifact anywhere": true
+  },
+  "freeze_commit": "b9ffc87fd7f42a922a688facae7e0b6987239c91"
+ },
+ "counts": {
+  "checks": 71,
+  "passed": 71
+ },
+ "driver_sha256": "c045e990549203e4c26b689dec9b278a092b65a22114dadc2e5751ffe579ac03",
+ "dry_run": false,
+ "failed": [],
+ "pass": true,
+ "python": "3.14.5",
+ "r6_generator_sha256": "9d5de3021aa731d1d288c68c7c936549928e45ac9a2a15daf7470854cd2c5688",
+ "schema": "rebaseguard.p5y.k5.tail-c12.qualification.v1",
+ "verifier_sha256": "4559a9c443e480eef07109c90a37837d1af3f24777c47569d4692903c716ade5",
+ "wall_seconds": 20.7
+}
