@@ -1,0 +1,35 @@
+{
+ "CELL_PROVENANCE": {
+  "identity_fields": [
+   "cells_sha256",
+   "detector",
+   "cell_index",
+   "e0",
+   "rho",
+   "left",
+   "right",
+   "C_upper"
+  ],
+  "sha256": "db02a798b57e6317bcdbdd6bc40b7ac9ae31e2e966f0ba303cec12df8f54ab90",
+  "source": "p5y_k1r4_bridge_successor/config/CUSUM_BRIDGE_CELL_TABLE.json"
+ },
+ "SCIENTIFIC_REGIME_PROVENANCE": {
+  "identity_fields": [
+   "checkpoint_hash",
+   "error_algebra_sha256",
+   "obligation_universe_total",
+   "implementation_hash_kind"
+  ],
+  "meaning": "the frozen scientific regime the bridge cells are certified under: CUSUM detector (h=5, k=1/2), m universe {1,2,3,5}, 256-bit precision, target, error algebra, ledger budgets and geometry CONSTRUCTION rules (grid, step, C rule), and the 28-unit-per-cell obligation scheme. The checkpoint also names the historical 642-cell table; K1R6 does NOT claim that table as the origin of cells 1000/1001 -- cell origin is carried exclusively by CELL_PROVENANCE.",
+  "source": "inherited aux4 / cover-ledger spec (spec.CHECKPOINT_SHA256, spec.ERROR_ALGEBRA_SHA256, spec.TOTAL_UNITS)"
+ },
+ "schema": "rebaseguard.p5y.k1r6.identity-provenance.v1",
+ "value_rebound": {
+  "cells_sha256": "db02a798b57e6317bcdbdd6bc40b7ac9ae31e2e966f0ba303cec12df8f54ab90"
+ },
+ "values_inherited": {
+  "checkpoint_hash": "spec.CHECKPOINT_SHA256 (cover-ledger successor config/checkpoint.json)",
+  "error_algebra_sha256": "spec.ERROR_ALGEBRA_SHA256",
+  "obligation_universe_total": "spec.TOTAL_UNITS = 17978 (scheme constant; the bridge adds 2 x 28 units OUTSIDE it, bound by K1R4)"
+ }
+}

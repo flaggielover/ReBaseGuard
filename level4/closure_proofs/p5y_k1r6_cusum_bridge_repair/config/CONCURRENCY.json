@@ -1,0 +1,15 @@
+{
+ "campaign_locks": "none",
+ "k1r4_sr": "RUNNING (6 genuine cells, run-20260926T075918Z) -- never touched by K1R6",
+ "k1r6_reads": [
+  "K1R4 CUSUM bridge table (read-only, hash-checked)",
+  "K1R6 config",
+  "aux4 kernel"
+ ],
+ "k1r6_writes": "only inside its own per-cell evidence directory (created exist_ok=False)",
+ "ledgers": "none",
+ "rule": "fresh evidence roots disjoint from every K1R4 SR evidence root; cores not used by SR",
+ "schema": "rebaseguard.p5y.k1r6.concurrency.v1",
+ "shared_mutable_files": [],
+ "thread_contract": "unchanged: OMP/OPENBLAS/MKL/NUMEXPR/BLIS/VECLIB = 1 before import; flint.ctx.threads = 1"
+}

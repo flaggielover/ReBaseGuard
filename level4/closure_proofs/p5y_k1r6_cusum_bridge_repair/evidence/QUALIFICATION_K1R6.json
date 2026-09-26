@@ -1,0 +1,321 @@
+{
+ "bridge_post_science_acceptance": "2/2",
+ "checkpoint_sha256": "d519a2d26304a31a60ca71fc1f48f552c6c325fa3703640aea7dea8c1db56cb9",
+ "controls": [
+  {
+   "control": "G1 empty exact sparse polynomial -> exact 0 (frozen path raises ValueError)",
+   "expected_reason": true,
+   "reason": "value 0, exact True",
+   "rejected": null
+  },
+  {
+   "control": "G2 explicit all-zero coefficients -> canonical {} -> exact 0 == frozen REFERENCE operator value (frozen fast path raises)",
+   "expected_reason": true,
+   "reason": "FRT 0, reference 0, firings 4",
+   "rejected": null
+  },
+  {
+   "control": "G3 nonzero constant -> non-empty (frozen) path, bit-identical, no firing",
+   "expected_reason": true,
+   "reason": "constant: FRT 13.00000000000000000000000000000000000000000000000000000000000000000000000000 frozen 13.00000000000000000000000000000000000000000000000000000000000000000000000000 firings 0",
+   "rejected": null
+  },
+  {
+   "control": "G4 tiny nonzero rational (exact 2^-400; inexact (1/3)2^-400) retained -> non-empty path, bit-identical",
+   "expected_reason": true,
+   "reason": "retained True",
+   "rejected": null
+  },
+  {
+   "control": "G5 0 +/- r (r > 0) is NOT exact zero -> kept, non-empty path, bit-identical",
+   "expected_reason": true,
+   "reason": "0 +/- 2^-300: FRT 13.00000000000000000000000000000000000000000000000000000000000000000000000000 frozen 13.00000000000000000000000000000000000000000000000000000000000000000000000000 firings 0",
+   "rejected": null
+  },
+  {
+   "control": "G6 higher degree with zero leading terms canonicalizes (zero keys dropped, nonzero kept; path frozen); all-zero high-degree -> {} -> fires once (low)",
+   "expected_reason": true,
+   "reason": "leading zeros: FRT 13.00000000000000000000000000000000000000000000000000000000000000000000000000 frozen 13.00000000000000000000000000000000000000000000000000000000000000000000000000 firings 0; all-zero low fires 1",
+   "rejected": null
+  },
+  {
+   "control": "G7 one nonzero interior coefficient among zeros -> non-empty path, bit-identical, no firing",
+   "expected_reason": true,
+   "reason": "interior: FRT [107.6666666666666666666666666666666666666666666666666666666666666666666666667 +/- 3.26e-74] frozen [107.6666666666666666666666666666666666666666666666666666666666666666666666667 +/- 3.26e-74] firings 0",
+   "rejected": null
+  },
+  {
+   "control": "G8 mutated totality rule (shadowed module)",
+   "expected_reason": true,
+   "reason": "k1r6_cusum_entry.CusumBridgeRefused: K1R6 module binding: successor modules not loaded from the manifest: [('fast_range_k1r6', '/tmp/tmp5brlss8l/fast_range_k1r6",
+   "rejected": true
+  },
+  {
+   "control": "F2 cell 1000 and 1001 bridge identities resolve, equal to the entry's certified cells, cells_sha256 bound",
+   "expected_reason": true,
+   "reason": "[True, True]",
+   "rejected": null
+  },
+  {
+   "control": "F3 historical index 0 rejected by the bridge resolver",
+   "expected_reason": true,
+   "reason": "historical CUSUM index 0: never resolved here (no historical fallback)",
+   "rejected": true
+  },
+  {
+   "control": "F4 historical index 325 rejected",
+   "expected_reason": true,
+   "reason": "historical CUSUM index 325: never resolved here (no historical fallback)",
+   "rejected": true
+  },
+  {
+   "control": "F5 unknown index 1002 rejected",
+   "expected_reason": true,
+   "reason": "index 1002 is not a K1R6 CUSUM bridge cell",
+   "rejected": true
+  },
+  {
+   "control": "F6 negative (far-field-style) index -1 rejected",
+   "expected_reason": true,
+   "reason": "index -1 is not a K1R6 CUSUM bridge cell",
+   "rejected": true
+  },
+  {
+   "control": "F7 SR detector rejected",
+   "expected_reason": true,
+   "reason": "detector 'SR': the K1R6 resolver serves CUSUM bridge cells only",
+   "rejected": true
+  },
+  {
+   "control": "F8 canonical_identity on a historical unit rejected (no fallback)",
+   "expected_reason": true,
+   "reason": "historical CUSUM index 325: never resolved here (no historical fallback)",
+   "rejected": true
+  },
+  {
+   "control": "F9 altered bridge record rejected (table hash)",
+   "expected_reason": true,
+   "reason": "bridge table hash 1708761f5af42c9b6d89ef81cd57516d18a6ae92ae22c5f69c8b609105dbaaf7 != frozen db02a798b57e6317bcdbdd6bc40b7ac9ae31e2e966f0ba303cec12df8f54ab90",
+   "rejected": true
+  },
+  {
+   "control": "F10 altered bridge-table hash (pin) rejected",
+   "expected_reason": true,
+   "reason": "bridge-table pin altered: refusing an unpinned table hash",
+   "rejected": true
+  },
+  {
+   "control": "F11 bridge certificate chain on historical cell 325 rejected",
+   "expected_reason": true,
+   "reason": "historical CUSUM index 325: never resolved here (no historical fallback)",
+   "rejected": true
+  },
+  {
+   "control": "D2 K1R2 bare-string record",
+   "expected_reason": true,
+   "reason": "left: affine [p, '0/1'] pair required (K1R2 schema defect)",
+   "rejected": true
+  },
+  {
+   "control": "D3 e0 not the midpoint",
+   "expected_reason": true,
+   "reason": "e0/rho are not the exact midpoint/half-width",
+   "rejected": true
+  },
+  {
+   "control": "D4 pre-existing evidence directory",
+   "expected_reason": true,
+   "reason": "evidence directory /tmp/tmpxs_8cgcv already exists",
+   "rejected": true
+  },
+  {
+   "control": "D5 wrong precision",
+   "expected_reason": true,
+   "reason": "precision 128 != frozen 256",
+   "rejected": true
+  },
+  {
+   "control": "D6 thread contract broken",
+   "expected_reason": true,
+   "reason": "frozen thread contract not in force",
+   "rejected": true
+  },
+  {
+   "control": "D7 CLI rejects a historical index",
+   "expected_reason": true,
+   "reason": "2",
+   "rejected": true
+  },
+  {
+   "control": "D8 unmanifested module loaded (this qualifier)",
+   "expected_reason": true,
+   "reason": "negative TCB gate: modules outside/unequal to the manifest: ['/home/ubuntu/work/ReBaseGuard-sr-o9-t1/level4/closure_proofs/p5y_k1r6_cusum_bridge_repair/ops/qual",
+   "rejected": true
+  }
+ ],
+ "controls_passed": 25,
+ "controls_total": 25,
+ "gates": [
+  {
+   "detail": "drift []",
+   "gate": "H1 58 inherited aux4 kernel files == aux4's own recorded hashes; no changed inherited file",
+   "status": "PASS"
+  },
+  {
+   "detail": "drift []",
+   "gate": "H2 producer manifest (69 files) byte-verified; binds kernel, generated modules, resolver, bridge table, transformation manifest, schemas, generator",
+   "status": "PASS"
+  },
+  {
+   "detail": "K1R5 True K1R4 True table True",
+   "gate": "H3 K1R5 and K1R4 namespaces byte-identical to their freezes; bridge table == K1R4 checkpoint pin",
+   "status": "PASS"
+  },
+  {
+   "detail": "3527b3b9399c12b406217c72548264293f11b8f14f1250f5cede138e7ba84671",
+   "gate": "H4 new K1R6 producer identity minted (not aux4's, not K1R5's)",
+   "status": "PASS"
+  },
+  {
+   "detail": "{\"regenerated_equal_on_disk\": true, \"differs\": []}",
+   "gate": "G1 generated stages regenerate byte-identically from pinned frozen sources (counted substitutions)",
+   "status": "PASS"
+  },
+  {
+   "detail": "text True, scheme True",
+   "gate": "A1 identity_k1r6 == frozen identity4 except the 3 counted substitutions (R x2, V x1); identity kind, field list, admission and hashing text unchanged; historical _cell_of absent",
+   "status": "PASS"
+  },
+  {
+   "detail": "[True, True, True, True]",
+   "gate": "A2 k1r6_chain build_certificates/_certified_content/_obligation_status/verify_chain == frozen qualify4 text with ID -> IDB only (3 + 0 + 0 + 7)",
+   "status": "PASS"
+  },
+  {
+   "detail": "text True; test `type(u) is dict and len(u) == 0`; else `return _bernstein_max_abs(_power_to_bernstein(u), subdivision_depth)`",
+   "gate": "B1 fast_range_k1r6 == frozen fast_range except P x1 + Z x4; empty test is exactly `type(u) is dict and len(u) == 0`; the non-empty branch is exactly the frozen call",
+   "status": "PASS"
+  },
+  {
+   "detail": "own attributes ['_range']",
+   "gate": "C1 K1R6Certifier(Aux3Certifier) overrides ONLY _range, = frozen cusum_layer2._range with 1 substitution",
+   "status": "PASS"
+  },
+  {
+   "detail": "forward-regenerated True; certify AST True",
+   "gate": "D1 entry = K1R5 entry + declared substitutions only (K x1, I x2, B x5 incl. names, Z x1); certify() == K1R5 certify (itself proven = frozen run_cell block) except the certifier class",
+   "status": "PASS"
+  },
+  {
+   "detail": "empty outputs 0",
+   "gate": "B2 a nonzero coefficient is never dropped (600 random exact/inexact monomials x 4 part maps: 0 empty)",
+   "status": "PASS"
+  },
+  {
+   "detail": "delta_mid 8.673617379884035472059622406959533691406250000000000000000000000000000000000e-19, object F_1, frozen raises True, div/log sites []",
+   "gate": "B7 downstream accepts range 0: frozen certify() on a zero residual via K1R6 _range -> delta_mid >= 0, delta_cell >= delta_mid, firings recorded with object name; frozen class raises; no division/log of a range output anywhere in the 58-file kernel",
+   "status": "PASS"
+  },
+  {
+   "detail": "records 326, manifest hashes 1, zero outputs 0/4890",
+   "gate": "E1 all 326 historical CUSUM cells sealed under one aux4 producer whose manifest pins THIS fast_range.py; the frozen fast path raises on any empty part, so no historical range call had one; 0 of 4890 recorded range outputs are zero",
+   "status": "PASS"
+  },
+  {
+   "detail": "[1.289014798365086518463845165645966943737937427390022612995540571411983803532e-5 +/- 1.71e-81] | [1.007768490164612515696483846990553275072304953284016487851073602604851591713e-5 +/- 1.97e-81]",
+   "gate": "E2 historical r2 self-test polynomials (real residual, e = 1/4): bit-identical at depth 0 and 3, no firing",
+   "status": "PASS"
+  },
+  {
+   "detail": "mismatches 0, firings 0",
+   "gate": "E3 random exact/inexact nonzero corpus (400 polynomial pairs, depths 0-2): bit-identical, 0 firings",
+   "status": "PASS"
+  },
+  {
+   "detail": "2/2 accepted",
+   "gate": "F1 NON-GENUINE post-science replay on bridge indices: certificates -> bridge identity -> chain -> assemble -> scientific hash -> final TCB gate + SciPy guard + module binding -> seal -> independent re-verification; temporary seals deleted",
+   "status": "PASS"
+  },
+  {
+   "detail": "{\"stage\": \"qualification-import-closure\", \"loaded_repository_modules\": 52, \"tcb_size\": 69, \"k1r6_modules\": 5}",
+   "gate": "H5 TCB gate + K1R6 module binding pass on the production import closure (fresh process)",
+   "status": "PASS"
+  },
+  {
+   "detail": "bridge evidence files []; SR launch PIDs alive 6/6, exited []",
+   "gate": "I1 no genuine CUSUM 1000/1001 computation in qualification; the 6 running K1R4 SR processes untouched",
+   "status": "PASS"
+  }
+ ],
+ "gates_passed": 18,
+ "gates_total": 18,
+ "genuine_bridge_computation": false,
+ "post_science_replay": {
+  "NON_GENUINE": true,
+  "cells": {
+   "1000": {
+    "accepted": true,
+    "checks": {
+     "28_units_certificates_built": true,
+     "bridge_block_bound": true,
+     "bridge_identity_resolves_and_equals_certified_cell": true,
+     "cells_sha256_is_the_k1r4_bridge_table": true,
+     "chain_verified": true,
+     "every_identity_is_the_bridge_cell": true,
+     "every_unit_readmitted_independently": true,
+     "exactly_two_files_sealed": true,
+     "final_gate_ran_after_hash": true,
+     "identity_geometry_from_bridge_record": true,
+     "inherited_regime_fields_preserved": true,
+     "k1r6_producer_identity_bound": true,
+     "non_genuine_flag_sealed": true,
+     "record_sha256_matches_marker": true,
+     "scientific_hash_recomputes": true
+    },
+    "final_gate": {
+     "loaded_repository_modules": 52,
+     "ran_after_scientific_hash": true,
+     "stage": "final",
+     "tcb_size": 69
+    },
+    "record_sha256": "de33c61d0cb295e6710494c4205e7e7b7311be3684bf225cadda8d2d2fc00da6",
+    "scientific_content_hash": "828e6fc4eaee116962f25075871c9c1952b5dc83429595359cb78ff956d59467",
+    "units": 28,
+    "zero_case_count": 0
+   },
+   "1001": {
+    "accepted": true,
+    "checks": {
+     "28_units_certificates_built": true,
+     "bridge_block_bound": true,
+     "bridge_identity_resolves_and_equals_certified_cell": true,
+     "cells_sha256_is_the_k1r4_bridge_table": true,
+     "chain_verified": true,
+     "every_identity_is_the_bridge_cell": true,
+     "every_unit_readmitted_independently": true,
+     "exactly_two_files_sealed": true,
+     "final_gate_ran_after_hash": true,
+     "identity_geometry_from_bridge_record": true,
+     "inherited_regime_fields_preserved": true,
+     "k1r6_producer_identity_bound": true,
+     "non_genuine_flag_sealed": true,
+     "record_sha256_matches_marker": true,
+     "scientific_hash_recomputes": true
+    },
+    "final_gate": {
+     "loaded_repository_modules": 52,
+     "ran_after_scientific_hash": true,
+     "stage": "final",
+     "tcb_size": 69
+    },
+    "record_sha256": "516f44bf37ab7fe97262c4956dd415272bf2c0bd958dc90d70c1b44a30395e4a",
+    "scientific_content_hash": "a57c8969d9f864de31f2313735f9cb20f5a7e94b3a322d55cf31488f96757db7",
+    "units": 28,
+    "zero_case_count": 0
+   }
+  }
+ },
+ "previous_consumed_unsealed_cpu_h": 0.61,
+ "schema": "rebaseguard.p5y.k1r6.qualification.v1",
+ "verdict": "PASS"
+}

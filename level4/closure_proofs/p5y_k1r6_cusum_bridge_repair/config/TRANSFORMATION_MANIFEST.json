@@ -1,0 +1,227 @@
+{
+ "discipline": "every substitution asserted at its declared occurrence count; frozen sources pinned to their own frozen manifests; any drift fails closed",
+ "hand_written_modules": {
+  "k1r6_bridge_resolver.py": "bridge-only resolver (orchestration; no scientific content)"
+ },
+ "permitted_categories": {
+  "B": "producer identity / manifest / checkpoint binding",
+  "I": "identity / certificate-chain binding",
+  "K": "successor certifier class binding",
+  "P": "path anchoring to the frozen proof library",
+  "R": "bridge-only identity geometry resolution",
+  "V": "cell-provenance binding (cells_sha256 = exact K1R4 CUSUM bridge-table hash)",
+  "Z": "zero-polynomial range totality (empty per-part sparse polynomial -> exact 0)"
+ },
+ "schema": "rebaseguard.p5y.k1r6.transformation-manifest.v1",
+ "sources": {
+  "cusum_layer2": {
+   "path": "/home/ubuntu/work/ReBaseGuard/level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/cusum_layer2.py",
+   "pinned_by": "aux4 producer_manifest_v2 files[level4/closure_proofs/p5y_k1_cover_ledger_implementation/code/cusum_layer2.py]",
+   "sha256": "42c3d98394a6a8536e05d50626b21c7c71c309f5f98e286bdf2a3f7b5badf5a7"
+  },
+  "fast_range": {
+   "path": "/home/ubuntu/work/ReBaseGuard/level4/closure_proofs/p5x_global_nonlinear_dynamics/compute_optimization_r2/fast_range.py",
+   "pinned_by": "aux4 producer_manifest_v2 files[level4/closure_proofs/p5x_global_nonlinear_dynamics/compute_optimization_r2/fast_range.py]",
+   "sha256": "82e630bdbe31271dca057cf33dc069937ca4e54f509be34f823092675d4cdbc4"
+  },
+  "identity4": {
+   "path": "/home/ubuntu/work/ReBaseGuard/level4/closure_proofs/p5y_k1_cusum_aux4_fullcover/code/identity4.py",
+   "pinned_by": "aux4 producer_manifest_v2 files[level4/closure_proofs/p5y_k1_cusum_aux4_fullcover/code/identity4.py]",
+   "sha256": "a8b3bb3c788c9d16ba50d656eabf5abbca8b854db710bc353761ed700309bcf2"
+  },
+  "k1r5_entry": {
+   "path": "/home/ubuntu/work/ReBaseGuard-sr-o9-t1/level4/closure_proofs/p5y_k1r5_cusum_entry/driver/k1r5_cusum_entry.py",
+   "pinned_by": "p5y_k1r5_cusum_entry/config/CHECKPOINT.json wrapper_sha256",
+   "sha256": "2cc7a97ad48431b34e1a8c64527430570aa382c751d3e089cb3c2e1bf185f5c6"
+  },
+  "qualify4": {
+   "path": "/home/ubuntu/work/ReBaseGuard/level4/closure_proofs/p5y_k1_cusum_aux4_fullcover/code/qualify4.py",
+   "pinned_by": "aux4 producer_manifest_v2 files[level4/closure_proofs/p5y_k1_cusum_aux4_fullcover/code/qualify4.py]",
+   "sha256": "c95b80e0be459b4724b68d4b31eb573a1fc4e8e5a494a5b33b199ad884957e90"
+  }
+ },
+ "stages": {
+  "fast_range_k1r6.py": {
+   "declared_additions": "_bmax_total (totality base case) + provenance recorder",
+   "generated_from": "fast_range.py",
+   "generated_sha256": "703d7f4508781e8ea919f4e94bcb5581a2e075d5433406ddc8da5f4d02953e47",
+   "source_sha256": "82e630bdbe31271dca057cf33dc069937ca4e54f509be34f823092675d4cdbc4",
+   "substitutions": [
+    {
+     "category": "P",
+     "expected_occurrences": 1,
+     "new": "_PROOF_SRC = Path(\"/home/ubuntu/work/ReBaseGuard\") / \"rebaseguard-proof\" / \"src\"  # K1R6 anchor: the frozen proof library",
+     "note": "the frozen module locates rebaseguard-proof from __file__; the generated copy must resolve the SAME frozen library (the one the aux4 kernel already loaded), not one relative to this worktree",
+     "old": "_PROOF_SRC = Path(__file__).resolve().parents[5] / \"rebaseguard-proof\" / \"src\""
+    },
+    {
+     "category": "Z",
+     "expected_occurrences": 1,
+     "new": "    low_max, low_n = _bmax_total(low_u, subdivision_depth, \"low\")",
+     "note": "low reachable triangle part",
+     "old": "    low_max, low_n = _bernstein_max_abs(_power_to_bernstein(low_u), subdivision_depth)"
+    },
+    {
+     "category": "Z",
+     "expected_occurrences": 1,
+     "new": "    high_max, high_n = _bmax_total(high_u, subdivision_depth, \"high\")",
+     "note": "high reachable part",
+     "old": "    high_max, high_n = _bernstein_max_abs(_power_to_bernstein(high_u), subdivision_depth)"
+    },
+    {
+     "category": "Z",
+     "expected_occurrences": 1,
+     "new": "    plus_max, plus_n = _bmax_total(plus_u, subdivision_depth, \"plus_tail\")",
+     "note": "plus tail part",
+     "old": "    plus_max, plus_n = _bernstein_max_abs(_power_to_bernstein(plus_u), subdivision_depth)"
+    },
+    {
+     "category": "Z",
+     "expected_occurrences": 1,
+     "new": "    minus_max, minus_n = _bmax_total(minus_u, subdivision_depth, \"minus_tail\")",
+     "note": "minus tail part",
+     "old": "    minus_max, minus_n = _bernstein_max_abs(_power_to_bernstein(minus_u), subdivision_depth)"
+    }
+   ]
+  },
+  "identity_k1r6.py": {
+   "declared_additions": "IDENTITY_PROVENANCE documentation appendix (not on the hashing path)",
+   "generated_from": "identity4.py",
+   "generated_sha256": "4da1b8868a9f883024ff983fb487a90c82d2ccb723ce4463b6f5e2403505662a",
+   "source_sha256": "a8b3bb3c788c9d16ba50d656eabf5abbca8b854db710bc353761ed700309bcf2",
+   "substitutions": [
+    {
+     "category": "R",
+     "expected_occurrences": 1,
+     "new": "from repair_universe import dependencies_of                          # noqa: F401  (K1R6: historical _cell_of NOT imported)\nfrom k1r6_bridge_resolver import _bridge_cell_of, BRIDGE_CELLS_SHA256  # noqa: E402  K1R6 bridge-only resolver",
+     "note": "the historical resolver is not imported at all, so no fallback path exists even by attribute",
+     "old": "from repair_universe import _cell_of, dependencies_of                # noqa: F401"
+    },
+    {
+     "category": "R",
+     "expected_occurrences": 1,
+     "new": "    cell = _bridge_cell_of(detector, index)",
+     "note": "identity geometry (e0, rho, left, right, C_upper) comes from the hash-bound K1R4 bridge record",
+     "old": "    cell = _cell_of(detector, index)"
+    },
+    {
+     "category": "V",
+     "expected_occurrences": 1,
+     "new": "        \"cells_sha256\": BRIDGE_CELLS_SHA256,",
+     "note": "CELL_PROVENANCE: cells 1000/1001 originate in the K1R4 CUSUM bridge table, so its exact hash is bound",
+     "old": "        \"cells_sha256\": spec.CELLS_SHA256,"
+    }
+   ]
+  },
+  "k1r6_certifier.py": {
+   "declared_additions": "leaf class K1R6Certifier(aux_certifier.Aux3Certifier) holding only _range",
+   "generated_from": "cusum_layer2.py (CellCertifier._range)",
+   "generated_sha256": "186e26b6fc4c79eeefa4f36ad164263466480cd13c88942432acf87843dc3c7b",
+   "source_sha256": "42c3d98394a6a8536e05d50626b21c7c71c309f5f98e286bdf2a3f7b5badf5a7",
+   "substitutions": [
+    {
+     "category": "K",
+     "expected_occurrences": 1,
+     "new": "FRT.max_abs_on_reachable_fast(pair.lo, pair.hi,",
+     "note": "the ONLY override: the frozen _range entry point bound to the generated totalized fast range",
+     "old": "max_abs_on_reachable_fast(pair.lo, pair.hi,"
+    }
+   ]
+  },
+  "k1r6_chain.py": {
+   "declared_additions": "module prelude: the three frozen import lines + import identity_k1r6 as IDB",
+   "generated_from": "qualify4.py (functions build_certificates, _certified_content, _obligation_status, verify_chain)",
+   "generated_sha256": "02a2807682335c4c94eea96fa857b629b09d46fa02b954e94da750852e6b4824",
+   "source_sha256": "c95b80e0be459b4724b68d4b31eb573a1fc4e8e5a494a5b33b199ad884957e90",
+   "substitutions": [
+    {
+     "category": "I",
+     "expected_occurrences": 3,
+     "function": "build_certificates",
+     "new": "IDB.",
+     "note": "build_certificates: identity4 -> identity_k1r6 (bridge-native identity)",
+     "old": "ID."
+    },
+    {
+     "category": "I",
+     "expected_occurrences": 7,
+     "function": "verify_chain",
+     "new": "IDB.",
+     "note": "verify_chain: identity4 -> identity_k1r6 (bridge-native identity)",
+     "old": "ID."
+    }
+   ]
+  },
+  "k1r6_cusum_entry.py": {
+   "declared_additions": "prefix comment only",
+   "generated_from": "p5y_k1r5_cusum_entry/driver/k1r5_cusum_entry.py",
+   "generated_sha256": "1374eac5b5f6b94bef8cc023c3dfb2c1216ce49f9f6483285fb6e9d429c8fcf7",
+   "source_sha256": "2cc7a97ad48431b34e1a8c64527430570aa382c751d3e089cb3c2e1bf185f5c6",
+   "substitutions": [
+    {
+     "category": "K",
+     "expected_occurrences": 1,
+     "new": "            cert = K1R6Certifier(cell, bits=bits).prepare()",
+     "note": "successor certifier class (frozen Aux3Certifier + the totalized _range only)",
+     "old": "            cert = aux_certifier.Aux3Certifier(cell, bits=bits).prepare()"
+    },
+    {
+     "category": "I",
+     "expected_occurrences": 1,
+     "new": "from k1r6_chain import build_certificates, verify_chain           # noqa: E402  generated bridge-native chain\nfrom k1r6_certifier import K1R6Certifier                          # noqa: E402  generated leaf certifier\nimport fast_range_k1r6 as FRT                                     # noqa: E402  generated totalized fast range\nimport k1r6_bridge_resolver as RES                                # noqa: E402  bridge-only identity resolver",
+     "note": "certificate/identity chain generated from the frozen qualify4 text, bound to identity_k1r6",
+     "old": "build_certificates, verify_chain = Q4.build_certificates, Q4.verify_chain"
+    },
+    {
+     "category": "B",
+     "expected_occurrences": 1,
+     "new": "K1R6_MODULES = (\"identity_k1r6\", \"k1r6_chain\", \"k1r6_certifier\", \"fast_range_k1r6\", \"k1r6_bridge_resolver\")\n\n\ndef verify_k1r6_modules() -> dict:\n    \"\"\"K1R6 module binding: every successor module must be LOADED from its manifest path with its manifest\n    hash. (verify_tcb inspects only files under the repository roots; this closes shadowing from elsewhere.)\"\"\"\n    files = json.loads((CFG / \"PRODUCER_MANIFEST.json\").read_text())[\"files\"]\n    bad = []\n    for name in K1R6_MODULES:\n        mod = sys.modules.get(name)\n        f = str(Path(mod.__file__).resolve()) if mod is not None and getattr(mod, \"__file__\", None) else None\n        want = str((NS / \"driver\" / f\"{name}.py\").resolve())\n        if f != want or files.get(want) != _sha(want):\n            bad.append((name, f))\n    if bad:\n        raise CusumBridgeRefused(f\"K1R6 module binding: successor modules not loaded from the manifest: {bad}\")\n    return {\"k1r6_modules\": len(K1R6_MODULES)}\n\n\n# ============================================================ the frozen statement block",
+     "note": "module binding gate for the generated successor modules",
+     "old": "# ============================================================ the frozen statement block"
+    },
+    {
+     "category": "I",
+     "expected_occurrences": 1,
+     "new": "    cell = bridge_cell(index)\n    if RES.resolve(\"CUSUM\", index) != cell:\n        raise CusumBridgeRefused(\"identity resolver and certified cell disagree\")\n    verify_tcb(\"initial\")\n    verify_k1r6_modules()\n    FRT.reset_zero_case()\n",
+     "note": "identity geometry == certified cell; module binding; zero-case record starts empty",
+     "old": "    cell = bridge_cell(index)\n    verify_tcb(\"initial\")\n"
+    },
+    {
+     "category": "B",
+     "expected_occurrences": 1,
+     "new": "    verify_tcb(\"final-reverify\")\n    verify_k1r6_modules()\n",
+     "note": "module binding re-verified after the scientific hash, before the seal",
+     "old": "    verify_tcb(\"final-reverify\")\n"
+    },
+    {
+     "category": "Z",
+     "expected_occurrences": 1,
+     "new": "        \"k1r5_bridge\": {\"index\": index, \"k1r4_table_sha256\": _sha(K1R4_TABLE),\n                        \"identity_cells_sha256\": RES.BRIDGE_CELLS_SHA256,\n                        \"identity_provenance\": RES.PROVENANCE,\n                        \"zero_case\": FRT.zero_case_record(),",
+     "note": "every zero base-case firing (object, part, reason, count) recorded in the hashed bridge block",
+     "old": "        \"k1r5_bridge\": {\"index\": index, \"k1r4_table_sha256\": _sha(K1R4_TABLE),"
+    },
+    {
+     "category": "B",
+     "expected_occurrences": 1,
+     "new": "                    \"k1r5_bridge_cell_entry(orchestration only; kernel unchanged)\",\n                    \"k1r6_bridge_native_identity(identity_k1r6: cell from the hash-bound K1R4 bridge table)\",\n                    \"k1r6_zero_polynomial_range_totality(fast_range_k1r6: empty part -> exact 0; non-empty path frozen)\"],",
+     "note": "declared change list",
+     "old": "                    \"k1r5_bridge_cell_entry(orchestration only; kernel unchanged)\"],"
+    },
+    {
+     "category": "B",
+     "expected_occurrences": 11,
+     "new": "k1r6",
+     "note": "producer / campaign / marker / file / record-key names",
+     "old": "k1r5"
+    },
+    {
+     "category": "B",
+     "expected_occurrences": 9,
+     "new": "K1R6",
+     "note": "producer / campaign / docstring names",
+     "old": "K1R5"
+    }
+   ]
+  }
+ }
+}
