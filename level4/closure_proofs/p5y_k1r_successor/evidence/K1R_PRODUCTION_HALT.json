@@ -1,0 +1,43 @@
+{
+ "schema": "rebaseguard.p5y.k1r.production-halt.v1",
+ "halted_utc": "2026-09-26T04:15:00Z",
+ "k1r_freeze_commit": "7f671b9ba2d7111b5e8cde010bc660904925fa1c",
+ "gate": "G_GOVERNANCE",
+ "gate_text": "source hash mismatch, runtime drift, producer mismatch or an unauthorised scientific artifact -> HALT",
+ "phases": {
+  "PHASE_0_REQUALIFY": "PASS",
+  "PHASE_1_B1": "PASS (AUX5_COMPOSITE_ADMISSION, 0.0 new CPU-h)",
+  "PHASE_2_CUSUM_BRIDGE": "HALTED BEFORE ANY COMPUTATION",
+  "PHASE_3_SR_BRIDGE": "HALTED BEFORE ANY COMPUTATION",
+  "PHASE_5_VERIFICATION": "NOT_REACHED",
+  "PHASE_6_ASSEMBLY": "NOT_CREATED"
+ },
+ "blocker": "No qualified producer can certify an e-interval outside its frozen cell table, and no authorization admits new cells into either lineage. Producing the bridge cells would require minting frozen governance artifacts inside a production run.",
+ "cusum_evidence": {
+  "producer_entry": "level4/closure_proofs/p5y_k1_cusum_aux4_fullcover/code/qualify4.py",
+  "interface": "--cell <int>, resolved by `cell = next(c for c in spec.CELLS ...)` (line 210)",
+  "frozen_table": "spec.CELLS, 326 cells 0..325, pinned as spec.CELLS_SHA256",
+  "identity_binding": "code/identity4.py:126 binds cells_sha256 into the producer identity",
+  "geometry_gate": "code/audit4.py:91 requires spec.CELLS_SHA256 == spec.CHECKPOINT['geometry']['cells_sha256']",
+  "consequence": "adding the 2 frozen bridge cells to the table changes CELLS_SHA256, breaking both the producer identity and the frozen cover-geometry gate"
+ },
+ "sr_evidence": {
+  "worker": "p5y_k1_ps1_production/driver/ps1_cellseq_worker.py:123",
+  "check": "refuses unless SC.table_sha256() == task['successor_cells_sha256'] (frozen 369-cell table dfaced89...)",
+  "ownership_gate": "multihost.gate_cell_ownership raises 'cell {id} is not in the frozen cover' for any cell outside the 0..368 owners map",
+  "total_cells": 369,
+  "consequence": "the 6 frozen SR bridge cells are not in the frozen table or the owners map; executing them needs a NEW partition table plus a NEW run authorization and countersignature"
+ },
+ "root_cause": "The K1R preregistration froze WHAT to certify (exact domains, partitions, thresholds, precision, hosts, gates, cost cap) but not HOW: it assumed the already-qualified CUSUM and SR backends could accept new intervals. They cannot. This is a gap in the preregistration, not a defect in the frozen science.",
+ "what_a_repair_would_need": [
+  "CUSUM: an additive bridge cell table + a producer-identity extension that binds it, re-qualified so cover geometry and identity gates hold (the frozen 326-cell table itself stays untouched)",
+  "SR: an additive bridge partition table + a new run authorization and countersignature admitting exactly the 6 frozen cells on AWS, under the existing 39-file executor identity",
+  "both preregistered and countersigned BEFORE any decisive computation, as K1R itself requires"
+ ],
+ "not_done_here": "No repair was attempted inside this production run, per the frozen stop conditions.",
+ "new_k1r_cpu_h": 0.0,
+ "cost_cap_cpu_h": 150.0,
+ "historical_artifacts_touched": "NONE",
+ "k1r_status": "NOT_DECIDED_HERE",
+ "k1_status": "PARTIAL (unchanged)"
+}

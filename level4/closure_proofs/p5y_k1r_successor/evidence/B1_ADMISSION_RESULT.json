@@ -1,0 +1,62 @@
+{
+ "schema": "rebaseguard.p5y.k1r.b1-admission-result.v1",
+ "evaluated_utc": "2026-09-26T04:00:00Z",
+ "evaluated_on_host": "rebaseguard-vultr-02",
+ "frozen_contract_sha256": "9e71467fb9b8938abc02e96cc0fc6f1b72ce35f621245358c423396572865478",
+ "k1r_freeze_commit": "7f671b9ba2d7111b5e8cde010bc660904925fa1c",
+ "decision_order": "A1..A10 evaluated FIRST on governance/identity fields only; the scientific gate G_AUX5_STATUS was evaluated ONLY after the route was fixed",
+ "route": "AUX5_COMPOSITE_ADMISSION",
+ "route_selection_used_scientific_outcome": false,
+ "fallback_run": false,
+ "new_k1r_cpu_h": 0.0,
+ "conditions": {
+  "A1": {"pass": true, "files": 326, "cell_set_is_0_325": true},
+  "A2": {"pass": true, "obligation_slots": 1304, "m_keys_exact": true},
+  "A3": {"pass": true, "export_manifest_file": true, "composite_audit_file": true,
+         "k4_attestation_file": true, "manifest_declares_audit": true,
+         "attestation_declares_audit": true, "halves_hashes_match_frozen": true},
+  "A4": {"pass": true, "manifest_entries": 326, "records_hashed": 326, "mismatches": []},
+  "A5": {"pass": true, "distinct_producer_identity_hashes": 1,
+         "producer_identity_hash": "3692d0feeaef71365798cd99399fdb6d744573f38d59dba5cfe2e99294f0ae19",
+         "nuance": "producer identity is bound per RECORD; the production checkpoint is bound per HALF (predecessor dd4c89d7, successor f9380847, both frozen-matching via A3). No per-record checkpoint field exists in this export."},
+  "A6": {"pass": true, "audit_pairs": 326, "scientific_hash_digest_mismatches": [],
+         "attestation_all_scientific_hashes_verified": true},
+  "A7": {"pass": true, "result_agnostic": true, "obligation_statuses_read_by_audit": false,
+         "k4_values_evaluated": false},
+  "A8": {"pass": true, "both_halves_authorised_and_countersigned": true,
+         "newest_record_mtime": "2026-09-16T05:53:11Z", "predates_k1r_freeze": true},
+  "A9": {"pass": true, "admission_set_size": 326, "total_or_nothing": true,
+         "partial_selection_representable": false},
+  "A10": {"pass": true, "host_libraries": 11, "host_packages": 8,
+          "distinct_runtime_contract_hashes": 1,
+          "runtime_contract_hash_prefix": "bc75c9ea7cd5f940"}
+ },
+ "all_a1_a10": "PASS",
+ "failed_conditions": [],
+ "admitted_source": {
+  "indivisible": true,
+  "cells": 326,
+  "cell_range": [0, 325],
+  "obligations": 1304,
+  "export_root": "/root/work/postk1-runs/closure-r1",
+  "export_manifest_sha256": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334",
+  "composite_audit_sha256": "2ec4dcbb9f2bc27568742db053133c01a369863a21f9a4f066471fcd9cb4b670",
+  "composite_audit_self_declared_sha256": "fa1d79b52c8ac6014c34ced67f1c53dd862b55c66cd6fcee47ab1797c7404266",
+  "k4_attestation_sha256": "039e2e1cbebb9561c177ddca790dbc2c675eafde15553ad4e1282777d9bd8d2c",
+  "producer_identity_hash": "3692d0feeaef71365798cd99399fdb6d744573f38d59dba5cfe2e99294f0ae19",
+  "halves": {"predecessor_cells_0_127": "CUSUM-AUX5-PROD-AUTH-001 / countersignature 1ceb92d4 / checkpoint dd4c89d7",
+             "successor_cells_128_325": "CUSUM-AUX5-GLIBC-PROD-AUTH-002 / countersignature e1ee7fb1 / checkpoint f9380847"}
+ },
+ "g_aux5_status_gate": {
+  "evaluated_after_route_fixed": true,
+  "cells": 326, "obligations_evaluated": 1304, "non_pass_count": 0,
+  "status_histogram": {"m=1": "326 PASS", "m=2": "326 PASS", "m=3": "326 PASS", "m=5": "326 PASS"},
+  "verdict": "CLEAR"
+ },
+ "b1_blocker_cells_of_record": {
+  "cells": [319, 320, 321, 322, 323], "m": 5,
+  "admitted_status": "PASS for all five under the admitted composite",
+  "historical_records_unchanged": true
+ },
+ "k1r_status": "NOT_DECIDED_HERE"
+}
