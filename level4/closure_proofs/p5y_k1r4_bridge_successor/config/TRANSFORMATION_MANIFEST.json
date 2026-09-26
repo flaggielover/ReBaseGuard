@@ -1,0 +1,233 @@
+{
+ "discipline": "every substitution asserted at its declared occurrence count; any drift in the frozen source text fails closed",
+ "permitted_categories": {
+  "P": "path anchoring to the frozen namespace",
+  "R": "bridge registry resolution",
+  "S": "bridge stage chaining",
+  "U": "bridge obligation-universe carrier"
+ },
+ "schema": "rebaseguard.p5y.k1r4.transformation-manifest.v1",
+ "source_namespace": "/home/ubuntu/work/ReBaseGuard-ps1-prod-gen2/level4/closure_proofs/p5y_k1_sr_o9_partition_successor/code",
+ "stages": {
+  "k1r4_bridge_cells.py": {
+   "addition_note": "mode control, bridge-index guard and the derived universe carrier appended; no frozen line altered",
+   "declared_additions": true,
+   "generated_from": "succ_cells.py",
+   "generated_sha256": "bb0ff1d19674e4eabc51a35e0c913bad37b0d1dcd17612f1753a493c6e86f62a",
+   "scientific_algebra": "BYTE-DERIVED from the frozen source; unchanged",
+   "source_lines": 93,
+   "source_sha256": "b651c78013d8a135ba94009ff6a621bb9d455b87149459ad7df5fdd2b70a3cb5",
+   "substituted_lines": 2,
+   "substitutions": [
+    {
+     "category": "P",
+     "expected_occurrences": 1,
+     "new": "NS = Path(\"/home/ubuntu/work/ReBaseGuard-ps1-prod-gen2/level4/closure_proofs/p5y_k1_sr_o9_partition_successor\")  # K1R4 anchor: the frozen namespace, not this file",
+     "observed_occurrences": 1,
+     "old": "NS = Path(__file__).resolve().parents[1]",
+     "rationale": "path anchoring: the frozen module locates its own namespace from __file__; a generated copy must still resolve the FROZEN inputs (historical table, live patches, universe) in the production clone, not in the generating worktree"
+    },
+    {
+     "category": "R",
+     "expected_occurrences": 1,
+     "new": "BRIDGE_TABLE = Path(__file__).resolve().parents[1] / \"config/SR_BRIDGE_CELL_TABLE.json\"\nHISTORICAL_TABLE = NS / \"config/successor_cells.json\"\nBRIDGE_INDICES = range(2000, 2006)\nHISTORICAL_INDICES = range(0, 369)\n_MODE = \"BRIDGE\"          # \"BRIDGE\" = genuine new work; \"REPLAY\" = read-only equivalence\nTABLE = BRIDGE_TABLE",
+     "observed_occurrences": 1,
+     "old": "TABLE = NS / \"config/successor_cells.json\"",
+     "rationale": "bridge/historical table selection"
+    }
+   ]
+  },
+  "k1r4_bridge_cellseq.py": {
+   "addition_note": null,
+   "declared_additions": false,
+   "generated_from": "ps1_cellseq_worker.py",
+   "generated_sha256": "209edd64e089cee27beae2af4f30c6b3331fe0111a6121d735c8a18241e7c7d4",
+   "scientific_algebra": "BYTE-DERIVED from the frozen source; unchanged",
+   "source_lines": 305,
+   "source_sha256": "12a23d063f950d70600983137575f054dbba6b96a25bf191e6c1de3d4b24e4e2",
+   "substituted_lines": 5,
+   "substitutions": [
+    {
+     "category": "S",
+     "expected_occurrences": 1,
+     "new": "    import k1r4_bridge_t3 as S3\n",
+     "observed_occurrences": 1,
+     "old": "    import succ_t3 as S3\n",
+     "rationale": "bridge stage chaining"
+    },
+    {
+     "category": "R",
+     "expected_occurrences": 1,
+     "new": "    import k1r4_bridge_cells as SC\n",
+     "observed_occurrences": 1,
+     "old": "    import succ_cells as SC\n",
+     "rationale": "bridge registry resolution"
+    },
+    {
+     "category": "S",
+     "expected_occurrences": 1,
+     "new": "    import k1r4_bridge_t3_aggregate as AG\n",
+     "observed_occurrences": 1,
+     "old": "    import succ_t3_aggregate as AG\n",
+     "rationale": "bridge stage chaining"
+    },
+    {
+     "category": "S",
+     "expected_occurrences": 1,
+     "new": "    import k1r4_bridge_t4 as S4\n",
+     "observed_occurrences": 1,
+     "old": "    import succ_t4 as S4\n",
+     "rationale": "bridge stage chaining"
+    },
+    {
+     "category": "S",
+     "expected_occurrences": 1,
+     "new": "    import k1r4_bridge_t5 as S5\n",
+     "observed_occurrences": 1,
+     "old": "    import succ_t5 as S5\n",
+     "rationale": "bridge stage chaining"
+    }
+   ]
+  },
+  "k1r4_bridge_t1.py": {
+   "addition_note": null,
+   "declared_additions": false,
+   "generated_from": "succ_t1.py",
+   "generated_sha256": "d1d610c2bbe90a11b689942396fa4e0e659ef4de2f83e4ae8fcef693eeec7390",
+   "scientific_algebra": "BYTE-DERIVED from the frozen source; unchanged",
+   "source_lines": 50,
+   "source_sha256": "233b5444bfd48a829e1e51177175d95e0eaf9a7c67bfd5f059289bb41a1a7675",
+   "substituted_lines": 1,
+   "substitutions": [
+    {
+     "category": "R",
+     "expected_occurrences": 1,
+     "new": "import k1r4_bridge_cells as SC",
+     "observed_occurrences": 1,
+     "old": "import succ_cells as SC",
+     "rationale": "bridge registry resolution"
+    }
+   ]
+  },
+  "k1r4_bridge_t3.py": {
+   "addition_note": null,
+   "declared_additions": false,
+   "generated_from": "succ_t3.py",
+   "generated_sha256": "b032d8ae09522b7927f4a6ffc954c00f804b509a60c5ae0228f3bc37a520418a",
+   "scientific_algebra": "BYTE-DERIVED from the frozen source; unchanged",
+   "source_lines": 74,
+   "source_sha256": "c3ae6ecf5c8128ac13e709e1c72a4980484249312b443ed95cfa02d317c0e3a9",
+   "substituted_lines": 2,
+   "substitutions": [
+    {
+     "category": "R",
+     "expected_occurrences": 1,
+     "new": "import k1r4_bridge_cells as SC",
+     "observed_occurrences": 1,
+     "old": "import succ_cells as SC",
+     "rationale": "bridge registry resolution"
+    },
+    {
+     "category": "S",
+     "expected_occurrences": 1,
+     "new": "import k1r4_bridge_t1 as S1",
+     "observed_occurrences": 1,
+     "old": "import succ_t1 as S1",
+     "rationale": "bridge stage chaining"
+    }
+   ]
+  },
+  "k1r4_bridge_t3_aggregate.py": {
+   "addition_note": null,
+   "declared_additions": false,
+   "generated_from": "succ_t3_aggregate.py",
+   "generated_sha256": "6d37a93ecf2d85e091475f4fef811113e3bd6178f0b41c054ea8774b2ea50abc",
+   "scientific_algebra": "BYTE-DERIVED from the frozen source; unchanged",
+   "source_lines": 150,
+   "source_sha256": "08cd2114fd8c9af28ab3ae5707f4e5f88fef58ca989662dc5466d29394f2c906",
+   "substituted_lines": 3,
+   "substitutions": [
+    {
+     "category": "P",
+     "expected_occurrences": 1,
+     "new": "NS = Path(\"/home/ubuntu/work/ReBaseGuard-ps1-prod-gen2/level4/closure_proofs/p5y_k1_sr_o9_partition_successor\")  # K1R4 anchor: the frozen namespace, not this file",
+     "observed_occurrences": 1,
+     "old": "NS = Path(__file__).resolve().parents[1]",
+     "rationale": "path anchoring: the frozen module locates its own namespace from __file__; a generated copy must still resolve the FROZEN inputs (historical table, live patches, universe) in the production clone, not in the generating worktree"
+    },
+    {
+     "category": "R",
+     "expected_occurrences": 1,
+     "new": "import k1r4_bridge_cells as SC",
+     "observed_occurrences": 1,
+     "old": "import succ_cells as SC",
+     "rationale": "bridge registry resolution"
+    },
+    {
+     "category": "S",
+     "expected_occurrences": 1,
+     "new": "import k1r4_bridge_t1 as S1",
+     "observed_occurrences": 1,
+     "old": "import succ_t1 as S1",
+     "rationale": "bridge stage chaining"
+    }
+   ]
+  },
+  "k1r4_bridge_t4.py": {
+   "addition_note": null,
+   "declared_additions": false,
+   "generated_from": "succ_t4.py",
+   "generated_sha256": "297c8c5adc53128af379d935d182e35b970091401c4906ba6bdd59d1278ead3a",
+   "scientific_algebra": "BYTE-DERIVED from the frozen source; unchanged",
+   "source_lines": 112,
+   "source_sha256": "f5d6bab31214f263e5cf94423ad642479dca4da530b98b58997eb97ad9e8fbb4",
+   "substituted_lines": 2,
+   "substitutions": [
+    {
+     "category": "R",
+     "expected_occurrences": 1,
+     "new": "import k1r4_bridge_cells as SC",
+     "observed_occurrences": 1,
+     "old": "import succ_cells as SC",
+     "rationale": "bridge registry resolution"
+    },
+    {
+     "category": "S",
+     "expected_occurrences": 1,
+     "new": "import k1r4_bridge_t1 as S1",
+     "observed_occurrences": 1,
+     "old": "import succ_t1 as S1",
+     "rationale": "bridge stage chaining"
+    }
+   ]
+  },
+  "k1r4_bridge_t5.py": {
+   "addition_note": null,
+   "declared_additions": false,
+   "generated_from": "succ_t5.py",
+   "generated_sha256": "959eb55dec128ab72fcc319aa75962cec5c5c4458dc6d2172eb7d2791f842bd2",
+   "scientific_algebra": "BYTE-DERIVED from the frozen source; unchanged",
+   "source_lines": 116,
+   "source_sha256": "28593c6ca775ec23e895ec04bdce0f0e7f280fff6690757cc4d42118fb59e76b",
+   "substituted_lines": 2,
+   "substitutions": [
+    {
+     "category": "R",
+     "expected_occurrences": 1,
+     "new": "import k1r4_bridge_cells as SC",
+     "observed_occurrences": 1,
+     "old": "import succ_cells as SC",
+     "rationale": "bridge registry resolution"
+    },
+    {
+     "category": "U",
+     "expected_occurrences": 1,
+     "new": "universe.work_ids(cells=[SC.universe_carrier(rec)])",
+     "observed_occurrences": 1,
+     "old": "universe.work_ids(cells=[T.frozen_cell(rec[\"parent_index\"])])",
+     "rationale": "bridge obligation-universe carrier: work_ids consumes only (detector, index) and T5 overwrites the index with rec['id'], so the historical parent lookup is a vacuous carrier; the bridge carrier supplies the same (detector, index) pair without claiming a parent the bridge cell does not have"
+    }
+   ]
+  }
+ }
+}

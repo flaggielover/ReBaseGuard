@@ -1,0 +1,25 @@
+{
+ "SCOPE_CHANGE_CLASS": "DOMAIN_ENLARGEMENT_TO_REMOVE_CERTIFICATE_GAP",
+ "decided_before_any_bridge_result": true,
+ "defect": "the old endpoint lay approximately 3.0e-17 ABOVE the exact c_SR, leaving (c_SR, old endpoint] uncovered by every certificate",
+ "effect": "prospective replacement in K1R4 only; K1R, K1R2 and K1R3 history is unchanged",
+ "new_sr_bridge_lower_endpoint": "33777657/5000000",
+ "not": [
+  "threshold relaxation",
+  "post-result narrowing",
+  "a new endpoint chosen by hand"
+ ],
+ "old_endpoint_minus_c_SR": "[3.0021326843705271477e-17 +/- 3.05e-37]",
+ "old_k1r_sr_bridge_lower_endpoint": "3803026123175981/562949953421312",
+ "schema": "rebaseguard.p5y.k1r4.scope-amendment.v1",
+ "why_conservative": [
+  "the bridge domain is enlarged, never narrowed: [q_SR, e_close] strictly contains the old (old, e_close]",
+  "theorem target unchanged (sup |R| < 2)",
+  "m universe unchanged {1,2,3,5}",
+  "precision unchanged (256 bits)",
+  "far-field endpoint unchanged (1883835/262144)",
+  "historical compact evidence unchanged",
+  "the overlap [q_SR, c_SR] is accepted as redundant certification",
+  "no previously required point is removed"
+ ]
+}

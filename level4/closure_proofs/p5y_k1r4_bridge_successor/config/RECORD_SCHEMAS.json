@@ -1,0 +1,99 @@
+{
+ "CUSUM": {
+  "consumer": "cusum_layer2.CellCertifier.__init__ (frozen) + aux_propagate",
+  "fields": {
+   "C_evaluation": {
+    "class": "orchestration (not read by the kernel)",
+    "type": "list[str,str]"
+   },
+   "C_upper": {
+    "class": "scientific",
+    "encoding": "plain 'num/den' rational, NOT a pair",
+    "type": "str"
+   },
+   "detector": {
+    "class": "governance",
+    "type": "str",
+    "value": "CUSUM"
+   },
+   "e0": {
+    "class": "scientific",
+    "encoding": "affine [p, '0/1']; kernel reads [0]",
+    "type": "list[str,str]"
+   },
+   "index": {
+    "class": "orchestration",
+    "type": "int"
+   },
+   "left": {
+    "class": "scientific input geometry",
+    "encoding": "affine [p, '0/1']; kernel reads [0]",
+    "type": "list[str,str]"
+   },
+   "nominal_step_half_width": {
+    "class": "orchestration (not read by the kernel)",
+    "type": "str"
+   },
+   "rho": {
+    "class": "scientific",
+    "encoding": "affine [p, '0/1']; kernel reads [0], record re-emits the pair",
+    "type": "list[str,str]"
+   },
+   "right": {
+    "class": "scientific input geometry",
+    "encoding": "affine [p, '0/1']; kernel reads [0]",
+    "type": "list[str,str]"
+   }
+  },
+  "identities": [
+   "e0 == (left+right)/2",
+   "rho == (right-left)/2"
+  ]
+ },
+ "SR": {
+  "consumer": "generated k1r4_bridge_cells.validate/geometry/identity + t1/t3/t4/t5",
+  "fields": {
+   "C_upper": {
+    "encoding": "plain rational, inherited from the bridge parent",
+    "type": "str"
+   },
+   "child": {
+    "type": "int"
+   },
+   "children": {
+    "type": "int"
+   },
+   "id": {
+    "type": "str"
+   },
+   "index": {
+    "range": "2000..",
+    "type": "int"
+   },
+   "left/right/e0/rho/C_evaluation": {
+    "encoding": "affine [p, s]; bridge cells are non-terminal so s == '0/1' everywhere",
+    "type": "list[str,str]"
+   },
+   "parent_index": {
+    "range": "9000.. (bridge parents only)",
+    "type": "int"
+   },
+   "parent_record_sha256": {
+    "type": "str"
+   },
+   "schema": {
+    "value": "rebaseguard.p5y.k1.sr.partition-successor.cell.v1"
+   },
+   "terminal": {
+    "type": "bool",
+    "value": false
+   }
+  },
+  "identities": [
+   "e0 == (left+right)/2",
+   "rho == (right-left)/2",
+   "rho <= 1/25"
+  ]
+ },
+ "schema": "rebaseguard.p5y.k1r4.record-schemas.v1"
+}

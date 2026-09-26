@@ -1,0 +1,189 @@
+"""Generate the K1R4 bridge stages MECHANICALLY from the frozen successor stage text.
+
+This is the same discipline make_successor_stages.py used to produce succ_t4/succ_t5 from the
+parent frozen sources: every substitution is declared with an expected occurrence count,
+asserted before it is applied, and recorded in a machine-readable transformation manifest.
+Every other byte is the frozen text, so no scientific equation, inequality, threshold or
+numerical routine is rewritten here.
+
+Permitted substitution categories ONLY:
+  R  bridge registry resolution        (import succ_cells -> import k1r4_bridge_cells)
+  S  bridge stage chaining             (import succ_t1   -> import k1r4_bridge_t1)
+  U  bridge obligation-universe carrier (T5's vacuous parent lookup -> the derived carrier)
+"""
+import hashlib
+import json
+import sys
+from pathlib import Path
+
+NS = Path(__file__).resolve().parents[1]
+SRC = Path("/home/ubuntu/work/ReBaseGuard-ps1-prod-gen2/level4/closure_proofs/"
+           "p5y_k1_sr_o9_partition_successor/code")
+OUT = NS / "driver"
+
+R = ("import succ_cells as SC", "import k1r4_bridge_cells as SC", "R", 1,
+     "bridge registry resolution")
+S = ("import succ_t1 as S1", "import k1r4_bridge_t1 as S1", "S", 1,
+     "bridge stage chaining")
+U = ('universe.work_ids(cells=[T.frozen_cell(rec["parent_index"])])',
+     'universe.work_ids(cells=[SC.universe_carrier(rec)])', "U", 1,
+     "bridge obligation-universe carrier: work_ids consumes only (detector, index) and T5 "
+     "overwrites the index with rec['id'], so the historical parent lookup is a vacuous "
+     "carrier; the bridge carrier supplies the same (detector, index) pair without claiming "
+     "a parent the bridge cell does not have")
+
+P = ("NS = Path(__file__).resolve().parents[1]",
+     'NS = Path("/home/ubuntu/work/ReBaseGuard-ps1-prod-gen2/level4/closure_proofs/'
+     'p5y_k1_sr_o9_partition_successor")  # K1R4 anchor: the frozen namespace, not this file',
+     "P", 1,
+     "path anchoring: the frozen module locates its own namespace from __file__; a generated "
+     "copy must still resolve the FROZEN inputs (historical table, live patches, universe) "
+     "in the production clone, not in the generating worktree")
+
+STAGES = {
+    "succ_t1.py": ("k1r4_bridge_t1.py", [R]),
+    "succ_t3.py": ("k1r4_bridge_t3.py", [R, S]),
+    "succ_t3_aggregate.py": ("k1r4_bridge_t3_aggregate.py", [P, R, S]),
+    "succ_t4.py": ("k1r4_bridge_t4.py", [R, S]),
+    "succ_t5.py": ("k1r4_bridge_t5.py", [R, U]),
+}
+
+REG_OLD = 'TABLE = NS / "config/successor_cells.json"'
+REG_NEW = ('BRIDGE_TABLE = Path(__file__).resolve().parents[1] / "config/SR_BRIDGE_CELL_TABLE.json"\n'
+           'HISTORICAL_TABLE = NS / "config/successor_cells.json"\n'
+           'BRIDGE_INDICES = range(2000, 2006)\n'
+           'HISTORICAL_INDICES = range(0, 369)\n'
+           '_MODE = "BRIDGE"          # "BRIDGE" = genuine new work; "REPLAY" = read-only equivalence\n'
+           'TABLE = BRIDGE_TABLE')
+APPENDIX = '''
+
+# ----------------------------------------------------------------- K1R4 bridge additions
+# Declared additions (category A). They add mode control, the bridge-index guard and the
+# derived obligation-universe carrier. No frozen line above is altered.
+def set_mode(mode: str) -> str:
+    """BRIDGE = genuine bridge work (6 bridge cells). REPLAY = read-only historical replay."""
+    global _MODE, TABLE
+    if mode not in ("BRIDGE", "REPLAY"):
+        raise SuccessorCellRefused(f"unknown registry mode {mode!r}")
+    _MODE, TABLE = mode, (BRIDGE_TABLE if mode == "BRIDGE" else HISTORICAL_TABLE)
+    return _MODE
+
+
+def mode() -> str:
+    return _MODE
+
+
+def _guard(index) -> None:
+    if _MODE == "BRIDGE" and index in HISTORICAL_INDICES:
+        raise SuccessorCellRefused(
+            f"historical PS1 cell {index} is inherited evidence, never new bridge work")
+    if _MODE == "REPLAY" and index in BRIDGE_INDICES:
+        raise SuccessorCellRefused(
+            f"bridge cell {index} may not be produced in read-only REPLAY mode")
+
+
+def cells() -> list:
+    return json.loads(table_bytes())["cells"]
+
+
+def cell(index: int) -> dict:
+    _guard(index)
+    hits = [c for c in cells() if c["index"] == index]
+    if len(hits) != 1:
+        raise SuccessorCellRefused(f"cell {index} is not in the active {_MODE} table")
+    return json.loads(json.dumps(hits[0]))
+
+
+def universe_carrier(rec: dict) -> dict:
+    """The (detector, index) carrier the frozen work_ids consumes.
+
+    universe.work_ids reads ONLY c["detector"] and c["index"], and T5 overwrites the index
+    with rec["id"]; the historical parent lookup was therefore a vacuous carrier. This
+    supplies the same pair without claiming a parent above the splice.
+    """
+    validate(rec)
+    return {"detector": rec["detector"] if "detector" in rec else "SR", "index": rec["index"]}
+'''
+
+STAGES["succ_cells.py"] = ("k1r4_bridge_cells.py",
+                           [P, (REG_OLD, REG_NEW, "R", 1, "bridge/historical table selection")])
+APPEND = {"k1r4_bridge_cells.py": APPENDIX}
+
+WORKER_SRC = Path("/home/ubuntu/work/ReBaseGuard-ps1-prod-gen2/level4/closure_proofs/"
+                  "p5y_k1_ps1_production/driver/ps1_cellseq_worker.py")
+W_SUBS = [
+    ("    import succ_t3 as S3\n", "    import k1r4_bridge_t3 as S3\n", "S", 1, "bridge stage chaining"),
+    ("    import succ_cells as SC\n", "    import k1r4_bridge_cells as SC\n", "R", 1, "bridge registry resolution"),
+    ("    import succ_t3_aggregate as AG\n", "    import k1r4_bridge_t3_aggregate as AG\n", "S", 1, "bridge stage chaining"),
+    ("    import succ_t4 as S4\n", "    import k1r4_bridge_t4 as S4\n", "S", 1, "bridge stage chaining"),
+    ("    import succ_t5 as S5\n", "    import k1r4_bridge_t5 as S5\n", "S", 1, "bridge stage chaining"),
+]
+STAGES["ps1_cellseq_worker.py"] = ("k1r4_bridge_cellseq.py", W_SUBS)
+
+HEADER = ("# GENERATED by code/make_bridge_stages.py from {src} (sha256 {sha}).\n"
+          "# Frozen text with exactly the asserted substitutions in\n"
+          "# config/TRANSFORMATION_MANIFEST.json. Do not edit by hand.\n")
+
+
+def sha_bytes(b: bytes) -> str:
+    return hashlib.sha256(b).hexdigest()
+
+
+def generate() -> dict:
+    man = {"schema": "rebaseguard.p5y.k1r4.transformation-manifest.v1",
+           "source_namespace": str(SRC),
+           "discipline": "every substitution asserted at its declared occurrence count; any "
+                         "drift in the frozen source text fails closed",
+           "permitted_categories": {"R": "bridge registry resolution",
+                                    "S": "bridge stage chaining",
+                                    "U": "bridge obligation-universe carrier",
+                                    "P": "path anchoring to the frozen namespace"},
+           "stages": {}}
+    OUT.mkdir(parents=True, exist_ok=True)
+    for src_name, (out_name, subs) in STAGES.items():
+        raw = (WORKER_SRC if src_name == "ps1_cellseq_worker.py" else SRC / src_name).read_bytes()
+        src_sha = sha_bytes(raw)
+        text = raw.decode()
+        applied = []
+        for old, new, cat, expect, why in subs:
+            got = text.count(old)
+            if got != expect:
+                raise SystemExit(f"FROZEN_SOURCE_DRIFT: {src_name}: {old!r} occurs {got} "
+                                 f"times, expected {expect}")
+            text = text.replace(old, new)
+            applied.append({"category": cat, "old": old, "new": new,
+                            "expected_occurrences": expect, "observed_occurrences": got,
+                            "rationale": why})
+        body = HEADER.format(src=src_name, sha=src_sha) + text
+        extra = APPEND.get(out_name)
+        if extra:
+            body += extra
+        (OUT / out_name).write_text(body)
+        man["stages"][out_name] = {
+            "generated_from": src_name, "source_sha256": src_sha,
+            "generated_sha256": sha_bytes(body.encode()),
+            "substitutions": applied,
+            "substituted_lines": len(applied),
+            "source_lines": text.count("\n"),
+            "scientific_algebra": "BYTE-DERIVED from the frozen source; unchanged",
+            "declared_additions": bool(APPEND.get(out_name)),
+            "addition_note": ("mode control, bridge-index guard and the derived universe "
+                              "carrier appended; no frozen line altered")
+            if APPEND.get(out_name) else None}
+    return man
+
+
+def main() -> int:
+    man = generate()
+    p = NS / "config" / "TRANSFORMATION_MANIFEST.json"
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps(man, indent=1, sort_keys=True) + "\n")
+    print(f"manifest sha256: {sha_bytes(p.read_bytes())}")
+    for name, s in sorted(man["stages"].items()):
+        print(f"  {name:<32} {s['generated_sha256'][:16]}  <- {s['generated_from']} "
+              f"({s['substituted_lines']} subs of {s['source_lines']} lines)")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
