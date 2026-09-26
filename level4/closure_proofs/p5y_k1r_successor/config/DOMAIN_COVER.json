@@ -1,0 +1,361 @@
+{
+ "detectors": {
+  "CUSUM": {
+   "bridge_width": {
+    "exact": "3613211/8388608",
+    "float": 0.43072831630706787
+   },
+   "children": [
+    {
+     "center": {
+      "exact": "188162587/33554432",
+      "float": 5.607682079076767
+     },
+     "child": 0,
+     "hi": {
+      "exact": "95887899/16777216",
+      "float": 5.715364158153534
+     },
+     "lo": {
+      "exact": "11/2",
+      "float": 5.5
+     },
+     "lower_open": true,
+     "rho": {
+      "exact": "3613211/33554432",
+      "float": 0.10768207907676697
+     },
+     "upper_closed": true,
+     "width": {
+      "exact": "3613211/16777216",
+      "float": 0.21536415815353394
+     }
+    },
+    {
+     "center": {
+      "exact": "195389009/33554432",
+      "float": 5.823046237230301
+     },
+     "child": 1,
+     "hi": {
+      "exact": "49750555/8388608",
+      "float": 5.930728316307068
+     },
+     "lo": {
+      "exact": "95887899/16777216",
+      "float": 5.715364158153534
+     },
+     "lower_open": true,
+     "rho": {
+      "exact": "3613211/33554432",
+      "float": 0.10768207907676697
+     },
+     "upper_closed": true,
+     "width": {
+      "exact": "3613211/16777216",
+      "float": 0.21536415815353394
+     }
+    }
+   ],
+   "gap_free_proof": {
+    "bridge_hi_equals_far_field_lo": "49750555/8388608",
+    "children_chain_exact": true,
+    "compact_hi_equals_bridge_lo": "11/2",
+    "double_ownership_points": [
+     {
+      "certifier": "FAR_FIELD_INHERITED",
+      "point": "49750555/8388608",
+      "redundant_cover": "K1R_BRIDGE"
+     }
+    ],
+    "gaps": [],
+    "omitted_endpoints": [],
+    "union": "[0, infinity)"
+   },
+   "segments": [
+    {
+     "closure": "[0, c]",
+     "hi": {
+      "exact": "11/2",
+      "float": 5.5
+     },
+     "lo": {
+      "exact": "0/1",
+      "float": 0.0
+     },
+     "new_compute": false,
+     "owns_endpoints": [
+      "0",
+      "c"
+     ],
+     "segment": "COMPACT_INHERITED",
+     "source": "p5y_k1_cusum_* compact cover, cells 0-325",
+     "status": "INHERITED_PASS"
+    },
+    {
+     "cells": 2,
+     "closure": "(c, e_close]",
+     "endpoint_note": "e_close covered redundantly; certified by the far field",
+     "hi": {
+      "exact": "49750555/8388608",
+      "float": 5.930728316307068
+     },
+     "lo": {
+      "exact": "11/2",
+      "float": 5.5
+     },
+     "new_compute": true,
+     "owns_endpoints": [],
+     "owns_interior": "(c, e_close)",
+     "segment": "K1R_BRIDGE",
+     "status": "TO_BE_CERTIFIED_BY_K1R"
+    },
+    {
+     "basis": "P5X-T3 majorant is monotone decreasing in e and is strictly below target 2 for every m at e_close",
+     "closure": "[e_close, infinity)",
+     "hi": "+infinity",
+     "lo": {
+      "exact": "49750555/8388608",
+      "float": 5.930728316307068
+     },
+     "new_compute": false,
+     "owns_endpoints": [
+      "e_close"
+     ],
+     "segment": "FAR_FIELD_INHERITED",
+     "status": "INHERITED_PASS_AT_AND_ABOVE_e_close"
+    }
+   ]
+  },
+  "SR": {
+   "bridge_width": {
+    "exact": "242478734854099/562949953421312",
+    "float": 0.43072875906719865
+   },
+   "children": [
+    {
+     "center": {
+      "exact": "45878792212965871/6755399441055744",
+      "float": 6.791425527577073
+     },
+     "child": 0,
+     "hi": {
+      "exact": "23060635473909985/3377699720527872",
+      "float": 6.827319590832673
+     },
+     "lo": {
+      "exact": "3803026123175981/562949953421312",
+      "float": 6.755531464321473
+     },
+     "lower_open": true,
+     "rho": {
+      "exact": "242478734854099/6755399441055744",
+      "float": 0.035894063255599885
+     },
+     "upper_closed": true,
+     "width": {
+      "exact": "242478734854099/3377699720527872",
+      "float": 0.07178812651119977
+     }
+    },
+    {
+     "center": {
+      "exact": "15454583227558023/2251799813685248",
+      "float": 6.863213654088273
+     },
+     "child": 1,
+     "hi": {
+      "exact": "5825778552191021/844424930131968",
+      "float": 6.899107717343873
+     },
+     "lo": {
+      "exact": "23060635473909985/3377699720527872",
+      "float": 6.827319590832673
+     },
+     "lower_open": true,
+     "rho": {
+      "exact": "242478734854099/6755399441055744",
+      "float": 0.035894063255599885
+     },
+     "upper_closed": true,
+     "width": {
+      "exact": "242478734854099/3377699720527872",
+      "float": 0.07178812651119977
+     }
+    },
+    {
+     "center": {
+      "exact": "46848707152382267/6755399441055744",
+      "float": 6.935001780599473
+     },
+     "child": 2,
+     "hi": {
+      "exact": "7848530981206061/1125899906842624",
+      "float": 6.9708958438550725
+     },
+     "lo": {
+      "exact": "5825778552191021/844424930131968",
+      "float": 6.899107717343873
+     },
+     "lower_open": true,
+     "rho": {
+      "exact": "242478734854099/6755399441055744",
+      "float": 0.035894063255599885
+     },
+     "upper_closed": true,
+     "width": {
+      "exact": "242478734854099/3377699720527872",
+      "float": 0.07178812651119977
+     }
+    },
+    {
+     "center": {
+      "exact": "47333664622090465/6755399441055744",
+      "float": 7.006789907110672
+     },
+     "child": 3,
+     "hi": {
+      "exact": "11894035839236141/1688849860263936",
+      "float": 7.042683970366272
+     },
+     "lo": {
+      "exact": "7848530981206061/1125899906842624",
+      "float": 6.9708958438550725
+     },
+     "lower_open": true,
+     "rho": {
+      "exact": "242478734854099/6755399441055744",
+      "float": 0.035894063255599885
+     },
+     "upper_closed": true,
+     "width": {
+      "exact": "242478734854099/3377699720527872",
+      "float": 0.07178812651119977
+     }
+    },
+    {
+     "center": {
+      "exact": "15939540697266221/2251799813685248",
+      "float": 7.078578033621872
+     },
+     "child": 4,
+     "hi": {
+      "exact": "24030550413326381/3377699720527872",
+      "float": 7.114472096877472
+     },
+     "lo": {
+      "exact": "11894035839236141/1688849860263936",
+      "float": 7.042683970366272
+     },
+     "lower_open": true,
+     "rho": {
+      "exact": "242478734854099/6755399441055744",
+      "float": 0.035894063255599885
+     },
+     "upper_closed": true,
+     "width": {
+      "exact": "242478734854099/3377699720527872",
+      "float": 0.07178812651119977
+     }
+    },
+    {
+     "center": {
+      "exact": "48303579561506861/6755399441055744",
+      "float": 7.150366160133072
+     },
+     "child": 5,
+     "hi": {
+      "exact": "1883835/262144",
+      "float": 7.186260223388672
+     },
+     "lo": {
+      "exact": "24030550413326381/3377699720527872",
+      "float": 7.114472096877472
+     },
+     "lower_open": true,
+     "rho": {
+      "exact": "242478734854099/6755399441055744",
+      "float": 0.035894063255599885
+     },
+     "upper_closed": true,
+     "width": {
+      "exact": "242478734854099/3377699720527872",
+      "float": 0.07178812651119977
+     }
+    }
+   ],
+   "gap_free_proof": {
+    "bridge_hi_equals_far_field_lo": "1883835/262144",
+    "children_chain_exact": true,
+    "compact_hi_equals_bridge_lo": "3803026123175981/562949953421312",
+    "double_ownership_points": [
+     {
+      "certifier": "FAR_FIELD_INHERITED",
+      "point": "1883835/262144",
+      "redundant_cover": "K1R_BRIDGE"
+     }
+    ],
+    "gaps": [],
+    "omitted_endpoints": [],
+    "union": "[0, infinity)"
+   },
+   "segments": [
+    {
+     "closure": "[0, c]",
+     "hi": {
+      "exact": "3803026123175981/562949953421312",
+      "float": 6.755531464321473
+     },
+     "lo": {
+      "exact": "0/1",
+      "float": 0.0
+     },
+     "new_compute": false,
+     "owns_endpoints": [
+      "0",
+      "c"
+     ],
+     "segment": "COMPACT_INHERITED",
+     "source": "PS1 SR campaign, cells 0-368 (369/369, inherited PASS)",
+     "status": "INHERITED_PASS"
+    },
+    {
+     "cells": 6,
+     "closure": "(c, e_close]",
+     "endpoint_note": "e_close covered redundantly; certified by the far field",
+     "hi": {
+      "exact": "1883835/262144",
+      "float": 7.186260223388672
+     },
+     "lo": {
+      "exact": "3803026123175981/562949953421312",
+      "float": 6.755531464321473
+     },
+     "new_compute": true,
+     "owns_endpoints": [],
+     "owns_interior": "(c, e_close)",
+     "segment": "K1R_BRIDGE",
+     "status": "TO_BE_CERTIFIED_BY_K1R"
+    },
+    {
+     "basis": "P5X-T3 majorant is monotone decreasing in e and is strictly below target 2 for every m at e_close",
+     "closure": "[e_close, infinity)",
+     "hi": "+infinity",
+     "lo": {
+      "exact": "1883835/262144",
+      "float": 7.186260223388672
+     },
+     "new_compute": false,
+     "owns_endpoints": [
+      "e_close"
+     ],
+     "segment": "FAR_FIELD_INHERITED",
+     "status": "INHERITED_PASS_AT_AND_ABOVE_e_close"
+    }
+   ]
+  }
+ },
+ "far_field_theorem": "P5X-T3 (inherited, unchanged, NOT modified by K1R)",
+ "ownership_rule": "Exactly one segment CERTIFIES each e. The compact segment owns its closed upper endpoint c. The bridge owns the open-lower/closed-upper interval (c, e_close], except the single point e_close, whose certification is owned by the inherited far field; the bridge's coverage of e_close is retained as declared REDUNDANT_OVERLAP so no endpoint is ever omitted.",
+ "schema": "rebaseguard.p5y.k1r.domain-cover.v1"
+}

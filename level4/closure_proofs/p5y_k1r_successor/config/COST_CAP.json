@@ -1,0 +1,16 @@
+{
+ "accounting_rule": "only NEW K1R production counts; inherited evidence and admitted Aux5 records contribute zero; verification and preflight are not production",
+ "authority": "K1R has no claim on the PS1 6600 CPU-h cap; this is its own envelope",
+ "cap_cpu_h": 150.0,
+ "consumed_new_cpu_h": 0.0,
+ "enforcement": "G_COST halts BEFORE the cap is exceeded, never after",
+ "expected": {
+  "b1_admission_cpu_h": 0.0,
+  "b1_fallback_if_needed_cpu_h": 3.2,
+  "cusum_bridge_cpu_h": 1.264,
+  "sr_bridge_cpu_h": 76.23,
+  "total_expected_cpu_h": 77.494,
+  "total_expected_with_fallback_cpu_h": 80.694
+ },
+ "schema": "rebaseguard.p5y.k1r.cost-cap.v1"
+}

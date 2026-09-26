@@ -1,0 +1,172 @@
+{
+ "b_cover_cap": "1/20",
+ "blockers": {
+  "B1": "CUSUM compact-cover admission (cells 319-323, m=5)",
+  "B2": "CUSUM bridge (11/2, 49750555/8388608]",
+  "B3": "SR bridge (3803026123175981/562949953421312, 1883835/262144]"
+ },
+ "campaign": "P5Y-K1R",
+ "detector_universe": [
+  "CUSUM",
+  "SR"
+ ],
+ "frozen_artifacts": {
+  "B1_ADMISSION_CONTRACT.json": "9e71467fb9b8938abc02e96cc0fc6f1b72ce35f621245358c423396572865478",
+  "COST_CAP.json": "ad7643f556b133fe68722bd229dca33c1611ea24f0c7d97181a8d74aa4b9eb92",
+  "CUSUM_BRIDGE_PLAN.json": "b9fb2deb32f56c03183a23f5f81f8063cce813a95ed517e6eff66dffce5fae02",
+  "DOMAIN_COVER.json": "c78bba4d44adf5bd3d4c8bc42d2922ce11ac0cd5773f90bb9d04d5d9995a8a9c",
+  "SR_BRIDGE_PLAN.json": "3a29f11850491cdfe70b0c9de9cda6a157d09b736389557ef29e8c53514cbdbf"
+ },
+ "genuine_results_present": false,
+ "immutable_history": {
+  "P5": "PARTIAL",
+  "P5X": "PARTIAL",
+  "P5Y_K1": "PARTIAL",
+  "adjudication": {
+   "CUSUM_K1": "INCOMPLETE",
+   "K1_FAR_FIELD": "FAIL",
+   "K1_FINAL_VERDICT": "K1_PARTIAL",
+   "K1_GOVERNANCE": "PASS",
+   "K1_THEOREM_SCOPE": "PASS",
+   "PS1_SUCCESSOR_VALIDITY": "PASS",
+   "SR_PS1_K1": "PASS",
+   "adjudicated_at_commit": "15e70072ebfb7c0b5863ae8966cdb769d0604535"
+  },
+  "rule": "K1R may not restate, weaken or overturn any of the above; it is additive only"
+ },
+ "inherited_evidence": {
+  "cusum_historical": {
+   "failed_obligations": [
+    {
+     "cell": 319,
+     "m": 5,
+     "status": "FAIL",
+     "utilisation": 1.152916
+    },
+    {
+     "cell": 320,
+     "m": 5,
+     "status": "FAIL",
+     "utilisation": 1.257775
+    },
+    {
+     "cell": 321,
+     "m": 5,
+     "status": "FAIL",
+     "utilisation": 1.335284
+    },
+    {
+     "cell": 322,
+     "m": 5,
+     "status": "FAIL",
+     "utilisation": 1.238998
+    },
+    {
+     "cell": 323,
+     "m": 5,
+     "status": "FAIL",
+     "utilisation": 1.042928
+    }
+   ],
+   "k1_cited_lineage": "p5y_k1_cusum_completion_successor",
+   "k1_commit": "f8e6f7583e798813c7f7e0dc8b952488c2a06a7e",
+   "modification": "PROHIBITED"
+  },
+  "far_field": {
+   "all_m_close": {
+    "CUSUM": {
+     "e0": "49750555/8388608",
+     "majorant_at_minimum": 1.9999988906443582
+    },
+    "SR": {
+     "e0": "1883835/262144",
+     "majorant_at_minimum": 1.9999984076818382
+    }
+   },
+   "at_splice": {
+    "CUSUM": {
+     "all_m_pass": false,
+     "failure_class": "CERTIFICATE_TOO_LOOSE"
+    },
+    "SR": {
+     "all_m_pass": false,
+     "failure_class": "CERTIFICATE_TOO_LOOSE"
+    }
+   },
+   "diagnostics_sha256": "f3266436764435c4649e93a8ffa0827476a866023868181876f3acf6cc8dcb26",
+   "k1_self_audit_sha256": "87ea625cf79d632b64ae08594d73323f43b2a3fc0ab8fcd87a39607ac56c0094",
+   "modification": "PROHIBITED",
+   "theorem": "P5X-T3"
+  },
+  "sr_ps1_campaign": {
+   "assembly_freeze_sha256": "4298716d9158d4f81e33454949ea4ba4e43baa7001ef1b94b800d9194044965f",
+   "cells": 369,
+   "final_assembly_self_binding": "741fb2b59b8e9139a7c2687d9377db4313853623f53aa0c06b992eedbac4b3e7",
+   "final_assembly_sha256": "a3ffb9ec89b1c2da255e7d7397399720d3045f53c9d12b1ffba4141c81369860",
+   "modification": "PROHIBITED",
+   "obligations": 10332,
+   "predecessor_ledger_sha256": "0557bc229c3fcdb10cb0dd0b5836fa62a6b0e6c2512656e6ec7e49294b4d6cab",
+   "production_authorization_sha256": "fc7cb93465916c3a7842066701b0e11fb6799bfdfc7fff55073a3f6e4cfc03ef",
+   "production_ledger_sha256": "988725cd8dd02d28f52ef18e3b1add8063825cc42ee828c99d556a12b06d0dd8",
+   "shard_manifest_sha256": "6450aff37d975a308f5fba5c799ab1163f6f2ab9e678312b53f0ec686b1c9e9c",
+   "status": "INHERITED_PASS",
+   "successor_cells_sha256": "dfaced89653bd71a0bab4a61729407694768456b1e841f042df84c4544bfe349"
+  }
+ },
+ "k1_status_after_k1r_freeze": "K1 remains PARTIAL; K1R decides nothing yet",
+ "kill_gates": [
+  {
+   "action": "HALT; record as POTENTIAL_SCIENTIFIC_FAILURE",
+   "id": "G_SCIENCE",
+   "prohibited_response": "automatic refinement around the failing point",
+   "trigger": "any certified enclosure reaches or exceeds target 2"
+  },
+  {
+   "action": "HALT",
+   "id": "G_COVERAGE",
+   "trigger": "any domain gap, endpoint mismatch or partition drift"
+  },
+  {
+   "action": "HALT",
+   "id": "G_BUDGET",
+   "trigger": "a bridge cell fails its frozen certificate budget while no predeclared refinement is authorised (max depth 0)"
+  },
+  {
+   "action": "HALT",
+   "id": "G_GOVERNANCE",
+   "trigger": "source hash mismatch, runtime drift, producer mismatch or an unauthorised scientific artifact"
+  },
+  {
+   "action": "admit ZERO Aux5 records, then run the preregistered B1 fallback only",
+   "id": "G_AUX5",
+   "trigger": "any Aux5 admission condition fails"
+  },
+  {
+   "action": "HALT (admission is total; a single non-PASS invalidates the admission)",
+   "id": "G_AUX5_STATUS",
+   "trigger": "an admitted Aux5 obligation is not PASS"
+  },
+  {
+   "action": "HALT BEFORE exceeding the cap",
+   "id": "G_COST",
+   "trigger": "total NEW K1R compute would exceed 150 CPU-hours"
+  },
+  {
+   "action": "HALT",
+   "id": "G_SCOPE",
+   "trigger": "any post-result endpoint movement, cell deletion, m deletion, threshold relaxation, precision relaxation, host substitution or theorem narrowing"
+  }
+ ],
+ "m_universe": [
+  1,
+  2,
+  3,
+  5
+ ],
+ "precision_bits": 256,
+ "production_started": false,
+ "purpose": "close exactly B1, B2, B3 and nothing else",
+ "result_bearing": false,
+ "schema": "rebaseguard.p5y.k1r.checkpoint.v1",
+ "theorem_target": "2/1"
+}

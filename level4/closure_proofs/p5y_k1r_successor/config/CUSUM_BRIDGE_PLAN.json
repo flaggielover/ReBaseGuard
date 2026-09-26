@@ -1,0 +1,128 @@
+{
+ "cost": {
+  "expected_cpu_h_per_cell": 0.632,
+  "expected_cpu_h_total": 1.264
+ },
+ "detector": "CUSUM",
+ "domain": {
+  "closure": "(lo, hi]",
+  "endpoint_shrinkage": "PROHIBITED",
+  "hi": {
+   "exact": "49750555/8388608",
+   "float": 5.930728316307068
+  },
+  "lo": {
+   "exact": "11/2",
+   "float": 5.5
+  },
+  "width": {
+   "exact": "3613211/8388608",
+   "float": 0.43072831630706787
+  }
+ },
+ "expected_utilisation_note": "predicted m=5 cover utilisation approx 0.19: curvature = M_R2 * w^2 / 8 with w = 0.21536 and the inherited M_R2 <= 1.0025 measured at compact cell 325; this is a PREDICTION and is not a gate",
+ "gates": {
+  "B_cover_cap": "1/20",
+  "correspondence_gates": "frozen; unchanged",
+  "inherited_gates": [
+   "B_candidate",
+   "B_cover",
+   "B_interval",
+   "B_kernel",
+   "B_other",
+   "B_resolvent",
+   "B_rounding",
+   "nested: aggregate, end, eq, int, round, tail, trunc"
+  ],
+  "target_gate": "frozen; unchanged"
+ },
+ "host_runtime_contract": {
+  "aws_permitted": true,
+  "host": "the already-qualified CUSUM runtime of the producer lineage selected by the B1 admission decision (Aux5 lineage runtime if admitted)",
+  "mac_as_producer": "PROHIBITED",
+  "permission_basis": "the CUSUM lineage is qualified on both hosts; SR is not",
+  "runtime_identity_binding": "producer identity + OpenBLAS/FLINT kernel + libc identities must match the selected lineage's frozen values",
+  "vultr_permitted": true
+ },
+ "inherited_reference_cell": {
+  "cell": 325,
+  "e_hi": "11/2",
+  "m5_M_R2": 1.0025166,
+  "m5_utilisation": 0.08481270408236977
+ },
+ "obligations_created": 8,
+ "partition": {
+  "cells": 2,
+  "children": [
+   {
+    "center": {
+     "exact": "188162587/33554432",
+     "float": 5.607682079076767
+    },
+    "child": 0,
+    "hi": {
+     "exact": "95887899/16777216",
+     "float": 5.715364158153534
+    },
+    "lo": {
+     "exact": "11/2",
+     "float": 5.5
+    },
+    "lower_open": true,
+    "rho": {
+     "exact": "3613211/33554432",
+     "float": 0.10768207907676697
+    },
+    "upper_closed": true,
+    "width": {
+     "exact": "3613211/16777216",
+     "float": 0.21536415815353394
+    }
+   },
+   {
+    "center": {
+     "exact": "195389009/33554432",
+     "float": 5.823046237230301
+    },
+    "child": 1,
+    "hi": {
+     "exact": "49750555/8388608",
+     "float": 5.930728316307068
+    },
+    "lo": {
+     "exact": "95887899/16777216",
+     "float": 5.715364158153534
+    },
+    "lower_open": true,
+    "rho": {
+     "exact": "3613211/33554432",
+     "float": 0.10768207907676697
+    },
+    "upper_closed": true,
+    "width": {
+     "exact": "3613211/16777216",
+     "float": 0.21536415815353394
+    }
+   }
+  ],
+  "rule": "equal exact-rational children"
+ },
+ "precision_bits": 256,
+ "refinement": {
+  "adaptive_refinement_after_results": "PROHIBITED",
+  "max_refinement_depth": 0,
+  "rule": "the partition above is final; a cell that fails its frozen certificate budget HALTS K1R and is reported, never re-split"
+ },
+ "schema": "rebaseguard.p5y.k1r.cusum-bridge-plan.v1",
+ "theorem_target": {
+  "m_universe": [
+   1,
+   2,
+   3,
+   5
+  ],
+  "statement": "sup |R_CUSUM,m(e)| < 2 on the bridge domain",
+  "strict": true,
+  "target": "2/1"
+ }
+}
