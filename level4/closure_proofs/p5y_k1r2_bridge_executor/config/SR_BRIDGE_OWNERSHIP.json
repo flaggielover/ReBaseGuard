@@ -1,0 +1,22 @@
+{
+ "bridge_only": true,
+ "cell_count": 6,
+ "gate": "multihost.gate_cell_ownership semantics: a cell absent from this map is 'not in the frozen cover'; a cell owned by another role is refused",
+ "owners": {
+  "2000": "AWS",
+  "2001": "AWS",
+  "2002": "AWS",
+  "2003": "AWS",
+  "2004": "AWS",
+  "2005": "AWS"
+ },
+ "refuses": {
+  "foreign_host": "any role other than AWS",
+  "historical_ps1_cells": [
+   0,
+   368
+  ],
+  "reason": "historical cells are inherited evidence, never new work"
+ },
+ "schema": "rebaseguard.p5y.k1r2.sr-bridge-ownership.v1"
+}

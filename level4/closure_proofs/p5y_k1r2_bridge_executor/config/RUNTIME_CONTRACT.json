@@ -1,0 +1,35 @@
+{
+ "certification": {
+  "precision_bits": 256,
+  "python": "/home/ubuntu/work/ReBaseGuard/level4/.venv/bin/python",
+  "thread_pinning": "K1_THREADS_PINNED=1 before numpy import; single-threaded BLAS/FLINT"
+ },
+ "geometry": {
+  "decisive": false,
+  "python_flint": "0.9.0",
+  "routines": [
+   "drift_minorant.drift_monotone_resolvent",
+   "sr_cover.sr_drift_monotone_resolvent"
+  ],
+  "workprec_bits": 192
+ },
+ "hosts": {
+  "CUSUM_BRIDGE": {
+   "basis": "the CUSUM lineage is qualified on both; the runtime identity of the chosen host is bound at production start",
+   "mac": "PROHIBITED",
+   "permitted": [
+    "AWS",
+    "VULTR"
+   ]
+  },
+  "SR_BRIDGE": {
+   "mac": "PROHIBITED",
+   "permitted": [
+    "AWS"
+   ],
+   "vultr": "PROHIBITED"
+  }
+ },
+ "kernel_identity_sha256": "35dbd6976c43aa43cf0a3ad2cf5c09f06753b9a9fe8c0a3616a3c7ab908eff92",
+ "schema": "rebaseguard.p5y.k1r2.runtime-contract.v1"
+}

@@ -1,0 +1,110 @@
+{
+ "checks": [
+  {
+   "check": "checkpoint hash file matches",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "every frozen artifact is bound by the checkpoint",
+   "detail": "10 artifacts",
+   "status": "PASS"
+  },
+  {
+   "check": "CUSUM bridge resolves exactly its 2 cells",
+   "detail": "resolved [1000, 1001], refused 6/6 non-bridge indices incl. historical 0/319/325",
+   "status": "PASS"
+  },
+  {
+   "check": "CUSUM endpoints are the frozen K1R intervals",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "CUSUM bridge table hash bound into producer contract and checkpoint",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "CUSUM scientific kernel byte-identical to the bound modules",
+   "detail": "11 modules, drift []",
+   "status": "PASS"
+  },
+  {
+   "check": "kernel identity digest recomputes",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "frozen cover spec untouched",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "bridge cell entries carry every frozen geometry field",
+   "detail": "frozen fields ['C_evaluation', 'C_upper', 'detector', 'e0', 'index', 'left', 'nominal_step_half_width', 'rho', 'right']",
+   "status": "PASS"
+  },
+  {
+   "check": "SR bridge resolves exactly its 6 cells",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "SR refuses historical PS1 ids and non-bridge ids as new work",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "SR ownership map is bridge-only and AWS-only",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "SR authorization is AWS-only with no Vultr and no handoff",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "SR scientific executor byte-identical to the qualified PS1 lineage",
+   "detail": "39 files, drift []",
+   "status": "PASS"
+  },
+  {
+   "check": "historical PS1 evidence is inherited-only and unmodified",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "inherited science unchanged from K1R",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "K1R predecessor bound, halt preserved, B1 inherited PASS",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "no frozen artifact carries a bridge scientific result",
+   "detail": "result fields [], verdicts in cell tables [], cells with results []",
+   "status": "PASS"
+  },
+  {
+   "check": "cost accounting at zero new compute",
+   "detail": "",
+   "status": "PASS"
+  },
+  {
+   "check": "no bridge result exists",
+   "detail": "['evidence/QUALIFICATION_RESULT.json']",
+   "status": "PASS"
+  }
+ ],
+ "decisive_computation": false,
+ "new_cpu_h": 0.0,
+ "passed": 20,
+ "schema": "rebaseguard.p5y.k1r2.qualification-result.v1",
+ "total": 20,
+ "verdict": "PASS"
+}

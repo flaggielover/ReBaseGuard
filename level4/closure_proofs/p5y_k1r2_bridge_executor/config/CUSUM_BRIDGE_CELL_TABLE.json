@@ -1,0 +1,99 @@
+{
+ "cell_count": 2,
+ "cells": [
+  {
+   "C_evaluation": "11/2",
+   "C_upper": "8589934592/4294967296",
+   "bridge_only": true,
+   "detector": "CUSUM",
+   "e0": "188162587/33554432",
+   "historical_index": null,
+   "index": 1000,
+   "k1r_child": 0,
+   "left": "11/2",
+   "lower_open": true,
+   "nominal_step_half_width": "626657/4000000",
+   "rho": "3613211/33554432",
+   "right": "95887899/16777216",
+   "upper_closed": true
+  },
+  {
+   "C_evaluation": "95887899/16777216",
+   "C_upper": "7338584246/4294967296",
+   "bridge_only": true,
+   "detector": "CUSUM",
+   "e0": "195389009/33554432",
+   "historical_index": null,
+   "index": 1001,
+   "k1r_child": 1,
+   "left": "95887899/16777216",
+   "lower_open": true,
+   "nominal_step_half_width": "1833781/10000000",
+   "rho": "3613211/33554432",
+   "right": "49750555/8388608",
+   "upper_closed": true
+  }
+ ],
+ "detector": "CUSUM",
+ "domain": {
+  "closure": "(lo, hi]",
+  "hi": {
+   "exact": "49750555/8388608",
+   "float": 5.930728316307068
+  },
+  "lo": {
+   "exact": "11/2",
+   "float": 5.5
+  }
+ },
+ "endpoint_shrinkage": "PROHIBITED",
+ "geometry_witness": {
+  "capped_by_last_frozen_cell": 8594972549,
+  "monotone_non_increasing": true,
+  "rows": [
+   {
+    "C_upper_num": 8589934592,
+    "cell_width_float": 0.21536415815353394,
+    "left": "11/2",
+    "left_float": 5.5,
+    "nominal_step_float": 0.3133285,
+    "nominal_step_q": 3133285,
+    "raw_bound_ball": "2.000000000000000000000000000000000000000",
+    "rounded_C_num": 8589934592,
+    "t_star": 1,
+    "width_within_frozen_step_rule": true
+   },
+   {
+    "C_upper_num": 7338584246,
+    "cell_width_float": 0.21536415815353394,
+    "left": "95887899/16777216",
+    "left_float": 5.715364158153534,
+    "nominal_step_float": 0.3667562,
+    "nominal_step_q": 3667562,
+    "raw_bound_ball": "[1.708647293399639958515173941452724571021 +/- 2.15e-40]",
+    "rounded_C_num": 7338584246,
+    "t_star": 1,
+    "width_within_frozen_step_rule": true
+   }
+  ]
+ },
+ "historical_index_range_refused": [
+  0,
+  325
+ ],
+ "historical_indices_resolvable": false,
+ "index_base": 1000,
+ "inherited": {
+  "b_cover_cap": "1/20",
+  "m_universe": [
+   1,
+   2,
+   3,
+   5
+  ],
+  "precision_bits": 256,
+  "target": "2/1"
+ },
+ "provenance": "endpoints inherited verbatim from the frozen K1R plans; C_upper computed by the frozen cover-geometry routine",
+ "schema": "rebaseguard.p5y.k1r2.bridge-cell-table.v1"
+}
