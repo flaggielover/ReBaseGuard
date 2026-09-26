@@ -1,0 +1,269 @@
+{
+ "campaign": "C12-R1 -- cell-306 adoption under K5 tail adoption floor r2 (successor of C12; repairs blocker B1)",
+ "caps": {
+  "hosts": "this machine only",
+  "new_real_scientific_addresses": 0,
+  "wall_clock_seconds_per_invocation": 900
+ },
+ "chain": [
+  "freeze",
+  "qualification (evidence only)",
+  "qualification review (review file only)",
+  "grant (grant file only)",
+  "execute",
+  "seal",
+  "execution review",
+  "adoption adjudication",
+  "adjudication review",
+  "r6 only if CELL306_ADOPTED and ADJUDICATION_ACCEPTED"
+ ],
+ "decision_table": {
+  "F1_prime_d": "Gamma(5,306;S_I1) < 0 AND Gamma(5,306;S_I2) < 0 (separately)",
+  "F2": "NOT_SATISFIED (C2 published FAIL on S_I1; not re-evaluated)",
+  "adoption": "floor_satisfied AND EXECUTION_ACCEPTED AND independent adjudication CELL306_ADOPTED AND ADJUDICATION_ACCEPTED",
+  "base": "Gamma(5,306;S_I1) < 0",
+  "floor_satisfied": "base AND F1_prime"
+ },
+ "floor": {
+  "review_commit": "3fadb422eaba97123d46e98b9e80277a62a042c8",
+  "rule_commit": "a15d083b009868e38a5bd5a808f38f19e6ab4b92"
+ },
+ "frozen_files_sha256": {
+  "code/c12r1_cell306.py": "05aaaf4d327fb7bec656e93bb1c9776e121bf3e475d8054eb1e1d398b2397f8e",
+  "code/c12r1_grant.py": "8174c4dbe9d61fe85d74867ff83501b21c52390d9ded70c65d93c7357cce44e8",
+  "code/c12r1_r6_from_adjudication.py": "d681240e70a2e8bd70267707be691786da5dcd297182d0946c2757b8a3fcf332",
+  "code/c12r1_verify.py": "af08fb9a1fc0c21a01540a4a2553807dd667737fea892a31c32d39558ba0a0b2",
+  "protocol/C12R1_PROTOCOL.md": "7e374f7088360c93abba40b391b513e3654fdd101d412b8f7725b8cf7d335e40"
+ },
+ "input_blobs": {
+  "adapter": "0516a15b2d83",
+  "adopted_inputs": "0ba3c6dc876f",
+  "c11r_comparison": "5269c2aaa354",
+  "c11r_comparison_review": "a1d33960e262",
+  "c11r_execution_review": "bfc1ab77c01f",
+  "c11r_statements": "58b4066f5cce",
+  "c11rd_comparison": "7151f57a9792",
+  "c11rd_comparison_review": "7c7cad001a72",
+  "c11rd_execution_review": "7037189f61ad",
+  "c11rd_runs": "30e2dfd0ac87",
+  "c2_forecast": "a191557f24c3",
+  "c2_forecast_code": "18403dbec855",
+  "cells_json": "30e40fc0e721",
+  "coverage_r5": "f978eeb6b411",
+  "deflated_consume": "a0a836fa83c6",
+  "floor_gate": "89b86218116a",
+  "floor_review": "ad73021bca35",
+  "floor_rule": "0ddfac300b92",
+  "n9_adjudication": "c3e001a7c84a",
+  "n9_adjudication_review": "3c716c70de5b",
+  "record_manifest": "e6e0e26e2583",
+  "registry_c1": "f6d84bdb5ef0",
+  "registry_c2": "1a3adfd3d893",
+  "tail_forecast_r2": "edec817e57f1",
+  "tct_inputs_305": "499ccafe5cc9",
+  "tct_inputs_306": "ad0f8039b4a1",
+  "tct_rule": "98f6eee4d867"
+ },
+ "input_pins_sha256": {
+  "adapter": {
+   "path": "level4/closure_proofs/p5y_k5b_consumption_adapter/code/consumption_adapter.py",
+   "sha256": "fbad7d33261fd47fc56c034d6a016f8427b81b51f9199f0e3a8f3e74df35973d"
+  },
+  "adopted_inputs": {
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/evidence/measurement_r1/ADOPTED_TAIL_INPUTS.json",
+   "sha256": "485fb1254e459683f48815c239d18d29119d651d0e77876f772c3fee9d29a37d"
+  },
+  "c11r_comparison": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/comparison/C11R_COMPARISON.json",
+   "sha256": "800447adb9bc5f1b6116b61dc584d1653d8ec3c3e181ae35112a9efd1568231b"
+  },
+  "c11r_comparison_review": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/review/REVIEW_C11R_COMPARISON.md",
+   "sha256": "09f1d42f0e85e10cc0907f4614d981d4852e160fc8cb2b9cb2649ad1fb1804ce"
+  },
+  "c11r_execution_review": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/review/REVIEW_C11R_EXECUTION.md",
+   "sha256": "ae2fbf7020751772feec798e73abde5bbf695a505315337ea8aef79ce90078a7"
+  },
+  "c11r_statements": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json",
+   "sha256": "2e0f7dc4ceb796289d083ba09129116f128f54dc172ad31d45129a255c0487b7"
+  },
+  "c11rd_comparison": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/evidence/comparison/C11RD_COMPARISON.json",
+   "sha256": "8a9637b6a11d6b7e48bc4beee6a7a8b37fce4425ba911f4b10d53b4020391b06"
+  },
+  "c11rd_comparison_review": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/review/C11RD_COMPARISON_REVIEW.md",
+   "sha256": "1c8832b4963f3da70883744cdfe0f5a91586f755ca0e26049cb4643dfc3199ff"
+  },
+  "c11rd_execution_review": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/review/C11RD_EXECUTION_REVIEW.md",
+   "sha256": "5d3181cb9fc83ec1e7f5ff473800d44251100100d43cd71b210a36439f1ff211"
+  },
+  "c11rd_runs": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/evidence/runs/C11RD_RUNS.json",
+   "sha256": "c28a8cea9e777c06dd082765fc8cc94f3f5e5376809c2c74fedc358658709cc0"
+  },
+  "c2_forecast": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/phase_d5/C2_D5_FORECAST.json",
+   "sha256": "784f25eecd65bad3bf687727590a0c0e91a683c5d30817c3bda80d6f373fe983"
+  },
+  "c2_forecast_code": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/code/c2_d5_forecast.py",
+   "sha256": "bd7854bce2434215c0a72eeb825ff87db4c729e80b0e4d125911e806a084f06b"
+  },
+  "cells_json": {
+   "path": "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/cells.json",
+   "sha256": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f"
+  },
+  "coverage_r5": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/coverage/K5_COVERAGE_MAP_R5.json",
+   "sha256": "e2197051e493df898295a692c580ed676e771f7dfae5a1675d8d8e9b979f684c"
+  },
+  "deflated_consume": {
+   "path": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/deflated_consume.py",
+   "sha256": "ef5d0474183053bb7cde3075bda66f99211706a9bf7bf27e31fe994ff8b87e72"
+  },
+  "floor_gate": {
+   "path": "level4/closure_proofs/p5y_k5_tail_floor_r2/config/CELL306_ADOPTION_GATE_R2.json",
+   "sha256": "747c65a8de75c9420410ec6941d3eb4a2da23e29cca24cd743c60acd436dca14"
+  },
+  "floor_review": {
+   "path": "level4/closure_proofs/p5y_k5_tail_floor_r2/review/FLOOR_R2_REVIEW.md",
+   "sha256": "2b94c8e0af795e758e7334bcf7d9e76861ff503b1ed67cfbaad273e00a188c77"
+  },
+  "floor_rule": {
+   "path": "level4/closure_proofs/p5y_k5_tail_floor_r2/config/K5_TAIL_ADOPTION_FLOOR_R2.json",
+   "sha256": "eb2b4196dd23a8353e25093ff6bfa30d18634dd7f52968ec3c7000ea9b624238"
+  },
+  "n9_adjudication": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/adjudication/ADJUDICATION_C11RD_N9.md",
+   "sha256": "4a61b0a345b539cb80a0912e2ab1f1c396f42405d5a6510496456e537a103ffc"
+  },
+  "n9_adjudication_review": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/review/C11RD_ADJUDICATION_REVIEW.md",
+   "sha256": "5fa25a80aad3b2d3610da5eccf946d0bc399558e01ac329b9b07edea1e701702"
+  },
+  "record_manifest": {
+   "path": "level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/evidence/closure_r1/COMPOSITE_EXPORT_MANIFEST.json",
+   "sha256": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334"
+  },
+  "registry_c1": {
+   "path": "level4/closure_proofs/p5y_k5_tail_operator_registry/evidence/registry_c1/REGISTRY_C1.json",
+   "sha256": "87bb1cfacb09c2a144cab0270427d91980ea742b36fd80f8963265a22d2eebb3"
+  },
+  "registry_c2": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/registry_c2/REGISTRY_C2.json",
+   "sha256": "1b2b834939fcd80a81ddc8f029f46705b53cefeb46c0cc925a99c2b8e856fdd6"
+  },
+  "tail_forecast_r2": {
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/code/tail_forecast_r2.py",
+   "sha256": "5ab31ae56c0174697a7f5805e212b46334803e9e3371a77f82871d60716b96cd"
+  },
+  "tct_inputs_305": {
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/evidence/measurement_r1/TCT_INPUTS_305.json",
+   "sha256": "e1390b427e5f7dcf2f997fe039ea3658554cba86f6e472f3c8f339ac0e93df76"
+  },
+  "tct_inputs_306": {
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/evidence/measurement_r1/TCT_INPUTS_306.json",
+   "sha256": "57ff9280ca4d3b597ce4cdd6741d3a473e9f5d63e7c414696ce42c422b709a49"
+  },
+  "tct_rule": {
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/code/tct_rule.py",
+   "sha256": "f5a343e7f7bfb742d0a41c38512e27e7311d0919b38bcea0dfe98775c73d9a3e"
+  }
+ },
+ "lineage": [
+  {
+   "commit": "5a94568af69f775eaabdeb895dea19b9bf664935",
+   "role_word": "D stage"
+  },
+  {
+   "commit": "ae4cbc2c",
+   "role_word": "coverage map r5"
+  },
+  {
+   "commit": "22537709",
+   "role_word": "EXECUTION_ACCEPTED"
+  },
+  {
+   "commit": "2c24a989",
+   "role_word": "comparison"
+  },
+  {
+   "commit": "7375b9cd",
+   "role_word": "COMPARISON_ACCEPTED"
+  },
+  {
+   "commit": "4547bcd4",
+   "role_word": "SEAL"
+  },
+  {
+   "commit": "db1c6118",
+   "role_word": "EXECUTION_ACCEPTED"
+  },
+  {
+   "commit": "8e2defab",
+   "role_word": "comparator"
+  },
+  {
+   "commit": "90265349",
+   "role_word": "COMPARISON_ACCEPTED"
+  },
+  {
+   "commit": "7d67989d3da6595180ca3c01d34f2bdf4543ae73",
+   "role_word": "adjudication"
+  },
+  {
+   "commit": "fb237288a7cf481c14cd2f85c18bb363d2ebe44a",
+   "role_word": "ADJUDICATION_ACCEPTED"
+  },
+  {
+   "commit": "a15d083b009868e38a5bd5a808f38f19e6ab4b92",
+   "role_word": "floor r2"
+  },
+  {
+   "commit": "3fadb422eaba97123d46e98b9e80277a62a042c8",
+   "role_word": "REPLACEMENT_FLOOR_ACCEPTED"
+  },
+  {
+   "commit": "2cdfa467",
+   "role_word": "QUALIFICATION_REJECTED"
+  }
+ ],
+ "predecessor": {
+  "blocker": "B1",
+  "c12_freeze": "b9ffc87fd7f42a922a688facae7e0b6987239c91",
+  "c12_qualification": "aac6dae9fda929b9458e0dd41ebe9e9af3da18b5",
+  "c12_review_QUALIFICATION_REJECTED": "2cdfa4677c311f64307b1f112ab372f0bc22cff4",
+  "c12_status": "eba56027af8d33ee0ae156dbd7e7266915c4af13",
+  "c12_target_evaluations": 0
+ },
+ "qualified_identity": {
+  "branch": "refs/heads/p5y-k5-tail-c11rd-d1d2-extension",
+  "common_dir": "/Users/suzhe/ReBaseGuard/.git",
+  "git_dir": "/Users/suzhe/ReBaseGuard/.git/worktrees/ReBaseGuard-k5c11rd",
+  "worktree": "/Users/suzhe/ReBaseGuard-k5c11rd"
+ },
+ "schema": "rebaseguard.p5y.k5.tail-c12r1.freeze.v1",
+ "sha256": "1ba9eadf4f437cf7b2b5e03b86d7637a879efeb99af374dd26f1e2cfc4ceaeb4",
+ "status": "FROZEN (prospective): no Gamma under any supply containing an I2 constant computed, estimated or inspected",
+ "stop_rule": "any REJECTED/blocking verdict, CONTROL_FAILED, TARGET_EVALUATION_FAILED or UNSEALED: preserve and stop the entire campaign",
+ "target": {
+  "cell": 306,
+  "evaluations_permitted": 1,
+  "m": 5,
+  "marker": "refs/c12r1/cell306-target-consumed",
+  "prior_markers_refused": [
+   "refs/c12r1/",
+   "refs/c12/"
+  ],
+  "prior_results_refused": [
+   "level4/closure_proofs/p5y_k5_tail_c12r1_cell306_adoption/evidence/execution/C12R1_CELL306_RESULT.json",
+   "level4/closure_proofs/p5y_k5_tail_c12_cell306_adoption/evidence/execution/C12_CELL306_RESULT.json"
+  ],
+  "quantity": "Gamma(5, 306; S_I2)",
+  "result_path": "level4/closure_proofs/p5y_k5_tail_c12r1_cell306_adoption/evidence/execution/C12R1_CELL306_RESULT.json"
+ }
+}
