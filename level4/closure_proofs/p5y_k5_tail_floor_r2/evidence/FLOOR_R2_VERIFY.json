@@ -1,0 +1,71 @@
+{
+ "HEAD": "fb237288a7cf481c14cd2f85c18bb363d2ebe44a",
+ "checks": {
+  "C11RD comparison and runs unchanged since their commits; runs sha256 as recorded": true,
+  "CELL306_ADOPTION_GATE_R2.json: decimal tokens are only the inherited parameters": true,
+  "CELL306_ADOPTION_GATE_R2.json: no JSON number value (only text, ids and booleans)": true,
+  "CELL306_ADOPTION_GATE_R2.json: sha256 field verifies": true,
+  "K5_TAIL_ADOPTION_FLOOR_R2.json: decimal tokens are only the inherited parameters": true,
+  "K5_TAIL_ADOPTION_FLOOR_R2.json: no JSON number value (only text, ids and booleans)": true,
+  "K5_TAIL_ADOPTION_FLOOR_R2.json: sha256 field verifies": true,
+  "N9 adjudication holds exactly one N9_CLOSED line; its review exactly one ADJUDICATION_ACCEPTED line": true,
+  "adjudication 7d67989d and its review fb237288 are in HEAD's lineage": true,
+  "all 14 cited commits are in HEAD's lineage with the cited role": true,
+  "all 23 quoted frozen sentences occur verbatim in their sources": true,
+  "every bound source is its recorded blob at HEAD": true,
+  "every quotation in the specification occurs verbatim (modulo line wrapping and elisions) in a bound source": true,
+  "negative controls: every detector fires on a planted defect": true,
+  "no K5 coverage map r6 exists": true,
+  "no rendering of the independent D1/D2 values in this namespace": true,
+  "no rendering of the original D1/D2 values in this namespace": true,
+  "nothing outside this namespace changed since the adjudication review": true,
+  "the consumed execution ref still points at G": true
+ },
+ "information": {
+  "CELL306_ADOPTION_GATE_R2.json_decimal_tokens": [],
+  "K5_TAIL_ADOPTION_FLOOR_R2.json_decimal_tokens": [
+   "1.25",
+   "3.7e-97"
+  ],
+  "blobs": {
+   "level4/closure_proofs/p5y_k5_m5_tail_closure/code/tct_rule.py": true,
+   "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/deflated_consume.py": true,
+   "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/theorem/THEOREM_AD.md": true,
+   "level4/closure_proofs/p5y_k5_tail_c10_governance_provenance/README.md": true,
+   "level4/closure_proofs/p5y_k5_tail_c10_governance_provenance/evidence/phase5/C10_GOVERNANCE.json": true,
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/comparison/C11R_COMPARISON.json": true,
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/runs/C11R_RUNS.json": true,
+   "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json": true,
+   "level4/closure_proofs/p5y_k5_tail_c2_closure/code/c2_d5_forecast.py": true,
+   "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/adjudication/C2_ADJUDICATION.md": true,
+   "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/coverage/K5_COVERAGE_MAP_R5.json": true,
+   "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/phase_d5/C2_D5_FORECAST.json": true,
+   "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/registry_c2/REGISTRY_C2.json": true,
+   "level4/closure_proofs/p5y_k5_tail_c2_closure/phase_d/CELL_306_ADOPTION.md": true,
+   "level4/closure_proofs/p5y_k5_tail_operator_registry/evidence/registry_c1/REGISTRY_C1.json": true
+  },
+  "commit_problems": [],
+  "files_scanned": [
+   "FLOOR_R2_SPECIFICATION.md",
+   "code/floor_r2_build.py",
+   "code/floor_r2_verify.py",
+   "config/CELL306_ADOPTION_GATE_R2.json",
+   "config/K5_TAIL_ADOPTION_FLOOR_R2.json",
+   "evidence/FLOOR_R2_VERIFY.json"
+  ],
+  "foreign_changes": [],
+  "missing_quotes": [],
+  "negative_controls": {
+   "a non-ancestor commit is refused": true,
+   "mutated quotation is not found": true,
+   "planted JSON number is detected": true,
+   "planted decimal token is detected": true,
+   "planted decoy value is detected; clean text is not": true
+  },
+  "specification_quotations": 16,
+  "specification_quotations_unfound": []
+ },
+ "pass": true,
+ "schema": "rebaseguard.p5y.k5.tail-floor-r2.verify",
+ "verifier_sha256": "fc17bd9939f70aea493fe51e75e38bb3101f165765101336c7757782e2502bb4"
+}
