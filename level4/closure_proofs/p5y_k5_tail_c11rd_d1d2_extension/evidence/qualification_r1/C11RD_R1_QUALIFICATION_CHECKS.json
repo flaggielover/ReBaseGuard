@@ -1,0 +1,416 @@
+{
+ "QUALIFICATION_CHECKS": "PASS",
+ "checks": {
+  "q01_entry_identity": {
+   "HEAD": "3c1eff11562638727156f09a9c58b8dc704548a5",
+   "checks": {
+    "branch": true,
+    "freeze_ancestor_of_HEAD": true,
+    "freeze_commit_exists": true,
+    "freeze_files_unchanged_on_disk": true,
+    "freeze_protocol_untouched_since_freeze": true,
+    "review_commit_ancestor_of_HEAD": true,
+    "review_sha256_unchanged": true,
+    "review_verdict_exactly_READY_TO_QUALIFY": true,
+    "since_review_only_qualification_paths_changed": true
+   },
+   "pass": true,
+   "seconds": 0.1,
+   "unexpected_changes": []
+  },
+  "q02_history_cleanliness": {
+   "checks": {
+    "C11R_namespace_byte_identical_since_7375b9cd": true,
+    "LOCAL_MAIN_REF": true,
+    "REMOTE_MAIN_REF (cached origin/main)": true,
+    "no_grafts_or_shallow_file": true,
+    "no_r6_file": true,
+    "no_refs_c11rd": true,
+    "no_replace_refs": true,
+    "no_run_lock_seal_comparison_grant_authorization_in_any_history (qualification reader)": true,
+    "none_on_disk": true,
+    "nothing_outside_the_namespace_changed_since_7375b9cd": true,
+    "r5_unchanged": true,
+    "repository_not_shallow": true,
+    "same, by the frozen reader c11rd_model.history_commits": true
+   },
+   "outside_changes": [],
+   "pass": true,
+   "seconds": 0.7
+  },
+  "q03_scientific_object": {
+   "checks": {
+    "168_initial_boxes": true,
+    "D1_formula_text": true,
+    "D2_formula_text": true,
+    "caps_43200_2GiB_5_workers": true,
+    "cover_complete_for_the_convention": true,
+    "derivative_recurrence_text": true,
+    "drift_interval_exact": true,
+    "factor_2_rule": true,
+    "float_proposal_frozen": true,
+    "four_sub_blocks_exact_tiling": true,
+    "maximum_aggregation (certify_block uses max for D1 and D2; no min)": true,
+    "moment_terms_34": true,
+    "one_execution_policy (freeze P = 1; runner grant check; permanent exclusive lock; launcher consumed ref)": true,
+    "original_value_quarantine_bound": true,
+    "propagation_and_atom_formulas_exact (50 random rational instances)": true,
+    "quarantine_read_only_after_run_once_seal_and_recompute": true,
+    "refinement_rule": true,
+    "scientific_identity_vs_71495747 (V29)": true,
+    "target_cell_306_only": true,
+    "taylor_order_6": true,
+    "upper_closed_band_convention (freeze + production owner_band)": true
+   },
+   "pass": true,
+   "seconds": 0.2
+  },
+  "q04_hashes": {
+   "checks": {
+    "all_input_blobs_equal": true,
+    "c7_sha256_and_blob": true,
+    "code_dir_exactly_the_frozen_files": true,
+    "freeze_json_sha256_recorded": true,
+    "frozen_code_sha256_equal": true,
+    "frozen_document_hashes_equal": true
+   },
+   "documents": {
+    "docs/C11RD_ARCHITECTURE.md": true,
+    "docs/C11RD_COST_MODEL.md": true,
+    "docs/C11RD_INDEPENDENCE_AUDIT.md": true,
+    "docs/C11RD_R1_REPAIR.md": true,
+    "docs/D1_D2_STATEMENT_AUDIT.md": true,
+    "evidence/calibration/C11RD_CALIBRATION.json": true,
+    "protocol/C11RD_FREEZE_R1.md": true,
+    "theory/D1_D2_DERIVATION.md": true
+   },
+   "freeze_json_sha256": "07118d3022181d99fae001e9ad5d424cf151aac876131c4c6e1f54e2e85ea3f8",
+   "freeze_md_sha256": "d2875e8384a2684c032190c233d0953593a7e0879c972b8d089a85a5359b40de",
+   "input_blobs": {
+    "c11_certifier_used_only_by_validation_V03": true,
+    "c11r_equiv_used_only_by_validation_V20": true,
+    "c11r_schema": true,
+    "c11r_sealed_runs_F_H": true,
+    "c11r_statement_table": true,
+    "c7_gaussian": true,
+    "comparison_only_c11r_comparison": true,
+    "comparison_only_c11r_quarantine": true
+   },
+   "pass": true,
+   "seconds": 0.1
+  },
+  "q05_validation": {
+   "failed": [],
+   "output_sha256": "94c34d8b1836cb8976737204b7efd8fe71a7785b2fce64f642b5c23a457918c9",
+   "pass": true,
+   "passed": 29,
+   "seconds": 140.9,
+   "total": 29
+  },
+  "q06_host_runtime": {
+   "checks": {
+    "disk_free_at_least_min": true,
+    "five_isolated_workers": true,
+    "host_identity_complete": true,
+    "interpreter_flags": true,
+    "process_table_reliable": true,
+    "ram_at_least_4x_cap": true,
+    "sleep_prevention_verified": true,
+    "stdlib_identity_recorded": true,
+    "wall_clock_sane": true,
+    "worktree_canonical": true
+   },
+   "interpreter": {
+    "executable_realpath": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+    "executable_sha256": "bd3498159da515acf12963b736f3e7e7599619204348868e018bbbc9e0fc9343",
+    "flags_isolated_nosite_nobytecode": true,
+    "version": "3.14.5"
+   },
+   "pass": true,
+   "record": {
+    "cpu": {
+     "logical": 6,
+     "model": "Apple A18 Pro",
+     "physical": 6
+    },
+    "disk": {
+     "free_bytes_now": 231117873152,
+     "total_bytes": 494332366848,
+     "volume_of": "/Users/suzhe/ReBaseGuard-k5c11rd"
+    },
+    "git": {
+     "binary": "/usr/bin/git",
+     "version": "git version 2.50.1 (Apple Git-155)"
+    },
+    "grant_host": {
+     "hostname": "suzhedeMacBook.local",
+     "platform": "darwin",
+     "platform_uuid": "57559A2E-B526-5AE7-9701-A8BEB8908AF0",
+     "python": "3.14.5"
+    },
+    "load_average_now": [
+     2.89697265625,
+     2.9248046875,
+     2.775390625
+    ],
+    "memory": {
+     "available_kb_now": 1785280,
+     "total_bytes": 8589934592
+    },
+    "os": {
+     "kernel": "25.5.0",
+     "machine": "arm64",
+     "sw_vers": {
+      "BuildVersion": "25F84",
+      "ProductName": "macOS",
+      "ProductVersion": "26.5.2"
+     }
+    },
+    "process_table": {
+     "calls": 500,
+     "failures": 0,
+     "seconds": 5.17,
+     "tool": "/bin/ps"
+    },
+    "sleep_prevention": {
+     "assertion_verified": true,
+     "mechanism": "the launcher runs /usr/bin/caffeinate -i -w <launcher pid> and verifies the PreventUserIdleSystemSleep assertion in `pmset -g assertions` before consuming",
+     "pmset_sleep_settings_now": {
+      "disksleep": "10",
+      "displaysleep": "0",
+      "powernap": "1",
+      "sleep": "1",
+      "standby": "1"
+     },
+     "power_source_now": "AC Power",
+     "tool": "/usr/bin/caffeinate"
+    },
+    "stdlib_modules_of_the_runner_sha256": {
+     "__future__": "981d4c398849f9ebcab72300d9c1fe288fd6d7f28957b3b3fa3a493a5836d95c",
+     "_collections_abc": "50beebb1f309d83fd3af45f0e4c98c9dbfe0edd2f40edc8dc79e5cf0072cfbea",
+     "_colorize": "15db41bec8e25fd1ba81cf234df2cc7446d0fbc10285fda73186176365efd730",
+     "_compat_pickle": "028d2d9845d7acac2e1ceb565aacaee64e3f8019fba96174d65eff1609b50cd0",
+     "_frozen_importlib": "e50d35b1191ecbc5f7faecc73f54efd242bcf24c510e4ea5eb64bfba9458c0e3",
+     "_frozen_importlib_external": "b9af1fb7b625030cf5ee06b39aeb7838c2a30c97ddee09410286b7afbd8b7098",
+     "_opcode_metadata": "d9badc5ab19a66415e230bf8f4299491b2207d584981a92b6e7c447cfa1aeac3",
+     "_py_warnings": "7728580177727fa3b295478cef4777a9d2a364c5cbd809efcea352db31144f85",
+     "_weakrefset": "2dd7cb459d654fe78b00c5c47ee8e786c037ee77763304603f5e976dd62cbf81",
+     "abc": "e558702a95cdce3febd289da021715d2b92bc43995b8a1bc58dfa1c3d8010287",
+     "annotationlib": "1cce29393714b91e3f71571ffbedacc7f73f11ad26be10701debeb86ec059a32",
+     "argparse": "052271a2a1eb1b6b60116acb8f3505c98edd52dba062b0309926e63ac4544743",
+     "ast": "5ea9a796353544bea0d706153516f04ef3d92be305d15a73238403837d77e34c",
+     "codecs": "718f39b3ea68fe934214d789c5bce3005fa828040b03a72d2f715fc5e2647b7e",
+     "codeop": "6777d19fa0f88c415d615c78e214ede057dd7507db8494744ca2c53fe9911a3a",
+     "collections": "dbd563752a57c6633b7566b1e9c95bc8ea81df1a1d213b23f61c5335424e5af5",
+     "collections.abc": "50beebb1f309d83fd3af45f0e4c98c9dbfe0edd2f40edc8dc79e5cf0072cfbea",
+     "contextlib": "c1e0d67b2007de11ae93cd36cf6faf38d9ab32656a832d592a49325eec579f96",
+     "copy": "15154fde290d6e65b5007905689a47a9a5a724822c5e06eec35d9ffbb2a3aa69",
+     "copyreg": "6376eb5722806396f5842997ac18add369ea9ac3ff4fcfe1460c41a088cac425",
+     "dataclasses": "2dedf70270f45c6a909ae1eac734fcf3ae3f2764bb71a330f4825aca3a79784b",
+     "dis": "17d4d9a9195c9ee5aa27a96f3e0871f9363fd501e3a64ef20cb1cc876d7ad553",
+     "encodings": "2b708410495acf12a6fad9d2de928dd89e567537c253eaa2b51aaae578e96c59",
+     "encodings.aliases": "e38fc524cc8b2355807921411c918c0d971419c4d6ba6147409785db42d257a3",
+     "encodings.utf_8": "ba0cac060269583523ca9506473a755203037c57d466a11aa89a30a5f6756f3d",
+     "enum": "982843c2dd6dbec992bfed44abe9ef5464be81876a180d977ccd1a69e26ec16d",
+     "fnmatch": "ce582bc266922e4c682e2a85d72095124430a6bf58716c6f2537103480eae742",
+     "fractions": "7a95f1c506c9ac4b2277df5f2bdd9d61cc67b520c45021a5a961939770221ef6",
+     "functools": "046ec9660146db48862c7b22c78e2ef3818eaed6920e5cbf35f551ef09fec6cd",
+     "genericpath": "cdac5a68dd738051e0d66fc81d5947d6a1776248fc6fe862253477608d870ec4",
+     "gettext": "54c00df11915aafb017ed23860dcb5197ed063f7ee07e5612625ec86afadcaf5",
+     "glob": "e3c82e6f0a1fe9442d4c5625e68cb206228408f0342326f6f5c8f59112091b59",
+     "hashlib": "88fa624821fbdee7eb2ef87c2437b207afe328cf117c7463367e2db5eb1af492",
+     "heapq": "f2d644de141a488db66fc13608a794ef5f2d33162299f6751ea92c3cb0b4c9ea",
+     "importlib": "72b07de4133a7e39b2f6a7920465669aa04626f217e800779587bc0713fe002e",
+     "importlib._bootstrap": "e50d35b1191ecbc5f7faecc73f54efd242bcf24c510e4ea5eb64bfba9458c0e3",
+     "importlib._bootstrap_external": "b9af1fb7b625030cf5ee06b39aeb7838c2a30c97ddee09410286b7afbd8b7098",
+     "importlib.machinery": "34b7583fd83ebb2629b7645c0dd293839ce16b19cf8742801e21a21fe08f5811",
+     "inspect": "9e9793a663928e98cb7b5e300a6fd7a747bb977641eec94c22a6074009aa6c46",
+     "io": "1b75584d4efcc612dc0db2ae98619408276585a106f0544879edb5e25b55430a",
+     "json": "95022d150a27a2bfd54ac21bfce35812c96b53c420bb7b018dcb573f13e52da0",
+     "json.decoder": "302ce57cb6f411122d7ef2ad2997c1fc0f184849fab3f1f585752f18f2195c73",
+     "json.encoder": "d68a4d04d2cfd95897498307f29349058b42c3f48ea6aa6739714a09200a7d01",
+     "json.scanner": "572958017eae8842eeddd0e3d18d3c56cc0a197348224915e1d87ce937841764",
+     "keyword": "18c2be738c04ad20ad375f6a71db34b3823c7f40b0340f5294d0e89f3c9b093b",
+     "linecache": "692daec68e2a419adf46bafc0eb2f8a2fb36c482183fa1ac47e00fec440f7d7e",
+     "locale": "0e90907424b4bef150b00feb1bef4687bacb416e6e3f2b463e0758ee34979fe4",
+     "multiprocessing": "a5a42976033c7d63ee2740acceef949a3582dcb0e0442845f9717e1be771c68b",
+     "multiprocessing.connection": "c8123946008ec2bd57266e61a3a388d3914b75856cb2c8af8685978658fef879",
+     "multiprocessing.context": "6d9058b6770152b5d26f2f3ece22de423decf1c751038f6bcd81995096aa9ab6",
+     "multiprocessing.pool": "2b1e92bfc230007ac463aa0a3bd18c948a3c62f97e7e73858ae8b3f61dd13a6e",
+     "multiprocessing.process": "9cad9791c8ff9aba8f688c4e7ad9f620384231f8d0dfcc88dbc1e4c947ec28bc",
+     "multiprocessing.reduction": "7cd1652f08e4685f380f2484ad3441d363fe58fe5b328f50050fb0f281a535f9",
+     "multiprocessing.util": "a03138826235c4806bd0baea705b33a42edd9727eb55ff50fc6d2e4cacb0bfea",
+     "ntpath": "7c5c992b1b52f97d7dc73ad09ea8b97917475e7e4474563379e71b03015f04ca",
+     "numbers": "e5e73beba4a7674bd5e9a881a202d403a0c3e2b59af4181699155ea4827a7561",
+     "opcode": "1036d90c917bb27c540ac3205d22896ee747214df1f2682458ab915758e4fdf2",
+     "operator": "a9f9910965c31f841caad0447ee47299ac539a371422aefe200c86c60f3b4697",
+     "os": "1494f3b93c6714d7a511963586f2b392dc92f3181c0d1ead82c621a4b0aad969",
+     "os.path": "8a5bc2b6674e76efe0f507b873a41d746beba466a191153ed18a7580ef6e08e1",
+     "pathlib": "042a4d0a5e1ef66778daa86dc269af205bd42d06e793e53d8b99dff4c45928ca",
+     "pathlib._os": "61e844988e54bdf47c0b11ad2b3fd961f058bb370793428f4c6868bd40cab6f2",
+     "pickle": "c9998751cf3b94536b4c2cffd6bb719fa1ee6027bd1bd37235d597c9ecf9f98c",
+     "posixpath": "8a5bc2b6674e76efe0f507b873a41d746beba466a191153ed18a7580ef6e08e1",
+     "queue": "5c2a0057e95a12f5de3e5c7d3f8de747eaea7139a5eb64626f185d93f48f8b79",
+     "re": "741a9de729ed8207bfa19db990f8826f1bf3661f33d0970a80c08cd1338ebc35",
+     "re._casefix": "1b12d9136f23db6c3f6f26053fefc15ca964b886838c7b9c1fabf8d2efc1e5c8",
+     "re._compiler": "d49f30cf9a1dbae33b200ed8befd9d0ce3ac612783a10ac35196536f98923e91",
+     "re._constants": "42253b3181b81aad6c46392f44a0ab26dcfa31feea411296f43ba16616a1ab0b",
+     "re._parser": "e57bd194a2d42398355ae7c1ccc2ddfb78421dd431eb81e3809dbe8ca9057dc4",
+     "reprlib": "b04872e10d76252e44eae50cc785eb0fe478491afc4d7f0825a93f82b2eaba5f",
+     "selectors": "4b8a60cfbb619d080f87dffe1578372e56e8c0ac826f043224a154cf7b77606d",
+     "signal": "0363c964c90ac0b3e515de5749205e6e6454051a1211058375d84d91eab6071a",
+     "socket": "873ff8912562c0375e75a7301024e61e878eef101b566dc0f3b6644c81874c8e",
+     "stat": "07217986d9b2172b509dab3578d18ac05ba768b418e1f1e8c90e38a8f7c2b3c6",
+     "struct": "50c14e55f94957804c1e45e975fedbe8e86f7e1dbb745b150370ff681155370a",
+     "subprocess": "6628ffdd65c093a6c08cae01ffe82877d3ced515aac9e7be0cff16512c30a7d9",
+     "textwrap": "7f05d89c983f5aa8cefcff707a9cc561ed60c51fc8a68e2e3ab61cc6dfa84544",
+     "threading": "5323909624ec2165e70b6d31333e4191b63d383d2dc5a7d7d516a3475ea2b7e3",
+     "token": "61d4270311099c8a0c0b2e45fb363fd1c4e347a720bcc25f682b63dc28c34234",
+     "tokenize": "65ba1bacdc42e768382208ff27f3001ee77d9d61aafba686c67652d22b84b330",
+     "traceback": "c9908c3f04a3b9c87402d0561436dce8e6a9d74fc5cd9d197fadda3112862c79",
+     "types": "fcfdd1c5ae56a9c35f207743d774e236da0153bf78e6e4629193a8e0e9438a6b",
+     "warnings": "142225786de63c593f1c9abdacf5b4fc0b05dd847f6bed0ebb4b4aa2d4d93b02",
+     "weakref": "5e5f727a19a858cb4c56dbaf3e0a138ded02fb954a9a58a840a0764216ae9522",
+     "zipimport": "4de64633a484e16c39fdb46a3f939ce7c577b14a6e9ee49b79871ec1880b4597"
+    },
+    "wall_clock": {
+     "runner_cap_clock": "time.time() (wall clock: it keeps running while the machine sleeps)",
+     "wall_vs_monotonic_drift_over_2s": 5e-06
+    },
+    "workers": {
+     "all_workers_isolated_nosite_nobytecode": true,
+     "distinct_worker_pids": 5,
+     "requested": 5
+    }
+   },
+   "seconds": 11.7,
+   "worktree": {
+    "canonical_path": "/Users/suzhe/ReBaseGuard-k5c11rd",
+    "git_common_dir": "/Users/suzhe/ReBaseGuard/.git"
+   }
+  },
+  "q07_git_history_hardening": {
+   "checks": {
+    "corrupted_commit_graph_ignored": true,
+    "deleted_artifact_found": true,
+    "grafts_fail_closed": true,
+    "hostile_env_ignored_by_comparator_run_once": true,
+    "hostile_env_ignored_by_frozen_history_reader": true,
+    "hostile_env_ignored_by_launcher_git": true,
+    "linked_detached_worktree_found": true,
+    "path_alias_same_history": true,
+    "path_alias_same_worktree_identity": true,
+    "real_repository_clean_under_hostile_env": true,
+    "replace_ref_ignored": true,
+    "shallow_fail_closed": true
+   },
+   "hostile_variables": [
+    "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+    "GIT_CEILING_DIRECTORIES",
+    "GIT_CONFIG_COUNT",
+    "GIT_CONFIG_GLOBAL",
+    "GIT_CONFIG_KEY_0",
+    "GIT_CONFIG_PARAMETERS",
+    "GIT_CONFIG_SYSTEM",
+    "GIT_CONFIG_VALUE_0",
+    "GIT_DIR",
+    "GIT_INDEX_FILE",
+    "GIT_NAMESPACE",
+    "GIT_OBJECT_DIRECTORY",
+    "GIT_REPLACE_REF_BASE",
+    "GIT_WORK_TREE",
+    "PATH"
+   ],
+   "pass": true,
+   "plain_git_with_the_corrupted_graph (information)": {
+    "commits": 2,
+    "returncode": 0,
+    "stderr_head": "error: improper chunk offset(s) 4ec and fffffb07"
+   },
+   "seconds": 1.0
+  },
+  "q08_execution_lifecycle": {
+   "attempt_semantics": {
+    "memory_cap -> NOT_CERTIFIED/RESOURCE_CAP_MEMORY": true,
+    "ps_accounting_failure -> NOT_CERTIFIED/RESOURCE_ACCOUNTING_FAILED, nothing computed": true,
+    "wall_cap -> NOT_CERTIFIED/RESOURCE_CAP_WALL": true
+   },
+   "checks": {
+    "attempt_semantics_production_runner_non_target": true,
+    "certify_block_called_only_in_main": true,
+    "comparator_treats_not_certified_as_INSUFFICIENT": true,
+    "cover_and_accounting_checked_before_any_mode": true,
+    "launcher_lifecycle_with_stub_runner": true,
+    "lock_never_removed_by_runner": true,
+    "not_certified_writes_no_value": true,
+    "predecessor_matrix_all_refused_and_positive_control_passes": true,
+    "real_mode_order: grant < clean < loaded-modules < lock < certify_block < artifact": true
+   },
+   "launcher": {
+    "cap/accounting outcome -> COMPLETED_NOT_CERTIFIED, sealed": true,
+    "hostile environment sanitized for git and runner": true,
+    "interruption (SIGTERM forwarded) -> CONSUMED_NO_RESULT, sealed": true,
+    "preflight refusals create nothing and run nothing": true,
+    "process failure -> CONSUMED_NO_RESULT, lock sealed": true,
+    "runner refusal before lock -> REFUSED_BEFORE_LOCK, still consumed and sealed": true,
+    "second launch refused (consumed) and nothing ran": true,
+    "success -> COMPLETED_CERTIFIED, sealed at once": true
+   },
+   "launcher_preflight_cases": {
+    "already consumed": true,
+    "dirty namespace": true,
+    "freeze not the qualified one": true,
+    "host mismatch": true,
+    "host not idle": true,
+    "interpreter mismatch": true,
+    "runner not frozen": true,
+    "worktree mismatch": true
+   },
+   "pass": true,
+   "predecessor_matrix": {
+    "AUTHORIZATION_REJECTED": true,
+    "QUALIFICATION_REJECTED (N-12)": true,
+    "ancestor_freeze_commit_with_different_freeze_file (N-12)": true,
+    "authorization_review_missing": true,
+    "freeze_commit_missing": true,
+    "git_common_dir_only_deviation (N-12)": true,
+    "grant_absent_at_authorization_review": true,
+    "input_bindings_deviation (N-12)": true,
+    "lineage_out_of_order": true,
+    "platform_only_deviation (N-12)": true,
+    "positive_control_all_predecessors_present": true,
+    "qualification_commit_missing": true,
+    "qualification_review_commit_missing": true,
+    "qualification_review_duplicated": true,
+    "qualification_review_file_missing": true
+   },
+   "seconds": 28.3
+  },
+  "q09_note_checks": {
+   "checks": {
+    "N-1 point_box: only continuous candidates, no interior s>=4, tests still pass": true,
+    "N-13 every per-sub-block list complete and identical in geometry": true,
+    "N-2 kernel-level exclusion of the reversed convention, orders 0-2, s = 2, 3, 4": true,
+    "N-3 sharp endpoint containment (width < 1e-3 of the residual)": true
+   },
+   "n2_rows": 36,
+   "n3_worst_width_to_residual_ratio": 0.0007235610200831315,
+   "pass": true,
+   "point_box_calls": 151,
+   "seconds": 74.2
+  },
+  "q10_broad_leak_scan": {
+   "files": 48,
+   "hits": {},
+   "pass": true,
+   "positive_control": true,
+   "rationals_checked": 7971,
+   "rule": "any decimal (plain, bare-point, scientific), integer-mantissa scientific or rational token within 1e-4 relative of either disclosed value"
+  }
+ },
+ "launcher_sha256": "6771447201b06e98883a90eee813e874fd1ddb139dab111ba6d657e4a4f48dbe",
+ "passed": 10,
+ "schema": "c11rd.qualification.checks.r1",
+ "tool_sha256": "4a9034eb14547ce90e0c81a8cf9ffad8ee655951f1ffd2bf65e8ea57a30b4aad",
+ "total": 10
+}
