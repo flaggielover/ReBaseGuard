@@ -1,0 +1,60 @@
+{
+ "schema": "rebaseguard.p5y.k1r3.scope-halt.v1",
+ "halted_utc": "2026-09-26T07:30:00Z",
+ "state": "K1R3 NOT CREATED AS A FROZEN SUCCESSOR; no authorization, checkpoint or source manifest minted",
+ "gate_1_sr_bridge_universe_derivation": {
+  "verdict": "PASS",
+  "obligations_per_cell": 28,
+  "theorem_invariant": true,
+  "derivation": "universe.work_ids(cells) builds, per cell: OBJECTS object units + 1 dependency_bundle + |M_VALUES| curvature + |M_VALUES| assembly, reading ONLY c['detector'] and c['index']. certhash.OBJECTS = [h_1..h_4] + [S_0..S_4] + [F_0..F_4] + [dF_0..dF_4] = 19 module-level constants with no cell dependence; spec.M_VALUES = (1,2,3,5) from the frozen checkpoint scope. 19 + 1 + 4 + 4 = 28. provenance.cell_units emits the same 28 in dependency order. Far-field units are global (det, -1, 'far_field', 'all_m'), not per cell.",
+  "parent_dependence_is_vacuous": "succ_t5 computes frozen_ids = [(u[0], rec['id'], u[2], u[3]) for u in universe.work_ids(cells=[T.frozen_cell(rec['parent_index'])])]: the parent supplies only (detector, index) and the index is immediately overwritten by rec['id']. The historical parent lookup therefore carries no scientific content.",
+  "classification": "A - theorem/schema invariant for every SR compact-cover cell under this certification architecture"
+ },
+ "cusum_schema_probe": {
+  "verdict": "PASS",
+  "method": "frozen Aux3Certifier constructed on a schema-correct affine-pair bridge record; no prepare(), no solve, nothing persisted",
+  "decoded": {"left": "11/2", "right": "95887899/16777216", "e0": "188162587/33554432",
+              "rho": "3613211/33554432", "C_upper": "2"},
+  "midpoint_and_halfwidth_identities": "hold exactly",
+  "kernel_changed": false
+ },
+ "generated_stages": {
+  "transformation_manifest_sha256": "412182134b5e022619770c53fb7a282ace70db6568afe57bafd1e49c8996f446",
+  "stages": {"k1r3_bridge_cells.py": "82bff0e90e27337e", "k1r3_bridge_t1.py": "b7a33b84e531218c",
+             "k1r3_bridge_t3.py": "edd671a4f9114235", "k1r3_bridge_t3_aggregate.py": "dc5a87285dfa1634",
+             "k1r3_bridge_t4.py": "2a839395bbe85821", "k1r3_bridge_t5.py": "be7f5b38029ab810"},
+  "substitutions_total": 10,
+  "frozen_source_lines": 595,
+  "status": "GENERATED BUT NOT FROZEN; not qualified for production"
+ },
+ "blocker_1_sr_domain_gap": {
+  "severity": "FATAL - the frozen SR bridge domain does not compose gap-free",
+  "compact_cover_ends_at": "the EXACT affine c_SR = log(4581762885148045/8796093022208) + 1/2 (frozen terminal cell 368, right = [0/1, 1/1])",
+  "c_sr_enclosure_512_bit": "[6.75553146432147319284577138576632261792582292 +/- 4.75e-45]",
+  "k1r_frozen_bridge_lower_endpoint": "3803026123175981/562949953421312",
+  "difference_enclosure": "[3.00213268437e-17 +/- 5.28e-30] - STRICTLY ABOVE c_SR",
+  "uncovered_interval": "(c_SR, 3803026123175981/562949953421312], width approx 3.0e-17",
+  "covered_by": "nothing: not the compact cover (ends at exact c_SR), not the K1R bridge (starts above it), not the far field (starts at 1883835/262144)",
+  "probable_origin": "the endpoint appears to be Fraction(float 6.755531464321473) (denominator 2^49). The far-field diagnostics' own constant, 7788597500264409053/1152921504606846976 (2^60), lies 3.36e-19 BELOW c_SR - the conservative side - so the two frozen artifacts disagree by 3.04e-17 and K1R inherited the wrong one."
+ },
+ "blocker_2_schema_cannot_express_the_splice_start": {
+  "severity": "FATAL - independent of the dyadic choice",
+  "frozen_rule": "succ_cells.validate: for left/right/e0/rho/C_evaluation, F(pair[1]) != 0 is refused unless rec['terminal'] and the field is right/e0/rho; and a terminal cell's right must be exactly [0/1, 1/1] = c_SR",
+  "consequence": "a non-terminal cell may never carry the c_SR component in ANY field, and 'left' may never carry it at all, so no SR bridge record can start EXACTLY at c_SR",
+  "why_it_cannot_be_repaired_in_k1r3": "the rule lives in the validate text that K1R3 inherits byte-derived; changing it would alter scientific input validation, i.e. invent scope"
+ },
+ "cusum_side_composes_exactly": "the CUSUM splice is the rational 11/2, representable with s = 0, so [0, 11/2] + (11/2, 49750555/8388608] + [49750555/8388608, infinity) composes with no gap",
+ "what_is_required_before_any_k1r3_freeze": [
+  "an operator decision amending the SR bridge lower endpoint to the EXACT affine c_SR, or to a rational strictly below c_SR (accepting a small certified overlap with the compact cover, which is harmless)",
+  "a governance decision on how an SR record expresses an interval whose left endpoint carries the c_SR component, since the frozen affine validate forbids it outside the terminal cell",
+  "re-derivation of the six-cell partition and of C_upper from the amended lower endpoint"
+ ],
+ "not_done": ["no K1R3 authorization", "no K1R3 checkpoint or source manifest",
+              "no 369-cell replay", "no bridge entry acceptance run", "no negative controls",
+              "no genuine bridge computation", "no frozen artifact modified"],
+ "new_cpu_h": 0.0,
+ "b1_inherited": "PASS, unchanged",
+ "k1_status": "PARTIAL (unchanged)",
+ "k1r_status": "HALTED_BY_GOVERNANCE after B1 PASS (unchanged)",
+ "k1r2_status": "HALTED before any computation (unchanged)"
+}
