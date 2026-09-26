@@ -1,0 +1,43 @@
+{
+ "schema": "rebaseguard.p5y.k1r2.production-halt.v1",
+ "halted_utc": "2026-09-26T06:10:00Z",
+ "k1r2_freeze_commit": "19272cb68aeb24d54a09f7b6188dca00171abe15",
+ "gates": ["G_GOVERNANCE", "G_SCOPE"],
+ "phases": {
+  "PHASE_0_REQUALIFICATION": "PASS (HEAD=19272cb, checkpoint 5d7bafba, manifest 14e0f9a2, qualification 20/20, tests 8/8, B1 hash unchanged, 0.0 consumed)",
+  "PHASE_1_CUSUM_BRIDGE": "HALTED BEFORE ANY COMPUTATION",
+  "PHASE_2_SR_BRIDGE": "HALTED BEFORE ANY COMPUTATION",
+  "PHASE_4_VERIFICATION": "NOT_REACHED",
+  "PHASE_5_DOMAIN_COVERAGE": "NOT_REACHED",
+  "PHASE_6_ASSEMBLY": "NOT_CREATED"
+ },
+ "new_cpu_h": 0.0,
+ "cap_cpu_h": 150.0,
+ "defect_1_cusum_cell_schema": {
+  "severity": "FATAL - would have produced silently wrong certificates",
+  "frozen_kernel_reads": "CellCertifier.__init__ (p5y_k1_cover_ledger_implementation/code/cusum_layer2.py:125-130) reads cell['e0'][0], cell['rho'][0], cell['left'][0], cell['right'][0] - the frozen AFFINE [p, s] pair encoding",
+  "k1r2_table_stores": "plain rational strings, e.g. \"left\": \"11/2\", \"e0\": \"188162587/33554432\"",
+  "observed_consequence": "cell['left'][0] evaluates to the CHARACTER '1', so the kernel would certify e0 = 1 instead of 5.607682079076767 - a plausible-looking certificate for the wrong interval, with no exception raised",
+  "why_not_repaired_here": "the cell table is a frozen K1R2 artifact bound into CUSUM_BRIDGE_CHECKPOINT and SOURCE_MANIFEST; editing it during production is exactly what G_SCOPE forbids"
+ },
+ "defect_2_sr_executor_refusal": {
+  "severity": "FATAL - structurally unrunnable",
+  "frozen_executor_requires": "succ_cells.validate(rec) first checks canonical(rec) == canonical(cell(rec['index'])) against the frozen 369-cell successor_cells.json (sha dfaced89...), then requires affine [p, s] pairs; succ_cells.geometry(rec) calls validate(rec); succ_t3.cell_inputs(s) resolves only through SC.cell(s)",
+  "consequence": "a bridge record at index 2000..2005 can never be accepted: it is not in the frozen table and carries the wrong field shape",
+  "only_ways_to_run": ["extend config/successor_cells.json (changes table_sha256, pinned by the PS1 authorization and bound into all 369 historical record identities)",
+                       "edit or shadow succ_cells.py / succ_t3.py (changes the 39-file executor identity)"],
+  "both_prohibited_by": "the frozen K1R2 SR authorization: scientific_executor.semantics = UNCHANGED"
+ },
+ "root_cause": "The K1R2 freeze wrote bridge cell tables in a schema the frozen kernels do not consume, and its qualification verified field NAMES, resolution by K1R2's OWN resolver, and file identity - but never that a frozen kernel would ACCEPT a bridge record. The CUSUM check compared the SR table against the CUSUM reference entry, so the SR shape mismatch was invisible.",
+ "what_a_correct_successor_needs": [
+  "bridge cell tables in the exact frozen encodings: CUSUM affine [p, '0/1'] pairs; SR affine [p, s] pairs with the c_SR component rule",
+  "an acceptance qualification that actually calls the frozen entry points on a bridge record (CellCertifier construction for CUSUM; a record-driven SR path) and requires them to accept, not merely to exist",
+  "for SR, a legitimate table-injection seam that leaves both succ_cells.py and the frozen 369-cell table untouched, or an explicit governance decision about how a bridge record may enter the SR executor at all"
+ ],
+ "not_done_here": "No frozen artifact was modified, no repair attempted, no bridge cell computed.",
+ "historical_artifacts_touched": "NONE",
+ "b1_inherited": "PASS (1304/1304), unchanged, not rerun",
+ "k1r2_status": "NOT_DECIDED_HERE",
+ "k1r_status": "HALTED_BY_GOVERNANCE after B1 PASS (unchanged)",
+ "k1_status": "PARTIAL (unchanged)"
+}
