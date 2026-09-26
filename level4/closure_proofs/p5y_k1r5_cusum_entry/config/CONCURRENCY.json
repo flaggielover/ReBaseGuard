@@ -1,0 +1,26 @@
+{
+ "campaign_locks": "none in either path",
+ "k1r4_sr_writes": "only inside its own per-cell evidence directories (exist_ok=False)",
+ "k1r5_reads": [
+  "K1R4 CUSUM bridge table (read-only, hash-checked)",
+  "K1R5 config",
+  "aux4 kernel"
+ ],
+ "k1r5_writes": "only inside its own per-cell evidence directory (created exist_ok=False)",
+ "ledgers": "none in either path",
+ "resources": {
+  "combined_peak_gib": 2.2,
+  "host_ram_gib": 123,
+  "k1r4_sr_peak_rss_gib_per_cell": 0.28,
+  "k1r5_peak_rss_gib_per_cell": 0.25,
+  "physical_cores": 16,
+  "processes": 8
+ },
+ "rule": "use evidence roots that are disjoint from every K1R4 SR evidence root",
+ "schema": "rebaseguard.p5y.k1r5.concurrency.v1",
+ "shared_mutable_files": [],
+ "thread_contract": {
+  "k1r4_sr": "OMP/OPENBLAS/MKL/NUMEXPR/BLIS/VECLIB = 1 at import and call",
+  "k1r5": "OMP/OPENBLAS/MKL/NUMEXPR = 1 pinned at qualify4 import; flint.ctx.threads = 1"
+ }
+}

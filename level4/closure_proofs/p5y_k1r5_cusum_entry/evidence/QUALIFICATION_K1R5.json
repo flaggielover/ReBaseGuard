@@ -1,0 +1,147 @@
+{
+ "checkpoint_sha256": "8cc6e877d20dac618b24bf9b2eb66ce08c8d6cce58e3cfb9ba1dc0527056b215",
+ "cusum_can_run_concurrently_with_k1r4_sr": true,
+ "decisive_computation": false,
+ "gates": [
+  {
+   "detail": "2/2",
+   "gate": "1 both bridge records decode exactly through the real frozen certifier",
+   "status": "PASS"
+  },
+  {
+   "detail": "",
+   "gate": "2 exact left/right/e0/rho/C_upper + midpoint/half-width assertions",
+   "status": "PASS"
+  },
+  {
+   "detail": "",
+   "gate": "3 production entry accepts exactly the two bridge indices",
+   "status": "PASS"
+  },
+  {
+   "detail": "head True, with-items True, block stmts [True, True, True, True, True], ctx True, forbidden calls []",
+   "gate": "AST: certify() is the frozen run_cell block verbatim (only cell source and ctx differ)",
+   "status": "PASS"
+  },
+  {
+   "detail": "aux4 drift [], K1R5 manifest drift []",
+   "gate": "7 frozen kernel files byte-identical (58 aux4 files; qualify4 incl. its production guard)",
+   "status": "PASS"
+  },
+  {
+   "detail": "46 keys; assemble writes 22",
+   "gate": "8 result schema explicitly frozen (aux4 record keys + k1r5_bridge; assemble() writes only schema keys)",
+   "status": "PASS"
+  },
+  {
+   "detail": "re-seal into an existing dir refused: True; files ['cell_done_1000.json', 'k1r5_CUSUM_1000_256.json']",
+   "gate": "9 evidence directory per-cell and collision-free",
+   "status": "PASS"
+  },
+  {
+   "detail": "hash_v2 twice equal; two seals byte-identical (marker equal except completed_utc)",
+   "gate": "10 sealing and scientific-content hash deterministic",
+   "status": "PASS"
+  },
+  {
+   "detail": "{\"stage\": \"qualification-import-closure\", \"loaded_repository_modules\": 47, \"tcb_size\": 59}",
+   "gate": "TCB gate passes on the production import closure (fresh process)",
+   "status": "PASS"
+  },
+  {
+   "detail": "12/12",
+   "gate": "negative controls rejected for the expected reason",
+   "status": "PASS"
+  },
+  {
+   "detail": "bridge evidence files: []",
+   "gate": "11 no genuine certificate solve has run",
+   "status": "PASS"
+  },
+  {
+   "detail": "",
+   "gate": "CUSUM can run concurrently with K1R4 SR (disjoint evidence roots, no shared file/lock, per-process single-thread, 8 procs <= 16 cores, 2.2 of 123 GiB)",
+   "status": "PASS"
+  }
+ ],
+ "gates_passed": 12,
+ "gates_total": 12,
+ "negative_controls": [
+  {
+   "control": "1 K1R2 bare-string record",
+   "expected_reason": true,
+   "reason": "left: affine [p, '0/1'] pair required (K1R2 schema defect)",
+   "rejected": true
+  },
+  {
+   "control": "2 e0 not the midpoint",
+   "expected_reason": true,
+   "reason": "e0/rho are not the exact midpoint/half-width",
+   "rejected": true
+  },
+  {
+   "control": "3 rho not the half-width",
+   "expected_reason": true,
+   "reason": "e0/rho are not the exact midpoint/half-width",
+   "rejected": true
+  },
+  {
+   "control": "4 one-digit mutated bridge record",
+   "expected_reason": true,
+   "reason": "K1R4 CUSUM bridge table does not match its frozen hash",
+   "rejected": true
+  },
+  {
+   "control": "5 historical CUSUM index 0 as new work",
+   "expected_reason": true,
+   "reason": "historical CUSUM cell 0 is inherited evidence, never new work",
+   "rejected": true
+  },
+  {
+   "control": "6 historical CUSUM index 325 as new work",
+   "expected_reason": true,
+   "reason": "historical CUSUM cell 325 is inherited evidence, never new work",
+   "rejected": true
+  },
+  {
+   "control": "7 unknown bridge index 1002",
+   "expected_reason": true,
+   "reason": "cell 1002 is not a K1R5 CUSUM bridge cell",
+   "rejected": true
+  },
+  {
+   "control": "8 pre-existing evidence directory",
+   "expected_reason": true,
+   "reason": "evidence directory /tmp/tmpq7sotxpl already exists",
+   "rejected": true
+  },
+  {
+   "control": "9 wrong precision",
+   "expected_reason": true,
+   "reason": "precision 128 != frozen 256",
+   "rejected": true
+  },
+  {
+   "control": "10 thread contract broken",
+   "expected_reason": true,
+   "reason": "frozen thread contract not in force",
+   "rejected": true
+  },
+  {
+   "control": "11 CLI rejects a historical index",
+   "expected_reason": true,
+   "reason": "2",
+   "rejected": true
+  },
+  {
+   "control": "12 unmanifested module loaded (this qualifier)",
+   "expected_reason": true,
+   "reason": "negative TCB gate: modules outside/unequal to the manifest: ['/home/ubuntu/work/ReBaseGuard-sr-o9-t1/level4/closure_proofs/p5y_k1r5_cusum_entry/ops/qu",
+   "rejected": true
+  }
+ ],
+ "negatives_passed": 12,
+ "negatives_total": 12,
+ "schema": "rebaseguard.p5y.k1r5.qualification.v1",
+ "verdict": "PASS"
+}
