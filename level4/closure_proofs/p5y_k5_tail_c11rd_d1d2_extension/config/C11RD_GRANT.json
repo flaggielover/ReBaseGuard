@@ -1,0 +1,96 @@
+{
+ "authorization": {
+  "artifact_blob": "7744108be139324eced5d93799d70c4dae2749ec",
+  "artifact_commit": "6bab71b95cd492956a688b062fe3547a5daf7389",
+  "artifact_path": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/authorization_r1/C11RD_AUTHORIZATION.json",
+  "review_blob": "7b35aa0bc8af43bc3ba6529f6c90b23e6771768c",
+  "review_commit": "e320d8f53e28761fda2d110fba1af8b3c063cc39",
+  "review_path": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/review/C11RD_AUTHORIZATION_REVIEW.md"
+ },
+ "campaign": "C11RD",
+ "code_sha256": {
+  "code/c11rd_certify.py": "8e389657fe3fdc1858d207847099c095e9161cf1c33e91ecea08721a2bf43507",
+  "code/c11rd_compare.py": "e299186a809eb9ee417a2b4b0917ec0ff4e76753b65f943a27d2d671e5c2b41d",
+  "code/c11rd_float.py": "dc72ead1ead7f67e98eeca3f5b9ab8048dd252053eae5dedf9f766c0d24a5863",
+  "code/c11rd_kernel.py": "bca5d3fe07ab0498f1a654477406e00a4d3c70e0597d5e78fcc967caa2548f12",
+  "code/c11rd_model.py": "9c91dcfd63cc1030a9b9dadb0c13aa36f2fc505941a788297c8f4db8611f1a54",
+  "code/c11rd_runs.py": "5cbd891686206696b67d8f6fa1e851de9dece3ed1fa1798673b0c5d29092f41f",
+  "code/c11rd_tm.py": "a7254b250956cf6509c005477ca14f8af3a5d019d42e21fd83b629ccbae8246f",
+  "code/c11rd_validate.py": "1509c73a85fa90e7549efc41301d977bcd367abf1841e786d8c97cb038e2771b"
+ },
+ "decision": "ALLOW",
+ "freeze_commit": "ce5b85959a1693525f9e001e7c191516a4ee7d76",
+ "freeze_sha256": "07118d3022181d99fae001e9ad5d424cf151aac876131c4c6e1f54e2e85ea3f8",
+ "host": {
+  "hostname": "suzhedeMacBook.local",
+  "platform": "darwin",
+  "platform_uuid": "57559A2E-B526-5AE7-9701-A8BEB8908AF0",
+  "python": "3.14.5"
+ },
+ "input_bindings": {
+  "c11_certifier_used_only_by_validation_V03": {
+   "blob": "36e60c96777bfab1d7e96527bbb7347c818e3707",
+   "path": "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py"
+  },
+  "c11r_equiv_used_only_by_validation_V20": {
+   "blob": "6531eb8d0b70b6dd3d30e755c13295d3ebcdf314",
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_equiv.py"
+  },
+  "c11r_schema": {
+   "blob": "0526426cf15647bcc44bc5ab901df0ba408ddef6",
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py"
+  },
+  "c11r_sealed_runs_F_H": {
+   "blob": "a53516031948cf44255d7980dc5c7af5ae8b2afd",
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/runs/C11R_RUNS.json",
+   "seal_commit": "5ff4cc5b310b31bc7b61213598aade9a5188964e"
+  },
+  "c11r_statement_table": {
+   "blob": "58b4066f5cce7efd139154c1b50e8661b4b5861b",
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json"
+  },
+  "c7_gaussian": {
+   "blob": "be492720abb628184962b54440c99a971c8d9f0a",
+   "path": "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py",
+   "sha256": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
+  },
+  "comparison_only_c11r_comparison": {
+   "blob": "5269c2aaa354385b714c669ec516ecc22f36c59d",
+   "opened_before_comparison": false,
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/comparison/C11R_COMPARISON.json"
+  },
+  "comparison_only_c11r_quarantine": {
+   "blob": "219e0122a7febf4347ce9205e5e5ed9f18b20ffb",
+   "opened_before_comparison": false,
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/quarantine/C11R_ORIGINAL_MAGNITUDES.json"
+  }
+ },
+ "launch_branch": "refs/heads/p5y-k5-tail-c11rd-d1d2-extension",
+ "launch_rule": "the launch commit is the commit G that adds exactly this grant on top of the accepted review commit; the qualified launcher is run as `python3.14 -I -S -B <launcher> --authorization-review-commit G` with HEAD == G, after the launch preconditions of the authorization artifact pass; nothing may be committed after G before the launch",
+ "launcher": {
+  "path": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/qualification_r1q_r1/code/c11rd_launch.py",
+  "sha256": "81ccc0482994ba0a4febb8aa5d6ee551f84bb3e66957e06e821250180e11fb48"
+ },
+ "max_executions": 1,
+ "qualification": {
+  "artifact_blob": "1d79ad42643c543957a5def54699ea557eb82b40",
+  "artifact_path": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/evidence/qualification_r1q_r1/C11RD_R1Q_R1_QUALIFICATION.json",
+  "commit": "e627d4ecf402f6d7b827d8ab734b55f4ae41e0e6",
+  "review_commit": "e27c2ffdc55f745e372f0e896d6bedc42a57f341",
+  "review_path": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/review/C11RD_R1Q_R1_QUALIFICATION_REVIEW.md"
+ },
+ "scope": "cell 306, D1 and D2 only; no other cell (307-309 excluded), no comparison, no adoption, no r6, r5 unchanged",
+ "target": {
+  "cell": 306,
+  "constants": [
+   "D1",
+   "D2"
+  ],
+  "e_hi": "17885921/10000000",
+  "e_lo": "680769/400000"
+ },
+ "worktree": {
+  "canonical_path": "/Users/suzhe/ReBaseGuard-k5c11rd",
+  "git_common_dir": "/Users/suzhe/ReBaseGuard/.git"
+ }
+}
