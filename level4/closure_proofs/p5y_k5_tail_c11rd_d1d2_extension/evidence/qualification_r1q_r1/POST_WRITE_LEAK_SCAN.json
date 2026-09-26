@@ -1,0 +1,24 @@
+{
+ "POST_WRITE_LEAK_SCAN": "every file of the namespace and the namespace's commit messages, after all evidence was written",
+ "broad_hashed_scan": {
+  "hits": {},
+  "tokens_checked": 10951
+ },
+ "clean": true,
+ "decoy_controls_as_expected": true,
+ "detectors": [
+  "c11rd_validate.v18_no_original_values_anywhere (frozen)",
+  "c11rd_validate._hashed_leak_scan with ORIGINAL_PATTERN_SHA256 (frozen)",
+  "c11rd_qualify._broad_hashed_scan (value-free, seven scales, 4-10 digits)"
+ ],
+ "files_scanned": 59,
+ "frozen_detector_V18": {
+  "files": 59,
+  "pass": true
+ },
+ "hashed_detector_hits": {},
+ "second_pass_including_this_file": {
+  "clean": true,
+  "files": 60
+ }
+}

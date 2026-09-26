@@ -1,0 +1,825 @@
+{
+ "CONTAINS_NO_TARGET_MAGNITUDE": true,
+ "LOCAL_MAIN_REF": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+ "QUALIFICATION_CLASS": "PASS",
+ "REMOTE_MAIN_REF": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+ "attempt_semantics": {
+  "interruption": "signal forwarded; CONSUMED_NO_RESULT, sealed, consumed",
+  "process failure": "lock without artifact, CONSUMED_NO_RESULT, sealed, consumed",
+  "refusal before the lock": "REFUSED_BEFORE_LOCK, sealed (log and journal), consumed by the launcher",
+  "resource cap or accounting failure": "exit 3, COMPLETED_NOT_CERTIFIED (targets INSUFFICIENT at comparison), sealed, consumed",
+  "seal cannot complete": "EXECUTION CONSUMED \u2014 RESULT UNSEALED (exit 4), consumed; seal-only recovery",
+  "signal after consumption, before the start": "CONSUMED_RUNNER_NOT_STARTED, sealed, consumed",
+  "success": "exit 0, COMPLETED_CERTIFIED, sealed"
+ },
+ "authorization_requirements": [
+  "the grant equals the qualified values: host (grant_host), worktree, freeze_commit = ce5b8595 exactly, qualification commit = the commit of this artifact, qualification review = the R1Q-R1 review commit (QUALIFICATION_ACCEPTED), the canonical r1q_r1 paths, the frozen code and input hashes, target 306 [D1, D2], max_executions 1",
+  "the launcher's sha256 at the authorization commit equals this artifact's; the rejected r1 launcher is not permitted; direct runner invocation is not permitted",
+  "the launch is the exact launch_command at HEAD = the authorization review commit, clean index, no lock file (the launcher enforces these)",
+  "no IDE or git client attached to the repository during the run (not mechanically enforceable; the seal survives index contention and retries ref-lock contention)",
+  "an otherwise idle host, AC power, lid open, sleep prevention verified (the launcher enforces all four at launch; PRED.N-7 = R1R.N-11)",
+  "after exit 4 or a launcher death: nothing but the seal-only recovery"
+ ],
+ "campaign": "C11RD-R1Q-R1 -- repaired qualification of the C11RD-R1 freeze",
+ "canonical_paths": {
+  "authorization_review": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/review/C11RD_AUTHORIZATION_REVIEW.md",
+  "consumed_ref": "refs/c11rd/r1-execution-consumed",
+  "grant": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/config/C11RD_GRANT.json",
+  "launcher": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/qualification_r1q_r1/code/c11rd_launch.py",
+  "launcher_log_dir": "<git common dir>/c11rd_r1",
+  "qualification_artifact": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/evidence/qualification_r1q_r1/C11RD_R1Q_R1_QUALIFICATION.json",
+  "qualification_review": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/review/C11RD_R1Q_R1_QUALIFICATION_REVIEW.md",
+  "runner": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/code/c11rd_runs.py",
+  "runs_directory": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/evidence/runs"
+ },
+ "checks_file_sha256": "ba82a9383e38f6b237b49d46baedee2ccc41363349da143d284ada9dbe13e777",
+ "checks_summary": {
+  "q01_entry_identity": true,
+  "q02_history_cleanliness": true,
+  "q03_scientific_object": true,
+  "q04_hashes": true,
+  "q05_validation": true,
+  "q06_host_runtime": true,
+  "q07_git_history_hardening": true,
+  "q08_execution_lifecycle": true,
+  "q09_note_checks": true,
+  "q10_broad_leak_scan": true,
+  "q11_b1_seal_preconditions": true,
+  "q12_post_consumption_seal": true,
+  "q13_signals": true,
+  "q14_entry_point": true
+ },
+ "comparator_rule": {
+  "factor": 2,
+  "module": "code/c11rd_compare.py",
+  "runs_once": "U0 over reachable history",
+  "steps": [
+   "U0 run once: no comparison artifact on disk and none ever in reachable history (c11rd_model.history_commits; fail-closed on ambiguous history)",
+   "U1 seal and review lineage",
+   "U2 identity: the comparator's own code, the other C11RD files and C7 c7_gaussian.py equal the freeze; the run's code hashes equal the freeze's; status",
+   "U3 exact recomputation of every sub-block bound and of the max",
+   "U4 statement equivalence before any number",
+   "U5 originals loaded ONLY now, from C11R's quarantine blob 219e0122a7febf4347ce9205e5e5ed9f18b20ffb; factor-2 classification",
+   "U6 exact equality INVALID",
+   "U7 post-hoc leak check of the namespace at the freeze commit",
+   "U8 N9 reassembly with C11R's accepted classes (C11R comparison blob 5269c2aaa354385b714c669ec516ecc22f36c59d)"
+  ]
+ },
+ "document_sha256": {
+  "docs/C11RD_ARCHITECTURE.md": "5c9c753d22893e67bc15b7b9f81b4d2b540c3995c9dccce146948030b68c07f0",
+  "docs/C11RD_COST_MODEL.md": "d4876930f0ea5bfc7ff9db75faabb48e98712946282685bf6b010524c496a6df",
+  "docs/C11RD_INDEPENDENCE_AUDIT.md": "62f7a5dbde9254b67085b1c72df395d47999aa394498ffea064d1528a9fb4f8a",
+  "docs/C11RD_R1_REPAIR.md": "18cbdd73fbac9f87493020fa5f9ade385653ede75e63480b053b2d07c42c4c1a",
+  "docs/D1_D2_STATEMENT_AUDIT.md": "3ff049f89e25fb1282b7dd0152ac3c1f005ff4d9524dd06a55d5de0f1d3e54b7",
+  "evidence/calibration/C11RD_CALIBRATION.json": "2f802099e67276e0aa503c72237de268d889696c874774226b8397cd42313e56",
+  "protocol/C11RD_FREEZE_R1.md": "d2875e8384a2684c032190c233d0953593a7e0879c972b8d089a85a5359b40de",
+  "theory/D1_D2_DERIVATION.md": "03eb121954702bb30c07ab4ed2093fa563df34f6507eb50b38d031ff15cbeae4"
+ },
+ "execution_count_rule": "exactly ONE target execution: freeze P = 1; the runner's grant binds max_executions 1; the runner's exclusive, permanent lock and its history check (R4); the launcher's create-only consumed ref, taken after the preflight and the final gate and before the run, consumes the authorization whatever happens next",
+ "freeze": {
+  "commit": "ce5b85959a1693525f9e001e7c191516a4ee7d76",
+  "json_sha256": "07118d3022181d99fae001e9ad5d424cf151aac876131c4c6e1f54e2e85ea3f8",
+  "md_sha256": "d2875e8384a2684c032190c233d0953593a7e0879c972b8d089a85a5359b40de",
+  "predecessor_freeze": "71495747504670dbe90ec0ee2f7dd4702fd47001"
+ },
+ "freeze_commit": "ce5b85959a1693525f9e001e7c191516a4ee7d76",
+ "frozen_code_sha256": {
+  "code/c11rd_certify.py": "8e389657fe3fdc1858d207847099c095e9161cf1c33e91ecea08721a2bf43507",
+  "code/c11rd_compare.py": "e299186a809eb9ee417a2b4b0917ec0ff4e76753b65f943a27d2d671e5c2b41d",
+  "code/c11rd_float.py": "dc72ead1ead7f67e98eeca3f5b9ab8048dd252053eae5dedf9f766c0d24a5863",
+  "code/c11rd_kernel.py": "bca5d3fe07ab0498f1a654477406e00a4d3c70e0597d5e78fcc967caa2548f12",
+  "code/c11rd_model.py": "9c91dcfd63cc1030a9b9dadb0c13aa36f2fc505941a788297c8f4db8611f1a54",
+  "code/c11rd_runs.py": "5cbd891686206696b67d8f6fa1e851de9dece3ed1fa1798673b0c5d29092f41f",
+  "code/c11rd_tm.py": "a7254b250956cf6509c005477ca14f8af3a5d019d42e21fd83b629ccbae8246f",
+  "code/c11rd_validate.py": "1509c73a85fa90e7549efc41301d977bcd367abf1841e786d8c97cb038e2771b"
+ },
+ "history": {
+  "C11R_namespace_byte_identical_since_7375b9cd": true,
+  "LOCAL_MAIN_REF": true,
+  "REMOTE_MAIN_REF (cached origin/main)": true,
+  "no_grafts_or_shallow_file": true,
+  "no_launcher_log_dir_in_the_common_dir": true,
+  "no_r6_file": true,
+  "no_refs_c11rd": true,
+  "no_replace_refs": true,
+  "no_run_lock_seal_comparison_grant_authorization_in_any_history (qualification reader)": true,
+  "none_on_disk": true,
+  "nothing_outside_the_namespace_changed_since_7375b9cd": true,
+  "r5_unchanged": true,
+  "repository_not_shallow": true,
+  "same, by the frozen reader c11rd_model.history_commits": true,
+  "this_rounds_review_not_yet_written": true
+ },
+ "host": {
+  "cpu": {
+   "logical": 6,
+   "model": "Apple A18 Pro",
+   "physical": 6
+  },
+  "disk": {
+   "free_bytes_now": 230920904704,
+   "total_bytes": 494332366848,
+   "volume_of": "/Users/suzhe/ReBaseGuard-k5c11rd"
+  },
+  "git": {
+   "binary": "/usr/bin/git",
+   "version": "git version 2.50.1 (Apple Git-155)"
+  },
+  "grant_host": {
+   "hostname": "suzhedeMacBook.local",
+   "platform": "darwin",
+   "platform_uuid": "57559A2E-B526-5AE7-9701-A8BEB8908AF0",
+   "python": "3.14.5"
+  },
+  "interpreter_finding (QR1.N-11)": {
+   "libpython": "/Library/Frameworks/Python.framework/Versions/3.14/Python",
+   "note": "sys.executable is the framework stub; the Mach-O image that actually runs (dyld image 0) is Resources/Python.app/Contents/MacOS/Python, linked to libpython Versions/3.14/Python; all three, every extension module and every stdlib source and cached bytecode loaded by the launcher, the runner-like probe and its spawn workers are bound in runtime_files_sha256 and re-hashed at launch",
+   "running_main_image": "/Library/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+   "sys_executable": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3.14"
+  },
+  "load_average_now": [
+   1.83544921875,
+   1.96728515625,
+   2.09375
+  ],
+  "memory": {
+   "available_kb_now": 1758528,
+   "total_bytes": 8589934592
+  },
+  "os": {
+   "kernel": "25.5.0",
+   "machine": "arm64",
+   "sw_vers": {
+    "BuildVersion": "25F84",
+    "ProductName": "macOS",
+    "ProductVersion": "26.5.2"
+   }
+  },
+  "power_now": {
+   "ac_power": true,
+   "lid_open": true
+  },
+  "process_table": {
+   "calls": 500,
+   "failures": 0,
+   "seconds": 4.73,
+   "tool": "/bin/ps"
+  },
+  "runtime_binding": {
+   "files": 227,
+   "from": [
+    "runner-like probe (parent)",
+    "its 5 spawn workers",
+    "the launcher after a full sandbox launch"
+   ],
+   "mach_o_images": [
+    "/Library/Frameworks/Python.framework/Versions/3.14/Python",
+    "/Library/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_bisect.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_blake2.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_bz2.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_ctypes.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_hashlib.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_heapq.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_json.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_lzma.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_multiprocessing.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_pickle.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_posixshmem.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_posixsubprocess.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_queue.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_random.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_socket.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_struct.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_zstd.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/array.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/binascii.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/fcntl.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/grp.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/math.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/select.cpython-314-darwin.so",
+    "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/zlib.cpython-314-darwin.so"
+   ],
+   "sha256_of_the_binding": "9b2a50359ac571d4aa707e03af9a296d8969332ab5fa35cc3b522084ef6b0740"
+  },
+  "sleep_prevention": {
+   "assertion_verified": true,
+   "mechanism": "caffeinate -i -s -w <launcher pid> in its own session; the launcher verifies PreventUserIdleSystemSleep and PreventSystemSleep in `pmset -g assertions` before consuming",
+   "pmset_sleep_settings_now": {
+    "disksleep": "10",
+    "displaysleep": "0",
+    "powernap": "1",
+    "sleep": "1",
+    "standby": "1"
+   },
+   "tool": "/usr/bin/caffeinate"
+  },
+  "wall_clock": {
+   "runner_cap_clock": "time.time() (wall clock: it keeps running while the machine sleeps)",
+   "wall_vs_monotonic_drift_over_2s": 3e-06
+  },
+  "workers_under_the_launcher_environment": {
+   "all_isolated_nosite_nobytecode": true,
+   "distinct_worker_pids": 5,
+   "requested": 5
+  }
+ },
+ "input_bindings": {
+  "c11_certifier_used_only_by_validation_V03": {
+   "blob": "36e60c96777bfab1d7e96527bbb7347c818e3707",
+   "path": "level4/closure_proofs/p5y_k5_tail_c11_n9_independent_certifier/code/c11_certifier.py"
+  },
+  "c11r_equiv_used_only_by_validation_V20": {
+   "blob": "6531eb8d0b70b6dd3d30e755c13295d3ebcdf314",
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_equiv.py"
+  },
+  "c11r_schema": {
+   "blob": "0526426cf15647bcc44bc5ab901df0ba408ddef6",
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/code/c11r_schema.py"
+  },
+  "c11r_sealed_runs_F_H": {
+   "blob": "a53516031948cf44255d7980dc5c7af5ae8b2afd",
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/runs/C11R_RUNS.json",
+   "seal_commit": "5ff4cc5b310b31bc7b61213598aade9a5188964e"
+  },
+  "c11r_statement_table": {
+   "blob": "58b4066f5cce7efd139154c1b50e8661b4b5861b",
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json"
+  },
+  "c7_gaussian": {
+   "blob": "be492720abb628184962b54440c99a971c8d9f0a",
+   "path": "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py",
+   "sha256": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
+  },
+  "comparison_only_c11r_comparison": {
+   "blob": "5269c2aaa354385b714c669ec516ecc22f36c59d",
+   "opened_before_comparison": false,
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/comparison/C11R_COMPARISON.json"
+  },
+  "comparison_only_c11r_quarantine": {
+   "blob": "219e0122a7febf4347ce9205e5e5ed9f18b20ffb",
+   "opened_before_comparison": false,
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/quarantine/C11R_ORIGINAL_MAGNITUDES.json"
+  }
+ },
+ "interpreter": {
+  "executable_realpath": "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3.14",
+  "executable_sha256": "bd3498159da515acf12963b736f3e7e7599619204348868e018bbbc9e0fc9343",
+  "flags_isolated_nosite_nobytecode": true,
+  "libpython": "/Library/Frameworks/Python.framework/Versions/3.14/Python",
+  "libpython_loaded": true,
+  "libpython_sha256": "34463f1b2fc9b5507f493af35080960ba3e86b94c0832c83ea771f8f252b5a55",
+  "main_image": "/Library/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python",
+  "main_image_sha256": "2c8c10480733f0f21078f0de32c1db49b62107b47b2890adde929f019e821a32",
+  "version": "3.14.5"
+ },
+ "launch_branch": "refs/heads/p5y-k5-tail-c11rd-d1d2-extension",
+ "launch_command": "python3 -I -S -B level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/qualification_r1q_r1/code/c11rd_launch.py --authorization-review-commit <authorization review commit>",
+ "launch_limits": {
+  "disk_free_min_bytes": 2147483648,
+  "load1_max": 2.0,
+  "memory_available_min_kb": 1048576,
+  "require_ac_power": true,
+  "require_lid_open": true
+ },
+ "launcher_death_recovery": "if the launcher dies after the consumed ref exists (SIGKILL, power loss): do nothing else; wait until no c11rd_runs.py process remains; then --seal-only; never re-run the launcher or the runner",
+ "leak_scans": {
+  "broad": {
+   "files": 56,
+   "hits": {},
+   "pass": true,
+   "tokens_checked": 10338
+  },
+  "post_write": "evidence/qualification_r1q_r1/POST_WRITE_LEAK_SCAN.json",
+  "rule": "every decimal (plain, bare-point, scientific with a point or an integer mantissa, JSON floats) and every rational token of every namespace file and of the namespace's commit messages is taken as a value t; for each decimal shift 10^j (j = -3..3) its renderings with 4..10 significant digits (truncated, rounded half up, and Python's %.{k}g for k <= 9) are hashed and compared with the frozen set of the disclosed values' renderings (c11rd_validate.ORIGINAL_PATTERN_SHA256, built by c11rd_compare.value_patterns): a hit is exactly a >= 4-significant-digit rendering of a disclosed value at any of seven scales. No value is read, supplied or stored; positive and negative controls run the same scanner with a DECOY hash set"
+ },
+ "lifecycle": [
+  "freeze ce5b8595",
+  "qualification (this artifact; successor of 3addf9d3)",
+  "qualification review (QUALIFICATION_ACCEPTED) at the canonical review path",
+  "authorization: grant at the canonical path + authorization review (AUTHORIZATION_ACCEPTED)",
+  "exactly one target execution through THIS launcher at HEAD = the authorization review commit",
+  "immediate seal (automatic; seal-only recovery if needed)",
+  "execution review (EXECUTION_ACCEPTED)",
+  "comparison (c11rd_compare, once)",
+  "adjudication"
+ ],
+ "note_dispositions": {
+  "QR1.B-1": {
+   "class": "HARDENED_OUTSIDE_FROZEN_SCIENCE",
+   "detail": "REPAIRED in the launcher only. Before consumption the preflight AND a final gate refuse unless HEAD is the authorization commit on the qualified branch, the index equals HEAD with no unmerged entry, the worktree and namespace are clean, no *.lock exists in the worktree git dir, the common dir or refs/, no merge/rebase/cherry-pick/revert/bisect is in progress, the ref backend is files, an explicit repo-local identity exists, sparse checkout is off, no attribute applies to the seal paths and the object store is writable. The seal itself uses a private index and a compare-and-swap ref update, retries transient failures under a bounded policy (1+6 attempts in 63 s, seal steps only), and otherwise ends in 'EXECUTION CONSUMED \u2014 RESULT UNSEALED' (exit 4, never REFUSE) whose only continuation is --seal-only. Q11: the rejected launcher reproduces T2/T11, the repaired one refuses both and 16 more states before consumption; Q12/Q13: post-consumption failure, retry, UNSEALED, recovery, signals, launcher death"
+  },
+  "QR1.N-1": {
+   "class": "HARDENED_OUTSIDE_FROZEN_SCIENCE",
+   "detail": "the launcher checks its own sha256 against this artifact and, in main(), its blob at HEAD; HEAD must equal the authorization review commit (Q08, Q11)"
+  },
+  "QR1.N-10": {
+   "class": "HARDENED_OUTSIDE_FROZEN_SCIENCE",
+   "detail": "the preflight requires AC power and an open lid; caffeinate -i -s. Residual ACCEPTED_LIMITATION: a lid closed DURING the run cannot be prevented; the wall-clock cap then ends the run NOT_CERTIFIED (fail-closed)"
+  },
+  "QR1.N-11": {
+   "class": "HARDENED_OUTSIDE_FROZEN_SCIENCE",
+   "detail": "MECHANICALLY VERIFIED (Q06): sys.executable bin/python3.14 is a stub; the running image (dyld image 0) is Resources/Python.app/Contents/MacOS/Python, linked to Versions/3.14/Python; both, every extension module and dylib, and every stdlib source and cached bytecode loaded by the launcher, a runner-like probe and its 5 spawn workers are bound (runtime_files_sha256) and re-hashed at launch; a mismatch refuses (Q08)"
+  },
+  "QR1.N-12": {
+   "class": "HARDENED_OUTSIDE_FROZEN_SCIENCE",
+   "detail": "every note here carries its source prefix (R1R, QR1, PRED); PRED.N-7 = R1R.N-11 recorded; the historical artifact and review are not edited"
+  },
+  "QR1.N-13": {
+   "class": "ACCEPTED_LIMITATION",
+   "detail": "fail-closed direction kept: after consumption the science can never be rerun under freeze ce5b8595 (consumed ref, runner lock and history R4, max_executions 1); a new execution needs a new freeze or namespace AND a new independently reviewed qualification and authorization. Only the SEAL may be retried (see retry_semantics)"
+  },
+  "QR1.N-14": {
+   "class": "HARDENED_OUTSIDE_FROZEN_SCIENCE",
+   "detail": "every commit id reaching git is validated as 40 hex first: the CLI argument, the grant's freeze, qualification and qualification-review commits (Q14 E5, E7-E9)"
+  },
+  "QR1.N-15": {
+   "class": "QUALIFIED",
+   "detail": "carried into authorization_requirements, several now enforced mechanically by the launcher"
+  },
+  "QR1.N-2": {
+   "class": "HARDENED_OUTSIDE_FROZEN_SCIENCE",
+   "detail": "main() first evaluates the sanitized-state predicate (flags, pycache prefix, exact environment); a preset marker without that state refuses (Q14 E2, E3; no __pycache__ written)"
+  },
+  "QR1.N-3": {
+   "class": "HARDENED_OUTSIDE_FROZEN_SCIENCE",
+   "detail": "Q08 now tests no grant, symlinked grant, disk, memory, process table, AC power, lid, canonical paths (T1), another freeze commit (T4), a decoy runner (T14), runner guards; every sandbox launch loads the qualification through load_qualified; Q14 drives main() (L1 re-exec, refusals)"
+  },
+  "QR1.N-4": {
+   "class": "HARDENED_OUTSIDE_FROZEN_SCIENCE",
+   "detail": "Q10 rebuilt: value-free, >= 4-digit renderings at seven scales against the frozen hash set; 22 planted decoy renderings fire and 8 decoy non-renderings stay silent through the same scanner"
+  },
+  "QR1.N-5": {
+   "class": "HARDENED_OUTSIDE_FROZEN_SCIENCE",
+   "detail": "Q09 instruments V07 as well and reports the instrumented tests and call counts"
+  },
+  "QR1.N-6": {
+   "class": "HARDENED_OUTSIDE_FROZEN_SCIENCE",
+   "detail": "Q07: a LYING commit-graph (c3's parent recorded as c1): plain git follows the lie, the frozen reader and the launcher's git return the truth -- the test can fail"
+  },
+  "QR1.N-7": {
+   "class": "HARDENED_OUTSIDE_FROZEN_SCIENCE",
+   "detail": "HOME=/var/empty, GIT_CONFIG_GLOBAL=/dev/null, GIT_CONFIG_NOSYSTEM=1, GIT_ATTR_NOSYSTEM=1 in the launcher, the runner and the seal; Q07 control shows a hostile HOME configures plain git and not the launcher's; Q08 hostile environment reaches neither"
+  },
+  "QR1.N-8": {
+   "class": "HARDENED_OUTSIDE_FROZEN_SCIENCE",
+   "detail": "signals are recorded (and forwarded only while the runner lives) from the final gate to the printed report; git children and caffeinate run in their own sessions; Q13 S1-S6. Residual ACCEPTED_LIMITATION: SIGKILL/power loss of the launcher cannot be intercepted -> the runner may finish unsealed, sleep prevention ends; recovery = --seal-only after no runner process remains (Q12 launcher-death test)"
+  },
+  "QR1.N-9": {
+   "class": "HARDENED_OUTSIDE_FROZEN_SCIENCE",
+   "detail": "the preflight runs the frozen runner's R0 (loaded modules), R1 (code, C7), R4 (disk and history), R5 (premise), R6/R7 (target, cover, accounting) in advance; the runner re-runs all of them"
+  },
+  "R1R.N-1": {
+   "class": "QUALIFIED",
+   "detail": "validation helper point_box reads bands lower-closed; Q09 instruments point_box and kernel_at over 8 validation tests INCLUDING V07 (QR1.N-5): every call uses a globally continuous candidate or none and no interior point with s >= 4; c11rd_validate.py is frozen and not edited (erratum recorded)"
+  },
+  "R1R.N-10": {
+   "class": "QUALIFIED",
+   "detail": "Q10 repaired (QR1.N-4): value-free hashed rendering scan at seven scales, 4-10 digits, with decoy positive/negative controls through the same code path: clean"
+  },
+  "R1R.N-11": {
+   "class": "QUALIFIED",
+   "detail": "fail-closed kept: a failed process-table read ends the run NOT_CERTIFIED and consumes it; Q06 500/500 reads; the launcher pre-checks the table and requires an idle host, AC power, open lid and verified sleep prevention (= PRED.N-7)"
+  },
+  "R1R.N-12": {
+   "class": "HARDENED_OUTSIDE_FROZEN_SCIENCE",
+   "detail": "Q08 single-field deviation matrix (platform, input_bindings, git_common_dir, QUALIFICATION_REJECTED, ancestor freeze commit with a different freeze file): all refused"
+  },
+  "R1R.N-13": {
+   "class": "QUALIFIED",
+   "detail": "Q09: each per-sub-block box list is complete (verify_cover) and identical in geometry to the NT list"
+  },
+  "R1R.N-2": {
+   "class": "HARDENED_OUTSIDE_FROZEN_SCIENCE",
+   "detail": "Q09: kernel-level exclusion of the reversed convention, Khat orders 0-2, s = 2, 3, 4"
+  },
+  "R1R.N-3": {
+   "class": "HARDENED_OUTSIDE_FROZEN_SCIENCE",
+   "detail": "Q09: sharp endpoint containment, width < 1e-3 of the residual at u_e = -1, +1"
+  },
+  "R1R.N-4": {
+   "class": "ACCEPTED_LIMITATION",
+   "detail": "nontarget mode trusts the on-disk freeze (changing it needs a new freeze); rule: no rehearsal after this qualification except on explicit instruction, from a clean tree with the committed freeze; the governed target path binds the freeze at the freeze commit (R2)"
+  },
+  "R1R.N-5": {
+   "class": "HARDENED_OUTSIDE_FROZEN_SCIENCE",
+   "detail": "the qualified launcher is the only permitted entry; the sanitized state now also fixes HOME=/var/empty, GIT_CONFIG_GLOBAL=/dev/null, GIT_CONFIG_NOSYSTEM, GIT_ATTR_NOSYSTEM, core.hooksPath=/dev/null (Q06-Q08, Q14); residual ACCEPTED_LIMITATION: deliberate forgery by a trusted operator, and interpreter start-up before any program check when the launcher is started without -I -S -B"
+  },
+  "R1R.N-6": {
+   "class": "HARDENED_OUTSIDE_FROZEN_SCIENCE",
+   "detail": "consumed ref in the COMMON git dir before the run, and an immediate seal that no longer depends on the shared index (private index + compare-and-swap ref update, bounded retry, distinct UNSEALED state, seal-only recovery): QR1.B-1 repaired (Q11-Q13)"
+  },
+  "R1R.N-7": {
+   "class": "ACCEPTED_LIMITATION",
+   "detail": "reachable history only (inherent; the freeze says 'reachable history')"
+  },
+  "R1R.N-8": {
+   "class": "HARDENED_OUTSIDE_FROZEN_SCIENCE",
+   "detail": "canonical qualification paths and the exact freeze commit enforced by the launcher; Q08 now tests it (reviewer T1 and T4: the frozen check alone accepts, the launcher refuses)"
+  },
+  "R1R.N-9": {
+   "class": "ACCEPTED_LIMITATION",
+   "detail": "stale 'R0-R6' wording and the JSON FORBIDDEN list without the band clause cannot be edited without a new freeze; errata carried; the convention is immutable through the frozen hashes and guard R6"
+  }
+ },
+ "note_id_map": {
+  "PRED": "predecessor pre-execution review, preserved at 663f8fe7 (NOT_READY)",
+  "QR1": "qualification review of 3addf9d3, preserved at 89330534 (QUALIFICATION_REJECTED)",
+  "R1R": "C11RD-R1 pre-execution review, preserved at 3c1eff11 (READY_TO_QUALIFY)",
+  "aliases": {
+   "PRED.N-7": "R1R.N-11 (idle host and sleep prevention; the rejected artifact's authorization_requirements[2] and doc section 3 say 'N-7' meaning PRED.N-7)"
+  }
+ },
+ "ordering_invariant": "complete preflight -> sleep prevention -> final gate -> consume -> run once -> immediate seal",
+ "original_value_quarantine": {
+  "opened": false,
+  "quarantine_blob": "219e0122a7febf4347ce9205e5e5ed9f18b20ffb",
+  "read_only_by": "c11rd_compare.main step U5, after U0-U4"
+ },
+ "pre_execution_review": {
+  "commit": "3c1eff11562638727156f09a9c58b8dc704548a5",
+  "path": "review/C11RD_R1_PRE_EXECUTION_REVIEW.md",
+  "sha256": "dd4ccbda22a4c2fde0c40831202d30850b08a88e023bef04326bcccc48914867",
+  "verdict": "READY_TO_QUALIFY"
+ },
+ "preflight": [
+  "L1 sanitized state (flags, exact environment incl. HOME=/var/empty and global/system git config off), before any frozen import",
+  "commit ids validated (40 hex) before any git call",
+  "qualified host, interpreter (stub, running image, libpython), runtime files re-hashed, worktree",
+  "launcher sha256 = this artifact's; exact freeze commit; canonical qualification paths; runner hash",
+  "frozen grant check (runner R2)",
+  "runner R0, R1, R4 (disk, history), R5, R6/R7 in advance",
+  "seal preconditions (QR1.B-1): HEAD = authorization commit on the launch branch; index = HEAD; no unmerged entry; worktree and namespace clean; no *.lock in the worktree git dir, common dir or refs/; no operation in progress; files ref backend; explicit repo-local identity; no sparse checkout; no attribute on the seal paths; writable object store",
+  "AC power, open lid, idle host, disk, memory, readable process table, no other runner, no consumed ref",
+  "final gate repeats the seal preconditions and the consumed/runs checks immediately before consumption; any signal received by then refuses"
+ ],
+ "qualification_code_sha256": {
+  "qualification_r1q_r1/code/c11rd_launch.py": "81ccc0482994ba0a4febb8aa5d6ee551f84bb3e66957e06e821250180e11fb48",
+  "qualification_r1q_r1/code/c11rd_qualify.py": "886679d16d22f6734bf7748dbeaa08452250ecb7685f5ef9d0869f0c99ea0a0d"
+ },
+ "requires_new_freeze": [],
+ "resource_caps": {
+  "rss_kb": 2097152,
+  "wall_seconds": 43200,
+  "workers": 5
+ },
+ "retry_semantics": {
+  "after_consumption_science": "NEVER retried under freeze ce5b8595: the consumed ref, the runner's permanent lock and its history guard R4, and max_executions = 1 all refuse; a new execution needs a new freeze or namespace and a new, independently reviewed qualification and authorization",
+  "after_consumption_seal": "the SEAL only: automatically inside the same launcher process (bounded policy, delays 1, 2, 4, 8, 16, 32 s; a moved branch is permanent and not retried), and after 'EXECUTION CONSUMED \u2014 RESULT UNSEALED' (exit 4) or a launcher death, only by the seal-only recovery (--seal-only), which requires the consumed ref at the start commit, HEAD at it, evidence/runs/ not yet sealed and no runner process alive, never starts the runner, never reads a runs value and commits exactly evidence/runs/ on top of the start commit",
+  "before_consumption": "any refusal (REFUSE ..., exit 2) consumed nothing and ran nothing; the launch may be retried once the cause is fixed",
+  "what_a_seal_only_recovery_does_not_mean": "it never permits a new D1/D2 execution, never resets the consumed ref and never changes what the runner produced; the sealed result goes to the execution review"
+ },
+ "runtime_files_sha256": {
+  "/Library/Frameworks/Python.framework/Versions/3.14/Python": "34463f1b2fc9b5507f493af35080960ba3e86b94c0832c83ea771f8f252b5a55",
+  "/Library/Frameworks/Python.framework/Versions/3.14/Resources/Python.app/Contents/MacOS/Python": "2c8c10480733f0f21078f0de32c1db49b62107b47b2890adde929f019e821a32",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/libcrypto.3.dylib": "f12d4f7ab32cfa9d7fda00728fb1c70c791a96fe3d129b2a48a3be1f09d867ff",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/libzstd.1.5.7.dylib": "0151e69288c2c71630c9f2261767670710a51bc050ba7a9948b391369d9453e3",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__future__.py": "981d4c398849f9ebcab72300d9c1fe288fd6d7f28957b3b3fa3a493a5836d95c",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/__future__.cpython-314.pyc": "ce8f5f6c6cbb3b31eb8f4c6a1aab86011cf1cacb000252088b5103e27d53a4ce",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/_colorize.cpython-314.pyc": "e483c31479a069e7c8748a628d7aab5ce5d2305c07156a8272241f10d04649e6",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/_compat_pickle.cpython-314.pyc": "513ea138ebf5d625ffdd7bb53f0e6bae7d20474f62650ab7739e057a4c71844b",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/_opcode_metadata.cpython-314.pyc": "f84a5c4514deb28dfbce9ecd0a22e47237b9c9ae2dd3a81eacc465f93a18352d",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/_py_warnings.cpython-314.pyc": "20f6d5eb48dc290a43764e5722ef3f477a072e0c7d591c6790d33ce246b6fe08",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/_weakrefset.cpython-314.pyc": "90fbc83cbc40c19078acf89a710b53802446ec2145b8de5aa310e187165f3624",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/annotationlib.cpython-314.pyc": "2922fa2b693df80d4787dc7c121de999eb221634b6e63b08fb9891cdd98495a8",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/argparse.cpython-314.pyc": "ca8ff7dff2db73ad05d2c4e1b940da739522feb895002387bbc4edb79ef7a5f2",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/ast.cpython-314.pyc": "b6dc8980119447ce633c24344a14cba1879b001c580ec8b42e80b86090972542",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/base64.cpython-314.pyc": "9fb90c07689190f7941336c98d53b778b12a227acc7cf430e3e600305452d595",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/bisect.cpython-314.pyc": "b75cd930063cd1dcd937c70fb85a7fc3c64b4e5a6ab8945591d2e525598725b3",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/bz2.cpython-314.pyc": "00e76fec7171188adbce6c5caf40297621dc8d3ea302f09d0ac1b9216ec171f9",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/codeop.cpython-314.pyc": "dadcf6687a4ba9557fc5ab3af15256f138804f57822eec68b97d985a5635556a",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/contextlib.cpython-314.pyc": "a95187733323108a59aa0610a7e7fce7ca150b474e3332276232b3677e7167a5",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/copy.cpython-314.pyc": "dc4428522e1a6018ac0b3e406ccc6227267ca93a06ec50811b015c15fe0605a4",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/copyreg.cpython-314.pyc": "b8548411c374345130108bca09cea483a3aae37e67f9417a21d46428894e4ab8",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/dataclasses.cpython-314.pyc": "e80a9df3d5c581ede06837e620ce21f3c6ab0d5cb9de208f275c587716dd41d2",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/dis.cpython-314.pyc": "9a5f0ebdcac9729981561083e24072c10e91c41961ae2df94dac09a4b6f24f12",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/enum.cpython-314.pyc": "7761386c7e43ef46f9477083b88ba0cb0fe2ea0d8d172b216956e4567bfb2bab",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/fnmatch.cpython-314.pyc": "78d704183b9971f0343df937fadf6ea42cd4f047ee23124abf9a23275dfcde17",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/fractions.cpython-314.pyc": "0468103977cd4a64dfe57f030a7cbdaac4274c4c8356e5344d0f110af7eddd3c",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/functools.cpython-314.pyc": "b7e2f4ebab556ddf9eb062325a458e317000a5d5a2707fff19dd836eaa48fa09",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/gettext.cpython-314.pyc": "28aa76c9f952b0941252fd62154eb58cd3ba1fe32fb0f6c4a1cf9bdf09771c2b",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/glob.cpython-314.pyc": "a20169717aad141f7055536624946dc4a596242fcff7563744002765458a511c",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/hashlib.cpython-314.pyc": "d782378765258ac923b80c64af5a476306d5d2f40664632c07c4415af042a178",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/heapq.cpython-314.pyc": "a1376b1ade333cf13703fa6434cf48ed66cbf554fff901892b47c4c3d1e33fa6",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/inspect.cpython-314.pyc": "8d1ba3ce72612ca336af275fc791cfdeb9d97e32c9db2dcd117490320f3e7dca",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/keyword.cpython-314.pyc": "03a8b090cffb48f66c222176d72aaad15ec5d4f276d61653225f656d3a30a4a0",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/linecache.cpython-314.pyc": "b4e99c6b08da5b6ae5fa68733161ab55d4e3b9b17e38c21781c38c91a7fa5c40",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/locale.cpython-314.pyc": "1e52079e69785b0d15d211859542210643c7ef38be15b9d5c797f58759c4c940",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/lzma.cpython-314.pyc": "0b1a27a80c4f921ff63248b76d93ae103b645b462a4fb0d397b603fcc53fb0b7",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/numbers.cpython-314.pyc": "8f0584fae8b210a17e1cab47b932a19a625da94708454cb6d6a655b443a543b0",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/opcode.cpython-314.pyc": "e0da949ace84a6c771021a80cca6ed6fef3ec6a280e76ff3b2b7067bff48c938",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/operator.cpython-314.pyc": "a8acf93a92db60e7cd8d2b1796566df5749a7e19552a3bb4a398de473102d49d",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/pickle.cpython-314.pyc": "3749a82c23996d4af0c650d52a1ad1ca0dfc20090bb28a07e468bff2809a5e5f",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/pkgutil.cpython-314.pyc": "50a9ba0ab31af304e5d2db67bcd22736750e0c0e0b5660bea1d69e46b3ef4e71",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/queue.cpython-314.pyc": "41603629f3a1224e4a48539292a909355becf234ac39cfa102e3e2a3e211480e",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/random.cpython-314.pyc": "74767a46046164001d0f839b369aeda12748981a8db2ce3821f5eafce12dfeb1",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/reprlib.cpython-314.pyc": "f30d052025506be3d186e5cee6bbd4691525f6ea134861e6d45978bf0ff64114",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/selectors.cpython-314.pyc": "cbf19503d9c606fd00cce2de57e0c451d519781911a8fc90631832779a40f5cc",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/shutil.cpython-314.pyc": "c3917b21bfde58c0b37a65ed6135aa5ab65d85ed68c2e136c8a2aa5391b1e126",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/signal.cpython-314.pyc": "eff5ff2a2aef5340709ca022c5ef34403ec060e78edc723266f2b4e04ec71b05",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/socket.cpython-314.pyc": "34ab2a444a4e6b34d6513e45a3ca8884687eea1b394fc903502a9319e962b65a",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/struct.cpython-314.pyc": "ce0a98f502938e455f400ff2f176cab8a69cf74ece61b6b0386f7d8b7d06701b",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/subprocess.cpython-314.pyc": "9148c76374bedbb1667a94e410692ba627ba414eef6bffedbc24b16df6ca2e23",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/tempfile.cpython-314.pyc": "73f024fd05c9968e81d91da261c4ae2b39dcb6c2a775abe63563f607f8042772",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/textwrap.cpython-314.pyc": "c0b8745caeec9419342857d349f8ed6bf5aec2a31464c559a6cd2baffc58c113",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/threading.cpython-314.pyc": "0c498cf6d48d114501cbc5c5a12d015a814753e8ce9b8eb1d1649dedc8f135c2",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/token.cpython-314.pyc": "0e69c1eff03c68861d3ef1a9777e70ef2550f4be2d9d2066e519e8271969193b",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/tokenize.cpython-314.pyc": "4fa2f9b13f23e3023a7928944ce683d941a22d31111a23887e6fb231bcd0adfa",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/traceback.cpython-314.pyc": "7949a985632e9660fb75287880efd068f1425105e4b92a53e172937a2bdf591b",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/types.cpython-314.pyc": "587c42281174f8b63bcf040f048ba1ec193ee63bf815b51d18c0237568080540",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/warnings.cpython-314.pyc": "0260e1519f520a20efad24c8948e68ab30aae7f14bfdad47fc015f29fa758f4f",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/__pycache__/weakref.cpython-314.pyc": "a2f58dc03747d94e9a7778a78e030b25a086ff693c9e6f1cdce830298b49738c",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_collections_abc.py": "50beebb1f309d83fd3af45f0e4c98c9dbfe0edd2f40edc8dc79e5cf0072cfbea",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_colorize.py": "15db41bec8e25fd1ba81cf234df2cc7446d0fbc10285fda73186176365efd730",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_compat_pickle.py": "028d2d9845d7acac2e1ceb565aacaee64e3f8019fba96174d65eff1609b50cd0",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_opcode_metadata.py": "d9badc5ab19a66415e230bf8f4299491b2207d584981a92b6e7c447cfa1aeac3",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_py_warnings.py": "7728580177727fa3b295478cef4777a9d2a364c5cbd809efcea352db31144f85",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/_weakrefset.py": "2dd7cb459d654fe78b00c5c47ee8e786c037ee77763304603f5e976dd62cbf81",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/abc.py": "e558702a95cdce3febd289da021715d2b92bc43995b8a1bc58dfa1c3d8010287",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/annotationlib.py": "1cce29393714b91e3f71571ffbedacc7f73f11ad26be10701debeb86ec059a32",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/argparse.py": "052271a2a1eb1b6b60116acb8f3505c98edd52dba062b0309926e63ac4544743",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/ast.py": "5ea9a796353544bea0d706153516f04ef3d92be305d15a73238403837d77e34c",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/base64.py": "202d288f0b6d25ed1b206640f86e934381e6766fa0496f6f8d87d9c1bf92cdef",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/bisect.py": "f1cf7b85fc36b5da249813fc5ab97d9464f8cc1bc817f7146206fa2713e35999",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/bz2.py": "368b9ee55f0b6dbfc81b15e1a17c51cccddb009389eae8e9a7acf2402ca4109a",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/codecs.py": "718f39b3ea68fe934214d789c5bce3005fa828040b03a72d2f715fc5e2647b7e",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/codeop.py": "6777d19fa0f88c415d615c78e214ede057dd7507db8494744ca2c53fe9911a3a",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/collections/__init__.py": "dbd563752a57c6633b7566b1e9c95bc8ea81df1a1d213b23f61c5335424e5af5",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/collections/__pycache__/__init__.cpython-314.pyc": "ff29b819c06f34e12b8ac11ca57e9aeb94ab407ba04c0d8ed1ec7b1f5e79a48d",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/compression/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/compression/__pycache__/__init__.cpython-314.pyc": "233a5b3899d78cf09ecaf95f2c6e36f31ceea4b7d0c08c13e8db3c53dfd6719f",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/compression/_common/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/compression/_common/__pycache__/__init__.cpython-314.pyc": "731f0606ace66200cc2677dd92ab0c4bd8776de495a3c776aad0553c8092b938",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/compression/_common/__pycache__/_streams.cpython-314.pyc": "39f7aa7fdd915c5e93e1247a9d70bf6a95f12259e6c367c6138e506da1de9dac",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/compression/_common/_streams.py": "8b8e943815c748d030e540a023400cb87fb13f75c2f0615a63ec42ef9f156c92",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/compression/zstd/__init__.py": "a4a2da5a3f729baf74dc9873afe02da7919a5e394e665dc7beb24438d105cc76",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/compression/zstd/__pycache__/__init__.cpython-314.pyc": "5b4f54f077c55b2dbfd369f5ba3e278b8262e2ed0d64795d701f91db7f1017aa",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/compression/zstd/__pycache__/_zstdfile.cpython-314.pyc": "9f7d23ad1dc624d500917e83131f9cb96528f3e487936026396d6bf8a7f299ee",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/compression/zstd/_zstdfile.py": "662c2fc97fae490e6dc0e1ceb6a4363bea76ffa05b0acd788aec1274157c4216",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/contextlib.py": "c1e0d67b2007de11ae93cd36cf6faf38d9ab32656a832d592a49325eec579f96",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/copy.py": "15154fde290d6e65b5007905689a47a9a5a724822c5e06eec35d9ffbb2a3aa69",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/copyreg.py": "6376eb5722806396f5842997ac18add369ea9ac3ff4fcfe1460c41a088cac425",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/ctypes/__init__.py": "72f2df568380c275a5596944810953124ff2ee8d678c5f8ddcf50f0f77577eb3",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/ctypes/__pycache__/__init__.cpython-314.pyc": "ca7d24d257748e1b073e1af66aef9ff8c9fa35a6f749b774cc4407bef8640404",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/ctypes/__pycache__/_endian.cpython-314.pyc": "e5a631ed3ae681c96770b740bbec21a6110d3426799b757b1714de41dbbd879e",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/ctypes/_endian.py": "499773a028a41ee18153fedfe0a00a26efb2a650f568b9bc17e2f3a914a23468",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/dataclasses.py": "2dedf70270f45c6a909ae1eac734fcf3ae3f2764bb71a330f4825aca3a79784b",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/dis.py": "17d4d9a9195c9ee5aa27a96f3e0871f9363fd501e3a64ef20cb1cc876d7ad553",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/encodings/__init__.py": "2b708410495acf12a6fad9d2de928dd89e567537c253eaa2b51aaae578e96c59",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/encodings/__pycache__/__init__.cpython-314.pyc": "46f6d0f5630d3e14f975af9dae5d5a3ca291b95954fd59af4aa559b16116f206",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/encodings/__pycache__/aliases.cpython-314.pyc": "93b8c95f1e0194a977115d123be9ba200bd935b3da9b2590c18ab81a2a1d059b",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/encodings/__pycache__/utf_8.cpython-314.pyc": "e88eb5219b1cc48efc3cc9c7107d1bd09996833542f9f1ff259df07fcdce288a",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/encodings/aliases.py": "e38fc524cc8b2355807921411c918c0d971419c4d6ba6147409785db42d257a3",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/encodings/utf_8.py": "ba0cac060269583523ca9506473a755203037c57d466a11aa89a30a5f6756f3d",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/enum.py": "982843c2dd6dbec992bfed44abe9ef5464be81876a180d977ccd1a69e26ec16d",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/fnmatch.py": "ce582bc266922e4c682e2a85d72095124430a6bf58716c6f2537103480eae742",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/fractions.py": "7a95f1c506c9ac4b2277df5f2bdd9d61cc67b520c45021a5a961939770221ef6",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/functools.py": "046ec9660146db48862c7b22c78e2ef3818eaed6920e5cbf35f551ef09fec6cd",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/genericpath.py": "cdac5a68dd738051e0d66fc81d5947d6a1776248fc6fe862253477608d870ec4",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/gettext.py": "54c00df11915aafb017ed23860dcb5197ed063f7ee07e5612625ec86afadcaf5",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/glob.py": "e3c82e6f0a1fe9442d4c5625e68cb206228408f0342326f6f5c8f59112091b59",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/hashlib.py": "88fa624821fbdee7eb2ef87c2437b207afe328cf117c7463367e2db5eb1af492",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/heapq.py": "f2d644de141a488db66fc13608a794ef5f2d33162299f6751ea92c3cb0b4c9ea",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/__init__.py": "72b07de4133a7e39b2f6a7920465669aa04626f217e800779587bc0713fe002e",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/__pycache__/__init__.cpython-314.pyc": "92bd714ab4671e326c7ee76e5eb81a21f79e205e8592787de0ea4aa3a22b9757",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/__pycache__/_abc.cpython-314.pyc": "787ac92e64738a1229eb2273e3e2b63f019036d2d7c5c7c48af5764cca0b9084",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/_abc.py": "80aab7931dc999dee581c8b8b56fcd973fe156335a96ceeaf6acfc03cebf10e8",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/_bootstrap.py": "e50d35b1191ecbc5f7faecc73f54efd242bcf24c510e4ea5eb64bfba9458c0e3",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/_bootstrap_external.py": "b9af1fb7b625030cf5ee06b39aeb7838c2a30c97ddee09410286b7afbd8b7098",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/machinery.py": "34b7583fd83ebb2629b7645c0dd293839ce16b19cf8742801e21a21fe08f5811",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/importlib/util.py": "7bdfadad42664ba169ffac8160765673cd79937f74324f4664de8d820c35b863",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/inspect.py": "9e9793a663928e98cb7b5e300a6fd7a747bb977641eec94c22a6074009aa6c46",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/io.py": "1b75584d4efcc612dc0db2ae98619408276585a106f0544879edb5e25b55430a",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__init__.py": "95022d150a27a2bfd54ac21bfce35812c96b53c420bb7b018dcb573f13e52da0",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__pycache__/__init__.cpython-314.pyc": "684cf9e74dfb9d9c97fc37ebaca1a007f4a050c9c7996ffdc780dc6b6ba8f1c9",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__pycache__/decoder.cpython-314.pyc": "157618b27274d36c1f47003935f3573743cc27741234808cd7aad4a4798ce3d6",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__pycache__/encoder.cpython-314.pyc": "83c35a4b3b9ae8b752502615d052c18bf57258eb69e4e6332ad67a59fe1f6eab",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/__pycache__/scanner.cpython-314.pyc": "3518c40bd25f905417bd49d066f0f62e99aaddd3ad5f4d09c340b170696c08db",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/decoder.py": "302ce57cb6f411122d7ef2ad2997c1fc0f184849fab3f1f585752f18f2195c73",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/encoder.py": "d68a4d04d2cfd95897498307f29349058b42c3f48ea6aa6739714a09200a7d01",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/json/scanner.py": "572958017eae8842eeddd0e3d18d3c56cc0a197348224915e1d87ce937841764",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/keyword.py": "18c2be738c04ad20ad375f6a71db34b3823c7f40b0340f5294d0e89f3c9b093b",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_bisect.cpython-314-darwin.so": "b6b96baaa02be21ea67e9395cab2f70474264dff42b26c06e5ddb7306dee6c64",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_blake2.cpython-314-darwin.so": "eca2246fc4b5035b5680225e2e1abe4347fa0ed4dc3dac285a2380199d833bb8",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_bz2.cpython-314-darwin.so": "400c1de1fcb52785bbe26643d750840f132c5a6ce67472d033294f3c87f53ac2",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_ctypes.cpython-314-darwin.so": "ab7f0f302d182ee2ce29add38f1fd2fd49e744825b27b049e1ba602fb05e3d7b",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_hashlib.cpython-314-darwin.so": "8fef6ce30036c3662a644f30475624bca793a291dde6b7bf2e4b5d3991372274",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_heapq.cpython-314-darwin.so": "0dc1651d570d6ddb9efaea4369d05dc2cb2681531c76ac477b06e344260b0507",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_json.cpython-314-darwin.so": "3e14dedc1d4ffd405dc7e24b93cd6920feaa1ea13cddadaf9c29f4c5e28c862e",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_lzma.cpython-314-darwin.so": "771371f459814bcd11feaf694e5a8c7e8b9118c3c38ef2920466e24462b7302b",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_multiprocessing.cpython-314-darwin.so": "25954fb2a3647c54ac4f3173bc7d39a28a46b8ff29864b0f2f13434c5f506079",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_pickle.cpython-314-darwin.so": "90dfbeef68232de37c60d9430a9f612492915bda2def3137617adff3d775ce00",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_posixshmem.cpython-314-darwin.so": "8c089e5e7cd60a79e900bd711a7ee1e9ff3224b7c5096ce10ed87a0abe3d80c6",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_posixsubprocess.cpython-314-darwin.so": "8878e38f84f14af77aefc4a454618477fc556f93fe535307d5992b1819e5aad2",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_queue.cpython-314-darwin.so": "630ce5f488eaaa152721cfbb602d937c3c86c0df56a5321a127173b6abd7436e",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_random.cpython-314-darwin.so": "62551a05423db538876153b9001158417bec23fcdf9b1a739bdd8591065b697a",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_socket.cpython-314-darwin.so": "542449a853f1fda6a26e53055f609666089950bee432db27113ef793d01cb3b7",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_struct.cpython-314-darwin.so": "9d44de60bddb21e452c9a1ae158e5864c5ef05d1c1ccfaa1b73388d63e5f2fd0",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/_zstd.cpython-314-darwin.so": "4371ad0ff96cdbfdd1497882ddfd3e8bdb8dd194de34720fd67b64b00ff14f1e",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/array.cpython-314-darwin.so": "834807b5def2dc37eed2ca486c9ff0ba91212bdd7cca39c6d7c2db71dd85cb7f",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/binascii.cpython-314-darwin.so": "a645313de42984a7e72cc74f47e112a078f562e384930169176f8351cdd18d4d",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/fcntl.cpython-314-darwin.so": "4393e3956db84c52ec82ba01628e294236f83f3fbd8811ad9e9346bc0db7414e",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/grp.cpython-314-darwin.so": "9d73e95e0db1fbb7de7cb5c8ff876a0679df3ddef6d2da1f0b4437afbd58668d",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/math.cpython-314-darwin.so": "b39e81367f05688d019eef7b9c85138e27aa0a3b40be377451d3be5411dd0b68",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/select.cpython-314-darwin.so": "73df76cd5265b210dc3e797c2f0aea461abb2be3be3f250d21ae434673550e69",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lib-dynload/zlib.cpython-314-darwin.so": "57d449620c4d68d191812201704e43f4580524a37fd874277d71c3231ecebbb5",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/linecache.py": "692daec68e2a419adf46bafc0eb2f8a2fb36c482183fa1ac47e00fec440f7d7e",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/locale.py": "0e90907424b4bef150b00feb1bef4687bacb416e6e3f2b463e0758ee34979fe4",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/lzma.py": "b01a78a04c6a9ba6c645758cace78ed53a53871ea3ff88744e23f6263613d507",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/__init__.py": "a5a42976033c7d63ee2740acceef949a3582dcb0e0442845f9717e1be771c68b",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/__pycache__/__init__.cpython-314.pyc": "c531653230b5700dfc088095379ec3a3c29a68534633addbec71c7d41a0e6cb5",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/__pycache__/connection.cpython-314.pyc": "3db8be0861109a528213e20b0d7c305e6203b6155e1b598fc9ee761674316416",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/__pycache__/context.cpython-314.pyc": "00f98edc622014166448f4ed36e3878e789f903c263b2d3b4deae2ac8bd10181",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/__pycache__/pool.cpython-314.pyc": "cd6efb8baf7c7706df299dfea5d9a210a4d06ca2f106c61e5f96d3a3bc024079",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/__pycache__/popen_fork.cpython-314.pyc": "889e75b90257217f5477d5eabfce25218b4a8333cc09e36849a5dea244dc0748",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/__pycache__/popen_spawn_posix.cpython-314.pyc": "3d01afac1527b68f7ca009007f7838c940ef9d20943142259a7ee75c09e22623",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/__pycache__/process.cpython-314.pyc": "4dc82f931d8aa5070de6ea47375ba6bce5f00c372ce327423e7e0323394bdf01",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/__pycache__/queues.cpython-314.pyc": "066468c00ca4f4faebafccdc41f644390fdc9eb1f61cb877f769e4f22c5f6ab1",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/__pycache__/reduction.cpython-314.pyc": "86bd0696ab44ef0a15f2be1650f186798acccb30a57ec4bb358486773a89726a",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/__pycache__/resource_tracker.cpython-314.pyc": "5ae3bc3587473d25ba448c8a5e7c8881479d720d1a18d70b52721cdbb5f54d04",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/__pycache__/spawn.cpython-314.pyc": "e2366225b9f2754fbc422fad1f1edc023c4f2720ffbc5b62e81383338c06d317",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/__pycache__/synchronize.cpython-314.pyc": "b9f77ba2907bb1fd59e332f3ca733a3d2871990aee71fa737023af2a9193d2a8",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/__pycache__/util.cpython-314.pyc": "b16d122b3834fa81c48f97d4b7bfa7376aef5a91b802b94835d6ff3af8497d69",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/connection.py": "c8123946008ec2bd57266e61a3a388d3914b75856cb2c8af8685978658fef879",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/context.py": "6d9058b6770152b5d26f2f3ece22de423decf1c751038f6bcd81995096aa9ab6",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/pool.py": "2b1e92bfc230007ac463aa0a3bd18c948a3c62f97e7e73858ae8b3f61dd13a6e",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/popen_fork.py": "9687a24fb0bca30f66ab4168aea2cfdf40679faf318d3f4e76e0e02ae823f9d1",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/popen_spawn_posix.py": "3738d2da3f5f57c83149232120a389a3b03cb4ed6f275957b884b18eb227628a",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/process.py": "9cad9791c8ff9aba8f688c4e7ad9f620384231f8d0dfcc88dbc1e4c947ec28bc",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/queues.py": "2749328cec74ac7abfb2f1b06df3eb70955d3951ea9c90aea21f25a729369cc7",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/reduction.py": "7cd1652f08e4685f380f2484ad3441d363fe58fe5b328f50050fb0f281a535f9",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/resource_tracker.py": "a11ea85a6c41f9d5482cc3efae5d7687834f970e00881af9807481d14aea1b59",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/spawn.py": "e38307ad8d7a6107ca90a943e2d7a01c9a16fbe4cbac6d0f5087a8bfef4ebf2a",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/synchronize.py": "d77f983907f050516dceae8e25af70628c644b720d51ae13d10f8b46442645c2",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/multiprocessing/util.py": "a03138826235c4806bd0baea705b33a42edd9727eb55ff50fc6d2e4cacb0bfea",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/ntpath.py": "7c5c992b1b52f97d7dc73ad09ea8b97917475e7e4474563379e71b03015f04ca",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/numbers.py": "e5e73beba4a7674bd5e9a881a202d403a0c3e2b59af4181699155ea4827a7561",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/opcode.py": "1036d90c917bb27c540ac3205d22896ee747214df1f2682458ab915758e4fdf2",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/operator.py": "a9f9910965c31f841caad0447ee47299ac539a371422aefe200c86c60f3b4697",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/os.py": "1494f3b93c6714d7a511963586f2b392dc92f3181c0d1ead82c621a4b0aad969",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__init__.py": "042a4d0a5e1ef66778daa86dc269af205bd42d06e793e53d8b99dff4c45928ca",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__pycache__/__init__.cpython-314.pyc": "fe7f7503f3521eaac7c125e181c77c1078b2c254fa66a231514b5255f9206835",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/__pycache__/_os.cpython-314.pyc": "bd32b71a24f50ed521e5aa5c17f9c2ac24672f3d7334ced50380e0fb31803b99",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pathlib/_os.py": "61e844988e54bdf47c0b11ad2b3fd961f058bb370793428f4c6868bd40cab6f2",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pickle.py": "c9998751cf3b94536b4c2cffd6bb719fa1ee6027bd1bd37235d597c9ecf9f98c",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/pkgutil.py": "c0ae4cc6a6d36be016d77764cf846c0da4b1b85229d94f090ac994495fc2f203",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/posixpath.py": "8a5bc2b6674e76efe0f507b873a41d746beba466a191153ed18a7580ef6e08e1",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/queue.py": "5c2a0057e95a12f5de3e5c7d3f8de747eaea7139a5eb64626f185d93f48f8b79",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/random.py": "6b71ebda0f250753051f0ad6b880a50c4674ce9bfc564239254b1bc37a78b98f",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/re/__init__.py": "741a9de729ed8207bfa19db990f8826f1bf3661f33d0970a80c08cd1338ebc35",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/re/__pycache__/__init__.cpython-314.pyc": "6311503eccaeaa21368cd4cc3082596320d6f8de2da4db657317e420917cfad2",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/re/__pycache__/_casefix.cpython-314.pyc": "7fc80bd79ff485dc45d4037e0f81db4863cc2c4776fff9b2649ee07ab84e93aa",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/re/__pycache__/_compiler.cpython-314.pyc": "24499606b05dd3d39fecd6c3f0418d192dd08cdb162e526413e6f8b448d5dae1",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/re/__pycache__/_constants.cpython-314.pyc": "5ff2a15c489d203f04f8eb343c80e1dbbda81053a1c47a263e0bdd429077a62c",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/re/__pycache__/_parser.cpython-314.pyc": "af6a6f04e9d613391aa680372a8163dd684684b349ceef13a20529ab12dbdf2e",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/re/_casefix.py": "1b12d9136f23db6c3f6f26053fefc15ca964b886838c7b9c1fabf8d2efc1e5c8",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/re/_compiler.py": "d49f30cf9a1dbae33b200ed8befd9d0ce3ac612783a10ac35196536f98923e91",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/re/_constants.py": "42253b3181b81aad6c46392f44a0ab26dcfa31feea411296f43ba16616a1ab0b",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/re/_parser.py": "e57bd194a2d42398355ae7c1ccc2ddfb78421dd431eb81e3809dbe8ca9057dc4",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/reprlib.py": "b04872e10d76252e44eae50cc785eb0fe478491afc4d7f0825a93f82b2eaba5f",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/runpy.py": "c5c5418c0a8caf915ca0c98619469227e390cb581f39494f2e368ec3b246c94b",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/selectors.py": "4b8a60cfbb619d080f87dffe1578372e56e8c0ac826f043224a154cf7b77606d",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/shutil.py": "c8fa43bdecda48e29dd719fcb93592e192ce688b896af42a8b74a445fac5da8e",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/signal.py": "0363c964c90ac0b3e515de5749205e6e6454051a1211058375d84d91eab6071a",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/socket.py": "873ff8912562c0375e75a7301024e61e878eef101b566dc0f3b6644c81874c8e",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/stat.py": "07217986d9b2172b509dab3578d18ac05ba768b418e1f1e8c90e38a8f7c2b3c6",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/struct.py": "50c14e55f94957804c1e45e975fedbe8e86f7e1dbb745b150370ff681155370a",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/subprocess.py": "6628ffdd65c093a6c08cae01ffe82877d3ced515aac9e7be0cff16512c30a7d9",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/sysconfig/__init__.py": "b40242a0824caab81d6eab15f249c0a7ff464c6a4b9ad633de0382e0604488e2",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/sysconfig/__pycache__/__init__.cpython-314.pyc": "5c01d6e8c5230b1393f0fa4ff4783497bc4e8276eb14b7eb361e1a0bd8f728ce",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/tempfile.py": "acaf59a740e42efb9f7e612ef3a9aa5c8134250c5a450714eb4af659491c8805",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/textwrap.py": "7f05d89c983f5aa8cefcff707a9cc561ed60c51fc8a68e2e3ab61cc6dfa84544",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/threading.py": "5323909624ec2165e70b6d31333e4191b63d383d2dc5a7d7d516a3475ea2b7e3",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/token.py": "61d4270311099c8a0c0b2e45fb363fd1c4e347a720bcc25f682b63dc28c34234",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/tokenize.py": "65ba1bacdc42e768382208ff27f3001ee77d9d61aafba686c67652d22b84b330",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/traceback.py": "c9908c3f04a3b9c87402d0561436dce8e6a9d74fc5cd9d197fadda3112862c79",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/types.py": "fcfdd1c5ae56a9c35f207743d774e236da0153bf78e6e4629193a8e0e9438a6b",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/warnings.py": "142225786de63c593f1c9abdacf5b4fc0b05dd847f6bed0ebb4b4aa2d4d93b02",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/weakref.py": "5e5f727a19a858cb4c56dbaf3e0a138ded02fb954a9a58a840a0764216ae9522",
+  "/Library/Frameworks/Python.framework/Versions/3.14/lib/python3.14/zipimport.py": "4de64633a484e16c39fdb46a3f939ce7c577b14a6e9ee49b79871ec1880b4597"
+ },
+ "schema": "c11rd.qualification.r1q_r1",
+ "science": {
+  "D1_formula": "|D1(a)| + |D2(a)| de + |D3(a)| de^2/2 + tau (lam1 + kappa_1 n0)",
+  "D2_formula": "|D2(a)| + |D3(a)| de + tau (lam2 + 2 kappa_1 n1 + kappa_2 n0)",
+  "aggregation": "maximum",
+  "frozen_parameters": {
+   "float": {
+    "bits": 52,
+    "n": 8,
+    "n4": 8,
+    "ns": 11,
+    "nt": 11,
+    "q": 20
+   },
+   "max_depth": 2,
+   "moment_terms": 34,
+   "splits": {
+    "s": 4,
+    "s4": 4,
+    "theta": [
+     4,
+     8,
+     12,
+     16
+    ]
+   },
+   "sub_blocks": 4,
+   "tm_order": 6,
+   "tolerances": [
+    "1/100000",
+    "1/20000",
+    "1/2000"
+   ]
+  },
+  "recurrence": [
+   "d = Khat d + h_1",
+   "d' = Khat d' + Khat' d + h_1'",
+   "d'' = Khat d'' + 2 Khat' d' + Khat'' d + h_1''"
+  ]
+ },
+ "seal_policy": {
+  "exit_codes": {
+   "EXECUTION CONSUMED \u2014 RESULT UNSEALED": 4,
+   "REFUSE (nothing consumed)": 2,
+   "SEAL-ONLY REFUSED": 5,
+   "SEALED": 0
+  },
+  "max_attempts": 7,
+  "mechanism": "private index: read-tree <start HEAD>; add -f evidence/runs; write-tree; commit-tree -p <start HEAD>; update-ref <launch branch> <seal> <start HEAD> (compare-and-swap); then the worktree index is refreshed for evidence/runs only",
+  "permanent": "the launch branch moved or HEAD left it; unexpected staged paths",
+  "recovery": "--seal-only (never starts the runner)",
+  "retried": "transient seal failures only (lock contention; a failed git step while the branch still equals the start HEAD)",
+  "retry_delays_seconds": [
+   1,
+   2,
+   4,
+   8,
+   16,
+   32
+  ],
+  "sealed_paths": "evidence/runs/ only: artifact, .partial, lock (as the runner left them), the runner log and the launch journal",
+  "terminal_state": "EXECUTION CONSUMED \u2014 RESULT UNSEALED"
+ },
+ "signal_policy": "from the final gate to the printed report SIGINT, SIGTERM, SIGHUP, SIGQUIT are recorded and forwarded to the runner while it lives, SIGTSTP is recorded and ignored; a signal before consumption refuses, one after consumption and before the start means the runner is not started; none interrupts the seal; git children and caffeinate run in their own sessions",
+ "successor_of": {
+  "artifact": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/evidence/qualification_r1/C11RD_R1_QUALIFICATION.json",
+  "artifact_blob": "a4544187635c02ae8c03a60c30f02f6f80f2754e",
+  "blockers": [
+   "QR1.B-1"
+  ],
+  "historical_files_unchanged": true,
+  "qualification_commit": "3addf9d3c72d9274813fb5e06486b633a50a133c",
+  "review": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/review/C11RD_R1_QUALIFICATION_REVIEW.md",
+  "review_commit": "8933053406b33cb4cc852dfd5b2231f507a552b3",
+  "review_sha256": "d95a2cb62497b7a19aefe1cfd90c23e80230651d9d7aeacc54becf75365baf90",
+  "superseded_launcher": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/qualification_r1/code/c11rd_launch.py",
+   "sha256": "6771447201b06e98883a90eee813e874fd1ddb139dab111ba6d657e4a4f48dbe",
+   "status": "HISTORICAL -- NOT a permitted entry"
+  },
+  "verdict": "QUALIFICATION_REJECTED"
+ },
+ "target": {
+  "band_convention": "UPPER-CLOSED: band 0 = s in [0, 1]; band k = s in (k, k + 1] for k = 1, 2, 3 (axis points included); band 4 = axis points with s in (4, 5]",
+  "cell": 306,
+  "constants": [
+   "D1",
+   "D2"
+  ],
+  "drift_block": [
+   "680769/400000",
+   "17885921/10000000"
+  ],
+  "initial_boxes": 168,
+  "sub_blocks": [
+   [
+    "680769/400000",
+    "17235899/10000000"
+   ],
+   [
+    "17235899/10000000",
+    "17452573/10000000"
+   ],
+   [
+    "17452573/10000000",
+    "17669247/10000000"
+   ],
+   [
+    "17669247/10000000",
+    "17885921/10000000"
+   ]
+  ]
+ },
+ "target_D1_computed": false,
+ "target_D2_computed": false,
+ "validation": {
+  "output_sha256": "db53abe5ebe792682472bccf4b7dc2bf2ee4c9d4ec44009238a12063a33074ba",
+  "passed": 29,
+  "total": 29
+ },
+ "worktree": {
+  "canonical_path": "/Users/suzhe/ReBaseGuard-k5c11rd",
+  "git_common_dir": "/Users/suzhe/ReBaseGuard/.git"
+ }
+}
