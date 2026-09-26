@@ -1,0 +1,309 @@
+{
+ "READY_FOR_INDEPENDENT_K1_SUCCESSOR_ADJUDICATION": "YES",
+ "assembly_sha256": "edb5478ca04b3d425baad5143d4871e72ce6bb49a76f8cff65859e60faea4ff7",
+ "cells": {
+  "CUSUM_bridge": {
+   "1000": {
+    "cpu_h": 0.6043828015544445,
+    "record_sha256": "65e97dfbb8424394239c34858f0f8ca2975db973314a65d757d8c3097c654ba9",
+    "scientific_content_hash": "35f060ac254f715a181254c82a55544bb57b81dc5adfe49a6e36271981beb14e",
+    "zero_case_by_object_part": {},
+    "zero_case_count": 0
+   },
+   "1001": {
+    "cpu_h": 0.5942859773763889,
+    "record_sha256": "4ed329c7d7bb9a8f455fe07d68e792a77eea431f9ceb2264182a1498f085627c",
+    "scientific_content_hash": "2fbb94f30f834aa45ba0250bedf3093218c60752e0235f61acdd602ef06e89a5",
+    "zero_case_by_object_part": {
+     "F_4|high": 2,
+     "F_4|low": 2,
+     "F_4|minus_tail": 2,
+     "F_4|plus_tail": 2
+    },
+    "zero_case_count": 8
+   }
+  },
+  "SR_bridge": {
+   "2000": {
+    "cpu_h": 10.540994218487475,
+    "id": "K1R4-SR-B000-N4-K0",
+    "left": "33777657/5000000",
+    "right": "273354541/40000000",
+    "scientific_content_hash": "fb3d049a5ecfa340d8a898901006d69d51a11778394102a0ddd813ae7b9b2632"
+   },
+   "2001": {
+    "cpu_h": 10.42865280756529,
+    "id": "K1R4-SR-B000-N4-K1",
+    "left": "273354541/40000000",
+    "right": "138243913/20000000",
+    "scientific_content_hash": "96c0123475794fd0291f41bea127333bff5d25cc46187b4703309bf487af20f4"
+   },
+   "2002": {
+    "cpu_h": 10.202762703026417,
+    "id": "K1R4-SR-B000-N4-K2",
+    "left": "138243913/20000000",
+    "right": "279621111/40000000",
+    "scientific_content_hash": "c63f3921a5e3acc29564814636cdcae5f457650512afb566ea4f0fa4bdd79908"
+   },
+   "2003": {
+    "cpu_h": 9.912450452523323,
+    "id": "K1R4-SR-B000-N4-K3",
+    "left": "279621111/40000000",
+    "right": "70688599/10000000",
+    "scientific_content_hash": "9bca94cd5dfddb42a32a0c83b8933c34add8b0c18a7e06ff4cc851c924c49171"
+   },
+   "2004": {
+    "cpu_h": 9.804112769325007,
+    "id": "K1R4-SR-B001-N2-K0",
+    "left": "70688599/10000000",
+    "right": "291944860127/40960000000",
+    "scientific_content_hash": "8d21f4b59d4ead3d0afbf34ab6afe96297006797c30597d7e2e14f7dc1d10b84"
+   },
+   "2005": {
+    "cpu_h": 9.868998650286098,
+    "id": "K1R4-SR-B001-N2-K1",
+    "left": "291944860127/40960000000",
+    "right": "1883835/262144",
+    "scientific_content_hash": "756b455319546e345d8d0f475100e8a9ea21698a20ae87cef67558aec590cc7b"
+   }
+  }
+ },
+ "cpu_accounting": {
+  "K1R4_SR_committed_cpu_h": 60.758,
+  "K1R5_consumed_unsealed_cpu_h": 0.61,
+  "K1R6_CUSUM_committed_cpu_h": 1.1987,
+  "K1R_K1R2_K1R3_cpu_h": 0.0,
+  "accounting": "committed CPU-h from sealed markers' cpu_seconds; unsealed K1R5 consumption carried forward; qualification/verification runs are non-genuine and excluded",
+  "cap_cpu_h_shared": 150.0,
+  "total_genuine_repair_cpu_h": 62.5666
+ },
+ "domain_composition": {
+  "CUSUM": {
+   "bridge": "(11/2, 49750555/8388608]",
+   "far_field": "[49750555/8388608, infinity)",
+   "historical_compact": "[0, 11/2]",
+   "overlap": "none (exact rational splices)",
+   "uncovered_domain_width": "0",
+   "union": "[0, infinity)"
+  },
+  "SR": {
+   "bridge": "[33777657/5000000, 1883835/262144]",
+   "c_SR_minus_q_SR": "[6.432147319284577138576632261792582292474732102657468287351355471015861516463011707977065509556796030686290143707083389967817184774345398189292615e-8 +/- 1.63e-153]",
+   "far_field": "[1883835/262144, infinity)",
+   "historical_compact": "[0, c_SR], c_SR = log(4581762885148045/8796093022208) + 1/2",
+   "overlap": {
+    "classification": "DECLARED_REDUNDANT_CERTIFIED_OVERLAP",
+    "interval": "[33777657/5000000, c_SR]"
+   },
+   "uncovered_domain_width": "0",
+   "union": "[0, infinity)"
+  }
+ },
+ "external_bound": {
+  "/home/ubuntu/work/k1-bridge-prod/run-20260926T075918Z/evidence/sr_2000/patches_2000.jsonl.gz": {
+   "bytes": 4899570,
+   "marker_sha256": "caf68020930b1adb969233a237375867d7ae3cfec9f3b0286a79c9f7b983b0b6",
+   "sha256": "caf68020930b1adb969233a237375867d7ae3cfec9f3b0286a79c9f7b983b0b6"
+  },
+  "/home/ubuntu/work/k1-bridge-prod/run-20260926T075918Z/evidence/sr_2001/patches_2001.jsonl.gz": {
+   "bytes": 4896623,
+   "marker_sha256": "4c4af9f37465bd2e5c5be3ab1c9ce8ddbeb066c418d818ecb88648248e06bb7c",
+   "sha256": "4c4af9f37465bd2e5c5be3ab1c9ce8ddbeb066c418d818ecb88648248e06bb7c"
+  },
+  "/home/ubuntu/work/k1-bridge-prod/run-20260926T075918Z/evidence/sr_2002/patches_2002.jsonl.gz": {
+   "bytes": 4900419,
+   "marker_sha256": "7bf745a6e153714e4eaafb5419ba4d618a07aed7977c28cd41744ae1cc13897c",
+   "sha256": "7bf745a6e153714e4eaafb5419ba4d618a07aed7977c28cd41744ae1cc13897c"
+  },
+  "/home/ubuntu/work/k1-bridge-prod/run-20260926T075918Z/evidence/sr_2003/patches_2003.jsonl.gz": {
+   "bytes": 4902331,
+   "marker_sha256": "f6e59de6f3a083fb7bcff61a71cd5bae322ea9de3bbbe0d127e174d74ddbd137",
+   "sha256": "f6e59de6f3a083fb7bcff61a71cd5bae322ea9de3bbbe0d127e174d74ddbd137"
+  },
+  "/home/ubuntu/work/k1-bridge-prod/run-20260926T075918Z/evidence/sr_2004/patches_2004.jsonl.gz": {
+   "bytes": 4856694,
+   "marker_sha256": "85733d6d0218a366c0be423b9b6de428cee8dbc4f5dd13f2f3467e6bc4722faf",
+   "sha256": "85733d6d0218a366c0be423b9b6de428cee8dbc4f5dd13f2f3467e6bc4722faf"
+  },
+  "/home/ubuntu/work/k1-bridge-prod/run-20260926T075918Z/evidence/sr_2005/patches_2005.jsonl.gz": {
+   "bytes": 4854812,
+   "marker_sha256": "9b350ec78b98648d543e8f0520d2bda4a31b4887197c3ec8de747a903247d18f",
+   "sha256": "9b350ec78b98648d543e8f0520d2bda4a31b4887197c3ec8de747a903247d18f"
+  }
+ },
+ "gates": [
+  {
+   "gate": "A1 inherited B1 PASS (Aux5 composite admission; 1304/1304; blocker cells 319-323 m=5 PASS)",
+   "sha256": "41fd34c6ede08b358c9b897f82662e9dd258d3c1619464a47e7f568ebf9f37bb",
+   "status": "PASS"
+  },
+  {
+   "cells": 326,
+   "gate": "A2 historical CUSUM compact [0, 11/2]: 326 cells tile exactly (aux4 fullcover geometry); admitted status from B1 (A1)",
+   "span": [
+    "0",
+    "11/2"
+   ],
+   "status": "PASS"
+  },
+  {
+   "gate": "A3 historical SR compact [0, c_SR]: PS1 generation-2 AWS-only assembly 369/369 cells, 10332 obligations",
+   "sha256": "a3ffb9ec89b1c2da255e7d7397399720d3045f53c9d12b1ffba4141c81369860",
+   "status": "PASS"
+  },
+  {
+   "domain_cover_sha256": "c78bba4d44adf5bd3d4c8bc42d2922ce11ac0cd5773f90bb9d04d5d9995a8a9c",
+   "gate": "A4 inherited far field [e_close, infinity) for CUSUM and SR: P5X-T3 (frozen K1R DOMAIN_COVER, checkpoint-bound)",
+   "status": "PASS",
+   "theorem": "P5X-T3 (inherited, unchanged, NOT modified by K1R)"
+  },
+  {
+   "gate": "A5 K1R4 SR bridge 6/6 genuine cells independently verified (20/20 checks each), producer/authorization bound",
+   "status": "PASS",
+   "verification_sha256": "909dbacca8b91639625b15507f84bbcbcb47f40ec1b4a904015e082d9e57f615"
+  },
+  {
+   "gate": "A6 K1R6 CUSUM bridge 2/2 genuine cells independently verified (22/22 checks each)",
+   "status": "PASS",
+   "verification_sha256": "c8848bc52cd0e4d4d7e98eac3cf125dee89e5d171b20e4e799f81c314b89965e"
+  },
+  {
+   "copied": 60,
+   "external": 6,
+   "gate": "A7 sealed evidence copied byte-for-byte (hashes equal the seals); SR patch archives bound by SHA-256",
+   "status": "PASS"
+  },
+  {
+   "gate": "A8 exact final domain composition: CUSUM and SR unions = [0, infinity), uncovered width 0; SR overlap [q_SR, c_SR] DECLARED_REDUNDANT_CERTIFIED_OVERLAP with q_SR < c_SR certified",
+   "status": "PASS"
+  },
+  {
+   "gate": "A9 producer identities, authorizations and runtime identities bound",
+   "status": "PASS"
+  },
+  {
+   "K1R4_SR_committed_cpu_h": 60.758,
+   "K1R5_consumed_unsealed_cpu_h": 0.61,
+   "K1R6_CUSUM_committed_cpu_h": 1.1987,
+   "K1R_K1R2_K1R3_cpu_h": 0.0,
+   "accounting": "committed CPU-h from sealed markers' cpu_seconds; unsealed K1R5 consumption carried forward; qualification/verification runs are non-genuine and excluded",
+   "cap_cpu_h_shared": 150.0,
+   "gate": "A10 CPU accounting within the shared cap (never raised)",
+   "status": "PASS",
+   "total_genuine_repair_cpu_h": 62.5666
+  },
+  {
+   "changed": [],
+   "gate": "A11 historical states immutable: no tracked file changed; K1R/K1R2/K1R4/K1R5/K1R6/PS1-assembly namespaces equal their final committed records (K1R config == its freeze)",
+   "status": "PASS"
+  }
+ ],
+ "gates_passed": 11,
+ "gates_total": 11,
+ "historical": {
+  "P5": "PARTIAL",
+  "P5X": "PARTIAL",
+  "P5Y_K1": "PARTIAL",
+  "modified": false
+ },
+ "identities": {
+  "B1_AUX5": {
+   "frozen_contract_sha256": "9e71467fb9b8938abc02e96cc0fc6f1b72ce35f621245358c423396572865478",
+   "k1r_freeze": "7f671b9ba2d7111b5e8cde010bc660904925fa1c"
+  },
+  "K1R4_SR": {
+   "authorization": "K1R4-SR-BRIDGE-AUTH-001",
+   "checkpoint": "9091cb0d5db6cc0a8d233f1667bea78bc69be676b2672f2e47506c453d2a33f0",
+   "producer": "K1R4-SR-BRIDGE-PRODUCER",
+   "producer_identity_sha256": "6e3713468634fe9fc5952d65aa2fd13f548312e29c6c749e867c55e98abb47b1",
+   "runtime": {
+    "host": "AWS",
+    "precision_bits": 256,
+    "python": "/home/ubuntu/work/ReBaseGuard/level4/.venv/bin/python",
+    "python_flint": "0.9.0",
+    "sys_vendor": "Amazon EC2",
+    "threads": "single-threaded BLAS/FLINT (all *_NUM_THREADS = 1)"
+   }
+  },
+  "K1R6_CUSUM": {
+   "authorization": "operator EXECUTION instruction 2026-09-26 (K1R6 launch)",
+   "checkpoint": "d519a2d26304a31a60ca71fc1f48f552c6c325fa3703640aea7dea8c1db56cb9",
+   "producer": "K1R6-CUSUM-BRIDGE-REPAIR-PRODUCER",
+   "producer_identity_hash": "3527b3b9399c12b406217c72548264293f11b8f14f1250f5cede138e7ba84671",
+   "runtime_contract_hash": "6b958926e2cdcb3bbd44294a64ab3b58ef029c76d604d1ebf653287af8625b52"
+  },
+  "PS1": {
+   "assembly_sha256": "741fb2b59b8e9139a7c2687d9377db4313853623f53aa0c06b992eedbac4b3e7",
+   "route": "AWS_ONLY"
+  }
+ },
+ "k1_status": "NOT_DECIDED_HERE: producer assembly is not scientific adjudication",
+ "notes": [
+  "CUSUM bridge records carry result_bearing=False: text inherited from the aux4 qualification harness (K1R5/K1R6 assemble() constant), NOT a scientific verdict; scientific status is the independently re-verified ledgers and certificates (A6).",
+  "K1R6 frozen campaign label is 'p5y_k1r6_cusum_entry' (mechanical rename of the K1R5 label).",
+  "CUSUM 1001: 8 zero-case firings, all on F_4 (candidate and source both exactly zero); exact [0,0], hashed."
+ ],
+ "schema": "rebaseguard.p5y.k1.bridge-repair.final-assembly.v1",
+ "sealed_copies": {
+  "evidence/sealed/cusum/cusum_1000/cell_done_1000.json": "47d9e08262334cf3b1ad0acb7dda0068a925a41ba7c4ca62f16552b634057057",
+  "evidence/sealed/cusum/cusum_1000/k1r6_CUSUM_1000_256.json": "65e97dfbb8424394239c34858f0f8ca2975db973314a65d757d8c3097c654ba9",
+  "evidence/sealed/cusum/cusum_1001/cell_done_1001.json": "5612017bc75ec17c5f986c6689b345cdd2d7881c3b27a7f83d47f183ee38d85f",
+  "evidence/sealed/cusum/cusum_1001/k1r6_CUSUM_1001_256.json": "4ed329c7d7bb9a8f455fe07d68e792a77eea431f9ceb2264182a1498f085627c",
+  "evidence/sealed/provenance/ops/cell.sh": "f11b98a5033b401bf96c5c94adcde6b2fd7e35175e1c3b389eda7598f08abca9",
+  "evidence/sealed/provenance/ops/cell_k1r6.sh": "3b90a6876393398fa0303cafead953ee2241bd0313aa55bb0aa6f971e0621fb9",
+  "evidence/sealed/provenance/ops/phase0.py": "5357fa5f1b0251c450074b767dc09d37c487feb810032c42e770785c7be05a5a",
+  "evidence/sealed/provenance/ops/phase0_cusum.json": "d4f5cb4765bae125bc2ab7ae1024c0a2d2500d928d950b54109c2508c4695dff",
+  "evidence/sealed/provenance/ops/phase0_k1r6.py": "dd700ba5f56e63fd3a5ece6b781b0bd6b99ae3ab2df3126f80d583f185b4788c",
+  "evidence/sealed/provenance/ops/phase0_k1r6_20260926T125551Z.json": "7eb5a6dc2f69937a867692b5c0cfb3b02c6d7e8cc02af4d0bed19b8f869fd3a7",
+  "evidence/sealed/provenance/ops/phase0_sr.json": "b13f026eec1ce24d1e40c0a1008e97a7b7d7a72ec4c35f224ef42de6e27ad113",
+  "evidence/sealed/provenance/ops/verify_k1r6.py": "5637408896b46f93cfe36076919cbb104dec1765e7c7dac59067168c78a25bc8",
+  "evidence/sealed/provenance/ops/verify_sr.py": "2c23cc2b836e38640cba1b901dc8bc2c7a2ef1785d2ff90b361d150d31c19091",
+  "evidence/sealed/provenance/run_k1r6/VERIFICATION_K1R6.json": "c8848bc52cd0e4d4d7e98eac3cf125dee89e5d171b20e4e799f81c314b89965e",
+  "evidence/sealed/provenance/run_k1r6/logs/CUSUM_1000.exit.json": "c48abbdff908dbcfd869f280ebf19590f1945ec8d16412f30fb19041eaf042cb",
+  "evidence/sealed/provenance/run_k1r6/logs/CUSUM_1000.launch.json": "298a8937db0c5bb22b08cfdf0c8aa7df10504cc7155144ab084146da388b7190",
+  "evidence/sealed/provenance/run_k1r6/logs/CUSUM_1001.exit.json": "e62370f22ecb39085543165e8a3888eb1f441e1c1c0b0b79e59d93cdf9fca07e",
+  "evidence/sealed/provenance/run_k1r6/logs/CUSUM_1001.launch.json": "c213a207c1d265547c9cd6d9c91eb35a4fefd4028a0e972212ee2b3783a90b01",
+  "evidence/sealed/provenance/run_sr_and_k1r5/CUSUM_HALT.json": "12c0a4be97e0e9f1bedcbaa1e3bed1432c1fc616ec6d3b53e57fe17343eb272e",
+  "evidence/sealed/provenance/run_sr_and_k1r5/VERIFICATION_SR.json": "909dbacca8b91639625b15507f84bbcbcb47f40ec1b4a904015e082d9e57f615",
+  "evidence/sealed/provenance/run_sr_and_k1r5/logs/CUSUM_1000.exit.json": "0f8b17260b9dcab359acf5b78cdf8de53c50e47c81469132b02f4acae8e74358",
+  "evidence/sealed/provenance/run_sr_and_k1r5/logs/CUSUM_1000.launch.json": "59dc5a34a708060a3a2ce51915060ad6342a87afab35edb3a648be16b4dcf1dd",
+  "evidence/sealed/provenance/run_sr_and_k1r5/logs/CUSUM_1001.exit.json": "16b5ac5008250244445741cdaa859d0a122ee431684ad8fe5d3d673aac47b159",
+  "evidence/sealed/provenance/run_sr_and_k1r5/logs/CUSUM_1001.launch.json": "98273cdc2477d321c1a2a2eaec4faabbe3e8f377b659d5ced558a5ee614a0b3a",
+  "evidence/sealed/provenance/run_sr_and_k1r5/logs/SR_2000.exit.json": "0a35e89ce1e6a1043e250dc628626e50676f91e54633906a63fd26b77e33e324",
+  "evidence/sealed/provenance/run_sr_and_k1r5/logs/SR_2000.launch.json": "fba454236244650af8e1d117dded0d0fb98527cacb40435be854f1f1e1d77ea8",
+  "evidence/sealed/provenance/run_sr_and_k1r5/logs/SR_2001.exit.json": "a261588e5e18e9305c118116087fb2272d871698c7f5a14e3102bcdeeff517d3",
+  "evidence/sealed/provenance/run_sr_and_k1r5/logs/SR_2001.launch.json": "9960682e58e8f52c1806f378791030ade865f21cc1b5485d300f2434a391bc75",
+  "evidence/sealed/provenance/run_sr_and_k1r5/logs/SR_2002.exit.json": "024f2d4869f58147ef76a8067778b62e1273cf3576337d145bfb167dae185b46",
+  "evidence/sealed/provenance/run_sr_and_k1r5/logs/SR_2002.launch.json": "77853b7b504426d3d6ff1d3f7b9fcf9b6567aa7b2592fdfa06a72a2a324cc9d4",
+  "evidence/sealed/provenance/run_sr_and_k1r5/logs/SR_2003.exit.json": "048eb8f28b2e1821ec7d1f847f4eee0cbe696fe3aefdf1dc17e4fd4cdba1641c",
+  "evidence/sealed/provenance/run_sr_and_k1r5/logs/SR_2003.launch.json": "ec40f4ce0b243821175f1de7b5a469c59a5c51fef49f7c80ed19b4bb60931d97",
+  "evidence/sealed/provenance/run_sr_and_k1r5/logs/SR_2004.exit.json": "80f270c33f954650b03116219f9129337d6a94a669f2fa957227fe682b6543a0",
+  "evidence/sealed/provenance/run_sr_and_k1r5/logs/SR_2004.launch.json": "da4f7a7b9b6e3f3e894fc66e403578f37757ac2c1652873602c7189d781d9ee8",
+  "evidence/sealed/provenance/run_sr_and_k1r5/logs/SR_2005.exit.json": "073b726c0add944322b72315747d842d21a30736906705a375ae0daba183139f",
+  "evidence/sealed/provenance/run_sr_and_k1r5/logs/SR_2005.launch.json": "0a439b1ea050d7553f671248afc7add424d9342789964e375275433898858fd0",
+  "evidence/sealed/sr/sr_2000/cell_done_2000.json": "a7a0d91bb4ad4b163d9eed2dbf2ede4941d90a788760de97f7514af9ee047dfd",
+  "evidence/sealed/sr/sr_2000/t3_2000.json": "3d4912089f475225d0838a8c52c8c4ecbc9b30f36916b84b22f1f3a64b014da1",
+  "evidence/sealed/sr/sr_2000/t4_2000.json": "2a53691e76441359d82b88d2eaaf3cb00b49f9934ea3280e99bb42ef637fcda5",
+  "evidence/sealed/sr/sr_2000/t5_2000.json": "4adcd7d256b4d893bcd07b7e30f388c8191da6a7097e094c5db4d43f9964150f",
+  "evidence/sealed/sr/sr_2001/cell_done_2001.json": "b399dbe62d7f86edd5fd7eb01ae4df800abd1245421f1a0d829927dce57f1ff7",
+  "evidence/sealed/sr/sr_2001/t3_2001.json": "825fc7274a681683f6d59345c30cfa8a14f1437d48993a383b1aa241c499ef83",
+  "evidence/sealed/sr/sr_2001/t4_2001.json": "166c9810361d7e6bfb7427650fddc7787626785741bebc0dbc15aefe8200ca44",
+  "evidence/sealed/sr/sr_2001/t5_2001.json": "c27d72f9fae2d6f2a75084fc987943662c995a7b312f9b424eed6093a3e0e5e9",
+  "evidence/sealed/sr/sr_2002/cell_done_2002.json": "9ba6b678e5e29186fe410f35caea3f0ebe48c1169dee25753b2e0916b715ec0d",
+  "evidence/sealed/sr/sr_2002/t3_2002.json": "446aef26c7ff2f994f2712956ba2558f53ff2c0f5caee019b66be7fa22662522",
+  "evidence/sealed/sr/sr_2002/t4_2002.json": "9f177c852ab01a5055cfdb8d4c20b87f0c4df4968f347d3f239a30e8c5d57902",
+  "evidence/sealed/sr/sr_2002/t5_2002.json": "4088c5bb2996b15b19a166ae9ac34be4bbec34b662dc9923083eecbf15492369",
+  "evidence/sealed/sr/sr_2003/cell_done_2003.json": "81b90fdc4ff769ee4f6f35f74f42865b8030871fea93e57a6f43e7142799f64f",
+  "evidence/sealed/sr/sr_2003/t3_2003.json": "8a081dc8a6e616a3577726cffb00fe3b80b69aa55dbb8bcb6b141f3e37c92879",
+  "evidence/sealed/sr/sr_2003/t4_2003.json": "f0de2340546bfc3df050aa80a79bd37727b4af360391785dac7122e62b2e6cb2",
+  "evidence/sealed/sr/sr_2003/t5_2003.json": "846fab35373818ad661fa09d4f1a0066d8d1ac2320895d5e4e352c80184c566c",
+  "evidence/sealed/sr/sr_2004/cell_done_2004.json": "7ac8ed2e94868606e1e8d7b44508f82a83f50a478bc1e72d720626c5f7e88da5",
+  "evidence/sealed/sr/sr_2004/t3_2004.json": "b981bb5ebe4b27c006ef1334d27bc8dc202182226f7155ef82619991a08014bb",
+  "evidence/sealed/sr/sr_2004/t4_2004.json": "417e03b531ebd204d91af164e80cffcc6b98acc239ced6366683bd39c2c0742c",
+  "evidence/sealed/sr/sr_2004/t5_2004.json": "191a91c069cbd7bbbf0aed8e6db7d673bd0589a34517941514497dd3844284aa",
+  "evidence/sealed/sr/sr_2005/cell_done_2005.json": "012b8882cebdf2692affd99488c67d2bbb87e88f200116656b1840476a66f3a9",
+  "evidence/sealed/sr/sr_2005/t3_2005.json": "8200474786e9d892ad6c8bfb513eff2ad783be9fb82e10515286994dad2cfba4",
+  "evidence/sealed/sr/sr_2005/t4_2005.json": "c8457690dc4f09b0db004ee410a4e060985d4dbf76491e09063df503a12da5f7",
+  "evidence/sealed/sr/sr_2005/t5_2005.json": "c092fa6556e376f9c07ba3d85e0e3dfe5c42909bbebf882a86101791d24df691"
+ }
+}

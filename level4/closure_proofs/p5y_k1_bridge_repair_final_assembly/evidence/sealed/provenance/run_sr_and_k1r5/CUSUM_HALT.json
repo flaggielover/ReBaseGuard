@@ -1,0 +1,48 @@
+{
+ "cells": {
+  "1000": {
+   "cell": 1000,
+   "classification": "K1R5_ORCHESTRATION_IDENTITY_DEFECT",
+   "committed_cpu_seconds": 0.0,
+   "consumed_cpu_seconds_upper_bound_from_wall_pinned_single_thread": 1830.0,
+   "core": 6,
+   "detail": "certify() completed the scientific obligation stage; build_certificates -> identity4.canonical_identity -> repair_universe._cell_of('CUSUM',1000) looks the cell up in aux4's frozen 326-cell spec.CELLS and raises KeyError. The K1R5 identity binding is not index-agnostic; K1R5 qualification never exercised build_certificates on a bridge index.",
+   "deterministic_rerun_would_repeat": true,
+   "end_utc": "2026-09-26T08:29:48Z",
+   "evidence_dir": "/home/ubuntu/work/k1-bridge-prod/run-20260926T075918Z/evidence/cusum_1000",
+   "evidence_dir_exists": false,
+   "kind": "CUSUM",
+   "pid": 345816,
+   "rc": 1,
+   "rerun_performed": false,
+   "sealed": false,
+   "start_utc": "2026-09-26T07:59:18Z",
+   "stderr_sha256": "c95ca817094b029a298e0e0f59e90b8e7358518fd1aa6436f68ca9e01d204678",
+   "task_id": "K1R5-CUSUM-1000-20260926T075918Z"
+  },
+  "1001": {
+   "cell": 1001,
+   "classification": "FROZEN_KERNEL_EDGE_CASE_ZERO_RESIDUAL_POLYNOMIAL",
+   "committed_cpu_seconds": 0.0,
+   "consumed_cpu_seconds_upper_bound_from_wall_pinned_single_thread": 366.0,
+   "core": 7,
+   "detail": "cert.all_residuals() -> cusum_layer2.certify(F_r) -> fast_range.max_abs_on_reachable_fast: the low-part reachable-set polynomial of an F_r residual is identically zero on this cell (fast affine substitution drops exact-zero coefficients), and rebaseguard_certify.residual._power_to_bernstein raises ValueError on the empty polynomial. The frozen kernel cannot range an identically-zero residual; not reached for any historical cell.",
+   "deterministic_rerun_would_repeat": true,
+   "end_utc": "2026-09-26T08:05:24Z",
+   "evidence_dir": "/home/ubuntu/work/k1-bridge-prod/run-20260926T075918Z/evidence/cusum_1001",
+   "evidence_dir_exists": false,
+   "kind": "CUSUM",
+   "pid": 345819,
+   "rc": 1,
+   "rerun_performed": false,
+   "sealed": false,
+   "start_utc": "2026-09-26T07:59:18Z",
+   "stderr_sha256": "753b1fa240cf00dc19ff05ecb1181be65bf808a0fb9375850cc8212f0fbf805a",
+   "task_id": "K1R5-CUSUM-1001-20260926T075918Z"
+  }
+ },
+ "decision": "CUSUM producer HALTED. No rerun (both failures are deterministic code paths). Repair requires a new successor, prohibited in this task; operator decision required.",
+ "producer": "K1R5-CUSUM-BRIDGE-PRODUCER 8cdacbc70370621e931eaeb55a523e1ecd2e548bfaba63aa54ede9c63f28c111",
+ "run": "20260926T075918Z",
+ "schema": "rebaseguard.p5y.k1.bridge-production.cusum-halt.v1"
+}
