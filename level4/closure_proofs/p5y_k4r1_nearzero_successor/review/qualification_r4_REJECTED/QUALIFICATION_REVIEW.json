@@ -1,0 +1,195 @@
+{
+ "schema": "rebaseguard.p5y.k4r1.qualification-review.v1",
+ "round": "r4",
+ "verdict": "QUALIFICATION_REJECTED",
+ "candidate_commit": "5d33363cbffc03d9a6f961d67e9d97ba6333becd",
+ "candidate_branch": "p5y-k4r1-nearzero-successor",
+ "reviewer": "independent adversarial pre-result qualification reviewer r4 (fresh context; not the designer, not the r1, r2 or r3 reviewer)",
+ "reviewed_date": "2026-09-27",
+ "summary": "Q3 (the r3 blocking defect) is repaired against every accidental or plausible operator action tried: make_freeze now refuses edited, staged, deleted, untracked and namespace-ignored files, extra review files, a moved HEAD and non-accepted reviews; ready/execute refuse post-freeze commits that change files, amended and rebased freeze commits, orphan commits, FREEZE hash/verdict tampering, plain delta widening and unbinding of tracked namespace files. The literal freeze_procedure + execution runbook succeeds on synthetic exported copies under Python 3.9 and 3.14, from a fresh clone and from a linked git worktree, with the real historical K4 report. Tests 78/78 (3.9 and 3.14) and harness 92/92 reproduce byte-identically. Mathematics, universe, inheritance, provenance (16/16), adoption, endpoints and leakage all hold; no target was computed. The candidate is nevertheless REJECTED on one new blocking defect, Q4: the launch-time composition check that repairs the second half of Q3 is self-referential. verify_freeze checks `git diff <candidate> HEAD` against allowed_freeze_delta, but the only constraint on allowed_freeze_delta is that it equals FREEZE.json/FREEZE_HASH plus the list review_files that the same FREEZE.json declares. Nothing constrains review_files (count, names, directory, absence at the candidate) and nothing reads the bound review. A freeze commit that modifies config/GATE.json, SPECIFICATION.md or code/k4r1_certificate.py and lists that path as a 'review file' passes ready and execute, including in a fresh clone of the freeze commit, and the modified code runs under a FREEZE.json naming the qualified candidate. Demonstrated on synthetic copies.",
+ "checks": {
+  "1a_q3_repaired_literal_flow": {
+   "result": "PASS",
+   "evidence": [
+    "Exported copy (git archive 5d33363c of the namespace, .gitignore and the 16 PROVENANCE paths; the three real value sources K1 cell-0, slot-1 and T-EXT replaced by the candidate's own synthetic test sources BEFORE any run; PROVENANCE updated in the copy; the real historical K4 report kept), git init, one candidate commit.",
+    "freeze_procedure executed literally: exactly QUALIFICATION_REVIEW.json/.md copied into new review/qualification_r4/, `python3 -B .../make_freeze.py --review-dir review/qualification_r4` -> FREEZE WRITTEN (53 bound files), `git add` of exactly the four paths, commit, `git status --porcelain` empty.",
+    "execution runbook executed literally from the repo root: ready -> READY PASS; execute -> EXECUTED, all 8 (D,m) PASS on the synthetic certificates, executed_at_head == freeze commit; a second execute -> REFUSED EXACT_ONCE rc 3.",
+    "Same flow: Python 3.9.6 (/usr/bin/python3) with execute launched from another cwd (/); Python 3.14.5 (python3 on PATH); fresh clone of the freeze commit (ready PASS, execute PASS); inside a linked git worktree (git worktree add), as in the real /Users/suzhe/ReBaseGuard-k4r1 checkout."
+   ]
+  },
+  "1b_make_freeze_attacks": {
+   "result": "PASS",
+   "evidence": [
+    "Refused (rc 1, nothing written): tracked edit in namespace; tracked edit outside (.gitignore); staged new file outside; untracked file in namespace; untracked file outside; a third file in the review dir; .DS_Store in namespace; __pycache__/*.pyc in namespace; code/k4r1_certificate.pyc (the r3 case); ignored tmp/ dir in namespace; deleted tracked file; a file hidden via .git/info/exclude inside the namespace; HEAD moved after the review; REJECTED and BLOCKED reviews; tracked review dir, existing freeze, bad review dir (candidate suite).",
+    "Accepted (by design, harmless): ignored files outside the namespace; a file hidden via .git/info/exclude outside the namespace.",
+    "Accepted and NOT harmless (non-blocking, deliberate only, see N19): a tracked file edited under `git update-index --assume-unchanged` or `--skip-worktree` is invisible to git status; make_freeze binds the edited bytes.",
+    "A garbage ignored code/json.pyc makes make_freeze crash with ImportError before its checks (sys.path[0] is code/; see N20). Nothing is written."
+   ]
+  },
+  "1c_post_freeze_attacks": {
+   "result": "FAIL",
+   "evidence": [
+    "Refused by ready: extra commit editing a namespace file; extra commit adding a file outside; amended freeze commit adding a file; amended freeze commit editing code; orphan commit with the valid tree; freeze commit rebased onto an edited candidate; bad FREEZE_HASH; uncommitted FREEZE edit; qualification_verdict changed; allowed_freeze_delta widened alone (the candidate's test case); a tracked namespace file unbound; qualified_candidate_commit set to HEAD; untracked file after freeze.",
+    "PASSES ready (Q4, blocking): FREEZE.json hand-edited to add a modified tracked file to BOTH review_files and allowed_freeze_delta (with its new hash). Shown for SPECIFICATION.md and for code/k4r1_certificate.py: ready PASS, execute EXECUTED with the unqualified code (marker field present in the result), and ready PASS again in a fresh clone of the freeze commit.",
+    "PASSES ready (non-blocking notes): FREEZE binds a REJECTED review or a review naming another candidate (N21); freeze commit deletes an unbound file outside the namespace, hidden by git rename detection in `git diff --name-only` (N22); an empty commit on top of the freeze (N23); assume-unchanged/skip-worktree edit (N19, but a fresh clone refuses with bound file drift); an ignored sourceless code/fractions.pyc shadowing the stdlib module runs arbitrary code through ready and execute with no trace (N20); ignored .DS_Store/__pycache__ after freeze (harmless)."
+   ]
+  },
+  "1d_real_flow_spurious_refusal_or_crash": {
+   "result": "PASS",
+   "evidence": [
+    "Real worktree at 5d33363c: `git status --porcelain --untracked-files=all --ignored` prints nothing (0 lines) before and after this review; no ignored entry anywhere; no index flags (git ls-files -v shows only H); no hooks, no core.hooksPath, no .gitattributes, no worktree-specific config; info/exclude is comments only; the global excludes file ignores only **/.claude/settings.local.json.",
+    "The repo .gitignore ignores __pycache__/, *.py[cod], .DS_Store, tmp/, scratch/, *.log, *.tmp, build/, env/: any such stray inside the namespace makes make_freeze refuse (recoverable by deleting it, per stop_conditions); after the freeze they are not examined. git status --ignored with -uall lists files individually inside ignored directories; the namespace-prefix test catches them.",
+    "review/qualification_r4 is not tracked; evidence/qualification_r4 is unrelated. python3 on PATH is 3.14.5; both 3.9 and 3.14 pass the whole flow. The value-blind preflight on the real sources passes (3.9 and 3.14), byte-identical to evidence/qualification_r4/PREFLIGHT.json, so ready's preflight part will pass; assemble() runs on the real historical report (8/8 structural PASS with synthetic certificates). No plausible path to a crash after the reservation was found.",
+    "Only operator error in the freeze commit itself (committing anything but the four paths) can end the lineage, and only as a refusal, never as a spent execution."
+   ]
+  },
+  "2a_tests_and_harness_reproduce": {
+   "result": "PASS",
+   "evidence": [
+    "tests/test_k4r1.py: 78 passed on Python 3.9.6 + pytest 8.4.1, and 78 passed on Python 3.14.5 (scratch venv).",
+    "tests/mutation_harness.py re-run (3.9): PASS, null mutant passes, 92/92 killed; mutant-by-mutant outcomes and code/make_freeze/tests sha256 identical to evidence/qualification_r4/MUTATION_REPORT.json."
+   ]
+  },
+  "2b_r3_mutants_carried": {
+   "result": "PASS",
+   "evidence": [
+    "r3 survivors X3 (BaseException->Exception), X15 (missing bound file tolerated), MF4 (review dir anywhere), MF5 (make_freeze source drift) are now in the harness and killed; MF10 (__pycache__ bound) is moot (binding is git ls-files); X14 and MF11 remain equivalent as r3 stated."
+   ]
+  },
+  "2c_own_mutants": {
+   "result": "NOTE",
+   "evidence": [
+    "29 new mutants (14 on verify_freeze/git_state/ready of k4r1_certificate.py, 15 on make_freeze.py): 18 killed, 11 survived.",
+    "Killed: ancestry args swapped; completeness allowing extra bound; status --untracked-files=no; clean = rc only; missing bound file tolerated; freeze-delta check reduced to superset; EXACT_ONCE check removed; namespace prefix narrowed; make_freeze without -uall; without --ignored; considering only ?? entries; allowing extras; ignored-slice off by one; existing-freeze needs both files; review dir not under review/; binding only code/; delta without the md; ignored check only for .DS_Store.",
+    "Survivors, classified: V2 diff against worktree instead of HEAD - masked by the clean-checkout gate; V3 delta subset instead of equality - masked (FREEZE-committed and drift checks); V4 completeness allows unbound tracked namespace files - untested, masked by the delta check (the real code refuses, shown in 1c); V6 review files bound unchecked - equivalent (completeness); V7 qualification_review membership unchecked - equivalent (nothing reads the review: part of Q4/N21); V14 ready skips the value-blind preflight - UNTESTED weakening (no end-to-end test where ready must refuse on a structurally bad frozen source; masked for the real flow because the real preflight passes); MF_i candidate compared by 7-char prefix - weakening, practically equivalent; MF_j qualification_review = md, MF_k verdict recorded as constant, MF_o source hash from PROVENANCE instead of disk - equivalent; MF_m HEAD~0 - textual no-op.",
+    "No survivor changes G, T, B or a verdict on inputs that pass the gates."
+   ]
+  },
+  "3a_no_target_computed": {
+   "result": "PASS",
+   "evidence": [
+    "Blind scan of every namespace file in all 8 revisions bc4ba08e..5d33363c against 735 real strings (slot-1 per_m L0/L1/U0/U1/M5/transport_factor, T-EXT rows M, trace, C_hull, L0, sealed_L1, channel-cell values, K1 D_interval lo/hi; only labels and counts printed): the only hits are 6 K1 cell-0 D_interval endpoints in evidence/RESIDUAL_TABLE.json (disclosed in FEASIBILITY.md; an input, not a K4R1 target; N17 carried). No FREEZE file and no execution_r1 directory in any revision. The branch changes nothing outside the namespace since bc4ba08e."
+   ]
+  },
+  "3b_residual_universe": {
+   "result": "PASS",
+   "evidence": [
+    "Historical report sha256 83cabce2 (matches PROVENANCE and RESIDUAL_UNIVERSE): too_loose cells exactly CUSUM m=2 [0,1] (a = 10187/10000000), m=3 [0,1,2] and m=5 [0,1,2] (a = 957/625000), outcome K4_CERTIFICATE_TOO_LOOSE, no counterexample cells, prefix from left = 0; the other 5 (D,m) are K4_CELLWISE_ALL_CERTIFIED. RESIDUAL_UNIVERSE.json is byte-identical since r1."
+   ]
+  },
+  "3c_inheritance_assembly_handoff": {
+   "result": "PASS",
+   "evidence": [
+    "Covers are contiguous from 0 to 2092283/1000000 (CUSUM) and 40372863/20000000 (SR), both >= 2. In the residual (D,m) the first inherited cell starts exactly at a and every non-residual cell is DIRECT_R_NEGATIVE (no chain cell depends on a residual cell). assemble() on the real report marks all 8 (D,m) PASS when fed synthetic PASS certificates, and FAILs the corresponding (D,m) in the candidate's negative tests."
+   ]
+  },
+  "3d_mathematical_soundness": {
+   "result": "PASS",
+   "evidence": [
+    "Re-derived: oddness (P5-T3) gives R(0) = R''(0) = R''''(0) = 0. R''(t) = int_0^t R''' >= t*L1 on [0, x1] (L1 = slot-1 lower bound of R''' on C1 = [0, x1], PROTOCOL.md section 2-3), e0 <= x1, so R'(0) = R'(e0) - int_0^e0 R'' <= D0.hi - L1*e0^2/2 = G (D_interval is the K1-certified enclosure of R'(e0), K4 checkpoint). R'''(e) = R'''(0) + int_0^e R'''' with |R''''(s)| <= s*M5 on [0, eta], eta >= a, so R''' <= U0 + a^2/2*M5 (U0 upper end of I0 containing R'''(0)), and R''' <= M3 (TEXT_SPEC Conclusion: M_{n,m}(eta) >= sup_[0,eta] |R_m^(n)|, prefix hull [0, eta]). Taylor-Lagrange at 0: R(e) = e*R'(0) + e^3/6*R'''(xi) <= e*(G + a^2/6*max(T,0)) = e*B, so B < 0 gives R < 0 on (0, a]. The eta check (a <= eta <= a*(1+2^-200)) only accepts an outward rounding; the upper bound is an identity check, not a tolerance that affects soundness.",
+    "Formula block of k4r1_certificate.py and the GATE certificate/pass/science/assembly/endpoint/fixed-parameter/obligation/budget fields are byte-identical from r1 81f5195a to r4."
+   ]
+  },
+  "3e_L5_endpoints_parameters": {
+   "result": "PASS",
+   "evidence": [
+    "L5 is used only for smoothness (C^5 from C^inf, R only), as its PASS_WITH_SCOPE_LIMITATION review allows. Endpoint semantics (0, a] with handoff at a are correct. No epsilon, partition, retry, precision ladder or target-dependent parameter; hull row selected by exact equality x_hi == a."
+   ]
+  },
+  "3f_provenance_and_adoption": {
+   "result": "PASS",
+   "evidence": [
+    "All 16 PROVENANCE sources: sha256 of the blob at 5d33363c == recorded sha256 == worktree sha256, all tracked, none inside the namespace (16/16). slot-1 adjudication adoption_status ADOPTED (84299314, ancestor of the candidate); T-EXT adjudication verdict ADOPTED (a3547b9b, ancestor); the T-EXT scope limitation (majorants used as standalone bounds) is disclosed in GATE.input_scope_note (N3 carried). Historical K4 NOT_CLOSED / K4_INCONCLUSIVE_K1_RECORDS is preserved and its disposition rule names a new predeclared successor as the only route."
+   ]
+  },
+  "4_stop_conditions_and_runbook": {
+   "result": "NOTE",
+   "evidence": [
+    "The runbook is literal and executable (verified). stop_conditions are prospective, but: (i) the fresh-clone clause for a ready/execute refusal 'caused by local checkout state only (an untracked/ignored stray file ...)' literally also covers the EXACT_ONCE refusal of a second execute, whose cause is the untracked output of the first run; a fresh clone of the freeze commit executes again (demonstrated on a synthetic copy). 'exactly once' in GATE.execution forbids it, but the precedence is not stated, and nothing requires the result or crash record to be committed immediately (N24, with N9 carried); (ii) ignored stray files and 'a missing ignored cache' never cause a ready refusal in the code; (iii) '`git status --porcelain` must be empty afterwards' after `git add` is literally false until the commit; (iv) 'ends this freeze lineage' does not say whether re-freezing the same candidate with the same accepted review is allowed. None of these lets a result influence a pre-result choice, provided 'exactly once' is read as overriding."
+   ]
+  },
+  "5_leakage_and_governance_disclosures": {
+   "result": "PASS",
+   "evidence": [
+    "Designer disclosures (FEASIBILITY.md, SPECIFICATION.md) are consistent with the scan. The r3 reviewer's disclosed real-worktree `ready` invocation was refused before any source was read. This reviewer's disclosures are in reviewer_disclosures."
+   ]
+  },
+  "6_other_freeze_blockers": {
+   "result": "FAIL",
+   "evidence": [
+    "Q4 below."
+   ]
+  }
+ },
+ "blocking_defects": [
+  {
+   "id": "Q4",
+   "severity": "BLOCKING",
+   "title": "The launch-time freeze-composition check is self-referential: the 'review files' that may differ from the qualified candidate are whatever the FREEZE under verification declares",
+   "detail": "GATE.execution states that ready/execute refuse unless `git diff --name-only <candidate> HEAD` equals allowed_freeze_delta, 'which must be exactly FREEZE.json, FREEZE_HASH and the review files', and GATE.freeze_procedure defines the review files as exactly QUALIFICATION_REVIEW.json and QUALIFICATION_REVIEW.md in a new directory review/qualification_rN/. verify_freeze only checks set(allowed_freeze_delta) == {FREEZE.json, FREEZE_HASH} | set(review_files), qualification_review in review_files, and every review file bound, where review_files is read from the same FREEZE.json. It never constrains review_files (number, names, directory under review/, absence at the candidate) and never reads the bound review (verdict, candidate_commit). The r4 test 'a freeze widening its own delta' widens allowed_freeze_delta alone; widening review_files together with it is not tested and passes.",
+   "demonstrations": {
+    "spec_smuggled": "Synthetic copy: after make_freeze, SPECIFICATION.md edited; FREEZE.json rewritten with the path appended to review_files and allowed_freeze_delta and its new hash; FREEZE_HASH refreshed; committed. ready PASS.",
+    "code_smuggled": "Synthetic copy: same with code/k4r1_certificate.py edited to add a marker field to the result. git status empty, ready PASS, execute EXECUTED and the result carries the marker (unqualified code ran), and ready PASS again in a fresh clone of the freeze commit, so re-running from a clean clone, the governance's own check, does not detect it."
+   },
+   "why_blocking": "The freeze is the only machine-checked link between the qualified candidate and the code that runs exactly once, and r4 was specifically required to close the second half of Q3 (ready/execute must verify freeze == candidate + review + FREEZE files). As implemented, the verification certifies a premise supplied by the object under verification, so it detects only freezes that are internally inconsistent, not freezes that change the candidate. The natural 'make it pass' response to the refusal 'freeze delta / review files malformed' after a post-freeze edit is exactly this edit, and the result would then survive a fresh-clone ready and a fresh-clone re-execution. The implementation also falls short of the frozen gate text it would be bound to. It cannot be repaired after the freeze.",
+   "repair": [
+    "verify_freeze: require review_files to be exactly two paths <ns>/review/<d>/QUALIFICATION_REVIEW.json and <ns>/review/<d>/QUALIFICATION_REVIEW.md for a single directory name d (no '/', not ending in _REJECTED), both ABSENT at qualified_candidate_commit (`git cat-file -e <cand>:<path>` fails) and present at HEAD; require qualification_review to be the .json one.",
+    "verify_freeze: parse the bound review JSON and require verdict == QUALIFICATION_ACCEPTED and candidate_commit == qualified_candidate_commit (closes N21).",
+    "Recommended in the same change: compare each bound tracked file's sha256 with the HEAD blob (`git show HEAD:<path>`), as is already done for FREEZE.json (closes N19); use `git diff --no-renames --name-only` (closes N22); refuse ignored entries inside the namespace in launch_gates, or run with `python3 -I -B` in the runbook, and apply the same to make_freeze (closes N20).",
+    "Tests: review_files widened with a modified code/spec/gate file (same checkout and fresh clone); review_files with three entries, a wrong name, a directory outside review/, or a path tracked at the candidate; a FREEZE naming a REJECTED review or another candidate; each must be refused, plus a positive fresh-clone control. Add the corresponding harness mutants."
+   ]
+  }
+ ],
+ "non_blocking_notes": [
+  {
+   "id": "N19",
+   "text": "Index flags: under `git update-index --assume-unchanged` or `--skip-worktree`, an edited tracked file is invisible to git status. make_freeze binds the edited bytes, and ready/execute then run unqualified code in that checkout (demonstrated). A fresh clone refuses with bound-file drift. Fix: compare bound hashes with HEAD blobs, or refuse if `git ls-files -v` shows lowercase or S flags."
+  },
+  {
+   "id": "N20",
+   "text": "Shadow modules: the script directory code/ is sys.path[0], and the repo .gitignore ignores *.py[cod]. An ignored sourceless code/<stdlib-name>.pyc (or a .py hidden via .git/info/exclude) is imported in place of the stdlib module. After the freeze nothing examines ignored files, and a synthetic code/fractions.pyc ran arbitrary code through ready and execute with git status empty and no committed trace (demonstrated). make_freeze imports json/hashlib before its own ignored check (a garbage code/json.pyc crashed it). `python3 -I` removes the script directory from sys.path (verified under 3.9 and 3.14). Deliberate only."
+  },
+  {
+   "id": "N21",
+   "text": "verify_freeze trusts FREEZE.qualification_verdict and never reads the bound review. A hand-written FREEZE binding a REJECTED review, or a review naming another candidate, passes ready (demonstrated). Folded into the Q4 repair."
+  },
+  {
+   "id": "N22",
+   "text": "`git diff --name-only` uses rename detection by default. A freeze commit that deletes an unbound file outside the namespace whose content is similar to a new review file shows only the new path, and passes ready (demonstrated). Use --no-renames."
+  },
+  {
+   "id": "N23",
+   "text": "GATE says 'exactly once, at the freeze commit', but an empty commit on top of the freeze passes ready. The tree is identical, and executed_at_head records it. The final adjudicator should check that executed_at_head is the freeze commit, or tree-identical to it."
+  },
+  {
+   "id": "N24",
+   "text": "stop_conditions wording, detailed in check 4: (i) state that any existing reservation or result, in any checkout, ends the lineage, that the fresh-clone clause never applies after a reservation has been made anywhere, and that the reservation or result is committed immediately whatever its content (N9 carried); (ii) drop the 'ignored stray file' and 'missing ignored cache' causes, or make ready check them; (iii) say that git status must be empty after the freeze COMMIT; (iv) define 'freeze lineage'."
+  },
+  {
+   "id": "N25",
+   "text": "Untested weakenings among the reviewer mutants: V14 (ready without the value-blind preflight) and V4 (unbinding a non-mandatory tracked namespace file). Add an end-to-end test where a structurally bad frozen synthetic source makes ready refuse, and a FREEZE unbinding FEASIBILITY.md or make_freeze.py."
+  },
+  {
+   "id": "N26",
+   "text": "Minor: the T-EXT adjudication verdict_scope says 'cells 0-10', and GATE.input_scope_note says 'cells 1-10'. read_text() and write_text() are used without an explicit encoding (fine under the UTF-8 locales tested). Carried: N3 (T-EXT majorant scope) and N17 (D0 values in RESIDUAL_TABLE.json)."
+  }
+ ],
+ "carry_forward_for_r5": "Every check except Q4 passes; r5 can be a small delta confined to verify_freeze (and optionally make_freeze and the runbook), plus tests and harness mutants. The next reviewer should repeat the literal flow (3.9 and 3.14, fresh clone, linked worktree) and the Q4 attack: review_files widened with code, spec and gate, in the same checkout and in a fresh clone.",
+ "reviewer_artifacts_outside_namespace": {
+  "location": "/private/tmp/claude-501/-Users-suzhe-ReBaseGuard/5963d483-46d8-4c58-95fb-fecc2ff62dcf/scratchpad/qual_review_r4/",
+  "files": {
+   "tools/": "copy builder, synthetic-source writer, make_freeze and post-freeze attack scripts, reviewer mutant driver",
+   "MY_MUTANTS_R4.json": "29 reviewer mutants",
+   "MUTATION_REPORT_rerun.json": "committed harness re-run",
+   "preflight_39.json / preflight_314.json": "real value-blind preflight re-runs",
+   "evilsrc/fractions.py": "synthetic N20 probe"
+  },
+  "copy_warning": "Copy ONLY QUALIFICATION_REVIEW.json and QUALIFICATION_REVIEW.md into the namespace. NEVER copy flows/ (nested git repositories), base/, suite/, venv314/ or evilsrc/."
+ },
+ "reviewer_disclosures": {
+  "no_target_computed": "I computed no G, T or B and no combination of real K1, slot-1 or T-EXT values. I printed no real slot-1 per_m value, T-EXT M value or Lambda value. All flows and simulations used the candidate's synthetic K1, slot-1 and T-EXT sources, written into the scratch copy before any run. The real historical K4 report was used only structurally (outcomes, cell indices, boundaries, assembly statuses).",
+  "real_worktree_commands": "In /Users/suzhe/ReBaseGuard-k4r1: read-only git (rev-parse, status incl. --ignored, log, diff, show, ls-files, ls-tree, merge-base, check-attr, config, archive of the namespace plus the 16 source paths into scratch); the permitted value-blind `preflight` under Python 3.14 and 3.9 (output identical to the committed PREFLIGHT.json; `git status --porcelain --ignored --untracked-files=all` empty before and after); a blind leakage scan that loaded the real sources in memory and printed only labels and counts; label-only inspection of source key structure and adjudication labels; hashing the 16 sources. I did NOT run ready, execute or make_freeze in the real worktree.",
+  "exposure": "The scan necessarily loaded real values in memory to count substring hits; none were printed. The historical report's cell boundaries and outcomes were printed; they are historical, inherited and appear in GATE.",
+  "no_repository_changes": "No file in /Users/suzhe/ReBaseGuard-k4r1 or /Users/suzhe/ReBaseGuard was modified. No commit, checkout, switch or reset. Both checkouts' git status are unchanged (empty)."
+ }
+}
