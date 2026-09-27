@@ -106,15 +106,15 @@ def leak_scan(obj, path="$", hits=None, parent_detector="CUSUM"):
 
 
 CONTROL_SHAPES = {  # each planted shape must be flagged on its own (review F4)
-    "int_cell": {"detector": "CUSUM", "m": 5, "cell": 307},
-    "list_cells": {"cells": [306, 12]},
-    "str_key": {"cells": {"308": {}}},
-    "text_cell": {"note": "evaluated at cell 309"},
+    "int_cell": {"detector": "CUSUM", "m": 5, "cell": 307},  # ov-quarantine: literal-ok planted leak-scan control
+    "list_cells": {"cells": [306, 12]},  # ov-quarantine: literal-ok planted leak-scan control
+    "str_key": {"cells": {"308": {}}},  # ov-quarantine: literal-ok planted leak-scan control
+    "text_cell": {"note": "evaluated at cell 309"},  # ov-quarantine: literal-ok planted leak-scan control
     "frac_drift": {"e0": "7/4"},
     "float_drift": {"e": 1.9},
     "list_drifts": {"drifts": [0.5, "9/5"]},
     "block": {"block": ["17/10", "9/5"]},
-    "index_key": {"index": 306, "detector": "CUSUM"},
+    "index_key": {"index": 306, "detector": "CUSUM"},  # ov-quarantine: literal-ok planted leak-scan control
     "text_drift": {"note": "certified at e = 1.85"},
     "x0": {"x0": "37/20"},
 }
