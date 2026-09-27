@@ -33,7 +33,7 @@ of LR/RLR constants, SC's f_G and RSO's order-0 term. None of these excludes ano
 | TPT-B ≤ TPT when every block constant ≤ the cell constant | proved | THEOREM_TPT §2b |
 | TPT is sharp among bounds built from (g_hi, L, U) | proved (TPT-O, as a supremum) | §1 |
 | true A1 ≤ A1^LR ≤ positive majorant ≤ Lemma G, and likewise for A2 | proved (LR-4, with a caveat on the score level) | THEOREM_LR |
-| RLR ≤ Dv′ on the **same** certified inputs | proved (LR-3) | THEOREM_LR |
+| RLR ≤ Dv′ on the same inputs | **proved for exact ρ only** (LR-3). With certified ρ (the Cauchy–Schwarz L1 bound) RLR can exceed Dv′ (REVIEW_RLR_R2: 6/9 exact fixtures). The guaranteed object is **min(RLR, Dv′, Lemma G)**. | THEOREM_LR; REVIEW_RLR_R2 §1.3 |
 | plain LR vs Dv′ | **incomparable** | THEOREM_LR E1/E2; stream B scaling |
 | SC composite sup ≤ the order-3 surrogate, with strict slack (the Leibniz gap) for continuous candidates | proved | SUPNORM_THEOREM |
 | RSO ≤ A0·‖φ‖; equality for constant ψ, where it collapses to the refuted uniform-A0 family | proved | RESIDUAL_SPECIFIC_309 |
@@ -48,7 +48,7 @@ of LR/RLR constants, SC's f_G and RSO's order-0 term. None of these excludes ano
   * in C1a's examples C_T is bounded; there Dv′ is essentially exact and plain LR is worse (Λ^{3/2} against Λ);
   * in B's zero- and low-drift fixtures C_T grows faster than Λ (slope about 1.35); there Dv′ is asymptotically
     loose and the true orders are Λ^{1+j/2}.
-* RLR dominates Dv′ in **both** regimes (LR-3). Plain LR does not.
+* With exact ρ, RLR dominates Dv′ in both regimes (LR-3). With certified ρ only the min with Dv′ is guaranteed (REVIEW_RLR_R2). Plain LR does not dominate.
 
 ## 3. Assumptions and scope
 
@@ -75,13 +75,13 @@ of LR/RLR constants, SC's f_G and RSO's order-0 term. None of these excludes ano
 ## 5. Resulting partial order (strength, holding all else fixed)
 
     frozen clause  <  C5-T  <=  TPT  <=  TPT-B                    (transport)
-    Lemma G  >=  positive majorant  >=  LR  >=  true;   Dv' >= RLR  (atom constants; LR vs Dv' incomparable)
+    Lemma G  >=  positive majorant  >=  LR  >=  true;   Dv' >= min(RLR, Dv', G)  (atom constants; RLR <= Dv' for exact rho only; LR vs Dv' incomparable)
     surrogate f_G  >=  SC composite                                 (order-3 term)
     A0*||phi||  >=  RSO                                             (order-0 term)
     TPT  ~  refinement-without-records (fixed-input family only; B2c open);   TPT  <>  real refinement   (incomparable)
 
 Here `≥` means the left side is the looser bound. The chains act on different inequalities, so the strongest combined
-theorem available **without new real objects** is **TPT ∘ (RLR constants) ∘ (C2b-certified A0)**. That combination
+theorem available **without new real objects** is **TPT ∘ (min(RLR, Dv′, Lemma G) constants) ∘ (C2b-certified A0)**. That combination
 has three blockers:
 * TPT's tail use is blocked in this campaign (incident 01);
 * each component is closure-only (U3);
