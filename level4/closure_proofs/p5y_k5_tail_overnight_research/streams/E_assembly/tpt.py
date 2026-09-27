@@ -10,8 +10,16 @@ Two independent evaluations of the transport penalty:
 Also the historical comparators ``penalty_c5t`` (theorem C5-T) and ``penalty_frozen`` (K5-B
 direct clause rho*x_hi*M), both from the whole-cell enclosure = the profile at s = rho.
 
-Every public entry point takes a ``CellProfile`` and calls ``ov_quarantine.guard_cell`` on its
-(detector, m, cell) label, so the target cells can never be evaluated through this module.
+Every public entry point takes a ``CellProfile`` and runs ``_check``, which calls
+``ov_quarantine.guard_cell`` on the (detector, m, cell) label AND ``ov_quarantine.guard_drift`` on the
+cell's geometry [x_lo, x_hi], and requires len(terms) == m -- so a target cell cannot be evaluated through
+this module even under a false label (review V3 findings T1, T2).
+
+Revision r1 (after the V3 non-target validation report, before any target use):
+  T1 guard on every public function; T2 label/terms/geometry binding; T3 the K1-cap split point is taken on
+  the NON-binding side of the crossing, so the closed form is exact on [0, s'] and dominated by C5-T;
+  T4 the closed-form vs Riemann-upper assertion (not a theorem once a split is used) is replaced by a
+  Riemann LOWER-sum bracket, and interval orders are validated.
 """
 from __future__ import annotations
 
@@ -100,6 +108,7 @@ class CellProfile:
 
 def rad_poly(cp: CellProfile, t: SourceTerm) -> Poly:
     """rad_r(s) = A0 p2(s) + 2 A1 p1(s) + A2 p0(s), plus the centre-motion term s*|G(a)|."""
+    _check(cp)
     p0 = [t.fF, t.fD, t.fH / 2, t.fG / 6, t.Env4 / 24]
     p1 = [t.fD, t.fH, t.fG / 2, t.Env4 / 6]
     p2 = [t.fH, t.fG, t.Env4 / 2]
@@ -109,6 +118,7 @@ def rad_poly(cp: CellProfile, t: SourceTerm) -> Poly:
 
 def lo_hi_polys(cp: CellProfile) -> tuple:
     """TC profile bounds lo(s), hi(s) of R''_m(e0 +- s) (before the K1 cap)."""
+    _check(cp)
     m = F(len(cp.terms))
     lo: Poly = [cp.W[0]]
     hi: Poly = [cp.W[1]]
@@ -119,8 +129,17 @@ def lo_hi_polys(cp: CellProfile) -> tuple:
     return lo, hi
 
 
+def _iv_ok(iv) -> bool:
+    return iv is None or (len(iv) == 2 and iv[0] <= iv[1])
+
+
 def _check(cp: CellProfile) -> None:
     Q.guard_cell(cp.detector, cp.m, cp.cell)
+    Q.guard_drift(cp.x_lo, cp.x_hi)            # geometry binding: refuses the tail band whatever the label
+    if len(cp.terms) != cp.m:
+        raise ValueError("label m must equal the number of source terms (1/m weights)")
+    if not (_iv_ok(cp.W) and _iv_ok(cp.H_K1) and all(_iv_ok(t.H_at_a) for t in cp.terms)):
+        raise ValueError("intervals must be ordered (lo <= hi)")
     if not cp.x_lo > 0:
         raise ValueError("TPT needs x_lo > 0 (it integrates t, not |t|)")
     if cp.rho <= 0:
@@ -134,7 +153,8 @@ def _check(cp: CellProfile) -> None:
 
 
 def _crossing(poly: Poly, level: F, rho: F, decreasing: bool, bits: int = 60) -> F | None:
-    """rational s' in [0, rho] near the crossing of poly(s) with level (monotone poly); None if no crossing."""
+    """rational s' in [0, rho] at or BEFORE the crossing of poly(s) with level (monotone poly), i.e. on the
+    side where the profile (not the cap) binds; None if the profile binds on all of [0, rho]."""
     f0, f1 = peval(poly, F(0)) - level, peval(poly, rho) - level
     if decreasing:
         if f0 <= 0:
@@ -154,7 +174,7 @@ def _crossing(poly: Poly, level: F, rho: F, decreasing: bool, bits: int = 60) ->
             a = mid
         else:
             b = mid
-    return (a + b) / 2
+    return a  # non-binding side (T3): exact on [0, a], cap used on [a, rho] is an over-estimate there
 
 
 def penalty_closed(cp: CellProfile) -> dict:
@@ -213,7 +233,33 @@ def penalty_riemann(cp: CellProfile, N: int = 64) -> F:
     return max(F(0), right, left)
 
 
+def penalty_riemann_lower(cp: CellProfile, N: int = 64) -> F:
+    """Monotone Riemann LOWER sum of max(0, I_right(rho), I_left(rho)) -- a lower bound of P* (TPT-M)."""
+    _check(cp)
+    lo, hi = lo_hi_polys(cp)
+    e0, rho = cp.e0, cp.rho
+
+    def L(s):
+        v = peval(lo, s)
+        return v if cp.H_K1 is None else max(cp.H_K1[0], v)
+
+    def U(s):
+        v = peval(hi, s)
+        return v if cp.H_K1 is None else min(cp.H_K1[1], v)
+
+    right = F(0)
+    left = F(0)
+    for i in range(N):
+        a, b = rho * i / N, rho * (i + 1) / N
+        f = -L(a)
+        right += (b - a) * min((e0 + a) * f, (e0 + b) * f)
+        u = U(a)
+        left += (b - a) * min((e0 - a) * u, (e0 - b) * u)
+    return max(F(0), right, left)
+
+
 def whole_cell_enclosure(cp: CellProfile) -> tuple:
+    _check(cp)
     lo, hi = lo_hi_polys(cp)
     Hlo, Hhi = peval(lo, cp.rho), peval(hi, cp.rho)
     if cp.H_K1 is not None:
@@ -232,6 +278,8 @@ def penalty_c5t(cp: CellProfile) -> F:
 
 
 def penalty_frozen(cp: CellProfile) -> F:
+    """rho * x_hi * mag(H); equals the consumed frozen clause rho*x_hi*M_k whenever M_k = mag(H_final)
+    (true on all 136 lower-front pairs, V3); a consumer with M_k < mag(H_final) would differ."""
     _check(cp)
     Hlo, Hhi = whole_cell_enclosure(cp)
     return cp.rho * cp.x_hi * max(abs(Hlo), abs(Hhi))
@@ -240,12 +288,13 @@ def penalty_frozen(cp: CellProfile) -> F:
 def evaluate(cp: CellProfile) -> dict:
     pc = penalty_closed(cp)
     pr = penalty_riemann(cp)
+    pl = penalty_riemann_lower(cp)
     c5 = penalty_c5t(cp)
     fr = penalty_frozen(cp)
-    if not (pc["P_star"] <= pr):
-        raise AssertionError("V4: Riemann upper sum below closed form")
+    if not (pl <= pc["P_star"] and pl <= pr):
+        raise AssertionError("V4: Riemann lower sum above an upper bound of P*")
     if not (pc["P_star"] <= c5 <= fr):
         raise AssertionError("TPT-D dominance violated")
-    return {"P_tpt": pc["P_star"], "P_riemann": pr, "P_c5t": c5, "P_frozen": fr,
+    return {"P_tpt": pc["P_star"], "P_riemann": pr, "P_riemann_lower": pl, "P_c5t": c5, "P_frozen": fr,
             "Gamma_tpt": cp.g_hi + pc["P_star"], "Gamma_c5t": cp.g_hi + c5,
             "Gamma_frozen": cp.g_hi + fr, "detail": pc}

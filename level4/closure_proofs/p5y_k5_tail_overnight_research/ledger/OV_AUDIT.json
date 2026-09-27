@@ -1,0 +1,54 @@
+{
+ "L1_ledger": {
+  "classes": {
+   "INFRASTRUCTURE": 1,
+   "NONTARGET_REAL_VALIDATION": 4,
+   "SYNTHETIC_VALIDATION": 4
+  },
+  "leak_flags": 0,
+  "lines": 9,
+  "negative_control_detected": true,
+  "new_target_evaluations": 0,
+  "target_equivalent_proxies": 0,
+  "target_informed_optimisation": 0
+ },
+ "L2_static_scan": {
+  "files_scanned": 7,
+  "findings": [],
+  "negative_control_detected": true,
+  "verdict": "PASS"
+ },
+ "L3_scope": {
+  "changed_files_since_base": 12,
+  "negative_control_detected": true,
+  "outside_namespace": [],
+  "untracked": 5
+ },
+ "L4_coverage": {
+  "r5_blob": "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
+  "r5_unchanged": true,
+  "r6_paths_any_ref": []
+ },
+ "L5_exactly_once_refs": {
+  "refs/c11rd/r1-execution-consumed": {
+   "actual": "4b716d43ce8c48fb52dd320b91c33d2379cce410",
+   "expected_prefix": "4b716d43",
+   "ok": true
+  },
+  "refs/c12r2/cell306-pending-result": {
+   "actual": "0ac46b3d2abe497084ddf7631d894bb819e6ddc6",
+   "expected_prefix": "0ac46b3d",
+   "ok": true
+  },
+  "refs/c12r2/cell306-target-consumed": {
+   "actual": "dec92e0983fe39bcf9834e62216daeab09f823a4",
+   "expected_prefix": "dec92e09",
+   "ok": true
+  }
+ },
+ "L6_protected_namespaces_touched": [],
+ "base": "8b9fc0bb1c6994dfb0e942cc7a6d411aaf51db99",
+ "head": "9db36e1382b0dcb64821bb9f0e5e1eac7d9f790a",
+ "schema": "OV_AUDIT/1",
+ "verdict": "PASS"
+}
