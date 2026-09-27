@@ -1,0 +1,163 @@
+{
+ "base": "2f36352e9401c135cca5d614d0d6f22620ebc0eb",
+ "checks": [
+  {
+   "detail": "refs/heads/p5y-k5-tail-c11rd-d1d2-extension",
+   "id": "S01 branch",
+   "pass": true
+  },
+  {
+   "detail": "2f36352e9401c135cca5d614d0d6f22620ebc0eb",
+   "id": "S02 base is ancestor of HEAD",
+   "pass": true
+  },
+  {
+   "detail": [
+    "d52cec02",
+    "1667ea88",
+    "27e259f4",
+    "802be11e",
+    "4a4b1392",
+    "2f36352e"
+   ],
+   "id": "S03 route-audit chain ancestors of HEAD",
+   "pass": true
+  },
+  {
+   "detail": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+   "id": "S04 local main unchanged",
+   "pass": true
+  },
+  {
+   "detail": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+   "id": "S05 remote main unchanged",
+   "pass": true
+  },
+  {
+   "detail": [],
+   "id": "S06 no remote copy of the branch",
+   "pass": true
+  },
+  {
+   "detail": "branch.*.remote unset",
+   "id": "S07 no upstream configured",
+   "pass": true
+  },
+  {
+   "detail": "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
+   "id": "C01 r5 blob unchanged",
+   "pass": true
+  },
+  {
+   "detail": "structure fields only",
+   "id": "C02 r5 m=5 open [[306,309]], m=1,2,3 open [], union [[306,309]], coverage incomplete",
+   "pass": true
+  },
+  {
+   "detail": [],
+   "id": "C03 no r6 anywhere (tracked or on disk)",
+   "pass": true
+  },
+  {
+   "detail": [
+    "refs/c11rd/r1-execution-consumed",
+    "refs/c12r2/cell306-pending-result",
+    "refs/c12r2/cell306-target-consumed"
+   ],
+   "id": "G01 governance refs exactly as pinned",
+   "pass": true
+  },
+  {
+   "detail": {
+    "276f4d41": "commit",
+    "b83cc6f5": "blob",
+    "def4e453": "commit"
+   },
+   "id": "G02 forensic objects present with expected types",
+   "pass": true
+  },
+  {
+   "detail": {
+    "count": 5,
+    "prefixes": [
+     "refs/codex"
+    ]
+   },
+   "id": "G03 other non-branch refs (observation only)",
+   "pass": true
+  },
+  {
+   "detail": [],
+   "id": "H01 historical namespaces byte-identical to base (committed and working tree)",
+   "pass": true
+  },
+  {
+   "detail": {
+    "missing": [],
+    "pins": 26
+   },
+   "id": "H02 historical verdict tokens present",
+   "pass": true
+  },
+  {
+   "detail": "level4/closure_proofs/p5y_k5_remaining_cell_closure/K5_STATUS.md",
+   "id": "H03 K5_STATUS unchanged and still records SR K5 NOT STARTED",
+   "pass": true
+  },
+  {
+   "detail": [],
+   "id": "P01 changes since base confined to the closeout namespace (+ permitted publication files in phase publication)",
+   "pass": true
+  },
+  {
+   "detail": {},
+   "id": "P02 publication edits are additive only (0 deleted lines)",
+   "pass": true
+  },
+  {
+   "detail": "level4/closure_proofs/p5y_k5_partial_closeout",
+   "id": "P03 no __pycache__ or .pyc in the closeout namespace",
+   "pass": true
+  },
+  {
+   "detail": {},
+   "id": "F01 verdict-line format of closeout review/adjudication documents present so far",
+   "pass": true
+  },
+  {
+   "detail": {
+    "cited": 22,
+    "missing": []
+   },
+   "id": "R01 every backticked repository path cited in closeout documents exists",
+   "pass": true
+  },
+  {
+   "detail": {
+    "decoy_negative_quiet": true,
+    "decoy_positive_fired": true,
+    "files_scanned": 6,
+    "hit_files": [],
+    "independent_hits": 0,
+    "original_hits": 0,
+    "original_set_size": 17
+   },
+   "id": "L01 value-free leak scan: 0 original and 0 independent D1/D2 renderings; decoy controls fire correctly",
+   "pass": true
+  },
+  {
+   "detail": [
+    "22293e05417132b4b0e1693126df343e14418a26",
+    "30e2dfd0ac87aad74f8a9490fee99623cbdf151d"
+   ],
+   "id": "L02 hash-set sources at pinned blobs",
+   "pass": true
+  }
+ ],
+ "head": "2f36352e9401c135cca5d614d0d6f22620ebc0eb",
+ "pass": true,
+ "phase": "prefreeze",
+ "schema": "rebaseguard.p5y.k5.partial-closeout.admin-checks.v1",
+ "scientific_computation": "NONE (administrative checks only)",
+ "summary": "23/23"
+}
