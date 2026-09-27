@@ -24,9 +24,14 @@ import d309_hermite as H  # noqa: E402
 
 D, Q, G, C11 = H.D, H.Q, H.G, H.C11
 
+DEFECTS = ("zero_remainder", "half_remainder", "drop_sign", "drop_hull")
+
 DECLARED_RULE = ("Triples (w_quad, w_lin, w_const) and (w_bump, w_bump, w_bump) as in d309_hermite H3; drifts {1/4, 3}; "
                  "Taylor-form image-box bounds; depth 4 for both triples, depth 5 for the bump triple; panel 1/16. "
-                 "Soundness: certified upper >= grid lower (grid of d309_hermite H2). Fixed before this run.")
+                 "Soundness: certified upper >= grid lower (grid of d309_hermite H2). Fixed before this run. "
+                 "Repair r1 (review B1/N5, declared before the re-run): soundness = per-box containment of exact values "
+                 "at box corners/edge midpoints/centre in the reachable set; planted defects zero_remainder, "
+                 "half_remainder, drop_sign, drop_hull through box_upper_tf; the old arithmetic control is withdrawn.")
 
 
 def shift2(w: dict, cp: F, cm: F) -> dict:
@@ -44,24 +49,28 @@ def shift2(w: dict, cp: F, cm: F) -> dict:
     return out
 
 
-def tf_range2(w: dict, P: tuple, M: tuple) -> G.Iv:
+def tf_range2(w: dict, P: tuple, M: tuple, rscale: F = F(1)) -> G.Iv:
     cp, cm = (P[0] + P[1]) / 2, (M[0] + M[1]) / 2
     rp, rm = (P[1] - P[0]) / 2, (M[1] - M[0]) / 2
     s = shift2(w, cp, cm)
     c0 = s.get((0, 0), F(0))
-    rest = sum((abs(v) * rp ** a * rm ** b for (a, b), v in s.items() if (a, b) != (0, 0)), F(0))
+    rest = rscale * sum((abs(v) * rp ** a * rm ** b for (a, b), v in s.items() if (a, b) != (0, 0)), F(0))
     return G.Iv(c0 - rest, c0 + rest)
 
 
-def tf_range1(poly: list, lo: F, hi: F) -> G.Iv:
+def tf_range1(poly: list, lo: F, hi: F, rscale: F = F(1)) -> G.Iv:
     c = (lo + hi) / 2
     r = (hi - lo) / 2
     t = D.p_taylor(poly, c)
-    rest = sum((abs(t[k]) * r ** k for k in range(1, len(t))), F(0))
+    rest = rscale * sum((abs(t[k]) * r ** k for k in range(1, len(t))), F(0))
     return G.Iv(t[0] - rest, t[0] + rest)
 
 
-def box_upper_tf(triple: list, box: tuple, e: F, panel: F) -> G.Iv:
+def box_upper_tf(triple: list, box: tuple, e: F, panel: F, defect: str | None = None) -> G.Iv:
+    """Rigorous enclosure (centred Taylor forms).  ``defect`` plants a known-invalid variant through this code path:
+    "zero_remainder", "half_remainder" (Taylor remainders scaled by 0 / 1/2), "drop_sign", "drop_hull"."""
+    Q.guard_drift(e)
+    rs = {"zero_remainder": F(0), "half_remainder": F(1, 2)}.get(defect, F(1))
     a, b, c, d = box
     zlo, zhi = c - H.CC, H.CC - a
     ilo, ihi = d - H.CC, H.CC - b
@@ -73,7 +82,8 @@ def box_upper_tf(triple: list, box: tuple, e: F, panel: F) -> G.Iv:
         k += 1
     cuts = sorted(x for x in cuts if zlo <= x <= zhi)
     same_w = all(t[2] is triple[0][2] for t in triple)
-    weights = [D.p_scale(D.p_taylor(H.HE[i], e), F(coef) * (-1) ** i) for coef, i, _ in triple]
+    weights = [D.p_scale(D.p_taylor(H.HE[i], e), F(coef) * (1 if defect == "drop_sign" else (-1) ** i))
+               for coef, i, _ in triple]
     if same_w:
         comb = [F(0)]
         for wpoly in weights:
@@ -87,10 +97,10 @@ def box_upper_tf(triple: list, box: tuple, e: F, panel: F) -> G.Iv:
         M = (max(F(0), c - z1 - H.KK), max(F(0), d - z0 - H.KK))
         q = G.Iv(0)
         for w, wp in groups:
-            q = q + tf_range2(w, P, M) * tf_range1(wp, z0, z1)
+            q = q + tf_range2(w, P, M, rs) * tf_range1(wp, z0, z1, rs)
         mass = H.Phi(z1 + e) - H.Phi(z0 + e)
         contrib = q * mass
-        if not (ilo <= z0 and z1 <= ihi):
+        if not (ilo <= z0 and z1 <= ihi) and defect != "drop_hull":
             contrib = G.Iv(min(F(0), contrib.lo), max(F(0), contrib.hi))
         tot = tot + contrib
     return tot
@@ -114,24 +124,28 @@ def main() -> None:
                 glo = max(glo, min(abs(v.lo), abs(v.hi)) if v.lo * v.hi > 0 else F(0))
             for depth in depths:
                 ts = time.time()
-                best = F(0)
-                boxes = C11.cover(depth)
-                for box in boxes:
-                    iv = box_upper_tf(trip, box, e, F(1, 16))
-                    best = max(best, abs(iv.lo), abs(iv.hi))
+                cres = H.containment(trip, e, depth, F(1, 16), DEFECTS, enclose=box_upper_tf)
+                best = cres["genuine_sup"]
                 nv = naive.get((str(e), names))
                 out["runs"].append({
-                    "e": str(e), "triple": list(names), "depth": depth, "boxes": len(boxes),
-                    "certified_upper_tf": float(best), "grid_lower": float(glo),
-                    "sound": bool(best >= glo), "upper_over_grid_lower": float(best / glo),
+                    "e": str(e), "triple": list(names), "depth": depth, "boxes": cres["boxes"],
+                    "points": cres["points"], "certified_upper_tf": float(best), "grid_lower": float(glo),
+                    "containment_violations_genuine": cres["genuine_violations"],
+                    "defect_violations": {dd: v["violations"] for dd, v in cres["defects"].items()},
+                    "necessary_upper_ge_grid_lower": bool(best >= glo), "upper_over_grid_lower": float(best / glo),
                     "surrogate_ideal_lower": nv["surrogate_ideal_lower"] if nv else None,
                     "upper_over_surrogate": float(best) / nv["surrogate_ideal_lower"] if nv else None,
                     "naive_depth4_upper": nv["certified_upper"] if nv else None,
-                    "nc_planted_detected": bool(not (glo * F(99, 100) >= glo)),
                     "wall_s": round(time.time() - ts, 1)})
-                print(out["runs"][-1], flush=True)
-    out["summary"] = {"sound_all": all(r["sound"] for r in out["runs"]),
-                      "nc_detected": sum(r["nc_planted_detected"] for r in out["runs"]),
+                print({k: v for k, v in out["runs"][-1].items() if k in ("e", "depth", "containment_violations_genuine",
+                                                                         "defect_violations", "upper_over_grid_lower")},
+                      flush=True)
+    rr = out["runs"]
+    out["summary"] = {"containment_violations_genuine": sum(r["containment_violations_genuine"] for r in rr),
+                      "points": sum(r["points"] for r in rr), "runs": len(rr),
+                      "defect_runs_detected": {dd: sum(1 for r in rr if r["defect_violations"][dd] > 0) for dd in DEFECTS},
+                      "defect_points_detected": {dd: sum(r["defect_violations"][dd] for r in rr) for dd in DEFECTS},
+                      "necessary_all": all(r["necessary_upper_ge_grid_lower"] for r in rr),
                       "wall_s": round(time.time() - t0, 1)}
     (D.NS / "validation" / "D309_HERMITE_TF_NONTARGET.json").write_text(json.dumps(out, indent=1, sort_keys=True))
     Q.log_execution("streams/D_309/code/d309_hermite_tf.py",

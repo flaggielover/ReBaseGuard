@@ -4,7 +4,8 @@ Identity (exact):  phi'''(e0) = (I - K) F'''(e0) + 3 K1 (H^ - F'') + 3 K2 (D^ - 
 Bound:             ||phi'''(e0)|| <= ||(I-K) F'''|| + 3 k1 ||E_H|| + 3 k2 ||E_D|| + k3 ||E_F||
 Reports ||phi'''|| / ||(I-K)F'''|| (-> 1 as the candidates improve) and the surrogate's Leibniz gap
 S0 / ||(I-K)F'''||.  Same declared fixture rule as d309_supnorm_fsm.py (generic seeds 1..24).
-Negative control: the identity with the coefficient of K2 set to 2 must fail.
+Comparator control (relabelled, review B1): the identity with the coefficient of K2 set to 2 must differ; it tests
+the comparator only.
 Writes validation/D309_SCT_FSM.json.
 """
 from __future__ import annotations
@@ -43,7 +44,7 @@ def main() -> None:
             bound = t + 3 * k[1] * D.vnorm(EH) + 3 * k[2] * D.vnorm(ED) + k[3] * D.vnorm(EF)
             sH, sD, sF = D.vnorm(fx.Hh), D.vnorm(fx.Dh), D.vnorm(fx.Fh)
             S0 = 3 * k[1] * sH + 3 * k[2] * sD + k[3] * sF + D.vnorm(fx.S[3])
-            rows.append({"seed": seed, "r": r, "pert": str(pert), "identity": phi3 == rhs, "nc_detected": phi3 != bad,
+            rows.append({"seed": seed, "r": r, "pert": str(pert), "identity": phi3 == rhs, "comparator_control_differs": phi3 != bad,
                          "bound_ok": D.vnorm(phi3) <= bound,
                          "true_over_IKF3": float(D.vnorm(phi3) / t), "S0_over_IKF3": float(S0 / t)})
     by = {}
@@ -54,7 +55,7 @@ def main() -> None:
     out = {"schema": "OV_D309_SCT_FSM/1", "rows": rows,
            "summary": {"cases": len(rows), "identity_all": all(r["identity"] for r in rows),
                        "bound_all": all(r["bound_ok"] for r in rows),
-                       "nc_detected": sum(r["nc_detected"] for r in rows), "by_pert": by}}
+                       "comparator_control_differs": sum(r["comparator_control_differs"] for r in rows), "by_pert": by}}
     (D.NS / "validation" / "D309_SCT_FSM.json").write_text(json.dumps(out, indent=1, sort_keys=True))
     Q.log_execution("streams/D_309/code/d309_sct.py", "Proposition SC-T identity and bound on synthetic FSM",
                     cells_touched=[], klass="SYNTHETIC_VALIDATION")

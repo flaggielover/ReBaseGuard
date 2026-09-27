@@ -145,9 +145,13 @@ quantifiers.
 
 * **vs F2.** Each record adds certified inputs beyond `(g_hi, [H_lo, H_hi])`, so the route is outside F2 by C5's own
   scope sentence (`C5_ADJUDICATION.md:179-180`).
-* **vs B2.** B2 splits without new records. COVER §4 proves (Proposition CR-2, a corollary of TPT-O) that any such
-  split is dominated by TPT. It is validated with exact zero difference, so B2's kill is confirmed and sharpened. A
-  real refinement is the complement of B2.
+* **vs B2.** B2 splits without new records. COVER §4 proves (Proposition CR-2, a corollary of TPT-O) that such a
+  split is dominated by TPT **within the fixed-(g_hi, L, U) family**. (Repair r1, review B2/B3: the r0 claim that the
+  kill was "validated with exact zero difference" is withdrawn; that difference is 0 by construction of the
+  implementation. The r0 wording "B2's kill is confirmed and sharpened" overreached: C5 killed B2 as NEW_REAL.)
+  * A record-free split that **re-certifies the operator constants on sub-segments** (lever B2c) is outside that
+    family and is unevaluated.
+  * A real refinement is the complement of B2.
 * **vs F1.** Refinement changes the cell, hence:
   * the domain of the "uniform on the closed cell" quantifier;
   * the constants over it.

@@ -16,12 +16,17 @@ Checks (declared rule DECLARED_RULE, fixed before the first run):
   C3  scaling: nested cells rho_k = rho0 / 2^k (k = 0..4, new records each), per-order TPT slack components and their
       log2 ratios (expected j + 1 for the r_j component), total slack slope;
   C4  refinement into N in {2, 3, 4} subcells with NEW records vs the pure-scaling prediction from the parent's own
-      premises; B2 (split with NO new record, transport from the parent midpoint) gains exactly 0 over TPT (TPT-O);
+      premises; the B2 transcription (split with NO new record) equals the parent TPT by construction -- an identity
+      of the implementation, NOT evidence for CR-2 (review B3; CR-2 rests on TPT-O alone);
       the C5-style "rho halved" oracle (Taylor rho only) vs a real bisection;
   C5  the one-extra-record anisotropic design (keep the parent record, add one record on the binding quarter);
-  C6  policy DRP-1 (dyadic certified branch-and-bound) on a fixture-internal synthetic threshold, record counts;
-  NC  planted: a TPT profile with rad(s) replaced by rad(0) (drops the Taylor growth) must violate C2 on some fixture,
-      and a planted g_hi below the exact g(e_c) must be caught by the midpoint-enclosure check.
+  C6  policy DRP-1 (dyadic certified branch-and-bound; OUTCOME-ADAPTIVE with a frozen pass predicate, not
+      result-free -- review N12) on a fixture-internal synthetic threshold, record counts;
+  NC  (repair r1) planted-invalid transports through Record.tpt_parts on every record built (parent, nested, subcells):
+      no_rad, flat_rad0, rad_half, no_W, no_midpoint_width; each flagged iff its value < the exact grid max of g on
+      that record's cell; plus PROFILE-LEVEL truth checks (L(s) <= exact R''_m <= U(s) on 17 points: genuine must
+      pass; no_rad, flat_rad0, rad_half, no_W flagged if they exclude the truth) and a midpoint-level check (g^ with the
+      enclosure widths dropped vs the exact g(e_c)); detection POWER reported. midpoint_check has a HARNESS check only.
 Writes validation/D309_COVER_FSM.json.
 """
 from __future__ import annotations
@@ -46,7 +51,7 @@ DECLARED_RULE = (
     "rho0 = 1/8. C3: rho_k = rho0/2^k, k = 0..4, same e0. C4: N in {2, 3, 4} equal subcells of the parent. C5: new "
     "record on the binding quarter. C6: DRP-1 with depth cap 4, synthetic threshold theta = gmax + kappa (Gamma_TPT(parent)"
     " - gmax), kappa in {1/2, 1/4, 1/16}. Truth grid: 65 points per (sub)cell. Riemann: 256 panels. Fixed before the "
-    "first run.")
+    "first run. Repair r1 (declared before the re-run): transport mutants as in the docstring on every record.")
 
 CW = F(1, 2)
 
@@ -146,14 +151,17 @@ class Record:
         h, ec = self.h, self.ec
         return self.g_hi + max(max(-Hlo, F(0)) * h * (ec + h / 2), max(Hhi, F(0)) * h * (ec - h / 2))
 
-    def tpt_parts(self, hr=None, hl=None, rad=None) -> dict:
-        """closed-form P* pieces for a record at ec with right/left transport lengths hr, hl <= h (TPT-M)."""
+    def tpt_parts(self, hr=None, hl=None, rad=None, clo=None, chi=None) -> dict:
+        """closed-form P* pieces for a record at ec with right/left transport lengths hr, hl <= h (TPT-M).
+        rad / clo / chi overrides exist ONLY to plant known-invalid profiles (negative controls, repair r1)."""
         hr = self.h if hr is None else hr
         hl = self.h if hl is None else hl
         rad = self.rad if rad is None else rad
+        clo = self.c_lo if clo is None else clo
+        chi = self.c_hi if chi is None else chi
         ec = self.ec
-        negL = D.p_add([-self.c_lo], rad)           # -L(s)
-        U = D.p_add([self.c_hi], rad)               # U(s)
+        negL = D.p_add([-clo], rad)                 # -L(s)
+        U = D.p_add([chi], rad)                     # U(s)
         right = D.p_mul([ec, F(1)], negL)           # (ec + s)(-L(s))
         left = D.p_mul([ec, F(-1)], U)              # (ec - s) U(s)
 
@@ -205,6 +213,39 @@ def midpoint_check(Rtrue: F, Dtrue: F, R_iv: tuple, D_iv: tuple) -> bool:
     return R_iv[0] <= Rtrue <= R_iv[1] and D_iv[0] <= Dtrue <= D_iv[1]
 
 
+def transport_mutants(rec: "Record", gm: F) -> dict:
+    """Planted-INVALID transports through Record.tpt_parts (repair r1, review B1/N13). Each is flagged iff its value
+    falls below the exact grid maximum gm of g on the record's cell (truth-relative; it can fail to flag)."""
+    ghat = (rec.R_iv[0] + rec.R_iv[1]) / 2 - rec.ec * (rec.D_iv[0] + rec.D_iv[1]) / 2
+    vals = {
+        "no_rad": rec.g_hi + rec.tpt_parts(rad=[F(0)])["P"],
+        "flat_rad0": rec.g_hi + rec.tpt_parts(rad=[rec.rad[0]])["P"],
+        "rad_half": rec.g_hi + rec.tpt_parts(rad=D.p_scale(rec.rad, F(1, 2)))["P"],
+        "no_W": rec.g_hi + rec.tpt_parts(clo=rec.cen, chi=rec.cen)["P"],
+        "no_midpoint_width": ghat + rec.tpt_parts()["P"],
+    }
+    out = {k: bool(v < gm) for k, v in vals.items()}
+    # PROFILE-LEVEL truth check (the actual third input of TPT): L(s) <= R''_m(e_c +- s) <= U(s) on 17 points;
+    # the genuine profile must pass, planted profiles are flagged if they exclude the exact R''_m somewhere.
+    fx = rec.fx
+    profiles = {"genuine": (rec.c_lo, rec.c_hi, rec.rad), "no_rad": (rec.c_lo, rec.c_hi, [F(0)]),
+                "flat_rad0": (rec.c_lo, rec.c_hi, [rec.rad[0]]),
+                "rad_half": (rec.c_lo, rec.c_hi, D.p_scale(rec.rad, F(1, 2))), "no_W": (rec.cen, rec.cen, rec.rad)}
+    pviol = {k: False for k in profiles}
+    for j in range(17):
+        t = rec.ec - rec.h + 2 * rec.h * F(j, 16)
+        D.guard_interval(t, t)
+        rpp = sum(fr.F_derivs(t, 2)[2][0] for fr in fx.famr) / 2 + D.p_eval(D.p_deriv(fx.Wp, 2), t)
+        s_ = abs(t - rec.ec)
+        for k, (clo, chi, rad) in profiles.items():
+            r_ = D.p_eval(rad, s_)
+            if not (clo - r_ <= rpp <= chi + r_):
+                pviol[k] = True
+    out.update({"profile_" + k: v for k, v in pviol.items()})
+    out["midpoint_no_width"] = bool(ghat < fx.g(rec.ec))
+    return out
+
+
 def clause_values(fx: Fix, rec: Record) -> dict:
     lo, hi = rec.ec - rec.h, rec.ec + rec.h
     gm = fx.gmax(lo, hi)
@@ -222,9 +263,9 @@ def run_fixture(seed: int) -> dict:
     Rtrue = sum(v[0][0] for v in vals) / 2 + D.p_eval(fx.Wp, e0)
     Dtrue = sum(v[1][0] for v in vals) / 2 + D.p_eval(D.p_deriv(fx.Wp, 1), e0)
     out["midpoint_enclosures_valid"] = midpoint_check(Rtrue, Dtrue, rec0.R_iv, rec0.D_iv)
-    # NC: planted record whose R interval is shifted by twice its width (true value outside) must fail the check
+    # HARNESS check of midpoint_check (relabelled, review N13): an interval shifted off the truth by construction
     wR = rec0.R_iv[1] - rec0.R_iv[0] + F(1, 10 ** 12)
-    out["NC_g_hi_planted_detected"] = not midpoint_check(Rtrue, Dtrue, (rec0.R_iv[0] + 2 * wR, rec0.R_iv[1] + 2 * wR),
+    out["harness_midpoint_check_flags_shifted"] = not midpoint_check(Rtrue, Dtrue, (rec0.R_iv[0] + 2 * wR, rec0.R_iv[1] + 2 * wR),
                                                          rec0.D_iv)
     # C2 soundness on the parent
     cv = clause_values(fx, rec0)
@@ -234,9 +275,8 @@ def run_fixture(seed: int) -> dict:
     # NC: profile with rad(s) := rad(0) (no Taylor growth), evaluated at the WHOLE-cell level
     bad = rec0.g_hi + rec0.tpt_parts(rad=[rec0.rad[0]])["P"]
     out["NC_flat_profile_value_minus_gmax"] = float(bad - cv["gmax"])
-    # harness NC: planted transport P := (gmax - g_hi)/2 (below the truth whenever gmax > g_hi) must fail C2
-    out["NC_half_transport_detected"] = (cv["gmax"] > rec0.g_hi) and not (
-        rec0.g_hi + (cv["gmax"] - rec0.g_hi) / 2 >= cv["gmax"])
+    # the arithmetic "half transport" control of r0 is WITHDRAWN (review N13); code-path transport mutants below
+    muts = [transport_mutants(rec0, cv["gmax"])]
     # C3 scaling
     sc = []
     for kk in range(5):
@@ -244,6 +284,8 @@ def run_fixture(seed: int) -> dict:
         rec = Record(fx, e0, h)
         comps = rec.components()
         gm = fx.gmax(e0 - h, e0 + h)
+        if kk > 0:
+            muts.append(transport_mutants(rec, gm))
         sc.append({"h": h, "slack_tpt": rec.tpt() - gm, "slack_frozen": rec.frozen() - gm,
                    "comps": comps, "tpt_ge": rec.tpt() >= gm})
     slopes = []
@@ -269,6 +311,7 @@ def run_fixture(seed: int) -> dict:
         tpt_sub = [s.tpt() for s in subs]
         fro_sub = [s.frozen() for s in subs]
         gm_sub = [fx.gmax(s.ec - s.h, s.ec + s.h) for s in subs]
+        muts.extend(transport_mutants(sb, g_) for sb, g_ in zip(subs, gm_sub))
         real_gain = cv["tpt"] - max(tpt_sub)
         # pure-scaling prediction from the PARENT's premises: parent slack function S(h) at the binding end
         par_rad = rec0.rad
@@ -284,7 +327,8 @@ def run_fixture(seed: int) -> dict:
         endJ = ecJ + hN if right_binds else ecJ - hN
         true_inc_J = fx.g(endJ) - fx.g(ecJ)
         pred_gain = (slack_model(e0, rho0) - true_inc_par) - (slack_model(ecJ, hN) - true_inc_J)
-        # B2: split with NO new record = transport from the parent midpoint = the parent TPT (TPT-O); exact value
+        # B2 TRANSCRIPTION-CONSISTENCY identity (review B3): the record-free split is implemented as the parent's own
+        # TPT integrals over sub-lengths, so its max equals the parent TPT BY CONSTRUCTION; not evidence for CR-2
         b2 = max(rec0.g_hi + rec0.tpt_parts(hr=max(F(0), (s.ec + s.h) - e0) if s.ec + s.h > e0 else F(0),
                                            hl=max(F(0), e0 - (s.ec - s.h)) if s.ec - s.h < e0 else F(0))["P"]
                  for s in subs)
@@ -293,7 +337,7 @@ def run_fixture(seed: int) -> dict:
                   "gain_fraction_of_parent_slack": float(real_gain / (cv["tpt"] - gm_par)),
                   "frozen_refined_gain": float(cv["frozen"] - max(fro_sub)),
                   "sound_all": all(t >= g for t, g in zip(tpt_sub, gm_sub)),
-                  "B2_minus_parent_tpt": float(b2 - cv["tpt"]),
+                  "B2_transcription_identity_diff": float(b2 - cv["tpt"]),
                   "records": N}
     out["C4"] = ref
     # C5-style oracle: Taylor rho halved inside rad only (transport rho, g_hi kept), vs a real bisection
@@ -341,6 +385,8 @@ def run_fixture(seed: int) -> dict:
         drp[str(kap)] = {"status": status, "new_records": records, "depth_used": depth_used,
                          "failing_leaves": leaves_fail}
     out["C6"] = drp
+    out["transport_mutants"] = {k: {"records": len(muts), "flagged": sum(1 for mm in muts if mm[k])}
+                                for k in muts[0]}
     return out
 
 
@@ -357,12 +403,15 @@ def main() -> None:
         "C2_sound_all": all(f["C2"]["frozen_ge"] and f["C2"]["c5t_ge"] and f["C2"]["tpt_ge"] for f in fx),
         "C2_order_all": all(f["C2"]["order"] for f in fx),
         "NC_flat_profile_violations": sum(1 for f in fx if f["NC_flat_profile_value_minus_gmax"] < 0),
-        "NC_g_hi_detected": sum(1 for f in fx if f["NC_g_hi_planted_detected"]),
-        "NC_half_transport_detected": sum(1 for f in fx if f["NC_half_transport_detected"]),
+        "harness_midpoint_check_flags_shifted": sum(1 for f in fx if f["harness_midpoint_check_flags_shifted"]),
+        "profile_genuine_violations": sum(f["transport_mutants"]["profile_genuine"]["flagged"] for f in fx),
+        "transport_mutant_power": {k: {"records": sum(f["transport_mutants"][k]["records"] for f in fx),
+                                       "flagged": sum(f["transport_mutants"][k]["flagged"] for f in fx)}
+                                   for k in fx[0]["transport_mutants"]},
         "C3_sound_all": all(f["C3"]["sound_all"] for f in fx),
         "C4_sound_all": all(v["sound_all"] for f in fx for v in f["C4"].values()),
-        "C4_B2_minus_parent_max": max(v["B2_minus_parent_tpt"] for f in fx for v in f["C4"].values()),
-        "C4_B2_minus_parent_min": min(v["B2_minus_parent_tpt"] for f in fx for v in f["C4"].values()),
+        "C4_B2_transcription_identity_diff_max": max(abs(v["B2_transcription_identity_diff"]) for f in fx
+                                                     for v in f["C4"].values()),
         "C4_gain_fraction": {N: [min(f["C4"][N]["gain_fraction_of_parent_slack"] for f in fx),
                                  max(f["C4"][N]["gain_fraction_of_parent_slack"] for f in fx)] for N in (2, 3, 4)},
         "C4_pred_rel_err": {N: [min(f["C4"][N]["pred_rel_err"] for f in fx),

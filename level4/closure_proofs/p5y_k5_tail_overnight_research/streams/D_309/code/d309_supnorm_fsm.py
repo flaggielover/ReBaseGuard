@@ -14,8 +14,14 @@ For each declared fixture (rule DECLARED_RULE, fixed before the first run) and e
   3. the order-4 ladder  sup_C ||phi''''|| <= E3 <= ... and E3 vs the (P3) envelope E0 (rigorous whole-cell composite);
   4. theorem TC enclosures for five premise supplies (base TC-T, SC3, SC3+E3, SC4+E3, TC+ order-raised) checked
      POINTWISE against the exact F_r''(t)(a) on a 33-point rational grid, and their rad(rho) ratios;
-  5. negative controls: (NC1) a planted wrong composite (coefficient of K2 D^ set to 2) must fail the identity check;
-     (NC2) the enclosure check with rad := max_true_dev/2 must report a violation;
+  5. controls (repair r1, review B1 and 'test power'): a COMPARATOR control (a wrong hand-written formula must differ
+     from the polynomial path; it tests the comparator only); PREMISE-LEVEL truth checks (premise_truth: the atom
+     constants vs exact ||R_e||, ||dR_e||, ||d2R_e|| on a drift grid, every f_* and Env4/f4/Env5 vs the exact quantity,
+     the Taylor profiles p_j(s) vs the exact ||phi^(2-j)(t)||); planted-INVALID premise supplies (mutants) fed through
+     premise_truth AND through tc_rad_poly + enclosure_check, with each check's detection power reported. The old NC2
+     (rad := max_dev/2) was arithmetic and is withdrawn.
+     Review N4: E3, Env5_comp and f4_comp are sups of phi_poly, which contains the EXACT source S(e); they are
+     exact-source idealizations that real use cannot certify.
   6. adversarial fixtures (sign-aligned candidates) where the composite gain over S1 is expected to vanish.
 Writes validation/D309_SUPNORM_FSM.json.
 """
@@ -34,7 +40,9 @@ import d309_core as D  # noqa: E402
 Q, X = D.Q, D.X
 
 DECLARED_RULE = (
-    "Generic fixtures: seeds 1..24; n = 4 + seed % 4 states; kernel degree 4 in e (random_family, kill 1/5); "
+    "[repair r1, declared before the re-run: mutants fG_zero, Env4_zero, fG_Env4_half_truth, A0_half, A0_x0.99, "
+    "Env4_midpoint_only, Env4_x0.9, fG_sigma3_dropped (sigma3 > 0 only) on the SC4_E3 supply; A-truth on a 9-point "
+    "drift grid] Generic fixtures: seeds 1..24; n = 4 + seed % 4 states; kernel degree 4 in e (random_family, kill 1/5); "
     "e0 = 1/8; rho = (1/64, 1/32, 1/16)[seed % 3]; candidate perturbation pert = (1e-6, 1e-4, 1e-2)[(seed // 3) % 3] "
     "(uniform integer/100 multiples); source degree (2, 5)[seed % 2] (degree 2 => sigma3 = sigma4 = 0); two sources "
     "per fixture; G^ := 0 (premise P2'). Adversarial fixtures: seeds 101..106, n = 5, source degree 2, candidates set "
@@ -63,11 +71,12 @@ def ladder(fx: D.TCFixture, k: list, rng: random.Random, pert: F) -> dict:
     phi3_L = fx.phi_leibniz(3)
     phi3_P = fx.phi_poly_deriv_at0(3)
     TRUE = D.vnorm(phi3_L)
-    # negative control NC1: planted wrong composite (3 K2 D^ -> 2 K2 D^) must NOT reproduce phi''' (with the source)
+    # COMPARATOR control (relabelled, repair r1 / review B1): a wrong hand-written formula must differ from the
+    # polynomial path. It tests the identity comparator only, not a premise supply.
     planted = D.vadd((F(1), fx.S[3]), (F(3), t1), (F(2), t2), (F(1), t3))
     nc1_detected = planted != phi3_P
     return {"S0": S0, "S1": S1, "S2": S2, "S3": S3, "S4": S4, "TRUE": TRUE, "sigma3": sig3,
-            "identity_phi3": phi3_L == phi3_P, "nc1_wrong_composite_detected": nc1_detected,
+            "identity_phi3": phi3_L == phi3_P, "comparator_control_differs": nc1_detected,
             "ladder_ok": TRUE <= S3 <= S2 <= S1 <= S0 and TRUE <= S4,
             "strict_submult": S2 < S1, "strict_crossterm": S3 < S2}
 
@@ -85,10 +94,62 @@ def env_levels(fx: D.TCFixture, k: list) -> dict:
     f4_comp = D.vnorm(fx.phi_leibniz(4))
     Env5_norm = sig5 + 10 * k[3] * sH + 5 * k[4] * (sD + rho * sH) + k[5] * (sF + rho * sD + rho ** 2 * sH / 2)
     E5_up, E5_lo = fx.phi_poly_deriv_sup(5)
-    return {"E0": E0, "E3": E3_up, "E3_lower": E3_lo, "f4_sur": f4_sur, "f4_comp": f4_comp,
+    return {"E0": E0, "E3": E3_up, "E3_lower": E3_lo, "E3_lower_exact": E3_lo, "E5_lower_exact": E5_lo,
+            "f4_sur": f4_sur, "f4_comp": f4_comp,
             "Env5_norm": Env5_norm, "Env5_comp": E5_up, "Env5_comp_lower": E5_lo,
             "env4_ok": E3_lo <= E3_up and E3_lo <= E0, "f4_ok": f4_comp <= f4_sur,
             "env5_ok": E5_lo <= E5_up and E5_lo <= Env5_norm}
+
+
+def a_truth(fam, e0: F, rho: F, pts: int = 9) -> dict:
+    """exact max over a drift grid of ||R_e||, ||dR_e|| = ||R K1 R||, ||d2R_e|| (lower bounds of the true sups)."""
+    best = {"A0": F(0), "A1": F(0), "A2": F(0)}
+    for j in range(pts):
+        e = e0 - rho + 2 * rho * F(j, pts - 1)
+        D.guard_interval(e, e)
+        R, K1, K2 = fam.R(e), fam.K(e, 1), fam.K(e, 2)
+        dR = X.mat_mul(X.mat_mul(R, K1), R)
+        d2R = X.mat_add(X.mat_scale(X.mat_mul(X.mat_mul(dR, K1), R), F(2)), X.mat_mul(X.mat_mul(R, K2), R))
+        best["A0"] = max(best["A0"], X.op_norm(R))
+        best["A1"] = max(best["A1"], X.op_norm(dR))
+        best["A2"] = max(best["A2"], X.op_norm(d2R))
+    return best
+
+
+def premise_truth(fx: D.TCFixture, A: tuple, prem: dict, at: dict, env: dict, variant: str = "TC",
+                  grid: int = 32) -> list:
+    """TRUTH-RELATIVE premise checks (repair r1, review 'test power'): every premise of theorem TC must dominate the
+    exact quantity it bounds. Returns the violated premises (empty = pass). It can fail: see the mutants."""
+    viol = []
+    for name, val in zip(("A0", "A1", "A2"), A):
+        if val < at[name]:
+            viol.append(name)
+    exact = {j: D.vnorm(fx.phi_poly_deriv_at0(j)) for j in range(5)}
+    for key, j in (("F", 0), ("D", 1), ("H", 2), ("G", 3)):
+        if prem[key] < exact[j]:
+            viol.append("f_" + key)
+    if variant == "TC":
+        if prem["Env4"] < env["E3_lower_exact"]:
+            viol.append("Env4")
+    else:
+        if prem["f4"] < exact[4]:
+            viol.append("f4")
+        if prem["Env5"] < env["E5_lower_exact"]:
+            viol.append("Env5")
+    p0, p1, p2 = D.tc_profile_polys(prem, variant)
+    polys = fx.phi_poly()
+    done = False
+    for i in range(grid + 1):
+        t = -fx.rho + 2 * fx.rho * F(i, grid)
+        for pj, der in ((p2, 2), (p1, 1), (p0, 0)):
+            tv = max(abs(D.p_eval(D.p_deriv(c, der), t)) for c in polys)
+            if D.p_eval(pj, abs(t)) < tv:
+                viol.append("profile_p%d" % der)
+                done = True
+                break
+        if done:
+            break
+    return viol
 
 
 def enclosure_check(fx: D.TCFixture, rad: list, grid: int = 32, plant: bool = False) -> dict:
@@ -135,6 +196,7 @@ def run_fixture(seed: int, n: int, rho: F, pert: F, sdeg: int, adversarial: bool
     C = D.C_cell(fam, e0, rho)
     A = D.lemma_g(k, C)
     rows = []
+    at = a_truth(fam, e0, rho)
     for r, fx in fxs:
         rng = random.Random(4242 + 31 * seed + r)
         idents = {j: fx.phi_leibniz(j) == fx.phi_poly_deriv_at0(j) for j in range(6)}
@@ -155,7 +217,30 @@ def run_fixture(seed: int, n: int, rho: F, pert: F, sdeg: int, adversarial: bool
         }
         rad_rho = {kname: D.p_eval(p, fx.rho) for kname, p in variants.items()}
         checks = {kname: enclosure_check(fx, p) for kname, p in variants.items()}
-        nc2 = enclosure_check(fx, variants["SC4_E3"], grid=16, plant=True)
+        supplies = {
+            "TCT_base": (dict(base, G=lad["S0"], Env4=env["E0"]), "TC"),
+            "SC3": (dict(base, G=fG_sc, Env4=env["E0"]), "TC"),
+            "SC3_E3": (dict(base, G=fG_sc, Env4=E4), "TC"),
+            "SC4_E3": (dict(base, G=fG_sc4, Env4=E4), "TC"),
+            "SC4_TCplus": (dict(base, G=fG_sc4, f4=min(env["f4_sur"], env["f4_comp"]),
+                                Env5=min(env["Env5_norm"], env["Env5_comp"])), "TCp")}
+        genuine_viol = {kname: premise_truth(fx, A, pr, at, env, var) for kname, (pr, var) in supplies.items()}
+        g4 = dict(base, G=fG_sc4, Env4=E4)
+        mut = {
+            "fG_zero": (dict(g4, G=F(0)), A),
+            "Env4_zero": (dict(g4, Env4=F(0)), A),
+            "fG_Env4_half_truth": (dict(g4, G=lad["TRUE"] / 2, Env4=env["E3_lower"] / 2), A),
+            "A0_half": (g4, (A[0] / 2, A[1], A[2])),
+            "A0_x0.99": (g4, (A[0] * F(99, 100), A[1], A[2])),
+            "Env4_midpoint_only": (dict(g4, Env4=env["f4_comp"]), A),
+            "Env4_x0.9": (dict(g4, Env4=E4 * F(9, 10)), A),
+        }
+        if lad["sigma3"] > 0:
+            mut["fG_sigma3_dropped"] = (dict(g4, G=lad["S3"] - lad["sigma3"]), A)
+        mutants = {}
+        for mname, (pr, AA) in mut.items():
+            mutants[mname] = {"premise_check_flags": premise_truth(fx, AA, pr, at, env, "TC"),
+                              "enclosure_violations": enclosure_check(fx, D.tc_rad_poly(AA, pr))["violations"]}
         rows.append({
             "seed": seed, "r": r, "n": n, "rho": str(rho), "pert": str(pert), "source_degree": sdeg,
             "adversarial": adversarial,
@@ -171,7 +256,8 @@ def run_fixture(seed: int, n: int, rho: F, pert: F, sdeg: int, adversarial: bool
                 "rad_rho_over_base": {kk: float(v / rad_rho["TCT_base"]) for kk, v in rad_rho.items()},
             },
             "enclosure_checks": checks,
-            "nc2_planted_radius_violations": nc2["violations"],
+            "premise_truth_genuine_violations": genuine_viol,
+            "mutants": mutants,
         })
     return rows
 
@@ -199,8 +285,19 @@ def main() -> None:
         "identity_all_orders_all": all(r["identity_all_orders"] for r in rows),
         "ladder_ok_all": all(r["ladder"]["ladder_ok"] for r in rows),
         "env_ok_all": all(r["env"]["env4_ok"] and r["env"]["f4_ok"] and r["env"]["env5_ok"] for r in rows),
-        "nc1_detected": sum(1 for r in rows if r["ladder"]["nc1_wrong_composite_detected"]),
-        "nc2_detected": sum(1 for r in rows if r["nc2_planted_radius_violations"] > 0),
+        "comparator_control_differs": sum(1 for r in rows if r["ladder"]["comparator_control_differs"]),
+        "premise_truth_genuine_violations_total": sum(len(v) for r in rows
+                                                      for v in r["premise_truth_genuine_violations"].values()),
+        "premise_truth_supplies_checked": sum(len(r["premise_truth_genuine_violations"]) for r in rows),
+        "mutant_power": {m: {"applicable": sum(1 for r in rows if m in r["mutants"]),
+                             "premise_check_detects": sum(1 for r in rows if m in r["mutants"]
+                                                          and r["mutants"][m]["premise_check_flags"]),
+                             "enclosure_check_detects": sum(1 for r in rows if m in r["mutants"]
+                                                            and r["mutants"][m]["enclosure_violations"] > 0)}
+                         for m in ("fG_zero", "Env4_zero", "fG_Env4_half_truth", "A0_half", "A0_x0.99",
+                                   "Env4_midpoint_only", "Env4_x0.9", "fG_sigma3_dropped")},
+        "enclosure_worst_dev_over_rad_genuine": max(c["worst_dev_over_rad"] for r in rows
+                                                    for c in r["enclosure_checks"].values()),
         "enclosure_violations_total": sum(c["violations"] for r in rows for c in r["enclosure_checks"].values()),
         "enclosure_points_checked": sum(33 * len(r["enclosure_checks"]) for r in rows),
         "strict_submult_generic": sum(1 for r in gen if r["ladder"]["strict_submult"]),

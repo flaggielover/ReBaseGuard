@@ -20,9 +20,12 @@ Parts (declared rule DECLARED_RULE, fixed before the first run):
       order-3 function), RSO-P on box classes g = 1, 2, n, checked POINTWISE against the exact F_r''(t)(a);
   R5  RSO-LR on discrete likelihood-ratio families: kernel identity K^S = K_1 (exact), signed LR identity by path
       enumeration, exact truncated lower bound <= certificate alpha(a), comparison with the PM and norm bounds;
-  NC  (a) planted psi below |phi| at one state -> majorant check fails; (b) planted v := (9/10) v_cert -> the
-      certificate check fails; (c) planted LR certificate alpha(a) := truncated lower bound * 9/10 -> soundness fails
-      (harness control); (d) planted wrong score S(z) := z -> the kernel identity K^S = K_1 fails (structural control).
+  NC  (repair r1 after review B1; controls go THROUGH the code path under test)
+      (a1/a2) planted invalid majorants (psi zero at the most-occupied state; psi halved) fed through cert_chain,
+      flagged by the truth check against the exact functional of the real residual; (b) planted v := (9/10) v_cert
+      through check_cert_taylor; (c) planted invalid LR certificates (cross term / K^{S^2} term / psi term dropped)
+      through lr_certificate, flagged against the exact truncated lower bound; (d) planted wrong score S(z) := z
+      through the kernel builder. Detection POWER is reported; the old arithmetic controls are withdrawn.
 Writes validation/D309_RSO_FSM.json.
 """
 from __future__ import annotations
@@ -49,7 +52,8 @@ DECLARED_RULE = (
     "R5: discrete LR families on states 0..L-1 (L in {4, 5, 6}), z in {-1, 0, 1}, p_e(z) = p0(z)(1 + e z + e^2 c "
     "(z^2 - m2)), p0 = (1/4, 1/2, 1/4), c = 1/2, e in {1/8, 1/4}, e-independent killing 1/4, x' = max(0, x + z), alarm "
     "iff x + z >= L; psi = (1/100 + x/L) and psi = indicator of the top state; ladder c in 2^{-4..4}, delta in 2^{-8..2}; "
-    "path enumeration N = 60. Fixed before the first run.")
+    "path enumeration N = 60. Fixed before the first run. Repair r1 (declared before the re-run): controls a1/a2, "
+    "c (drop_cross, drop_KS2, drop_psi) and the halved-profile R4 mutant as in the module docstring.")
 
 LAMBDAS = [F(1), F(1) + F(1, 2 ** 10), F(1) + F(1, 2 ** 8), F(1) + F(1, 2 ** 6), F(1) + F(1, 2 ** 4),
            F(1) + F(1, 4), F(2)]
@@ -61,6 +65,7 @@ ETAS = [F(1, 2 ** 12), F(1, 2 ** 8), F(1, 2 ** 5), F(1, 2 ** 3), F(1, 2), F(1), 
 
 def abs_sup_matrix(fam: X.DriftFamily, i: int, lo: F, hi: F) -> list:
     """entrywise rigorous sup_{e in [lo,hi]} |K_i(e)_{xy}|."""
+    D.guard_interval(lo, hi)
     return [[D.sup_abs_on(D.p_deriv(p, i), lo, hi)[0] for p in row] for row in fam.kp]
 
 
@@ -74,11 +79,13 @@ def margin_poly(fam: X.DriftFamily, v: list, x: int) -> list:
 
 def check_cert_taylor(fam, lo, hi, v, b) -> F:
     """RIGOROUS lower bound of min_x min_e [v_x - (K_e v)_x - b_x] (Taylor-form bisection)."""
+    D.guard_interval(lo, hi)
     return min(D.min_on(margin_poly(fam, v, x), lo, hi) - b[x] for x in range(fam.n))
 
 
 def check_cert_grid(fam, lo, hi, v, b, N: int = 256) -> F:
     """Independent RIGOROUS lower bound: grid minimum minus (h/2) * sup|q'| with a crude coefficient bound."""
+    D.guard_interval(lo, hi)
     emax = max(abs(lo), abs(hi))
     best = None
     for x in range(fam.n):
@@ -197,11 +204,20 @@ def r123(seed: int) -> list:
         # negative control (b): planted v := 9/10 v_cert must fail the certificate check
         vbad = [x * F(9, 10) for x in ch["N0"]["v"]]
         nc_b = check_cert_taylor(fam, lo, hi, vbad, a) < 0
-        # negative control (a): planted psi below |phi| at the argmax state must fail the majorant check
-        psi_bad = list(a)
-        xm = max(range(n), key=lambda y: a[y])
-        psi_bad[xm] = a[xm] / 2
-        nc_a = not all(p >= q for p, q in zip(psi_bad, a))
+        # negative controls (a1, a2), repair r1 of review B1: a planted INVALID majorant is fed through the
+        # certificate path (cert_chain) and the soundness checker must flag the result against the exact truth of
+        # the real residual a. (a1): psi := a with the entry at the most-occupied state set to 0; (a2): psi := a/2.
+        xo = max(range(n), key=lambda y: occ[y])
+        psi_a1 = [F(0) if x == xo else a[x] for x in range(n)]
+        psi_a2 = [x / 2 for x in a]
+        nc_a = {}
+        for tag, psi_bad in (("a1_zero_at_most_occupied", psi_a1), ("a2_half", psi_a2)):
+            if max(psi_bad) == 0:
+                nc_a[tag] = None
+                continue
+            chb = cert_chain(fam, e0, rho, psi_bad, K1abs, K2abs)
+            nc_a[tag] = {"N0_flagged": chb["N0"]["va"] < tr["R"], "N1_flagged_signed": chb["N1"]["va"] < tr["signed1"],
+                         "N1_flagged_PM": chb["N1"]["va"] < tr["PM1"]}
         rows.append({
             "seed": seed, "class": cname, "n": n, "rho": str(rho),
             "certs_verified_twice": all(ch[kk]["verified_twice"] for kk in ("N0", "N1", "N2")),
@@ -216,7 +232,7 @@ def r123(seed: int) -> list:
             "N2_over_A2norm": float(ch["N2"]["va"] / (A2 * na)),
             "signed1_over_N1": float(tr["signed1"] / ch["N1"]["va"]),
             "cert_overhead_N0_over_truth": float(ch["N0"]["va"] / tr["R"]),
-            "nc_a_detected": nc_a, "nc_b_detected": nc_b,
+            "nc_a": nc_a, "nc_b_detected": nc_b,
         })
     return rows
 
@@ -296,8 +312,16 @@ def r4(seed: int) -> list:
             worst = max(worst, dev / r)
         checks[kname] = {"violations": viol, "worst_dev_over_rad": float(worst),
                          "rad_rho_over_base": float(D.p_eval(poly, rho) / D.p_eval(base, rho))}
+    # planted-invalid pointwise profile (every component halved) through rso_poly + the same enclosure check:
+    # measures the POWER of the enclosure check (repair r1, review 'test power')
+    mut_poly, _ = rso_poly([[x / 2 for x in v] for v in a])
+    mut_viol = 0
+    for j in range(33):
+        t = lo + 2 * rho * F(j, 32)
+        mut_viol += abs(fx.Fpp_at_atom(t) - fx.Hh[0]) > D.p_eval(mut_poly, abs(t - e0))
     rows.append({"seed": seed, "n": n, "rho": str(rho), "pert": str(pert), "source_degree": sdeg,
-                 "checks": checks, "occupation_at_e0": [float(o) for o in occupation(fam, e0)]})
+                 "checks": checks, "occupation_at_e0": [float(o) for o in occupation(fam, e0)],
+                 "mutant_profile_half_enclosure_violations": mut_viol})
     return rows
 
 
@@ -326,6 +350,7 @@ class LRFamily:
         return None if y >= self.L else max(0, y)
 
     def kernel(self, e: F, weight=None) -> list:
+        Q.guard_drift(e)
         L = self.L
         K = [[F(0)] * L for _ in range(L)]
         for x in range(L):
@@ -340,6 +365,7 @@ class LRFamily:
         return K
 
     def kernel_deriv(self, e: F, der: int) -> list:
+        Q.guard_drift(e)
         L = self.L
         K = [[F(0)] * L for _ in range(L)]
         for x in range(L):
@@ -350,7 +376,9 @@ class LRFamily:
         return K
 
 
-def lr_certificate(fam: LRFamily, e: F, psi: list) -> dict:
+def lr_certificate(fam: LRFamily, e: F, psi: list, defect: str | None = None) -> dict:
+    """quadratic-in-mu certificate; ``defect`` plants a known-invalid variant through this code path (repair r1):
+    "drop_cross" (omit (K^S beta)^2/delta), "drop_KS2" (omit K^{S^2} beta), "drop_psi" (omit psi c/2 in alpha)."""
     Q.guard_drift(e)
     L = fam.L
     Kc = fam.kernel(e)
@@ -364,7 +392,8 @@ def lr_certificate(fam: LRFamily, e: F, psi: list) -> dict:
             dd = F(2) ** kd
             beta = D.mv(R, [p / (2 * cc) + dd for p in psi])
             ksb = D.mv(KS, beta)
-            src = [p * cc / 2 + q + r * r / dd for p, q, r in zip(psi, D.mv(KS2, beta), ksb)]
+            src = [(0 if defect == "drop_psi" else p * cc / 2) + (0 if defect == "drop_KS2" else q)
+                   + (0 if defect == "drop_cross" else r * r / dd) for p, q, r in zip(psi, D.mv(KS2, beta), ksb)]
             alpha = D.mv(R, src)
             if best is None or alpha[0] < best[0]:
                 best = (alpha[0], cc, dd, min(alpha), min(beta))
@@ -425,7 +454,10 @@ def r5() -> list:
                 k1 = X.op_norm(K1)
                 Cn = X.op_norm(R)
                 normb = k1 * Cn * Cn * D.vnorm(psi)
-                nc_c = not (paths["lower"] * F(9, 10) >= paths["lower"])
+                # negative controls (c), repair r1 of review B1: planted invalid certificates through lr_certificate,
+                # flagged iff alpha(a) falls below the exact truncated lower bound of A1^psi
+                nc_c = {d: bool(lr_certificate(fam, e, psi, defect=d)["alpha_a"] < paths["lower"])
+                        for d in ("drop_cross", "drop_KS2", "drop_psi")}
                 rows.append({
                     "L": L, "e": str(e), "psi": pname, "kernel_identity_KS_eq_K1": ident_KS_K1,
                     "signed_exact": float(exact_signed), "signed_trunc_N60": float(paths["signed_trunc"]),
@@ -440,7 +472,7 @@ def r5() -> list:
                     "LR_lower_over_PM_pathwise": float(paths["lower"] / pm_path),
                     "LR_cert_over_norm": float(cert["alpha_a"] / normb),
                     "cert_c": str(cert["c"]), "cert_delta": str(cert["delta"]),
-                    "nc_c_detected": nc_c, "nc_d_wrong_score_detected": nc_score})
+                    "nc_c": nc_c, "nc_d_wrong_score_detected": nc_score})
     return rows
 
 
@@ -459,7 +491,11 @@ def main() -> None:
         "R123_cases": len(r123_rows),
         "R1_certs_verified_twice_all": all(r["certs_verified_twice"] for r in r123_rows),
         "R2_sound_all": all(all(r["sound"].values()) for r in r123_rows),
-        "NC_a_detected": sum(r["nc_a_detected"] for r in r123_rows),
+        "NC_a_power": {tag: {"applicable": sum(1 for r in r123_rows if r["nc_a"][tag] is not None),
+                             "N0_flagged": sum(1 for r in r123_rows if r["nc_a"][tag] and r["nc_a"][tag]["N0_flagged"]),
+                             "N1_flagged_PM": sum(1 for r in r123_rows if r["nc_a"][tag]
+                                                  and r["nc_a"][tag]["N1_flagged_PM"])}
+                       for tag in ("a1_zero_at_most_occupied", "a2_half")},
         "NC_b_detected": sum(r["nc_b_detected"] for r in r123_rows),
         "R3_shape_factor": {c: rng_of(r123_rows, "shape_factor_mu_a_over_sup", lambda r, c=c: r["class"] == c)
                             for c in ("generic_phiH", "favourable", "adversarial_atom", "adversarial_const")},
@@ -472,6 +508,8 @@ def main() -> None:
         "R3_cert_overhead_N0_over_truth": rng_of(r123_rows, "cert_overhead_N0_over_truth"),
         "R4_cases": len(r4_rows),
         "R4_violations_total": sum(c["violations"] for r in r4_rows for c in r["checks"].values()),
+        "R4_mutant_profile_half_detected": sum(1 for r in r4_rows if r["mutant_profile_half_enclosure_violations"] > 0),
+        "R4_worst_dev_over_rad_genuine": max(c["worst_dev_over_rad"] for r in r4_rows for c in r["checks"].values()),
         "R4_points_checked": sum(33 * len(r["checks"]) for r in r4_rows),
         "R4_rso_shape_gain_box1_over_boxn": [
             min(r["checks"]["RSO_P_box1"]["rad_rho_over_base"] / r["checks"]["RSO_P_boxn"]["rad_rho_over_base"]
@@ -490,7 +528,7 @@ def main() -> None:
         "R5_LR_cert_over_PM_entrywise": rng_of(r5_rows, "LR_cert_over_PM_entrywise"),
         "R5_LR_lower_over_PM_pathwise": rng_of(r5_rows, "LR_lower_over_PM_pathwise"),
         "R5_LR_cert_over_norm": rng_of(r5_rows, "LR_cert_over_norm"),
-        "NC_c_detected": sum(r["nc_c_detected"] for r in r5_rows),
+        "NC_c_power": {d: sum(1 for r in r5_rows if r["nc_c"][d]) for d in ("drop_cross", "drop_KS2", "drop_psi")},
         "NC_d_wrong_score_detected": sum(r["nc_d_wrong_score_detected"] for r in r5_rows),
         "wall_s": round(time.time() - t0, 1),
     }

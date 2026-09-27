@@ -7,7 +7,8 @@
 
 **Route state.**
 * The decomposition and the gain theorem are **VALIDATED_NON_TARGET**.
-* Policy DRP-1 is **IMPLEMENTED** on FSM.
+* Policy DRP-1 is **IMPLEMENTED** on FSM. It is **outcome-adaptive** (frozen pass predicate), not result-free.
+  DRP-0 is result-free (repair r1, review N12).
 * Real use is **BLOCKED**: NEW_REAL, i.e. new K1 midpoint records.
 
 ## 1. Objects
@@ -84,33 +85,55 @@ TPT factors are relative to the whole-cell charge, to leading order in ρ/e0.
 
 ## 4. Relation to C5 route B2
 
-**Proposition CR-2 (B2 is dominated by TPT).** Split C into subcells but create **no** new record, so every subcell bound
-must be transported from the single record at e0. Then every resulting bound on `max_C g` is at least the TPT bound.
+**Proposition CR-2 (within the fixed-input family, B2 is dominated by TPT).** Split C into subcells, create **no** new
+record, and use **only the fixed triple** `(g_hi, L, U)` of the parent record. Then every resulting bound on `max_C g`
+is at least the TPT bound.
 
-*Proof.* The split uses only the inputs `(g_hi, L, U)` and returns a bound valid for every admissible witness. By
-Proposition TPT-O, `g_hi + P*` is attained by an admissible witness, so no bound from those inputs is smaller. ∎
+*Proof.* Such a split returns a bound valid for every function consistent with `(g_hi, L, U)`. By Proposition TPT-O as
+corrected (`streams/E_assembly/THEOREM_TPT.md:75-80`), `g_hi + P*` is the **supremum** over C² functions consistent
+with those inputs. Any valid bound from these inputs is therefore at least `g_hi + P*`. (Repair r1, review N10: the r0
+text said "attained", which the corrected TPT-O withdraws; the conclusion is unchanged.) ∎
 
-C5 killed B2 with: "R and D are certified at e0 only; transporting them to a sub-midpoint costs exactly what the split
-saves" (`p5y_k5_tail_c5_exhaustion/phase_3/C5_ROUTE_SEARCH.md:50`). CR-2 sharpens this: **with TPT available, a
-record-free split can never gain anything.** Everything TPT gains, it gains for free.
+**Scope (repair r1, review B2).** C5 killed B2 as **NEW_REAL**, not MATH, with: "R and D are certified at e0 only;
+transporting them to a sub-midpoint costs exactly what the split saves" (`p5y_k5_tail_c5_exhaustion/phase_3/
+C5_ROUTE_SEARCH.md:50`). CR-2 is a MATH statement about a narrower object. **B2 is REFUTED only within the
+fixed-(g_hi, L, U) family.** The r0 sentence "a record-free split can never gain anything" is withdrawn.
 
-**Validated.** `B2 − TPT = 0` exactly in 30/30 splits (`d309_cover.py:288-292`; summary `C4_B2_minus_parent_min/max`).
+**Separate lever B2c (recorded, unevaluated).** A record-free split can still change the third input:
+* re-certify the operator constants (`k_i`, the A-supply, the k-terms of Env4) on shorter drift segments;
+* this gives an s-dependent profile pointwise ≤ the cell-uniform one;
+* Lemma TC-P needs the constants only on `[e0, t]`.
+
+B2c is not dominated by fixed-profile TPT. It creates no new K1 record, so it is not NEW_REAL, and it is **not refuted
+by anything here**. State: THEORY_ONLY; closure-only under floor r2.
+
+**Transcription-consistency identity (not evidence; review B3).** `d309_cover.py` implements the record-free split as
+the parent's own TPT integrals over sub-lengths from the same e0. Its maximum equals the parent TPT **by construction**
+(`B2_transcription_identity_diff` = 0 in all 30 splits). This checks the transcription only. CR-2 rests on TPT-O
+alone.
 
 ## 5. What a REAL refinement buys beyond TPT (as a function of ρ)
 
 **Theorem CR-3 (leading-order gain).** Refine C into N equal subcells, each with a **new** record. Let J be the binding
 subcell: the rightmost when the right integral binds, and J = 1 by symmetry otherwise. Then, exactly,
 
-    Γ_TPT(parent) − Γ_TPT,N  =  S_par(ρ) − S_J(ρ/N) + [w_g(e0) − w_g(e_J)] + (max_C g − max_{C_J} g)
+    Γ_TPT(parent) − Γ_TPT,N  =  T_par(ρ) − T_J(ρ/N) + [w_g(e0) − w_g(e_J)] + (max_C g − max_{C_J} g)
 
-where `S_X(h)` is the transport slack of record X over length h.
+where `T_X(h) := P*_X(h) − (true increase of g over the transported length)` is the **transport** slack of record X
+over length h. It **excludes** the midpoint width `w_g`, which appears separately. (Repair r1, review N9: r0 wrote
+`S_X`, which the r0 §2 definition of `S_TPT` made include `w_g`, and so double-counted it.)
 
 **Leading-order model.** Suppose the subcell premises equal the parent's. They differ only by the new candidates, the
 constants over the smaller cell and the W enclosure, which are all second order. Suppose also the max of g lies in
 `C_J`. Then
 
-    gain(ρ, N) ≈ S(ρ) − S(ρ/N) = Σ_j s_j ρ^j (1 − N^{−j}),
+    gain(ρ, N) ≈ T(ρ) − T(ρ/N) = Σ_j s_j ρ^j (1 − (e_J/e0) N^{−j}),
     s_1 = e0 (W + r0 + centre error),   s_2 ≈ e0 r1/2 + s_1/(2e0),   s_3 ≈ e0 r2/3 + r1/3, …
+
+The factor `e_J/e0 = 1 + O(ρ/e0)` makes the fractions below exact only to leading order in ρ/e0 (review note). The
+"centre error" is the deviation of the candidate centre from the true `R''(e0)`. It is **not** an input. Its
+certified bound is `W + r0` half-widths, so a certified `s_1^cert := e0 (2W + 2r0)` is used wherever a rule needs
+`s_1` (repair r1, review N11).
 
 So beyond TPT, a real refinement removes:
 * the fraction `1 − 1/N` of the **order-1** slack, which TPT cannot touch (TPT-G charges the constant component at 1);
@@ -129,9 +152,9 @@ Two further effects are not captured by the scaling model:
   refinement gains `≈ 1 − 1/N²`, and TPT alone `1/2`.
 * In the **narrow-cell regime** the order-1 slack dominates. There TPT gains ≈ 0 and refinement gains `1 − 1/N`.
 
-**Validation on FSM** (10 fixtures, parent `e0 = 1/4`, `ρ0 = 1/8`; `d309_cover.py:264-297`).
+**Validation on FSM** (10 fixtures, parent `e0 = 1/4`, `ρ0 = 1/8`; `d309_cover.py:308-342`).
 
-Real gain as a fraction of the parent TPT slack (`:272`):
+Real gain as a fraction of the parent TPT slack (`:315`):
 
 | N | fraction of parent slack removed |
 |---|---|
@@ -141,7 +164,7 @@ Real gain as a fraction of the parent TPT slack (`:272`):
 
 Every refined bound is sound against the exact g (30/30).
 
-Pure-scaling prediction from the parent's premises (`:278-286`), relative error:
+Pure-scaling prediction from the parent's premises (`:321-329`), relative error:
 
 | N | relative error |
 |---|---|
@@ -152,7 +175,7 @@ Pure-scaling prediction from the parent's premises (`:278-286`), relative error:
 The prediction is 1–2 % on fixture 1. The error comes from the changed premises of the new records. The model is a
 **leading-order** statement, not a forecast.
 
-**Scaling exponents** (`:238-257`). Nested cells `ρ_k = ρ0/2^k` with new records at every level:
+**Scaling exponents** (`:280-300`). Nested cells `ρ_k = ρ0/2^k` with new records at every level:
 * **Components.** The per-order TPT components have log2 halving ratios converging to j + 1. Fixture 1 (the other nine
   alike, in the JSON):
 
@@ -179,10 +202,12 @@ The frozen cover is adaptive but not built for K5-B.
 the cost `Σ_k N_k` scales with the whole cover.
 
 **Adaptive a priori (DRP-0).** `N_k` is chosen from the cell's own certified **inputs**, never from Γ.
-* **Rule:** `N_k = ⌈ρ_k / ρ_k*⌉`, where `ρ_k* := s_1/s_2` is the crossover at which the order-2 slack equals the
-  order-1 slack (§5). Below the crossover further splitting buys at most `1 − 1/N` of an order-1 term.
-* **Properties:** result-free and deterministic. It depends only on premise sizes (`f_*`, `Env4`, A, W), which are
-  inputs.
+* **Rule:** `N_k = ⌈ρ_k / ρ_k*⌉`, where `ρ_k* := s_1^cert / s_2^cert` is the crossover at which the order-2 slack
+  equals the order-1 slack (§5). It uses the **certified** coefficients `s_1^cert = e0(2W + 2r0)` and
+  `s_2^cert = e0 r1/2 + s_1^cert/(2e0)`. Below the crossover further splitting buys at most `1 − 1/N` of an order-1
+  term.
+* **Properties:** result-free and deterministic. It depends only on certified premise sizes (`f_*`, `Env4`, A, W),
+  which are inputs; no centre error or Γ enters (repair r1, review N11).
 
 **Hierarchical (dyadic) refinement.**
 * Subcells nest inside the frozen cells, so the committed boundaries of `cells.json` are preserved.
@@ -194,7 +219,7 @@ the cost `Σ_k N_k` scales with the whole cover.
   holds for any record point inside a segment on which its premises are certified.
 * Add **one** new record covering the binding end `[x_hi − 2ρ/N, x_hi]`.
 * The binding side is read from the parent's own certified pieces `I_R ≥ I_L`, not from any target outcome.
-* **FSM result (N = 4, one record)** (`d309_cover.py:305-318`): gain fraction 0.12–0.97, against 0.89–0.98 for four
+* **FSM result (N = 4, one record)** (`d309_cover.py:350-362`): gain fraction 0.12–0.97, against 0.89–0.98 for four
   records. It is sound in 10/10 cases.
 * It is efficient when the order-2/3 slack concentrates at the binding end. It is inefficient when the parent's
   transport over `[e0, x_hi − ρ/2]` still dominates.
@@ -227,8 +252,15 @@ cell with `x_lo > 0`.
 6. **No re-runs.** No parameter is tuned after any evaluation.
 7. **Cost:** `records ≤ 2^{D+1} − 2` per cell.
 
-DRP-1 is result-dependent only through the frozen pass/fail predicate, as in standard branch-and-bound. Applying it to
-a target cell is itself a target evaluation, so it can run only inside an authorized, prospectively frozen stage.
+**DRP-1 is OUTCOME-ADAPTIVE, not result-free** (repair r1, review N12).
+* It splits on `Γ ≥ 0`, i.e. on the outcome, through a frozen pass predicate.
+* Rigour is unaffected: every leaf bound is certified, so adaptivity cannot create a false PASS.
+* Under S1, a branch-and-bound toward `Γ < 0` on a target cell is admissible only as a frozen, budget-capped stage
+  authorized in advance.
+* Applying it to a target cell is itself a target evaluation.
+
+Any r0 phrase calling the DRP-0/1 pair "result-free" (including the commit subject of 6d0f0615, which cannot be edited)
+is superseded by: **DRP-0 result-free; DRP-1 outcome-adaptive, frozen-predicate.**
 
 **Cost model.**
 * `cost = Σ_new records × c_rec`.
@@ -238,7 +270,7 @@ a target cell is itself a target evaluation, so it can run only inside an author
   is the smallest d with `Σ_j s_j ρ^j (1 − 2^{−jd}) ≥ δ`.
 * Committed per-record reference costs are in §9 (history).
 
-**FSM exercise** (`d309_cover.py:320-344`).
+**FSM exercise** (`d309_cover.py:363-387`).
 * **Threshold** (fixture-internal and declared): `θ = gmax + κ(Γ_TPT(parent) − gmax)`, with κ ∈ {1/2, 1/4, 1/16}.
 * **Outcome:** all 30 runs PASS within the depth cap.
 
@@ -252,30 +284,36 @@ The record count grows as the threshold approaches the truth, as the order-1 flo
 
 ## 8. Validation summary (target-free)
 
-Source: `validation/D309_COVER_FSM.json`, 10 fixtures; declared rule at `d309_cover.py:42-50`.
+Source: `validation/D309_COVER_FSM.json`, 10 fixtures; declared rule at `d309_cover.py:47-56`.
 
 **Identities, soundness and B2**
 
 | check | code | result |
 |---|---|---|
-| C1 frozen clause equals its polynomial form, exactly | `:190-201` | holds |
+| C1 frozen clause equals its polynomial form, exactly | `:198-209` | holds |
 | C1 TPT closed form lies inside an independent 256-panel Riemann bracket | same | holds |
-| midpoint enclosures contain the exact R and R′ | `:204-206` | holds |
+| midpoint enclosures contain the exact R and R′ | `:212-214` | holds |
 | C2 soundness: every clause ≥ the grid max of the exact g | — | holds |
 | C2 order: TPT ≤ C5-T ≤ frozen | — | holds in 10/10 |
 | C3 / C4 / C5 refinements | — | sound everywhere |
-| B2 − TPT | — | 0 exactly, 30/30 |
+| B2 transcription identity (NOT evidence, review B3) | `:330-340` | 0 in 30 splits, by construction |
 
-**Negative controls**
+**Controls (repair r1, review B1/N13).** Planted-invalid inputs go **through** `Record.tpt_parts` and the profile, on
+all 140 records built (10 parents, 40 nested, 90 subcells). Code: `transport_mutants` in `d309_cover.py`.
 
-| control | how it works | detected |
-|---|---|---|
-| planted record with its R interval shifted off the truth | fails the midpoint check | 10/10 |
-| planted transport P := (gmax − g_hi)/2 | fails C2 | 9/10; the 10th fixture has gmax ≤ g_hi, so the plant cannot be built |
-| structural: a TPT profile with `rad(s) := rad(0)` (the Taylor growth dropped) | violates soundness | 3/10 |
+| check (truth-relative) | genuine | no_rad | flat_rad0 | rad_half | no_W | no_midpoint_width |
+|---|---|---|---|---|---|---|
+| transport level: clause value < exact grid max of g | 0/140 | 32/140 | 32/140 | 0/140 | 2/140 | 1/140 |
+| profile level: exact `R''_m` outside `[L(s), U(s)]` (17 pts) | 0/140 | 136/140 | 130/140 | 0/140 | 140/140 | — |
+| midpoint level: `ĝ` without the widths < exact `g(e_c)` | — | — | — | — | — | 63/140 |
 
-The structural control is caught in only 3/10 fixtures: the necessary-condition check can be masked by the other slack
-terms. That is a coverage limit, recorded here.
+* **The transport-level check is weak.** It is a necessary condition, masked by the other slack terms.
+* **The profile-level check is the load-bearing evidence** for the third TPT input.
+* **`rad_half` is not detected at either level.** On these fixtures the TC radius overestimates the true deviation by
+  more than 2×: the genuine worst deviation/radius in the SC run is 0.54. So the halved profile still encloses the
+  truth, and it is not invalid on these fixtures.
+* **Withdrawn:** the r0 "planted transport P := (gmax − g_hi)/2" was arithmetic.
+* **Harness check only:** the shifted-interval control of `midpoint_check`.
 
 ## 9. History (quoted, no route factor attached)
 
@@ -311,11 +349,11 @@ why it is not one; `graph_A_consumer.md` item 9 found the same.
 | G3 | PASS. Premises: `x_lo > 0`, TC-T premises on each record, TPT-M monotone profiles. |
 | G4 | PASS. |
 | G5 | PASS on FSM. |
-| G6 | PARTIAL. Independent Riemann bracket; B2 checked against its exact definition. No external review. |
+| G6 | PASS for the mathematics (independent review R1 re-derived CR-1, CR-3 and CR-2 in its scoped form). The B2 check is an implementation identity, not evidence. |
 | G7 | PASS. |
 | G8 | PASS. |
 | G9 | PASS. DRP-0 and DRP-1 are fully specified and freezable. |
-| G10 | PASS. A real refinement has certified inputs outside F2. The record-free split (B2) is shown to be cosmetic (0 gain). |
+| G10 | PASS. A real refinement has certified inputs outside F2. Within the fixed-(g_hi, L, U) family a record-free split is cosmetic (CR-2). B2c (constant re-certification on sub-segments) is outside that family and unevaluated. |
 
 **Verdict.**
 * The algebra and policy are **VALIDATED_NON_TARGET**.

@@ -1,15 +1,22 @@
 {
- "declared_rule": "Triples (w_quad, w_lin, w_const) and (w_bump, w_bump, w_bump) as in d309_hermite H3; drifts {1/4, 3}; Taylor-form image-box bounds; depth 4 for both triples, depth 5 for the bump triple; panel 1/16. Soundness: certified upper >= grid lower (grid of d309_hermite H2). Fixed before this run.",
+ "declared_rule": "Triples (w_quad, w_lin, w_const) and (w_bump, w_bump, w_bump) as in d309_hermite H3; drifts {1/4, 3}; Taylor-form image-box bounds; depth 4 for both triples, depth 5 for the bump triple; panel 1/16. Soundness: certified upper >= grid lower (grid of d309_hermite H2). Fixed before this run. Repair r1 (review B1/N5, declared before the re-run): soundness = per-box containment of exact values at box corners/edge midpoints/centre in the reachable set; planted defects zero_remainder, half_remainder, drop_sign, drop_hull through box_upper_tf; the old arithmetic control is withdrawn.",
  "runs": [
   {
    "boxes": 97,
    "certified_upper_tf": 13.048401202480052,
+   "containment_violations_genuine": 0,
+   "defect_violations": {
+    "drop_hull": 2,
+    "drop_sign": 95,
+    "half_remainder": 0,
+    "zero_remainder": 516
+   },
    "depth": 4,
    "e": "1/4",
    "grid_lower": 9.231326351251562,
    "naive_depth4_upper": 14.127493622275894,
-   "nc_planted_detected": true,
-   "sound": true,
+   "necessary_upper_ge_grid_lower": true,
+   "points": 749,
    "surrogate_ideal_lower": 70.80646124907386,
    "triple": [
     "w_quad",
@@ -18,17 +25,24 @@
    ],
    "upper_over_grid_lower": 1.4134914860540035,
    "upper_over_surrogate": 0.18428263427231684,
-   "wall_s": 4.6
+   "wall_s": 38.9
   },
   {
    "boxes": 97,
    "certified_upper_tf": 1.4178708031367524,
+   "containment_violations_genuine": 0,
+   "defect_violations": {
+    "drop_hull": 0,
+    "drop_sign": 578,
+    "half_remainder": 219,
+    "zero_remainder": 749
+   },
    "depth": 4,
    "e": "1/4",
    "grid_lower": 1.0579483871478814,
    "naive_depth4_upper": 12458.046585031234,
-   "nc_planted_detected": true,
-   "sound": true,
+   "necessary_upper_ge_grid_lower": true,
+   "points": 749,
    "surrogate_ideal_lower": 3.3891573634463272,
    "triple": [
     "w_bump",
@@ -37,17 +51,24 @@
    ],
    "upper_over_grid_lower": 1.3402079159638256,
    "upper_over_surrogate": 0.41835496292652646,
-   "wall_s": 4.1
+   "wall_s": 48.7
   },
   {
    "boxes": 363,
    "certified_upper_tf": 1.2872536566792172,
+   "containment_violations_genuine": 0,
+   "defect_violations": {
+    "drop_hull": 0,
+    "drop_sign": 2712,
+    "half_remainder": 69,
+    "zero_remainder": 3016
+   },
    "depth": 5,
    "e": "1/4",
    "grid_lower": 1.0579483871478814,
    "naive_depth4_upper": 12458.046585031234,
-   "nc_planted_detected": true,
-   "sound": true,
+   "necessary_upper_ge_grid_lower": true,
+   "points": 3016,
    "surrogate_ideal_lower": 3.3891573634463272,
    "triple": [
     "w_bump",
@@ -56,17 +77,24 @@
    ],
    "upper_over_grid_lower": 1.2167452328648272,
    "upper_over_surrogate": 0.3798152515911063,
-   "wall_s": 16.3
+   "wall_s": 176.7
   },
   {
    "boxes": 97,
    "certified_upper_tf": 12.674812175681073,
+   "containment_violations_genuine": 0,
+   "defect_violations": {
+    "drop_hull": 65,
+    "drop_sign": 379,
+    "half_remainder": 0,
+    "zero_remainder": 362
+   },
    "depth": 4,
    "e": "3",
    "grid_lower": 8.784100781787421,
    "naive_depth4_upper": 35.34965382250777,
-   "nc_planted_detected": true,
-   "sound": true,
+   "necessary_upper_ge_grid_lower": true,
+   "points": 749,
    "surrogate_ideal_lower": 66.99445057677809,
    "triple": [
     "w_quad",
@@ -75,17 +103,24 @@
    ],
    "upper_over_grid_lower": 1.4429265431426386,
    "upper_over_surrogate": 0.18919197137314042,
-   "wall_s": 4.6
+   "wall_s": 41.6
   },
   {
    "boxes": 97,
    "certified_upper_tf": 0.7747653120760998,
+   "containment_violations_genuine": 0,
+   "defect_violations": {
+    "drop_hull": 0,
+    "drop_sign": 542,
+    "half_remainder": 237,
+    "zero_remainder": 699
+   },
    "depth": 4,
    "e": "3",
    "grid_lower": 0.5894937641800555,
    "naive_depth4_upper": 22864.690050456597,
-   "nc_planted_detected": true,
-   "sound": true,
+   "necessary_upper_ge_grid_lower": true,
+   "points": 749,
    "surrogate_ideal_lower": 3.251719653398547,
    "triple": [
     "w_bump",
@@ -94,17 +129,24 @@
    ],
    "upper_over_grid_lower": 1.3142892413013803,
    "upper_over_surrogate": 0.23826325595638326,
-   "wall_s": 4.1
+   "wall_s": 49.5
   },
   {
    "boxes": 363,
    "certified_upper_tf": 0.7008200342823808,
+   "containment_violations_genuine": 0,
+   "defect_violations": {
+    "drop_hull": 0,
+    "drop_sign": 2547,
+    "half_remainder": 513,
+    "zero_remainder": 3016
+   },
    "depth": 5,
    "e": "3",
    "grid_lower": 0.5894937641800555,
    "naive_depth4_upper": 22864.690050456597,
-   "nc_planted_detected": true,
-   "sound": true,
+   "necessary_upper_ge_grid_lower": true,
+   "points": 3016,
    "surrogate_ideal_lower": 3.251719653398547,
    "triple": [
     "w_bump",
@@ -113,13 +155,27 @@
    ],
    "upper_over_grid_lower": 1.188850632300025,
    "upper_over_surrogate": 0.21552289526248555,
-   "wall_s": 17.4
+   "wall_s": 193.0
   }
  ],
  "schema": "OV_D309_HERMITE_TF_NONTARGET/1",
  "summary": {
-  "nc_detected": 6,
-  "sound_all": true,
-  "wall_s": 52.6
+  "containment_violations_genuine": 0,
+  "defect_points_detected": {
+   "drop_hull": 67,
+   "drop_sign": 6853,
+   "half_remainder": 1038,
+   "zero_remainder": 8358
+  },
+  "defect_runs_detected": {
+   "drop_hull": 2,
+   "drop_sign": 6,
+   "half_remainder": 4,
+   "zero_remainder": 6
+  },
+  "necessary_all": true,
+  "points": 9028,
+  "runs": 6,
+  "wall_s": 550.9
  }
 }

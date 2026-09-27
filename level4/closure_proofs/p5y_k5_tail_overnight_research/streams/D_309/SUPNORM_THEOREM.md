@@ -52,7 +52,7 @@ displayed in §1, then E4 is a valid (P3) premise. So is `min(Env4, E4)`.
 * `f4 ≥ ‖φ⁗(e0)‖` (a midpoint premise, which may be composite);
 * `Env5 ≥ sup_C ‖φ⁽⁵⁾‖`.
 
-For `s = |t − e0| ≤ ρ` define
+For `s = |e − e0| = |t| ≤ ρ` define (repair r1, review N1)
 
     p2(s) = f_H + s f_G + s² f4/2 + s³ Env5/6
     p1(s) = f_D + s f_H + s² f_G/2 + s³ f4/6 + s⁴ Env5/24
@@ -121,7 +121,7 @@ Hence:
 |---|---|
 | identity, exact | 48/48 |
 | bound | 48/48 |
-| negative control (coefficient 3 → 2 on the K2 term) | detected 48/48 |
+| comparator control (coefficient 3 → 2 on the K2 term; tests the identity comparator only, review B1) | differs 48/48 |
 | `‖φ'''‖ / ‖(I−K)F'''‖` at pert 1e-6 | 1 ± 6·10⁻⁷ |
 | `‖φ'''‖ / ‖(I−K)F'''‖` at pert 1e-2 | 0.995–1.008 |
 | Leibniz gap `S0 / ‖(I−K)F'''‖` (synthetic) | 1.27–15.8 |
@@ -155,12 +155,18 @@ The true operator norm is attained at the widest window, the atom, with `k_i^tru
 2. **If `win(x*)` is strictly inside the atom's window:** `|(K_iX̂)(x*)| ≤ ‖X̂‖ ∫_{win(x*)} |He_i| φ < k_i^true ‖X̂‖`,
    because `|He_i| φ > 0` a.e.
 3. **Otherwise `x* = a`** (the only state with the widest window). There equality would need
-   `X̂(n(a,z)) = ±‖X̂‖ sign He_i(z+e)` for a.e. z in the window. The window contains a sign change of `He_i` (a root of
-   `He_i` lies in `(e − C, e + C)` whenever `|e| < C − √3`). The left side is continuous in z, so equality is
+   `X̂(n(a,z)) = ±‖X̂‖ sign He_i(z+e)` for a.e. z in the window. The window contains a sign change of `He_i`: every
+   `He_i`, i ≥ 1, has a simple root in `[−1, 1]`, so a root lies in `(e − C, e + C)` whenever `|e| < C − 1`. This covers
+   every order used here, i = 1..5 (repair r1, review N2). The left side is continuous in z, so equality is
    impossible. ∎
 
 TC-T's `k_i` is a drift-aware upper bound, at least `k_i^true`. So on the Gaussian kernel with continuous candidates,
 `S2 < S1 ≤ S0` always holds qualitatively.
+
+**Scope of "strict" (repair r1, review N3).** SC-S1 is strictness of the **exact** sup. A certified `B3` carries
+certificate overhead: the Taylor-form certificate is 1.19–1.44× a grid lower bound on the test functions of §7.
+So strictness does **not** imply a certified gain. Whether a certified composite beats the surrogate for a given
+candidate is an empirical property of that candidate and certificate configuration.
 
 **Quantitative mechanism.** For i = 1, `∂_e φ(z+e) = ∂_z φ(z+e)`, and integration by parts gives
 
@@ -253,20 +259,45 @@ implemented here, because no non-target validation of interval drift was needed 
    * The window-membership hull is `O(panel + box width)`, and only on the two edge panels.
    * The panel-mass product loses the `z`–`n(x,z)` correlation, costing `O(panel width)`.
 
-## 7. Validation (target-free)
+## 7. Validation (target-free; revised in repair r1 after `reviews/REVIEW_STREAM_D_R1.md`)
 
 **FSM, exact truth** (`code/d309_supnorm_fsm.py` → `validation/D309_SUPNORM_FSM.json`).
-* **Coverage:** 48 generic plus 12 adversarial source-cases. The declared rule is at `:36-43`.
+* **Coverage:** 48 generic plus 12 adversarial source-cases; declared rule at `:42-55`.
 * **Identities:** the two independent paths (Leibniz `d309_core.py:244-252`; polynomial `:254-270`) agree exactly for
   `φ^(j)(e0)`, `j = 0..5`, in 60/60 cases.
-* **Ladder:** `TRUE ≤ S3 ≤ S2 ≤ S1 ≤ S0` and `TRUE ≤ S4` hold in 60/60 (`:71`). Strict submultiplicativity and strict
-  cross-term cancellation hold in 48/48 generic cases.
-* **Order-4 premises:** `E3 ≥` the true `sup_C‖φ⁗‖`, `E3 ≤ E0`, and `f4^comp ≤ f4^sur` hold in 60/60.
-* **TC enclosure soundness** against the exact `F_r''(t)(a)` on 33 rational grid points, for five premise supplies
-  (TCT_base, SC3, SC3_E3, SC4_E3, SC4_TCplus at `:148-155`): **0 violations in 9900 point checks**.
-* **Negative controls:**
-  * NC1, the wrong composite coefficient (`:66-68`): detected 60/60;
-  * NC2, a planted radius of half the true deviation (`:103-104`): detected 60/60.
+* **Ladder (truth-relative, can fail):** `TRUE ≤ S3 ≤ S2 ≤ S1 ≤ S0` and `TRUE ≤ S4` hold in 60/60 (`:80`). Strict
+  submultiplicativity and strict cross-term cancellation hold in 48/48 generic cases.
+* **Premise-level truth checks (load-bearing; `premise_truth`, `:119-153`).** Every premise of theorem TC is compared
+  with the exact quantity it bounds:
+  * `A0, A1, A2` vs the exact `max_e ‖R_e‖, ‖∂R_e‖, ‖∂²R_e‖` on a 9-point drift grid (`a_truth`, `:104-117`);
+  * `f_F, f_D, f_H, f_G` vs `‖φ^(j)(e0)‖`;
+  * `Env4` (or `f4`, `Env5`) vs a rigorous lower bound of the true whole-cell sup;
+  * the Taylor profiles `p_j(s)` vs the exact `‖φ^(2−j)(t)‖` on 33 points.
+
+  Genuine supplies: **0 violations over 300 supply checks** (5 supplies × 60 cases).
+* **Mutation power.** Planted-INVALID supplies, fed through `premise_truth` and through `tc_rad_poly` +
+  `enclosure_check` (`:229-252`):
+
+  | mutant (on the SC4_E3 supply) | cases | premise check flags | enclosure check flags |
+  |---|---|---|---|
+  | `fG_zero` | 60 | 60/60 | 35/60 |
+  | `Env4_zero` | 60 | 60/60 | 0/60 |
+  | `fG_Env4_half_truth` | 60 | 60/60 | 1/60 |
+  | `A0_half` | 60 | 60/60 | 1/60 |
+  | `A0_x0.99` | 60 | 20/60 | 0/60 |
+  | `Env4_midpoint_only` | 60 | 60/60 | 0/60 |
+  | `Env4_x0.9` | 60 | 60/60 | 0/60 |
+  | `fG_sigma3_dropped` | 24 | 24/24 | 14/24 |
+
+* **The pointwise enclosure check is a weak necessary condition.** It reports 0 violations in 9900 point checks for the
+  five genuine supplies (`:210-219`), but the fixtures are loose (worst genuine deviation/radius 0.538). By the
+  mutation table it misses `Env4 := 0` and a halved `A0` almost always. **It is not cited as evidence of premise validity**; the premise-level checks are.
+* **Comparator control (relabelled):** a hand-written wrong composite (coefficient 3 → 2 on `K2D̂`) differs from the
+  polynomial path in 60/60 (`:74-77`). It tests the identity comparator only.
+* **Withdrawn (review B1):** r0's "NC2" (radius := max deviation / 2), which was arithmetic.
+* **Idealization (review N4).** `E3`, `Env5_comp` and `f4_comp` are sups of `phi_poly`, which contains the **exact**
+  source `S(e)`. Their ratios and the SC3_E3 / SC4_E3 / SC4_TCplus radius ratios include a source cancellation that
+  real SC-4w cannot certify, because it sees only σ4 or a source candidate. Validity is unaffected.
 * **Synthetic ratios** (generic cases; a property of these fixtures, not a forecast):
 
   | quantity | range |
@@ -274,30 +305,71 @@ implemented here, because no non-target validation of interval drift was needed 
   | `S3/S0` | 0.063–0.834 |
   | `S2/S1` | 0.261–0.883 |
   | `S1/S0` | 0.857–0.990 |
-  | `E3/E0` | 0.136–0.871 |
-  | `rad(ρ)` ratio SC4_E3 / TCT_base | 0.080–0.799 |
-  | `rad(ρ)` ratio SC4_TCplus / TCT_base | 0.080–0.788 |
+  | `E3/E0` (exact-source idealization) | 0.136–0.871 |
+  | `rad(ρ)` SC3 / TCT_base (no source idealization) | 0.120–0.856 |
+  | `rad(ρ)` SC4_E3 / TCT_base (idealized) | 0.080–0.799 |
 
 **Real CUSUM kernel, non-target drifts {0, 1/4, 1/2, 1, 3}** (`code/d309_hermite.py` →
 `validation/D309_HERMITE_NONTARGET.json`).
-* **H1 (G6 independent check):** the Hermite closed form agrees with the **independent** C11 kernel
-  (`c11_certifier.kernel_apply`) in 1200/1200 cases. The comparison is direct for i = 0 and by central finite
-  differences with rigorous truncation bounds for i = 1, 2, 3 (`:184-200`). Maximum gap 5.8·10⁻⁸.
-* **Negative controls:**
-  * dropping the Hermite sign is detected 592/592 wherever it applies (odd i, non-negligible value);
-  * ignoring the clipping kinks is detected 936/960. The 24 misses are all `w_bump` at state (0, 9/2), where the kink
-    region carries mass below the check's tolerance. This is a coverage limit of that control and is recorded as such.
-* **H2 (DIAGNOSTIC, grid, not certified):** the composite is 0.124–0.314 of the **ideal** surrogate. The ideal surrogate
-  uses the true operator norm (rigorous lower end, `:212-242`) and grid-lower `‖w‖`, so the ratio is conservative.
-  * The per-term submultiplicativity ratios are 0.09–0.68.
-* **H3 / TF (certified):** the certified composite sup is 0.18–0.19 (smooth triple) and 0.22–0.42 (degree-9 triple) of
-  the ideal surrogate. It is sound in 6/6 cases, and the planted-too-small control is detected 6/6.
+* **H1:** the Hermite closed form (`Ki_apply`, `:124-147`) agrees with the independent C11 kernel in
+  1200/1200 cases. The comparison is direct for i = 0 and by central finite differences with
+  rigorous truncation bounds for i = 1, 2, 3 (`fd_check`, `:189-215`). Maximum gap 5.8e-08.
+  * The pass tolerance reaches about 10⁻³ for `w_bump` (review N6). The evidence is the observed gaps, not the pass
+    count.
+  * C11 shares the in-process memoised Gaussian primitives with the closed form (review N7). H1b closes that gap.
+* **H1b (independent, repair r1).** A float Gauss–Legendre quadrature with `math.exp`, sharing no primitive with c7 or
+  C11 (`Ki_quad_float`, `:353-380`), agrees in 1200/1200 cases, maximum gap
+  1.7e-13.
+* **Structural controls through the closed-form code path** (`Ki_apply(drop_sign / ignore_kinks)`):
+
+  | control | comparator | flagged |
+  |---|---|---|
+  | Hermite sign dropped | FD comparator | 592/592 where applicable |
+  | Hermite sign dropped | quadrature comparator | 592/592 |
+  | clipping kinks ignored | FD comparator | 936/960 (non-constant w) |
+  | clipping kinks ignored | quadrature comparator | 955/960 |
+
+* **H2 (DIAGNOSTIC, grid, not certified):** the composite is 0.124–0.314 of the **ideal** surrogate (true operator norm via `op_norm_true`, `:218-248`; grid-lower `‖w‖`).
+* **H3, naive certificate (`box_upper_composite`, `:251-298`).**
+  * Soundness is now **per-box containment** (review N5, `containment`, `:307-331`): every exact point value at the
+    box corners, edge midpoints and centre in the reachable set must lie in that box's enclosure.
+  * Planted defects go **inside** the certificate code path.
+  * The r0 "planted-too-small" control, which was arithmetic, is withdrawn.
+
+  | drift | triple | points | genuine violations | drop_sign | collapse | shrink_half | drop_hull | upper/grid-lower |
+  |---|---|---|---|---|---|---|---|---|
+  | e = 1/4 | w_quad+w_lin+w_const | 749 | 0 | 38 | 513 | 0 | 1 | 1.53 |
+  | e = 1/4 | w_bump+w_bump+w_bump | 749 | 0 | 0 | 749 | 0 | 0 | 1.178e+04 |
+  | e = 3 | w_quad+w_lin+w_const | 749 | 0 | 45 | 265 | 0 | 3 | 4.024 |
+  | e = 3 | w_bump+w_bump+w_bump | 749 | 0 | 0 | 749 | 0 | 0 | 3.879e+04 |
+
+  The naive certificate is sound, but vacuous for the degree-9 triple (§6). There, every defect short of `collapse` stays
+  contained in the vacuous enclosure, so those rows carry no detection power.
+* **Taylor-form certificate (`box_upper_tf`, `d309_hermite_tf.py:69-107`)**, same containment test and planted defects
+  inside `box_upper_tf` (`validation/D309_HERMITE_TF_NONTARGET.json`):
+
+  | drift | triple | depth | points | genuine violations | zero_remainder | half_remainder | drop_sign | drop_hull | upper/grid-lower | upper/ideal surrogate |
+  |---|---|---|---|---|---|---|---|---|---|---|
+  | e = 1/4 | w_quad+w_lin+w_const | 4 | 749 | 0 | 516 | 0 | 95 | 2 | 1.413 | 0.184 |
+  | e = 1/4 | w_bump+w_bump+w_bump | 4 | 749 | 0 | 749 | 219 | 578 | 0 | 1.340 | 0.418 |
+  | e = 1/4 | w_bump+w_bump+w_bump | 5 | 3016 | 0 | 3016 | 69 | 2712 | 0 | 1.217 | 0.380 |
+  | e = 3 | w_quad+w_lin+w_const | 4 | 749 | 0 | 362 | 0 | 379 | 65 | 1.443 | 0.189 |
+  | e = 3 | w_bump+w_bump+w_bump | 4 | 749 | 0 | 699 | 237 | 542 | 0 | 1.314 | 0.238 |
+  | e = 3 | w_bump+w_bump+w_bump | 5 | 3016 | 0 | 3016 | 513 | 2547 | 0 | 1.189 | 0.216 |
+
+  Reading:
+  * **Genuine certificates:** 0 containment violations everywhere.
+  * **Detected defects:** zeroed remainders and a dropped Hermite sign are detected in every run.
+  * **Coverage limit:** a halved remainder, or a dropped window hull, is detected only in some runs. The `O(panel)`
+    decoupling overestimate hides small defects. This matches the independent review's own attack (§1.3 there).
+  * **Consequence:** certificate soundness rests on the reading proof of §5, confirmed independently by the review,
+    with these runs as a sanity layer.
 
 These are declared test functions, **not** K1 candidates. They show that:
-* the Stein-type slack exists on the real kernel;
+* the Stein-type slack exists on the real kernel **for exact sups**;
 * the certificate is computable, stdlib-only.
 
-They do **not** estimate the slack for any real candidate.
+They do **not** estimate the slack for any real candidate, nor a certified gain for one (N3).
 
 ## 8. Data requirement for real-cell use (checked, not assumed)
 
@@ -343,12 +415,12 @@ They do **not** estimate the slack for any real candidate.
 | G2 validity | PASS. SC-3, SC-4w and TC⁺ are proved (§2); SC-T is an identity; SC-S1 is proved. |
 | G3 scope | PASS. Premises and frozen assumptions in §2. The kernel dependence of strictness is stated (§4). |
 | G4 reproducible | PASS. Stdlib-only scripts. The JSONs regenerate from `code/`. |
-| G5 non-target validation | PASS. FSM exact truth (60 cases, 9900 enclosure points); real kernel at non-target drifts (1200 + 20 + 6 checks). |
-| G6 independent check | PARTIAL. Dual independent paths inside the code (Leibniz/polynomial; closed form vs C11). No external review. |
+| G5 non-target validation | PASS on the premise-level truth checks (300 genuine supply checks, 0 violations, with mutation power reported) and on the real-kernel closed form (H1/H1b). The FSM enclosure check is a weak necessary condition and is not cited as evidence. |
+| G6 independent check | PASS for the mathematics and the order-3 certificate. Evidence: the independent review R1 (re-derivation, its own quadrature, per-box attack), the H1b quadrature and the Leibniz/polynomial dual paths. |
 | G7 temporal integrity | PASS. Designed and validated with 0 target evaluations. |
 | G8 no leakage | PASS. The ledger holds only SYNTHETIC / NONTARGET_DRIFT entries; the scan finds 0 findings in D_309 files. |
 | G9 prospective freeze | PASS for the theorem and certificate code. The certificate configuration (depth, panel, Taylor form) can be frozen by a declared rule. |
-| G10 not cosmetic | PASS. SC is a strictly different certified quantity: strict for continuous candidates on the Gaussian kernel (SC-S1); equality case exhibited on FSM. |
+| G10 not cosmetic | PASS for **exact** sups: strict for continuous candidates on the Gaussian kernel (SC-S1); equality case exhibited on FSM. A **certified** gain is not guaranteed (certificate overhead; review N3). |
 
 **Verdict: route NOT killed.** State **VALIDATED_NON_TARGET**. Real use is **BLOCKED** on payloads, U1, U2 and U3.
 FREEZE_READY: **no**, because no real payload exists to evaluate a frozen stage on.

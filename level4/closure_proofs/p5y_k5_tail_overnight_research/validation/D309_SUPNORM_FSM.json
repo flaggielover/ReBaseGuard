@@ -1,5 +1,5 @@
 {
- "declared_rule": "Generic fixtures: seeds 1..24; n = 4 + seed % 4 states; kernel degree 4 in e (random_family, kill 1/5); e0 = 1/8; rho = (1/64, 1/32, 1/16)[seed % 3]; candidate perturbation pert = (1e-6, 1e-4, 1e-2)[(seed // 3) % 3] (uniform integer/100 multiples); source degree (2, 5)[seed % 2] (degree 2 => sigma3 = sigma4 = 0); two sources per fixture; G^ := 0 (premise P2'). Adversarial fixtures: seeds 101..106, n = 5, source degree 2, candidates set to the sign pattern of the maximising row of K_1(e0) (H^), K_2(e0) (D^), K_3(e0) (F^). Grid: 33 equispaced rational points on the closed cell. Fixed before the first run; no fixture is selected by outcome.",
+ "declared_rule": "[repair r1, declared before the re-run: mutants fG_zero, Env4_zero, fG_Env4_half_truth, A0_half, A0_x0.99, Env4_midpoint_only, Env4_x0.9, fG_sigma3_dropped (sigma3 > 0 only) on the SC4_E3 supply; A-truth on a 9-point drift grid] Generic fixtures: seeds 1..24; n = 4 + seed % 4 states; kernel degree 4 in e (random_family, kill 1/5); e0 = 1/8; rho = (1/64, 1/32, 1/16)[seed % 3]; candidate perturbation pert = (1e-6, 1e-4, 1e-2)[(seed // 3) % 3] (uniform integer/100 multiples); source degree (2, 5)[seed % 2] (degree 2 => sigma3 = sigma4 = 0); two sources per fixture; G^ := 0 (premise P2'). Adversarial fixtures: seeds 101..106, n = 5, source degree 2, candidates set to the sign pattern of the maximising row of K_1(e0) (H^), K_2(e0) (D^), K_3(e0) (F^). Grid: 33 equispaced rational points on the closed cell. Fixed before the first run; no fixture is selected by outcome.",
  "rows": [
   {
    "adversarial": false,
@@ -34,6 +34,8 @@
     "E0": 23.160865165654936,
     "E3": 15.460214231743118,
     "E3_lower": 15.460205934228734,
+    "E3_lower_exact": 15.460205934228734,
+    "E5_lower_exact": 75.95472909972096,
     "Env5_comp": 75.95472909972096,
     "Env5_comp_lower": 75.95472909972096,
     "Env5_norm": 119.10108915076455,
@@ -51,16 +53,77 @@
     "S3": 6.530048705564821,
     "S4": 6.530048705564821,
     "TRUE": 6.530048705564821,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 6.16875,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 23,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 4,
    "pert": "1/1000000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.6675145389071626,
@@ -115,6 +178,8 @@
     "E0": 39.302945896618745,
     "E3": 28.67138843672455,
     "E3_lower": 28.67138843672455,
+    "E3_lower_exact": 28.67138843672455,
+    "E5_lower_exact": 108.8135505073641,
     "Env5_comp": 108.8135505073641,
     "Env5_comp_lower": 108.8135505073641,
     "Env5_norm": 151.49733824118408,
@@ -132,16 +197,75 @@
     "S3": 7.611485911559705,
     "S4": 7.329774191495561,
     "TRUE": 7.329773221495562,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 7.18125,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 7,
    "pert": "1/1000000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.729497186092383,
@@ -196,6 +320,8 @@
     "E0": 16.907839257935365,
     "E3": 2.970864834140507,
     "E3_lower": 2.9708640273257734,
+    "E3_lower_exact": 2.9708640273257734,
+    "E5_lower_exact": 12.707930173234853,
     "Env5_comp": 12.707930173234853,
     "Env5_comp_lower": 12.707930173234853,
     "Env5_norm": 50.781003468481224,
@@ -213,16 +339,68 @@
     "S3": 0.5715860127049277,
     "S4": 0.5715866627049276,
     "TRUE": 0.5715860127049277,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 31,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 6,
-   "nc2_planted_radius_violations": 7,
    "pert": "1/1000000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.17570931381703253,
@@ -277,6 +455,8 @@
     "E0": 30.79637895206832,
     "E3": 5.488923957819815,
     "E3_lower": 5.488920334198109,
+    "E3_lower_exact": 5.488920334198109,
+    "E5_lower_exact": 41.83439807376024,
     "Env5_comp": 41.83439807376024,
     "Env5_comp_lower": 41.83439807376024,
     "Env5_norm": 97.60431963358904,
@@ -294,16 +474,68 @@
     "S3": 1.539028296164497,
     "S4": 1.539029696164497,
     "TRUE": 1.539028296164497,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 6,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/1000000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.17823277101385235,
@@ -358,6 +590,8 @@
     "E0": 57.32051563173138,
     "E3": 35.56333144164485,
     "E3_lower": 35.56331478427965,
+    "E3_lower_exact": 35.56331478427965,
+    "E5_lower_exact": 122.27344827474488,
     "Env5_comp": 122.27344827474488,
     "Env5_comp_lower": 122.27344827474488,
     "Env5_norm": 163.22486624820544,
@@ -375,16 +609,77 @@
     "S3": 9.126612478143556,
     "S4": 8.394072798335408,
     "TRUE": 8.394072798335408,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 8.34375,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 15,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 7,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/10000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.6204293707008764,
@@ -439,6 +734,8 @@
     "E0": 29.163451262670844,
     "E3": 18.748171127867867,
     "E3_lower": 18.748171127867867,
+    "E3_lower_exact": 18.748171127867867,
+    "E5_lower_exact": 108.60246505255648,
     "Env5_comp": 108.60246505255648,
     "Env5_comp_lower": 108.60246505255648,
     "Env5_norm": 145.45078893496833,
@@ -456,16 +753,77 @@
     "S3": 6.221527269350319,
     "S4": 5.455492095190767,
     "TRUE": 5.455485095190767,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 5.60625,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 7,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/10000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.6428653096989754,
@@ -520,6 +878,8 @@
     "E0": 15.408966897114203,
     "E3": 5.03616633535337,
     "E3_lower": 5.03616633535337,
+    "E3_lower_exact": 5.03616633535337,
+    "E5_lower_exact": 6.11840097283966,
     "Env5_comp": 6.11840097283966,
     "Env5_comp_lower": 6.11840097283966,
     "Env5_norm": 50.1128092279189,
@@ -537,16 +897,71 @@
     "S3": 0.8159114415591259,
     "S4": 0.8159974415591258,
     "TRUE": 0.8159114415591259,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 14,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 13,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 4,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/10000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.32683348396942463,
@@ -601,6 +1016,8 @@
     "E0": 14.796809658062875,
     "E3": 5.738881422048626,
     "E3_lower": 5.738879181934385,
+    "E3_lower_exact": 5.738879181934385,
+    "E5_lower_exact": 13.369885760392826,
     "Env5_comp": 13.369885760392826,
     "Env5_comp_lower": 13.369885760392826,
     "Env5_norm": 39.36776562704078,
@@ -618,16 +1035,71 @@
     "S3": 1.5642826084590546,
     "S4": 1.5644046084590546,
     "TRUE": 1.5642826084590546,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 4,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/10000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.38784586371437674,
@@ -682,6 +1154,8 @@
     "E0": 55.23203458573281,
     "E3": 48.117221355709376,
     "E3_lower": 48.11720010942013,
+    "E3_lower_exact": 48.11720010942013,
+    "E5_lower_exact": 116.95026449861919,
     "Env5_comp": 116.95026449861919,
     "Env5_comp_lower": 116.95026449861919,
     "Env5_norm": 154.88767789085446,
@@ -699,16 +1173,77 @@
     "S3": 9.380412865047223,
     "S4": 8.857990719739387,
     "TRUE": 8.857853719739389,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 8.64375,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 31,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 7,
    "pert": "1/10000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.8711832130866081,
@@ -763,6 +1298,8 @@
     "E0": 37.84650741783162,
     "E3": 22.08954971867492,
     "E3_lower": 22.089542603583507,
+    "E3_lower_exact": 22.089542603583507,
+    "E5_lower_exact": 112.79123829904037,
     "Env5_comp": 112.79123829904037,
     "Env5_comp_lower": 112.79123829904037,
     "Env5_norm": 136.67174505925982,
@@ -780,16 +1317,75 @@
     "S3": 6.816655541013444,
     "S4": 6.573437998002489,
     "TRUE": 6.573370998002489,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 6.1125,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 26,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 7,
    "pert": "1/10000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.5836615113464153,
@@ -844,6 +1440,8 @@
     "E0": 16.189272059413867,
     "E3": 6.03120726317078,
     "E3_lower": 6.03120726317078,
+    "E3_lower_exact": 6.03120726317078,
+    "E5_lower_exact": 18.67871103997751,
     "Env5_comp": 18.67871103997751,
     "Env5_comp_lower": 18.67871103997751,
     "Env5_norm": 54.600604623140875,
@@ -861,16 +1459,69 @@
     "S3": 1.9512931772866062,
     "S4": 1.967093177286606,
     "TRUE": 1.9512931772866062,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 6,
-   "nc2_planted_radius_violations": 9,
    "pert": "1/100",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.3725434498250776,
@@ -925,6 +1576,8 @@
     "E0": 16.71773033023384,
     "E3": 7.32591438599413,
     "E3_lower": 7.32591041362379,
+    "E3_lower_exact": 7.32591041362379,
+    "E5_lower_exact": 35.19370162691206,
     "Env5_comp": 35.19370162691206,
     "Env5_comp_lower": 35.19370162691206,
     "Env5_norm": 61.766878574343835,
@@ -942,16 +1595,69 @@
     "S3": 2.590576688310932,
     "S4": 2.604776688310932,
     "TRUE": 2.590576688310932,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 6,
-   "nc2_planted_radius_violations": 9,
    "pert": "1/100",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.43821225975545797,
@@ -1006,6 +1712,8 @@
     "E0": 53.159701918112106,
     "E3": 34.829394559826355,
     "E3_lower": 34.829394559826355,
+    "E3_lower_exact": 34.829394559826355,
+    "E5_lower_exact": 101.87066605737387,
     "Env5_comp": 101.87066605737387,
     "Env5_comp_lower": 101.87066605737387,
     "Env5_norm": 191.6213393149337,
@@ -1023,16 +1731,74 @@
     "S3": 6.905172459564448,
     "S4": 6.263559931138477,
     "TRUE": 6.262259931138477,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 5.85,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 7,
-   "nc2_planted_radius_violations": 6,
    "pert": "1/100",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.6551841583588638,
@@ -1087,6 +1853,8 @@
     "E0": 49.69051050888781,
     "E3": 38.402834564911714,
     "E3_lower": 38.40280828593273,
+    "E3_lower_exact": 38.40280828593273,
+    "E5_lower_exact": 126.7732626526639,
     "Env5_comp": 126.7732626526639,
     "Env5_comp_lower": 126.7732626526639,
     "Env5_norm": 152.03877132886268,
@@ -1104,16 +1872,75 @@
     "S3": 8.018798526159273,
     "S4": 7.030908386431916,
     "TRUE": 7.029808386431916,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 7.33125,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 7,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/100",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.7728404110085135,
@@ -1168,6 +1995,8 @@
     "E0": 16.845224689567946,
     "E3": 6.804086445461391,
     "E3_lower": 6.804086445461391,
+    "E3_lower_exact": 6.804086445461391,
+    "E5_lower_exact": 25.576348172745508,
     "Env5_comp": 25.576348172745508,
     "Env5_comp_lower": 25.576348172745508,
     "Env5_norm": 47.60184675670684,
@@ -1185,16 +2014,68 @@
     "S3": 0.5238135508908917,
     "S4": 0.5351135508908916,
     "TRUE": 0.5238135508908917,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 4,
-   "nc2_planted_radius_violations": 4,
    "pert": "1/100",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.4039178206791794,
@@ -1249,6 +2130,8 @@
     "E0": 11.327807074371306,
     "E3": 5.506994995019094,
     "E3_lower": 5.506994995019094,
+    "E3_lower_exact": 5.506994995019094,
+    "E5_lower_exact": 21.146000136159834,
     "Env5_comp": 21.146000136159834,
     "Env5_comp_lower": 21.146000136159834,
     "Env5_norm": 35.64894094114405,
@@ -1266,16 +2149,67 @@
     "S3": 0.8875527241301826,
     "S4": 0.8977527241301826,
     "TRUE": 0.8875527241301826,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 4,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/100",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.486148374426189,
@@ -1330,6 +2264,8 @@
     "E0": 39.46031194576637,
     "E3": 28.151023480820083,
     "E3_lower": 28.1510144990723,
+    "E3_lower_exact": 28.1510144990723,
+    "E5_lower_exact": 134.23105791263714,
     "Env5_comp": 134.23105791263714,
     "Env5_comp_lower": 134.23105791263714,
     "Env5_norm": 165.74961199130564,
@@ -1347,16 +2283,77 @@
     "S3": 4.714134902459757,
     "S4": 4.127399854451135,
     "TRUE": 4.127398744451136,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 3.69375,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 19,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/1000000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.7134009360977785,
@@ -1411,6 +2408,8 @@
     "E0": 46.31940545813889,
     "E3": 25.5182210227646,
     "E3_lower": 25.5182210227646,
+    "E3_lower_exact": 25.5182210227646,
+    "E5_lower_exact": 129.43520818177038,
     "Env5_comp": 129.43520818177038,
     "Env5_comp_lower": 129.43520818177038,
     "Env5_norm": 185.14536121997097,
@@ -1428,16 +2427,77 @@
     "S3": 6.00693999569168,
     "S4": 4.653056090007224,
     "TRUE": 4.653056010007225,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 5.00625,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/1000000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.5509185787331977,
@@ -1492,6 +2552,8 @@
     "E0": 15.35009688016991,
     "E3": 3.8751488477415035,
     "E3_lower": 3.8751488477415035,
+    "E3_lower_exact": 3.8751488477415035,
+    "E5_lower_exact": 11.160419248769648,
     "Env5_comp": 11.160419248769648,
     "Env5_comp_lower": 11.160419248769648,
     "Env5_norm": 52.495332295537544,
@@ -1509,16 +2571,70 @@
     "S3": 1.3832276244535642,
     "S4": 1.3832278344535642,
     "TRUE": 1.3832276244535642,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 8,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 6,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/1000000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.25245110034110807,
@@ -1573,6 +2689,8 @@
     "E0": 17.733525173858418,
     "E3": 5.0300735928327,
     "E3_lower": 5.0300735928327,
+    "E3_lower_exact": 5.0300735928327,
+    "E5_lower_exact": 10.892229430845179,
     "Env5_comp": 10.892229430845179,
     "Env5_comp_lower": 10.892229430845179,
     "Env5_norm": 52.48953913290143,
@@ -1590,16 +2708,68 @@
     "S3": 0.829483911978838,
     "S4": 0.8294853619788379,
     "TRUE": 0.829483911978838,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 6,
-   "nc2_planted_radius_violations": 6,
    "pert": "1/1000000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.2836476979911304,
@@ -1654,6 +2824,8 @@
     "E0": 47.98018013906139,
     "E3": 31.927376337293154,
     "E3_lower": 31.927376337293154,
+    "E3_lower_exact": 31.927376337293154,
+    "E5_lower_exact": 104.45233625047021,
     "Env5_comp": 104.45233625047021,
     "Env5_comp_lower": 104.45233625047021,
     "Env5_norm": 139.4678149948655,
@@ -1671,16 +2843,75 @@
     "S3": 8.111623762053032,
     "S4": 6.552434081794115,
     "TRUE": 6.552432991794115,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 7.06875,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 24,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 7,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/1000000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.6654284382584174,
@@ -1735,6 +2966,8 @@
     "E0": 59.52717118240027,
     "E3": 45.312744036947855,
     "E3_lower": 45.31271251482489,
+    "E3_lower_exact": 45.31271251482489,
+    "E5_lower_exact": 126.68669473729616,
     "Env5_comp": 126.68669473729616,
     "Env5_comp_lower": 126.68669473729616,
     "Env5_norm": 168.3546488393248,
@@ -1752,16 +2985,75 @@
     "S3": 5.898371213408705,
     "S4": 5.074579946097451,
     "TRUE": 5.074579686097452,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 5.30625,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 8,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 7,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/1000000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.7612111097653665,
@@ -1816,6 +3108,8 @@
     "E0": 18.978028092322408,
     "E3": 8.411143604133926,
     "E3_lower": 8.411143604133926,
+    "E3_lower_exact": 8.411143604133926,
+    "E5_lower_exact": 24.59536090466216,
     "Env5_comp": 24.59536090466216,
     "Env5_comp_lower": 24.59536090466216,
     "Env5_norm": 62.180845011353895,
@@ -1833,16 +3127,71 @@
     "S3": 2.337714299772766,
     "S4": 2.337911299772766,
     "TRUE": 2.337714299772766,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 10,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 4,
-   "nc2_planted_radius_violations": 6,
    "pert": "1/10000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.4432042972650393,
@@ -1897,6 +3246,8 @@
     "E0": 17.8434775770323,
     "E3": 3.55895704731986,
     "E3_lower": 3.558955879290844,
+    "E3_lower_exact": 3.558955879290844,
+    "E5_lower_exact": 28.307692407433347,
     "Env5_comp": 28.307692407433347,
     "Env5_comp_lower": 28.307692407433347,
     "Env5_norm": 51.561706039621065,
@@ -1914,16 +3265,69 @@
     "S3": 0.7396339297670853,
     "S4": 0.7398259297670853,
     "TRUE": 0.7396339297670853,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 31,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 4,
-   "nc2_planted_radius_violations": 9,
    "pert": "1/10000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.19945422813212513,
@@ -1978,6 +3382,8 @@
     "E0": 43.292607423212544,
     "E3": 34.81319344340909,
     "E3_lower": 34.81319344340909,
+    "E3_lower_exact": 34.81319344340909,
+    "E5_lower_exact": 105.75000774823714,
     "Env5_comp": 105.75000774823714,
     "Env5_comp_lower": 105.75000774823714,
     "Env5_norm": 131.15791231854675,
@@ -1995,16 +3401,77 @@
     "S3": 5.324883330019174,
     "S4": 4.087774669980827,
     "TRUE": 4.087616669980826,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 4.70625,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 21,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/10000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.8041371383129726,
@@ -2059,6 +3526,8 @@
     "E0": 47.388099050787815,
     "E3": 26.942119718348806,
     "E3_lower": 26.94210985297959,
+    "E3_lower_exact": 26.94210985297959,
+    "E5_lower_exact": 113.10175067086708,
     "Env5_comp": 113.10175067086708,
     "Env5_comp_lower": 113.10175067086708,
     "Env5_norm": 133.64463955840318,
@@ -2076,16 +3545,79 @@
     "S3": 8.823381974451575,
     "S4": 7.533713515525706,
     "TRUE": 7.533629515525706,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 7.875,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/10000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.5685418967634428,
@@ -2140,6 +3672,8 @@
     "E0": 20.294342137687803,
     "E3": 4.161456941332737,
     "E3_lower": 4.161456941332737,
+    "E3_lower_exact": 4.161456941332737,
+    "E5_lower_exact": 14.51657968878637,
     "Env5_comp": 14.51657968878637,
     "Env5_comp_lower": 14.51657968878637,
     "Env5_norm": 63.564969272591085,
@@ -2157,16 +3691,68 @@
     "S3": 1.6485369444228164,
     "S4": 1.6486299444228163,
     "TRUE": 1.6485369444228164,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 20,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 6,
-   "nc2_planted_radius_violations": 6,
    "pert": "1/10000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.20505503026898633,
@@ -2221,6 +3807,8 @@
     "E0": 12.386360432528154,
     "E3": 2.77062332669698,
     "E3_lower": 2.77062332669698,
+    "E3_lower_exact": 2.77062332669698,
+    "E5_lower_exact": 9.372857396005397,
     "Env5_comp": 9.372857396005397,
     "Env5_comp_lower": 9.372857396005397,
     "Env5_norm": 34.367139805204744,
@@ -2238,16 +3826,68 @@
     "S3": 0.4444427645423319,
     "S4": 0.4445897645423319,
     "TRUE": 0.4444427645423319,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 8,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 6,
-   "nc2_planted_radius_violations": 4,
    "pert": "1/10000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.22368340900374353,
@@ -2302,6 +3942,8 @@
     "E0": 52.6171695843033,
     "E3": 37.19466829296263,
     "E3_lower": 37.19466829296263,
+    "E3_lower_exact": 37.19466829296263,
+    "E5_lower_exact": 99.85122027042269,
     "Env5_comp": 99.85122027042269,
     "Env5_comp_lower": 99.85122027042269,
     "Env5_norm": 162.60155512227078,
@@ -2319,16 +3961,74 @@
     "S3": 8.416471435676486,
     "S4": 7.434220983737647,
     "TRUE": 7.4282209837376465,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 7.55625,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 7,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/100",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.7068922290350355,
@@ -2383,6 +4083,8 @@
     "E0": 50.205009806049084,
     "E3": 24.644283747493333,
     "E3_lower": 24.64427709579085,
+    "E3_lower_exact": 24.64427709579085,
+    "E5_lower_exact": 70.77868990161546,
     "Env5_comp": 70.77868990161546,
     "Env5_comp_lower": 70.77868990161546,
     "Env5_norm": 169.44983151900314,
@@ -2400,16 +4102,74 @@
     "S3": 6.899539508016859,
     "S4": 5.762989508016858,
     "TRUE": 5.755789508016859,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 5.1,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 7,
-   "nc2_planted_radius_violations": 10,
    "pert": "1/100",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.49087299938190637,
@@ -2464,6 +4224,8 @@
     "E0": 16.52789347779123,
     "E3": 3.087846089485973,
     "E3_lower": 3.087846089485973,
+    "E3_lower_exact": 3.087846089485973,
+    "E5_lower_exact": 8.454887220003547,
     "Env5_comp": 8.454887220003547,
     "Env5_comp_lower": 8.454887220003547,
     "Env5_norm": 50.585131390447074,
@@ -2481,16 +4243,67 @@
     "S3": 0.9936760173088527,
     "S4": 0.9990760173088526,
     "TRUE": 0.9936760173088527,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 4,
-   "nc2_planted_radius_violations": 9,
    "pert": "1/100",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.1868263547097007,
@@ -2545,6 +4358,8 @@
     "E0": 13.904862585137172,
     "E3": 3.7600189678514346,
     "E3_lower": 3.7600179759243924,
+    "E3_lower_exact": 3.7600179759243924,
+    "E5_lower_exact": 18.90305560762222,
     "Env5_comp": 18.90305560762222,
     "Env5_comp_lower": 18.90305560762222,
     "Env5_norm": 51.198609973671026,
@@ -2562,16 +4377,67 @@
     "S3": 1.6566355720187804,
     "S4": 1.6615355720187803,
     "TRUE": 1.6566355720187804,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 4,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/100",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.2704103650668578,
@@ -2626,6 +4492,8 @@
     "E0": 57.813585508262236,
     "E3": 41.45990345371114,
     "E3_lower": 41.45989175853429,
+    "E3_lower_exact": 41.45989175853429,
+    "E5_lower_exact": 90.33877462790197,
     "Env5_comp": 90.33877462790197,
     "Env5_comp_lower": 90.33877462790197,
     "Env5_norm": 138.4290244295847,
@@ -2643,16 +4511,75 @@
     "S3": 8.049749423278906,
     "S4": 7.8727784351091525,
     "TRUE": 7.859578435109153,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 7.29375,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 9,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 16,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 5,
    "pert": "1/100",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.7171308108504365,
@@ -2707,6 +4634,8 @@
     "E0": 54.75027229192544,
     "E3": 34.7640396782127,
     "E3_lower": 34.76401224228509,
+    "E3_lower_exact": 34.76401224228509,
+    "E5_lower_exact": 98.4201938493702,
     "Env5_comp": 98.4201938493702,
     "Env5_comp_lower": 98.4201938493702,
     "Env5_norm": 171.08060175305548,
@@ -2724,16 +4653,75 @@
     "S3": 6.328791842895825,
     "S4": 4.573325980344185,
     "TRUE": 4.5560259803441845,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 5.1,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 6,
    "pert": "1/100",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.6349564709532906,
@@ -2788,6 +4776,8 @@
     "E0": 14.424049708228239,
     "E3": 3.4474246512385953,
     "E3_lower": 3.4474212349229805,
+    "E3_lower_exact": 3.4474212349229805,
+    "E5_lower_exact": 16.881694610086647,
     "Env5_comp": 16.881694610086647,
     "Env5_comp_lower": 16.881694610086647,
     "Env5_norm": 52.94953821444223,
@@ -2805,16 +4795,72 @@
     "S3": 1.1362613025588248,
     "S4": 1.136261952558825,
     "TRUE": 1.1362613025588248,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 6,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/1000000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.23900532242841638,
@@ -2869,6 +4915,8 @@
     "E0": 13.642133897932164,
     "E3": 6.061171132508184,
     "E3_lower": 6.061171132508184,
+    "E3_lower_exact": 6.061171132508184,
+    "E5_lower_exact": 18.986939002941234,
     "Env5_comp": 18.986939002941234,
     "Env5_comp_lower": 18.986939002941234,
     "Env5_norm": 51.76942736730694,
@@ -2886,16 +4934,72 @@
     "S3": 0.6121980458699472,
     "S4": 0.6121997658699472,
     "TRUE": 0.6121980458699472,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 6,
-   "nc2_planted_radius_violations": 7,
    "pert": "1/1000000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.44429787728640596,
@@ -2950,6 +5054,8 @@
     "E0": 48.57359018416479,
     "E3": 35.28708420255797,
     "E3_lower": 35.28706443871716,
+    "E3_lower_exact": 35.28706443871716,
+    "E5_lower_exact": 126.82962478623323,
     "Env5_comp": 126.82962478623323,
     "Env5_comp_lower": 126.82962478623323,
     "Env5_norm": 163.78131753648861,
@@ -2967,16 +5073,75 @@
     "S3": 6.264052805698328,
     "S4": 5.5718275642186095,
     "TRUE": 5.571825724218609,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 5.68125,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 7,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/1000000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.7264664618935602,
@@ -3031,6 +5196,8 @@
     "E0": 38.48436281883812,
     "E3": 28.66013800605465,
     "E3_lower": 28.660129765534197,
+    "E3_lower_exact": 28.660129765534197,
+    "E5_lower_exact": 113.54605736100446,
     "Env5_comp": 113.54605736100446,
     "Env5_comp_lower": 113.54605736100446,
     "Env5_norm": 154.7794852048857,
@@ -3048,16 +5215,75 @@
     "S3": 5.344419565348259,
     "S4": 5.030047846361228,
     "TRUE": 5.030046706361228,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 5.1375,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 7,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/1000000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.7447216455413286,
@@ -3112,6 +5338,8 @@
     "E0": 12.506423971197913,
     "E3": 2.8732639561486817,
     "E3_lower": 2.873261417811124,
+    "E3_lower_exact": 2.873261417811124,
+    "E5_lower_exact": 7.253629921089049,
     "Env5_comp": 7.253629921089049,
     "Env5_comp_lower": 7.253629921089049,
     "Env5_norm": 53.39390489293137,
@@ -3129,16 +5357,68 @@
     "S3": 0.3594018762700248,
     "S4": 0.3594036662700248,
     "TRUE": 0.3594018762700248,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 22,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 4,
-   "nc2_planted_radius_violations": 6,
    "pert": "1/1000000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.2297430474743029,
@@ -3193,6 +5473,8 @@
     "E0": 15.94391576507576,
     "E3": 6.5574624224970774,
     "E3_lower": 6.5574624224970774,
+    "E3_lower_exact": 6.5574624224970774,
+    "E5_lower_exact": 23.055094295688363,
     "Env5_comp": 23.055094295688363,
     "Env5_comp_lower": 23.055094295688363,
     "Env5_norm": 55.01967066918161,
@@ -3210,16 +5492,69 @@
     "S3": 0.6479018273713449,
     "S4": 0.6479018273713449,
     "TRUE": 0.6479018273713449,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 4,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/1000000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.41128305738172716,
@@ -3274,6 +5609,8 @@
     "E0": 38.28558318109427,
     "E3": 24.374235481117662,
     "E3_lower": 24.374235481117662,
+    "E3_lower_exact": 24.374235481117662,
+    "E5_lower_exact": 104.96182612564292,
     "Env5_comp": 104.96182612564292,
     "Env5_comp_lower": 104.96182612564292,
     "Env5_norm": 189.80057062978028,
@@ -3291,16 +5628,77 @@
     "S3": 8.193894214485304,
     "S4": 8.008391576927115,
     "TRUE": 8.008235576927115,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 7.275,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/10000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.6366426590872425,
@@ -3355,6 +5753,8 @@
     "E0": 35.35462085457691,
     "E3": 23.602133698618225,
     "E3_lower": 23.602133698618225,
+    "E3_lower_exact": 23.602133698618225,
+    "E5_lower_exact": 123.13289649404639,
     "Env5_comp": 123.13289649404639,
     "Env5_comp_lower": 123.13289649404639,
     "Env5_norm": 168.243958955105,
@@ -3372,16 +5772,78 @@
     "S3": 6.036884189570082,
     "S4": 5.507717985914148,
     "TRUE": 5.507548985914148,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 5.5875,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 32,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/10000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.667582712757695,
@@ -3436,6 +5898,8 @@
     "E0": 13.217419097498997,
     "E3": 4.118092021963726,
     "E3_lower": 4.118092021963726,
+    "E3_lower_exact": 4.118092021963726,
+    "E5_lower_exact": 16.730435561623676,
     "Env5_comp": 16.730435561623676,
     "Env5_comp_lower": 16.730435561623676,
     "Env5_norm": 45.17797601202127,
@@ -3453,16 +5917,68 @@
     "S3": 0.21261070233799792,
     "S4": 0.2127867023379979,
     "TRUE": 0.21261070233799792,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 15,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 6,
-   "nc2_planted_radius_violations": 4,
    "pert": "1/10000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.3115655175633307,
@@ -3517,6 +6033,8 @@
     "E0": 9.724370522504366,
     "E3": 1.3216762957613748,
     "E3_lower": 1.3216762957613748,
+    "E3_lower_exact": 1.3216762957613748,
+    "E5_lower_exact": 8.79907959286027,
     "Env5_comp": 8.79907959286027,
     "Env5_comp_lower": 8.79907959286027,
     "Env5_norm": 37.19220232309897,
@@ -3534,16 +6052,68 @@
     "S3": 0.47543089843953434,
     "S4": 0.4755188984395343,
     "TRUE": 0.47543089843953434,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 23,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 6,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/10000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.1359138149562196,
@@ -3598,6 +6168,8 @@
     "E0": 53.23353228774639,
     "E3": 39.88863373788386,
     "E3_lower": 39.88863373788386,
+    "E3_lower_exact": 39.88863373788386,
+    "E5_lower_exact": 130.33773956803756,
     "Env5_comp": 130.33773956803756,
     "Env5_comp_lower": 130.33773956803756,
     "Env5_norm": 168.0644056986033,
@@ -3615,16 +6187,75 @@
     "S3": 3.194971624884016,
     "S4": 2.441030768592507,
     "TRUE": 2.441018768592507,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 2.60625,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 9,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 25,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 7,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/10000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.7493140511937371,
@@ -3679,6 +6310,8 @@
     "E0": 51.69773225022333,
     "E3": 33.80983964978245,
     "E3_lower": 33.80983964978245,
+    "E3_lower_exact": 33.80983964978245,
+    "E5_lower_exact": 128.03872383755623,
     "Env5_comp": 128.03872383755623,
     "Env5_comp_lower": 128.03872383755623,
     "Env5_norm": 180.52948023648915,
@@ -3696,16 +6329,75 @@
     "S3": 4.787952777345086,
     "S4": 4.366354597034118,
     "TRUE": 4.366332597034118,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 4.125,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_sigma3_dropped": {
+     "enclosure_violations": 3,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 24,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 7,
-   "nc2_planted_radius_violations": 4,
    "pert": "1/10000",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.6539907686112554,
@@ -3760,6 +6452,8 @@
     "E0": 14.239281158665058,
     "E3": 3.347418731099147,
     "E3_lower": 3.347418731099147,
+    "E3_lower_exact": 3.347418731099147,
+    "E5_lower_exact": 9.213027305831961,
     "Env5_comp": 9.213027305831961,
     "Env5_comp_lower": 9.213027305831961,
     "Env5_norm": 44.62117762145611,
@@ -3777,16 +6471,69 @@
     "S3": 1.0714148168380504,
     "S4": 1.0815149187375421,
     "TRUE": 1.0714148168380504,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 4,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/100",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.23508340721695317,
@@ -3841,6 +6588,8 @@
     "E0": 16.18896504497414,
     "E3": 2.968487272382665,
     "E3_lower": 2.968487272382665,
+    "E3_lower_exact": 2.968487272382665,
+    "E5_lower_exact": 2.171260859777218,
     "Env5_comp": 2.171260859777218,
     "Env5_comp_lower": 2.171260859777218,
     "Env5_norm": 40.902951094324685,
@@ -3858,16 +6607,69 @@
     "S3": 0.3205239122531504,
     "S4": 0.3303239122531504,
     "TRUE": 0.3205239122531504,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 4,
-   "nc2_planted_radius_violations": 8,
    "pert": "1/100",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.18336485773710598,
@@ -3922,6 +6724,8 @@
     "E0": 8.716644202583714,
     "E3": 1.733064480633803,
     "E3_lower": 1.733064480633803,
+    "E3_lower_exact": 1.733064480633803,
+    "E5_lower_exact": 7.92,
     "Env5_comp": 7.92,
     "Env5_comp_lower": 7.92,
     "Env5_norm": 24.079736842105262,
@@ -3939,16 +6743,67 @@
     "S3": 0.9907192708333333,
     "S4": 0.9907192708333333,
     "TRUE": 0.9907192708333333,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 17,
    "pert": "0",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.19882244133815882,
@@ -4003,6 +6858,8 @@
     "E0": 8.716644202583714,
     "E3": 1.733064480633803,
     "E3_lower": 1.733064480633803,
+    "E3_lower_exact": 1.733064480633803,
+    "E5_lower_exact": 7.92,
     "Env5_comp": 7.92,
     "Env5_comp_lower": 7.92,
     "Env5_norm": 24.079736842105262,
@@ -4020,16 +6877,66 @@
     "S3": 0.9907192708333333,
     "S4": 0.9907192708333333,
     "TRUE": 0.9907192708333333,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 17,
    "pert": "0",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.19882244133815882,
@@ -4084,6 +6991,8 @@
     "E0": 8.707452935571883,
     "E3": 3.8508283975290696,
     "E3_lower": 3.8508283975290696,
+    "E3_lower_exact": 3.8508283975290696,
+    "E5_lower_exact": 8.60625,
     "Env5_comp": 8.60625,
     "Env5_comp_lower": 8.60625,
     "Env5_norm": 23.28314668318719,
@@ -4101,16 +7010,66 @@
     "S3": 1.9285443313953488,
     "S4": 1.9285443313953488,
     "TRUE": 1.9285443313953488,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": false,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 17,
    "pert": "0",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.44224510037804265,
@@ -4165,6 +7124,8 @@
     "E0": 8.707452935571883,
     "E3": 3.8508283975290696,
     "E3_lower": 3.8508283975290696,
+    "E3_lower_exact": 3.8508283975290696,
+    "E5_lower_exact": 8.60625,
     "Env5_comp": 8.60625,
     "Env5_comp_lower": 8.60625,
     "Env5_norm": 23.28314668318719,
@@ -4182,16 +7143,66 @@
     "S3": 1.9285443313953488,
     "S4": 1.9285443313953488,
     "TRUE": 1.9285443313953488,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": false,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 17,
    "pert": "0",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.44224510037804265,
@@ -4246,6 +7257,8 @@
     "E0": 8.289458217577934,
     "E3": 2.2472484853316326,
     "E3_lower": 2.2472484853316326,
+    "E3_lower_exact": 2.2472484853316326,
+    "E5_lower_exact": 15.066964285714286,
     "Env5_comp": 15.066964285714286,
     "Env5_comp_lower": 15.066964285714286,
     "Env5_norm": 24.6807,
@@ -4263,16 +7276,66 @@
     "S3": 1.6675244140625,
     "S4": 1.6675244140625,
     "TRUE": 1.6675244140625,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": false,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 17,
    "pert": "0",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.271097148492323,
@@ -4327,6 +7390,8 @@
     "E0": 8.289458217577934,
     "E3": 2.2472484853316326,
     "E3_lower": 2.2472484853316326,
+    "E3_lower_exact": 2.2472484853316326,
+    "E5_lower_exact": 15.066964285714286,
     "Env5_comp": 15.066964285714286,
     "Env5_comp_lower": 15.066964285714286,
     "Env5_norm": 24.6807,
@@ -4344,16 +7409,66 @@
     "S3": 1.6675244140625,
     "S4": 1.6675244140625,
     "TRUE": 1.6675244140625,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": false,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 17,
    "pert": "0",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.271097148492323,
@@ -4408,6 +7523,8 @@
     "E0": 9.293213547297887,
     "E3": 3.112801016807556,
     "E3_lower": 3.112798828125,
+    "E3_lower_exact": 3.112798828125,
+    "E5_lower_exact": 13.48470588235294,
     "Env5_comp": 13.48470588235294,
     "Env5_comp_lower": 13.48470588235294,
     "Env5_norm": 27.235379464285714,
@@ -4425,16 +7542,66 @@
     "S3": 1.8985882352941177,
     "S4": 1.8985882352941177,
     "TRUE": 1.8985882352941177,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": false,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 17,
    "pert": "0",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.3349542115829933,
@@ -4489,6 +7656,8 @@
     "E0": 9.293213547297887,
     "E3": 3.112801016807556,
     "E3_lower": 3.112798828125,
+    "E3_lower_exact": 3.112798828125,
+    "E5_lower_exact": 13.48470588235294,
     "Env5_comp": 13.48470588235294,
     "Env5_comp_lower": 13.48470588235294,
     "Env5_norm": 27.235379464285714,
@@ -4506,16 +7675,66 @@
     "S3": 1.8985882352941177,
     "S4": 1.8985882352941177,
     "TRUE": 1.8985882352941177,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": false,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 17,
    "pert": "0",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.3349542115829933,
@@ -4570,6 +7789,8 @@
     "E0": 7.976593092729093,
     "E3": 5.976388034119898,
     "E3_lower": 5.976388034119898,
+    "E3_lower_exact": 5.976388034119898,
+    "E5_lower_exact": 15.694936224489796,
     "Env5_comp": 15.694936224489796,
     "Env5_comp_lower": 15.694936224489796,
     "Env5_norm": 23.048380824027724,
@@ -4587,16 +7808,69 @@
     "S3": 1.8597998246173468,
     "S4": 1.8597998246173468,
     "TRUE": 1.8597998246173468,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": false,
     "strict_submult": false
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 17,
    "pert": "0",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.7492406801554861,
@@ -4651,6 +7925,8 @@
     "E0": 7.976593092729093,
     "E3": 5.976388034119898,
     "E3_lower": 5.976388034119898,
+    "E3_lower_exact": 5.976388034119898,
+    "E5_lower_exact": 15.694936224489796,
     "Env5_comp": 15.694936224489796,
     "Env5_comp_lower": 15.694936224489796,
     "Env5_norm": 23.048380824027724,
@@ -4668,16 +7944,68 @@
     "S3": 1.8597998246173468,
     "S4": 1.8597998246173468,
     "TRUE": 1.8597998246173468,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": false,
     "strict_submult": false
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 17,
    "pert": "0",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.7492406801554861,
@@ -4732,6 +8060,8 @@
     "E0": 8.303485513221052,
     "E3": 3.5634641771058777,
     "E3_lower": 3.563461254222973,
+    "E3_lower_exact": 3.563461254222973,
+    "E5_lower_exact": 13.699553571428572,
     "Env5_comp": 13.699553571428572,
     "Env5_comp_lower": 13.699553571428572,
     "Env5_norm": 23.123472744360903,
@@ -4749,16 +8079,70 @@
     "S3": 1.3714833192567568,
     "S4": 1.3714833192567568,
     "TRUE": 1.3714833192567568,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4",
+      "profile_p2"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 17,
    "pert": "0",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 0,
    "ratios": {
     "E3_over_E0": 0.4291528143731962,
@@ -4813,6 +8197,8 @@
     "E0": 8.303485513221052,
     "E3": 3.5634641771058777,
     "E3_lower": 3.563461254222973,
+    "E3_lower_exact": 3.563461254222973,
+    "E5_lower_exact": 13.699553571428572,
     "Env5_comp": 13.699553571428572,
     "Env5_comp_lower": 13.699553571428572,
     "Env5_norm": 23.123472744360903,
@@ -4830,16 +8216,66 @@
     "S3": 1.3714833192567568,
     "S4": 1.3714833192567568,
     "TRUE": 1.3714833192567568,
+    "comparator_control_differs": true,
     "identity_phi3": true,
     "ladder_ok": true,
-    "nc1_wrong_composite_detected": true,
     "sigma3": 0.0,
     "strict_crossterm": true,
     "strict_submult": true
    },
+   "mutants": {
+    "A0_half": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "A0"
+     ]
+    },
+    "A0_x0.99": {
+     "enclosure_violations": 0,
+     "premise_check_flags": []
+    },
+    "Env4_midpoint_only": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_x0.9": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "Env4_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "Env4"
+     ]
+    },
+    "fG_Env4_half_truth": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "Env4"
+     ]
+    },
+    "fG_zero": {
+     "enclosure_violations": 0,
+     "premise_check_flags": [
+      "f_G",
+      "profile_p2"
+     ]
+    }
+   },
    "n": 5,
-   "nc2_planted_radius_violations": 17,
    "pert": "0",
+   "premise_truth_genuine_violations": {
+    "SC3": [],
+    "SC3_E3": [],
+    "SC4_E3": [],
+    "SC4_TCplus": [],
+    "TCT_base": []
+   },
    "r": 1,
    "ratios": {
     "E3_over_E0": 0.4291528143731962,
@@ -4952,13 +8388,57 @@
   },
   "cases_adversarial": 12,
   "cases_generic": 48,
+  "comparator_control_differs": 60,
   "enclosure_points_checked": 9900,
   "enclosure_violations_total": 0,
+  "enclosure_worst_dev_over_rad_genuine": 0.537700421891824,
   "env_ok_all": true,
   "identity_all_orders_all": true,
   "ladder_ok_all": true,
-  "nc1_detected": 60,
-  "nc2_detected": 60,
+  "mutant_power": {
+   "A0_half": {
+    "applicable": 60,
+    "enclosure_check_detects": 1,
+    "premise_check_detects": 60
+   },
+   "A0_x0.99": {
+    "applicable": 60,
+    "enclosure_check_detects": 0,
+    "premise_check_detects": 20
+   },
+   "Env4_midpoint_only": {
+    "applicable": 60,
+    "enclosure_check_detects": 0,
+    "premise_check_detects": 60
+   },
+   "Env4_x0.9": {
+    "applicable": 60,
+    "enclosure_check_detects": 0,
+    "premise_check_detects": 60
+   },
+   "Env4_zero": {
+    "applicable": 60,
+    "enclosure_check_detects": 0,
+    "premise_check_detects": 60
+   },
+   "fG_Env4_half_truth": {
+    "applicable": 60,
+    "enclosure_check_detects": 1,
+    "premise_check_detects": 60
+   },
+   "fG_sigma3_dropped": {
+    "applicable": 24,
+    "enclosure_check_detects": 14,
+    "premise_check_detects": 24
+   },
+   "fG_zero": {
+    "applicable": 60,
+    "enclosure_check_detects": 35,
+    "premise_check_detects": 60
+   }
+  },
+  "premise_truth_genuine_violations_total": 0,
+  "premise_truth_supplies_checked": 300,
   "rad_rho_over_base_generic": {
    "SC3": [
     0.1199755783494238,
@@ -4979,6 +8459,6 @@
   },
   "strict_crossterm_generic": 48,
   "strict_submult_generic": 48,
-  "wall_s": 7.56
+  "wall_s": 33.13
  }
 }

@@ -1,5 +1,5 @@
 {
- "declared_rule": "Fixtures: seeds 1..10, n = 4 + seed % 3, kernel degree 4 (random_family, kill 1/5, e-range (0, 3/8)), two sources of degree 5 (make_sources), W = K_e S_0 with coefficient 1/2, candidate perturbation pert = (1e-6, 1e-4, 1e-3)[seed % 3] (seeded by seed, source index and midpoint), G^ := 0, Lemma-G constants on each (sub)cell. Parent cell e0 = 1/4, rho0 = 1/8. C3: rho_k = rho0/2^k, k = 0..4, same e0. C4: N in {2, 3, 4} equal subcells of the parent. C5: new record on the binding quarter. C6: DRP-1 with depth cap 4, synthetic threshold theta = gmax + kappa (Gamma_TPT(parent) - gmax), kappa in {1/2, 1/4, 1/16}. Truth grid: 65 points per (sub)cell. Riemann: 256 panels. Fixed before the first run.",
+ "declared_rule": "Fixtures: seeds 1..10, n = 4 + seed % 3, kernel degree 4 (random_family, kill 1/5, e-range (0, 3/8)), two sources of degree 5 (make_sources), W = K_e S_0 with coefficient 1/2, candidate perturbation pert = (1e-6, 1e-4, 1e-3)[seed % 3] (seeded by seed, source index and midpoint), G^ := 0, Lemma-G constants on each (sub)cell. Parent cell e0 = 1/4, rho0 = 1/8. C3: rho_k = rho0/2^k, k = 0..4, same e0. C4: N in {2, 3, 4} equal subcells of the parent. C5: new record on the binding quarter. C6: DRP-1 with depth cap 4, synthetic threshold theta = gmax + kappa (Gamma_TPT(parent) - gmax), kappa in {1/2, 1/4, 1/16}. Truth grid: 65 points per (sub)cell. Riemann: 256 panels. Fixed before the first run. Repair r1 (declared before the re-run): transport mutants as in the docstring on every record.",
  "fixtures": [
   {
    "C1": {
@@ -82,7 +82,7 @@
    },
    "C4": {
     "2": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.2550599373535029,
      "gain_fraction_of_parent_slack": 0.7644280600601012,
      "pred_gain_parent_scaling": 0.10199756838297472,
@@ -92,7 +92,7 @@
      "sound_all": true
     },
     "3": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.29899078804880735,
      "gain_fraction_of_parent_slack": 0.9087916095919174,
      "pred_gain_parent_scaling": 0.12022039191500186,
@@ -102,7 +102,7 @@
      "sound_all": true
     },
     "4": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.3141031838745018,
      "gain_fraction_of_parent_slack": 0.9544253774043796,
      "pred_gain_parent_scaling": 0.12653324494111381,
@@ -147,12 +147,57 @@
     }
    },
    "NC_flat_profile_value_minus_gmax": 0.0017133961449371491,
-   "NC_g_hi_planted_detected": true,
-   "NC_half_transport_detected": true,
+   "harness_midpoint_check_flags_shifted": true,
    "midpoint_enclosures_valid": true,
    "n": 5,
    "pert": "1/10000",
-   "seed": 1
+   "seed": 1,
+   "transport_mutants": {
+    "flat_rad0": {
+     "flagged": 0,
+     "records": 14
+    },
+    "midpoint_no_width": {
+     "flagged": 4,
+     "records": 14
+    },
+    "no_W": {
+     "flagged": 0,
+     "records": 14
+    },
+    "no_midpoint_width": {
+     "flagged": 0,
+     "records": 14
+    },
+    "no_rad": {
+     "flagged": 0,
+     "records": 14
+    },
+    "profile_flat_rad0": {
+     "flagged": 11,
+     "records": 14
+    },
+    "profile_genuine": {
+     "flagged": 0,
+     "records": 14
+    },
+    "profile_no_W": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_no_rad": {
+     "flagged": 11,
+     "records": 14
+    },
+    "profile_rad_half": {
+     "flagged": 0,
+     "records": 14
+    },
+    "rad_half": {
+     "flagged": 0,
+     "records": 14
+    }
+   }
   },
   {
    "C1": {
@@ -235,7 +280,7 @@
    },
    "C4": {
     "2": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.374421669288612,
      "gain_fraction_of_parent_slack": 0.7291714325383842,
      "pred_gain_parent_scaling": 0.14419942175309594,
@@ -245,7 +290,7 @@
      "sound_all": true
     },
     "3": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.4361627020953967,
      "gain_fraction_of_parent_slack": 0.8662886091407532,
      "pred_gain_parent_scaling": 0.16906712640972202,
@@ -255,7 +300,7 @@
      "sound_all": true
     },
     "4": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.4564437901090327,
      "gain_fraction_of_parent_slack": 0.9118539186617892,
      "pred_gain_parent_scaling": 0.17747076945308266,
@@ -300,12 +345,57 @@
     }
    },
    "NC_flat_profile_value_minus_gmax": 0.004363150583712138,
-   "NC_g_hi_planted_detected": true,
-   "NC_half_transport_detected": true,
+   "harness_midpoint_check_flags_shifted": true,
    "midpoint_enclosures_valid": true,
    "n": 6,
    "pert": "1/1000",
-   "seed": 2
+   "seed": 2,
+   "transport_mutants": {
+    "flat_rad0": {
+     "flagged": 0,
+     "records": 14
+    },
+    "midpoint_no_width": {
+     "flagged": 5,
+     "records": 14
+    },
+    "no_W": {
+     "flagged": 0,
+     "records": 14
+    },
+    "no_midpoint_width": {
+     "flagged": 0,
+     "records": 14
+    },
+    "no_rad": {
+     "flagged": 0,
+     "records": 14
+    },
+    "profile_flat_rad0": {
+     "flagged": 9,
+     "records": 14
+    },
+    "profile_genuine": {
+     "flagged": 0,
+     "records": 14
+    },
+    "profile_no_W": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_no_rad": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_rad_half": {
+     "flagged": 0,
+     "records": 14
+    },
+    "rad_half": {
+     "flagged": 0,
+     "records": 14
+    }
+   }
   },
   {
    "C1": {
@@ -388,7 +478,7 @@
    },
    "C4": {
     "2": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.43183488441059376,
      "gain_fraction_of_parent_slack": 0.7376609428136535,
      "pred_gain_parent_scaling": 0.17789842323863583,
@@ -398,7 +488,7 @@
      "sound_all": true
     },
     "3": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.5081804347881399,
      "gain_fraction_of_parent_slack": 0.8813037848262886,
      "pred_gain_parent_scaling": 0.20529430574889365,
@@ -408,7 +498,7 @@
      "sound_all": true
     },
     "4": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.5345185841650341,
      "gain_fraction_of_parent_slack": 0.9326093841291773,
      "pred_gain_parent_scaling": 0.21319546950314597,
@@ -453,12 +543,57 @@
     }
    },
    "NC_flat_profile_value_minus_gmax": -0.02355061404912668,
-   "NC_g_hi_planted_detected": true,
-   "NC_half_transport_detected": true,
+   "harness_midpoint_check_flags_shifted": true,
    "midpoint_enclosures_valid": true,
    "n": 4,
    "pert": "1/1000000",
-   "seed": 3
+   "seed": 3,
+   "transport_mutants": {
+    "flat_rad0": {
+     "flagged": 14,
+     "records": 14
+    },
+    "midpoint_no_width": {
+     "flagged": 5,
+     "records": 14
+    },
+    "no_W": {
+     "flagged": 0,
+     "records": 14
+    },
+    "no_midpoint_width": {
+     "flagged": 0,
+     "records": 14
+    },
+    "no_rad": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_flat_rad0": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_genuine": {
+     "flagged": 0,
+     "records": 14
+    },
+    "profile_no_W": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_no_rad": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_rad_half": {
+     "flagged": 0,
+     "records": 14
+    },
+    "rad_half": {
+     "flagged": 0,
+     "records": 14
+    }
+   }
   },
   {
    "C1": {
@@ -541,7 +676,7 @@
    },
    "C4": {
     "2": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.49832864890869216,
      "gain_fraction_of_parent_slack": 0.8917804292423617,
      "pred_gain_parent_scaling": 0.1767931611513171,
@@ -551,7 +686,7 @@
      "sound_all": true
     },
     "3": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.582471634727418,
      "gain_fraction_of_parent_slack": 0.9582157554701073,
      "pred_gain_parent_scaling": 0.20709528268005156,
@@ -561,7 +696,7 @@
      "sound_all": true
     },
     "4": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.5939978394889066,
      "gain_fraction_of_parent_slack": 0.9776323499534064,
      "pred_gain_parent_scaling": 0.21727235862696842,
@@ -606,12 +741,57 @@
     }
    },
    "NC_flat_profile_value_minus_gmax": 0.002472820609253059,
-   "NC_g_hi_planted_detected": true,
-   "NC_half_transport_detected": true,
+   "harness_midpoint_check_flags_shifted": true,
    "midpoint_enclosures_valid": true,
    "n": 5,
    "pert": "1/10000",
-   "seed": 4
+   "seed": 4,
+   "transport_mutants": {
+    "flat_rad0": {
+     "flagged": 0,
+     "records": 14
+    },
+    "midpoint_no_width": {
+     "flagged": 8,
+     "records": 14
+    },
+    "no_W": {
+     "flagged": 0,
+     "records": 14
+    },
+    "no_midpoint_width": {
+     "flagged": 0,
+     "records": 14
+    },
+    "no_rad": {
+     "flagged": 0,
+     "records": 14
+    },
+    "profile_flat_rad0": {
+     "flagged": 12,
+     "records": 14
+    },
+    "profile_genuine": {
+     "flagged": 0,
+     "records": 14
+    },
+    "profile_no_W": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_no_rad": {
+     "flagged": 13,
+     "records": 14
+    },
+    "profile_rad_half": {
+     "flagged": 0,
+     "records": 14
+    },
+    "rad_half": {
+     "flagged": 0,
+     "records": 14
+    }
+   }
   },
   {
    "C1": {
@@ -694,7 +874,7 @@
    },
    "C4": {
     "2": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.4501086417834241,
      "gain_fraction_of_parent_slack": 0.742300700455248,
      "pred_gain_parent_scaling": 0.1845033027719177,
@@ -704,7 +884,7 @@
      "sound_all": true
     },
     "3": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.5410517188530775,
      "gain_fraction_of_parent_slack": 0.9028909558423616,
      "pred_gain_parent_scaling": 0.22238928576601188,
@@ -714,7 +894,7 @@
      "sound_all": true
     },
     "4": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.5743157468061603,
      "gain_fraction_of_parent_slack": 0.9405843252679978,
      "pred_gain_parent_scaling": 0.23744478065145225,
@@ -759,12 +939,57 @@
     }
    },
    "NC_flat_profile_value_minus_gmax": 0.016558019341234784,
-   "NC_g_hi_planted_detected": true,
-   "NC_half_transport_detected": false,
+   "harness_midpoint_check_flags_shifted": true,
    "midpoint_enclosures_valid": true,
    "n": 6,
    "pert": "1/1000",
-   "seed": 5
+   "seed": 5,
+   "transport_mutants": {
+    "flat_rad0": {
+     "flagged": 0,
+     "records": 14
+    },
+    "midpoint_no_width": {
+     "flagged": 3,
+     "records": 14
+    },
+    "no_W": {
+     "flagged": 0,
+     "records": 14
+    },
+    "no_midpoint_width": {
+     "flagged": 0,
+     "records": 14
+    },
+    "no_rad": {
+     "flagged": 0,
+     "records": 14
+    },
+    "profile_flat_rad0": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_genuine": {
+     "flagged": 0,
+     "records": 14
+    },
+    "profile_no_W": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_no_rad": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_rad_half": {
+     "flagged": 0,
+     "records": 14
+    },
+    "rad_half": {
+     "flagged": 0,
+     "records": 14
+    }
+   }
   },
   {
    "C1": {
@@ -847,7 +1072,7 @@
    },
    "C4": {
     "2": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.34705801234793165,
      "gain_fraction_of_parent_slack": 0.7556349827550985,
      "pred_gain_parent_scaling": 0.14137694909463988,
@@ -857,7 +1082,7 @@
      "sound_all": true
     },
     "3": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.40521987882083516,
      "gain_fraction_of_parent_slack": 0.8922982714776495,
      "pred_gain_parent_scaling": 0.16078818922575905,
@@ -867,7 +1092,7 @@
      "sound_all": true
     },
     "4": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.4248511871521772,
      "gain_fraction_of_parent_slack": 0.9396886430696981,
      "pred_gain_parent_scaling": 0.16531611532396648,
@@ -912,12 +1137,57 @@
     }
    },
    "NC_flat_profile_value_minus_gmax": -0.03232184775092987,
-   "NC_g_hi_planted_detected": true,
-   "NC_half_transport_detected": true,
+   "harness_midpoint_check_flags_shifted": true,
    "midpoint_enclosures_valid": true,
    "n": 4,
    "pert": "1/1000000",
-   "seed": 6
+   "seed": 6,
+   "transport_mutants": {
+    "flat_rad0": {
+     "flagged": 14,
+     "records": 14
+    },
+    "midpoint_no_width": {
+     "flagged": 9,
+     "records": 14
+    },
+    "no_W": {
+     "flagged": 1,
+     "records": 14
+    },
+    "no_midpoint_width": {
+     "flagged": 0,
+     "records": 14
+    },
+    "no_rad": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_flat_rad0": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_genuine": {
+     "flagged": 0,
+     "records": 14
+    },
+    "profile_no_W": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_no_rad": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_rad_half": {
+     "flagged": 0,
+     "records": 14
+    },
+    "rad_half": {
+     "flagged": 0,
+     "records": 14
+    }
+   }
   },
   {
    "C1": {
@@ -1000,7 +1270,7 @@
    },
    "C4": {
     "2": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.4591434922654251,
      "gain_fraction_of_parent_slack": 0.8440524610718896,
      "pred_gain_parent_scaling": 0.07994434492873942,
@@ -1010,7 +1280,7 @@
      "sound_all": true
     },
     "3": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.5192045965673941,
      "gain_fraction_of_parent_slack": 0.9381806709559275,
      "pred_gain_parent_scaling": 0.09290951758798612,
@@ -1020,7 +1290,7 @@
      "sound_all": true
     },
     "4": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.5307024500475815,
      "gain_fraction_of_parent_slack": 0.9659611395072214,
      "pred_gain_parent_scaling": 0.09741088872205007,
@@ -1065,12 +1335,57 @@
     }
    },
    "NC_flat_profile_value_minus_gmax": 0.011188723831562027,
-   "NC_g_hi_planted_detected": true,
-   "NC_half_transport_detected": true,
+   "harness_midpoint_check_flags_shifted": true,
    "midpoint_enclosures_valid": true,
    "n": 5,
    "pert": "1/10000",
-   "seed": 7
+   "seed": 7,
+   "transport_mutants": {
+    "flat_rad0": {
+     "flagged": 0,
+     "records": 14
+    },
+    "midpoint_no_width": {
+     "flagged": 4,
+     "records": 14
+    },
+    "no_W": {
+     "flagged": 0,
+     "records": 14
+    },
+    "no_midpoint_width": {
+     "flagged": 0,
+     "records": 14
+    },
+    "no_rad": {
+     "flagged": 0,
+     "records": 14
+    },
+    "profile_flat_rad0": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_genuine": {
+     "flagged": 0,
+     "records": 14
+    },
+    "profile_no_W": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_no_rad": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_rad_half": {
+     "flagged": 0,
+     "records": 14
+    },
+    "rad_half": {
+     "flagged": 0,
+     "records": 14
+    }
+   }
   },
   {
    "C1": {
@@ -1153,7 +1468,7 @@
    },
    "C4": {
     "2": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.3088405603014592,
      "gain_fraction_of_parent_slack": 0.7095867664809999,
      "pred_gain_parent_scaling": 0.1309538987358179,
@@ -1163,7 +1478,7 @@
      "sound_all": true
     },
     "3": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.36536405078981143,
      "gain_fraction_of_parent_slack": 0.8553269248764674,
      "pred_gain_parent_scaling": 0.1475929907242706,
@@ -1173,7 +1488,7 @@
      "sound_all": true
     },
     "4": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.3829156739906314,
      "gain_fraction_of_parent_slack": 0.8930144188170596,
      "pred_gain_parent_scaling": 0.15085910024230412,
@@ -1218,12 +1533,57 @@
     }
    },
    "NC_flat_profile_value_minus_gmax": -0.02972459942968093,
-   "NC_g_hi_planted_detected": true,
-   "NC_half_transport_detected": true,
+   "harness_midpoint_check_flags_shifted": true,
    "midpoint_enclosures_valid": true,
    "n": 6,
    "pert": "1/1000",
-   "seed": 8
+   "seed": 8,
+   "transport_mutants": {
+    "flat_rad0": {
+     "flagged": 4,
+     "records": 14
+    },
+    "midpoint_no_width": {
+     "flagged": 10,
+     "records": 14
+    },
+    "no_W": {
+     "flagged": 0,
+     "records": 14
+    },
+    "no_midpoint_width": {
+     "flagged": 1,
+     "records": 14
+    },
+    "no_rad": {
+     "flagged": 4,
+     "records": 14
+    },
+    "profile_flat_rad0": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_genuine": {
+     "flagged": 0,
+     "records": 14
+    },
+    "profile_no_W": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_no_rad": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_rad_half": {
+     "flagged": 0,
+     "records": 14
+    },
+    "rad_half": {
+     "flagged": 0,
+     "records": 14
+    }
+   }
   },
   {
    "C1": {
@@ -1306,7 +1666,7 @@
    },
    "C4": {
     "2": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.4324779106561048,
      "gain_fraction_of_parent_slack": 0.8343620707446554,
      "pred_gain_parent_scaling": 0.06638567270996228,
@@ -1316,7 +1676,7 @@
      "sound_all": true
     },
     "3": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.47419250500902327,
      "gain_fraction_of_parent_slack": 0.9354508728271694,
      "pred_gain_parent_scaling": 0.07796002297621421,
@@ -1326,7 +1686,7 @@
      "sound_all": true
     },
     "4": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.4856544586685643,
      "gain_fraction_of_parent_slack": 0.9659988231157417,
      "pred_gain_parent_scaling": 0.0822760667663101,
@@ -1371,12 +1731,57 @@
     }
    },
    "NC_flat_profile_value_minus_gmax": 0.014487257147939416,
-   "NC_g_hi_planted_detected": true,
-   "NC_half_transport_detected": true,
+   "harness_midpoint_check_flags_shifted": true,
    "midpoint_enclosures_valid": true,
    "n": 4,
    "pert": "1/1000000",
-   "seed": 9
+   "seed": 9,
+   "transport_mutants": {
+    "flat_rad0": {
+     "flagged": 0,
+     "records": 14
+    },
+    "midpoint_no_width": {
+     "flagged": 12,
+     "records": 14
+    },
+    "no_W": {
+     "flagged": 1,
+     "records": 14
+    },
+    "no_midpoint_width": {
+     "flagged": 0,
+     "records": 14
+    },
+    "no_rad": {
+     "flagged": 0,
+     "records": 14
+    },
+    "profile_flat_rad0": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_genuine": {
+     "flagged": 0,
+     "records": 14
+    },
+    "profile_no_W": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_no_rad": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_rad_half": {
+     "flagged": 0,
+     "records": 14
+    },
+    "rad_half": {
+     "flagged": 0,
+     "records": 14
+    }
+   }
   },
   {
    "C1": {
@@ -1459,7 +1864,7 @@
    },
    "C4": {
     "2": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.4777923533166523,
      "gain_fraction_of_parent_slack": 0.84463814675599,
      "pred_gain_parent_scaling": 0.08967669346098628,
@@ -1469,7 +1874,7 @@
      "sound_all": true
     },
     "3": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.5732571578257104,
      "gain_fraction_of_parent_slack": 0.9389494193508678,
      "pred_gain_parent_scaling": 0.10467434047408979,
@@ -1479,7 +1884,7 @@
      "sound_all": true
     },
     "4": {
-     "B2_minus_parent_tpt": 0.0,
+     "B2_transcription_identity_diff": 0.0,
      "frozen_refined_gain": 0.5858425473979112,
      "gain_fraction_of_parent_slack": 0.9676773121485184,
      "pred_gain_parent_scaling": 0.1099951384121944,
@@ -1524,12 +1929,57 @@
     }
    },
    "NC_flat_profile_value_minus_gmax": 0.012705670268510797,
-   "NC_g_hi_planted_detected": true,
-   "NC_half_transport_detected": true,
+   "harness_midpoint_check_flags_shifted": true,
    "midpoint_enclosures_valid": true,
    "n": 5,
    "pert": "1/10000",
-   "seed": 10
+   "seed": 10,
+   "transport_mutants": {
+    "flat_rad0": {
+     "flagged": 0,
+     "records": 14
+    },
+    "midpoint_no_width": {
+     "flagged": 3,
+     "records": 14
+    },
+    "no_W": {
+     "flagged": 0,
+     "records": 14
+    },
+    "no_midpoint_width": {
+     "flagged": 0,
+     "records": 14
+    },
+    "no_rad": {
+     "flagged": 0,
+     "records": 14
+    },
+    "profile_flat_rad0": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_genuine": {
+     "flagged": 0,
+     "records": 14
+    },
+    "profile_no_W": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_no_rad": {
+     "flagged": 14,
+     "records": 14
+    },
+    "profile_rad_half": {
+     "flagged": 0,
+     "records": 14
+    },
+    "rad_half": {
+     "flagged": 0,
+     "records": 14
+    }
+   }
   }
  ],
  "schema": "OV_D309_COVER_FSM/1",
@@ -1538,8 +1988,7 @@
   "C2_order_all": true,
   "C2_sound_all": true,
   "C3_sound_all": true,
-  "C4_B2_minus_parent_max": 0.0,
-  "C4_B2_minus_parent_min": 0.0,
+  "C4_B2_transcription_identity_diff_max": 0.0,
   "C4_gain_fraction": {
    "2": [
     0.7095867664809999,
@@ -1651,10 +2100,56 @@
    ]
   },
   "NC_flat_profile_violations": 3,
-  "NC_g_hi_detected": 10,
-  "NC_half_transport_detected": 9,
   "fixtures": 10,
+  "harness_midpoint_check_flags_shifted": 10,
   "midpoint_enclosures_valid_all": true,
-  "wall_s": 44.9
+  "profile_genuine_violations": 0,
+  "transport_mutant_power": {
+   "flat_rad0": {
+    "flagged": 32,
+    "records": 140
+   },
+   "midpoint_no_width": {
+    "flagged": 63,
+    "records": 140
+   },
+   "no_W": {
+    "flagged": 2,
+    "records": 140
+   },
+   "no_midpoint_width": {
+    "flagged": 1,
+    "records": 140
+   },
+   "no_rad": {
+    "flagged": 32,
+    "records": 140
+   },
+   "profile_flat_rad0": {
+    "flagged": 130,
+    "records": 140
+   },
+   "profile_genuine": {
+    "flagged": 0,
+    "records": 140
+   },
+   "profile_no_W": {
+    "flagged": 140,
+    "records": 140
+   },
+   "profile_no_rad": {
+    "flagged": 136,
+    "records": 140
+   },
+   "profile_rad_half": {
+    "flagged": 0,
+    "records": 140
+   },
+   "rad_half": {
+    "flagged": 0,
+    "records": 140
+   }
+  },
+  "wall_s": 78.9
  }
 }

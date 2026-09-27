@@ -292,6 +292,12 @@ def tc_rad_poly(A: tuple, f: dict, variant: str = "TC") -> list:
     variant TCp : order-raised TC+ with a MIDPOINT order-4 premise f4 and a whole-cell order-5 envelope Env5:
                   p2(s) = fH + s fG + s^2/2 f4 + s^3/6 Env5, and the lower p's by integration."""
     A0, A1, A2 = A
+    p0, p1, p2 = tc_profile_polys(f, variant)
+    return p_add(p_add(p_scale(p2, A0), p_scale(p1, 2 * A1)), p_scale(p0, A2))
+
+
+def tc_profile_polys(f: dict, variant: str = "TC") -> tuple:
+    """(p0, p1, p2) as polynomials in s (Lemma TC-P; TC+ for variant 'TCp')."""
     if variant == "TC":
         p2 = [f["H"], f["G"], f["Env4"] / 2]
         p1 = [f["D"], f["H"], f["G"] / 2, f["Env4"] / 6]
@@ -302,7 +308,7 @@ def tc_rad_poly(A: tuple, f: dict, variant: str = "TC") -> list:
         p0 = [f["F"], f["D"], f["H"] / 2, f["G"] / 6, f["f4"] / 24, f["Env5"] / 120]
     else:
         raise ValueError(variant)
-    return p_add(p_add(p_scale(p2, A0), p_scale(p1, 2 * A1)), p_scale(p0, A2))
+    return p0, p1, p2
 
 
 def lemma_g(k: list, C: F) -> tuple:

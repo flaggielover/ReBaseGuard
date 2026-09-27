@@ -19,8 +19,13 @@ Checks (declared set DECLARED_RULE, fixed before the first run):
   H2  DIAGNOSTIC (grid, not certified): composite |3 K1 wH + 3 K2 wD + K3 wF| vs the ideal surrogate
       3 k1 |wH| + 3 k2 |wD| + k3 |wF| with k_i the TRUE operator norm at that drift (rigorous lower end) and |w| a grid
       lower bound -- i.e. the surrogate is taken at its smallest possible value, so the ratio is conservative.
-  H3  CERTIFIED box-cover upper bound of sup_X |3 K1 wH + 3 K2 wD + K3 wF| for declared triples at declared drifts,
-      checked against the grid lower bound (soundness) with a planted-too-small negative control.
+  H1b (repair r1, review N7) independent float Gauss-Legendre quadrature (math.exp; no c7/C11 primitive), with the
+      sign/kink defects flagged through the same comparator.
+  H3  CERTIFIED box-cover upper bound of sup_X |3 K1 wH + 3 K2 wD + K3 wF| for declared triples at declared drifts;
+      soundness = per-box CONTAINMENT of exact point values (corners, edge midpoints, centre in the reachable set);
+      negative controls = planted defects inside box_upper_composite (drop_sign, collapse, shrink_half, drop_hull),
+      each detected only if it yields containment violations (repair r1 of review B1/N5; the old planted-too-small
+      comparison was arithmetic and is withdrawn).
 Writes validation/D309_HERMITE_NONTARGET.json.
 """
 from __future__ import annotations
@@ -204,7 +209,8 @@ def fd_check(w: dict, p: F, m: F, e: F, i: int, h: F) -> dict:
 
     def far(iv):
         return max(abs(iv.hi - fd.lo), abs(fd.hi - iv.lo)) > tol
-    return {"ok": bool(ok), "value": float(cf.lo), "gap": float(gap), "trunc_bound": float(trunc),
+    return {"ok": bool(ok), "value": float(cf.lo), "value_nc_sign": float(nc_sign.lo),
+            "value_nc_kink": float(nc_kink.lo), "gap": float(gap), "trunc_bound": float(trunc),
             "nc_sign_detected": far(nc_sign), "nc_sign_applicable": i % 2 == 1 and abs(cf.lo) > 10 * tol,
             "nc_kink_detected": far(nc_kink)}
 
@@ -242,8 +248,14 @@ def op_norm_true(e: F, i: int) -> G.Iv:
     return tot
 
 
-def box_upper_composite(triple: list, box: tuple, e: F, panel: F) -> G.Iv:
-    """Rigorous enclosure of {sum_i c_i (K_i w_i)(x) : x in box} (triple = [(c_i, i, w_i)])."""
+def box_upper_composite(triple: list, box: tuple, e: F, panel: F, defect: str | None = None) -> G.Iv:
+    """Rigorous enclosure of {sum_i c_i (K_i w_i)(x) : x in box} (triple = [(c_i, i, w_i)]).
+
+    ``defect`` plants a KNOWN-INVALID variant through this same code path (negative controls, repair r1 of review
+    B1): "drop_sign" (Hermite sign (-1)^i omitted), "collapse" (the panel interval q replaced by its midpoint, i.e.
+    the range information thrown away), "shrink_half" (q shrunk to half its width), "drop_hull" (partial-window
+    panels not hulled with 0)."""
+    Q.guard_drift(e)
     a, b, c, d = box
     zlo, zhi = c - CC, CC - a            # union window
     ilo, ihi = d - CC, CC - b            # window common to every state of the box
@@ -270,12 +282,96 @@ def box_upper_composite(triple: list, box: tuple, e: F, panel: F) -> G.Iv:
                     for _ in range(kk):
                         t = t * Z
                     hv = hv + t
-            q = q + G.Iv(coef * (-1) ** i) * wv * hv
+            sg = 1 if defect == "drop_sign" else (-1) ** i
+            q = q + G.Iv(coef * sg) * wv * hv
+        if defect == "collapse":
+            q = G.Iv((q.lo + q.hi) / 2)
+        elif defect == "shrink_half":
+            mq, hq = (q.lo + q.hi) / 2, (q.hi - q.lo) / 4
+            q = G.Iv(mq - hq, mq + hq)
         mass = Phi(z1 + e) - Phi(z0 + e)
         contrib = q * mass  # for every x in the box: int_P g(x,z) phi(z+e) dz in [q.lo, q.hi] * mass
-        if not (ilo <= z0 and z1 <= ihi):  # the panel is inside the window for some states only
+        if not (ilo <= z0 and z1 <= ihi) and defect != "drop_hull":  # panel inside the window for some states only
             contrib = G.Iv(min(F(0), contrib.lo), max(F(0), contrib.hi))
         tot = tot + contrib
+    return tot
+
+
+def box_points(box: tuple) -> list:
+    """declared sample points of a cover box: corners, edge midpoints and centre that lie in the reachable closure."""
+    a, b, c, d = box
+    pts = [(x, y) for x in (a, (a + b) / 2, b) for y in (c, (c + d) / 2, d)]
+    return [(x, y) for x, y in pts if in_reach(x, y)]
+
+
+def containment(triple: list, e: F, depth: int, panel: F, defects: tuple, enclose=None) -> dict:
+    """Per-box soundness test (review N5): the exact value at every declared point of every cover box must lie in
+    that box's enclosure.  Run for the genuine certificate and for each planted defect through the same code path."""
+    Q.guard_drift(e)
+    enclose = enclose or box_upper_composite
+    boxes = C11.cover(depth)
+    res = {"boxes": len(boxes), "points": 0, "genuine_violations": 0, "genuine_sup": F(0),
+           "defects": {dd: {"violations": 0} for dd in defects}}
+    for box in boxes:
+        pts = box_points(box)
+        vals = [sum((G.Iv(cf) * Ki_apply(w, p, m, e, i) for cf, i, w in triple), G.Iv(0)) for p, m in pts]
+        res["points"] += len(pts)
+        encs = {None: enclose(triple, box, e, panel)}
+        for dd in defects:
+            encs[dd] = enclose(triple, box, e, panel, defect=dd)
+        res["genuine_sup"] = max(res["genuine_sup"], abs(encs[None].lo), abs(encs[None].hi))
+        for dd, enc in encs.items():
+            viol = sum(1 for v in vals if v.lo < enc.lo or v.hi > enc.hi)
+            if dd is None:
+                res["genuine_violations"] += viol
+            else:
+                res["defects"][dd]["violations"] += viol
+    return res
+
+
+def _gl_nodes(n: int = 24) -> list:
+    """Gauss-Legendre nodes/weights on [-1, 1] (float, Newton on P_n); independent of c7/C11."""
+    out = []
+    for k in range(1, n + 1):
+        x = math.cos(math.pi * (k - 0.25) / (n + 0.5))
+        for _ in range(100):
+            p0, p1 = 1.0, x
+            for j in range(2, n + 1):
+                p0, p1 = p1, ((2 * j - 1) * x * p1 - (j - 1) * p0) / j
+            dp = n * (x * p1 - p0) / (x * x - 1)
+            dx = p1 / dp
+            x -= dx
+            if abs(dx) < 1e-16:
+                break
+        out.append((x, 2 / ((1 - x * x) * dp * dp)))
+    return out
+
+
+_GL = _gl_nodes()
+
+
+def Ki_quad_float(w: dict, p: F, m: F, e: F, i: int) -> float:
+    """INDEPENDENT float evaluation of (K_i w)(p,m): Gauss-Legendre (24 nodes) on unit sub-panels of each piece,
+    math.exp for phi, direct evaluation of max(0, .) -- shares no primitive with c7_gaussian or C11 (review N7)."""
+    Q.guard_drift(e)
+    pf, mf, ef, K, C = float(p), float(m), float(e), 0.5, 5.5
+    ell, up = mf - C, C - pf
+    cuts = sorted({ell, up} | {z for z in (K - pf, mf - K) if ell < z < up})
+    he = [float(c) for c in HE[i]]
+    wf = [((a, b), float(c)) for (a, b), c in w.items()]
+    tot = 0.0
+    for lo, hi in zip(cuts, cuts[1:]):
+        npan = max(1, math.ceil(hi - lo))
+        hstep = (hi - lo) / npan
+        for k in range(npan):
+            a0 = lo + k * hstep
+            for x, wt in _GL:
+                z = a0 + hstep * (x + 1) / 2
+                pp, mm = max(0.0, pf + z - K), max(0.0, mf - z - K)
+                u = z + ef
+                val = sum(c * pp ** a * mm ** b for (a, b), c in wf)
+                hv = sum(c * u ** j for j, c in enumerate(he))
+                tot += wt * hstep / 2 * val * ((-1) ** i) * hv * math.exp(-u * u / 2) / math.sqrt(2 * math.pi)
     return tot
 
 
@@ -307,6 +403,13 @@ def main() -> None:
                 for i in range(4):
                     r = fd_check(w, p, m, e, i, h)
                     r.update({"e": str(e), "state": [str(p), str(m)], "w": wn, "i": i})
+                    # H1b (review N7): independent float Gauss-Legendre quadrature, no shared primitive
+                    qv = Ki_quad_float(w, p, m, e, i)
+                    tolq = 1e-9 * max(1.0, abs(qv))
+                    r["quad_gap"] = abs(r["value"] - qv)
+                    r["quad_ok"] = r["quad_gap"] <= tolq
+                    r["quad_nc_sign_flagged"] = abs(r["value_nc_sign"] - qv) > tolq
+                    r["quad_nc_kink_flagged"] = abs(r["value_nc_kink"] - qv) > tolq
                     out["H1"].append(r)
     h1 = out["H1"]
     # H2: grid diagnostic of the composite vs the ideal surrogate
@@ -334,27 +437,31 @@ def main() -> None:
                 "submult_ratio_per_term": {
                     "K1wH": float(parts[1] / (k[1].lo * wsup[hn])), "K2wD": float(parts[2] / (k[2].lo * wsup[dn])),
                     "K3wF": float(parts[3] / (k[3].lo * wsup[fn]))}})
-    # H3: certified box-cover sup for two triples at two drifts
+    # H3: certified box-cover sup, per-box CONTAINMENT soundness test (review N5) and planted defects through the
+    # certificate's own code path (review B1): each defect must produce containment violations to count as detected.
+    defects = ("drop_sign", "collapse", "shrink_half", "drop_hull")
     for e in (F(1, 4), F(3)):
         k = {i: op_norm_true(e, i) for i in (1, 2, 3)}
         for (fn, dn, hn) in (triples[0], triples[2]):
             trip = [(F(3), 1, W[hn]), (F(3), 2, W[dn]), (F(1), 3, W[fn])]
             ts = time.time()
-            ub, nbox = certified_sup(trip, e, depth=4, panel=F(1, 16))
+            cres = containment(trip, e, 4, F(1, 16), defects)
+            ub = cres["genuine_sup"]
             glo = F(0)
             for (p, m) in grid:
                 v = sum((G.Iv(cf) * Ki_apply(w, p, m, e, i) for cf, i, w in trip), G.Iv(0))
                 glo = max(glo, min(abs(v.lo), abs(v.hi)) if v.lo * v.hi > 0 else F(0))
             wsup = {nm: max(abs(poly_eval(W[nm], p, m)) for p, m in grid) for nm in {fn, dn, hn}}
             sur_lo = 3 * k[1].lo * wsup[hn] + 3 * k[2].lo * wsup[dn] + k[3].lo * wsup[fn]
-            planted = glo * F(99, 100)
             out["H3"].append({
-                "e": str(e), "triple": [fn, dn, hn], "boxes": nbox, "panel": "1/16", "depth": 4,
+                "e": str(e), "triple": [fn, dn, hn], "boxes": cres["boxes"], "points": cres["points"],
+                "panel": "1/16", "depth": 4,
                 "certified_upper": float(ub), "grid_lower": float(glo), "surrogate_ideal_lower": float(sur_lo),
-                "sound_upper_ge_grid_lower": bool(ub >= glo),
+                "containment_violations_genuine": cres["genuine_violations"],
+                "defect_violations": {dd: v["violations"] for dd, v in cres["defects"].items()},
+                "necessary_upper_ge_grid_lower": bool(ub >= glo),
                 "certified_upper_over_surrogate": float(ub / sur_lo),
                 "certified_upper_over_grid_lower": float(ub / glo) if glo else None,
-                "nc_planted_upper_detected": bool(not (planted >= glo)),
                 "wall_s": round(time.time() - ts, 1)})
     out["summary"] = {
         "H1_cases": len(h1), "H1_ok": sum(1 for r in h1 if r["ok"]),
@@ -365,8 +472,15 @@ def main() -> None:
         "H1_nc_kink_cases_with_i0_nonconst": sum(1 for r in h1 if r["w"] != "w_const"),
         "H2_ratio_range": [min(r["ratio_composite_over_surrogate"] for r in out["H2"]),
                            max(r["ratio_composite_over_surrogate"] for r in out["H2"])],
-        "H3_sound_all": all(r["sound_upper_ge_grid_lower"] for r in out["H3"]),
-        "H3_nc_detected": sum(1 for r in out["H3"] if r["nc_planted_upper_detected"]),
+        "H1b_quad_ok": sum(1 for r in h1 if r["quad_ok"]),
+        "H1b_quad_max_gap": max(r["quad_gap"] for r in h1),
+        "H1b_nc_sign_flagged_where_applicable": sum(1 for r in h1 if r["nc_sign_applicable"] and r["quad_nc_sign_flagged"]),
+        "H1b_nc_kink_flagged_nonconst": sum(1 for r in h1 if r["w"] != "w_const" and r["quad_nc_kink_flagged"]),
+        "H3_containment_violations_genuine": sum(r["containment_violations_genuine"] for r in out["H3"]),
+        "H3_points": sum(r["points"] for r in out["H3"]),
+        "H3_defect_runs_detected": {dd: sum(1 for r in out["H3"] if r["defect_violations"][dd] > 0) for dd in
+                                    ("drop_sign", "collapse", "shrink_half", "drop_hull")},
+        "H3_runs": len(out["H3"]),
         "H3_certified_over_surrogate": [r["certified_upper_over_surrogate"] for r in out["H3"]],
         "wall_s": round(time.time() - t0, 1),
     }

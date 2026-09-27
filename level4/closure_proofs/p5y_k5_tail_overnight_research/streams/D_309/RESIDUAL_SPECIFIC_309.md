@@ -22,9 +22,8 @@ tail number.
   entirely". Ranked first for costing by C4 Condition 7(a) (`:554-556`).
 * **Route-audit narrowing** (`p5y_k5_tail_route_audit/ROUTE_AUDIT_R1.md:418-431`): the mechanism replaces "at most, the
   residual part `A0·f_H` of TC-T's `A0·p2`", because "`f_G` and `Env4` are norm-only".
-* **C5's per-cell radius decomposition** records the share of that `A0·f_H` term
-  (`p5y_k5_tail_c5_exhaustion/phase_1/C5_BLOCKER_DECOMPOSITION.md:49`). It is cited for provenance only and not combined
-  with anything here (S8).
+* (Repair r1, review N18: the r0 pointer to a committed per-cell share of this term was removed from this document,
+  because the same document reports synthetic RSO-C4 ratios in §6 and a reader could combine the two.)
 
 **This document keeps the original definition as RSO-C4.** It adds two extensions, which are defined, not
 reinterpreted:
@@ -68,22 +67,25 @@ premise that made `f_G` and Env4 norm-only.
 
 is the normalized expected occupation measure of the chain started at a and killed at alarm.
 
-**Corollary RSO-G.** Against any uniform order-0 atom constant `A0 ≥ Λ := sup_C E_a[τ]` (Lemma SM(d)), the exact RSO
-bound improves by the factor
+**Corollary RSO-G (repair r1, review N15: the drift is now explicit).** Against any uniform order-0 atom constant
+`A0 ≥ Λ := sup_C E_a[τ]` (Lemma SM(d)), the exact RSO bound improves by the factor
 
-    A0‖ψ‖ / sup_e (R_e ψ)(a)  ≥  (A0/Λ) · (‖ψ‖ / μ(ψ)).
+    A0‖ψ‖ / sup_e (R_e ψ)(a)  ≥  (A0/Λ) · (‖ψ‖ / sup_{e∈C} μ_{a,e}(ψ)),
 
-The second factor, the **shape factor** `‖ψ‖/μ(ψ) ≥ 1`, is the RSO-specific part.
+because `sup_e (R_eψ)(a) = sup_e E_a[τ](e) μ_{a,e}(ψ) ≤ Λ · sup_e μ_{a,e}(ψ)`. The second factor, the **shape factor**
+`‖ψ‖ / sup_e μ_{a,e}(ψ) ≥ 1`, is the RSO-specific part.
 
-**Equality.** The shape factor is 1 **iff** `ψ = ‖ψ‖` μ-a.e. — the residual majorant is flat on everything the chain
-visits.
+**Equality.** The shape factor is 1 **iff** `ψ = ‖ψ‖` `μ_{a,e}`-a.e. for some `e` approaching the sup. At a single
+drift: the majorant equals its sup on everything the chain visits.
 
 ### 2.3 Collapse lemma
 
 For `ψ ≡ c`, `v = c·W` with `W ≥ 1 + K_e W`, so `v(a) = c·Ā`. That is exactly the whole-kernel ARL supply `Ā` of
 Lemma Dv′ (`THEOREM_AD.md:91-93`), a member of the refuted uniform-A0 family F1.
 
-So RSO is **non-cosmetic iff ψ is non-constant on the support of μ**. With a constant ψ it is F1 again.
+So RSO is **non-cosmetic iff `ψ ≠ ‖ψ‖` μ-a.e.**, i.e. iff ψ is below its sup on a set the chain visits with
+positive expected occupation. (Repair r1, review N14: r0 said "non-constant on the support of μ", which misses ψ
+constant on supp μ but larger off it; that case also gains.) With a constant ψ it is F1 again.
 
 ### 2.4 Deflated form
 
@@ -244,7 +246,10 @@ Concentrating ψ on the single most-occupied state still leaves a gain equal to 
 
 ### TC assembly (12 fixtures × 33 grid points × 6 variants = 2376 checks; `:235-304`)
 
-* **Soundness:** 0 violations of `|F''(t)(a) − Ĥ(a)| ≤ rad(|t − e0|)`.
+* **Soundness:** 0 violations of `|F''(t)(a) − Ĥ(a)| ≤ rad(|t − e0|)`. The check has some power here (genuine worst
+  deviation/radius 0.98 for RSO-P-box1). Its measured power against a planted profile with every component halved is
+  only 4/12 (`R4_mutant_profile_half_detected`), so it is a weak necessary condition. The load-bearing RSO evidence is
+  the truth-relative certificate checks of §6 (N0, N1, N2 ≥ the exact functionals).
 
 `rad(ρ)` relative to TCT_base, synthetic:
 
@@ -283,14 +288,30 @@ Concentrating ψ on the single most-occupied state still leaves a gain equal to 
 The certificate recovers only part of the LR gap: AM–GM with constant (c, δ). Per-state c(x), δ(x) is the obvious
 tightening and is not implemented.
 
-### Negative controls (all detected)
+### Controls through the code path (repair r1, review B1)
 
-| control | detected |
-|---|---|
-| (a) planted ψ below `|φ|` at one state | 48/48 |
-| (b) planted `v := (9/10) v_cert` fails the certificate check | 48/48 |
-| (c) planted LR value below the exact lower bound (harness control) | 12/12 |
-| (d) planted wrong score `S(z) := z` breaks `K^S = K₁` (structural control) | 12/12 |
+The r0 controls (a) and (c) were arithmetic on constructed values and could not fail. They are **withdrawn**. The
+controls below plant an invalid input **into the function under test** and require a truth-relative checker to flag it
+(`d309_rso.py`, `r123` and `r5`):
+
+| control | planted into | checker | flagged |
+|---|---|---|---|
+| (a1) ψ := 0 at the most-occupied state (invalid majorant) | `cert_chain` | N0 ≥ exact `max_e (R_e a)(a)` | 44/48 |
+| (a1) same | `cert_chain` | N1 ≥ exact PM1 truth | 34/48 |
+| (a2) ψ := a/2 | `cert_chain` | N0 ≥ exact truth | 48/48 |
+| (a2) same | `cert_chain` | N1 ≥ exact PM1 truth | 48/48 |
+| (b) v := (9/10) v_cert | `check_cert_taylor` | margin ≥ 0 | 48/48 |
+| (c1) cross term `(K^Sβ)²/δ` dropped | `lr_certificate` | α(a) ≥ exact truncated lower bound of A1^ψ | 4/12 |
+| (c2) `K^{S²}β` term dropped | `lr_certificate` | same | 12/12 |
+| (c3) `ψc/2` term dropped | `lr_certificate` | same | 12/12 |
+| (d) wrong score S(z) := z | LR kernel builder | `K^S = K₁` exactly | 12/12 |
+| (e) every pointwise profile component halved | `rso_poly` → enclosure check | exact `F''(t)(a)` | 4/12 |
+
+Misses are power limits, not failures:
+* **(a1)** is invalid but can still produce a certificate above the truth when the most-occupied state carries little
+  residual.
+* **(c1)** removes only the cross term, and the remaining AM–GM slack can still cover the truth.
+* **(e)** is weak because the radius is loose.
 
 ## 7. Data blocker for real use (honest)
 
@@ -316,11 +337,11 @@ tightening and is not implemented.
 | G3 | PASS: (R1), (R2), declared ψ class | PASS: single drift; uniformity over a block is not implemented |
 | G4 | PASS | PASS |
 | G5 | PASS on FSM: favourable and adversarial classes included | PASS on discrete LR families |
-| G6 | PARTIAL: two independent certificate checks, exact truth; no external review | PARTIAL |
+| G6 | PASS for the mathematics (independent review R1 re-derived RSO-0, RSO-PM and RSO-P); two independent certificate checks | PASS for the order-1 reduction (re-derived by review R1) |
 | G7 | PASS | PASS |
 | G8 | PASS | PASS |
 | G9 | PASS: the certificate format is freezable | PASS |
-| G10 | PASS **iff ψ is non-constant on the occupation support**; with constant ψ it is F1 (collapse lemma) | PASS (below PM and norm on every case) |
+| G10 | PASS **iff ψ ≠ ‖ψ‖ μ-a.e.** (N14); with constant ψ it is F1 (collapse lemma) | PASS (below PM and norm on every case) |
 
 **Verdict.**
 * RSO-C4 as originally defined is **valid but structurally narrow**: order-0 term only.
