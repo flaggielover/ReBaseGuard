@@ -1,0 +1,113 @@
+{
+  "schema": "rebaseguard.p5y.k2-k3.final-countersignature.v1",
+  "generated_utc": "2026-09-27T06:01:12Z",
+  "publication_scope": "ADDITIVE_ONLY",
+  "scientific_rerun": "NO",
+  "source": {
+    "closure_commit": "6f1d351bd12c57d6438c61dda4bdd6aa2b46528a",
+    "closure_commit_subject": "P5Y K2/K3 closure packet and K5 feasibility (bridge theorem, frozen non-closure oracle)",
+    "frontier_ref_checked": "origin/p5y-postk1-frontier",
+    "frontier_tip_checked": "5289b6cee7134dd66e3289c3a210c8de5abb6a2c",
+    "closure_commit_is_ancestor_of_frontier": true,
+    "historical_closure_packet_unchanged_after_source_commit": true,
+    "packet_files": {
+      "level4/closure_proofs/p5y_k2_k3_closure_packet/K2_ADJUDICATION.md": {
+        "git_blob_id": "4a958469822cf602fa8a159d4cff53b7fb64b78d",
+        "sha256": "3409bcb5a7ccf952325c6bfe60b2a6ec9053f437853014b1fa43623776f28bac"
+      },
+      "level4/closure_proofs/p5y_k2_k3_closure_packet/K3_ADJUDICATION.md": {
+        "git_blob_id": "e940c945b579c8b1017c831037880b39bb285a13",
+        "sha256": "7472ae1112a17908db4de40fa2c2e5da68480a77de82302c66eed34226abfb94"
+      },
+      "level4/closure_proofs/p5y_k2_k3_closure_packet/README.md": {
+        "git_blob_id": "03099cdd5564acdabbef4bf66563a202004b5b51",
+        "sha256": "4e57940818d50b1b881759f72e2e4f396500ab7132dc40ec88b3c402ab430cb8"
+      },
+      "level4/closure_proofs/p5y_k2_k3_closure_packet/code/verify_k2_constants.py": {
+        "git_blob_id": "4edf2a435029a6d76231e61f560103530d0d845f",
+        "sha256": "42633fef6b13a25b827aa224e6896ea9f3e2642d840dec985a31a10d022c8d31"
+      }
+    },
+    "frozen_source_git_blobs": {
+      "level4/stage_d/src/stopped.py": "318031fd0c90f6862a79d04edbd3500b2c93311b",
+      "level4/src/rebaseguard_level4/frozen.py": "aec217e6b78f171dc16ade3f342ef94c581ab16d",
+      "level4/closure_proofs/p5_nonlinear_dynamics/DEFINITION_AUDIT.md": "0ffa3a02148857f1bd207feb56f88236aa681c7e",
+      "level4/closure_proofs/p5_nonlinear_dynamics/THEOREM.md": "fe287dbcda3d0bc7cc78348a86d1d5464df22812",
+      "level4/closure_proofs/p5_nonlinear_dynamics/PROOF.md": "0e2d0e5f464cb30d990ead94dd316eb63fdb4a9a",
+      "level4/closure_proofs/p5x_global_nonlinear_dynamics/FROZEN_THEOREM.md": "85c8762f67b76122c74273bb1572a7cfeb4f4b6f"
+    },
+    "historical_binding_commits": [
+      "bb03c0ea9ea34060c992b6d7f0390de6a3cf8108",
+      "db0781ed79851ca55af788731a47a0f4dda1d9c6",
+      "17eb58b2c032c84dbaa012e49da78263ac285a84",
+      "45a824731204d1945b65993d26b8f1d115fd1264",
+      "e5cc5a9069f817cce76b5ac5676a327757b57573"
+    ]
+  },
+  "independent_countersignature": {
+    "K2": "PASS",
+    "K3": "PASS",
+    "method": "Independent exact-arithmetic replay of the frozen constants plus a fresh audit of later frozen theorem consumers and repository history.",
+    "tolerance": "NONE",
+    "reran_science": false
+  },
+  "K2": {
+    "scientific_result": "CLOSED",
+    "final_status": "CLOSED",
+    "obligation": "s_min(D,m) = inf_e S_{D,m}(e) > 0 for D in {CUSUM, SR}, m in {1,2,3,5}, and all real e.",
+    "scope": {
+      "detectors": ["CUSUM", "SR"],
+      "m": [1, 2, 3, 5],
+      "frozen_case_count": 8,
+      "state_domain": "all real e"
+    },
+    "certified_lower_constants": {
+      "CUSUM": "121/46875",
+      "SR": "49/30000"
+    },
+    "exact_checks": {
+      "CUSUM_gap_G": "11",
+      "CUSUM_M": "125/22",
+      "CUSUM_kappa": "121/46875",
+      "SR_exp_lower_6": "1957/720",
+      "SR_sqrt_exp_lower_4": "633/384",
+      "SR_product_exceeds_663": true,
+      "SR_logA_less_than_13_over_2": true,
+      "SR_G_upper_bound": "14",
+      "SR_M_upper_bound": "50/7",
+      "SR_kappa": "49/30000",
+      "all_eight_m_case_bounds_strictly_positive": true
+    },
+    "binding_source_statement": "The frozen P5X lower arm consumes s_min > 0; no stronger K2 threshold was introduced."
+  },
+  "K3": {
+    "scientific_result": "CLOSED",
+    "final_status": "CLOSED",
+    "binding_requirement": "FINITENESS_ONLY",
+    "obligation": "M_2 = sup_e E_e[Rbar^2] < infinity for both detectors, all frozen m, and all real e.",
+    "scope": {
+      "detectors": ["CUSUM", "SR"],
+      "m": [1, 2, 3, 5],
+      "state_domain": "all real e"
+    },
+    "certified_bounds": {
+      "CUSUM": "M_2 <= C_CUSUM = 10/Phi(-1)^10 <= 9.8959e8",
+      "SR": "M_2 <= C_SR = 1/Phi(-(log(A)+1/2)) <= 1.4054e11"
+    },
+    "consumer_audit": {
+      "later_frozen_consumers_require_finiteness_only": true,
+      "invented_tightness_threshold_adopted": false,
+      "M2_le_100_times_s_min_adopted": false,
+      "reason": "No later frozen theorem, gate, or consumer specifies a numerical tightness relation; adding one would change the obligation."
+    },
+    "discharge": "Frozen P5-T4/T5 gives the uniform stopping-time moment bounds and hence the stated finite M_2 bounds by Jensen, Tonelli, and Wald."
+  },
+  "status": {
+    "K2": "CLOSED",
+    "K3": "CLOSED",
+    "K4": "OPEN",
+    "K5": "OPEN",
+    "P5Y": "K2_K3_CLOSED_K4_K5_OPEN"
+  },
+  "historical_records_preserved": true
+}
