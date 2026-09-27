@@ -99,22 +99,35 @@ Abbreviations for the columns:
     N22,N23,N24,N1 → N25      N18,N25 → N26       N11,N12 → N27    N26,N27 → N28
     N4,N28 → N29              N15,N29,N1 → N30    N15,N28,N1 → N31  N30 → N33   N13 → N34 (floor on N18.A0)
 
-## 3. Which inequality carries the largest avoidable looseness (structural, target-independent)
+## 3. Looseness inventory (structural only; no tail weights, no route factors)
 
-Graph A §3 lists 18 inequality steps. They are grouped here by **structural reason**, not by any closure estimate.
-The weights quoted are committed historical shares of the radius sum S̄. They are used only to say which inequality
-the structure makes large, never to forecast a cell.
+**Revision r1 (incident 01, `ledger/INCIDENT_01_TPT_GRAPH_PROXY.md`).** The r0 version of this section, at commit
+4403f86f, ranked the inequalities by quoting committed tail-cell shares of the radius sum next to the generic gain
+factors of a new route. That is a target-equivalent proxy. It is **WITHDRAWN**; the withdrawn rank-1 text is quoted
+here only as a record and is not asserted:
 
-| rank | inequality (graph A §3 item) | structural looseness | new-route owner |
-|---|---|---|---|
-| 1 | whole-cell radius charged at every t in the transport (items 4, 5, 12) | the Taylor remainder terms linear and quadratic in \|t−e0\| (≈ 60 % + ≈ 20 % of S̄ historically) are charged at their edge value over the whole cell. The exact profile charges ≈ 1/2 and ≈ 1/3 (TPT-G) | **TPT** (E_assembly): theorem, implementation, V1/V3 done |
-| 2 | order-3 surrogate `‖S‴ + 3K1Ĥ + 3K2D̂ + K3F̂‖ ≤ σ3 + 3k1 s_H + …` (item 14) plus atom functional × sup norm (item 8) | triangle inequality plus submultiplicativity; ‖·‖ over the whole state space where only an atom functional is needed; no cancellation | B_307 (order-3), D_309 (composite sup, RSO) |
-| 3 | A1, A2 via submultiplicativity / quotient rule (item 9) | discards the sign cancellation of K₁, K₂ (synthetic: true functional norm 3–10× / 10–20× below even the positive majorant); asymptotically Dv′ A2 ~ Λ·C_T² vs A2^LR ~ E[τ²] | **LR** (C_308/LR) |
-| 4 | order-0 channel `A0‖φ″‖` (item 8) | sharp only at f ≡ 1 (C4 :256-259); the floor A0 ≥ Λ binds the whole family | RSO (D_309) |
-| 5 | generic midpoint eps in g_hi (item 3) | C_upper·f instead of the atom functional (AD Corollary T), not applied on the tail | assembly (E): inventory only |
-| 6 | Env4 / σ4 towers (items 13, 15) | Leibniz triangle recursion; order-4 source measured nowhere | B_307 / D_309 |
-| 7 | independent R/D in g_hi, independent r-sum, W hull (items 1, 7) | no joint information exists (C6: never existed) | — (data never existed) |
-| 8 | κ rationalization, outward rounding (items 2, 10) | negligible | — |
+> *[WITHDRAWN]* "the Taylor remainder terms linear and quadratic in |t−e0| (≈ 60 % + ≈ 20 % of S̄ historically) are
+> charged at their edge value over the whole cell. The exact profile charges ≈ 1/2 and ≈ 1/3 (TPT-G)"
+
+The inventory below is **not ranked by impact on any cell**. Each entry states the kind of structure the inequality
+discards and a target-free characterisation of the slack. Items are listed in chain order. The committed per-cell
+decompositions remain available as history in the node table's "Dom" column and in `sources/graph_A_consumer.md` §4.
+No route factor is attached to them.
+
+| graph A §3 item | inequality | structure discarded | target-free slack characterisation | route addressing it |
+|---|---|---|---|---|
+| 1 | independent R and D in g_hi | correlation of the midpoint enclosures | none computable; no joint object exists (C6) | — |
+| 2, 10 | outward rounding; κ rationalisation | none | negligible by construction | — |
+| 3 | generic midpoint eps (`C_upper·f`) in g_hi | the atom functional (AD Corollary T is not applied on the tail) | proportional to the midpoint residuals | Corollary-T g_hi (assembly; inventory only) |
+| 4, 5, 12 | whole-cell radius charged at every t of the transport | the \|t−e0\| profile of the Taylor remainders | exact: the s^k remainder term is over-charged by the factor `(x0+ρ/2)/(x0/(k+1)+ρ/(k+2))` (TPT-G); no charge on the s-independent part | TPT (**tail use BLOCKED**, incident 01) |
+| 7 | independent sum over r, and the W hull | cancellation between objects r | needs pointwise residuals (data never serialized) | — |
+| 8 | `|[R f](a)| ≤ A0‖f‖` (order-0 channel) | where the chain spends time (weighting) | sharp only at f ≡ 1 (Lemma SM(d)); the slack is ‖f‖ vs `(R|f|)(a)/Λ` | RSO (stream D) |
+| 9 | A1, A2 by submultiplicativity / quotient rule | sign cancellation of K₁ and K₂ | asymptotic: Dv′ A1 ~ Λ·C_T and A2 ~ Λ·C_T² vs the score-representation orders E[Σ\|M_n\|], E[Σ\|M_n²−n\|] (stream C1a); synthetic exact probe: true functional norm 3–10× / 10–20× below the positive majorant | LR (stream C1a/C1b) |
+| 9 | Ā_eff from sup τ over inf D_lo taken independently | joint e-dependence across sub-blocks | bounded by the relative variation of the constants across the cell | TPT-B (low value) |
+| 13, 15 | Env4, σ4 towers | Leibniz triangle recursion | order-4 source never measured | streams B, D |
+| 14 | order-3 surrogate `‖S‴ + 3K₁Ĥ + 3K₂D̂ + K₃F̂‖ ≤ σ3 + 3k₁s_H + …` | cancellation, and the atom functional vs the whole-function sup | structural: products of two resolvent-scale quantities (A0 × candidate sups) | real Ĝ (R-stage, governed), composite sup (stream D, data-blocked), ADLR atom-direct (theory) |
+| 16 | Ĝ := 0 | the signed order-3 centre motion | a symmetric radius replaces a signed drift | real Ĝ |
+| 17 | direct clause only | the chain clause | — | — |
 
 ## 4. What is target-free, what is data-blocked, what is governance-blocked
 

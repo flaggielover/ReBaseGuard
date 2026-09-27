@@ -224,8 +224,12 @@ def main() -> None:
         "transport_sound_all": all(r["sound_transport"] for r in fx),
         "transport_sound_certified_all": all(r["sound_transport_certified"] for r in fx),
         "riemann_ge_closed_all": all(r["P_riemann64"] >= r["P_tpt"] for r in fx),
-        "negative_controls_detected": sum(1 for c in out["negative_controls"] if c["pointwise_violations_detected"] > 0),
+        "negative_controls_r1_WITHDRAWN": ("REVIEW_TPT_R1 B2: this control replaced the radius by max(true dev)/2 inside "
+                                           "the checker and so exercised only the comparison, never tpt.rad_poly or the "
+                                           "transport; superseded by validate_tpt_r2.py (code-path + transport controls)"),
+        "negative_controls_detected_r1": sum(1 for c in out["negative_controls"] if c["pointwise_violations_detected"] > 0),
         "negative_controls_total": len(out["negative_controls"]),
+        "tpt_py_sha256": __import__("hashlib").sha256((HERE / "tpt.py").read_bytes()).hexdigest(),
         "tpt_over_c5t_range": [min(r["tpt_over_c5t"] for r in fx if r["tpt_over_c5t"] is not None),
                                max(r["tpt_over_c5t"] for r in fx if r["tpt_over_c5t"] is not None)],
         "wall_s": round(time.time() - t0, 2),

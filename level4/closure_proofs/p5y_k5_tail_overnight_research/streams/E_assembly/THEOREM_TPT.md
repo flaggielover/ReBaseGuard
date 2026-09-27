@@ -1,225 +1,187 @@
-# Theorem TPT — Taylor-profile transport for the K5-B direct clause
+# Theorem TPT — Taylor-profile transport for the K5-B direct clause (revision r2)
 
-**Status:** research theorem, written 2026-09-27/28 (overnight campaign) before any evaluation on any cell.
-* It has **never been evaluated on CUSUM m = 5 cells 305–309**, and is not evaluated on them in this campaign.
-* It is general: it applies to every K1 cell with `x_lo > 0`, for every detector and every m.
+**Status after independent review R1** (`reviews/REVIEW_TPT_R1.md`, NOT_READY, preserved at 32413877) **and repair r2**:
 
-## 0. Motivation (prospective, target-independent)
+| component | state |
+|---|---|
+| Theorem TPT, Corollaries TPT-M/P, Propositions TPT-D/O/G, Lemma TC-P, Theorem TPT-B | mathematics **sound** (review R1 §1, re-derived by the reviewer) |
+| implementation `tpt.py` r2 (sha256 `05cebc9c…`) | **VALIDATED_NON_TARGET** on exact synthetic fixtures (V1, r2 controls, V2 cap path) and on the TC input path of 136 real lower-front pairs (V3) |
+| application to CUSUM m = 5 cells 306–309 | **BLOCKED (PROXY_EXPOSURE, incident 01)**: fails G8 at campaign level; cannot become FREEZE_READY in this campaign (charter rule G1/G7/G8) |
+| TC-T / C2 tail input path | **unvalidated by design**: its inputs exist only for the quarantined cells; see `FREEZE_DESIGN_TPT_TAIL.md` (design only, for a future disclosed campaign) |
+| floor r2 | **closure-only** |
 
-The K5-B direct clause and its C5-T sharpening transport the midpoint value `g(e0)` across the cell with
-`g(e) − g(e0) = −∫_{e0}^{e} t R''(t) dt`. Both then bound `R''(t)` by **one whole-cell interval** `[H_lo, H_hi]`.
+TPT has **never been evaluated on CUSUM m = 5 cells 305–309**.
 
-Theorem TC's own proof (`p5y_k5_lower_front_order3/theorem/THEOREM_TC.md` §4 step 1) produces something finer. It
-proves Taylor remainder bounds at distance `|t − e0|` and only then replaces `|t − e0|` by its maximum `ρ`. The
-resulting radius `rad_r(ρ)` is charged at every point of the cell, including the midpoint, where the TC radius is
-only `rad_r(0) = A0·f_H + 2A1·f_D + A2·f_F`, the midpoint residual terms.
+## 0. Motivation, and its provenance
 
-**Erratum TPT-E1 (after the V3 non-target validation).** An earlier sentence here said `rad_r(0)` is "typically orders
-of magnitude smaller" than `rad_r(ρ)`. That is regime-dependent and was false where it was first tested:
-* on the 136 real lower-front pairs (cells 11–44, m ∈ {1,2,3,5}, ρ ≈ 2.7·10⁻⁴), `rad(0)/rad(ρ)` is 0.94–0.97;
-* TPT's gain there came mostly from the centre-motion term `ρ|Ĝ(a)|` and was only 0.7–2.5 % of the penalty
-  (`v3/TPT_V3_REPORT.md`).
+The K5-B direct clause and its C5-T sharpening transport the midpoint value `g(e0)` across the cell by
+`g(e) − g(e0) = −∫_{e0}^{e} t R''(t) dt`. Both then bound `R''(t)` by **one whole-cell interval**.
 
-The gain is governed by how much of the binding enclosure end grows with `s`; see Proposition TPT-G. No statement is
-made here about any tail cell.
+Theorem TC's proof (`p5y_k5_lower_front_order3/theorem/THEOREM_TC.md` §4 step 1) bounds each Taylor remainder at
+distance `|t − e0|`, and only then replaces `|t − e0|` by ρ. Keeping `s = |t − e0|` gives a **new lemma, TC-P** (§2).
+It is a small extension of TC's proof, reviewed in R1 (N2, N3), and not something TC itself certifies. It yields a
+pointwise profile of the enclosure. At the midpoint the TC radius is only the midpoint-residual part
+`rad_r(0) = A0 f_H + 2A1 f_D + A2 f_F`.
 
-The C5 adjudication (`p5y_k5_tail_c5_exhaustion/evidence/adjudication/C5_ADJUDICATION.md` §8) scopes C5-T's
-exhaustion to bounds built from **exactly two inputs** (`g_hi` and a whole-cell `[H_lo, H_hi]`). It states that the
-exhaustion "says nothing about … a transport consuming a third certified input". The C5 route search
-(`phase_3/C5_ROUTE_SEARCH.md`) killed:
-* **B2**, splitting the cell, because R and D are certified at e0 only;
-* **D3**, second-order transport, because it needs R'''.
+**Erratum TPT-E1.** The r0 text said `rad_r(0)` is "typically orders of magnitude smaller" than `rad_r(ρ)`. That is
+regime-dependent. On the 136 real lower-front pairs the ratio is 0.94–0.97 (`v3/TPT_V3_REPORT.md`).
 
-TPT is neither of these:
-* it keeps one midpoint and first-order transport;
-* it needs no R''';
-* it consumes, as its third input, the pointwise profile that theorem TC already certifies.
+**Provenance disclosure (review R1 B1(c); `ledger/INCIDENT_01_TPT_GRAPH_PROXY.md`).**
+* Before designing TPT, the author knew the committed C5 decomposition of the tail radius. Its order-3 and order-4
+  terms dominate, and its midpoint residual term is about 0.1 %. The r0 sentence reflected that knowledge.
+* TPT's content is general and nothing in it is tuned. But the choice to develop it first was informed by committed
+  tail structure.
 
-This motivation is a property of the inequality chain. It does not depend on any cell's Γ.
+The C5 adjudication (`p5y_k5_tail_c5_exhaustion/evidence/adjudication/C5_ADJUDICATION.md` §7–§9) scopes C5-T's
+exhaustion to exactly two inputs (`g_hi` and a whole-cell `[H_lo, H_hi]`). It lists "a transport consuming a third
+certified input … a midpoint or sub-cell enclosure of R''" as unexcluded.
+
+TPT is neither C5 route B2 (split the cell) nor D3 (second-order transport, which needs R''') (review R1 N15). Its
+third input is a finer reading of the same certified premises, not new information. TPT therefore cannot exceed what
+those premises imply (TPT-O).
 
 ## 1. Transport theorem
 
 **Setting.** A cell `C = [x_lo, x_hi] = [e0 − ρ, e0 + ρ]` with **`x_lo > 0`**. `R` is C² on C, and
-`g(e) := R(e) − e R'(e)`, so `g'(e) = −e R''(e)`.
+`g(e) := R(e) − eR'(e)`, so `g'(e) = −eR''(e)`.
 
 **Inputs.**
 * (i) `g(e0) ≤ g_hi`.
-* (ii) Measurable functions `L, U` on C with `L(t) ≤ R''(t) ≤ U(t)` for every `t ∈ C`, with `t·L` and `t·U`
-  integrable.
+* (ii) Measurable `L, U` with `L(t) ≤ R''(t) ≤ U(t)` for every t ∈ C.
 
 **Theorem TPT.** For every `e ∈ C`, `g(e) ≤ g_hi + P*`, where
 
     P* := max( 0,  sup_{e∈[e0,x_hi]} ∫_{e0}^{e} t·(−L(t)) dt,  sup_{e∈[x_lo,e0]} ∫_{e}^{e0} t·U(t) dt ).
 
-**Proof.**
-* `g` is absolutely continuous on C.
-* For `e ≥ e0`: `g(e) − g(e0) = −∫_{e0}^{e} t R''(t) dt ≤ ∫_{e0}^{e} t (−L(t)) dt`, because `t > 0` and
-  `−R'' ≤ −L`.
-* For `e ≤ e0`: `g(e) − g(e0) = ∫_{e}^{e0} t R''(t) dt ≤ ∫_{e}^{e0} t U(t) dt`.
-* The case `e = e0` gives the 0 term.
-* Take the supremum over e. ∎
+*Proof.*
+* g is absolutely continuous.
+* For `e ≥ e0`: `g(e) − g(e0) = −∫ t R'' ≤ ∫ t(−L)`, because t > 0.
+* For `e ≤ e0`: `g(e) − g(e0) = ∫ t R'' ≤ ∫ t U`.
+* The case `e = e0` gives the 0 term. ∎
 
-**Corollary TPT-M (monotone profiles).** Assume
-* `−L(e0 + s)` is non-decreasing in `s ∈ [0, ρ]`, and
-* `U(e0 − s)` is non-decreasing in `s ∈ [0, ρ]`.
+**Corollary TPT-M.** Assume `−L(e0+s)` and `U(e0−s)` are non-decreasing in s. Then
+`P* = max(0, ∫_{e0}^{x_hi} t(−L), ∫_{x_lo}^{e0} tU)`.
+*Proof.* `I'(s) = (e0+s)(−L(e0+s))` changes sign at most once, from − to +. So I is quasi-convex and its maximum is
+at an endpoint. The left side is the same. ∎
 
-Then
+**Corollary TPT-P.** `P* ≤ P₊ := max(∫ t(−L)⁺, ∫ tU⁺)`. This is theory only; `tpt.py` does not implement P₊. It is
+never needed for record-based inputs (§2).
 
-    P* = max( 0,  ∫_{e0}^{x_hi} t·(−L(t)) dt,  ∫_{x_lo}^{e0} t·U(t) dt ).
+**Proposition TPT-D.** With `L ≥ H_lo` and `U ≤ H_hi`: `P* ≤ P₊ ≤ P_C5T < ρ x_hi M`.
+* C5-T is TPT with the constant profile.
+* The dominance over the **consumed** clause needs L and U to lie inside the consumed whole-cell enclosure
+  `H_final`, meaning everything the consumer intersects (review R1 N7).
 
-*Proof.* Write `I(s) := ∫_{e0}^{e0+s} t(−L(t)) dt`.
-* `I'(s) = (e0+s)(−L(e0+s))`. Since `e0 + s > 0`, its sign is the sign of `−L(e0+s)`.
-* That sign is non-decreasing in s, so it changes at most once, from − to +.
-* Hence I is quasi-convex and attains its maximum over `[0, ρ]` at an endpoint.
-* The left side is the same argument with `J(s) := ∫_{e0−s}^{e0} tU(t) dt`. ∎
+**Proposition TPT-O (sharpness within the three-input family; corrected per review R1 N1).** For given
+`(g_hi, L, U)` with `L ≤ U`, the value `g_hi + P*` is the **supremum** over C² functions consistent with the inputs.
+* It is approached by mollifying the witness that takes `R'' = L` right of e0 and `R'' = U` left of e0.
+* It is attained only in the relaxed class where R'' is merely measurable. The r0 text wrongly said it is "attained".
+* So no bound built from these three inputs alone is smaller.
+* Scope, as in C5 §8: the witness is not resolvent-type, and the result is not valid for `x_lo = 0`.
 
-**Corollary TPT-P (sound relaxation, no monotonicity needed).**
+## 2. Lemma TC-P (the third input)
 
-    P* ≤ P₊ := max( ∫_{e0}^{x_hi} t·(−L(t))⁺ dt,  ∫_{x_lo}^{e0} t·(U(t))⁺ dt ).
+**Lemma TC-P.** Assume the premises of theorem TC, namely (P1)–(P4), or those of TC-T, namely (P1), (P2′), (P3′) and
+Lemma G. For `t ∈ C` let `s = |t − e0|` and define
 
-**Proposition TPT-D (dominance over C5-T and the frozen clause).**
-* With `L ≥ H_lo` and `U ≤ H_hi` pointwise, `P* ≤ P₊ ≤ P_C5T` (C5-T's
-  `max((−H_lo)⁺ w_R, (H_hi)⁺ w_L)`), and `P_C5T < ρ·x_hi·M`.
-* C5-T is exactly TPT with the constant profile `L ≡ H_lo`, `U ≡ H_hi`.
-* *Proof:* `(−L)⁺ ≤ (−H_lo)⁺` pointwise, and `∫_{e0}^{x_hi} t dt = w_R`. ∎
+    p0(s) := f_F + s f_D + s² f_H/2 + s³ f_G/6 + s⁴ Env4/24,   p1(s) := f_D + s f_H + s² f_G/2 + s³ Env4/6,
+    p2(s) := f_H + s f_G + s² Env4/2,                          rad_r(s) := A0 p2(s) + 2A1 p1(s) + A2 p0(s).
 
-**Proposition TPT-O (optimality within the three-input family).** For given `(g_hi, L, U)` with `L ≤ U`, the bound
-`g_hi + P*` is attained by an admissible witness:
-* `g(e0) = g_hi`;
-* `R'' = L` on `(e0, x_hi]` and `R'' = U` on `[x_lo, e0)`.
+Then `|F_r''(t)(a) − Ĥ_r(a) − (t − e0)Ĝ_r(a)| ≤ rad_r(s)` for every t ∈ C.
 
-So no bound using only these three inputs is smaller.
+*Proof* (restated precisely, per review R1 N2).
+* **Taylor remainders at e0.** The expansions at e0 with integral remainder give `‖φ⁽ʲ⁾(t)‖ ≤ p_{2−j}(s)`, using:
+  * the **midpoint** premises f_F, f_D, f_H, f_G. σ3, a midpoint premise, enters only through f_G, which is the
+    coefficient of the φ‴(e0) term. That is a midpoint object.
+  * the **whole-cell** bound Env4 on ‖φ⁗(u)‖ for u ∈ [e0, t] ⊂ C.
+    * Env4 itself uses |t| ≤ ρ inside (P3).
+    * In TC-T, σ4 comes from the (P3′) cell tower, which carries a ρ mean-value correction.
+    * Both are whole-cell constants and stay valid at every u of the segment.
+* **Error identities and constants.** TC §4 steps 2–3 are unchanged. The error identities hold at every e, and
+  step 3 is pointwise in t. The A-constants of Lemma G or Lemma Dv′ are uniform on C.
+* **Centre motion.** The relaxation per r, `(t − e0)Ĝ_r(a) ∈ [−s|Ĝ_r(a)|, s|Ĝ_r(a)|]`, is valid. ∎
 
-**Scope** (carried over from C5 adjudication §8, verbatim in substance):
-* The witness is an arbitrary absolutely continuous function consistent with the inputs, not a resolvent-type R.
-* The result does not apply to a cell with `x_lo = 0`.
+**Profile enclosure.**
 
-## 2. The TC profile lemma (the third input)
+    R''_m(t) ∈ Σ_{r<m} (1/m)[Ĥ_r(a) ± (rad_r(s) + s|Ĝ_r(a)|)] + Σ c·𝒲_(r,j),
 
-**Lemma TC-P.** Assume the premises (P1)–(P4) of theorem TC, or (P1), (P2′), (P3′) and Lemma G of TC-T, on C. For
-`t ∈ C` put `s := |t − e0| ≤ ρ` and
+where the whole-cell W enclosures are constant in t. With `H_final` the **consumed** whole-cell enclosure (N7):
 
-    p0(s) := f_F + s f_D + s² f_H/2 + s³ f_G/6 + s⁴ Env4/24
-    p1(s) := f_D + s f_H + s² f_G/2 + s³ Env4/6
-    p2(s) := f_H + s f_G + s² Env4/2
-    rad_r(s) := A0·p2(s) + 2·A1·p1(s) + A2·p0(s).
+    L(t) := max(H_final.lo, lo(s)),   U(t) := min(H_final.hi, hi(s)).
 
-Then `|F_r''(t)(a) − Ĥ_r(a) − (t − e0)·Ĝ_r(a)| ≤ rad_r(s)` for every `t ∈ C`.
+The profile coefficients are all ≥ 0, so lo is non-increasing in s and hi is non-decreasing. Corollary TPT-M then
+applies exactly. The committed records carry only |Ĝ(a)|, so the symmetric relaxation is what is used.
 
-*Proof.* This is theorem TC §4 with the substitution of `ρ` for `|t − e0|` omitted.
-* Step 1 is Taylor's theorem with integral remainder in `B(X)`. For example
-  `φ''(t) = φ''(e0) + (t−e0)φ'''(e0) + ∫_{e0}^{t}(t−u)φ⁗(u)du`, with `‖φ⁗(u)‖ ≤ Env4` for every `u` on the segment
-  `[e0, t] ⊂ C`. So `‖φ''(t)‖ ≤ p2(s)`, and likewise `p1(s)` and `p0(s)`.
-* Steps 2–3 are unchanged. The A-constants are uniform over C, so they hold at t.
-* No inequality of TC uses `s = ρ` except the final substitution. ∎
+**Fail-closed rules, enforced by `tpt.py` r2:**
+* Refuse a pointwise-empty intersection. It is narrowest at s = 0 (N5).
+* Accept exact rationals only (N6).
+* If the consumed M_k is supplied, it must equal `mag(H_final)` (N7).
+* Refuse unordered intervals, and refuse an m label that does not match the number of source terms.
 
-**Consequence (profile enclosure of R''_m).**
+**The geometry guard is defence in depth only (N4).**
+* The enclosure does not depend on e0, and P* is affine in e0.
+* So the real barrier against target evaluation is the input-path quarantine: no new code reads tail input files.
 
-    R''_m(t) ∈ 𝓗_m(t) := Σ_{r<m} (1/m)·[Ĥ_r(a) + (t−e0)Ĝ_r(a) − rad_r(s), Ĥ_r(a) + (t−e0)Ĝ_r(a) + rad_r(s)]
-                          + Σ c·𝒲_(r,j),
+**Proposition TPT-G (target-free structure of the gain; premises made explicit per N13).**
+* On the binding right side, write `−L(e0+s) = c + αs + βs² + γs³ + δs⁴`, where
+  `c = −W_lo − Σ_r (Ĥ_r,lo − rad_r(0))/m`, and α, β, … are the s-coefficients (all ≥ 0).
+* The whole-cell charge of the `s^k` term exceeds the profile integral by the factor
+  `(x0 + ρ/2)/(x0/(k+1) + ρ/(k+2))`, where `x0 = e0`. As ρ/x0 → 0 this factor tends to k + 1.
+* The constant term c is charged identically by both.
+* The comparison assumes `c ≥ 0`, which is a data-dependent sign premise.
 
-where the whole-cell W enclosures are used unchanged (constant in t).
+**Correction per review R1 B1(b).** The r0 text said that combining this proposition with committed tail
+decompositions "was not done". **At campaign level it was done.** The coordinator's dependency graph placed the
+committed tail shares next to these factors (commit 4403f86f). It is retracted and recorded as incident 01, and TPT's
+tail application is BLOCKED for this campaign.
 
-Intersecting with any whole-cell enclosure `H_K1 ⊇ R''_m(C)` (the K1 record's `R2_interval`) keeps validity
-pointwise:
+## 2b. Theorem TPT-B (block-resolved profile)
 
-    L(t) := max(H_K1.lo, lo 𝓗_m(t)),    U(t) := min(H_K1.hi, hi 𝓗_m(t)).
+Let each block's constants `(A0^b, A1^b, A2^b)` be valid on that block. Then Lemma TC-P holds pointwise with the
+constants of the block containing t, because TC §4 step 3 is pointwise. Within one block the integrand is monotone,
+so the running integral is quasi-convex on each piece. Hence
 
-* If `Ĝ ≡ 0` (TC-T, premise (P2′)), `lo 𝓗_m(e0 + s)` is non-increasing and `hi 𝓗_m(e0 − s)` is non-decreasing in s,
-  because every coefficient of `p0`, `p1` and `p2` is ≥ 0. So Corollary TPT-M applies, and `P*` is two polynomial
-  integrals.
-* With `Ĝ ≠ 0` (theorem TC), use `P₊` (Corollary TPT-P), which is always sound.
-* **The committed records carry only `|Ĝ_r(a)|`**, not its sign (V3 finding 3). The implementation `tpt.py` therefore
-  uses the symmetric relaxation `(t − e0)Ĝ_r(a) ∈ [−s|Ĝ_r(a)|, s|Ĝ_r(a)|]` and folds `s|Ĝ_r(a)|` into the radius. The
-  profile is then monotone again, so Corollary TPT-M applies exactly and the `P₊` branch is never needed for inputs
-  built from committed records.
-* The (P3) envelope could itself be taken on the segment `[e0, e0 ± s]` (`Env4(s)`, with ρ replaced by s inside
-  (P3)). That is a further, second-order tightening. It is **not** implemented; the whole-cell `Env4` is used.
+    P*_B = max(0, running integral at the piece ends),
 
-**Proposition TPT-G (generic structure of the gain; target-free).** Write the rightward binding integrand as
-`t·(c + α s + β s² + γ s³ + δ s⁴)` with `t = x0 + s`, `s ∈ [0, ρ]` and all coefficients ≥ 0. Here c collects the
-centre, the W half-widths and `rad(0)`; `α, β, …` are the s-coefficients of `Σ_r (1/m) rad_r(s)` (plus `|Ĝ(a)|`
-motion). Compare the whole-cell charge `ρ(x0 + ρ/2)·(c + αρ + βρ² + …)` with the profile integral
-`∫_0^ρ (x0+s)(c + αs + βs² + …) ds`. Term by term, as ρ/x0 → 0:
-* the constant component is unchanged;
-* the linear component is charged **1/2**;
-* the quadratic component is charged **1/3**;
-* the cubic component is charged 1/4, and the quartic 1/5.
+which is exact. It satisfies `P*_B ≤ P*_TPT` whenever `A^b ≤ A^cell`.
 
-The exact finite-ρ ratios are `(x0/2 + ρ/3)/(x0 + ρ/2)` for the linear term and `(x0/3 + ρ/4)/(x0 + ρ/2)` for the
-quadratic term. So TPT removes exactly the part of the inequality chain that charges a Taylor remainder at its edge
-value over the whole cell. The linear and quadratic remainder terms are the components that grow with the cell
-width.
+The mathematics is sound (review R1 N16).
 
-*No forecast is made.* Combining this proposition with committed per-cell radius decompositions or C8 factors to
-predict any tail cell's Γ is a target-equivalent proxy. It is forbidden in this campaign and was not done.
-
-## 2b. Theorem TPT-B — block-resolved profile
-
-**Motivation.** This addresses an assembly looseness named in the campaign brief §16: "worst-case constants used
-simultaneously even when mutually incompatible".
-* A cell's atom constants are composed componentwise over its sub-blocks: max τ, max C_T, min D_lo, max D1, max D2
-  (`deflated_consume.block_for`; C2 registry cell rows).
-* Lemma TC-P needs, at a point t, only constants valid **at t**. Theorem TC §4 step 3 evaluates E''(t)(a) pointwise.
-
-**Theorem TPT-B.** Let blocks `B_1 … B_q` cover the cell. Let each `(A0^b, A1^b, A2^b)` be valid (Lemma G or Lemma Dv′
-premises) for every e ∈ B_b. Define `rad_r(t) := A0^{b(t)} p2(s) + 2A1^{b(t)} p1(s) + A2^{b(t)} p0(s)`, with b(t) any
-block containing t. Then Lemma TC-P holds pointwise with `rad_r(t)`.
-
-Within one block, the profile integrand is monotone in s. So the running transport integral is quasi-convex on each
-piece, and
-
-    P*_B = max(0, max over right piece ends of ∫_{e0}^{end} t(−L_B), max over left piece ends of ∫_{end}^{e0} t U_B)
-
-is exact: polynomial integrals, no root-finding. If every `A_j^b ≤ A_j^cell`, then `L_B ≥ L` pointwise, and so
-**P*_B ≤ P*_TPT** (dominance).
-
-**Validation** (`validate_tptb_synthetic.py`, `validation/TPTB_SYNTHETIC.json`). 24 exact FSM fixtures, with 2 or 4
-blocks each certified by its own Lemma-G constants:
+Validation r2 on 24 exact fixtures:
 
 | check | result |
 |---|---|
-| B1 pointwise violations | 0 |
-| B2 transport soundness, certified | 24/24 |
-| B3 dominance P*_B ≤ P*_TPT ≤ P_C5T | 24/24 |
-| B4 truth-relative negative control detected | 24/24 |
+| pointwise violations | 0 |
+| transport certified sound | 24/24 |
+| dominance | 24/24 |
+| code-path control | detected 24/24 |
+| θ-controls, 1/2 / 9/10 / 99/100 | detected 22 / 10 / 4 |
 
-**Gain on these fixtures: P*_B / P*_TPT ∈ [0.99896, 1].** It is negligible here, because the synthetic constants
-hardly vary across a cell. The gain is structurally bounded by the relative variation of the A-constants across the
-cell's binding side. This is recorded as a sound, low-value refinement; it is not ranked as a route.
+The r1 control was a tautology and is withdrawn.
 
-## 3. What TPT changes and what it does not
+The gain on these fixtures is P*_B/P*_TPT ∈ [0.99896, 1]. That result is specific to these fixtures, whose k_i are
+bounded over [0, e_hi], not per block. TPT-B is not ranked as a route.
+
+## 3. What TPT changes, and its governance
 
 | item | status |
 |---|---|
-| `g_hi`, `R2_interval`, W enclosures, A-constants, `f_*`, `Env4`, ρ, cover | **unchanged**; all are the committed certified inputs |
-| TC / TC-T radius | used pointwise in t instead of at its maximum |
-| consumer | **changed**: the direct clause `g_hi + ρ x_hi M` (or C5-T) is replaced by `g_hi + P*` |
-| floor r2 | TPT is **closure-only** under floor r2 (`adoption_quantity` binds C2's consumer path, `fail_closed[3]`); any adoption use needs a floor extension frozen before any evaluation (C2 Condition 1; route audit U3) |
-| chain recurrences of K5-B (`ℓ_k`, `γ_k`) | not changed here. The same profile idea applies to `μ_k` and is left as a remark. |
+| inputs | `g_hi`, the consumed whole-cell enclosure, W, A, `f_*`, Env4, ρ, cover: **unchanged** |
+| TC / TC-T radius | used pointwise in t |
+| consumer | **changed**: the direct clause is replaced by `g_hi + P*` |
+| floor r2 | **closure-only**. The anchor is `quantity_compared.adoption_quantity` ("the frozen consumer path … with the atom constants S substituted and every other input unchanged"), with `fail_closed[2]`. The r0 citation of `fail_closed[3]` was inapt (N10). Adoption would need a floor extension frozen before any evaluation (C2 Condition 1; route audit U3). |
+| chain clause (γ_k) | not in the adoption quantity. A consumer feeding γ_k would need only `g(x_k) ≤ g_hi + I_right(ρ)`, which is not implemented (N11). |
+| cells 305 / 306 | **305 OUT**: adopted under r1 and not re-adjudicable. **306 OUT**, decided prospectively here: a TPT evaluation at 306 would be designed knowing the sealed adverse I2 result, which the route audit classes RESULT_CHASING_RISK / GOVERNANCE_BARRED (306-g). (N12) |
+| G10 | **undetermined prospectively**. The only non-target real evidence gives 0.7–2.5 % of the penalty on the lower front, which is cosmetic there. Any claim of material tail value would go through the incident-01 proxy (N14). |
 
-## 4. Validation obligations (non-target only)
+## 4. Validation record (pinned `tpt.py` r2, sha256 `05cebc9c…`)
 
-**Implementation revision r1** (`tpt.py`). The V3 report found four defects in r0; `test_tpt_guards.py` is their
-regression test. It passes on r1 and fails on r0; the r0 run was checked in a scratch copy.
-* **T1:** a guard is now on every public function.
-* **T2:** the m label is bound to `len(terms)`, and the cell geometry goes through `guard_drift`. A tail cell under a
-  false label is refused.
-* **T3:** the K1-cap split point is taken on the non-binding side. r0 could exceed C5-T by 10⁻⁴² and then raise.
-* **T4:** a Riemann lower-sum bracket replaces an assertion that is not a theorem, and interval orders are checked.
-
-The results did not move: V1 is unchanged, and V3's 136 values of `P_tpt` are identical after regeneration.
-
-* **V1.** Exact-truth synthetic fixtures (finite-state drift families, `code/ov_fixtures.py`):
-  * build a full TC pipeline (candidates, certified residual bounds, Env4, Lemma-G constants);
-  * check `max_{e∈C} g(e) ≤ g_hi + P* ≤ g_hi + P_C5T ≤ g_hi + ρ x_hi M` on every fixture cell;
-  * check Lemma TC-P pointwise against the exact `F''(t)(a)` on a dense rational grid.
-* **V2.** Adversarial:
-  * profiles that are non-monotone (P₊ path);
-  * `H_K1` binding on part of the cell;
-  * a planted invalid profile (L above the true R'' somewhere) must make the check fail.
-* **V3.** Real non-tail cells: the 34 lower-front TC cell records (CUSUM cells 11–44,
-  `p5y_k5_lower_front_order3/evidence/tc_r1/cells/`), if their committed inputs suffice. Soundness relations and
-  improvement factor; e ≈ 0.01, a regime far from the tail.
-* **V4.** Independent second implementation of the P* integral (different algorithm: dense rational Riemann upper
-  sums vs closed-form polynomial integration). They must agree, the upper sums from above.
+| id | what | result | file |
+|---|---|---|---|
+| V1 | exact FSM fixtures: Lemma TC-P pointwise; transport certified sound (rigorous sup g, adaptive bisection) | 0 violations; 12/12 sound | `validation/TPT_SYNTHETIC.json` (its r1 negative control is marked WITHDRAWN inside the file) |
+| r2 controls | code-path pointwise plant (A and \|G\| scaled so rad_poly is invalid); transport plants θ·P and mutants M2 (t sign), M4 (radius at s/2), M5 (Env4 dropped) | code path detected 12/12; transport θ = 1/2, 9/10, 99/100 detected 11, 5, 2; M2, M4, M5 detected 6, 4, 2; every control fires somewhere | `validation/TPT_R2_VALIDATION.json` |
+| V2 | cap/split path with a rigorously **certified truth cap** (grid R'' ± (h/2)·B3) | 12/12 sound; 12/12 dominated by C5-T with the same cap; interior splits right 11/12, left 12/12 | `validation/TPT_R2_VALIDATION.json` |
+| V3 | 136 real lower-front pairs, TC input path; independent TC re-derivation reproduces the committed H_TC exactly | gate 136/136; P_tpt/P_c5t 0.975–0.993 (regenerated against r2) | `validation/TPT_V3_LOWER_FRONT.json`, `v3/` |
+| V4 | Riemann upper and lower sums against the closed form | bracket holds. Same module and same profile derivation, so this is **not** an independent implementation (N8). | same |
+| guards | `test_tpt_guards.py` G1–G8 | pass on r2; G1–G5 fail on r0, G6–G8 on r1 | — |
+| not done | the non-monotone P₊ path (unimplemented, theory only); the TC-T tail input path (quarantined; design only) | — | — |

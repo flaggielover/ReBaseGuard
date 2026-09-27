@@ -6,7 +6,8 @@ Checks:
   B1 pointwise: |F_r''(t)(a) - H_r(a) - (t-e0) G_r(a)| <= rad_r(|t-e0|; A of the block containing t), exact, on a grid;
   B2 transport: rigorous sup_C g <= g_hi + P*_B (adaptive bisection as in V1);
   B3 dominance: P*_B <= P_tpt(cell constants = componentwise max over blocks) <= P_c5t;
-  B4 negative control: a radius planted at half the largest TRUE deviation must produce a B1 violation.
+  B4 negative control (r2, code path): block constants scaled so that rad_at itself is invalid -> violation;
+  B5 transport controls: planted g_hi + theta*P*_B, detected when the exact grid max of g exceeds it.
 Writes validation/TPTB_SYNTHETIC.json.
 """
 from __future__ import annotations
@@ -73,8 +74,16 @@ def run_fixture(cfg: tuple, nb: int, grid: int = 400) -> dict:
         R0, R1, R2 = Rmd(t)
         gvals.append(R0 - t * R1)
         Rpp.append(abs(R2))
-    # negative control (truth-relative plant): radius := half the largest true deviation -> must be violated
-    viol_nc = sum(1 for d in devs for x in d if x > max(d) / 2)
+    # negative control r2 (REVIEW_TPT_R1 B2): a CODE-PATH plant. Block constants are scaled by
+    # lam = (max true dev / 2) / (max rad_at), so rad_at -> tpt._lo_hi_with itself yields an invalid radius;
+    # the same comparison must then report >= 1 violation. (r1's control, a count over the truth list only,
+    # was a tautology and is withdrawn.)
+    maxdev = max(max(d) for d in devs)
+    maxrad = max(rad_at(st, t) for t in pts for st in cell.terms)
+    lam = (maxdev / 2) / maxrad if maxrad > 0 else F(0)
+    viol_nc = sum(1 for i, t in enumerate(pts) for j, st in enumerate(cell.terms) if devs[j][i] > rad_at(st, t, lam))
+    theta_detect = {str(th): bool(max(gvals) > cell.g_hi + th * resB["P_star_B"])
+                    for th in (F(1, 2), F(9, 10), F(99, 100))}
     B3 = V.third_derivative_bound(cell, truth, k, cell.x_hi, C)
     target = cell.g_hi + resB["P_star_B"]
 
@@ -100,6 +109,7 @@ def run_fixture(cfg: tuple, nb: int, grid: int = 400) -> dict:
         "B3_PB_le_Ptpt": bool(resB["P_star_B"] <= res_cell["P_tpt"]),
         "B3_Ptpt_le_Pc5t": bool(res_cell["P_tpt"] <= res_cell["P_c5t"]),
         "B4_negative_control_violations": viol_nc,
+        "B5_transport_theta_controls_detected": theta_detect,
         "P_B": float(resB["P_star_B"]), "P_tpt_cellmax": float(res_cell["P_tpt"]),
         "P_c5t_cellmax": float(res_cell["P_c5t"]),
         "PB_over_Ptpt": float(resB["P_star_B"] / res_cell["P_tpt"]) if res_cell["P_tpt"] else None,
@@ -123,6 +133,9 @@ def main() -> None:
         "B2_all_sound": all(r["B2_sound_certified"] for r in rows),
         "B3_all_dominated": all(r["B3_PB_le_Ptpt"] and r["B3_Ptpt_le_Pc5t"] for r in rows),
         "B4_controls_detected": sum(1 for r in rows if r["B4_negative_control_violations"] > 0),
+        "B5_theta_detections": {k: sum(1 for r in rows if r["B5_transport_theta_controls_detected"][k])
+                                for k in rows[0]["B5_transport_theta_controls_detected"]},
+        "tpt_py_sha256": __import__("hashlib").sha256((HERE / "tpt.py").read_bytes()).hexdigest(),
         "PB_over_Ptpt_range": [min(r["PB_over_Ptpt"] for r in rows), max(r["PB_over_Ptpt"] for r in rows)],
         "wall_s": round(time.time() - t0, 1),
     }

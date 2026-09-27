@@ -7,7 +7,9 @@ G3  every public function refuses a target-labelled profile (T1): rad_poly, lo_h
     whole_cell_enclosure, penalty_* and evaluate;
 G4  split-side (T3): a synthetic profile whose cap crossing lies inside the last bisection interval no
     longer raises a spurious TPT-D violation, and the closed form stays <= C5-T and >= the Riemann lower sum;
-G5  unordered intervals are refused (T4).
+G5  unordered intervals are refused (T4);
+G6  (r2, N6) float inputs are refused; G7 (r2, N5) a pointwise-empty intersection at s = 0 is refused;
+G8  (r2, N7) a consumed M inconsistent with mag(H_final) is refused.
 """
 from __future__ import annotations
 
@@ -78,7 +80,16 @@ def main() -> None:
         res["G4_split_side"] = {"raised": True, "msg": str(exc)}
     # G5: unordered centre interval
     res["G5_unordered_refused"] = refused(tpt.evaluate, profile(terms=[term(H_at_a=(F(1), F(0)))]))
-    ok = (res["G1_label_spoof_geometry_refused"] and "DRIFT_BAND" in res["G1_label_spoof_geometry_refused"]
+    # G6 (r2, N6): float input refused
+    res["G6_float_refused"] = refused(tpt.evaluate, profile(terms=[term(Env4=2.0)]))
+    # G7 (r2, N5): pointwise-empty intersection at s = 0 refused (cap above the profile's upper end at e0)
+    cp7 = profile(H_K1=(F(0), F(10)))  # centre -1, rad(0) tiny: hi(0) < 0 = cap.lo -> empty at s = 0
+    res["G7_empty_pointwise_refused"] = refused(tpt.evaluate, cp7)
+    # G8 (r2, N7): M_consumed inconsistent with mag(H_final) refused
+    res["G8_M_consumed_mismatch_refused"] = refused(tpt.penalty_frozen, profile(M_consumed=F(12345)))
+    ok = (res["G6_float_refused"] and res["G7_empty_pointwise_refused"]
+          and res["G8_M_consumed_mismatch_refused"]
+          and res["G1_label_spoof_geometry_refused"] and "DRIFT_BAND" in res["G1_label_spoof_geometry_refused"]
           and res["G2_m_label_mismatch_refused"]
           and all(res["G3_public_functions_refusing"].values())
           and res["G4_split_side"].get("raised") is False and res["G4_split_side"]["closed_le_c5t"]

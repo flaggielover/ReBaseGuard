@@ -12,14 +12,24 @@ direct clause rho*x_hi*M), both from the whole-cell enclosure = the profile at s
 
 Every public entry point takes a ``CellProfile`` and runs ``_check``, which calls
 ``ov_quarantine.guard_cell`` on the (detector, m, cell) label AND ``ov_quarantine.guard_drift`` on the
-cell's geometry [x_lo, x_hi], and requires len(terms) == m -- so a target cell cannot be evaluated through
-this module even under a false label (review V3 findings T1, T2).
+cell's geometry [x_lo, x_hi], and requires len(terms) == m (review V3 findings T1, T2).  These guards are
+DEFENCE IN DEPTH ONLY (review R1 N4): the enclosure does not depend on e0 and the penalty is affine in e0, so
+a target's per-r inputs under a translated geometry would be evaluated exactly.  The effective barrier is the
+input-path quarantine (no new code reads tail input files: ov_quarantine.FORBIDDEN_PATH_PATTERNS + static
+scan); no freeze may rely on these guards as a safety property.
 
 Revision r1 (after the V3 non-target validation report, before any target use):
   T1 guard on every public function; T2 label/terms/geometry binding; T3 the K1-cap split point is taken on
   the NON-binding side of the crossing, so the closed form is exact on [0, s'] and dominated by C5-T;
   T4 the closed-form vs Riemann-upper assertion (not a theorem once a split is used) is replaced by a
   Riemann LOWER-sum bracket, and interval orders are validated.
+
+Revision r2 (after the independent review REVIEW_TPT_R1, NOT_READY):
+  N5 refuse a pointwise-empty intersection: max(capLo, lo(0)) > min(capHi, hi(0)) (lo decreases and hi
+     increases in s, so s = 0 is where the intersection is narrowest);
+  N6 exact-rational contract: every numeric field must be a Fraction or int (floats refused);
+  N7 H_K1 must be the CONSUMED whole-cell enclosure H_final (everything the consumer intersects); optional
+     M_consumed is checked against mag(H_final at s = rho) and penalty_frozen uses it when given.
 """
 from __future__ import annotations
 
@@ -93,9 +103,10 @@ class CellProfile:
     A2: F
     terms: list                         # list[SourceTerm], r = 0..m-1, each weighted 1/m
     W: tuple = (F(0), F(0))             # whole-cell W enclosure sum (lo, hi), already c-weighted
-    H_K1: tuple | None = None           # whole-cell K1 enclosure of R''_m, or None
+    H_K1: tuple | None = None           # the CONSUMED whole-cell enclosure H_final of R''_m (N7), or None
     label: str = ""
     meta: dict = field(default_factory=dict)
+    M_consumed: F | None = None         # the consumer's M_k, if known (N7)
 
     @property
     def x_lo(self) -> F:
@@ -133,8 +144,25 @@ def _iv_ok(iv) -> bool:
     return iv is None or (len(iv) == 2 and iv[0] <= iv[1])
 
 
+def _exact(v) -> bool:
+    return isinstance(v, (F, int)) and not isinstance(v, bool)
+
+
+def _check_types(cp: CellProfile) -> None:
+    vals = [cp.e0, cp.rho, cp.g_hi, cp.A0, cp.A1, cp.A2, *cp.W]
+    if cp.H_K1 is not None:
+        vals += list(cp.H_K1)
+    if cp.M_consumed is not None:
+        vals.append(cp.M_consumed)
+    for t in cp.terms:
+        vals += [*t.H_at_a, t.abs_G_at_a, t.fF, t.fD, t.fH, t.fG, t.Env4]
+    if not all(_exact(v) for v in vals):
+        raise ValueError("exact-rational contract: every numeric input must be a Fraction or int (N6)")
+
+
 def _check(cp: CellProfile) -> None:
     Q.guard_cell(cp.detector, cp.m, cp.cell)
+    _check_types(cp)
     Q.guard_drift(cp.x_lo, cp.x_hi)            # geometry binding: refuses the tail band whatever the label
     if len(cp.terms) != cp.m:
         raise ValueError("label m must equal the number of source terms (1/m weights)")
@@ -177,10 +205,21 @@ def _crossing(poly: Poly, level: F, rho: F, decreasing: bool, bits: int = 60) ->
     return a  # non-binding side (T3): exact on [0, a], cap used on [a, rho] is an over-estimate there
 
 
+def check_nonempty(cp: CellProfile) -> None:
+    """N5: refuse if the profile enclosure intersected with H_K1 is empty anywhere (narrowest at s = 0)."""
+    lo, hi = lo_hi_polys(cp)
+    L0, U0 = peval(lo, F(0)), peval(hi, F(0))
+    if cp.H_K1 is not None:
+        L0, U0 = max(L0, cp.H_K1[0]), min(U0, cp.H_K1[1])
+    if L0 > U0:
+        raise ValueError("pointwise-empty intersection at s = 0: an input enclosure is invalid (N5)")
+
+
 def penalty_closed(cp: CellProfile) -> dict:
     """Corollary TPT-M: P* = max(0, I_right, I_left), each an exact polynomial integral (upper bound
     when the K1 cap is split at a rational s')."""
     _check(cp)
+    check_nonempty(cp)
     lo, hi = lo_hi_polys(cp)
     e0, rho = cp.e0, cp.rho
     # right side: integrand (e0 + s) * (-L(s)),  L = max(capLo, lo(s))
@@ -279,10 +318,14 @@ def penalty_c5t(cp: CellProfile) -> F:
 
 def penalty_frozen(cp: CellProfile) -> F:
     """rho * x_hi * mag(H); equals the consumed frozen clause rho*x_hi*M_k whenever M_k = mag(H_final)
-    (true on all 136 lower-front pairs, V3); a consumer with M_k < mag(H_final) would differ."""
+    (true on all 136 lower-front pairs, V3); a consumer with M_k < mag(H_final) would differ (N7):
+    if M_consumed is given it must equal mag(H_final) and is used."""
     _check(cp)
     Hlo, Hhi = whole_cell_enclosure(cp)
-    return cp.rho * cp.x_hi * max(abs(Hlo), abs(Hhi))
+    mag = max(abs(Hlo), abs(Hhi))
+    if cp.M_consumed is not None and cp.M_consumed != mag:
+        raise ValueError("M_consumed != mag(H_final): the consumed clause differs from the enclosure (N7)")
+    return cp.rho * cp.x_hi * mag
 
 
 def evaluate(cp: CellProfile) -> dict:
@@ -336,7 +379,7 @@ def _check_blocks(cp: CellProfile, blocks: list) -> list:
     return bl
 
 
-def penalty_blocked(cp: CellProfile, blocks: list) -> dict:
+def penalty_blocked(cp: CellProfile, blocks: list) -> dict:  # noqa: C901
     """Theorem TPT-B: the profile uses, at each t, the constants of a block containing t.
 
     Within one block the integrand t*(-L(t)) (right) / t*U(t) (left) is monotone in s = |t - e0|, so the running
@@ -345,6 +388,10 @@ def penalty_blocked(cp: CellProfile, blocks: list) -> dict:
     polynomial integral (the K1 cap, if any, is handled per piece by the non-binding-side split, an upper bound).
     """
     bl = _check_blocks(cp, blocks)
+    check_nonempty(cp)
+    for b in bl:
+        if not all(_exact(v) for v in (b.e_lo, b.e_hi, b.A0, b.A1, b.A2)):
+            raise ValueError("exact-rational contract (N6) for blocks")
     e0, rho = cp.e0, cp.rho
 
     def piece_integral(A, s_a, s_b, side):

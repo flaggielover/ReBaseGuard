@@ -390,7 +390,8 @@
  "schema": "OV_TPT_SYNTHETIC/1",
  "summary": {
   "fixtures": 12,
-  "negative_controls_detected": 12,
+  "negative_controls_detected_r1": 12,
+  "negative_controls_r1_WITHDRAWN": "REVIEW_TPT_R1 B2: this control replaced the radius by max(true dev)/2 inside the checker and so exercised only the comparison, never tpt.rad_poly or the transport; superseded by validate_tpt_r2.py (code-path + transport controls)",
   "negative_controls_total": 12,
   "pointwise_violations_total": 0,
   "riemann_ge_closed_all": true,
@@ -398,8 +399,9 @@
    0.5433744809824389,
    0.9758341440066453
   ],
+  "tpt_py_sha256": "05cebc9cd3278e1099ed2faf0c2ca5b32ee155f85be93654a80892873e4beab8",
   "transport_sound_all": true,
   "transport_sound_certified_all": true,
-  "wall_s": 27.0
+  "wall_s": 54.29
  }
 }
