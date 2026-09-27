@@ -1,0 +1,327 @@
+{
+ "authorization_scope": "repair, freeze, qualification and a fresh qualification review ONLY; no grant; the grant/execution phase needs a separate explicit authorization",
+ "campaign": "C12-R2 -- cell-306 adoption under K5 tail adoption floor r2 (successor of C12-R1; repairs the C12-R1 blocker)",
+ "caps": {
+  "evaluation_seconds": 600,
+  "hosts": "this machine only",
+  "new_real_scientific_addresses": 0,
+  "wall_clock_seconds_per_invocation": 900
+ },
+ "chain": [
+  "freeze",
+  "qualification (evidence only)",
+  "qualification review (review file only) -- the C12-R2 authorization ends here",
+  "[separate authorization] grant (grant file only)",
+  "execute",
+  "seal",
+  "execution review",
+  "adoption adjudication",
+  "adjudication review",
+  "r6 only if CELL306_ADOPTED and ADJUDICATION_ACCEPTED"
+ ],
+ "decision_table": {
+  "F1_prime_d": "Gamma(5,306;S_I1) < 0 AND Gamma(5,306;S_I2) < 0 (separately)",
+  "F2": "NOT_SATISFIED (C2 published FAIL on S_I1; not re-evaluated)",
+  "adoption": "floor_satisfied AND EXECUTION_ACCEPTED AND independent adjudication CELL306_ADOPTED AND ADJUDICATION_ACCEPTED",
+  "base": "Gamma(5,306;S_I1) < 0",
+  "floor_satisfied": "base AND F1_prime"
+ },
+ "exit_codes": {
+  "0": "sealed TARGET_EVALUATED",
+  "2": "refused before the marker",
+  "3": "CONTROL_FAILED sealed",
+  "4": "UNSEALED, evidence persisted",
+  "5": "sealed with a post-marker failure status",
+  "6": "CONSUMED_UNRECORDED",
+  "7": "sealed, worktree copy not materialized"
+ },
+ "frozen_files_sha256": {
+  "code/c12r2_cell306.py": "5c45b4de6c1587bf301e7ebe5db75ad89889192981543b41d3416bf7c600fb91",
+  "code/c12r2_grant.py": "83ec10cc01ec79fedf319d023bf26b0994d36722a1123a18dcdfeff8d77f2dd0",
+  "code/c12r2_r6_from_adjudication.py": "23a831c9774921b63011dbfc3b1e713fa1ee512c314a21e09ce00d58b0afff45",
+  "code/c12r2_verify.py": "3c748f113c6d25e0352cce8cacd673c8618577f0704bd7958befef9d77fc8e03",
+  "protocol/C12R2_PROTOCOL.md": "874a561079a36cc21110df004d067afb9a04136eabcc07f35466a4379aac8086"
+ },
+ "input_blobs": {
+  "adapter": "0516a15b2d83",
+  "adopted_inputs": "0ba3c6dc876f",
+  "c11r_comparison": "5269c2aaa354",
+  "c11r_comparison_review": "a1d33960e262",
+  "c11r_execution_review": "bfc1ab77c01f",
+  "c11r_statements": "58b4066f5cce",
+  "c11rd_comparison": "7151f57a9792",
+  "c11rd_comparison_review": "7c7cad001a72",
+  "c11rd_execution_review": "7037189f61ad",
+  "c11rd_runs": "30e2dfd0ac87",
+  "c2_forecast": "a191557f24c3",
+  "c2_forecast_code": "18403dbec855",
+  "cells_json": "30e40fc0e721",
+  "coverage_r5": "f978eeb6b411",
+  "deflated_consume": "a0a836fa83c6",
+  "floor_gate": "89b86218116a",
+  "floor_review": "ad73021bca35",
+  "floor_rule": "0ddfac300b92",
+  "n9_adjudication": "c3e001a7c84a",
+  "n9_adjudication_review": "3c716c70de5b",
+  "record_manifest": "e6e0e26e2583",
+  "registry_c1": "f6d84bdb5ef0",
+  "registry_c2": "1a3adfd3d893",
+  "soundness_c11r_runs": "a53516031948",
+  "soundness_c11rd_independence_audit": "571c2d9205b5",
+  "soundness_c11rd_theory": "803f01450e6a",
+  "soundness_c2_adjudication": "cfc5b3ed9a74",
+  "soundness_c2_cell306_adoption": "f5db4cd9286f",
+  "tail_forecast_r2": "edec817e57f1",
+  "tct_inputs_305": "499ccafe5cc9",
+  "tct_inputs_306": "ad0f8039b4a1",
+  "tct_rule": "98f6eee4d867"
+ },
+ "input_pins_sha256": {
+  "adapter": {
+   "path": "level4/closure_proofs/p5y_k5b_consumption_adapter/code/consumption_adapter.py",
+   "sha256": "fbad7d33261fd47fc56c034d6a016f8427b81b51f9199f0e3a8f3e74df35973d"
+  },
+  "adopted_inputs": {
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/evidence/measurement_r1/ADOPTED_TAIL_INPUTS.json",
+   "sha256": "485fb1254e459683f48815c239d18d29119d651d0e77876f772c3fee9d29a37d"
+  },
+  "c11r_comparison": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/comparison/C11R_COMPARISON.json",
+   "sha256": "800447adb9bc5f1b6116b61dc584d1653d8ec3c3e181ae35112a9efd1568231b"
+  },
+  "c11r_comparison_review": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/review/REVIEW_C11R_COMPARISON.md",
+   "sha256": "09f1d42f0e85e10cc0907f4614d981d4852e160fc8cb2b9cb2649ad1fb1804ce"
+  },
+  "c11r_execution_review": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/review/REVIEW_C11R_EXECUTION.md",
+   "sha256": "ae2fbf7020751772feec798e73abde5bbf695a505315337ea8aef79ce90078a7"
+  },
+  "c11r_statements": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/table/C11R_N9_STATEMENTS.json",
+   "sha256": "2e0f7dc4ceb796289d083ba09129116f128f54dc172ad31d45129a255c0487b7"
+  },
+  "c11rd_comparison": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/evidence/comparison/C11RD_COMPARISON.json",
+   "sha256": "8a9637b6a11d6b7e48bc4beee6a7a8b37fce4425ba911f4b10d53b4020391b06"
+  },
+  "c11rd_comparison_review": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/review/C11RD_COMPARISON_REVIEW.md",
+   "sha256": "1c8832b4963f3da70883744cdfe0f5a91586f755ca0e26049cb4643dfc3199ff"
+  },
+  "c11rd_execution_review": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/review/C11RD_EXECUTION_REVIEW.md",
+   "sha256": "5d3181cb9fc83ec1e7f5ff473800d44251100100d43cd71b210a36439f1ff211"
+  },
+  "c11rd_runs": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/evidence/runs/C11RD_RUNS.json",
+   "sha256": "c28a8cea9e777c06dd082765fc8cc94f3f5e5376809c2c74fedc358658709cc0"
+  },
+  "c2_forecast": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/phase_d5/C2_D5_FORECAST.json",
+   "sha256": "784f25eecd65bad3bf687727590a0c0e91a683c5d30817c3bda80d6f373fe983"
+  },
+  "c2_forecast_code": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/code/c2_d5_forecast.py",
+   "sha256": "bd7854bce2434215c0a72eeb825ff87db4c729e80b0e4d125911e806a084f06b"
+  },
+  "cells_json": {
+   "path": "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/cells.json",
+   "sha256": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f"
+  },
+  "coverage_r5": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/coverage/K5_COVERAGE_MAP_R5.json",
+   "sha256": "e2197051e493df898295a692c580ed676e771f7dfae5a1675d8d8e9b979f684c"
+  },
+  "deflated_consume": {
+   "path": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/deflated_consume.py",
+   "sha256": "ef5d0474183053bb7cde3075bda66f99211706a9bf7bf27e31fe994ff8b87e72"
+  },
+  "floor_gate": {
+   "path": "level4/closure_proofs/p5y_k5_tail_floor_r2/config/CELL306_ADOPTION_GATE_R2.json",
+   "sha256": "747c65a8de75c9420410ec6941d3eb4a2da23e29cca24cd743c60acd436dca14"
+  },
+  "floor_review": {
+   "path": "level4/closure_proofs/p5y_k5_tail_floor_r2/review/FLOOR_R2_REVIEW.md",
+   "sha256": "2b94c8e0af795e758e7334bcf7d9e76861ff503b1ed67cfbaad273e00a188c77"
+  },
+  "floor_rule": {
+   "path": "level4/closure_proofs/p5y_k5_tail_floor_r2/config/K5_TAIL_ADOPTION_FLOOR_R2.json",
+   "sha256": "eb2b4196dd23a8353e25093ff6bfa30d18634dd7f52968ec3c7000ea9b624238"
+  },
+  "n9_adjudication": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/adjudication/ADJUDICATION_C11RD_N9.md",
+   "sha256": "4a61b0a345b539cb80a0912e2ab1f1c396f42405d5a6510496456e537a103ffc"
+  },
+  "n9_adjudication_review": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/review/C11RD_ADJUDICATION_REVIEW.md",
+   "sha256": "5fa25a80aad3b2d3610da5eccf946d0bc399558e01ac329b9b07edea1e701702"
+  },
+  "record_manifest": {
+   "path": "level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/evidence/closure_r1/COMPOSITE_EXPORT_MANIFEST.json",
+   "sha256": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334"
+  },
+  "registry_c1": {
+   "path": "level4/closure_proofs/p5y_k5_tail_operator_registry/evidence/registry_c1/REGISTRY_C1.json",
+   "sha256": "87bb1cfacb09c2a144cab0270427d91980ea742b36fd80f8963265a22d2eebb3"
+  },
+  "registry_c2": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/registry_c2/REGISTRY_C2.json",
+   "sha256": "1b2b834939fcd80a81ddc8f029f46705b53cefeb46c0cc925a99c2b8e856fdd6"
+  },
+  "soundness_c11r_runs": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/runs/C11R_RUNS.json",
+   "sha256": "1552dfa99d2250da2bc7e6269957168f89f08e4d60e32eaca2387c6800438f59"
+  },
+  "soundness_c11rd_independence_audit": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/docs/C11RD_INDEPENDENCE_AUDIT.md",
+   "sha256": "62f7a5dbde9254b67085b1c72df395d47999aa394498ffea064d1528a9fb4f8a"
+  },
+  "soundness_c11rd_theory": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/theory/D1_D2_DERIVATION.md",
+   "sha256": "03eb121954702bb30c07ab4ed2093fa563df34f6507eb50b38d031ff15cbeae4"
+  },
+  "soundness_c2_adjudication": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/adjudication/C2_ADJUDICATION.md",
+   "sha256": "f37dae47b3548bd4b24a0973ba57af869c076fb424c9b46bf4a86d67f74823ef"
+  },
+  "soundness_c2_cell306_adoption": {
+   "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/phase_d/CELL_306_ADOPTION.md",
+   "sha256": "2f85440c7999490a1273509655c0a988e1316c5c907aebebf6dfab1ca2153cfa"
+  },
+  "tail_forecast_r2": {
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/code/tail_forecast_r2.py",
+   "sha256": "5ab31ae56c0174697a7f5805e212b46334803e9e3371a77f82871d60716b96cd"
+  },
+  "tct_inputs_305": {
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/evidence/measurement_r1/TCT_INPUTS_305.json",
+   "sha256": "e1390b427e5f7dcf2f997fe039ea3658554cba86f6e472f3c8f339ac0e93df76"
+  },
+  "tct_inputs_306": {
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/evidence/measurement_r1/TCT_INPUTS_306.json",
+   "sha256": "57ff9280ca4d3b597ce4cdd6741d3a473e9f5d63e7c414696ce42c422b709a49"
+  },
+  "tct_rule": {
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/code/tct_rule.py",
+   "sha256": "f5a343e7f7bfb742d0a41c38512e27e7311d0919b38bcea0dfe98775c73d9a3e"
+  }
+ },
+ "lineage": [
+  {
+   "commit": "5a94568af69f775eaabdeb895dea19b9bf664935",
+   "role_word": "D stage"
+  },
+  {
+   "commit": "ae4cbc2c",
+   "role_word": "coverage map r5"
+  },
+  {
+   "commit": "22537709",
+   "role_word": "EXECUTION_ACCEPTED"
+  },
+  {
+   "commit": "2c24a989",
+   "role_word": "comparison"
+  },
+  {
+   "commit": "7375b9cd",
+   "role_word": "COMPARISON_ACCEPTED"
+  },
+  {
+   "commit": "4547bcd4",
+   "role_word": "SEAL"
+  },
+  {
+   "commit": "db1c6118",
+   "role_word": "EXECUTION_ACCEPTED"
+  },
+  {
+   "commit": "8e2defab",
+   "role_word": "comparator"
+  },
+  {
+   "commit": "90265349",
+   "role_word": "COMPARISON_ACCEPTED"
+  },
+  {
+   "commit": "7d67989d3da6595180ca3c01d34f2bdf4543ae73",
+   "role_word": "adjudication"
+  },
+  {
+   "commit": "fb237288a7cf481c14cd2f85c18bb363d2ebe44a",
+   "role_word": "ADJUDICATION_ACCEPTED"
+  },
+  {
+   "commit": "a15d083b009868e38a5bd5a808f38f19e6ab4b92",
+   "role_word": "floor r2"
+  },
+  {
+   "commit": "3fadb422eaba97123d46e98b9e80277a62a042c8",
+   "role_word": "REPLACEMENT_FLOOR_ACCEPTED"
+  },
+  {
+   "commit": "2cdfa467",
+   "role_word": "QUALIFICATION_REJECTED"
+  },
+  {
+   "commit": "e89402c1",
+   "role_word": "QUALIFICATION_REJECTED"
+  }
+ ],
+ "predecessors": {
+  "C12": {
+   "freeze": "b9ffc87fd7f42a922a688facae7e0b6987239c91",
+   "review_QUALIFICATION_REJECTED": "2cdfa4677c311f64307b1f112ab372f0bc22cff4",
+   "status": "eba56027af8d33ee0ae156dbd7e7266915c4af13"
+  },
+  "C12-R1": {
+   "freeze": "5cfe336ac471f24ddd1d02f30fbe173f617fe31a",
+   "qualification": "2e7bc7d6aa890a7b849639f4fe4b699614f4ad08",
+   "review_QUALIFICATION_REJECTED": "e89402c14faa26dc2616071e900b74a33d18e525",
+   "status": "13e06db05d59c84da1ce69f94ce189e37a76836f"
+  }
+ },
+ "qualified_identity": {
+  "branch": "refs/heads/p5y-k5-tail-c11rd-d1d2-extension",
+  "common_dir": "/Users/suzhe/ReBaseGuard/.git",
+  "git_dir": "/Users/suzhe/ReBaseGuard/.git/worktrees/ReBaseGuard-k5c11rd",
+  "worktree": "/Users/suzhe/ReBaseGuard-k5c11rd"
+ },
+ "repairs": {
+  "R1": "lstat refusal of any object at the result, temporary and execution-directory paths; no symlinked component",
+  "R2": "git status --ignored --untracked-files=all over the namespace must be empty",
+  "R3": "seal from memory: hash-object -w --stdin (blob id verified) -> pending ref -> private-index --cacheinfo commit; worktree copy only after the seal, O_CREAT|O_EXCL|O_NOFOLLOW via directory fds, read back",
+  "R4": "signals ignored before the marker; evaluation-scoped cap; after_marker lets nothing escape; two persistence channels; seal-only never computes",
+  "R5": "decoy regression tests T1-T9, P01-P11"
+ },
+ "schema": "rebaseguard.p5y.k5.tail-c12r2.freeze.v1",
+ "sha256": "6713660b4082254a1f55283e2d2e36a22e17cb2e3589ef87707e4b91daefa185",
+ "status": "FROZEN (prospective): real Gamma(5,306;S_I2) evaluated 0 times; no marker, grant, result or seal",
+ "target": {
+  "cell": 306,
+  "emergency_file_in_git_dir": "c12r2-cell306-emergency-result.json",
+  "evaluations_permitted": 1,
+  "guarded_paths": [
+   "level4/closure_proofs/p5y_k5_tail_c12r2_cell306_adoption/evidence/execution",
+   "level4/closure_proofs/p5y_k5_tail_c12r2_cell306_adoption/evidence/execution/C12R2_CELL306_RESULT.json",
+   "level4/closure_proofs/p5y_k5_tail_c12r2_cell306_adoption/evidence/execution/C12R2_CELL306_RESULT.tmp",
+   "level4/closure_proofs/p5y_k5_tail_c12r2_cell306_adoption/evidence/execution/C12R2_CELL306_RESULT.json.tmp",
+   "level4/closure_proofs/p5y_k5_tail_c12r2_cell306_adoption/evidence/execution/C12R2_CELL306_RESULT.partial"
+  ],
+  "m": 5,
+  "marker": "refs/c12r2/cell306-target-consumed",
+  "pending_ref": "refs/c12r2/cell306-pending-result",
+  "prior_markers_refused": [
+   "refs/c12r2/",
+   "refs/c12r1/",
+   "refs/c12/"
+  ],
+  "prior_results_refused": [
+   "level4/closure_proofs/p5y_k5_tail_c12r2_cell306_adoption/evidence/execution/C12R2_CELL306_RESULT.json",
+   "level4/closure_proofs/p5y_k5_tail_c12r1_cell306_adoption/evidence/execution/C12R1_CELL306_RESULT.json",
+   "level4/closure_proofs/p5y_k5_tail_c12_cell306_adoption/evidence/execution/C12_CELL306_RESULT.json"
+  ],
+  "quantity": "Gamma(5, 306; S_I2)",
+  "result_path": "level4/closure_proofs/p5y_k5_tail_c12r2_cell306_adoption/evidence/execution/C12R2_CELL306_RESULT.json"
+ }
+}
