@@ -22,7 +22,8 @@ Subcommands (cwd-independent; every path is resolved from this file):
               value-blind preflight; never computes G, T or B and writes nothing
   execute     the single execution: the same gates, then reserves the canonical output file (exclusive create) BEFORE any
               source is read, computes the certificate and the successor assembly, and writes the result into the
-              reservation; any failure after the reservation is recorded in it as EXECUTION_CRASHED
+              reservation; any failure after the reservation is recorded in it as EXECUTION_CRASHED. A hard kill
+              (SIGKILL) leaves an empty reservation, which likewise spends the execution.
 """
 from __future__ import annotations
 
@@ -215,6 +216,8 @@ def extract_inputs(src: dict, universe: dict, prov: dict) -> dict:
         if not (tf >= x1 * x1 / 2 and M5x1 >= 0 and L0 <= U0 and L1 <= L0 - tf * M5x1 and U1 >= U0 + tf * M5x1):
             raise K4R1Refusal(f"m={m}: slot-1 record is not a consistent transport over [0, x1]")
         M3, M5 = fr(row["M"]["3"][m]), fr(row["M"]["5"][m])
+        if M3 < 0 or M5 < 0 or a <= 0:
+            raise K4R1Refusal(f"m={m}: negative majorant or non-positive residual end")
         out[m] = {"cells": cells, "a": a, "e0": e0, "x1": x1, "hull_cell": row["cell"],
                   "_D0_hi": D0[1], "_L1": L1, "_U0": U0, "_M3": M3, "_M5": M5}
     return out
@@ -287,6 +290,21 @@ def verify_freeze(freeze_path: Path | None = None, repo: Path | None = None, ns:
     missing = [r for r in required if r not in fz["bound_files"]]
     if missing:
         raise K4R1Refusal(f"EXECUTION_LOCKED: mandatory files not bound by the freeze: {missing}")
+    freeze_rel = {str(ns_rel / "config/FREEZE.json"), str(ns_rel / "config/FREEZE_HASH")}
+    cand = fz.get("qualified_candidate_commit") or "<absent>"
+    delta = sorted(fz.get("allowed_freeze_delta") or [])
+    review_files = fz.get("review_files") or []
+    if not (freeze_rel <= set(delta) and set(delta) == freeze_rel | set(review_files)
+            and fz.get("qualification_review") in review_files and all(r in fz["bound_files"] for r in review_files)):
+        raise K4R1Refusal("EXECUTION_LOCKED: freeze delta / review files malformed")
+    anc = subprocess.run(["git", "-C", str(repo), "merge-base", "--is-ancestor", cand, "HEAD"], capture_output=True)
+    diff = subprocess.run(["git", "-C", str(repo), "diff", "--name-only", cand, "HEAD"], capture_output=True, text=True)
+    if anc.returncode != 0 or diff.returncode != 0 or sorted(diff.stdout.split()) != delta:
+        raise K4R1Refusal("EXECUTION_LOCKED: HEAD is not the qualified candidate plus exactly the allowed freeze delta")
+    tracked = subprocess.run(["git", "-C", str(repo), "ls-files", "--", str(ns_rel)], capture_output=True, text=True)
+    bound_ns = {k for k in fz["bound_files"] if k.startswith(str(ns_rel) + "/")}
+    if tracked.returncode != 0 or bound_ns != set(tracked.stdout.split()) - freeze_rel:
+        raise K4R1Refusal("EXECUTION_LOCKED: bound namespace files differ from the namespace files tracked at HEAD")
     return fz
 
 
@@ -366,7 +384,8 @@ def main(argv=None) -> int:
             res = compute(universe, prov, gs)
         except BaseException as exc:
             fh.write(json.dumps({"schema": "rebaseguard.p5y.k4r1.result.v1", "status": "EXECUTION_CRASHED",
-                                 "error": repr(exc)}, sort_keys=True) + "\n")
+                                 "error": repr(exc), "executed_at_head": gs["head"],
+                                 "freeze_sha256": sha_file(CONFIG / "FREEZE.json")}, sort_keys=True) + "\n")
             raise
         fh.write(json.dumps(res, indent=1, sort_keys=True) + "\n")
     print(json.dumps({k: res[k] for k in ("K4R1_COMPACT_RESIDUAL_COVERAGE", "K4R1_COMPLETE_K4_ASSEMBLY",

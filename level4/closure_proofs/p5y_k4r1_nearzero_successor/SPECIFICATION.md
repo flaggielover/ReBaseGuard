@@ -80,7 +80,7 @@ There is no tunable parameter.
   - Mathematics, universe, provenance, endpoint and leakage checks all passed.
   - Blocking defect: the real-input wiring and the `execute` branch were not tested, and 6 unsound wiring mutants survived.
   - Candidate r1 is never frozen or executed.
-- **r2** (this candidate) repairs:
+- **r2** (candidate `179d5aae`) repaired:
   - wiring tests with distinct per-field values;
   - an end-to-end synthetic `execute` in a throwaway git repository;
   - all 12 reviewer mutants plus the new checks added to the harness (51 mutants in total).
@@ -96,7 +96,7 @@ There is no tunable parameter.
     - the output directory is absent in a clean checkout;
     - the command's path and working directory were inconsistent.
   - Candidate r2 is never frozen or executed.
-- **r3** (this candidate) repairs Q2:
+- **r3** (candidate `cb5b6c61`) repaired Q2:
   - **Canonical output:** the output path is fixed and cwd-independent.
   - **Early reservation:** the directory is created and the output file is reserved by exclusive create before any source is read.
   - **Crash record:** any later failure is written into the reservation.
@@ -109,7 +109,25 @@ There is no tunable parameter.
   - **N10:** the runbook requires an empty `git status --porcelain`, then `ready`, before `execute`.
   - **N9 and N11 are accepted.** Exact-once is per canonical output with reservation, and HEAD is recorded.
 - **Designer disclosure:** while checking the r3 lock, the designer ran `execute` once in the real worktree before any freeze. It was refused at the freeze gate (`FREEZE.json` absent) before any source was read.
-- **r3 must pass a new, independent qualification** before any freeze.
+- **r3** (candidate `cb5b6c61`): **QUALIFICATION_REJECTED** (`review/qualification_r3_REJECTED/`, review sha `8f49abac`).
+  - Q2 was confirmed repaired. The whole planned flow worked on synthetic copies under Python 3.9 and 3.14.
+  - Blocking defect Q3: `make_freeze` bound whatever was on disk in the namespace, including edited, untracked and ignored files, without checking git state. In addition, `ready` and `execute` did not verify that the freeze commit equals the qualified candidate plus review and FREEZE files.
+  - Candidate r3 is never frozen or executed.
+- **r4** (this candidate) repairs Q3 with a git-aware `make_freeze`:
+  - it refuses unless the checkout is the candidate plus exactly the two review files;
+  - it refuses on any ignored entry in the namespace;
+  - it binds exactly the tracked namespace files plus the review files and sources;
+  - it records `allowed_freeze_delta`.
+- **Launch verification in r4:** `ready` and `execute` verify ancestry, `git diff <candidate> HEAD` against the allowed delta, and bound namespace files against the tracked files.
+- **r4 also addresses the r3 notes:**
+  - **N12:** the crash record carries HEAD and the freeze hash; KeyboardInterrupt and hard kills are covered.
+  - **N13:** majorant signs are checked before the reservation.
+  - **N14:** the remaining survivors are now tested or documented as equivalent.
+  - **N15:** the wording is fixed.
+  - **N16:** the `ready` and `execute` refusal rules are in `GATE.stop_conditions`.
+  - **Runbook:** it names exactly which review files are copied.
+- **Harness:** 92 mutants across both scripts, all killed (5 documented equivalents); 78 tests.
+- **r4 must pass a new, independent qualification** before any freeze.
 
 ## Governance sequence
 

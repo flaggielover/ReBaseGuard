@@ -9,6 +9,10 @@ Known equivalent mutants (not listed):
   PASS only when its certificate PASSes.
 - removing `if here not in fz["bound_files"]` (r2 F4): the implementation path is also in the mandatory bound set.
 - `open(OUT, "x")` -> `open(OUT, "w")`: launch_gates already refuses when OUT exists (differs only under a concurrent race).
+- removing the mandatory-binding check in verify_freeze (r3/r4): every mandatory file is tracked in the namespace, and the
+  completeness check (bound namespace files == tracked namespace files) plus the review-file checks already refuse.
+- removing the ".." test on --review-dir in make_freeze: a path with ".." never matches the normalised paths that
+  `git status` prints, so the status check refuses (defence in depth only).
 
   python tests/mutation_harness.py --out MUTATION_REPORT.json
 """
@@ -25,6 +29,7 @@ from pathlib import Path
 
 NS = Path(__file__).resolve().parents[1]
 CODE = NS / "code/k4r1_certificate.py"
+MAKE_FREEZE = NS / "code/make_freeze.py"
 TESTS = NS / "tests/test_k4r1.py"
 
 MUTANTS = [
@@ -89,7 +94,6 @@ MUTANTS = [
     ("slot1_transport_unchecked",
      "if not (tf >= x1 * x1 / 2 and M5x1 >= 0 and L0 <= U0 and L1 <= L0 - tf * M5x1 and U1 >= U0 + tf * M5x1):",
      "if not (tf >= x1 * x1 / 2 and M5x1 >= 0 and L0 <= U0 and True and U1 >= U0 + tf * M5x1):"),
-    ("mandatory_binding_unchecked", "    if missing:\n", "    if False:\n"),
     ("git_clean_unchecked", 'if not (gs["clean"] and gs["freeze_committed"]):', 'if not (True and gs["freeze_committed"]):'),
     ("git_freeze_committed_unchecked", 'if not (gs["clean"] and gs["freeze_committed"]):', 'if not (gs["clean"] and True):'),
     ("coverage_flag_always_pass",
@@ -109,8 +113,8 @@ MUTANTS = [
     ('W8_detector_scope_unchecked', ' or universe["detector_scope"] != ["CUSUM"]:', ':'),
     ('W9_M5x1_nonneg_unchecked', 'if not (tf >= x1 * x1 / 2 and M5x1 >= 0 and', 'if not (tf >= x1 * x1 / 2 and True and'),
     ('W11_entry_rho_unchecked', 'or ent.get("rho", k1["rho"]) != k1["rho"]:', 'or False:'),
-    ('R1_head_not_recorded', '"executed_at_head": gs["head"]', '"executed_at_head": None'),
-    ('R2_freeze_sha_wrong', '"freeze_sha256": sha_file(CONFIG / "FREEZE.json")', '"freeze_sha256": "0"'),
+    ('R1_head_not_recorded', '"executed_at_head": gs["head"], "arithmetic": "exact rational",', '"executed_at_head": None, "arithmetic": "exact rational",'),
+    ('R2_freeze_sha_wrong', '"freeze_sha256": sha_file(CONFIG / "FREEZE.json"),\n            "executed_at_head"', '"freeze_sha256": \'0\',\n            "executed_at_head"'),
     ('R3_inputs_record_L1_as_U0', '"L1": str(v["_L1"]), "U0": str(v["_U0"])', '"L1": str(v["_U0"]), "U0": str(v["_L1"])'),
     ('R4_T_branch_inverted', '"T_branch": "M3" if v["_M3"] <= v["_U0"]', '"T_branch": "M3" if v["_M3"] > v["_U0"]'),
     ('F2_git_show_bytes_ignored', 'shown.returncode == 0 and shown.stdout == freeze_path.read_bytes()', 'shown.returncode == 0'),
@@ -125,10 +129,41 @@ MUTANTS = [
 ]
 
 
-def run(code_text: str, tmp: Path) -> int:
+CERT_R4 = [
+    ("r4_delta_unchecked", "if anc.returncode != 0 or diff.returncode != 0 or sorted(diff.stdout.split()) != delta:", "if False:"),
+    ("r4_ancestor_unchecked", "if anc.returncode != 0 or diff.returncode != 0 or sorted(diff.stdout.split()) != delta:",
+     "if diff.returncode != 0 or sorted(diff.stdout.split()) != delta:"),
+    ("r4_completeness_unchecked", "if tracked.returncode != 0 or bound_ns != set(tracked.stdout.split()) - freeze_rel:", "if False:"),
+    ("r4_delta_malformed_unchecked", "if not (freeze_rel <= set(delta) and set(delta) == freeze_rel | set(review_files)", "if not (True"),
+    ("r4_majorant_sign_extract_unchecked", "if M3 < 0 or M5 < 0 or a <= 0:", "if False:"),
+    ("r4_crash_head_missing", '"error": repr(exc), "executed_at_head": gs["head"],', '"error": repr(exc), "executed_at_head": None,'),
+    ("r4_crash_only_Exception", "except BaseException as exc:", "except Exception as exc:"),
+]
+MUTANTS += CERT_R4
+
+MF_MUTANTS = [
+    ("mf_existing_freeze_ok", "if fz_path.exists() or fh_path.exists():", "if False:"),
+    ("mf_review_dir_anywhere", 'if rdir.is_absolute() or ".." in rdir.parts or not rdir.parts or rdir.parts[0] != "review":', "if False:"),
+    ("mf_tracked_review_ok", 'if git("ls-files", "--", str(ns_rel / rdir)).strip():', "if False:"),
+    ("mf_status_unchecked", "if sorted(other) != expected or ignored_in_ns:", "if False:"),
+    ("mf_ignored_ok", "if sorted(other) != expected or ignored_in_ns:", "if sorted(other) != expected:"),
+    ("mf_verdict_unchecked", 'if rv.get("verdict") != "QUALIFICATION_ACCEPTED":', "if False:"),
+    ("mf_candidate_unchecked", 'if rv.get("candidate_commit") != head:', "if False:"),
+    ("mf_source_drift_unchecked", 'if h != v["sha256"]:', "if False:"),
+    ("mf_sources_unbound", "        bound[v[\"path\"]] = h\n", "        pass\n"),
+    ("mf_reviews_unbound", "bound.update({p: sha(REPO / p) for p in review_rel})", "pass"),
+    ("mf_delta_without_reviews", 'delta = sorted(review_rel + [str(ns_rel / "config/FREEZE.json"), str(ns_rel / "config/FREEZE_HASH")])',
+     'delta = sorted([str(ns_rel / "config/FREEZE.json"), str(ns_rel / "config/FREEZE_HASH")])'),
+    ("mf_target_flag", '"target_values_present": False,', '"target_values_present": True,'),
+]
+
+
+def run(code_text: str, tmp: Path, mf_text: str | None = None) -> int:
     p = tmp / "k4r1_certificate.py"
     p.write_text(code_text)
-    env = {**os.environ, "K4R1_CODE_PATH": str(p), "PYTHONDONTWRITEBYTECODE": "1"}
+    q = tmp / "make_freeze.py"
+    q.write_text(mf_text if mf_text is not None else MAKE_FREEZE.read_text())
+    env = {**os.environ, "K4R1_CODE_PATH": str(p), "K4R1_MAKE_FREEZE_PATH": str(q), "PYTHONDONTWRITEBYTECODE": "1"}
     r = subprocess.run([sys.executable, "-m", "pytest", "-q", "-x", "-p", "no:cacheprovider", str(TESTS)],
                        env=env, capture_output=True, text=True)
     return r.returncode
@@ -139,6 +174,7 @@ def main() -> int:
     ap.add_argument("--out", required=True)
     a = ap.parse_args()
     src = CODE.read_text()
+    mf = MAKE_FREEZE.read_text()
     rows = []
     with tempfile.TemporaryDirectory() as td:
         tmp = Path(td)
@@ -146,16 +182,25 @@ def main() -> int:
         for name, old, new in MUTANTS:
             n = src.count(old)
             if n != 1:
-                rows.append({"mutant": name, "applied": False, "occurrences": n, "killed": False})
+                rows.append({"mutant": name, "target": "k4r1_certificate.py", "applied": False, "occurrences": n, "killed": False})
                 continue
             rc = run(src.replace(old, new), tmp)
-            rows.append({"mutant": name, "applied": True, "killed": rc != 0, "pytest_rc": rc})
+            rows.append({"mutant": name, "target": "k4r1_certificate.py", "applied": True, "killed": rc != 0, "pytest_rc": rc})
+        for name, old, new in MF_MUTANTS:
+            n = mf.count(old)
+            if n != 1:
+                rows.append({"mutant": name, "target": "make_freeze.py", "applied": False, "occurrences": n, "killed": False})
+                continue
+            rc = run(src, tmp, mf.replace(old, new))
+            rows.append({"mutant": name, "target": "make_freeze.py", "applied": True, "killed": rc != 0, "pytest_rc": rc})
     rep = {"schema": "rebaseguard.p5y.k4r1.mutation-report.v1",
            "code_sha256": hashlib.sha256(src.encode()).hexdigest(),
+           "make_freeze_sha256": hashlib.sha256(mf.encode()).hexdigest(),
            "tests_sha256": hashlib.sha256(TESTS.read_bytes()).hexdigest(),
            "null_mutant_passes": null_rc == 0, "mutants": rows,
            "all_applied": all(r["applied"] for r in rows), "all_killed": all(r["killed"] for r in rows)}
     rep["PASS"] = rep["null_mutant_passes"] and rep["all_applied"] and rep["all_killed"]
+    rep["counts"] = {"total": len(rows), "killed": sum(r["killed"] for r in rows)}
     Path(a.out).write_text(json.dumps(rep, indent=1, sort_keys=True) + "\n")
     print(json.dumps({"PASS": rep["PASS"], "null": rep["null_mutant_passes"],
                       "survivors": [r["mutant"] for r in rows if not r["killed"]]}))
