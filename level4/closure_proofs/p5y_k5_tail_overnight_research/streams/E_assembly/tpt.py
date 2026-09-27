@@ -298,3 +298,92 @@ def evaluate(cp: CellProfile) -> dict:
     return {"P_tpt": pc["P_star"], "P_riemann": pr, "P_riemann_lower": pl, "P_c5t": c5, "P_frozen": fr,
             "Gamma_tpt": cp.g_hi + pc["P_star"], "Gamma_c5t": cp.g_hi + c5,
             "Gamma_frozen": cp.g_hi + fr, "detail": pc}
+
+
+# ----------------------------------------------------------------------------- TPT-B (block-resolved)
+
+@dataclass
+class Block:
+    """Atom constants valid for every e in [e_lo, e_hi] (e.g. one registry sub-block)."""
+    e_lo: F
+    e_hi: F
+    A0: F
+    A1: F
+    A2: F
+
+
+def _lo_hi_with(cp: CellProfile, A: tuple) -> tuple:
+    saved = (cp.A0, cp.A1, cp.A2)
+    cp.A0, cp.A1, cp.A2 = A
+    try:
+        return lo_hi_polys(cp)
+    finally:
+        cp.A0, cp.A1, cp.A2 = saved
+
+
+def _check_blocks(cp: CellProfile, blocks: list) -> list:
+    _check(cp)
+    bl = sorted(blocks, key=lambda b: b.e_lo)
+    if not bl or bl[0].e_lo > cp.x_lo or bl[-1].e_hi < cp.x_hi:
+        raise ValueError("blocks must cover the cell")
+    for a, b in zip(bl, bl[1:]):
+        if b.e_lo > a.e_hi:
+            raise ValueError("blocks must be contiguous (no gap)")
+    for b in bl:
+        Q.guard_drift(b.e_lo, b.e_hi)
+        if min(b.A0, b.A1, b.A2) < 0 or b.e_lo > b.e_hi:
+            raise ValueError("bad block")
+    return bl
+
+
+def penalty_blocked(cp: CellProfile, blocks: list) -> dict:
+    """Theorem TPT-B: the profile uses, at each t, the constants of a block containing t.
+
+    Within one block the integrand t*(-L(t)) (right) / t*U(t) (left) is monotone in s = |t - e0|, so the running
+    integral I(e) is quasi-convex on each piece and its supremum over the cell is attained at a piece endpoint.
+    P*_B = max(0, max over right piece ends of I_right, max over left piece ends of I_left), each an exact
+    polynomial integral (the K1 cap, if any, is handled per piece by the non-binding-side split, an upper bound).
+    """
+    bl = _check_blocks(cp, blocks)
+    e0, rho = cp.e0, cp.rho
+
+    def piece_integral(A, s_a, s_b, side):
+        lo, hi = _lo_hi_with(cp, A)
+        if side == "R":
+            tpoly = [e0, F(1)]
+            prof = pscale(lo, F(-1))
+            cap = None if cp.H_K1 is None else -cp.H_K1[0]
+            crossing = None if cp.H_K1 is None else _crossing(lo, cp.H_K1[0], rho, decreasing=True)
+        else:
+            tpoly = [e0, F(-1)]
+            prof = hi
+            cap = None if cp.H_K1 is None else cp.H_K1[1]
+            crossing = None if cp.H_K1 is None else _crossing(hi, cp.H_K1[1], rho, decreasing=False)
+        if cap is None or crossing is None or crossing >= s_b:
+            return pint(pmul(tpoly, prof), s_a, s_b)
+        if crossing <= s_a:
+            return pint(pscale(tpoly, cap), s_a, s_b)
+        return pint(pmul(tpoly, prof), s_a, crossing) + pint(pscale(tpoly, cap), crossing, s_b)
+
+    best = F(0)
+    # right side: pieces of [e0, x_hi]
+    cuts = sorted({e0, cp.x_hi} | {b.e_lo for b in bl if e0 < b.e_lo < cp.x_hi}
+                  | {b.e_hi for b in bl if e0 < b.e_hi < cp.x_hi})
+    run = F(0)
+    for a, b in zip(cuts, cuts[1:]):
+        mid = (a + b) / 2
+        blk = [x for x in bl if x.e_lo <= mid <= x.e_hi]
+        A = (max(x.A0 for x in blk), max(x.A1 for x in blk), max(x.A2 for x in blk))
+        run += piece_integral(A, a - e0, b - e0, "R")
+        best = max(best, run)
+    run_r = run
+    cuts = sorted({cp.x_lo, e0} | {b.e_lo for b in bl if cp.x_lo < b.e_lo < e0}
+                  | {b.e_hi for b in bl if cp.x_lo < b.e_hi < e0}, reverse=True)
+    run = F(0)
+    for a, b in zip(cuts, cuts[1:]):  # a > b, moving left from e0
+        mid = (a + b) / 2
+        blk = [x for x in bl if x.e_lo <= mid <= x.e_hi]
+        A = (max(x.A0 for x in blk), max(x.A1 for x in blk), max(x.A2 for x in blk))
+        run += piece_integral(A, e0 - a, e0 - b, "L")
+        best = max(best, run)
+    return {"P_star_B": best, "I_right_full": run_r, "I_left_full": run, "pieces": len(cuts)}

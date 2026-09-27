@@ -154,6 +154,40 @@ width.
 *No forecast is made.* Combining this proposition with committed per-cell radius decompositions or C8 factors to
 predict any tail cell's Γ is a target-equivalent proxy. It is forbidden in this campaign and was not done.
 
+## 2b. Theorem TPT-B — block-resolved profile
+
+**Motivation.** This addresses an assembly looseness named in the campaign brief §16: "worst-case constants used
+simultaneously even when mutually incompatible".
+* A cell's atom constants are composed componentwise over its sub-blocks: max τ, max C_T, min D_lo, max D1, max D2
+  (`deflated_consume.block_for`; C2 registry cell rows).
+* Lemma TC-P needs, at a point t, only constants valid **at t**. Theorem TC §4 step 3 evaluates E''(t)(a) pointwise.
+
+**Theorem TPT-B.** Let blocks `B_1 … B_q` cover the cell. Let each `(A0^b, A1^b, A2^b)` be valid (Lemma G or Lemma Dv′
+premises) for every e ∈ B_b. Define `rad_r(t) := A0^{b(t)} p2(s) + 2A1^{b(t)} p1(s) + A2^{b(t)} p0(s)`, with b(t) any
+block containing t. Then Lemma TC-P holds pointwise with `rad_r(t)`.
+
+Within one block, the profile integrand is monotone in s. So the running transport integral is quasi-convex on each
+piece, and
+
+    P*_B = max(0, max over right piece ends of ∫_{e0}^{end} t(−L_B), max over left piece ends of ∫_{end}^{e0} t U_B)
+
+is exact: polynomial integrals, no root-finding. If every `A_j^b ≤ A_j^cell`, then `L_B ≥ L` pointwise, and so
+**P*_B ≤ P*_TPT** (dominance).
+
+**Validation** (`validate_tptb_synthetic.py`, `validation/TPTB_SYNTHETIC.json`). 24 exact FSM fixtures, with 2 or 4
+blocks each certified by its own Lemma-G constants:
+
+| check | result |
+|---|---|
+| B1 pointwise violations | 0 |
+| B2 transport soundness, certified | 24/24 |
+| B3 dominance P*_B ≤ P*_TPT ≤ P_C5T | 24/24 |
+| B4 truth-relative negative control detected | 24/24 |
+
+**Gain on these fixtures: P*_B / P*_TPT ∈ [0.99896, 1].** It is negligible here, because the synthetic constants
+hardly vary across a cell. The gain is structurally bounded by the relative variation of the A-constants across the
+cell's binding side. This is recorded as a sound, low-value refinement; it is not ranked as a route.
+
 ## 3. What TPT changes and what it does not
 
 | item | status |
