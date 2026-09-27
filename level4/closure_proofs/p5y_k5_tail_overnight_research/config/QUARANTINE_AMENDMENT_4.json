@@ -1,0 +1,13 @@
+{
+  "schema": "P5Y_K5_TAIL_OVERNIGHT_QUARANTINE_AMENDMENT/1",
+  "amends": "config/QUARANTINE_AMENDMENT_2.json rule R2.3 (latent-proxy list), after config/QUARANTINE_AMENDMENT_3.json",
+  "direction": "STRICTER ONLY (adds artifacts to the latent-proxy list; removes nothing)",
+  "trigger": "reviews/REVIEW_RLR_R2.md condition C5",
+  "added_latent_proxies": [
+    "streams/C_308/LR/cusum/C1B_ROUTE_SUMMARY.md (the certified validation-drift constants near line 60 and the tables near lines 97-112)",
+    "streams/C_308/LR/cusum/logs/* and validation/C1B_*.json (already listed in R2.3; restated for completeness)",
+    "streams/C_308/A0X/gen/C2B_ROUTE_SUMMARY.md and gen/A0_TIGHTNESS.md (certified validation-drift Lambda/tau/C_T values; the gen/results files are already listed)",
+    "validation/C2B_VALIDATION.json"
+  ],
+  "rule": "As R2.3: in any handover, registry or cross-route text these artifacts are reported by content class only; their values are never quoted there and never juxtaposed with any 305-309 number."
+}
