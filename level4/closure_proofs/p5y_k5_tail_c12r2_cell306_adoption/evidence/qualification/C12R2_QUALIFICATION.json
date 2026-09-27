@@ -1,0 +1,643 @@
+{
+ "A_sandbox": {
+  "A00 freeze-commit sandbox: preflight PASS (not vacuous)": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 0,
+   "out": "C12R2 PREFLIGHT PASS\n",
+   "pass": true
+  },
+  "A00b freeze-commit sandbox: the I1 control rehearsal PASS": {
+   "argv": [
+    "rehearse",
+    "--cell",
+    "306"
+   ],
+   "exit": 0,
+   "out": "C12R2 REHEARSE cell 306: reproduces C2 exactly = True\n",
+   "pass": true
+  },
+  "A01 altered input": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12R2 REFUSED PIN_MISMATCH: level4/closure_proofs/p5y_k5_m5_tail_closure/evidence/measurement_r1/ADOPTED_TAIL_INPUTS.json\n",
+   "pass": true
+  },
+  "A02 wrong cell 307 (rehearse)": {
+   "argv": [
+    "rehearse",
+    "--cell",
+    "307"
+   ],
+   "exit": 2,
+   "out": "C12R2 REFUSED CELL_OUT_OF_SCOPE: 307\n",
+   "pass": true
+  },
+  "A02 wrong cell 308 (rehearse)": {
+   "argv": [
+    "rehearse",
+    "--cell",
+    "308"
+   ],
+   "exit": 2,
+   "out": "C12R2 REFUSED CELL_OUT_OF_SCOPE: 308\n",
+   "pass": true
+  },
+  "A02 wrong cell 309 (rehearse)": {
+   "argv": [
+    "rehearse",
+    "--cell",
+    "309"
+   ],
+   "exit": 2,
+   "out": "C12R2 REFUSED CELL_OUT_OF_SCOPE: 309\n",
+   "pass": true
+  },
+  "A02b a cell passed to execute": {
+   "argv": [
+    "execute",
+    "--cell",
+    "307"
+   ],
+   "exit": 2,
+   "out": "C12R2 REFUSED CELL_OUT_OF_SCOPE: only rehearse takes --cell; execute is cell 306 only\n",
+   "pass": true
+  },
+  "A03 wrong bytes (REGISTRY_C1 := REGISTRY_C2)": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12R2 REFUSED PIN_MISMATCH: level4/closure_proofs/p5y_k5_tail_operator_registry/evidence/registry_c1/REGISTRY_C1.json\n",
+   "pass": true
+  },
+  "A03b wrong blob at HEAD, pinned bytes on disk": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12R2 REFUSED BLOB_MISMATCH: level4/closure_proofs/p5y_k5_tail_operator_registry/evidence/registry_c1/REGISTRY_C1.json\n",
+   "pass": true
+  },
+  "A04 wrong statement file": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12R2 REFUSED PIN_MISMATCH: level4/closure_proofs/p5y_k5_tail_c11r_n9_statement_alignment/evidence/comparison/C11R_COMPARISON.json\n",
+   "pass": true
+  },
+  "A05 missing review (floor r2)": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12R2 REFUSED INPUT_MISSING: level4/closure_proofs/p5y_k5_tail_floor_r2/review/FLOOR_R2_REVIEW.md\n",
+   "pass": true
+  },
+  "A05b missing review (N9 adjudication review)": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12R2 REFUSED INPUT_MISSING: level4/closure_proofs/p5y_k5_tail_c11rd_d1d2_extension/review/C11RD_ADJUDICATION_REVIEW.md\n",
+   "pass": true
+  },
+  "A07 planted result (working tree)": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12R2 REFUSED TARGET_ARTIFACT_EXISTS: level4/closure_proofs/p5y_k5_tail_c12r2_cell306_adoption/evidence/execution/C12R2_CELL306_RESULT.json\n",
+   "pass": true
+  },
+  "A07b planted result (history)": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12R2 REFUSED TARGET_ARTIFACT_EXISTS: level4/closure_proofs/p5y_k5_tail_c12r2_cell306_adoption/evidence/execution/C12R2_CELL306_RESULT.json\n",
+   "pass": true
+  },
+  "A07c planted predecessor C12-R1 result": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12R2 REFUSED TARGET_ARTIFACT_EXISTS: level4/closure_proofs/p5y_k5_tail_c12r1_cell306_adoption/evidence/execution/C12R1_CELL306_RESULT.json\n",
+   "pass": true
+  },
+  "A07c2 planted predecessor C12 result": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12R2 REFUSED TARGET_ARTIFACT_EXISTS: level4/closure_proofs/p5y_k5_tail_c12_cell306_adoption/evidence/execution/C12_CELL306_RESULT.json\n",
+   "pass": true
+  },
+  "A07d planted marker (refs/c12r2)": {
+   "argv": [
+    "rehearse",
+    "--cell",
+    "306"
+   ],
+   "exit": 2,
+   "out": "C12R2 REFUSED CONSUMED: a ref exists under refs/c12r2/\n",
+   "pass": true
+  },
+  "A07e planted predecessor marker (refs/c12)": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12R2 REFUSED CONSUMED: a ref exists under refs/c12/\n",
+   "pass": true
+  },
+  "A07f planted predecessor marker (refs/c12r1)": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12R2 REFUSED CONSUMED: a ref exists under refs/c12r1/\n",
+   "pass": true
+  },
+  "A07g planted pending-result ref (refs/c12r2)": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12R2 REFUSED CONSUMED: a ref exists under refs/c12r2/\n",
+   "pass": true
+  },
+  "A12 an r6 file in the working tree": {
+   "argv": [
+    "preflight"
+   ],
+   "exit": 2,
+   "out": "C12R2 REFUSED R6_EXISTS: an r6 file exists in the working tree\n",
+   "pass": true
+  },
+  "A20 freeze-commit sandbox (real inputs) cannot execute: identity refused first": {
+   "argv": [
+    "execute"
+   ],
+   "exit": 2,
+   "out": "C12R2 REFUSED REPO_NOT_QUALIFIED: not the qualified worktree / git dir / common dir\n",
+   "pass": true
+  },
+  "A21 execute without -I is refused before anything (N8)": {
+   "exit": 2,
+   "out": "C12R2 REFUSED INTERPRETER_FLAGS: execute and seal-only require python3.14 -I -S -B\n",
+   "pass": true
+  }
+ },
+ "B_sandbox_cli": {
+  "B01 qualification-commit sandbox cannot target-evaluate": {
+   "exit": 2,
+   "out": "C12R2 REFUSED REPO_NOT_QUALIFIED: not the qualified worktree / git dir / common dir\n",
+   "pass": true
+  },
+  "B02 accepted-review-state sandbox cannot target-evaluate": {
+   "exit": 2,
+   "out": "C12R2 REFUSED REPO_NOT_QUALIFIED: not the qualified worktree / git dir / common dir\n",
+   "pass": true
+  },
+  "B02v the verifier refuses to run in an accepted-review state": {
+   "exit": 2,
+   "out": "C12R2 VERIFY REFUSED HEAD is neither the freeze commit nor (in --review) the qualification-evidence commit on it\n",
+   "pass": true
+  },
+  "B03 grant-state sandbox cannot target-evaluate": {
+   "exit": 2,
+   "out": "C12R2 REFUSED REPO_NOT_QUALIFIED: not the qualified worktree / git dir / common dir\n",
+   "pass": true
+  },
+  "B03s grant-state sandbox cannot seal-only": {
+   "exit": 2,
+   "out": "C12R2 REFUSED REPO_NOT_QUALIFIED: not the qualified worktree / git dir / common dir\n",
+   "pass": true
+  },
+  "B03v the verifier refuses to run in a grant state": {
+   "exit": 2,
+   "out": "C12R2 VERIFY REFUSED HEAD is neither the freeze commit nor (in --review) the qualification-evidence commit on it\n",
+   "pass": true
+  },
+  "B04 consumed-state sandbox cannot target-evaluate": {
+   "exit": 2,
+   "out": "C12R2 REFUSED REPO_NOT_QUALIFIED: not the qualified worktree / git dir / common dir\n",
+   "pass": true
+  },
+  "B04v the verifier refuses to run in a consumed state": {
+   "exit": 2,
+   "out": "C12R2 VERIFY REFUSED HEAD is neither the freeze commit nor (in --review) the qualification-evidence commit on it\n",
+   "pass": true
+  },
+  "B05 a copied repository (grant state) cannot target-evaluate": {
+   "exit": 2,
+   "out": "C12R2 REFUSED REPO_NOT_QUALIFIED: not the qualified worktree / git dir / common dir\n",
+   "pass": true
+  },
+  "B06v the verifier refuses to run at a grant state with a planted result (refused by the HEAD test)": {
+   "exit": 2,
+   "out": "C12R2 VERIFY REFUSED HEAD is neither the freeze commit nor (in --review) the qualification-evidence commit on it\n",
+   "pass": true
+  },
+  "B07v planted qualification review file: the verifier refuses at the freeze state": {
+   "exit": 2,
+   "out": "C12R2 VERIFY REFUSED level4/closure_proofs/p5y_k5_tail_c12r2_cell306_adoption/review exists (tree, disk or history): a later governance state\n",
+   "pass": true
+  },
+  "B08v planted exactly-once marker: the verifier refuses at the freeze state": {
+   "exit": 2,
+   "out": "C12R2 VERIFY REFUSED a marker or pending ref exists under refs/c12r2/\n",
+   "pass": true
+  },
+  "B09v planted predecessor C12-R1 result: the verifier refuses at the freeze state": {
+   "exit": 2,
+   "out": "C12R2 VERIFY REFUSED prior evaluation evidence or an occupied result path: TARGET_ARTIFACT_EXISTS: level4/closure_proofs/p5y_k5_tail_c12r1_cell306_adoption/evidence/execution/C12R1_CELL306_RESULT.json\n",
+   "pass": true
+  },
+  "B10v this campaign's own result planted at the freeze state (N2): the verifier refuses at the freeze state": {
+   "exit": 2,
+   "out": "C12R2 VERIFY REFUSED level4/closure_proofs/p5y_k5_tail_c12r2_cell306_adoption/evidence/execution exists (tree, disk or history): a later governance state\n",
+   "pass": true
+  },
+  "B11v an ignored *.tmp object planted in the namespace at the freeze state: the verifier refuses at the freeze state": {
+   "exit": 2,
+   "out": "C12R2 VERIFY REFUSED the verifier needs a clean tree (tracked, untracked and ignored)\n",
+   "pass": true
+  },
+  "B12v --review with modified code at the freeze state (N3): the verifier refuses at the freeze state": {
+   "exit": 2,
+   "out": "C12R2 VERIFY REFUSED the verifier needs a clean tree (tracked, untracked and ignored)\n",
+   "pass": true
+  }
+ },
+ "F_function_controls": {
+  "F01 mixed supply I1 + I2 refused": true,
+  "F01b I1-tagged set in an I2 supply refused": true,
+  "F01c duplicate set name refused": true,
+  "F02 consumer validation refuses Abar < 1": true,
+  "F02 consumer validation refuses C < tau": true,
+  "F02 consumer validation refuses D_lo <= 0": true,
+  "F02 consumer validation refuses non-exact value": true,
+  "F02 consumer validation refuses tau < 1": true,
+  "F03 C11R class INSUFFICIENT": true,
+  "F03b C11R statement WEAKER": true,
+  "F03c C11R domain SUBSET": true,
+  "F03d C11R target not certified": true,
+  "F03e C11R D_lo direction flipped": true,
+  "F03f C11RD N9 verdict not CLOSED": true,
+  "F03g C11RD class INSUFFICIENT": true,
+  "F03h C11RD statement WEAKER": true,
+  "F03i C11RD value not the sealed run's": true,
+  "F03j C11RD runs for another cell": true,
+  "F03k independence violation recorded (N8)": true,
+  "F04 I2 domain for cell 307 refused": true,
+  "F04b I2 domain endpoint altered refused": true,
+  "F04c I2 domain equals cell 306's cover cell (positive)": true,
+  "F05 control mismatch detected (perturbed expected cell record)": true,
+  "F05b control mismatch detected (perturbed Lemma-G supply record, N2)": true,
+  "F06 cell 307 refused by cell_inputs": true,
+  "F06b cell 309 refused by cell_inputs": true,
+  "F07 verdict line: a second verdict line is refused": true,
+  "F07b verdict line: wrong line 2 is refused": true,
+  "F07c verdict line: the right line 2 is accepted (positive)": true,
+  "F08 Lemma G: the frozen tct_rule and the independent re-derivation agree exactly (N11)": true,
+  "F08b Lemma G: a perturbed re-derivation is refused by cell_inputs (N11 guard is live)": true,
+  "F08c Lemma G exact at 306 and 305 from the record-bound C_upper (positive)": true
+ },
+ "G_r6_generator": {
+  "G01 refuses in the real repository": true,
+  "G02 synthetic chain: r6 moves exactly (5, 306), keeps 307-309 open, records r5 lineage": true,
+  "G03 CELL306_NOT_ADOPTED: refused": true,
+  "G04 adopted set other than [306]: refused": true,
+  "G05 Gamma(S_I2) >= 0: refused": true,
+  "G06 no adjudication review: refused": true,
+  "G07 no execution review: refused": true,
+  "G08 result self-hash mismatch: refused": true,
+  "G09 no exactly-once marker: refused": true,
+  "G10 working bytes differ from the committed bytes (dirty): refused": true,
+  "G11 --out is r5: refused": true,
+  "G12 --out wrongly named: refused": true,
+  "G13 result for another cell (N7): refused": true,
+  "G14 marker not at the result's grant commit (N7): refused": true,
+  "G15 committed result is not the pending blob: refused": true,
+  "G16 --out outside evidence/coverage/ (N7): refused": true,
+  "G17 the result is not committed at HEAD (N6): refused": true
+ },
+ "HEAD": "11f91daf50a077999023f733d8e870ad3813923a",
+ "L_leak": {
+  "checks": {
+   "no rendering of the independent D1/D2 values": true,
+   "no rendering of the original D1/D2 values": true,
+   "the scanner detects a planted decoy (not vacuous)": true
+  },
+  "files_scanned": [
+   "code/c12r2_cell306.py",
+   "code/c12r2_grant.py",
+   "code/c12r2_r6_from_adjudication.py",
+   "code/c12r2_verify.py",
+   "evidence/qualification/PREFLIGHT.json",
+   "evidence/qualification/REHEARSE_305.json",
+   "evidence/qualification/REHEARSE_306.json",
+   "protocol/C12R2_FREEZE.json",
+   "protocol/C12R2_PROTOCOL.md"
+  ]
+ },
+ "N_notes": {
+  "N1": {
+   "classification": "repaired",
+   "evidence": [
+    "sandbox B holds only decoy I2 inputs",
+    "A07c2",
+    "A07f",
+    "B09v"
+   ],
+   "how": "C12-R2 protocol states exactly what is checked for C12, C12-R1 and C12-R2; sandbox B also decoys C11R_RUNS.json and the I2 soundness documents and removes the C11RD run logs, and the claim is narrowed to those files",
+   "note": "protocol overstatements: the verifier's C12 coverage; 'no real I2 value' in sandbox B"
+  },
+  "N10": {
+   "classification": "repaired",
+   "evidence": [
+    "the G07 soundness evidence is pinned",
+    "preflight PASS"
+   ],
+   "how": "C11R_RUNS.json, CELL_306_ADOPTION.md, the C11RD theory and independence audit and the C2 adjudication are pinned by sha256 and blob, for the adjudicator to verify",
+   "note": "G07 soundness evidence not pinned"
+  },
+  "N11": {
+   "classification": "repaired to the precision the committed evidence permits",
+   "evidence": [
+    "F08",
+    "F08b",
+    "F08c",
+    "I1 control reproduces C2 exactly for 306"
+   ],
+   "how": "C2 recorded G only as floats, so an exact comparison with C2 is impossible; the driver now re-derives Lemma G exactly from its statement and refuses any disagreement, and C_upper is bound to the K1 record hash",
+   "note": "the Lemma-G check was float-level"
+  },
+  "N12": {
+   "classification": "not applicable (by design)",
+   "evidence": [
+    "run_execute order"
+   ],
+   "how": "every I2 check must precede consumption (R4); the atoms are never output",
+   "note": "S_I2 atoms exist in memory before the marker"
+  },
+  "N13": {
+   "classification": "repaired",
+   "evidence": [
+    "review mode removes its temporary output"
+   ],
+   "note": "--review left a temp directory"
+  },
+  "N2": {
+   "classification": "repaired",
+   "evidence": [
+    "B06v",
+    "B10v"
+   ],
+   "how": "B06v relabelled; B10v plants this campaign's own result at the freeze state",
+   "note": "B06v refused for a different reason than its label"
+  },
+  "N3": {
+   "classification": "repaired",
+   "evidence": [
+    "B12v"
+   ],
+   "how": "--review requires a clean tree (incl. ignored) and code/ + protocol/ identical to the freeze",
+   "note": "--review did not bind its own code"
+  },
+  "N4": {
+   "classification": "repaired",
+   "evidence": [
+    "run_execute order",
+    "after_marker: every top-level",
+    "P04",
+    "P08",
+    "X13c"
+   ],
+   "how": "signals ignored before the marker, the wall cap scoped to the evaluation, every post-marker exception handled, an object-store write probe and a trial commit object before the marker",
+   "note": "post-marker residuals: signal window, non-Refusal sealer errors, object store / gpgsign not probed"
+  },
+  "N5": {
+   "classification": "not applicable (inherent), mitigated",
+   "evidence": [
+    "X03",
+    "B05",
+    "X08",
+    "X08b",
+    "X08c"
+   ],
+   "how": "deleting the marker is forbidden by protocol; the identity barrier stops copies, and the pending ref and the emergency file are further prior-evaluation evidence the driver refuses on",
+   "note": "exactly-once is local to the common ref store"
+  },
+  "N6": {
+   "classification": "repaired",
+   "evidence": [
+    "X12 grant variant refused: qualification",
+    "X12 grant variant refused: review",
+    "X12e",
+    "G17"
+   ],
+   "note": "missing tests: grant naming a wrong qualification/review commit, code changed after the freeze, r6 with the result not at HEAD"
+  },
+  "N7": {
+   "classification": "repaired",
+   "evidence": [
+    "G13",
+    "G14",
+    "G15",
+    "G16"
+   ],
+   "note": "r6 --out not confined; no cell / marker-target check"
+  },
+  "N8": {
+   "classification": "repaired",
+   "evidence": [
+    "A21"
+   ],
+   "note": "interpreter flags not enforced"
+  },
+  "N9": {
+   "classification": "repaired",
+   "evidence": [
+    "the grant generator requires QUAL_REL"
+   ],
+   "note": "grant generator: QUAL_REL not required; inherited environment"
+  }
+ },
+ "R_real": {
+  "checks": {
+   "I1 control reproduces C2 exactly for 306, including C2's per-supply records (N2)": true,
+   "I1 control reproduces C2 exactly for the non-target 305": true,
+   "a real execute at this state refuses GRANT_MISSING (identity, no-prior-evaluation and clean tree pass first)": true,
+   "no marker or pending ref exists in the real repository": true,
+   "no result path object exists in the real repository (lexists)": true,
+   "preflight PASS": true
+  },
+  "execute_in_the_real_worktree": {
+   "exit": 2,
+   "out": "C12R2 REFUSED GRANT_MISSING\n"
+  },
+  "preflight": {
+   "exit": 0,
+   "field_matches": null,
+   "out": "C12R2 PREFLIGHT PASS\n",
+   "reproduces_C2_exactly": null
+  },
+  "rehearse_305": {
+   "exit": 0,
+   "field_matches": {
+    "A_exact": true,
+    "Gamma_exact": true,
+    "H_exact": true,
+    "M_after_exact": true,
+    "pass": true,
+    "per_supply_records_G_C1_C2": true,
+    "provenance": true
+   },
+   "out": "C12R2 REHEARSE cell 305: reproduces C2 exactly = True\n",
+   "reproduces_C2_exactly": true
+  },
+  "rehearse_306": {
+   "exit": 0,
+   "field_matches": {
+    "A_exact": true,
+    "Gamma_exact": true,
+    "H_exact": true,
+    "M_after_exact": true,
+    "pass": true,
+    "per_supply_records_G_C1_C2": true,
+    "provenance": true
+   },
+   "out": "C12R2 REHEARSE cell 306: reproduces C2 exactly = True\n",
+   "reproduces_C2_exactly": true
+  }
+ },
+ "S_static": {
+  "after_marker order: evaluation < persistence < seal < materialization": true,
+  "after_marker: every top-level statement is a try with an `except BaseException`, an assignment, a guarded branch or a return (nothing escapes)": true,
+  "evaluate_target / prepare_target referenced only by run_execute; after_marker only by run_execute": true,
+  "no numpy/flint import": true,
+  "no print of a computed value": true,
+  "review mode removes its temporary output (N13)": true,
+  "run_execute order: flags < identity < not-evaluated < result paths < clean (incl. ignored) < grant < bindings < state < seal preconditions < consumer < control < CONTROL_FAILED exit < prepare < signals ignored < marker < after_marker": true,
+  "seal-only: flags and identity first, never computes": true,
+  "the CLI calls run_execute(own_sha) with no injection": true,
+  "the G07 soundness evidence is pinned by sha256 and blob (N10)": true,
+  "the grant generator requires QUAL_REL and commits through the driver's sanitized git (N9)": true,
+  "the result is never written through the filesystem before the seal (no write_result, sealed via --cacheinfo)": true
+ },
+ "X_flows_decoy": {
+  "P01 evaluation exception: sealed TARGET_EVALUATION_FAILED; retry refused; seal-only computes nothing": true,
+  "P02 SystemExit in the evaluation (as C2's crosscheck raises): sealed, retry refused": true,
+  "P03 KeyboardInterrupt in the evaluation: sealed, retry refused": true,
+  "P04 evaluation wall cap fires: sealed TARGET_EVALUATION_FAILED, retry refused": true,
+  "P05 serialization failure after the evaluation: sealed POST_MARKER_RECORDING_FAILED, retry refused": true,
+  "P06 primary persistence fails: emergency channel used, UNSEALED, retry refused, seal-only seals it without computing": true,
+  "P07 both persistence channels fail: CONSUMED_UNRECORDED, retry refused, seal-only refuses, nothing recomputed": true,
+  "P08 seal failure (non-Refusal error): UNSEALED, pending evidence kept, retry refused, seal-only seals it": true,
+  "P09 permission failure after the marker: sealed, worktree copy refused (exit 7), retry refused, seal-only materializes after the permission is restored": true,
+  "P10 unexpected filesystem state after the marker (directory planted): sealed, never materialized over it, seal-only refuses to materialize (7), nothing recomputed": true,
+  "P11 symlink planted at the execution directory after the marker: sealed, nothing written outside": true,
+  "P11b nothing was written through the planted symlink": true,
+  "T1 directory at the temporary-result path (ignored *.tmp): refused, 0 evaluations, no marker, no result": true,
+  "T2 symlink at the temporary-result path to a file outside the repository: refused, outside unchanged": true,
+  "T3 broken symlink at the temporary-result path: refused": true,
+  "T4 regular file at the final result path: refused": true,
+  "T4b symlink at the final result path to outside: refused, outside unchanged": true,
+  "T4c directory at the final result path: refused": true,
+  "T4d broken symlink at the final result path: refused": true,
+  "T5 ignored regular *.tmp file at the temporary-result path: refused although `git status` is blind to it": true,
+  "T5b ignored *.tmp file elsewhere in the namespace: refused (R2, ignored-aware cleanliness)": true,
+  "T6 FIFO at the temporary-result path: refused": true,
+  "T7 socket at the temporary-result path: refused": true,
+  "T8 the execution directory is a symlink to outside: refused": true,
+  "T9 a symlinked parent component (evidence/): refused": true,
+  "X01 wrong worktree cannot consume": true,
+  "X02 wrong branch (detached) cannot consume": true,
+  "X02b wrong branch (another branch) cannot consume": true,
+  "X03 a copy of the qualified repository cannot consume": true,
+  "X04 Q-state cannot consume (GRANT_MISSING)": true,
+  "X04 R-state cannot consume (GRANT_MISSING)": true,
+  "X05 grant-state DECOY run: one evaluation; sealed bytes = pending blob = produced bytes = worktree copy": true,
+  "X06 a second execute after a sealed run is refused before anything": true,
+  "X06b seal-only after a complete run changes nothing and computes nothing": true,
+  "X07 own result planted: refused before anything": true,
+  "X07b predecessor C12-R1 result planted: refused before anything": true,
+  "X07c predecessor C12 result planted: refused before anything": true,
+  "X08 consumed state: refused before control, prepare or evaluation": true,
+  "X08b a pending-result ref: refused before anything": true,
+  "X08c an emergency evidence file: refused before anything": true,
+  "X11 control mismatch: CONTROL_FAILED sealed, no marker, no I2 preparation or evaluation; retry refused": true,
+  "X12 grant variant refused: driver sha": true,
+  "X12 grant variant refused: exactly_once false": true,
+  "X12 grant variant refused: freeze commit named wrong": true,
+  "X12 grant variant refused: qualification commit named wrong": true,
+  "X12 grant variant refused: review commit named wrong": true,
+  "X12 grant variant refused: schema": true,
+  "X12b a REJECTED review cannot be granted": true,
+  "X12c a grant commit carrying another file is refused": true,
+  "X12d HEAD not the grant commit is refused": true,
+  "X12e code changed after the freeze: the grant naming the old freeze is refused (N6)": true,
+  "X13 dirty tree refused before the marker": true,
+  "X13b a git lock is refused before the marker": true,
+  "X13c an unwritable result parent is refused before the marker": true
+ },
+ "X_flows_decoy_stdout": [],
+ "counts": {
+  "checks": 181,
+  "passed": 181
+ },
+ "coverage_state": {
+  "K5_COVERAGE_COMPLETE": false,
+  "r5_blob": "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
+  "r5_union_open_ranges": [
+   [
+    306,
+    309
+   ]
+  ],
+  "r6_exists": false
+ },
+ "driver_sha256": "5c45b4de6c1587bf301e7ebe5db75ad89889192981543b41d3416bf7c600fb91",
+ "dry_run": false,
+ "exactly_once_state": {
+  "evidence": "no ref under refs/c12r2, refs/c12r1 or refs/c12; no result of C12-R2, C12-R1 or C12 in any tree, history or disk; no emergency file; no grant (checked by the preconditions before anything ran, and again below)",
+  "grant_exists": false,
+  "markers_and_pending_refs": [],
+  "real_target_evaluations": 0,
+  "result_path_objects": [],
+  "seal_exists": false
+ },
+ "failed": [],
+ "freeze_commit": "11f91daf50a077999023f733d8e870ad3813923a",
+ "grant_generator_sha256": "83ec10cc01ec79fedf319d023bf26b0994d36722a1123a18dcdfeff8d77f2dd0",
+ "pass": true,
+ "python": "3.14.5",
+ "r6_generator_sha256": "23a831c9774921b63011dbfc3b1e713fa1ee512c314a21e09ce00d58b0afff45",
+ "repository_identity": {
+  "branch": "refs/heads/p5y-k5-tail-c11rd-d1d2-extension",
+  "common_dir": "/Users/suzhe/ReBaseGuard/.git",
+  "equals_the_driver_qualified_identity": true,
+  "git_dir": "/Users/suzhe/ReBaseGuard/.git/worktrees/ReBaseGuard-k5c11rd",
+  "worktree": "/Users/suzhe/ReBaseGuard-k5c11rd"
+ },
+ "review_mode": false,
+ "sandboxes": {
+  "A_commit": "11f91daf50a077999023f733d8e870ad3813923a",
+  "B_contains_no_real_I2_file": true,
+  "B_parent": "11f91daf50a077999023f733d8e870ad3813923a",
+  "B_scope_note": "the I2 supply inputs, C11R_RUNS.json and the I2 soundness documents are decoys and the C11RD run logs are removed; other pinned documents (e.g. the floor rule) are unchanged and are never read as supply inputs (N1)",
+  "both_from_the_freeze_commit": true
+ },
+ "schema": "rebaseguard.p5y.k5.tail-c12r2.qualification.v1",
+ "state": "freeze",
+ "verifier_sha256": "3c748f113c6d25e0352cce8cacd673c8618577f0704bd7958befef9d77fc8e03",
+ "wall_seconds": 114.8
+}
