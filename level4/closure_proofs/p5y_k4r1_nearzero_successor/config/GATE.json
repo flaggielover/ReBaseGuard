@@ -1,0 +1,32 @@
+{
+ "schema": "rebaseguard.p5y.k4r1.gate.v1",
+ "campaign": "P5Y-K4R1 - Near-Zero Successor Certificate",
+ "status": "CANDIDATE_PRE_QUALIFICATION (becomes binding only through config/FREEZE.json)",
+ "obligation_unchanged": "for each D in {CUSUM, SR} and m in {1,2,3,5}: R_{D,m}(e) < 0 for every e in (0, 2] (historical K4 checkpoint 95b1fd16 @ e5cc5a90, P5X-T7(1)); H2 for e > 2 not asserted, exactly as frozen in K4",
+ "no_redefinition": "K4R1 does not redefine H2, R, the detectors, the m scope, the domain (0, 2], the compact/far-field handoff at 2, strictness, or any historical K4 decision. It adds one certificate for the historical residual only.",
+ "residual_universe": "config/RESIDUAL_UNIVERSE.json (CUSUM m=2 cells 0-1 -> (0, 10187/10000000]; m=3 cells 0-2 -> (0, 957/625000]; m=5 cells 0-2 -> (0, 957/625000])",
+ "arithmetic": "exact rational (Python fractions.Fraction) over the recorded outward exact-rational endpoints; any float or bool in a certified field is refused",
+ "certificate": {
+  "name": "anchored third-order Taylor certificate (route D3)",
+  "per_m": {
+   "a": "right end of the historical residual region for m (from RESIDUAL_UNIVERSE, checked against the historical report)",
+   "e0": "5083/20000000 (K1 CUSUM cell-0 midpoint)",
+   "G": "D0.hi - L1 * e0^2 / 2, with D0 = K1 cell-0 record m-entry D_interval, L1 = slot-1 per_m[m].L1",
+   "T": "min( M3 , U0 + a^2/2 * M5 ), with M3 = T-EXT row(x_hi == a).M['3'][m], M5 = T-EXT row(x_hi == a).M['5'][m], U0 = slot-1 per_m[m].U0",
+   "B": "G + a^2/6 * max(T, 0)"
+  },
+  "theorem": "If R is C^5 on [0, a] (L5: C^inf), odd (P5-T3), R'(e0) in D0, R''' >= L1 on [0, x1] with e0 <= x1, R'''(0) <= U0, |R'''| <= M3 and |R^(5)| <= M5 on [0, eta] with eta >= a, then R(e) <= e*B for every e in (0, a]. Proof: oddness gives R(0) = R''(0) = R''''(0) = 0. R'(0) = R'(e0) - int_0^e0 R'' and R''(t) = int_0^t R''' >= t*L1, so R'(0) <= G. R'''(e) = R'''(0) + int_0^e R'''' with |R''''(s)| <= s*M5, so R''' <= U0 + a^2/2*M5 on [0, a], and R''' <= M3; hence R''' <= T. Taylor-Lagrange at 0: R(e) = e*R'(0) + e^3/6*R'''(xi), xi in (0, e), so R(e) <= e*(G + e^2/6*max(T,0)) <= e*B.",
+  "premise_use": "L5 is used only qualitatively (smoothness), as its independent review's scope limitation requires; no numerical bound is taken from L5"
+ },
+ "endpoint_semantics": "The obligation is on the half-open (0, a]; e = 0 is not required to satisfy R(0) < 0 (R(0) = 0 exactly by P5-T3). The certificate asserts R(e) < 0 for every e > 0 in (0, a]. The handoff at a is to the historical K4 cell whose closed interval starts exactly at a (DIRECT_R_NEGATIVE), so (0, a] union [a, ...] leaves no gap; overlap at the single point a is harmless (both assert R < 0 there).",
+ "pass_rule": "K4R1_CERTIFIED for m iff B_m < 0 (strict, exact). B_m >= 0 -> K4R1_CERTIFICATE_TOO_LOOSE for m (never a counterexample: the certificate is one-sided and cannot certify R > 0).",
+ "science_rule": "K4R1_SUCCESSOR_SCIENCE = PASS iff (a) all three residual m are K4R1_CERTIFIED and (b) the successor assembly marks all 8 (D,m) PASS; otherwise NOT_CLOSED with the exact residual set preserved.",
+ "assembly_rule": "For each of the 8 (D,m): the hash-bound historical K4 cover must be contiguous from 0 to >= 2. Historical CELLWISE_ALL_CERTIFIED (D,m) are INHERITED unchanged (every cell CHAIN_RPRIME_NEGATIVE or DIRECT_R_NEGATIVE). For CUSUM m in {2,3,5}: the residual cells are exactly the historical CERTIFICATE_TOO_LOOSE prefix, every other cell is CHAIN_RPRIME_NEGATIVE or DIRECT_R_NEGATIVE, there is no counterexample cell, the first inherited cell starts exactly at a, and the K4R1 certificate for m is K4R1_CERTIFIED.",
+ "inherited_cells": "never recomputed or redefined; taken from K4_ASSEMBLY_REPORT.json sha256 83cabce2 (bc4ba08e), reproduced byte-identically by the accepted independent K4 review",
+ "adoption_rule": "The K4R1 result supports K4_SCIENTIFIC_LINE = CLOSED_BY_LATER_SUCCESSOR_CAMPAIGN only if K4R1_SUCCESSOR_SCIENCE = PASS and a fresh-context final adjudication returns ACCEPTED. The historical K4 verdict NOT_CLOSED (K4_INCONCLUSIVE_K1_RECORDS) is preserved in every case.",
+ "fixed_parameters": "none tunable: no epsilon, tolerance, partition, precision ladder, retry or alternative bound. Every input is a named field of a hash-bound adopted record; the hull is selected by exact equality x_hi == a and requires the recorded eta to be an outward rounding of a (a <= eta <= a*(1 + 2^-200)).",
+ "budget": {"new_real_addresses": 0, "cpu_seconds_max": 60, "host": "any machine with the frozen checkout; no production host, no producer, no Arb", "precision": "exact rational"},
+ "execution": "exactly once: code/k4r1_certificate.py execute --out evidence/execution_r1/K4R1_RESULT.json from a clean checkout of the freeze commit; the code refuses without a hash-bound FREEZE.json whose qualification verdict is QUALIFICATION_ACCEPTED, refuses on any bound-file or source drift, and refuses to overwrite its output",
+ "adversarial_checks": "tests/test_k4r1.py (synthetic only: strict boundary, negative-T, exact formulas, randomised odd-polynomial soundness against exact truth, positive-function never certified, transport load-bearing, 19 source-identity refusals, non-prefix residual, hash drift, assembly gap/rest/handoff, freeze gate with positive control, exact-once) and tests/mutation_harness.py (32 single-edit mutants of the decision path; null mutant must pass, every mutant must be killed)",
+ "stop_conditions": "any refusal of preflight or execute; any qualification verdict other than QUALIFICATION_ACCEPTED; any source hash drift; any need to change this gate after freeze -> stop, no execution in this lineage"
+}

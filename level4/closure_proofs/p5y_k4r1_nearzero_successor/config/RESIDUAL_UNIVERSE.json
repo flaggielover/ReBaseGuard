@@ -1,0 +1,18 @@
+{
+ "schema": "rebaseguard.p5y.k4r1.residual-universe.v1",
+ "source": {
+  "historical_k4_commit": "bc4ba08ef20f3996926f319766ca253e82004f74",
+  "historical_k4_report": "level4/closure_proofs/p5y_k4_frozen_execution_r1/evidence/K4_ASSEMBLY_REPORT.json",
+  "historical_k4_report_sha256": "83cabce239630d98a842bd9eec32482c7d0720fc86433ef8ee7c658833aef175",
+  "historical_checkpoint_commit": "e5cc5a9069f817cce76b5ac5676a327757b57573",
+  "historical_checkpoint_sha256": "95b1fd16ac420d6f545cbb2619a6086ced31c6d748a9c801ca7f7c114e77a1e1"
+ },
+ "detector_scope": ["CUSUM"],
+ "residuals": [
+  {"detector": "CUSUM", "m": 2, "cells": [0, 1], "a": "10187/10000000", "region": "(0, 10187/10000000]"},
+  {"detector": "CUSUM", "m": 3, "cells": [0, 1, 2], "a": "957/625000", "region": "(0, 957/625000]"},
+  {"detector": "CUSUM", "m": 5, "cells": [0, 1, 2], "a": "957/625000", "region": "(0, 957/625000]"}
+ ],
+ "rule": "exactly the CERTIFICATE_TOO_LOOSE cells of the historical K4 report, all (D,m); the implementation refuses unless this list equals the report's too_loose_cells for every (D,m), each residual is a prefix from cell 0 starting at e = 0, and a equals the historical right end of its last residual cell",
+ "inherited": "all other cells of all 8 (D,m) keep their historical K4 decision (CHAIN_RPRIME_NEGATIVE / DIRECT_R_NEGATIVE) from the hash-bound report; nothing is recomputed or redefined"
+}
