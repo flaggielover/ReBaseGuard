@@ -220,7 +220,11 @@ M is approximately diffusive and weakly correlated with τ: A1^LR ≈ √(2/π)�
 true A2 ≥ |Λ''|, typically O(Λ·polylog Λ); Dv′ A1 = Λ(κ1C_T + δ1) = O(Λ C_T), A2 = O(Λ C_T²); Lemma G A1 = k1C² ≥ k1Λ²,
 A2 ≥ 2k1²Λ³. So plain LR beats Lemma G by order but not Dv′ when Λ ≫ C_T².
 
-### 5.3 Regenerative LR (RLR): LR inside the atom excursion — dominates Dv′
+### 5.3 Regenerative LR (RLR): LR inside the atom excursion — dominates Dv′ for exact ρ; with certified ρ only the min is guaranteed
+
+*Correction (REVIEW_RLR_R2 §1.3, condition C1):* dominance over Dv′ is a theorem for EXACT ρ only. With certified ρ
+(e.g. the Cauchy–Schwarz L1 bound), raw RLR can exceed Dv′ on equal inputs; the review found ρ1 > κ1·C_T on 6/9 exact
+fixtures. What is guaranteed is the MIN of the RLR and Dv′/Lemma-G supplies, which is ≤ Dv′ by construction.
 
 Taboo kernel K̂_e (THEOREM_AD Lemma K): the standing form with survival set Â(x) := A(x) \ {z : T(x,z) = a}, which is
 e-free (CUSUM: the atom window [β, α] is e-free). Its chain is killed at σ := first time of alarm *or* of entering a at
@@ -238,8 +242,11 @@ are admissible atom constants on E. Moreover the exact excursion ratios satisfy,
 
     L1/τ_a ≤ (Ĝ|K̂'|Ĝ1)(a)/τ_a ≤ ‖|K̂'|‖ C_T,     L2/τ_a ≤ [(Ĝ|K̂''|Ĝ1)(a) + 2(Ĝ|K̂'|Ĝ|K̂'|Ĝ1)(a)]/τ_a ≤ ‖|K̂''|‖C_T + 2‖|K̂'|‖²C_T²,
 
-so with ρ_j equal to the exact suprema (or with ρ_j := min(certified ρ_j, the Dv′ factor)), A^RLR ≤ A^{Dv′}
-componentwise, for the same (Ā, τ, D_lo, δ1, δ2) and κ_1 ≥ ‖|K̂'|‖, κ_2 ≥ ‖|K̂''|‖.
+so with ρ_j equal to the exact suprema, A^RLR ≤ A^{Dv′} componentwise (theorem), for the same (Ā, τ, D_lo, δ1, δ2) and
+κ_1 ≥ ‖|K̂'|‖, κ_2 ≥ ‖|K̂''|‖. With *certified* ρ_j (any upper bound on L_j/τ_a, e.g. Cauchy–Schwarz) this domination
+is **not** a theorem and can fail; only the minimum is guaranteed — at ρ level, ρ_j := min(certified ρ_j, Dv′ factor),
+or at constant level, min(A^RLR, A^{Dv′}, A^G) — and that minimum is ≤ A^{Dv′} by construction. (Neither min form is
+implemented in lr_fsm.py; REVIEW_RLR_R2 C2 asks for it in the certification code.)
 
 *Proof.* Theorem LR-1 applied to K̂ (with Lemma TL for w): ν'(f) = E_a[Σ_{n<σ} f(X_n)M_n] and
 ν''(f) = E_a[Σ_{n<σ} f(X_n)(M_n² + N_n)], so |ν'(f)| ≤ L1‖f‖ ≤ τ_a ρ1 ‖f‖ and |ν''(f)| ≤ τ_a ρ2 ‖f‖. By Lemma SM(c),
@@ -414,12 +421,12 @@ seeds 1..8 on [0, 1/4].
 * Chain true ≤ LR_cert ≤ PM ≤ G: 24/24 for A1 and for A2 (`chain_A1_holds`, `chain_A2_holds`).
 * Ratios to the truth (`A1_ratios`, `A2_ratios`; Λ ∈ [2.7, 8.4] on these fixtures): PM/LR_cert ≈ 1.5–2.4 (A1) and
   1.2–3.5 (A2); the rigorous LR lower bound itself is ≈ 1–7.6× (median ≈ 2×) above A1_true — **about half of the
-  true-vs-PM slack is between-path cancellation that no |M_n|-type bound can recover**; RLR beats exact-input Dv′ on
+  true-vs-PM slack is between-path cancellation that no |M_n|-type bound can recover**; RLR (certified ρ) beats exact-input Dv′ — an empirical observation on these fixtures, not a consequence of LR-3 — on
   24/24 seeds (A1 by 1.7–3.0×, A2 by 1.4–3.1×); at these small Λ the whole-kernel LR certificate is also below Dv′
   24/24, and RLR is below the whole-kernel LR certificate for A1 on 24/24.
 
 **Examples (C1LR_EXAMPLES.json).** E2 (state-level, two states): the rigorous LR lower bound ≈ 0.40 Λ^{3/2}, exact
-Dv′ ≈ 1.07 Λ, ratio 1.33 → 4.69 over Λ = 10 … 160; RLR stays below Dv′. E1d (declared) showed *no* separation — a
+Dv′ ≈ 1.07 Λ, ratio 1.33 → 4.69 over Λ = 10 … 160; RLR (certified ρ) stays below Dv′ there (empirical). E1d (declared) showed *no* separation — a
 design error: its killing derivative is O(1), so δ1 ∝ Λ and Dv′ = true ∝ Λ²; the theory predicts ratio ∝ √Λ/δ1, so this
 is the correct outcome (preserved, `E1d_note`). E1d′ (faithful analogue, δ1 = 1, declared before running): Dv′ = true
 = Λ exactly, noise-level LR lower bound ≈ 0.40 Λ^{3/2}, ratio up to 5.10 at Λ = 160 (`E1d_prime`).

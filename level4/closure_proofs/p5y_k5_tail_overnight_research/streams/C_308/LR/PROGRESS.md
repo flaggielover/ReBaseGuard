@@ -95,3 +95,9 @@ Scope: THEORY + EXACT SYNTHETIC VALIDATION ONLY. No CUSUM target cells, no drift
   covered. Chains 24/24, all certificates pass, block guaranteed-invalid control 8/8. Ledger: 12 lr_fsm entries, 0
   LEAK_FLAG. Docs corrected: THEOREM_LR:3 + §7, C1LR summary status/controls/G6, this log (C-10 note). C-11
   (`rebuilt_matches_and_passes`) is a consistency check, not a control; it is not cited as evidence. cusum/ untouched.
+- [REVIEW_RLR_R2 C1 correction] The entries above at "RLR dominates Dv' term by term with the same inputs" (plan item 4)
+  and "Theorem LR-3 RLR dominating Dv'" are corrected: dominance is a theorem for EXACT rho only. With certified rho
+  (Cauchy-Schwarz L1) raw RLR can exceed Dv'; the review found rho1 > kappa1*C_T on 6/9 exact fixtures. Only
+  min(RLR, Dv'/Lemma G) is guaranteed <= Dv', by construction. Reworded THEOREM_LR §5.3 heading + statement + §7
+  (fixture wins marked empirical), and C1LR summary LR-3 row, G10 and a correction note. No code or JSON change;
+  cusum/ untouched.

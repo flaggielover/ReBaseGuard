@@ -25,7 +25,7 @@ campaign name.
 | LR-2 | A0 = Λ exactly; A1 ≤ A1^LR; A2 ≤ A2^LR | proved; validated | §4 |
 | LR-4 | Chain true ≤ LR ≤ PM ≤ Lemma G, with a caveat on the score level | proved; VALIDATED_NON_TARGET (24/24 for A1 and for A2) | §5.1 |
 | E1/E2 | Plain whole-kernel LR is **not** dominated by Dv′. Its order is Λ^{3/2}; Dv′'s is O(Λ) | proved in order (E1); rigorous lower bounds on toy chains (E2, E1d′) | §5.2; `C1LR_EXAMPLES.json` |
-| LR-3 | **Regenerative LR (RLR)**: LR is applied inside the taboo excursion, and Dv′'s Sherman–Morrison quotient is kept. A1 = Ā_eff(ρ1+δ1) and A2 = Ā_eff(ρ2+2ρ1δ1+2δ1²+δ2). The exact ratios satisfy ρ1 ≤ κ1C_T and ρ2 ≤ 2κ1²C_T²+κ2C_T, so RLR dominates Dv′ when both use the same inputs | proved; VALIDATED_NON_TARGET | §5.3; `rlr_and_dv` |
+| LR-3 | **Regenerative LR (RLR)**: LR is applied inside the taboo excursion, and Dv′'s Sherman–Morrison quotient is kept. A1 = Ā_eff(ρ1+δ1) and A2 = Ā_eff(ρ2+2ρ1δ1+2δ1²+δ2). The exact ratios satisfy ρ1 ≤ κ1C_T and ρ2 ≤ 2κ1²C_T²+κ2C_T, so with EXACT ρ RLR dominates Dv′ on equal inputs (theorem). With certified ρ (e.g. the Cauchy–Schwarz L1 bound) raw RLR can exceed Dv′: REVIEW_RLR_R2 §1.3 found ρ1 > κ1·C_T on 6/9 exact fixtures. Only min(RLR, Dv′, Lemma G) is guaranteed ≤ Dv′, by construction | proved; VALIDATED_NON_TARGET | §5.3; `rlr_and_dv` |
 | CT0/CT1 | Comparison lemma, and the δ-certificate. The δ-certificate reduces to two linear supersolution inequalities, (C1-b) and (C1-a) | proved; implemented; checker has negative controls | §cert (i) |
 | CT1′ | Full quadratic certificate with a linear term, using a global or a per-state c. Its exact value is √(ΛS2) for global c and Σ_y√(U0U2) for per-state c. At equal c it dominates the δ-form | proved; validated | §cert (i′) |
 | CT2 | A2: the triangle bound S2 + T_N, and a per-state quartic Cauchy–Schwarz bound | proved; exact values validated. The quartic checker (for blocks) is **not implemented** | §cert (ii) |
@@ -43,6 +43,9 @@ campaign name.
 **Governance under floor r2.** Both routes are **CLOSURE-ONLY**, because they supply constants other than Lemma G and
 Lemma Dv′ r2. RLR reuses Dv′'s inputs but adds the new ρ1 and ρ2. Adoption needs a floor extension that the user
 decides and freezes before any evaluation.
+
+*Correction (REVIEW_RLR_R2 §1.3, condition C1):* "RLR is never worse than Dv′ on equal inputs" holds only for exact ρ.
+With certified ρ only the min of the RLR and Dv′/Lemma-G supplies is guaranteed ≤ Dv′.
 
 ## 2. Key results (all synthetic; every number is a field of the named JSON)
 
@@ -119,7 +122,7 @@ interval-Horner enclosures (`check_block_cert`).
 | G7 temporal integrity | **PASS.** Every rule was declared in PROGRESS.md before its run. No target was evaluated. |
 | G8 no target leakage | **PASS.** No CUSUM computation was done. The only drifts used are {0, k/32 ≤ 1/4} on synthetic fixtures. The quarantine scan shows no finding in this stream; the one finding it reports is in another stream's file. There are 12 ledger entries (6 original runs + 6 re-runs after REVIEW_GLOBAL_INTEGRITY_R1), none flagged. |
 | G9 could be frozen prospectively | **YES, in principle.** The constant formulas (LR-3) and the certificate checker are fixed objects. Freezing needs the CUSUM certifier and a floor extension. |
-| G10 real improvement | **RLR: YES, structurally.** It replaces the worst-case κ1·C_T by an excursion-average LR constant from the atom, and it provably never loses to Dv′. **Plain LR:** it improves only on Lemma G. |
+| G10 real improvement | **RLR: YES, structurally.** It replaces the worst-case κ1·C_T by an excursion-average LR constant from the atom, and with exact ρ it provably never loses to Dv′. With certified ρ only min(RLR, Dv′, G) is guaranteed ≤ Dv′ (REVIEW_RLR_R2 §1.3); RLR < Dv′ on the fixtures is empirical. **Plain LR:** it improves only on Lemma G. |
 
 ## 5. What the CUSUM certification stream must implement
 
