@@ -122,11 +122,16 @@ def main() -> int:
     incidents = sorted(q.name for q in (NS / "ledger").glob("INCIDENT_*.md"))
     out["incidents_recorded"] = incidents
     out["verdict"] = "PASS" if ok else "FAIL"
-    if not ok and lc["new_target_evaluations"] == 0 and lc["target_equivalent_proxies"] == len(incidents) \
-            and sc["verdict"] == "PASS" and not outside and out["L4_coverage"]["r5_unchanged"] and not r6_hits \
-            and all(v["ok"] for v in refs.values()):
-        out["verdict_detail"] = ("FAIL solely because of the recorded proxy-exposure incidents "
-                                 f"({len(incidents)}); 0 new target evaluations; governance otherwise clean")
+    flagged = [json.loads(x) for x in Q.LEDGER.read_text().splitlines() if x.strip() and json.loads(x).get("LEAK_FLAG")]
+    accounted = all(r.get("class") in ("PROXY_EXPOSURE", "QUARANTINE_RULE_BREACH") for r in flagged)
+    out["leak_flag_lines"] = [{"utc": r["utc"], "class": r["class"], "proxies": r.get("target_equivalent_proxies", 0),
+                               "purpose": r["purpose"][:120]} for r in flagged]
+    if not ok and lc["new_target_evaluations"] == 0 and accounted and sc["verdict"] == "PASS" and not outside \
+            and out["L4_coverage"]["r5_unchanged"] and not r6_hits and all(v["ok"] for v in refs.values()):
+        out["verdict_detail"] = (f"FAIL solely because of recorded incidents: {len(flagged)} LEAK_FLAG ledger lines, all "
+                                 f"of class PROXY_EXPOSURE / QUARANTINE_RULE_BREACH ({lc['target_equivalent_proxies']} "
+                                 f"qualitative proxies; incident files {incidents}); 0 new target evaluations; "
+                                 "governance otherwise clean")
     (NS / "ledger" / "OV_AUDIT.json").write_text(json.dumps(out, indent=1, sort_keys=True))
     print(json.dumps({k: out[k] for k in ("verdict", "head")} | {"detail": out.get("verdict_detail"),
         "incidents": out["incidents_recorded"],
