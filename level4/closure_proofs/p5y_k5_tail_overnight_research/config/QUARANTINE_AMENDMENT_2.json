@@ -1,0 +1,13 @@
+{
+  "schema": "P5Y_K5_TAIL_OVERNIGHT_QUARANTINE_AMENDMENT/1",
+  "amends": "config/TARGET_QUARANTINE.json + config/QUARANTINE_AMENDMENT_1.json",
+  "direction": "STRICTER ONLY (adds prohibitions; removes none)",
+  "written_utc": "2026-09-28T20:20Z",
+  "trigger": "reviews/REVIEW_THEOREM_M_R1.md note N5 and section 3.1: under Theorem M (E_a[tau] even and nonincreasing in |e| from the atom, and from diagonal starts), a certified UPPER bound on Lambda at |e'| transfers to every |e| >= |e'|, and a certified LOWER bound at |e''| transfers to every |e| <= |e''|. The declared validation drifts {0, 1/4, 1/2, 1} and 3 therefore BRACKET the quarantined band for Lambda. Amendment 1's premise that out-of-band drifts carry no band information is false for Lambda.",
+  "rules": [
+    "R2.1: No document, table or script may juxtapose, combine or compare any validation-drift value of Lambda, E_a[tau], P(tau > n), or any supersolution or sub-solution certificate value, with any committed or new CUSUM m=5 cell 305-309 number (thresholds, critical A0, floors, factors, margins).",
+    "R2.2: No transfer (T-UP, T-LO) into [6/5, 13/5] or its mirror may be derived or stated as a number.",
+    "R2.3: Artifacts carrying certified validation-drift Lambda/tau/C_T values are LATENT PROXIES: streams/C_308/A0X/gen/results/*, NS/validation/C2B_*.json, streams/C_308/LR/cusum/logs/*, NS/validation/C1B_*.json, NS/validation/THEOREM_M_REVIEW_NUMERICS.json, SCR review_M files. They are reported by content class only in campaign summaries; their values are not quoted in any cross-route or handover text.",
+    "R2.4: Cross-cell re-attribution of a committed certified value to another tail cell (T-UP/T-LO between tail cells, or endpoint sharing) is a target-cell derived quantity and forbidden (incident 02)."
+  ]
+}
