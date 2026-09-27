@@ -1,0 +1,543 @@
+{
+ "K4_ADJUDICATION": "ACCEPTED",
+ "K4_SCIENTIFIC_RESULT": "NOT_CLOSED",
+ "artifacts": {
+  "aws": {
+   "FARFIELD_INFO_NON_DECISIONAL.json": "d584379e5a9831da55dc0b945e40531879e0e5099e8fac26fe98317146d0dade",
+   "INDEPENDENT_CHECK.json": "027238477a0e25a4d51451b8331cd74ff16e81797f1b12506f747fbb9b7ebe20",
+   "K4_ASSEMBLY_REPORT_REVIEW.json": "83cabce239630d98a842bd9eec32482c7d0720fc86433ef8ee7c658833aef175",
+   "independent_k4_check.py": "aaf1a5292c7b913598d44efb0e1cdcbe97c2d6083bfc2542c58169adb801eda6",
+   "lanec_review/ADJUDICATION_AUDIT.json": "82dae9dcc473a87d7e81c98b26e2be17da2da26a75d2e8182f50c08b516cfe6e"
+  },
+  "local": {
+   "cusum_vultr/COMPOSITE_EXPORT.tar": "bcff857f86c9e765c4ae60c05e812e590ea87b9e70e9af0bde068f52526f1721"
+  }
+ },
+ "checks": {
+  "A_checkpoint_identity": {
+   "evidence": {
+    "K4_ASSEMBLY_CHECKPOINT_HASH_content": "95b1fd16ac420d6f545cbb2619a6086ced31c6d748a9c801ca7f7c114e77a1e1",
+    "K4_ASSEMBLY_CHECKPOINT_HASH_file_sha256": "05e8390f7a9b80b694d12812d0454076baca10f897ee0e2cdbf337a17315b893",
+    "bound_sources_at_e5cc5a90_and_5289b6ce": {
+     "code/k4_assembly.py": "6e9518b0dc1f399984a36af313fd58ad80746e80f2c3a356a35ddef6c3568de7",
+     "config/K4_ASSEMBLY_PREDECLARATION.json": "874ab214389fe072388857678cee32af72d4c2ec27b1c253f9c3b6f124cedbdd",
+     "tests/test_k4_assembly.py": "8fd19ce5623fa10944b5a4c4a7e656ef68364e92906bc4cea128233e43a46d9d"
+    },
+    "checkpoint_commit": "e5cc5a9069f817cce76b5ac5676a327757b57573",
+    "checkpoint_sha256": "95b1fd16ac420d6f545cbb2619a6086ced31c6d748a9c801ca7f7c114e77a1e1",
+    "e5cc5a90_ancestor_of_5289b6ce": true,
+    "namespace_diff_e5cc5a90_to_5289b6ce": "empty",
+    "status_field": "FROZEN_PRE_RESULT",
+    "target": "for D in {CUSUM,SR}, m in {1,2,3,5}: R_{D,m}(e) < 0 for every e in (0,2]; not_asserted: H2 for e > 2",
+    "unchanged_on_origin_p5y_postk1_frontier_5289b6ce": true
+   },
+   "status": "PASS"
+  },
+  "B_temporal_integrity": {
+   "evidence": {
+    "cells_with_left_eq_2_in_either_table": "none (strictness amendment has no effect on the cell set)",
+    "checkpoint_freeze_commit": "e5cc5a90 2026-09-13T06:53:07Z",
+    "cusum": "all Aux5 production after freeze: production checkpoint 4026f296 frozen 532c880e 2026-09-13T09:35Z, predecessor launched 11:57Z, glibc successor f9380847 frozen 2026-09-14; all three CUSUM checkpoints hash-bind K4 checkpoint 95b1fd16 and k4_assembly 6e9518b0",
+    "judgement": "freeze-before-result holds as the checkpoint states it (non-observation). The decision procedure was fixed before any production value existed; the freeze-time amendments are outcome-neutral; all failing cells are CUSUM cells computed after freeze. Tension recorded, not a violation.",
+    "k4_assembly_diff_predecl_to_freeze": "no change to enclosure formulas, chain/direct/counterexample/too-loose logic; changes = strict domain (left<2), genuine-mode input gates, report schema",
+    "predeclaration_first_commit": "e47e8947 2026-09-13T06:11:45Z (same enclosures and decision steps 1-5 as the frozen checkpoint)",
+    "sr_gen2_run_20260913T112316Z": "353 cells, launched after freeze",
+    "sr_pre_freeze_existence": "16 SR production T4 records (cells 0,4,...,60; run 20260912T154659Z, runtime dir p5y_k1_ps1_production) have file mtimes 2026-09-13T06:26:28Z-06:29:21Z: AFTER the predeclaration (06:11Z) but ~24-27 min BEFORE the freeze commit (06:53Z). They are K4-domain cells (incl. SR cell 0). The checkpoint's blinding disclosure lists only non-production records and asserts genuine_production_values_observed_before_freeze=false; nothing found contradicts non-observation, but existence is not disclosed.",
+    "task_framing_correction": "the gen-1 ledger has 0 completed cells; the 16 early cells come from the 2026-09-12 15:46Z compatibility-drain run and were sealed into the gen-2 ledger"
+   },
+   "status": "PASS_WITH_NOTE"
+  },
+  "C_input_provenance": {
+   "evidence": {
+    "attestation_fields": {
+     "all_scientific_hashes_verified": true,
+     "cells_verified": 326,
+     "mode": "COMPOSITE",
+     "producer_checkpoint_sha256": "f9380847c92b6f5eb014d56021d11c2b66a95bef0990e392c7021c05d537a6cb",
+     "producer_identity_hash": "3692d0feeaef71365798cd99399fdb6d744573f38d59dba5cfe2e99294f0ae19",
+     "schema": "rebaseguard.p5y.k1.cusum-production.integrity-attestation.v1"
+    },
+    "attestation_sha256": "039e2e1cbebb9561c177ddca790dbc2c675eafde15553ad4e1282777d9bd8d2c (== committed ce7fb933 == executor copy)",
+    "cusum_tree_bytewise_digest": "7517199ae57fe99dd63e60bd820c72349f6faf1e5cf139be75ce331a6fedb0a3 (== ATTESTED tree_sha256_bytewise; equal on vultr, reviewer copy, and executor staging copy)",
+    "cusum_tree_reviewer_copy": "tar streamed from rebaseguard-vultr-02 /root/work/postk1-runs/closure-r1/COMPOSITE_EXPORT (tar sha bcff857f...), 326 records, no dotfiles",
+    "export_manifest_sha256": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334 (== committed at ce7fb933)",
+    "lane_c_rerun_output": {
+     "ADJUDICATION_AUDIT.json": "82dae9dcc473a87d7e81c98b26e2be17da2da26a75d2e8182f50c08b516cfe6e",
+     "A_completeness": "369/369 sealed==ledger==domain",
+     "COVERAGE_MATRIX.csv": "5344113cb8a4bb7d588d7c6e558f913bf4241818f058480a7f67378a6ecd34d8",
+     "INTEGRITY_READY_FOR_ADJUDICATION": true,
+     "byte_identical_to_executor": true,
+     "issues": {},
+     "ledger_sha256": "988725cd8dd02d28f52ef18e3b1add8063825cc42ee828c99d556a12b06d0dd8"
+    },
+    "lane_c_tool_sha256": "7e65c8bc98cd70310971d4a2a895326427c03eb4b85c1bc19faa10af4c90df84 (pristine git archive 5289b6ce; identical at 2aea59ca)",
+    "notes": [
+     "CUSUM records carry certifier-constant flags production_run=false/result_bearing=false; documented frozen semantics (prov_schema CERTIFIER_CONSTANT_FLAGS): production status is carried by envelopes/ledger, not the scientific record",
+     "frozen k4_assembly checks only presence (not value) of producer_checkpoint_sha256 and trusts the Lane C JSON flags of whatever file is passed; both were independently verified here"
+    ],
+    "producer_identity_clause_interpretation": "The K4 checkpoint (frozen before any CUSUM Aux5 checkpoint existed) names the producer by role, not hash. Reading: the attestation must record the frozen CUSUM successor checkpoint as producer_checkpoint_sha256 and carry that checkpoint's declared producer identity, and every record must carry it. f9380847 (GLIBC_SUCCESSOR_CHECKPOINT.json, FROZEN_PRE_PRODUCTION) declares producer.record_identity.producer_identity_hash = 3692d0fe and k4_composite_attestation.producer_identity_hash = 3692d0fe, binds predecessor dd4c89d7 for cells 0-127 (same identity), and hash-binds K4 checkpoint 95b1fd16. All 326 records carry 3692d0fe at top level and in producer. SATISFIED.",
+    "ps1_final_assembly_15e70072": "FINAL_ASSEMBLY.json sha a3ffb9ec... references ledger 988725cd",
+    "verify_closure_export_tree": "CLOSURE_PACKAGE_VALID true, problems [] (pristine git archive ce7fb933, local and on AWS)"
+   },
+   "status": "PASS_WITH_NOTE"
+  },
+  "D_domain_detector_m": {
+   "evidence": {
+    "M_R2_equals_R2_interval_mag": "all domain entries",
+    "cusum_domain": {
+     "contiguous_indices": true,
+     "geometric_contiguous_0_to_ge2": true,
+     "indices_min_max": [
+      0,
+      309
+     ],
+     "last_right": "2092283/1000000",
+     "n": 310
+    },
+    "detector": "every m entry carries its detector (CUSUM/SR), 0 mismatches",
+    "floats_in_certified_fields": 0,
+    "m_scope": "every domain record has exactly m in {1,2,3,5}",
+    "record_geometry_equals_table": "all 605 domain cells: record e0 and rho equal the frozen table cell exactly (0 mismatches)",
+    "sr_domain": {
+     "contiguous_indices": true,
+     "geometric_contiguous_0_to_ge2": true,
+     "indices_min_max": [
+      0,
+      294
+     ],
+     "last_right": "40372863/20000000",
+     "n": 295
+    },
+    "sr_integrity": "369 sealed -> t4 file sha == sealed sha, t4.cell == cell_id, t4_record_sha256 recomputed (independent code): 0 failures",
+    "tables": {
+     "cusum_cells.json": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f",
+     "sr_successor_cells.json": "dfaced89653bd71a0bab4a61729407694768456b1e841f042df84c4544bfe349"
+    }
+   },
+   "status": "PASS"
+  },
+  "E_reproduction": {
+   "evidence": {
+    "byte_identical_to_executor_report": true,
+    "executor_staged_namespace_identical_to_pristine": true,
+    "frozen_tests": "16 passed (tests/test_k4_assembly.py from pristine archive, local /usr/bin/python3 3.9.6 + pytest 8.4.1; AWS and vultr have no pytest)",
+    "report_embeds_paths": false,
+    "report_sha256": "83cabce239630d98a842bd9eec32482c7d0720fc86433ef8ee7c658833aef175",
+    "run": "python3 -B (3.12.3) pristine git archive e5cc5a90 k4_assembly.py GENUINE mode, reviewer's own Lane C output and own CUSUM tree, AWS /home/ubuntu/work/k4-review-r1"
+   },
+   "status": "PASS"
+  },
+  "F_strict_negativity": {
+   "evidence": {
+    "independent_check_json_sha256": "027238477a0e25a4d51451b8331cd74ff16e81797f1b12506f747fbb9b7ebe20",
+    "method": "independent script (independent_k4_check.py sha aaf1a529...) exact Fraction recomputation from raw record fields; chain computed as leading-run length; per-cell (how, R_cell_hi, Rprime_cell_hi) strings equal to the frozen report for all 8 (D,m)",
+    "no_counterexample": "no domain cell in any (D,m) has R.lo > 0 (checked on every cell, including chain cells)",
+    "structural_note": "cell 0 contains e=0 where R(0)=0, so it can only be certified by the chain; for CUSUM m>=2 Rprime_cell.hi = D.hi + rho*M_R2 > 0 (rho*M_R2 = 7.5-7.9 vs D.hi = -3.73/-2.53/-0.94)",
+    "too_loose_cells_exact": {
+     "CUSUM|m=2": {
+      "0": {
+       "D_hi": "-8401312526310037/2251799813685248",
+       "D_lo": "-46801742704614037/2251799813685248",
+       "M_R2": "34943747814894836657/1125899906842624",
+       "R_cell_hi": "10596989842618493442800040073/900719925474099200000000000000",
+       "R_cell_hi_float": 0.011765022114993966,
+       "R_cell_strictly_negative": false,
+       "R_hi": "12340717364325/2251799813685248",
+       "R_lo": "-26370621561755/2251799813685248",
+       "R_lo_positive": false,
+       "Rprime_cell_hi": "93605944880010084727531/22517998136852480000000",
+       "Rprime_cell_hi_float": 4.156939009903219,
+       "Rprime_cell_strictly_negative": false,
+       "left": "0",
+       "rho": "5083/20000000",
+       "rho_M": 7.887871251415677,
+       "right": "5083/10000000"
+      },
+      "1": {
+       "D_hi": "-8546323469562825/2251799813685248",
+       "D_lo": "-46654472130786249/2251799813685248",
+       "M_R2": "34536763037018067499/1125899906842624",
+       "R_cell_hi": "19327035441153199855515739/3518437208883200000000000000",
+       "R_cell_hi_float": 0.005493073854595764,
+       "R_cell_strictly_negative": false,
+       "R_hi": "-1786195753221/2251799813685248",
+       "R_lo": "-40360905160965/2251799813685248",
+       "R_lo_positive": false,
+       "Rprime_cell_hi": "5675775240331997907181/1407374883553280000000",
+       "Rprime_cell_hi_float": 4.032880866824938,
+       "Rprime_cell_strictly_negative": false,
+       "left": "5083/10000000",
+       "rho": "319/1250000",
+       "rho_M": 7.828210903546139,
+       "right": "10187/10000000"
+      }
+     },
+     "CUSUM|m=3": {
+      "0": {
+       "D_hi": "-18328707085338292866948655780740247726453867681095678355297564524727548335441/7237005577332262213973186563042994240829374041602535252466099000494570602496",
+       "D_lo": "-69902839042658697062886034772032610794887792195028263454880710253286798305961/3618502788666131106986593281521497120414687020801267626233049500247285301248",
+       "M_R2": "8597988141286849807/281474976710656",
+       "R_cell_hi": "131056431594746989131112238350666046365123619840822183168324093950708273450231031620689/11307821214581659709333104004754678501295896940003961331978279688272766566400000000000000",
+       "R_cell_hi_float": 0.011589892438849945,
+       "R_cell_strictly_negative": false,
+       "R_hi": "10548487571010827854661951647285157338660609057618510383997010563380307208875/1852673427797059126777135760139006525652319754650249024631321344126610074238976",
+       "R_lo": "-83348503028695704927368784408303454197727421782429988431777492575509074498901/7410693711188236507108543040556026102609279018600996098525285376506440296955904",
+       "R_lo_positive": false,
+       "Rprime_cell_hi": "2957378214221576488728428102410535592081154435431703348861274457458401282358935491/565391060729082985466655200237733925064794847000198066598913984413638328320000000",
+       "Rprime_cell_hi_float": 5.230677348184421,
+       "Rprime_cell_strictly_negative": false,
+       "left": "0",
+       "rho": "5083/20000000",
+       "rho_M": 7.763314208759386,
+       "right": "5083/10000000"
+      },
+      "1": {
+       "D_hi": "-18783986135472790373535271470112897254565773878064547481821633035222755835901/7237005577332262213973186563042994240829374041602535252466099000494570602496",
+       "D_lo": "-69671909717438460456142945565011835687633353263823577870100518190452381319167/3618502788666131106986593281521497120414687020801267626233049500247285301248",
+       "M_R2": "16996654636331280451/562949953421312",
+       "R_cell_hi": "33903359019858857033281798302870150004151301716199227486901257196887108677674728050547/5653910607290829854666552002377339250647948470001980665989139844136383283200000000000000",
+       "R_cell_hi_float": 0.005996444120665757,
+       "R_cell_strictly_negative": false,
+       "R_hi": "92237980149010759848987471678383510235780634247820518079713182426893822635/926336713898529563388567880069503262826159877325124512315660672063305037119488",
+       "R_lo": "-15546234254469110895576269572804109658621939483787461099086302001592270148949/926336713898529563388567880069503262826159877325124512315660672063305037119488",
+       "R_lo_positive": false,
+       "Rprime_cell_hi": "2888856151326332394201868111541177389636788388382471457530922508451748657991226247/565391060729082985466655200237733925064794847000198066598913984413638328320000000",
+       "Rprime_cell_hi_float": 5.1094832443956495,
+       "Rprime_cell_strictly_negative": false,
+       "left": "5083/10000000",
+       "rho": "319/1250000",
+       "rho_M": 7.7050299708356516,
+       "right": "10187/10000000"
+      },
+      "2": {
+       "D_hi": "-19234459189088738540241568560526268688008073673193536151139492841553903921831/7237005577332262213973186563042994240829374041602535252466099000494570602496",
+       "D_lo": "-17360014185038117267341627506740819118554608737271926425752601223209382401365/904625697166532776746648320380374280103671755200316906558262375061821325312",
+       "M_R2": "52722754800787454439794109784432832095297908909457263726030393970752525871787/1766847064778384329583297500742918515827483896875618958121606201292619776",
+       "R_cell_hi": "1100195354817259494141802206182778651943659796862659364294593224686782473349231929/2894802230932904885589274625217197696331749616641014100986439600197828240998400000000",
+       "R_cell_hi_float": 0.00038005890110935165,
+       "R_cell_strictly_negative": false,
+       "R_hi": "-40885961480084365860617566983344394059113944278420084314043306830898255276711/7410693711188236507108543040556026102609279018600996098525285376506440296955904",
+       "R_lo": "-20694785826506623589269816107280151532309503230991571191393529970860483761493/926336713898529563388567880069503262826159877325124512315660672063305037119488",
+       "R_lo_positive": false,
+       "Rprime_cell_hi": "22564590156136108524853955668259019924510382198858004909813755418842467020747897/4523128485832663883733241601901871400518358776001584532791311875309106626560000",
+       "Rprime_cell_hi_float": 4.988713061504417,
+       "Rprime_cell_strictly_negative": false,
+       "left": "10187/10000000",
+       "rho": "41/160000",
+       "rho_M": 7.646505567473306,
+       "right": "957/625000"
+      }
+     },
+     "CUSUM|m=5": {
+      "0": {
+       "D_hi": "-3402768965958415144399202069786420586385094257483483500128046871327825111719/3618502788666131106986593281521497120414687020801267626233049500247285301248",
+       "D_lo": "-63105444903492678041900186295696906157440043348460839149977360052149572774567/3618502788666131106986593281521497120414687020801267626233049500247285301248",
+       "M_R2": "106089636718033924694220831725898911679173133919722618870790146822805922268229/3533694129556768659166595001485837031654967793751237916243212402585239552",
+       "R_cell_hi": "1031626066210372935980775829791494254778012392819922845964447464173424541686405376989717/90462569716653277674664832038037428010367175520031690655826237506182132531200000000000000",
+       "R_cell_hi_float": 0.011403899639835907,
+       "R_cell_strictly_negative": false,
+       "R_hi": "88958076236744785090013816233973960192714100156486045917110875101255096179101/14821387422376473014217086081112052205218558037201992197050570753012880593911808",
+       "R_lo": "-39548316043353391820341771504574121939162202014631025131972863729678769822105/3705346855594118253554271520278013051304639509300498049262642688253220148477952",
+       "R_lo_positive": false,
+       "Rprime_cell_hi": "1891173168285564573726710288948912563949612669989903138433401603378803674704585153/282695530364541492733327600118866962532397423500099033299456992206819164160000000",
+       "Rprime_cell_hi_float": 6.689788005657038,
+       "Rprime_cell_strictly_negative": false,
+       "left": "0",
+       "rho": "5083/20000000",
+       "rho_M": 7.630168368666999,
+       "right": "5083/10000000"
+      },
+      "1": {
+       "D_hi": "-453323796602591666523926229872681736047501451395782142896749582017426323319/452312848583266388373324160190187140051835877600158453279131187530910662656",
+       "D_lo": "-7859850687783497052708800543746271277491485125227088148363917567879990966135/452312848583266388373324160190187140051835877600158453279131187530910662656",
+       "M_R2": "52429814687500475098282004520362531688697624179176512645515803695560973265579/1766847064778384329583297500742918515827483896875618958121606201292619776",
+       "R_cell_hi": "302745997268478756235331027443027547518452935295314404294731415680595972911448802308223/45231284858326638837332416019018714005183587760015845327913118753091066265600000000000000",
+       "R_cell_hi_float": 0.006693287582184307,
+       "R_cell_strictly_negative": false,
+       "R_hi": "9577389284626005261659142923673020398754929067850957971469773320849469874727/7410693711188236507108543040556026102609279018600996098525285376506440296955904",
+       "R_lo": "-113571722154042526861635915191108223852507555864280765975507429309574696263129/7410693711188236507108543040556026102609279018600996098525285376506440296955904",
+       "R_lo_positive": false,
+       "Rprime_cell_hi": "232185852555424950954449614363127101110401622920221440628904100967031776038218341/35336941295567686591665950014858370316549677937512379162432124025852395520000000",
+       "Rprime_cell_hi_float": 6.570626773080329,
+       "Rprime_cell_strictly_negative": false,
+       "left": "5083/10000000",
+       "rho": "319/1250000",
+       "rho_M": 7.5728618367591345,
+       "right": "10187/10000000"
+      },
+      "2": {
+       "D_hi": "-7696464889660401587228310532142240557996091633549961914536755221277142714497/7237005577332262213973186563042994240829374041602535252466099000494570602496",
+       "D_lo": "-62651495876165064499284306342974578381893423019894717525978954459305168094273/3618502788666131106986593281521497120414687020801267626233049500247285301248",
+       "M_R2": "103636535711278516689365251261200884906196858880853737030737589130812514421965/3533694129556768659166595001485837031654967793751237916243212402585239552",
+       "R_cell_hi": "1136710226849602440958757239787955190170365938376323122625747624202944556089686503/578960446186580977117854925043439539266349923328202820197287920039565648199680000000",
+       "R_cell_hi_float": 0.0019633642234745618,
+       "R_cell_strictly_negative": false,
+       "R_hi": "-25465379289232314886237860862185655341755885423759983592641704295437235370933/7410693711188236507108543040556026102609279018600996098525285376506440296955904",
+       "R_lo": "-74093641922186162322878431085285113958839003471783220194366249407755044380123/3705346855594118253554271520278013051304639509300498049262642688253220148477952",
+       "R_lo_positive": false,
+       "Rprime_cell_hi": "5836498631452320496418821666216997980097002488390259909899291444321658106768779/904625697166532776746648320380374280103671755200316906558262375061821325312000",
+       "Rprime_cell_hi_float": 6.451838201958437,
+       "Rprime_cell_strictly_negative": false,
+       "left": "10187/10000000",
+       "rho": "41/160000",
+       "rho_M": 7.515325691006015,
+       "right": "957/625000"
+      }
+     }
+    }
+   },
+   "status": "PASS"
+  },
+  "G_far_field": {
+   "evidence": {
+    "dependency": "the e>2 licence depends on the K1 sup|R|<2 result (K1 successor adjudication 7d5cf02b PASS), which this review did not re-verify",
+    "far_field_info_sha256": "d584379e5a9831da55dc0b945e40531879e0e5099e8fac26fe98317146d0dade",
+    "frozen_obligation": "(0,2] only; not_asserted: H2 for e > 2 (consumer licence P5X FROZEN_THEOREM s8 P5X-T7(1), E=2, given K1 sup|R| < 2 = P5X-T7(3)/P5X-T4)",
+    "gap_relative_to_frozen_obligation": "none: both domains contiguous from 0 to last right >= 2 (CUSUM 2.092283, SR 2.01864315)",
+    "relation_to_literal_H2": "K4 does not assert R<0 for e>2. Literal H2 on (0,inf) would additionally need (2, inf): record cells cover CUSUM to 5.5 and SR to 6.7101317 (plus one symbolic SR terminal cell), K1 bridges start at e > 5.5 (da79fe1f). NON-DECISIONAL scan: all 16 CUSUM and 73 SR record cells beyond 2 have R(e0).hi < 0 for all m, none R.lo > 0, but no cellwise enclosure was assembled there. This is outside the frozen K4 obligation and is not counted."
+   },
+   "status": "PASS"
+  },
+  "H_no_relaxation": {
+   "evidence": {
+    "appledouble": "executor deleted ._*.json only from its own staging copy; its staged k4_records tree digest equals the vultr original (7517199a), 326 files, no residue",
+    "no_refinement_split_retry": "report per-cell sets equal the frozen table domain; outcomes reproduce byte-identically from pristine code",
+    "single_run": "only one executor K4 report on AWS (k4-final-r1, time.txt shows one run, exit 0)",
+    "threshold": "strict < 0 in frozen code and in reviewer recomputation; no tolerance/delta"
+   },
+   "status": "PASS"
+  },
+  "I_disposition": {
+   "agrees": true,
+   "derived": "K4_INCONCLUSIVE_K1_RECORDS",
+   "executor_claim": "K4_INCONCLUSIVE_K1_RECORDS",
+   "status": "PASS"
+  }
+ },
+ "defects_in_executor_work": [
+  "none material",
+  "minor/process: the readiness checker k4_readiness.py is unfrozen executor code (disclosed); its conclusions were independently re-derived here",
+  "minor/process: .git directory mtime of the production checkout /home/ubuntu/work/ReBaseGuard-ps1-prod-gen2 changed at 2026-09-27T06:09:08Z during the executor session (consistent with a read-only git status creating/removing a transient lock); no production file changed (no file under production/ newer than 2026-09-26; ledger sha 988725cd unchanged)"
+ ],
+ "directories_created": [
+  "/home/ubuntu/work/k4-review-r1 (AWS)",
+  "/private/tmp/claude-501/-Users-suzhe-ReBaseGuard/5963d483-46d8-4c58-95fb-fecc2ff62dcf/scratchpad/review (local)"
+ ],
+ "disposition_rule_applied": "any K4_CERTIFICATE_TOO_LOOSE, no counterexample -> K4_INCONCLUSIVE_K1_RECORDS (any tightening is a NEW predeclared successor)",
+ "frozen_disposition": "K4_INCONCLUSIVE_K1_RECORDS",
+ "frozen_procedure_governance_notes_non_blocking": [
+  "k4_assembly GENUINE mode does not pin producer_checkpoint_sha256/producer_identity_hash to a frozen value, does not re-run Lane C, and does not compare record geometry to the frozen tables; K4 checkpoint names the CUSUM producer by role only",
+  "CUSUM glob '*.json' via pathlib matches dotfiles; AppleDouble sidecars would make the run crash (fail-closed), not change a value",
+  "checkpoint blinding disclosure omits that 16 genuine SR production T4 records existed on the AWS host ~25 min before freeze"
+ ],
+ "reproduced_per_Dm": {
+  "CUSUM|m=1": {
+   "agrees_with_frozen_report_per_cell": true,
+   "cell_crossing_e2": [
+    {
+     "R_cell_hi": -0.5879796176033724,
+     "how": "DIRECT_R_NEGATIVE",
+     "index": 309,
+     "left": "19839101/10000000",
+     "right": "2092283/1000000"
+    }
+   ],
+   "cells": 310,
+   "cells_with_R_lo_gt_0_in_domain": [],
+   "chain_cells": 189,
+   "chain_certifies_up_to": "1747613/10000000",
+   "counterexample_cells": [],
+   "outcome": "K4_CELLWISE_ALL_CERTIFIED",
+   "too_loose_cells": [],
+   "worst_direct_cell": {
+    "R_cell_hi": -0.5879796176033724,
+    "index": 309
+   }
+  },
+  "CUSUM|m=2": {
+   "agrees_with_frozen_report_per_cell": true,
+   "cell_crossing_e2": [
+    {
+     "R_cell_hi": -0.30758679046888393,
+     "how": "DIRECT_R_NEGATIVE",
+     "index": 309,
+     "left": "19839101/10000000",
+     "right": "2092283/1000000"
+    }
+   ],
+   "cells": 310,
+   "cells_with_R_lo_gt_0_in_domain": [],
+   "chain_cells": 0,
+   "chain_certifies_up_to": "0",
+   "counterexample_cells": [],
+   "outcome": "K4_CERTIFICATE_TOO_LOOSE",
+   "too_loose_cells": [
+    0,
+    1
+   ],
+   "worst_direct_cell": {
+    "R_cell_hi": -0.0008045860764037516,
+    "index": 2
+   }
+  },
+  "CUSUM|m=3": {
+   "agrees_with_frozen_report_per_cell": true,
+   "cell_crossing_e2": [
+    {
+     "R_cell_hi": -0.2013492552517567,
+     "how": "DIRECT_R_NEGATIVE",
+     "index": 309,
+     "left": "19839101/10000000",
+     "right": "2092283/1000000"
+    }
+   ],
+   "cells": 310,
+   "cells_with_R_lo_gt_0_in_domain": [],
+   "chain_cells": 0,
+   "chain_certifies_up_to": "0",
+   "counterexample_cells": [],
+   "outcome": "K4_CERTIFICATE_TOO_LOOSE",
+   "too_loose_cells": [
+    0,
+    1,
+    2
+   ],
+   "worst_direct_cell": {
+    "R_cell_hi": -0.005259049976090096,
+    "index": 3
+   }
+  },
+  "CUSUM|m=5": {
+   "agrees_with_frozen_report_per_cell": true,
+   "cell_crossing_e2": [
+    {
+     "R_cell_hi": -0.14125640466346273,
+     "how": "DIRECT_R_NEGATIVE",
+     "index": 309,
+     "left": "19839101/10000000",
+     "right": "2092283/1000000"
+    }
+   ],
+   "cells": 310,
+   "cells_with_R_lo_gt_0_in_domain": [],
+   "chain_cells": 0,
+   "chain_certifies_up_to": "0",
+   "counterexample_cells": [],
+   "outcome": "K4_CERTIFICATE_TOO_LOOSE",
+   "too_loose_cells": [
+    0,
+    1,
+    2
+   ],
+   "worst_direct_cell": {
+    "R_cell_hi": -0.0027856947771787606,
+    "index": 3
+   }
+  },
+  "SR|m=1": {
+   "agrees_with_frozen_report_per_cell": true,
+   "cell_crossing_e2": [
+    {
+     "R_cell_hi": -0.6094339849297385,
+     "how": "DIRECT_R_NEGATIVE",
+     "index": 294,
+     "left": "9855569/5000000",
+     "right": "40372863/20000000"
+    }
+   ],
+   "cells": 295,
+   "cells_with_R_lo_gt_0_in_domain": [],
+   "chain_cells": 198,
+   "chain_certifies_up_to": "2213511/10000000",
+   "counterexample_cells": [],
+   "outcome": "K4_CELLWISE_ALL_CERTIFIED",
+   "too_loose_cells": [],
+   "worst_direct_cell": {
+    "R_cell_hi": -0.6094339849297385,
+    "index": 294
+   }
+  },
+  "SR|m=2": {
+   "agrees_with_frozen_report_per_cell": true,
+   "cell_crossing_e2": [
+    {
+     "R_cell_hi": -0.3181024052126872,
+     "how": "DIRECT_R_NEGATIVE",
+     "index": 294,
+     "left": "9855569/5000000",
+     "right": "40372863/20000000"
+    }
+   ],
+   "cells": 295,
+   "cells_with_R_lo_gt_0_in_domain": [],
+   "chain_cells": 191,
+   "chain_certifies_up_to": "2030461/10000000",
+   "counterexample_cells": [],
+   "outcome": "K4_CELLWISE_ALL_CERTIFIED",
+   "too_loose_cells": [],
+   "worst_direct_cell": {
+    "R_cell_hi": -0.3181024052126872,
+    "index": 294
+   }
+  },
+  "SR|m=3": {
+   "agrees_with_frozen_report_per_cell": true,
+   "cell_crossing_e2": [
+    {
+     "R_cell_hi": -0.19786313531238173,
+     "how": "DIRECT_R_NEGATIVE",
+     "index": 294,
+     "left": "9855569/5000000",
+     "right": "40372863/20000000"
+    }
+   ],
+   "cells": 295,
+   "cells_with_R_lo_gt_0_in_domain": [],
+   "chain_cells": 187,
+   "chain_certifies_up_to": "386967/2000000",
+   "counterexample_cells": [],
+   "outcome": "K4_CELLWISE_ALL_CERTIFIED",
+   "too_loose_cells": [],
+   "worst_direct_cell": {
+    "R_cell_hi": -0.19786313531238173,
+    "index": 294
+   }
+  },
+  "SR|m=5": {
+   "agrees_with_frozen_report_per_cell": true,
+   "cell_crossing_e2": [
+    {
+     "R_cell_hi": -0.1167826843086166,
+     "how": "DIRECT_R_NEGATIVE",
+     "index": 294,
+     "left": "9855569/5000000",
+     "right": "40372863/20000000"
+    }
+   ],
+   "cells": 295,
+   "cells_with_R_lo_gt_0_in_domain": [],
+   "chain_cells": 183,
+   "chain_certifies_up_to": "922449/5000000",
+   "counterexample_cells": [],
+   "outcome": "K4_CELLWISE_ALL_CERTIFIED",
+   "too_loose_cells": [],
+   "worst_direct_cell": {
+    "R_cell_hi": -0.09305797415873988,
+    "index": 289
+   }
+  }
+ },
+ "residual_blockers": [
+  {
+   "class": "CERTIFICATE_TOO_LOOSE",
+   "remedy_scope": "any tightening (smaller cells near 0, sharper M_R2 or D enclosures, R'''/Taylor-order change) is a NEW predeclared successor per the frozen mapping",
+   "what": "CUSUM m=2 cells 0,1; m=3 cells 0,1,2; m=5 cells 0,1,2: chain empty (Rprime_cell.hi>0 at cell 0 because rho*M_R2 ~7.5-7.9 exceeds |D.hi|), cells 0-1/0-2 have R_cell.hi > 0; cells from 2 or 3 onward certify directly"
+  }
+ ],
+ "review_utc": "2026-09-27",
+ "reviewer_disclosures": [
+  "reviewer ran read-only 'git status'/'git log' in /home/ubuntu/work/ReBaseGuard-ps1-prod-gen2, which updated only the .git directory mtime (2026-09-27T06:39:10Z); no content change"
+ ],
+ "reviewer_role": "independent adversarial reviewer; did not perform the execution",
+ "schema": "rebaseguard.p5y.k4.independent-review.v1"
+}

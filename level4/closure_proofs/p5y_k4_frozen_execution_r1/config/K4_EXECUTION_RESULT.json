@@ -1,0 +1,114 @@
+{
+ "schema": "rebaseguard.p5y.k4.frozen-execution-result.v1",
+ "executed_utc": "2026-09-27T06:15:02Z",
+ "frozen_checkpoint": {
+  "commit": "e5cc5a9069f817cce76b5ac5676a327757b57573",
+  "path": "level4/closure_proofs/p5y_k2k5_postk1_audit/config/K4_ASSEMBLY_CHECKPOINT.json",
+  "sha256": "95b1fd16ac420d6f545cbb2619a6086ced31c6d748a9c801ca7f7c114e77a1e1",
+  "bound_sources_verified": {
+   "code/k4_assembly.py": "6e9518b0dc1f399984a36af313fd58ad80746e80f2c3a356a35ddef6c3568de7",
+   "tests/test_k4_assembly.py": "8fd19ce5623fa10944b5a4c4a7e656ef68364e92906bc4cea128233e43a46d9d",
+   "config/K4_ASSEMBLY_PREDECLARATION.json": "874ab214389fe072388857678cee32af72d4c2ec27b1c253f9c3b6f124cedbdd"
+  },
+  "modified": false
+ },
+ "frozen_obligation": "for each D in {CUSUM, SR} and m in {1,2,3,5}: R_{D,m}(e) < 0 for every e in (0, 2]; H2 for e > 2 NOT asserted (consumer licence P5X-T7(1) + K1 sup|R| < 2)",
+ "inputs": {
+  "SR": {
+   "records": "369 sealed PS1 production cell records (AWS, ReBaseGuard-ps1-prod-gen2 @ 4bfb14b), T4 evidence re-hashed",
+   "production_ledger_sha256": "988725cd8dd02d28f52ef18e3b1add8063825cc42ee828c99d556a12b06d0dd8",
+   "ps1_final_assembly_commit": "15e70072ebfb7c0b5863ae8966cdb769d0604535",
+   "lane_c_audit": {
+    "tool": "p5y_k1_ps1_postk1_adjudication_tooling/code/ps1_adjudication_audit.py",
+    "tool_sha256": "7e65c8bc98cd70310971d4a2a895326427c03eb4b85c1bc19faa10af4c90df84",
+    "output_sha256": "82dae9dcc473a87d7e81c98b26e2be17da2da26a75d2e8182f50c08b516cfe6e",
+    "INTEGRITY_READY_FOR_ADJUDICATION": true,
+    "A_completeness_complete": true,
+    "issues": {},
+    "blinded": true,
+    "first_run": "2026-09-27 in this execution (never run before); reproduced byte-identically by the independent reviewer"
+   },
+   "status": "PASS"
+  },
+  "CUSUM": {
+   "records": "326 exported Aux5 composite records (cells 0-325), rebaseguard-vultr-02:/root/work/postk1-runs/closure-r1/COMPOSITE_EXPORT",
+   "closure_commit": "ce7fb93308dc41284e5b424be96a9ad578ecfee9",
+   "export_manifest_sha256": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334",
+   "attestation_sha256": "039e2e1cbebb9561c177ddca790dbc2c675eafde15553ad4e1282777d9bd8d2c",
+   "producer_identity_hash": "3692d0feeaef71365798cd99399fdb6d744573f38d59dba5cfe2e99294f0ae19",
+   "producer_checkpoint_sha256": "f9380847c92b6f5eb014d56021d11c2b66a95bef0990e392c7021c05d537a6cb",
+   "verify_closure_export_tree": "CLOSURE_PACKAGE_VALID",
+   "status": "PASS"
+  },
+  "K1": {
+   "successor_final_adjudication_commit": "7d5cf02b7f4b29439c59d803fe90ce62bc0841da",
+   "relevance": "K1 bridges lie at e > 11/2 (CUSUM) and e >= 33777657/5000000 (SR); the K4 compact domain (0,2] rests only on the historical CUSUM 326 and SR 369 records",
+   "status": "CLOSED_BY_LATER_SUCCESSOR_CAMPAIGN (not re-adjudicated here)"
+  },
+  "readiness_report_sha256": "de9f81f0f456499e13a1c9944bbe846e0a63d61fec7b20a2e7bd3b7a626b6ddd",
+  "K4_INPUT_READINESS": "PASS"
+ },
+ "domain": {
+  "CUSUM": {"cells": "0..309", "count": 310, "last_right": "2092283/1000000", "contiguous_from_0": true, "table_sha256": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f"},
+  "SR": {"cells": "0..294", "count": 295, "last_right": "40372863/20000000", "contiguous_from_0": true, "table_sha256": "dfaced89653bd71a0bab4a61729407694768456b1e841f042df84c4544bfe349"}
+ },
+ "assembly": {
+  "tool": "frozen code/k4_assembly.py, GENUINE mode, run once, unmodified",
+  "report_sha256": "83cabce239630d98a842bd9eec32482c7d0720fc86433ef8ee7c658833aef175",
+  "all_eight_cellwise_certified": false,
+  "per_Dm": {
+   "CUSUM|m=1": {"outcome": "K4_CELLWISE_ALL_CERTIFIED", "chain_cells": 189, "chain_certifies_up_to": "1747613/10000000", "direct_cells": 121},
+   "CUSUM|m=2": {"outcome": "K4_CERTIFICATE_TOO_LOOSE", "chain_cells": 0, "too_loose_cells": [0, 1], "counterexample_cells": []},
+   "CUSUM|m=3": {"outcome": "K4_CERTIFICATE_TOO_LOOSE", "chain_cells": 0, "too_loose_cells": [0, 1, 2], "counterexample_cells": []},
+   "CUSUM|m=5": {"outcome": "K4_CERTIFICATE_TOO_LOOSE", "chain_cells": 0, "too_loose_cells": [0, 1, 2], "counterexample_cells": []},
+   "SR|m=1": {"outcome": "K4_CELLWISE_ALL_CERTIFIED", "chain_cells": 198, "chain_certifies_up_to": "2213511/10000000", "direct_cells": 97},
+   "SR|m=2": {"outcome": "K4_CELLWISE_ALL_CERTIFIED", "chain_cells": 191, "chain_certifies_up_to": "2030461/10000000", "direct_cells": 104},
+   "SR|m=3": {"outcome": "K4_CELLWISE_ALL_CERTIFIED", "chain_cells": 187, "chain_certifies_up_to": "386967/2000000", "direct_cells": 108},
+   "SR|m=5": {"outcome": "K4_CELLWISE_ALL_CERTIFIED", "chain_cells": 183, "chain_certifies_up_to": "922449/5000000", "direct_cells": 112}
+  },
+  "cpu_seconds": 1.19
+ },
+ "K4_COMPACT_COVERAGE": "FAIL (cover complete and gap-free for all 8 (D,m); certification incomplete for CUSUM m=2,3,5 on cells 0-2)",
+ "K4_FAR_FIELD": "PASS (frozen handoff only: e > 2 is not part of the frozen K4 obligation; licensed by P5X-T7(1) + K1 sup|R| < 2; literal R < 0 on e > 2 NOT asserted)",
+ "K4_DOMAIN_COVERAGE": "FAIL (the frozen (0,2] obligation is not fully certified)",
+ "frozen_disposition": "K4_INCONCLUSIVE_K1_RECORDS",
+ "K4_SCIENTIFIC_RESULT": "NOT_CLOSED",
+ "K4_ADJUDICATION": "ACCEPTED",
+ "K4_FINAL_VERDICT": "NOT_CLOSED (K4_INCONCLUSIVE_K1_RECORDS)",
+ "residual_blockers": [
+  {
+   "class": "CERTIFICATE_TOO_LOOSE",
+   "where": "CUSUM m=2 cells 0-1, m=3 cells 0-2, m=5 cells 0-2 (e in [0, 957/625000]; m=2 only up to 10187/10000000)",
+   "mechanism": "D_interval at e0 is certified negative (D.hi = -3.73 / -2.53 / -0.94 at cell 0), but the frozen mean-value widening rho*M_R2 (about 7.6-7.9, M_R2 about 3e4) exceeds |D.hi|, so Rprime_cell crosses 0 and the chain is empty; cell 0 contains R(0) = 0 and cannot be certified by the direct rule",
+   "not": "no MATHEMATICAL_COUNTEREXAMPLE (no cell has R.lo > 0), no MISSING_INPUT, no IMPLEMENTATION_DEFECT, no DOMAIN_GAP",
+   "remedy_governance": "any tightening (refinement, splitting, signed R2_interval, point certificates) is a NEW predeclared successor per the frozen disposition mapping"
+  }
+ ],
+ "review": {
+  "K4_ADJUDICATION": "ACCEPTED",
+  "review_json_sha256": "241953c0dafc02bb92c5320a9bbf2d1e277582b3565a114b47309a816e309dbb",
+  "reproduced_report_sha256": "83cabce239630d98a842bd9eec32482c7d0720fc86433ef8ee7c658833aef175",
+  "notes": [
+   "Temporal PASS_WITH_NOTE: 16 genuine SR T4 records (K4-domain cells 0,4,...,60) were written 06:26-06:29Z on 2026-09-13, after the predeclaration (06:11Z) and about 25 min before the freeze (06:53Z); not listed in the checkpoint's blinding disclosure; no evidence of observation; every failing cell is a CUSUM cell produced after the freeze",
+   "Provenance PASS_WITH_NOTE: the checkpoint names the CUSUM producer by role; f9380847 declares identity 3692d0fe and all 326 records carry it",
+   "Frozen-tool weaknesses (non-blocking): producer_checkpoint_sha256 is only presence-checked; Lane C flags are trusted from the file passed; record geometry is not compared with the frozen tables (the independent readiness gate does this); the CUSUM *.json glob matches dotfiles (fails closed)"
+  ]
+ },
+ "governance": {
+  "HISTORICAL_K4_PRE_RESULT_STATE": "PRESERVED",
+  "HISTORICAL_RECORDS_MODIFIED": false,
+  "THRESHOLDS_RELAXED": false,
+  "SCOPE_NARROWED": false,
+  "refinement_split_retry": false,
+  "closure_tag_created": false,
+  "new_scientific_computation": "NO (read-only integrity audits plus the frozen exact-rational assembly over existing certified records)"
+ },
+ "p5y_state": {
+  "K1": "CLOSED_BY_LATER_SUCCESSOR_CAMPAIGN",
+  "K2": "CLOSED",
+  "K3": "CLOSED",
+  "K4": "OPEN (frozen execution NOT_CLOSED: K4_INCONCLUSIVE_K1_RECORDS)",
+  "K5": "OPEN",
+  "P5Y": "NOT_YET_CLOSED"
+ }
+}
