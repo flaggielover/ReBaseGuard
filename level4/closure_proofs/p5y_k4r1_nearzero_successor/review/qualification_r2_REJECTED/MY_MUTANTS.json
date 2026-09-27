@@ -1,0 +1,268 @@
+[
+ {
+  "mutant": "W1_x1_right_unchecked",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": "if x1 != fr(b[\"right\"]) or not (e0 <= x1):",
+  "new": "if not (e0 <= x1):"
+ },
+ {
+  "mutant": "W2_e0_le_x1_unchecked",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": "if x1 != fr(b[\"right\"]) or not (e0 <= x1):",
+  "new": "if x1 != fr(b[\"right\"]):"
+ },
+ {
+  "mutant": "W3_geometry_e0_unchecked",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": "if e0 != F(prov[\"geometry\"][\"k1_cell0_e0\"]):",
+  "new": "if False:"
+ },
+ {
+  "mutant": "W4_e0_rho_unchecked",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": "if e0 != rho or e0 - rho != 0:",
+  "new": "if False:"
+ },
+ {
+  "mutant": "W5_k1_detector_unchecked",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": "if k1.get(\"detector\") != \"CUSUM\" or k1.get(\"cell_index\") != 0:",
+  "new": "if k1.get(\"cell_index\") != 0:"
+ },
+ {
+  "mutant": "W6_slot1_cell_index_unchecked",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": "if not (b[\"k1_cell_index\"] == 0 and b[\"detector\"] == \"CUSUM\"",
+  "new": "if not (True and True"
+ },
+ {
+  "mutant": "W7_slot1_left_unchecked",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": "and fr(b[\"left\"]) == 0 and fr(ctx[\"point_e\"]) == 0):",
+  "new": "and fr(ctx[\"point_e\"]) == 0):"
+ },
+ {
+  "mutant": "W8_detector_scope_unchecked",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": " or universe[\"detector_scope\"] != [\"CUSUM\"]:",
+  "new": ":"
+ },
+ {
+  "mutant": "W9_M5x1_nonneg_unchecked",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": "if not (tf >= x1 * x1 / 2 and M5x1 >= 0 and",
+  "new": "if not (tf >= x1 * x1 / 2 and True and"
+ },
+ {
+  "mutant": "W10_U1_unchecked",
+  "result": "KILLED",
+  "rc": 1,
+  "old": "and U1 >= U0 + tf * M5x1):",
+  "new": "and True):"
+ },
+ {
+  "mutant": "W11_entry_rho_unchecked",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": "or ent.get(\"rho\", k1[\"rho\"]) != k1[\"rho\"]:",
+  "new": "or False:"
+ },
+ {
+  "mutant": "W12_eta_lower_unchecked",
+  "result": "KILLED",
+  "rc": 1,
+  "old": "if not (a <= eta <= a * (1 + F(1, 2 ** 200))):",
+  "new": "if not (eta <= a * (1 + F(1, 2 ** 200))):"
+ },
+ {
+  "mutant": "W13_M_order_from_x1row",
+  "result": "KILLED",
+  "rc": 1,
+  "old": "hits = [r for r in rows if fr(r[\"x_hi\"]) == a]",
+  "new": "hits = [r for r in rows if fr(r[\"x_hi\"]) == a or fr(r[\"x_hi\"]) == x1][-1:]"
+ },
+ {
+  "mutant": "W14_U0_from_U1",
+  "result": "KILLED",
+  "rc": 1,
+  "old": "L1, U0 = fr(pm[\"L1\"]), fr(pm[\"U0\"])",
+  "new": "L1, U0 = fr(pm[\"L1\"]), fr(pm[\"U1\"])"
+ },
+ {
+  "mutant": "W15_L1_from_L0",
+  "result": "KILLED",
+  "rc": 1,
+  "old": "L1, U0 = fr(pm[\"L1\"]), fr(pm[\"U0\"])",
+  "new": "L1, U0 = fr(pm[\"L0\"]), fr(pm[\"U0\"])"
+ },
+ {
+  "mutant": "R1_head_not_recorded",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": "\"executed_at_head\": gs[\"head\"]",
+  "new": "\"executed_at_head\": None"
+ },
+ {
+  "mutant": "R2_freeze_sha_wrong",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": "\"freeze_sha256\": sha_file(CONFIG / \"FREEZE.json\")",
+  "new": "\"freeze_sha256\": \"0\""
+ },
+ {
+  "mutant": "R3_inputs_record_L1_as_U0",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": "\"L1\": str(v[\"_L1\"]), \"U0\": str(v[\"_U0\"])",
+  "new": "\"L1\": str(v[\"_U0\"]), \"U0\": str(v[\"_L1\"])"
+ },
+ {
+  "mutant": "R4_T_branch_inverted",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": "\"T_branch\": \"M3\" if v[\"_M3\"] <= v[\"_U0\"]",
+  "new": "\"T_branch\": \"M3\" if v[\"_M3\"] > v[\"_U0\"]"
+ },
+ {
+  "mutant": "R5_assembly_flag_always_pass",
+  "result": "KILLED",
+  "rc": 1,
+  "old": "\"K4R1_COMPLETE_K4_ASSEMBLY\": \"PASS\" if asm[\"complete\"] else \"FAIL\"",
+  "new": "\"K4R1_COMPLETE_K4_ASSEMBLY\": \"PASS\""
+ },
+ {
+  "mutant": "R6_new_addresses",
+  "result": "KILLED",
+  "rc": 1,
+  "old": "\"new_real_addresses\": 0,\n",
+  "new": "\"new_real_addresses\": 1,\n"
+ },
+ {
+  "mutant": "R7_science_ignore_certs",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": "science = all(c[\"PASS\"] for c in certs.values()) and asm[\"complete\"]",
+  "new": "science = asm[\"complete\"]"
+ },
+ {
+  "mutant": "F1_git_status_ignored",
+  "result": "KILLED",
+  "rc": 1,
+  "old": "status.returncode == 0 and status.stdout.strip() == b\"\"",
+  "new": "status.returncode == 0"
+ },
+ {
+  "mutant": "F2_git_show_bytes_ignored",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": "shown.returncode == 0 and shown.stdout == freeze_path.read_bytes()",
+  "new": "shown.returncode == 0"
+ },
+ {
+  "mutant": "F3_freeze_committed_always",
+  "result": "KILLED",
+  "rc": 1,
+  "old": "\"freeze_committed\": shown.returncode == 0 and shown.stdout == freeze_path.read_bytes()",
+  "new": "\"freeze_committed\": True"
+ },
+ {
+  "mutant": "F4_here_not_bound_unchecked",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": "if here not in fz[\"bound_files\"]:",
+  "new": "if False:"
+ },
+ {
+  "mutant": "F5_review_not_required",
+  "result": "KILLED",
+  "rc": 1,
+  "old": "required = [str(ns_rel / r) for r in REQUIRED_BOUND] + [fz.get(\"qualification_review\") or \"<absent>\"]",
+  "new": "required = [str(ns_rel / r) for r in REQUIRED_BOUND]"
+ },
+ {
+  "mutant": "F6_exact_once_after_compute",
+  "result": "KILLED",
+  "rc": 1,
+  "old": "    if out.exists():\n        raise K4R1Refusal(\"EXACT_ONCE: output already exists\")\n",
+  "new": "    pass\n"
+ },
+ {
+  "mutant": "F7_git_check_skipped",
+  "result": "KILLED",
+  "rc": 1,
+  "old": "    if not (gs[\"clean\"] and gs[\"freeze_committed\"]):",
+  "new": "    if False:"
+ },
+ {
+  "mutant": "F8_freeze_absent_ok",
+  "result": "KILLED",
+  "rc": 1,
+  "old": "if not freeze_path.exists():\n        raise K4R1Refusal(\"EXECUTION_LOCKED: config/FREEZE.json absent\")",
+  "new": "if False:\n        raise K4R1Refusal(\"EXECUTION_LOCKED: config/FREEZE.json absent\")"
+ },
+ {
+  "mutant": "A1_cover_start_unchecked",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": "contiguous = (bool(cells) and F(cells[0][\"left\"]) == 0 and",
+  "new": "contiguous = (bool(cells) and"
+ },
+ {
+  "mutant": "A2_adjacency_unchecked",
+  "result": "KILLED",
+  "rc": 1,
+  "old": "and all(F(x[\"right\"]) == F(y[\"left\"]) for x, y in zip(cells, cells[1:])))",
+  "new": ")"
+ },
+ {
+  "mutant": "A3_counterexample_asm_unchecked",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": "and not h.get(\"counterexample_cells\")\n",
+  "new": "\n"
+ },
+ {
+  "mutant": "A4_rest_nonempty_unchecked",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": "and bool(rest) and F(rest[0][\"left\"]) == a)",
+  "new": "and (not rest or F(rest[0][\"left\"]) == a))"
+ },
+ {
+  "mutant": "A5_cellwise_only_CHAIN",
+  "result": "KILLED",
+  "rc": 1,
+  "old": "ok = all(c[\"how\"] in (\"CHAIN_RPRIME_NEGATIVE\", \"DIRECT_R_NEGATIVE\") for c in cells)",
+  "new": "ok = True"
+ },
+ {
+  "mutant": "A6_outside_universe_pass",
+  "result": "SURVIVED",
+  "rc": 0,
+  "old": "per[key] = {\"status\": \"FAIL\", \"reason\": f\"historical {h['outcome']} outside the K4R1 universe\"}",
+  "new": "per[key] = {\"status\": \"PASS\", \"reason\": \"x\"}"
+ },
+ {
+  "mutant": "D1_B_uses_e0",
+  "result": "KILLED",
+  "rc": 1,
+  "old": "B = b_bound(G, T, a)",
+  "new": "B = b_bound(G, T, a / 2)"
+ },
+ {
+  "mutant": "D2_max_T_minus",
+  "result": "KILLED",
+  "rc": 1,
+  "old": "return min(M3, U0 + a * a / 2 * M5)",
+  "new": "return max(M3, U0 + a * a / 2 * M5) if False else min(M3, U0 + a * a / 2 * M5 - 1)"
+ }
+]

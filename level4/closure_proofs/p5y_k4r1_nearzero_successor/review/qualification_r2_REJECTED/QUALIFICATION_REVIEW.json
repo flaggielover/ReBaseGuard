@@ -1,0 +1,452 @@
+{
+ "schema": "rebaseguard.p5y.k4r1.qualification-review.v1",
+ "round": "r2",
+ "campaign": "P5Y-K4R1 - Near-Zero Successor Certificate",
+ "candidate": {
+  "commit": "179d5aaeada14256bbdc64e68646d49b4cc2bc41",
+  "branch": "p5y-k4r1-nearzero-successor",
+  "code_sha256": "a0f2167220f2a532627814a7534a69ed1ee905a785911aa6c0e4c528ddd26c67",
+  "tests_sha256": "d3c15ea2a11275c096d1d2942515f641ad9a33e4bf0cb59c31f8f6d6da480ff8",
+  "predecessor_rejected": "81f5195a (review sha c1e8cdf1)"
+ },
+ "reviewer": "independent adversarial pre-result qualification reviewer r2 (fresh context; not the designer, not the r1 reviewer)",
+ "date_utc": "2026-09-27",
+ "verdict": "QUALIFICATION_REJECTED",
+ "checks": {
+  "C1_Q1_repaired_value_wiring": {
+   "result": "PASS",
+   "evidence": [
+    "pytest 52/52 on an exported copy (PYTHONDONTWRITEBYTECODE=1), identical to evidence/qualification_r2/PYTEST.txt",
+    "mutation harness re-run on the copy: 51/51 killed, null passes; report byte-identical to evidence/qualification_r2/MUTATION_REPORT.json (rerun sha e051eb67...)",
+    "r1 reviewer's 12 extra mutants (original forms, adapted only in paths): 12/12 KILLED (R1_EXTRA_MUTANTS_rerun.json)",
+    "test_extract_values_are_wired_to_the_right_fields asserts exact per-field values with distinct synthetic constants; test_execute_end_to_end_exact_values asserts exact G, T, B, a per m through main()",
+    "own value-path mutants W10, W12, W13, W14, W15, D1, D2, R5, R6: all KILLED"
+   ]
+  },
+  "C1b_own_mutants": {
+   "result": "NOTE",
+   "summary": "38 new single-edit mutants: 18 killed, 20 survived. No survivor alters the computed G, T, B, PASS, science flags or residual_remaining on inputs that pass the unmutated structural checks, and the real inputs pass them (value-blind preflight PASS). Survivors are: 5 unsound-in-principle structural/assembly check weakenings (W1, W2, W7, A1, A6), 4 record-fidelity mutants of result fields (R1-R4), and 11 sound or equivalent weakenings.",
+   "mutants": [
+    {
+     "mutant": "W1_x1_right_unchecked",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": "if x1 != fr(b[\"right\"]) or not (e0 <= x1):",
+     "new": "if not (e0 <= x1):",
+     "classification": "UNSOUND_IN_PRINCIPLE (slot-1 context x1 not tied to hull right; e0<=x1 could be tested on the wrong value); real input passes the unmutated check (preflight PASS)"
+    },
+    {
+     "mutant": "W2_e0_le_x1_unchecked",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": "if x1 != fr(b[\"right\"]) or not (e0 <= x1):",
+     "new": "if x1 != fr(b[\"right\"]):",
+     "classification": "UNSOUND_IN_PRINCIPLE (theorem premise e0 <= x1 unchecked); real input passes (preflight PASS)"
+    },
+    {
+     "mutant": "W3_geometry_e0_unchecked",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": "if e0 != F(prov[\"geometry\"][\"k1_cell0_e0\"]):",
+     "new": "if False:",
+     "classification": "SOUND_WEAKENING (identity only; G uses the record's own e0 and D_interval consistently); redundant with e0 == rho for the tested input"
+    },
+    {
+     "mutant": "W4_e0_rho_unchecked",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": "if e0 != rho or e0 - rho != 0:",
+     "new": "if False:",
+     "classification": "SOUND_WEAKENING (rho not used by the certificate); redundant with the geometry check for the tested input"
+    },
+    {
+     "mutant": "W5_k1_detector_unchecked",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": "if k1.get(\"detector\") != \"CUSUM\" or k1.get(\"cell_index\") != 0:",
+     "new": "if k1.get(\"cell_index\") != 0:",
+     "classification": "NEAR_EQUIVALENT (per-entry detector and producer identity still checked)"
+    },
+    {
+     "mutant": "W6_slot1_cell_index_unchecked",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": "if not (b[\"k1_cell_index\"] == 0 and b[\"detector\"] == \"CUSUM\"",
+     "new": "if not (True and True",
+     "classification": "EQUIVALENT_GIVEN_BINDING (slot-1 record_sha256 must equal the K1 cell-0 CUSUM record hash)"
+    },
+    {
+     "mutant": "W7_slot1_left_unchecked",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": "and fr(b[\"left\"]) == 0 and fr(ctx[\"point_e\"]) == 0):",
+     "new": "and fr(ctx[\"point_e\"]) == 0):",
+     "classification": "UNSOUND_IN_PRINCIPLE (hull [x0,x1] with x0>0 would not bound R''' on [0,e0]); real input passes (preflight PASS)"
+    },
+    {
+     "mutant": "W8_detector_scope_unchecked",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": " or universe[\"detector_scope\"] != [\"CUSUM\"]:",
+     "new": ":",
+     "classification": "EQUIVALENT (residual keys incl. detector are compared with the historical report)"
+    },
+    {
+     "mutant": "W9_M5x1_nonneg_unchecked",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": "if not (tf >= x1 * x1 / 2 and M5x1 >= 0 and",
+     "new": "if not (tf >= x1 * x1 / 2 and True and",
+     "classification": "SOUND_WEAKENING (cross-check only; L1/U0 used as recorded)"
+    },
+    {
+     "mutant": "W10_U1_unchecked",
+     "result": "KILLED",
+     "rc": 1,
+     "old": "and U1 >= U0 + tf * M5x1):",
+     "new": "and True):"
+    },
+    {
+     "mutant": "W11_entry_rho_unchecked",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": "or ent.get(\"rho\", k1[\"rho\"]) != k1[\"rho\"]:",
+     "new": "or False:",
+     "classification": "SOUND_WEAKENING (rho unused)"
+    },
+    {
+     "mutant": "W12_eta_lower_unchecked",
+     "result": "KILLED",
+     "rc": 1,
+     "old": "if not (a <= eta <= a * (1 + F(1, 2 ** 200))):",
+     "new": "if not (eta <= a * (1 + F(1, 2 ** 200))):"
+    },
+    {
+     "mutant": "W13_M_order_from_x1row",
+     "result": "KILLED",
+     "rc": 1,
+     "old": "hits = [r for r in rows if fr(r[\"x_hi\"]) == a]",
+     "new": "hits = [r for r in rows if fr(r[\"x_hi\"]) == a or fr(r[\"x_hi\"]) == x1][-1:]"
+    },
+    {
+     "mutant": "W14_U0_from_U1",
+     "result": "KILLED",
+     "rc": 1,
+     "old": "L1, U0 = fr(pm[\"L1\"]), fr(pm[\"U0\"])",
+     "new": "L1, U0 = fr(pm[\"L1\"]), fr(pm[\"U1\"])"
+    },
+    {
+     "mutant": "W15_L1_from_L0",
+     "result": "KILLED",
+     "rc": 1,
+     "old": "L1, U0 = fr(pm[\"L1\"]), fr(pm[\"U0\"])",
+     "new": "L1, U0 = fr(pm[\"L0\"]), fr(pm[\"U0\"])"
+    },
+    {
+     "mutant": "R1_head_not_recorded",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": "\"executed_at_head\": gs[\"head\"]",
+     "new": "\"executed_at_head\": None",
+     "classification": "RECORD_FIDELITY (executed_at_head not asserted by any test)"
+    },
+    {
+     "mutant": "R2_freeze_sha_wrong",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": "\"freeze_sha256\": sha_file(CONFIG / \"FREEZE.json\")",
+     "new": "\"freeze_sha256\": \"0\"",
+     "classification": "RECORD_FIDELITY (freeze_sha256 not asserted)"
+    },
+    {
+     "mutant": "R3_inputs_record_L1_as_U0",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": "\"L1\": str(v[\"_L1\"]), \"U0\": str(v[\"_U0\"])",
+     "new": "\"L1\": str(v[\"_U0\"]), \"U0\": str(v[\"_L1\"])",
+     "classification": "RECORD_FIDELITY (the per-m 'inputs' block that the final adjudicator will read is not asserted; a label swap survives)"
+    },
+    {
+     "mutant": "R4_T_branch_inverted",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": "\"T_branch\": \"M3\" if v[\"_M3\"] <= v[\"_U0\"]",
+     "new": "\"T_branch\": \"M3\" if v[\"_M3\"] > v[\"_U0\"]",
+     "classification": "RECORD_FIDELITY (T_branch label not asserted)"
+    },
+    {
+     "mutant": "R5_assembly_flag_always_pass",
+     "result": "KILLED",
+     "rc": 1,
+     "old": "\"K4R1_COMPLETE_K4_ASSEMBLY\": \"PASS\" if asm[\"complete\"] else \"FAIL\"",
+     "new": "\"K4R1_COMPLETE_K4_ASSEMBLY\": \"PASS\""
+    },
+    {
+     "mutant": "R6_new_addresses",
+     "result": "KILLED",
+     "rc": 1,
+     "old": "\"new_real_addresses\": 0,\n",
+     "new": "\"new_real_addresses\": 1,\n"
+    },
+    {
+     "mutant": "R7_science_ignore_certs",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": "science = all(c[\"PASS\"] for c in certs.values()) and asm[\"complete\"]",
+     "new": "science = asm[\"complete\"]",
+     "classification": "EQUIVALENT (documented in the harness; assembly already requires cert PASS)"
+    },
+    {
+     "mutant": "F1_git_status_ignored",
+     "result": "KILLED",
+     "rc": 1,
+     "old": "status.returncode == 0 and status.stdout.strip() == b\"\"",
+     "new": "status.returncode == 0"
+    },
+    {
+     "mutant": "F2_git_show_bytes_ignored",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": "shown.returncode == 0 and shown.stdout == freeze_path.read_bytes()",
+     "new": "shown.returncode == 0",
+     "classification": "EQUIVALENT (a modified tracked FREEZE.json makes the checkout dirty)"
+    },
+    {
+     "mutant": "F3_freeze_committed_always",
+     "result": "KILLED",
+     "rc": 1,
+     "old": "\"freeze_committed\": shown.returncode == 0 and shown.stdout == freeze_path.read_bytes()",
+     "new": "\"freeze_committed\": True"
+    },
+    {
+     "mutant": "F4_here_not_bound_unchecked",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": "if here not in fz[\"bound_files\"]:",
+     "new": "if False:",
+     "classification": "EQUIVALENT (mandatory-binding list contains the same path)"
+    },
+    {
+     "mutant": "F5_review_not_required",
+     "result": "KILLED",
+     "rc": 1,
+     "old": "required = [str(ns_rel / r) for r in REQUIRED_BOUND] + [fz.get(\"qualification_review\") or \"<absent>\"]",
+     "new": "required = [str(ns_rel / r) for r in REQUIRED_BOUND]"
+    },
+    {
+     "mutant": "F6_exact_once_after_compute",
+     "result": "KILLED",
+     "rc": 1,
+     "old": "    if out.exists():\n        raise K4R1Refusal(\"EXACT_ONCE: output already exists\")\n",
+     "new": "    pass\n"
+    },
+    {
+     "mutant": "F7_git_check_skipped",
+     "result": "KILLED",
+     "rc": 1,
+     "old": "    if not (gs[\"clean\"] and gs[\"freeze_committed\"]):",
+     "new": "    if False:"
+    },
+    {
+     "mutant": "F8_freeze_absent_ok",
+     "result": "KILLED",
+     "rc": 1,
+     "old": "if not freeze_path.exists():\n        raise K4R1Refusal(\"EXECUTION_LOCKED: config/FREEZE.json absent\")",
+     "new": "if False:\n        raise K4R1Refusal(\"EXECUTION_LOCKED: config/FREEZE.json absent\")"
+    },
+    {
+     "mutant": "A1_cover_start_unchecked",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": "contiguous = (bool(cells) and F(cells[0][\"left\"]) == 0 and",
+     "new": "contiguous = (bool(cells) and",
+     "classification": "UNSOUND_IN_PRINCIPLE (inherited cover not starting at 0 would PASS); bound historical report starts every cover at 0 (verified read-only)"
+    },
+    {
+     "mutant": "A2_adjacency_unchecked",
+     "result": "KILLED",
+     "rc": 1,
+     "old": "and all(F(x[\"right\"]) == F(y[\"left\"]) for x, y in zip(cells, cells[1:])))",
+     "new": ")"
+    },
+    {
+     "mutant": "A3_counterexample_asm_unchecked",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": "and not h.get(\"counterexample_cells\")\n",
+     "new": "\n",
+     "classification": "EQUIVALENT (check_universe refuses residual counterexamples first)"
+    },
+    {
+     "mutant": "A4_rest_nonempty_unchecked",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": "and bool(rest) and F(rest[0][\"left\"]) == a)",
+     "new": "and (not rest or F(rest[0][\"left\"]) == a))",
+     "classification": "SOUND (empty rest implies a >= 2 through contiguity, then (0,a] covers (0,2])"
+    },
+    {
+     "mutant": "A5_cellwise_only_CHAIN",
+     "result": "KILLED",
+     "rc": 1,
+     "old": "ok = all(c[\"how\"] in (\"CHAIN_RPRIME_NEGATIVE\", \"DIRECT_R_NEGATIVE\") for c in cells)",
+     "new": "ok = True"
+    },
+    {
+     "mutant": "A6_outside_universe_pass",
+     "result": "SURVIVED",
+     "rc": 0,
+     "old": "per[key] = {\"status\": \"FAIL\", \"reason\": f\"historical {h['outcome']} outside the K4R1 universe\"}",
+     "new": "per[key] = {\"status\": \"PASS\", \"reason\": \"x\"}",
+     "classification": "UNSOUND_IN_PRINCIPLE (a non-certified (D,m) outside the universe would PASS); bound report has only CELLWISE_ALL_CERTIFIED outside the universe (verified read-only)"
+    },
+    {
+     "mutant": "D1_B_uses_e0",
+     "result": "KILLED",
+     "rc": 1,
+     "old": "B = b_bound(G, T, a)",
+     "new": "B = b_bound(G, T, a / 2)"
+    },
+    {
+     "mutant": "D2_max_T_minus",
+     "result": "KILLED",
+     "rc": 1,
+     "old": "return min(M3, U0 + a * a / 2 * M5)",
+     "new": "return max(M3, U0 + a * a / 2 * M5) if False else min(M3, U0 + a * a / 2 * M5 - 1)"
+    }
+   ]
+  },
+  "C2_N1_freeze_gate": {
+   "result": "PASS",
+   "evidence": "REQUIRED_BOUND + named qualification review enforced (mandatory_binding_unchecked and F5 killed); git_state checks whole-checkout cleanliness and FREEZE.json byte-identical at HEAD (F1, F3, F7 killed; F2 equivalent). HEAD is recorded but not pinned to a specific freeze commit (acceptable: bound files are hash-checked)."
+  },
+  "C2_N2_exact_once": {
+   "result": "NOTE",
+   "evidence": "still per-output-path, no ledger; partially mitigated because an untracked prior output makes the checkout dirty. Not addressed in r2 (not claimed)."
+  },
+  "C2_N3_text_scope": {
+   "result": "PASS",
+   "evidence": "GATE.input_scope_note accurate: T-EXT adjudication a3547b9b verdict_scope is the cells 0-10 pass set; object TEXT_RESULT_sha256 = cb97cabc (identical at 20dc6b98, f6540638, a3547b9b); M02/M06/M11 exist as cited."
+  },
+  "C2_N4_disclosure": {
+   "result": "PASS",
+   "evidence": "FEASIBILITY.md revised: blindness restricted to M3(a), M5(a); prior knowledge listed."
+  },
+  "C2_N5_structural": {
+   "result": "PASS",
+   "evidence": "K1 entry metadata checked; slot-1 transport check is the sound one-sided form (tf >= x1^2/2, M5 >= 0, L0 <= U0, L1 <= L0 - tf*M5, U1 >= U0 + tf*M5) of the source's exact definition (p5y_k5_cusum_real_point_executor/code/executor_core.py enclosure_stages: tf = x1^2/2 exact, L1 = L0 - tf*M5, U1 = U0 + tf*M5; L0,U0 = R3_mid point enclosure of R'''(0); M5 >= sup_[0,x1]|R^(5)|). Not over-strict (real preflight PASS), not under-strict for soundness. Test gaps: W9, W11 survive (see C1b)."
+  },
+  "C2_N6_typed_refusals": {
+   "result": "PASS",
+   "evidence": "test_extract_refusals uses pytest.raises(K.K4R1Refusal) only."
+  },
+  "C3_no_target_computed": {
+   "result": "PASS",
+   "evidence": "no FREEZE.json or execution_r1 in any commit (git log --all); evidence/qualification_r2 contains no G/T/B keys; blind in-memory scan of the r1->r2 diff and all 21 namespace files at 179d5aae for the exact strings and 6-significant-digit decimals of slot-1 per_m L0/U0/L1/U1/M5 (m=2,3,5) and T-EXT rows 1-2 M3/M5/Lambda: 0 hits (values never printed)."
+  },
+  "C3_residual_universe": {
+   "result": "PASS",
+   "evidence": "historical report 83cabce2: too_loose_cells CUSUM m=2 [0,1], m=3 [0,1,2], m=5 [0,1,2], nothing else; no counterexample cells; RESIDUAL_UNIVERSE.json unchanged since r1; a values equal historical right ends; first inherited cell starts exactly at a (DIRECT_R_NEGATIVE) for all three."
+  },
+  "C3_inheritance_assembly": {
+   "result": "PASS",
+   "evidence": "all 8 (D,m) historical covers start at 0, are contiguous and reach >= 2; non-residual (D,m) are K4_CELLWISE_ALL_CERTIFIED with only CHAIN_RPRIME_NEGATIVE/DIRECT_R_NEGATIVE."
+  },
+  "C3_mathematics": {
+   "result": "PASS",
+   "evidence": "Re-derived: oddness => R(0)=R''(0)=R''''(0)=0; R''(t) >= t*L1 on [0,e0] subset [0,x1] (L1 = L0 - x1^2/2*M5 is a lower bound of R''' on [0,x1]) => R'(0) <= D0.hi - L1*e0^2/2 = G for either sign of L1; R'''(e) = R'''(0) + int_0^e (e-t)R^(5)(t)dt <= U0 + a^2/2*M5(a) on [0,a] (TEXT_SPEC line 70 form), and R''' <= M3(a); Taylor-Lagrange R(e) = e R'(0) + e^3/6 R'''(xi) <= e(G + a^2/6 max(T,0)) = eB; e>0 and B<0 give R(e)<0 strictly on (0,a]. Source semantics: D_interval encloses R'(e0) (K4 checkpoint line 88); slot-1 per_m as above; TEXT_SPEC Conclusion M_{n,m}(eta) >= sup_[0,eta]|R_m^(n)| with eta >= a enforced (a <= eta <= a(1+2^-200)); L5 used qualitatively only; no tunable parameter; no threshold relaxation or scope narrowing (GATE diff r1->r2 is procedural/descriptive only)."
+  },
+  "C3_endpoint": {
+   "result": "PASS",
+   "evidence": "(0,a] half-open; handoff at a to a closed historical cell starting exactly at a."
+  },
+  "C3_provenance": {
+   "result": "PASS",
+   "evidence": "16/16 PROVENANCE sources match sha256 at 179d5aae (git show); slot-1 adjudication adoption_status ADOPTED; T-EXT ADOPTED 37/37 (scope as in N3); diff 81f5195a..179d5aae touches only the K4R1 namespace."
+  },
+  "C4_e2e_harness": {
+   "result": "FAIL",
+   "evidence": [
+    "The harness tests the copy under test (build_repo copies $K4R1_CODE_PATH; mutants propagate) and the positive test is not vacuous (exact Fraction equality).",
+    "But build_repo pre-creates evidence/execution_r1 and calls main() in-process with an absolute --out, so it does not exercise the planned flow; the planned flow fails (defect Q2).",
+    "Environment dependence: with in-tree bytecode caching (standard CPython; simulated with sys.pycache_prefix=None, PYTHONDONTWRITEBYTECODE unset), 3 positive e2e tests fail with EXECUTION_LOCKED (untracked __pycache__ in the synthetic repo); the negative e2e tests then pass for the wrong reason. Passes on this host only because Xcode python uses a pycache_prefix outside the tree (N8).",
+    "Real worktree: git status --porcelain empty at 179d5aae (before and after my value-blind preflight); __pycache__/ and .pytest_cache/ are gitignored, so they cannot dirty the real checkout."
+   ]
+  },
+  "C5_leakage": {
+   "result": "PASS_WITH_NOTE",
+   "evidence": "Designer prior knowledge (published D0.hi, L1 order 1e3, cell-0 M5 order 1e9) makes the order of B foreseeable, but the certificate has no tunable parameter and the route choice is value-independent: not disqualifying. r1 reviewer's exposure (exact slot-1 rationals) and this reviewer's exposure (slot-1 L1 decimals in system memory) are disclosed; neither influenced a design choice."
+  },
+  "C6_other": {
+   "result": "FAIL",
+   "evidence": "defect Q2 (execution output path)"
+  }
+ },
+ "defects": [
+  {
+   "id": "Q2",
+   "severity": "BLOCKING",
+   "title": "The prescribed exactly-once execution cannot write its result and crashes AFTER computing the target",
+   "detail": [
+    "evidence/execution_r1/ does not exist at 179d5aae and cannot exist in a clean checkout of any freeze commit unless a file is committed there (git does not track empty directories).",
+    "main() never creates out.parent and never checks it; out.write_text runs only after verify_freeze, git_state, load_sources, extract_inputs, g/t/b for every m and assemble. With the directory absent it raises an uncaught FileNotFoundError (not a K4R1Refusal): G, T, B are computed in memory, nothing is recorded or printed, and the exactly-once is consumed with no record (any retry is a second execution).",
+    "GATE.execution mixes a namespace-relative script path (code/k4r1_certificate.py) with a repo-relative --out (level4/...). Run literally from the repo root, the script is not found; run from the namespace directory, --out resolves to <ns>/level4/closure_proofs/... and the run again crashes after computing, even if evidence/execution_r1 was pre-created.",
+    "The e2e harness masks this: build_repo mkdirs evidence/execution_r1 and run_execute passes an absolute path in-process."
+   ],
+   "evidence": {
+    "sim/sim_flow.py dir_absent": "CLI from repo root, relative --out, synthetic sources, clean checkout: rc=1 FileNotFoundError, output absent, stdout empty",
+    "sim/sim_flow.py dir_precreated": "rc=0, PASS/PASS/PASS written",
+    "sim/sim_literal.py": "literal GATE command: repo_root rc=2 (script not found); namespace_dir rc=1 FileNotFoundError after compute"
+   },
+   "repair": [
+    "Resolve --out against REPO (or require an absolute path under NS/evidence/) and validate it (parent is an existing directory or is created; output absent) BEFORE any source is read; refuse with K4R1Refusal otherwise.",
+    "State one unambiguous command and working directory in GATE.execution.",
+    "Add an e2e test that runs the literal GATE command as a CLI subprocess from the prescribed cwd, without pre-creating evidence/execution_r1, and a test that a missing/invalid output location is refused before load_sources.",
+    "Consequence: new candidate r3 and a fresh qualification; r2 must not be frozen."
+   ]
+  }
+ ],
+ "non_blocking": [
+  {
+   "id": "N7",
+   "title": "Check and record-field coverage gaps",
+   "detail": "Unsound-in-principle survivors W1 (x1 == hull right), W2 (e0 <= x1), W7 (hull left == 0), A1 (inherited cover starts at 0), A6 (non-certified (D,m) outside the universe) and record-fidelity survivors R1-R4 (executed_at_head, freeze_sha256, inputs block, T_branch). Implementation is correct by inspection and the real inputs pass every unmutated check, so the real outcome cannot differ; add targeted tests in r3 (the final adjudicator will read the inputs block)."
+  },
+  {
+   "id": "N8",
+   "title": "e2e tests are host-dependent",
+   "detail": "On CPython with in-tree bytecode caching, 3 positive e2e tests fail (untracked __pycache__ in the synthetic repo) and negative e2e tests pass for the wrong reason. Add a .gitignore or sys.dont_write_bytecode in build_repo, and assert refusal reasons (pytest.raises(match=...))."
+  },
+  {
+   "id": "N9",
+   "title": "Exact-once remains per-path (r1 N2 carried over)",
+   "detail": "No ledger; partly mitigated by the clean-checkout check."
+  },
+  {
+   "id": "N10",
+   "title": "Operator hazard under the stop rule",
+   "detail": "Any untracked file in the checkout (for example a mutation-harness --out written in the frozen checkout) refuses execute, and stop_conditions then end the lineage. The runbook should require an empty git status --porcelain immediately before execution and forbid writing reverification output into the checkout."
+  },
+  {
+   "id": "N11",
+   "title": "HEAD not pinned to the freeze commit",
+   "detail": "Only FREEZE.json byte-identity at HEAD plus clean plus bound hashes; acceptable, HEAD recorded."
+  }
+ ],
+ "reviewer_disclosures": [
+  "No target value computed: I never ran execute against the real worktree, never computed G, T, B or any combination of real inputs, and never printed real slot-1 per_m or T-EXT rows 1-2 M/Lambda values.",
+  "The blind leakage scan loaded the real slot-1 per_m and T-EXT rows 1-2 values into memory only as search strings; nothing was printed or combined arithmetically. It printed only file names and hit counts (0).",
+  "Prior exposure: my system-provided memory contains slot-1 L1 decimals for m=1,2,3,5 (4-5 significant digits). I did not use them.",
+  "Read-only real-worktree actions: git inspection, reading schemas and keys only, the value-blind preflight (script mode, PYTHONDONTWRITEBYTECODE=1; git status still empty afterwards), and one print of the slot-1 adjudication adoption_status and aggregate label/route.",
+  "No repository file was modified in any worktree. All tests, mutants and simulations ran on git-archive exports and synthetic repositories in the scratch directory."
+ ],
+ "artifacts_sha256": {
+  "MY_MUTANTS.json": "67147e015dfe3e4dbb2e1fc7ee29ad07660602e01e8497006de01a3c52063bd0",
+  "my_mutants.py": "2cc2bc7c83e634561384df57d2b580b25c6b786ae3aadc5ca7013e6535a61bb9",
+  "R1_EXTRA_MUTANTS_rerun.json": "c144947d9986483192aa49c299b294e747f9c43589b2e340cba8bd96c8539407",
+  "r1_extra_mutants_adapted.py": "5e784fee9f36d723be6fbaa3e6e4da3fc78182e1c0442957bd3afadad139c4d1",
+  "MUTATION_REPORT_rerun.json": "e051eb6712d563307c2c9557b2de24467a2c8171471052f5e2eef42f703be859",
+  "sim/sim_flow.py": "216983a7240a71685a89e0541fbb21ff162a1df0f3c096fe672f0978eff549f2",
+  "sim/sim_literal.py": "d886b90aeeabae4151cc3ba41bae10701c38ae940b4a49c795461041ff53ee83"
+ }
+}
