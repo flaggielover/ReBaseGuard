@@ -392,7 +392,8 @@ def test_exact_once(tmp_path, monkeypatch):
     monkeypatch.setattr(K, "OUT", out)
     monkeypatch.setattr(K, "read_config", lambda: ({}, {}))
     monkeypatch.setattr(K, "verify_freeze", lambda *a, **k: {})
-    monkeypatch.setattr(K, "git_state", lambda *a, **k: {"head": "h", "clean": True, "freeze_committed": True})
+    monkeypatch.setattr(K, "git_state", lambda *a, **k: {"head": "h", "clean": True, "freeze_committed": True,
+                                                          "namespace_pristine": True})
 
     def boom(*a, **k):
         raise AssertionError("sources must not be read when the output already exists")
@@ -425,7 +426,7 @@ def _sha(p):
 
 
 MAKE_FREEZE = Path(os.environ.get("K4R1_MAKE_FREEZE_PATH", NS / "code/make_freeze.py"))
-REVIEW_DIR = "review/qualification_rT"
+REVIEW_DIR = "review/qualification_r9"
 ENV = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
 
 
@@ -439,7 +440,8 @@ def build_candidate(tmp, *, report=None, sources=None, prov_hook=None):
     (ns / "code").mkdir(parents=True)
     shutil.copy(CODE, ns / "code/k4r1_certificate.py")
     shutil.copy(MAKE_FREEZE, ns / "code/make_freeze.py")
-    for rel in ("tests/test_k4r1.py", "tests/mutation_harness.py", "SPECIFICATION.md", "config/GATE.json", "docs/premise.md"):
+    for rel in ("tests/test_k4r1.py", "tests/mutation_harness.py", "SPECIFICATION.md", "config/GATE.json", "docs/premise.md",
+                "docs/extra.md"):
         (ns / rel).parent.mkdir(parents=True, exist_ok=True)
         (ns / rel).write_text(f"synthetic {rel}\n")
     src = sources or synthetic_sources()
@@ -466,7 +468,9 @@ def build_candidate(tmp, *, report=None, sources=None, prov_hook=None):
         prov_hook(prov)
     (ns / "config/PROVENANCE.json").write_text(json.dumps(prov))
     (ns / "config/RESIDUAL_UNIVERSE.json").write_text(json.dumps(synthetic_universe()))
-    (repo / ".gitignore").write_text("__pycache__/\n.pytest_cache/\n.DS_Store\n")
+    (repo / ".gitignore").write_text("__pycache__/\n.pytest_cache/\n.DS_Store\n*.py[cod]\n")
+    (repo / "other").mkdir()
+    (repo / "other/notes.txt").write_text("an unbound tracked file outside the namespace\n" * 20)
     _git(repo, "init", "-q")
     _git(repo, "add", "-A")
     _git(repo, "commit", "-q", "-m", "candidate")
@@ -479,7 +483,7 @@ def run_make_freeze(repo, ns, *, review=None, review_dir=REVIEW_DIR):
     (rd / "QUALIFICATION_REVIEW.json").write_text(
         json.dumps(review or {"verdict": "QUALIFICATION_ACCEPTED", "candidate_commit": _head(repo)}))
     (rd / "QUALIFICATION_REVIEW.md").write_text("synthetic review\n")
-    return subprocess.run([sys.executable, "-B", str(NSREL / "code/make_freeze.py"), "--review-dir", review_dir],
+    return subprocess.run([sys.executable, "-I", "-B", str(NSREL / "code/make_freeze.py"), "--review-dir", review_dir],
                           cwd=repo, capture_output=True, text=True, env=ENV)
 
 
@@ -503,11 +507,13 @@ def rewrite_freeze(ns, fn):
     (ns / "config/FREEZE_HASH").write_text(_sha(fpath) + "\n")
 
 
-def build_repo(tmp, *, report=None, sources=None, bind_all=True, commit_freeze=True, freeze=True):
+def build_repo(tmp, *, report=None, sources=None, bind_all=True, commit_freeze=True, freeze=True, freeze_hook=None):
     repo, ns = build_candidate(tmp, report=report, sources=sources)
     if freeze:
         r = run_make_freeze(repo, ns)
         assert r.returncode == 0, r.stderr
+        if freeze_hook:
+            freeze_hook(repo, ns)
         if not bind_all:
             rewrite_freeze(ns, lambda fz: fz["bound_files"].pop(str(NSREL / "tests/mutation_harness.py")))
         if not commit_freeze:
@@ -615,15 +621,15 @@ def test_literal_command_from_repo_root_and_elsewhere(tmp_path):
         script = str(NSREL / "code/k4r1_certificate.py") if where == "root" else str(ns / "code/k4r1_certificate.py")
         cwd = repo if where == "root" else tmp_path
         env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
-        r = subprocess.run([sys.executable, "-B", script, "ready"], cwd=cwd, capture_output=True, text=True, env=env)
+        r = subprocess.run([sys.executable, "-I", "-B", script, "ready"], cwd=cwd, capture_output=True, text=True, env=env)
         assert r.returncode == 0 and '"READY": "PASS"' in r.stdout, r.stderr
-        r = subprocess.run([sys.executable, "-B", script, "execute"], cwd=cwd, capture_output=True, text=True, env=env)
+        r = subprocess.run([sys.executable, "-I", "-B", script, "execute"], cwd=cwd, capture_output=True, text=True, env=env)
         assert r.returncode == 0, r.stderr
         res = json.loads((ns / "evidence/execution_r1/K4R1_RESULT.json").read_text())
         assert res["status"] == "EXECUTED" and res["K4R1_SUCCESSOR_SCIENCE"] == "PASS"
-        r = subprocess.run([sys.executable, "-B", script, "execute"], cwd=cwd, capture_output=True, text=True, env=env)
+        r = subprocess.run([sys.executable, "-I", "-B", script, "execute"], cwd=cwd, capture_output=True, text=True, env=env)
         assert r.returncode == 3 and "EXACT_ONCE" in r.stderr
-        r = subprocess.run([sys.executable, "-B", script, "ready"], cwd=cwd, capture_output=True, text=True, env=env)
+        r = subprocess.run([sys.executable, "-I", "-B", script, "ready"], cwd=cwd, capture_output=True, text=True, env=env)
         assert r.returncode == 3
 
 
@@ -723,9 +729,9 @@ def test_make_freeze_flow_end_to_end_and_fresh_clone(tmp_path):
     clone = tmp_path / "clone"
     subprocess.run(["git", "clone", "-q", str(repo), str(clone)], check=True, capture_output=True)
     script = str(NSREL / "code/k4r1_certificate.py")
-    r = subprocess.run([sys.executable, "-B", script, "ready"], cwd=clone, capture_output=True, text=True, env=ENV)
+    r = subprocess.run([sys.executable, "-I", "-B", script, "ready"], cwd=clone, capture_output=True, text=True, env=ENV)
     assert r.returncode == 0, r.stderr
-    r = subprocess.run([sys.executable, "-B", script, "execute"], cwd=clone, capture_output=True, text=True, env=ENV)
+    r = subprocess.run([sys.executable, "-I", "-B", script, "execute"], cwd=clone, capture_output=True, text=True, env=ENV)
     assert r.returncode == 0, r.stderr
     assert json.loads((clone / NSREL / "evidence/execution_r1/K4R1_RESULT.json").read_text())["K4R1_SUCCESSOR_SCIENCE"] == "PASS"
 
@@ -752,7 +758,8 @@ def test_make_freeze_refusals(tmp_path):
     _mf_case(tmp_path, "ignored_ns", lambda repo, ns: (ns / ".DS_Store").write_text("finder"))
     _mf_case(tmp_path, "pycache_ns", lambda repo, ns: [(ns / "code/__pycache__").mkdir(),
                                                         (ns / "code/__pycache__/x.pyc").write_bytes(b"x")])
-    _mf_case(tmp_path, "outside_review", nop, review_dir="config/qualification_rT")
+    _mf_case(tmp_path, "outside_review", nop, review_dir="config/qualification_r9")
+    _mf_case(tmp_path, "bad_review_name", nop, review_dir="review/notes")
     _mf_case(tmp_path, "escape_review", nop, review_dir="review/../../x")
 
     def tracked_review(repo, ns):
@@ -789,11 +796,18 @@ def test_post_freeze_change_refused(tmp_path):
 
 
 def test_bound_namespace_must_equal_tracked(tmp_path):
-    repo, ns, mod = build_repo(tmp_path)
-    (ns / ".DS_Store").write_text("finder")                          # ignored, never committed
-    rewrite_freeze(ns, lambda fz: fz["bound_files"].__setitem__(str(NSREL / ".DS_Store"), _sha(ns / ".DS_Store")))
-    _git(repo, "add", "-A")
-    _git(repo, "commit", "-q", "-m", "freeze binds an ignored file")
+    def bind_ignored(repo, ns):
+        (ns / ".DS_Store").write_text("finder")                      # ignored, never committed
+        rewrite_freeze(ns, lambda fz: fz["bound_files"].__setitem__(str(NSREL / ".DS_Store"), _sha(ns / ".DS_Store")))
+    repo, ns, mod = build_repo(tmp_path, freeze_hook=bind_ignored)
+    (ns / ".DS_Store").unlink()
+    with pytest.raises(mod.K4R1Refusal):
+        mod.verify_freeze()
+
+
+def test_nonmandatory_namespace_file_must_be_bound(tmp_path):
+    repo, ns, mod = build_repo(tmp_path, freeze_hook=lambda repo, ns: rewrite_freeze(
+        ns, lambda fz: fz["bound_files"].pop(str(NSREL / "docs/extra.md"))))
     with pytest.raises(mod.K4R1Refusal):
         mod.verify_freeze()
 
@@ -827,20 +841,143 @@ def test_negative_majorant_refused_before_reservation():
             K.extract_inputs(s, synthetic_universe(), PROV)
 
 
-def test_tampered_delta_refused(tmp_path):
-    """a freeze that widens its own allowed delta to smuggle a post-freeze edit is refused"""
-    repo, ns, mod = build_repo(tmp_path)
-    gate = str(NSREL / "config/GATE.json")
-    (ns / "config/GATE.json").write_text("changed after the freeze\n")
+def _smuggle(extra_in_review_files):
+    """edit GATE after make_freeze and try to legitimise it through the freeze's own delta (and review_files)"""
+    def hook(repo, ns):
+        gate = str(NSREL / "config/GATE.json")
+        (ns / "config/GATE.json").write_text("changed after the freeze\n")
 
-    def widen(fz):
-        fz["allowed_freeze_delta"] = sorted(fz["allowed_freeze_delta"] + [gate])
-        fz["bound_files"][gate] = _sha(ns / "config/GATE.json")
-    rewrite_freeze(ns, widen)
-    _git(repo, "add", "-A")
-    _git(repo, "commit", "-q", "-m", "widened delta")
+        def widen(fz):
+            fz["allowed_freeze_delta"] = sorted(fz["allowed_freeze_delta"] + [gate])
+            fz["bound_files"][gate] = _sha(ns / "config/GATE.json")
+            if extra_in_review_files:
+                fz["review_files"] = sorted(fz["review_files"] + [gate])
+        rewrite_freeze(ns, widen)
+    return hook
+
+
+def test_tampered_delta_refused(tmp_path):
+    for i, extra in enumerate((False, True)):
+        repo, ns, mod = build_repo(tmp_path / str(i), freeze_hook=_smuggle(extra))
+        with pytest.raises(mod.K4R1Refusal):
+            mod.verify_freeze()
+        with pytest.raises(mod.K4R1Refusal):
+            mod.main(["ready"])
+
+
+def test_q4_code_smuggled_as_review_file_refused(tmp_path):
+    """r4 reviewer's Q4: an edited implementation listed as a review file and in the delta"""
+    def hook(repo, ns):
+        code = str(NSREL / "code/k4r1_certificate.py")
+        (ns / "code/k4r1_certificate.py").write_text((ns / "code/k4r1_certificate.py").read_text() + "\n# smuggled\n")
+
+        def smuggle(fz):
+            fz["review_files"] = sorted(fz["review_files"] + [code])
+            fz["allowed_freeze_delta"] = sorted(fz["allowed_freeze_delta"] + [code])
+            fz["bound_files"][code] = _sha(ns / "code/k4r1_certificate.py")
+        rewrite_freeze(ns, smuggle)
+    repo, ns, mod = build_repo(tmp_path, freeze_hook=hook)
+    r = subprocess.run([sys.executable, "-I", "-B", str(NSREL / "code/k4r1_certificate.py"), "ready"], cwd=repo,
+                       capture_output=True, text=True)
+    assert r.returncode == 3 and "REFUSED" in r.stderr
+
+
+@pytest.mark.parametrize("tamper", [
+    lambda fz, ns: fz.__setitem__("review_files", [fz["review_files"][0]]),                                # one file
+    lambda fz, ns: fz.__setitem__("review_files", [f.replace("qualification_r9", "notes") for f in fz["review_files"]]),
+    lambda fz, ns: fz.__setitem__("qualification_review", fz["review_files"][1]),                           # the .md
+])
+def test_review_file_shape_pinned(tmp_path, tamper):
+    repo, ns, mod = build_repo(tmp_path, freeze_hook=lambda repo, ns: rewrite_freeze(ns, lambda fz: tamper(fz, ns)))
     with pytest.raises(mod.K4R1Refusal):
         mod.verify_freeze()
+
+
+@pytest.mark.parametrize("review", [
+    lambda head: {"verdict": "QUALIFICATION_REJECTED", "candidate_commit": head},
+    lambda head: {"verdict": "QUALIFICATION_ACCEPTED", "candidate_commit": "f" * 40},
+])
+def test_bound_review_must_accept_the_candidate(tmp_path, review):
+    def hook(repo, ns):
+        rv = ns / REVIEW_DIR / "QUALIFICATION_REVIEW.json"
+        rv.write_text(json.dumps(review(_head(repo))))
+        rewrite_freeze(ns, lambda fz: fz["bound_files"].__setitem__(str(NSREL / REVIEW_DIR / "QUALIFICATION_REVIEW.json"), _sha(rv)))
+    repo, ns, mod = build_repo(tmp_path, freeze_hook=hook)
+    with pytest.raises(mod.K4R1Refusal):
+        mod.verify_freeze()
+
+
+def test_empty_commit_on_top_of_freeze_refused(tmp_path):
+    repo, ns, mod = build_repo(tmp_path)
+    mod.verify_freeze()                                                  # positive control
+    _git(repo, "commit", "-q", "--allow-empty", "-m", "empty")
+    with pytest.raises(mod.K4R1Refusal):
+        mod.verify_freeze()
+
+
+def test_rename_cannot_hide_a_deletion(tmp_path):
+    """the freeze commit deletes an unbound tracked file outside the namespace; rename detection must not hide it"""
+    def hook(repo, ns):
+        md = ns / REVIEW_DIR / "QUALIFICATION_REVIEW.md"
+        md.write_text((repo / "other/notes.txt").read_text())
+        _git(repo, "rm", "-q", "other/notes.txt")
+        rewrite_freeze(ns, lambda fz: fz["bound_files"].__setitem__(str(NSREL / REVIEW_DIR / "QUALIFICATION_REVIEW.md"), _sha(md)))
+    repo, ns, mod = build_repo(tmp_path, freeze_hook=hook)
+    with pytest.raises(mod.K4R1Refusal):
+        mod.verify_freeze()
+
+
+def test_assume_unchanged_edit_before_freeze_refused(tmp_path):
+    """N19 at freeze time: a tracked file edited under assume-unchanged is invisible to git status; make_freeze refuses"""
+    repo, ns = build_candidate(tmp_path)
+    code = str(NSREL / "code/k4r1_certificate.py")
+    _git(repo, "update-index", "--assume-unchanged", code)
+    (repo / code).write_text((repo / code).read_text() + "\n# edited under assume-unchanged\n")
+    r = run_make_freeze(repo, ns)
+    assert r.returncode != 0 and "HEAD blob" in (r.stderr + r.stdout)
+    assert not (ns / "config/FREEZE.json").exists()
+
+
+def test_assume_unchanged_edit_after_freeze_refused(tmp_path):
+    """N19 at launch: bound hash equals the edited working file but not the committed blob"""
+    def hook(repo, ns):
+        code = str(NSREL / "code/k4r1_certificate.py")
+        _git(repo, "update-index", "--assume-unchanged", code)
+        (repo / code).write_text((repo / code).read_text() + "\n# edited under assume-unchanged\n")
+        rewrite_freeze(ns, lambda fz: fz["bound_files"].__setitem__(code, _sha(repo / code)))
+    repo, ns, mod = build_repo(tmp_path, freeze_hook=hook)
+    assert mod.git_state(repo, ns / "config/FREEZE.json")["clean"] is True     # hidden from git status
+    with pytest.raises(mod.K4R1Refusal):
+        mod.verify_freeze()
+
+
+def test_ignored_files_in_namespace_block_launch(tmp_path):
+    """N20: an ignored sourceless .pyc (or any ignored/untracked file) inside the namespace refuses ready/execute"""
+    repo, ns, mod = build_repo(tmp_path)
+    (ns / "code/fractions.pyc").write_bytes(b"not a real module")
+    with pytest.raises(mod.K4R1Refusal):
+        mod.main(["ready"])
+    with pytest.raises(mod.K4R1Refusal):
+        mod.main(["execute"])
+    assert not mod.OUT.exists()
+
+
+def test_isolated_mode_required(tmp_path):
+    repo, ns, mod = build_repo(tmp_path)
+    for script, args in (("code/k4r1_certificate.py", ["ready"]), ("code/make_freeze.py", ["--review-dir", REVIEW_DIR])):
+        for flags in (["-B"], []):
+            r = subprocess.run([sys.executable, *flags, str(NSREL / script), *args], cwd=repo, capture_output=True, text=True)
+            assert r.returncode == 3 and "isolated" in r.stderr, (script, flags, r.stderr)
+
+
+def test_ready_runs_the_preflight(tmp_path, monkeypatch):
+    repo, ns, mod = build_repo(tmp_path)
+
+    def refuse(*a, **k):
+        raise mod.K4R1Refusal("synthetic preflight refusal")
+    monkeypatch.setattr(mod, "extract_inputs", refuse)
+    with pytest.raises(mod.K4R1Refusal):
+        mod.main(["ready"])
 
 
 def test_freeze_not_descended_from_candidate_refused(tmp_path):

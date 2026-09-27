@@ -4,7 +4,7 @@ Run from anywhere (paths resolve from this file), on the qualified candidate com
 files QUALIFICATION_REVIEW.json and QUALIFICATION_REVIEW.md of the accepted review into a NEW namespace directory
 review/qualification_rN/:
 
-  python3 -B level4/closure_proofs/p5y_k4r1_nearzero_successor/code/make_freeze.py --review-dir review/qualification_rN
+  python3 -I -B level4/closure_proofs/p5y_k4r1_nearzero_successor/code/make_freeze.py --review-dir review/qualification_rN
 
 Refuses unless:
   - no freeze exists yet;
@@ -17,13 +17,17 @@ Binds by sha256: every namespace file tracked at HEAD, the two review files, and
 qualified candidate commit and the exact set of paths the freeze commit may add (the review files, FREEZE.json,
 FREEZE_HASH); ready/execute verify that set against `git diff --name-only <candidate> HEAD`.
 """
-from __future__ import annotations
+import sys
+
+if __name__ == "__main__" and not sys.flags.isolated:
+    sys.stderr.write("REFUSED: run as `python3 -I -B <script>` (isolated mode: no script-directory or user-site imports)\n")
+    sys.exit(3)
 
 import argparse
 import hashlib
 import json
+import re
 import subprocess
-import sys
 import time
 from pathlib import Path
 
@@ -52,8 +56,8 @@ def main(argv=None) -> int:
     if fz_path.exists() or fh_path.exists():
         raise SystemExit("REFUSED: a freeze already exists")
     rdir = Path(a.review_dir)
-    if rdir.is_absolute() or ".." in rdir.parts or not rdir.parts or rdir.parts[0] != "review":
-        raise SystemExit("REFUSED: --review-dir must be a namespace-relative directory under review/")
+    if rdir.is_absolute() or ".." in rdir.parts or not re.fullmatch(r"review/qualification_r[0-9]+", rdir.as_posix()):
+        raise SystemExit("REFUSED: --review-dir must be review/qualification_rN (namespace-relative)")
     review_rel = [str(ns_rel / rdir / f) for f in REVIEW_FILES]
     if git("ls-files", "--", str(ns_rel / rdir)).strip():
         raise SystemExit("REFUSED: the review directory already holds tracked files")
@@ -73,6 +77,10 @@ def main(argv=None) -> int:
     if rv.get("candidate_commit") != head:
         raise SystemExit(f"REFUSED: review candidate_commit {rv.get('candidate_commit')!r} != HEAD {head}")
     bound = {p: sha(REPO / p) for p in git("ls-files", "--", str(ns_rel)).splitlines()}
+    for p, h in bound.items():                      # working tree == HEAD blob (catches assume-unchanged / skip-worktree edits)
+        blob = subprocess.run(["git", "-C", str(REPO), "show", f"HEAD:{p}"], capture_output=True)
+        if blob.returncode != 0 or hashlib.sha256(blob.stdout).hexdigest() != h:
+            raise SystemExit(f"REFUSED: working-tree file differs from its HEAD blob: {p}")
     bound.update({p: sha(REPO / p) for p in review_rel})
     prov = json.loads((NS / "config/PROVENANCE.json").read_text())
     for v in prov["sources"].values():

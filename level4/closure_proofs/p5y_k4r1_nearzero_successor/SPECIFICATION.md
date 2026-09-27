@@ -113,7 +113,7 @@ There is no tunable parameter.
   - Q2 was confirmed repaired. The whole planned flow worked on synthetic copies under Python 3.9 and 3.14.
   - Blocking defect Q3: `make_freeze` bound whatever was on disk in the namespace, including edited, untracked and ignored files, without checking git state. In addition, `ready` and `execute` did not verify that the freeze commit equals the qualified candidate plus review and FREEZE files.
   - Candidate r3 is never frozen or executed.
-- **r4** (this candidate) repairs Q3 with a git-aware `make_freeze`:
+- **r4** (candidate `5d33363c`) repaired Q3 with a git-aware `make_freeze`:
   - it refuses unless the checkout is the candidate plus exactly the two review files;
   - it refuses on any ignored entry in the namespace;
   - it binds exactly the tracked namespace files plus the review files and sources;
@@ -127,7 +127,19 @@ There is no tunable parameter.
   - **N16:** the `ready` and `execute` refusal rules are in `GATE.stop_conditions`.
   - **Runbook:** it names exactly which review files are copied.
 - **Harness:** 92 mutants across both scripts, all killed (5 documented equivalents); 78 tests.
-- **r4 must pass a new, independent qualification** before any freeze.
+- **r4** (candidate `5d33363c`): **QUALIFICATION_REJECTED** (`review/qualification_r4_REJECTED/`, review sha `c1718a4c`).
+  - Q3 was confirmed repaired against all plausible operator actions.
+  - Blocking defect Q4: the launch check trusted the freeze's own `review_files` list. A tampered FREEZE could therefore list an edited implementation as a "review file" and get unqualified code executed. The bound review's verdict and candidate were never read.
+  - Candidate r4 is never frozen or executed.
+- **r5** (this candidate) repairs Q4. The review files are pinned to exactly one `QUALIFICATION_REVIEW.{json,md}` pair in `review/qualification_rN`, which must be absent at the candidate. The bound review JSON must accept `qualified_candidate_commit`. The r4 notes are addressed as follows:
+  - **N19:** every bound file must equal its committed blob at HEAD, and `make_freeze` checks the same.
+  - **N20:** both scripts require isolated mode (`-I`), and any untracked or ignored file inside the namespace blocks launch.
+  - **N22:** `--no-renames`.
+  - **N23:** the freeze commit's only parent must be the candidate.
+  - **N24:** stop conditions rewritten. At most one `execute` invocation per lineage, in any checkout or clone, and this takes precedence over the fresh-clone remedy.
+  - **N25:** tests for "ready runs the preflight" and for non-mandatory bindings.
+- **Test coverage:** 92 tests; 102 mutants, all killed (6 documented equivalents).
+- **r5 must pass a new, independent qualification** before any freeze.
 
 ## Governance sequence
 

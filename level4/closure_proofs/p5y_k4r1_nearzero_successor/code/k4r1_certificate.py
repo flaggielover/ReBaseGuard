@@ -25,13 +25,17 @@ Subcommands (cwd-independent; every path is resolved from this file):
               reservation; any failure after the reservation is recorded in it as EXECUTION_CRASHED. A hard kill
               (SIGKILL) leaves an empty reservation, which likewise spends the execution.
 """
-from __future__ import annotations
+import sys
+
+if __name__ == "__main__" and not sys.flags.isolated:
+    sys.stderr.write("REFUSED: run as `python3 -I -B <script>` (isolated mode: no script-directory or user-site imports)\n")
+    sys.exit(3)
 
 import argparse
 import hashlib
 import json
+import re
 import subprocess
-import sys
 import time
 from fractions import Fraction as F
 from pathlib import Path
@@ -116,7 +120,7 @@ def load_json_bound(entry: dict, repo: Path) -> dict:
     return json.loads(p.read_text())
 
 
-def load_sources(prov: dict, repo: Path | None = None) -> dict:
+def load_sources(prov: dict, repo: "Path | None" = None) -> dict:
     """Every bound source (data and premise documents) is hash-verified; only data sources are parsed."""
     repo = REPO if repo is None else repo
     out = {}
@@ -260,7 +264,7 @@ def assemble(report: dict, universe_res: dict, certs: dict) -> dict:
 
 
 # ------------------------------------------------------------------ freeze gate
-def verify_freeze(freeze_path: Path | None = None, repo: Path | None = None, ns: Path | None = None) -> dict:
+def verify_freeze(freeze_path: "Path | None" = None, repo: "Path | None" = None, ns: "Path | None" = None) -> dict:
     freeze_path = CONFIG / "FREEZE.json" if freeze_path is None else freeze_path
     repo = REPO if repo is None else repo
     ns = NS if ns is None else ns
@@ -297,10 +301,31 @@ def verify_freeze(freeze_path: Path | None = None, repo: Path | None = None, ns:
     if not (freeze_rel <= set(delta) and set(delta) == freeze_rel | set(review_files)
             and fz.get("qualification_review") in review_files and all(r in fz["bound_files"] for r in review_files)):
         raise K4R1Refusal("EXECUTION_LOCKED: freeze delta / review files malformed")
-    anc = subprocess.run(["git", "-C", str(repo), "merge-base", "--is-ancestor", cand, "HEAD"], capture_output=True)
-    diff = subprocess.run(["git", "-C", str(repo), "diff", "--name-only", cand, "HEAD"], capture_output=True, text=True)
-    if anc.returncode != 0 or diff.returncode != 0 or sorted(diff.stdout.split()) != delta:
-        raise K4R1Refusal("EXECUTION_LOCKED: HEAD is not the qualified candidate plus exactly the allowed freeze delta")
+    # the review files are pinned: exactly QUALIFICATION_REVIEW.{json,md} in one new review/qualification_rN directory
+    rdirs = {str(Path(r).parent) for r in review_files}
+    rdir = next(iter(rdirs)) if len(rdirs) == 1 else ""
+    if not (len(review_files) == 2 and re.fullmatch(re.escape(str(ns_rel)) + r"/review/qualification_r[0-9]+", rdir)
+            and sorted(Path(r).name for r in review_files) == ["QUALIFICATION_REVIEW.json", "QUALIFICATION_REVIEW.md"]
+            and fz.get("qualification_review") == rdir + "/QUALIFICATION_REVIEW.json"):
+        raise K4R1Refusal("EXECUTION_LOCKED: review files are not exactly one new QUALIFICATION_REVIEW.{json,md} pair")
+
+    def git(*args, text=True):
+        return subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=text)
+
+    for r in review_files:
+        if git("cat-file", "-e", f"{cand}:{r}").returncode == 0:
+            raise K4R1Refusal(f"EXECUTION_LOCKED: review file already existed at the candidate: {r}")
+    rv = json.loads((repo / fz["qualification_review"]).read_text())
+    if rv.get("verdict") != "QUALIFICATION_ACCEPTED" or rv.get("candidate_commit") != cand:
+        raise K4R1Refusal("EXECUTION_LOCKED: the bound review does not accept the qualified candidate")
+    parents = git("rev-list", "--parents", "-n", "1", "HEAD").stdout.split()
+    diff = git("diff", "--no-renames", "--name-only", cand, "HEAD")
+    if parents[1:] != [cand] or diff.returncode != 0 or sorted(diff.stdout.split()) != delta:
+        raise K4R1Refusal("EXECUTION_LOCKED: HEAD is not a single freeze commit on the qualified candidate adding exactly the allowed delta")
+    for rel, h in fz["bound_files"].items():
+        blob = git("show", f"HEAD:{rel}", text=False)
+        if blob.returncode != 0 or sha_bytes(blob.stdout) != h:
+            raise K4R1Refusal(f"EXECUTION_LOCKED: bound file differs from its committed blob at HEAD: {rel}")
     tracked = subprocess.run(["git", "-C", str(repo), "ls-files", "--", str(ns_rel)], capture_output=True, text=True)
     bound_ns = {k for k in fz["bound_files"] if k.startswith(str(ns_rel) + "/")}
     if tracked.returncode != 0 or bound_ns != set(tracked.stdout.split()) - freeze_rel:
@@ -316,7 +341,10 @@ def git_state(repo: Path, freeze_path: Path) -> dict:
     status = git("status", "--porcelain")
     rel = str(freeze_path.resolve().relative_to(repo.resolve()))
     shown = git("show", f"HEAD:{rel}")
+    ns_rel = str(NS.resolve().relative_to(repo.resolve())) if str(NS.resolve()).startswith(str(repo.resolve())) else "."
+    ign = git("status", "--porcelain", "--ignored", "--untracked-files=all", "--", ns_rel)
     return {"head": head.stdout.decode().strip() if head.returncode == 0 else None,
+            "namespace_pristine": ign.returncode == 0 and ign.stdout.strip() == b"",
             "clean": head.returncode == 0 and status.returncode == 0 and status.stdout.strip() == b"",
             "freeze_committed": shown.returncode == 0 and shown.stdout == freeze_path.read_bytes()}
 
@@ -333,6 +361,8 @@ def launch_gates() -> tuple[dict, dict]:
     gs = git_state(REPO, CONFIG / "FREEZE.json")
     if not (gs["clean"] and gs["freeze_committed"]):
         raise K4R1Refusal(f"EXECUTION_LOCKED: checkout not clean or FREEZE.json not committed at HEAD ({gs})")
+    if not gs["namespace_pristine"]:
+        raise K4R1Refusal("EXECUTION_LOCKED: untracked or ignored files inside the namespace (e.g. caches, .DS_Store, .pyc)")
     return fz, gs
 
 

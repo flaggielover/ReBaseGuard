@@ -11,8 +11,10 @@ Known equivalent mutants (not listed):
 - `open(OUT, "x")` -> `open(OUT, "w")`: launch_gates already refuses when OUT exists (differs only under a concurrent race).
 - removing the mandatory-binding check in verify_freeze (r3/r4): every mandatory file is tracked in the namespace, and the
   completeness check (bound namespace files == tracked namespace files) plus the review-file checks already refuse.
-- removing the ".." test on --review-dir in make_freeze: a path with ".." never matches the normalised paths that
-  `git status` prints, so the status check refuses (defence in depth only).
+- removing the ".." test on --review-dir in make_freeze: the pattern review/qualification_rN already excludes "..".
+- removing the "review file already existed at the candidate" check in verify_freeze: an unchanged pre-existing file
+  cannot appear in `git diff <candidate> HEAD`, so the delta check refuses; a changed one is still pinned by name and
+  the bound review JSON must accept the candidate (defence in depth only).
 
   python tests/mutation_harness.py --out MUTATION_REPORT.json
 """
@@ -130,9 +132,17 @@ MUTANTS = [
 
 
 CERT_R4 = [
-    ("r4_delta_unchecked", "if anc.returncode != 0 or diff.returncode != 0 or sorted(diff.stdout.split()) != delta:", "if False:"),
-    ("r4_ancestor_unchecked", "if anc.returncode != 0 or diff.returncode != 0 or sorted(diff.stdout.split()) != delta:",
+    ("r5_delta_unchecked", "if parents[1:] != [cand] or diff.returncode != 0 or sorted(diff.stdout.split()) != delta:", "if False:"),
+    ("r5_parent_unchecked", "if parents[1:] != [cand] or diff.returncode != 0 or sorted(diff.stdout.split()) != delta:",
      "if diff.returncode != 0 or sorted(diff.stdout.split()) != delta:"),
+    ("r5_renames_detected", 'diff = git("diff", "--no-renames", "--name-only", cand, "HEAD")', 'diff = git("diff", "--name-only", cand, "HEAD")'),
+    ("r5_review_shape_unchecked", "if not (len(review_files) == 2 and re.fullmatch(", "if not (True or len(review_files) == 2 and re.fullmatch("),
+    ("r5_review_verdict_unchecked", 'if rv.get("verdict") != "QUALIFICATION_ACCEPTED" or rv.get("candidate_commit") != cand:', "if False:"),
+    ("r5_review_candidate_unchecked", 'if rv.get("verdict") != "QUALIFICATION_ACCEPTED" or rv.get("candidate_commit") != cand:',
+     'if rv.get("verdict") != "QUALIFICATION_ACCEPTED":'),
+    ("r5_blob_unchecked", "if blob.returncode != 0 or sha_bytes(blob.stdout) != h:", "if False:"),
+    ("r5_namespace_pristine_unchecked", 'if not gs["namespace_pristine"]:', "if False:"),
+    ("r5_isolation_guard_removed", 'if __name__ == "__main__" and not sys.flags.isolated:', "if False:"),
     ("r4_completeness_unchecked", "if tracked.returncode != 0 or bound_ns != set(tracked.stdout.split()) - freeze_rel:", "if False:"),
     ("r4_delta_malformed_unchecked", "if not (freeze_rel <= set(delta) and set(delta) == freeze_rel | set(review_files)", "if not (True"),
     ("r4_majorant_sign_extract_unchecked", "if M3 < 0 or M5 < 0 or a <= 0:", "if False:"),
@@ -143,7 +153,11 @@ MUTANTS += CERT_R4
 
 MF_MUTANTS = [
     ("mf_existing_freeze_ok", "if fz_path.exists() or fh_path.exists():", "if False:"),
-    ("mf_review_dir_anywhere", 'if rdir.is_absolute() or ".." in rdir.parts or not rdir.parts or rdir.parts[0] != "review":', "if False:"),
+    ("mf_review_dir_anywhere", 'if rdir.is_absolute() or ".." in rdir.parts or not re.fullmatch(r"review/qualification_r[0-9]+", rdir.as_posix()):', "if False:"),
+    ("mf_review_dir_name_free", 'if rdir.is_absolute() or ".." in rdir.parts or not re.fullmatch(r"review/qualification_r[0-9]+", rdir.as_posix()):',
+     'if rdir.is_absolute() or ".." in rdir.parts or rdir.parts[0] != "review":'),
+    ("mf_blob_unchecked", "if blob.returncode != 0 or hashlib.sha256(blob.stdout).hexdigest() != h:", "if False:"),
+    ("mf_isolation_guard_removed", 'if __name__ == "__main__" and not sys.flags.isolated:', "if False:"),
     ("mf_tracked_review_ok", 'if git("ls-files", "--", str(ns_rel / rdir)).strip():', "if False:"),
     ("mf_status_unchecked", "if sorted(other) != expected or ignored_in_ns:", "if False:"),
     ("mf_ignored_ok", "if sorted(other) != expected or ignored_in_ns:", "if sorted(other) != expected:"),
