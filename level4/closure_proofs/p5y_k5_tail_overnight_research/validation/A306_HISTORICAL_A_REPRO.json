@@ -27,7 +27,7 @@
    "A2"
   ],
   "float_comparisons": 2,
-  "negative_controls": 3,
+  "negative_controls": 1,
   "supplies_reproduced": [
    "I1_C1",
    "I1_C2",
@@ -40,9 +40,7 @@
   "source": "deflated_consume.py:55-56"
  },
  "negative_controls": {
-  "planted_float_mismatch_detected": true,
-  "planted_mixed_supply_refused": true,
-  "planted_wrong_committed_A1_detected": true
+  "planted_mixed_supply_refused": true
  },
  "schema": "A306_HISTORICAL_A_REPRO/1",
  "sources": {
@@ -54,5 +52,9 @@
   "registry_c1": "p5y_k5_tail_operator_registry/evidence/registry_c1/REGISTRY_C1.json",
   "theorem_ad": "p5y_k5_perron_deflated_resolvent/theorem/THEOREM_AD.md"
  },
- "verdict": "PASS"
+ "verdict": "PASS",
+ "withdrawn_controls": [
+  "planted_wrong_committed_A1_detected (class d)",
+  "planted_float_mismatch_detected (class d)"
+ ]
 }

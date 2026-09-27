@@ -104,6 +104,9 @@ def h1_bounds(a, b, c, d, elo, ehi) -> tuple:
     return lo, hi
 
 
+STATS = {"upper_skips": 0, "lower_drops": 0}   # instrumentation (R1 repair): how often each Khat branch fires
+
+
 def upper_Kf(w, a, b, c, d, elo, ehi, panels, atom_removed) -> F:
     lo_z, hi_z = c - C, C - a                     # union of the alarm-free windows over the box
     u0a, u1a = lo_z + elo, hi_z + ehi
@@ -113,6 +116,7 @@ def upper_Kf(w, a, b, c, d, elo, ehi, panels, atom_removed) -> F:
         u0, u1 = u0a + step * k, u0a + step * (k + 1)
         zl, zh = u0 - ehi, u1 - elo
         if atom_removed and (d - K) < (K - b) and zl >= d - K and zh <= K - b:
+            STATS["upper_skips"] += 1
             continue                              # inside every state's atom window: no Khat mass
         pl, ph = max(F(0), a + zl - K), max(F(0), b + zh - K)
         ml, mh = max(F(0), c - zh - K), max(F(0), d - zl - K)
@@ -133,6 +137,7 @@ def lower_Kf(w, a, b, c, d, elo, ehi, panels, atom_removed) -> F:
         u0, u1 = u0a + step * k, u0a + step * (k + 1)
         zl, zh = u0 - ehi, u1 - elo
         if atom_removed and ulo < uhi and zl < uhi and zh > ulo:
+            STATS["lower_drops"] += 1
             continue                              # may meet an atom window: drop (f >= 0 on R)
         pl, ph = max(F(0), a + zl - K), max(F(0), b + zh - K)
         ml, mh = max(F(0), c - zh - K), max(F(0), d - zl - K)
@@ -151,6 +156,7 @@ def verify(cert: dict) -> dict:
     atom_removed, src, direction = KINDS[kind]
     depth, panels = int(cert["hints"]["depth"]), int(cert["hints"]["panels"])
     w = weight(cert)
+    STATS["upper_skips"] = STATS["lower_drops"] = 0
     reasons, mn, fmin, hmin, fsup = [], None, None, None, None
     for (a, b, c, d) in cover(depth):
         fl, fh = feval_iv(w, (a, b), (c, d))
@@ -179,7 +185,7 @@ def verify(cert: dict) -> dict:
         reasons.append("claimed value_at_atom differs from f(a)")
     out = {"verifier": "V_A (fractions + c7_gaussian)", "kind": kind, "accepted": not reasons, "reasons": reasons,
            "margin_lower_bound": float(mn), "f_min_lower_bound": float(fmin), "value_at_atom": str(val),
-           "boxes": len(cover(depth))}
+           "boxes": len(cover(depth)), "khat_branch_counts": dict(STATS)}
     if direction == "sub":
         out["h_min_lower_bound"] = float(hmin)
     if kind == "TABOO_SUPER":

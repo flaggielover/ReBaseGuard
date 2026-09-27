@@ -7,9 +7,13 @@ Lemma Dv′ r2 and compared for exact equality with the committed atom constants
 class HISTORICAL_READ). It emits booleans and branch labels only. No mixing, no perturbation, no Γ.
 
 **Layout rule (PREAMBLE S8).** Part A quotes committed cell-306 history and attaches no route or non-target factor
-to it. Part C reports non-target mechanism numbers and quotes no cell-306 number. Part D (classification) is
-qualitative and cites Parts A–C by section; it multiplies, ranks or compares no Part-C number against any Part-A
-number. Nothing written before S8 arrived violated this layout (checked; see `PROGRESS.md`).
+to it. Part C is qualitative: since the R1/R2 repair it quotes no number, because amendment 2 R2.1 forbids
+juxtaposing validation-drift values with tail-cell numbers in one document. Part D (classification) is qualitative
+and cites Parts A–C by section.
+
+Correction note: the first version of Part C quoted non-target float ratios in this same document. That was
+compliant with S8 as then written (separate sections, no factor attached), but it is not compliant with amendment
+2 R2.1. It was removed in the R1 repair.
 
 Paths are relative to `level4/closure_proofs/` unless stated; `file:N` is line N in the worktree at the time of
 reading (branch `p5y-k5-tail-overnight-306-309`).
@@ -59,21 +63,25 @@ K_e bound … weak corroboration of tau's Khat_e-specific tightness"
 (`p5y_k5_tail_c11rd_d1d2_extension/review/C11RD_ADJUDICATION_REVIEW.md`:261-262).
 
 A.5 **Reproduction result** (`validation/A306_HISTORICAL_A_REPRO.json`, producer `audit/a306_reproduce_A.py`,
-verdict PASS, 12 checks + 3 negative controls):
+verdict PASS, 12 checks + 1 negative control; R1 repair: two class-(d) controls withdrawn):
 * Lemma Dv′ r2 (THEOREM_AD.md:86) on the I1/C2 constant set reproduces C2's committed `A_exact` **exactly**
-  (`checks.I1_C2_equals_C2_forecast_A_exact`, a306_reproduce_A.py:117) and the C12-R2 control `A_exact` exactly;
+  (`checks.I1_C2_equals_C2_forecast_A_exact`, a306_reproduce_A.py:118) and the C12-R2 control `A_exact` exactly;
   the C1 and C2 floats match `supplies`.
 * Lemma Dv′ r2 on the I2 constant set — with C_T = C11R's **outward-rounded record**, τ = Ā = 3429/500, D_lo = 101/200,
   D1/D2 from C11RD — reproduces the sealed S_I2 `A_exact` **exactly** (`checks.I2_equals_C12R2_target_A_exact`,
-  a306_reproduce_A.py:125).
+  a306_reproduce_A.py:126).
   So the sealed target used the outward-rounded C_T record in the consumer, as floor r2 §6 binds it
   (FLOOR_R2_SPECIFICATION.md:143-145), while C11RD's D1/D2 propagation used the exact 3429/500 (Part B, item B-H2).
 * Binding eff branch inside each supply: I1/C1 and I1/C2 → **τ/D_lo**; I2 → **Ā**
-  (`branches`, a306_reproduce_A.py:78). The I2 branch is structural: τ_I2 = Ā_I2 (a306_reproduce_A.py:135) and
+  (`branches`, a306_reproduce_A.py:79). The I2 branch is structural: τ_I2 = Ā_I2 (a306_reproduce_A.py:136) and
   D_lo < 1, so τ/D_lo > Ā for every admissible D_lo.
-* Negative controls (a306_reproduce_A.py:143-153): a committed string altered by one unit in the last place is
-  detected; a mixed-provenance constant set is refused before any arithmetic; a C1 value compared with the C2
-  record is detected as a mismatch.
+* Negative control (a306_reproduce_A.py:146-152, class (a), through `dv_r2`): a planted mixed-provenance constant
+  set is refused before any arithmetic.
+* **R1 repair (REVIEW_GLOBAL_INTEGRITY_R1 C-6):** the former "committed string altered by one ulp" and "C1 value vs
+  C2 record" controls tested only a comparison operator (class (d)) and are WITHDRAWN. A through-the-code plant
+  for the equality checks would need Lemma Dv′ evaluated on a perturbed cell-306 constant set. The quarantine
+  forbids that, so the equality checks carry **no** negative control. Their evidence is the exact equality itself,
+  which a wrong reproduction could fail.
 
 ---
 
@@ -149,7 +157,7 @@ exactly for B ≥ 0. → REPRESENTATION_ONLY.
 unconditional (c11r_boxdata.py:25-31) → PROOF_STRENGTH_DIFFERENCE in favour of I2. This difference **cannot** be what
 makes I2's D_lo value smaller: the maximal bounded sub-solution of u ≤ h₁ + K̂_e u is d itself (d = Ĝ_e h₁ satisfies the
 equation, and K̂_e^n → 0 because K̂_e 1 ≤ 1 − h_min), so the unconditional route can in principle reach D_e. Part C
-(control NC1) confirms this mechanically on a discretised operator. All other statements are EQUIVALENT.
+(the truth-in-family check CHECK1, mechanism study) confirms this mechanically on a discretised operator. All other statements are EQUIVALENT.
 → the D_lo proof-strength difference is real but value-neutral in principle.
 
 **(8) Supply construction.** S_I1 = min{G, C1, C2}, S_I2 = min{G, I2}, componentwise (FLOOR_R2_SPECIFICATION.md:90-94).
@@ -260,50 +268,52 @@ not by itself improve any value: it removes the two-supply structure and makes "
 
 ## Part C — Non-target mechanism evidence
 
-All of Part C was computed at e ∈ {1/2, 1, 3} only. It is FLOAT and NON-CERTIFIED, and no cell-306 number appears in
-it. Full report: `mechanism/MECHANISM_STUDY.md`. Generated tables: `mechanism/MECHANISM_TABLES.md`. Data:
-`validation/A306_MECHANISM.json` and `validation/A306_PFLAT.json`.
+**R1/R2 repair.** This part previously quoted non-target float values (family/truth ratios, box values). Quarantine
+amendment 2, rule R2.1, forbids any document from juxtaposing validation-drift E_a[τ], or super/sub-solution values,
+with committed tail-cell numbers. This document quotes committed 306 numbers in Part A. Part C is therefore
+**qualitative**. Every number lives in `mechanism/MECHANISM_STUDY.md` and `validation/A306_MECHANISM.json` /
+`A306_PFLAT.json`, which contain no tail-cell number. Those JSON files are latent proxies by content class (R2.3),
+and their values must not be quoted in cross-route or handover text.
+
+All of Part C was computed at the declared drifts e ∈ {1/2, 1, 3} only. It is FLOAT and NON-CERTIFIED.
 
 C.1 **Proposition PF (p-flat ceiling), proved and checked.**
 * *Statement.* Every p-flat K̂_e-supersolution f(m) has τ_F = C_T,F = f(0) ≥ L′_e(0). Here L′_e is the ARL of the
-  m-arm read along the atom-free states (max(0, 1 − m), m).
-* *Checks.* All 18 p-flat family values (6 families × 3 drifts) respect the ceiling; p-dependent families go below it
-  at every drift (`mech_pflat.py`, verdict PASS, with a planted negative control).
-* *Size.* L′(0) equals the whole-kernel E_a[τ] to 5–6 figures at e = 1 and e = 3. So a p-flat taboo certificate
-  cannot certify τ below ≈ E_a[τ] = τ_a/D.
-* *Why this matters.* It is the structural explanation of review note N6. I2's weight is p-flat, so its τ is
-  inherently a whole-kernel bound.
+  m-arm along the atom-free states (max(0, 1 − m), m).
+* *Checks.* All 18 p-flat LP values respect the ceiling, and p-dependent families go below it at every declared
+  drift.
+* *Control.* A planted p-flat candidate just below L′ is run through the pointwise K̂ screen and is rejected, as
+  PF guarantees. The verdict is gated on this (R1 re-plant of C-4).
+* *Size.* L′(0) is numerically the whole-kernel ARL at the declared drifts. So a p-flat taboo certificate cannot
+  certify τ below ≈ E_a[τ] = τ_a/D.
+* *Why this matters.* It is the structural explanation of review note N6: I2's weight is p-flat.
 
 C.2 **Family slack, point drift, same statement.**
-* The I2 families (L1 for Ā, τ and C_T; linear u for D_lo) are loose at every declared drift. Examples:
-  * Ā/E_a[τ] = 1.146 (e = 1) and 1.164 (e = 3); a factor of 17.6 at e = 1/2, where the m-drift e − K vanishes;
-  * D_lo/D = 0.550 (e = 1).
-* Richer families of the **same** statements recover most of this:
-  * Ā: HATm reaches 1.006 at e = 1; M6 reaches 1.002 at e = 3.
-  * τ: HATpm reaches 1.033 at e = 1.
-  * D_lo: PM4 and HATm reach 0.966 at e = 1.
-* Controls:
-  * NC1: the full nodal family reproduces the truth exactly (Ā, τ, D). The unconditional D_lo statement is therefore
-    not what limits the value.
-  * NC4: all 120 LP values lie on the correct side of the truth.
+* The I2 families (the linear p-flat supersolution; the linear sub-solution) are measurably loose at every declared
+  drift.
+* Richer families of the **same** statements recover most of that slack.
+* CHECK1 (truth-in-family): when the truth is in the family, the LP returns it exactly. So the unconditional D_lo
+  statement is not what limits the value.
+* CHECK4 (side of truth): every LP value lies on the correct side of the truth.
+* These are checks, not planted controls.
 
-C.3 **Verification-discretisation and block slack of the linear family** (I2's selector re-implemented in float at
-D5/P32; checked against the exact `c11_certifier` box bound, |diff| 1.1e-16).
-* At e = 3, the box value of A exceeds the pointwise optimum by about 10 %, and the box α for D_lo falls from 0.988
-  (pointwise) to 0.855 (w = 0) and to 0.748 (w = 1/8).
-* At e = 1 the box selector hits b_max. The box loss (at most about 0.66 in m-drift at this configuration) can
-  exceed the m-drift itself.
+C.3 **Verification-discretisation and block slack of the linear family.**
+* The measurement uses I2's selector, re-implemented in float at D5/P32 and cross-checked against the exact
+  `c11_certifier` box bound.
+* Box/panel loss is large when the m-drift is small against the box and panel widths.
+* Block uniformity adds further loss to the lower bound.
 
-C.4 **Sherman–Morrison consistency** (Lemma SM(d), τ_a = D·E_a[τ]) holds to 1e-12 in every discretised solve.
-Planted wrong atom split: the error rises to 3.7 (NC3).
+C.4 **Sherman–Morrison consistency** (τ_a = D·E_a[τ]) holds in every discretised solve.
+* NC3 (class (a)): a planted wrong atom split breaks the identity.
+* NC2′ (class (a), R1 re-plant of C-5): a candidate with one planted defective node fails the screen at exactly
+  that node, while its undamaged twin passes.
 
-**What Part C establishes.** The candidate families of I2 carry large, avoidable, drift-dependent slack from three
-sources: the ansatz (linear, p-flat), the box/panel discretisation, and block uniformity. Richer families of the
-same statements remove most of it. The one I2 statement that is stronger (D_lo) is not the limiting factor. Each
-outcome was open in advance.
+**What Part C establishes.** Qualitatively: the candidate families of I2 carry avoidable slack from three sources —
+the ansatz (linear, p-flat), box/panel discretisation, and block uniformity. Richer families of the same statements
+remove most of it. The one I2 statement that is stronger (D_lo) is not the limiting factor.
 
-**What Part C does not establish.** The size of any effect at cell 306's drift block. No number here may be used
-as an estimate for 306 (PREAMBLE S1, S8).
+**What Part C does not establish.** The size of any effect at cell 306's drift block. Nothing in the mechanism
+study may be used as an estimate for 306 (PREAMBLE S1, S8; amendment 2).
 
 ---
 
@@ -313,7 +323,7 @@ D.1 **Classification of the 306 disagreement: IMPLEMENTATION_SLACK (primary), ac
 (the eff branch).** It is **not** a PROOF_STRENGTH_DIFFERENCE. Reasons, qualitative and each cited:
 * Five of the six statements are EQUIVALENT, and the sixth (D_lo) is stronger on I2's side, yet I2's D_lo value is
   the weaker one. A stronger statement cannot explain a weaker value unless the statement forces it. The full nodal
-  control (C.2, NC1) shows that it does not.
+  check (C.2, CHECK1) shows that it does not.
 * The consumer, κ, and every non-constant input are identical (B.2 (9)).
 * Both implementations bound the same quantity, sup_E E_a[τ], through admissible Lemma Dv′ r2 branches (B.2 (12)).
 * Every value-relevant difference in the register (X09, X12–X18, X22) is a property of the candidate family, the

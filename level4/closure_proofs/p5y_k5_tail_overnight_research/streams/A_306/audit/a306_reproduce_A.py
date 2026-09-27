@@ -18,7 +18,7 @@ margin, no per-term decomposition value is emitted; no constant of one implement
 with a constant of the other; no perturbation.  The only derived output besides equality booleans is
 the LABEL of the binding eff branch inside each supply (brief: "eff = min(Abar, tau/D_lo) branch that
 binds in each supply").  The negative controls compare against PLANTED WRONG committed strings (no new
-quantity is computed for them) and against a planted mixed-provenance set, which must be refused
+quantity is computed for them; WITHDRAWN in the R1 repair as class (d)) and against a planted mixed-provenance set, which must be refused
 before any arithmetic.
 
 Ledger class HISTORICAL_READ (TARGET_QUARANTINE allowed[1]: arithmetic on committed historical
@@ -41,7 +41,7 @@ import ov_quarantine as Q  # noqa: E402
 
 Q.install_import_guard()
 
-CELL_KEY = "306"  # ov-quarantine: literal-ok string key into committed JSON; HISTORICAL_READ only
+CELL_KEY = "306"  # string key into committed JSON (HISTORICAL_READ only; see the file-level marker)
 SRC = {
     "theorem_ad": CP / "p5y_k5_perron_deflated_resolvent/theorem/THEOREM_AD.md",
     "deflated_consume": CP / "p5y_k5_perron_deflated_resolvent/code/deflated_consume.py",
@@ -50,7 +50,7 @@ SRC = {
     "registry_c1": CP / "p5y_k5_tail_operator_registry/evidence/registry_c1/REGISTRY_C1.json",
     "c2_forecast": CP / "p5y_k5_tail_c2_closure/evidence/phase_d5/C2_D5_FORECAST.json",
     # sealed C12-R2 result: committed text, read (never executed, never fed to a new route)
-    "c12r2_result": CP / "p5y_k5_tail_c12r2_cell306_adoption/evidence/execution/C12R2_CELL306_RESULT.json",  # ov-quarantine: literal-ok HISTORICAL_READ reproduction requested by the stream brief
+    "c12r2_result": CP / "p5y_k5_tail_c12r2_cell306_adoption/evidence/execution/C12R2_CELL306_RESULT.json",  # sanctioned historical read (file-level marker); not suppressed
 }
 
 
@@ -137,12 +137,12 @@ def main() -> dict:
     out["checks"]["I2_A0_equals_I2_Abar"] = A["I2"]["A0"] == sets["I2"]["Abar"][0]
     out["checks"]["I2_C_T_record_exceeds_exact_sup_3429_over_500"] = sets["I2"]["C_T"][0] > F(3429, 500)
 
-    # ---- negative controls: each detector must fire on a planted defect; no new target quantity computed
-    wrong = dict(res["target"]["evaluated"]["A_exact"])
-    num, den = wrong["A1"].split("/")
-    wrong["A1"] = f"{int(num) + 1}/{den}"                       # planted: committed string altered by one ulp
-    out["negative_controls"]["planted_wrong_committed_A1_detected"] = \
-        A["I2"] != {j: F(wrong[j]) for j in ("A0", "A1", "A2")}
+    # ---- negative control (class a, through the code under test): a planted mixed-provenance constant set must be
+    # refused by dv_r2 BEFORE any arithmetic.  No new target quantity is computed.
+    # R1 repair (REVIEW_GLOBAL_INTEGRITY_R1 C-6): the former "planted wrong committed A1 string" and "float mismatch"
+    # controls tested only a comparison operator (class d); they are WITHDRAWN.  A through-the-code plant for the
+    # equality checks would require evaluating Lemma Dv' on a perturbed cell-306 constant set, which the quarantine
+    # forbids (no perturbation at a target cell), so none is offered.
     mixed = dict(sets["I2"])
     mixed["D2"] = (sets["I1_C2"]["D2"][0], "I1")               # planted mixed-provenance set
     try:
@@ -150,12 +150,12 @@ def main() -> dict:
         out["negative_controls"]["planted_mixed_supply_refused"] = False
     except MixedSupply:
         out["negative_controls"]["planted_mixed_supply_refused"] = True
-    out["negative_controls"]["planted_float_mismatch_detected"] = not float_close(
-        A["I1_C1"]["A0"], fc["supplies"][CELL_KEY]["C2"]["A0"])  # C1 value against the C2 record must NOT match
+    out["withdrawn_controls"] = ["planted_wrong_committed_A1_detected (class d)",
+                                 "planted_float_mismatch_detected (class d)"]
 
     out["verdict"] = "PASS" if all(out["checks"].values()) and all(out["negative_controls"].values()) else "FAIL"
     out["coverage"] = {"supplies_reproduced": sorted(sets), "fields": ["A0", "A1", "A2"],
-                       "exact_comparisons": 3, "float_comparisons": 2, "negative_controls": 3}
+                       "exact_comparisons": 3, "float_comparisons": 2, "negative_controls": 1}
     return out
 
 

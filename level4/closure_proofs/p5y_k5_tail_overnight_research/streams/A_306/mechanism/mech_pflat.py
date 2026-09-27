@@ -17,8 +17,14 @@ degree.  (The true tau_a = D_e * E_a[tau] is smaller by the factor D_e.)
 CHECK (could fail): on the SAME discretised operator the family LPs used (Nystrom N = 10), assemble K' from the
 rows at the nodes (p*(m), m), solve L', and verify that EVERY p-flat family's certified-optimal tau in
 validation/A306_MECHANISM.json is >= L'(0) - 1e-9, while at least one p-dependent family goes BELOW L'(0) (showing
-the ceiling is a family property, not a property of the statement).  Negative control: a planted "p-flat" value
-equal to 0.999 L'(0) must be flagged as a violation.
+the ceiling is a family property, not a property of the statement).
+
+NEGATIVE CONTROL (R1 repair of REVIEW_GLOBAL_INTEGRITY_R1 C-4, which found the former plant never entered the
+detection loop): the p-flat nodal candidate w(p, m) = (1 - 1/1000) L'(m) is run THROUGH the pointwise Khat
+supersolution screen min_x (w - 1 - Phat w)(x) on the same operator.  It is guaranteed to fail: at the nodes
+(p*(m), m) the screen row equals the K' row, so a p-flat w passing the screen would satisfy w >= 1 + K'w on the
+m-grid, hence w >= L' by the discrete comparison principle (row sums of K' = 1 - h1 < 1), contradicting
+w(0) < L'(0).  The verdict is gated on it.
 """
 from __future__ import annotations
 
@@ -75,7 +81,17 @@ def pflat_ceiling(e: Fr, N: int) -> dict:
     A = [[(1.0 if i == j else 0.0) - Kp[i][j] for j in mgrid] for i in mgrid]
     L = solve_dense(A, [1.0] * len(mgrid))
     tr = ny.truth()
-    return {"Lprime_0": L[0], "E_a_tau": tr["v"][0], "tau_a": tr["t"][0], "D": tr["d"][0], "N": N}
+    # planted p-flat candidate through the screen (class a control)
+    w = [(1.0 - 1e-3) * L[mi] for (_, mi) in ny.coords]
+    Pw = ny.apply(w, True)
+    marg = [w[r] - 1.0 - Pw[r] for r in range(ny.n)]
+    r0 = min(range(ny.n), key=lambda r: marg[r])
+    w_ok = [L[mi] + 1.0 for (_, mi) in ny.coords]           # informational twin (not asserted)
+    Pok = ny.apply(w_ok, True)
+    return {"Lprime_0": L[0], "E_a_tau": tr["v"][0], "tau_a": tr["t"][0], "D": tr["d"][0], "N": N,
+            "planted_pflat_screen": {"min_margin": min(marg), "argmin_node": list(ny.xy(r0)),
+                                     "fired": min(marg) < 0},
+            "twin_Lprime_plus_1_min_margin_info": min(w_ok[r] - 1.0 - Pok[r] for r in range(ny.n))}
 
 
 def main() -> dict:
@@ -97,15 +113,12 @@ def main() -> dict:
         c["ratio_Lprime_to_E_a_tau"] = c["Lprime_0"] / c["E_a_tau"]
         c["ratio_Lprime_to_tau_a"] = c["Lprime_0"] / c["tau_a"]
         out["per_drift"][key] = c
-    # negative control: a planted p-flat value just below the ceiling must be flagged by the same test
-    k0 = next(iter(out["per_drift"]))
-    planted = 0.999 * out["per_drift"][k0]["Lprime_0"]
-    out["negative_control"] = {"planted_value": planted,
-                               "flagged": planted < out["per_drift"][k0]["Lprime_0"] * (1 - 1e-9)}
+    out["negative_control"] = {d: c["planted_pflat_screen"] for d, c in out["per_drift"].items()}
+    out["negative_control_all_fired"] = all(v["fired"] for v in out["negative_control"].values())
     out["prediction_pflat_never_below_ceiling"] = {"violations": viol, "pass": not viol,
                                                    "checked": len(PFLAT) * len(out["per_drift"])}
     out["pdep_families_below_ceiling"] = below
-    out["verdict"] = "PASS" if (not viol and out["negative_control"]["flagged"]) else "FAIL"
+    out["verdict"] = "PASS" if (not viol and out["negative_control_all_fired"]) else "FAIL"
     return out
 
 
@@ -120,4 +133,4 @@ if __name__ == "__main__":
         print(k, "L'(0)=%.5f E_a[tau]=%.5f tau_a=%.5f D=%.5f" % (c["Lprime_0"], c["E_a_tau"], c["tau_a"], c["D"]),
               "pflat min tau=%.5f" % min(c["pflat_tau"].values()), "pdep min tau=%.5f" % min(c["pdep_tau"].values()))
     print("violations", o["prediction_pflat_never_below_ceiling"], "below", o["pdep_families_below_ceiling"],
-          "NC", o["negative_control"], o["verdict"])
+          "NC fired", o["negative_control_all_fired"], o["verdict"])

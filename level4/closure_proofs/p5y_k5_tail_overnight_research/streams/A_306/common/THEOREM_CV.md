@@ -1,6 +1,8 @@
 # Theorem CV — separating certificate search from verification, with a two-sided operator sandwich
 
-**Status:** THEORY + stdlib IMPLEMENTATION + NON-TARGET VALIDATION (Stream A, overnight campaign). It is not applied
+**Status:** THEORY + stdlib IMPLEMENTATION + NON-TARGET VALIDATION of the mechanics (Stream A, overnight
+campaign; R1-repaired). Route states after the repair: R-CV and R-SAND are **IMPLEMENTED (qualification needed)**;
+see `../A_306_ROUTE_SUMMARY.md`. It is not applied
 to any tail drift or cell. No drift in [6/5, 13/5] (or its mirror) was evaluated. No committed tail-cell number
 appears in this file (PREAMBLE S8).
 
@@ -197,69 +199,103 @@ Any disagreement excludes the certificate (fail closed) and is recorded.
 
 ## 7. Non-target validation (`cv_validate.py` → `validation/A306_CV_VALIDATION.json`)
 
-The declaration is in the docstring of `cv_validate.py`, written before any verification ran. Verdict: **PASS**.
-It is produced by `cv_validate.assemble` (`out["verdict"]`) and written to `validation/A306_CV_VALIDATION.json`.
+**Latent-proxy notice (quarantine amendment 2, R2.3).** The certified values below are validation-drift
+E_a[τ]/τ/C_T bounds at e = 3. They are latent proxies by content class. They must not be quoted in cross-route or
+handover text, and no transfer into the band is derived from them (R2.2).
+
+**R1 repair (REVIEW_GLOBAL_INTEGRITY_R1 C-2, C-3, F5, F11).** The validation was repaired and re-run in full with
+instrumented verifiers:
+* the class (c)/(d) items are withdrawn from the verdict;
+* taboo-specific certificates were added;
+* planted items P8 and P9 were added;
+* the DD control was re-planted.
+
+The declaration of the repair is in the docstring of `cv_validate.py`. The pre-repair runs are preserved as
+`runs/V_*_pre_R1.*`. Verdict after the repair: **PASS** (`cv_validate.assemble`, `out["verdict"]`). The gates are:
+* valid certificates accepted by both verifiers with identical values;
+* planted certificates rejected by both;
+* the sandwich contains the float truth;
+* both taboo branches fire in both verifiers;
+* the taboo certificate is distinct from the ARL one;
+* √(2π) memoisation is bit-identical;
+* the DD re-plant passes.
 
 **7.1 Two verifiers, one certificate set.**
-* Six valid certificates, found by the untrusted search at the non-target block E = [3, 49/16] and at E′ = {3}:
-  ARL_SUPER, TABOO_SUPER, D_SUB, ARL_SUB, TABOO_SUB and D_SUPER.
-* Each has 363 boxes and 32 u-panels.
-* Both V_A and V_B **ACCEPT** all six, with **identical** `value_at_atom` strings
-  (`valid_all_accepted_by_both_with_identical_values` = true).
-* The margin lower bounds differ slightly between the verifiers but are positive in both. Example: ARL_SUPER
-  9.902e-05 (V_A) and 9.933e-05 (V_B). The difference comes from their different polynomial range bounds.
-* That difference is expected, and it does not affect the value: the value is f(a), which is exact.
-* Sub-kinds certify h_min ≥ 6.21e-3 in both verifiers.
-* Wall time: V_A ≈ 180 s, V_B ≈ 20 s.
+* Seven valid certificates were found by the untrusted search:
+  * six at the non-target block E = [3, 49/16] and at E′ = {3}: ARL_SUPER, TABOO_SUPER, D_SUB, ARL_SUB, TABOO_SUB,
+    D_SUPER;
+  * one taboo-specific certificate **TABOO_SUPER_T** at the point {3}, searched with the K̂ box condition.
+* Each certificate has 363 boxes and 32 u-panels.
+* Both V_A and V_B **ACCEPT** all seven with **identical** value strings.
+* Distinct certificates:
+  * TABOO_SUPER (block) has a weight byte-identical to ARL_SUPER (review F11). It is **not** evidence for the taboo
+    path.
+  * TABOO_SUPER_T has its own weight, distinct from ARL_SUPER (gated).
+  * The K̂ sub-solution search at {3} reproduced the ARL_SUB weight byte-for-byte: the atom-union drop does not bind
+    there. So TABOO_SUB is **not distinct** from ARL_SUB, and no distinct valid taboo lower certificate is claimed.
+* **Taboo branches exercised, identically in both verifiers** (instrumented counters, gated):
+  * the upper K̂ skip fires on 2 panels for TABOO_SUPER_T (the origin box);
+  * the lower atom-union drop fires on 68 panels for TABOO_SUB;
+  * both counters are 0 for TABOO_SUPER (block), where the skip cannot align.
+* **Discrimination (reported, not gated):** TABOO_SUPER_T re-submitted with kind ARL_SUPER is REJECTED by both
+  verifiers, with margins about −9.7e-4, whereas its K̂ margin is about +9.9e-5.
+  * So the skip branch is load-bearing: this certificate is valid for K̂ and not certifiable for K at this
+    discretisation.
+  * This is not a proof that the weight is not a K-supersolution.
+* **D_SUPER is vacuous:** its value exceeds 1, and D ≤ 1 always.
 
-**7.2 Planted-invalid certificates. All seven are REJECTED by both verifiers**
-(`planted_all_rejected_by_both` = true):
+**7.2 Planted-invalid certificates. All nine are REJECTED by both verifiers.** Every item is class (a): through the
+verifier code, and guaranteed to fire for a sound verifier.
 
-| id | planted defect | V_A reason | V_B reason |
+| id | planted defect | why invalid | V_A / V_B reason |
 |---|---|---|---|
-| P1 | ARL_SUPER with f(a) below the certified ARL_SUB lower side (provably invalid by (2a)) | box inequality | box inequality |
-| P2 | D_SUB with u(a) = 101/100 > 1 ≥ D | box inequality | box inequality |
-| P3 | TABOO_SUPER value claim tampered (−1/1000) | claim ≠ f(a) | claim ≠ f(0,0) |
-| P4 | TABOO_SUPER C_T claim below sup f | C_T claim below sup bound | same |
-| P5 | ARL_SUPER shifted so f(5) = −1/10 | box inequality + f ≥ 0 fails | same |
-| P6 | TABOO_SUB above the certified TABOO_SUPER upper side | box inequality | box inequality |
-| P7 | D_SUPER below the certified D_SUB lower side | box inequality | box inequality |
+| P1 | ARL_SUPER value below the certified ARL_SUB lower side | provably (Theorem CV (2a)) | box inequality |
+| P2 | D_SUB with u(a) = 101/100 | D ≤ 1 | box inequality |
+| P3 | TABOO_SUPER value claim − 1/1000 | claim ≠ f(a) | claim check |
+| P4 | TABOO_SUPER C_T claim below sup f | claim check | C_T_upper branch |
+| P5 | ARL_SUPER with f(5) = −1/10 | f ≥ 0 fails | box + nonnegativity |
+| P6 | TABOO_SUB above the certified TABOO_SUPER upper side | provably | box inequality |
+| P7 | D_SUPER below the certified D_SUB lower side | provably | box inequality |
+| **P8** | **TABOO_SUPER_T** (taboo path, skip active) scaled below the TABOO_SUB lower side at {3} | provably (τ_a(3) ≥ L) | box inequality |
+| **P9** | TABOO_SUB with C_T_lower claim = f(a) + 1/100 | above the point maximum | **C_T_lower branch** |
 
-**7.3 Sandwich against the float truth, and refutation.**
+**7.3 Sandwich against the float truth** (the truth is a non-certified reference):
+* All five intervals contain the Nyström truth: Ā*, τ*, C* and D* on E, plus τ_a(3) at the point, which uses the
+  taboo-specific upper side.
+* The upper side of D* is the trivial bound D ≤ 1, because D_SUPER is vacuous.
+* **Refutation (Theorem CV part 3)** is a one-line logical corollary. The former "refutation pattern" list tested
+  only comparisons (class (c)/(d)). It is kept in the JSON as `refutation_illustration_not_a_control` and is **not**
+  in the verdict.
+* The operational content of refutation — a certificate asserting a value on the wrong side of a certified bound is
+  rejected — is carried by the class-(a) plants P1, P6, P7 and P8.
 
-| true constant (block E) | certified L | certified U | float truth (Nyström, Richardson) | inside |
-|---|---|---|---|---|
-| Ā* = sup_E E_a[τ] | 2.12040 | 3.29798 | 2.57325 | yes |
-| τ* = sup_E τ_a | 2.12040 | 3.29798 | 2.55775 | yes |
-| C* = sup_E ‖Ĝ_e‖ | 2.12040 | 3.29827 | 2.57329 | yes |
-| D* = inf_E D_e | 0.86026 | 1 (D ≤ 1) | 0.99396 | yes |
-
-Refutation pattern (Theorem CV part 3), expected [refuted, not, refuted, not], observed as expected:
-* "Ā = L − 1/100" is REFUTED.
-* "Ā = U + 1/2" is not refuted.
-* "D_lo = 1001/1000" is REFUTED.
-* "D_lo = L_d" is not refuted.
-
-Divided-difference lower bounds, part (2b):
-* Tested on five exact finite-state drift families (`ov_fixtures.random_family`, seeds 1–5, n = 5), with certified
-  enclosures d ± δ checked exactly as super/sub-solutions.
-* At δ = 1e-9 the lower bound on sup|D″| is 0.0029–0.082, never above the exact grid sup. A planted claim
-  0.9·LB2 is refuted in 5/5 cases.
-* At δ = 1e-3 the bound is vacuous (0) in 5/5 cases, as §9 predicts.
-* Memoising √(2π) in V_A is bit-identical to the fresh computation (checked).
+**Divided-difference lower bounds, part (2b)**, on five exact finite-state drift families (`ov_fixtures`, seeds 1–5):
+* The honest enclosures d ± δ are checked exactly as sub/super-solutions.
+* LB1 ≤ exact sup|D′| and LB2 ≤ exact sup|D″| in all 10 records.
+* LB2 is non-vacuous in the 5 records with δ = 1e-9, and vacuous (0) in the 5 with δ = 1e-3.
+* **Re-planted control (class (a)):** an invalid enclosure u = d + 1/20, claimed as a sub-solution, is rejected by
+  the exact sub-solution check in 10/10 records. This is guaranteed, since u − K̂u − h₁ = (1/20)(1 − K̂1) > 0.
+* The former "planted D2 claim 0.9·LB2 refuted 5/5" reduced to LB2 > 0 (class (c)). It is WITHDRAWN.
 
 **7.4 What the validation shows and does not show.**
-* It shows the mechanics end to end: two arithmetically independent verifiers agree on accept/reject for every
-  certificate, including seven planted defects; values are shared exactly; the sandwich is sound against the float
-  truth; the refutation logic fires when and only when it should.
-* It does **not** show tight sandwiches. At depth 5/32 panels, with degree-3 monotone polynomials in m, the
-  relative width is about 46 % for Ā*, τ* and C*, and 14 % for D*. This is dominated by box/panel loss, not by the
-  theorem (compare `mechanism/MECHANISM_STUDY.md` §3.3).
-* Note: the untrusted search used the p-flat family, so τ = Ā (Proposition PF, here at e ≈ 3 where D ≈ 1, so the
-  cost is small).
-* Coverage: 13 certificates × 2 verifiers × 363 boxes × 32 panels, plus 10 synthetic records.
-* A first search trial at depth 4 / 16 panels produced a D_SUPER with W(a) > 1, i.e. a vacuous certificate. The
-  search was repeated at depth 5 / 32 panels **before** any verifier ran. This is recorded in `PROGRESS.md`.
+* **It shows:**
+  * two arithmetically independent verifiers agree on accept/reject for every certificate, including nine
+    class-(a) plants and a taboo-specific certificate whose skip branch is load-bearing;
+  * values are shared exactly;
+  * the sandwich is sound against the float truth.
+* **It does not show:**
+  * **Tight sandwiches.** At depth 5 / 32 panels, with degree-3 monotone polynomials in m, the widths are
+    dominated by box/panel loss, not by the theorem.
+  * **A non-vacuous D upper side.**
+  * **A taboo lower certificate distinct from the ARL one.**
+  * **Any D1/D2 certificate kind.** Theorem CV covers four of the six supply constants: C_T, τ, Ā and D_lo.
+* **Correction.** The first version of this section said the depth-5 re-run followed a vacuous depth-4 D_SUPER, and
+  implied the vacuity was cured. It was **not** cured: D_SUPER's value is still above 1 at depth 5 / 32 panels.
+  The depth-4 → depth-5 change happened before any verifier ran and is disclosed as a search trial only.
+* **Coverage:**
+  * 17 certificates × 2 verifiers: 7 valid, 9 planted, 1 discrimination;
+  * 363 boxes × 32 panels each;
+  * 10 synthetic records.
 
 ## 8. Relation to governance (cell 306 and beyond)
 
@@ -285,3 +321,11 @@ See `../A_306_ROUTE_SUMMARY.md` §3. In short:
   exceeds h²·|D″| (seen in §7.3 at δ = 1e-3).
 * **Float truth is a reference only.** The sandwich-contains-truth check uses the non-certified Nyström truth, with
   its Richardson uncertainty as tolerance.
+* **The theorem covers four of the six supply constants.** There is no certificate kind for D1 or D2 (upper bounds
+  on |D′| and |D″|); only their certified lower sides (2b) exist. A supply built by Theorem CV (5) therefore still
+  needs D1/D2 from a derivative certificate of the C11RD type. That certificate lies outside Theorem CV's separation
+  structure.
+* **The D upper side is vacuous at the validation configuration** (D_SUPER value > 1). The D sandwich's upper side
+  is the trivial D ≤ 1.
+* **The taboo lower branch is not validated as distinct.** The K̂ sub-solution optimum coincided with the ARL one at
+  the validation point.

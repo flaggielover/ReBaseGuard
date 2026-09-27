@@ -5,6 +5,21 @@ none in [6/5, 13/5] or its mirror). No CUSUM m = 5 tail cell and no tail drift i
 is combined with, or placed next to, any committed tail-cell number (PREAMBLE S8), and no number here is
 interpolated towards any tail drift.
 
+**Latent-proxy notice (quarantine amendment 2, R2.3).** This file and `validation/A306_MECHANISM.json` /
+`A306_PFLAT.json` carry validation-drift values of E_a[τ], τ_a, sup Ĝ1 and super/sub-solution family values. Under
+Theorem M monotonicity these are latent proxies by content class. They must not be quoted in cross-route or
+handover text, and must never be juxtaposed with tail-cell numbers (R2.1). No transfer into the band is derived
+here (R2.2).
+
+**R1 repair (REVIEW_GLOBAL_INTEGRITY_R1 C-4, C-5, F18).**
+* The former NC2 ("0.99 × truth") was class (c), since its margin is −0.01 by linearity. It is replaced by NC2′,
+  a localized planted defect that must be caught at its own node.
+* NC1 and NC4 are relabelled CHECK1 and CHECK4: checks, not planted controls.
+* The Proposition PF control now runs a planted p-flat candidate through the screen; before, the plant never
+  entered the detection loop.
+* `box_upper_rows`, `box_lower_rows` and `cv_search.screen` now call `guard_drift`.
+* The study was re-run after the repair. The generated tables are identical except for the control lines (git diff of `MECHANISM_TABLES.md`).
+
 Producers:
 * `mech_core.py`: kernel, Nyström truth, continuous kernel.
 * `mech_lp.py`: LP solver.
@@ -15,7 +30,7 @@ Outputs:
 * `validation/A306_MECHANISM.json` and `MECHANISM_TABLES.md` (generated tables).
 * `validation/A306_PFLAT.json`.
 
-Ledger: two NONTARGET_DRIFT_VALIDATION lines.
+Ledger: NONTARGET_DRIFT_VALIDATION lines for each run, including the R1 re-runs.
 
 ## 1. Question and why the answer could have gone either way
 
@@ -96,14 +111,14 @@ Readings:
 2. **τ and C_T.** Every p-flat family, whatever its degree, stays at τ/τ_a ≈ 1/D or above: M2–M6 and HATm give
    4.29–4.61 at e = 1/2 and 1.56–1.79 at e = 1; L1 is far worse at e = 1/2 (75.4). Proposition PF explains this
    exactly (§4). Families with p-dependence break the ceiling: PM3, PM4 and HATpm give τ/τ_a = 1.03–1.23; PM2 gives
-   2.02 at e = 1/2. This is a family property, not a statement property: control NC1 returns the truth exactly
+   2.02 at e = 1/2. This is a family property, not a statement property: check CHECK1 returns the truth exactly
    when the truth is in the family.
 3. **D_lo.**
    * The linear family reaches 55 % of D at e = 1, 72 % at e = 1/2 and 99.4 % at e = 3.
    * The best richer family reaches 90 % at e = 1/2 (PM4) and 97 % at e = 1 (PM4, HATm), and ≥ 99.9 % at e = 3.
    * They do not reach 100 % with low-degree polynomials at e ∈ {1/2, 1}. d has band structure (kinks at
      p + m ∈ {1, 2, 3, 4}), which a global polynomial cannot follow.
-   * The full nodal family reproduces D exactly (NC1), so the remaining gap is expressiveness, not the unconditional
+   * The full nodal family reproduces D exactly (CHECK1), so the remaining gap is expressiveness, not the unconditional
      statement.
 
 **3.3 The linear family: pointwise → block → box/panel (D5/P32).**
@@ -159,7 +174,12 @@ whole-kernel-type quantity: no p-flat family, of any degree, certifies τ or C_T
 
 * All 18 p-flat LP values are ≥ L′(0), with no violation. At least one p-dependent family goes below L′(0) at every
   drift.
-* Negative control: a planted p-flat value 0.999·L′(0) is flagged.
+* Negative control (class (a), R1 re-plant; `mech_pflat.py` `pflat_ceiling`):
+  * The planted p-flat nodal candidate (1 − 1/1000)·L′(m) is run through the pointwise K̂ screen. It is rejected at
+    all three drifts, with min margin −0.001.
+  * PF guarantees this: at the p* nodes the screen row equals the K′ row, so the margin there is exactly −1/1000.
+  * The control demonstrates that the screen evaluates P̂ at the p* nodes as the proof assumes.
+  * The verdict is gated on it.
 * L′(0) agrees with E_a[τ] to 5–6 significant figures at e = 1 and e = 3, and is 0.04 % above it at e = 1/2.
 
 **Consequence (generic, statement-level).**
@@ -171,14 +191,18 @@ whole-kernel-type quantity: no p-flat family, of any degree, certifies τ or C_T
 
 ## 5. Negative controls and coverage
 
-| control | what it plants | result |
-|---|---|---|
-| NC1 truth-in-family | the discrete truth as a family member (Ā, τ, D) | LP returns it to 1e-8; the family without it (L1) is strictly looser |
-| NC2 shrink | 0.99 × truth as a supersolution | screen flags min margin −0.0100; truth + 1e-9 passes |
-| NC3 wrong atom split | atom piece dropped from K as well | the Sherman–Morrison identity error jumps from 6e-13 to 3.7 |
-| NC4 side of truth | — (all 120 family/objective/drift LP values checked) | 0 violations |
-| box cross-check | float box bound vs exact `c11_certifier` | 1.1e-16 |
-| PF prediction | 0.999·L′(0) planted | flagged; 0 violations over 18 p-flat values |
+| item | type | what it plants / checks | result |
+|---|---|---|---|
+| NC2′ localized defect | control, class (a) | w = v + 1/100, lowered by 1/5 at one rule-chosen node (nearest (2, 1)) | screen fails at exactly that node (min margin −0.19999); undamaged twin passes (min margin +3.4e-8) |
+| NC3 wrong atom split | control, class (a) | atom piece dropped from K as well | Sherman–Morrison identity error rises from 6e-13 to 3.7 |
+| PF plant | control, class (a) | p-flat (1 − 1/1000)·L′ through the K̂ screen | rejected at 3/3 drifts |
+| CHECK1 truth-in-family | check (not a control) | the discrete truth as a family member (Ā, τ, D) | LP returns it to 1e-8; the family without it (L1) is strictly looser |
+| CHECK4 side of truth | check (not a control) | all 120 family/objective/drift LP values | 0 violations |
+| box cross-check | check | float box bound vs exact `c11_certifier` | 1.1e-16 |
+| PF prediction | prediction (could fail) | 18 p-flat LP values ≥ L′(0) | 0 violations |
+
+(The earlier count "4 negative controls" was wrong. Before the repair there was one genuine planted control (NC3);
+now there are three.)
 
 Coverage:
 * 3 drifts × 4 widths for the linear/box study.

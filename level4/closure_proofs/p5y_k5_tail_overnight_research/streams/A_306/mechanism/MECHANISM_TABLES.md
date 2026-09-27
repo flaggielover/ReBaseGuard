@@ -62,9 +62,9 @@
 
 ## Negative controls and cross-check
 
-* NC1_full_nodal: pass = True
-* NC2_planted_shrink: pass = True
-* NC3_wrong_atom_split: pass = True
-* NC4_side_of_truth: pass = True
+* control NC2p_localized_defect: pass = True
+* control NC3_wrong_atom_split: pass = True
+* check CHECK1_truth_in_family: pass = True
+* check CHECK4_side_of_truth: pass = True
 * box float emulation vs exact c11_certifier (e = 3, depth 3, 8 panels, w = 3 - m/2): |diff| = 1.110e-16 (30 boxes), agree = True
 * verdict: PASS

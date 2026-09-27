@@ -196,7 +196,11 @@ def _img(a, b, c, d, zl, zh):
     return ((max(z, a + zl - KQ), max(z, b + zh - KQ)), (max(z, c - zh - KQ), max(z, d - zl - KQ)))
 
 
+BRANCH = {"upper_skips": 0, "lower_drops": 0}   # instrumentation (R1 repair)
+
+
 def verify(cert: dict) -> dict:
+    BRANCH["upper_skips"] = BRANCH["lower_drops"] = 0
     kind = cert["kind"]
     if kind not in KINDS:
         return {"accepted": False, "reasons": ["unknown kind"]}
@@ -221,6 +225,7 @@ def verify(cert: dict) -> dict:
                 u0, u1 = u_start + k * step, u_start + (k + 1) * step
                 zl, zh = u0 - ehi, u1 - elo
                 if kern == "Khat" and (d - KQ) < (KQ - b) and zl >= d - KQ and zh <= KQ - b:
+                    BRANCH["upper_skips"] += 1
                     continue
                 (P, M) = _img(a, b, c, d, zl, zh)
                 fi = horner_iv(rows, q2d(P[0])[:1] + q2d(P[1])[1:], q2d(M[0])[:1] + q2d(M[1])[1:])
@@ -238,6 +243,7 @@ def verify(cert: dict) -> dict:
                     u0, u1 = u_start + k * step, u_start + (k + 1) * step
                     zl, zh = u0 - ehi, u1 - elo
                     if kern == "Khat" and (c - KQ) < (KQ - a) and zl < KQ - a and zh > c - KQ:
+                        BRANCH["lower_drops"] += 1
                         continue
                     (P, M) = _img(a, b, c, d, zl, zh)
                     fi = horner_iv(rows, q2d(P[0])[:1] + q2d(P[1])[1:], q2d(M[0])[:1] + q2d(M[1])[1:])
@@ -258,7 +264,8 @@ def verify(cert: dict) -> dict:
     if "value_at_atom" not in cl or Fr(cl["value_at_atom"]) != val:
         reasons.append("claimed value_at_atom is not f(0,0)")
     out = {"verifier": "V_B (decimal, directed rounding)", "kind": kind, "margin_lower_bound": float(worst),
-           "f_min_lower_bound": float(fmin), "value_at_atom": str(val), "boxes": len(boxes(depth))}
+           "f_min_lower_bound": float(fmin), "value_at_atom": str(val), "boxes": len(boxes(depth)),
+           "khat_branch_counts": dict(BRANCH)}
     if sgn < 0:
         out["h_min_lower_bound"] = float(hmin)
     if kind == "TABOO_SUPER":

@@ -42,6 +42,15 @@ KIND = {  # kind: (atom_removed, source, direction, family degree in m, block)
     "TABOO_SUB": (True, "one", "sub", 3, (E_LO, E_LO)),
     "D_SUPER": (True, "h1", "super", 3, (E_LO, E_LO)),
 }
+# R1 repair (REVIEW_GLOBAL_INTEGRITY_R1 F5/F11): TABOO-SPECIFIC certificates, searched with the Khat box condition at the
+# point block {3}, where (declared before running) the upper Khat skip branch fires at the origin box (u-panels 15, 16
+# of 32 lie inside [d - K, K - b]) and the lower branch drops atom-union panels.  Added by `python3 cv_search.py
+# taboo`, which writes ONLY the two new files; the six earlier certificates are left byte-identical.
+KIND_T = {
+    "TABOO_SUPER_T": (True, "one", "super", 3, (E_LO, E_LO)),
+    "TABOO_SUB_T": (True, "one", "sub", 3, (E_LO, E_LO)),
+}
+KIND.update(KIND_T)
 
 
 # ------------------------------------------------------------------------------------------------ float box screen
@@ -62,6 +71,7 @@ def _frange(cs, lo, hi):
 
 def screen(kind: str, cs: list) -> float:
     ar, src, direc, _, (elo, ehi) = KIND[kind]
+    Q.guard_drift(elo, ehi)
     elo, ehi = float(elo), float(ehi)
     K_, C_ = 0.5, 5.5
     worst = math.inf
@@ -178,16 +188,17 @@ def robustify(kind: str, cs: list) -> tuple:
 def make_cert(kind: str, q: list) -> dict:
     _, _, _, _, (lo, hi) = KIND[kind]
     w = {f"0,{j}": str(c) for j, c in enumerate(q) if c != 0}
-    cert = {"schema": "A306_CV_CERT/1", "kind": kind, "drift_block": [str(lo), str(hi)], "weight": w,
+    base = kind[:-2] if kind.endswith("_T") else kind
+    cert = {"schema": "A306_CV_CERT/1", "kind": base, "drift_block": [str(lo), str(hi)], "weight": w,
             "claims": {"value_at_atom": str(q[0])}, "hints": {"depth": DEPTH, "panels": PANELS},
             "model": {"K": "1/2", "H": "5", "R": "0<=p,m<=5 and (p+m<=4 or p==0 or m==0)", "atom": [0, 0]}}
-    if kind == "TABOO_SUPER":
+    if base == "TABOO_SUPER":
         # sup_R f for a polynomial in m: bound over [0,5] by dense sampling + Lipschitz pad, rounded up (claim only)
         xs = [5 * t / 4000 for t in range(4001)]
         mx = max(sum(float(c) * x ** j for j, c in enumerate(q)) for x in xs)
         L = sum(abs(float(c)) * j * 5 ** (j - 1) for j, c in enumerate(q) if j) * 5 / 8000
         cert["claims"]["C_T_upper"] = str(dyadic(mx + L + 1e-9, up=True))
-    if kind == "TABOO_SUB":
+    if base == "TABOO_SUB":
         n = 2 ** DEPTH
         s = Fr(5, n)
         pts = [(s * i, s * j) for i in range(n) for j in range(n) if s * i + s * j <= 4 or i == 0 or j == 0]
@@ -196,9 +207,9 @@ def make_cert(kind: str, q: list) -> dict:
     return cert
 
 
-def main() -> dict:
+def main(kinds=None) -> dict:
     out = {}
-    for kind in KIND:
+    for kind in (kinds or [k for k in KIND if k not in KIND_T]):
         cs = box_lp(kind)
         q, eta = robustify(kind, cs)
         out[kind] = {"certificate": make_cert(kind, q), "search": {"lp_coeffs_float": cs, "eta": eta,
@@ -207,7 +218,15 @@ def main() -> dict:
     return out
 
 
-if __name__ == "__main__":
+if __name__ == "__main__" and sys.argv[1:] == ["taboo"]:
+    o = main(list(KIND_T))
+    for k, v in o.items():
+        (HERE / "certs" / f"{k}.json").write_text(json.dumps(v["certificate"], indent=1, sort_keys=True) + "\n")
+    (HERE / "certs" / "SEARCH_LOG_T.json").write_text(json.dumps({k: v["search"] for k, v in o.items()},
+                                                                 indent=1, sort_keys=True, default=str) + "\n")
+    Q.log_execution("streams/A_306/common/cv_search.py taboo", "untrusted taboo-specific search at e = 3 (point)",
+                    cells_touched=[], klass="NONTARGET_DRIFT_VALIDATION", notes="float search; verification separate")
+elif __name__ == "__main__":
     o = main()
     (HERE / "certs").mkdir(exist_ok=True)
     for k, v in o.items():

@@ -1,4 +1,38 @@
 {
+ "checks": {
+  "CHECK1_truth_in_family": {
+   "nodes": 881,
+   "pass": true,
+   "per_objective": {
+    "Abar": {
+     "family_with_truth": 10.375611505285493,
+     "family_without": 11.892941219917152,
+     "reproduces": true,
+     "truth": 10.37561150528546,
+     "without_is_looser": true
+    },
+    "D": {
+     "family_with_truth": 0.6417965414637096,
+     "family_without": 0.3532081245573243,
+     "reproduces": true,
+     "truth": 0.6417965414637106,
+     "without_is_looser": true
+    },
+    "tau": {
+     "family_with_truth": 6.659031579663142,
+     "family_without": 11.892941219917148,
+     "reproduces": true,
+     "truth": 6.65903157966369,
+     "without_is_looser": true
+    }
+   }
+  },
+  "CHECK4_side_of_truth": {
+   "checked": 120,
+   "pass": true,
+   "violations": []
+  }
+ },
  "crosscheck": {
   "box_float_vs_exact_c11": {
    "abs_diff": 1.1102230246251565e-16,
@@ -44,49 +78,23 @@
  },
  "label": "FLOAT, NON-CERTIFIED, NON-TARGET",
  "negative_controls": {
-  "NC1_full_nodal": {
-   "nodes": 881,
+  "NC2p_localized_defect": {
+   "node": [
+    2.0,
+    1.0
+   ],
    "pass": true,
-   "per_objective": {
-    "Abar": {
-     "family_with_truth": 10.375611505285493,
-     "family_without": 11.892941219917152,
-     "reproduces": true,
-     "truth": 10.37561150528546,
-     "without_is_looser": true
-    },
-    "D": {
-     "family_with_truth": 0.6417965414637096,
-     "family_without": 0.3532081245573243,
-     "reproduces": true,
-     "truth": 0.6417965414637106,
-     "without_is_looser": true
-    },
-    "tau": {
-     "family_with_truth": 6.659031579663142,
-     "family_without": 11.892941219917148,
-     "reproduces": true,
-     "truth": 6.65903157966369,
-     "without_is_looser": true
-    }
-   }
-  },
-  "NC2_planted_shrink": {
-   "min_margin": {
-    "planted_0.99": -0.01000000000003709,
-    "truth_plus": -1.9539925233402755e-14
-   },
-   "pass": true
+   "planted_argmin_node": [
+    2.0,
+    1.0
+   ],
+   "planted_min_margin": -0.1999976397324854,
+   "twin_min_margin": 3.3977130442508496e-08
   },
   "NC3_wrong_atom_split": {
    "good_identity_err": 6.199485369506874e-13,
    "pass": true,
    "planted_identity_err": 3.7165799256223906
-  },
-  "NC4_side_of_truth": {
-   "checked": 120,
-   "pass": true,
-   "violations": []
   }
  },
  "per_drift": {
@@ -1881,5 +1889,5 @@
  },
  "schema": "A306_MECHANISM/1",
  "verdict": "PASS",
- "wall_seconds": 267.6046919822693
+ "wall_seconds": 323.4632189273834
 }

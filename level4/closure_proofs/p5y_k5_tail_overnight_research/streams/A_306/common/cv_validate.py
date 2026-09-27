@@ -20,6 +20,19 @@ DECLARED BEFORE ANY VERIFICATION RUN (rule, not similarity to a target):
                drift families ov_fixtures.random_family(n=5, seed) for seeds 1..5, e in {0, 1/8, 1/4}, enclosure
                half-widths delta in {1e-9, 1e-3}; the bound must not exceed the exact sup over a 401-point grid; a
                planted D2 claim 0.9 x LB2 must be refuted.
+R1 REPAIR (REVIEW_GLOBAL_INTEGRITY_R1 C-2, C-3, F5, F11), declared before the re-run:
+  * the "refutation" list (C-2) and the "0.9 x LB2 refuted" count (C-3) were class (c)/(d): WITHDRAWN from the
+    verdict (the refutation list is kept only as a labelled illustration);
+  * NEW valid taboo-specific certificate TABOO_SUPER_T (Khat box LP at the point {3}; weight distinct from ARL_SUPER);
+  * NEW planted P8 TABOO_SUPER_T scaled below the certified TABOO_SUB lower side (provably invalid: tau_a(3) >= L),
+    P9 TABOO_SUB with C_T_lower claim = f(a) + 1/100 above the point maximum (C_T_lower rejection branch);
+  * GATE: the upper Khat skip branch must fire (> 0 panels) in BOTH verifiers on TABOO_SUPER_T and the lower atom-union
+    drop must fire on TABOO_SUB (instrumented counters);
+  * REPORTED, not gated: TABOO_SUPER_T submitted with kind ARL_SUPER (a discrimination check, not provably invalid);
+  * DD part (C-3 re-plant, class a): a planted INVALID enclosure u = d + 1/20 (claimed sub-solution) must be rejected
+    by the exact sub-solution check in every family (guaranteed: u - Khat u - h1 = (1/20)(1 - Khat 1) > 0);
+  * a Khat sub-solution search at {3} returned the ARL_SUB weight byte-for-byte (the atom drop does not bind there), so
+    no distinct valid TABOO_SUB exists in this set; recorded, not counted.
 Usage:  python3 -B cv_validate.py A | B | assemble
 """
 from __future__ import annotations
@@ -39,7 +52,8 @@ import ov_quarantine as Q  # noqa: E402
 Q.install_import_guard()
 CERTS = HERE / "certs"
 RUNS = HERE / "runs"
-VALID = ("ARL_SUPER", "TABOO_SUPER", "D_SUB", "ARL_SUB", "TABOO_SUB", "D_SUPER")
+VALID = ("ARL_SUPER", "TABOO_SUPER", "D_SUB", "ARL_SUB", "TABOO_SUB", "D_SUPER", "TABOO_SUPER_T")
+DISCRIM = ("X_TABOO_SUPER_T_as_ARL",)
 
 
 def load_valid() -> dict:
@@ -76,12 +90,24 @@ def planted(v: dict) -> dict:
     P["P5_ARL_SUPER_negative_on_R"] = c
     P["P6_TABOO_SUB_above_certified_upper"] = _scale(v["TABOO_SUB"], U_tab + Fr(1, 100))
     P["P7_D_SUPER_below_certified_lower"] = _scale(v["D_SUPER"], Dlo - Fr(1, 100))
+    L_tau_pt = Fr(v["TABOO_SUB"]["claims"]["value_at_atom"])          # certified at the point {3}
+    P["P8_TABOO_SUPER_T_below_certified_lower"] = _scale(v["TABOO_SUPER_T"], L_tau_pt - Fr(1, 100))
     for k, c in P.items():
         if "C_T_lower" in c.get("claims", {}):
             c["claims"]["C_T_lower"] = c["claims"]["value_at_atom"]
         if "C_T_upper" in c.get("claims", {}) and k != "P4_TABOO_SUPER_C_T_claim_low":
             c["claims"]["C_T_upper"] = str(max(Fr(c["claims"]["C_T_upper"]), Fr(c["claims"]["value_at_atom"])))
+    c = json.loads(json.dumps(v["TABOO_SUB"]))
+    c["claims"]["C_T_lower"] = str(Fr(c["claims"]["value_at_atom"]) + Fr(1, 100))   # above the point maximum f(a)
+    P["P9_TABOO_SUB_C_T_lower_claim_high"] = c
     return P
+
+
+def discrim(v: dict) -> dict:
+    c = json.loads(json.dumps(v["TABOO_SUPER_T"]))
+    c["kind"] = "ARL_SUPER"
+    c["claims"].pop("C_T_upper", None)
+    return {"X_TABOO_SUPER_T_as_ARL": c}
 
 
 def run(which: str) -> None:
@@ -93,7 +119,7 @@ def run(which: str) -> None:
         (CERTS / "planted" / f"{k}.json").write_text(json.dumps(c, indent=1, sort_keys=True) + "\n")
     RUNS.mkdir(exist_ok=True)
     res = {}
-    for name, cert in list(v.items()) + list(P.items()):
+    for name, cert in list(v.items()) + list(P.items()) + list(discrim(v).items()):
         t0 = time.time()
         r = mod.verify(cert)
         r["seconds"] = time.time() - t0
@@ -143,6 +169,13 @@ def dd_synthetic() -> dict:
                     res = [f[i] - Kf[i] - h[i] for i in range(n)]
                     if (sgn < 0 and max(res) > 0) or (sgn > 0 and min(res) < 0):
                         ok_cert = False
+            # planted INVALID enclosure (class a): u = d + 1/20 claimed as a sub-solution at e = 1/8
+            e_p = Fr(1, 8)
+            d_p = dfam.F_derivs(e_p, 0)[0]
+            Kh_p, h_p = dfam.K(e_p), dfam.S(e_p)
+            u_p = [x + Fr(1, 20) for x in d_p]
+            Ku_p = [sum(a * b for a, b in zip(r, u_p)) for r in Kh_p]
+            planted_rejected = max(u_p[i] - Ku_p[i] - h_p[i] for i in range(n)) > 0
             lo = [x - delta for x in Dv]
             hi = [x + delta for x in Dv]
             hstep = Fr(1, 8)
@@ -153,15 +186,17 @@ def dd_synthetic() -> dict:
             rec = {"seed": seed, "delta": str(delta), "certificates_valid": ok_cert,
                    "LB1": float(lb1), "sup_grid_D1": float(sup1), "LB2": float(lb2), "sup_grid_D2": float(sup2),
                    "LB1_le_sup": lb1 <= sup1, "LB2_le_sup": lb2 <= sup2,
-                   "planted_D2_claim_0.9LB2_refuted": (lb2 > 0 and Fr(9, 10) * lb2 < lb2),
-                   "honest_D2_claim_1.01sup_not_refuted": Fr(101, 100) * sup2 >= lb2}
-            if not (ok_cert and rec["LB1_le_sup"] and rec["LB2_le_sup"] and rec["honest_D2_claim_1.01sup_not_refuted"]):
+                   "planted_invalid_enclosure_rejected": planted_rejected,
+                   "LB2_nonvacuous": lb2 > 0}
+            if not (ok_cert and rec["LB1_le_sup"] and rec["LB2_le_sup"] and planted_rejected):
                 fails.append(rec)
             out.append(rec)
     return {"records": out, "failures": fails,
-            "planted_refutations": sum(1 for r in out if r["planted_D2_claim_0.9LB2_refuted"]),
+            "planted_invalid_enclosures_rejected": sum(1 for r in out if r["planted_invalid_enclosure_rejected"]),
+            "nonvacuous_LB2": sum(1 for r in out if r["LB2_nonvacuous"]),
             "vacuous_bounds": sum(1 for r in out if r["LB2"] == 0.0),
-            "pass": not fails and sum(1 for r in out if r["planted_D2_claim_0.9LB2_refuted"]) >= 5}
+            "withdrawn": "planted_D2_claim_0.9LB2_refuted (class c, reduced to LB2 > 0)",
+            "pass": not fails and all(r["planted_invalid_enclosure_rejected"] for r in out)}
 
 
 def assemble() -> dict:
@@ -169,7 +204,7 @@ def assemble() -> dict:
     B = json.loads((RUNS / "V_B.json").read_text())
     v = load_valid()
     names_valid = list(VALID)
-    names_pl = [k for k in A if k not in VALID]
+    names_pl = [k for k in A if k not in VALID and k not in DISCRIM]
     agree = {k: {"A": A[k]["accepted"], "B": B[k]["accepted"], "same_value": A[k]["value_at_atom"] == B[k]["value_at_atom"]}
              for k in A}
     valid_ok = all(A[k]["accepted"] and B[k]["accepted"] and A[k]["value_at_atom"] == B[k]["value_at_atom"]
@@ -193,6 +228,22 @@ def assemble() -> dict:
     for s in sand.values():
         s["truth_inside"] = s["L"] - s["unc"] <= s["truth_float"] <= s["U"] + s["unc"]
         s["relative_width"] = (s["U"] - s["L"]) / s["truth_float"]
+    # tau_a at the POINT {3}: taboo-specific upper side TABOO_SUPER_T, lower side TABOO_SUB (both at {3})
+    U_tau_pt = Fr(v["TABOO_SUPER_T"]["claims"]["value_at_atom"])
+    sand["tau_a(3) (point)"] = {"L": float(L_tau), "U": float(U_tau_pt), "truth_float": tr["t_a"], "unc": unc["t_a"]}
+    for s_ in sand.values():
+        s_["truth_inside"] = s_["L"] - s_["unc"] <= s_["truth_float"] <= s_["U"] + s_["unc"]
+        s_["relative_width"] = (s_["U"] - s_["L"]) / s_["truth_float"]
+    D_SUPER_vacuous = Fr(v["D_SUPER"]["claims"]["value_at_atom"]) > 1
+    branch = {nm: {"V_A": A[nm]["khat_branch_counts"], "V_B": B[nm]["khat_branch_counts"]}
+              for nm in ("TABOO_SUPER_T", "TABOO_SUB", "TABOO_SUPER")}
+    branch_ok = (A["TABOO_SUPER_T"]["khat_branch_counts"]["upper_skips"] > 0
+                 and B["TABOO_SUPER_T"]["khat_branch_counts"]["upper_skips"] > 0
+                 and A["TABOO_SUB"]["khat_branch_counts"]["lower_drops"] > 0
+                 and B["TABOO_SUB"]["khat_branch_counts"]["lower_drops"] > 0)
+    distinct = v["TABOO_SUPER_T"]["weight"] != v["ARL_SUPER"]["weight"]
+    disc = {k: {"A": A[k]["accepted"], "B": B[k]["accepted"]} for k in DISCRIM}
+    # ILLUSTRATION ONLY (class c/d per REVIEW_GLOBAL_INTEGRITY_R1 C-2): not a control, not in the verdict
     refute = [
         {"claim": "Abar = L - 1/100 (upper-bound constant)", "refuted": L_arl - Fr(1, 100) < L_arl},
         {"claim": "Abar = U + 1/2", "refuted": U_arl + Fr(1, 2) < L_arl},
@@ -213,13 +264,17 @@ def assemble() -> dict:
            "valid_all_accepted_by_both_with_identical_values": valid_ok,
            "planted_all_rejected_by_both": planted_ok,
            "sandwich": sand, "sandwich_all_contain_truth": all(s["truth_inside"] for s in sand.values()),
-           "refutation": refute, "refutation_pattern_ok": refute_ok,
+           "refutation_illustration_not_a_control": refute, "refutation_pattern_illustration": refute_ok,
+           "taboo_branch_counts": branch, "taboo_branches_fired_in_both": branch_ok,
+           "TABOO_SUPER_T_weight_distinct_from_ARL_SUPER": distinct,
+           "discrimination_reported_not_gated": disc,
+           "D_SUPER_vacuous_value_gt_1": D_SUPER_vacuous,
            "V_A_sqrt2pi_memo_bit_identical": memo_ok, "divided_difference_synthetic": dd,
            "coverage": {"certificates": len(A), "valid": len(names_valid), "planted": len(names_pl),
                         "boxes_per_certificate": A["ARL_SUPER"]["boxes"], "panels": 32,
                         "synthetic_families": 5, "synthetic_records": len(dd["records"])}}
-    out["verdict"] = "PASS" if (valid_ok and planted_ok and out["sandwich_all_contain_truth"] and refute_ok
-                                and memo_ok and dd["pass"]) else "FAIL"
+    out["verdict"] = "PASS" if (valid_ok and planted_ok and out["sandwich_all_contain_truth"] and branch_ok
+                                and distinct and memo_ok and dd["pass"]) else "FAIL"
     (NS / "validation" / "A306_CV_VALIDATION.json").write_text(json.dumps(out, indent=1, sort_keys=True) + "\n")
     Q.log_execution("streams/A_306/common/cv_validate.py assemble",
                     "Theorem CV: agreement of V_A/V_B, planted rejections, sandwich vs truth, synthetic DD bounds",
@@ -232,8 +287,9 @@ if __name__ == "__main__":
         run(sys.argv[1])
     else:
         o = assemble()
-        print(json.dumps({k: o[k] for k in ("verdict", "per_certificate", "sandwich", "refutation_pattern_ok",
+        print(json.dumps({k: o[k] for k in ("verdict", "per_certificate", "taboo_branch_counts",
+                                            "discrimination_reported_not_gated", "D_SUPER_vacuous_value_gt_1",
                                             "V_A_sqrt2pi_memo_bit_identical")}, indent=1))
-        print("DD:", o["divided_difference_synthetic"]["pass"], "refutations",
-              o["divided_difference_synthetic"]["planted_refutations"], "vacuous",
-              o["divided_difference_synthetic"]["vacuous_bounds"])
+        dd = o["divided_difference_synthetic"]
+        print("DD:", dd["pass"], "planted enclosures rejected", dd["planted_invalid_enclosures_rejected"],
+              "nonvacuous", dd["nonvacuous_LB2"], "vacuous", dd["vacuous_bounds"])

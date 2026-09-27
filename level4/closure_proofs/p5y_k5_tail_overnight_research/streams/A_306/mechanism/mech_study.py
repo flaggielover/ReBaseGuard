@@ -17,10 +17,14 @@ DECLARED BEFORE ANY RUN (rule, not similarity to any target):
   box/panel emulation    C11R's frozen configuration depth 5, 32 u-panels (C11R_POLICY), float re-implementation
                          of c11r_boxdata.box_upper_coeffs / box_lower_coeffs, cross-checked against the exact
                          c11_certifier box bound at a point drift (depth 3, 8 panels)
-  negative controls      NC1 full nodal family on a tiny operator (N = 4) must reproduce the truth exactly;
-                         NC2 a planted 0.99 x truth candidate must FAIL the pointwise supersolution screen;
+  negative controls      (R1 repair, REVIEW_GLOBAL_INTEGRITY_R1 C-5: the former NC2 "0.99 x truth" was class (c) --
+                         its margin is -0.01 by linearity -- and is REPLACED; NC1 and NC4 are CHECKS, not controls)
+                         CHECK1 truth-in-family: when the discrete truth is a family member the LP must return it;
+                         NC2' localized planted defect: w = v + 1/100 with w lowered by 1/5 at ONE rule-chosen node
+                             must FAIL the pointwise screen AT that node, while the undamaged twin passes (guaranteed:
+                             the node's margin drops by (1/5)(1 - P_xx) > (1/100) h1(x));
                          NC3 a planted wrong atom split must break the Sherman-Morrison identity v(a) = t(a)/D;
-                         NC4 every family value must lie on the correct side of the truth (any violation is a
+                         CHECK4 every family value must lie on the correct side of the truth (any violation is a
                              detected solver/assembly defect, never silently dropped).
 No quantity is evaluated at any CUSUM m=5 tail drift; every drift passes ov_quarantine.guard_drift.
 """
@@ -198,6 +202,7 @@ def cover(depth: int) -> list:
 
 def box_upper_rows(elo: float, ehi: float, depth: int, panels: int) -> list:
     """Float re-implementation of c11r_boxdata.box_upper_coeffs (K and Khat keys)."""
+    Q.guard_drift(Fr(elo), Fr(ehi))
     out = []
     for (a, b, c, d) in cover(depth):
         lo_z, hi_z = c - MC.CC, MC.CC - a
@@ -235,6 +240,7 @@ def box_select_upper(rows: list, key: str, b_max: float = 4.0) -> dict:
 
 def box_lower_rows(elo: float, ehi: float, depth: int, panels: int) -> list:
     """Float re-implementation of c11r_boxdata.box_lower_coeffs + h1_box_lower."""
+    Q.guard_drift(Fr(elo), Fr(ehi))
     out = []
     for (a, b, c, d) in cover(depth):
         u0a, u1a = d - MC.CC + ehi, MC.CC - b + elo
@@ -332,17 +338,28 @@ def nc_full_nodal(e: Fr) -> dict:
             "pass": all(r["reproduces"] and r["without_is_looser"] for r in res.values())}
 
 
-def nc_planted_shrink(e: Fr) -> dict:
-    """NC2: 0.99 x truth is NOT a supersolution; the pointwise screen must detect it (and accept 1.0 x truth + 1e-9)."""
+def nc_localized_defect(e: Fr) -> dict:
+    """NC2' (class a): a planted non-supersolution with ONE defective node must be caught by the pointwise screen at
+    exactly that node; its undamaged twin must pass.  Node rule (fixed): the interior node nearest to (2, 1)."""
     Q.guard_drift(e)
     ny = MC.Nystrom(10, float(e))
     tr = ny.truth()
-    res = {}
-    for lab, fac, add in (("planted_0.99", 0.99, 0.0), ("truth_plus", 1.0, 1e-9)):
-        w = [fac * x + add for x in tr["v"]]
+    w_ok = [x + 0.01 for x in tr["v"]]
+    xstar = min((r for r, (pi, mi) in enumerate(ny.coords) if pi > 0 and mi > 0),
+                key=lambda r: (ny.xy(r)[0] - 2.0) ** 2 + (ny.xy(r)[1] - 1.0) ** 2)
+    w_bad = list(w_ok)
+    w_bad[xstar] -= 0.2
+
+    def screen(w):
         Pw = ny.apply(w, False)
-        res[lab] = min(w[r] - 1.0 - Pw[r] for r in range(ny.n))
-    return {"min_margin": res, "pass": res["planted_0.99"] < 0 and res["truth_plus"] > -1e-10}
+        m = [w[r] - 1.0 - Pw[r] for r in range(ny.n)]
+        r0 = min(range(ny.n), key=lambda r: m[r])
+        return m[r0], r0
+    ok_min, _ = screen(w_ok)
+    bad_min, bad_arg = screen(w_bad)
+    return {"node": list(ny.xy(xstar)), "twin_min_margin": ok_min, "planted_min_margin": bad_min,
+            "planted_argmin_node": list(ny.xy(bad_arg)),
+            "pass": ok_min > 0 and bad_min < 0 and bad_arg == xstar}
 
 
 def nc_wrong_atom(e: Fr) -> dict:
@@ -409,8 +426,8 @@ def main() -> dict:
         out["per_drift"][key] = res
         print(f"drift {key} done at {time.time() - t00:.0f}s", flush=True)
     # negative controls (declared set)
-    out["negative_controls"]["NC1_full_nodal"] = nc_full_nodal(Fr(1))
-    out["negative_controls"]["NC2_planted_shrink"] = nc_planted_shrink(Fr(1))
+    out["checks"] = {"CHECK1_truth_in_family": nc_full_nodal(Fr(1))}
+    out["negative_controls"]["NC2p_localized_defect"] = nc_localized_defect(Fr(1))
     out["negative_controls"]["NC3_wrong_atom_split"] = nc_wrong_atom(Fr(1))
     viol = []
     for key, res in out["per_drift"].items():
@@ -422,11 +439,12 @@ def main() -> dict:
                 if not ok or r["min_slack"] < -1e-7:
                     viol.append({"drift": key, "family": f, "objective": obj, "value": r["value"], "truth": ref,
                                  "min_slack": r["min_slack"]})
-    out["negative_controls"]["NC4_side_of_truth"] = {"violations": viol, "pass": not viol,
+    out["checks"]["CHECK4_side_of_truth"] = {"violations": viol, "pass": not viol,
                                                      "checked": sum(len(r["families_point_N10"]) * 4
                                                                     for r in out["per_drift"].values())}
     out["wall_seconds"] = time.time() - t00
     out["verdict"] = "PASS" if all(v.get("pass", False) for v in out["negative_controls"].values()) \
+        and all(v.get("pass", False) for v in out["checks"].values()) \
         and out["crosscheck"]["box_float_vs_exact_c11"]["agree_1e-12"] else "CONTROL_FAILED"
     return out
 
@@ -467,7 +485,9 @@ def tables(o: dict) -> str:
     L.append("## Negative controls and cross-check")
     L.append("")
     for k, v in o["negative_controls"].items():
-        L.append(f"* {k}: pass = {v['pass']}")
+        L.append(f"* control {k}: pass = {v['pass']}")
+    for k, v in o["checks"].items():
+        L.append(f"* check {k}: pass = {v['pass']}")
     c = o["crosscheck"]["box_float_vs_exact_c11"]
     L.append(f"* box float emulation vs exact c11_certifier (e = 3, depth 3, 8 panels, w = 3 - m/2): "
              f"|diff| = {c['abs_diff']:.3e} ({c['boxes']} boxes), agree = {c['agree_1e-12']}")
