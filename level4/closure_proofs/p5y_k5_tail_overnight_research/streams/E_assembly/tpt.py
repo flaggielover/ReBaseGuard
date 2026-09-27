@@ -1,0 +1,251 @@
+"""Theorem TPT (Taylor-profile transport) — exact-rational implementation (stdlib only).
+
+Two independent evaluations of the transport penalty:
+
+* ``penalty_closed``  closed-form polynomial integration of t * (-L(t)) (Corollary TPT-M), with the
+                      K1 cap handled by a split at a rational point s' (valid for ANY s');
+* ``penalty_riemann`` monotone Riemann UPPER sums on a uniform rational partition (V4 cross-check);
+                      it must be >= penalty_closed and converge to it.
+
+Also the historical comparators ``penalty_c5t`` (theorem C5-T) and ``penalty_frozen`` (K5-B
+direct clause rho*x_hi*M), both from the whole-cell enclosure = the profile at s = rho.
+
+Every public entry point takes a ``CellProfile`` and calls ``ov_quarantine.guard_cell`` on its
+(detector, m, cell) label, so the target cells can never be evaluated through this module.
+"""
+from __future__ import annotations
+
+import sys
+from dataclasses import dataclass, field
+from fractions import Fraction as F
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "code"))
+import ov_quarantine as Q  # noqa: E402
+
+Q.install_import_guard()
+
+Poly = list  # coefficients in s, low -> high
+
+
+def padd(a: Poly, b: Poly, sb: F = F(1)) -> Poly:
+    n = max(len(a), len(b))
+    return [(a[i] if i < len(a) else F(0)) + sb * (b[i] if i < len(b) else F(0)) for i in range(n)]
+
+
+def pscale(a: Poly, c: F) -> Poly:
+    return [c * x for x in a]
+
+
+def pmul(a: Poly, b: Poly) -> Poly:
+    out = [F(0)] * (len(a) + len(b) - 1)
+    for i, x in enumerate(a):
+        for j, y in enumerate(b):
+            out[i + j] += x * y
+    return out
+
+
+def peval(a: Poly, s: F) -> F:
+    acc = F(0)
+    for c in reversed(a):
+        acc = acc * s + c
+    return acc
+
+
+def pint(a: Poly, lo: F, hi: F) -> F:
+    """exact integral of polynomial a(s) over [lo, hi]."""
+    tot = F(0)
+    for k, c in enumerate(a):
+        tot += c * (hi ** (k + 1) - lo ** (k + 1)) / (k + 1)
+    return tot
+
+
+@dataclass
+class SourceTerm:
+    """One r of theorem TC: centre interval of H_r(a), |G_r(a)|, midpoint residuals, sups."""
+    H_at_a: tuple            # (lo, hi) enclosure of the candidate value Ĥ_r(a)
+    abs_G_at_a: F            # |Ĝ_r(a)| (0 under TC-T premise (P2'))
+    fF: F
+    fD: F
+    fH: F
+    fG: F
+    Env4: F
+
+
+@dataclass
+class CellProfile:
+    detector: str
+    m: int
+    cell: int
+    e0: F
+    rho: F
+    g_hi: F
+    A0: F
+    A1: F
+    A2: F
+    terms: list                         # list[SourceTerm], r = 0..m-1, each weighted 1/m
+    W: tuple = (F(0), F(0))             # whole-cell W enclosure sum (lo, hi), already c-weighted
+    H_K1: tuple | None = None           # whole-cell K1 enclosure of R''_m, or None
+    label: str = ""
+    meta: dict = field(default_factory=dict)
+
+    @property
+    def x_lo(self) -> F:
+        return self.e0 - self.rho
+
+    @property
+    def x_hi(self) -> F:
+        return self.e0 + self.rho
+
+
+def rad_poly(cp: CellProfile, t: SourceTerm) -> Poly:
+    """rad_r(s) = A0 p2(s) + 2 A1 p1(s) + A2 p0(s), plus the centre-motion term s*|G(a)|."""
+    p0 = [t.fF, t.fD, t.fH / 2, t.fG / 6, t.Env4 / 24]
+    p1 = [t.fD, t.fH, t.fG / 2, t.Env4 / 6]
+    p2 = [t.fH, t.fG, t.Env4 / 2]
+    r = padd(padd(pscale(p2, cp.A0), pscale(p1, 2 * cp.A1)), pscale(p0, cp.A2))
+    return padd(r, [F(0), t.abs_G_at_a])
+
+
+def lo_hi_polys(cp: CellProfile) -> tuple:
+    """TC profile bounds lo(s), hi(s) of R''_m(e0 +- s) (before the K1 cap)."""
+    m = F(len(cp.terms))
+    lo: Poly = [cp.W[0]]
+    hi: Poly = [cp.W[1]]
+    for t in cp.terms:
+        rp = rad_poly(cp, t)
+        lo = padd(lo, padd([t.H_at_a[0]], rp, F(-1)), F(1) / m)
+        hi = padd(hi, padd([t.H_at_a[1]], rp), F(1) / m)
+    return lo, hi
+
+
+def _check(cp: CellProfile) -> None:
+    Q.guard_cell(cp.detector, cp.m, cp.cell)
+    if not cp.x_lo > 0:
+        raise ValueError("TPT needs x_lo > 0 (it integrates t, not |t|)")
+    if cp.rho <= 0:
+        raise ValueError("rho must be positive")
+    for t in cp.terms:
+        for v in (t.abs_G_at_a, t.fF, t.fD, t.fH, t.fG, t.Env4):
+            if v < 0:
+                raise ValueError("profile coefficients must be >= 0 (monotone profile)")
+    if min(cp.A0, cp.A1, cp.A2) < 0:
+        raise ValueError("atom constants must be >= 0")
+
+
+def _crossing(poly: Poly, level: F, rho: F, decreasing: bool, bits: int = 60) -> F | None:
+    """rational s' in [0, rho] near the crossing of poly(s) with level (monotone poly); None if no crossing."""
+    f0, f1 = peval(poly, F(0)) - level, peval(poly, rho) - level
+    if decreasing:
+        if f0 <= 0:
+            return F(0)
+        if f1 >= 0:
+            return None
+    else:
+        if f0 >= 0:
+            return F(0)
+        if f1 <= 0:
+            return None
+    a, b = F(0), rho
+    for _ in range(bits):
+        mid = (a + b) / 2
+        v = peval(poly, mid) - level
+        if (v > 0) == decreasing:
+            a = mid
+        else:
+            b = mid
+    return (a + b) / 2
+
+
+def penalty_closed(cp: CellProfile) -> dict:
+    """Corollary TPT-M: P* = max(0, I_right, I_left), each an exact polynomial integral (upper bound
+    when the K1 cap is split at a rational s')."""
+    _check(cp)
+    lo, hi = lo_hi_polys(cp)
+    e0, rho = cp.e0, cp.rho
+    # right side: integrand (e0 + s) * (-L(s)),  L = max(capLo, lo(s))
+    tR = [e0, F(1)]
+    negLo = pscale(lo, F(-1))
+    if cp.H_K1 is not None:
+        sR = _crossing(lo, cp.H_K1[0], rho, decreasing=True)
+    else:
+        sR = None
+    if sR is None:
+        I_right = pint(pmul(tR, negLo), F(0), rho)
+    else:
+        I_right = pint(pmul(tR, negLo), F(0), sR) + pint(pscale(tR, -cp.H_K1[0]), sR, rho)
+    # left side: t = e0 - s, integrand (e0 - s) * U(e0 - s), U = min(capHi, hi(s)); dt = ds
+    tL = [e0, F(-1)]
+    if cp.H_K1 is not None:
+        sL = _crossing(hi, cp.H_K1[1], rho, decreasing=False)
+    else:
+        sL = None
+    if sL is None:
+        I_left = pint(pmul(tL, hi), F(0), rho)
+    else:
+        I_left = pint(pmul(tL, hi), F(0), sL) + pint(pscale(tL, cp.H_K1[1]), sL, rho)
+    P = max(F(0), I_right, I_left)
+    return {"P_star": P, "I_right": I_right, "I_left": I_left, "split_right": sR, "split_left": sL}
+
+
+def penalty_riemann(cp: CellProfile, N: int = 64) -> F:
+    """Independent monotone Riemann upper sum for P* (Corollary TPT-M)."""
+    _check(cp)
+    lo, hi = lo_hi_polys(cp)
+    e0, rho = cp.e0, cp.rho
+
+    def L(s):
+        v = peval(lo, s)
+        return v if cp.H_K1 is None else max(cp.H_K1[0], v)
+
+    def U(s):
+        v = peval(hi, s)
+        return v if cp.H_K1 is None else min(cp.H_K1[1], v)
+
+    right = F(0)
+    left = F(0)
+    for i in range(N):
+        a, b = rho * i / N, rho * (i + 1) / N
+        f = -L(b)  # -L non-decreasing in s: sup on [a,b] at b
+        right += (b - a) * max((e0 + a) * f, (e0 + b) * f)
+        u = U(b)   # U(e0 - s) non-decreasing in s
+        left += (b - a) * max((e0 - a) * u, (e0 - b) * u)
+    return max(F(0), right, left)
+
+
+def whole_cell_enclosure(cp: CellProfile) -> tuple:
+    lo, hi = lo_hi_polys(cp)
+    Hlo, Hhi = peval(lo, cp.rho), peval(hi, cp.rho)
+    if cp.H_K1 is not None:
+        Hlo, Hhi = max(Hlo, cp.H_K1[0]), min(Hhi, cp.H_K1[1])
+    if Hlo > Hhi:
+        raise ValueError("empty enclosure")
+    return Hlo, Hhi
+
+
+def penalty_c5t(cp: CellProfile) -> F:
+    _check(cp)
+    Hlo, Hhi = whole_cell_enclosure(cp)
+    wR = cp.rho * (cp.x_hi - cp.rho / 2)
+    wL = cp.rho * (cp.x_lo + cp.rho / 2)
+    return max(max(-Hlo, F(0)) * wR, max(Hhi, F(0)) * wL)
+
+
+def penalty_frozen(cp: CellProfile) -> F:
+    _check(cp)
+    Hlo, Hhi = whole_cell_enclosure(cp)
+    return cp.rho * cp.x_hi * max(abs(Hlo), abs(Hhi))
+
+
+def evaluate(cp: CellProfile) -> dict:
+    pc = penalty_closed(cp)
+    pr = penalty_riemann(cp)
+    c5 = penalty_c5t(cp)
+    fr = penalty_frozen(cp)
+    if not (pc["P_star"] <= pr):
+        raise AssertionError("V4: Riemann upper sum below closed form")
+    if not (pc["P_star"] <= c5 <= fr):
+        raise AssertionError("TPT-D dominance violated")
+    return {"P_tpt": pc["P_star"], "P_riemann": pr, "P_c5t": c5, "P_frozen": fr,
+            "Gamma_tpt": cp.g_hi + pc["P_star"], "Gamma_c5t": cp.g_hi + c5,
+            "Gamma_frozen": cp.g_hi + fr, "detail": pc}
