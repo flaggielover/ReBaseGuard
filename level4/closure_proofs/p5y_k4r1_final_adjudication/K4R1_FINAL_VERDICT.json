@@ -1,0 +1,59 @@
+{
+ "schema": "rebaseguard.p5y.k4r1.final-successor-adjudication.v1",
+ "HISTORICAL_K4_VERDICT": "NOT_CLOSED",
+ "HISTORICAL_K4_DISPOSITION": "K4_INCONCLUSIVE_K1_RECORDS",
+ "HISTORICAL_K4_COMMIT": "bc4ba08ef20f3996926f319766ca253e82004f74",
+ "HISTORICAL_K4_CHECKPOINT": {"commit": "e5cc5a9069f817cce76b5ac5676a327757b57573", "sha256": "95b1fd16ac420d6f545cbb2619a6086ced31c6d748a9c801ca7f7c114e77a1e1"},
+ "HISTORICAL_K4_PRE_RESULT_STATE": "PRESERVED",
+ "K4R1": {
+  "campaign": "P5Y-K4R1 - Near-Zero Successor Certificate",
+  "start_commit": "bc4ba08ef20f3996926f319766ca253e82004f74",
+  "qualification_history": {
+   "r1": {"candidate": "81f5195a9be3253729706066a125ed88644f7c8c", "verdict": "QUALIFICATION_REJECTED", "blocking": "Q1 real-input wiring untested"},
+   "r2": {"candidate": "179d5aaeada14256bbdc64e68646d49b4cc2bc41", "verdict": "QUALIFICATION_REJECTED", "blocking": "Q2 execution would crash after computing"},
+   "r3": {"candidate": "cb5b6c61185c093a69006a73fbadba81b0880a7b", "verdict": "QUALIFICATION_REJECTED", "blocking": "Q3 freeze builder bound on-disk files"},
+   "r4": {"candidate": "5d33363cbffc03d9a6f961d67e9d97ba6333becd", "verdict": "QUALIFICATION_REJECTED", "blocking": "Q4 launch check trusted the freeze's review_files"},
+   "r5": {"candidate": "93d82c87d2f5aa33109f5b37125caf283967b694", "verdict": "QUALIFICATION_ACCEPTED",
+          "review_json_sha256": "8e49763026be4aa423f81d8596c5bcc33219314c826e83394bb18c50d4c0552e"}
+  },
+  "freeze_commit": "8928b8f170419e2daf19187085dd502e44a26a6b",
+  "freeze_sha256": "874e63e2f7a6b892714a46b5dc167ceea8b41cf8b4bb25bc50c77f875c0cc295",
+  "execution": {"exact_once": true, "executed_at_head": "8928b8f170419e2daf19187085dd502e44a26a6b", "started_utc": "2026-09-27T12:17:35Z",
+                "result_commit": "b5b4c91764a44f3b7438bcc571c1360cbbc1379d",
+                "result_sha256": "cbf1332bdf368ceb747128996d057d7e2acb1017325ec47b67bfba92b15fc7e4",
+                "cpu_seconds_in_process": 0.022521, "wall_seconds_process": 1.33, "new_real_addresses": 0},
+  "certificate": "anchored third-order Taylor (route D3): B = D0.hi - L1*e0^2/2 + a^2/6*max(min(M3, U0 + a^2/2*M5), 0) < 0",
+  "results": {
+   "CUSUM|m=2": {"cells": [0, 1], "region": "(0, 10187/10000000]", "outcome": "K4R1_CERTIFIED", "B_approx": -3.730553555165},
+   "CUSUM|m=3": {"cells": [0, 1, 2], "region": "(0, 957/625000]", "outcome": "K4R1_CERTIFIED", "B_approx": -2.531775266413},
+   "CUSUM|m=5": {"cells": [0, 1, 2], "region": "(0, 957/625000]", "outcome": "K4R1_CERTIFIED", "B_approx": -0.939622114960}
+  },
+  "K4R1_COMPACT_RESIDUAL_COVERAGE": "PASS",
+  "K4R1_COMPLETE_K4_ASSEMBLY": "PASS",
+  "K4R1_SUCCESSOR_SCIENCE": "PASS",
+  "FINAL_ADJUDICATION": "ACCEPTED",
+  "final_adjudication_json_sha256": "f4a5263700b95f4feaf66a4f7d168e52d94fb6cbf54d2bd2c685c7e2d40c6812"
+ },
+ "K4R1_SUCCESSOR_VERDICT": "CLOSED",
+ "K4_SCIENTIFIC_LINE": "CLOSED_BY_LATER_SUCCESSOR_CAMPAIGN",
+ "K4_SCOPE": "H2 on (0, 2] for D in {CUSUM, SR}, m in {1,2,3,5} (the frozen K4 obligation, P5X-T7(1)); R < 0 for e > 2 is not asserted, exactly as frozen in K4 (consumer licence P5X-T7(1) + K1 sup|R| < 2)",
+ "K4_RESIDUAL_BLOCKERS": "NONE",
+ "THRESHOLDS_RELAXED": false,
+ "SCOPE_NARROWED": false,
+ "HISTORICAL_RECORDS_MODIFIED": false,
+ "non_blocking_notes": [
+  "T-EXT adoption covers the cells 0-10 K5-B pass set; the hull majorants M3/M5 rest on that adjudication's tower checks, TEXT_SPEC and premise P1b (GATE.input_scope_note); the decision does not depend on them materially: B stays negative with T replaced by M3 and without the L1 correction, i.e. it rests on D0.hi < 0 from the K1 cell-0 record",
+  "designer prior knowledge of some input magnitudes disclosed (FEASIBILITY.md); the gate has no tunable parameter",
+  "r5 qualification note N31 (provenance commit typo) was itself mistaken: the field equals 7d5cf02b7f4b29439c59d803fe90ce62bc0841da",
+  "the r5 qualification reviewer was given an explicit definition of BLOCKING (unqualified code producing a result, unsoundness/narrowing/relaxation, target leakage, spoiling the single execution)",
+  "all reviewers, adjudicators and the designer are the same model family in separate contexts; no human review"
+ ],
+ "P5Y_STATE": {
+  "K1": "CLOSED_BY_LATER_SUCCESSOR_CAMPAIGN",
+  "K2": "CLOSED",
+  "K3": "CLOSED",
+  "K4": "CLOSED_BY_LATER_SUCCESSOR_CAMPAIGN",
+  "K5": "OPEN",
+  "P5Y": "NOT_YET_CLOSED"
+ }
+}
