@@ -1,0 +1,190 @@
+{
+ "binding": [
+  {
+   "artifact": "level4/closure_proofs/p5y_k1_successor_final_adjudication/evidence/FINAL_ADJUDICATION.json",
+   "compatible": true,
+   "expected": {
+    "cusum_successor_science": "PASS",
+    "k1_scientific_line": "CLOSED_BY_LATER_SUCCESSOR_CAMPAIGN",
+    "k1_successor_verdict": "K1_SUCCESSOR_CLOSED",
+    "residual_blockers": "NONE",
+    "sr_successor_science": "PASS"
+   },
+   "id": "XB1 K1 state",
+   "observed": {
+    "cusum_successor_science": "PASS",
+    "k1_scientific_line": "CLOSED_BY_LATER_SUCCESSOR_CAMPAIGN",
+    "k1_successor_verdict": "K1_SUCCESSOR_CLOSED",
+    "residual_blockers": "NONE",
+    "sr_successor_science": "PASS"
+   },
+   "ref": "refs/heads/p5y-k1-successor-final-assembly",
+   "tip": "7d5cf02b7f4b29439c59d803fe90ce62bc0841da"
+  },
+  {
+   "artifact": "level4/closure_proofs/p5y_k2_k3_final_countersignature/FINAL_COUNTERSIGNATURE.json",
+   "compatible": true,
+   "expected": {
+    "K2": "PASS",
+    "K3": "PASS"
+   },
+   "id": "XB2 K2/K3 countersignature",
+   "observed": {
+    "K2": "PASS",
+    "K3": "PASS"
+   },
+   "ref": "refs/heads/p5y-k2-k3-final-closure",
+   "tip": "df7038374a80cc94d7293ce08195fae21fe8dc0f"
+  },
+  {
+   "artifact": "level4/closure_proofs/p5y_k4r1_final_adjudication/K4R1_FINAL_VERDICT.json",
+   "compatible": true,
+   "expected": {
+    "K4R1_SUCCESSOR_VERDICT": "CLOSED",
+    "K4_RESIDUAL_BLOCKERS": "NONE",
+    "K4_SCIENTIFIC_LINE": "CLOSED_BY_LATER_SUCCESSOR_CAMPAIGN"
+   },
+   "id": "XB3 K4 state",
+   "observed": {
+    "K4R1_SUCCESSOR_VERDICT": "CLOSED",
+    "K4_RESIDUAL_BLOCKERS": "NONE",
+    "K4_SCIENTIFIC_LINE": "CLOSED_BY_LATER_SUCCESSOR_CAMPAIGN"
+   },
+   "ref": "refs/heads/p5y-k4r1-final-closure",
+   "tip": "e88a288588e08d13c32ed009c8dc42f5982ff8a1"
+  },
+  {
+   "artifact": "level4/closure_proofs/p5y_k4r1_final_adjudication/K4R1_FINAL_VERDICT.json",
+   "compatible": true,
+   "expected": {
+    "K1": "CLOSED_BY_LATER_SUCCESSOR_CAMPAIGN",
+    "K2": "CLOSED",
+    "K3": "CLOSED",
+    "K4": "CLOSED_BY_LATER_SUCCESSOR_CAMPAIGN",
+    "K5": "OPEN",
+    "P5Y": "NOT_YET_CLOSED"
+   },
+   "id": "XB4 recorded P5Y_STATE (K1..K5, P5Y)",
+   "observed": {
+    "K1": "CLOSED_BY_LATER_SUCCESSOR_CAMPAIGN",
+    "K2": "CLOSED",
+    "K3": "CLOSED",
+    "K4": "CLOSED_BY_LATER_SUCCESSOR_CAMPAIGN",
+    "K5": "OPEN",
+    "P5Y": "NOT_YET_CLOSED"
+   },
+   "ref": "refs/heads/p5y-k4r1-final-closure",
+   "tip": "e88a288588e08d13c32ed009c8dc42f5982ff8a1"
+  },
+  {
+   "compatible": true,
+   "expected": "only a3547b9b, e8680998 and route-audit/closeout-namespace commits; one version each",
+   "id": "XB5 SR K5 NOT STARTED on every ref (SR-K5 status text and status-file versions unchanged)",
+   "method": "git log --all -G 'SR K5|SR_K5|K5_SR|K5 \\(SR\\)|SR-side K5|SR/K5|SR half of K5|SR side of K5' --name-only; per-tip blob of status files",
+   "observed": {
+    "commits": [
+     "591b4394",
+     "08e9acd1",
+     "2f36352e",
+     "4a4b1392",
+     "802be11e",
+     "a3547b9b",
+     "e8680998"
+    ],
+    "status_file_versions": {
+     "level4/closure_proofs/p5y_k5_order3_readiness_audit/README.md": [
+      "597c9b2d2fc5370d0ec40e55b3cc546b3f299837"
+     ],
+     "level4/closure_proofs/p5y_k5_remaining_cell_closure/K5_STATUS.md": [
+      "d212f0d52126cd4c7d062fc11c335484482903b0"
+     ]
+    },
+    "unexpected": []
+   }
+  },
+  {
+   "compatible": true,
+   "expected": "none",
+   "id": "XB6 no ref records K5 closed, a K5 coverage map r6, or P5Y closed",
+   "observed": {
+    "k5_closed_commits": [],
+    "p5y_closed_commits": [],
+    "r6_paths": []
+   }
+  }
+ ],
+ "drift_rule": "binding facts are compared by STATE (the expected tokens at the ref's current tip), not by tip id: a moved tip whose artifact yields identical tokens is COMPATIBLE_DRIFT (recorded); any token change, missing ref or missing/unparseable artifact is INCOMPATIBLE -> STOP",
+ "head": "591b43948a07e5fd916de37b3ef4d38830bb7b94",
+ "informational": [
+  {
+   "ref": "refs/heads/p5y-k1-successor-final-assembly",
+   "subject": "level4: close P5Y K1 line by successor adjudication",
+   "tip": "7d5cf02b7f4b29439c59d803fe90ce62bc0841da",
+   "tip_date": "2026-09-27T14:25:06+09:00"
+  },
+  {
+   "ref": "refs/remotes/origin/p5y-k1-successor-final-assembly",
+   "subject": "level4: close P5Y K1 line by successor adjudication",
+   "tip": "7d5cf02b7f4b29439c59d803fe90ce62bc0841da",
+   "tip_date": "2026-09-27T14:25:06+09:00"
+  },
+  {
+   "ref": "refs/heads/p5y-k2-k3-final-closure",
+   "subject": "level4: independently countersign P5Y K2 and K3 closure",
+   "tip": "df7038374a80cc94d7293ce08195fae21fe8dc0f",
+   "tip_date": "2026-09-27T15:03:06+09:00"
+  },
+  {
+   "ref": "refs/remotes/origin/p5y-k2-k3-final-closure",
+   "subject": "level4: independently countersign P5Y K2 and K3 closure",
+   "tip": "df7038374a80cc94d7293ce08195fae21fe8dc0f",
+   "tip_date": "2026-09-27T15:03:06+09:00"
+  },
+  {
+   "ref": "refs/heads/p5y-k4r1-final-closure",
+   "subject": "level4: P5Y K4 closed by later successor campaign (K4R1 final adjudication ACCEPTED)",
+   "tip": "e88a288588e08d13c32ed009c8dc42f5982ff8a1",
+   "tip_date": "2026-09-27T22:13:19+09:00"
+  },
+  {
+   "ref": "refs/remotes/origin/p5y-k4r1-final-closure",
+   "subject": "level4: P5Y K4 closed by later successor campaign (K4R1 final adjudication ACCEPTED)",
+   "tip": "e88a288588e08d13c32ed009c8dc42f5982ff8a1",
+   "tip_date": "2026-09-27T22:13:19+09:00"
+  },
+  {
+   "ref": "refs/heads/p5y-k4-frozen-execution-r1",
+   "subject": "P5Y K4: execute the frozen assembly checkpoint (r1) - NOT_CLOSED, K4_INCONCLUSIVE_K1_RECORDS",
+   "tip": "bc4ba08ef20f3996926f319766ca253e82004f74",
+   "tip_date": "2026-09-27T15:44:32+09:00"
+  },
+  {
+   "ref": "refs/heads/p5y-k4r1-nearzero-successor",
+   "subject": "P5Y-K4R1: exactly-once execution result (committed immediately, unmodified)",
+   "tip": "b5b4c91764a44f3b7438bcc571c1360cbbc1379d",
+   "tip_date": "2026-09-27T21:17:46+09:00"
+  },
+  {
+   "ref": "refs/heads/p5y-k1-final-evidence",
+   "subject": "PS1 downstream assembly: genuine AWS-only final assembly",
+   "tip": "15e70072ebfb7c0b5863ae8966cdb769d0604535",
+   "tip_date": "2026-09-25T17:12:25Z"
+  },
+  {
+   "ref": "refs/remotes/origin/p5y-postk1-frontier",
+   "subject": "p5y: K5 Campaign C1 \u2014 STOP before freeze at MARGINAL, with a costed C2 plan; spec corrections from the pre-freeze review",
+   "tip": "5289b6cee7134dd66e3289c3a210c8de5abb6a2c",
+   "tip_date": "2026-09-20T19:04:54+09:00"
+  },
+  {
+   "ref": "refs/heads/p5y-k5-tail-c11rd-d1d2-extension",
+   "subject": "p5y: K5 PARTIAL closeout \u2014 preserve the independent freeze review (CLOSEOUT_FREEZE_REJECTED) verbatim; STOP",
+   "tip": "591b43948a07e5fd916de37b3ef4d38830bb7b94",
+   "tip_date": "2026-09-27T22:44:30+09:00"
+  }
+ ],
+ "observed_at": "2026-09-27T23:11:55+09:00",
+ "pass": true,
+ "refs_scanned": 126,
+ "schema": "rebaseguard.p5y.k5.partial-closeout-r1.xref.v1"
+}

@@ -1,0 +1,220 @@
+{
+ "base": "591b43948a07e5fd916de37b3ef4d38830bb7b94",
+ "checks": [
+  {
+   "detail": "refs/heads/p5y-k5-tail-c11rd-d1d2-extension",
+   "id": "S01 branch",
+   "pass": true
+  },
+  {
+   "detail": "591b43948a07e5fd916de37b3ef4d38830bb7b94",
+   "id": "S02 base (predecessor freeze review 591b4394) is ancestor of HEAD",
+   "pass": true
+  },
+  {
+   "detail": [
+    "d52cec02",
+    "1667ea88",
+    "27e259f4",
+    "802be11e",
+    "4a4b1392",
+    "2f36352e",
+    "08e9acd1",
+    "591b4394"
+   ],
+   "id": "S03 local chain (route audit r0..r1, rejected freeze 08e9acd1, its review 591b4394) in HEAD",
+   "pass": true
+  },
+  {
+   "detail": "c123b9bb8f15d17650545b3fce4aca8a6b61093b",
+   "id": "S04 local main unchanged",
+   "pass": true
+  },
+  {
+   "detail": "1cb453826313c189f0bdafd5b84120c1edb74da9",
+   "id": "S05 remote main unchanged",
+   "pass": true
+  },
+  {
+   "detail": [],
+   "id": "S06 no remote copy of the branch",
+   "pass": true
+  },
+  {
+   "detail": "unset",
+   "id": "S07 no upstream configured",
+   "pass": true
+  },
+  {
+   "detail": "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
+   "id": "C01 r5 blob unchanged",
+   "pass": true
+  },
+  {
+   "detail": "structure only",
+   "id": "C02 r5: m=5 open [[306,309]], m=1,2,3 open [], union [[306,309]], K5_COVERAGE_COMPLETE false",
+   "pass": true
+  },
+  {
+   "detail": [],
+   "id": "C03 no r6 anywhere in this worktree (tracked or on disk)",
+   "pass": true
+  },
+  {
+   "detail": [
+    "refs/c11rd/r1-execution-consumed",
+    "refs/c12r2/cell306-pending-result",
+    "refs/c12r2/cell306-target-consumed"
+   ],
+   "id": "G01 governance refs exactly as pinned",
+   "pass": true
+  },
+  {
+   "detail": {
+    "276f4d41": "commit",
+    "b83cc6f5": "blob",
+    "def4e453": "commit"
+   },
+   "id": "G02 forensic objects present with expected types",
+   "pass": true
+  },
+  {
+   "detail": [],
+   "id": "H01 historical namespaces (incl. the rejected predecessor closeout) byte-identical to base",
+   "pass": true
+  },
+  {
+   "detail": {
+    "missing": [],
+    "pins": 28
+   },
+   "id": "H02 historical verdict tokens present",
+   "pass": true
+  },
+  {
+   "detail": [
+    "d212f0d52126cd4c7d062fc11c335484482903b0",
+    "597c9b2d2fc5370d0ec40e55b3cc546b3f299837"
+   ],
+   "id": "H03 K5_STATUS and readiness audit unchanged; K5_STATUS records SR K5 NOT STARTED with both prerequisites",
+   "pass": true
+  },
+  {
+   "detail": {
+    "changed": [
+     "level4/closure_proofs/p5y_k5_partial_closeout_r1/README.md",
+     "level4/closure_proofs/p5y_k5_partial_closeout_r1/code/closeout_checks_r1.py",
+     "level4/closure_proofs/p5y_k5_partial_closeout_r1/evidence/XREF_SNAPSHOT_R1.json",
+     "level4/closure_proofs/p5y_k5_partial_closeout_r1/protocol/K5_PARTIAL_CLOSEOUT_PROTOCOL_R1.md"
+    ],
+    "unexpected": []
+   },
+   "id": "P01 exact allowlist: every path changed since base (tracked, untracked, ignored) is allowed in this phase",
+   "pass": true
+  },
+  {
+   "detail": {},
+   "id": "P02 public publication edits are additive only (0 deleted or modified lines)",
+   "pass": true
+  },
+  {
+   "detail": {},
+   "id": "P03 public publication edits are single additive blocks at the frozen positions",
+   "pass": true
+  },
+  {
+   "detail": "level4/closure_proofs/p5y_k5_partial_closeout_r1",
+   "id": "P04 no __pycache__ or .pyc in the successor namespace",
+   "pass": true
+  },
+  {
+   "detail": {},
+   "id": "F01 verdict-line format of successor review/adjudication documents present so far",
+   "pass": true
+  },
+  {
+   "detail": {
+    "cited": 30,
+    "missing": []
+   },
+   "id": "R01 every backticked repository path cited in successor documents exists (in this worktree, or for the declared cross-ref artifacts at their ref's current tip; declared later artifacts exempt until their phase)",
+   "pass": true
+  },
+  {
+   "detail": {
+    "allowed_false_positive": [],
+    "pass": true,
+    "prohibited_caught": [
+     "H3a is established for CUSUM m = 5.",
+     "Cell 309 is unclosable.",
+     "All routes are exhausted.",
+     "This is the final coverage map.",
+     "306 failed.",
+     "K5 is not closed, and H3a is established.",
+     "The open cells are evidence against H3a.",
+     "Cell 309 is refuted.",
+     "SR K5 is complete.",
+     "P5Y is closed.",
+     "CUSUM K5 is closed.",
+     "H3a holds for every m."
+    ],
+    "prohibited_missed": []
+   },
+   "id": "T01 wording-scan regression fixtures: all prohibited caught, no negated/scoped false positive",
+   "pass": true
+  },
+  {
+   "detail": {
+    "files": [
+     "level4/closure_proofs/p5y_k5_partial_closeout_r1/README.md"
+    ],
+    "findings": {}
+   },
+   "id": "W01 publication-facing text (publication/, namespace README, added public lines) makes no banned assertion",
+   "pass": true
+  },
+  {
+   "detail": {
+    "decoy_negative_quiet": true,
+    "decoy_positive_fired": true,
+    "files_scanned": 5,
+    "hit_files": [],
+    "independent_hits": 0,
+    "original_hits": 0
+   },
+   "id": "L01 value-free leak scan: 0 original and 0 independent D1/D2 renderings; decoy controls behave",
+   "pass": true
+  },
+  {
+   "detail": "4 blobs",
+   "id": "L02 hash-set and helper sources at pinned blobs",
+   "pass": true
+  },
+  {
+   "detail": {
+    "compared": [
+     "DEC",
+     "DECOYS",
+     "INTSCI",
+     "RAT",
+     "SCALES",
+     "_dec_str",
+     "_digits",
+     "_exp10",
+     "_rendering_hashes",
+     "_tokens",
+     "value_patterns"
+    ],
+    "different": []
+   },
+   "id": "L03 scan helpers are code-identical (AST, docstrings ignored) to their cited sources",
+   "pass": true
+  }
+ ],
+ "head": "591b43948a07e5fd916de37b3ef4d38830bb7b94",
+ "pass": true,
+ "phase": "prefreeze",
+ "schema": "rebaseguard.p5y.k5.partial-closeout-r1.admin-checks.v1",
+ "scientific_computation": "NONE (administrative checks only)",
+ "summary": "26/26"
+}
