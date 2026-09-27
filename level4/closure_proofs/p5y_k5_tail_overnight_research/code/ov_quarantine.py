@@ -50,6 +50,11 @@ FORBIDDEN_PATH_PATTERNS = (
 )
 
 LITERAL_OK = "ov-quarantine: literal-ok"
+# A file whose first 40 lines contain this marker is an AUTHORIZED historical-read script (reading committed target
+# values under the historically evaluated supply only, TARGET_QUARANTINE allowed[1]). Its TARGET_INPUT_PATH and
+# TARGET_CELL_LITERAL findings are reported as SANCTIONED (listed for review), never silently dropped; a
+# FORBIDDEN_IMPORT in such a file still fails the scan.
+HISTORICAL_READ_MARK = "ov-quarantine: historical-read"
 
 
 class QuarantineRefusal(RuntimeError):
@@ -161,10 +166,17 @@ def _scan_file(p: Path) -> list[dict]:
 def scan(root: Path = NS) -> dict:
     files = sorted(q for q in root.rglob("*.py") if "__pycache__" not in q.parts)
     findings: list[dict] = []
+    sanctioned: list[dict] = []
     for q in files:
         if q.name == Path(__file__).name:
             continue  # the scanner's own tables are the definitions, not uses
-        findings.extend(_scan_file(q))
+        head = "\n".join(q.read_text().splitlines()[:40])
+        fs = _scan_file(q)
+        if HISTORICAL_READ_MARK in head:
+            sanctioned.extend(f for f in fs if f["kind"] in ("TARGET_INPUT_PATH", "TARGET_CELL_LITERAL"))
+            findings.extend(f for f in fs if f["kind"] not in ("TARGET_INPUT_PATH", "TARGET_CELL_LITERAL"))
+        else:
+            findings.extend(fs)
     # Negative control: a planted file (in memory) must be detected.
     planted = "import tail_forecast_r2\nx = 307\np = 'evidence/TCT_INPUTS_308.json'\n"
     tmp = NS / "ledger" / ".scan_negative_control.py"
@@ -179,6 +191,8 @@ def scan(root: Path = NS) -> dict:
         "files_scanned": len(files) - 1,
         "file_list": [str(q.relative_to(root)) for q in files if q.name != Path(__file__).name],
         "findings": findings,
+        "sanctioned_historical_read": [{"file": f["file"], "line": f["line"], "kind": f["kind"]} for f in sanctioned],
+        "sanctioned_files": sorted({f["file"] for f in sanctioned}),
         "negative_control_kinds": kinds,
         "negative_control_detected": control_ok,
         "verdict": "PASS" if (control_ok and not findings) else ("CONTROL_FAILED" if not control_ok else "FINDINGS"),

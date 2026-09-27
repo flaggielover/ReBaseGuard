@@ -84,7 +84,8 @@ def main() -> int:
     out["L1_ledger"] = lc | {"negative_control_detected": ledger_negative_control()}
     sc = Q.scan()
     out["L2_static_scan"] = {k: sc[k] for k in ("verdict", "files_scanned", "findings",
-                                                "negative_control_detected")}
+                                                "negative_control_detected", "sanctioned_files",
+                                                "sanctioned_historical_read")}
     changed = [p for p in git("diff", "--name-only", BASE, "HEAD").splitlines() if p]
     untracked = [p for p in git("ls-files", "--others", "--exclude-standard").splitlines() if p]
     outside = [p for p in changed + untracked if not p.startswith(NS_REL + "/")]
@@ -115,6 +116,7 @@ def main() -> int:
         "ledger": {k: lc[k] for k in ("lines", "new_target_evaluations", "target_equivalent_proxies",
                                       "target_informed_optimisation", "leak_flags")},
         "scan": out["L2_static_scan"]["verdict"], "files_scanned": sc["files_scanned"],
+        "sanctioned_files": sc["sanctioned_files"],
         "outside_namespace": outside, "r5_unchanged": out["L4_coverage"]["r5_unchanged"],
         "r6": out["L4_coverage"]["r6_paths_any_ref"],
         "refs_ok": all(v["ok"] for v in refs.values())}, indent=1))
