@@ -1,7 +1,7 @@
 # THEOREM LR — likelihood-ratio / score representation of the atom constants A0, A1, A2
 
-Status: theory complete (self-checked, not independently reviewed); VALIDATED_NON_TARGET on exact synthetic fixtures
-(§7). Stream C1a. No target-cell quantity and no tail-cell constant appears or is computed in this document (rule S8
+Status: theory complete (self-checked, not independently reviewed); VALIDATED_NON_TARGET on FSM; G6 pending
+REVIEW_RLR_R1 (§7; REVIEW_GLOBAL_INTEGRITY_R1 F11). Stream C1a. No target-cell quantity and no tail-cell constant appears or is computed in this document (rule S8
 checked). Under floor r2 any supply built from it is CLOSURE-ONLY.
 
 ## §0 Setting and notation
@@ -378,15 +378,21 @@ seeds 1..8 on [0, 1/4].
   recursion of §cert (iii), summed over n).
 * `identity_checks`: Theorem LR-1 as *exact vector equalities* U_{10} = (RK1R)[a,·] and U_{20} + U_{01} = (∂²R)[a,·];
   independent checks — (1) symmetric difference quotients of e ↦ R_e (h = 10⁻⁵, exact rationals), (2) brute-force path
-  enumeration to horizon 3–4 against the forward recursion `Chain.forward_moments`; negative controls — first-order
-  score sign flipped, and t sign flipped, must break the equalities.
+  enumeration to horizon 3–4 against the forward recursion `Chain.forward_moments`; negative controls, all planted
+  inside `Chain.moment_totals` and judged by the same comparators `identity1_holds` / `identity2_holds` — first-order
+  score sign flipped (identity 1); +10⁻⁹ planted at the atom of the (0,1) right-hand side (identity 2, guaranteed to
+  fire because R[a][a] ≥ 1); t sign flipped inside the solver (identity 2, fires iff U01 ≠ 0; fire rate reported).
+  *Correction (REVIEW_GLOBAL_INTEGRITY_R1 C-10):* the earlier `neg_t_flip` compared U20 − U01 with `!=` and never
+  exercised `moment_totals` (class (d)); it was withdrawn and is no longer counted as evidence.
 * `truth_pm_g`: A1_true = ‖(RK1R)[a,·]‖₁, A2_true = ‖(∂²R)[a,·]‖₁, PM1, PM2 (state level, |K1|, |K2| entrywise),
   Lemma G with C = ‖R‖, k_i = ‖K_i‖ at the point.
 * `lr_bounds_A1`: (i) δ-certificate over the declared (c, δ) grid; (i′) full quadratic, global c; (i′) per-state c(y);
   (iii) horizon-12 per-(n,y) CS head + certified tail; (iv) per-(n,y) Hölder lower bound (horizon 80). Every
   certificate is checked by `check_quadratic_cert` (exact coefficient test A ≥ 0, C ≥ 0, B² ≤ 4AC per state).
   Checker negative controls: a scaled by (1 − 10⁻³); constant term c/4 instead of c/2; certificate scaled below the
-  rigorous LR lower bound; b1 perturbed by 10⁻⁶ at the atom — each must be rejected.
+  rigorous LR lower bound; b1 perturbed by 10⁻⁶ at the atom; and (added after REVIEW_GLOBAL_INTEGRITY_R1 F7) an
+  **A < 0 plant** (b2 exact for c′ = 2c so A = −1/(4c), b1 exact so B = 0, a solved with c so C = 0: only the A ≥ 0
+  conjunct can reject it; a mutant checker without that conjunct must accept it) — each must be rejected.
 * `lr_bounds_A2`: (ii-a) triangle S2 + T_N and (ii-b) per-state quartic Cauchy–Schwarz (exact values of the minimal
   solutions); Jensen lower bound Σ_{n,y}|E[M_n² + N_n; X_n = y]|.
 * `rlr_and_dv`: taboo chain (atom column removed), τ_a, C_T = ‖Ĝ‖, κ_i = ‖K̂_i‖, D, D′, D″ exactly (h = Ĝk_a and
@@ -395,10 +401,15 @@ seeds 1..8 on [0, 1/4].
   identities for ∂R and ∂²R rows (exact), ν′ = (ĜK̂1Ĝ)[a,·], and PM-hat ≤ Dv′ factors.
 
 **Results (C1LR_FSM_VALIDATION.json, `V1.summary`, `V2.summary`).**
-* 24/24 seeds: both identities exact; difference-quotient and path-enumeration checks agree; both sign-flip negative
-  controls detected (`identity_counts`).
-* 24/24: every certificate passes the exact checker; all four planted non-supersolutions rejected, for the whole-kernel
-  and the excursion chain (`checker_negative_controls_detected*`); closed-form values match the solved certificates
+* 24/24 seeds: both identities exact; difference-quotient and path-enumeration checks agree (`identity_counts`).
+  In-solver negative controls (regenerated after REVIEW_GLOBAL_INTEGRITY_R1): first-order sign flip detected 24/24
+  (class (a) per that review); guaranteed (0,1)-plant detected 24/24 (`neg2_plant_detected`); t sign flip inside the
+  solver detected 24/24 (`neg2_tflip_in_solver_detected`, class (b): not guaranteed, fired 24/24 here and 5/5 on E2).
+  *Correction:* the earlier claim "both sign-flip negative controls detected" counted the class-(d) `neg_t_flip`,
+  which never exercised the solver (review C-10); that claim is withdrawn.
+* 24/24: every certificate passes the exact checker; all five planted non-supersolutions (including the A < 0 plant)
+  rejected, for the whole-kernel and the excursion chain, and the mutant checker without the A ≥ 0 conjunct accepts the
+  A < 0 plant 24/24, so that conjunct is now covered (`checker_negative_controls_detected*`); closed-form values match the solved certificates
   (`formula_matches`); regenerative identities exact (`regenerative_checks`); PM-hat ≤ Dv′ factor (`PMhat_le_Dv_counts`).
 * Chain true ≤ LR_cert ≤ PM ≤ G: 24/24 for A1 and for A2 (`chain_A1_holds`, `chain_A2_holds`).
 * Ratios to the truth (`A1_ratios`, `A2_ratios`; Λ ∈ [2.7, 8.4] on these fixtures): PM/LR_cert ≈ 1.5–2.4 (A1) and

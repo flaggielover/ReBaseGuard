@@ -37,8 +37,8 @@ campaign name.
 
 | route | state | note |
 |---|---|---|
-| RLR (Theorem LR-3) | **VALIDATED_NON_TARGET** | The theory is complete. |
-| plain LR | VALIDATED_NON_TARGET | Use it only as one more supply inside the componentwise minimum, never on its own. |
+| RLR (Theorem LR-3) | **VALIDATED_NON_TARGET on FSM; G6 pending REVIEW_RLR_R1** | The theory is complete (self-checked). The real-kernel status depends on C1b and REVIEW_RLR_R1 (REVIEW_GLOBAL_INTEGRITY_R1 F11). |
+| plain LR | VALIDATED_NON_TARGET on FSM; G6 pending REVIEW_RLR_R1 | Use it only as one more supply inside the componentwise minimum, never on its own. |
 
 **Governance under floor r2.** Both routes are **CLOSURE-ONLY**, because they supply constants other than Lemma G and
 Lemma Dv′ r2. RLR reuses Dv′'s inputs but adds the new ρ1 and ρ2. Adoption needs a floor extension that the user
@@ -49,9 +49,12 @@ decides and freezes before any evaluation.
 **Validation sets V1 and V2** (24 seeds, Λ ∈ [2.7, 8.4]):
 * the identities are exact;
 * the independent checks (finite differences and path enumeration) agree;
-* the sign-flip negative controls are detected;
+* the in-solver negative controls are detected 24/24: the first-order sign flip, the guaranteed (0,1) plant, and the
+  t sign flip inside the solver (class (b)). *Correction (REVIEW_GLOBAL_INTEGRITY_R1 C-10):* the earlier `neg_t_flip`
+  was class (d), never ran the solver, and is withdrawn;
 * every certificate passes the exact checker;
-* all four planted non-supersolutions are rejected for each seed;
+* all five planted non-supersolutions are rejected for each seed. One of them is the A < 0 plant (added for review F7),
+  and a mutant checker that drops the A ≥ 0 conjunct accepts it 24/24;
 * the chain true ≤ LR_cert ≤ PM ≤ G holds 24/24 for A1 and for A2.
 
 **A1 on V1** (`V1.summary.A1_ratios`):
@@ -112,9 +115,9 @@ interval-Horner enclosures (`check_block_cert`).
 | G3 scope explicit | **PASS.** The scope is (H1)–(H3), the e-free survival set, the score level, and the block form. The caveat about noise-level versus state-level scores is stated. |
 | G4 reproducible implementation | **PASS for the finite-state case.** `lr_fsm.py` regenerates every JSON (flags `--sets`, `--examples`, `--example-e1dp`, `--block`, `--block-variants`, `--block-negctl`). **There is no CUSUM implementation.** |
 | G5 non-target validation | **PASS, synthetic only**: 24 seeds, 3 toy ladders and 8 block seeds. |
-| G6 independent check | **PARTIAL.** There are internal independent code paths: finite differences, path enumeration, matrix-product identities, and closed-form versus solved certificates. There is no independent reviewer and no second implementation. |
+| G6 independent check | **PARTIAL; pending REVIEW_RLR_R1.** There are internal independent code paths: finite differences, path enumeration, matrix-product identities, and closed-form versus solved certificates. There is no independent reviewer and no second implementation. |
 | G7 temporal integrity | **PASS.** Every rule was declared in PROGRESS.md before its run. No target was evaluated. |
-| G8 no target leakage | **PASS.** No CUSUM computation was done. The only drifts used are {0, k/32 ≤ 1/4} on synthetic fixtures. The quarantine scan shows no finding in this stream; the one finding it reports is in another stream's file. There are 6 ledger entries (one per flag run), none flagged. |
+| G8 no target leakage | **PASS.** No CUSUM computation was done. The only drifts used are {0, k/32 ≤ 1/4} on synthetic fixtures. The quarantine scan shows no finding in this stream; the one finding it reports is in another stream's file. There are 12 ledger entries (6 original runs + 6 re-runs after REVIEW_GLOBAL_INTEGRITY_R1), none flagged. |
 | G9 could be frozen prospectively | **YES, in principle.** The constant formulas (LR-3) and the certificate checker are fixed objects. Freezing needs the CUSUM certifier and a floor extension. |
 | G10 real improvement | **RLR: YES, structurally.** It replaces the worst-case κ1·C_T by an excursion-average LR constant from the atom, and it provably never loses to Dv′. **Plain LR:** it improves only on Lemma G. |
 

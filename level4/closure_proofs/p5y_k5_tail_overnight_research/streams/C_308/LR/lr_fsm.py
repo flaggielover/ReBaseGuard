@@ -115,16 +115,18 @@ class Chain:
         return [[self.K0[x][y] * self.s[x][y] ** i * self.t[x][y] ** j for y in range(self.n)] for x in range(self.n)]
 
     # -- exact moment totals U_{ij}(y) = E_a sum_{n<tau} M_n^i N_n^j 1{X_n=y}
-    def moment_totals(self, maxdeg: int = 4, sign: int = 1) -> dict:
+    def moment_totals(self, maxdeg: int = 4, sign: int = 1, tsign: int = 1, plant=None) -> dict:
         """Row-vector linear solves U_{ij} = [delta_a 1{ij=00} + sum_lower C C U_{i'j'} K_{s^{i-i'} t^{j-j'}}] R.
 
-        ``sign`` = -1 flips the first-order score (negative control)."""
+        Negative-control hooks (REVIEW_GLOBAL_INTEGRITY_R1 C-10 repair; all act INSIDE this solver):
+        ``sign`` = -1 flips the first-order score; ``tsign`` = -1 flips the second-order score t;
+        ``plant`` = ((i, j), eps) adds eps at the atom entry of the (i, j) right-hand side before the solve."""
         n = self.n
         cache = {}
 
         def Kst(i, j):
             if (i, j) not in cache:
-                cache[(i, j)] = [[self.K0[x][y] * (sign * self.s[x][y]) ** i * self.t[x][y] ** j
+                cache[(i, j)] = [[self.K0[x][y] * (sign * self.s[x][y]) ** i * (tsign * self.t[x][y]) ** j
                                   for y in range(n)] for x in range(n)]
             return cache[(i, j)]
 
@@ -140,6 +142,8 @@ class Chain:
                     coef = comb(i, i2) * comb(j, j2)
                     contrib = row_mat(U[(i2, j2)], Kst(i - i2, j - j2))
                     rhs = [r + coef * c for r, c in zip(rhs, contrib)]
+            if plant is not None and plant[0] == (i, j):
+                rhs = [r + (plant[1] if y == self.atom else F(0)) for y, r in enumerate(rhs)]
             U[(i, j)] = row_mat(rhs, self.R)
         return U
 
@@ -173,7 +177,7 @@ class Chain:
 
 # ----------------------------------------------------------------------------- certificates (THEOREM_LR §cert)
 
-def check_quadratic_cert(ch: Chain, a, b1, b2, c) -> dict:
+def check_quadratic_cert(ch: Chain, a, b1, b2, c, _mutant_drop_A: bool = False) -> dict:
     """Exact check of w = a + b1 mu + b2 mu^2 >= c(x)/2 + mu^2/(2c(x)) + P w for all mu (THEOREM_LR §cert (i')).
 
     c: list (state-dependent) of positive rationals. Returns per-state pass flags and the worst slack."""
@@ -191,7 +195,7 @@ def check_quadratic_cert(ch: Chain, a, b1, b2, c) -> dict:
         A = b2[x] - 1 / (2 * c[x]) - Kb2[x]
         B = b1[x] - Kb1[x] - 2 * K1b2[x]
         C = a[x] - c[x] / 2 - Ka[x] - K1b1[x] - K2b2[x]
-        ok = A >= 0 and C >= 0 and B * B <= 4 * A * C
+        ok = (_mutant_drop_A or A >= 0) and C >= 0 and B * B <= 4 * A * C
         if not ok:
             ok_all = False
             fails.append(x)
@@ -227,15 +231,24 @@ C_GRID = [F(2 ** k, 8) for k in range(7)]          # declared: multiples of c_ha
 D_GRID = [F(1, 4), F(1, 2), F(1), F(2)]             # declared: multiples of 1/(2c)
 
 
+def identity1_holds(U: dict, dR, a: int) -> bool:
+    return U[(1, 0)] == dR[a]
+
+
+def identity2_holds(U: dict, d2R, a: int) -> bool:
+    return [p + q for p, q in zip(U[(2, 0)], U[(0, 1)])] == d2R[a]
+
+
 def identity_checks(fam, ch: Chain, e: F) -> dict:
     """Theorem LR-1 on the fixture: U10 row == (R K1 R)[a], U20+U01 row == (d2R)[a]; independent checks."""
+    Q.guard_drift(e)
     R, K1, K2 = ch.R, ch.K1, ch.K2
     dR = X.mat_mul(X.mat_mul(R, K1), R)
     d2R = X.mat_add(X.mat_scale(X.mat_mul(X.mat_mul(dR, K1), R), 2), X.mat_mul(X.mat_mul(R, K2), R))
     U = ch.moment_totals(4)
     a = ch.atom
-    id1 = U[(1, 0)] == dR[a]
-    id2 = [p + q for p, q in zip(U[(2, 0)], U[(0, 1)])] == d2R[a]
+    id1 = identity1_holds(U, dR, a)
+    id2 = identity2_holds(U, d2R, a)
     # independent check 1: symmetric difference quotient of e -> R_e (exact rationals, error O(h^2))
     h = F(1, 10 ** 5)
     Rp, Rm = fam.R(e + h), fam.R(e - h)
@@ -265,18 +278,23 @@ def identity_checks(fam, ch: Chain, e: F) -> dict:
     rec1 = [sum((fwd[k][(1, 0)][y] for k in range(Hp + 1)), F(0)) for y in range(ch.n)]
     rec2 = [sum((fwd[k][(2, 0)][y] + fwd[k][(0, 1)][y] for k in range(Hp + 1)), F(0)) for y in range(ch.n)]
     enum_ok = (rec1 == enum1) and (rec2 == enum2)
-    # negative control: flipped first-order score must break identity 1 (and hence the second-order cross term)
+    # negative controls, all THROUGH moment_totals and the same comparators as the real checks.
+    # (the former `neg_t_flip`, a bare != on U20-U01, was class (d) and is withdrawn: REVIEW_GLOBAL_INTEGRITY_R1 C-10)
     Uneg = ch.moment_totals(2, sign=-1)
-    neg1_detected = Uneg[(1, 0)] != dR[a]
-    # planted: t with the wrong sign breaks identity 2
-    neg2_rhs = [p - q for p, q in zip(U[(2, 0)], U[(0, 1)])]
-    neg2_detected = neg2_rhs != d2R[a]
+    neg1_detected = not identity1_holds(Uneg, dR, a)
+    # guaranteed plant: +eps at the atom of the (0,1) rhs shifts U01 by eps*R[a,.], and R[a][a] >= 1 > 0
+    Upl = ch.moment_totals(2, plant=((0, 1), F(1, 10 ** 9)))
+    neg2_plant_detected = not identity2_holds(Upl, d2R, a)
+    # t-sign flip inside the solver: fires iff U01 != 0 (not guaranteed; fire rate reported)
+    Utf = ch.moment_totals(2, tsign=-1)
+    neg2_tflip_detected = not identity2_holds(Utf, d2R, a)
     return {
         "identity1_exact": id1, "identity2_exact": id2,
         "fd_err1": float(err1), "fd_err2": float(err2), "fd_h": "1e-5",
         "fd_ok": err1 < F(1, 10 ** 6) and err2 < F(1, 10 ** 3),
         "path_enumeration_horizon": Hp, "path_enumeration_match": enum_ok,
-        "neg_sign_flip_detected": neg1_detected, "neg_t_flip_detected": neg2_detected,
+        "neg_sign_flip_detected": neg1_detected, "neg2_plant_detected": neg2_plant_detected,
+        "neg2_tflip_in_solver_detected": neg2_tflip_detected,
         "_U": U, "_dR": dR, "_d2R": d2R,
     }
 
@@ -356,6 +374,15 @@ def lr_bounds_A1(ch: Chain, U: dict, H_head: int, H_lb: int, fwd=None) -> dict:
     K2b = X.mat_vec(ch.Kw(2, 0), b_best)
     a_wc = X.mat_vec(ch.R, [c_best / 4 + k2 + k1 * k1 / d_best for k1, k2 in zip(K1b, K2b)])
     neg["wrong_constant_rejected"] = not check_quadratic_cert(ch, a_wc, z, b_best, [c_best] * n)["pass"]
+    # A < 0 plant (REVIEW_GLOBAL_INTEGRITY_R1 F7): b2 exact for c' = 2c (so A = 1/(4c) - 1/(2c) < 0), b1 exact from
+    # b2 (B = 0), a solved with the checker's c (C = 0): ONLY the A >= 0 conjunct can reject it; w - g - Pw = A mu^2 < 0.
+    cc = c_hat
+    b2p = X.mat_vec(ch.R, [1 / (2 * (2 * cc))] * n)
+    b1p = X.mat_vec(ch.R, [2 * v for v in X.mat_vec(ch.K1, b2p)])
+    ap = X.mat_vec(ch.R, [cc / 2 + p + q for p, q in zip(X.mat_vec(ch.K1, b1p), X.mat_vec(ch.Kw(2, 0), b2p))])
+    neg["A_negative_rejected"] = not check_quadratic_cert(ch, ap, b1p, b2p, [cc] * n)["pass"]
+    neg["A_negative_passes_mutant_without_A_conjunct"] = check_quadratic_cert(
+        ch, ap, b1p, b2p, [cc] * n, _mutant_drop_A=True)["pass"]
     if lb > 0:
         sc = lb / (2 * a_best[ch.atom])
         neg["below_lower_bound_rejected"] = not check_quadratic_cert(
@@ -563,9 +590,10 @@ def summarise(recs: list) -> dict:
     for tag in ("chain_A1", "chain_A2"):
         out[tag + "_holds"] = {k: sum(1 for r in recs if r[tag][k]) for k in keys1}
     idk = ["identity1_exact", "identity2_exact", "fd_ok", "path_enumeration_match", "neg_sign_flip_detected",
-           "neg_t_flip_detected"]
+           "neg2_plant_detected", "neg2_tflip_in_solver_detected"]
     out["identity_counts"] = {k: sum(1 for r in recs if r["identity"][k]) for k in idk}
-    nck = ["b1_perturbed_rejected", "a_scaled_down_rejected", "wrong_constant_rejected", "below_lower_bound_rejected"]
+    nck = ["b1_perturbed_rejected", "a_scaled_down_rejected", "wrong_constant_rejected", "below_lower_bound_rejected",
+           "A_negative_rejected", "A_negative_passes_mutant_without_A_conjunct"]
     out["checker_negative_controls_detected"] = {
         k: sum(1 for r in recs if r["cert_checks"]["negative_controls"].get(k)) for k in nck}
     out["checker_negative_controls_detected_excursion"] = {
@@ -772,6 +800,7 @@ def imatvec(Mi, v):
 
 
 def block_enclosures(fam, lo: F, hi: F):
+    Q.guard_drift(lo, hi)
     n = fam.n
     K0 = [[ipoly(p, lo, hi) for p in row] for row in fam.kp]
     K1 = [[ipoly(X.poly_deriv(p, 1), lo, hi) for p in row] for row in fam.kp]
@@ -884,6 +913,7 @@ def run_block(seeds=range(1, 9), m: int = 8, eta: F = F(1, 100)):
 
 
 def build_block_cert(fam, lo_b: F, hi_b: F, m: int, eta: F) -> dict:
+    Q.guard_drift(lo_b, hi_b)
     n = fam.n
     subs = [(lo_b + (hi_b - lo_b) * F(k, m), lo_b + (hi_b - lo_b) * F(k + 1, m)) for k in range(m)]
     encs = [block_enclosures(fam, l, h) for (l, h) in subs]

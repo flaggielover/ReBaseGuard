@@ -47,7 +47,9 @@ Scope: THEORY + EXACT SYNTHETIC VALIDATION ONLY. No CUSUM target cells, no drift
   D = eps(1+e), delta1 = 1 at e=0; same eps ladder, H=4/eps.
 - [result] --sets done -> validation/C1LR_FSM_VALIDATION.json (V1 kill=1/20: Lambda 4.1-8.4; V2 kill=1/5: Lambda 2.7-4.0;
   12+12 seeds, ~5 s each). ALL 24: identities exact (1st+2nd order), fd + path-enumeration independent checks match,
-  sign-flip / t-flip negative controls detected, all certificates pass the exact checker, all 4 planted
+  sign-flip / t-flip negative controls detected [CORRECTED per REVIEW_GLOBAL_INTEGRITY_R1 C-10: the t-flip
+  control was class (d) -- a bare != on U20-U01 that never ran moment_totals -- and is withdrawn; see the R1-repair
+  entry below for the in-solver replacement], all certificates pass the exact checker, all 4 planted
   non-supersolutions rejected (whole + excursion), regenerative identities exact, PMhat <= Dv' factor.
   Chain true <= LR_cert <= PM <= G holds 24/24 for A1 and A2.
   A1 ratios (V1 median): LR_lower/true 1.99, LR_cert/true 3.21, PM/true 7.79, Dv'(exact inputs)/true 6.52,
@@ -79,3 +81,17 @@ Scope: THEORY + EXACT SYNTHETIC VALIDATION ONLY. No CUSUM target cells, no drift
 - [result] --block-negctl: guaranteed-invalid scaled certificate rejected 8/8. Quarantine scan: 0 findings in C1a files
   (one finding in another stream's file, not mine); ledger 6 lr_fsm entries (one per flag run; --one smoke runs did not log), 0 LEAK_FLAG.
 - [done] THEOREM_LR §7 filled, route summary written.
+- [R1 repair, 2026-09-28, per NS/reviews/REVIEW_GLOBAL_INTEGRITY_R1.md C-10/C-11, F7, F11, F18] lr_fsm.py changed:
+  (1) withdrew class-(d) `neg_t_flip`; added in-solver hooks to Chain.moment_totals (tsign, plant) and shared
+  comparators identity1_holds/identity2_holds; new controls `neg2_plant_detected` (+1e-9 at the atom of the (0,1) rhs,
+  guaranteed since R[a][a] >= 1) and `neg2_tflip_in_solver_detected` (t sign flipped inside the solver, fire rate
+  reported); (2) A<0 plant for check_quadratic_cert (A = -1/(4c), B = C = 0 exactly: only the A>=0 conjunct can reject),
+  plus a mutant-checker demo (A conjunct dropped must accept it); (5) Q.guard_drift in identity_checks,
+  block_enclosures, build_block_cert. Pre-repair copy kept in SCR/lr_fsm_pre_r1repair.py. Re-running all flags.
+- [R1 repair result] re-ran --sets, --examples, --example-e1dp, --block, --block-variants, --block-negctl; all three
+  C1LR_*.json regenerated (06:25-06:27). Headline numbers unchanged (Dv'/RLR, E2/E1d' ratios, block overheads identical).
+  New controls: identity-1 sign flip 24/24; neg2_plant 24/24 (+5/5 E2); neg2_tflip_in_solver 24/24 (+5/5 E2; class (b));
+  A<0 plant rejected 24/24 whole + 24/24 excursion, mutant checker (no A conjunct) accepts it 24/24/24 -> A conjunct
+  covered. Chains 24/24, all certificates pass, block guaranteed-invalid control 8/8. Ledger: 12 lr_fsm entries, 0
+  LEAK_FLAG. Docs corrected: THEOREM_LR:3 + §7, C1LR summary status/controls/G6, this log (C-10 note). C-11
+  (`rebuilt_matches_and_passes`) is a consistency check, not a control; it is not cited as evidence. cusum/ untouched.
