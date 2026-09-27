@@ -1,0 +1,643 @@
+{
+ "schema": "OV_K5_TAIL_DEPENDENCY_GRAPH/1",
+ "target_values_included": false,
+ "nodes": [
+  {
+   "id": "N1",
+   "name": "cover geometry e0, rho, x_lo, x_hi",
+   "bound": "exact",
+   "enters": "transport factor rho*x_hi; Taylor radius",
+   "scope": "cell",
+   "improvable": "yes: refine cover",
+   "new_science": "R+G",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N1"
+  },
+  {
+   "id": "N2",
+   "name": "R_k midpoint enclosure of R(e0)",
+   "bound": "two-sided",
+   "enters": "g_hi",
+   "scope": "cell",
+   "improvable": "yes: AD Corollary T on the tail",
+   "new_science": "T-light+G",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N2"
+  },
+  {
+   "id": "N3",
+   "name": "D_k midpoint enclosure of R'(e0)",
+   "bound": "two-sided",
+   "enters": "g_hi",
+   "scope": "cell",
+   "improvable": "yes: AD Corollary T on the tail",
+   "new_science": "T-light+G",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N2"
+  },
+  {
+   "id": "N4",
+   "name": "R2_interval / M_R2 (K1 whole-cell)",
+   "bound": "two-sided",
+   "enters": "cap on M",
+   "scope": "cell",
+   "improvable": "not binding",
+   "new_science": "-",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N4"
+  },
+  {
+   "id": "N5",
+   "name": "C_upper",
+   "bound": "upper",
+   "enters": "Lemma G",
+   "scope": "cell",
+   "improvable": "frozen",
+   "new_science": "R",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N5"
+  },
+  {
+   "id": "N6",
+   "name": "k_i, j_i drift-aware norms",
+   "bound": "upper",
+   "enters": "Lemma G, f_G, Env4, towers",
+   "scope": "cell",
+   "improvable": "frozen",
+   "new_science": "R",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N6"
+  },
+  {
+   "id": "N7",
+   "name": "delta_{F,D,H}, eps_src",
+   "bound": "upper",
+   "enters": "f_F, f_D, f_H",
+   "scope": "cell x r",
+   "improvable": "pointless",
+   "new_science": "-",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N7"
+  },
+  {
+   "id": "N8",
+   "name": "candidate sups s_F, s_D, s_H",
+   "bound": "upper",
+   "enters": "f_G, Env4",
+   "scope": "cell x r",
+   "improvable": "yes: composite sup (stream D)",
+   "new_science": "D+T",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N8"
+  },
+  {
+   "id": "N9",
+   "name": "sup_S0[n]",
+   "bound": "upper",
+   "enters": "towers, sigma4 r=0",
+   "scope": "cell",
+   "improvable": "-",
+   "new_science": "-",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N9"
+  },
+  {
+   "id": "N10",
+   "name": "Aux3 order-3 source evidence",
+   "bound": "upper",
+   "enters": "sigma3, sigma4 via P3'",
+   "scope": "cell",
+   "improvable": "yes",
+   "new_science": "R",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N10"
+  },
+  {
+   "id": "N11",
+   "name": "centres H_r(a)",
+   "bound": "point",
+   "enters": "centre",
+   "scope": "cell x r",
+   "improvable": "no",
+   "new_science": "-",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N11"
+  },
+  {
+   "id": "N12",
+   "name": "W2 enclosures",
+   "bound": "two-sided",
+   "enters": "centre",
+   "scope": "cell",
+   "improvable": "yes",
+   "new_science": "R",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N12"
+  },
+  {
+   "id": "N13",
+   "name": "operator constants C_T, tau, Abar, D_lo, D1, D2",
+   "bound": "upper/lower block-uniform",
+   "enters": "Dv' supply",
+   "scope": "cell",
+   "improvable": "yes: operator certification; LR route",
+   "new_science": "T",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N13"
+  },
+  {
+   "id": "N14",
+   "name": "kappa1, kappa2",
+   "bound": "upper",
+   "enters": "Dv' A1, A2",
+   "scope": "shared",
+   "improvable": "negligible",
+   "new_science": "-",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N14"
+  },
+  {
+   "id": "N15",
+   "name": "g_hi = R.hi - e0 D.lo",
+   "bound": "upper",
+   "enters": "additive",
+   "scope": "cell",
+   "improvable": "via N2/N3",
+   "new_science": "T-light+G",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N15"
+  },
+  {
+   "id": "N16",
+   "name": "Lemma G supply A_G",
+   "bound": "upper",
+   "enters": "min supply",
+   "scope": "cell",
+   "improvable": "-",
+   "new_science": "-",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N16"
+  },
+  {
+   "id": "N17",
+   "name": "Dv' r2 supply (eff, delta1, delta2)",
+   "bound": "upper",
+   "enters": "min supply",
+   "scope": "cell",
+   "improvable": "yes (N13), floored by Lambda",
+   "new_science": "T",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N17"
+  },
+  {
+   "id": "N18",
+   "name": "chosen supply S (componentwise min)",
+   "bound": "upper",
+   "enters": "rad_r",
+   "scope": "cell",
+   "improvable": "D' mixed not admissible under r2",
+   "new_science": "G",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N18"
+  },
+  {
+   "id": "N19",
+   "name": "J/h towers",
+   "bound": "upper",
+   "enters": "sigma3, sigma4",
+   "scope": "cell",
+   "improvable": "yes",
+   "new_science": "T",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N19"
+  },
+  {
+   "id": "N20",
+   "name": "sigma3",
+   "bound": "upper",
+   "enters": "f_G",
+   "scope": "cell x r",
+   "improvable": "yes",
+   "new_science": "R/T",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N20"
+  },
+  {
+   "id": "N21",
+   "name": "sigma4",
+   "bound": "upper",
+   "enters": "Env4",
+   "scope": "cell x r",
+   "improvable": "yes",
+   "new_science": "R/T",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N21"
+  },
+  {
+   "id": "N22",
+   "name": "f_F, f_D, f_H",
+   "bound": "upper",
+   "enters": "p0, p1, p2",
+   "scope": "cell x r",
+   "improvable": "negligible",
+   "new_science": "-",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N22"
+  },
+  {
+   "id": "N23",
+   "name": "f_G order-3 surrogate (G := 0)",
+   "bound": "upper norm-only",
+   "enters": "p2 via rho f_G",
+   "scope": "cell x r",
+   "improvable": "yes: real G (R), composite sup (T+D), cancellation (T)",
+   "new_science": "R/T/D",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N23"
+  },
+  {
+   "id": "N24",
+   "name": "Env4",
+   "bound": "upper",
+   "enters": "p2 via rho^2 Env4/2",
+   "scope": "cell x r",
+   "improvable": "yes",
+   "new_science": "T/R",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N24"
+  },
+  {
+   "id": "N25",
+   "name": "p0, p1, p2 Taylor bounds",
+   "bound": "upper",
+   "enters": "rad_r",
+   "scope": "cell x r",
+   "improvable": "yes: profile p_j(s) (TPT)",
+   "new_science": "T",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N25"
+  },
+  {
+   "id": "N26",
+   "name": "rad_r = A0 p2 + 2A1 p1 + A2 p0",
+   "bound": "upper",
+   "enters": "enclosure",
+   "scope": "cell x r",
+   "improvable": "via A, p, TPT, LR",
+   "new_science": "T",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N26"
+  },
+  {
+   "id": "N27",
+   "name": "assembly coefficients and centre [C_lo, C_hi]",
+   "bound": "exact/interval",
+   "enters": "enclosure",
+   "scope": "cell",
+   "improvable": "-",
+   "new_science": "-",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N27"
+  },
+  {
+   "id": "N28",
+   "name": "TC-T enclosure H_5 = [C_lo - S, C_hi + S]",
+   "bound": "two-sided",
+   "enters": "M",
+   "scope": "cell",
+   "improvable": "via S",
+   "new_science": "-",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N28"
+  },
+  {
+   "id": "N29",
+   "name": "M = min(M_R2, mag(H cap H_5))",
+   "bound": "upper",
+   "enters": "transport",
+   "scope": "cell",
+   "improvable": "-",
+   "new_science": "-",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N29"
+  },
+  {
+   "id": "N30",
+   "name": "Gamma: K5-B direct clause (adoption quantity)",
+   "bound": "upper on max g",
+   "enters": "-",
+   "scope": "cell",
+   "improvable": "TPT / C5-T transport",
+   "new_science": "T+G",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N30"
+  },
+  {
+   "id": "N31",
+   "name": "Gamma_C5T",
+   "bound": "upper",
+   "enters": "scientific clause",
+   "scope": "cell",
+   "improvable": "dominated by TPT",
+   "new_science": "-",
+   "frozen_on_r2_path": false,
+   "detail_ref": "A:N31"
+  },
+  {
+   "id": "N32",
+   "name": "chain clause (mu, l, gamma, U)",
+   "bound": "upper",
+   "enters": "not in adoption quantity",
+   "scope": "adjacent cells",
+   "improvable": "-",
+   "new_science": "-",
+   "frozen_on_r2_path": false,
+   "detail_ref": "A:N32"
+  },
+  {
+   "id": "N33",
+   "name": "adoption predicates (floor r2)",
+   "bound": "governance",
+   "enters": "-",
+   "scope": "cell",
+   "improvable": "-",
+   "new_science": "G",
+   "frozen_on_r2_path": true,
+   "detail_ref": "A:N33"
+  },
+  {
+   "id": "N34",
+   "name": "Lemma SM(d) floor Lambda_k",
+   "bound": "constraint",
+   "enters": "floor on A0 only",
+   "scope": "cell",
+   "improvable": "-",
+   "new_science": "-",
+   "frozen_on_r2_path": false,
+   "detail_ref": "A:N34"
+  }
+ ],
+ "edges": [
+  {
+   "from": "N1",
+   "to": "N15"
+  },
+  {
+   "from": "N1",
+   "to": "N25"
+  },
+  {
+   "from": "N1",
+   "to": "N30"
+  },
+  {
+   "from": "N2",
+   "to": "N15"
+  },
+  {
+   "from": "N3",
+   "to": "N15"
+  },
+  {
+   "from": "N4",
+   "to": "N29"
+  },
+  {
+   "from": "N5",
+   "to": "N16"
+  },
+  {
+   "from": "N6",
+   "to": "N16"
+  },
+  {
+   "from": "N13",
+   "to": "N17"
+  },
+  {
+   "from": "N14",
+   "to": "N17"
+  },
+  {
+   "from": "N16",
+   "to": "N18"
+  },
+  {
+   "from": "N17",
+   "to": "N18"
+  },
+  {
+   "from": "N6",
+   "to": "N19"
+  },
+  {
+   "from": "N9",
+   "to": "N19"
+  },
+  {
+   "from": "N10",
+   "to": "N19"
+  },
+  {
+   "from": "N19",
+   "to": "N20"
+  },
+  {
+   "from": "N10",
+   "to": "N20"
+  },
+  {
+   "from": "N19",
+   "to": "N21"
+  },
+  {
+   "from": "N10",
+   "to": "N21"
+  },
+  {
+   "from": "N7",
+   "to": "N22"
+  },
+  {
+   "from": "N6",
+   "to": "N23"
+  },
+  {
+   "from": "N8",
+   "to": "N23"
+  },
+  {
+   "from": "N20",
+   "to": "N23"
+  },
+  {
+   "from": "N7",
+   "to": "N23"
+  },
+  {
+   "from": "N6",
+   "to": "N24"
+  },
+  {
+   "from": "N8",
+   "to": "N24"
+  },
+  {
+   "from": "N21",
+   "to": "N24"
+  },
+  {
+   "from": "N22",
+   "to": "N25"
+  },
+  {
+   "from": "N23",
+   "to": "N25"
+  },
+  {
+   "from": "N24",
+   "to": "N25"
+  },
+  {
+   "from": "N18",
+   "to": "N26"
+  },
+  {
+   "from": "N25",
+   "to": "N26"
+  },
+  {
+   "from": "N11",
+   "to": "N27"
+  },
+  {
+   "from": "N12",
+   "to": "N27"
+  },
+  {
+   "from": "N26",
+   "to": "N28"
+  },
+  {
+   "from": "N27",
+   "to": "N28"
+  },
+  {
+   "from": "N28",
+   "to": "N29"
+  },
+  {
+   "from": "N15",
+   "to": "N30"
+  },
+  {
+   "from": "N29",
+   "to": "N30"
+  },
+  {
+   "from": "N15",
+   "to": "N31"
+  },
+  {
+   "from": "N28",
+   "to": "N31"
+  },
+  {
+   "from": "N1",
+   "to": "N31"
+  },
+  {
+   "from": "N30",
+   "to": "N33"
+  },
+  {
+   "from": "N13",
+   "to": "N34"
+  }
+ ],
+ "prospective_overlay": [
+  {
+   "route": "TPT",
+   "replaces": [
+    "N30"
+   ],
+   "consumes": [
+    "N15",
+    "N25",
+    "N26",
+    "N27",
+    "N28",
+    "N1"
+   ],
+   "note": "profile transport; closure-only under floor r2"
+  },
+  {
+   "route": "LR",
+   "replaces": [
+    "N17"
+   ],
+   "consumes": [
+    "N13"
+   ],
+   "note": "score-representation A1/A2; closure-only under floor r2"
+  },
+  {
+   "route": "RSO",
+   "replaces": [
+    "N26"
+   ],
+   "consumes": [
+    "N22"
+   ],
+   "note": "pointwise residual majorant; data-blocked"
+  },
+  {
+   "route": "SUPNORM",
+   "replaces": [
+    "N23"
+   ],
+   "consumes": [
+    "N8"
+   ],
+   "note": "composite sup; data-blocked"
+  },
+  {
+   "route": "ORDER3_REAL",
+   "replaces": [
+    "N23"
+   ],
+   "consumes": [
+    "N8",
+    "N20"
+   ],
+   "note": "real G; new real addresses"
+  },
+  {
+   "route": "COROLLARY_T_GHI",
+   "replaces": [
+    "N15"
+   ],
+   "consumes": [
+    "N2",
+    "N3",
+    "N17"
+   ],
+   "note": "atom-functional midpoint eps (existing AD Corollary T); closure-only under floor r2"
+  }
+ ],
+ "checks": {
+  "acyclic": true,
+  "planted_cycle_detected": true,
+  "nodes_not_reaching_Gamma": [
+   "N31",
+   "N32",
+   "N33",
+   "N34"
+  ]
+ },
+ "sources": [
+  "graph/sources/graph_A_consumer.md",
+  "graph/sources/graph_B_operators.md",
+  "graph/sources/graph_C_inputs.md"
+ ]
+}
