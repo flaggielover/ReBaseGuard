@@ -123,8 +123,10 @@ and Theorem M (section (c)) changes only the refutation side.
 ### b.1 What would PROVE X308
 
 A certified number L with `L <= Lambda(e*)` for **one** e* in E308, and a directed decision `L >= A0*` (b.4).
-One drift always suffices (F4). By Theorem M the truth Lambda(e) is largest at e_lo, so **e* = e_lo is the optimal
-point for every route**, not only for route L.
+One drift always suffices (F4). By Theorem M the truth Lambda(e) is largest at e_lo, so e_lo maximises Lambda over the
+cell, hence the cap on every lower-bound route; **for a given route, e_lo is optimal only if its slack does not grow
+faster than Lambda decreases** (route L is monotone, so it is optimal there, as F6 says). *[Corrected per
+REVIEW_THEOREM_M_R1 C1: the earlier text said "e* = e_lo is the optimal point for every route", an overstatement.]*
 
 Families, reasoning from committed facts only:
 
@@ -132,7 +134,7 @@ Families, reasoning from committed facts only:
 |---|---|---|---|
 | C4 route L, `H / E[(abs z - K)^+]` (ladder/Wald minorant) | parameter-free formula, decreasing in e (`C4_TARGET_RECONSTRUCTION.md:60-63`) | its value at e_lo, **3.512733596** (F6), is the family's maximum over the cell | **No** — rigorous, no MC needed |
 | C4 R4, `1/D` from `D_mid` | recombination of committed artifacts | 1.051130 (`C4_CANDIDATE_ROUTES.md:18`) | **No** |
-| C7 E2 / E2c overshoot LP, `(H + E[R]) / E[V]` | (i) analytic family ceiling `(H + Lorden upper bound on E[R]) / E[V]`; (ii) E[tau'] <= Lambda(e), tau >= tau' pathwise (`C7 README.md:115-118`) | ceiling **4.679910340 at e = 19839101/10000000 = e_hi(308)** (F14); at e_lo(308) not committed (computing it would be a forbidden in-band evaluation) | **Not excluded by any committed ceiling** (4.679910 > 4.442851). Capped only by the truth via (ii) |
+| C7 E2 / E2c overshoot LP, `(H + E[R]) / E[V]` | (i) analytic family ceiling `(H + Lorden upper bound on E[R]) / E[V]`; (ii) E[tau'] <= Lambda(e), tau >= tau' pathwise (`C7 README.md:115-118`) | **no committed ceiling at e_lo(308)** (computing it would be a forbidden in-band evaluation) | **Not excluded by any committed ceiling at cell 308** *[Corrected per REVIEW_THEOREM_M_R1 N3: the earlier row placed the committed family ceiling at a cell-309 drift next to A0*(308), a cross-cell comparison the committed record does not make; that value now appears only in the history table (F14).]* |
 | C4-N1 R1 (invert Lemma T on a taboo candidate, `tau_a >= w(a)/(1 + sup_X g)`) and R5 (two-sided tau_a certificate) | designed, never run (`OPEN_NOTES_DISPOSITION_C4.md:27-32`) | no committed ceiling; sharp routes converge to the truth | **Not excluded**; capped only by the truth |
 
 (Every entry in this table compares committed numbers with the committed A0*; no new route factor is involved. The
@@ -302,8 +304,11 @@ lambda = (1 + e/e')/2: log g(e) >= lambda log g(e') + (1 - lambda) log g(-e') = 
 
 ### c.8 What Theorem M does not give
 
-* **Other starting states.** From x = (p0, m0) != a the survival set is not centrally symmetric and monotonicity in
-  e can fail. *Analytic negative control (no computation, no drift evaluated):* for n = 1,
+* **Other starting states.** From x = (p0, m0) with p0 != m0 the survival set is not centrally symmetric and
+  monotonicity in e can fail. *[Corrected per REVIEW_THEOREM_M_R1 C2: for DIAGONAL starts p0 = m0 = c (0 < c <= 2)
+  the proof goes through verbatim (the s = 0 slab becomes |S_t| <= H - c + Kt), verified numerically by the reviewer;
+  Theorem M therefore holds from every diagonal state. Nothing about sup_x E_x[tau], C_T, C_upper or Lemma G's A0
+  follows either way.]* *Analytic negative control (no computation, no drift evaluated):* for n = 1,
   P_x(tau > 1) = Phi(C - p0 + e) - Phi(m0 - C + e), whose e-derivative with m0 = 0 at e = 0 is phi(C - p0) - phi(C),
   strictly **positive** whenever 0 < p0 < 2C. So from any start (p0, 0) with p0 > 0 the one-step survival *increases*
   in e near 0, whereas at the atom (p0 = 0) the derivative phi(C + e) - phi(C - e) is 0 at e = 0 and < 0 for e > 0.
