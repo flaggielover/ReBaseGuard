@@ -424,11 +424,12 @@ def _sha(p):
     return hashlib.sha256(Path(p).read_bytes()).hexdigest()
 
 
-def build_repo(tmp, *, report=None, sources=None, bind_all=True, commit_freeze=True):
+def build_repo(tmp, *, report=None, sources=None, bind_all=True, commit_freeze=True, freeze=True):
     repo = tmp / "repo"
     ns = repo / NSREL
     (ns / "code").mkdir(parents=True)
     shutil.copy(CODE, ns / "code/k4r1_certificate.py")
+    shutil.copy(NS / "code/make_freeze.py", ns / "code/make_freeze.py")
     for rel in ("tests/test_k4r1.py", "tests/mutation_harness.py", "SPECIFICATION.md", "config/GATE.json",
                 "review/QUALIFICATION_REVIEW.json", "docs/premise.md"):
         (ns / rel).parent.mkdir(parents=True, exist_ok=True)
@@ -464,8 +465,11 @@ def build_repo(tmp, *, report=None, sources=None, bind_all=True, commit_freeze=T
         bound.pop(str(NSREL / "tests/mutation_harness.py"))
     fz = {"qualification_verdict": "QUALIFICATION_ACCEPTED",
           "qualification_review": str(NSREL / "review/QUALIFICATION_REVIEW.json"), "bound_files": bound}
-    (ns / "config/FREEZE.json").write_text(json.dumps(fz, sort_keys=True))
-    (ns / "config/FREEZE_HASH").write_text(_sha(ns / "config/FREEZE.json"))
+    if freeze:
+        (ns / "config/FREEZE.json").write_text(json.dumps(fz, sort_keys=True))
+        (ns / "config/FREEZE_HASH").write_text(_sha(ns / "config/FREEZE.json"))
+    else:
+        (ns / "review/QUALIFICATION_REVIEW.json").unlink()
     (repo / ".gitignore").write_text("__pycache__/\n.pytest_cache/\n")
     _git(repo, "init", "-q")
     if not commit_freeze:
@@ -667,3 +671,32 @@ def test_assembly_structural_cases_r3():
     rep = synthetic_report()
     rep["per_Dm"]["SR|m=2"]["outcome"] = "K4_CERTIFICATE_TOO_LOOSE"            # uncertified (D,m) outside the universe
     assert K.assemble(rep, res_map(), certs())["per_Dm"]["SR|m=2"]["status"] == "FAIL"
+
+
+def test_make_freeze_flow_end_to_end(tmp_path):
+    """candidate commit -> accepted review for that commit -> make_freeze -> freeze commit -> ready -> execute."""
+    repo, ns, mod = build_repo(tmp_path, freeze=False)
+    head = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+    rv_rel = NSREL / "review/qualification_r9/QUALIFICATION_REVIEW.json"
+    env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
+    mf = [sys.executable, "-B", str(NSREL / "code/make_freeze.py"), "--review", str(rv_rel)]
+    (repo / rv_rel).parent.mkdir(parents=True)
+    for bad in ({"verdict": "QUALIFICATION_REJECTED", "candidate_commit": head},
+                {"verdict": "QUALIFICATION_ACCEPTED", "candidate_commit": "0" * 40}):
+        (repo / rv_rel).write_text(json.dumps(bad))
+        r = subprocess.run(mf, cwd=repo, capture_output=True, text=True, env=env)
+        assert r.returncode != 0 and not (ns / "config/FREEZE.json").exists()
+    (repo / rv_rel).write_text(json.dumps({"verdict": "QUALIFICATION_ACCEPTED", "candidate_commit": head}))
+    r = subprocess.run(mf, cwd=repo, capture_output=True, text=True, env=env)
+    assert r.returncode == 0, r.stderr
+    assert subprocess.run(mf, cwd=repo, capture_output=True, text=True, env=env).returncode != 0   # no second freeze
+    fz = json.loads((ns / "config/FREEZE.json").read_text())
+    assert fz["qualified_candidate_commit"] == head and fz["target_values_present"] is False
+    assert str(rv_rel) in fz["bound_files"] and "data/text.json" in fz["bound_files"]
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "freeze")
+    script = str(NSREL / "code/k4r1_certificate.py")
+    assert subprocess.run([sys.executable, "-B", script, "ready"], cwd=repo, capture_output=True, env=env).returncode == 0
+    r = subprocess.run([sys.executable, "-B", script, "execute"], cwd=repo, capture_output=True, text=True, env=env)
+    assert r.returncode == 0, r.stderr
+    assert json.loads((ns / "evidence/execution_r1/K4R1_RESULT.json").read_text())["K4R1_SUCCESSOR_SCIENCE"] == "PASS"
