@@ -1,0 +1,43 @@
+{
+  "schema": "P5Y_K5_TAIL_OVERNIGHT_TARGET_QUARANTINE/1",
+  "frozen_before_any_science": true,
+  "base_commit": "8b9fc0bb1c6994dfb0e942cc7a6d411aaf51db99",
+  "written_utc": "2026-09-27T17:31Z",
+  "target": {
+    "detector": "CUSUM",
+    "m": 5,
+    "cells": [306, 307, 308, 309],
+    "cover_file": "cells.json (filter detector == CUSUM FIRST; index collides with SR)"
+  },
+  "tail_adjacent_quarantine": {
+    "cells": [305],
+    "rule": "Self-imposed, stricter than the campaign prompt, following ROUTE_AUDIT_R1 section 8 ('calibration on any real cell' is load-bearing because per-cell ratios transfer as estimates, E09). No NEW-ROUTE quantity (new bound, new constant, improvement ratio) is computed on cell 305 tonight. Reading committed 305 values is allowed."
+  },
+  "forbidden_evaluation_classes": [
+    "Gamma / g_hi + rho*x*M / C5-T clause value for any target cell under ANY supply, including re-computation of historical sealed values by code execution",
+    "any enclosure radius rad_r, half_r, H_k, M_k, magnitude, margin, pass/fail indicator, x-eff factor, critical constant or critical ratio for a target cell under any new route, supply, theorem, cover, truncation, tolerance or consumer",
+    "any new-route input quantity computed ON a target cell: new operator constants (C_T, tau, Abar, D_lo, D1, D2, A0, A1, A2), new sup norms, new sigma3/sigma4, new residual bounds, new cover cells, new order-3 objects",
+    "mixed-supply evaluation (I1 and I2 constants combined), including per-constant attribution of the sealed 306 Gamma gap by partial substitution",
+    "perturbation / sensitivity sweeps evaluated at target cells",
+    "any number designed or able to reveal the sign of a quarantined target outcome under a new route (target-equivalent proxy)",
+    "any optimisation, search or tuning whose objective involves a target cell"
+  ],
+  "forbidden_executions": [
+    "any historical campaign driver or CLI entry point (c2_d5_forecast, tail_forecast_r2, tct_inputs replay, c12*/c12r1*/c12r2* drivers, c11r_runs/c11r_launch/c11r_compare, c11rd runs, taboo_certify on any target block, c2_refined_registry build, closeout checkers)",
+    "any exactly-once protocol step of any campaign (qualification, grant, execution, seal, comparison, adjudication)",
+    "remote hosts (AWS, Vultr): not contacted tonight"
+  ],
+  "allowed": [
+    "reading committed text and JSON, including historical target values (Gamma, terms, factors) exactly as committed",
+    "arithmetic on committed historical intermediate values under the historically evaluated supply only (no mixing, no perturbation), each logged in the ledger as HISTORICAL_DECOMPOSITION",
+    "symbolic / exact-rational derivation, theorem statements and proofs",
+    "new stdlib-only code exercised on synthetic fixtures, analytically solvable cases, and real non-tail cells (other m values, lower front) for soundness only",
+    "improvement ratios on synthetic fixtures and non-tail cells only"
+  ],
+  "enforcement": {
+    "runtime_guard": "code/ov_quarantine.py: every new route entry point calls guard_cell(detector, m, cell) and refuses target and tail-adjacent cells",
+    "static_scan": "code/ov_quarantine.py --scan: AST/regex scan of all new code for target-cell literals used as data, imports of historical consumer/driver modules, and reads of target-cell input files; must show coverage (files scanned) and pass a planted negative control",
+    "ledger": "ledger/ZERO_TARGET_LEDGER.jsonl: one line per potentially sensitive execution",
+    "stop_rule": "any target leak STOPS the affected route immediately; it is classified INVALID_RESULT_CHASING or LEAKED and cannot be rescued tonight (G1/G7/G8)"
+  }
+}
