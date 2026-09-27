@@ -159,3 +159,29 @@ def adlr(cell, o):
             nc += 1
     out["nc_B3_dropped_detections"] = nc
     return out
+
+
+def route_group_plants(cell, o, dh):
+    """Class-(a) controls for the RO3-F floor check and the RO3-E envelope check (review F6): planted-invalid routes
+    are passed THROUGH route_groups (the code under test) and its own floor_ok / envelope_ok must flip.
+      floor plant    : G = 0, f_G = 0, s_G = 0 (violates the premise f_G >= ||phi'''_G(e0)||); Q = 0, so the floor check
+                       fires whenever the floor is > 0 (eligibility recorded);
+      envelope plant : the eta = 1e-3 real route with s_G := 2 (C (f + eps3) + ||G - F'''||) + 1 (violates the premise
+                       s_G <= ||F'''|| + ||G - F'''||); beta is then > 2 * beta_envelope > beta_envelope, guaranteed."""
+    n = len(o["Fd"][0])
+    C = cell["cb"]["C"]
+    f = o["fG_surr"]
+    real = next(rt for nm, rt in o["routes"].items() if nm.startswith("real"))
+    gerr = X.sup_norm(L.vsub(real["G"], o["Fd"][3]))
+    sG_bad = 2 * (C * (f + dh["eps3"]) + gerr) + 1
+    o2 = dict(o)
+    o2["routes"] = {
+        "surrogate": o["routes"]["surrogate"],
+        "real_PLANT_floor": {"G": [F(0)] * n, "fG": F(0), "sG": F(0), "Gat": F(0), "half": o["routes"]["surrogate"]["half"]},
+        "real_PLANT_env": dict(real, sG=sG_bad),
+    }
+    out = route_groups(cell, o2, dh)
+    eligible_floor = out["floor"] > 0
+    return {"floor_plant_eligible": eligible_floor,
+            "floor_plant_fired": (not out["real_PLANT_floor"]["floor_ok"]) if eligible_floor else None,
+            "envelope_plant_fired": not out["real_PLANT_env"]["envelope_ok"]}

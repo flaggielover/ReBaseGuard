@@ -34,6 +34,7 @@ def _noise(rng, n):
 
 def f_derivs_at(P, spoly, e, upto, s_upto=None):
     """[S^(0..s_upto)(e)], [F^(0..upto)(e)] exactly from (I - K)F = S (Leibniz), using P's resolvent."""
+    Q.guard_drift(e)
     s_upto = upto if s_upto is None else max(s_upto, upto)
     S = [[X.poly_eval(X.poly_deriv(list(p), i), e) for p in spoly] for i in range(s_upto + 1)]
     out = []
@@ -115,7 +116,8 @@ def run_cell(kp, sources, e0: F, rho: F, seed: int, m: int | None = None, want_d
             rt["ph_e0"] = phis_at(P0, S0, (Fh, Dh, Hh, rt["G"]), F(0), 3)
             rt["max"] = {"E2": F(0), "P_H": F(0), "P_G": F(0), "P_4": F(0), "P_1": F(0), "P_0": F(0),
                          "phi4": F(0), "prem_ratio_max": F(0), "env4_fail": 0, "idfail": 0, "sound_fail": 0,
-                         "nc_flip_fail": 0, "nc_e10_fail": 0}
+                         "nc_flip_fail": 0, "nc_e10_fail": 0, "split_bookkeeping_mismatch": 0,
+                         "plant_d2R_noK2_eligible": 0, "plant_d2R_noK2_fired": 0}
         objs.append({"r": r, "Fd": Fd, "S0": S0, "cand": (Fh, Dh, Hh), "fF": fF, "fD": fD, "fH": fH,
                      "sF": sF, "sD": sD, "sH": sH, "sig3_mid": sig3_mid, "sig4_cell": sig4_cell,
                      "fG_surr": fG_surr, "phi3_zero": phi3_zero, "routes": routes})
@@ -170,8 +172,15 @@ def run_cell(kp, sources, e0: F, rho: F, seed: int, m: int | None = None, want_d
                 P4 = X.mat_vec(Pt.R, L.vsub(L.vsub(ph[2], ph0_e0[2]), L.vscale(ph0_e0[3], t)))[L.ATOM]
                 P1 = 2 * X.mat_vec(Pt.dR, ph[1])[L.ATOM]
                 P0v = X.mat_vec(Pt.d2R, ph[0])[L.ATOM]
-                if PH + PG + P4 + P1 + P0v != E2:
-                    mx["idfail"] += 1
+                if PH + PG + P4 + P1 + P0v != E2:      # bookkeeping only: P4 is defined as a remainder (review C-9)
+                    mx["split_bookkeeping_mismatch"] += 1
+                if name == "surrogate":
+                    # class-(a) plant through the identity check: d2R with the R K2 R term removed
+                    rk2r_phi = X.mat_vec(Pt.R, X.mat_vec(Pt.K[2], X.mat_vec(Pt.R, ph[0])))[L.ATOM]
+                    if rk2r_phi != 0:
+                        mx["plant_d2R_noK2_eligible"] += 1
+                        if comp - rk2r_phi != E2:
+                            mx["plant_d2R_noK2_fired"] += 1
                 for key, v in (("E2", E2), ("P_H", PH), ("P_G", PG), ("P_4", P4), ("P_1", P1), ("P_0", P0v)):
                     mx[key] = max(mx[key], abs(v))
                 # premise checks at |t|

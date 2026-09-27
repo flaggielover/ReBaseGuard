@@ -95,6 +95,7 @@ def integrate(f, a, b, pieces=200):
 
 
 def one_step(p, m, e, i, g, sign_ok=True):
+    Q.guard_drift(Fr(e))  # review F18: helpers guard their own drift
     lo, hi = m - CC, CC - p
     kink = KK - p
     def integrand(z):
@@ -106,6 +107,7 @@ def one_step(p, m, e, i, g, sign_ok=True):
 
 
 def closed_form_jets(p, m, e, which):
+    Q.guard_drift(Fr(e))
     if which == "one":
         return jadd(jet_Phi(CC - p + e), jet_Phi(m - CC + e), -1.0)
     # g = p' = max(0, p + z - K) on z in [K - p, c - p]:  (p - K - e)[Phi(b) - Phi(a)] + phi(a) - phi(b)

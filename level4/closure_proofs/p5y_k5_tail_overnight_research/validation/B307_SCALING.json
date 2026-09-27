@@ -1,5 +1,5 @@
 {
- "schema": "P5Y_K5_TAIL_OVERNIGHT_B307_SCALING/1",
+ "schema": "P5Y_K5_TAIL_OVERNIGHT_B307_SCALING/2",
  "producer": "streams/B_307/code/b307_scaling.py",
  "class": "SYNTHETIC_VALIDATION",
  "source": "validation/B307_AUDIT_FIXTURES.json",
@@ -51,7 +51,7 @@
    },
    "C_T_slope": 1.0575552225835347,
    "C_slope": 1.0,
-   "negative_control_planted_extra_half_power_detected": true
+   "NON_EVIDENCE_class_c_linear_slope_plant": true
   },
   "1/4": {
    "Lambda": [
@@ -100,7 +100,7 @@
    },
    "C_T_slope": 1.3458937202068164,
    "C_slope": 1.0,
-   "negative_control_planted_extra_half_power_detected": true
+   "NON_EVIDENCE_class_c_linear_slope_plant": true
   },
   "1/2": {
    "Lambda": [
@@ -149,7 +149,23 @@
    },
    "C_T_slope": 1.3469032812662556,
    "C_slope": 1.0,
-   "negative_control_planted_extra_half_power_detected": true
+   "NON_EVIDENCE_class_c_linear_slope_plant": true
   }
+ },
+ "exponent_claim_check": {
+  "claim": "drift 0: |slope(true A_j) - (1 + j/2)| <= 0.05, j = 1, 2, 3",
+  "true_recomputed_slopes": {
+   "1": 1.498791314660556,
+   "2": 2.0048920215032706,
+   "3": 2.4939752771618955
+  },
+  "claim_holds_for_true": true,
+  "class_a_mutant_absK_slopes": {
+   "1": 2.007864703924113,
+   "2": 3.0059340081005077,
+   "3": 4.003590751450646
+  },
+  "class_a_mutant_fired": true,
+  "true_matches_json_fit": true
  }
 }

@@ -4,6 +4,9 @@ Stream B_307, overnight campaign (research only). Written 2026-09-27/28 UTC.
 Code: `NS/streams/B_307/code/` (`b307_order3.py`, `b307_cellpipe.py`, `b307_lib.py`, `b307_run_fixtures.py`,
 `b307_lower_front.py`, `b307_hermite_check.py`, `b307_tower_fixture.py`).
 
+**Control-class note (review F6).** RO3-E and RO3-F had no control in the pre-repair version. Class-(a) plants
+through `route_groups` were added (§4b, §4c), and every control is now labelled (a)–(d).
+
 **Correction note (incident 01).** A pre-correction version of §4c set a committed tail break-even figure next to
 this document's structural ratios (α, β). That adjacency is a target-equivalent proxy. It was removed on coordinator
 instruction (incident 01).
@@ -75,7 +78,7 @@ and for n = 3 this is
 * Implementation: `b307_lib.Point.atom_rows`, `generic_dnR_bound`, and `Point.__init__` (d3R).
 * Verification: exact on 4 P1 cases. The atom identity F'''(e0)(a) = [RS'''](a) + 3[∂RS''](a) + 3[∂²RS'](a) +
   [∂³RS](a) holds exactly on all 320 fixture objects (`B307_ORDER3_FIXTURES.json` `F3_atom_identity_all_exact`).
-* Negative control: ∂³R without the 3RK₂RK₁R term is detected (4/4).
+* Control, class (a): ∂³R without the 3RK₂RK₁R term, through the same equality check, is detected (4/4).
 
 ### 2b. Likelihood-ratio / Hermite form of the kernel derivatives (CUSUM)
 
@@ -86,7 +89,7 @@ The CUSUM kernel is (K_eg)(x) = ∫_{m−c}^{c−p} g(T(x,z))·φ(z+e) dz. Its w
 
 * Check: float identity check at the declared drifts e ∈ {0, 1/4, 1/2, 1, 3}, 6 states, g ∈ {1, post-state p'},
   i = 1..4. There are 240 cases with worst relative error 1.6·10⁻¹⁵ (`NS/validation/B307_HERMITE_IDENTITY.json`).
-* Negative control: dropping the (−1)^i sign is detected in 112/120 odd-order cases. The 8 undetected cases have a
+* Control, class (b): dropping the (−1)^i sign is detected in 112/120 odd-order cases. The 8 undetected cases have a
   derivative that vanishes by symmetry.
 * κ_n = E|He_n(Y)| = 0.797885, 0.967883, 1.510013, 2.800600 (n = 1..4), matching the whole-line norms quoted in
   `p5y_k5_m5_tail_closure/evidence/measurement_r1/MEASUREMENT_NOTE.md:60`.
@@ -103,7 +106,7 @@ Written out: H_0 = 1, H_1 = M, H_2 = M² − n, H_3 = M³ − 3nM, H_4 = M⁴ �
 * Proof. Πφ(u_k) depends on e only through Σu_k, with variance n. Differentiate
   exp(−(Σu_k)²/(2n)) j times and use He_j(−x) = (−1)^jHe_j(x).
 * Check: jets at 100 random points, j = 1..4 steps and orders 1..4; worst error 4.4·10⁻¹³.
-* Negative control: dropping the variance rescaling is detected in 225/300 cases. The 75 undetected cases are
+* Control, class (b): dropping the variance rescaling is detected in 225/300 cases. The 75 undetected cases are
   order 1, where H_1 = M needs no rescaling.
 
 **Theorem RO3-LR (path representation).**
@@ -164,7 +167,7 @@ These are universal constants, valid at every drift and every cell. They grow li
 tower grows like (k₁j)^n.
 * On the exact FX_B score walks the tower overstates the truth by 3–4× at j = 2, 9–12× at j = 3, 24–38× at j = 4,
   and 47–77× on S_4''' (`NS/validation/B307_TOWER_FIXTURE.json`, all sound).
-* Negative control: dropping the binomial weights is detected in 6/54 cases. It is weak because the tower is loose.
+* Control, class (b): dropping the binomial weights is detected in 6/54 cases. It is weak because the tower is loose.
 
 This is a **valid alternative supply** for σ3 and σ4. The minimum of it and the frozen tower is valid.
 * At j = 1, keep the frozen h_1^(n) = −S_0^(n−1) bound: it is a closed form. The Hermite bound is meant for j ≥ 2.
@@ -224,6 +227,9 @@ candidate-error terms. It is built from the resolvent identity by a triangle spl
 below the true centre motion. What a real Ĝ can remove is only the **excess** of the norm-only bound over that floor.
 
 **Check.** Holds on all 320 objects × 3 routes (`floor_ok`, `b307_order3.route_groups`).
+**Control, class (a)** (`b307_order3.route_group_plants`): a planted route with G = 0, f_G = 0 and s_G = 0 violates
+the premise f_G ≥ ‖φ'''_Ĝ‖. It is passed through route_groups and flips floor_ok on 320/320 eligible objects (those
+with floor > 0).
 
 ### 4c. The price of a real candidate: the order-4 envelope penalty (Proposition RO3-E)
 
@@ -245,6 +251,8 @@ candidate
 
 **Evidence.**
 * The envelope holds on all 640 real-route objects (`envelope_ok`).
+* Control, class (a): the η = 10⁻³ route with s_G := 2(C(f + ε3) + ‖Ĝ − F'''‖) + 1 violates the premise
+  s_G ≤ ‖F'''‖ + ‖Ĝ − F'''‖. Passed through route_groups, it flips envelope_ok on 320/320 objects.
 * On FX_A under the cover rule, β = 0.0025–0.09 against an envelope of 0.05–0.62.
 * On the lower front, β = 0.0033–0.0084 with 2k₁ρC_upper = 0.49992–0.499999.
 
@@ -301,7 +309,7 @@ range in parentheses.
 
 At the ρ/16 regime, FX_A gives 0.54 for the true variant and 8.9 for G.
 
-Negative control ("oracle with B3 := 0"):
+Control, class (b) ("oracle with B3 := 0"; through the pointwise check, not guaranteed):
 * detected on 240/240 FX_A objects;
 * detected on only 7/80 FX_B objects. There F'''(e0)(a) ≡ 0 on 56/80 objects, so the linear term carries no motion.
 
@@ -373,9 +381,10 @@ Real-Ĝ route over the surrogate, medians (ranges):
   there: it is the rank-1 item of the audit, with P_0 share 0.51–0.995.
 * **Improving order 3 alone cannot beat the atom-functional slack of rank 1.**
 * Pointwise soundness of every route: 0 failures on 320 objects × 17 grid points.
-* Negative controls:
+* Controls of class (b) (through the code, not guaranteed; fire rates given):
   * the sign-flipped motion is detected on 328/640 objects;
   * "f_G := 0 as a certificate" is detected on 146/320.
+* Control of class (a) on the E'' identity (∂²R without RK₂R): fires on 5439/5439 eligible grid points.
 
 ### 6c. The safe historical cases: 34 committed lower-front TC cells with REAL order-3 data
 
@@ -401,7 +410,9 @@ The data are 170 objects, from `b307_lower_front.py` and `NS/validation/B307_LOW
 **Reading.** On real non-target CUSUM cells:
 * the surrogate's order-3 monomial overstates the certified point motion by 37–110×;
 * the real candidate's order-4 penalty is tiny (β < 0.01), because F''' is far from Perron-amplified (index ≈ 0.01);
-* the real route narrows the whole enclosure by a factor of 5–9.
+* the real route narrows the m-enclosures by 4.42–9.35× (all m; `enclosure_narrowing_factor_surrogate_over_real_all_m`).
+  **Baseline caveat:** the surrogate here uses the pure-tower σ3, which is looser than a (P3′) surrogate, so this
+  factor favours the real route.
 
 Proposition RO3-E predicts β ≤ ≈ 1/2 at every cell of the cover. The lower-front β sits far below that envelope.
 

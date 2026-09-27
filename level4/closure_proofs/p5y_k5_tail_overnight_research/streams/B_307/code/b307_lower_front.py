@@ -33,6 +33,25 @@ CELLS_JSON = ROOT / "p5y_k1_cover_ledger_successor" / "config" / "cells.json"
 M_VALUES = (1, 2, 3, 5)
 
 
+LF_CELLS = range(11, 45)  # the 34 committed lower-front TC cells (declared rule); nothing else is kept
+
+
+def load_lower_front_cover():
+    """cells.json filtered AT LOAD TIME to CUSUM cells 11-44 (review F18): the path is guarded, each kept entry is
+    guarded per m, and no other entry is retained."""
+    Q.guard_path(CELLS_JSON)
+    kept = {}
+    for c in json.loads(CELLS_JSON.read_text()):
+        if c["detector"] != "CUSUM" or int(c["index"]) not in LF_CELLS:
+            continue
+        for m in M_VALUES:
+            Q.guard_cell("CUSUM", m, int(c["index"]))
+        kept[int(c["index"])] = c
+    if sorted(kept) != list(LF_CELLS):
+        raise RuntimeError("lower-front cover filter did not return exactly cells 11-44")
+    return kept
+
+
 def coefficients(m):
     """ERROR_ALGEBRA section 4: F_r gets 1/m (r < m); W_(r,t-r-1) gets 1/t - 1/m (1 <= t < m, r < t)."""
     rows = [("F", r, 0, F(1, m)) for r in range(m)]
@@ -98,7 +117,7 @@ def main():
     t0 = time.time()
     cons = json.loads((LF / "TC_CONSUMPTION.json").read_text())
     audit = cons["tc_audit"]
-    cover = {c["index"]: c for c in json.loads(CELLS_JSON.read_text()) if c["detector"] == "CUSUM"}
+    cover = load_lower_front_cover()
     files = sorted(LF.glob("cells/TC_CELL_*.json"), key=lambda p: int(p.stem.split("_")[-1]))
     touched, repro_ok, repro_n = [], 0, 0
     rows, encl = [], []
@@ -176,6 +195,10 @@ def main():
         "reproduction_gate": {"exact_matches": repro_ok, "of": repro_n,
                               "negative_control_perturbed_delta_G_detected": nc_detected},
         "sigma3_note": "pure J/h tower (Aux3 (P3') inputs are not in the lower-front cell files)",
+        "baseline_caveat": "the surrogate baseline uses the pure-tower sigma3, which is looser than a (P3')-refined surrogate; every real/surrogate ratio here therefore FAVOURS the real-G route (R1)",
+        "enclosure_narrowing_factor_surrogate_over_real_all_m": {
+            "min": min(1 / e["ratio_real_over_surrogate"] for e in encl),
+            "max": max(1 / e["ratio_real_over_surrogate"] for e in encl)},
         "summary_by_r": {str(r): {kk: stats([x[kk] for x in rows if x["r"] == r]) for kk in keys} for r in range(5)},
         "summary_all": {kk: stats([x[kk] for x in rows]) for kk in keys},
         "enclosure_width_ratio_real_over_surrogate": {str(m): stats([e["ratio_real_over_surrogate"] for e in encl if e["m"] == m])
@@ -191,7 +214,8 @@ def main():
                     cells_touched=touched, klass="NONTARGET_REAL_VALIDATION",
                     notes=f"repro {repro_ok}/{repro_n}; NC detected={nc_detected}")
     print(json.dumps({"repro": f"{repro_ok}/{repro_n}", "nc": nc_detected, "summary_all": out["summary_all"],
-                      "encl": out["enclosure_width_ratio_real_over_surrogate"]}, indent=1)[:3000])
+                      "encl": out["enclosure_width_ratio_real_over_surrogate"],
+                      "narrowing": out["enclosure_narrowing_factor_surrogate_over_real_all_m"]}, indent=1)[-1500:])
 
 
 if __name__ == "__main__":

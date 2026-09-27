@@ -85,7 +85,10 @@ Column key:
 * **evaluation at the atom.** E''(e)(a) = [R_eφ''(e)](a) + 2[∂R_eφ'(e)](a) + [∂²R_eφ(e)](a) is still exact.
 * **evidence:**
   * exact at all 17 grid points of all 64 fixture cells × 5 objects × 4 routes;
-  * the five-way split P_H + P_G + P_4 + P_1 + P_0 = E''(e)(a) (§4 T3) is also exact everywhere.
+  * class-(a) plant through the same identity check: ∂²R with the RK₂R term removed fires on 5439/5439 eligible
+    grid points (those where [RK₂Rφ](a) ≠ 0);
+  * the five-way split P_H + P_G + P_4 + P_1 + P_0 = E''(e)(a) (§4 T3) holds **by construction** (P_4 is defined as
+    a remainder). It is bookkeeping, class (c), and **not evidence** (review C-9).
 
 ### HO-3  |E''(e)(a)| ≤ A0‖φ''(e)‖ + 2A1‖φ'(e)‖ + A2‖φ(e)‖   (THEOREM_TC.md:80)
 
@@ -331,10 +334,15 @@ A0 monomials at every cell of the cover**, never asymptotically small.
 * On the 34 lower-front cells: 2k₁ρC_upper = 0.49992–0.499999 (`NS/validation/B307_LOWER_FRONT_ORDER3.json`
   `summary_all.cover_factor_2k1rhoC`).
 
-## 4. Exact fixture demonstrations (each with a negative control)
+## 4. Exact fixture demonstrations (controls classified (a)–(d) as in `NS/reviews/REVIEW_GLOBAL_INTEGRITY_R1.md` §1)
+
+**Control-class correction (review F6, C-7…C-9).** A pre-repair version counted three controls as evidence that
+cannot fail: "A0 := τ_a" (class (d), guaranteed by Lemma SM(d)), the linear slope plant (class (c)) and the five-way
+split (class (c), true by construction). They are relabelled NON-EVIDENCE below and replaced by class-(a) plants
+through the code under test. The fixture run was repeated with the repaired code (run 3, 368 s).
 
 **Producers and outputs.**
-* `code/b307_run_fixtures.py` (run 2, 362 s, ledger entry "B307 exact-fixture audit") writes
+* `code/b307_run_fixtures.py` (run 3, 368 s, ledger entry "B307 exact-fixture audit") writes
   `NS/validation/B307_AUDIT_FIXTURES.json` and `NS/validation/B307_ORDER3_FIXTURES.json`.
 * `code/b307_scaling.py` writes `B307_SCALING.json`.
 * `code/b307_tower_fixture.py` writes `B307_TOWER_FIXTURE.json`.
@@ -348,15 +356,17 @@ A0 monomials at every cell of the cover**, never asymptotically small.
 * 42 ladder points.
 * Ranges are min–max, with the median in parentheses.
 
-### T1 — identities (P1): all exact, all negative controls detected
+### T1 — identities (P1): all exact; class-(a) controls fire
 
 | identity | result | planted-invalid control | detected |
 |---|---|---|---|
 | F^(n) = Σ C(n,i)∂^iR S^(n−i), n = 1, 2, 3 (4 cases) | exact | ∂³R without 3RK₂RK₁R | 4/4 |
 | E'' = Rφ'' + 2∂Rφ' + ∂²Rφ at a | exact (also at every one of 64 × 17 grid points × 5 × 4) | factor 2 dropped | yes |
 | (P2′)/(P2) φ'''(e0) identity by exact polynomial differentiation, Ĝ = 0 and Ĝ = F''' | exact | 2K₁Ĥ in place of 3K₁Ĥ | 2/2 |
-| Lemma SM(d): τ_a/D = Λ, and D = ν(h₁) (42 points) | exact | "A0 := τ_a" (no division by D) claimed ≥ Λ | 42/42 |
-| five-way split P_H + P_G + P_4 + P_1 + P_0 = E''(e)(a) | exact everywhere | (covered by the identity counter) | — |
+| Lemma SM(d): τ_a/D = Λ, and D = ν(h₁) (42 points) | exact | "A0 := τ_a" claimed ≥ Λ — **class (d), NON-EVIDENCE** (guaranteed by SM(d) since D < 1) | 42/42 (not counted) |
+| E'' identity, all grid points | exact | class (a): ∂²R without RK₂R, through the identity check | 5439/5439 eligible |
+| ladder soundness check `ladder_checks` (42 points) | 0 rung failures | class (a): Lemma-G A1 rung := true·(1 − 2⁻²⁰); class (a): PM ↔ collapse of A2 swapped | 42/42 and 42/42 |
+| five-way split P_H + P_G + P_4 + P_1 + P_0 = E''(e)(a) | holds by construction | **class (c), NON-EVIDENCE** (review C-9) | — |
 
 ### T2 — atom-constant ladders (ratio of each rung to the true functional norm; every rung sound, 0 failures)
 
@@ -378,8 +388,13 @@ A0 monomials at every cell of the cover**, never asymptotically small.
 See §3. Slopes vs Λ at drift 0: true 1.50 / 2.00 / 2.49; PM 2.01 / 3.01 / 4.00; Lemma G 2.00 / 2.99 / 3.98;
 Dv′ 1.91 / 2.83.
 
-Negative control: a planted rung "true × Λ^{1/2}" must show a slope exactly 1/2 higher. It does, at all three drifts
-(`code/b307_scaling.py`).
+Controls:
+* The planted rung "true × Λ^{1/2}" (slope exactly +1/2) is **class (c), NON-EVIDENCE**: the least-squares slope is
+  linear, so it holds for any data (review C-8).
+* Class (a): the documented claim "|slope(true A_j) − (1 + j/2)| ≤ 0.05, j = 1, 2, 3, at drift 0" is checked on
+  functionals recomputed through `b307_lib.Point`. It holds (1.499, 2.005, 2.494). The same check on a mutant with
+  |K_i| in place of K_i (sign cancellation removed, same code path) **fires** (2.008, 3.006, 4.004)
+  (`NS/validation/B307_SCALING.json` `exponent_claim_check`).
 
 ### T3 — per-term looseness of the TC radius on fixture cells
 
@@ -412,10 +427,13 @@ representative class.
 **Soundness.** Every monomial is individually sound, and |E''| ≤ rad on all 320 × 4 × 17 points. The premise checks
 ‖φ^(j)(e)‖ ≤ p_j(|t|) and ‖φ⁗‖ ≤ Env4 hold everywhere.
 
-**Negative controls.**
+**Controls of the soundness check |E''| ≤ rad** (class (b): through the code, not guaranteed; fire rates given).
 * The sign-flipped centre motion is detected on 328/640 real-route objects.
 * "f_G := 0 as a certificate" (E10 misuse) is detected on 146/320 surrogate objects.
-* Both controls fire only where the linear motion exceeds the remaining slack, and that coverage is recorded.
+* Both controls fire only where the linear motion exceeds the remaining slack.
+
+(The JSON verdict key `E2_identity_and_split_failures` now counts identity failures only. Split mismatches are
+reported separately, as NON-EVIDENCE.)
 
 ### T4 — assembly per-r triangle (HO-13)
 

@@ -16,7 +16,7 @@ and its planted control was detected.
 | `REAL_ORDER3_THEORY.md` | true order-3 objects; TC vs K5-B chain needs; resolvent and Hermite/LR representations; finiteness; Propositions RO3-S/F/E; ADLR evaluation; inputs and availability; fixtures and lower-front evidence; the structural-information verdict |
 | `VALIDATION_DECLARATION_B307.json` | validation sets, declared before any run |
 | `code/b307_lib.py`, `b307_cellpipe.py`, `b307_order3.py`, `b307_run_fixtures.py`, `b307_scaling.py`, `b307_tower_fixture.py`, `b307_lower_front.py`, `b307_hermite_check.py` | stdlib-only producers |
-| `NS/validation/B307_AUDIT_FIXTURES.json`, `B307_ORDER3_FIXTURES.json`, `B307_SCALING.json`, `B307_TOWER_FIXTURE.json`, `B307_LOWER_FRONT_ORDER3.json`, `B307_HERMITE_IDENTITY.json` | results; every check has a negative control |
+| `NS/validation/B307_AUDIT_FIXTURES.json`, `B307_ORDER3_FIXTURES.json`, `B307_SCALING.json`, `B307_TOWER_FIXTURE.json`, `B307_LOWER_FRONT_ORDER3.json`, `B307_HERMITE_IDENTITY.json` | results. Controls are classified (a)–(d) as in `NS/reviews/REVIEW_GLOBAL_INTEGRITY_R1.md` §1; see the Controls table below. Class (c)/(d) items are not counted as evidence |
 
 ## Registry rows
 
@@ -38,13 +38,43 @@ Legend: P = pass, F = fail, — = not applicable or not reached.
 | G2 mathematical validity | **P**: TC holds for any Ĝ; RO3-F and RO3-E proved and checked (320 / 640 objects) | **P**: validity conditions (i)–(iii) of §4d; 0 failures in all variants | **P**: Gaussian-location lemma; identity checked to 4.4e-13 | **P** (standard triangle) |
 | G3 scope explicit | **P** | **P** | **P** | **P** |
 | G4 reproducible implementation | P on fixtures; **F** on real cells (no producer or host) | P on fixtures | **—** (float identity only; no σ supply built) | **F** (no payloads) |
-| G5 non-target validation | **P**: fixtures, plus 34 real lower-front cells (136/136 exact reproduction; real/surrogate enclosure 0.11–0.22) | P on fixtures; **—** on real cells (no certified Λ_j) | P (declared drifts; FX_B towers) | P on fixtures |
+| G5 non-target validation | **P**: fixtures, plus 34 real lower-front cells (136/136 exact reproduction; real/surrogate enclosure 0.11–0.22) | P on fixtures; **—** on real cells (no certified Λ_j) | — (no test of the Hermite tower as a σ supply; the identity check at declared drifts and the FX_B tower slack are not a validation of R3) | P on fixtures |
 | G6 independent check | partial: independent re-implementation of the TC arithmetic reproduces the committed audit exactly. No second agent has checked RO3-E/F | **F** (single implementation) | **F** | **F** |
 | G7 temporal integrity | **P**: declaration before runs; no target evaluation | **P** | **P** | **P** |
 | G8 no target leakage | **P** | **P** | **P** | **P** |
 | G9 could be frozen prospectively | **F**: data, host and governance (N1/N3/N5/N7) | **F**: A_3, A_4 uncertified | F (no supply built) | **F** (payloads) |
-| G10 real, not cosmetic | P on non-target (lower front: enclosure 5–9× narrower). Capped by 1/(α+β); leaves ranks 1 and 3 | **F** with certified constants (18×–2·10⁴× looser); best case incomparable (FX_A 0.46×, FX_B 2.9×) | undetermined (bounded gain, j ≤ 5) | undetermined (≈ 2× on fixtures) |
+| G10 real, not cosmetic | P on non-target: lower-front m-enclosures are 4.42–9.35× narrower (`B307_LOWER_FRONT_ORDER3.json` `enclosure_narrowing_factor_surrogate_over_real_all_m`). **Baseline caveat:** the surrogate baseline uses the pure-tower σ3, which is looser than a (P3′) surrogate, so the factor favours R1. Capped by 1/(α+β); leaves ranks 1 and 3 | **F** with certified constants (18×–2·10⁴× looser); best case incomparable (FX_A 0.46×, FX_B 2.9×) | undetermined (bounded gain, j ≤ 5) | undetermined (≈ 2× on fixtures) |
 | **state** | **BLOCKED** | **BLOCKED** | **THEORY_ONLY** | **BLOCKED** |
+
+## Controls register (review F6: classes as in `NS/reviews/REVIEW_GLOBAL_INTEGRITY_R1.md` §1)
+
+Class key:
+* (a): through the code under test, planted invalid input, guaranteed to fire;
+* (b): through the code, not guaranteed; the fire rate is given;
+* (c): tautological or arithmetic;
+* (d): tests only a comparison operator.
+
+(c) and (d) are **not evidence**. No control gates a script's exit code; each is reported as a JSON count.
+
+| check | control | class | result | source |
+|---|---|---|---|---|
+| resolvent-derivative formulas (P1) | ∂³R without 3RK₂RK₁R | (a) | 4/4 | `B307_AUDIT_FIXTURES.json` P1 |
+| E'' identity at a point (P1) | factor 2 dropped | (a) | fired | P1 |
+| E'' identity on every grid point (P3) | ∂²R without RK₂R, through the identity check | (a) | 5439/5439 eligible | P3_verdicts |
+| (P2)/(P2′) φ''' identity (P1) | 2K₁Ĥ in place of 3K₁Ĥ | (a) | 2/2 | P1 |
+| ladder soundness `ladder_checks` (P2) | A1 Lemma-G rung := true·(1 − 2⁻²⁰); PM ↔ collapse swap | (a) | 42/42; 42/42 | P2 `class_a_plants_through_ladder_checks` |
+| Lemma SM(d) "A0 := τ_a ≥ Λ" | — | **(d) non-evidence** (C-7) | 42/42, not counted | P2 `NON_EVIDENCE_class_d_A0_eq_tau_a` |
+| Λ-exponent claim (drift 0) | mutant with \|K_i\| through `b307_lib.Point` | (a) | fired (2.008 / 3.006 / 4.004 vs claim 1.5 / 2 / 2.5) | `B307_SCALING.json` `exponent_claim_check` |
+| linear slope plant "true × Λ^{1/2}" | — | **(c) non-evidence** (C-8) | — | `B307_SCALING.json` |
+| five-way split of E'' | — | **(c) non-evidence** (C-9), true by construction | — | P3 |
+| pointwise soundness \|E''\| ≤ rad | sign-flipped centre motion; f_G := 0 (E10) | (b) | 328/640; 146/320 | P3_verdicts |
+| RO3-F floor check | G = 0, f_G = 0, s_G = 0 through `route_groups` | (a) | 320/320 eligible | `B307_ORDER3_FIXTURES.json` verdicts |
+| RO3-E envelope check | inflated s_G through `route_groups` | (a) | 320/320 | same |
+| ADLR pointwise soundness | oracle with B3 := 0 | (b) | 247/320 | same |
+| lower-front exact reproduction | 2⁻⁶⁰ perturbation of one δ_G through `per_object` | (a) | fired | `B307_LOWER_FRONT_ORDER3.json` |
+| Hermite identity (one-step / j-step) | sign dropped; variance rescaling dropped | (b) | 112/120; 225/300 (the misses are identically-zero or order-1 cases) | `B307_HERMITE_IDENTITY.json` |
+| J/h tower soundness (FX_B) | binomial weights dropped | (b), weak | 6/54 | `B307_TOWER_FIXTURE.json` |
+| quarantine static scan | planted file | (a) | detected | `ov_quarantine.py --scan` |
 
 ## Per-cell deliverable — cell 307
 

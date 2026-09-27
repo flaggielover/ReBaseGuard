@@ -170,8 +170,28 @@ def ladder_checks(lad):
     return fails
 
 
+def ladder_plants(lad):
+    """Class-(a) controls THROUGH ladder_checks (review F6/C-7): (i) the Lemma-G A1 rung replaced by
+    true * (1 - 2^-20) must be reported unsound (fires iff true > 0); (ii) the PM and collapse rungs of A2 swapped must
+    break the chain-order check (fires iff PM != collapse)."""
+    import copy
+    out = {}
+    l1 = copy.deepcopy(lad)
+    tr = l1["A1"]["true"]
+    l1["A1"]["G"] = tr * (1 - F(1, 2 ** 20))
+    out["rung_plant_eligible"] = tr > 0
+    out["rung_plant_fired"] = any(x.startswith("A1.G") for x in ladder_checks(l1)) if tr > 0 else None
+    l2 = copy.deepcopy(lad)
+    pm, co = l2["A2"]["PM"], l2["A2"]["collapse"]
+    l2["A2"]["PM"], l2["A2"]["collapse"] = co, pm
+    out["order_plant_eligible"] = pm != co
+    out["order_plant_fired"] = ("A2 chain order" in ladder_checks(l2)) if pm != co else None
+    return out
+
+
 def part2():
     pts, fails, nc = [], [], []
+    plants = []
     sm_ok = True
     for sp in fx_a_specs():
         kp = L.generic_family(sp["n"], sp["seed"], sp["kill"])
@@ -182,6 +202,7 @@ def part2():
         nc.append(tb["tau_a"] < P.Lam)
         f = ladder_checks(lad)
         fails += f
+        plants.append(ladder_plants(lad))
         pts.append({"spec": {k: str(v) for k, v in sp.items()}, "e": "1/8", **ladder_record(lad), "fails": f})
     for sp in fx_b_points():
         Q.guard_drift(sp["e"])
@@ -193,6 +214,7 @@ def part2():
         nc.append(tb["tau_a"] < P.Lam)
         f = ladder_checks(lad)
         fails += f
+        plants.append(ladder_plants(lad))
         pts.append({"spec": {k: str(v) for k, v in sp.items()}, **ladder_record(lad), "fails": f})
     # ratios to the truth, per class
     summ = {}
@@ -216,7 +238,13 @@ def part2():
     scal["N_values"] = [p["spec"]["N"] for p in sel]
     scal["Lambda_values"] = [p["Lambda"] for p in sel]
     return {"points": pts, "rung_failures": fails, "SM_identities_all_exact": sm_ok,
-            "negative_control_A0_eq_tau_a_detected": {"detected_on": sum(nc), "of": len(nc)},
+            "NON_EVIDENCE_class_d_A0_eq_tau_a": {"detected_on": sum(nc), "of": len(nc),
+                                                 "note": "class (d): guaranteed by Lemma SM(d) since D < 1; not evidence (review C-7)"},
+            "class_a_plants_through_ladder_checks": {
+                "rung_plant": {"fired": sum(1 for x in plants if x["rung_plant_fired"]),
+                               "eligible": sum(1 for x in plants if x["rung_plant_eligible"])},
+                "order_plant": {"fired": sum(1 for x in plants if x["order_plant_fired"]),
+                                "eligible": sum(1 for x in plants if x["order_plant_eligible"])}},
             "ratio_to_true": summ, "FX_B_e0_loglog_slopes_vs_Lambda": scal}
 
 
@@ -266,6 +294,8 @@ def summarize_cell(spec, cell):
                 "env4_over_max_phi4": fl(rt["env4"] / mx["phi4"]) if mx["phi4"] else None,
                 "fG": fl(rt["fG"]), "sG": fl(rt["sG"]), "Gat": fl(rt["Gat"]),
                 "nc_flip_detections": mx["nc_flip_fail"], "nc_e10_detections": mx["nc_e10_fail"],
+                "split_bookkeeping_mismatch": mx["split_bookkeeping_mismatch"],
+                "plant_d2R_noK2_eligible": mx["plant_d2R_noK2_eligible"], "plant_d2R_noK2_fired": mx["plant_d2R_noK2_fired"],
             }
         per["fG_split_over_exact_zero_residual"] = fl(o["fG_surr"] / X.sup_norm(o["phi3_zero"]))
         per["normonly_A0_over_pointwise_at_e0"] = (
@@ -278,6 +308,7 @@ def summarize_cell(spec, cell):
         dh = O3.direct_hierarchy(cell, o)
         rg = O3.route_groups(cell, o, dh)
         ad = O3.adlr(cell, o)
+        pl = O3.route_group_plants(cell, o, dh)
         adf = {}
         for kk, vv in ad.items():
             if isinstance(vv, dict):
@@ -292,7 +323,7 @@ def summarize_cell(spec, cell):
                    "groups": {k: ({kk: (fl(vv) if not isinstance(vv, bool) else vv) for kk, vv in v.items()}
                                   if isinstance(v, dict) else (fl(v) if not isinstance(v, bool) else v))
                               for k, v in rg.items()},
-                   "adlr": adf})
+                   "adlr": adf, "ro3_plants": pl})
     j = cell["joint"]
     return {
         "spec": {k: str(v) for k, v in spec.items()},
@@ -335,6 +366,9 @@ def main():
     nc_e10 = sum(1 for _, _, n, v in allrec() if n == "surrogate" and v["nc_e10_detections"] > 0)
     nc_e10_of = sum(1 for _, _, n, v in allrec() if n == "surrogate")
     joint_ok = all(c["assembly"]["joint_sound"] for c in cells_audit)
+    split_mis = sum(v["split_bookkeeping_mismatch"] for _, _, _, v in allrec())
+    pid_el = sum(v["plant_d2R_noK2_eligible"] for _, _, n, v in allrec() if n == "surrogate")
+    pid_fi = sum(v["plant_d2R_noK2_fired"] for _, _, n, v in allrec() if n == "surrogate")
 
     def route_stat(route, key, cls=None, regime=None):
         vals = []
@@ -390,8 +424,10 @@ def main():
         "P3_verdicts": {"E2_identity_and_split_failures": id_fail, "soundness_failures_|E2|>rad": sound_fail,
                         "premise_checks_all_hold": prem_ok, "env4_failures": env4_fail,
                         "every_term_individually_sound": term_ok, "assembly_joint_sound": joint_ok,
-                        "NC_sign_flipped_centre_motion_detected_on": {"objects": nc_flip, "of": nc_flip_of},
-                        "NC_E10_fG_zero_as_certificate_detected_on": {"objects": nc_e10, "of": nc_e10_of}},
+                        "class_b_NC_sign_flipped_centre_motion_detected_on": {"objects": nc_flip, "of": nc_flip_of},
+                        "class_b_NC_E10_fG_zero_as_certificate_detected_on": {"objects": nc_e10, "of": nc_e10_of},
+                        "class_a_plant_d2R_without_RK2R_through_identity_check": {"fired": pid_fi, "eligible_grid_points": pid_el},
+                        "NON_EVIDENCE_class_c_five_way_split_bookkeeping_mismatches": split_mis},
         "P3_summary": summary,
         "P3_cells": cells_audit,
     }
@@ -450,7 +486,11 @@ def main():
                      "ADLR_G_certified_pointwise_failures": sum(per["adlr"]["G"]["pointwise_failures"] for c in cells_o3 for per in c["per_r"]),
                      "ADLR_true_proxy_pointwise_failures": sum(per["adlr"]["true"]["pointwise_failures"] for c in cells_o3 for per in c["per_r"]),
                      "ADLR_NC_B3_dropped_detected_objects": sum(1 for c in cells_o3 for per in c["per_r"] if per["adlr"]["nc_B3_dropped_detections"] > 0),
-                     "ADLR_objects": sum(len(c["per_r"]) for c in cells_o3)},
+                     "ADLR_objects": sum(len(c["per_r"]) for c in cells_o3),
+                     "class_a_RO3F_floor_plant": {"fired": sum(1 for c in cells_o3 for per in c["per_r"] if per["ro3_plants"]["floor_plant_fired"]),
+                                                  "eligible": sum(1 for c in cells_o3 for per in c["per_r"] if per["ro3_plants"]["floor_plant_eligible"])},
+                     "class_a_RO3E_envelope_plant": {"fired": sum(1 for c in cells_o3 for per in c["per_r"] if per["ro3_plants"]["envelope_plant_fired"]),
+                                                     "of": sum(len(c["per_r"]) for c in cells_o3)}},
         "summary": o3sum,
         "cells": cells_o3,
     }
@@ -465,7 +505,7 @@ def main():
                     notes=f"cells={len(cells_audit)} wall={wall:.0f}s P1={audit['P1_all_pass']} "
                           f"NC={audit['P1_all_negative_controls_detected']} sound_fail={sound_fail}")
     print(json.dumps({"P1": audit["P1_all_pass"], "P1_NC": audit["P1_all_negative_controls_detected"],
-                      "P2_fails": len(p2["rung_failures"]), "P3": audit["P3_verdicts"],
+                      "P2_fails": len(p2["rung_failures"]), "P2_plants": p2["class_a_plants_through_ladder_checks"], "P3": audit["P3_verdicts"],
                       "O3": order3["verdicts"], "wall": wall}, indent=1, default=str))
 
 
