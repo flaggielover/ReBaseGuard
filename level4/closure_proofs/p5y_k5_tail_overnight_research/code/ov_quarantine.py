@@ -65,6 +65,25 @@ def guard_cell(detector: str, m: int, cell: int) -> None:
             raise QuarantineRefusal(f"ADJACENT_CELL_REFUSED CUSUM m=5 cell {cell}")
 
 
+# Amendment 1 (config/QUARANTINE_AMENDMENT_1.json): operator quantities depend on the drift only,
+# so the tail drift band itself is quarantined, with margin.
+from fractions import Fraction as _Fr  # noqa: E402
+
+DRIFT_BAND = (_Fr(6, 5), _Fr(13, 5))
+
+
+def guard_drift(e_lo, e_hi=None) -> None:
+    """Refuse any drift point/interval meeting the quarantined band [6/5, 13/5]."""
+    lo = _Fr(e_lo)
+    hi = lo if e_hi is None else _Fr(e_hi)
+    if hi < lo:
+        lo, hi = hi, lo
+    # also refuse the mirror band: the kernel is symmetric under e -> -e with p <-> m
+    for a, b in (DRIFT_BAND, (-DRIFT_BAND[1], -DRIFT_BAND[0])):
+        if not (hi < a or lo > b):
+            raise QuarantineRefusal(f"DRIFT_BAND_REFUSED [{float(lo)}, {float(hi)}] meets [{float(a)}, {float(b)}]")
+
+
 def guard_path(path: str | Path) -> None:
     s = str(path)
     for pat in FORBIDDEN_PATH_PATTERNS:
@@ -176,6 +195,20 @@ def _selftest() -> None:
     guard_cell("SR", 5, 307)  # ov-quarantine: literal-ok SR cells are not targets
     guard_cell("CUSUM", 3, 307)  # ov-quarantine: literal-ok other m are not targets
     guard_cell("CUSUM", 5, 44)
+    for e in ("1.2", "7/4", "2.6", "-2"):
+        try:
+            guard_drift(_Fr(e))
+        except QuarantineRefusal:
+            continue
+        raise AssertionError(f"guard_drift failed to refuse {e}")
+    guard_drift(_Fr(1, 2), 1)
+    guard_drift(3)
+    try:
+        guard_drift(1, 3)  # interval straddling the band
+    except QuarantineRefusal:
+        pass
+    else:
+        raise AssertionError("guard_drift failed to refuse a straddling interval")
     install_import_guard()
     try:
         __import__("tail_forecast_r2")
