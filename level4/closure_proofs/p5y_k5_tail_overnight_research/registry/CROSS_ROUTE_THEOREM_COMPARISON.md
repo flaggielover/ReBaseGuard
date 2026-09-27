@@ -37,7 +37,7 @@ of LR/RLR constants, SC's f_G and RSO's order-0 term. None of these excludes ano
 | plain LR vs Dv′ | **incomparable** | THEOREM_LR E1/E2; stream B scaling |
 | SC composite sup ≤ the order-3 surrogate, with strict slack (the Leibniz gap) for continuous candidates | proved | SUPNORM_THEOREM |
 | RSO ≤ A0·‖φ‖; equality for constant ψ, where it collapses to the refuted uniform-A0 family | proved | RESIDUAL_SPECIFIC_309 |
-| a refinement without new records ≡ TPT (zero gain) | proved; validated 30/30 | COVER_REFINEMENT_309 |
+| a refinement without new records ≡ TPT **within the fixed-(g_hi, L, U) family** | an implementation identity, not validation evidence (review D B3); re-certifying constants on sub-segments (B2c) is a separate lever, THEORY_ONLY (review D B2) | COVER_REFINEMENT_309, D_309_ROUTE_SUMMARY §7 |
 | real refinement vs TPT | **incomparable**: refinement removes order-1 slack that TPT cannot touch; TPT is free | COVER_REFINEMENT_309 |
 | ADLR vs TC-T | **incomparable** | REAL_ORDER3_THEORY |
 | a block-uniform Ā ≥ Λ*(E) ≥ sup_E Λ, for **any** single-supersolution certifier (I1, I2 and C2b alike) | proved | C2b A0_TIGHTNESS §1 |
@@ -78,7 +78,7 @@ of LR/RLR constants, SC's f_G and RSO's order-0 term. None of these excludes ano
     Lemma G  >=  positive majorant  >=  LR  >=  true;   Dv' >= RLR  (atom constants; LR vs Dv' incomparable)
     surrogate f_G  >=  SC composite                                 (order-3 term)
     A0*||phi||  >=  RSO                                             (order-0 term)
-    TPT  ~  refinement-without-records;   TPT  <>  real refinement   (incomparable)
+    TPT  ~  refinement-without-records (fixed-input family only; B2c open);   TPT  <>  real refinement   (incomparable)
 
 Here `≥` means the left side is the looser bound. The chains act on different inequalities, so the strongest combined
 theorem available **without new real objects** is **TPT ∘ (RLR constants) ∘ (C2b-certified A0)**. That combination

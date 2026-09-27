@@ -49,47 +49,55 @@ So, symbolically:
 
 ## 1. Nodes
 
+**Revision r2 (after `reviews/REVIEW_GLOBAL_INTEGRITY_R1.md` F13; incident 01 residue).**
+* The committed tail-cell dominance figures that r0/r1 quoted in the "Dom" column now live only in
+  `HISTORICAL_DOMINANCE.md`. That history file carries no route column.
+* The TPT remark in row N31 is deleted.
+* §3 carries no numeric route factors.
+* This document therefore no longer co-locates any route factor with any committed tail figure.
+
+
 Abbreviations for the columns:
 * **Frozen:** on the floor-r2 consumer path;
 * **Impr:** theoretically improvable;
 * **NS:** improvement needs new science (T), new real compute (R), new data or toolchain (D), or governance only (G);
 * **Dom:** dominance per committed evidence, quoted.
 
-| id | node | definition (short) | bound type | enters Γ via | scope | Dom (committed) | Impr | NS | Frozen | detail |
+| id | node | definition (short) | bound type | enters Γ via | scope | Dom | Impr | NS | Frozen | detail |
 |---|---|---|---|---|---|---|---|---|---|---|
-| N1 | e0, ρ, x_lo, x_hi | cover cell `[e0−ρ, e0+ρ]` | exact rational | transport factor ρ·x_hi, and the Taylor radius inside TC-T | per cell | halving ρ closes 307–309 (C5 oracle, **diagnostic**; it scales only the Taylor ρ, graph A §5) | yes (refine) | R + G | yes | A:N1 |
-| N2/N3 | R_k ∋ R(e0), D_k ∋ R′(e0) | K1 midpoint Arb balls; generic eps: eps(F)=C f_F, eps(D)=C(f_D+k1 eps(F)) | two-sided certified | g_hi only | per cell | g_hi "59–60 % of the closure deficit" (C6 adj :606) | **yes**: AD Corollary T (atom-functional eps) is adopted but applied only on cells 0–148 | T-light (existing theorem) + G | yes | A:N2 |
-| N4 | H = R2_interval, M_R2 | K1 whole-cell enclosure of R″ | two-sided | intersection ∩ 𝓗, M cap | per cell | not binding (mag 𝓗/M_R2 ≈ 0.65) | irrelevant | — | yes | A:N4 |
-| N5 | C = C_upper | ≥ sup ‖(I−K_e)⁻¹‖ | upper | Lemma G A0 | per cell | never selected on the tail | — | R | yes | A:N5 |
-| N6 | k_i, j_i | ≥ sup ‖K_i(e)‖, ‖J_i‖ | upper | Lemma G; f_G; Env4; towers | per cell | — | frozen | R | yes | A:N6 |
-| N7 | δ_{F,D,H}, ε_src | midpoint residuals and source errors | upper | f_F, f_D, f_H | cell × r | negligible (f_F, f_D, f_H ≈ 0.15–0.6 % of the radius) | pointless | — | yes | A:N7 |
-| N8 | s_F, s_D, s_H | ≥ ‖F̂‖, ‖D̂‖, ‖Ĥ‖ (candidate sups) | upper | f_G, Env4 | cell × r | candidate-sup part of f_G, quoted at A:N8 | yes (A1/R5; composite-sup theorem, stream D) | D (payloads never serialized) + T | yes | A:N8, C §2 |
-| N9 | sup_S0[n] | drift-aware closed-form bounds | upper | towers, σ4 (r = 0) | per cell | — | — | — | yes | A:N9 |
-| N10 | Aux3 order-3 evidence | S:r:3, h:j:3 candidate sups + midpoint eps | upper | σ3/σ4 via (P3′) | per cell | the live half is S:r:3 (r = 1…4) and h:j:3 (j = 2…4) | yes | R | yes | A:N10 |
-| N11 | Ĥ_r(a) | centre values at the atom | point interval | centre C_lo/C_hi | cell × r | — | no (centres) | — | yes | A:N11 |
+| N1 | e0, ρ, x_lo, x_hi | cover cell `[e0−ρ, e0+ρ]` | exact rational | transport factor ρ·x_hi, and the Taylor radius inside TC-T | per cell | history: `HISTORICAL_DOMINANCE.md` | yes (refine) | R + G | yes | A:N1 |
+| N2/N3 | R_k ∋ R(e0), D_k ∋ R′(e0) | K1 midpoint Arb balls; generic eps: eps(F)=C f_F, eps(D)=C(f_D+k1 eps(F)) | two-sided certified | g_hi only | per cell | history: `HISTORICAL_DOMINANCE.md` | **yes**: AD Corollary T (atom-functional eps) is adopted but applied only on cells 0–148 | T-light (existing theorem) + G | yes | A:N2 |
+| N4 | H = R2_interval, M_R2 | K1 whole-cell enclosure of R″ | two-sided | intersection ∩ 𝓗, M cap | per cell | history: `HISTORICAL_DOMINANCE.md` | irrelevant | — | yes | A:N4 |
+| N5 | C = C_upper | ≥ sup ‖(I−K_e)⁻¹‖ | upper | Lemma G A0 | per cell | history: `HISTORICAL_DOMINANCE.md` | — | R | yes | A:N5 |
+| N6 | k_i, j_i | ≥ sup ‖K_i(e)‖, ‖J_i‖ | upper | Lemma G; f_G; Env4; towers | per cell | history: `HISTORICAL_DOMINANCE.md` | frozen | R | yes | A:N6 |
+| N7 | δ_{F,D,H}, ε_src | midpoint residuals and source errors | upper | f_F, f_D, f_H | cell × r | history: `HISTORICAL_DOMINANCE.md` | pointless | — | yes | A:N7 |
+| N8 | s_F, s_D, s_H | ≥ ‖F̂‖, ‖D̂‖, ‖Ĥ‖ (candidate sups) | upper | f_G, Env4 | cell × r | history: `HISTORICAL_DOMINANCE.md` | yes (A1/R5; composite-sup theorem, stream D) | D (payloads never serialized) + T | yes | A:N8, C §2 |
+| N9 | sup_S0[n] | drift-aware closed-form bounds | upper | towers, σ4 (r = 0) | per cell | history: `HISTORICAL_DOMINANCE.md` | — | — | yes | A:N9 |
+| N10 | Aux3 order-3 evidence | S:r:3, h:j:3 candidate sups + midpoint eps | upper | σ3/σ4 via (P3′) | per cell | history: `HISTORICAL_DOMINANCE.md` | yes | R | yes | A:N10 |
+| N11 | Ĥ_r(a) | centre values at the atom | point interval | centre C_lo/C_hi | cell × r | history: `HISTORICAL_DOMINANCE.md` | no (centres) | — | yes | A:N11 |
 | N12 | W2 enclosures | "origin ± cellwise node" | two-sided | centre C_lo/C_hi | cell | \|C_lo\| is small vs S̄ (C5 phase 1 :36) | yes (C4 :263) | R | yes | A:N12 |
-| N13 | C_T, τ, Ā, D_lo, D1, D2 | operator constants (taboo resolvent, ARL, escape probability and its e-derivatives) | upper / lower, block-uniform | Dv′ → A | per cell (sub-block max/min) | "D_lo and τ are the only operator levers that matter … D2 is irrelevant" (D1 diagnosis :98-103) | yes (E1/R3; LR route, stream C1) | T or computation; host-free for stdlib certifiers | I1 yes; I2 is the r2 substitute | A:N13, B §a |
+| N13 | C_T, τ, Ā, D_lo, D1, D2 | operator constants (taboo resolvent, ARL, escape probability and its e-derivatives) | upper / lower, block-uniform | Dv′ → A | per cell (sub-block max/min) | history: `HISTORICAL_DOMINANCE.md` | yes (E1/R3; LR route, stream C1) | T or computation; host-free for stdlib certifiers | I1 yes; I2 is the r2 substitute | A:N13, B §a |
 | N14 | κ1, κ2 | E\|He_n(Y)\| rational upper bounds | upper | Dv′ A1, A2 | shared | negligible slack | — | — | yes | A:N14 |
-| N15 | g_hi | R.hi − e0·D.lo | upper | additive | per cell | 59–60 % of the deficit | via N2/N3 | T-light + G | yes | A:N15 |
-| N16 | A_G | Lemma G: C, k1C², k2C²+2k1²C³ | upper | min supply | per cell | never selected | — | — | yes | A:N16, B §a.2 |
-| N17 | eff, δ1, δ2, A_Dv′ | Dv′ r2: A0=eff, A1=eff(κ1C_T+δ1), A2=eff(2κ1²C_T²+κ2C_T+2κ1C_Tδ1+2δ1²+δ2) | upper | rad_r | per cell | A0·p2 ≈ 81.5–81.9 % of S̄ | yes (N13); floored by Λ (N34) | T | yes | A:N17 |
-| N18 | chosen supply S | componentwise min over valid supplies | upper | rad_r | per cell | S_I1 = C2 on all fields | D′ operator-mixed is tighter but not admissible under r2 | G | yes | A:N18 |
-| N19 | towers | Leibniz J/h recursions | upper | σ3, σ4 | per cell | pure tower loose at order 3 (TCT:79-80) | yes | T | yes | A:N19 |
-| N20 | σ3 | ≥ ‖S_r‴(e0)‖ (midpoint tower) | upper | f_G | cell × r | 42–48 % of f_G at r ≥ 1 | yes | R (evidence) or T | yes | A:N20 |
-| N21 | σ4 | ≥ sup ‖S_r⁗‖ (cell tower) | upper | Env4 | cell × r | ≈235 at r = 4 via the tower | yes | R or T | yes | A:N21 |
-| N22 | f_F, f_D, f_H | δ + ε (midpoint) | upper | p0, p1, p2 | cell × r | negligible | — | — | yes | A:N22 |
-| N23 | f_G | 3k1 s_H + 3k2 s_D + k3 s_F + σ3 + ε_src[3] (Ĝ := 0) | upper (norm-only) | p2 (ρ f_G), p1, p0 | cell × r | **dominant**: A0·ρ·f_G ≈ 60–63 % of S̄ | yes: real Ĝ (R), composite sup (T + D), cancellation (T) | R / T / D | yes | A:N23, C §3 |
-| N24 | Env4 | (P3) envelope at s_G = 0 | upper | p2 (ρ² Env4/2) … | cell × r | A0·ρ²·Env4/2 ≈ 18–23 % of S̄ | yes | T / R | yes | A:N24 |
+| N15 | g_hi | R.hi − e0·D.lo | upper | additive | per cell | history: `HISTORICAL_DOMINANCE.md` | via N2/N3 | T-light + G | yes | A:N15 |
+| N16 | A_G | Lemma G: C, k1C², k2C²+2k1²C³ | upper | min supply | per cell | history: `HISTORICAL_DOMINANCE.md` | — | — | yes | A:N16, B §a.2 |
+| N17 | eff, δ1, δ2, A_Dv′ | Dv′ r2: A0=eff, A1=eff(κ1C_T+δ1), A2=eff(2κ1²C_T²+κ2C_T+2κ1C_Tδ1+2δ1²+δ2) | upper | rad_r | per cell | history: `HISTORICAL_DOMINANCE.md` | yes (N13); floored by Λ (N34) | T | yes | A:N17 |
+| N18 | chosen supply S | componentwise min over valid supplies | upper | rad_r | per cell | history: `HISTORICAL_DOMINANCE.md` | D′ operator-mixed is tighter but not admissible under r2 | G | yes | A:N18 |
+| N19 | towers | Leibniz J/h recursions | upper | σ3, σ4 | per cell | history: `HISTORICAL_DOMINANCE.md` | yes | T | yes | A:N19 |
+| N20 | σ3 | ≥ ‖S_r‴(e0)‖ (midpoint tower) | upper | f_G | cell × r | history: `HISTORICAL_DOMINANCE.md` | yes | R (evidence) or T | yes | A:N20 |
+| N21 | σ4 | ≥ sup ‖S_r⁗‖ (cell tower) | upper | Env4 | cell × r | history: `HISTORICAL_DOMINANCE.md` | yes | R or T | yes | A:N21 |
+| N22 | f_F, f_D, f_H | δ + ε (midpoint) | upper | p0, p1, p2 | cell × r | history: `HISTORICAL_DOMINANCE.md` | — | — | yes | A:N22 |
+| N23 | f_G | 3k1 s_H + 3k2 s_D + k3 s_F + σ3 + ε_src[3] (Ĝ := 0) | upper (norm-only) | p2 (ρ f_G), p1, p0 | cell × r | history: `HISTORICAL_DOMINANCE.md` | yes: real Ĝ (R), composite sup (T + D), cancellation (T) | R / T / D | yes | A:N23, C §3 |
+| N24 | Env4 | (P3) envelope at s_G = 0 | upper | p2 (ρ² Env4/2) … | cell × r | history: `HISTORICAL_DOMINANCE.md` | yes | T / R | yes | A:N24 |
 | N25 | p0, p1, p2 | Taylor bounds at \|t−e0\| ≤ ρ | upper | rad_r | cell × r | — | **yes: the profile p_j(s) (TPT)** | T (done tonight) | yes | A:N25 |
-| N26 | rad_r | A0 p2 + 2A1 p1 + A2 p0 | upper | 𝓗 | cell × r | — | via A, p, TPT, LR | T | yes | A:N26 |
-| N27 | c(5), [C_lo, C_hi] | assembly coefficients and centres | exact / interval | 𝓗 | cell | small | — | — | yes | A:N27 |
-| N28 | 𝓗_5 | [C_lo − S̄, C_hi + S̄] | two-sided | M | cell | lower end binds | via S̄ | — | yes | A:N28 |
+| N26 | rad_r | A0 p2 + 2A1 p1 + A2 p0 | upper | 𝓗 | cell × r | history: `HISTORICAL_DOMINANCE.md` | via A, p, TPT, LR | T | yes | A:N26 |
+| N27 | c(5), [C_lo, C_hi] | assembly coefficients and centres | exact / interval | 𝓗 | cell | history: `HISTORICAL_DOMINANCE.md` | — | — | yes | A:N27 |
+| N28 | 𝓗_5 | [C_lo − S̄, C_hi + S̄] | two-sided | M | cell | history: `HISTORICAL_DOMINANCE.md` | via S̄ | — | yes | A:N28 |
 | N29 | M | min(M_R2, mag(H ∩ 𝓗)) | upper | transport | cell | = \|lo\| on 306–309 | — | — | yes | A:N29 |
-| N30 | Γ (direct clause) | g_hi + ρ x_hi M | upper on max g | **adoption quantity** | cell | — | TPT / C5-T replace the transport step | T + **G (floor extension)** | yes | A:N30 |
-| N31 | Γ_C5T | g_hi + max((−H_lo)⁺ w_R, (H_hi)⁺ w_L) | upper | scientific clause | cell | 1.21–1.30 % of the penalty | superseded in strength by TPT (TPT-D) | — | **no** | A:N31 |
-| N32 | chain clause | μ_k, ℓ_k, γ_k, U_k | upper | not in the adoption quantity | adjacent cells | — | — | — | no | A:N32 |
-| N33 | adoption predicates | floor r2 base + (F1′ or F2) | governance | — | cell | 306: F1′(d) fails | — | G | yes | A:N33, B §b.4 |
-| N34 | Λ_k floor | Λ_k = sup E_a[τ]; any admissible A0 ≥ Λ_k | constraint | never enters Γ | cell | 309: Λ ≥ 3.586306 > the C5-T critical A0 3.266416 | — | — | no | A:N34, C §5 |
+| N30 | Γ (direct clause) | g_hi + ρ x_hi M | upper on max g | **adoption quantity** | cell | history: `HISTORICAL_DOMINANCE.md` | TPT / C5-T replace the transport step | T + **G (floor extension)** | yes | A:N30 |
+| N31 | Γ_C5T | g_hi + max((−H_lo)⁺ w_R, (H_hi)⁺ w_L) | upper | scientific clause | cell | history: `HISTORICAL_DOMINANCE.md` | — | — | **no** | A:N31 |
+| N32 | chain clause | μ_k, ℓ_k, γ_k, U_k | upper | not in the adoption quantity | adjacent cells | history: `HISTORICAL_DOMINANCE.md` | — | — | no | A:N32 |
+| N33 | adoption predicates | floor r2 base + (F1′ or F2) | governance | — | cell | history: `HISTORICAL_DOMINANCE.md` | — | G | yes | A:N33, B §b.4 |
+| N34 | Λ_k floor | Λ_k = sup E_a[τ]; any admissible A0 ≥ Λ_k | constraint | never enters Γ | cell | history: `HISTORICAL_DOMINANCE.md` | — | — | no | A:N34, C §5 |
 
 ## 2. Edges (primitive → derived)
 
@@ -103,11 +111,10 @@ Abbreviations for the columns:
 
 **Revision r1 (incident 01, `ledger/INCIDENT_01_TPT_GRAPH_PROXY.md`).** The r0 version of this section, at commit
 4403f86f, ranked the inequalities by quoting committed tail-cell shares of the radius sum next to the generic gain
-factors of a new route. That is a target-equivalent proxy. It is **WITHDRAWN**; the withdrawn rank-1 text is quoted
-here only as a record and is not asserted:
+factors of a new route. That is a target-equivalent proxy. It is **WITHDRAWN**; the withdrawn rank-1 text is not
+reproduced here:
 
-> *[WITHDRAWN]* "the Taylor remainder terms linear and quadratic in |t−e0| (≈ 60 % + ≈ 20 % of S̄ historically) are
-> charged at their edge value over the whole cell. The exact profile charges ≈ 1/2 and ≈ 1/3 (TPT-G)"
+> *[WITHDRAWN; the verbatim text is recorded only in `ledger/INCIDENT_01_TPT_GRAPH_PROXY.md`, the fenced incident record, and is not repeated here (review F13).]*
 
 The inventory below is **not ranked by impact on any cell**. Each entry states the kind of structure the inequality
 discards and a target-free characterisation of the slack. Items are listed in chain order. The committed per-cell
@@ -122,7 +129,7 @@ No route factor is attached to them.
 | 4, 5, 12 | whole-cell radius charged at every t of the transport | the \|t−e0\| profile of the Taylor remainders | exact: the s^k remainder term is over-charged by the factor `(x0+ρ/2)/(x0/(k+1)+ρ/(k+2))` (TPT-G); no charge on the s-independent part | TPT (**tail use BLOCKED**, incident 01) |
 | 7 | independent sum over r, and the W hull | cancellation between objects r | needs pointwise residuals (data never serialized) | — |
 | 8 | `|[R f](a)| ≤ A0‖f‖` (order-0 channel) | where the chain spends time (weighting) | sharp only at f ≡ 1 (Lemma SM(d)); the slack is ‖f‖ vs `(R|f|)(a)/Λ` | RSO (stream D) |
-| 9 | A1, A2 by submultiplicativity / quotient rule | sign cancellation of K₁ and K₂ | asymptotic: Dv′ A1 ~ Λ·C_T and A2 ~ Λ·C_T² vs the score-representation orders E[Σ\|M_n\|], E[Σ\|M_n²−n\|] (stream C1a); synthetic exact probe: true functional norm 3–10× / 10–20× below the positive majorant | LR (stream C1a/C1b) |
+| 9 | A1, A2 by submultiplicativity / quotient rule | sign cancellation of K₁ and K₂ | asymptotic: Dv′ A1 ~ Λ·C_T and A2 ~ Λ·C_T² vs the score-representation orders E[Σ\|M_n\|], E[Σ\|M_n²−n\|] (stream C1a); synthetic exact probe (`streams/C_308/pm_probe_synthetic.py`, `validation/PM_PROBE_SYNTHETIC.json`): the true functional norms lie well below the positive majorant | LR (stream C1a/C1b) |
 | 9 | Ā_eff from sup τ over inf D_lo taken independently | joint e-dependence across sub-blocks | bounded by the relative variation of the constants across the cell | TPT-B (low value) |
 | 13, 15 | Env4, σ4 towers | Leibniz triangle recursion | order-4 source never measured | streams B, D |
 | 14 | order-3 surrogate `‖S‴ + 3K₁Ĥ + 3K₂D̂ + K₃F̂‖ ≤ σ3 + 3k₁s_H + …` | cancellation, and the atom functional vs the whole-function sup | structural: products of two resolvent-scale quantities (A0 × candidate sups) | real Ĝ (R-stage, governed), composite sup (stream D, data-blocked), ADLR atom-direct (theory) |

@@ -108,6 +108,11 @@ def install_import_guard() -> None:
         sys.meta_path.insert(0, _ImportGuard())
 
 
+# TARGET_QUARANTINE.json allowed[0] (reading) and allowed[1] (HISTORICAL_DECOMPOSITION) are both exempt from
+# LEAK_FLAG; review F15 found the exemption keyed on one free-text class only.
+HISTORICAL_CLASSES = frozenset({"HISTORICAL_READ", "HISTORICAL_DECOMPOSITION"})
+
+
 def log_execution(script: str, purpose: str, *, cells_touched: list, klass: str,
                   target_evaluations: int = 0, proxies: int = 0, target_informed_opt: int = 0,
                   notes: str = "") -> dict:
@@ -122,7 +127,7 @@ def log_execution(script: str, purpose: str, *, cells_touched: list, klass: str,
     }
     for c in cells_touched:
         if isinstance(c, dict) and c.get("detector") == "CUSUM" and c.get("m") == 5 \
-                and c.get("cell") in TARGET_CELLS and klass != "HISTORICAL_READ":
+                and c.get("cell") in TARGET_CELLS and klass not in HISTORICAL_CLASSES:
             rec["LEAK_FLAG"] = True
     LEDGER.parent.mkdir(parents=True, exist_ok=True)
     with LEDGER.open("a") as fh:
@@ -132,7 +137,33 @@ def log_execution(script: str, purpose: str, *, cells_touched: list, klass: str,
 
 # ---------------------------------------------------------------- static scan
 
+_CELL_STR = re.compile(r"^\s*30[5-9]\s*$|\bcell\s*30[5-9]\b", re.I)
+_FRAC_STR = re.compile(r"^\s*(-?\d+)\s*/\s*(\d+)\s*$")
+
+
+def _in_band(x) -> bool:
+    try:
+        v = abs(_Fr(x))
+    except (ValueError, TypeError, ZeroDivisionError):
+        return False
+    return DRIFT_BAND[0] <= v <= DRIFT_BAND[1]
+
+
+def _mentions_forbidden(text: str) -> bool:
+    if any(pat.search(text) for pat in FORBIDDEN_PATH_PATTERNS):
+        return True
+    return any(re.search(r"\b" + re.escape(m) + r"\b", text) for m in FORBIDDEN_MODULES)
+
+
+def _strings_in(node) -> list:
+    return [n.value for n in ast.walk(node) if isinstance(n, ast.Constant) and isinstance(n.value, str)]
+
+
 def _scan_file(p: Path) -> list[dict]:
+    """Findings (fail the scan) plus two report-only kinds:
+    SUPPRESSED_LITERAL (a target-cell literal on a literal-ok line; listed, never silent) and
+    ATTENTION_DRIFT_LITERAL (a numeric literal inside the quarantined drift band; the runtime guard_drift is the
+    barrier, the static list is defence in depth). TARGET_INPUT_PATH is NEVER suppressed by literal-ok (review F3)."""
     src = p.read_text()
     lines = src.splitlines()
     out: list[dict] = []
@@ -140,45 +171,105 @@ def _scan_file(p: Path) -> list[dict]:
         tree = ast.parse(src)
     except SyntaxError as exc:  # a file we cannot parse is itself a finding
         return [{"file": str(p), "line": exc.lineno, "kind": "UNPARSEABLE"}]
+
+    def rec(node, kind, what):
+        out.append({"file": str(p), "line": getattr(node, "lineno", 0), "kind": kind, "what": what})
+
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
-            for a in node.names:
-                if a.name.rsplit(".", 1)[-1] in FORBIDDEN_MODULES:
-                    out.append({"file": str(p), "line": node.lineno, "kind": "FORBIDDEN_IMPORT", "what": a.name})
+            for a_ in node.names:
+                if a_.name.rsplit(".", 1)[-1] in FORBIDDEN_MODULES:
+                    rec(node, "FORBIDDEN_IMPORT", a_.name)
         elif isinstance(node, ast.ImportFrom):
             mod = (node.module or "").rsplit(".", 1)[-1]
             if mod in FORBIDDEN_MODULES:
-                out.append({"file": str(p), "line": node.lineno, "kind": "FORBIDDEN_IMPORT", "what": node.module})
+                rec(node, "FORBIDDEN_IMPORT", node.module)
+        elif isinstance(node, ast.Call):
+            fn = node.func
+            name = fn.id if isinstance(fn, ast.Name) else (fn.attr if isinstance(fn, ast.Attribute) else "")
+            if name in ("__import__", "import_module"):
+                arg = node.args[0] if node.args else None
+                cands = None
+                if isinstance(arg, ast.Constant) and isinstance(arg.value, str):
+                    cands = [arg.value]
+                elif isinstance(arg, ast.IfExp) and all(isinstance(x, ast.Constant) and isinstance(x.value, str)
+                                                        for x in (arg.body, arg.orelse)):
+                    cands = [arg.body.value, arg.orelse.value]   # a conditional between constant module names
+                if cands is None:
+                    rec(node, "DYNAMIC_IMPORT_UNRESOLVED", ast.dump(fn)[:60])
+                else:
+                    for c in cands:
+                        if c.rsplit(".", 1)[-1] in FORBIDDEN_MODULES:
+                            rec(node, "DYNAMIC_FORBIDDEN_IMPORT", c)
+            if name in ("run", "Popen", "call", "check_call", "check_output", "system", "execv", "execvp",
+                        "spawnv", "run_path"):
+                for sv in _strings_in(node):
+                    if _mentions_forbidden(sv) or ("level4/closure_proofs/" in sv
+                                                   and "p5y_k5_tail_overnight_research" not in sv):
+                        rec(node, "SUBPROCESS_FORBIDDEN", sv[:80])
+            if name in ("F", "Fraction", "_Fr") and len(node.args) == 2 and all(
+                    isinstance(x, ast.Constant) and isinstance(x.value, int) for x in node.args):
+                nval, dval = node.args[0].value, node.args[1].value
+                if dval and _in_band(_Fr(nval, dval)):
+                    line = lines[node.lineno - 1] if 0 < node.lineno <= len(lines) else ""
+                    if LITERAL_OK not in line:
+                        rec(node, "ATTENTION_DRIFT_LITERAL", f"{nval}/{dval}")
         elif isinstance(node, ast.Constant):
             v = node.value
             line = lines[node.lineno - 1] if 0 < node.lineno <= len(lines) else ""
-            if LITERAL_OK in line:
-                continue
-            if isinstance(v, int) and not isinstance(v, bool) and v in (TARGET_CELLS | ADJACENT_CELLS):
-                out.append({"file": str(p), "line": node.lineno, "kind": "TARGET_CELL_LITERAL", "what": v})
-            elif isinstance(v, str):
+            ok = LITERAL_OK in line
+            if isinstance(v, str):
                 for pat in FORBIDDEN_PATH_PATTERNS:
                     if pat.search(v):
-                        out.append({"file": str(p), "line": node.lineno, "kind": "TARGET_INPUT_PATH", "what": v})
+                        rec(node, "TARGET_INPUT_PATH", v[:120])       # never suppressed
+                if _CELL_STR.search(v):
+                    rec(node, "SUPPRESSED_LITERAL" if ok else "TARGET_CELL_STRING", v[:60])
+                mfr = _FRAC_STR.match(v)
+                if mfr and int(mfr.group(2)) and _in_band(_Fr(int(mfr.group(1)), int(mfr.group(2)))) and not ok:
+                    rec(node, "ATTENTION_DRIFT_LITERAL", v)
+            elif isinstance(v, int) and not isinstance(v, bool) and v in (TARGET_CELLS | ADJACENT_CELLS):
+                rec(node, "SUPPRESSED_LITERAL" if ok else "TARGET_CELL_LITERAL", v)
+            elif isinstance(v, float) and _in_band(v) and not ok:
+                rec(node, "ATTENTION_DRIFT_LITERAL", v)
     return out
+
+
+REPORT_ONLY = ("SUPPRESSED_LITERAL", "ATTENTION_DRIFT_LITERAL")
 
 
 def scan(root: Path = NS) -> dict:
     files = sorted(q for q in root.rglob("*.py") if "__pycache__" not in q.parts)
     findings: list[dict] = []
     sanctioned: list[dict] = []
+    report_only: list[dict] = []
     for q in files:
         if q.name == Path(__file__).name:
             continue  # the scanner's own tables are the definitions, not uses
         head = "\n".join(q.read_text().splitlines()[:40])
         fs = _scan_file(q)
+        report_only.extend(f for f in fs if f["kind"] in REPORT_ONLY)
+        fs = [f for f in fs if f["kind"] not in REPORT_ONLY]
         if HISTORICAL_READ_MARK in head:
-            sanctioned.extend(f for f in fs if f["kind"] in ("TARGET_INPUT_PATH", "TARGET_CELL_LITERAL"))
-            findings.extend(f for f in fs if f["kind"] not in ("TARGET_INPUT_PATH", "TARGET_CELL_LITERAL"))
+            sk = ("TARGET_INPUT_PATH", "TARGET_CELL_LITERAL", "TARGET_CELL_STRING")
+            sanctioned.extend(f for f in fs if f["kind"] in sk)
+            findings.extend(f for f in fs if f["kind"] not in sk)
         else:
             findings.extend(fs)
-    # Negative control: a planted file (in memory) must be detected.
-    planted = "import tail_forecast_r2\nx = 307\np = 'evidence/TCT_INPUTS_308.json'\n"
+    # Negative control (multi-shape, review F3): a planted file must be detected in EVERY shape.
+    planted = "\n".join([
+        "import tail_forecast_r2",
+        "import importlib, subprocess",
+        "importlib.import_module('tct_rule')",
+        "__import__('c2_d5_forecast')",
+        "subprocess.run(['python3', 'x/k5b_literal.py'])",
+        "x = 307",
+        "y = 'cell 308'",
+        "p = 'evidence/TCT_INPUTS_309.json'",
+        "q = 'evidence/TCT_INPUTS_306.json'  # " + LITERAL_OK + " (a path must never be suppressed)",
+        "z = 1.75",
+        "w = F(7, 4)",
+        "u = 306  # " + LITERAL_OK + " (reported as suppressed, not silent)",
+    ]) + "\n"
     tmp = NS / "ledger" / ".scan_negative_control.py"
     tmp.write_text(planted)
     try:
@@ -186,7 +277,10 @@ def scan(root: Path = NS) -> dict:
     finally:
         tmp.unlink()
     kinds = sorted({f["kind"] for f in ctrl})
-    control_ok = kinds == ["FORBIDDEN_IMPORT", "TARGET_CELL_LITERAL", "TARGET_INPUT_PATH"]
+    expected = sorted({"FORBIDDEN_IMPORT", "DYNAMIC_FORBIDDEN_IMPORT", "SUBPROCESS_FORBIDDEN", "TARGET_CELL_LITERAL",
+                       "TARGET_CELL_STRING", "TARGET_INPUT_PATH", "ATTENTION_DRIFT_LITERAL", "SUPPRESSED_LITERAL"})
+    n_paths = sum(1 for f in ctrl if f["kind"] == "TARGET_INPUT_PATH")
+    control_ok = kinds == expected and n_paths == 2 and sum(1 for f in ctrl if f["kind"] == "ATTENTION_DRIFT_LITERAL") == 2
     return {
         "files_scanned": len(files) - 1,
         "file_list": [str(q.relative_to(root)) for q in files if q.name != Path(__file__).name],
@@ -194,6 +288,12 @@ def scan(root: Path = NS) -> dict:
         "sanctioned_historical_read": [{"file": f["file"], "line": f["line"], "kind": f["kind"]} for f in sanctioned],
         "sanctioned_files": sorted({f["file"] for f in sanctioned}),
         "negative_control_kinds": kinds,
+        "negative_control_expected": expected,
+        "report_only": report_only,
+        "report_only_counts": {k: sum(1 for f in report_only if f["kind"] == k) for k in REPORT_ONLY},
+        "limits": ("static AST scan: cannot see values computed at run time, paths built by string operations, or "
+                   "drifts passed as variables; the runtime guards (guard_cell, guard_drift, import guard) and the "
+                   "input-path discipline are the primary barriers"),
         "negative_control_detected": control_ok,
         "verdict": "PASS" if (control_ok and not findings) else ("CONTROL_FAILED" if not control_ok else "FINDINGS"),
     }

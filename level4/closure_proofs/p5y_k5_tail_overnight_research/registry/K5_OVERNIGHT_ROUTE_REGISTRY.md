@@ -42,8 +42,9 @@
 | route | cells | motivation | theory | implementation | validation | governance | blocker | next action |
 |---|---|---|---|---|---|---|---|---|
 | SC: composite-sup theorem | 307–309 | The surrogate's slack is exactly the Leibniz gap, which is strictly positive. | proved | IMPLEMENTED (centred Taylor-form certified sup) | VALIDATED_NON_TARGET (FSM; Hermite closed form on the real kernel at declared drifts) | closure-only; **data-blocked** | candidate payloads were never serialized (U1, U2) | A host plus an admissibility ruling |
-| Real cover refinement | 309 and others | Order-j slack removal of 1 − 1/N^j | proved | IMPLEMENTED (algebra) | FSM | **BLOCKED** (new K1 records) | U1 plus governance | Result-free policies DRP-0/1 are ready |
-| Refinement without new records | — | — | gains exactly 0 over TPT | — | FSM 30/30 | REFUTED as a lever beyond TPT | — | — |
+| Real cover refinement | 309 and others | Order-j slack removal of 1 − 1/N^j | proved | IMPLEMENTED (algebra) | FSM | **BLOCKED** (new K1 records) | U1 plus governance | DRP-0 (result-free, certified slack coefficient) is ready; DRP-1 is outcome-adaptive (review D) |
+| Refinement without new records (C5 route B2) | — | — | within the fixed-(g_hi, L, U) family it equals TPT (an implementation identity, not validation evidence; review D B3) | — | — | **REFUTED within the fixed-input family only** (review D B2) | — | — |
+| B2c: re-certifying constants on sub-segments without new records | 307–309 | a separate lever not covered by the B2 refutation | THEORY_ONLY | — | — | not evaluated | — | research |
 | RSO: residual-specific order-0 | 307–309 | The order-0 bound is sharp only at f ≡ 1. | proved; the order-2 score form is THEORY_ONLY | IMPLEMENTED | FSM | closure-only; data-blocked | pointwise residuals | Combine with SC |
 
 ## Cell 306 (stream A)

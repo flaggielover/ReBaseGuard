@@ -52,3 +52,23 @@ the expectation behind that sentence, were informed by committed tail structure.
    tail-cell shares or factors. The coordinator checked by grep for the committed tail share figures and the C8/C3
    factor figures across `streams/`, `graph/` and `registry/`. The node table's "Dom" column quotes committed history
    (charter §5 asks for it) and attaches no route factor.
+
+## Residue (found by `reviews/REVIEW_GLOBAL_INTEGRITY_R1.md` F13)
+
+The original scope check (consequence 5) missed further co-locations in the same document:
+* The node table's "Dom" column quoted committed tail shares of the order-3, order-4 and A0 radius terms.
+* §3 of the same document stated TPT-G's over-charge formula and a synthetic LR ratio.
+* Row N31 placed C5-T's committed tail gain share beside "superseded in strength by TPT".
+
+**Repair (graph r2).**
+* The "Dom" values moved to `graph/HISTORICAL_DOMINANCE.md`, which has no route columns.
+* The N31 remark is deleted.
+* The withdrawn quote is replaced by a pointer here.
+* The synthetic ratio is replaced by a pointer to its producer.
+
+**Ledger.** The residue is recorded conservatively as a further qualitative proxy exposure, one additional line.
+TPT's tail use was already BLOCKED. For the LR route, the co-location was a latent proxy that no one combined.
+
+**Withdrawn rank-1 text of graph r0** (quoted only in this fenced record): "the Taylor remainder terms linear and
+quadratic in |t−e0| (≈ 60 % + ≈ 20 % of S̄ historically) are charged at their edge value over the whole cell. The
+exact profile charges ≈ 1/2 and ≈ 1/3 (TPT-G)".

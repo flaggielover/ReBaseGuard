@@ -1,0 +1,15 @@
+{
+  "schema": "P5Y_K5_TAIL_OVERNIGHT_QUARANTINE_AMENDMENT/1",
+  "amends": "config/QUARANTINE_AMENDMENT_2.json rule R2.3 (latent-proxy list)",
+  "direction": "STRICTER ONLY (adds artifacts to the latent-proxy list; removes nothing)",
+  "trigger": "reviews/REVIEW_GLOBAL_INTEGRITY_R1.md F14",
+  "added_latent_proxies": [
+    "streams/A_306/common/certs/ARL_SUB.json (certified lower bound on E_a[tau] at e = 3; by Theorem M T-LO a lower bound throughout the band)",
+    "streams/A_306/common/certs/TABOO_SUB.json",
+    "streams/A_306/common/certs/*_SUPER.json (certified upper bounds at a non-target block)",
+    "streams/A_306/common/runs/V_A.json, V_B.json",
+    "validation/A306_CV_VALIDATION.json (if present) and the values quoted in streams/A_306/common/THEOREM_CV.md section 7.3",
+    "validation/A306_MECHANISM.json, validation/A306_PFLAT.json, streams/A_306/mechanism/MECHANISM_STUDY.md, MECHANISM_TABLES.md (float Lambda at e in {1/2, 1, 3})"
+  ],
+  "rule": "As R2.3: reported by content class only in campaign summaries; never juxtaposed with any 305-309 number."
+}

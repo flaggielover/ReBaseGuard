@@ -69,8 +69,9 @@ INVALID_RESULT_CHASING. **CLOSED is never used for a route.**
 | `streams/C_308/` | operator-level route, exclusion question |
 | `streams/D_309/` | sup-norm, cover, residual-specific routes |
 | `streams/E_assembly/` | assembly tightening, general operator-tuple strategy |
-| `streams/F_indep/` | independent implementation, validation infrastructure |
 | `registry/K5_OVERNIGHT_ROUTE_REGISTRY.md` | route registry |
 | `validation/` | non-target validation report |
 | `reviews/` | independent reviews, preserved verbatim |
 | `OVERNIGHT_FINAL_REPORT.md` | morning handover |
+| `ERRATA.md` | corrections to frozen records |
+| `ledger/INCIDENT_0*.md` | proxy-exposure incident records |

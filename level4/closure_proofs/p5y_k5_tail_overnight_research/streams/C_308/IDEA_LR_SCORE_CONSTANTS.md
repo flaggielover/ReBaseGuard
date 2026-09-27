@@ -62,3 +62,16 @@ kernel evaluation, as in I1/I2.
 | stream assignment | this note is filed under C_308 for the operator-level stream, but applies to every cell |
 | r2 | **closure-only**: it is neither a Lemma G nor a Lemma Dv′ supply |
 | quarantine | never to be evaluated on a tail drift block tonight; validation drifts must avoid [1.2, 2.6] |
+
+## Erratum (after `reviews/REVIEW_GLOBAL_INTEGRITY_R1.md` F8)
+
+The ratio ranges in the probe table above were hand-copied from console output and were inaccurate. The probe is now
+a guarded producer, `pm_probe_synthetic.py`, which writes `validation/PM_PROBE_SYNTHETIC.json` with the same declared
+set. Its exact-arithmetic ranges over the 8 seeds are:
+
+| ratio | A1 | A2 |
+|---|---|---|
+| positive majorant / true functional norm | **2.43–9.20** (not "3–10×") | **7.34–23.6** (not "10–20×") |
+| Lemma G / positive majorant | 1.22–2.07 | **1.53–2.45** (not "1.2–2×") |
+
+The conclusion is unchanged: the slack lives in the sign cancellation of K₁ and K₂.

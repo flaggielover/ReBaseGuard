@@ -28,3 +28,14 @@ C7's committed certificate `E_a[τ] ≥ 3.586306094` at the drift 19839101/10000
   the ledger fences it.
 * Process lesson (coordinator): 7e851139 was committed after C2a's first completion notification. C2a had been
   resumed by the coordinator's S8 notice and was still correcting. The final files landed in 0d32a2e8.
+
+## Residue (found by `reviews/REVIEW_GLOBAL_INTEGRITY_R1.md` F12)
+
+`EXCLUSION_308.md` §e item 2 (:418), `C2A_ROUTE_SUMMARY.md` :88-89 and `A0X/PROGRESS.md` :17 still re-labelled C7's
+committed E2 family ceiling as lying at 308's right endpoint, and compared it with 308's committed A0*. That breaks
+amendment 2 R2.4. The earlier N3 fix covered only line 137.
+
+* Information content for the sign of X308 is nil, because the ceiling is not a bound on Λ.
+* No number was computed.
+* **Ledger:** one line of class `QUARANTINE_RULE_BREACH`, with `target_equivalent_proxies = 0`.
+* **Repair:** re-worded by stream C2a on coordinator instruction as "no committed ceiling at e_lo(308) exists".
