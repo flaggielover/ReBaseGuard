@@ -26,6 +26,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import subprocess
 import sys
 import time
 from fractions import Fraction as F
@@ -34,6 +35,8 @@ from pathlib import Path
 NS = Path(__file__).resolve().parents[1]
 REPO = NS.parents[2]
 CONFIG = NS / "config"
+REQUIRED_BOUND = ("code/k4r1_certificate.py", "tests/test_k4r1.py", "tests/mutation_harness.py", "SPECIFICATION.md",
+                  "config/GATE.json", "config/RESIDUAL_UNIVERSE.json", "config/PROVENANCE.json")
 M_RESIDUAL = ("2", "3", "5")
 DETECTORS = ("CUSUM", "SR")
 M_SCOPE = ("1", "2", "3", "5")
@@ -108,8 +111,9 @@ def load_json_bound(entry: dict, repo: Path) -> dict:
     return json.loads(p.read_text())
 
 
-def load_sources(prov: dict, repo: Path = REPO) -> dict:
+def load_sources(prov: dict, repo: Path | None = None) -> dict:
     """Every bound source (data and premise documents) is hash-verified; only data sources are parsed."""
+    repo = REPO if repo is None else repo
     out = {}
     for k, v in prov["sources"].items():
         if v.get("kind") == "json":
@@ -196,11 +200,16 @@ def extract_inputs(src: dict, universe: dict, prov: dict) -> dict:
         if not (a <= eta <= a * (1 + F(1, 2 ** 200))):
             raise K4R1Refusal(f"m={m}: T-EXT hull eta is not an outward rounding of x_hi")
         ent = k1["m"][m]
-        if ent.get("detector") != "CUSUM":
-            raise K4R1Refusal(f"m={m}: K1 entry detector")
+        if ent.get("detector") != "CUSUM" or ent.get("m") != int(m) or ent.get("cell_index") != 0 \
+                or ent.get("e0", k1["e0"]) != k1["e0"] or ent.get("rho", k1["rho"]) != k1["rho"]:
+            raise K4R1Refusal(f"m={m}: K1 entry metadata (detector / m / cell / geometry) inconsistent")
         D0 = interval(ent["D_interval"])
         pm = s1["per_m"][m]
         L1, U0 = fr(pm["L1"]), fr(pm["U0"])
+        L0, U1, M5x1, tf = fr(pm["L0"]), fr(pm["U1"]), fr(pm["M5"]), fr(pm["transport_factor"])
+        # slot-1 internal consistency: [L1, U1] is the evenness transport of [L0, U0] over [0, x1]
+        if not (tf >= x1 * x1 / 2 and M5x1 >= 0 and L0 <= U0 and L1 <= L0 - tf * M5x1 and U1 >= U0 + tf * M5x1):
+            raise K4R1Refusal(f"m={m}: slot-1 record is not a consistent transport over [0, x1]")
         M3, M5 = fr(row["M"]["3"][m]), fr(row["M"]["5"][m])
         out[m] = {"cells": cells, "a": a, "e0": e0, "x1": x1, "hull_cell": row["cell"],
                   "_D0_hi": D0[1], "_L1": L1, "_U0": U0, "_M3": M3, "_M5": M5}
@@ -244,7 +253,10 @@ def assemble(report: dict, universe_res: dict, certs: dict) -> dict:
 
 
 # ------------------------------------------------------------------ freeze gate
-def verify_freeze(freeze_path: Path = CONFIG / "FREEZE.json", repo: Path = REPO) -> dict:
+def verify_freeze(freeze_path: Path | None = None, repo: Path | None = None, ns: Path | None = None) -> dict:
+    freeze_path = CONFIG / "FREEZE.json" if freeze_path is None else freeze_path
+    repo = REPO if repo is None else repo
+    ns = NS if ns is None else ns
     if not freeze_path.exists():
         raise K4R1Refusal("EXECUTION_LOCKED: config/FREEZE.json absent")
     fz = json.loads(freeze_path.read_text())
@@ -263,7 +275,28 @@ def verify_freeze(freeze_path: Path = CONFIG / "FREEZE.json", repo: Path = REPO)
         raise K4R1Refusal("EXECUTION_LOCKED: implementation lies outside the bound repository") from None
     if here not in fz["bound_files"]:
         raise K4R1Refusal("EXECUTION_LOCKED: this implementation is not bound by the freeze")
+    try:
+        ns_rel = ns.resolve().relative_to(repo.resolve())
+    except ValueError:
+        raise K4R1Refusal("EXECUTION_LOCKED: namespace lies outside the bound repository") from None
+    required = [str(ns_rel / r) for r in REQUIRED_BOUND] + [fz.get("qualification_review") or "<absent>"]
+    missing = [r for r in required if r not in fz["bound_files"]]
+    if missing:
+        raise K4R1Refusal(f"EXECUTION_LOCKED: mandatory files not bound by the freeze: {missing}")
     return fz
+
+
+def git_state(repo: Path, freeze_path: Path) -> dict:
+    """HEAD, cleanliness of the whole checkout, and whether FREEZE.json is committed at HEAD byte-identically."""
+    def git(*args):
+        return subprocess.run(["git", "-C", str(repo), *args], capture_output=True)
+    head = git("rev-parse", "HEAD")
+    status = git("status", "--porcelain")
+    rel = str(freeze_path.resolve().relative_to(repo.resolve()))
+    shown = git("show", f"HEAD:{rel}")
+    return {"head": head.stdout.decode().strip() if head.returncode == 0 else None,
+            "clean": head.returncode == 0 and status.returncode == 0 and status.stdout.strip() == b"",
+            "freeze_committed": shown.returncode == 0 and shown.stdout == freeze_path.read_bytes()}
 
 
 def read_config():
@@ -290,6 +323,9 @@ def main(argv=None) -> int:
     out = Path(a.out)
     if out.exists():
         raise K4R1Refusal("EXACT_ONCE: output already exists")
+    gs = git_state(REPO, CONFIG / "FREEZE.json")
+    if not (gs["clean"] and gs["freeze_committed"]):
+        raise K4R1Refusal(f"EXECUTION_LOCKED: checkout not clean or FREEZE.json not committed at HEAD ({gs})")
     t0w, t0c = time.time(), time.process_time()
     src = load_sources(prov)
     inp = extract_inputs(src, universe, prov)
@@ -304,7 +340,7 @@ def main(argv=None) -> int:
     asm = assemble(src["historical_report"], {m: (v["cells"], v["a"]) for m, v in inp.items()}, certs)
     science = all(c["PASS"] for c in certs.values()) and asm["complete"]
     res = {"schema": "rebaseguard.p5y.k4r1.result.v1", "freeze_sha256": sha_file(CONFIG / "FREEZE.json"),
-           "freeze_commit_declared": fz.get("freeze_commit"), "arithmetic": "exact rational",
+           "executed_at_head": gs["head"], "arithmetic": "exact rational",
            "certificates": {f"CUSUM|m={m}": c for m, c in sorted(certs.items())}, "assembly": asm,
            "K4R1_COMPACT_RESIDUAL_COVERAGE": "PASS" if all(c["PASS"] for c in certs.values()) else "FAIL",
            "K4R1_COMPLETE_K4_ASSEMBLY": "PASS" if asm["complete"] else "FAIL",

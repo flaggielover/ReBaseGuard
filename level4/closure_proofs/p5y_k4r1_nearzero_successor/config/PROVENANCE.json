@@ -3,28 +3,106 @@
  "start_commit": "bc4ba08ef20f3996926f319766ca253e82004f74",
  "start_branch": "p5y-k4-frozen-execution-r1",
  "sources": {
-  "historical_report": {"kind": "json", "path": "level4/closure_proofs/p5y_k4_frozen_execution_r1/evidence/K4_ASSEMBLY_REPORT.json", "sha256": "83cabce239630d98a842bd9eec32482c7d0720fc86433ef8ee7c658833aef175", "commit": "bc4ba08e", "status": "frozen K4 GENUINE report; independently reproduced byte-identically (K4_INDEPENDENT_REVIEW ACCEPTED)"},
-  "k1_cell0_record": {"kind": "json", "path": "level4/closure_proofs/p5y_k5b_k1_premise_binding_audit/result_r1/records/aux5_CUSUM_0_256.json", "sha256": "4f8df44c956309b109e174f7ea15deee39ffad863c459f1656d6e2470a7ff1fb", "status": "K1 CUSUM Aux5 production record of cell 0 (producer 3692d0fe); equals COMPOSITE_EXPORT_MANIFEST entry k4_records/aux5_CUSUM_0_256.json; K1 CLOSED"},
-  "slot1_record": {"kind": "json", "path": "level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/evidence/slot-1/SCIENTIFIC_RECORD_SEALED.json", "sha256": "cf90f1ea577c09d718adddab9698f8f03995722dae51f68d1fd767e4339f73ae", "commit": "84299314", "status": "ADOPTED by independent adjudication"},
-  "text_result": {"kind": "json", "path": "level4/closure_proofs/p5y_k5_remaining_cell_closure/transport_extension/evidence/qualification_r1/TEXT_RESULT.json", "sha256": "cb97cabcc3b5848665584e33ad4207c6d36ce835729725265d585dc8f3ee4f87", "commit": "20dc6b98 (sealed), adopted a3547b9b", "status": "ADOPTED 37/37 by independent adjudication"},
-  "slot1_adjudication": {"kind": "document", "path": "level4/closure_proofs/p5y_k5_cusum_first_real_probe_result/adjudication/ADJUDICATION.json", "sha256": "b2c56141e9846d3b9a6e7d123f35938dc8dc7692c858dd460af19616e2ab3338"},
-  "text_adjudication": {"kind": "document", "path": "level4/closure_proofs/p5y_k5_remaining_cell_closure/transport_extension/adjudication/ADJUDICATION.json", "sha256": "f72abeed47a5165dc1f314e987b017c98b7ae56c506cbe7700a83d7e60f299b1"},
-  "text_spec": {"kind": "document", "path": "level4/closure_proofs/p5y_k5_remaining_cell_closure/transport_extension/TEXT_SPEC.md", "sha256": "b49658e0c1583ddd235800d290b56afb9404b5a99f7d7685707f75a5e88771d3", "role": "defines M_{n,m}(eta) >= sup_[0,eta] |R_m^(n)|"},
-  "premise_p5_t3": {"kind": "document", "path": "level4/closure_proofs/p5_nonlinear_dynamics/THEOREM.md", "sha256": "207951a9ea64b995685862240c8605fa62313762ac77e652e6176e0311688ca3", "role": "P5-T3: R(-e) = -R(e) exactly"},
-  "premise_l5_proof": {"kind": "document", "path": "level4/closure_proofs/p5x_global_nonlinear_dynamics/PROOF.md", "sha256": "da4a2d519317c9a0265079c488f28ff1cec4a27b658c02d40d1c514942cd88be", "role": "L5: R_{D,m} in C^inf(R)"},
-  "premise_l5_review": {"kind": "document", "path": "level4/closure_proofs/p5x_l5_independent_review/README.md", "sha256": "dcc04575521e34fce00ba359a414a10164b7d9ac7b93f1b2bcfd82b56a5ef2f3", "role": "L5 independent review PASS_WITH_SCOPE_LIMITATION (qualitative use only)"},
-  "premise_l5_countersignature": {"kind": "document", "path": "level4/closure_proofs/p5x_l5_independent_review/COUNTERSIGNATURE.json", "sha256": "4bf843abe26f0fe91a8e95ff1d1bdb6f1b541762d4734762b272560126b7d7b9"},
-  "historical_checkpoint": {"kind": "document", "path": "level4/closure_proofs/p5y_k2k5_postk1_audit/config/K4_ASSEMBLY_CHECKPOINT.json", "sha256": "95b1fd16ac420d6f545cbb2619a6086ced31c6d748a9c801ca7f7c114e77a1e1"},
-  "historical_result": {"kind": "document", "path": "level4/closure_proofs/p5y_k4_frozen_execution_r1/config/K4_EXECUTION_RESULT.json", "sha256": "ae4ef59e6470f6ae6d772d584f82c39f122999de1cd69a32a3e550086ce2ee5e"},
-  "historical_review": {"kind": "document", "path": "level4/closure_proofs/p5y_k4_frozen_execution_r1/review/K4_INDEPENDENT_REVIEW.json", "sha256": "241953c0dafc02bb92c5320a9bbf2d1e277582b3565a114b47309a816e309dbb"},
-  "cusum_export_manifest": {"kind": "document", "path": "level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/evidence/closure_r1/COMPOSITE_EXPORT_MANIFEST.json", "sha256": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334"},
-  "cusum_attestation": {"kind": "document", "path": "level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/evidence/closure_r1/K4_COMPOSITE_ATTESTATION.json", "sha256": "039e2e1cbebb9561c177ddca790dbc2c675eafde15553ad4e1282777d9bd8d2c"}
+  "historical_report": {
+   "kind": "json",
+   "path": "level4/closure_proofs/p5y_k4_frozen_execution_r1/evidence/K4_ASSEMBLY_REPORT.json",
+   "sha256": "83cabce239630d98a842bd9eec32482c7d0720fc86433ef8ee7c658833aef175",
+   "commit": "bc4ba08e",
+   "status": "frozen K4 GENUINE report; independently reproduced byte-identically (K4_INDEPENDENT_REVIEW ACCEPTED)"
+  },
+  "k1_cell0_record": {
+   "kind": "json",
+   "path": "level4/closure_proofs/p5y_k5b_k1_premise_binding_audit/result_r1/records/aux5_CUSUM_0_256.json",
+   "sha256": "4f8df44c956309b109e174f7ea15deee39ffad863c459f1656d6e2470a7ff1fb",
+   "status": "K1 CUSUM Aux5 production record of cell 0 (producer 3692d0fe); equals COMPOSITE_EXPORT_MANIFEST entry k4_records/aux5_CUSUM_0_256.json; K1 CLOSED"
+  },
+  "slot1_record": {
+   "kind": "json",
+   "path": "level4/closure_proofs/p5y_k5_cusum_first_real_probe_protocol/evidence/slot-1/SCIENTIFIC_RECORD_SEALED.json",
+   "sha256": "cf90f1ea577c09d718adddab9698f8f03995722dae51f68d1fd767e4339f73ae",
+   "commit": "84299314",
+   "status": "ADOPTED by independent adjudication"
+  },
+  "text_result": {
+   "kind": "json",
+   "path": "level4/closure_proofs/p5y_k5_remaining_cell_closure/transport_extension/evidence/qualification_r1/TEXT_RESULT.json",
+   "sha256": "cb97cabcc3b5848665584e33ad4207c6d36ce835729725265d585dc8f3ee4f87",
+   "commit": "20dc6b98 (sealed), adopted a3547b9b",
+   "status": "sealed 20dc6b98; T-EXT independently adjudicated ADOPTED 37/37 (a3547b9b) for the cells 1-10 K5-B pass set; the hull majorants M_n used here rest on that adjudication's tower checks (M02, M06, M11), TEXT_SPEC and the premises P5-T3, L5, P1b (see GATE.input_scope_note)"
+  },
+  "slot1_adjudication": {
+   "kind": "document",
+   "path": "level4/closure_proofs/p5y_k5_cusum_first_real_probe_result/adjudication/ADJUDICATION.json",
+   "sha256": "b2c56141e9846d3b9a6e7d123f35938dc8dc7692c858dd460af19616e2ab3338"
+  },
+  "text_adjudication": {
+   "kind": "document",
+   "path": "level4/closure_proofs/p5y_k5_remaining_cell_closure/transport_extension/adjudication/ADJUDICATION.json",
+   "sha256": "f72abeed47a5165dc1f314e987b017c98b7ae56c506cbe7700a83d7e60f299b1"
+  },
+  "text_spec": {
+   "kind": "document",
+   "path": "level4/closure_proofs/p5y_k5_remaining_cell_closure/transport_extension/TEXT_SPEC.md",
+   "sha256": "b49658e0c1583ddd235800d290b56afb9404b5a99f7d7685707f75a5e88771d3",
+   "role": "defines M_{n,m}(eta) >= sup_[0,eta] |R_m^(n)|"
+  },
+  "premise_p5_t3": {
+   "kind": "document",
+   "path": "level4/closure_proofs/p5_nonlinear_dynamics/THEOREM.md",
+   "sha256": "207951a9ea64b995685862240c8605fa62313762ac77e652e6176e0311688ca3",
+   "role": "P5-T3: R(-e) = -R(e) exactly"
+  },
+  "premise_l5_proof": {
+   "kind": "document",
+   "path": "level4/closure_proofs/p5x_global_nonlinear_dynamics/PROOF.md",
+   "sha256": "da4a2d519317c9a0265079c488f28ff1cec4a27b658c02d40d1c514942cd88be",
+   "role": "L5: R_{D,m} in C^inf(R)"
+  },
+  "premise_l5_review": {
+   "kind": "document",
+   "path": "level4/closure_proofs/p5x_l5_independent_review/README.md",
+   "sha256": "dcc04575521e34fce00ba359a414a10164b7d9ac7b93f1b2bcfd82b56a5ef2f3",
+   "role": "L5 independent review PASS_WITH_SCOPE_LIMITATION (qualitative use only)"
+  },
+  "premise_l5_countersignature": {
+   "kind": "document",
+   "path": "level4/closure_proofs/p5x_l5_independent_review/COUNTERSIGNATURE.json",
+   "sha256": "4bf843abe26f0fe91a8e95ff1d1bdb6f1b541762d4734762b272560126b7d7b9"
+  },
+  "historical_checkpoint": {
+   "kind": "document",
+   "path": "level4/closure_proofs/p5y_k2k5_postk1_audit/config/K4_ASSEMBLY_CHECKPOINT.json",
+   "sha256": "95b1fd16ac420d6f545cbb2619a6086ced31c6d748a9c801ca7f7c114e77a1e1"
+  },
+  "historical_result": {
+   "kind": "document",
+   "path": "level4/closure_proofs/p5y_k4_frozen_execution_r1/config/K4_EXECUTION_RESULT.json",
+   "sha256": "ae4ef59e6470f6ae6d772d584f82c39f122999de1cd69a32a3e550086ce2ee5e"
+  },
+  "historical_review": {
+   "kind": "document",
+   "path": "level4/closure_proofs/p5y_k4_frozen_execution_r1/review/K4_INDEPENDENT_REVIEW.json",
+   "sha256": "241953c0dafc02bb92c5320a9bbf2d1e277582b3565a114b47309a816e309dbb"
+  },
+  "cusum_export_manifest": {
+   "kind": "document",
+   "path": "level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/evidence/closure_r1/COMPOSITE_EXPORT_MANIFEST.json",
+   "sha256": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334"
+  },
+  "cusum_attestation": {
+   "kind": "document",
+   "path": "level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/evidence/closure_r1/K4_COMPOSITE_ATTESTATION.json",
+   "sha256": "039e2e1cbebb9561c177ddca790dbc2c675eafde15553ad4e1282777d9bd8d2c"
+  }
  },
  "identities": {
   "k1_cusum_producer_identity_hash": "3692d0feeaef71365798cd99399fdb6d744573f38d59dba5cfe2e99294f0ae19",
   "k1_successor_final_adjudication_commit": "7d5cf02b7f4b29439c59d803fe90ce62bc0841da"
  },
- "geometry": {"k1_cell0_e0": "5083/20000000", "slot1_x1": "5083/10000000"},
+ "geometry": {
+  "k1_cell0_e0": "5083/20000000",
+  "slot1_x1": "5083/10000000"
+ },
  "not_used": {
   "gammatilde_point_certificate": "p5y_gammatilde_point_certificate (84aaa6a5): not used; it has scripted self-adjudication only, no independent review",
   "gammatilde_sign_audit": "p5y_gammatilde_sign_audit (323e2b8f): not used; not countersigned",

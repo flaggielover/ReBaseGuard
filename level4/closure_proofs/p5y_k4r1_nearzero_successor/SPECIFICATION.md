@@ -74,6 +74,24 @@ All inputs are hash-bound in `config/PROVENANCE.json`:
 
 There is no tunable parameter.
 
+## Qualification history
+
+- **r1** (candidate `81f5195a`): **QUALIFICATION_REJECTED** (`review/qualification_r1_REJECTED/`, review sha `c1e8cdf1`).
+  - Mathematics, universe, provenance, endpoint and leakage checks all passed.
+  - Blocking defect: the real-input wiring and the `execute` branch were not tested, and 6 unsound wiring mutants survived.
+  - Candidate r1 is never frozen or executed.
+- **r2** (this candidate) repairs:
+  - wiring tests with distinct per-field values;
+  - an end-to-end synthetic `execute` in a throwaway git repository;
+  - all 12 reviewer mutants plus the new checks added to the harness (51 mutants in total).
+- **r2 also addresses the r1 notes:**
+  - **N1:** mandatory freeze bindings, a clean checkout, and FREEZE.json committed at HEAD.
+  - **N3:** T-EXT scope stated in `GATE.input_scope_note`.
+  - **N4:** disclosure revised in FEASIBILITY.md.
+  - **N5:** K1 entry metadata and slot-1 transport consistency are now checked.
+  - **N6:** refusals must be `K4R1Refusal`, not crashes.
+- **r2 must pass a new, independent qualification** before any freeze.
+
 ## Governance sequence
 
 1. **Candidate commit.** Contains this specification, the gate, the universe, the provenance, the code, the tests, and the qualification evidence (the synthetic suite, the mutation harness, and a value-blind preflight).

@@ -173,20 +173,46 @@ def synthetic_universe():
         {"detector": "CUSUM", "m": 5, "cells": [0, 1, 2], "a": str(A3)}]}
 
 
+DVAL = {"1": ("-9", "-1/7"), "2": ("-8", "-3/11"), "3": ("-7", "-5/13"), "5": ("-6", "-7/17")}
+SLOT = {m: {"L0": F(100 + 10 * k), "U0": F(200 + 10 * k), "M5": F(10 ** 6 * (k + 1))} for k, m in enumerate(("1", "2", "3", "5"))}
+TF = X1 * X1 / 2
+
+
+def slot_per_m():
+    out = {}
+    for m, v in SLOT.items():
+        out[m] = {"L0": str(v["L0"]), "U0": str(v["U0"]), "M5": str(v["M5"]), "transport_factor": str(TF),
+                  "L1": str(v["L0"] - TF * v["M5"] - F(1, 1000)), "U1": str(v["U0"] + TF * v["M5"] + F(1, 1000))}
+    return out
+
+
+def mval(n, m, row):
+    return F(1000 * int(n) + 7 * int(m) + row, 1)
+
+
 def synthetic_sources():
     k1 = {"detector": "CUSUM", "cell_index": 0, "producer_identity_hash": PID, "e0": [str(E0), "0/1"], "rho": [str(E0), "0/1"],
-          "m": {m: {"detector": "CUSUM", "D_interval": {"lo": "-5", "hi": "-1"}} for m in ("1", "2", "3", "5")}}
+          "m": {m: {"detector": "CUSUM", "m": int(m), "cell_index": 0, "e0": [str(E0), "0/1"], "rho": [str(E0), "0/1"],
+                    "D_interval": {"lo": DVAL[m][0], "hi": DVAL[m][1]}} for m in ("1", "2", "3", "5")}}
     slot1 = {"scientific": {"binding": {"k1_cell_index": 0, "detector": "CUSUM", "record_sha256": "K1SHA", "left": "0/1",
                                         "right": str(X1)},
                             "context": {"point_e": "0/1", "x1": str(X1)},
-                            "per_m": {m: {"L1": "1", "U0": "2"} for m in ("1", "2", "3", "5")}}}
+                            "per_m": slot_per_m()}}
     rows = []
     for i, (lo, hi) in enumerate([(F(0), X1), (X1, A2), (A2, A3), (A3, F(2, 1000))]):
         eta = hi + hi / 10 ** 70
         rows.append({"cell": i, "x_lo": str(lo), "x_hi": str(hi), "hull_norms": {"eta": str(eta)},
-                     "M": {n: {m: "10" for m in ("1", "2", "3", "5")} for n in ("2", "3", "4", "5")}})
+                     "M": {n: {m: str(mval(n, m, i)) for m in ("1", "2", "3", "5")} for n in ("2", "3", "4", "5")}})
     text = {"sealed_record_sha256": "S1SHA", "rows": rows}
     return {"historical_report": synthetic_report(), "k1_cell0_record": k1, "slot1_record": slot1, "text_result": text}
+
+
+def expected(m, a, row):
+    """independent statement of the frozen formulas over the synthetic constants"""
+    L1 = SLOT[m]["L0"] - TF * SLOT[m]["M5"] - F(1, 1000)
+    G = F(DVAL[m][1]) - L1 * E0 * E0 / 2
+    T = min(mval("3", m, row), SLOT[m]["U0"] + a * a / 2 * mval("5", m, row))
+    return G, T, G + a * a / 6 * max(T, F(0))
 
 
 PROV = {"identities": {"k1_cusum_producer_identity_hash": PID}, "geometry": {"k1_cell0_e0": str(E0)},
@@ -198,6 +224,17 @@ def test_extract_accepts_consistent_synthetic_sources():
     assert sorted(out) == ["2", "3", "5"]
     assert out["2"]["a"] == A2 and out["2"]["hull_cell"] == 1 and out["5"]["hull_cell"] == 2
     assert out["3"]["cells"] == [0, 1, 2]
+
+
+def test_extract_values_are_wired_to_the_right_fields():
+    out = K.extract_inputs(synthetic_sources(), synthetic_universe(), PROV)
+    for m, a, row in (("2", A2, 1), ("3", A3, 2), ("5", A3, 2)):
+        v = out[m]
+        assert v["_D0_hi"] == F(DVAL[m][1])
+        assert v["_L1"] == SLOT[m]["L0"] - TF * SLOT[m]["M5"] - F(1, 1000)
+        assert v["_U0"] == SLOT[m]["U0"]
+        assert v["_M3"] == mval("3", m, row) and v["_M5"] == mval("5", m, row)
+        assert v["e0"] == E0 and v["x1"] == X1 and v["a"] == a
 
 
 @pytest.mark.parametrize("mutate", [
@@ -220,11 +257,18 @@ def test_extract_accepts_consistent_synthetic_sources():
     lambda s, u: s["slot1_record"]["scientific"]["per_m"]["5"].__setitem__("L1", 0.5),           # float
     lambda s, u: s["text_result"]["rows"][2]["M"]["3"].__setitem__("3", 7.0),                    # float
     lambda s, u: s["k1_cell0_record"]["m"]["2"].__setitem__("detector", "SR"),
+    lambda s, u: s["k1_cell0_record"]["m"]["3"].__setitem__("m", 5),                            # entry for the wrong m
+    lambda s, u: s["k1_cell0_record"]["m"]["5"].__setitem__("cell_index", 1),
+    lambda s, u: s["k1_cell0_record"]["m"]["5"].__setitem__("e0", ["1/1000", "0/1"]),
+    lambda s, u: s["slot1_record"]["scientific"]["per_m"]["3"].__setitem__("L1", "1000000"),     # L1 above transport
+    lambda s, u: s["slot1_record"]["scientific"]["per_m"]["2"].__setitem__("U1", "0"),           # U1 below transport
+    lambda s, u: s["slot1_record"]["scientific"]["per_m"]["5"].__setitem__("transport_factor", "0"),
+    lambda s, u: s["slot1_record"]["scientific"]["per_m"]["5"].__setitem__("U0", "-1000000"),    # L0 > U0
 ])
 def test_extract_refusals(mutate):
     s, u = synthetic_sources(), synthetic_universe()
     mutate(s, u)
-    with pytest.raises((K.K4R1Refusal, KeyError)):
+    with pytest.raises(K.K4R1Refusal):
         K.extract_inputs(s, u, PROV)
 
 
@@ -307,31 +351,38 @@ def test_execute_locked_without_freeze(tmp_path):
 
 
 def test_freeze_gate(tmp_path):
-    code = Path(K.__file__).resolve()
-    repo = code.parent                                   # the implementation lies inside this "repository"
-    good = {"qualification_verdict": "QUALIFICATION_ACCEPTED",
-            "bound_files": {code.name: hashlib.sha256(code.read_bytes()).hexdigest()}}
-    p = tmp_path / "FREEZE.json"
+    repo, ns, mod = build_repo(tmp_path)
+    fpath = ns / "config/FREEZE.json"
+    good = json.loads(fpath.read_text())
 
-    def write(o):
-        p.write_text(json.dumps(o))
-        (tmp_path / "FREEZE_HASH").write_text(hashlib.sha256(p.read_bytes()).hexdigest())
+    def write(o, hash_ok=True):
+        fpath.write_text(json.dumps(o, sort_keys=True))
+        (ns / "config/FREEZE_HASH").write_text(_sha(fpath) if hash_ok else "0" * 64)
 
     write(good)
-    assert K.verify_freeze(p, repo)["qualification_verdict"] == "QUALIFICATION_ACCEPTED"   # positive control
-    for bad in ({**good, "qualification_verdict": "QUALIFICATION_REJECTED"},
-                {**good, "bound_files": {code.name: "0" * 64}},                               # bound-file drift
-                {**good, "bound_files": {}}):                                                 # implementation unbound
+    assert mod.verify_freeze()["qualification_verdict"] == "QUALIFICATION_ACCEPTED"          # positive control
+    code_rel = str(NSREL / "code/k4r1_certificate.py")
+    bad_cases = [
+        {**good, "qualification_verdict": "QUALIFICATION_REJECTED"},
+        {**good, "bound_files": {**good["bound_files"], code_rel: "0" * 64}},                   # bound-file drift
+        {**good, "bound_files": {k: v for k, v in good["bound_files"].items() if k != code_rel}},  # code unbound
+        {**good, "bound_files": {k: v for k, v in good["bound_files"].items()
+                                 if not k.endswith("config/GATE.json")}},                       # gate unbound
+        {**good, "qualification_review": None},                                                 # review not named
+    ]
+    for bad in bad_cases:
         write(bad)
-        with pytest.raises(K.K4R1Refusal):
-            K.verify_freeze(p, repo)
+        with pytest.raises(mod.K4R1Refusal):
+            mod.verify_freeze()
+    write(good, hash_ok=False)                                                                  # freeze hash mismatch
+    with pytest.raises(mod.K4R1Refusal):
+        mod.verify_freeze()
     write(good)
-    (tmp_path / "FREEZE_HASH").write_text("0" * 64)                                           # freeze hash mismatch
-    with pytest.raises(K.K4R1Refusal):
-        K.verify_freeze(p, repo)
-    write(good)
-    with pytest.raises(K.K4R1Refusal):                                                        # implementation outside repo
-        K.verify_freeze(p, tmp_path)
+    with pytest.raises(mod.K4R1Refusal):                                                        # implementation outside repo
+        mod.verify_freeze(repo=tmp_path / "elsewhere")
+    (fpath).unlink()
+    with pytest.raises(mod.K4R1Refusal):                                                        # freeze absent
+        mod.verify_freeze()
 
 
 def test_exact_once(tmp_path, monkeypatch):
@@ -339,6 +390,7 @@ def test_exact_once(tmp_path, monkeypatch):
     out.write_text("{}")
     monkeypatch.setattr(K, "read_config", lambda: ({}, {}))
     monkeypatch.setattr(K, "verify_freeze", lambda *a, **k: {})
+    monkeypatch.setattr(K, "git_state", lambda *a, **k: {"head": "h", "clean": True, "freeze_committed": True})
 
     def boom(*a, **k):
         raise AssertionError("sources must not be read when the output already exists")
@@ -346,3 +398,147 @@ def test_exact_once(tmp_path, monkeypatch):
     monkeypatch.setattr(K, "load_sources", boom)
     with pytest.raises(K.K4R1Refusal):
         K.main(["execute", "--out", str(out)])
+
+
+def test_assembly_residual_cell_must_be_the_historical_too_loose_cell():
+    rep = synthetic_report()
+    rep["per_Dm"]["CUSUM|m=3"]["per_cell"][2]["how"] = "DIRECT_R_NEGATIVE"   # residual claimed where history certified
+    assert K.assemble(rep, res_map(), certs())["per_Dm"]["CUSUM|m=3"]["status"] == "FAIL"
+
+
+# ------------------------------------------------------------------ end-to-end execute in a throwaway git repository
+import shutil
+import subprocess
+
+NSREL = Path("level4/closure_proofs/p5y_k4r1_nearzero_successor")
+
+
+def _git(repo, *args):
+    subprocess.run(["git", "-C", str(repo), "-c", "user.name=t", "-c", "user.email=t@t", *args], check=True,
+                   capture_output=True)
+
+
+def _sha(p):
+    return hashlib.sha256(Path(p).read_bytes()).hexdigest()
+
+
+def build_repo(tmp, *, report=None, sources=None, bind_all=True, commit_freeze=True):
+    repo = tmp / "repo"
+    ns = repo / NSREL
+    (ns / "code").mkdir(parents=True)
+    shutil.copy(CODE, ns / "code/k4r1_certificate.py")
+    for rel in ("tests/test_k4r1.py", "tests/mutation_harness.py", "SPECIFICATION.md", "config/GATE.json",
+                "review/QUALIFICATION_REVIEW.json", "docs/premise.md"):
+        (ns / rel).parent.mkdir(parents=True, exist_ok=True)
+        (ns / rel).write_text(f"synthetic {rel}\n")
+    src = sources or synthetic_sources()
+    if report is not None:
+        src["historical_report"] = report
+    data = repo / "data"
+    data.mkdir()
+
+    def dump(name, obj):
+        (data / name).write_text(json.dumps(obj, sort_keys=True))
+        return {"kind": "json", "path": f"data/{name}", "sha256": _sha(data / name)}
+
+    prov_sources = {"historical_report": dump("report.json", src["historical_report"]),
+                    "k1_cell0_record": dump("k1.json", src["k1_cell0_record"])}
+    src["slot1_record"]["scientific"]["binding"]["record_sha256"] = prov_sources["k1_cell0_record"]["sha256"]
+    prov_sources["slot1_record"] = dump("slot1.json", src["slot1_record"])
+    src["text_result"]["sealed_record_sha256"] = prov_sources["slot1_record"]["sha256"]
+    prov_sources["text_result"] = dump("text.json", src["text_result"])
+    prov_sources["premise"] = {"kind": "document", "path": str(NSREL / "docs/premise.md"),
+                               "sha256": _sha(ns / "docs/premise.md")}
+    prov = {"sources": prov_sources, "identities": {"k1_cusum_producer_identity_hash": PID},
+            "geometry": {"k1_cell0_e0": str(E0)}}
+    (ns / "config/PROVENANCE.json").write_text(json.dumps(prov))
+    (ns / "config/RESIDUAL_UNIVERSE.json").write_text(json.dumps(synthetic_universe()))
+    bound = {str(NSREL / r): _sha(ns / r) for r in
+             ("code/k4r1_certificate.py", "tests/test_k4r1.py", "tests/mutation_harness.py", "SPECIFICATION.md",
+              "config/GATE.json", "config/RESIDUAL_UNIVERSE.json", "config/PROVENANCE.json",
+              "review/QUALIFICATION_REVIEW.json")}
+    bound.update({v["path"]: v["sha256"] for v in prov_sources.values()})
+    if not bind_all:
+        bound.pop(str(NSREL / "tests/mutation_harness.py"))
+    fz = {"qualification_verdict": "QUALIFICATION_ACCEPTED",
+          "qualification_review": str(NSREL / "review/QUALIFICATION_REVIEW.json"), "bound_files": bound}
+    (ns / "config/FREEZE.json").write_text(json.dumps(fz, sort_keys=True))
+    (ns / "config/FREEZE_HASH").write_text(_sha(ns / "config/FREEZE.json"))
+    (ns / "evidence/execution_r1").mkdir(parents=True)
+    _git(repo, "init", "-q")
+    if not commit_freeze:
+        (repo / ".git/info/exclude").write_text(str(NSREL / "config/FREEZE.json") + "\n")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "synthetic freeze")
+    spec = importlib.util.spec_from_file_location(f"k4r1_e2e_{abs(hash(str(tmp)))}", ns / "code/k4r1_certificate.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return repo, ns, mod
+
+
+def run_execute(mod, ns):
+    out = ns / "evidence/execution_r1/K4R1_RESULT.json"
+    assert mod.main(["execute", "--out", str(out)]) == 0
+    return json.loads(out.read_text())
+
+
+def test_execute_end_to_end_exact_values(tmp_path):
+    repo, ns, mod = build_repo(tmp_path)
+    res = run_execute(mod, ns)
+    for m, a, row in (("2", A2, 1), ("3", A3, 2), ("5", A3, 2)):
+        G, T, B = expected(m, a, row)
+        c = res["certificates"][f"CUSUM|m={m}"]
+        assert (F(c["G"]), F(c["T"]), F(c["B"]), F(c["a"])) == (G, T, B, a)
+        assert c["PASS"] is (B < 0) and c["cells"] == [[0, 1], [0, 1, 2], [0, 1, 2]][["2", "3", "5"].index(m)]
+    assert res["K4R1_SUCCESSOR_SCIENCE"] == "PASS" and res["K4R1_COMPLETE_K4_ASSEMBLY"] == "PASS"
+    assert res["residual_remaining"] == {} and res["new_real_addresses"] == 0
+    with pytest.raises(mod.K4R1Refusal):                     # exact once
+        mod.main(["execute", "--out", str(ns / "evidence/execution_r1/K4R1_RESULT.json")])
+
+
+def test_execute_one_residual_fails(tmp_path):
+    s = synthetic_sources()
+    s["k1_cell0_record"]["m"]["5"]["D_interval"] = {"lo": "-6", "hi": "-1/1000000000"}   # G ~ 0 -> B > 0
+    repo, ns, mod = build_repo(tmp_path, sources=s)
+    res = run_execute(mod, ns)
+    assert res["certificates"]["CUSUM|m=5"]["PASS"] is False
+    assert res["certificates"]["CUSUM|m=2"]["PASS"] is True
+    assert res["K4R1_SUCCESSOR_SCIENCE"] == "NOT_CLOSED" and res["K4R1_COMPACT_RESIDUAL_COVERAGE"] == "FAIL"
+    assert res["residual_remaining"] == {"CUSUM|m=5": [0, 1, 2]}
+
+
+def test_execute_all_certified_but_assembly_incomplete(tmp_path):
+    rep = synthetic_report()
+    rep["per_Dm"]["SR|m=1"]["per_cell"][7]["left"] = "1/2"          # inherited cover broken elsewhere
+    repo, ns, mod = build_repo(tmp_path, report=rep)
+    res = run_execute(mod, ns)
+    assert all(c["PASS"] for c in res["certificates"].values())
+    assert res["K4R1_COMPLETE_K4_ASSEMBLY"] == "FAIL" and res["K4R1_SUCCESSOR_SCIENCE"] == "NOT_CLOSED"
+
+
+def test_execute_refuses_dirty_checkout(tmp_path):
+    repo, ns, mod = build_repo(tmp_path)
+    (repo / "stray.txt").write_text("x")
+    with pytest.raises(mod.K4R1Refusal):
+        mod.main(["execute", "--out", str(ns / "evidence/execution_r1/K4R1_RESULT.json")])
+    assert not (ns / "evidence/execution_r1/K4R1_RESULT.json").exists()
+
+
+def test_execute_refuses_uncommitted_freeze(tmp_path):
+    repo, ns, mod = build_repo(tmp_path, commit_freeze=False)
+    with pytest.raises(mod.K4R1Refusal):
+        mod.main(["execute", "--out", str(ns / "evidence/execution_r1/K4R1_RESULT.json")])
+
+
+def test_execute_refuses_missing_mandatory_binding(tmp_path):
+    repo, ns, mod = build_repo(tmp_path, bind_all=False)
+    with pytest.raises(mod.K4R1Refusal):
+        mod.main(["execute", "--out", str(ns / "evidence/execution_r1/K4R1_RESULT.json")])
+
+
+def test_execute_refuses_source_drift_after_freeze(tmp_path):
+    repo, ns, mod = build_repo(tmp_path)
+    (repo / "data/text.json").write_text("{}")
+    _git(repo, "commit", "-q", "-am", "drift")
+    with pytest.raises(mod.K4R1Refusal):
+        mod.main(["execute", "--out", str(ns / "evidence/execution_r1/K4R1_RESULT.json")])

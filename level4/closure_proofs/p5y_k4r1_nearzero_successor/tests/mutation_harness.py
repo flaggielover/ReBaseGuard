@@ -4,6 +4,9 @@ Each mutant is a copy of code/k4r1_certificate.py with ONE textual change, writt
 tested through $K4R1_CODE_PATH. The unmodified copy (null mutant) must pass; every real mutant must fail.
 Synthetic only. Writes a JSON report.
 
+Known equivalent mutant (not listed): replacing `science = all(PASS) and asm["complete"]` by `science = asm["complete"]`
+cannot change any outcome, because the assembly already marks a residual (D,m) PASS only when its certificate PASSes.
+
   python tests/mutation_harness.py --out MUTATION_REPORT.json
 """
 from __future__ import annotations
@@ -62,6 +65,36 @@ MUTANTS = [
      "if False:\n        raise K4R1Refusal(\"EXACT_ONCE: output already exists\")"),
     ("document_hash_unchecked", "if not p.exists() or sha_file(p) != v[\"sha256\"]:", "if False:"),
     ("json_hash_unchecked", "if sha_file(p) != entry[\"sha256\"]:", "if False:"),
+    # qualification r1 reviewer's extra mutants (7 survived r1)
+    ("D0_lo_instead_of_hi", '"_D0_hi": D0[1]', '"_D0_hi": D0[0]'),
+    ("M3_from_order2", 'M3, M5 = fr(row["M"]["3"][m]), fr(row["M"]["5"][m])', 'M3, M5 = fr(row["M"]["2"][m]), fr(row["M"]["5"][m])'),
+    ("M5_from_order4", 'M3, M5 = fr(row["M"]["3"][m]), fr(row["M"]["5"][m])', 'M3, M5 = fr(row["M"]["3"][m]), fr(row["M"]["4"][m])'),
+    ("M_wrong_m", 'M3, M5 = fr(row["M"]["3"][m]), fr(row["M"]["5"][m])', 'M3, M5 = fr(row["M"]["3"]["1"]), fr(row["M"]["5"]["1"])'),
+    ("L1_U0_swapped", 'L1, U0 = fr(pm["L1"]), fr(pm["U0"])', 'U0, L1 = fr(pm["L1"]), fr(pm["U0"])'),
+    ("D0_wrong_m", 'ent = k1["m"][m]', 'ent = k1["m"]["1"]'),
+    ("exec_g_uses_x1", 'G = g_bound(v["_D0_hi"], v["_L1"], v["e0"])', 'G = g_bound(v["_D0_hi"], v["_L1"], v["x1"])'),
+    ("exec_t_args_swapped", 'T = t_bound(v["_M3"], v["_U0"], v["_M5"], v["a"])', 'T = t_bound(v["_M3"], v["_U0"], v["_M5"], v["e0"])'),
+    ("exec_science_or", 'science = all(c["PASS"] for c in certs.values()) and asm["complete"]',
+     'science = all(c["PASS"] for c in certs.values()) or asm["complete"]'),
+    ("hull_row_wrong", 'hits = [r for r in rows if fr(r["x_hi"]) == a]', 'hits = [rows[0]]'),
+    ("eta_upper_unbounded", 'if not (a <= eta <= a * (1 + F(1, 2 ** 200))):', 'if not (a <= eta):'),
+    ("assembly_residual_how_unchecked",
+     'hist_ok = (all(c["how"] == "CERTIFICATE_TOO_LOOSE" for c in cells if c["index"] in rcells)', 'hist_ok = (True'),
+    # r2 repair checks
+    ("k1_entry_metadata_unchecked", 'if ent.get("detector") != "CUSUM" or ent.get("m") != int(m) or ent.get("cell_index") != 0 \\',
+     'if ent.get("detector") != "CUSUM" or False or ent.get("cell_index") != 0 \\'),
+    ("slot1_transport_unchecked",
+     "if not (tf >= x1 * x1 / 2 and M5x1 >= 0 and L0 <= U0 and L1 <= L0 - tf * M5x1 and U1 >= U0 + tf * M5x1):",
+     "if not (tf >= x1 * x1 / 2 and M5x1 >= 0 and L0 <= U0 and True and U1 >= U0 + tf * M5x1):"),
+    ("mandatory_binding_unchecked", "    if missing:\n", "    if False:\n"),
+    ("git_clean_unchecked", 'if not (gs["clean"] and gs["freeze_committed"]):', 'if not (True and gs["freeze_committed"]):'),
+    ("git_freeze_committed_unchecked", 'if not (gs["clean"] and gs["freeze_committed"]):', 'if not (gs["clean"] and True):'),
+    ("coverage_flag_always_pass",
+     '"K4R1_COMPACT_RESIDUAL_COVERAGE": "PASS" if all(c["PASS"] for c in certs.values()) else "FAIL",',
+     '"K4R1_COMPACT_RESIDUAL_COVERAGE": "PASS",'),
+    ("residual_remaining_empty",
+     '"residual_remaining": {f"CUSUM|m={m}": c["cells"] for m, c in sorted(certs.items()) if not c["PASS"]},',
+     '"residual_remaining": {},'),
 ]
 
 

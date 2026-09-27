@@ -73,11 +73,22 @@ Findings common to all 8 residual (m, cell) pairs:
 
 **SELECTED: route D3.** It is the smallest sound architecture that tests the full residual obligation for every m, including cell 0, with no new real computation. If D3 does not close K4, route A is the natural next predeclared successor; it would be a new campaign, not a repair.
 
-## Pre-result disclosure (leakage)
+## Pre-result disclosure (leakage), revised in r2 after qualification r1 note N4
 
-- **Not computed, printed or read before freeze:** G_m, T_m, B_m, L1, U0, the hull M3 and M5 values, and every value of the GammaTilde and sign-audit artifacts. The scout withheld them. The preflight runs every identity check without computing any of these.
-- **Prior knowledge the designer did hold:**
-  - the historical K1 D intervals: the D0.hi values in the table above, already published in K4 r1;
-  - from earlier K5 campaign summaries in its own notes, the slot-1 lower bounds L1 on cell 0 (order 10³) and an R4-campaign cell-0 M5 of order 10⁹;
-  - the published verdicts `GammaTilde > 1 CERTIFIED` for m = 3, 5.
-- The gate has **no tunable parameter**. Every quantity is a named field of a hash-bound adopted record, and the formula follows from the theorem. So this prior knowledge could not shape the gate beyond the choice of route. That choice is justified above on grounds independent of the values: Route B is shown worthless, Route A needs new production, and Route D is the only zero-new-compute sound route.
+**Not computed, printed or read by the designer before freeze:**
+- G_m, T_m, B_m;
+- the T-EXT hull rows 1–2 majorants M3(a) and M5(a);
+- the exact slot-1 per-m rationals (L0, U0, L1, U1, M5);
+- every value of the GammaTilde and sign-audit artifacts.
+
+The preflight runs every identity and structural check without computing any of these.
+
+**Prior knowledge the designer held,** from the published K4 r1 record and from earlier K5 campaign summaries in the designer's notes:
+- the historical K1 D intervals (D0.hi, in the table above);
+- slot-1 lower bounds L1 on cell 0, of order 10³;
+- an R4-campaign cell-0 M5 of order 10⁹;
+- the verdicts `GammaTilde > 1 CERTIFIED` for m = 3 and 5.
+
+This knowledge fixes the order of magnitude of G and of the slot-1 part of T. The designer's claim of blindness is therefore limited to M3(a) and M5(a). The qualification r1 reviewer also reports having seen the exact slot-1 rationals, through a faulty redaction filter, without combining them.
+
+**Why this does not bias the certificate.** The gate has no tunable parameter. Every quantity is a named field of a hash-bound adopted record, and the formula follows deductively from the theorem. A valid deductive certificate is not biased by what its designer knew. The only design choice, the route, is justified above on value-independent grounds.
