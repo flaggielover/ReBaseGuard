@@ -14,13 +14,13 @@ Sibling C2b owns A0X/gen/ — not touched by C2a.
   and P5's open claim sup_e E[tau|e]=E[tau|0] (ATOM START ONLY; D3/L4's sup_x version NOT implied).
 - Quantifier: A0 admissible iff A0 >= sup_{e in cell} E_a[tau](e) (C4_TARGET_RECONSTRUCTION.md:10-16). Prove X308 needs one
   point; refute needs sup => without Theorem M one drift does NOT suffice; with Theorem M the single drift e_lo suffices.
-- E2 family ceiling 4.679910340 was evaluated at e = 19839101/10000000 = right endpoint of cell 308 (C7_LEDGER.json).
+- E2 family (C7): no committed ceiling at e_lo(308) exists. [F12-corrected: this line originally re-attributed a C7 cell-309 value by endpoint sharing (amendment 2 R2.4).]
 - step 2: EXCLUSION_308.md §0 (facts F1-F17 with file:line) and §(a) (X308 exact, sup quantifier, negation) WRITTEN.
 - step 3 (plan): write §(c) Theorem M (Lemma V V-mask, Lemma S survival set, Anderson), corollaries, NOT-implied list,
-  analytic negative control (non-atom start: one-step survival d/de at e=0 = phi(C-p0)-phi(C) > 0 for 0<p0<2C),
+  analytic derivation, not a negative control per review C-12 (non-atom start: one-step survival d/de at e=0 = phi(C-p0)-phi(C) > 0 for 0<p0<2C),
   proxy prohibition (Theorem M turns every drift into a one-sided bound on Lambda_308 -> quarantine-policy flag).
 - step 4: §(c) WRITTEN: Theorem M proved (V-mask Lemma V + symmetric convex survival set + Anderson 1955; Prekopa
-  alternative), corollaries M1-M4, not-implied list with analytic negative control, proxy prohibition c.9, validation c.10.
+  alternative), corollaries M1-M4, not-implied list with an analytic derivation (not a negative control, C-12), proxy prohibition c.9, validation c.10.
 - step 5: §(b) WRITTEN (proof/refute certificates, family ceilings table, one-drift question, completeness, b.4 comparator not certified).
 - step 6: §(d) WRITTEN (D1-D8 consistent; wording issue: C8 R3 'closes 308' is conditional on not-X308).
 - step 7: §(e) WRITTEN. EXCLUSION_308.md complete (pending self-review).
@@ -39,3 +39,8 @@ Sibling C2b owns A0X/gen/ — not touched by C2a.
   use of 306-309 committed MC/diagnostics as Theorem-M evidence (old c.10, D3), the entailed 308 floor from C7's 309
   number, committed tail factors in own reasoning (C4 Cond. 3 factor, C5-T consumed-margin share, C8 A1 figure, A1/A2 values).
   Classification is now outcome-neutral: BOUNDABLE now; DECIDABLE in principle (either direction); L/R4 cannot prove it.
+- step 14: REVIEW_GLOBAL_INTEGRITY_R1 F10/F12 addressed (edits in A0X/ only, not gen/): F12 endpoint re-attributions of
+  C7's family ceiling re-worded as "no committed ceiling at e_lo(308) exists" (EXCLUSION §e item 2, C2A §1/§3, PROGRESS
+  step-1 line), D2 withdrawn-label note removed; FREEZE §0a incident 02/03 disclosure added; stale Theorem M status
+  lines set to VALIDATED_NON_TARGET (REVIEW_THEOREM_M_R1 ACCEPTED_WITH_CORRECTIONS; C1/C2/N3 applied); §c.8 no longer
+  counted as a negative control (C-12); C1/C2 wording residues aligned. Summary table in C2A §7.

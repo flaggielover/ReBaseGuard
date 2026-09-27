@@ -1,6 +1,10 @@
 # EXCLUSION_308 — the cell-308 uniform-A0 exclusion question (Stream C2a)
 
-Status: THEORY_ONLY. No computation was performed at any drift; no new quantity was computed for cells 305-309.
+Status:
+* **Theorem M** (§c): **VALIDATED_NON_TARGET** after `reviews/REVIEW_THEOREM_M_R1.md` (ACCEPTED_WITH_CORRECTIONS;
+  C1/C2/N3 applied).
+* **X308** (§a): undecided, not executed; the draft protocol only.
+* This stream performed no computation at any drift and computed no new quantity for cells 305-309.
 All numbers below are quoted from committed files with file:line.
 
 **S8 correction notice (2026-09-28, after the coordinator's rule S8).** The first version of this file combined
@@ -190,7 +194,7 @@ Lambda_308 exists" (`ROUTE_AUDIT_R1.md:281`) is accurate only in the sense "none
 
 | goal | quantifier | certificate | drifts needed | committed status |
 |---|---|---|---|---|
-| prove X308 | exists e | certified lower bound L >= A0* | 1 (any e in E308; optimal e_lo) | best committed floor 3.512733596 [S8-corrected: entailed value withdrawn]; no family *shown* incapable except L and R4 |
+| prove X308 | exists e | certified lower bound L >= A0* | 1 (any e in E308; e_lo maximises the cap Lambda, and is optimal for a given route only if that route's slack does not grow faster than Lambda decreases, per review C1) | best committed floor 3.512733596 [S8-corrected: entailed value withdrawn]; no family *shown* incapable except L and R4 |
 | refute X308 | for all e | certified upper bound U < A0* | without Theorem M: whole-cell uniform W, or mesh + A1; with Theorem M: 1 (exactly e_lo) | best committed U: 5.218548599 |
 
 ### b.4 The comparison target is not certified
@@ -206,11 +210,12 @@ float may not serve as a certified comparator.
 
 ## (c) General theorems: monotonicity of Lambda(e)
 
-**Result: PROVED (THEORY_ONLY, pending independent review) — Lambda(e) = E_a[tau](e) is even in e and
+**Result: PROVED; VALIDATED_NON_TARGET after REVIEW_THEOREM_M_R1 (ACCEPTED_WITH_CORRECTIONS; C1/C2/N3 applied)
+— Lambda(e) = E_a[tau](e) is even in e and
 nonincreasing on [0, infinity); in fact P_e(tau > n) is nonincreasing in abs(e) for every n.** The proof does
 *not* use a pathwise coupling (which fails, as F17 records); it uses the V-mask form of the two-sided CUSUM from the
-atom and Anderson's theorem on symmetric unimodal densities. It is specific to the **atom start** and says nothing
-about sup_x E_x[tau].
+atom and Anderson's theorem on symmetric unimodal densities. It is stated for the **atom start**, and by review C2
+it holds verbatim from every diagonal start p0 = m0. It says nothing about sup_x E_x[tau].
 
 ### c.1 Why the obvious coupling fails (recorded, not used)
 
@@ -285,7 +290,7 @@ set under a linear map), so (x, e) -> 1_{A_n}(x - e v) f_n(x) is log-concave; it
 log-concave (Prekopa 1973) and positive (A_n has interior). An even log-concave g satisfies, for 0 <= e < e', with
 lambda = (1 + e/e')/2: log g(e) >= lambda log g(e') + (1 - lambda) log g(-e') = log g(e'). Same conclusion.
 
-### c.7 Corollaries (all THEORY_ONLY)
+### c.7 Corollaries (logical consequences of Theorem M; validated with it by REVIEW_THEOREM_M_R1)
 
 * **M1 — the quantifier collapses to the left endpoint.** For every cell [e_lo, e_hi] with e_lo >= 0:
   `Lambda_k = sup_cell Lambda = Lambda(e_lo)`. For 308: `Lambda_308 = Lambda(1882413/1000000)`, and
@@ -308,11 +313,13 @@ lambda = (1 + e/e')/2: log g(e) >= lambda log g(e') + (1 - lambda) log g(-e') = 
   monotonicity in e can fail. *[Corrected per REVIEW_THEOREM_M_R1 C2: for DIAGONAL starts p0 = m0 = c (0 < c <= 2)
   the proof goes through verbatim (the s = 0 slab becomes |S_t| <= H - c + Kt), verified numerically by the reviewer;
   Theorem M therefore holds from every diagonal state. Nothing about sup_x E_x[tau], C_T, C_upper or Lemma G's A0
-  follows either way.]* *Analytic negative control (no computation, no drift evaluated):* for n = 1,
+  follows either way.]* *Analytic derivation (not a test, and not counted as a negative control; review note C-12):*
+  for n = 1,
   P_x(tau > 1) = Phi(C - p0 + e) - Phi(m0 - C + e), whose e-derivative with m0 = 0 at e = 0 is phi(C - p0) - phi(C),
   strictly **positive** whenever 0 < p0 < 2C. So from any start (p0, 0) with p0 > 0 the one-step survival *increases*
   in e near 0, whereas at the atom (p0 = 0) the derivative phi(C + e) - phi(C - e) is 0 at e = 0 and < 0 for e > 0.
-  The atom hypothesis is load-bearing (the symmetry step of the proof is exactly what fails). Hence nothing about
+  Central symmetry (atom or diagonal start) is load-bearing: the symmetry step of the proof is exactly what fails
+  for off-diagonal starts. Hence nothing about
   sup_x E_x[tau], the cover's C_upper, Lemma G's A0 or C_T follows.
 * **Taboo quantities.** tau_a(e) = E_a[tau ^ T_a] and D_e separately: "not at the atom at time t" is the complement
   of a symmetric convex set, so {T_a > n} is not convex and Anderson does not apply. Only the ratio
@@ -346,18 +353,21 @@ Lambda_308. Therefore:
 
 ### c.10 Validation status (S2) and what would falsify it
 
-No code was run (this stream is theory-only by instruction). **Theorem M is not validated.** Its only check so far
-is the analytic negative control of c.8, which shows that the symmetry step fails where it should (non-atom start).
+This stream ran no code (it is theory-only by instruction). **Theorem M is VALIDATED_NON_TARGET** by the
+independent review `reviews/REVIEW_THEOREM_M_R1.md` (ACCEPTED_WITH_CORRECTIONS; C1/C2/N3 applied):
+* §2 of the review validates it numerically at the declared drifts only;
+* the review's numerical negative controls are in its §2.3.
+
+The §c.8 argument is a derivation. It is not counted as a negative control (review note C-12).
 
 **[S8-corrected]** The first version listed as "consistency checks" the ordering of the committed 306-309 MC values
 and float diagnostics. That used target-cell values as validation evidence for a new result, and it is withdrawn.
 Theorem M must be validated at non-target drifts only.
 
-Recommended to the validation stream (not done here). The exact finite-state fixtures (`NS/code/ov_fixtures.py`) are
-not CUSUM chains, so the right test is a certified or high-accuracy evaluation of E_a[tau] at the declared drifts
-{0, 1/4, 1/2, 1, 3}, checking the predicted order. It should include the planted negative control of c.8 (start
-(p0, 0), p0 > 0), which must show the order failing near e = 0. Per c.9, those values must never be compared with
-any 305-309 number.
+The original recommendation here is now superseded by the review. It asked for an evaluation at the declared drifts
+{0, 1/4, 1/2, 1, 3}, with a planted numerical case at an off-diagonal start (p0, 0), p0 > 0, where §c.8's derivation
+predicts failure near e = 0. Per c.9 and amendment 2 R2.1, validation-drift values must never be compared with any
+305-309 number.
 
 ## (d) Internal consistency of committed evidence
 
@@ -367,7 +377,7 @@ enters this section (S8).
 | # | check (could it fail?) | committed values | result |
 |---|---|---|---|
 | D1 | certified floor <= MC <= certified uniform upper bound, at e_lo(308) | 3.512733596 (F6) <= 4.30910 +- 0.00102 (F7) <= 5.218548599 (F11) | consistent |
-| D2 | **[S8-corrected]** the same check at the drift 19839101/10000000, using only numbers committed *for that drift or for a closed cell containing it* | C7's committed 309 bound 3.586306094 (F14) <= MC 4.04731 +- 0.00092 (F7) <= 4.867216117 (309's certified A0, `C4_TARGET_RECONSTRUCTION.md:77`) | consistent. The first version labelled 3.586306094 an "entailed" 308 floor; that label is withdrawn |
+| D2 | the same check for cell 309's own committed numbers at cell 309's e_lo | C7's committed 309 bound 3.586306094 (F14) <= MC 4.04731 +- 0.00092 (F7) <= 4.867216117 (309's certified A0, `C4_TARGET_RECONSTRUCTION.md:77`) | consistent |
 | D3 | **[S8-corrected] withdrawn.** It checked Theorem M against the ordering of committed 306-309 MC and diagnostic values | — | — |
 | D4 | the two independent float diagnostics at the 308 midpoint vs the MC there | 4.174300305 / 4.174300818 (`C4_CANDIDATE_ROUTES.md:91`) vs 4.17398 +- 0.00097 | consistent; the adjudicator reports agreement "to ~3e-4" (`C4_ADJUDICATION.md:84-85`) |
 | D5 | thresholds ordered as consumer tightening predicts (a tighter transport raises the critical A0) | frozen clause 4.375228833 (F10) < C5-T 4.442851488 (F9) | consistent |
@@ -415,8 +425,8 @@ Justification.
 2. **Proof direction.**
    * Route L and R4 are rigorously incapable. Their committed maxima over the cell, 3.512733596 and 1.051130, are
      below the committed A0*; this is a comparison of committed numbers only.
-   * E2/E2c's only committed ceiling (4.679910340, at e_hi(308)) is above A0*, and R1/R5 have no committed ceiling.
-     So committed ceiling facts do not rule out a proof by those families.
+   * For E2/E2c, no committed ceiling at e_lo(308) exists; R1/R5 have no committed ceiling either. So no committed
+     ceiling fact rules out a proof by those families.
    * Every lower-bound route is capped by Lambda_308 itself (definition). Whether that cap lies above or below A0* is
      exactly X308, and it is not estimated here.
    * The committed record's own risk assessment of this direction is history (`ROUTE_AUDIT_R1.md:450-459`), and C4

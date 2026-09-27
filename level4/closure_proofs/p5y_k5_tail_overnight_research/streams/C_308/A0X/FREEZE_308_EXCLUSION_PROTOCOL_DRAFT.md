@@ -36,11 +36,30 @@ Pre-registered outcome classes (exactly one is sealed):
 
 Both decisive directions are registered **before** anything is evaluated, and the protocol prefers neither.
 
-## 1. Preconditions for freezing (none holds tonight)
+## 0a. Mandatory incident disclosure (binding on any future X308 protocol)
 
-| id | precondition | status tonight |
+Any future X308 freeze, qualification review, execution review and adjudication must disclose the following
+exposures. The disclosure must cite the files and must not restate any tail number.
+
+| # | incident | file | what it means for a future X308 run |
+|---|---|---|---|
+| D-02 | **Incident 02**: the first version of stream C2a created a zero-compute, target-cell derived quantity. It was a cross-cell re-attribution of a committed certified value by endpoint sharing, placed next to 308's A0*. It was withdrawn under S8 (committed 7e851139, corrected 0d32a2e8), and a `PROXY_EXPOSURE` ledger line was written | `ledger/INCIDENT_02_C2A_CROSS_CELL_FLOOR.md` | the designers of this draft were exposed to an exclusion-direction quantity for cell 308 |
+| D-03 | **Incident 03**: the coordinator's C2b brief contained a comparison scale derived from committed cell-308 figures, and C2b answered it. The exposure is qualitative, and a `PROXY_EXPOSURE` ledger line was written | `ledger/INCIDENT_03_C2B_BRIEF_SCALE.md` | the generator's tightness was, once, discussed against a 308-derived scale; that sentence is not used |
+| D-F12 | Same class as incident 02, residual. C2a's files re-attributed C7's committed family ceiling to 308's right endpoint, which amendment 2 R2.4 forbids. It was found by `reviews/REVIEW_GLOBAL_INTEGRITY_R1.md` F12 and has been re-worded | `reviews/REVIEW_GLOBAL_INTEGRITY_R1.md` F12 | no number was computed; the information content for the sign of X308 is nil (review M §3.2) |
+| D-S8 | The first version of C2a estimated the X308 outcome from committed values plus Theorem M. This was withdrawn under S8 | `EXCLUSION_308.md` S8 correction notice | the designers knew the committed cell-308 values (see also §4 disclosure) |
+
+Consequences for a future freeze:
+* **Parameter selection.** Every parameter must be selected by the cell-independent rule of §4, which exists so that
+  these exposures cannot steer it.
+* **Result-chasing class.** The classification of §9 applies with these disclosures attached. The qualification review
+  must confirm that no frozen parameter or rule depends on any exposed quantity.
+* **Proxies.** No exposed quantity may enter the decision table (§7) or the comparator (§6).
+
+## 1. Preconditions for freezing (P1 met; P2-P5 open)
+
+| id | precondition | status |
 |---|---|---|
-| P1 | Theorem M (`EXCLUSION_308.md` §c.6) is reviewed and ACCEPTED by a fresh-context reviewer. It is also validated at the declared non-target drifts {0, 1/4, 1/2, 1, 3}, with the §c.8 negative control (start (p0, 0), p0 > 0) shown to fail as predicted | THEORY_ONLY; not reviewed, not validated |
+| P1 | Theorem M (`EXCLUSION_308.md` §c.6) is reviewed and ACCEPTED by a fresh-context reviewer. It is also validated at the declared non-target drifts {0, 1/4, 1/2, 1, 3}, with a numerical negative control at an off-diagonal start (p0, 0), p0 > 0 (the §c.8 argument itself is a derivation, not a control; C-12) | **MET.** Theorem M is VALIDATED_NON_TARGET after `reviews/REVIEW_THEOREM_M_R1.md` (ACCEPTED_WITH_CORRECTIONS; C1/C2/N3 applied; review note N6; numerical controls in review §2.3) |
 | P2 | C2b's generator and exact certifier (`streams/C_308/A0X/gen/`) are VALIDATED_NON_TARGET at the declared drifts. Planted-invalid W's must be detected (S2) and coverage recorded | in progress in C2b (a skeleton when this was written) |
 | P3 | The C5-T consumer for cell 308 is identified by blob and executable from pinned bytes without importing any forbidden historical module (Q3). Alternatively, an independent re-implementation is qualified against C8's committed inversion values at the non-target cells | open |
 | P4 | The user decides to authorize one target computation at an in-band drift, outside the overnight quarantine | not given. No agent may request it on its own initiative |
@@ -274,7 +293,7 @@ With all three mitigations in force, the residual risk is LOW–MEDIUM. Without 
 
 ## 11. Open items before this draft could become a freeze
 
-1. P1–P5 (§1).
+1. P2–P5 (§1); P1 is met.
 2. C2b's subsolution side (or the Neumann alternative) specified and validated.
 3. Stage C's depth and the exact consumer entry point pinned; qualification against C8's committed non-target values.
 4. Timing caps derived from non-target runs.

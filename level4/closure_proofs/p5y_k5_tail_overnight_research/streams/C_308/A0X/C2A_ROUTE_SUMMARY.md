@@ -22,22 +22,23 @@ committed numbers, or are structural.
 |---|---|
 | **X308** := `Lambda_308 >= A0*`. Lambda_308 = sup over the cell of E_a[tau]; A0* = C5-T critical A0 at A1 = A2 = 0 (committed float 4.442851487961) | **UNDECIDED on certified evidence.** The committed certified bracket `3.512733596 <= Lambda_308 <= 5.218548599` strictly contains the committed A0*. **The outcome is not estimated** (S8) |
 | quantifier | **sup**, not inf (Lemma SM(d) plus the uniform-in-e admissibility, F3). Proving X308 needs one drift. Refuting it is universal in e |
-| classification | **BOUNDABLE now; DECIDABLE in principle** by one certified computation, in either direction; that is a single drift, e_lo, if Theorem M is accepted. **Route L and R4 cannot prove it** (their committed values are below the committed A0*). No committed ceiling excludes E2/E2c, R1 or R5. **Not undecidable** |
+| classification | **BOUNDABLE now; DECIDABLE in principle** by one certified computation, in either direction; that is a single drift, e_lo, by Theorem M (VALIDATED_NON_TARGET). **Route L and R4 cannot prove it** (their committed values are below the committed A0*). For E2/E2c, R1 and R5, no committed ceiling at e_lo(308) exists. **Not undecidable** |
 | value of settling it | zero closure leverage either way. If X308 is true, the result is exclusion only. If it is false, the result is an A0 < A0*, but closing would still need (A1, A2) reductions (C4 Condition 3). Under floor r2 a scalar-drift A0 is CLOSURE-ONLY |
 
 ## 2. Routes, states and gates
 
 **M — Theorem M: E_a[tau](e) is even and nonincreasing in abs(e)** (V-mask + Anderson 1955 / Prekopa).
-**State: THEORY_ONLY** (proved; pending review).
+**State: VALIDATED_NON_TARGET** after `reviews/REVIEW_THEOREM_M_R1.md` (ACCEPTED_WITH_CORRECTIONS; C1/C2/N3
+applied).
 
 | gate | result |
 |---|---|
 | G1 | pass: it resolves recorded open obligations (P5 LIMITATIONS §3, C4's caveat) and holds at every drift |
-| G2 | pass on paper; needs G6 |
-| G3 | pass: atom start only; symmetric unimodal i.i.d. innovations; either alarm convention; not sup_x; not taboo tau_a or D_e |
-| G4 | n/a (no code) |
-| G5 | **not done** (theory-only by instruction). No target-cell values are used as evidence (S8) |
-| G6 | **not done** |
+| G2 | pass (review §1) |
+| G3 | pass: atom start and, by review C2, every diagonal start p0 = m0; symmetric unimodal i.i.d. innovations; either alarm convention; not sup_x; not taboo tau_a or D_e |
+| G4 | n/a for this stream (no code); the review's scratch code is `SCR/review_M/` |
+| G5 | pass (review §2; declared drifts only). No target-cell values are used as evidence (S8). The §c.8 argument is a derivation, not a negative control (C-12) |
+| G6 | pass (REVIEW_THEOREM_M_R1) |
 | G7 | pass |
 | G8 | pass, but it opens a cross-drift proxy channel (§c.9) |
 | G9 | pass |
@@ -85,8 +86,8 @@ Governance:
 
 1. **Route L and R4 cannot prove X308.** Their committed values over the cell are below the committed A0*. This is a
    committed-vs-committed comparison, independent of any MC.
-2. **The E2/E2c (C7) committed family ceiling does not exclude it as a proof route.** The ceiling is 4.679910340 at
-   e = 19839101/10000000 = e_hi(308), above the committed A0*.
+2. **E2/E2c (C7) is not excluded as a proof route by any committed ceiling:** no committed ceiling at e_lo(308)
+   exists.
 3. **C7's lever S4 ("gap between sup over the cell and the value at e_lo") is identically zero** for every cell with
    e_lo >= 0, by Theorem M. This is structural: no number is attached.
 4. **Wording issue in ADJUDICATION_C8.md:382.** "R3 closes 307 and 308" under perfect information compares A0* with
@@ -111,11 +112,13 @@ Governance:
 
 ## 5. Recommended next action for 308's exclusion question
 
-1. **A fresh-context independent review of Theorem M.** It is cross-cutting: it gives the atom version of P5's open
-   claim `sup_e E[tau|e] = E[tau|0]`, discharges C4's caveat, and turns a future uniform-in-e Abar/A0 certification
-   into a one-drift problem, subject to a floor extension.
-2. **Non-target validation of Theorem M by the validation stream,** at e in {0, 1/4, 1/2, 1, 3} only. The planted
-   negative control is a start (p0, 0), p0 > 0, where the order must fail near e = 0 (§c.8).
+1. **Done: independent review and non-target validation of Theorem M.** `REVIEW_THEOREM_M_R1` returned
+   ACCEPTED_WITH_CORRECTIONS; C1/C2/N3 are applied, and the route is VALIDATED_NON_TARGET. Its value is cross-cutting:
+   * it gives the atom version of P5's open claim `sup_e E[tau|e] = E[tau|0]`;
+   * it discharges C4's caveat;
+   * it turns a future uniform-in-e Abar/A0 certification into a one-drift problem, subject to a floor extension.
+2. **Keep validation-drift values fenced** (amendment 2 R2.1-R2.3). They must never be compared with any 305-309
+   number.
 3. **DEFER settling X308,** because either outcome has zero closure leverage. The basis is leverage, not an expected
    outcome.
    * Do not spend compute on lower-bound routes at 308. Route L and R4 are rigorously incapable, and the others would
@@ -139,3 +142,14 @@ Governance:
 | FREEZE_308_...DRAFT.md | §4 | the MC number inside the parameter prohibition |
 | FREEZE_308_...DRAFT.md | §9 | the MC-via-Theorem-M location statement; committed A1/A2 values and C8's A1 reduction figure |
 | C2A_ROUTE_SUMMARY.md | §1-§5 | "expected false", "refutable", "expected not provable"; the entailment item |
+
+## 7. Corrections after REVIEW_GLOBAL_INTEGRITY_R1 (F10, F12)
+
+| finding | file | change |
+|---|---|---|
+| F12 | EXCLUSION_308.md §e item 2; this file §1 classification and §3 item 2; PROGRESS.md step-1 line | re-worded to "no committed ceiling at e_lo(308) exists"; no tail number restated (amendment 2 R2.4) |
+| F12 | EXCLUSION_308.md §d row D2 | withdrawn-label note removed; the row now checks cell 309's own committed numbers only |
+| F10 | FREEZE draft §0a (new) | mandatory disclosure of incidents 02 and 03 (and the F12/S8 residues) for any future X308 protocol |
+| F10 | EXCLUSION_308.md status line, §c result line, §c.7 heading, §c.10; this file §2 (M) and §5; FREEZE §1 P1 and §11 | Theorem M is VALIDATED_NON_TARGET after REVIEW_THEOREM_M_R1 (ACCEPTED_WITH_CORRECTIONS; C1/C2/N3 applied) |
+| F10 / C-12 | EXCLUSION_308.md §c.8 and §c.10; PROGRESS.md; this file G5 | the §c.8 analytic argument is no longer counted as a negative control; it is a derivation |
+| C1/C2 residues | EXCLUSION_308.md §b.3 table ("optimal e_lo"), §c intro and §c.8 ("atom start only"); this file G3 | aligned with review C1 (e_lo maximises the cap) and C2 (diagonal starts) |
