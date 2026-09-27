@@ -11,8 +11,17 @@ The K5-B direct clause and its C5-T sharpening transport the midpoint value `g(e
 
 Theorem TC's own proof (`p5y_k5_lower_front_order3/theorem/THEOREM_TC.md` §4 step 1) produces something finer. It
 proves Taylor remainder bounds at distance `|t − e0|` and only then replaces `|t − e0|` by its maximum `ρ`. The
-resulting radius `rad_r(ρ)` is charged at every point of the cell, including the midpoint, where the true TC radius
-is `rad_r(0) = A0·f_H + 2A1·f_D + A2·f_F`. That is the midpoint residual only, typically orders of magnitude smaller.
+resulting radius `rad_r(ρ)` is charged at every point of the cell, including the midpoint, where the TC radius is
+only `rad_r(0) = A0·f_H + 2A1·f_D + A2·f_F`, the midpoint residual terms.
+
+**Erratum TPT-E1 (after the V3 non-target validation).** An earlier sentence here said `rad_r(0)` is "typically orders
+of magnitude smaller" than `rad_r(ρ)`. That is regime-dependent and was false where it was first tested:
+* on the 136 real lower-front pairs (cells 11–44, m ∈ {1,2,3,5}, ρ ≈ 2.7·10⁻⁴), `rad(0)/rad(ρ)` is 0.94–0.97;
+* TPT's gain there came mostly from the centre-motion term `ρ|Ĝ(a)|` and was only 0.7–2.5 % of the penalty
+  (`v3/TPT_V3_REPORT.md`).
+
+The gain is governed by how much of the binding enclosure end grows with `s`; see Proposition TPT-G. No statement is
+made here about any tail cell.
 
 The C5 adjudication (`p5y_k5_tail_c5_exhaustion/evidence/adjudication/C5_ADJUDICATION.md` §8) scopes C5-T's
 exhaustion to bounds built from **exactly two inputs** (`g_hi` and a whole-cell `[H_lo, H_hi]`). It states that the
@@ -120,6 +129,12 @@ pointwise:
   because every coefficient of `p0`, `p1` and `p2` is ≥ 0. So Corollary TPT-M applies, and `P*` is two polynomial
   integrals.
 * With `Ĝ ≠ 0` (theorem TC), use `P₊` (Corollary TPT-P), which is always sound.
+* **The committed records carry only `|Ĝ_r(a)|`**, not its sign (V3 finding 3). The implementation `tpt.py` therefore
+  uses the symmetric relaxation `(t − e0)Ĝ_r(a) ∈ [−s|Ĝ_r(a)|, s|Ĝ_r(a)|]` and folds `s|Ĝ_r(a)|` into the radius. The
+  profile is then monotone again, so Corollary TPT-M applies exactly and the `P₊` branch is never needed for inputs
+  built from committed records.
+* The (P3) envelope could itself be taken on the segment `[e0, e0 ± s]` (`Env4(s)`, with ρ replaced by s inside
+  (P3)). That is a further, second-order tightening. It is **not** implemented; the whole-cell `Env4` is used.
 
 **Proposition TPT-G (generic structure of the gain; target-free).** Write the rightward binding integrand as
 `t·(c + α s + β s² + γ s³ + δ s⁴)` with `t = x0 + s`, `s ∈ [0, ρ]` and all coefficients ≥ 0. Here c collects the
@@ -150,6 +165,16 @@ predict any tail cell's Γ is a target-equivalent proxy. It is forbidden in this
 | chain recurrences of K5-B (`ℓ_k`, `γ_k`) | not changed here. The same profile idea applies to `μ_k` and is left as a remark. |
 
 ## 4. Validation obligations (non-target only)
+
+**Implementation revision r1** (`tpt.py`). The V3 report found four defects in r0; `test_tpt_guards.py` is their
+regression test. It passes on r1 and fails on r0; the r0 run was checked in a scratch copy.
+* **T1:** a guard is now on every public function.
+* **T2:** the m label is bound to `len(terms)`, and the cell geometry goes through `guard_drift`. A tail cell under a
+  false label is refused.
+* **T3:** the K1-cap split point is taken on the non-binding side. r0 could exceed C5-T by 10⁻⁴² and then raise.
+* **T4:** a Riemann lower-sum bracket replaces an assertion that is not a theorem, and interval orders are checked.
+
+The results did not move: V1 is unchanged, and V3's 136 values of `P_tpt` are identical after regeneration.
 
 * **V1.** Exact-truth synthetic fixtures (finite-state drift families, `code/ov_fixtures.py`):
   * build a full TC pipeline (candidates, certified residual bounds, Env4, Lemma-G constants);
