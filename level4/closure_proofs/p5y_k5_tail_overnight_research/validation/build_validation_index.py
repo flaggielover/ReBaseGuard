@@ -22,6 +22,7 @@ KEYS_SHALLOW = ("summary", "verdict", "verdicts", "checks", "all_sound", "P1_all
                 "coverage", "declared_rule", "declaration", "class", "producer", "negative_controls",
                 "negative_control", "crosscheck")
 BAND = (F(6, 5), F(13, 5))
+TARGET_RANGE = range(305, 310)  # ov-quarantine: literal-ok the leak scanner must name the cells it searches for
 
 
 def shallow(v, depth=0):
@@ -56,7 +57,7 @@ def leak_scan(obj, path="$", hits=None):
         m = obj.get("m")
         for key in ("cell", "k", "cell_index"):
             c = obj.get(key)
-            if isinstance(c, int) and not isinstance(c, bool) and det == "CUSUM" and c in range(305, 310) \
+            if isinstance(c, int) and not isinstance(c, bool) and det == "CUSUM" and c in TARGET_RANGE \
                     and (m is None or m == 5):
                 hits.append({"path": path, "kind": "TARGET_CELL", "value": c})
         for key in ("e", "e0", "drift", "e_lo", "e_hi", "x_lo", "x_hi"):

@@ -1,0 +1,621 @@
+{
+ "V_A": {
+  "ARL_SUB": {
+   "accepted": true,
+   "boxes": 363,
+   "f_min_lower_bound": 0.4459655284881592,
+   "h_min_lower_bound": 0.006209665325776144,
+   "kind": "ARL_SUB",
+   "margin_lower_bound": 1.0148004162732262e-06,
+   "reasons": [],
+   "seconds": 28.502558946609497,
+   "value_at_atom": "8893615/4194304",
+   "verifier": "V_A (fractions + c7_gaussian)"
+  },
+  "ARL_SUPER": {
+   "accepted": true,
+   "boxes": 363,
+   "f_min_lower_bound": 1.011697688320055,
+   "kind": "ARL_SUPER",
+   "margin_lower_bound": 9.902024524079742e-05,
+   "reasons": [],
+   "seconds": 129.96856904029846,
+   "value_at_atom": "27665491/8388608",
+   "verifier": "V_A (fractions + c7_gaussian)"
+  },
+  "D_SUB": {
+   "accepted": true,
+   "boxes": 363,
+   "f_min_lower_bound": 0.8602623343467712,
+   "h_min_lower_bound": 0.006209665325776141,
+   "kind": "D_SUB",
+   "margin_lower_bound": 5.011992383379306e-07,
+   "reasons": [],
+   "seconds": 10.570167779922485,
+   "value_at_atom": "14432807/16777216",
+   "verifier": "V_A (fractions + c7_gaussian)"
+  },
+  "D_SUPER": {
+   "accepted": true,
+   "boxes": 363,
+   "f_min_lower_bound": 1.5430229902267456,
+   "kind": "D_SUPER",
+   "margin_lower_bound": 1.000045103648216e-06,
+   "reasons": [],
+   "seconds": 6.300948143005371,
+   "value_at_atom": "12943815/8388608",
+   "verifier": "V_A (fractions + c7_gaussian)"
+  },
+  "P1_ARL_SUPER_below_certified_lower": {
+   "accepted": false,
+   "boxes": 363,
+   "f_min_lower_bound": 0.6473925266462431,
+   "kind": "ARL_SUPER",
+   "margin_lower_bound": -0.36002954332324916,
+   "reasons": [
+    "box inequality fails (margin lower bound < 0)"
+   ],
+   "seconds": 0.6491408348083496,
+   "value_at_atom": "221291799/104857600",
+   "verifier": "V_A (fractions + c7_gaussian)"
+  },
+  "P2_D_SUB_above_one": {
+   "accepted": false,
+   "boxes": 363,
+   "f_min_lower_bound": 1.01,
+   "h_min_lower_bound": 0.006209665325776141,
+   "kind": "D_SUB",
+   "margin_lower_bound": -0.17239382421605656,
+   "reasons": [
+    "box inequality fails (margin lower bound < 0)"
+   ],
+   "seconds": 0.5398521423339844,
+   "value_at_atom": "101/100",
+   "verifier": "V_A (fractions + c7_gaussian)"
+  },
+  "P3_TABOO_SUPER_tampered_value": {
+   "C_T_upper_bound": "1813085618301/549755813888",
+   "accepted": false,
+   "boxes": 363,
+   "f_min_lower_bound": 1.011697688320055,
+   "kind": "TABOO_SUPER",
+   "margin_lower_bound": 9.902024524079742e-05,
+   "reasons": [
+    "claimed value_at_atom differs from f(a)"
+   ],
+   "seconds": 0.6515541076660156,
+   "value_at_atom": "27665491/8388608",
+   "verifier": "V_A (fractions + c7_gaussian)"
+  },
+  "P4_TABOO_SUPER_C_T_claim_low": {
+   "C_T_upper_bound": "1813085618301/549755813888",
+   "accepted": false,
+   "boxes": 363,
+   "f_min_lower_bound": 1.011697688320055,
+   "kind": "TABOO_SUPER",
+   "margin_lower_bound": 9.902024524079742e-05,
+   "reasons": [
+    "claimed C_T_upper below the verifier's sup bound"
+   ],
+   "seconds": 0.6284449100494385,
+   "value_at_atom": "27665491/8388608",
+   "verifier": "V_A (fractions + c7_gaussian)"
+  },
+  "P5_ARL_SUPER_negative_on_R": {
+   "accepted": false,
+   "boxes": 363,
+   "f_min_lower_bound": -0.1000006768914318,
+   "kind": "ARL_SUPER",
+   "margin_lower_bound": -1.10102295088583,
+   "reasons": [
+    "box inequality fails (margin lower bound < 0)",
+    "f >= 0 on R not established"
+   ],
+   "seconds": 0.6038699150085449,
+   "value_at_atom": "45849723/20971520",
+   "verifier": "V_A (fractions + c7_gaussian)"
+  },
+  "P6_TABOO_SUB_above_certified_upper": {
+   "C_T_lower_bound": "693734427/209715200",
+   "accepted": false,
+   "boxes": 363,
+   "f_min_lower_bound": 0.6957387752167938,
+   "h_min_lower_bound": 0.006209665325776144,
+   "kind": "TABOO_SUB",
+   "margin_lower_bound": -0.5600714062797068,
+   "reasons": [
+    "box inequality fails (margin lower bound < 0)"
+   ],
+   "seconds": 0.5368807315826416,
+   "value_at_atom": "693734427/209715200",
+   "verifier": "V_A (fractions + c7_gaussian)"
+  },
+  "P7_D_SUPER_below_certified_lower": {
+   "accepted": false,
+   "boxes": 363,
+   "f_min_lower_bound": 0.8502623343467712,
+   "kind": "D_SUPER",
+   "margin_lower_bound": -0.16086416339345508,
+   "reasons": [
+    "box inequality fails (margin lower bound < 0)"
+   ],
+   "seconds": 0.43848395347595215,
+   "value_at_atom": "356625871/419430400",
+   "verifier": "V_A (fractions + c7_gaussian)"
+  },
+  "TABOO_SUB": {
+   "C_T_lower_bound": "8893615/4194304",
+   "accepted": true,
+   "boxes": 363,
+   "f_min_lower_bound": 0.4459655284881592,
+   "h_min_lower_bound": 0.006209665325776144,
+   "kind": "TABOO_SUB",
+   "margin_lower_bound": 1.0148004162732262e-06,
+   "reasons": [],
+   "seconds": 0.5303878784179688,
+   "value_at_atom": "8893615/4194304",
+   "verifier": "V_A (fractions + c7_gaussian)"
+  },
+  "TABOO_SUPER": {
+   "C_T_upper_bound": "1813085618301/549755813888",
+   "accepted": true,
+   "boxes": 363,
+   "f_min_lower_bound": 1.011697688320055,
+   "kind": "TABOO_SUPER",
+   "margin_lower_bound": 9.902024524079742e-05,
+   "reasons": [],
+   "seconds": 0.6197612285614014,
+   "value_at_atom": "27665491/8388608",
+   "verifier": "V_A (fractions + c7_gaussian)"
+  }
+ },
+ "V_A_sqrt2pi_memo_bit_identical": true,
+ "V_B": {
+  "ARL_SUB": {
+   "accepted": true,
+   "boxes": 363,
+   "f_min_lower_bound": 0.4459655284881592,
+   "h_min_lower_bound": 0.006209665325776144,
+   "kind": "ARL_SUB",
+   "margin_lower_bound": 1.0148004162732262e-06,
+   "reasons": [],
+   "seconds": 2.3879120349884033,
+   "value_at_atom": "8893615/4194304",
+   "verifier": "V_B (decimal, directed rounding)"
+  },
+  "ARL_SUPER": {
+   "accepted": true,
+   "boxes": 363,
+   "f_min_lower_bound": 1.0116979068261571,
+   "kind": "ARL_SUPER",
+   "margin_lower_bound": 9.93286081039122e-05,
+   "reasons": [],
+   "seconds": 9.876242876052856,
+   "value_at_atom": "27665491/8388608",
+   "verifier": "V_B (decimal, directed rounding)"
+  },
+  "D_SUB": {
+   "accepted": true,
+   "boxes": 363,
+   "f_min_lower_bound": 0.8602623343467712,
+   "h_min_lower_bound": 0.006209665325776141,
+   "kind": "D_SUB",
+   "margin_lower_bound": 5.011992383379306e-07,
+   "reasons": [],
+   "seconds": 1.4387331008911133,
+   "value_at_atom": "14432807/16777216",
+   "verifier": "V_B (decimal, directed rounding)"
+  },
+  "D_SUPER": {
+   "accepted": true,
+   "boxes": 363,
+   "f_min_lower_bound": 1.5430229902267456,
+   "kind": "D_SUPER",
+   "margin_lower_bound": 1.000045103648216e-06,
+   "reasons": [],
+   "seconds": 1.3029861450195312,
+   "value_at_atom": "12943815/8388608",
+   "verifier": "V_B (decimal, directed rounding)"
+  },
+  "P1_ARL_SUPER_below_certified_lower": {
+   "accepted": false,
+   "boxes": 363,
+   "f_min_lower_bound": 0.6473926664698477,
+   "kind": "ARL_SUPER",
+   "margin_lower_bound": -0.36002934599966585,
+   "reasons": [
+    "box inequality fails"
+   ],
+   "seconds": 1.3681371212005615,
+   "value_at_atom": "221291799/104857600",
+   "verifier": "V_B (decimal, directed rounding)"
+  },
+  "P2_D_SUB_above_one": {
+   "accepted": false,
+   "boxes": 363,
+   "f_min_lower_bound": 1.01,
+   "h_min_lower_bound": 0.006209665325776141,
+   "kind": "D_SUB",
+   "margin_lower_bound": -0.17239382421605656,
+   "reasons": [
+    "box inequality fails"
+   ],
+   "seconds": 0.8098502159118652,
+   "value_at_atom": "101/100",
+   "verifier": "V_B (decimal, directed rounding)"
+  },
+  "P3_TABOO_SUPER_tampered_value": {
+   "C_T_upper_bound": "3.297983527183532714843750",
+   "accepted": false,
+   "boxes": 363,
+   "f_min_lower_bound": 1.0116979068261571,
+   "kind": "TABOO_SUPER",
+   "margin_lower_bound": 9.93286081039122e-05,
+   "reasons": [
+    "claimed value_at_atom is not f(0,0)"
+   ],
+   "seconds": 0.63177490234375,
+   "value_at_atom": "27665491/8388608",
+   "verifier": "V_B (decimal, directed rounding)"
+  },
+  "P4_TABOO_SUPER_C_T_claim_low": {
+   "C_T_upper_bound": "3.297983527183532714843750",
+   "accepted": false,
+   "boxes": 363,
+   "f_min_lower_bound": 1.0116979068261571,
+   "kind": "TABOO_SUPER",
+   "margin_lower_bound": 9.93286081039122e-05,
+   "reasons": [
+    "claimed C_T_upper is below the verifier's sup bound"
+   ],
+   "seconds": 0.6864149570465088,
+   "value_at_atom": "27665491/8388608",
+   "verifier": "V_B (decimal, directed rounding)"
+  },
+  "P5_ARL_SUPER_negative_on_R": {
+   "accepted": false,
+   "boxes": 363,
+   "f_min_lower_bound": -0.1000004583853297,
+   "kind": "ARL_SUPER",
+   "margin_lower_bound": -1.1010227292154926,
+   "reasons": [
+    "box inequality fails",
+    "nonnegativity on R not established"
+   ],
+   "seconds": 0.6293470859527588,
+   "value_at_atom": "45849723/20971520",
+   "verifier": "V_B (decimal, directed rounding)"
+  },
+  "P6_TABOO_SUB_above_certified_upper": {
+   "C_T_lower_bound": "693734427/209715200",
+   "accepted": false,
+   "boxes": 363,
+   "f_min_lower_bound": 0.6957387752167938,
+   "h_min_lower_bound": 0.006209665325776144,
+   "kind": "TABOO_SUB",
+   "margin_lower_bound": -0.5600714062797068,
+   "reasons": [
+    "box inequality fails"
+   ],
+   "seconds": 0.48920226097106934,
+   "value_at_atom": "693734427/209715200",
+   "verifier": "V_B (decimal, directed rounding)"
+  },
+  "P7_D_SUPER_below_certified_lower": {
+   "accepted": false,
+   "boxes": 363,
+   "f_min_lower_bound": 0.8502623343467712,
+   "kind": "D_SUPER",
+   "margin_lower_bound": -0.16086416339345508,
+   "reasons": [
+    "box inequality fails"
+   ],
+   "seconds": 0.39003896713256836,
+   "value_at_atom": "356625871/419430400",
+   "verifier": "V_B (decimal, directed rounding)"
+  },
+  "TABOO_SUB": {
+   "C_T_lower_bound": "8893615/4194304",
+   "accepted": true,
+   "boxes": 363,
+   "f_min_lower_bound": 0.4459655284881592,
+   "h_min_lower_bound": 0.006209665325776144,
+   "kind": "TABOO_SUB",
+   "margin_lower_bound": 1.0148004162732262e-06,
+   "reasons": [],
+   "seconds": 0.5245277881622314,
+   "value_at_atom": "8893615/4194304",
+   "verifier": "V_B (decimal, directed rounding)"
+  },
+  "TABOO_SUPER": {
+   "C_T_upper_bound": "3.297983527183532714843750",
+   "accepted": true,
+   "boxes": 363,
+   "f_min_lower_bound": 1.0116979068261571,
+   "kind": "TABOO_SUPER",
+   "margin_lower_bound": 9.93286081039122e-05,
+   "reasons": [],
+   "seconds": 0.775383710861206,
+   "value_at_atom": "27665491/8388608",
+   "verifier": "V_B (decimal, directed rounding)"
+  }
+ },
+ "coverage": {
+  "boxes_per_certificate": 363,
+  "certificates": 13,
+  "panels": 32,
+  "planted": 7,
+  "synthetic_families": 5,
+  "synthetic_records": 10,
+  "valid": 6
+ },
+ "divided_difference_synthetic": {
+  "failures": [],
+  "pass": true,
+  "planted_refutations": 5,
+  "records": [
+   {
+    "LB1": 0.029510763839086344,
+    "LB1_le_sup": true,
+    "LB2": 0.021274583525573463,
+    "LB2_le_sup": true,
+    "certificates_valid": true,
+    "delta": "1/1000000000",
+    "honest_D2_claim_1.01sup_not_refuted": true,
+    "planted_D2_claim_0.9LB2_refuted": true,
+    "seed": 1,
+    "sup_grid_D1": 0.03086612536883413,
+    "sup_grid_D2": 0.02179743739831713
+   },
+   {
+    "LB1": 0.020181102368738005,
+    "LB1_le_sup": true,
+    "LB2": 0.0,
+    "LB2_le_sup": true,
+    "certificates_valid": true,
+    "delta": "1/1000",
+    "honest_D2_claim_1.01sup_not_refuted": true,
+    "planted_D2_claim_0.9LB2_refuted": false,
+    "seed": 1,
+    "sup_grid_D1": 0.03086612536883413,
+    "sup_grid_D2": 0.02179743739831713
+   },
+   {
+    "LB1": 0.052684672046192656,
+    "LB1_le_sup": true,
+    "LB2": 0.0029487013753182042,
+    "LB2_le_sup": true,
+    "certificates_valid": true,
+    "delta": "1/1000000000",
+    "honest_D2_claim_1.01sup_not_refuted": true,
+    "planted_D2_claim_0.9LB2_refuted": true,
+    "seed": 2,
+    "sup_grid_D1": 0.0529313981552857,
+    "sup_grid_D2": 0.00430148926198803
+   },
+   {
+    "LB1": 0.04450037821023527,
+    "LB1_le_sup": true,
+    "LB2": 0.0,
+    "LB2_le_sup": true,
+    "certificates_valid": true,
+    "delta": "1/1000",
+    "honest_D2_claim_1.01sup_not_refuted": true,
+    "planted_D2_claim_0.9LB2_refuted": false,
+    "seed": 2,
+    "sup_grid_D1": 0.0529313981552857,
+    "sup_grid_D2": 0.00430148926198803
+   },
+   {
+    "LB1": 0.07263876368416433,
+    "LB1_le_sup": true,
+    "LB2": 0.016345584358189603,
+    "LB2_le_sup": true,
+    "certificates_valid": true,
+    "delta": "1/1000000000",
+    "honest_D2_claim_1.01sup_not_refuted": true,
+    "planted_D2_claim_0.9LB2_refuted": true,
+    "seed": 3,
+    "sup_grid_D1": 0.07359611316251996,
+    "sup_grid_D2": 0.017582697482741626
+   },
+   {
+    "LB1": 0.06361716466177748,
+    "LB1_le_sup": true,
+    "LB2": 0.0,
+    "LB2_le_sup": true,
+    "certificates_valid": true,
+    "delta": "1/1000",
+    "honest_D2_claim_1.01sup_not_refuted": true,
+    "planted_D2_claim_0.9LB2_refuted": false,
+    "seed": 3,
+    "sup_grid_D1": 0.07359611316251996,
+    "sup_grid_D2": 0.017582697482741626
+   },
+   {
+    "LB1": 0.06902500611662349,
+    "LB1_le_sup": true,
+    "LB2": 0.002866040428526136,
+    "LB2_le_sup": true,
+    "certificates_valid": true,
+    "delta": "1/1000000000",
+    "honest_D2_claim_1.01sup_not_refuted": true,
+    "planted_D2_claim_0.9LB2_refuted": true,
+    "seed": 4,
+    "sup_grid_D1": 0.06929008074713208,
+    "sup_grid_D2": 0.004925463505643224
+   },
+   {
+    "LB1": 0.0608458785898406,
+    "LB1_le_sup": true,
+    "LB2": 0.0,
+    "LB2_le_sup": true,
+    "certificates_valid": true,
+    "delta": "1/1000",
+    "honest_D2_claim_1.01sup_not_refuted": true,
+    "planted_D2_claim_0.9LB2_refuted": false,
+    "seed": 4,
+    "sup_grid_D1": 0.06929008074713208,
+    "sup_grid_D2": 0.004925463505643224
+   },
+   {
+    "LB1": 0.03552377217327475,
+    "LB1_le_sup": true,
+    "LB2": 0.08195284598189308,
+    "LB2_le_sup": true,
+    "certificates_valid": true,
+    "delta": "1/1000000000",
+    "honest_D2_claim_1.01sup_not_refuted": true,
+    "planted_D2_claim_0.9LB2_refuted": true,
+    "seed": 5,
+    "sup_grid_D1": 0.040589092448968175,
+    "sup_grid_D2": 0.08356832469555747
+   },
+   {
+    "LB1": 0.022401719299406434,
+    "LB1_le_sup": true,
+    "LB2": 0.0,
+    "LB2_le_sup": true,
+    "certificates_valid": true,
+    "delta": "1/1000",
+    "honest_D2_claim_1.01sup_not_refuted": true,
+    "planted_D2_claim_0.9LB2_refuted": false,
+    "seed": 5,
+    "sup_grid_D1": 0.040589092448968175,
+    "sup_grid_D2": 0.08356832469555747
+   }
+  ],
+  "vacuous_bounds": 5
+ },
+ "drift_block": [
+  "3",
+  "49/16"
+ ],
+ "label": "NON-TARGET; rigorous verifiers V_A, V_B; float truth reference",
+ "other_side_point": "3",
+ "per_certificate": {
+  "ARL_SUB": {
+   "A": true,
+   "B": true,
+   "same_value": true
+  },
+  "ARL_SUPER": {
+   "A": true,
+   "B": true,
+   "same_value": true
+  },
+  "D_SUB": {
+   "A": true,
+   "B": true,
+   "same_value": true
+  },
+  "D_SUPER": {
+   "A": true,
+   "B": true,
+   "same_value": true
+  },
+  "P1_ARL_SUPER_below_certified_lower": {
+   "A": false,
+   "B": false,
+   "same_value": true
+  },
+  "P2_D_SUB_above_one": {
+   "A": false,
+   "B": false,
+   "same_value": true
+  },
+  "P3_TABOO_SUPER_tampered_value": {
+   "A": false,
+   "B": false,
+   "same_value": true
+  },
+  "P4_TABOO_SUPER_C_T_claim_low": {
+   "A": false,
+   "B": false,
+   "same_value": true
+  },
+  "P5_ARL_SUPER_negative_on_R": {
+   "A": false,
+   "B": false,
+   "same_value": true
+  },
+  "P6_TABOO_SUB_above_certified_upper": {
+   "A": false,
+   "B": false,
+   "same_value": true
+  },
+  "P7_D_SUPER_below_certified_lower": {
+   "A": false,
+   "B": false,
+   "same_value": true
+  },
+  "TABOO_SUB": {
+   "A": true,
+   "B": true,
+   "same_value": true
+  },
+  "TABOO_SUPER": {
+   "A": true,
+   "B": true,
+   "same_value": true
+  }
+ },
+ "planted_all_rejected_by_both": true,
+ "refutation": [
+  {
+   "claim": "Abar = L - 1/100 (upper-bound constant)",
+   "refuted": true
+  },
+  {
+   "claim": "Abar = U + 1/2",
+   "refuted": false
+  },
+  {
+   "claim": "D_lo = 1001/1000 (lower-bound constant)",
+   "refuted": true
+  },
+  {
+   "claim": "D_lo = L_d",
+   "refuted": false
+  }
+ ],
+ "refutation_pattern_ok": true,
+ "sandwich": {
+  "Abar* = sup_E E_a[tau]": {
+   "L": 2.1204030513763428,
+   "U": 3.2979835271835327,
+   "relative_width": 0.45762344782669007,
+   "truth_float": 2.5732520512217287,
+   "truth_inside": true,
+   "unc": 8.603145659424882e-06
+  },
+  "C* = sup_E ||Ghat_e||": {
+   "L": 2.1204030513763428,
+   "U": 3.2982693314552307,
+   "relative_width": 0.4577284273809533,
+   "truth_float": 2.573286275485324,
+   "truth_inside": true,
+   "unc": 8.602996634336316e-06
+  },
+  "D* = inf_E D_e": {
+   "L": 0.8602623343467712,
+   "U": 1.0,
+   "relative_width": 0.14058644930573255,
+   "truth_float": 0.9939625500416619,
+   "truth_inside": true,
+   "unc": 3.60543759662472e-08
+  },
+  "tau* = sup_E tau_a": {
+   "L": 2.1204030513763428,
+   "U": 3.2979835271835327,
+   "relative_width": 0.46039695158040456,
+   "truth_float": 2.557750375550728,
+   "truth_inside": true,
+   "unc": 8.458427292505158e-06
+  }
+ },
+ "sandwich_all_contain_truth": true,
+ "schema": "A306_CV_VALIDATION/1",
+ "valid_all_accepted_by_both_with_identical_values": true,
+ "verdict": "PASS"
+}

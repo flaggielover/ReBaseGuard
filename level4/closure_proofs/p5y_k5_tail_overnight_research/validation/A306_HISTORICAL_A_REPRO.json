@@ -1,0 +1,58 @@
+{
+ "branches": {
+  "I1_C1": "tau/D_lo",
+  "I1_C2": "tau/D_lo",
+  "I2": "Abar"
+ },
+ "checks": {
+  "C12R2_target_provenance_is_I2": true,
+  "C2_below_G_and_C1_every_field": true,
+  "C2_forecast_provenance_is_C2": true,
+  "I1_C1_floats_equal_forecast_supplies_C1": true,
+  "I1_C2_equals_C12R2_control_A_exact": true,
+  "I1_C2_equals_C2_forecast_A_exact": true,
+  "I1_C2_floats_equal_forecast_supplies_C2": true,
+  "I2_A0_equals_I2_Abar": true,
+  "I2_C_T_record_exceeds_exact_sup_3429_over_500": true,
+  "I2_below_committed_G_every_field": true,
+  "I2_equals_C12R2_target_A_exact": true,
+  "I2_tau_equals_I2_Abar": true
+ },
+ "class": "HISTORICAL_READ",
+ "coverage": {
+  "exact_comparisons": 3,
+  "fields": [
+   "A0",
+   "A1",
+   "A2"
+  ],
+  "float_comparisons": 2,
+  "negative_controls": 3,
+  "supplies_reproduced": [
+   "I1_C1",
+   "I1_C2",
+   "I2"
+  ]
+ },
+ "kappa_from_committed_source": {
+  "k1": "3989423/5000000",
+  "k2": "967883/1000000",
+  "source": "deflated_consume.py:55-56"
+ },
+ "negative_controls": {
+  "planted_float_mismatch_detected": true,
+  "planted_mixed_supply_refused": true,
+  "planted_wrong_committed_A1_detected": true
+ },
+ "schema": "A306_HISTORICAL_A_REPRO/1",
+ "sources": {
+  "c11r_comparison": "p5y_k5_tail_c11r_n9_statement_alignment/evidence/comparison/C11R_COMPARISON.json",
+  "c11rd_comparison": "p5y_k5_tail_c11rd_d1d2_extension/evidence/comparison/C11RD_COMPARISON.json",
+  "c12r2_result": "p5y_k5_tail_c12r2_cell306_adoption/evidence/execution/C12R2_CELL306_RESULT.json",
+  "c2_forecast": "p5y_k5_tail_c2_closure/evidence/phase_d5/C2_D5_FORECAST.json",
+  "deflated_consume": "p5y_k5_perron_deflated_resolvent/code/deflated_consume.py",
+  "registry_c1": "p5y_k5_tail_operator_registry/evidence/registry_c1/REGISTRY_C1.json",
+  "theorem_ad": "p5y_k5_perron_deflated_resolvent/theorem/THEOREM_AD.md"
+ },
+ "verdict": "PASS"
+}

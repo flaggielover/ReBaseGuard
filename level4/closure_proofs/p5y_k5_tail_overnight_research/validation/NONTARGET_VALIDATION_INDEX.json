@@ -2,6 +2,25 @@
  "schema": "OV_NONTARGET_VALIDATION_INDEX/1",
  "artifacts": [
   {
+   "file": "A306_CV_VALIDATION.json",
+   "sha256": "775f42d7166ed5a310040b3aa0007ffa7dfe8579d6ee9e7fab2fff9154b43a50",
+   "bytes": 16795,
+   "schema": "A306_CV_VALIDATION/1",
+   "fields": {
+    "verdict": "PASS",
+    "coverage": {
+     "boxes_per_certificate": 363,
+     "certificates": 13,
+     "panels": 32,
+     "planted": 7,
+     "synthetic_families": 5,
+     "synthetic_records": 10,
+     "valid": 6
+    }
+   },
+   "leak_scan_hits": []
+  },
+  {
    "file": "A306_HISTORICAL_A_REPRO.json",
    "sha256": "14d9658cec3e6d40adf49cf6b41228d90fef3bcd8e1daca9ee9623ecc9b51a04",
    "bytes": 1852,
@@ -404,6 +423,54 @@
    "leak_scan_hits": []
   },
   {
+   "file": "C1B_MC.json",
+   "sha256": "de0f110877cc63149c32cd62bfc2d136cb9bc3c07b681feb03e7162015bf644f",
+   "bytes": 1702,
+   "schema": "C1B_MC/1",
+   "fields": {},
+   "leak_scan_hits": []
+  },
+  {
+   "file": "C1B_NEGCTL.json",
+   "sha256": "b7e5eafc79e4af02df6853b99280f3ddb1570427560e8ce88361c555ebdd53d6",
+   "bytes": 4092,
+   "schema": "C1B_NEGCTL/1",
+   "fields": {},
+   "leak_scan_hits": []
+  },
+  {
+   "file": "C1B_POINT_e1_2.json",
+   "sha256": "71a672e10228afc1132a95e1ece79b788d86b63c58ce1bbfaa7454cc8e4e0b33",
+   "bytes": 141916,
+   "schema": "C1B_POINT/1",
+   "fields": {},
+   "leak_scan_hits": []
+  },
+  {
+   "file": "C1B_POINT_e1_4.json",
+   "sha256": "dae9832fd90d278c9a215087d6c32116e824db2a9d6c1d9cf2e0858ba5697632",
+   "bytes": 142851,
+   "schema": "C1B_POINT/1",
+   "fields": {},
+   "leak_scan_hits": []
+  },
+  {
+   "file": "C1B_PW_POINT_e1_2.json",
+   "sha256": "9932407d8032f913c1564a0a48ad5f3502c7ccd02655012b0962b7bffa5ebc6f",
+   "bytes": 48683,
+   "schema": "C1B_POINT/2",
+   "fields": {},
+   "leak_scan_hits": []
+  },
+  {
+   "file": "C1B_PW_POINT_e1_4.json",
+   "sha256": "34c690d8d19936cc87529eff470c804cc9d8d6a81e4ee4bc65b02f2679a6009f",
+   "bytes": 48256,
+   "schema": "C1B_POINT/2",
+   "fields": {},
+   "leak_scan_hits": []
+  },
+  {
    "file": "C1LR_BLOCK.json",
    "sha256": "0f277a236f2a36269bf4f1fd0bddd1f061f185ddf2bcb8890a0065f05df1990f",
    "bytes": 18666,
@@ -437,6 +504,14 @@
     "class": "SYNTHETIC_VALIDATION",
     "producer": "streams/C_308/LR/lr_fsm.py (run_sets)"
    },
+   "leak_scan_hits": []
+  },
+  {
+   "file": "C2B_VALIDATION.json",
+   "sha256": "26e69c3e1652cbd6916081b27417cb1f4547f474d95e4b5e21dab9bc6f10c831",
+   "bytes": 46600,
+   "schema": "C2B_VALIDATION/1",
+   "fields": {},
    "leak_scan_hits": []
   },
   {
@@ -888,6 +963,318 @@
    "leak_scan_hits": []
   },
   {
+   "file": "THEOREM_M_REVIEW_NUMERICS.json",
+   "sha256": "32c214e235dadbfadc75924121ff4b660e0a987084789215df35bb0faabeb4a9",
+   "bytes": 18355,
+   "schema": "THEOREM_M_REVIEW_NUMERICS/1",
+   "fields": {
+    "checks": {
+     "exact_detectors": {
+      "n1_surv:atom": {
+       "evenness_max_rel_diff_of_alarm_prob": "\u2026",
+       "monotone_violations_neg": "\u2026",
+       "monotone_violations_pos": "\u2026"
+      },
+      "n1_surv:m1": {
+       "evenness_max_rel_diff_of_alarm_prob": "\u2026",
+       "monotone_violations_neg": "\u2026",
+       "monotone_violations_pos": "\u2026"
+      },
+      "n1_surv:m2.5": {
+       "evenness_max_rel_diff_of_alarm_prob": "\u2026",
+       "monotone_violations_neg": "\u2026",
+       "monotone_violations_pos": "\u2026"
+      },
+      "n1_surv:m5": {
+       "evenness_max_rel_diff_of_alarm_prob": "\u2026",
+       "monotone_violations_neg": "\u2026",
+       "monotone_violations_pos": "\u2026"
+      },
+      "n1_surv:p1": {
+       "evenness_max_rel_diff_of_alarm_prob": "\u2026",
+       "monotone_violations_neg": "\u2026",
+       "monotone_violations_pos": "\u2026"
+      },
+      "n1_surv:p2.5": {
+       "evenness_max_rel_diff_of_alarm_prob": "\u2026",
+       "monotone_violations_neg": "\u2026",
+       "monotone_violations_pos": "\u2026"
+      },
+      "n1_surv:p5": {
+       "evenness_max_rel_diff_of_alarm_prob": "\u2026",
+       "monotone_violations_neg": "\u2026",
+       "monotone_violations_pos": "\u2026"
+      },
+      "n2_alarm:atom": {
+       "evenness_max_rel_diff_of_alarm_prob": "\u2026",
+       "monotone_violations_neg": "\u2026",
+       "monotone_violations_pos": "\u2026"
+      },
+      "n2_alarm:m5": {
+       "evenness_max_rel_diff_of_alarm_prob": "\u2026",
+       "monotone_violations_neg": "\u2026",
+       "monotone_violations_pos": "\u2026"
+      },
+      "n2_alarm:p1": {
+       "evenness_max_rel_diff_of_alarm_prob": "\u2026",
+       "monotone_violations_neg": "\u2026",
+       "monotone_violations_pos": "\u2026"
+      },
+      "n2_alarm:p5": {
+       "evenness_max_rel_diff_of_alarm_prob": "\u2026",
+       "monotone_violations_neg": "\u2026",
+       "monotone_violations_pos": "\u2026"
+      }
+     },
+     "grid_N10_atom": {
+      "E_pos_ray": [
+       "\u2026",
+       "\u2026",
+       "\u2026",
+       "\u2026",
+       "\u2026"
+      ],
+      "E_viol_neg": [],
+      "E_viol_pos": [],
+      "Pn_viol_pos": {
+       "1": "\u2026",
+       "10": "\u2026",
+       "100": "\u2026",
+       "2": "\u2026",
+       "20": "\u2026",
+       "200": "\u2026",
+       "3": "\u2026",
+       "5": "\u2026",
+       "50": "\u2026",
+       "500": "\u2026"
+      },
+      "evenness_max_abs_E_diff_(implementation_check_only)": 7.389644451905042e-13,
+      "rho_drift_50_e0": 1.1102230246251565e-16,
+      "tail_frac_atom_e0": 0.3345187482660533
+     },
+     "grid_N20_atom": {
+      "E_pos_ray": [
+       "\u2026",
+       "\u2026",
+       "\u2026",
+       "\u2026",
+       "\u2026"
+      ],
+      "E_viol_neg": [],
+      "E_viol_pos": [],
+      "Pn_viol_pos": {
+       "1": "\u2026",
+       "10": "\u2026",
+       "100": "\u2026",
+       "2": "\u2026",
+       "20": "\u2026",
+       "200": "\u2026",
+       "3": "\u2026",
+       "5": "\u2026",
+       "50": "\u2026",
+       "500": "\u2026"
+      },
+      "evenness_max_abs_E_diff_(implementation_check_only)": 5.115907697472721e-13,
+      "rho_drift_50_e0": 0.0,
+      "tail_frac_atom_e0": 0.3354059568438596
+     },
+     "mc_atom_E": {
+      "evenness_z": [
+       "\u2026",
+       "\u2026",
+       "\u2026",
+       "\u2026"
+      ],
+      "mono_neg": [
+       "\u2026",
+       "\u2026",
+       "\u2026"
+      ],
+      "mono_pos": [
+       "\u2026",
+       "\u2026",
+       "\u2026"
+      ],
+      "pos_ray": [
+       "\u2026",
+       "\u2026",
+       "\u2026",
+       "\u2026",
+       "\u2026"
+      ]
+     },
+     "mc_atom_Pn_mono_pos": {
+      "1": [
+       "\u2026",
+       "\u2026",
+       "\u2026"
+      ],
+      "10": [
+       "\u2026",
+       "\u2026",
+       "\u2026"
+      ],
+      "100": [
+       "\u2026",
+       "\u2026",
+       "\u2026"
+      ],
+      "2": [
+       "\u2026",
+       "\u2026",
+       "\u2026"
+      ],
+      "20": [
+       "\u2026",
+       "\u2026",
+       "\u2026"
+      ],
+      "200": [
+       "\u2026",
+       "\u2026",
+       "\u2026"
+      ],
+      "3": [
+       "\u2026",
+       "\u2026",
+       "\u2026"
+      ],
+      "5": [
+       "\u2026",
+       "\u2026",
+       "\u2026"
+      ],
+      "50": [
+       "\u2026",
+       "\u2026",
+       "\u2026"
+      ],
+      "500": [
+       "\u2026",
+       "\u2026",
+       "\u2026"
+      ]
+     },
+     "mc_vs_grid20_E_z": {
+      "-1": -1.78,
+      "-1/2": -0.15,
+      "-1/4": 0.15,
+      "-3": -0.61,
+      "0": 0.58,
+      "1": 0.12,
+      "1/2": -1.06,
+      "1/4": 0.68,
+      "3": -1.09
+     },
+     "vmask_alarms_total": 10235,
+     "vmask_clipped_convention_mismatches_total": 0,
+     "vmask_identity_mismatches_total": 0,
+     "vmask_paths_total": 13500
+    },
+    "producer": "SCR/review_M/rm_assemble.py (inputs out_*.json from rm_exact/rm_vmask/rm_grid/rm_mc/rm_diag/rm_score)",
+    "negative_controls": {
+     "grid_N10_dE_de_at_0": {
+      "(0, 0)": -1.7089941812841817e-13,
+      "(0, 10)": -15.018271401777913,
+      "(0, 25)": -91.14299642985183,
+      "(0, 50)": -321.217898643192,
+      "(10, 0)": 15.018271401777568,
+      "(25, 0)": 91.14299642985155,
+      "(50, 0)": 321.2178986431917
+     },
+     "grid_N10_nonatom": {
+      "(10, 0)": {
+       "E_neg_ray": "\u2026",
+       "E_pos_ray": "\u2026",
+       "E_viol_neg": "\u2026",
+       "E_viol_pos": "\u2026",
+       "P1_viol_pos": "\u2026",
+       "evenness_max_abs_E_diff": "\u2026"
+      },
+      "(25, 0)": {
+       "E_neg_ray": "\u2026",
+       "E_pos_ray": "\u2026",
+       "E_viol_neg": "\u2026",
+       "E_viol_pos": "\u2026",
+       "P1_viol_pos": "\u2026",
+       "evenness_max_abs_E_diff": "\u2026"
+      },
+      "(50, 0)": {
+       "E_neg_ray": "\u2026",
+       "E_pos_ray": "\u2026",
+       "E_viol_neg": "\u2026",
+       "E_viol_pos": "\u2026",
+       "P1_viol_pos": "\u2026",
+       "evenness_max_abs_E_diff": "\u2026"
+      }
+     },
+     "grid_N20_dE_de_at_0": {
+      "(0, 0)": -1.3571357738098236e-12,
+      "(0, 100)": -321.98068583626093,
+      "(0, 20)": -15.033010414579119,
+      "(0, 50)": -91.28503338897806,
+      "(100, 0)": 321.98068583625957,
+      "(20, 0)": 15.033010414576406,
+      "(50, 0)": 91.28503338897536
+     },
+     "grid_N20_nonatom": {
+      "(100, 0)": {
+       "E_neg_ray": "\u2026",
+       "E_pos_ray": "\u2026",
+       "E_viol_neg": "\u2026",
+       "E_viol_pos": "\u2026",
+       "P1_viol_pos": "\u2026",
+       "evenness_max_abs_E_diff": "\u2026"
+      },
+      "(20, 0)": {
+       "E_neg_ray": "\u2026",
+       "E_pos_ray": "\u2026",
+       "E_viol_neg": "\u2026",
+       "E_viol_pos": "\u2026",
+       "P1_viol_pos": "\u2026",
+       "evenness_max_abs_E_diff": "\u2026"
+      },
+      "(50, 0)": {
+       "E_neg_ray": "\u2026",
+       "E_pos_ray": "\u2026",
+       "E_viol_neg": "\u2026",
+       "E_viol_pos": "\u2026",
+       "P1_viol_pos": "\u2026",
+       "evenness_max_abs_E_diff": "\u2026"
+      }
+     },
+     "mc_start_5_0": {
+      "-1/4": [
+       "\u2026",
+       "\u2026"
+      ],
+      "0": [
+       "\u2026",
+       "\u2026"
+      ],
+      "1/4": [
+       "\u2026",
+       "\u2026"
+      ]
+     },
+     "mc_start_5_0_evenness_z_at_quarter": 91.9,
+     "n1_deriv_at_0": {
+      "atom": 0.0,
+      "m1": -1.5876043506480047e-05,
+      "m2.5": -0.004431740714337582,
+      "m5": -0.3520652190666991,
+      "p1": 1.5876043506480047e-05,
+      "p2.5": 0.004431740714337582,
+      "p5": 0.3520652190666991
+     },
+     "vmask_lag_minus_one_mismatches": 4588,
+     "vmask_nonatom_start_mismatches": 3559,
+     "vmask_omit_s0_mismatches": 3520
+    }
+   },
+   "leak_scan_hits": []
+  },
+  {
    "file": "TPTB_SYNTHETIC.json",
    "sha256": "b7601b46b44a870c1f4ea5b7bef29383f959bc4e1e60ac786fc93accd71fb5cc",
    "bytes": 15289,
@@ -1236,7 +1623,7 @@
    "leak_scan_hits": []
   }
  ],
- "artifacts_count": 22,
+ "artifacts_count": 31,
  "leak_scan_negative_control_flagged": true,
  "artifacts_with_leak_hits": [],
  "ledger_runs_by_script": {
@@ -1266,13 +1653,25 @@
   "streams/C_308/LR/lr_fsm.py --block-negctl": 1,
   "streams/A_306/mechanism/mech_study.py": 1,
   "streams/D_309/code/d309_sct.py": 1,
-  "gen/c2b_validate.py": 35,
+  "gen/c2b_validate.py": 81,
   "streams/E_assembly/validate_tpt_r2.py": 1,
   "streams/A_306/mechanism/mech_pflat.py": 1,
-  "gen/c2b_controls.py": 1,
+  "gen/c2b_controls.py": 3,
   "SCR/review_M/rm_exact.py": 1,
   "graph/K5_TAIL_DEPENDENCY_GRAPH.md@4403f86f": 1,
   "SCR/review_M/rm_vmask.py": 1,
-  "SCR/review_M/rm_grid.py": 1
+  "SCR/review_M/rm_grid.py": 2,
+  "SCR/review_M/rm_mc.py": 1,
+  "streams/A_306/common/cv_search.py": 2,
+  "SCR/review_M/rm_diag.py": 1,
+  "SCR/review_M/rm_score.py": 1,
+  "streams/A_306/common/cv_validate.py B": 1,
+  "streams/A_306/common/cv_validate.py A": 1,
+  "streams/C_308/LR/cusum/c1b_certify.py": 4,
+  "streams/C_308/LR/cusum/c1b_certpw.py": 3,
+  "streams/A_306/common/cv_validate.py assemble": 1,
+  "streams/C_308/A0X/EXCLUSION_308.md@7e851139": 1,
+  "streams/C_308/LR/cusum/c1b_mc.py": 1,
+  "streams/C_308/LR/cusum/c1b_negctl.py": 1
  }
 }
