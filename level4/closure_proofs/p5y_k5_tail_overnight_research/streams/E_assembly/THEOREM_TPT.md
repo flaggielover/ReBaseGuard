@@ -121,6 +121,24 @@ pointwise:
   integrals.
 * With `Ĝ ≠ 0` (theorem TC), use `P₊` (Corollary TPT-P), which is always sound.
 
+**Proposition TPT-G (generic structure of the gain; target-free).** Write the rightward binding integrand as
+`t·(c + α s + β s² + γ s³ + δ s⁴)` with `t = x0 + s`, `s ∈ [0, ρ]` and all coefficients ≥ 0. Here c collects the
+centre, the W half-widths and `rad(0)`; `α, β, …` are the s-coefficients of `Σ_r (1/m) rad_r(s)` (plus `|Ĝ(a)|`
+motion). Compare the whole-cell charge `ρ(x0 + ρ/2)·(c + αρ + βρ² + …)` with the profile integral
+`∫_0^ρ (x0+s)(c + αs + βs² + …) ds`. Term by term, as ρ/x0 → 0:
+* the constant component is unchanged;
+* the linear component is charged **1/2**;
+* the quadratic component is charged **1/3**;
+* the cubic component is charged 1/4, and the quartic 1/5.
+
+The exact finite-ρ ratios are `(x0/2 + ρ/3)/(x0 + ρ/2)` for the linear term and `(x0/3 + ρ/4)/(x0 + ρ/2)` for the
+quadratic term. So TPT removes exactly the part of the inequality chain that charges a Taylor remainder at its edge
+value over the whole cell. The linear and quadratic remainder terms are the components that grow with the cell
+width.
+
+*No forecast is made.* Combining this proposition with committed per-cell radius decompositions or C8 factors to
+predict any tail cell's Γ is a target-equivalent proxy. It is forbidden in this campaign and was not done.
+
 ## 3. What TPT changes and what it does not
 
 | item | status |
