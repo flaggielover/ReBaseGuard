@@ -1,0 +1,55 @@
+# Non-target validation report (brief §21)
+
+**Machine-readable companion:** `NONTARGET_VALIDATION_INDEX.json`, produced by `build_validation_index.py`. It lists
+every artifact's sha256, schema and summary fields, together with a **leak scan** of each artifact's content. The scan
+flags any CUSUM m = 5 cell 305–309 as a value or a key, and any drift inside [6/5, 13/5]. Its planted negative control
+is flagged.
+
+**Validation classes used:**
+
+| class | meaning |
+|---|---|
+| SYNTHETIC | exact finite-state drift families (`code/ov_fixtures.py`); every quantity is exact, so exact truth is available |
+| NONTARGET_DRIFT | the real CUSUM kernel at the declared drifts only: e ∈ {0, 1/4, 1/2, 1, 3}, their mirrors, and small blocks near them |
+| NONTARGET_REAL | committed real records of non-tail cells: the lower-front CUSUM cells 11–44, all m |
+| HISTORICAL_READ | reproduction of committed historical values under their own supply. One sanctioned script: stream A's A-reproduction. |
+
+**How the validation sets were selected.** Every set was declared before its run. The selection rules were:
+* the synthetic seed ranges and configurations are fixed;
+* the drifts are the declared list, and the tail band is refused by `guard_drift`;
+* the real cells are all 34 lower-front cells, not a subset.
+
+No case was chosen for its similarity to 306–309.
+
+## Per route: correctness, bound validity, controls, reproducibility, cost
+
+| route | cases | correctness / validity | negative controls (through the code path?) | reproducibility | runtime | artifact |
+|---|---|---|---|---|---|---|
+| TPT (r2) | 12 FSM fixtures; 136 lower-front (cell, m) pairs | Lemma TC-P: 0 pointwise violations. Transport certified sound 12/12. Cap path sound 12/12, with interior splits in 11/12 and 12/12. Independent TC re-derivation reproduces the committed H_TC exactly, 136/136. | **Yes:** code-path plant 12/12; transport plants θ = 1/2, 9/10, 99/100 detected 11, 5, 2; mutants M2, M4, M5 detected 6, 4, 2. The r1 controls were tautological and are withdrawn (review R1 B2). | all JSON pinned to `tpt.py` sha 05cebc9c | 5–120 s | TPT_SYNTHETIC, TPT_R2_VALIDATION, TPT_V3_LOWER_FRONT |
+| TPT-B | 24 FSM | 0 violations; 24/24 sound; 24/24 dominated | **Yes:** code-path 24/24; θ controls detected 22, 10, 4 | pinned | 116 s | TPTB_SYNTHETIC |
+| LR / RLR (theory, FSM) | 24 FSM seeds (Λ from 2.7 to 8.4); blocks [0, 1/4] | Identities exact. Ordering chain holds 24/24. RLR ≤ Dv′ on equal inputs 24/24. | sign-flipped score detected; planted non-supersolutions rejected. One non-guaranteed control (slack = 0) was replaced by a guaranteed-invalid one, 8/8. | exact | minutes | C1LR_* |
+| RLR (real kernel) | declared drifts | see stream C1b | see C1b | — | — | C1B_* (pending) |
+| C2b strategy | 30 pointwise runs (5 drifts × N ∈ {10, 20, 40} × whole/taboo); 18 blocks | all certified. Every gap is < 1 % above the float truth at N = 40. The block floor is proved. | 0.97× and 0.999× candidates rejected; notches 10/10; wrong kernel 28/28; FD check of the Hessian bounds (after the domain fix) 0/7200 violations, ×0.05 control 20/20. The sign-flip is not detectable at the atom by symmetry (documented). | exact | 2–300 CPU-s per run | C2B_VALIDATION |
+| Theorem M (review numerics) | declared drifts; 13,500 paths | V-mask identity; monotonicity and evenness hold at every resolved comparison | the non-atom start violates the property locally (as predicted); planted V-mask errors caught | MC seeds stated | — | THEOREM_M_REVIEW_NUMERICS |
+| Stream B (307) | 64 fixture cells / 320 objects; 34 lower-front cells | all identities and bounds held at every grid point. The lower-front TC arithmetic reproduced 136/136 exactly; a 2⁻⁶⁰ perturbation was detected. | planted errors caught | — | — | B307_* |
+| Stream D (309): SC, cover, RSO | FSM; Hermite closed form on the real kernel at declared drifts | SC and RSO enclosures 0 violations. Hermite closed form matches C11's kernel 1200/1200. | **Several controls could not fail** (review D B1). **Repair in progress; see the addendum below.** | — | — | D309_* |
+| Stream A (306): Theorem CV | block [3, 49/16] | two independent verifiers: 6/6 valid accepted, identical values; 7/7 planted invalid rejected; float truth inside every certified interval | planted invalid certificates, through both verifiers | exact / directed decimal | — | A306_* |
+| Stream A: mechanism | e ∈ {1/2, 1, 3} (float, labelled non-certified) | Proposition PF holds 18/18 | 4 controls | — | — | A306_MECHANISM, A306_PFLAT |
+
+## Weaknesses (stated, not hidden)
+
+* **Tautological or non-guaranteed controls occurred in three streams**, each caught by review or by the authors:
+  * TPT r1 (review R1 B2);
+  * Stream D (review D B1);
+  * C1a and C1b (authors: "slack = 0" and "w·(1 − 2⁻⁶)" were still valid certificates).
+
+  Every repaired control now plants invalidity through the code under test. A global controls-and-leakage review of
+  all streams is **scheduled after the last stream repair**; its outcome, whatever it is, will be preserved in
+  `reviews/`.
+* **No ground truth for the s-profile shape on real data.** On the lower front only s = ρ is anchored externally (TPT
+  review N8).
+* **The strongest routes' real-cell data paths cannot be validated tonight:**
+  * the TC-T tail path's inputs exist only for the quarantined cells;
+  * the SC and RSO payloads were never serialized.
+* **Theorem M transfer (amendment 2).** Certified Λ bounds at the declared drifts logically bracket the band. They are
+  **latent proxies**, and their values are not quoted in any cross-route or handover text.
