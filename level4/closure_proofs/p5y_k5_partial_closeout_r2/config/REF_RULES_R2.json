@@ -1,0 +1,36 @@
+{
+ "schema": "rebaseguard.p5y.k5.partial-closeout-r2.ref-rules.v1",
+ "purpose": "Content-based discovery of refs that carry K1/K2/K3/K4/K5/P5Y/SR-K5 state. Refs are never selected by name.",
+ "carrier_regex_ere": "P5Y_STATE|p5y_state|k1_successor_verdict|K1_SUCCESSOR|K4R1_SUCCESSOR_VERDICT|K4_SCIENTIFIC_LINE|K4_FINAL_VERDICT|independent_countersignature|K5_STATUS [(]CUSUM[)]|[|] SR K5 [|]|SR K5|SR_K5|K5_SR|SR-side K5|SR half of K5|K5_DECLARED_CLOSED|P5Y_DECLARED_CLOSED|K1_DECLARED_CLOSED|P5Y_STATUS|\"P5Y\": *\"|\"K[1-5]\": *\"|K[1-5] = [A-Z_]{4,}|P5Y = [A-Z_]{4,}|P5Y state|K5_COVERAGE_COMPLETE|coverage-map[.]v[0-9]|LEVEL4_GLOBAL_CLOSURE",
+ "search_scope_pathspec": ["level4", "docs", "README.md"],
+ "owner_record_types": {
+  "K1_OWNER": {"path": "level4/closure_proofs/p5y_k1_successor_final_adjudication/evidence/FINAL_ADJUDICATION.json", "obligations": ["K1", "SR_K1"], "binding": true},
+  "K2K3_OWNER": {"path": "level4/closure_proofs/p5y_k2_k3_final_countersignature/FINAL_COUNTERSIGNATURE.json", "obligations": ["K2", "K3", "P5Y_SUMMARY"], "binding": true},
+  "K4_OWNER": {"path": "level4/closure_proofs/p5y_k4r1_final_adjudication/K4R1_FINAL_VERDICT.json", "obligations": ["K4", "P5Y_SUMMARY"], "binding": true},
+  "K4_HISTORICAL": {"path": "level4/closure_proofs/p5y_k4_frozen_execution_r1/config/K4_EXECUTION_RESULT.json", "obligations": ["K4_HISTORICAL", "P5Y_SUMMARY"], "binding": false, "superseded_by": "K4_OWNER via its HISTORICAL_K4_COMMIT field"},
+  "SRK5_OWNER": {"path": "level4/closure_proofs/p5y_k5_remaining_cell_closure/K5_STATUS.md", "obligations": ["SR_K5", "CUSUM_K5_HISTORICAL_STATUS"], "binding": true},
+  "CUSUMK5_MAP": {"path": "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/coverage/K5_COVERAGE_MAP_R5.json", "obligations": ["CUSUM_K5_COVERAGE"], "binding": true}
+ },
+ "positive_closure_flag_regex": "K5_DECLARED_CLOSED *[=:] *\"?(YES|true|True)|P5Y_DECLARED_CLOSED *[=:] *\"?(YES|true|True)|\"P5Y\": *\"CLOSED|P5Y *[=:] *CLOSED|K5_COVERAGE_COMPLETE\"? *[=:] *\"?(true|True|YES)|K5_STATUS [(]CUSUM[)] *= *CLOSED|\"K5\": *\"CLOSED|K5 *= *CLOSED|K5 CLOSED_BY",
+ "exempt_prefixes_this_branch": [
+  "level4/closure_proofs/p5y_k5_tail_route_audit/",
+  "level4/closure_proofs/p5y_k5_partial_closeout/",
+  "level4/closure_proofs/p5y_k5_partial_closeout_r1/",
+  "level4/closure_proofs/p5y_k5_partial_closeout_r2/"
+ ],
+ "exempt_publication_files_in_phase_publication": ["README.md", "docs/research_synthesis/README.md", "docs/research_synthesis/LIMITATIONS_AND_OPEN_ITEMS.md"],
+ "state_mapping": {
+  "K1": "CLOSED iff K1_OWNER.scientific_verdict.k1_successor_verdict == K1_SUCCESSOR_CLOSED and residual_blockers == NONE; else the recorded token",
+  "SR_K1": "CLOSED iff K1_OWNER.scientific_verdict.sr_successor_science == PASS and K1 is CLOSED; else the recorded token",
+  "K2": "K2K3_OWNER.status.K2 (with independent_countersignature.K2 == PASS)",
+  "K3": "K2K3_OWNER.status.K3 (with independent_countersignature.K3 == PASS)",
+  "K4": "CLOSED iff K4_OWNER.K4R1_SUCCESSOR_VERDICT == CLOSED and K4_RESIDUAL_BLOCKERS == NONE and K4_OWNER.HISTORICAL_K4_COMMIT is the commit that introduced the K4_HISTORICAL record; else the recorded token",
+  "P5Y_SUMMARY": "the P5Y summary (K1..K5, P5Y) of the live owner record whose introducing commit is newest; it must agree with K1, K2, K3 and K4 above (CLOSED <-> CLOSED or CLOSED_BY_LATER_SUCCESSOR_CAMPAIGN), otherwise CONFLICT",
+  "K5": "P5Y_SUMMARY.K5",
+  "P5Y": "P5Y_SUMMARY.P5Y",
+  "SR_K5": "the state token of the '| SR K5 |' row of SRK5_OWNER (text before the first ':')",
+  "CUSUM_K5_COVERAGE": "CUSUMK5_MAP.K5_COVERAGE_COMPLETE and union_open_ranges"
+ },
+ "version_rule": "for each owner-record path, collect the distinct blobs at all live commit tips; one blob -> current; several -> the version whose introducing commit is a descendant of every other version's introducing commit is current, the others superseded; otherwise CONFLICT",
+ "stop_classes": ["STOP_AMBIGUOUS_CROSS_REF_STATE", "STOP_INCOMPATIBLE_BINDING_DRIFT", "STOP_CONFLICTING_LIVE_RECORDS", "STOP_MISSING_BINDING_RECORD", "STOP_POSITIVE_CLOSURE_FLAG", "STOP_DISCOVERY_ERROR"]
+}

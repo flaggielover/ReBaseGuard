@@ -1,0 +1,30 @@
+{
+ "schema": "rebaseguard.p5y.k5.partial-closeout-r2.wording-rules.v1",
+ "normalization": "remove the markdown markers '*' and '`'; collapse every run of whitespace (including hard-wrapped line breaks) into one space; lowercase. Sentence and clause punctuation is kept.",
+ "tier_P_source": "BANNED_PUBLICATION_PHRASES of the predecessor checker level4/closure_proofs/p5y_k5_partial_closeout/code/closeout_checks.py at blob fb297cf2b91b3d685a0aa29c3f6d20b23ff6e547 (read by AST literal parsing), plus tier_P_additions",
+ "tier_P_rule": "ABSOLUTE: a tier-P phrase occurring anywhere in the normalized text is rejected, negated or not (predecessor semantics, no relaxation)",
+ "tier_P_additions": [
+  "all routes have been exhausted",
+  "every route is exhausted",
+  "h3a is confirmed",
+  "h3a is certified",
+  "h3a has been established",
+  "h3a has been proved",
+  "h3a has been confirmed",
+  "cusum k5 is closed",
+  "p5y is closed",
+  "sr k5 is complete",
+  "sr k5 is closed"
+ ],
+ "tier_L_source": "BANNED_ASSERTIONS of the R1 checker level4/closure_proofs/p5y_k5_partial_closeout_r1/code/closeout_checks_r1.py at blob aa856b1bc985f17040bfedbb6a16982c734a10e7 (read by AST literal parsing), plus tier_L_additions",
+ "tier_L_additions": {
+  "h3a supported": "\\bevidence (for|in favour of|in favor of) h3a\\b|\\bsupports h3a\\b",
+  "h3a refuted (verb forms)": "\\b(refute|refutes|refuted|refuting|disprove|disproves|disproved|falsify|falsifies|falsified) h3a\\b"
+ },
+ "tier_L_rule": "PROPOSITION-LOCAL NEGATION: a tier-L match is licensed only if the text immediately before the match (after normalization) ends with a governing negation cue followed by nothing but an optional neutral insertion",
+ "governing_negation_regex": "\\b(not|no|never|without)\\s*(?P<ins>[^.;:!?]*)$",
+ "neutral_insertion_regex": "^\\s*(\\(?\\s*,?\\s*(by themselves|by itself|alone|as such|in themselves|in itself)\\s*,?\\s*\\)?\\s*)?$",
+ "no_relaxation_guarantee": "for every sentence of the regression corpus: rejected by the predecessor scan => rejected by R2; rejected by the R1 scan => rejected by R2",
+ "stale_status_note": "stale current-state K1 wording in public files is handled by the stale-line rule of PUBLICATION_ALLOWLIST_R2.json, not by this wording scan (the correction form must quote the historical claim)",
+ "governing_negation_rule": "take the LAST governing cue (not|no|never|without) in the normalized text before the match; the match is licensed iff no sentence punctuation [.;:!?] lies between that cue and the match and the text between them fully matches neutral_insertion_regex"
+}

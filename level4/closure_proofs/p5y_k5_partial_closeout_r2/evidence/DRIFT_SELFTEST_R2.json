@@ -1,0 +1,212 @@
+{
+ "clone": "git clone --shared --no-checkout (temporary, outside the repository; deleted afterwards)",
+ "k1_record_refs_in_clone": [
+  "refs/remotes/origin/p5y-k1-successor-final-assembly",
+  "refs/tags/p5y-k1-successor-closed"
+ ],
+ "k4_record_refs_in_clone": [
+  "refs/remotes/origin/p5y-k4r1-final-closure",
+  "refs/tags/p5y-k4-successor-closed"
+ ],
+ "pass": true,
+ "scenarios": [
+  {
+   "compatible_drift": false,
+   "expected": [
+    "CONTINUE"
+   ],
+   "pass": true,
+   "ref_changes": [],
+   "scenario": "S0_no_change",
+   "stop_classes": [],
+   "verdict": "CONTINUE"
+  },
+  {
+   "compatible_drift": false,
+   "expected": [
+    "STOP_AMBIGUOUS_CROSS_REF_STATE"
+   ],
+   "pass": true,
+   "ref_changes": [
+    [
+     "refs/heads/zz-new-status",
+     "new"
+    ]
+   ],
+   "scenario": "S1_new_ref_unknown_carrier",
+   "stop_classes": [
+    "STOP_AMBIGUOUS_CROSS_REF_STATE"
+   ],
+   "verdict": "STOP_AMBIGUOUS_CROSS_REF_STATE"
+  },
+  {
+   "compatible_drift": false,
+   "expected": [
+    "STOP_CONFLICTING_LIVE_RECORDS",
+    "STOP_INCOMPATIBLE_BINDING_DRIFT"
+   ],
+   "pass": true,
+   "ref_changes": [
+    [
+     "refs/remotes/origin/p5y-k4r1-final-closure",
+     "moved"
+    ],
+    [
+     "refs/tags/p5y-k4-successor-closed",
+     "moved"
+    ]
+   ],
+   "scenario": "S2_binding_ref_moved_incompatible",
+   "stop_classes": [
+    "STOP_CONFLICTING_LIVE_RECORDS",
+    "STOP_INCOMPATIBLE_BINDING_DRIFT"
+   ],
+   "verdict": "STOP_CONFLICTING_LIVE_RECORDS"
+  },
+  {
+   "compatible_drift": true,
+   "expected": [
+    "CONTINUE"
+   ],
+   "pass": true,
+   "ref_changes": [
+    [
+     "refs/remotes/origin/p5y-k4r1-final-closure",
+     "moved"
+    ],
+    [
+     "refs/tags/p5y-k4-successor-closed",
+     "moved"
+    ]
+   ],
+   "scenario": "S3_binding_ref_moved_compatible",
+   "stop_classes": [],
+   "verdict": "CONTINUE"
+  },
+  {
+   "compatible_drift": false,
+   "expected": [
+    "STOP_MISSING_BINDING_RECORD"
+   ],
+   "pass": true,
+   "ref_changes": [
+    [
+     "refs/remotes/origin/p5y-k1-successor-final-assembly",
+     "deleted"
+    ],
+    [
+     "refs/tags/p5y-k1-successor-closed",
+     "deleted"
+    ]
+   ],
+   "scenario": "S4_binding_ref_deleted",
+   "stop_classes": [
+    "STOP_CONFLICTING_LIVE_RECORDS",
+    "STOP_INCOMPATIBLE_BINDING_DRIFT",
+    "STOP_MISSING_BINDING_RECORD"
+   ],
+   "verdict": "STOP_CONFLICTING_LIVE_RECORDS"
+  },
+  {
+   "compatible_drift": false,
+   "expected": [
+    "CONTINUE"
+   ],
+   "pass": true,
+   "ref_changes": [
+    [
+     "refs/heads/zz-renamed-k1",
+     "renamed-equivalent"
+    ],
+    [
+     "refs/remotes/origin/p5y-k1-successor-final-assembly",
+     "deleted"
+    ],
+    [
+     "refs/tags/p5y-k1-successor-closed",
+     "deleted"
+    ]
+   ],
+   "scenario": "S5_binding_ref_renamed",
+   "stop_classes": [],
+   "verdict": "CONTINUE"
+  },
+  {
+   "compatible_drift": false,
+   "expected": [
+    "STOP_CONFLICTING_LIVE_RECORDS"
+   ],
+   "pass": true,
+   "ref_changes": [
+    [
+     "refs/heads/zz-divergent-k1",
+     "new"
+    ]
+   ],
+   "scenario": "S6_conflicting_live_records",
+   "stop_classes": [
+    "STOP_CONFLICTING_LIVE_RECORDS",
+    "STOP_INCOMPATIBLE_BINDING_DRIFT",
+    "STOP_MISSING_BINDING_RECORD"
+   ],
+   "verdict": "STOP_CONFLICTING_LIVE_RECORDS"
+  },
+  {
+   "compatible_drift": false,
+   "expected": [
+    "CONTINUE"
+   ],
+   "pass": true,
+   "ref_changes": [
+    [
+     "refs/tags/zz-old",
+     "new"
+    ]
+   ],
+   "scenario": "S7_new_unrelated_ref_at_frozen_commit",
+   "stop_classes": [],
+   "verdict": "CONTINUE"
+  },
+  {
+   "compatible_drift": false,
+   "expected": [
+    "STOP_AMBIGUOUS_CROSS_REF_STATE"
+   ],
+   "pass": true,
+   "ref_changes": [
+    [
+     "refs/zz/tree-ref",
+     "new"
+    ]
+   ],
+   "scenario": "S8_new_tree_ref_unknown_carrier",
+   "stop_classes": [
+    "STOP_AMBIGUOUS_CROSS_REF_STATE"
+   ],
+   "verdict": "STOP_AMBIGUOUS_CROSS_REF_STATE"
+  },
+  {
+   "compatible_drift": false,
+   "expected": [
+    "STOP_AMBIGUOUS_CROSS_REF_STATE",
+    "STOP_POSITIVE_CLOSURE_FLAG"
+   ],
+   "pass": true,
+   "ref_changes": [
+    [
+     "refs/heads/zz-flag",
+     "new"
+    ]
+   ],
+   "scenario": "S9_positive_closure_flag",
+   "stop_classes": [
+    "STOP_AMBIGUOUS_CROSS_REF_STATE",
+    "STOP_POSITIVE_CLOSURE_FLAG"
+   ],
+   "verdict": "STOP_AMBIGUOUS_CROSS_REF_STATE"
+  }
+ ],
+ "schema": "rebaseguard.p5y.k5.partial-closeout-r2.drift-selftest.v1",
+ "snapshot_refs_in_clone": 91,
+ "snapshot_verdict_in_clone": "CONTINUE"
+}

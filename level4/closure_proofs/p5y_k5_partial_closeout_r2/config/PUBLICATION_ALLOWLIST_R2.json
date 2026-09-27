@@ -1,0 +1,130 @@
+{
+ "schema": "rebaseguard.p5y.k5.partial-closeout-r2.publication-allowlist.v1",
+ "namespace": "level4/closure_proofs/p5y_k5_partial_closeout_r2",
+ "base_commit": "0d275038fe60252915691df45a31904b27f34c0f",
+ "phase_order": [
+  "prefreeze",
+  "freeze",
+  "adjudication",
+  "publication"
+ ],
+ "namespace_files": {
+  "README.md": "freeze",
+  "protocol/K5_PARTIAL_CLOSEOUT_PROTOCOL_R2.md": "freeze",
+  "code/closeout_checks_r2.py": "freeze",
+  "code/drift_selftest_r2.py": "freeze",
+  "config/REF_RULES_R2.json": "freeze",
+  "config/WORDING_RULES_R2.json": "freeze",
+  "config/WORDING_FIXTURES_R2.json": "freeze",
+  "config/PUBLICATION_ALLOWLIST_R2.json": "freeze",
+  "evidence/REF_SNAPSHOT_R2.json": "freeze",
+  "evidence/PREFREEZE_CHECKS_R2.json": "freeze",
+  "evidence/DRIFT_SELFTEST_R2.json": "freeze",
+  "review/CLOSEOUT_FREEZE_REVIEW_R2.md": "adjudication",
+  "evidence/PREADJUDICATION_REF_DIFF_R2.json": "adjudication",
+  "evidence/PREADJUDICATION_CHECKS_R2.json": "adjudication",
+  "adjudication/K5_CUSUM_FINAL_ADJUDICATION_R2.md": "adjudication",
+  "review/K5_ADJUDICATION_REVIEW_R2.md": "publication",
+  "evidence/PREPUBLICATION_REF_DIFF_R2.json": "publication",
+  "publication/K5_CUSUM_CLOSEOUT_STATUS.md": "publication",
+  "review/PUBLICATION_CONFORMANCE_R2.md": "publication",
+  "evidence/PUBLICATION_CHECKS_R2.json": "publication"
+ },
+ "frozen_files": [
+  "README.md",
+  "protocol/K5_PARTIAL_CLOSEOUT_PROTOCOL_R2.md",
+  "code/closeout_checks_r2.py",
+  "code/drift_selftest_r2.py",
+  "config/REF_RULES_R2.json",
+  "config/WORDING_RULES_R2.json",
+  "config/WORDING_FIXTURES_R2.json",
+  "config/PUBLICATION_ALLOWLIST_R2.json",
+  "evidence/REF_SNAPSHOT_R2.json",
+  "evidence/PREFREEZE_CHECKS_R2.json",
+  "evidence/DRIFT_SELFTEST_R2.json"
+ ],
+ "frozen_files_note": "README.md of the namespace is frozen at freeze and may change again only in phase publication (its index update, P-E); every other frozen file must stay byte-identical to the freeze commit in every later phase",
+ "public_files": {
+  "README.md": {
+   "publication_facing": "repository root README, 'Current successor status (PS1)' section",
+   "insertion": {
+    "after_heading": "## Current successor status (PS1)",
+    "before_heading": "## Limitations and negative results",
+    "block_first_line": "### Current K5 status (CUSUM, updated 2026-09-27)"
+   }
+  },
+  "docs/research_synthesis/README.md": {
+   "publication_facing": "research synthesis index, 'Current PS1 successor (additive update)' section",
+   "insertion": {
+    "append_at_end": true,
+    "block_first_line": "## Current K5 successor status (additive update)"
+   }
+  },
+  "docs/research_synthesis/LIMITATIONS_AND_OPEN_ITEMS.md": {
+   "publication_facing": "limitations register",
+   "insertion": {
+    "append_at_end": true,
+    "block_first_line": "## P5Y successor: CUSUM K5 open items (additive, 2026-09-27)"
+   }
+  }
+ },
+ "stale_detection_regex": "\\bk1\\b[^.]{0,160}\\bnot[_ ]closed\\b|^- \\*\\*not_closed\\.\\*\\*$",
+ "stale_lines": [
+  {
+   "file": "README.md",
+   "line": 134,
+   "text": "- **NOT_CLOSED.**",
+   "recorded": "2026-09-13",
+   "claim": "NOT_CLOSED",
+   "context": "bullet of 'Current status (updated 2026-09-13):' (README :130) describing PS1/SR, the SR side of K1"
+  },
+  {
+   "file": "README.md",
+   "line": 137,
+   "text": "- K1 and P5Y remain **NOT CLOSED**, and LEVEL4_GLOBAL_CLOSURE = NO.",
+   "recorded": "2026-09-16",
+   "claim": "K1 and P5Y remain NOT CLOSED",
+   "context": "last touched by ce7fb933 (2026-09-16)"
+  },
+  {
+   "file": "docs/research_synthesis/README.md",
+   "line": 158,
+   "text": "- PS1/SR (the SR side of K1) is QUALIFIED_AND_AUTHORIZED_ON_AWS, PRODUCTION_STARTED, CURRENTLY_GRACEFUL_DRAINING and NOT_CLOSED.",
+   "recorded": "2026-09-13",
+   "claim": "PS1/SR (the SR side of K1) is QUALIFIED_AND_AUTHORIZED_ON_AWS, PRODUCTION_STARTED, CURRENTLY_GRACEFUL_DRAINING and NOT_CLOSED",
+   "context": "bullet under 'Updated 2026-09-13:' (synthesis README :157)"
+  },
+  {
+   "file": "docs/research_synthesis/README.md",
+   "line": 160,
+   "text": "- K1 is NOT_CLOSED.",
+   "recorded": "2026-09-16",
+   "claim": "K1 is NOT_CLOSED",
+   "context": "last touched by ce7fb933 (2026-09-16)"
+  }
+ ],
+ "stale_outside_allowlist": [
+  {
+   "file": "docs/research_synthesis/PS1_CURRENT_STATUS.md",
+   "line": 8,
+   "text": "K1        = NOT_CLOSED"
+  },
+  {
+   "file": "docs/research_synthesis/PS1_CURRENT_STATUS.md",
+   "line": 42,
+   "text": "- K1 = NOT CLOSED, P5Y = NOT CLOSED, LEVEL4_GLOBAL_CLOSURE = NO. No K1 closure is claimed: the CUSUM side is closed, the PS1/SR side is not."
+  }
+ ],
+ "stale_outside_allowlist_rule": "publication-facing but NOT on this allowlist: left byte-identical in this closeout; reported in the handover and named explicitly as superseded in blocks P-B and P-C; a separate authorization is needed to edit it",
+ "correction_form": {
+  "rule": "each stale line is replaced IN PLACE by exactly one line that keeps its list marker and reads: '<marker>Historical status (as recorded <recorded>): <claim>. Superseded (2026-09-27) <scope> by K1_SUCCESSOR_CLOSED (CLOSED_BY_LATER_SUCCESSOR_CAMPAIGN), <authoritative artifact path> at ref <ref> (<tip>)<optional tail>.'",
+  "required_substrings_normalized": [
+   "historical status (as recorded ",
+   "superseded (2026-09-27)",
+   "k1_successor_closed",
+   "p5y_k1_successor_final_adjudication/evidence/final_adjudication.json"
+  ],
+  "must_contain_claim": true,
+  "no_other_modification": "every other line of the three public files is unchanged; the only deletions allowed are the four stale lines, each paired with its correction line at the same position"
+ }
+}
