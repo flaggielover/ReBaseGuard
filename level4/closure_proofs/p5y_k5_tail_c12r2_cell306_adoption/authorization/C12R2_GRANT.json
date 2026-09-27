@@ -1,0 +1,42 @@
+{
+ "authorization": {
+  "authorizes": "exactly one `python3.14 -I -S -B code/c12r2_cell306.py execute` at HEAD = this grant commit, in the qualified worktree; `seal-only` only after an UNSEALED exit",
+  "host": "this machine only",
+  "not_authorized": [
+   "any second execute",
+   "deleting or moving the exactly-once marker",
+   "cells 307-309",
+   "modifying r5",
+   "r6 outside c12r2_r6_from_adjudication.py after the accepted chain",
+   "changing any frozen threshold, input or code"
+  ],
+  "source": "a SEPARATE explicit user authorization for the C12-R2 grant / exactly-once execution phase, given after QUALIFICATION_ACCEPTED was preserved (the C12-R2 repair campaign itself did not authorize a grant)",
+  "target": {
+   "cell": 306,
+   "evaluations": 1,
+   "m": 5,
+   "quantity": "Gamma(5, 306; S_I2)"
+  },
+  "wall_clock_cap_seconds": 900
+ },
+ "campaign": "C12-R2 -- cell-306 adoption under K5 tail adoption floor r2",
+ "created_utc": "2026-09-27T06:40:36Z",
+ "driver_sha256": "5c45b4de6c1587bf301e7ebe5db75ad89889192981543b41d3416bf7c600fb91",
+ "exactly_once": true,
+ "freeze_commit": "11f91daf50a077999023f733d8e870ad3813923a",
+ "freeze_record_sha256": "23deb827fdafe3574f5e6b2bdb1ad19c1848507e2f202348039b9da8e1a408fb",
+ "grant_generator_sha256": "83ec10cc01ec79fedf319d023bf26b0994d36722a1123a18dcdfeff8d77f2dd0",
+ "protocol_sha256": "874a561079a36cc21110df004d067afb9a04136eabcc07f35466a4379aac8086",
+ "qualification_commit": "107a8b362e572eeab5c630e838edbe012cd3ae85",
+ "qualification_review_commit": "e19f4edd06ef2152d8285996db6d60b664c40f7d",
+ "qualification_review_verdict": "QUALIFICATION_ACCEPTED",
+ "qualified_identity": {
+  "branch": "refs/heads/p5y-k5-tail-c11rd-d1d2-extension",
+  "common_dir": "/Users/suzhe/ReBaseGuard/.git",
+  "git_dir": "/Users/suzhe/ReBaseGuard/.git/worktrees/ReBaseGuard-k5c11rd",
+  "worktree": "/Users/suzhe/ReBaseGuard-k5c11rd"
+ },
+ "r6_generator_sha256": "23a831c9774921b63011dbfc3b1e713fa1ee512c314a21e09ce00d58b0afff45",
+ "schema": "rebaseguard.p5y.k5.tail-c12r2.grant.v1",
+ "verifier_sha256": "3c748f113c6d25e0352cce8cacd673c8618577f0704bd7958befef9d77fc8e03"
+}
