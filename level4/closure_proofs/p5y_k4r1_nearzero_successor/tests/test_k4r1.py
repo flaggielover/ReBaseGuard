@@ -9,6 +9,7 @@ import importlib.util
 import json
 import os
 import random
+import sys
 from fractions import Fraction as F
 from pathlib import Path
 
@@ -388,6 +389,7 @@ def test_freeze_gate(tmp_path):
 def test_exact_once(tmp_path, monkeypatch):
     out = tmp_path / "RESULT.json"
     out.write_text("{}")
+    monkeypatch.setattr(K, "OUT", out)
     monkeypatch.setattr(K, "read_config", lambda: ({}, {}))
     monkeypatch.setattr(K, "verify_freeze", lambda *a, **k: {})
     monkeypatch.setattr(K, "git_state", lambda *a, **k: {"head": "h", "clean": True, "freeze_committed": True})
@@ -397,7 +399,7 @@ def test_exact_once(tmp_path, monkeypatch):
 
     monkeypatch.setattr(K, "load_sources", boom)
     with pytest.raises(K.K4R1Refusal):
-        K.main(["execute", "--out", str(out)])
+        K.main(["execute"])
 
 
 def test_assembly_residual_cell_must_be_the_historical_too_loose_cell():
@@ -464,7 +466,7 @@ def build_repo(tmp, *, report=None, sources=None, bind_all=True, commit_freeze=T
           "qualification_review": str(NSREL / "review/QUALIFICATION_REVIEW.json"), "bound_files": bound}
     (ns / "config/FREEZE.json").write_text(json.dumps(fz, sort_keys=True))
     (ns / "config/FREEZE_HASH").write_text(_sha(ns / "config/FREEZE.json"))
-    (ns / "evidence/execution_r1").mkdir(parents=True)
+    (repo / ".gitignore").write_text("__pycache__/\n.pytest_cache/\n")
     _git(repo, "init", "-q")
     if not commit_freeze:
         (repo / ".git/info/exclude").write_text(str(NSREL / "config/FREEZE.json") + "\n")
@@ -477,9 +479,11 @@ def build_repo(tmp, *, report=None, sources=None, bind_all=True, commit_freeze=T
 
 
 def run_execute(mod, ns):
-    out = ns / "evidence/execution_r1/K4R1_RESULT.json"
-    assert mod.main(["execute", "--out", str(out)]) == 0
-    return json.loads(out.read_text())
+    assert not (ns / "evidence/execution_r1").exists()          # a clean checkout has no output directory
+    assert mod.main(["ready"]) == 0
+    assert mod.main(["execute"]) == 0
+    assert mod.OUT == ns / "evidence/execution_r1/K4R1_RESULT.json"
+    return json.loads(mod.OUT.read_text())
 
 
 def test_execute_end_to_end_exact_values(tmp_path):
@@ -491,9 +495,18 @@ def test_execute_end_to_end_exact_values(tmp_path):
         assert (F(c["G"]), F(c["T"]), F(c["B"]), F(c["a"])) == (G, T, B, a)
         assert c["PASS"] is (B < 0) and c["cells"] == [[0, 1], [0, 1, 2], [0, 1, 2]][["2", "3", "5"].index(m)]
     assert res["K4R1_SUCCESSOR_SCIENCE"] == "PASS" and res["K4R1_COMPLETE_K4_ASSEMBLY"] == "PASS"
-    assert res["residual_remaining"] == {} and res["new_real_addresses"] == 0
+    assert res["residual_remaining"] == {} and res["new_real_addresses"] == 0 and res["status"] == "EXECUTED"
+    head = subprocess.run(["git", "-C", str(repo), "rev-parse", "HEAD"], capture_output=True, text=True).stdout.strip()
+    assert res["executed_at_head"] == head
+    assert res["freeze_sha256"] == _sha(ns / "config/FREEZE.json")
+    for m, a, row in (("2", A2, 1), ("3", A3, 2), ("5", A3, 2)):
+        c = res["certificates"][f"CUSUM|m={m}"]
+        assert c["inputs"] == {"D0_hi": DVAL[m][1] if "/" in DVAL[m][1] else str(F(DVAL[m][1])),
+                               "L1": str(SLOT[m]["L0"] - TF * SLOT[m]["M5"] - F(1, 1000)), "U0": str(SLOT[m]["U0"]),
+                               "M3": str(mval("3", m, row)), "M5": str(mval("5", m, row)), "e0": str(E0), "x1": str(X1)}
+        assert c["T_branch"] == "U0+a^2/2*M5"            # synthetic M3 (~3000) exceeds U0 + a^2/2*M5 (~200)
     with pytest.raises(mod.K4R1Refusal):                     # exact once
-        mod.main(["execute", "--out", str(ns / "evidence/execution_r1/K4R1_RESULT.json")])
+        mod.main(["execute"])
 
 
 def test_execute_one_residual_fails(tmp_path):
@@ -520,20 +533,20 @@ def test_execute_refuses_dirty_checkout(tmp_path):
     repo, ns, mod = build_repo(tmp_path)
     (repo / "stray.txt").write_text("x")
     with pytest.raises(mod.K4R1Refusal):
-        mod.main(["execute", "--out", str(ns / "evidence/execution_r1/K4R1_RESULT.json")])
-    assert not (ns / "evidence/execution_r1/K4R1_RESULT.json").exists()
+        mod.main(["execute"])
+    assert not mod.OUT.exists()
 
 
 def test_execute_refuses_uncommitted_freeze(tmp_path):
     repo, ns, mod = build_repo(tmp_path, commit_freeze=False)
     with pytest.raises(mod.K4R1Refusal):
-        mod.main(["execute", "--out", str(ns / "evidence/execution_r1/K4R1_RESULT.json")])
+        mod.main(["execute"])
 
 
 def test_execute_refuses_missing_mandatory_binding(tmp_path):
     repo, ns, mod = build_repo(tmp_path, bind_all=False)
     with pytest.raises(mod.K4R1Refusal):
-        mod.main(["execute", "--out", str(ns / "evidence/execution_r1/K4R1_RESULT.json")])
+        mod.main(["execute"])
 
 
 def test_execute_refuses_source_drift_after_freeze(tmp_path):
@@ -541,4 +554,116 @@ def test_execute_refuses_source_drift_after_freeze(tmp_path):
     (repo / "data/text.json").write_text("{}")
     _git(repo, "commit", "-q", "-am", "drift")
     with pytest.raises(mod.K4R1Refusal):
-        mod.main(["execute", "--out", str(ns / "evidence/execution_r1/K4R1_RESULT.json")])
+        mod.main(["execute"])
+
+
+def test_execute_T_branch_M3(tmp_path):
+    s = synthetic_sources()
+    for row in s["text_result"]["rows"]:
+        for m in row["M"]["3"]:
+            row["M"]["3"][m] = "3"                          # M3 below the transport bound
+    repo, ns, mod = build_repo(tmp_path, sources=s)
+    res = run_execute(mod, ns)
+    for m in ("2", "3", "5"):
+        c = res["certificates"][f"CUSUM|m={m}"]
+        assert c["T_branch"] == "M3" and F(c["T"]) == 3
+
+
+def test_literal_command_from_repo_root_and_elsewhere(tmp_path):
+    """The gate's literal commands, as subprocesses, with no pre-created output directory."""
+    for where in ("root", "elsewhere"):
+        repo, ns, mod = build_repo(tmp_path / where)
+        script = str(NSREL / "code/k4r1_certificate.py") if where == "root" else str(ns / "code/k4r1_certificate.py")
+        cwd = repo if where == "root" else tmp_path
+        env = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
+        r = subprocess.run([sys.executable, "-B", script, "ready"], cwd=cwd, capture_output=True, text=True, env=env)
+        assert r.returncode == 0 and '"READY": "PASS"' in r.stdout, r.stderr
+        r = subprocess.run([sys.executable, "-B", script, "execute"], cwd=cwd, capture_output=True, text=True, env=env)
+        assert r.returncode == 0, r.stderr
+        res = json.loads((ns / "evidence/execution_r1/K4R1_RESULT.json").read_text())
+        assert res["status"] == "EXECUTED" and res["K4R1_SUCCESSOR_SCIENCE"] == "PASS"
+        r = subprocess.run([sys.executable, "-B", script, "execute"], cwd=cwd, capture_output=True, text=True, env=env)
+        assert r.returncode == 3 and "EXACT_ONCE" in r.stderr
+        r = subprocess.run([sys.executable, "-B", script, "ready"], cwd=cwd, capture_output=True, text=True, env=env)
+        assert r.returncode == 3
+
+
+def test_crash_after_reservation_is_recorded_and_spends_the_execution(tmp_path, monkeypatch):
+    repo, ns, mod = build_repo(tmp_path)
+
+    def boom(*a, **k):
+        raise RuntimeError("synthetic crash inside the computation")
+
+    monkeypatch.setattr(mod, "assemble", boom)
+    with pytest.raises(RuntimeError):
+        mod.main(["execute"])
+    rec = json.loads(mod.OUT.read_text())
+    assert rec["status"] == "EXECUTION_CRASHED" and "synthetic crash" in rec["error"]
+    with pytest.raises(mod.K4R1Refusal):
+        mod.main(["execute"])
+
+
+def test_ready_computes_nothing_and_writes_nothing(tmp_path, monkeypatch):
+    repo, ns, mod = build_repo(tmp_path)
+
+    def forbidden(*a, **k):
+        raise AssertionError("ready must not compute the certificate")
+
+    for name in ("g_bound", "t_bound", "b_bound", "decide", "compute"):
+        monkeypatch.setattr(mod, name, forbidden)
+    assert mod.main(["ready"]) == 0
+    assert not (ns / "evidence/execution_r1").exists()
+
+
+def test_freeze_bytes_must_equal_head(tmp_path):
+    repo, ns, mod = build_repo(tmp_path)
+    fpath = ns / "config/FREEZE.json"
+    fz = json.loads(fpath.read_text())
+    fz["note"] = "edited after commit"
+    fpath.write_text(json.dumps(fz, sort_keys=True))
+    (ns / "config/FREEZE_HASH").write_text(_sha(fpath))
+    _git(repo, "update-index", "--assume-unchanged", str(NSREL / "config/FREEZE.json"), str(NSREL / "config/FREEZE_HASH"))
+    assert mod.git_state(repo, fpath)["clean"] is True                      # status hides the edit
+    with pytest.raises(mod.K4R1Refusal):
+        mod.main(["execute"])
+    assert not mod.OUT.exists()
+
+
+@pytest.mark.parametrize("mutate", [
+    lambda s, u, p: s["slot1_record"]["scientific"]["binding"].__setitem__("right", "1/1000"),        # x1 != hull right
+    lambda s, u, p: [s["slot1_record"]["scientific"]["binding"].__setitem__("right", "1/100000000"),
+                     s["slot1_record"]["scientific"]["context"].__setitem__("x1", "1/100000000")],     # x1 < e0
+    lambda s, u, p: p["geometry"].__setitem__("k1_cell0_e0", "1/1000"),                                # frozen e0 differs
+    lambda s, u, p: [s["k1_cell0_record"].__setitem__("rho", ["1/1000", "0/1"])] +
+    [e.__setitem__("rho", ["1/1000", "0/1"]) for e in s["k1_cell0_record"]["m"].values()],             # e0 != rho
+    lambda s, u, p: s["k1_cell0_record"].__setitem__("detector", "SR"),
+    lambda s, u, p: s["slot1_record"]["scientific"]["binding"].__setitem__("k1_cell_index", 1),
+    lambda s, u, p: s["slot1_record"]["scientific"]["binding"].__setitem__("detector", "SR"),
+    lambda s, u, p: s["slot1_record"]["scientific"]["binding"].__setitem__("left", "1/1000000"),     # hull not from 0
+    lambda s, u, p: u.__setitem__("detector_scope", ["CUSUM", "SR"]),
+    lambda s, u, p: s["slot1_record"]["scientific"]["per_m"]["2"].__setitem__("M5", "-1"),           # negative M5
+    lambda s, u, p: s["k1_cell0_record"]["m"]["3"].__setitem__("rho", ["1/1000", "0/1"]),            # entry geometry
+])
+def test_structural_refusals_r3(mutate):
+    s, u, p = synthetic_sources(), synthetic_universe(), copy.deepcopy(PROV)
+    mutate(s, u, p)
+    with pytest.raises(K.K4R1Refusal):
+        K.extract_inputs(s, u, p)
+
+
+def test_assembly_structural_cases_r3():
+    rep = synthetic_report()
+    rep["per_Dm"]["SR|m=1"]["per_cell"][0]["left"] = "1/1000000000"          # inherited cover does not start at 0
+    assert K.assemble(rep, res_map(), certs())["per_Dm"]["SR|m=1"]["status"] == "FAIL"
+    rep = synthetic_report()
+    rep["per_Dm"]["CUSUM|m=2"]["counterexample_cells"] = [0]                   # counterexample in history
+    assert K.assemble(rep, res_map(), certs())["per_Dm"]["CUSUM|m=2"]["status"] == "FAIL"
+    rep = synthetic_report()
+    for c in rep["per_Dm"]["CUSUM|m=5"]["per_cell"]:
+        c["how"] = "CERTIFICATE_TOO_LOOSE"                                      # nothing inherited after the residual
+    allres = res_map()
+    allres["5"] = (list(range(len(rep["per_Dm"]["CUSUM|m=5"]["per_cell"]))), F(rep["per_Dm"]["CUSUM|m=5"]["per_cell"][-1]["right"]))
+    assert K.assemble(rep, allres, certs())["per_Dm"]["CUSUM|m=5"]["status"] == "FAIL"
+    rep = synthetic_report()
+    rep["per_Dm"]["SR|m=2"]["outcome"] = "K4_CERTIFICATE_TOO_LOOSE"            # uncertified (D,m) outside the universe
+    assert K.assemble(rep, res_map(), certs())["per_Dm"]["SR|m=2"]["status"] == "FAIL"

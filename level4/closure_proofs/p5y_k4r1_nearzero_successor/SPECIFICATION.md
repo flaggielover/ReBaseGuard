@@ -90,7 +90,26 @@ There is no tunable parameter.
   - **N4:** disclosure revised in FEASIBILITY.md.
   - **N5:** K1 entry metadata and slot-1 transport consistency are now checked.
   - **N6:** refusals must be `K4R1Refusal`, not crashes.
-- **r2 must pass a new, independent qualification** before any freeze.
+- **r2** (candidate `179d5aae`): **QUALIFICATION_REJECTED** (`review/qualification_r2_REJECTED/`, review sha `bf42df37`).
+  - Q1 was confirmed repaired, and N1 and N3–N6 fixed.
+  - Blocking defect Q2: the gate's execution command would have crashed *after* computing the target, spending the exactly-once run without a record. There were two causes:
+    - the output directory is absent in a clean checkout;
+    - the command's path and working directory were inconsistent.
+  - Candidate r2 is never frozen or executed.
+- **r3** (this candidate) repairs Q2:
+  - **Canonical output:** the output path is fixed and cwd-independent.
+  - **Early reservation:** the directory is created and the output file is reserved by exclusive create before any source is read.
+  - **Crash record:** any later failure is written into the reservation.
+  - **`ready` subcommand:** a post-freeze launch check that computes and writes nothing.
+  - **One runbook:** a single unambiguous runbook in GATE.
+  - **Literal-command tests:** subprocess tests run the literal commands from the repository root and from another cwd, with no pre-created output directory.
+- **r3 also addresses the r2 notes:**
+  - **N7:** tests and harness mutants cover all 19 non-equivalent r2-reviewer survivors (74 mutants in total, 3 documented equivalents).
+  - **N8:** the synthetic repositories ignore `__pycache__`, and the suite passes with in-tree bytecode.
+  - **N10:** the runbook requires an empty `git status --porcelain`, then `ready`, before `execute`.
+  - **N9 and N11 are accepted.** Exact-once is per canonical output with reservation, and HEAD is recorded.
+- **Designer disclosure:** while checking the r3 lock, the designer ran `execute` once in the real worktree before any freeze. It was refused at the freeze gate (`FREEZE.json` absent) before any source was read.
+- **r3 must pass a new, independent qualification** before any freeze.
 
 ## Governance sequence
 

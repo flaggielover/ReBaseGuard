@@ -16,10 +16,13 @@ For each residual m in {2, 3, 5} of CUSUM, with a = a_m the right end of the his
 
 Premises: P5-T3 (R odd, so R(0) = R''(0) = R''''(0) = 0), P5X L5 (R in C^inf; qualitative use only).
 
-Subcommands:
+Subcommands (cwd-independent; every path is resolved from this file):
   preflight   value-blind identity/geometry/type checks over the real sources; never computes G, T or B
-  execute     requires config/FREEZE.json (hash-bound); computes the certificate and the successor assembly exactly
-              once and refuses to overwrite its output
+  ready       post-freeze launch check: freeze gate, output absent, clean checkout, FREEZE.json committed at HEAD, and the
+              value-blind preflight; never computes G, T or B and writes nothing
+  execute     the single execution: the same gates, then reserves the canonical output file (exclusive create) BEFORE any
+              source is read, computes the certificate and the successor assembly, and writes the result into the
+              reservation; any failure after the reservation is recorded in it as EXECUTION_CRASHED
 """
 from __future__ import annotations
 
@@ -35,6 +38,7 @@ from pathlib import Path
 NS = Path(__file__).resolve().parents[1]
 REPO = NS.parents[2]
 CONFIG = NS / "config"
+OUT = NS / "evidence/execution_r1/K4R1_RESULT.json"       # canonical, cwd-independent output of the single execution
 REQUIRED_BOUND = ("code/k4r1_certificate.py", "tests/test_k4r1.py", "tests/mutation_harness.py", "SPECIFICATION.md",
                   "config/GATE.json", "config/RESIDUAL_UNIVERSE.json", "config/PROVENANCE.json")
 M_RESIDUAL = ("2", "3", "5")
@@ -304,28 +308,17 @@ def read_config():
             json.loads((CONFIG / "PROVENANCE.json").read_text()))
 
 
-def main(argv=None) -> int:
-    ap = argparse.ArgumentParser()
-    sub = ap.add_subparsers(dest="cmd", required=True)
-    sub.add_parser("preflight")
-    ex = sub.add_parser("execute")
-    ex.add_argument("--out", required=True)
-    a = ap.parse_args(argv)
-    universe, prov = read_config()
-    if a.cmd == "preflight":
-        src = load_sources(prov)
-        inp = extract_inputs(src, universe, prov)
-        print(json.dumps({"PREFLIGHT": "PASS", "values_computed": False,
-                          "residual": {m: {"cells": v["cells"], "a": str(v["a"]), "hull_cell": v["hull_cell"]}
-                                       for m, v in inp.items()}}, sort_keys=True))
-        return 0
+def launch_gates() -> tuple[dict, dict]:
     fz = verify_freeze()
-    out = Path(a.out)
-    if out.exists():
-        raise K4R1Refusal("EXACT_ONCE: output already exists")
+    if OUT.exists():
+        raise K4R1Refusal("EXACT_ONCE: the canonical output already exists")
     gs = git_state(REPO, CONFIG / "FREEZE.json")
     if not (gs["clean"] and gs["freeze_committed"]):
         raise K4R1Refusal(f"EXECUTION_LOCKED: checkout not clean or FREEZE.json not committed at HEAD ({gs})")
+    return fz, gs
+
+
+def compute(universe: dict, prov: dict, gs: dict) -> dict:
     t0w, t0c = time.time(), time.process_time()
     src = load_sources(prov)
     inp = extract_inputs(src, universe, prov)
@@ -339,17 +332,43 @@ def main(argv=None) -> int:
                     "T_branch": "M3" if v["_M3"] <= v["_U0"] + v["a"] ** 2 / 2 * v["_M5"] else "U0+a^2/2*M5"}
     asm = assemble(src["historical_report"], {m: (v["cells"], v["a"]) for m, v in inp.items()}, certs)
     science = all(c["PASS"] for c in certs.values()) and asm["complete"]
-    res = {"schema": "rebaseguard.p5y.k4r1.result.v1", "freeze_sha256": sha_file(CONFIG / "FREEZE.json"),
-           "executed_at_head": gs["head"], "arithmetic": "exact rational",
-           "certificates": {f"CUSUM|m={m}": c for m, c in sorted(certs.items())}, "assembly": asm,
-           "K4R1_COMPACT_RESIDUAL_COVERAGE": "PASS" if all(c["PASS"] for c in certs.values()) else "FAIL",
-           "K4R1_COMPLETE_K4_ASSEMBLY": "PASS" if asm["complete"] else "FAIL",
-           "K4R1_SUCCESSOR_SCIENCE": "PASS" if science else "NOT_CLOSED",
-           "residual_remaining": {f"CUSUM|m={m}": c["cells"] for m, c in sorted(certs.items()) if not c["PASS"]},
-           "new_real_addresses": 0,
-           "runtime": {"cpu_seconds": time.process_time() - t0c, "wall_seconds": time.time() - t0w,
-                       "started_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(t0w))}}
-    out.write_text(json.dumps(res, indent=1, sort_keys=True) + "\n")
+    return {"schema": "rebaseguard.p5y.k4r1.result.v1", "status": "EXECUTED",
+            "freeze_sha256": sha_file(CONFIG / "FREEZE.json"),
+            "executed_at_head": gs["head"], "arithmetic": "exact rational",
+            "certificates": {f"CUSUM|m={m}": c for m, c in sorted(certs.items())}, "assembly": asm,
+            "K4R1_COMPACT_RESIDUAL_COVERAGE": "PASS" if all(c["PASS"] for c in certs.values()) else "FAIL",
+            "K4R1_COMPLETE_K4_ASSEMBLY": "PASS" if asm["complete"] else "FAIL",
+            "K4R1_SUCCESSOR_SCIENCE": "PASS" if science else "NOT_CLOSED",
+            "residual_remaining": {f"CUSUM|m={m}": c["cells"] for m, c in sorted(certs.items()) if not c["PASS"]},
+            "new_real_addresses": 0,
+            "runtime": {"cpu_seconds": time.process_time() - t0c, "wall_seconds": time.time() - t0w,
+                        "started_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime(t0w))}}
+
+
+def main(argv=None) -> int:
+    ap = argparse.ArgumentParser()
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    for name in ("preflight", "ready", "execute"):
+        sub.add_parser(name)
+    a = ap.parse_args(argv)
+    universe, prov = read_config()
+    if a.cmd in ("preflight", "ready"):
+        gs = launch_gates()[1] if a.cmd == "ready" else None
+        inp = extract_inputs(load_sources(prov), universe, prov)
+        print(json.dumps({a.cmd.upper(): "PASS", "values_computed": False, "head": gs and gs["head"],
+                          "residual": {m: {"cells": v["cells"], "a": str(v["a"]), "hull_cell": v["hull_cell"]}
+                                       for m, v in inp.items()}}, sort_keys=True))
+        return 0
+    fz, gs = launch_gates()
+    OUT.parent.mkdir(parents=True, exist_ok=True)
+    with open(OUT, "x") as fh:                              # reservation: exactly once, before any source is read
+        try:
+            res = compute(universe, prov, gs)
+        except BaseException as exc:
+            fh.write(json.dumps({"schema": "rebaseguard.p5y.k4r1.result.v1", "status": "EXECUTION_CRASHED",
+                                 "error": repr(exc)}, sort_keys=True) + "\n")
+            raise
+        fh.write(json.dumps(res, indent=1, sort_keys=True) + "\n")
     print(json.dumps({k: res[k] for k in ("K4R1_COMPACT_RESIDUAL_COVERAGE", "K4R1_COMPLETE_K4_ASSEMBLY",
                                           "K4R1_SUCCESSOR_SCIENCE")}))
     return 0

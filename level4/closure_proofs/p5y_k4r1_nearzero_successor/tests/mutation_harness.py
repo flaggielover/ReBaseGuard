@@ -4,8 +4,11 @@ Each mutant is a copy of code/k4r1_certificate.py with ONE textual change, writt
 tested through $K4R1_CODE_PATH. The unmodified copy (null mutant) must pass; every real mutant must fail.
 Synthetic only. Writes a JSON report.
 
-Known equivalent mutant (not listed): replacing `science = all(PASS) and asm["complete"]` by `science = asm["complete"]`
-cannot change any outcome, because the assembly already marks a residual (D,m) PASS only when its certificate PASSes.
+Known equivalent mutants (not listed):
+- `science = all(PASS) and asm["complete"]` -> `science = asm["complete"]` (r2 R7): the assembly already marks a residual (D,m)
+  PASS only when its certificate PASSes.
+- removing `if here not in fz["bound_files"]` (r2 F4): the implementation path is also in the mandatory bound set.
+- `open(OUT, "x")` -> `open(OUT, "w")`: launch_gates already refuses when OUT exists (differs only under a concurrent race).
 
   python tests/mutation_harness.py --out MUTATION_REPORT.json
 """
@@ -61,8 +64,8 @@ MUTANTS = [
     ("freeze_qualification_unchecked", "if fz.get(\"qualification_verdict\") != \"QUALIFICATION_ACCEPTED\":", "if False:"),
     ("freeze_hash_unchecked", "if not hp.exists() or hp.read_text().strip() != sha_file(freeze_path):", "if False:"),
     ("freeze_drift_unchecked", "if not p.exists() or sha_file(p) != h:", "if False:"),
-    ("exact_once_removed", "if out.exists():\n        raise K4R1Refusal(\"EXACT_ONCE: output already exists\")",
-     "if False:\n        raise K4R1Refusal(\"EXACT_ONCE: output already exists\")"),
+    ("exact_once_removed", "if OUT.exists():\n        raise K4R1Refusal(\"EXACT_ONCE: the canonical output already exists\")",
+     "if False:\n        raise K4R1Refusal(\"EXACT_ONCE: the canonical output already exists\")"),
     ("document_hash_unchecked", "if not p.exists() or sha_file(p) != v[\"sha256\"]:", "if False:"),
     ("json_hash_unchecked", "if sha_file(p) != entry[\"sha256\"]:", "if False:"),
     # qualification r1 reviewer's extra mutants (7 survived r1)
@@ -95,6 +98,30 @@ MUTANTS = [
     ("residual_remaining_empty",
      '"residual_remaining": {f"CUSUM|m={m}": c["cells"] for m, c in sorted(certs.items()) if not c["PASS"]},',
      '"residual_remaining": {},'),
+    # qualification r2 reviewer survivors (non-equivalent) and r3 execution-path mutants
+    ('W1_x1_right_unchecked', 'if x1 != fr(b["right"]) or not (e0 <= x1):', 'if not (e0 <= x1):'),
+    ('W2_e0_le_x1_unchecked', 'if x1 != fr(b["right"]) or not (e0 <= x1):', 'if x1 != fr(b["right"]):'),
+    ('W3_geometry_e0_unchecked', 'if e0 != F(prov["geometry"]["k1_cell0_e0"]):', 'if False:'),
+    ('W4_e0_rho_unchecked', 'if e0 != rho or e0 - rho != 0:', 'if False:'),
+    ('W5_k1_detector_unchecked', 'if k1.get("detector") != "CUSUM" or k1.get("cell_index") != 0:', 'if k1.get("cell_index") != 0:'),
+    ('W6_slot1_cell_index_unchecked', 'if not (b["k1_cell_index"] == 0 and b["detector"] == "CUSUM"', 'if not (True and True'),
+    ('W7_slot1_left_unchecked', 'and fr(b["left"]) == 0 and fr(ctx["point_e"]) == 0):', 'and fr(ctx["point_e"]) == 0):'),
+    ('W8_detector_scope_unchecked', ' or universe["detector_scope"] != ["CUSUM"]:', ':'),
+    ('W9_M5x1_nonneg_unchecked', 'if not (tf >= x1 * x1 / 2 and M5x1 >= 0 and', 'if not (tf >= x1 * x1 / 2 and True and'),
+    ('W11_entry_rho_unchecked', 'or ent.get("rho", k1["rho"]) != k1["rho"]:', 'or False:'),
+    ('R1_head_not_recorded', '"executed_at_head": gs["head"]', '"executed_at_head": None'),
+    ('R2_freeze_sha_wrong', '"freeze_sha256": sha_file(CONFIG / "FREEZE.json")', '"freeze_sha256": "0"'),
+    ('R3_inputs_record_L1_as_U0', '"L1": str(v["_L1"]), "U0": str(v["_U0"])', '"L1": str(v["_U0"]), "U0": str(v["_L1"])'),
+    ('R4_T_branch_inverted', '"T_branch": "M3" if v["_M3"] <= v["_U0"]', '"T_branch": "M3" if v["_M3"] > v["_U0"]'),
+    ('F2_git_show_bytes_ignored', 'shown.returncode == 0 and shown.stdout == freeze_path.read_bytes()', 'shown.returncode == 0'),
+    ('A1_cover_start_unchecked', 'contiguous = (bool(cells) and F(cells[0]["left"]) == 0 and', 'contiguous = (bool(cells) and'),
+    ('A3_counterexample_asm_unchecked', 'and not h.get("counterexample_cells")\n', '\n'),
+    ('A4_rest_nonempty_unchecked', 'and bool(rest) and F(rest[0]["left"]) == a)', 'and (not rest or F(rest[0]["left"]) == a))'),
+    ('A6_outside_universe_pass', 'per[key] = {"status": "FAIL", "reason": f"historical {h[\'outcome\']} outside the K4R1 universe"}', 'per[key] = {"status": "PASS", "reason": "x"}'),
+    ('r3_mkdir_removed', 'OUT.parent.mkdir(parents=True, exist_ok=True)', 'pass'),
+    ('r3_crash_record_removed', 'fh.write(json.dumps({"schema": "rebaseguard.p5y.k4r1.result.v1", "status": "EXECUTION_CRASHED",', 'fh.write(json.dumps({"schema": "rebaseguard.p5y.k4r1.result.v1", "status": "EXECUTED",'),
+    ('r3_ready_skips_gates', 'gs = launch_gates()[1] if a.cmd == "ready" else None', 'gs = None'),
+    ('r3_status_field', '"status": "EXECUTED",\n', '"status": "CRASHED",\n'),
 ]
 
 
