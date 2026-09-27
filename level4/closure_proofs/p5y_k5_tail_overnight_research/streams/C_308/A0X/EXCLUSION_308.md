@@ -356,61 +356,82 @@ any 305-309 number.
 
 ## (d) Internal consistency of committed evidence
 
-Only committed numbers; every comparison below is an ordering of two quoted values, not a new quantity.
+Only committed numbers are compared here, each with other committed numbers. No new route result (Theorem M included)
+enters this section (S8).
 
 | # | check (could it fail?) | committed values | result |
 |---|---|---|---|
 | D1 | certified floor <= MC <= certified uniform upper bound, at e_lo(308) | 3.512733596 (F6) <= 4.30910 +- 0.00102 (F7) <= 5.218548599 (F11) | consistent |
-| D2 | same at e_hi(308) = e_lo(309) | 3.586306094 (F14, entailed) <= 4.04731 +- 0.00092 (F7) <= 5.218548599 (F11) and <= 4.867216117 (309's certified A0, `C4_TARGET_RECONSTRUCTION.md:77`, valid there because the drift lies in cell 309) | consistent |
-| D3 | Theorem M ordering of the MC and of the float diagnostics | MC 4.30910 (e_lo) > 4.17398 (mid) > 4.04731 (e_hi) (F7); diagnostics 4.7299 > 4.4445 > 4.1743 > 3.9208 at the 306-309 midpoints (F8) | consistent (c.10) |
+| D2 | **[S8-corrected]** the same check at the drift 19839101/10000000, using only numbers committed *for that drift or for a closed cell containing it* | C7's committed 309 bound 3.586306094 (F14) <= MC 4.04731 +- 0.00092 (F7) <= 4.867216117 (309's certified A0, `C4_TARGET_RECONSTRUCTION.md:77`) | consistent. The first version labelled 3.586306094 an "entailed" 308 floor; that label is withdrawn |
+| D3 | **[S8-corrected] withdrawn.** It checked Theorem M against the ordering of committed 306-309 MC and diagnostic values | — | — |
 | D4 | the two independent float diagnostics at the 308 midpoint vs the MC there | 4.174300305 / 4.174300818 (`C4_CANDIDATE_ROUTES.md:91`) vs 4.17398 +- 0.00097 | consistent; the adjudicator reports agreement "to ~3e-4" (`C4_ADJUDICATION.md:84-85`) |
 | D5 | thresholds ordered as consumer tightening predicts (a tighter transport raises the critical A0) | frozen clause 4.375228833 (F10) < C5-T 4.442851488 (F9) | consistent |
-| D6 | the E2 family ceiling is not a bound on Lambda, so it may exceed the truth | ceiling 4.679910340 vs MC 4.04731 at the same drift; E2 PRIMARY 3.586306 below both | consistent (Lorden is simply loose) |
-| D7 | "4.311" used in C4 Condition 3 vs the adjudicator's MC | 4.311, "reproduced independently by both the pre-result reviewer and the adjudicator" (`C4_TARGET_RECONSTRUCTION.md:119-120`) vs 4.30910 +- 0.00102 | consistent to the precision quoted; the 18.2x figure is tied to 4.311 and to the frozen clause, not to C5-T |
-| D8 | the diagnostic interpolation "about 4.315" at e_lo (`C4_TARGET_RECONSTRUCTION.md:107-111`) vs MC 4.30910 | uncertified vs uncertified | consistent to about 1e-2; interpolation of a decreasing function between midpoints, no more |
+| D6 | the E2 family ceiling is not a bound on Lambda, so it may exceed the truth | at the same drift: ceiling 4.679910340 (F14) vs MC 4.04731 (F7); E2 PRIMARY 3.586306094 below both | consistent (Lorden is simply loose) |
+| D7 | "4.311" used in C4 Condition 3 vs the adjudicator's MC | 4.311, "reproduced independently by both the pre-result reviewer and the adjudicator" (`C4_TARGET_RECONSTRUCTION.md:119-120`) vs 4.30910 +- 0.00102 | consistent to the precision quoted. C4 Condition 3 is a frozen-clause statement (F12) |
+| D8 | the diagnostic interpolation "about 4.315" at e_lo (`C4_TARGET_RECONSTRUCTION.md:107-111`) vs MC 4.30910 | uncertified vs uncertified | consistent to about 1e-2 |
 
-**One real inconsistency of wording (not of numbers).** ADJUDICATION_C8's R3 row says that under perfect
-information (A0 -> Lambda, A1 = A2 = 0) R3 "closes 307 and 308" (`ADJUDICATION_C8.md:382`), justified by
-"ceilings ... vs floors" — i.e. by comparing A0* with the **certified floor**. For 309 that comparison is valid
-(floor > ceiling implies true Lambda > ceiling). For 308 it is not: floor < ceiling says nothing about whether the
-**true** Lambda_308 is below the ceiling. "R3 closes 308" is therefore conditional on not-X308, which no certified
-fact establishes (the best certified upper bound, 5.218548599, is above A0*). For 307 the same claim is independently
-certified, because 307 already closes at A1 = A2 = 0 with its certified A0 (`C4_TARGET_RECONSTRUCTION.md:75`).
-The uncertified MC supports C8's reading; the certified record does not yet. This is a wording scope issue for the
-C8 record, not a numerical error, and it changes no status.
+**One real inconsistency of wording (not of numbers).**
+* ADJUDICATION_C8's R3 row says that under perfect information (A0 -> Lambda, A1 = A2 = 0) R3 "closes 307 and 308"
+  (`ADJUDICATION_C8.md:382`). It justifies this by "ceilings ... vs floors", i.e. by comparing A0* with the
+  **certified floor**.
+* For 309 that comparison is valid: floor > ceiling implies true Lambda > ceiling.
+* For 308 it is not: floor < ceiling says nothing about whether the **true** Lambda_308 is below the ceiling.
+  "R3 closes 308" is therefore conditional on not-X308, which no certified fact establishes: the best certified upper
+  bound, 5.218548599, is above A0*.
+* For 307 the same claim is certified independently, because 307 already closes at A1 = A2 = 0 with its certified A0
+  (`C4_TARGET_RECONSTRUCTION.md:75`).
+* This is a wording scope issue for the C8 record, not a numerical error, and it changes no status. **[S8-corrected]**
+  A sentence saying which way uncertified evidence leans was removed.
 
-**Verdict on (d).** No committed number contradicts any other or contradicts Theorem M. The certified bracket is
-`3.512733596 <= Lambda_308 <= 5.218548599` (3.586306094 on the left by entailment); A0* = 4.442851 lies strictly
-inside it; the MC, if trusted, puts Lambda_308 below A0*, i.e. not-X308.
+**Verdict on (d).** No committed number contradicts any other committed number. The certified bracket is
+`3.512733596 <= Lambda_308 <= 5.218548599`, and the committed A0* = 4.442851 lies strictly inside it (as C8's own
+table already implies: ceiling vs floor at `ADJUDICATION_C8.md:270`, A_now vs ceiling at `C8_DECISION.json:124-129`).
+**[S8-corrected]** The first version added where the MC places Lambda_308 relative to A0*; that outcome estimate is
+withdrawn.
 
 ## (e) Conclusion
 
-**Classification with current information: BOUNDABLE now (undecided on certified evidence); REFUTABLE in principle
-by a one-drift certificate once Theorem M is accepted (and expected to be refutable, on uncertified MC); NOT
-PROVABLE by any committed family whose ceiling is committed, and expected not provable by any family; NOT
-undecidable.**
+**[S8-corrected] Classification with current information, outcome-neutral.**
+* **BOUNDABLE now:** X308 is undecided on certified evidence.
+* **DECIDABLE in principle** by one certified computation, in either direction. That computation is a single drift,
+  e_lo, if Theorem M is accepted.
+* **NOT PROVABLE by route L or R4**, per their committed values.
+* No committed ceiling fact excludes E2/E2c, R1 or R5 as proof routes.
+* **NOT undecidable.**
+* This stream does not estimate which direction a certified computation would take.
+
+The first version said "expected to be refutable" and "expected not provable". Those were outcome estimates built
+from Theorem M plus committed MC and A0*, and they are withdrawn under S8.
 
 Justification.
 
 1. **Undecided now.** The certified bracket 3.512733596 <= Lambda_308 <= 5.218548599 strictly contains A0* (d).
    Nothing committed decides X308 either way.
-2. **Not provable by committed families.** Route L and R4 are rigorously incapable (their committed maxima over the
-   cell, 3.512733596 and 1.051130, are below A0*). E2/E2c's only committed ceiling (4.679910340, at e_hi(308)) is
-   above A0*, and R1/R5 have none, so *committed ceiling facts alone* do not rule out a proof. What rules it out is
-   the truth: every valid lower bound is <= Lambda_308 = Lambda(e_lo) (Theorem M), which the uncertified MC places
-   below A0* (b.1). If the MC is right, X308 is **false** and no proof exists. (C4 Condition 2: this is corroboration,
-   not an established universal negative.)
-3. **Refutable in principle.** A refuting certificate exists iff not-X308 (b.2 completeness). With Theorem M it needs
-   exactly one drift, e_lo = 1882413/1000000; without Theorem M it needs a whole-cell uniform supersolution or a
-   drift mesh plus a certified A1-type modulus. In both cases the comparator A0* must itself be certified (b.4),
-   which is a target Gamma evaluation.
-4. **Not undecidable.** Lambda(e_lo) and A0* are fixed computable reals; unless they are exactly equal, a certified
+2. **Proof direction.**
+   * Route L and R4 are rigorously incapable. Their committed maxima over the cell, 3.512733596 and 1.051130, are
+     below the committed A0*; this is a comparison of committed numbers only.
+   * E2/E2c's only committed ceiling (4.679910340, at e_hi(308)) is above A0*, and R1/R5 have no committed ceiling.
+     So committed ceiling facts do not rule out a proof by those families.
+   * Every lower-bound route is capped by Lambda_308 itself (definition). Whether that cap lies above or below A0* is
+     exactly X308, and it is not estimated here.
+   * The committed record's own risk assessment of this direction is history (`ROUTE_AUDIT_R1.md:450-459`), and C4
+     Condition 2 forbids quoting it as established.
+3. **Refutation direction.**
+   * A refuting certificate exists iff not-X308 (b.2, completeness).
+   * With Theorem M it needs exactly one drift, e_lo = 1882413/1000000. Without Theorem M it needs a whole-cell
+     uniform supersolution, or a drift mesh plus a certified A1-type modulus.
+   * In both cases the comparator A0* must itself be certified (b.4), which is a target Gamma evaluation.
+4. **Not undecidable.** Lambda(e_lo) and A0* are fixed computable reals. Unless they are exactly equal, a certified
    computation of finite precision decides X308 (b.2). "Undecidable" would misdescribe a question that is only
    *unauthorized* and *costly*, not unsettleable.
-5. **Value of settling it.** Either outcome has **zero closure leverage** by itself: X308 true is exclusion-only
-   (F15); X308 false yields an admissible A0 < A0*, but closing 308 still needs a large reduction of (A1, A2)
-   (C4 Condition 3: 18.2x at A0 = 4.311 under the frozen clause, F12), and under floor r2 a scalar-drift A0 is
-   CLOSURE-ONLY (c.8, F16). The durable, cell-independent gain is Theorem M itself.
+5. **Value of settling it.** Either outcome has **zero closure leverage** by itself.
+   * X308 true is exclusion-only (F15).
+   * X308 false yields an admissible A0 < A0*, but closing 308 would still need reductions of (A1, A2) (C4 Condition 3,
+     F12). **[S8-corrected]** The committed factor is no longer repeated here.
+   * Under floor r2 a scalar-drift A0 is CLOSURE-ONLY (c.8, F16).
+   * The durable, cell-independent gain is Theorem M itself.
 
-What this stream did **not** do: evaluate anything at any drift; compute any Gamma, margin, bound or critical value
-for cells 305-309; combine Theorem M with any in-band or validation-drift value (c.9).
+What this stream did **not** do:
+* evaluate anything at any drift;
+* compute any Gamma, margin, bound or critical value for cells 305-309;
+* combine Theorem M with any in-band, validation-drift or committed tail-cell value (c.9; S8 corrections above).

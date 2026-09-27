@@ -34,3 +34,8 @@ Sibling C2b owns A0X/gen/ — not touched by C2a.
 - DONE. Files: EXCLUSION_308.md, FREEZE_308_EXCLUSION_PROTOCOL_DRAFT.md, C2A_ROUTE_SUMMARY.md, PROGRESS.md.
   No code written or run; no ledger entries (no substantive executions); gen/ (C2b) not touched (read-only listing).
 - step 12: coordinator S8 received (no new-route result next to/combined with committed tail-cell factors/margins; no outcome estimate). Auditing all files.
+- step 13: S8 corrections applied in all three deliverables, each marked [S8-corrected], with a correction notice at
+  the top of each file and a table in C2A_ROUTE_SUMMARY.md §6. Withdrawn: outcome estimates for X308 (Theorem M + MC + A0*),
+  use of 306-309 committed MC/diagnostics as Theorem-M evidence (old c.10, D3), the entailed 308 floor from C7's 309
+  number, committed tail factors in own reasoning (C4 Cond. 3 factor, C5-T consumed-margin share, C8 A1 figure, A1/A2 values).
+  Classification is now outcome-neutral: BOUNDABLE now; DECIDABLE in principle (either direction); L/R4 cannot prove it.

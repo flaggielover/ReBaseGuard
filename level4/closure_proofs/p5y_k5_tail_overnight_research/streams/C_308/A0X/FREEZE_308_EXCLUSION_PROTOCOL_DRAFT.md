@@ -7,6 +7,16 @@ qualification, no grant and no code. Executing any part of it at the cell-308 dr
 `config/QUARANTINE_AMENDMENT_1.json`). A later run would need a separately frozen protocol and an explicit user
 authorization. Nothing below was computed. Numbers quoted are committed values (file:line in `EXCLUSION_308.md` §0).
 
+**S8 correction notice (2026-09-28).** The first version of §9 did three things that are now removed and marked
+"[S8-corrected]":
+* it placed the committed MC value next to Theorem M as a location estimate for Lambda_308, which estimated the
+  outcome;
+* it quoted committed tail-cell supply constants and a C8 reduction factor that no future result is compared against;
+* §4 quoted the MC number inside a prohibition.
+
+The leakage analysis now only STATES which committed numbers a future certified result would be compared against.
+It does not estimate where U or L would fall.
+
 ## 0. What it would settle
 
 It would settle the proposition `X308: Lambda_308 >= A0*` of `EXCLUSION_308.md` §a.2.
@@ -90,8 +100,9 @@ lower envelopes. The choice must be made at freeze.)
   that uses non-target validation only.
   * Example rule: "the smallest N on a pre-declared ladder for which the certified relative enclosure width
     (U - L)/L is <= delta at every declared validation drift", with delta stated before any validation run.
-* **Forbidden:** sizing N or delta from the committed MC value 4.30910, or from its distance to A0*. That would be
-  optimizing against the target (S1).
+* **Forbidden:** sizing N or delta from any committed cell-308 value (the MC included), or from any distance between
+  such a value and A0*. That would be optimizing against the target (S1). **[S8-corrected]** The number is no longer
+  quoted here.
 * **Disclosure:** the designers knew both numbers. The rule must be written so that knowing them changes nothing it
   selects.
 * **The float proposal at e_lo is itself an estimate of Lambda_308**, a target-equivalent number.
@@ -204,15 +215,17 @@ for cell 308 (`C4_TARGET_RECONSTRUCTION.md:8-18`). Four questions follow.
 
 1. **Does U reveal the sign of Gamma under a committed supply? No.** This can be shown from committed numbers without
    computing anything.
-   * C8's inversion gives, for cell 308, a largest closing A0 of **3.270701093**. That holds the committed
-     operator-mixed A1 = 22.79374, A2 = 230.3658 fixed (`C8_DECISION.json:136`, with :126-130). The C8 adjudicator
-     verified this inversion to be exactly equal to C5-T at every point it reports (`ADJUDICATION_C8.md:274-276`).
-   * The certified floor is **3.512733596** (`C8_DECISION.json:131`).
-   * Every admissible A0 is >= Lambda_308 >= 3.512733596 > 3.270701093. So under the committed (A1, A2), **no
-     admissible A0 closes 308, whatever U turns out to be**, and the sign of Gamma(U, A1_now, A2_now) is known to be
-     positive in advance.
-   * This re-reads the committed C8 verdict; it is not a new evaluation. C8's `cheapest_sufficient_fact` is
-     "A0 to its floor 3.512734 AND A1 <= 17.632791" (`C8_DECISION.json:135`).
+   * **The committed numbers a future U would be compared against, for this question**, are two:
+     * C8's largest closing A0 for cell 308 with the committed operator-mixed A1, A2 held fixed, **3.270701093**
+       (`C8_DECISION.json:136`; its A1, A2 at :126-130). The C8 adjudicator verified this inversion to be exactly
+       equal to C5-T at every point it reports (`ADJUDICATION_C8.md:274-276`).
+     * The committed certified floor, **3.512733596** (`C8_DECISION.json:131`).
+   * These two committed numbers already settle the question without any U. Every admissible A0 is
+     >= Lambda_308 >= 3.512733596 > 3.270701093. So under the committed (A1, A2), **no admissible A0 closes 308**,
+     and this holds for every U, not an estimated one.
+   * This re-reads the committed C8 verdict; it is not a new evaluation. **[S8-corrected]** The first version also
+     quoted the committed A1/A2 values and C8's A1 reduction figure. Neither is a comparison target, so both are
+     removed.
 2. **Does U reveal the knockout sign? Yes.** Comparing U with A0* *is* the X308 question (rule 7), which is the
    protocol's sanctioned purpose. The knockout (A1 = A2 = 0) is not a real supply (C4-N3), so this is not closure
    information.
@@ -225,8 +238,12 @@ for cell 308 (`C4_TARGET_RECONSTRUCTION.md:8-18`). Four questions follow.
    * **Variant B**: its block-uniform U has the floor's shape, but it is a single-implementation Abar-type statement.
      Floor r2's F1′ two-implementation rule would still not accept it alone.
 4. **Informational increment over what is committed.**
-   * The uncertified MC already locates Lambda_308: 4.30910 +- 0.00102, which by Theorem M equals Lambda(e_lo). A
-     certified U adds certification, not location.
+   * **[S8-corrected]** The first version said here where the uncertified MC places Lambda_308, reading it through
+     Theorem M. That is an outcome estimate and is withdrawn. This analysis does not estimate where U or L will fall,
+     nor which outcome class the run would seal.
+   * **The committed numbers U and L would be compared against** are exactly these:
+     * the Stage-C bracket of A0*, which must contain the committed float 4.442851487961334 (§6);
+     * the committed certified floor 3.512733596 and the committed certified A0 5.218548599, in rule 5 of §7.
    * The lower side L adds nothing closure-relevant. Lower bounds only raise the floor, which has zero leverage (C8's
      R1/R2 rows, `ADJUDICATION_C8.md:380-381`).
 
