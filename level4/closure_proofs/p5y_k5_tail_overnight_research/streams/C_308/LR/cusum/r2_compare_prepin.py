@@ -66,6 +66,12 @@ def main():
                                 "only_old": [list(k) for k in sorted(set(old) - set(new))]}
         print(fam, len(rows), "rungs;", sum(r["identical"] for r in rows), "identical,",
               sum(r["tighter"] for r in rows), "tighter,", sum(r["looser"] for r in rows), "looser fields")
+    import hashlib
+    sys.path.insert(0, str(HERE))
+    import c1b_prov as PV
+    res["provenance"] = PV.provenance({})
+    res["provenance"]["own_sha256"] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+    res["provenance"]["own_file"] = Path(__file__).name
     (V / "C1B_R2_PREPIN_COMPARISON.json").write_text(json.dumps(res, indent=1, sort_keys=True) + "\n")
     Q.log_execution("streams/C_308/LR/cusum/r2_compare_prepin.py", "C1b R2 regeneration vs pre-pin comparison",
                     cells_touched=[], klass="NONTARGET_DRIFT_VALIDATION", notes="reads own JSON only")

@@ -31,6 +31,7 @@ The status of each condition is in §0.
 | C2 | Put the combined supply in load-bearing code, with a test that can fail | DONE. `c1b_certpw.assemble` returns SUPPLY (D14). `c1b_test_combined.py` tests it, with two mutants | §1, §5.3 |
 | C3 | Push class-(a) plants through the block (e_r > 0) checkers, including a discriminant-only plant and an interior-drift-only plant, with a positive control. Declare the block family. Assert the N1′/N4 preconditions | DONE: `c1b_blockctl.py`, D12, D15, and asserts in `c1b_negctl.py` | §3, §5.1, §5.2 |
 | C4 | Re-pin, record code hashes and CLI flags in every output, and regenerate once with the pinned code | see §6 | §6 |
+| R3 notes | REVIEW_RLR_R3_VERIFY (CONFIRMED_WITH_NOTES): N5 two-sided test, N3 pre-pin files, N2 comparison provenance, plus N4/N6/N7 wording | DONE (§3, §5.3, §6, §8) | §5.3, §6 |
 | C5 | Latent-proxy listing | Not assigned to me. I added the banner above and moved all values to Appendix V; the config list itself is outside my directory | — |
 
 ## 1. What is certified (statements)
@@ -117,7 +118,9 @@ P_d with d ∈ {6, 8, 10, 12}.
     convention.
   * So the owning region's form is the exact residual at every state of its closed region, including the boundary
     line.
-  * Every box is checked with every region form it meets, which is a superset of what is needed.
+  * Every box is checked with every region form that owns a point of R inside it, which is a superset of what is
+    needed. After D13, 2-D boxes skip J = 5, because the only states of R with p+m > 4 are axis states, which the
+    1-D boxes cover (REVIEW_RLR_R3_VERIFY N7).
   * The axis images of pieces A and C, and their strip crossings, genuinely are null sets.
 * R1 and R2 confirmed that the code implements this.
 
@@ -203,17 +206,33 @@ enclosures, together with an exact discriminant witness.
 | D17b | B inflation alone | NOT_CONSTRUCTIBLE: C goes negative globally on every declared rung (preserved) |
 | D17c | B inflation with C-margin compensation a + μw_T | **PLANTED and REJECTED** at the first ladder rung (λ = 1). A > 0 globally; C′ ≥ 0 globally, by a rigorous block enclosure; exact witness B′² > 4AC′ at (x* = (0, 4.625), e*). The pinned block `quad_check` rejects, and every sampled failure is a centre discriminant violation with A > 0 and C > 0. The unmodified certificate passes (positive control). This **isolates the discriminant clause** on the block path. `C1B_R2_BLOCKCTL_DISC.json` is the final file version (own sha256 recorded); the D17 and D17b outputs are in `logs/`. |
 
-### 5.3 Combined supply (`C1B_R2_TEST_COMBINED.json`, `c1b_test_combined.py`)
+### 5.3 Combined supply (`C1B_R2_TEST_COMBINED.json`, `c1b_test_combined.py`, two-sided since R3)
 
-**What is tested.** The test recomputes raw RLR, Dv′ and G with its own formulas. It checks SUPPLY ≤ min(RLR, Dv′, G)
-on each of the following:
-* the 16 regenerated rungs;
+The test recomputes raw RLR, Dv′, Lemma G and the declared D14 combination with its own formulas. For every input set
+it asserts two things:
+* **(E)** exact rational equality of assemble's A0/A1/A2_SUPPLY and G0/G1/G2 with that recomputation. This makes the
+  test two-sided (REVIEW_RLR_R3_VERIFY N5; declaration D18).
+* **(U)** SUPPLY ≤ min(RLR, Dv′, G), and SUPPLY > 0.
+
+The inputs are:
+* the 16 regenerated certified rungs;
 * three plants: raw RLR worse than Dv′ (plant validity asserted, and SUPPLY < raw RLR required), G smallest, and mixed;
-* 2000 seeded random input sets.
+* 2000 seeded random sets.
 
-**Result.** assemble **passes**. Both mutants are **caught**:
-* mutant without the min: the planted cases fail, and 379/2000 random sets fail;
-* mutant without Lemma G: the G plant fails, and 153/2000 random sets fail.
+**Result.** assemble **passes** everything. All six mutants are **caught**:
+
+| mutant | kind | caught |
+|---|---|---|
+| no min with the Dv′ factors | too large | yes (planted cases + 387/2000 random) |
+| no Lemma G | too large | yes (every set: its G fields are missing) |
+| supply × 1/2 | **too small** | yes (every real, planted and random set) |
+| A2 without the 2c1δ1 cross term | **too small** | yes (every real set; 1875/2000 random) |
+| A1 without the Ā_eff δ1 term | **too small** | yes (every real set; 1968/2000 random) |
+| Lemma G without its cubic term | **too small** | yes (every set) |
+
+All four too-small mutants satisfy the one-sided bound (U) on every random set
+(`too_small_mutants_pass_one_sided_bound`). The pre-R3 one-sided test could therefore not have caught them; the
+equality clause (E) does.
 
 ### 5.4 Other checks
 
@@ -226,7 +245,9 @@ on each of the following:
 
 **Pins.** `NS/validation/C1B_R2_CODE_PINS.json` holds the sha256 of every `c1b_*.py`.
 * It was written after all R2 edits and before the regeneration.
-* Revision 2 changed only `c1b_report.py`, a crash fix in the aggregator. The load-bearing set is unchanged:
+* Revision 3 (the R3 response) changed only non-load-bearing files: `c1b_test_combined.py` (two-sided test) and
+  docstring output names in `c1b_mc.py`, `c1b_negctl.py` and `c1b_report.py`.
+* Revision 2 changed only `c1b_report.py`, a crash fix in the aggregator. The load-bearing set is unchanged at every revision:
   gauss 3189208d…, kernel dfdc871b…, pw f10c2cf1…, certpw 48080dd4…, certify 47bdc8e2….
 
 **Self-identification.** Every output JSON records `provenance`:
@@ -256,7 +277,34 @@ All 16 PW/block sources, NEGCTL, BLOCKCTL, MC, TEST_COMBINED and SUMMARY record 
 * Plain baseline: 0 identical, 53 tighter and 51 looser. Its untrusted candidates changed, because the float
   quadrature was split at strip crossings after the old plain runs.
 
-The pre-pin evidence is kept in `logs/prepin/` and is superseded.
+**Pre-pin evidence moved out of `NS/validation/` (REVIEW_RLR_R3_VERIFY N3).** All 12 files now live under
+`streams/C_308/LR/cusum/logs/prepin/`, with the same basenames. They are superseded and not ingested (the report
+reads only R2 names). The move was done as file moves on disk; committing it (git) is left to the coordinator:
+* `C1B_MC.json`
+* `C1B_NEGCTL.json`
+* `C1B_POINT_e1_2.json`
+* `C1B_POINT_e1_4.json`
+* `C1B_PW9_BLOCK_1_2__17_32.json`
+* `C1B_PW9_POINT_e0.json`
+* `C1B_PW9_POINT_e1.json`
+* `C1B_PW9_POINT_e1_2.json`
+* `C1B_PW9_POINT_e3.json`
+* `C1B_PW_POINT_e1_2.json`
+* `C1B_PW_POINT_e1_4.json`
+* `C1B_SUMMARY_PW_PW9.json`
+
+Two uncommitted pre-pin R2 scratch outputs (a smoke-test rung and a dry-run test output) are also kept there.
+The docstrings of the two load-bearing modules still name pre-R2 output patterns (`c1b_certpw.py:4`,
+`c1b_certify.py:5`). They are left unchanged on purpose, so the load-bearing pins of all evidence stay valid; the
+actual file names are set in `run_point`.
+
+**Other R3 fixes.**
+* `C1B_R2_PREPIN_COMPARISON.json` now carries a `provenance` block, including the sha256 of `r2_compare_prepin.py`
+  (N2).
+* NEGCTL, MC, SUMMARY, TEST_COMBINED and PREPIN_COMPARISON were re-run under pin revision 3 and record
+  `matches_pins = true`. The certification rungs were not re-run, because their load-bearing code is unchanged.
+* N4: the bracketed [hh:mm] stamps in PROGRESS.md are not wall-clock times. The time evidence is the file mtimes
+  and `logs/r2_queue.status`.
 
 
 ## 7. Runtimes
@@ -281,7 +329,8 @@ Setup: one core, `nice`, and two lanes.
 6. **The acceptance rule:**
    * every checker passes;
    * constants are ladder minima;
-   * **the consumed output is SUPPLY (D14)**, never raw RLR;
+   * **the consumed output is SUPPLY (D14)** from the PW certifier (`c1b_certpw`), never raw RLR. PLAIN baseline
+     records (`c1b_certify.assemble`, which has no SUPPLY) are never a consumed output (REVIEW_RLR_R3_VERIFY N6);
    * no retuning after any evaluation.
 7. Every output self-identifies through `provenance`.
 

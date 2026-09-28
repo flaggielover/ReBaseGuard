@@ -4,7 +4,7 @@ Excursion from a = (0,0) under drift e (z = -e + N(0,1)); sigma = first alarm or
 Estimates (mean, standard error) of
   tau_a = E sigma,  L1 = E sum_{n<sigma} |M_n|,  L2 = E sum_{n<sigma} |M_n^2 - n|,  S2 = E sum_{n<sigma} M_n^2,
   T_N = E sum_{n<sigma} n,  D = P(alarm before return),  and Lambda = tau_a / D (renewal identity).
-N = 200000 excursions per drift, seed 12345.  Output NS/validation/C1B_MC.json.  NON-CERTIFIED.
+N = 200000 excursions per drift, seed 12345.  Output NS/validation/C1B_R2_MC.json (R2 name).  NON-CERTIFIED.
 """
 from __future__ import annotations
 

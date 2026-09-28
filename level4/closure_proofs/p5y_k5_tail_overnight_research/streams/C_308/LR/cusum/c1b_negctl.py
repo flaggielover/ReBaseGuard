@@ -7,7 +7,7 @@ N3  window mis-specification: (a) atom window not removed, (b) alarm window shif
     K^1 + k_a + h1 = 1 and the independent quadrature cross-check must both fail; the correct kernel passes both.
 N4  the explicit (i') L1 certificate with a' = a - kappa (C'(atom) = -C(atom) < 0 exactly) must be rejected;
     N4b the one-sided T_N certificate u scaled by 1/2 must be rejected by lin_check.
-Output: NS/validation/C1B_NEGCTL.json
+Output: NS/validation/C1B_R2_NEGCTL.json (R2 name)
 """
 from __future__ import annotations
 

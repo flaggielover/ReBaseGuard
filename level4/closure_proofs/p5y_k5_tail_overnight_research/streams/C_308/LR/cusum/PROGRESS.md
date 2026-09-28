@@ -291,3 +291,32 @@ D16 (provenance, C4): every output JSON records sha256 of every c1b_*.py it impo
   wording (LR-3 dominance for exact rho only; only SUPPLY guaranteed <= Dv' and G), corrected coverage/ownership
   reasoning, corrected (i') claim, controls, provenance, all values confined to Appendix V (produced by r2_tables.py
   from C1B_R2_SUMMARY.json). Pre-review summary kept at logs/prepin/C1B_ROUTE_SUMMARY_prepin_as_reviewed.md.
+
+## R3 RESPONSE (reviews/REVIEW_RLR_R3_VERIFY.md, CONFIRMED_WITH_NOTES; coordinator: fix N5, N3, N2)
+Read §2 and notes N2-N8. Note N4 accepted: the bracketed [hh:mm] stamps in this log are NOT wall-clock times (they
+were written from the session's sense of time); the file mtimes and the queue status file are the time evidence.
+## DECLARATION D18 (before any edit/run of this response)
+N5: c1b_test_combined.py becomes TWO-SIDED: for every input set it asserts EXACT rational equality, component by
+    component, of assemble's A0/A1/A2_SUPPLY and G0/G1/G2 with the test's own independent D14 recomputation, in
+    addition to the existing one-sided bound and positivity. Mutants (each must be CAUGHT): existing no_min, no_G;
+    new "too small" mutants: supply x 1/2; A2 without the 2 c1 delta1 cross term; A1 without the A_eff delta1 term;
+    Lemma G without its cubic term (the reviewer's). The real code must pass.
+N3: the 12 pre-pin NS/validation/C1B_*.json were already moved on disk to logs/prepin/ at [PIN] (no copy left in
+    validation/); verified again and listed in the report; references: non-load-bearing docstrings (c1b_mc, c1b_negctl,
+    c1b_report) updated to the R2 names; the two LOAD-BEARING docstrings (c1b_certpw.py:4, c1b_certify.py:5) are left
+    unchanged on purpose (editing them would change the load-bearing pins of all evidence); they describe pre-R2
+    output names, and the actual names are set in run_point; PROGRESS.md lines naming moved files are history:
+    the move is recorded here (all 12 now under logs/prepin/, same basenames).
+N2: r2_compare_prepin.py records a provenance block (c1b_prov + its own sha256) and is re-run.
+Also (documentation only): N6 PLAIN records are never a consumed output; N7 wording of the coverage bullet.
+Pins revision 3 after the edits (load-bearing set must be unchanged); re-run test_combined, negctl, mc, report,
+compare_prepin with the r3 pins.
+- [R3 done] N5: c1b_test_combined.py is two-sided (exact equality with an independent D14 recomputation on
+  A0/A1/A2_SUPPLY and G0/G1/G2, plus the one-sided bound and positivity). Result: assemble PASS (16 real rungs, 3 plants,
+  2000 random); all 6 mutants CAUGHT (no_min, no_G, supply_half, drop_A2_cross, drop_A1_delta, G_no_cubic); the four
+  too-small mutants all satisfy the old one-sided bound on every random set, i.e. only the new equality clause catches
+  them. N3: verified 0 pre-pin C1B_*.json left in NS/validation/; the 12 files are under logs/prepin/ (same basenames),
+  non-load-bearing docstrings updated, load-bearing docstrings deliberately unchanged (pins). N2: comparison JSON has a
+  provenance block (+ own sha256). Pins revision 3 (non-load-bearing files only; load-bearing unchanged). Re-run under
+  r3: TEST_COMBINED, NEGCTL (all controls detected), MC, SUMMARY (MC checks all pass), PREPIN_COMPARISON — all
+  matches_pins = true. Summary updated (§0, §3 N7 wording, §5.3, §6 moved-file list, §8 N6). N4 acknowledged.

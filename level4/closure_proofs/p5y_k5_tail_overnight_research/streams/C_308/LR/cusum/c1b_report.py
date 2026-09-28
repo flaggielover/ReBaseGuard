@@ -1,4 +1,4 @@
-"""C1b report aggregator: reads NS/validation/C1B_{PW,PW9,...}_*.json and C1B_MC.json, forms per-drift ladder
+"""C1b report aggregator: reads NS/validation/C1B_R2_PW_*.json and C1B_R2_MC.json (R2 names), forms per-drift ladder
 minima of the certified inputs (every certified rung of every run is an independent valid certificate at that
 same declared non-target drift), re-assembles RLR (LR-3) and Dv' r2 with the SAME inputs, and runs the
 consistency checks against the NON-CERTIFIED Monte Carlo (each can fail).  Output NS/validation/C1B_SUMMARY.json.

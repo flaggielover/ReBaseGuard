@@ -3,27 +3,27 @@
  "artifacts": [
   {
    "file": "A306_CV_VALIDATION.json",
-   "sha256": "775f42d7166ed5a310040b3aa0007ffa7dfe8579d6ee9e7fab2fff9154b43a50",
-   "bytes": 16795,
+   "sha256": "1af049b68d45954741121c852b27696956151e0111c10b4796a0ceefd27bde5c",
+   "bytes": 24128,
    "schema": "A306_CV_VALIDATION/1",
    "fields": {
     "verdict": "PASS",
     "coverage": {
      "boxes_per_certificate": 363,
-     "certificates": 13,
+     "certificates": 17,
      "panels": 32,
-     "planted": 7,
+     "planted": 9,
      "synthetic_families": 5,
      "synthetic_records": 10,
-     "valid": 6
+     "valid": 7
     }
    },
    "leak_scan_hits": []
   },
   {
    "file": "A306_HISTORICAL_A_REPRO.json",
-   "sha256": "14d9658cec3e6d40adf49cf6b41228d90fef3bcd8e1daca9ee9623ecc9b51a04",
-   "bytes": 1852,
+   "sha256": "a7b4b58b87deba199456ce47c5588a4e7996eb84f57e9b8a8fd4e681d3bbc0d1",
+   "bytes": 1888,
    "schema": "A306_HISTORICAL_A_REPRO/1",
    "fields": {
     "verdict": "PASS",
@@ -49,7 +49,7 @@
       "A2"
      ],
      "float_comparisons": 2,
-     "negative_controls": 3,
+     "negative_controls": 1,
      "supplies_reproduced": [
       "I1_C1",
       "I1_C2",
@@ -58,22 +58,20 @@
     },
     "class": "HISTORICAL_READ",
     "negative_controls": {
-     "planted_float_mismatch_detected": true,
-     "planted_mixed_supply_refused": true,
-     "planted_wrong_committed_A1_detected": true
+     "planted_mixed_supply_refused": true
     }
    },
    "leak_scan_hits": []
   },
   {
    "file": "A306_MECHANISM.json",
-   "sha256": "dbaa14fb32bcf723140a97f95fcf1b8225342c2915c9aa4137d1765aca3661fe",
-   "bytes": 43266,
+   "sha256": "5f2f13a5fa4c45735150cad43db443b988156410dcf9531480c8b228913f562a",
+   "bytes": 43366,
    "schema": "A306_MECHANISM/1",
    "fields": {
     "verdict": "PASS",
-    "negative_controls": {
-     "NC1_full_nodal": {
+    "checks": {
+     "CHECK1_truth_in_family": {
       "nodes": 881,
       "pass": true,
       "per_objective": {
@@ -82,22 +80,30 @@
        "tau": "\u2026"
       }
      },
-     "NC2_planted_shrink": {
-      "min_margin": {
-       "planted_0.99": "\u2026",
-       "truth_plus": "\u2026"
-      },
-      "pass": true
+     "CHECK4_side_of_truth": {
+      "checked": 120,
+      "pass": true,
+      "violations": []
+     }
+    },
+    "negative_controls": {
+     "NC2p_localized_defect": {
+      "node": [
+       "\u2026",
+       "\u2026"
+      ],
+      "pass": true,
+      "planted_argmin_node": [
+       "\u2026",
+       "\u2026"
+      ],
+      "planted_min_margin": -0.1999976397324854,
+      "twin_min_margin": 3.3977130442508496e-08
      },
      "NC3_wrong_atom_split": {
       "good_identity_err": 6.199485369506874e-13,
       "pass": true,
       "planted_identity_err": 3.7165799256223906
-     },
-     "NC4_side_of_truth": {
-      "checked": 120,
-      "pass": true,
-      "violations": []
      }
     },
     "crosscheck": {
@@ -114,22 +120,44 @@
   },
   {
    "file": "A306_PFLAT.json",
-   "sha256": "6a686c764020f2801876ff7ceb71ec9f95dc294d78de9d60f0181d9f3162da74",
-   "bytes": 2497,
+   "sha256": "bf8b62eed4676463a8993f34f2799813a9e6bd421f37b8936acbbb2615f9aeb0",
+   "bytes": 3472,
    "schema": "A306_PFLAT/1",
    "fields": {
     "verdict": "PASS",
     "negative_control": {
-     "flagged": true,
-     "planted_value": 10.365240944604237
+     "1": {
+      "argmin_node": [
+       "\u2026",
+       "\u2026"
+      ],
+      "fired": true,
+      "min_margin": -0.0010000000000083276
+     },
+     "1/2": {
+      "argmin_node": [
+       "\u2026",
+       "\u2026"
+      ],
+      "fired": true,
+      "min_margin": -0.0010000000000296438
+     },
+     "3": {
+      "argmin_node": [
+       "\u2026",
+       "\u2026"
+      ],
+      "fired": true,
+      "min_margin": -0.0010000000000018883
+     }
     }
    },
    "leak_scan_hits": []
   },
   {
    "file": "B307_AUDIT_FIXTURES.json",
-   "sha256": "30b8195444d803651e7234fa49caf4af6e96a1bcc8504e653bccea9843de0d57",
-   "bytes": 1709366,
+   "sha256": "24ed66408a2475244535bf7816ed1c9cddf29028540b804cdb84976aaf43a2cd",
+   "bytes": 1848701,
    "schema": "P5Y_K5_TAIL_OVERNIGHT_B307_AUDIT_FIXTURES/1",
    "fields": {
     "P1_all_pass": true,
@@ -152,8 +180,8 @@
   },
   {
    "file": "B307_LOWER_FRONT_ORDER3.json",
-   "sha256": "ea043c90afb391a7e8c1518b7e9ba0c0b52de3dd8d1b92c384a906095f017693",
-   "bytes": 234837,
+   "sha256": "fc76f4e0e18b06be4656f1c23acaf5dc3d4a0fe767b9f6d07c18690d8c346817",
+   "bytes": 235149,
    "schema": "P5Y_K5_TAIL_OVERNIGHT_B307_LOWER_FRONT_ORDER3/1",
    "fields": {
     "reproduction_gate": {
@@ -173,8 +201,8 @@
   },
   {
    "file": "B307_ORDER3_FIXTURES.json",
-   "sha256": "1632c20dcd333573998fcc6cd2ff415e233b0ce588766d155a3db7ae9daf49e2",
-   "bytes": 1292351,
+   "sha256": "e662c501576998e061342aa39dd406011c98ae7e37964610da0c2b2ac3b496d0",
+   "bytes": 1335054,
    "schema": "P5Y_K5_TAIL_OVERNIGHT_B307_ORDER3_FIXTURES/1",
    "fields": {
     "summary": {
@@ -392,7 +420,15 @@
      "ADLR_G_certified_pointwise_failures": 0,
      "ADLR_true_proxy_pointwise_failures": 0,
      "ADLR_NC_B3_dropped_detected_objects": 247,
-     "ADLR_objects": 320
+     "ADLR_objects": 320,
+     "class_a_RO3F_floor_plant": {
+      "fired": 320,
+      "eligible": 320
+     },
+     "class_a_RO3E_envelope_plant": {
+      "fired": 320,
+      "of": 320
+     }
     },
     "class": "SYNTHETIC_VALIDATION",
     "producer": "streams/B_307/code/b307_run_fixtures.py (functions in b307_order3.py)"
@@ -401,9 +437,9 @@
   },
   {
    "file": "B307_SCALING.json",
-   "sha256": "cc3301ce575375e9a000f4bbc7b9287bd3e95619bc73f26e4d3dab9309b21eb3",
-   "bytes": 3205,
-   "schema": "P5Y_K5_TAIL_OVERNIGHT_B307_SCALING/1",
+   "sha256": "69f13c2d742f61504e8bc4034cee9eb119c31ae46f2ce0911793aa884a8a62cb",
+   "bytes": 3610,
+   "schema": "P5Y_K5_TAIL_OVERNIGHT_B307_SCALING/2",
    "fields": {
     "class": "SYNTHETIC_VALIDATION",
     "producer": "streams/B_307/code/b307_scaling.py"
@@ -424,16 +460,16 @@
   },
   {
    "file": "C1B_MC.json",
-   "sha256": "de0f110877cc63149c32cd62bfc2d136cb9bc3c07b681feb03e7162015bf644f",
-   "bytes": 1702,
+   "sha256": "3edd73d2c108058aefa82342f6fce2115d785131dd435dd486f52b9c8b47dd24",
+   "bytes": 3281,
    "schema": "C1B_MC/1",
    "fields": {},
    "leak_scan_hits": []
   },
   {
    "file": "C1B_NEGCTL.json",
-   "sha256": "b7e5eafc79e4af02df6853b99280f3ddb1570427560e8ce88361c555ebdd53d6",
-   "bytes": 4092,
+   "sha256": "150d3344f4056ba4e069cfa1f5ac51ac45b5dfc662f40c5e6c0f46835b5df6ff",
+   "bytes": 4723,
    "schema": "C1B_NEGCTL/1",
    "fields": {},
    "leak_scan_hits": []
@@ -455,6 +491,46 @@
    "leak_scan_hits": []
   },
   {
+   "file": "C1B_PW9_BLOCK_1_2__17_32.json",
+   "sha256": "183dbb8f7d10837e3760b60f0c63b37d440cbe44248e4772748f4b559cda4e03",
+   "bytes": 19003,
+   "schema": "C1B_POINT/2",
+   "fields": {},
+   "leak_scan_hits": []
+  },
+  {
+   "file": "C1B_PW9_POINT_e0.json",
+   "sha256": "464817bc8823fe08551257db8866193e1e951b090d77fde19d4e79985ddd44e9",
+   "bytes": 48811,
+   "schema": "C1B_POINT/2",
+   "fields": {},
+   "leak_scan_hits": []
+  },
+  {
+   "file": "C1B_PW9_POINT_e1.json",
+   "sha256": "1eb723272aff5726f6a470bc2fb2524be3a4028d82a871d8a53aaa448278bc49",
+   "bytes": 49391,
+   "schema": "C1B_POINT/2",
+   "fields": {},
+   "leak_scan_hits": []
+  },
+  {
+   "file": "C1B_PW9_POINT_e1_2.json",
+   "sha256": "6c15e010c373dd49b16088cd128458e1423a693401c9dc70fb25164618500e76",
+   "bytes": 35030,
+   "schema": "C1B_POINT/2",
+   "fields": {},
+   "leak_scan_hits": []
+  },
+  {
+   "file": "C1B_PW9_POINT_e3.json",
+   "sha256": "b744bf65d15799374c3f7184085f6381a4baf0afabdfe506153c5356cb8a243d",
+   "bytes": 56744,
+   "schema": "C1B_POINT/2",
+   "fields": {},
+   "leak_scan_hits": []
+  },
+  {
    "file": "C1B_PW_POINT_e1_2.json",
    "sha256": "9932407d8032f913c1564a0a48ad5f3502c7ccd02655012b0962b7bffa5ebc6f",
    "bytes": 48683,
@@ -467,6 +543,14 @@
    "sha256": "34c690d8d19936cc87529eff470c804cc9d8d6a81e4ee4bc65b02f2679a6009f",
    "bytes": 48256,
    "schema": "C1B_POINT/2",
+   "fields": {},
+   "leak_scan_hits": []
+  },
+  {
+   "file": "C1B_SUMMARY_PW_PW9.json",
+   "sha256": "4352110ef80ec1a376656404da03354ba3869122801b0eb0ecaeaac15b2fa0df",
+   "bytes": 86310,
+   "schema": "C1B_SUMMARY/1",
    "fields": {},
    "leak_scan_hits": []
   },
@@ -484,8 +568,8 @@
   },
   {
    "file": "C1LR_EXAMPLES.json",
-   "sha256": "4812d288f61fcb57924f149753918049090abdcaefd714f10a87f094b9cacd70",
-   "bytes": 10068,
+   "sha256": "8897ad1d4cf3c925bd489da60373d75e8dc5703a40492019b3d4392e6d1ba8b7",
+   "bytes": 10733,
    "schema": "C1LR_EXAMPLES/1",
    "fields": {
     "declared_rule": "eps ladder {1/10,1/20,1/40,1/80,1/160}, e=0, lower-bound horizon H=4/eps (PROGRESS.md)",
@@ -496,8 +580,8 @@
   },
   {
    "file": "C1LR_FSM_VALIDATION.json",
-   "sha256": "1fde9365467a0783dc28d832358d3742666e5c1ee9d708c2a5587a4e1855fa5b",
-   "bytes": 100350,
+   "sha256": "80e019eab1db1f80fd4b478b5e285ca142b84bae4ec7892f0c39609053c72c2c",
+   "bytes": 106344,
    "schema": "C1LR_FSM_VALIDATION/1",
    "fields": {
     "declared_rule": "V1: ov_fixtures.random_family(n=6+seed%4, seed, e_range=(0,1/4), kill=1/20), seeds 1..12; V2: same with kill=1/5; drift e=1/8; H_head=12, H_lb=80; certificate grids c in {2^k/8, k=0..6}*c_hat, delta i\u2026",
@@ -508,16 +592,16 @@
   },
   {
    "file": "C2B_VALIDATION.json",
-   "sha256": "26e69c3e1652cbd6916081b27417cb1f4547f474d95e4b5e21dab9bc6f10c831",
-   "bytes": 46600,
+   "sha256": "358cbd5d84104fabd2291686885de4c4a3af79e4210caafbf80927bbd2da8706",
+   "bytes": 55919,
    "schema": "C2B_VALIDATION/1",
    "fields": {},
    "leak_scan_hits": []
   },
   {
    "file": "D309_COVER_FSM.json",
-   "sha256": "3ea601a1387c23a708ec1ee07fa1232e1db6c9efb31562363e5b45bd8af653c4",
-   "bytes": 44510,
+   "sha256": "118a57f125a9eda356272654b044e4453adad11db8b887cca1abd24cf13454fa",
+   "bytes": 53161,
    "schema": "OV_D309_COVER_FSM/1",
    "fields": {
     "summary": {
@@ -525,8 +609,7 @@
      "C2_order_all": true,
      "C2_sound_all": true,
      "C3_sound_all": true,
-     "C4_B2_minus_parent_max": 0.0,
-     "C4_B2_minus_parent_min": 0.0,
+     "C4_B2_transcription_identity_diff_max": 0.0,
      "C4_gain_fraction": {
       "2": [
        "\u2026",
@@ -638,11 +721,57 @@
       ]
      },
      "NC_flat_profile_violations": 3,
-     "NC_g_hi_detected": 10,
-     "NC_half_transport_detected": 9,
      "fixtures": 10,
+     "harness_midpoint_check_flags_shifted": 10,
      "midpoint_enclosures_valid_all": true,
-     "wall_s": 44.9
+     "profile_genuine_violations": 0,
+     "transport_mutant_power": {
+      "flat_rad0": {
+       "flagged": "\u2026",
+       "records": "\u2026"
+      },
+      "midpoint_no_width": {
+       "flagged": "\u2026",
+       "records": "\u2026"
+      },
+      "no_W": {
+       "flagged": "\u2026",
+       "records": "\u2026"
+      },
+      "no_midpoint_width": {
+       "flagged": "\u2026",
+       "records": "\u2026"
+      },
+      "no_rad": {
+       "flagged": "\u2026",
+       "records": "\u2026"
+      },
+      "profile_flat_rad0": {
+       "flagged": "\u2026",
+       "records": "\u2026"
+      },
+      "profile_genuine": {
+       "flagged": "\u2026",
+       "records": "\u2026"
+      },
+      "profile_no_W": {
+       "flagged": "\u2026",
+       "records": "\u2026"
+      },
+      "profile_no_rad": {
+       "flagged": "\u2026",
+       "records": "\u2026"
+      },
+      "profile_rad_half": {
+       "flagged": "\u2026",
+       "records": "\u2026"
+      },
+      "rad_half": {
+       "flagged": "\u2026",
+       "records": "\u2026"
+      }
+     },
+     "wall_s": 78.9
     },
     "declared_rule": "Fixtures: seeds 1..10, n = 4 + seed % 3, kernel degree 4 (random_family, kill 1/5, e-range (0, 3/8)), two sources of degree 5 (make_sources), W = K_e S_0 with coefficient 1/2, candidate perturbation p\u2026"
    },
@@ -650,8 +779,8 @@
   },
   {
    "file": "D309_HERMITE_NONTARGET.json",
-   "sha256": "bb007b74d4ad422539ab69727f629ba06788aa557e3b0de55dc757ae19e497ed",
-   "bytes": 361346,
+   "sha256": "420f9e75595b2591d539228b02dcce8b3833286a52073043958843a2667185b8",
+   "bytes": 609187,
    "schema": "OV_D309_HERMITE_NONTARGET/1",
    "fields": {
     "summary": {
@@ -662,6 +791,10 @@
      "H1_nc_sign_applicable": 592,
      "H1_nc_sign_detected_where_applicable": 592,
      "H1_ok": 1200,
+     "H1b_nc_kink_flagged_nonconst": 955,
+     "H1b_nc_sign_flagged_where_applicable": 592,
+     "H1b_quad_max_gap": 1.701971896750365e-13,
+     "H1b_quad_ok": 1200,
      "H2_ratio_range": [
       0.12405932909350707,
       0.3138274238313109
@@ -672,9 +805,16 @@
       0.5276504772883505,
       7031.56867368916
      ],
-     "H3_nc_detected": 4,
-     "H3_sound_all": true,
-     "wall_s": 94.4
+     "H3_containment_violations_genuine": 0,
+     "H3_defect_runs_detected": {
+      "collapse": 4,
+      "drop_hull": 2,
+      "drop_sign": 2,
+      "shrink_half": 0
+     },
+     "H3_points": 2996,
+     "H3_runs": 4,
+     "wall_s": 471.4
     },
     "declared_rule": "Drifts e in {0, 1/4, 1/2, 1, 3} (declared validation drifts; guard_drift on [e-2h, e+2h], h = 1/10000). States: (0,0),(0,1),(1,0),(0,5/2),(5/2,0),(1/4,1/2),(1,1),(2,1),(1,3),(0,9/2),(9/2,0),(3/2,5/2).\u2026"
    },
@@ -682,14 +822,28 @@
   },
   {
    "file": "D309_HERMITE_TF_NONTARGET.json",
-   "sha256": "3689b1ce20042bb2a88f5ea2b62fd5baee86c66e245071761c3e7195bc0a92bc",
-   "bytes": 3167,
+   "sha256": "8e0ef1e69d6969e9859fdad2f320287b826e40efba25895b43c370ff92bf1f9a",
+   "bytes": 4832,
    "schema": "OV_D309_HERMITE_TF_NONTARGET/1",
    "fields": {
     "summary": {
-     "nc_detected": 6,
-     "sound_all": true,
-     "wall_s": 52.6
+     "containment_violations_genuine": 0,
+     "defect_points_detected": {
+      "drop_hull": 67,
+      "drop_sign": 6853,
+      "half_remainder": 1038,
+      "zero_remainder": 8358
+     },
+     "defect_runs_detected": {
+      "drop_hull": 2,
+      "drop_sign": 6,
+      "half_remainder": 4,
+      "zero_remainder": 6
+     },
+     "necessary_all": true,
+     "points": 9028,
+     "runs": 6,
+     "wall_s": 550.9
     },
     "declared_rule": "Triples (w_quad, w_lin, w_const) and (w_bump, w_bump, w_bump) as in d309_hermite H3; drifts {1/4, 3}; Taylor-form image-box bounds; depth 4 for both triples, depth 5 for the bump triple; panel 1/16. S\u2026"
    },
@@ -697,14 +851,29 @@
   },
   {
    "file": "D309_RSO_FSM.json",
-   "sha256": "929b758b301bef520e5b18ddc10dce9a0fcdc598ea6a9c1acae78104402e1e86",
-   "bytes": 59492,
+   "sha256": "8b8bf39e6bca30ece97dd4e650b79a5e95da8b9adb8044665b59c2c7c84ed738",
+   "bytes": 72225,
    "schema": "OV_D309_RSO_FSM/1",
    "fields": {
     "summary": {
-     "NC_a_detected": 48,
+     "NC_a_power": {
+      "a1_zero_at_most_occupied": {
+       "N0_flagged": "\u2026",
+       "N1_flagged_PM": "\u2026",
+       "applicable": "\u2026"
+      },
+      "a2_half": {
+       "N0_flagged": "\u2026",
+       "N1_flagged_PM": "\u2026",
+       "applicable": "\u2026"
+      }
+     },
      "NC_b_detected": 48,
-     "NC_c_detected": 12,
+     "NC_c_power": {
+      "drop_KS2": 12,
+      "drop_cross": 4,
+      "drop_psi": 12
+     },
      "NC_d_wrong_score_detected": 12,
      "R123_cases": 48,
      "R1_certs_verified_twice_all": true,
@@ -780,6 +949,7 @@
       0.6396130708678226
      ],
      "R4_cases": 12,
+     "R4_mutant_profile_half_detected": 4,
      "R4_points_checked": 2376,
      "R4_rad_ratio": {
       "RSO_C4": [
@@ -812,6 +982,7 @@
       0.7803940489161559
      ],
      "R4_violations_total": 0,
+     "R4_worst_dev_over_rad_genuine": 0.9803113965028364,
      "R5_LR_cert_over_PM_entrywise": [
       0.739783529010404,
       0.8688755265568164
@@ -829,7 +1000,7 @@
      "R5_kernel_identity_all": true,
      "R5_lower_ge_signed_all": true,
      "R5_signed_trunc_gap_max": 2.104109297443201e-08,
-     "wall_s": 60.4
+     "wall_s": 113.3
     },
     "declared_rule": "R1-R4 generic: seeds 1..12, n = 4 + seed % 4, kernel degree 4, e0 = 1/8, rho = (1/64, 1/32, 1/16)[seed % 3], pert = (1e-6, 1e-4, 1e-2)[(seed // 3) % 3], source degree (2, 5)[seed % 2], one source per \u2026"
    },
@@ -837,8 +1008,8 @@
   },
   {
    "file": "D309_SCT_FSM.json",
-   "sha256": "9e4a0ae3e8ef833b79dd3619f4db3df607d9b86a1fe6c70eed6357aff7cfd940",
-   "bytes": 10352,
+   "sha256": "e68643be428d238a6f45bd32ab3ff399f146cd34c7a76a48e1fe9ec16509c711",
+   "bytes": 11087,
    "schema": "OV_D309_SCT_FSM/1",
    "fields": {
     "summary": {
@@ -858,16 +1029,16 @@
       }
      },
      "cases": 48,
-     "identity_all": true,
-     "nc_detected": 48
+     "comparator_control_differs": 48,
+     "identity_all": true
     }
    },
    "leak_scan_hits": []
   },
   {
    "file": "D309_SUPNORM_FSM.json",
-   "sha256": "9a8429237e6cac8ef9a68870f5f7778546ae5a1b9944482c8c240b4df703c7c8",
-   "bytes": 127992,
+   "sha256": "92fe2ca7fe75df38b54a9ab57e7418f2ddade5e8546c67ff31f86aab594afece",
+   "bytes": 193927,
    "schema": "OV_D309_SUPNORM_FSM/1",
    "fields": {
     "summary": {
@@ -929,13 +1100,57 @@
      },
      "cases_adversarial": 12,
      "cases_generic": 48,
+     "comparator_control_differs": 60,
      "enclosure_points_checked": 9900,
      "enclosure_violations_total": 0,
+     "enclosure_worst_dev_over_rad_genuine": 0.537700421891824,
      "env_ok_all": true,
      "identity_all_orders_all": true,
      "ladder_ok_all": true,
-     "nc1_detected": 60,
-     "nc2_detected": 60,
+     "mutant_power": {
+      "A0_half": {
+       "applicable": "\u2026",
+       "enclosure_check_detects": "\u2026",
+       "premise_check_detects": "\u2026"
+      },
+      "A0_x0.99": {
+       "applicable": "\u2026",
+       "enclosure_check_detects": "\u2026",
+       "premise_check_detects": "\u2026"
+      },
+      "Env4_midpoint_only": {
+       "applicable": "\u2026",
+       "enclosure_check_detects": "\u2026",
+       "premise_check_detects": "\u2026"
+      },
+      "Env4_x0.9": {
+       "applicable": "\u2026",
+       "enclosure_check_detects": "\u2026",
+       "premise_check_detects": "\u2026"
+      },
+      "Env4_zero": {
+       "applicable": "\u2026",
+       "enclosure_check_detects": "\u2026",
+       "premise_check_detects": "\u2026"
+      },
+      "fG_Env4_half_truth": {
+       "applicable": "\u2026",
+       "enclosure_check_detects": "\u2026",
+       "premise_check_detects": "\u2026"
+      },
+      "fG_sigma3_dropped": {
+       "applicable": "\u2026",
+       "enclosure_check_detects": "\u2026",
+       "premise_check_detects": "\u2026"
+      },
+      "fG_zero": {
+       "applicable": "\u2026",
+       "enclosure_check_detects": "\u2026",
+       "premise_check_detects": "\u2026"
+      }
+     },
+     "premise_truth_genuine_violations_total": 0,
+     "premise_truth_supplies_checked": 300,
      "rad_rho_over_base_generic": {
       "SC3": [
        "\u2026",
@@ -956,9 +1171,36 @@
      },
      "strict_crossterm_generic": 48,
      "strict_submult_generic": 48,
-     "wall_s": 7.56
+     "wall_s": 33.13
     },
-    "declared_rule": "Generic fixtures: seeds 1..24; n = 4 + seed % 4 states; kernel degree 4 in e (random_family, kill 1/5); e0 = 1/8; rho = (1/64, 1/32, 1/16)[seed % 3]; candidate perturbation pert = (1e-6, 1e-4, 1e-2)[(\u2026"
+    "declared_rule": "[repair r1, declared before the re-run: mutants fG_zero, Env4_zero, fG_Env4_half_truth, A0_half, A0_x0.99, Env4_midpoint_only, Env4_x0.9, fG_sigma3_dropped (sigma3 > 0 only) on the SC4_E3 supply; A-tr\u2026"
+   },
+   "leak_scan_hits": []
+  },
+  {
+   "file": "PM_PROBE_SYNTHETIC.json",
+   "sha256": "b6cf556e44c979dac6ccc8cce9bec2ac5ea606f4a5d5f48c3279b2b9734feb27",
+   "bytes": 3990,
+   "schema": "OV_PM_PROBE_SYNTHETIC/1",
+   "fields": {
+    "summary": {
+     "PM_over_true_A1": [
+      2.4332361191527867,
+      9.198181017964826
+     ],
+     "PM_over_true_A2": [
+      7.33741151956707,
+      23.57346473653701
+     ],
+     "G_over_PM_A1": [
+      1.2221600603042102,
+      2.0681431566118187
+     ],
+     "G_over_PM_A2": [
+      1.5263818080284532,
+      2.4457390049321086
+     ]
+    }
    },
    "leak_scan_hits": []
   },
@@ -1623,8 +1865,22 @@
    "leak_scan_hits": []
   }
  ],
- "artifacts_count": 31,
+ "artifacts_count": 38,
+ "leak_scan_controls_by_shape": {
+  "int_cell": true,
+  "list_cells": true,
+  "str_key": true,
+  "text_cell": true,
+  "frac_drift": true,
+  "float_drift": true,
+  "list_drifts": true,
+  "block": true,
+  "index_key": true,
+  "text_drift": true,
+  "x0": true
+ },
  "leak_scan_negative_control_flagged": true,
+ "leak_scan_benign_false_positives": [],
  "artifacts_with_leak_hits": [],
  "ledger_runs_by_script": {
   "code/ov_quarantine.py": 1,
@@ -1633,29 +1889,29 @@
   "scratchpad python -c (prototype of streams/E_assembly/v3/tpt_v3_lower_front.py)": 2,
   "streams/E_assembly/test_tpt_guards.py": 10,
   "graph/build_graph_json.py": 1,
-  "streams/A_306/audit/a306_reproduce_A.py": 1,
+  "streams/A_306/audit/a306_reproduce_A.py": 2,
   "streams/E_assembly/validate_tptb_synthetic.py": 3,
-  "streams/B_307/code/b307_lower_front.py": 1,
-  "streams/D_309/code/d309_supnorm_fsm.py": 1,
-  "streams/B_307/code/b307_run_fixtures.py": 2,
-  "streams/B_307/code/b307_hermite_check.py": 1,
-  "streams/D_309/code/d309_hermite.py": 1,
+  "streams/B_307/code/b307_lower_front.py": 2,
+  "streams/D_309/code/d309_supnorm_fsm.py": 2,
+  "streams/B_307/code/b307_run_fixtures.py": 3,
+  "streams/B_307/code/b307_hermite_check.py": 2,
+  "streams/D_309/code/d309_hermite.py": 2,
   "streams/B_307/code/b307_tower_fixture.py": 1,
-  "streams/B_307/code/b307_scaling.py": 1,
-  "streams/D_309/code/d309_rso.py": 3,
-  "streams/D_309/code/d309_cover.py": 2,
-  "streams/C_308/LR/lr_fsm.py --examples": 1,
-  "streams/C_308/LR/lr_fsm.py --sets": 1,
-  "streams/C_308/LR/lr_fsm.py --example-e1dp": 1,
-  "streams/D_309/code/d309_hermite_tf.py": 1,
-  "streams/C_308/LR/lr_fsm.py --block": 1,
-  "streams/C_308/LR/lr_fsm.py --block-variants": 1,
-  "streams/C_308/LR/lr_fsm.py --block-negctl": 1,
-  "streams/A_306/mechanism/mech_study.py": 1,
-  "streams/D_309/code/d309_sct.py": 1,
+  "streams/B_307/code/b307_scaling.py": 2,
+  "streams/D_309/code/d309_rso.py": 4,
+  "streams/D_309/code/d309_cover.py": 4,
+  "streams/C_308/LR/lr_fsm.py --examples": 2,
+  "streams/C_308/LR/lr_fsm.py --sets": 2,
+  "streams/C_308/LR/lr_fsm.py --example-e1dp": 2,
+  "streams/D_309/code/d309_hermite_tf.py": 2,
+  "streams/C_308/LR/lr_fsm.py --block": 2,
+  "streams/C_308/LR/lr_fsm.py --block-variants": 2,
+  "streams/C_308/LR/lr_fsm.py --block-negctl": 2,
+  "streams/A_306/mechanism/mech_study.py": 2,
+  "streams/D_309/code/d309_sct.py": 2,
   "gen/c2b_validate.py": 81,
   "streams/E_assembly/validate_tpt_r2.py": 1,
-  "streams/A_306/mechanism/mech_pflat.py": 1,
+  "streams/A_306/mechanism/mech_pflat.py": 2,
   "gen/c2b_controls.py": 3,
   "SCR/review_M/rm_exact.py": 1,
   "graph/K5_TAIL_DEPENDENCY_GRAPH.md@4403f86f": 1,
@@ -1665,13 +1921,22 @@
   "streams/A_306/common/cv_search.py": 2,
   "SCR/review_M/rm_diag.py": 1,
   "SCR/review_M/rm_score.py": 1,
-  "streams/A_306/common/cv_validate.py B": 1,
-  "streams/A_306/common/cv_validate.py A": 1,
+  "streams/A_306/common/cv_validate.py B": 2,
+  "streams/A_306/common/cv_validate.py A": 2,
   "streams/C_308/LR/cusum/c1b_certify.py": 4,
-  "streams/C_308/LR/cusum/c1b_certpw.py": 3,
-  "streams/A_306/common/cv_validate.py assemble": 1,
+  "streams/C_308/LR/cusum/c1b_certpw.py": 8,
+  "streams/A_306/common/cv_validate.py assemble": 2,
   "streams/C_308/A0X/EXCLUSION_308.md@7e851139": 1,
-  "streams/C_308/LR/cusum/c1b_mc.py": 1,
-  "streams/C_308/LR/cusum/c1b_negctl.py": 1
+  "streams/C_308/LR/cusum/c1b_mc.py": 3,
+  "streams/C_308/LR/cusum/c1b_negctl.py": 2,
+  "gen/c2b_fdcheck.py": 1,
+  "streams/C_308/LR/cusum/c1b_report.py": 4,
+  "coordinator C2b brief / streams/C_308/A0X/gen/C2B_ROUTE_SUMMARY.md:49": 1,
+  "scratchpad/c1b_t1..c1b_t6 (test scripts, retroactive entry)": 1,
+  "streams/C_308/pm_probe_synthetic.py": 1,
+  "graph/K5_TAIL_DEPENDENCY_GRAPH.md (r0/r1 node table + section 3)": 1,
+  "streams/C_308/A0X/{EXCLUSION_308.md:418,C2A_ROUTE_SUMMARY.md:88-89,PROGRESS.md:17}": 1,
+  "streams/A_306/common/cv_search.py taboo": 1,
+  "streams/A_306/CELL306_I1_I2_DISAGREEMENT_AUDIT.md (Part C, pre-repair)": 1
  }
 }
