@@ -1,7 +1,7 @@
 # Cell-308 MB formal prospective closure campaign (r1): protocol
 
-**Status: PRE-FREEZE DRAFT p0.** Becomes the frozen protocol at the freeze commit. Nothing in it authorizes a
-target evaluation; only the grant (§10 step 4) does.
+**Status: FROZEN (r1)** at the freeze commit on branch `p5y-k5-cell308-mb-r1` (the commit that adds
+`protocol/MB308_FREEZE.json`). Nothing in it authorizes a target evaluation; only the grant (§10 step 4) does.
 
 ## 1. Scope and authority
 

@@ -1,0 +1,777 @@
+{
+ "a0_extraction_sources": {
+  "a0_c1b.py": {
+   "blob": "599827ff6db0cbd41daf66d8d29aaa8fb292cdab",
+   "lines": "26-64, 84-101",
+   "sha256": "9efbc0d3927d0c599b696af9a2683081e66096a1e04be07c838ae8e25619c054"
+  },
+  "a0_c2b.py": {
+   "blob": "a18e091484c7948060d248be075416630afdda96",
+   "lines": "88-113, 164-173",
+   "sha256": "4134797cf3d46b784d9c2ebc35d5bf43a7554d456695aa21092ac84c931cd925"
+  },
+  "a0_c2bx.py": {
+   "blob": "b1068e0bacb21a598e78991f295d0d28f5f6564c",
+   "lines": "29-109",
+   "sha256": "12c3ca45f8097478532f1e6473d69ff155645c21f5d4897baf165d4670781c84"
+  },
+  "a0_common.py": {
+   "blob": "32c8a37225de97a73c57f7395a194efe626d5466",
+   "lines": "114-116, 125-126, 226-227",
+   "sha256": "5df43fd12cd74a94e611550b209656c561bc9f80b8600ac193c430b0b7646c91"
+  },
+  "a0_ladder.py": {
+   "blob": "17974e1c25d23357ae170fd5a2906ad4dbf9e2ed",
+   "lines": "85-96",
+   "sha256": "7717639f170a75ee5c326743601e5de1fbee0850d8cd205e0b862e0da90cc36f"
+  },
+  "a0_verify.py": {
+   "blob": "7ca1bc915bdcbf7433deccd677b194e38f8e0c95",
+   "lines": "34-99",
+   "sha256": "5fb8a9d6601f8fb5c3f8602ecb8aef657f0c2fbbeb8af5e0ac3895486e0e981b"
+  }
+ },
+ "c2b_pl_hook": [
+  "level4/closure_proofs/p5y_k5_cell308_research/streams/VERIFY/vd_pl.py",
+  "1f10c9506422adf11e001c05d39dda59c7081c595abae45a1540ab05e0aa1221",
+  "0764c0b11d77"
+ ],
+ "caps": {
+  "evaluation_s": 28800,
+  "pre_marker_s": 1800,
+  "workers": 5
+ },
+ "cell": 308,
+ "consumer_and_input_pins": {
+  "adapter": {
+   "git_blob_prefix": "0516a15b2d83",
+   "path": "level4/closure_proofs/p5y_k5b_consumption_adapter/code/consumption_adapter.py",
+   "sha256": "fbad7d33261fd47fc56c034d6a016f8427b81b51f9199f0e3a8f3e74df35973d"
+  },
+  "adopted_inputs": {
+   "git_blob_prefix": "0ba3c6dc876f",
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/evidence/measurement_r1/ADOPTED_TAIL_INPUTS.json",
+   "sha256": "485fb1254e459683f48815c239d18d29119d651d0e77876f772c3fee9d29a37d"
+  },
+  "c2_forecast": {
+   "git_blob_prefix": "a191557f24c3",
+   "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/phase_d5/C2_D5_FORECAST.json",
+   "sha256": "784f25eecd65bad3bf687727590a0c0e91a683c5d30817c3bda80d6f373fe983"
+  },
+  "c2_forecast_code": {
+   "git_blob_prefix": "18403dbec855",
+   "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/code/c2_d5_forecast.py",
+   "sha256": "bd7854bce2434215c0a72eeb825ff87db4c729e80b0e4d125911e806a084f06b"
+  },
+  "cells_json": {
+   "git_blob_prefix": "30e40fc0e721",
+   "path": "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/cells.json",
+   "sha256": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f"
+  },
+  "coverage_r5": {
+   "git_blob_prefix": "f978eeb6b411",
+   "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/coverage/K5_COVERAGE_MAP_R5.json",
+   "sha256": "e2197051e493df898295a692c580ed676e771f7dfae5a1675d8d8e9b979f684c"
+  },
+  "deflated_consume": {
+   "git_blob_prefix": "a0a836fa83c6",
+   "path": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/deflated_consume.py",
+   "sha256": "ef5d0474183053bb7cde3075bda66f99211706a9bf7bf27e31fe994ff8b87e72"
+  },
+  "floor_rule": {
+   "git_blob_prefix": "0ddfac300b92",
+   "path": "level4/closure_proofs/p5y_k5_tail_floor_r2/config/K5_TAIL_ADOPTION_FLOOR_R2.json",
+   "sha256": "eb2b4196dd23a8353e25093ff6bfa30d18634dd7f52968ec3c7000ea9b624238"
+  },
+  "record_manifest": {
+   "git_blob_prefix": "e6e0e26e2583",
+   "path": "level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/evidence/closure_r1/COMPOSITE_EXPORT_MANIFEST.json",
+   "sha256": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334"
+  },
+  "registry_c1": {
+   "git_blob_prefix": "f6d84bdb5ef0",
+   "path": "level4/closure_proofs/p5y_k5_tail_operator_registry/evidence/registry_c1/REGISTRY_C1.json",
+   "sha256": "87bb1cfacb09c2a144cab0270427d91980ea742b36fd80f8963265a22d2eebb3"
+  },
+  "registry_c2": {
+   "git_blob_prefix": "1a3adfd3d893",
+   "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/registry_c2/REGISTRY_C2.json",
+   "sha256": "1b2b834939fcd80a81ddc8f029f46705b53cefeb46c0cc925a99c2b8e856fdd6"
+  },
+  "tail_forecast_r2": {
+   "git_blob_prefix": "edec817e57f1",
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/code/tail_forecast_r2.py",
+   "sha256": "5ab31ae56c0174697a7f5805e212b46334803e9e3371a77f82871d60716b96cd"
+  },
+  "tct_inputs_305": {
+   "git_blob_prefix": "499ccafe5cc9",
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/evidence/measurement_r1/TCT_INPUTS_305.json",
+   "sha256": "e1390b427e5f7dcf2f997fe039ea3658554cba86f6e472f3c8f339ac0e93df76"
+  },
+  "tct_inputs_308": {
+   "git_blob_prefix": "866ddab11c9b",
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/evidence/measurement_r1/TCT_INPUTS_308.json",
+   "sha256": "386f4a7774d69b0c319918fc6f4aa010ae6a8c349fca941c24e13a2111c418c2"
+  },
+  "tct_rule": {
+   "git_blob_prefix": "98f6eee4d867",
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/code/tct_rule.py",
+   "sha256": "f5a343e7f7bfb742d0a41c38512e27e7311d0919b38bcea0dfe98775c73d9a3e"
+  }
+ },
+ "driver": {
+  "path": "level4/closure_proofs/p5y_k5_cell308_mb_r1/code/mb308_driver.py",
+  "sha256": "965a2a306dd564b16614fc0bc22583e663e5bfa99464dc7afbe2bc408ac265f9"
+ },
+ "exactly_once": {
+  "emergency_file": "mb308-cell308-emergency-result.json",
+  "marker": "refs/p5y-k5-cell308-mb-r1/target-consumed",
+  "pending": "refs/p5y-k5-cell308-mb-r1/pending-result",
+  "qualified_branch": "refs/heads/p5y-k5-cell308-mb-r1",
+  "qualified_worktree": "/Users/suzhe/ReBaseGuard-c308mb",
+  "result": "level4/closure_proofs/p5y_k5_cell308_mb_r1/evidence/execution/MB308_CELL308_RESULT.json"
+ },
+ "external_files": {
+  "input:adapter": {
+   "git_blob": "0516a15b2d832e4f7681d5dc770afaa06ca02862",
+   "path": "level4/closure_proofs/p5y_k5b_consumption_adapter/code/consumption_adapter.py",
+   "sha256": "fbad7d33261fd47fc56c034d6a016f8427b81b51f9199f0e3a8f3e74df35973d"
+  },
+  "input:adopted_inputs": {
+   "git_blob": "0ba3c6dc876ff6b27406a584a28f7e1a80e95f62",
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/evidence/measurement_r1/ADOPTED_TAIL_INPUTS.json",
+   "sha256": "485fb1254e459683f48815c239d18d29119d651d0e77876f772c3fee9d29a37d"
+  },
+  "input:c2_forecast": {
+   "git_blob": "a191557f24c305824f88e39edec38edaf9c49b48",
+   "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/phase_d5/C2_D5_FORECAST.json",
+   "sha256": "784f25eecd65bad3bf687727590a0c0e91a683c5d30817c3bda80d6f373fe983"
+  },
+  "input:c2_forecast_code": {
+   "git_blob": "18403dbec85513355414beb6869746703f7bbda2",
+   "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/code/c2_d5_forecast.py",
+   "sha256": "bd7854bce2434215c0a72eeb825ff87db4c729e80b0e4d125911e806a084f06b"
+  },
+  "input:cells_json": {
+   "git_blob": "30e40fc0e7213fe54cc30cd1f18fa61cdbef03d8",
+   "path": "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/cells.json",
+   "sha256": "341eb5e95161bbdc2d15c1dca72eb8c4565982fab562e1c5a337139375b67c2f"
+  },
+  "input:coverage_r5": {
+   "git_blob": "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
+   "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/coverage/K5_COVERAGE_MAP_R5.json",
+   "sha256": "e2197051e493df898295a692c580ed676e771f7dfae5a1675d8d8e9b979f684c"
+  },
+  "input:deflated_consume": {
+   "git_blob": "a0a836fa83c6d85d02bd377e8f2dc3ebfcc436ef",
+   "path": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/deflated_consume.py",
+   "sha256": "ef5d0474183053bb7cde3075bda66f99211706a9bf7bf27e31fe994ff8b87e72"
+  },
+  "input:floor_rule": {
+   "git_blob": "0ddfac300b9219984188a4f6aede60efc25c4434",
+   "path": "level4/closure_proofs/p5y_k5_tail_floor_r2/config/K5_TAIL_ADOPTION_FLOOR_R2.json",
+   "sha256": "eb2b4196dd23a8353e25093ff6bfa30d18634dd7f52968ec3c7000ea9b624238"
+  },
+  "input:record_manifest": {
+   "git_blob": "e6e0e26e25831a9c88ef44c2801f49bc5647ebd8",
+   "path": "level4/closure_proofs/p5y_k1_cusum_aux5_composite_closure/evidence/closure_r1/COMPOSITE_EXPORT_MANIFEST.json",
+   "sha256": "29ad1f9bb8630a5f3f9aab74d400d552516f0774a05e2b219d66f38b2da0d334"
+  },
+  "input:registry_c1": {
+   "git_blob": "f6d84bdb5ef078fdd51667b0d44e8622049be7e6",
+   "path": "level4/closure_proofs/p5y_k5_tail_operator_registry/evidence/registry_c1/REGISTRY_C1.json",
+   "sha256": "87bb1cfacb09c2a144cab0270427d91980ea742b36fd80f8963265a22d2eebb3"
+  },
+  "input:registry_c2": {
+   "git_blob": "1a3adfd3d893790498f9776d32121deb76469077",
+   "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/registry_c2/REGISTRY_C2.json",
+   "sha256": "1b2b834939fcd80a81ddc8f029f46705b53cefeb46c0cc925a99c2b8e856fdd6"
+  },
+  "input:tail_forecast_r2": {
+   "git_blob": "edec817e57f162a7c2bc90300bc6dc64e8d830ff",
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/code/tail_forecast_r2.py",
+   "sha256": "5ab31ae56c0174697a7f5805e212b46334803e9e3371a77f82871d60716b96cd"
+  },
+  "input:tct_inputs_305": {
+   "git_blob": "499ccafe5cc90908ab8c97f6f228ee49eab5dd21",
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/evidence/measurement_r1/TCT_INPUTS_305.json",
+   "sha256": "e1390b427e5f7dcf2f997fe039ea3658554cba86f6e472f3c8f339ac0e93df76"
+  },
+  "input:tct_inputs_308": {
+   "git_blob": "866ddab11c9b17e9a26055c51f04c7c2c456631e",
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/evidence/measurement_r1/TCT_INPUTS_308.json",
+   "sha256": "386f4a7774d69b0c319918fc6f4aa010ae6a8c349fca941c24e13a2111c418c2"
+  },
+  "input:tct_rule": {
+   "git_blob": "98f6eee4d867455065e20043fcf47ae54ffcad1e",
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/code/tct_rule.py",
+   "sha256": "f5a343e7f7bfb742d0a41c38512e27e7311d0919b38bcea0dfe98775c73d9a3e"
+  },
+  "module:F2_mb_independent": {
+   "git_blob": "8aacb252b57b85f1fe3444250fb3aec74b1dc5d5",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/INDEP/mb_independent.py",
+   "sha256": "32aa83a866005ad737424225ff8bfcb3898ebb79b3598e37d80a1e89a16ca4c0"
+  },
+  "module:F3_tuple_independent": {
+   "git_blob": "86061897e6cc294223e35de3480e9503f18ce707",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/INDEP_TUPLE/tuple_independent.py",
+   "sha256": "47ae88dcc792779b247ae1827e66c9f460a5e1b2c56e6b081a828ae245e6cbc8"
+  },
+  "module:c1b_certpw": {
+   "git_blob": "807b64fed49a29546b1e4a81676529015bb01c75",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/c1b_certpw.py",
+   "sha256": "48080dd4df193a1474113ea792ab550fe325f51cb0e4d0e1c8a3e3bebd195c25"
+  },
+  "module:c1b_float": {
+   "git_blob": "6b3b8e23f6dd99e3512091474c2c7527e5817d25",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/c1b_float.py",
+   "sha256": "2a14067cd0c629f5d9b18a56bf66e439acd9802dc62a166e5ff5f7e2d5726f5f"
+  },
+  "module:c1b_gauss": {
+   "git_blob": "61d756cb8dace8c1ed3adf3eb66f1132a62e7798",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/c1b_gauss.py",
+   "sha256": "3189208d6c4ce37ce7dd1e013caf58ae454f35211fd36154b2afa8b96cd9c43f"
+  },
+  "module:c1b_kernel": {
+   "git_blob": "b5b8dcf05724f067f2df337ab7900900be97dc40",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/c1b_kernel.py",
+   "sha256": "dfdc871b18ff132a95ed98d7354e3e95fbbc749cc473629923e4dec19bc4c41e"
+  },
+  "module:c1b_prov": {
+   "git_blob": "530b4b222bcb9d21a41f45ca094bfe2ca4cc5b6d",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/c1b_prov.py",
+   "sha256": "d12c2a2183e6636ec3fa1379db8024c5402f6b7e1f8cb6f7ad11b3ce6d20cf47"
+  },
+  "module:c1b_pw": {
+   "git_blob": "607fc7075446b1d8ca9853a6430f928ff4ae3e76",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/c1b_pw.py",
+   "sha256": "f10c2cf14691e56699aa823800381d799eb6bdbdf47fdfcf5f28e1f1abb839d0"
+  },
+  "module:c2b_certify": {
+   "git_blob": "2d92ba8ec15a8dffd563f36820ddbd1edbab7917",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/A0X/gen/c2b_certify.py",
+   "sha256": "1c7e111be4cf50f1644decd98d4ce8f20526741f18a596d551cffa1f7993e8de"
+  },
+  "module:c2b_common": {
+   "git_blob": "3960490f4b4165c14905a5a74452a9f78e2b823d",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/A0X/gen/c2b_common.py",
+   "sha256": "2f059c0aa5761d571da6af82b86d0ab788d1a608740116c9f2cd59fc025d49b5"
+  },
+  "module:c2b_exact": {
+   "git_blob": "49e72fe09a92c6f2776faf1203627a1c2f838f09",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/A0X/gen/c2b_exact.py",
+   "sha256": "fb94e7cec4d2379ab5999c056410fcfc58ac5efee06a074b0c756619d238c8e5"
+  },
+  "module:c2b_float": {
+   "git_blob": "fa24dfe4508d6eb1e8c0df997789925e1b5bbaa8",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/A0X/gen/c2b_float.py",
+   "sha256": "b33e3f908fc5166e80ebc7faf99a0aee537e93b5eba78ebe5ce9762aa7739d4f"
+  },
+  "module:c308_quarantine": {
+   "git_blob": "e103c196ef0e393d9a7bca038ca8ab38d5841f11",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/code/c308_quarantine.py",
+   "sha256": "72d529cc352208fe6dc9c2045d991a799eb0fcca2f2fe3b2969cd5b7554faa12"
+  },
+  "module:c7_gaussian": {
+   "git_blob": "be492720abb628184962b54440c99a971c8d9f0a",
+   "path": "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py",
+   "sha256": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
+  },
+  "module:decoy_gen": {
+   "git_blob": "621a7a56c142ef9656af021af36b535184227ddc",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/ASSEMBLY/decoy_gen.py",
+   "sha256": "457472689cfcb70761707cde027c9f1ee971dd6edec4261ecdc84dedeae61ed6"
+  },
+  "module:fp_c2_d5": {
+   "git_blob": "18403dbec85513355414beb6869746703f7bbda2",
+   "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/code/c2_d5_forecast.py",
+   "sha256": "bd7854bce2434215c0a72eeb825ff87db4c729e80b0e4d125911e806a084f06b"
+  },
+  "module:fp_dc": {
+   "git_blob": "a0a836fa83c6d85d02bd377e8f2dc3ebfcc436ef",
+   "path": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/deflated_consume.py",
+   "sha256": "ef5d0474183053bb7cde3075bda66f99211706a9bf7bf27e31fe994ff8b87e72"
+  },
+  "module:fp_km": {
+   "git_blob": "fbd624aaecbbfed4846970530e0c53db1f6d6a64",
+   "path": "level4/closure_proofs/p5y_k5_order3_readiness_audit/code/k5_minimality.py",
+   "sha256": "3a54f0fb290a9b8a07c861653d4399e6c588afdaef77ee51473f778c6c988885"
+  },
+  "module:fp_tcr": {
+   "git_blob": "ce101d175360a3a82b7eebc5a6ac4409a41f2f1d",
+   "path": "level4/closure_proofs/p5y_k5_lower_front_order3/code/tc_rule.py",
+   "sha256": "8d402d11f6fc06ea2af88e3d3a01e376fefbe8ebacd8418f772116010e57afd5"
+  },
+  "module:fp_tctr": {
+   "git_blob": "98f6eee4d867455065e20043fcf47ae54ffcad1e",
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/code/tct_rule.py",
+   "sha256": "f5a343e7f7bfb742d0a41c38512e27e7311d0919b38bcea0dfe98775c73d9a3e"
+  },
+  "module:fp_tpt": {
+   "git_blob": "c6d4cdde3f04c8012672a6d5bd03654f96693c00",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/E_assembly/tpt.py",
+   "sha256": "05cebc9cd3278e1099ed2faf0c2ca5b32ee155f85be93654a80892873e4beab8"
+  },
+  "module:frozen_path_loader": {
+   "git_blob": "26fdb8f7580d8a619861b312a381f78b49aeb763",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/ASSEMBLY/frozen_path_loader.py",
+   "sha256": "97c0feb34e6fc31f436adbe1e5afa871e5f3ddaf28f9726dcc89fe1ca5fac18a"
+  },
+  "module:rlr307_independent": {
+   "git_blob": "85397b5538bd0906e3f92f7312b573d71ad94404",
+   "path": "level4/closure_proofs/p5y_k5_cell307_rlr_r1/code/rlr307_independent.py",
+   "sha256": "91a75ea8f4c5a6183efc0eeec4eff3315abaafd92c4a4c8bc5d94c6d44cf94f4"
+  },
+  "module:rlr307_stage1": {
+   "git_blob": "cadb9f83d8be9f7ce5dd913fc1eb77b0f2e40ba8",
+   "path": "level4/closure_proofs/p5y_k5_cell307_rlr_r1/code/rlr307_stage1.py",
+   "sha256": "6fa9f69168d619a194c1e508e9bb264c01715998dc755e8bd481846758cf685f"
+  },
+  "module:tptb_tail": {
+   "git_blob": "1995004c6c499fb8c1af79e459bf684fe1bf47e4",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/ASSEMBLY/tptb_tail.py",
+   "sha256": "b373a8b4389b6e572a2297c069606c790b7e8bb6ede9e05619fc8308256862c2"
+  },
+  "module:vd_adapt": {
+   "git_blob": "3ffc0fef9d483eca4c823de7368bd4f54be08237",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/VERIFY/vd_adapt.py",
+   "sha256": "1b2acd616f3dc75b5cb812c0508977b001cd4f8d0518ca81513fcfb9907dc761"
+  },
+  "module:vd_pl": {
+   "git_blob": "0764c0b11d7723a4d1d6a699a468ba2a1018e005",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/VERIFY/vd_pl.py",
+   "sha256": "1f10c9506422adf11e001c05d39dda59c7081c595abae45a1540ab05e0aa1221"
+  },
+  "module:vd_verify": {
+   "git_blob": "2b50f8dd5c530b4e987cac66b4b8a4e37895392b",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/VERIFY/vd_verify.py",
+   "sha256": "cd4cec35e86d8036618a53c85d76f685d1475847af4fac9b879ba33c37cefc7f"
+  },
+  "qc06:A0_CERTS_MANIFEST": {
+   "git_blob": "53d97d31fa73d1622e184949edda0327048c2900",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/A0/certs/CERTS_MANIFEST.json",
+   "sha256": "af2555724786a42c3e40c2f2a2c97568e69d6fc92c77f57f671b1b63aa4c9355"
+  },
+  "qc06:C1B_SUPER_e3_d8_detA.json": {
+   "git_blob": "6063372233608796c0983d9f67a0bbf84d77c7e0",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/A0/certs/C1B_SUPER_e3_d8_detA.json",
+   "sha256": "01673b0cb451b3185bcbca1452a0d5c165093594b41cedc82222f91b7e68efaf"
+  },
+  "qc06:C2BX_SUB_e11_10_N20.json": {
+   "git_blob": "aeb28384afbbd8a1c2827833fe82322324516489",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/A0/certs/C2BX_SUB_e11_10_N20.json",
+   "sha256": "5510d1ba1ba53db30e223f2bd0fc1cdc88699d43ed4619387191448b92c97db3"
+  },
+  "qc06:C2BX_SUB_e3_N20_detA.json": {
+   "git_blob": "3b5391d09cbc6afff37a4cdc250c04d1ccc2236e",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/A0/certs/C2BX_SUB_e3_N20_detA.json",
+   "sha256": "04ae9d89ef8f063ff1b8e19e7d806586577e5c6c9e80349203d49668df5754a0"
+  },
+  "qc06:C2BX_SUPER_e11_10_N20.json": {
+   "git_blob": "dbe87adccdd758b956bfd02164d9db0ad53daeda",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/A0/certs/C2BX_SUPER_e11_10_N20.json",
+   "sha256": "e222e384468155beb64f4664197bcfe786b0212106a74dbfbb1639da5dda5bf3"
+  },
+  "qc06:C2BX_SUPER_e3_N20_detA.json": {
+   "git_blob": "5317275a309096d6ec9d16a977e81e046da73f85",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/A0/certs/C2BX_SUPER_e3_N20_detA.json",
+   "sha256": "87fd6dffbf9bfc2e4dcf6a92712c22838dbd138939a5844353c4f1b811db5e38"
+  },
+  "qc06:r_eval": {
+   "git_blob": "16efeb208f18670cad3b51601e66372d668108e0",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/reviews/scratch_A0_R1/r_eval.py",
+   "sha256": "2fdfe516ceb137f23658d5b0156ed88bdc41602f268e015923e77514eb8dd789"
+  },
+  "qualify:assembly_E4": {
+   "git_blob": "4c42c56af95c3d61d0d86551ea45bd5ad8349692",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/ASSEMBLY/controls.py",
+   "sha256": "801fb5ab3450407dd478ef26331f964a8cd27abee3c00768c3fc8a0c95946519"
+  },
+  "qualify:mc": {
+   "git_blob": "b486a5f695882ae9e23f88702234b97fc2daf0c3",
+   "path": "level4/closure_proofs/p5y_k5_cell307_rlr_r1/tests/test_rlr307_mc.py",
+   "sha256": "811c929acabbdde16ce181f22e66cd7ce9f840c7777add71c632140f7eb348fb"
+  },
+  "qualify:tail_patterns": {
+   "git_blob": "ab0104c6b534171d0969768810d7f0f8c1d05517",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/ledger/TAIL_FIGURE_PATTERNS.json",
+   "sha256": "0dc2addcd6ac667c6866736ab913a2513b6ec848636d2fbb04051d02ab49cbf5"
+  },
+  "qualify:theory_research": {
+   "git_blob": "2ee1a41bccd26c32f2bb150b5f2ad6df856ff3a9",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/theory/THEOREM_MB.md",
+   "sha256": "f1c767dccc0bb3738fcae350530d4dda13c8b9db482ffb25528376502f4d0d25"
+  }
+ },
+ "frozen_dirs": [
+  "code",
+  "protocol",
+  "theory",
+  "tests",
+  "config",
+  "errata",
+  "evidence_prefreeze"
+ ],
+ "frozen_files": {
+  "level4/closure_proofs/p5y_k5_cell308_mb_r1/BUILD_REPORT.md": {
+   "git_blob": "ad3bb85d2f266a4417452f9017521f59aaef2fc7",
+   "sha256": "2087e6724a9b6d650483cfa0954e90ba5634dab0e186b037e61e39b0935a317d"
+  },
+  "level4/closure_proofs/p5y_k5_cell308_mb_r1/code/mb308_a0core.py": {
+   "git_blob": "379469a2c4e3432a64ca28fe318a7fd803cb8816",
+   "sha256": "0873604379bb5008f385ed09c7ae2f0694a402a91881b6a9d2e45649af332de6"
+  },
+  "level4/closure_proofs/p5y_k5_cell308_mb_r1/code/mb308_consumer.py": {
+   "git_blob": "2ffdfa631551065e5b0440a0edd09d92ff1a64cd",
+   "sha256": "c233bdb6235cd8a44bcf187be7d6686a4684f8619bed21ade9130432c5c09188"
+  },
+  "level4/closure_proofs/p5y_k5_cell308_mb_r1/code/mb308_driver.py": {
+   "git_blob": "209f99db7b8946b93de36df9c060fdb6431caaae",
+   "sha256": "965a2a306dd564b16614fc0bc22583e663e5bfa99464dc7afbe2bc408ac265f9"
+  },
+  "level4/closure_proofs/p5y_k5_cell308_mb_r1/code/mb308_guard.py": {
+   "git_blob": "058f1a8f67c38df24d7667856ff5da3856718bcb",
+   "sha256": "882ce3fb86f4089081104e0fdbaf31c01b16e9a80065acd4e911f3010e6e06b1"
+  },
+  "level4/closure_proofs/p5y_k5_cell308_mb_r1/code/mb308_manifest.py": {
+   "git_blob": "ec71d8c1ad6124cda92762ec1f3f46e77514c76e",
+   "sha256": "fe80033d32df890b6dff187cf5ab876b46ad779e6c8eece60c138b0793b11170"
+  },
+  "level4/closure_proofs/p5y_k5_cell308_mb_r1/code/mb308_pinned.py": {
+   "git_blob": "e714650d79aa0bb6ad644784403b0ce01accb78f",
+   "sha256": "5c221a0e70a708c580f13e1cd622556930f047f3c0b302227a8d9b18c52220a2"
+  },
+  "level4/closure_proofs/p5y_k5_cell308_mb_r1/code/mb308_qualify.py": {
+   "git_blob": "bda40fa1a9fe663c8593a8d774ae646db6fcad2d",
+   "sha256": "ca221cf080a0d4343971903aeea8c069ec871795d6424bf1b2558ad407c96a94"
+  },
+  "level4/closure_proofs/p5y_k5_cell308_mb_r1/code/mb308_stage1.py": {
+   "git_blob": "518150ba19991894d6cdd2621f8e60ce9784313c",
+   "sha256": "23296f837eb7520b36c32bba08d238d940c14a8753e8ce8cadb05f0990f2ec98"
+  },
+  "level4/closure_proofs/p5y_k5_cell308_mb_r1/code/mb308_supply.py": {
+   "git_blob": "8c4463e7191bb267ff7e2f00603b9c1a4f61ff18",
+   "sha256": "af1a818b68459ada53773557e10153ae4ae3edc232d52e93fd19814e4da59b58"
+  },
+  "level4/closure_proofs/p5y_k5_cell308_mb_r1/config/QUALIFICATION_CASES.json": {
+   "git_blob": "594e5cc028b6032cb0a6291b28008cb6f89b0f78",
+   "sha256": "2283989bdc61acfb34f3136503614db2dbc6d4ce18c450b870198f10bdd6ba5f"
+  },
+  "level4/closure_proofs/p5y_k5_cell308_mb_r1/errata/C2B_ERRATA.md": {
+   "git_blob": "5d17e7572c8ea1a50cdb8b1a275ec28c434b97f9",
+   "sha256": "91bc3e4867479d28d6dab080db59bc30767b26c888af466727137a29285185b3"
+  },
+  "level4/closure_proofs/p5y_k5_cell308_mb_r1/evidence_prefreeze/DECOY_TIMING_PREFREEZE.json": {
+   "git_blob": "a9b135159622b522058539bb180db32ba39ae655",
+   "sha256": "0d6ded7f571753e91a11d09e3e778198b5ba3742bf6dd84e7c0fc0676e209f3f"
+  },
+  "level4/closure_proofs/p5y_k5_cell308_mb_r1/protocol/MB308_PROTOCOL.md": {
+   "git_blob": "8f8f23d172fc3f1e2d3acb7ec3cc86a1931f51ad",
+   "sha256": "2177100770748b8a2de5c98e6a3cf057b4f96e28d9172d6ee52f9eb5b17d0770"
+  },
+  "level4/closure_proofs/p5y_k5_cell308_mb_r1/tests/test_mb308_a0.py": {
+   "git_blob": "716575b4933c98ba3f30d15cc635ff55e2428c0a",
+   "sha256": "be7ca5a7f3e73432ee1d7dd7c2a597c6bc41ef09557643234c3a7b4c1c5b98eb"
+  },
+  "level4/closure_proofs/p5y_k5_cell308_mb_r1/tests/test_mb308_flows.py": {
+   "git_blob": "ed18b0c7c5c8a1cc066532256e0415257633e52d",
+   "sha256": "5a5c70c12754ff0ea4cdca20429661e0f16827ee8b6e926e741f55b8373cbd6a"
+  },
+  "level4/closure_proofs/p5y_k5_cell308_mb_r1/tests/test_mb308_guard.py": {
+   "git_blob": "bc463e3f4b0f0d6b79fd640e6db4d69c88c3034d",
+   "sha256": "a64ac7865ec2af48eb18531b48aacac19bf0329d7d31e5ea9b0e390a588fd52f"
+  },
+  "level4/closure_proofs/p5y_k5_cell308_mb_r1/tests/test_mb308_tptb.py": {
+   "git_blob": "6070ca944ef2de0de6ec28d5192cfc6cadd5faba",
+   "sha256": "44ea60ac0e28222c365a78fd6c8a92b7f8f72ab2ebc0e70619dcde05e07faec9"
+  },
+  "level4/closure_proofs/p5y_k5_cell308_mb_r1/tests/test_mb308_twosided.py": {
+   "git_blob": "bf34580a1d555cde785303dbb987a6d33e9c7183",
+   "sha256": "e71b12fa7c29261ad0b4ad561c24133a54cc60464d0fc0ca68ca56d055afc8d8"
+  },
+  "level4/closure_proofs/p5y_k5_cell308_mb_r1/theory/THEOREM_MB.md": {
+   "git_blob": "2ee1a41bccd26c32f2bb150b5f2ad6df856ff3a9",
+   "sha256": "f1c767dccc0bb3738fcae350530d4dda13c8b9db482ffb25528376502f4d0d25"
+  }
+ },
+ "guard": {
+  "admitted_pairs": 37,
+  "cell308_cover": [
+   "1882413/1000000",
+   "19839101/10000000"
+  ]
+ },
+ "helper_sha256": {
+  "mb308_a0core.py": "0873604379bb5008f385ed09c7ae2f0694a402a91881b6a9d2e45649af332de6",
+  "mb308_consumer.py": "c233bdb6235cd8a44bcf187be7d6686a4684f8619bed21ade9130432c5c09188",
+  "mb308_guard.py": "882ce3fb86f4089081104e0fdbaf31c01b16e9a80065acd4e911f3010e6e06b1",
+  "mb308_pinned.py": "5c221a0e70a708c580f13e1cd622556930f047f3c0b302227a8d9b18c52220a2",
+  "mb308_stage1.py": "23296f837eb7520b36c32bba08d238d940c14a8753e8ce8cadb05f0990f2ec98",
+  "mb308_supply.py": "af1a818b68459ada53773557e10153ae4ae3edc232d52e93fd19814e4da59b58"
+ },
+ "independent_F2_pin": {
+  "git_blob_prefix": "8aacb252b57b",
+  "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/INDEP/mb_independent.py",
+  "sha256": "32aa83a866005ad737424225ff8bfcb3898ebb79b3598e37d80a1e89a16ca4c0"
+ },
+ "lineage": [
+  [
+   "5a94568af69f775eaabdeb895dea19b9bf664935",
+   "D stage"
+  ],
+  [
+   "ae4cbc2c",
+   "coverage map r5"
+  ],
+  [
+   "a15d083b009868e38a5bd5a808f38f19e6ab4b92",
+   "floor r2"
+  ],
+  [
+   "3fadb422eaba97123d46e98b9e80277a62a042c8",
+   "REPLACEMENT_FLOOR_ACCEPTED"
+  ],
+  [
+   "9c2cbf21",
+   "CELL306_NOT_ADOPTED"
+  ],
+  [
+   "c5324a78",
+   "ADJUDICATION_ACCEPTED"
+  ],
+  [
+   "d3b60795",
+   "FREEZE_READY"
+  ],
+  [
+   "7f45e048c39023f4805b21a461650fd332af951f",
+   "morning handover"
+  ],
+  [
+   "b73b9449",
+   "CELL307_CLOSED_UNDER_RLR"
+  ],
+  [
+   "33185113",
+   "charter"
+  ],
+  [
+   "bfa9ad3c",
+   "Theorem MB r1"
+  ],
+  [
+   "a7014669",
+   "stream INDEP"
+  ],
+  [
+   "0292d654",
+   "stream INDEP_TUPLE"
+  ],
+  [
+   "e042c8d1",
+   "A0 certifier review"
+  ],
+  [
+   "f42fef40",
+   "incident-independence review"
+  ],
+  [
+   "8da57f89",
+   "incident-review conditions"
+  ],
+  [
+   "58f190dc",
+   "stream VERIFY follow-up"
+  ],
+  [
+   "55d3719c",
+   "pre-freeze formal build"
+  ],
+  [
+   "fc4eeeee",
+   "stream-A0 certificates"
+  ],
+  [
+   "cc249872",
+   "protocol draft p0"
+  ]
+ ],
+ "module_pins": {
+  "c1b_certpw": {
+   "git_blob_prefix": "807b64fed49a",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/c1b_certpw.py",
+   "sha256": "48080dd4df193a1474113ea792ab550fe325f51cb0e4d0e1c8a3e3bebd195c25"
+  },
+  "c1b_float": {
+   "git_blob_prefix": "6b3b8e23f6dd",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/c1b_float.py",
+   "sha256": "2a14067cd0c629f5d9b18a56bf66e439acd9802dc62a166e5ff5f7e2d5726f5f"
+  },
+  "c1b_gauss": {
+   "git_blob_prefix": "61d756cb8dac",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/c1b_gauss.py",
+   "sha256": "3189208d6c4ce37ce7dd1e013caf58ae454f35211fd36154b2afa8b96cd9c43f"
+  },
+  "c1b_kernel": {
+   "git_blob_prefix": "b5b8dcf05724",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/c1b_kernel.py",
+   "sha256": "dfdc871b18ff132a95ed98d7354e3e95fbbc749cc473629923e4dec19bc4c41e"
+  },
+  "c1b_prov": {
+   "git_blob_prefix": "530b4b222bcb",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/c1b_prov.py",
+   "sha256": "d12c2a2183e6636ec3fa1379db8024c5402f6b7e1f8cb6f7ad11b3ce6d20cf47"
+  },
+  "c1b_pw": {
+   "git_blob_prefix": "607fc7075446",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/c1b_pw.py",
+   "sha256": "f10c2cf14691e56699aa823800381d799eb6bdbdf47fdfcf5f28e1f1abb839d0"
+  },
+  "c2b_certify": {
+   "git_blob_prefix": "2d92ba8ec15a",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/A0X/gen/c2b_certify.py",
+   "sha256": "1c7e111be4cf50f1644decd98d4ce8f20526741f18a596d551cffa1f7993e8de"
+  },
+  "c2b_common": {
+   "git_blob_prefix": "3960490f4b41",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/A0X/gen/c2b_common.py",
+   "sha256": "2f059c0aa5761d571da6af82b86d0ab788d1a608740116c9f2cd59fc025d49b5"
+  },
+  "c2b_exact": {
+   "git_blob_prefix": "49e72fe09a92",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/A0X/gen/c2b_exact.py",
+   "sha256": "fb94e7cec4d2379ab5999c056410fcfc58ac5efee06a074b0c756619d238c8e5"
+  },
+  "c2b_float": {
+   "git_blob_prefix": "fa24dfe4508d",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/A0X/gen/c2b_float.py",
+   "sha256": "b33e3f908fc5166e80ebc7faf99a0aee537e93b5eba78ebe5ce9762aa7739d4f"
+  },
+  "c308_quarantine": {
+   "git_blob_prefix": "e103c196ef0e",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/code/c308_quarantine.py",
+   "sha256": "72d529cc352208fe6dc9c2045d991a799eb0fcca2f2fe3b2969cd5b7554faa12"
+  },
+  "c7_gaussian": {
+   "git_blob_prefix": "be492720abb6",
+   "path": "level4/closure_proofs/p5y_k5_tail_c7_e2_lambda309/code/c7_gaussian.py",
+   "sha256": "bd73b5b46766ca4272cdf5db3c7258e45e81599e712f9984cd03a5455cea9815"
+  },
+  "decoy_gen": {
+   "git_blob_prefix": "621a7a56c142",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/ASSEMBLY/decoy_gen.py",
+   "sha256": "457472689cfcb70761707cde027c9f1ee971dd6edec4261ecdc84dedeae61ed6"
+  },
+  "fp_c2_d5": {
+   "git_blob_prefix": "18403dbec855",
+   "path": "level4/closure_proofs/p5y_k5_tail_c2_closure/code/c2_d5_forecast.py",
+   "sha256": "bd7854bce2434215c0a72eeb825ff87db4c729e80b0e4d125911e806a084f06b"
+  },
+  "fp_dc": {
+   "git_blob_prefix": "a0a836fa83c6",
+   "path": "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/deflated_consume.py",
+   "sha256": "ef5d0474183053bb7cde3075bda66f99211706a9bf7bf27e31fe994ff8b87e72"
+  },
+  "fp_km": {
+   "git_blob_prefix": "fbd624aaecbb",
+   "path": "level4/closure_proofs/p5y_k5_order3_readiness_audit/code/k5_minimality.py",
+   "sha256": "3a54f0fb290a9b8a07c861653d4399e6c588afdaef77ee51473f778c6c988885"
+  },
+  "fp_tcr": {
+   "git_blob_prefix": "ce101d175360",
+   "path": "level4/closure_proofs/p5y_k5_lower_front_order3/code/tc_rule.py",
+   "sha256": "8d402d11f6fc06ea2af88e3d3a01e376fefbe8ebacd8418f772116010e57afd5"
+  },
+  "fp_tctr": {
+   "git_blob_prefix": "98f6eee4d867",
+   "path": "level4/closure_proofs/p5y_k5_m5_tail_closure/code/tct_rule.py",
+   "sha256": "f5a343e7f7bfb742d0a41c38512e27e7311d0919b38bcea0dfe98775c73d9a3e"
+  },
+  "fp_tpt": {
+   "git_blob_prefix": "c6d4cdde3f04",
+   "path": "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/E_assembly/tpt.py",
+   "sha256": "05cebc9cd3278e1099ed2faf0c2ca5b32ee155f85be93654a80892873e4beab8"
+  },
+  "frozen_path_loader": {
+   "git_blob_prefix": "26fdb8f7580d",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/ASSEMBLY/frozen_path_loader.py",
+   "sha256": "97c0feb34e6fc31f436adbe1e5afa871e5f3ddaf28f9726dcc89fe1ca5fac18a"
+  },
+  "rlr307_independent": {
+   "git_blob_prefix": "85397b5538bd",
+   "path": "level4/closure_proofs/p5y_k5_cell307_rlr_r1/code/rlr307_independent.py",
+   "sha256": "91a75ea8f4c5a6183efc0eeec4eff3315abaafd92c4a4c8bc5d94c6d44cf94f4"
+  },
+  "rlr307_stage1": {
+   "git_blob_prefix": "cadb9f83d8be",
+   "path": "level4/closure_proofs/p5y_k5_cell307_rlr_r1/code/rlr307_stage1.py",
+   "sha256": "6fa9f69168d619a194c1e508e9bb264c01715998dc755e8bd481846758cf685f"
+  },
+  "tptb_tail": {
+   "git_blob_prefix": "1995004c6c49",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/ASSEMBLY/tptb_tail.py",
+   "sha256": "b373a8b4389b6e572a2297c069606c790b7e8bb6ede9e05619fc8308256862c2"
+  },
+  "vd_adapt": {
+   "git_blob_prefix": "3ffc0fef9d48",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/VERIFY/vd_adapt.py",
+   "sha256": "1b2acd616f3dc75b5cb812c0508977b001cd4f8d0518ca81513fcfb9907dc761"
+  },
+  "vd_verify": {
+   "git_blob_prefix": "2b50f8dd5c53",
+   "path": "level4/closure_proofs/p5y_k5_cell308_research/streams/VERIFY/vd_verify.py",
+   "sha256": "cd4cec35e86d8036618a53c85d76f685d1475847af4fac9b879ba33c37cefc7f"
+  }
+ },
+ "outcomes": [
+  "CELL308_CLOSED_UNDER_MB",
+  "CELL308_NOT_CLOSED_UNDER_MB",
+  "CELL308_EXECUTION_INDETERMINATE"
+ ],
+ "post_freeze_dirs": [
+  "qualification",
+  "review",
+  "authorization",
+  "evidence",
+  "adjudication",
+  "postexec"
+ ],
+ "route": "MB",
+ "rules": {
+  "D1_sub_block_max_width": "1/100",
+  "D2_hull_bits": 20,
+  "D3_rlr_ladder": [
+   4,
+   6,
+   8
+  ],
+  "D4_c1b_d": [
+   8,
+   10,
+   12
+  ],
+  "D4_c2b_N": [
+   20,
+   40,
+   80
+  ],
+  "decision": "Gamma_dec = g_hi + max(P_B primary, P_hi F2) < 0 exact (Gamma_dec = 0 is NOT closed)",
+  "members": [
+   "S_I1",
+   "DvM_C1",
+   "DvM_C2",
+   "D14M",
+   "G"
+  ],
+  "pw_flags": [
+   true,
+   false
+  ],
+  "rlr_flags": [
+   true,
+   true
+  ]
+ },
+ "schema": "rebaseguard.p5y.k5.cell308-mb-r1.freeze-manifest.v1",
+ "scope": "CLOSURE_ONLY"
+}
