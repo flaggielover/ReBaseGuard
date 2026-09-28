@@ -1,0 +1,56 @@
+{
+ "checks": {
+  "1_result_blob": {
+   "blob": "041611126a32d7064f6a9b1dd6a3439c3f3e15e7",
+   "blob_id_recomputed": true,
+   "equals_pending_ref": true,
+   "mode": "100644"
+  },
+  "1_result_self_hash": true,
+  "2_seal_commit": {
+   "changes_only_result": true,
+   "seal": "b26c64a74d0ed7a7535259fa058f9ab4a39dedd2"
+  },
+  "3_seal_parent_is_grant": true,
+  "4_consumed_marker": {
+   "marker": "5390b06dc92c2580b92d743ca82629473e28ca90",
+   "names_grant": true
+  },
+  "5_exactly_one_execution": {
+   "refs": [
+    "refs/p5y-k5-cell307-rlr-r1/pending-result",
+    "refs/p5y-k5-cell307-rlr-r1/target-consumed"
+   ],
+   "result_commits_in_history": [
+    "b26c64a74d0ed7a7535259fa058f9ab4a39dedd2"
+   ],
+   "status": "TARGET_EVALUATED",
+   "target_evaluations": 1
+  },
+  "6_second_execution_refused": {
+   "exit": 2,
+   "refused_before_anything": true,
+   "stdout": "RLR307 REFUSED CONSUMED: a ref exists under refs/p5y-k5-cell307-rlr-r1/"
+  },
+  "7_seal_only_read_only": {
+   "exit": 0,
+   "head_unchanged": true,
+   "nothing_computed": true,
+   "stdout": "RLR307 SEALED b26c64a74d0ed7a7535259fa058f9ab4a39dedd2 (seal-only; status TARGET_EVALUATED; nothing computed)"
+  },
+  "7b_worktree_copy_equals_sealed_bytes": true,
+  "8_r5_unchanged_no_r6": {
+   "r5_blob": "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
+   "r5_ok": true,
+   "r6_paths_any_ref": []
+  },
+  "9_no_other_cell_evaluated": {
+   "changes_outside_namespace": [],
+   "other_marker_refs": [],
+   "result_cell": 307
+  }
+ },
+ "note": "status and structure only; this file quotes no target value",
+ "pass": true,
+ "schema": "rebaseguard.p5y.k5.cell307-rlr-r1.postexec.v1"
+}
