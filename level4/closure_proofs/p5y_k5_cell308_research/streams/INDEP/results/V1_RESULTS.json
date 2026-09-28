@@ -1,0 +1,293 @@
+{
+ "schema": "F2_V1_RESULTS/1",
+ "module_revision": "F2-r1",
+ "n_checks": 59,
+ "n_pass": 59,
+ "all_pass": true,
+ "fuzz_stats": {
+  "cases": 154,
+  "refused_C6": 6,
+  "split_pieces": 87,
+  "cap_pieces": 167,
+  "profile_pieces": 416,
+  "max_width_log2": -389,
+  "interior_points": 2010,
+  "self_controls": {
+   "endpoint_only": 1,
+   "flip_t": 55,
+   "drop_piece_end": 28
+  }
+ },
+ "checks": [
+  {
+   "name": "L1 dv_prime hand",
+   "pass": true
+  },
+  {
+   "name": "L1 dv_prime no Abar",
+   "pass": true
+  },
+  {
+   "name": "L1 dv_prime INF Abar",
+   "pass": true
+  },
+  {
+   "name": "L1 refuses float",
+   "pass": true,
+   "why": "Abar: type float refused (exact int / Fraction / 'p/q' only)"
+  },
+  {
+   "name": "L1 refuses D_lo=0",
+   "pass": true,
+   "why": "D_lo must be > 0 (got 0)"
+  },
+  {
+   "name": "L2 dv_prime_M Ubar",
+   "pass": true
+  },
+  {
+   "name": "L2 dv_prime_M Ubar=INF equals L1",
+   "pass": true
+  },
+  {
+   "name": "L2 dv_prime_M + DM",
+   "pass": true
+  },
+  {
+   "name": "L2 DM needs tau_a_lo",
+   "pass": true,
+   "why": "dv_prime_M: dlo_refresh requires tau_a_lo"
+  },
+  {
+   "name": "L2 refuses float Ubar (non-certified)",
+   "pass": true,
+   "why": "Ubar: type float refused (exact int / Fraction / 'p/q' only)"
+  },
+  {
+   "name": "L3 d14_M hand",
+   "pass": true
+  },
+  {
+   "name": "L3 d14_M + DM hand",
+   "pass": true
+  },
+  {
+   "name": "L3 DM never lowers D_lo",
+   "pass": true
+  },
+  {
+   "name": "L3 d14_M G caps + C3 A0 slot",
+   "pass": true
+  },
+  {
+   "name": "L3 refuses missing input",
+   "pass": true,
+   "why": "d14_M: missing B-uniform inputs ['L2_up']"
+  },
+  {
+   "name": "L4 lemma_g hand",
+   "pass": true
+  },
+  {
+   "name": "L5 envelope",
+   "pass": true
+  },
+  {
+   "name": "L5 envelope leading None",
+   "pass": true
+  },
+  {
+   "name": "L5 refuses non-increasing drifts",
+   "pass": true,
+   "why": "envelope: block drifts must be strictly increasing"
+  },
+  {
+   "name": "L5 band guard fires on a block drift in the band",
+   "pass": true,
+   "why": "RESEARCH_BAND_GUARD: drift set meets the quarantine band or its mirror"
+  },
+  {
+   "name": "L6 block_supply",
+   "pass": true
+  },
+  {
+   "name": "L6 refuses missing S_I1",
+   "pass": true,
+   "why": "block_supply: the committed cell-level supply S_I1 must be present"
+  },
+  {
+   "name": "L7 ladder",
+   "pass": true
+  },
+  {
+   "name": "L7 ladder no certified rung -> None",
+   "pass": true
+  },
+  {
+   "name": "L9 CLOSED",
+   "pass": true
+  },
+  {
+   "name": "L9 NOT_CLOSED",
+   "pass": true
+  },
+  {
+   "name": "L9 UNDECIDED",
+   "pass": true
+  },
+  {
+   "name": "L9 boundary Gamma_hi = 0 is not CLOSED",
+   "pass": true
+  },
+  {
+   "name": "kappa check accepts kappa1=7978845609/1e10, kappa2=4*0.24197072451914337",
+   "pass": true
+  },
+  {
+   "name": "kappa check rejects values below sqrt(2/pi) / 4 phi(1)",
+   "pass": true
+  },
+  {
+   "name": "dyadic hull outward",
+   "pass": true
+  },
+  {
+   "name": "L8(a) single block = TPT closed form 41/6",
+   "pass": true,
+   "got": "41/6"
+  },
+  {
+   "name": "L8(a') identical triples on 4 blocks = 41/6",
+   "pass": true
+  },
+  {
+   "name": "L8(b) constant profile = C5-T 27/2",
+   "pass": true
+  },
+  {
+   "name": "L8(b') cap-bound profile = C5-T 27/2",
+   "pass": true
+  },
+  {
+   "name": "L8(c) decreasing block constants: piece-end rule 17/2",
+   "pass": true,
+   "argmax": "{'side': 'R', 'piece': 0, 's_end': Fraction(1, 2)}"
+  },
+  {
+   "name": "L8(c) endpoint-only rule fails (49/8 < 17/2)",
+   "pass": true
+  },
+  {
+   "name": "L8(d) irrational crossing bracket contains 23 - 20 sqrt2/3",
+   "pass": true,
+   "width_log2": "399"
+  },
+  {
+   "name": "L8(d') irrational crossing below band contains 19/4096 - sqrt2/768",
+   "pass": true
+  },
+  {
+   "name": "L8(e) rational crossing exact",
+   "pass": true
+  },
+  {
+   "name": "L8 refuses E != [e0-rho, e0+rho] (C5)",
+   "pass": true,
+   "why": "CELL_IDENTITY: E = [e0 - rho, e0 + rho] does not hold as an exact rational identity (C5)"
+  },
+  {
+   "name": "L8 refuses x_lo = 0",
+   "pass": true,
+   "why": "x_lo must be > 0"
+  },
+  {
+   "name": "L8 refuses float",
+   "pass": true,
+   "why": "src[0].f_F: type float refused (exact int / Fraction / 'p/q' only)"
+  },
+  {
+   "name": "L8 C6 refuses empty band at s=0",
+   "pass": true,
+   "why": "C6_EMPTY_BAND: side R piece s in [0, 1] (block 0) at inner end"
+  },
+  {
+   "name": "L8 C6 refuses empty band at an OUTER piece inner end (s=0 check passes)",
+   "pass": true,
+   "why": "C6_EMPTY_BAND: side R piece s in [1/2, 1] (block 2) at inner end"
+  },
+  {
+   "name": "L8 refuses tiling gap",
+   "pass": true,
+   "why": "blocks do not tile [x_lo, x_hi] (gap/overlap between 0 and 1)"
+  },
+  {
+   "name": "L8 refuses negative block constant",
+   "pass": true,
+   "why": "block[0].A2 must be >= 0 (got -1)"
+  },
+  {
+   "name": "L8 refuses m label mismatch",
+   "pass": true,
+   "why": "m = 2 does not match the number of source terms (1)"
+  },
+  {
+   "name": "L8 refuses unordered Hhat",
+   "pass": true,
+   "why": "src[0].Hhat: unordered interval [1, 0]"
+  },
+  {
+   "name": "L8 refuses M_consumed != mag(H_final)",
+   "pass": true,
+   "why": "M_consumed != mag(H_final) (N7 / C2 dominance premise)"
+  },
+  {
+   "name": "L8 accepts M_consumed == mag(H_final)",
+   "pass": true
+  },
+  {
+   "name": "L8 research band guard refuses a band cell",
+   "pass": true,
+   "why": "RESEARCH_BAND_GUARD: drift set meets the quarantine band or its mirror"
+  },
+  {
+   "name": "L8 refuses a negative-side cell (x_lo <= 0)",
+   "pass": true,
+   "why": "x_lo must be > 0"
+  },
+  {
+   "name": "L8 fuzz: no accepted case has an empty inner end (C6 two-sided)",
+   "pass": true
+  },
+  {
+   "name": "L8 fuzz: every C6 refusal independently justified",
+   "pass": true,
+   "n": "6"
+  },
+  {
+   "name": "L8 fuzz: every accepted case sound (width < 2^-150, Darboux-consistent, <= C5-T, interior <= P_hi, TPT dominance, monotone)",
+   "pass": true,
+   "cases": "154",
+   "refused_C6": "6",
+   "split_pieces": "87",
+   "cap_pieces": "167",
+   "profile_pieces": "416",
+   "max_width_log2": "-389",
+   "interior_points": "2010"
+  },
+  {
+   "name": "V1 self-control: fuzz detects planted L8 mutant endpoint_only",
+   "pass": true,
+   "detections": "1"
+  },
+  {
+   "name": "V1 self-control: fuzz detects planted L8 mutant flip_t",
+   "pass": true,
+   "detections": "55"
+  },
+  {
+   "name": "V1 self-control: fuzz detects planted L8 mutant drop_piece_end",
+   "pass": true,
+   "detections": "28"
+  }
+ ]
+}

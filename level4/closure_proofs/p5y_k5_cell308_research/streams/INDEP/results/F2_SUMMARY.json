@@ -1,0 +1,54 @@
+{
+ "schema": "F2_SUMMARY/1",
+ "stream": "F2 independent reconstruction of THEOREM_MB r1 composition layers",
+ "code_sha256": {
+  "compare_primary.py": "d318fd5825cc417a2e7f7136b545fe0d3f7a5757595d2050200002b2d6e081e1",
+  "mb_independent.py": "32aa83a866005ad737424225ff8bfcb3898ebb79b3598e37d80a1e89a16ca4c0",
+  "shared_surface.py": "2aca2ee06142daa99720c395e19605aab4d32ab5a10a22de2ad8ee61fcdf3ee4",
+  "v1_synthetic.py": "8158bea68ca3926f31305ebc557c8c67e7c29f800e213d64b0aac2a05abcadb7"
+ },
+ "mb_independent_pre_read_sha256": "32aa83a866005ad737424225ff8bfcb3898ebb79b3598e37d80a1e89a16ca4c0",
+ "mb_independent_unchanged_since_pre_read": true,
+ "V1": {
+  "n_checks": 59,
+  "n_pass": 59,
+  "fuzz": {
+   "cases": 154,
+   "refused_C6": 6,
+   "split_pieces": 87,
+   "cap_pieces": 167,
+   "profile_pieces": 416,
+   "max_width_log2": -389,
+   "interior_points": 2010,
+   "self_controls": {
+    "endpoint_only": 1,
+    "flip_t": 55,
+    "drop_piece_end": 28
+   }
+  }
+ },
+ "V2": {
+  "L8_decoys_all_agree": true,
+  "other_layers_all_agree": true
+ },
+ "V3": {
+  "all_non_equivalent_mutants_detected": true,
+  "two_sided_L8": {
+   "L8_large": 915,
+   "L8_small": 1120
+  },
+  "classes": 23
+ },
+ "shared_surface": {
+  "static_non_stdlib": [],
+  "runtime_non_stdlib": [],
+  "identical_code_lines_total": 7,
+  "max_ident_6gram_jaccard": 0.0163
+ },
+ "quarantine": {
+  "target_evaluations": 0,
+  "tail_numbers_written": 0,
+  "band_drifts_evaluated": 0,
+  "scan_verdict": "PASS (0 findings, INDEP report-only none)"
+ }
+}
