@@ -1,0 +1,17 @@
+Coordinator: the RLR completion review is committed at NS/reviews/REVIEW_RLR_R2.md (ACCEPTED_WITH_CONDITIONS, no soundness blockers). Read §5 in full. Implement conditions C1–C4 in NS/streams/C_308/LR/cusum/ under the same rules: preamble, S8, amendments 1–3, declared non-target drifts only, guard_drift everywhere. Work in small steps and cap each heavy run with `timeout` at ≤ 20 min.
+
+C1: correct C1B_ROUTE_SUMMARY.md:91 (the e = 3, d = 6 (i′) ladder failures) and :269 (the continuity / null-set reasoning). Remove every statement that RLR is never worse than Dv′ for certified ρ; only the min is guaranteed.
+
+C2: implement the combined supply in load-bearing code:
+- at least the constant-level componentwise min of RLR with Dv′ r2 and Lemma G (ρ-level min with the Dv′ factors if feasible);
+- add a test that CAN fail, e.g. a planted RLR value above Dv′ that the min must replace, together with a mutant without the min that the test catches.
+
+C3: block-path controls. Push class-(a) planted-invalid certificates through the block (e_r > 0) checkers, with a positive control:
+- a supersolution violation;
+- an (i′) quadratic violation, including a discriminant-only violation;
+- a violation at an interior drift of the block, with an exact witness.
+Declare the block candidate family. Also assert the preconditions of N1′ (V(atom) < 2) and N4 (C(atom) > 0) in code.
+
+C4: re-pin all load-bearing hashes. Make every output JSON record the code hashes and CLI flags (TIGHT_CT, BLOCK_LIGHT). Regenerate the evidence once with the pinned code. If a full regeneration exceeds the time budget, regenerate what you can and list the rest as NOT REGENERATED.
+
+Do NOT place any value or ratio next to any tail number, and keep the validation-drift value tables out of any summary headline. Send a short final report.

@@ -1,0 +1,8 @@
+Coordinator: you stalled at the 600 s watchdog while writing. No python processes of yours are running. Resume from your scratch PROGRESS.md and your partial NS/reviews/REVIEW_RLR_R1.md.
+
+Finish in SMALL steps:
+- append one section per tool call and keep each output short;
+- re-launch any interrupted check in the background with a `timeout`, and poll it briefly;
+- if a check cannot finish within ~15 minutes, record it as NOT RUN and say why.
+
+End the file with exactly one verdict line, `ROUTE_REVIEW: ...`, from your allowed set. Then return your ≤200-word summary. All previous rules bind.

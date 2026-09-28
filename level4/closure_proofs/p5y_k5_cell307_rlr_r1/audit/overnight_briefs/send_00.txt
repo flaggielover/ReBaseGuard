@@ -1,0 +1,15 @@
+Coordinator note for your item 2(4) (direct bound on |F_r'''(e0)(a)|). It is a suggestion to evaluate, not an instruction to adopt; same quarantine rules apply.
+
+Candidate "atom-direct LR Taylor" (ADLR) enclosure:
+- F_r(e)(a) = E_a[Σ_{n<τ} S_r(X_n; e)], with S_r depending on e.
+- By Leibniz + the likelihood-ratio identity (∂^j R f)(a) = E_a[Σ_{n<τ} f(X_n)·H_j(M_n, n)], where H_0 = 1, H_1 = M, H_2 = M² − n, H_3 = M³ − 3nM, H_4 = M⁴ − 6nM² + 3n² for the Gaussian score (check these: Hermite-type LR weights):
+    |F_r^{(k)}(e)(a)| ≤ Σ_{j=0..k} C(k,j)·Λ_j(e)·‖S_r^{(k−j)}(e)‖,   Λ_j := E_a[Σ_{n<τ}|H_j(M_n,n)|]   (Λ_0 = Λ).
+- Hence an enclosure F_r''(t)(a) ∈ Ĥ_r(a) ± [rad_TC(0) + s·B3_r + (s²/2)·B4_r], where:
+  - rad_TC(0) = A0 f_H + 2A1 f_D + A2 f_F (theorem AD midpoint);
+  - B3_r ≥ |F_r'''(e0)(a)| via the formula;
+  - B4_r ≥ sup_cell |F_r''''(u)(a)| via the formula with cell-uniform σ's.
+- This uses NO candidate payloads for orders 3–4: only source-derivative sups σ_n(r), which are committed tower inputs, and operator-only LR constants Λ_j.
+
+Compare structurally with TC-T's s-coefficient A0·f_G = A0(σ3 + 3k1 s_H + 3k2 s_D + k3 s_F), where the ADLR analogue is σ3Λ + 3σ2Λ_1 + 3σ1Λ_2 + σ0Λ_3. Also check the validity conditions, including the e-dependence of S_r and uniformity of Λ_j over the cell.
+
+Validate on exact FSM fixtures (ov_fixtures; general score ∂_e log p). Report honestly whether it is tighter, looser or incomparable, and in which regime. The LR theory stream (NS/streams/C_308/LR/) owns Λ_1/Λ_2 certification; you may reference it. Do not evaluate anything on 305–309 or at drifts in [1.2, 2.6].

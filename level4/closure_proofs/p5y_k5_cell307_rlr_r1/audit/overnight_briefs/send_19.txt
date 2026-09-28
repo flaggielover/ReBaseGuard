@@ -1,0 +1,12 @@
+Coordinator: the repair verification is committed at NS/reviews/REVIEW_RLR_R3_VERIFY.md (CONFIRMED_WITH_NOTES). Read its §2 and notes N2–N5. Fix the following in your files. The same rules bind, including the latent-proxy rule: quote no validation-drift values in any summary text.
+
+N5: c1b_test_combined.py is one-sided. It asserts SUPPLY ≤ min(RLR, Dv′, G) and SUPPLY > 0, so a deliberately unsound mutant that returns too small a supply passes.
+- Make the test two-sided: assert SUPPLY EQUALS an independent recomputation of the declared combination (exact rational equality, term by term per D14).
+- Add at least two "too small" mutants, e.g. supply × 1/2 and dropping a term, and show the test catches them.
+- Keep the existing mutants.
+
+N3: 12 pre-pin validation/C1B_*.json files are still live at HEAD. Move them into streams/C_308/LR/cusum/logs/prepin/ with `git mv`-equivalent file moves. You may not run git, so move the files on disk; the coordinator commits. Update any reference to them.
+
+N2: add a provenance block to C1B_R2_PREPIN_COMPARISON.json.
+
+Re-run the test, then send a short report listing the moved files.

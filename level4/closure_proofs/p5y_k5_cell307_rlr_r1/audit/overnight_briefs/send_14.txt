@@ -1,0 +1,13 @@
+Coordinator: the global integrity review is committed at NS/reviews/REVIEW_GLOBAL_INTEGRITY_R1.md. Read §1.1 C-10/C-11, F7, F11 (C1a parts) and F18. Repair your own files only (NS/streams/C_308/LR/THEOREM_LR.md, lr_fsm.py, C1LR_ROUTE_SUMMARY.md, PROGRESS.md), under the same rules (preamble, S8, amendments 1–2).
+
+(1) `neg_t_flip` (lr_fsm.py:272-273) only compares U20−U01 with != and never exercises moment_totals. A sub-review corrupted U01; identity 2 broke on 6/6 seeds while this control still reported "detected". Replace it with a corruption inside moment_totals that must break the identity check.
+
+(2) Add an A < 0 plant for check_quadratic_cert.
+
+(3) Correct THEOREM_LR:398, C1LR summary :52 and PROGRESS :50.
+
+(4) C1LR_ROUTE_SUMMARY.md:40-41 and THEOREM_LR.md:3 claim VALIDATED_NON_TARGET while G6 is unmet. Mark the status "VALIDATED_NON_TARGET on FSM; G6 pending REVIEW_RLR_R1".
+
+(5) Add guards to identity_checks, block_enclosures and build_block_cert.
+
+Re-run lr_fsm.py, regenerate C1LR_*.json and send a short report. Do not touch NS/streams/C_308/LR/cusum/: a separate review of it is running.
