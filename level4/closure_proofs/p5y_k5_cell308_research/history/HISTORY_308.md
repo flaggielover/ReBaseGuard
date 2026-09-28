@@ -21,12 +21,14 @@
 | id | fact | source |
 |---|---|---|
 | H1.1 | C2 D5 forecast, supply S_I1 (provenance C2 for A0, A1, A2), frozen direct clause: Γ = 0.10270008356594545, pass = false; A0 = 5.332021179343055, A1 = 23.91517098849144, A2 = 246.74977924152824; M_after = 3.4524564789357517; required uniform atom-constant reduction 1.5002877825423833 | `LP/p5y_k5_tail_c2_closure/evidence/phase_d5/C2_D5_FORECAST.json` cells["308"] |
-| H1.2 | C3 operator-mixed supply (REJECTED campaign; not admissible under floor r2): Γ = +0.094564; A0 certified 5.2185 (= τ/D_lo); whole-kernel Ā 7.2179 | `LP/p5y_k5_tail_c3_closure/evidence/adjudication/C3_ADJUDICATION.md` §K (on ref p5y-k5-tail-c3 @ 019ecce0) |
+| H1.2 | Operator-mixed supply (not admissible under floor r2): Γ = +0.094564; A0 certified 5.2185 (= τ/D_lo); whole-kernel Ā 7.2179. **Correction (stream A D5):** this supply and its Γ₃₀₈ first appear in C2 (`12585997`, `C2_CRITICAL_RATIOS.json`), before C3 adopted it | `LP/p5y_k5_tail_c3_closure/evidence/adjudication/C3_ADJUDICATION.md` §K (on ref p5y-k5-tail-c3 @ 019ecce0); `history/recon/HISTORY_308_INVENTORY.md` |
 | H1.3 | **C3 knockout** (C3 adjudicator, "computed from committed rationals with no scientific address evaluated"): Γ at A1 = A2 = 0 is **+0.039568** (still open); critical A0 at A1 = A2 = 0 is **4.3752**; A0 reduction needed ×1.1927 (16.2 %). "Closure is infeasible by any improvement of A1 and A2 whatsoever." | same, §K table and text |
 | H1.4 | C4: frozen-clause critical A0 at 308 = 4.375228833136 | `LP/p5y_k5_tail_c4_exhaustion/phase_1/C4_TARGET_RECONSTRUCTION.md:76` (ref p5y-k5-tail-c4 @ e12a09e8) |
-| H1.5 | C4 adjudicator §4: "at A0 = 4.311 (the Monte-Carlo value of Λ₃₀₈), closing cell 308 still requires an 18.2× reduction of (A1, A2); at A0 = 4.375229 it is impossible at any (A1, A2)." Reproduced as 18.2496× in the C4 open-notes disposition | `C4_ADJUDICATION.md` ~l.186; `OPEN_NOTES_DISPOSITION_C4.md:52` |
+| H1.5 | C4 adjudicator §4 (**note, stream A D2:** the adjudicator's own MC is 4.30910; 4.311 is the pre-result reviewer's 4.31108 rounded): "at A0 = 4.311 (the Monte-Carlo value of Λ₃₀₈), closing cell 308 still requires an 18.2× reduction of (A1, A2); at A0 = 4.375229 it is impossible at any (A1, A2)." Reproduced as 18.2496× in the C4 open-notes disposition | `C4_ADJUDICATION.md` ~l.186; `OPEN_NOTES_DISPOSITION_C4.md:52` |
 | H1.6 | C8 phase 4 (C5-T clause, mixed supply): A0 ceiling at A1 = A2 = 0 = 4.442851487961334; A_now = (5.218548598870686, 22.79374449569498, 230.3658154880664); required A0 factor 1.5955443343999633; M_used 3.3716470503119877; A1 ceiling at perfect A0 17.632791191529485 | `LP/p5y_k5_tail_c8_operator_feasibility/evidence/phase9/C8_DECISION.json` phase4_inversion_C5T["308"] |
 | H1.7 | C8 uniform-eff factors (C5-T clause): ×1.438423 to close, ×1.798029 to adopt | `LP/p5y_k5_tail_c8_operator_feasibility/README.md:54`; `review/ADJUDICATION_C8.md:84` |
+| H1.8 | **(stream A D6)** Campaign B's T2_AUDIT_MEAS NOMINAL forecast committed a negative Γ₃₀₈ with `pass: true` on ASSUMED order-3 inputs: a proxy, not an evaluation | `history/recon/HISTORY_308_INVENTORY.md` |
+| H1.9 | **(stream A R1–R4)** Pre-registered HISTORICAL_RECONSTRUCTION: H1.1, H1.3, H1.4 and H1.5 reproduced exactly (55/55 committed values) from committed inputs through the frozen consumer and an independent re-implementation; Γ is affine in (A0, A1, A2) at all 7 committed points with the binding-regime facts holding | `history/recon/C3_KNOCKOUT_RECONSTRUCTION.md`, `.json`; `history/recon/recon_308.py` |
 
 ## H2. Committed facts about Λ₃₀₈ = sup_cell E_a[τ]
 
@@ -52,10 +54,11 @@ campaign does not reproduce them anywhere.
 | H4.1 | Incident 01 (+ residue): committed tail radius shares (306–309) placed next to TPT-G's generic over-charge factors | TPT's (and any profile transport's) tail use carries a disclosed MEDIUM–HIGH result-chasing liability |
 | H4.2 | Incident 02: stream C2a re-attributed a committed 309 floor to 308 | bears on the 308 EXCLUSION question only |
 | H4.3 | Incident 03: the coordinator's C2b brief used a comparison scale derived from cell-308 figures | bears on the 308 exclusion question; C2b's certifier code is unaffected, but its use for 308 must disclose it |
+| H4.3b | **(stream A D7)** `p5y_k5_tail_route_audit/ROUTE_AUDIT.md:315` placed C9's projected factor for a 307 route next to 308's C5-T closing factor — the incident-01 shape, committed before the overnight quarantine existed | `history/recon/HISTORY_308_INVENTORY.md` §4 |
 | H4.4 | The cell-307 RLR campaign (b73b9449) evaluated nothing on 308 and inferred nothing about it | `LP/p5y_k5_cell307_rlr_r1/FINAL_REPORT.md` §Q |
 
 ## H5. Inventory of every historical evaluation touching Γ308
 
-To be completed by the history reconstruction stream (A) and appended below with commit ids. Until then the
-inventory above (H1) lists the campaigns known to the coordinator: C2 (D5 forecast), C3 (mixed supply + knockout),
-C4 (critical A0, MC), C5 (C5-T clause), C8 (inversion), and the overnight campaign (no evaluation; incidents only).
+Complete inventory (about 90 classified rows over all 130 local refs): `history/recon/HISTORY_308_INVENTORY.md`.
+Pruning theorems derived from committed values only: `history/recon/PRUNING_308.md` (P308-D direct clause, P308-T
+C5-T clause). Committed-record discrepancies D1–D8 (none load-bearing) are listed in the inventory §4.
