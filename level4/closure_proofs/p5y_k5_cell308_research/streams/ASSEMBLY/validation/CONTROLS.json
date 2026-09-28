@@ -1,0 +1,774 @@
+{
+ "schema": "C308_STREAM_E_CONTROLS/1",
+ "class": "SYNTHETIC_VALIDATION",
+ "summary": {
+  "controls": 29,
+  "detected": 29,
+  "all_detected": true,
+  "valid_halves_ok": true,
+  "not_detected": [],
+  "tptb_tail_sha256": "b373a8b4389b6e572a2297c069606c790b7e8bb6ede9e05619fc8308256862c2",
+  "controls_sha256": "801fb5ab3450407dd478ef26331f964a8cd27abee3c00768c3fc8a0c95946519",
+  "wall_s": 5.0
+ },
+ "rows": [
+  {
+   "control": "GR3_shape_preserving_rad_rho",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "REPRODUCTION_FAILED",
+   "observed_code": "REPRODUCTION_FAILED",
+   "observed_reason": "gates failed: G-R3",
+   "gate_expectation": {
+    "fail": [
+     "G-R3"
+    ],
+    "pass": [
+     "G-R1",
+     "G-R2"
+    ]
+   },
+   "gates_observed": {
+    "G-R1": true,
+    "G-R2": true,
+    "G-R3": false,
+    "G-R4": true,
+    "G-T1": null,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": {
+    "note": "decoy only: TPT penalty the mis-shaped tuple would give if G-R3 were absent",
+    "P_tpt_valid": 0.03296491575685603,
+    "P_tpt_mis_shaped_independent": 0.03297025513744052,
+    "ratio": 1.0001619716132106,
+    "mis_shaped_has_negative_coefficient": true
+   }
+  },
+  {
+   "control": "GR3_shape_preserving_rad_rho_midpoint_regime",
+   "base_decoy": 6,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "REPRODUCTION_FAILED",
+   "observed_code": "REPRODUCTION_FAILED",
+   "observed_reason": "gates failed: G-R3",
+   "gate_expectation": {
+    "fail": [
+     "G-R3"
+    ],
+    "pass": [
+     "G-R1",
+     "G-R2"
+    ]
+   },
+   "gates_observed": {
+    "G-R1": true,
+    "G-R2": true,
+    "G-R3": false,
+    "G-R4": true,
+    "G-T1": null,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": {
+    "note": "decoy only: TPT penalty the mis-shaped tuple would give if G-R3 were absent",
+    "P_tpt_valid": 0.9742759941343606,
+    "P_tpt_mis_shaped_independent": 0.9742759954218327,
+    "ratio": 1.0000000013214656,
+    "mis_shaped_has_negative_coefficient": false
+   }
+  },
+  {
+   "control": "GR3_shape_unsound_direction",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "REPRODUCTION_FAILED",
+   "observed_code": "REPRODUCTION_FAILED",
+   "observed_reason": "gates failed: G-R3, G-R4(N5)",
+   "gate_expectation": {
+    "fail": [
+     "G-R3"
+    ],
+    "pass": [
+     "G-R1",
+     "G-R2"
+    ]
+   },
+   "gates_observed": {
+    "G-R1": true,
+    "G-R2": true,
+    "G-R3": false,
+    "G-R4": false,
+    "G-T1": null,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": {
+    "note": "decoy only: TPT penalty the mis-shaped tuple would give if G-R3 were absent",
+    "P_tpt_valid": 0.03296491575685603,
+    "P_tpt_mis_shaped_independent": 0.03295957637627153,
+    "ratio": 0.9998380283867893,
+    "mis_shaped_has_negative_coefficient": true
+   }
+  },
+  {
+   "control": "GR3_shape_unsound_direction_midpoint_regime",
+   "base_decoy": 6,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "REPRODUCTION_FAILED",
+   "observed_code": "REPRODUCTION_FAILED",
+   "observed_reason": "gates failed: G-R3",
+   "gate_expectation": {
+    "fail": [
+     "G-R3"
+    ],
+    "pass": [
+     "G-R1",
+     "G-R2"
+    ]
+   },
+   "gates_observed": {
+    "G-R1": true,
+    "G-R2": true,
+    "G-R3": false,
+    "G-R4": true,
+    "G-T1": null,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": {
+    "note": "decoy only: TPT penalty the mis-shaped tuple would give if G-R3 were absent",
+    "P_tpt_valid": 0.9742759941343606,
+    "P_tpt_mis_shaped_independent": 0.9742759928468885,
+    "ratio": 0.9999999986785345,
+    "mis_shaped_has_negative_coefficient": true
+   }
+  },
+  {
+   "control": "env4_dropped",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "REPRODUCTION_FAILED",
+   "observed_code": "REPRODUCTION_FAILED",
+   "observed_reason": "gates failed: G-R1, G-R2, G-R3, G-R4(M)",
+   "gate_expectation": {
+    "fail": [
+     "G-R1",
+     "G-R3"
+    ]
+   },
+   "gates_observed": {
+    "G-R1": false,
+    "G-R2": false,
+    "G-R3": false,
+    "G-R4": false,
+    "G-T1": null,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "tiling_gap",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "BLOCKS_REFUSED",
+   "observed_code": "BLOCKS_REFUSED",
+   "observed_reason": "blocks are not contiguous without overlap (tiling is not exact)",
+   "gate_expectation": {},
+   "gates_observed": {
+    "G-R1": true,
+    "G-R2": true,
+    "G-R3": true,
+    "G-R4": true,
+    "G-T1": true,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "tiling_overlap",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "BLOCKS_REFUSED",
+   "observed_code": "BLOCKS_REFUSED",
+   "observed_reason": "blocks are not contiguous without overlap (tiling is not exact)",
+   "gate_expectation": {},
+   "gates_observed": {
+    "G-R1": true,
+    "G-R2": true,
+    "G-R3": true,
+    "G-R4": true,
+    "G-T1": true,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "tiling_short_of_x_hi",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "BLOCKS_REFUSED",
+   "observed_code": "BLOCKS_REFUSED",
+   "observed_reason": "blocks do not start at x_lo and end at x_hi exactly",
+   "gate_expectation": {},
+   "gates_observed": {
+    "G-R1": true,
+    "G-R2": true,
+    "G-R3": true,
+    "G-R4": true,
+    "G-T1": true,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "tiling_beyond_x_hi",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "BLOCKS_REFUSED",
+   "observed_code": "BLOCKS_REFUSED",
+   "observed_reason": "blocks do not start at x_lo and end at x_hi exactly",
+   "gate_expectation": {},
+   "gates_observed": {
+    "G-R1": true,
+    "G-R2": true,
+    "G-R3": true,
+    "G-R4": true,
+    "G-T1": true,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "block_constant_above_cell_supply",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "BLOCKS_REFUSED",
+   "observed_code": "BLOCKS_REFUSED",
+   "observed_reason": "block constant above the cell-level supply (must be min'ed with S)",
+   "gate_expectation": {},
+   "gates_observed": {
+    "G-R1": true,
+    "G-R2": true,
+    "G-R3": true,
+    "G-R4": true,
+    "G-T1": true,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "wrong_m_label",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "INPUT_REFUSED",
+   "observed_code": "INPUT_REFUSED",
+   "observed_reason": "label m = 3: the frozen direct clause is m = 5 only",
+   "gate_expectation": {},
+   "gates_observed": {
+    "G-R1": null,
+    "G-R2": null,
+    "G-R3": null,
+    "G-R4": null,
+    "G-T1": null,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "wrong_m_extraction_weights",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "REPRODUCTION_FAILED",
+   "observed_code": "REPRODUCTION_FAILED",
+   "observed_reason": "gates failed: G-R1, G-R2, G-R3, G-R4(M)",
+   "gate_expectation": {
+    "fail": [
+     "G-R1",
+     "G-R3"
+    ]
+   },
+   "gates_observed": {
+    "G-R1": false,
+    "G-R2": false,
+    "G-R3": false,
+    "G-R4": false,
+    "G-T1": null,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "M_consumed_ne_mag_H_final_input",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "REPRODUCTION_FAILED",
+   "observed_code": "REPRODUCTION_FAILED",
+   "observed_reason": "gates failed: G-R4(M)",
+   "gate_expectation": {
+    "fail": [
+     "G-R4"
+    ],
+    "pass": [
+     "G-R1",
+     "G-R2",
+     "G-R3"
+    ]
+   },
+   "gates_observed": {
+    "G-R1": true,
+    "G-R2": true,
+    "G-R3": true,
+    "G-R4": false,
+    "G-T1": null,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "M_consumed_ne_mag_H_final_extraction",
+   "base_decoy": 2,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "REPRODUCTION_FAILED",
+   "observed_code": "REPRODUCTION_FAILED",
+   "observed_reason": "gates failed: G-R4(M)",
+   "gate_expectation": {
+    "fail": [
+     "G-R4"
+    ],
+    "pass": [
+     "G-R1",
+     "G-R2",
+     "G-R3"
+    ]
+   },
+   "gates_observed": {
+    "G-R1": true,
+    "G-R2": true,
+    "G-R3": true,
+    "G-R4": false,
+    "G-T1": null,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "empty_intersection_at_s0",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "REPRODUCTION_FAILED",
+   "observed_code": "REPRODUCTION_FAILED",
+   "observed_reason": "gates failed: G-R4(N5)",
+   "gate_expectation": {
+    "fail": [
+     "G-R4"
+    ]
+   },
+   "gates_observed": {
+    "G-R1": true,
+    "G-R2": true,
+    "G-R3": true,
+    "G-R4": false,
+    "G-T1": null,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "sign_flip_t_negated",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "TRANSPORT_CHECK_FAILED",
+   "observed_code": "TRANSPORT_CHECK_FAILED",
+   "observed_reason": "G-T1: tpt P_TPT outside the independent bracket",
+   "gate_expectation": {
+    "fail": [
+     "G-T1"
+    ]
+   },
+   "gates_observed": {
+    "G-R1": true,
+    "G-R2": true,
+    "G-R3": true,
+    "G-R4": true,
+    "G-T1": false,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "sign_flip_t_negated_left_binding",
+   "base_decoy": 2,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "TRANSPORT_CHECK_FAILED",
+   "observed_code": "TRANSPORT_CHECK_FAILED",
+   "observed_reason": "G-T1: tpt P_TPT outside the independent bracket",
+   "gate_expectation": {
+    "fail": [
+     "G-T1"
+    ]
+   },
+   "gates_observed": {
+    "G-R1": true,
+    "G-R2": true,
+    "G-R3": true,
+    "G-R4": true,
+    "G-T1": false,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "sign_flip_t_mirrored_right",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "TRANSPORT_CHECK_FAILED",
+   "observed_code": "TRANSPORT_CHECK_FAILED",
+   "observed_reason": "G-T1: tpt P_TPT outside the independent bracket",
+   "gate_expectation": {
+    "fail": [
+     "G-T1"
+    ]
+   },
+   "gates_observed": {
+    "G-R1": true,
+    "G-R2": true,
+    "G-R3": true,
+    "G-R4": true,
+    "G-T1": false,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "sign_flip_t_mirrored_left",
+   "base_decoy": 2,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "TRANSPORT_CHECK_FAILED",
+   "observed_code": "TRANSPORT_CHECK_FAILED",
+   "observed_reason": "G-T1: tpt P_TPT outside the independent bracket",
+   "gate_expectation": {
+    "fail": [
+     "G-T1"
+    ]
+   },
+   "gates_observed": {
+    "G-R1": true,
+    "G-R2": true,
+    "G-R3": true,
+    "G-R4": true,
+    "G-T1": false,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "sign_flip_block_lookup_mirrored",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "TRANSPORT_CHECK_FAILED",
+   "observed_code": "TRANSPORT_CHECK_FAILED",
+   "observed_reason": "G-T2: tpt P_B outside the independent bracket",
+   "gate_expectation": {
+    "fail": [
+     "G-T2"
+    ]
+   },
+   "gates_observed": {
+    "G-R1": true,
+    "G-R2": true,
+    "G-R3": true,
+    "G-R4": true,
+    "G-T1": true,
+    "G-T2": false,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "sign_flip_geometry_mirrored",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "INPUT_REFUSED",
+   "observed_code": "INPUT_REFUSED",
+   "observed_reason": "ValueError: TPT needs x_lo > 0 (it integrates t, not |t|)",
+   "gate_expectation": {},
+   "gates_observed": {
+    "G-R1": true,
+    "G-R2": true,
+    "G-R3": true,
+    "G-R4": true,
+    "G-T1": null,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "frozen_chain_tampered_radius",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "FROZEN_PATH_REFUSED",
+   "observed_code": "FROZEN_PATH_REFUSED",
+   "observed_reason": "theorem TC-T crosscheck disagrees",
+   "gate_expectation": {},
+   "gates_observed": {
+    "G-R1": null,
+    "G-R2": null,
+    "G-R3": null,
+    "G-R4": null,
+    "G-T1": null,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "committed_H_mismatch",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "REPRODUCTION_FAILED",
+   "observed_code": "REPRODUCTION_FAILED",
+   "observed_reason": "gates failed: G-R1",
+   "gate_expectation": {
+    "fail": [
+     "G-R1"
+    ]
+   },
+   "gates_observed": {
+    "G-R1": false,
+    "G-R2": true,
+    "G-R3": true,
+    "G-R4": true,
+    "G-T1": null,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "committed_Gamma_mismatch",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "REPRODUCTION_FAILED",
+   "observed_code": "REPRODUCTION_FAILED",
+   "observed_reason": "gates failed: G-R2",
+   "gate_expectation": {
+    "fail": [
+     "G-R2"
+    ]
+   },
+   "gates_observed": {
+    "G-R1": true,
+    "G-R2": false,
+    "G-R3": true,
+    "G-R4": true,
+    "G-T1": null,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "committed_per_r_mismatch",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "REPRODUCTION_FAILED",
+   "observed_code": "REPRODUCTION_FAILED",
+   "observed_reason": "gates failed: G-R3",
+   "gate_expectation": {
+    "fail": [
+     "G-R3"
+    ]
+   },
+   "gates_observed": {
+    "G-R1": true,
+    "G-R2": true,
+    "G-R3": false,
+    "G-R4": true,
+    "G-T1": null,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "supply_differs_from_frozen_combine",
+   "base_decoy": 1,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "INPUT_REFUSED",
+   "observed_code": "INPUT_REFUSED",
+   "observed_reason": "explicit supply differs from the frozen combine of its sources",
+   "gate_expectation": {},
+   "gates_observed": {
+    "G-R1": null,
+    "G-R2": null,
+    "G-R3": null,
+    "G-R4": null,
+    "G-T1": null,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "label_quarantined_target",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "GUARD_REFUSED",
+   "observed_code": "GUARD_REFUSED",
+   "observed_reason": "TARGET_CELL_REFUSED CUSUM m=5 cell 306",
+   "gate_expectation": {},
+   "gates_observed": {
+    "G-R1": null,
+    "G-R2": null,
+    "G-R3": null,
+    "G-R4": null,
+    "G-T1": null,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "label_quarantined_adjacent",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "GUARD_REFUSED",
+   "observed_code": "GUARD_REFUSED",
+   "observed_reason": "ADJACENT_CELL_REFUSED CUSUM m=5 cell 305",
+   "gate_expectation": {},
+   "gates_observed": {
+    "G-R1": null,
+    "G-R2": null,
+    "G-R3": null,
+    "G-R4": null,
+    "G-T1": null,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  },
+  {
+   "control": "geometry_in_drift_band",
+   "base_decoy": 3,
+   "valid_status": "OK",
+   "planted_status": "STOP",
+   "expected_code": "GUARD_REFUSED",
+   "observed_code": "GUARD_REFUSED",
+   "observed_reason": "DRIFT_BAND_REFUSED [1.984375, 2.015625] meets [1.2, 2.6]",
+   "gate_expectation": {},
+   "gates_observed": {
+    "G-R1": null,
+    "G-R2": null,
+    "G-R3": null,
+    "G-R4": null,
+    "G-T1": null,
+    "G-T2": null,
+    "G-D": null
+   },
+   "gate_expectation_met": true,
+   "DETECTED": true,
+   "ungated_consequence": null
+  }
+ ]
+}
