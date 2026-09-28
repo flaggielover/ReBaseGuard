@@ -6,6 +6,19 @@
 * The freeze commit is the last commit touching `code/`, `protocol/`, `theory/`, `tests/` or `config/` of this
   namespace. The driver derives it from git and refuses a grant chain that does not start there.
 
+**Freeze revision r2** (the freeze commit is the last commit touching the frozen directories).
+* The r1 freeze `5c6667fd` was qualified once. The official run failed gate Q12 only through a defect in the
+  verifier's aggregation: the QC10 summary had no `pass` key. Every case passed on its own terms.
+* The run is preserved unchanged, with `FAILURE_RECORD.md`, in `qualification/r1_failed/` (commit `0a0db965`).
+* r2 changes `code/rlr307_qualify.py` only, stricter-only:
+  * QC10 carries `pass`;
+  * any case summary lacking a boolean `pass` fails the qualification;
+  * the cross-run determinism case QC03_cross_run is added.
+* This protocol records the revision, and `config/QUALIFICATION_CASES.json` lists the new case.
+* The driver, the certifier and its pins, the guard, Stage 1, the independent reconstruction, the tests, the theorem
+  and every frozen rule and threshold are unchanged.
+* No review had taken place.
+
 **Question answered by this campaign, once:** does the prospectively frozen RLR certificate close cell 307 under the
 existing frozen K5 consumer?
 

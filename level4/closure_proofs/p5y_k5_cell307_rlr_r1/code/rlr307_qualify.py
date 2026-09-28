@@ -158,6 +158,26 @@ def qc03_compare(decoy: dict, serial: dict) -> dict:
             and len(per) == len(S1.LADDER)}
 
 
+def qc03_cross_run(decoy: dict | None) -> dict:
+    """r2 addition (stricter only): this run's decoy Stage 1 must equal the preserved r1 run's records exactly
+    (block records, and every exact rung field), a cross-run determinism check at the same pinned code."""
+    r1 = QDIR / "r1_failed" / OUTS["decoy"]
+    if not r1.exists():
+        return {"pass": True, "note": "no r1 record present (not applicable)"}
+    if not decoy:
+        return {"pass": False, "missing": "decoy"}
+    a, b = json.loads(r1.read_text())["stage1"], decoy["stage1"]
+    same_blocks = [x["block"] == y["block"] for x, y in zip(a["blocks"], b["blocks"])]
+    same_rungs = []
+    for x, y in zip(a["blocks"], b["blocks"]):
+        rx = {r["degree"]: r.get("record", {}) for r in x["rungs"]}
+        ry = {r["degree"]: r.get("record", {}) for r in y["rungs"]}
+        same_rungs.append(all(rx[d].get(k) == ry[d].get(k) for d in rx for k in S1.EXACT_RECORD_KEYS))
+    return {"blocks_identical": sum(same_blocks), "rungs_identical_blocks": sum(same_rungs), "blocks": len(b["blocks"]),
+            "cell_identical": a["cell"] == b["cell"],
+            "pass": len(a["blocks"]) == len(b["blocks"]) and all(same_blocks) and all(same_rungs) and a["cell"] == b["cell"]}
+
+
 # ------------------------------------------------------------------ QC06 kappa
 def qc06() -> dict:
     mods = PIN.load_certifier(REPO, GUARD)
@@ -427,6 +447,7 @@ def main(argv=None) -> int:
     flows = TF.run_flows(pre["freeze_commit"], work / "flows")
     cases["QC10"] = {k: v for k, v in flows.items() if k != "flows"}
     cases["QC10"]["flows"] = {k: {"ok": v["ok"], "run": v.get("run")} for k, v in flows["flows"].items()}
+    cases["QC10"]["pass"] = bool(flows["all_ok"]) and not flows["failed"]      # r2 repair: r1 lacked this key
     cases["QC07"] = {"in_process": cases.pop("QC07_inprocess"), "sandbox_arming": flows["flows"].get("QC07_arming")}
     cases["QC07"]["pass"] = cases["QC07"]["in_process"]["pass"] and bool(cases["QC07"]["sandbox_arming"]
                                                                           and cases["QC07"]["sandbox_arming"]["ok"])
@@ -458,6 +479,7 @@ def main(argv=None) -> int:
                      and (st.get("independent_checks") or {}).get("all_equal") is True
                      and st.get("ladder") == list(S1.LADDER) and len(st.get("blocks", [])) == 5}
     cases["QC03"] = qc03_compare(decoy, serial) if decoy and serial else {"pass": False, "missing": True}
+    cases["QC03_cross_run"] = qc03_cross_run(decoy)
     import test_rlr307_mc as TM  # noqa: E402
     import test_rlr307_twosided as TT  # noqa: E402
     if decoy:
@@ -473,12 +495,13 @@ def main(argv=None) -> int:
         cases["QC04"] = cases["QC05"] = cases["QC09"] = {"pass": False, "missing": "decoy stage 1"}
     cases["QC13"] = qc13(pre)
     cap_ok = proj is not None and proj <= D.EVAL_CAP_S / 2 and proj <= 4 * 3600
+    missing_pass = sorted(k for k, v in cases.items() if not isinstance(v.get("pass"), bool))   # r2: fail loudly
     P = lambda *ks: all(cases[k].get("pass") is True for k in ks)       # noqa: E731
     gates = {
         "Q1": {"pass": P("QC05") and (NS / "theory/THEOREM_RLR307.md").exists(),
                "note": "automated: theorem formulas = independent module = pinned assembly; proof checked by the reviewer"},
         "Q2": {"pass": P("QC01", "QC08", "QC11", "Q8")},
-        "Q3": {"pass": P("QC01", "QC03")},
+        "Q3": {"pass": P("QC01", "QC03", "QC03_cross_run")},
         "Q4": {"pass": P("QC05", "QC06") and cases["QC05"].get("float_reaching_exact_layer_raises") is True},
         "Q5": {"pass": P("QC05") and cases["QC05"].get("historical_mutants_rejected") == "6/6"},
         "Q6": {"pass": P("QC02", "QC04")},
@@ -489,10 +512,10 @@ def main(argv=None) -> int:
         "Q11": {"pass": pre["incident_review_accepted_before_freeze"]},
         "Q12": {"pass": P("QC10", "QC11") and cap_ok, "projected_cell307_wall_s": proj, "eval_cap_s": D.EVAL_CAP_S},
     }
-    ok = all(g["pass"] for g in gates.values())
+    ok = all(g["pass"] for g in gates.values()) and not missing_pass
     report = {"schema": "rebaseguard.p5y.k5.cell307-rlr-r1.qualification.v1", "freeze_commit": pre["freeze_commit"],
               "head": pre["head"], "review_mode": not official, "heavy_recomputed": heavy, "preconditions": pre,
-              "cases": cases, "gates": gates, "pass": ok, "started_utc": started, "finished_utc": utc(),
+              "cases": cases, "gates": gates, "pass": ok, "cases_missing_pass": missing_pass, "started_utc": started, "finished_utc": utc(),
               "wall_seconds": round(time.time() - t0, 1), "verifier_sha256": sha(HERE.read_bytes()),
               "python": sys.version.split()[0],
               "record_sha256": {k: sha(p.read_bytes()) for k, p in paths.items() if k != "report" and p.exists()},

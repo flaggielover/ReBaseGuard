@@ -3,57 +3,158 @@
  "frozen": "at the freeze commit, before any qualification case is run",
  "rule": "non-target cases only: no cell 306, 307, 308 or 309, no drift in [6/5, 13/5] or its mirror, no target-equivalent proxy. Cell 305 is used ONLY for exact reproduction of its committed C2 record (no new supply value enters any Gamma).",
  "cases": [
-  {"id": "QC01", "gates": ["Q2", "Q3", "Q4"], "what": "committed-block reproduction",
+  {
+   "id": "QC01",
+   "gates": [
+    "Q2",
+    "Q3",
+    "Q4"
+   ],
+   "what": "committed-block reproduction",
    "input": "the pinned block rung [1/2, 17/32], degree 4, through rlr307_pinned + rlr307_stage1.certify_rung in a fresh process",
    "pass_if": "status CERTIFIED and every field the committed file C1B_R2_PW_BLOCK_1_2__17_32_d4.json records as an exact rational is equal",
-   "why_non_target": "drift block [0.5, 0.53125], declared overnight, outside the band"},
-  {"id": "QC02", "gates": ["Q2", "Q6", "Q7", "Q12"], "what": "full Stage 1 on a decoy cover cell through the driver's decoy-stage1 mode (the same pool, worker and composition code as the target)",
+   "why_non_target": "drift block [0.5, 0.53125], declared overnight, outside the band"
+  },
+  {
+   "id": "QC02",
+   "gates": [
+    "Q2",
+    "Q6",
+    "Q7",
+    "Q12"
+   ],
+   "what": "full Stage 1 on a decoy cover cell through the driver's decoy-stage1 mode (the same pool, worker and composition code as the target)",
    "input": "cover cell 297 of cells.json, [11441326/10000000, 11905203/10000000], 5 C2-rule sub-blocks, 2^-20 hulls, the frozen ladder",
    "pass_if": "the run completes, every composition layer equals its independent reconstruction, and the cell is CERTIFIED; per-rung cost is recorded for the cap check",
-   "why_non_target": "cell 297 is an adopted lower cell; its drifts lie below 6/5"},
-  {"id": "QC03", "gates": ["Q3"], "what": "determinism",
+   "why_non_target": "cell 297 is an adopted lower cell; its drifts lie below 6/5"
+  },
+  {
+   "id": "QC03",
+   "gates": [
+    "Q3"
+   ],
+   "what": "determinism",
    "input": "block 0 of decoy cell 297, every ladder degree, recomputed serially in a separate process",
    "pass_if": "every exact rung field and the block's ladder record are identical to QC02's block 0",
-   "why_non_target": "as QC02"},
-  {"id": "QC04", "gates": ["Q6"], "what": "independent Monte Carlo consistency (non-certified; an independent implementation of the CUSUM chain by simulation)",
+   "why_non_target": "as QC02"
+  },
+  {
+   "id": "QC03_cross_run",
+   "gates": [
+    "Q3"
+   ],
+   "what": "cross-run determinism (added in freeze r2, stricter only)",
+   "input": "this run's QC02 decoy Stage-1 record against the preserved r1 run's record (qualification/r1_failed/RLR307_DECOY_STAGE1_297.json), same pinned code",
+   "pass_if": "every block record and every exact rung field identical, and the cell record identical",
+   "why_non_target": "as QC02"
+  },
+  {
+   "id": "QC04",
+   "gates": [
+    "Q6"
+   ],
+   "what": "independent Monte Carlo consistency (non-certified; an independent implementation of the CUSUM chain by simulation)",
    "input": "each QC02 block at its hull's lower end, midpoint and upper end; taboo excursions and whole runs from the atom, fixed seeds",
    "pass_if": "no certified bound is contradicted beyond 5 standard errors: tau_a,lo <= E sigma <= tau, D_lo <= D, Lambda <= A_bar, L1 <= L1_up, L2 <= L2_up, and the block's A1_SUPPLY >= |Lambda'| and A2_SUPPLY >= |Lambda''| (score identities, whole chain)",
-   "why_non_target": "as QC02"},
-  {"id": "QC05", "gates": ["Q1", "Q4", "Q5", "Q7"], "what": "two-sided assembly and composition test",
+   "why_non_target": "as QC02"
+  },
+  {
+   "id": "QC05",
+   "gates": [
+    "Q1",
+    "Q4",
+    "Q5",
+    "Q7"
+   ],
+   "what": "two-sided assembly and composition test",
    "input": "(a) every committed R2 real-kernel rung and ladder record (C1B_R2_PW_*.json), (b) every QC02 rung, (c) planted sets making each of RLR-ratio, RLR-non-ratio, Dv', Lemma G binding in turn, (d) 2000 seeded random sets",
    "pass_if": "pinned c1b_certpw.assemble equals the independent reconstruction EXACTLY on every set (A0/A1/A2_SUPPLY, G0-G2); a float reaching an exact layer raises; the six historical mutants (no_min, no_G, supply_half, drop_A2_cross, drop_A1_delta, G_no_cubic) are each rejected (6/6), the four too-small ones while passing the one-sided bound; the composition mutants (ladder max-for-upper, ladder min-for-lower, cell min, A0 replaced, no min with I1, max for min) are each rejected",
-   "why_non_target": "validation drifts {0, 1/4, 1/2, 1, 3}, the block [1/2, 17/32], decoy cell 297, synthetic sets"},
-  {"id": "QC06", "gates": ["Q4", "Q8"], "what": "kappa constants",
+   "why_non_target": "validation drifts {0, 1/4, 1/2, 1, 3}, the block [1/2, 17/32], decoy cell 297, synthetic sets"
+  },
+  {
+   "id": "QC06",
+   "gates": [
+    "Q4",
+    "Q8"
+   ],
+   "what": "kappa constants",
    "input": "the pinned certifier's KAPPA1, KAPPA2 and the consumer's K1_BOUND, K2_BOUND",
    "pass_if": "each is >= its true value by the independent 80-digit decimal check; controls just below the true values are rejected",
-   "why_non_target": "constants"},
-  {"id": "QC07", "gates": ["Q9", "Q12"], "what": "drift guard and arming",
+   "why_non_target": "constants"
+  },
+  {
+   "id": "QC07",
+   "gates": [
+    "Q9",
+    "Q12"
+   ],
+   "what": "drift guard and arming",
    "input": "guard_drift on each cell-307 hull block, on the cover intervals of 305, 306, 308, 309, on the band ends and the mirror (all must be refused unarmed) and on decoys (accepted); arm_target without a marker (refused); in a sandbox with a marker: arming with a block outside cell 307's hull (refused) and with the planned blocks (accepted); a target-mode worker pool started without a marker (must fail before any certification)",
    "pass_if": "every expectation holds; no certification is performed on any refused or armed band block",
-   "why_non_target": "refusal and arming logic only; nothing is certified in the band"},
-  {"id": "QC08", "gates": ["Q2"], "what": "consumer rehearsal",
+   "why_non_target": "refusal and arming logic only; nothing is certified in the band"
+  },
+  {
+   "id": "QC08",
+   "gates": [
+    "Q2"
+   ],
+   "what": "consumer rehearsal",
    "input": "driver `rehearse --cell 305`",
    "pass_if": "C2's committed cell-305 record reproduced exactly under S_I1, and again through the Stage-2 substitution path with a neutral cell record (S_RLR == S_I1)",
-   "why_non_target": "cell 305 is adopted; only its committed record is reproduced; no new supply value enters any Gamma"},
-  {"id": "QC09", "gates": ["Q7"], "what": "S_RLR construction",
+   "why_non_target": "cell 305 is adopted; only its committed record is reproduced; no new supply value enters any Gamma"
+  },
+  {
+   "id": "QC09",
+   "gates": [
+    "Q7"
+   ],
+   "what": "S_RLR construction",
    "input": "synthetic exact supplies",
    "pass_if": "driver s_rlr equals the independent consumed() on every set; A0 is never changed; mutants rejected",
-   "why_non_target": "synthetic"},
-  {"id": "QC10", "gates": ["Q12"], "what": "exactly-once flows in a `git clone --shared` sandbox at the freeze commit (separate refs; the real repository's refs are never touched), with stubbed control / prepare / evaluator so that no cell is evaluated",
+   "why_non_target": "synthetic"
+  },
+  {
+   "id": "QC10",
+   "gates": [
+    "Q12"
+   ],
+   "what": "exactly-once flows in a `git clone --shared` sandbox at the freeze commit (separate refs; the real repository's refs are never touched), with stubbed control / prepare / evaluator so that no cell is evaluated",
    "input": "successful flow; second-execute refusal; seal-only without recompute; CONTROL_FAILED; pre-marker refusals (planted result file, directory, symlink, broken symlink, FIFO, ignored *.tmp, symlinked evidence dir, dirty tree, ignored object, prior marker, pending ref, emergency file, wrong branch, missing grant, wrong driver sha in grant, broken chain, rejected review, non-PASS qualification, tampered pinned input); post-marker failures (exception, IndependentCheckFailed, SystemExit, KeyboardInterrupt, evaluation cap, primary persistence failure with emergency channel, both channels failing, seal failure, materialization failure)",
    "pass_if": "each case ends in its expected exit code / refusal code, the stub evaluator runs at most once per sandbox state, a consumed marker persists and every retry is refused, and recovery never recomputes",
-   "why_non_target": "stubs only"},
-  {"id": "QC11", "gates": ["Q2", "Q12"], "what": "static structure of the driver (AST)",
+   "why_non_target": "stubs only"
+  },
+  {
+   "id": "QC11",
+   "gates": [
+    "Q2",
+    "Q12"
+   ],
+   "what": "static structure of the driver (AST)",
    "input": "code/rlr307_driver.py",
    "pass_if": "the CLI never passes injection arguments; control(..., TARGET_CELL) is called only in run_execute after check_grant; stage1('target', ...) only in evaluate_target; evaluate_target only through after_marker; exactly one marker update-ref; no file write before the seal in the target path; the only value printed after the marker is the status line",
-   "why_non_target": "static"},
-  {"id": "QC12", "gates": ["Q9"], "what": "leak scan",
+   "why_non_target": "static"
+  },
+  {
+   "id": "QC12",
+   "gates": [
+    "Q9"
+   ],
+   "what": "leak scan",
    "input": "every file of this namespace at the freeze commit, against the numeric tokens (>= 6 significant digits) of the committed cell-307 records (C2 forecast cell and supplies, REGISTRY_C1/C2 blocks, TCT_INPUTS_307), cover-cell geometry excepted",
    "pass_if": "0 hits (only the count and file names are reported, never a value)",
-   "why_non_target": "a read of committed records, used only to count hits"},
-  {"id": "QC13", "gates": ["Q10", "Q11"], "what": "temporal and governance state",
+   "why_non_target": "a read of committed records, used only to count hits"
+  },
+  {
+   "id": "QC13",
+   "gates": [
+    "Q10",
+    "Q11"
+   ],
+   "what": "temporal and governance state",
    "input": "git state",
    "pass_if": "HEAD is the freeze commit; no qualification review, grant, marker, pending ref, result or emergency file exists; the incident-independence review is committed before the freeze with line 2 INCIDENT_AUDIT_ACCEPTED; r5 blob unchanged; no r6; the ledger holds only pre-grant classes",
-   "why_non_target": "governance"}
- ]
+   "why_non_target": "governance"
+  }
+ ],
+ "revision": "r2 (freeze r2): QC03_cross_run added; every case summary must carry a boolean 'pass' (r1 aggregation defect)"
 }
