@@ -1,28 +1,53 @@
 {
  "L1_ledger": {
   "classes": {
-   "INFRASTRUCTURE": 1,
-   "NONTARGET_REAL_VALIDATION": 4,
-   "SYNTHETIC_VALIDATION": 4
+   "HISTORICAL_READ": 2,
+   "INFRASTRUCTURE": 2,
+   "NONTARGET_DRIFT_VALIDATION": 170,
+   "NONTARGET_REAL_VALIDATION": 8,
+   "PROXY_EXPOSURE": 4,
+   "QUARANTINE_RULE_BREACH": 2,
+   "SYNTHETIC_VALIDATION": 54
   },
-  "leak_flags": 0,
-  "lines": 9,
+  "leak_flags": 6,
+  "lines": 242,
   "negative_control_detected": true,
   "new_target_evaluations": 0,
-  "target_equivalent_proxies": 0,
+  "target_equivalent_proxies": 4,
   "target_informed_optimisation": 0
  },
  "L2_static_scan": {
-  "files_scanned": 7,
+  "files_scanned": 62,
   "findings": [],
   "negative_control_detected": true,
+  "sanctioned_files": [
+   "/Users/suzhe/ReBaseGuard-k5ov/level4/closure_proofs/p5y_k5_tail_overnight_research/streams/A_306/audit/a306_reproduce_A.py"
+  ],
+  "sanctioned_historical_read": [
+   {
+    "file": "/Users/suzhe/ReBaseGuard-k5ov/level4/closure_proofs/p5y_k5_tail_overnight_research/streams/A_306/audit/a306_reproduce_A.py",
+    "kind": "TARGET_INPUT_PATH",
+    "line": 1
+   },
+   {
+    "file": "/Users/suzhe/ReBaseGuard-k5ov/level4/closure_proofs/p5y_k5_tail_overnight_research/streams/A_306/audit/a306_reproduce_A.py",
+    "kind": "TARGET_CELL_STRING",
+    "line": 44
+   },
+   {
+    "file": "/Users/suzhe/ReBaseGuard-k5ov/level4/closure_proofs/p5y_k5_tail_overnight_research/streams/A_306/audit/a306_reproduce_A.py",
+    "kind": "TARGET_INPUT_PATH",
+    "line": 53
+   }
+  ],
   "verdict": "PASS"
  },
  "L3_scope": {
-  "changed_files_since_base": 12,
+  "changed_files_since_base": 416,
   "negative_control_detected": true,
   "outside_namespace": [],
-  "untracked": 5
+  "untracked": 1,
+  "worktree_changed": 416
  },
  "L4_coverage": {
   "r5_blob": "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
@@ -48,7 +73,51 @@
  },
  "L6_protected_namespaces_touched": [],
  "base": "8b9fc0bb1c6994dfb0e942cc7a6d411aaf51db99",
- "head": "9db36e1382b0dcb64821bb9f0e5e1eac7d9f790a",
+ "head": "d3b6079552296f0057576b4b2049bf52ecdba503",
+ "incidents_recorded": [
+  "INCIDENT_01_TPT_GRAPH_PROXY.md",
+  "INCIDENT_02_C2A_CROSS_CELL_FLOOR.md",
+  "INCIDENT_03_C2B_BRIEF_SCALE.md"
+ ],
+ "leak_flag_lines": [
+  {
+   "class": "PROXY_EXPOSURE",
+   "proxies": 1,
+   "purpose": "INCIDENT 01: qualitative proxy (tail radius shares x TPT-G charges) in the dependency graph; retracted",
+   "utc": "2026-09-27T19:09:10Z"
+  },
+  {
+   "class": "PROXY_EXPOSURE",
+   "proxies": 1,
+   "purpose": "INCIDENT 02: zero-compute cross-cell re-attribution of a committed 309 floor to cell 308 (withdrawn at 0d32a2e8)",
+   "utc": "2026-09-27T20:13:39Z"
+  },
+  {
+   "class": "PROXY_EXPOSURE",
+   "proxies": 1,
+   "purpose": "INCIDENT 03: brief-defined comparison scale derived from committed cell-308 figures; qualitative",
+   "utc": "2026-09-27T21:06:24Z"
+  },
+  {
+   "class": "PROXY_EXPOSURE",
+   "proxies": 1,
+   "purpose": "INCIDENT 01 residue: tail dominance shares co-located with route factors in the same document; moved to HISTORICAL_DOMIN",
+   "utc": "2026-09-27T21:28:39Z"
+  },
+  {
+   "class": "QUARANTINE_RULE_BREACH",
+   "proxies": 0,
+   "purpose": "INCIDENT 02 residue: R2.4 cross-cell attribution of a committed family ceiling",
+   "utc": "2026-09-27T21:28:39Z"
+  },
+  {
+   "class": "QUARANTINE_RULE_BREACH",
+   "proxies": 0,
+   "purpose": "R2.1 breach found and fixed by the author: non-target validation values co-located with committed 306 numbers; now quali",
+   "utc": "2026-09-27T21:38:02Z"
+  }
+ ],
  "schema": "OV_AUDIT/1",
- "verdict": "PASS"
+ "verdict": "FAIL",
+ "verdict_detail": "FAIL solely because of recorded incidents: 6 LEAK_FLAG ledger lines, all of class PROXY_EXPOSURE / QUARANTINE_RULE_BREACH (4 qualitative proxies; incident files ['INCIDENT_01_TPT_GRAPH_PROXY.md', 'INCIDENT_02_C2A_CROSS_CELL_FLOOR.md', 'INCIDENT_03_C2B_BRIEF_SCALE.md']); 0 new target evaluations; governance otherwise clean"
 }
