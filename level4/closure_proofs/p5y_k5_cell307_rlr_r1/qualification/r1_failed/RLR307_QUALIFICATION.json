@@ -1,0 +1,691 @@
+{
+ "cases": {
+  "Q8": {
+   "bindings_ok": true,
+   "driver_sha_ok": true,
+   "frozen_files": 17,
+   "manifest_sha256": "2b30fd32a16493406269de1f4adf00f9595918ead227d978b8db488d64d0875b",
+   "mismatches": [],
+   "pass": true,
+   "unlisted_files": []
+  },
+  "QC01": {
+   "committed_status": "CERTIFIED",
+   "exact_fields_compared": 28,
+   "exact_fields_equal": 28,
+   "identity": {
+    "certpw.G": true,
+    "certpw.KX": true,
+    "certpw.PV": true,
+    "certpw.PW": true,
+    "certpw.Q": true,
+    "flags": true,
+    "kernel.G": true,
+    "pw.FL": true,
+    "pw.KX": true
+   },
+   "ladder_fields_compared": 25,
+   "ladder_fields_equal": 25,
+   "pass": true,
+   "status": "CERTIFIED",
+   "unequal": [],
+   "wall_seconds": 332.0
+  },
+  "QC02": {
+   "blocks": 5,
+   "cell_status": "CERTIFIED",
+   "exit": 0,
+   "independent_checks": {
+    "all_equal": true,
+    "rungs": 15
+   },
+   "ladder": [
+    4,
+    6,
+    8
+   ],
+   "max_rung_wall_by_degree": {
+    "4": 261.3,
+    "6": 1504.9,
+    "8": 2311.6
+   },
+   "pass": true,
+   "projected_cell307_wall_s": 8155.6,
+   "rung_status": {
+    "b0d4": "CERTIFIED",
+    "b0d6": "CERTIFIED",
+    "b0d8": "CERTIFIED",
+    "b1d4": "CERTIFIED",
+    "b1d6": "CERTIFIED",
+    "b1d8": "CERTIFIED",
+    "b2d4": "CERTIFIED",
+    "b2d6": "CERTIFIED",
+    "b2d8": "CERTIFIED",
+    "b3d4": "CERTIFIED",
+    "b3d6": "CERTIFIED",
+    "b3d8": "CERTIFIED",
+    "b4d4": "CERTIFIED",
+    "b4d6": "CERTIFIED",
+    "b4d8": "CERTIFIED"
+   }
+  },
+  "QC03": {
+   "block_record_identical": true,
+   "hull_identical": true,
+   "pass": true,
+   "per_degree": {
+    "4": {
+     "exact_equal": true,
+     "keys": 32,
+     "status_equal": true
+    },
+    "6": {
+     "exact_equal": true,
+     "keys": 32,
+     "status_equal": true
+    },
+    "8": {
+     "exact_equal": true,
+     "keys": 32,
+     "status_equal": true
+    }
+   }
+  },
+  "QC04": {
+   "controls": {
+    "A1_SUPPLY := |Lambda'_hat|/3": {
+     "flagged": true
+    },
+    "D_lo := 2 D_hat": {
+     "flagged": true
+    },
+    "L1_up := L1_hat/3": {
+     "flagged": true
+    },
+    "tau := tau_a,lo/2 (upper bound below the truth)": {
+     "flagged": true
+    }
+   },
+   "latent_proxy": "decoy estimates; never juxtapose with any tail-cell number",
+   "n_checked": 15,
+   "pass": true,
+   "rows_all_hold": true,
+   "symmetry_e_vs_minus_e": true
+  },
+  "QC05": {
+   "committed_reproduction": {
+    "checked": 47,
+    "equal": 47
+   },
+   "exact_equal": 2052,
+   "float_reaching_exact_layer_raises": true,
+   "historical_mutants_rejected": "6/6",
+   "mutants": {
+    "G_no_cubic": {
+     "kind": "too_small",
+     "passes_one_sided_bound_on": 2052,
+     "rejected": true,
+     "sets": 2052,
+     "sets_differing": 964
+    },
+    "drop_A1_delta": {
+     "kind": "too_small",
+     "passes_one_sided_bound_on": 2052,
+     "rejected": true,
+     "sets": 2052,
+     "sets_differing": 2008
+    },
+    "drop_A2_cross": {
+     "kind": "too_small",
+     "passes_one_sided_bound_on": 2052,
+     "rejected": true,
+     "sets": 2052,
+     "sets_differing": 1839
+    },
+    "no_G": {
+     "kind": "too_large",
+     "passes_one_sided_bound_on": 1828,
+     "rejected": true,
+     "sets": 2052,
+     "sets_differing": 259
+    },
+    "no_min": {
+     "kind": "too_large",
+     "passes_one_sided_bound_on": 1583,
+     "rejected": true,
+     "sets": 2052,
+     "sets_differing": 506
+    },
+    "supply_half": {
+     "kind": "too_small",
+     "passes_one_sided_bound_on": 2052,
+     "rejected": true,
+     "sets": 2052,
+     "sets_differing": 2052
+    }
+   },
+   "not_equal": [],
+   "pass": true,
+   "plants": {
+    "plant_Dv_binding": {
+     "as_expected": true,
+     "binding_A1": "Dv",
+     "equal": true,
+     "expected": "Dv"
+    },
+    "plant_G_binding": {
+     "as_expected": true,
+     "binding_A1": "G",
+     "equal": true,
+     "expected": "G"
+    },
+    "plant_mixed": {
+     "as_expected": true,
+     "binding_A1": "G",
+     "equal": true,
+     "expected": null
+    },
+    "plant_nonratio_binding": {
+     "as_expected": true,
+     "binding_A1": "RLR_nonratio",
+     "equal": true,
+     "expected": "RLR_nonratio"
+    },
+    "plant_ratio_binding": {
+     "as_expected": true,
+     "binding_A1": "RLR_ratio",
+     "equal": true,
+     "expected": "RLR_ratio"
+    }
+   },
+   "sets": 2052,
+   "too_small_mutants_pass_one_sided_somewhere": {
+    "G_no_cubic": true,
+    "drop_A1_delta": true,
+    "drop_A2_cross": true,
+    "supply_half": true
+   }
+  },
+  "QC06": {
+   "certifier": {
+    "kappa1_ge_sqrt_2_over_pi": true,
+    "kappa1_margin": "9.713464E-11",
+    "kappa2_ge_4phi1": true,
+    "kappa2_margin": "8.942328E-48",
+    "pi_check": "3.14159265358979323846",
+    "precision_digits": 80
+   },
+   "consumer": {
+    "kappa1_ge_sqrt_2_over_pi": true,
+    "kappa1_margin": "3.919713E-8",
+    "kappa2_ge_4phi1": true,
+    "kappa2_margin": "1.019234E-7",
+    "pi_check": "3.14159265358979323846",
+    "precision_digits": 80
+   },
+   "control_below_true": {
+    "kappa1_ge_sqrt_2_over_pi": false,
+    "kappa1_margin": "-2.865356E-12",
+    "kappa2_ge_4phi1": false,
+    "kappa2_margin": "-9.999999E-41",
+    "pi_check": "3.14159265358979323846",
+    "precision_digits": 80
+   },
+   "pass": true
+  },
+  "QC07": {
+   "in_process": {
+    "arm_without_marker_refused": true,
+    "band_ends_and_mirror_refused": true,
+    "cell307_hull_blocks_refused": true,
+    "certifier_path_refuses_band_unarmed": true,
+    "decoys_accepted": true,
+    "pass": true,
+    "tail_cover_cells_refused": true
+   },
+   "pass": true,
+   "sandbox_arming": {
+    "ok": true,
+    "run": {
+     "marker_not_naming_grant": "REFUSED QuarantineRefusal",
+     "no_marker": "REFUSED QuarantineRefusal",
+     "outside_hull": "REFUSED QuarantineRefusal",
+     "with_marker": "ARMED 10"
+    }
+   }
+  },
+  "QC08": {
+   "control": {
+    "A_exact": true,
+    "Gamma_exact": true,
+    "H_exact": true,
+    "M_after_exact": true,
+    "pass": true,
+    "per_supply_records_G_C1_C2": true,
+    "provenance": true
+   },
+   "exit": 0,
+   "neutral_substitution": {
+    "S_RLR_equals_S_I1": true,
+    "reproduces_committed_again": true
+   },
+   "pass": true
+  },
+  "QC09": {
+   "A0_never_changed": true,
+   "blocks": 5,
+   "cell_equal": true,
+   "composition_mutants": {
+    "A0_replaced": {
+     "rejected": true,
+     "sets_differing": 257
+    },
+    "cell_min": {
+     "rejected": true
+    },
+    "ladder_max_for_upper": {
+     "decoy_multi_rung_blocks": 5,
+     "ladders_tested": 205,
+     "rejected": true
+    },
+    "ladder_min_for_lower": {
+     "decoy_multi_rung_blocks": 5,
+     "ladders_tested": 205,
+     "rejected": true
+    },
+    "max_for_min": {
+     "rejected": true,
+     "sets_differing": 500
+    },
+    "no_min_with_I1": {
+     "rejected": true,
+     "sets_differing": 381
+    }
+   },
+   "ladder_equal": 5,
+   "pass": true,
+   "s_rlr_equal": "500/500",
+   "synthetic_ladder_equal": "200/200"
+  },
+  "QC10": {
+   "all_ok": true,
+   "failed": [],
+   "flows": {
+    "C01_control_failed": {
+     "ok": true,
+     "run": {
+      "exit": 3
+     }
+    },
+    "C02_rerun_after_control_failed_refused": {
+     "ok": true,
+     "run": {
+      "refused": "CONSUMED"
+     }
+    },
+    "P01_exception": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P02_independent_check_failed": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P03_system_exit": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P04_keyboard_interrupt": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P05_evaluation_cap": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P06_serialization_failure": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P07_primary_persistence_fails_emergency_then_seal_only": {
+     "ok": true,
+     "run": {
+      "exit": 4
+     }
+    },
+    "P08_both_channels_fail": {
+     "ok": true,
+     "run": {
+      "exit": 6
+     }
+    },
+    "P09_seal_fails_then_seal_only": {
+     "ok": true,
+     "run": {
+      "exit": 4
+     }
+    },
+    "P10_materialize_fails_then_seal_only": {
+     "ok": true,
+     "run": {
+      "exit": 7
+     }
+    },
+    "P11_worker_bootstrap_failure": {
+     "ok": true,
+     "run": "BrokenProcessPool"
+    },
+    "QC07_arming": {
+     "ok": true,
+     "run": {
+      "marker_not_naming_grant": "REFUSED QuarantineRefusal",
+      "no_marker": "REFUSED QuarantineRefusal",
+      "outside_hull": "REFUSED QuarantineRefusal",
+      "with_marker": "ARMED 10"
+     }
+    },
+    "T01_file_at_result": {
+     "ok": true,
+     "run": {
+      "refused": "TARGET_ARTIFACT_EXISTS"
+     }
+    },
+    "T02_directory_at_execution_dir": {
+     "ok": true,
+     "run": {
+      "refused": "RESULT_PATH_OCCUPIED"
+     }
+    },
+    "T03_symlink_out_at_tmp": {
+     "ok": true,
+     "run": {
+      "refused": "RESULT_PATH_OCCUPIED"
+     }
+    },
+    "T04_broken_symlink_at_result": {
+     "ok": true,
+     "run": {
+      "refused": "TARGET_ARTIFACT_EXISTS"
+     }
+    },
+    "T05_fifo_at_partial": {
+     "ok": true,
+     "run": {
+      "refused": "RESULT_PATH_OCCUPIED"
+     }
+    },
+    "T06_ignored_tmp_file": {
+     "ok": true,
+     "run": {
+      "refused": "RESULT_PATH_OCCUPIED"
+     }
+    },
+    "T07_symlinked_evidence_dir": {
+     "ok": true,
+     "run": {
+      "refused": "RESULT_PATH_OCCUPIED"
+     }
+    },
+    "T08_dirty_tree": {
+     "ok": true,
+     "run": {
+      "refused": "DIRTY_TREE"
+     }
+    },
+    "T09_ignored_object_in_namespace": {
+     "ok": true,
+     "run": {
+      "refused": "IGNORED_OBJECT"
+     }
+    },
+    "T10_prior_marker_ref": {
+     "ok": true,
+     "run": {
+      "refused": "CONSUMED"
+     }
+    },
+    "T11_pending_ref": {
+     "ok": true,
+     "run": {
+      "refused": "CONSUMED"
+     }
+    },
+    "T12_overnight_draft_ref_name": {
+     "ok": true,
+     "run": {
+      "refused": "CONSUMED"
+     }
+    },
+    "T13_emergency_file": {
+     "ok": true,
+     "run": {
+      "refused": "TARGET_ARTIFACT_EXISTS"
+     }
+    },
+    "T14_wrong_branch": {
+     "ok": true,
+     "run": {
+      "refused": "WRONG_BRANCH"
+     }
+    },
+    "T15_cli_flags_and_identity": {
+     "ok": true,
+     "run": [
+      "307 REFUSED INTERPRETER_FLAGS: execute and seal-only require python3.14 -I -S -B",
+      "07 REFUSED REPO_NOT_QUALIFIED: not the qualified worktree / git dir / common dir"
+     ]
+    },
+    "T16_no_grant": {
+     "ok": true,
+     "run": {
+      "refused": "GRANT_MISSING"
+     }
+    },
+    "T17_grant_wrong_driver_sha": {
+     "ok": true,
+     "run": {
+      "refused": "GRANT_INVALID"
+     }
+    },
+    "T18_broken_chain": {
+     "ok": true,
+     "run": {
+      "refused": "GRANT_INVALID"
+     }
+    },
+    "T19_review_rejected": {
+     "ok": true,
+     "run": {
+      "refused": "REVIEW_VERDICT"
+     }
+    },
+    "T20_qualification_not_pass": {
+     "ok": true,
+     "run": {
+      "refused": "GRANT_INVALID"
+     }
+    },
+    "T21_grant_wrong_manifest": {
+     "ok": true,
+     "run": {
+      "refused": "GRANT_INVALID"
+     }
+    },
+    "T22_tampered_inputs": {
+     "ok": true,
+     "run": {
+      "certifier": "PinError",
+      "helper": "HELPER_PIN_MISMATCH",
+      "registry_c2": "PIN_MISMATCH"
+     }
+    },
+    "X01_success": {
+     "ok": true,
+     "run": {
+      "exit": 0
+     }
+    },
+    "X02_rerun_refused": {
+     "ok": true,
+     "run": {
+      "refused": "CONSUMED"
+     }
+    },
+    "X03_seal_only_no_recompute": {
+     "ok": true,
+     "run": 0
+    }
+   },
+   "n": 39
+  },
+  "QC11": {
+   "after_marker_prints_status_only": true,
+   "cli_passes_no_injection": true,
+   "evaluate_target_referenced_only_in_run_execute": true,
+   "exactly_one_marker_update_ref_in_run_execute": true,
+   "no_file_write_detail": {
+    "_worker_init": true,
+    "_worker_job": true,
+    "after_marker": true,
+    "cell_inputs": true,
+    "control": true,
+    "decide": true,
+    "evaluate": true,
+    "evaluate_target": true,
+    "prepare_target": true,
+    "s_i1": true,
+    "s_rlr": true,
+    "stage1": true,
+    "target_blocks": true
+   },
+   "no_file_write_in_target_path": true,
+   "pass": true,
+   "stage1_module_prints_and_writes_nothing": true,
+   "stage1_target_only_in_evaluate_target": true,
+   "target_control_only_in_run_execute_after_grant": true
+  },
+  "QC12": {
+   "files_scanned": 59,
+   "hit_files": [],
+   "hits": 0,
+   "pass": true,
+   "planted_control_detected": true,
+   "tokens": 312
+  },
+  "QC13": {
+   "governance": {
+    "r5_union_open_ranges": [
+     [
+      306,
+      309
+     ]
+    ],
+    "r6": "absent"
+   },
+   "ledger_lines": 22,
+   "ledger_pre_grant_classes_only": true,
+   "ledger_zero_target": true,
+   "pass": true,
+   "preconditions": true
+  }
+ },
+ "finished_utc": "2026-09-28T05:46:06Z",
+ "freeze_commit": "5c6667fd9f27aa47bc33512b6a25620248e129f2",
+ "gates": {
+  "Q1": {
+   "note": "automated: theorem formulas = independent module = pinned assembly; proof checked by the reviewer",
+   "pass": true
+  },
+  "Q10": {
+   "pass": true
+  },
+  "Q11": {
+   "pass": true
+  },
+  "Q12": {
+   "eval_cap_s": 21600,
+   "pass": false,
+   "projected_cell307_wall_s": 8155.6
+  },
+  "Q2": {
+   "pass": true
+  },
+  "Q3": {
+   "pass": true
+  },
+  "Q4": {
+   "pass": true
+  },
+  "Q5": {
+   "pass": true
+  },
+  "Q6": {
+   "pass": true
+  },
+  "Q7": {
+   "pass": true
+  },
+  "Q8": {
+   "pass": true
+  },
+  "Q9": {
+   "pass": true
+  }
+ },
+ "head": "5c6667fd9f27aa47bc33512b6a25620248e129f2",
+ "heavy_recomputed": true,
+ "ledger_entries": [
+  {
+   "class": "NONTARGET_DECOY",
+   "recomputed": true,
+   "what": "QC01 committed block [1/2,17/32] d4; QC02/QC03/QC04 decoy cover cell 297 (5 blocks, ladder [4, 6, 8])"
+  },
+  {
+   "class": "HISTORICAL_READ",
+   "what": "QC08 rehearse cell 305 (committed-record reproduction only); QC12 committed cell-307 records read to form leak-scan tokens (never printed)"
+  },
+  {
+   "class": "SYNTHETIC",
+   "what": "QC05/QC09 synthetic and planted sets; QC10 sandbox flows with stubs"
+  }
+ ],
+ "pass": false,
+ "preconditions": {
+  "freeze_commit": "5c6667fd9f27aa47bc33512b6a25620248e129f2",
+  "head": "5c6667fd9f27aa47bc33512b6a25620248e129f2",
+  "head_ok": true,
+  "incident_review_accepted_before_freeze": true,
+  "namespace_clean_including_ignored": true,
+  "no_emergency_file": true,
+  "no_marker_refs": true,
+  "no_review_grant_result": true,
+  "pass": true,
+  "tracked_clean": true
+ },
+ "python": "3.14.5",
+ "record_sha256": {
+  "decoy": "486dc352c65d7807de0ffe80db6c87c055538d0885459072ea25b8e5aaa3169d",
+  "mc": "0e4fb532b07abf6f7d570088391766e257bded7ee05eded56fd8277df2ad3b1e",
+  "qc01": "4656dfcb91659af28a8d195f7ec9e188f1f875bf9925d313e61334ec66976857",
+  "rehearse": "c6be38df98358fc7bf2dd2dead89b407ceba7db9d0231d2328c3549cc9c27fdb",
+  "serial": "b5c099921c924a5568c824cab163b2a25cd6e9d771bb4ded73a2ec34d19166f2"
+ },
+ "review_mode": false,
+ "schema": "rebaseguard.p5y.k5.cell307-rlr-r1.qualification.v1",
+ "started_utc": "2026-09-28T04:38:08Z",
+ "target_evaluations": 0,
+ "verifier_sha256": "232bda717955cb1d07e9f1c0e1d257bd68b8f35de1246cbc88ef6b35b0787d31",
+ "wall_seconds": 4078.0
+}
