@@ -26,10 +26,20 @@ FREEZE_READY.
      They were not used to design or tune RLR, but the choice of the A1/A2 channel was informed by committed C3/C4
      findings.
    * **Result-chasing risk: MEDIUM.**
-3. **Cell set, fixed in this draft and not to be changed after any result:** {307, 308, 309}, evaluated together in
-   one execution.
+3. **Cell set: {307} only, fixed in this draft (revision r1) and not to be changed after any result.**
+   * **Why not 308 and 309 (committed scope, not a forecast).** This protocol changes only A1 and A2; A0 stays at C2's
+     committed value. The committed C3 knockout (C3-N4; C4 §8; ROUTE_AUDIT_R1 §4) shows that at A1 = A2 = 0 with the
+     certified A0:
+     * cells 308 and 309 remain non-closing under the frozen consumer;
+     * cell 307 closes.
+
+     So an A1/A2-only supply **cannot** close 308 or 309 under this consumer, and evaluating them would consume their
+     exactly-once target evaluations for no possible outcome. They need an A0-channel or other improvement (the C2b
+     certifier, not yet freeze-ready; TPT, blocked by incident 01; SC or RSO, data-blocked) and a separate protocol.
    * 305 is OUT (adopted).
-   * 306 is OUT (route audit 306-c/d/g: the sealed adverse I2 result is known).
+   * 306 is OUT (route audit 306-c/d/g).
+   * **Revision note.** The r0 draft of this protocol (commit 9e8ae240) listed {307, 308, 309}. It was corrected before
+     any freeze because of the scope fact above.
 
 ## 2. Stage 1: operator certification, exactly once
 
@@ -90,15 +100,15 @@ FREEZE_READY.
 
 ## 5. Exactly-once mechanics
 
-* Consumed ref: `refs/rlr-tail/target-consumed` → the grant commit.
+* Consumed ref: `refs/rlr-tail/cell307-target-consumed` → the grant commit.
 * Pending-result ref and a sealed result JSON, committed alone.
 * No re-run, no partial re-run, no change of partition, candidate family, arithmetic or cell set after the grant.
 
 ## 6. Cost (from C1b measurements at non-target drifts; to be re-measured on decoys at qualification)
 
 * A block certification takes minutes of local CPU. The C1b block at width 1/32 took about 246 s.
-* The tail cells have 10–11 sub-blocks each.
-* The whole of Stage 1 is of order 30 blocks, so on the order of a few CPU-hours on this Mac.
+* Cell 307 has 10 sub-blocks under the C2 partition rule.
+* The whole of Stage 1 is of order 10 blocks, so on the order of an hour of CPU on this Mac.
 * No host is needed (U1 not required).
 
 ## 7. What this protocol can and cannot establish
