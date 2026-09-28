@@ -234,23 +234,105 @@ The decoy outputs are latent proxies. Only runtime and status may enter the EVAL
 9. **Formal ledger.** None exists in NSF. As in 307, the qualification carries its ledger entries in its report.
    Builder lines went to the NS ledger through `log_event`.
 
-## 7. Files (sha256 of the bytes at the end of the build; this report excluded)
+## 8. Freeze prep (coordinator note 6; edits made after the build commit `55d3719c`)
+
+**Edits.** Nothing was executed on 305–309 apart from the committed-305 reproduction (QC01, twice more; ledgered).
+1. **Caps (protocol §3.2).**
+   * `EVAL_CAP_S = 8 * 3600`.
+   * `RUNG_CPU_CAP_S` in seconds:
+
+     | kind | per-rung caps |
+     |---|---|
+     | RLR | d4 1800, d6 4200, d8 8700 |
+     | C2B | N20 1800, N40 1800, N80 2700 |
+     | C1B | d8, d10, d12: 1800 |
+     | VER | every rung 1800 (unused in the frozen ladder) |
+
+   * `PRE_CAP_S` stays 1800 and `WORKERS` stays 5.
+   * One addition: `C1B` d4 = 1800 s is kept. It serves only the decoy development ladder (`--dev-ladder`) and is
+     unused by the frozen ladder.
+2. **Q12 (`q12_caps` in `mb308_qualify`).** It re-derives the §3.2 projection from the OFFICIAL QC02 (297, all
+   blocks) and QC03 (316, blocks 0–2) runtimes. The job set is 11 blocks × 9 frozen jobs = 99 jobs, scheduled
+   longest-first on 5 workers.
+   * It requires EVAL_CAP_S ≥ ⌈1.5 × projection⌉.
+   * It requires every per-job cap ≥ 2 × the official maximum wall of its kind and rung.
+   * It requires every job CERTIFIED (C2b VERIFIED and admitted), with no alarm, refutation or ALARM_UNAVAILABLE.
+   * A missing job kind fails loudly. Every number is recorded, runtime and status only.
+   * Gate Q12 = QC10 ∧ QC11 ∧ Q12_caps.
+   * Checks: the scheduler reproduces the protocol's figures exactly (99 jobs, 65 502.8 job-s, makespan 13 110.8 s).
+     A plumbing run on the timing-only record passed; its full outputs were not opened.
+   * **Remark for §3.2.** In this build's records the C2B job wall ALREADY includes the in-job vd_pl verification:
+     `run_job` times the whole job. The protocol table's "+ verification" column therefore double-counts. That is
+     conservative and harmless. Q12 keeps the same convention: job wall + recorded verification seconds.
+3. **Theory copy.**
+   * `theory/THEOREM_MB.md` is byte-identical to the research THEOREM_MB r1 blob at `bfa9ad3c`
+     (sha256 `f1c767dc…0d25`, blob `2ee1a41b…`).
+   * Case `Q1_theory` checks the NSF copy's sha256 and blob against that pin, and the pin against `git rev-parse
+     bfa9ad3c:<path>`. Gate Q1 = QC05 ∧ Q1_theory.
+4. **Driver docstring fixed.** Stage 1 verifies C2b rungs with vd_pl in the job. C1b upper rungs with d > 6 are
+   never admitted. C1b Lambda_lo is only the cross-implementation alarm. No other comment claimed C1b verification.
+5. **Identity and lineage.**
+   * Identity constants are as specified (they were already set).
+   * LINEAGE now requires the research commits 33185113, bfa9ad3c, a7014669, 0292d654, e042c8d1, f42fef40, 8da57f89,
+     58f190dc, 55d3719c, fc4eeeee and cc249872 (plus the 307-era anchors), each with a subject-word check.
+   * All resolve as ancestors of HEAD.
+6. **Q8 manifest.** It now lists, with sha256 and git blob:
+   * EVERY namespace file (root files, protocol, theory, errata, evidence_prefreeze, config, code, tests), excluding
+     the manifest itself and the post-freeze directories;
+   * EVERY pinned external file (54: pinned modules, F2, F3, vd_pl, consumer inputs, MC, E4, the pattern file, the
+     research theory, r_eval, and the 5 committed A0 certificates plus their manifest), each checked against its pin
+     and its HEAD blob.
+
+   Q8 in the qualification checks all of these, plus no unlisted or absent file, and requires the five named files
+   to be listed. `FROZEN_DIRS` gains `evidence_prefreeze`. The flow sandbox now copies every NSF directory and the
+   root files onto the checked-out namespace (`dirs_exist_ok`).
+7. **Protocol not pinned.**
+   * The protocol is not pinned in code. The manifest reads `protocol/MB308_PROTOCOL.md` at freeze time.
+   * `HELPER_SHA256` was re-pinned after the last edit (driver sha256 below).
+   * The C2 static check (QC11) now scans code (.py) only. The protocol's own sentence stating the history/recon
+     prohibition had made the prose scan fire.
+
+**Discrepancies for the coordinator.** I did not change these unilaterally.
+* **Verdict line.** Protocol §10 step 3 says the qualification review's "line 3 exactly QUALIFICATION_ACCEPTED".
+  The driver's `check_grant` (the 307 code) requires line 2 (`verdict_ok`: `lines[1]`). The QC13 incident-review
+  check takes the first non-empty line after the title. One of the two texts must be aligned before the freeze.
+* **§3.2 double count.** See item 2.
+
+**Dev qualification after these edits** (`--dev --only QC01,QC05,QC06,QC07,QC09,QC10,QC11,QC12,QC13`, sandbox
+under the scratchpad, 221.5 s):
+* **All 10 PASS**: Q1_theory, QC01, QC05, QC06, QC07, QC09, QC10, QC11, QC12, QC13.
+  * QC05: 1980/1980 exact.
+  * QC06: C1 byte identity 5/5, including the committed-blob check; FD; controls; D5 9/9.
+  * QC07: E4 29/29; rise-then-fall 32/32; formal 168/168.
+  * QC10: 41/41.
+  * QC12: 20 files, 70 patterns, 0 hits.
+  * QC13: the incident review is committed before HEAD, and its condition files are present.
+* Gates Q2, Q3, Q6, Q8 and Q12 stay false in dev mode by construction: heavy cases, manifest and Q12_caps are
+  official-only.
+* Report sha256: `e8957269c3c5ded6c83281a5c048ac550d9887feff2f31042c2b0b8f71d1ead7`.
+* The QC01 records of the two runs: `712fdf10…641e` and `de7e9cd8…0bb6`.
+* The read-only `preflight` passes on the real repository.
+
+## 7. Files (sha256 of the bytes after freeze prep; this report excluded)
 
 | file | sha256 |
 |---|---|
 | `code/mb308_a0core.py` | `0873604379bb5008f385ed09c7ae2f0694a402a91881b6a9d2e45649af332de6` |
 | `code/mb308_consumer.py` | `c233bdb6235cd8a44bcf187be7d6686a4684f8619bed21ade9130432c5c09188` |
-| `code/mb308_driver.py` | `b1de67f06475320b389a348227193319dc759e34d41685e981427787ea894cad` |
+| `code/mb308_driver.py` | `965a2a306dd564b16614fc0bc22583e663e5bfa99464dc7afbe2bc408ac265f9` |
 | `code/mb308_guard.py` | `882ce3fb86f4089081104e0fdbaf31c01b16e9a80065acd4e911f3010e6e06b1` |
-| `code/mb308_manifest.py` | `9475c8a9670e9ac6ab38f41709784bf08dbe494b455855e388a184b7ae8d7c25` |
+| `code/mb308_manifest.py` | `fe80033d32df890b6dff187cf5ab876b46ad779e6c8eece60c138b0793b11170` |
 | `code/mb308_pinned.py` | `5c221a0e70a708c580f13e1cd622556930f047f3c0b302227a8d9b18c52220a2` |
-| `code/mb308_qualify.py` | `ab786968066cd94f353c3cd6b2b3a4efbe8e29cac2d53c1eeb00ebed69ebfb17` |
+| `code/mb308_qualify.py` | `ca221cf080a0d4343971903aeea8c069ec871795d6424bf1b2558ad407c96a94` |
 | `code/mb308_stage1.py` | `23296f837eb7520b36c32bba08d238d940c14a8753e8ce8cadb05f0990f2ec98` |
 | `code/mb308_supply.py` | `af1a818b68459ada53773557e10153ae4ae3edc232d52e93fd19814e4da59b58` |
-| `config/QUALIFICATION_CASES.json` | `9b2b76c68c25461a16f5d39ca9bf6359f7dac34c01a7221872c32ccd6aead006` |
+| `config/QUALIFICATION_CASES.json` | `2283989bdc61acfb34f3136503614db2dbc6d4ce18c450b870198f10bdd6ba5f` |
 | `errata/C2B_ERRATA.md` | `91bc3e4867479d28d6dab080db59bc30767b26c888af466727137a29285185b3` |
-| `tests/test_mb308_a0.py` | `0353db093f0e401f952139fb310bc30489b1029486cb285003cc1970c37e9d17` |
-| `tests/test_mb308_flows.py` | `6a17625e48c1b0d07652b46925464fa192966e320869f5eb50dc7a2cd4490e3f` |
+| `evidence_prefreeze/DECOY_TIMING_PREFREEZE.json` | `0d6ded7f571753e91a11d09e3e778198b5ba3742bf6dd84e7c0fc0676e209f3f` |
+| `protocol/MB308_PROTOCOL.md` | `87e75fa7396d1d9149d5d245d344c5eed8a52c3421720626dcb10bd5ec892cf8` |
+| `tests/test_mb308_a0.py` | `be7ca5a7f3e73432ee1d7dd7c2a597c6bc41ef09557643234c3a7b4c1c5b98eb` |
+| `tests/test_mb308_flows.py` | `5a5c70c12754ff0ea4cdca20429661e0f16827ee8b6e926e741f55b8373cbd6a` |
 | `tests/test_mb308_guard.py` | `a64ac7865ec2af48eb18531b48aacac19bf0329d7d31e5ea9b0e390a588fd52f` |
 | `tests/test_mb308_tptb.py` | `44ea60ac0e28222c365a78fd6c8a92b7f8f72ab2ebc0e70619dcde05e07faec9` |
 | `tests/test_mb308_twosided.py` | `e71b12fa7c29261ad0b4ad561c24133a54cc60464d0fc0ca68ca56d055afc8d8` |
+| `theory/THEOREM_MB.md` | `f1c767dccc0bb3738fcae350530d4dda13c8b9db482ffb25528376502f4d0d25` |

@@ -26,6 +26,7 @@ import ast
 import datetime
 import hashlib
 import json
+import math
 import os
 import re
 import subprocess
@@ -74,7 +75,16 @@ MC_PIN = ("level4/closure_proofs/p5y_k5_cell307_rlr_r1/tests/test_rlr307_mc.py",
           "811c929acabbdde16ce181f22e66cd7ce9f840c7777add71c632140f7eb348fb", "b486a5f69588")
 E4_PIN = (RS + "streams/ASSEMBLY/controls.py", "801fb5ab3450407dd478ef26331f964a8cd27abee3c00768c3fc8a0c95946519",
           "4c42c56af95c")
-LADDER_DET_DRIFTS = ("3", "11/10")         # REVIEW_A0 C4: one dyadic (with d = 8), one non-dyadic declared drift
+LADDER_DET_DRIFTS = ("3", "11/10")
+# Q1: the NSF copy of THEOREM_MB r1 must be byte-identical to the research file as committed at bfa9ad3c
+THEORY_REL = D.NS_REL + "/theory/THEOREM_MB.md"
+THEORY_RESEARCH = (RS + "theory/THEOREM_MB.md", "bfa9ad3c",
+                   "f1c767dccc0bb3738fcae350530d4dda13c8b9db482ffb25528376502f4d0d25",
+                   "2ee1a41bccd26c32f2bb150b5f2ad6df856ff3a9")
+# Q12 (protocol 3.2): the cell-308 Stage-1 job set and the projection's scheduling model
+Q12_BLOCKS, Q12_WORKERS = 11, D.WORKERS
+Q12_KEYS = (("RLR", 4), ("RLR", 6), ("RLR", 8), ("C2B", 20), ("C2B", 40), ("C2B", 80), ("C1B", 8), ("C1B", 10),
+            ("C1B", 12))         # REVIEW_A0 C4: one dyadic (with d = 8), one non-dyadic declared drift
 ENV = {"PATH": "/usr/bin:/bin", "LC_ALL": "C", "GIT_OPTIONAL_LOCKS": "0", "HOME": os.environ.get("HOME", "/var/empty")}
 
 
@@ -333,8 +343,8 @@ def qc11_static() -> dict:
     t3 = ast.parse((REPO / PIN.TUPLE_PIN[0]).read_text())
     imps3 = {a.name.split(".")[0] for n in ast.walk(t3) if isinstance(n, ast.Import) for a in n.names} | \
         {(n.module or "").split(".")[0] for n in ast.walk(t3) if isinstance(n, ast.ImportFrom)}
-    ns_text = "".join(p.read_text(errors="replace") for p in NS.rglob("*") if p.is_file() and p.suffix in
-                      (".py", ".json", ".md") and "__pycache__" not in p.parts)
+    ns_text = "".join(p.read_text(errors="replace") for p in NS.rglob("*") if p.is_file() and p.suffix == ".py"
+                      and "__pycache__" not in p.parts)   # code only: prose may STATE the prohibition (protocol s5)
     forbidden = ("history" + "/" + "recon", "KNOCK" + "OUT_RECON")      # incident review C2 (built, not written)
     r["no_reference_to_the_research_reconstructions"] = not any(f in ns_text for f in forbidden)
     r["F3_imports_stdlib_only"] = imps3 <= {"__future__", "fractions", "hashlib", "json", "math", "random", "copy",
@@ -439,15 +449,26 @@ def qc13(pre: dict) -> dict:
 
 # ------------------------------------------------------------------ Q8 manifest
 def q8_manifest() -> dict:
-    mp = NS / "protocol" / "MB308_FREEZE.json"
+    """The freeze manifest lists EVERY namespace file (manifest and post-freeze directories excluded) and EVERY pinned
+    external file, each with sha256 and git blob; all must match the bytes and the blobs at HEAD."""
+    import mb308_manifest as MF
+    mp = MF.OUT
     if not mp.exists():
         return {"pass": False, "reason": "no freeze manifest"}
     man = json.loads(mp.read_bytes())
     bad = [rel for rel, v in man["frozen_files"].items()
-           if sha((REPO / rel).read_bytes()) != v["sha256"] or git("rev-parse", f"HEAD:{rel}") != v["git_blob"]]
+           if not (REPO / rel).exists() or sha((REPO / rel).read_bytes()) != v["sha256"]
+           or git("rev-parse", f"HEAD:{rel}") != v["git_blob"]]
     listed = set(man["frozen_files"])
-    on_disk = {str(p.relative_to(REPO)) for d in D.FROZEN_DIRS if (NS / d).is_dir() for p in (NS / d).rglob("*")
-               if p.is_file() and p != mp and "__pycache__" not in p.parts}
+    on_disk = {str(p.relative_to(REPO)) for p in MF.namespace_files()}
+    want_ext = MF.external_pins()
+    ext = man.get("external_files", {})
+    bad_ext = [k for k, (rel, pin) in want_ext.items()
+               if k not in ext or ext[k]["path"] != rel or sha((REPO / rel).read_bytes()) != ext[k]["sha256"]
+               or (pin is not None and pin != ext[k]["sha256"]) or git("rev-parse", f"HEAD:{rel}") != ext[k]["git_blob"]]
+    required = [D.NS_REL + "/" + r for r in ("protocol/MB308_PROTOCOL.md", "theory/THEOREM_MB.md",
+                                             "evidence_prefreeze/DECOY_TIMING_PREFREEZE.json",
+                                             "errata/C2B_ERRATA.md", "config/QUALIFICATION_CASES.json")]
     drv_ok = man["driver"]["sha256"] == sha((CODE / "mb308_driver.py").read_bytes())
     try:
         D.check_bindings()
@@ -455,8 +476,93 @@ def q8_manifest() -> dict:
     except (D.Refusal, PIN.PinError):
         bind = False
     return {"manifest_sha256": sha(mp.read_bytes()), "frozen_files": len(listed), "mismatches": bad,
-            "unlisted_files": sorted(on_disk - listed), "driver_sha_ok": drv_ok, "bindings_ok": bind,
-            "pass": not bad and on_disk == listed and drv_ok and bind}
+            "unlisted_files": sorted(on_disk - listed), "listed_but_absent": sorted(listed - on_disk),
+            "external_files": len(ext), "external_mismatches": bad_ext,
+            "required_files_listed": all(r in listed for r in required), "driver_sha_ok": drv_ok,
+            "bindings_ok": bind,
+            "pass": not bad and on_disk == listed and not bad_ext and len(ext) == len(want_ext) and drv_ok and bind
+            and all(r in listed for r in required)}
+
+
+# ------------------------------------------------------------------ Q1 theory copy
+def q1_theory() -> dict:
+    raw = (REPO / THEORY_REL).read_bytes() if (REPO / THEORY_REL).exists() else b""
+    rel, commit, pin_sha, pin_blob = THEORY_RESEARCH
+    out = {"nsf_copy": THEORY_REL, "research": f"{rel}@{commit}",
+           "research_blob_at_commit_ok": git("rev-parse", f"{commit}:{rel}") == pin_blob,
+           "nsf_sha256_ok": sha(raw) == pin_sha, "nsf_blob_ok": PIN.blob_id(raw) == pin_blob}
+    out["pass"] = all(out[k] for k in ("research_blob_at_commit_ok", "nsf_sha256_ok", "nsf_blob_ok"))
+    return out
+
+
+# ------------------------------------------------------------------ Q12 cap rule on the official decoy runtimes
+def _decoy_jobs(dec: dict) -> tuple:
+    """(jobs, problems) from an official decoy record: runtime and status ONLY (incident review C7(b))."""
+    jobs, bad = [], []
+    for b in dec["stage1"]["blocks"]:
+        if not b.get("run"):
+            continue
+        for r in b["rlr_rungs"]:
+            jobs.append({"kind": "RLR", "rung": r["rung"], "wall": r["wall_seconds"], "ok": r.get("status") == "CERTIFIED"})
+        for r in b["c2b_rungs"]:
+            v = r.get("verification") or {}
+            jobs.append({"kind": "C2B", "rung": r["rung"], "wall": r["wall_seconds"],
+                         "ver_seconds": v.get("seconds") or 0.0,
+                         "ok": r.get("status_U") == "CERTIFIED" and r.get("status_L") == "CERTIFIED"
+                         and v.get("verdict") == "VERIFIED" and v.get("accepted") is True})
+        for r in b["c1b_rungs"]:
+            jobs.append({"kind": "C1B", "rung": r["rung"], "wall": r["wall_seconds"], "ok": r.get("status") == "CERTIFIED"})
+        pw = b["pointwise"]
+        c2b_up = [u for u in pw.get("uppers", []) if u["impl"] == "C2B"]
+        if pw.get("status") != "CERTIFIED" or pw.get("alarms") or pw.get("refuted_rungs") or \
+                pw.get("alarm_unavailable") or not c2b_up or any("alarm_sensitivity" not in u for u in c2b_up):
+            bad.append(b["index"])
+    return jobs, bad
+
+
+def lpt_makespan(durations: list, workers: int) -> float:
+    """Longest-first list scheduling on `workers` identical workers (protocol 3.2)."""
+    loads = [0.0] * workers
+    for d in sorted(durations, reverse=True):
+        i = loads.index(min(loads))
+        loads[i] += d
+    return max(loads)
+
+
+def q12_caps(dec297: dict | None, dec316: dict | None) -> dict:
+    """Protocol 3.2 re-derived from the OFFICIAL QC02 (297, all blocks) and QC03 (316, blocks 0-2) runtimes:
+    projection = longest-first makespan of 11 blocks x the 9 frozen jobs at 5 workers, each job taking the larger
+    official wall time of its kind and rung (C2b: job wall + its recorded in-job verification seconds, the
+    protocol table's conservative convention; the job wall already contains the verification). Requires
+    EVAL_CAP_S >= ceil(1.5 x projection), every per-job cap >= 2 x the official max wall of its kind and rung,
+    every job CERTIFIED (C2b VERIFIED and admitted) and no alarm. Runtime and status only."""
+    if not dec297 or not dec316:
+        return {"pass": False, "missing": [k for k, v in (("QC02", dec297), ("QC03", dec316)) if not v]}
+    j297, bad297 = _decoy_jobs(dec297)
+    j316, bad316 = _decoy_jobs(dec316)
+    mx = {}
+    for j in j297 + j316:
+        w = j["wall"] + (j.get("ver_seconds") or 0.0)
+        key = (j["kind"], j["rung"])
+        mx[key] = max(mx.get(key, 0.0), w)
+    missing = [f"{k}:{r}" for k, r in Q12_KEYS if (k, r) not in mx]
+    if missing:
+        return {"pass": False, "missing_job_kinds": missing}
+    durations = [mx[k] for _ in range(Q12_BLOCKS) for k in Q12_KEYS]
+    proj = lpt_makespan(durations, Q12_WORKERS)
+    need_eval = math.ceil(1.5 * proj)
+    caps = {f"{k}:{r}": {"cap_s": D.RUNG_CPU_CAP_S[k][r], "official_max_wall_s": round(mx[(k, r)], 1),
+                         "cap_ge_2x": D.RUNG_CPU_CAP_S[k][r] >= 2 * mx[(k, r)]} for k, r in Q12_KEYS}
+    out = {"jobs_297": len(j297), "jobs_316": len(j316), "all_jobs_certified": all(j["ok"] for j in j297 + j316),
+           "blocks_with_alarm_or_unadmitted_c2b": {"297": bad297, "316": bad316},
+           "projection_jobs": len(durations), "projection_job_seconds": round(sum(durations), 1),
+           "projection_makespan_s": round(proj, 1), "eval_cap_s": D.EVAL_CAP_S, "eval_cap_required_s": need_eval,
+           "eval_cap_ok": D.EVAL_CAP_S >= need_eval, "per_job_caps": caps,
+           "stage1_wall_s": {"297": dec297.get("stage1_wall_seconds"), "316": dec316.get("stage1_wall_seconds")},
+           "note": "runtime and status only (incident review C7(b))"}
+    out["pass"] = out["all_jobs_certified"] and not bad297 and not bad316 and out["eval_cap_ok"] and \
+        all(c["cap_ge_2x"] for c in caps.values()) and len(j297) > 0 and len(j316) > 0
+    return out
 
 
 # ------------------------------------------------------------------ comparisons of the heavy records
@@ -641,15 +747,18 @@ def main(argv=None) -> int:  # noqa: C901
         cases["QC13"] = qc13(pre)
     if mode != "dev":
         cases["Q8"] = q8_manifest()
+    cases["Q1_theory"] = q1_theory()
+    if mode != "dev" or {"QC02", "QC03"} <= sel:
+        cases["Q12_caps"] = q12_caps(load("decoy297"), load("decoy316"))
     missing_pass = sorted(k for k, v in cases.items() if not isinstance(v, dict) or not isinstance(v.get("pass"), bool))
     P = lambda *ks: all(cases.get(k, {}).get("pass") is True for k in ks)    # noqa: E731
     theory = (REPO / RS / "theory/THEOREM_MB.md").exists()
-    gates = {"Q1": {"pass": P("QC05") and theory}, "Q2": {"pass": P("QC01", "QC06", "QC11", "Q8")},
+    gates = {"Q1": {"pass": P("QC05", "Q1_theory") and theory}, "Q2": {"pass": P("QC01", "QC06", "QC11", "Q8")},
              "Q3": {"pass": P("QC04")}, "Q4": {"pass": P("QC05", "QC06")}, "Q5": {"pass": P("QC05", "QC07")},
              "Q6": {"pass": P("QC02", "QC03", "QC08")}, "Q7": {"pass": P("QC05")}, "Q8": {"pass": P("Q8")},
              "Q9": {"pass": P("QC09", "QC12")}, "Q10": {"pass": P("QC13")},
              "Q11": {"pass": pre.get("incident_review_accepted_before_freeze") is True},
-             "Q12": {"pass": P("QC10", "QC11")}}
+             "Q12": {"pass": P("QC10", "QC11", "Q12_caps")}}
     ok = mode != "dev" and all(g["pass"] for g in gates.values()) and not missing_pass
     report = {"schema": "rebaseguard.p5y.k5.cell308-mb-r1.qualification.v1", "freeze_commit": pre["freeze_commit"],
               "head": pre["head"], "review_mode": mode != "official", "dev_mode": mode == "dev",

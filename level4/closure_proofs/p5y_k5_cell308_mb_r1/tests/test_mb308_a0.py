@@ -35,6 +35,7 @@ import hashlib
 import json
 import math
 import random
+import subprocess
 from fractions import Fraction as F
 from pathlib import Path
 
@@ -71,9 +72,14 @@ def byte_identity(A0C, c1b, c2b, guard, set_flags) -> dict:
         for fname, cert in got.items():
             raw = (A0_CERTS / fname).read_bytes()
             ok_hash = hashlib.sha256(raw).hexdigest() == man[fname]["sha256"]
-            rows.append({"file": fname, "manifest_sha256_ok": ok_hash,
+            rel = str((A0_CERTS / fname).relative_to(REPO))
+            head = subprocess.run(["/usr/bin/git", "-C", str(REPO), "rev-parse", f"HEAD:{rel}"], capture_output=True,
+                                  text=True).stdout.strip()
+            ok_blob = head == hashlib.sha1(b"blob %d\0" % len(raw) + raw).hexdigest()
+            rows.append({"file": fname, "manifest_sha256_ok": ok_hash, "committed_blob_ok": ok_blob,
                          "byte_identical": cert is not None and a0_bytes(cert) == raw})
-    return {"rows": rows, "pass": bool(rows) and all(x["manifest_sha256_ok"] and x["byte_identical"] for x in rows)}
+    return {"rows": rows, "pass": bool(rows) and all(x["manifest_sha256_ok"] and x["committed_blob_ok"]
+                                                     and x["byte_identical"] for x in rows)}
 
 
 # ------------------------------------------------------------------ the reviewer's float evaluator (pinned bytes)

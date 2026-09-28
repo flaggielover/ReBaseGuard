@@ -33,7 +33,7 @@ BRANCH = "p5y-k5-cell308-mb-r1"
 PY = sys.executable
 GENV = {"PATH": "/usr/bin:/bin", "LC_ALL": "C", "GIT_OPTIONAL_LOCKS": "0", "HOME": os.environ.get("HOME", "/var/empty")}
 SIGS = (signal.SIGINT, signal.SIGTERM, signal.SIGHUP, signal.SIGQUIT, signal.SIGALRM)
-COPY_DIRS = ("code", "tests", "config", "theory", "errata")
+COPY_DIRS = ("code", "tests", "config", "theory", "errata", "protocol", "evidence_prefreeze")
 
 
 def g(root: Path, *args, check=True) -> str:
@@ -60,10 +60,14 @@ class Sandbox:
             self.freeze = freeze
             return
         g(self.root, "checkout", "-q", "-B", BRANCH, base)
-        for d in COPY_DIRS:
+        for d in COPY_DIRS:                           # the namespace as built (it may also be committed already)
             src = NS / d
             if src.is_dir():
-                shutil.copytree(src, self.root / NS_REL / d, ignore=shutil.ignore_patterns("__pycache__"))
+                shutil.copytree(src, self.root / NS_REL / d, ignore=shutil.ignore_patterns("__pycache__"),
+                                dirs_exist_ok=True)
+        for f in NS.iterdir():
+            if f.is_file():
+                shutil.copy2(f, self.root / NS_REL / f.name)
         m = subprocess.run([PY, "-I", "-S", "-B", str(self.root / NS_REL / "code/mb308_manifest.py")],
                            capture_output=True, text=True, env=GENV, stdin=subprocess.DEVNULL)
         if m.returncode:

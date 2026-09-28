@@ -1,9 +1,13 @@
 """Cell-308 MB campaign (r1) -- the cell-308-only exactly-once driver (B6).
 
 ONE scientific evaluation, after freeze -> qualification -> independent review (QUALIFICATION_ACCEPTED) -> grant:
-  Stage 1  (mb308_stage1) RLR block rungs on every hull B_i, the pointwise Lambda ladder at every b_i, independent
-           verification of every certified C1b upper rung, consistency L_i <= U_i, envelope (Lemma M-U), in a pool of
-           spawned workers that load every certifier from pinned bytes and arm the guard from git;
+  Stage 1  (mb308_stage1) RLR block rungs on every hull B_i; the pointwise Lambda ladder at every b_i (C2b N 20/40/80,
+           C1b d 8/10/12); independent verification of every certified C2b upper rung by stream VERIFY's P1 verifier
+           vd_pl inside its job; C1b upper rungs with d > 6 are never admitted (NOT_INDEPENDENTLY_VERIFIED) and the C1b
+           Lambda_lo serves only as the cross-implementation alarm (L_C1b <= U_C2b); admission (verified AND an
+           other-implementation lower rung below U), INCONSISTENT on a refutation or an alarm; envelope (Lemma M-U);
+           in a pool of spawned workers (one fresh process per job, declared CPU cap) that load every certifier from
+           pinned bytes and arm the guard from git;
   compose  (mb308_supply) S_i = componentwise min of {S_I1, Dv'-M(C1), Dv'-M(C2), D14-M, G}, equal to stream F2;
   Stage 2  (mb308_consumer.stage2) TPT-B through tptb_tail on cell 308's COMMITTED TC-T inputs with the block
            triples; C5 / C6 gates; F2 bracket; Gamma_dec = g_hi + max(P_B, P_hi); CLOSED iff Gamma_dec < 0 (exact).
@@ -68,7 +72,8 @@ TARGET_CELL = 308
 REHEARSAL_CELLS = (305,)
 DECOY_CELLS = (297, 316)
 FIELDS = ("A0", "A1", "A2")
-FROZEN_DIRS = ("code", "protocol", "theory", "tests", "config", "errata")
+FROZEN_DIRS = ("code", "protocol", "theory", "tests", "config", "errata", "evidence_prefreeze")
+POST_FREEZE_DIRS = ("qualification", "review", "authorization", "evidence", "adjudication", "postexec")
 DECOY_SEED = 20260929
 DECOY_BUNDLES = (("taylor", 1, "cut"), ("midpoint", -1, "loose"), ("mixed", 1, "cut_both"))
 
@@ -89,7 +94,7 @@ PRIOR_MARKERS = ("refs/p5y-k5-cell308-mb-r1/",)
 R6_NAME = "K5_COVERAGE_MAP_R6"
 WORKERS = 5                      # design D11
 PRE_CAP_S = 1800                 # everything before the marker (controls included)
-EVAL_CAP_S = 12 * 3600           # OPEN (design D11 / 8.6): to be set at the freeze from decoy costs by the 307 rule
+EVAL_CAP_S = 8 * 3600            # protocol 3.2: max(6 h, ceil(2 x projected Stage-1 wall)) from decoy runtimes only
 DECOY_CAP_S = 12 * 3600
 SEAL_RETRY_DELAYS = (0.5, 1.0, 2.0, 4.0)
 ENV = {"PATH": "/usr/bin:/bin", "HOME": os.environ.get("HOME", "/var/empty"), "GIT_OPTIONAL_LOCKS": "0",
@@ -110,17 +115,23 @@ PIN.GUARD_SHA256 = HELPER_SHA256["mb308_guard.py"]
 # per-job CPU caps (REVIEW_A0_CERTIFIER_R1 C3): each Stage-1 job runs in a FRESH worker process (max_tasks_per_child
 # = 1) whose RLIMIT_CPU is set to exactly the declared cap; a job refuses to start if an outer hard limit would make the
 # effective cap smaller than the declared one. A cap hit kills the worker: an execution failure, never a dropped rung.
-# OPEN (design D11): provisional values, to be sized at the freeze from decoy costs by the 307 rule.
-RUNG_CPU_CAP_S = {"RLR": {4: 3600, 6: 10800, 8: 14400}, "C2B": {20: 900, 40: 2700, 80: 10800},
-                  "C1B": {4: 900, 8: 1800, 10: 3600, 12: 7200}, "VER": {4: 900, 8: 21600, 10: 43200, 12: 43200}}
+# Values: protocol 3.2 (max(3 x the larger decoy wall time rounded up to 300 s, 1800 s)); C1B d4 and every VER entry
+# serve only the decoy development ladder / are unused by the frozen ladder (C1b d > 6 is never verified).
+RUNG_CPU_CAP_S = {"RLR": {4: 1800, 6: 4200, 8: 8700}, "C2B": {20: 1800, 40: 1800, 80: 2700},
+                  "C1B": {4: 1800, 8: 1800, 10: 1800, 12: 1800},
+                  "VER": {4: 1800, 6: 1800, 8: 1800, 10: 1800, 12: 1800}}
 LINEAGE = [("5a94568af69f775eaabdeb895dea19b9bf664935", "D stage"), ("ae4cbc2c", "coverage map r5"),
            ("a15d083b009868e38a5bd5a808f38f19e6ab4b92", "floor r2"),
            ("3fadb422eaba97123d46e98b9e80277a62a042c8", "REPLACEMENT_FLOOR_ACCEPTED"),
            ("9c2cbf21", "CELL306_NOT_ADOPTED"), ("c5324a78", "ADJUDICATION_ACCEPTED"),
            ("d3b60795", "FREEZE_READY"), ("7f45e048c39023f4805b21a461650fd332af951f", "morning handover"),
-           ("b73b9449", "CELL307_CLOSED_UNDER_RLR"), ("bfa9ad3c", "Theorem MB r1"),
-           ("c8b68d4d", "MB308 formal design draft"), ("c494705d", "stream VERIFY"), ("a7014669", "stream INDEP"),
-           ("e042c8d1", "A0 certifier review"), ("0292d654", "stream INDEP_TUPLE")]
+           ("b73b9449", "CELL307_CLOSED_UNDER_RLR"),
+           # the research lineage required by the coordinator (note 6, item 5)
+           ("33185113", "charter"), ("bfa9ad3c", "Theorem MB r1"), ("a7014669", "stream INDEP"),
+           ("0292d654", "stream INDEP_TUPLE"), ("e042c8d1", "A0 certifier review"),
+           ("f42fef40", "incident-independence review"), ("8da57f89", "incident-review conditions"),
+           ("58f190dc", "stream VERIFY follow-up"), ("55d3719c", "pre-freeze formal build"),
+           ("fc4eeeee", "stream-A0 certificates"), ("cc249872", "protocol draft p0")]
 
 
 class Refusal(Exception):

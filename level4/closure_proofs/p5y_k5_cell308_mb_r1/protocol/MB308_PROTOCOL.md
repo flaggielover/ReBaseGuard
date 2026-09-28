@@ -47,11 +47,41 @@ target evaluation; only the grant (§10 step 4) does.
 
 ### 3.2 Cap rule (frozen before any target computation; decoy runtime and status only)
 
-**To be completed from the pre-freeze exploration** (decoy 297 full ladder, decoy 316 first three blocks; runtimes and
-statuses only, incident review C7(b)). Rule (the 307 rule, extended): project cell 308's Stage-1 cost from the larger
-decoy wall time per job kind and rung (RLR d4/d6/d8; C2b N20/40/80 including `vd_pl`; C1b d8/10/12), for 11 blocks and
-11 pointwise drifts at 5 workers with longest-first scheduling; EVAL_CAP = max(6 h, ⌈2 × projection⌉); per-job CPU cap
-= max(3 × largest decoy job CPU of that kind and rung, 1800 s).
+**Rule (frozen; the 307 rule, extended).** Project cell 308's Stage-1 cost from the larger decoy wall time per job
+kind and rung (C2b including its in-job verification) for 11 blocks and 11 pointwise drifts at 5 workers with
+longest-first scheduling; EVAL_CAP = max(6 h, ⌈2 × projection⌉ in hours); per-job CPU cap = max(3 × the larger decoy
+wall time of that kind and rung rounded up to 300 s, 1800 s). Only runtime and status are used (incident review
+C7(b)); no certified value of any decoy is read by this rule.
+
+**Measured decoy costs** (pre-freeze exploration with the pre-freeze build `55d3719c`, full ladder, 5 workers, no
+other campaign job running to the coordinator's knowledge; record `evidence_prefreeze/DECOY_TIMING_PREFREEZE.json`; full outputs kept outside the
+repository with their sha256 recorded there). Every job CERTIFIED; every C2b rung VERIFIED by `vd_pl` and admitted;
+no alarm.
+
+| job kind, rung | decoy 297 (5 blocks) max wall s | decoy 316 (blocks 0–2) max wall s | used |
+|---|---|---|---|
+| RLR d4 | 276.5 | 139.6 | 276.5 |
+| RLR d6 | 1379.1 | 1327.8 | 1379.1 |
+| RLR d8 | 2236.0 | 2816.6 | 2816.6 |
+| C2b N20 (+ verification) | 43.4 (+3.3) | 40.3 (+2.8) | 46.7 |
+| C2b N40 (+ verification) | 144.6 (+19.7) | 96.7 (+14.8) | 164.3 |
+| C2b N80 (+ verification) | 759.2 (+136.0) | 342.0 (+88.9) | 895.2 |
+
+The C2b job wall times already include their in-job verification; the "used" column adds the verification seconds
+once more. The double count is conservative, and Q12 uses the same convention.
+| C1b d8 | 34.3 | 32.2 | 34.3 |
+| C1b d10 | 148.1 | 137.4 | 148.1 |
+| C1b d12 | 184.5 | 194.0 | 194.0 |
+
+Stage-1 wall: 297 all blocks 5142.1 s; 316 blocks 0–2 3055.8 s.
+
+**Projection for cell 308:** 99 jobs, 65 502.8 job-seconds; longest-first on 5 workers gives a makespan of
+**13 110.8 s = 3.64 h**.
+
+**Frozen values:** EVAL_CAP = max(6 h, ⌈7.28 h⌉) = **8 h = 28 800 s**; pre-marker cap 1800 s; workers 5; per-job CPU caps
+RLR {d4: 1800, d6: 4200, d8: 8700} s; C2b {N20: 1800, N40: 1800, N80: 2700} s; C1b {d8, d10, d12: 1800} s; VER (unused
+in the frozen ladder) 1800 s. Q12 re-derives the projection from the official QC02/QC03 runtimes and requires
+EVAL_CAP ≥ ⌈1.5 × projection⌉ and every per-job cap ≥ 2 × the official maximum wall time of its kind and rung.
 
 ## 4. Stage 1 (after the marker)
 
@@ -140,14 +170,15 @@ Every case carries a boolean `pass`; the aggregator fails loudly on a missing ke
 
 1. Freeze (a commit on branch `p5y-k5-cell308-mb-r1`, worktree `/Users/suzhe/ReBaseGuard-c308mb`).
 2. Official qualification at the freeze commit; committed as qualification evidence only.
-3. Fresh independent qualification review: line 3 exactly QUALIFICATION_ACCEPTED or QUALIFICATION_REJECTED.
+3. Fresh independent qualification review: line 2 (line 1 is the title) exactly QUALIFICATION_ACCEPTED or
+   QUALIFICATION_REJECTED, appearing exactly once as a whole line (the driver's `verdict_ok`).
    **REJECTED ⇒ STOP** (no same-round repair; a successor campaign only).
 4. The grant, committed alone, binding cell 308, route MB, the freeze/qualification/review commits, the driver
    sha256, the manifest sha256, exactly once, CLOSURE_ONLY, **and the user's C4 ruling**.
 5. `execute`, once, at the grant commit; post-execution checks.
-6. Fresh independent execution review: EXECUTION_ACCEPTED or EXECUTION_REJECTED (**REJECTED ⇒ STOP**, no rerun).
+6. Fresh independent execution review (verdict on line 2): EXECUTION_ACCEPTED or EXECUTION_REJECTED (**REJECTED ⇒ STOP**, no rerun).
 7. Scientific adjudication applying §8 verbatim.
-8. Fresh independent adjudication review: ADJUDICATION_ACCEPTED or ADJUDICATION_REJECTED.
+8. Fresh independent adjudication review (verdict on line 2): ADJUDICATION_ACCEPTED or ADJUDICATION_REJECTED.
 9. Handover.
 
 Additional STOP conditions: the start state differs; the target appears consumed or a result exists; freeze inputs

@@ -153,6 +153,27 @@
    "input": "protocol/MB308_FREEZE.json against every frozen file and every external pin",
    "pass_if": "no mismatch, no unlisted file, driver sha256 bound, bindings valid",
    "why_non_target": "provenance"
+  },
+  {
+   "id": "Q1_theory",
+   "gates": [
+    "Q1"
+   ],
+   "what": "theorem copy",
+   "input": "theory/THEOREM_MB.md (NSF) against the research THEOREM_MB.md r1 as committed at bfa9ad3c",
+   "pass_if": "the NSF copy's sha256 and git blob equal the research blob pinned at bfa9ad3c",
+   "why_non_target": "text"
+  },
+  {
+   "id": "Q12_caps",
+   "gates": [
+    "Q12"
+   ],
+   "what": "cap rule (protocol 3.2) re-derived from the OFFICIAL QC02 / QC03 runtimes",
+   "input": "per job kind and rung the larger official wall time (C2b: job wall + recorded in-job verification seconds); 11 blocks x (RLR 4/6/8, C2b 20/40/80, C1b 8/10/12) = 99 jobs, longest-first on 5 workers",
+   "pass_if": "EVAL_CAP_S >= ceil(1.5 x projection); every per-job cap >= 2 x the official maximum wall time of its kind and rung; every QC02/QC03 Stage-1 job CERTIFIED (C2b VERIFIED and admitted); no alarm, no refutation, no ALARM_UNAVAILABLE; a missing job kind fails",
+   "why_non_target": "runtime and status of decoy runs only (incident review C7(b))"
   }
- ]
+ ],
+ "revision": "freeze prep (coordinator note 6): Q1_theory and Q12_caps added; Q8 covers every namespace file and every external pin"
 }
