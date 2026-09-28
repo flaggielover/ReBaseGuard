@@ -112,9 +112,17 @@ def teval(A: tuple, p, m, e) -> tuple:
 
 
 def regions_of_box(b) -> list:
+    """x-regions a box must be checked in.  D13: points of R with p+m > 4 lie only on the axis segments, which are
+    covered by 1-D boxes; so the J = 5 form is checked on 1-D boxes only (2-D boxes have p, m <= 4)."""
     pc, mc, rp, rm = b
     lo, hi = pc - rp + mc - rm, pc + rp + mc + rm
-    return [J for J in range(1, NREG + 1) if not (hi < J - 1 or lo > J)]
+    two_d = rp > 0 and rm > 0
+    return [J for J in range(1, NREG + 1) if not (hi < J - 1 or lo > J) and not (two_d and J == NREG)]
+
+
+def in_R(p, m) -> bool:
+    """R = {0 <= p, m <= 5 : p = 0 or m = 0 or p + m <= 4}."""
+    return 0 <= p <= 5 and 0 <= m <= 5 and (p == 0 or m == 0 or p + m <= 4)
 
 
 def enclose_t(A: tuple, e_c: F, e_r: F = F(0), h: F = F(1, 4), extra_levels: int = 4, KT: int = 10,
@@ -127,17 +135,20 @@ def enclose_t(A: tuple, e_c: F, e_r: F = F(0), h: F = F(1, 4), extra_levels: int
         new = []
         for b, lev in work:
             los, his, mids = [], [], []
+            own = None
             for J in regions_of_box(b):
                 lo, hi, mid = KX.gf_box_int(Ai[J - 1], (b[0], b[1], e_c), (b[2], b[3], e_r), KT)
                 los.append(lo)
                 his.append(hi)
                 mids.append(mid)
-            results[b] = (min(los), max(his), mids, lev)
+                if in_R(b[0], b[1]) and region_of_point(b[0], b[1]) == J:
+                    own = mid          # centre value of the owning form at a point of R (a genuine witness)
+            results[b] = (min(los), max(his), mids, lev, own)
         cmax = max(max(v[2]) for v in results.values())
         cmin = min(min(v[2]) for v in results.values())
         up_lim = cmax + (tol - 1) * abs(cmax) + abs_tol
         lo_lim = cmin - (tol - 1) * abs(cmin) - abs_tol
-        for b, (lo, hi, mids, lev) in list(results.items()):
+        for b, (lo, hi, mids, lev, own) in list(results.items()):
             if (hi > up_lim or lo < lo_lim) and lev < extra_levels:
                 del results[b]
                 for cb in KX.split_box(b):
@@ -150,7 +161,9 @@ def enclose_t(A: tuple, e_c: F, e_r: F = F(0), h: F = F(1, 4), extra_levels: int
     hi = max(v[1] for v in results.values())
     wl = min(results.items(), key=lambda kv: kv[1][0])[0]
     wh = max(results.items(), key=lambda kv: kv[1][1])[0]
+    owns = [v[4] for v in results.values() if v[4] is not None]
     return {"lo": lo, "hi": hi, "centre_min": cmin, "centre_max": cmax, "boxes": len(results),
+            "centre_min_R": min(owns) if owns else None, "centre_max_R": max(owns) if owns else None,
             "max_level": max(v[3] for v in results.values()),
             "argmin_box": [float(x) for x in wl], "argmax_box": [float(x) for x in wh]}
 

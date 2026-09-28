@@ -141,6 +141,7 @@ def main():
     resT = PW.tadd(PW.tadd(cx.P(wT), cx.P(CP.wconst(1, cx.S)), -1), cx.K(wT), -1)
     Vt = PW.tadd(cx.P(wT), cx.K(wT), -1)
     Va = PW.teval(Vt, F(0), F(0), E0)
+    assert Va[1] < 2, "N1' precondition V(atom) < 2 fails: f = 1/2 would not be guaranteed invalid"
     s_half = CP.check_supersolution(cx, CP.wscale(wT, F(1, 2)), False, "whalf")
     cen = [(b[0], b[1]) for b in KX.base_cover()]
     rv = [(PW.teval(resT, p, m, E0)[0], (p, m)) for (p, m) in cen if p + m <= 4 or p == 0 or m == 0]
@@ -150,7 +151,7 @@ def main():
     res2 = PW.tadd(PW.tadd(cx.P(w2), cx.P(CP.wconst(1, cx.S)), -1), cx.K(w2), -1)
     r2x = PW.teval(res2, xs[0], xs[1], E0)
     s_tight = CP.check_supersolution(cx, w2, False, "wtight")
-    res["N1prime"] = {"V_atom": float(Va[0]), "f": 0.5, "rejected": not s_half["certified"],
+    res["N1prime"] = {"V_atom": float(Va[0]), "V_atom_hi_lt_2_asserted": bool(Va[1] < 2), "f": 0.5, "rejected": not s_half["certified"],
                       "checker_pointwise_violation": s_half["pointwise_refuted"],
                       "residual_lo": float(s_half["residual_lo"])}
     res["N1dprime"] = {"x_star": [float(xs[0]), float(xs[1])], "rho_star": float(rho), "f": float(f2),
@@ -171,6 +172,7 @@ def main():
     K, add = cx.K, PW.tadd
     Cf = add(add(add(add(cx.P(a), cx.P(CP.wconst(cc / 2, cx.S)), -1), K(a), -1), K(b1, 1), -1), K(b2, 2), -1)
     Ca = PW.teval(Cf, F(0), F(0), E0)
+    assert Ca[0] > 0, "N4 precondition C(atom) > 0 fails: a - kappa would not be guaranteed invalid"
     kah1 = PW.teval(PW.tadd(PW.tsubs_e(PW.KA_T, E0), PW.tsubs_e(PW.H1_T, E0)), F(0), F(0), E0)
     kappa = CP.dyadic_up(2 * Ca[1] / kah1[0], 40)
     abad = [KX.padd(a[0], {(0, 0, 0): -kappa})] + [KX.padd(x, {(0, 0, 0): -kappa}) for x in a[1:]]
@@ -178,6 +180,7 @@ def main():
     bad = CP.quad_check(cx, abad, b1, b2, cc / 2, g2c)
     res["N4"] = {"good_passed": good["passed"], "planted_rejected": not bad["passed"],
                  "planted_pointwise_violations": bad["pointwise_violations"], "C_atom": float(Ca[0]),
+                 "C_atom_lo_gt_0_asserted": bool(Ca[0] > 0),
                  "kappa": float(kappa)}
     # N4b: one-sided T_N certificate replaced by x~T / 2
     lb = CP.lin_check(cx, CP.wscale(rec["_c"]["xT"], F(1, 2)), wT)
@@ -192,7 +195,9 @@ def main():
                                         and res["N3"]["window_shift_detected"] and res["N4"]["good_passed"]
                                         and res["N4"]["planted_rejected"] and res["N4b"]["planted_rejected"])
     res["seconds"] = round(time.time() - t0, 1)
-    path = NS / "validation" / "C1B_NEGCTL.json"
+    import c1b_prov as PV
+    res["provenance"] = PV.provenance({"TIGHT_CT": CP.TIGHT_CT, "BLOCK_LIGHT": CP.BLOCK_LIGHT})
+    path = NS / "validation" / "C1B_R2_NEGCTL.json"
     path.write_text(json.dumps(CP.jsonable(res), indent=1, sort_keys=True) + "\n")
     Q.log_execution("streams/C_308/LR/cusum/c1b_negctl.py", "C1b negative controls N1-N4 at e=1/2",
                     cells_touched=[], klass="NONTARGET_DRIFT_VALIDATION", notes="drift 1/2 and 1/2 +- 2^-12")

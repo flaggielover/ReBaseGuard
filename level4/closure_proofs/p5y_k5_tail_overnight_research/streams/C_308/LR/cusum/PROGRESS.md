@@ -186,3 +186,108 @@ D5. Non-certified context (declared): Monte Carlo of L1 = E_a sum_{n<sigma}|M_n|
   scan PASS (0 findings in 9 stream files). Ledger: 22 c1b entries, all NONTARGET_DRIFT_VALIDATION, cells [] , no
   LEAK_FLAG (one retroactive entry for scratchpad test scripts c1b_t1..t6, drifts 1/2 and [1/2,17/32] only).
 - [06:13] C1B_ROUTE_SUMMARY.md complete. Route state VALIDATED_NON_TARGET, not FREEZE_READY; CLOSURE-ONLY (floor r2).
+
+## R2 RESPONSE (coordinator instruction after reviews/REVIEW_RLR_R2.md, ACCEPTED_WITH_CONDITIONS): conditions C1-C4
+Read REVIEW_RLR_R2.md in full (§0-§6) and QUARANTINE_AMENDMENT_2/3 (R2.1-R2.4: this stream's NS/validation/C1B_*.json
+and logs/* are LATENT PROXIES; values not quoted in cross-route/handover text; no Theorem-M transfer; no juxtaposition).
+Scope here: my directory only. THEOREM_LR.md:223 and C1LR_ROUTE_SUMMARY.md:28 (C1a files, sibling) are NOT edited by
+me (Q7); flagged for their owner. C5 is not assigned to me; I add a latent-proxy banner to C1B_ROUTE_SUMMARY.md.
+
+Diagnosis of R2 F1 (e = 3, d = 6 (i') failures), read from C1B_PW9_POINT_e3.json before any change: all 8 failing
+checks report a "pointwise violation" at box centres such as (0.1875, 3.9375), region J = 5, i.e. p+m = 4.125 > 4,
+a point OUTSIDE R. The checker is conservative (it checks the whole box, and the J = 5 form on 2-D boxes), so the
+rejection is sound but the "pointwise_violation" label claimed a witness that is not a reachable state.
+
+## DECLARATIONS D12-D16 (before any code change or run of the R2 response)
+D12 (block candidate family, decided): block statements use the e-FREE family PW_d (D8), one candidate per block,
+    solved in float at the block midpoint, with the D11 light enclosure settings; e-affine candidates are NOT part of
+    this route version (recorded as future work). Block controls (D15) run on the declared block [1/2, 17/32], d = 4.
+D13 (checker coverage, soundness-preserving): points of R with p+m > 4 lie only on the two axis segments, which the
+    1-D boxes cover; so the x-region J = 5 form is checked only on 1-D (axis) boxes. A "pointwise violation" witness is
+    reported only if the box centre is a point of R (p = 0 or m = 0 or p+m <= 4) and lies in the region it is tested
+    with. Everything else unchanged.
+D14 (combined supply, C2): c1b_certpw.assemble also returns, in load-bearing code,
+    (a) rho-level/term-level min: q1 = min(A_eff rho1, L1/D_lo, A_eff kappa1 C_T), q2 = min(A_eff rho2, L2/D_lo,
+        A_eff (2 kappa1^2 C_T^2 + kappa2 C_T)); A1_comb = q1 + A_eff delta1, A2_comb = q2 + 2 q1 delta1 + A_eff(2 delta1^2
+        + delta2)  (each term bounds the same quotient-rule term: |nu'/D| <= q1, |nu''/D| <= q2);
+    (b) Lemma G in the THEOREM_LR LR-4 form with C_R := sup_R W >= ||R_e||: G0 = C_R, G1 = kappa1 C_R^2,
+        G2 = kappa2 C_R^2 + 2 kappa1^2 C_R^3;
+    (c) SUPPLY_j = min(A_j_comb, G_j) (A0: min(A_eff, C_R)). Guarantee (trivial, by construction): SUPPLY_j <= Dv'r2_j
+        and <= G_j componentwise; raw certified RLR carries NO such guarantee (R2 §1.3) and is reported only as a field.
+    Test c1b_test_combined.py (can fail): real-record inputs, 3 planted cases (RLR > Dv' via inflated L1/L2; G smallest
+    via small C_R; mixed), 2000 seeded random positive input sets; assertions SUPPLY <= min(RLR, Dv', G) and
+    SUPPLY < RLR on the planted RLR>Dv' case; MUTANT (assemble with the min removed) must FAIL the same test.
+D15 (block controls, C3), class (a), all through the block (e_r > 0) checkers, witness drift e* = 33/64 (interior):
+    B0 positive: the certified block w_T, W, T_N and (i') certificates are accepted;
+    B1 supersolution: w' = (1-eps) w_T, eps from the exact residual interval at (atom, e*): residual' < 0 exactly there;
+    B2 interior-drift-only: w'' = w_T - c psi(e), psi(e) = 1 - ((e-e_c)/e_r)^2 (zero at both block ends, 1 at e_c);
+       residual'' = residual - c psi(e)(k_a + h1); c chosen so residual''(atom, e_c) < 0 exactly, residual'' = residual
+       (certified >= 0) at both ends;
+    B3 (i') C-conjunct: a' = a - kappa with exact C'(atom, e*) < 0;
+    B4 (i') discriminant-only: a'' = a - kappa'' with, at a witness (x*, e*) in R, exactly A > 0, 0 <= C'' and
+       B^2 > 4 A C'' (x* = base-cover centre in R maximising |B|/sqrt(A) at e*).
+    Each must be rejected; the witness is asserted in code. Also assert V(atom) < 2 (N1') and C(atom) > 0 (N4).
+D16 (provenance, C4): every output JSON records sha256 of every c1b_*.py it imports + the CLI flags (TIGHT_CT,
+    BLOCK_LIGHT) + argv; per-rung output files C1B_R2_{PW,PLAIN}_POINT_e<e>_d<d>.json, C1B_R2_PW_BLOCK_*.json; pins
+    written to C1B_R2_CODE_PINS.json AFTER all code edits and BEFORE the regeneration; each heavy run capped at 1200 s
+    (perl alarm; macOS has no `timeout`). Pre-pin evidence moved to logs/prepin/ (not deleted). Regeneration of an
+    old rung must reproduce its exact fields unless D13 changes it (compared and reported).
+- [R2 code done] c1b_prov.py (provenance), D13 in c1b_pw.regions_of_box / in_R / centre_min_R, D14 combined supply
+  in c1b_certpw.assemble (+ C_R, G0-G2, A*_SUPPLY), discriminant witness in quad_check, N1'/N4 precondition asserts,
+  c1b_test_combined.py (dry run: assemble PASS, mutant_no_min caught, mutant_no_G caught), c1b_blockctl.py (B0-B4),
+  R2 output naming + provenance in certpw/certify/negctl/mc/report. Smoke test e=3 d=4 (pre-pin, discarded): 8/11
+  exact fields identical to the pre-pin rung; S2_up, L1_up, L2_up changed by <1e-4 relative, all TIGHTER (D13 removes
+  the J=5 check on 2-D boxes, which only covered points outside R).
+- [PIN] all pre-pin NS/validation/C1B_*.json moved (not deleted) to logs/prepin/; code pins written to
+  NS/validation/C1B_R2_CODE_PINS.json. No code edit after this line without a re-pin.
+- [08:08] r2 queue: blockctl rc=0 (374 s): B0 positive accepted (w_T and the L1 (i') certificate), B1, B2, B3, B4 all
+  have valid exact witnesses and are rejected; B2 (interior drift only) is ACCEPTED by the point checkers at both block
+  ends and REJECTED by the block checker (it isolates the e-direction). all_block_controls = true.
+  Self-critique: B4's uniform shift of `a` makes C negative elsewhere too (2413 flagged centres), so B4 is
+  discriminant-only AT ITS WITNESS but does not isolate the discriminant clause.
+## DECLARATION D17 (before running): supplementary control B4' in r2_blockctl_disc.py (outside the pinned c1b_* set,
+  records its own sha256): keep (a, b1, b2), raise the forcing constants g2 -> g2 + dA, g0 -> g0 + dC with dA < A_lo and
+  dC <= max(C_lo, 0) from rigorous block enclosures of A and C, so A' > 0 and C' >= 0 hold GLOBALLY while B is unchanged;
+  exact witness B^2 > 4A'C' at a base-cover centre in R at e* = 33/64 (maximising the exact slack). If no centre admits
+  a witness the plant is reported NOT_CONSTRUCTIBLE (no forcing). Positive control: the unshifted certificate passes.
+  Runs after a queue lane frees (2-process limit).
+- [08:49] queue: all jobs so far rc=0 and every output matches the pins with flags recorded. With D13 the e = 3, d = 6
+  rung now passes all six (i') checks (pre-pin: S2 FFF, L1 TFF) — confirming the old failures came from checking
+  the J = 5 form outside R. A system sleep (pmset log: sleep ~08:30, wake 08:46) inflated the wall time of pl12d10
+  (1087 s) and e0d6 (1179 s, just under the 1200 s cap); CPU time is not inflated.
+- [09:02] queue DONE (all 27 jobs rc=0; every output matches pins r1, flags recorded). negctl: all controls detected
+  with the N1'/N4 preconditions asserted. test_combined: assemble PASS on 16 regenerated rungs + 3 plants + 2000
+  random sets; mutant_no_min and mutant_no_G both CAUGHT. Comparison vs pre-pin (r2_compare_prepin.py): PW 16 rungs,
+  208 field comparisons: 76 identical, 128 tighter, 4 looser (tau_a,lo at d=4 for e = 1, 1/2, 1/4 by <= 0.45%,
+  Lambda_lo at e=1/4 d=8 by 1e-4 relative: D13 changes the adaptive covers, both old and new are rigorous);
+  PLAIN 8 rungs: 0 identical (the float quadrature was split at strip crossings after the old plain runs, so the
+  untrusted candidates differ), 53 tighter / 51 looser.
+- [PIN r2] c1b_report.py crashed on the non-numeric SUPPLY_rule field (aggregator only) -> fixed (skip non-Fraction
+  fields); pins revision 2 written: only c1b_report.py changed, load-bearing set unchanged (recorded in the pins file).
+- [09:05] D17 (uniform forcing shifts) result: NOT_CONSTRUCTIBLE (best exact slack < 0: the block certificate's C has a
+  large global margin relative to B^2/(4A), so shifting A and C uniformly cannot create a discriminant-only violation
+  while keeping A > 0, C >= 0). Preserved: logs/C1B_R2_BLOCKCTL_DISC_shift_not_constructible.json.
+## DECLARATION D17b (before running): discriminant-only plant by inflating B
+  keep a and b2 (so A is UNCHANGED, A > 0 globally from the certificate), replace b1 by (1+lam) b1:
+  B' = B + lam (b1 - K^b1), C' = C - lam K^(1) b1. lam from the declared ladder {1/8, 1/4, 1/2, 1, 2, 4}, first rung for
+  which (i) an exact witness B'^2 > 4 A C' with A > 0, C' >= 0 exists at a base-cover centre in R at e* = 33/64 and
+  (ii) the rigorous block enclosure of C' has lower bound >= 0 and that of A has lower bound > 0 (so the ONLY violated
+  conjunct is the discriminant). Then quad_check (block) must reject; the unmodified certificate is the positive
+  control. If no rung qualifies: NOT_CONSTRUCTIBLE, reported as is.
+- [09:12] D17b result: NOT_CONSTRUCTIBLE — every lam rung has an exact discriminant witness, but C' = C - lam K^(1)b1
+  becomes negative elsewhere (rigorous C'_lo < 0 on all six rungs), so the plant would not be discriminant-ONLY.
+  Preserved: logs/C1B_R2_BLOCKCTL_DISC_D17b_not_constructible.json.
+## DECLARATION D17c (before running): B inflation with C-margin compensation
+  b1 -> (1+lam) b1 and a -> a + mu w_T with mu = dyadic_up(lam * S_up), S_up = rigorous sup over R x block of
+  |K^(1) b1| (block enclosure). Then A is unchanged (> 0 globally), C' = C - lam K^(1)b1 + mu V >= C_lo + mu - lam S_up
+  >= C_lo >= 0 globally (V = w_T - K^w_T >= 1 certified), and B' = B + lam (b1 - K^b1) grows linearly in lam while
+  C' grows at most linearly, so B'^2 > 4 A C' at some point for lam large. lam ladder {1, 2, 4, 8, 16, 32}: first rung
+  with an exact witness (A > 0, C' >= 0, B'^2 > 4AC') at a base-cover centre in R at e* = 33/64; C'_lo >= 0 is ALSO
+  verified by a rigorous block enclosure (not only by construction). quad_check (block) must reject.
+- [09:20] D17c: PLANTED at lam = 1 (A > 0 and C' >= 0 globally by rigorous block enclosures; exact discriminant
+  witness at a point of R, e* = 33/64); pinned block quad_check REJECTS, sampled failures are centre discriminant
+  violations with A, C > 0; unmodified certificate passes. The discriminant clause is isolated on the block path.
+- [09:22] C1B_ROUTE_SUMMARY.md rewritten (R2 revision): latent-proxy banner, conditions table, corrected guarantee
+  wording (LR-3 dominance for exact rho only; only SUPPLY guaranteed <= Dv' and G), corrected coverage/ownership
+  reasoning, corrected (i') claim, controls, provenance, all values confined to Appendix V (produced by r2_tables.py
+  from C1B_R2_SUMMARY.json). Pre-review summary kept at logs/prepin/C1B_ROUTE_SUMMARY_prepin_as_reviewed.md.

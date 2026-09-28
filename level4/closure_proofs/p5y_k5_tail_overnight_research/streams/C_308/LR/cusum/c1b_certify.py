@@ -343,7 +343,10 @@ def run_point(e: F, degrees: list) -> dict:
     out = {"schema": "C1B_POINT/1", "drift": fstr(e), "statement": "POINTWISE at drift e (declared non-target)",
            "declarations": "PROGRESS.md D0-D6", "degrees": degrees, "records": recs, "ladder_min": best,
            "kappa1": KAPPA1, "kappa2": KAPPA2, "wall_seconds": round(time.time() - t0, 1)}
-    path = NS / "validation" / f"C1B_POINT_e{str(e).replace('/', '_')}.json"
+    import c1b_prov as PV
+    out["provenance"] = PV.provenance({})
+    out["latent_proxy"] = "QUARANTINE_AMENDMENT_2 R2.3: values not for handover"
+    path = NS / "validation" / f"C1B_R2_PLAIN_POINT_e{str(e).replace('/', '_')}_d{'-'.join(str(d) for d in degrees)}.json"
     path.write_text(json.dumps(jsonable(out), indent=1, sort_keys=True) + "\n")
     Q.log_execution("streams/C_308/LR/cusum/c1b_certify.py", f"C1b RLR/Dv' point certification e={e} d={degrees}",
                     cells_touched=[], klass="NONTARGET_DRIFT_VALIDATION",

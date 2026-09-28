@@ -76,7 +76,10 @@ def main(drifts):
         print(e, {k: (round(v["mean"], 4), round(v["se"], 4)) if isinstance(v, dict) and "mean" in v else v
                   for k, v in r.items()}, flush=True)
     res["wall_seconds"] = round(time.time() - t0, 1)
-    path = NS / "validation" / "C1B_MC.json"
+    sys.path.insert(0, str(HERE))
+    import c1b_prov as PV
+    res["provenance"] = PV.provenance({})
+    path = NS / "validation" / "C1B_R2_MC.json"
     path.write_text(json.dumps(res, indent=1, sort_keys=True) + "\n")
     Q.log_execution("streams/C_308/LR/cusum/c1b_mc.py", f"C1b NON-CERTIFIED MC excursion functionals e={drifts}",
                     cells_touched=[], klass="NONTARGET_DRIFT_VALIDATION")

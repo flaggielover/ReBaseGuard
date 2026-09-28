@@ -1,0 +1,98 @@
+{
+ "PASS": true,
+ "assemble": {
+  "n_real": 0,
+  "passed": true,
+  "planted": {
+   "P1_RLR_worse_than_Dv": {
+    "ok": true,
+    "plant_valid_RLR1_gt_Dv1": true,
+    "plant_valid_RLR2_gt_Dv2": true,
+    "supply_replaced_RLR1": true
+   },
+   "P2_G_smallest": {
+    "ok": true,
+    "plant_valid_G1_smallest": true
+   },
+   "P3_mixed": {
+    "ok": true
+   }
+  },
+  "random_fail": 0,
+  "real": []
+ },
+ "declaration": "PROGRESS.md D14",
+ "mutant_no_G": {
+  "n_real": 0,
+  "passed": false,
+  "planted": {
+   "P1_RLR_worse_than_Dv": {
+    "ok": true,
+    "plant_valid_RLR1_gt_Dv1": true,
+    "plant_valid_RLR2_gt_Dv2": true,
+    "supply_replaced_RLR1": true
+   },
+   "P2_G_smallest": {
+    "ok": false,
+    "plant_valid_G1_smallest": true
+   },
+   "P3_mixed": {
+    "ok": false
+   }
+  },
+  "random_fail": 153,
+  "real": []
+ },
+ "mutant_no_min": {
+  "n_real": 0,
+  "passed": false,
+  "planted": {
+   "P1_RLR_worse_than_Dv": {
+    "ok": false,
+    "plant_valid_RLR1_gt_Dv1": true,
+    "plant_valid_RLR2_gt_Dv2": true,
+    "supply_replaced_RLR1": false
+   },
+   "P2_G_smallest": {
+    "ok": false,
+    "plant_valid_G1_smallest": true
+   },
+   "P3_mixed": {
+    "ok": false
+   }
+  },
+  "random_fail": 379,
+  "real": []
+ },
+ "provenance": {
+  "argv": [
+   "c1b_test_combined.py"
+  ],
+  "code_sha256": {
+   "c1b_certify.py": "406d8a36cdf764c58ffc29421dfcad7781da326406ad517dbf0730737abca7ce",
+   "c1b_certpw.py": "bbec3d5419510854f072848e262b846d3f6c0e4e52b0c3d38b496f2fe30f6e2b",
+   "c1b_float.py": "2a14067cd0c629f5d9b18a56bf66e439acd9802dc62a166e5ff5f7e2d5726f5f",
+   "c1b_gauss.py": "3189208d6c4ce37ce7dd1e013caf58ae454f35211fd36154b2afa8b96cd9c43f",
+   "c1b_kernel.py": "dfdc871b18ff132a95ed98d7354e3e95fbbc749cc473629923e4dec19bc4c41e",
+   "c1b_mc.py": "b73e59eaf7d23bfc6118b74ac64d61fab7f13a28fa2fa804da63add47374ab46",
+   "c1b_negctl.py": "aae8d3b4c7eb0004cc3ec3fe07ca02210c991cf5f8a46fd4ccec1264cdb479ea",
+   "c1b_prov.py": "d12c2a2183e6636ec3fa1379db8024c5402f6b7e1f8cb6f7ad11b3ce6d20cf47",
+   "c1b_pw.py": "f10c2cf14691e56699aa823800381d799eb6bdbdf47fdfcf5f28e1f1abb839d0",
+   "c1b_report.py": "4d3142974b00b47f8979ae687a821841e9f5834cdf0b5a2a06a627a02968221a",
+   "c1b_test_combined.py": "bee7761ce21e3be69e445d93be76057d7b3065ec3fdea1b71c447e3c004744d5"
+  },
+  "flags": {
+   "BLOCK_LIGHT": false,
+   "TIGHT_CT": false
+  },
+  "matches_pins": null,
+  "pinned": null,
+  "python": "3.14.5"
+ },
+ "schema": "C1B_R2_TEST_COMBINED/1",
+ "verdict": {
+  "assemble_passes": true,
+  "mutant_no_G_caught": true,
+  "mutant_no_min_caught": true
+ }
+}

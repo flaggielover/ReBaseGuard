@@ -29,6 +29,7 @@ Q.install_import_guard()
 import c1b_gauss as G  # noqa: E402
 import c1b_kernel as KX  # noqa: E402
 import c1b_pw as PW  # noqa: E402
+import c1b_prov as PV  # noqa: E402
 
 TIGHT_CT = "--tight-ct" in sys.argv
 BLOCK_LIGHT = "--block-light" in sys.argv   # declaration D11: block runs within the ~20 min cap     # declaration D9: sup_R w_T enclosed with tol 1+2^-7, 6 extra levels
@@ -130,13 +131,16 @@ def check_supersolution(cx: Ctx, w, whole: bool, name: str) -> dict:
     r = cx.enc(res, name + "R")
     wmin, wmax = range_R(cx, w, name + "rng", tight=TIGHT_CT and not whole)
     return {"residual_lo": r["lo"], "residual_centre_min": r["centre_min"], "w_min_lo": wmin, "w_max_hi": wmax,
-            "certified": r["lo"] >= 0 and wmin >= 0, "pointwise_refuted": r["centre_min"] < 0, "boxes": r["boxes"]}
+            "certified": r["lo"] >= 0 and wmin >= 0,
+            "pointwise_refuted": r["centre_min_R"] is not None and r["centre_min_R"] < 0, "boxes": r["boxes"],
+            "residual_centre_min_R": r["centre_min_R"]}
 
 
 def lin_check(cx: Ctx, u, f) -> dict:
     res = PW.tadd(PW.tadd(cx.P(u), cx.P(f), -1), cx.K(u), -1)
     r = cx.enc(res, "uR")
-    return {"residual_lo": r["lo"], "certified": r["lo"] >= 0, "boxes": r["boxes"], "centre_min": r["centre_min"]}
+    return {"residual_lo": r["lo"], "certified": r["lo"] >= 0, "boxes": r["boxes"], "centre_min": r["centre_min"],
+            "centre_min_R": r["centre_min_R"]}
 
 
 def quad_check(cx: Ctx, a, b1, b2, g0: F, g2: F, extra_levels: int = 4) -> dict:
@@ -159,12 +163,16 @@ def quad_check(cx: Ctx, a, b1, b2, g0: F, g2: F, extra_levels: int = 4) -> dict:
                 clo, _, _ = KX.gf_box_int(Ci[J - 1], cen, rad)
                 if not (alo > 0 and clo >= 0 and max(blo * blo, bhi * bhi) <= 4 * alo * clo):
                     ok = False
-                    if PW.region_of_point(bx[0], bx[1]) == J:
+                    if PW.in_R(bx[0], bx[1]) and PW.region_of_point(bx[0], bx[1]) == J:
                         cv = KX.gf_eval(Cf[J - 1], bx[0], bx[1], cx.e)
                         av = KX.gf_eval(A[J - 1], bx[0], bx[1], cx.e)
-                        if cv[1] < 0 or av[1] < 0:
+                        bv = KX.gf_eval(B[J - 1], bx[0], bx[1], cx.e)
+                        bmin2 = F(0) if bv[0] <= 0 <= bv[1] else min(bv[0] * bv[0], bv[1] * bv[1])
+                        disc = av[0] > 0 and cv[0] >= 0 and bmin2 > 4 * av[1] * cv[1]
+                        if cv[1] < 0 or av[1] < 0 or disc:
                             fails.append({"box": [float(t) for t in bx], "region": J, "C_centre_hi": float(cv[1]),
-                                          "A_centre_hi": float(av[1]), "pointwise_violation": True})
+                                          "A_centre_hi": float(av[1]), "discriminant_violation": disc,
+                                          "pointwise_violation": True})
             if ok:
                 n_ok += 1
             elif lev < extra_levels:
@@ -201,6 +209,7 @@ def certify_degree(e: F, d: int, BW, log=print, e_r: F = F(0)) -> dict:
     if not (sT["certified"] and sW["certified"]):
         return {"drift": fstr(e), "degree": d, "status": "SUPERSOLUTION_NOT_CERTIFIED", "sT": str(sT), "sW": str(sW)}
     tau, C_T, Abar = at_atom(wT), sT["w_max_hi"], at_atom(W)
+    C_R = sW["w_max_hi"]                     # sup_R W >= ||R_e|| (whole resolvent), for Lemma G (D14)
     V_lo = 1 + sT["residual_lo"]
     # ---- (S3)
     E0n = C_T * rn["b0"]
@@ -267,7 +276,7 @@ def certify_degree(e: F, d: int, BW, log=print, e_r: F = F(0)) -> dict:
     L1_quad = min((q["L1_bound"] for q in quad if q["check"]["passed"]), default=None)
     L1 = min(x for x in (L1_cs, L1_quad) if x is not None)
     rec = {"drift": fstr(e), "drift_radius": fstr(F(e_r)), "degree": d, "strips": S, "status": "CERTIFIED",
-           "eta_T": eta, "eta_W": etaW, "tau": tau, "C_T": C_T, "A_bar": Abar, "Lambda_lo": Lam_lo,
+           "eta_T": eta, "eta_W": etaW, "tau": tau, "C_T": C_T, "C_R": C_R, "A_bar": Abar, "Lambda_lo": Lam_lo,
            "tau_a_lo": tau_a_lo, "tau_a_up": tau_a_up, "S2_up": S2_up, "TN_up": TN_up,
            "S2_tame": S2_tame, "S2_onesided": S2_one, "TN_tame": TN_tame, "TN_onesided": TN_one,
            "D_lo": D_lo, "D_lo_tame": D_lo_tame, "D_lo_SM": D_lo_sm, "D1": D1, "D2": D2,
@@ -291,7 +300,11 @@ def certify_degree(e: F, d: int, BW, log=print, e_r: F = F(0)) -> dict:
     return rec
 
 
-def assemble(r: dict) -> dict:
+def assemble(r: dict, use_min: bool = True) -> dict:
+    """THEOREM_LR LR-3 (raw certified RLR, ratio / non-ratio termwise min), Lemma Dv' r2 with the SAME inputs, Lemma G
+    (LR-4 form, C_R = sup_R W), and the COMBINED SUPPLY of declaration D14 (term-level min with the Dv' factors, then
+    componentwise min with G).  Only SUPPLY is guaranteed <= Dv' r2 and <= G; raw RLR is not (REVIEW_RLR_R2 §1.3).
+    use_min=False is the MUTANT used by c1b_test_combined.py (it must be caught)."""
     Abar, tau, D_lo, C_T = r["A_bar"], r["tau"], r["D_lo"], r["C_T"]
     A_eff = min(Abar, tau / D_lo)
     d1, d2 = r["D1"] / D_lo, r["D2"] / D_lo
@@ -304,13 +317,31 @@ def assemble(r: dict) -> dict:
     rho2_dv = 2 * KAPPA1 ** 2 * C_T ** 2 + KAPPA2 * C_T
     A1_dv = A_eff * (rho1_dv + d1)
     A2_dv = A_eff * (rho2_dv + 2 * KAPPA1 * C_T * d1 + 2 * d1 * d1 + d2)
-    return {"A0": A_eff, "delta1": d1, "delta2": d2, "rho1": rho1, "rho2": rho2, "rho1_Dv": rho1_dv,
-            "rho2_Dv": rho2_dv, "A1_RLR": A1_rlr, "A2_RLR": A2_rlr, "A1_Dv": A1_dv, "A2_Dv": A2_dv,
-            "ratio_A1_Dv_over_RLR": A1_dv / A1_rlr, "ratio_A2_Dv_over_RLR": A2_dv / A2_rlr,
-            "ratio_rho1_Dv_over_RLR": rho1_dv / rho1, "ratio_rho2_Dv_over_RLR": rho2_dv / rho2}
+    out = {"A0": A_eff, "delta1": d1, "delta2": d2, "rho1": rho1, "rho2": rho2, "rho1_Dv": rho1_dv,
+           "rho2_Dv": rho2_dv, "A1_RLR": A1_rlr, "A2_RLR": A2_rlr, "A1_Dv": A1_dv, "A2_Dv": A2_dv,
+           "ratio_A1_Dv_over_RLR": A1_dv / A1_rlr, "ratio_A2_Dv_over_RLR": A2_dv / A2_rlr,
+           "ratio_rho1_Dv_over_RLR": rho1_dv / rho1, "ratio_rho2_Dv_over_RLR": rho2_dv / rho2}
+    # ---- combined supply (D14)
+    if use_min:
+        c1 = min(q1, A_eff * rho1_dv)                      # |nu'/D| <= each of the three
+        c2 = min(q2, A_eff * rho2_dv)                      # |nu''/D| <= each of the three
+    else:                                                  # MUTANT: no min with the Dv' factors, no G
+        c1, c2 = q1, q2
+    A1_c = c1 + A_eff * d1
+    A2_c = c2 + 2 * c1 * d1 + A_eff * (2 * d1 * d1 + d2)
+    C_R = r.get("C_R")
+    if C_R is not None:
+        G0, G1, G2 = C_R, KAPPA1 * C_R ** 2, KAPPA2 * C_R ** 2 + 2 * KAPPA1 ** 2 * C_R ** 3
+        out.update({"G0": G0, "G1": G1, "G2": G2})
+    if use_min and C_R is not None:
+        out.update({"A0_SUPPLY": min(A_eff, G0), "A1_SUPPLY": min(A1_c, G1), "A2_SUPPLY": min(A2_c, G2)})
+    else:
+        out.update({"A0_SUPPLY": A_eff, "A1_SUPPLY": A1_c, "A2_SUPPLY": A2_c})
+    out["SUPPLY_rule"] = "D14: term-level min(RLR, Dv' factor), then componentwise min with Lemma G (LR-4 form)"
+    return out
 
 
-EXACT_KEYS = {"tau", "C_T", "A_bar", "Lambda_lo", "tau_a_lo", "tau_a_up", "S2_up", "TN_up", "D_lo", "D1", "D2",
+EXACT_KEYS = {"C_R", "G0", "G1", "G2", "A0_SUPPLY", "A1_SUPPLY", "A2_SUPPLY", "tau", "C_T", "A_bar", "Lambda_lo", "tau_a_lo", "tau_a_up", "S2_up", "TN_up", "D_lo", "D1", "D2",
               "L1_up", "L2_up", "A0", "A1_RLR", "A2_RLR", "A1_Dv", "A2_Dv", "eta_T", "eta_W", "c_global"}
 
 
@@ -324,7 +355,7 @@ def jsonable(o, key=None):
     return o
 
 
-LADDER_KEYS_MIN = ("tau", "C_T", "A_bar", "tau_a_up", "S2_up", "TN_up", "D1", "D2", "L1_up", "L2_up")
+LADDER_KEYS_MIN = ("C_R", "tau", "C_T", "A_bar", "tau_a_up", "S2_up", "TN_up", "D1", "D2", "L1_up", "L2_up")
 LADDER_KEYS_MAX = ("tau_a_lo", "D_lo", "Lambda_lo")
 
 
@@ -347,17 +378,21 @@ def run_point(e: F, degrees: list, BW, tag: str, e_r: F = F(0)) -> dict:
         best = {k: min(r[k] for r in cert) for k in LADDER_KEYS_MIN}
         best.update({k: max(r[k] for r in cert) for k in LADDER_KEYS_MAX})
         best.update(assemble(best))
-    out = {"schema": "C1B_POINT/2", "family": tag, "BW": list(BW), "drift": fstr(e), "drift_radius": fstr(e_r),
+    out = {"schema": "C1B_POINT/3", "family": tag, "BW": list(BW), "drift": fstr(e), "drift_radius": fstr(e_r),
            "statement": ("POINTWISE at drift e (declared non-target)" if e_r == 0 else
-                         f"BLOCK-UNIFORM for every e in [{fstr(e - e_r)}, {fstr(e + e_r)}] (declared non-target)"), "declarations": "PROGRESS.md D0-D8",
+                         f"BLOCK-UNIFORM for every e in [{fstr(e - e_r)}, {fstr(e + e_r)}] (declared non-target)"),
+           "declarations": "PROGRESS.md D0-D16", "latent_proxy": "QUARANTINE_AMENDMENT_2 R2.3: values not for handover",
            "degrees": degrees, "records": recs, "ladder_min": best, "kappa1": KAPPA1, "kappa2": KAPPA2,
+           "provenance": PV.provenance({"TIGHT_CT": TIGHT_CT, "BLOCK_LIGHT": BLOCK_LIGHT}),
            "wall_seconds": round(time.time() - t0, 1)}
-    stem = f"POINT_e{str(e).replace('/', '_')}" if e_r == 0 else f"BLOCK_{fstr(e - e_r).replace('/', '_')}__{fstr(e + e_r).replace('/', '_')}"
+    dtag = "_d" + "-".join(str(d) for d in degrees)
+    stem = (f"POINT_e{str(e).replace('/', '_')}" if e_r == 0 else
+            f"BLOCK_{fstr(e - e_r).replace('/', '_')}__{fstr(e + e_r).replace('/', '_')}") + dtag
     path = NS / "validation" / f"C1B_{tag}_{stem}.json"
     path.write_text(json.dumps(jsonable(out), indent=1, sort_keys=True) + "\n")
-    Q.log_execution("streams/C_308/LR/cusum/c1b_certpw.py", f"C1b RLR/Dv' point certification ({tag}) e={e} d={degrees}",
+    Q.log_execution("streams/C_308/LR/cusum/c1b_certpw.py", f"C1b RLR/Dv' certification ({tag}) e={e} r={e_r} d={degrees}",
                     cells_touched=[], klass="NONTARGET_DRIFT_VALIDATION",
-                    notes=f"drift {e} declared non-target (guard_drift passed); no cell id used")
+                    notes=f"drift {e} +- {e_r} declared non-target (guard_drift passed); no cell id used")
     print("wrote", path, flush=True)
     return out
 
@@ -366,11 +401,10 @@ if __name__ == "__main__":
     if len(sys.argv) >= 5 and sys.argv[1] == "block":
         lo, hi = F(sys.argv[2]), F(sys.argv[3])
         degs = [int(x) for x in sys.argv[4:] if not x.startswith("--")]
-        run_point((lo + hi) / 2, degs, PW.BW_PW, "PW9" if TIGHT_CT else "PW", e_r=(hi - lo) / 2)
+        run_point((lo + hi) / 2, degs, PW.BW_PW, "R2_PW", e_r=(hi - lo) / 2)
     elif len(sys.argv) >= 4 and sys.argv[1] == "point":
         plain = "--plain" in sys.argv
         degs = [int(x) for x in sys.argv[3:] if not x.startswith("--")]
-        tag = ("PLAIN2" if plain else "PW") + ("9" if TIGHT_CT else "")
-        run_point(F(sys.argv[2]), degs, PW.BW_PLAIN if plain else PW.BW_PW, tag)
+        run_point(F(sys.argv[2]), degs, PW.BW_PLAIN if plain else PW.BW_PW, "R2_PLAIN2" if plain else "R2_PW")
     else:
         print(__doc__)
