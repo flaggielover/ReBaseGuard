@@ -27,7 +27,7 @@ def body_sha(cert: dict) -> str:
     return hashlib.sha256(json.dumps(body, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
-def main(paths, tighten=F(0)):
+def main(paths, tighten=F(0), workers=3, opts_extra=None):
     out = []
     for path in paths:
         Q.guard_path(path)
@@ -37,7 +37,8 @@ def main(paths, tighten=F(0)):
         W_adapt = AD.from_c1b_raw(cert["c1b_raw"])
         W_stored = V.StripPW.from_json(cert)
         same = W_adapt.polys == W_stored.polys and W_adapt.BW == W_stored.BW
-        r = V.verify(W_adapt, e, workers=3, opts={"tighten_below": tighten, "tighten_min_width": F(1, 2 ** 10)})
+        r = V.verify(W_adapt, e, workers=workers, opts={"tighten_below": tighten, "tighten_min_width": F(1, 2 ** 10),
+                                                         **(opts_extra or {})})
         tight = None   # a full margin-bracket pass is infeasible on flat residuals (see VERIFIER_REPORT.md)
         Abar = F(cert["W_at_atom_producer"])
         rec = {"file": Path(path).name, "drift": cert["drift"], "degree": cert["producer"]["degree"],
@@ -53,7 +54,9 @@ def main(paths, tighten=F(0)):
                "min_residual_upper_bound_at": r["min_residual_upper_bound_at"],
                "W_min_lower_bound": r["W_min_lower_bound"],
                "boxes": r["residual_bb"]["boxes"], "seconds": r["seconds"], "sha256_W": r["sha256_W"],
-               "producer_eta_W": cert["producer"]["eta_W"], "margin_bracket_pass": tight}
+               "producer_eta_W": cert["producer"]["eta_W"], "margin_bracket_pass": tight, "workers": workers,
+               "opts_extra": {k: str(v) for k, v in (opts_extra or {}).items()},
+               "n_undecided": r["residual_bb"].get("n_undecided", 0)}
         rec["control_pass"] = (rec["verdict"] == "PASS" and rec["W_at_atom_equals_A_bar_exactly"] and same
                                and rec["body_sha_ok"])
         print(json.dumps(V.jsonable({k: rec[k] for k in ("file", "verdict", "W_at_atom_equals_A_bar_exactly",

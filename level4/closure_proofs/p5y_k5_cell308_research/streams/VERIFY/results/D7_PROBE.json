@@ -1,0 +1,251 @@
+{
+ "schema": "VD_D7_PROBE/1",
+ "budget_boxes_per_initial_box": 200,
+ "rows": [
+  {
+   "degree": 4,
+   "ms_per_box_bound": 6.1,
+   "initial_boxes": 144,
+   "certified_within_budget": 144,
+   "not_within_budget": 0,
+   "boxes_used": 623,
+   "hard_initial_boxes": [],
+   "seconds": 2.8
+  },
+  {
+   "degree": 6,
+   "ms_per_box_bound": 7.6,
+   "initial_boxes": 144,
+   "certified_within_budget": 83,
+   "not_within_budget": 61,
+   "boxes_used": 22382,
+   "hard_initial_boxes": [
+    [
+     "0",
+     "1/4",
+     "11/4",
+     "3"
+    ],
+    [
+     "0",
+     "1/4",
+     "3",
+     "13/4"
+    ],
+    [
+     "0",
+     "1/4",
+     "13/4",
+     "7/2"
+    ],
+    [
+     "0",
+     "1/4",
+     "7/2",
+     "15/4"
+    ],
+    [
+     "1/4",
+     "1/2",
+     "5/2",
+     "11/4"
+    ],
+    [
+     "1/4",
+     "1/2",
+     "11/4",
+     "3"
+    ],
+    [
+     "1/4",
+     "1/2",
+     "3",
+     "13/4"
+    ],
+    [
+     "1/4",
+     "1/2",
+     "13/4",
+     "7/2"
+    ],
+    [
+     "1/2",
+     "3/4",
+     "9/4",
+     "5/2"
+    ],
+    [
+     "1/2",
+     "3/4",
+     "5/2",
+     "11/4"
+    ]
+   ],
+   "seconds": 123.7
+  },
+  {
+   "degree": 8,
+   "ms_per_box_bound": 12.4,
+   "initial_boxes": 144,
+   "certified_within_budget": 8,
+   "not_within_budget": 136,
+   "boxes_used": 27962,
+   "hard_initial_boxes": [
+    [
+     "0",
+     "1/4",
+     "0",
+     "1/4"
+    ],
+    [
+     "0",
+     "1/4",
+     "1/4",
+     "1/2"
+    ],
+    [
+     "0",
+     "1/4",
+     "1/2",
+     "3/4"
+    ],
+    [
+     "0",
+     "1/4",
+     "3/4",
+     "1"
+    ],
+    [
+     "0",
+     "1/4",
+     "1",
+     "5/4"
+    ],
+    [
+     "0",
+     "1/4",
+     "5/4",
+     "3/2"
+    ],
+    [
+     "0",
+     "1/4",
+     "3/2",
+     "7/4"
+    ],
+    [
+     "0",
+     "1/4",
+     "7/4",
+     "2"
+    ],
+    [
+     "0",
+     "1/4",
+     "2",
+     "9/4"
+    ],
+    [
+     "0",
+     "1/4",
+     "9/4",
+     "5/2"
+    ]
+   ],
+   "seconds": 248.6
+  },
+  {
+   "degree": 10,
+   "ms_per_box_bound": 19.2,
+   "initial_boxes": 144,
+   "certified_within_budget": 3,
+   "not_within_budget": 141,
+   "boxes_used": 28749,
+   "hard_initial_boxes": [
+    [
+     "0",
+     "1/4",
+     "0",
+     "1/4"
+    ],
+    [
+     "0",
+     "1/4",
+     "1/4",
+     "1/2"
+    ],
+    [
+     "0",
+     "1/4",
+     "1/2",
+     "3/4"
+    ],
+    [
+     "0",
+     "1/4",
+     "3/4",
+     "1"
+    ],
+    [
+     "0",
+     "1/4",
+     "1",
+     "5/4"
+    ],
+    [
+     "0",
+     "1/4",
+     "5/4",
+     "3/2"
+    ],
+    [
+     "0",
+     "1/4",
+     "3/2",
+     "7/4"
+    ],
+    [
+     "0",
+     "1/4",
+     "7/4",
+     "2"
+    ],
+    [
+     "0",
+     "1/4",
+     "2",
+     "9/4"
+    ],
+    [
+     "0",
+     "1/4",
+     "9/4",
+     "5/2"
+    ]
+   ],
+   "seconds": 315.5
+  }
+ ],
+ "note": "probe stopped by the agent at 02:32 JST during degree 12 (time budget); degrees 4, 6, 8, 10 complete. D7 full verifications: e=1 d=8 aborted after about 23 min wall (2 workers), e=3 d=8 aborted after about 38 min wall (2 workers); no verdict is claimed for any d >= 8 certificate",
+ "aborted_full_runs": [
+  {
+   "certificate": "CERT_e1_1_d8.json",
+   "workers": 2,
+   "wall_minutes_before_abort": 23
+  },
+  {
+   "certificate": "CERT_e3_1_d8.json",
+   "workers": 2,
+   "wall_minutes_before_abort": 38,
+   "budget_per_initial_box": 40000
+  }
+ ],
+ "producer": {
+  "e3_d8": "CERTIFIED 283 cpu-s",
+  "e1_d8": "CERTIFIED 739 cpu-s",
+  "e3_d10": "CERTIFIED 1112 cpu-s",
+  "e1_d10": "SCALING_RULE_INAPPLICABLE 494 cpu-s",
+  "e3_d12": "CERTIFIED 1342 cpu-s",
+  "e1_d12": "SCALING_RULE_INAPPLICABLE 593 cpu-s"
+ }
+}

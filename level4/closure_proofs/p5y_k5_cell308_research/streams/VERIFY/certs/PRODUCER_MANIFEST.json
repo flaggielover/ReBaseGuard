@@ -166,6 +166,129 @@
     }
    ],
    "utc": "2026-09-28T13:20:11Z"
+  },
+  {
+   "args": [
+    "--workers",
+    "2",
+    "3:8",
+    "1:8",
+    "3:10",
+    "1:10",
+    "3:12",
+    "1:12"
+   ],
+   "c1b_sources_sha256": {
+    "c1b_certpw.py": "48080dd4df193a1474113ea792ab550fe325f51cb0e4d0e1c8a3e3bebd195c25",
+    "c1b_float.py": "2a14067cd0c629f5d9b18a56bf66e439acd9802dc62a166e5ff5f7e2d5726f5f",
+    "c1b_gauss.py": "3189208d6c4ce37ce7dd1e013caf58ae454f35211fd36154b2afa8b96cd9c43f",
+    "c1b_kernel.py": "dfdc871b18ff132a95ed98d7354e3e95fbbc749cc473629923e4dec19bc4c41e",
+    "c1b_prov.py": "d12c2a2183e6636ec3fa1379db8024c5402f6b7e1f8cb6f7ad11b3ce6d20cf47",
+    "c1b_pw.py": "f10c2cf14691e56699aa823800381d799eb6bdbdf47fdfcf5f28e1f1abb839d0"
+   },
+   "results": [
+    {
+     "A_bar": "50978291834989996539014131291/19807040628566084398385987584",
+     "degree": 8,
+     "drift": "3/1",
+     "file": "streams/VERIFY/certs/CERT_e3_1_d8.json",
+     "producer_cpu_s": 282.9,
+     "producer_log_tail": [
+      "  S2 quad s=1/64 lam=0.000946 S2<= 2.86175 passed=True boxes=744",
+      "  L1 quad s=1/64 lam=0.0005579 L1<= 2.70584 passed=True boxes=549",
+      "  S2 quad s=1/16 lam=0.000906 S2<= 2.99362 passed=True boxes=752",
+      "  L1 quad s=1/16 lam=0.0005398 L1<= 2.7687 passed=True boxes=546",
+      "  S2 quad s=1/4 lam=0.001041 S2<= 3.52184 passed=True boxes=760",
+      "  L1 quad s=1/4 lam=0.0006037 L1<= 3.02052 passed=True boxes=566"
+     ],
+     "sha256_body": "a9ffb52132d57c017110c55aa0e84ec56892a2c494338ed34e5abc87102d3dbe",
+     "sha256_file": "b7a0c787a671fc9684f961554afaf974e735cad069534ee7c32453fd04e9a5f7",
+     "status": "CERTIFIED"
+    },
+    {
+     "A_bar": "12546033794141148782843007/1208925819614629174706176",
+     "degree": 8,
+     "drift": "1/1",
+     "file": "streams/VERIFY/certs/CERT_e1_1_d8.json",
+     "producer_cpu_s": 738.5,
+     "producer_log_tail": [
+      "  S2 quad s=1/64 lam=0.2938 S2<= 42.6241 passed=True boxes=1797",
+      "  L1 quad s=1/64 lam=0.0752 L1<= 16.9623 passed=True boxes=1809",
+      "  S2 quad s=1/16 lam=0.2098 S2<= 43.9334 passed=True boxes=1714",
+      "  L1 quad s=1/16 lam=0.05794 L1<= 17.231 passed=True boxes=1805",
+      "  S2 quad s=1/4 lam=0.2181 S2<= 51.4929 passed=True boxes=1762",
+      "  L1 quad s=1/4 lam=0.05965 L1<= 18.7822 passed=True boxes=1805"
+     ],
+     "sha256_body": "55dbf01a927830e5d645f0a6103a5d01ab47a569070aced2a079a01db5e4d83e",
+     "sha256_file": "aa191d11b27726cd2d435e6f57cd72c4f89a3a57aea86f09f0ba46d468ed37fe",
+     "status": "CERTIFIED"
+    },
+    {
+     "A_bar": "6225681455172456633879213/2417851639229258349412352",
+     "degree": 10,
+     "drift": "3/1",
+     "file": "streams/VERIFY/certs/CERT_e3_1_d10.json",
+     "producer_cpu_s": 1112.4,
+     "producer_log_tail": [
+      "  S2 quad s=1/64 lam=0.004111 S2<= 2.86952 passed=True boxes=1330",
+      "  L1 quad s=1/64 lam=0.002001 L1<= 2.70937 passed=True boxes=1330",
+      "  S2 quad s=1/16 lam=0.003942 S2<= 3.00104 passed=True boxes=1338",
+      "  L1 quad s=1/16 lam=0.00192 L1<= 2.77207 passed=True boxes=1330",
+      "  S2 quad s=1/4 lam=0.004532 S2<= 3.53036 passed=True boxes=1333",
+      "  L1 quad s=1/4 lam=0.002201 L1<= 3.02441 passed=True boxes=1325"
+     ],
+     "sha256_body": "367a25b653d93ee1305283c80963c073fb544f1ac113e22552079a1e4ea33cc3",
+     "sha256_file": "a5051d478ce9ab2a1f920b140f5b53f099e1a0c18e8fb9d3e1fd6f4d527d8fe6",
+     "status": "CERTIFIED"
+    },
+    {
+     "degree": 10,
+     "drift": "1/1",
+     "producer_cpu_s": 493.6,
+     "producer_log_tail": [
+      "  enclose b2     lo=-1.915e+01 hi=+1.362e+01 boxes=1970 lev=4 argmin=[0.0078125, 1.9765625] 67.51s",
+      "  enclose xT     lo=-9.595e+00 hi=+7.047e+00 boxes=1905 lev=4 argmin=[0.0078125, 1.9765625] 61.97s",
+      "  enclose d0     lo=-1.296e-01 hi=+8.427e-02 boxes=2022 lev=4 argmin=[0.0078125, 1.9765625] 61.27s",
+      "  enclose d1     lo=-1.471e-01 hi=+1.985e-01 boxes=1955 lev=4 argmin=[1.9453125, 1.0390625] 65.7s",
+      "  enclose d2     lo=-3.456e-01 hi=+3.669e-01 boxes=1710 lev=4 argmin=[2.9765625, 0.0078125] 60.31s",
+      "  enclose W      lo=-4.860e-04 hi=+7.368e-04 boxes=2028 lev=4 argmin=[2.3984375, 0.5859375] 65.39s"
+     ],
+     "status": "SCALING_RULE_INAPPLICABLE"
+    },
+    {
+     "A_bar": "1555894472787687776136383/604462909807314587353088",
+     "degree": 12,
+     "drift": "3/1",
+     "file": "streams/VERIFY/certs/CERT_e3_1_d12.json",
+     "producer_cpu_s": 1341.8,
+     "producer_log_tail": [
+      "  S2 quad s=1/64 lam=0.01058 S2<= 2.88706 passed=True boxes=1340",
+      "  L1 quad s=1/64 lam=0.005271 L1<= 2.71821 passed=True boxes=1312",
+      "  S2 quad s=1/16 lam=0.008953 S2<= 3.01489 passed=True boxes=1308",
+      "  L1 quad s=1/16 lam=0.004495 L1<= 2.77915 passed=True boxes=1268",
+      "  S2 quad s=1/4 lam=0.009911 S2<= 3.54533 passed=True boxes=1320",
+      "  L1 quad s=1/4 lam=0.004951 L1<= 3.03202 passed=True boxes=1296"
+     ],
+     "sha256_body": "bf270bb600f845cd04a74a616b8649b4204bce66b2c6b3dc5293d8c0d2820a48",
+     "sha256_file": "8fad7372f23a21545ea602373a7299186bed145cc7aaeaffd83b0c77349668d0",
+     "status": "CERTIFIED"
+    },
+    {
+     "degree": 12,
+     "drift": "1/1",
+     "producer_cpu_s": 593.3,
+     "producer_log_tail": [
+      "  enclose b2     lo=-1.080e+02 hi=+2.042e+02 boxes=1781 lev=4 argmin=[1.9921875, 0.9921875] 76.86s",
+      "  enclose xT     lo=-6.693e+01 hi=+1.305e+02 boxes=1741 lev=4 argmin=[2.3515625, 0.6328125] 63.18s",
+      "  enclose d0     lo=-6.913e-01 hi=+1.521e+00 boxes=1768 lev=4 argmin=[2.3359375, 0.6484375] 70.56s",
+      "  enclose d1     lo=-2.371e+00 hi=+1.272e+00 boxes=1801 lev=4 argmin=[1.0859375, 0.8984375] 71.89s",
+      "  enclose d2     lo=-8.285e+00 hi=+4.435e+00 boxes=1528 lev=4 argmin=[0.8359375, 1.1484375] 52.32s",
+      "  enclose W      lo=-5.314e-04 hi=+1.065e-03 boxes=1649 lev=4 argmin=[2.7109375, 0.2734375] 64.13s"
+     ],
+     "status": "SCALING_RULE_INAPPLICABLE"
+    }
+   ],
+   "utc": "2026-09-28T16:17:42Z"
   }
  ]
 }

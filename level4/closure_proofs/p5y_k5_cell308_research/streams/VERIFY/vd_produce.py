@@ -124,17 +124,23 @@ def _sources_sha() -> dict:
 if __name__ == "__main__":
     import multiprocessing as mp
     jobs = []
-    for a in sys.argv[1:]:
+    nworkers = 3
+    args = list(sys.argv[1:])
+    if "--workers" in args:
+        k = args.index("--workers")
+        nworkers = max(1, min(3, int(args[k + 1])))
+        del args[k:k + 2]
+    for a in args:
         es, ds = a.split(":")
         e = F(es)
         Q.guard_drift(e)
         jobs.append((e, int(ds)))
     CERT_DIR.mkdir(parents=True, exist_ok=True)
     Q.log_event("streams/VERIFY/vd_produce.py", "produce C1b whole-kernel supersolution certificates at declared "
-                "non-target drifts for independent verification: " + ",".join(sys.argv[1:]),
+                "non-target drifts for independent verification: " + ",".join(args),
                 klass="NONTARGET_DRIFT_VALIDATION", agent="streamD")
     ctx = mp.get_context("spawn")
-    with ctx.Pool(min(3, len(jobs))) as pool:
+    with ctx.Pool(min(nworkers, len(jobs))) as pool:
         res = pool.map(_job, jobs)
     manifest_path = HERE / "certs" / "PRODUCER_MANIFEST.json"
     old = json.loads(manifest_path.read_text()) if manifest_path.exists() else {"runs": []}

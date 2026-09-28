@@ -178,15 +178,78 @@ class PW:
         P = self.polys[self.strip(p + m)]
         return sum((c * p ** i * m ** j for (i, j), c in P.items()), F(0))
 
+    def cut_levels(self) -> list:
+        return list(self.BW)
+
+    def poly_at(self, pp: F, mm: F) -> dict:
+        return self.polys[self.strip(pp + mm)]
+
+
+class PL:
+    """P1 nodal function (layout VD_PL_NODAL/1): nodes (i/N, j/N); on each mesh cell the linear interpolant.
+    Cell search is written here independently (barycentric test over the candidate cells around the point)."""
+
+    def __init__(self, obj: dict):
+        self.N = int(obj["N"])
+        self.h = F(1, self.N)
+        self.w = [[F(x) for x in col] for col in obj["w"]]
+
+    def _node(self, i, j):
+        if 0 <= i < len(self.w) and 0 <= j < len(self.w[i]):
+            return self.w[i][j]
+        return None
+
+    def poly_at(self, pp: F, mm: F) -> dict:
+        """linear polynomial {(1,0): b, (0,1): g, (0,0): a} of a cell containing (pp, mm)."""
+        h = self.h
+        i0, j0 = math.floor(pp / h), math.floor(mm / h)
+        for i in (i0, i0 - 1):
+            for j in (j0, j0 - 1):
+                for tri in (((i, j), (i + 1, j), (i, j + 1)), ((i + 1, j), (i, j + 1), (i + 1, j + 1))):
+                    vals = [self._node(a, b) for a, b in tri]
+                    if any(v is None for v in vals):
+                        continue
+                    (x0, y0), (x1, y1), (x2, y2) = [(a * h, b * h) for a, b in tri]
+                    det = (x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0)
+                    l1 = ((pp - x0) * (y2 - y0) - (x2 - x0) * (mm - y0)) / det
+                    l2 = ((x1 - x0) * (mm - y0) - (pp - x0) * (y1 - y0)) / det
+                    l0 = 1 - l1 - l2
+                    if min(l0, l1, l2) >= 0:
+                        # W = v0 l0 + v1 l1 + v2 l2, each l affine in (p, m)
+                        v0, v1, v2 = vals
+                        cb = ((v1 - v0) * (y2 - y0) - (v2 - v0) * (y1 - y0)) / det
+                        cg = ((v2 - v0) * (x1 - x0) - (v1 - v0) * (x2 - x0)) / det
+                        ca = v0 - cb * x0 - cg * y0
+                        return {(0, 0): ca, (1, 0): cb, (0, 1): cg}
+        # axis segments beyond t = 4
+        if mm == 0:
+            i = min(math.floor(pp / h), 5 * self.N - 1)
+            v0, v1 = self.w[i][0], self.w[i + 1][0]
+            cb = (v1 - v0) / h
+            return {(0, 0): v0 - cb * i * h, (1, 0): cb}
+        if pp == 0:
+            j = min(math.floor(mm / h), 5 * self.N - 1)
+            v0, v1 = self.w[0][j], self.w[0][j + 1]
+            cg = (v1 - v0) / h
+            return {(0, 0): v0 - cg * j * h, (0, 1): cg}
+        raise ValueError(f"point {(pp, mm)} not in the mesh")
+
+    def value(self, p: F, m: F) -> F:
+        P = self.poly_at(F(p), F(m))
+        return sum((c * F(p) ** i * F(m) ** j for (i, j), c in P.items()), F(0))
+
+    def cut_levels(self) -> list:
+        return [F(k, self.N) for k in range(5 * self.N + 1)]
+
 
 def kernel_W(W: PW, e: F, p: F, m: F, omit_atom: bool = False) -> tuple:
     """rigorous enclosure of (K_e W)(p, m)."""
     Q.guard_drift(F(e))
     zlo, zhi = m - C, C - p
     cuts = {zlo, zhi, K - p, m - K}
-    for b in W.BW:
-        cuts.add(m - K - b)          # m-axis image crosses m' = b
-        cuts.add(b + K - p)          # p-axis image crosses p' = b
+    for b in W.cut_levels():
+        cuts.add(m - K - b)          # image crosses m' = b (m-axis or interior line)
+        cuts.add(b + K - p)          # image crosses p' = b (p-axis or interior line)
     cuts = sorted(z for z in cuts if zlo <= z <= zhi)
     lo_sum, hi_sum = F(0), F(0)
     for z0, z1 in zip(cuts, cuts[1:]):
@@ -198,15 +261,12 @@ def kernel_W(W: PW, e: F, p: F, m: F, omit_atom: bool = False) -> tuple:
         if not pos_p and not pos_m:                           # atom window
             if omit_atom:
                 continue
-            s = W.strip(F(0))
-            poly_z = [W.polys[s].get((0, 0), F(0))]
+            poly_z = [W.value(F(0), F(0))]
         else:
-            tprime = (pp if pos_p else 0) + (mm if pos_m else 0)
-            s = W.strip(tprime)
             ap = [p - K, F(1)] if pos_p else [F(0)]             # p'(z) as polynomial in z
             am = [m - K, F(-1)] if pos_m else [F(0)]
             poly_z = [F(0)]
-            for (i, j), c in W.polys[s].items():
+            for (i, j), c in W.poly_at(pp if pos_p else F(0), mm if pos_m else F(0)).items():
                 poly_z = padd(poly_z, [c * x for x in pmul(ppow(ap, i), ppow(am, j))])
         # shift to u = z + e: Q(u) = poly_z(u - e)
         q = [F(0)]
@@ -238,3 +298,7 @@ def residual(W: PW, e, p, m, omit_atom: bool = False) -> tuple:
 
 def load(path) -> PW:
     return PW(json.loads(Path(path).read_text()))
+
+
+def make(obj: dict):
+    return PL(obj) if obj.get("format") == "VD_PL_NODAL/1" else PW(obj)

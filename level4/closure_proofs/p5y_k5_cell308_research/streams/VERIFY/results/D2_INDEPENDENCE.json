@@ -1,5 +1,20 @@
 {
  "original_files_compared": [
+  "p5y_k5_cell308_research/streams/A0/a0_c1b.py",
+  "p5y_k5_cell308_research/streams/A0/a0_c1bh.py",
+  "p5y_k5_cell308_research/streams/A0/a0_c2b.py",
+  "p5y_k5_cell308_research/streams/A0/a0_c2bx.py",
+  "p5y_k5_cell308_research/streams/A0/a0_c4extra.py",
+  "p5y_k5_cell308_research/streams/A0/a0_common.py",
+  "p5y_k5_cell308_research/streams/A0/a0_controls.py",
+  "p5y_k5_cell308_research/streams/A0/a0_ladder.py",
+  "p5y_k5_cell308_research/streams/A0/a0_manifest.py",
+  "p5y_k5_cell308_research/streams/A0/a0_mc.py",
+  "p5y_k5_cell308_research/streams/A0/a0_queue.py",
+  "p5y_k5_cell308_research/streams/A0/a0_report.py",
+  "p5y_k5_cell308_research/streams/A0/a0_run.py",
+  "p5y_k5_cell308_research/streams/A0/a0_run2.py",
+  "p5y_k5_cell308_research/streams/A0/a0_verify.py",
   "p5y_k5_tail_overnight_research/streams/C_308/A0X/gen/c2b_certify.py",
   "p5y_k5_tail_overnight_research/streams/C_308/A0X/gen/c2b_checks.py",
   "p5y_k5_tail_overnight_research/streams/C_308/A0X/gen/c2b_common.py",
@@ -41,10 +56,11 @@
   "vd_adapt"
  ],
  "runtime_certifier_modules": [],
- "runtime_modules_loaded_count": 112,
+ "runtime_modules_loaded_count": 113,
  "runtime_nonstdlib_modules": [
   "vd_adapt",
   "vd_float",
+  "vd_pl",
   "vd_point",
   "vd_verify"
  ],
@@ -117,6 +133,32 @@
     "vd_float"
    ]
   },
+  "vd_d6_verify_pl.py": {
+   "certifier_imports": [],
+   "imports": [
+    "__future__",
+    "fractions",
+    "hashlib",
+    "json",
+    "pathlib",
+    "sys",
+    "time",
+    "vd_pl",
+    "vd_verify"
+   ]
+  },
+  "vd_d7_cost.py": {
+   "certifier_imports": [],
+   "imports": [
+    "__future__",
+    "json",
+    "pathlib",
+    "sys",
+    "time",
+    "vd_d3_verify_all",
+    "vd_verify"
+   ]
+  },
   "vd_float.py": {
    "certifier_imports": [],
    "imports": [
@@ -160,6 +202,49 @@
     "vd_float"
    ]
   },
+  "vd_pl.py": {
+   "certifier_imports": [],
+   "imports": [
+    "__future__",
+    "fractions",
+    "hashlib",
+    "json",
+    "multiprocessing",
+    "pathlib",
+    "sys",
+    "time",
+    "vd_verify"
+   ]
+  },
+  "vd_pl_controls.py": {
+   "certifier_imports": [],
+   "imports": [
+    "__future__",
+    "fractions",
+    "json",
+    "pathlib",
+    "sys",
+    "time",
+    "vd_pl",
+    "vd_point",
+    "vd_verify"
+   ]
+  },
+  "vd_pl_crosscheck.py": {
+   "certifier_imports": [],
+   "imports": [
+    "__future__",
+    "fractions",
+    "json",
+    "pathlib",
+    "random",
+    "sys",
+    "time",
+    "vd_pl",
+    "vd_point",
+    "vd_verify"
+   ]
+  },
   "vd_point.py": {
    "certifier_imports": [],
    "imports": [
@@ -192,11 +277,13 @@
  "static_planted_control": {
   "detected": true,
   "flagged": [
+   "a0_c2b",
    "c1b_pw",
    "c2b_exact",
    "c7_gaussian"
   ],
   "imports": [
+   "a0_c2b",
    "c1b_pw",
    "c2b_exact",
    "c7_gaussian",
@@ -208,6 +295,122 @@
    "identical_lines_total": 2,
    "normalised_lines": 26,
    "overlaps": {
+    "a0_c1b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c1bh.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2bx.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c4extra.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_common.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_controls.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_ladder.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_manifest.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_mc.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_queue.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_report.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_run.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_run2.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_verify.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
     "c1b_blockctl.py": {
      "examples": [
       "from __future__ import annotations",
@@ -411,6 +614,132 @@
    "identical_lines_total": 5,
    "normalised_lines": 176,
    "overlaps": {
+    "a0_c1b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c1bh.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2bx.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c4extra.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_common.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_controls.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_ladder.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_manifest.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_mc.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_queue.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_report.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_run.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_run2.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_verify.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
     "c1b_blockctl.py": {
      "examples": [
       "HERE = Path(__file__).resolve().parent",
@@ -641,6 +970,133 @@
    "identical_lines_total": 6,
    "normalised_lines": 51,
    "overlaps": {
+    "a0_c1b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c1bh.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2bx.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c4extra.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_common.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_controls.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_ladder.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_manifest.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_mc.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "rng = random.Random(seed)"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_queue.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_report.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_run.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_run2.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_verify.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
     "c1b_blockctl.py": {
      "examples": [
       "HERE = Path(__file__).resolve().parent",
@@ -869,8 +1325,148 @@
   },
   "vd_d3_verify_all.py": {
    "identical_lines_total": 5,
-   "normalised_lines": 49,
+   "normalised_lines": 51,
    "overlaps": {
+    "a0_c1b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c1bh.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2bx.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c4extra.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_common.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_controls.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_ladder.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_manifest.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_mc.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_queue.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_report.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_run.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_run2.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_verify.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
     "c1b_blockctl.py": {
      "examples": [
       "HERE = Path(__file__).resolve().parent",
@@ -1121,6 +1717,132 @@
    "identical_lines_total": 5,
    "normalised_lines": 41,
    "overlaps": {
+    "a0_c1b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c1bh.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2bx.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c4extra.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_common.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_controls.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_ladder.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_manifest.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_mc.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_queue.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_report.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_run.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_run2.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_verify.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
     "c1b_blockctl.py": {
      "examples": [
       "HERE = Path(__file__).resolve().parent",
@@ -1347,10 +2069,834 @@
     }
    }
   },
-  "vd_float.py": {
+  "vd_d6_verify_pl.py": {
+   "identical_lines_total": 6,
+   "normalised_lines": 56,
+   "overlaps": {
+    "a0_c1b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c1bh.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2bx.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c4extra.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_common.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_controls.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_ladder.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": [
+      "run"
+     ]
+    },
+    "a0_manifest.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_mc.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_queue.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_report.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_run.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_run2.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_verify.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":",
+      "if cert.get(\"kind\") != \"whole\":"
+     ],
+     "identical_lines": 4,
+     "shared_top_level_names": []
+    },
+    "c1b_blockctl.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "c1b_certify.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "c1b_certpw.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "c1b_float.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c1b_gauss.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "c1b_kernel.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "c1b_mc.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":",
+      "sys.path.insert(0, str(HERE))"
+     ],
+     "identical_lines": 4,
+     "shared_top_level_names": [
+      "run"
+     ]
+    },
+    "c1b_negctl.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "c1b_prov.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c1b_pw.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c1b_report.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "c1b_test_combined.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "c2b_certify.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": [
+      "run"
+     ]
+    },
+    "c2b_checks.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_common.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_controls.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "c2b_exact.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_fdcheck.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_float.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_pointeval.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "c2b_report.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "c2b_validate.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "r2_blockctl_disc.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "r2_compare_prepin.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "r2_tables.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 4,
+     "shared_top_level_names": []
+    }
+   }
+  },
+  "vd_d7_cost.py": {
    "identical_lines_total": 4,
+   "normalised_lines": 26,
+   "overlaps": {
+    "a0_c1b.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_c1bh.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_c2b.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_c2bx.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_c4extra.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_common.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_controls.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_ladder.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_manifest.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_mc.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_queue.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_report.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_run.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_run2.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_verify.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c1b_blockctl.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":",
+      "sys.path.insert(0, str(HERE))"
+     ],
+     "identical_lines": 4,
+     "shared_top_level_names": []
+    },
+    "c1b_certify.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":",
+      "sys.path.insert(0, str(HERE))"
+     ],
+     "identical_lines": 4,
+     "shared_top_level_names": []
+    },
+    "c1b_certpw.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":",
+      "sys.path.insert(0, str(HERE))"
+     ],
+     "identical_lines": 4,
+     "shared_top_level_names": []
+    },
+    "c1b_float.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "c1b_gauss.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c1b_kernel.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c1b_mc.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":",
+      "sys.path.insert(0, str(HERE))"
+     ],
+     "identical_lines": 4,
+     "shared_top_level_names": []
+    },
+    "c1b_negctl.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":",
+      "sys.path.insert(0, str(HERE))"
+     ],
+     "identical_lines": 4,
+     "shared_top_level_names": []
+    },
+    "c1b_prov.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c1b_pw.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "c1b_report.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":",
+      "sys.path.insert(0, str(HERE))"
+     ],
+     "identical_lines": 4,
+     "shared_top_level_names": []
+    },
+    "c1b_test_combined.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":",
+      "sys.path.insert(0, str(HERE))"
+     ],
+     "identical_lines": 4,
+     "shared_top_level_names": []
+    },
+    "c2b_certify.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "c2b_checks.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "c2b_common.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "c2b_controls.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_exact.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "c2b_fdcheck.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "c2b_float.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "c2b_pointeval.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "c2b_report.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_validate.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "r2_blockctl_disc.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":",
+      "sys.path.insert(0, str(HERE))"
+     ],
+     "identical_lines": 4,
+     "shared_top_level_names": []
+    },
+    "r2_compare_prepin.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":",
+      "sys.path.insert(0, str(HERE))"
+     ],
+     "identical_lines": 4,
+     "shared_top_level_names": []
+    },
+    "r2_tables.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    }
+   }
+  },
+  "vd_float.py": {
+   "identical_lines_total": 6,
    "normalised_lines": 65,
    "overlaps": {
+    "a0_c1b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c1bh.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2bx.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c4extra.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_common.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "mod = importlib.util.module_from_spec(spec)",
+      "spec.loader.exec_module(mod)"
+     ],
+     "identical_lines": 4,
+     "shared_top_level_names": []
+    },
+    "a0_controls.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_ladder.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": [
+      "run"
+     ]
+    },
+    "a0_manifest.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_mc.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_queue.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_report.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_run.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_run2.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_verify.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
     "c1b_blockctl.py": {
      "examples": [
       "HERE = Path(__file__).resolve().parent",
@@ -1585,8 +3131,137 @@
   },
   "vd_independence.py": {
    "identical_lines_total": 3,
-   "normalised_lines": 79,
+   "normalised_lines": 83,
    "overlaps": {
+    "a0_c1b.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_c1bh.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_c2b.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_c2bx.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_c4extra.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_common.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_controls.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_ladder.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_manifest.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_mc.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_queue.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_report.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_run.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_run2.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_verify.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
     "c1b_blockctl.py": {
      "examples": [
       "HERE = Path(__file__).resolve().parent",
@@ -1814,6 +3489,133 @@
    "identical_lines_total": 6,
    "normalised_lines": 36,
    "overlaps": {
+    "a0_c1b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c1bh.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2bx.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c4extra.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_common.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_controls.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_ladder.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_manifest.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_mc.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "rng = random.Random(seed)"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_queue.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_report.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_run.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_run2.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_verify.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
     "c1b_blockctl.py": {
      "examples": [
       "HERE = Path(__file__).resolve().parent",
@@ -2040,10 +3842,1230 @@
     }
    }
   },
+  "vd_pl.py": {
+   "identical_lines_total": 9,
+   "normalised_lines": 286,
+   "overlaps": {
+    "a0_c1b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c1bh.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2bx.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c4extra.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_common.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_controls.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_ladder.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_manifest.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_mc.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_queue.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_report.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_run.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_run2.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_verify.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "c1b_blockctl.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "c1b_certify.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "c1b_certpw.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "c1b_float.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c1b_gauss.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "c1b_kernel.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "c1b_mc.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":",
+      "sys.path.insert(0, str(HERE))"
+     ],
+     "identical_lines": 4,
+     "shared_top_level_names": []
+    },
+    "c1b_negctl.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "c1b_prov.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c1b_pw.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c1b_report.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "c1b_test_combined.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "c2b_certify.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_checks.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_common.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_controls.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "c2b_exact.py": {
+     "examples": [
+      "for i in range(4 * N, 5 * N):",
+      "for j in range(4 * N - i):",
+      "for j in range(4 * N, 5 * N):",
+      "for k in range(n5 - 1, 0, -1):"
+     ],
+     "identical_lines": 6,
+     "shared_top_level_names": []
+    },
+    "c2b_fdcheck.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_float.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_pointeval.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "c2b_report.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "c2b_validate.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "r2_blockctl_disc.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "r2_compare_prepin.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "r2_tables.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 4,
+     "shared_top_level_names": []
+    }
+   }
+  },
+  "vd_pl_controls.py": {
+   "identical_lines_total": 5,
+   "normalised_lines": 156,
+   "overlaps": {
+    "a0_c1b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c1bh.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2bx.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c4extra.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_common.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_controls.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_ladder.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_manifest.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_mc.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_queue.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_report.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_run.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_run2.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_verify.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "c1b_blockctl.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "c1b_certify.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "c1b_certpw.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "c1b_float.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c1b_gauss.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "c1b_kernel.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "c1b_mc.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":",
+      "sys.path.insert(0, str(HERE))"
+     ],
+     "identical_lines": 4,
+     "shared_top_level_names": []
+    },
+    "c1b_negctl.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "c1b_prov.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c1b_pw.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c1b_report.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "c1b_test_combined.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "c2b_certify.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_checks.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_common.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_controls.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "c2b_exact.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_fdcheck.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_float.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_pointeval.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "c2b_report.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "c2b_validate.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "r2_blockctl_disc.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "r2_compare_prepin.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "r2_tables.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 4,
+     "shared_top_level_names": []
+    }
+   }
+  },
+  "vd_pl_crosscheck.py": {
+   "identical_lines_total": 5,
+   "normalised_lines": 45,
+   "overlaps": {
+    "a0_c1b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c1bh.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2bx.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c4extra.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_common.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_controls.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_ladder.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_manifest.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_mc.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_queue.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_report.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_run.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_run2.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "a0_verify.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "c1b_blockctl.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "c1b_certify.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "c1b_certpw.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": []
+    },
+    "c1b_float.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c1b_gauss.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "c1b_kernel.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "c1b_mc.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":",
+      "sys.path.insert(0, str(HERE))"
+     ],
+     "identical_lines": 4,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "c1b_negctl.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "c1b_prov.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c1b_pw.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c1b_report.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "c1b_test_combined.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "c2b_certify.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_checks.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_common.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_controls.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "c2b_exact.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_fdcheck.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_float.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "c2b_pointeval.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "c2b_report.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "c2b_validate.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "r2_blockctl_disc.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "r2_compare_prepin.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 5,
+     "shared_top_level_names": [
+      "main"
+     ]
+    },
+    "r2_tables.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 4,
+     "shared_top_level_names": [
+      "main"
+     ]
+    }
+   }
+  },
   "vd_point.py": {
    "identical_lines_total": 2,
-   "normalised_lines": 107,
+   "normalised_lines": 137,
    "overlaps": {
+    "a0_c1b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c1bh.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2bx.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c4extra.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_common.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_controls.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_ladder.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_manifest.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_mc.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_queue.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_report.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_run.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_run2.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_verify.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
     "c1b_blockctl.py": {
      "examples": [
       "from __future__ import annotations",
@@ -2253,9 +5275,137 @@
    }
   },
   "vd_verify.py": {
-   "identical_lines_total": 8,
+   "identical_lines_total": 10,
    "normalised_lines": 413,
    "overlaps": {
+    "a0_c1b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c1bh.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2b.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c2bx.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_c4extra.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_common.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "mod = importlib.util.module_from_spec(spec)",
+      "spec.loader.exec_module(mod)"
+     ],
+     "identical_lines": 4,
+     "shared_top_level_names": []
+    },
+    "a0_controls.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_ladder.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_manifest.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 2,
+     "shared_top_level_names": []
+    },
+    "a0_mc.py": {
+     "examples": [
+      "from __future__ import annotations"
+     ],
+     "identical_lines": 1,
+     "shared_top_level_names": []
+    },
+    "a0_queue.py": {
+     "examples": [
+      "HERE = Path(__file__).resolve().parent",
+      "from __future__ import annotations",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_report.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_run.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_run2.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
+    "a0_verify.py": {
+     "examples": [
+      "from __future__ import annotations",
+      "from fractions import Fraction as F",
+      "if __name__ == \"__main__\":"
+     ],
+     "identical_lines": 3,
+     "shared_top_level_names": []
+    },
     "c1b_blockctl.py": {
      "examples": [
       "HERE = Path(__file__).resolve().parent",
@@ -2505,6 +5655,11 @@
   "vd_d5.py",
   "vd_mc.py",
   "vd_crosscheck.py",
-  "vd_independence.py"
+  "vd_independence.py",
+  "vd_pl.py",
+  "vd_d6_verify_pl.py",
+  "vd_pl_controls.py",
+  "vd_pl_crosscheck.py",
+  "vd_d7_cost.py"
  ]
 }

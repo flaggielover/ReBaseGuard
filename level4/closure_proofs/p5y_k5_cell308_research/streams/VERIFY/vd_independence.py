@@ -22,10 +22,12 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 NS = HERE.parents[1]
 OV = NS.parent / "p5y_k5_tail_overnight_research"
-ORIG_DIRS = [OV / "streams" / "C_308" / "LR" / "cusum", OV / "streams" / "C_308" / "A0X" / "gen"]
+ORIG_DIRS = [OV / "streams" / "C_308" / "LR" / "cusum", OV / "streams" / "C_308" / "A0X" / "gen",
+             NS / "streams" / "A0"]          # stream A0 (stored-format reader read for layout; its certifier code)
 VERIFIER_SIDE = ["vd_verify.py", "vd_point.py", "vd_adapt.py", "vd_float.py", "vd_controls.py",
-                 "vd_d3_verify_all.py", "vd_d5.py", "vd_mc.py", "vd_crosscheck.py", "vd_independence.py"]
-BAD = re.compile(r"^(c1b_|c2b_|c7_|ov_quarantine$|r2_)")
+                 "vd_d3_verify_all.py", "vd_d5.py", "vd_mc.py", "vd_crosscheck.py", "vd_independence.py",
+                 "vd_pl.py", "vd_d6_verify_pl.py", "vd_pl_controls.py", "vd_pl_crosscheck.py", "vd_d7_cost.py"]
+BAD = re.compile(r"^(c1b_|c2b_|c7_|a0_|ov_quarantine$|r2_)")
 
 
 def imports_of(path: Path) -> list:
@@ -72,18 +74,22 @@ def main() -> dict:
     res["static_clean"] = all(not v["certifier_imports"] for v in static.values())
     with tempfile.TemporaryDirectory() as td:
         pl = Path(td) / "planted.py"
-        pl.write_text("import c1b_pw\nfrom c2b_exact import Mesh\nimport importlib\nimportlib.import_module('c7_gaussian')\n")
+        pl.write_text("import c1b_pw\nfrom c2b_exact import Mesh\nimport importlib\nimportlib.import_module('c7_gaussian')\n"
+                      "import a0_c2b\n")
         pm = imports_of(pl)
         res["static_planted_control"] = {"imports": pm, "flagged": bad_imports(pm),
-                                         "detected": sorted(bad_imports(pm)) == ["c1b_pw", "c2b_exact", "c7_gaussian"]}
+                                         "detected": sorted(bad_imports(pm)) == ["a0_c2b", "c1b_pw", "c2b_exact",
+                                                                                 "c7_gaussian"]}
     res["producer_imports"] = imports_of(HERE / "vd_produce.py")
     # runtime
     code = ("import sys; sys.path.insert(0, %r)\n"
-            "import vd_verify as V, vd_point as P, vd_adapt as A, vd_float as FL\n"
+            "import vd_verify as V, vd_point as P, vd_adapt as A, vd_float as FL, vd_pl as PL\n"
             "from fractions import Fraction as F\n"
             "W = V.StripPW([0, 5], [{(0, 0): F(100)}])\n"
             "pre = V.Prep(W, F(3)); V.residual_point(pre, F(1, 3), F(1, 5)); P.residual(P.PW(W.to_json()), 3, 0, 0)\n"
             "V.bb_box(('k', W.to_json(), '3', False, (F(0), F(1, 4), F(0), F(1, 4)), 'res', {}))\n"
+            "PW = PL.PLW(2, [[F(10)] * c for c in PL._cols(2)])\n"
+            "PL.verify_pl(PW, F(3), workers=1); P.residual(P.make(PW.to_json()), 3, F(1, 3), F(1, 5))\n"
             "print('\\n'.join(sorted(sys.modules)))\n") % str(HERE)
     r = subprocess.run([sys.executable, "-I", "-B", "-c", code], capture_output=True, text=True, timeout=600)
     loaded = r.stdout.split()

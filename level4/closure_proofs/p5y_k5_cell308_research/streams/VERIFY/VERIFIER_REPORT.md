@@ -336,3 +336,288 @@ for d = 6 at e = 1/2.
 | `certs/` | 8 certificates plus the producer manifest |
 | `results/` | D2_INDEPENDENCE, D3_VERIFY_ALL, D4_CONTROLS, D5_FLOAT, D5_MC, CROSSCHECK, PRODUCER_REPRODUCIBILITY, prev_no_early_exit/ |
 | `logs/` | run logs and the source sha256 of the final runs |
+
+---
+
+# Follow-up (2026-09-29): D6 P1 nodal format, D7 high-degree cost, D8 re-measurement
+
+Sections 1-9 above are unchanged from the first report, which is committed at `c494705d`. The C1b-format verifier
+`vd_verify.py` was not modified; its sha256 is still `cd4cec35...`. `vd_point.py` gained P1 support, so the
+strip-format crosscheck and the D4 controls were re-run on the final code (section 13). The final source hashes are
+in `logs/sources_followup.sha256`. The machine was shared throughout: another stream's pool was running, and my
+producer occupied 2 workers for 48 minutes. Wall times are therefore indicative only.
+
+## 10. D6: independent verifier for P1 (triangle-piecewise-linear) nodal certificates (`vd_pl.py`)
+
+### Data layout
+
+This is the only information taken from stream A0 (section 12 lists the lines read).
+
+* The nodes are (ih, jh) with h = 1/N. Column i has height cols(N) = [5N+1] + [4N-i+1 for i = 1..4N] + [1]*N.
+* The cells are:
+  * L(i,j) = conv{(i,j), (i+1,j), (i,j+1)}, for i + j <= 4N - 1;
+  * U(i,j) = conv{(i+1,j), (i,j+1), (i+1,j+1)}, for i + j <= 4N - 2 (the anti-diagonal split);
+  * the axis segments beyond t = 4.
+* W is linear on every cell.
+* Values are stored as integers at scale 2^-Qbits.
+* `W_sha256` = sha256(`json.dumps([[str(x) ...]], sort_keys=True, separators=(",", ":"))`).
+* `claim_w_atom` = W(a).
+* The `certifier` field is `C2B_P1_SUPER` or `C2B_P1_SUB`.
+* The adapter `vd_pl.from_a0_cert` recomputes the sha256 from the stored integers, checks the shape and converts
+  every value to an exact Fraction.
+
+### Kernel application (derived here; `vd_pl.py` docstring)
+
+Put u = z + e. Along the window [u_L, u_H] = [m - C + e, C - p + e], the path value g(u) = W(T(x, u - e)) is
+continuous and piecewise linear. The image moves:
+1. down the m-axis;
+2. then along the line p' + m' = t - 1 (for t >= 1), or stays in the atom (for t <= 1);
+3. then along the p-axis.
+
+With Psi(u) = u Phi(u) + phi(u), so that Psi' = Phi, two integrations by parts give
+
+    int g phi = g(u_H) Phi(u_H) - g(u_L) Phi(u_L) - s_last Psi(u_H) + s_first Psi(u_L) + sum_k (slope jump at u_k) Psi(u_k)
+
+**Kinks.** Every kink is a mesh crossing, at u = ih + K + e - p or at u = m + e - K - jh. The jumps are exact
+rationals. They depend only on the nodal values and on the t-band of x:
+* second differences on the axes;
+* differences of the edge slopes D(i,j) = (w[i+1][j] - w[i][j+1])/h along p' + m' = t - 1;
+* the junction coefficients (w[1][b] - w[0][b])/h and (w[b][1] - w[b][0])/h, or (C_1 - C_0)/h and (A_1 - A_0)/h
+  when t <= 1.
+
+**Separable residual.** On every mesh cell the residual is exactly alpha + beta p + gamma m - 1 - P_band(p) - M_band(m).
+
+**Cell bound.** On a cell, or on one of its 4 midpoint children:
+
+    F(c) + min over the vertices of grad F(c) . (v - c) - 1/2 (max|P''| r_p^2 + max|M''| r_m^2)
+
+* The linear part is exact on the triangle, so only the second-order remainder is slack.
+* It uses the exact dyadic interval arithmetic and the special functions of vd_verify.
+* The band-independent tails are handled by suffix sums.
+
+**Decisions.**
+* A centroid whose residual has an upper bound < 0 is a rigorous witness, and the run stops.
+* W >= 0 on R holds iff every node is >= 0.
+* For SUB certificates the verifier checks 1 + K_e W - W >= 0. For bounded W this gives E_x[tau] >= W(x), because the
+  resolvent series converges.
+* W(a) = w[0][0] is returned exactly and compared with the claim.
+
+### Second, independent evaluator
+
+`vd_point.PL` shares nothing with the kink/Psi formula:
+* cells are located by a barycentric test;
+* breakpoints are found generically;
+* each linear piece is integrated by an exact antiderivative;
+* the arithmetic is exact Fraction arithmetic with its own Phi and exp.
+
+`vd_pl_crosscheck.py` compared the two evaluators on 7 certificates:
+* N = 10, 20 and 40;
+* drifts 1/2, 1, 11/10, 27/10, 3 and 7/2;
+* SUPER and SUB;
+* the atom, t = 1, band and mesh boundaries, nodes, centroids, the axes beyond 4, (5,0), (0,5) and random rational
+  points;
+* with and without the atom window.
+
+**Result:** 464 residual evaluations, **all enclosures intersect**, and the exact W(x) of the two cell-location codes
+is **identical everywhere** (`results/D6_PL_CROSSCHECK.json`).
+
+### 10a. Every stored A0 C2b / C2bx certificate (`results/D6_VERIFY_PL.json`)
+
+All **98** stored P1 certificates in `streams/A0/certs/` were checked:
+* 48 C2B and 50 C2BX; 49 SUPER and 49 SUB;
+* N = 10, 20, 40 and 80;
+* drifts 1/2, 1, 11/10, 27/10, 3 and 7/2.
+
+Results:
+* **98/98 PASS.**
+* **W(a) == claim_w_atom exactly in 98/98.**
+* The recomputed W_sha256 matches in 98/98.
+* 0 are undecided.
+* Only 3 needed any subdivision beyond the base cells, all at e = 1/2 (132-264 extra boxes). Every other certificate
+  was decided on its mesh cells alone.
+
+Costs are for a single process: `--workers 1`, because the producer held the other slots.
+
+| family | direction | N | certificates | PASS | W(a) == claim | cells | margin lower bound (min .. max) | wall s per certificate (mean / max) |
+|---|---|---|---|---|---|---|---|---|
+| C2B | sub | 10 | 6 | 6 | 6 | 1620 | 6.71e-04 .. 1.54e-02 | 0.4 / 0.5 |
+| C2B | sub | 20 | 6 | 6 | 6 | 6440 | 1.69e-04 .. 3.96e-03 | 2.3 / 2.9 |
+| C2B | sub | 40 | 6 | 6 | 6 | 25680 | 4.21e-05 .. 1.00e-03 | 14.6 / 17.6 |
+| C2B | sub | 80 | 6 | 6 | 6 | 102560 | 1.05e-05 .. 2.51e-04 | 125.3 / 147.1 |
+| C2B | super | 10 | 6 | 6 | 6 | 1620 | 1.20e-04 .. 1.69e-03 | 0.5 / 0.6 |
+| C2B | super | 20 | 6 | 6 | 6 | 6440 | 5.34e-07 .. 4.54e-04 | 2.4 / 2.9 |
+| C2B | super | 40 | 6 | 6 | 6 | 25680 | 3.32e-06 .. 2.37e-04 | 13.5 / 15.6 |
+| C2B | super | 80 | 6 | 6 | 6 | 102560 | 1.07e-04 .. 2.37e-04 | 117.8 / 173.2 |
+| C2BX | sub | 20 | 8 | 8 | 8 | 6440 | 1.69e-04 .. 3.96e-03 | 2.7 / 3.1 |
+| C2BX | sub | 40 | 9 | 9 | 9 | 25680 | 4.21e-05 .. 1.00e-03 | 12.8 / 14.4 |
+| C2BX | sub | 80 | 8 | 8 | 8 | 102560 | 1.05e-05 .. 2.51e-04 | 98.5 / 143.3 |
+| C2BX | super | 20 | 8 | 8 | 8 | 6440 | 2.61e-04 .. 5.16e-04 | 2.6 / 3.6 |
+| C2BX | super | 40 | 9 | 9 | 9 | 25680 | 6.47e-05 .. 1.22e-04 | 14.4 / 16.9 |
+| C2BX | super | 80 | 8 | 8 | 8 | 102560 | 1.61e-05 .. 2.97e-05 | 122.2 / 166.2 |
+
+**Total main-process CPU:**
+
+| N | certificates | CPU seconds |
+|---|---|---|
+| 10 | 12 | 5 |
+| 20 | 28 | 65 |
+| 40 | 30 | 394 |
+| 80 | 28 | 2816 (54 min wall) |
+
+Cost grows like the number of cells times the band length, roughly N^3. The quoted margin lower bounds are rigorous
+but not tight, as in section 2.
+
+### 10b. Controls through `verify_pl()` (`results/D6_PL_CONTROLS.json`)
+
+The base is A0's C2B_SUPER at e = 3, N = 20. Every FAIL witness was confirmed by `vd_point.PL`. The final run
+passed all 13 controls in 79 s.
+
+| # | control | expected | observed | witness (cell), independent residual upper bound | pass |
+|---|---|---|---|---|---|
+| 0 | the base certificate at its own drift, claim checked | PASS | PASS | - | yes |
+| 1 | node (10,10) = (1/2,1/2) lowered by 1/64 | FAIL | FAIL | (29/60, 29/60) in U(9,9), -4.7e-3 | yes |
+| 2a | atom node lowered by 1/64 | FAIL | FAIL | (1/60, 1/60) in L(0,0), -4.6e-3 | yes |
+| 2b | atom node raised by 2^-12 | inequality PASS, certificate FAIL on the claim | inequality PASS; certificate FAIL, `claim_mismatch` | - | yes |
+| 3 | (1 - 2^-k) W for k = 20, 19, ... | PASS ... then FAIL | PASS for k = 20..12, **FAIL at k = 11** | (1/60, 23/30) in L(0,15), -7.2e-7 | yes |
+| 4 | C2B e = 3 checked at e' = 1 | FAIL | FAIL | (1/60, 1/60), -0.73 | yes |
+| 4 | C2B e = 1 checked at e' = 1/2 | FAIL | FAIL | (1/60, 1/60), -0.45 | yes |
+| 4 | C2B e = 7/2 checked at e' = 3 | FAIL | FAIL | (1/60, 1/60), -0.15 | yes |
+| 4 | C2B e = 27/10 checked at e' = 11/10 | FAIL | FAIL | (1/60, 1/60), -0.66 | yes |
+| 5 | node (0, 5N) set to -1 | FAIL | FAIL | (0, 199/40) on an m-axis segment, confirmed | yes |
+| 6 | atom window omitted, valid certificate | residual at a rises by W(a)(Phi(K+e) - Phi(e-K)) | the difference encloses exactly that; the independent evaluator agrees | - | yes |
+| 7 | **vertex-only-acceptable candidate** (1 - s) W | FAIL with an interior witness while every node is valid | FAIL; **all 3361 node residuals rigorously > 0** (smallest lower bound 5.7e-4); witness (41/3072, 4403/7680) strictly inside triangle L(0,11), not a node; independent upper bound -2.1e-7 | see previous column | yes |
+
+Notes on individual controls:
+* **(3)** The ladder brackets r_min in [2.44e-4, 4.89e-4], which is consistent with the base-run bracket
+  [3.84e-4, 4.74e-4].
+* **(4)** Every wrong drift was chosen with a smaller |e|, so Lambda(e') > W_e(a) and the certificate must fail.
+* **(7)** This is the err-path case the C2b review asked for.
+  * The base is A0's C2B_SUPER at e = 1/2, N = 20. Scanning four certificates found its interior centroid minimum
+    below its node minimum, both rigorous, and the minimum lies inside a triangle.
+  * s = 457300367/2^37 (about 3.33e-3) lies strictly inside the window between the two r/(1 + r) ratios, [2.76e-3, 3.89e-3].
+  * A vertex-only checker would accept this W. The branch and bound rejects it after 1917 boxes.
+
+## 11. D7: cost of the C1b-format verifier at degrees 8, 10, 12 (e = 1 and e = 3)
+
+**Production.** `vd_produce.py`, run with 2 workers for 48 min wall, called C1b `certify_degree`:
+
+| certificate | producer status | producer CPU |
+|---|---|---|
+| e = 3, d = 8 | CERTIFIED | 283 s |
+| e = 3, d = 10 | CERTIFIED | 1112 s |
+| e = 3, d = 12 | CERTIFIED | 1342 s |
+| e = 1, d = 8 | CERTIFIED | 739 s |
+| e = 1, d = 10 | **SCALING_RULE_INAPPLICABLE** (the float fit's residual lower bound is <= -1) | - |
+| e = 1, d = 12 | **SCALING_RULE_INAPPLICABLE** | - |
+
+The four new certificates are in `certs/`. The strip crosscheck (section 13) covers them.
+
+**Verification: not completed, so no verdict is claimed for any d >= 8 certificate.**
+* e = 1, d = 8 was aborted after about 23 min wall on 2 workers.
+* e = 3, d = 8 was aborted after about 38 min wall on 2 workers, with a budget of 40000 boxes per initial box.
+* By comparison, d = 6 takes 57-97 s on 3 workers and d = 4 takes 2-4 s.
+
+**Diagnosis (`vd_d7_probe.py` → `results/D7_PROBE.json`).** A single process, e = 3, at most 200 boxes per initial
+box; there are 144 initial boxes:
+
+| degree | ms per second-order box bound | initial boxes certified within 200 boxes | boxes used |
+|---|---|---|---|
+| 4 | 6.1 | 144/144 | 623 |
+| 6 | 7.6 | 83/144 | 22382 |
+| 8 | 12.4 | **8/144** | 27962 |
+| 10 | 19.2 | **3/144** | 28749 |
+| 12 | (probe stopped for time) | - | - |
+
+At d >= 8 the scaled residual is small **everywhere**. The unscaled residual range drops from about 3e-2 (d = 4) to
+about 3e-4 (d = 8). The producer's own positive margins are 5.6e-6 (d = 8), 6.1e-8 (d = 10) and 9.1e-7 (d = 12) at
+e = 3.
+
+The second-order interval-AD bound needs boxes of size about sqrt(margin/|Hessian enclosure|) over the whole of R.
+Its Hessian enclosure also widens with degree, through the dependency effect in the Taylor shift and the moment
+recurrence.
+
+**Conclusion.** This verifier is practical up to d = 6 (about 1.5 min) and impractical at d >= 8 in its current
+form. The fix would be a tighter local form, such as a Taylor model of order > 2 or Chebyshev remainder forms. That
+is exactly where the original C1b spends its effort (order-10 Taylor models), so an independent check of d >= 8
+certificates is an open item.
+
+## 12. D8: independence re-measured (final code; `results/D2_INDEPENDENCE.json`)
+
+**Stream A0 lines READ, for layout only:**
+* `a0_verify.py`: the whole file, 129 lines.
+* `a0_c2b.py`: lines 164-172 (`w_sha256`, `make_cert`).
+* `a0_common.py`: lines 102-110, 114-117, 125-126 and 226-227 (`declared_drift`, `fs`, `sha256_bytes`, `canon`).
+* `a0_c2bx.py`: grep hits at lines 14 and 88 (the certifier name).
+* The top-level JSON keys of 3 A0 certificates.
+* The timing keys of 4 A0 `results/C1B_e*_d*.json` files, used only to plan D7.
+
+From the first report I had also read `c2b_exact.py` lines 1-70 (the mesh and cell enumeration). **Disclosure:** the
+overlap scan below made me read `c2b_exact.py` lines 236-253 **after** `vd_pl.py` was written. They show that the
+original C2b also forms suffix sums over axis second differences. That is the same mathematical structure (kinks of
+P1 on the axes), which I reached independently from my own derivation. It is common-mode *mathematics*, not shared
+code.
+
+**Import audit.**
+* **Static.** All 15 verifier-side files are clean: zero `c1b_*`, `c2b_*`, `c7_*`, `a0_*` or `ov_quarantine`
+  imports. `vd_pl.py` imports only the stdlib and `vd_verify`.
+* **Planted control.** A file importing a0_c2b, c1b_pw, c2b_exact and c7_gaussian is flagged 4/4.
+* **Runtime.** After running vd_verify, vd_point (strip and PL), vd_pl.verify_pl, vd_adapt and vd_float, the
+  process holds 113 modules and no certifier module. The planted runtime control is detected.
+* The producer remains the only C1b importer.
+
+**Measured shared surface.** Lines were normalised as before and compared with 40 original files: the C1b and C2b
+directories of OV plus `streams/A0/*.py`.
+
+| file | normalised lines | identical lines | what the identical lines are |
+|---|---|---|---|
+| vd_pl.py | 286 | 9 | 5 boilerplate lines; 3 mesh-enumeration loop headers (`for j in range(4 * N - i):`, `for i in range(4 * N, 5 * N):`, `for j in range(4 * N, 5 * N):`) that coincide with `c2b_exact.Mesh.cells`, i.e. the prescribed layout; `for k in range(n5 - 1, 0, -1):`, a suffix-sum loop header that coincides with `c2b_exact.py` line 239/250 (see the disclosure above) |
+| vd_d6_verify_pl.py | 56 | 6 | 5 boilerplate lines plus `if cert.get("kind") != "whole":`, the same layout check as `a0_verify.py` |
+| vd_point.py | 137 | 2 | imports |
+| vd_pl_controls.py, vd_pl_crosscheck.py, vd_d7_cost.py | 227 | 14 | boilerplate |
+| vd_verify.py | 413 | 10 | as in section 3, plus 2 boilerplate matches with A0 files |
+| **all 15 files** | **1648** | **79** | no function body or algorithmic block is shared |
+
+## 13. Regression re-runs after the `vd_point.py` change
+
+| check | result | log |
+|---|---|---|
+| Strip-format crosscheck (`vd_crosscheck.py`), now over 12 certificates including the d = 8/10/12 ones | 2003 special-function points and 1368 residual evaluations, all agree | `logs/crosscheck_followup.log` |
+| D4 strip controls (`vd_controls.py`) | 12/12 pass | `logs/d4_followup_regression.log` |
+| Quarantine scan | PASS; 51 .py and 330 text files, 0 findings, both planted controls fire | - |
+
+The scan reports 8 report-only drift literals in this stream. They are the state coordinates 3/2, 5/3 and 7/3, a
+delta step, and `sqrt(2.0)`; none of them is a drift.
+
+**Ledger:** 29 streamD lines, all NONTARGET_DRIFT_VALIDATION or INFRASTRUCTURE, 0 target evaluations and no
+LEAK_FLAG. **OV:** `git status` is empty. **Stream A0:** read only; nothing was written there.
+
+## 14. Open issues (follow-up)
+
+1. **D7: no independent verdict for C1b certificates of degree >= 8.** Section 11 gives the diagnosis. Closing this
+   needs a higher-order local enclosure in `vd_verify`.
+2. **C1b at e = 1, d = 10 and d = 12** returned SCALING_RULE_INAPPLICABLE in the producer (`certify_degree`). Stream
+   A0 did store e = 1, d = 10/12 certificates made by its own W-only route, and those were not verified here: their
+   format is `C1B_PW_W_SUPER`, whose layout I did not read.
+3. **Point certificates only.** `vd_pl` checks one exact drift per call, and drift blocks are not supported. The
+   rational drifts 11/10 and 27/10 are handled exactly.
+4. **SUB direction.** The conclusion E_x[tau] >= W(x) assumes W bounded, which is automatic for P1, and a convergent
+   resolvent series. The convergence follows from any verified supersolution at the same drift, and every SUB drift
+   has a verified SUPER certificate here.
+5. **Common-mode assumptions.** The kernel model and the P1 layout are shared with C2b by construction. The kink/Psi
+   decomposition is my own derivation, but it is mathematically the same object the original C2b sums (section 12).
+   The generic evaluator `vd_point.PL` is the independent guard for it.
+
+## 15. Files added in the follow-up
+
+| path | role |
+|---|---|
+| `vd_pl.py` | D6 P1 verifier: adapter, kink/Psi kernel, cell branch and bound, `verify_pl`, exact W(a) |
+| `vd_point.py` | now also evaluates P1 nodal W pointwise (`PL`: barycentric cell search, generic breakpoints) |
+| `vd_d6_verify_pl.py` | D6(a) runner |
+| `vd_pl_controls.py` | D6(b) controls |
+| `vd_pl_crosscheck.py` | agreement of the two PL evaluators |
+| `vd_d7_cost.py`, `vd_d7_probe.py` | D7 |
+| `certs/CERT_e3_1_d8.json`, `CERT_e3_1_d10.json`, `CERT_e3_1_d12.json`, `CERT_e1_1_d8.json` | new C1b certificates, recorded in the manifest |
+| `results/D6_VERIFY_PL.json`, `D6_PL_CONTROLS.json`, `D6_PL_CROSSCHECK.json`, `D7_PROBE.json` | new results |
+| `results/D2_INDEPENDENCE.json`, `CROSSCHECK.json`, `D4_CONTROLS.json` | re-run |
+| `logs/` | produce_run4_highdeg, d6_run_N10_20/N40/N80, d6_controls_final, d6_pl_crosscheck, d7_run1_aborted, d7_run2, d7_probe, crosscheck_followup, d4_followup_regression, independence_followup, sources_followup.sha256 |
