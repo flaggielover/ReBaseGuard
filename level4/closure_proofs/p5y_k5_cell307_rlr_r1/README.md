@@ -7,6 +7,7 @@ existing frozen consumer?
 
 | read first | what |
 |---|---|
+| `FINAL_REPORT.md` | **outcome and handover (sections A–U): CELL307_CLOSED_UNDER_RLR, scientific closure only, ADJUDICATION_ACCEPTED** |
 | `protocol/RLR307_PROTOCOL.md` | the frozen protocol: scope, the decisions this campaign adds, Stage 1/2, the outcome table, qualification, order, STOP rules |
 | `theory/THEOREM_RLR307.md` | Theorem RLR-307 and its proof |
 | `audit/INCIDENT_AUDIT_RLR307.md` + `audit/INCIDENT_AUDIT_ADDENDUM_R1.md` | overnight incidents and their relevance to RLR/307 (the addendum prevails) |
