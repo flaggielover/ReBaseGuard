@@ -1,0 +1,36 @@
+N=20 iters=121 last_delta=7.1e-14 secs=3.0
+N=40 iters=121 last_delta=7.3e-14 secs=18.1
+N=80 iters=121 last_delta=7.6e-14 secs=114.7
+{
+ "drift_declared": true,
+ "meshes": [
+  20,
+  40,
+  80
+ ],
+ "three_mesh_ratios": {
+  "20/40/80": 3.9822777715748665
+ },
+ "richardson_keys": [
+  "20-40",
+  "40-80"
+ ],
+ "rel_change_last_two_richardson": 9.559141200222636e-10,
+ "rel_h4_minus_h2": 6.372760800148423e-11,
+ "U_minus_est_over_est": 7.879718222102978e-05,
+ "est_minus_L_over_est": 7.867690624264778e-05,
+ "L_le_est_le_U": true,
+ "U_minus_est4_over_est": 7.879724595365935e-05,
+ "est4_minus_L_over_est": 7.867684252005367e-05,
+ "mc": {
+  "n": 1000000,
+  "seed": 20260929,
+  "rel_se": 0.000488417230976328,
+  "z_vs_est": 0.3398069970313258,
+  "z_U": -0.17850207278672078,
+  "z_L": 0.5008657055225941,
+  "secs": 5.4
+ },
+ "wall_seconds": 141.3
+}
+exit 0

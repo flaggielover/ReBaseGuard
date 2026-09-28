@@ -1,0 +1,14 @@
+{"all_rows_as_expected": true, "errpath_vertex_only_accepts": {"super": true, "sub": true}, "node_test": {"nodes": 3361, "outside_enclosure": 0, "max_rel_dev_from_mid": 1.804275098774794e-15, "neg_control_other_drift_outside": 3361}, "selection_boundary": {"W_super = a_up g and W_sub = a_lo g exactly": true, "a_lo <= 2^40 <= a_up": true, "certify(a_up - 1) certified": false, "sub_certify(a_lo + 1) certified": false}}
+stored_super {'points': 83400, 'min_residual': 0.0007833019802951924, 'n_negative': 0, 'n_negative_cells': 0}
+stored_sub {'points': 83400, 'min_residual': 0.0010224326074514956, 'n_negative': 0, 'n_negative_cells': 0}
+errpath_super {'points': 83400, 'min_residual': -0.0004884444714052805, 'n_negative': 77672, 'n_negative_cells': 6164}
+errpath_sub {'points': 83400, 'min_residual': -0.0002469795977226852, 'n_negative': 3172, 'n_negative_cells': 276}
+stored_super_reverify PASS None True
+stored_sub_reverify PASS None True
+planted_super_x0.97 FAIL CERTIFICATE_INEQUALITY_NOT_CERTIFIED True
+planted_sub_x1.03 FAIL CERTIFICATE_INEQUALITY_NOT_CERTIFIED True
+swap_super_W_labelled_SUB FAIL CERTIFICATE_INEQUALITY_NOT_CERTIFIED True
+swap_sub_W_labelled_SUPER FAIL CERTIFICATE_INEQUALITY_NOT_CERTIFIED True
+ERRPATH_super_vertex_only_acceptable FAIL CERTIFICATE_INEQUALITY_NOT_CERTIFIED True
+ERRPATH_sub_vertex_only_acceptable FAIL CERTIFICATE_INEQUALITY_NOT_CERTIFIED True
+exit 0

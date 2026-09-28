@@ -1,0 +1,124 @@
+{
+ "N": 20,
+ "all_rows_as_expected": true,
+ "drift_declared": true,
+ "errpath_vertex_only_accepts": {
+  "sub": true,
+  "super": true
+ },
+ "interior_scans": {
+  "errpath_sub": {
+   "min_residual": -0.0002469795977226852,
+   "n_negative": 3172,
+   "n_negative_cells": 276,
+   "points": 83400
+  },
+  "errpath_super": {
+   "min_residual": -0.0004884444714052805,
+   "n_negative": 77672,
+   "n_negative_cells": 6164,
+   "points": 83400
+  },
+  "stored_sub": {
+   "min_residual": 0.0010224326074514956,
+   "n_negative": 0,
+   "n_negative_cells": 0,
+   "points": 83400
+  },
+  "stored_super": {
+   "min_residual": 0.0007833019802951924,
+   "n_negative": 0,
+   "n_negative_cells": 0,
+   "points": 83400
+  }
+ },
+ "node_test": {
+  "max_rel_dev_from_mid": 1.804275098774794e-15,
+  "neg_control_other_drift_outside": 3361,
+  "nodes": 3361,
+  "outside_enclosure": 0
+ },
+ "ref_N": 40,
+ "ref_brackets_nested": {
+  "L <= U": true,
+  "L_ref > L": true,
+  "U_ref < U": true
+ },
+ "ref_reverified": [
+  "PASS",
+  "PASS"
+ ],
+ "rows": [
+  {
+   "as_expected": true,
+   "control": "stored_super_reverify",
+   "expected": "PASS",
+   "invalidity_proof": null,
+   "reason": null,
+   "verdict": "PASS"
+  },
+  {
+   "as_expected": true,
+   "control": "stored_sub_reverify",
+   "expected": "PASS",
+   "invalidity_proof": null,
+   "reason": null,
+   "verdict": "PASS"
+  },
+  {
+   "as_expected": true,
+   "control": "planted_super_x0.97",
+   "expected": "FAIL",
+   "invalidity_proof": "0.97 U < L <= Lambda",
+   "reason": "CERTIFICATE_INEQUALITY_NOT_CERTIFIED",
+   "verdict": "FAIL"
+  },
+  {
+   "as_expected": true,
+   "control": "planted_sub_x1.03",
+   "expected": "FAIL",
+   "invalidity_proof": "1.03 L > U >= Lambda",
+   "reason": "CERTIFICATE_INEQUALITY_NOT_CERTIFIED",
+   "verdict": "FAIL"
+  },
+  {
+   "as_expected": true,
+   "control": "swap_super_W_labelled_SUB",
+   "expected": "FAIL",
+   "invalidity_proof": "claim U(N) > U(ref) >= Lambda, so w cannot be a subsolution",
+   "reason": "CERTIFICATE_INEQUALITY_NOT_CERTIFIED",
+   "verdict": "FAIL"
+  },
+  {
+   "as_expected": true,
+   "control": "swap_sub_W_labelled_SUPER",
+   "expected": "FAIL",
+   "invalidity_proof": "claim L(N) < L(ref) <= Lambda, so w cannot be a supersolution",
+   "reason": "CERTIFICATE_INEQUALITY_NOT_CERTIFIED",
+   "verdict": "FAIL"
+  },
+  {
+   "as_expected": true,
+   "control": "ERRPATH_super_vertex_only_acceptable",
+   "expected": "FAIL",
+   "invalidity_proof": "sensitivity (interior violation checked below by the independent float scan)",
+   "reason": "CERTIFICATE_INEQUALITY_NOT_CERTIFIED",
+   "verdict": "FAIL"
+  },
+  {
+   "as_expected": true,
+   "control": "ERRPATH_sub_vertex_only_acceptable",
+   "expected": "FAIL",
+   "invalidity_proof": "sensitivity (interior violation checked below by the independent float scan)",
+   "reason": "CERTIFICATE_INEQUALITY_NOT_CERTIFIED",
+   "verdict": "FAIL"
+  }
+ ],
+ "selection_boundary": {
+  "W_super = a_up g and W_sub = a_lo g exactly": true,
+  "a_lo <= 2^40 <= a_up": true,
+  "certify(a_up - 1) certified": false,
+  "sub_certify(a_lo + 1) certified": false
+ },
+ "wall_seconds": 228.8
+}
