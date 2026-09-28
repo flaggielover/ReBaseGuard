@@ -1,0 +1,929 @@
+{
+ "cases": {
+  "Q12_caps": {
+   "all_jobs_certified": true,
+   "blocks_with_alarm_or_unadmitted_c2b": {
+    "297": [],
+    "316": []
+   },
+   "eval_cap_ok": true,
+   "eval_cap_required_s": 27108,
+   "eval_cap_s": 28800,
+   "jobs_297": 45,
+   "jobs_316": 27,
+   "note": "runtime and status only (incident review C7(b))",
+   "pass": true,
+   "per_job_caps": {
+    "C1B:10": {
+     "cap_ge_2x": true,
+     "cap_s": 1800,
+     "official_max_wall_s": 192.7
+    },
+    "C1B:12": {
+     "cap_ge_2x": true,
+     "cap_s": 1800,
+     "official_max_wall_s": 236.0
+    },
+    "C1B:8": {
+     "cap_ge_2x": true,
+     "cap_s": 1800,
+     "official_max_wall_s": 44.2
+    },
+    "C2B:20": {
+     "cap_ge_2x": true,
+     "cap_s": 1800,
+     "official_max_wall_s": 58.5
+    },
+    "C2B:40": {
+     "cap_ge_2x": true,
+     "cap_s": 1800,
+     "official_max_wall_s": 215.2
+    },
+    "C2B:80": {
+     "cap_ge_2x": true,
+     "cap_s": 2700,
+     "official_max_wall_s": 1154.1
+    },
+    "RLR:4": {
+     "cap_ge_2x": true,
+     "cap_s": 1800,
+     "official_max_wall_s": 350.9
+    },
+    "RLR:6": {
+     "cap_ge_2x": true,
+     "cap_s": 4200,
+     "official_max_wall_s": 1803.2
+    },
+    "RLR:8": {
+     "cap_ge_2x": true,
+     "cap_s": 8700,
+     "official_max_wall_s": 4149.9
+    }
+   },
+   "projection_job_seconds": 90251.7,
+   "projection_jobs": 99,
+   "projection_makespan_s": 18071.9,
+   "stage1_wall_s": {
+    "297": 7146.7,
+    "316": 11900.4
+   }
+  },
+  "Q1_theory": {
+   "nsf_blob_ok": true,
+   "nsf_copy": "level4/closure_proofs/p5y_k5_cell308_mb_r1/theory/THEOREM_MB.md",
+   "nsf_sha256_ok": true,
+   "pass": true,
+   "research": "level4/closure_proofs/p5y_k5_cell308_research/theory/THEOREM_MB.md@bfa9ad3c",
+   "research_blob_at_commit_ok": true
+  },
+  "Q8": {
+   "bindings_ok": true,
+   "driver_sha_ok": true,
+   "external_files": 54,
+   "external_mismatches": [],
+   "frozen_files": 20,
+   "listed_but_absent": [],
+   "manifest_sha256": "ce5bd219f2f855461c3e7c44a9cb7d191a3e94435647592c0f25f91d4ea075e1",
+   "mismatches": [],
+   "pass": true,
+   "required_files_listed": true,
+   "unlisted_files": []
+  },
+  "QC01": {
+   "C_A": {
+    "A_exact": true,
+    "Gamma_exact": true,
+    "H_exact": true,
+    "M_after_exact": true,
+    "pass": true,
+    "per_supply_records_G_C1_C2": true,
+    "provenance": true
+   },
+   "C_B_failed": [],
+   "exit": 0,
+   "pass": true
+  },
+  "QC02": {
+   "all_run": true,
+   "blocks": 5,
+   "exit": 0,
+   "ladder_full": true,
+   "pass": true,
+   "pointwise_status": [
+    "CERTIFIED",
+    "CERTIFIED",
+    "CERTIFIED",
+    "CERTIFIED",
+    "CERTIFIED"
+   ],
+   "r0_order3_variant_present": true,
+   "rlr_blocks_certified": 5,
+   "stage2_all_gates_pass": true,
+   "stage2_decoys": 5,
+   "verifications": 0
+  },
+  "QC03": {
+   "exit": 0,
+   "pass": true
+  },
+  "QC04": {
+   "ladder_drifts": [
+    "3,11/10",
+    "3,11/10"
+   ],
+   "ladder_pair_identical": false,
+   "pass": false,
+   "serial_ok": false,
+   "serial_vs_pooled": {
+    "C1B:10": true,
+    "C1B:12": true,
+    "C1B:8": true,
+    "C2B:20": true,
+    "C2B:40": true,
+    "C2B:80": true,
+    "RLR:4": false,
+    "RLR:6": false,
+    "RLR:8": false
+   }
+  },
+  "QC05": {
+   "blocks": 1980,
+   "exact_equal": 1980,
+   "ladder": {
+    "equal": 150,
+    "ladders": 150,
+    "mutant_max_for_upper_rejected_on": 150,
+    "pass": true
+   },
+   "mutants": {
+    "A0_slot_without_C_R": {
+     "passes_one_sided_somewhere": false,
+     "rejected": true,
+     "sets_differing": 158,
+     "sets_differing_at_S": 0
+    },
+    "abar_not_capped": {
+     "passes_one_sided_somewhere": true,
+     "rejected": true,
+     "sets_differing": 255,
+     "sets_differing_at_S": 145
+    },
+    "abar_replaced": {
+     "passes_one_sided_somewhere": true,
+     "rejected": true,
+     "sets_differing": 199,
+     "sets_differing_at_S": 109
+    },
+    "envelope_none": {
+     "passes_one_sided_somewhere": true,
+     "rejected": true,
+     "sets_differing": 227,
+     "sets_differing_at_S": 123
+    },
+    "envelope_right_hand": {
+     "passes_one_sided_somewhere": true,
+     "rejected": true,
+     "sets_differing": 249,
+     "sets_differing_at_S": 144
+    },
+    "max_for_min": {
+     "passes_one_sided_somewhere": true,
+     "rejected": true,
+     "sets_differing": 305,
+     "sets_differing_at_S": 305
+    },
+    "minus_2^-40": {
+     "passes_one_sided_somewhere": true,
+     "rejected": true,
+     "sets_differing": 305,
+     "sets_differing_at_S": 305
+    },
+    "no_DM_refresh": {
+     "passes_one_sided_somewhere": true,
+     "rejected": true,
+     "sets_differing": 262,
+     "sets_differing_at_S": 168
+    },
+    "no_S_I1": {
+     "passes_one_sided_somewhere": false,
+     "rejected": true,
+     "sets_differing": 23,
+     "sets_differing_at_S": 23
+    },
+    "plus_2^-40": {
+     "passes_one_sided_somewhere": true,
+     "rejected": true,
+     "sets_differing": 305,
+     "sets_differing_at_S": 305
+    }
+   },
+   "not_equal": [],
+   "pass": true,
+   "plants_provenance": {
+    "D14M": true,
+    "DvM_C1": true,
+    "DvM_C2": true,
+    "G": true,
+    "S_I1": true
+   },
+   "pointwise": {
+    "C1b_d8_uppers_never_admitted": true,
+    "L_C1B_above_C2B_upper_inconsistent": true,
+    "L_C2B_above_C1B_upper_inconsistent": true,
+    "U_min_over_admitted_C2b": true,
+    "alarm_sensitivity_recorded": true,
+    "c1b_refutation_inconsistent": true,
+    "c2b_refutation_inconsistent": true,
+    "low_degree_c1b_admissible_when_verified": true,
+    "no_other_implementation_lower_alarm_unavailable": true,
+    "pass": true,
+    "same_implementation_L_above_U_not_an_alarm": true,
+    "undecided_not_admitted": true
+   },
+   "refusals": {
+    "float_reaching_exact_layer": true,
+    "not_certified": true,
+    "pointwise_record": true,
+    "wrong_hull": true
+   },
+   "sets": 305
+  },
+  "QC06": {
+   "C1_byte_identity": {
+    "pass": true,
+    "rows": [
+     {
+      "byte_identical": true,
+      "committed_blob_ok": true,
+      "file": "C2BX_SUPER_e3_N20_detA.json",
+      "manifest_sha256_ok": true
+     },
+     {
+      "byte_identical": true,
+      "committed_blob_ok": true,
+      "file": "C2BX_SUB_e3_N20_detA.json",
+      "manifest_sha256_ok": true
+     },
+     {
+      "byte_identical": true,
+      "committed_blob_ok": true,
+      "file": "C1B_SUPER_e3_d8_detA.json",
+      "manifest_sha256_ok": true
+     },
+     {
+      "byte_identical": true,
+      "committed_blob_ok": true,
+      "file": "C2BX_SUPER_e11_10_N20.json",
+      "manifest_sha256_ok": true
+     },
+     {
+      "byte_identical": true,
+      "committed_blob_ok": true,
+      "file": "C2BX_SUB_e11_10_N20.json",
+      "manifest_sha256_ok": true
+     }
+    ]
+   },
+   "C6i_fd": {
+    "pass": true,
+    "rough_W": {
+     "N": 20,
+     "cells_checked": {
+      "AXM": 20,
+      "AXP": 20,
+      "L": 3030,
+      "L_s<1": 210,
+      "U": 2970,
+      "U_s<1": 190
+     },
+     "drift": "27/10",
+     "exceedances": 0,
+     "half_bound_flags": 0,
+     "kinds_ok": true,
+     "max_fd_over_bound": 0.0095,
+     "points": [
+      "c"
+     ]
+    },
+    "smooth_W": {
+     "N": 20,
+     "cells_checked": {
+      "AXM": 20,
+      "AXP": 20,
+      "L": 765,
+      "L_s<1": 210,
+      "U": 735,
+      "U_s<1": 190
+     },
+     "drift": "27/10",
+     "exceedances": 0,
+     "half_bound_flags": 2048,
+     "kinds_ok": true,
+     "max_fd_over_bound": 0.9985,
+     "points": [
+      "c",
+      "v0",
+      "v1",
+      "v2"
+     ]
+    }
+   },
+   "C6ii_iv_controls": {
+    "errpath_sub": {
+     "interior_violation_float": true,
+     "points": 83400,
+     "recheck_FAIL": true,
+     "vertex_only_acceptable": true
+    },
+    "errpath_super": {
+     "interior_violation_float": true,
+     "points": 83400,
+     "recheck_FAIL": true,
+     "vertex_only_acceptable": true
+    },
+    "pass": true,
+    "reference_nested": true,
+    "stored_like_sub_PASS": true,
+    "stored_like_super_PASS": true,
+    "swap_sub_W_as_SUPER_FAIL": true,
+    "swap_super_W_as_SUB_FAIL": true,
+    "vertex_enclosure": {
+     "negative_control_outside": 3361,
+     "nodes": 3361,
+     "outside": 0,
+     "pass": true
+    }
+   },
+   "D5_verifier_controls": {
+    "c1b_claim_mismatch_refuted": true,
+    "c1b_d4_valid": true,
+    "c1b_relabelled_to_smaller_drift_not_accepted": true,
+    "c1b_wrong_drift_refused": true,
+    "c2b_claim_mismatch_refuted": true,
+    "c2b_sha_mismatch_refused": true,
+    "c2b_sub_W_as_super_not_accepted": true,
+    "c2b_valid": true,
+    "c2b_x0.97_refuted": true,
+    "pass": true
+   },
+   "pass": true
+  },
+  "QC07": {
+   "assembly_E4": {
+    "controls": 29,
+    "detected": 29,
+    "not_detected": [],
+    "pass": true,
+    "valid_halves_ok": true,
+    "wall_seconds": 2.8
+   },
+   "formal": {
+    "T10_G_R3b_common_mode_plant": true,
+    "T1_cases": 168,
+    "T1_failures": [],
+    "T1_ok": 168,
+    "T2_detected": 32,
+    "T2_rise_fall_cases": 32,
+    "T3_cases": 168,
+    "T3_detected": 168,
+    "T4_C5_plant": true,
+    "T5_C6_plant": true,
+    "T5_F2_refuses_same_input": true,
+    "T6_reproduction_plant": true,
+    "T7_tiling_plant": true,
+    "T8_tripwires": true,
+    "T9_r0_order3_binding_cases": 8,
+    "pass": true
+   },
+   "pass": true
+  },
+  "QC08": {
+   "controls": {
+    "L := 2 Lambda_hat flagged": true,
+    "U := Lambda_hat/2 flagged": true
+   },
+   "latent_proxy": "decoy estimates only",
+   "n": 5,
+   "pass": true,
+   "rows": [
+    {
+     "L_ok": true,
+     "U_ok": true,
+     "block": 0,
+     "rlr_block": true
+    },
+    {
+     "L_ok": true,
+     "U_ok": true,
+     "block": 1,
+     "rlr_block": true
+    },
+    {
+     "L_ok": true,
+     "U_ok": true,
+     "block": 2,
+     "rlr_block": true
+    },
+    {
+     "L_ok": true,
+     "U_ok": true,
+     "block": 3,
+     "rlr_block": true
+    },
+    {
+     "L_ok": true,
+     "U_ok": true,
+     "block": 4,
+     "rlr_block": true
+    }
+   ]
+  },
+  "QC09": {
+   "in_process": {
+    "arm_without_marker_refused": true,
+    "band_points_and_mirror_refused": true,
+    "c1b_Ctx_direct_refused": true,
+    "c1b_block_rung_refused": true,
+    "c1b_pointwise_rung_refused": true,
+    "c2b_Setup_direct_refused": true,
+    "c2b_rung_refused": true,
+    "cell308_cover_is_guard_constant": true,
+    "cell308_tiles_hulls_points_refused": true,
+    "decoys_accepted": true,
+    "f2_research_band_guard_on_by_default": true,
+    "log_execution_refuses": true,
+    "mode_still_decoy": true,
+    "numpy_import_refused": true,
+    "other_labels_accepted": true,
+    "pass": true,
+    "quarantined_labels_refused": true,
+    "reproduction_308_needs_guard_cover": true,
+    "reproduction_admits_exactly_the_cell": true,
+    "reproduction_closed_after_exit": true,
+    "reproduction_refuses_other_cells": true,
+    "straddling_intervals_refused": true,
+    "tail_cover_cells_refused": true,
+    "tpt_geometry_refused_whatever_label": true,
+    "verifier_refused": true
+   },
+   "pass": true,
+   "sandbox_arming": {
+    "ok": true,
+    "run": {
+     "drop_one_pair": "REFUSED QuarantineRefusal",
+     "extra_band_pair": "REFUSED QuarantineRefusal",
+     "marker_not_naming_grant": "REFUSED QuarantineRefusal",
+     "no_marker": "REFUSED QuarantineRefusal",
+     "with_marker": "ARMED 37 True"
+    }
+   }
+  },
+  "QC10": {
+   "failed": [],
+   "flows": {
+    "C01_control_failed": {
+     "ok": true,
+     "run": {
+      "exit": 3
+     }
+    },
+    "C02_rerun_after_control_failed_refused": {
+     "ok": true,
+     "run": {
+      "refused": "CONSUMED"
+     }
+    },
+    "P01_exception": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P02_independent_check_failed": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P02b_inconsistent": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P02c_c6_refusal": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P03_system_exit": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P04_keyboard_interrupt": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P05_evaluation_cap": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P06_serialization_failure": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P07_primary_persistence_fails_emergency_then_seal_only": {
+     "ok": true,
+     "run": {
+      "exit": 4
+     }
+    },
+    "P08_both_channels_fail": {
+     "ok": true,
+     "run": {
+      "exit": 6
+     }
+    },
+    "P09_seal_fails_then_seal_only": {
+     "ok": true,
+     "run": {
+      "exit": 4
+     }
+    },
+    "P10_materialize_fails_then_seal_only": {
+     "ok": true,
+     "run": {
+      "exit": 7
+     }
+    },
+    "P11_worker_bootstrap_failure": {
+     "ok": true,
+     "run": "BrokenProcessPool"
+    },
+    "QC09_arming": {
+     "ok": true,
+     "run": {
+      "drop_one_pair": "REFUSED QuarantineRefusal",
+      "extra_band_pair": "REFUSED QuarantineRefusal",
+      "marker_not_naming_grant": "REFUSED QuarantineRefusal",
+      "no_marker": "REFUSED QuarantineRefusal",
+      "with_marker": "ARMED 37 True"
+     }
+    },
+    "T01_file_at_result": {
+     "ok": true,
+     "run": {
+      "refused": "TARGET_ARTIFACT_EXISTS"
+     }
+    },
+    "T02_directory_at_execution_dir": {
+     "ok": true,
+     "run": {
+      "refused": "RESULT_PATH_OCCUPIED"
+     }
+    },
+    "T03_symlink_out_at_tmp": {
+     "ok": true,
+     "run": {
+      "refused": "RESULT_PATH_OCCUPIED"
+     }
+    },
+    "T04_broken_symlink_at_result": {
+     "ok": true,
+     "run": {
+      "refused": "TARGET_ARTIFACT_EXISTS"
+     }
+    },
+    "T05_fifo_at_partial": {
+     "ok": true,
+     "run": {
+      "refused": "RESULT_PATH_OCCUPIED"
+     }
+    },
+    "T06_ignored_tmp_file": {
+     "ok": true,
+     "run": {
+      "refused": "RESULT_PATH_OCCUPIED"
+     }
+    },
+    "T07_symlinked_evidence_dir": {
+     "ok": true,
+     "run": {
+      "refused": "RESULT_PATH_OCCUPIED"
+     }
+    },
+    "T08_dirty_tree": {
+     "ok": true,
+     "run": {
+      "refused": "DIRTY_TREE"
+     }
+    },
+    "T09_ignored_object_in_namespace": {
+     "ok": true,
+     "run": {
+      "refused": "IGNORED_OBJECT"
+     }
+    },
+    "T09b_pycache_in_namespace": {
+     "ok": true,
+     "run": {
+      "refused": "IGNORED_OBJECT"
+     }
+    },
+    "T10_prior_marker_ref": {
+     "ok": true,
+     "run": {
+      "refused": "CONSUMED"
+     }
+    },
+    "T11_pending_ref": {
+     "ok": true,
+     "run": {
+      "refused": "CONSUMED"
+     }
+    },
+    "T13_emergency_file": {
+     "ok": true,
+     "run": {
+      "refused": "TARGET_ARTIFACT_EXISTS"
+     }
+    },
+    "T14_wrong_branch": {
+     "ok": true,
+     "run": {
+      "refused": "WRONG_BRANCH"
+     }
+    },
+    "T15_cli_flags_identity_devflags": {
+     "ok": true,
+     "run": [
+      [
+       2,
+       "MB308 REFUSED INTERPRETER_FLAGS: execute and seal-only require python3.14 -I -S -B"
+      ],
+      [
+       2,
+       "MB308 REFUSED REPO_NOT_QUALIFIED: not the qualified worktree / git dir / common dir"
+      ],
+      [
+       2,
+       "MB308 REFUSED DEV_FLAG_REFUSED: --dev-ladder / --first-blocks exist in decoy mode only"
+      ]
+     ]
+    },
+    "T16_no_grant": {
+     "ok": true,
+     "run": {
+      "refused": "GRANT_MISSING"
+     }
+    },
+    "T17_grant_wrong_driver_sha": {
+     "ok": true,
+     "run": {
+      "refused": "GRANT_INVALID"
+     }
+    },
+    "T18_broken_chain": {
+     "ok": true,
+     "run": {
+      "refused": "GRANT_INVALID"
+     }
+    },
+    "T19_review_rejected": {
+     "ok": true,
+     "run": {
+      "refused": "REVIEW_VERDICT"
+     }
+    },
+    "T20_qualification_not_pass": {
+     "ok": true,
+     "run": {
+      "refused": "GRANT_INVALID"
+     }
+    },
+    "T21_grant_wrong_manifest": {
+     "ok": true,
+     "run": {
+      "refused": "GRANT_INVALID"
+     }
+    },
+    "T22_tampered_inputs": {
+     "ok": true,
+     "run": {
+      "certifier": "PinError",
+      "f2": "PIN_MISMATCH",
+      "f2_removed": "F2_MISSING",
+      "helper": "HELPER_PIN_MISMATCH",
+      "registry_c2": "PIN_MISMATCH",
+      "verifier": "PIN_MISMATCH"
+     }
+    },
+    "X01_success": {
+     "ok": true,
+     "run": {
+      "exit": 0
+     }
+    },
+    "X02_rerun_refused": {
+     "ok": true,
+     "run": {
+      "refused": "CONSUMED"
+     }
+    },
+    "X03_seal_only_no_recompute": {
+     "ok": true,
+     "run": 0
+    }
+   },
+   "freeze": "a7fe302877aba15fcdd3ab70f34d98c498a7acfb",
+   "n": 41,
+   "pass": true
+  },
+  "QC11": {
+   "F2_band_guard_only_from_formal_guard": true,
+   "F2_imports_stdlib_only": true,
+   "F3_imports_stdlib_only": true,
+   "after_marker_prints_status_only": true,
+   "arm_target_only_in_evaluate_target_and_worker_init": true,
+   "cli_passes_no_injection": true,
+   "control_path_names_no_penalty": true,
+   "evaluate_target_referenced_only_in_run_execute": true,
+   "exactly_one_marker_update_ref_in_run_execute": true,
+   "no_file_write_in_target_path": true,
+   "no_private_F2_hooks_mb308_a0core.py": true,
+   "no_private_F2_hooks_mb308_consumer.py": true,
+   "no_private_F2_hooks_mb308_driver.py": true,
+   "no_private_F2_hooks_mb308_stage1.py": true,
+   "no_private_F2_hooks_mb308_supply.py": true,
+   "no_reference_to_the_research_reconstructions": true,
+   "pass": true,
+   "stage1_and_a0core_print_and_write_nothing": true,
+   "stage1_target_only_in_evaluate_target": true,
+   "stage2_names_no_other_route": true,
+   "supply_band_guard_only_from_formal_guard": true,
+   "target_control_only_in_run_execute_after_grant": true
+  },
+  "QC12": {
+   "files_scanned": 23,
+   "pass": false,
+   "patterns": 70,
+   "planted_control_fires": true,
+   "record_planted_fires": true,
+   "record_token_hit_files": [
+    "level4/closure_proofs/p5y_k5_cell308_mb_r1/protocol/MB308_FREEZE.json"
+   ],
+   "record_tokens": 309,
+   "tail_figure_hits": {}
+  },
+  "QC13": {
+   "builder_ledger_lines": 9,
+   "builder_ledger_pre_grant_classes_only": true,
+   "builder_ledger_zero_target": true,
+   "governance": {
+    "r5_union_open_ranges": [
+     [
+      306,
+      309
+     ]
+    ],
+    "r6": "absent"
+   },
+   "incident_review": {
+    "committed_before_freeze": true,
+    "condition_files_at_HEAD": {
+     "level4/closure_proofs/p5y_k5_cell308_research/audit/INCIDENT_AUDIT_MB308_ADDENDUM_A1.md": true,
+     "level4/closure_proofs/p5y_k5_cell308_research/config/QUARANTINE_AMENDMENT_308_1.json": true,
+     "level4/closure_proofs/p5y_k5_cell308_research/ledger/briefs/BRIEF_CHECK.json": true,
+     "level4/closure_proofs/p5y_k5_cell308_research/registry/ROUTE_REGISTRY.md": true
+    },
+    "pass": true,
+    "registry_revision_r2": true,
+    "review": "level4/closure_proofs/p5y_k5_cell308_research/reviews/INCIDENT_INDEPENDENCE_REVIEW_MB308.md",
+    "verdict_line": true
+   },
+   "pass": true,
+   "preconditions": true
+  }
+ },
+ "cases_missing_pass": [],
+ "cases_selected": [
+  "QC01",
+  "QC02",
+  "QC03",
+  "QC04",
+  "QC05",
+  "QC06",
+  "QC07",
+  "QC08",
+  "QC09",
+  "QC10",
+  "QC11",
+  "QC12",
+  "QC13"
+ ],
+ "child_exit_codes": {
+  "decoy297": 0,
+  "decoy316": 0,
+  "det_a": 0,
+  "det_b": 0,
+  "e4": 0,
+  "serial": 0
+ },
+ "dev_mode": false,
+ "finished_utc": "2026-09-28T23:56:55Z",
+ "freeze_commit": "a7fe302877aba15fcdd3ab70f34d98c498a7acfb",
+ "gates": {
+  "Q1": {
+   "pass": true
+  },
+  "Q10": {
+   "pass": true
+  },
+  "Q11": {
+   "pass": true
+  },
+  "Q12": {
+   "pass": true
+  },
+  "Q2": {
+   "pass": true
+  },
+  "Q3": {
+   "pass": false
+  },
+  "Q4": {
+   "pass": true
+  },
+  "Q5": {
+   "pass": true
+  },
+  "Q6": {
+   "pass": true
+  },
+  "Q7": {
+   "pass": true
+  },
+  "Q8": {
+   "pass": true
+  },
+  "Q9": {
+   "pass": false
+  }
+ },
+ "head": "a7fe302877aba15fcdd3ab70f34d98c498a7acfb",
+ "heavy_recomputed": true,
+ "ledger_entries": [
+  {
+   "class": "HISTORICAL_RECONSTRUCTION",
+   "what": "QC01 rehearse cell 305 (C-A, C-B reproduction only)"
+  },
+  {
+   "class": "NONTARGET_DRIFT_VALIDATION",
+   "what": "QC02-QC04, QC06, QC08 decoy cells 297 / 316 and validation drifts 3, 27/10, 11/10"
+  },
+  {
+   "class": "SYNTHETIC_VALIDATION",
+   "what": "QC05, QC07, QC10 synthetic sets, decoy bundles, sandbox"
+  }
+ ],
+ "pass": false,
+ "preconditions": {
+  "freeze_commit": "a7fe302877aba15fcdd3ab70f34d98c498a7acfb",
+  "head": "a7fe302877aba15fcdd3ab70f34d98c498a7acfb",
+  "head_ok": true,
+  "incident_review_accepted_before_freeze": true,
+  "mode": "official",
+  "namespace_clean_including_ignored": true,
+  "no_emergency_file": true,
+  "no_marker_refs": true,
+  "no_review_grant_result": true,
+  "pass": true,
+  "tracked_clean": true
+ },
+ "python": "3.14.5",
+ "record_sha256": {
+  "asm_controls": "7cf9e40285b254cefd319a694c7b543420afc0101963946203be42379d8b04fd",
+  "decoy297": "858043b845500d2b50c61a628dd76a2cd866c1bbb7bb0c9846c6414973abeb2c",
+  "decoy316": "1e1c6d35e59c73602e9e552e2f9c7c3610fb3c604ab647fabd65f303433bd2e4",
+  "det_a": "acb7b21bed25364728d9c1c3c7740f1c1da830e17e73fedee0a8116f839d3a68",
+  "det_b": "386f815007f12c0d0cf45aa037ed99f13ff63e2c6a28cd60dd284a92348b2430",
+  "mc": "72d8a1d092b912a1cb817249e5e9634fbdb451ffcbb120229dabe7445857bb49",
+  "rehearse": "50daabaec6cd52e47a0b8a7f67e4d8d8ab21013c452919a8bfb86e2dae5ad0af",
+  "serial": "74d761903a62ff46197f9e930b0a50da879c94ea37dc1f0672d0367cee643502"
+ },
+ "review_mode": false,
+ "schema": "rebaseguard.p5y.k5.cell308-mb-r1.qualification.v1",
+ "started_utc": "2026-09-28T20:38:27Z",
+ "target_evaluations": 0,
+ "verifier_sha256": "ca221cf080a0d4343971903aeea8c069ec871795d6424bf1b2558ad407c96a94",
+ "wall_seconds": 11907.9
+}
