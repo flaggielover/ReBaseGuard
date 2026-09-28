@@ -4,7 +4,7 @@ Rules: route states only (CLOSED is never used for a route); no tail figure; eve
 (floor r2 binds adoption to C2's consumer path with only S substituted). Columns: A0 = touches A0; ASM = changes the
 assembly/consumer; DATA = needs new data; FRZ = eligible for a prospective target freeze.
 
-**Revision r1** (2026-09-29): streams A (history), A0, VERIFY, ASSEMBLY, INDEP and the Theorem MB review have reported; r0 was at the charter.
+**Revision r2** (2026-09-29): adds the absent route families (incident review C6). **Revision r1** (2026-09-29): streams A (history), A0, VERIFY, ASSEMBLY, INDEP and the Theorem MB review have reported; r0 was at the charter.
 
 | id | route | theorem / obligation | status | A0 | ASM | DATA | FRZ | evidence / stream | known weakness |
 |---|---|---|---|---|---|---|---|---|---|
@@ -28,3 +28,19 @@ combination, formed by logical dominance (every component acts on a different in
 with the committed supply). Status: **IMPLEMENTED (research components) → formal build in progress**
 (`streams/FORMAL/MB308_DESIGN_DRAFT.md`). O1 discharged; O2 validated non-target, certifier review pending; O3 done on
 decoys; O4 done (INDEP) pending the formal primary; O5 incident review pending. **Not FREEZE_READY.**
+
+## Completeness rows (r2; incident review C6)
+
+Every known tail route family, including those absent from r0/r1, with a **target-free** status (toolchain, host,
+data, governance, or logical position). **None was pruned by H4.3b or by any estimated effect on 308.**
+
+| id | route family | status | target-free reason |
+|---|---|---|---|
+| C9-E1 | α-ladder lever (re-certify the registry's taboo/whole-kernel supersolutions at an α below the C2 first rung) | **BLOCKED (toolchain/host)** | needs the registry certifier `taboo_certify` (numpy + python-flint); neither exists on this host (stdlib Python only) and host provisioning is a user decision (U1). Its logical position: it would tighten the registry inputs of member (2) of R-MB; R-MB's Theorem-M order-0 certificate already replaces its Ā channel |
+| C11R-I2 | the I2 certifier family (C11R constants + C11RD D1/D2) as an additional member at 308's blocks | **DEFERRED (implementation scope)** | the certifier exists (stdlib, reviewed for N9 at cell 306) but has never been run at any block of this cell and is not wired into R-MB; adding it is a successor-campaign item. Not excluded by estimated effect |
+| COR-T | AD Corollary T for g_hi (atom-functional midpoint eps) | **DEFERRED (implementation scope)** | not implemented on the TC-T path; would add a new trust surface to g_hi; not excluded by estimated effect |
+| CHAIN | the K5-B chain clause (γ_k over adjacent cells) | **EXCLUDED (logical position + quarantine)** | not part of the per-cell closure quantity; needs certificates of the adjacent tail cells, which are quarantined |
+| RO3 | real order-3 candidate Ĝ (R-stage) | **BLOCKED (governance)** | new real K1 addresses; guard DENY; N1/N5/N7 open |
+| TPT, C5-T | single-profile transports | **INCLUDED as special cases** | TPT-B with one block equals TPT; C5-T ≤ frozen clause; dominance chain (THEOREM_MB r1 §7) |
+| LR | plain score-level atom constants | **INCLUDED** | as the non-ratio/ratio terms inside D14 (min) |
+| B2c | constants re-certified on sub-segments without new records | **INCLUDED** | this is R-MB's block resolution |

@@ -1,0 +1,14 @@
+{
+  "schema": "P5Y_K5_CELL308_RESEARCH_QUARANTINE_AMENDMENT/1",
+  "amends": "config/TARGET_QUARANTINE_308.json (committed 33185113), allowed[1] HISTORICAL_RECONSTRUCTION",
+  "written_utc": "2026-09-29",
+  "trigger": "reviews/INCIDENT_INDEPENDENCE_REVIEW_MB308.md condition C2",
+  "finding": "Stream A's pre-registered items R1 and R4 (authorized by the coordinator's brief 01) produced outputs beyond 'the committed value and an equality boolean': R1 recomputed the committed Gamma through the frozen consumer and an independent re-implementation (exact rationals written), and R4 wrote the exact direct-clause coefficients (g_hi, rho, x_hi, C_lo, P0bar, P1bar, P2bar) for cell 308. These are functions of committed inputs only and carry no new-route information, but the frozen quarantine text did not permit writing them. Recorded as one QUARANTINE_RULE_BREACH (proxies 0), by the coordinator's brief.",
+  "rule_now": [
+    "A HISTORICAL_RECONSTRUCTION may write exact intermediate quantities that are functions of committed inputs under the historically evaluated consumer and supplies only, and only under history/recon/, when they are pre-registered by name before the run.",
+    "No such intermediate may be combined with any new-route quantity, validation-drift value or route factor anywhere.",
+    "No file of any formal namespace may read history/recon/C3_KNOCKOUT_RECONSTRUCTION.json or any other history/recon/ output; formal control C-A recomputes from committed inputs only.",
+    "Everything else in TARGET_QUARANTINE_308.json is unchanged."
+  ],
+  "direction": "records a past widening and bounds it; stricter going forward (formal namespaces may not read history/recon/)"
+}

@@ -13,6 +13,7 @@ Implements config/TARGET_QUARANTINE_308.json:
 
 ``log_event`` appends one line to ledger/TARGET_INTEGRITY_LEDGER.jsonl.
 
+Revision r2 (incident review C8): tail patterns loaded from ledger/TAIL_FIGURE_PATTERNS.json; neutral planted controls.
 Adapted from the overnight tool p5y_k5_tail_overnight_research/code/ov_quarantine.py (after its review F3/F15
 repairs); the text co-location scan is new here (incident-01 class: committed tail figures outside history/).
 """
@@ -57,25 +58,19 @@ FORBIDDEN_PATH_PATTERNS = (
     re.compile(r"TAIL_FORECAST_R2"),
 )
 
-# Committed CUSUM m=5 tail-cell figures (305-309) that may appear ONLY in history/ and ledger/ files.
-# They are the definitions of the text co-location scan, not uses. Sources: history/HISTORY_308.md.
-TAIL_FIGURES = (
-    # 308
-    r"0\.10270", r"5\.33202", r"23\.915", r"246\.749", r"1\.50028", r"3\.45245", r"0\.09456", r"0\.03956",
-    r"5\.21854", r"5\.2185\b", r"4\.3752", r"4\.37522", r"1\.1927", r"7\.2179", r"4\.3091", r"4\.311\b",
-    r"4\.3110", r"18\.2\b", r"18\.249", r"3\.51273", r"3\.5127\b", r"4\.44285", r"17\.6327", r"1\.59554",
-    r"3\.27070", r"1\.43842", r"1\.79802", r"4\.1739", r"4\.1743", r"4\.0473", r"22\.7937", r"230\.365",
-    r"3\.37164", r"2\.57670", r"2\.46391",
-    # 306
-    r"6\.0045", r"8\.5136", r"1\.171431", r"1\.067071", r"0\.036198", r"0\.079279", r"4\.7299", r"0\.005159",
-    # 307
-    r"5\.59799", r"5\.5980\b", r"6\.1725", r"1\.096007", r"1\.370009", r"0\.026354", r"0\.026355", r"0\.021906",
-    r"4\.4445\b", r"0\.00307\b", r"0\.003070", r"2\.203053", r"1\.111966", r"1\.137406",
-    # 309
-    r"4\.8672", r"3\.2142", r"1\.5143\b", r"0\.153020", r"0\.092812", r"3\.29725", r"3\.58630", r"3\.26641",
-    r"1\.818354", r"2\.272943", r"3\.9208", r"3\.92108", r"4\.67991",
-)
+# Committed CUSUM m=5 tail-cell figures (305-309) that may appear ONLY in history/ and ledger/ files. Since scanner r2
+# (incident review C8) the pattern table lives in the sanctioned file ledger/TAIL_FIGURE_PATTERNS.json, not in this
+# source; the planted controls below are built from it at run time, with neutral wording.
+_PATTERN_FILE = NS / "ledger" / "TAIL_FIGURE_PATTERNS.json"
+TAIL_FIGURES = tuple(json.loads(_PATTERN_FILE.read_text())["patterns"])
+if len(TAIL_FIGURES) < 50:
+    raise RuntimeError("tail-figure pattern table missing or truncated")
 _TAIL_RE = re.compile("|".join("(?<![0-9])" + p for p in TAIL_FIGURES))
+
+
+def _literal(pattern: str) -> str:
+    """A concrete string matched by one pattern of the table (backslash escapes and \\b removed)."""
+    return pattern.replace("\\b", "").replace("\\", "")
 
 TEXT_SUFFIXES = (".md", ".json", ".txt", ".jsonl")
 SANCTIONED_TEXT_DIRS = ("history", "ledger")
@@ -291,7 +286,7 @@ def _py_control(tmpdir: Path) -> tuple[bool, list]:
         "z = 1.9",
         "w = F(47, 25)",
         "u = 306  # " + LITERAL_OK + " (reported as suppressed, not silent)",
-        "t = 'threshold 4.3752'",
+        "t = 'value " + _literal(TAIL_FIGURES[9]) + "'",
     ]) + "\n"
     f = tmpdir / "planted_control.py"
     f.write_text(planted)
@@ -311,12 +306,12 @@ def _text_control(tmpdir: Path) -> tuple[bool, dict]:
     (root / "streams").mkdir(parents=True)
     (root / "history").mkdir(parents=True)
     bad = root / "streams" / "planted.md"
-    bad.write_text("route gain 0.5 on the order-3 term; critical A0 4.3752 for the cell\nplain line\n"
-                   "MC 4.311 and floor 3.5127\n")
+    f = [_literal(TAIL_FIGURES[i]) for i in (9, 15, 19, 26)]
+    bad.write_text(f"planted value {f[0]}\nplain line\nplanted values {f[1]} and {f[2]}\n")
     bad_json = root / "streams" / "planted.json"
-    bad_json.write_text('{"note": "x-eff 1.438423"}\n')
+    bad_json.write_text('{"note": "planted ' + f[3] + '"}\n')
     good = root / "history" / "planted_history.md"
-    good.write_text("committed: 4.3752\n")
+    good.write_text(f"committed: {f[0]}\n")
     clean = root / "streams" / "clean.md"
     clean.write_text("a derivation with 1/2 and 3/4 and 1.25 and 0.431\n")
     r = _scan_tree(root, run_controls=False)

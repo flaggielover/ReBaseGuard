@@ -50,3 +50,28 @@ independent reviewer. Values are kept in `history/HISTORY_308.md`; this file nam
   3. no tail figure outside `history/` and `ledger/` (scanner-enforced);
   4. independent incident-independence review before any freeze;
   5. at most one target evaluation, of one frozen route.
+
+## E1′. Addendum (2026-09-29; incident review condition C1(c)) — what the coordinator saw after the charter `33185113`
+
+Values stay in `history/`; this addendum names what was seen.
+
+* **Stream A hand-back** (read in full): the pruning statements P308-D (direct clause) and P308-T (C5-T clause) in
+  words, the reconstruction results including the reproduced C4 factor and the value of Γ just above the critical A0,
+  and discrepancies D1–D8 (including the C5 adjudicator's "misses by …" wording). The exact R4 coefficients in
+  `history/recon/C3_KNOCKOUT_RECONSTRUCTION.json` were **not** opened by the coordinator; the review's statement that
+  they were read is corrected here to "available to the coordinator in the sanctioned directory, not opened".
+* **History entries written by the coordinator after the charter:** H1.8 (Campaign B's nominal forecast proxy) and
+  H4.3b (the route-audit juxtaposition), from stream A's report.
+* **Stream A0 tables** at all six non-target drifts, including the two drifts that bracket the quarantine band
+  (11/10 and 27/10): certified relative slacks of the upper and lower bounds, and certification costs. No Λ value
+  was read or written by the coordinator; the relative slacks are latent proxies for the tightness R-MB's order-0
+  certificate will reach.
+* **Stream ASSEMBLY, INDEP, INDEP_TUPLE, VERIFY reports:** decoy-only gain ratios, bracket widths, margins of
+  non-target certificates.
+
+**Statement required by C1(c).** Together with E1 (the committed tail thresholds, Monte-Carlo values and the C5
+radius decomposition) and I-d (TPT-G's generic factors), the coordinator now holds every ingredient of an
+incident-01-class estimator of R-MB's own outcome on cell 308 (order-0 tightness × committed thresholds; profile
+transport factor × committed shares). **The coordinator has not formed that estimate, has written no such
+combination, and will not.** No R-MB design decision after E1 depended on these ingredients: every parameter is fixed
+by the dominance rule, inherited rules or non-target findings (audit a0 §4, a1 C1(a)).

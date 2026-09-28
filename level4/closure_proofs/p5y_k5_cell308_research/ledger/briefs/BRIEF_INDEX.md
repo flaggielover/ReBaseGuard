@@ -1,0 +1,31 @@
+# Agent briefs of the cell-308 research campaign (incident review C5)
+
+Every brief and follow-up message sent by the coordinator to a sub-agent, in order. Files are verbatim copies of the
+prompt text as sent (the coordinator re-typed them from its own context; whitespace may differ from the transmitted
+bytes, content does not). This directory is a sanctioned location because brief 01 names committed cell-308 values
+(stream A's pre-registered reconstruction targets). No other brief contains a committed tail figure or a
+308-derived scale; each was checked by the scanner (`code/c308_quarantine.py --scan` covers `ledger/` only as
+sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`).
+
+| # | file | agent | kind | launched (UTC, approx.) | tail figures? |
+|---|---|---|---|---|---|
+| 01 | 01_streamA.txt | stream A (history + C3 knockout) | Agent | 2026-09-28 12:4x | **yes, by design** (committed values to reproduce: C3 §K row, C4 §4 statement) |
+| 02 | 02_streamC.txt | stream C (A0 certifier) | Agent | 12:5x | no |
+| 03 | 03_streamD.txt | stream D (independent verifier) | Agent | 12:5x | no |
+| 04 | 04_streamE.txt | stream E (assembly) | Agent | 12:5x | no |
+| 05 | 05_reviewMB.txt | Theorem MB proof review | Agent | 13:0x | no |
+| 06 | 06_resumeA.txt | stream A resume (network error) | SendMessage | ~13:4x | no |
+| 07 | 07_resumeC.txt | stream C resume (network error) | SendMessage | ~13:4x | no |
+| 08 | 08_streamF2.txt | F2 independent reconstruction | Agent | ~14:2x | no |
+| 09 | 09_finishC.txt | stream C: batch-3 crash | SendMessage | ~15:0x | no |
+| 10 | 10_followupD.txt | stream D follow-up (C2b PL format) | SendMessage | ~15:0x | no |
+| 11 | 11_builder.txt | formal builder | Agent | ~15:1x | no |
+| 12 | 12_builder_note1.txt | builder note 1 (F2, decreasing constants) | SendMessage | ~15:4x | no |
+| 13 | 13_reviewA0.txt | A0 certifier review | Agent | ~15:4x | no |
+| 14 | 14_streamF3.txt | F3 tuple re-derivation | Agent | ~15:4x | no |
+| 15 | 15_builder_note2.txt | builder note 2 (G-R3b) | SendMessage | ~16:3x | no |
+| 16 | 16_builder_note3.txt | builder note 3 (A0 conditions) | SendMessage | ~16:5x | no |
+| 17 | 17_reviewINC.txt | incident-independence review | Agent | ~17:0x | no |
+
+Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
+first activity time.
