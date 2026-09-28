@@ -1,0 +1,158 @@
+{
+ "schema": "rebaseguard.p5y.k5.cell308-mb-r1.qualification-cases.v1",
+ "status": "BUILDER DRAFT (not frozen): the case list of design section 6 as amended by REVIEW_A0_CERTIFIER_R1 C1-C6 and coordinator notes 1-3",
+ "rule": "non-target cases only: no cell 306, 307, 308 or 309, no drift in [6/5, 13/5] or its mirror, no target-equivalent proxy. Cell 305 only for exact reproduction of its committed record (equality booleans).",
+ "aggregation": "every case summary carries a boolean `pass`; a missing or non-boolean `pass` fails the qualification (307 lesson)",
+ "cases": [
+  {
+   "id": "QC01",
+   "gates": [
+    "Q2"
+   ],
+   "what": "committed-record rehearsal on cell 305 (controls C-A and C-B)",
+   "input": "driver `rehearse --cell 305` in a fresh process",
+   "pass_if": "C-A: C2's committed record for 305 under S_I1 reproduced exactly; C-B: tptb_tail reproduction gates at s = rho (G-R1, G-R2, G-R3, G-R3b, G-R4(M), G-CF, the tpt profile at rho, P_frozen) all equal, with tripwires on every transport penalty",
+   "why_non_target": "cell 305 is adopted; only its committed record is reproduced (equality booleans only); no new-route value (TPT, C5-T, TPT-B) is computed on 305"
+  },
+  {
+   "id": "QC02",
+   "gates": [
+    "Q2",
+    "Q6",
+    "Q7",
+    "Q12"
+   ],
+   "what": "full Stage 1 + Stage 2 on decoy cover cell 297 through the driver's own decoy mode",
+   "input": "cover cell 297 (5 C2-rule tiles, 2^-20 hulls): RLR (4,6,8), C2b N (20,40,80), C1b d (8,10,12), independent verification, amended admission rule, envelope, composition with F2 equality; Stage 2 on manufactured TC-T bundles (decoy_gen, 297's geometry, three regimes plus the r = 0 order-3-binding variant), members (1) decoy supply, (3) D14-M, (4) G",
+   "pass_if": "every block run; every composition layer equal to F2; every Stage-2 gate passes (G-R1..G-R4, G-R3b cell and blocks, C5, C6, G-T2 exact lower side, dominance, F2 P_lo <= P_B); per-job costs recorded for EVAL_CAP",
+   "why_non_target": "cell 297 lies below 6/5; decoy bundles carry the label DECOY"
+  },
+  {
+   "id": "QC03",
+   "gates": [
+    "Q6"
+   ],
+   "what": "Stage 1 on the first three blocks of decoy cover cell 316 (above the band)",
+   "input": "driver `decoy --cell 316 --first-blocks 3`",
+   "pass_if": "the three blocks run to completion; costs recorded",
+   "why_non_target": "cell 316 lies above 13/5"
+  },
+  {
+   "id": "QC04",
+   "gates": [
+    "Q3"
+   ],
+   "what": "determinism",
+   "input": "(a) block 0 of decoy 297, every job serially in a fresh process vs the pooled QC02 record; (b) REVIEW_A0 C4: the pointwise ladder job code twice in fresh processes at drift 3 (dyadic, C1b d = 8, 10, 12) and 11/10 (non-dyadic, C2b)",
+   "pass_if": "(a) every exact rung field identical; (b) every exact field and certificate sha256 identical between the two runs",
+   "why_non_target": "decoy / validation drifts"
+  },
+  {
+   "id": "QC05",
+   "gates": [
+    "Q1",
+    "Q4",
+    "Q5",
+    "Q7"
+   ],
+   "what": "two-sided composition test (tests/test_mb308_twosided.py)",
+   "input": "300 seeded synthetic cells (1-12 tiles each) + 5 planted cells (each member binding in turn); 150 synthetic 3-rung ladders; the amended pointwise admission rule",
+   "pass_if": "S_i == F2 exactly on every block; provenance attains the min; all 10 mutants rejected (no S_I1, max for min, right-hand envelope, no envelope, Abar not capped, Abar replaced by Ubar, no DM refresh, A0 slot without C_R, +-2^-40); pointwise / wrong-hull / non-certified D14 inputs refused; a float raises; Lemma Lad == rlr307_independent == F2; admission rule cases (verified-only U, cross-implementation alarms both ways, ALARM_UNAVAILABLE, same-implementation not an alarm, refutation reported, sensitivity recorded)",
+   "why_non_target": "synthetic"
+  },
+  {
+   "id": "QC06",
+   "gates": [
+    "Q2",
+    "Q4"
+   ],
+   "what": "pointwise-certificate package through the formal path (tests/test_mb308_a0.py; REVIEW_A0_CERTIFIER_R1 C1, C6)",
+   "input": "C1: byte identity of mb308_a0core certificates with the persisted stream-A0 certificates (e = 3 C2b N = 20 super/sub, C1b d = 8; e = 11/10 C2b N = 20); C6(i) FD of hessian_bounds over every cell kind (L, U, AXP, AXM, s < 1) at N = 20 with a rough W at 27/10; C6(ii) err-path controls both directions with a float-confirmed interior violation; C6(iii) both direction swaps (N = 40 reference); C6(iv) vertex-enclosure agreement at 27/10 with a negative control at 3",
+   "pass_if": "all byte-identical (manifest hashes checked); 0 FD exceedances and the x0.5 control fires; err-path candidates vertex-acceptable, re-check FAIL, interior violation found; swaps FAIL; 0 nodes outside the enclosure, negative control outside",
+   "why_non_target": "validation drifts 3, 27/10, 11/10 outside the band"
+  },
+  {
+   "id": "QC07",
+   "gates": [
+    "Q5"
+   ],
+   "what": "TPT-B controls",
+   "input": "(a) stream ASSEMBLY E4 (29 controls) regenerated in a fresh process through the research path (its main() is not called); (b) tests/test_mb308_tptb.py through mb308_consumer.stage2 on decoy bundles: 7 block patterns x 24 bundles, 48 constructed rise-then-fall cases with the endpoint-only mutant, P_B x (1 - 2^-40), C5 / C6 / reproduction / tiling plants, F2 refusal on the C6 plant, tripwires, 8 r = 0 order-3-binding variants, the G-R3b common-mode plant (stream F3)",
+   "pass_if": "(a) 29/29 detected with valid halves OK; (b) every case as stated, every endpoint-only mutant that differs from P_B detected (at least 3), every common-mode plant refused by G-R3b only",
+   "why_non_target": "decoy bundles, label DECOY, geometries outside the band"
+  },
+  {
+   "id": "QC08",
+   "gates": [
+    "Q6"
+   ],
+   "what": "independent Monte Carlo at decoy drifts (the cell-307 campaign's pinned simulator)",
+   "input": "QC02's record: at every b_i, U_i >= Lambda_MC - 5 se and L_i <= Lambda_MC + 5 se; every RLR block record as in the 307 campaign; planted wrong bounds flagged",
+   "pass_if": "no violation; controls flagged",
+   "why_non_target": "decoy drifts"
+  },
+  {
+   "id": "QC09",
+   "gates": [
+    "Q9",
+    "Q12"
+   ],
+   "what": "guard",
+   "input": "in-process (tests/test_mb308_guard.py): band refused in DECOY mode through every pinned code path (C1b block and pointwise, Ctx, C2b rung and Setup, the verifier, tpt geometry, F2 research guard), labels 305-309 refused, reproduction context exact, arming without marker refused; sandbox (test_mb308_flows QC09_arming): arming with the marker at HEAD = grant and EXACTLY the frozen set succeeds, a dropped pair / an extra band pair / a marker not naming the grant are refused, and after arming only the admitted objects pass",
+   "pass_if": "every expectation holds; nothing is certified in the band",
+   "why_non_target": "refusal and arming logic only"
+  },
+  {
+   "id": "QC10",
+   "gates": [
+    "Q12"
+   ],
+   "what": "exactly-once flows in a `git clone --shared` sandbox (tests/test_mb308_flows.py)",
+   "input": "success, rerun refusal, seal-only; CONTROL_FAILED; 21 pre-marker refusals (incl. pycache, F2 missing / tampered, verifier tampered); post-marker failures (exception, IndependentCheckFailed, Inconsistent, C6 refusal, SystemExit, KeyboardInterrupt, cap, serialization, persistence, both channels, seal, materialization); worker bootstrap failure; CLI flags / identity / dev flags",
+   "pass_if": "each case ends in its expected exit / refusal code; the stub evaluator runs at most once per sandbox state; recovery never recomputes",
+   "why_non_target": "stubs only"
+  },
+  {
+   "id": "QC11",
+   "gates": [
+    "Q2",
+    "Q12"
+   ],
+   "what": "static structure (AST)",
+   "input": "code/mb308_driver.py, mb308_consumer.py, mb308_supply.py, mb308_stage1.py, mb308_a0core.py; F2 and F3 imports",
+   "pass_if": "CLI passes no injection; control(TARGET_CELL) only in run_execute after check_grant; stage1('target') only in evaluate_target; arm_target only in evaluate_target / _worker_init; one marker update-ref; no file write in the target path; after_marker prints status only; control path references no transport penalty; Stage 2 references no other route; F2's research band guard only from the formal guard; no F2 private hooks; F2 / F3 stdlib only",
+   "why_non_target": "static"
+  },
+  {
+   "id": "QC12",
+   "gates": [
+    "Q9"
+   ],
+   "what": "leak scans",
+   "input": "(a) the research scanner's TAIL_FIGURES text scan over every file of this namespace (planted control built at run time); (b) official only: >= 6-digit tokens of the committed cell-308 records (C2 forecast cell and supplies, REGISTRY_C1/C2 rows, TCT_INPUTS_308)",
+   "pass_if": "0 hits (counts and file names only)",
+   "why_non_target": "a read of committed records used only to count hits"
+  },
+  {
+   "id": "QC13",
+   "gates": [
+    "Q10",
+    "Q11"
+   ],
+   "what": "temporal and governance state",
+   "input": "git state and the research ledger's builder / qualification lines",
+   "pass_if": "HEAD = freeze; no review, grant, marker, pending ref, result or emergency file; the incident-independence review committed before the freeze with line 2 INCIDENT_AUDIT_ACCEPTED; r5 unchanged; no r6; builder ledger lines pre-grant classes with 0 target evaluations",
+   "why_non_target": "governance"
+  },
+  {
+   "id": "Q8",
+   "gates": [
+    "Q8"
+   ],
+   "what": "freeze manifest",
+   "input": "protocol/MB308_FREEZE.json against every frozen file and every external pin",
+   "pass_if": "no mismatch, no unlisted file, driver sha256 bound, bindings valid",
+   "why_non_target": "provenance"
+  }
+ ]
+}
