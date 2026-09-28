@@ -1,0 +1,64 @@
+{
+  "schema": "P5Y_K5_CELL308_RESEARCH_TARGET_QUARANTINE/1",
+  "frozen_before_any_science": true,
+  "base_commit": "b73b9449",
+  "base_commit_note": "tip of p5y-k5-cell307-rlr-r1 (final report of the cell-307 RLR campaign); contains the overnight namespace p5y_k5_tail_overnight_research at 7f45e048",
+  "written_utc": "2026-09-28T12:30Z",
+  "primary_target": {"detector": "CUSUM", "m": 5, "cell": 308,
+                     "cover_interval": ["1882413/1000000", "19839101/10000000"],
+                     "cover_file": "cells.json (filter detector == CUSUM FIRST; the index collides with SR)"},
+  "quarantined_cells": {
+    "cells": [306, 307, 308, 309],
+    "rule": "No new target-sensitive quantity for any of them before a grant. 307 is scientifically closed (CELL307_CLOSED_UNDER_RLR) and is never re-evaluated, tuned or re-interpreted. 306 and 309 are out of scope: nothing is computed for them in this campaign at all."
+  },
+  "tail_adjacent_quarantine": {
+    "cells": [305],
+    "rule": "No new-route quantity (bound, constant, ratio, gain) is computed on cell 305. A formal protocol may declare an exact reproduction of a COMMITTED 305 record (equality check only, historical supply only), as the 307 campaign's QC08 did."
+  },
+  "drift_band": {
+    "band": ["6/5", "13/5"],
+    "mirror": ["-13/5", "-6/5"],
+    "rule": "No new operator quantity (C_T, tau, Abar, D_lo, D1, D2, L1, L2, Lambda = E_a[tau], P(tau > n), A0/A1/A2 of any supply, supersolution or subsolution certificate) is evaluated at any drift point or block that meets the band or its mirror. Validation drifts lie outside it (for example 0, 1/4, 1/2, 1, 11/10, 3, 7/2).",
+    "inherited_from": "p5y_k5_tail_overnight_research/config/QUARANTINE_AMENDMENT_1.json"
+  },
+  "theorem_M_transfer_rules": {
+    "inherited_from": "p5y_k5_tail_overnight_research/config/QUARANTINE_AMENDMENT_2.json (R2.1-R2.4) and AMENDMENT_3/4 latent-proxy lists",
+    "restated": [
+      "T1: Theorem M (E_a[tau] even and nonincreasing in |e| from the atom) transfers an UPPER bound on Lambda at |e'| to every |e| >= |e'| and a LOWER bound at |e''| to every |e| <= |e''|. Every validation-drift value of Lambda, E_a[tau], P(tau > n), or of a supersolution/subsolution certificate is therefore a LATENT PROXY for the tail.",
+      "T2: no document, table, script or agent brief may juxtapose, combine or compare any validation-drift value of those quantities with any committed or new CUSUM m=5 cell 305-309 number (thresholds, critical A0, floors, factors, margins, Monte-Carlo values).",
+      "T3: no transfer (T-UP, T-LO) into [6/5, 13/5] or its mirror may be derived or stated as a number.",
+      "T4: cross-cell re-attribution of a committed certified value to another tail cell is a target-cell derived quantity and forbidden."
+    ]
+  },
+  "forbidden_evaluation_classes": [
+    "Gamma / g_hi + rho*x*M / C5-T / TPT / TPT-B clause value for any quarantined cell under ANY supply or consumer, including re-computation of historical values by code execution, except a pre-registered HISTORICAL_RECONSTRUCTION (see allowed)",
+    "any enclosure radius, H_k, M_k, magnitude, margin, pass/fail indicator, x-eff factor, critical constant or critical ratio for a quarantined cell under any NEW route, supply, theorem, cover, truncation, tolerance or consumer",
+    "any new-route input quantity computed ON a quarantined cell or at a drift inside the band: operator constants, pointwise ARL certificates, RLR constants, sup norms, sigma3/sigma4, residual bounds, cover cells, order-3 objects",
+    "mixed-supply or partial-substitution evaluation at a quarantined cell (including 'knockouts') beyond the committed ones",
+    "perturbation / sensitivity sweeps evaluated at quarantined cells",
+    "any number designed or able to reveal the sign of a quarantined target outcome under a new route (target-equivalent proxy), including a route gain factor written next to a committed tail-cell share, factor, threshold or margin (incident-01 class)",
+    "any optimisation, search, tuning or route selection whose objective involves a quarantined cell"
+  ],
+  "forbidden_executions": [
+    "any historical campaign driver or CLI entry point on a quarantined cell (c2_d5_forecast main loop, tail_forecast_r2, tct_inputs replay, c12*/c12r1*/c12r2* drivers, c11r*/c11rd* runs, taboo_certify on a quarantined block, c2_refined_registry build, closeout checkers, rlr307_driver)",
+    "any exactly-once protocol step of any other campaign (qualification, grant, execution, seal, comparison, adjudication); the refs refs/p5y-k5-cell307-rlr-r1/*, refs/c12r2/*, refs/c11rd/* are read-only",
+    "remote hosts (AWS, Vultr): not contacted",
+    "package installation or host provisioning: not performed (stdlib Python only)"
+  ],
+  "allowed": [
+    "reading committed text and JSON, including historical target values exactly as committed; the coordinator's reads are ledgered as HISTORICAL_READ",
+    "HISTORICAL_RECONSTRUCTION: a pre-registered exact reproduction of a COMMITTED target number from committed inputs, whose output is only the committed value and an equality boolean (for this campaign: the C3 adjudicator's cell-308 knockout row and the C4 adjudicator's section-4 cell-308 statement; values in history/HISTORY_308.md only); any mismatch is reported as a discrepancy, never as a new value",
+    "PRUNING from committed facts only: a route family may be eliminated by a statement whose every numeric input is committed and which attaches no measured gain factor of any new route (incident-01 rule)",
+    "symbolic / exact-rational derivation, theorem statements and proofs",
+    "new stdlib-only code exercised on synthetic fixtures, analytically solvable cases, manufactured TC-T-shaped decoys, and real non-tail cells or drifts outside the band, for soundness, reproducibility and tightness",
+    "improvement ratios on synthetic fixtures and non-tail cells only, never juxtaposed with tail figures"
+  ],
+  "formal_mode": "Any cell-308 computation happens only inside one granted exactly-once execution of a frozen, qualified, independently reviewed protocol in a SEPARATE formal namespace. Nothing in this research namespace authorizes it.",
+  "enforcement": {
+    "runtime_guard": "code/c308_quarantine.py: guard_cell, guard_drift, guard_path and an import guard; every new-route entry point calls them",
+    "static_scan": "code/c308_quarantine.py --scan: AST scan of all .py files in the namespace plus a text co-location scan of all .md/.json/.txt files; each with a planted multi-shape negative control that must fire; coverage (files scanned) is printed",
+    "ledger": "ledger/TARGET_INTEGRITY_LEDGER.jsonl: one line per potentially sensitive execution or read",
+    "stop_rule": "any target leak STOPS the affected route: it is classified INVALID_RESULT_CHASING or LEAKED and recorded as an incident; it is not rescued inside this campaign"
+  },
+  "gamma_ledger_before_grant": {"Gamma306_new": 0, "Gamma307_new": 0, "Gamma308_new": 0, "Gamma309_new": 0}
+}
