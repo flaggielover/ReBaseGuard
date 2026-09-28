@@ -1,0 +1,159 @@
+{
+ "head": "7d7e91359b12e6c53635f840476c036689a9d0e9",
+ "items": {
+  "K1_CLOSED": {
+   "observed": {
+    "scientific_verdict.k1_scientific_line": "CLOSED_BY_LATER_SUCCESSOR_CAMPAIGN",
+    "scientific_verdict.k1_successor_verdict": "K1_SUCCESSOR_CLOSED"
+   },
+   "ok": true
+  },
+  "K2_K3_CLOSED": {
+   "observed": {
+    "independent_countersignature.K2": "PASS",
+    "independent_countersignature.K3": "PASS",
+    "status.K2": "CLOSED",
+    "status.K3": "CLOSED",
+    "status.K4": "OPEN",
+    "status.K5": "OPEN",
+    "status.P5Y": "K2_K3_CLOSED_K4_K5_OPEN"
+   },
+   "ok": true
+  },
+  "K4_CLOSED": {
+   "observed": {
+    "K4R1_SUCCESSOR_VERDICT": "CLOSED",
+    "K4_SCIENTIFIC_LINE": "CLOSED_BY_LATER_SUCCESSOR_CAMPAIGN",
+    "P5Y_STATE.K4": "CLOSED_BY_LATER_SUCCESSOR_CAMPAIGN"
+   },
+   "ok": true
+  },
+  "K5_OPEN_P5Y_NOT_YET_CLOSED": {
+   "observed": {
+    "K5": "OPEN",
+    "P5Y": "NOT_YET_CLOSED"
+   },
+   "ok": true
+  },
+  "cell306_OPEN_NOT_ADOPTED": {
+   "observed": {
+    "level4/closure_proofs/p5y_k5_tail_c12r2_cell306_adoption/adjudication/C12R2_ADOPTION_ADJUDICATION.md": {
+     "ancestor": true,
+     "line2": "CELL306_NOT_ADOPTED"
+    },
+    "level4/closure_proofs/p5y_k5_tail_c12r2_cell306_adoption/review/C12R2_ADJUDICATION_REVIEW.md": {
+     "ancestor": true,
+     "line2": "ADJUDICATION_ACCEPTED"
+    }
+   },
+   "ok": true
+  },
+  "floor_r2_in_lineage": {
+   "observed": {
+    "3fadb422": {
+     "ancestor": true,
+     "subject": "p5y: K5 tail adoption floor r2 \u2014 preserve the independent review (REPLACEMENT_FLOOR_ACCEPTED) verbatim\n"
+    },
+    "a15d083b": {
+     "ancestor": true,
+     "subject": "p5y: K5 tail adoption floor r2 \u2014 PROPOSED replacement of lapsed limb F1 (two-implementation agreement F1')\n"
+    }
+   },
+   "ok": true
+  },
+  "handover_descends_from_base": {
+   "observed": "8b9fc0bb",
+   "ok": true
+  },
+  "head_descends_from_handover": {
+   "observed": "7d7e91359b12e6c53635f840476c036689a9d0e9",
+   "ok": true
+  },
+  "historical_307_named_branches_inside_lineage": {
+   "observed": {
+    "refs/heads/p5y-k5-tail-c9-e1-cell307": true,
+    "refs/remotes/origin/p5y-k5-tail-c9-e1-cell307": true
+   },
+   "ok": true
+  },
+  "historical_exactly_once_refs_unchanged": {
+   "observed": {
+    "refs/c11rd/r1-execution-consumed": "4b716d43ce8c48fb52dd320b91c33d2379cce410",
+    "refs/c12r2/cell306-pending-result": "0ac46b3d2abe497084ddf7631d894bb819e6ddc6",
+    "refs/c12r2/cell306-target-consumed": "dec92e0983fe39bcf9834e62216daeab09f823a4"
+   },
+   "ok": true
+  },
+  "no_cell307_marker_or_result_ref": {
+   "observed": [],
+   "ok": true
+  },
+  "no_cell307_result_artifact_in_any_history": {
+   "observed": [],
+   "ok": true
+  },
+  "no_ref_records_K5_or_P5Y_closed": {
+   "observed": [],
+   "ok": true
+  },
+  "overnight_RLR_FREEZE_READY_closure_only_307": {
+   "observed": {
+    "closure_only": true,
+    "draft_cell_set_307_only": true,
+    "draft_not_frozen": true,
+    "registry_row_has_FREEZE_READY": true
+   },
+   "ok": true
+  },
+  "overnight_branch_tip": {
+   "observed": "7f45e048c39023f4805b21a461650fd332af951f",
+   "ok": true
+  },
+  "overnight_commits_inside_namespace": {
+   "observed": [],
+   "ok": true
+  },
+  "r5_authoritative_306_309_open": {
+   "observed": {
+    "K5_COVERAGE_COMPLETE": false,
+    "blob": "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
+    "m5_306_309": {
+     "306": "OPEN",
+     "307": "OPEN",
+     "308": "OPEN",
+     "309": "OPEN"
+    },
+    "union_open_ranges": [
+     [
+      306,
+      309
+     ]
+    ]
+   },
+   "ok": true
+  },
+  "r6_absent_on_every_ref": {
+   "observed": [],
+   "ok": true
+  },
+  "rejected_closeout_commits_present": {
+   "observed": {
+    "08e9acd1": true,
+    "0d275038": true,
+    "591b4394": true,
+    "8b9fc0bb": true,
+    "9f702acb": true,
+    "dfcd8f79": true
+   },
+   "ok": true
+  },
+  "since_handover_only_campaign_namespace": {
+   "observed": [],
+   "ok": true
+  }
+ },
+ "material_differences": [],
+ "pass": true,
+ "schema": "rebaseguard.p5y.k5.cell307-rlr-r1.start-state.v1",
+ "utc": "2026-09-28T04:35:43Z"
+}
