@@ -1,0 +1,31 @@
+You are a FRESH, INDEPENDENT REVIEWER. You wrote none of the material you review, and you have not reviewed any of it before. Your task is to verify, adversarially and read-only, a recovery assessment. The assessment concerns the ONE granted, exactly-once evaluation of CUSUM K5 cell 308 under route MB in the ReBaseGuard repository. That evaluation was interrupted when the host was hard-reset. Trust no claim you have not verified yourself: in the object store, the filesystem, the system logs, or the frozen code.
+
+WHERE
+- Formal worktree /Users/suzhe/ReBaseGuard-c308mb, branch p5y-k5-cell308-mb-r1. NSF = level4/closure_proofs/p5y_k5_cell308_mb_r1. The chain is freeze r3 c46434a3 -> qualification 7eb057bb -> qualification review 47bb37c7 -> grant afa93072 (HEAD). The git common dir is /Users/suzhe/ReBaseGuard/.git; the worktree git dir is /Users/suzhe/ReBaseGuard/.git/worktrees/ReBaseGuard-c308mb.
+- Research worktree /Users/suzhe/ReBaseGuard-c308, branch p5y-k5-cell308-research. NS = level4/closure_proofs/p5y_k5_cell308_research. The document under review is NS/audit/EXECUTION_INTERRUPTION_ASSESSMENT.md, together with the matching new line in NS/ledger/TARGET_INTEGRITY_LEDGER.jsonl.
+- The event: the granted `execute` was launched 2026-09-29 11:57:58Z. The host rebooted at 2026-09-30 00:00:15 JST (15:00:15Z). The /private/tmp session scratchpad, which held the launcher log, the execution log and the host readings, was erased by the reboot.
+
+ABSOLUTE RULES
+- NEVER run the driver's `execute`, `seal-only` or any other mode that could touch the target. Never create, move or delete any ref. Never git add, commit, stash, reset, checkout or gc in either worktree, and never run `git fsck --lost-found` or any other command that writes. Write nothing inside /Users/suzhe/ReBaseGuard-c308mb.
+- Never read the CONTENT of any git object created after the marker. There should be none; if you find one, report its type and size only. For the two pre-marker probe objects, check the probe blob by recomputing its id from the frozen probe bytes in the driver's check_seal_preconditions. Do not print object contents.
+- Never compute anything for CUSUM m=5 cells 305-309, and never evaluate anything at a drift in [6/5, 13/5] or its mirror. Stdlib Python only (python3.14 -I -S -B). No network. Do not change any system setting.
+- Write ONLY your verdict file /Users/suzhe/ReBaseGuard-c308/level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_EXECUTION_INTERRUPTION.md, plus scratch under /private/tmp/claude-501/-Users-suzhe-ReBaseGuard/d1135746-7699-4331-8dd2-9addf63a6def/scratchpad/reviewINT/. Line 1 is the title. Line 2 is EXACTLY one of RECOVERY_ASSESSMENT_ACCEPTED or RECOVERY_ASSESSMENT_REJECTED, and that token appears nowhere else as a whole line. Write incrementally.
+- Ledger lines go to the research ledger only, via NS/code/c308_quarantine.py log_event (klass='REVIEW', agent='reviewINT').
+
+READ
+- The assessment, and the frozen protocol NSF/protocol/MB308_PROTOCOL.md (sections 4, 7, 8, 10, 14).
+- The frozen driver NSF/code/mb308_driver.py: the module docstring and exit codes; run_execute, after_marker, persist_pending, persist_emergency, seal_blob, materialize, run_seal_only, check_seal_preconditions, keep_awake, close_host. Also NSF/code/mb308_host.py.
+- The grant NSF/authorization/MB308_GRANT.json, and the qualification review NSF/review/MB308_QUALIFICATION_REVIEW.md (E1-E8, N1-N8).
+- For the governance state (r5, r6, K5), the files the driver's check_governance_state reads. Read them; do not modify them.
+
+VERIFY INDEPENDENTLY (report each as PASS / FAIL / PASS WITH NOTE, with evidence)
+ 1. The marker exists, is unique under refs/p5y-k5-cell308-mb-r1/, and points to the grant commit. Its ref-file mtime. HEAD, branch and a clean namespace. The chain commits are unchanged, and the frozen file hashes still match NSF/protocol/MB308_FREEZE.json.
+ 2. There is no pending-result ref, no emergency evidence file in the git dir, no evidence/ directory and no result file. No object was written to the object store after the marker (list loose objects and packs by mtime; type and size only). The two 20:58:00 JST objects are the pre-marker probe blob and trial commit.
+ 3. No MB308 process is alive.
+ 4. The reset. Verify it from `sysctl kern.boottime`, the kernel boot log (the PMU fault reason), the last unified-log and power-log entries before the boot, and whether any sleep, shutdown or restart entry exists. Note that `log show` takes local time in --start and prints UTC.
+ 5. The frozen semantics: does the protocol and driver state actually entail CELL308_EXECUTION_INDETERMINATE (CONSUMED_UNRECORDED, target consumed, no rerun)? Is `seal-only` correctly judged inapplicable (it would refuse: no persisted evidence)? Is re-execution correctly judged forbidden? Look for ANY frozen path that would allow resuming, recovering or re-running, and for any path that the assessment mis-states.
+ 6. Status claims: cell 308 stays OPEN (no scientific positive or negative conclusion), r5 is unchanged, no r6 exists, and K5 and P5Y are unaffected. Also: TARGET_EVALUATION_COUNT = 1, and the ledger line's class, count and notes are correct and honest.
+ 7. The assessment's timeline and its statements about what was lost (the /private/tmp logs) and what is unknown (the cause of the unresponsiveness between 23:41 and 00:00 JST): accurate and not overstated?
+ 8. Rule on the assessment's section 7 proposal: an additive formal-branch postexec/ record following the 307 precedent, and whether protocol section 10 steps 6-8 (execution review, section 8 adjudication, adjudication review) should run on it. If a postexec record is to be committed, say exactly what it may and may not contain.
+ 9. Anything else.
+Then give CONDITIONS (C1...) and NOTES (N1...). Time budget: about 1 hour. Final message: the verdict line and a 10-line summary.
