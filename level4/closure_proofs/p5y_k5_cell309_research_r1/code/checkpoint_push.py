@@ -109,28 +109,49 @@ def main(dry: bool) -> int:
             _log(rec)       # failed attempts are recorded (the tree is then dirty on purpose: a failure needs attention)
         print("NO PUSH:", rec["reason"])
         return 0 if (ok and (dry or uptodate)) else 1
+    # record-first (2026-09-29, fixes the one-unpushed-commit loop): the record of THIS push (checks 1-8 on the
+    # content head) is committed before the push and travels with it; check 9 is verified after the push and is
+    # visible as the next record's remote_before.  Only a failure writes an extra (uncommitted, on purpose) line.
+    rec["phase"] = "pre-push record (committed with the push)"
+    rec["content_head"] = head
+    rec["remote_before"] = tip
+    rec["mode"] = "plain fast-forward" if tip else "plain (branch creation)"
+    rec["remote_only_commits_overwritten"] = 0
+    _log(rec)
+    ledger_rel = str(LEDGER.relative_to(REPO))
+    git("add", ledger_rel)
+    git("commit", "-q", "-m", f"p5y: K5 cell-309 research r1 — ledger: checkpoint push record ({head[:8]}; committed "
+        "before the push, travels with it)\n\n"
+        "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n"
+        "Claude-Session: https://claude.ai/code/session_01RiV5bfPm5GJ4GcvoBrCC3p")
+    head2 = git("rev-parse", "HEAD")
+    # re-check the record commit: it touches exactly the ledger file; still one ref, no force
+    rc_paths = git("diff", "--name-only", head, head2).split()
+    chk("6b_record_commit_ledger_only", rc_paths == [ledger_rel], repr(rc_paths))
+    dr2 = subprocess.run(["git", "push", "--dry-run", "--porcelain", "origin", spec], cwd=REPO, capture_output=True,
+                         text=True)
+    lines2 = [l for l in dr2.stdout.splitlines() if "\t" in l]
+    chk("3b_single_ref_only_after_record", len(lines2) == 1 and dr2.returncode == 0
+        and not any(l.startswith("+") for l in lines2), repr(lines2))
+    if not ok:
+        _log({"utc": rec["utc"], "pushed": False, "reason": "record-commit re-check failed", "local_head": head2})
+        print("NO PUSH: record-commit re-check failed")
+        return 1
     r = subprocess.run(["git", "push", "origin", spec], cwd=REPO, capture_output=True, text=True)
     if r.returncode != 0:
-        rec["pushed"] = False
-        rec["reason"] = "push failed: " + r.stderr.strip()[-300:]
-        _log(rec)
-        print(rec["reason"])
+        _log({"utc": rec["utc"], "pushed": False, "reason": "push failed: " + r.stderr.strip()[-300:],
+              "local_head": head2})
+        print("push failed:", r.stderr.strip()[-300:])
         return 1
     # 9 verify
     git("fetch", "origin", f"+refs/heads/{BRANCH}:refs/remotes/origin/{BRANCH}")
     after = git("rev-parse", f"refs/remotes/origin/{BRANCH}")
-    chk("9_remote_equals_local", after == head, f"remote={after} local={head}")
-    rec["remote_head_after"] = after
-    rec["pushed"] = True
-    rec["mode"] = "plain fast-forward" if tip else "plain (branch creation)"
-    rec["remote_only_commits_overwritten"] = 0
-    _log(rec)
-    # keep the working tree clean: record the push itself in a local commit (pushed at the next checkpoint)
-    git("add", str(LEDGER.relative_to(REPO)))
-    git("commit", "-q", "-m", f"p5y: K5 cell-309 research r1 — ledger: checkpoint push record ({head[:8]})\n\n"
-        "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n"
-        "Claude-Session: https://claude.ai/code/session_01RiV5bfPm5GJ4GcvoBrCC3p")
-    return 0 if after == head else 1
+    chk("9_remote_equals_local", after == head2, f"remote={after} local={head2}")
+    if after != head2:
+        _log({"utc": rec["utc"], "pushed": "UNVERIFIED", "reason": "remote != local after push",
+              "remote_head_after": after, "local_head": head2})
+        return 1
+    return 0
 
 
 def _log(rec):
