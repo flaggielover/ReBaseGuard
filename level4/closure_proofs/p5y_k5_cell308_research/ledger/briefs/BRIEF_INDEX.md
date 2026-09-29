@@ -48,6 +48,8 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 37 | 37_reviewIMPL_MBS.txt | successor implementation review (fresh, non-holder) | Agent | see ledger | no |
 | 38 | 38_reviewINC2_T6.txt | bounded T6 ruling (reviewINC2 resumed) | SendMessage | see ledger | no |
 | 39 | 39_readerUDB.txt | non-holder reader check of the user decision brief (MBS-10) | Agent | see ledger | no |
+| 40 | 40_builderMBS_R124.txt | builder2 repairs R1/R2/R4 at the non-holder reviewer's request (M4) | SendMessage | see ledger | no |
+| 41 | 41_ratifierMBS_R3.txt | non-holder constants ratification (R3 / M1) | Agent | see ledger | no |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.

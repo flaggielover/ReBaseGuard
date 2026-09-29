@@ -1,0 +1,15 @@
+REPAIR REQUEST (builder2, resumed). The non-holder implementation review research reviews/REVIEW_IMPLEMENTATION_MBS308.md (IMPLEMENTATION_REJECTED, commit 6d3a44cd, sha256 abecfbb2c57cb50c79f722db4a0d25bb4b35fe8adcf4782cf70476fe2aa4738f) requests repairs R1, R2 and R4. Under the T6 ruling (research reviews/INCIDENT_INDEPENDENCE_REVIEW_MBS308_T6.md, M4) you may repair only at a non-holder reviewer's request, and NEVER touch an operational number: no cap, limit, timeout, threshold, allow-list or budget value. A non-holder reviews each repair diff. All your ABSOLUTE RULES from brief 30 are unchanged, including: no ref in the real repo; sandboxes on a --no-local base store (never the shared object store); no commits; no target; the MBS-2 reading restrictions.
+
+Read ONLY the review's sections "Defects" and "CONDITIONS" (the text of R1, R2, R4) and the code/tests you wrote. Do not read the review's section 10 table beyond what R1/R2/R4 need.
+
+- R1 (DEF-1):
+  (i) After a failed `update-ref`, re-read the ref. Only "the ref no longer holds the expected old value" is a CAS conflict (LostOwnership / JournalConflict); anything else is a recorded, retried infrastructure failure.
+  (ii) In seal-only (and in _journal generally, once the durable artifacts exist), a failed journal advance never stops the seal: the artifacts decide.
+  (iii) Classify stale git lockfiles of the campaign (refs/p5y-k5-cell308-mbs-r1/*.lock, the branch lock, packed-refs.lock) when no live campaign process holds the O_EXCL lock or pidfile. Give `recover` a frozen, recorded, value-free action for them (move aside, never delete) before resume / seal / close.
+  (iv) Add fault points or planted locks for the marker, journal, ckpt, pending and branch refs to the crash suite, each asserting the frozen final state. Add mutants that undo (i)-(iii).
+- R2 (DEF-2): the launcher boots a job out only when the recorded job identity (pid, start time, boot UUID, command sha256) is dead, never on one negative `launchctl print`. `launch()` must never boot out a job that may have passed the marker (e.g. never boot out after the bootstrap; leave refusal to the driver's own launchd check). Add a test with a planted failing `launchctl print`, and a mutant.
+- R4 (DEF-4): behavioural tests and mutants (on planted readings) for:
+  - the driver's GC-10 start gates;
+  - the execute-time and resume-time platform, research and science pin refusals;
+  - GC-8 with an evidence path at HEAD and on MB r1's branch.
+Re-run the full suite and the mutant matrix, and append to BUILD_REPORT.md a section "Repairs R1/R2/R4" with the diff summary, the new tests and the new mutants. Do not change any operational number: if a repair seems to need one, stop and report it. Final message: a 10-line summary with the test and mutant counts.

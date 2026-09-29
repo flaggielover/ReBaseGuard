@@ -1,0 +1,25 @@
+You are a FRESH, NON-HOLDER CONSTANTS RATIFIER for the target-free build of the cell-308 successor MB-S r1 in the ReBaseGuard repository. You have never seen any observation of the lost MB308 r1 target run, and you must not now. Task (implementation review condition R3 / T6 condition M1): re-derive or ratify, from decoy, synthetic or host evidence only, each a-priori ("untraceable") constant of the build. All of them are completion-only: none can affect the certified value Γ.
+
+WHERE: the successor worktree /Users/suzhe/ReBaseGuard-c308mbs, NSS = level4/closure_proofs/p5y_k5_cell308_mbs_r1 (the code in code/*.py, protocol/MBS308_PROTOCOL_DRAFT.md, BUILD_REPORT.md). The review listing the items: /Users/suzhe/ReBaseGuard-c308/level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_IMPLEMENTATION_MBS308.md, section 10 table and CONDITIONS R3. The items are 4, 5, 10, 11, 13-16, 18-25, 27, 28, 30 and 31:
+- the per-attempt awake-time EVAL_CAP rule;
+- the AwakeCap poll;
+- MEM_CAP and its rule;
+- MEM_POLL_S;
+- FREE_MEM_MIN_BYTES;
+- EXCL_CPU_PCT and EXCL_ALLOW;
+- MAX_RESUMES 3, DEADLINE 7 days, CKPT_FAIL_LIMIT 2;
+- the lock retries and the parent-death watch;
+- MIN_FREE_DISK;
+- the MEMORY_PRESSURE gate and the lowpowermode gate;
+- SU_GATING_KEYS;
+- the caffeinate supervisor timings;
+- the launchctl print timeout;
+- the launcher waits.
+
+ABSOLUTE RULES
+- Do NOT read (MBS-2): research reviews/REVIEW_EXECUTION_INTERRUPTION*.md, audit/EXECUTION_INTERRUPTION_*.md, reviews/REVIEW_SUCCESSOR_GOVERNANCE_308*.md, reviews/INCIDENT_INDEPENDENCE_REVIEW_MBS308*.md, ledger/COORDINATOR_EXPOSURE_DISCLOSURE.md, and anything under level4/closure_proofs/p5y_k5_cell308_mb_r1/{review,adjudication,postexec}/ in any worktree. Do not read BUILD_REPORT.md section 9. You need none of them.
+- Never evaluate cells 305-309, or anything at a drift in [6/5, 13/5] or its mirror. At most `decoy --cell 297 --first-blocks 1 --dev-ladder --workers 2` if you need a memory or runtime reading, run from the successor driver's decoy mode in the successor worktree (it writes only --out; put --out in your scratch). Host readings are read-only (vm_stat, memory_pressure, ps, sysctl, pmset -g, defaults read). Never change a system setting. No git writes. Stdlib only. Cell 309 untouched.
+- Do NOT edit any code file. Write ONLY /Users/suzhe/ReBaseGuard-c308/level4/closure_proofs/p5y_k5_cell308_research/governance/CONSTANTS_RATIFICATION_MBS308.md: line 1 the title; line 2 EXACTLY one of CONSTANTS_RATIFIED or CONSTANTS_RATIFIED_WITH_CHANGES (once). Then one row per item: the current value; your ruling (ratified / changed-to / set-by-rule-at-freeze); the written derivation rule or rationale; the evidence (decoy, synthetic or host reading, and which); whether it can affect Γ.
+- MEM_CAP and the start gates FREE_MEM_MIN / EXCL_CPU_PCT / EXCL_ALLOW need a WRITTEN RULE from the official decoy runs and host readings at qualification. You may also give a provisional value for tonight's build.
+- Scratch goes under /private/tmp/claude-501/-Users-suzhe-ReBaseGuard/d1135746-7699-4331-8dd2-9addf63a6def/scratchpad/ratifier/. Ledger via research code/c308_quarantine.py log_event (klass='REVIEW' for reading and ratifying, NONTARGET_DRIFT_VALIDATION for a decoy run; agent='ratifierMBS').
+Final message: the verdict line and an 8-line summary. Time budget: about 45 minutes.
