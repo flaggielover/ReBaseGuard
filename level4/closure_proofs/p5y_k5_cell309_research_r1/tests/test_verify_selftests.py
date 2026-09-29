@@ -80,7 +80,8 @@ def kq(i, p, m, e, c, n=2000):
 
 
 def decoy_files():
-    return sorted(glob.glob(os.path.join(NS, 'evidence', 'srk_decoys', '*.json')))
+    files = sorted(glob.glob(os.path.join(NS, 'evidence', 'srk_decoys', '*.json')))
+    return files or sorted(glob.glob(os.path.join(NS, 'evidence', 'srk_decoys_prelim', '*.json')))
 
 
 def pick_cert(prefer_index='1'):

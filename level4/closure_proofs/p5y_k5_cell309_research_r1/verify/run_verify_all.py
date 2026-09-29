@@ -5,7 +5,8 @@ rejections (mutants), recording everything in verify/VERIFY_RESULTS.json.
 
     python3 run_verify_all.py [--max-depth 24] [--order 8] [--no-mutants] [--redo]
 
-Files scanned: evidence/srk_decoys/*.json and evidence/srk_decoys_taboo/*.json (read only, never modified).  Results
+Files scanned: evidence/srk_decoys/*.json, evidence/srk_decoys_prelim/*.json and evidence/srk_decoys_taboo/*.json
+(read only, never modified).  Results
 are written after every certificate; an existing (file, index, sha256) result is reused unless --redo.
 Mutants 1-5 get a recomputed sha256 (so that the mathematics, not the hash, is exercised); mutant 6 alters the hash.
 """
@@ -148,6 +149,7 @@ def main():
     ap.add_argument('--unit-tests', action='store_true', help='also run tests/test_verify_selftests.py and record it')
     a = ap.parse_args()
     files = a.files or sorted(glob.glob(os.path.join(NS, 'evidence', 'srk_decoys', '*.json'))
+                              + glob.glob(os.path.join(NS, 'evidence', 'srk_decoys_prelim', '*.json'))
                               + glob.glob(os.path.join(NS, 'evidence', 'srk_decoys_taboo', '*.json')))
     res = {}
     if os.path.exists(OUT) and not a.redo:

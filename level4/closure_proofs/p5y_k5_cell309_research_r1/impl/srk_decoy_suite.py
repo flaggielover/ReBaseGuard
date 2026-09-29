@@ -20,7 +20,10 @@ def job(spec):
     logs = []
     blk = S.run_block(g, F(elo), F(ehi), tuple(idx), tuple(ladder), log=logs.append, whole=whole)
     certs = {i: S.certificate_json(blk, i) for i in blk["Gamma"]}
+    import subprocess
+    head = subprocess.run(["git", "rev-parse", "HEAD"], cwd=NS, capture_output=True, text=True).stdout.strip()
     rec = {"geometry": blk["geometry"], "block": blk["block"], "kernel": "whole" if whole else "taboo",
+           "producer": blk["producer"], "git_head_at_run": head,
            "Gamma": {i: (S.fstr(v) if v is not None else None) for i, v in blk["Gamma"].items()},
            "Abar_W": S.fstr(blk["Abar_W"]) if blk["Abar_W"] is not None else None,
            "rungs": [{"degree": r["degree"], "W_status": r["W"]["status"],

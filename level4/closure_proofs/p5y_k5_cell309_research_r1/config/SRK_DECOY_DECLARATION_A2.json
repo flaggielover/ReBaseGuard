@@ -1,0 +1,16 @@
+{
+  "schema": "P5Y_K5_CELL309_SRK_DECOY_DECLARATION_AMENDMENT/1",
+  "amends": "config/SRK_DECOY_DECLARATION.json (+A1)",
+  "direction": "ADDITIVE (declared before any run of it); and the rerun rule",
+  "rerun_rule": "Every declared block (base declaration and taboo family A1) is re-run from ONE committed code state, recorded per file as producer sha256 plus git HEAD (review R1 B3). The preliminary files stay in evidence/srk_decoys_prelim/ as history and are not evidence for readiness.",
+  "cell_family": {
+    "purpose": "QC08-style end-to-end run of amendment A3 (cell_blocks with outward dyadic rounding, 4 sub-blocks, weight block = hull), the independent verifier and srk_gate on non-dyadic cell endpoints",
+    "cells": [
+      {"h": "3", "k": "1/2", "cell": ["1/3", "20/51"], "kernel": "whole"},
+      {"h": "5", "k": "1/2", "cell": ["1/2", "37/72"], "kernel": "whole"}
+    ],
+    "indices": [1, 2, 3, 4],
+    "ladder": [8, 10, 12],
+    "band_note": "The real-kernel cell [1/2, 37/72] and its hull lie far below 6/5"
+  }
+}
