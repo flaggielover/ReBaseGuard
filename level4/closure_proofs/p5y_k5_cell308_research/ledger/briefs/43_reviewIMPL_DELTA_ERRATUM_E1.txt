@@ -1,0 +1,6 @@
+ERRATUM E1 TO BRIEF 43 (recorded before sending). The ratifier's code application did NOT happen. It stopped when a safety check blocked a read-only command, and the successor worktree is clean at 35cabb50 (ledger correction line). So there is NO commit after 35cabb50. Brief 43 is amended as follows:
+- Review the build at 35cabb50 only (builder2's repairs R1, R2, R4, diffed against afba20e5).
+- R3: rule on what exists. The ratification governance/CONSTANTS_RATIFICATION_MBS308.md (3c2a7854, CONSTANTS_RATIFIED_WITH_CHANGES) is recorded, but its changed rulings are NOT applied to code or to the protocol draft, and M33's kill is still non-deterministic. Say whether the ratification covers every item of your section 10, and whether R3 is therefore met, partly met or open.
+- Still check M4: builder2's diff changed NO operational number.
+- Verdict line: DELTA_ACCEPTED only if R1-R4 are all met; otherwise DELTA_REJECTED, with each of R1, R2, R4 and R3 ruled separately (met / not met) so that a later bounded application of R3 needs only an R3 delta.
+Everything else in brief 43 (rules, output file, ledger, final message) is unchanged.

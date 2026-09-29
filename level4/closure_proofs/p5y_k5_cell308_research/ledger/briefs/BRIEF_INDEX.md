@@ -52,6 +52,7 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 41 | 41_ratifierMBS_R3.txt | non-holder constants ratification (R3 / M1) | Agent | see ledger | no |
 | 42 | 42_ratifierMBS_apply.txt | non-holder applies the ratified constants + deterministic M33 test | SendMessage | see ledger | no |
 | 43 | 43_reviewIMPL_DELTA.txt | implementation delta review R1-R4 (reviewIMPL resumed) | SendMessage | see ledger | no |
+| 43-E1 | 43_reviewIMPL_DELTA_ERRATUM_E1.txt | ratifier's code application did not happen; review 35cabb50; R3 ruled as recorded-not-applied | SendMessage | see ledger | no |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.
