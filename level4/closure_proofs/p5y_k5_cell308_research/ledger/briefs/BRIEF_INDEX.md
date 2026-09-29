@@ -37,6 +37,7 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 26 | 26_reviewINTERRUPTION_R3.txt | re-check R3 of erratum E1 (same reviewer resumed) | SendMessage | 2026-09-30 ~18:4xZ | no |
 | 27 | 27_reviewEXEC.txt | execution review (section 10 step 6, adapted; fresh) | Agent | 2026-09-30 ~19:0xZ | no |
 | 28 | 28_reviewGOV.txt | successor-governance review (fresh) | Agent | 2026-09-30 ~19:2xZ | no |
+| 29 | 29_reviewROUTE.txt | successor route review (fresh) | Agent | 2026-09-30 ~19:4xZ | no |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.
