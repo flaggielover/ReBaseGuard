@@ -1,0 +1,273 @@
+"""MB-S r1: the launchd launcher and the host contract (architecture sections 5, 6). A REAL launchd integration test with
+a SYNTHETIC payload (never the driver's target path): a shell in its own session runs the launcher, which bootstraps a
+transient LaunchAgent (unique label org.rebaseguard.mbs308.test.<utc>, plist in scratch, never ~/Library/LaunchAgents,
+logs under ~/Library/Logs/ReBaseGuard/mbs308-test/); the test then KILLS the launching shell's process group AND every
+process of its session (the "hosting app Force Quit" analogue) and asserts the job survives; kills the job's caffeinate
+and asserts the supervisor re-spawns it; stops the job and asserts its pidfile is detected as stale; and ALWAYS boots
+the job out and removes the plist, even on failure. Unit tests: PPID 1 is not detachment, the supervisor in-process,
+the pidfile / identity rules, the preflight gates on planted readings, and the launcher's refusal of `execute` when the
+driver's preflight fails (a read-only preflight of the successor driver).
+
+    python3.14 -I -S -B test_mbs308_launch.py [t_name ...] [--out report.json]
+"""
+from __future__ import annotations
+
+import datetime
+import json
+import os
+import signal
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+import mbs308_testlib as T  # noqa: E402
+
+TMP = T.SCRATCH / "t_launch"
+
+
+def mods():
+    sys.path.insert(0, str(T.code_dir()))
+    import mbs308_host as H
+    import mbs308_launch as L
+    import mbs308_state as S
+    return H, L, S
+
+
+def read_json(p: Path):
+    try:
+        return json.loads(p.read_text())
+    except (OSError, ValueError):
+        return None
+
+
+def wait_for(fn, timeout=20.0, every=0.2):
+    t0 = time.time()
+    while time.time() - t0 < timeout:
+        v = fn()
+        if v:
+            return v
+        time.sleep(every)
+    return None
+
+
+def session_pids(sid: int) -> list:
+    out = []
+    ps = subprocess.run(["/bin/ps", "-A", "-o", "pid="], capture_output=True, text=True).stdout.split()
+    for p in ps:
+        try:
+            if os.getsid(int(p)) == sid:
+                out.append(int(p))
+        except OSError:
+            pass
+    return out
+
+
+def t_launchd_integration():
+    H, L, S = mods()
+    run = TMP / datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S")
+    run.mkdir(parents=True)
+    repo = run / "repo"
+    subprocess.run(["/usr/bin/git", "init", "-q", str(repo)], check=True, env=T.GENV)
+    label = "org.rebaseguard.mbs308.test." + run.name
+    state, stop = run / "payload_state.json", run / "STOP"
+    pargs = [str(T.code_dir()), str(repo), str(state), str(stop)]
+    harness = T.NSS / "tests/mbs308_launch_harness.py"
+    shell_cmd = f"'{T.PY}' -I -S -B '{harness}' '{T.code_dir()}' '{run}' '{label}' '{json.dumps(pargs)}'; sleep 600"
+    res = {"label": label}
+    shell = subprocess.Popen(["/bin/zsh", "-c", shell_cmd], start_new_session=True, stdin=subprocess.DEVNULL,
+                             stdout=open(run / "shell.out", "w"), stderr=subprocess.STDOUT)
+    try:
+        rec = wait_for(lambda: read_json(run / "launch_record.json"), 30)
+        res["launch_record"] = {k: rec.get(k) for k in ("pid", "ppid", "pgid", "sid", "uid", "boot_uuid", "refused")} \
+            if rec else None
+        if not rec or "refused" in rec:
+            res["ok"] = False
+            return res
+        job = rec["pid"]
+        res["detachment_by_launcher"] = rec["detachment"]
+        st0 = wait_for(lambda: (read_json(state) or {}).get("caffeinate_pid") and read_json(state), 20)
+        res["payload"] = {k: st0.get(k) for k in ("pid", "ppid", "sid", "xpc_service_name", "label",
+                                                  "launched_by_launchd", "preferred_encoding")} if st0 else None
+        # --- kill the launching shell's process group AND its whole session
+        sid = os.getsid(shell.pid)
+        pg = os.getpgid(shell.pid)
+        members = session_pids(sid)
+        os.killpg(pg, signal.SIGKILL)
+        for p in members:
+            try:
+                os.kill(p, signal.SIGKILL)
+            except OSError:
+                pass
+        shell.wait(timeout=10)
+        time.sleep(2.0)
+        left = session_pids(sid)
+        hb1 = (read_json(state) or {}).get("heartbeat")
+        time.sleep(1.5)
+        hb2 = (read_json(state) or {}).get("heartbeat")
+        res["session_killed"] = {"members_killed": len(members), "left": left}
+        res["job_survives"] = H.pid_alive(job) and H.launchd_job_pid(label) == job and hb2 and hb1 and hb2 > hb1
+        res["job_not_in_killed_session"] = os.getsid(job) != sid and job not in members
+        # --- kill the job's caffeinate; the supervisor must re-spawn it
+        c1 = (read_json(state) or {}).get("caffeinate_pid")
+        os.kill(c1, signal.SIGKILL)
+        st2 = wait_for(lambda: (lambda s: s if s and s.get("caffeinate_pid") not in (None, c1) else None)(
+            read_json(state)), 10)
+        c2 = st2.get("caffeinate_pid") if st2 else None
+        cmd2 = subprocess.run(["/bin/ps", "-ww", "-p", str(c2 or 0), "-o", "command="], capture_output=True,
+                              text=True).stdout.strip()
+        sup = st2["supervisor"] if st2 else {}
+        res["caffeinate"] = {"killed": c1, "respawned": c2, "command": cmd2, "deaths": sup.get("deaths"),
+                             "respawns": sup.get("respawns")}
+        res["respawn_ok"] = bool(c2) and c2 != c1 and cmd2.endswith(f"-w {job}") and "-i -m -s" in cmd2 and \
+            sup.get("deaths", 0) >= 1 and sup.get("respawns", 0) >= 1
+        # --- live pidfile, then stop the job: a stale pidfile is detected
+        store = S.Store(repo, "refs/heads/main")
+        live = S.read_pidfile(store)[1]
+        stop.write_text("stop\n")
+        gone = wait_for(lambda: not H.pid_alive(job), 15)
+        stale = S.read_pidfile(store)[1]
+        res["pidfile"] = {"while_running": live, "after_exit": stale}
+        res["ok"] = bool(rec["detachment"]["detached"] and res["payload"]
+                         and res["payload"]["launched_by_launchd"]["pass"] and res["payload"]["ppid"] == 1
+                         and res["payload"]["xpc_service_name"] == label and not left and res["job_survives"]
+                         and res["job_not_in_killed_session"] and res["respawn_ok"] and live == "LIVE" and gone
+                         and stale == "STALE")
+        return res
+    finally:
+        try:
+            stop.write_text("stop\n")
+        except OSError:
+            pass
+        booted = subprocess.run(["/bin/launchctl", "bootout", f"gui/{os.getuid()}/{label}"], capture_output=True)
+        for p in (run / "plists").glob("*.plist"):
+            p.unlink()
+        res["cleanup"] = {"bootout_rc": booted.returncode,
+                          "still_loaded": subprocess.run(["/bin/launchctl", "print", f"gui/{os.getuid()}/{label}"],
+                                                         capture_output=True).returncode == 0}
+        try:
+            os.killpg(os.getpgid(shell.pid), signal.SIGKILL)
+        except OSError:
+            pass
+
+
+def t_launcher_death_while_waiting():
+    """Launcher death: the launcher process itself is killed right after the bootstrap (in its --wait phase); the job
+    survives it, and the job is booted out by cleanup."""
+    H, L, S = mods()
+    run = TMP / ("ld" + datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S"))
+    run.mkdir(parents=True)
+    repo = run / "repo"
+    subprocess.run(["/usr/bin/git", "init", "-q", str(repo)], check=True, env=T.GENV)
+    label = "org.rebaseguard.mbs308.test." + run.name
+    state, stop = run / "payload_state.json", run / "STOP"
+    pargs = [str(T.code_dir()), str(repo), str(state), str(stop)]
+    harness = T.NSS / "tests/mbs308_launch_harness.py"
+    p = subprocess.Popen([T.PY, "-I", "-S", "-B", str(harness), str(T.code_dir()), str(run), label, json.dumps(pargs)],
+                         start_new_session=True, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
+                         stderr=subprocess.DEVNULL)
+    try:
+        rec = wait_for(lambda: read_json(run / "launch_record.json"), 30)
+        p.kill()
+        p.wait(timeout=10)
+        time.sleep(1.5)
+        job = rec and rec.get("pid")
+        alive = bool(job) and H.pid_alive(job) and H.launchd_job_pid(label) == job
+        return {"ok": bool(rec and rec["detachment"]["detached"]) and alive, "job_alive_after_launcher_death": alive}
+    finally:
+        stop.write_text("stop\n")
+        subprocess.run(["/bin/launchctl", "bootout", f"gui/{os.getuid()}/{label}"], capture_output=True)
+        for f in (run / "plists").glob("*.plist"):
+            f.unlink()
+
+
+def t_ppid1_is_not_detachment():
+    """A process orphaned INSIDE the launcher's session (PPID 1, same SID, not a launchd job) is NOT detached."""
+    H, L, S = mods()
+    r, w = os.pipe()
+    pid = os.fork()
+    if pid == 0:                                   # child: fork a grandchild that outlives us, report its pid, exit
+        g = os.fork()
+        if g == 0:
+            os.close(r)
+            time.sleep(8)
+            os._exit(0)
+        os.write(w, str(g).encode())
+        os._exit(0)
+    os.close(w)
+    gpid = int(os.read(r, 32).decode())
+    os.close(r)
+    os.waitpid(pid, 0)
+    wait_for(lambda: H.process_ppid(gpid) == 1, 5)
+    proof = L.prove_detached(gpid, os.getpid(), "org.rebaseguard.mbs308.test.not-a-job")
+    try:
+        os.kill(gpid, signal.SIGKILL)
+    except OSError:
+        pass
+    return {"ok": H.process_ppid(gpid) in (1, None) and proof["ppid_recorded_not_relied_on"] in (1, None)
+            and proof["detached"] is False and proof["session_differs"] is False, "proof": proof}
+
+
+def t_supervisor_respawns_in_process():
+    H, L, S = mods()
+    sup = H.CaffeinateSupervisor(poll_s=0.05).start()
+    try:
+        c1 = wait_for(sup.current_pid, 5)
+        os.kill(c1, signal.SIGKILL)
+        c2 = wait_for(lambda: (lambda c: c if c and c != c1 else None)(sup.current_pid()), 5)
+        rec = sup.record()
+    finally:
+        rec_final = sup.stop()
+    return {"ok": bool(c1 and c2 and c2 != c1 and rec["deaths"] >= 1 and rec["respawns"] >= 1)
+            and not H.pid_alive(c2 or 0) or False,
+            "first": c1, "second": c2, "record": {k: rec[k] for k in ("spawns", "deaths", "respawns")},
+            "stopped": rec_final["spawns"]}
+
+
+def t_preflight_gates_planted():
+    """Section 6 gates (and DR2 c) on planted readings: each failing reading fails exactly its gate."""
+    H, L, S = mods()
+    good = {"batt": "Now drawing from 'AC Power'\n", "pmset": " lowpowermode         0\n",
+            "thermal": "com.apple.system.thermalpressurelevel 0\n", "free": 10 * 2 ** 30, "memory": "1\n",
+            "boot": "A7417159-025C-461F-8BF8-3F9C7F3C58CB\n"}
+    su_off = {"AutomaticallyInstallMacOSUpdates": "0", "AutomaticDownload": "1", "CriticalUpdateInstall": "0",
+              "ConfigDataInstall": "1"}
+    base = H.preflight_gates("/", other_job_running=False, launched={"pass": True}, texts=good, su_texts=su_off)
+    cases = {"batt": ("Now drawing from 'Battery Power'\n", "ac_power"), "pmset": (" lowpowermode 1\n", "lowpowermode_0"),
+             "thermal": ("com.apple.system.thermalpressurelevel 1\n", "thermal_pressure_0"),
+             "free": (1 * 2 ** 30, "free_disk_ge_2GiB"), "memory": ("2\n", "memory_pressure_normal"),
+             "boot": ("", "boot_uuid_recorded")}
+    out = {}
+    for k, (bad, gate) in cases.items():
+        g = H.preflight_gates("/", other_job_running=False, launched={"pass": True}, texts=dict(good, **{k: bad}),
+                              su_texts=su_off)
+        out[k] = [x for x, v in g["gates"].items() if not v] == [gate]
+    g = H.preflight_gates("/", other_job_running=True, launched={"pass": False}, texts=good, su_texts=su_off)
+    out["job_and_launcher"] = sorted(x for x, v in g["gates"].items() if not v) == ["launched_by_launchd",
+                                                                                    "no_other_campaign_job"]
+    for key in ("AutomaticallyInstallMacOSUpdates", "CriticalUpdateInstall"):
+        for val in ("1", ""):                        # enabled, or missing (= enabled by default)
+            g = H.preflight_gates("/", other_job_running=False, launched={"pass": True}, texts=good,
+                                  su_texts=dict(su_off, **{key: val}))
+            out[f"{key}={val or 'missing'}"] = [x for x, v in g["gates"].items() if not v] == ["no_automatic_os_install"]
+    real = H.software_update_settings()
+    return {"ok": base["pass"] and all(out.values()), "cases": out, "real_host_software_update": real}
+
+
+def t_launcher_refuses_execute_when_preflight_fails():
+    """`launch execute` runs the successor driver's (read-only) preflight first and refuses when it fails; nothing is
+    bootstrapped. (On this host tonight the preflight fails on the host gates; the refusal is what is tested.)"""
+    H, L, S = mods()
+    before = subprocess.run(["/bin/launchctl", "list"], capture_output=True, text=True).stdout.count("org.rebaseguard")
+    try:
+        L.pre_launch("execute")
+        refused = None
+    except L.LaunchRefused as e:
+        refused = e.code
+    after = subprocess.run(["/bin/launchctl", "list"], capture_output=True, text=True).stdout.count("org.rebaseguard")
+    return {"ok": refused == "PREFLIGHT_FAILED" and before == after, "refused": refused}
+
+
+if __name__ == "__main__":
+    T.cli(globals())
