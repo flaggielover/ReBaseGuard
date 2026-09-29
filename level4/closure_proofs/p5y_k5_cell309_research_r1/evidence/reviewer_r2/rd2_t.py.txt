@@ -1,0 +1,16 @@
+import sys, json, time, importlib
+from pathlib import Path
+NS = "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_research_r1"
+for p in ("/tests", "/impl", "/code"): sys.path.insert(0, NS + p)
+import q309_guard as Q
+Q.EXEC_LEDGER = Path(sys.argv[1])
+for name in sys.argv[2:]:
+    t0 = time.time()
+    m = importlib.import_module(name)
+    assert m.__dict__.get("Q", Q) is Q
+    r = m.run()
+    ok = r[0]
+    print(f"== {name}: ok={ok} ({time.time()-t0:.1f}s)")
+    for x in r[1:]:
+        s = json.dumps(x, default=str)
+        print("   ", s[:3000])

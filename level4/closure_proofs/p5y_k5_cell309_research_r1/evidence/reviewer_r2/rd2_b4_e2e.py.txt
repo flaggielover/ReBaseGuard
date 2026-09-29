@@ -1,0 +1,18 @@
+import sys, json, time
+from pathlib import Path
+NS = "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_research_r1"
+for p in ("/tests", "/verify", "/impl", "/code"): sys.path.insert(0, NS + p)
+import q309_guard as Q
+Q.EXEC_LEDGER = Path(sys.argv[1])
+import e2e_cell_family as E
+t0 = time.time()
+ok, out = E.run(10000)
+print("E2E ok", ok, f"{time.time()-t0:.0f}s")
+committed = json.loads((Path(NS) / "evidence/SRK_CELL_FAMILY_E2E.json").read_text())
+for c, cc in zip(out, committed["cells"]):
+    print(c["geometry"], c["cell"], c["checks"])
+    print("   reasons", c["negative_refusal_reasons"])
+    same_gamma = {str(k): v for k, v in c["gamma_bar"].items()} == {str(k): v for k, v in cc["gamma_bar"].items()}
+    same_mc = [(r["i"], round(r["mc_max"], 12), round(r["se"], 12)) for r in c["mc"]] == [(r["i"], round(r["mc_max"], 12), round(r["se"], 12)) for r in cc["mc"]]
+    print("   gamma_bar identical to committed:", same_gamma, " MC rows identical to committed:", same_mc,
+          " MC pass:", [r["control_pass"] for r in c["mc"]], " tightness:", [round(r["tightness"], 3) for r in c["mc"]])

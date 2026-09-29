@@ -1,0 +1,18 @@
+import sys, json, time
+from pathlib import Path
+NS = Path("/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_research_r1")
+for p in ("verify", "code"): sys.path.insert(0, str(NS / p))
+import q309_guard as Q
+Q.EXEC_LEDGER = Path(sys.argv[1])
+import srk_verify_indep as VI
+V = json.loads((NS / "verify/VERIFY_RESULTS.json").read_text())
+jobs = [("srk_decoys/h5_k1_2_E1_33_32.json", i) for i in "01234"] + [("srk_decoys/h4_k1_2_E1_33_32.json", i) for i in "01234"] + [("srk_decoys/h5_k1_2_E0_1_32.json", "4")]
+Q.log_execution("scratch/rd2_b5_verify.py", "reviewer R2: independent verifier re-run on committed whole-block certificates",
+                klass="NONTARGET_DECOY", drifts=[["0", "1/32"], ["1", "33/32"]], notes="real kernel e<=33/32 and h=4; genuine certificates only")
+for rel, i in jobs:
+    d = json.loads((NS / "evidence" / rel).read_text())
+    c = d["certificates"][i]
+    t0 = time.time()
+    r = VI.verify_cert(c, d.get("kernel"), N=8, max_depth=24, procs=1, log=None)
+    b = V["files"]["evidence/" + rel][i]
+    print(rel, i, r["verdict"], "| batch:", b["verdict"], "| sha match:", b["sha256"] == c["sha256"], f"| {time.time()-t0:.0f}s |", r.get("reason", "")[:60], flush=True)

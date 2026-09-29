@@ -1,0 +1,95 @@
+import json, hashlib, subprocess, sys
+from fractions import Fraction as Fr
+from pathlib import Path
+REPO = "/home/user/ReBaseGuard"
+NSR = "level4/closure_proofs/p5y_k5_cell309_research_r1"
+NS = Path(REPO) / NSR
+sys.path.insert(0, str(NS / "code")); sys.path.insert(0, str(NS / "impl"))
+import q309_guard as Q
+Q.EXEC_LEDGER = Path(sys.argv[1])
+import srk_certify as S
+C1B = "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/c1b_gauss.py"
+def git(*a): return subprocess.run(["git", *a], cwd=REPO, capture_output=True).stdout
+def u(x): return x.replace("/", "_")
+def canon(c): return hashlib.sha256(json.dumps({k: v for k, v in c.items() if k != "sha256"}, sort_keys=True).encode()).hexdigest()
+
+dec = json.loads((NS / "config/SRK_DECOY_DECLARATION.json").read_text())
+fam = json.loads((NS / "config/SRK_DECOY_DECLARATION_A2.json").read_text())["cell_family"]
+expected = {}
+for gd in [dec["real_geometry"]] + dec["synthetic_geometries"]:
+    for lo, hi in gd["blocks"]:
+        expected[f"srk_decoys/h{u(gd['h'])}_k{u(gd['k'])}_E{u(lo)}_{u(hi)}.json"] = dict(h=gd["h"], k=gd["k"], block=(lo, hi), wb=None, idx=dec["indices"])
+for c in fam["cells"]:
+    wb, subs = S.cell_blocks(Fr(c["cell"][0]), Fr(c["cell"][1]))
+    for j, (a, b) in enumerate(subs):
+        expected[f"srk_decoys_cell/cell_h{u(c['h'])}_k{u(c['k'])}_C{u(c['cell'][0])}_{u(c['cell'][1])}_S{j}.json"] = dict(
+            h=c["h"], k=c["k"], block=(S.fstr(a), S.fstr(b)), wb=(S.fstr(wb[0]), S.fstr(wb[1])), idx=fam["indices"])
+present = {f"{d}/{p.name}" for d in ("srk_decoys", "srk_decoys_cell") for p in (NS / "evidence" / d).glob("*")}
+print("expected", len(expected), "present", len(present), "missing", sorted(set(expected) - present), "extra", sorted(present - set(expected)))
+
+V = json.loads((NS / "verify/VERIFY_RESULTS.json").read_text())
+print("verifier settings", V["settings"])
+combined, heads, problems = set(), set(), []
+ncert = nacc = nmut = nmut_met = 0
+fp_cache = {}
+for rel, ex in sorted(expected.items()):
+    d = json.loads((NS / "evidence" / rel).read_text())
+    prod, head = d["producer"], d["git_head_at_start"]
+    combined.add(prod["combined"]); heads.add(head)
+    if head not in fp_cache:
+        out = {f: hashlib.sha256(git("show", f"{head}:{NSR}/impl/{f}")).hexdigest() for f in S.PRODUCER_FILES}
+        out["c1b_gauss.py"] = hashlib.sha256(git("show", f"{head}:{C1B}")).hexdigest()
+        out["combined"] = hashlib.sha256(json.dumps(out, sort_keys=True).encode()).hexdigest()
+        fp_cache[head] = out
+    if fp_cache[head] != prod: problems.append((rel, "producer bytes at git_head_at_start do not hash to producer"))
+    if d["geometry"] != {"h": S.fstr(Fr(ex["h"])), "k": S.fstr(Fr(ex["k"]))}: problems.append((rel, "geometry", d["geometry"]))
+    if tuple(d["block"]) != tuple(S.fstr(Fr(x)) for x in ex["block"]): problems.append((rel, "block", d["block"]))
+    if d["kernel"] != "whole": problems.append((rel, "kernel"))
+    if (d["weight_block"] and tuple(d["weight_block"])) != (ex["wb"] and tuple(ex["wb"])): problems.append((rel, "weight_block", d["weight_block"]))
+    if sorted(int(i) for i in d["certificates"]) != sorted(ex["idx"]): problems.append((rel, "indices", list(d["certificates"])))
+    if [r["degree"] for r in d["rungs"]] != [8, 10, 12]: problems.append((rel, "ladder"))
+    vf = V["files"].get(f"evidence/{rel}")
+    if vf is None: problems.append((rel, "not in VERIFY_RESULTS")); continue
+    for i, c in d["certificates"].items():
+        ncert += 1
+        if c.get("status") != "CERTIFIED": problems.append((rel, i, "status", c.get("status"))); continue
+        if canon(c) != c["sha256"]: problems.append((rel, i, "sha mismatch"))
+        if c["producer_sha256"] != prod["combined"]: problems.append((rel, i, "cert producer"))
+        if c["geometry"] != d["geometry"] or c["block"] != d["block"] or c["kernel"] != "whole" or c["hermite_index"] != int(i): problems.append((rel, i, "cert fields"))
+        wbx = c["weight_block"]
+        if wbx != (list(ex["wb"]) if ex["wb"] else d["block"]): problems.append((rel, i, "cert weight_block", wbx))
+        if Fr(c["Gamma"]) != Fr(d["Gamma"][i]): problems.append((rel, i, "cert Gamma != file Gamma (min over rungs)"))
+        best = min((Fr(r["V"][i]["Gamma"]), r["degree"]) for r in d["rungs"] if i in r["V"])
+        if (Fr(c["Gamma"]), c["degree"]) != best: problems.append((rel, i, "not the best rung", best))
+        e = vf.get(i)
+        if not e or e.get("sha256") != c["sha256"]: problems.append((rel, i, "verifier sha mismatch")); continue
+        nacc += e["verdict"] == "ACCEPT"
+        if e["verdict"] != "ACCEPT": problems.append((rel, i, "verdict", e["verdict"]))
+        for mn, mv in e.get("mutants", {}).items():
+            nmut += 1; nmut_met += bool(mv.get("expectation_met"))
+            if not mv.get("expectation_met"): problems.append((rel, i, "mutant expectation not met", mn))
+print("producer.combined values", combined, "git_head_at_start", heads)
+cur = S.producer_fingerprint()
+print("current working-tree producer == evidence producer:", {cur["combined"]} == combined)
+print("certificates", ncert, "ACCEPT (sha-matched)", nacc, "mutants", nmut, "met", nmut_met)
+print("problems", len(problems)); [print("  ", p) for p in problems[:40]]
+# verifier file coverage: any VERIFY_RESULTS entry for these files that is not one of the certificates?
+extra_v = [(rel, i) for rel in V["files"] if rel.startswith(("evidence/srk_decoys/", "evidence/srk_decoys_cell/")) for i in V["files"][rel] if rel[9:] not in expected]
+print("VERIFY_RESULTS entries for non-declared files:", extra_v)
+# git history of evidence files: committed once? modified later?
+for rel in sorted(expected):
+    log = git("log", "--format=%h %cI", "--", f"{NSR}/evidence/{rel}").decode().split("\n")
+    log = [x for x in log if x]
+    if len(log) != 1: print("HISTORY", rel, log)
+# MC control coverage
+mc = json.loads((NS / "evidence/SRK_MC_CONTROL.json").read_text())
+rows = {(r["file"], r["i"]): r for r in mc["rows"]}
+need = {(Path(rel).name, int(i)) for rel, ex in expected.items() if rel.startswith("srk_decoys/") for i in ex["idx"]}
+print("MC ok", mc["ok"], "n_paths", mc["n_paths"], "rows", len(mc["rows"]), "missing", sorted(need - set(rows)), "extra", sorted(set(rows) - need))
+bad = [k for k, r in rows.items() if not (r["control_pass"] and r["mc_max"] - 5 * r["se"] <= r["Gamma"])]
+gam_mis = [k for k, r in rows.items() if abs(r["Gamma"] - float(Fr(json.loads((NS / "evidence/srk_decoys" / k[0]).read_text())["Gamma"][str(k[1])]))) > 1e-12 * max(1, r["Gamma"])]
+print("MC failing rows", bad, "Gamma mismatches vs evidence", gam_mis)
+t = sorted(r["tightness"] for r in mc["rows"] if r["tightness"]); z = sorted((r["Gamma"] - r["mc_max"]) / r["se"] for r in mc["rows"] if r["se"] > 0)
+print("MC tightness range (decoy-only) %.3f..%.3f; min z=(Gamma-mc)/se %.2f" % (t[0], t[-1], z[0]))
+E = json.loads((NS / "evidence/SRK_CELL_FAMILY_E2E.json").read_text())
+print("E2E ok", E["ok"], "n_paths", E["n_paths"], [(c["geometry"], c["cell"], all(c["checks"].values()), c.get("negative_refusal_reasons")) for c in E["cells"]])

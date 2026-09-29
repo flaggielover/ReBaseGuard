@@ -1,0 +1,33 @@
+import json, subprocess, sys
+from fractions import Fraction as F
+P = "level4/closure_proofs/p5y_k5_cell309_research_r1/ledger/ZERO_TARGET_LEDGER.jsonl"
+def at(c):
+    return subprocess.run(["git","show",f"{c}:{P}"],capture_output=True,text=True).stdout.splitlines()
+commits = subprocess.run(["git","log","--reverse","--format=%h","fae64157^..HEAD"],capture_output=True,text=True).stdout.split()
+prev = None
+for c in commits:
+    L = at(c)
+    if prev is not None and L[:len(prev)] != prev:
+        print("NOT APPEND-ONLY at", c)
+    prev = L
+cur = open(P).read().splitlines()
+print("append-only working tree vs HEAD:", cur[:len(prev)] == prev, len(prev), len(cur))
+base = len(at("fae64157"))
+band_lo, band_hi = F(6,5), F(13,5)
+bad = 0; maxd = None; classes = {}; scripts = {}
+for n, line in enumerate(cur[base:], start=base+1):
+    d = json.loads(line)
+    for k in ("new_target_evaluations","target_equivalent_proxies","target_informed_optimisation"):
+        if d.get(k, 0) != 0: print("NONZERO", k, n)
+    if d.get("cells_touched"): print("CELLS", n, d["cells_touched"])
+    classes[d.get("class")] = classes.get(d.get("class"),0)+1
+    scripts[d.get("script")] = scripts.get(d.get("script"),0)+1
+    for iv in d.get("drifts", []):
+        lo, hi = F(iv[0]), F(iv[1])
+        if not (hi < band_lo and lo > -band_lo) :
+            # anything reaching |e| >= 6/5
+            if hi >= band_lo or lo <= -band_lo:
+                bad += 1; print("DRIFT |e|>=6/5 line", n, d.get("class"), d.get("purpose")[:80])
+        m = max(abs(lo), abs(hi)); maxd = m if maxd is None else max(maxd, m)
+print("lines after fae64157:", len(cur)-base, "band-reaching drift lines:", bad, "max |drift|:", maxd)
+print(classes); print(scripts)

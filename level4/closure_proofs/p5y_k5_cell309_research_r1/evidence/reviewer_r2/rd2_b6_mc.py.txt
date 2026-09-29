@@ -1,0 +1,30 @@
+import sys, json, time, zlib, random
+from fractions import Fraction as F
+from pathlib import Path
+NS = Path("/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_research_r1")
+for p in ("tests", "code"): sys.path.insert(0, str(NS / p))
+import q309_guard as Q
+Q.EXEC_LEDGER = Path(sys.argv[1])
+import srk_mc_control as M
+rows = {(r["file"], r["i"]): r for r in json.loads((NS / "evidence/SRK_MC_CONTROL.json").read_text())["rows"]}
+todo = [tuple(x.split(":")) for x in sys.argv[2:]]
+for name, i in todo:
+    i = int(i)
+    d = json.loads((NS / "evidence/srk_decoys" / name).read_text())
+    hh, kk = float(F(d["geometry"]["h"])), float(F(d["geometry"]["k"]))
+    elo, ehi = F(d["block"][0]), F(d["block"][1])
+    if F(d["geometry"]["h"]) == 5: Q.guard_drift(elo, ehi)
+    Q.log_execution("scratch/rd2_b6_mc.py", f"reviewer R2: MC reproduction {name} i={i}", klass="NONTARGET_DECOY",
+                    drifts=[[elo, ehi]] if F(d["geometry"]["h"]) == 5 else [], notes="n_paths=10000, committed seed")
+    c = hh + kk; step = 1 / 32; nb = int(round(hh / step)) + 1; grid = {}
+    def wbar(p, m):
+        a, b = min(int(p / step), nb - 1), min(int(m / step), nb - 1)
+        if (a, b) not in grid:
+            grid[(a, b)] = M.he_abs_int(i, b * step - c + float(elo), c - a * step + float(ehi))
+        return grid[(a, b)]
+    t0 = time.time()
+    rng = random.Random(zlib.crc32(f"{name}:{i}".encode()))
+    est = [M.simulate(hh, kk, float(e), wbar, 10000, rng) for e in (elo, ehi)]
+    mmax, se = max(est, key=lambda t: t[0])
+    r = rows[(name, i)]
+    print(name, i, "reproduced mc_max/se identical:", (mmax, se) == (r["mc_max"], r["se"]), "| pass:", mmax - 5 * se <= float(F(d["Gamma"][str(i)])), f"| {time.time()-t0:.0f}s", flush=True)

@@ -1,0 +1,74 @@
+import sys, copy
+from fractions import Fraction as Fr
+from pathlib import Path
+NS = "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_research_r1"
+for p in ("/code", "/impl", "/tests"): sys.path.insert(0, NS + p)
+import q309_guard as Q
+Q.EXEC_LEDGER = Path(sys.argv[1])
+import srk_certify as S, srk_gate as GT, srk_adapter as AD
+import test_srk_gate as TG, test_srk_adapter as TA
+
+# (a) reasons behind each negative of test_srk_gate
+GEOM, CELL = TG.GEOM, TG.CELL
+wb, subs = S.cell_blocks(*CELL)
+certs, verd = [], {}
+for i in (1, 2, 3, 4):
+    for j, b in enumerate(subs):
+        c = TG.mk(i, b, wb, Fr(10 + j + i)); certs.append(c); verd[c["sha256"]] = "ACCEPT"
+def reason(mut, v="ACCEPT", kernel="whole", geom=GEOM, cell=CELL):
+    base = [c for c in certs if not (c["hermite_index"] == 1 and c["block"][0] == S.fstr(subs[0][0]))]
+    m = copy.deepcopy([c for c in certs if c["hermite_index"] == 1 and c["block"][0] == S.fstr(subs[0][0])][0])
+    mut(m); vv = dict(verd); vv[m["sha256"]] = v
+    r = GT.gate(*cell, geom, kernel, base + [m], vv)
+    return r.gamma[1], [x["reason"] for x in r.report["refused"]]
+def rs(f):
+    def g(m): f(m); m["sha256"] = GT.canonical_sha(m)
+    return g
+probes = {
+ "G1_sha_tamper": (lambda m: m.__setitem__("Gamma", "1/1"), "ACCEPT"),
+ "G1_status": (rs(lambda m: m.__setitem__("status", "NO_CERTIFIED_RUNG")), "ACCEPT"),
+ "G2_geometry": (rs(lambda m: m.__setitem__("geometry", {"h": "4/1", "k": "1/2"})), "ACCEPT"),
+ "G2_kernel_mismatch": (rs(lambda m: m.__setitem__("kernel", "taboo")), "ACCEPT"),
+ "G2_kernel_absent": (rs(lambda m: m.pop("kernel")), "ACCEPT"),
+ "G3_weight_small": (rs(lambda m: m.__setitem__("weight_block", [S.fstr(wb[0]), S.fstr(wb[1] - Fr(1, 4096))])), "ACCEPT"),
+ "G3_weight_LARGER": (rs(lambda m: m.__setitem__("weight_block", [S.fstr(wb[0] - Fr(1, 1024)), S.fstr(wb[1])])), "ACCEPT"),
+ "G4_e_c": (rs(lambda m: m.__setitem__("e_c", S.fstr(subs[0][0]))), "ACCEPT"),
+ "G5_reject": (lambda m: None, "REJECT"),
+ "G5_missing": (lambda m: None, None),
+ "G6_neg": (rs(lambda m: m.__setitem__("Gamma", "-1/1")), "ACCEPT"),
+ "hermite_index_float_1.5": (rs(lambda m: m.__setitem__("hermite_index", 1.5)), "ACCEPT"),
+ "gamma_float_not_str": (rs(lambda m: m.__setitem__("Gamma", 3.0)), "ACCEPT"),
+}
+for k, (f, v) in probes.items():
+    g, why = reason(f, v)
+    print(f"(a) {k:26s} gamma1={g}  reasons={why}")
+
+# (b) binding: gate(cell') output accepted by adapter for a consumer cell with other rho; geometry not bound
+meas, k, A, sig = TA.manufactured(3)
+lo, hi, obj = TA.stub_tail_enclosure(meas, k, A, sig, 5)
+other_cell = (Fr(1, 8), Fr(1, 8) + Fr(1, 97))        # NOT the consumer's cell (meas has only rho)
+wb2, subs2 = S.cell_blocks(*other_cell)
+c2, v2 = [], {}
+for i in (1, 2, 3, 4):
+    for b in subs2:
+        c = TG.mk(i, b, wb2, A["A0"] * k[i] / 2); c["geometry"] = {"h": "3/1", "k": "1/2"}; c["sha256"] = GT.canonical_sha(c)
+        c2.append(c); v2[c["sha256"]] = "ACCEPT"
+r_other = GT.gate(*other_cell, {"h": "3/1", "k": "1/2"}, "whole", c2, v2)
+print("(b) GateResult for a synthetic-geometry, unrelated cell: source", r_other.source, "report keys", sorted(r_other.report))
+out = AD.srk_enclosure(meas, A, 5, r_other, obj, (lo, hi), TA.coefficients)
+print("(b) adapter ACCEPTED it (no cell/geometry binding):", out["lo"] >= lo and out["hi"] <= hi, (out["lo"], out["hi"]) != (lo, hi))
+forged = GT.GateResult({i: A["A0"] * k[i] / 2 for i in (1, 2, 3, 4)}, {}, "GATE")
+out2 = AD.srk_enclosure(meas, A, 5, forged, obj, (lo, hi), TA.coefficients)
+print("(b) adapter ACCEPTED a hand-built GateResult(source='GATE'):", (out2["lo"], out2["hi"]) != (lo, hi))
+e = GT.GateResult.empty(); e.gamma[1] = Fr(0); e.gamma[2] = Fr(0); e.gamma[3] = Fr(0); e.gamma[4] = Fr(0)
+out3 = AD.srk_enclosure(meas, A, 5, e, obj, (lo, hi), TA.coefficients)
+print("(b) adapter ACCEPTED an EMPTY GateResult whose gamma dict was mutated to 0:", (out3["lo"], out3["hi"]) != (lo, hi))
+tab = GT.gate(*other_cell, {"h": "3/1", "k": "1/2"}, "taboo",
+              [dict(x, kernel="taboo") for x in []], {}, d_lo={"value": "4/1", "domain": [S.fstr(other_cell[0]), S.fstr(other_cell[1])]})
+print("(c) taboo gate accepts D_lo = 4 > 1 (D_e <= 1 always):", tab.source, tab.report["d_lo"])
+try:
+    cm = GT.combine(GT.gate(*CELL, GEOM, "whole", certs, verd), r_other)
+    print("(d) combine() of two GateResults for DIFFERENT cells/geometries accepted:", cm.source)
+except ValueError as ex:
+    print("(d) combine refused:", ex)
+print("(e) adapter sources accepted:", "GATE_TABOO/GATE_MIN accepted by source check (srk_adapter.py:204)")

@@ -1,0 +1,12 @@
+import sys, json
+NS = "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_research_r1"
+sys.path.insert(0, NS + "/code")
+import q309_guard as Q
+Q.EXEC_LEDGER = __import__("pathlib").Path(sys.argv[1])
+r = Q.scan()
+print("verdict", r["verdict"], "files", r["files_scanned"], "findings", len(r["findings"]),
+      "control", r["control_fires_all_kinds"], r["planted_controls"])
+print("suppressed (literal-ok):")
+for f in r["suppressed_listed"]: print("  ", f["file"], f["line"], f["kind"], f["what"])
+print("sanctioned refusal-test findings:", len(r["sanctioned_refusal_test_findings"]))
+for f in r["sanctioned_refusal_test_findings"]: print("  ", f["file"], f["line"], f["kind"], f["what"])

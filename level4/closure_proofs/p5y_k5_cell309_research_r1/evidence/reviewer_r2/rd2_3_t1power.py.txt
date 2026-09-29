@@ -1,0 +1,39 @@
+import sys, json, time
+from fractions import Fraction as Fr
+from pathlib import Path
+NS = "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_research_r1"
+for p in ("/verify", "/impl", "/code"): sys.path.insert(0, NS + p)
+import q309_guard as Q
+Q.EXEC_LEDGER = Path(sys.argv[1])
+import srk_certify as S, srk_kernel as KX, srk_verify_indep as VI
+G3 = KX.Geom(3, Fr(1, 2)); LO, HI, D, I = Fr(1, 4), Fr(9, 32), 8, 1
+quiet = lambda s: None
+def cert(W, V):
+    blk = {"geometry": {"h": S.fstr(G3.h), "k": S.fstr(G3.k)}, "block": [S.fstr(LO), S.fstr(HI)],
+           "rungs": [{"degree": D, "W": W, "V": {I: V}}], "producer": S.producer_fingerprint()}
+    return S.certificate_json(blk, I)
+t0 = time.time()
+W = S.certify_W(G3, LO, HI, D, log=quiet)
+Vg = S.certify_weight(G3, I, LO, HI, D, W, log=quiet)
+Vq = S.certify_weight(G3, I, LO, HI, D, W, log=quiet, mutant="quarter_weight")
+print("(a) sup kbar_1 (envelope max) genuine", float(Vg["sup_psi"]), " quarter", float(Vq["sup_psi"]))
+print("(a) genuine: r_min", float(Vg["r_min"]), "lam", float(Vg["lam"]), "Gamma", float(Vg["Gamma"]))
+print("(a) quarter: r_min", float(Vq["r_min"]), "lam", float(Vq["lam"]), "Gamma", float(Vq["Gamma"]))
+print("(a) same float proposal?  V0 raw identical up to lam*W:",
+      all(Vg["_V"][0].get(k, 0) - Vg["lam"] * W["_W"][0].get(k, 0) == Vq["_V"][0].get(k, 0) - Vq["lam"] * W["_W"][0].get(k, 0)
+          for k in set(Vg["_V"][0]) | set(Vq["_V"][0]) | set(W["_W"][0])))
+print("(a) Gamma_quarter / Gamma_genuine =", float(Vq["Gamma"] / Vg["Gamma"]))
+cq = cert(W, Vq)
+rq = VI.verify_cert(cq, None, N=8, max_depth=24, procs=1, log=None)
+print("(a) verifier on quarter mutant:", rq["verdict"], "|", rq.get("reason"), "| cell", rq.get("cell"))
+# (b) consistent quarter-weight mutant: proposal RHS kbar/4 as well, exact check against kbar/4, claim kbar
+orig = S._kbar_float
+S._kbar_float = lambda g, i, a, b: (lambda f: (lambda p, m: f(p, m) / 4))(orig(g, i, a, b))
+Vc = S.certify_weight(G3, I, LO, HI, D, W, log=quiet, mutant="quarter_weight")
+S._kbar_float = orig
+print("(b) consistent quarter: r_min", float(Vc["r_min"]), "lam", float(Vc["lam"]), "Gamma", float(Vc["Gamma"]),
+      "Gamma/Gamma_genuine", float(Vc["Gamma"] / Vg["Gamma"]))
+cc = cert(W, Vc)
+rc = VI.verify_cert(cc, None, N=8, max_depth=24, procs=1, log=None)
+print("(b) verifier on consistent quarter mutant:", rc["verdict"], "|", rc.get("reason"), "| false:", rc.get("false"))
+print(f"total {time.time()-t0:.1f}s")

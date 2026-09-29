@@ -1,11 +1,292 @@
 # Independent route review R2 of SRK (cell-309 research campaign r1)
-ROUTE_REVIEW: PENDING_EVIDENCE
+ROUTE_REVIEW: FREEZE_READY_WITH_CONDITIONS
 
-**Status.** Phase A done (items 1, 2, 4, 5, 6, 7). Items 3 and 8 and the verdict come in Phase B, once the rerun
-evidence is complete. Phase A was written 2026-09-29, 16:19–16:40Z. It started at HEAD `a748ac49`; the coordinator's
-rerun commits up to `daa7e885` landed during the review. I am not the R1 reviewer, and I have no stake in the outcome.
+**Status.** Final, 2026-09-29.
+* Phase A was reviewed at `a748ac49`…`daa7e885` (16:19–16:40Z). Phase B was reviewed at `bf5c87c4` (23:11–23:40Z),
+  on a clean tree with no coordinator process running.
+* I am not the R1 reviewer, and I have no stake in the outcome.
+* Everything below was recomputed or re-run where possible; I did not rely on the coordinator's summaries. The
+  Phase-A record (§§1–7 as first written) is kept below; the Phase-B updates (§PB) supersede it where they say so.
 
-## 0. Reviewer execution declaration (written before any of these runs)
+## Verdict
+
+**FREEZE_READY_WITH_CONDITIONS.** P309 (package 1) is scientifically ready to be frozen into a formal, closure-only,
+exactly-once campaign, subject to three conditions. The route is: the frozen direct clause, the SRK-0 whole-kernel
+order-0 channel min construction, and the supply S = (A0_I1, min(A1_I1, A1_RLR), min(A2_I1, A2_RLR)).
+* No mathematical, soundness, producer or evidence blocker remains.
+* All three conditions are target-free and can be met inside the freeze package without new science.
+* This classification authorizes nothing. See (ii) and the P0-1 statement.
+
+Classes: A mathematical/soundness · B implementation · C verifier/control · D evidence completeness ·
+E provenance/governance · F wording/documentation · G target-dependent or unrepairable without forbidden information.
+
+### (i) Science / implementation: blockers none; conditions C1–C3
+
+| id | class | condition (target-free; inside the freeze package) | evidence |
+|---|---|---|---|
+| **C1** | B | Fix the adapter's geometry to (5, 1/2). `srk_enclosure(..., geometry=REAL_GEOMETRY)` is a caller-overridable keyword. With `geometry={"h":"3/1",…}` the adapter ACCEPTS a synthetic-geometry GateResult (RD2-B2 probe b1‴). Remove the keyword, or refuse any value ≠ REAL_GEOMETRY, and add the probe to test_srk_adapter | srk_adapter.py:93–94, 72–73 |
+| **C2** | D, F | Record the non-run of the A1 taboo family as a formal withdrawal for package 1 (erratum). The base declaration says "All declared decoys are run and reported", and A2's rerun rule names the A1 taboo family. a748ac49 said it "is still run as preparatory evidence", but PHASE3 (23:1xZ) now says "not run". It cannot affect P309 (SRK-T is OUT). The erratum must say that any package including SRK-T runs the full A1 family from its own locked code state | config/SRK_DECOY_DECLARATION.json "no_selection"; SRK_DECOY_DECLARATION_A2.json "rerun_rule"; PHASE3 readiness table |
+| **C3** | C | Give the verifier battery's quarantine probe its intended reason. On **all 41 rerun real-kernel certificates** (25 whole + 16 cell), mutant `7q_quarantine_band_refused` is REFUSED for "weight_block does not contain block", **not** for the band. Only the 15 preliminary certificates (no `weight_block` key) exercised the band refusal. Fix the generator (verify/run_verify_all.py) to move `weight_block` with `block`, or assert the reason, and re-run the battery. The verifier file and its identity are untouched. Firewall control only; not load-bearing for validity | VERIFY_RESULTS.json `mutants.7q_*.reason` |
+
+**No G-class item.** Nothing in this review needs 309 information to be decided.
+
+### (ii) Owner governance decisions (block authorization, not the route class)
+
+* **G1.** Accept SRK's motivation-provenance liability, **MEDIUM-HIGH**. Its sources:
+  * 309R1-02 (an in-band estimate during ideation) and 309R1-01;
+  * rule S's "BLOCKED-only" C4 threshold, set by the exposed coordinator;
+  * every post-R1 rule was written by the same exposed coordinator. The rules written knowing decoy counts or ratios
+    are disclosed (E-10, E-12), and they are decoy-only.
+* **G2.** Authorize a separate closure-only, exactly-once campaign. It includes new in-band Stage-1 operator
+  certificates over the **hull Ew** of cell 309, which are forbidden here.
+* **G3.** Confirm RLR as the min-composed A1/A2 component. It needs its own 309 Stage-1 blocks by the frozen C2 rule and
+  carries the 307 disclosures.
+* **U2.** Rule, or confirm "not triggered": P309 claims no quantity derived from P3 records (rule S C3), and KG-U2
+  requires a ruling before any Stage-1 freeze.
+* **U3.** Decide on the floor extension for closure-only routes, or on explicit CLOSURE_ONLY. KG-U3 says: user-instructed,
+  frozen and reviewed before Stage 1. Adoption needs U3; closure does not.
+* **SRK-T under C5.** Should the exclusion be reconsidered? My finding (item 5) is that it is correct and safe.
+  * Re-inclusion is optional. It would need a D_lo decoy certifier, the A1 taboo family from a locked state, a
+    verifier taboo-mode qualification and a new review.
+  * It must be decided **before** any 309 Stage-1 number exists (rule S).
+  * Excluding it in an exactly-once campaign forgoes SRK-T for 309.
+* **Efficacy is unknown by design.**
+  * Real-kernel decoys stop at 33/32 and never bracket the band, and no decoy number may be extrapolated. So nothing
+    here says whether SRK certifies at 309's drift.
+  * Failure is safe: Γ̄_i = +∞, then TC-T. But it would spend the single evaluation on P309 without the SRK channel.
+    The owner should decide knowing this.
+* **Other recorded user items** (governance report §2): acknowledgement of the incident disclosures, the cell set, a
+  separate grant after QUALIFICATION_ACCEPTED, any new real computation, and push/merge. R1 G4 (the unverifiable timing
+  of an early out-of-band probe) is historical.
+
+**P0-1 (does an actual protocol freeze itself need owner authorization?)** **Yes.**
+* No protocol draft is inside my allowed reading: `protocol_prep/` is empty and untracked. So I cannot quote P0-1's
+  text.
+* Independently of that text, the recorded governance requires owner authorization before an actual freeze:
+  * README: the campaign is research-only; "no exactly-once step, no grant, no marker… without explicit
+    authorization"; `protocol_prep/` is "prepared only if … FREEZE_READY. Never executed";
+  * governance report §2: U1–U3 "none decided"; KG-U2 requires a ruling "before any Stage-1 freeze"; KG-U3 requires
+    the floor extension to be "user-instructed, frozen and reviewed before Stage 1";
+  * R1 G2.
+* This verdict classifies readiness only. It authorizes neither a freeze nor a campaign.
+
+### (iii) Formal-campaign items (expected outstanding; not blockers of the route class)
+
+* **FC1. Pin set.** It must cover:
+  * producer `srk_kernel/srk_float/srk_envelope/srk_certify` + the imported `c1b_gauss` (fingerprint `377057be…`,
+    lock `2a03e838`);
+  * `srk_gate`, `srk_adapter` and `srk_assemble` at the post-`cfb88c69` state, plus C1;
+  * the verifier `a32d5d39…` (or its grant-scoped successor, FC2), `run_verify_all.py`, SRK_CERT_SPEC, THEOREM_SRK
+    §§1–3 and 9–12, and the configs;
+  * the §12 constants, the verifier parameters (N = 8, max_depth = 24), and the Python version.
+* **FC2. Grant-scoped band handling (necessary for SRK to have any effect).**
+  * As qualified, the producer refuses the band through q309 (`guard_geometry_block`, `log_execution`). The
+    verifier also refuses any real-geometry certificate whose block or weight block meets the band (hard-coded
+    `QUARANTINE_BANDS`, srk_verify_indep.py:121, 254–259, 1448).
+  * Unchanged, every 309 certificate would be refused and Γ̄ = None, so the route falls back to TC-T. That is safe
+    but useless.
+  * Replacing the verifier's band check changes its identity, so it must be re-qualified before the seal: self-tests,
+    then batch re-verification of the 87 decoy certificates and battery (minutes).
+  * The grant must cover **Ew**, not only C. Ew extends up to 2⁻¹⁰ beyond C, possibly into an adjacent quarantined
+    cell's drift range; no evaluation of that cell is involved.
+* **FC3. Stage-1 driver.**
+  * Exact-rational cells from the pinned cells.json, then `cell_blocks`, then one `run_block` per sub-block with
+    weight block = Ew. Deterministic output.
+  * Failure semantics fixed in advance: Γ̄_i = +∞, no retry.
+  * Optionally, decided in advance: emit every certified rung, not only the best one.
+* **FC4. Stage-2 driver.**
+  * Verdicts by `srk_gate.verdicts_from_verifier` with the pinned verifier in-process. `verifier_id` goes to the
+    adapter. The pinned `tct_rule` is loaded by bytes. Reproduction gate, dominance, frozen direct clause.
+  * A static driver check: no use of `srk_gate._TOKEN` or `object.__setattr__`, and no geometry override. RD2-B2 b7
+    shows the module-private token can be forged, so immutability holds against accidents, not against an
+    adversarial driver.
+* **FC5.** RLR 309 Stage-1 blocks (G3).
+* **FC6.** Exactly-once machinery: grant, marker/seal, sandbox qualification (the 307 anatomy, Q1–Q12), and independent
+  qualification, execution and adjudication reviews.
+
+---
+
+## PB. Phase-B findings
+
+### Item 3. B3 evidence integrity: PASS (no failure; C2 and C3 above)
+
+Everything below was recomputed by me (RD2-B1, B4, B5, B5b, B6), mostly without trusting the manifest, the
+self-audit or the summaries.
+
+**Completeness.**
+* The expected names, derived from `SRK_DECOY_DECLARATION.json` (real 5 + h3 3 + h4 3 blocks) and from
+  `cell_blocks` on the 2 A2 cells (4 sub-blocks each), are exactly the 19 files present. **19/19; nothing missing,
+  nothing extra.**
+* Each file's geometry, block, kernel (`whole`), weight block (= the hull for cells, `null` for whole blocks), index
+  set (0–4 whole, 1–4 cell) and ladder (8, 10, 12) are as declared.
+* In all 57 rungs, W is CERTIFIED and every index has a V: every rung certified.
+* The A1 taboo family was not run (C2). The A1 index-5 item is conditional on SRK-1, which is deferred.
+
+**Single code state.**
+* All 19 files carry `producer.combined = 377057bef1d1…` and `git_head_at_start = 2a03e838498a…`.
+* I re-hashed the producer bytes **as committed at 2a03e838** (`git show 2a03e838:<path>` for the 4 producer files and
+  `c1b_gauss.py`). They reproduce each file's per-file sha256 dict and the combined hash exactly. The current working
+  tree gives the same fingerprint.
+* `git diff 2a03e838 HEAD` is empty for all five files.
+
+**Nothing dropped, re-run or overwritten.**
+* After the lock (16:07:47Z), the exec ledger has **exactly one** `run_block` line for each of the 19 blocks.
+* Each evidence file was committed once. The four earlier commits on the same paths are the pre-E-7 preliminary
+  files, moved to `srk_decoys_prelim/` at 5f41d8a9.
+* Across all 21 committed versions of VERIFY_RESULTS.json since fae64157:
+  * the totals grow monotonically, 20 → 107 certificates and 415 → 2196 expectations;
+  * no non-ACCEPT verdict and no failed mutant expectation was ever recorded;
+  * no sha has two verdicts, and no (file, index) ever had two shas.
+* The MC preview (dade1486, 50 rows) is identical, row for row, to the final (142fe64e, 55 rows).
+* The E2E file was produced once.
+* SRK_CERT_MUTANTS.json changed once, for the disclosed T1 repair (E-13).
+
+**Certificates.**
+* 87 = 11 × 5 + 8 × 4, all CERTIFIED.
+* The canonical sha256 recomputes to the stored value for every certificate.
+* The certificate fields match the file: geometry, block, `kernel` whole, index, `producer_sha256` = the lock
+  fingerprint, and weight_block.
+* Γ in each certificate equals the file's Γ_i, and that is the minimum over rungs at the arg-min degree.
+
+**Independent verification.**
+* Every certificate's sha256 has a VERIFY_RESULTS entry: **87/87 ACCEPT**, with **1781/1781** mutant expectations met
+  (2196/2196 including the preliminary files).
+* Settings: N = 8, max_depth = 24. The verifier file is unchanged since 2f026dbc (sha `a32d5d39…`, equal to the
+  manifest).
+* **My own re-run of `verify_cert` on all 87 certificates (RD2-B5/B5b): 87/87 ACCEPT, sha-matched.**
+* The 32 genuine weight_block ⊋ block certificates are among them. This closes R1's verifier-coverage gap.
+
+**MC controls.**
+* `SRK_MC_CONTROL.json` has 55 rows, exactly (11 blocks × indices 0–4). Row Γ equals the evidence Γ, and all rows pass
+  the 5-se criterion.
+* **I reproduced all 55 rows bit-identically** with the committed seeds (RD2-B6).
+* The worst row is (Γ − MC)/se = −2.23 (h4 [1, 33/32], i = 0). This is within the allowance, and the MC weight is a
+  1/32-grid upper envelope, so it is conservative.
+* Decoy-only tightness Γ/MC is 0.99–1.39.
+
+**A2 end to end.** My re-run of `e2e_cell_family.run(10000)` (RD2-B4) gave PASS on both cells, 13/13 checks each.
+* In-process verdicts equal the batch verdicts.
+* The gate is bound to the cell and the verifier identity, and equals the max over sub-blocks.
+* Γ̄ and the MC rows are identical to the committed file. The cell-level MC passes 8/8.
+* The negatives on real certificates refuse for their own reasons:
+  * `independent verifier verdict 'REJECT'`;
+  * `kernel whole != requested taboo`;
+  * `weight_block is not the cell's outward dyadic hull` (narrowed weight block; shifted cell);
+  * the missing sub-block gives None.
+
+**Manifest and self-audit.** My recomputation agrees with `SRK_EVIDENCE_MANIFEST.json` (complete, 19 jobs, 87
+certificates, lock, verifier sha) and with self-audit A1–A9. I checked A7 (namespace-only since base b73b9449: 0 paths
+outside NS) and A2/A1 (below) directly.
+
+**Failures found:** none. Deviations: C2 (declaration bookkeeping) and C3 (control reason).
+
+### Item 8. Classification: FREEZE_READY_WITH_CONDITIONS (see "Verdict" above)
+
+* **Soundness (A).**
+  * SRK-0 (R1), Lemma SV″ and the §12 D_lo argument (my Phase A) hold.
+  * The Phase-B restatement of SC-SRK is also correct (PHASE1_RESULTS.md). If for every e ∈ C,
+    (R_eκ̄_i)(a) < ‖κ̄_i‖E_a[τ_e], then with continuous sides on compact C, sup f < sup g. Hence Γ̄_i < A0·k_i, and
+    B3 < A0·f_G when that index's coefficient is > 0.
+  * Nothing in P309's validity depends on a decoy number or on any 309 quantity.
+* **Implementation (B).**
+  * The producer is qualified at a single locked code state.
+  * The gate and adapter are repaired (P-1). One residual remains, C1.
+  * Failure semantics are fail-safe: None → TC-T. Dominance is checked twice (the `rad_srk` refusal and the adapter).
+* **Verifier and controls (C).**
+  * The verifier is independent and re-verified by me on all certificates.
+  * The controls have demonstrated power: T1 is now refuted at an explicit point, and T2, the FSM M1/M4/M5, the
+    envelope corners, the assembly mutants, the gate and adapter probes, and MC all bite.
+  * One control reason is wrong, C3.
+* **Evidence (D).** It is complete for package 1 (item 3). The C2 bookkeeping item remains.
+* **Provenance (E).** Temporal integrity passes: after fae64157 there are 403 exec-ledger lines, and the counters are
+  0. The max real-kernel |drift| is 33/32, with no line at |e| ≥ 6/5, and the ledger is append-only. There are no
+  producer changes after the lock, the static scan passes, and all changes stay inside NS. The G1 liability stays
+  with the owner.
+* **Wording (F).**
+  * The B6 corrections are present; SC-SRK is fixed; E-12 through E-14 are recorded.
+  * One remaining wording mismatch is covered by C2.
+  * NOTE: the MC control's ledger lines carry no `drifts` field. `guard_drift` is still called before any real-kernel
+    simulation, so this is only an audit-trail gap.
+
+### Phase-B updates to Phase-A items
+
+**Item 2 (B2 gate): PASS (supersedes P-1 "OPEN"), with residual C1.** I re-ran every RD2-2 probe against the repaired
+code (RD2-B2). Each is now refused, for its own reason:
+* an unrelated cell ("GateResult is for another cell"; if the driver also passes that cell: "cell half-width != meas
+  rho");
+* a synthetic geometry ("for another geometry");
+* a hand-built GateResult (`TypeError`, foreign token);
+* a mutated EMPTY gamma (mappingproxy has no `__setitem__`; attribute rebinding gives "immutable"; an
+  `object.__setattr__` bypass gives "EMPTY GateResult with a non-None value");
+* GATE_TABOO and GATE_MIN ("not admissible in package 1");
+* a verdict-source mismatch or a missing `verifier_id`;
+* the `allow_test_gamma` keyword (removed: `TypeError`);
+* D_lo = 4 ("(0, 1]");
+* a float cell endpoint;
+* hermite_index 1.5 ("hermite_index is not an int");
+* `combine` across cells.
+
+Two residuals:
+* (b1‴) a caller-overridden `geometry` keyword is ACCEPTED, hence C1;
+* (b7) a forgery with the module-private `_TOKEN` is ACCEPTED. That is adversarial and inherent to Python; it is
+  covered by FC4.
+
+`verdict_source` is a caller string. Its binding comes from `verdicts_from_verifier` plus the adapter's `verifier_id`
+equality, so the driver's use must be statically checked (FC4). Tests: test_srk_gate 33/33 and test_srk_adapter
+17 × 20, both re-run and passing.
+
+**Item 4 (controls): PASS (supersedes P-2), with C3.**
+* test_srk_cert_mutants re-run (RD2-B3): T1 is the consistent quarter-weight mutant, **REJECT with `false: True`**
+  ("C3 is FALSE at (3/16, 3/16, 17/64): certified upper bound −0.59 < 0").
+* The legacy T1 row is report-only ("UNPROVEN", as I found).
+* T2 is refuted; T8 and T10 pass.
+* E-12 (the T8 tolerance disclosure) and E-13 (the T1 history) are recorded.
+
+**Item 5 (SRK-T):** unchanged (PASS). The adapter now refuses taboo-derived results, and `_d_lo` enforces (0, 1].
+
+**Item 6 (changed code): PASS, with residual C1.**
+* **`srk_gate`.** Construction requires the module token. Values are held in `MappingProxyType` over private copies,
+  and `__setattr__`/`__delattr__` raise. `_rat` refuses floats and bools. The G5 verdict check precedes the index
+  type check. D_lo must be in (0, 1]. `combine` requires the same cell, geometry and verdict source.
+* **`srk_adapter._bound_gamma`.** It checks the source ∈ {GATE, EMPTY}, the exact cell, the geometry, kernel = whole,
+  ρ = half-width, indices = {1..4}, EMPTY ⇒ all None, `verdict_source == verifier_id`, and each Γ̄ ∈ Fraction ≥ 0.
+  All of these are correct.
+* No producer file was touched (`cfb88c69` changed only the gate, adapter, tests and text).
+* NOTE: `verifier_identity` hashes the verifier file only, not N or max_depth. Pin those (FC1).
+
+**Item 7:** re-checked at bf5c87c4 (403 ledger lines after fae64157; see Item 8 E). PASS.
+
+---
+
+## Phase-B disclosures
+
+**Exposures.**
+* Phase B added only NS files: the governance reader report §§1–3, PHASE3, ERRATA, theory, evidence JSON,
+  VERIFY_RESULTS, and the new code and tests.
+* **No 305–309 number was seen.** The only in-band values I met were the verifier battery's `7q` refusal-probe drift
+  literals (in reason strings of preliminary entries). They are generic band points and carry no cell quantity.
+
+**Executions (Phase B).** All executions were declared in §0B before running; RD2-B5b was declared by the amendment
+before it ran.
+* Ledgers: 91 lines in total across `scratchpad/r2/reviewer_exec_ledger*.jsonl` (Phase A + B). Max real-kernel
+  |drift| is 33/32; all target counters are 0; no cell was touched.
+* Runs:
+  * the RD2-B1 integrity script;
+  * the RD2-B2 probes;
+  * RD2-B3: 5 tests via `run()`;
+  * RD2-B4: e2e `run(10000)`;
+  * RD2-B5/B5b: the verifier on 11, then all 87 certificates;
+  * RD2-B6: all 55 MC rows.
+* Scripts are in `scratchpad/r2/`.
+* Nothing was written in the repository except this file. No git write. No process was started or stopped other than
+  my own.
+
+---
+
+## Phase-A record (written 16:19–16:40Z; superseded where §PB says so)
+
+### 0. Reviewer execution declaration (Phase A; verbatim)
+
 
 Written 2026-09-29 ~16:20Z at HEAD `a748ac49`, while the coordinator's rerun (`srk_decoy_suite.py 2 whole`,
 `2 cell`) is running. I do not start, stop or touch those processes, and I do not run `srk_decoy_suite.py`.
@@ -33,9 +314,8 @@ No run touches the real kernel at a drift above 9/32, any cell 305–309, or any
 So git alone does not show declaration-before-run; the file time and my session do. This is the same situation as
 R1's timing disclosure.
 
----
 
-## Phase-A summary (blockers first)
+### Phase-A summary (historical; P-1 and P-2 were repaired, see §PB)
 
 **Science blockers: none found.**
 * I re-derived Lemma SV″ (A3) and the §12 SRK-T D_lo argument, and both are correct.
@@ -82,9 +362,10 @@ conditions (Phase B decides between a condition and a blocker):
 * The static scan passes.
 * The SRK-T exclusion is target-free and conservative.
 
+
 ---
 
-## 1. B1 / Lemma SV″ and the §12 D_lo argument: PASS (NOTE on one undocumented convention)
+### 1. B1 / Lemma SV″ and the §12 D_lo argument: PASS (NOTE on one undocumented convention)
 
 **Lemma SV″ (THEOREM_SRK.md:311–321), re-derived.**
 * Fix e ∈ C. Since C ⊆ Ew = ∪_j b_j (closed, contiguous quarters), e ∈ b_j for some j.
@@ -139,7 +420,7 @@ The claim "Theorem SRK holds verbatim" is right.
 * NOTE (inputs): `cell_blocks` and `gate` accept floats (`F(0.1)` is the binary value, so the hull is for the wrong
   cell). The Stage-2 driver must pass exact rationals (strings or Fractions).
 
-## 2. B2 gate: PASS for the gate logic; binding to the consumer is OPEN (candidate condition P-1)
+### 2. B2 gate: PASS for the gate logic; binding to the consumer is OPEN (candidate condition P-1)
 
 **Gate logic (srk_gate.py:69–130).** I re-ran test_srk_gate (23/23), and RD2-2 printed each refusal reason.
 Every G-rule negative is refused alone, for its own reason:
@@ -208,7 +489,7 @@ on the loaded rerun certificates:
 They have not yet run on the complete rerun evidence. **Deferred to Phase B**, where I will run e2e `run()` and print
 the reasons.
 
-## 4. B4 controls: PASS except T1 (NOTE/FAIL-for-power, candidate condition P-2)
+### 4. B4 controls: PASS except T1 (NOTE/FAIL-for-power, candidate condition P-2)
 
 | control | can it fail? | right reason? | evidence |
 |---|---|---|---|
@@ -258,7 +539,7 @@ the reasons.
   its first ledgered run at 15:55:34Z) was chosen after R1 reported "Γ₀/Ā_W slightly above 1" on one decoy. It should
   carry an E-10-style disclosure. This is decoy-only, target-free, and a sanity bound only.
 
-## 5. B5 / SRK-T exclusion: PASS (correct and safe), with NOTEs
+### 5. B5 / SRK-T exclusion: PASS (correct and safe), with NOTEs
 
 **Correct under C5?** Yes.
 * There is no D_lo certifier anywhere in NS, so the Γ̂ = v̂/D_lo path cannot be qualified end to end on decoys.
@@ -284,7 +565,7 @@ the reasons.
   (srk_verify_indep.py:237–240). So R1's RD-2 ambiguity (same sha, opposite verdicts) cannot recur, and T2 confirms
   it.
 
-## 6. Soundness spot-checks of changed code: PASS with NOTEs
+### 6. Soundness spot-checks of changed code: PASS with NOTEs
 
 | unit | verdict | evidence |
 |---|---|---|
@@ -329,7 +610,7 @@ the verifier rejected that rung, the gate would fall back to TC-T (None) instead
 safe. Emitting every certified rung, fixed in advance, would keep "min over admitted rungs" meaningful without being a
 retry.
 
-## 7. Target independence and temporal integrity since fae64157: PASS
+### 7. Target independence and temporal integrity since fae64157: PASS
 
 * **Band drift.**
   * I scanned every ZERO_TARGET_LEDGER line after fae64157 (98 lines at 16:2xZ, including the running rerun's
@@ -360,18 +641,15 @@ retry.
   7f1eb363. The a748ac49 application removes SRK-T by C5 only, and removal can only weaken the route. P309 (package 1)
   is as stated in the brief.
 
-## B6 text (spot check)
+### B6 text (spot check)
 
 * E-5 corrections are present and marked (THEOREM_SRK §2, PHASE1 Theorem L restricted to the order-0 channel,
   SC-SRK reduced from "iff" to "if", O3-N with the full Δ_r). E-8 and E-9 are recorded.
 * NOTE (non-load-bearing): SC-SRK keeps "for the maximizing e". R1 flagged this, because Γ̄_i are separate sups over
   e, so the maximizing e is per index. The proposition should say "for each i's maximizing e", or be stated per i.
 
-## 3 and 8: pending (Phase B)
 
----
-
-## Reviewer disclosures (Phase A)
+### Reviewer disclosures (Phase A)
 
 **Exposures.**
 * I read only brief-sanctioned files: NS (not EXPOSURE_LEDGER or INCIDENT_*), git metadata and diffs of NS files,
@@ -391,3 +669,27 @@ retry.
 
 Nothing was written to the repository except this file. No git write. The coordinator's running processes were not
 touched.
+
+---
+
+## 0B. Phase-B reviewer execution declaration (written before any Phase-B run)
+
+Written 2026-09-29 at HEAD `bf5c87c4`, clean tree. No coordinator process is running. The rules are the same as in
+§0: `PYTHONDONTWRITEBYTECODE=1`; only `run()` or library calls, never a `__main__` that writes evidence; the q309
+exec ledger redirected to `scratchpad/r2/reviewer_exec_ledger.jsonl`; nothing written in the repository except this
+file.
+
+| id | what | kernel / geometry / drift | certifier or verifier? |
+|---|---|---|---|
+| RD2-B1 | evidence-integrity recomputation: JSON reads, sha256 recomputation, `git show <git_head_at_start>:<producer file>` byte hashes, completeness against the declarations, verdict matching by sha256, MC row coverage, re-derivation of the manifest and self-audit claims | none | no |
+| RD2-B2 | my RD2-2 gate/adapter probes, re-run against the repaired `srk_gate` / `srk_adapter` (constructed certificates and manufactured consumer objects) | none | no |
+| RD2-B3 | NS tests via `run()`: test_srk_gate, test_srk_adapter, test_q309_guard, test_srk_assembly_twosided, test_srk_cert_mutants (synthetic h = 3, k = 1/2, E = [1/4, 9/32], degree 8, including the new consistent-T1 and the verifier) | h = 3 only | yes (h = 3) |
+| RD2-B4 | `tests/e2e_cell_family.run(10000)`: in-process verifier on the 32 A2 sub-block certificates (h = 3 cell [1/3, 20/51]; real-kernel cell [1/2, 37/72], hull [1/2, 527/1024]), gate, real-certificate negatives with reasons, and MC at drifts inside those cells | real kernel only at e ≤ 527/1024; h = 3 | verifier only |
+| RD2-B5 | independent verifier `verify_cert` (N = 8, max_depth = 24, procs = 1) re-run on committed whole-block certificates: all 5 of real [1, 33/32], all 5 of h = 4 [1, 33/32], and real [0, 1/32] index 4, compared by sha256 with VERIFY_RESULTS.json (genuine certificates only) | real kernel only at e ≤ 33/32; h = 4 | verifier only |
+| RD2-B6 | deterministic MC reproduction of a subset of SRK_MC_CONTROL.json rows via `srk_mc_control.simulate` / `he_abs_int`, with the committed seeds (crc32 of `file:i`) and n = 10 000: rows of real [1, 33/32] and h = 4 [1, 33/32] (as many as time allows), compared for exact equality | real kernel only at e ≤ 33/32; h = 4 | no |
+
+No run touches the real kernel at a drift above 33/32, any cell 305–309, or any drift in [6/5, 13/5] or its mirror.
+
+**Amendment to 0B (written before the run it declares).** RD2-B5b: the same verifier call (N = 8, max_depth = 24) on
+**all 87** rerun certificates. These are all 11 whole blocks (real kernel e ≤ 33/32, h = 3, h = 4) and the 8 A2
+sub-blocks (real-kernel hull ≤ 527/1024, h = 3). Genuine certificates only, compared by sha256 with VERIFY_RESULTS.json.

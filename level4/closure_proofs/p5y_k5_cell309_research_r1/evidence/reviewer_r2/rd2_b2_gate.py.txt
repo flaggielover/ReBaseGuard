@@ -1,0 +1,61 @@
+import sys, copy
+from fractions import Fraction as Fr
+from pathlib import Path
+NS = "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_research_r1"
+for p in ("/code", "/impl", "/tests"): sys.path.insert(0, NS + p)
+import q309_guard as Q
+Q.EXEC_LEDGER = Path(sys.argv[1])
+import srk_certify as S, srk_gate as GT, srk_adapter as AD
+import test_srk_adapter as TA
+VID = TA.VID
+def attempt(label, fn):
+    try:
+        r = fn(); print(f"{label:62s} ACCEPTED -> {r}")
+    except Exception as ex:
+        print(f"{label:62s} refused: {type(ex).__name__}: {str(ex)[:110]}")
+# (a) gate-level reasons on constructed certs
+cell = (Fr(1, 3), Fr(1, 3) + Fr(1, 17)); geom = {"h": "3/1", "k": "1/2"}
+wb, subs = S.cell_blocks(*cell)
+def mk(i, b, g, **kw):
+    c = {"schema": "SRK_CERT/1", "status": "CERTIFIED", "geometry": geom, "block": [S.fstr(b[0]), S.fstr(b[1])],
+         "weight_block": [S.fstr(wb[0]), S.fstr(wb[1])], "e_c": S.fstr((b[0] + b[1]) / 2), "hermite_index": i,
+         "degree": 8, "kernel": "whole", "Gamma": S.fstr(g), "V0": {}, "V1": {}, "W0": {}, "W1": {}}
+    c.update(kw); c["sha256"] = GT.canonical_sha(c); return c
+certs = [mk(i, b, Fr(10 + i)) for i in (1, 2, 3, 4) for b in subs]; verd = {c["sha256"]: "ACCEPT" for c in certs}
+m15 = mk(1, subs[0], Fr(1), hermite_index=1.5); v2 = dict(verd, **{m15["sha256"]: "ACCEPT"})
+r = GT.gate(*cell, geom, "whole", certs + [m15], v2, verdict_source="x")
+print("(a) hermite_index 1.5 ->", [x["reason"] for x in r.report["refused"]], "gamma1", r.gamma[1])
+attempt("(a) gate without verdict_source", lambda: GT.gate(*cell, geom, "whole", certs, verd))
+attempt("(a) gate with float cell endpoint", lambda: GT.gate(float(cell[0]), cell[1], geom, "whole", certs, verd, verdict_source="x"))
+attempt("(a) taboo gate with D_lo = 4", lambda: GT.gate(*cell, geom, "taboo", certs, verd, verdict_source="x",
+        d_lo={"value": "4/1", "domain": [S.fstr(cell[0]), S.fstr(cell[1])]}).source)
+# (b) adapter binding (manufactured consumer object, real-geometry label, no kernel)
+meas, k, A, sig = TA.manufactured(3)
+lo, hi, obj = TA.stub_tail_enclosure(meas, k, A, sig, 5)
+C = (TA.E0 - meas["rho"], TA.E0 + meas["rho"])
+gam = {i: A["A0"] * k[i] / 2 for i in (1, 2, 3, 4)}
+def enc(gr, c=C, vid=VID, **kw): return AD.srk_enclosure(meas, A, 5, c, gr, obj, (lo, hi), TA.coefficients, verifier_id=vid, **kw)
+good = TA.gate_for(C, gam)
+attempt("(b0) genuine bound GateResult (positive control)", lambda: (enc(good)["lo"], enc(good)["hi"]) != (lo, hi))
+other = (Fr(1, 8), Fr(1, 8) + Fr(1, 97))
+attempt("(b1) GateResult for an unrelated cell", lambda: enc(TA.gate_for(other, gam)))
+attempt("(b1') same, and driver passes that unrelated cell", lambda: enc(TA.gate_for(other, gam), c=other))
+attempt("(b1'') synthetic-geometry GateResult", lambda: enc(TA.gate_for(C, gam, geometry={"h": "3/1", "k": "1/2"})))
+attempt("(b1''') synthetic GateResult + adapter geometry kw override", lambda: (enc(TA.gate_for(C, gam, geometry={"h": "3/1", "k": "1/2"}), geometry={"h": "3/1", "k": "1/2"})["lo"] != lo))
+attempt("(b2) hand-built GateResult (foreign token)", lambda: GT.GateResult(object(), gamma=gam, cell=C, geometry=AD.REAL_GEOMETRY, kernel="whole", source="GATE", admitted=(), verdict_source=VID, d_lo=None, report={}))
+e = GT.GateResult.empty(*C, AD.REAL_GEOMETRY)
+attempt("(b3) mutate EMPTY.gamma[1] = 0", lambda: e.gamma.__setitem__(1, Fr(0)))
+attempt("(b3') rebind EMPTY.gamma attribute", lambda: setattr(e, "gamma", {1: Fr(0)}))
+def forge():
+    object.__setattr__(e, "gamma", __import__("types").MappingProxyType({1: Fr(0), 2: Fr(0), 3: Fr(0), 4: Fr(0)}))
+    return enc(e)
+attempt("(b3'') object.__setattr__ bypass on EMPTY (adversarial)", forge)
+dl = {"value": "1/2", "domain": [S.fstr(C[0]), S.fstr(C[1])]}
+tab = TA.gate_for(C, gam, kernel="taboo", d_lo=dl)
+attempt("(b4) GATE_TABOO", lambda: enc(tab))
+attempt("(b4') GATE_MIN", lambda: enc(GT.combine(good, tab)))
+attempt("(b5) verdict_source != verifier_id", lambda: enc(good, vid="sha256:other"))
+attempt("(b5') verifier_id None", lambda: enc(good, vid=None))
+attempt("(b6) allow_test_gamma raw dict", lambda: AD.srk_enclosure(meas, A, 5, C, gam, obj, (lo, hi), TA.coefficients, verifier_id=VID, allow_test_gamma=True))
+attempt("(b7) forged token via module-private GT._TOKEN (adversarial)", lambda: enc(GT.GateResult(GT._TOKEN, gamma={i: Fr(0) for i in (1,2,3,4)}, cell=C, geometry=AD.REAL_GEOMETRY, kernel="whole", source="GATE", admitted=(), verdict_source=VID, d_lo=None, report={}))["lo"] != lo)
+attempt("(c) combine results for different cells", lambda: GT.combine(good, TA.gate_for(other, gam)))

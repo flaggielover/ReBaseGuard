@@ -1,0 +1,62 @@
+import sys, random
+from fractions import Fraction as Fr
+from pathlib import Path
+NS = "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_research_r1"
+sys.path.insert(0, NS + "/code"); sys.path.insert(0, NS + "/impl")
+import q309_guard as Q
+Q.EXEC_LEDGER = Path(sys.argv[1])
+import srk_certify as S
+
+def my_hull(lo, hi, bits=10, n=4):
+    s = 2 ** bits
+    # floor/ceil by integer division only (independent of math.floor on Fraction)
+    a = (lo.numerator * s) // lo.denominator
+    b = -((-hi.numerator * s) // hi.denominator)
+    L, H = Fr(a, s), Fr(b, s)
+    if L == H:
+        H = L + Fr(1, s)
+    w = (H - L) / n
+    return (L, H), [(L + j * w, L + (j + 1) * w) for j in range(n)]
+
+def is_dyadic(x): d = Fr(x).denominator; return d & (d - 1) == 0
+BAND = (Fr(6, 5), Fr(13, 5))
+def banded(lo, hi):  # avoid ever passing band endpoints (not needed for arithmetic, but keep the firewall literal)
+    return any(not (hi < a or lo > b) for a, b in (BAND, (-BAND[1], -BAND[0])))
+
+cases = [(Fr(1,3), Fr(20,51)), (Fr(1,2), Fr(37,72)), (Fr(-7,9), Fr(-5,9)), (Fr(-1,3), Fr(1,7)),
+         (Fr(0), Fr(1,1000)), (Fr(1,1024), Fr(2,1024)), (Fr(5,1024), Fr(5,1024)), (Fr(1,3), Fr(1,3)),
+         (Fr(-1,1024), Fr(0)), (Fr(99,100), Fr(101,100)), (Fr(-3,1), Fr(-14,5)), (Fr(3,1), Fr(31,10)),
+         (Fr(1,4), Fr(9,32)), (Fr(1,7), Fr(1,7) + Fr(1, 10**9))]
+rng = random.Random(29)
+for _ in range(3000):
+    while True:
+        a = Fr(rng.randint(-3000, 3000), rng.randint(1, 5000))
+        b = a + Fr(rng.randint(0, 400), rng.randint(1, 5000))
+        if not banded(a, b): break
+    cases.append((a, b))
+bad = 0; props = {"contains": 0, "dyadic_grid": 0, "four_equal": 0, "tight": 0, "match_mine": 0}
+for lo, hi in cases:
+    if banded(lo, hi): continue
+    wb, subs = S.cell_blocks(lo, hi)
+    mw, msubs = my_hull(lo, hi)
+    ok = True
+    props["match_mine"] += (wb == mw and list(subs) == msubs)
+    c = wb[0] <= lo and hi <= wb[1]; props["contains"] += c
+    g = all((x * 1024).denominator == 1 for x in wb) and all(is_dyadic(x) for s_ in subs for x in s_); props["dyadic_grid"] += g
+    fe = (len(subs) == 4 and subs[0][0] == wb[0] and subs[-1][1] == wb[1]
+          and all(subs[j][1] == subs[j+1][0] for j in range(3)) and len({b_ - a_ for a_, b_ in subs}) == 1); props["four_equal"] += fe
+    # tightness: hull is the smallest 2^-10-grid interval containing the cell (or one grid cell when degenerate on-grid)
+    t = (wb[0] > lo - Fr(1,1024)) and (wb[1] < hi + Fr(1,1024)) or (lo == hi and wb[1] - wb[0] == Fr(1,1024)); props["tight"] += t
+    if not (c and g and fe and t and wb == mw):
+        bad += 1; print("BAD", lo, hi, wb, subs)
+n = sum(1 for lo, hi in cases if not banded(lo, hi))
+print("cases", n, "bad", bad, props)
+for lo, hi in cases[:14]:
+    wb, subs = S.cell_blocks(lo, hi)
+    print(f"[{lo}, {hi}] -> Ew=[{wb[0]}, {wb[1]}] subs={[(str(a), str(b)) for a, b in subs]}")
+# refusals
+for args in [(Fr(1,2), Fr(1,3))]:
+    try: S.cell_blocks(*args); print("NOT refused", args)
+    except ValueError as e: print("refused", args, e)
+# non-Fraction inputs
+print("str input:", S.cell_blocks("1/3", "20/51")[0], " float input 0.1:", S.cell_blocks(0.1, 0.2)[0])
