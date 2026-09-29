@@ -981,7 +981,27 @@ def lin_min(T, verts):
     return math.floor(best)
 
 
-def tm_lb(T, rem, verts):
+def reduce_axis(T, kind):
+    """On an axis cell the prism is 2-dimensional: for 'axp' (m = 0) x1 = x2 identically (tau - tau_c = t - t_c
+    = e - e_box, r1 = r2 = w_e/2); for 'axm' (p = 0) x0 = -x2.  Substituting these identities is exact on the
+    feasible set and removes large cancelling coefficients in the infeasible direction."""
+    if kind == 'axp':
+        out = {}
+        for (i, j, l), v in T.items():
+            e = (i, 0, j + l)
+            out[e] = out.get(e, 0) + v
+        return out
+    if kind == 'axm':
+        out = {}
+        for (i, j, l), v in T.items():
+            e = (0, j, i + l)
+            out[e] = out.get(e, 0) + (-v if i & 1 else v)
+        return out
+    return T
+
+
+def tm_lb(T, rem, verts, kind='tri'):
+    T = reduce_axis(T, kind)
     return T.get((0, 0, 0), 0) + lin_min(T, verts) + tm_hi_bound(T) - rem
 
 
@@ -1182,7 +1202,7 @@ def check_cell(kind, cell, N):
     P_tm = shift_to_tm(ps.st, fr, N)
     if kind == 'C1':
         verts = prism_verts(poly, e0, e1, fr, cert)
-        lb = tm_lb(P_tm[0], P_tm[1], verts)
+        lb = tm_lb(P_tm[0], P_tm[1], verts, cell[0])
         return lb >= 0, Fr(lb, ONEB), ''
     cases = split_cases(cert, poly)
     Ds = []
@@ -1194,7 +1214,7 @@ def check_cell(kind, cell, N):
         for case, cpoly, D, rem in Ds:
             D = dict(D)
             D[(0, 0, 0)] = D.get((0, 0, 0), 0) - ONEB
-            lb = tm_lb(D, rem, prism_verts(cpoly, e0, e1, fr, cert))
+            lb = tm_lb(D, rem, prism_verts(cpoly, e0, e1, fr, cert), cell[0])
             worst = lb if worst is None or lb < worst else worst
         return worst >= 0, Fr(worst, ONEB), ''
     # (C3)
@@ -1208,7 +1228,7 @@ def check_cell(kind, cell, N):
             return False, None if lb is None else Fr(lb, ONEB), 'kbar-resolution'
         pts, delta = res
         pts = prune_points(cert, pts, pmin, pmax, mmin, mmax)
-        worst = c3_lower_bound(cert, fr, Ds, pts, e0, e1, N)
+        worst = c3_lower_bound(cert, fr, Ds, pts, e0, e1, N, cell[0])
         if worst is None:
             return False, None, 'multi-root'
         dfx = ce(delta, WB)
@@ -1223,7 +1243,7 @@ def check_cell(kind, cell, N):
     return False, Fr(lb, ONEB), info
 
 
-def c3_lower_bound(cert, fr, Ds, pts, e0, e1, N):
+def c3_lower_bound(cert, fr, Ds, pts, e0, e1, N, kind='tri'):
     n, c = cert.i, cert.c
     r0, r1, r2 = fr.rad
     pc = fr.cen[0] + fr.cen[2] + cert.e_c           # p_c = sigma_c + e_box_c
@@ -1274,7 +1294,7 @@ def c3_lower_bound(cert, fr, Ds, pts, e0, e1, N):
                         T[e] = T.get(e, 0) - v
                     for e, v in GA.items():
                         T[e] = T.get(e, 0) + v
-                    lb = tm_lb(T, rem + GBr + GAr + errB + errA, prism_verts(pol, e0, e1, fr, cert))
+                    lb = tm_lb(T, rem + GBr + GAr + errB + errA, prism_verts(pol, e0, e1, fr, cert), kind)
                     if worst is None or lb < worst:
                         worst = lb
     return worst
