@@ -1,6 +1,6 @@
 {
- "certificates": 82,
- "complete": false,
+ "certificates": 87,
+ "complete": true,
  "declared_jobs": 19,
  "e2e_ok": true,
  "jobs": [
@@ -1275,6 +1275,102 @@
    "weight_block": null
   },
   {
+   "W_status": [
+    "CERTIFIED",
+    "CERTIFIED",
+    "CERTIFIED"
+   ],
+   "block": [
+    "1/1",
+    "33/32"
+   ],
+   "certificates": [
+    {
+     "Gamma_present": true,
+     "degree": 10,
+     "i": 0,
+     "mc_control": {
+      "pass": true,
+      "tightness": 0.9868307665873786
+     },
+     "mutants_met": 20,
+     "mutants_run": 20,
+     "sha256": "9c3e7dd0f6665c9af6ffdf849a479c30ffc4838a6c4d844908923aa533a379ed",
+     "sha_recomputed_ok": true,
+     "status": "CERTIFIED",
+     "verifier_reason": "(C1)-(C4) and sha256 proved",
+     "verifier_verdict": "ACCEPT"
+    },
+    {
+     "Gamma_present": true,
+     "degree": 12,
+     "i": 1,
+     "mc_control": {
+      "pass": true,
+      "tightness": 1.00489400057888
+     },
+     "mutants_met": 20,
+     "mutants_run": 20,
+     "sha256": "51a9db4e99c5cae4f4e1c64c6b2e4dbb23dd69bbdf3eb6e060482c694e12acde",
+     "sha_recomputed_ok": true,
+     "status": "CERTIFIED",
+     "verifier_reason": "(C1)-(C4) and sha256 proved",
+     "verifier_verdict": "ACCEPT"
+    },
+    {
+     "Gamma_present": true,
+     "degree": 12,
+     "i": 2,
+     "mc_control": {
+      "pass": true,
+      "tightness": 0.9991106240897362
+     },
+     "mutants_met": 20,
+     "mutants_run": 20,
+     "sha256": "0371bd18f11e6f7bd1356d58472d994262d68068db7429ebde3534d0db35bf2e",
+     "sha_recomputed_ok": true,
+     "status": "CERTIFIED",
+     "verifier_reason": "(C1)-(C4) and sha256 proved",
+     "verifier_verdict": "ACCEPT"
+    },
+    {
+     "Gamma_present": true,
+     "degree": 10,
+     "i": 3,
+     "mc_control": {
+      "pass": true,
+      "tightness": 1.007045368539046
+     },
+     "mutants_met": 20,
+     "mutants_run": 20,
+     "sha256": "7dbae51dc52b41c92d02e4eafdf7e6e621756b30e17b97abf86ed6572db3355e",
+     "sha_recomputed_ok": true,
+     "status": "CERTIFIED",
+     "verifier_reason": "(C1)-(C4) and sha256 proved",
+     "verifier_verdict": "ACCEPT"
+    },
+    {
+     "Gamma_present": true,
+     "degree": 12,
+     "i": 4,
+     "mc_control": {
+      "pass": true,
+      "tightness": 1.0072448507092504
+     },
+     "mutants_met": 20,
+     "mutants_run": 20,
+     "sha256": "bee771e1b9c42cca63003d62eee722dba9e7d6588cb009c5d3ba1a4f115f647f",
+     "sha_recomputed_ok": true,
+     "status": "CERTIFIED",
+     "verifier_reason": "(C1)-(C4) and sha256 proved",
+     "verifier_verdict": "ACCEPT"
+    }
+   ],
+   "geometry": {
+    "h": "4/1",
+    "k": "1/2"
+   },
+   "git_head_at_start": "2a03e838498ab8a8c1c61b9a142ba45adb941592",
    "job": {
     "h": "4",
     "hi": "33/32",
@@ -1297,10 +1393,13 @@
     "wb": null,
     "whole": true
    },
-   "ledger_calls": 15,
+   "kernel": "whole",
+   "ledger_calls": 18,
    "ledger_first": "2026-09-29T20:51:22Z",
-   "ledger_last": "2026-09-29T21:57:37Z",
-   "present": false
+   "ledger_last": "2026-09-29T22:48:46Z",
+   "present": true,
+   "producer": "377057bef1d1f21be4db38488235596c0e4134bb75ffdced08e667e6c48cc8db",
+   "weight_block": null
   },
   {
    "W_status": [
@@ -2106,10 +2205,8 @@
  "lock_commit": "2a03e838498ab8a8c1c61b9a142ba45adb941592",
  "lock_producer_fingerprint": "377057bef1d1f21be4db38488235596c0e4134bb75ffdced08e667e6c48cc8db",
  "mc_ok": true,
- "present_jobs": 18,
- "problems": [
-  "missing srk_decoys/h4_k1_2_E1_33_32.json"
- ],
+ "present_jobs": 19,
+ "problems": [],
  "schema": "SRK_EVIDENCE_MANIFEST/1",
  "verifier_file_sha256": "a32d5d397893a1fc698d3609f59cb65aab3bc4fe1445c51c676fd9ad54652333"
 }
