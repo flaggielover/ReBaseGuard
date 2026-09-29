@@ -75,3 +75,29 @@ incident-01-class estimator of R-MB's own outcome on cell 308 (order-0 tightness
 transport factor × committed shares). **The coordinator has not formed that estimate, has written no such
 combination, and will not.** No R-MB design decision after E1 depended on these ingredients: every parameter is fixed
 by the dominance rule, inherited rules or non-target findings (audit a0 §4, a1 C1(a)).
+
+## E1″. Addendum (2026-09-30; successor-governance review GC-6): observations of the MB308 r1 target run
+
+This addendum names, and never values, what the coordinator and the reviewers observed about the one granted MB308 r1
+evaluation (grant `afa93072`). The run was consumed, never sealed, and ended as CELL308_EXECUTION_INDETERMINATE. **No
+target value was ever persisted, printed or read.** Every item below is a runtime or host observation: a latent
+runtime proxy with no value content.
+
+| observation | where recorded | who holds it |
+|---|---|---|
+| host readings at launch (thermal level, AC, lid, lowpowermode, load) | session transcript; recovery addendum A1 (g), labelled coordinator-reported | coordinator |
+| the 23:10 JST read-only audit: process tree, worker start times and ages, per-worker CPU times, load average, thermal-pressure level | session transcript | coordinator |
+| thermal-pressure level during the run | session transcript; REVIEW_EXECUTION_INTERRUPTION §4a/§4b; the execution review's disclosures | coordinator; reviewers reviewINT and reviewEXEC |
+| per-coalition CPU of the run (powerlog) before and after 23:29, and the pool-load continuation | REVIEW_EXECUTION_INTERRUPTION §4b (quantitative); A1 and postexec (qualitative) | reviewINT; coordinator (read §4b); reviewEXEC; the adjudicator (reads the recovery chain) |
+| host memory events in the window (ReportMemoryException, memory-pressure warning) | REVIEW_EXECUTION_INTERRUPTION §4b/N6; A1 (c) | reviewINT; coordinator; later readers of the chain |
+| other applications active during the run | the execution review `a40211cc` | reviewEXEC; coordinator |
+
+**Restrictions (successor-governance addendum A1, S13):**
+* no successor brief contains these observations or points to REVIEW_EXECUTION_INTERRUPTION §4b;
+* the successor's route, implementation and caps agents must not have seen them;
+* the caps decision is justified from decoy and qualification evidence only.
+
+**Disclosure.** The successor builder (brief 30, `8a4a02b4`) was launched before GC-6 existed. It was then told not to
+read the recovery chain or the execution review, and to disclose any earlier reading in its BUILD_REPORT. The
+successor route audit (`bddd85f8`) was written by the coordinator, who holds these observations. Its selection rests on
+registry r2 and dominance, and uses none of them. The route review found no dependence on the lost run.
