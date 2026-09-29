@@ -38,6 +38,7 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 27 | 27_reviewEXEC.txt | execution review (section 10 step 6, adapted; fresh) | Agent | 2026-09-30 ~19:0xZ | no |
 | 28 | 28_reviewGOV.txt | successor-governance review (fresh) | Agent | 2026-09-30 ~19:2xZ | no |
 | 29 | 29_reviewROUTE.txt | successor route review (fresh) | Agent | 2026-09-30 ~19:4xZ | no |
+| 30 | 30_builderMBS.txt | successor MB-S r1 builder (Phases 4-8, target-free) | Agent | 2026-09-30 ~20:0xZ | no |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.

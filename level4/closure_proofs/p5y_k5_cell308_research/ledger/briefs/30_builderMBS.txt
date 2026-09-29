@@ -1,0 +1,57 @@
+You are the BUILDER of the cell-308 successor campaign MB-S r1 in the ReBaseGuard repository: target-free implementation of Phases 4–8. Work carefully and test everything. You never evaluate cell 308.
+
+WHERE
+- Successor worktree /Users/suzhe/ReBaseGuard-c308mbs, branch p5y-k5-cell308-mbs-r1, HEAD 21e99cf0 (MB r1's postexec commit). NSS = level4/closure_proofs/p5y_k5_cell308_mbs_r1: create it, and build only there.
+- MB r1's namespace level4/closure_proofs/p5y_k5_cell308_mb_r1 (NSF) is present in this worktree and is FROZEN HISTORY. Never modify any byte of it.
+- Design to implement: /Users/suzhe/ReBaseGuard-c308/level4/closure_proofs/p5y_k5_cell308_research/governance/SUCCESSOR_ARCHITECTURE_308.md. Read it fully, with the successor governance (governance/SUCCESSOR_GOVERNANCE_308.md), the route audit (registry/SUCCESSOR_ROUTE_AUDIT_308.md) and MB r1's protocol and driver (NSF/protocol/MB308_PROTOCOL.md, NSF/code/*.py, NSF/tests/*.py). Two reviews (governance, route) are still running; build to the design as written, and note any point where you think it is wrong.
+
+ABSOLUTE RULES
+- NEVER run any MB r1 driver mode (NSF/code/mb308_driver.py) in any worktree. NEVER evaluate CUSUM m=5 cells 305-309, and never compute any operator quantity at a drift in [6/5, 13/5] or its mirror (the guard enforces this; never bypass it).
+- NEVER create, move or delete any ref in the REAL repository. That covers refs/p5y-k5-cell308-mbs-r1/* and refs/p5y-k5-cell308-mb-r1/*: all marker, journal, pending, ckpt and seal tests run in `git clone --shared` SANDBOXES under your scratch, exactly as MB r1's tests/test_mb308_flows.py does. Do not commit, stage or reset in any real worktree; the coordinator commits.
+- Heavy compute is limited: no full decoys. Decoy runs only as `decoy --cell 297 --first-blocks 1 --dev-ladder --workers 2` (about 3 minutes) or smaller. Crash, recovery and state-machine tests use a SYNTHETIC evaluator (a stub Stage-1 job function over fake job keys, and stub Stage 2).
+- Stdlib Python 3.14 only (python3.14 -I -S -B). No pip. No network. No sudo. Never change power or system settings.
+- launchd tests:
+  - the plist lives in your scratch (never ~/Library/LaunchAgents) and uses a unique label org.rebaseguard.mbs308.test.<utc>;
+  - start with `launchctl bootstrap gui/$(id -u) <plist>`; always `launchctl bootout` and remove it afterwards, even on failure;
+  - the job runs only a synthetic payload (sleep/loop), never the driver's target path;
+  - logs go under ~/Library/Logs/ReBaseGuard/mbs308-test/.
+- Scratch: /private/tmp/claude-501/-Users-suzhe-ReBaseGuard/d1135746-7699-4331-8dd2-9addf63a6def/scratchpad/builderMBS/. Any durable test logs you need to keep go under ~/Library/Logs/ReBaseGuard/mbs308-test/.
+- Ledger: one line per run in the research ledger via /Users/suzhe/ReBaseGuard-c308/level4/closure_proofs/p5y_k5_cell308_research/code/c308_quarantine.py log_event (agent='builder2'; class SYNTHETIC_VALIDATION for sandbox/synthetic runs, NONTARGET_DRIFT_VALIDATION for decoy runs; target_evaluations 0).
+- Cell 309 is worked in a separate session: never touch it.
+
+BUILD (in NSS)
+1. code/mbs308_guard.py: MB r1's guard semantics (quarantine band, target cell 308 admitted set derived from CELL308, decoy by default), with the successor's refs (marker refs/p5y-k5-cell308-mbs-r1/target-consumed). Diff it minimally against NSF/code/mb308_guard.py and document every changed line.
+2. code/mbs308_host.py: MB r1's mb308_host (sleep channels K/S/L, power, thermal level, load) plus:
+   - boot session UUID (sysctl kern.bootsessionuuid);
+   - free disk on the repository volume;
+   - memory-pressure level (read-only);
+   - a caffeinate SUPERVISOR thread that re-spawns `caffeinate -i -m -s -w <pid>` when it dies and records each death and re-spawn;
+   - preflight gates per architecture section 6.
+3. code/mbs308_state.py:
+   - the durable journal (blob + CAS ref; sequence numbers; no target value);
+   - the spool persistence of section 3 (O_EXCL tmp, fsync, rename, dir fsync + F_FULLFSYNC where available, read-back verify, `git -c core.fsync=loose-object hash-object -w`);
+   - the pending ref, the seal and materialization;
+   - checkpoints of section 4 (per-job blob in a tree under refs/.../ckpt, schema, binding, verification);
+   - the read-only STATE CLASSIFIER of section 2 (prints the state name only);
+   - `recover` dispatch;
+   - `close-indeterminate` (value-free sealed record);
+   - the resume budget (3 attempts; 7-day deadline) and mandatory-continuation rules;
+   - an O_EXCL lockfile against concurrent recover/resume;
+   - pidfile identity (pid, start time, boot UUID, command sha).
+4. code/mbs308_driver.py: derived from NSF/code/mb308_driver.py.
+   - Keep, identically, every science-glue function (controls, compose_and_consume, decide, target_geometry, admitted_pairs, prepare_target, the Stage-1 aggregation logic, load_science, the worker job code path).
+   - Change only: identity (the successor worktree, branch and refs), the guard (mbs308_guard), the lifecycle (state machine, durable persistence, checkpoints + resume, supervisor, host contract), and the modes (preflight, rehearse --cell 305, decoy, execute, resume, recover, status, seal-only, close-indeterminate).
+   - The science MODULES are loaded from MB r1's paths, pinned by sha256 and git blob at 21e99cf0 (mb308_stage1, mb308_supply, mb308_consumer, mb308_a0core, mb308_pinned), plus MB r1's research pins. Do NOT copy them.
+   - If the Stage-1 aggregation must be refactored to support resume (skip jobs with verified checkpoints), keep it byte-equivalent in behaviour and prove equivalence by test (resumed vs uninterrupted identical on the synthetic evaluator and on the dev decoy).
+   - Produce DRIVER_DIFF.md: the full diff against mb308_driver.py, with every hunk classified (science-glue identical / lifecycle / identity).
+5. code/mbs308_launch.py: the launchd launcher of section 5 (install a transient LaunchAgent plist, bootstrap, record label/pid/PPID/PGID/SID/uid/start time/boot UUID, prove detachment by test, bootout on completion or refusal). Refuse to start `execute` unless preflight passes. `execute` itself must refuse unless it runs under this launcher (a label/env check).
+6. tests/:
+   - test_mbs308_state.py: every state of section 2 classified correctly, and every recover action.
+   - test_mbs308_crash.py: fault points F1-F12 by real os._exit/SIGKILL in sandboxes with the synthetic evaluator, plus the simulations of section 7. Assert the classified state, the action, no second marker, no recomputation of verified checkpoints, the final state, and resumed == uninterrupted bytes.
+   - test_mbs308_launch.py: a launchd integration test with a synthetic payload: kill the launching shell's process group AND session; assert the job survives; kill its caffeinate; assert the supervisor re-spawns; assert a stale pidfile is detected.
+   - test_mbs308_mutants.py: each planted mutant of section 7 (and any you add) must make its target test FAIL, and the unmutated code must PASS. Report the mutant kill matrix.
+   - A test mode hook for fault injection that production refuses (static check included).
+7. protocol/MBS308_PROTOCOL_DRAFT.md (NOT frozen): state machine, recovery semantics, persistence contract, host contract, checkpoint governance, resume budget, and the carried-over MB r1 science and criterion, citing MB r1 as history (consumed, interrupted, INDETERMINATE, not negative).
+8. BUILD_REPORT.md: what was built, every test, the mutant matrix, the ledger lines, the known gaps, and every deviation from the design with its reason.
+
+STOP when the build and its tests are complete (target: about 3 hours), or earlier on a genuine blocker. Report which it was. Final message: a 15-line summary with the test and mutant results.
