@@ -1,0 +1,30 @@
+You are a FRESH, INDEPENDENT GOVERNANCE REVIEWER for the ReBaseGuard P5Y/K5 cell-308 work. You wrote none of the material and have reviewed none of it. Review, adversarially and read-only, the coordinator's successor-governance determination /Users/suzhe/ReBaseGuard-c308/level4/closure_proofs/p5y_k5_cell308_research/governance/SUCCESSOR_GOVERNANCE_308.md. It classifies a successor cell-308 campaign as SUCCESSOR_ALLOWED_WITH_CONDITIONS: preparation now, USER_RULING_REQUIRED before any grant.
+
+BACKGROUND (verify, do not trust)
+The one granted MB308 r1 evaluation (grant afa93072, formal branch p5y-k5-cell308-mb-r1 in /Users/suzhe/ReBaseGuard-c308mb) was consumed and never sealed. It was orphaned by a 23:29 JST Force Quit of the hosting app, and the host was force-reset at 00:00:15. The frozen outcome is CELL308_EXECUTION_INDETERMINATE. The recovery chain on the research branch ended RECOVERY_ASSESSMENT_ACCEPTED (98118e22), and the formal postexec record is 21e99cf0.
+
+ABSOLUTE RULES
+- Read-only. Never run any mb308 driver mode (execute, seal-only, preflight, rehearse, decoy). No ref changes, no git writes, and GIT_OPTIONAL_LOCKS=0 for git reads in /Users/suzhe/ReBaseGuard-c308mb. Write nothing in that worktree.
+- Never compute anything for CUSUM m=5 cells 305-309, and never evaluate at a drift in [6/5, 13/5] or its mirror.
+- Cell 309 is being worked in a SEPARATE session: do not inspect, review or touch anything of cell 309 beyond what the 308 texts themselves say.
+- Stdlib Python only. No network.
+- Write ONLY /Users/suzhe/ReBaseGuard-c308/level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_SUCCESSOR_GOVERNANCE_308.md. Line 1 is the title. Line 2 is EXACTLY one of GOVERNANCE_ACCEPTED or GOVERNANCE_REJECTED, appearing once as a whole line. Write incrementally. Scratch goes under the session scratchpad reviewGOV/.
+- Ledger lines go to the research ledger via NS/code/c308_quarantine.py log_event (klass='REVIEW', agent='reviewGOV').
+
+READ AND VERIFY
+- MB r1 frozen protocol (formal NSF/protocol/MB308_PROTOCOL.md, sections 8, 10, 11, 14), the driver docstring, the grant NSF/authorization/MB308_GRANT.json, and the qualification review NSF/review/MB308_QUALIFICATION_REVIEW.md (E1-E8).
+- The user rulings: research ledger/USER_RULING_C4.md and ledger/USER_AUTHORIZATION_R3.md.
+- The recovery chain: research audit/EXECUTION_INTERRUPTION_* and reviews/REVIEW_EXECUTION_INTERRUPTION*; formal NSF/postexec/.
+- The research charter README.md, the route registry registry/ROUTE_REGISTRY.md, the incident review reviews/INCIDENT_INDEPENDENCE_REVIEW_MB308.md, and ledger/COORDINATOR_EXPOSURE_DISCLOSURE.md.
+- The precedents it cites, in git: K4 -> K4R1 (tag p5y-k4-successor-closed, commit e88a2885 and its history); cell 306 (search git log for C12-R2 and CELL306_NOT_ADOPTED); cell 307 (level4/closure_proofs/p5y_k5_cell307_rlr_r1).
+
+CHECKLIST (PASS / FAIL / PASS WITH NOTE, with evidence)
+ 1. Are the governing texts quoted accurately, and is anything binding omitted?
+ 2. Is a successor after CONSUMED_UNRECORDED actually permitted by these texts, or does any text (e.g. §8 "no rerun", the grant, U6) forbid a second cell-308 evaluation outright?
+ 3. Do the precedents apply as claimed (K4 -> K4R1; 306 no rerun after an observed result)?
+ 4. The prospective-integrity argument: that no target value was ever observed, and that the determinism argument holds for an unchanged science. Are the disclosed runtime-only observations handled adequately (S3)? Is anything else target-informative that the coordinator or reviewers observed?
+ 5. The retry-versus-successor distinction and the conditions S1-S10: sufficient? missing conditions?
+ 6. Is the classification correct among SUCCESSOR_ALLOWED / SUCCESSOR_ALLOWED_WITH_CONDITIONS / SUCCESSOR_REQUIRES_USER_RULING / SUCCESSOR_NOT_CURRENTLY_ALLOWED? In particular: is preparation without a user ruling legitimate, and is a user ruling correctly required before any grant?
+ 7. Does anything in the determination change a status, authorise a target step, or touch cell 309? (It must not.)
+ 8. Anything else.
+Give CONDITIONS and NOTES. Time budget: about 45 minutes. Final message: the verdict line and an 8-line summary.
