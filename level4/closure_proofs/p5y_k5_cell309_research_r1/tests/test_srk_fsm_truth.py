@@ -9,8 +9,10 @@ For each declared seed (rule fixed before the first run, below):
   * pointwise premises: |phi'''(e0)(x)| <= Psi3(x) and sup_s |phi''''(s)(x)| <= Psi4(x) exactly/rigorously;
   * dominance rad_srk <= rad_tct;
   * mutants: (M1) Gamma halved, (M2) SRK min dropped (raw SRK coefficients used even when larger),
-    (M3) coefficient 3 -> 1 on the s_H term of B3, (M4) Psi3 without the sigma3 term.  A mutant is 'caught' when
-    it violates exact truth, a pointwise premise, or dominance.
+    (M3) coefficient 3 -> 1 on the s_H term of B3, (M4) Psi3 without the sigma3 term, (M5, added per review R1 B4)
+    Gamma_i taken at the centre drift e0 only, (R_{e0} kbar_i)(a) exactly, i.e. the sup over the cell forgotten
+    (the failure mode Lemma SV' exists to prevent).  A mutant is 'caught' when it violates exact truth, a pointwise
+    premise, or dominance.
 
 DECLARED RULE: seeds 1..12; n = 4 + seed % 4; kernel degree 4; e0 = 1/8; rho = (1/64, 1/32, 1/16)[seed % 3];
 pert = (1e-6, 1e-4, 1e-2)[(seed // 3) % 3]; one source of degree (2, 5)[seed % 2].
@@ -108,7 +110,13 @@ def case(seed: int) -> dict:
     m3 = A0 * fH + rho * b3 + rho ** 2 / 2 * out["B4"] + 2 * A1 * p1 + A2 * p0
     mut["M3_coef3to1"] = {"rad": m3, "caught_truth": dev > m3, "caught_premise": b3 < b3_truth}
     psi3_bad = [3 * sH * kbar[1][x] + 3 * sD * kbar[2][x] + sF * kbar[3][x] for x in range(n)]
-    mut["M4_sigma3_dropped"] = {"caught_pointwise": not all(abs(phi[3][x]) <= psi3_bad[x] for x in range(n))}
+    mut["M4_sigma3_dropped"] = {"applicable": sigma3 > 0,
+                                "caught_pointwise": not all(abs(phi[3][x]) <= psi3_bad[x] for x in range(n))}
+    gam_c = {i: D.mv(fam.R(e0), kbar[i])[0] for i in (1, 2, 3, 4)}
+    m5 = SA.rad_srk(fields, gam_c)
+    mut["M5_centre_drift_only"] = {"rad": m5["rad_srk"], "caught_truth": dev > m5["rad_srk"],
+                                   "caught_premise": any(gam_c[i] < g_truth[i] for i in gam_c)
+                                   or m5["B3"] < b3_truth or m5["B4"] < b4_truth}
     return {"seed": seed, "n": n, "rho": str(rho), "pert": str(pert),
             "rad_srk": float(out["rad_srk"]), "rad_tct": float(out["rad_tct"]), "dev": float(dev),
             "ratio_srk_tct": float(out["rad_srk"] / out["rad_tct"]), "branch3": out["branch3"],
@@ -128,17 +136,29 @@ def run():
     caught = {m: sum(1 for r in rows if any(v for kk, v in r["mutants"][m].items() if kk.startswith("caught")))
               for m in rows[0]["mutants"]}
     caught["M2_min_dropped_applicable_cases"] = sum(1 for r in rows if r["mutants"]["M2_min_dropped"]["applicable"])
+    caught["M4_sigma3_dropped_applicable_cases"] = sum(1 for r in rows if r["mutants"]["M4_sigma3_dropped"]["applicable"])
+    caught["M4_sigma3_dropped_caught_on_applicable"] = sum(
+        1 for r in rows if r["mutants"]["M4_sigma3_dropped"]["applicable"]
+        and r["mutants"]["M4_sigma3_dropped"]["caught_pointwise"])
     return ok, rows, caught
 
 
-# EXIT-STATUS RULE (review R1 B4, fixed before the rerun): genuine checks must all pass AND
+# EXIT-STATUS RULE (review R1 B4; revised 2026-09-29 after review R1 and BEFORE the next run): genuine checks must all
+# pass AND
 #   M1 (Gamma halved) must be caught in 12/12 cases (premise-level truth; a control that can fail),
-#   M4 (sigma3 dropped from Psi3) must be caught in >= 1 case (pointwise premise; a control that can fail).
+#   M4 (sigma3 dropped from Psi3) must be caught on EVERY applicable case (applicable := sigma3 > 0; applicability
+#      reported), and there must be >= 1 applicable case.  Disclosure: review R1 observed 6/6 on the then
+#      applicable cases, so this rule was written knowing that count,
+#   M5 (Gamma at the centre drift only) must be caught in >= 1 case (count reported).
 # M2 (min dropped) is NOT APPLICABLE here when SRK wins every branch, and M3 (coefficient 3 -> 1) is below the
-# power of a truth check on loose radii: both are covered by tests/test_srk_assembly_twosided.py (exact two-sided).
+# power of a truth check on loose radii: both are covered by tests/test_srk_assembly_twosided.py (exact two-sided)
+# and are reported here only.
 if __name__ == "__main__":
     ok, rows, caught = run()
-    ok = ok and caught["M1_gamma_half"] == len(rows) and caught["M4_sigma3_dropped"] >= 1
+    ok = (ok and caught["M1_gamma_half"] == len(rows)
+          and caught["M4_sigma3_dropped_applicable_cases"] >= 1
+          and caught["M4_sigma3_dropped_caught_on_applicable"] == caught["M4_sigma3_dropped_applicable_cases"]
+          and caught["M5_centre_drift_only"] >= 1)
     out = {"all_genuine_ok": ok, "mutants_caught_of_12": caught,
            "ratio_srk_tct": [round(r["ratio_srk_tct"], 4) for r in rows],
            "branches": [(r["branch3"], r["branch4"]) for r in rows], "rows": rows}

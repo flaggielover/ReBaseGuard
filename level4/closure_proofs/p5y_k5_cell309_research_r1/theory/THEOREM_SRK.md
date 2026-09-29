@@ -334,3 +334,50 @@ refuses Γ̄ values that do not come from the gate.
 
 **Note (review R1).** The premise W ≥ 0 in (W) is redundant for sub-Markov kernels, and is kept as a checked safety
 condition.
+
+## 12. Amendment A4: pinned implementation constants, SRK-T D_lo rule, §8 test amendments (review R1 B4/B5/N2/N3; target-free; before the single-code-state rerun at 2a03e838)
+
+**Pinned constants.** Every constant below affects tightness only; validity never depends on them. Each is part of
+the producer code state, which is identified by the producer fingerprint in every evidence file. Any change is a new
+code state and requires a rerun.
+
+| constant | value | where |
+|---|---|---|
+| drift grid / sub-blocks | 2⁻¹⁰ outward hull; N_E = 4 | `srk_certify.GRID_BITS`, `N_SUB` (§11) |
+| ladder | d ∈ {8, 10, 12}; Γ̄_i = min over certified rungs | `DEFAULT_LADDER` |
+| base cover | C1b base cover, h = 1/4 | `cover_check(hstep=1/4)` |
+| refinement (residual check) | ≤ 4 extra halvings; halve iff certified lower margin < m_c − |m_c|/4 − 2⁻⁴⁰ | `cover_check(extra_levels=4)` |
+| refinement (W ≥ 0 check) | ≤ 3 extra halvings (the premise is redundant, §11 note; a failure only withholds the rung) | `poly_min_X` |
+| Taylor order in the drift variable | KT = 10, remainder by `c1b_gauss.dphi_sup` | `gf_box_int` |
+| proposal rounding | float proposals rounded to dyadics with 96 bits | `dyadic_round_poly(·, 96)` |
+| repair rounding | η rounded up with 24 bits, λ with 40 bits | `dyadic_up` |
+| repair margin | μ = 2⁻²⁰ | `MU` |
+| Hermite root brackets | isqrt brackets with 40 bits (width ≤ 2·2⁻⁴⁰) | `srk_envelope` |
+
+**SRK-T D_lo rule (review R1 B5).** In the sub-block form, only drifts e ∈ C are used. For e ∈ C ∩ b_j, Lemma SV-T and
+the e-affinity of v̂^{(j)} give
+
+    (R_e κ̄_i^C)(a) ≤ (Ĝ_e κ̄_i^{Ew})(a)/D_e ≤ max(v̂^{(j)}_{e'}(a) : e' ∈ endpoints of b_j) / D_lo,
+
+provided D_e ≥ D_lo > 0 **for every e ∈ C**. So Γ̂_i := max_j max_{endpoints} v̂^{(j)}(a) / D_lo is valid. D_lo must be
+a certified lower bound whose validity domain contains C; it does not need to hold on the whole hull Ew.
+
+This is implemented as `srk_gate.gate(..., kernel="taboo", d_lo={"value", "domain"})`, which refuses without D_lo,
+refuses a domain that does not contain C, and divides. `srk_gate.combine` gives the index-wise min(Γ̄_i, Γ̂_i). A
+taboo certificate's raw value bounds Ĝ_e, not R_e (R_e = Ĝ_e/D_e with D_e ≤ 1), so it is never admissible as Γ̄_i
+without the division. Corrigendum: before 2a03e838 the gate returned the raw taboo value; that path was never used by
+the adapter (ERRATA E-11).
+
+**§8 amendments.**
+* **Test 1 (too-small weight).** The shrink-window mutant can be a TRUE claim (review R1 RD-1, as spec erratum SE-1
+  for test 3), so it is not a negative control. The mandatory negative control is the quarter-weight mutant
+  (Ψ/4 certified, κ̄_i claimed): the independent verifier must not ACCEPT it (`tests/test_srk_cert_mutants.py` T1).
+* **Test 3 (scaled V).** Replaced by V0 × 3/4 (spec erratum SE-1).
+* **Test 8 (constant weight) criterion.** On the declared decoy (h = 3, E = [1/4, 9/32], d = 8, κ̄_0) the test requires
+  all three of:
+  * Monte Carlo satisfies E_a[Σ_{n<τ} k_0(X_n)] = E_a[τ] − 1 within 5 standard errors (simulator check);
+  * Γ_0 ≥ that estimate − 5 se (validity);
+  * Γ_0 ≤ max_E W(a)·(1 + 2⁻⁴), where W is the Ā-type certificate at the same rung (no pathological looseness).
+* **Test 10.** Implemented as T10: byte-identical sha over two productions, a JSON round trip, and verifier ACCEPT.
+* **Decoy restriction (N3).** §8's "e ≤ 1" should read "e ≤ 33/32", since the declared real-kernel block [1, 33/32]
+  reaches 33/32. Every declared drift stays far below 6/5 (ERRATA E-8).
