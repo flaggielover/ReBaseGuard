@@ -1,9 +1,11 @@
 # Cell-308 MB formal prospective closure campaign (r1): protocol
 
-**Status: FROZEN (r2)** at the r2 freeze commit on branch `p5y-k5-cell308-mb-r1` (the last commit touching
+**Status: FROZEN (r3)** at the r3 freeze commit on branch `p5y-k5-cell308-mb-r1` (the last commit touching
 the frozen directories; it regenerates `protocol/MB308_FREEZE.json`). Freeze r1 was `a7fe3028`; its official
-qualification FAILED on two verifier defects and is preserved in `qualification/r1_failed/` (§13). Nothing in this
-protocol authorizes a target evaluation; only the grant (§10 step 4) does.
+qualification FAILED on two verifier defects and is preserved in `qualification/r1_failed/` (§13). Freeze r2 was
+`29b68d5e`; its official qualification FAILED on Q12 alone, on runtimes measured across two host sleeps, and is
+preserved in `qualification/r2_failed/` (§14). Nothing in this protocol authorizes a target evaluation; only the
+grant (§10 step 4) does.
 
 ## 1. Scope and authority
 
@@ -238,3 +240,140 @@ the science or the exactly-once machinery; 0 target evaluations.
   `evidence_prefreeze/`; in particular the driver (`965a2a30…`), the guard, Stage 1, the supply, the consumer, the
   pinned loader, the A0 core and the manifest writer. The science, the criterion, the caps and every rule of §3–§8 are
   unchanged.
+
+## 14. Freeze r3: host-environment repair (after the r2 official qualification FAILED)
+
+**r2** (freeze `29b68d5e`): official qualification 2026-09-29 00:11:03Z–04:54:07Z.
+
+* **Evidence.** Commit `d031dad8`, moved unchanged to `qualification/r2_failed/`.
+* **Result.** FAIL on `Q12_caps` only. Every other case and gate passed. 0 target evaluations.
+* **Assessment** (coordinator, not independent). The research file `audit/QUALIFICATION_R2_FAIL_ASSESSMENT.md`
+  (`2fa80954`) and its addendum a1 (`64dc4cce`).
+  * **Two host sleeps.** The host slept twice while the Q12 runtimes were measured: lid closed, 01:31–01:58Z and
+    03:51–04:42Z; the host also ran on battery during the second sleep. These sleeps inflate the C1b d10, RLR d6 and
+    316-block-1 RLR d8 walls.
+  * **A sleep-free slowdown as well.** About 15 % against r1, during the concurrent heavy-case window, on a fanless
+    2P + 4E host. By itself this makes RLR d8 on block 0 of 316 (sleep-free) fail the per-job check.
+  * **The failure is purely execution-environment.** The code is identical to r1, the certificates are identical
+    (QC04), and every non-timing gate passed.
+
+**The user's r3 authorization (2026-09-29, in chat).** The r3 repair covers the execution environment and sleep
+contamination only:
+
+* **Unchanged:** the scientific route, the theorem, the parameters, the consumer, the criterion and the
+  exactly-once semantics.
+* **No change to the caps:** the caps are neither raised nor recomputed from the contaminated r2 runtimes, and Q12
+  is not weakened.
+* **What the repair adds:**
+  * whole-run sleep prevention;
+  * AC power required at preflight;
+  * sleep / wake and relevant thermal provenance;
+  * fail closed on sleep during a load-bearing timing interval, or on ambiguous timing provenance;
+  * same-path planted controls, under which genuine runtime / cap violations stay detectable;
+  * an independent review of the repair.
+* **Run conditions:** a fresh official qualification on an awake machine. After learning that the failure was not
+  sleep-only, the user chose "r3 as specified, cool host": caps, Q12 and the qualification's concurrency are
+  unchanged, and the official run happens only on a cool, awake host (lid open, on AC, no other heavy work).
+
+**What r3 changes (environment only):**
+
+* **`code/mb308_host.py` (new, pinned in the driver's helper table).** It provides:
+  * three independent sleep channels:
+    * **K**: CLOCK_MONOTONIC_RAW − CLOCK_UPTIME_RAW over the interval (both unadjusted);
+    * **S**: `kern.sleeptime` / `kern.waketime`;
+    * **L**: `pmset -g log` entries of type Sleep, Wake or DarkWake in the interval;
+  * power (`pmset -g batt`), read at the start, every 60 s and at the end;
+  * thermal and load, **recorded and never part of any pass**:
+    * the OS thermal-pressure level (`notifyutil -g com.apple.system.thermalpressurelevel`; 0 = nominal) at every
+      snapshot and sample;
+    * the power log's ThermalEvent entries;
+    * the load average;
+    * `pmset -g therm`, kept for the record only. It is **not** a cool-host check: on this host it reports
+      "no warning" while the thermal-pressure level is 1;
+  * `assess()`, which is **fail-closed**. The only CLEAN outcome requires all of the following:
+    * every channel available;
+    * samples at most 180 s apart;
+    * no channel reporting a sleep;
+    * every power reading AC.
+
+    Any other outcome is CONTAMINATED or AMBIGUOUS.
+  * `keep_awake()`, which runs `caffeinate -i -m -s`. That is best effort: lid-close sleep cannot be prevented by an
+    assertion, and detection is what binds.
+* **Driver.**
+  * `execute` and `preflight` refuse before the marker unless on AC (`HOST_NOT_ON_AC`, exit 2, nothing consumed).
+  * `keep_awake` uses `-i -m -s`.
+  * The evaluation interval (marker → record) and every decoy run carry host provenance.
+  * No other line changes. Unchanged: EVAL_CAP, PRE_CAP, DECOY_CAP, every per-job CPU cap, the ladder, the
+    workers, the order of operations, the marker, the seal, the exit codes and every scientific function.
+* **Qualification verifier.**
+  * **Official-run preconditions:** AC, **thermal-pressure level 0 at start**, sleep channels available. The
+    qualification process itself keeps the host awake and records its own provenance.
+  * **Q12 reads the QC02 / QC03 runtimes only if both conditions hold for each decoy run:**
+    * its host provenance, re-assessed from the stored raw readings, is CLEAN (a stored assessment that the raw
+      readings contradict is AMBIGUOUS);
+    * its host interval covers the run's recorded Stage-1 (+ Stage-2) walls.
+
+    Otherwise Q12 fails **closed**, whatever the caps. The cap computation, the thresholds (EVAL_CAP ≥
+    ⌈1.5 × projection⌉; per-job cap ≥ 2 × official max wall) and §3.2 are unchanged.
+  * **Fourteen planted controls through `_q12_core`**, Q12's own decision function:
+    * a clean host within the caps passes;
+    * each of the following fails, with the caps passing:
+      * K;
+      * S (parsed from real-format `sysctl` text);
+      * L (real-format log lines; the parser must count exactly Sleep, DarkWake and Wake, and skip Assertions and
+        Wake Requests);
+      * battery;
+      * an unavailable log;
+      * missing clocks;
+      * uncovered samples;
+      * a record without provenance;
+      * a stored assessment contradicted by the raw readings;
+      * a host interval shorter than the run;
+    * a genuine **per-job** violation on a CLEAN host fails with EVAL_CAP passing and exactly {RLR:8} failing;
+    * a genuine **EVAL_CAP** violation on a CLEAN host fails with every per-job cap passing;
+    * both at once report both.
+  * **QC11:** branch-exact static checks of the host guards.
+  * **QC10 (test file):** T23 (a planted battery reading at the `pmset` text layer → `HOST_NOT_ON_AC` before the
+    marker) and host provenance in the success flow's sealed record.
+* **Config and protocol.** `config/QUALIFICATION_CASES.json` (the Q12_caps, QC10 and QC11 entries), this section and
+  the header.
+
+**Independent review of the repair (before the freeze).**
+
+* **First review:** research `reviews/REVIEW_R3_HOST_REPAIR.md`, commit `4b38eef2`, sha256
+  `d39e25ef2e0adf3db9f4a32c870417c1e58b9b138386929f8a7b613441b4f491`, REPAIR_REJECTED as submitted. The core repair
+  was sound, with two defects:
+  * **F1:** the per-job control was not specific; it also broke EVAL_CAP.
+  * **F2:** `pmset -g therm` was blind to thermal pressure.
+
+  Conditions F3–F6 also applied. The present text applies:
+  * F1, F2 and F3;
+  * notes N1 (raw clock for K), N2 (interval coverage), N3 (the stored-vs-raw control, S parsed from text, exact
+    fixture counts) and N6 (branch-exact QC11).
+* **Delta review:** research `reviews/REVIEW_R3_HOST_REPAIR_DELTA.md` — commit 1571040d0af44c76606befffc85defce1e79a71c, sha256 2afbbf4cf608e26dfad41ab4e4d90acd0930050fd44606823c9b4e752ead8fd6, DELTA_ACCEPTED.
+
+**Pre-declared consequences (review F3; binding).**
+
+* r3 does **not** address the sleep-free slowdown. The headroom r1 left is the whole allowance: RLR d8 may run at most
+  about 4.8 % slower than r1, and the EVAL_CAP projection at most about 6.2 % higher.
+* **Any r3 official Q12 FAIL is a qualification FAIL that stops the campaign before the target (C4 point 7).** That
+  holds whether the timing was CLEAN (a genuine cap failure) or CONTAMINATED / AMBIGUOUS.
+* Freeze r3 is **never re-run**, and **no r4 with the same caps** is made, without a new explicit user decision
+  recorded before it.
+
+**Why the execution is fail-closed without a new rule.** The verdict is exact arithmetic and never depends on time:
+
+* the per-job caps are CPU-time limits, which a sleep does not consume;
+* the only wall-clock limits are PRE_CAP, before the marker (a hit is a refusal: nothing consumed), and EVAL_CAP,
+  after it (a hit is INDETERMINATE, never a closure).
+
+A sleep during the evaluation can therefore only waste the evaluation, never produce a wrong verdict. **Host
+provenance never changes the status, the outcome or exactly-once**: there is no re-run and no re-interpretation on
+host grounds. The provenance is recorded in the sealed record's `host`, and the execution review must report and
+disclose it. The execution runs under the qualification's host conditions: AC (enforced), lid open, thermal-pressure
+level 0 at start, no other heavy work, low-power mode off.
+
+**Order after r3.** First the delta review of the repair, then the freeze. Then: the official qualification on a
+cool, awake host; its evidence committed on its own; a fresh independent qualification review; and, only on
+QUALIFICATION_ACCEPTED and every frozen prerequisite, the grant. The grant carries the user's C4 ruling (research
+`ledger/USER_RULING_C4.md`, `0aeaec23`). Γ308 stays 0 until the grant.

@@ -27,6 +27,10 @@ modes
     execute                            qualified worktree + grant commit only; the ONE evaluation of cell 308
     seal-only                          qualified worktree only: seal / materialize persisted evidence; never computes
 
+host (freeze r3, protocol section 14): execute and preflight refuse before the marker unless on AC power; caffeinate
+-i -m -s for the whole run; the evaluation interval and every decoy run carry host provenance (mb308_host: sleep
+channels K/S/L, power, thermal, load). The verdict never depends on it.
+
 exit codes: 0 sealed TARGET_EVALUATED; 2 REFUSED before the marker (nothing consumed); 3 CONTROL_FAILED sealed (target
             not consumed); 4 UNSEALED (evidence persisted; run seal-only); 5 sealed with a post-marker failure status;
             6 CONSUMED_UNRECORDED (never rerun); 7 sealed, worktree copy not materialized (run seal-only)
@@ -57,6 +61,7 @@ REPO = HERE.parents[4]
 sys.path.insert(0, str(CODE))
 import mb308_consumer as CON  # noqa: E402
 import mb308_guard as GUARD  # noqa: E402
+import mb308_host as HOST  # noqa: E402
 import mb308_pinned as PIN  # noqa: E402
 import mb308_stage1 as S1M  # noqa: E402
 import mb308_supply as SUP  # noqa: E402
@@ -110,6 +115,7 @@ HELPER_SHA256 = {
     "mb308_stage1.py": "23296f837eb7520b36c32bba08d238d940c14a8753e8ce8cadb05f0990f2ec98",
     "mb308_supply.py": "af1a818b68459ada53773557e10153ae4ae3edc232d52e93fd19814e4da59b58",
     "mb308_consumer.py": "c233bdb6235cd8a44bcf187be7d6686a4684f8619bed21ade9130432c5c09188",
+    "mb308_host.py": "6702a9be56b6e8a530407b8be2794f4d4266445a97d33c2f0601da8754760a8c",
 }
 PIN.GUARD_SHA256 = HELPER_SHA256["mb308_guard.py"]
 # per-job CPU caps (REVIEW_A0_CERTIFIER_R1 C3): each Stage-1 job runs in a FRESH worker process (max_tasks_per_child
@@ -775,6 +781,7 @@ def after_marker(con, prep, common: dict, evaluator, t0: float, persist=None, se
                        "peak_rss_bytes": usage.ru_maxrss,
                        "cpu_seconds_parent": round(usage.ru_utime + usage.ru_stime, 3),
                        "cpu_seconds_workers": round(cusage.ru_utime + cusage.ru_stime, 3)})
+        close_host(common)
         data = serialize(common)
     except BaseException as exc:
         status, data = "POST_MARKER_RECORDING_FAILED", fallback_bytes(common_min, "record", exc)
@@ -806,13 +813,28 @@ def after_marker(con, prep, common: dict, evaluator, t0: float, persist=None, se
 
 
 def keep_awake() -> dict:
-    """Environmental only (results never depend on it): ask macOS not to idle-sleep while this process lives."""
+    """Environmental only (results never depend on it): `caffeinate -i -m -s` for the life of this process (freeze r3,
+    protocol section 14; lid-close sleep cannot be prevented by an assertion, it is detected by mb308_host)."""
+    return HOST.keep_awake()
+
+
+def require_ac() -> str:
+    """Freeze r3 (protocol section 14): execute and preflight refuse, before the marker, unless on AC power."""
     try:
-        p = subprocess.Popen(["/usr/bin/caffeinate", "-i", "-w", str(os.getpid())], stdin=subprocess.DEVNULL,
-                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-        return {"caffeinate_pid": p.pid}
-    except OSError as exc:
-        return {"caffeinate": f"unavailable ({type(exc).__name__})"}
+        return HOST.require_ac()
+    except HOST.HostRefusal as exc:
+        raise Refusal(exc.code, str(exc))
+
+
+def close_host(common: dict) -> None:
+    """Replace the live host record (start snapshot + sampler) by its closed provenance. Never raises."""
+    h = common.pop("_host", None)
+    if h is None:
+        return
+    try:
+        common["host"] = HOST.provenance(h["start"], h["sampler"].stop(), HOST.snapshot())
+    except BaseException as exc:                                       # noqa: BLE001
+        common["host"] = {"error": type(exc).__name__}
 
 
 # ------------------------------------------------------------------ controls and preparation (before the marker)
@@ -851,7 +873,9 @@ def run_execute(own_sha: str, prepare=None, evaluator=None, persist=None, sealer
     state = check_governance_state()
     pre = check_seal_preconditions()
     pre["cpu_caps"] = check_cpu_caps()
+    pre["host_power"] = require_ac()
     awake = keep_awake()
+    awake["host_at_start"] = HOST.snapshot()
     try:
         con = load_consumer()
         sci = load_science(allow_uncommitted=False)
@@ -888,8 +912,11 @@ def run_execute(own_sha: str, prepare=None, evaluator=None, persist=None, sealer
     for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP, signal.SIGQUIT):
         signal.signal(sig, signal.SIG_IGN)
     signal.alarm(0)
+    host = {"start": HOST.snapshot(), "sampler": HOST.Sampler().start()}
     if git("update-ref", CONSUMED_REF, grant["grant_commit"], "0" * 40).returncode != 0:
+        host["sampler"].stop()
         raise Refusal("CONSUMED", "the exactly-once marker could not be created: the target is never evaluated twice")
+    common["_host"] = host
     return after_marker(con, prep, common, evaluator, t0, persist, sealer, materializer)
 
 
@@ -1092,7 +1119,7 @@ def main(argv=None) -> int:
         if a.mode == "preflight":
             check_not_evaluated()
             out = {"mode": "preflight", "input_sha256": check_bindings(), "governance_state": check_governance_state(),
-                   "driver_sha256": own_sha}
+                   "driver_sha256": own_sha, "host_power": require_ac()}
             load_consumer()
             out["identity"] = load_science(allow_uncommitted=False)["identity"]
             print("MB308 PREFLIGHT PASS")
@@ -1112,8 +1139,10 @@ def main(argv=None) -> int:
             if a.workers > 5 or a.workers < 1:
                 raise Refusal("WORKERS", "1..5 workers")
             check_bindings(allow_uncommitted=True)
+            h0, smp = HOST.snapshot(), HOST.Sampler().start()          # freeze r3: the load-bearing timing interval
             t0 = time.time()
             out = decoy(a.cell, own_sha, a.workers, a.first_blocks, a.dev_ladder)
+            out["host"] = HOST.provenance(h0, smp.stop(), HOST.snapshot())
             cu = resource.getrusage(resource.RUSAGE_CHILDREN)
             out.update({"mode": "decoy", "driver_sha256": own_sha, "utc": utc(), "wall_seconds": round(time.time() - t0, 1),
                         "cpu_seconds_workers": round(cu.ru_utime + cu.ru_stime, 1)})

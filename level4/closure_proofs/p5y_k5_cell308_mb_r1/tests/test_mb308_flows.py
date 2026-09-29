@@ -200,7 +200,12 @@ def run_flows(tmp: Path, base: str | None = None, freeze: str | None = None) -> 
                           and g(sb.root, "rev-parse", "HEAD^") == ch["grant"] and rec is not None
                           and rec["status"] == "TARGET_EVALUATED" and rec["target_evaluations"] == 1
                           and rec["mechanical_outcome"] == "STUB_DECOY" and mat.is_file() and not mat.is_symlink()
-                          and mat.read_bytes() == head_raw(D) and D._stub["calls"]["evaluator"] == 1, "run": r}
+                          and mat.read_bytes() == head_raw(D) and D._stub["calls"]["evaluator"] == 1
+                          # freeze r3: AC checked before the marker; the evaluation interval carries host provenance
+                          and rec["seal_preconditions"].get("host_power") == "AC Power"
+                          and isinstance(rec.get("host"), dict) and "assessment" in rec["host"]
+                          and rec["host"]["assessment"].get("status") in ("CLEAN", "CONTAMINATED", "AMBIGUOUS"),
+                          "run": r}
     r2 = execute(D)
     res["X02_rerun_refused"] = {"ok": r2.get("refused") == "CONSUMED" and D._stub["calls"]["evaluator"] == 1, "run": r2}
     try:
@@ -299,6 +304,21 @@ def run_flows(tmp: Path, base: str | None = None, freeze: str | None = None) -> 
     T("T19_review_rejected", None, "REVIEW_VERDICT", review_line="QUALIFICATION_REJECTED")
     T("T20_qualification_not_pass", None, "GRANT_INVALID", qual_pass=False)
     T("T21_grant_wrong_manifest", None, "GRANT_INVALID", manifest_sha="1" * 64)
+
+    def battery(D):
+        """freeze r3: a planted battery reading at the pmset text layer (restored afterwards)"""
+        orig = D.HOST._run
+
+        def fake(args, timeout=60):
+            if list(args[:3]) == [D.HOST.PMSET, "-g", "batt"]:
+                return "Now drawing from 'Battery Power'\n -InternalBattery-0 (planted)\n"
+            return orig(args, timeout)
+        D.HOST._run = fake
+
+        def undo():
+            D.HOST._run = orig
+        return undo
+    T("T23_not_on_ac_power", battery, "HOST_NOT_ON_AC")
 
     # function-level tamper tests (each file restored afterwards)
     D, ch = fresh()

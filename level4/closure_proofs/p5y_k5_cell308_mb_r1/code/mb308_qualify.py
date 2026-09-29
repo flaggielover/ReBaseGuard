@@ -15,6 +15,16 @@ Modes
              aggregation (a dev report can never be an official PASS).
 Every case summary carries a boolean `pass`; the aggregator fails loudly on a missing or non-boolean `pass`.
 
+Freeze r3 (protocol section 14, after the r2 official qualification failed Q12 on runtimes measured across two host
+sleeps): the official run refuses to start unless the host is on AC power, the OS thermal-pressure level reads 0
+(nominal; `pmset -g therm` is recorded but is NOT a cool-host check on this host) and the sleep channels are
+available; this process and every decoy run keep the host awake (caffeinate -i -m -s) and record host provenance
+(mb308_host); Q12 reads the QC02 / QC03 runtimes ONLY if the host provenance of each of those runs, re-assessed from
+its stored raw readings, is CLEAN (sleep channels K, S, L all available and silent, AC throughout, samples covering
+the run) and its interval covers the run's recorded Stage-1 / Stage-2 walls; otherwise Q12 fails closed. Thermal and
+load are recorded, never part of any pass. The caps, the cap rule and the cap checks are unchanged; 14 planted
+controls drive Q12's own decision function (_q12_core).
+
     python3.14 -I -S -B mb308_qualify.py                           (official)
     python3.14 -I -S -B mb308_qualify.py --review --out FILE [--heavy]
     python3.14 -I -S -B mb308_qualify.py --dev --only QC05,QC09 --out FILE
@@ -45,6 +55,7 @@ sys.path.insert(1, str(NS / "tests"))
 import mb308_a0core as A0C  # noqa: E402
 import mb308_driver as D  # noqa: E402
 import mb308_guard as GUARD  # noqa: E402
+import mb308_host as HOST  # noqa: E402
 import mb308_pinned as PIN  # noqa: E402
 import mb308_stage1 as S1M  # noqa: E402
 import mb308_supply as SUP  # noqa: E402
@@ -132,6 +143,11 @@ def preconditions(mode: str) -> dict:
         out["namespace_clean_including_ignored"] = git("status", "--porcelain", "--ignored", "--untracked-files=all",
                                                        "--", D.NS_REL) == ""
     out["incident_review_accepted_before_freeze"] = incident_review(fz)["pass"]
+    if mode == "official":                     # freeze r3: an awake, cool host on AC (protocol section 14)
+        out["host_on_ac"] = HOST.power_source() == HOST.AC
+        out["host_thermal_pressure_level_zero"] = HOST.thermal_level() == 0     # review r3 F2 (0 = nominal)
+        out["host_sleep_channels_available"] = HOST.kern_times() is not None and \
+            HOST.log_events(0, 0) is not None
     keys = [k for k in out if k not in ("freeze_commit", "head", "mode")]
     if mode == "dev":
         keys = [k for k in keys if k != "incident_review_accepted_before_freeze"]
@@ -349,6 +365,29 @@ def qc11_static() -> dict:
     r["no_reference_to_the_research_reconstructions"] = not any(f in ns_text for f in forbidden)
     r["F3_imports_stdlib_only"] = imps3 <= {"__future__", "fractions", "hashlib", "json", "math", "random", "copy",
                                             "sys"}
+    # freeze r3 (protocol section 14): AC is required in run_execute BEFORE the marker and in preflight; the whole run
+    # keeps the host awake with -i -m -s; the evaluation and every decoy run carry host provenance
+    ac = _calls(fd["run_execute"], "require_ac")
+    marker_line = min(c.lineno for c in upd) if upd else 0
+    r["ac_required_before_marker_in_run_execute"] = len(ac) == 1 and 0 < ac[0].lineno < marker_line
+    branches = {}
+    for node in ast.walk(fd["main"]):
+        if isinstance(node, ast.If) and isinstance(node.test, ast.Compare) and \
+                isinstance(node.test.left, ast.Attribute) and node.test.left.attr == "mode" and \
+                len(node.test.comparators) == 1 and isinstance(node.test.comparators[0], ast.Constant):
+            branches[node.test.comparators[0].value] = ast.Module(body=node.body, type_ignores=[])
+    r["ac_required_in_preflight"] = len(_calls(fd["main"], "require_ac")) == 1 and \
+        len(_calls(branches.get("preflight", ast.Module(body=[], type_ignores=[])), "require_ac")) == 1
+    r["keep_awake_flags_ims"] = HOST.CAFFEINATE_FLAGS == ("-i", "-m", "-s") and \
+        len(_calls(fd["keep_awake"], "keep_awake")) == 1
+    r["evaluation_host_provenance_closed_in_after_marker"] = len(_calls(fd["after_marker"], "close_host")) == 1
+    dec = branches.get("decoy", ast.Module(body=[], type_ignores=[]))
+    snaps, smps = _calls(dec, "snapshot"), _calls(dec, "Sampler")
+    decs, provs = [c for c in _calls(dec, "decoy") if isinstance(c.func, ast.Name)], _calls(dec, "provenance")
+    r["decoy_host_provenance_recorded"] = len(_calls(fd["main"], "provenance")) == 1 and len(provs) == 1 and \
+        len(decs) == 1 and bool(snaps) and bool(smps) and \
+        min(c.lineno for c in snaps + smps) <= decs[0].lineno <= provs[0].lineno
+    r["host_module_pinned"] = "mb308_host.py" in D.HELPER_SHA256
     r["pass"] = all(v is True for v in r.values())
     return r
 
@@ -624,7 +663,43 @@ def lpt_makespan(durations: list, workers: int) -> float:
     return max(loads)
 
 
+def _host_verdict(dec: dict | None) -> dict:
+    """Freeze r3: the host provenance of one decoy run, RE-ASSESSED from its stored raw readings by mb308_host.assess
+    (the stored assessment is reported, never trusted); a record without provenance is AMBIGUOUS."""
+    h = (dec or {}).get("host")
+    if not isinstance(h, dict):
+        return {"status": "AMBIGUOUS", "clean": False, "reasons": ["AMBIGUOUS: the record carries no host provenance"]}
+    try:
+        v = HOST.assess(h.get("start"), h.get("end"), h.get("samples"), h.get("events"))
+    except Exception as exc:                                           # noqa: BLE001
+        return {"status": "AMBIGUOUS", "clean": False, "reasons": [f"AMBIGUOUS: {type(exc).__name__}"]}
+    stored = (h.get("assessment") or {}).get("status")
+    if stored != v["status"]:
+        v = dict(v, status="AMBIGUOUS", clean=False,
+                 reasons=v["reasons"] + [f"AMBIGUOUS: stored assessment {stored} differs from the re-assessment"])
+    # review r3 N2: the host interval must cover the run's recorded Stage-1 (+ Stage-2) walls (1 s rounding allowance)
+    try:
+        span = (h["end"]["clocks"]["monotonic_raw_ns"] - h["start"]["clocks"]["monotonic_raw_ns"]) // 10 ** 9
+        need = float(dec.get("stage1_wall_seconds") or 0) + float(dec.get("stage2_wall_seconds") or 0)
+        if span + 1 < need:
+            v = dict(v, status="AMBIGUOUS", clean=False,
+                     reasons=v["reasons"] + [f"AMBIGUOUS: host interval {span} s does not cover the run's walls"])
+    except (KeyError, TypeError, ValueError):
+        if v["clean"]:
+            v = dict(v, status="AMBIGUOUS", clean=False, reasons=v["reasons"] + ["AMBIGUOUS: interval unreadable"])
+    return v
+
+
 def q12_caps(dec297: dict | None, dec316: dict | None) -> dict:
+    """Q12 on the official records, plus the planted controls through the SAME decision function (freeze r3)."""
+    out = _q12_core(dec297, dec316)
+    ctl = q12_controls()
+    out["planted_controls"] = ctl
+    out["pass"] = out["pass"] is True and ctl["pass"] is True
+    return out
+
+
+def _q12_core(dec297: dict | None, dec316: dict | None) -> dict:
     """Protocol 3.2 re-derived from the OFFICIAL QC02 (297, all blocks) and QC03 (316, blocks 0-2) runtimes:
     projection = longest-first makespan of 11 blocks x the 9 frozen jobs at 5 workers, each job taking the larger
     official wall time of its kind and rung (C2b: job wall + its recorded in-job verification seconds, the
@@ -633,6 +708,7 @@ def q12_caps(dec297: dict | None, dec316: dict | None) -> dict:
     every job CERTIFIED (C2b VERIFIED and admitted) and no alarm. Runtime and status only."""
     if not dec297 or not dec316:
         return {"pass": False, "missing": [k for k, v in (("QC02", dec297), ("QC03", dec316)) if not v]}
+    timing = {"297": _host_verdict(dec297), "316": _host_verdict(dec316)}
     j297, bad297 = _decoy_jobs(dec297)
     j316, bad316 = _decoy_jobs(dec316)
     mx = {}
@@ -642,7 +718,7 @@ def q12_caps(dec297: dict | None, dec316: dict | None) -> dict:
         mx[key] = max(mx.get(key, 0.0), w)
     missing = [f"{k}:{r}" for k, r in Q12_KEYS if (k, r) not in mx]
     if missing:
-        return {"pass": False, "missing_job_kinds": missing}
+        return {"pass": False, "missing_job_kinds": missing, "timing_provenance": timing}
     durations = [mx[k] for _ in range(Q12_BLOCKS) for k in Q12_KEYS]
     proj = lpt_makespan(durations, Q12_WORKERS)
     need_eval = math.ceil(1.5 * proj)
@@ -655,9 +731,146 @@ def q12_caps(dec297: dict | None, dec316: dict | None) -> dict:
            "eval_cap_ok": D.EVAL_CAP_S >= need_eval, "per_job_caps": caps,
            "stage1_wall_s": {"297": dec297.get("stage1_wall_seconds"), "316": dec316.get("stage1_wall_seconds")},
            "note": "runtime and status only (incident review C7(b))"}
-    out["pass"] = out["all_jobs_certified"] and not bad297 and not bad316 and out["eval_cap_ok"] and \
+    out["caps_pass"] = out["all_jobs_certified"] and not bad297 and not bad316 and out["eval_cap_ok"] and \
         all(c["cap_ge_2x"] for c in caps.values()) and len(j297) > 0 and len(j316) > 0
+    out["timing_provenance"] = timing
+    out["timing_clean"] = all(v["clean"] is True for v in timing.values())
+    out["fail_reasons"] = ([] if out["caps_pass"] else ["CAP_RULE_VIOLATED"]) + \
+        [f"TIMING_{v['status']}_{k}" for k, v in timing.items() if not v["clean"]]
+    out["pass"] = out["caps_pass"] and out["timing_clean"]      # contaminated / ambiguous timing fails CLOSED
     return out
+
+
+# ------------------------------------------------------------------ Q12 planted controls (freeze r3)
+# real-format power-log lines (copied from this host's log around the r2 run): the parser must count the Sleep,
+# DarkWake and Wake entries and must NOT count "Wake Requests" or "Assertions" lines
+Q12_LOG_FIXTURE = (
+    "2026-09-29 10:31:00 +0900 Assertions          \tPID 340(powerd) Released PreventUserIdleSystemSleep\n"
+    "2026-09-29 10:31:29 +0900 Sleep               \tEntering Sleep state due to 'Clamshell Sleep'\n"
+    "2026-09-29 10:31:57 +0900 Wake Requests       \t[process=dasd request=SleepService]\n"
+    "2026-09-29 10:32:00 +0900 DarkWake            \tDarkWake from Deep Idle [CDNP]\n"
+    "2026-09-29 10:58:43 +0900 Wake                \tWake from Deep Idle [CDNVA]\n")
+
+
+def _sysctl_text(sleep_s: int, wake_s: int) -> str:
+    """Planted `sysctl kern.sleeptime kern.waketime` output in the host's real format (parsed by mb308_host)."""
+    return (f"kern.sleeptime: {{ sec = {sleep_s}, usec = 370188 }} Tue Sep 29 13:41:35 2026\n"
+            f"kern.waketime: {{ sec = {wake_s}, usec = 975077 }} Tue Sep 29 13:42:02 2026\n")
+
+
+def _synthetic_host(*, gap_s: int = 0, kern_change: bool = False, events=None, battery_at: int | None = None,
+                    spacing_s: int = 60, n: int = 12, drop_clocks: bool = False, fixture_window: bool = False,
+                    stored_status: str | None = None) -> dict:
+    """A planted host-provenance record in the stored format of mb308_host (integers only). `events` None means
+    "log read, no entries" unless set to the string "unavailable" or "fixture" (the real-format log lines)."""
+    m0, u0, e0 = 10 ** 15, 4 * 10 ** 14, 1790650000
+    if fixture_window:                                   # the fixture's window (2026-09-29 01:30-01:43Z)
+        e0 = 1790645400
+    therm = {"lines": ["Note: No thermal warning level has been recorded"], "no_warning_recorded": True}
+
+    def snap(k, extra_mono=0):
+        c = {"monotonic_raw_ns": m0 + k * spacing_s * 10 ** 9 + extra_mono,
+             "uptime_raw_ns": u0 + k * spacing_s * 10 ** 9, "epoch_s": e0 + k * spacing_s + extra_mono // 10 ** 9,
+             "utc": "planted"}
+        return {"clocks": c, "power": HOST.AC, "thermal_level": 0, "thermal": therm, "load_x100": [100, 100, 100]}
+    start = dict(snap(0), kern_us=HOST.kern_times(_sysctl_text(1790656895, 1790656922)))
+    samples = [snap(k) for k in range(1, n + 1)]
+    end = dict(snap(n + 1, gap_s * 10 ** 9),
+               kern_us=HOST.kern_times(_sysctl_text(1790656895 + 3600 * int(kern_change), 1790656922)))
+    if battery_at is not None:
+        samples[battery_at]["power"] = "Battery Power"
+    if drop_clocks:
+        end.pop("clocks")
+    if events == "unavailable":
+        ev = None
+    elif events == "fixture":
+        ev = HOST.log_events(start["clocks"]["epoch_s"], end["clocks"]["epoch_s"], Q12_LOG_FIXTURE)
+    else:
+        ev = list(events or [])
+    rec = {"start": start, "samples": samples, "end": end, "events": ev}
+    try:
+        rec["assessment"] = HOST.assess(start, end, samples, ev)
+    except Exception:                                                  # noqa: BLE001
+        rec["assessment"] = {"status": "AMBIGUOUS"}
+    if stored_status is not None:                       # a stored assessment that the raw readings contradict
+        rec["assessment"] = dict(rec["assessment"], status=stored_status)
+    return rec
+
+
+def _synthetic_decoy(frac: dict, host) -> dict:
+    """One run block carrying every frozen job kind at wall = frac x its cap (default 1/4), all CERTIFIED, the C2b
+    rungs VERIFIED and admitted, the pointwise record CERTIFIED with an admitted C2b upper."""
+    w = {(k, r): D.RUNG_CPU_CAP_S[k][r] * frac.get((k, r), frac.get("all", 0.25)) for k, r in Q12_KEYS}
+    b = {"index": 0, "run": True,
+         "rlr_rungs": [{"rung": r, "wall_seconds": w[("RLR", r)], "status": "CERTIFIED"} for r in (4, 6, 8)],
+         "c2b_rungs": [{"rung": n, "wall_seconds": w[("C2B", n)], "status_U": "CERTIFIED", "status_L": "CERTIFIED",
+                        "verification": {"seconds": 0.0, "verdict": "VERIFIED", "accepted": True}} for n in (20, 40, 80)],
+         "c1b_rungs": [{"rung": d, "wall_seconds": w[("C1B", d)], "status": "CERTIFIED"} for d in (8, 10, 12)],
+         "pointwise": {"status": "CERTIFIED", "uppers": [{"impl": "C2B", "alarm_sensitivity": "planted"}]}}
+    return {"stage1": {"blocks": [b]}, "stage1_wall_seconds": 0, "host": host}
+
+
+def _failing_job_keys(r: dict) -> set:
+    return {k for k, c in (r.get("per_job_caps") or {}).items() if not c["cap_ge_2x"]}
+
+
+def q12_controls() -> dict:
+    """Every control runs _q12_core, the decision function of the real Q12, on planted records. Expected: the clean
+    control PASSES (the gate can pass); every contamination / ambiguity FAILS with the timing reason while the caps
+    still pass; a genuine PER-JOB violation on a CLEAN host fails with EVAL_CAP passing and exactly {RLR:8} failing
+    (review r3 F1); a genuine EVAL_CAP violation on a CLEAN host fails with every per-job cap passing; both at once
+    report both."""
+    clean = _synthetic_host
+    ok_frac = {"all": 0.25}
+    per_job_frac = {"all": 0.10, ("RLR", 8): 0.55}          # review r3 F1: EVAL_CAP passes, only RLR:8 fails
+    cases = {
+        "clean_host_within_caps": (clean(), clean(), ok_frac, True, "CLEAN", True),
+        "K_host_slept_30s_during_316": (clean(), clean(gap_s=30), ok_frac, False, "CONTAMINATED", True),
+        "S_kern_sleep_time_changed_during_297": (clean(kern_change=True), clean(), ok_frac, False, "CONTAMINATED", True),
+        "L_real_format_log_lines_in_316": (clean(), clean(events="fixture", fixture_window=True), ok_frac, False,
+                                           "CONTAMINATED", True),
+        "L_power_log_unavailable": (clean(events="unavailable"), clean(), ok_frac, False, "AMBIGUOUS", True),
+        "K_clocks_missing": (clean(), clean(drop_clocks=True), ok_frac, False, "AMBIGUOUS", True),
+        "battery_in_one_sample": (clean(battery_at=5), clean(), ok_frac, False, "CONTAMINATED", True),
+        "samples_do_not_cover_the_run": (clean(spacing_s=400), clean(), ok_frac, False, "AMBIGUOUS", True),
+        "record_without_host_provenance": (None, clean(), ok_frac, False, "AMBIGUOUS", True),
+        "genuine_per_job_cap_violation_clean_host": (clean(), clean(), per_job_frac, False, "CLEAN", False),
+        "genuine_eval_cap_violation_clean_host": (clean(), clean(), {"all": 0.45}, False, "CLEAN", False),
+        "violation_and_contamination": (clean(), clean(gap_s=30), per_job_frac, False, "CONTAMINATED", False),
+        "stored_assessment_contradicted_by_raw_readings": (clean(), clean(events="fixture", fixture_window=True,
+                                                                          stored_status="CLEAN"), ok_frac, False,
+                                                           "AMBIGUOUS", True),
+        "host_interval_shorter_than_the_run": (clean(), "short", ok_frac, False, "AMBIGUOUS", True),
+    }
+    rows = {}
+    for name, (h297, h316, frac, want_pass, want_status, want_caps) in cases.items():
+        d316 = _synthetic_decoy(frac, clean() if h316 == "short" else h316)
+        if h316 == "short":                              # 13 min of provenance vouching for a 10 000 s run
+            d316["stage1_wall_seconds"] = 10000.0
+        r = _q12_core(_synthetic_decoy(frac, h297), d316)
+        stat = [v["status"] for v in r.get("timing_provenance", {}).values()]
+        worst = "CONTAMINATED" if "CONTAMINATED" in stat else ("AMBIGUOUS" if "AMBIGUOUS" in stat else "CLEAN")
+        rows[name] = {"pass_observed": r.get("pass"), "caps_pass": r.get("caps_pass"), "timing": worst,
+                      "eval_cap_ok": r.get("eval_cap_ok"), "failing_per_job_keys": sorted(_failing_job_keys(r)),
+                      "fail_reasons": r.get("fail_reasons"),
+                      "ok": r.get("pass") is want_pass and worst == want_status and r.get("caps_pass") is want_caps}
+    per_job = rows["genuine_per_job_cap_violation_clean_host"]
+    per_job["ok"] &= per_job["fail_reasons"] == ["CAP_RULE_VIOLATED"] and per_job["eval_cap_ok"] is True and \
+        per_job["failing_per_job_keys"] == ["RLR:8"]
+    ev = rows["genuine_eval_cap_violation_clean_host"]
+    ev["ok"] &= ev["eval_cap_ok"] is False and ev["failing_per_job_keys"] == []
+    both = rows["violation_and_contamination"]
+    both["ok"] &= set(both["fail_reasons"] or []) == {"CAP_RULE_VIOLATED", "TIMING_CONTAMINATED_316"} and \
+        both["failing_per_job_keys"] == ["RLR:8"]
+    # the parser on the real-format fixture: exactly Sleep, DarkWake, Wake over all time (Assertions and Wake Requests
+    # skipped), exactly Sleep and DarkWake in the fixture control's window (review r3 N3)
+    allt = HOST.log_events(0, 2 ** 40, Q12_LOG_FIXTURE) or []
+    win = HOST.log_events(1790645400, 1790645400 + 13 * 60, Q12_LOG_FIXTURE) or []
+    rows["L_real_format_log_lines_in_316"]["fixture_parse"] = [e["type"] for e in allt]
+    rows["L_real_format_log_lines_in_316"]["ok"] &= [e["type"] for e in allt] == ["Sleep", "DarkWake", "Wake"] and \
+        [e["type"] for e in win] == ["Sleep", "DarkWake"]
+    return {"controls": rows, "n": len(rows), "failed": sorted(k for k, v in rows.items() if not v["ok"]),
+            "pass": len(rows) == 14 and all(v["ok"] for v in rows.values())}
 
 
 # ------------------------------------------------------------------ comparisons of the heavy records
@@ -825,6 +1038,8 @@ def main(argv=None) -> int:  # noqa: C901
         print("QUALIFY REFUSED: --out must lie outside the repository")
         return 2
     t0, started = time.time(), utc()
+    awake = HOST.keep_awake()                  # freeze r3: the whole qualification run (children inherit nothing)
+    h0, smp = HOST.snapshot(), HOST.Sampler().start()
     pre = preconditions(mode)
     if not pre["pass"]:
         print(f"QUALIFY REFUSED: preconditions {json.dumps(pre)}")
@@ -950,7 +1165,8 @@ def main(argv=None) -> int:  # noqa: C901
                   {"class": "NONTARGET_DRIFT_VALIDATION", "what": "QC02-QC04, QC06, QC08 decoy cells 297 / 316 and "
                    "validation drifts 3, 27/10, 11/10"},
                   {"class": "SYNTHETIC_VALIDATION", "what": "QC05, QC07, QC10 synthetic sets, decoy bundles, sandbox"}],
-              "target_evaluations": 0}
+              "target_evaluations": 0,
+              "host": dict(HOST.provenance(h0, smp.stop(), HOST.snapshot()), keep_awake=awake)}
     out = Path(a.out) if a.out else paths["report"]
     out.write_text(json.dumps(report, indent=1, sort_keys=True, default=str) + "\n")
     print(f"QUALIFICATION {'PASS' if ok else ('DEV' if mode == 'dev' else 'FAIL')}: " +

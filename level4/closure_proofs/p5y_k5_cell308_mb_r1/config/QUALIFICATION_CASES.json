@@ -108,8 +108,8 @@
     "Q12"
    ],
    "what": "exactly-once flows in a `git clone --shared` sandbox (tests/test_mb308_flows.py)",
-   "input": "success, rerun refusal, seal-only; CONTROL_FAILED; 21 pre-marker refusals (incl. pycache, F2 missing / tampered, verifier tampered); post-marker failures (exception, IndependentCheckFailed, Inconsistent, C6 refusal, SystemExit, KeyboardInterrupt, cap, serialization, persistence, both channels, seal, materialization); worker bootstrap failure; CLI flags / identity / dev flags",
-   "pass_if": "each case ends in its expected exit / refusal code; the stub evaluator runs at most once per sandbox state; recovery never recomputes",
+   "input": "success, rerun refusal, seal-only; CONTROL_FAILED; 21 pre-marker refusals (incl. pycache, F2 missing / tampered, verifier tampered); post-marker failures (exception, IndependentCheckFailed, Inconsistent, C6 refusal, SystemExit, KeyboardInterrupt, cap, serialization, persistence, both channels, seal, materialization); worker bootstrap failure; CLI flags / identity / dev flags; freeze r3: T23 not on AC power (planted at the pmset text layer); X01 checks the AC precondition and the evaluation's host provenance",
+   "pass_if": "each case ends in its expected exit / refusal code; the stub evaluator runs at most once per sandbox state; recovery never recomputes; T23 refuses HOST_NOT_ON_AC before the marker",
    "why_non_target": "stubs only"
   },
   {
@@ -120,7 +120,7 @@
    ],
    "what": "static structure (AST)",
    "input": "code/mb308_driver.py, mb308_consumer.py, mb308_supply.py, mb308_stage1.py, mb308_a0core.py; F2 and F3 imports",
-   "pass_if": "CLI passes no injection; control(TARGET_CELL) only in run_execute after check_grant; stage1('target') only in evaluate_target; arm_target only in evaluate_target / _worker_init; one marker update-ref; no file write in the target path; after_marker prints status only; control path references no transport penalty; Stage 2 references no other route; F2's research band guard only from the formal guard; no F2 private hooks; F2 / F3 stdlib only",
+   "pass_if": "CLI passes no injection; control(TARGET_CELL) only in run_execute after check_grant; stage1('target') only in evaluate_target; arm_target only in evaluate_target / _worker_init; one marker update-ref; no file write in the target path; after_marker prints status only; control path references no transport penalty; Stage 2 references no other route; F2's research band guard only from the formal guard; no F2 private hooks; F2 / F3 stdlib only; freeze r3: require_ac in run_execute before the marker and in the preflight branch; keep_awake uses caffeinate -i -m -s; after_marker closes the host provenance; in the decoy branch the snapshot and sampler precede decoy() and provenance follows it; mb308_host.py pinned",
    "why_non_target": "static"
   },
   {
@@ -170,10 +170,10 @@
     "Q12"
    ],
    "what": "cap rule (protocol 3.2) re-derived from the OFFICIAL QC02 / QC03 runtimes",
-   "input": "per job kind and rung the larger official wall time (C2b: job wall + recorded in-job verification seconds); 11 blocks x (RLR 4/6/8, C2b 20/40/80, C1b 8/10/12) = 99 jobs, longest-first on 5 workers",
-   "pass_if": "EVAL_CAP_S >= ceil(1.5 x projection); every per-job cap >= 2 x the official maximum wall time of its kind and rung; every QC02/QC03 Stage-1 job CERTIFIED (C2b VERIFIED and admitted); no alarm, no refutation, no ALARM_UNAVAILABLE; a missing job kind fails",
+   "input": "per job kind and rung the larger official wall time (C2b: job wall + recorded in-job verification seconds); 11 blocks x (RLR 4/6/8, C2b 20/40/80, C1b 8/10/12) = 99 jobs, longest-first on 5 workers; freeze r3: each decoy record's host provenance (mb308_host: sleep channels K raw clocks, S kern.sleeptime/waketime, L power log; power at every sample; thermal-pressure level, ThermalEvent entries and load recorded), re-assessed from its stored raw readings",
+   "pass_if": "EVAL_CAP_S >= ceil(1.5 x projection); every per-job cap >= 2 x the official maximum wall time of its kind and rung; every QC02/QC03 Stage-1 job CERTIFIED (C2b VERIFIED and admitted); no alarm, no refutation, no ALARM_UNAVAILABLE; a missing job kind fails; freeze r3: the host provenance of BOTH decoy runs assesses CLEAN and its interval covers the run's recorded walls (CONTAMINATED or AMBIGUOUS fails closed, whatever the caps); all 14 planted controls through _q12_core behave as declared (clean passes; each contamination / ambiguity, incl. a contradicted stored assessment and a too-short interval, fails with caps passing; a genuine per-job violation on a clean host fails with EVAL_CAP passing and exactly RLR:8 failing; a genuine EVAL_CAP violation fails with every per-job cap passing; both at once report both)",
    "why_non_target": "runtime and status of decoy runs only (incident review C7(b))"
   }
  ],
- "revision": "freeze prep (coordinator note 6): Q1_theory and Q12_caps added; Q8 covers every namespace file and every external pin"
+ "revision": "freeze prep (coordinator note 6): Q1_theory and Q12_caps added; Q8 covers every namespace file and every external pin; freeze r3 (protocol section 14): Q12_caps reads the QC02 / QC03 runtimes only under CLEAN host provenance whose interval covers each run and carries 14 planted controls through its own decision function (review r3 F1, N2, N3); QC10 adds the not-on-AC refusal and the evaluation's host provenance; QC11 adds the host guards; the official run needs AC, thermal-pressure level 0 (review r3 F2) and available sleep channels"
 }
