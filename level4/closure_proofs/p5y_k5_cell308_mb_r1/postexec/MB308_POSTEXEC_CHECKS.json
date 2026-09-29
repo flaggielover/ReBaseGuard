@@ -1,0 +1,64 @@
+{
+ "all_hold": true,
+ "checks": {
+  "1_marker": {
+   "exactly_one_ref": true,
+   "marker_names_grant": true,
+   "ref_file_mtime_epoch": 1790683081,
+   "refs_under_prefix": [
+    "refs/p5y-k5-cell308-mb-r1/target-consumed afa930727d084a5b70e6b85d30ca8f34c0e8ae74"
+   ]
+  },
+  "2_no_persisted_evidence": {
+   "emergency_file_absent": true,
+   "guarded_paths_absent": {
+    "evidence": true,
+    "evidence/execution": true,
+    "evidence/execution/MB308_CELL308_RESULT.json": true,
+    "evidence/execution/MB308_CELL308_RESULT.json.tmp": true,
+    "evidence/execution/MB308_CELL308_RESULT.partial": true,
+    "evidence/execution/MB308_CELL308_RESULT.tmp": true
+   },
+   "pending_ref_absent": true,
+   "result_path_not_in_any_commit": true
+  },
+  "3_object_store_marker_to_boot": {
+   "boot_epoch": 1790694015,
+   "no_object_after_marker": true,
+   "objects_in_window_incl_5s_before_marker": [
+    {
+     "mtime_epoch": 1790683080,
+     "oid": "501388e2a1c285bc4a71524be79e36ddc1a1a8c5",
+     "size": "253",
+     "type": "commit"
+    },
+    {
+     "mtime_epoch": 1790683080,
+     "oid": "a1995184cdbcf51f5e1885873958a5168fbd5f69",
+     "size": "31",
+     "type": "blob"
+    }
+   ],
+   "objects_strictly_after_marker": [],
+   "packs_in_window": [],
+   "probe_blob_id_recomputed_from_frozen_bytes": "a1995184cdbcf51f5e1885873958a5168fbd5f69",
+   "window_objects_are_exactly_the_probes": true
+  },
+  "4_chain_unchanged": {
+   "freeze": true,
+   "grant": true,
+   "parents": true,
+   "qualification": true,
+   "qualification_review": true
+  },
+  "5_frozen_files_match_manifest_at_grant": {
+   "files": 21,
+   "mismatches": []
+  },
+  "6_no_mb308_process": true
+ },
+ "frozen_outcome": "CELL308_EXECUTION_INDETERMINATE",
+ "note": "repository facts only; no target value exists or was read; no seal, no exit code",
+ "schema": "rebaseguard.p5y.k5.cell308-mb-r1.postexec-checks.v1",
+ "target_evaluations": 1
+}
