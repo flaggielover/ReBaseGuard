@@ -1,0 +1,5789 @@
+{
+ "cases": {
+  "Q12_caps": {
+   "all_jobs_certified": true,
+   "blocks_with_alarm_or_unadmitted_c2b": {
+    "297": [],
+    "316": []
+   },
+   "caps_pass": true,
+   "eval_cap_ok": true,
+   "eval_cap_required_s": 26319,
+   "eval_cap_s": 28800,
+   "fail_reasons": [],
+   "jobs_297": 45,
+   "jobs_316": 27,
+   "note": "runtime and status only (incident review C7(b))",
+   "pass": true,
+   "per_job_caps": {
+    "C1B:10": {
+     "cap_ge_2x": true,
+     "cap_s": 1800,
+     "official_max_wall_s": 188.4
+    },
+    "C1B:12": {
+     "cap_ge_2x": true,
+     "cap_s": 1800,
+     "official_max_wall_s": 220.2
+    },
+    "C1B:8": {
+     "cap_ge_2x": true,
+     "cap_s": 1800,
+     "official_max_wall_s": 42.4
+    },
+    "C2B:20": {
+     "cap_ge_2x": true,
+     "cap_s": 1800,
+     "official_max_wall_s": 59.3
+    },
+    "C2B:40": {
+     "cap_ge_2x": true,
+     "cap_s": 1800,
+     "official_max_wall_s": 206.1
+    },
+    "C2B:80": {
+     "cap_ge_2x": true,
+     "cap_s": 2700,
+     "official_max_wall_s": 1121.7
+    },
+    "RLR:4": {
+     "cap_ge_2x": true,
+     "cap_s": 1800,
+     "official_max_wall_s": 329.9
+    },
+    "RLR:6": {
+     "cap_ge_2x": true,
+     "cap_s": 4200,
+     "official_max_wall_s": 1702.2
+    },
+    "RLR:8": {
+     "cap_ge_2x": true,
+     "cap_s": 8700,
+     "official_max_wall_s": 4093.1
+    }
+   },
+   "planted_controls": {
+    "controls": {
+     "K_clocks_missing": {
+      "caps_pass": true,
+      "eval_cap_ok": true,
+      "fail_reasons": [
+       "TIMING_AMBIGUOUS_316"
+      ],
+      "failing_per_job_keys": [],
+      "ok": true,
+      "pass_observed": false,
+      "timing": "AMBIGUOUS"
+     },
+     "K_host_slept_30s_during_316": {
+      "caps_pass": true,
+      "eval_cap_ok": true,
+      "fail_reasons": [
+       "TIMING_CONTAMINATED_316"
+      ],
+      "failing_per_job_keys": [],
+      "ok": true,
+      "pass_observed": false,
+      "timing": "CONTAMINATED"
+     },
+     "L_power_log_unavailable": {
+      "caps_pass": true,
+      "eval_cap_ok": true,
+      "fail_reasons": [
+       "TIMING_AMBIGUOUS_297"
+      ],
+      "failing_per_job_keys": [],
+      "ok": true,
+      "pass_observed": false,
+      "timing": "AMBIGUOUS"
+     },
+     "L_real_format_log_lines_in_316": {
+      "caps_pass": true,
+      "eval_cap_ok": true,
+      "fail_reasons": [
+       "TIMING_CONTAMINATED_316"
+      ],
+      "failing_per_job_keys": [],
+      "fixture_parse": [
+       "Sleep",
+       "DarkWake",
+       "Wake"
+      ],
+      "ok": true,
+      "pass_observed": false,
+      "timing": "CONTAMINATED"
+     },
+     "S_kern_sleep_time_changed_during_297": {
+      "caps_pass": true,
+      "eval_cap_ok": true,
+      "fail_reasons": [
+       "TIMING_CONTAMINATED_297"
+      ],
+      "failing_per_job_keys": [],
+      "ok": true,
+      "pass_observed": false,
+      "timing": "CONTAMINATED"
+     },
+     "battery_in_one_sample": {
+      "caps_pass": true,
+      "eval_cap_ok": true,
+      "fail_reasons": [
+       "TIMING_CONTAMINATED_297"
+      ],
+      "failing_per_job_keys": [],
+      "ok": true,
+      "pass_observed": false,
+      "timing": "CONTAMINATED"
+     },
+     "clean_host_within_caps": {
+      "caps_pass": true,
+      "eval_cap_ok": true,
+      "fail_reasons": [],
+      "failing_per_job_keys": [],
+      "ok": true,
+      "pass_observed": true,
+      "timing": "CLEAN"
+     },
+     "genuine_eval_cap_violation_clean_host": {
+      "caps_pass": false,
+      "eval_cap_ok": false,
+      "fail_reasons": [
+       "CAP_RULE_VIOLATED"
+      ],
+      "failing_per_job_keys": [],
+      "ok": true,
+      "pass_observed": false,
+      "timing": "CLEAN"
+     },
+     "genuine_per_job_cap_violation_clean_host": {
+      "caps_pass": false,
+      "eval_cap_ok": true,
+      "fail_reasons": [
+       "CAP_RULE_VIOLATED"
+      ],
+      "failing_per_job_keys": [
+       "RLR:8"
+      ],
+      "ok": true,
+      "pass_observed": false,
+      "timing": "CLEAN"
+     },
+     "host_interval_shorter_than_the_run": {
+      "caps_pass": true,
+      "eval_cap_ok": true,
+      "fail_reasons": [
+       "TIMING_AMBIGUOUS_316"
+      ],
+      "failing_per_job_keys": [],
+      "ok": true,
+      "pass_observed": false,
+      "timing": "AMBIGUOUS"
+     },
+     "record_without_host_provenance": {
+      "caps_pass": true,
+      "eval_cap_ok": true,
+      "fail_reasons": [
+       "TIMING_AMBIGUOUS_297"
+      ],
+      "failing_per_job_keys": [],
+      "ok": true,
+      "pass_observed": false,
+      "timing": "AMBIGUOUS"
+     },
+     "samples_do_not_cover_the_run": {
+      "caps_pass": true,
+      "eval_cap_ok": true,
+      "fail_reasons": [
+       "TIMING_AMBIGUOUS_297"
+      ],
+      "failing_per_job_keys": [],
+      "ok": true,
+      "pass_observed": false,
+      "timing": "AMBIGUOUS"
+     },
+     "stored_assessment_contradicted_by_raw_readings": {
+      "caps_pass": true,
+      "eval_cap_ok": true,
+      "fail_reasons": [
+       "TIMING_AMBIGUOUS_316"
+      ],
+      "failing_per_job_keys": [],
+      "ok": true,
+      "pass_observed": false,
+      "timing": "AMBIGUOUS"
+     },
+     "violation_and_contamination": {
+      "caps_pass": false,
+      "eval_cap_ok": true,
+      "fail_reasons": [
+       "CAP_RULE_VIOLATED",
+       "TIMING_CONTAMINATED_316"
+      ],
+      "failing_per_job_keys": [
+       "RLR:8"
+      ],
+      "ok": true,
+      "pass_observed": false,
+      "timing": "CONTAMINATED"
+     }
+    },
+    "failed": [],
+    "n": 14,
+    "pass": true
+   },
+   "projection_job_seconds": 87596.3,
+   "projection_jobs": 99,
+   "projection_makespan_s": 17545.8,
+   "stage1_wall_s": {
+    "297": 6971.9,
+    "316": 11669.1
+   },
+   "timing_clean": true,
+   "timing_provenance": {
+    "297": {
+     "clean": true,
+     "largest_spacing_s": 60,
+     "load_x100_max_1min": 15484,
+     "log_events": [],
+     "pmset_therm_warning_recorded": false,
+     "reasons": [],
+     "samples": 116,
+     "sleep_gap_ms": 0,
+     "status": "CLEAN",
+     "thermal_level_max": 2,
+     "thermal_level_unreadable": 0
+    },
+    "316": {
+     "clean": true,
+     "largest_spacing_s": 60,
+     "load_x100_max_1min": 15484,
+     "log_events": [],
+     "pmset_therm_warning_recorded": false,
+     "reasons": [],
+     "samples": 194,
+     "sleep_gap_ms": 0,
+     "status": "CLEAN",
+     "thermal_level_max": 2,
+     "thermal_level_unreadable": 0
+    }
+   }
+  },
+  "Q1_theory": {
+   "nsf_blob_ok": true,
+   "nsf_copy": "level4/closure_proofs/p5y_k5_cell308_mb_r1/theory/THEOREM_MB.md",
+   "nsf_sha256_ok": true,
+   "pass": true,
+   "research": "level4/closure_proofs/p5y_k5_cell308_research/theory/THEOREM_MB.md@bfa9ad3c",
+   "research_blob_at_commit_ok": true
+  },
+  "Q8": {
+   "bindings_ok": true,
+   "driver_sha_ok": true,
+   "external_files": 54,
+   "external_mismatches": [],
+   "frozen_files": 21,
+   "listed_but_absent": [],
+   "manifest_sha256": "8799cdac9c6fa80fe106ec626848f4f75ec41800567ddfb2230d39c86831b36a",
+   "mismatches": [],
+   "pass": true,
+   "required_files_listed": true,
+   "unlisted_files": []
+  },
+  "QC01": {
+   "C_A": {
+    "A_exact": true,
+    "Gamma_exact": true,
+    "H_exact": true,
+    "M_after_exact": true,
+    "pass": true,
+    "per_supply_records_G_C1_C2": true,
+    "provenance": true
+   },
+   "C_B_failed": [],
+   "exit": 0,
+   "pass": true
+  },
+  "QC02": {
+   "all_run": true,
+   "blocks": 5,
+   "exit": 0,
+   "ladder_full": true,
+   "pass": true,
+   "pointwise_status": [
+    "CERTIFIED",
+    "CERTIFIED",
+    "CERTIFIED",
+    "CERTIFIED",
+    "CERTIFIED"
+   ],
+   "r0_order3_variant_present": true,
+   "rlr_blocks_certified": 5,
+   "stage2_all_gates_pass": true,
+   "stage2_decoys": 5,
+   "verifications": 0
+  },
+  "QC03": {
+   "exit": 0,
+   "pass": true
+  },
+  "QC04": {
+   "ladder_drifts": [
+    "3,11/10",
+    "3,11/10"
+   ],
+   "ladder_pair": {
+    "11/10:C2B:20": {
+     "compared_leaves": 43,
+     "control_detected": true,
+     "equal": true
+    },
+    "11/10:C2B:40": {
+     "compared_leaves": 43,
+     "control_detected": true,
+     "equal": true
+    },
+    "11/10:C2B:80": {
+     "compared_leaves": 43,
+     "control_detected": true,
+     "equal": true
+    },
+    "3:C1B:10": {
+     "compared_leaves": 22,
+     "control_detected": true,
+     "equal": true
+    },
+    "3:C1B:12": {
+     "compared_leaves": 22,
+     "control_detected": true,
+     "equal": true
+    },
+    "3:C1B:8": {
+     "compared_leaves": 22,
+     "control_detected": true,
+     "equal": true
+    },
+    "3:C2B:20": {
+     "compared_leaves": 43,
+     "control_detected": true,
+     "equal": true
+    },
+    "3:C2B:40": {
+     "compared_leaves": 43,
+     "control_detected": true,
+     "equal": true
+    },
+    "3:C2B:80": {
+     "compared_leaves": 43,
+     "control_detected": true,
+     "equal": true
+    }
+   },
+   "ladder_pair_identical": true,
+   "pass": true,
+   "serial_ok": true,
+   "serial_vs_pooled": {
+    "C1B:10": {
+     "compared_leaves": 18,
+     "control_detected": true,
+     "equal": true
+    },
+    "C1B:12": {
+     "compared_leaves": 18,
+     "control_detected": true,
+     "equal": true
+    },
+    "C1B:8": {
+     "compared_leaves": 18,
+     "control_detected": true,
+     "equal": true
+    },
+    "C2B:20": {
+     "compared_leaves": 17,
+     "control_detected": true,
+     "equal": true
+    },
+    "C2B:40": {
+     "compared_leaves": 17,
+     "control_detected": true,
+     "equal": true
+    },
+    "C2B:80": {
+     "compared_leaves": 17,
+     "control_detected": true,
+     "equal": true
+    },
+    "RLR:4": {
+     "compared_leaves": 189,
+     "control_detected": true,
+     "equal": true
+    },
+    "RLR:6": {
+     "compared_leaves": 189,
+     "control_detected": true,
+     "equal": true
+    },
+    "RLR:8": {
+     "compared_leaves": 189,
+     "control_detected": true,
+     "equal": true
+    }
+   },
+   "stripped_keys": [
+    "cpu_seconds",
+    "seconds",
+    "wall_seconds",
+    "cpu_cap (job level)"
+   ]
+  },
+  "QC05": {
+   "blocks": 1980,
+   "exact_equal": 1980,
+   "ladder": {
+    "equal": 150,
+    "ladders": 150,
+    "mutant_max_for_upper_rejected_on": 150,
+    "pass": true
+   },
+   "mutants": {
+    "A0_slot_without_C_R": {
+     "passes_one_sided_somewhere": false,
+     "rejected": true,
+     "sets_differing": 158,
+     "sets_differing_at_S": 0
+    },
+    "abar_not_capped": {
+     "passes_one_sided_somewhere": true,
+     "rejected": true,
+     "sets_differing": 255,
+     "sets_differing_at_S": 145
+    },
+    "abar_replaced": {
+     "passes_one_sided_somewhere": true,
+     "rejected": true,
+     "sets_differing": 199,
+     "sets_differing_at_S": 109
+    },
+    "envelope_none": {
+     "passes_one_sided_somewhere": true,
+     "rejected": true,
+     "sets_differing": 227,
+     "sets_differing_at_S": 123
+    },
+    "envelope_right_hand": {
+     "passes_one_sided_somewhere": true,
+     "rejected": true,
+     "sets_differing": 249,
+     "sets_differing_at_S": 144
+    },
+    "max_for_min": {
+     "passes_one_sided_somewhere": true,
+     "rejected": true,
+     "sets_differing": 305,
+     "sets_differing_at_S": 305
+    },
+    "minus_2^-40": {
+     "passes_one_sided_somewhere": true,
+     "rejected": true,
+     "sets_differing": 305,
+     "sets_differing_at_S": 305
+    },
+    "no_DM_refresh": {
+     "passes_one_sided_somewhere": true,
+     "rejected": true,
+     "sets_differing": 262,
+     "sets_differing_at_S": 168
+    },
+    "no_S_I1": {
+     "passes_one_sided_somewhere": false,
+     "rejected": true,
+     "sets_differing": 23,
+     "sets_differing_at_S": 23
+    },
+    "plus_2^-40": {
+     "passes_one_sided_somewhere": true,
+     "rejected": true,
+     "sets_differing": 305,
+     "sets_differing_at_S": 305
+    }
+   },
+   "not_equal": [],
+   "pass": true,
+   "plants_provenance": {
+    "D14M": true,
+    "DvM_C1": true,
+    "DvM_C2": true,
+    "G": true,
+    "S_I1": true
+   },
+   "pointwise": {
+    "C1b_d8_uppers_never_admitted": true,
+    "L_C1B_above_C2B_upper_inconsistent": true,
+    "L_C2B_above_C1B_upper_inconsistent": true,
+    "U_min_over_admitted_C2b": true,
+    "alarm_sensitivity_recorded": true,
+    "c1b_refutation_inconsistent": true,
+    "c2b_refutation_inconsistent": true,
+    "low_degree_c1b_admissible_when_verified": true,
+    "no_other_implementation_lower_alarm_unavailable": true,
+    "pass": true,
+    "same_implementation_L_above_U_not_an_alarm": true,
+    "undecided_not_admitted": true
+   },
+   "refusals": {
+    "float_reaching_exact_layer": true,
+    "not_certified": true,
+    "pointwise_record": true,
+    "wrong_hull": true
+   },
+   "sets": 305
+  },
+  "QC06": {
+   "C1_byte_identity": {
+    "pass": true,
+    "rows": [
+     {
+      "byte_identical": true,
+      "committed_blob_ok": true,
+      "file": "C2BX_SUPER_e3_N20_detA.json",
+      "manifest_sha256_ok": true
+     },
+     {
+      "byte_identical": true,
+      "committed_blob_ok": true,
+      "file": "C2BX_SUB_e3_N20_detA.json",
+      "manifest_sha256_ok": true
+     },
+     {
+      "byte_identical": true,
+      "committed_blob_ok": true,
+      "file": "C1B_SUPER_e3_d8_detA.json",
+      "manifest_sha256_ok": true
+     },
+     {
+      "byte_identical": true,
+      "committed_blob_ok": true,
+      "file": "C2BX_SUPER_e11_10_N20.json",
+      "manifest_sha256_ok": true
+     },
+     {
+      "byte_identical": true,
+      "committed_blob_ok": true,
+      "file": "C2BX_SUB_e11_10_N20.json",
+      "manifest_sha256_ok": true
+     }
+    ]
+   },
+   "C6i_fd": {
+    "pass": true,
+    "rough_W": {
+     "N": 20,
+     "cells_checked": {
+      "AXM": 20,
+      "AXP": 20,
+      "L": 3030,
+      "L_s<1": 210,
+      "U": 2970,
+      "U_s<1": 190
+     },
+     "drift": "27/10",
+     "exceedances": 0,
+     "half_bound_flags": 0,
+     "kinds_ok": true,
+     "max_fd_over_bound": 0.0095,
+     "points": [
+      "c"
+     ]
+    },
+    "smooth_W": {
+     "N": 20,
+     "cells_checked": {
+      "AXM": 20,
+      "AXP": 20,
+      "L": 765,
+      "L_s<1": 210,
+      "U": 735,
+      "U_s<1": 190
+     },
+     "drift": "27/10",
+     "exceedances": 0,
+     "half_bound_flags": 2048,
+     "kinds_ok": true,
+     "max_fd_over_bound": 0.9985,
+     "points": [
+      "c",
+      "v0",
+      "v1",
+      "v2"
+     ]
+    }
+   },
+   "C6ii_iv_controls": {
+    "errpath_sub": {
+     "interior_violation_float": true,
+     "points": 83400,
+     "recheck_FAIL": true,
+     "vertex_only_acceptable": true
+    },
+    "errpath_super": {
+     "interior_violation_float": true,
+     "points": 83400,
+     "recheck_FAIL": true,
+     "vertex_only_acceptable": true
+    },
+    "pass": true,
+    "reference_nested": true,
+    "stored_like_sub_PASS": true,
+    "stored_like_super_PASS": true,
+    "swap_sub_W_as_SUPER_FAIL": true,
+    "swap_super_W_as_SUB_FAIL": true,
+    "vertex_enclosure": {
+     "negative_control_outside": 3361,
+     "nodes": 3361,
+     "outside": 0,
+     "pass": true
+    }
+   },
+   "D5_verifier_controls": {
+    "c1b_claim_mismatch_refuted": true,
+    "c1b_d4_valid": true,
+    "c1b_relabelled_to_smaller_drift_not_accepted": true,
+    "c1b_wrong_drift_refused": true,
+    "c2b_claim_mismatch_refuted": true,
+    "c2b_sha_mismatch_refused": true,
+    "c2b_sub_W_as_super_not_accepted": true,
+    "c2b_valid": true,
+    "c2b_x0.97_refuted": true,
+    "pass": true
+   },
+   "pass": true
+  },
+  "QC07": {
+   "assembly_E4": {
+    "controls": 29,
+    "detected": 29,
+    "not_detected": [],
+    "pass": true,
+    "valid_halves_ok": true,
+    "wall_seconds": 5.3
+   },
+   "formal": {
+    "T10_G_R3b_common_mode_plant": true,
+    "T1_cases": 168,
+    "T1_failures": [],
+    "T1_ok": 168,
+    "T2_detected": 32,
+    "T2_rise_fall_cases": 32,
+    "T3_cases": 168,
+    "T3_detected": 168,
+    "T4_C5_plant": true,
+    "T5_C6_plant": true,
+    "T5_F2_refuses_same_input": true,
+    "T6_reproduction_plant": true,
+    "T7_tiling_plant": true,
+    "T8_tripwires": true,
+    "T9_r0_order3_binding_cases": 8,
+    "pass": true
+   },
+   "pass": true
+  },
+  "QC08": {
+   "controls": {
+    "L := 2 Lambda_hat flagged": true,
+    "U := Lambda_hat/2 flagged": true
+   },
+   "latent_proxy": "decoy estimates only",
+   "n": 5,
+   "pass": true,
+   "rows": [
+    {
+     "L_ok": true,
+     "U_ok": true,
+     "block": 0,
+     "rlr_block": true
+    },
+    {
+     "L_ok": true,
+     "U_ok": true,
+     "block": 1,
+     "rlr_block": true
+    },
+    {
+     "L_ok": true,
+     "U_ok": true,
+     "block": 2,
+     "rlr_block": true
+    },
+    {
+     "L_ok": true,
+     "U_ok": true,
+     "block": 3,
+     "rlr_block": true
+    },
+    {
+     "L_ok": true,
+     "U_ok": true,
+     "block": 4,
+     "rlr_block": true
+    }
+   ]
+  },
+  "QC09": {
+   "in_process": {
+    "arm_without_marker_refused": true,
+    "band_points_and_mirror_refused": true,
+    "c1b_Ctx_direct_refused": true,
+    "c1b_block_rung_refused": true,
+    "c1b_pointwise_rung_refused": true,
+    "c2b_Setup_direct_refused": true,
+    "c2b_rung_refused": true,
+    "cell308_cover_is_guard_constant": true,
+    "cell308_tiles_hulls_points_refused": true,
+    "decoys_accepted": true,
+    "f2_research_band_guard_on_by_default": true,
+    "log_execution_refuses": true,
+    "mode_still_decoy": true,
+    "numpy_import_refused": true,
+    "other_labels_accepted": true,
+    "pass": true,
+    "quarantined_labels_refused": true,
+    "reproduction_308_needs_guard_cover": true,
+    "reproduction_admits_exactly_the_cell": true,
+    "reproduction_closed_after_exit": true,
+    "reproduction_refuses_other_cells": true,
+    "straddling_intervals_refused": true,
+    "tail_cover_cells_refused": true,
+    "tpt_geometry_refused_whatever_label": true,
+    "verifier_refused": true
+   },
+   "pass": true,
+   "sandbox_arming": {
+    "ok": true,
+    "run": {
+     "drop_one_pair": "REFUSED QuarantineRefusal",
+     "extra_band_pair": "REFUSED QuarantineRefusal",
+     "marker_not_naming_grant": "REFUSED QuarantineRefusal",
+     "no_marker": "REFUSED QuarantineRefusal",
+     "with_marker": "ARMED 37 True"
+    }
+   }
+  },
+  "QC10": {
+   "failed": [],
+   "flows": {
+    "C01_control_failed": {
+     "ok": true,
+     "run": {
+      "exit": 3
+     }
+    },
+    "C02_rerun_after_control_failed_refused": {
+     "ok": true,
+     "run": {
+      "refused": "CONSUMED"
+     }
+    },
+    "P01_exception": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P02_independent_check_failed": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P02b_inconsistent": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P02c_c6_refusal": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P03_system_exit": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P04_keyboard_interrupt": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P05_evaluation_cap": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P06_serialization_failure": {
+     "ok": true,
+     "run": {
+      "exit": 5
+     }
+    },
+    "P07_primary_persistence_fails_emergency_then_seal_only": {
+     "ok": true,
+     "run": {
+      "exit": 4
+     }
+    },
+    "P08_both_channels_fail": {
+     "ok": true,
+     "run": {
+      "exit": 6
+     }
+    },
+    "P09_seal_fails_then_seal_only": {
+     "ok": true,
+     "run": {
+      "exit": 4
+     }
+    },
+    "P10_materialize_fails_then_seal_only": {
+     "ok": true,
+     "run": {
+      "exit": 7
+     }
+    },
+    "P11_worker_bootstrap_failure": {
+     "ok": true,
+     "run": "BrokenProcessPool"
+    },
+    "QC09_arming": {
+     "ok": true,
+     "run": {
+      "drop_one_pair": "REFUSED QuarantineRefusal",
+      "extra_band_pair": "REFUSED QuarantineRefusal",
+      "marker_not_naming_grant": "REFUSED QuarantineRefusal",
+      "no_marker": "REFUSED QuarantineRefusal",
+      "with_marker": "ARMED 37 True"
+     }
+    },
+    "T01_file_at_result": {
+     "ok": true,
+     "run": {
+      "refused": "TARGET_ARTIFACT_EXISTS"
+     }
+    },
+    "T02_directory_at_execution_dir": {
+     "ok": true,
+     "run": {
+      "refused": "RESULT_PATH_OCCUPIED"
+     }
+    },
+    "T03_symlink_out_at_tmp": {
+     "ok": true,
+     "run": {
+      "refused": "RESULT_PATH_OCCUPIED"
+     }
+    },
+    "T04_broken_symlink_at_result": {
+     "ok": true,
+     "run": {
+      "refused": "TARGET_ARTIFACT_EXISTS"
+     }
+    },
+    "T05_fifo_at_partial": {
+     "ok": true,
+     "run": {
+      "refused": "RESULT_PATH_OCCUPIED"
+     }
+    },
+    "T06_ignored_tmp_file": {
+     "ok": true,
+     "run": {
+      "refused": "RESULT_PATH_OCCUPIED"
+     }
+    },
+    "T07_symlinked_evidence_dir": {
+     "ok": true,
+     "run": {
+      "refused": "RESULT_PATH_OCCUPIED"
+     }
+    },
+    "T08_dirty_tree": {
+     "ok": true,
+     "run": {
+      "refused": "DIRTY_TREE"
+     }
+    },
+    "T09_ignored_object_in_namespace": {
+     "ok": true,
+     "run": {
+      "refused": "IGNORED_OBJECT"
+     }
+    },
+    "T09b_pycache_in_namespace": {
+     "ok": true,
+     "run": {
+      "refused": "IGNORED_OBJECT"
+     }
+    },
+    "T10_prior_marker_ref": {
+     "ok": true,
+     "run": {
+      "refused": "CONSUMED"
+     }
+    },
+    "T11_pending_ref": {
+     "ok": true,
+     "run": {
+      "refused": "CONSUMED"
+     }
+    },
+    "T13_emergency_file": {
+     "ok": true,
+     "run": {
+      "refused": "TARGET_ARTIFACT_EXISTS"
+     }
+    },
+    "T14_wrong_branch": {
+     "ok": true,
+     "run": {
+      "refused": "WRONG_BRANCH"
+     }
+    },
+    "T15_cli_flags_identity_devflags": {
+     "ok": true,
+     "run": [
+      [
+       2,
+       "MB308 REFUSED INTERPRETER_FLAGS: execute and seal-only require python3.14 -I -S -B"
+      ],
+      [
+       2,
+       "MB308 REFUSED REPO_NOT_QUALIFIED: not the qualified worktree / git dir / common dir"
+      ],
+      [
+       2,
+       "MB308 REFUSED DEV_FLAG_REFUSED: --dev-ladder / --first-blocks exist in decoy mode only"
+      ]
+     ]
+    },
+    "T16_no_grant": {
+     "ok": true,
+     "run": {
+      "refused": "GRANT_MISSING"
+     }
+    },
+    "T17_grant_wrong_driver_sha": {
+     "ok": true,
+     "run": {
+      "refused": "GRANT_INVALID"
+     }
+    },
+    "T18_broken_chain": {
+     "ok": true,
+     "run": {
+      "refused": "GRANT_INVALID"
+     }
+    },
+    "T19_review_rejected": {
+     "ok": true,
+     "run": {
+      "refused": "REVIEW_VERDICT"
+     }
+    },
+    "T20_qualification_not_pass": {
+     "ok": true,
+     "run": {
+      "refused": "GRANT_INVALID"
+     }
+    },
+    "T21_grant_wrong_manifest": {
+     "ok": true,
+     "run": {
+      "refused": "GRANT_INVALID"
+     }
+    },
+    "T22_tampered_inputs": {
+     "ok": true,
+     "run": {
+      "certifier": "PinError",
+      "f2": "PIN_MISMATCH",
+      "f2_removed": "F2_MISSING",
+      "helper": "HELPER_PIN_MISMATCH",
+      "registry_c2": "PIN_MISMATCH",
+      "verifier": "PIN_MISMATCH"
+     }
+    },
+    "T23_not_on_ac_power": {
+     "ok": true,
+     "run": {
+      "refused": "HOST_NOT_ON_AC"
+     }
+    },
+    "X01_success": {
+     "ok": true,
+     "run": {
+      "exit": 0
+     }
+    },
+    "X02_rerun_refused": {
+     "ok": true,
+     "run": {
+      "refused": "CONSUMED"
+     }
+    },
+    "X03_seal_only_no_recompute": {
+     "ok": true,
+     "run": 0
+    }
+   },
+   "freeze": "c46434a399eca18a709616a4a4d51918d1a30298",
+   "n": 42,
+   "pass": true
+  },
+  "QC11": {
+   "F2_band_guard_only_from_formal_guard": true,
+   "F2_imports_stdlib_only": true,
+   "F3_imports_stdlib_only": true,
+   "ac_required_before_marker_in_run_execute": true,
+   "ac_required_in_preflight": true,
+   "after_marker_prints_status_only": true,
+   "arm_target_only_in_evaluate_target_and_worker_init": true,
+   "cli_passes_no_injection": true,
+   "control_path_names_no_penalty": true,
+   "decoy_host_provenance_recorded": true,
+   "evaluate_target_referenced_only_in_run_execute": true,
+   "evaluation_host_provenance_closed_in_after_marker": true,
+   "exactly_one_marker_update_ref_in_run_execute": true,
+   "host_module_pinned": true,
+   "keep_awake_flags_ims": true,
+   "no_file_write_in_target_path": true,
+   "no_private_F2_hooks_mb308_a0core.py": true,
+   "no_private_F2_hooks_mb308_consumer.py": true,
+   "no_private_F2_hooks_mb308_driver.py": true,
+   "no_private_F2_hooks_mb308_stage1.py": true,
+   "no_private_F2_hooks_mb308_supply.py": true,
+   "no_reference_to_the_research_reconstructions": true,
+   "pass": true,
+   "stage1_and_a0core_print_and_write_nothing": true,
+   "stage1_target_only_in_evaluate_target": true,
+   "stage2_names_no_other_route": true,
+   "supply_band_guard_only_from_formal_guard": true,
+   "target_control_only_in_run_execute_after_grant": true
+  },
+  "QC12": {
+   "files_scanned": 44,
+   "geometry_exemptions": [
+    {
+     "field": "guard.cell308_cover",
+     "file": "level4/closure_proofs/p5y_k5_cell308_mb_r1/protocol/MB308_FREEZE.json",
+     "occurrences": 2
+    }
+   ],
+   "geometry_tokens": 8,
+   "pass": true,
+   "patterns": 70,
+   "planted_control_fires": true,
+   "planted_geometry_token_outside_guard_field_fires": true,
+   "planted_non_geometry_token_in_manifest_copy_fires": true,
+   "planted_tail_value_in_nontiming_field_of_evidence_fires": true,
+   "planted_tail_value_in_timing_field_of_evidence_exempt_and_counted": true,
+   "record_token_hit_files": [],
+   "record_token_hits": 0,
+   "record_tokens": 309,
+   "tail_figure_hits": {},
+   "timing_field_exemptions": [
+    {
+     "field": "timing keys cpu_seconds/seconds/wall_seconds",
+     "file": "level4/closure_proofs/p5y_k5_cell308_mb_r1/qualification/r1_failed/MB308_QC03_DECOY_316_B3.json",
+     "occurrences": 1
+    }
+   ]
+  },
+  "QC13": {
+   "builder_ledger_lines": 9,
+   "builder_ledger_pre_grant_classes_only": true,
+   "builder_ledger_zero_target": true,
+   "governance": {
+    "r5_union_open_ranges": [
+     [
+      306,
+      309
+     ]
+    ],
+    "r6": "absent"
+   },
+   "incident_review": {
+    "committed_before_freeze": true,
+    "condition_files_at_HEAD": {
+     "level4/closure_proofs/p5y_k5_cell308_research/audit/INCIDENT_AUDIT_MB308_ADDENDUM_A1.md": true,
+     "level4/closure_proofs/p5y_k5_cell308_research/config/QUARANTINE_AMENDMENT_308_1.json": true,
+     "level4/closure_proofs/p5y_k5_cell308_research/ledger/briefs/BRIEF_CHECK.json": true,
+     "level4/closure_proofs/p5y_k5_cell308_research/registry/ROUTE_REGISTRY.md": true
+    },
+    "pass": true,
+    "registry_revision_r2": true,
+    "review": "level4/closure_proofs/p5y_k5_cell308_research/reviews/INCIDENT_INDEPENDENCE_REVIEW_MB308.md",
+    "verdict_line": true
+   },
+   "pass": true,
+   "preconditions": true
+  }
+ },
+ "cases_missing_pass": [],
+ "cases_selected": [
+  "QC01",
+  "QC02",
+  "QC03",
+  "QC04",
+  "QC05",
+  "QC06",
+  "QC07",
+  "QC08",
+  "QC09",
+  "QC10",
+  "QC11",
+  "QC12",
+  "QC13"
+ ],
+ "child_exit_codes": {
+  "decoy297": 0,
+  "decoy316": 0,
+  "det_a": 0,
+  "det_b": 0,
+  "e4": 0,
+  "serial": 0
+ },
+ "dev_mode": false,
+ "finished_utc": "2026-09-29T10:17:50Z",
+ "freeze_commit": "c46434a399eca18a709616a4a4d51918d1a30298",
+ "gates": {
+  "Q1": {
+   "pass": true
+  },
+  "Q10": {
+   "pass": true
+  },
+  "Q11": {
+   "pass": true
+  },
+  "Q12": {
+   "pass": true
+  },
+  "Q2": {
+   "pass": true
+  },
+  "Q3": {
+   "pass": true
+  },
+  "Q4": {
+   "pass": true
+  },
+  "Q5": {
+   "pass": true
+  },
+  "Q6": {
+   "pass": true
+  },
+  "Q7": {
+   "pass": true
+  },
+  "Q8": {
+   "pass": true
+  },
+  "Q9": {
+   "pass": true
+  }
+ },
+ "head": "c46434a399eca18a709616a4a4d51918d1a30298",
+ "heavy_recomputed": true,
+ "host": {
+  "assessment": {
+   "clean": true,
+   "largest_spacing_s": 62,
+   "load_x100_max_1min": 15484,
+   "log_events": [],
+   "pmset_therm_warning_recorded": false,
+   "reasons": [],
+   "samples": 194,
+   "sleep_gap_ms": 0,
+   "status": "CLEAN",
+   "thermal_level_max": 2,
+   "thermal_level_unreadable": 0
+  },
+  "end": {
+   "clocks": {
+    "epoch_s": 1790677070,
+    "monotonic_raw_ns": 785965189962250,
+    "uptime_raw_ns": 761819309795250,
+    "utc": "2026-09-29T10:17:50Z"
+   },
+   "kern_us": {
+    "sleeptime": 1790656895370188,
+    "waketime": 1790656922975077
+   },
+   "load_x100": [
+    227,
+    289,
+    283
+   ],
+   "power": "AC Power",
+   "thermal": {
+    "lines": [
+     "Note: No thermal warning level has been recorded",
+     "Note: No performance warning level has been recorded",
+     "Note: No CPU power status has been recorded"
+    ],
+    "no_warning_recorded": true
+   },
+   "thermal_level": 1
+  },
+  "events": [],
+  "keep_awake": {
+   "caffeinate_flags": "-i -m -s",
+   "caffeinate_pid": 4592
+  },
+  "samples": [
+   {
+    "clocks": {
+     "epoch_s": 1790665450,
+     "monotonic_raw_ns": 774344892544916,
+     "uptime_raw_ns": 750199012382875,
+     "utc": "2026-09-29T07:04:10Z"
+    },
+    "load_x100": [
+     4030,
+     1335,
+     651
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790665510,
+     "monotonic_raw_ns": 774405010519458,
+     "uptime_raw_ns": 750259130358708,
+     "utc": "2026-09-29T07:05:10Z"
+    },
+    "load_x100": [
+     5026,
+     2121,
+     992
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790665570,
+     "monotonic_raw_ns": 774465094034541,
+     "uptime_raw_ns": 750319213876750,
+     "utc": "2026-09-29T07:06:10Z"
+    },
+    "load_x100": [
+     4224,
+     2454,
+     1196
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790665630,
+     "monotonic_raw_ns": 774525182877666,
+     "uptime_raw_ns": 750379302716333,
+     "utc": "2026-09-29T07:07:10Z"
+    },
+    "load_x100": [
+     3654,
+     2606,
+     1338
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790665690,
+     "monotonic_raw_ns": 774585301253583,
+     "uptime_raw_ns": 750439421087208,
+     "utc": "2026-09-29T07:08:10Z"
+    },
+    "load_x100": [
+     3435,
+     2742,
+     1475
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790665750,
+     "monotonic_raw_ns": 774645384106333,
+     "uptime_raw_ns": 750499503940750,
+     "utc": "2026-09-29T07:09:10Z"
+    },
+    "load_x100": [
+     3562,
+     2867,
+     1605
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790665810,
+     "monotonic_raw_ns": 774705488432333,
+     "uptime_raw_ns": 750559608269625,
+     "utc": "2026-09-29T07:10:10Z"
+    },
+    "load_x100": [
+     4164,
+     3163,
+     1802
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790665870,
+     "monotonic_raw_ns": 774765601820541,
+     "uptime_raw_ns": 750619721658958,
+     "utc": "2026-09-29T07:11:10Z"
+    },
+    "load_x100": [
+     3873,
+     3272,
+     1936
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790665930,
+     "monotonic_raw_ns": 774825678532291,
+     "uptime_raw_ns": 750679798365708,
+     "utc": "2026-09-29T07:12:10Z"
+    },
+    "load_x100": [
+     3915,
+     3388,
+     2070
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790665990,
+     "monotonic_raw_ns": 774885760720208,
+     "uptime_raw_ns": 750739880553708,
+     "utc": "2026-09-29T07:13:10Z"
+    },
+    "load_x100": [
+     3154,
+     3264,
+     2113
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790666050,
+     "monotonic_raw_ns": 774945854494833,
+     "uptime_raw_ns": 750799974333541,
+     "utc": "2026-09-29T07:14:10Z"
+    },
+    "load_x100": [
+     2663,
+     3103,
+     2131
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790666111,
+     "monotonic_raw_ns": 775005923082041,
+     "uptime_raw_ns": 750860042917666,
+     "utc": "2026-09-29T07:15:11Z"
+    },
+    "load_x100": [
+     2844,
+     3074,
+     2186
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790666171,
+     "monotonic_raw_ns": 775065989685125,
+     "uptime_raw_ns": 750920109519541,
+     "utc": "2026-09-29T07:16:11Z"
+    },
+    "load_x100": [
+     3163,
+     3135,
+     2270
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790666231,
+     "monotonic_raw_ns": 775126047855708,
+     "uptime_raw_ns": 750980167691000,
+     "utc": "2026-09-29T07:17:11Z"
+    },
+    "load_x100": [
+     2775,
+     3031,
+     2290
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790666292,
+     "monotonic_raw_ns": 775187860554333,
+     "uptime_raw_ns": 751041980388291,
+     "utc": "2026-09-29T07:18:12Z"
+    },
+    "load_x100": [
+     2831,
+     3001,
+     2333
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790666355,
+     "monotonic_raw_ns": 775250191445125,
+     "uptime_raw_ns": 751104311287625,
+     "utc": "2026-09-29T07:19:15Z"
+    },
+    "load_x100": [
+     2523,
+     2876,
+     2331
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790666415,
+     "monotonic_raw_ns": 775310261921083,
+     "uptime_raw_ns": 751164381760625,
+     "utc": "2026-09-29T07:20:15Z"
+    },
+    "load_x100": [
+     2921,
+     2901,
+     2376
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790666475,
+     "monotonic_raw_ns": 775370330178541,
+     "uptime_raw_ns": 751224450022500,
+     "utc": "2026-09-29T07:21:15Z"
+    },
+    "load_x100": [
+     2782,
+     2855,
+     2394
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790666535,
+     "monotonic_raw_ns": 775430386543041,
+     "uptime_raw_ns": 751284506391791,
+     "utc": "2026-09-29T07:22:15Z"
+    },
+    "load_x100": [
+     2623,
+     2792,
+     2401
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790666595,
+     "monotonic_raw_ns": 775490447769125,
+     "uptime_raw_ns": 751344567612916,
+     "utc": "2026-09-29T07:23:15Z"
+    },
+    "load_x100": [
+     3413,
+     2983,
+     2498
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790666655,
+     "monotonic_raw_ns": 775550510593958,
+     "uptime_raw_ns": 751404630435875,
+     "utc": "2026-09-29T07:24:15Z"
+    },
+    "load_x100": [
+     2630,
+     2835,
+     2475
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790666715,
+     "monotonic_raw_ns": 775610576359208,
+     "uptime_raw_ns": 751464696205166,
+     "utc": "2026-09-29T07:25:15Z"
+    },
+    "load_x100": [
+     2476,
+     2750,
+     2468
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790666775,
+     "monotonic_raw_ns": 775670643653083,
+     "uptime_raw_ns": 751524763500666,
+     "utc": "2026-09-29T07:26:15Z"
+    },
+    "load_x100": [
+     2421,
+     2676,
+     2459
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790666835,
+     "monotonic_raw_ns": 775730694506416,
+     "uptime_raw_ns": 751584814349458,
+     "utc": "2026-09-29T07:27:15Z"
+    },
+    "load_x100": [
+     2414,
+     2647,
+     2463
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790666895,
+     "monotonic_raw_ns": 775790759684791,
+     "uptime_raw_ns": 751644879528416,
+     "utc": "2026-09-29T07:28:15Z"
+    },
+    "load_x100": [
+     2464,
+     2618,
+     2465
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790666955,
+     "monotonic_raw_ns": 775850826240458,
+     "uptime_raw_ns": 751704946082208,
+     "utc": "2026-09-29T07:29:15Z"
+    },
+    "load_x100": [
+     2340,
+     2542,
+     2446
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790667016,
+     "monotonic_raw_ns": 775910887587875,
+     "uptime_raw_ns": 751765007435500,
+     "utc": "2026-09-29T07:30:16Z"
+    },
+    "load_x100": [
+     2610,
+     2566,
+     2460
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790667076,
+     "monotonic_raw_ns": 775970950512125,
+     "uptime_raw_ns": 751825070361583,
+     "utc": "2026-09-29T07:31:16Z"
+    },
+    "load_x100": [
+     2485,
+     2522,
+     2450
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790667136,
+     "monotonic_raw_ns": 776031012044333,
+     "uptime_raw_ns": 751885131891291,
+     "utc": "2026-09-29T07:32:16Z"
+    },
+    "load_x100": [
+     3232,
+     2683,
+     2513
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790667196,
+     "monotonic_raw_ns": 776091069854458,
+     "uptime_raw_ns": 751945189701041,
+     "utc": "2026-09-29T07:33:16Z"
+    },
+    "load_x100": [
+     5808,
+     3518,
+     2836
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790667256,
+     "monotonic_raw_ns": 776151123640333,
+     "uptime_raw_ns": 752005243490333,
+     "utc": "2026-09-29T07:34:16Z"
+    },
+    "load_x100": [
+     8859,
+     4753,
+     3341
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790667316,
+     "monotonic_raw_ns": 776211188415833,
+     "uptime_raw_ns": 752065308258208,
+     "utc": "2026-09-29T07:35:16Z"
+    },
+    "load_x100": [
+     9912,
+     5845,
+     3847
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790667376,
+     "monotonic_raw_ns": 776271258997416,
+     "uptime_raw_ns": 752125378845833,
+     "utc": "2026-09-29T07:36:16Z"
+    },
+    "load_x100": [
+     8839,
+     6295,
+     4153
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790667436,
+     "monotonic_raw_ns": 776331322119750,
+     "uptime_raw_ns": 752185441968666,
+     "utc": "2026-09-29T07:37:16Z"
+    },
+    "load_x100": [
+     9402,
+     6907,
+     4527
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790667496,
+     "monotonic_raw_ns": 776391378700416,
+     "uptime_raw_ns": 752245498580291,
+     "utc": "2026-09-29T07:38:16Z"
+    },
+    "load_x100": [
+     10310,
+     7577,
+     4937
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790667556,
+     "monotonic_raw_ns": 776451441792708,
+     "uptime_raw_ns": 752305561635666,
+     "utc": "2026-09-29T07:39:16Z"
+    },
+    "load_x100": [
+     8968,
+     7721,
+     5172
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790667616,
+     "monotonic_raw_ns": 776511501963041,
+     "uptime_raw_ns": 752365621815791,
+     "utc": "2026-09-29T07:40:16Z"
+    },
+    "load_x100": [
+     9573,
+     8030,
+     5455
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790667676,
+     "monotonic_raw_ns": 776571560603125,
+     "uptime_raw_ns": 752425680449416,
+     "utc": "2026-09-29T07:41:16Z"
+    },
+    "load_x100": [
+     10339,
+     8537,
+     5821
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790667736,
+     "monotonic_raw_ns": 776631622677416,
+     "uptime_raw_ns": 752485742519833,
+     "utc": "2026-09-29T07:42:16Z"
+    },
+    "load_x100": [
+     9697,
+     8701,
+     6068
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790667796,
+     "monotonic_raw_ns": 776691699838166,
+     "uptime_raw_ns": 752545819673333,
+     "utc": "2026-09-29T07:43:16Z"
+    },
+    "load_x100": [
+     8612,
+     8600,
+     6211
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790667856,
+     "monotonic_raw_ns": 776751751956416,
+     "uptime_raw_ns": 752605871802291,
+     "utc": "2026-09-29T07:44:16Z"
+    },
+    "load_x100": [
+     8517,
+     8587,
+     6369
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790667916,
+     "monotonic_raw_ns": 776811812266125,
+     "uptime_raw_ns": 752665932111208,
+     "utc": "2026-09-29T07:45:16Z"
+    },
+    "load_x100": [
+     7350,
+     8260,
+     6399
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790667976,
+     "monotonic_raw_ns": 776871862881375,
+     "uptime_raw_ns": 752725982726416,
+     "utc": "2026-09-29T07:46:16Z"
+    },
+    "load_x100": [
+     8963,
+     8415,
+     6575
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790668037,
+     "monotonic_raw_ns": 776931927594958,
+     "uptime_raw_ns": 752786047494958,
+     "utc": "2026-09-29T07:47:17Z"
+    },
+    "load_x100": [
+     13621,
+     9975,
+     7291
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790668097,
+     "monotonic_raw_ns": 776991989293500,
+     "uptime_raw_ns": 752846109138791,
+     "utc": "2026-09-29T07:48:17Z"
+    },
+    "load_x100": [
+     15484,
+     11151,
+     7912
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790668157,
+     "monotonic_raw_ns": 777052049074750,
+     "uptime_raw_ns": 752906168917958,
+     "utc": "2026-09-29T07:49:17Z"
+    },
+    "load_x100": [
+     14365,
+     11641,
+     8317
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790668217,
+     "monotonic_raw_ns": 777112107250541,
+     "uptime_raw_ns": 752966227112333,
+     "utc": "2026-09-29T07:50:17Z"
+    },
+    "load_x100": [
+     12795,
+     11682,
+     8558
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790668277,
+     "monotonic_raw_ns": 777172165189583,
+     "uptime_raw_ns": 753026285027875,
+     "utc": "2026-09-29T07:51:17Z"
+    },
+    "load_x100": [
+     11511,
+     11508,
+     8705
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790668337,
+     "monotonic_raw_ns": 777232218974166,
+     "uptime_raw_ns": 753086338818125,
+     "utc": "2026-09-29T07:52:17Z"
+    },
+    "load_x100": [
+     11938,
+     11590,
+     8924
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790668397,
+     "monotonic_raw_ns": 777292278487291,
+     "uptime_raw_ns": 753146398329333,
+     "utc": "2026-09-29T07:53:17Z"
+    },
+    "load_x100": [
+     12989,
+     12018,
+     9269
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790668457,
+     "monotonic_raw_ns": 777352349347833,
+     "uptime_raw_ns": 753206469289666,
+     "utc": "2026-09-29T07:54:17Z"
+    },
+    "load_x100": [
+     11657,
+     11792,
+     9370
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790668517,
+     "monotonic_raw_ns": 777412402850083,
+     "uptime_raw_ns": 753266522696791,
+     "utc": "2026-09-29T07:55:17Z"
+    },
+    "load_x100": [
+     9415,
+     11150,
+     9297
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790668577,
+     "monotonic_raw_ns": 777472466299041,
+     "uptime_raw_ns": 753326586142916,
+     "utc": "2026-09-29T07:56:17Z"
+    },
+    "load_x100": [
+     8643,
+     10607,
+     9219
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790668637,
+     "monotonic_raw_ns": 777532540285708,
+     "uptime_raw_ns": 753386660128625,
+     "utc": "2026-09-29T07:57:17Z"
+    },
+    "load_x100": [
+     7667,
+     9968,
+     9074
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790668697,
+     "monotonic_raw_ns": 777592590498625,
+     "uptime_raw_ns": 753446710336583,
+     "utc": "2026-09-29T07:58:17Z"
+    },
+    "load_x100": [
+     8750,
+     9811,
+     9073
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790668757,
+     "monotonic_raw_ns": 777652636339500,
+     "uptime_raw_ns": 753506756181958,
+     "utc": "2026-09-29T07:59:17Z"
+    },
+    "load_x100": [
+     8236,
+     9449,
+     8987
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790668817,
+     "monotonic_raw_ns": 777712698355416,
+     "uptime_raw_ns": 753566818210625,
+     "utc": "2026-09-29T08:00:17Z"
+    },
+    "load_x100": [
+     8557,
+     9354,
+     8984
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790668877,
+     "monotonic_raw_ns": 777772765741583,
+     "uptime_raw_ns": 753626885584750,
+     "utc": "2026-09-29T08:01:17Z"
+    },
+    "load_x100": [
+     7373,
+     8872,
+     8830
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790668937,
+     "monotonic_raw_ns": 777832816248791,
+     "uptime_raw_ns": 753686936091625,
+     "utc": "2026-09-29T08:02:17Z"
+    },
+    "load_x100": [
+     7350,
+     8607,
+     8734
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790668998,
+     "monotonic_raw_ns": 777892883232125,
+     "uptime_raw_ns": 753747003074333,
+     "utc": "2026-09-29T08:03:18Z"
+    },
+    "load_x100": [
+     8122,
+     8519,
+     8687
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790669058,
+     "monotonic_raw_ns": 777952954777083,
+     "uptime_raw_ns": 753807074619166,
+     "utc": "2026-09-29T08:04:18Z"
+    },
+    "load_x100": [
+     8571,
+     8627,
+     8719
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790669118,
+     "monotonic_raw_ns": 778013010404250,
+     "uptime_raw_ns": 753867130247583,
+     "utc": "2026-09-29T08:05:18Z"
+    },
+    "load_x100": [
+     8246,
+     8563,
+     8691
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790669178,
+     "monotonic_raw_ns": 778073077852750,
+     "uptime_raw_ns": 753927197698541,
+     "utc": "2026-09-29T08:06:18Z"
+    },
+    "load_x100": [
+     6929,
+     8108,
+     8511
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790669238,
+     "monotonic_raw_ns": 778133137772958,
+     "uptime_raw_ns": 753987257684625,
+     "utc": "2026-09-29T08:07:18Z"
+    },
+    "load_x100": [
+     8606,
+     8418,
+     8602
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790669298,
+     "monotonic_raw_ns": 778193197771708,
+     "uptime_raw_ns": 754047317611916,
+     "utc": "2026-09-29T08:08:18Z"
+    },
+    "load_x100": [
+     8744,
+     8458,
+     8602
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790669358,
+     "monotonic_raw_ns": 778253256382291,
+     "uptime_raw_ns": 754107376224791,
+     "utc": "2026-09-29T08:09:18Z"
+    },
+    "load_x100": [
+     9283,
+     8672,
+     8672
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790669418,
+     "monotonic_raw_ns": 778313328365041,
+     "uptime_raw_ns": 754167448358000,
+     "utc": "2026-09-29T08:10:18Z"
+    },
+    "load_x100": [
+     10944,
+     9293,
+     8906
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790669478,
+     "monotonic_raw_ns": 778373390189291,
+     "uptime_raw_ns": 754227510030208,
+     "utc": "2026-09-29T08:11:18Z"
+    },
+    "load_x100": [
+     10451,
+     9479,
+     9003
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790669538,
+     "monotonic_raw_ns": 778433452403000,
+     "uptime_raw_ns": 754287572488666,
+     "utc": "2026-09-29T08:12:18Z"
+    },
+    "load_x100": [
+     11183,
+     9821,
+     9160
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790669598,
+     "monotonic_raw_ns": 778493517302791,
+     "uptime_raw_ns": 754347637144583,
+     "utc": "2026-09-29T08:13:18Z"
+    },
+    "load_x100": [
+     10986,
+     10010,
+     9276
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790669658,
+     "monotonic_raw_ns": 778553584392041,
+     "uptime_raw_ns": 754407704234083,
+     "utc": "2026-09-29T08:14:18Z"
+    },
+    "load_x100": [
+     11414,
+     10342,
+     9451
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790669718,
+     "monotonic_raw_ns": 778613647018500,
+     "uptime_raw_ns": 754467766861375,
+     "utc": "2026-09-29T08:15:18Z"
+    },
+    "load_x100": [
+     10610,
+     10326,
+     9507
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790669778,
+     "monotonic_raw_ns": 778673693924916,
+     "uptime_raw_ns": 754527813767250,
+     "utc": "2026-09-29T08:16:18Z"
+    },
+    "load_x100": [
+     9511,
+     10043,
+     9456
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790669838,
+     "monotonic_raw_ns": 778733755187958,
+     "uptime_raw_ns": 754587875035583,
+     "utc": "2026-09-29T08:17:18Z"
+    },
+    "load_x100": [
+     10047,
+     10108,
+     9520
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790669898,
+     "monotonic_raw_ns": 778793817324583,
+     "uptime_raw_ns": 754647937400791,
+     "utc": "2026-09-29T08:18:18Z"
+    },
+    "load_x100": [
+     13604,
+     11127,
+     9941
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790669959,
+     "monotonic_raw_ns": 778853887549791,
+     "uptime_raw_ns": 754708007396958,
+     "utc": "2026-09-29T08:19:19Z"
+    },
+    "load_x100": [
+     13022,
+     11387,
+     10118
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790670019,
+     "monotonic_raw_ns": 778913954560750,
+     "uptime_raw_ns": 754768074401416,
+     "utc": "2026-09-29T08:20:19Z"
+    },
+    "load_x100": [
+     11854,
+     11346,
+     10189
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790670079,
+     "monotonic_raw_ns": 778974013413125,
+     "uptime_raw_ns": 754828133256375,
+     "utc": "2026-09-29T08:21:19Z"
+    },
+    "load_x100": [
+     10642,
+     11134,
+     10191
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790670139,
+     "monotonic_raw_ns": 779034080324375,
+     "uptime_raw_ns": 754888200188291,
+     "utc": "2026-09-29T08:22:19Z"
+    },
+    "load_x100": [
+     8621,
+     10480,
+     10012
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790670199,
+     "monotonic_raw_ns": 779094139533541,
+     "uptime_raw_ns": 754948259377083,
+     "utc": "2026-09-29T08:23:19Z"
+    },
+    "load_x100": [
+     7783,
+     9889,
+     9821
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790670259,
+     "monotonic_raw_ns": 779154195973125,
+     "uptime_raw_ns": 755008315819875,
+     "utc": "2026-09-29T08:24:19Z"
+    },
+    "load_x100": [
+     7180,
+     9341,
+     9621
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790670319,
+     "monotonic_raw_ns": 779214268461708,
+     "uptime_raw_ns": 755068388332583,
+     "utc": "2026-09-29T08:25:19Z"
+    },
+    "load_x100": [
+     6568,
+     8773,
+     9389
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790670379,
+     "monotonic_raw_ns": 779274323134541,
+     "uptime_raw_ns": 755128443078833,
+     "utc": "2026-09-29T08:26:19Z"
+    },
+    "load_x100": [
+     5458,
+     8054,
+     9078
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790670439,
+     "monotonic_raw_ns": 779334380774625,
+     "uptime_raw_ns": 755188500616916,
+     "utc": "2026-09-29T08:27:19Z"
+    },
+    "load_x100": [
+     5067,
+     7450,
+     8781
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790670499,
+     "monotonic_raw_ns": 779394438974041,
+     "uptime_raw_ns": 755248558815666,
+     "utc": "2026-09-29T08:28:19Z"
+    },
+    "load_x100": [
+     4539,
+     6881,
+     8479
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790670559,
+     "monotonic_raw_ns": 779454492539000,
+     "uptime_raw_ns": 755308612382416,
+     "utc": "2026-09-29T08:29:19Z"
+    },
+    "load_x100": [
+     4015,
+     6286,
+     8146
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790670619,
+     "monotonic_raw_ns": 779514548976291,
+     "uptime_raw_ns": 755368668840541,
+     "utc": "2026-09-29T08:30:19Z"
+    },
+    "load_x100": [
+     5002,
+     6101,
+     7947
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790670679,
+     "monotonic_raw_ns": 779574598159666,
+     "uptime_raw_ns": 755428718011708,
+     "utc": "2026-09-29T08:31:19Z"
+    },
+    "load_x100": [
+     5152,
+     5951,
+     7765
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790670739,
+     "monotonic_raw_ns": 779634664153750,
+     "uptime_raw_ns": 755488783994000,
+     "utc": "2026-09-29T08:32:19Z"
+    },
+    "load_x100": [
+     5781,
+     5977,
+     7650
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790670799,
+     "monotonic_raw_ns": 779694725059500,
+     "uptime_raw_ns": 755548844937583,
+     "utc": "2026-09-29T08:33:19Z"
+    },
+    "load_x100": [
+     6022,
+     6025,
+     7555
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790670859,
+     "monotonic_raw_ns": 779754786015833,
+     "uptime_raw_ns": 755608905858875,
+     "utc": "2026-09-29T08:34:19Z"
+    },
+    "load_x100": [
+     5773,
+     5994,
+     7441
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790670919,
+     "monotonic_raw_ns": 779814858671333,
+     "uptime_raw_ns": 755668978516958,
+     "utc": "2026-09-29T08:35:19Z"
+    },
+    "load_x100": [
+     4794,
+     5679,
+     7225
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790670980,
+     "monotonic_raw_ns": 779874910271083,
+     "uptime_raw_ns": 755729030112250,
+     "utc": "2026-09-29T08:36:20Z"
+    },
+    "load_x100": [
+     4402,
+     5410,
+     7019
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790671040,
+     "monotonic_raw_ns": 779934969723958,
+     "uptime_raw_ns": 755789089565375,
+     "utc": "2026-09-29T08:37:20Z"
+    },
+    "load_x100": [
+     5837,
+     5602,
+     6978
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790671100,
+     "monotonic_raw_ns": 779995031596500,
+     "uptime_raw_ns": 755849151463750,
+     "utc": "2026-09-29T08:38:20Z"
+    },
+    "load_x100": [
+     6870,
+     5922,
+     7003
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790671160,
+     "monotonic_raw_ns": 780055110511041,
+     "uptime_raw_ns": 755909230356083,
+     "utc": "2026-09-29T08:39:20Z"
+    },
+    "load_x100": [
+     8677,
+     6660,
+     7208
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790671220,
+     "monotonic_raw_ns": 780115162250083,
+     "uptime_raw_ns": 755969282093166,
+     "utc": "2026-09-29T08:40:20Z"
+    },
+    "load_x100": [
+     8250,
+     6908,
+     7263
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790671280,
+     "monotonic_raw_ns": 780175247365083,
+     "uptime_raw_ns": 756029367212625,
+     "utc": "2026-09-29T08:41:20Z"
+    },
+    "load_x100": [
+     6316,
+     6620,
+     7133
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790671340,
+     "monotonic_raw_ns": 780235306465291,
+     "uptime_raw_ns": 756089426310291,
+     "utc": "2026-09-29T08:42:20Z"
+    },
+    "load_x100": [
+     4700,
+     6105,
+     6906
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790671400,
+     "monotonic_raw_ns": 780295360380000,
+     "uptime_raw_ns": 756149480226458,
+     "utc": "2026-09-29T08:43:20Z"
+    },
+    "load_x100": [
+     5042,
+     5960,
+     6797
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790671460,
+     "monotonic_raw_ns": 780355421725666,
+     "uptime_raw_ns": 756209541572208,
+     "utc": "2026-09-29T08:44:20Z"
+    },
+    "load_x100": [
+     7954,
+     6576,
+     6967
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790671520,
+     "monotonic_raw_ns": 780415497054791,
+     "uptime_raw_ns": 756269616924041,
+     "utc": "2026-09-29T08:45:20Z"
+    },
+    "load_x100": [
+     6491,
+     6449,
+     6895
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790671580,
+     "monotonic_raw_ns": 780475553412916,
+     "uptime_raw_ns": 756329673257833,
+     "utc": "2026-09-29T08:46:20Z"
+    },
+    "load_x100": [
+     4634,
+     5944,
+     6677
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790671640,
+     "monotonic_raw_ns": 780535629645500,
+     "uptime_raw_ns": 756389749489958,
+     "utc": "2026-09-29T08:47:20Z"
+    },
+    "load_x100": [
+     4212,
+     5559,
+     6481
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790671700,
+     "monotonic_raw_ns": 780595683037916,
+     "uptime_raw_ns": 756449802946125,
+     "utc": "2026-09-29T08:48:20Z"
+    },
+    "load_x100": [
+     3785,
+     5193,
+     6282
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790671761,
+     "monotonic_raw_ns": 780655875970833,
+     "uptime_raw_ns": 756509995815750,
+     "utc": "2026-09-29T08:49:21Z"
+    },
+    "load_x100": [
+     3562,
+     4857,
+     6080
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790671821,
+     "monotonic_raw_ns": 780715928532333,
+     "uptime_raw_ns": 756570048376625,
+     "utc": "2026-09-29T08:50:21Z"
+    },
+    "load_x100": [
+     5470,
+     5133,
+     6098
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790671881,
+     "monotonic_raw_ns": 780775977279666,
+     "uptime_raw_ns": 756630097152625,
+     "utc": "2026-09-29T08:51:21Z"
+    },
+    "load_x100": [
+     6772,
+     5558,
+     6191
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790671941,
+     "monotonic_raw_ns": 780836044470833,
+     "uptime_raw_ns": 756690164315375,
+     "utc": "2026-09-29T08:52:21Z"
+    },
+    "load_x100": [
+     8154,
+     6183,
+     6381
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790672001,
+     "monotonic_raw_ns": 780896104994500,
+     "uptime_raw_ns": 756750224836416,
+     "utc": "2026-09-29T08:53:21Z"
+    },
+    "load_x100": [
+     8069,
+     6494,
+     6483
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790672061,
+     "monotonic_raw_ns": 780956215498958,
+     "uptime_raw_ns": 756810335344791,
+     "utc": "2026-09-29T08:54:21Z"
+    },
+    "load_x100": [
+     8563,
+     6875,
+     6623
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790672121,
+     "monotonic_raw_ns": 781016298239750,
+     "uptime_raw_ns": 756870418082583,
+     "utc": "2026-09-29T08:55:21Z"
+    },
+    "load_x100": [
+     9616,
+     7544,
+     6894
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790672181,
+     "monotonic_raw_ns": 781076349482416,
+     "uptime_raw_ns": 756930469326250,
+     "utc": "2026-09-29T08:56:21Z"
+    },
+    "load_x100": [
+     8505,
+     7617,
+     6966
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790672241,
+     "monotonic_raw_ns": 781136401954791,
+     "uptime_raw_ns": 756990521788416,
+     "utc": "2026-09-29T08:57:21Z"
+    },
+    "load_x100": [
+     6842,
+     7308,
+     6895
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790672301,
+     "monotonic_raw_ns": 781196455582208,
+     "uptime_raw_ns": 757050575422541,
+     "utc": "2026-09-29T08:58:21Z"
+    },
+    "load_x100": [
+     5798,
+     6928,
+     6781
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790672361,
+     "monotonic_raw_ns": 781256511564916,
+     "uptime_raw_ns": 757110631403333,
+     "utc": "2026-09-29T08:59:21Z"
+    },
+    "load_x100": [
+     5295,
+     6569,
+     6656
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790672421,
+     "monotonic_raw_ns": 781316617494625,
+     "uptime_raw_ns": 757170737332041,
+     "utc": "2026-09-29T09:00:21Z"
+    },
+    "load_x100": [
+     2288,
+     5487,
+     6246
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790672481,
+     "monotonic_raw_ns": 781376651337583,
+     "uptime_raw_ns": 757230771181416,
+     "utc": "2026-09-29T09:01:21Z"
+    },
+    "load_x100": [
+     1325,
+     4628,
+     5873
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 2
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790672541,
+     "monotonic_raw_ns": 781436684967208,
+     "uptime_raw_ns": 757290804809666,
+     "utc": "2026-09-29T09:02:21Z"
+    },
+    "load_x100": [
+     662,
+     3836,
+     5492
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790672601,
+     "monotonic_raw_ns": 781496720222791,
+     "uptime_raw_ns": 757350840061250,
+     "utc": "2026-09-29T09:03:21Z"
+    },
+    "load_x100": [
+     485,
+     3206,
+     5143
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790672661,
+     "monotonic_raw_ns": 781556750435958,
+     "uptime_raw_ns": 757410870275208,
+     "utc": "2026-09-29T09:04:21Z"
+    },
+    "load_x100": [
+     314,
+     2666,
+     4809
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790672721,
+     "monotonic_raw_ns": 781616793581125,
+     "uptime_raw_ns": 757470913426000,
+     "utc": "2026-09-29T09:05:21Z"
+    },
+    "load_x100": [
+     395,
+     2257,
+     4510
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790672781,
+     "monotonic_raw_ns": 781676838720958,
+     "uptime_raw_ns": 757530958563000,
+     "utc": "2026-09-29T09:06:21Z"
+    },
+    "load_x100": [
+     320,
+     1898,
+     4222
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790672842,
+     "monotonic_raw_ns": 781736876333583,
+     "uptime_raw_ns": 757590996167875,
+     "utc": "2026-09-29T09:07:22Z"
+    },
+    "load_x100": [
+     252,
+     1593,
+     3950
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790672902,
+     "monotonic_raw_ns": 781796923854208,
+     "uptime_raw_ns": 757651043703541,
+     "utc": "2026-09-29T09:08:22Z"
+    },
+    "load_x100": [
+     580,
+     1391,
+     3698
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790672962,
+     "monotonic_raw_ns": 781857112242375,
+     "uptime_raw_ns": 757711232312791,
+     "utc": "2026-09-29T09:09:22Z"
+    },
+    "load_x100": [
+     990,
+     1318,
+     3511
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790673022,
+     "monotonic_raw_ns": 781917160025916,
+     "uptime_raw_ns": 757771279869708,
+     "utc": "2026-09-29T09:10:22Z"
+    },
+    "load_x100": [
+     537,
+     1127,
+     3290
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790673082,
+     "monotonic_raw_ns": 781977193669125,
+     "uptime_raw_ns": 757831313503333,
+     "utc": "2026-09-29T09:11:22Z"
+    },
+    "load_x100": [
+     320,
+     960,
+     3080
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790673142,
+     "monotonic_raw_ns": 782037229138000,
+     "uptime_raw_ns": 757891348976291,
+     "utc": "2026-09-29T09:12:22Z"
+    },
+    "load_x100": [
+     188,
+     806,
+     2878
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790673202,
+     "monotonic_raw_ns": 782097267699000,
+     "uptime_raw_ns": 757951387544250,
+     "utc": "2026-09-29T09:13:22Z"
+    },
+    "load_x100": [
+     201,
+     697,
+     2696
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790673262,
+     "monotonic_raw_ns": 782157303023125,
+     "uptime_raw_ns": 758011422857500,
+     "utc": "2026-09-29T09:14:22Z"
+    },
+    "load_x100": [
+     208,
+     607,
+     2526
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790673322,
+     "monotonic_raw_ns": 782217337962208,
+     "uptime_raw_ns": 758071457803166,
+     "utc": "2026-09-29T09:15:22Z"
+    },
+    "load_x100": [
+     286,
+     555,
+     2376
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790673382,
+     "monotonic_raw_ns": 782277372244625,
+     "uptime_raw_ns": 758131492084458,
+     "utc": "2026-09-29T09:16:22Z"
+    },
+    "load_x100": [
+     246,
+     499,
+     2231
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790673442,
+     "monotonic_raw_ns": 782337406296833,
+     "uptime_raw_ns": 758191526137958,
+     "utc": "2026-09-29T09:17:22Z"
+    },
+    "load_x100": [
+     332,
+     479,
+     2105
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790673502,
+     "monotonic_raw_ns": 782397449502833,
+     "uptime_raw_ns": 758251569351666,
+     "utc": "2026-09-29T09:18:22Z"
+    },
+    "load_x100": [
+     261,
+     433,
+     1977
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790673562,
+     "monotonic_raw_ns": 782457498284833,
+     "uptime_raw_ns": 758311618120583,
+     "utc": "2026-09-29T09:19:22Z"
+    },
+    "load_x100": [
+     221,
+     391,
+     1856
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790673622,
+     "monotonic_raw_ns": 782517531330583,
+     "uptime_raw_ns": 758371651168833,
+     "utc": "2026-09-29T09:20:22Z"
+    },
+    "load_x100": [
+     207,
+     356,
+     1743
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790673682,
+     "monotonic_raw_ns": 782577572565833,
+     "uptime_raw_ns": 758431692402083,
+     "utc": "2026-09-29T09:21:22Z"
+    },
+    "load_x100": [
+     306,
+     362,
+     1651
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790673742,
+     "monotonic_raw_ns": 782637610581166,
+     "uptime_raw_ns": 758491730420416,
+     "utc": "2026-09-29T09:22:22Z"
+    },
+    "load_x100": [
+     273,
+     345,
+     1557
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790673802,
+     "monotonic_raw_ns": 782697650181333,
+     "uptime_raw_ns": 758551770025916,
+     "utc": "2026-09-29T09:23:22Z"
+    },
+    "load_x100": [
+     229,
+     320,
+     1465
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790673862,
+     "monotonic_raw_ns": 782757699618833,
+     "uptime_raw_ns": 758611819456833,
+     "utc": "2026-09-29T09:24:22Z"
+    },
+    "load_x100": [
+     189,
+     290,
+     1376
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790673922,
+     "monotonic_raw_ns": 782817745264875,
+     "uptime_raw_ns": 758671865109541,
+     "utc": "2026-09-29T09:25:22Z"
+    },
+    "load_x100": [
+     280,
+     299,
+     1305
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790673982,
+     "monotonic_raw_ns": 782877784723041,
+     "uptime_raw_ns": 758731904565791,
+     "utc": "2026-09-29T09:26:22Z"
+    },
+    "load_x100": [
+     210,
+     276,
+     1228
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790674042,
+     "monotonic_raw_ns": 782937833128041,
+     "uptime_raw_ns": 758791952970791,
+     "utc": "2026-09-29T09:27:22Z"
+    },
+    "load_x100": [
+     237,
+     271,
+     1161
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790674103,
+     "monotonic_raw_ns": 782997877237083,
+     "uptime_raw_ns": 758851997079708,
+     "utc": "2026-09-29T09:28:23Z"
+    },
+    "load_x100": [
+     231,
+     262,
+     1096
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790674163,
+     "monotonic_raw_ns": 783057910654166,
+     "uptime_raw_ns": 758912030493625,
+     "utc": "2026-09-29T09:29:23Z"
+    },
+    "load_x100": [
+     344,
+     282,
+     1047
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790674223,
+     "monotonic_raw_ns": 783117945922083,
+     "uptime_raw_ns": 758972065762333,
+     "utc": "2026-09-29T09:30:23Z"
+    },
+    "load_x100": [
+     292,
+     277,
+     993
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790674283,
+     "monotonic_raw_ns": 783177984952708,
+     "uptime_raw_ns": 759032104794500,
+     "utc": "2026-09-29T09:31:23Z"
+    },
+    "load_x100": [
+     279,
+     278,
+     944
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790674343,
+     "monotonic_raw_ns": 783238025614625,
+     "uptime_raw_ns": 759092145457041,
+     "utc": "2026-09-29T09:32:23Z"
+    },
+    "load_x100": [
+     356,
+     300,
+     907
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790674403,
+     "monotonic_raw_ns": 783298064772500,
+     "uptime_raw_ns": 759152184610166,
+     "utc": "2026-09-29T09:33:23Z"
+    },
+    "load_x100": [
+     351,
+     308,
+     868
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790674463,
+     "monotonic_raw_ns": 783358102021708,
+     "uptime_raw_ns": 759212221869125,
+     "utc": "2026-09-29T09:34:23Z"
+    },
+    "load_x100": [
+     296,
+     301,
+     827
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790674523,
+     "monotonic_raw_ns": 783418142270000,
+     "uptime_raw_ns": 759272262104791,
+     "utc": "2026-09-29T09:35:23Z"
+    },
+    "load_x100": [
+     267,
+     293,
+     788
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790674583,
+     "monotonic_raw_ns": 783478178210416,
+     "uptime_raw_ns": 759332298048208,
+     "utc": "2026-09-29T09:36:23Z"
+    },
+    "load_x100": [
+     281,
+     287,
+     752
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790674643,
+     "monotonic_raw_ns": 783538212000541,
+     "uptime_raw_ns": 759392331836875,
+     "utc": "2026-09-29T09:37:23Z"
+    },
+    "load_x100": [
+     238,
+     278,
+     717
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790674703,
+     "monotonic_raw_ns": 783598249051500,
+     "uptime_raw_ns": 759452368918791,
+     "utc": "2026-09-29T09:38:23Z"
+    },
+    "load_x100": [
+     225,
+     264,
+     681
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790674763,
+     "monotonic_raw_ns": 783658282138208,
+     "uptime_raw_ns": 759512401978958,
+     "utc": "2026-09-29T09:39:23Z"
+    },
+    "load_x100": [
+     189,
+     245,
+     646
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790674823,
+     "monotonic_raw_ns": 783718315765875,
+     "uptime_raw_ns": 759572435609416,
+     "utc": "2026-09-29T09:40:23Z"
+    },
+    "load_x100": [
+     198,
+     239,
+     616
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790674883,
+     "monotonic_raw_ns": 783778357393208,
+     "uptime_raw_ns": 759632477236666,
+     "utc": "2026-09-29T09:41:23Z"
+    },
+    "load_x100": [
+     221,
+     236,
+     589
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790674943,
+     "monotonic_raw_ns": 783838398085791,
+     "uptime_raw_ns": 759692517924125,
+     "utc": "2026-09-29T09:42:23Z"
+    },
+    "load_x100": [
+     288,
+     252,
+     571
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790675003,
+     "monotonic_raw_ns": 783898437672833,
+     "uptime_raw_ns": 759752557514708,
+     "utc": "2026-09-29T09:43:23Z"
+    },
+    "load_x100": [
+     262,
+     254,
+     550
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790675063,
+     "monotonic_raw_ns": 783958477655541,
+     "uptime_raw_ns": 759812597491916,
+     "utc": "2026-09-29T09:44:23Z"
+    },
+    "load_x100": [
+     191,
+     234,
+     522
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790675123,
+     "monotonic_raw_ns": 784018519719250,
+     "uptime_raw_ns": 759872639564833,
+     "utc": "2026-09-29T09:45:23Z"
+    },
+    "load_x100": [
+     159,
+     217,
+     496
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790675183,
+     "monotonic_raw_ns": 784078562573708,
+     "uptime_raw_ns": 759932682413375,
+     "utc": "2026-09-29T09:46:23Z"
+    },
+    "load_x100": [
+     155,
+     207,
+     473
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790675243,
+     "monotonic_raw_ns": 784138602046291,
+     "uptime_raw_ns": 759992721883625,
+     "utc": "2026-09-29T09:47:23Z"
+    },
+    "load_x100": [
+     154,
+     196,
+     451
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790675303,
+     "monotonic_raw_ns": 784198635072000,
+     "uptime_raw_ns": 760052754911083,
+     "utc": "2026-09-29T09:48:23Z"
+    },
+    "load_x100": [
+     151,
+     188,
+     430
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790675363,
+     "monotonic_raw_ns": 784258675886750,
+     "uptime_raw_ns": 760112795726958,
+     "utc": "2026-09-29T09:49:23Z"
+    },
+    "load_x100": [
+     147,
+     179,
+     410
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790675423,
+     "monotonic_raw_ns": 784318714633250,
+     "uptime_raw_ns": 760172834471416,
+     "utc": "2026-09-29T09:50:23Z"
+    },
+    "load_x100": [
+     185,
+     185,
+     396
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790675483,
+     "monotonic_raw_ns": 784378760651958,
+     "uptime_raw_ns": 760232880495375,
+     "utc": "2026-09-29T09:51:23Z"
+    },
+    "load_x100": [
+     257,
+     202,
+     388
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790675543,
+     "monotonic_raw_ns": 784438802661125,
+     "uptime_raw_ns": 760292922501916,
+     "utc": "2026-09-29T09:52:23Z"
+    },
+    "load_x100": [
+     304,
+     227,
+     384
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790675603,
+     "monotonic_raw_ns": 784498844396375,
+     "uptime_raw_ns": 760352964233166,
+     "utc": "2026-09-29T09:53:23Z"
+    },
+    "load_x100": [
+     314,
+     244,
+     380
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790675664,
+     "monotonic_raw_ns": 784558884334375,
+     "uptime_raw_ns": 760413004170000,
+     "utc": "2026-09-29T09:54:24Z"
+    },
+    "load_x100": [
+     258,
+     244,
+     371
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790675724,
+     "monotonic_raw_ns": 784618916928458,
+     "uptime_raw_ns": 760473036766416,
+     "utc": "2026-09-29T09:55:24Z"
+    },
+    "load_x100": [
+     196,
+     228,
+     356
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790675784,
+     "monotonic_raw_ns": 784678950983791,
+     "uptime_raw_ns": 760533070822416,
+     "utc": "2026-09-29T09:56:24Z"
+    },
+    "load_x100": [
+     213,
+     226,
+     346
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790675844,
+     "monotonic_raw_ns": 784738983553875,
+     "uptime_raw_ns": 760593103397583,
+     "utc": "2026-09-29T09:57:24Z"
+    },
+    "load_x100": [
+     254,
+     242,
+     344
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790675904,
+     "monotonic_raw_ns": 784799023367000,
+     "uptime_raw_ns": 760653143205416,
+     "utc": "2026-09-29T09:58:24Z"
+    },
+    "load_x100": [
+     199,
+     228,
+     332
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790675964,
+     "monotonic_raw_ns": 784859062419458,
+     "uptime_raw_ns": 760713182257625,
+     "utc": "2026-09-29T09:59:24Z"
+    },
+    "load_x100": [
+     223,
+     229,
+     325
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790676024,
+     "monotonic_raw_ns": 784919097446583,
+     "uptime_raw_ns": 760773217291875,
+     "utc": "2026-09-29T10:00:24Z"
+    },
+    "load_x100": [
+     239,
+     233,
+     320
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790676084,
+     "monotonic_raw_ns": 784979140602041,
+     "uptime_raw_ns": 760833260441208,
+     "utc": "2026-09-29T10:01:24Z"
+    },
+    "load_x100": [
+     295,
+     248,
+     319
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790676144,
+     "monotonic_raw_ns": 785039185341250,
+     "uptime_raw_ns": 760893305183750,
+     "utc": "2026-09-29T10:02:24Z"
+    },
+    "load_x100": [
+     218,
+     234,
+     309
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790676204,
+     "monotonic_raw_ns": 785099225153750,
+     "uptime_raw_ns": 760953344992625,
+     "utc": "2026-09-29T10:03:24Z"
+    },
+    "load_x100": [
+     166,
+     216,
+     297
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790676264,
+     "monotonic_raw_ns": 785159265289708,
+     "uptime_raw_ns": 761013385127125,
+     "utc": "2026-09-29T10:04:24Z"
+    },
+    "load_x100": [
+     162,
+     206,
+     287
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790676324,
+     "monotonic_raw_ns": 785219295113375,
+     "uptime_raw_ns": 761073414952416,
+     "utc": "2026-09-29T10:05:24Z"
+    },
+    "load_x100": [
+     156,
+     196,
+     278
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790676384,
+     "monotonic_raw_ns": 785279328379791,
+     "uptime_raw_ns": 761133448220958,
+     "utc": "2026-09-29T10:06:24Z"
+    },
+    "load_x100": [
+     160,
+     188,
+     269
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790676444,
+     "monotonic_raw_ns": 785339371983083,
+     "uptime_raw_ns": 761193491824291,
+     "utc": "2026-09-29T10:07:24Z"
+    },
+    "load_x100": [
+     338,
+     221,
+     275
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790676504,
+     "monotonic_raw_ns": 785399410993083,
+     "uptime_raw_ns": 761253530898875,
+     "utc": "2026-09-29T10:08:24Z"
+    },
+    "load_x100": [
+     192,
+     201,
+     264
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790676564,
+     "monotonic_raw_ns": 785459449105208,
+     "uptime_raw_ns": 761313568944583,
+     "utc": "2026-09-29T10:09:24Z"
+    },
+    "load_x100": [
+     174,
+     193,
+     256
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790676624,
+     "monotonic_raw_ns": 785519492103333,
+     "uptime_raw_ns": 761373611938500,
+     "utc": "2026-09-29T10:10:24Z"
+    },
+    "load_x100": [
+     141,
+     179,
+     246
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790676684,
+     "monotonic_raw_ns": 785579528038750,
+     "uptime_raw_ns": 761433647883666,
+     "utc": "2026-09-29T10:11:24Z"
+    },
+    "load_x100": [
+     199,
+     190,
+     246
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790676744,
+     "monotonic_raw_ns": 785639569418083,
+     "uptime_raw_ns": 761493689258750,
+     "utc": "2026-09-29T10:12:24Z"
+    },
+    "load_x100": [
+     368,
+     243,
+     262
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790676804,
+     "monotonic_raw_ns": 785699611777375,
+     "uptime_raw_ns": 761553731623541,
+     "utc": "2026-09-29T10:13:24Z"
+    },
+    "load_x100": [
+     347,
+     262,
+     268
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790676864,
+     "monotonic_raw_ns": 785759652623833,
+     "uptime_raw_ns": 761613772465291,
+     "utc": "2026-09-29T10:14:24Z"
+    },
+    "load_x100": [
+     529,
+     325,
+     290
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790676924,
+     "monotonic_raw_ns": 785819686070916,
+     "uptime_raw_ns": 761673805910875,
+     "utc": "2026-09-29T10:15:24Z"
+    },
+    "load_x100": [
+     423,
+     328,
+     294
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790676984,
+     "monotonic_raw_ns": 785879728208458,
+     "uptime_raw_ns": 761733848053958,
+     "utc": "2026-09-29T10:16:24Z"
+    },
+    "load_x100": [
+     315,
+     312,
+     290
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   },
+   {
+    "clocks": {
+     "epoch_s": 1790677044,
+     "monotonic_raw_ns": 785939764335666,
+     "uptime_raw_ns": 761793884175541,
+     "utc": "2026-09-29T10:17:24Z"
+    },
+    "load_x100": [
+     265,
+     300,
+     287
+    ],
+    "power": "AC Power",
+    "thermal": {
+     "lines": [
+      "Note: No thermal warning level has been recorded",
+      "Note: No performance warning level has been recorded",
+      "Note: No CPU power status has been recorded"
+     ],
+     "no_warning_recorded": true
+    },
+    "thermal_level": 1
+   }
+  ],
+  "start": {
+   "clocks": {
+    "epoch_s": 1790665389,
+    "monotonic_raw_ns": 774284856336000,
+    "uptime_raw_ns": 750138976169625,
+    "utc": "2026-09-29T07:03:09Z"
+   },
+   "kern_us": {
+    "sleeptime": 1790656895370188,
+    "waketime": 1790656922975077
+   },
+   "load_x100": [
+    572,
+    356,
+    284
+   ],
+   "power": "AC Power",
+   "thermal": {
+    "lines": [
+     "Note: No thermal warning level has been recorded",
+     "Note: No performance warning level has been recorded",
+     "Note: No CPU power status has been recorded"
+    ],
+    "no_warning_recorded": true
+   },
+   "thermal_level": 0
+  },
+  "thermal_events": []
+ },
+ "ledger_entries": [
+  {
+   "class": "HISTORICAL_RECONSTRUCTION",
+   "what": "QC01 rehearse cell 305 (C-A, C-B reproduction only)"
+  },
+  {
+   "class": "NONTARGET_DRIFT_VALIDATION",
+   "what": "QC02-QC04, QC06, QC08 decoy cells 297 / 316 and validation drifts 3, 27/10, 11/10"
+  },
+  {
+   "class": "SYNTHETIC_VALIDATION",
+   "what": "QC05, QC07, QC10 synthetic sets, decoy bundles, sandbox"
+  }
+ ],
+ "pass": true,
+ "preconditions": {
+  "freeze_commit": "c46434a399eca18a709616a4a4d51918d1a30298",
+  "head": "c46434a399eca18a709616a4a4d51918d1a30298",
+  "head_ok": true,
+  "host_on_ac": true,
+  "host_sleep_channels_available": true,
+  "host_thermal_pressure_level_zero": true,
+  "incident_review_accepted_before_freeze": true,
+  "mode": "official",
+  "namespace_clean_including_ignored": true,
+  "no_emergency_file": true,
+  "no_marker_refs": true,
+  "no_review_grant_result": true,
+  "pass": true,
+  "tracked_clean": true
+ },
+ "python": "3.14.5",
+ "record_sha256": {
+  "asm_controls": "3d819cc5035fea6cf8466407d724c0658af5763deca246e27f5d7db613c65a65",
+  "decoy297": "14e1ac26e483f90e7845eab92d7e6ff629e497a6ca9ba521b4b7aca734e04f02",
+  "decoy316": "678025c1420f6162047a441d8ee60b384cbcdb85d028a929a3680cc581922998",
+  "det_a": "fc6d02271aa7f6d049b0029e764153e4c09d2f2f030fcecc5e7021979940f540",
+  "det_b": "e3952991a0a3815de660afe5457fe3857bc0d1f6bee85c379c58840cdade8cb5",
+  "mc": "72d8a1d092b912a1cb817249e5e9634fbdb451ffcbb120229dabe7445857bb49",
+  "rehearse": "a56c90c3bea6909062a4420b1e5192ca0619322885a9d60ab2ad0f5d643d94a0",
+  "serial": "d697870767caab5a2771a6c0772c15d0e7485280e7110821d73ae654b7227671"
+ },
+ "review_mode": false,
+ "schema": "rebaseguard.p5y.k5.cell308-mb-r1.qualification.v1",
+ "started_utc": "2026-09-29T07:03:09Z",
+ "target_evaluations": 0,
+ "verifier_sha256": "48d48049ace56ec91c74b204c62a253f8c870b468032e69f9f897bd9401afc59",
+ "wall_seconds": 11680.3
+}
