@@ -750,9 +750,249 @@
     },
     "describe": "h=5 k=1/2 block=[0,1/32] weight_block=[0,1/32] i=3 kernel=whole deg=12",
     "maxdepth": 0,
+    "mutants": {
+     "1_gamma_minus_1e-6": {
+      "boxes": null,
+      "cell": null,
+      "expect": "REJECT",
+      "expectation_met": true,
+      "false": true,
+      "interpretation": "mutated claim DISPROVED (false)",
+      "reason": "(C4) fails: Gamma < max(V_elo(a), V_ehi(a))",
+      "sec": 0.0,
+      "verdict": "REJECT"
+     },
+     "2_V0_scaled_1-2^-8": {
+      "boxes": 432,
+      "cell": null,
+      "expect": "REJECT or PROVE TRUE (spec erratum SE-1)",
+      "expectation_met": true,
+      "false": null,
+      "interpretation": "mutated claim PROVED TRUE by the verifier (so it cannot be a false acceptance)",
+      "reason": "(C1)-(C4) and sha256 proved",
+      "sec": 3.91,
+      "verdict": "ACCEPT"
+     },
+     "2x_V0_scaled_3/4 (SE-1 mandatory)": {
+      "boxes": 288,
+      "cell": "tri p=[1/8,1/4] m=[1/8,1/4] e=[0,1/32] depth=2",
+      "expect": "REJECT",
+      "expectation_met": true,
+      "false": true,
+      "interpretation": "mutated claim DISPROVED (false)",
+      "reason": "C3 is FALSE at (p, m, e) = (3/16, 3/16, 1/64): certified upper bound -2.707119e-01 < 0",
+      "sec": 2.41,
+      "verdict": "REJECT"
+     },
+     "3_V0_minus_lam_W0": {
+      "boxes": 288,
+      "cell": "tri p=[1/8,1/4] m=[1/8,1/4] e=[0,1/32] depth=2",
+      "expect": "REJECT",
+      "expectation_met": true,
+      "false": true,
+      "interpretation": "mutated claim DISPROVED (false)",
+      "reason": "C3 is FALSE at (p, m, e) = (3/16, 3/16, 1/64): certified upper bound -6.099037e-03 < 0",
+      "sec": 2.44,
+      "verdict": "REJECT"
+     },
+     "4B_block_widened_1/8": {
+      "boxes": null,
+      "cell": null,
+      "expect": "REJECT unless the widened claim is true",
+      "expectation_met": true,
+      "false": true,
+      "interpretation": "mutated claim DISPROVED (false)",
+      "reason": "(C4) fails: Gamma < max(V_elo(a), V_ehi(a))",
+      "sec": 0.0,
+      "verdict": "REJECT"
+     },
+     "4B_block_widened_1/8+Gamma_recomputed": {
+      "boxes": 763,
+      "cell": "tri p=[1/16,3/32] m=[63/16,127/32] e=[71/512,5/32] depth=10",
+      "expect": "REJECT unless the widened claim is true",
+      "expectation_met": true,
+      "false": true,
+      "interpretation": "mutated claim DISPROVED (false)",
+      "reason": "C2 is FALSE at (p, m, e) = (1/16, 63/16, 151/1024): certified upper bound -1.479284e-02 < 0",
+      "sec": 14.92,
+      "verdict": "REJECT"
+     },
+     "4L_block_widened_1/8": {
+      "boxes": null,
+      "cell": null,
+      "expect": "REJECT unless the widened claim is true",
+      "expectation_met": true,
+      "false": true,
+      "interpretation": "mutated claim DISPROVED (false)",
+      "reason": "(C4) fails: Gamma < max(V_elo(a), V_ehi(a))",
+      "sec": 0.0,
+      "verdict": "REJECT"
+     },
+     "4L_block_widened_1/8+Gamma_recomputed": {
+      "boxes": 169,
+      "cell": "tri p=[213/1024,107/512] m=[511/1024,1/2] e=[-1/128,-59/8192] depth=24",
+      "expect": "REJECT unless the widened claim is true",
+      "expectation_met": true,
+      "false": true,
+      "interpretation": "mutated claim DISPROVED (false)",
+      "reason": "C2 is FALSE at (p, m, e) = (213/1024, 1/2, -1/128): certified upper bound -6.056464e-06 < 0",
+      "sec": 1.88,
+      "verdict": "REJECT"
+     },
+     "4R_block_widened_1/8": {
+      "boxes": null,
+      "cell": null,
+      "expect": "REJECT unless the widened claim is true",
+      "expectation_met": true,
+      "false": true,
+      "interpretation": "mutated claim DISPROVED (false)",
+      "reason": "(C4) fails: Gamma < max(V_elo(a), V_ehi(a))",
+      "sec": 0.0,
+      "verdict": "REJECT"
+     },
+     "4R_block_widened_1/8+Gamma_recomputed": {
+      "boxes": 232,
+      "cell": "tri p=[11/16,3/4] m=[1/8,1/4] e=[0,5/64] depth=4",
+      "expect": "REJECT unless the widened claim is true",
+      "expectation_met": true,
+      "false": true,
+      "interpretation": "mutated claim DISPROVED (false)",
+      "reason": "C2 is FALSE at (p, m, e) = (23/32, 3/16, 5/128): certified upper bound -4.929298e-06 < 0",
+      "sec": 2.69,
+      "verdict": "REJECT"
+     },
+     "5_hermite_index_plus_1": {
+      "boxes": 288,
+      "cell": "tri p=[1/8,1/4] m=[1/8,1/4] e=[0,1/32] depth=2",
+      "expect": "REJECT (generally)",
+      "expectation_met": true,
+      "false": true,
+      "interpretation": "mutated claim DISPROVED (false)",
+      "reason": "C3 is FALSE at (p, m, e) = (3/16, 3/16, 1/64): certified upper bound -1.148141e+00 < 0",
+      "sec": 2.4,
+      "verdict": "REJECT"
+     },
+     "6_sha256_altered": {
+      "boxes": null,
+      "cell": null,
+      "expect": "REJECT",
+      "expectation_met": true,
+      "false": null,
+      "interpretation": "not proved (method limit or false; not disproved)",
+      "reason": "sha256 mismatch",
+      "sec": 0.0,
+      "verdict": "REJECT"
+     },
+     "7a_missing_key_W1": {
+      "expect": "REFUSE",
+      "expectation_met": true,
+      "false": null,
+      "reason": "malformed: missing key 'W1'",
+      "sec": 0.0,
+      "verdict": "REFUSE"
+     },
+     "7b_non_rational_string": {
+      "expect": "REFUSE",
+      "expectation_met": true,
+      "false": null,
+      "reason": "malformed: V0[0,0]: not a rational string \"p/q\": '1.5e3'",
+      "sec": 0.0,
+      "verdict": "REFUSE"
+     },
+     "7c_e_lo_gt_e_hi": {
+      "expect": "REFUSE",
+      "expectation_met": true,
+      "false": null,
+      "reason": "malformed: block: e_lo > e_hi",
+      "sec": 0.0,
+      "verdict": "REFUSE"
+     },
+     "7d_garbage_block": {
+      "expect": "REFUSE",
+      "expectation_met": true,
+      "false": null,
+      "reason": "malformed: block[0]: not a rational string \"p/q\": 'a/b'",
+      "sec": 0.0,
+      "verdict": "REFUSE"
+     },
+     "7e_weight_block_not_containing_block": {
+      "expect": "REFUSE",
+      "expectation_met": true,
+      "false": null,
+      "reason": "malformed: weight_block does not contain block",
+      "sec": 0.0,
+      "verdict": "REFUSE"
+     },
+     "7f_unknown_kernel": {
+      "expect": "REFUSE",
+      "expectation_met": true,
+      "false": null,
+      "reason": "malformed: kernel key conflicts with the file-level kernel key",
+      "sec": 0.0,
+      "verdict": "REFUSE"
+     },
+     "7g_e_c_not_midpoint": {
+      "expect": "REFUSE",
+      "expectation_met": true,
+      "false": null,
+      "reason": "malformed: e_c != (e_lo + e_hi)/2",
+      "sec": 0.0,
+      "verdict": "REFUSE"
+     },
+     "7h_non_dyadic_drift (processed, no crash)": {
+      "expect": "no crash (any verdict)",
+      "expectation_met": true,
+      "false": null,
+      "reason": "malformed: weight_block does not contain block",
+      "sec": 0.0,
+      "verdict": "REFUSE"
+     },
+     "7q_quarantine_band_refused": {
+      "expect": "REFUSE",
+      "expectation_met": true,
+      "false": null,
+      "reason": "malformed: weight_block does not contain block",
+      "sec": 0.0,
+      "verdict": "REFUSE"
+     }
+    },
     "reason": "(C1)-(C4) and sha256 proved",
     "sec": 3.7974634170532227,
     "sha256": "6854db9b880494d6f0d2eed8ae29ebca3760a4446c9b6f15bb3f8a574f906346",
+    "verdict": "ACCEPT"
+   },
+   "4": {
+    "C4": {
+     "Gamma": "121100549029073775378160459272147216961567/85070591730234615865843651857942052864",
+     "max_V_at_atom": "121100549029073775378160459272147216961567/85070591730234615865843651857942052864",
+     "ok": true
+    },
+    "boxes": 434,
+    "claims": {
+     "C1": {
+      "boxes": 144,
+      "maxdepth": 0,
+      "minlb": 253.12833781243833,
+      "sec": 0.32193732261657715
+     },
+     "C2": {
+      "boxes": 144,
+      "maxdepth": 0,
+      "minlb": 0.039120374963465133,
+      "sec": 0.9871120452880859
+     },
+     "C3": {
+      "boxes": 146,
+      "maxdepth": 2,
+      "minlb": 0.007626309088846734,
+      "sec": 1.4180371761322021
+     }
+    },
+    "describe": "h=5 k=1/2 block=[0,1/32] weight_block=[0,1/32] i=4 kernel=whole deg=12",
+    "maxdepth": 2,
+    "reason": "(C1)-(C4) and sha256 proved",
+    "sec": 4.264478921890259,
+    "sha256": "fd9894817b287cc9b355b987a02079b57128fd389a83b260f9b8e0027eaa5d0d",
     "verdict": "ACCEPT"
    }
   },
