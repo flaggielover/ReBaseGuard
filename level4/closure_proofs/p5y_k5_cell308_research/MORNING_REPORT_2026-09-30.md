@@ -102,13 +102,14 @@ which makes it GOVERNANCE_ACCEPTED** (`00a432df`), with errata D1–D3 applied (
 * **caffeinate supervisor.** caffeinate was re-spawned after it was killed.
 * **Stale pidfile.** Detected.
 * **Re-run by the independent reviewer:** 6/6.
-* **DEF-2** (the launcher could boot out a live job) is **under repair R2** (§20).
+* **DEF-2** (the launcher could boot out a live job): repair R2 is committed in `35cabb50`; its independent delta review is running (§20).
 
 ## 12. Crash-safe persistence design
 
 The durable path for a complete result: O_EXCL tmp → fsync → rename → dir fsync / F_FULLFSYNC → read-back and
 self-hash verification → journal RESULT_DURABLE → `hash-object` (fsync) → pending ref (CAS) → seal (private index) →
-materialize. A checkpoint is never a result. **DEF-1** (stale git ref locks after a mid-write reset) is **under repair R1**.
+materialize. A checkpoint is never a result. **DEF-1** (stale git ref locks after a mid-write reset): repair R1 is committed
+in `35cabb50`; its independent delta review is running.
 
 ## 13. Crash and mutant test results
 
@@ -119,7 +120,10 @@ materialize. A checkpoint is never a result. **DEF-1** (stale git ref locks afte
 
 **Resume check.** Resumed equals uninterrupted over 643 Stage-1 and 883 Stage-2 certified leaves (dev decoy 297 block 0).
 
-**Gaps** (DEF-1, DEF-4) are under repair (§20).
+**Repairs `35cabb50`** (builder2's run; not yet independently re-run):
+* static 9/9, launch 8/8, state 44/44, crash 47/47 (planted-lock cases L01–L11 added), dev decoy 2/2;
+* mutants **46/47 killed**. M33, which predates the repairs, survives non-deterministically: its kill depends on timing. The
+  deterministic test is part of the unapplied R3 work (§16).
 
 ## 14. Independent verifier status
 
@@ -138,7 +142,11 @@ MBR1_REPRO matches MB r1's committed QC02 records.
 **NOT FROZEN.** The gates:
 * the user decision under §14 / G2 (S16(c)) and MBS-6/7/8 are **open (user)**;
 * S16(b) (RC1/RC2 as facts) awaits qualification;
-* the implementation delta (R1–R4) is PENDING.
+* the implementation delta review (R1/R2/R4 at `35cabb50`) is **running**;
+* **R3 is ratified but not applied.** The non-holder ratification is recorded (`3c2a7854`, CONSTANTS_RATIFIED_WITH_CHANGES). The
+  ratifier could not apply it: an auto-mode safety check blocked one of its read-only commands, and it stopped without
+  changing anything (worktree verified clean; ledger correction `3d08f981`). I have **not** applied the edits myself, and I
+  did not hand them to another agent, because that would route around the block. They need you (§33).
 
 ## 17. Qualification status
 
@@ -160,11 +168,13 @@ MBR1_REPRO matches MB r1's committed QC02 records.
 * incident re-rating: `b7e62dec`, `6a33f22d`, `ff2280e9`, `bae2945d`;
 * decision brief: `60af17dd`, `21a86b43`, `03ca1bcf`, `751babc2`;
 * implementation review: `6d3a44cd`;
-* the rest: (PENDING).
+* repairs and constants: `50afc064` (briefs 40–41), `3c2a7854` (constants ratification + this report's draft), `023a287d`
+  (brief 42), `d9078876` (brief 43), `3d08f981` (ledger correction + brief 43 erratum E1);
+* this report's final version: the commit after `3d08f981`.
 
 **Formal `p5y-k5-cell308-mb-r1`:** `21e99cf0`, `a40211cc`, `9ad632c9`, `e451e634`.
 
-**Successor `p5y-k5-cell308-mbs-r1`:** `afba20e5` (PENDING: repairs).
+**Successor `p5y-k5-cell308-mbs-r1`:** `afba20e5` (pre-freeze build), `35cabb50` (repairs R1/R2/R4).
 
 ## 20. Every rejection or failure, and its disposition
 
@@ -174,7 +184,8 @@ MBR1_REPRO matches MB r1's committed QC02 records.
 | its DELTA_REJECTED | E1, then accepted |
 | GOVERNANCE_REJECTED | A1, then delta accepted |
 | route DELTA_REJECTED | E1, then accepted |
-| **IMPLEMENTATION_REJECTED** (`6d3a44cd`; DEF-1 to DEF-4) | repairs R1/R2/R4 by builder2 at the non-holder reviewer's request (M4); R3 by a non-holder ratifier. PENDING delta |
+| **IMPLEMENTATION_REJECTED** (`6d3a44cd`; DEF-1 to DEF-4) | R1/R2/R4 repaired by builder2 at the non-holder reviewer's request (M4), `35cabb50`; delta review running. R3 ratified (`3c2a7854`) but **not applied** (see the next row) |
+| the constants ratifier stopped by an auto-mode safety check | nothing changed; ledger correction `3d08f981`; not worked around; needs you |
 
 ## 21. Every incident
 
@@ -188,7 +199,8 @@ MBR1_REPRO matches MB r1's committed QC02 records.
 **Also:**
 * an accidental HISTORICAL_READ by the coordinator (BRIEF_CHECK.json);
 * the coordinator's unreliable "~HH:MMZ" time annotations (errata);
-* a reader-check file committed a few seconds before its completion notification (bytes verified identical).
+* a reader-check file committed a few seconds before its completion notification (bytes verified identical);
+* the ratifier's INFRASTRUCTURE ledger line (23:34:16Z) announced an edit that never happened; corrected at 23:36:04Z.
 
 ## 22. Exact new Cell-308 target-evaluation count
 
@@ -223,7 +235,8 @@ OPEN. MB r1 is INDETERMINATE. The successor MB-S is prepared, and its freeze and
 
 ## 31. Remaining blockers
 
-1. The implementation delta (R1–R4) and the constants ratification: PENDING.
+1. **Applying R3** (the ratified constants, the protocol-draft §8 text and a deterministic M33 test). The ratifier was blocked,
+   so this needs you (§33). The implementation delta review (R1/R2/R4) is running.
 2. The verifier, manifest writer and leak scanner are not built.
 3. **Your freeze decision** (§14 / G2; the caps option; finality; the member decision).
 4. Qualification on an awake, cool host with automatic updates disabled.
@@ -234,10 +247,58 @@ OPEN. MB r1 is INDETERMINATE. The successor MB-S is prepared, and its freeze and
 
 * MB r1 is fully closed out as INDETERMINATE.
 * Successor governance, route and incident re-rating are all accepted.
-* A crash-safe successor build exists. It is pre-freeze, and its implementation is under bounded repair.
+* A crash-safe successor build exists (`35cabb50`). It is pre-freeze. R1/R2/R4 are repaired and under delta review; R3 is
+  ratified but not applied.
 * The decision brief is ready and passed its non-holder reader check.
 
 ## 33. Exact next action requiring your authorization
 
-The freeze decision in `governance/USER_DECISION_BRIEF_308_SUCCESSOR.md` §A (`03ca1bcf`): grant or withhold, caps
-option (i) or (ii), finality (i) or (ii), members (i) or (ii). The S1 ruling comes later.
+1. **How R3 gets applied.** The ratifier's edits are listed in its hand-back. There are three: comments only on `MEM_CAP_BYTES`
+   and `FREE_MEM_MIN_BYTES`; four names added to `EXCL_ALLOW`; the launcher's `pre_launch` timeout becomes `PRE_CAP_S + 100`, with
+   a re-pinned launcher hash. There is also the protocol §8 text and the M33 test. It needs a non-holder with edit access. The
+   ratifier suggested a session outside auto mode, or a fresh session. I am a holder, so I may not apply them myself.
+2. The freeze decision in `governance/USER_DECISION_BRIEF_308_SUCCESSOR.md` §A (`03ca1bcf`): grant or withhold, caps
+   option (i) or (ii), finality (i) or (ii), members (i) or (ii). The S1 ruling comes later.
+
+## Final block
+
+```
+CELL 308 RECOVERY
+-----------------
+MB308 r1 target count: 1
+target-consumed: YES (refs/p5y-k5-cell308-mb-r1/target-consumed -> afa93072, unchanged)
+complete result: NONE
+pending-result: NONE
+seal: NONE
+same-grant re-execution: NONE (not attempted; forbidden)
+execution verdict: CELL308_EXECUTION_INDETERMINATE (9ad632c9; ADJUDICATION_ACCEPTED e451e634)
+scientific status: OPEN (not closed; not a scientific negative)
+
+CELL 308 SUCCESSOR
+------------------
+governance: SUCCESSOR_ALLOWED_WITH_CONDITIONS (e5871aa6; A1 ce145e51; E1 a7c969e8)
+independent governance review: GOVERNANCE_REJECTED (e3c60491), then DELTA_ACCEPTED => GOVERNANCE_ACCEPTED (00a432df)
+route: MB-S (MB r1 science byte-identical; infrastructure only)
+independent scientific review: ROUTE_ACCEPTED under RC1-RC6 (a1d1c7d4); delta REJECTED (fc723105); R3 DELTA_ACCEPTED (87d0b2b9)
+protocol: DRAFT only (not frozen)
+detachment: launchd launcher proven by test; DEF-2 repaired (35cabb50), delta review running
+persistence: crash-safe spool -> CAS -> seal built; DEF-1 repaired (35cabb50), delta review running
+crash tests: crash 47/47, state 44/44, mutants 46/47 (M33 timing-dependent) at 35cabb50; independent re-run in the delta
+freeze: NOT FROZEN
+qualification: NOT STARTED
+independent qualification review: NONE
+new target authorization: NONE
+new target evaluations: 0
+remaining blocker: R3 application (blocked; needs you); implementation delta; your freeze decision (brief §A); verifier/manifest/leak scanner; qualification; your S1 ruling
+
+K5
+---
+306: OPEN (CELL306_NOT_ADOPTED)
+307: CLOSED_UNDER_RLR (scientific closure only; NOT adopted)
+308: OPEN (MB r1 INDETERMINATE; successor MB-S pre-freeze)
+309: EXTERNALLY_IN_PROGRESS
+r5: unchanged, authoritative
+r6: NONE
+K5: PARTIAL
+P5Y: NOT CLOSED
+```
