@@ -125,18 +125,18 @@ def poly_min_X(g: KX.Geom, P0: dict, P1: dict, e_c: F, e_r: F) -> F:
 
 
 # ------------------------------------------------------------------------------------------ float proposals
-def _float_solve(g: KX.Geom, e: F, d: int, rhs_fn) -> dict:
+def _float_solve(g: KX.Geom, e: F, d: int, rhs_fn, whole: bool = True) -> dict:
     fg = FL.FGeom(g.h, g.k)
     D = FL.Disc(fg, float(e), d)
-    qr = FL.QR(D.matrix(True))
+    qr = FL.QR(D.matrix(whole))
     rhs = [rhs_fn(p, m) for (p, m) in D.pts]
     coef = qr.solve(rhs)
     return KX.dyadic_round_poly(FL.to_exact_poly(coef, D.idx, g.h), 96)
 
 
-def _eaff_proposal(g: KX.Geom, e_lo: F, e_hi: F, d: int, rhs_fn) -> tuple:
-    Pl = _float_solve(g, e_lo, d, rhs_fn)
-    Ph = _float_solve(g, e_hi, d, rhs_fn)
+def _eaff_proposal(g: KX.Geom, e_lo: F, e_hi: F, d: int, rhs_fn, whole: bool = True) -> tuple:
+    Pl = _float_solve(g, e_lo, d, rhs_fn, whole)
+    Ph = _float_solve(g, e_hi, d, rhs_fn, whole)
     P0 = KX.dyadic_round_poly({k: v / 2 for k, v in KX.padd(Pl, Ph).items()}, 96)
     P1 = KX.dyadic_round_poly({k: v / (e_hi - e_lo) for k, v in KX.padd(Ph, Pl, -1).items()}, 96) \
         if e_hi > e_lo else {}
@@ -153,13 +153,14 @@ def _kbar_float(g: KX.Geom, i: int, e_lo: F, e_hi: F):
 
 
 # ------------------------------------------------------------------------------------------ certificates
-def certify_W(g: KX.Geom, e_lo: F, e_hi: F, d: int, log=print) -> dict:
-    """(W): e-affine whole-kernel supersolution on E, multiplicative repair (1 + eta) (C1b rule; amendment A1)."""
+def certify_W(g: KX.Geom, e_lo: F, e_hi: F, d: int, log=print, whole: bool = True) -> dict:
+    """(W): e-affine supersolution on E (whole kernel K_e, or taboo kernel K^_e when whole=False, amendment A2),
+    multiplicative repair (1 + eta) (C1b rule; amendment A1)."""
     guard_geometry_block(g, e_lo, e_hi)
     t0 = time.time()
     e_c, e_r = (e_lo + e_hi) / 2, (e_hi - e_lo) / 2
-    W0, W1 = _eaff_proposal(g, e_lo, e_hi, d, lambda p, m: 1.0)
-    res = KX.pair_add(eaff_pair(g, W0, W1, e_c), KX.poly_pair({(0, 0, 0): F(1)}), -1)
+    W0, W1 = _eaff_proposal(g, e_lo, e_hi, d, lambda p, m: 1.0, whole)
+    res = KX.pair_add(eaff_pair(g, W0, W1, e_c, whole), KX.poly_pair({(0, 0, 0): F(1)}), -1)
     chk = cover_check(g, res, lambda b: F(0), e_lo, e_hi)
     rlo = chk["r_min"]
     if rlo <= -1:
@@ -171,20 +172,21 @@ def certify_W(g: KX.Geom, e_lo: F, e_hi: F, d: int, log=print) -> dict:
     Wa = max(eaff_at(W0, W1, e_c, e_lo), eaff_at(W0, W1, e_c, e_hi))
     rec = {"status": "CERTIFIED" if ok else "W_NEGATIVE", "degree": d, "eta": eta, "r_lo": rlo, "W_min": wmin,
            "W_at_atom_max": Wa, "boxes": chk["boxes"], "seconds": round(time.time() - t0, 1), "_W": (W0, W1),
-           "e_c": e_c}
-    log(f"  W d={d}: {rec['status']} max_E W(a)={float(Wa):.6g} eta={float(eta):.3g} "
+           "e_c": e_c, "whole": whole}
+    log(f"  W{'' if whole else '^'} d={d}: {rec['status']} max_E W(a)={float(Wa):.6g} eta={float(eta):.3g} "
         f"boxes={chk['boxes']} lev={chk['max_level']} {rec['seconds']}s")
     return rec
 
 
 def certify_weight(g: KX.Geom, i: int, e_lo: F, e_hi: F, d: int, Wrec: dict, log=print, mutant: str = "") -> dict:
+    whole = Wrec.get("whole", True)
     """(V) for Psi = kbar_i^E (e-affine family, additive lambda W' repair).  mutant (tests only):
     'shrink_window' certifies against a window narrowed by 1/4 (an invalid, too-small Psi)."""
     guard_geometry_block(g, e_lo, e_hi)
     t0 = time.time()
     e_c = (e_lo + e_hi) / 2
-    V0, V1 = _eaff_proposal(g, e_lo, e_hi, d, _kbar_float(g, i, e_lo, e_hi))
-    res = eaff_pair(g, V0, V1, e_c)
+    V0, V1 = _eaff_proposal(g, e_lo, e_hi, d, _kbar_float(g, i, e_lo, e_hi), whole)
+    res = eaff_pair(g, V0, V1, e_c, whole)
     if mutant == "shrink_window":
         rhs = lambda b: EN.abs_integral_upper(i, b[1] - b[3] - g.c + e_lo + F(1, 4), g.c - (b[0] - b[2]) + e_hi)  # noqa
     else:
@@ -198,14 +200,15 @@ def certify_weight(g: KX.Geom, i: int, e_lo: F, e_hi: F, d: int, Wrec: dict, log
     raw = max(eaff_at(V0, V1, e_c, e_lo), eaff_at(V0, V1, e_c, e_hi))
     rec = {"status": "CERTIFIED", "i": i, "degree": d, "r_min": chk["r_min"], "lam": lam, "sup_psi": sup_psi,
            "V_at_atom_raw": raw, "Gamma": bound, "boxes": chk["boxes"], "max_level": chk["max_level"],
-           "worst_box": chk["worst_box"], "seconds": round(time.time() - t0, 1), "_V": (V0p, V1p), "e_c": e_c}
+           "worst_box": chk["worst_box"], "seconds": round(time.time() - t0, 1), "_V": (V0p, V1p), "e_c": e_c,
+           "whole": whole}
     log(f"  V[k{i}] d={d}: Gamma={float(bound):.6g} (raw {float(raw):.6g}, lam={float(lam):.3g}, "
         f"r_min={float(chk['r_min']):.3g}) boxes={chk['boxes']} lev={chk['max_level']} {rec['seconds']}s")
     return rec
 
 
 def run_block(g: KX.Geom, e_lo: F, e_hi: F, indices=(1, 2, 3, 4), ladder=DEFAULT_LADDER, log=print,
-              klass: str = "NONTARGET_DECOY") -> dict:
+              klass: str = "NONTARGET_DECOY", whole: bool = True) -> dict:
     """Full ladder on one block.  Gamma_i := min over certified rungs (a min of valid bounds is valid)."""
     e_lo, e_hi = F(e_lo), F(e_hi)
     if not (is_dyadic(e_lo) and is_dyadic(e_hi)) or e_hi < e_lo:
@@ -217,7 +220,7 @@ def run_block(g: KX.Geom, e_lo: F, e_hi: F, indices=(1, 2, 3, 4), ladder=DEFAULT
                     notes="real kernel, out-of-band decoy drift" if real else "synthetic decoy geometry")
     rungs = []
     for d in ladder:
-        Wr = certify_W(g, e_lo, e_hi, d, log)
+        Wr = certify_W(g, e_lo, e_hi, d, log, whole)
         rung = {"degree": d, "W": Wr, "V": {}}
         if Wr["status"] == "CERTIFIED":
             for i in indices:
@@ -229,7 +232,7 @@ def run_block(g: KX.Geom, e_lo: F, e_hi: F, indices=(1, 2, 3, 4), ladder=DEFAULT
         gam[i] = min(vals) if vals else None
     Wa = [r["W"]["W_at_atom_max"] for r in rungs if r["W"]["status"] == "CERTIFIED"]
     return {"geometry": {"h": fstr(g.h), "k": fstr(g.k)}, "block": [fstr(e_lo), fstr(e_hi)], "rungs": rungs,
-            "Gamma": gam, "Abar_W": min(Wa) if Wa else None}
+            "Gamma": gam, "Abar_W": min(Wa) if Wa else None, "whole": whole}
 
 
 # ------------------------------------------------------------------------------------------ serialization

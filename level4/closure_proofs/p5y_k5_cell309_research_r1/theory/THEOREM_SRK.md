@@ -245,3 +245,25 @@ Implementation rules, replacing the corresponding rows of §7:
 | box refinement | C1b's tightness rule, not a sign rule. After a full pass, a box is halved (≤ 4 extra levels) iff its certified lower margin lies below m_c − (1/4)|m_c| − 2⁻⁴⁰, where m_c is the minimum over boxes of the centre margin |
 
 Validity: e-affine families are a special case of Lemma SV′, and the refinement rule affects tightness only.
+
+## 10. Amendment A2: taboo form SRK-T (target-free; a dominance-composition option)
+
+**Lemma SV-T.** Let K̂_e be the taboo kernel: K_e with the atom sub-window removed (theorem AD Lemma K). Suppose that
+for every e ∈ E:
+* ŵ_e ≥ 0 and ŵ_e ≥ 1 + K̂_eŵ_e on X;
+* v̂_e ≥ Ψ + K̂_e v̂_e on X.
+
+Then for every e ∈ E, (Ĝ_eΨ)(a) ≤ v̂_e(a). If moreover D_e ≥ D_lo > 0 on E (a certified lower bound, e.g. the
+committed D_lo of the chosen supply's registry), then Lemma SM(c) gives, for every f with |f| ≤ Ψ:
+
+    |[R_e f](a)| = |ν_e(f)|/D_e ≤ (Ĝ_e|f|)(a)/D_e ≤ v̂_e(a)/D_lo.
+
+*Proof.* Lemma SV applies verbatim with K̂_e in place of K_e (Lemma T of theorem AD supplies the Neumann series and
+positivity of Ĝ_e). Then use Lemma SM(c). ∎
+
+**Use.** Γ̂_i := max_{e∈{e_lo,e_hi}} v̂_{i,e}(a)/D_lo is an alternative valid value for Γ̄_i. The consumer may use
+min(Γ̄_i, Γ̂_i), because both are valid. SRK-T is the analogue of the τ/D_lo branch of Ā_eff, while §2 is the analogue of
+the Ā branch.
+
+**Implementation.** `certify_W(..., whole=False)` and `certify_weight` inherit the flag. D_lo is not produced here:
+in a formal campaign it would be the committed, pinned registry value of the chosen supply.
