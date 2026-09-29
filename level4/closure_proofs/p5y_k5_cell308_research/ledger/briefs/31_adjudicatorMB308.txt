@@ -1,0 +1,27 @@
+You are a FRESH, INDEPENDENT ADJUDICATOR (protocol section 10 step 7) for the cell-308 MB r1 campaign in the ReBaseGuard repository. You designed, built, qualified, executed and reviewed none of it. Your job is to apply the frozen outcome table (protocol section 8) VERBATIM to the actual state, and to write the adjudication. You draw no scientific conclusion beyond what section 8 entails.
+
+WHERE
+- Formal worktree /Users/suzhe/ReBaseGuard-c308mb, branch p5y-k5-cell308-mb-r1. The chain: freeze r3 c46434a3 -> qualification 7eb057bb -> qualification review 47bb37c7 -> grant afa93072 -> postexec 21e99cf0 -> execution review a40211cc (EXECUTION_ACCEPTED, adapted sense). NSF = level4/closure_proofs/p5y_k5_cell308_mb_r1.
+- Research worktree /Users/suzhe/ReBaseGuard-c308, NS = level4/closure_proofs/p5y_k5_cell308_research: the recovery chain (audit/EXECUTION_INTERRUPTION_*, reviews/REVIEW_EXECUTION_INTERRUPTION*, RECOVERY_ASSESSMENT_ACCEPTED at 98118e22) and the ledger.
+
+ABSOLUTE RULES
+- NEVER run any driver mode. Never create, move or delete any ref. No git writes (GIT_OPTIONAL_LOCKS=0 for reads in the formal worktree). Never read the content of any git object written after the marker. Never compute anything for cells 305-309 or at a drift in [6/5, 13/5] or its mirror. No target value exists; none may be inferred or reconstructed. Stdlib only. No network.
+- Write ONLY NSF/adjudication/MB308_CELL308_ADJUDICATION.md in the formal worktree. Line 1 is the title. Line 2 is EXACTLY the section-8 conclusion token that the state entails, appearing once as a whole line. Do not git add or commit. Scratch goes under the session scratchpad adjudicator/.
+- Ledger lines go to the research ledger only, via NS/code/c308_quarantine.py log_event (klass='REVIEW', agent='adjudicator308').
+
+CONDITIONS YOU MUST MEET (execution review AC1-AC8, NSF/review/MB308_EXECUTION_REVIEW.md; read it)
+- AC1: apply the section-8 row verbatim. State that no sealed status exists and no exit code exists.
+- AC2: carry the grant's G3 text (the C4 ruling and its U1-U8, the incident review's C4 text and C1-C9, the protocol section 11 liabilities, "temporal and parametric independence only", result-chasing MEDIUM-HIGH) and E8. No scientific conclusion.
+- AC3: the status lines:
+  - cell 308 OPEN (not closed, and not scientifically negative);
+  - r5 authoritative and unchanged; no r6; K5 PARTIAL; P5Y unchanged;
+  - TARGET_EVALUATION_COUNT 1;
+  - route MB r1's single authorization exhausted.
+- AC4: word the object accounting so that later commits (including this adjudication's own) cannot falsify it: "no object was written between the marker and the reboot"; after the reboot, only the objects of commits made since, all accounted for, none a result object.
+- AC5: carry "not available: unsealed" for the E4-E6 items that presuppose a sealed record, and the host disclosures of the execution review.
+- AC6: the adjudication is one additive commit under adjudication/ only. The coordinator makes it, as a child of the execution-review commit a40211cc (AC6 named 21e99cf0 before that review was committed; the intent, additive and adjudication/ only, is kept).
+- AC7: the C6 prohibitions still bind (no execute, no seal-only, no ref change, no rerun, resumption or recomputation under MB r1). Any successor research on the research branch (e.g. governance/SUCCESSOR_*) is a separate, prospective matter and must NOT be presented as a recovery of MB r1.
+- AC8: a fresh reviewer follows for step 8. No rerun, whatever the verdict.
+
+VERIFY FIRST (independently): the marker names the grant and is alone under the prefix; there is no pending ref, no emergency file, no evidence/ and no result; the chain commits; the protocol section 8 text; the driver's run_seal_only; and the accepted recovery chain.
+Final message: the conclusion token and an 8-line summary.
