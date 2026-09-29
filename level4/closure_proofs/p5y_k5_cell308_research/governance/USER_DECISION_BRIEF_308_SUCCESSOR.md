@@ -1,5 +1,8 @@
 # Decision brief for the user: the cell-308 successor MB-S (freeze decision now; S1 ruling later)
 
+**Revision r1.** Neutrality repairs N-1 to N-6 and N-8 from the non-holder reader check
+(`reviews/READER_CHECK_USER_DECISION_BRIEF_308.md`, NO_OUTCOME_EXPECTATION). The r0 text is in git history.
+
 **What this is.** It prepares the decisions the governance leaves to you. **It contains no expectation of MB-S's
 outcome**: no margin, estimate, likelihood or "worth running" argument (MBS-10). A research scanner and a non-holder
 reader check this before you receive it.
@@ -9,22 +12,34 @@ MB308 r1: CELL308_EXECUTION_INDETERMINATE (ADJUDICATION_ACCEPTED `e451e634`). Ce
 
 ## A. Decisions needed before the successor freeze (§14 / G2; S16(c); MBS-6, MBS-7, MBS-8)
 
-1. **Freeze permission.** MB-S keeps MB r1's science and is "an r4 with the same caps" in substance. §14 and G2
-   require a new explicit user decision, recorded before any such freeze.
-2. **Caps (MBS-8)**, exactly one of two options, chosen mechanically:
+1. **Freeze permission: grant or withhold.** MB-S keeps MB r1's science and is "an r4 with the same caps" in
+   substance. §14 and G2 require a new explicit user decision, recorded before any such freeze.
+   * **Withholding permission is equally available.** In that case MB-S stays a reviewed, unfrozen, pre-freeze build,
+     and cell 308 stays OPEN with MB r1 INDETERMINATE.
+   * **Granting permission** allows the freeze and the official qualification. It does **not** authorise a target
+     step (see B).
+2. **Caps (MBS-8).** Exactly one of the two options below. "Mechanically" means that no cap value is set by hand;
+   the option alone determines the values.
    * **(i)** keep MB r1's r3 caps (EVAL_CAP 8 h; per-job CPU caps as frozen); or
    * **(ii)** apply MB r1's frozen §3.2 rule to MB-S's own official decoy runtimes under its new launcher.
 
    Either way Q12 must pass. Caps change only the probability of completion, never Γ.
-3. **Finality (MBS-6; S1 item 6).** Is an INDETERMINATE-class outcome of MB-S **final** for route MB on cell 308? The
-   incident review recommends "final". Whatever you decide, any evaluation of 308 after the MB-S marker, of any route,
-   starts at a risk rating of not lower than HIGH (MBS-5(b)).
-4. **The C11R-I2 / COR-T trade (MBS-7; route erratum E1 DR1; route re-check R3-N2).**
-   * **Keep MB-S unchanged.** Any later use of those members on 308 is post-result and governed by the brief's §26
-     path. It starts at not lower than HIGH.
-   * **Adopt them before the freeze.** That means leaving MB-S for the S4 "changed science" branch: new code, new
-     reviews, a new qualification, the loss of the determinism argument, and a fresh incident re-rating
-     (presumptively HIGH).
+3. **Finality (MBS-6; S1 item 6).** Record your decision, one of:
+   * **(i) final:** an INDETERMINATE-class outcome of MB-S ends route MB on cell 308;
+   * **(ii) not final:** a further successor may be governed after an MB-S INDETERMINATE, through its own process
+     and ruling.
+
+   The incident re-rating's recommendation is (i). Under either option, any evaluation of 308 after the MB-S marker,
+   of any route, starts at a risk rating of not lower than HIGH (MBS-5(b)).
+4. **The member decision on C11R-I2 / COR-T (MBS-7; route erratum E1 DR1; route re-check R3-N2).** Record one of:
+
+   | | (i) keep MB-S unchanged | (ii) add the members before the freeze |
+   |---|---|---|
+   | science | MB r1's, byte-identical | changed (the S4 "changed science" branch) |
+   | determinism argument (successor value = lost-run value) | applies (under the pin) | does not apply |
+   | work before any freeze | the current build and reviews | new code, new reviews, a new qualification |
+   | incident rating | MEDIUM–HIGH, upper end, conditional | a fresh re-rating, presumptively HIGH |
+   | later use of these members on 308 | post-result; the brief's §26 path; not lower than HIGH | not applicable (already included) |
 
 ## B. The ruling needed before any successor grant (S1; governance addendum A1 §3 with erratum E1 D1)
 
@@ -35,7 +50,7 @@ The ruling must expressly:
 3. state that MB-S is **a new governance decision, not a rerun on host grounds** (E3); MB r1 stays INDETERMINATE;
 4. confirm the caps option (A.2);
 5. re-affirm U1–U8 of your C4 ruling;
-6. confirm finality (A.3) and the member decision (A.4).
+6. record your decisions on finality (A.3) and on the members (A.4).
 
 ## C. What the ruling is taken with in view (C4 list, extended; MBS-10)
 
@@ -117,6 +132,9 @@ caps change only the probability of completion, never Γ).
 governance process. It needs the new user decision.
 
 ## E. Your own words (verbatim, from `ledger/USER_TEXTS_SUCCESSOR_308.md`)
+
+The selection is the brief's §20, §21, §23 and §26 of 2026-09-28, the passages on a second execution and on
+successors.
 
 ### 3a. The brief's §20
 
@@ -219,7 +237,8 @@ review before considering it.
   * a host contract.
 
   The independent implementation review is **pending at the time of writing**.
-* **Host readiness for any future official run** (builder's reading): this host would refuse today. Memory pressure is
+* **Host readiness for any future official run** (the builder's reading at the end of its build, about
+  2026-09-29 21:00Z; a reading at that time only): this host would then have refused. Memory pressure is
   elevated, thermal level is 1, automatic macOS and critical-update installation is on, and another application
   exceeds the CPU exclusivity limit. Disabling automatic installation for the whole window is your action. The
   campaign never changes system settings.
