@@ -9,7 +9,7 @@ next to a tail number.
 ### SRK, whole kernel (R16)
 
 * **Theorem readiness:** THEOREM_SRK with Lemmas SK, SV, SV′ and amendment A1. Written and self-checked. The
-  exact-truth FSM test passes 12/12, including premise-level controls. The independent review is pending
+  exact-truth FSM test passes 12/12 on genuine checks; its mutant controls catch M1 12/12 and M4 6/12, while M2 is not applicable and M3 is caught 0/12 (covered only by the two-sided assembly test) [wording corrected per review R1 B6]. The independent review is pending
   (`reviews/REVIEW_SRK_R1.md`).
 * **Implementation readiness:** certifier (port identical to C1b, 84/84), envelopes, assembly (two-sided test, 10/10
   mutants), adapter (6×20 checks).

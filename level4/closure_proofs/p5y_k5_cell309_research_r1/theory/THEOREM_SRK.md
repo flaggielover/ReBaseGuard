@@ -69,8 +69,16 @@ Then for every e ∈ E, R_e exists, R_e ≥ 0, and R_eΨ ≤ V on X. In particul
 
 **Dominance of the channel constant.** For any valid order-0 constant A0 (A0 ≥ sup_{e∈E} E_a[τ], Lemma SM(d)):
 (R_eΨ)(a) ≤ ‖Ψ‖·(R_e1)(a) ≤ A0‖Ψ‖. Equality in the first step holds iff Ψ = ‖Ψ‖ almost everywhere for the occupation
-measure μ_{a,e}(·) = Σ_n P_a(X_n ∈ ·, n < τ) (the "refuted family" of constant weights, RSO). SRK is strictly better
-exactly when the weight is non-constant on the occupation support.
+measure μ_{a,e}(·) = Σ_n P_a(X_n ∈ ·, n < τ) (the "refuted family" of constant weights, RSO).
+
+*[Corrected per review R1 B6.]* At the level of exact functionals, the SRK image of a weight is strictly below its norm
+bound iff the weight is below its sup on a set of positive occupation (the RSO shape factor; overnight N14). Whether
+the certified radius is strictly smaller also depends on:
+* certificate tightness;
+* the slack in A0 ≥ sup E_a[τ];
+* the slack in the frozen norms k_i ≥ ‖κ̄_i‖.
+
+So "non-constant weight" is sufficient for an exact-level gain, but it is not a characterization of a certified gain.
 
 ## 3. Theorem SRK (order-0 channel of theorem TC with Ĝ := 0)
 
@@ -290,3 +298,39 @@ It reads
 It is valid by §6 and Lemma SV (a min of valid bounds on (R_e|S_r'''(e0)|)(a)). It is deferred only for the coupling
 to the internals of `tct_rule.h_towers`, which the formal campaign would have to pin and qualify. It is a
 target-free candidate for a later package.
+
+
+## 11. Amendment A3: the drift-block rule and the certificate gate (review R1 B1/B2; target-free; fixed before the rerun)
+
+**Rule (replaces the "drift block" row of §7).** For a cell C = [e_lo, e_hi]:
+* The **weight block** is Ew := [⌊e_lo·2¹⁰⌋/2¹⁰, ⌈e_hi·2¹⁰⌉/2¹⁰], the outward dyadic hull on the 2⁻¹⁰ grid.
+* The **check sub-blocks** b_1..b_4 are the four equal parts of Ew, all dyadic.
+* Every sub-block certificate uses the **whole** Ew as its weight block. This is implemented as
+  `srk_certify.cell_blocks` / `run_cell`.
+
+**Lemma SV″ (sub-block covers).** Suppose that for each j ≤ 4 a certified pair (W^{(j)}, V^{(j)}) satisfies Lemma SV′ on
+b_j with weight Ψ = κ̄_i^{Ew}. Then
+
+    sup_{e∈C} (R_e κ̄_i^C)(a) ≤ sup_{e∈Ew} (R_e κ̄_i^{Ew})(a) ≤ max_j max(V^{(j)}_{e}(a) : e ∈ {endpoints of b_j}) =: Γ̄_i.
+
+*Proof.*
+* C ⊆ Ew = ∪_j b_j.
+* κ̄_i^C ≤ κ̄_i^{Ew}, because the sup is over a larger drift set, and R_e is positive.
+* Apply Lemma SV′ on each b_j. ∎
+
+Theorem SRK holds verbatim with Γ̄_i defined this way, since its weights may be any pointwise majorants of κ̄_i^C.
+
+**Gate (mandatory).** Γ̄_i enters the consumer only through `impl/srk_gate.gate`. A certificate is admitted iff all of
+the following hold:
+* schema, status and sha256 are consistent;
+* geometry and the kernel are inside the hashed body and equal to the request;
+* weight_block = Ew exactly;
+* its block is a declared b_j, with e_c its midpoint;
+* the independent verifier returned ACCEPT for exactly this sha256;
+* Γ ≥ 0.
+
+Γ̄_i = max_j min(admitted rungs on b_j), or None (fall back to TC-T) if some b_j has no admitted certificate. The adapter
+refuses Γ̄ values that do not come from the gate.
+
+**Note (review R1).** The premise W ≥ 0 in (W) is redundant for sub-Markov kernels, and is kept as a checked safety
+condition.

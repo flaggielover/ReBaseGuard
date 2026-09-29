@@ -158,6 +158,18 @@ def _scan_file(p: Path) -> list[dict]:
         out.append({"file": str(p.relative_to(NS)), "line": ln, "kind": kind, "what": str(what)[:80],
                     "suppressed": bool(ok and kind in ("CELL_LITERAL", "BAND_LITERAL"))})
 
+    # names bound to fractions.Fraction (review R1: `from fractions import Fraction as F` then F(9, 5) was missed)
+    frac_names = {"Fraction"}
+    for node in ast.walk(tree):
+        if isinstance(node, ast.ImportFrom) and node.module == "fractions":
+            for a in node.names:
+                if a.name == "Fraction":
+                    frac_names.add(a.asname or a.name)
+        elif isinstance(node, ast.Assign) and isinstance(node.value, ast.Name) and node.value.id in frac_names:
+            for t in node.targets:
+                if isinstance(t, ast.Name):
+                    frac_names.add(t.id)
+
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             for a in node.names:
@@ -184,7 +196,9 @@ def _scan_file(p: Path) -> list[dict]:
         elif isinstance(node, ast.Call):
             fn = node.func
             name = fn.id if isinstance(fn, ast.Name) else (fn.attr if isinstance(fn, ast.Attribute) else "")
-            if name == "Fraction" and len(node.args) == 2 and all(
+            is_frac = (isinstance(fn, ast.Name) and fn.id in frac_names) or (isinstance(fn, ast.Attribute)
+                                                                             and fn.attr == "Fraction")
+            if is_frac and len(node.args) == 2 and all(
                     isinstance(a, ast.Constant) and isinstance(a.value, int) for a in node.args):
                 if node.args[1].value != 0 and _in_band(Fraction(node.args[0].value, node.args[1].value)):
                     rec(node, "BAND_LITERAL", f"Fraction({node.args[0].value},{node.args[1].value})")

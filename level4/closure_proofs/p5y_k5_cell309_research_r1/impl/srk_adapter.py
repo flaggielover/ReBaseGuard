@@ -19,6 +19,7 @@ from __future__ import annotations
 from fractions import Fraction as F
 
 import srk_assemble as SA
+import srk_gate as GT
 
 
 class AdapterRefusal(ValueError):
@@ -52,8 +53,16 @@ def assemble(meas: dict, halves: dict, m: int, coefficients) -> tuple:
     return lo, hi
 
 
-def srk_enclosure(meas: dict, A: dict, m: int, gamma: dict, frozen_obj: dict, frozen_lohi: tuple,
-                  coefficients) -> dict:
+def srk_enclosure(meas: dict, A: dict, m: int, gate_result, frozen_obj: dict, frozen_lohi: tuple,
+                  coefficients, allow_test_gamma: bool = False) -> dict:
+    """gate_result must be a srk_gate.GateResult (review R1 B2): Gamma-bar values reach the consumer only through the
+    certificate gate.  allow_test_gamma=True admits a raw {i: value} dict and exists for unit tests only."""
+    if isinstance(gate_result, GT.GateResult):
+        gamma = gate_result.gamma
+    elif allow_test_gamma and isinstance(gate_result, dict):
+        gamma = gate_result
+    else:
+        raise AdapterRefusal("Gamma-bar must come from srk_gate.gate() (GateResult)")
     rho = F(meas["rho"])
     # reproduction gate: the frozen half widths must be exactly rad_r (|G(a)| = 0, (P2'))
     base_halves = {}

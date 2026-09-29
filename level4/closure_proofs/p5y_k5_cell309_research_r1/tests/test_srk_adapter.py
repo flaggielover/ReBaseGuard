@@ -82,22 +82,28 @@ def run():
         meas, k, A, sig = manufactured(seed)
         lo, hi, obj = stub_tail_enclosure(meas, k, A, sig, 5)
         res["cases"] += 1
-        none = AD.srk_enclosure(meas, A, 5, {1: None, 2: None, 3: None, 4: None}, obj, (lo, hi), coefficients)
+        none = AD.srk_enclosure(meas, A, 5, {1: None, 2: None, 3: None, 4: None}, obj, (lo, hi), coefficients, allow_test_gamma=True)
         res["repro_none"] += (none["lo"], none["hi"]) == (lo, hi)
         gam = {i: A["A0"] * k[i] * F(random.Random(seed * 7 + i).randint(30, 99), 100) for i in (1, 2, 3, 4)}
-        out = AD.srk_enclosure(meas, A, 5, gam, obj, (lo, hi), coefficients)
+        out = AD.srk_enclosure(meas, A, 5, gam, obj, (lo, hi), coefficients, allow_test_gamma=True)
         res["inside"] += (out["lo"] >= lo and out["hi"] <= hi and (out["lo"], out["hi"]) != (lo, hi))
         big = {i: A["A0"] * k[i] * 10 ** 6 for i in (1, 2, 3, 4)}
-        outb = AD.srk_enclosure(meas, A, 5, big, obj, (lo, hi), coefficients)
+        outb = AD.srk_enclosure(meas, A, 5, big, obj, (lo, hi), coefficients, allow_test_gamma=True)
         res["big_gamma_unchanged"] += (outb["lo"], outb["hi"]) == (lo, hi)
         bad = {r: dict(v) for r, v in obj.items()}
         bad[2]["rad"] = bad[2]["rad"] * F(99, 100)
-        res["tamper_refused"] += refuses(lambda: AD.srk_enclosure(meas, A, 5, gam, bad, (lo, hi), coefficients))
+        res["tamper_refused"] += refuses(lambda: AD.srk_enclosure(meas, A, 5, gam, bad, (lo, hi), coefficients, allow_test_gamma=True))
         badg = {r: dict(v) for r, v in obj.items()}
         badg[0]["abs_G_at_a"] = F(1, 10)
-        res["Gneq0_refused"] += refuses(lambda: AD.srk_enclosure(meas, A, 5, gam, badg, (lo, hi), coefficients))
+        res["Gneq0_refused"] += refuses(lambda: AD.srk_enclosure(meas, A, 5, gam, badg, (lo, hi), coefficients, allow_test_gamma=True))
         wrong = lambda m: [(a, b, c, d * (F(11, 10) if a == "W" else 1)) for a, b, c, d in coefficients(m)]  # noqa
-        res["wrongcoef_refused"] += refuses(lambda: AD.srk_enclosure(meas, A, 5, gam, obj, (lo, hi), wrong))
+        res["wrongcoef_refused"] += refuses(lambda: AD.srk_enclosure(meas, A, 5, gam, obj, (lo, hi), wrong, allow_test_gamma=True))
+        res.setdefault("raw_dict_refused_without_flag", 0)
+        res["raw_dict_refused_without_flag"] += refuses(lambda: AD.srk_enclosure(meas, A, 5, gam, obj, (lo, hi),
+                                                                                  coefficients))
+        res.setdefault("gate_empty_reproduces", 0)
+        e = AD.srk_enclosure(meas, A, 5, AD.GT.GateResult.empty(), obj, (lo, hi), coefficients)
+        res["gate_empty_reproduces"] += (e["lo"], e["hi"]) == (lo, hi)
     ok = all(v == res["cases"] for kk, v in res.items() if kk != "cases")
     return ok, res
 

@@ -148,7 +148,7 @@ class TestGaussianEnclosures(unittest.TestCase):
     def test_G_value_vs_quadrature(self):
         for n in range(0, 6):
             kinks = [float(r[0]) for r in V.he_roots(n)]
-            for u in (Fr(-3), Fr(-1, 2), Fr(1, 5), Fr(2), Fr(3, 2), Fr(-7, 3)):
+            for u in (Fr(-3), Fr(-1, 2), Fr(1, 5), Fr(2), Fr(3, 2), Fr(-7, 3)):  # q309: literal-ok (arguments of a Gaussian special function, not drifts)
                 lo, hi = V.G_value(n, u)
                 # reference: Simpson between consecutive kinks of |He_n| (the integrand is smooth there)
                 bps = [-14.0] + [r for r in kinks if r < float(u)] + [float(u)]
@@ -237,7 +237,7 @@ class TestTaylorModels(unittest.TestCase):
     def test_containment(self):
         rnd = random.Random(5)
         cert = self.cert
-        cells = [('tri', Fr(1), Fr(5, 4), Fr(1, 2), Fr(3, 4)), ('tri', Fr(0), Fr(1, 8), Fr(0), Fr(1, 8)),
+        cells = [('tri', Fr(1), Fr(5, 4), Fr(1, 2), Fr(3, 4)), ('tri', Fr(0), Fr(1, 8), Fr(0), Fr(1, 8)),  # q309: literal-ok (state-cell coordinates (p, m), not drifts)
                  ('axp', cert.S, cert.S + Fr(1, 4), Fr(0), Fr(0)), ('axm', Fr(0), Fr(0), cert.h - Fr(1, 4), cert.h)]
         for c5 in cells:
             cell = c5 + (cert.e_lo, cert.e_hi, 0)
@@ -266,7 +266,7 @@ class TestTaylorModels(unittest.TestCase):
         rnd = random.Random(9)
         cert = self.cert
         c = float(cert.c)
-        for c5 in (('tri', Fr(3, 2), Fr(7, 4), Fr(1, 4), Fr(1, 2)), ('axp', cert.h - Fr(1, 4), cert.h, Fr(0), Fr(0))):
+        for c5 in (('tri', Fr(3, 2), Fr(7, 4), Fr(1, 4), Fr(1, 2)), ('axp', cert.h - Fr(1, 4), cert.h, Fr(0), Fr(0))):  # q309: literal-ok (state-cell coordinates (p, m), not drifts)
             cell = c5 + (cert.e_lo, cert.e_hi, 0)
             ok2, lb2, _ = V.check_cell('C2', cell, 8)
             ok3, lb3, _ = V.check_cell('C3', cell, 8)

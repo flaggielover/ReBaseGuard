@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import sys
 import time
 from fractions import Fraction as F
@@ -34,6 +35,47 @@ import srk_float as FL  # noqa: E402
 import srk_envelope as EN  # noqa: E402
 
 MU = F(1, 1 << 20)
+PRODUCER_FILES = ("srk_kernel.py", "srk_float.py", "srk_envelope.py", "srk_certify.py")
+
+
+def producer_fingerprint() -> dict:
+    """sha256 of every producer source file (and of the pinned c1b_gauss it imports): binds evidence to a code state."""
+    out = {f: hashlib.sha256((HERE / f).read_bytes()).hexdigest() for f in PRODUCER_FILES}
+    out["c1b_gauss.py"] = hashlib.sha256(Path(KX.G.__file__).read_bytes()).hexdigest()
+    out["combined"] = hashlib.sha256(json.dumps(out, sort_keys=True).encode()).hexdigest()
+    return out
+
+
+def _log_call(g, what: str, e_lo, e_hi, klass: str = "NONTARGET_DECOY") -> None:
+    real = (g.h == 5 and g.k == F(1, 2))
+    Q.log_execution("impl/srk_certify.py", f"{what} {g.key()} E=[{e_lo},{e_hi}]", klass=klass,
+                    drifts=[[e_lo, e_hi]] if real else [],
+                    notes="real kernel, out-of-band decoy drift" if real else "synthetic decoy geometry")
+
+
+# THEOREM_SRK section 7 / amendment A3: the drift-block rule (fixed, target-free)
+GRID_BITS = 10
+N_SUB = 4
+
+
+def cell_blocks(e_lo, e_hi, grid_bits: int = GRID_BITS, n_sub: int = N_SUB) -> tuple:
+    """(weight_block, check_sub_blocks): the weight block is the OUTWARD dyadic hull of the cell [e_lo, e_hi] on the
+    2^-grid_bits grid; the check sub-blocks are its n_sub equal parts (dyadic since n_sub is a power of two).
+    Every sub-block certificate uses the WHOLE weight block as its weight block (THEOREM_SRK s.7, A3)."""
+    e_lo, e_hi = F(e_lo), F(e_hi)
+    if e_hi < e_lo:
+        raise ValueError("empty cell")
+    if n_sub < 1 or n_sub & (n_sub - 1):
+        raise ValueError("n_sub must be a power of two")
+    s = 1 << grid_bits
+    lo = F(math.floor(e_lo * s), s)
+    hi = F(math.ceil(e_hi * s), s)
+    if hi == lo:
+        hi = lo + F(1, s)
+    w = (hi - lo) / n_sub
+    subs = [(lo + j * w, lo + (j + 1) * w) for j in range(n_sub)]
+    assert lo <= e_lo and e_hi <= hi and subs[0][0] == lo and subs[-1][1] == hi
+    return (lo, hi), subs
 DEFAULT_LADDER = (8, 10, 12)
 
 
@@ -157,6 +199,7 @@ def certify_W(g: KX.Geom, e_lo: F, e_hi: F, d: int, log=print, whole: bool = Tru
     """(W): e-affine supersolution on E (whole kernel K_e, or taboo kernel K^_e when whole=False, amendment A2),
     multiplicative repair (1 + eta) (C1b rule; amendment A1)."""
     guard_geometry_block(g, e_lo, e_hi)
+    _log_call(g, f"certify_W d={d} {'whole' if whole else 'taboo'}", e_lo, e_hi)
     t0 = time.time()
     e_c, e_r = (e_lo + e_hi) / 2, (e_hi - e_lo) / 2
     W0, W1 = _eaff_proposal(g, e_lo, e_hi, d, lambda p, m: 1.0, whole)
@@ -180,24 +223,30 @@ def certify_W(g: KX.Geom, e_lo: F, e_hi: F, d: int, log=print, whole: bool = Tru
 
 def certify_weight(g: KX.Geom, i: int, e_lo: F, e_hi: F, d: int, Wrec: dict, log=print, mutant: str = "",
                    weight_block=None) -> dict:
-    """weight_block = (w_lo, w_hi) (default: the check block): the weight is kbar_i over the WEIGHT block while the
-    supersolution inequality is checked for e in the CHECK block [e_lo, e_hi] (sub-block covers, THEOREM_SRK s.7)."""
+    """(V) for Psi = kbar_i over the WEIGHT block Ew = weight_block (default: the check block), with the supersolution
+    inequality checked for e in the CHECK block [e_lo, e_hi] (e-affine family, additive lambda W' repair; THEOREM_SRK
+    s.7, A1, A3).  mutant (tests only): 'shrink_window' (window narrowed by 1/4) or 'quarter_weight' (Psi/4), both
+    invalid, too-small weights."""
     whole = Wrec.get("whole", True)
     w_lo, w_hi = (e_lo, e_hi) if weight_block is None else (F(weight_block[0]), F(weight_block[1]))
     if not (w_lo <= e_lo and e_hi <= w_hi):
         raise ValueError("the check block must lie inside the weight block")
     guard_geometry_block(g, w_lo, w_hi)
-    """(V) for Psi = kbar_i^E (e-affine family, additive lambda W' repair).  mutant (tests only):
-    'shrink_window' certifies against a window narrowed by 1/4 (an invalid, too-small Psi)."""
     guard_geometry_block(g, e_lo, e_hi)
+    _log_call(g, f"certify_weight i={i} d={d} {'whole' if whole else 'taboo'} weight=[{w_lo},{w_hi}] mutant={mutant!r}",
+              e_lo, e_hi)
     t0 = time.time()
     e_c = (e_lo + e_hi) / 2
     V0, V1 = _eaff_proposal(g, e_lo, e_hi, d, _kbar_float(g, i, w_lo, w_hi), whole)
     res = eaff_pair(g, V0, V1, e_c, whole)
-    if mutant == "shrink_window":
+    if mutant == "quarter_weight":
+        rhs = lambda b: EN.box_envelope(g, i, b, w_lo, w_hi) / 4  # noqa: E731  (invalid: Psi/4)
+    elif mutant == "shrink_window":
         rhs = lambda b: EN.abs_integral_upper(i, b[1] - b[3] - g.c + w_lo + F(1, 4), g.c - (b[0] - b[2]) + w_hi)  # noqa
-    else:
+    elif mutant == "":
         rhs = lambda b: EN.box_envelope(g, i, b, w_lo, w_hi)  # noqa: E731
+    else:
+        raise ValueError(f"unknown mutant {mutant!r}")
     chk = cover_check(g, res, rhs, e_lo, e_hi)
     sup_psi = chk["rhs_max"]
     lam = dyadic_up(max(F(0), -chk["r_min"]) + MU * max(F(1), sup_psi), 40)
@@ -215,7 +264,7 @@ def certify_weight(g: KX.Geom, i: int, e_lo: F, e_hi: F, d: int, Wrec: dict, log
 
 
 def run_block(g: KX.Geom, e_lo: F, e_hi: F, indices=(1, 2, 3, 4), ladder=DEFAULT_LADDER, log=print,
-              klass: str = "NONTARGET_DECOY", whole: bool = True) -> dict:
+              klass: str = "NONTARGET_DECOY", whole: bool = True, weight_block=None) -> dict:
     """Full ladder on one block.  Gamma_i := min over certified rungs (a min of valid bounds is valid)."""
     e_lo, e_hi = F(e_lo), F(e_hi)
     if not (is_dyadic(e_lo) and is_dyadic(e_hi)) or e_hi < e_lo:
@@ -231,7 +280,7 @@ def run_block(g: KX.Geom, e_lo: F, e_hi: F, indices=(1, 2, 3, 4), ladder=DEFAULT
         rung = {"degree": d, "W": Wr, "V": {}}
         if Wr["status"] == "CERTIFIED":
             for i in indices:
-                rung["V"][i] = certify_weight(g, i, e_lo, e_hi, d, Wr, log)
+                rung["V"][i] = certify_weight(g, i, e_lo, e_hi, d, Wr, log, weight_block=weight_block)
         rungs.append(rung)
     gam = {}
     for i in indices:
@@ -239,7 +288,17 @@ def run_block(g: KX.Geom, e_lo: F, e_hi: F, indices=(1, 2, 3, 4), ladder=DEFAULT
         gam[i] = min(vals) if vals else None
     Wa = [r["W"]["W_at_atom_max"] for r in rungs if r["W"]["status"] == "CERTIFIED"]
     return {"geometry": {"h": fstr(g.h), "k": fstr(g.k)}, "block": [fstr(e_lo), fstr(e_hi)], "rungs": rungs,
-            "Gamma": gam, "Abar_W": min(Wa) if Wa else None, "whole": whole}
+            "Gamma": gam, "Abar_W": min(Wa) if Wa else None, "whole": whole, "producer": producer_fingerprint()}
+
+
+def run_cell(g: KX.Geom, cell_lo, cell_hi, indices=(1, 2, 3, 4), ladder=DEFAULT_LADDER, log=print,
+             whole: bool = True) -> dict:
+    """THEOREM_SRK amendment A3: certificates for one cell = one run_block per check sub-block, each with the WHOLE
+    outward-dyadic hull as weight block.  The cell-level Gamma_i is formed only by impl/srk_gate.py."""
+    wb, subs = cell_blocks(cell_lo, cell_hi)
+    blocks = [run_block(g, lo, hi, indices, ladder, log, whole=whole, weight_block=wb) for lo, hi in subs]
+    return {"cell": [fstr(F(cell_lo)), fstr(F(cell_hi))], "weight_block": [fstr(x) for x in wb],
+            "sub_blocks": [[fstr(a), fstr(b)] for a, b in subs], "blocks": blocks}
 
 
 # ------------------------------------------------------------------------------------------ serialization
@@ -265,11 +324,15 @@ def certificate_json(blk: dict, i: int) -> dict:
     if best is None:
         return {"schema": "SRK_CERT/1", "status": "NO_CERTIFIED_RUNG", "i": i}
     r, v = best
+    whole = v.get("whole", True)
+    K = "K_e" if whole else "K^_e"
+    concl = ("sup_E (R_e kbar_i^Ew)(a) <= max(V_{e_lo}(a), V_{e_hi}(a)) = Gamma (THEOREM_SRK Lemma SV')" if whole else
+             "sup_E (G^_e kbar_i^Ew)(a) <= max(V_{e_lo}(a), V_{e_hi}(a)) = Gamma (THEOREM_SRK Lemma SV-T)")
     out = {"schema": "SRK_CERT/1", "status": "CERTIFIED", "geometry": blk["geometry"], "block": blk["block"],
-           "hermite_index": i, "degree": r["degree"],
-           "claim": "for every e in E, with V_e = V0 + (e - e_c) V1 and W_e = W0 + (e - e_c) W1: V_e >= kbar_i^E + K_e V_e "
-                    "and W_e >= 0, W_e >= 1 + K_e W_e on X (whole kernel); hence sup_E (R_e kbar_i^E)(a) <= "
-                    "max(V_{e_lo}(a), V_{e_hi}(a)) = Gamma (THEOREM_SRK Lemma SV')",
+           "hermite_index": i, "degree": r["degree"], "kernel": "whole" if whole else "taboo",
+           "producer_sha256": blk.get("producer", {}).get("combined"),
+           "claim": f"for every e in E (check block), with V_e = V0 + (e - e_c) V1 and W_e = W0 + (e - e_c) W1: "
+                    f"V_e >= kbar_i^Ew + {K} V_e and W_e >= 0, W_e >= 1 + {K} W_e on X, Ew = weight_block; hence {concl}",
            "e_c": fstr(v["e_c"]), "weight_block": [fstr(x) for x in v.get("weight_block", (F(blk["block"][0]), F(blk["block"][1])))],
            "V0": _poly_json(v["_V"][0]), "V1": _poly_json(v["_V"][1]),
            "W0": _poly_json(r["W"]["_W"][0]), "W1": _poly_json(r["W"]["_W"][1]),

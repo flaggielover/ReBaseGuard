@@ -47,9 +47,13 @@ charged through the order-0 channel at its **sup norm**:
 * a centre motion of half-width ρ|Ĝ(a)|, which is **unsigned** in the committed records;
 * p2 = f_H + ρf_G^real + ρ²Env4(s_G)/2, with Env4(s_G) = Env4(0) + 4k₁s_G + 6k₂ρs_G + 4k₃ρ²s_G/2 + k₄ρ³s_G/6.
 
-The real route is better for cell r iff
+*[Corrected per review R1 B6: the full per-object half width is compared, including the A1/A2 terms.]* The real
+route gives a smaller half width for object r iff
 
-    ρ|Ĝ_r(a)| + A0[ρ(f_G^real − f_G^sur) + ρ²(Env4(s_G) − Env4(0))/2] < 0.
+    Δ_r := ρ|Ĝ_r(a)| + A0·Δp2 + 2A1·Δp1 + A2·Δp0 < 0.
+
+Here Δp_j is the change of p_j when (f_G^sur, Env4(0)) is replaced by (f_G^real, Env4(s_G)). Both f_G and Env4 enter
+p1 and p0 as well as p2.
 
 Neither sign is implied by the premises: s_G > 0 raises Env4 strictly, and |Ĝ(a)| > 0 adds width. So the real
 order-3 route **does not uniformly dominate** the surrogate. This is consistent with Campaign B's committed "T2 hinges
@@ -72,9 +76,13 @@ s_G terms of Env4 then get state-resolved weights 4κ̄₁ + ….
 
 ## Q4. Can the composite-sup theorem be strengthened prospectively?
 
-**Theorem L (ladder).** With exact certificates, for every cell and every r:
+**Theorem L (ladder of the order-0 channel term).** *[Corrected per review R1 B6: the ladder holds for the order-0
+channel term only. RSO-P also changes the derivative terms, through RSO-PM / RSO-LR, so a radius-level ladder holds
+only with the derivative terms held at 2A1p1 + A2p0 in every rung.]*
 
-    rad^TC-T  ≥  rad^SRK  ≥  rad^{RSO-P∘SC}  ≥  |exact order-0 image| + 2A1p1 + A2p0 .
+With exact certificates, for every cell and every r, the order-0 channel term satisfies
+
+    A0·p2  ≥  A0 f_H + ρB3 + (ρ²/2)B4 (SRK)  ≥  order-0 term of RSO-P∘SC  ≥  (R_e|φ''(e)|)(a) (exact image).
 
 *Proof.*
 1. **TC-T ≥ SRK:** the min construction (THEOREM_SRK §3 step 7).
@@ -88,13 +96,16 @@ weighting**. Both need the candidate payloads, which are not serialized (U1/U2).
 strengthening:** it keeps the pointwise *structure* of the surrogate (which kernel term, with which state-resolved
 window) and drops only the candidates' pointwise values, replacing them by their certified sups s_X.
 
-**Theorem SC-SRK (strict gain criterion).** At exact certificate level, SRK is strictly below TC-T for cell r iff at
-least one of these holds:
-* (3s_H κ̄₁ + 3s_D κ̄₂ + s_F κ̄₃) is non-constant μ_{a,e}-a.e., with values below its sup on a set of positive
-  occupation, for the maximizing e;
-* the analogous statement holds for the order-4 weight.
+**Proposition SC-SRK (sufficient condition for a strict gain).** *[Corrected per review R1 B6: this was stated as
+"iff"; it is only sufficient.]* At exact certificate level, SRK is strictly below TC-T for object r if either of
+these holds:
+* the order-3 weight (3s_H κ̄₁ + 3s_D κ̄₂ + s_F κ̄₃) lies below its sup on a set of positive μ_{a,e}-occupation, for the
+  maximizing e;
+* the same holds for the order-4 weight.
 
-*Proof.* This is the equality case of Lemma SV. ∎
+A strict gain can also arise with neither, from the slack in A0 ≥ sup E_a[τ] or in the frozen k_i ≥ ‖κ̄_i‖.
+
+*Proof.* The equality case of Lemma SV (first step), and then the min construction. ∎
 
 ## Q5. Does TPT give a strict theorem-level improvement after the incident liabilities?
 

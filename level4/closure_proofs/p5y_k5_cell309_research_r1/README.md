@@ -42,3 +42,13 @@ no marker, no push without explicit authorization.
 | 4 | `protocol_prep/`: prepared only if a route is independently reviewed as FREEZE_READY. Never executed |
 
 Route classes: REJECTED, BLOCKED, INSUFFICIENT_EVIDENCE, RESEARCHABLE, PROMISING, FREEZE_READY.
+
+## Push authorizations (recorded per review R1 G5)
+
+| when (UTC) | authorization (user, verbatim scope) | use |
+|---|---|---|
+| 2026-09-29 ~15:3x | "I explicitly authorize a checkpoint push of the cell-309 research branch only … solely to preserve the current research-only work against another cloud-container restart" | one push, which created `refs/heads/claude/rebaseguard-k5-cell-309-w0jv8m` at 5e96041f (it did not exist on origin before) |
+| 2026-09-29 later | "I grant standing permission for checkpoint pushes of the cell-309 research branch only … for preservation/recovery only", with nine required checks | `code/checkpoint_push.py` enforces the nine checks plus the static quarantine scan. Every push is ledgered in `ledger/CHECKPOINT_PUSHES.jsonl` |
+
+Neither authorization permits any target evaluation, grant, marker, r5/r6 change, adoption, K5/P5Y change, or a push of
+any other ref.

@@ -118,7 +118,7 @@ SH = WX - WB
 ONEB = 1 << WB
 HALFB = 1 << (WB - 1)
 
-QUARANTINE_BANDS = ((Fr(6, 5), Fr(13, 5)), (Fr(-13, 5), Fr(-6, 5)))
+QUARANTINE_BANDS = ((Fr(6, 5), Fr(13, 5)), (Fr(-13, 5), Fr(-6, 5)))  # q309: literal-ok (the quarantine band definition (refusal), not an evaluation)
 
 
 class CertError(Exception):

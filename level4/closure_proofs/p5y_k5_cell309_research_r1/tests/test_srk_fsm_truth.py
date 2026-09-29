@@ -131,8 +131,14 @@ def run():
     return ok, rows, caught
 
 
+# EXIT-STATUS RULE (review R1 B4, fixed before the rerun): genuine checks must all pass AND
+#   M1 (Gamma halved) must be caught in 12/12 cases (premise-level truth; a control that can fail),
+#   M4 (sigma3 dropped from Psi3) must be caught in >= 1 case (pointwise premise; a control that can fail).
+# M2 (min dropped) is NOT APPLICABLE here when SRK wins every branch, and M3 (coefficient 3 -> 1) is below the
+# power of a truth check on loose radii: both are covered by tests/test_srk_assembly_twosided.py (exact two-sided).
 if __name__ == "__main__":
     ok, rows, caught = run()
+    ok = ok and caught["M1_gamma_half"] == len(rows) and caught["M4_sigma3_dropped"] >= 1
     out = {"all_genuine_ok": ok, "mutants_caught_of_12": caught,
            "ratio_srk_tct": [round(r["ratio_srk_tct"], 4) for r in rows],
            "branches": [(r["branch3"], r["branch4"]) for r in rows], "rows": rows}
