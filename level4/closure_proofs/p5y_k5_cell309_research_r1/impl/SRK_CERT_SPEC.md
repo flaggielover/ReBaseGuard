@@ -93,3 +93,10 @@ The verifier must REJECT each of the following:
 
 The verifier must ACCEPT the genuine certificates, or report the specific (x, e) box where its method could not prove
 the claim.
+
+## 6. Taboo-kernel certificates (optional key `kernel`, amendment A2)
+
+If a certificate (or the decoy-suite file containing it) carries `"kernel": "taboo"`, then in (C2) and (C3) replace
+K_e by the taboo kernel K̂_e. K̂_e is the same integral with the atom sub-window z ∈ [m − k, k − p] removed, which is
+non-empty only when p + m ≤ 2k. The implied statement is then sup_E (Ĝ_e κ̄_i)(a) ≤ Gamma (THEOREM_SRK Lemma SV-T).
+Absent the key, the kernel is the whole kernel.
