@@ -1,0 +1,34 @@
+test_G_value_vs_quadrature (test_verify_selftests.TestGaussianEnclosures.test_G_value_vs_quadrature) ... ok
+test_Phi_monotone_consistent (test_verify_selftests.TestGaussianEnclosures.test_Phi_monotone_consistent) ... ok
+test_absHephi_bounds_contain_samples (test_verify_selftests.TestGaussianEnclosures.test_absHephi_bounds_contain_samples) ... ok
+test_he_roots (test_verify_selftests.TestGaussianEnclosures.test_he_roots) ... ok
+test_phi_Phi_contain_math (test_verify_selftests.TestGaussianEnclosures.test_phi_Phi_contain_math) ... ok
+test_pi (test_verify_selftests.TestGaussianEnclosures.test_pi) ... ok
+test_closed_form_vs_quadrature (test_verify_selftests.TestKernelClosedForm.test_closed_form_vs_quadrature) ... ok
+test_0_genuine_accepted (test_verify_selftests.TestRequiredRejections.test_0_genuine_accepted) ... ok
+test_0b_taboo_positive_control (test_verify_selftests.TestRequiredRejections.test_0b_taboo_positive_control)
+K^_e P = K_e P - P(0,0) (Phi(k-p+e) - Phi(m-k+e)) <= K_e P when P(0,0) >= 0, so a valid whole-kernel ... ok
+test_1_gamma (test_verify_selftests.TestRequiredRejections.test_1_gamma) ... ok
+test_2_scaled_V0 (test_verify_selftests.TestRequiredRejections.test_2_scaled_V0)
+(1 - 2^-8) V0.  On these decoys the certificates carry a margin of order 1e-1, so this mutated claim is ... ok
+test_3_drop_lambda (test_verify_selftests.TestRequiredRejections.test_3_drop_lambda) ... ok
+test_4_widened_block (test_verify_selftests.TestRequiredRejections.test_4_widened_block) ... ok
+test_5_hermite_plus_one (test_verify_selftests.TestRequiredRejections.test_5_hermite_plus_one) ... ok
+test_6_sha (test_verify_selftests.TestRequiredRejections.test_6_sha) ... ok
+test_7_malformed (test_verify_selftests.TestRequiredRejections.test_7_malformed)
+Each probe has exactly one defect and must be REFUSED for that defect (reason-specific). ... ok
+test_7_non_dyadic_drift_no_crash (test_verify_selftests.TestRequiredRejections.test_7_non_dyadic_drift_no_crash)
+Non-dyadic drift: block AND weight_block shifted by -1/3 (or +1/3, whichever stays out of the quarantine ... ok
+test_quarantine_refused (test_verify_selftests.TestRequiredRejections.test_quarantine_refused)
+Parse-time refusal probe: block AND weight_block moved into the quarantine band (the only defect); must be ... ok
+test_weight_block_is_used (test_verify_selftests.TestRequiredRejections.test_weight_block_is_used)
+A much wider weight block (hull of the block and [-1, 1], outside the quarantine band) raises kbar; on these ... ok
+test_containment (test_verify_selftests.TestTaylorModels.test_containment) ... ok
+test_lower_bound_below_samples (test_verify_selftests.TestTaylorModels.test_lower_bound_below_samples)
+Certified cell lower bounds of (C2)/(C3) never exceed float samples of the true quantity in the cell. ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 41.432s
+
+OK
+ran 21 failures 0 errors 0 skipped 0 41s

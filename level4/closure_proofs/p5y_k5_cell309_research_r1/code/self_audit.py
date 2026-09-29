@@ -15,7 +15,8 @@ Checks (each mechanical; nothing is evaluated, nothing is modified except the au
      verdict, no cell-308 file, no r5 and no K5/P5Y status file changed)
   A8 no non-ordinary ref exists (no exactly-once marker, no p5y-* / c1* ref); local branches are only main and BRANCH
   A9 the independent verifier imports no producer module and no C1b module
-  A10 (informational) local HEAD vs remote branch tip; working-tree dirt
+  A10 no independent-verifier probe meeting the band was ever evaluated (code/verifier_probe_envelope.py)
+  A11 (informational) local HEAD vs remote branch tip; working-tree dirt
 """
 from __future__ import annotations
 
@@ -127,6 +128,9 @@ def run(label: str) -> tuple:
     vsrc = (NS / "verify" / "srk_verify_indep.py").read_text()
     res["A9_verifier_independent_imports"] = not re.search(
         r"^\s*(import|from)\s+(srk_kernel|srk_certify|srk_envelope|srk_float|srk_gate|srk_assemble|c1b_\w+)", vsrc, re.M)
+    # A10 (review R2 C4): no independent-verifier probe meeting the band was ever evaluated (v1 and v2 harness, self-tests)
+    pe = subprocess.run([sys.executable, str(NS / "code" / "verifier_probe_envelope.py")], capture_output=True, text=True)
+    res["A10_verifier_probes_no_inband_evaluation"] = pe.returncode == 0
     remote = subprocess.run(["git", "ls-remote", "origin", f"refs/heads/{BRANCH}"], cwd=REPO, capture_output=True,
                             text=True).stdout.split()
     detail["A10_local_head"] = git("rev-parse", "HEAD")

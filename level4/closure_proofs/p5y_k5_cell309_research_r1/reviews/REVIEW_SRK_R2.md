@@ -693,3 +693,148 @@ No run touches the real kernel at a drift above 33/32, any cell 305–309, or an
 **Amendment to 0B (written before the run it declares).** RD2-B5b: the same verifier call (N = 8, max_depth = 24) on
 **all 87** rerun certificates. These are all 11 whole blocks (real kernel e ≤ 33/32, h = 3, h = 4) and the 8 A2
 sub-blocks (real-kernel hull ≤ 527/1024, h = 3). Genuine certificates only, compared by sha256 with VERIFY_RESULTS.json.
+
+---
+
+## Phase C (2026-09-29/30): conditions-closure check at HEAD `1a6735b4`
+
+### 0C. Phase-C reviewer execution declaration (written before any Phase-C run)
+
+The rules are the same as in §0 and §0B: `PYTHONDONTWRITEBYTECODE=1`; only `run()` or library calls, never a
+`__main__` that writes evidence; the q309 exec ledger redirected to `scratchpad/r2/reviewer_exec_ledger_c*.jsonl`;
+nothing written in the repository except this file.
+
+| id | what | kernel / geometry / drift | evaluates? |
+|---|---|---|---|
+| RD2-C0 | read-only recomputation: file hashes; `git show` of harness v1; recount of VERIFY_RESULTS v2 (expectations, reasons of 7q/7f/7h/7i, per-result harness and verifier sha256, sha matching to the 87 certificates, genuine verdicts); interruption record; ledger band scan; E-15 against the ledger | none | no |
+| RD2-C1 | adapter probes: my b1‴ override probe, mutation of `REAL_GEOMETRY`, an h = 3 GateResult; `tests/test_srk_adapter.run()` and `tests/test_srk_gate.run()` | none (manufactured objects) | no |
+| RD2-C2 | `tests/test_verify_selftests.py` (21 unittest cases, in-process, no writes). Inputs: the first h5 decoy file, real [0, 1/32]. Real-kernel evaluations at \|e\| ≤ 1 only (widened blocks, a weight block [−1, 1], shifts by ±1/3); plus one **parse-time** quarantine refusal probe (block and weight block in the band), which the verifier refuses before evaluating anything (srk_verify_indep.py:1441–1450) | real kernel \|e\| ≤ 1; band only as a parse-time refusal | verifier |
+| RD2-C3 | independent reproduction of harness-v2 batteries in-process (`run_verify_all.run_battery`, no file written) on 4 certificates: h3 [1/4, 9/32] i = 1; real [1/2, 17/32] i = 2 (widened mutants ≤ 21/32, 7h at −1/3, 7q parse-time); real A2 sub-block [2093/4096, 527/1024] i = 4 (mutants ≤ 655/1024); h4 [1/4, 9/32] i = 3. Compared entry by entry with VERIFY_RESULTS.json | real kernel \|e\| ≤ 21/32 (+ the parse-time 7q refusal); h = 3, 4 | verifier |
+
+No run touches any cell 305–309. No drift in [6/5, 13/5] or its mirror is evaluated: the only band values used are
+the parse-time refusal probes of RD2-C2 and RD2-C3.
+
+### Phase-C verdict (supersedes the Phase-B condition list; line 2 updated)
+
+**FREEZE_READY_WITH_CONDITIONS.** C1, C2 and C3 are **CLOSED**. The repairs introduced no new blocker.
+
+**One new condition, C4, remains.** It is documentation-only, class E/F, and target-free. It is **not** caused by the
+repairs: it has existed since the first verifier runs, and I found it while auditing C3.
+
+Owner governance (ii) is unchanged; FC1–FC6 (iii) are updated below. There is still no class A, B-science, D or G
+item.
+
+| id | Phase-C status | evidence (all recomputed or re-run by me at `1a6735b4`) |
+|---|---|---|
+| **C1** | **CLOSED** | See C1 below |
+| **C2** | **CLOSED** (wording NOTE folded into C4) | See C2 below |
+| **C3** | **CLOSED** | See C3 below |
+| **C4 (new)** | **OPEN** (E/F, documentation only) | See C4 below |
+
+**C1 evidence (RD2-C1).**
+* `srk_enclosure` now has the signature `(meas, A, m, cell, gate_result, frozen_obj, frozen_lohi, coefficients, *,
+  verifier_id)`, with no `geometry` parameter (repair commit `b5ad2372`).
+* My b1‴ probe now fails with `TypeError: unexpected keyword argument 'geometry'`.
+* An h = 3 GateResult without the override is refused: "GateResult is not for the real geometry (5, 1/2)". A
+  non-canonical `{"h": "5"}` is also refused.
+* `REAL_GEOMETRY` is a mappingproxy, so `__setitem__` fails. The positive control is still accepted.
+* Tests: test_srk_adapter 19 × 20 (including `geometry_override_impossible` and `real_geometry_immutable`) and
+  test_srk_gate 33/33, both re-run and passing.
+* Residual, adversarial only: rebinding the module attribute `_REAL_GEOMETRY_ITEMS` defeats the check. This is the
+  same class as the `_TOKEN` forgery and is covered by the FC4 static driver check (updated below).
+
+**C2 evidence.**
+* ERRATA E-15 withdraws the A1 taboo family from this package, citing all four texts, and binds any future SRK-T
+  package to run the full family from its own locked state, before any 309 number exists.
+* `evidence/srk_decoys_taboo/` does not exist.
+* NOTE (F): E-15 dates the one launch at "~16:01Z … about 4 minutes". The ledger shows the taboo `run_block` at
+  15:59:14Z and taboo lines through 16:01:48Z. The stop is ledgered at 16:07:36Z ("about 7 min"). Its in-memory logs
+  were never written or displayed. The substance holds; correct the times (C4).
+
+**C3 evidence (RD2-C0, RD2-C2, RD2-C3).** I recomputed the following.
+* **Hashes.** Harness v2 `3455c141…`; harness v1 `54840bf4…` (from git at 2f026dbc and bf5c87c4); verifier
+  `a32d5d39…`, unchanged at bf5c87c4; self-tests `8357be85…`.
+* **v2 batteries.** All 87 rerun certificates carry v2 batteries: **1868 mutants, every one stamped with harness_v2
+  and verifier shas that match the files, 1868/1868 expectations met.** Genuine verdicts are 87/87 ACCEPT.
+* **Masked probes, now on their own reasons.**
+  * `7q` REFUSE "quarantine: … nothing evaluated": **41/41** real-kernel certificates.
+  * `7f` REFUSE "unknown kernel 'bogus'": 87/87.
+  * `7i` REFUSE "kernel key conflicts with the file-level kernel": 87/87.
+  * `7h` processed (claim rejected, not refused): 87/87.
+* **The 7 disclosed "UNPROVEN" claim rejections.**
+  * 5 are `7h` on real [0, 1/32]. That probe tests processing, not a negative claim.
+  * 1 is mutant 2 (SE-1 "prove or reject"; no negative power is expected).
+  * 1 is mutant 3 (dropped λ) on h3 cell S2 i = 4, with a lower bound of −6.4e−8. That is one instance where a
+    negative control was not refuted; mutant 3 is refuted on 86/87. NOTE only.
+* **History.**
+  * At the interruption record `27b50777` there were 53 v2 and 34 v1 batteries; at `b3106070` and `0e4c6cdd`, 87 v2.
+  * No v2 battery changed after it was first recorded.
+  * No genuine (sha, verdict) changed across any VERIFY_RESULTS version since bf5c87c4.
+* **Reproduction.** I re-ran `run_battery` in-process on 4 certificates (h3 whole; real whole [1/2, 17/32]; real A2
+  sub-block S3; h4 whole). All **86/86 mutants reproduce the recorded verdict, reason and expectation exactly**,
+  including `7q` refused for the band on both real-kernel certificates.
+* **Self-tests.** `tests/test_verify_selftests.py` in-process: **21/21 OK** (41 s).
+* **Provenance NOTE (E).** Git cannot show who authored harness v2: every commit is authored "Claude". The
+  load-bearing verifier core is unchanged, and I reproduced the v2 outcomes myself.
+
+**Does the masked-reason finding (7f, 7h, the self-tests) change an earlier conclusion of mine? No.**
+* **Soundness and genuine verdicts.** My Phase-B conclusions rest on the unchanged verifier core, and I re-verified
+  all 87 genuine certificates myself.
+* **Counts.** My Phase-B figure of "1781/1781 mutant expectations met" (v1) did include three wrong-reason passes per
+  certificate: 7f and 7h on all 87, and 7q on the 41 real-kernel certificates. That is the full extent of the defect
+  I raised as C3 for 7q alone. Read that figure as "met under verdict-only expectations". v2 now gives 1868/1868 with
+  reason checks.
+* **Self-tests.** Phase B did not rely on the unit self-tests. The "21 ok" then recorded in VERIFY_RESULTS predates
+  the current inputs, and E-16 says four tests failed loudly on them. They now pass 21/21 with reason checks
+  (confirmed by my run).
+* **What these probes are.** None of the affected probes is a mathematical negative control: 7f and 7h are
+  malformed-input robustness probes, and 7q is a firewall probe. The mathematical negatives (1, 2x, 3, 4, 5) and T1
+  are unaffected.
+
+**Is anything in the repairs itself a new blocker? No.**
+* The adapter change removes a parameter and adds nothing to the numeric path.
+* E-15 is text.
+* The harness and self-test changes touch only expectations and mutant construction. The verifier core, the producer
+  (fingerprint `377057be…`, `git diff 2a03e838 HEAD` empty for all five files) and the certificates are unchanged.
+* The ledger is still append-only (516 lines), with no band-reaching line and max ledgered real-kernel |drift| 33/32.
+* The transcription of my scratch files into `evidence/reviewer_r2/` is byte-identical (checked).
+
+**C4 (new; E/F; documentation only; not from the repairs).** Record the independent verifier's executions in the
+campaign ledger or errata.
+* The batch genuine verifications, the v1 and v2 mutant batteries, and the verifier self-tests have **no
+  ZERO_TARGET_LEDGER lines**. Only the interruption note, a GOVERNANCE line for the self-test refusal probe, and my
+  transcribed runs appear.
+* The self-audit's drift figure is therefore "max *ledgered* drift 33/32". But the batteries evaluate the real kernel
+  on widened blocks up to **e ≤ 37/32**: mutants `4R`/`4B` on the real [1, 33/32] certificates. All of these were
+  refuted, for example "C2 is FALSE at e = 2293/2048". The `7h` probes evaluate at shifts to −1/3. Both exceed the
+  declared real-kernel decoy envelope of 33/32.
+* All of this stays **outside the band**, never brackets it, and certifies nothing true on the real kernel beyond
+  33/32. The `7q` band probes are parse-time refusals that evaluate nothing (srk_verify_indep.py:1441–1450; verified).
+* Required: one ledger line per harness run (or one summarizing line per run group) stating the real-kernel drift
+  envelope (|e| ≤ 37/32 plus the parse-time band refusals). Add an erratum saying that the ledgered maximum did not
+  cover verifier probes, and correct E-15's times (C2 NOTE).
+* No new computation is needed. This is target-free and satisfiable inside the freeze package.
+
+### Updated formal-campaign items (iii)
+
+The owner-governance list (ii) is unchanged. FC3, FC5 and FC6 are unchanged.
+* **FC1 (pin set).** Updated: the adapter at `b5ad2372`; harness v2 `3455c141…` and self-tests `8357be85…` as part of
+  the verifier toolchain.
+* **FC2 (grant-scoped band handling).** Updated: the re-qualification of the grant-scoped verifier must re-run the
+  v2 reason-specific battery and the 21 self-tests. The v2 `7q` probe then needs a grant-scoped counterpart, and the
+  harness executions must be ledgered (C4).
+* **FC4 (static driver check).** Updated: it must also forbid rebinding `srk_adapter._REAL_GEOMETRY_ITEMS` or
+  `REAL_GEOMETRY`, in addition to `srk_gate._TOKEN` and `object.__setattr__`.
+
+### Phase-C disclosures
+
+* **Exposures.** No 305–309 number was seen. The only band values met are the refusal-probe literals of `7q` and the
+  self-test, which are generic band points.
+* **Executions** (declared in §0C before running; ledgers `scratchpad/r2/reviewer_exec_ledger_c1.jsonl`, `_c2`,
+  `_c3`):
+  * RD2-C0: read-only;
+  * RD2-C1: probes plus 2 tests;
+  * RD2-C2: 21 self-tests, real kernel |e| ≤ 1, plus one parse-time refusal;
+  * RD2-C3: 4 batteries, real kernel |e| ≤ 21/32 plus parse-time `7q`.
+* No run touched a cell 305–309 or evaluated any drift in the band or its mirror. Nothing was written in the
+  repository except this file. No git write. No process was started or stopped other than my own.

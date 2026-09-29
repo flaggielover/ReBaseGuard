@@ -1,0 +1,30 @@
+import sys
+from fractions import Fraction as Fr
+from pathlib import Path
+NS = "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_research_r1"
+for p in ("/code", "/impl", "/tests"): sys.path.insert(0, NS + p)
+import q309_guard as Q
+Q.EXEC_LEDGER = Path(sys.argv[1])
+import srk_gate as GT, srk_adapter as AD, inspect
+import test_srk_adapter as TA
+def attempt(label, fn):
+    try: r = fn(); print(f"{label:60s} ACCEPTED -> {r}")
+    except Exception as ex: print(f"{label:60s} refused: {type(ex).__name__}: {str(ex)[:100]}")
+print("srk_enclosure signature:", inspect.signature(AD.srk_enclosure))
+meas, k, A, sig = TA.manufactured(3)
+lo, hi, obj = TA.stub_tail_enclosure(meas, k, A, sig, 5)
+C = (TA.E0 - meas["rho"], TA.E0 + meas["rho"])
+gam = {i: A["A0"] * k[i] / 2 for i in (1, 2, 3, 4)}
+h3 = {"h": "3/1", "k": "1/2"}
+def enc(gr, **kw): return AD.srk_enclosure(meas, A, 5, C, gr, obj, (lo, hi), TA.coefficients, verifier_id=TA.VID, **kw)
+attempt("positive control: real-geometry GateResult", lambda: (enc(TA.gate_for(C, gam))["lo"], "ok")[1])
+attempt("b1''' geometry kw override with h=3 GateResult", lambda: enc(TA.gate_for(C, gam, geometry=h3), geometry=h3))
+attempt("h=3 GateResult without override", lambda: enc(TA.gate_for(C, gam, geometry=h3)))
+attempt("mutate REAL_GEOMETRY['h']", lambda: AD.REAL_GEOMETRY.__setitem__("h", "3/1"))
+attempt("gate_for with geometry dict {'h':'5','k':'1/2'} (non-canonical)", lambda: enc(TA.gate_for(C, gam, geometry={"h": "5", "k": "1/2"})))
+def rebind():
+    old = AD._REAL_GEOMETRY_ITEMS
+    AD._REAL_GEOMETRY_ITEMS = (("h", "3/1"), ("k", "1/2"))
+    try: return enc(TA.gate_for(C, gam, geometry=h3))["lo"] != lo
+    finally: AD._REAL_GEOMETRY_ITEMS = old
+attempt("adversarial: rebind module attr _REAL_GEOMETRY_ITEMS", rebind)

@@ -1,0 +1,42 @@
+import json, hashlib, subprocess, collections, glob
+from pathlib import Path
+REPO = "/home/user/ReBaseGuard"; NSR = "level4/closure_proofs/p5y_k5_cell309_research_r1"; NS = Path(REPO) / NSR
+def git(*a): return subprocess.run(["git", *a], cwd=REPO, capture_output=True).stdout
+sha = lambda b: hashlib.sha256(b).hexdigest()
+print("harness v2 file sha:", sha((NS / "verify/run_verify_all.py").read_bytes())[:16])
+print("harness v1 (git 2f026dbc) sha:", sha(git("show", f"2f026dbc:{NSR}/verify/run_verify_all.py"))[:16],
+      " (bf5c87c4):", sha(git("show", f"bf5c87c4:{NSR}/verify/run_verify_all.py"))[:16])
+print("verifier sha now:", sha((NS / "verify/srk_verify_indep.py").read_bytes())[:16], " at bf5c87c4:", sha(git("show", f"bf5c87c4:{NSR}/verify/srk_verify_indep.py"))[:16])
+print("selftests sha now:", sha((NS / "tests/test_verify_selftests.py").read_bytes())[:16])
+R = json.loads((NS / "verify/VERIFY_RESULTS.json").read_text())
+print("top keys:", list(R), "\nharness:", json.dumps(R.get("harness"))[:400], "\nsettings:", R.get("settings"))
+print("summary:", json.dumps(R.get("summary"))[:1500])
+H2 = sha((NS / "verify/run_verify_all.py").read_bytes()); VS = sha((NS / "verify/srk_verify_indep.py").read_bytes())
+# the 87 rerun certificates
+certs = {}
+for f in sorted(glob.glob(str(NS / "evidence/srk_decoys/*.json")) + glob.glob(str(NS / "evidence/srk_decoys_cell/*.json"))):
+    d = json.loads(Path(f).read_text()); rel = "evidence/" + str(Path(f).relative_to(NS / "evidence"))
+    for i, c in d["certificates"].items(): certs[(rel, i)] = (c, d)
+tot = met = 0; genuine = collections.Counter(); reasons = collections.defaultdict(collections.Counter)
+notmet = []; wrong_sha = []; unproven = []; per_cert_counts = collections.Counter(); names = collections.Counter()
+for (rel, i), (c, d) in certs.items():
+    e = R["files"][rel][i]
+    assert e["sha256"] == c["sha256"]
+    genuine[e["verdict"]] += 1
+    for mn, mv in e["mutants"].items():
+        tot += 1; met += bool(mv["expectation_met"]); names[mn.split(" ")[0]] += 1; per_cert_counts[(rel, i)] += 1
+        if mv.get("harness_sha256") != H2 or mv.get("verifier_sha256") != VS or mv.get("harness_version") != "v2": wrong_sha.append((rel, i, mn))
+        if not mv["expectation_met"]: notmet.append((rel, i, mn, mv["verdict"], (mv.get("reason") or "")[:60]))
+        if mv["verdict"] == "REJECT" and "UNPROVEN" in (mv.get("reason") or ""): unproven.append((rel.split("/")[-1], i, mn, (mv.get("reason") or "")[:70]))
+        key = mn.split(" ")[0]
+        if key[:2] in ("7q", "7f", "7h", "7i"): reasons[key][(mv["verdict"], (mv.get("reason") or "")[:48])] += 1
+print("rerun certs", len(certs), "genuine verdicts", dict(genuine), "mutants", tot, "met", met, "not met", notmet[:5], "non-v2/sha-mismatched entries", len(wrong_sha))
+print("mutants per cert: min", min(per_cert_counts.values()), "max", max(per_cert_counts.values()))
+print("mutant name counts:", dict(names))
+real = [k for k, (c, d) in certs.items() if c["geometry"] == {"h": "5/1", "k": "1/2"}]
+print("real-kernel certs:", len(real), " with 7q:", sum(1 for k in real if any(m.startswith("7q") for m in R["files"][k[0]][k[1]]["mutants"])))
+for k, v in reasons.items(): print(k, dict(v))
+print("UNPROVEN rejections (allowed as claim rejects):", len(unproven)); [print("   ", u) for u in unproven]
+# prelim entries: are they v1-annotated?
+pre = [(rel, i) for rel in R["files"] if "prelim" in rel for i in R["files"][rel]]
+print("prelim entries:", len(pre), "example mutant keys:", list(R["files"][pre[0][0]][pre[0][1]]["mutants"].values())[0].keys() if pre else None)
