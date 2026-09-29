@@ -46,8 +46,16 @@ def main():
     for sg in dec["synthetic_geometries"]:
         for elo, ehi in sg["blocks"]:
             jobs.append((sg["h"], sg["k"], elo, ehi, dec["indices"], dec["ladder"]))
-    if len(sys.argv) > 2 and sys.argv[2] == "taboo":
+    taboo = len(sys.argv) > 2 and sys.argv[2] == "taboo"
+    if taboo:
         jobs = [j + (False,) for j in jobs]
+    # resume after an interruption: skip blocks whose output already exists (outputs are deterministic)
+    sub = "srk_decoys_taboo" if taboo else "srk_decoys"
+    def _name(j):
+        h, k, elo, ehi = j[:4]
+        return f"h{h.replace('/', '_')}_k{k.replace('/', '_')}_E{elo.replace('/', '_')}_{ehi.replace('/', '_')}.json"
+    jobs = [j for j in jobs if not (NS / "evidence" / sub / _name(j)).exists()]
+    print("pending jobs:", [_name(j) for j in jobs], flush=True)
     with ProcessPoolExecutor(max_workers=int(sys.argv[1]) if len(sys.argv) > 1 else 4) as ex:
         for name in ex.map(job, jobs):
             print("done", name, flush=True)
