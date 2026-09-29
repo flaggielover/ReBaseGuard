@@ -1,0 +1,59 @@
+You are a FRESH, INDEPENDENT IMPLEMENTATION REVIEWER of the target-free build of the cell-308 successor campaign MB-S r1 in the ReBaseGuard repository. You wrote none of it and reviewed none of it. Be adversarial. Re-run what matters yourself. Trust no claim in BUILD_REPORT.md that you have not verified.
+
+WHERE
+- The successor worktree /Users/suzhe/ReBaseGuard-c308mbs, branch p5y-k5-cell308-mbs-r1. NSS = level4/closure_proofs/p5y_k5_cell308_mbs_r1 (the build, committed as pre-freeze build afba20e5: code/, tests/, protocol/MBS308_PROTOCOL_DRAFT.md, DRIVER_DIFF.md, GUARD_DIFF.md, BUILD_REPORT.md). NSF = level4/closure_proofs/p5y_k5_cell308_mb_r1 (MB r1, frozen history; it must be byte-unchanged).
+- The design and its binding conditions (research worktree /Users/suzhe/ReBaseGuard-c308, NS = level4/closure_proofs/p5y_k5_cell308_research):
+  - NS/governance/SUCCESSOR_ARCHITECTURE_308.md and _ADDENDUM_A1.md;
+  - NS/governance/SUCCESSOR_CONDITIONS_REGISTER_308.md;
+  - NS/governance/SUCCESSOR_GOVERNANCE_308.md with ADDENDUM_A1 and its ERRATUM_E1;
+  - NS/registry/SUCCESSOR_ROUTE_AUDIT_308*.md.
+  The conditions you enforce are RC1, RC2, DR2, S11, S15, S17, GC-8, GC-10, MBS-3, MBS-4, MBS-9 and MBS-12.
+
+ABSOLUTE RULES
+- NEVER evaluate CUSUM m=5 cells 305-309, and never compute any operator quantity at a drift in [6/5, 13/5] or its mirror. Never run any MB r1 driver mode. Never run the successor's `execute` or `resume` outside a sandbox.
+- Never create, move or delete any ref in the REAL repository. All state-machine, crash and seal tests run in sandboxes that do NOT write to the real shared object store (`git clone --no-local`, or as the build documents). Do not commit, stage or reset in any real worktree.
+- Decoys: at most `decoy --cell 297 --first-blocks 1 --dev-ladder --workers 2`. No full decoys.
+- launchd tests: plists in your scratch only, with a unique label org.rebaseguard.mbs308.review.<utc>, a synthetic payload only, and always `launchctl bootout` plus removal afterwards.
+- Do NOT read (MBS-2; these hold observations of the lost MB r1 run):
+  - research reviews/REVIEW_EXECUTION_INTERRUPTION*.md;
+  - research audit/EXECUTION_INTERRUPTION_*.md;
+  - research reviews/REVIEW_SUCCESSOR_GOVERNANCE_308*.md;
+  - research reviews/INCIDENT_INDEPENDENCE_REVIEW_MBS308.md;
+  - formal NSF/review/MB308_EXECUTION_REVIEW.md, NSF/adjudication/*, NSF/review/MB308_ADJUDICATION_REVIEW.md, NSF/postexec/*.
+  You need none of them.
+- Stdlib Python 3.14 only (-I -S -B). No pip, no network, no sudo, no system-setting changes. Cell 309 untouched.
+- Write ONLY /Users/suzhe/ReBaseGuard-c308/level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_IMPLEMENTATION_MBS308.md. Line 1 the title. Line 2 EXACTLY one of IMPLEMENTATION_ACCEPTED or IMPLEMENTATION_REJECTED (once as a whole line). Write incrementally. Scratch goes under /private/tmp/claude-501/-Users-suzhe-ReBaseGuard/d1135746-7699-4331-8dd2-9addf63a6def/scratchpad/reviewIMPL/.
+- Ledger: one line per run via NS/code/c308_quarantine.py log_event (klass='REVIEW', agent='reviewIMPL').
+
+CHECK (PASS / FAIL / PASS WITH NOTE, with evidence)
+1. Scope and boundary (RC1, S11, MBS-9(i)):
+   - MB r1 bytes are unchanged;
+   - the science modules and pins are loaded from MB r1 paths by sha256 and blob, not copied;
+   - the carried driver science functions are text-identical, with an AST test that also covers the module-level names they use;
+   - the guard diff touches only the namespace, ref and marker constants;
+   - DRIVER_DIFF.md is complete and every hunk is correctly classified.
+2. State machine and recovery:
+   - every state in architecture section 2 is classified correctly from refs, spool, journal, process identity and boot UUID;
+   - `recover` does exactly the frozen action;
+   - checkpoints are never results;
+   - mandatory continuation, the resume budget and the deadline;
+   - `close-indeterminate` is value-free.
+3. Persistence (section 3): O_EXCL tmp, fsync, rename, dir fsync / F_FULLFSYNC, read-back verification, hash-object with fsync, pending CAS, seal, materialization. Can a partial or corrupt file ever be taken as a result?
+4. Crash injection: F1-F12 and the simulations. Re-run them and verify each assertion is meaningful (not vacuous). Resumed equals uninterrupted bytes. No second marker. No recomputation of verified checkpoints.
+5. Mutants: re-run the kill matrix. Each mutant must be killed by the intended test, and the unmutated code must pass. It must include the MBS-9(iii) set:
+   - job-A checkpoint served as job B;
+   - wrong grant; wrong driver sha; wrong or future sequence number; another attempt;
+   - a different platform pin;
+   - a skipped resume-time pin check;
+   - reading checkpoints after a terminal state (MBS-4).
+6. Detachment (section 5): the launchd launcher. Is detachment proven by test, not by PPID=1? Does the job survive the death of the launching process group and session? Is caffeinate re-spawned? Is a stale pidfile detected?
+7. Host contract (section 6, S17, GC-10, DR2):
+   - preflight gates (AC, low-power mode, thermal level 0, disk, memory headroom, exclusivity, automatic-update refusal, platform pin);
+   - the memory watchdog leads to a recorded execution failure;
+   - host provenance never changes the outcome.
+8. MBS-3: no per-job output before the seal (a test captures the output), and no per-job progress in the logs. MBS-12: C2, C7(a), C7(b), C8, C9. S15/GC-8: the assertion of MB r1's recorded state, with planted extra and pending MB r1 refs refusing.
+9. Object-store hygiene: what did the build's sandboxes write to or freshen in the real object store? Distinct probe bytes?
+10. T6 non-dependence. The builder disclosed (BUILD_REPORT section 9) that before the exposure restriction it read the MB r1 postexec recovery record, which holds a chronology, coordinator-reported launch host readings, and a qualitative pool-load fact, but no per-job runtimes. Verify independently that no successor cap, limit, timing, threshold or design choice depends on an observation of the MB r1 target run: trace each constant's provenance to MB r1 frozen values, decoy/synthetic runs or host readings taken tonight. Do NOT read the postexec record yourself; rely on the builder's description of its content.
+11. Deviations D1-D17 (BUILD_REPORT section 8). Rule on each, especially: D1 (the intent before the marker); D4; D5 (worker death stays INDETERMINATE vs resumable); D9 (the serialize change); D10 (the EVAL_CAP watchdog on CLOCK_UPTIME_RAW, which is MBS-8's per-attempt EVAL_CAP rule and must be independently reviewed); D14; D15.
+12. Anything else. Include whether the build is FREEZE-READY apart from the user decisions (S16(c), MBS-6, MBS-7, MBS-8, S1), and list every defect.
+Give CONDITIONS and NOTES. Time budget: about 90 minutes. Final message: the verdict line and a 12-line summary.
