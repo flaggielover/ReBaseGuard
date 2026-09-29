@@ -216,3 +216,32 @@ Decoys:
 * the real kernel at drifts outside [6/5, 13/5] and its mirror, restricted to e ≤ 1 so that decoys never bracket the
   band (QUARANTINE_AMENDMENT_2 R2.1 rationale);
 * synthetic geometries (h, k) ≠ (5, 1/2) at any drift. These do not transfer to the target kernel.
+
+## 9. Amendment A1 (2026-09-29, decoy-driven, target-free; before any real-geometry run)
+
+The first synthetic-geometry profiling (h = 3, k = 1/2, E = [1/2, 1/2 + 1/32]) showed two things.
+* A single e-independent V must absorb the genuine e-variation K₁(e)V·δe of the residual across the block.
+* Splitting boxes on the *sign* of the residual never terminates for a float proposal whose residual is ≈ 0 ± ε.
+
+Two changes follow. Neither concerns any quarantined cell or band drift, and neither changes any statement of §§1–3.
+
+**Lemma SV′ (pointwise-in-e families).** Let W_e = W₀ + (e − e_c)W₁ and V_e = V₀ + (e − e_c)V₁, with bounded W_j, V_j.
+Suppose that for every e ∈ E:
+* W_e ≥ 0 and W_e ≥ 1 + K_eW_e on X;
+* V_e ≥ Ψ + K_eV_e on X.
+
+Then for every e ∈ E, (R_eΨ)(a) ≤ V_e(a). Hence sup_E (R_eΨ)(a) ≤ max(V_{e_lo}(a), V_{e_hi}(a)), since V_e(a) is
+affine in e.
+
+*Proof.* Apply Lemma SV at each fixed e with the pair (W_e, V_e). ∎
+
+Implementation rules, replacing the corresponding rows of §7:
+
+| parameter | amended rule |
+|---|---|
+| certificate family | e-affine: V_e = V₀ + (e − e_c)V₁ and W_e = W₀ + (e − e_c)W₁. The float proposals come from two collocation solves at e_lo and e_hi (P₀ = midpoint average, P₁ = difference quotient). The exact check runs over X × E with e as a Taylor-model variable |
+| repairs | W: multiplicative, W' = (1+η)W_e with η = −r/(1+r), as in C1b. V: additive, V' = V_e + λW', with λ = max(0, −r_min) + μ·max(1, sup Ψ) and μ = 2⁻²⁰ (unchanged) |
+| Γ̄_i | max over the two block endpoints of V'_e(a), exact |
+| box refinement | C1b's tightness rule, not a sign rule. After a full pass, a box is halved (≤ 4 extra levels) iff its certified lower margin lies below m_c − (1/4)|m_c| − 2⁻⁴⁰, where m_c is the minimum over boxes of the centre margin |
+
+Validity: e-affine families are a special case of Lemma SV′, and the refinement rule affects tightness only.

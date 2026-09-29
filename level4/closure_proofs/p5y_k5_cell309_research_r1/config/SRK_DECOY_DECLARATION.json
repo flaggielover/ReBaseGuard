@@ -1,0 +1,18 @@
+{
+  "schema": "P5Y_K5_CELL309_SRK_DECOY_DECLARATION/1",
+  "written_before": "any real-geometry SRK certification (the only runs before this file: synthetic h=3 profiling at E=[1/2, 1/2+1/32], exact FSM fixtures)",
+  "purpose": "fix, target-free, every decoy on which SRK is validated, so that no decoy can be chosen to imitate the quarantined regime",
+  "real_geometry": {
+    "h": "5", "k": "1/2",
+    "blocks": [["0", "1/32"], ["1/8", "5/32"], ["1/4", "9/32"], ["1/2", "17/32"], ["1", "33/32"]],
+    "rule": "block width 1/32 at the five declared left endpoints, all < 6/5 (below the band, so that no pair of decoys brackets it; overnight amendment 2 R2.1 rationale). No drift >= 6/5 is ever used for the real kernel in this campaign."
+  },
+  "synthetic_geometries": [
+    {"h": "3", "k": "1/2", "blocks": [["1/4", "9/32"], ["1/2", "17/32"], ["1", "33/32"]]},
+    {"h": "4", "k": "1/2", "blocks": [["1/4", "9/32"], ["1/2", "17/32"], ["1", "33/32"]]}
+  ],
+  "indices": [0, 1, 2, 3, 4],
+  "ladder": [8, 10, 12],
+  "latent_proxy_class": "Every SRK decoy output (Gamma, Abar_W, ratios) is a LATENT PROXY in the sense of overnight amendment 2 R2.3. It is never juxtaposed, combined or compared with any 305-309 number, and it is reported in handovers by content class plus dimensionless decoy-only ratios.",
+  "no_selection": "All declared decoys are run and reported. None is dropped or added after results."
+}
