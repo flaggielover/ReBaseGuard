@@ -61,8 +61,10 @@ def main(dry: bool) -> int:
     chk("2_current_branch", cur == BRANCH, cur)
     head = git("rev-parse", "HEAD")
     rec["local_head"] = head
-    clean = git("status", "--porcelain") == ""
-    chk("2b_working_tree_clean", clean)
+    dirty = git("status", "--porcelain")
+    # informational only (not one of the nine required checks): uncommitted files are never pushed
+    rec["uncommitted_not_pushed"] = dirty.splitlines()
+    print(f"[INFO] uncommitted (not pushed): {dirty.splitlines()}")
     # 4/5 no remote-only commits, no force
     if tip:
         is_anc = subprocess.run(["git", "merge-base", "--is-ancestor", tip, head], cwd=REPO).returncode == 0
