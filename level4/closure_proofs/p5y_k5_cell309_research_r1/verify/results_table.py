@@ -36,7 +36,7 @@ def main(path=os.path.join(HERE, 'VERIFY_RESULTS.json')):
     # mutant summary: per mutant name, counts of verdict kinds
     agg = {}
     for (f, l, name, m) in mut_rows:
-        key = name
+        key = (name, m.get('harness_version', 'v1'))
         d = agg.setdefault(key, {'n': 0, 'met': 0, 'ACCEPT(proved true)': 0, 'REJECT(disproved)': 0,
                                  'REJECT(C4/sha)': 0, 'REJECT(unproven)': 0, 'REFUSE': 0, 'other': 0})
         d['n'] += 1
@@ -46,7 +46,7 @@ def main(path=os.path.join(HERE, 'VERIFY_RESULTS.json')):
             d['ACCEPT(proved true)'] += 1
         elif v == 'REFUSE':
             d['REFUSE'] += 1
-        elif v == 'REJECT' and m.get('false') and '(C4)' not in reason:
+        elif v == 'REJECT' and m.get('false') and '(C4)' not in reason and 'sha256' not in reason:
             d['REJECT(disproved)'] += 1
         elif v == 'REJECT' and ('(C4)' in reason or 'sha256' in reason):
             d['REJECT(C4/sha)'] += 1
@@ -55,11 +55,11 @@ def main(path=os.path.join(HERE, 'VERIFY_RESULTS.json')):
         else:
             d['other'] += 1
     cols = ['ACCEPT(proved true)', 'REJECT(disproved)', 'REJECT(C4/sha)', 'REJECT(unproven)', 'REFUSE', 'other']
-    print('| mutant | runs | expectation met | ' + ' | '.join(cols) + ' |')
-    print('|---|---|---|' + '---|' * len(cols))
-    for name in sorted(agg):
-        d = agg[name]
-        print('| %s | %d | %d | %s |' % (name, d['n'], d['met'], ' | '.join(str(d[c]) for c in cols)))
+    print('| mutant | harness | runs | expectation met | ' + ' | '.join(cols) + ' |')
+    print('|---|---|---|---|' + '---|' * len(cols))
+    for (name, hv) in sorted(agg, key=lambda t: (t[1], t[0])):
+        d = agg[(name, hv)]
+        print('| %s | %s | %d | %d | %s |' % (name, hv, d['n'], d['met'], ' | '.join(str(d[c]) for c in cols)))
     unmet = [(f, l, n, m) for (f, l, n, m) in mut_rows if not m.get('expectation_met')]
     if unmet:
         print()
