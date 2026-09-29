@@ -87,8 +87,15 @@ def one_marker(ch) -> bool:
 
 def action_of(r: dict) -> str | None:
     for ln in r["stdout"].splitlines():
-        if "MBS308 RECOVER state" in ln:
+        if "MBS308 RECOVER state" in ln and "-> " in ln:
             return ln.split("-> ", 1)[1].strip()
+    return None
+
+
+def moved_locks(r: dict) -> int | None:
+    for ln in r["stdout"].splitlines():
+        if "stale campaign git lockfile(s) moved aside" in ln:
+            return int(ln.split(": ", 1)[1].split()[0])
     return None
 
 
@@ -333,6 +340,199 @@ def t_S12_eval_cap_awake_time():
             and rec["target"]["error"].startswith("TimeoutError") and rec["lifecycle"]["eval_cap"]["hit"] is True
             and rec["lifecycle"]["eval_cap"]["clock"] == "CLOCK_UPTIME_RAW" and status() == "INDETERMINATE"
             and one_marker(ch) and took < 60, "eval_cap": rec["lifecycle"]["eval_cap"], "seconds": round(took, 1)}
+
+
+# ====================================================================== R1 (iv): stale git lockfiles of the campaign
+MARKER_LOCK = T.PREFIX + "target-consumed.lock"
+JOURNAL_LOCK = T.PREFIX + "journal.lock"
+CKPT_LOCK = T.PREFIX + "ckpt.lock"
+PENDING_LOCK = T.PREFIX + "pending-result.lock"
+BRANCH_LOCK = "refs/heads/" + T.BRANCH + ".lock"
+PACKED_LOCK = "packed-refs.lock"
+
+
+def _plant(point: str, rel: str, at: int = 1) -> dict:
+    return {"fault": {point: {"at": at, "how": "plant", "path": str(sb().lock_path(rel))}}}
+
+
+def _actions() -> list:
+    p = sb().spool() / "recover-actions.jsonl"
+    return [json.loads(x) for x in p.read_text().splitlines()] if p.exists() else []
+
+
+def _journal_state() -> str | None:
+    code = str(sb().p(T.NS_REL + "/code"))
+    if code not in sys.path:
+        sys.path.insert(0, code)
+    import mbs308_state as Sm
+    rec = Sm.Journal.read(Sm.Store(sb().root, "refs/heads/" + T.BRANCH))[1]
+    return rec and rec["state"]
+
+
+def t_L01_marker_lock():
+    """A stale target-consumed.lock (a) before execute: GIT_LOCKED, nothing consumed; (b) appearing between the intent
+    and the marker (the DEF-1 d wedge): MARKER_WRITE_FAILED (the marker provably absent), the intent closed
+    ABORTED_INTENT, NO_TARGET_CONSUMED. recover moves the lock aside (recorded); the next execute takes over the
+    intent and seals."""
+    base = baseline()
+    ch = fresh()
+    sb().plant_lock(MARKER_LOCK)
+    a1 = T.child(sb(), "execute")
+    a_state = status()
+    a_rec = recover()
+    a2 = T.child(sb(), "execute")
+    ok_a = a1["out"] == {"rc": 2, "refused": "GIT_LOCKED"} and a_state == "NO_TARGET_CONSUMED" \
+        and moved_locks(a_rec) == 1 and action_of(a_rec) == "none" and a2["out"] == {"rc": 0} and sealed_ok() \
+        and one_marker(ch)
+    ch = fresh()
+    b1 = T.child(sb(), "execute", _plant("F1", MARKER_LOCK))
+    b_state, b_journal = status(), _journal_state()
+    b_marker = T.PREFIX + "target-consumed" in sb().refs()
+    b_again = T.child(sb(), "execute")
+    b_rec = recover()
+    b2 = T.child(sb(), "execute")
+    rec = sb().sealed_record()
+    ok_b = b1["out"] == {"rc": 2, "refused": "MARKER_WRITE_FAILED"} and b_state == "NO_TARGET_CONSUMED" \
+        and b_journal == "ABORTED_INTENT" and not b_marker and b_again["out"] == {"rc": 2, "refused": "GIT_LOCKED"} \
+        and moved_locks(b_rec) == 1 and b2["out"] == {"rc": 0} and sealed_ok() and one_marker(ch) \
+        and T.certified_bytes(rec) == base and len(sb().locks_aside()) == 1 and _actions()[0]["lock"] == MARKER_LOCK
+    return {"ok": ok_a and ok_b, "a": [a1["out"], a_state, a2["out"]],
+            "b": [b1["out"], b_state, b_journal, b_again["out"], b2["out"]]}
+
+
+def t_L02_journal_lock_after_crash():
+    ch = fresh()
+    T.child(sb(), "execute", {"fault": {"F3": {"at": 4, "how": "kill"}}})
+    names, before = sb().ckpt_names(), counts()
+    sb().plant_lock(JOURNAL_LOCK)
+    s1 = status()
+    direct = T.child(sb(), "resume")
+    r = recover()
+    after = counts()
+    return {"ok": s1 == "CONSUMED_INTERRUPTED" and direct["out"] == {"rc": 2, "refused": "GIT_LOCKED"}
+            and moved_locks(r) == 1 and action_of(r) == "resume" and r["out"] == {"rc": 0} and status() == "SEALED"
+            and sealed_ok() and one_marker(ch) and all(after.get(n) == before.get(n) for n in names)
+            and not sb().lock_path(JOURNAL_LOCK).exists(),
+            "direct_resume": direct["out"], "recover": r["out"]}
+
+
+def t_L03_journal_lock_during_seal():
+    """R1 (ii): a journal lock appearing once the result is durable (F8) never stops the seal: the run seals itself
+    (the journal lags); recover then moves the lock aside and catches the journal up."""
+    ch = fresh()
+    r = T.child(sb(), "execute", _plant("F8", JOURNAL_LOCK))
+    s1, j1 = status(), _journal_state()
+    r2 = recover()
+    return {"ok": r["out"] == {"rc": 0} and s1 == "SEALED" and sealed_ok() and j1 == "COMPUTING"
+            and moved_locks(r2) == 1 and action_of(r2) == "materialize" and _journal_state() == "SEALED"
+            and one_marker(ch), "run": r["out"], "journal_after_run": j1, "journal_after_recover": _journal_state()}
+
+
+def t_L04_journal_conflict_during_seal():
+    """R1 (ii): a GENUINE journal conflict once the result is durable (another writer advances the journal at F8) is
+    recorded and never stops the seal."""
+    ch = fresh()
+    r = T.child(sb(), "execute", {"fault": {"F8": {"how": "bump_journal", "repo": str(sb().root),
+                                                  "branch": "refs/heads/" + T.BRANCH}}})
+    return {"ok": r["out"] == {"rc": 0} and status() == "SEALED" and sealed_ok() and one_marker(ch), "run": r["out"]}
+
+
+def t_L05_ckpt_lock_midrun():
+    """R1 (i): a ckpt.lock appearing after the 14th checkpoint: the later checkpoint writes fail WITHOUT a conflict,
+    are recorded and retried, and the evaluation completes and seals (no LostOwnership)."""
+    base = baseline()
+    ch = fresh()
+    r = T.child(sb(), "execute", _plant("F3", CKPT_LOCK, at=14))
+    rec = sb().sealed_record()
+    life = (rec or {}).get("lifecycle", {})
+    fails = life.get("stage1_context", {}).get("checkpoint_write_failures", [])
+    refw = [f for f in life.get("ref_write_failures", []) if f["ref"].endswith("/ckpt")]
+    return {"ok": r["out"] == {"rc": 0} and status() == "SEALED" and sealed_ok() and len(fails) == 4
+            and all(f.endswith("RefWriteError") for f in fails) and len(refw) >= 4 and all(f["lock_present"] for f in refw)
+            and T.certified_bytes(rec) == base and one_marker(ch), "run": r["out"], "ckpt_failures": fails}
+
+
+def t_L06_ckpt_lock_after_crash():
+    ch = fresh()
+    T.child(sb(), "execute", {"fault": {"F3": {"at": 4, "how": "kill"}}})
+    names, before = sb().ckpt_names(), counts()
+    sb().plant_lock(CKPT_LOCK)
+    r = recover()
+    after = counts()
+    return {"ok": moved_locks(r) == 1 and action_of(r) == "resume" and status() == "SEALED" and sealed_ok()
+            and one_marker(ch) and all(after.get(n) == before.get(n) for n in names), "recover": r["out"]}
+
+
+def t_L07_pending_lock():
+    ch = fresh()
+    r = T.child(sb(), "execute", _plant("F8", PENDING_LOCK))
+    s1 = status()
+    n0 = sum(counts().values())
+    r2 = recover()
+    return {"ok": r["out"] == {"rc": 4} and s1 == "RESULT_DURABLE_UNSEALED" and moved_locks(r2) == 1
+            and action_of(r2) == "seal-only" and status() == "SEALED" and sealed_ok() and sum(counts().values()) == n0
+            and one_marker(ch), "run": r["out"], "state": s1}
+
+
+def t_L08_branch_lock():
+    ch = fresh()
+    r = T.child(sb(), "execute", _plant("F10", BRANCH_LOCK))
+    s1 = status()
+    n0 = sum(counts().values())
+    r2 = recover()
+    return {"ok": r["out"] == {"rc": 4} and s1 == "PENDING_RESULT" and moved_locks(r2) == 1
+            and action_of(r2) == "seal-only" and status() == "SEALED" and sealed_ok() and sum(counts().values()) == n0
+            and one_marker(ch), "run": r["out"], "state": s1}
+
+
+def t_L09_packed_refs_lock_stale():
+    ch = fresh()
+    T.child(sb(), "execute", {"fault": {"F3": {"at": 4, "how": "kill"}}})
+    sb().plant_lock(PACKED_LOCK)
+    r = recover()
+    return {"ok": moved_locks(r) == 1 and status() == "SEALED" and sealed_ok() and one_marker(ch)
+            and _actions()[-1]["lock"] == PACKED_LOCK, "recover": r["out"]}
+
+
+def t_L10_lock_with_live_campaign_process():
+    """A lockfile is NOT stale while a live campaign process exists (here: the pidfile names a live process): recover
+    does nothing; once that process is gone, recover moves the lock aside and resumes."""
+    ch = fresh()
+    T.child(sb(), "execute", {"fault": {"F3": {"at": 4, "how": "kill"}}})
+    lk = sb().plant_lock(JOURNAL_LOCK)
+    code = str(sb().p(T.NS_REL + "/code"))
+    if code not in sys.path:
+        sys.path.insert(0, code)
+    import mbs308_host as H
+    h = T.Helper(120)
+    try:
+        (sb().spool() / "driver.pid").write_text(json.dumps({"identity": H.identity(h.p.pid)}))
+        r1 = recover()
+        held = lk.exists() and sb().locks_aside() == []
+    finally:
+        h.kill()
+    r2 = recover()
+    return {"ok": r1["out"] == {"rc": 8} and held and moved_locks(r2) == 1 and status() == "SEALED" and sealed_ok()
+            and one_marker(ch), "first": r1["out"], "second": r2["out"]}
+
+
+def t_L11_packed_refs_lock_open():
+    """A lockfile that some process holds open (lsof) is NOT stale (a live git command elsewhere in the repository)."""
+    ch = fresh()
+    T.child(sb(), "execute", {"fault": {"F3": {"at": 4, "how": "kill"}}})
+    lk = sb().plant_lock(PACKED_LOCK)
+    holder = subprocess.Popen([T.PY, "-I", "-S", "-B", "-c", f"import time; f = open({str(lk)!r}); time.sleep(120)"],
+                              stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    try:
+        time.sleep(0.5)
+        r1 = recover()
+        held = lk.exists() and sb().locks_aside() == []
+    finally:
+        holder.kill()
+        holder.wait()
+    r2 = recover()
+    return {"ok": r1["out"] == {"rc": 8} and held and moved_locks(r2) == 1 and status() == "SEALED" and sealed_ok()
+            and one_marker(ch), "first": r1["out"], "second": r2["out"]}
 
 
 if __name__ == "__main__":

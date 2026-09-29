@@ -128,6 +128,18 @@ performs exactly the frozen action.
 | CONSUMED_COMPUTING | marker, journal ARMING … PENDING_RESULT, and the recorded process identity (pid, start time, command sha256) is alive under the **same boot UUID** | wait; `resume`, `close-indeterminate`, `seal-only`, `execute` refuse |
 | CONSUMED_INTERRUPTED | otherwise (the recorded process is dead or the boot UUID changed; checkpoints permit; budget and deadline remain; same platform) | `resume` (mandatory) |
 
+**Stale git lockfiles (repair R1 iii).** Every classification also lists the campaign's git lockfiles
+(`refs/p5y-k5-cell308-mbs-r1/*.lock`, the branch lock, `packed-refs.lock`, what a reset inside a ref write leaves).
+They are **stale** only when no live campaign process exists (the O_EXCL recover lock's holder, the pidfile, the
+journal's recorded process) and no process has any of them open (`lsof`). They do not change the state. `recover`,
+in every state except CONSUMED_COMPUTING and **before** resume / seal / close, performs the frozen, recorded,
+value-free action: under the O_EXCL lock it re-verifies staleness and **moves** each lockfile into
+`<spool>/git-locks-aside/` (never deletes it; never renames it inside `refs/`, where it would read as a ref), appending
+one record (name, size, birth / change times, destination, who) to `<spool>/recover-actions.jsonl`. Held (not stale)
+lockfiles: `recover` does nothing and exits 8. `execute`, `resume`, `seal-only` and `close-indeterminate` refuse
+`GIT_LOCKED` while any campaign lockfile exists. A durable pre-marker intent whose marker write failed
+(ABORTED_INTENT, no marker) is taken over by the next `execute` like a stale ARMING intent.
+
 A verified sealed / pending / spool record wins over the journal (a crash between an artifact write and the journal
 update is resolved by the artifact). A file whose canonical layout, self sha256, schema, completeness (`complete: true`
 and a terminal status), cell, grant or driver binding fails is **never used**; `result.json.tmp` is never read.
@@ -150,6 +162,14 @@ and a terminal status), cell, grant or driver binding fails is **never used**; `
 8. Seal: private-index commit adding only the result path; branch update by CAS; journal → SEALED
    (INDETERMINATE_SEALED for a failure record).
 9. Materialize with `O_EXCL|O_NOFOLLOW`, fsync, read back.
+
+**Ref writes (repair R1 i, ii).** Every ref update is a compare-and-swap. After a failed `update-ref` the ref is
+re-read: only "the ref no longer holds the expected old value" is a conflict (another process owns the run:
+LostOwnership / JournalConflict / CONSUMED). Any other failure (a stale lockfile, I/O, an unreadable ref) is recorded
+and retried on MB r1's frozen seal-retry schedule (`SEAL_RETRY_DELAYS`, reused; no new number), then raised as an
+infrastructure failure: a failed checkpoint write is recorded and the evaluation continues; before the marker it
+refuses (nothing consumed); after the durable artifacts exist (spool result, pending ref, seal) a failed journal
+advance, a conflict included, is recorded and **never stops the seal**: the artifacts decide.
 
 If the spool write fails, the object store is still tried; if both fail the process exits with the journal COMPUTING
 (state INTERRUPTED once the process is dead): `recover` resumes (all jobs are checkpointed, so only Stage 2 and the
@@ -200,6 +220,12 @@ persistence are redone). Fault points F4–F12 are placed at the steps above (§
 * The launcher records label, pid, PPID, PGID, SID, uid, start time, boot UUID, command sha256 and **proves detachment
   by test, not by PPID = 1**: not a descendant of the launcher's tree, a different session, launchd names the job as
   running with this pid. With `--wait` it boots the job out when it ends; `cleanup <label>` boots out a finished job.
+* **Boot-out (repair R2).** After `launchctl bootstrap` the launcher never boots the job out on its own evidence of
+  failure (the job may already have passed the marker; a job not properly launched is refused by the driver's own
+  launchd check). `--wait` and `cleanup <label>` boot a job out only when its **recorded identity** (pid, start time,
+  boot UUID, command sha256) is positively dead (the pid is gone, belongs to another process, or the boot UUID
+  changed); a failing, timed-out or unparseable `launchctl print` decides nothing, and a job whose identity was never
+  recorded is never booted out automatically.
 * The driver's `execute` and `resume` refuse unless `XPC_SERVICE_NAME` **equals** the label (the hosting app exports
   `XPC_SERVICE_NAME=0`, so presence alone proves nothing), the parent is launchd and `launchctl print` names this pid.
 * Caffeinate is supervised: `caffeinate -i -m -s -w <driver pid>` is re-spawned whenever it dies; every spawn, death and

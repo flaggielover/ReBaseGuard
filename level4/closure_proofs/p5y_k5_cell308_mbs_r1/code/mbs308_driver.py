@@ -214,9 +214,9 @@ PLATFORM_PINS = {
 # helper modules of this campaign, pinned by sha256 (the grant binds this driver's own sha256). Re-pinned at freeze.
 HELPER_SHA256 = {
     "mbs308_guard.py": "48903487f648e9d39bb764497ceae87941c33be73cb4b1fa285ac83bbb1e9435",
-    "mbs308_host.py": "21b82c3f96ce54dca541e719aac92600fb1c9f3acc0e0ce6de4af8761a0c28dd",
-    "mbs308_state.py": "6a09062c29a57619535ccfa885e51714ed73c0557b332d58cc59f2faf13d3839",
-    "mbs308_launch.py": "a3310ed87c92dac5200f5752d0bc185f2d99948269c2b7cc7c3b66692b65dc00",
+    "mbs308_host.py": "fed4ea2b83975d388decfa12f29afffc8e9dd2a1cdfa8b941bf85ce70855fc89",
+    "mbs308_state.py": "807008ef5ac756d6a0f86a5b7667e213fbbdfba00ae420813b4b5c2728f154e3",
+    "mbs308_launch.py": "c829b9ed375d25f5e1386001831015f2dde0fa07dcccd283ba822b0290022028",
 }
 PIN.GUARD_SHA256 = HELPER_SHA256["mbs308_guard.py"]
 # per-job CPU caps (REVIEW_A0_CERTIFIER_R1 C3): each Stage-1 job runs in a FRESH worker process (max_tasks_per_child
@@ -347,7 +347,9 @@ def check_identity() -> dict:
 
 
 def store() -> STATE.Store:
-    return STATE.Store(REPO, QUALIFIED_BRANCH)
+    # R1 (i): a ref write that fails WITHOUT a compare-and-swap conflict is retried on MB r1's frozen seal-retry
+    # schedule (SEAL_RETRY_DELAYS; no new number), then raised as STATE.RefWriteError (infrastructure)
+    return STATE.Store(REPO, QUALIFIED_BRANCH, retry_delays=SEAL_RETRY_DELAYS)
 
 
 def campaign() -> STATE.Campaign:
@@ -379,14 +381,20 @@ def check_mbr1_state() -> dict:
 
 def check_not_evaluated() -> dict:
     """No prior MB-S evaluation: no marker / pending / checkpoint ref, no result anywhere, no spool result file. A
-    journal is allowed only as a STALE pre-marker intent (state ARMING, its process dead): execute takes it over."""
+    journal is allowed only as a STALE pre-marker intent (state ARMING, or ABORTED_INTENT after a marker write that
+    failed; its process dead; no marker): execute takes it over. R1 (iii): a campaign git lockfile refuses (GIT_LOCKED;
+    `recover` moves stale ones aside)."""
+    locks = STATE.git_lockfiles(store())
+    if locks:
+        raise Refusal("GIT_LOCKED", f"campaign git lockfile(s) {', '.join(locks)}: run `recover`")
     refs = git("for-each-ref", "--format=%(refname)", PRIOR_MARKERS[0]).stdout.split()
     if any(r != JOURNAL_REF for r in refs):
         raise Refusal("CONSUMED", f"a ref exists under {PRIOR_MARKERS[0]}")
     stale = None
     if JOURNAL_REF in refs:
         jid, jrec = STATE.Journal.read(store())
-        if jrec is None or jrec["state"] != "ARMING" or HOST.identity_alive(jrec.get("process")):
+        if jrec is None or jrec["state"] not in ("ARMING", "ABORTED_INTENT") or \
+                HOST.identity_alive(jrec.get("process")):
             raise Refusal("CONSUMED", "a journal exists that is not a stale pre-marker intent")
         stale = jid
     names = git("ls-tree", "-r", "--name-only", "HEAD").stdout.split()
@@ -544,12 +552,15 @@ def busy_processes(text: str | None = None) -> list:
     return out
 
 
-def host_preflight(launched: dict | None) -> dict:
-    """Section 6 gates + GC-10 headroom and exclusivity. Every gate refuses start (before the marker)."""
+def host_preflight(launched: dict | None, texts: dict | None = None) -> dict:
+    """Section 6 gates + GC-10 headroom and exclusivity. Every gate refuses start (before the marker). `texts`: planted
+    readings for the tests ({"host": ..., "su": ..., "vm_stat": ..., "ps": ...}); production passes none."""
+    t = texts or {}
     pid_rec, pid_state = STATE.read_pidfile(store())
-    g = HOST.preflight_gates(REPO, other_job_running=pid_state == "LIVE", launched=launched)
-    fm = free_memory_bytes()
-    busy = busy_processes()
+    g = HOST.preflight_gates(REPO, other_job_running=pid_state == "LIVE", launched=launched, texts=t.get("host"),
+                             su_texts=t.get("su"))
+    fm = free_memory_bytes(t.get("vm_stat"))
+    busy = busy_processes(t.get("ps"))
     g["gates"]["free_memory_ge_min"] = isinstance(fm, int) and fm >= FREE_MEM_MIN_BYTES
     g["gates"]["host_exclusive"] = not busy
     g["readings"].update({"free_memory_bytes": fm, "busy_processes": busy, "pidfile": pid_state})
@@ -1036,7 +1047,7 @@ def persist_and_seal(data: bytes, status: str, jr: STATE.Journal | None, stale_p
         pass
     STATE.fault("F8")
     if spool_ok and jr is not None:
-        _journal(jr, state="RESULT_DURABLE", result_sha256=STATE.sha(data))
+        _journal(jr, durable=True, state="RESULT_DURABLE", result_sha256=STATE.sha(data))
     STATE.fault("F9")
     try:
         blob = persist_pending(data, stale_pending)
@@ -1047,7 +1058,7 @@ def persist_and_seal(data: bytes, status: str, jr: STATE.Journal | None, stale_p
         print("MBS308 NOTHING DURABLE: the marker exists; run `recover` (it resumes). NEVER run execute again.")
         return 6
     if jr is not None:
-        _journal(jr, state="PENDING_RESULT", result_blob=blob)
+        _journal(jr, durable=True, state="PENDING_RESULT", result_blob=blob)
     STATE.fault("F10")
     try:
         cid = seal_blob(blob, seal_message(status))
@@ -1056,7 +1067,8 @@ def persist_and_seal(data: bytes, status: str, jr: STATE.Journal | None, stale_p
         return 4
     STATE.fault("F12")
     if jr is not None:
-        _journal(jr, state="SEALED" if status == STATE.TARGET_EVALUATED else "INDETERMINATE_SEALED", seal_commit=cid)
+        _journal(jr, durable=True, state="SEALED" if status == STATE.TARGET_EVALUATED else "INDETERMINATE_SEALED",
+                 seal_commit=cid)
     try:
         materialize(blob)
     except BaseException:                                              # noqa: BLE001
@@ -1066,15 +1078,23 @@ def persist_and_seal(data: bytes, status: str, jr: STATE.Journal | None, stale_p
     return 0 if status == STATE.TARGET_EVALUATED else (3 if status == "CONTROL_FAILED" else 5)
 
 
-def _journal(jr: STATE.Journal, **changes) -> None:
-    """A journal advance after the marker: a CAS conflict means another attempt owns the run (stop, write nothing);
-    any other failure is ignored (the artifacts, not the journal, decide the durable states)."""
+JOURNAL_FAILURES: list = []        # value-free, in memory: {utc, state, error, durable}
+
+
+def _journal(jr: STATE.Journal, durable: bool = False, **changes) -> None:
+    """A journal advance after the marker. Before any durable artifact exists, a genuine CAS conflict means another
+    attempt owns the run (stop, write nothing). R1 (ii): once the durable artifacts exist (`durable`: the spool result,
+    the pending ref, the seal), a failed advance -- a conflict or an infrastructure failure -- never stops the seal:
+    the artifacts decide; the failure is recorded. Other failures are always recorded and ignored."""
     try:
         jr.advance(**changes)
-    except STATE.JournalConflict:
-        raise STATE.LostOwnership()
-    except Exception:                                                  # noqa: BLE001
-        pass
+    except STATE.JournalConflict as exc:
+        JOURNAL_FAILURES.append({"utc": utc(), "state": changes.get("state"), "error": exc.code, "durable": durable})
+        if not durable:
+            raise STATE.LostOwnership()
+    except Exception as exc:                                           # noqa: BLE001
+        JOURNAL_FAILURES.append({"utc": utc(), "state": changes.get("state"), "durable": durable,
+                                 "error": getattr(exc, "code", type(exc).__name__)})
 
 
 def after_marker(con, prep, common: dict, evaluator, t0: float, jr: STATE.Journal, ctx: STATE.Ctx) -> int:
@@ -1159,6 +1179,9 @@ def close_host(common: dict) -> None:
         sup = _SUP.get("sup")
         common.setdefault("lifecycle", {})["caffeinate"] = None if sup is None else sup.record()
         common["lifecycle"]["host_log"] = store().host_log_read()
+        common["lifecycle"]["recover_actions"] = STATE.recover_actions_read(store())
+        common["lifecycle"]["ref_write_failures"] = list(STATE.REF_WRITE_FAILURES)
+        common["lifecycle"]["journal_failures"] = list(JOURNAL_FAILURES)
     except BaseException as exc:                                       # noqa: BLE001
         common.setdefault("lifecycle", {})["caffeinate"] = {"error": type(exc).__name__}
     if h is None:
@@ -1271,14 +1294,23 @@ def run_execute(own_sha: str, prepare=None, evaluator=None) -> int:
         except STATE.JournalConflict:
             host["sampler"].stop()
             raise Refusal("CONSUMED", "another process holds the journal")
+        except STATE.RefWriteError as exc:                             # R1 (i): infrastructure, nothing consumed
+            host["sampler"].stop()
+            raise Refusal("JOURNAL_WRITE_FAILED", f"{exc} (nothing consumed; run `recover`)")
         STATE.fault("F1")
-        if not st.cas_ref(CONSUMED_REF, grant["grant_commit"], None):
+        why = ("CONSUMED", "the exactly-once marker could not be created: the target is never evaluated twice")
+        try:
+            marker_ok = st.cas_ref(CONSUMED_REF, grant["grant_commit"], None)
+        except STATE.RefWriteError as exc:     # R1 (i): the marker is provably absent (re-read); nothing is consumed
+            marker_ok, why = False, ("MARKER_WRITE_FAILED", f"{exc} (the marker is absent; nothing consumed; run "
+                                                            "`recover`)")
+        if not marker_ok:
             host["sampler"].stop()
             try:                        # this intent never owned the marker: it must not make the run look resumable
                 jr.advance(state="ABORTED_INTENT", aborted_utc=utc())
             except Exception:                                          # noqa: BLE001
                 pass
-            raise Refusal("CONSUMED", "the exactly-once marker could not be created: the target is never evaluated twice")
+            raise Refusal(*why)
         STATE.fault("F2")
         common["_host"] = host
         _journal(jr, state="COMPUTING", marker_utc=utc(), attempt_started_utc=utc(), attempt_seq="SELF")
@@ -1312,6 +1344,8 @@ def run_resume(own_sha: str, prepare=None, evaluator=None, boot_uuid: str | None
         cls = STATE.classify(campaign(), boot_uuid=boot_uuid, platform=platform_readings())
         if cls["state"] != "CONSUMED_INTERRUPTED":
             raise Refusal("RESUME_REFUSED", f"state {cls['state']}")
+        if cls.get("git_locks"):
+            raise Refusal("GIT_LOCKED", f"campaign git lockfile(s) {', '.join(cls['git_locks'])}: run `recover`")
         grant, common, con, sci, ctl, awake = pre_marker_common(own_sha, resume=True)
         if cls["marker"] != grant["grant_commit"]:
             raise Refusal("RESUME_REFUSED", "the marker does not name the grant commit at HEAD")
@@ -1342,6 +1376,8 @@ def run_resume(own_sha: str, prepare=None, evaluator=None, boot_uuid: str | None
                        attempt_started_utc=utc(), history=hist, attempt_seq="SELF")
         except STATE.JournalConflict:
             raise Refusal("RESUME_REFUSED", "another resume advanced the journal first")
+        except STATE.RefWriteError as exc:                             # R1 (i): the attempt counter did not move
+            raise Refusal("JOURNAL_WRITE_FAILED", f"{exc} (the attempt was not consumed; run `recover`)")
         STATE.write_pidfile(st, {"mode": "resume", "attempt": attempt, "label": os.environ.get("MBS308_LAUNCH_LABEL")})
         common["_host"] = {"start": HOST.snapshot(), "sampler": HOST.Sampler().start()}
         common["lifecycle"] = {"attempt": attempt, "resumed": True, "classified": cls["why"]}
@@ -1411,13 +1447,15 @@ def run_seal_only(boot_uuid: str | None = None) -> int:
     try:
         cls = STATE.classify(campaign(), boot_uuid=boot_uuid, platform=platform_readings())
         s = cls["state"]
+        if cls.get("git_locks"):
+            raise Refusal("GIT_LOCKED", f"campaign git lockfile(s) {', '.join(cls['git_locks'])}: run `recover`")
         jid, jrec = STATE.Journal.read(st)
         jr = STATE.Journal(st, jid, jrec) if jrec is not None else None
         if s == "RESULT_DURABLE_UNSEALED":
             data = _read_verified_spool(cls)
             status = json.loads(data)["status"]
             if jr is not None:
-                _journal(jr, state="RESULT_DURABLE", result_sha256=STATE.sha(data))
+                _journal(jr, durable=True, state="RESULT_DURABLE", result_sha256=STATE.sha(data))
             return _pending_seal_materialize(data, status, jr, cls.get("stale_pending"))
         if s == "PENDING_RESULT":
             data = st.get_blob(cls["pending"])
@@ -1430,7 +1468,7 @@ def run_seal_only(boot_uuid: str | None = None) -> int:
                 return 0 if s == "SEALED" else 5
             want = "SEALED" if s == "SEALED" else "INDETERMINATE_SEALED"
             if jr is not None and jrec.get("state") != want:
-                _journal(jr, state=want, seal_commit=git("rev-parse", "HEAD").stdout.strip())
+                _journal(jr, durable=True, state=want, seal_commit=git("rev-parse", "HEAD").stdout.strip())
             m = materialized_ok(blob)
             if m is None:
                 try:
@@ -1456,13 +1494,14 @@ def _pending_seal_materialize(data: bytes, status: str, jr, stale: str | None) -
     except OSError as exc:
         raise Refusal("UNSEALED", str(exc))
     if jr is not None:
-        _journal(jr, state="PENDING_RESULT", result_blob=blob)
+        _journal(jr, durable=True, state="PENDING_RESULT", result_blob=blob)
     try:
         cid = seal_blob(blob, seal_message(f"{status}, sealed by seal-only"))
     except OSError as exc:
         raise Refusal("UNSEALED", str(exc))
     if jr is not None:
-        _journal(jr, state="SEALED" if status == STATE.TARGET_EVALUATED else "INDETERMINATE_SEALED", seal_commit=cid)
+        _journal(jr, durable=True, state="SEALED" if status == STATE.TARGET_EVALUATED else "INDETERMINATE_SEALED",
+                 seal_commit=cid)
     try:
         materialize(blob)
     except (OSError, FileExistsError) as exc:
@@ -1504,6 +1543,8 @@ def run_close_indeterminate(own_sha: str, boot_uuid: str | None = None) -> int:
         if cls["state"] != "CONSUMED_UNRECORDED":
             raise Refusal("NO_DISCRETIONARY_ABANDONMENT", f"close-indeterminate applies only to CONSUMED_UNRECORDED "
                                                           f"(state {cls['state']})")
+        if cls.get("git_locks"):
+            raise Refusal("GIT_LOCKED", f"campaign git lockfile(s) {', '.join(cls['git_locks'])}: run `recover`")
         marker = cls["marker"]
         drv = cls.get("driver_sha256")
         if drv is None or drv != own_sha or git("rev-parse", "HEAD").stdout.strip() != marker:
@@ -1515,6 +1556,8 @@ def run_close_indeterminate(own_sha: str, boot_uuid: str | None = None) -> int:
                        closing_utc=utc(), closing_reason=cls["why"])
         except STATE.JournalConflict:
             raise Refusal("CLOSE_REFUSED", "the journal moved")
+        except STATE.RefWriteError as exc:                             # R1 (i)
+            raise Refusal("JOURNAL_WRITE_FAILED", f"{exc} (run `recover`)")
         for name in (STATE.RESULT_FILE, STATE.TMP_FILE):
             if st.spool_exists(name):
                 st.quarantine(name, "closing")
@@ -1539,7 +1582,21 @@ def run_recover(own_sha: str, prepare=None, evaluator=None, boot_uuid: str | Non
     """The only dispatcher: exactly the frozen action of the classified state (mbs308_state.ACTIONS)."""
     check_flags()
     check_identity()
-    s = STATE.classify(campaign(), boot_uuid=boot_uuid, platform=platform_readings())["state"]
+    cls = STATE.classify(campaign(), boot_uuid=boot_uuid, platform=platform_readings())
+    s = cls["state"]
+    if cls.get("git_locks") and s != "CONSUMED_COMPUTING":
+        # R1 (iii): the frozen, recorded, value-free action for stale campaign git lockfiles, BEFORE resume / seal /
+        # close: move them aside (never delete). Not stale (a live campaign process, or an open file): nothing.
+        if not cls.get("git_locks_stale"):
+            print(f"MBS308 RECOVER state {s}: campaign git lockfiles are held (a live campaign process or an open "
+                  "file); nothing done")
+            return 8
+        try:
+            moved = STATE.move_stale_git_locks(store(), boot_uuid)
+        except STATE.Locked as exc:
+            raise Refusal(exc.code, str(exc))
+        print(f"MBS308 RECOVER state {s}: {len(moved)} stale campaign git lockfile(s) moved aside (recorded)")
+        s = STATE.classify(campaign(), boot_uuid=boot_uuid, platform=platform_readings())["state"]
     action = STATE.ACTIONS[s]
     print(f"MBS308 RECOVER state {s} -> {action}")
     if action == "none":
@@ -1738,7 +1795,7 @@ def main(argv=None) -> int:
         print("MBS308 LOST OWNERSHIP: another attempt advanced the journal; this attempt wrote nothing more")
         return 9
     except (Refusal, PIN.PinError, GUARD.QuarantineRefusal, CON.ConsumerRefusal, STATE.StateError,
-            SciencePinError) as e:
+            SciencePinError, STATE.RefWriteError) as e:
         print(f"MBS308 REFUSED {e}")
         return 4 if getattr(e, "code", None) == "UNSEALED" else 2
     finally:

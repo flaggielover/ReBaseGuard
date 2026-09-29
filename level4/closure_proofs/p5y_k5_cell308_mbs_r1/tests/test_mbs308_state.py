@@ -11,6 +11,7 @@ from __future__ import annotations
 import datetime
 import json
 import os
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -606,6 +607,209 @@ def t_gc8_mbr1_state():
     ok_run = T.child(sb(), "execute")["out"]
     return {"ok": all(v == {"rc": 2, "refused": "MBR1_STATE"} for v in out.values()) and ok_run == {"rc": 0}
             and counts() != {}, "refusals": out, "unplanted": ok_run}
+
+
+# ====================================================================== R4: start gates, pins, GC-8 (behavioural)
+GOOD_HOST = {"batt": "Now drawing from 'AC Power'\n", "pmset": " lowpowermode         0\n",
+             "thermal": "com.apple.system.thermalpressurelevel 0\n", "free": 10 * 2 ** 30, "memory": "1\n",
+             "boot": "A7417159-025C-461F-8BF8-3F9C7F3C58CB\n"}
+SU_OFF = {"AutomaticallyInstallMacOSUpdates": "0", "AutomaticDownload": "1", "CriticalUpdateInstall": "0",
+          "ConfigDataInstall": "1"}
+
+
+def _vm(free_bytes: int) -> str:
+    pages = free_bytes // 16384
+    return ("Mach Virtual Memory Statistics: (page size of 16384 bytes)\n"
+            f"Pages free:                               {pages}.\nPages active:                  1000.\n"
+            "Pages inactive:                                0.\nPages speculative:                0.\n"
+            "Pages throttled:                                0.\nPages wired down:            1000.\n"
+            "Pages purgeable:                                0.\n")
+
+
+PS_QUIET = "    1     0   0.4 /sbin/launchd\n  300     1   1.2 /usr/libexec/somed\n"
+
+
+def _gates(vm: str, ps: str) -> dict:
+    return T.child(sb(), "host_gates", {"planted": {"host": GOOD_HOST, "su": SU_OFF, "vm_stat": vm, "ps": ps}})["out"]
+
+
+def t_gc10_start_gates():
+    """The DRIVER's GC-10 start gates on planted readings: free memory (vm_stat) and host exclusivity (ps); each failing
+    reading fails exactly its gate and refuses start; an allow-listed or own-child busy process does not."""
+    fresh()
+    big, small = 8 * 2 ** 30, 2 ** 29                       # far from the frozen threshold on either side
+    busy_other = PS_QUIET + " 4242     1  90.0 /Applications/Busy.app/Contents/MacOS/Busy\n"
+    busy_ui = PS_QUIET + " 4243     1  90.0 /System/Library/PrivateFrameworks/SkyLight.framework/Resources/WindowServer\n"
+    busy_child = PS_QUIET + " 4244 {SELF}  90.0 /usr/bin/python3\n"
+    out = {"good": _gates(_vm(big), PS_QUIET), "low_memory": _gates(_vm(small), PS_QUIET),
+           "vm_unreadable": _gates("garbage\n", PS_QUIET), "busy_other": _gates(_vm(big), busy_other),
+           "busy_allow_listed": _gates(_vm(big), busy_ui), "busy_own_child": _gates(_vm(big), busy_child)}
+    ok = out["good"]["rc"] == 0 and all(out["good"]["gates"].values()) \
+        and out["low_memory"] == {"rc": 2, "refused": "HOST_PREFLIGHT", "detail": "HOST_PREFLIGHT: free_memory_ge_min"} \
+        and out["vm_unreadable"]["detail"] == "HOST_PREFLIGHT: free_memory_ge_min" \
+        and out["busy_other"] == {"rc": 2, "refused": "HOST_PREFLIGHT", "detail": "HOST_PREFLIGHT: host_exclusive"} \
+        and out["busy_allow_listed"]["rc"] == 0 and out["busy_own_child"]["rc"] == 0
+    return {"ok": ok, "cases": {k: v.get("refused", "PASS") for k, v in out.items()}}
+
+
+PIN_OVERRIDE = {"pin_override": {"os_build": "25Z999"}}
+RESEARCH_REL = "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/registry_c2/REGISTRY_C2.json"
+SCIENCE_REL = T.NSF_REL + "/code/mb308_supply.py"
+
+
+def _journal_attempt():
+    rec = S().Journal.read(store())[1]
+    return rec and rec.get("attempt")
+
+
+def _restoring(rel: str):
+    p = sb().p(rel)
+    return p, p.read_bytes()
+
+
+def _nothing_consumed() -> bool:
+    return T.PREFIX + "target-consumed" not in sb().refs() and counts() == {}
+
+
+def t_pins_execute_platform():
+    fresh()
+    r = T.child(sb(), "execute", PIN_OVERRIDE)
+    return {"ok": r["out"] == {"rc": 2, "refused": "PLATFORM_PIN_MISMATCH"} and _nothing_consumed()
+            and T.PREFIX + "journal" not in sb().refs(), "run": r["out"]}
+
+
+def _resume_refusal(spec: dict, want: str, rel: str | None = None) -> dict:
+    """After an interruption, a pin refusal at resume stops BEFORE the attempt counter moves: nothing is computed,
+    the state stays CONSUMED_INTERRUPTED; with the pin restored, recover resumes and seals."""
+    ch = fresh()
+    crash("F3", at=4)
+    before, att = counts(), _journal_attempt()
+    keep = _restoring(rel) if rel else None
+    try:
+        r = recover(**spec)
+    finally:
+        if keep:
+            keep[0].write_bytes(keep[1])
+    s1, att1, c1 = status(), _journal_attempt(), counts()
+    r2 = recover()
+    return {"ok": r["out"] == {"rc": 2, "refused": want} and s1 == "CONSUMED_INTERRUPTED" and att1 == att == 1
+            and c1 == before and r2["out"] == {"rc": 0} and status() == "SEALED" and sealed_ok() and one_marker(ch),
+            "refusal": r["out"], "state_after": s1, "attempt_after": att1}
+
+
+def t_pins_resume_platform():
+    return _resume_refusal(PIN_OVERRIDE, "PLATFORM_PIN_MISMATCH")
+
+
+def t_pins_execute_research():
+    fresh()
+    p, orig = _restoring(RESEARCH_REL)
+    try:
+        r = T.child(sb(), "execute", {"skip_clean": True, "tamper_after_import": RESEARCH_REL})
+    finally:
+        p.write_bytes(orig)
+    return {"ok": r["out"] == {"rc": 2, "refused": "PIN_MISMATCH"} and _nothing_consumed(), "run": r["out"]}
+
+
+def t_pins_resume_research():
+    return _resume_refusal({"tamper_after_import": RESEARCH_REL}, "PIN_MISMATCH", RESEARCH_REL)
+
+
+def t_pins_execute_science():
+    fresh()
+    p, orig = _restoring(SCIENCE_REL)
+    try:
+        r = T.child(sb(), "execute", {"skip_clean": True, "tamper_after_import": SCIENCE_REL})
+    finally:
+        p.write_bytes(orig)
+    return {"ok": r["out"] == {"rc": 2, "refused": "SCIENCE_PIN_MISMATCH"} and _nothing_consumed(), "run": r["out"]}
+
+
+def t_pins_resume_science():
+    return _resume_refusal({"tamper_after_import": SCIENCE_REL}, "SCIENCE_PIN_MISMATCH", SCIENCE_REL)
+
+
+def t_pins_science_fresh_process():
+    """A science module changed BEFORE the driver starts: the driver refuses at import (SciencePinError), for execute
+    and for recover after an interruption; nothing is consumed or computed; the state is unchanged."""
+    fresh()
+    p, orig = _restoring(SCIENCE_REL)
+    try:
+        p.write_bytes(orig + b"\n# planted\n")
+        r1 = T.child(sb(), "execute")
+    finally:
+        p.write_bytes(orig)
+    ok1 = r1["out"] is None and r1["rc"] not in (0, None) and "SciencePinError" in r1["stderr"] and _nothing_consumed()
+    ch = fresh()
+    crash("F3", at=4)
+    before = counts()
+    try:
+        p.write_bytes(orig + b"\n# planted\n")
+        r2 = recover()
+    finally:
+        p.write_bytes(orig)
+    ok2 = r2["out"] is None and "SciencePinError" in r2["stderr"] and status() == "CONSUMED_INTERRUPTED" \
+        and _journal_attempt() == 1 and counts() == before
+    r3 = recover()
+    return {"ok": ok1 and ok2 and r3["out"] == {"rc": 0} and sealed_ok() and one_marker(ch),
+            "execute_rc": r1["rc"], "recover_rc": r2["rc"]}
+
+
+def t_gc8_evidence_at_head_and_mbr1_branch():
+    """GC-8: an NSF/evidence path committed at HEAD (absent from the worktree), or on MB r1's branch, refuses."""
+    ev = T.NSF_REL + "/evidence/planted.txt"
+    fresh()
+    sb().write(ev, "planted\n")
+    T.g(sb().root, "add", "-f", ev)
+    T.g(sb().root, "commit", "-q", "-m", "sandbox: planted NSF/evidence at HEAD")
+    sb().p(ev).unlink()
+    sb().p(T.NSF_REL + "/evidence").rmdir()
+    r1 = T.child(sb(), "execute")
+    ok1 = r1["out"] == {"rc": 2, "refused": "MBR1_STATE"} and "HEAD holds an NSF/evidence path" in (r1["detail"] or "")
+    fresh()
+    env = dict(T.GENV, GIT_INDEX_FILE=str(sb().tmp / "planted.index"))
+    run = lambda *a: subprocess.run(["/usr/bin/git", "-C", str(sb().root), *a], capture_output=True, text=True,  # noqa
+                                    env=env, check=True).stdout.strip()
+    try:
+        blob = subprocess.run(["/usr/bin/git", "-C", str(sb().root), "hash-object", "-w", "--stdin"],
+                              input="planted\n", capture_output=True, text=True, env=T.GENV, check=True).stdout.strip()
+        run("read-tree", T.BASE)
+        run("update-index", "--add", "--cacheinfo", f"100644,{blob},{ev}")
+        c = run("commit-tree", run("write-tree"), "-p", T.BASE, "-m", "sandbox: MB r1 branch with NSF/evidence")
+        T.g(sb().root, "branch", "-f", "p5y-k5-cell308-mb-r1", c)
+        r2 = T.child(sb(), "execute")
+    finally:
+        T.g(sb().root, "branch", "-f", "p5y-k5-cell308-mb-r1", T.BASE)
+    ok2 = r2["out"] == {"rc": 2, "refused": "MBR1_STATE"} and \
+        "refs/heads/p5y-k5-cell308-mb-r1 holds an NSF/evidence path" in (r2["detail"] or "")
+    return {"ok": ok1 and ok2 and _nothing_consumed(), "head": r1["detail"], "mbr1_branch": r2["detail"]}
+
+
+def t_cas_ref_conflict_vs_infrastructure():
+    """R1 (i), unit: a genuine CAS conflict returns False at once; a lockfile (the ref still holds the expected old
+    value) is recorded and raises RefWriteError once the retries are spent; a lock that clears during the retry
+    schedule is overcome."""
+    import threading
+    Sm = S()
+    fresh()
+    ref = T.PREFIX + "unit-test"
+    st = Sm.Store(sb().root, "refs/heads/" + T.BRANCH)
+    b1, b2 = st.put_blob(b"cas unit 1\n"), st.put_blob(b"cas unit 2\n")
+    created = st.cas_ref(ref, b1, None) is True
+    conflict = st.cas_ref(ref, b2, None) is False and st.cas_ref(ref, b2, b2) is False
+    lk = sb().plant_lock(ref + ".lock")
+    n0 = len(Sm.REF_WRITE_FAILURES)
+    try:
+        st.cas_ref(ref, b2, b1)
+        infra = "NO_RAISE"
+    except Sm.RefWriteError:
+        infra = "RefWriteError"
+    recorded = len(Sm.REF_WRITE_FAILURES) == n0 + 1 and Sm.REF_WRITE_FAILURES[-1]["lock_present"] is True
+    st2 = Sm.Store(sb().root, "refs/heads/" + T.BRANCH, retry_delays=(0.8,))    # test-local schedule
+    threading.Timer(0.2, lk.unlink).start()
+    retried = st2.cas_ref(ref, b2, b1) is True and st.rev(ref) == b2
+    return {"ok": created and conflict and infra == "RefWriteError" and recorded and retried,
+            "created": created, "conflict": conflict, "infra": infra, "recorded": recorded, "retried": retried}
 
 
 # ====================================================================== persistence contract and units

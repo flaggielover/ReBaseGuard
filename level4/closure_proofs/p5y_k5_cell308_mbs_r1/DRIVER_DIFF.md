@@ -1,7 +1,7 @@
 # DRIVER_DIFF: mbs308_driver.py against MB r1's mb308_driver.py (NOT frozen; regenerated from the files)
 
 * Base: `level4/closure_proofs/p5y_k5_cell308_mb_r1/code/mb308_driver.py` at freeze r3 `c46434a3` (byte-identical at `21e99cf0`), sha256 `411252b2a9fa601cc5c1ba34abaf08482cf95a06e2ce7e4d5e5a5bd9e1f56dcb`.
-* New: `code/mbs308_driver.py`, sha256 `7bc2a6192b1877aeb8fc0184cb249e098be9ce224f32570636817c39a13e7067` (changes with every re-pin; the freeze binds the final bytes).
+* New: `code/mbs308_driver.py`, sha256 `d60e675897b0574ed0a5abfd0f8d414be140e1e3dca658dfa9105bb48dbb2d46` (changes with every re-pin; the freeze binds the final bytes).
 * Hunks: 22; by class: IDENTITY 1, IDENTITY + LIFECYCLE 10, LIFECYCLE 11.
 * Classes: **SCIENCE-GLUE identical** = every function in the RC1 list and every function it references is text-identical, so it appears in NO hunk (asserted by `tests/test_mbs308_static.py` t_rc1_science_glue_text_identical and t_mbs9_referenced_module_names; a hunk touching one would be classified `SCIENCE-GLUE (MUST NOT OCCUR)`); **IDENTITY** = the successor's worktree, branch, namespace, refs, grant schema and paths, MB r1's recorded state (GC-8), helper pins, lineage; **LIFECYCLE** = the durable state machine, persistence, checkpoints + resume, supervisor, host contract, platform pins, launcher gate, modes.
 * The carried (text-identical) functions: `Inconsistent`, `IndependentCheckFailed`, `Refusal`, `_eval_cap`, `_ser_block`, `_set_job_cap`, `_worker_init`, `_worker_job`, `admitted_pairs`, `check_bindings`, `check_clean`, `check_cpu_caps`, `check_flags`, `check_governance_state`, `check_helpers`, `check_identity`, `check_result_paths`, `compose_and_consume`, `control`, `controls`, `decide`, `decoy`, `decoy_bundles`, `decoy_cover`, `evaluate_target`, `failure_kind`, `freeze_commit`, `fs`, `git`, `git_blob_id`, `git_dir`, `jsonable`, `load_consumer`, `load_science`, `prepare_target`, `public_stage1`, `r0_order3_variant`, `read_pinned`, `rehearse`, `require_ac`, `sha`, `stage1`, `supply_scaled_variant`, `target_geometry`, `utc`, `verdict_ok`.
@@ -320,9 +320,9 @@
 -    "mb308_consumer.py": "c233bdb6235cd8a44bcf187be7d6686a4684f8619bed21ade9130432c5c09188",
 -    "mb308_host.py": "6702a9be56b6e8a530407b8be2794f4d4266445a97d33c2f0601da8754760a8c",
 +    "mbs308_guard.py": "48903487f648e9d39bb764497ceae87941c33be73cb4b1fa285ac83bbb1e9435",
-+    "mbs308_host.py": "21b82c3f96ce54dca541e719aac92600fb1c9f3acc0e0ce6de4af8761a0c28dd",
-+    "mbs308_state.py": "6a09062c29a57619535ccfa885e51714ed73c0557b332d58cc59f2faf13d3839",
-+    "mbs308_launch.py": "a3310ed87c92dac5200f5752d0bc185f2d99948269c2b7cc7c3b66692b65dc00",
++    "mbs308_host.py": "fed4ea2b83975d388decfa12f29afffc8e9dd2a1cdfa8b941bf85ce70855fc89",
++    "mbs308_state.py": "807008ef5ac756d6a0f86a5b7667e213fbbdfba00ae420813b4b5c2728f154e3",
++    "mbs308_launch.py": "c829b9ed375d25f5e1386001831015f2dde0fa07dcccd283ba822b0290022028",
  }
 -PIN.GUARD_SHA256 = HELPER_SHA256["mb308_guard.py"]
 +PIN.GUARD_SHA256 = HELPER_SHA256["mbs308_guard.py"]
@@ -354,7 +354,7 @@
 ### Hunk 6: IDENTITY + LIFECYCLE; campaign, check_mbr1_state, check_not_evaluated, store
 
 ```diff
-@@ -239,17 +346,57 @@
+@@ -239,17 +346,65 @@
      return {"worktree": here, "git_dir": gd, "common_dir": cd, "branch": br}
  
  
@@ -363,7 +363,9 @@
 -        if git("for-each-ref", "--format=%(refname)", prefix).stdout.strip():
 -            raise Refusal("CONSUMED", f"a ref exists under {prefix}")
 +def store() -> STATE.Store:
-+    return STATE.Store(REPO, QUALIFIED_BRANCH)
++    # R1 (i): a ref write that fails WITHOUT a compare-and-swap conflict is retried on MB r1's frozen seal-retry
++    # schedule (SEAL_RETRY_DELAYS; no new number), then raised as STATE.RefWriteError (infrastructure)
++    return STATE.Store(REPO, QUALIFIED_BRANCH, retry_delays=SEAL_RETRY_DELAYS)
 +
 +
 +def campaign() -> STATE.Campaign:
@@ -395,14 +397,20 @@
 +
 +def check_not_evaluated() -> dict:
 +    """No prior MB-S evaluation: no marker / pending / checkpoint ref, no result anywhere, no spool result file. A
-+    journal is allowed only as a STALE pre-marker intent (state ARMING, its process dead): execute takes it over."""
++    journal is allowed only as a STALE pre-marker intent (state ARMING, or ABORTED_INTENT after a marker write that
++    failed; its process dead; no marker): execute takes it over. R1 (iii): a campaign git lockfile refuses (GIT_LOCKED;
++    `recover` moves stale ones aside)."""
++    locks = STATE.git_lockfiles(store())
++    if locks:
++        raise Refusal("GIT_LOCKED", f"campaign git lockfile(s) {', '.join(locks)}: run `recover`")
 +    refs = git("for-each-ref", "--format=%(refname)", PRIOR_MARKERS[0]).stdout.split()
 +    if any(r != JOURNAL_REF for r in refs):
 +        raise Refusal("CONSUMED", f"a ref exists under {PRIOR_MARKERS[0]}")
 +    stale = None
 +    if JOURNAL_REF in refs:
 +        jid, jrec = STATE.Journal.read(store())
-+        if jrec is None or jrec["state"] != "ARMING" or HOST.identity_alive(jrec.get("process")):
++        if jrec is None or jrec["state"] not in ("ARMING", "ABORTED_INTENT") or \
++                HOST.identity_alive(jrec.get("process")):
 +            raise Refusal("CONSUMED", "a journal exists that is not a stale pre-marker intent")
 +        stale = jid
      names = git("ls-tree", "-r", "--name-only", "HEAD").stdout.split()
@@ -424,7 +432,7 @@
 ### Hunk 7: IDENTITY + LIFECYCLE; check_seal_preconditions
 
 ```diff
-@@ -288,16 +435,19 @@
+@@ -288,16 +443,19 @@
      if git("var", "GIT_COMMITTER_IDENT").returncode or git("var", "GIT_AUTHOR_IDENT").returncode:
          raise Refusal("SEAL_PRECONDITION", "no committer/author identity")
      head = git("rev-parse", "HEAD").stdout.strip()
@@ -452,7 +460,7 @@
 ### Hunk 8: IDENTITY + LIFECYCLE; <module-level assignment / statement>, busy_processes, check_launched, check_platform, free_memory_bytes, host_preflight, platform_readings
 
 ```diff
-@@ -309,6 +459,104 @@
+@@ -309,6 +467,107 @@
      if not os.access(parent, os.W_OK | os.X_OK):
          raise Refusal("SEAL_PRECONDITION", "the worktree copy's parent directory is not writable")
      return {"branch_head": head}
@@ -541,12 +549,15 @@
 +    return out
 +
 +
-+def host_preflight(launched: dict | None) -> dict:
-+    """Section 6 gates + GC-10 headroom and exclusivity. Every gate refuses start (before the marker)."""
++def host_preflight(launched: dict | None, texts: dict | None = None) -> dict:
++    """Section 6 gates + GC-10 headroom and exclusivity. Every gate refuses start (before the marker). `texts`: planted
++    readings for the tests ({"host": ..., "su": ..., "vm_stat": ..., "ps": ...}); production passes none."""
++    t = texts or {}
 +    pid_rec, pid_state = STATE.read_pidfile(store())
-+    g = HOST.preflight_gates(REPO, other_job_running=pid_state == "LIVE", launched=launched)
-+    fm = free_memory_bytes()
-+    busy = busy_processes()
++    g = HOST.preflight_gates(REPO, other_job_running=pid_state == "LIVE", launched=launched, texts=t.get("host"),
++                             su_texts=t.get("su"))
++    fm = free_memory_bytes(t.get("vm_stat"))
++    busy = busy_processes(t.get("ps"))
 +    g["gates"]["free_memory_ge_min"] = isinstance(fm, int) and fm >= FREE_MEM_MIN_BYTES
 +    g["gates"]["host_exclusive"] = not busy
 +    g["readings"].update({"free_memory_bytes": fm, "busy_processes": busy, "pidfile": pid_state})
@@ -562,7 +573,7 @@
 ### Hunk 9: IDENTITY; check_grant
 
 ```diff
-@@ -594,9 +842,15 @@
+@@ -594,9 +853,15 @@
      if git("diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").stdout.split() != [GRANT_REL]:
          raise Refusal("GRANT_INVALID", "the grant commit changes more than the grant")
      g = json.loads((REPO / GRANT_REL).read_bytes())
@@ -585,7 +596,7 @@
 ### Hunk 10: IDENTITY + LIFECYCLE; persist_emergency, persist_pending, serialize
 
 ```diff
-@@ -623,33 +877,23 @@
+@@ -623,33 +888,23 @@
  
  # ------------------------------------------------------------------ persistence, seal and materialization
  def serialize(obj: dict) -> bytes:
@@ -637,7 +648,7 @@
 ### Hunk 11: LIFECYCLE; seal_blob
 
 ```diff
-@@ -657,7 +901,12 @@
+@@ -657,7 +912,12 @@
      for delay in (0.0, *SEAL_RETRY_DELAYS):
          time.sleep(delay)
          head = git("rev-parse", "HEAD").stdout.strip()
@@ -656,7 +667,7 @@
 ### Hunk 12: IDENTITY + LIFECYCLE; seal_blob
 
 ```diff
-@@ -667,12 +916,13 @@
+@@ -667,12 +927,13 @@
              if any(s.returncode for s in steps) or tree.returncode:
                  last = "index"
                  continue
@@ -677,7 +688,7 @@
 ### Hunk 13: IDENTITY + LIFECYCLE; materialize
 
 ```diff
-@@ -690,20 +940,19 @@
+@@ -690,20 +951,19 @@
          raise OSError("the object store returned other bytes")
      fds = [os.open(str(REPO), os.O_RDONLY | os.O_DIRECTORY)]
      try:
@@ -707,7 +718,7 @@
 ### Hunk 14: IDENTITY + LIFECYCLE; fallback_bytes, materialized_ok, seal_message
 
 ```diff
-@@ -719,19 +968,42 @@
+@@ -719,19 +979,42 @@
              os.close(fd)
  
  
@@ -758,7 +769,7 @@
 ### Hunk 15: LIFECYCLE; <module-level assignment / statement>, _journal, after_marker, keep_awake, persist_and_seal
 
 ```diff
-@@ -751,71 +1023,124 @@
+@@ -751,71 +1034,133 @@
      return "TARGET_EVALUATION_FAILED"
  
  
@@ -780,7 +791,7 @@
 +        pass
 +    STATE.fault("F8")
 +    if spool_ok and jr is not None:
-+        _journal(jr, state="RESULT_DURABLE", result_sha256=STATE.sha(data))
++        _journal(jr, durable=True, state="RESULT_DURABLE", result_sha256=STATE.sha(data))
 +    STATE.fault("F9")
 +    try:
 +        blob = persist_pending(data, stale_pending)
@@ -791,7 +802,7 @@
 +        print("MBS308 NOTHING DURABLE: the marker exists; run `recover` (it resumes). NEVER run execute again.")
 +        return 6
 +    if jr is not None:
-+        _journal(jr, state="PENDING_RESULT", result_blob=blob)
++        _journal(jr, durable=True, state="PENDING_RESULT", result_blob=blob)
 +    STATE.fault("F10")
 +    try:
 +        cid = seal_blob(blob, seal_message(status))
@@ -800,7 +811,8 @@
 +        return 4
 +    STATE.fault("F12")
 +    if jr is not None:
-+        _journal(jr, state="SEALED" if status == STATE.TARGET_EVALUATED else "INDETERMINATE_SEALED", seal_commit=cid)
++        _journal(jr, durable=True, state="SEALED" if status == STATE.TARGET_EVALUATED else "INDETERMINATE_SEALED",
++                 seal_commit=cid)
 +    try:
 +        materialize(blob)
 +    except BaseException:                                              # noqa: BLE001
@@ -810,15 +822,23 @@
 +    return 0 if status == STATE.TARGET_EVALUATED else (3 if status == "CONTROL_FAILED" else 5)
 +
 +
-+def _journal(jr: STATE.Journal, **changes) -> None:
-+    """A journal advance after the marker: a CAS conflict means another attempt owns the run (stop, write nothing);
-+    any other failure is ignored (the artifacts, not the journal, decide the durable states)."""
++JOURNAL_FAILURES: list = []        # value-free, in memory: {utc, state, error, durable}
++
++
++def _journal(jr: STATE.Journal, durable: bool = False, **changes) -> None:
++    """A journal advance after the marker. Before any durable artifact exists, a genuine CAS conflict means another
++    attempt owns the run (stop, write nothing). R1 (ii): once the durable artifacts exist (`durable`: the spool result,
++    the pending ref, the seal), a failed advance -- a conflict or an infrastructure failure -- never stops the seal:
++    the artifacts decide; the failure is recorded. Other failures are always recorded and ignored."""
 +    try:
 +        jr.advance(**changes)
-+    except STATE.JournalConflict:
-+        raise STATE.LostOwnership()
-+    except Exception:                                                  # noqa: BLE001
-+        pass
++    except STATE.JournalConflict as exc:
++        JOURNAL_FAILURES.append({"utc": utc(), "state": changes.get("state"), "error": exc.code, "durable": durable})
++        if not durable:
++            raise STATE.LostOwnership()
++    except Exception as exc:                                           # noqa: BLE001
++        JOURNAL_FAILURES.append({"utc": utc(), "state": changes.get("state"), "durable": durable,
++                                 "error": getattr(exc, "code", type(exc).__name__)})
 +
 +
 +def after_marker(con, prep, common: dict, evaluator, t0: float, jr: STATE.Journal, ctx: STATE.Ctx) -> int:
@@ -928,7 +948,7 @@
 ### Hunk 16: LIFECYCLE; close_host
 
 ```diff
-@@ -827,8 +1152,15 @@
+@@ -827,8 +1172,18 @@
  
  
  def close_host(common: dict) -> None:
@@ -940,6 +960,9 @@
 +        sup = _SUP.get("sup")
 +        common.setdefault("lifecycle", {})["caffeinate"] = None if sup is None else sup.record()
 +        common["lifecycle"]["host_log"] = store().host_log_read()
++        common["lifecycle"]["recover_actions"] = STATE.recover_actions_read(store())
++        common["lifecycle"]["ref_write_failures"] = list(STATE.REF_WRITE_FAILURES)
++        common["lifecycle"]["journal_failures"] = list(JOURNAL_FAILURES)
 +    except BaseException as exc:                                       # noqa: BLE001
 +        common.setdefault("lifecycle", {})["caffeinate"] = {"error": type(exc).__name__}
      if h is None:
@@ -950,7 +973,7 @@
 ### Hunk 17: LIFECYCLE; pre_marker_common, run_execute
 
 ```diff
-@@ -859,21 +1191,21 @@
+@@ -859,21 +1214,21 @@
              "kappa_check": sci["kappa_check"]}
  
  
@@ -985,7 +1008,7 @@
 ### Hunk 18: LIFECYCLE; pre_marker_common, run_execute, run_resume
 
 ```diff
-@@ -884,40 +1216,167 @@
+@@ -884,40 +1239,180 @@
          raise Refusal(exc.code, str(exc))
      except PIN.PinError as exc:
          raise Refusal("PIN_MISMATCH", str(exc))
@@ -1059,14 +1082,23 @@
 +        except STATE.JournalConflict:
 +            host["sampler"].stop()
 +            raise Refusal("CONSUMED", "another process holds the journal")
++        except STATE.RefWriteError as exc:                             # R1 (i): infrastructure, nothing consumed
++            host["sampler"].stop()
++            raise Refusal("JOURNAL_WRITE_FAILED", f"{exc} (nothing consumed; run `recover`)")
 +        STATE.fault("F1")
-+        if not st.cas_ref(CONSUMED_REF, grant["grant_commit"], None):
++        why = ("CONSUMED", "the exactly-once marker could not be created: the target is never evaluated twice")
++        try:
++            marker_ok = st.cas_ref(CONSUMED_REF, grant["grant_commit"], None)
++        except STATE.RefWriteError as exc:     # R1 (i): the marker is provably absent (re-read); nothing is consumed
++            marker_ok, why = False, ("MARKER_WRITE_FAILED", f"{exc} (the marker is absent; nothing consumed; run "
++                                                            "`recover`)")
++        if not marker_ok:
 +            host["sampler"].stop()
 +            try:                        # this intent never owned the marker: it must not make the run look resumable
 +                jr.advance(state="ABORTED_INTENT", aborted_utc=utc())
 +            except Exception:                                          # noqa: BLE001
 +                pass
-+            raise Refusal("CONSUMED", "the exactly-once marker could not be created: the target is never evaluated twice")
++            raise Refusal(*why)
 +        STATE.fault("F2")
 +        common["_host"] = host
 +        _journal(jr, state="COMPUTING", marker_utc=utc(), attempt_started_utc=utc(), attempt_seq="SELF")
@@ -1114,6 +1146,8 @@
 +        cls = STATE.classify(campaign(), boot_uuid=boot_uuid, platform=platform_readings())
 +        if cls["state"] != "CONSUMED_INTERRUPTED":
 +            raise Refusal("RESUME_REFUSED", f"state {cls['state']}")
++        if cls.get("git_locks"):
++            raise Refusal("GIT_LOCKED", f"campaign git lockfile(s) {', '.join(cls['git_locks'])}: run `recover`")
 +        grant, common, con, sci, ctl, awake = pre_marker_common(own_sha, resume=True)
 +        if cls["marker"] != grant["grant_commit"]:
 +            raise Refusal("RESUME_REFUSED", "the marker does not name the grant commit at HEAD")
@@ -1144,6 +1178,8 @@
 +                       attempt_started_utc=utc(), history=hist, attempt_seq="SELF")
 +        except STATE.JournalConflict:
 +            raise Refusal("RESUME_REFUSED", "another resume advanced the journal first")
++        except STATE.RefWriteError as exc:                             # R1 (i): the attempt counter did not move
++            raise Refusal("JOURNAL_WRITE_FAILED", f"{exc} (the attempt was not consumed; run `recover`)")
 +        STATE.write_pidfile(st, {"mode": "resume", "attempt": attempt, "label": os.environ.get("MBS308_LAUNCH_LABEL")})
 +        common["_host"] = {"start": HOST.snapshot(), "sampler": HOST.Sampler().start()}
 +        common["lifecycle"] = {"attempt": attempt, "resumed": True, "classified": cls["why"]}
@@ -1187,7 +1223,7 @@
 ### Hunk 19: IDENTITY + LIFECYCLE; _pending_seal_materialize, _read_verified_spool, _seal_control_failed, run_close_indeterminate, run_recover, run_seal_only, run_status
 
 ```diff
-@@ -928,73 +1387,170 @@
+@@ -928,73 +1423,191 @@
      return controls(con, sci, k)
  
  
@@ -1224,13 +1260,15 @@
 +    try:
 +        cls = STATE.classify(campaign(), boot_uuid=boot_uuid, platform=platform_readings())
 +        s = cls["state"]
++        if cls.get("git_locks"):
++            raise Refusal("GIT_LOCKED", f"campaign git lockfile(s) {', '.join(cls['git_locks'])}: run `recover`")
 +        jid, jrec = STATE.Journal.read(st)
 +        jr = STATE.Journal(st, jid, jrec) if jrec is not None else None
 +        if s == "RESULT_DURABLE_UNSEALED":
 +            data = _read_verified_spool(cls)
 +            status = json.loads(data)["status"]
 +            if jr is not None:
-+                _journal(jr, state="RESULT_DURABLE", result_sha256=STATE.sha(data))
++                _journal(jr, durable=True, state="RESULT_DURABLE", result_sha256=STATE.sha(data))
 +            return _pending_seal_materialize(data, status, jr, cls.get("stale_pending"))
 +        if s == "PENDING_RESULT":
 +            data = st.get_blob(cls["pending"])
@@ -1243,7 +1281,7 @@
 +                return 0 if s == "SEALED" else 5
 +            want = "SEALED" if s == "SEALED" else "INDETERMINATE_SEALED"
 +            if jr is not None and jrec.get("state") != want:
-+                _journal(jr, state=want, seal_commit=git("rev-parse", "HEAD").stdout.strip())
++                _journal(jr, durable=True, state=want, seal_commit=git("rev-parse", "HEAD").stdout.strip())
 +            m = materialized_ok(blob)
 +            if m is None:
 +                try:
@@ -1269,13 +1307,14 @@
 +    except OSError as exc:
 +        raise Refusal("UNSEALED", str(exc))
 +    if jr is not None:
-+        _journal(jr, state="PENDING_RESULT", result_blob=blob)
++        _journal(jr, durable=True, state="PENDING_RESULT", result_blob=blob)
 +    try:
 +        cid = seal_blob(blob, seal_message(f"{status}, sealed by seal-only"))
 +    except OSError as exc:
 +        raise Refusal("UNSEALED", str(exc))
 +    if jr is not None:
-+        _journal(jr, state="SEALED" if status == STATE.TARGET_EVALUATED else "INDETERMINATE_SEALED", seal_commit=cid)
++        _journal(jr, durable=True, state="SEALED" if status == STATE.TARGET_EVALUATED else "INDETERMINATE_SEALED",
++                 seal_commit=cid)
 +    try:
 +        materialize(blob)
 +    except (OSError, FileExistsError) as exc:
@@ -1317,6 +1356,8 @@
 +        if cls["state"] != "CONSUMED_UNRECORDED":
 +            raise Refusal("NO_DISCRETIONARY_ABANDONMENT", f"close-indeterminate applies only to CONSUMED_UNRECORDED "
 +                                                          f"(state {cls['state']})")
++        if cls.get("git_locks"):
++            raise Refusal("GIT_LOCKED", f"campaign git lockfile(s) {', '.join(cls['git_locks'])}: run `recover`")
 +        marker = cls["marker"]
 +        drv = cls.get("driver_sha256")
 +        if drv is None or drv != own_sha or git("rev-parse", "HEAD").stdout.strip() != marker:
@@ -1350,7 +1391,46 @@
 -    if not entry:
 -        if git("status", "--porcelain", "--untracked-files=all").stdout.strip():
 -            raise Refusal("DIRTY_TREE", "seal-only needs an otherwise clean tree")
--        try:
++            jr.advance(state="CLOSING_INDETERMINATE", grant_commit=marker, driver_sha256=drv,
++                       closing_utc=utc(), closing_reason=cls["why"])
++        except STATE.JournalConflict:
++            raise Refusal("CLOSE_REFUSED", "the journal moved")
++        except STATE.RefWriteError as exc:                             # R1 (i)
++            raise Refusal("JOURNAL_WRITE_FAILED", f"{exc} (run `recover`)")
++        for name in (STATE.RESULT_FILE, STATE.TMP_FILE):
++            if st.spool_exists(name):
++                st.quarantine(name, "closing")
++        rec = {"schema": SCHEMA, "complete": True, "status": "INDETERMINATE_CLOSED", "cell": TARGET_CELL,
++               "grant": {"grant_commit": marker}, "driver_sha256": drv, "target_evaluations": 1,
++               "consumed_ref": CONSUMED_REF, "mechanical_outcome": "CELL308_EXECUTION_INDETERMINATE",
++               "classified": {"state": cls["state"], "why": cls["why"]},
++               "journal": None if jrec is None else {"seq": jrec.get("seq"), "attempt": jrec.get("attempt"),
++                                                     "n_ckpt": jrec.get("n_ckpt")},
++               "closed_utc": utc(), "value_free": True}
++        return persist_and_seal(serialize(rec), "INDETERMINATE_CLOSED", jr, cls.get("stale_pending"))
++    finally:
++        lock.release()
++
++
++def run_status(boot_uuid: str | None = None) -> str:
++    """Read-only; the caller prints the state name only."""
++    return STATE.classify(campaign(), boot_uuid=boot_uuid, platform=platform_readings())["state"]
++
++
++def run_recover(own_sha: str, prepare=None, evaluator=None, boot_uuid: str | None = None) -> int:
++    """The only dispatcher: exactly the frozen action of the classified state (mbs308_state.ACTIONS)."""
++    check_flags()
++    check_identity()
++    cls = STATE.classify(campaign(), boot_uuid=boot_uuid, platform=platform_readings())
++    s = cls["state"]
++    if cls.get("git_locks") and s != "CONSUMED_COMPUTING":
++        # R1 (iii): the frozen, recorded, value-free action for stale campaign git lockfiles, BEFORE resume / seal /
++        # close: move them aside (never delete). Not stale (a live campaign process, or an open file): nothing.
++        if not cls.get("git_locks_stale"):
++            print(f"MBS308 RECOVER state {s}: campaign git lockfiles are held (a live campaign process or an open "
++                  "file); nothing done")
++            return 8
+         try:
 -            cid = seal_blob(pending, seal_message(f"{status}, sealed by seal-only"))
 -        except OSError as exc:
 -            raise Refusal("UNSEALED", str(exc))
@@ -1377,35 +1457,11 @@
 -            return 7
 -    print(f"MB308 SEALED {cid} (seal-only; status {status}; nothing computed)")
 -    return 0
-+            jr.advance(state="CLOSING_INDETERMINATE", grant_commit=marker, driver_sha256=drv,
-+                       closing_utc=utc(), closing_reason=cls["why"])
-+        except STATE.JournalConflict:
-+            raise Refusal("CLOSE_REFUSED", "the journal moved")
-+        for name in (STATE.RESULT_FILE, STATE.TMP_FILE):
-+            if st.spool_exists(name):
-+                st.quarantine(name, "closing")
-+        rec = {"schema": SCHEMA, "complete": True, "status": "INDETERMINATE_CLOSED", "cell": TARGET_CELL,
-+               "grant": {"grant_commit": marker}, "driver_sha256": drv, "target_evaluations": 1,
-+               "consumed_ref": CONSUMED_REF, "mechanical_outcome": "CELL308_EXECUTION_INDETERMINATE",
-+               "classified": {"state": cls["state"], "why": cls["why"]},
-+               "journal": None if jrec is None else {"seq": jrec.get("seq"), "attempt": jrec.get("attempt"),
-+                                                     "n_ckpt": jrec.get("n_ckpt")},
-+               "closed_utc": utc(), "value_free": True}
-+        return persist_and_seal(serialize(rec), "INDETERMINATE_CLOSED", jr, cls.get("stale_pending"))
-+    finally:
-+        lock.release()
-+
-+
-+def run_status(boot_uuid: str | None = None) -> str:
-+    """Read-only; the caller prints the state name only."""
-+    return STATE.classify(campaign(), boot_uuid=boot_uuid, platform=platform_readings())["state"]
-+
-+
-+def run_recover(own_sha: str, prepare=None, evaluator=None, boot_uuid: str | None = None) -> int:
-+    """The only dispatcher: exactly the frozen action of the classified state (mbs308_state.ACTIONS)."""
-+    check_flags()
-+    check_identity()
-+    s = STATE.classify(campaign(), boot_uuid=boot_uuid, platform=platform_readings())["state"]
++            moved = STATE.move_stale_git_locks(store(), boot_uuid)
++        except STATE.Locked as exc:
++            raise Refusal(exc.code, str(exc))
++        print(f"MBS308 RECOVER state {s}: {len(moved)} stale campaign git lockfile(s) moved aside (recorded)")
++        s = STATE.classify(campaign(), boot_uuid=boot_uuid, platform=platform_readings())["state"]
 +    action = STATE.ACTIONS[s]
 +    print(f"MBS308 RECOVER state {s} -> {action}")
 +    if action == "none":
@@ -1425,7 +1481,7 @@
 ### Hunk 20: LIFECYCLE; main
 
 ```diff
-@@ -1097,13 +1653,18 @@
+@@ -1097,13 +1710,18 @@
  
  def main(argv=None) -> int:
      ap = argparse.ArgumentParser()
@@ -1450,7 +1506,7 @@
 ### Hunk 21: LIFECYCLE; main
 
 ```diff
-@@ -1112,25 +1673,31 @@
+@@ -1112,25 +1730,31 @@
      signal.signal(signal.SIGALRM, wall_cap)
      signal.alarm(DECOY_CAP_S if a.mode == "decoy" else PRE_CAP_S)
      try:
@@ -1492,7 +1548,7 @@
 ### Hunk 22: LIFECYCLE; <module-level assignment / statement>, main
 
 ```diff
-@@ -1139,27 +1706,50 @@
+@@ -1139,27 +1763,50 @@
              if a.workers > 5 or a.workers < 1:
                  raise Refusal("WORKERS", "1..5 workers")
              check_bindings(allow_uncommitted=True)
@@ -1533,7 +1589,7 @@
 +        print("MBS308 LOST OWNERSHIP: another attempt advanced the journal; this attempt wrote nothing more")
 +        return 9
 +    except (Refusal, PIN.PinError, GUARD.QuarantineRefusal, CON.ConsumerRefusal, STATE.StateError,
-+            SciencePinError) as e:
++            SciencePinError, STATE.RefWriteError) as e:
 +        print(f"MBS308 REFUSED {e}")
          return 4 if getattr(e, "code", None) == "UNSEALED" else 2
      finally:

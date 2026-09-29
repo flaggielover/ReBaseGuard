@@ -36,8 +36,23 @@ def main() -> int:
     if spec.get("platform_override"):              # a simulated platform change (e.g. another OS build)
         real_readings = D.platform_readings
         D.platform_readings = lambda: dict(real_readings(), **spec["platform_override"])
+    if spec.get("pin_override"):                   # R4: the frozen pin differs from this host (a planted reading)
+        D.PLATFORM_PINS = dict(D.PLATFORM_PINS, **spec["pin_override"])
+    if spec.get("tamper_after_import"):            # R4: a pinned file changes after the driver loaded it
+        p = root / spec["tamper_after_import"]
+        p.write_bytes(p.read_bytes() + b"\n# planted by the test\n")
+    if spec.get("skip_clean"):                     # R4: isolate a later refusal from the (tested) clean-tree check
+        D.check_clean = lambda: None
     if action == "platform":
         print(json.dumps({"rc": 0, "platform": D.platform_readings()}))
+        return 0
+    if action == "host_gates":                     # R4: the driver's own start gates on planted readings
+        planted = json.loads(json.dumps(spec.get("planted") or {}).replace("{SELF}", str(os.getpid())))
+        try:
+            g = D.host_preflight(spec.get("launched", {"pass": True}), texts=planted)
+            print(json.dumps({"rc": 0, "gates": g["gates"]}))
+        except D.Refusal as e:
+            print(json.dumps({"rc": 2, "refused": e.code, "detail": str(e)}))
         return 0
     if action == "status":
         print(D.run_status(boot_uuid=boot))
@@ -72,6 +87,8 @@ def main() -> int:
         return 0
     except (D.Refusal, STATE.StateError) as e:
         print(json.dumps({"rc": 2, "refused": getattr(e, "code", str(e))}))
+        print(json.dumps({"rc": 2, "refused": getattr(e, "code", str(e)), "detail": str(e)[:300]}),
+              file=sys.stderr)
         return 0
 
 

@@ -407,6 +407,36 @@ def identity_alive(ident, boot_uuid: str | None = None) -> bool:
     return cs is not None and cs == ident.get("command_sha256")
 
 
+def identity_state(ident, boot_uuid: str | None = None) -> str:
+    """R2: "DEAD" only on POSITIVE evidence that the recorded process is gone -- the boot UUID changed, the pid does not
+    exist, or the pid now belongs to another process (other start time or command). "ALIVE" when all four fields
+    match. "UNKNOWN" when a reading fails (a failed `ps`, an unreadable boot UUID): never treated as dead."""
+    if not isinstance(ident, dict) or not ident.get("pid"):
+        return "UNKNOWN"
+    cur_boot = boot_session_uuid() if boot_uuid is None else boot_uuid
+    if cur_boot is None:
+        return "UNKNOWN"
+    if ident.get("boot_uuid") and ident["boot_uuid"] != cur_boot:
+        return "DEAD"
+    try:
+        os.kill(int(ident["pid"]), 0)
+    except ProcessLookupError:
+        return "DEAD"
+    except PermissionError:
+        pass
+    except (TypeError, ValueError, OSError):
+        return "UNKNOWN"
+    st = process_start(ident["pid"])
+    if st is None:
+        return "UNKNOWN"
+    if st != ident.get("start_time"):
+        return "DEAD"
+    cs = process_command_sha256(ident["pid"])
+    if cs is None:
+        return "UNKNOWN"
+    return "ALIVE" if cs == ident.get("command_sha256") else "DEAD"
+
+
 # ------------------------------------------------------------------ the caffeinate supervisor (section 5)
 class CaffeinateSupervisor:
     """Runs `caffeinate -i -m -s -w <pid>` and re-spawns it whenever it dies while the watched process lives; records

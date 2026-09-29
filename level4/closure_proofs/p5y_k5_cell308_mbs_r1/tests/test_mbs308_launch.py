@@ -182,6 +182,95 @@ def t_launcher_death_while_waiting():
             f.unlink()
 
 
+def _loaded(label: str) -> bool:
+    return subprocess.run(["/bin/launchctl", "print", f"gui/{os.getuid()}/{label}"], capture_output=True).returncode == 0
+
+
+def _start_job(tag: str):
+    H, L, S = mods()
+    run = TMP / (tag + datetime.datetime.now(datetime.timezone.utc).strftime("%Y%m%dT%H%M%S%f"))
+    run.mkdir(parents=True)
+    repo = run / "repo"
+    subprocess.run(["/usr/bin/git", "init", "-q", str(repo)], check=True, env=T.GENV)
+    label = "org.rebaseguard.mbs308.test." + run.name
+    state, stop = run / "payload_state.json", run / "STOP"
+    program = [T.PY, "-I", "-S", "-B", str(T.NSS / "tests/mbs308_payload.py"), str(T.code_dir()), str(repo), str(state),
+               str(stop)]
+    log_dir = Path.home() / "Library/Logs/ReBaseGuard/mbs308-test"
+    return run, label, state, stop, program, log_dir
+
+
+def _teardown(label: str, run: Path, stop: Path, pid: int | None) -> dict:
+    H, L, S = mods()
+    stop.write_text("stop\n")
+    if pid:
+        wait_for(lambda: not H.pid_alive(pid), 15)
+    b = subprocess.run(["/bin/launchctl", "bootout", f"gui/{os.getuid()}/{label}"], capture_output=True)
+    for f in (run / "plists").glob("*.plist"):
+        f.unlink()
+    return {"bootout_rc": b.returncode, "still_loaded": _loaded(label)}
+
+
+def t_wait_cleanup_ignores_failing_print():
+    """R2: with `launchctl print` failing (planted: launchd_job_pid returns nothing), neither `cleanup` nor
+    `wait_and_cleanup` boots out the live job; only once its RECORDED identity is dead is it booted out."""
+    import threading
+    H, L, S = mods()
+    run, label, state, stop, program, log_dir = _start_job("wc")
+    rec = L.launch(program, label, run / "plists", log_dir, run, record_dir=run)
+    real = H.launchd_job_pid
+    out, res = {}, {}
+    try:
+        H.launchd_job_pid = lambda *a, **k: None                 # planted failing / negative `launchctl print`
+        try:
+            L.cleanup(label, run)
+            res["cleanup_while_alive"] = "NOT_REFUSED"
+        except L.LaunchRefused as e:
+            res["cleanup_while_alive"] = e.code
+        th = threading.Thread(target=lambda: out.update(L.wait_and_cleanup(label, rec["plist"], rec["identity"],
+                                                                           poll_s=0.2)), daemon=True)
+        th.start()
+        time.sleep(3.0)
+        res["alive_during_wait"] = th.is_alive() and H.identity_state(rec["identity"]) == "ALIVE" and _loaded(label)
+        stop.write_text("stop\n")
+        th.join(30)
+        res["booted_out_after_death"] = (not th.is_alive()) and out.get("booted_out") is True and not _loaded(label)
+    finally:
+        H.launchd_job_pid = real
+        res["teardown"] = _teardown(label, run, stop, rec.get("pid"))
+    return {"ok": bool(rec.get("observed")) and res["cleanup_while_alive"] == "STILL_RUNNING"
+            and res["alive_during_wait"] and res["booted_out_after_death"], **res}
+
+
+def t_launch_never_boots_out_after_bootstrap():
+    """R2: a failure inside launch() AFTER the bootstrap (planted: the detachment proof raises) never boots the job out:
+    it may already have passed the marker; the driver's own launchd check governs."""
+    H, L, S = mods()
+    run, label, state, stop, program, log_dir = _start_job("nb")
+    real = L.prove_detached
+
+    def boom(*_a, **_k):
+        raise RuntimeError("planted failure after the bootstrap")
+    L.prove_detached = boom
+    pid = None
+    try:
+        try:
+            L.launch(program, label, run / "plists", log_dir, run, record_dir=run)
+            raised = False
+        except RuntimeError:
+            raised = True
+        L.prove_detached = real
+        st = wait_for(lambda: read_json(state), 20)
+        pid = st and st.get("pid")
+        time.sleep(1.5)
+        alive = bool(pid) and H.pid_alive(pid) and _loaded(label)
+    finally:
+        L.prove_detached = real
+        td = _teardown(label, run, stop, pid)
+    return {"ok": raised and alive and not td["still_loaded"], "raised": raised, "alive_after_failure": alive,
+            "teardown": td}
+
+
 def t_ppid1_is_not_detachment():
     """A process orphaned INSIDE the launcher's session (PPID 1, same SID, not a launchd job) is NOT detached."""
     H, L, S = mods()

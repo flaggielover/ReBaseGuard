@@ -132,7 +132,29 @@ class Sandbox:
     def spool(self) -> Path:
         return self.git_dir() / "mbs308-spool"
 
+    def common_dir(self) -> Path:
+        return Path(g(self.root, "rev-parse", "--path-format=absolute", "--git-common-dir"))
+
+    def lock_path(self, rel: str) -> Path:
+        return self.common_dir() / rel
+
+    def plant_lock(self, rel: str) -> Path:
+        """A stale git lockfile, as a reset inside a ref write leaves it (sandbox only)."""
+        p = self.lock_path(rel)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_bytes(b"0" * 40 + b"\n")
+        return p
+
+    def locks_aside(self) -> list:
+        d = self.spool() / "git-locks-aside"
+        return sorted(x.name for x in d.iterdir()) if d.is_dir() else []
+
     def wipe_state(self) -> None:
+        cd = self.common_dir()               # planted git lockfiles first (they block ref deletion)
+        for lk in list((cd / PREFIX.rstrip("/")).glob("*.lock")) + [cd / ("refs/heads/" + BRANCH + ".lock"),
+                                                                    cd / "packed-refs.lock"]:
+            if lk.exists():
+                lk.unlink()
         for ref in g(self.root, "for-each-ref", "--format=%(refname)").split():
             if ref.startswith(PREFIX) or ref.startswith("refs/mbs308-test"):
                 g(self.root, "update-ref", "-d", ref)
@@ -237,9 +259,17 @@ def child(sb: Sandbox, action: str, spec: dict | None = None, timeout: int = 300
                 break
             except ValueError:
                 pass
+    detail = None
+    for ln in reversed(p.stderr.splitlines()):
+        if ln.startswith("{") and ln.endswith("}"):
+            try:
+                detail = json.loads(ln).get("detail")
+                break
+            except ValueError:
+                pass
     rc = p.returncode
     return {"rc": rc, "signal": -rc if rc < 0 else None, "out": out, "stdout": p.stdout[-1500:],
-            "stderr": p.stderr[-1500:]}
+            "stderr": p.stderr[-1500:], "detail": detail}
 
 
 def joblog_counts(path) -> dict:

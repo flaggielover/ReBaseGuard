@@ -422,3 +422,96 @@ Before the GC-6 instruction arrived I had opened:
 
 13 lines; LEAK_FLAG on none: True.
 
+
+## 12. Repairs R1/R2/R4 (implementation review REVIEW_IMPLEMENTATION_MBS308, IMPLEMENTATION_REJECTED, commit 6d3a44cd, sha256 abecfbb2…; T6 ruling M4: repairs at a non-holder reviewer's request only)
+
+Read for this repair: the review's sections "Defects" and "CONDITIONS" only (plus the code and tests I wrote). R3 (DEF-3) is not a builder repair (it needs a non-holder's re-derivation / ratification) and was not touched. **No operational number was changed or added**: no cap, limit, timeout, threshold, allow-list or budget value. One point for the reviewer: the R1 (i) retry of a failed ref write reuses MB r1's frozen `SEAL_RETRY_DELAYS` schedule (0.5, 1, 2, 4 s; previously used only for the branch update in the seal) — a reuse of an existing frozen value in a new place, not a new number; ratify or rule otherwise. R2 removed the launcher's `timeout_s` early boot-out (its only use was `cleanup`'s `timeout_s=0`). Working tree only; nothing committed; base afba20e5.
+
+### Diff summary (against afba20e5)
+
+```
+.../p5y_k5_cell308_mbs_r1/DRIVER_DIFF.md           | 204 +++++++++++++--------
+ .../p5y_k5_cell308_mbs_r1/code/mbs308_driver.py    | 115 +++++++++---
+ .../p5y_k5_cell308_mbs_r1/code/mbs308_host.py      |  30 +++
+ .../p5y_k5_cell308_mbs_r1/code/mbs308_launch.py    |  67 ++++---
+ .../p5y_k5_cell308_mbs_r1/code/mbs308_state.py     | 178 +++++++++++++++++-
+ .../protocol/MBS308_PROTOCOL_DRAFT.md              |  26 +++
+ .../p5y_k5_cell308_mbs_r1/tests/mbs308_child.py    |  17 ++
+ .../p5y_k5_cell308_mbs_r1/tests/mbs308_testlib.py  |  32 +++-
+ .../tests/test_mbs308_crash.py                     | 202 +++++++++++++++++++-
+ .../tests/test_mbs308_launch.py                    |  89 +++++++++
+ .../tests/test_mbs308_mutants.py                   |  41 ++++-
+ .../tests/test_mbs308_state.py                     | 204 +++++++++++++++++++++
+ 12 files changed, 1069 insertions(+), 136 deletions(-)
+```
+
+* **R1 (i) — `mbs308_state.Store.cas_ref`.** After a failed `update-ref` the ref is re-read (`read_ref`: readable / absent / unreadable). Only "the ref no longer holds the expected old value" returns False (a conflict). Anything else (stale lockfile, I/O error, unreadable ref) is appended to `REF_WRITE_FAILURES` (value-free: ref, try, rc, lock present) and retried on the store's `retry_delays` (the driver passes `SEAL_RETRY_DELAYS`), then raises `RefWriteError` (an OSError; never a conflict). Callers: checkpoint write → recorded, evaluation continues; journal intent → `JOURNAL_WRITE_FAILED` (nothing consumed); marker → `MARKER_WRITE_FAILED` (the marker provably absent; intent closed ABORTED_INTENT); resume's attempt advance → `JOURNAL_WRITE_FAILED` (attempt not consumed); close → `JOURNAL_WRITE_FAILED`; pending / branch → UNSEALED (exit 4; the durable spool / pending decide). `check_not_evaluated` now also takes over an ABORTED_INTENT journal (no marker, process dead): this removes the DEF-1 (d) pre-marker wedge.
+* **R1 (ii) — `mbs308_driver._journal(durable=...)`.** Every journal advance made once the durable artifacts exist (after the spool write, the pending ref or the seal; in `persist_and_seal` and every `seal-only` path) is `durable=True`: a failed advance — a genuine conflict included — is recorded in `JOURNAL_FAILURES` and never stops the seal. Before the artifacts exist a genuine conflict still means LostOwnership.
+* **R1 (iii) — stale campaign git lockfiles.** `git_lockfiles` (refs/p5y-k5-cell308-mbs-r1/*.lock, the branch lock, packed-refs.lock in the common dir); `git_lock_info` (read-only, in every classification): stale only when no live campaign process exists (O_EXCL recover-lock holder, pidfile, journal process) and `lsof` shows no process holding any of them open (a live git command elsewhere in the shared repository); `move_stale_git_locks`: `recover`'s frozen action, before resume / seal / close and in every state except CONSUMED_COMPUTING — under the O_EXCL lock, re-verify, move each lockfile into `<spool>/git-locks-aside/` (never deleted; never renamed inside refs/, where it would read as a ref), fsync, and append a value-free record to `<spool>/recover-actions.jsonl` (also copied into the sealed record's lifecycle). Held lockfiles: recover does nothing (exit 8). `execute` / `resume` / `seal-only` / `close-indeterminate` refuse `GIT_LOCKED` while any campaign lockfile exists.
+* **R1 (iv) — fault points / planted locks.** The test-only fault hook gained two in-place actions (`plant`: a lockfile appears at that fault point; `bump_journal`: another writer advances the journal there); the production CLI still refuses when any hook is set. Crash tests L01–L11 plant locks for the marker, journal, ckpt, pending and branch refs and packed-refs, before a run and mid-run, and assert the frozen final state (SEALED with the uninterrupted bytes, no second marker, no verified checkpoint recomputed).
+* **R2 — `mbs308_launch.py`.** `launch()` never boots out after `launchctl bootstrap` (any failure after the bootstrap propagates; the record carries `observed`, the job identity and the detachment proof when launchd reported the job; the driver's own launchd check refuses a job not properly launched). `wait_and_cleanup` and `cleanup <label>` boot out only when `mbs308_host.identity_state(recorded identity)` is `DEAD` (positive evidence: the pid is gone, belongs to another process, or the boot UUID changed); `UNKNOWN` (a failed `ps` or boot-UUID read) is never dead; a failing, timed-out or unparseable `launchctl print` decides nothing; no recorded identity → never booted out automatically.
+* **R4 — behavioural tests on planted readings.** `host_preflight(launched, texts=...)` accepts planted vm_stat / ps / host / update readings (production passes none); the child harness can plant a pin value (`pin_override`), change a pinned file after the driver loaded it (`tamper_after_import`), or skip the clean-tree check to isolate a later refusal (`skip_clean`).
+
+### New tests (all PASS in the repair run)
+
+| module | test | result |
+|---|---|---|
+| crash | `t_L01_marker_lock` | PASS |
+| crash | `t_L02_journal_lock_after_crash` | PASS |
+| crash | `t_L03_journal_lock_during_seal` | PASS |
+| crash | `t_L04_journal_conflict_during_seal` | PASS |
+| crash | `t_L05_ckpt_lock_midrun` | PASS |
+| crash | `t_L06_ckpt_lock_after_crash` | PASS |
+| crash | `t_L07_pending_lock` | PASS |
+| crash | `t_L08_branch_lock` | PASS |
+| crash | `t_L09_packed_refs_lock_stale` | PASS |
+| crash | `t_L10_lock_with_live_campaign_process` | PASS |
+| crash | `t_L11_packed_refs_lock_open` | PASS |
+| launch | `t_wait_cleanup_ignores_failing_print` | PASS |
+| launch | `t_launch_never_boots_out_after_bootstrap` | PASS |
+| state | `t_gc10_start_gates` | PASS |
+| state | `t_pins_execute_platform` | PASS |
+| state | `t_pins_resume_platform` | PASS |
+| state | `t_pins_execute_research` | PASS |
+| state | `t_pins_resume_research` | PASS |
+| state | `t_pins_execute_science` | PASS |
+| state | `t_pins_resume_science` | PASS |
+| state | `t_pins_science_fresh_process` | PASS |
+| state | `t_gc8_evidence_at_head_and_mbr1_branch` | PASS |
+| state | `t_cas_ref_conflict_vs_infrastructure` | PASS |
+
+### New mutants
+
+| id | file | what the mutant breaks | target test | result |
+|---|---|---|---|---|
+| M34 | `mbs308_state.py` | R1 (i) undone: every ref-write failure read as a CAS conflict | `crash::t_L05_ckpt_lock_midrun` | KILLED |
+| M35 | `mbs308_driver.py` | R1 (ii) undone: a journal conflict after the durable result stops the seal | `crash::t_L04_journal_conflict_during_seal` | KILLED |
+| M36 | `mbs308_driver.py` | R1 (iii) undone: recover never moves stale git lockfiles aside | `crash::t_L02_journal_lock_after_crash` | KILLED |
+| M37 | `mbs308_state.py` | R1 (iii) guard undone: a lock is 'stale' although a live campaign process holds the pidfile | `crash::t_L10_lock_with_live_campaign_process` | KILLED |
+| M38 | `mbs308_state.py` | R1 (iii) guard undone: a lockfile held open by a live process is moved aside | `crash::t_L11_packed_refs_lock_open` | KILLED |
+| M39 | `mbs308_driver.py` | R1 (d wedge) undone: an aborted intent (marker write failed) blocks every later execute | `crash::t_L01_marker_lock` | KILLED |
+| M40 | `mbs308_launch.py` | R2 undone: the launcher boots out on one negative `launchctl print` | `launch::t_wait_cleanup_ignores_failing_print` | KILLED |
+| M41 | `mbs308_launch.py` | R2 undone: launch() boots out after the bootstrap | `launch::t_launch_never_boots_out_after_bootstrap` | KILLED |
+| M42 | `mbs308_driver.py` | GC-10 free-memory start gate ignored (R4) | `state::t_gc10_start_gates` | KILLED |
+| M43 | `mbs308_driver.py` | GC-10 exclusivity start gate ignored (R4) | `state::t_gc10_start_gates` | KILLED |
+| M44 | `mbs308_driver.py` | platform pin never compared (execute / resume) (R4) | `state::t_pins_resume_platform` | KILLED |
+| M45 | `mbs308_driver.py` | research pins not re-verified at execute / resume (R4) | `state::t_pins_resume_research` | KILLED |
+| M46 | `mbs308_driver.py` | science pins not re-verified at execute / resume (R4) | `state::t_pins_resume_science` | KILLED |
+| M47 | `mbs308_driver.py` | GC-8 evidence path at HEAD / on MB r1's branch ignored (R4) | `state::t_gc8_evidence_at_head_and_mbr1_branch` | KILLED |
+| M17 | `mbs308_driver.py` | marker without compare-and-swap | `state::t_marker_cas` | KILLED |
+
+M17 (marker without compare-and-swap) was re-targeted to the restructured marker write; its meaning is unchanged. Every other mutant M01–M33 is unchanged.
+
+### Repair run (full suite + full matrix; reports in ~/Library/Logs/ReBaseGuard/mbs308-test/repair/)
+
+* `test_mbs308_static.py`: **9/9 PASS**
+* `test_mbs308_launch.py`: **8/8 PASS**
+* `test_mbs308_state.py`: **44/44 PASS**
+* `test_mbs308_crash.py`: **47/47 PASS**
+* `test_mbs308_decoy.py`: **2/2 PASS**
+* Mutant matrix: **46/47 killed**; unmutated code passes every target test: True; survivors ['M33'].
+
+**The one survivor, M33, is PRE-EXISTING (not a repair mutant), and its earlier kill was luck.** M33 removes the broken-pool release from the pool watch thread. When a worker dies, concurrent.futures' `terminate_broken` holds the executor's shutdown lock while it `join`s the other workers. They ignore SIGTERM, so the join waits until each busy sibling finishes its current job; meanwhile the driver's `submit` / `shutdown` blocks. With short synthetic jobs the join ends at once, so `t_S01_worker_death` kills M33 only when a sibling happens to be mid-job: the previous matrix did (232 s), this run did not. A scratch probe (existing knobs only; no repository file changed; spec worker_die=RLR.0.6, job_sleep=90) confirms the defect and the release: unmutated, the failure is sealed in 9.7 s; with M33, 97.5 s (in production the sibling job can run for hours, until EVAL_CAP). **Proposed deterministic test (NOT applied: T6 M4 allows repairs only at a non-holder's request):** add to `t_S01_worker_death` one run with `{"worker_die": "RLR.0.6", "job_sleep": 90}` under the existing 60 s bound. For the reviewer to rule on.
+
+The repair run used only sandboxes cloned from the separate no-local base store, the synthetic evaluator, the synthetic launchd payload and the dev decoy (297, block 0, dev ladder, 2 workers); 0 target evaluations; no ref, commit or staging in the real repository.
+

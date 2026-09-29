@@ -97,6 +97,18 @@ def fault(point: str) -> None:
     n = _FAULT_COUNTS[point] = _FAULT_COUNTS.get(point, 0) + 1
     if n < int(s.get("at", 1)):
         return
+    if s.get("how") == "plant":             # R1 (iv): a lockfile appears here (what a reset inside a git write leaves)
+        if n == int(s.get("at", 1)):
+            fd = os.open(s["path"], os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o644)
+            os.write(fd, b"0" * 40 + b"\n")
+            os.close(fd)
+        return
+    if s.get("how") == "bump_journal":      # R1 (iv): another writer advances the journal here (a genuine conflict)
+        if n == int(s.get("at", 1)):
+            st = Store(s["repo"], s["branch"])
+            jid, jrec = Journal.read(st)
+            Journal(st, jid, jrec).advance(bumped_by_test=True)
+        return
     if s.get("how") == "kill":
         os.kill(os.getpid(), signal.SIGKILL)
         time.sleep(30)
@@ -122,6 +134,18 @@ class StateError(RuntimeError):
 
 class JournalConflict(StateError):
     """The journal CAS failed: another process advanced the journal (it owns the run now)."""
+
+
+class RefWriteError(OSError):
+    """R1 (i): an update-ref failure that is NOT a compare-and-swap conflict (the ref still holds the expected old
+    value: a stale lockfile, an I/O error). Recorded and retried; never read as "another process owns the run"."""
+
+    def __init__(self, code: str, detail: str = ""):
+        super().__init__(f"{code}: {detail}" if detail else code)
+        self.code = code
+
+
+REF_WRITE_FAILURES: list = []      # value-free, in memory: {utc, ref, try, rc, lock_present}
 
 
 class LostOwnership(BaseException):
@@ -243,10 +267,12 @@ def dec(o):
 class Store:
     """Git plumbing and the spool for ONE repository (the qualified worktree, or a test sandbox)."""
 
-    def __init__(self, repo, branch_ref: str):
+    def __init__(self, repo, branch_ref: str, retry_delays: tuple = ()):
         self.repo = Path(repo)
         self.branch_ref = branch_ref
+        self.retry_delays = tuple(retry_delays)   # the driver passes MB r1's SEAL_RETRY_DELAYS (no new number)
         self._gd = None
+        self._cd = None
 
     # ---- git
     def git(self, *args, input_bytes=None, write=False, text=True, env_extra=None):
@@ -269,9 +295,33 @@ class Store:
         p = self.git("cat-file", "-t", oid)
         return p.stdout.strip() if p.returncode == 0 else ""
 
+    def read_ref(self, ref: str) -> tuple:
+        """(readable, value): value "" = the ref does not exist; readable False = the read itself failed."""
+        p = self.git("rev-parse", "-q", "--verify", ref)
+        if p.returncode == 0:
+            return True, p.stdout.strip()
+        if p.returncode == 1 and not p.stdout.strip():
+            return True, ""
+        return False, None
+
     def cas_ref(self, ref: str, new: str, old: str | None) -> bool:
-        """update-ref by compare-and-swap: `old` None or ZERO = the ref must not exist."""
-        return self.git("update-ref", ref, new, old or ZERO, write=True).returncode == 0
+        """update-ref by compare-and-swap (`old` None or ZERO = the ref must not exist). R1 (i): after a failed
+        update-ref the ref is RE-READ. Only "the ref no longer holds the expected old value" is a conflict (False).
+        Anything else (a stale lockfile, an I/O error, an unreadable ref) is recorded and retried on
+        `retry_delays`; if it persists: RefWriteError (infrastructure)."""
+        expect = "" if old in (None, ZERO) else old
+        for i, delay in enumerate((0.0, *self.retry_delays)):
+            if delay:
+                time.sleep(delay)
+            p = self.git("update-ref", ref, new, old or ZERO, write=True)
+            if p.returncode == 0:
+                return True
+            readable, cur = self.read_ref(ref)
+            if readable and cur != expect:
+                return False                                  # a genuine compare-and-swap conflict
+            REF_WRITE_FAILURES.append({"utc": utc(), "ref": ref, "try": i + 1, "rc": p.returncode,
+                                       "lock_present": os.path.lexists(self.common_dir() / (ref + ".lock"))})
+        raise RefWriteError("REF_WRITE_FAILED", ref)
 
     def put_blob(self, data: bytes) -> str:
         p = self.git("hash-object", "-w", "--stdin", input_bytes=data, write=True)
@@ -317,6 +367,11 @@ class Store:
         if self._gd is None:
             self._gd = Path(self.git("rev-parse", "--path-format=absolute", "--git-dir").stdout.strip())
         return self._gd
+
+    def common_dir(self) -> Path:
+        if self._cd is None:
+            self._cd = Path(self.git("rev-parse", "--path-format=absolute", "--git-common-dir").stdout.strip())
+        return self._cd
 
     # ---- spool (section 3)
     def spool(self, create: bool = False) -> Path:
@@ -726,6 +781,121 @@ def remove_own_pidfile(store: Store) -> None:
             pass
 
 
+# ------------------------------------------------------------------ stale git lockfiles of the campaign (R1 iii)
+LOCKS_ASIDE = "git-locks-aside"
+RECOVER_ACTIONS = "recover-actions.jsonl"
+LSOF = "/usr/sbin/lsof"
+
+
+def git_lockfiles(st: Store) -> list:
+    """The campaign's git lockfiles, relative to the common dir: refs/p5y-k5-cell308-mbs-r1/*.lock, the branch lock,
+    packed-refs.lock (what a reset or power loss inside a ref write leaves)."""
+    cd = st.common_dir()
+    out = []
+    d = cd / REF_PREFIX.rstrip("/")
+    if d.is_dir():
+        out += sorted(f"{REF_PREFIX}{p.name}" for p in d.iterdir() if p.name.endswith(".lock"))
+    for rel in (st.branch_ref + ".lock", "packed-refs.lock"):
+        if os.path.lexists(cd / rel):
+            out.append(rel)
+    return out
+
+
+def lockfile_open(path) -> bool | None:
+    """True: some process has the file open; False: none (lsof finds nothing); None: unknown (lsof failed)."""
+    try:
+        p = subprocess.run([LSOF, "-t", "--", str(path)], capture_output=True, text=True, stdin=subprocess.DEVNULL,
+                           env={"PATH": "/usr/bin:/bin:/usr/sbin", "LC_ALL": "C"})
+    except OSError:
+        return None
+    if p.returncode == 0 and p.stdout.strip():
+        return True
+    if p.returncode == 1 and not p.stdout.strip():
+        return False
+    return None
+
+
+def git_lock_info(st: Store, boot_uuid: str | None = None, exclude_pid: int | None = None) -> dict:
+    """Read-only. The lockfiles are STALE only when no live campaign process exists (the O_EXCL recover lock's
+    holder, the pidfile, the journal's recorded process) AND no process has any of them open."""
+    locks = git_lockfiles(st)
+    if not locks:
+        return {"git_locks": [], "git_locks_stale": None}
+    live = []
+    jrec = Journal.read(st)[1]
+    if jrec is not None and HOST.identity_alive(jrec.get("process"), boot_uuid) and \
+            (jrec.get("process") or {}).get("pid") != exclude_pid:
+        live.append("journal_process")
+    prec, pst = read_pidfile(st, boot_uuid)
+    if pst == "LIVE" and (prec.get("identity") or {}).get("pid") != exclude_pid:
+        live.append("pidfile")
+    try:
+        holder = json.loads(st.spool_read(LOCKFILE) or b"{}").get("identity")
+    except (ValueError, AttributeError, StateError):
+        holder = None
+    if HOST.identity_alive(holder, boot_uuid) and (holder or {}).get("pid") != exclude_pid:
+        live.append("recover_lock")
+    opened = {rel: lockfile_open(st.common_dir() / rel) for rel in locks}
+    return {"git_locks": locks, "git_locks_live_campaign_process": live,
+            "git_locks_not_provably_closed": [r for r, v in opened.items() if v is not False],
+            "git_locks_stale": not live and all(v is False for v in opened.values())}
+
+
+def move_stale_git_locks(st: Store, boot_uuid: str | None = None) -> list:
+    """`recover`'s frozen action for stale campaign git lockfiles: under the O_EXCL campaign lock, re-verify that they
+    are stale, then MOVE each one aside into the spool (never delete; never inside refs/, where a renamed file would
+    read as a ref), fsync both directories, and append a value-free record (name, size, birth and change times,
+    where it went, by whom) to <spool>/recover-actions.jsonl."""
+    lock = Lock(st)
+    lock.acquire()
+    try:
+        info = git_lock_info(st, boot_uuid, exclude_pid=os.getpid())
+        if not info["git_locks"]:
+            return []
+        if not info["git_locks_stale"]:
+            raise StateError("GIT_LOCKS_NOT_STALE", "a live campaign process or an open file holds a lockfile")
+        sp = st.spool(create=True)
+        aside = sp / LOCKS_ASIDE
+        try:
+            os.mkdir(aside, 0o700)
+        except FileExistsError:
+            pass
+        moved = []
+        for rel in info["git_locks"]:
+            src = st.common_dir() / rel
+            stt = os.lstat(src)
+            name = rel.replace("/", "__") + f".{datetime.datetime.now(datetime.timezone.utc):%Y%m%dT%H%M%S}." \
+                f"{secrets.token_hex(3)}"
+            os.rename(src, aside / name)
+            for d in (src.parent, aside):
+                dfd = os.open(d, os.O_RDONLY | os.O_DIRECTORY)
+                try:
+                    fsync_dir(dfd)
+                finally:
+                    os.close(dfd)
+            rec = {"utc": utc(), "action": "git_lock_moved_aside", "lock": rel, "bytes": stt.st_size,
+                   "birth_utc": utc(stt.st_birthtime), "mtime_utc": utc(stt.st_mtime),
+                   "moved_to": f"{LOCKS_ASIDE}/{name}", "by": HOST.identity()}
+            fd = os.open(sp / RECOVER_ACTIONS, os.O_WRONLY | os.O_CREAT | os.O_APPEND | os.O_NOFOLLOW, 0o600)
+            try:
+                _write_all(fd, canon(rec) + b"\n")
+                fsync_file(fd)
+            finally:
+                os.close(fd)
+            moved.append(rec)
+        return moved
+    finally:
+        lock.release()
+
+
+def recover_actions_read(st: Store) -> list:
+    try:
+        raw = st.spool_read(RECOVER_ACTIONS) or b""
+    except StateError:
+        return []
+    return [json.loads(x) for x in raw.splitlines() if x.strip()]
+
+
 # ------------------------------------------------------------------ EVAL_CAP per attempt, on awake time (section 8)
 class AwakeCap:
     """EVAL_CAP counted on CLOCK_UPTIME_RAW (which stops while the host sleeps, channel K): the cap applies per attempt,
@@ -800,7 +970,7 @@ def classify(camp: Campaign, *, platform: dict, boot_uuid: str | None = None, no
         raise StateError("PLATFORM_READINGS", "the classifier needs the current platform readings")
     st = camp.store
     why: list = []
-    info = {"marker": st.rev(MARKER_REF) or None}
+    info = {"marker": st.rev(MARKER_REF) or None, **git_lock_info(st, boot_uuid)}
     marker = info["marker"]
     if not marker:
         return {"state": "NO_TARGET_CONSUMED", "why": ["NO_MARKER"], **info}

@@ -116,8 +116,10 @@ def job_loaded(label: str) -> bool:
 
 def launch(program: list, label: str, plist_dir: Path, log_dir: Path, workdir: Path, record_dir: Path | None = None,
            env_extra: dict | None = None, wait_s: float = 15.0) -> dict:
-    """Install and bootstrap the transient LaunchAgent; return the launch record with the detachment proof. On any
-    failure after the bootstrap the job is booted out and the plist removed."""
+    """Install and bootstrap the transient LaunchAgent; return the launch record (with the job identity and the
+    detachment proof when launchd reported the job). R2: after the bootstrap the launcher NEVER boots the job out --
+    the job may already have passed the marker; a job that is not properly launched is refused by the driver's own
+    launchd check (XPC_SERVICE_NAME = label, PPID 1, launchctl pid = self). Only a bootstrap failure removes the plist."""
     if not label.startswith(LABEL_PREFIX):
         raise LaunchRefused("LABEL", "the label must carry the campaign prefix")
     plist_dir.mkdir(parents=True, exist_ok=True)
@@ -135,33 +137,30 @@ def launch(program: list, label: str, plist_dir: Path, log_dir: Path, workdir: P
             pid = HOST.launchd_job_pid(label)
             if pid is None:
                 time.sleep(0.1)
-        if pid is None:
-            raise LaunchRefused("NOT_RUNNING", "launchd never reported the job running")
         me = os.getpid()
         rec = {"label": label, "plist": str(path), "program": [str(x) for x in program], "uid": os.getuid(),
-               "pid": pid, "ppid": HOST.process_ppid(pid), "pgid": os.getpgid(pid), "sid": getsid(pid),
-               "start_time": HOST.process_start(pid), "boot_uuid": HOST.boot_session_uuid(),
-               "command_sha256": HOST.process_command_sha256(pid),
+               "pid": pid, "observed": pid is not None, "boot_uuid": HOST.boot_session_uuid(),
                "launcher": {"pid": me, "pgid": os.getpgid(0), "sid": os.getsid(0), "ppid": os.getppid()},
-               "launched_utc": utc_compact(), "detachment": prove_detached(pid, me, label)}
-        if not rec["detachment"]["detached"]:
-            raise LaunchRefused("NOT_DETACHED", json.dumps(rec["detachment"])[:300])
+               "launched_utc": utc_compact()}
+        if pid is not None:
+            rec.update({"ppid": HOST.process_ppid(pid), "pgid": os.getpgid(pid), "sid": getsid(pid),
+                        "start_time": HOST.process_start(pid), "command_sha256": HOST.process_command_sha256(pid),
+                        "identity": HOST.identity(pid), "detachment": prove_detached(pid, me, label)})
         if record_dir is not None:
             record_dir.mkdir(parents=True, exist_ok=True)
             (record_dir / f"{label}.launch.json").write_text(json.dumps(rec, indent=1, sort_keys=True) + "\n")
         return rec
     except BaseException:
-        bootout(label)
-        path.unlink(missing_ok=True)
-        raise
+        raise                    # never boot out after the bootstrap (R2): the job may have passed the marker
 
 
-def wait_and_cleanup(label: str, plist: str, poll_s: float = 2.0, timeout_s: float | None = None) -> dict:
-    """Wait until launchd no longer runs the job, then boot it out and remove the plist."""
-    t0 = time.time()
-    while HOST.launchd_job_pid(label) is not None:
-        if timeout_s is not None and time.time() - t0 > timeout_s:
-            break
+def wait_and_cleanup(label: str, plist: str, identity: dict | None, poll_s: float = 2.0) -> dict:
+    """R2: wait until the RECORDED job identity (pid, start time, boot UUID, command sha256) is positively DEAD
+    (HOST.identity_state), then boot the job out and remove the plist. A failing, timed-out or unparseable
+    `launchctl print` never decides anything; without a recorded identity nothing is booted out."""
+    if not identity:
+        raise LaunchRefused("NO_IDENTITY", "the job's identity was never recorded: it is never booted out here")
+    while HOST.identity_state(identity) != "DEAD":
         time.sleep(poll_s)
     info = _run(["/bin/launchctl", "print", f"gui/{os.getuid()}/{label}"]).stdout
     last = None
@@ -171,6 +170,21 @@ def wait_and_cleanup(label: str, plist: str, poll_s: float = 2.0, timeout_s: flo
     out = {"label": label, "last_exit": last, "booted_out": bootout(label)}
     Path(plist).unlink(missing_ok=True)
     return out
+
+
+def cleanup(label: str, record_dir: Path) -> dict:
+    """Boot out a finished job: only with its launch record and only when the recorded identity is DEAD (R2)."""
+    try:
+        rec = json.loads((record_dir / f"{label}.launch.json").read_text())
+    except (OSError, ValueError):
+        raise LaunchRefused("NO_RECORD", "no launch record: the job is never booted out without its identity")
+    ident = rec.get("identity")
+    if not ident:
+        raise LaunchRefused("NO_IDENTITY", "the launch record carries no job identity")
+    st = HOST.identity_state(ident)
+    if st != "DEAD":
+        raise LaunchRefused("STILL_RUNNING" if st == "ALIVE" else "IDENTITY_UNKNOWN", st)
+    return wait_and_cleanup(label, rec["plist"], ident)
 
 
 # ------------------------------------------------------------------ the campaign modes
@@ -209,10 +223,11 @@ def main(argv=None) -> int:
         if not a.label or not a.label.startswith(LABEL_PREFIX):
             print("MBS308 LAUNCH REFUSED LABEL")
             return 2
-        if HOST.launchd_job_pid(a.label) is not None:
-            print("MBS308 LAUNCH REFUSED STILL_RUNNING")
+        try:
+            print(json.dumps(cleanup(a.label, LOG_DIR)))
+        except LaunchRefused as e:
+            print(f"MBS308 LAUNCH REFUSED {e}")
             return 2
-        print(json.dumps(wait_and_cleanup(a.label, str(spool_launch_dir() / f"{a.label}.plist"), timeout_s=0)))
         return 0
     if os.path.realpath(sys.executable) != os.path.realpath(PYTHON):
         print("MBS308 LAUNCH REFUSED INTERPRETER")
@@ -225,13 +240,15 @@ def main(argv=None) -> int:
         rec["gate"] = gate
         rec["launcher_sha256"] = hashlib.sha256(HERE.read_bytes()).hexdigest()
         (LOG_DIR / f"{label}.launch.json").write_text(json.dumps(rec, indent=1, sort_keys=True) + "\n")
-        print(f"MBS308 LAUNCHED {label} pid {rec['pid']} (detached: {rec['detachment']['detached']})")
+        det = (rec.get("detachment") or {}).get("detached")
+        print(f"MBS308 LAUNCHED {label} pid {rec['pid']} (detached: {det}; never booted out by the launcher while "
+              "its recorded identity lives)")
     except LaunchRefused as e:
         print(f"MBS308 LAUNCH REFUSED {e}")
         return 2
-    if a.no_wait:
+    if a.no_wait or not rec.get("identity"):
         return 0
-    out = wait_and_cleanup(label, rec["plist"])
+    out = wait_and_cleanup(label, rec["plist"], rec["identity"])
     print(f"MBS308 LAUNCH FINISHED {label}: last exit {out['last_exit']}; booted out {out['booted_out']}")
     return 0
 
