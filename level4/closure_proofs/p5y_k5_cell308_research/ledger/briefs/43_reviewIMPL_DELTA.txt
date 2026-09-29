@@ -1,0 +1,13 @@
+DELTA REVIEW REQUEST (your implementation review research reviews/REVIEW_IMPLEMENTATION_MBS308.md, IMPLEMENTATION_REJECTED, commit 6d3a44cd, sha256 abecfbb2c57cb50c79f722db4a0d25bb4b35fe8adcf4782cf70476fe2aa4738f; conditions R1-R4). You are the same non-holder reviewer (reviewIMPL), resumed. All ABSOLUTE RULES of brief 37 still apply: MBS-2 reading restrictions; no target; sandboxes on your own --no-local base store; no real refs; no git writes; launchd tests with review labels, bootout and removal.
+
+WHAT CHANGED on the successor branch p5y-k5-cell308-mbs-r1 (/Users/suzhe/ReBaseGuard-c308mbs):
+- 35cabb50: builder2's repairs R1, R2, R4, made at your request under the T6 ruling's M4 (no operational number may change); diff against afba20e5; BUILD_REPORT section 12.
+- the NEXT commit after 35cabb50: the non-holder constants ratifier (ratifierMBS) applying its R3 rulings (research governance/CONSTANTS_RATIFICATION_MBS308.md, CONSTANTS_RATIFIED_WITH_CHANGES, commit 3c2a7854) and a deterministic run for mutant M33; BUILD_REPORT "Constants applied (ratifierMBS)". The coordinator will tell you its hash.
+
+TASK (bounded to R1-R4):
+- R1: is a CAS conflict distinguished from other failures? Are stale locks classified, with a frozen, recorded move-aside action? Is the seal never stopped by a failed journal advance? Is the pre-marker wedge fixed? Do planted-lock tests L01-L11 assert the frozen final states? Do mutants M34-M47 undo (i)-(iii) and get killed?
+- R2: no bootout after the bootstrap; bootout only on a positively dead recorded identity; a planted failing `launchctl print` test and a mutant.
+- R4: behavioural tests and mutants for the GC-10 gates, the execute-time and resume-time pin refusals, and GC-8 at HEAD and on MB r1's branch. Do your earlier X2 and X3 now die?
+- R3: does the ratification cover every section-10 item? Do the applied code changes match the ratification exactly, with no other operational change? Did builder2's diff change NO operational number (M4)? Is the M33 kill now deterministic?
+- Re-run the suites and the full mutant matrix yourself.
+Write /Users/suzhe/ReBaseGuard-c308/level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_IMPLEMENTATION_MBS308_DELTA.md: line 1 the title; line 2 EXACTLY one of DELTA_ACCEPTED or DELTA_REJECTED (once); short sections. If accepted, state whether the build is IMPLEMENTATION_ACCEPTED as a pre-freeze candidate, and list what remains before a freeze. Ledger via log_event (klass='REVIEW', agent='reviewIMPL'). Final message: the verdict line and an 8-line summary. Time budget: about 45 minutes.
