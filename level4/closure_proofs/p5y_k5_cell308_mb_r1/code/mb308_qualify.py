@@ -362,69 +362,164 @@ def _tail_regex():
     return pats, re.compile("|".join("(?<![0-9])" + p for p in pats))
 
 
-def qc12_leak(official: bool) -> dict:
+MANIFEST_REL = D.NS_REL + "/protocol/MB308_FREEZE.json"
+GUARD_REL = D.NS_REL + "/code/mb308_guard.py"
+GUARD_FIELD = ("guard", "cell308_cover")          # the manifest's guard-geometry field (the guard's CELL308 constant)
+
+
+def qc12_leak(record_scan: bool) -> dict:
     """(a) the tail-figure text scan over EVERY file of this namespace (0 hits), with a planted control built at run
-    time from the pattern file in neutral wording; (b) official runs only: tokens (>= 6 significant digits) of the
-    committed cell-308 records, as the 307 QC12 (counts and file names only, never a value)."""
+    time from the pattern file in neutral wording; (b) when `record_scan` (official and review runs, or --record-scan
+    in dev): tokens (>= 6 significant digits) of the committed cell-308 records, as the 307 QC12 (counts and file
+    names only, never a value). r2 repair: the tokens derived from cell 308's cells.json GEOMETRY (left, right, e0,
+    rho) are exempt ONLY where the design puts that geometry: inside the freeze manifest's guard-geometry field
+    guard.cell308_cover (every occurrence of the token in the file must lie in that field) and in the guard source;
+    every exempted occurrence is reported (file, field, count; never the value); any other hit fails. Planted
+    controls, through the same per-file function on a temporary copy of the manifest text: a NON-geometry record
+    token must fire, and a geometry token placed outside the guard field must fire."""
     pats, rx = _tail_regex()
     files = sorted(p for p in NS.rglob("*") if p.is_file() and "__pycache__" not in p.parts)
-    hits = {}
+    hits, timing_ex = {}, []
     for p in files:
-        n = len(rx.findall(p.read_text(errors="replace")))
+        rel = str(p.relative_to(REPO))
+        n, ex = _tail_hits(rel, p.read_text(errors="replace"), rx)
         if n:
-            hits[str(p.relative_to(REPO))] = n
+            hits[rel] = n
+        if ex:
+            timing_ex.append({"file": rel, "field": "timing keys " + "/".join(sorted(TIMING_KEYS)), "occurrences": ex})
     planted = " and ".join(re.sub(r"\\b|\\", "", pat) for pat in pats[:3])   # built at run time only, neutral
     ctl = len(rx.findall("row " + planted + " end")) >= 3
+    one = re.sub(r"\\b|\\", "", pats[0])
+    rec_rel = D.NS_REL + "/qualification/PLANTED.json"
+    c_nontiming = _tail_hits(rec_rel, json.dumps({"record": {"value": one, "seconds": 1.0}}), rx)[0] > 0
+    c_timing = _tail_hits(rec_rel, json.dumps({"record": {"value": "x", "seconds": {"S": one}}}), rx) == (0, 1)
     out = {"files_scanned": len(files), "patterns": len(pats), "tail_figure_hits": hits,
-           "planted_control_fires": ctl}
-    if official:
-        toks = _record_tokens()
-        th = {str(p.relative_to(REPO)): sum(p.read_text(errors="replace").count(t) for t in toks) for p in files}
-        th = {k: v for k, v in th.items() if v}
-        c2 = sum(("line " + sorted(toks)[len(toks) // 2]).count(t) for t in toks) >= 1
-        out.update({"record_tokens": len(toks), "record_token_hit_files": sorted(th), "record_planted_fires": c2})
-        out["pass"] = not hits and ctl and not th and c2 and len(toks) > 20
-    else:
-        out["record_token_scan"] = "not run (official qualification only; it reads committed cell-308 records)"
+           "timing_field_exemptions": timing_ex, "planted_control_fires": ctl,
+           "planted_tail_value_in_nontiming_field_of_evidence_fires": c_nontiming,
+           "planted_tail_value_in_timing_field_of_evidence_exempt_and_counted": c_timing}
+    ctl = ctl and c_nontiming and c_timing
+    if not record_scan:
+        out["record_token_scan"] = "not run (official and review runs, or --record-scan in dev mode)"
         out["pass"] = not hits and ctl and len(pats) > 20
+        return out
+    toks, geom = _record_tokens(), _geometry_tokens()
+    if not geom:
+        out.update({"pass": False, "reason": "no geometry tokens derived"})
+        return out
+    th, exempt = {}, []
+    for p in files:
+        rel = str(p.relative_to(REPO))
+        bad, ex = _token_hits(rel, p.read_text(errors="replace"), toks, geom)
+        if bad:
+            th[rel] = bad
+        exempt += ex
+    c_rec = c_geo = False
+    if (REPO / MANIFEST_REL).exists():
+        mtext = (REPO / MANIFEST_REL).read_text()
+        non_geo = sorted(toks - geom)
+        planted_rec = mtext.replace("\n", "\n" + json.dumps(non_geo[len(non_geo) // 2]) + "\n", 1)
+        c_rec = _token_hits(MANIFEST_REL, planted_rec, toks, geom)[0] > 0
+        planted_geo = mtext.replace("\n", "\n" + json.dumps(sorted(geom)[0]) + "\n", 1)
+        c_geo = _token_hits(MANIFEST_REL, planted_geo, toks, geom)[0] > 0
+    out.update({"record_tokens": len(toks), "geometry_tokens": len(geom),
+                "record_token_hit_files": sorted(th), "record_token_hits": sum(th.values()),
+                "geometry_exemptions": exempt,
+                "planted_non_geometry_token_in_manifest_copy_fires": c_rec,
+                "planted_geometry_token_outside_guard_field_fires": c_geo})
+    out["pass"] = not hits and ctl and not th and c_rec and c_geo and len(toks) > 20
     return out
 
 
-def _record_tokens() -> set:
-    acc = set()
+def _tail_hits(rel: str, text: str, rx) -> tuple:
+    """(non-exempt tail-pattern matches, matches exempted as timing fields). r2: in machine-written JSON evidence under
+    the post-freeze directories (qualification/, incl. r1_failed/), a match located ONLY inside a timing key
+    (TIMING_KEYS, at any depth, with everything below it: runtimes in seconds) is exempt and reported; every other
+    match fails. Every other file is scanned as text, without exemption."""
+    n = len(rx.findall(text))
+    parts = Path(rel).relative_to(D.NS_REL).parts if rel.startswith(D.NS_REL + "/") else ()
+    if not n or not parts or parts[0] not in D.POST_FREEZE_DIRS or not rel.endswith(".json"):
+        return n, 0
+    try:
+        obj = json.loads(text)
+    except ValueError:
+        return n, 0
+    kept = len(rx.findall(json.dumps(_strip_timing(obj), sort_keys=True)))
+    full = len(rx.findall(json.dumps(obj, sort_keys=True)))
+    return kept + max(0, n - full), max(0, full - kept)      # a raw-text-only match is never exempt
 
-    def tok(o):
-        if isinstance(o, dict):
-            for v in o.values():
-                tok(v)
-        elif isinstance(o, list):
-            for v in o:
-                tok(v)
-        elif isinstance(o, str) and "/" in o:
-            try:
-                x = F(o)
-            except (ValueError, ZeroDivisionError):
-                return
-            if len(o) >= 8:
-                acc.add(o)
-            s = f"{abs(float(x)):.12g}"
-            if "e" not in s and len(s.replace(".", "").lstrip("0")) >= 6:
-                out, n = "", 0
-                for ch in s:
-                    out += ch
-                    if ch.isdigit() and (n > 0 or ch != "0"):
-                        n += 1
-                    if n == 6:
-                        break
-                acc.add(out)
+
+def _token_hits(rel: str, text: str, toks: set, geom: set) -> tuple:
+    """(number of NON-exempt token occurrences, [exemption records]) for one file's text."""
+    counts = {t: text.count(t) for t in toks | geom if t in text}
+    if not counts:
+        return 0, []
+    field_counts = {}
+    if rel == MANIFEST_REL:
+        try:
+            man = json.loads(text)
+            vals = man.get(GUARD_FIELD[0], {}).get(GUARD_FIELD[1], [])
+        except (ValueError, AttributeError):
+            vals = []
+        field_counts = {t: sum(str(v).count(t) for v in vals) for t in counts}
+    bad, n_ex = 0, 0
+    for t, n in counts.items():
+        if t in geom and rel == GUARD_REL:
+            n_ex += n
+        elif t in geom and rel == MANIFEST_REL and field_counts.get(t, 0) == n:
+            n_ex += n
+        else:
+            bad += n
+    ex = [] if not n_ex else [{"file": rel, "field": ".".join(GUARD_FIELD) if rel == MANIFEST_REL else "source",
+                               "occurrences": n_ex}]
+    return bad, ex
+
+
+def _tok(o, acc: set) -> None:
+    if isinstance(o, dict):
+        for v in o.values():
+            _tok(v, acc)
+    elif isinstance(o, list):
+        for v in o:
+            _tok(v, acc)
+    elif isinstance(o, str) and "/" in o:
+        try:
+            x = F(o)
+        except (ValueError, ZeroDivisionError):
+            return
+        if len(o) >= 8:
+            acc.add(o)
+        s = f"{abs(float(x)):.12g}"
+        if "e" not in s and len(s.replace(".", "").lstrip("0")) >= 6:
+            out, n = "", 0
+            for ch in s:
+                out += ch
+                if ch.isdigit() and (n > 0 or ch != "0"):
+                    n += 1
+                if n == 6:
+                    break
+            acc.add(out)
+
+
+def _record_tokens() -> set:
+    """Tokens of the committed cell-308 records (C2 forecast cell and supplies, REGISTRY_C1/C2 rows, TCT_INPUTS_308)."""
+    acc = set()
     fc = json.loads(D.read_pinned("c2_forecast"))
-    tok(fc["cells"]["308"])
-    tok(fc["supplies"]["308"])
+    _tok(fc["cells"]["308"], acc)
+    _tok(fc["supplies"]["308"], acc)
     for key in ("registry_c1", "registry_c2"):
-        tok([b for b in json.loads(D.read_pinned(key))["blocks"] if b["cell"] == 308])
-    tok(json.loads(D.read_pinned("tct_inputs_308")))
-    geom = set()
-    return acc - geom
+        _tok([b for b in json.loads(D.read_pinned(key))["blocks"] if b["cell"] == 308], acc)
+    _tok(json.loads(D.read_pinned("tct_inputs_308")), acc)
+    return acc
+
+
+def _geometry_tokens() -> set:
+    """Tokens of cell 308's cells.json geometry (left, right, e0, rho): exact rational strings and their
+    6-significant-digit renderings (the same tokenisation as the record tokens)."""
+    cells = [c for c in json.loads(D.read_pinned("cells_json")) if c["detector"] == "CUSUM" and c["index"] == 308]
+    acc = set()
+    if len(cells) == 1:
+        _tok({k: cells[0][k][0] for k in ("left", "right", "e0", "rho")}, acc)
+    return acc
 
 
 # ------------------------------------------------------------------ QC13 temporal / governance
@@ -587,32 +682,102 @@ def qc02_eval(dec: dict | None) -> dict:
                                  "C1B": list(S1M.LADDER_C1B_D)}}
 
 
+TIMING_KEYS = frozenset({"seconds", "wall_seconds", "cpu_seconds"})     # QC04 r2: stripped at EVERY depth, nothing else
+
+
+def _strip_timing(o):
+    if isinstance(o, dict):
+        return {k: _strip_timing(v) for k, v in o.items() if k not in TIMING_KEYS}
+    if isinstance(o, list):
+        return [_strip_timing(v) for v in o]
+    return o
+
+
+def _leaves(o, path=()) -> list:
+    if isinstance(o, dict):
+        return [lf for k in sorted(o) for lf in _leaves(o[k], path + (k,))]
+    if isinstance(o, list):
+        return [lf for i, v in enumerate(o) for lf in _leaves(v, path + (i,))]
+    return [path]
+
+
+def _serial_view(job: dict) -> dict:
+    """The compared scope of a serial / pooled Stage-1 job (as in r1: the status fields and the record), after the
+    driver's own publication projection D.jsonable (it drops the in-memory "_"-prefixed fields such as _cpu_seconds,
+    _log_sha256, which no published record carries; the r1 serial child wrote its file without that projection) and
+    the recursive timing strip."""
+    j = D.jsonable(job)
+    keep = {x: j[x] for x in ("status", "status_U", "status_L") if x in j}
+    keep["record"] = j.get("record", {})
+    return _strip_timing(keep)
+
+
+def _ladder_view(job: dict) -> dict:
+    """The compared scope of a ladder-determinism job (as in r1: the whole job minus cpu_cap at the job level)."""
+    j = D.jsonable(job)
+    j.pop("cpu_cap", None)
+    return _strip_timing(j)
+
+
+def _compare(a: dict, b: dict, view) -> dict:
+    va, vb = view(a), view(b)
+    return {"equal": va == vb, "compared_leaves": len(_leaves(va))}
+
+
+def _planted(a: dict, b: dict, view) -> bool:
+    """Mutate ONE non-timing leaf (the middle one of the compared view) in a deep copy of `a`; the SAME comparison
+    must report a difference."""
+    import copy
+    paths = _leaves(view(a))
+    if not paths:
+        return False
+    path = paths[len(paths) // 2]
+    m = copy.deepcopy(a)
+    node = m
+    for k in path[:-1]:
+        node = node[k]
+    v = node[path[-1]]
+    node[path[-1]] = (not v) if isinstance(v, bool) else (v + 1 if isinstance(v, (int, float)) else
+                                                           ("planted" if v is None else str(v) + "#planted"))
+    return not _compare(m, b, view)["equal"]
+
+
 def qc04_eval(dec: dict | None, serial: dict | None, det_a: dict | None, det_b: dict | None) -> dict:
-    out = {}
+    """QC04 r2: (a) block 0 of decoy 297, serial vs pooled; (b) the REVIEW_A0 C4 ladder pair. Every compared pair:
+    exactly the timing keys {seconds, wall_seconds, cpu_seconds} are stripped at every depth (and cpu_cap at the job
+    level); the comparison must be non-vacuous (> 0 compared leaves per job) and a planted one-leaf mutation of a
+    deep copy must be detected by the same comparison."""
+    out = {"stripped_keys": sorted(TIMING_KEYS) + ["cpu_cap (job level)"]}
     if dec and serial:
         b0 = dec["stage1"]["blocks"][0]
         pooled = {f"RLR:{r['rung']}": r for r in b0["rlr_rungs"]} | {f"C2B:{r['rung']}": r for r in b0["c2b_rungs"]} | \
             {f"C1B:{r['rung']}": r for r in b0["c1b_rungs"]}
-        same = {}
+        rows = {}
         for k, r in serial["results"].items():
             if k.startswith("VER"):
                 continue
-            p = pooled.get(k, {})
-            keys = [x for x in ("status", "status_U", "status_L") if x in r] + ["record"]
-            rec_s = {x: v for x, v in r.get("record", {}).items() if not x.startswith("_") and x != "cpu_seconds"}
-            rec_p = {x: v for x, v in p.get("record", {}).items() if not x.startswith("_") and x != "cpu_seconds"}
-            same[k] = all(r.get(x) == p.get(x) for x in keys if x != "record") and rec_s == rec_p
-        out["serial_vs_pooled"] = same
-        out["serial_ok"] = bool(same) and all(same.values())
+            p = pooled.get(k)
+            if p is None:
+                rows[k] = {"equal": False, "compared_leaves": 0, "missing_pooled": True, "control_detected": False}
+                continue
+            rows[k] = _compare(r, p, _serial_view) | {"control_detected": _planted(r, p, _serial_view)}
+        out["serial_vs_pooled"] = rows
+        out["serial_ok"] = bool(rows) and len(rows) == len(pooled) and all(
+            v["equal"] and v["compared_leaves"] > 0 and v["control_detected"] for v in rows.values())
     else:
         out["serial_ok"] = False
     if det_a and det_b:
-        def proj(d):
-            return {k: {x: y for x, y in v.items() if x not in ("wall_seconds", "cpu_cap")} |
-                    {"record": {x: y for x, y in v.get("record", {}).items() if x not in ("cpu_seconds",)}}
-                    for k, v in d["results"].items()}
-        out["ladder_pair_identical"] = proj(det_a) == proj(det_b)
+        ka, kb = det_a.get("results", {}), det_b.get("results", {})
+        rows = {}
+        for k in sorted(set(ka) | set(kb)):
+            if k not in ka or k not in kb:
+                rows[k] = {"equal": False, "compared_leaves": 0, "control_detected": False, "missing_one_side": True}
+                continue
+            rows[k] = _compare(ka[k], kb[k], _ladder_view) | {"control_detected": _planted(kb[k], ka[k], _ladder_view)}
+        out["ladder_pair"] = rows
         out["ladder_drifts"] = [det_a.get("drifts"), det_b.get("drifts")]
+        out["ladder_pair_identical"] = bool(rows) and all(
+            v["equal"] and v["compared_leaves"] > 0 and v["control_detected"] for v in rows.values())
     else:
         out["ladder_pair_identical"] = False
     out["pass"] = out["serial_ok"] and out["ladder_pair_identical"]
@@ -629,6 +794,9 @@ def main(argv=None) -> int:  # noqa: C901
     ap.add_argument("--out")
     ap.add_argument("--workers", type=int, default=D.WORKERS)
     ap.add_argument("--work", help="base directory for work files and the flow sandbox (required with --dev)")
+    ap.add_argument("--records", help="review / dev without --heavy: directory of the committed heavy-case records "
+                                      "(default: qualification/)")
+    ap.add_argument("--record-scan", action="store_true", help="dev only: run QC12's committed-record token scan")
     ap.add_argument("--_child", choices=("serial", "ladder", "e4", "mc"))
     ap.add_argument("--_drift")
     ap.add_argument("--_decoy")
@@ -640,6 +808,12 @@ def main(argv=None) -> int:  # noqa: C901
     mode = "dev" if a.dev else ("review" if a.review else "official")
     if mode != "official" and not a.out:
         print("QUALIFY REFUSED: --review / --dev write only --out")
+        return 2
+    if mode == "official" and (a.records or a.record_scan):
+        print("QUALIFY REFUSED: --records / --record-scan are review / dev options (official recomputes everything)")
+        return 2
+    if a.record_scan and mode != "dev":
+        print("QUALIFY REFUSED: --record-scan is a dev option (review runs always scan)")
         return 2
     if mode == "dev" and not a.work:
         print("QUALIFY REFUSED: --dev needs --work (the builder's sandboxes live in the session scratchpad)")
@@ -662,6 +836,10 @@ def main(argv=None) -> int:  # noqa: C901
     if mode == "official":
         odir.mkdir(exist_ok=True)
     paths = {k: odir / v for k, v in OUTS.items()}
+    if mode != "official" and not heavy:                     # re-verify the committed heavy records (read only)
+        rdir = Path(a.records).resolve() if a.records else QDIR
+        for k in ("decoy297", "decoy316", "serial", "det_a", "det_b", "mc"):
+            paths[k] = rdir / OUTS[k]
     drv = str(CODE / "mb308_driver.py")
     procs = {}
     if heavy and "QC02" in sel:
@@ -720,7 +898,7 @@ def main(argv=None) -> int:  # noqa: C901
     if "QC11" in sel:
         cases["QC11"] = qc11_static()
     if "QC12" in sel:
-        cases["QC12"] = qc12_leak(mode == "official")
+        cases["QC12"] = qc12_leak(mode in ("official", "review") or a.record_scan)
     for k, p in procs.items():
         p.wait()
     rcs = {k: p.returncode for k, p in procs.items()}
@@ -739,7 +917,7 @@ def main(argv=None) -> int:  # noqa: C901
     if "QC04" in sel:
         cases["QC04"] = qc04_eval(load("decoy297"), load("serial"), load("det_a"), load("det_b"))
     if "QC08" in sel:
-        if paths["decoy297"].exists():
+        if heavy and paths["decoy297"].exists():
             subprocess.run([PY, *FLAGS, str(HERE), "--_child", "mc", "--_decoy", str(paths["decoy297"]), "--out",
                             str(paths["mc"])], env=ENV, cwd=str(REPO))
         cases["QC08"] = load("mc") or {"pass": False, "missing": "decoy 297 record"}

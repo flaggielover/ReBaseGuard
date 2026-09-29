@@ -1,7 +1,9 @@
 # Cell-308 MB formal prospective closure campaign (r1): protocol
 
-**Status: FROZEN (r1)** at the freeze commit on branch `p5y-k5-cell308-mb-r1` (the commit that adds
-`protocol/MB308_FREEZE.json`). Nothing in it authorizes a target evaluation; only the grant (§10 step 4) does.
+**Status: FROZEN (r2)** at the r2 freeze commit on branch `p5y-k5-cell308-mb-r1` (the last commit touching
+the frozen directories; it regenerates `protocol/MB308_FREEZE.json`). Freeze r1 was `a7fe3028`; its official
+qualification FAILED on two verifier defects and is preserved in `qualification/r1_failed/` (§13). Nothing in this
+protocol authorizes a target evaluation; only the grant (§10 step 4) does.
 
 ## 1. Scope and authority
 
@@ -204,3 +206,35 @@ exactly-once infrastructure is found unsafe; the user's C4 ruling is absent at s
 * The qualification carries its ledger entries inside its report; they are appended after the seal together with the
   execution's line (307 precedent). The execution writes no ledger line before its seal.
 * Guard: `code/mb308_guard.py`; quarantine config: research `config/TARGET_QUARANTINE_308.json` and amendment 1.
+
+## 13. Freeze r2: verifier-only repair (after the r1 official qualification FAILED)
+
+**r1** (freeze `a7fe3028`; qualification evidence `3a05aef7`, moved unchanged to `qualification/r1_failed/`): FAIL on
+QC04 and QC12, i.e. gates Q3 and Q9. Both were defects of the qualification verifier `code/mb308_qualify.py`, not of
+the science or the exactly-once machinery; 0 target evaluations.
+
+* **QC04 (determinism).** The comparison included nondeterministic timing fields nested inside the records (the RLR
+  certifier's `residual_enclosures/*/seconds` and `seconds/*`; the ladder's `verification/seconds`, `wall_seconds`,
+  `record/cpu_seconds`). Every non-timing field was identical. **Repair:** strip exactly the keys `seconds`,
+  `wall_seconds`, `cpu_seconds` at every depth (and `cpu_cap` at the job level, as before); pass both sides through the
+  driver's own publication step `jsonable` (which drops in-memory `_`-prefixed fields that no published record
+  carries); require more than 0 compared leaf fields per job; a planted control mutates one non-timing leaf per pair
+  and must be detected by the same comparison. This is a defect repair, **not** stricter-only: the r1 comparison could
+  never pass.
+* **QC12 (leak scans).** (a) The record-token scan hit only the freeze manifest's `guard.cell308_cover` field, i.e.
+  cell 308's committed cover interval from `cells.json`, which the design permits as the guard's constant.
+  **Repair:** the 8 tokens derived from cell 308's cells.json geometry are exempt only when every occurrence in a file
+  lies inside that manifest field or in the guard source; exemptions are reported (file, field, count, never the
+  value); planted controls (a non-geometry record token, and a geometry token outside the guard field) must fire.
+  (b) After the r1 evidence moved into the scanned tree, one runtime value inside a timing key of an r1 record matched
+  a short tail pattern. **Repair:** in JSON files under the post-freeze directories, a tail-pattern match is exempt
+  only when it lies inside a timing key (`seconds`, `wall_seconds`, `cpu_seconds`, at any depth); exemptions are
+  reported by file and count; planted controls (a tail value in a non-timing field fires; one in a timing field is
+  exempted and counted) go through the same function.
+* **Other verifier changes:** `--records DIR` (review/dev re-verification of committed heavy records, read-only);
+  `--record-scan` (dev only); the QC08 Monte-Carlo child runs only in heavy mode (a review run can no longer overwrite
+  the committed QC08 record). The official mode refuses both new flags.
+* **Unchanged (sha256 as at r1):** every other file of `code/`, `tests/`, `config/`, `theory/`, `errata/`,
+  `evidence_prefreeze/`; in particular the driver (`965a2a30…`), the guard, Stage 1, the supply, the consumer, the
+  pinned loader, the A0 core and the manifest writer. The science, the criterion, the caps and every rule of §3–§8 are
+  unchanged.
