@@ -2,7 +2,10 @@
 INDEPENDENT verifier (verify/srk_verify_indep.py, used as a tool; it was written from the spec by a separate agent).
 Declared decoy (synthetic geometry, not band-guarded): h = 3, k = 1/2, block [1/4, 9/32], degree 8.
 
-  T1   too-small weight: certificate produced against kbar_1 / 4 but claiming kbar_1 -> verifier must REJECT
+  T1   too-small weight (revised per review R2 P-2): a CONSISTENT quarter-weight mutant (float proposal AND exact
+       check both against kbar_1/4, claiming kbar_1) -> the verifier must REFUTE it at an explicit point (REJECT
+       with a disproof), not merely fail to prove it.  The older mutant (full-weight proposal, only lambda shrunk)
+       is kept as a report-only row: its REJECT was 'C3 UNPROVEN', i.e. no demonstrated power (review R2)
   T2   taboo presented as whole: a taboo-kernel certificate relabelled 'whole' (rehashed) -> verifier must REJECT;
        the genuine taboo certificate -> ACCEPT
   T8   constant-weight identity: E_a[sum_{n<tau} k_0(X_n)] = E_a[tau] - 1 (Monte Carlo, checks the simulator);
@@ -31,9 +34,17 @@ G3 = KX.Geom(3, F(1, 2))
 LO, HI, D = F(1, 4), F(9, 32), 8
 
 
-def one_cert(i, whole=True, mutant=""):
+def one_cert(i, whole=True, mutant="", consistent_quarter=False):
     W = S.certify_W(G3, LO, HI, D, log=lambda s: None, whole=whole)
-    V = S.certify_weight(G3, i, LO, HI, D, W, log=lambda s: None, mutant=mutant)
+    if consistent_quarter:            # test-local: the (untrusted) float proposal also targets kbar/4
+        orig = S._kbar_float
+        S._kbar_float = lambda g, i_, a, b: (lambda f: (lambda p, m: f(p, m) / 4))(orig(g, i_, a, b))
+        try:
+            V = S.certify_weight(G3, i, LO, HI, D, W, log=lambda s: None, mutant="quarter_weight")
+        finally:
+            S._kbar_float = orig
+    else:
+        V = S.certify_weight(G3, i, LO, HI, D, W, log=lambda s: None, mutant=mutant)
     blk = {"geometry": {"h": S.fstr(G3.h), "k": S.fstr(G3.k)}, "block": [S.fstr(LO), S.fstr(HI)],
            "rungs": [{"degree": D, "W": W, "V": {i: V}}], "producer": S.producer_fingerprint()}
     return S.certificate_json(blk, i), W, V
@@ -41,7 +52,7 @@ def one_cert(i, whole=True, mutant=""):
 
 def verdict(cert, kernel_file=None):
     r = VI.verify_cert(cert, kernel_file, N=8, max_depth=24, procs=1, log=None)
-    return r["verdict"], r.get("reason")
+    return r["verdict"], r.get("reason"), bool(r.get("false"))
 
 
 def mc(e, weight, n, rng):
@@ -72,9 +83,11 @@ def run():
     res["T10_sha_consistent"] = GT.canonical_sha(gen) == gen["sha256"]
     v_gen = verdict(gen)
     res["T10_genuine_ACCEPT"] = v_gen[0] == "ACCEPT"
-    q, _, _ = one_cert(1, mutant="quarter_weight")
+    q, _, _ = one_cert(1, consistent_quarter=True)
     v_q = verdict(q)
-    res["T1_quarter_weight_REJECT"] = v_q[0] == "REJECT"
+    res["T1_consistent_quarter_weight_REFUTED"] = v_q[0] == "REJECT" and v_q[2]
+    ql, _, _ = one_cert(1, mutant="quarter_weight")
+    v_ql = verdict(ql)                          # report-only (no demonstrated power; review R2 P-2)
     tab, Wt, _ = one_cert(1, whole=False)
     v_tab = verdict(tab)
     res["T2_taboo_genuine_ACCEPT"] = v_tab[0] == "ACCEPT"
@@ -94,7 +107,8 @@ def run():
     g0 = float(F(z0["Gamma"]))
     res["T8_Gamma0_ge_mc"] = g0 >= m_k0 - 5 * se_k0
     res["T8_Gamma0_le_W"] = g0 <= float(W0["W_at_atom_max"]) * (1 + 2 ** -4)
-    detail = {"verdicts": {"genuine": v_gen, "quarter": v_q, "taboo": v_tab, "taboo_as_whole": v_rel},
+    detail = {"verdicts": {"genuine": v_gen, "quarter_consistent": v_q, "quarter_legacy_report_only": v_ql,
+                           "taboo": v_tab, "taboo_as_whole": v_rel},
               "T8": {"Gamma0": g0, "mc_k0": m_k0, "se_k0": se_k0, "mc_tau": m_tau, "se_tau": se_tau,
                      "W_at_atom_max": float(W0["W_at_atom_max"])}}
     return all(res.values()), res, detail

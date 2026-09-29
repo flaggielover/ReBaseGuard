@@ -53,19 +53,50 @@ def assemble(meas: dict, halves: dict, m: int, coefficients) -> tuple:
     return lo, hi
 
 
-def srk_enclosure(meas: dict, A: dict, m: int, gate_result, frozen_obj: dict, frozen_lohi: tuple,
-                  coefficients, allow_test_gamma: bool = False) -> dict:
-    """gate_result must be a srk_gate.GateResult (review R1 B2): Gamma-bar values reach the consumer only through the
-    certificate gate.  allow_test_gamma=True admits a raw {i: value} dict and exists for unit tests only."""
-    if isinstance(gate_result, GT.GateResult):
-        if gate_result.source not in ("GATE", "GATE_TABOO", "GATE_MIN", "EMPTY"):
-            raise AdapterRefusal(f"unknown GateResult source {gate_result.source!r}")
-        gamma = gate_result.gamma
-    elif allow_test_gamma and isinstance(gate_result, dict):
-        gamma = gate_result
-    else:
+REAL_GEOMETRY = {"h": "5/1", "k": "1/2"}
+PACKAGE1_SOURCES = frozenset({"GATE", "EMPTY"})     # SRK-T is OUT of package 1: GATE_TABOO / GATE_MIN are refused
+
+
+def _bound_gamma(gate_result, cell: tuple, geometry: dict, verifier_id: str, rho: F) -> dict:
+    """review R2 P-1: the gate result must be bound to THIS cell, geometry, the whole kernel and the pinned verifier."""
+    if not isinstance(gate_result, GT.GateResult):
         raise AdapterRefusal("Gamma-bar must come from srk_gate.gate() (GateResult)")
+    if gate_result.source not in PACKAGE1_SOURCES:
+        raise AdapterRefusal(f"GateResult source {gate_result.source!r} not admissible in package 1")
+    try:
+        c0, c1 = GT._rat(cell[0]), GT._rat(cell[1])
+    except ValueError as exc:
+        raise AdapterRefusal(str(exc))
+    if gate_result.cell != (c0, c1):
+        raise AdapterRefusal("GateResult is for another cell")
+    if dict(gate_result.geometry) != dict(geometry):
+        raise AdapterRefusal("GateResult is for another geometry")
+    if gate_result.kernel != "whole":
+        raise AdapterRefusal("GateResult kernel is not 'whole'")
+    if rho != (c1 - c0) / 2:
+        raise AdapterRefusal("cell half-width != meas rho")
+    gamma = dict(gate_result.gamma)
+    if set(gamma) != {1, 2, 3, 4}:
+        raise AdapterRefusal("GateResult must carry exactly the indices 1..4")
+    if gate_result.source == "EMPTY":
+        if any(v is not None for v in gamma.values()):
+            raise AdapterRefusal("EMPTY GateResult with a non-None value")
+    else:
+        if not isinstance(verifier_id, str) or not verifier_id or gate_result.verdict_source != verifier_id:
+            raise AdapterRefusal("GateResult verdicts do not come from the pinned verifier")
+        for v in gamma.values():
+            if v is not None and (not isinstance(v, F) or v < 0):
+                raise AdapterRefusal("Gamma-bar must be None or a nonnegative Fraction")
+    return gamma
+
+
+def srk_enclosure(meas: dict, A: dict, m: int, cell: tuple, gate_result, frozen_obj: dict, frozen_lohi: tuple,
+                  coefficients, *, verifier_id: str | None, geometry: dict = REAL_GEOMETRY) -> dict:
+    """cell = the exact rational drift cell (e_lo, e_hi) from the pinned cells.json (driver-supplied).  gate_result must
+    be a srk_gate.GateResult bound to that cell, the geometry, the whole kernel and verifier_id (the identity of the
+    pinned independent verifier, 'sha256:<hex>'); an EMPTY result (all None) is the reproduction case."""
     rho = F(meas["rho"])
+    gamma = _bound_gamma(gate_result, cell, geometry, verifier_id, rho)
     # reproduction gate: the frozen half widths must be exactly rad_r (|G(a)| = 0, (P2'))
     base_halves = {}
     for r in range(5):

@@ -99,9 +99,13 @@ window) and drops only the candidates' pointwise values, replacing them by their
 **Proposition SC-SRK (sufficient condition for a strict gain).** *[Corrected per review R1 B6: this was stated as
 "iff"; it is only sufficient.]* At exact certificate level, SRK is strictly below TC-T for object r if either of
 these holds:
-* the order-3 weight (3s_H κ̄₁ + 3s_D κ̄₂ + s_F κ̄₃) lies below its sup on a set of positive μ_{a,e}-occupation, for the
-  maximizing e;
-* the same holds for the order-4 weight.
+* for some index i with a nonzero coefficient in B3 (i ≤ 3), and at **every** e ∈ C, κ̄_i lies below ‖κ̄_i‖ on a set of
+  positive μ_{a,e}-occupation. Then (R_eκ̄_i)(a) < ‖κ̄_i‖·E_a[τ_e] for every e ∈ C. Both sides are continuous in e and C
+  is compact, so the strict inequality survives the sup, giving Γ̄_i < A0·k_i and hence B3 < A0·f_G;
+* the same holds for some index with a nonzero coefficient in B4.
+
+*[Corrected per review R2: the earlier wording "for the maximizing e" broke, because the Γ̄_i are separate sups over
+e.]*
 
 A strict gain can also arise with neither, from the slack in A0 ≥ sup E_a[τ] or in the frozen k_i ≥ ‖κ̄_i‖.
 

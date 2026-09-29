@@ -2,7 +2,10 @@
 A stub of the frozen tail_enclosure is re-derived here from THEOREM_TC / THEOREM_TCT formulas (independent of
 tct_rule.py).  Checks: reproduction gate passes on genuine stub output and refuses tampered frozen objects; the SRK
 enclosure lies inside the TC-T enclosure; Gamma = None everywhere reproduces the frozen enclosure; a manufactured
-Gamma that is large leaves the enclosure unchanged (min construction)."""
+Gamma that is large leaves the enclosure unchanged (min construction).  Every Gamma-bar reaches the adapter through
+srk_gate.gate on manufactured certificate objects (review R2 P-1: no raw-dict bypass exists any more), and the binding
+negatives of review R2 RD2-2 must refuse: another cell, another geometry, another verifier identity, taboo/min sources,
+a hand-built result, an EMPTY result for another cell, a float cell, a rho/cell mismatch."""
 import random
 import sys
 from fractions import Fraction as F
@@ -11,6 +14,27 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "impl"))
 import srk_adapter as AD  # noqa: E402
+import srk_certify as S  # noqa: E402
+import srk_gate as GT  # noqa: E402
+
+VID = "sha256:test-verifier"
+E0 = F(1, 2)                                   # manufactured decoy drift centre (not a tail cell)
+
+
+def gate_for(cell, gam, geometry=None, kernel="whole", d_lo=None, vid=VID):
+    geometry = dict(AD.REAL_GEOMETRY if geometry is None else geometry)
+    wb, subs = S.cell_blocks(*cell)
+    certs, verd = [], {}
+    for i, g in gam.items():
+        for b in subs:
+            c = {"schema": "SRK_CERT/1", "status": "CERTIFIED", "geometry": geometry,
+                 "block": [S.fstr(b[0]), S.fstr(b[1])], "weight_block": [S.fstr(wb[0]), S.fstr(wb[1])],
+                 "e_c": S.fstr((b[0] + b[1]) / 2), "hermite_index": i, "degree": 8, "kernel": kernel,
+                 "Gamma": S.fstr(g), "V0": {}, "V1": {}, "W0": {}, "W1": {}}
+            c["sha256"] = GT.canonical_sha(c)
+            certs.append(c)
+            verd[c["sha256"]] = "ACCEPT"
+    return GT.gate(cell[0], cell[1], geometry, kernel, certs, verd, d_lo=d_lo, verdict_source=vid)
 
 
 def coefficients(m):
@@ -76,34 +100,59 @@ def refuses(fn):
 
 
 def run():
-    res = {"repro_none": 0, "inside": 0, "big_gamma_unchanged": 0, "tamper_refused": 0, "Gneq0_refused": 0,
-           "wrongcoef_refused": 0, "cases": 0}
+    keys = ["repro_empty", "inside", "big_gamma_unchanged", "tamper_refused", "Gneq0_refused", "wrongcoef_refused",
+            "raw_dict_refused", "other_cell_refused", "other_geometry_refused", "other_verifier_refused",
+            "taboo_source_refused", "min_source_refused", "empty_other_cell_refused", "float_cell_refused",
+            "rho_mismatch_refused", "hand_built_refused", "partial_gate_is_safe"]
+    res = {k: 0 for k in keys}
+    res["cases"] = 0
     for seed in range(1, 21):
         meas, k, A, sig = manufactured(seed)
         lo, hi, obj = stub_tail_enclosure(meas, k, A, sig, 5)
+        cell = (E0 - meas["rho"], E0 + meas["rho"])
         res["cases"] += 1
-        none = AD.srk_enclosure(meas, A, 5, {1: None, 2: None, 3: None, 4: None}, obj, (lo, hi), coefficients, allow_test_gamma=True)
-        res["repro_none"] += (none["lo"], none["hi"]) == (lo, hi)
+
+        def enc(gr, o=obj, coef=coefficients, c=cell, vid=VID):
+            return AD.srk_enclosure(meas, A, 5, c, gr, o, (lo, hi), coef, verifier_id=vid)
+        e = enc(GT.GateResult.empty(*cell, AD.REAL_GEOMETRY))
+        res["repro_empty"] += (e["lo"], e["hi"]) == (lo, hi)
         gam = {i: A["A0"] * k[i] * F(random.Random(seed * 7 + i).randint(30, 99), 100) for i in (1, 2, 3, 4)}
-        out = AD.srk_enclosure(meas, A, 5, gam, obj, (lo, hi), coefficients, allow_test_gamma=True)
+        gr = gate_for(cell, gam)
+        out = enc(gr)
         res["inside"] += (out["lo"] >= lo and out["hi"] <= hi and (out["lo"], out["hi"]) != (lo, hi))
-        big = {i: A["A0"] * k[i] * 10 ** 6 for i in (1, 2, 3, 4)}
-        outb = AD.srk_enclosure(meas, A, 5, big, obj, (lo, hi), coefficients, allow_test_gamma=True)
+        outb = enc(gate_for(cell, {i: A["A0"] * k[i] * 10 ** 6 for i in (1, 2, 3, 4)}))
         res["big_gamma_unchanged"] += (outb["lo"], outb["hi"]) == (lo, hi)
         bad = {r: dict(v) for r, v in obj.items()}
         bad[2]["rad"] = bad[2]["rad"] * F(99, 100)
-        res["tamper_refused"] += refuses(lambda: AD.srk_enclosure(meas, A, 5, gam, bad, (lo, hi), coefficients, allow_test_gamma=True))
+        res["tamper_refused"] += refuses(lambda: enc(gr, o=bad))
         badg = {r: dict(v) for r, v in obj.items()}
         badg[0]["abs_G_at_a"] = F(1, 10)
-        res["Gneq0_refused"] += refuses(lambda: AD.srk_enclosure(meas, A, 5, gam, badg, (lo, hi), coefficients, allow_test_gamma=True))
+        res["Gneq0_refused"] += refuses(lambda: enc(gr, o=badg))
         wrong = lambda m: [(a, b, c, d * (F(11, 10) if a == "W" else 1)) for a, b, c, d in coefficients(m)]  # noqa
-        res["wrongcoef_refused"] += refuses(lambda: AD.srk_enclosure(meas, A, 5, gam, obj, (lo, hi), wrong, allow_test_gamma=True))
-        res.setdefault("raw_dict_refused_without_flag", 0)
-        res["raw_dict_refused_without_flag"] += refuses(lambda: AD.srk_enclosure(meas, A, 5, gam, obj, (lo, hi),
-                                                                                  coefficients))
-        res.setdefault("gate_empty_reproduces", 0)
-        e = AD.srk_enclosure(meas, A, 5, AD.GT.GateResult.empty(), obj, (lo, hi), coefficients)
-        res["gate_empty_reproduces"] += (e["lo"], e["hi"]) == (lo, hi)
+        res["wrongcoef_refused"] += refuses(lambda: enc(gr, coef=wrong))
+        res["raw_dict_refused"] += refuses(lambda: enc(gam))
+        other = (cell[0] + F(1, 1024), cell[1] + F(1, 1024))
+        res["other_cell_refused"] += refuses(lambda: enc(gate_for(other, gam)))
+        res["other_geometry_refused"] += refuses(lambda: enc(gate_for(cell, gam, geometry={"h": "3/1", "k": "1/2"})))
+        res["other_verifier_refused"] += refuses(lambda: enc(gr, vid="sha256:another-verifier"))
+        dl = {"value": "1/2", "domain": [S.fstr(cell[0]), S.fstr(cell[1])]}
+        tab = gate_for(cell, gam, kernel="taboo", d_lo=dl)
+        res["taboo_source_refused"] += refuses(lambda: enc(tab))
+        res["min_source_refused"] += refuses(lambda: enc(GT.combine(gr, tab)))
+        res["empty_other_cell_refused"] += refuses(lambda: enc(GT.GateResult.empty(*other, AD.REAL_GEOMETRY)))
+        res["float_cell_refused"] += refuses(lambda: enc(gr, c=(float(cell[0]), cell[1])))
+        wide = (cell[0] - F(1, 1024), cell[1])
+        res["rho_mismatch_refused"] += refuses(lambda: enc(gate_for(wide, gam), c=wide))
+        try:
+            GT.GateResult(object(), gamma=gam, cell=cell, geometry=AD.REAL_GEOMETRY, kernel="whole", source="GATE",
+                          admitted=(), verdict_source=VID, d_lo=None, report={})
+        except TypeError:
+            res["hand_built_refused"] += 1
+        # a gate result with a missing index value (None) is safe: that index falls back to TC-T
+        gp = gate_for(cell, {1: gam[1], 2: gam[2], 3: gam[3]})          # no certificate for index 4
+        part = enc(gp)
+        res["partial_gate_is_safe"] += (gp.gamma[4] is None and part["lo"] >= lo and part["hi"] <= hi
+                                        and all(part["per_r"][r]["branch4"] == "TCT" for r in range(5)))
     ok = all(v == res["cases"] for kk, v in res.items() if kk != "cases")
     return ok, res
 

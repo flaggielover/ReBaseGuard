@@ -3,8 +3,9 @@
 For each declared cell of config/SRK_DECOY_DECLARATION_A2.json (non-dyadic endpoints):
   1. sub-block certificates from evidence/srk_decoys_cell/ (weight block = the cell's outward dyadic hull, which is
      STRICTLY larger than each check sub-block: the case review R1 found unverified);
-  2. independent-verifier verdicts from verify/VERIFY_RESULTS.json, matched by sha256 (run the verifier first:
-     python3 verify/run_verify_all.py --files evidence/srk_decoys_cell/*.json);
+  2. independent-verifier verdicts computed IN-PROCESS by srk_gate.verdicts_from_verifier (the verifier library,
+     verdict_source = sha256 of the verifier file; review R2 P-1), cross-checked against the batch results in
+     verify/VERIFY_RESULTS.json (python3 verify/run_verify_all.py --files evidence/srk_decoys_cell/*.json);
   3. srk_gate.gate -> Gamma-bar_i; must be non-None for every declared index and equal max_b of the per-block values;
   4. gate negatives on the REAL certificates: a missing sub-block, a weight block narrowed to the check block (re-hashed
      and given a forged ACCEPT), a REJECT verdict, the wrong kernel, a shifted cell -> each must refuse / give None;
@@ -24,11 +25,12 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 NS = HERE.parent
-for p_ in (NS / "impl", NS / "code", HERE):
+for p_ in (NS / "impl", NS / "code", NS / "verify", HERE):
     sys.path.insert(0, str(p_))
 import q309_guard as Q  # noqa: E402
 import srk_certify as S  # noqa: E402
 import srk_gate as GT  # noqa: E402
+import srk_verify_indep as VI  # noqa: E402
 from srk_mc_control import he_abs_int, simulate  # noqa: E402
 
 
@@ -88,7 +90,7 @@ def run(n_paths=10000):
                     klass="NONTARGET_DECOY", drifts=[[F(c["cell"][0]), F(c["cell"][1])]
                                                      for c in fam["cells"] if F(c["h"]) == 5 and F(c["k"]) == F(1, 2)],
                     notes=f"declared A2 cells; real-kernel cell far below the band; n_paths={n_paths}")
-    verd = verdicts_from_results()
+    batch = verdicts_from_results()
     out, ok = [], True
     for cd in fam["cells"]:
         geom = {"h": S.fstr(F(cd["h"])), "k": S.fstr(F(cd["k"]))}
@@ -102,38 +104,48 @@ def run(n_paths=10000):
         chk["certificates_present"] = len(certs) == len(idx) * len(subs)
         chk["weight_block_strictly_larger_than_blocks"] = all(
             tuple(F(x) for x in c["weight_block"]) == wb and tuple(F(x) for x in c["block"]) != wb for c in certs)
+        verd, vs = GT.verdicts_from_verifier(certs, VI)
         chk["all_verifier_ACCEPT"] = len(certs) > 0 and all(verd.get(c["sha256"]) == "ACCEPT" for c in certs)
-        r = GT.gate(*cell, geom, "whole", certs, verd, indices=idx)
+        chk["in_process_equals_batch_verdicts"] = len(certs) > 0 and all(verd[c["sha256"]] == batch.get(c["sha256"])
+                                                                         for c in certs)
+        r = GT.gate(*cell, geom, "whole", certs, verd, indices=idx, verdict_source=vs)
+        chk["gate_bound_to_cell_and_verifier"] = (r.cell == cell and r.verdict_source == vs == GT.verifier_identity(VI)
+                                                  and len(r.admitted) == len(certs))
         direct = {i: max(F(c["Gamma"]) for c in certs if c["hermite_index"] == i) for i in idx} if certs else {}
         chk["gate_all_indices"] = all(r.gamma[i] is not None for i in idx) and not r.report["refused"]
         chk["gate_equals_max_over_blocks"] = chk["gate_all_indices"] and all(r.gamma[i] == direct[i] for i in idx)
         # negatives on real certificates
         s1 = S.fstr(subs[1][0])
-        r_miss = GT.gate(*cell, geom, "whole", [c for c in certs if c["block"][0] != s1], verd, indices=idx)
+        r_miss = GT.gate(*cell, geom, "whole", [c for c in certs if c["block"][0] != s1], verd, indices=idx,
+                         verdict_source=vs)
         chk["neg_missing_subblock_None"] = all(r_miss.gamma[i] is None for i in idx)
         if certs:
             m = copy.deepcopy(certs[0])
             m["weight_block"] = list(m["block"])
             m["sha256"] = GT.canonical_sha(m)
             forged = dict(verd, **{m["sha256"]: "ACCEPT"})
-            r_nw = GT.gate(*cell, geom, "whole", [m] + [c for c in certs if c is not certs[0]], forged, indices=idx)
+            r_nw = GT.gate(*cell, geom, "whole", [m] + [c for c in certs if c is not certs[0]], forged, indices=idx,
+                           verdict_source=vs)
             chk["neg_narrow_weight_refused"] = (r_nw.gamma[m["hermite_index"]] is None
                                                 and any("hull" in x["reason"] for x in r_nw.report["refused"]))
             rej = dict(verd, **{certs[0]["sha256"]: "REJECT"})
-            r_rej = GT.gate(*cell, geom, "whole", certs, rej, indices=idx)
+            r_rej = GT.gate(*cell, geom, "whole", certs, rej, indices=idx, verdict_source=vs)
             chk["neg_REJECT_refused"] = r_rej.gamma[certs[0]["hermite_index"]] is None
         r_tab = GT.gate(*cell, geom, "taboo", certs, verd, indices=idx, d_lo={"value": "1/1", "domain": [
-            S.fstr(cell[0]), S.fstr(cell[1])]})
+            S.fstr(cell[0]), S.fstr(cell[1])]}, verdict_source=vs)
         chk["neg_wrong_kernel_refused"] = all(r_tab.gamma[i] is None for i in idx)
         shifted = (cell[0] + F(1, 1024), cell[1] + F(1, 1024))
-        r_sh = GT.gate(*shifted, geom, "whole", certs, verd, indices=idx)
+        r_sh = GT.gate(*shifted, geom, "whole", certs, verd, indices=idx, verdict_source=vs)
         chk["neg_shifted_cell_refused"] = all(r_sh.gamma[i] is None for i in idx)
+        reasons = sorted({x["reason"].split(":")[0][:60] for rr in (r_miss, r_rej, r_tab, r_sh)
+                                         for x in rr.report["refused"]} | ({x["reason"][:60] for x in r_nw.report["refused"]}
+                                                                           if certs else set())) or ["none"]
         mc = mc_cell(geom, cell, wb, r.gamma, n_paths) if chk["gate_all_indices"] else []
         chk["mc_control_pass"] = bool(mc) and all(x["control_pass"] for x in mc)
         ok = ok and all(chk.values())
         out.append({"geometry": geom, "cell": [S.fstr(cell[0]), S.fstr(cell[1])],
                     "weight_block": [S.fstr(x) for x in wb], "sub_blocks": [[S.fstr(a), S.fstr(b)] for a, b in subs],
-                    "checks": chk, "gamma_bar": {i: (S.fstr(v) if v is not None else None) for i, v in r.gamma.items()},
+                    "checks": chk, "negative_refusal_reasons": reasons, "gamma_bar": {i: (S.fstr(v) if v is not None else None) for i, v in r.gamma.items()},
                     "mc": mc, "producer": sorted({c.get("producer_sha256") for c in certs})})
     return ok, out
 

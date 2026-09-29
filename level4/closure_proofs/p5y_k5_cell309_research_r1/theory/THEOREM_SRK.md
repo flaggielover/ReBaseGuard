@@ -381,3 +381,13 @@ the adapter (ERRATA E-11).
 * **Test 10.** Implemented as T10: byte-identical sha over two productions, a JSON round trip, and verifier ACCEPT.
 * **Decoy restriction (N3).** §8's "e ≤ 1" should read "e ≤ 33/32", since the declared real-kernel block [1, 33/32]
   reaches 33/32. Every declared drift stays far below 6/5 (ERRATA E-8).
+
+**A4 notes (review R2).**
+* **Degenerate on-grid cell.** If e_lo = e_hi lies on the 2⁻¹⁰ grid, `cell_blocks` returns Ew = [x, x + 2⁻¹⁰]. This is
+  a valid outward hull, and it is irrelevant for tail cells (ρ > 0).
+* **Float inputs.** `cell_blocks` (a producer function, left unchanged so the qualified code state is preserved)
+  converts a float silently to its binary value. The gate and the adapter refuse floats: cell endpoints must be exact
+  rationals from the pinned `cells.json`.
+* **Verdict provenance.** The gate records the verdict source. The Stage-2 driver must obtain verdicts by running the
+  pinned verifier in-process (`srk_gate.verdicts_from_verifier`) and pass its identity to the adapter (`verifier_id`).
+  This is a formal-campaign QC item (static check of the driver).

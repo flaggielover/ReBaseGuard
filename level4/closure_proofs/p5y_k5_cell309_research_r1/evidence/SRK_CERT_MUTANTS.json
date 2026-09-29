@@ -5,7 +5,7 @@
   "T10_json_round_trip": true,
   "T10_sha_consistent": true,
   "T10_genuine_ACCEPT": true,
-  "T1_quarter_weight_REJECT": true,
+  "T1_consistent_quarter_weight_REFUTED": true,
   "T2_taboo_genuine_ACCEPT": true,
   "T2_taboo_as_whole_REJECT": true,
   "T8_identity_mc": true,
@@ -16,19 +16,28 @@
   "verdicts": {
    "genuine": [
     "ACCEPT",
-    "(C1)-(C4) and sha256 proved"
+    "(C1)-(C4) and sha256 proved",
+    false
    ],
-   "quarter": [
+   "quarter_consistent": [
     "REJECT",
-    "C3 UNPROVEN at depth limit: certified lower bound -1.619926e-08 (pts=1 delta=0.00e+00)"
+    "C3 is FALSE at (p, m, e) = (3/16, 3/16, 17/64): certified upper bound -5.908161e-01 < 0",
+    true
+   ],
+   "quarter_legacy_report_only": [
+    "REJECT",
+    "C3 UNPROVEN at depth limit: certified lower bound -1.619926e-08 (pts=1 delta=0.00e+00)",
+    false
    ],
    "taboo": [
     "ACCEPT",
-    "(C1)-(C4) and sha256 proved"
+    "(C1)-(C4) and sha256 proved",
+    false
    ],
    "taboo_as_whole": [
     "REJECT",
-    "C2 is FALSE at (p, m, e) = (3/16, 3/16, 17/64): certified upper bound -1.315225e+00 < 0"
+    "C2 is FALSE at (p, m, e) = (3/16, 3/16, 17/64): certified upper bound -1.315225e+00 < 0",
+    true
    ]
   },
   "T8": {
