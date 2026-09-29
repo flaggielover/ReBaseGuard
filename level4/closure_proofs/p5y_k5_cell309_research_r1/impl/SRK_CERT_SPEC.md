@@ -25,6 +25,7 @@ OPERATOR_AUDIT.md` §1) are the complete specification. An independent verifier 
 | `block` | ["e_lo", "e_hi"]: the drift set E = [e_lo, e_hi], exact rationals |
 | `e_c` | (e_lo + e_hi)/2, exact |
 | `hermite_index` | i ∈ {0, 1, 2, 3, 4} |
+| `weight_block` | ["w_lo", "w_hi"] ⊇ block: the weight is κ̄_i over the WEIGHT block (default equal to `block`) |
 | `V0`, `V1`, `W0`, `W1` | bivariate polynomials in (p, m): {"a,b": "num/den"} meaning Σ c_ab p^a m^b, exact rationals |
 | `lam`, `eta_W` | informational (already folded into V0/V1/W0/W1) |
 | `Gamma` | claimed value "num/den" |
@@ -39,7 +40,7 @@ For **every** e ∈ E and **every** x ∈ X:
 
     (C1)  W_e(x) ≥ 0
     (C2)  W_e(x) − (K_e W_e)(x) ≥ 1
-    (C3)  V_e(x) − (K_e V_e)(x) ≥ κ̄_i^E(x)
+    (C3)  V_e(x) − (K_e V_e)(x) ≥ κ̄_i^{Ew}(x),   Ew = weight_block (⊇ E)
     (C4)  Gamma ≥ max( V_{e_lo}(a), V_{e_hi}(a) )     (exact rational comparison)
 
 and `sha256` must match the body.

@@ -178,19 +178,26 @@ def certify_W(g: KX.Geom, e_lo: F, e_hi: F, d: int, log=print, whole: bool = Tru
     return rec
 
 
-def certify_weight(g: KX.Geom, i: int, e_lo: F, e_hi: F, d: int, Wrec: dict, log=print, mutant: str = "") -> dict:
+def certify_weight(g: KX.Geom, i: int, e_lo: F, e_hi: F, d: int, Wrec: dict, log=print, mutant: str = "",
+                   weight_block=None) -> dict:
+    """weight_block = (w_lo, w_hi) (default: the check block): the weight is kbar_i over the WEIGHT block while the
+    supersolution inequality is checked for e in the CHECK block [e_lo, e_hi] (sub-block covers, THEOREM_SRK s.7)."""
     whole = Wrec.get("whole", True)
+    w_lo, w_hi = (e_lo, e_hi) if weight_block is None else (F(weight_block[0]), F(weight_block[1]))
+    if not (w_lo <= e_lo and e_hi <= w_hi):
+        raise ValueError("the check block must lie inside the weight block")
+    guard_geometry_block(g, w_lo, w_hi)
     """(V) for Psi = kbar_i^E (e-affine family, additive lambda W' repair).  mutant (tests only):
     'shrink_window' certifies against a window narrowed by 1/4 (an invalid, too-small Psi)."""
     guard_geometry_block(g, e_lo, e_hi)
     t0 = time.time()
     e_c = (e_lo + e_hi) / 2
-    V0, V1 = _eaff_proposal(g, e_lo, e_hi, d, _kbar_float(g, i, e_lo, e_hi), whole)
+    V0, V1 = _eaff_proposal(g, e_lo, e_hi, d, _kbar_float(g, i, w_lo, w_hi), whole)
     res = eaff_pair(g, V0, V1, e_c, whole)
     if mutant == "shrink_window":
-        rhs = lambda b: EN.abs_integral_upper(i, b[1] - b[3] - g.c + e_lo + F(1, 4), g.c - (b[0] - b[2]) + e_hi)  # noqa
+        rhs = lambda b: EN.abs_integral_upper(i, b[1] - b[3] - g.c + w_lo + F(1, 4), g.c - (b[0] - b[2]) + w_hi)  # noqa
     else:
-        rhs = lambda b: EN.box_envelope(g, i, b, e_lo, e_hi)  # noqa: E731
+        rhs = lambda b: EN.box_envelope(g, i, b, w_lo, w_hi)  # noqa: E731
     chk = cover_check(g, res, rhs, e_lo, e_hi)
     sup_psi = chk["rhs_max"]
     lam = dyadic_up(max(F(0), -chk["r_min"]) + MU * max(F(1), sup_psi), 40)
@@ -201,7 +208,7 @@ def certify_weight(g: KX.Geom, i: int, e_lo: F, e_hi: F, d: int, Wrec: dict, log
     rec = {"status": "CERTIFIED", "i": i, "degree": d, "r_min": chk["r_min"], "lam": lam, "sup_psi": sup_psi,
            "V_at_atom_raw": raw, "Gamma": bound, "boxes": chk["boxes"], "max_level": chk["max_level"],
            "worst_box": chk["worst_box"], "seconds": round(time.time() - t0, 1), "_V": (V0p, V1p), "e_c": e_c,
-           "whole": whole}
+           "whole": whole, "weight_block": (w_lo, w_hi)}
     log(f"  V[k{i}] d={d}: Gamma={float(bound):.6g} (raw {float(raw):.6g}, lam={float(lam):.3g}, "
         f"r_min={float(chk['r_min']):.3g}) boxes={chk['boxes']} lev={chk['max_level']} {rec['seconds']}s")
     return rec
@@ -263,7 +270,7 @@ def certificate_json(blk: dict, i: int) -> dict:
            "claim": "for every e in E, with V_e = V0 + (e - e_c) V1 and W_e = W0 + (e - e_c) W1: V_e >= kbar_i^E + K_e V_e "
                     "and W_e >= 0, W_e >= 1 + K_e W_e on X (whole kernel); hence sup_E (R_e kbar_i^E)(a) <= "
                     "max(V_{e_lo}(a), V_{e_hi}(a)) = Gamma (THEOREM_SRK Lemma SV')",
-           "e_c": fstr(v["e_c"]),
+           "e_c": fstr(v["e_c"]), "weight_block": [fstr(x) for x in v.get("weight_block", (F(blk["block"][0]), F(blk["block"][1])))],
            "V0": _poly_json(v["_V"][0]), "V1": _poly_json(v["_V"][1]),
            "W0": _poly_json(r["W"]["_W"][0]), "W1": _poly_json(r["W"]["_W"][1]),
            "Gamma": fstr(v["Gamma"]), "W_at_atom_max": fstr(r["W"]["W_at_atom_max"]), "lam": fstr(v["lam"]),
