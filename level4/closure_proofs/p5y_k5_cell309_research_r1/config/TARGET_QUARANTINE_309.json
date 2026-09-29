@@ -1,0 +1,51 @@
+{
+  "schema": "P5Y_K5_CELL309_RESEARCH_R1_TARGET_QUARANTINE/1",
+  "frozen_before_any_science": true,
+  "base_commit": "b73b9449fb13e7134455d8f5819c1f9d5290bb0b",
+  "base_description": "tip of p5y-k5-cell307-rlr-r1 (cell-307 RLR r1 final report), the latest committed K5 state visible on origin",
+  "written_utc": "2026-09-29T12:57Z",
+  "authority": "user instruction 2026-09-29: PARALLEL RESEARCH-ONLY campaign for K5 cell 309 (no target evaluation, no push unless authorized, r5 immutable, no r6, no adoption, no K5/P5Y status change)",
+  "target": {
+    "detector": "CUSUM",
+    "m": 5,
+    "primary_cell": 309,
+    "quarantined_cells": [305, 306, 307, 308, 309],
+    "why_305_307": "305 (tail-adjacent, ROUTE_AUDIT_R1 section 8 precedent) and 307 (already closed under RLR; no re-evaluation, no tuning) are quarantined for any new-route quantity. 306 and 308 are out of scope by instruction; 308 is under a separate live formal campaign elsewhere and is untouchable."
+  },
+  "drift_band": {
+    "band": ["6/5", "13/5"],
+    "mirror": ["-13/5", "-6/5"],
+    "rule": "Inherited unchanged from overnight QUARANTINE_AMENDMENT_1 (stricter-only inheritance): no new operator quantity, candidate object, sup norm, remainder, cover quantity or consumer quantity is evaluated at any drift point or interval meeting the band or its mirror.",
+    "theorem_M_transfer_rule": "Inherited from overnight QUARANTINE_AMENDMENT_2 R2.1-R2.4: no validation-drift value of Lambda / E_a[tau] / P(tau>n) / supersolution values is juxtaposed with any 305-309 number, and no transfer into the band is stated as a number."
+  },
+  "forbidden_evaluation_classes": [
+    "Gamma(5,309) (and Gamma for 305-308) under ANY supply, consumer, theorem, cover, truncation or tolerance, including re-computation of historical sealed values by code execution",
+    "any target-equivalent numerical proxy: enclosure radius, rad_r, S-bar, H_k, M_k, magnitude, margin, pass/fail indicator, x-eff factor, critical constant or critical ratio for a quarantined cell under any new route",
+    "any new-route input quantity computed on a quarantined cell or inside the drift band (operator constants C_T, tau, Abar, D_lo, D1, D2, A0, A1, A2; sup norms; sigma3/sigma4; residual bounds; cover cells; order-3 objects; candidate payloads)",
+    "hidden reconstruction of a target verdict (e.g. multiplying a committed 309 decomposition by a new route's generic gain factor, or juxtaposing them)",
+    "Monte Carlo or deterministic calculations whose output would reveal whether a proposed route closes 309",
+    "parameter tuning (degree, partition, truncation order, cover, tolerance, ladder, scale, route, consumer variant) against 309 or against any committed 309 figure",
+    "trying multiple routes on 309 and selecting the successful one",
+    "any evaluation of cells 306 or 308"
+  ],
+  "forbidden_executions": [
+    "any historical campaign driver / consumer / exactly-once CLI (list in code/q309_guard.py FORBIDDEN_MODULES)",
+    "any exactly-once protocol step of any campaign: qualification, grant, marker arming, execution, seal, adjudication",
+    "creating, moving or deleting any ref under refs/p5y-*, refs/c1*, or any cell-308 namespace",
+    "any contact with the machine executing cell 308; any read of its uncommitted/transient state"
+  ],
+  "allowed": [
+    "reading committed text and JSON on origin refs, including historical 309 values, ONLY when necessary for provenance/history reconstruction; every such read that exposes a 309 numeric value is logged in ledger/EXPOSURE_LEDGER.jsonl",
+    "symbolic / exact-rational derivations, theorem statements and proofs",
+    "new stdlib-only code exercised on synthetic fixtures, analytically solvable models, and non-tail real cells (other m values, lower front) at drifts outside the band, for soundness only",
+    "improvement ratios on synthetic fixtures and non-tail material only, never juxtaposed with any 305-309 figure"
+  ],
+  "firewall_practice": "Historical documents that carry 309 numeric values are, where practical, read by a firewalled reader (subagent) instructed to return only qualitative/structural content and a list of the files that carried 309 numbers; the coordinator logs those reads as exposures of the reader. Any 309 number the coordinator itself sees is logged as a coordinator exposure.",
+  "enforcement": {
+    "runtime_guard": "code/q309_guard.py guard_cell / guard_drift / guard_path, called at every new entry point",
+    "import_guard": "code/q309_guard.py install_import_guard refuses historical consumer/driver modules",
+    "static_scan": "code/q309_guard.py --scan with a planted negative control that must fire",
+    "ledgers": "ledger/EXPOSURE_LEDGER.jsonl (historical reads), ledger/ZERO_TARGET_LEDGER.jsonl (executions)",
+    "stop_rule": "any target leak stops the affected route; it is classified LEAKED / INVALID_RESULT_CHASING and is not rescued in this campaign"
+  }
+}
