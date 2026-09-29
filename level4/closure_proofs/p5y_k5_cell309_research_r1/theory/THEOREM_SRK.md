@@ -49,13 +49,14 @@ B = [p₀, p₁] × [m₀, m₁] and E = [e_lo, e_hi],
 ## 2. Weighted resolvent bounds by supersolution
 
 **Lemma SV.** Let E be a drift set and Ψ ∈ B(X) with Ψ ≥ 0. Assume:
-* (W) there is W ∈ B(X) with W ≥ 1 + K_e W on X for every e ∈ E;
+* (W) there is W ∈ B(X) with W ≥ 0 and W ≥ 1 + K_e W on X for every e ∈ E;
 * (V) there is V ∈ B(X) with V ≥ Ψ + K_e V on X for every e ∈ E.
 
 Then for every e ∈ E, R_e exists, R_e ≥ 0, and R_eΨ ≤ V on X. In particular sup_{e∈E} (R_eΨ)(a) ≤ V(a).
 
 *Proof.*
-1. By (W) and the whole-kernel supersolution lemma (theorem AD §4, Lemma T with K in place of K̂): W ≥ 1, so
+1. By (W) and the whole-kernel supersolution lemma (theorem AD §4, Lemma T with K in place of K̂): W ≥ 0 gives
+   K_eW ≥ 0, hence W ≥ 1, so
    K_e W ≤ W − 1 ≤ θW with θ = 1 − 1/‖W‖ < 1. Positivity then gives ‖K_e^j‖ = ‖K_e^j 1‖ ≤ θ^j ‖W‖. So
    R_e = Σ_j K_e^j converges in operator norm and is positive.
 2. Put g := V − K_e V. Then g ≥ Ψ by (V), and V = R_e g because V is bounded and I − K_e is invertible.
