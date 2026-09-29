@@ -1,0 +1,29 @@
+DELTA REVIEW REQUEST (review r3, condition F6). You are the same independent reviewer (reviewR3) who wrote research reviews/REVIEW_R3_HOST_REPAIR.md (REPAIR_REJECTED, committed at research 4b38eef2, sha256 d39e25ef2e0adf3db9f4a32c870417c1e58b9b138386929f8a7b613441b4f491). Everything in your first brief (research ledger/briefs/21_reviewR3REPAIR.txt) still applies. Its ABSOLUTE RULES apply unchanged: no execute or seal-only, no refs, no git add or commit anywhere, nothing written inside /Users/suzhe/ReBaseGuard-c308mb, only stdlib Python, nothing for cells 305-309 or the band. Your scratch lives under the session scratchpad reviewR3/ (you may use reviewR3/delta/). Ledger lines go to the research ledger via log_event, klass='REVIEW', agent='reviewR3'.
+
+The coordinator applied your F1-F3 and notes N1, N2, N3 and N6 to the still-UNCOMMITTED candidate in /Users/suzhe/ReBaseGuard-c308mb (HEAD still d031dad8; the r2 renames are still staged). Final candidate hashes (verify first; stop and report if any differs):
+  6702a9be56b6e8a530407b8be2794f4d4266445a97d33c2f0601da8754760a8c  code/mb308_host.py
+  411252b2a9fa601cc5c1ba34abaf08482cf95a06e2ce7e4d5e5a5bd9e1f56dcb  code/mb308_driver.py (vs the reviewed 26513c16…: only the HELPER_SHA256 entry of mb308_host.py)
+  48d48049ace56ec91c74b204c62a253f8c870b468032e69f9f897bd9401afc59  code/mb308_qualify.py
+  54c9c8eec9ada5bba420fa77504a060bbd6fe53bfefad2c109ebc6e049e331a7  tests/test_mb308_flows.py (unchanged)
+  57c78b417a654ee893e6b8762da0f2430be7b101bc1fe3bd9b4d1723f7f6a396  config/QUALIFICATION_CASES.json
+  64c291093b3a98a97819fe4dae1ac9046e499798b6e81596d25154a7a509fa82  protocol/MB308_PROTOCOL.md (section 14 rewritten)
+  04e2899a85348f023b2cbf7cad1ebd4dc86a548bc972f06264a1a13148886b2e  protocol/MB308_FREEZE.json (regenerated)
+The version you reviewed is kept for diffing: the driver at scratchpad r3dev/driver_26513c16.py. For the other files, diff against your own record of the reviewed bytes, or reconstruct them from your scratch; git has only r2 (d031dad8) for them.
+
+What changed (the coordinator's account; verify, do not trust):
+- F1: the per-job control plants {all 0.10, RLR d8 0.55} and asserts caps_pass False, eval_cap_ok True, failing per-job keys == ["RLR:8"]. The EVAL-only control asserts that no per-job key fails. The combined control asserts both reasons and ["RLR:8"]. The coordinator checked in-process that M6 (2x -> 1x), M7 and M8 are now caught.
+- F2: mb308_host records the OS thermal-pressure level (notifyutil -g com.apple.system.thermalpressurelevel; integer, or None if unreadable) at every snapshot and sample, and records ThermalEvent entries from the power log in the interval. assess reports thermal_level_max and thermal_level_unreadable and never gates on thermal. The official precondition host_thermal_pressure_level_zero replaces the pmset-therm check. pmset -g therm stays recorded and is described as not a cool-host check.
+- F3: protocol section 14 now carries the pre-declared consequences (headroom, any r3 Q12 FAIL stops the campaign, no re-run of r3 and no r4 with the same caps without a new user decision) and your E2 wording.
+- N1: channel K uses CLOCK_MONOTONIC_RAW (the stored key is monotonic_raw_ns).
+- N2: _host_verdict marks AMBIGUOUS any host interval (raw-clock span) shorter than stage1_wall_seconds + stage2_wall_seconds - 1 s. A control covers it.
+- N3: a stored-vs-raw contradiction control. S kern times are parsed from planted sysctl text in every control. The L fixture control asserts the exact parse [Sleep, DarkWake, Wake] over all time and [Sleep, DarkWake] in its window. There are now 14 controls, and q12_controls requires exactly 14.
+- N6: QC11 checks require_ac inside the preflight branch, and checks that in the decoy branch the snapshot and sampler precede decoy() and provenance follows it.
+- F5 evidence, produced on the final bytes, ledgered, in the session scratchpad r3f5/:
+  - f5_dev.json: --dev --only QC05,QC06,QC07,QC09,QC10,QC11,QC12 --record-scan; all pass; QC10 42 flows, T23 ok.
+  - f5_q12_controls.json: 14/14.
+  - f5_decoy297_b0.json: a dev decoy, host CLEAN, with thermal-level and ThermalEvent fields. Observed and disclosed: the thermal-pressure level went from 0 at start to a maximum of 2 during that short run, with the dev qualifier running concurrently.
+  - The pre-freeze Q8 consistency from bytes: 21 frozen files, 54 external files, 0 mismatches, helper pins ok.
+
+PERMITTED CHANGE AFTER YOUR DELTA VERDICT (declare whether you accept it): if you accept, the coordinator will commit your delta verdict file on the research branch. It will then replace ONLY the token DELTA_REVIEW_CITATION_PENDING in protocol section 14 with "commit <research commit>, sha256 <sha256 of your delta file>, <your verdict token>", regenerate protocol/MB308_FREEZE.json with code/mb308_manifest.py, and commit the freeze r3. No other byte may change. The qualification review will check this.
+
+TASK: check F1-F5 (and N1/N2/N3/N6) against your review file. Re-run your mutations M1-M8 on the final bytes; M6 must now be caught. Re-run any plants you judge necessary, and at least one dev qualifier run of your choice. Look for regressions introduced by the delta. Write /Users/suzhe/ReBaseGuard-c308/level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_R3_HOST_REPAIR_DELTA.md: line 1 the title; line 2 EXACTLY one of DELTA_ACCEPTED or DELTA_REJECTED (that token appears nowhere else as a whole line); then short sections: what you verified, M1-M8 results, any residual conditions for the freeze or the official run (keep the O and E conditions of your first review, amended if needed), and notes. Final message: the verdict line and an 8-line summary.
