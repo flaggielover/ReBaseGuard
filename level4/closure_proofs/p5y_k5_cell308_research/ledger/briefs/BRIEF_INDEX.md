@@ -42,6 +42,12 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 31 | 31_adjudicatorMB308.txt | MB r1 adjudication (section 10 step 7; fresh) | Agent | 2026-09-30 ~20:3xZ | no |
 | 32 | 32_reviewGOV_DELTA.txt | governance delta review (same reviewer resumed) | SendMessage | 2026-09-30 ~21:0xZ | no |
 | 33 | 33_reviewROUTE_DELTA.txt | route delta review (same reviewer resumed) | SendMessage | 2026-09-30 ~21:0xZ | no |
+| 34 | 34_reviewADJ.txt | MB r1 adjudication review (section 10 step 8; fresh) | Agent | 2026-09-29 ~21:2xZ | no |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.
+
+**Erratum (2026-09-29 ~21:2xZ).** Rows 24–31 and 32–33 carry dates written as "2026-09-30 ~HH:MMZ". Those were local
+(JST, +0900) dates paired with approximate UTC clock times. The UTC date of those launches is **2026-09-29**, and the
+UTC times shown are approximate. The adjudicator's note gives rows 30 and 31 as about 18:20Z and 18:31Z, 2026-09-29.
+Each agent's own ledger lines carry the exact UTC first-activity times. The rows themselves are not edited.
