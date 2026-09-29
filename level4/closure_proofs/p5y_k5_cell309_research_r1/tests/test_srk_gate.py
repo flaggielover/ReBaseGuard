@@ -74,6 +74,45 @@ def run():
     res["G5_verifier_missing"] = refused_alone(lambda m: None, verd="")
     res["G6_negative_gamma"] = refused_alone(resha(lambda m: m.__setitem__("Gamma", "-1/1")))
     res["malformed_refused"] = refused_alone(resha(lambda m: m.__setitem__("block", ["x", "y"])))
+    # taboo kernel (SRK-T): D_lo is mandatory, divides, and must be valid on the whole cell
+    tcerts, tverd = [], {}
+    for c in certs:
+        t = copy.deepcopy(c)
+        t["kernel"] = "taboo"
+        t["sha256"] = GT.canonical_sha(t)
+        tcerts.append(t)
+        tverd[t["sha256"]] = "ACCEPT"
+
+    def refuses(**kw):
+        try:
+            GT.gate(*CELL, GEOM, "taboo", tcerts, tverd, **kw)
+        except ValueError:
+            return True
+        return False
+    dl_ok = {"value": "1/2", "domain": [S.fstr(CELL[0]), S.fstr(CELL[1])]}
+    res["taboo_without_D_lo_refused"] = refuses()
+    res["taboo_D_lo_nonpositive_refused"] = refuses(d_lo={"value": "0/1", "domain": dl_ok["domain"]})
+    res["taboo_D_lo_domain_short_refused"] = refuses(d_lo={"value": "1/2", "domain": [
+        S.fstr(CELL[0]), S.fstr(CELL[1] - F(1, 10 ** 6))]})
+    res["taboo_D_lo_extra_key_refused"] = refuses(d_lo=dict(dl_ok, note="x"))
+    rt = GT.gate(*CELL, GEOM, "taboo", tcerts, tverd, d_lo=dl_ok)
+    res["taboo_divides_by_D_lo"] = all(rt.gamma[i] == F(9 + 3 + i) * 2 for i in (1, 2, 3, 4)) and rt.source == "GATE_TABOO"
+    try:
+        GT.gate(*CELL, GEOM, "whole", certs, verdicts, d_lo=dl_ok)
+        res["whole_with_D_lo_refused"] = False
+    except ValueError:
+        res["whole_with_D_lo_refused"] = True
+    rt_big = GT.gate(*CELL, GEOM, "taboo", tcerts, tverd, d_lo={"value": "4/1", "domain": dl_ok["domain"]})
+    cm = GT.combine(r, rt_big)
+    res["combine_is_indexwise_min"] = all(cm.gamma[i] == min(r.gamma[i], rt_big.gamma[i]) for i in (1, 2, 3, 4)) \
+        and cm.source == "GATE_MIN"
+    cm2 = GT.combine(r2, rt)
+    res["combine_None_is_infinity"] = cm2.gamma[2] == rt.gamma[2]
+    try:
+        GT.combine(r, GT.GateResult.empty())
+        res["combine_refuses_EMPTY"] = False
+    except ValueError:
+        res["combine_refuses_EMPTY"] = True
     ok = all(res.values())
     return ok, res
 

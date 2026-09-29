@@ -17,7 +17,7 @@ For the frozen geometry (h, k) = (5, 1/2), a certificate whose block or weight b
 
 ## Usage
 
-    python3 verify/srk_verify_indep.py CERT.json [--index I] [--max-depth 14] [--order 8] [--procs 1] [--json OUT]
+    python3 verify/srk_verify_indep.py CERT.json [--index I] [--max-depth 24] [--order 8] [--procs 1] [--json OUT]
     python3 verify/run_verify_all.py      # all decoy files + section 5 mutants -> verify/VERIFY_RESULTS.json
     python3 verify/results_table.py       # markdown tables of VERIFY_RESULTS.json
     python3 tests/test_verify_selftests.py
@@ -46,7 +46,7 @@ The verdicts are:
    * X × E is covered by prisms (polygon × e-interval). The polygons are axis boxes clipped exactly (Fractions) by
      p+m ≤ h−2k and by the case line p+m = 2k.
    * The initial cells have width 1/4 and span the full block.
-   * A failing cell is bisected along its widest dimension, down to `--max-depth` (default 14).
+   * A failing cell is bisected along its widest dimension, down to `--max-depth` (default 24).
 3. **Taylor models (order N = 8).** Each cell gets a frame (σ,τ,t) = centre + (r0 x0, r1 x1, r2 x2), with x ∈ [−1,1]³
    containing the prism.
    * **Polynomials** are shifted into the frame *exactly*, with integer arithmetic after clearing denominators.
@@ -115,7 +115,7 @@ accepted only if every cover task completed.
   piece ordering m−c ≤ k−p ≤ m−k ≤ c−p for p+m ≥ 2k (valid because p+m ≤ h+2k on X).
 
 **Limitations.**
-* A REJECT that is not a disproof can be a method limitation. The limits are the depth (default 14) and the Taylor
+* A REJECT that is not a disproof can be a method limitation. The limits are the depth (default 24) and the Taylor
   order (8).
 * The disproof is only attempted at a few points per failing cell.
 * Polynomial degree is limited to ≤ 24 by the parser; the decoys use 8–12.
@@ -127,39 +127,58 @@ accepted only if every cover task completed.
 These results are from `verify/VERIFY_RESULTS.json`; `python3 verify/results_table.py` regenerates the tables. The
 settings were Taylor order 8, initial cell width 1/4, depth limit 24, and one worker process.
 
+**Status of the inputs.** The decoy files verified here are the **preliminary** producer outputs. They were moved to
+`evidence/srk_decoys_prelim/` and are unchanged: the certificate sha256 values are recorded per entry. The files are:
+* `evidence/srk_decoys_prelim/h3_k1_2_E1_4_9_32.json`
+* `evidence/srk_decoys_prelim/h5_k1_2_E1_2_17_32.json`
+* `evidence/srk_decoys_prelim/h5_k1_2_E1_4_9_32.json`
+* `evidence/srk_decoys_prelim/h5_k1_2_E1_8_5_32.json`
+
+A single-code-state producer rerun is announced. To verify it with this verifier unchanged, run either:
+* `python3 verify/run_verify_all.py --unit-tests`, which scans `evidence/srk_decoys{,_prelim,_taboo}/*.json` and reuses
+  entries with an identical (file, index, sha256); or
+* `python3 verify/srk_verify_indep.py FILE.json` for a single file.
+
+Keys in the certificate format:
+* `kernel` (whole/taboo), `weight_block` and any extra keys such as `producer_sha256` are accepted.
+* The sha256 is computed, as the spec says, over **every** key except `sha256`. A `kernel` key inside the certificate
+  is therefore hashed.
+* A file-level `kernel` key is honoured. It must not conflict with a certificate-level one.
+
 ### Genuine decoy certificates
 
-Every certificate is **ACCEPTED**: 20 of 20. The verification time is 50 s in total.
+Every certificate is **ACCEPTED**: 20 of 20. The verification time is 47 s in total.
 
 The "min certified LB" columns give the smallest certified cell lower bound over the accepted cover for (C2) and (C3).
-They are conservative: float samples of the true quantity are larger, typically around 0.07–0.2 for h = 5.
+They are conservative: float samples of the true quantity are larger, typically around 0.07–0.2 for h = 5. No h4_*
+file had appeared when this run was made.
 
 | file | idx | i | verdict | cells | max depth | sec | min certified LB (C2) | min certified LB (C3) |
 |---|---|---|---|---|---|---|---|---|
 | h3_k1_2_E1_4_9_32.json | 0 | 0 | ACCEPT | 132 | 0 | 0.8 | 7.70e-03 | 1.22e-02 |
-| h3_k1_2_E1_4_9_32.json | 1 | 1 | ACCEPT | 132 | 0 | 0.8 | 7.70e-03 | 9.78e-03 |
+| h3_k1_2_E1_4_9_32.json | 1 | 1 | ACCEPT | 132 | 0 | 0.7 | 7.70e-03 | 9.78e-03 |
 | h3_k1_2_E1_4_9_32.json | 2 | 2 | ACCEPT | 134 | 1 | 0.8 | 7.70e-03 | 1.31e-03 |
-| h3_k1_2_E1_4_9_32.json | 3 | 3 | ACCEPT | 167 | 4 | 2.4 | 8.25e-03 | 1.12e-04 |
-| h3_k1_2_E1_4_9_32.json | 4 | 4 | ACCEPT | 175 | 4 | 3.0 | 8.25e-03 | 5.49e-04 |
+| h3_k1_2_E1_4_9_32.json | 3 | 3 | ACCEPT | 167 | 4 | 2.7 | 8.25e-03 | 1.12e-04 |
+| h3_k1_2_E1_4_9_32.json | 4 | 4 | ACCEPT | 175 | 4 | 2.8 | 8.25e-03 | 5.49e-04 |
 | h5_k1_2_E1_2_17_32.json | 0 | 0 | ACCEPT | 432 | 0 | 2.6 | 7.68e-03 | 1.12e-02 |
-| h5_k1_2_E1_2_17_32.json | 1 | 1 | ACCEPT | 432 | 0 | 2.5 | 7.68e-03 | 9.72e-03 |
-| h5_k1_2_E1_2_17_32.json | 2 | 2 | ACCEPT | 433 | 1 | 2.7 | 7.68e-03 | 4.64e-03 |
-| h5_k1_2_E1_2_17_32.json | 3 | 3 | ACCEPT | 442 | 3 | 4.0 | 8.80e-03 | 2.16e-03 |
-| h5_k1_2_E1_2_17_32.json | 4 | 4 | ACCEPT | 448 | 3 | 3.0 | 7.68e-03 | 3.16e-03 |
-| h5_k1_2_E1_4_9_32.json | 0 | 0 | ACCEPT | 432 | 0 | 2.0 | 5.41e-02 | 5.81e-02 |
-| h5_k1_2_E1_4_9_32.json | 1 | 1 | ACCEPT | 432 | 0 | 2.0 | 5.41e-02 | 4.66e-02 |
-| h5_k1_2_E1_4_9_32.json | 2 | 2 | ACCEPT | 432 | 0 | 3.2 | 6.08e-02 | 5.79e-02 |
-| h5_k1_2_E1_4_9_32.json | 3 | 3 | ACCEPT | 432 | 0 | 2.8 | 6.08e-02 | 8.58e-02 |
-| h5_k1_2_E1_4_9_32.json | 4 | 4 | ACCEPT | 432 | 0 | 2.7 | 6.08e-02 | 1.54e-01 |
-| h5_k1_2_E1_8_5_32.json | 0 | 0 | ACCEPT | 432 | 0 | 2.7 | 1.68e-01 | 1.74e-01 |
-| h5_k1_2_E1_8_5_32.json | 1 | 1 | ACCEPT | 432 | 0 | 2.2 | 1.68e-01 | 1.38e-01 |
-| h5_k1_2_E1_8_5_32.json | 2 | 2 | ACCEPT | 432 | 0 | 3.2 | 1.68e-01 | 1.68e-01 |
-| h5_k1_2_E1_8_5_32.json | 3 | 3 | ACCEPT | 432 | 0 | 2.8 | 1.68e-01 | 2.48e-01 |
-| h5_k1_2_E1_8_5_32.json | 4 | 4 | ACCEPT | 432 | 0 | 4.1 | 1.72e-01 | 4.46e-01 |
+| h5_k1_2_E1_2_17_32.json | 1 | 1 | ACCEPT | 432 | 0 | 2.6 | 7.68e-03 | 9.72e-03 |
+| h5_k1_2_E1_2_17_32.json | 2 | 2 | ACCEPT | 433 | 1 | 2.6 | 7.68e-03 | 4.64e-03 |
+| h5_k1_2_E1_2_17_32.json | 3 | 3 | ACCEPT | 442 | 3 | 4.1 | 8.80e-03 | 2.16e-03 |
+| h5_k1_2_E1_2_17_32.json | 4 | 4 | ACCEPT | 448 | 3 | 2.8 | 7.68e-03 | 3.16e-03 |
+| h5_k1_2_E1_4_9_32.json | 0 | 0 | ACCEPT | 432 | 0 | 1.9 | 5.41e-02 | 5.81e-02 |
+| h5_k1_2_E1_4_9_32.json | 1 | 1 | ACCEPT | 432 | 0 | 1.6 | 5.41e-02 | 4.66e-02 |
+| h5_k1_2_E1_4_9_32.json | 2 | 2 | ACCEPT | 432 | 0 | 2.5 | 6.08e-02 | 5.79e-02 |
+| h5_k1_2_E1_4_9_32.json | 3 | 3 | ACCEPT | 432 | 0 | 2.4 | 6.08e-02 | 8.58e-02 |
+| h5_k1_2_E1_4_9_32.json | 4 | 4 | ACCEPT | 432 | 0 | 2.5 | 6.08e-02 | 1.54e-01 |
+| h5_k1_2_E1_8_5_32.json | 0 | 0 | ACCEPT | 432 | 0 | 2.5 | 1.68e-01 | 1.74e-01 |
+| h5_k1_2_E1_8_5_32.json | 1 | 1 | ACCEPT | 432 | 0 | 2.7 | 1.68e-01 | 1.38e-01 |
+| h5_k1_2_E1_8_5_32.json | 2 | 2 | ACCEPT | 432 | 0 | 2.6 | 1.68e-01 | 1.68e-01 |
+| h5_k1_2_E1_8_5_32.json | 3 | 3 | ACCEPT | 432 | 0 | 2.5 | 1.68e-01 | 2.48e-01 |
+| h5_k1_2_E1_8_5_32.json | 4 | 4 | ACCEPT | 432 | 0 | 3.7 | 1.72e-01 | 4.46e-01 |
 
 ### Required rejections (SRK_CERT_SPEC.md section 5, with erratum SE-1)
 
-The mutants were run on every genuine certificate (415 runs, 260 s). Each outcome is one of:
+The mutants were run on every genuine certificate (415 runs, 245 s). Each outcome is one of:
 * **"disproved"**: a rigorous point upper bound < 0 at an explicit (p, m, e);
 * **"C4/sha"**: an exact rejection;
 * **"proved true"**: the mutated claim is itself proved, which is never an unproved ACCEPT.
@@ -189,21 +208,25 @@ Notes on the mutants:
 No mutant ended as an undetermined "unproven" rejection: every REJECT that is not an exact (C4)/sha256 rejection is
 a disproof.
 
+Two extra checks confirm that the weight block is really used:
+* A genuine certificate with its weight block widened by 1/32 or 1/4 is still proved.
+* Widened to [−1, 1], it is disproved.
+
 ### Unit self-tests
 
-`tests/test_verify_selftests.py`: 20 tests, all OK (54 s). They cover:
+`tests/test_verify_selftests.py`: 21 tests, all OK (49 s). They cover:
 * Gaussian enclosures, G_i, |He_n|φ ranges and He_n roots;
 * the kernel closed form against the defining integral (whole and taboo, 3 geometries);
 * Taylor-model containment, including the axis reduction;
 * certified lower bounds ≤ float samples;
 * a taboo positive control: a valid whole-kernel certificate must be, and is, accepted under the taboo kernel;
+* the weight-block regression;
 * the section 5 mutants.
 
 ### Taboo-kernel certificates
 
 The `kernel: taboo` path (certificate- or file-level key) is implemented and tested: closed form against quadrature,
-plus the positive control. No `evidence/srk_decoys_taboo/` file existed at the time of this run. `run_verify_all.py`
-picks such files up automatically.
+plus the positive control. No taboo decoy file existed at the time of this run.
 
 ### Mutant outcome table
 

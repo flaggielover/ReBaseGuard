@@ -13,6 +13,13 @@ A certificate is ADMITTED iff all of:
 Then Gamma_{i,b} = min over admitted certificates for (i, b), and Gamma-bar_i = max_b Gamma_{i,b} if EVERY declared
 sub-block b has at least one admitted certificate for index i; otherwise Gamma-bar_i = None (+infinity: the consumer's
 min falls back to the TC-T term, THEOREM_SRK section 3).  Every refusal is reported with its reason.
+
+Taboo kernel (SRK-T, Lemma SV-T): a taboo certificate bounds (G^_e kbar)(a), NOT (R_e kbar)(a) = (G^_e kbar)(a)/D_e, and
+D_e <= 1.  A taboo gate therefore REQUIRES d_lo = {"value": "p/q" > 0, "domain": ["lo", "hi"]}, a certified lower bound
+D_e >= value for every e in domain, with domain containing the cell C (only e in C is used: V_e(a) is e-affine on each
+sub-block, so its max over C ∩ b is at most the max at b's endpoints).  It returns Gamma-hat_i = max_b Gamma_{i,b} / value.
+Without d_lo a taboo gate REFUSES (review R2 prep: the raw taboo value would under-bound R_e).
+combine(a, b) = the index-wise min of two GateResults (both valid bounds; None = +infinity).
 """
 from __future__ import annotations
 
@@ -47,10 +54,26 @@ def _fr(x) -> F:
     return F(x)
 
 
+def _d_lo(d_lo, cell_lo, cell_hi) -> F:
+    if not isinstance(d_lo, dict) or set(d_lo) != {"value", "domain"}:
+        raise ValueError("taboo gate requires d_lo = {'value': 'p/q', 'domain': ['lo', 'hi']}")
+    v = _fr(d_lo["value"])
+    lo, hi = (_fr(x) for x in d_lo["domain"])
+    if not v > 0:
+        raise ValueError("D_lo must be a positive rational")
+    if not (lo <= F(cell_lo) and F(cell_hi) <= hi):
+        raise ValueError("D_lo validity domain does not contain the cell")
+    return v
+
+
 def gate(cell_lo, cell_hi, geometry: dict, kernel: str, certs: list, verdicts: dict,
-         indices=(1, 2, 3, 4)) -> GateResult:
+         indices=(1, 2, 3, 4), d_lo=None) -> GateResult:
     if kernel not in ("whole", "taboo"):
         raise ValueError("kernel must be 'whole' or 'taboo'")
+    if kernel == "taboo":
+        dl = _d_lo(d_lo, cell_lo, cell_hi)
+    elif d_lo is not None:
+        raise ValueError("d_lo applies to the taboo kernel only")
     wb, subs = S.cell_blocks(F(cell_lo), F(cell_hi))
     subs_key = {(a, b) for a, b in subs}
     admitted: dict = {}
@@ -98,9 +121,23 @@ def gate(cell_lo, cell_hi, geometry: dict, kernel: str, certs: list, verdicts: d
     gamma = {}
     for i in indices:
         per = [admitted.get((i, b)) for b in subs]
-        gamma[i] = None if any(v is None for v in per) else max(per)
+        gamma[i] = None if any(v is None for v in per) else (max(per) if kernel == "whole" else max(per) / dl)
     report = {"weight_block": [S.fstr(x) for x in wb], "sub_blocks": [[S.fstr(a), S.fstr(b)] for a, b in subs],
               "admitted": {f"{i}@[{S.fstr(b[0])},{S.fstr(b[1])}]": S.fstr(v) for (i, b), v in sorted(admitted.items())},
               "refused": refused,
-              "gamma": {i: (S.fstr(v) if v is not None else None) for i, v in gamma.items()}}
-    return GateResult(gamma, report, "GATE")
+              "gamma": {i: (S.fstr(v) if v is not None else None) for i, v in gamma.items()}, "kernel": kernel,
+              "d_lo": None if kernel == "whole" else {"value": S.fstr(dl), "domain": list(d_lo["domain"])}}
+    return GateResult(gamma, report, "GATE" if kernel == "whole" else "GATE_TABOO")
+
+
+def combine(a: GateResult, b: GateResult) -> GateResult:
+    """index-wise min of two gate results (THEOREM_SRK s.10 'Use': min(Gamma-bar_i, Gamma-hat_i)); None = +infinity."""
+    if not (isinstance(a, GateResult) and isinstance(b, GateResult)) or "EMPTY" in (a.source, b.source):
+        raise ValueError("combine takes two non-empty GateResults")
+    if set(a.gamma) != set(b.gamma):
+        raise ValueError("combine: index sets differ")
+    out = {}
+    for i in a.gamma:
+        x, y = a.gamma[i], b.gamma[i]
+        out[i] = y if x is None else x if y is None else min(x, y)
+    return GateResult(out, {"combined": [a.report, b.report]}, "GATE_MIN")

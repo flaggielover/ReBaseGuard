@@ -58,6 +58,8 @@ def srk_enclosure(meas: dict, A: dict, m: int, gate_result, frozen_obj: dict, fr
     """gate_result must be a srk_gate.GateResult (review R1 B2): Gamma-bar values reach the consumer only through the
     certificate gate.  allow_test_gamma=True admits a raw {i: value} dict and exists for unit tests only."""
     if isinstance(gate_result, GT.GateResult):
+        if gate_result.source not in ("GATE", "GATE_TABOO", "GATE_MIN", "EMPTY"):
+            raise AdapterRefusal(f"unknown GateResult source {gate_result.source!r}")
         gamma = gate_result.gamma
     elif allow_test_gamma and isinstance(gate_result, dict):
         gamma = gate_result

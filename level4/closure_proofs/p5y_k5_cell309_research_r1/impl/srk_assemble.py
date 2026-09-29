@@ -95,6 +95,7 @@ def rad_srk(fields: dict, gamma: dict) -> dict:
     rho = f["rho"]
     rad = f["A0"] * f["fH"] + rho * B3 + rho ** 2 / 2 * B4 + 2 * f["A1"] * p1 + f["A2"] * p0
     base = f["A0"] * p2 + 2 * f["A1"] * p1 + f["A2"] * p0
-    assert rad <= base
+    if not rad <= base:   # review R1 B4: a refusal, not an assert (asserts vanish under -O)
+        raise AssemblyRefusal("rad_srk: dominance violated (rad_srk > rad_tct)")
     return {"rad_srk": rad, "rad_tct": base, "B3": B3, "B4": B4, "B3_srk_raw": n3, "B4_srk_raw": n4,
             "branch3": w3, "branch4": w4}

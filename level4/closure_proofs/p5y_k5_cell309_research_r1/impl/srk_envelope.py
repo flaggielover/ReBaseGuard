@@ -2,7 +2,7 @@
 
 I_i(J) := int_J |He_i(v)| phi(v) dv for a rational interval J = [a, b], rigorous upper bound.
 On a sub-interval where He_i has constant sign, int He_i phi = [-He_{i-1} phi]  (d/dv(He_{i-1} phi) = -He_i phi).
-Irrational roots of He_i are bracketed by rational intervals of width <= 2^-40; on a bracket the integral is bounded
+Irrational roots of He_i are bracketed by rational intervals of width <= 2 * 2^-40 (review R1 doc fix); on a bracket the integral is bounded
 by (width) * sup|He_i| * phi(0) with sup|He_i| <= sum |coef| max(|lo|,|hi|)^j.
 
 Box envelope (THEOREM_SRK section 1, monotonicity):  for a state box B = [p0,p1] x [m0,m1] and drift set

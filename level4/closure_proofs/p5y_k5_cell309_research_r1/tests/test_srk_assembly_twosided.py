@@ -81,14 +81,20 @@ MUTANTS = {
 }
 
 
-def load_mutant(name: str):
+DOM_CHECK = ("    if not rad <= base:   # review R1 B4: a refusal, not an assert (asserts vanish under -O)\n"
+             "        raise AssemblyRefusal(\"rad_srk: dominance violated (rad_srk > rad_tct)\")\n")
+
+
+def load_mutant(name: str, keep_dominance_check: bool = False):
     old, new = MUTANTS[name]
     assert SRC.count(old) >= 1, (name, old)
     mod = types.ModuleType("srk_assemble_mut_" + name)
     code = SRC.replace(old, new, 1)
     if name == "missing_as_zero":
         code = code.replace("            g[i] = None\n", "            g[i] = F(0)\n", 1)
-    code = code.replace("    assert rad <= base\n", "")      # mutants may violate dominance; compare values only
+    assert code.count(DOM_CHECK) == 1
+    if not keep_dominance_check:
+        code = code.replace(DOM_CHECK, "")      # mutants may violate dominance; compare values only
     exec(compile(code, name, "exec"), mod.__dict__)
     return mod
 
@@ -122,6 +128,18 @@ def run():
         m = load_mutant(name)
         caught[name] = any(m.rad_srk(f, g)["rad_srk"] != independent(f, g) for f, g in bat)
     ref = refusals()
+    # the dominance refusal is live (not stripped by -O): the unstripped min-dropped mutants must refuse somewhere
+    for name in ("drop_min3", "drop_min4"):
+        if name in MUTANTS:
+            m = load_mutant(name, keep_dominance_check=True)
+            hit = False
+            for f, g in bat:
+                try:
+                    m.rad_srk(f, g)
+                except m.AssemblyRefusal:          # the mutant module defines its own class
+                    hit = True
+                    break
+            ref[f"dominance_refusal_live_{name}"] = hit
     ok = genuine and dominance and all(caught.values()) and all(ref.values())
     return ok, {"genuine_equal": genuine, "dominance": dominance, "mutants_caught": caught, "refusals": ref,
                 "battery": len(bat)}

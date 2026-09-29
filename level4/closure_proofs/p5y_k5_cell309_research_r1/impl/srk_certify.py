@@ -74,7 +74,8 @@ def cell_blocks(e_lo, e_hi, grid_bits: int = GRID_BITS, n_sub: int = N_SUB) -> t
         hi = lo + F(1, s)
     w = (hi - lo) / n_sub
     subs = [(lo + j * w, lo + (j + 1) * w) for j in range(n_sub)]
-    assert lo <= e_lo and e_hi <= hi and subs[0][0] == lo and subs[-1][1] == hi
+    if not (lo <= e_lo and e_hi <= hi and subs[0][0] == lo and subs[-1][1] == hi):   # a refusal, not an assert (-O)
+        raise ValueError("cell_blocks: hull does not contain the cell")
     return (lo, hi), subs
 DEFAULT_LADDER = (8, 10, 12)
 
@@ -215,7 +216,7 @@ def certify_W(g: KX.Geom, e_lo: F, e_hi: F, d: int, log=print, whole: bool = Tru
     Wa = max(eaff_at(W0, W1, e_c, e_lo), eaff_at(W0, W1, e_c, e_hi))
     rec = {"status": "CERTIFIED" if ok else "W_NEGATIVE", "degree": d, "eta": eta, "r_lo": rlo, "W_min": wmin,
            "W_at_atom_max": Wa, "boxes": chk["boxes"], "seconds": round(time.time() - t0, 1), "_W": (W0, W1),
-           "e_c": e_c, "whole": whole}
+           "e_c": e_c, "whole": whole, "block": (e_lo, e_hi), "geom": g.key()}
     log(f"  W{'' if whole else '^'} d={d}: {rec['status']} max_E W(a)={float(Wa):.6g} eta={float(eta):.3g} "
         f"boxes={chk['boxes']} lev={chk['max_level']} {rec['seconds']}s")
     return rec
@@ -227,7 +228,13 @@ def certify_weight(g: KX.Geom, i: int, e_lo: F, e_hi: F, d: int, Wrec: dict, log
     inequality checked for e in the CHECK block [e_lo, e_hi] (e-affine family, additive lambda W' repair; THEOREM_SRK
     s.7, A1, A3).  mutant (tests only): 'shrink_window' (window narrowed by 1/4) or 'quarter_weight' (Psi/4), both
     invalid, too-small weights."""
-    whole = Wrec.get("whole", True)
+    # review R1 B4: W must be a CERTIFIED record of this geometry, check block, e_c, degree and kernel
+    if not isinstance(Wrec, dict) or Wrec.get("status") != "CERTIFIED":
+        raise ValueError("certify_weight: W record is not CERTIFIED")
+    if Wrec.get("geom") != g.key() or Wrec.get("block") != (e_lo, e_hi) or Wrec.get("degree") != d \
+            or Wrec.get("e_c") != (e_lo + e_hi) / 2 or not isinstance(Wrec.get("whole"), bool):
+        raise ValueError("certify_weight: W record is for another geometry, block, e_c, degree or kernel")
+    whole = Wrec["whole"]
     w_lo, w_hi = (e_lo, e_hi) if weight_block is None else (F(weight_block[0]), F(weight_block[1]))
     if not (w_lo <= e_lo and e_hi <= w_hi):
         raise ValueError("the check block must lie inside the weight block")
