@@ -114,8 +114,8 @@ def malformed(raw):
     out.append(('7h_non_dyadic_drift (processed, no crash)', resha(m), 'no crash (any verdict)'))
     if Fr(raw['geometry']['h']) == 5 and Fr(raw['geometry']['k']) == Fr(1, 2):
         m = copy.deepcopy(raw)
-        m['block'] = ['6/5', '39/32']
-        m['e_c'] = fs((Fr(6, 5) + Fr(39, 32)) / 2)
+        m['block'] = ['6/5', '39/32']  # q309: literal-ok (refusal probe: REFUSED at parse time, nothing evaluated)
+        m['e_c'] = fs((Fr(6, 5) + Fr(39, 32)) / 2)  # q309: literal-ok (refusal probe: REFUSED at parse time, nothing evaluated)
         out.append(('7q_quarantine_band_refused', resha(m), 'REFUSE'))
     return out
 

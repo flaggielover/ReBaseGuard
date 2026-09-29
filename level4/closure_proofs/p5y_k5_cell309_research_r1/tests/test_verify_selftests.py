@@ -426,8 +426,8 @@ class TestRequiredRejections(unittest.TestCase):
     def test_quarantine_refused(self):
         m = copy.deepcopy(self.raw)
         m['geometry'] = {'h': '5/1', 'k': '1/2'}
-        m['block'] = ['5/4', '41/32']
-        m['e_c'] = fs((Fr(5, 4) + Fr(41, 32)) / 2)
+        m['block'] = ['5/4', '41/32']  # q309: literal-ok (refusal probe: rejected at parse time, nothing evaluated)
+        m['e_c'] = fs((Fr(5, 4) + Fr(41, 32)) / 2)  # q309: literal-ok (refusal probe: rejected at parse time, nothing evaluated)
         r = self.run_v(resha(m))
         self.assertEqual(r['verdict'], 'REFUSE')
         self.assertIn('quarantine', r['reason'])

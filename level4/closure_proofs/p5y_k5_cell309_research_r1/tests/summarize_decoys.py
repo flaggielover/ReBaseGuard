@@ -5,7 +5,7 @@ from fractions import Fraction as F
 from pathlib import Path
 
 NS = Path(__file__).resolve().parent.parent
-KAPPA = {0: 1.0, 1: 0.7978845608, 2: 0.9678829, 3: 1.5100130, 4: 2.8006003}
+KAPPA = {0: 1.0, 1: 0.7978845608, 2: 0.9678829, 3: 1.5100130, 4: 2.8006003}  # q309: literal-ok (Gaussian moments E|He_i|, not drifts)
 
 
 def main(sub="srk_decoys"):
