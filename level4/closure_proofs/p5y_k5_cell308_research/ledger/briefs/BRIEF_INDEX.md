@@ -26,6 +26,10 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 15 | 15_builder_note2.txt | builder note 2 (G-R3b) | SendMessage | ~16:3x | no |
 | 16 | 16_builder_note3.txt | builder note 3 (A0 conditions) | SendMessage | ~16:5x | no |
 | 17 | 17_reviewINC.txt | incident-independence review | Agent | ~17:0x | no |
+| 18 | 18_builder_note4.txt | builder note 4 | SendMessage | 2026-09-29 (added to this index later) | no |
+| 19 | 19_builder_note5.txt | builder note 5 | SendMessage | 2026-09-29 (added to this index later) | no |
+| 20 | 20_reviewQUAL.txt | qualification review (r2; not launched: r2 qualification FAILED) | Agent | not sent | no |
+| 21 | 21_reviewR3REPAIR.txt | r3 host-environment repair review (pre-freeze) | Agent | 2026-09-29 ~05:3xZ | no |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.
