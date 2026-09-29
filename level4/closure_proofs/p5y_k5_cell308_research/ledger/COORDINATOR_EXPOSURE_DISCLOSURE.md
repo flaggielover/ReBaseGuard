@@ -106,3 +106,23 @@ registry r2 and dominance, and uses none of them. The route review found no depe
 * The builder was instructed about GC-6 at **2026-09-29 18:39:04Z**, not "~20:40Z".
 * The holders also include reviewGOV (it read REVIEW_EXECUTION_INTERRUPTION §4b) and the step-8 adjudication
   reviewer. Neither may take a successor route, implementation or caps role.
+
+**E1″ erratum 2 (successor incident re-rating MBS-1; X1–X3).**
+* **Additional locations** where MB r1 run observations appear, qualitatively or quantitatively:
+  * the successor-governance review §4 and its delta review §5;
+  * the formal MB r1 adjudication §6 (`9ad632c9`) and the adjudication review (`e451e634`);
+  * the successor incident re-rating `reviews/INCIDENT_INDEPENDENCE_REVIEW_MBS308.md`;
+  * `NSF/postexec/*`, as present in every worktree of the MB r1 branch and its descendants, including the successor
+    worktree `/Users/suzhe/ReBaseGuard-c308mbs`.
+* **Additional holders:**
+  * reviewINC2 (the incident re-rating reviewer);
+  * reviewGOV;
+  * adjudicator308;
+  * reviewADJ;
+  * every agent that read one of the locations above.
+
+  None of them may take a successor route, implementation, caps or qualification role (T6).
+* **Statement (the C1(c) pattern of E1′).** The coordinator holds the ingredients of a runtime-calibrated proxy of
+  rung behaviour at cell 308: the 23:10 per-worker observations of the MB r1 run, and the committed decoy per-job
+  runtimes. **The coordinator has not formed that proxy, has written no such combination, and will not.** No
+  successor decision uses these ingredients.
