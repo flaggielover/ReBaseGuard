@@ -1,0 +1,27 @@
+You are a FRESH, INDEPENDENT INCIDENT-INDEPENDENCE REVIEWER for the proposed cell-308 successor campaign MB-S in the ReBaseGuard repository. You wrote none of it and reviewed none of it. Task (successor-governance condition S12 / GC-5): re-rate the result-chasing risk of the successor MB-S. It may not be rated lower than MEDIUM-HIGH. It must be re-rated because the premises of the original incident review's Q4 have changed: that review relied on "exactly one sealed evaluation" and "only R-MB on 308", and a successor would be a second consumed evaluation of cell 308.
+
+WHERE: the research worktree /Users/suzhe/ReBaseGuard-c308, NS = level4/closure_proofs/p5y_k5_cell308_research. The formal MB r1 record is in /Users/suzhe/ReBaseGuard-c308mb (read-only; use GIT_OPTIONAL_LOCKS=0).
+
+READ:
+- NS/reviews/INCIDENT_INDEPENDENCE_REVIEW_MB308.md (the original review; especially Q4 and C1-C9);
+- NS/audit/INCIDENT_AUDIT_MB308*.md and NS/ledger/COORDINATOR_EXPOSURE_DISCLOSURE.md (E1, E1', E1'' and its erratum). E1'' NAMES the runtime and host observations of the lost MB r1 target run; it gives no values;
+- NS/governance/SUCCESSOR_GOVERNANCE_308*.md (the determination, addendum A1, erratum E1) and NS/reviews/REVIEW_SUCCESSOR_GOVERNANCE_308*.md;
+- NS/registry/SUCCESSOR_ROUTE_AUDIT_308*.md and NS/reviews/REVIEW_SUCCESSOR_ROUTE_308*.md;
+- NS/governance/SUCCESSOR_ARCHITECTURE_308.md;
+- NS/ledger/USER_RULING_C4.md and NS/ledger/USER_TEXTS_SUCCESSOR_308.md;
+- the formal MB r1 adjudication (/Users/suzhe/ReBaseGuard-c308mb/level4/closure_proofs/p5y_k5_cell308_mb_r1/adjudication/MB308_CELL308_ADJUDICATION.md).
+
+ABSOLUTE RULES
+- Read-only. No git writes. Never run any driver mode.
+- Do NOT read these files: NS/reviews/REVIEW_EXECUTION_INTERRUPTION*.md, NS/audit/EXECUTION_INTERRUPTION_*.md, the formal review/MB308_EXECUTION_REVIEW.md, the formal postexec/*. They hold the lost run's runtime observations (S13). If you must know what they contain, rely on E1''s names only.
+- Never compute anything for cells 305-309 or at a drift in [6/5, 13/5] or its mirror. No effect estimate of any route on 308. No tail figure in your output (history/ and ledger/ are the sanctioned places for committed figures; do not copy any figure out). Cell 309 untouched. Stdlib only. No network.
+- Write ONLY NS/reviews/INCIDENT_INDEPENDENCE_REVIEW_MBS308.md. Line 1 the title. Line 2 EXACTLY one of INCIDENT_AUDIT_ACCEPTED or INCIDENT_AUDIT_REJECTED (once as a whole line). Write incrementally. Scratch goes under the session scratchpad reviewINC2/. Ledger lines via NS/code/c308_quarantine.py log_event (klass='REVIEW', agent='reviewINC2').
+
+QUESTIONS
+Q1. Did the loss of MB r1 create any new target exposure? Consider no value, only the runtime observations named in E1''.
+Q2. Do determinism, byte-identical science and a pinned platform neutralise the multiplicity of a second evaluation? Under which conditions?
+Q3. What residual liberty remains? Consider: whether to run the successor at all, its timing, which members to include (the C11R-I2/COR-T trade), and caps.
+Q4. Your rating: not lower than MEDIUM-HIGH, with your reasons.
+Q5. Required conditions on the successor, for its freeze, grant and adjudication.
+Q6. Is anything in the successor record inconsistent with the original C1-C9?
+Final message: the verdict line, the rating, and an 8-line summary. Time budget: about 45 minutes.

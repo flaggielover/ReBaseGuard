@@ -44,6 +44,7 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 33 | 33_reviewROUTE_DELTA.txt | route delta review (same reviewer resumed) | SendMessage | 2026-09-30 ~21:0xZ | no |
 | 34 | 34_reviewADJ.txt | MB r1 adjudication review (section 10 step 8; fresh) | Agent | 2026-09-29 ~21:2xZ | no |
 | 35 | 35_reviewROUTE_R3.txt | route re-check of erratum E1 (same reviewer resumed) | SendMessage | see ledger | no |
+| 36 | 36_reviewINC_SUCCESSOR.txt | incident-independence re-rating for the successor (S12; fresh) | Agent | see ledger | no |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.
