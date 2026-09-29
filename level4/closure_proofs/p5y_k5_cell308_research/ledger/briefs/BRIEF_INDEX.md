@@ -43,6 +43,7 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 32 | 32_reviewGOV_DELTA.txt | governance delta review (same reviewer resumed) | SendMessage | 2026-09-30 ~21:0xZ | no |
 | 33 | 33_reviewROUTE_DELTA.txt | route delta review (same reviewer resumed) | SendMessage | 2026-09-30 ~21:0xZ | no |
 | 34 | 34_reviewADJ.txt | MB r1 adjudication review (section 10 step 8; fresh) | Agent | 2026-09-29 ~21:2xZ | no |
+| 35 | 35_reviewROUTE_R3.txt | route re-check of erratum E1 (same reviewer resumed) | SendMessage | see ledger | no |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.
@@ -51,3 +52,7 @@ first activity time.
 (JST, +0900) dates paired with approximate UTC clock times. The UTC date of those launches is **2026-09-29**, and the
 UTC times shown are approximate. The adjudicator's note gives rows 30 and 31 as about 18:20Z and 18:31Z, 2026-09-29.
 Each agent's own ledger lines carry the exact UTC first-activity times. The rows themselves are not edited.
+
+**Erratum 2.** The coordinator's approximate UTC times in rows 24–34, and in the erratum above, were not taken from a
+clock and are unreliable. The authoritative times are the UTC timestamps of each agent's research-ledger lines. For
+example, rows 30 and 31 are about 2026-09-29 18:20Z and 18:31Z. The rows are not edited.

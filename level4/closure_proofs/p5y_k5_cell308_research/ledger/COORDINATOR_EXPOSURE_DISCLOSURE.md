@@ -101,3 +101,8 @@ runtime proxy with no value content.
 read the recovery chain or the execution review, and to disclose any earlier reading in its BUILD_REPORT. The
 successor route audit (`bddd85f8`) was written by the coordinator, who holds these observations. Its selection rests on
 registry r2 and dominance, and uses none of them. The route review found no dependence on the lost run.
+
+**E1″ erratum (governance delta review D2, D3; see `governance/SUCCESSOR_GOVERNANCE_308_ADDENDUM_A1_ERRATUM_E1.md`).**
+* The builder was instructed about GC-6 at **2026-09-29 18:39:04Z**, not "~20:40Z".
+* The holders also include reviewGOV (it read REVIEW_EXECUTION_INTERRUPTION §4b) and the step-8 adjudication
+  reviewer. Neither may take a successor route, implementation or caps role.

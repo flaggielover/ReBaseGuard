@@ -871,3 +871,81 @@ independently reviewable, and governance-valid.
 Continue autonomously after the current recovery phase completes until a real
 scientific, governance, computational, or user-authorization boundary is
 reached.
+
+
+---
+
+## 3. Addendum (governance delta review D1): the brief's exactly-once passages, verbatim
+
+These passages of the 2026-09-28 campaign brief (transcript JSONL record index 2, i.e. the file's third line, received
+2026-09-28T12:06:01Z) govern a second execution. They were omitted from §1 above. They bind MB308 r1's grant and
+marker, and any successor needs the user's S1 ruling expressly **notwithstanding** them (successor-governance erratum
+E1).
+
+### 3a. The brief's §20
+
+======================================================================
+20. EXPLICIT GRANT
+======================================================================
+
+QUALIFICATION_ACCEPTED does not itself authorize target execution.
+
+Create a separate explicit grant.
+
+The grant must bind:
+
+- cell 308;
+- route;
+- freeze commit;
+- theorem;
+- implementation;
+- driver;
+- manifest;
+- qualification;
+- qualification review;
+- exactly one target execution;
+- closure-only interpretation unless separately authorized otherwise.
+
+No floor/adoption permission is implied.
+
+### 3b. The brief's §21
+
+======================================================================
+21. EXACTLY-ONCE 308 EXECUTION
+======================================================================
+
+Only after the grant:
+
+execute cell 308 exactly once.
+
+Use the strongest already-frozen qualified route.
+
+Do not compare several candidate routes on 308.
+
+Do not run parameter sweeps.
+
+Do not tune after seeing the result.
+
+The consumed marker must make any second execution refuse.
+
+### 3c. The brief's §23
+
+======================================================================
+23. POST-EXECUTION REVIEW
+======================================================================
+
+Run all frozen post-execution checks.
+
+Then launch a fresh independent execution reviewer.
+
+Required verdict:
+
+    EXECUTION_ACCEPTED
+
+or:
+
+    EXECUTION_REJECTED
+
+No rerun on rejection.
+
+**Transcript-index note.** "Line 2" above means the JSONL record index 2 (0-based), which is the file's third line.
