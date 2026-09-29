@@ -36921,9 +36921,14 @@
  },
  "unit_selftests": {
   "file": "tests/test_verify_selftests.py",
+  "harness_sha256": "3455c1414464290a306384770a056c2e4a7e3c2210965eac49500809f9a7ce05",
+  "inputs": "current inputs: TestRequiredRejections uses evidence/srk_decoys/h5_k1_2_E0_1_32.json #1, TestTaylorModels uses #4 of the same file (pick_cert: first h5 file of evidence/srk_decoys/)",
+  "note": "test file revised for review R2 condition C3 (same fix as harness v2): single-defect probes (weight_block moved with block in the quarantine, non-dyadic and widened-block tests; taboo control and unknown-kernel probe run as bare certificates) and reason-specific assertions",
   "ok": true,
   "ran": 21,
-  "sec": 48.6,
+  "recorded_utc": "2026-09-29T23:45Z",
+  "sec": 40.4,
+  "test_file_sha256": "8357be8539ed408b449c486387907b9dd3e0df03ccf0c846fec18ccfae48e2c3",
   "tests": {
    "test_verify_selftests.TestGaussianEnclosures.test_G_value_vs_quadrature": "ok",
    "test_verify_selftests.TestGaussianEnclosures.test_Phi_monotone_consistent": "ok",
@@ -36946,7 +36951,8 @@
    "test_verify_selftests.TestRequiredRejections.test_weight_block_is_used": "ok",
    "test_verify_selftests.TestTaylorModels.test_containment": "ok",
    "test_verify_selftests.TestTaylorModels.test_lower_bound_below_samples": "ok"
-  }
+  },
+  "verifier_sha256": "a32d5d397893a1fc698d3609f59cb65aab3bc4fe1445c51c676fd9ad54652333"
  },
  "verifier": "verify/srk_verify_indep.py (independent; stdlib only)"
 }

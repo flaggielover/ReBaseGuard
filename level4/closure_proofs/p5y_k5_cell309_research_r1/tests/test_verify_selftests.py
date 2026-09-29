@@ -18,6 +18,7 @@ import json
 import math
 import os
 import random
+import re
 import sys
 import unittest
 from fractions import Fraction as Fr
@@ -104,6 +105,18 @@ def resha(c):
     c = dict(c)
     c['sha256'] = V.canonical_sha(c)
     return c
+
+
+_CLAIM_REJECT = re.compile(r'^C[123] (is FALSE at|UNPROVEN at depth limit)')
+
+
+def meets_band(m):
+    """True if (h, k) = (5, 1/2) and block or weight block meets a quarantine band (exact rational comparison)."""
+    g = m['geometry']
+    if not (Fr(g['h']) == 5 and Fr(g['k']) == Fr(1, 2)):
+        return False
+    ivs = [m['block']] + ([m['weight_block']] if 'weight_block' in m else [])
+    return any(Fr(lo) <= b and a <= Fr(hi) for (lo, hi) in ivs for (a, b) in V.QUARANTINE_BANDS)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -301,6 +314,15 @@ class TestRequiredRejections(unittest.TestCase):
     def run_v(self, c, depth=24):
         return V.verify_cert(c, N=8, max_depth=depth, procs=1)
 
+    def assertClaimReject(self, r):
+        """REJECT because a claim (C1)-(C3) is disproved or unproven -- not (C4), sha256, a refusal or an error."""
+        self.assertEqual(r['verdict'], 'REJECT', r)
+        self.assertRegex(r.get('reason') or '', _CLAIM_REJECT)
+
+    def assertRefusedFor(self, r, prefix):
+        self.assertEqual(r['verdict'], 'REFUSE', r)
+        self.assertTrue((r.get('reason') or '').startswith(prefix), (prefix, r.get('reason')))
+
     def test_0_genuine_accepted(self):
         r = self.run_v(self.raw)
         self.assertEqual(r['verdict'], 'ACCEPT', r)
@@ -309,7 +331,9 @@ class TestRequiredRejections(unittest.TestCase):
         """K^_e P = K_e P - P(0,0) (Phi(k-p+e) - Phi(m-k+e)) <= K_e P when P(0,0) >= 0, so a valid whole-kernel
         certificate stays valid under the taboo kernel: the taboo code path must ACCEPT it."""
         self.assertGreater(Fr(self.raw['V0']['0,0']), 0)
-        r = V.verify_cert(self.raw, 'taboo', N=8, max_depth=12, procs=1)
+        m = copy.deepcopy(self.raw)
+        m['kernel'] = 'taboo'          # the only change; run as a bare certificate so no file-level key can conflict
+        r = V.verify_cert(resha(m), None, N=8, max_depth=12, procs=1)
         self.assertEqual(r['verdict'], 'ACCEPT', r)
         self.assertIn('kernel=taboo', r['describe'])
 
@@ -319,6 +343,7 @@ class TestRequiredRejections(unittest.TestCase):
         r = self.run_v(resha(m))
         self.assertEqual(r['verdict'], 'REJECT')
         self.assertTrue(r['false'])
+        self.assertTrue(r['reason'].startswith('(C4) fails'), r['reason'])
 
     def test_2_scaled_V0(self):
         """(1 - 2^-8) V0.  On these decoys the certificates carry a margin of order 1e-1, so this mutated claim is
@@ -344,11 +369,11 @@ class TestRequiredRejections(unittest.TestCase):
                       - K_quad(cert.V0, cert.V1, float(cert.h), float(cert.k), p, mm, e, float(cert.e_c)) - kb)
                 self.assertGreater(F3, 0)
         else:
-            self.assertEqual(r['verdict'], 'REJECT')
+            self.assertClaimReject(r)
         m = copy.deepcopy(self.raw)
         m['V0'] = {k: fs(Fr(v) * (1 - Fr(1, 4))) for k, v in self.raw['V0'].items()}
         r = self.run_v(resha(m))
-        self.assertEqual(r['verdict'], 'REJECT')
+        self.assertClaimReject(r)
 
     def test_3_drop_lambda(self):
         lam = Fr(self.raw['lam'])
@@ -358,7 +383,7 @@ class TestRequiredRejections(unittest.TestCase):
         keys = set(self.raw['V0']) | set(self.raw['W0'])
         m['V0'] = {k: fs(Fr(self.raw['V0'].get(k, '0')) - lam * Fr(self.raw['W0'].get(k, '0'))) for k in keys}
         r = self.run_v(resha(m))
-        self.assertEqual(r['verdict'], 'REJECT')
+        self.assertClaimReject(r)
 
     def test_4_widened_block(self):
         elo, ehi = Fr(self.raw['block'][0]), Fr(self.raw['block'][1])
@@ -368,82 +393,107 @@ class TestRequiredRejections(unittest.TestCase):
                 m['block'] = [fs(a), fs(b)]
                 ec = (a + b) / 2
                 m['e_c'] = fs(ec)
+                if 'weight_block' in self.raw:          # keep weight_block containing block: single defect
+                    wb = self.raw['weight_block']
+                    m['weight_block'] = [fs(min(a, Fr(wb[0]))), fs(max(b, Fr(wb[1])))]
+                self.assertFalse(meets_band(m))
                 if regam:
                     v00, v10 = Fr(self.raw['V0']['0,0']), Fr(self.raw['V1']['0,0'])
                     m['Gamma'] = fs(max(v00 + (a - ec) * v10, v00 + (b - ec) * v10))
                 r = self.run_v(resha(m))
-                # REJECT unless the widened claim is true; the verifier reports which (disproof vs proof)
-                self.assertIn(r['verdict'], ('REJECT', 'ACCEPT'))
-                if r['verdict'] == 'REJECT':
-                    self.assertTrue(r['false'], r)          # on these decoys the widened claims are disproved
+                if not regam:
+                    # Gamma kept: (C4) must fail at the new endpoint
+                    self.assertTrue(r['verdict'] == 'REJECT' and r['reason'].startswith('(C4) fails'), r)
+                elif r['verdict'] != 'ACCEPT':
+                    # REJECT unless the widened claim is true (then it is proved); the reason must be a claim failure
+                    self.assertClaimReject(r)
 
     def test_5_hermite_plus_one(self):
         m = copy.deepcopy(self.raw)
         m['hermite_index'] = self.raw['hermite_index'] + 1
         r = self.run_v(resha(m))
         if self.raw['hermite_index'] >= 1:
-            self.assertEqual(r['verdict'], 'REJECT')
-        else:
-            self.assertIn(r['verdict'], ('REJECT', 'ACCEPT'))   # k_1 <= k_0 on these windows: claim may be true
+            self.assertClaimReject(r)
+        elif r['verdict'] != 'ACCEPT':                          # k_1 <= k_0 on these windows: claim may be true
+            self.assertClaimReject(r)
 
     def test_6_sha(self):
         m = copy.deepcopy(self.raw)
         m['sha256'] = ('0' if self.raw['sha256'][0] != '0' else '1') + self.raw['sha256'][1:]
         r = self.run_v(m)
         self.assertEqual(r['verdict'], 'REJECT')
-        self.assertIn('sha256', r['reason'])
+        self.assertEqual(r['reason'], 'sha256 mismatch')
 
     def test_7_malformed(self):
+        """Each probe has exactly one defect and must be REFUSED for that defect (reason-specific)."""
         cases = []
         m = copy.deepcopy(self.raw)
         del m['V1']
-        cases.append(m)
+        cases.append((m, "malformed: missing key 'V1'"))
         m = copy.deepcopy(self.raw)
         m['Gamma'] = '12.5'
-        cases.append(resha(m))
+        cases.append((resha(m), 'malformed: Gamma: not a rational string'))
         m = copy.deepcopy(self.raw)
         m['block'] = [self.raw['block'][1], self.raw['block'][0]]
-        cases.append(resha(m))
+        cases.append((resha(m), 'malformed: block: e_lo > e_hi'))
         m = copy.deepcopy(self.raw)
         m['hermite_index'] = 'two'
-        cases.append(resha(m))
+        cases.append((resha(m), 'malformed: hermite_index must be an integer'))
         m = copy.deepcopy(self.raw)
         m['weight_block'] = [fs(Fr(self.raw['block'][0]) + Fr(1, 64)), self.raw['block'][1]]
-        cases.append(resha(m))
+        cases.append((resha(m), 'malformed: weight_block does not contain block'))
         m = copy.deepcopy(self.raw)
-        m['kernel'] = 'bogus'
-        cases.append(resha(m))
-        cases.append(['not', 'a', 'certificate'])
-        for c in cases:
+        m['kernel'] = 'bogus'                   # run as a bare certificate: no file-level kernel key can conflict
+        cases.append((resha(m), "malformed: unknown kernel 'bogus'"))
+        cases.append((['not', 'a', 'certificate'], 'malformed: certificate is not a JSON object'))
+        for c, prefix in cases:
             r = self.run_v(c)
-            self.assertEqual(r['verdict'], 'REFUSE', r)
+            self.assertRefusedFor(r, prefix)
 
     def test_7_non_dyadic_drift_no_crash(self):
-        m = copy.deepcopy(self.raw)
-        a, b = Fr(self.raw['block'][0]) + Fr(1, 3), Fr(self.raw['block'][1]) + Fr(1, 3)
-        m['block'] = [fs(a), fs(b)]
-        m['e_c'] = fs((a + b) / 2)
+        """Non-dyadic drift: block AND weight_block shifted by -1/3 (or +1/3, whichever stays out of the quarantine
+        band), so the drift is the only change.  It must be PROCESSED (not refused): ACCEPT, or REJECT for a claim."""
+        for sh in (Fr(-1, 3), Fr(1, 3)):
+            m = copy.deepcopy(self.raw)
+            a, b = Fr(self.raw['block'][0]) + sh, Fr(self.raw['block'][1]) + sh
+            m['block'] = [fs(a), fs(b)]
+            m['e_c'] = fs((a + b) / 2)
+            if 'weight_block' in self.raw:
+                m['weight_block'] = [fs(Fr(self.raw['weight_block'][0]) + sh),
+                                     fs(Fr(self.raw['weight_block'][1]) + sh)]
+            if not meets_band(m):
+                break
+        self.assertFalse(meets_band(m))
         r = self.run_v(resha(m), depth=4)
-        self.assertIn(r['verdict'], ('ACCEPT', 'REJECT'))
-        self.assertNotIn('internal error', r.get('reason') or '')
+        self.assertIn(r['verdict'], ('ACCEPT', 'REJECT'), r)
+        if r['verdict'] == 'REJECT':
+            self.assertClaimReject(r)
+        self.assertIn('block=[%s,%s]' % (Fr(m['block'][0]), Fr(m['block'][1])), r['describe'])   # the shifted drift
 
     def test_weight_block_is_used(self):
-        """A much wider weight block ([-1, 1], outside the quarantine band) raises kbar; on these decoys the claim then
-        fails and must be REJECTED (disproved).  Guards against the weight block being ignored."""
+        """A much wider weight block (hull of the block and [-1, 1], outside the quarantine band) raises kbar; on these
+        decoys the claim then fails and must be REJECTED for a (C3)-type claim failure.  Guards against the weight
+        block being ignored."""
         m = copy.deepcopy(self.raw)
-        m['weight_block'] = ['-1/1', '1/1']
+        m['weight_block'] = [fs(min(Fr(self.raw['block'][0]), Fr(-1))), fs(max(Fr(self.raw['block'][1]), Fr(1)))]
+        self.assertFalse(meets_band(m))
         r = self.run_v(resha(m))
-        self.assertEqual(r['verdict'], 'REJECT', r)
+        self.assertClaimReject(r)
+        self.assertTrue(r['reason'].startswith('C3'), r['reason'])
         self.assertIn('kbar', V.__doc__)
 
     def test_quarantine_refused(self):
+        """Parse-time refusal probe: block AND weight_block moved into the quarantine band (the only defect); must be
+        REFUSED for the quarantine reason, before anything is evaluated."""
         m = copy.deepcopy(self.raw)
         m['geometry'] = {'h': '5/1', 'k': '1/2'}
         m['block'] = ['5/4', '41/32']  # q309: literal-ok (refusal probe: rejected at parse time, nothing evaluated)
         m['e_c'] = fs((Fr(5, 4) + Fr(41, 32)) / 2)  # q309: literal-ok (refusal probe: rejected at parse time, nothing evaluated)
+        if 'weight_block' in self.raw:
+            m['weight_block'] = list(m['block'])
         r = self.run_v(resha(m))
-        self.assertEqual(r['verdict'], 'REFUSE')
-        self.assertIn('quarantine', r['reason'])
+        self.assertRefusedFor(r, 'quarantine:')
+        self.assertIn('nothing evaluated', r['reason'])
 
 
 if __name__ == '__main__':

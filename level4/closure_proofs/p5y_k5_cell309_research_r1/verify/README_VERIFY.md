@@ -394,15 +394,53 @@ applies to. The h3 and h4 classes therefore have no 7q probe.
 
 ### Unit self-tests
 
-* **Recorded run.** The run recorded in `VERIFY_RESULTS.json` (`unit_selftests`) is from 2026-09-29 16:01 on the
-  preliminary inputs: 21 tests, all OK.
-* **Current inputs.** On the current inputs the tests pick a rerun certificate, and two of them have the same
-  block/weight_block pattern:
-  * `test_quarantine_refused` fails with "'quarantine' not found in 'malformed: weight_block does not contain block'";
-  * `test_7_non_dyadic_drift_no_crash` fails because the probe is REFUSED.
-* **These fail loudly.** Their assertions are reason-specific, so neither passes for the wrong reason.
-* **Fix, not applied.** The file is outside the scope of the R2-C3 change. The fix is to set `m['weight_block']`
-  together with `m['block']` in both tests.
+`tests/test_verify_selftests.py` (sha256 `8357be8539ed408b449c486387907b9dd3e0df03ccf0c846fec18ccfae48e2c3`) was run on the **current inputs** at 2026-09-29T23:45Z: **21 tests, all OK** (40 s). It was
+recorded with `python3 verify/run_verify_all.py --unit-tests --no-mutants` in `VERIFY_RESULTS.json` (`unit_selftests`).
+`TestRequiredRejections` uses `evidence/srk_decoys/h5_k1_2_E0_1_32.json` #1, which has an explicit `weight_block` and a
+certificate-level `kernel`.
+
+Per-test outcome:
+* `TestGaussianEnclosures.test_G_value_vs_quadrature`: ok
+* `TestGaussianEnclosures.test_Phi_monotone_consistent`: ok
+* `TestGaussianEnclosures.test_absHephi_bounds_contain_samples`: ok
+* `TestGaussianEnclosures.test_he_roots`: ok
+* `TestGaussianEnclosures.test_phi_Phi_contain_math`: ok
+* `TestGaussianEnclosures.test_pi`: ok
+* `TestKernelClosedForm.test_closed_form_vs_quadrature`: ok
+* `TestRequiredRejections.test_0_genuine_accepted`: ok
+* `TestRequiredRejections.test_0b_taboo_positive_control`: ok
+* `TestRequiredRejections.test_1_gamma`: ok
+* `TestRequiredRejections.test_2_scaled_V0`: ok
+* `TestRequiredRejections.test_3_drop_lambda`: ok
+* `TestRequiredRejections.test_4_widened_block`: ok
+* `TestRequiredRejections.test_5_hermite_plus_one`: ok
+* `TestRequiredRejections.test_6_sha`: ok
+* `TestRequiredRejections.test_7_malformed`: ok
+* `TestRequiredRejections.test_7_non_dyadic_drift_no_crash`: ok
+* `TestRequiredRejections.test_quarantine_refused`: ok
+* `TestRequiredRejections.test_weight_block_is_used`: ok
+* `TestTaylorModels.test_containment`: ok
+* `TestTaylorModels.test_lower_bound_below_samples`: ok
+
+**Revision for review R2 condition C3.** The fix is the same as harness v2: each probe has a single defect, and every
+assertion is reason-specific.
+* **The two tests that failed on the rerun inputs:**
+  * `test_quarantine_refused` now moves `weight_block` together with `block`. It must be refused with a reason starting
+    `quarantine:` and containing "nothing evaluated". It is a parse-time refusal.
+  * `test_7_non_dyadic_drift_no_crash` shifts `block` and `weight_block` together by −1/3 (or +1/3, chosen by exact
+    rational comparison so as never to meet a quarantine band). It must be *processed*: ACCEPT, or REJECT with a
+    (C1)–(C3) reason, not refused. It also checks that the shifted block is the one verified.
+* **Two more tests that would have failed loudly on the rerun inputs:**
+  * `test_4_widened_block` now keeps `weight_block` containing the widened block.
+  * `test_0b_taboo_positive_control` sets `kernel: taboo` in the certificate and runs it as a bare certificate. Before,
+    a file-level `taboo` conflicted with the certificate's `kernel: whole`.
+* **Tests that passed but checked only the verdict now check the reason:**
+  * `test_1_gamma`: (C4);
+  * `test_2_scaled_V0` and `test_3_drop_lambda`: a (C1)–(C3) claim failure;
+  * `test_5_hermite_plus_one`: a claim failure, when rejected;
+  * `test_6_sha`: exactly "sha256 mismatch";
+  * `test_7_malformed`: each of its 7 probes against its own message; the unknown-kernel probe runs bare;
+  * `test_weight_block_is_used`: a C3 claim failure, with the weight-block hull built to stay out of the band.
 
 ### Taboo-kernel certificates
 
