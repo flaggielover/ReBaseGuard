@@ -63,3 +63,46 @@ processes share 6 cores.
 * The campaign is stopped before the target. That follows the user's C4 ruling point 7 and protocol §10.
 * Any continuation needs a new freeze (r3) with its own full official qualification and a fresh independent review.
   Whether to make one is put to the user.
+
+## 5. Addendum a1 (2026-09-29 ~05:20Z): the failure is not sleep-only
+
+This section was written after the user asked whether the failure was purely execution-environment contamination. It
+prevails over §2–§4 where they differ.
+
+**QC03 job timeline, reconstructed.** The QC03 records carry no timestamps. The timeline therefore comes from the frozen
+job order ("longest expected first", 1 worker, one job per worker) and the recorded job walls:
+
+* the job walls sum to 16 962 s, against QC03's process lifetime of about 17 000 s;
+* the reconstructed job boundaries match the worker handovers the coordinator observed between 04:45 and 04:54Z to
+  within about 20 s.
+
+**RLR d8 on block 0 of 316 did not overlap either sleep.** It ran 00:11–01:31:15Z, about 15 s before the first sleep
+at 01:31:29Z. Its 4 810.5 s is sleep-free. On its own it fails Q12's per-job check for RLR d8: 2 × 4 810.5 > 8 700.
+
+**Every job that did overlap a sleep:** C1b d10 on block 0 of 316, RLR d6 of 297, RLR d8 on block 1 of 316. With the
+sleep time removed, each would pass its per-job check.
+
+**r1 against r2, same frozen code** (driver `965a2a30…`; QC04 determinism PASS, so the certificates are identical):
+
+| window | r1 | r2 | change |
+|---|---|---|---|
+| RLR d8 of 297, 5 jobs in parallel, r2 00:11–01:15Z, sleep-free | 3 366–3 380 s | 3 844–3 880 s | +14 % |
+| RLR d8 on block 0 of 316, sleep-free | 4 150 s | 4 810 s | +16 % |
+| RLR d6 of 316, run after QC02 had finished | 613–619 s | 588–604 s | no slowdown |
+
+**Host.** Mac17,5 (Apple A18 Pro): 2 performance and 4 efficiency cores, apparently fanless. The power log shows
+"Dark Wake Thermal Emergency" right after the lid closed at 10:31. During QC02 the qualification runs 7 to 10
+CPU-bound processes at once.
+
+**Conclusion.**
+
+* The failure is **purely execution-environment**. The code is identical, the outputs are deterministic, every
+  non-timing gate passed, and runtimes vary only with the host's state.
+* It is **not sleep-only**. There are two components:
+  * (i) the two sleeps, which explain the C1b d10, RLR d6 and 316-block-1 RLR d8 items;
+  * (ii) a sleep-free slowdown of about 15 % against r1, during the concurrent heavy-case window. That slowdown alone
+    fails the RLR d8 per-job check and most likely the EVAL_CAP check too.
+* Component (ii) is consistent with thermal throttling and/or background load on a fanless 2P+4E host. Its cause is
+  not established, because no thermal-level record exists for that window.
+* A sleep-only repair with unchanged caps can pass Q12 only if the host is as cool and as unloaded as it was in r1. r1's
+  own margin was about 5 % on RLR d8.
