@@ -1,0 +1,90 @@
+{
+ "C_A": {
+  "field_matches": {
+   "A_exact": true,
+   "Gamma_exact": true,
+   "H_exact": true,
+   "M_after_exact": true,
+   "pass": true,
+   "per_supply_records_G_C1_C2": true,
+   "provenance": true
+  },
+  "provenance": {
+   "A0": "C2",
+   "A1": "C2",
+   "A2": "C2"
+  },
+  "reproduces_C2_exactly": true
+ },
+ "C_B": {
+  "failed": [],
+  "gates": {
+   "C5": {
+    "meas_e0_eq_cover_e0": true,
+    "meas_rho_eq_cover_rho": true,
+    "pass": true,
+    "x_hi_eq_e0_plus_rho": true,
+    "x_lo_eq_e0_minus_rho": true,
+    "x_lo_positive": true
+   },
+   "G-CF": {
+    "applies": true,
+    "pass": true
+   },
+   "G-R1": {
+    "committed_equal": true,
+    "frozen_equal": true,
+    "pass": true
+   },
+   "G-R2": {
+    "committed_equal": true,
+    "frozen_equal": true,
+    "pass": true
+   },
+   "G-R3": {
+    "pass": true
+   },
+   "G-R3b": {
+    "pass": true
+   },
+   "G-R4(M)": {
+    "pass": true
+   },
+   "P_frozen": {
+    "pass": true
+   },
+   "TPT_profile_at_rho": {
+    "pass": true
+   }
+  },
+  "note": "reproduction only (s = rho); equality booleans only; no transport penalty of any route computed",
+  "reproduces_exactly": true,
+  "tripwires": {
+   "armed": [
+    "penalty_closed",
+    "penalty_c5t",
+    "penalty_riemann",
+    "penalty_riemann_lower",
+    "evaluate",
+    "penalty_blocked",
+    "evaluate_bundle",
+    "_evaluate",
+    "independent_penalty",
+    "transport_gate",
+    "p5_c5t_closed_form",
+    "tpt_endpoint_only",
+    "tptb"
+   ],
+   "mode": "control",
+   "verified_armed": true,
+   "verified_fires": true
+  }
+ },
+ "F2_present": true,
+ "cell": 305,
+ "driver_sha256": "965a2a306dd564b16614fc0bc22583e663e5bfa99464dc7afbe2bc408ac265f9",
+ "mode": "rehearse",
+ "pass": true,
+ "utc": "2026-09-29T00:11:07.321767Z",
+ "wall_seconds": 0.831
+}
