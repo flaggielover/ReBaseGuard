@@ -82,7 +82,10 @@ enters `impl/srk_assemble.py` as Γ̄_i.
 
 The verifier must REJECT each of the following:
 1. The certificate with `Gamma` decreased by 1/10⁶.
-2. V0 scaled by 1 − 2⁻⁸.
+2. V0 scaled by 1 − 2⁻⁸. **Amended 2026-09-29 (spec erratum SE-1):** this mutant may be a TRUE claim, because the
+   producer's λ-repair and rung minimum can leave slack larger than 2⁻⁸. The requirement is therefore "REJECT, or
+   PROVE TRUE with the proof recorded; never an unproved ACCEPT". The mandatory rejection moves to V0 scaled by 3/4,
+   which is false on every declared decoy observed so far.
 3. V0 := V0 − (lam)·W0, i.e. the additive repair removed (when lam > 0).
 4. The block widened by 1/8 on either side (with e_c recomputed), unless the widened claim is also true. The verifier
    reports which.
