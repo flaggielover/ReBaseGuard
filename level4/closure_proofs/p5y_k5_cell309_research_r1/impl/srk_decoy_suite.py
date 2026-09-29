@@ -14,12 +14,13 @@ sys.path.insert(0, str(HERE))
 def job(spec):
     import srk_certify as S
     import srk_kernel as KX
-    h, k, elo, ehi, idx, ladder = spec
+    h, k, elo, ehi, idx, ladder = spec[:6]
+    whole = spec[6] if len(spec) > 6 else True
     g = KX.Geom(F(h), F(k))
     logs = []
-    blk = S.run_block(g, F(elo), F(ehi), tuple(idx), tuple(ladder), log=logs.append)
+    blk = S.run_block(g, F(elo), F(ehi), tuple(idx), tuple(ladder), log=logs.append, whole=whole)
     certs = {i: S.certificate_json(blk, i) for i in blk["Gamma"]}
-    rec = {"geometry": blk["geometry"], "block": blk["block"],
+    rec = {"geometry": blk["geometry"], "block": blk["block"], "kernel": "whole" if whole else "taboo",
            "Gamma": {i: (S.fstr(v) if v is not None else None) for i, v in blk["Gamma"].items()},
            "Abar_W": S.fstr(blk["Abar_W"]) if blk["Abar_W"] is not None else None,
            "rungs": [{"degree": r["degree"], "W_status": r["W"]["status"],
@@ -30,7 +31,7 @@ def job(spec):
                      for r in blk["rungs"]],
            "certificates": certs, "log": logs}
     name = f"h{h.replace('/', '_')}_k{k.replace('/', '_')}_E{elo.replace('/', '_')}_{ehi.replace('/', '_')}.json"
-    out = NS / "evidence" / "srk_decoys" / name
+    out = NS / "evidence" / ("srk_decoys" if whole else "srk_decoys_taboo") / name
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(rec, indent=1, sort_keys=True))
     return name
@@ -45,6 +46,8 @@ def main():
     for sg in dec["synthetic_geometries"]:
         for elo, ehi in sg["blocks"]:
             jobs.append((sg["h"], sg["k"], elo, ehi, dec["indices"], dec["ladder"]))
+    if len(sys.argv) > 2 and sys.argv[2] == "taboo":
+        jobs = [j + (False,) for j in jobs]
     with ProcessPoolExecutor(max_workers=int(sys.argv[1]) if len(sys.argv) > 1 else 4) as ex:
         for name in ex.map(job, jobs):
             print("done", name, flush=True)

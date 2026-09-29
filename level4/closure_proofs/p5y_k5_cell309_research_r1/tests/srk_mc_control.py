@@ -40,7 +40,8 @@ def he_abs_int(i, a, b, n=200):
     return s
 
 
-def simulate(hh, kk, e, weight, n_paths, rng):
+def simulate(hh, kk, e, weight, n_paths, rng, taboo=False):
+    """E_a[sum_{n < tau} w(X_n)] (whole kernel) or E_a[sum_{n < tau ^ T_a} w(X_n)] (taboo: killed on return to a)."""
     c = hh + kk
     tot = tot2 = 0.0
     for _ in range(n_paths):
@@ -52,6 +53,8 @@ def simulate(hh, kk, e, weight, n_paths, rng):
             if not (m - c < z < c - p):
                 break
             p, m = max(0.0, p + z - kk), max(0.0, m - z - kk)
+            if taboo and p == 0.0 and m == 0.0:
+                break
         tot += acc
         tot2 += acc * acc
     mean = tot / n_paths
@@ -59,9 +62,9 @@ def simulate(hh, kk, e, weight, n_paths, rng):
     return mean, math.sqrt(var / n_paths)
 
 
-def run(n_paths=10000):
+def run(n_paths=10000, taboo=False):
     rows = []
-    for fp in sorted((NS / "evidence" / "srk_decoys").glob("*.json")):
+    for fp in sorted((NS / "evidence" / ("srk_decoys_taboo" if taboo else "srk_decoys")).glob("*.json")):
         d = json.loads(fp.read_text())
         hh, kk = float(F(d["geometry"]["h"])), float(F(d["geometry"]["k"]))
         elo, ehi = F(d["block"][0]), F(d["block"][1])
@@ -84,7 +87,7 @@ def run(n_paths=10000):
                     grid[(a, b)] = he_abs_int(i, b * step - c + float(elo), c - a * step + float(ehi))
                 return grid[(a, b)]
             rng = random.Random(zlib.crc32(f"{fp.name}:{i}".encode()))
-            est = [simulate(hh, kk, float(e), wbar, n_paths, rng) for e in (elo, ehi)]
+            est = [simulate(hh, kk, float(e), wbar, n_paths, rng, taboo) for e in (elo, ehi)]
             mmax, se = max(est, key=lambda t: t[0])
             G = float(F(gam))
             rows.append({"file": fp.name, "i": i, "Gamma": G, "mc_max": mmax, "se": se,
@@ -97,8 +100,10 @@ def run(n_paths=10000):
 
 if __name__ == "__main__":
     n = int(sys.argv[1]) if len(sys.argv) > 1 else 10000
-    ok, rows = run(n)
-    (NS / "evidence" / "SRK_MC_CONTROL.json").write_text(json.dumps({"ok": ok, "rows": rows}, indent=1))
+    taboo = len(sys.argv) > 2 and sys.argv[2] == "taboo"
+    ok, rows = run(n, taboo)
+    out = "SRK_MC_CONTROL_TABOO.json" if taboo else "SRK_MC_CONTROL.json"
+    (NS / "evidence" / out).write_text(json.dumps({"ok": ok, "n_paths": n, "rows": rows}, indent=1))
     for r in rows:
         print(r["file"], r["i"], round(r["Gamma"], 4), round(r["mc_max"], 4), "+-", round(r["se"], 4),
               "PASS" if r["control_pass"] else "FAIL", round(r["tightness"] or 0, 4))
