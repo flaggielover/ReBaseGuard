@@ -1396,12 +1396,17 @@ def run_subtree(args):
             pc = sum(v[0] for v in poly) / len(poly)
             mc = sum(v[1] for v in poly) / len(poly)
             ec = (cl[5] + cl[6]) / 2
-            up = point_upper(kind, pc, mc, ec)
-            if up < 0:
-                return {'kind': kind, 'ok': False, 'false': True,
-                        'reason': '%s is FALSE at (p, m, e) = (%s, %s, %s): certified upper bound %.6e < 0'
-                                  % (kind, pc, mc, ec, float(up)),
-                        'cell': fmt_cell(cl), 'boxes': nboxes, 'maxdepth': max(maxd, cl[7]), 'sec': time.time() - t0}
+            cands = [(pc, mc, ec)]
+            if cl[7] >= max_depth:                   # last chance: also the vertices x e-endpoints
+                cands += [(v[0], v[1], e) for v in poly for e in (cl[5], cl[6])]
+            for (px, mx, ex) in cands:
+                up = point_upper(kind, px, mx, ex)
+                if up < 0:
+                    return {'kind': kind, 'ok': False, 'false': True,
+                            'reason': '%s is FALSE at (p, m, e) = (%s, %s, %s): certified upper bound %.6e < 0'
+                                      % (kind, px, mx, ex, float(up)),
+                            'cell': fmt_cell(cl), 'boxes': nboxes, 'maxdepth': max(maxd, cl[7]),
+                            'sec': time.time() - t0}
         if cl[7] >= max_depth:
             return {'kind': kind, 'ok': False, 'false': False,
                     'reason': '%s UNPROVEN at depth limit: certified lower bound %s (%s)'

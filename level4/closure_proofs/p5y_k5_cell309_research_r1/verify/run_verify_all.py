@@ -45,10 +45,10 @@ def mutants(raw):
     out.append(('1_gamma_minus_1e-6', resha(m), 'REJECT'))
     m = copy.deepcopy(raw)
     m['V0'] = {k: fs(Fr(v) * (1 - Fr(1, 256))) for k, v in raw['V0'].items()}
-    out.append(('2_V0_scaled_1-2^-8', resha(m), 'REJECT'))
+    out.append(('2_V0_scaled_1-2^-8', resha(m), 'REJECT or PROVE TRUE (spec erratum SE-1)'))
     m = copy.deepcopy(raw)
     m['V0'] = {k: fs(Fr(v) * (1 - Fr(1, 4))) for k, v in raw['V0'].items()}
-    out.append(('2x_V0_scaled_1-2^-2 (informative, stronger)', resha(m), 'REJECT'))
+    out.append(('2x_V0_scaled_3/4 (SE-1 mandatory)', resha(m), 'REJECT'))
     lam = Fr(raw.get('lam', '0'))
     if lam > 0:
         m = copy.deepcopy(raw)
@@ -128,6 +128,8 @@ def outcome_ok(expect, r):
         return 'internal error' not in (r.get('reason') or '')
     if expect == 'REJECT':
         return v == 'REJECT'
+    if expect.startswith('REJECT or PROVE TRUE'):
+        return v in ('REJECT', 'ACCEPT')      # an ACCEPT is a completed proof of the (true) mutated claim
     return v in ('REJECT', 'ACCEPT')
 
 
