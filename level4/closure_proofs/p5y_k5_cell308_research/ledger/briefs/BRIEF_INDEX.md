@@ -35,6 +35,7 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 24 | 24_reviewINTERRUPTION.txt | review of the execution-interruption recovery assessment (fresh) | Agent | 2026-09-30 ~15:4xZ | no |
 | 25 | 25_reviewINTERRUPTION_DELTA.txt | delta review of addendum A1 (C2; same reviewer resumed) | SendMessage | 2026-09-30 ~18:0xZ | no |
 | 26 | 26_reviewINTERRUPTION_R3.txt | re-check R3 of erratum E1 (same reviewer resumed) | SendMessage | 2026-09-30 ~18:4xZ | no |
+| 27 | 27_reviewEXEC.txt | execution review (section 10 step 6, adapted; fresh) | Agent | 2026-09-30 ~19:0xZ | no |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.

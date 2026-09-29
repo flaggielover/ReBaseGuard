@@ -1,0 +1,44 @@
+You are a FRESH, INDEPENDENT EXECUTION REVIEWER (protocol section 10 step 6) for the cell-308 MB r1 campaign in the ReBaseGuard repository. You wrote none of it and have reviewed none of it. Be adversarial and verify everything yourself, read-only.
+
+CONTEXT
+The ONE granted evaluation (grant afa93072) was launched 2026-09-29 11:57:58Z. The marker refs/p5y-k5-cell308-mb-r1/target-consumed -> afa93072 was created at 11:58:01Z. The run never sealed:
+- 23:29:00 JST: the user's Force Quit of the hosting Claude desktop app killed both caffeinate processes and orphaned the run.
+- 2026-09-30 00:00:15 JST: the host was force-reset by the power button.
+- No evidence was ever persisted.
+A reviewed recovery chain on the research branch concluded RECOVERY_ASSESSMENT_ACCEPTED:
+- assessment 8b64d989;
+- review ef29bc2b, REJECTED as submitted;
+- addendum A1 e681d16f;
+- delta review 0b9020af, REJECTED;
+- erratum E1 c5f7c857;
+- re-check R3 98118e22, DELTA_ACCEPTED.
+Its review ruled (REVIEW_EXECUTION_INTERRUPTION.md section 8b, condition C5) that protocol section 10 steps 6-8 run in adapted form on the formal postexec record.
+
+WHERE
+- Formal worktree /Users/suzhe/ReBaseGuard-c308mb, branch p5y-k5-cell308-mb-r1, HEAD 21e99cf0 (postexec record; parent afa93072 = grant). NSF = level4/closure_proofs/p5y_k5_cell308_mb_r1.
+- Research worktree /Users/suzhe/ReBaseGuard-c308, NS = level4/closure_proofs/p5y_k5_cell308_research: the recovery chain files under NS/audit/ and NS/reviews/, and the ledger.
+
+ABSOLUTE RULES
+- NEVER run the driver's execute, seal-only, preflight, rehearse or decoy modes. Never create, move or delete any ref. No git writes of any kind in either worktree, and GIT_OPTIONAL_LOCKS=0 for git reads in the formal worktree.
+- Write NOTHING in the formal worktree except your single verdict file NSF/review/MB308_EXECUTION_REVIEW.md (line 1 the title; line 2 EXACTLY one of EXECUTION_ACCEPTED or EXECUTION_REJECTED, appearing once as a whole line). Scratch goes under /private/tmp/claude-501/-Users-suzhe-ReBaseGuard/d1135746-7699-4331-8dd2-9addf63a6def/scratchpad/reviewEXEC/. Do not git add or commit.
+- Never read the content of any git object written after the marker; type and size only. Never compute anything for cells 305-309 or at a drift in [6/5, 13/5] or its mirror. No target value exists, and none may be inferred or reconstructed. Stdlib Python only. No network. No system settings.
+- Ledger lines go to the research ledger only, via NS/code/c308_quarantine.py log_event (klass='REVIEW', agent='reviewEXEC').
+
+WHAT "EXECUTION_ACCEPTED" MEANS HERE (adapted, review section 8b)
+It means only that the formal postexec record (NSF/postexec/: MB308_RECOVERY_RECORD.md, MB308_POSTEXEC_CHECKS.json, mb308_postexec_checks.py, MB308_EXECUTION_LAUNCH_UTC.txt) is accurate and complete, and that the repository and host state are as recorded. It does NOT mean a scientific result exists.
+
+CHECK (report each as PASS / FAIL / PASS WITH NOTE, with evidence)
+ 1. The postexec commit 21e99cf0 is a direct child of afa93072, adds only files under NSF/postexec/, creates no evidence/ or GUARDED_PATHS name, and leaves the marker unchanged (review C4 form).
+ 2. Its content obeys C4:
+    - It uses E1's object wording, "driver death most probably after 23:29:00, at the latest 00:00:15", "state equivalent to CONSUMED_UNRECORDED; the driver never returned", the qualitative pool-load fact, and the coordinator-reported label for the launcher readings.
+    - It contains no target, job-level, seal or exit-code content and no causal claim about the hang.
+    - The checks script is stdlib and git plumbing only, imports no mb308_* module, and writes only its JSON.
+ 3. Re-run the checks script yourself with --out into your scratch. The results must equal the committed JSON (the boot epoch and the object window are deterministic).
+ 4. The frozen protocol section 7, the driver (execute / after_marker / run_seal_only) and E1-E8 of NSF/review/MB308_QUALIFICATION_REVIEW.md, applied to this state:
+    - E4 and E6 items that presuppose a sealed record: report "not available: unsealed";
+    - E1/E2 compliance as far as it can be assessed: disclose the other applications active during the run, the coordinator's read-only 23:10 JST audit, the Force Quit, and the loss of caffeinate;
+    - E3: host provenance never changes the outcome;
+    - E7: no rerun; recovery only through seal-only, and seal-only has nothing to seal.
+ 5. The chronology and evidence strengths in the record agree with the accepted research chain and with the system logs (spot-check the Force Quit and caffeinate ClientDied entries, the last log entries and kern.boottime).
+ 6. Anything else.
+Then give CONDITIONS for the adjudication (step 7) and NOTES. Whatever your verdict, there is no rerun. Time budget: about 45 minutes. Final message: the verdict line and an 8-line summary.
