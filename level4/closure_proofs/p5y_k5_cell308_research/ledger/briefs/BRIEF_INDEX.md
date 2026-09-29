@@ -47,6 +47,7 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 36 | 36_reviewINC_SUCCESSOR.txt | incident-independence re-rating for the successor (S12; fresh) | Agent | see ledger | no |
 | 37 | 37_reviewIMPL_MBS.txt | successor implementation review (fresh, non-holder) | Agent | see ledger | no |
 | 38 | 38_reviewINC2_T6.txt | bounded T6 ruling (reviewINC2 resumed) | SendMessage | see ledger | no |
+| 39 | 39_readerUDB.txt | non-holder reader check of the user decision brief (MBS-10) | Agent | see ledger | no |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.
