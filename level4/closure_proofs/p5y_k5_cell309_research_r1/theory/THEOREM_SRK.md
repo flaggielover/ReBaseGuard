@@ -178,6 +178,17 @@ For r = 0, S_0 = φ(c−p+e) − φ(m−c+e) is explicit. Replacing σ3 (resp. �
 min(σ3, source envelope(x)) is valid by the same proof. The implementation of SRK-1 is deferred; SRK-0 (§3) is the
 object of this campaign.
 
+**Deferral record (2026-09-29, engineering scope; independent of any target quantity).** SRK-1 needs four new
+things:
+* a He₅ weight (index 5) for σ4;
+* a new closed-form weight for r = 0, namely |S₀^{(n)}(e₀)(x)| as a function of both window endpoints;
+* pinned tower norms N_{r,n}, taken from the frozen `tct_rule.h_towers` (midpoint tower and cell tower);
+* a verifier mode for each of the above.
+
+Under ROUTE_SELECTION_RULE S, a component enters only when it is ready (C5). SRK-1 is therefore OUT of the first
+freeze package. Omitting a min-composed component can never invalidate the route. Note the index identity
+j_i(x; e) = k_{i+1}(x; e): the SRK-0 certificates Γ̄_1..Γ̄_4 already cover every σ3 weight of SRK-1.
+
 ## 7. Target-free parameter rules (fixed now, before any decoy result)
 
 | parameter | rule |
@@ -267,3 +278,15 @@ the Ā branch.
 
 **Implementation.** `certify_W(..., whole=False)` and `certify_weight` inherit the flag. D_lo is not produced here:
 in a formal campaign it would be the committed, pinned registry value of the chosen supply.
+
+**SRK-1a (the cheapest increment; also deferred).** For r ≥ 1, the σ3 part alone needs only two things beyond SRK-0:
+* the pinned midpoint tower norms N_{r,n};
+* the existing Γ̄_1..Γ̄_4.
+
+It reads
+
+    B3 := min( A0 f_G ,  A0 ε3 + min( A0 σ3 , Σ_{i≤3} C(3,i) N_{r,3−i} Γ̄_{i+1} ) + 3 s_H Γ̄_1 + 3 s_D Γ̄_2 + s_F Γ̄_3 ).
+
+It is valid by §6 and Lemma SV (a min of valid bounds on (R_e|S_r'''(e0)|)(a)). It is deferred only for the coupling
+to the internals of `tct_rule.h_towers`, which the formal campaign would have to pin and qualify. It is a
+target-free candidate for a later package.
