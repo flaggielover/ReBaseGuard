@@ -1,7 +1,8 @@
 # Decision brief for the user: the cell-308 successor MB-S (freeze decision now; S1 ruling later)
 
 **Revision r1.** Neutrality repairs N-1 to N-6 and N-8 from the non-holder reader check
-(`reviews/READER_CHECK_USER_DECISION_BRIEF_308.md`, NO_OUTCOME_EXPECTATION). The r0 text is in git history.
+(`reviews/READER_CHECK_USER_DECISION_BRIEF_308.md`, NO_OUTCOME_EXPECTATION), then R-1 to R-9 of its re-check
+(`reviews/READER_CHECK_USER_DECISION_BRIEF_308_R1.md`). Earlier texts are in git history.
 
 **What this is.** It prepares the decisions the governance leaves to you. **It contains no expectation of MB-S's
 outcome**: no margin, estimate, likelihood or "worth running" argument (MBS-10). A research scanner and a non-holder
@@ -14,10 +15,12 @@ MB308 r1: CELL308_EXECUTION_INDETERMINATE (ADJUDICATION_ACCEPTED `e451e634`). Ce
 
 1. **Freeze permission: grant or withhold.** MB-S keeps MB r1's science and is "an r4 with the same caps" in
    substance. §14 and G2 require a new explicit user decision, recorded before any such freeze.
-   * **Withholding permission is equally available.** In that case MB-S stays a reviewed, unfrozen, pre-freeze build,
-     and cell 308 stays OPEN with MB r1 INDETERMINATE.
-   * **Granting permission** allows the freeze and the official qualification. It does **not** authorise a target
-     step (see B).
+   * **Withholding permission is equally available.** In that case MB-S stays an unfrozen, pre-freeze build (its
+     implementation review and the T6 condition M1 are pending at the time of writing), and cell 308 stays OPEN with
+     MB r1 INDETERMINATE.
+   * **Granting permission** meets only freeze gate S16(c). The freeze still needs S16(b): the route conditions
+     RC1–RC6 established as facts, and the implementation review and M1 accepted. It does **not** authorise a
+     target step (see B).
 2. **Caps (MBS-8).** Exactly one of the two options below. "Mechanically" means that no cap value is set by hand;
    the option alone determines the values.
    * **(i)** keep MB r1's r3 caps (EVAL_CAP 8 h; per-job CPU caps as frozen); or
@@ -29,7 +32,7 @@ MB308 r1: CELL308_EXECUTION_INDETERMINATE (ADJUDICATION_ACCEPTED `e451e634`). Ce
    * **(ii) not final:** a further successor may be governed after an MB-S INDETERMINATE, through its own process
      and ruling.
 
-   The incident re-rating's recommendation is (i). Under either option, any evaluation of 308 after the MB-S marker,
+   The successor incident re-rating (reviewINC2, `b7e62dec`, condition MBS-6) recommends (i). Under either option, any evaluation of 308 after the MB-S marker,
    of any route, starts at a risk rating of not lower than HIGH (MBS-5(b)).
 4. **The member decision on C11R-I2 / COR-T (MBS-7; route erratum E1 DR1; route re-check R3-N2).** Record one of:
 
@@ -38,12 +41,13 @@ MB308 r1: CELL308_EXECUTION_INDETERMINATE (ADJUDICATION_ACCEPTED `e451e634`). Ce
    | science | MB r1's, byte-identical | changed (the S4 "changed science" branch) |
    | determinism argument (successor value = lost-run value) | applies (under the pin) | does not apply |
    | work before any freeze | the current build and reviews | new code, new reviews, a new qualification |
-   | incident rating | MEDIUM–HIGH, upper end, conditional | a fresh re-rating, presumptively HIGH |
+   | incident rating | MEDIUM–HIGH, upper end, conditional, **and only under the T6 conditions M1–M6 (M1 pending); otherwise HIGH** (§G) | a fresh re-rating, presumptively HIGH |
    | later use of these members on 308 | post-result; the brief's §26 path; not lower than HIGH | not applicable (already included) |
 
 ## B. The ruling needed before any successor grant (S1; governance addendum A1 §3 with erratum E1 D1)
 
-The ruling must expressly:
+**You may give or withhold this ruling.** Withholding it leaves the successor without a grant: no marker, no target
+step, cell 308 OPEN. If given, the ruling must expressly:
 1. authorise a **second consumed evaluation** of cell 308 (count 2) under MB-S only, **notwithstanding the brief's §21
    ("execute cell 308 exactly once") and mitigation 5**;
 2. lift mitigation 5 for MB-S, and confirm that the brief's §20–§21 and §23 **continue to bind MB r1 unchanged**;
@@ -63,8 +67,8 @@ The ruling must expressly:
   * the rating is **MEDIUM–HIGH at the upper end, conditional** on byte-identical science on the pinned platform;
   * triggers T1–T6 move it to HIGH;
   * conditions MBS-1…MBS-14;
-  * the T6 ruling on the builder's disclosed exposure (`reviews/INCIDENT_INDEPENDENCE_REVIEW_MBS308_T6.md`) is
-    **pending at the time of writing**.
+  * the T6 ruling on the builder's disclosed exposure (`reviews/INCIDENT_INDEPENDENCE_REVIEW_MBS308_T6.md`,
+    `ff2280e9`) is **T6_FIRED_MITIGATED**; see §G.
 * The governance texts O1–O5, verbatim (§D below), and the brief's §20, §21, §23 and §26, verbatim (§E below).
 
 ## D. The governing texts O1–O5 (verbatim, from governance addendum A1 §1)
@@ -133,8 +137,8 @@ governance process. It needs the new user decision.
 
 ## E. Your own words (verbatim, from `ledger/USER_TEXTS_SUCCESSOR_308.md`)
 
-The selection is the brief's §20, §21, §23 and §26 of 2026-09-28, the passages on a second execution and on
-successors.
+The selection is the brief's §20, §21 and §23 of 2026-09-28 (on exactly one execution) and its §26 (on successor
+routes). Other passages of that brief are not reproduced.
 
 ### 3a. The brief's §20
 
@@ -237,9 +241,32 @@ review before considering it.
   * a host contract.
 
   The independent implementation review is **pending at the time of writing**.
-* **Host readiness for any future official run** (the builder's reading at the end of its build, about
-  2026-09-29 21:00Z; a reading at that time only): this host would then have refused. Memory pressure is
+* **Host readiness for any future official run** (reported by the successor builder in its BUILD_REPORT, from its
+  readings at the end of its build, about 2026-09-29 21:00Z; a reading at that time only): at that time, this host
+  would have refused. Memory pressure is
   elevated, thermal level is 1, automatic macOS and critical-update installation is on, and another application
   exceeds the CPU exclusivity limit. Disabling automatic installation for the whole window is your action. The
   campaign never changes system settings.
 * **Conditions register.** `governance/SUCCESSOR_CONDITIONS_REGISTER_308.md`.
+
+## G. Trigger T6: fired and mitigated (the T6 ruling's M7 disclosure)
+
+* **The ruling.** `reviews/INCIDENT_INDEPENDENCE_REVIEW_MBS308_T6.md` (research `ff2280e9`, sha256
+  `d091e4ba4a31f0aa5723435add320ddbe43ee1f1d9b726d00facd861414e77e4`), line 2: **T6_FIRED_MITIGATED**.
+* **What happened.** The successor builder read the formal MB r1 postexec recovery record before its exposure
+  instruction reached it, and then held the implementation role. That record holds:
+  * the run chronology;
+  * the coordinator-reported launch host readings;
+  * a qualitative statement about worker-pool load;
+  * caffeinate PIDs;
+  * probe and trial object ids.
+
+  No values are reproduced here.
+* **M2 (satisfied).** An earlier holder (reviewEXEC) confirmed by a ledger line (2026-09-29T21:13:47Z) that the record
+  holds no per-job runtime, no per-worker observation from the coordinator's in-run audit, and no per-coalition CPU
+  value.
+* **M1 (pending at the time of writing).** An itemised provenance trace of every constant in the build, by the
+  non-holder implementation reviewer. Anything untraceable must be re-derived by a non-holder, or the rating becomes
+  HIGH.
+* **The rating.** MEDIUM–HIGH (upper end) **only under M1–M6**; otherwise HIGH. The builder takes no caps,
+  qualification, qualification-review or S1-brief role (M4).
