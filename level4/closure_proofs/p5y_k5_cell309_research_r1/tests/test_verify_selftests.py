@@ -147,9 +147,12 @@ class TestGaussianEnclosures(unittest.TestCase):
 
     def test_G_value_vs_quadrature(self):
         for n in range(0, 6):
+            kinks = [float(r[0]) for r in V.he_roots(n)]
             for u in (Fr(-3), Fr(-1, 2), Fr(1, 5), Fr(2), Fr(3, 2), Fr(-7, 3)):
                 lo, hi = V.G_value(n, u)
-                g = simpson(lambda v: abs(fhe(n, v)) * fphi(v), -14.0, float(u), 40000)
+                # reference: Simpson between consecutive kinks of |He_n| (the integrand is smooth there)
+                bps = [-14.0] + [r for r in kinks if r < float(u)] + [float(u)]
+                g = sum(simpson(lambda v: abs(fhe(n, v)) * fphi(v), a, b, 20000) for a, b in zip(bps[:-1], bps[1:]))
                 self.assertLessEqual(lo / TWO_WX, g + 1e-9)
                 self.assertGreaterEqual(hi / TWO_WX, g - 1e-9)
 
@@ -294,7 +297,7 @@ class TestRequiredRejections(unittest.TestCase):
             raise unittest.SkipTest('no decoy certificate available')
         cls.log = {}
 
-    def run_v(self, c, depth=12):
+    def run_v(self, c, depth=24):
         return V.verify_cert(c, N=8, max_depth=depth, procs=1)
 
     def test_0_genuine_accepted(self):
@@ -422,6 +425,15 @@ class TestRequiredRejections(unittest.TestCase):
         r = self.run_v(resha(m), depth=4)
         self.assertIn(r['verdict'], ('ACCEPT', 'REJECT'))
         self.assertNotIn('internal error', r.get('reason') or '')
+
+    def test_weight_block_is_used(self):
+        """A much wider weight block ([-1, 1], outside the quarantine band) raises kbar; on these decoys the claim then
+        fails and must be REJECTED (disproved).  Guards against the weight block being ignored."""
+        m = copy.deepcopy(self.raw)
+        m['weight_block'] = ['-1/1', '1/1']
+        r = self.run_v(resha(m))
+        self.assertEqual(r['verdict'], 'REJECT', r)
+        self.assertIn('kbar', V.__doc__)
 
     def test_quarantine_refused(self):
         m = copy.deepcopy(self.raw)

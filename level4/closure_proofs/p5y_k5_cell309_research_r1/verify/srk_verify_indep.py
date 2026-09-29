@@ -9,7 +9,7 @@ decided with exact integers / Fractions or with outward-rounded fixed-point encl
 
 Usage
 -----
-    python3 srk_verify_indep.py CERT.json [--index I] [--max-depth N] [--order N] [--procs P] [--json OUT]
+    python3 srk_verify_indep.py CERT.json [--index I] [--max-depth 24] [--order 8] [--procs 1] [--json OUT]
 
 CERT.json is either a bare SRK_CERT/1 object or a decoy-suite file {"certificates": {i: cert}, ...}.  Without
 --index every certificate of a suite file is verified.  Exit status 0 iff every verified certificate is ACCEPTED.
@@ -62,6 +62,8 @@ Method (and why it is sound)
 4.  Lower bound of a Taylor model over a prism: constant + exact minimum of the linear part over the prism vertices
     (a linear function attains its minimum over a polytope at a vertex; vertices are exact rationals) + sum over
     monomials of degree >= 2 of min(0, c) (all exponents even, x^a in [0, 1]) or -|c| (otherwise) - remainder.
+    On the two axis segments the prism is 2-dimensional and x1 = x2 (m = 0) resp. x0 = -x2 (p = 0) hold
+    identically on it; these identities are substituted before bounding (exact on the feasible set).
 5.  Gaussian enclosures.  pi from Machin's formula (alternating series, partial sums bracket the limit), 1/sqrt(2 pi)
     by integer square roots with directed rounding; exp(z), z >= 0, by argument halving + Taylor series with directed
     rounding + tail bound + repeated squaring; phi = exp(-x^2/2)/sqrt(2pi); Phi(x) = 1/2 + phi(x) sum x^(2n+1)/(2n+1)!!
@@ -81,7 +83,8 @@ Method (and why it is sound)
     Points e'_j whose k-range over the cell lies entirely below another point's k-range are dropped (valid: they
     never realise the max).
 7.  Disproof.  When a cell fails, the verifier also evaluates a rigorous UPPER bound of the claimed quantity at the
-    cell centre (point Taylor model, and for (C3) kbar(x) >= k(x; e') for sample e' in Ew).  If it is < 0 the claim is
+    cell centre, and at the depth limit also at the cell vertices x e-endpoints (point Taylor model with zero radii;
+    for (C3) kbar(x) >= k(x; e') for 17 sample e' in Ew).  If it is < 0 the claim is
     FALSE (reported as such); otherwise the failure is a method limitation (reported as UNPROVEN).
 
 Assumptions (the soundness argument relies on): exactness of Python integer / Fraction arithmetic; the classical
@@ -1425,7 +1428,7 @@ def prepare(cert):
     return ctx
 
 
-def verify_cert(raw, file_kernel=None, N=8, max_depth=14, procs=1, kinds=('C4', 'C1', 'C2', 'C3'),
+def verify_cert(raw, file_kernel=None, N=8, max_depth=24, procs=1, kinds=('C4', 'C1', 'C2', 'C3'),
                 log=None, stop_on_fail=True):
     """Verify one raw certificate object.  Returns a result dict with 'verdict' in ACCEPT/REJECT/REFUSE."""
     global CTX
@@ -1513,7 +1516,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description='Independent SRK_CERT/1 verifier')
     ap.add_argument('cert')
     ap.add_argument('--index', default=None)
-    ap.add_argument('--max-depth', type=int, default=14)
+    ap.add_argument('--max-depth', type=int, default=24)
     ap.add_argument('--order', type=int, default=8, help='Taylor model order N')
     ap.add_argument('--procs', type=int, default=1, help='worker processes (default 1)')
     ap.add_argument('--json', default=None, help='write the result list to this file')

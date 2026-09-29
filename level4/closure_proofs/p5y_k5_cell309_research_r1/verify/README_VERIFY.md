@@ -124,4 +124,109 @@ accepted only if every cover task completed.
 
 ## Results
 
-(See the tables below, generated from `verify/VERIFY_RESULTS.json` by `verify/results_table.py`.)
+These results are from `verify/VERIFY_RESULTS.json`; `python3 verify/results_table.py` regenerates the tables. The
+settings were Taylor order 8, initial cell width 1/4, depth limit 24, and one worker process.
+
+### Genuine decoy certificates
+
+Every certificate is **ACCEPTED**: 20 of 20. The verification time is 50 s in total.
+
+The "min certified LB" columns give the smallest certified cell lower bound over the accepted cover for (C2) and (C3).
+They are conservative: float samples of the true quantity are larger, typically around 0.07–0.2 for h = 5.
+
+| file | idx | i | verdict | cells | max depth | sec | min certified LB (C2) | min certified LB (C3) |
+|---|---|---|---|---|---|---|---|---|
+| h3_k1_2_E1_4_9_32.json | 0 | 0 | ACCEPT | 132 | 0 | 0.8 | 7.70e-03 | 1.22e-02 |
+| h3_k1_2_E1_4_9_32.json | 1 | 1 | ACCEPT | 132 | 0 | 0.8 | 7.70e-03 | 9.78e-03 |
+| h3_k1_2_E1_4_9_32.json | 2 | 2 | ACCEPT | 134 | 1 | 0.8 | 7.70e-03 | 1.31e-03 |
+| h3_k1_2_E1_4_9_32.json | 3 | 3 | ACCEPT | 167 | 4 | 2.4 | 8.25e-03 | 1.12e-04 |
+| h3_k1_2_E1_4_9_32.json | 4 | 4 | ACCEPT | 175 | 4 | 3.0 | 8.25e-03 | 5.49e-04 |
+| h5_k1_2_E1_2_17_32.json | 0 | 0 | ACCEPT | 432 | 0 | 2.6 | 7.68e-03 | 1.12e-02 |
+| h5_k1_2_E1_2_17_32.json | 1 | 1 | ACCEPT | 432 | 0 | 2.5 | 7.68e-03 | 9.72e-03 |
+| h5_k1_2_E1_2_17_32.json | 2 | 2 | ACCEPT | 433 | 1 | 2.7 | 7.68e-03 | 4.64e-03 |
+| h5_k1_2_E1_2_17_32.json | 3 | 3 | ACCEPT | 442 | 3 | 4.0 | 8.80e-03 | 2.16e-03 |
+| h5_k1_2_E1_2_17_32.json | 4 | 4 | ACCEPT | 448 | 3 | 3.0 | 7.68e-03 | 3.16e-03 |
+| h5_k1_2_E1_4_9_32.json | 0 | 0 | ACCEPT | 432 | 0 | 2.0 | 5.41e-02 | 5.81e-02 |
+| h5_k1_2_E1_4_9_32.json | 1 | 1 | ACCEPT | 432 | 0 | 2.0 | 5.41e-02 | 4.66e-02 |
+| h5_k1_2_E1_4_9_32.json | 2 | 2 | ACCEPT | 432 | 0 | 3.2 | 6.08e-02 | 5.79e-02 |
+| h5_k1_2_E1_4_9_32.json | 3 | 3 | ACCEPT | 432 | 0 | 2.8 | 6.08e-02 | 8.58e-02 |
+| h5_k1_2_E1_4_9_32.json | 4 | 4 | ACCEPT | 432 | 0 | 2.7 | 6.08e-02 | 1.54e-01 |
+| h5_k1_2_E1_8_5_32.json | 0 | 0 | ACCEPT | 432 | 0 | 2.7 | 1.68e-01 | 1.74e-01 |
+| h5_k1_2_E1_8_5_32.json | 1 | 1 | ACCEPT | 432 | 0 | 2.2 | 1.68e-01 | 1.38e-01 |
+| h5_k1_2_E1_8_5_32.json | 2 | 2 | ACCEPT | 432 | 0 | 3.2 | 1.68e-01 | 1.68e-01 |
+| h5_k1_2_E1_8_5_32.json | 3 | 3 | ACCEPT | 432 | 0 | 2.8 | 1.68e-01 | 2.48e-01 |
+| h5_k1_2_E1_8_5_32.json | 4 | 4 | ACCEPT | 432 | 0 | 4.1 | 1.72e-01 | 4.46e-01 |
+
+### Required rejections (SRK_CERT_SPEC.md section 5, with erratum SE-1)
+
+The mutants were run on every genuine certificate (415 runs, 260 s). Each outcome is one of:
+* **"disproved"**: a rigorous point upper bound < 0 at an explicit (p, m, e);
+* **"C4/sha"**: an exact rejection;
+* **"proved true"**: the mutated claim is itself proved, which is never an unproved ACCEPT.
+
+Notes on the mutants:
+* **1, 6.** Rejected exactly, by (C4) and sha256.
+* **2 (V0 × (1−2^-8)).** The mutated claim is **TRUE** for every decoy, and the verifier proves it. This is allowed by
+  erratum SE-1.
+  * The certificates carry a true margin far above the μ = 2^-20 floor, because the repair λ ≈ |r_min| is much larger
+    than necessary.
+  * For h5 E[1/4, 9/32] #4, the claim remains provable down to V0 × (1 − 2^-4) and is disproved at V0 × (1 − 2^-3).
+  * The SE-1 mandatory mutant **V0 × 3/4** is disproved everywhere.
+* **3 (V0 − λ W0).** Disproved everywhere. For h3 #4 this happens only at depth 24 (the violation is about 2e-6).
+* **4 (block widened by 1/8).**
+  * With Gamma kept, (C4) fails.
+  * With Gamma recomputed at the new endpoints, (C1)–(C3) were decided over the widened block: every widened claim
+    is FALSE, disproved at an explicit point. The failures are in (C2) or (C1), i.e. W_e itself fails on the wider
+    block.
+* **5 (hermite_index + 1).** Disproved for i ≥ 1. For i = 0 the mutated claim (weight |He_1| = |v| instead of 1) is
+  TRUE and proved: k_1 ≤ k_0 on these windows, so this mutant is a weaker claim, as THEOREM_SRK §8 test 6 anticipates.
+* **7.** Missing key, non-rational string, e_lo > e_hi, garbage block, weight_block not containing block, unknown
+  kernel, and e_c not the midpoint are all REFUSED.
+  * A non-dyadic drift (block shifted by 1/3) is processed without a crash; the method does not need dyadics. It is
+    rejected and disproved.
+  * A block inside the quarantine band (h5 only) is REFUSED before any evaluation.
+
+No mutant ended as an undetermined "unproven" rejection: every REJECT that is not an exact (C4)/sha256 rejection is
+a disproof.
+
+### Unit self-tests
+
+`tests/test_verify_selftests.py`: 20 tests, all OK (54 s). They cover:
+* Gaussian enclosures, G_i, |He_n|φ ranges and He_n roots;
+* the kernel closed form against the defining integral (whole and taboo, 3 geometries);
+* Taylor-model containment, including the axis reduction;
+* certified lower bounds ≤ float samples;
+* a taboo positive control: a valid whole-kernel certificate must be, and is, accepted under the taboo kernel;
+* the section 5 mutants.
+
+### Taboo-kernel certificates
+
+The `kernel: taboo` path (certificate- or file-level key) is implemented and tested: closed form against quadrature,
+plus the positive control. No `evidence/srk_decoys_taboo/` file existed at the time of this run. `run_verify_all.py`
+picks such files up automatically.
+
+### Mutant outcome table
+
+| mutant | runs | expectation met | ACCEPT(proved true) | REJECT(disproved) | REJECT(C4/sha) | REJECT(unproven) | REFUSE | other |
+|---|---|---|---|---|---|---|---|---|
+| 1_gamma_minus_1e-6 | 20 | 20 | 0 | 0 | 20 | 0 | 0 | 0 |
+| 2_V0_scaled_1-2^-8 | 20 | 20 | 20 | 0 | 0 | 0 | 0 | 0 |
+| 2x_V0_scaled_3/4 (SE-1 mandatory) | 20 | 20 | 0 | 20 | 0 | 0 | 0 | 0 |
+| 3_V0_minus_lam_W0 | 20 | 20 | 0 | 20 | 0 | 0 | 0 | 0 |
+| 4B_block_widened_1/8 | 20 | 20 | 0 | 0 | 20 | 0 | 0 | 0 |
+| 4B_block_widened_1/8+Gamma_recomputed | 20 | 20 | 0 | 20 | 0 | 0 | 0 | 0 |
+| 4L_block_widened_1/8 | 20 | 20 | 0 | 0 | 20 | 0 | 0 | 0 |
+| 4L_block_widened_1/8+Gamma_recomputed | 20 | 20 | 0 | 20 | 0 | 0 | 0 | 0 |
+| 4R_block_widened_1/8 | 20 | 20 | 0 | 0 | 20 | 0 | 0 | 0 |
+| 4R_block_widened_1/8+Gamma_recomputed | 20 | 20 | 0 | 20 | 0 | 0 | 0 | 0 |
+| 5_hermite_index_plus_1 | 20 | 20 | 4 | 16 | 0 | 0 | 0 | 0 |
+| 6_sha256_altered | 20 | 20 | 0 | 0 | 20 | 0 | 0 | 0 |
+| 7a_missing_key_W1 | 20 | 20 | 0 | 0 | 0 | 0 | 20 | 0 |
+| 7b_non_rational_string | 20 | 20 | 0 | 0 | 0 | 0 | 20 | 0 |
+| 7c_e_lo_gt_e_hi | 20 | 20 | 0 | 0 | 0 | 0 | 20 | 0 |
+| 7d_garbage_block | 20 | 20 | 0 | 0 | 0 | 0 | 20 | 0 |
+| 7e_weight_block_not_containing_block | 20 | 20 | 0 | 0 | 0 | 0 | 20 | 0 |
+| 7f_unknown_kernel | 20 | 20 | 0 | 0 | 0 | 0 | 20 | 0 |
+| 7g_e_c_not_midpoint | 20 | 20 | 0 | 0 | 0 | 0 | 20 | 0 |
+| 7h_non_dyadic_drift (processed, no crash) | 20 | 20 | 0 | 20 | 0 | 0 | 0 | 0 |
+| 7q_quarantine_band_refused | 15 | 15 | 0 | 0 | 0 | 0 | 15 | 0 |

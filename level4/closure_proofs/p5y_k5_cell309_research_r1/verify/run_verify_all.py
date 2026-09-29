@@ -3,7 +3,7 @@
 Run the independent SRK verifier over every decoy certificate file and the SRK_CERT_SPEC.md section 5 required
 rejections (mutants), recording everything in verify/VERIFY_RESULTS.json.
 
-    python3 run_verify_all.py [--max-depth 14] [--order 8] [--no-mutants] [--redo]
+    python3 run_verify_all.py [--max-depth 24] [--order 8] [--no-mutants] [--redo]
 
 Files scanned: evidence/srk_decoys/*.json and evidence/srk_decoys_taboo/*.json (read only, never modified).  Results
 are written after every certificate; an existing (file, index, sha256) result is reused unless --redo.
@@ -140,11 +140,12 @@ def summarize(r):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument('--max-depth', type=int, default=14)
+    ap.add_argument('--max-depth', type=int, default=24)
     ap.add_argument('--order', type=int, default=8)
     ap.add_argument('--no-mutants', action='store_true')
     ap.add_argument('--redo', action='store_true')
     ap.add_argument('--files', nargs='*', default=None)
+    ap.add_argument('--unit-tests', action='store_true', help='also run tests/test_verify_selftests.py and record it')
     a = ap.parse_args()
     files = a.files or sorted(glob.glob(os.path.join(NS, 'evidence', 'srk_decoys', '*.json'))
                               + glob.glob(os.path.join(NS, 'evidence', 'srk_decoys_taboo', '*.json')))
@@ -216,6 +217,34 @@ def main():
                 print('   malformed %-45s %s  %s' % (name, mr['verdict'], (mr.get('reason') or '')[:100]), flush=True)
             fres[label]['mutants'] = mres
             flush()
+    if a.unit_tests:
+        import unittest
+        sys.path.insert(0, os.path.join(NS, 'tests'))
+        import test_verify_selftests as T
+        t0 = time.time()
+        suite = unittest.defaultTestLoader.loadTestsFromModule(T)
+        outcome = {}
+
+        class Rec(unittest.TextTestResult):
+            def addSuccess(self, test):
+                super().addSuccess(test)
+                outcome[test.id()] = 'ok'
+
+            def addFailure(self, test, err):
+                super().addFailure(test, err)
+                outcome[test.id()] = 'FAIL: %s' % (err[1],)
+
+            def addError(self, test, err):
+                super().addError(test, err)
+                outcome[test.id()] = 'ERROR: %r' % (err[1],)
+
+            def addSkip(self, test, reason):
+                super().addSkip(test, reason)
+                outcome[test.id()] = 'skipped: %s' % reason
+        rr = unittest.TextTestRunner(resultclass=Rec, verbosity=1).run(suite)
+        res['unit_selftests'] = {'file': 'tests/test_verify_selftests.py', 'ran': rr.testsRun,
+                                 'ok': rr.wasSuccessful(), 'sec': round(time.time() - t0, 1), 'tests': outcome}
+        flush()
     # summary
     summ = {'certificates': 0, 'ACCEPT': 0, 'REJECT': 0, 'REFUSE': 0, 'mutants_run': 0,
             'mutant_expectations_met': 0, 'mutant_accepts_proved_true': []}
