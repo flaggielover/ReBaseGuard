@@ -80,3 +80,36 @@ To be filled after the decoy suite, the independent verifier and the independent
 | taboo family (SRK-T) | declared, not run |
 | independent route review | brief written (`reviews/BRIEF_SRK_ROUTE_REVIEW_R1.md`) |
 | consumer adapter against the real pinned `tct_rule` | design plus manufactured-input tests. The real pinned-module qualification belongs to the formal campaign (QC) |
+
+## Rule-S application update: SRK-T (recorded 2026-09-29, before any taboo-family output of the rerun exists)
+
+SRK-T's Γ̂_i = v̂/D_lo needs a certified lower bound D_lo valid on the cell (THEOREM_SRK §12).
+* For cell 309, D_lo would be the pinned supply-registry value. That is formal-campaign data and is not read here.
+* For decoys, this campaign has **no D_lo certifier**, so the Γ̂ path cannot be qualified end to end on decoys.
+
+Criterion C5 ("qualified on decoys and cross-checked") is therefore **not met** in this package, and **SRK-T is OUT of
+package 1**. This is safe: SRK-T is min-composed, and omitting it can never invalidate the route (rule S). The
+decision uses only C5. It uses no decoy gain and no 309 quantity.
+
+The taboo decoy family (whole-block v̂ certificates, independent verification, taboo MC) is still run as
+**preparatory** evidence for a later package. Its results cannot change package 1: adding a component after any
+309-related number is known is forbidden by rule S, and this decision precedes the taboo results.
+
+P309 (package 1) = frozen direct clause, with:
+* the SRK-0 whole-kernel B3/B4 min construction in the order-0 channel term;
+* S = (A0_I1, min(A1_I1, A1_RLR), min(A2_I1, A2_RLR)).
+
+Closure-only.
+
+## Readiness ledger for P309 (update; replaces the table above when complete)
+
+| item | status |
+|---|---|
+| R1 blockers B1–B6 | repaired: see `reviews/BRIEF_SRK_ROUTE_REVIEW_R2.md` for the map; ERRATA E-1..E-11 |
+| declared decoy suite, whole kernel, single code state | running from 2a03e838 (runner lock) |
+| A2 cell family (A3 hull rule, verifier, gate, MC end to end) | running from 2a03e838 |
+| independent verifier | built and final (20/20 prelim ACCEPT, 415/415 mutant expectations); the rerun certificates are pending |
+| MC positive controls | pending the rerun |
+| taboo family | preparatory only (SRK-T OUT of package 1) |
+| independent route review R2 | brief written; to launch when the rerun evidence is complete |
+| tightness note | the verifier finds certified margins well above μ. Γ is conservative (e.g. V0 × (1 − 2⁻⁴) still valid on one decoy). This is a tightness matter only, and the min with A0 makes it harmless for validity |
