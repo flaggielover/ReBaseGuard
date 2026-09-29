@@ -1,0 +1,14 @@
+NARROW CODE-EDIT REQUEST (ratifierMBS, resumed; you are a non-holder, and under the T6 ruling's M4 only a non-holder may change operational numbers). Your ratification research governance/CONSTANTS_RATIFICATION_MBS308.md (CONSTANTS_RATIFIED_WITH_CHANGES, commit 3c2a7854) has "changed" or "rule" rulings. Builder2's repairs R1/R2/R4 are now committed on the successor branch at 35cabb50, so the code is stable.
+
+TASK, in the successor worktree /Users/suzhe/ReBaseGuard-c308mbs, NSS = level4/closure_proofs/p5y_k5_cell308_mbs_r1:
+(1) Apply EXACTLY your changed rulings to the code constants, and touch nothing else:
+  - the preflight timeout, written as the rule PRE_CAP_S + 100 s;
+  - EXCL_ALLOW: the current names plus your four OS daemons, as the provisional list;
+  - MEM_CAP: keep the provisional 3 GiB value, but record the R-MEM rule in a code comment and in the protocol draft, as your ratification states;
+  - FREE_MEM_MIN: R-FREE, recorded as a rule, provisional 2 GiB;
+  - the R-EXCL-PCT bounded exception, if and only if your ratification says it must be code now (if it is a rule for freeze, record it in the protocol draft only).
+  Record every rule in protocol/MBS308_PROTOCOL_DRAFT.md.
+(2) Make mutant M33's kill deterministic: in tests/test_mbs308_state.py, add one run to t_S01_worker_death with worker_die=RLR.0.6 and job_sleep=90, under its existing 60 s bound, as builder2 proposed (BUILD_REPORT section 12). These are test-only values.
+(3) Re-run the affected tests (static, state, and the mutant matrix, or at least M33 and any mutant touching the edited constants), and report the counts.
+(4) Append a short section "Constants applied (ratifierMBS)" to BUILD_REPORT.md listing each edited line.
+All your earlier ABSOLUTE RULES apply: the MBS-2 reading restrictions; no git writes; no refs; no target; sandboxes on --no-local stores only; no system settings. Ledger via log_event (agent='ratifierMBS'). Final message: a 6-line summary with the diffed lines and the test counts.
