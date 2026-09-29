@@ -17,6 +17,7 @@ frozen_lohi EXACTLY; otherwise the adapter refuses (REPRODUCTION_FAILED).
 from __future__ import annotations
 
 from fractions import Fraction as F
+from types import MappingProxyType
 
 import srk_assemble as SA
 import srk_gate as GT
@@ -53,11 +54,13 @@ def assemble(meas: dict, halves: dict, m: int, coefficients) -> tuple:
     return lo, hi
 
 
-REAL_GEOMETRY = {"h": "5/1", "k": "1/2"}
+# review R2 C1: the geometry is FIXED to the real kernel (5, 1/2); there is no caller override
+_REAL_GEOMETRY_ITEMS = (("h", "5/1"), ("k", "1/2"))
+REAL_GEOMETRY = MappingProxyType(dict(_REAL_GEOMETRY_ITEMS))
 PACKAGE1_SOURCES = frozenset({"GATE", "EMPTY"})     # SRK-T is OUT of package 1: GATE_TABOO / GATE_MIN are refused
 
 
-def _bound_gamma(gate_result, cell: tuple, geometry: dict, verifier_id: str, rho: F) -> dict:
+def _bound_gamma(gate_result, cell: tuple, verifier_id: str, rho: F) -> dict:
     """review R2 P-1: the gate result must be bound to THIS cell, geometry, the whole kernel and the pinned verifier."""
     if not isinstance(gate_result, GT.GateResult):
         raise AdapterRefusal("Gamma-bar must come from srk_gate.gate() (GateResult)")
@@ -69,8 +72,8 @@ def _bound_gamma(gate_result, cell: tuple, geometry: dict, verifier_id: str, rho
         raise AdapterRefusal(str(exc))
     if gate_result.cell != (c0, c1):
         raise AdapterRefusal("GateResult is for another cell")
-    if dict(gate_result.geometry) != dict(geometry):
-        raise AdapterRefusal("GateResult is for another geometry")
+    if dict(gate_result.geometry) != dict(_REAL_GEOMETRY_ITEMS):
+        raise AdapterRefusal("GateResult is not for the real geometry (5, 1/2)")
     if gate_result.kernel != "whole":
         raise AdapterRefusal("GateResult kernel is not 'whole'")
     if rho != (c1 - c0) / 2:
@@ -91,12 +94,12 @@ def _bound_gamma(gate_result, cell: tuple, geometry: dict, verifier_id: str, rho
 
 
 def srk_enclosure(meas: dict, A: dict, m: int, cell: tuple, gate_result, frozen_obj: dict, frozen_lohi: tuple,
-                  coefficients, *, verifier_id: str | None, geometry: dict = REAL_GEOMETRY) -> dict:
+                  coefficients, *, verifier_id: str | None) -> dict:
     """cell = the exact rational drift cell (e_lo, e_hi) from the pinned cells.json (driver-supplied).  gate_result must
     be a srk_gate.GateResult bound to that cell, the geometry, the whole kernel and verifier_id (the identity of the
     pinned independent verifier, 'sha256:<hex>'); an EMPTY result (all None) is the reproduction case."""
     rho = F(meas["rho"])
-    gamma = _bound_gamma(gate_result, cell, geometry, verifier_id, rho)
+    gamma = _bound_gamma(gate_result, cell, verifier_id, rho)
     # reproduction gate: the frozen half widths must be exactly rad_r (|G(a)| = 0, (P2'))
     base_halves = {}
     for r in range(5):

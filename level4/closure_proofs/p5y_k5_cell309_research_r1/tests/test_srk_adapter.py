@@ -103,7 +103,8 @@ def run():
     keys = ["repro_empty", "inside", "big_gamma_unchanged", "tamper_refused", "Gneq0_refused", "wrongcoef_refused",
             "raw_dict_refused", "other_cell_refused", "other_geometry_refused", "other_verifier_refused",
             "taboo_source_refused", "min_source_refused", "empty_other_cell_refused", "float_cell_refused",
-            "rho_mismatch_refused", "hand_built_refused", "partial_gate_is_safe"]
+            "rho_mismatch_refused", "hand_built_refused", "partial_gate_is_safe", "geometry_override_impossible",
+            "real_geometry_immutable"]
     res = {k: 0 for k in keys}
     res["cases"] = 0
     for seed in range(1, 21):
@@ -134,6 +135,18 @@ def run():
         other = (cell[0] + F(1, 1024), cell[1] + F(1, 1024))
         res["other_cell_refused"] += refuses(lambda: enc(gate_for(other, gam)))
         res["other_geometry_refused"] += refuses(lambda: enc(gate_for(cell, gam, geometry={"h": "3/1", "k": "1/2"})))
+        # review R2 C1 (reviewer probe b1-triple-prime): a caller can no longer override the geometry
+        try:
+            AD.srk_enclosure(meas, A, 5, cell, gate_for(cell, gam, geometry={"h": "3/1", "k": "1/2"}), obj, (lo, hi),
+                             coefficients, verifier_id=VID, geometry={"h": "3/1", "k": "1/2"})
+        except TypeError:
+            res["geometry_override_impossible"] += 1
+        except AD.AdapterRefusal:
+            pass
+        try:
+            AD.REAL_GEOMETRY["h"] = "3/1"
+        except TypeError:
+            res["real_geometry_immutable"] += 1
         res["other_verifier_refused"] += refuses(lambda: enc(gr, vid="sha256:another-verifier"))
         dl = {"value": "1/2", "domain": [S.fstr(cell[0]), S.fstr(cell[1])]}
         tab = gate_for(cell, gam, kernel="taboo", d_lo=dl)
