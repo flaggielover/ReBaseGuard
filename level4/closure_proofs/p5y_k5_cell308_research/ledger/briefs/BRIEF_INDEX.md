@@ -33,6 +33,7 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 22 | 22_reviewR3DELTA.txt | r3 repair delta review (F6; same reviewer resumed) | SendMessage | 2026-09-29 ~07:0xZ | no |
 | 23 | 23_reviewQUAL_R3.txt | qualification review of freeze r3 (fresh) | Agent | 2026-09-29 ~10:3xZ | no |
 | 24 | 24_reviewINTERRUPTION.txt | review of the execution-interruption recovery assessment (fresh) | Agent | 2026-09-30 ~15:4xZ | no |
+| 25 | 25_reviewINTERRUPTION_DELTA.txt | delta review of addendum A1 (C2; same reviewer resumed) | SendMessage | 2026-09-30 ~18:0xZ | no |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.

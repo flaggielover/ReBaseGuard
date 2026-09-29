@@ -1,0 +1,26 @@
+DELTA REVIEW REQUEST (condition C2 of your review research reviews/REVIEW_EXECUTION_INTERRUPTION.md: RECOVERY_ASSESSMENT_REJECTED as submitted; committed at research ef29bc2b, sha256 e82c45242563efb3e9043886549c395496f188dbf32061c1bad17fe1cec3bfc3). You are the same independent reviewer (reviewINT), resumed. Every ABSOLUTE RULE of your brief (research ledger/briefs/24_reviewINTERRUPTION.txt) still applies:
+- read-only;
+- no execute and no seal-only;
+- no ref changes and no git writes;
+- nothing written inside /Users/suzhe/ReBaseGuard-c308mb (use GIT_OPTIONAL_LOCKS=0 for git reads there);
+- no object contents after the marker;
+- nothing computed for cells 305-309 or the band;
+- stdlib only.
+Scratch goes under the session scratchpad reviewINT/delta/. Ledger lines go to the research ledger via log_event, klass='REVIEW', agent='reviewINT'.
+
+The coordinator has applied C1 and C3:
+- C1: the new file level4/closure_proofs/p5y_k5_cell308_research/audit/EXECUTION_INTERRUPTION_ASSESSMENT_ADDENDUM_A1.md. The original assessment stays byte-unchanged at 8b64d989.
+- C3: one supplementary ledger line in level4/closure_proofs/p5y_k5_cell308_research/ledger/TARGET_INTEGRITY_LEDGER.jsonl (class INCIDENT, new_target_evaluations 0, cells_touched empty). It cross-references the 2026-09-29T15:22:45Z line, which is not edited.
+Both are committed on the research branch together with this brief (see git log).
+
+TASK
+1. Check A1 against your C1(a)-(g). The additions must be correct and complete, and nothing may be overstated:
+   - A1 must make no causal claim beyond the evidence;
+   - the pool-load fact must stay qualitative and attributed to your review;
+   - the unknowns must be exactly the two you named;
+   - the launcher readings must be labelled coordinator-reported.
+   Re-verify the verbatim log facts A1 quotes.
+2. Check that A1 changes none of A-E, the outcome or the status lines, and that the original assessment file is byte-unchanged.
+3. Check the C3 ledger line (class, count 0, empty cells_touched, notes, cross-reference) and that the 15:22:45Z line is unchanged.
+4. Look for anything new that A1 introduces and that is wrong.
+Write /Users/suzhe/ReBaseGuard-c308/level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_EXECUTION_INTERRUPTION_DELTA.md: line 1 the title; line 2 EXACTLY one of DELTA_ACCEPTED or DELTA_REJECTED (appearing once as a whole line); then short sections. Keep or restate C4-C6 as they bind the next steps. Final message: the verdict line and an 8-line summary.
