@@ -84,6 +84,13 @@ def main(dry: bool) -> int:
     bad = sorted(p for p in paths if FORBIDDEN_PATH.search(p))
     refs = [r for r in git("for-each-ref", "--format=%(refname)").split() if not ORDINARY_REF.match(r)]
     chk("7_no_target_or_governance_artifact", not bad and not refs, f"bad_paths={bad[:5]} marker_refs={refs[:5]}")
+    scan = subprocess.run([sys.executable, str(Path(__file__).resolve().parent / "q309_guard.py"), "--scan"],
+                          capture_output=True, text=True)
+    try:
+        verdict = json.loads(scan.stdout)["verdict"]
+    except Exception:  # noqa: BLE001
+        verdict = "UNREADABLE"
+    chk("7b_quarantine_static_scan", verdict == "PASS", verdict)
     # 3/8 dry run: exactly one ref, explicit refspec, no tags, no force
     spec = f"refs/heads/{BRANCH}:refs/heads/{BRANCH}"
     dr = subprocess.run(["git", "push", "--dry-run", "--porcelain", "origin", spec], cwd=REPO, capture_output=True,
