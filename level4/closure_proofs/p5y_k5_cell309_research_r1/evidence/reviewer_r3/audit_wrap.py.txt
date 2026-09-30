@@ -1,0 +1,24 @@
+"""RD3-1: run code/self_audit.run('r3') in-process; A10's subprocess is redirected to vpe_wrap.py; output to scratch."""
+import sys, json, pathlib, importlib.util, subprocess
+NS = pathlib.Path("/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_research_r1")
+HERE = pathlib.Path(__file__).resolve().parent
+_orig_run = subprocess.run
+def run_redirect(args, *a, **k):
+    if isinstance(args, list) and any(str(x).endswith("verifier_probe_envelope.py") for x in args):
+        args = [sys.executable, str(HERE / "vpe_wrap.py")]
+    return _orig_run(args, *a, **k)
+subprocess.run = run_redirect
+_orig_wt = pathlib.Path.write_text
+def refuse_ns(self, data, *a, **k):
+    if str(pathlib.Path(self).resolve()).startswith(str(NS)):
+        raise RuntimeError(f"R3 wrapper: refused write inside NS: {self}")
+    return _orig_wt(self, data, *a, **k)
+pathlib.Path.write_text = refuse_ns
+spec = importlib.util.spec_from_file_location("self_audit", str(NS / "code" / "self_audit.py"))
+m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+ok, out = m.run("r3")
+(HERE / "SELF_AUDIT_r3.json").write_text(json.dumps(out, indent=1, sort_keys=True))
+print(json.dumps({"ok": ok, "checks": out["checks"], "max_abs_drift": out["detail"]["max_abs_drift"],
+                  "ledger_lines": out["detail"]["ledger_lines"], "evidence_files": out["detail"]["evidence_files"],
+                  "A11_local_head": out["detail"]["A11_local_head"], "A11_remote_head": out["detail"]["A11_remote_head"],
+                  "A11_dirty": out["detail"]["A11_dirty"], "immutable": out["detail"]["immutable"]}, indent=1))

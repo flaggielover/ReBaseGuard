@@ -1,0 +1,30 @@
+"""RD3-3: run selected NS tests via run(), ledgers redirected to scratch, writes inside NS refused."""
+import sys, json, time, pathlib, importlib.util, builtins
+NS = pathlib.Path("/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_research_r1")
+HERE = pathlib.Path(__file__).resolve().parent
+sys.path.insert(0, str(NS / "code")); sys.path.insert(0, str(NS / "impl"))
+import q309_guard as Q
+Q.EXEC_LEDGER = HERE / "reviewer_exec_ledger_r3.jsonl"
+Q.EXPOSURE_LEDGER = HERE / "reviewer_exposure_ledger_r3.jsonl"
+_open = builtins.open
+def guarded_open(f, mode="r", *a, **k):
+    if any(c in mode for c in "wax+") and str(pathlib.Path(f).resolve()).startswith(str(NS)):
+        raise RuntimeError(f"R3 wrapper: refused write inside NS: {f}")
+    return _open(f, mode, *a, **k)
+builtins.open = guarded_open
+_wt = pathlib.Path.write_text
+def guarded_wt(self, *a, **k):
+    if str(pathlib.Path(self).resolve()).startswith(str(NS)):
+        raise RuntimeError(f"R3 wrapper: refused write inside NS: {self}")
+    return _wt(self, *a, **k)
+pathlib.Path.write_text = guarded_wt
+out = {}
+for name in sys.argv[1:]:
+    t0 = time.time()
+    spec = importlib.util.spec_from_file_location(name, str(NS / "tests" / f"{name}.py"))
+    m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+    r = m.run()
+    ok, res = r if isinstance(r, tuple) else (r, None)
+    out[name] = {"ok": ok, "sec": round(time.time() - t0, 1), "res": res}
+    print(name, "OK" if ok else "FAIL", out[name]["sec"], "s", flush=True)
+(HERE / "tests_r3.json").write_text(json.dumps(out, indent=1, default=str))

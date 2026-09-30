@@ -1,0 +1,16 @@
+"""RD3-2: run code/verifier_probe_envelope.main() with its single output write redirected to scratch."""
+import sys, pathlib, importlib.util
+NS = pathlib.Path("/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_research_r1")
+OUT = pathlib.Path(__file__).resolve().parent / "VERIFIER_PROBE_ENVELOPE_r3.json"
+_orig = pathlib.Path.write_text
+def guarded_write_text(self, data, *a, **k):
+    p = pathlib.Path(self).resolve()
+    if str(p).startswith(str(NS)):
+        if p.name == "VERIFIER_PROBE_ENVELOPE.json":
+            return _orig(OUT, data, *a, **k)
+        raise RuntimeError(f"R3 wrapper: refused write inside NS: {p}")
+    return _orig(self, data, *a, **k)
+pathlib.Path.write_text = guarded_write_text
+spec = importlib.util.spec_from_file_location("vpe", str(NS / "code" / "verifier_probe_envelope.py"))
+m = importlib.util.module_from_spec(spec); spec.loader.exec_module(m)
+sys.exit(m.main())
