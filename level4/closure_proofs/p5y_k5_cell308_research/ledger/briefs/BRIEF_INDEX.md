@@ -64,6 +64,8 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 50-N | 50_builder5_NOTES.txt | practical notes appended to brief 50 as sent (skip BUILD_REPORT s6 and the governance determination: MB r1 clock times; AC / lid; disk; shell quirks) | Agent (same prompt) | see ledger | no |
 | 51 | 51_reviewSEQ_sequencing_determination.txt | fresh non-holder reviewSEQ: does accepted governance uniquely determine the R-rule sequencing resolution (protocol s11.2) given the user's MBS-8 = (i)? read-only | Agent | see ledger | no (tail-figure scan: 0 hits) |
 | 52 | 52_reviewS1T_decision_text_conformance.txt | fresh non-holder reviewS1T: conformance of the user's owner-decision text (5c2394ba) with the required S1 / S16(c) / MBS-6/7/8 content; MBS-8 (i) values vs MB r1 and the candidate; read-only | Agent | see ledger | no (tail-figure scan: 0 hits) |
+| 51-N | 51_reviewSEQ_NOTES.txt | practical notes appended to brief 51 as sent (memory index not a source; shell quirks; committed bytes only) | Agent (same prompt) | see ledger | no |
+| 52-N | 52_reviewS1T_NOTES.txt | practical notes appended to brief 52 as sent (memory index not a source; shell quirks; committed bytes only; MB r1 worktree read-only) | Agent (same prompt) | see ledger | no |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.
