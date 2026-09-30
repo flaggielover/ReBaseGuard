@@ -111,3 +111,32 @@ effective ceiling of Stage 1b is set by the threshold together with the per-job 
 * `WORKERS` = 4.
 
 Flows S06 and S07 check the limit and threshold mechanics themselves.
+
+## Second delta: resolution of the pre-freeze review R4 (FREEZE_BLOCKED) and the owner's D5 decision (append-only)
+
+**Sources:**
+* `reviews/REVIEW_PREFREEZE_R4_P309.md`: B1–B8 and NB1–NB15; conditions R4-C1 to R4-C5.
+* `governance/OWNER_D5_RATIFICATION_P309_VERBATIM.md`: the owner's D5 decision.
+
+Code: commit 35f3cf34 and its successors before the freeze. The rows above and the D2 section stay as written. Where
+they differ from this section, this section governs.
+
+**Review status.**
+* Every row marked **new rule** is a delta under incident-review condition C2, and goes to the delta reviewer before
+  the freeze (R4-C1).
+* All rows go to R4's focused re-review (R4-C2), which also verifies independently that the D5 exception is limited to
+  the two ratified sites.
+
+| id | source | change | direction | new rule? |
+|---|---|---|---|---|
+| **A20** | R4 B1 | `execute` derives the cell interval C itself, from the pinned `cells.json`: the CUSUM entry of the target cell, each endpoint read in the canonical sum form (FE-9). It is cross-checked against the consumer's cover. The grant's `cell_interval` must equal C exactly, and `drift_hull_Ew` must equal `cell_blocks(C)[0]`. Otherwise `execute` refuses before the marker. The grant never supplies C | none on efficacy; closes an invalid-closure route | no (it enforces protocol §2.1) |
+| **A21** | R4 B3, NB8 | **Pre-marker dry admission**: the guard's own checks 2–6, 8 and 9, and check 7 with an empty namespace, via `premarker_check`, plus the driver's checks: exact geometry strings, `verifier_id` and `guard_id` equal to the pinned sha256, `marker_ref`, host id, worktree, runtime, `issued_utc` not in the future, `authority` not a placeholder, and a git committer identity present. **New frozen rule: at arming, `not_after_utc` ≥ now + 14 days.** A failure is exit 2 with no marker | toward a conclusive outcome: avoidable post-marker refusals become pre-marker refusals | **yes** (the 14-day horizon) |
+| **A22** | R4 B4 | Stage-1 job end mapping: **only** the kernel's CPU-limit enforcement (SIGXCPU, or SIGKILL with CPU ≥ the per-job limit) is a budget termination, which falls back. Every other abnormal end (an OOM kill, a `kill -9` below the limit) is JOB_EXCEPTION, which gives EXECUTION_INDETERMINATE. `RLIMIT_CORE` = 0. Hard limit = limit + 5 s (R4 §3.2); the A6 bound is < threshold + 4 × (limit + 5 s) | against closure in a failure case, toward conformity: implements the owner's STAGE-1a FAILURE SEMANTICS; removes a post-marker operator lever | **yes** (a precision of the failure mapping) |
+| **A23** | R4 B5 | **A8 amended (grant window).** Between the review commit Rv and the grant commit G, window commits are allowed. Each changes only these paths: `ledger/ZERO_TARGET_LEDGER.jsonl`, `ledger/EXPOSURE_LEDGER.jsonl`, `ledger/CHECKPOINT_PUSHES.jsonl`, `handoff/…` and `qualification/host_rerun/…` (A14's host re-run evidence is committed there, before G). Only checkpoint-record commits may appear elsewhere in the chain. Nothing ledgered may run between G and `execute`: `execute` requires a clean tree | none | **yes** (A8) |
+| **A24** | R4 B7(c) | **Freeze record.** `ledger/FREEZE_RECORD.json` names F. It is added by F's only child, which changes nothing else, and it is never changed afterwards. F must remain the last change to a frozen directory. `check_grant`, QC13, the QC runner and the proposal tool all compare against it. Chain: F ← FR ← [records] ← Q ← [records] ← Rv ← [window or records] ← G | none | **yes** (A8) |
+| **A25** | R4 B2 | The sealed record carries a **top-level `stage1a`** (spec §3), so the variant's review mode can read it. P10 is strict: an evaluated record without `stage1a` fails. Post-execution invocation: `python3 -I -S -B code/p309_postexec.py`; without these flags it refuses to start | toward a conclusive outcome: a correct run no longer ends INDETERMINATE | no |
+| **A26** | R4 B6 | Stage-1a verdicts are sealed **with reasons** (`stage1a.verdict_details`) through a recording proxy of the pinned variant (same file, same `verifier_identity`). A job whose reasons do not cover its verdicts raises | none | no |
+| **A27** | R4 B8 | Qualification is **one complete run**: `qualification/attempt_1/`, every file O_EXCL, never overwritten, and the summary O_EXCL. If any attempt exists, the runner refuses: **no retry, no resumption**. A failed or interrupted attempt is preserved, and the campaign stops | none | **yes** (the retry rule: none) |
+| **A28** | R4 NB4–NB6, NB14 | Test hooks are refused outside a sandbox context. An exception in the historical control is CONTROL_FAILED (sealed, exit 3, not consumed); any other pre-marker exception is exit 2. A **run nonce** (O_EXCL in the git dir, token and pid) binds target-mode jobs to the live `execute` process. Job children run under `-I -S -B` | none | no |
+| **A29** | owner D5 | `seal-only` creates the pending ref only for emergency evidence bound to a marker that names a commit carrying the grant. HEAD must be attached to a branch under `refs/heads/`. **Scanner schema 3:** <br>• every ref-moving git call must be in a ratified site or in a function listed with its AST sha256 and a reason; <br>• marker and grant-path aliases are tracked through values; <br>• production-name tokens are allowed only in the reviewed definitions; <br>• writes into refs paths are findings; <br>• a planted-control mark in an unlisted file is a finding; <br>• a site must be the unique module-level function of its name. <br>**Static check:** T6 (arming only after `check_grant`, the dry admission and the nonce; seal-only's pending ref only behind its three guards) and T7 (no production execution path from tests or qualification tools). **QC_D5 gate:** `tests/test_p309_d5_exception.py` and a current whitelist | none | no (implements the owner's decision) |
+| **A30** | R4 NB7, NB10 | **Text corrections.** <br>• A4 and FC2 spec §5 say that the adapter is injected "in execute mode only". In fact it is injected in every mode, and in the decoy modes it only returns NOT_BANDED. Target-mode records are labelled `job_mode` in the sealed record. <br>• A16's ban on consumer calls is checked by QC-U2, not QC12 | none | no |

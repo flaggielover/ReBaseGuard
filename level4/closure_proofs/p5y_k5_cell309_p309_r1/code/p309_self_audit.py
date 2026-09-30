@@ -45,7 +45,19 @@ IMMUTABLE = ["governance/OWNER_DECISIONS_P309_VERBATIM.md", "governance/OWNER_RU
              "config/FORMAL_QUARANTINE_P309.json", "reviews/REVIEW_INCIDENT_INDEPENDENCE_P309.md",
              "reviews/REVIEW_INCIDENT_INDEPENDENCE_P309_EXEC_LEDGER.jsonl", "reviews/REVIEW_U2_CHECK_P309.md",
              "reviews/REVIEW_U2_CHECK_P309_EXEC_LEDGER.jsonl", "governance/U2_CORRECTED_PROPOSITION.md",
-             "fc2/FC2_SPEC.md"]
+             "fc2/FC2_SPEC.md",
+             # R4 NB11: every committed brief and review, their ledgers, the owner's D5 decision, the FC2 spec rev. 2
+             # and its erratum, the incident record
+             "governance/OWNER_D5_RATIFICATION_P309_VERBATIM.md", "governance/D5_OWNER_RATIFICATION_REQUEST_P309.md",
+             "governance/INCIDENT_P309F_01_FC2_REV1_INSTRUCTION.md", "governance/briefs_recovered/AGENT_BRIEFS_TRANSCRIPT.jsonl",
+             "reviews/BRIEF_INCIDENT_INDEPENDENCE_P309.md", "reviews/BRIEF_U2_CHECK_P309.md",
+             "reviews/BRIEF_FC2_VERIFIER_VARIANT_AUTHOR.md", "reviews/BRIEF_FC2_VERIFIER_VARIANT_AUTHOR_FOLLOWUP_1.md",
+             "reviews/BRIEF_FC2_VERIFIER_VARIANT_AUTHOR_FOLLOWUP_2.md", "reviews/BRIEF_DELTA_INCIDENT_P309.md",
+             "reviews/BRIEF_PREFREEZE_R4_P309.md", "reviews/REVIEW_DELTA_INCIDENT_P309.md",
+             "reviews/REVIEW_DELTA_INCIDENT_P309_EXEC_LEDGER.jsonl", "reviews/REVIEW_PREFREEZE_R4_P309.md",
+             "reviews/REVIEW_PREFREEZE_R4_P309_EXEC_LEDGER.jsonl", "fc2/FC2_SPEC_R2.md"]
+# the append-only documents (FC2_SPEC_R2_ERRATUM_1, ERRATA_FORMAL, P309_REV2C_AMENDMENTS) are not "unchanged since
+# their first commit"; after the freeze they are fixed like every frozen-directory file (QC13, check_grant)
 PRODUCER_MODULES = re.compile(r"^\s*(import|from)\s+(srk_kernel|srk_certify|srk_envelope|srk_float|srk_gate|srk_assemble|"
                               r"c1b_\w+|p309_guard|q309_guard)\b", re.M)
 

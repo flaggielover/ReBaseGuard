@@ -1,9 +1,14 @@
 """QC01-QC17 and QC-U2 of the P309 formal campaign, run exactly as frozen (package rev. 2b section B, rev. 2c).
 
-  python3 code/p309_qualify.py [--only QC08,QC10] [--workers 4]
+  python3 code/p309_qualify.py [--workers 4]                 the one qualification run (all items, no subset)
+  python3 code/p309_qualify.py --host-rerun [--workers 4]    rev. 2c A14 / delta D7: QC10 on an owner-named host,
+                                                             into qualification/host_rerun/ (a grant-window path)
 
-Writes qualification/QCxx.json per item and qualification/P309_QUALIFICATION.json (pass iff every gate Q01-Q17 and
-Q-U2 passes; no gate may be waived).  Every formal tool is pointed at qualification/ through P309_EVIDENCE_DIR, so the
+R4 B8 (no retry-until-pass): the run writes into a fresh qualification/attempt_1/ (created exclusively; every file
+O_EXCL, never overwritten) and then qualification/P309_QUALIFICATION.json (O_EXCL).  If ANY attempt directory already
+exists the runner refuses: there is no retry and no resumption, and a failed or interrupted attempt is preserved as it
+is for the owner and the reviewers.  The summary passes only if this single complete run passes every gate
+Q01-Q17, Q-U2 and Q-D5; no gate may be waived.  Every formal tool is pointed at qualification/ through P309_EVIDENCE_DIR, so the
 qualification commit touches only qualification/ and the two ledgers (rev. 2c A8).  Research tests that write into
 their own namespace run in a read-only `git archive` export of the frozen commit under the scratchpad (the research
 namespace itself is never written).
@@ -51,9 +56,21 @@ def sha_file(p: Path) -> str:
     return hashlib.sha256(p.read_bytes()).hexdigest()
 
 
+ATT = {"dir": None}                                    # the attempt directory of this run
+
+
+def xwrite(path: Path, text: str) -> None:
+    """write a new file exclusively (never overwrite)"""
+    fd = os.open(path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644)
+    try:
+        os.write(fd, text.encode())
+    finally:
+        os.close(fd)
+
+
 def run(cmd: list, cwd: Path, timeout: int = 6 * 3600, env_extra=None) -> dict:
     env = dict(os.environ)
-    env["P309_EVIDENCE_DIR"] = str(QDIR / "evidence")
+    env["P309_EVIDENCE_DIR"] = str(ATT["dir"] / "evidence")
     env.update(env_extra or {})
     t0 = time.time()
     r0 = os.times()
@@ -141,7 +158,7 @@ def qc07(m: Path) -> dict:
 
 
 def decoy_stage1a(tag: str, workers: int) -> dict:
-    out = QDIR / f"{tag}_DECOY_STAGE1A.json"
+    out = ATT["dir"] / f"{tag}_DECOY_STAGE1A.json"
     r = run([PY, "-B", str(FNS / "code" / "p309_driver.py"), "decoy-stage1a", "--decoy", "a2_h5",
              "--workers", str(workers), "--out", str(out)], FNS, timeout=24 * 3600)
     return {"run": r, "out": out}
@@ -177,7 +194,7 @@ def qc08(m: Path, workers: int) -> dict:
 def qc09(workers: int) -> dict:
     out, runs, cells = {}, [], {}
     for k in D.DECOY_STAGE1B_CELLS:
-        f = QDIR / f"QC09_DECOY_STAGE1B_{k}.json"
+        f = ATT["dir"] / f"QC09_DECOY_STAGE1B_{k}.json"
         r = run([PY, "-B", str(FNS / "code" / "p309_driver.py"), "decoy-stage1b", "--cell", str(k),
                  "--workers", str(workers), "--out", str(f)], FNS, timeout=24 * 3600)
         runs.append(r)
@@ -192,7 +209,7 @@ def qc09(workers: int) -> dict:
 
 def qc10(workers: int) -> dict:
     d = decoy_stage1a("QC10", workers)
-    a = json.loads((QDIR / "QC08_DECOY_STAGE1A.json").read_text())
+    a = json.loads((ATT["dir"] / "QC08_DECOY_STAGE1A.json").read_text())
     b = json.loads(d["out"].read_text()) if d["out"].exists() else {}
     sa = sorted(c["sha256"] for c in a.get("certificates", []))
     sb = sorted(c["sha256"] for c in b.get("certificates", []))
@@ -203,8 +220,8 @@ def qc10(workers: int) -> dict:
             "note": "QC08 and QC10 both run on this host (the proposed execution host, rev. 2c A14)"}
 
 
-def qc_formal(cmd_rel: str, *args) -> dict:
-    r = run([PY, str(FNS / cmd_rel), *args], FNS, timeout=12 * 3600)
+def qc_formal(cmd_rel: str, *args, flags: bool = False) -> dict:
+    r = run([PY, *(["-I", "-S", "-B"] if flags else []), str(FNS / cmd_rel), *args], FNS, timeout=12 * 3600)
     return {"pass": r["rc"] == 0, "runs": [r]}
 
 
@@ -213,7 +230,12 @@ def qc13(freeze: str) -> dict:
     frozen_now = [g("rev-parse", f"HEAD:{D.NS_REL}/{d}") for d in D.FROZEN_DIRS]
     frozen_then = [g("rev-parse", f"{freeze}:{D.NS_REL}/{d}") for d in D.FROZEN_DIRS]
     refs = g("for-each-ref", "--format=%(refname)").splitlines()
-    ok = {"freeze_is_last_frozen_change": D.freeze_commit() == freeze,
+    try:
+        recorded = D.recorded_freeze()
+    except D.Refusal as exc:
+        recorded = f"refused: {exc}"
+    ok = {"freeze_record_valid_and_names_this_freeze": recorded == freeze,
+          "freeze_is_last_frozen_change": D.freeze_commit() == freeze,
           "frozen_dirs_unchanged_since_freeze": frozen_now == frozen_then,
           "r5_blob_unchanged": g("rev-parse", "HEAD:level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/coverage/"
                                             "K5_COVERAGE_MAP_R5.json") == "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
@@ -232,8 +254,8 @@ def qc13(freeze: str) -> dict:
 
 def qc16() -> dict:
     parts = [qc_formal("verify/run_verify_all_scoped.py", "--jobs", "3", "--unit-tests", "--out",
-                       str(QDIR / "evidence" / "VERIFY_RESULTS_SCOPED.json")),
-             qc_formal("tests/test_verify_scoped.py"), qc_formal("tests/test_p309_guard.py"),
+                       str(ATT["dir"] / "evidence" / "VERIFY_RESULTS_SCOPED.json")),
+             qc_formal("tests/test_verify_scoped.py"), qc_formal("tests/test_p309_guard.py", flags=True),
              qc_formal("tests/test_p309_scan_allowance.py")]
     return {"pass": all(x["pass"] for x in parts), "parts": parts}
 
@@ -261,12 +283,57 @@ def qc17() -> dict:
     return {"pass": bad == 0, "cases": 2000, "mismatches": bad}
 
 
+def qc_d5() -> dict:
+    """owner D5: the exception is limited to the two ratified sites -- the control suite, and the scanner's
+    ref-mutation whitelist current (no unlisted, no stale entry)"""
+    parts = [qc_formal("tests/test_p309_d5_exception.py", flags=True)]
+    pins = run([PY, str(FNS / "code" / "p309_scan_pins.py"), "--list"], FNS)
+    bad = [l for l in pins["stdout_tail"].splitlines() if "NOT LISTED" in l or "STALE" in l or "remove the entry" in l]
+    parts.append({"pass": pins["rc"] == 0 and not bad, "runs": [pins], "not_current": bad})
+    return {"pass": all(x["pass"] for x in parts), "parts": parts}
+
+
+def host_rerun(workers: int) -> int:
+    """rev. 2c A14 / delta D7: QC10 re-run on the owner-named host, before the grant commit.  Evidence goes to
+    qualification/host_rerun/<host id>/ (exclusive), which the grant window admits (rev. 2c A8 as amended)."""
+    freeze = D.recorded_freeze()
+    base = QDIR / "host_rerun"
+    base.mkdir(parents=True, exist_ok=True)
+    ATT["dir"] = base / D.G.host_id()[:16]
+    os.mkdir(ATT["dir"])
+    (ATT["dir"] / "evidence").mkdir()
+    a = decoy_stage1a("QC08_HOST", workers)
+    d = decoy_stage1a("QC10_HOST", workers)
+    x = json.loads(a["out"].read_text()) if a["out"].exists() else {}
+    y = json.loads(d["out"].read_text()) if d["out"].exists() else {}
+    q08 = json.loads(git_show(f"{QDIR.relative_to(REPO)}/attempt_1/QC08_DECOY_STAGE1A.json") or "{}")
+    same = lambda u, v: (sorted(c["sha256"] for c in u.get("certificates", [])) ==  # noqa: E731
+                         sorted(c["sha256"] for c in v.get("certificates", [])) and u.get("verdicts") == v.get("verdicts"))
+    res = {"schema": "P309_HOST_RERUN/1", "freeze_commit": freeze, "utc": utc(), "host_id_sha256": D.G.host_id(),
+           "runtime": {"python": platform.python_version(), "platform": f"{sys.platform} {platform.machine()}"},
+           "runs": [a["run"], d["run"]], "pass": a["run"]["rc"] == 0 and d["run"]["rc"] == 0 and same(x, y)
+           and same(x, q08) and bool(x.get("certificates"))}
+    xwrite(ATT["dir"] / "QC10_HOST_RERUN.json", json.dumps(res, indent=1, sort_keys=True, default=str) + "\n")
+    print(f"[{'PASS' if res['pass'] else 'FAIL'}] QC10 host re-run on {D.G.host_id()[:16]}")
+    return 0 if res["pass"] else 1
+
+
+def git_show(rel: str) -> str:
+    return subprocess.run(["git", "-C", str(REPO), "show", f"HEAD:{rel}"], capture_output=True, text=True).stdout
+
+
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--only")
     ap.add_argument("--workers", type=int, default=4)
+    ap.add_argument("--host-rerun", action="store_true")
     a = ap.parse_args()
-    freeze = D.freeze_commit()
+    if a.host_rerun:
+        return host_rerun(a.workers)
+    try:
+        freeze = D.recorded_freeze()
+    except D.Refusal as exc:
+        print(f"QUALIFICATION REFUSED: {exc}")
+        return 2
     chk = subprocess.run([PY, str(FNS / "code" / "make_freeze_manifest.py"), "--check"], capture_output=True, text=True)
     if chk.returncode != 0:
         print("QUALIFICATION REFUSED: the freeze manifest does not regenerate identically")
@@ -278,8 +345,12 @@ def main() -> int:
         print(f"QUALIFICATION REFUSED: dirty frozen tree {dirty[:3]}")
         return 2
     QDIR.mkdir(exist_ok=True)
-    (QDIR / "evidence").mkdir(exist_ok=True)
-    only = set(a.only.split(",")) if a.only else None
+    if any(p.name.startswith("attempt_") for p in QDIR.iterdir()) or (QDIR / "P309_QUALIFICATION.json").exists():
+        print("QUALIFICATION REFUSED: an attempt already exists (R4 B8: no retry, no resumption; it is preserved)")
+        return 2
+    ATT["dir"] = QDIR / "attempt_1"
+    os.mkdir(ATT["dir"])                                      # exclusive
+    (ATT["dir"] / "evidence").mkdir()
     m = mirror(freeze)
     items = {
         "QC01": lambda: qc_research_simple(m, "tests/test_srk_port_identity.py"),
@@ -292,39 +363,39 @@ def main() -> int:
         "QC08": lambda: qc08(m, a.workers),
         "QC09": lambda: qc09(a.workers),
         "QC10": lambda: qc10(a.workers),
-        "QC11": lambda: qc_formal("tests/test_p309_exactly_once.py"),
-        "QC12": lambda: qc_formal("code/p309_static_check.py"),
+        "QC11": lambda: qc_formal("tests/test_p309_exactly_once.py", flags=True),
+        "QC12": lambda: qc_formal("code/p309_static_check.py", flags=True),
         "QC13": lambda: qc13(freeze),
         "QC14": lambda: {**(lambda r: {"pass": r["rc"] == 0, "runs": [r]})(run(
-            [PY, "-B", str(FNS / "code" / "p309_driver.py"), "rehearse", "--out", str(QDIR / "QC14_REHEARSE.json")],
-            FNS)), "rehearse": json.loads((QDIR / "QC14_REHEARSE.json").read_text()) if (
-            QDIR / "QC14_REHEARSE.json").exists() else None},
+            [PY, "-B", str(FNS / "code" / "p309_driver.py"), "rehearse", "--out", str(ATT["dir"] / "QC14_REHEARSE.json")],
+            FNS)), "rehearse": json.loads((ATT["dir"] / "QC14_REHEARSE.json").read_text()) if (
+            ATT["dir"] / "QC14_REHEARSE.json").exists() else None},
         "QC15": lambda: qc_formal("code/p309_self_audit.py", "QUALIFICATION"),
         "QC16": qc16,
         "QC17": qc17,
         "QC_U2": qc_u2,
+        "QC_D5": qc_d5,
     }
+    results = {}
     for k, fn in items.items():
-        if only and k not in only:
-            continue
         t0 = time.time()
         try:
             res = fn()
         except Exception as exc:  # noqa: BLE001 - a crashed QC is a FAIL, recorded
             res = {"pass": False, "error": f"{type(exc).__name__}: {exc}"[:800]}
         res.update({"qc": k, "freeze_commit": freeze, "utc": utc(), "wall_s": round(time.time() - t0, 1)})
-        (QDIR / f"{k}.json").write_text(json.dumps(res, indent=1, sort_keys=True, default=str) + "\n")
+        xwrite(ATT["dir"] / f"{k}.json", json.dumps(res, indent=1, sort_keys=True, default=str) + "\n")
+        results[k] = res
         print(f"[{'PASS' if res['pass'] else 'FAIL'}] {k} ({res['wall_s']} s)", flush=True)
-    results = {k: json.loads((QDIR / f"{k}.json").read_text()) for k in items if (QDIR / f"{k}.json").exists()}
     gates = {("Q" + k[2:]): bool(v.get("pass")) and v.get("freeze_commit") == freeze for k, v in results.items()}
-    summary = {"schema": "P309_QUALIFICATION/1", "freeze_commit": freeze, "utc": utc(),
-               "pass": len(gates) == len(items) and all(gates.values()), "gates": gates,
+    summary = {"schema": "P309_QUALIFICATION/2", "freeze_commit": freeze, "attempt": ATT["dir"].name, "utc": utc(),
+               "pass": len(gates) == len(items) and all(gates.values()), "gates": gates, "retry_rule": "none (R4 B8)",
                "runtime": {"python": platform.python_version(), "implementation": platform.python_implementation(),
                            "platform": f"{sys.platform} {platform.machine()}", "host_id_sha256": D.G.host_id()},
-               "files": {k: sha_file(QDIR / f"{k}.json") for k in results},
+               "files": {k: sha_file(ATT["dir"] / f"{k}.json") for k in results},
                "statement": "no target input read; no quarantined cell evaluated; no in-band computation; "
                             "NEW Γ309 TARGET EVALUATIONS = 0"}
-    (QDIR / "P309_QUALIFICATION.json").write_text(json.dumps(summary, indent=1, sort_keys=True) + "\n")
+    xwrite(QDIR / "P309_QUALIFICATION.json", json.dumps(summary, indent=1, sort_keys=True) + "\n")
     print(json.dumps({"pass": summary["pass"], "gates": gates}, indent=1))
     return 0 if summary["pass"] else 1
 

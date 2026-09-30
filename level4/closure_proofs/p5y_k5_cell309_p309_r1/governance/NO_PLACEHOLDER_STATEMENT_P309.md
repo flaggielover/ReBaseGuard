@@ -50,3 +50,13 @@ result exists after the marker.
   * A consumed marker is never rerun.
 * **Host dependence when the budget binds** is disclosed (protocol §2.5, §2.8). It is a property of the frozen rule,
   not a choice.
+
+## Addendum after R4 (append-only)
+
+* **Cell interval.** It is no longer taken from the grant. `execute` derives it from the pinned `cells.json` (canonical
+  sum form) and refuses any grant whose `cell_interval` or `drift_hull_Ew` differs (rev. 2c A20).
+* **Owner-set grant values.** `issued_utc`, `not_after_utc` and `authority` are the owner's. Before the marker, the
+  driver refuses a placeholder, an `issued_utc` in the future, and a horizon shorter than 14 days (A21). The proposal
+  tool's `<SET BY THE OWNER …>` strings are therefore refused mechanically if left in place.
+* **Qualification.** It has no retry rule: one complete run (A27). A failed or interrupted attempt is preserved, and it
+  is not a choice point.

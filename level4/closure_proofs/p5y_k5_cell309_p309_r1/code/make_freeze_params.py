@@ -76,12 +76,21 @@ DISCLOSED_LIABILITIES = [
     "(it would have made every execution INDETERMINATE); repaired by an isolated load (toward a conclusive outcome; no "
     "rule, parameter or binding changed)",
     "delta result-chasing component LOW-MEDIUM; the route's overall rating unchanged: MEDIUM-HIGH, upper end",
+    "the independent pre-freeze review R4 was FREEZE_BLOCKED (B1-B8: the cell taken from the grant; post-seal checks "
+    "that would fail a correct run; post-marker-only grant checks; SIGKILL as fallback; an impossible grant window; "
+    "unsealed verdict reasons; QC blind spots; retry-until-pass); resolved before the freeze by rev. 2c A20-A30 and "
+    "re-reviewed (R4 follow-up); FE-9 (cells.json endpoint form)",
+    "owner D5: the two production mutation sites (_arm_marker, _persist_pending) and the pending-ref NAME were "
+    "ratified to EXIST in the frozen tree (not to be used before the grant); scanner schema 3 rejects every other "
+    "ref-moving path; independently verified",
 ]
 REVIEWS = {
     "incident_independence": (NS + "reviews/REVIEW_INCIDENT_INDEPENDENCE_P309.md", "## 10. Conditions"),
     "u2_check": (NS + "reviews/REVIEW_U2_CHECK_P309.md", "## 8. Conditions"),
     "delta_incident_independence": (NS + "reviews/REVIEW_DELTA_INCIDENT_P309.md", "## 7. Conditions"),
-    "prefreeze_r4": (NS + "reviews/REVIEW_PREFREEZE_R4_P309.md", None),
+    "prefreeze_r4": (NS + "reviews/REVIEW_PREFREEZE_R4_P309.md", "## 7. Conditions"),
+    "prefreeze_r4_followup": (NS + "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_P309.md", "## Conditions"),
+    "delta2_incident_independence": (NS + "reviews/REVIEW_DELTA2_INCIDENT_P309.md", "## Conditions"),
 }
 
 
@@ -148,7 +157,11 @@ def build() -> dict:
                                "order": "rung-major: b1..b4 at d = 8, then 10, then 12",
                                "accounting": "user + system CPU of each job process, verification included",
                                "stopping": "only by not starting jobs and by discarding a terminated job; never raises",
-                               "total_cpu_bound": "< threshold + 4 x per-job limit = 96 CPU-h (rev. 2c A6 as corrected, D2)",
+                               "total_cpu_bound": "< threshold + 4 x (per-job limit + 5 s hard margin) (rev. 2c A6 as "
+                                                  "corrected, D2; R4 3.2)",
+                               "termination_mapping": "only SIGXCPU, or SIGKILL with CPU >= the per-job limit, is a "
+                                                      "budget termination (fallback); any other abnormal end is "
+                                                      "JOB_EXCEPTION -> EXECUTION_INDETERMINATE (rev. 2c A22)",
                                "wall_clock": "unbounded; no post-marker wall-clock cap (rev. 2c A6)"},
                     "genuine_only": "no mutant battery, no shifted or widened probe on in-band certificates"},
         "stage1b": {"rules": "RLR307 Stage-1 rules verbatim (rlr307_stage1 / rlr307_independent / rlr307_pinned at "
@@ -159,7 +172,8 @@ def build() -> dict:
                                "order": "degree descending, then block (the RLR307 order)",
                                "per_job_limit_classification": "rev. 2c A5 as corrected (D2): a new parameter, "
                                                                "efficacy-relevant, ambiguous direction; the maximal limit",
-                               "total_cpu_bound": "< 21 600 + 4 x 21 600 s = 30 CPU-h (rev. 2c A6 as corrected, D2)",
+                               "total_cpu_bound": "< 21 600 + 4 x (21 600 + 5) s (rev. 2c A6 as corrected, D2; R4 3.2)",
+                               "termination_mapping": "as Stage 1a (rev. 2c A22)",
                                "wall_clock": "unbounded; no post-marker wall-clock cap (rev. 2c A6)"},
                     "exceptions": "an exception or an independent-reconstruction mismatch -> EXECUTION_INDETERMINATE",
                     "guard": "code/p309_guard.producer_adapter injected as ov_quarantine (rev. 2c A4)"},
@@ -183,7 +197,24 @@ def build() -> dict:
                          "exit_codes": {"0": "sealed", "2": "refused pre-marker", "3": "CONTROL_FAILED (not consumed)",
                                         "4": "UNSEALED", "5": "sealed failure status", "6": "CONSUMED_UNRECORDED",
                                         "7": "sealed, not materialized"},
-                         "chain": "freeze -> qualification -> qualification review -> grant (rev. 2c A8)"},
+                         "chain": "freeze F <- freeze record FR <- qualification Q <- review Rv <- [window commits] "
+                                  "<- grant G; checkpoint-record commits anywhere (rev. 2c A8, A23, A24)",
+                         "run_nonce": "<gitdir>/p309-run-nonce.json, O_EXCL, created just before the marker, binds "
+                                      "target-mode jobs to the live execute process (A28)",
+                         "seal_only_gate": "the pending ref is created by seal-only only for emergency evidence bound to "
+                                           "a marker that names a commit carrying the grant (owner D5; A29)"},
+        "grant_rules": {"cell_source": "execute derives the cell interval from the pinned cells.json (canonical sum "
+                                       "form); the grant's cell_interval and drift_hull_Ew must equal it (A20)",
+                        "min_horizon_s_at_arming": 14 * 86400,
+                        "premarker_admission": "the guard's checks 2-6, 8, 9 and 7 without the marker, plus exact "
+                                               "strings, pinned ids, host, worktree, runtime, issued_utc not in the "
+                                               "future, non-placeholder authority, committer identity (A21)",
+                        "window_paths": ["ledger/ZERO_TARGET_LEDGER.jsonl", "ledger/EXPOSURE_LEDGER.jsonl",
+                                         "ledger/CHECKPOINT_PUSHES.jsonl", "handoff/", "qualification/host_rerun/"],
+                        "freeze_record": NS + "ledger/FREEZE_RECORD.json",
+                        "nothing_between_grant_and_execute": True},
+        "qualification_rule": "one complete run (qualification/attempt_1, O_EXCL); no retry, no resumption (A27); "
+                              "gates Q01-Q17, Q-U2, Q-D5",
         "driver": {"path": NS + "code/p309_driver.py", "sha256": hashlib.sha256(driver).hexdigest()},
         "u2": {"incident_review_finding": "U2_FINDING: NOT_TRIGGERED_WORDING_DISCREPANCY",
                "u2_check_verdict": "U2_CP_ESTABLISHED",

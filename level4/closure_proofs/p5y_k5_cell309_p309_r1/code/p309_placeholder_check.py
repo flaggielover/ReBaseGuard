@@ -36,6 +36,13 @@ ALLOW = [
     ("code/p309_placeholder_check.py", r".*", "this checker names the markers it searches for"),
     ("governance/NO_PLACEHOLDER_STATEMENT_P309.md", r".*", "the statement quotes the markers it rules out"),
     ("code/p309_driver.py", r"placeholder", "none expected"),
+    ("code/p309_driver.py", r"TBD|TODO", "PLACEHOLDER_MARKS: the placeholder values the driver REFUSES in a grant's "
+                                         "authority before the marker (rev. 2c A21, R4 NB8)"),
+    ("code/make_freeze_params.py", r"placeholder", "the frozen rule text: the driver refuses a placeholder authority "
+                                                   "(rev. 2c A21)"),
+    ("code/make_proposed_authorization.py", r"placeholder", "the grant rules text: the owner's values must not be "
+                                                            "placeholders; the driver refuses them (rev. 2c A21)"),
+    ("governance/P309_REV2C_AMENDMENTS.md", r"placeholder", "A21 states the rule that refuses placeholder grant values"),
     ("verify/scoped_sandbox.py", r"placeholder", "the verifier author's sandbox builder seeds a TEST_ONLY synthetic "
                                                 "guard_id from the bytes 'TEST_ONLY_DO_NOT_EXECUTE guard placeholder' "
                                                 "(sandbox grants only; not a campaign value)"),

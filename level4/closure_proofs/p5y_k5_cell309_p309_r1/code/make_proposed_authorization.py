@@ -4,8 +4,8 @@ a proposal under handoff/ (the path deliberately avoids the word the push proced
 
   python3 code/make_proposed_authorization.py
 
-Precondition: HEAD is the qualification-review commit (or a checkpoint-record commit on top of it) whose review says
-QUALIFICATION_ACCEPTED.  The cell interval is read here from the pinned cells.json (a structural read, ledgered, after
+Precondition: HEAD is the qualification-review commit (or record / grant-window commits on top of it, rev. 2c A8 as
+amended) whose review says QUALIFICATION_ACCEPTED.  The cell interval is read here from the pinned cells.json (a structural read, ledgered, after
 the freeze; incident review C4).  The owner sets issued_utc, not_after_utc and the authority text, and makes the grant
 commit: the file authorization/P309_GRANT.json, alone, as the only change of a commit whose parent is HEAD.
 """
@@ -32,24 +32,33 @@ def git(*a) -> str:
 
 
 def main() -> int:
-    fz = D.freeze_commit()
+    fz = D.recorded_freeze()                              # R4 B7(c): the independently recorded freeze
     m = D.load_manifest()
     pins = D.pin_table(m)
     head = git("rev-parse", "HEAD")
-    # find the qualification and review commits on the first-parent chain back to the freeze
-    chain, c = [], head
-    for _ in range(64):
-        if not D._only(c, (D.CHECKPOINT_LEDGER_REL,), REPO):
-            c = git("rev-parse", f"{c}^")
-            continue
-        if c == fz:
-            break
-        chain.append(c)
-        c = git("rev-parse", f"{c}^")
-    if len(chain) != 2:
-        print("REFUSED: HEAD is not freeze -> qualification -> review (plus record commits)")
+    # the check_grant chain read backwards from HEAD: [window / record commits] <- Rv <- [records] <- Q <- [records]
+    # <- FR <- F (rev. 2c A8 as amended for R4 B5); the grant commit will be HEAD's child
+    seq, c = [], head
+    while c != fz:
+        seq.append((c, D._chain_kind(c, REPO)))
+        pl = git("rev-list", "--parents", "-n", "1", c).split()
+        if len(pl) != 2 or len(seq) > 256:
+            print("REFUSED: a merge or root commit, or no path to the recorded freeze")
+            return 2
+        c = pl[1]
+    i = 0
+    while i < len(seq) and seq[i][1] in ("record", "window"):
+        i += 1
+    j = i + 1
+    while j < len(seq) and seq[j][1] == "record":
+        j += 1
+    k = j + 1
+    while k < len(seq) and seq[k][1] == "record":
+        k += 1
+    if i >= len(seq) or j >= len(seq) or k != len(seq) - 1 or seq[k][1] != "freeze_record":
+        print("REFUSED: HEAD is not freeze -> record -> qualification -> review (plus record / window commits)")
         return 2
-    review_c, qual_c = chain
+    review_c, qual_c = seq[i][0], seq[j][0]
     if not D.verdict_ok(git("show", f"{review_c}:{D.QREVIEW_REL}"), "QUALIFICATION_ACCEPTED"):
         print("REFUSED: the qualification review is not QUALIFICATION_ACCEPTED")
         return 2
@@ -113,11 +122,25 @@ def main() -> int:
             "failure_and_recovery": "package section I; exit codes " + json.dumps(fp["exactly_once"]["exit_codes"]),
             "recording": "package section E (from memory: object store + pending ref, emergency file, private-index "
                          "seal commit, O_EXCL materialization)",
-            "post_execution_checks": "code/p309_postexec.py (P1-P10; P10 = review-mode re-verification)",
+            "post_execution_checks": "python3 -I -S -B code/p309_postexec.py (P1-P10; P10 = review-mode "
+                                     "re-verification; refuses to start without these flags)",
+            "execution_procedure": "on the named host, in the named worktree, on the named branch with HEAD attached "
+                                   "at the grant commit; remove every __pycache__ from the campaign namespace first "
+                                   "(check_clean refuses ignored objects); run nothing ledgered between the grant "
+                                   "commit and execute; then `python3 -I -S -B code/p309_driver.py execute`; after a "
+                                   "seal, `python3 -I -S -B code/p309_postexec.py`; never run execute twice (R4 NB15)",
             "execution_review": "research protocol_prep/P309_REVIEW_BRIEFS.md section 3 (brief committed before "
                                 "issue)", "adjudication": "package section H; the protocol section 5 table verbatim",
             "adjudication_review": "research protocol_prep/P309_REVIEW_BRIEFS.md section 4"},
-        "issued_utc": "<SET BY THE OWNER>", "not_after_utc": "<SET BY THE OWNER, ISO-8601 UTC, e.g. 2026-10-31T23:59:59Z>",
+        "issued_utc": "<SET BY THE OWNER, ISO-8601 UTC YYYY-MM-DDTHH:MM:SSZ, not in the future>",
+        "not_after_utc": "<SET BY THE OWNER, ISO-8601 UTC YYYY-MM-DDTHH:MM:SSZ, at least 14 days after execute starts>",
+        "grant_rules": "the driver refuses before the marker (exit 2, nothing consumed) unless: every field above is "
+                       "exact (geometry the exact strings, cell the integer, verifier_id / guard_id the pinned "
+                       "sha256, marker_ref the production marker NAME, host id, worktree and runtime of the execution "
+                       "host); not_after_utc >= now + 14 days at arming (rev. 2c amendment, R4 B3); issued_utc not in "
+                       "the future; authority a non-placeholder reference to the owner's grant instruction; the grant "
+                       "commit is the only change of a single-parent commit on top of this chain, HEAD attached to "
+                       "the branch, and no ref points past it",
         "granted_after": review_c,
         "authority": "<THE OWNER'S GRANT INSTRUCTION, verbatim reference>",
     }

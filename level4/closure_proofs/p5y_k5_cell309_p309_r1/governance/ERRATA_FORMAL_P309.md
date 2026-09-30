@@ -115,3 +115,25 @@ rule is involved):
 
 The development runs used a scratch evidence directory and wrote their ledger lines to `ledger/ZERO_TARGET_LEDGER.jsonl`
 as usual. Two scratch runs of the stage flows alone, made through `runpy`, wrote no ledger line; they used stubs only.
+
+## FE-9: the `cells.json` endpoint representation was misread (found while fixing R4 B1; never executed)
+
+**The representation.** In the pinned cover `cells.json`, each endpoint is a list of two exact-rational strings whose
+**sum** is the value. The canonical loader, `k5_minimality.rat`, reads it as `F(p[0]) + F(p[1])`.
+
+**The misreading.** Three places read an endpoint as `F(p[0], p[1])`, that is, as numerator and denominator:
+* `decoy_stage1b` (QC09);
+* the proposal tool;
+* the first draft of the B1 fix.
+
+With string arguments that raises TypeError, so nothing was ever computed on a misread interval:
+* `decoy_stage1b` had never run (no ledger line);
+* the proposal tool had never run;
+* the B1 draft was corrected before any run.
+
+**The fix.** All three now use the driver's `cover_rat` / `cover_interval`. A ledgered structural check found them equal
+to the canonical `rat` on all 326 CUSUM cover cells. Only the boolean result, and the raw entries of cover cells 0
+and 1, were displayed (exposure ledger).
+
+**Direction:** none. Without the fix, QC09 would have failed, and every execute would have been refused before the
+marker.
