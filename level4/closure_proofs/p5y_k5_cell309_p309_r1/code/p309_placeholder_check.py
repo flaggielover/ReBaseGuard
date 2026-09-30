@@ -36,12 +36,16 @@ ALLOW = [
     ("code/p309_placeholder_check.py", r".*", "this checker names the markers it searches for"),
     ("governance/NO_PLACEHOLDER_STATEMENT_P309.md", r".*", "the statement quotes the markers it rules out"),
     ("code/p309_driver.py", r"placeholder", "none expected"),
+    ("verify/scoped_sandbox.py", r"placeholder", "the verifier author's sandbox builder seeds a TEST_ONLY synthetic "
+                                                "guard_id from the bytes 'TEST_ONLY_DO_NOT_EXECUTE guard placeholder' "
+                                                "(sandbox grants only; not a campaign value)"),
     ("governance/briefs_recovered/README.md", r"placeholder", "states that a number in brief 1 is an illustrative "
                                                               "placeholder in firewall wording, not a campaign value"),
     ("governance/briefs_recovered/AGENT_BRIEFS_TRANSCRIPT.jsonl", r".*", "verbatim historical briefs (record only; "
                                                                         "they govern nothing)"),
     ("governance/OWNER_DECISIONS_P309_VERBATIM.md", r".*", "the owner's own text, verbatim"),
     ("governance/OWNER_RULINGS_2_P309_VERBATIM.md", r".*", "the owner's own text, verbatim"),
+    ("governance/OWNER_D5_RATIFICATION_P309_VERBATIM.md", r".*", "the owner's own text, verbatim"),
     ("protocol_prep/P309_PROTOCOL.md", r"owner (decides|to decide)|open question",
      "rev. 2b text on decisions the owner has since taken (OWNER_DECISIONS_P309_VERBATIM); rev. 2c governs"),
     ("protocol_prep/P309_FORMAL_PACKAGE.md", r"owner (decides|to decide)",

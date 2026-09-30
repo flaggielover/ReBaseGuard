@@ -40,6 +40,8 @@ DOCS = {
     "u2_corrected_proposition_r2": NS + "governance/U2_CORRECTED_PROPOSITION_R2.md",
     "owner_decisions_verbatim": NS + "governance/OWNER_DECISIONS_P309_VERBATIM.md",
     "owner_rulings_2_verbatim": NS + "governance/OWNER_RULINGS_2_P309_VERBATIM.md",
+    "owner_d5_ratification_verbatim": NS + "governance/OWNER_D5_RATIFICATION_P309_VERBATIM.md",
+    "d5_ratification_request": NS + "governance/D5_OWNER_RATIFICATION_REQUEST_P309.md",
     "formal_quarantine": NS + "config/FORMAL_QUARANTINE_P309.json",
     "scanner_allowance": NS + "config/SCANNER_ALLOWANCE_P309.json",
     "errata_formal": NS + "governance/ERRATA_FORMAL_P309.md",
