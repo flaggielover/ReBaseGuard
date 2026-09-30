@@ -246,8 +246,10 @@ def _parse_grant(ctx, raw: bytes) -> dict:
     return g
 
 
-def _check_official(ctx, geometry, lo: F, hi: F) -> str:
-    """Raises on any failed check; returns the grant commit on success.  Order: spec section 3, checks 2-10."""
+def _check_official(ctx, geometry, lo: F, hi: F, *, premarker: bool = False) -> str:
+    """Raises on any failed check; returns the grant commit on success.  Order: spec section 3, checks 2-10.
+    premarker=True (R4 B3, the driver's dry admission before the marker): check 7 requires an EMPTY marker namespace
+    instead of the marker, and the item checks (10, geometry) are not reached; nothing is admitted."""
     repo = ctx.repo
     try:
         raw = _git_bytes(repo, "show", f"HEAD:{ctx.grant_path}")                              # 2 present
@@ -278,12 +280,16 @@ def _check_official(ctx, geometry, lo: F, hi: F) -> str:
         raise ValueError("this guard is not pinned (with this sha256) by the frozen manifest")
     if g["guard_id"] != own_id():                                                               # 6 own identity
         raise ValueError("guard_id is not this file")
-    mk = _git(repo, "rev-parse", "--verify", "--quiet", f"{ctx.marker_ref}^{{commit}}").strip()  # 7 marker
-    if mk != gc:
-        raise ValueError("marker does not name the grant commit")
-    ns = _git(repo, "for-each-ref", "--format=%(refname)", ctx.ref_namespace).split()
-    if ns != [ctx.marker_ref]:
-        raise ValueError("the marker namespace holds other refs (recording begun or consumed)")
+    ns = _git(repo, "for-each-ref", "--format=%(refname)", ctx.ref_namespace).split()          # 7 marker
+    if premarker:
+        if ns:
+            raise ValueError("the marker namespace is not empty before the marker")
+    else:
+        mk = _git(repo, "rev-parse", "--verify", "--quiet", f"{ctx.marker_ref}^{{commit}}").strip()
+        if mk != gc:
+            raise ValueError("marker does not name the grant commit")
+        if ns != [ctx.marker_ref]:
+            raise ValueError("the marker namespace holds other refs (recording begun or consumed)")
     cur = _git(repo, "symbolic-ref", "-q", "HEAD").strip()
     for line in _git(repo, "for-each-ref",
                      "--format=%(refname) %(objectname) %(objecttype) %(*objectname) %(*objecttype)").splitlines():
@@ -302,6 +308,8 @@ def _check_official(ctx, geometry, lo: F, hi: F) -> str:
         raise ValueError("execution host mismatch")
     if g["runtime"]["python"] != platform.python_version():
         raise ValueError("runtime mismatch")
+    if premarker:
+        return gc
     if not (ew[0] <= lo and hi <= ew[1]):                                                       # 10 inside Ew
         raise ValueError("interval not inside Ew")
     if (F(geometry[0]), F(geometry[1])) != ctx.geometry:
@@ -334,6 +342,19 @@ def admission_decision(item: dict, *, ctx=None, mode: str = "official") -> tuple
         return "ADMIT", f"admitted under grant commit {gc[:12]} ({ctx.kind})"
     except Exception as exc:  # noqa: BLE001 - fail closed
         return "REFUSE", f"quarantine: {type(exc).__name__}: {str(exc)[:160]}"
+
+
+def premarker_check(ctx=None) -> tuple:
+    """R4 B3: the official checks that do not need the marker (2-6, 8, 9, and 7 with an empty namespace), for the
+    driver's dry admission before the marker.  Returns (ok, reason).  It examines no band item and admits nothing."""
+    ctx = PRODUCTION if ctx is None else ctx
+    try:
+        if ctx is not PRODUCTION and type(ctx) is not TestContext:
+            return False, "not a guard context"
+        gc = _check_official(ctx, None, None, None, premarker=True)
+        return True, f"grant commit {gc[:12]} passes the pre-marker checks ({ctx.kind})"
+    except Exception as exc:  # noqa: BLE001 - fail closed
+        return False, f"{type(exc).__name__}: {str(exc)[:160]}"
 
 
 def guard_interval(geometry, lo, hi=None, *, ctx=None) -> None:

@@ -83,6 +83,17 @@ DECOY_STAGE1A = {   # declared (research SRK_DECOY_DECLARATION_A2 cell family); 
 }
 DECOY_STAGE1B_CELLS = (297, 316)       # the RLR307 decoy cover cells (declared by the 307 pattern; outside the band)
 VARIANT_REL = NS_REL + "/verify/srk_verify_indep_scoped.py"
+GUARD_REL = NS_REL + "/code/p309_guard.py"
+SANDBOX_RESULT_REL = "TEST_ONLY/P309_TEST_RESULT.json"   # spec section 2.2: the test context's sealed result path
+TEST_CELL_INTERVAL = ("1/3", "20/51")   # the declared synthetic h3 decoy cell (the FC2 TEST band is its outward hull)
+GRANT_GEOMETRY = {"PRODUCTION": {"h": "5", "k": "1/2"}, "SANDBOX": {"h": "3", "k": "1/2"}}   # exact strings (E1-3)
+MIN_GRANT_HORIZON_S = 14 * 86400     # rev. 2c amendment (R4 B3): at arming, not_after_utc >= now + 14 days
+FREEZE_RECORD_REL = NS_REL + "/ledger/FREEZE_RECORD.json"   # R4 B7(c): the freeze commit, recorded in its child
+WINDOW_PATHS = (NS_REL + "/ledger/ZERO_TARGET_LEDGER.jsonl", NS_REL + "/ledger/EXPOSURE_LEDGER.jsonl",
+                NS_REL + "/ledger/CHECKPOINT_PUSHES.jsonl")    # rev. 2c amendment (R4 B5): Rv..G window commits
+WINDOW_PREFIXES = (NS_REL + "/handoff/", NS_REL + "/qualification/host_rerun/")
+RUN_NONCE_NAME = "p309-run-nonce.json"   # R4 NB6: binds target-mode jobs to the live execute process
+PLACEHOLDER_MARKS = ("<", ">", "SET BY THE OWNER", "TBD", "TODO")
 
 
 class Refusal(Exception):
@@ -137,6 +148,8 @@ class ExecContext:
                  branch_ref: str | None):
         self.kind, self.repo, self.guard_ctx = kind, Path(repo), guard_ctx
         self.marker_ref, self.pending_ref, self.namespace, self.branch_ref = marker_ref, pending_ref, namespace, branch_ref
+        # the sealed result path: the variant's review mode reads exactly this path for the context (spec 2.1 / 2.2)
+        self.result_rel = RESULT_REL if kind == "PRODUCTION" else SANDBOX_RESULT_REL
 
 
 def production_context() -> ExecContext:
@@ -237,8 +250,32 @@ def check_flags() -> None:
 
 
 # ------------------------------------------------------------------------------------------------ governance checks
-def freeze_commit(repo: Path = REPO) -> str:
-    return git("log", "-1", "--format=%H", "--", *(f"{NS_REL}/{d}" for d in FROZEN_DIRS), repo=repo).stdout.strip()
+def freeze_commit(repo: Path = REPO, rev: str = "HEAD") -> str:
+    """the last commit (at or before rev) that changes a frozen directory"""
+    return git("log", "-1", "--format=%H", rev, "--", *(f"{NS_REL}/{d}" for d in FROZEN_DIRS),
+               repo=repo).stdout.strip()
+
+
+def recorded_freeze(repo: Path = REPO, rev: str = "HEAD") -> str:
+    """R4 B7(c): the freeze commit F as recorded independently at the freeze.  The record is added by F's only child,
+    which changes nothing else, and it is never changed afterwards; F must still be the last change to a frozen
+    directory.  Every consumer (check_grant, QC13, the QC runner, the proposal tool) compares against this."""
+    raw = git("show", f"{rev}:{FREEZE_RECORD_REL}", repo=repo)
+    if raw.returncode:
+        raise Refusal("FREEZE_RECORD", "no freeze record")
+    try:
+        fz = json.loads(raw.stdout)["freeze_commit"]
+    except (ValueError, KeyError, TypeError):
+        raise Refusal("FREEZE_RECORD", "the freeze record does not parse") from None
+    hist = git("log", "--format=%H", rev, "--", FREEZE_RECORD_REL, repo=repo).stdout.split()
+    if len(hist) != 1:
+        raise Refusal("FREEZE_RECORD", "the freeze record was changed after it was made")
+    parents = git("rev-list", "--parents", "-n", "1", hist[0], repo=repo).stdout.split()[1:]
+    if parents != [fz] or _only(hist[0], (FREEZE_RECORD_REL,), repo):
+        raise Refusal("FREEZE_RECORD", "the record commit is not the freeze commit's record-only child")
+    if freeze_commit(repo, rev) != fz:
+        raise Refusal("FREEZE_RECORD", "a frozen directory changed after the recorded freeze")
+    return fz
 
 
 def check_not_evaluated(ctx: ExecContext) -> None:
@@ -247,19 +284,26 @@ def check_not_evaluated(ctx: ExecContext) -> None:
     if hits:
         raise Refusal("CONSUMED", f"a ref exists under a marker namespace: {hits[:2]}")
     names = git("ls-tree", "-r", "--name-only", "HEAD", repo=ctx.repo).stdout.split()
-    if RESULT_REL in names or os.path.lexists(ctx.repo / RESULT_REL) or git(
-            "log", "--all", "--format=%H", "--", RESULT_REL, repo=ctx.repo).stdout.strip():
-        raise Refusal("TARGET_ARTIFACT_EXISTS", RESULT_REL)
+    if ctx.result_rel in names or os.path.lexists(ctx.repo / ctx.result_rel) or git(
+            "log", "--all", "--format=%H", "--", ctx.result_rel, repo=ctx.repo).stdout.strip():
+        raise Refusal("TARGET_ARTIFACT_EXISTS", ctx.result_rel)
     if os.path.lexists(git_dir(ctx) / EMERGENCY_NAME):
         raise Refusal("TARGET_ARTIFACT_EXISTS", "emergency evidence file in the git dir")
+    if os.path.lexists(git_dir(ctx) / RUN_NONCE_NAME):
+        raise Refusal("TARGET_ARTIFACT_EXISTS", "a run nonce exists in the git dir (an earlier execute stopped there)")
 
 
 def git_dir(ctx: ExecContext) -> Path:
     return Path(git("rev-parse", "--path-format=absolute", "--git-dir", repo=ctx.repo).stdout.strip())
 
 
+def guarded_paths(ctx: ExecContext) -> tuple:
+    r = ctx.result_rel
+    return (GUARDED_PATHS if ctx.kind == "PRODUCTION" else ()) + (r, r + ".tmp", r + ".partial")
+
+
 def check_result_paths(ctx: ExecContext) -> None:
-    for rel in GUARDED_PATHS:
+    for rel in guarded_paths(ctx):
         try:
             st = os.lstat(ctx.repo / rel)
         except FileNotFoundError:
@@ -268,7 +312,7 @@ def check_result_paths(ctx: ExecContext) -> None:
             raise Refusal("RESULT_PATH_OCCUPIED", f"{rel}: unreadable ({exc.__class__.__name__})")
         raise Refusal("RESULT_PATH_OCCUPIED", f"{rel} holds a {stat.filemode(st.st_mode)} object")
     cur = ctx.repo
-    for part in (NS_REL + "/evidence").split("/"):
+    for part in _result_parents(ctx):
         cur = cur / part
         try:
             st = os.lstat(cur)
@@ -276,6 +320,13 @@ def check_result_paths(ctx: ExecContext) -> None:
             break
         if not stat.S_ISDIR(st.st_mode):
             raise Refusal("RESULT_PATH_OCCUPIED", f"{cur} is not a plain directory")
+
+
+def _result_parents(ctx: ExecContext) -> list:
+    """the directories above the result path that may pre-exist (production: up to .../evidence; the final
+    `execution` directory is created afresh by materialize; sandbox: TEST_ONLY, which holds the test grant)."""
+    parts = ctx.result_rel.split("/")[:-1]
+    return parts[:-1] if ctx.kind == "PRODUCTION" else parts
 
 
 def check_clean(ctx: ExecContext) -> None:
@@ -309,9 +360,27 @@ def _only(commit: str, allowed, repo: Path, prefixes=()) -> list:
     return [f for f in files if f not in allowed and not any(f.startswith(p) for p in prefixes)]
 
 
+def check_branch(ctx: ExecContext) -> None:
+    """HEAD is attached to a branch under refs/heads/ (the seal moves only that branch; D5: no other ref path)."""
+    if not (ctx.branch_ref and ctx.branch_ref.startswith("refs/heads/") and not ctx.branch_ref.startswith(ctx.namespace)):
+        raise Refusal("BRANCH", "HEAD must be attached to a branch under refs/heads/")
+
+
+def _chain_kind(commit: str, repo: Path) -> str:
+    if not _only(commit, (CHECKPOINT_LEDGER_REL,), repo):
+        return "record"                                   # a checkpoint-record commit: allowed anywhere
+    if not _only(commit, (FREEZE_RECORD_REL,), repo):
+        return "freeze_record"
+    if not _only(commit, WINDOW_PATHS, repo, prefixes=WINDOW_PREFIXES):
+        return "window"                                   # allowed only between the review and the grant (R4 B5)
+    return "chain"
+
+
 def check_grant(own_sha: str, m: dict, ctx: ExecContext) -> dict:
-    """rev. 2c chain: freeze F -> qualification Q -> qualification review Rv -> grant G, where between them only
-    checkpoint-record commits (touching only ledger/CHECKPOINT_PUSHES.jsonl) may occur; G touches only the grant."""
+    """rev. 2c chain (A8 as amended for R4 B5 and B7(c)), read backwards from the grant commit G = HEAD:
+       G <- [window or checkpoint-record commits] <- Rv <- [records] <- Q <- [records] <- FR <- F
+    FR (the freeze record, F's only child) names F; window commits change only the ledgers, handoff/ and
+    qualification/host_rerun/; G changes only the grant; the grant's fixed fields are the context's."""
     repo = ctx.repo
     gp = ctx.guard_ctx.grant_path
     head = git("rev-parse", "HEAD", repo=repo).stdout.strip()
@@ -332,34 +401,48 @@ def check_grant(own_sha: str, m: dict, ctx: ExecContext) -> dict:
             raise ValueError("not an object")
     except ValueError:
         raise Refusal("GRANT_INVALID", "the grant does not parse as a JSON object") from None
-    if ctx.kind == "PRODUCTION" and (g.get("schema") != "P309_GRANT/1" or g.get("cell") != TARGET_CELL or
-                                     g.get("closure_only") is not True or g.get("executions_authorized") != 1):
+    schema, cell = (("P309_GRANT/1", TARGET_CELL) if ctx.kind == "PRODUCTION" else
+                    ("P309_TEST_GRANT/1", G._TEST_CELL))
+    ea = g.get("executions_authorized")
+    if (g.get("schema") != schema or type(g.get("cell")) is not type(cell) or g.get("cell") != cell or
+            g.get("closure_only") is not True or type(ea) is not int or ea != 1):
         raise Refusal("GRANT_INVALID", "schema / cell / scope / executions")
     if g.get("driver_sha256") != own_sha:
         raise Refusal("GRANT_INVALID", "driver bytes differ from the granted driver")
     if g.get("frozen_manifest_sha256") != m["_sha256"]:
         raise Refusal("GRANT_INVALID", "the grant does not bind the frozen manifest")
-    chain, c = [], head
-    for _ in range(64):                                  # walk single parents back to the freeze commit
+    fz = recorded_freeze(repo)
+    if g.get("frozen_commit") != fz:
+        raise Refusal("GRANT_INVALID", "the grant does not name the recorded freeze commit")
+    seq, c = [], head
+    while True:                                          # single parents back to the freeze commit
         pl = git("rev-list", "--parents", "-n", "1", c, repo=repo).stdout.split()
         if len(pl) != 2:
             raise Refusal("GRANT_INVALID", "a merge or root commit inside the chain")
         c = pl[1]
-        if c == g.get("frozen_commit"):
+        if c == fz:
             break
-        if not _only(c, (CHECKPOINT_LEDGER_REL,), repo):
-            continue                                     # a checkpoint-record commit: allowed anywhere in the chain
-        chain.append(c)
-        if len(chain) > 2:
-            raise Refusal("GRANT_INVALID", "more than qualification and review between freeze and grant")
-    else:
-        raise Refusal("GRANT_INVALID", "the chain never reaches the named freeze commit")
-    if len(chain) != 2:
-        raise Refusal("GRANT_INVALID", "the chain must be freeze -> qualification -> review -> grant")
-    review_c, qual_c = chain
-    fz = freeze_commit(repo)
-    if fz != g.get("frozen_commit") or (g.get("qualification_commit"), g.get("qualification_review_commit")) != (
-            qual_c, review_c):
+        seq.append((c, _chain_kind(c, repo)))
+        if len(seq) > 256:
+            raise Refusal("GRANT_INVALID", "the chain never reaches the recorded freeze commit")
+    i = 0
+    while i < len(seq) and seq[i][1] in ("record", "window"):
+        i += 1
+    if i >= len(seq):
+        raise Refusal("GRANT_INVALID", "the chain must be freeze -> record -> qualification -> review -> grant")
+    review_c = seq[i][0]
+    i += 1
+    while i < len(seq) and seq[i][1] == "record":
+        i += 1
+    if i >= len(seq):
+        raise Refusal("GRANT_INVALID", "the chain must be freeze -> record -> qualification -> review -> grant")
+    qual_c = seq[i][0]
+    i += 1
+    while i < len(seq) and seq[i][1] == "record":
+        i += 1
+    if i != len(seq) - 1 or seq[i][1] != "freeze_record":
+        raise Refusal("GRANT_INVALID", "only the freeze record and checkpoint records may precede the qualification")
+    if (g.get("qualification_commit"), g.get("qualification_review_commit")) != (qual_c, review_c):
         raise Refusal("GRANT_INVALID", "the grant does not name the chain commits")
     if _only(review_c, (), repo, prefixes=(QREVIEW_PREFIX,)):
         raise Refusal("GRANT_INVALID", "the review commit changes more than the review files")
@@ -376,15 +459,78 @@ def check_grant(own_sha: str, m: dict, ctx: ExecContext) -> dict:
     rv = git("show", f"{review_c}:{QREVIEW_REL}", repo=repo).stdout
     if not verdict_ok(rv, "QUALIFICATION_ACCEPTED"):
         raise Refusal("REVIEW_VERDICT", "qualification review is not QUALIFICATION_ACCEPTED")
-    if git("merge-base", "--is-ancestor", fz, head, repo=repo).returncode:
-        raise Refusal("GRANT_INVALID", "the freeze commit is not an ancestor")
     later = git("log", "--format=%H", f"{fz}..{head}", "--", *(f"{NS_REL}/{d}" for d in FROZEN_DIRS),
                 repo=repo).stdout.split()
     if later:
         raise Refusal("GRANT_INVALID", "a frozen directory changed after the freeze")
     return {"grant_commit": head, "grant_sha256": sha(raw.stdout.encode()), "freeze_commit": fz,
             "qualification_commit": qual_c, "qualification_review_commit": review_c,
-            "cell_interval": g.get("cell_interval"), "drift_hull_Ew": g.get("drift_hull_Ew")}
+            "cell_interval": g.get("cell_interval"), "drift_hull_Ew": g.get("drift_hull_Ew"), "_grant": g}
+
+
+def expected_cell(ctx: ExecContext, m: dict) -> tuple:
+    """R4 B1: the cell is never taken from the grant.  PRODUCTION: the CUSUM entry of the pinned cells.json for the
+    target cell, as exact rationals (read in execute only, after check_grant).  SANDBOX: the declared h3 decoy cell."""
+    if ctx.kind != "PRODUCTION":
+        return F(TEST_CELL_INTERVAL[0]), F(TEST_CELL_INTERVAL[1])
+    rows = [c for c in json.loads(read_pinned(pin_table(m), data_rel(m, "cells_json"), ctx.repo))
+            if c.get("detector") == "CUSUM" and c.get("index") == TARGET_CELL]
+    if len(rows) != 1:
+        raise Refusal("CELL", "the pinned cells.json does not hold exactly one entry for the target cell")
+    return cover_interval(rows[0])
+
+
+def cover_rat(v) -> F:
+    """a cells.json endpoint exactly as the canonical cover loader reads it (k5_minimality.rat): a string, or a list of
+    two exact-rational strings whose SUM is the value (the second is a correction term, usually 0/1)."""
+    if isinstance(v, str):
+        return F(v)
+    if not (isinstance(v, list) and len(v) == 2 and all(isinstance(x, str) for x in v)):
+        raise Refusal("CELL", "a cells.json endpoint is not a string or a pair of strings")
+    return F(v[0]) + F(v[1])
+
+
+def cover_interval(row: dict) -> tuple:
+    return cover_rat(row["left"]), cover_rat(row["right"])
+
+
+def _utc_z(s) -> datetime.datetime:
+    return datetime.datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=datetime.timezone.utc)
+
+
+def premarker_admission(ctx: ExecContext, g: dict, m: dict, cell: tuple) -> dict:
+    """R4 B3: before the marker, every admission precondition that does not need the marker, so that no avoidable
+    grant defect is found only after the single evaluation has been spent.  Refuses (exit 2, no marker)."""
+    import platform
+    import srk_certify as S
+    ok, why = G.premarker_check(ctx.guard_ctx)          # the guard's own checks 2-6, 8, 9 and 7 without the marker
+    if not ok:
+        raise Refusal("ADMISSION", why)
+    pins = pin_table(m)
+    wb, _ = S.cell_blocks(*cell)
+    checks = {
+        "cell_interval": [fs(F(x)) for x in g.get("cell_interval") or []] == [fs(cell[0]), fs(cell[1])],
+        "drift_hull_Ew": [fs(F(x)) for x in g.get("drift_hull_Ew") or []] == [fs(wb[0]), fs(wb[1])],
+        "geometry": g.get("geometry") == GRANT_GEOMETRY[ctx.kind],
+        "verifier_id": g.get("verifier_id") == "sha256:" + pins[VARIANT_REL][0],
+        "guard_id": g.get("guard_id") == "sha256:" + pins[GUARD_REL][0],
+        "marker_ref": g.get("marker_ref") == ctx.marker_ref,
+        "worktree": str(Path((g.get("execution_host") or {}).get("worktree", "")).resolve()) == str(ctx.repo.resolve()),
+        "runtime": (g.get("runtime") or {}).get("python") == platform.python_version() == m["runtime"]["python"],
+        "committer_identity": git("var", "GIT_COMMITTER_IDENT", repo=ctx.repo).returncode == 0,
+    }
+    now = datetime.datetime.now(datetime.timezone.utc)
+    try:
+        checks["not_after_horizon"] = _utc_z(g["not_after_utc"]) >= now + datetime.timedelta(seconds=MIN_GRANT_HORIZON_S)
+        checks["issued_utc"] = _utc_z(g["issued_utc"]) <= now
+    except (KeyError, TypeError, ValueError):
+        checks["not_after_horizon"] = checks["issued_utc"] = False
+    auth = g.get("authority")
+    checks["authority"] = isinstance(auth, str) and bool(auth.strip()) and not any(t in auth for t in PLACEHOLDER_MARKS)
+    bad = sorted(k for k, v in checks.items() if not v)
+    if bad:
+        raise Refusal("ADMISSION", f"grant preconditions fail before the marker: {bad}")
+    return checks
 
 
 # ------------------------------------------------------------------------------------------------ consumer (Stage 2)
@@ -605,8 +751,13 @@ def run_jobs(specs: list, *, budget_s: float, job_limit_s: float, workers: int, 
         cum += cpu
         sig = os.WTERMSIG(status) if os.WIFSIGNALED(status) else None
         rc = os.WEXITSTATUS(status) if os.WIFEXITED(status) else None
-        if sig in (signal.SIGXCPU, signal.SIGKILL) or cpu >= job_limit_s:
+        if sig == signal.SIGXCPU or (sig == signal.SIGKILL and cpu >= job_limit_s):
+            # R4 B4: only the kernel's CPU-limit enforcement is budget exhaustion (fallback); any other abnormal end
+            # (an OOM kill, a kill -9 below the limit) is a runtime failure -> JOB_EXCEPTION -> the stage raises
             done[idx] = {"kind": "TERMINATED_JOB_LIMIT", "cpu_s": round(cpu, 3), "signal": sig}
+        elif sig is not None:
+            done[idx] = {"kind": "JOB_EXCEPTION", "error": f"killed by signal {sig} below the CPU limit",
+                         "cpu_s": round(cpu, 3)}
         elif rc == 0:
             try:
                 done[idx] = dict(json.loads(Path(outp).read_text()), cpu_s=round(cpu, 3))
@@ -630,9 +781,10 @@ def _spawn_job(spec: dict):
 
     def limit():
         resource.setrlimit(resource.RLIMIT_CPU, (lim, lim + 5))
+        resource.setrlimit(resource.RLIMIT_CORE, (0, 0))    # SIGXCPU's default action would dump core (R4 B4)
         for s in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP, signal.SIGQUIT):
             signal.signal(s, signal.SIG_IGN)
-    return subprocess.Popen([sys.executable, "-B", str(HERE), "_job", json.dumps(spec)], preexec_fn=limit,
+    return subprocess.Popen([sys.executable, "-I", "-S", "-B", str(HERE), "_job", json.dumps(spec)], preexec_fn=limit,
                             stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
                             env={**ENV, "PYTHONHASHSEED": "0"})
 
@@ -647,12 +799,13 @@ def job_stage1a(spec: dict) -> dict:
     _check_worker_pins(load_manifest(), (S, GT, KX, sys.modules["srk_envelope"], sys.modules["srk_float"], G, E))
     mode = spec["mode"]
     if mode == "target":
+        check_run_nonce(spec)
         S.Q = G.producer_adapter(G.PRODUCTION)           # admission re-checked on every guarded call
     elif mode != "decoy":
         raise RuntimeError("unknown job mode")
     vs = importlib.util.spec_from_file_location("srk_verify_indep_scoped", str(REPO / VARIANT_REL))
-    V = importlib.util.module_from_spec(vs)
-    vs.loader.exec_module(V)
+    V = _RecordingVerifier(importlib.util.module_from_spec(vs))
+    vs.loader.exec_module(V._V)
     if GT.verifier_identity(V) != spec["verifier_id"]:
         raise RuntimeError("verifier bytes differ from the pinned verifier")
     g = KX.Geom(F(spec["h"]), F(spec["k"]))
@@ -668,8 +821,66 @@ def job_stage1a(spec: dict) -> dict:
     return {"kind": "JOB_RETURNED", "block": spec["block"], "degree": spec["degree"],
             "W_status": rung["W"]["status"],
             "V_status": {str(i): rung["V"][i]["status"] for i in rung["V"]},
-            "certificates": certs, "verdicts": verdicts, "verdict_source": source,
-            "adapter_records": list(getattr(S.Q, "records", [])), "log_digest": sha("\n".join(map(str, logs)).encode())}
+            "certificates": certs, "verdicts": verdicts, "verdict_details": V.details, "verdict_source": source,
+            "adapter_records": _labelled(getattr(S.Q, "records", []), mode),
+            "log_digest": sha("\n".join(map(str, logs)).encode())}
+
+
+class _RecordingVerifier:
+    """R4 B6 (protocol 2.6: all verdicts WITH reasons): delegates verify_cert to the pinned variant module and keeps
+    each result's verdict, reason and admission.  __file__ is the variant's, so verifier_identity is unchanged."""
+    KEYS = ("verdict", "reason", "admission", "describe", "boxes", "maxdepth", "false")
+
+    def __init__(self, module):
+        self._V, self.details = module, {}
+
+    @property
+    def __file__(self):
+        return self._V.__file__
+
+    def verify_cert(self, c, *a, **kw):
+        r = self._V.verify_cert(c, *a, **kw)
+        self.details[c.get("sha256")] = {k: r[k] for k in self.KEYS if k in r and isinstance(r[k], (str, int, bool))}
+        return r
+
+
+def _labelled(records, mode: str) -> list:
+    """R4 NB7: adapter records keep the producer's own class labels; the job mode is added to each sealed record."""
+    return [dict(r, job_mode=mode) for r in records]
+
+
+def create_run_nonce(ctx: ExecContext) -> str:
+    """R4 NB6: an O_EXCL file in the git dir, created just before the marker and removed after the recording, that
+    binds target-mode jobs to this execute process (token and pid)."""
+    token = os.urandom(16).hex()
+    dfd = os.open(git_dir(ctx), os.O_RDONLY | os.O_DIRECTORY)
+    try:
+        fd = os.open(RUN_NONCE_NAME, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o600, dir_fd=dfd)
+        try:
+            os.write(fd, json.dumps({"pid": os.getpid(), "token": token}).encode())
+            os.fsync(fd)
+        finally:
+            os.close(fd)
+    finally:
+        os.close(dfd)
+    return token
+
+
+def remove_run_nonce(ctx: ExecContext) -> None:
+    try:
+        os.unlink(git_dir(ctx) / RUN_NONCE_NAME)
+    except OSError:
+        pass
+
+
+def check_run_nonce(spec: dict) -> None:
+    """a target-mode job runs only as a child of the live execute process that created the nonce."""
+    try:
+        rec = json.loads((Path(spec["_git_dir"]) / RUN_NONCE_NAME).read_text())
+    except (OSError, KeyError, ValueError):
+        raise RuntimeError("target job without a run nonce: not started by execute") from None
+    if rec.get("token") != spec.get("_run_token") or rec.get("pid") != os.getppid():
+        raise RuntimeError("target job not bound to the live execute process")
 
 
 def _check_worker_pins(m: dict, modules) -> None:
@@ -682,7 +893,7 @@ def _check_worker_pins(m: dict, modules) -> None:
 
 
 def stage1a(mode: str, cell: tuple, geometry: dict, verifier_id: str, *, workers: int = WORKERS, runner=None,
-            budget_s: float = STAGE1A_BUDGET_S) -> dict:
+            budget_s: float = STAGE1A_BUDGET_S, extra: dict | None = None) -> dict:
     """protocol 2: jobs, budget, per-rung certificates, in-process verdicts, the pinned gate.  Non-CERTIFIED, non-ACCEPT
     and budget outcomes fall back (Gamma-bar_i = None); a job exception or a gate exception raises (post-marker ->
     EXECUTION_INDETERMINATE)."""
@@ -690,24 +901,28 @@ def stage1a(mode: str, cell: tuple, geometry: dict, verifier_id: str, *, workers
     import srk_gate as GT
     wb, subs = S.cell_blocks(cell[0], cell[1])
     specs = [{"mode": mode, "h": geometry["h"], "k": geometry["k"], "block": [fs(subs[j][0]), fs(subs[j][1])],
-              "weight_block": [fs(wb[0]), fs(wb[1])], "degree": d, "verifier_id": verifier_id}
+              "weight_block": [fs(wb[0]), fs(wb[1])], "degree": d, "verifier_id": verifier_id, **(extra or {})}
              for j, d in stage1a_jobs()]
     run = run_jobs(specs, budget_s=budget_s, job_limit_s=STAGE1A_JOB_LIMIT_S, workers=workers, runner=runner)
     exc = [i for i, r in run["results"].items() if r["kind"] == "JOB_EXCEPTION"]
     if exc:
         raise RuntimeError(f"Stage-1a job exception(s) {exc}: " + run["results"][exc[0]].get("error", ""))
-    certs, verdicts = [], {}
+    certs, verdicts, details = [], {}, {}
     for i in sorted(run["results"]):
         r = run["results"][i]
         if r["kind"] != "JOB_RETURNED":
             continue                                          # terminated by the job limit: discarded (fallback)
         if r["verdict_source"] != verifier_id:
             raise RuntimeError("a job's verdicts do not come from the pinned verifier")
+        vd = r.get("verdict_details")
+        if not isinstance(vd, dict) or set(vd) != set(r["verdicts"]):
+            raise RuntimeError("a job's verdict reasons do not cover its verdicts")
         certs.extend(r["certificates"])
         verdicts.update(r["verdicts"])
+        details.update(r["verdict_details"])
     gr = GT.gate(cell[0], cell[1], dict(geometry), "whole", certs, verdicts, indices=STAGE1A_INDICES,
                  verdict_source=verifier_id)
-    return {"gate_result": gr, "certificates": certs, "verdicts": verdicts, "run": {
+    return {"gate_result": gr, "certificates": certs, "verdicts": verdicts, "verdict_details": details, "run": {
         k: v for k, v in run.items() if k != "results"}, "jobs": {str(i): {k: v for k, v in r.items()
                                                                           if k not in ("certificates",)}
                                                                for i, r in run["results"].items()},
@@ -721,6 +936,10 @@ def gate_report(gr) -> dict:
 
 # ------------------------------------------------------------------------------------------------ Stage 1b (RLR307)
 def job_stage1b(spec: dict) -> dict:
+    if spec["mode"] == "target":
+        check_run_nonce(spec)
+    elif spec["mode"] != "decoy":
+        raise RuntimeError("unknown job mode")
     m = load_manifest()
     _check_worker_pins(m, (G, E))
     rl = load_rlr307(m)
@@ -729,7 +948,7 @@ def job_stage1b(spec: dict) -> dict:
     mods = PIN.load_certifier(REPO, guard, check_git=True)
     rec = S1.certify_rung(mods, F(spec["hull"][0]), F(spec["hull"][1]), spec["degree"])
     return {"kind": "JOB_RETURNED", "block": spec["block"], "degree": spec["degree"], "status": rec.get("status"),
-            "record": rec, "adapter_records": list(guard.records)}
+            "record": rec, "adapter_records": _labelled(guard.records, spec["mode"])}
 
 
 def _load_certifier_isolated(PIN, guard) -> dict:
@@ -749,7 +968,7 @@ def _load_certifier_isolated(PIN, guard) -> dict:
 
 
 def stage1b(mode: str, cell: tuple, m: dict, *, workers: int = WORKERS, runner=None,
-            budget_s: float = STAGE1B_BUDGET_S) -> dict:
+            budget_s: float = STAGE1B_BUDGET_S, extra: dict | None = None) -> dict:
     """protocol 3: the RLR307 Stage-1 rules verbatim; CERTIFICATION_FAILED -> fallback to S_I1; an exception or an
     independent-reconstruction mismatch raises (post-marker -> EXECUTION_INDETERMINATE)."""
     rl = load_rlr307(m)
@@ -763,7 +982,8 @@ def stage1b(mode: str, cell: tuple, m: dict, *, workers: int = WORKERS, runner=N
     blocks = S1.blocks_for(cell[0], cell[1])
     hull = [(fs(b["hull_lo"]), fs(b["hull_hi"])) for b in blocks]
     order = sorted(((i, d) for i in range(len(blocks)) for d in S1.LADDER), key=lambda j: (-j[1], j[0]))
-    specs = [{"mode": mode, "stage": "1b", "block": i, "hull": list(hull[i]), "degree": d} for i, d in order]
+    specs = [{"mode": mode, "stage": "1b", "block": i, "hull": list(hull[i]), "degree": d, **(extra or {})}
+             for i, d in order]
     run = run_jobs(specs, budget_s=budget_s, job_limit_s=STAGE1B_JOB_LIMIT_S, workers=workers, runner=runner)
     res = {}
     for idx, r in run["results"].items():
@@ -861,7 +1081,7 @@ def seal_blob(ctx: ExecContext, blob: str, message: str) -> str:
             msgf = Path(td) / "msg"
             msgf.write_text(message)
             steps = [git("read-tree", head, repo=ctx.repo, env_extra=idx),
-                     git("update-index", "--add", "--cacheinfo", f"100644,{blob},{RESULT_REL}", repo=ctx.repo,
+                     git("update-index", "--add", "--cacheinfo", f"100644,{blob},{ctx.result_rel}", repo=ctx.repo,
                          env_extra=idx)]
             tree = git("write-tree", repo=ctx.repo, env_extra=idx)
             if any(s.returncode for s in steps) or tree.returncode:
@@ -875,10 +1095,10 @@ def seal_blob(ctx: ExecContext, blob: str, message: str) -> str:
             if not ctx.branch_ref or git("update-ref", ctx.branch_ref, cid, head, repo=ctx.repo).returncode:
                 last = "update-ref"
                 continue
-            entry = git("ls-tree", cid, "--", RESULT_REL, repo=ctx.repo).stdout.split()
+            entry = git("ls-tree", cid, "--", ctx.result_rel, repo=ctx.repo).stdout.split()
             if entry[:3] != ["100644", "blob", blob]:
                 raise OSError("the sealed entry is not the persisted blob")
-            git("update-index", "--add", "--cacheinfo", f"100644,{blob},{RESULT_REL}", repo=ctx.repo)
+            git("update-index", "--add", "--cacheinfo", f"100644,{blob},{ctx.result_rel}", repo=ctx.repo)
             return cid
     raise OSError(f"seal failed at {last}")
 
@@ -889,22 +1109,25 @@ def materialize(ctx: ExecContext, blob: str) -> None:
     if git_blob_id(data) != blob:
         raise OSError("the object store returned other bytes")
     fds = [os.open(str(ctx.repo), os.O_RDONLY | os.O_DIRECTORY)]
+    parts = ctx.result_rel.split("/")
+    name, fresh = parts[-1], parts[len(_result_parents(ctx)):-1]      # production: `execution` must be new
     try:
-        for part in (NS_REL + "/evidence").split("/"):
+        for part in _result_parents(ctx):
             try:
                 os.mkdir(part, 0o755, dir_fd=fds[-1])
             except FileExistsError:
                 pass
             fds.append(os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=fds[-1]))
-        os.mkdir("execution", 0o755, dir_fd=fds[-1])
-        fds.append(os.open("execution", os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=fds[-1]))
-        fd = os.open(RESULT_NAME, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644, dir_fd=fds[-1])
+        for part in fresh:
+            os.mkdir(part, 0o755, dir_fd=fds[-1])
+            fds.append(os.open(part, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW, dir_fd=fds[-1]))
+        fd = os.open(name, os.O_WRONLY | os.O_CREAT | os.O_EXCL | os.O_NOFOLLOW, 0o644, dir_fd=fds[-1])
         try:
             os.write(fd, data)
             os.fsync(fd)
         finally:
             os.close(fd)
-        rfd = os.open(RESULT_NAME, os.O_RDONLY | os.O_NOFOLLOW, dir_fd=fds[-1])
+        rfd = os.open(name, os.O_RDONLY | os.O_NOFOLLOW, dir_fd=fds[-1])
         try:
             st = os.fstat(rfd)
             back = b""
@@ -934,19 +1157,26 @@ def decide(st1b: dict | None, st2: dict) -> dict:
             "stage1b_fallback_to_S_I1": st1b is None or st1b["cell"]["status"] != "CERTIFIED"}
 
 
-def evaluate_target(con: dict, prep: dict) -> dict:
-    """post-marker: Stage 1a, Stage 1b, Stage 2.  Any exception propagates (-> EXECUTION_INDETERMINATE)."""
+def evaluate(con: dict, prep: dict, *, mode: str = "target", geometry: dict | None = None, runner1a=None,
+             runner1b=None, extra: dict | None = None) -> dict:
+    """Stage 1a, Stage 1b, Stage 2 in one process, in execute's order (R4 B7(a): one function body serves execute
+    and the QC integration flow on declared decoys).  Any exception propagates (-> EXECUTION_INDETERMINATE)."""
     cell, vid, m = prep["cell"], prep["verifier_id"], prep["manifest"]
-    st1a = stage1a("target", cell, GEOMETRY, vid)
-    st1b = stage1b("target", cell, m)
+    st1a = stage1a(mode, cell, geometry or GEOMETRY, vid, runner=runner1a, extra=extra)
+    st1b = stage1b(mode, prep.get("cell_1b", cell), m, runner=runner1b, extra=extra)
     A = compose_S(prep["A_I1"], st1b)
     if st1b["cell"]["status"] == "CERTIFIED" and A != _ind().consumed(prep["A_I1"], {
             "A1_SUPPLY": st1b["cell"]["A1_SUPPLY_max"], "A2_SUPPLY": st1b["cell"]["A2_SUPPLY_max"]}):
         raise IndependentCheckFailed("S disagrees with its independent reconstruction")
-    st2 = evaluate_srk(con, prep["ci"], A, cell, st1a["gate_result"], vid)
-    return {"cell": TARGET_CELL, "stage1a": {**{k: v for k, v in st1a.items() if k != "gate_result"},
-                                             "gate": gate_report(st1a["gate_result"])},
+    st2 = evaluate_srk(con, prep["ci"], A, prep.get("cell_2", cell), st1a["gate_result"], vid)
+    return {"cell": prep.get("cell_label", TARGET_CELL),
+            "stage1a": {**{k: v for k, v in st1a.items() if k != "gate_result"}, "gate": gate_report(st1a["gate_result"])},
             "stage1b": st1b, "S": {j: fs(A[j]) for j in FIELDS}, "stage2": st2, "decision": decide(st1b, st2)}
+
+
+def evaluate_target(con: dict, prep: dict) -> dict:
+    """post-marker: the evaluation of the granted cell (target mode, jobs bound to this process by the run nonce)."""
+    return evaluate(con, prep, extra=prep.get("job_binding"))
 
 
 def fallback_bytes(common_min: dict, stage: str, exc: BaseException) -> bytes:
@@ -972,6 +1202,8 @@ def after_marker(ctx: ExecContext, con, prep, common: dict, evaluator, t0: float
         except BaseException as exc:  # noqa: BLE001  (protocol 2.5 / 3: any exception -> EXECUTION_INDETERMINATE)
             kind = "INDEPENDENT_CHECK_FAILED" if isinstance(exc, IndependentCheckFailed) else "TARGET_EVALUATION_FAILED"
             tgt, status = {"error": f"{type(exc).__name__}: {exc}"[:400], "failure_kind": kind}, kind
+        if status == "TARGET_EVALUATED" and isinstance(tgt.get("stage1a"), dict):
+            common["stage1a"] = tgt.pop("stage1a")       # R4 B2(a): spec 3, the review mode reads stage1a at top level
         usage = resource.getrusage(resource.RUSAGE_SELF)
         cusage = resource.getrusage(resource.RUSAGE_CHILDREN)
         common.update({"status": status, "target_evaluated": status == "TARGET_EVALUATED", "target_evaluations": 1,
@@ -1012,38 +1244,56 @@ def after_marker(ctx: ExecContext, con, prep, common: dict, evaluator, t0: float
     return 0 if status == "TARGET_EVALUATED" else 5
 
 
+def control_failure(exc: BaseException) -> dict:
+    """R4 NB5: any exception in the historical control is a control mismatch (protocol 4: "any mismatch ... STOP")."""
+    body = {"cell": TARGET_CELL, "fields": {}, "reproduces_C2_exactly": False}
+    return {**body, "digest": sha(canon(body)), "error": f"{type(exc).__name__}: {exc}"[:400]}
+
+
 def run_execute(own_sha: str, ctx: ExecContext | None = None, prepare=None, evaluator=None, persist=None,
                 sealer=None, materializer=None, control=None) -> int:
-    """THE execution.  Before the marker: flags, not-evaluated, result paths, clean tree, check_grant, pins,
-    governance, the historical control (CONTROL_FAILED -> exit 3, not consumed).  Then the marker (CAS), then
-    Stage 1a / 1b / 2 and recording from memory."""
+    """THE execution.  Before the marker: hooks, flags, branch, not-evaluated, result paths, clean tree, check_grant,
+    pins, governance, the cell from cells.json (B1), the dry admission (B3), the historical control (CONTROL_FAILED
+    -> exit 3, not consumed).  Then the run nonce and the marker (CAS), then Stage 1a / 1b / 2 and recording from
+    memory."""
+    if (ctx is None or ctx.kind != "SANDBOX") and any(h is not None for h in (prepare, evaluator, persist, sealer,
+                                                                                materializer, control)):
+        raise Refusal("HOOKS", "test hooks are honoured only in a sandbox context")      # R4 NB4
     _MODE["mode"] = "execute"
     ctx = ctx or production_context()
     t0, started = time.time(), utc()
-    if ctx.kind == "PRODUCTION":
-        check_flags()
+    check_flags()
+    check_branch(ctx)
     check_not_evaluated(ctx)
     check_result_paths(ctx)
     check_clean(ctx)
     m = load_manifest(ctx.repo)
     grant = check_grant(own_sha, m, ctx)
+    g = grant.pop("_grant")
     shas = check_bindings(m, ctx.repo) if ctx.kind == "PRODUCTION" else {"sandbox": True}
     state = check_governance_state(m, ctx.repo) if ctx.kind == "PRODUCTION" else {"sandbox": True}
-    cell = tuple(F(x) for x in grant["cell_interval"])
-    if ctx.kind == "PRODUCTION":
-        import srk_certify as S
-        wb, _ = S.cell_blocks(*cell)
-        if [fs(wb[0]), fs(wb[1])] != [fs(F(x)) for x in grant["drift_hull_Ew"]]:
-            raise Refusal("GRANT_INVALID", "Ew is not the outward hull of the granted cell")
+    cell = expected_cell(ctx, m)                          # R4 B1: never from the grant
+    admission = premarker_admission(ctx, g, m, cell)      # R4 B3: includes grant cell_interval == cell and Ew
     verifier_id = "sha256:" + pin_table(m)[VARIANT_REL][0]
     if ctx.kind == "PRODUCTION":
         con = load_consumer(m, ctx.repo)
+        cov = con["cover"].get(TARGET_CELL)
+        if not cov or cover_interval(cov) != cell:
+            raise Refusal("CELL", "the consumer's cover disagrees with the pinned cells.json")
         load_rlr307(m, ctx.repo)
-        ctl = historical_control(con, m, cell, verifier_id, ctx.repo)
+        try:
+            ctl = historical_control(con, m, cell, verifier_id, ctx.repo)
+        except Exception as exc:  # noqa: BLE001
+            ctl = control_failure(exc)
     else:
-        con, ctl = None, (control or (lambda: {"reproduces_C2_exactly": True, "digest": "sandbox"}))()
+        con = None
+        try:
+            ctl = (control or (lambda: {"reproduces_C2_exactly": True, "digest": "sandbox"}))()
+        except Exception as exc:  # noqa: BLE001
+            ctl = control_failure(exc)
     common = {"schema": SCHEMA, "cell": TARGET_CELL, "m": 5, "route": "P309", "scope": "CLOSURE_ONLY",
-              "context": ctx.kind, "grant": grant, "input_sha256": shas, "governance_state_before": state,
+              "context": ctx.kind, "grant": grant, "cell_interval": [fs(cell[0]), fs(cell[1])],
+              "premarker_admission": admission, "input_sha256": shas, "governance_state_before": state,
               "driver_sha256": own_sha, "started_utc": started, "verifier_id": verifier_id,
               "historical_control": {k: v for k, v in ctl.items() if not k.startswith("_")},
               "python": sys.version.split()[0]}
@@ -1066,17 +1316,27 @@ def run_execute(own_sha: str, ctx: ExecContext | None = None, prepare=None, eval
     for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP, signal.SIGQUIT):
         signal.signal(sig, signal.SIG_IGN)
     signal.alarm(0)
-    _arm_marker(ctx, grant["grant_commit"])
-    return after_marker(ctx, con, prep, common, evaluator or evaluate_target, t0, persist, sealer, materializer)
+    token = create_run_nonce(ctx)
+    if isinstance(prep, dict):
+        prep["job_binding"] = {"_run_token": token, "_git_dir": str(git_dir(ctx))}
+    try:
+        _arm_marker(ctx, grant["grant_commit"])
+    except BaseException:
+        remove_run_nonce(ctx)
+        raise
+    try:
+        return after_marker(ctx, con, prep, common, evaluator or evaluate_target, t0, persist, sealer, materializer)
+    finally:
+        remove_run_nonce(ctx)
 
 
 def run_seal_only(ctx: ExecContext | None = None) -> int:
     _MODE["mode"] = "seal-only"
     ctx = ctx or production_context()
-    if ctx.kind == "PRODUCTION":
-        check_flags()
+    check_flags()
     for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP, signal.SIGQUIT):
         signal.signal(sig, signal.SIG_IGN)
+    check_branch(ctx)
     marker = git("rev-parse", "-q", "--verify", ctx.marker_ref, repo=ctx.repo).stdout.strip()
     pending = git("rev-parse", "-q", "--verify", ctx.pending_ref, repo=ctx.repo).stdout.strip()
     emergency = git_dir(ctx) / EMERGENCY_NAME
@@ -1090,6 +1350,18 @@ def run_seal_only(ctx: ExecContext | None = None) -> int:
                 data += chunk
         finally:
             os.close(fd)
+        # owner D5: the pending ref is created only for evidence of a granted, consumed execution.  An emergency file
+        # is written only after the marker (after_marker), and the marker only after check_grant (run_execute).
+        if not marker:
+            raise Refusal("SEAL_ONLY", "emergency evidence without a marker: nothing is persisted")
+        if git("cat-file", "-e", f"{marker}:{ctx.guard_ctx.grant_path}", repo=ctx.repo).returncode:
+            raise Refusal("SEAL_ONLY", "the marker does not name a grant commit")
+        try:
+            bound = (json.loads(data).get("grant") or {}).get("grant_commit")
+        except (ValueError, AttributeError):
+            bound = marker                                   # unparseable evidence: bound by the marker alone
+        if bound != marker:
+            raise Refusal("SEAL_ONLY", "the emergency evidence is not bound to the marker's grant commit")
         pending = _persist_pending(ctx, data)
     if not pending:
         raise Refusal("SEAL_ONLY", "no persisted evidence (no pending ref, no emergency file)")
@@ -1097,13 +1369,14 @@ def run_seal_only(ctx: ExecContext | None = None) -> int:
                           env=dict(ENV), stdin=subprocess.DEVNULL).stdout
     try:
         status = json.loads(data).get("status", "UNKNOWN")
-    except ValueError:
+    except (ValueError, AttributeError):
         status = "UNPARSEABLE_EVIDENCE"
     if status == "CONTROL_FAILED" and marker:
         raise Refusal("SEAL_ONLY", "CONTROL_FAILED evidence but the marker exists")
     if status != "CONTROL_FAILED" and not marker:
         raise Refusal("SEAL_ONLY", "post-marker evidence without a marker")
-    entry = git("ls-tree", "HEAD", "--", RESULT_REL, repo=ctx.repo).stdout.split()
+    rel = ctx.result_rel
+    entry = git("ls-tree", "HEAD", "--", rel, repo=ctx.repo).stdout.split()
     if entry and entry[:3] != ["100644", "blob", pending]:
         raise Refusal("SEAL_ONLY", "HEAD holds a different result entry")
     cid = git("rev-parse", "HEAD", repo=ctx.repo).stdout.strip()
@@ -1114,17 +1387,17 @@ def run_seal_only(ctx: ExecContext | None = None) -> int:
             cid = seal_blob(ctx, pending, seal_message(f"{status}, sealed by seal-only"))
         except OSError as exc:
             raise Refusal("UNSEALED", str(exc))
-    if not os.path.lexists(ctx.repo / RESULT_REL):
+    if not os.path.lexists(ctx.repo / rel):
         try:
             materialize(ctx, pending)
         except (OSError, FileExistsError) as exc:
             print(f"P309 SEALED {cid} (status {status}); materialization refused: {type(exc).__name__}")
             return 7
     else:
-        st = os.lstat(ctx.repo / RESULT_REL)
+        st = os.lstat(ctx.repo / rel)
         same = False
         if stat.S_ISREG(st.st_mode):
-            same = (ctx.repo / RESULT_REL).read_bytes() == data
+            same = (ctx.repo / rel).read_bytes() == data
         if not same:
             print(f"P309 SEALED {cid} (status {status}); the worktree object at the result path is NOT the sealed bytes")
             return 7
@@ -1156,7 +1429,7 @@ def decoy_stage1b(k: int, workers: int, m: dict) -> dict:
              if c["detector"] == "CUSUM" and c["index"] == k]
     if len(cells) != 1:
         raise Refusal("DECOY_GEOMETRY", str(k))
-    lo, hi = F(cells[0]["left"][0], cells[0]["left"][1]), F(cells[0]["right"][0], cells[0]["right"][1])
+    lo, hi = cover_interval(cells[0])
     G.guard_interval((F(5), F(1, 2)), lo, hi)
     E.log("code/p309_driver.py decoy-stage1b", f"QC09 decoy Stage 1b (RLR307 rules) on declared cover cell {k}",
           klass="NONTARGET_DECOY", drifts=[[fs(lo), fs(hi)]], notes="the RLR307 decoy cells; outside the band")
@@ -1185,7 +1458,7 @@ def main(argv=None) -> int:
         return 0
     try:
         if a.mode in ("preflight", "execute", "seal-only") and (a.cell is not None or a.decoy is not None):
-            raise Refusal("CELL_OUT_OF_SCOPE", "execute takes no cell: the cell comes from the grant")
+            raise Refusal("CELL_OUT_OF_SCOPE", "execute takes no cell: the cell comes from the pinned cells.json")
         if a.mode == "execute":
             return run_execute(own_sha)
         if a.mode == "seal-only":
@@ -1223,6 +1496,9 @@ def main(argv=None) -> int:
     except (Refusal, G.QuarantineRefusal) as e:
         print(f"P309 REFUSED {e}")
         return 4 if getattr(e, "code", None) == "UNSEALED" else 2
+    except Exception as e:  # noqa: BLE001  (R4 NB5: a pre-marker exception is a refusal; after the marker,
+        print(f"P309 REFUSED (exception) {type(e).__name__}: {str(e)[:200]}")   # after_marker contains everything)
+        return 2
     finally:
         signal.alarm(0)
 

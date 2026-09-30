@@ -1,5 +1,5 @@
 {
- "schema": "P309_SCANNER_ALLOWANCE/2",
+ "schema": "P309_SCANNER_ALLOWANCE/3",
  "authority": "owner rulings 2 (governance/OWNER_RULINGS_2_P309_VERBATIM.md), section OWNER RULING - QUARANTINE SCANNER; spec fc2/FC2_SPEC_R2.md section 7; rev. 2 of this file adds the pending-result ref NAME (the second exactly-once ref of package section A), in the guard file only, under the same conditions -- a proposed extension recorded in governance/P309_REV2C_AMENDMENTS.md for independent review",
  "scope": "the research scanner's TARGET_PATH finding for exactly these exactly-once ref NAMES, as inert metadata, in exactly the listed files, under conditions (a)-(e); nothing else",
  "names": [
@@ -66,5 +66,193 @@
   "bypass of quarantine",
   "hidden evaluation"
  ],
- "amendment_rule": "adding a file or a site requires a reviewed amendment of this file before the freeze"
+ "amendment_rule": "adding a file or a site requires a reviewed amendment of this file before the freeze",
+ "production_tokens": [
+  "refs/p5y-k5-cell309-p309-r1",
+  "target-consumed",
+  "pending-result"
+ ],
+ "ref_mutation_verbs": [
+  "update-ref",
+  "symbolic-ref",
+  "push",
+  "fetch",
+  "pull",
+  "tag",
+  "branch",
+  "replace",
+  "notes",
+  "fast-import",
+  "commit",
+  "merge",
+  "rebase",
+  "reset",
+  "checkout",
+  "switch",
+  "cherry-pick",
+  "revert",
+  "am",
+  "stash",
+  "worktree",
+  "clone"
+ ],
+ "git_runner_names": [
+  "git",
+  "_git",
+  "_git_ok",
+  "_git_bytes",
+  "_run_git",
+  "sh",
+  "run",
+  "Popen",
+  "check_output",
+  "check_call",
+  "call"
+ ],
+ "planted_control_files": [
+  "tests/planted_control_p309.py",
+  "tests/planted_control_p309_formal.py"
+ ],
+ "ref_mutation_functions": [
+  {
+   "file": "code/checkpoint_push_p309.py",
+   "function": "main",
+   "ast_sha256": "38fab778483168542ec16a609764a6d907561448989447d2c9d00594c3991aa5",
+   "reason": "the owner-authorized single-ref checkpoint push of the formal branch: commits the push record, fetches, pushes one explicit refspec; check 7 refuses any production-namespace ref"
+  },
+  {
+   "file": "code/p309_driver.py",
+   "function": "production_context",
+   "ast_sha256": "2b00b5e48db324f731d8dc69851a8b2deeaeb4465afa8b4df674893395e822ab",
+   "reason": "read form `symbolic-ref -q HEAD` (the current branch); moves nothing"
+  },
+  {
+   "file": "code/p309_driver.py",
+   "function": "sandbox_context",
+   "ast_sha256": "9d56e804301538e35db7de979feef5336a663bfc4a4da6c1d93fd52f341b47ff",
+   "reason": "read form `symbolic-ref -q HEAD` (the current branch); moves nothing"
+  },
+  {
+   "file": "code/p309_driver.py",
+   "function": "seal_blob",
+   "ast_sha256": "da8e567cb535e87d42f3d2e968f714a0ef0b054825567a756016f9a472681522",
+   "reason": "the seal: moves ONLY ctx.branch_ref (under refs/heads/, check_branch) by compare-and-swap from HEAD; never a marker-namespace ref"
+  },
+  {
+   "file": "code/p309_guard.py",
+   "function": "_check_official",
+   "ast_sha256": "0b23af88e3ccc72ab4d2bfa66f98fca47e838dcf500ae54badcc29b799d740d1",
+   "reason": "read form `symbolic-ref -q HEAD` (check 7: the current branch); moves nothing"
+  },
+  {
+   "file": "tests/test_p309_exactly_once.py",
+   "function": "new_sandbox",
+   "ast_sha256": "3c315c1d1b312ade19d8cc8fd0f5a909761f02fc49d0105749e625b9184b5b70",
+   "reason": "QC11 sandbox only: a light repository under the scratchpad with the synthetic TEST names; refs are moved only inside it"
+  },
+  {
+   "file": "tests/test_p309_exactly_once.py",
+   "function": "build_chain",
+   "ast_sha256": "02a5c528472d695a46deb1a06cbfbe1934748d1ba0d657f5a54a1d52d5d8177c",
+   "reason": "QC11 sandbox only: a light repository under the scratchpad with the synthetic TEST names; refs are moved only inside it"
+  },
+  {
+   "file": "tests/test_p309_exactly_once.py",
+   "function": "pre_marker_flows",
+   "ast_sha256": "96f3e54f950ef9101fe3c4eb0767f7d855ca9412b7a5c27c52917ab2301cfc8c",
+   "reason": "QC11 sandbox only: a light repository under the scratchpad with the synthetic TEST names; refs are moved only inside it"
+  },
+  {
+   "file": "tests/test_p309_exactly_once.py",
+   "function": "admission_flows",
+   "ast_sha256": "c422740dee41a2a2d0a5ccc85f3b7e20c4f520e11adfd1ce6d477ecdc6fee7b1",
+   "reason": "QC11 sandbox only: a light repository under the scratchpad with the synthetic TEST names; refs are moved only inside it"
+  },
+  {
+   "file": "tests/test_p309_exactly_once.py",
+   "function": "post_marker_flows",
+   "ast_sha256": "c744bb8ef1f733861f378508b679264b53cf5a5f30d9f720cccc6f8c7d52d936",
+   "reason": "QC11 sandbox only: a light repository under the scratchpad with the synthetic TEST names; refs are moved only inside it"
+  },
+  {
+   "file": "tests/test_p309_guard.py",
+   "function": "new_sandbox",
+   "ast_sha256": "a4f2140849a96fab7ee678ad9e51687d3a903d6d2178d6a223fb007f7b00f2df",
+   "reason": "FC2 guard tests, sandbox only: a light repository under the scratchpad with the synthetic TEST names; refs are moved only inside it"
+  },
+  {
+   "file": "tests/test_p309_guard.py",
+   "function": "set_head",
+   "ast_sha256": "27de83927c73463155e7f6239cb58ad7eeea8678b5c3090184d3364913c98779",
+   "reason": "FC2 guard tests, sandbox only: a light repository under the scratchpad with the synthetic TEST names; refs are moved only inside it"
+  },
+  {
+   "file": "tests/test_p309_guard.py",
+   "function": "set_test_ref",
+   "ast_sha256": "d64317c97bf169d0014849077c3bd522c8bd4686058e26c98e63ec9afbd3abde",
+   "reason": "FC2 guard tests, sandbox only: a light repository under the scratchpad with the synthetic TEST names; refs are moved only inside it"
+  },
+  {
+   "file": "tests/test_verify_scoped.py",
+   "function": "TestFC2Scoped.fresh",
+   "ast_sha256": "a09dc5794fe8db0849d354accea7a2169578a2984bc746cf8e9a51eae58046d7",
+   "reason": "verifier-author tests: read form `symbolic-ref HEAD` of its own sandbox"
+  },
+  {
+   "file": "verify/scoped_sandbox.py",
+   "function": "Sandbox.__init__",
+   "ast_sha256": "1820ef2698731ac4eb5c7648f4a99dc9887443576a6932dc68ca91887aa7d981",
+   "reason": "verifier-author sandbox helper (E1-6 light sandbox; refuses production-namespace refs): read form of its own branch"
+  },
+  {
+   "file": "verify/scoped_sandbox.py",
+   "function": "Sandbox.commit",
+   "ast_sha256": "83f2c204a4c8eba1c96a4236fdebcca26223bd426c1ed351bb5f7fc1c6c49f5c",
+   "reason": "verifier-author sandbox helper: commits inside its own sandbox only"
+  },
+  {
+   "file": "verify/scoped_sandbox.py",
+   "function": "Sandbox.update_ref",
+   "ast_sha256": "9ac042318320d06fa20db5108d13ab5390a8d2497dfdf555aae6d3ec4622ece7",
+   "reason": "verifier-author sandbox helper: TEST refs inside its own sandbox only"
+  },
+  {
+   "file": "verify/scoped_sandbox.py",
+   "function": "Sandbox.delete_ref",
+   "ast_sha256": "64fdbd2f08201474b1609e4209c01414482d1345528d306d84234cb396f15349",
+   "reason": "verifier-author sandbox helper: TEST refs inside its own sandbox only"
+  },
+  {
+   "file": "verify/scoped_sandbox.py",
+   "function": "Sandbox.reset_hard_index",
+   "ast_sha256": "77cd22c50b4252f436da5e596899a44b18f1481f72aaa685a5dcb53a383c3d80",
+   "reason": "verifier-author sandbox helper: resets its own sandbox branch only"
+  },
+  {
+   "file": "verify/srk_verify_indep_scoped.py",
+   "function": "_admission",
+   "ast_sha256": "e8df9204a3b742dc04b0add67e6302b1da545ee75170038218a6a6050e1f35f8",
+   "reason": "read form `symbolic-ref -q HEAD` (check 7: the current branch); moves nothing"
+  },
+  {
+   "file": "tests/test_p309_guard.py",
+   "function": "run",
+   "ast_sha256": "520d1a9e1a5ae30794dbfd90ff4681d228455f3f69a820302ea803c2c3b6f5d9",
+   "reason": "FC2 guard tests (N7j): `checkout --detach` inside a sandbox only (light repository under the scratchpad, TEST names only)"
+  },
+  {
+   "file": "tests/test_p309_d5_exception.py",
+   "function": "run",
+   "ast_sha256": "b8e88a16e46478bb034394aa8d0a5cc452c8b6f88211503babe2c413401e9810",
+   "reason": "the D5 runtime controls' scratch sandbox: one empty commit in a fresh `git init` repository under the scratchpad (no marker-namespace ref; deleted afterwards)"
+  }
+ ],
+ "ref_mutation_rule": "owner D5: a git call with a ref-moving verb is allowed only inside an exactly-once site or a function listed here by file, qualified name, AST sha256 and reason; entries are added only by review, and code/p309_scan_pins.py refreshes the hashes of listed entries before the freeze only (never the exactly-once sites)",
+ "token_definitions": [
+  {
+   "file": "verify/scoped_sandbox.py",
+   "constant": "_FORBIDDEN_REF_PREFIX",
+   "reason": "the verifier author's sandbox helper: the production ref namespace, used ONLY to refuse any such ref in a sandbox (module-level constant)"
+  }
+ ]
 }

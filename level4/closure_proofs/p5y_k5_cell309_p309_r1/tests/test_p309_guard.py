@@ -99,7 +99,7 @@ def set_head(sb: Path, c: str) -> None:
 
 
 def set_test_ref(sb: Path, ref: str, c: str) -> None:
-    assert ref.startswith("refs/p309-test/") or ref.startswith("refs/heads/p309-test-"), ref
+    assert ref.startswith(("refs/p309-test/", "refs/heads/p309-test-", "refs/remotes/origin/p309-test-")), ref
     sh(sb, "update-ref", ref, c)
 
 
@@ -124,6 +124,14 @@ def grant_dict(fc: str, msha: str, **over) -> dict:
 
 
 DELETE = object()
+N2_REASONS = {"invalid_json": "JSONDecodeError", "missing_field": "grant misses", "wrong_type": "cell_interval malformed",
+              "unknown_schema": "schema/campaign", "ew_lo_ge_hi": "drift_hull_Ew malformed",
+              "non_rational": "not an exact rational"}
+
+
+def why(d, fragment: str) -> tuple:
+    """R4 NB2: a negative control passes only when it is refused FOR THE EXPECTED REASON"""
+    return d[0] == "REFUSE" and fragment in d[1], d
 
 
 def scenario(name: str, *, grant=None, grant_raw=None, manifest=None, extra_grant_files=None, marker="grant",
@@ -204,11 +212,11 @@ def run() -> dict:
     except Exception as exc:  # noqa: BLE001
         t("P1b_guard_interval_and_adapter_allowed", False, exc)
     # same valid sandbox: everything the positive path must still refuse
-    t("N4a_interval_leaves_Ew", dec(H3, "401/1024", "103/256", ctx)[0] == "REFUSE")
-    t("N9a_test_ctx_real_band_geometry_5", dec(H5, *REAL_ITEM, ctx)[0] == "REFUSE")
-    t("N9b_test_ctx_real_band_geometry_3", dec(H3, *REAL_ITEM, ctx)[0] == "REFUSE")
-    t("N9c_production_ctx_test_band", dec(H3, *EW)[0] == "REFUSE")
-    t("N12_guard_has_no_review_mode", dec(H3, *EW, ctx, mode="review")[0] == "REFUSE")
+    t("N4a_interval_leaves_Ew", *why(dec(H3, "401/1024", "103/256", ctx), "not inside Ew"))
+    t("N9a_test_ctx_real_band_geometry_5", *why(dec(H5, *REAL_ITEM, ctx), "only in the production context"))
+    t("N9b_test_ctx_real_band_geometry_3", *why(dec(H3, *REAL_ITEM, ctx), "only in the production context"))
+    t("N9c_production_ctx_test_band", *why(dec(H3, *EW), "only in a test context"))
+    t("N12_guard_has_no_review_mode", *why(dec(H3, *EW, ctx, mode="review"), "no review mode"))
     t("N13a_fail_closed_on_git_error", _fail_closed(ctx))
     try:
         G.producer_adapter(ctx).guard_drift(*REAL_ITEM)
@@ -224,7 +232,7 @@ def run() -> dict:
 
     # N1 no grant
     ctx1, _, _ = scenario("n1", grant=None)
-    t("N1_no_test_grant", dec(H3, *EW, ctx1)[0] == "REFUSE")
+    t("N1_no_test_grant", *why(dec(H3, *EW, ctx1), "no grant at HEAD"))
 
     # N2 malformed
     for nm, kw in {"invalid_json": dict(grant_raw=b"{not json"),
@@ -235,30 +243,30 @@ def run() -> dict:
                    "non_rational": dict(grant=lambda fc, ms: grant_dict(fc, ms, drift_hull_Ew=["0.333", "201/512"]))
                    }.items():
         cx, _, _ = scenario("n2_" + nm, **kw)
-        t("N2_" + nm, dec(H3, *EW, cx)[0] == "REFUSE")
+        t("N2_" + nm, *why(dec(H3, *EW, cx), N2_REASONS[nm]))
     # N3 wrong cell
     cx, _, _ = scenario("n3a", grant=lambda fc, ms: grant_dict(fc, ms, cell="OTHER_CELL"))
-    t("N3a_wrong_cell_string", dec(H3, *EW, cx)[0] == "REFUSE")
+    t("N3a_wrong_cell_string", *why(dec(H3, *EW, cx), "grant cell is not"))
     cx, _, _ = scenario("n3b", grant=lambda fc, ms: grant_dict(fc, ms, cell=G._PROD_CELL))
-    t("N3b_wrong_cell_type", dec(H3, *EW, cx)[0] == "REFUSE")
+    t("N3b_wrong_cell_type", *why(dec(H3, *EW, cx), "grant cell is not"))
     # N4 wrong Ew
     cx, _, _ = scenario("n4b", grant=lambda fc, ms: grant_dict(fc, ms, drift_hull_Ew=["85/256", "201/512"]))
-    t("N4b_Ew_not_outward_hull", dec(H3, "341/1024", "1425/4096", cx)[0] == "REFUSE")
+    t("N4b_Ew_not_outward_hull", *why(dec(H3, "341/1024", "1425/4096", cx), "outward 2^-10 hull"))
     cx, _, _ = scenario("n4c", grant=lambda fc, ms: grant_dict(fc, ms, cell_interval=["1/3", "3/8"],
                                                                drift_hull_Ew=["341/1024", "3/8"]))
-    t("N4c_narrower_Ew_excludes_block", dec(H3, *blocks[3], cx)[0] == "REFUSE")
+    t("N4c_narrower_Ew_excludes_block", *why(dec(H3, *blocks[3], cx), "not inside Ew"))
     # N5 wrong guard id
     cx, _, _ = scenario("n5", grant=lambda fc, ms: grant_dict(fc, ms, guard_id="sha256:" + "1" * 64))
-    t("N5_wrong_guard_id", dec(H3, *EW, cx)[0] == "REFUSE")
+    t("N5_wrong_guard_id", *why(dec(H3, *EW, cx), "guard_id is not this file"))
     # N6 frozen identity
     cx, _, _ = scenario("n6a", grant=lambda fc, ms: grant_dict(fc, ms, frozen_manifest_sha256="2" * 64))
-    t("N6a_manifest_sha_mismatch", dec(H3, *EW, cx)[0] == "REFUSE")
+    t("N6a_manifest_sha_mismatch", *why(dec(H3, *EW, cx), "manifest sha256 mismatch"))
     cx, _, _ = scenario("n6b", manifest=manifest_bytes(path="level4/other.py"), grant=good)
-    t("N6b_own_file_not_in_manifest", dec(H3, *EW, cx)[0] == "REFUSE")
+    t("N6b_own_file_not_in_manifest", *why(dec(H3, *EW, cx), "not pinned"))
     cx, _, _ = scenario("n6c", manifest=manifest_bytes(sha="3" * 64), grant=good)
-    t("N6c_own_file_other_sha", dec(H3, *EW, cx)[0] == "REFUSE")
+    t("N6c_own_file_other_sha", *why(dec(H3, *EW, cx), "not pinned"))
     cx, cc, sbx = scenario("n6d", grant=lambda fc, ms: grant_dict(fc, ms, frozen_commit="4" * 40))
-    t("N6d_frozen_commit_unknown", dec(H3, *EW, cx)[0] == "REFUSE")
+    t("N6d_frozen_commit_unknown", *why(dec(H3, *EW, cx), "not an ancestor"))
 
     def orphan_freeze(fc, ms):
         return grant_dict(fc, ms)
@@ -269,20 +277,20 @@ def run() -> dict:
     gc2 = commit(sbs, cs["freeze"], {G._TEST_GRANT_PATH: json.dumps(g2, sort_keys=True).encode()}, "grant(sibling)")
     set_head(sbs, gc2)
     set_test_ref(sbs, G.TEST_MARKER, gc2)
-    t("N6e_frozen_commit_not_ancestor", dec(H3, *EW, G.TestContext(sbs))[0] == "REFUSE")
+    t("N6e_frozen_commit_not_ancestor", *why(dec(H3, *EW, G.TestContext(sbs)), "not an ancestor"))
     # N7 marker / grant commit
     cx, _, _ = scenario("n7a", grant=good, marker=None)
-    t("N7a_marker_absent", dec(H3, *EW, cx)[0] == "REFUSE")
+    t("N7a_marker_absent", *why(dec(H3, *EW, cx), "git rev-parse failed"))       # the marker does not resolve
     cx, _, _ = scenario("n7b", grant=good, marker="freeze")
-    t("N7b_marker_elsewhere", dec(H3, *EW, cx)[0] == "REFUSE")
+    t("N7b_marker_elsewhere", *why(dec(H3, *EW, cx), "marker does not name"))
     cx, cc, sbx = scenario("n7c", grant=good)
     set_test_ref(sbx, "refs/p309-test/TEST_ONLY_EXTRA_REF", cc["grant"])
-    t("N7c_extra_namespace_ref", dec(H3, *EW, G.TestContext(sbx))[0] == "REFUSE")
+    t("N7c_extra_namespace_ref", *why(dec(H3, *EW, G.TestContext(sbx)), "holds other refs"))
     cx, _, _ = scenario("n7d", grant=good, head="tip",
                         after=lambda s, c: commit(s, c["grant"], {"TEST_ONLY/child": b"c"}, "child"))
-    t("N7d_head_not_grant_commit", dec(H3, *EW, cx)[0] == "REFUSE")
+    t("N7d_head_not_grant_commit", *why(dec(H3, *EW, cx), "HEAD is not the grant commit"))
     cx, _, _ = scenario("n7e", grant=good, extra_grant_files={"TEST_ONLY/other": b"o"})
-    t("N7e_grant_commit_touches_other_file", dec(H3, *EW, cx)[0] == "REFUSE")
+    t("N7e_grant_commit_touches_other_file", *why(dec(H3, *EW, cx), "touches other paths"))
 
     def readd(s, c):
         rm = commit(s, c["grant"], {}, "remove grant", remove=(G._TEST_GRANT_PATH,))
@@ -291,28 +299,55 @@ def run() -> dict:
         set_test_ref(s, G.TEST_MARKER, c["grant2"])
         return c["grant2"]
     cx, _, sbx = scenario("n7f", grant=good, head="tip", marker=None, after=readd)
-    t("N7f_two_commits_add_grant", dec(H3, *EW, G.TestContext(sbx))[0] == "REFUSE")
+    t("N7f_two_commits_add_grant", *why(dec(H3, *EW, G.TestContext(sbx)), "commits add the grant"))
     cx, _, _ = scenario("n7g", grant=lambda fc, ms: grant_dict(fc, ms, not_after_utc="2000-01-01T00:00:00Z"))
-    t("N7g_expired", dec(H3, *EW, cx)[0] == "REFUSE")
+    t("N7g_expired", *why(dec(H3, *EW, cx), "grant expired"))
     cx, cc, sbx = scenario("n7h", grant=good)
     child = commit(sbx, cc["grant"], {"TEST_ONLY/seal": b"s"}, "a descendant on another ref")
     set_test_ref(sbx, "refs/heads/p309-test-other", child)
-    t("N7h_strict_descendant_on_other_ref", dec(H3, *EW, G.TestContext(sbx))[0] == "REFUSE")
+    t("N7h_strict_descendant_on_other_ref", *why(dec(H3, *EW, G.TestContext(sbx)), "strict descendant"))
+    # R4 B7(d): E1-1's positive case -- a non-current ref exactly AT the grant commit (e.g. the remote-tracking ref
+    # after the owner's grant is pushed and fetched) does not block admission; and a detached HEAD is refused
+    cx, cc, sbx = scenario("n7i", grant=good)
+    set_test_ref(sbx, "refs/remotes/origin/p309-test-sandbox", cc["grant"])
+    d = dec(H3, *EW, G.TestContext(sbx))
+    t("N7i_ref_at_grant_commit_admitted", d[0] == "ADMIT", d)
+    cx, cc, sbx = scenario("n7j", grant=good)
+    sh(sbx, "checkout", "-q", "--detach", cc["grant"])
+    t("N7j_detached_head_refused", *why(dec(H3, *EW, G.TestContext(sbx)), "symbolic-ref"))
+    # R4 B3: the pre-marker dry admission (premarker_check) -- ready before the marker, never an admission
+    cx, cc, sbx = scenario("pm1", grant=good, marker=None)
+    ok, why_ = G.premarker_check(cx)
+    t("PM1_premarker_ready_without_marker", ok and "passes the pre-marker checks" in why_, why_)
+    t("PM1b_no_admission_without_marker", *why(dec(H3, *EW, cx), "git rev-parse failed"))
+    cx, _, _ = scenario("pm2", grant=good)
+    ok, why_ = G.premarker_check(cx)
+    t("PM2_premarker_refuses_when_namespace_not_empty", not ok and "not empty before the marker" in why_, why_)
+    cx, _, _ = scenario("pm3", grant=lambda fc, ms: grant_dict(fc, ms, not_after_utc="2000-01-01T00:00:00Z"),
+                        marker=None)
+    ok, why_ = G.premarker_check(cx)
+    t("PM3_premarker_refuses_expired", not ok and "grant expired" in why_, why_)
+    cx, _, _ = scenario("pm4", grant=lambda fc, ms: grant_dict(fc, ms, execution_host={"host_id_sha256": "5" * 64}),
+                        marker=None)
+    ok, why_ = G.premarker_check(cx)
+    t("PM4_premarker_refuses_wrong_host", not ok and "execution host mismatch" in why_, why_)
+    ok, why_ = G.premarker_check(object())
+    t("PM5_premarker_refuses_unknown_context", not ok, why_)
     # N8 host / runtime
     cx, _, _ = scenario("n8a", grant=lambda fc, ms: grant_dict(fc, ms, execution_host={"host_id_sha256": "5" * 64}))
-    t("N8a_wrong_host", dec(H3, *EW, cx)[0] == "REFUSE")
+    t("N8a_wrong_host", *why(dec(H3, *EW, cx), "execution host mismatch"))
     cx, _, _ = scenario("n8b", grant=lambda fc, ms: grant_dict(fc, ms, runtime={"python": "0.0.0"}))
-    t("N8b_wrong_runtime", dec(H3, *EW, cx)[0] == "REFUSE")
+    t("N8b_wrong_runtime", *why(dec(H3, *EW, cx), "runtime mismatch"))
     # N10 / N11: production authorization cannot be synthesized from test artifacts; synthetic marker substitution
     prod_shaped = lambda fc, ms: grant_dict(fc, ms, schema="P309_GRANT/1", campaign="p5y_k5_cell309_p309_r1",  # noqa: E731
                                             cell=G._PROD_CELL, geometry={"h": "5", "k": "1/2"},
                                             marker_ref=G.TEST_MARKER)
     cx, _, sbx = scenario("n10", grant=prod_shaped)
-    t("N10a_production_ctx_ignores_sandbox", dec(H5, *REAL_ITEM)[0] == "REFUSE")
-    t("N10a2_test_ctx_refuses_production_shaped_grant", dec(H3, *EW, cx)[0] == "REFUSE")
-    t("N10b_real_band_with_test_ctx", dec(H5, *REAL_ITEM, cx)[0] == "REFUSE")
-    t("N11_synthetic_marker_not_production", dec(H5, *REAL_ITEM)[0] == "REFUSE"
-      and dec(H3, *EW, cx)[0] == "REFUSE")
+    t("N10a_production_ctx_ignores_sandbox", *why(dec(H5, *REAL_ITEM), "no grant at HEAD"))
+    t("N10a2_test_ctx_refuses_production_shaped_grant", *why(dec(H3, *EW, cx), "schema/campaign"))
+    t("N10b_real_band_with_test_ctx", *why(dec(H5, *REAL_ITEM, cx), "only in the production context"))
+    t("N11_synthetic_marker_not_production", why(dec(H5, *REAL_ITEM), "no grant at HEAD")[0]
+      and why(dec(H3, *EW, cx), "schema/campaign")[0])
     for nm, root in (("repo_root", REPO), ("repo_subdir", FNS)):
         try:
             G.TestContext(root)
@@ -360,7 +395,7 @@ def _fail_closed(ctx) -> bool:
         raise OSError("injected")
     G._git_bytes = boom
     try:
-        return dec(H3, *EW, ctx)[0] == "REFUSE"
+        return why(dec(H3, *EW, ctx), "OSError")[0]
     finally:
         G._git_bytes = orig
 

@@ -1,6 +1,7 @@
 """Post-execution checks (package rev. 2b section F; rev. 2c A7: this file replaces the postexec/ directory).
 
-  python3 code/p309_postexec.py            -> run against this repository after a seal (never before a grant exists)
+  python3 -I -S -B code/p309_postexec.py   -> run against this repository after a seal (never before a grant exists);
+                                              refuses to start without these interpreter flags (R4 B2(b))
 
 Every check is read-only except P4, which probes a second `execute` and must be refused before anything happens.
 In qualification (QC11) the same functions run against sandbox flows with the synthetic TEST names.
@@ -38,7 +39,7 @@ def checks(ctx: D.ExecContext, *, own_sha: str | None = None, reverify=None, sec
     out = {}
     pending = D.git("rev-parse", "-q", "--verify", ctx.pending_ref, repo=ctx.repo).stdout.strip()
     marker = D.git("rev-parse", "-q", "--verify", ctx.marker_ref, repo=ctx.repo).stdout.strip()
-    entry = D.git("ls-tree", "HEAD", "--", D.RESULT_REL, repo=ctx.repo).stdout.split()
+    entry = D.git("ls-tree", "HEAD", "--", ctx.result_rel, repo=ctx.repo).stdout.split()
     data = D.git("cat-file", "blob", pending, repo=ctx.repo).stdout.encode() if pending else b""
     try:
         rec = json.loads(data)
@@ -47,12 +48,12 @@ def checks(ctx: D.ExecContext, *, own_sha: str | None = None, reverify=None, sec
     except ValueError:
         rec, self_ok = {}, False
     out["P1_blob_equals_pending_and_self_hash"] = bool(pending) and entry[2:3] == [pending] and self_ok
-    adds = D.git("log", "--format=%H", "--diff-filter=A", "--", D.RESULT_REL, repo=ctx.repo).stdout.split()
+    adds = D.git("log", "--format=%H", "--diff-filter=A", "--", ctx.result_rel, repo=ctx.repo).stdout.split()
     seal = adds[0] if len(adds) == 1 else None
     grant_c = (rec.get("grant") or {}).get("grant_commit")
     parents = D.git("rev-list", "--parents", "-n", "1", seal, repo=ctx.repo).stdout.split()[1:] if seal else []
     changed = D.git("diff-tree", "--no-commit-id", "--name-only", "-r", seal, repo=ctx.repo).stdout.split() if seal else []
-    out["P2_seal_changes_result_only_parent_is_grant"] = bool(seal) and changed == [D.RESULT_REL] and parents == [grant_c]
+    out["P2_seal_changes_result_only_parent_is_grant"] = bool(seal) and changed == [ctx.result_rel] and parents == [grant_c]
     out["P3_marker_names_grant_one_execution"] = bool(marker) and marker == grant_c and len(adds) == 1 and \
         rec.get("target_evaluations") == 1
     if second_execute is not None:
@@ -68,7 +69,7 @@ def checks(ctx: D.ExecContext, *, own_sha: str | None = None, reverify=None, sec
     except D.Refusal:                                    # a refusal is a failed check, never a crash of the checker
         rc = None
     out["P5_seal_only_changes_nothing"] = rc == 0 and D.git("rev-parse", "HEAD", repo=ctx.repo).stdout.strip() == head0
-    wt = (ctx.repo / D.RESULT_REL)
+    wt = (ctx.repo / ctx.result_rel)
     out["P6_worktree_copy_equals_sealed"] = wt.is_file() and not wt.is_symlink() and wt.read_bytes() == data
     names = D.git("ls-tree", "-r", "--name-only", "HEAD", repo=ctx.repo).stdout.split()
     out["P7_no_r6"] = not any(Path(n).name.startswith(D.R6_NAME) for n in names)
@@ -93,22 +94,37 @@ def checks(ctx: D.ExecContext, *, own_sha: str | None = None, reverify=None, sec
     return out
 
 
-def reverify_production(rec: dict) -> bool:
-    """P10 in production: the band-scoped verifier in REVIEW mode on every sealed Stage-1a certificate."""
+def reverify(rec: dict, sandbox: Path | None = None) -> bool:
+    """P10: the band-scoped verifier in REVIEW mode on every sealed Stage-1a certificate (the record's top-level
+    `stage1a`, spec section 3).  Production context, or (QC11 integration flow) the variant's own test context for a
+    sandbox.  Every verdict must equal the sealed one."""
     import importlib.util
     vs = importlib.util.spec_from_file_location("srk_verify_indep_scoped", str(D.REPO / D.VARIANT_REL))
     V = importlib.util.module_from_spec(vs)
     vs.loader.exec_module(V)
-    s1a = (rec.get("target") or {}).get("stage1a") or {}
+    kw = {"ctx": V.TestContext(str(sandbox))} if sandbox is not None else {}
+    if rec.get("status") == "TARGET_EVALUATED" and not isinstance(rec.get("stage1a"), dict):
+        return False                                     # never vacuous: an evaluated record carries stage1a
+    s1a = rec.get("stage1a") or {}
     sealed = s1a.get("verdicts") or {}
-    for c in s1a.get("certificates") or []:
-        v = V.verify_cert(c, None, N=D.VERIFIER_N, max_depth=D.VERIFIER_DEPTH, procs=1, log=None, mode="review")
+    certs = s1a.get("certificates") or []
+    if set(sealed) != {c.get("sha256") for c in certs}:
+        return False
+    for c in certs:
+        v = V.verify_cert(c, None, N=D.VERIFIER_N, max_depth=D.VERIFIER_DEPTH, procs=1, log=None, mode="review", **kw)
         if v["verdict"] != sealed.get(c.get("sha256")):
             return False
     return True
 
 
+def reverify_production(rec: dict) -> bool:
+    return reverify(rec)
+
+
 if __name__ == "__main__":
+    if not (sys.flags.isolated and sys.flags.no_site and sys.flags.dont_write_bytecode):
+        print("P309 POSTEXEC REFUSED: run as python3 -I -S -B code/p309_postexec.py (P5 runs seal-only)")
+        sys.exit(2)
     ctx = D.production_context()
     if not D.git("rev-parse", "-q", "--verify", ctx.marker_ref).stdout.strip():
         print("P309 POSTEXEC REFUSED: no marker (nothing was executed)")

@@ -14,10 +14,12 @@ import datetime
 import hashlib
 import json
 import os
+import platform
 import shutil
 import subprocess
 import sys
 import tempfile
+import types
 from fractions import Fraction as F
 from pathlib import Path
 
@@ -78,22 +80,50 @@ def new_sandbox(name: str) -> Path:
                           check=True).stdout.strip()
     sh(sb, "update-ref", SB_BRANCH, head)
     sh(sb, "symbolic-ref", "HEAD", SB_BRANCH)
-    sh(sb, "sparse-checkout", "set", "--no-cone", f"/{NS}/")
+    sh(sb, "sparse-checkout", "set", "--no-cone", f"/{NS}/", "/TEST_ONLY/")
     sh(sb, "reset", "-q", "--hard", head)
     return sb
 
 
+def utc_in(seconds: float) -> str:
+    t = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(seconds=seconds)
+    return t.strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def test_grant(sb: Path, man: bytes, F_: str, Q: str, Rv: str | None) -> dict:
+    """a complete TEST-context grant (spec 2.2 / 3 fields; driver B3 fields), valid for this host and sandbox."""
+    pins = D.pin_table(json.loads(man))
+    return {"schema": "P309_TEST_GRANT/1", "campaign": G._TEST_CELL, "cell": G._TEST_CELL,
+            "geometry": dict(D.GRANT_GEOMETRY["SANDBOX"]), "cell_interval": list(D.TEST_CELL_INTERVAL),
+            "drift_hull_Ew": ["341/1024", "201/512"], "closure_only": True, "executions_authorized": 1,
+            "driver_sha256": OWN_SHA, "frozen_manifest_sha256": hashlib.sha256(man).hexdigest(), "frozen_commit": F_,
+            "qualification_commit": Q, "qualification_review_commit": Rv,
+            "verifier_id": "sha256:" + pins[D.VARIANT_REL][0], "guard_id": "sha256:" + pins[D.GUARD_REL][0],
+            "execution_host": {"host_id_sha256": G.host_id(), "worktree": str(sb)},
+            "runtime": {"python": platform.python_version()}, "marker_ref": G.TEST_MARKER,
+            "not_after_utc": utc_in(30 * 86400), "issued_utc": utc_in(-60),
+            "authority": "TEST_ONLY sandbox authority (QC11); not an owner grant"}
+
+
 def build_chain(sb: Path, *, grant_over=None, grant_raw=None, drop_review=False, extra_after_freeze=None,
                 qual=None, review_text=None, grant_extra_files=None, record_commits=False, grant_parents=None,
-                qual_extra=None, review_extra=None, child_after_grant=False) -> dict:
+                qual_extra=None, review_extra=None, child_after_grant=False, window=None, pre_review_window=None,
+                freeze_record="ok") -> dict:
+    """F (manifest; TEST_ONLY manifest = the same bytes) <- FR (freeze record) <- [extra] <- Q <- Rv <- [window] <- G"""
     base = sh(sb, "rev-parse", "HEAD").strip()
     man = (REPO / D.MANIFEST_REL).read_bytes()
     # the sandbox freeze commit must change a frozen path even when the manifest bytes equal the base's (the driver
     # locates the freeze as the last commit touching the frozen directories); the nonce file exists only in sandboxes
-    F_ = commit(sb, base, {D.MANIFEST_REL: man, f"{NS}/freeze/SANDBOX_FREEZE_NONCE.txt": sb.name.encode() + b"\n"},
-                "sandbox freeze (manifest)")
+    F_ = commit(sb, base, {D.MANIFEST_REL: man, G._TEST_MANIFEST_PATH: man,
+                           f"{NS}/freeze/SANDBOX_FREEZE_NONCE.txt": sb.name.encode() + b"\n"}, "sandbox freeze (manifest)")
     c = {"F": F_}
     tip = F_
+    if freeze_record in ("ok", "late_change"):
+        tip = commit(sb, tip, {D.FREEZE_RECORD_REL: json.dumps({"freeze_commit": F_}).encode()}, "freeze record")
+    elif freeze_record == "wrong":
+        tip = commit(sb, tip, {D.FREEZE_RECORD_REL: json.dumps({"freeze_commit": base}).encode()}, "freeze record")
+    if freeze_record == "late_change":
+        tip = commit(sb, tip, {D.FREEZE_RECORD_REL: json.dumps({"freeze_commit": F_, "x": 1}).encode()}, "record edit")
     if extra_after_freeze:
         tip = commit(sb, tip, extra_after_freeze, "a change after the freeze")
     if record_commits:
@@ -103,17 +133,20 @@ def build_chain(sb: Path, *, grant_over=None, grant_raw=None, drop_review=False,
     c["Q"] = tip = Q
     if record_commits:
         tip = commit(sb, tip, {D.CHECKPOINT_LEDGER_REL: b'{"r":2}\n'}, "checkpoint record")
+    for k, files in enumerate(pre_review_window or []):
+        tip = commit(sb, tip, files, f"window-type commit before the review {k}")
     if not drop_review:
         rv = review_text if review_text is not None else "# review\nQUALIFICATION_ACCEPTED\n"
         Rv = commit(sb, tip, {D.QREVIEW_REL: rv.encode(), **(review_extra or {})}, "qualification review")
         c["Rv"] = tip = Rv
     if record_commits:
         tip = commit(sb, tip, {D.CHECKPOINT_LEDGER_REL: b'{"r":3}\n'}, "checkpoint record")
-    g = {"schema": "P309_TEST_GRANT/1", "cell": G._TEST_CELL, "driver_sha256": OWN_SHA,
-         "frozen_manifest_sha256": hashlib.sha256(man).hexdigest(), "frozen_commit": F_,
-         "qualification_commit": Q, "qualification_review_commit": c.get("Rv"),
-         "cell_interval": ["1/3", "20/51"], "drift_hull_Ew": ["341/1024", "201/512"]}
+    for k, files in enumerate(window or []):
+        tip = commit(sb, tip, files, f"window commit {k}")
+    g = test_grant(sb, man, F_, Q, c.get("Rv"))
     g.update(grant_over or {})
+    for k in [k for k, v in g.items() if v is DROP]:
+        del g[k]
     raw = grant_raw if grant_raw is not None else json.dumps(g, sort_keys=True).encode()
     Gc = commit(sb, tip, {G._TEST_GRANT_PATH: raw, **(grant_extra_files or {})}, "TEST_ONLY grant",
                 parents=[tip] + (grant_parents or []))
@@ -126,6 +159,9 @@ def build_chain(sb: Path, *, grant_over=None, grant_raw=None, drop_review=False,
     return c
 
 
+DROP = object()
+
+
 def ctx_of(sb: Path) -> D.ExecContext:
     return D.sandbox_context(sb)
 
@@ -133,6 +169,10 @@ def ctx_of(sb: Path) -> D.ExecContext:
 OK_CONTROL = lambda: {"reproduces_C2_exactly": True, "digest": "sandbox"}  # noqa: E731
 BAD_CONTROL = lambda: {"reproduces_C2_exactly": False, "digest": "sandbox"}  # noqa: E731
 PREP = lambda: {}  # noqa: E731
+
+
+def RAISING_CONTROL():
+    raise ValueError("stub: the control raised")
 
 
 def ev_ok(con, prep):
@@ -158,7 +198,8 @@ def ev_unserializable(con, prep):
 def execute(sb, evaluator=ev_ok, control=OK_CONTROL, **kw):
     ctx = ctx_of(sb)
     try:
-        return D.run_execute(OWN_SHA, ctx=ctx, prepare=PREP, evaluator=evaluator, control=control, **kw)
+        return D.run_execute(OWN_SHA, ctx=ctx, prepare=kw.pop("prepare", PREP), evaluator=evaluator, control=control,
+                             **kw)
     except D.Refusal as exc:
         return ("REFUSED", exc.code)
 
@@ -167,9 +208,17 @@ def refs(sb) -> dict:
     return dict(line.split()[::-1] for line in sh(sb, "for-each-ref", "--format=%(objectname) %(refname)").splitlines())
 
 
+def result_path(sb) -> Path:
+    return sb / D.SANDBOX_RESULT_REL
+
+
 def status_of(sb) -> str | None:
-    p = sb / D.RESULT_REL
+    p = result_path(sb)
     return json.loads(p.read_text()).get("status") if p.exists() else None
+
+
+def git_dir_of(sb) -> Path:
+    return Path(sh(sb, "rev-parse", "--path-format=absolute", "--git-dir").strip())
 
 
 # --------------------------------------------------------------------------------------------------- the flows
@@ -186,49 +235,57 @@ def pre_marker_flows() -> dict:
         out = execute(sb)
         after = (refs(sb), sh(sb, "rev-parse", "HEAD"))
         # refs and HEAD unchanged; execute creates no marker (F20 plants one in its setup, which must survive as is)
-        R[name] = {"pass": out == ("REFUSED", code) and before == after
-                   and (G.TEST_MARKER in before[0] or G.TEST_MARKER not in after[0]),
+        nonce_ok = name == "F22b_run_nonce_exists" or not (git_dir_of(sb) / D.RUN_NONCE_NAME).exists()
+        R[name] = {"pass": (out == ("REFUSED", code) and before == after and nonce_ok
+                            and (G.TEST_MARKER in before[0] or G.TEST_MARKER not in after[0])),
                    "got": str(out)}
+        return sb
 
     refused("F01_no_grant_commit", "GRANT_MISSING", setup=lambda sb, c: (
         sh(sb, "update-ref", SB_BRANCH, c["Rv"]), sh(sb, "reset", "-q", "--hard", c["Rv"])))
     refused("F02_grant_not_at_head", "GRANT_INVALID", child_after_grant=True)
-    refused("F03_grant_touches_another_file", "GRANT_INVALID", grant_extra_files={f"{NS}/tests/x.txt": b"x"})
+    refused("F03_grant_touches_another_file", "GRANT_INVALID", grant_extra_files={f"{NS}/evidence/x.txt": b"x"})
     sb = new_sandbox("F04_grant_is_a_merge")
     base = sh(sb, "rev-parse", "HEAD").strip()
-    side = commit(sb, base, {f"{NS}/tests/side.txt": b"s"}, "side")
+    side = commit(sb, base, {f"{NS}/evidence/side.txt": b"s"}, "side")
     build_chain(sb, grant_parents=[side])
     R["F04_grant_is_a_merge"] = {"pass": execute(sb) == ("REFUSED", "GRANT_INVALID")}
     refused("F05_wrong_driver_sha", "GRANT_INVALID", grant_over={"driver_sha256": "0" * 64})
     refused("F06_wrong_manifest_sha", "GRANT_INVALID", grant_over={"frozen_manifest_sha256": "1" * 64})
-    refused("F07_frozen_commit_not_in_chain", "GRANT_INVALID", grant_over={"frozen_commit": "2" * 40})
+    refused("F07_frozen_commit_not_recorded", "GRANT_INVALID", grant_over={"frozen_commit": "2" * 40})
     refused("F08_missing_review", "GRANT_INVALID", drop_review=True)
     refused("F09_extra_commit_in_chain", "GRANT_INVALID", extra_after_freeze={f"{NS}/qualification/extra.txt": b"e"})
     refused("F10_review_rejected", "REVIEW_VERDICT", review_text="# review\nQUALIFICATION_REJECTED\n")
     refused("F11_review_verdict_not_on_line_2", "REVIEW_VERDICT", review_text="# review\n\nQUALIFICATION_ACCEPTED\n")
     refused("F12_qualification_not_pass", "GRANT_INVALID", qual={"pass": False})
     refused("F13_qualification_other_freeze", "GRANT_INVALID", qual={"pass": True, "freeze_commit": "3" * 40})
-    refused("F14_qualification_touches_code", "GRANT_INVALID", qual_extra={f"{NS}/code/x.py": b"# x\n"})
-    refused("F15_review_touches_another_file", "GRANT_INVALID", review_extra={f"{NS}/tests/y.txt": b"y"})
-    refused("F16_frozen_dir_changed_after_freeze", "GRANT_INVALID",
+    refused("F14_qualification_touches_code", "FREEZE_RECORD", qual_extra={f"{NS}/code/x.py": b"# x\n"})
+    refused("F15_review_touches_another_file", "GRANT_INVALID", review_extra={f"{NS}/evidence/y.txt": b"y"})
+    refused("F16_frozen_dir_changed_after_freeze", "FREEZE_RECORD",
             extra_after_freeze={f"{NS}/code/late.py": b"# late\n"})
     refused("F17_dirty_tree", "DIRTY_TREE", setup=lambda sb, c: (sb / NS / "untracked.txt").write_text("u"))
-    refused("F18_result_file_present", "TARGET_ARTIFACT_EXISTS", setup=lambda sb, c: (
-        (sb / D.EXEC_DIR_REL).mkdir(parents=True), (sb / D.RESULT_REL).write_text("{}")))
-    refused("F19_result_dir_is_symlink", "RESULT_PATH_OCCUPIED", setup=lambda sb, c: (
-        (sb / NS / "evidence").mkdir(exist_ok=True), os.symlink("/tmp", sb / D.EXEC_DIR_REL)))
+    refused("F18_result_file_present", "TARGET_ARTIFACT_EXISTS", setup=lambda sb, c: result_path(sb).write_text("{}"))
+    refused("F19_result_tmp_is_symlink", "RESULT_PATH_OCCUPIED", setup=lambda sb, c: os.symlink(
+        "/tmp", str(result_path(sb)) + ".tmp"))
     refused("F20_marker_already_exists", "CONSUMED", setup=lambda sb, c: sh(sb, "update-ref", G.TEST_MARKER, c["G"]))
     refused("F21_pending_ref_exists", "CONSUMED", setup=lambda sb, c: sh(sb, "update-ref", G.TEST_PENDING_REF, c["G"]))
     refused("F22_emergency_file_exists", "TARGET_ARTIFACT_EXISTS", setup=lambda sb, c: (
-        Path(sh(sb, "rev-parse", "--path-format=absolute", "--git-dir").strip()) / D.EMERGENCY_NAME).write_text("{}"))
+        git_dir_of(sb) / D.EMERGENCY_NAME).write_text("{}"))
+    refused("F22b_run_nonce_exists", "TARGET_ARTIFACT_EXISTS", setup=lambda sb, c: (
+        git_dir_of(sb) / D.RUN_NONCE_NAME).write_text("{}"))
     refused("F23_prior_marker_namespace", "CONSUMED", setup=lambda sb, c: sh(sb, "update-ref", "refs/rlr-tail/x", c["G"]))
     refused("F24_unparseable_grant", "GRANT_INVALID", grant_raw=b"{not json")
-    # F25 CONTROL_FAILED: sealed, exit 3, no marker
-    sb = new_sandbox("F25_control_failed")
-    build_chain(sb)
-    rc = execute(sb, control=BAD_CONTROL)
-    R["F25_control_failed_sealed_not_consumed"] = {"pass": rc == 3 and G.TEST_MARKER not in refs(sb)
-                                                   and status_of(sb) == "CONTROL_FAILED", "got": rc}
+    refused("F24b_executions_authorized_true", "GRANT_INVALID", grant_over={"executions_authorized": True})
+    # F25 CONTROL_FAILED: sealed, exit 3, no marker; F25b: an exception in the control is a control failure (NB5)
+    for name, ctl in (("F25_control_failed", BAD_CONTROL), ("F25b_control_raises", RAISING_CONTROL)):
+        sb = new_sandbox(name)
+        build_chain(sb)
+        rc = execute(sb, control=ctl)
+        rec = json.loads(result_path(sb).read_text()) if result_path(sb).exists() else {}
+        R[name + "_sealed_not_consumed"] = {"pass": rc == 3 and G.TEST_MARKER not in refs(sb)
+                                            and rec.get("status") == "CONTROL_FAILED"
+                                            and (name == "F25_control_failed" or "error" in rec.get("historical_control", {})),
+                                            "got": rc}
     # F26 valid chain with interleaved checkpoint-record commits
     sb = new_sandbox("F26_record_commits_allowed")
     build_chain(sb, record_commits=True)
@@ -237,11 +294,85 @@ def pre_marker_flows() -> dict:
     return R
 
 
+def admission_flows() -> dict:
+    """R4 B1, B3, B5, B7(b)/(c), NB4: every grant precondition is refused BEFORE the marker (exit 2, no ref)."""
+    R = {}
+
+    def refused(name, code, **kw):
+        sb = new_sandbox(name)
+        setup = kw.pop("setup", None)
+        c = build_chain(sb, **kw)
+        if setup:
+            setup(sb, c)
+        before = refs(sb)
+        out = execute(sb)
+        R[name] = {"pass": out == ("REFUSED", code) and refs(sb) == before and G.TEST_MARKER not in refs(sb),
+                   "got": str(out)}
+
+    w = F(20, 51) - F(1, 3)                                   # B1: a same-width neighbour of the declared cell
+    lo, hi = F(1, 3) + w, F(20, 51) + w
+    ew = G.outward_hull(lo, hi)
+    refused("A01_shifted_cell_same_width", "ADMISSION", grant_over={
+        "cell_interval": [D.fs(lo), D.fs(hi)], "drift_hull_Ew": [D.fs(ew[0]), D.fs(ew[1])]})
+    refused("A02_geometry_not_exact_strings", "ADMISSION", grant_over={"geometry": {"h": "3/1", "k": "1/2"}})
+    refused("A03_wrong_verifier_id", "ADMISSION", grant_over={"verifier_id": "sha256:" + "4" * 64})
+    refused("A04_wrong_guard_id", "ADMISSION", grant_over={"guard_id": "sha256:" + "5" * 64})
+    refused("A05_wrong_marker_ref", "ADMISSION", grant_over={"marker_ref": "refs/p309-test/OTHER"})
+    refused("A06_wrong_host", "ADMISSION", grant_over={"execution_host": {"host_id_sha256": "6" * 64,
+                                                                          "worktree": "/nonexistent"}})
+    refused("A07_wrong_worktree", "ADMISSION", grant_over={"execution_host": {"host_id_sha256": G.host_id(),
+                                                                              "worktree": "/nonexistent"}})
+    refused("A08_wrong_runtime", "ADMISSION", grant_over={"runtime": {"python": "2.7.18"}})
+    refused("A09_short_horizon", "ADMISSION", grant_over={"not_after_utc": utc_in(86400)})
+    refused("A10_expired", "ADMISSION", grant_over={"not_after_utc": utc_in(-60)})
+    refused("A11_placeholder_expiry", "ADMISSION",
+            grant_over={"not_after_utc": "<SET BY THE OWNER, ISO-8601 UTC, e.g. 2026-10-31T23:59:59Z>"})
+    refused("A12_placeholder_issued", "ADMISSION", grant_over={"issued_utc": "<SET BY THE OWNER>"})
+    refused("A13_placeholder_authority", "ADMISSION",
+            grant_over={"authority": "<THE OWNER'S GRANT INSTRUCTION, verbatim reference>"})
+    refused("A14_missing_authority", "ADMISSION", grant_over={"authority": DROP})
+    refused("A15_issued_in_the_future", "ADMISSION", grant_over={"issued_utc": utc_in(3600)})
+    refused("A16_detached_head", "BRANCH", setup=lambda sb, c: sh(sb, "checkout", "-q", "--detach", c["G"]))
+    refused("A17_strict_descendant_ref", "ADMISSION", setup=lambda sb, c: sh(
+        sb, "update-ref", "refs/heads/side", commit(sb, c["G"], {f"{NS}/evidence/s.txt": b"s"}, "child of G")))
+    # E1-1 positive (B7(d)): a non-current ref exactly AT the grant commit does not block
+    sb = new_sandbox("A18_ref_at_grant_commit_allowed")
+    c = build_chain(sb)
+    sh(sb, "update-ref", "refs/remotes/origin/p309-test-sandbox", c["G"])
+    rc = execute(sb)
+    R["A18_ref_at_grant_commit_allowed"] = {"pass": rc == 0 and status_of(sb) == "TARGET_EVALUATED", "got": rc}
+    # B5 grant window
+    sb = new_sandbox("A19_window_commits_allowed")
+    build_chain(sb, window=[{f"{NS}/ledger/ZERO_TARGET_LEDGER.jsonl": b'{"w":1}\n'},
+                            {f"{NS}/handoff/PROPOSED_EXECUTION_AUTHORIZATION_P309.json": b"{}\n",
+                             f"{NS}/ledger/EXPOSURE_LEDGER.jsonl": b'{"w":2}\n'},
+                            {f"{NS}/qualification/host_rerun/QC10_HOST.json": b"{}\n"}])
+    rc = execute(sb)
+    R["A19_window_commits_allowed"] = {"pass": rc == 0 and status_of(sb) == "TARGET_EVALUATED", "got": rc}
+    refused("A20_window_commit_outside_window_paths", "GRANT_INVALID", window=[{f"{NS}/evidence/w.txt": b"w"}])
+    refused("A21_window_type_commit_before_review", "GRANT_INVALID",
+            pre_review_window=[{f"{NS}/ledger/ZERO_TARGET_LEDGER.jsonl": b'{"w":1}\n'}])
+    refused("A22_window_commit_touching_review_files", "GRANT_INVALID",
+            window=[{D.QREVIEW_PREFIX + "_EXEC_LEDGER.jsonl": b"{}\n"}])
+    # B7(c) freeze record
+    refused("A23_freeze_record_missing", "FREEZE_RECORD", freeze_record="missing")
+    refused("A24_freeze_record_names_another_commit", "FREEZE_RECORD", freeze_record="wrong")
+    refused("A25_freeze_record_changed_later", "FREEZE_RECORD", freeze_record="late_change")
+    # NB4: hooks are refused outside a sandbox context, before anything is read (a dummy non-sandbox context object)
+    dummy = types.SimpleNamespace(kind="PRODUCTION")
+    try:
+        D.run_execute(OWN_SHA, ctx=dummy, evaluator=ev_ok)
+        R["A26_hooks_refused_outside_sandbox"] = {"pass": False}
+    except D.Refusal as exc:
+        R["A26_hooks_refused_outside_sandbox"] = {"pass": exc.code == "HOOKS", "got": exc.code}
+    return R
+
+
 def post_marker_flows() -> dict:
     import p309_postexec as PX
     R = {}
 
-    def run(name, evaluator=ev_ok, want_rc=0, want_status="TARGET_EVALUATED", **kw):
+    def run(name, evaluator=ev_ok, **kw):
         sb = new_sandbox(name)
         c = build_chain(sb)
         rc = execute(sb, evaluator=evaluator, **kw)
@@ -249,12 +380,13 @@ def post_marker_flows() -> dict:
 
     sb, c, rc = run("F27_success")
     px = PX.checks(ctx_of(sb), second_execute=lambda: 2 if execute(sb) == ("REFUSED", "CONSUMED") else 99)
-    R["F27_success_and_postexec"] = {"pass": rc == 0 and px["ok"], "got": {"rc": rc, "postexec": px}}
+    R["F27_success_and_postexec"] = {"pass": rc == 0 and px["ok"] and not (git_dir_of(sb) / D.RUN_NONCE_NAME).exists(),
+                                     "got": {"rc": rc, "postexec": px}}
     for name, ev, st in (("F28_evaluator_raises", ev_raise, "TARGET_EVALUATION_FAILED"),
                          ("F29_independent_check_fails", ev_indep, "INDEPENDENT_CHECK_FAILED"),
                          ("F30_base_exception", ev_bexc, "TARGET_EVALUATION_FAILED")):
         sb, c, rc = run(name, evaluator=ev)
-        rec = json.loads((sb / D.RESULT_REL).read_text())
+        rec = json.loads(result_path(sb).read_text())
         R[name] = {"pass": rc == 5 and rec["status"] == st and rec["mechanical_outcome"] == "EXECUTION_INDETERMINATE"
                    and G.TEST_MARKER in refs(sb), "got": rc}
 
@@ -287,24 +419,43 @@ def post_marker_flows() -> dict:
     rc2 = D.run_seal_only(ctx_of(sb))
     R["F34_materialize_fails_then_seal_only"] = {"pass": rc == 7 and rc2 == 0 and status_of(sb) == "TARGET_EVALUATED",
                                                  "got": [rc, rc2]}
-    sb = new_sandbox("F35_seal_only_nothing")
-    build_chain(sb)
-    try:
-        D.run_seal_only(ctx_of(sb))
-        R["F35_seal_only_without_evidence_refused"] = {"pass": False}
-    except D.Refusal as exc:
-        R["F35_seal_only_without_evidence_refused"] = {"pass": exc.code == "SEAL_ONLY", "got": exc.code}
+
+    def seal_only_refused(name, prepare_fn):
+        sb = new_sandbox(name)
+        c = build_chain(sb)
+        prepare_fn(sb, c)
+        before = refs(sb)
+        try:
+            D.run_seal_only(ctx_of(sb))
+            R[name] = {"pass": False, "got": "not refused"}
+        except D.Refusal as exc:
+            R[name] = {"pass": exc.code == "SEAL_ONLY" and refs(sb) == before and G.TEST_PENDING_REF not in refs(sb),
+                       "got": str(exc)[:160]}
+
+    seal_only_refused("F35_seal_only_without_evidence_refused", lambda sb, c: None)
+
+    def pending_without_marker(sb, c):
+        blob = sh(sb, "hash-object", "-w", "--stdin", input_=b'{"status": "TARGET_EVALUATED"}\n').strip()
+        sh(sb, "update-ref", G.TEST_PENDING_REF, blob)
     sb = new_sandbox("F36_seal_only_pending_without_marker")
     c = build_chain(sb)
-    blob = sh(sb, "hash-object", "-w", "--stdin", input_=b'{"status": "TARGET_EVALUATED"}\n').strip()
-    sh(sb, "update-ref", G.TEST_PENDING_REF, blob)
+    pending_without_marker(sb, c)
     try:
         D.run_seal_only(ctx_of(sb))
         R["F36_seal_only_post_marker_evidence_without_marker"] = {"pass": False}
     except D.Refusal as exc:
         R["F36_seal_only_post_marker_evidence_without_marker"] = {"pass": exc.code == "SEAL_ONLY"}
+    # owner D5: seal-only creates the pending ref only for evidence bound to a marker that names a grant commit
+    emer = lambda sb, gc: (git_dir_of(sb) / D.EMERGENCY_NAME).write_text(  # noqa: E731
+        json.dumps({"status": "TARGET_EVALUATED", "grant": {"grant_commit": gc}}))
+    seal_only_refused("F40_seal_only_emergency_without_marker", lambda sb, c: emer(sb, c["G"]))
+    seal_only_refused("F41_seal_only_emergency_bound_elsewhere", lambda sb, c: (
+        sh(sb, "update-ref", G.TEST_MARKER, c["G"]), emer(sb, c["Rv"])))
+    seal_only_refused("F42_seal_only_marker_without_grant", lambda sb, c: (
+        sh(sb, "update-ref", G.TEST_MARKER, c["Rv"]), emer(sb, c["Rv"])))
     sb, c, rc = run("F37_seal_only_other_result_at_head")
-    other = commit(sb, sh(sb, "rev-parse", "HEAD").strip(), {D.RESULT_REL: b'{"status": "OTHER"}\n'}, "other result")
+    other = commit(sb, sh(sb, "rev-parse", "HEAD").strip(), {D.SANDBOX_RESULT_REL: b'{"status": "OTHER"}\n'},
+                   "other result")
     sh(sb, "update-ref", SB_BRANCH, other)
     sh(sb, "reset", "-q", "--hard", other)
     try:
@@ -315,7 +466,7 @@ def post_marker_flows() -> dict:
     sb, c, rc = run("F38_second_execute")
     R["F38_second_execute_refused"] = {"pass": rc == 0 and execute(sb) == ("REFUSED", "CONSUMED")}
     sb, c, rc = run("F39_recording_failure", evaluator=ev_unserializable)
-    rec = json.loads((sb / D.RESULT_REL).read_text()) if (sb / D.RESULT_REL).exists() else {}
+    rec = json.loads(result_path(sb).read_text()) if result_path(sb).exists() else {}
     R["F39_recording_failure_sealed"] = {"pass": rc == 5 and rec.get("status") == "POST_MARKER_RECORDING_FAILED",
                                          "got": rc}
     return R
@@ -353,7 +504,7 @@ def stage_flows() -> dict:
     cell = (F(1, 2), F(37, 72))                               # the declared decoy cell (a stub run; nothing computed)
     vid = "sha256:" + D.pin_table(D.load_manifest())[D.VARIANT_REL][0]
     base = {"kind": "JOB_RETURNED", "W_status": "W_NEGATIVE", "V_status": {}, "certificates": [], "verdicts": {},
-            "verdict_source": vid, "adapter_records": [], "log_digest": ""}
+            "verdict_details": {}, "verdict_source": vid, "adapter_records": [], "log_digest": ""}
     st = D.stage1a("decoy", cell, dict(D.GEOMETRY), vid, workers=2, runner=_stub_runner(lambda s: base))
     R["S01_non_certified_falls_back"] = {"pass": all(v is None for v in dict(st["gate_result"].gamma).values())}
     # real committed decoy certificates of this cell, returned by a stub job with a chosen verdict
@@ -365,7 +516,8 @@ def stage_flows() -> dict:
     def with_verdict(v):
         def pl(spec):
             cs = [c for c in certs if c["block"] == spec["block"] and c["degree"] == spec["degree"]]
-            return dict(base, W_status="CERTIFIED", certificates=cs, verdicts={c["sha256"]: v for c in cs})
+            return dict(base, W_status="CERTIFIED", certificates=cs, verdicts={c["sha256"]: v for c in cs},
+                        verdict_details={c["sha256"]: {"verdict": v, "reason": "stub"} for c in cs})
         return pl
     st = D.stage1a("decoy", cell, dict(D.GEOMETRY), vid, workers=2, runner=_stub_runner(with_verdict("REJECT")))
     st_ok = D.stage1a("decoy", cell, dict(D.GEOMETRY), vid, workers=2, runner=_stub_runner(with_verdict("ACCEPT")))
@@ -459,18 +611,141 @@ def stage_flows() -> dict:
         and all(s["_limit"] == 12 * 3600 for s in seen["1a"]) and st1a["run"]["budget_s"] == 48 * 3600
         and st1a["run"]["job_limit_s"] == 12 * 3600 and D.WORKERS == 4,
         "got": {"stage1b_jobs": len(keys), "stage1b_order": keys[:8], "stage1a_jobs": len(seen["1a"])}}
+    # S15 (R4 B4): a worker killed below its CPU limit is a runtime failure, never a budget fallback
+    def killer(spec):
+        return subprocess.Popen([sys.executable, "-c", "import os, signal; os.kill(os.getpid(), signal.SIGKILL)"])
+    run = D.run_jobs([{"x": 1}], budget_s=100, job_limit_s=60, workers=1, runner=killer)
+    try:
+        D.stage1a("decoy", cell, dict(D.GEOMETRY), vid, workers=2, runner=killer)
+        raised = False
+    except RuntimeError:
+        raised = True
+    R["S15_sigkill_below_limit_is_job_exception"] = {"pass": run["results"][0]["kind"] == "JOB_EXCEPTION" and raised,
+                                                     "got": run["results"][0]}
+    # S16 (R4 NB6): a target-mode job refuses unless it is a child of the live execute process holding the nonce
+    outs = {}
+    for name, spec in (("no_nonce", {}), ("wrong_token", {"_git_dir": str(SCRATCH), "_run_token": "x"})):
+        try:
+            D.check_run_nonce(spec)
+            outs[name] = "ran"
+        except RuntimeError:
+            outs[name] = "refused"
+    R["S16_target_job_needs_the_run_nonce"] = {"pass": set(outs.values()) == {"refused"}, "got": outs}
     _ = GT
     return R
 
 
+# ------------------------------------------------------------------ integration: the whole path in one process
+def _certs(pattern: str) -> list:
+    out = []
+    for j in range(4):
+        d = json.loads((D.E.RNS / f"evidence/srk_decoys_cell/{pattern}_S{j}.json").read_text())
+        out += [c for c in d["certificates"].values() if c.get("status") == "CERTIFIED"]
+    return out
+
+
+def integration_flows() -> dict:
+    """R4 B2 and B7(a).  I01/I02: P10 runs the real band-scoped variant in REVIEW mode (TEST context) on the 16
+    committed TEST-band h3 decoy-cell certificates sealed at the record's top level, and P5 runs seal-only on the
+    interpreter-flag path.  I03: execute's whole evaluation (Stage 1a, Stage 1b, S, Stage 2, decision, recording) in
+    one process, in execute's import order, on the declared decoys: stub job runners return the committed a2_h5
+    certificates and the committed RLR307 decoy records of cover cell 297; Stage 2 runs on the QC14' manufactured
+    inputs; then the sandbox seal and P1-P10.  Nothing is evaluated for any tail cell."""
+    import p309_postexec as PX
+    import p309_rehearse as RH
+    R = {}
+    h3 = _certs("cell_h3_k1_2_C1_3_20_51")
+
+    def ev_h3(verdict_of):
+        def ev(con, prep):
+            v = {c["sha256"]: verdict_of(c) for c in h3}
+            return {"stage1a": {"certificates": h3, "verdicts": v,
+                                "verdict_details": {k: {"verdict": x, "reason": "stub"} for k, x in v.items()}},
+                    "decision": {"mechanical_outcome": "NOT_CLOSED"}}
+        return ev
+    for name, vf, want in (("I01_review_mode_P10_TEST_band", lambda c: "ACCEPT", True),
+                           ("I02_review_mode_detects_a_wrong_sealed_verdict",
+                            lambda c: "REJECT" if c["sha256"] == h3[0]["sha256"] else "ACCEPT", False)):
+        sb = new_sandbox(name)
+        build_chain(sb)
+        rc = execute(sb, evaluator=ev_h3(vf))
+        rec = json.loads(result_path(sb).read_text())
+        p10 = PX.reverify(rec, sandbox=sb)
+        px = PX.checks(ctx_of(sb))
+        R[name] = {"pass": rc == 0 and len(h3) == 16 and p10 is want and px["ok"] and "stage1a" in rec
+                   and "stage1a" not in rec.get("target", {}), "got": {"rc": rc, "P10": p10, "postexec": px}}
+    # I03 the whole evaluation in one process, on decoys
+    m = D.load_manifest()
+    con = D.load_consumer(m)                              # execute's order: consumer, RLR307 helpers, then SRK side
+    D.load_rlr307(m)
+    import srk_gate  # noqa: F401  (as the historical control does)
+    vid = "sha256:" + D.pin_table(m)[D.VARIANT_REL][0]
+    a2 = _certs("cell_h5_k1_2_C1_2_37_72")
+    rec297 = json.loads((REPO / "level4/closure_proofs/p5y_k5_cell307_rlr_r1/qualification/"
+                                "RLR307_DECOY_STAGE1_297.json").read_text())
+    rungs = {(b["index"], r["degree"]): r for b in rec297["stage1"]["blocks"] for r in b["rungs"]}
+    cells = [c for c in json.loads(D.read_pinned(D.pin_table(m), D.data_rel(m, "cells_json")))
+             if c["detector"] == "CUSUM" and c["index"] == 297]
+
+    def run1a(spec):
+        cs = [c for c in a2 if c["block"] == spec["block"] and c["degree"] == spec["degree"]]
+        return {"kind": "JOB_RETURNED", "W_status": "CERTIFIED", "V_status": {}, "certificates": cs,
+                "verdicts": {c["sha256"]: "ACCEPT" for c in cs},
+                "verdict_details": {c["sha256"]: {"verdict": "ACCEPT", "reason": "stub (P10 re-verifies)"} for c in cs},
+                "verdict_source": vid, "adapter_records": [], "log_digest": ""}
+
+    def run1b(spec):
+        r = rungs[(spec["block"], spec["degree"])]
+        return {"kind": "JOB_RETURNED", "block": spec["block"], "degree": spec["degree"], "status": r["status"],
+                "record": r["record"], "adapter_records": []}
+    mf = RH.manufactured()
+    prep = {"cell": RH.DECOY_CELL, "cell_1b": D.cover_interval(cells[0]), "verifier_id": vid, "manifest": m,
+            "A_I1": mf["A"], "ci": {k: mf[k] for k in ("meas", "aux", "ad", "cov")}, "cell_label": "DECOY_INTEGRATION"}
+    seen = {}
+
+    def ev_decoys(con_, prep_):
+        out = D.evaluate(con, prep, mode="decoy", runner1a=_stub_runner(run1a), runner1b=_stub_runner(run1b))
+        seen["out"] = out
+        return out
+    sb = new_sandbox("I03_whole_evaluation_on_decoys")
+    build_chain(sb)
+    rc = execute(sb, evaluator=ev_decoys)
+    rec = json.loads(result_path(sb).read_text()) if result_path(sb).exists() else {}
+    px = PX.checks(ctx_of(sb), reverify=lambda r: PX.reverify(r, sandbox=sb))
+    s1a = rec.get("stage1a") or {}
+    tgt = rec.get("target") or {}
+    ok = (rc == 0 and rec.get("status") == "TARGET_EVALUATED" and len(cells) == 1
+          and set(s1a.get("verdict_details", {})) == set(s1a.get("verdicts", {})) and s1a.get("certificates")
+          and tgt.get("stage1b", {}).get("cell", {}).get("status") == "CERTIFIED"
+          and tgt.get("S") == {j: D.fs(x) for j, x in D._ind().consumed(mf["A"], {
+              "A1_SUPPLY": tgt["stage1b"]["cell"]["A1_SUPPLY_max"],
+              "A2_SUPPLY": tgt["stage1b"]["cell"]["A2_SUPPLY_max"]}).items()}
+          and all(v for k, v in px.items() if k.startswith("P") and not k.startswith("P8"))
+          and px.get("P8_single_target_cell") is False)          # the evaluated cell is the decoy label, not a target
+    R["I03_whole_evaluation_on_decoys"] = {"pass": bool(ok), "got": {"rc": rc, "status": rec.get("status"),
+                                                                     "postexec": px, "gate": s1a.get("gate", {}).get("source")}}
+    return R
+
+
 if __name__ == "__main__":
-    D.E.log("tests/test_p309_exactly_once.py", "QC11 exactly-once sandbox flows (stubs; synthetic TEST names only)",
-            klass="SYNTHETIC", notes="sandboxes are light repositories under the scratchpad (alternates, no remote), never pushed; "
-                                     "no production ref is created; nothing is evaluated for any cell")
+    _m = D.load_manifest()
+    _c297 = [c for c in json.loads(D.read_pinned(D.pin_table(_m), D.data_rel(_m, "cells_json")))
+             if c["detector"] == "CUSUM" and c["index"] == 297]
+    _i297 = D.cover_interval(_c297[0])
+    D.E.log("tests/test_p309_exactly_once.py", "QC11 exactly-once sandbox flows (synthetic TEST names only) and the "
+            "integration flows on declared decoys", klass="NONTARGET_DECOY",
+            drifts=[["1/2", "37/72"], [D.fs(_i297[0]), D.fs(_i297[1])], ["341/1024", "201/512"]],
+            notes="sandboxes are light repositories under the scratchpad (alternates, no remote), never pushed; no "
+                  "production ref is created; stub job runners; I01/I02 verify the 16 committed TEST-band h3 decoy "
+                  "certificates in review mode; I03 composes the committed a2_h5 decoy certificates and the committed "
+                  "RLR307 decoy records of cover cell 297 and runs Stage 2 on the QC14' manufactured inputs; nothing is "
+                  "evaluated for any tail cell")
     res = {}
     res.update(pre_marker_flows())
+    res.update(admission_flows())
     res.update(post_marker_flows())
     res.update(stage_flows())
+    res.update(integration_flows())
     bad = [k for k, v in res.items() if not v.get("pass")]
     leaked = []
     for p in sorted(SCRATCH.iterdir()):

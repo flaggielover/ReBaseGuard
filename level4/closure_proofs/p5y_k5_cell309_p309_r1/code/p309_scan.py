@@ -22,6 +22,21 @@ Three layers:
    GRANT_WRITE       a write call (write_text/write_bytes/open/writelines, or a git write verb) naming the production
                      grant path.
    A planted control (tests/planted_control_p309_formal.py) must fire all four.
+4. Owner D5 (governance/OWNER_D5_RATIFICATION_P309_VERBATIM.md): the ratified production mutation sites may EXIST;
+   everything else that could move a ref is rejected.
+   * Aliases are tracked (R4 NB1): a name bound, directly or through a tuple, a function return or an in-module call
+     argument, to a marker/pending/namespace/grant-path name is itself such a name (MARKER_MUTATION, GRANT_WRITE).
+   * A sanctioned site is the unique module-level function of that name in its listed file, with the listed AST hash.
+   REF_MUTATION_UNLISTED  a git call with a ref-moving verb (config `ref_mutation_verbs`, as a positional argument of a
+                          git-runner call) in a function that is not listed in config `ref_mutation_functions` with
+                          its current AST sha256 (and a reason) -- so a dynamically constructed ref name, however it is
+                          built, is caught wherever it is not already reviewed and pinned
+   MARKER_TOKEN           a string constant carrying a production ref-name token (config `production_tokens`) other
+                          than the reviewed definitions (the listed constants' own assignments)
+   REF_FILE_WRITE         a filesystem mutation (open for writing, os.open O_CREAT/O_WRONLY, write_*, mkdir, rename,
+                          replace, link, symlink, unlink, remove, copy, move) naming a refs path
+   CONTROL_MARK_UNLISTED  a planted-control mark in a file not listed in config `planted_control_files`
+   A planted control must fire every formal kind.
 """
 from __future__ import annotations
 
@@ -46,10 +61,20 @@ NSPACE = ALLOW["production_ref_namespace"]
 SITES = ALLOW["exactly_once_sites"]
 VERBS = set(ALLOW["mutating_git_verbs"])
 GRANT_MARKS = tuple(ALLOW["production_grant_markers"]) + ("_PROD_GRANT_PATH",)
+GRANT_NAMES = {"grant_path", "_PROD_GRANT_PATH"}
+TOKENS = tuple(ALLOW["production_tokens"])
+REF_VERBS = set(ALLOW["ref_mutation_verbs"])
+GIT_RUNNERS = set(ALLOW["git_runner_names"])
+REF_FUNCS = ALLOW["ref_mutation_functions"]
+CONTROL_FILES = set(ALLOW["planted_control_files"])
+TOKEN_DEFS = ALLOW["token_definitions"]
+FS_WRITE_FUNCS = {"mkdir", "makedirs", "rename", "replace", "renames", "link", "symlink", "unlink", "remove", "rmtree",
+                  "copy", "copy2", "copyfile", "copytree", "move", "touch", "write_text", "write_bytes", "writelines"}
 WRITE_FUNCS = {"write_text", "write_bytes", "writelines"}
 GIT_WRITE_VERBS = {"add", "commit", "commit-tree", "hash-object", "update-index", "mv", "checkout", "apply", "am",
                    "stash", "merge", "cherry-pick", "revert", "reset", "restore"}
-FORMAL_KINDS = {"MARKER_MUTATION", "MARKER_ALIAS", "MARKER_REBIND", "GRANT_WRITE"}
+FORMAL_KINDS = {"MARKER_MUTATION", "MARKER_ALIAS", "MARKER_REBIND", "GRANT_WRITE", "REF_MUTATION_UNLISTED",
+                "MARKER_TOKEN", "REF_FILE_WRITE"}
 
 
 def _atoms(node) -> set:
@@ -74,25 +99,235 @@ def _literal_nodes(tree, lit=None) -> list:
 
 
 def _func_of(tree) -> dict:
-    """node id -> name of the innermost enclosing function (for sanctioned exactly-once sites)."""
+    """node id -> the innermost enclosing function NODE (None at module level)."""
     out = {}
 
     def walk(n, fn):
         for ch in ast.iter_child_nodes(n):
-            f = ch.name if isinstance(ch, (ast.FunctionDef, ast.AsyncFunctionDef)) else fn
+            f = ch if isinstance(ch, (ast.FunctionDef, ast.AsyncFunctionDef)) else fn
             out[id(ch)] = f
             walk(ch, f)
     walk(tree, None)
     return out
 
 
-def _site_ok(tree, rel: str, fname) -> bool:
+def ast_sha(fn) -> str:
     import hashlib
-    for s in SITES:
-        if s["file"] == rel and s["function"] == fname:
-            for n in ast.walk(tree):
-                if isinstance(n, ast.FunctionDef) and n.name == fname:
-                    return hashlib.sha256(ast.dump(n).encode()).hexdigest() == s["ast_sha256"]
+    return hashlib.sha256(ast.dump(fn).encode()).hexdigest()
+
+
+def _unique_module_def(tree, fn) -> bool:
+    """fn is a module-level def and the only def of that name anywhere in the file"""
+    same = [n for n in ast.walk(tree) if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == fn.name]
+    return fn in tree.body and len(same) == 1
+
+
+def _site_ok(tree, rel: str, fn) -> bool:
+    if fn is None or not _unique_module_def(tree, fn):
+        return False
+    return any(s["file"] == rel and s["function"] == fn.name and s["ast_sha256"] == ast_sha(fn) for s in SITES)
+
+
+def owners(tree) -> dict:
+    """node id -> (qualified name, node) of the OUTERMOST enclosing function: `func` at module level, or
+    `Class.method` for a method of a module-level class.  Nested functions and lambdas belong to their owner, whose
+    AST hash covers them."""
+    out = {}
+
+    def walk(n, owner, cls):
+        for ch in ast.iter_child_nodes(n):
+            o = owner
+            if owner is None and isinstance(ch, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                o = (f"{cls}.{ch.name}" if cls else ch.name, ch)
+            out[id(ch)] = o
+            walk(ch, o, ch.name if (owner is None and cls is None and isinstance(ch, ast.ClassDef)) else cls)
+    walk(tree, None, None)
+    return out
+
+
+def _ref_func_ok(tree, rel: str, owner) -> bool:
+    if owner is None:
+        return False
+    qual, node = owner
+    same = [o for o in owners(tree).values() if o is not None and o[0] == qual and o[1] is not node]
+    if same:
+        return False
+    return any(r["file"] == rel and r["function"] == qual and r["ast_sha256"] == ast_sha(node) and r.get("reason")
+               for r in REF_FUNCS)
+
+
+def _callee(n: ast.Call) -> str:
+    return n.func.attr if isinstance(n.func, ast.Attribute) else (n.func.id if isinstance(n.func, ast.Name) else "")
+
+
+def _positional_strings(n: ast.Call) -> list:
+    out = []
+    for a in n.args:
+        if isinstance(a, ast.Constant) and isinstance(a.value, str):
+            out.append(a.value)
+        elif isinstance(a, (ast.List, ast.Tuple)):
+            out += [x.value for x in a.elts if isinstance(x, ast.Constant) and isinstance(x.value, str)]
+    return out
+
+
+def ref_verbs_of(n: ast.Call) -> set:
+    """the ref-moving git verbs of a git-runner call (positional arguments only; `errors="replace"` is not a verb)"""
+    if _callee(n) not in GIT_RUNNERS:
+        return set()
+    pos = _positional_strings(n)
+    if _callee(n) in ("run", "Popen", "check_output", "check_call", "call") and not any(
+            x == "git" or x.endswith("/git") for x in pos):
+        return set()
+    return set(pos) & REF_VERBS
+
+
+STR_METHODS = {"join", "format", "replace", "strip", "lstrip", "rstrip", "lower", "upper", "removeprefix",
+               "removesuffix", "encode", "decode", "__add__", "format_map", "casefold"}
+
+
+def _value_names(expr) -> set | None:
+    """the names and string constants a VALUE expression is built from, or None if it is not value-like.  Value-like:
+    names, attributes, string constants, f-strings, + / % concatenation, conditional and boolean forms, subscripts
+    and string-method calls.  An arbitrary call (for example a constructor returning an object) is not a value."""
+    if isinstance(expr, ast.Name):
+        return {expr.id}
+    if isinstance(expr, ast.Attribute):
+        inner = _value_names(expr.value)
+        return {expr.attr} | (inner or set())
+    if isinstance(expr, ast.Constant):
+        return {expr.value} if isinstance(expr.value, str) else set()
+    if isinstance(expr, ast.JoinedStr):
+        out = set()
+        for v in expr.values:
+            got = _value_names(v.value if isinstance(v, ast.FormattedValue) else v)
+            out |= got or set()
+        return out
+    if isinstance(expr, ast.FormattedValue):
+        return _value_names(expr.value)
+    if isinstance(expr, ast.BinOp) and isinstance(expr.op, (ast.Add, ast.Mod)):
+        return (_value_names(expr.left) or set()) | (_value_names(expr.right) or set())
+    if isinstance(expr, ast.IfExp):
+        return (_value_names(expr.body) or set()) | (_value_names(expr.orelse) or set())
+    if isinstance(expr, ast.BoolOp):
+        return set().union(*[(_value_names(v) or set()) for v in expr.values])
+    if isinstance(expr, ast.Subscript):
+        return _value_names(expr.value)
+    if isinstance(expr, (ast.Tuple, ast.List)):
+        return set().union(*[(_value_names(v) or set()) for v in expr.elts]) if expr.elts else set()
+    if isinstance(expr, ast.Call) and isinstance(expr.func, ast.Attribute) and expr.func.attr in STR_METHODS:
+        out = _value_names(expr.func.value) or set()
+        for a in expr.args:
+            out |= _value_names(a) or set()
+        return out
+    if isinstance(expr, ast.Call):                   # the value returned by a (possibly marker-bearing) function
+        return {_callee(expr)} - {""}
+    return None
+
+
+def _targets(t) -> list:
+    """the bound names of an assignment target (Name ids and Attribute attrs), element-wise for tuples"""
+    if isinstance(t, ast.Name):
+        return [t.id]
+    if isinstance(t, ast.Attribute):
+        return [t.attr]
+    if isinstance(t, ast.Starred):
+        return _targets(t.value)
+    if isinstance(t, (ast.Tuple, ast.List)):
+        return [x for e in t.elts for x in _targets(e)]
+    return []
+
+
+def taint(tree, seeds: set, lit_test) -> set:
+    """flow-insensitive alias closure over VALUES (R4 NB1): a name becomes marker-bearing when it is bound -- directly,
+    element-wise through tuples, as a loop/with/walrus target, as the parameter receiving an in-module call argument,
+    or as a function whose return value is such a value -- to a value-like expression built from a seed name, an
+    already marker-bearing name, or a literal accepted by lit_test.  Objects that merely CONTAIN such a value (an
+    execution context, a constructor result) are not marker-bearing; their marker attributes are seeds themselves."""
+    tainted = set(seeds)
+    funcs = {f.name: f for f in ast.walk(tree) if isinstance(f, (ast.FunctionDef, ast.AsyncFunctionDef))}
+
+    def hot(expr) -> bool:
+        names = _value_names(expr)
+        return bool(names) and any(a in tainted or (isinstance(a, str) and lit_test(a)) for a in names)
+    for _ in range(12):
+        before = len(tainted)
+        for n in ast.walk(tree):
+            pairs = []
+            if isinstance(n, ast.Assign):
+                for t in n.targets:
+                    if isinstance(t, (ast.Tuple, ast.List)) and isinstance(n.value, (ast.Tuple, ast.List)) and \
+                            len(t.elts) == len(n.value.elts):
+                        pairs += list(zip(t.elts, n.value.elts))
+                    else:
+                        pairs.append((t, n.value))
+            elif isinstance(n, (ast.AnnAssign, ast.AugAssign)) and n.value is not None:
+                pairs.append((n.target, n.value))
+            elif isinstance(n, ast.NamedExpr):
+                pairs.append((n.target, n.value))
+            elif isinstance(n, (ast.For, ast.AsyncFor, ast.comprehension)):
+                pairs.append((n.target, n.iter))
+            elif isinstance(n, (ast.With, ast.AsyncWith)):
+                pairs += [(i.optional_vars, i.context_expr) for i in n.items if i.optional_vars is not None]
+            elif isinstance(n, ast.Call) and _callee(n) in funcs:
+                f = funcs[_callee(n)]
+                params = [a.arg for a in f.args.posonlyargs + f.args.args]
+                if isinstance(n.func, ast.Attribute) and params[:1] == ["self"]:
+                    params = params[1:]
+                for k, a in enumerate(n.args):
+                    if k < len(params) and hot(a):
+                        tainted.add(params[k])
+                for kw in n.keywords:
+                    if kw.arg and hot(kw.value):
+                        tainted.add(kw.arg)
+            for t, v in pairs:
+                if hot(v):
+                    tainted.update(_targets(t))
+        for f in funcs.values():
+            if any(isinstance(r, ast.Return) and r.value is not None and hot(r.value) for r in ast.walk(f)):
+                tainted.add(f.name)
+        if len(tainted) == before:
+            break
+    return tainted
+
+
+def git_write_verbs_of(n: ast.Call) -> set:
+    """object/index-writing git verbs of a git-runner call (positional arguments only)"""
+    if _callee(n) not in GIT_RUNNERS:
+        return set()
+    pos = _positional_strings(n)
+    if _callee(n) in ("run", "Popen", "check_output", "check_call", "call") and not any(
+            x == "git" or x.endswith("/git") for x in pos):
+        return set()
+    return set(pos) & (GIT_WRITE_VERBS | REF_VERBS)
+
+
+def write_target_atoms(n: ast.Call) -> set:
+    """the atoms of the PATH a write call writes (not of the bytes written): the receiver of a Path method, the first
+    argument of open / os.* / shutil.* (both paths for rename, replace, link, copy, move); for a git write, the call."""
+    fname = _callee(n)
+    if git_write_verbs_of(n):
+        return _atoms(n)
+    two = {"rename", "replace", "renames", "link", "symlink", "copy", "copy2", "copyfile", "copytree", "move"}
+    if isinstance(n.func, ast.Attribute) and fname in {"write_text", "write_bytes", "touch", "symlink_to",
+                                                         "hardlink_to"} | ({"mkdir", "unlink", "rename", "replace"}
+                                                                           if not n.args or fname in two else set()):
+        return _atoms(n.func.value) | (_atoms(n.args[0]) if n.args and fname in two else set())
+    args = n.args[:2] if fname in two else n.args[:1]
+    out = set()
+    for x in args:
+        out |= _atoms(x)
+    return out
+
+
+def fs_write_of(n: ast.Call, atoms: set) -> bool:
+    fname = _callee(n)
+    if fname in FS_WRITE_FUNCS:
+        return True
+    if fname == "open" and isinstance(n.func, ast.Name):      # builtin open with a writing mode
+        return any(isinstance(x, ast.Constant) and isinstance(x.value, str) and set(x.value) & set("wax+")
+                   for x in list(n.args[1:2]) + [k.value for k in n.keywords if k.arg == "mode"])
+    if fname == "open":                                        # os.open with creating/writing flags
+        return bool({"O_CREAT", "O_WRONLY", "O_RDWR", "O_APPEND", "O_TRUNC"} & atoms)
     return False
 
 
@@ -145,24 +380,42 @@ def formal_rules(tree, rel: str, sanctioned: list | None = None) -> list:
                         and st.targets[0].id in ("marker_ref", "pending_ref") and isinstance(st.value, ast.Name)
                         and st.value.id in CONSTS):
                     class_attr_ok.add(id(st))
+    marker_names = taint(tree, set(MENTION) | set(CONSTS), lambda a: any(l in a for l in LITS) or NSPACE in a)
+    grant_names = taint(tree, set(GRANT_NAMES), lambda a: any(g in a for g in GRANT_MARKS))
     fn_of = _func_of(tree)
+    own = owners(tree)
+    allowed_defs = set()                      # the reviewed definitions of the listed constants (the only token homes)
+    homes = {"PRODUCTION_MARKER", "PENDING_REF", "_PROD_NAMESPACE"} if listed else set()
+    homes |= {d["constant"] for d in TOKEN_DEFS if d["file"] == rel and d.get("reason")}
+    for st in tree.body:
+        if isinstance(st, (ast.Assign, ast.AnnAssign)) and isinstance(st.value, ast.Constant) and any(
+                t in _targets(x) for x in (st.targets if isinstance(st, ast.Assign) else [st.target]) for t in homes):
+            allowed_defs.add(id(st.value))
     for n in ast.walk(tree):
         if isinstance(n, ast.Call):
             a = _atoms(n)
-            if a & VERBS and _mentions_marker(a):
-                if _site_ok(tree, rel, fn_of.get(id(n))):
-                    sanctioned.append({"file": rel, "line": n.lineno, "function": fn_of.get(id(n)),
-                                       "kind": "EXACTLY_ONCE_SITE", "verbs": sorted(a & VERBS)})
+            fn = fn_of.get(id(n))
+            direct = bool(a & VERBS) and _mentions_marker(a)
+            aliased = bool(ref_verbs_of(n)) and bool(a & marker_names)
+            verbs = (a & VERBS) | ref_verbs_of(n)
+            if direct or aliased:
+                if _site_ok(tree, rel, fn):
+                    sanctioned.append({"file": rel, "line": n.lineno, "function": fn.name,
+                                       "kind": "EXACTLY_ONCE_SITE", "verbs": sorted(verbs)})
                 else:
-                    rec(n, "MARKER_MUTATION", sorted(a & VERBS))
-            fname = n.func.attr if isinstance(n.func, ast.Attribute) else (
-                n.func.id if isinstance(n.func, ast.Name) else "")
-            writes = fname in WRITE_FUNCS or (fname == "open" and any(
-                isinstance(x, ast.Constant) and isinstance(x.value, str) and set(x.value) & set("wax")
-                for x in list(n.args[1:2]) + [k.value for k in n.keywords if k.arg == "mode"])) or bool(
-                a & GIT_WRITE_VERBS)
-            if writes and any(isinstance(x, str) and any(g in x for g in GRANT_MARKS) for x in a):
+                    rec(n, "MARKER_MUTATION", sorted(verbs))
+            rv = ref_verbs_of(n)
+            if rv and not _site_ok(tree, rel, fn) and not _ref_func_ok(tree, rel, own.get(id(n))):
+                rec(n, "REF_MUTATION_UNLISTED", f"{(own.get(id(n)) or ('<module>',))[0]}: {sorted(rv)}")
+            fname = _callee(n)
+            fs_write = fs_write_of(n, a)
+            writes = fs_write or bool(git_write_verbs_of(n))
+            ta = write_target_atoms(n) if writes else set()
+            if writes and (any(isinstance(x, str) and any(g in x for g in GRANT_MARKS) for x in ta) or ta & grant_names):
                 rec(n, "GRANT_WRITE", fname or "call")
+            if fs_write and any(isinstance(x, str) and (x in ("refs", "packed-refs") or "refs/" in x
+                                                        or x.startswith("logs/refs")) for x in ta):
+                rec(n, "REF_FILE_WRITE", fname)
         elif isinstance(n, (ast.Assign, ast.AnnAssign)):
             val = n.value
             if val is None:
@@ -180,6 +433,8 @@ def formal_rules(tree, rel: str, sanctioned: list | None = None) -> list:
             for nm in NAMES:
                 if nm["literal"] in n.value and rel not in nm["files"]:
                     rec(n, "MARKER_ALIAS", f"{nm['constant']} literal outside its listed files")
+            if id(n) not in allowed_defs and any(t in n.value for t in TOKENS):
+                rec(n, "MARKER_TOKEN", "a production ref-name token outside the reviewed definitions")
     return out
 
 
@@ -212,7 +467,11 @@ def scan(root: Path = FNS) -> dict:
             continue
         site_hits: list = []
         fs = formal_rules(tree, rel, site_hits)
-        if Q.CONTROL_MARK in src[:400]:
+        if Q.CONTROL_MARK in src:
+            if rel not in CONTROL_FILES or Q.CONTROL_MARK not in src[:400]:
+                findings.append({"file": rel, "line": 0, "kind": "CONTROL_MARK_UNLISTED",
+                                 "what": "a planted-control mark in a file that is not a listed planted control"})
+                continue
             formal_controls.append({"file": rel, "fired": sorted({x["kind"] for x in fs})})
             continue
         findings.extend(fs)

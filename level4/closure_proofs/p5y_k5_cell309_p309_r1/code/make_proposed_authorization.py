@@ -62,7 +62,7 @@ def main() -> int:
                "(incident review C4: after the freeze, ledgered)", carried_309_numbers=True)
     cells = json.loads(D.read_pinned(pins, D.data_rel(m, "cells_json")))
     rows = [c for c in cells if c["detector"] == "CUSUM" and c["index"] == D.TARGET_CELL]
-    lo, hi = F(rows[0]["left"][0], rows[0]["left"][1]), F(rows[0]["right"][0], rows[0]["right"][1])
+    lo, hi = D.cover_interval(rows[0])                   # the canonical sum form (FE-9)
     import srk_certify as S
     wb, _ = S.cell_blocks(lo, hi)
     fp = json.loads((FNS / "freeze" / "P309_FREEZE.json").read_text())

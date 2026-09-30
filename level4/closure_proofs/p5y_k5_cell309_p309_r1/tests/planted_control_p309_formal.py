@@ -2,7 +2,8 @@
 
 Each statement below is a deliberate violation that the scan must detect.  The module raises at import, and nothing
 below ever executes.  Research kinds: CELL_LITERAL, BAND_LITERAL, FORBIDDEN_IMPORT, TARGET_PATH.  Formal kinds:
-MARKER_MUTATION, MARKER_ALIAS, MARKER_REBIND, GRANT_WRITE.
+MARKER_MUTATION, MARKER_ALIAS, MARKER_REBIND, GRANT_WRITE; owner D5 kinds: REF_MUTATION_UNLISTED, MARKER_TOKEN,
+REF_FILE_WRITE.
 """
 raise SystemExit("planted control: never run")
 
@@ -20,3 +21,5 @@ PRODUCTION_MARKER = G.PRODUCTION_MARKER      # MARKER_ALIAS (another binding of 
 G.PRODUCTION_MARKER = G.TEST_MARKER          # MARKER_REBIND
 subprocess.run(["git", "update-ref", G.PRODUCTION_MARKER, "HEAD"])                      # MARKER_MUTATION
 Path(G._PROD_GRANT_PATH).write_text("{}")                                                # GRANT_WRITE
+TOKEN = "refs/p5y-k5-cell309-p309-r1" + "/elsewhere"                                        # MARKER_TOKEN
+open(".git/refs/heads/planted", "w")                                                     # REF_FILE_WRITE
