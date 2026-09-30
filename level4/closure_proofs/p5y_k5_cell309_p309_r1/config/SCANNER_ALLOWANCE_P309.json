@@ -1,5 +1,5 @@
 {
- "schema": "P309_SCANNER_ALLOWANCE/3",
+ "schema": "P309_SCANNER_ALLOWANCE/4",
  "authority": "owner rulings 2 (governance/OWNER_RULINGS_2_P309_VERBATIM.md), section OWNER RULING - QUARANTINE SCANNER; spec fc2/FC2_SPEC_R2.md section 7; the pending-result ref NAME (in the guard file only) and the two exactly-once sites _arm_marker and _persist_pending (AST-hash-pinned) RATIFIED by the owner's D5 decision (governance/OWNER_D5_RATIFICATION_P309_VERBATIM.md): they may EXIST in the frozen tree; no production ref may be created, mutated or consumed before the owner's explicit execution grant; every other ref-moving path is rejected (schema 3)",
  "scope": "the research scanner's TARGET_PATH finding for exactly these exactly-once ref NAMES, as inert metadata, in exactly the listed files, under conditions (a)-(e); nothing else",
  "names": [
@@ -72,43 +72,6 @@
   "target-consumed",
   "pending-result"
  ],
- "ref_mutation_verbs": [
-  "update-ref",
-  "symbolic-ref",
-  "push",
-  "fetch",
-  "pull",
-  "tag",
-  "branch",
-  "replace",
-  "notes",
-  "fast-import",
-  "commit",
-  "merge",
-  "rebase",
-  "reset",
-  "checkout",
-  "switch",
-  "cherry-pick",
-  "revert",
-  "am",
-  "stash",
-  "worktree",
-  "clone"
- ],
- "git_runner_names": [
-  "git",
-  "_git",
-  "_git_ok",
-  "_git_bytes",
-  "_run_git",
-  "sh",
-  "run",
-  "Popen",
-  "check_output",
-  "check_call",
-  "call"
- ],
  "planted_control_files": [
   "tests/planted_control_p309.py",
   "tests/planted_control_p309_formal.py"
@@ -117,32 +80,14 @@
   {
    "file": "code/checkpoint_push_p309.py",
    "function": "main",
-   "ast_sha256": "38fab778483168542ec16a609764a6d907561448989447d2c9d00594c3991aa5",
+   "ast_sha256": "cefa7382a01f029bfe3db37e583ba92a00e2edab6610fc56d5199a5c1bc8cd2e",
    "reason": "the owner-authorized single-ref checkpoint push of the formal branch: commits the push record, fetches, pushes one explicit refspec; check 7 refuses any production-namespace ref"
-  },
-  {
-   "file": "code/p309_driver.py",
-   "function": "production_context",
-   "ast_sha256": "2b00b5e48db324f731d8dc69851a8b2deeaeb4465afa8b4df674893395e822ab",
-   "reason": "read form `symbolic-ref -q HEAD` (the current branch); moves nothing"
-  },
-  {
-   "file": "code/p309_driver.py",
-   "function": "sandbox_context",
-   "ast_sha256": "9d56e804301538e35db7de979feef5336a663bfc4a4da6c1d93fd52f341b47ff",
-   "reason": "read form `symbolic-ref -q HEAD` (the current branch); moves nothing"
   },
   {
    "file": "code/p309_driver.py",
    "function": "seal_blob",
    "ast_sha256": "da8e567cb535e87d42f3d2e968f714a0ef0b054825567a756016f9a472681522",
    "reason": "the seal: moves ONLY ctx.branch_ref (under refs/heads/, check_branch) by compare-and-swap from HEAD; never a marker-namespace ref"
-  },
-  {
-   "file": "code/p309_guard.py",
-   "function": "_check_official",
-   "ast_sha256": "0b23af88e3ccc72ab4d2bfa66f98fca47e838dcf500ae54badcc29b799d740d1",
-   "reason": "read form `symbolic-ref -q HEAD` (check 7: the current branch); moves nothing"
   },
   {
    "file": "tests/test_p309_exactly_once.py",
@@ -165,7 +110,7 @@
   {
    "file": "tests/test_p309_exactly_once.py",
    "function": "admission_flows",
-   "ast_sha256": "c422740dee41a2a2d0a5ccc85f3b7e20c4f520e11adfd1ce6d477ecdc6fee7b1",
+   "ast_sha256": "6cc70f3495ee4f7376f12c48b82d85d93f353d4cdd3f15aa3d99776ddbb26fa9",
    "reason": "QC11 sandbox only: a light repository under the scratchpad with the synthetic TEST names; refs are moved only inside it"
   },
   {
@@ -191,12 +136,6 @@
    "function": "set_test_ref",
    "ast_sha256": "d64317c97bf169d0014849077c3bd522c8bd4686058e26c98e63ec9afbd3abde",
    "reason": "FC2 guard tests, sandbox only: a light repository under the scratchpad with the synthetic TEST names; refs are moved only inside it"
-  },
-  {
-   "file": "tests/test_verify_scoped.py",
-   "function": "TestFC2Scoped.fresh",
-   "ast_sha256": "a09dc5794fe8db0849d354accea7a2169578a2984bc746cf8e9a51eae58046d7",
-   "reason": "verifier-author tests: read form `symbolic-ref HEAD` of its own sandbox"
   },
   {
    "file": "verify/scoped_sandbox.py",
@@ -229,22 +168,22 @@
    "reason": "verifier-author sandbox helper: resets its own sandbox branch only"
   },
   {
-   "file": "verify/srk_verify_indep_scoped.py",
-   "function": "_admission",
-   "ast_sha256": "e8df9204a3b742dc04b0add67e6302b1da545ee75170038218a6a6050e1f35f8",
-   "reason": "read form `symbolic-ref -q HEAD` (check 7: the current branch); moves nothing"
-  },
-  {
    "file": "tests/test_p309_guard.py",
    "function": "run",
    "ast_sha256": "520d1a9e1a5ae30794dbfd90ff4681d228455f3f69a820302ea803c2c3b6f5d9",
    "reason": "FC2 guard tests (N7j): `checkout --detach` inside a sandbox only (light repository under the scratchpad, TEST names only)"
   },
   {
-   "file": "tests/test_p309_d5_exception.py",
+   "file": "tests/test_p309_site_backstop.py",
    "function": "run",
-   "ast_sha256": "b8e88a16e46478bb034394aa8d0a5cc452c8b6f88211503babe2c413401e9810",
-   "reason": "the D5 runtime controls' scratch sandbox: one empty commit in a fresh `git init` repository under the scratchpad (no marker-namespace ref; deleted afterwards)"
+   "ast_sha256": "203dee6e24af38ccea9048bec529c49151f9165076b32f0e510f7a53871fced1",
+   "reason": "backstop controls B07/B09b set the TEST marker in scratch sandboxes (update-ref through the QC11 sandbox runner); TEST names only"
+  },
+  {
+   "file": "tests/test_p309_exactly_once.py",
+   "function": "validate_flows",
+   "ast_sha256": "7b261b33779c29b87f53103e94bad239b6586693b608240ec8cf1a5e8f96cc02",
+   "reason": "QC11 V01-V09: moves the SANDBOX branch back to the grant commit's parent (update-ref, reset --hard) so that validate-grant sees HEAD at the would-be parent, and commits a validated TEST grant; sandbox branch only"
   }
  ],
  "ref_mutation_rule": "owner D5: a git call with a ref-moving verb is allowed only inside an exactly-once site or a function listed here by file, qualified name, AST sha256 and reason; entries are added only by review, and code/p309_scan_pins.py refreshes the hashes of listed entries before the freeze only (never the exactly-once sites)",
@@ -253,6 +192,650 @@
    "file": "verify/scoped_sandbox.py",
    "constant": "_FORBIDDEN_REF_PREFIX",
    "reason": "the verifier author's sandbox helper: the production ref namespace, used ONLY to refuse any such ref in a sandbox (module-level constant)"
+  }
+ ],
+ "process_policy": {
+  "rule": "R4 follow-up F1(b) (reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_P309.md): process execution is ALLOWLISTED. A call that can start a process or run git is a finding unless it lies in an exactly-once site or in a function listed in reviewed_functions (file, qualified name, AST sha256, permits, reason), or it is a git call whose verb is a literal in git_read_verbs (with literal options only; the conditional read forms of symbolic-ref, config, branch, remote, worktree, sparse-checkout and stash are recognised by their arguments). Unknown verbs are ref-moving (REF_MUTATION_UNLISTED unless listed in ref_mutation_functions); git_object_verbs need the git_write permit (or a ref_mutation_functions listing). os.system/popen/exec*/spawn*/posix_spawn*/fork*, pty.spawn, asyncio.create_subprocess_*, subprocess attributes other than run/Popen/call/check_call/check_output, and shell=True are always findings. Aliases of process functions or modules, getattr/vars on them, __import__/import_module of them or with non-literal names, exec/eval/compile of non-literal code, git runners used as values, forbidden git options, and filesystem writes whose target is built from a git directory are findings. A `python -c` code string and a literal exec/eval/compile string are parsed and scanned with every rule. Every file of the scanned tree has an allowed suffix and no executable bit, and no module shadows a research module. Entries are added only by review; code/p309_scan_pins.py refreshes the AST hashes of listed entries before the freeze only.",
+  "git_read_verbs": [
+   "rev-parse",
+   "show",
+   "log",
+   "diff-tree",
+   "diff",
+   "rev-list",
+   "cat-file",
+   "for-each-ref",
+   "ls-tree",
+   "ls-files",
+   "status",
+   "merge-base",
+   "var",
+   "show-ref",
+   "describe",
+   "archive",
+   "ls-remote",
+   "check-ignore",
+   "count-objects",
+   "version",
+   "diff-index",
+   "name-rev",
+   "cherry",
+   "shortlog",
+   "grep",
+   "verify-pack"
+  ],
+  "git_object_verbs": [
+   "hash-object",
+   "commit-tree",
+   "write-tree",
+   "read-tree",
+   "update-index",
+   "mktree",
+   "add",
+   "rm",
+   "unpack-objects",
+   "index-pack",
+   "pack-objects"
+  ],
+  "git_global_options_with_operand": [
+   "-C"
+  ],
+  "git_global_options_flag": [
+   "--no-pager",
+   "--no-optional-locks",
+   "--literal-pathspecs"
+  ],
+  "git_forbidden_options_exact": [
+   "-o"
+  ],
+  "git_forbidden_option_prefixes": [
+   "--exec",
+   "--output",
+   "--upload-pack",
+   "--receive-pack",
+   "--ext-diff",
+   "--textconv",
+   "--filters",
+   "--template",
+   "--separate-git-dir",
+   "--prefix",
+   "--remote",
+   "--config-env",
+   "--super-prefix"
+  ],
+  "python_argv0": [
+   "sys.executable",
+   "PY",
+   "QQ.PY",
+   "python3"
+  ],
+  "file_suffixes": [
+   ".py",
+   ".md",
+   ".json",
+   ".jsonl",
+   ".txt",
+   ".sha256"
+  ],
+  "git_runners": [
+   {
+    "file": "code/p309_driver.py",
+    "function": "git",
+    "kind": "git",
+    "leading": 0,
+    "reason": "the driver's git runner: /usr/bin/git -C <repo> <args> with a fixed environment; every caller's verb is classified"
+   },
+   {
+    "file": "code/p309_guard.py",
+    "function": "_git",
+    "kind": "git",
+    "leading": 1,
+    "reason": "the guard's read runner: git -C <repo> <args>; callers pass the repository first"
+   },
+   {
+    "file": "code/p309_guard.py",
+    "function": "_git_bytes",
+    "kind": "git",
+    "leading": 1,
+    "reason": "the guard's read runner (bytes); callers pass the repository first"
+   },
+   {
+    "file": "code/p309_guard.py",
+    "function": "_git_ok",
+    "kind": "git",
+    "leading": 1,
+    "reason": "the guard's read runner (return code); callers pass the repository first"
+   },
+   {
+    "file": "code/make_freeze_manifest.py",
+    "function": "git",
+    "kind": "git",
+    "leading": 0,
+    "reason": "manifest tool: git -C <this repository> <args>"
+   },
+   {
+    "file": "code/make_freeze_params.py",
+    "function": "git",
+    "kind": "git",
+    "leading": 0,
+    "reason": "freeze-parameter tool: git -C <this repository> <args>"
+   },
+   {
+    "file": "code/make_proposed_authorization.py",
+    "function": "git",
+    "kind": "git",
+    "leading": 0,
+    "reason": "proposal tool: git -C <this repository> <args>"
+   },
+   {
+    "file": "code/checkpoint_push_p309.py",
+    "function": "git",
+    "kind": "git",
+    "leading": 0,
+    "reason": "checkpoint push tool: git <args> in this repository"
+   },
+   {
+    "file": "code/p309_qualify.py",
+    "function": "git",
+    "kind": "git",
+    "leading": 0,
+    "reason": "QC runner: read-only git -C <this repository> <args>"
+   },
+   {
+    "file": "code/p309_self_audit.py",
+    "function": "git",
+    "kind": "git",
+    "leading": 0,
+    "reason": "self audit: git <args> in this repository"
+   },
+   {
+    "file": "start_state/verify_start_state.py",
+    "function": "git",
+    "kind": "git",
+    "leading": 0,
+    "reason": "start-state check: git <args> in this repository"
+   },
+   {
+    "file": "tests/test_p309_exactly_once.py",
+    "function": "sh",
+    "kind": "git",
+    "leading": 1,
+    "reason": "QC11 sandbox runner: git -C <sandbox> <args>; callers pass the sandbox first"
+   },
+   {
+    "file": "tests/test_p309_guard.py",
+    "function": "sh",
+    "kind": "git",
+    "leading": 1,
+    "reason": "guard-test sandbox runner: git -C <sandbox> <args>; callers pass the sandbox first"
+   },
+   {
+    "file": "verify/scoped_sandbox.py",
+    "function": "_git",
+    "kind": "git",
+    "leading": 1,
+    "reason": "the verifier author's sandbox runner: git -C <cwd> <args>; callers pass the directory first"
+   },
+   {
+    "file": "verify/srk_verify_indep_scoped.py",
+    "function": "_run_git",
+    "kind": "git",
+    "leading": 1,
+    "reason": "the verifier's runner: git -C <repo> + a list; callers pass the repository and a literal list",
+    "list": true
+   },
+   {
+    "file": "verify/srk_verify_indep_scoped.py",
+    "function": "_git_ok",
+    "kind": "git",
+    "leading": 2,
+    "reason": "the verifier's checked runner: (repo, label, *git args)"
+   },
+   {
+    "file": "code/p309_qualify.py",
+    "function": "run",
+    "kind": "argv",
+    "leading": 0,
+    "reason": "QC runner: runs an argv list (python scripts of the frozen tree or the archive mirror) with a timeout; every caller's argv is checked"
+   },
+   {
+    "file": "code/p309_qualify.py",
+    "function": "qc_formal",
+    "kind": "script",
+    "leading": 0,
+    "reason": "QC runner: runs a python script of the frozen tree named literally by the caller (T7 still checks the driver modes)"
+   },
+   {
+    "file": "code/p309_qualify.py",
+    "function": "research_test",
+    "kind": "script",
+    "leading": 1,
+    "reason": "QC runner: runs a research test of the archive mirror named literally by the caller"
+   },
+   {
+    "file": "code/p309_qualify.py",
+    "function": "qc_research_simple",
+    "kind": "script",
+    "leading": 1,
+    "reason": "QC runner: QC01-QC04 run one research test of the archive mirror named literally by the caller"
+   }
+  ],
+  "reviewed_functions": [
+   {
+    "file": "code/p309_driver.py",
+    "function": "git",
+    "ast_sha256": "6da407af03f0c3a024065102f9d2c27adec4ba78b136a406124849ca6b5dbf35",
+    "permits": [
+     "process"
+    ],
+    "reason": "the driver's git runner: /usr/bin/git --no-replace-objects -C <repo> <args> with the driver's fixed environment; a registered git runner (process_policy.git_runners): the scanner classifies every caller's verb"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "function": "_spawn_job",
+    "ast_sha256": "5f7ab03a475f72f6634908429d5d428f9d534f972b1e5a1a3f094f402c5de724",
+    "permits": [
+     "process"
+    ],
+    "reason": "spawns one Stage-1 job: sys.executable -I -S -B <this driver file> _job <spec JSON>, with CPU and core rlimits and signals ignored; program, flags and mode are fixed, the spec is the job's data"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "function": "exec_module",
+    "ast_sha256": "bc58173dd57e3f2064e28db0cd2a5182eafa11930412e6ce211d1045efc04d3b",
+    "permits": [
+     "dynamic_exec"
+    ],
+    "reason": "executes the bytes of a pinned consumer / RLR307 module in a fresh module; every caller passes read_pinned(...) (sha256 and git blob verified against the frozen manifest)"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "function": "create_run_nonce",
+    "ast_sha256": "de62973e66d9f4b2ff90bcf9d41685cc6a1de17f6b0c6c3aed0d271458ca8070",
+    "permits": [
+     "gitdir_write"
+    ],
+    "reason": "creates the run nonce p309-run-nonce.json in the git dir (O_EXCL, O_NOFOLLOW, 0600; R4 NB6); not a ref"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "function": "remove_run_nonce",
+    "ast_sha256": "2a75aa98195193f2eed14ca1af2094163093e19afe58b1a1bf59b0c1c01bef13",
+    "permits": [
+     "gitdir_write"
+    ],
+    "reason": "removes the run nonce from the git dir; not a ref"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "function": "persist_emergency",
+    "ast_sha256": "231cda794f7545dc41fd28f50c537e0586685775cc62c9a0e9ba9fc78be85fea",
+    "permits": [
+     "gitdir_write"
+    ],
+    "reason": "writes the emergency evidence file in the git dir (O_EXCL, O_NOFOLLOW), reached only after the marker through after_marker; not a ref"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "function": "run_execute",
+    "ast_sha256": "ed4a49381ad832231100aa5b28a6f2eefdf06248115c757a75d31dcc3f61d6e7",
+    "permits": [
+     "git_write"
+    ],
+    "reason": "CONTROL_FAILED path: git hash-object -w --stdin of the serialized record (object store only, no ref), then seal_blob (listed); before any marker"
+   },
+   {
+    "file": "code/p309_guard.py",
+    "function": "_git",
+    "ast_sha256": "b036b9869c66fe5ac48a5cfd842de8003792287d3a4bd069041e250f76c25646",
+    "permits": [
+     "process"
+    ],
+    "reason": "the guard's runner: git -C <repo> <args> with GIT_* removed from the environment; a registered git runner (process_policy.git_runners): the scanner classifies every caller's verb"
+   },
+   {
+    "file": "code/p309_guard.py",
+    "function": "_git_bytes",
+    "ast_sha256": "e6e85a912bd275692effe122ace9908237885fd6ff538d2a6d175fb7acf68fa0",
+    "permits": [
+     "process"
+    ],
+    "reason": "the guard's runner (bytes): git -C <repo> <args> with GIT_* removed; a registered git runner (process_policy.git_runners): the scanner classifies every caller's verb"
+   },
+   {
+    "file": "code/p309_guard.py",
+    "function": "_git_ok",
+    "ast_sha256": "4e6535c9a96b89473726639c0d00b383226c846763b21a7de2bb12c7ce0f48dc",
+    "permits": [
+     "process"
+    ],
+    "reason": "the guard's runner (return code): git -C <repo> <args> with GIT_* removed; a registered git runner (process_policy.git_runners): the scanner classifies every caller's verb"
+   },
+   {
+    "file": "code/make_freeze_manifest.py",
+    "function": "git",
+    "ast_sha256": "840a70a7d5e7deca2a57b1045b618d13d610bcdf6c2866e9c5b91b073f553e11",
+    "permits": [
+     "process"
+    ],
+    "reason": "manifest tool runner: git -C <this repository> <args>, check=True; a registered git runner (process_policy.git_runners): the scanner classifies every caller's verb"
+   },
+   {
+    "file": "code/make_freeze_params.py",
+    "function": "git",
+    "ast_sha256": "098b4529e5e1f451c036d0a4fe26bc6c120a680f2f540b4b36b58b190d0e42c8",
+    "permits": [
+     "process"
+    ],
+    "reason": "freeze-parameter tool runner: git -C <this repository> <args>, check=True; a registered git runner (process_policy.git_runners): the scanner classifies every caller's verb"
+   },
+   {
+    "file": "code/make_proposed_authorization.py",
+    "function": "git",
+    "ast_sha256": "098b4529e5e1f451c036d0a4fe26bc6c120a680f2f540b4b36b58b190d0e42c8",
+    "permits": [
+     "process"
+    ],
+    "reason": "proposal tool runner: git -C <this repository> <args>, check=True; a registered git runner (process_policy.git_runners): the scanner classifies every caller's verb"
+   },
+   {
+    "file": "code/checkpoint_push_p309.py",
+    "function": "git",
+    "ast_sha256": "bf1a1f9dc2f20168af9571c4e7c561127ee7124f6b62cb595f3786bbef116cb3",
+    "permits": [
+     "process"
+    ],
+    "reason": "checkpoint push tool runner: git <args> in this repository; a registered git runner (process_policy.git_runners): the scanner classifies every caller's verb"
+   },
+   {
+    "file": "code/p309_self_audit.py",
+    "function": "git",
+    "ast_sha256": "46d0fa84bf5b7b2a9ce15429dc3264d1ab1feccdb93b519099f1d743df22544a",
+    "permits": [
+     "process"
+    ],
+    "reason": "self-audit runner: git <args> in this repository, check=True; a registered git runner (process_policy.git_runners): the scanner classifies every caller's verb"
+   },
+   {
+    "file": "start_state/verify_start_state.py",
+    "function": "git",
+    "ast_sha256": "af8fe676bd4d1cfb93242f2984a57edd0128cfc73246c1a0f579638b1763f186",
+    "permits": [
+     "process"
+    ],
+    "reason": "start-state check runner: git <args> in this repository, check=True; a registered git runner (process_policy.git_runners): the scanner classifies every caller's verb"
+   },
+   {
+    "file": "code/p309_qualify.py",
+    "function": "git",
+    "ast_sha256": "cd913a26790149f0ed1802bfa6f7a86326e71d4eeea5d7bc7b2ca08bfe54f07d",
+    "permits": [
+     "process"
+    ],
+    "reason": "QC runner: git -C <this repository> <args> (qc13 reads only); a registered git runner (process_policy.git_runners): the scanner classifies every caller's verb"
+   },
+   {
+    "file": "code/p309_qualify.py",
+    "function": "run",
+    "ast_sha256": "127e8929f9d54627c6214268490dee4e41ca94ef5887203d159ffe2d46e38f9c",
+    "permits": [
+     "process"
+    ],
+    "reason": "QC argv runner: subprocess.run(cmd, cwd, timeout) with P309_EVIDENCE_DIR set; a registered argv runner: every caller's argv is checked (python with a literal .py script)"
+   },
+   {
+    "file": "code/p309_qualify.py",
+    "function": "qc_formal",
+    "ast_sha256": "8bc184214aea3dec1c3b7818f17de2ff0dec69c813c8d53f4ca0b1b56634972a",
+    "permits": [
+     "process"
+    ],
+    "reason": "QC script runner: runs a python script of the frozen tree that the caller names literally (optionally -I -S -B); registered: callers are checked, and T7 checks the driver modes"
+   },
+   {
+    "file": "code/p309_qualify.py",
+    "function": "research_test",
+    "ast_sha256": "01fae563f3b5931a26df7d29a5b15903ffb1f6b11ea1bce330f95a0ef55c3452",
+    "permits": [
+     "process"
+    ],
+    "reason": "QC script runner: runs a research test of the archive mirror that the caller names literally (optionally -O); registered"
+   },
+   {
+    "file": "code/p309_qualify.py",
+    "function": "qc_research_simple",
+    "ast_sha256": "675ccfbd330a86434d11356e12541344f36da2660969fd12bead3c395be50495",
+    "permits": [
+     "process"
+    ],
+    "reason": "QC01-QC04: forwards the literal test name to research_test; registered"
+   },
+   {
+    "file": "code/p309_qualify.py",
+    "function": "mirror",
+    "ast_sha256": "39ac0b57c418899a852569b22e777dcd10ba2db6f285422bbf0576ed3fb7ce9b",
+    "permits": [
+     "process",
+     "forwards_operands"
+    ],
+    "reason": "git archive <freeze commit> <MIRROR_PATHS> piped into tar -x -C <scratch mirror>: a read-only export of the frozen commit into the scratchpad (no ref, no git dir); the parameter reaches only the archive's tree-ish operand"
+   },
+   {
+    "file": "tests/test_p309_exactly_once.py",
+    "function": "sh",
+    "ast_sha256": "35dac82df16210d2c960491a6a24050558f9d727000de2b1e868d5715ff2357e",
+    "permits": [
+     "process"
+    ],
+    "reason": "QC11 sandbox runner: git -C <sandbox> <args> with a test identity; a registered git runner (process_policy.git_runners): the scanner classifies every caller's verb"
+   },
+   {
+    "file": "tests/test_p309_exactly_once.py",
+    "function": "commit",
+    "ast_sha256": "6d60ad1a459f23d399d07b44dbfee911bbf25bd989b5ad91c45bac309414b0fb",
+    "permits": [
+     "git_write"
+    ],
+    "reason": "QC11 plumbing commit in a scratch sandbox on a temporary index (read-tree, hash-object, update-index, write-tree, commit-tree); moves no ref"
+   },
+   {
+    "file": "tests/test_p309_exactly_once.py",
+    "function": "_stub_runner",
+    "ast_sha256": "6c587131dcbb521b99a4aba21770594b547ccce49b1b9a3f5d41a87660a34670",
+    "permits": [
+     "process"
+    ],
+    "reason": "QC11 Stage-1 job stub: python -c with generated code (a CPU-burn loop, or os.replace of the stub payload file into the job's output path) so that os.wait4 accounting is genuine; no git"
+   },
+   {
+    "file": "tests/test_p309_exactly_once.py",
+    "function": "new_sandbox",
+    "ast_sha256": "3c315c1d1b312ade19d8cc8fd0f5a909761f02fc49d0105749e625b9184b5b70",
+    "permits": [
+     "gitdir_write"
+    ],
+    "reason": "writes objects/info/alternates and copies the shallow file into the NEW sandbox's git dir (read-only link to this repository's objects)"
+   },
+   {
+    "file": "tests/test_p309_exactly_once.py",
+    "function": "pre_marker_flows",
+    "ast_sha256": "96f3e54f950ef9101fe3c4eb0767f7d855ca9412b7a5c27c52917ab2301cfc8c",
+    "permits": [
+     "gitdir_write"
+    ],
+    "reason": "F22 / F22b plant an emergency file / a run nonce in the SANDBOX git dir to prove that execute refuses"
+   },
+   {
+    "file": "tests/test_p309_exactly_once.py",
+    "function": "post_marker_flows",
+    "ast_sha256": "c744bb8ef1f733861f378508b679264b53cf5a5f30d9f720cccc6f8c7d52d936",
+    "permits": [
+     "gitdir_write"
+    ],
+    "reason": "F40 / F41 plant emergency evidence in the SANDBOX git dir for the seal-only D5 gates"
+   },
+   {
+    "file": "tests/test_p309_guard.py",
+    "function": "sh",
+    "ast_sha256": "6c0b4238be3d9649c1ebe601d12ad78e6d7863f261fc10ccf618b9d65c770e0f",
+    "permits": [
+     "process"
+    ],
+    "reason": "guard-test sandbox runner: git -C <sandbox> <args> with a test identity; a registered git runner (process_policy.git_runners): the scanner classifies every caller's verb"
+   },
+   {
+    "file": "tests/test_p309_guard.py",
+    "function": "commit",
+    "ast_sha256": "d27d0a160869e47363b04951dc24166e999567b2b2e915b828503025ab413a72",
+    "permits": [
+     "git_write"
+    ],
+    "reason": "guard-test plumbing commit in a scratch sandbox on a temporary index; moves no ref"
+   },
+   {
+    "file": "tests/test_p309_guard.py",
+    "function": "new_sandbox",
+    "ast_sha256": "a4f2140849a96fab7ee678ad9e51687d3a903d6d2178d6a223fb007f7b00f2df",
+    "permits": [
+     "gitdir_write"
+    ],
+    "reason": "writes objects/info/alternates and copies the shallow file into the NEW sandbox's git dir"
+   },
+   {
+    "file": "tests/test_p309_guard.py",
+    "function": "_fail_closed",
+    "ast_sha256": "4bac29589c390bfb745c857aac1cd119bbb26c8642a3b7212265190b6cb63756",
+    "permits": [
+     "runner_alias"
+    ],
+    "reason": "fault injection: replaces G._git_bytes by a raising stub for one admission decision and restores it (fail-closed test)"
+   },
+   {
+    "file": "tests/test_verify_scoped.py",
+    "function": "TestFC2Scoped.test_N10_production_cannot_be_synthesized",
+    "ast_sha256": "02b558f5cd4a07bc1b1bf1a83e4a4eac06bae2d9d88536e4a694990cccb8fba4",
+    "permits": [
+     "gitdir_write"
+    ],
+    "reason": "the verifier author's N10: writes a `.git` gitdir FILE into a scratch directory under the sandbox base (a fake worktree of this repository), asserts TestContext refuses it, and removes the directory; this repository's git dir is not written"
+   },
+   {
+    "file": "tests/test_verify_scoped.py",
+    "function": "TestFC2Scoped.test_N13_fail_closed",
+    "ast_sha256": "83f8185d2945f43c3faf9434564b0cd753fa6037a452465918d805f4d96d4cd1",
+    "permits": [
+     "gitdir_write",
+     "ref_file_write",
+     "runner_alias"
+    ],
+    "reason": "the verifier author's N13: renames the SANDBOX's .git/HEAD away and back (a Sandbox under the sandbox base, isolation asserted by its constructor) and replaces V._run_git by a raising stub (restored), to prove admission fails closed"
+   },
+   {
+    "file": "verify/scoped_sandbox.py",
+    "function": "_git",
+    "ast_sha256": "98218ce05a3d686f6eae848acd36a37739244432c7871a172378411bb218df8b",
+    "permits": [
+     "process"
+    ],
+    "reason": "the verifier author's sandbox runner: git -C <cwd> <args>; a registered git runner (process_policy.git_runners): the scanner classifies every caller's verb"
+   },
+   {
+    "file": "verify/scoped_sandbox.py",
+    "function": "Sandbox.__init__",
+    "ast_sha256": "1820ef2698731ac4eb5c7648f4a99dc9887443576a6932dc68ca91887aa7d981",
+    "permits": [
+     "gitdir_write"
+    ],
+    "reason": "writes objects/info/alternates and copies the shallow file into the new sandbox's git dir, after asserting that the git dir lies inside the sandbox"
+   },
+   {
+    "file": "verify/scoped_sandbox.py",
+    "function": "Sandbox._stage",
+    "ast_sha256": "71d8fa2b9780f655e1272a14df1896e2a1dd3de1c92baf1477d24a5055ef1676",
+    "permits": [
+     "git_write"
+    ],
+    "reason": "stages files into the sandbox index (hash-object -w, update-index, rm --cached); moves no ref"
+   },
+   {
+    "file": "verify/scoped_sandbox.py",
+    "function": "Sandbox.commit",
+    "ast_sha256": "83f2c204a4c8eba1c96a4236fdebcca26223bd426c1ed351bb5f7fc1c6c49f5c",
+    "permits": [
+     "process",
+     "forwards_operands",
+     "gitdir_write"
+    ],
+    "reason": "builds git -C <sandbox> commit-tree <tree> -p <parent>... -m <message> as a list (the parameters reach only the parent and message operands) and removes its temporary index from the sandbox git dir"
+   },
+   {
+    "file": "verify/srk_verify_indep_scoped.py",
+    "function": "_run_git",
+    "ast_sha256": "c058cd12ec09ded37e0255c3d2abc7d82a42256415376f882b1080c742a8ac0c",
+    "permits": [
+     "process"
+    ],
+    "reason": "the verifier's runner: git -C <repo> + a literal list (GIT_PAGER, GIT_OPTIONAL_LOCKS=0); a registered git runner (process_policy.git_runners): the scanner classifies every caller's verb"
+   },
+   {
+    "file": "verify/srk_verify_indep_scoped.py",
+    "function": "_git_ok",
+    "ast_sha256": "e6213c0d720d22b302aeea9d12b02e6ad96a3055e169c82f190bcd5b70b9ee7a",
+    "permits": [
+     "process"
+    ],
+    "reason": "the verifier's checked runner: forwards (repo, *args) to _run_git; a registered git runner (process_policy.git_runners): the scanner classifies every caller's verb"
+   },
+   {
+    "file": "verify/srk_verify_indep_scoped.py",
+    "function": "_changed_paths",
+    "ast_sha256": "0e1c9cf13d35ad1897e63c2e06f12f9a54ca2740f477f83dea9801ec639fb850",
+    "permits": [
+     "process",
+     "forwards_operands"
+    ],
+    "reason": "git diff-tree --no-commit-id --name-only -r <extra> <commit> (read); `extra` is a literal option tuple from its callers ('--diff-filter=A' or none)"
+   },
+   {
+    "file": "tests/test_p309_site_backstop.py",
+    "function": "plant_nonce",
+    "ast_sha256": "13bddb370eb9717115c2126547c8dbda3ed305d49f865b5a1301b0327d121c5b",
+    "permits": [
+     "gitdir_write"
+    ],
+    "reason": "writes a run nonce (this or another pid) into a SANDBOX git dir for the backstop controls"
+   },
+   {
+    "file": "tests/test_p309_site_backstop.py",
+    "function": "drop_nonce",
+    "ast_sha256": "3bae2eec6e69e17c2a2dab83b56f71317811ec2c3187de5e376d3fdaff0e8213",
+    "permits": [
+     "gitdir_write"
+    ],
+    "reason": "removes that nonce from the SANDBOX git dir"
+   }
+  ],
+  "git_forbidden_options_note": "global options before the verb are allowlisted (git_global_options_*; anything else, e.g. -c, --git-dir, --work-tree, --exec-path, --namespace, is a finding); after the verb the listed options (program execution, output files, templates, prefixes, remotes) are findings"
+ },
+ "t7_exemptions_rule": "R4 follow-up F1(c): a test file listed here (module AST sha256, the exempted QC12 T7 rules, a reason) is exempt from exactly those rules; any change to the file's AST voids the exemption; entries are added only by review, and code/p309_scan_pins.py refreshes the hashes of listed entries before the freeze only",
+ "t7_exemptions": [
+  {
+   "file": "tests/test_p309_guard.py",
+   "rules": [
+    "PRODUCTION_REFERENCE",
+    "MODULE_ATTRIBUTE_STORE"
+   ],
+   "ast_sha256": "c3c5c907be89714109b3f0c58b627b38f27707c706873e11e0f26919997569e6",
+   "reason": "the guard's own tests: S1 asserts that the guard's PRODUCTION context is immutable (an attempted store must raise), the production-context refusals of the REAL band run with no grant in existence, and _fail_closed swaps G._git_bytes for a raising stub and restores it; the guard never moves a ref and no driver site is referenced"
+  },
+  {
+   "file": "tests/test_p309_site_backstop.py",
+   "rules": [
+    "FORBIDDEN_NAME",
+    "PRODUCTION_REFERENCE"
+   ],
+   "ast_sha256": "66206f0f530d97e2c6e70a5a5c2f277e76e18441239f618f2e218996f88eb0b0",
+   "reason": "the runtime backstop controls (R4F F1(a)) must call the two sites, the execute-context assertion and the mode switch; every site call gets a SANDBOX context on a scratch sandbox with the TEST names; the production guard context and marker NAME appear only inside SANDBOX-kind shape controls, which are refused (CONTEXT) before any site check"
   }
  ]
 }

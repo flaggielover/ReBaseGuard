@@ -20,9 +20,21 @@ T6 (owner D5: no mutation reachable without a valid owner grant) dominance in th
      marker names no grant commit; the evidence is bound to another commit);
    * after_marker is referenced only by run_execute
 T7 (owner D5: no qualification or test path can mutate the production refs) outside the driver and the post-execution
-   tool: no reference to production_context, _arm_marker, _persist_pending, after_marker or reverify_production; no
-   ExecContext construction; every run_execute / run_seal_only call passes an explicit, non-None context; no
-   subprocess call runs the driver in `execute` or `seal-only` mode
+   tool: no reference to production_context, _arm_marker, _persist_pending, after_marker, reverify_production, _MODE,
+   _assert_execute_context, _site_backstop, _SITE_CODES or _require_own_run_nonce; no ExecContext construction; every
+   run_execute / run_seal_only call passes an explicit, non-None context; no subprocess call runs the driver in
+   `execute` or `seal-only` mode.  R4 follow-up F1(c): also no `from p309_driver import` of those names (or of G or *),
+   no `from p309_guard import PRODUCTION` (or *); no __dict__ / getattr / setattr / delattr / hasattr / vars on the
+   driver or guard module, no sys.modules / import_module / __import__ access to them; no attribute store or delete on
+   the driver module (except the QC11 stub point `persist_emergency`) or on the guard module; no reference to the
+   guard's PRODUCTION context; in tests and the qualification tools, no string constant naming a forbidden name; and
+   every `python -c` code string is parsed and checked by the same rules.  A file listed in config `t7_exemptions`
+   (module AST sha256, the exempted rules, a reason) is exempt from exactly those rules.
+T8 (R4 follow-up F1(a)) the runtime backstop: _assert_execute_context ends by refusing any caller that is not one of the
+   two sites (NOT_A_SITE, through _SITE_CODES of their code objects) and then calls _site_backstop; _site_backstop's
+   arm branch requires execute mode, G.premarker_check and the run nonce of this process; its pending branch requires
+   the marker and the grant path at the marker; _SITE_CODES maps exactly the two sites' code objects and is the only
+   module-level reference to them
 """
 from __future__ import annotations
 
@@ -37,7 +49,11 @@ from pathlib import Path
 FNS = Path(__file__).resolve().parents[1]
 FILES = {"p309_driver": FNS / "code" / "p309_driver.py", "p309_rehearse": FNS / "code" / "p309_rehearse.py"}
 T7_EXEMPT = {"code/p309_driver.py", "code/p309_postexec.py"}
-T7_FORBIDDEN = {"production_context", "_arm_marker", "_persist_pending", "after_marker", "reverify_production"}
+T7_FORBIDDEN = {"production_context", "_arm_marker", "_persist_pending", "after_marker", "reverify_production", "_MODE",
+                "_assert_execute_context", "_site_backstop", "_SITE_CODES", "_require_own_run_nonce"}
+T7_PATCHABLE = {"persist_emergency"}                   # QC11 F-flow stub: both evidence channels fail
+T7_STRING_SCOPE = ("tests/", "code/p309_qualify.py", "code/p309_rehearse.py", "verify/run_verify_all_scoped.py")
+ALLOW = json.loads((FNS / "config" / "SCANNER_ALLOWANCE_P309.json").read_text())
 TARGET_FUNCS = {"run_execute", "after_marker", "evaluate_target", "historical_control", "cell_inputs", "check_grant",
                 "_arm_marker", "_persist_pending", "run_seal_only"}
 MODE_ENTRIES = {"preflight": {"check_not_evaluated", "check_bindings", "check_governance_state", "load_consumer",
@@ -45,6 +61,7 @@ MODE_ENTRIES = {"preflight": {"check_not_evaluated", "check_bindings", "check_go
                 "rehearse": {"rehearse", "load_consumer", "load_manifest", "pin_table"},
                 "decoy-stage1a": {"decoy_stage1a", "load_manifest", "pin_table"},
                 "decoy-stage1b": {"decoy_stage1b", "load_manifest", "pin_table"},
+                "validate-grant": {"validate_grant"},
                 "_job": {"job_stage1a", "job_stage1b"}}
 SITES = ("_arm_marker", "_persist_pending")
 SITE_CALLERS = {"run_execute", "after_marker", "run_seal_only"}
@@ -155,38 +172,162 @@ def t6(dtree, edges) -> dict:
     return out
 
 
-def t7(root: Path) -> list:
+def _t7_aliases(tree) -> tuple:
+    drv, grd = set(), set()
+    for n in ast.walk(tree):
+        if isinstance(n, ast.Import):
+            for a in n.names:
+                if a.name == "p309_driver":
+                    drv.add(a.asname or a.name)
+                elif a.name == "p309_guard":
+                    grd.add(a.asname or a.name)
+    return drv, grd
+
+
+def _is_mod(node, names: set, drv: set) -> bool:
+    """node denotes one of the modules named `names` (or, for the guard, `<driver alias>.G`)"""
+    if isinstance(node, ast.Name):
+        return node.id in names
+    return (isinstance(node, ast.Attribute) and node.attr == "G" and isinstance(node.value, ast.Name)
+            and node.value.id in drv and names is not drv)
+
+
+def _ident_in(text: str, names: set) -> list:
+    import re
+    return [nm for nm in names if re.search(r"(?<![A-Za-z0-9_])" + re.escape(nm) + r"(?![A-Za-z0-9_])", text)]
+
+
+def t7_tree(tree, rel: str, root: Path, depth: int = 0) -> list:
+    """[(rule, message)] for one file (or one parsed `python -c` code string)"""
+    sys.path.insert(0, str(FNS / "code"))
+    import p309_scan as SC
     bad = []
-    for p in sorted(root.rglob("*.py")):
+    fc = SC.FileCtx(tree, rel)
+    drv, grd = _t7_aliases(tree)
+    both = drv | grd
+    strings = rel.startswith(T7_STRING_SCOPE) or depth > 0
+    for n in ast.walk(tree):
+        ln = getattr(n, "lineno", 0)
+        if isinstance(n, ast.Name) and n.id in T7_FORBIDDEN or isinstance(n, ast.Attribute) and n.attr in T7_FORBIDDEN:
+            bad.append(("FORBIDDEN_NAME", f"{rel}:{ln}: reference to {getattr(n, 'id', getattr(n, 'attr', ''))}"))
+        if isinstance(n, ast.ImportFrom) and n.module in ("p309_driver", "p309_guard"):
+            names = {a.name for a in n.names}
+            hit = names & (T7_FORBIDDEN | {"*", "G"}) if n.module == "p309_driver" else names & {"PRODUCTION", "*"}
+            if hit:
+                bad.append(("IMPORT_FROM", f"{rel}:{ln}: from {n.module} import {sorted(hit)}"))
+        if isinstance(n, ast.Attribute) and n.attr in ("__dict__", "__getattribute__") and (
+                _is_mod(n.value, drv, drv) or _is_mod(n.value, grd, drv)):
+            bad.append(("DYNAMIC_ACCESS", f"{rel}:{ln}: {ast.unparse(n)}"))
+        if isinstance(n, ast.Attribute) and n.attr == "PRODUCTION" and _is_mod(n.value, grd, drv):
+            bad.append(("PRODUCTION_REFERENCE", f"{rel}:{ln}: {ast.unparse(n)}"))
+        if isinstance(n, ast.Attribute) and isinstance(n.ctx, (ast.Store, ast.Del)) and (
+                (_is_mod(n.value, drv, drv) and n.attr not in T7_PATCHABLE) or _is_mod(n.value, grd, drv)):
+            bad.append(("MODULE_ATTRIBUTE_STORE", f"{rel}:{ln}: {ast.unparse(n)}"))
+        if isinstance(n, ast.Subscript) and ast.unparse(n.value) in ("sys.modules",) and any(
+                isinstance(x, ast.Constant) and isinstance(x.value, str) and x.value in ("p309_driver", "p309_guard")
+                for x in ast.walk(n.slice)):
+            bad.append(("DYNAMIC_ACCESS", f"{rel}:{ln}: {ast.unparse(n)}"))
+        if strings and isinstance(n, ast.Constant) and isinstance(n.value, str):
+            hit = _ident_in(n.value, T7_FORBIDDEN)
+            if hit:
+                bad.append(("STRING_NAME", f"{rel}:{ln}: a string naming {sorted(hit)}"))
+        if not isinstance(n, ast.Call):
+            continue
+        callee = n.func.attr if isinstance(n.func, ast.Attribute) else getattr(n.func, "id", "")
+        if callee in ("getattr", "setattr", "delattr", "hasattr", "vars") and n.args and (
+                _is_mod(n.args[0], drv, drv) or _is_mod(n.args[0], grd, drv)):
+            bad.append(("DYNAMIC_ACCESS", f"{rel}:{ln}: {callee} on the driver / guard module"))
+        if callee in ("import_module", "__import__", "get") and any(
+                isinstance(x, ast.Constant) and isinstance(x.value, str) and x.value.split(".")[-1] in (
+                    "p309_driver", "p309_guard") for x in n.args[:1]) and (callee != "get" or ast.unparse(
+                        n.func.value) == "sys.modules"):
+            bad.append(("DYNAMIC_ACCESS", f"{rel}:{ln}: {callee}({ast.unparse(n.args[0])})"))
+        if callee == "ExecContext":
+            bad.append(("EXEC_CONTEXT", f"{rel}:{ln}: ExecContext construction"))
+        if callee in ("run_execute", "run_seal_only"):
+            ctxs = [k.value for k in n.keywords if k.arg == "ctx"] + (n.args[:1] if callee == "run_seal_only"
+                                                                      else n.args[1:2])
+            if not ctxs or any(isinstance(c, ast.Constant) and c.value is None for c in ctxs):
+                bad.append(("NO_CONTEXT", f"{rel}:{ln}: {callee} without an explicit context"))
+        strs = [x.value for a in n.args for x in ([a] + list(getattr(a, "elts", [])))
+                if isinstance(x, ast.Constant) and isinstance(x.value, str)]
+        if any("p309_driver" in x for x in strs) and {"execute", "seal-only"} & set(strs):
+            bad.append(("DRIVER_EXECUTE", f"{rel}:{ln}: the driver run in execute / seal-only mode"))
+        if any(isinstance(a, (ast.List, ast.Tuple)) and any(
+                isinstance(x, (ast.Attribute, ast.Name, ast.BinOp, ast.Call)) and "p309_driver" in ast.unparse(x)
+                for x in a.elts) for a in n.args) and {"execute", "seal-only"} & set(strs):
+            bad.append(("DRIVER_EXECUTE", f"{rel}:{ln}: the driver run in execute / seal-only mode"))
+        if depth < 3:                                      # a `python -c` code string: the same rules
+            info = SC.process_info(n, fc, root)
+            code = (info or {}).get("python", {}).get("code") if info and info["kind"] == "python" else None
+            if code is not None:
+                try:
+                    bad += t7_tree(ast.parse(code), f"{rel}:{ln}:-c", root, depth + 1)
+                except SyntaxError:
+                    bad.append(("UNPARSEABLE", f"{rel}:{ln}: unparseable -c code"))
+    return bad
+
+
+def _never_runs(tree) -> bool:
+    body = [st for st in tree.body if not (isinstance(st, ast.Expr) and isinstance(st.value, ast.Constant))]
+    return bool(body) and isinstance(body[0], ast.Raise) and "SystemExit" in ast.unparse(body[0])
+
+
+def t7(root: Path) -> list:
+    import hashlib as _h
+    ex = {e["file"]: e for e in ALLOW.get("t7_exemptions", []) if e.get("reason")}
+    bad = []
+    for p in sorted(root.rglob("*.py")):                   # R4F M01: no file is skipped by its name
         rel = str(p.relative_to(root))
-        if "__pycache__" in p.parts or rel in T7_EXEMPT or p.name == "q309_guard.py":
+        if "__pycache__" in p.parts or rel in T7_EXEMPT:
             continue
         try:
             tree = ast.parse(p.read_text())
         except SyntaxError:
             bad.append(f"{rel}: unparseable")
             continue
-        for n in ast.walk(tree):
-            if isinstance(n, ast.Name) and n.id in T7_FORBIDDEN or isinstance(n, ast.Attribute) and n.attr in T7_FORBIDDEN:
-                bad.append(f"{rel}:{n.lineno}: reference to {getattr(n, 'id', getattr(n, 'attr', ''))}")
-            if isinstance(n, ast.Call):
-                callee = n.func.attr if isinstance(n.func, ast.Attribute) else getattr(n.func, "id", "")
-                if callee == "ExecContext":
-                    bad.append(f"{rel}:{n.lineno}: ExecContext construction")
-                if callee in ("run_execute", "run_seal_only"):
-                    ctxs = [k.value for k in n.keywords if k.arg == "ctx"] + (n.args[:1] if callee == "run_seal_only"
-                                                                              else n.args[1:2])
-                    if not ctxs or any(isinstance(c, ast.Constant) and c.value is None for c in ctxs):
-                        bad.append(f"{rel}:{n.lineno}: {callee} without an explicit context")
-                strs = [x.value for a in n.args for x in ([a] + list(getattr(a, "elts", [])))
-                        if isinstance(x, ast.Constant) and isinstance(x.value, str)]
-                if any("p309_driver" in x for x in strs) and {"execute", "seal-only"} & set(strs):
-                    bad.append(f"{rel}:{n.lineno}: the driver run in execute / seal-only mode")
-                if any(isinstance(a, (ast.List, ast.Tuple)) and any(
-                        isinstance(x, (ast.Attribute, ast.Name, ast.BinOp, ast.Call)) and "p309_driver" in ast.unparse(x)
-                        for x in a.elts) for a in n.args) and {"execute", "seal-only"} & set(strs):
-                    bad.append(f"{rel}:{n.lineno}: the driver run in execute / seal-only mode")
+        if rel in ALLOW["planted_control_files"] and _never_runs(tree):
+            continue                                        # a planted control raises at import: it never runs
+        e = ex.get(rel)
+        current = e is not None and e.get("ast_sha256") == _h.sha256(ast.dump(tree).encode()).hexdigest()
+        for rule, msg in t7_tree(tree, rel, root):
+            if not (current and rule in e.get("rules", [])):
+                bad.append(f"[{rule}] {msg}")
     return bad
+
+
+def t8(dtree) -> dict:
+    fns = {n.name: n for n in dtree.body if isinstance(n, ast.FunctionDef)}
+    out = {}
+    ae = fns.get("_assert_execute_context")
+    body = [st for st in (ae.body if ae else []) if not (isinstance(st, ast.Expr) and isinstance(st.value, ast.Constant))]
+    out["assert_ends_with_site_check_and_backstop"] = (
+        len(body) >= 3 and ast.unparse(body[-3]) == "site = _SITE_CODES.get(sys._getframe(1).f_code)"
+        and isinstance(body[-2], ast.If) and ast.unparse(body[-2].test) == "site is None"
+        and isinstance(body[-2].body[0], ast.Raise) and "NOT_A_SITE" in ast.unparse(body[-2].body[0])
+        and ast.unparse(body[-1]) == "_site_backstop(ctx, site)")
+    sb = fns.get("_site_backstop")
+    src = ast.unparse(sb) if sb else ""
+    arm = next((st for st in (sb.body if sb else []) if isinstance(st, ast.If) and ast.unparse(st.test) ==
+                "site == 'arm'"), None)
+    arm_src = ast.unparse(arm) if arm else ""
+    out["arm_requires_execute_grant_and_nonce"] = bool(arm) and all(x in arm_src for x in (
+        "_MODE.get('mode') != 'execute'", "G.premarker_check(ctx.guard_ctx)", "_require_own_run_nonce(ctx)")) and \
+        isinstance(arm.body[-1], ast.Return)
+    rest = ast.unparse(ast.Module(body=[st for st in (sb.body if sb else []) if st is not arm], type_ignores=[]))
+    out["pending_requires_marker_and_grant"] = all(x in rest for x in (
+        "if not marker:", "ctx.guard_ctx.grant_path", "_require_own_run_nonce(ctx)"))
+    nonce = fns.get("_require_own_run_nonce")
+    out["nonce_names_this_process"] = bool(nonce) and "os.getpid()" in ast.unparse(nonce)
+    mod_refs = [st for st in dtree.body if not isinstance(st, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+                and any(isinstance(x, ast.Name) and x.id in SITES for x in ast.walk(st))]
+    out["site_codes_is_the_only_module_reference"] = (
+        len(mod_refs) == 1 and ast.unparse(mod_refs[0]) ==
+        "_SITE_CODES = types.MappingProxyType({_arm_marker.__code__: 'arm', _persist_pending.__code__: 'pending'})")
+    out["site_backstop_referenced_only_by_assert"] = {
+        f.name for f in fns.values() if f.name != "_site_backstop" and any(
+            isinstance(x, ast.Name) and x.id == "_site_backstop" for x in ast.walk(f))} == {"_assert_execute_context"}
+    return out
 
 
 def run(root: Path = FNS) -> dict:
@@ -259,6 +400,8 @@ def run(root: Path = FNS) -> dict:
     R["T6_mutation_dominated_by_the_grant"] = {"pass": all(d6.values()), "detail": d6}
     d7 = t7(root)
     R["T7_no_production_execution_from_tests_or_qualification"] = {"pass": not d7, "detail": d7[:20]}
+    d8 = t8(dtree)
+    R["T8_runtime_backstop_at_the_sites"] = {"pass": all(d8.values()), "detail": d8}
     return R
 
 

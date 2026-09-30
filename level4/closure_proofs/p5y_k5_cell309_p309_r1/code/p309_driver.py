@@ -94,7 +94,7 @@ WINDOW_PATHS = (NS_REL + "/ledger/ZERO_TARGET_LEDGER.jsonl", NS_REL + "/ledger/E
                 NS_REL + "/ledger/CHECKPOINT_PUSHES.jsonl")    # rev. 2c amendment (R4 B5): Rv..G window commits
 WINDOW_PREFIXES = (NS_REL + "/handoff/", NS_REL + "/qualification/host_rerun/")
 RUN_NONCE_NAME = "p309-run-nonce.json"   # R4 NB6: binds target-mode jobs to the live execute process
-PLACEHOLDER_MARKS = ("<", ">", "SET BY THE OWNER", "TBD", "TODO")
+PLACEHOLDER_MARKS = ("<THE OWNER'S GRANT INSTRUCTION", "<SET BY THE OWNER")   # R4F F2: the proposal's own placeholders
 
 
 class Refusal(Exception):
@@ -167,7 +167,9 @@ def sandbox_context(sandbox: Path) -> ExecContext:
 
 def _assert_execute_context(ctx: ExecContext) -> None:
     """First statement of every exactly-once site: the context is one of the two kinds, its names are the guard's
-    own names for that kind, and the process runs in execute (or seal-only) mode."""
+    own names for that kind, and the process runs in execute (or seal-only) mode.  R4F F1(a): then the runtime
+    backstop (_site_backstop), which lives here, outside the owner-ratified site ASTs: the caller must BE one of the
+    two sites, and that site's own preconditions are re-checked immediately before its ref mutation."""
     if _MODE.get("mode") not in ("execute", "seal-only"):
         raise Refusal("NOT_EXECUTE_MODE", "an exactly-once site outside execute / seal-only")
     if ctx.kind == "PRODUCTION":
@@ -180,6 +182,42 @@ def _assert_execute_context(ctx: ExecContext) -> None:
         ok = False
     if not ok:
         raise Refusal("CONTEXT", "exactly-once names do not match the context kind")
+    site = _SITE_CODES.get(sys._getframe(1).f_code)
+    if site is None:
+        raise Refusal("NOT_A_SITE", "the execute-context assertion is reached only from the two ratified sites")
+    _site_backstop(ctx, site)
+
+
+def _site_backstop(ctx: ExecContext, site: str) -> None:
+    """R4F F1(a), the runtime backstop (a strengthened precondition, reported to the owner; it changes no site AST).
+    arm:     execute mode only; the guard's own pre-marker grant checks pass NOW (checks 2-6, 8, 9 and an empty marker
+             namespace); and the run nonce exists and names this process.
+    pending: the marker exists and names a commit that carries the grant (the seal-only D5 gate, re-checked here);
+             in execute mode also the run nonce of this process."""
+    if site == "arm":
+        if _MODE.get("mode") != "execute":
+            raise Refusal("NOT_EXECUTE_MODE", "backstop: the marker is armed only in execute mode")
+        ok, why = G.premarker_check(ctx.guard_ctx)
+        if not ok:
+            raise Refusal("GRANT_INVALID", f"backstop: the guard's pre-marker checks fail at the site: {why}")
+        _require_own_run_nonce(ctx)
+        return
+    marker = git("rev-parse", "-q", "--verify", f"{ctx.marker_ref}^{{commit}}", repo=ctx.repo).stdout.strip()
+    if not marker:
+        raise Refusal("NO_MARKER", "backstop: the pending evidence ref is created only after the marker")
+    if git("cat-file", "-e", f"{marker}:{ctx.guard_ctx.grant_path}", repo=ctx.repo).returncode:
+        raise Refusal("GRANT_INVALID", "backstop: the marker does not name a commit that carries the grant")
+    if _MODE.get("mode") == "execute":
+        _require_own_run_nonce(ctx)
+
+
+def _require_own_run_nonce(ctx: ExecContext) -> None:
+    try:
+        rec = json.loads((git_dir(ctx) / RUN_NONCE_NAME).read_text())
+    except (OSError, ValueError):
+        raise Refusal("RUN_NONCE", "backstop: no run nonce (the site is reached only inside run_execute)") from None
+    if not isinstance(rec, dict) or type(rec.get("pid")) is not int or rec["pid"] != os.getpid():
+        raise Refusal("RUN_NONCE", "backstop: the run nonce does not name this process")
 
 
 _MODE: dict = {}
@@ -415,17 +453,30 @@ def check_grant(own_sha: str, m: dict, ctx: ExecContext) -> dict:
     fz = recorded_freeze(repo)
     if g.get("frozen_commit") != fz:
         raise Refusal("GRANT_INVALID", "the grant does not name the recorded freeze commit")
-    seq, c = [], head
-    while True:                                          # single parents back to the freeze commit
-        pl = git("rev-list", "--parents", "-n", "1", c, repo=repo).stdout.split()
-        if len(pl) != 2:
-            raise Refusal("GRANT_INVALID", "a merge or root commit inside the chain")
-        c = pl[1]
-        if c == fz:
-            break
+    pl = git("rev-list", "--parents", "-n", "1", head, repo=repo).stdout.split()
+    qual_c, review_c = walk_chain(repo, pl[1], fz)
+    if (g.get("qualification_commit"), g.get("qualification_review_commit")) != (qual_c, review_c):
+        raise Refusal("GRANT_INVALID", "the grant does not name the chain commits")
+    later = git("log", "--format=%H", f"{fz}..{head}", "--", *(f"{NS_REL}/{d}" for d in FROZEN_DIRS),
+                repo=repo).stdout.split()
+    if later:
+        raise Refusal("GRANT_INVALID", "a frozen directory changed after the freeze")
+    return {"grant_commit": head, "grant_sha256": sha(raw.stdout.encode()), "freeze_commit": fz,
+            "qualification_commit": qual_c, "qualification_review_commit": review_c,
+            "cell_interval": g.get("cell_interval"), "drift_hull_Ew": g.get("drift_hull_Ew"), "_grant": g}
+
+
+def walk_chain(repo: Path, parent: str, fz: str) -> tuple:
+    """the chain below the grant commit, read from its (would-be) parent back to the recorded freeze F:
+       [window or checkpoint-record commits] <- Rv <- [records] <- Q <- [records] <- FR <- F.
+    Returns (Q, Rv) after checking both.  Shared by check_grant and validate-grant (R4F F2)."""
+    seq, c = [], parent
+    while c != fz:
         seq.append((c, _chain_kind(c, repo)))
-        if len(seq) > 256:
-            raise Refusal("GRANT_INVALID", "the chain never reaches the recorded freeze commit")
+        pl = git("rev-list", "--parents", "-n", "1", c, repo=repo).stdout.split()
+        if len(pl) != 2 or len(seq) > 256:
+            raise Refusal("GRANT_INVALID", "a merge or root commit inside the chain, or no path to the freeze")
+        c = pl[1]
     i = 0
     while i < len(seq) and seq[i][1] in ("record", "window"):
         i += 1
@@ -443,8 +494,6 @@ def check_grant(own_sha: str, m: dict, ctx: ExecContext) -> dict:
         i += 1
     if i != len(seq) - 1 or seq[i][1] != "freeze_record":
         raise Refusal("GRANT_INVALID", "only the freeze record and checkpoint records may precede the qualification")
-    if (g.get("qualification_commit"), g.get("qualification_review_commit")) != (qual_c, review_c):
-        raise Refusal("GRANT_INVALID", "the grant does not name the chain commits")
     if _only(review_c, (), repo, prefixes=(QREVIEW_PREFIX,)):
         raise Refusal("GRANT_INVALID", "the review commit changes more than the review files")
     if _only(qual_c, (NS_REL + "/ledger/ZERO_TARGET_LEDGER.jsonl", NS_REL + "/ledger/EXPOSURE_LEDGER.jsonl"), repo,
@@ -460,13 +509,7 @@ def check_grant(own_sha: str, m: dict, ctx: ExecContext) -> dict:
     rv = git("show", f"{review_c}:{QREVIEW_REL}", repo=repo).stdout
     if not verdict_ok(rv, "QUALIFICATION_ACCEPTED"):
         raise Refusal("REVIEW_VERDICT", "qualification review is not QUALIFICATION_ACCEPTED")
-    later = git("log", "--format=%H", f"{fz}..{head}", "--", *(f"{NS_REL}/{d}" for d in FROZEN_DIRS),
-                repo=repo).stdout.split()
-    if later:
-        raise Refusal("GRANT_INVALID", "a frozen directory changed after the freeze")
-    return {"grant_commit": head, "grant_sha256": sha(raw.stdout.encode()), "freeze_commit": fz,
-            "qualification_commit": qual_c, "qualification_review_commit": review_c,
-            "cell_interval": g.get("cell_interval"), "drift_hull_Ew": g.get("drift_hull_Ew"), "_grant": g}
+    return qual_c, review_c
 
 
 def expected_cell(ctx: ExecContext, m: dict) -> tuple:
@@ -499,24 +542,32 @@ def _utc_z(s) -> datetime.datetime:
     return datetime.datetime.strptime(s, "%Y-%m-%dT%H:%M:%SZ").replace(tzinfo=datetime.timezone.utc)
 
 
-def premarker_admission(ctx: ExecContext, g: dict, m: dict, cell: tuple) -> dict:
-    """R4 B3: before the marker, every admission precondition that does not need the marker, so that no avoidable
-    grant defect is found only after the single evaluation has been spent.  Refuses (exit 2, no marker)."""
+def grant_content_checks(ctx: ExecContext, g: dict, m: dict, cell: tuple, own_sha: str) -> dict:
+    """every content check of a grant that does not need the grant COMMIT (R4 B3; shared by execute's dry admission and
+    by validate-grant, R4F F2).  Returns {check: bool}."""
     import platform
     import srk_certify as S
-    ok, why = G.premarker_check(ctx.guard_ctx)          # the guard's own checks 2-6, 8, 9 and 7 without the marker
-    if not ok:
-        raise Refusal("ADMISSION", why)
     pins = pin_table(m)
     wb, _ = S.cell_blocks(*cell)
+    schema, want_cell = (("P309_GRANT/1", TARGET_CELL) if ctx.kind == "PRODUCTION" else
+                         ("P309_TEST_GRANT/1", G._TEST_CELL))
+    eh = g.get("execution_host") if isinstance(g.get("execution_host"), dict) else {}
+    ea = g.get("executions_authorized")
     checks = {
+        "schema_cell_scope": (g.get("schema") == schema and type(g.get("cell")) is type(want_cell)
+                              and g.get("cell") == want_cell and g.get("closure_only") is True
+                              and type(ea) is int and ea == 1),
+        "driver_sha256": g.get("driver_sha256") == own_sha,
+        "frozen_manifest_sha256": g.get("frozen_manifest_sha256") == m["_sha256"],
         "cell_interval": [fs(F(x)) for x in g.get("cell_interval") or []] == [fs(cell[0]), fs(cell[1])],
         "drift_hull_Ew": [fs(F(x)) for x in g.get("drift_hull_Ew") or []] == [fs(wb[0]), fs(wb[1])],
         "geometry": g.get("geometry") == GRANT_GEOMETRY[ctx.kind],
         "verifier_id": g.get("verifier_id") == "sha256:" + pins[VARIANT_REL][0],
         "guard_id": g.get("guard_id") == "sha256:" + pins[GUARD_REL][0],
         "marker_ref": g.get("marker_ref") == ctx.marker_ref,
-        "worktree": str(Path((g.get("execution_host") or {}).get("worktree", "")).resolve()) == str(ctx.repo.resolve()),
+        "host_id": eh.get("host_id_sha256") == G.host_id(),
+        "worktree": isinstance(eh.get("worktree"), str) and bool(eh.get("worktree"))       # R4F NF1: required
+                    and str(Path(eh["worktree"]).resolve()) == str(ctx.repo.resolve()),
         "runtime": (g.get("runtime") or {}).get("python") == platform.python_version() == m["runtime"]["python"],
         "committer_identity": git("var", "GIT_COMMITTER_IDENT", repo=ctx.repo).returncode == 0,
     }
@@ -528,10 +579,72 @@ def premarker_admission(ctx: ExecContext, g: dict, m: dict, cell: tuple) -> dict
         checks["not_after_horizon"] = checks["issued_utc"] = False
     auth = g.get("authority")
     checks["authority"] = isinstance(auth, str) and bool(auth.strip()) and not any(t in auth for t in PLACEHOLDER_MARKS)
+    try:
+        G._parse_grant(ctx.guard_ctx, json.dumps(g).encode())                  # the guard's own field parser
+        checks["guard_field_parse"] = True
+    except Exception:  # noqa: BLE001
+        checks["guard_field_parse"] = False
+    return checks
+
+
+def premarker_admission(ctx: ExecContext, g: dict, m: dict, cell: tuple, own_sha: str | None = None) -> dict:
+    """R4 B3: before the marker, every admission precondition that does not need the marker, so that no avoidable
+    grant defect is found only after the single evaluation has been spent.  Refuses (exit 2, no marker)."""
+    ok, why = G.premarker_check(ctx.guard_ctx)          # the guard's own checks 2-6, 8, 9 and 7 without the marker
+    if not ok:
+        raise Refusal("ADMISSION", why)
+    checks = grant_content_checks(ctx, g, m, cell, own_sha if own_sha is not None else g.get("driver_sha256"))
     bad = sorted(k for k, v in checks.items() if not v)
     if bad:
         raise Refusal("ADMISSION", f"grant preconditions fail before the marker: {bad}")
     return checks
+
+
+def validate_grant(path: Path, own_sha: str, ctx: ExecContext | None = None) -> dict:
+    """R4F F2: a check of an UNCOMMITTED candidate grant, BEFORE the owner's grant commit, on the execution host, in the
+    execution worktree, with HEAD at the would-be parent of the grant commit.  It runs the shared content checks
+    (grant_content_checks, the same as execute's dry admission), the chain walk from HEAD (walk_chain, the same as
+    check_grant), the guard's field parser and the guard's own checks 2, 3, 5-9 (G.candidate_check).  It creates no
+    commit and no ref and runs nothing of Stage 1 or 2; its only writes are its ledger lines (production context),
+    which are committed as one ledger-only window commit before the grant commit (handoff procedure)."""
+    ctx = production_context() if ctx is None else ctx
+    raw = Path(path).read_bytes()
+    try:
+        g = json.loads(raw)
+        if not isinstance(g, dict):
+            raise ValueError("not an object")
+    except ValueError:
+        return {"pass": False, "checks": {"json_object": False}}
+    head = git("rev-parse", "HEAD", repo=ctx.repo).stdout.strip()
+    clean = not git("status", "--porcelain", "--untracked-files=all", repo=ctx.repo).stdout.strip()
+    attached = bool(ctx.branch_ref) and ctx.branch_ref.startswith("refs/heads/") and git(
+        "symbolic-ref", "-q", "HEAD", repo=ctx.repo).stdout.strip() == ctx.branch_ref
+    m = load_manifest(ctx.repo)
+    fz = recorded_freeze(ctx.repo)
+    out = {"head": head, "recorded_freeze": fz, "clean_tree_before": clean, "branch_attached": attached}
+    try:
+        qual_c, review_c = walk_chain(ctx.repo, head, fz)
+        out["chain"] = (g.get("frozen_commit"), g.get("qualification_commit"),
+                        g.get("qualification_review_commit")) == (fz, qual_c, review_c)
+    except Refusal as exc:
+        out["chain"], out["chain_refusal"] = False, str(exc)
+    if ctx.kind == "PRODUCTION":
+        E.log("code/p309_driver.py validate-grant", "R4F F2: pre-commit check of a candidate grant (no marker, no "
+              "Stage 1/2, no target evaluation)", klass="GOVERNANCE", notes=f"HEAD {head[:12]}")
+        E.exposure(head, "the pinned cells.json entry for the target cell (validate-grant)", content="the cell "
+                   "interval (compared with the candidate's, not displayed)", necessity="R4F F2: the candidate "
+                   "grant's cell_interval must equal it (the same read as the proposal tool's; C4 ledgered)",
+                   carried_309_numbers=True)
+    checks = grant_content_checks(ctx, g, m, expected_cell(ctx, m), own_sha)
+    ok, why = G.candidate_check(ctx.guard_ctx, raw, head)
+    checks["guard_candidate_check"] = ok
+    out.update({"checks": checks, "guard": why})
+    out["pass"] = bool(out["chain"] and clean and attached and all(checks.values()))
+    out["notice"] = ("on PASS: commit the ledger lines this run wrote as ONE ledger-only commit; then commit the grant "
+                     "file ALONE on top of it (single parent, attached branch, nothing pushed past it); then execute. "
+                     "A grant commit that execute refuses is terminal: it cannot be repaired without a new owner "
+                     "decision (R4F F2)")
+    return out
 
 
 # ------------------------------------------------------------------------------------------------ consumer (Stage 2)
@@ -1054,6 +1167,10 @@ def _persist_pending(ctx: ExecContext, data: bytes) -> str:
     return blob
 
 
+# R4F F1(a): the two ratified sites, by code object (the backstop's caller check); read-only
+_SITE_CODES = types.MappingProxyType({_arm_marker.__code__: "arm", _persist_pending.__code__: "pending"})
+
+
 def persist_emergency(ctx: ExecContext, data: bytes) -> str:
     dfd = os.open(git_dir(ctx), os.O_RDONLY | os.O_DIRECTORY)
     try:
@@ -1442,12 +1559,13 @@ def decoy_stage1b(k: int, workers: int, m: dict) -> dict:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("mode", choices=("preflight", "rehearse", "decoy-stage1a", "decoy-stage1b", "execute",
-                                     "seal-only", "_job"))
+                                     "seal-only", "validate-grant", "_job"))
     ap.add_argument("spec", nargs="?")
     ap.add_argument("--decoy")
     ap.add_argument("--cell", type=int)
     ap.add_argument("--workers", type=int, default=WORKERS)
     ap.add_argument("--out")
+    ap.add_argument("--grant")
     a = ap.parse_args(argv)
     own_sha = sha(HERE.read_bytes())
     _MODE["mode"] = a.mode
@@ -1466,6 +1584,13 @@ def main(argv=None) -> int:
             return run_execute(own_sha)
         if a.mode == "seal-only":
             return run_seal_only()
+        if a.mode == "validate-grant":
+            if not a.grant:
+                raise Refusal("GRANT_MISSING", "validate-grant needs --grant FILE (the uncommitted candidate)")
+            out = validate_grant(Path(a.grant), own_sha)
+            print(json.dumps(out, indent=1, sort_keys=True, default=str))
+            print("P309 VALIDATE-GRANT " + ("PASS" if out["pass"] else "FAIL"))
+            return 0 if out["pass"] else 3
         signal.signal(signal.SIGALRM, lambda *_: (_ for _ in ()).throw(Refusal("WALL_CAP", f"{PRE_CAP_S} s")))
         m = load_manifest()
         vid = "sha256:" + pin_table(m)[VARIANT_REL][0]

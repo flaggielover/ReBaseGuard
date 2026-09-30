@@ -63,18 +63,17 @@ VERBS = set(ALLOW["mutating_git_verbs"])
 GRANT_MARKS = tuple(ALLOW["production_grant_markers"]) + ("_PROD_GRANT_PATH",)
 GRANT_NAMES = {"grant_path", "_PROD_GRANT_PATH"}
 TOKENS = tuple(ALLOW["production_tokens"])
-REF_VERBS = set(ALLOW["ref_mutation_verbs"])
-GIT_RUNNERS = set(ALLOW["git_runner_names"])
 REF_FUNCS = ALLOW["ref_mutation_functions"]
 CONTROL_FILES = set(ALLOW["planted_control_files"])
 TOKEN_DEFS = ALLOW["token_definitions"]
 FS_WRITE_FUNCS = {"mkdir", "makedirs", "rename", "replace", "renames", "link", "symlink", "unlink", "remove", "rmtree",
                   "copy", "copy2", "copyfile", "copytree", "move", "touch", "write_text", "write_bytes", "writelines"}
 WRITE_FUNCS = {"write_text", "write_bytes", "writelines"}
-GIT_WRITE_VERBS = {"add", "commit", "commit-tree", "hash-object", "update-index", "mv", "checkout", "apply", "am",
-                   "stash", "merge", "cherry-pick", "revert", "reset", "restore"}
 FORMAL_KINDS = {"MARKER_MUTATION", "MARKER_ALIAS", "MARKER_REBIND", "GRANT_WRITE", "REF_MUTATION_UNLISTED",
                 "MARKER_TOKEN", "REF_FILE_WRITE"}
+PROCESS_KINDS = {"PROCESS_FORBIDDEN", "PROCESS_SHELL", "PROCESS_UNLISTED", "PROCESS_ALIAS", "RUNNER_ALIAS",
+                 "DYNAMIC_IMPORT", "DYNAMIC_EXEC", "GIT_OPTION_FORBIDDEN", "GIT_CALL_OPAQUE", "GIT_WRITE_UNLISTED",
+                 "GITDIR_WRITE"}
 
 
 def _atoms(node) -> set:
@@ -111,15 +110,36 @@ def _func_of(tree) -> dict:
     return out
 
 
+_SHA_CACHE: dict = {}
+
+
 def ast_sha(fn) -> str:
     import hashlib
-    return hashlib.sha256(ast.dump(fn).encode()).hexdigest()
+    hit = _SHA_CACHE.get(id(fn))
+    if hit is None or hit[0] is not fn:
+        hit = (fn, hashlib.sha256(ast.dump(fn).encode()).hexdigest())
+        _SHA_CACHE[id(fn)] = hit
+    return hit[1]
+
+
+_DEFS_CACHE: dict = {}
+
+
+def _defs_by_name(tree) -> dict:
+    hit = _DEFS_CACHE.get(id(tree))
+    if hit is None or hit[0] is not tree:
+        d = {}
+        for n in ast.walk(tree):
+            if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                d.setdefault(n.name, []).append(n)
+        hit = (tree, d)
+        _DEFS_CACHE[id(tree)] = hit
+    return hit[1]
 
 
 def _unique_module_def(tree, fn) -> bool:
     """fn is a module-level def and the only def of that name anywhere in the file"""
-    same = [n for n in ast.walk(tree) if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == fn.name]
-    return fn in tree.body and len(same) == 1
+    return fn in tree.body and len(_defs_by_name(tree).get(fn.name, [])) == 1
 
 
 def _site_ok(tree, rel: str, fn) -> bool:
@@ -128,11 +148,18 @@ def _site_ok(tree, rel: str, fn) -> bool:
     return any(s["file"] == rel and s["function"] == fn.name and s["ast_sha256"] == ast_sha(fn) for s in SITES)
 
 
+_OWNERS_CACHE: dict = {}
+
+
 def owners(tree) -> dict:
     """node id -> (qualified name, node) of the OUTERMOST enclosing function: `func` at module level, or
     `Class.method` for a method of a module-level class.  Nested functions and lambdas belong to their owner, whose
     AST hash covers them."""
+    hit = _OWNERS_CACHE.get(id(tree))
+    if hit is not None and hit[0] is tree:
+        return hit[1]
     out = {}
+    _OWNERS_CACHE[id(tree)] = (tree, out)
 
     def walk(n, owner, cls):
         for ch in ast.iter_child_nodes(n):
@@ -145,12 +172,27 @@ def owners(tree) -> dict:
     return out
 
 
+_QUAL_CACHE: dict = {}
+
+
+def _unique_owner(tree, owner) -> bool:
+    """no other outermost function of the file has the same qualified name"""
+    hit = _QUAL_CACHE.get(id(tree))
+    if hit is None or hit[0] is not tree:
+        q = {}
+        for o in owners(tree).values():
+            if o is not None:
+                q.setdefault(o[0], {})[id(o[1])] = o[1]
+        hit = (tree, q)
+        _QUAL_CACHE[id(tree)] = hit
+    return len(hit[1].get(owner[0], {})) == 1
+
+
 def _ref_func_ok(tree, rel: str, owner) -> bool:
     if owner is None:
         return False
     qual, node = owner
-    same = [o for o in owners(tree).values() if o is not None and o[0] == qual and o[1] is not node]
-    if same:
+    if not _unique_owner(tree, owner):
         return False
     return any(r["file"] == rel and r["function"] == qual and r["ast_sha256"] == ast_sha(node) and r.get("reason")
                for r in REF_FUNCS)
@@ -168,17 +210,6 @@ def _positional_strings(n: ast.Call) -> list:
         elif isinstance(a, (ast.List, ast.Tuple)):
             out += [x.value for x in a.elts if isinstance(x, ast.Constant) and isinstance(x.value, str)]
     return out
-
-
-def ref_verbs_of(n: ast.Call) -> set:
-    """the ref-moving git verbs of a git-runner call (positional arguments only; `errors="replace"` is not a verb)"""
-    if _callee(n) not in GIT_RUNNERS:
-        return set()
-    pos = _positional_strings(n)
-    if _callee(n) in ("run", "Popen", "check_output", "check_call", "call") and not any(
-            x == "git" or x.endswith("/git") for x in pos):
-        return set()
-    return set(pos) & REF_VERBS
 
 
 STR_METHODS = {"join", "format", "replace", "strip", "lstrip", "rstrip", "lower", "upper", "removeprefix",
@@ -237,7 +268,28 @@ def _targets(t) -> list:
     return []
 
 
-def taint(tree, seeds: set, lit_test) -> set:
+PATH_CALLS = {"Path", "PurePath", "str", "fspath", "join", "joinpath", "realpath", "abspath", "resolve", "open",
+              "dirname", "with_name", "with_suffix", "expanduser"}
+
+
+def _path_value_names(expr) -> set | None:
+    """like _value_names, and a path-building call (Path(), str(), os.path.join(), os.open(dir) ...) carries the
+    names of its receiver and arguments (a git-directory path stays a git-directory path)"""
+    if isinstance(expr, ast.Call) and _callee(expr) in PATH_CALLS:
+        out = set()
+        if isinstance(expr.func, ast.Attribute):
+            out |= _path_value_names(expr.func.value) or set()
+        for a in expr.args:
+            out |= _path_value_names(a) or set()
+        return out
+    if isinstance(expr, ast.BinOp) and isinstance(expr.op, ast.Div):
+        return (_path_value_names(expr.left) or set()) | (_path_value_names(expr.right) or set())
+    if isinstance(expr, ast.Attribute):
+        return {expr.attr} | (_path_value_names(expr.value) or set())
+    return _value_names(expr)
+
+
+def taint(tree, seeds: set, lit_test, broad: bool = False, values=None) -> set:
     """flow-insensitive alias closure over VALUES (R4 NB1): a name becomes marker-bearing when it is bound -- directly,
     element-wise through tuples, as a loop/with/walrus target, as the parameter receiving an in-module call argument,
     or as a function whose return value is such a value -- to a value-like expression built from a seed name, an
@@ -247,7 +299,7 @@ def taint(tree, seeds: set, lit_test) -> set:
     funcs = {f.name: f for f in ast.walk(tree) if isinstance(f, (ast.FunctionDef, ast.AsyncFunctionDef))}
 
     def hot(expr) -> bool:
-        names = _value_names(expr)
+        names = _atoms(expr) if broad else (values or _value_names)(expr)
         return bool(names) and any(a in tainted or (isinstance(a, str) and lit_test(a)) for a in names)
     for _ in range(12):
         before = len(tainted)
@@ -290,23 +342,10 @@ def taint(tree, seeds: set, lit_test) -> set:
     return tainted
 
 
-def git_write_verbs_of(n: ast.Call) -> set:
-    """object/index-writing git verbs of a git-runner call (positional arguments only)"""
-    if _callee(n) not in GIT_RUNNERS:
-        return set()
-    pos = _positional_strings(n)
-    if _callee(n) in ("run", "Popen", "check_output", "check_call", "call") and not any(
-            x == "git" or x.endswith("/git") for x in pos):
-        return set()
-    return set(pos) & (GIT_WRITE_VERBS | REF_VERBS)
-
-
 def write_target_atoms(n: ast.Call) -> set:
     """the atoms of the PATH a write call writes (not of the bytes written): the receiver of a Path method, the first
     argument of open / os.* / shutil.* (both paths for rename, replace, link, copy, move); for a git write, the call."""
     fname = _callee(n)
-    if git_write_verbs_of(n):
-        return _atoms(n)
     two = {"rename", "replace", "renames", "link", "symlink", "copy", "copy2", "copyfile", "copytree", "move"}
     if isinstance(n.func, ast.Attribute) and fname in {"write_text", "write_bytes", "touch", "symlink_to",
                                                          "hardlink_to"} | ({"mkdir", "unlink", "rename", "replace"}
@@ -319,8 +358,12 @@ def write_target_atoms(n: ast.Call) -> set:
     return out
 
 
-def fs_write_of(n: ast.Call, atoms: set) -> bool:
+def fs_write_of(n: ast.Call, atoms: set, fc=None) -> bool:
     fname = _callee(n)
+    if fname in ("replace", "rename") and isinstance(n.func, ast.Attribute) and len(n.args) >= 2:
+        base = n.func.value                     # os.replace(a, b) / shutil.move: a module; str.replace(a, b): not
+        mods = fc.mod_alias if fc is not None else {"os": "os", "shutil": "shutil"}
+        return isinstance(base, ast.Name) and mods.get(base.id) in ("os", "shutil", "posix")
     if fname in FS_WRITE_FUNCS:
         return True
     if fname == "open" and isinstance(n.func, ast.Name):      # builtin open with a writing mode
@@ -329,6 +372,553 @@ def fs_write_of(n: ast.Call, atoms: set) -> bool:
     if fname == "open":                                        # os.open with creating/writing flags
         return bool({"O_CREAT", "O_WRONLY", "O_RDWR", "O_APPEND", "O_TRUNC"} & atoms)
     return False
+
+
+# ------------------------------------------------------------------------------------------------------------------
+# Layer 5 (R4 follow-up F1(b)): an ALLOWLIST for process execution.  Every call that can start a process or run git
+# is a finding unless it lies in an exactly-once site or a reviewed function (config `process_policy`
+# `reviewed_functions`, AST-pinned, with the permits it needs), or it is a literal git call whose verb is in the
+# read-only allowlist.  Unknown git verbs count as ref-moving.
+# ------------------------------------------------------------------------------------------------------------------
+PROC = ALLOW["process_policy"]
+REVIEWED = PROC["reviewed_functions"]            # [{file, function, ast_sha256, permits, reason}]
+RUNNERS = PROC["git_runners"]                    # [{file, function, leading, list?, kind: git|argv, reason}]
+READ_VERBS = set(PROC["git_read_verbs"])
+OBJECT_VERBS = set(PROC["git_object_verbs"])
+GLOBAL_OPTS_1 = set(PROC["git_global_options_with_operand"])     # e.g. -C <path>
+GLOBAL_OPTS_0 = set(PROC["git_global_options_flag"])
+FORBIDDEN_OPTS_EXACT = set(PROC["git_forbidden_options_exact"])
+FORBIDDEN_OPTS_PREFIX = tuple(PROC["git_forbidden_option_prefixes"])
+PY_ARGV0 = set(PROC["python_argv0"])
+SUFFIXES = set(PROC["file_suffixes"])
+PROC_MODULES = {"subprocess", "os", "pty", "asyncio", "importlib", "builtins", "posix"}
+OS_PROC = {"system", "popen", "startfile", "fork", "forkpty"}
+OS_PROC_PREFIX = ("exec", "spawn", "posix_spawn")
+SUBPROCESS_RUN = {"run", "Popen", "call", "check_call", "check_output"}
+SUBPROCESS_DATA = {"DEVNULL", "PIPE", "STDOUT", "CalledProcessError", "TimeoutExpired", "CompletedProcess",
+                   "SubprocessError"}
+GITDIR_NAMES = {"git_dir", "git_dir_of", "_git_dir", "gitdir", "GIT_DIR", "common_dir", "_common_dir"}
+GITDIR_OPTS = {"--git-dir", "--git-common-dir", "--absolute-git-dir", "--git-path"}
+REF_LAST = {"packed-refs", "HEAD", "ORIG_HEAD", "FETCH_HEAD", "MERGE_HEAD", "config"}
+REF_ANY = {"refs", "hooks"}
+X = "\x00"                                        # an unknown piece of a folded string
+
+
+def _fmt_fold(fmt: str) -> str:
+    """a %-format string with placeholders for its conversions (for parsing a `python -c` code string)"""
+    import re
+    return re.sub(r"%(\([^)]*\))?[-#0 +]*\d*(\.\d+)?[rsdifxXa%]",
+                  lambda m: "%" if m.group(0) == "%%" else ("'_'" if m.group(0).endswith("r") else "_"), fmt)
+
+
+def fold(expr, consts=None, loose=False):
+    """the string value of an expression built from literals: + and / concatenation, f-strings, %-formatting of a
+    literal, str()/Path()/os.path.join()/joinpath().  Exact mode returns None when any piece is unknown; loose mode
+    puts X for each unknown piece (never None)."""
+    consts = consts or {}
+
+    def f(e):
+        if isinstance(e, ast.Constant) and isinstance(e.value, str):
+            return e.value
+        if isinstance(e, ast.Name) and e.id in consts:
+            return f(consts[e.id])
+        if isinstance(e, ast.JoinedStr):
+            parts = [f(v.value) if isinstance(v, ast.FormattedValue) else f(v) for v in e.values]
+            return None if None in parts else "".join(parts)
+        if isinstance(e, ast.BinOp) and isinstance(e.op, (ast.Add, ast.Div)):
+            a, b = f(e.left), f(e.right)
+            if a is None or b is None:
+                return None
+            return a + b if isinstance(e.op, ast.Add) else a + "/" + b
+        if isinstance(e, ast.BinOp) and isinstance(e.op, ast.Mod):
+            a = f(e.left)
+            return None if a is None else _fmt_fold(a)
+        if isinstance(e, ast.Call) and len(e.args) >= 1:
+            c = _callee(e)
+            if c in ("str", "Path", "PurePath", "fspath", "realpath", "abspath") and len(e.args) == 1:
+                return f(e.args[0])
+            if c in ("join", "joinpath") and (c == "joinpath" or ast.unparse(e.func).endswith("path.join")):
+                parts = ([f(e.func.value)] if c == "joinpath" else []) + [f(a) for a in e.args]
+                return None if None in parts else "/".join(parts)
+        return X if loose else None
+    if not loose:
+        return f(expr)
+
+    def g(e):
+        r = f(e)
+        if r is not None and r != X:
+            return r
+        if isinstance(e, ast.BinOp) and isinstance(e.op, (ast.Add, ast.Div)):
+            return g(e.left) + ("" if isinstance(e.op, ast.Add) else "/") + g(e.right)
+        if isinstance(e, ast.JoinedStr):
+            return "".join(g(v.value) if isinstance(v, ast.FormattedValue) else g(v) for v in e.values)
+        if isinstance(e, ast.Call) and _callee(e) in ("str", "Path", "PurePath", "fspath") and len(e.args) == 1:
+            return g(e.args[0])
+        if isinstance(e, ast.Call) and _callee(e) in ("join", "joinpath"):
+            return "/".join(([g(e.func.value)] if _callee(e) == "joinpath" else []) + [g(a) for a in e.args])
+        if isinstance(e, ast.BinOp) and isinstance(e.op, ast.Mod):
+            return g(e.left)
+        return X
+    return g(expr)
+
+
+def single_constants(tree) -> dict:
+    """names bound exactly once in the file, by a plain assignment of a foldable value"""
+    binds = {}
+    for n in ast.walk(tree):
+        if isinstance(n, ast.Name) and isinstance(n.ctx, (ast.Store, ast.Del)):
+            binds[n.id] = binds.get(n.id, 0) + 1
+        elif isinstance(n, ast.arg):
+            binds[n.arg] = binds.get(n.arg, 0) + 1
+        elif isinstance(n, ast.alias):
+            k = (n.asname or n.name).split(".")[0]
+            binds[k] = binds.get(k, 0) + 1
+        elif isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef)):
+            binds[n.name] = binds.get(n.name, 0) + 1
+    out = {}
+    for n in ast.walk(tree):
+        if isinstance(n, ast.Assign) and len(n.targets) == 1 and isinstance(n.targets[0], ast.Name) and \
+                binds.get(n.targets[0].id) == 1:
+            out[n.targets[0].id] = n.value
+    return out
+
+
+def _path_bad(sfold: str) -> str | None:
+    comps = [c for c in sfold.replace("\\", "/").split("/") if c]
+    if not comps:
+        return None
+    if set(comps) & REF_ANY or comps[-1] in REF_LAST:
+        return "refs"
+    if any(comps[i] == "logs" and comps[i + 1] in ("refs", "HEAD") for i in range(len(comps) - 1)):
+        return "refs"
+    return None
+
+
+def _has_gitdir_component(sfold: str) -> bool:
+    return ".git" in [c for c in sfold.replace("\\", "/").split("/")]
+
+
+class FileCtx:
+    """per-file resolution: module aliases (import X as Y), runner definitions, single-binding constants"""
+
+    def __init__(self, tree, rel: str):
+        self.tree, self.rel = tree, rel
+        self.mod_alias = {}                               # local name -> module name
+        self.from_names = {}                              # local name -> (module, name)
+        for n in ast.walk(tree):
+            if isinstance(n, ast.Import):
+                for a in n.names:
+                    self.mod_alias[a.asname or a.name.split(".")[0]] = a.name if a.asname else a.name.split(".")[0]
+            elif isinstance(n, ast.ImportFrom) and n.module:
+                for a in n.names:
+                    self.from_names[a.asname or a.name] = (n.module, a.name)
+        self.defs = {f.name for f in tree.body if isinstance(f, (ast.FunctionDef, ast.AsyncFunctionDef))}
+        self.consts = single_constants(tree)
+
+    def is_mod(self, node, mod: str) -> bool:
+        return isinstance(node, ast.Name) and self.mod_alias.get(node.id) == mod
+
+    def module_of(self, node) -> str | None:
+        """the module name a Name / Attribute chain denotes (import aliases, and one hop through a module's own
+        imports is not followed: `D.G` resolves only when this file imports the guard itself)"""
+        if isinstance(node, ast.Name):
+            return self.mod_alias.get(node.id)
+        return None
+
+
+_MODULE_FILES: dict = {}
+
+
+def module_file(root: Path, mod: str) -> str | None:
+    """the scanned file of a module name (code/, tests/, verify/, start_state/ of the scanned root)"""
+    key = (str(root), mod)
+    if key not in _MODULE_FILES:
+        hit = None
+        for d in ("code", "tests", "verify", "start_state"):
+            if (root / d / f"{mod}.py").exists():
+                hit = f"{d}/{mod}.py"
+                break
+        _MODULE_FILES[key] = hit
+    return _MODULE_FILES[key]
+
+
+_IMPORTS_CACHE: dict = {}
+
+
+def _module_imports_of(root: Path, rel: str) -> dict:
+    key = (str(root), rel)
+    if key not in _IMPORTS_CACHE:
+        _IMPORTS_CACHE[key] = _module_imports_uncached(root, rel)
+    return _IMPORTS_CACHE[key]
+
+
+def _module_imports_uncached(root: Path, rel: str) -> dict:
+    try:
+        t = ast.parse((root / rel).read_text())
+    except (OSError, SyntaxError):
+        return {}
+    out = {}
+    for n in ast.walk(t):
+        if isinstance(n, ast.Import):
+            for a in n.names:
+                out[a.asname or a.name.split(".")[0]] = a.name
+    return out
+
+
+def runner_of(call: ast.Call, fc: FileCtx, root: Path) -> dict | None:
+    """the registered runner a call invokes: a def of this file, a name imported from a scanned module, or an
+    attribute of a module alias (followed through one module's own import aliases, e.g. D.G._git)"""
+    return runner_ref(call.func, fc, root)
+
+
+def runner_ref(fn, fc: FileCtx, root: Path) -> dict | None:
+    """the registered runner a Name / Attribute expression denotes (None if it denotes none)"""
+    if isinstance(fn, ast.Name):
+        if fn.id in fc.defs:
+            return next((r for r in RUNNERS if r["file"] == fc.rel and r["function"] == fn.id), None)
+        if fn.id in fc.from_names:
+            mod, name = fc.from_names[fn.id]
+            mf = module_file(root, mod.split(".")[-1])
+            return next((r for r in RUNNERS if r["file"] == mf and r["function"] == name), None)
+        return None
+    if isinstance(fn, ast.Attribute):
+        chain, v = [fn.attr], fn.value
+        while isinstance(v, ast.Attribute):
+            chain.append(v.attr)
+            v = v.value
+        if not isinstance(v, ast.Name) or v.id not in fc.mod_alias:
+            return None
+        mod = fc.mod_alias[v.id]
+        mf = module_file(root, mod.split(".")[-1])
+        for attr in reversed(chain[1:]):                # follow module aliases (D.G -> the guard)
+            if mf is None:
+                return None
+            nxt = _module_imports_of(root, mf).get(attr)
+            mf = module_file(root, nxt.split(".")[-1]) if nxt else None
+        return next((r for r in RUNNERS if r["file"] == mf and r["function"] == fn.attr), None) if mf else None
+    return None
+
+
+def classify_git(args: list, consts: dict) -> dict:
+    """R4F F1(b): the verb class of a git argument list: read | object | ref | opaque | forbidden.  Unknown verbs are
+    ref-moving; any starred or non-literal element at or before the verb is opaque."""
+    i = 0
+    while i < len(args):
+        a = args[i]
+        if isinstance(a, ast.Starred):
+            return {"cls": "opaque", "why": "a starred argument at or before the verb"}
+        s = fold(a, consts)
+        if s is None:
+            return {"cls": "opaque", "why": "a non-literal verb"}
+        if s in GLOBAL_OPTS_1:
+            i += 2
+            continue
+        if s in GLOBAL_OPTS_0:
+            i += 1
+            continue
+        if s.startswith("-"):
+            return {"cls": "forbidden", "why": f"git global option {s!r} is not allowlisted"}
+        verb, rest = s, args[i + 1:]
+        break
+    else:
+        return {"cls": "opaque", "why": "no verb"}
+    lits, starred = [], False
+    for k, a in enumerate(rest):
+        if isinstance(a, ast.Starred):
+            starred = True
+            continue
+        v = fold(a, consts)
+        if v == "--":                                    # everything after a literal -- is a pathspec
+            rest = rest[:k]
+            break
+        if v is not None:
+            lits.append(v)
+            if v in FORBIDDEN_OPTS_EXACT or v.startswith(FORBIDDEN_OPTS_PREFIX):
+                return {"cls": "forbidden", "verb": verb, "why": f"git option {v!r} is forbidden"}
+    ops = [x for x in rest if isinstance(x, ast.Starred) or fold(x, consts) is None or
+           not fold(x, consts).startswith("-")]
+    cls = None
+    if verb in READ_VERBS:
+        cls = "read"
+    elif verb == "symbolic-ref":
+        cls = "read" if (not starred and len(ops) == 1 and set(lits) - {fold(o, consts) for o in ops}
+                         <= {"-q", "--quiet", "--short"}) else "ref"
+    elif verb == "config":
+        cls = "read" if set(lits) & {"--get", "--get-all", "--get-regexp", "--list", "-l"} and not starred else "ref"
+    elif verb == "branch":
+        cls = "read" if not starred and lits and set(lits) <= {"--show-current", "--list"} and len(lits) == len(rest) \
+            else "ref"
+    elif verb == "remote":
+        cls = "read" if not rest else "ref"
+    elif verb in ("worktree", "sparse-checkout", "stash"):
+        cls = "read" if lits[:1] == ["list"] and len(rest) == 1 else "ref"
+    elif verb in OBJECT_VERBS:
+        cls = "object"
+    else:
+        cls = "ref"
+    if starred and cls == "read":
+        return {"cls": "opaque", "verb": verb, "why": "starred operands"}
+    return {"cls": cls, "verb": verb, "starred": starred}
+
+
+def _python_argv(elts: list, consts: dict) -> dict:
+    """a python interpreter argv: -c <literal code> (parsed and scanned), -m <literal module>, or a script whose
+    path folds to a .py file"""
+    i = 1
+    while i < len(elts):
+        a = elts[i]
+        if isinstance(a, ast.Starred):
+            return {"ok": False, "why": "a starred python argument before the script"}
+        s = fold(a, consts)
+        if s == "-c":
+            code = fold(elts[i + 1], consts) if i + 1 < len(elts) and not isinstance(elts[i + 1], ast.Starred) \
+                else None
+            return {"ok": code is not None, "code": code, "control": elts[:i + 2],
+                    "why": None if code is not None else "python -c with non-literal code"}
+        if s == "-m":
+            mod = fold(elts[i + 1], consts) if i + 1 < len(elts) else None
+            return {"ok": mod is not None, "control": elts[:i + 2],
+                    "why": None if mod else "python -m with a non-literal module"}
+        if s is not None and s.startswith("-") and s in ("-I", "-S", "-B", "-u", "-E", "-s", "-O", "-X", "-W"):
+            i += 2 if s in ("-X", "-W") else 1
+            continue
+        script = fold(a, consts, loose=True)
+        return {"ok": script.endswith(".py") and not script.startswith(X + X), "control": elts[:i + 1],
+                "why": None if script.endswith(".py") else "python script path does not fold to a .py file"}
+    return {"ok": False, "why": "python without a script", "control": elts}
+
+
+def process_info(n: ast.Call, fc: FileCtx, root: Path) -> dict | None:
+    """None if the call starts no process; else {kind, git?, python?, why?}"""
+    fn = n.func
+    if isinstance(fn, ast.Attribute) and isinstance(fn.value, ast.Name):
+        mod = fc.mod_alias.get(fn.value.id)
+        if mod in ("os", "posix") and (fn.attr in OS_PROC or fn.attr.startswith(OS_PROC_PREFIX)):
+            return {"kind": "PROCESS_FORBIDDEN", "why": f"os.{fn.attr}"}
+        if mod == "pty" and fn.attr == "spawn" or mod == "asyncio" and fn.attr.startswith("create_subprocess"):
+            return {"kind": "PROCESS_FORBIDDEN", "why": f"{mod}.{fn.attr}"}
+        if mod == "subprocess":
+            if fn.attr in SUBPROCESS_DATA:
+                return None                                   # a result / exception object, not a process
+            if fn.attr not in SUBPROCESS_RUN:
+                return {"kind": "PROCESS_FORBIDDEN", "why": f"subprocess.{fn.attr}"}
+            return _argv_info(n, fc, root, n.args[0] if n.args else next(
+                (k.value for k in n.keywords if k.arg == "args"), None))
+    r = runner_of(n, fc, root)
+    if r is not None:
+        lead = r.get("leading", 0)
+        if r.get("kind") == "script":                 # a python-script runner: the caller names the script literally
+            sc = fold(n.args[lead], fc.consts) if len(n.args) > lead else None
+            ok = sc is not None and sc.endswith(".py")
+            return {"kind": "python", "python": {"ok": ok, "why": None if ok else "the script of a script runner is "
+                                                  "not a literal .py path"}, "control": n.args[:lead + 1]}
+        if r.get("kind") == "argv":
+            return _argv_info(n, fc, root, n.args[lead] if len(n.args) > lead else None, runner=r)
+        if r.get("list"):
+            lst = n.args[lead] if len(n.args) > lead else None
+            if not isinstance(lst, (ast.List, ast.Tuple)):
+                return {"kind": "git", "runner": r["function"], "git": {"cls": "opaque", "why": "the git argument "
+                                                                          "list is not a literal list"}}
+            gargs = list(lst.elts)
+        else:
+            gargs = list(n.args[lead:])
+        return {"kind": "git", "runner": r["function"], "git": classify_git(gargs, fc.consts)}
+    return None
+
+
+def _argv_info(n: ast.Call, fc: FileCtx, root: Path, argv, runner=None) -> dict:
+    if any(k.arg == "shell" and not (isinstance(k.value, ast.Constant) and k.value.value is False)
+           for k in n.keywords):
+        return {"kind": "PROCESS_SHELL", "why": "shell=True"}
+    if not isinstance(argv, (ast.List, ast.Tuple)) or not argv.elts:
+        return {"kind": "argv", "opaque": "the argv is not a literal list"}
+    elts = argv.elts
+    if isinstance(elts[0], ast.Starred):
+        return {"kind": "argv", "opaque": "starred program"}
+    if any(isinstance(e, ast.Starred) for e in elts[1:]) and not (ast.unparse(elts[0]) in PY_ARGV0 or fold(
+            elts[0], fc.consts) in PY_ARGV0 | {"git", "/usr/bin/git"}):
+        return {"kind": "argv", "opaque": "starred arguments"}
+    prog = fold(elts[0], fc.consts)
+    if ast.unparse(elts[0]) in PY_ARGV0 or prog in PY_ARGV0:
+        py = _python_argv(elts, fc.consts)
+        return {"kind": "python", "python": py, "control": py.get("control", elts)}
+    if prog in ("git", "/usr/bin/git"):
+        if any(isinstance(e, ast.Starred) for e in elts[1:]):
+            return {"kind": "git", "git": {"cls": "opaque", "why": "starred git arguments"}, "raw": True}
+        return {"kind": "git", "git": classify_git(elts[1:], fc.consts), "raw": True}
+    return {"kind": "argv", "opaque": f"program {ast.unparse(elts[0])[:40]} is not git or python"}
+
+
+def reviewed(rel: str, owner, permit: str, tree=None) -> bool:
+    if owner is None or (tree is not None and not _unique_owner(tree, owner)):
+        return False
+    qual, node = owner
+    return any(r["file"] == rel and r["function"] == qual and r["ast_sha256"] == ast_sha(node) and r.get("reason")
+               and permit in r.get("permits", []) for r in REVIEWED)
+
+
+def process_rules(tree, rel: str, root: Path, recurse=None) -> list:
+    """layer 5 findings for one file (or one parsed `python -c` code string)"""
+    fc = FileCtx(tree, rel)
+    own = owners(tree)
+    fn_of = _func_of(tree)
+    out = []
+
+    def rec(node, kind, what):
+        out.append({"file": rel, "line": getattr(node, "lineno", 0), "kind": kind, "what": str(what)[:120]})
+    call_funcs = {id(n.func) for n in ast.walk(tree) if isinstance(n, ast.Call)}
+    attr_values = {id(n.value) for n in ast.walk(tree) if isinstance(n, ast.Attribute)}
+    gitdir = taint(tree, set(GITDIR_NAMES), lambda a: _has_gitdir_component(a) or a in GITDIR_OPTS,
+                   values=_path_value_names)
+    for n in ast.walk(tree):
+        o = own.get(id(n))
+        site = _site_ok(tree, rel, fn_of.get(id(n)))
+        if isinstance(n, ast.ImportFrom) and n.module and n.module.split(".")[0] in PROC_MODULES:
+            names = {a.name for a in n.names}
+            m0 = n.module.split(".")[0]
+            if m0 in ("subprocess", "pty", "importlib", "builtins") or (m0 in ("os", "posix") and any(
+                    x == "*" or x in OS_PROC or x.startswith(OS_PROC_PREFIX) for x in names)):
+                rec(n, "PROCESS_ALIAS", f"from {n.module} import {sorted(names)}")
+        if isinstance(n, ast.Attribute) and isinstance(n.value, ast.Name) and id(n) not in call_funcs:
+            mod = fc.mod_alias.get(n.value.id)
+            if (mod == "subprocess" and n.attr not in SUBPROCESS_DATA) or (
+                    mod in ("os", "posix") and (n.attr in OS_PROC or n.attr.startswith(OS_PROC_PREFIX)
+                                                 or n.attr == "__dict__")) or (mod == "pty" and n.attr == "spawn"):
+                rec(n, "PROCESS_ALIAS", f"{mod}.{n.attr} used as a value")
+        if isinstance(n, ast.Name) and isinstance(n.ctx, ast.Load) and id(n) not in attr_values and \
+                fc.mod_alias.get(n.id) in ("subprocess", "pty"):
+            rec(n, "PROCESS_ALIAS", f"the {fc.mod_alias[n.id]} module used as a value")
+        if isinstance(n, (ast.Name, ast.Attribute)) and isinstance(n.ctx, ast.Load) and id(n) not in call_funcs \
+                and id(n) not in attr_values and runner_ref(n, fc, root) is not None and not reviewed(
+                rel, o, "runner_alias", tree):
+            rec(n, "RUNNER_ALIAS", f"the git runner {ast.unparse(n)} used as a value")
+        if not isinstance(n, ast.Call):
+            continue
+        c = _callee(n)
+        if isinstance(n.func, ast.Name) and c in ("getattr", "setattr", "vars", "delattr", "hasattr") and n.args and \
+                isinstance(n.args[0], ast.Name) and fc.mod_alias.get(n.args[0].id) in PROC_MODULES:
+            rec(n, "PROCESS_ALIAS", f"{c} on the {fc.mod_alias[n.args[0].id]} module")
+        if isinstance(n.func, ast.Name) and c in ("__import__",) or (
+                c == "import_module" and isinstance(n.func, ast.Attribute)):
+            mod = fold(n.args[0], fc.consts) if n.args else None
+            if mod is None:
+                rec(n, "DYNAMIC_IMPORT", f"{c} with a non-literal module")
+            elif mod.split(".")[0] in PROC_MODULES:
+                rec(n, "PROCESS_ALIAS", f"{c}({mod!r})")
+        if isinstance(n.func, ast.Name) and c in ("exec", "eval", "compile") and n.args:
+            code = fold(n.args[0], fc.consts)
+            if code is None:
+                if not (site or reviewed(rel, o, "dynamic_exec", tree)):
+                    rec(n, "DYNAMIC_EXEC", f"{c} with non-literal code")
+            elif recurse is not None:
+                out.extend(recurse(code, f"{rel}:{n.lineno}:{c}"))
+        info = process_info(n, fc, root)
+        if info is None:
+            continue
+        k = info["kind"]
+        opaque = (k == "argv" or (k == "python" and not info["python"]["ok"])
+                  or (k == "git" and info["git"]["cls"] == "opaque"))
+        if opaque and o is not None and _forwards_params(o[1], info.get("control", n.args[:2])) and not any(
+                r["file"] == rel and r["function"] == o[0] for r in RUNNERS) and not reviewed(
+                rel, o, "forwards_operands", tree):
+            rec(n, "RUNNER_UNREGISTERED", f"{o[0]} forwards its parameters into a process call")
+        if k in ("PROCESS_FORBIDDEN", "PROCESS_SHELL"):
+            rec(n, k, info["why"])
+            continue
+        if k == "argv":
+            if not (site or reviewed(rel, o, "process", tree)):
+                rec(n, "PROCESS_UNLISTED", info["opaque"])
+            continue
+        if k == "python":
+            py = info["python"]
+            if not py["ok"] and not (site or reviewed(rel, o, "process", tree)):
+                rec(n, "PROCESS_UNLISTED", py["why"])
+            if py.get("code") is not None and recurse is not None:
+                out.extend(recurse(py["code"], f"{rel}:{n.lineno}:-c"))
+            continue
+        g = info["git"]
+        if g["cls"] == "read":
+            continue
+        if g["cls"] == "forbidden":
+            rec(n, "GIT_OPTION_FORBIDDEN", g["why"])
+            continue
+        if g["cls"] == "opaque":
+            if not (site or reviewed(rel, o, "process", tree)):
+                rec(n, "GIT_CALL_OPAQUE", g["why"])
+            continue
+        if g["cls"] == "object" and not (site or reviewed(rel, o, "git_write", tree) or _ref_func_ok(tree, rel, o)):
+            rec(n, "GIT_WRITE_UNLISTED", f"{(o or ('<module>',))[0]}: {g['verb']}")
+        # ref-class verbs: REF_MUTATION_UNLISTED in formal_rules (it uses the same classifier)
+    # git-dir writes: a filesystem write whose target is built from a git directory
+    for n in ast.walk(tree):
+        if isinstance(n, ast.Call) and fs_write_of(n, _atoms(n), fc):
+            tex = _write_target_exprs(n)
+            ta = write_target_atoms(n).union(*(_atoms(e) for e in tex))
+            tf = [fold(x, fc.consts, loose=True) for x in tex]
+            if (ta & gitdir or any(_has_gitdir_component(x) for x in tf)) and not (
+                    _site_ok(tree, rel, fn_of.get(id(n))) or reviewed(rel, own.get(id(n)), "gitdir_write", tree)):
+                rec(n, "GITDIR_WRITE", _callee(n))
+    # reviewed runners: every registered runner of this file is itself reviewed with the process permit
+    for r in RUNNERS:
+        if r["file"] == rel:
+            node = next((f for f in tree.body if isinstance(f, (ast.FunctionDef, ast.AsyncFunctionDef))
+                         and f.name == r["function"]), None)
+            if node is None or not reviewed(rel, (r["function"], node), "process") or not r.get("reason"):
+                rec(node or tree, "RUNNER_UNREVIEWED", r["function"])
+    return out
+
+
+def _forwards_params(fn, exprs: list) -> bool:
+    """the call's program / argv / git-argument expressions depend on a parameter of fn (directly or through a local
+    bound from one): the function is then a runner and its callers must be checked"""
+    a = fn.args
+    params = {x.arg for x in a.posonlyargs + a.args + a.kwonlyargs} | ({a.vararg.arg} if a.vararg else set()) | (
+        {a.kwarg.arg} if a.kwarg else set())
+    params -= {"self"}
+    if not params:
+        return False
+    hot = taint(fn, params, lambda _: False, broad=True)
+    return any(isinstance(x, ast.Name) and x.id in hot for e in exprs for x in ast.walk(e))
+
+
+def _write_target_exprs(n: ast.Call) -> list:
+    fname = _callee(n)
+    two = {"rename", "replace", "renames", "link", "symlink", "copy", "copy2", "copyfile", "copytree", "move"}
+    if isinstance(n.func, ast.Attribute) and fname in {"write_text", "write_bytes", "touch", "symlink_to",
+                                                         "hardlink_to", "mkdir", "unlink"} and not n.args:
+        return [n.func.value]
+    if isinstance(n.func, ast.Attribute) and fname in {"write_text", "write_bytes", "touch"}:
+        return [n.func.value]
+    return list(n.args[:2] if fname in two else n.args[:1]) + [k.value for k in n.keywords
+                                                                 if k.arg in ("dst", "file", "path", "dir_fd",
+                                                                              "src_dir_fd", "dst_dir_fd")]
+
+
+def git_class_of(n: ast.Call, fc: "FileCtx", root: Path) -> str | None:
+    info = process_info(n, fc, root)
+    if info is None or info["kind"] != "git":
+        return None
+    return info["git"]["cls"]
+
+
+def file_rules(root: Path) -> list:
+    """non-Python files, executable bits, and modules that would shadow a research module (R4F M01, M15)"""
+    out = []
+    shadow = set()
+    for d in ("impl", "verify", "code"):
+        shadow |= {p.stem for p in (RNS / d).glob("*.py")}
+    for p in sorted(root.rglob("*")):
+        if "__pycache__" in p.parts or not p.is_file():
+            continue
+        rel = str(p.relative_to(root))
+        if p.suffix not in SUFFIXES:
+            out.append({"file": rel, "line": 0, "kind": "NONPY_FILE", "what": f"suffix {p.suffix!r} not allowed"})
+        if p.stat().st_mode & 0o111:
+            out.append({"file": rel, "line": 0, "kind": "EXEC_BIT", "what": "an executable file"})
+        if p.suffix == ".py" and p.stem in shadow:
+            out.append({"file": rel, "line": 0, "kind": "SHADOW_MODULE",
+                        "what": f"{p.name} would shadow a research module on sys.path"})
+    return out
 
 
 def allowance_check(tree, lit=None, const=None) -> list:
@@ -364,8 +954,9 @@ def allowance_check(tree, lit=None, const=None) -> list:
     return why
 
 
-def formal_rules(tree, rel: str, sanctioned: list | None = None) -> list:
+def formal_rules(tree, rel: str, sanctioned: list | None = None, root: Path = FNS) -> list:
     listed = any(rel in n["files"] for n in NAMES)
+    fc = FileCtx(tree, rel)
     sanctioned = [] if sanctioned is None else sanctioned
     out = []
 
@@ -395,26 +986,33 @@ def formal_rules(tree, rel: str, sanctioned: list | None = None) -> list:
         if isinstance(n, ast.Call):
             a = _atoms(n)
             fn = fn_of.get(id(n))
+            info = process_info(n, fc, root)
+            g = info["git"] if info and info["kind"] == "git" else None
+            gcls = g["cls"] if g else None
+            gverb = {g.get("verb")} - {None} if g else set()
             direct = bool(a & VERBS) and _mentions_marker(a)
-            aliased = bool(ref_verbs_of(n)) and bool(a & marker_names)
-            verbs = (a & VERBS) | ref_verbs_of(n)
+            aliased = gcls in ("ref", "opaque", "forbidden") and bool(a & marker_names)
+            verbs = (a & VERBS) | (gverb if gcls == "ref" else set())
             if direct or aliased:
                 if _site_ok(tree, rel, fn):
                     sanctioned.append({"file": rel, "line": n.lineno, "function": fn.name,
                                        "kind": "EXACTLY_ONCE_SITE", "verbs": sorted(verbs)})
                 else:
-                    rec(n, "MARKER_MUTATION", sorted(verbs))
-            rv = ref_verbs_of(n)
-            if rv and not _site_ok(tree, rel, fn) and not _ref_func_ok(tree, rel, own.get(id(n))):
-                rec(n, "REF_MUTATION_UNLISTED", f"{(own.get(id(n)) or ('<module>',))[0]}: {sorted(rv)}")
+                    rec(n, "MARKER_MUTATION", sorted(verbs) or gcls)
+            if gcls == "ref" and not _site_ok(tree, rel, fn) and not _ref_func_ok(tree, rel, own.get(id(n))):
+                rec(n, "REF_MUTATION_UNLISTED", f"{(own.get(id(n)) or ('<module>',))[0]}: {sorted(gverb)}")
             fname = _callee(n)
-            fs_write = fs_write_of(n, a)
-            writes = fs_write or bool(git_write_verbs_of(n))
-            ta = write_target_atoms(n) if writes else set()
-            if writes and (any(isinstance(x, str) and any(g in x for g in GRANT_MARKS) for x in ta) or ta & grant_names):
+            fs_write = fs_write_of(n, a, fc)
+            writes = fs_write or gcls in ("object", "ref", "opaque")
+            ta = (a if gcls in ("object", "ref", "opaque") else write_target_atoms(n)) if writes else set()
+            tf = [fold(x, fc.consts, loose=True) for x in _write_target_exprs(n)] if fs_write else []
+            if writes and (any(isinstance(x, str) and any(g_ in x for g_ in GRANT_MARKS) for x in list(ta) + tf)
+                           or ta & grant_names):
                 rec(n, "GRANT_WRITE", fname or "call")
-            if fs_write and any(isinstance(x, str) and (x in ("refs", "packed-refs") or "refs/" in x
-                                                        or x.startswith("logs/refs")) for x in ta):
+            if fs_write and (any(isinstance(x, str) and (x in ("refs", "packed-refs") or "refs/" in x
+                                                          or x.startswith("logs/refs")) for x in ta)
+                             or any(_path_bad(x) for x in tf)) and not reviewed(rel, own.get(id(n)),
+                                                                                "ref_file_write", tree):
                 rec(n, "REF_FILE_WRITE", fname)
         elif isinstance(n, (ast.Assign, ast.AnnAssign)):
             val = n.value
@@ -455,8 +1053,22 @@ def scan(root: Path = FNS) -> dict:
         if f["kind"] == "TARGET_PATH" and any(l in f.get("what", "") for l in LITS):
             findings.append(dict(f, note="exactly-once ref literal in a refusal-test file: not covered by the allowance"))
     formal_controls = []
-    for p in sorted(root.rglob("*.py")):
-        if p.name == "q309_guard.py":
+    findings.extend(file_rules(root))
+
+    def recurse(code: str, label: str, depth=[0]) -> list:            # a `python -c` / exec code string
+        if depth[0] > 3:
+            return [{"file": label, "line": 0, "kind": "UNPARSEABLE_CODE", "what": "nesting too deep"}]
+        try:
+            t = ast.parse(code)
+        except SyntaxError:
+            return [{"file": label, "line": 0, "kind": "UNPARSEABLE_CODE", "what": code[:80]}]
+        depth[0] += 1
+        try:
+            return formal_rules(t, label, [], root) + process_rules(t, label, root, recurse)
+        finally:
+            depth[0] -= 1
+    for p in sorted(root.rglob("*.py")):                 # R4F M01: no file is skipped by its name
+        if "__pycache__" in p.parts:
             continue
         rel = str(p.relative_to(root))
         src = p.read_text()
@@ -466,7 +1078,7 @@ def scan(root: Path = FNS) -> dict:
             findings.append({"file": rel, "line": 0, "kind": "UNPARSEABLE"})
             continue
         site_hits: list = []
-        fs = formal_rules(tree, rel, site_hits)
+        fs = formal_rules(tree, rel, site_hits, root) + process_rules(tree, rel, root, recurse)
         if Q.CONTROL_MARK in src:
             if rel not in CONTROL_FILES or Q.CONTROL_MARK not in src[:400]:
                 findings.append({"file": rel, "line": 0, "kind": "CONTROL_MARK_UNLISTED",
@@ -476,7 +1088,8 @@ def scan(root: Path = FNS) -> dict:
             continue
         findings.extend(fs)
         sanctioned.extend(site_hits)
-    formal_ok = any(FORMAL_KINDS <= set(c["fired"]) for c in formal_controls)
+    formal_ok = any(FORMAL_KINDS <= set(c["fired"]) for c in formal_controls) and any(
+        PROCESS_KINDS <= set(c["fired"]) for c in formal_controls)
     verdict = "PASS" if (not findings and r["control_fires_all_kinds"] and formal_ok) else "FAIL"
     return {"files_scanned": r["files_scanned"], "findings": findings, "allowed_marker_name": allowed,
             "sanctioned_exactly_once_sites": sanctioned,

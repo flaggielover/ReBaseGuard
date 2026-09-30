@@ -246,6 +246,40 @@ def _parse_grant(ctx, raw: bytes) -> dict:
     return g
 
 
+def _check_ew(g: dict) -> tuple:
+    c_lo, c_hi = (_rat(x) for x in g["cell_interval"])
+    ew = tuple(_rat(x) for x in g["drift_hull_Ew"])
+    if outward_hull(c_lo, c_hi) != ew:                                                          # 3 Ew binding
+        raise ValueError("Ew is not the outward 2^-10 hull of cell_interval")
+    return ew
+
+
+def _check_frozen_identity(ctx, g: dict, anchor: str) -> None:
+    """checks 5 and 6; anchor is the grant commit, or (candidate_check) the would-be parent of the grant commit."""
+    repo = ctx.repo
+    fc = g["frozen_commit"]                                                                     # 5 frozen identity
+    if not _git_ok(repo, "merge-base", "--is-ancestor", fc, anchor):
+        raise ValueError("frozen_commit is not an ancestor of the grant commit")
+    man = _git_bytes(repo, "show", f"{fc}:{ctx.manifest_path}")
+    if hashlib.sha256(man).hexdigest() != g["frozen_manifest_sha256"]:
+        raise ValueError("frozen manifest sha256 mismatch")
+    pins = {p["path"]: p.get("sha256") for p in json.loads(man.decode("utf-8"))["code_pins"]}
+    if pins.get(own_relpath()) != own_id()[7:]:
+        raise ValueError("this guard is not pinned (with this sha256) by the frozen manifest")
+    if g["guard_id"] != own_id():                                                               # 6 own identity
+        raise ValueError("guard_id is not this file")
+
+
+def _check_expiry_host(g: dict) -> None:
+    now = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)                    # 8 expiry
+    if now > datetime.datetime.strptime(g["not_after_utc"], "%Y-%m-%dT%H:%M:%SZ"):
+        raise ValueError("grant expired")
+    if g["execution_host"]["host_id_sha256"] != host_id():                                     # 9 host, runtime
+        raise ValueError("execution host mismatch")
+    if g["runtime"]["python"] != platform.python_version():
+        raise ValueError("runtime mismatch")
+
+
 def _check_official(ctx, geometry, lo: F, hi: F, *, premarker: bool = False) -> str:
     """Raises on any failed check; returns the grant commit on success.  Order: spec section 3, checks 2-10.
     premarker=True (R4 B3, the driver's dry admission before the marker): check 7 requires an EMPTY marker namespace
@@ -256,10 +290,7 @@ def _check_official(ctx, geometry, lo: F, hi: F, *, premarker: bool = False) -> 
     except RuntimeError:
         raise ValueError("no grant at HEAD") from None
     g = _parse_grant(ctx, raw)                                                                 # 2 well formed
-    c_lo, c_hi = (_rat(x) for x in g["cell_interval"])
-    ew = tuple(_rat(x) for x in g["drift_hull_Ew"])
-    if outward_hull(c_lo, c_hi) != ew:                                                          # 3 Ew binding
-        raise ValueError("Ew is not the outward 2^-10 hull of cell_interval")
+    ew = _check_ew(g)                                                                           # 3 Ew binding
     adds = _git(repo, "log", "--format=%H", "--diff-filter=A", "HEAD", "--", ctx.grant_path).split()
     if len(adds) != 1:                                                                          # 4 grant commit
         raise ValueError(f"{len(adds)} commits add the grant")
@@ -269,17 +300,7 @@ def _check_official(ctx, geometry, lo: F, hi: F, *, premarker: bool = False) -> 
         raise ValueError("the grant commit touches other paths")
     if _git(repo, "rev-parse", "HEAD").strip() != gc:
         raise ValueError("HEAD is not the grant commit")
-    fc = g["frozen_commit"]                                                                     # 5 frozen identity
-    if not _git_ok(repo, "merge-base", "--is-ancestor", fc, gc):
-        raise ValueError("frozen_commit is not an ancestor of the grant commit")
-    man = _git_bytes(repo, "show", f"{fc}:{ctx.manifest_path}")
-    if hashlib.sha256(man).hexdigest() != g["frozen_manifest_sha256"]:
-        raise ValueError("frozen manifest sha256 mismatch")
-    pins = {p["path"]: p.get("sha256") for p in json.loads(man.decode("utf-8"))["code_pins"]}
-    if pins.get(own_relpath()) != own_id()[7:]:
-        raise ValueError("this guard is not pinned (with this sha256) by the frozen manifest")
-    if g["guard_id"] != own_id():                                                               # 6 own identity
-        raise ValueError("guard_id is not this file")
+    _check_frozen_identity(ctx, g, gc)                                                          # 5, 6
     ns = _git(repo, "for-each-ref", "--format=%(refname)", ctx.ref_namespace).split()          # 7 marker
     if premarker:
         if ns:
@@ -301,13 +322,7 @@ def _check_official(ctx, geometry, lo: F, hi: F, *, premarker: bool = False) -> 
             continue
         if _git_ok(repo, "merge-base", "--is-ancestor", gc, obj):
             raise ValueError(f"a strict descendant of the grant commit exists ({name})")
-    now = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)                    # 8 expiry
-    if now > datetime.datetime.strptime(g["not_after_utc"], "%Y-%m-%dT%H:%M:%SZ"):
-        raise ValueError("grant expired")
-    if g["execution_host"]["host_id_sha256"] != host_id():                                     # 9 host, runtime
-        raise ValueError("execution host mismatch")
-    if g["runtime"]["python"] != platform.python_version():
-        raise ValueError("runtime mismatch")
+    _check_expiry_host(g)                                                                       # 8, 9
     if premarker:
         return gc
     if not (ew[0] <= lo and hi <= ew[1]):                                                       # 10 inside Ew
@@ -353,6 +368,24 @@ def premarker_check(ctx=None) -> tuple:
             return False, "not a guard context"
         gc = _check_official(ctx, None, None, None, premarker=True)
         return True, f"grant commit {gc[:12]} passes the pre-marker checks ({ctx.kind})"
+    except Exception as exc:  # noqa: BLE001 - fail closed
+        return False, f"{type(exc).__name__}: {str(exc)[:160]}"
+
+
+def candidate_check(ctx, raw: bytes, parent: str) -> tuple:
+    """R4F F2: the official checks 2, 3, 5, 6, 8 and 9 on an UNCOMMITTED candidate grant (bytes), with `parent` the
+    would-be parent of the grant commit, plus check 7 in its pre-marker form (empty namespace).  Checks 4 and 10 need
+    the grant commit or an item and are not reached.  Read-only; returns (ok, reason); admits nothing."""
+    try:
+        if ctx is not PRODUCTION and type(ctx) is not TestContext:
+            return False, "not a guard context"
+        g = _parse_grant(ctx, raw)                                                             # 2
+        _check_ew(g)                                                                           # 3
+        _check_frozen_identity(ctx, g, parent)                                                 # 5, 6
+        if _git(ctx.repo, "for-each-ref", "--format=%(refname)", ctx.ref_namespace).split():   # 7 (pre-marker form)
+            raise ValueError("the marker namespace is not empty before the marker")
+        _check_expiry_host(g)                                                                  # 8, 9
+        return True, f"the candidate grant passes checks 2, 3, 5-9 on parent {parent[:12]} ({ctx.kind})"
     except Exception as exc:  # noqa: BLE001 - fail closed
         return False, f"{type(exc).__name__}: {str(exc)[:160]}"
 

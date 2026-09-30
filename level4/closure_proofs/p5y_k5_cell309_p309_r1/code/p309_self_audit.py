@@ -55,7 +55,11 @@ IMMUTABLE = ["governance/OWNER_DECISIONS_P309_VERBATIM.md", "governance/OWNER_RU
              "reviews/BRIEF_FC2_VERIFIER_VARIANT_AUTHOR_FOLLOWUP_2.md", "reviews/BRIEF_DELTA_INCIDENT_P309.md",
              "reviews/BRIEF_PREFREEZE_R4_P309.md", "reviews/REVIEW_DELTA_INCIDENT_P309.md",
              "reviews/REVIEW_DELTA_INCIDENT_P309_EXEC_LEDGER.jsonl", "reviews/REVIEW_PREFREEZE_R4_P309.md",
-             "reviews/REVIEW_PREFREEZE_R4_P309_EXEC_LEDGER.jsonl", "fc2/FC2_SPEC_R2.md"]
+             "reviews/REVIEW_PREFREEZE_R4_P309_EXEC_LEDGER.jsonl", "fc2/FC2_SPEC_R2.md",
+             # R4 follow-up: its review, ledger extract and mutant suite; the brief; the report to the owner
+             "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_P309.md", "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_P309_EXEC_LEDGER.jsonl",
+             "reviews/R4_FOLLOWUP_D5_MUTANTS.py.txt", "reviews/BRIEF_PREFREEZE_R4_FOLLOWUP_P309.md",
+             "governance/D5_SITE_BACKSTOP_REPORT_P309.md"]
 # the append-only documents (FC2_SPEC_R2_ERRATUM_1, ERRATA_FORMAL, P309_REV2C_AMENDMENTS) are not "unchanged since
 # their first commit"; after the freeze they are fixed like every frozen-directory file (QC13, check_grant)
 PRODUCER_MODULES = re.compile(r"^\s*(import|from)\s+(srk_kernel|srk_certify|srk_envelope|srk_float|srk_gate|srk_assemble|"

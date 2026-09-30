@@ -99,10 +99,11 @@ def mirror(freeze_commit: str) -> Path:
 
 
 def research_test(m: Path, rel: str, *args, opt: bool = False) -> dict:
-    cmd = [PY] + (["-O"] if opt else []) + [str(m / RMIR / rel), *args]
     E.log(f"{RMIR}/{rel} (in the archive mirror)", f"{ATT['label']}: research test {rel} {' '.join(args)}",
           klass="NONTARGET_DECOY", notes="read-only export of the frozen commit; outputs stay in the mirror")
-    return run(cmd, m / RMIR)
+    if opt:
+        return run([PY, "-O", str(m / RMIR / rel), *args], m / RMIR)
+    return run([PY, str(m / RMIR / rel), *args], m / RMIR)
 
 
 # ---------------------------------------------------------------------------------------------------- the items
@@ -187,8 +188,8 @@ def qc08(m: Path, workers: int) -> dict:
                     and x["degree"] == c["degree"]]
             compared += 1
             ident.append(len(mine) == 1 and mine[0]["sha256"] == c["sha256"])
-    batteries = [research_test(m, t) for t in ("tests/test_srk_gate.py", "tests/test_srk_wrec_refusal.py",
-                                               "tests/test_srk_cert_mutants.py", "tests/e2e_cell_family.py")]
+    batteries = [research_test(m, "tests/test_srk_gate.py"), research_test(m, "tests/test_srk_wrec_refusal.py"),
+                 research_test(m, "tests/test_srk_cert_mutants.py"), research_test(m, "tests/e2e_cell_family.py")]
     ok = (d["run"]["rc"] == 0 and res.get("gate", {}).get("source") == "GATE" and len(returned) == 12 and
           set(verdicts.values()) <= {"ACCEPT"} and not res.get("run", {}).get("not_started") and compared > 0
           and all(ident) and all(b["rc"] == 0 for b in batteries))
@@ -226,16 +227,23 @@ def qc10(workers: int) -> dict:
             "note": "QC08 and QC10 both run on this host (the proposed execution host, rev. 2c A14)"}
 
 
+def git(*a) -> str:
+    """read-only git in this repository (a registered runner: the scanner checks every caller's verb)"""
+    return subprocess.run(["git", "-C", str(REPO), *a], capture_output=True, text=True).stdout.strip()
+
+
 def qc_formal(cmd_rel: str, *args, flags: bool = False) -> dict:
-    r = run([PY, *(["-I", "-S", "-B"] if flags else []), str(FNS / cmd_rel), *args], FNS, timeout=12 * 3600)
+    if flags:
+        r = run([PY, "-I", "-S", "-B", str(FNS / cmd_rel), *args], FNS, timeout=12 * 3600)
+    else:
+        r = run([PY, str(FNS / cmd_rel), *args], FNS, timeout=12 * 3600)
     return {"pass": r["rc"] == 0, "runs": [r]}
 
 
 def qc13(freeze: str) -> dict:
-    g = lambda *a: subprocess.run(["git", "-C", str(REPO), *a], capture_output=True, text=True).stdout.strip()  # noqa
-    frozen_now = [g("rev-parse", f"HEAD:{D.NS_REL}/{d}") for d in D.FROZEN_DIRS]
-    frozen_then = [g("rev-parse", f"{freeze}:{D.NS_REL}/{d}") for d in D.FROZEN_DIRS]
-    refs = g("for-each-ref", "--format=%(refname)").splitlines()
+    frozen_now = [git("rev-parse", f"HEAD:{D.NS_REL}/{d}") for d in D.FROZEN_DIRS]
+    frozen_then = [git("rev-parse", f"{freeze}:{D.NS_REL}/{d}") for d in D.FROZEN_DIRS]
+    refs = git("for-each-ref", "--format=%(refname)").splitlines()
     try:
         recorded = D.recorded_freeze()
     except D.Refusal as exc:
@@ -243,14 +251,15 @@ def qc13(freeze: str) -> dict:
     ok = {"freeze_record_valid_and_names_this_freeze": recorded == freeze,
           "freeze_is_last_frozen_change": D.freeze_commit() == freeze,
           "frozen_dirs_unchanged_since_freeze": frozen_now == frozen_then,
-          "r5_blob_unchanged": g("rev-parse", "HEAD:level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/coverage/"
+          "r5_blob_unchanged": git("rev-parse", "HEAD:level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/coverage/"
                                             "K5_COVERAGE_MAP_R5.json") == "f978eeb6b41188eabaf3c6d590c9178d711f1ce6",
           "no_exactly_once_ref": not [r for r in refs if r.startswith(D.G._PROD_NAMESPACE)],
-          "research_namespace_unchanged": not g("diff", "--name-only", "eb9a9c22b093f938e1bf13e0b30512608c58c370",
+          "research_namespace_unchanged": not git("diff", "--name-only", "eb9a9c22b093f938e1bf13e0b30512608c58c370",
                                                 "HEAD", "--", D.RNS_REL),
           "qualification_after_freeze": subprocess.run(["git", "-C", str(REPO), "merge-base", "--is-ancestor", freeze,
                                                         "HEAD"]).returncode == 0}
-    ok["no_r6"] = not any("COVERAGE_MAP_R6" in p.upper() for p in g("ls-tree", "-r", "--name-only", "HEAD").splitlines())
+    ok["no_r6"] = not any("COVERAGE_MAP_R6" in p.upper()
+                          for p in git("ls-tree", "-r", "--name-only", "HEAD").splitlines())
     ok["single_qualification_run_since_the_freeze_record"] = single_run_since_freeze()
     ph = qc_formal("code/p309_placeholder_check.py")
     ok["no_placeholder_or_choice"] = ph["pass"]
@@ -308,12 +317,16 @@ def qc17() -> dict:
 
 
 def qc_d5() -> dict:
-    """owner D5: the exception is limited to the two ratified sites -- the control suite, and the scanner's
-    ref-mutation whitelist current (no unlisted, no stale entry)"""
-    parts = [qc_formal("tests/test_p309_d5_exception.py", flags=True)]
+    """owner D5: the exception is limited to the two ratified sites -- the control suite (with R4's M01-M15), the
+    runtime backstop controls (R4F F1(a)), and the scanner's AST-pinned lists current (no unlisted, stale, missing or
+    unnecessary entry)"""
+    parts = [qc_formal("tests/test_p309_d5_exception.py", flags=True),
+             qc_formal("tests/test_p309_site_backstop.py", flags=True)]
     pins = run([PY, str(FNS / "code" / "p309_scan_pins.py"), "--list"], FNS)
-    bad = [l for l in pins["stdout_tail"].splitlines() if "NOT LISTED" in l or "STALE" in l or "remove the entry" in l]
-    parts.append({"pass": pins["rc"] == 0 and not bad, "runs": [pins], "not_current": bad})
+    bad = [l for l in pins["stdout_tail"].splitlines() if "NOT LISTED" in l or "STALE" in l or "remove the entry" in l
+           or l.endswith(": missing")]
+    parts.append({"pass": pins["rc"] == 0 and not bad and "P309 SCAN PINS: all current" in pins["stdout_tail"],
+                  "runs": [pins], "not_current": bad})
     return {"pass": all(x["pass"] for x in parts), "parts": parts}
 
 

@@ -48,6 +48,7 @@ DOCS = {
     "briefs_recovered": NS + "governance/briefs_recovered/README.md",
     "incident_p309f_01": NS + "governance/INCIDENT_P309F_01_FC2_REV1_INSTRUCTION.md",
     "no_placeholder_statement": NS + "governance/NO_PLACEHOLDER_STATEMENT_P309.md",
+    "d5_site_backstop_report": NS + "governance/D5_SITE_BACKSTOP_REPORT_P309.md",
 }
 # the disclosed liabilities (carried verbatim into the proposed grant); delta review D3 adds its section 5 items
 DISCLOSED_LIABILITIES = [
@@ -81,8 +82,15 @@ DISCLOSED_LIABILITIES = [
     "unsealed verdict reasons; QC blind spots; retry-until-pass); resolved before the freeze by rev. 2c A20-A30 and "
     "re-reviewed (R4 follow-up); FE-9 (cells.json endpoint form)",
     "owner D5: the two production mutation sites (_arm_marker, _persist_pending) and the pending-ref NAME were "
-    "ratified to EXIST in the frozen tree (not to be used before the grant); scanner schema 3 rejects every other "
+    "ratified to EXIST in the frozen tree (not to be used before the grant); scanner schema 4 rejects every other "
     "ref-moving path; independently verified",
+    "the R4 follow-up review was FREEZE_BLOCKED with D5_EXCEPTION_LIMITED_TO_RATIFIED_SITES: NO (F1: fifteen static "
+    "evasions M01-M15 and no runtime check of the grant at the sites; F2: an authority placeholder test that could "
+    "refuse a genuine grant commit irreparably, and no validation before the grant commit); resolved before the freeze "
+    "by the third delta (A31-A36: a runtime backstop in the execute-context assertion, the site ASTs unchanged; an "
+    "allowlist for process execution, scanner schema 4; hardened T7 and a new T8; validate-grant; the authority test "
+    "narrowed to the proposal's placeholders; the worktree field required), reported to the owner and re-confirmed "
+    "(R4F-C3)",
     "second-delta rule choices with direction (delta-2 review E9(a)): A20 against an invalid closure; A21 toward a "
     "conclusive outcome, 14-day minimum horizon, residual mid-run expiry for runs longer than the horizon; A22 "
     "against closure in a failure case (including E2: a SIGXCPU below the CPU limit is a job exception); A25 toward a "
@@ -105,6 +113,8 @@ REVIEWS = {
     "prefreeze_r4": (NS + "reviews/REVIEW_PREFREEZE_R4_P309.md", "## 7. Conditions"),
     "prefreeze_r4_followup": (NS + "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_P309.md", "## Conditions"),
     "delta2_incident_independence": (NS + "reviews/REVIEW_DELTA2_INCIDENT_P309.md", "## Conditions"),
+    "prefreeze_r4_followup_2": (NS + "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_2_P309.md", "## Conditions"),
+    "delta3_incident_independence": (NS + "reviews/REVIEW_DELTA3_INCIDENT_P309.md", "## Conditions"),
 }
 
 
@@ -221,8 +231,16 @@ def build() -> dict:
                                        "form); the grant's cell_interval and drift_hull_Ew must equal it (A20)",
                         "min_horizon_s_at_arming": 14 * 86400,
                         "premarker_admission": "the guard's checks 2-6, 8, 9 and 7 without the marker, plus exact "
-                                               "strings, pinned ids, host, worktree, runtime, issued_utc not in the "
-                                               "future, non-placeholder authority, committer identity (A21)",
+                                               "strings, pinned ids, host, worktree (the field required, A34), "
+                                               "runtime, issued_utc not in the future, an authority that is not the "
+                                               "proposal's placeholder text (A34), committer identity (A21)",
+                        "grant_validation": "validate-grant on the uncommitted candidate before the grant commit, the "
+                                            "same checks as execute's (A34); a grant commit that execute refuses is "
+                                            "terminal without a new owner decision",
+                        "site_backstop": "at each exactly-once site, before its ref mutation: arm only in execute "
+                                         "mode, with the guard's pre-marker grant checks passing and this process's "
+                                         "run nonce; pending only with a marker whose commit carries the grant (and "
+                                         "the run nonce in execute mode); any other caller refused (A31)",
                         "window_paths": ["ledger/ZERO_TARGET_LEDGER.jsonl", "ledger/EXPOSURE_LEDGER.jsonl",
                                          "ledger/CHECKPOINT_PUSHES.jsonl", "handoff/", "qualification/host_rerun/"],
                         "freeze_record": NS + "ledger/FREEZE_RECORD.json",

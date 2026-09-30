@@ -331,6 +331,12 @@ def admission_flows() -> dict:
     refused("A13_placeholder_authority", "ADMISSION",
             grant_over={"authority": "<THE OWNER'S GRANT INSTRUCTION, verbatim reference>"})
     refused("A14_missing_authority", "ADMISSION", grant_over={"authority": DROP})
+    # R4F F2: only the proposal's own placeholders are refused; an authority quoting the owner's text is admitted
+    sb = new_sandbox("A27_authority_quoting_owner_text_admitted")
+    build_chain(sb, grant_over={"authority": 'owner message 2026-10-01: "EXECUTION GRANT -> run once <P309>"'})
+    R["A27_authority_quoting_owner_text_admitted"] = {"pass": execute(sb) == 0}
+    # R4F NF1: the worktree field is required
+    refused("A28_missing_worktree", "ADMISSION", grant_over={"execution_host": {"host_id_sha256": G.host_id()}})
     refused("A15_issued_in_the_future", "ADMISSION", grant_over={"issued_utc": utc_in(3600)})
     refused("A16_detached_head", "BRANCH", setup=lambda sb, c: sh(sb, "checkout", "-q", "--detach", c["G"]))
     refused("A17_strict_descendant_ref", "ADMISSION", setup=lambda sb, c: sh(
@@ -469,6 +475,64 @@ def post_marker_flows() -> dict:
     rec = json.loads(result_path(sb).read_text()) if result_path(sb).exists() else {}
     R["F39_recording_failure_sealed"] = {"pass": rc == 5 and rec.get("status") == "POST_MARKER_RECORDING_FAILED",
                                          "got": rc}
+    return R
+
+
+# --------------------------------------------------------------------------- R4F F2: the pre-commit grant validator
+def validate_flows() -> dict:
+    """validate-grant on an UNCOMMITTED candidate (a file outside the sandbox) with HEAD at the would-be parent of the
+    grant commit: a PASS for the valid candidate, a named failing check for each defect, nothing written or moved; and
+    a PASS candidate, committed alone, is admitted by execute (the validator and execute agree)."""
+    R = {}
+    man = (REPO / D.MANIFEST_REL).read_bytes()
+
+    def setup(name):
+        sb = new_sandbox(name)
+        c = build_chain(sb)
+        parent = sh(sb, "rev-parse", f"{c['G']}~1").strip()          # drop the grant commit: HEAD = its parent
+        sh(sb, "update-ref", SB_BRANCH, parent)
+        sh(sb, "reset", "-q", "--hard", parent)
+        return sb, c
+
+    def validate(name, over=None, dirty=False, edit=None):
+        sb, c = setup(name)
+        g = test_grant(sb, man, c["F"], c["Q"], c["Rv"])
+        g.update(over or {})
+        for k in [k for k, v in g.items() if v is DROP]:
+            del g[k]
+        cand = SCRATCH / f"{name}.candidate.json"
+        cand.write_text(json.dumps(g, sort_keys=True))
+        if dirty:
+            (sb / NS / "evidence").mkdir(parents=True, exist_ok=True)
+            (sb / NS / "evidence" / "dirty.txt").write_text("x")
+        before = (refs(sb), sh(sb, "rev-parse", "HEAD"), sh(sb, "status", "--porcelain", "--untracked-files=all"))
+        out = D.validate_grant(cand, OWN_SHA, ctx=ctx_of(sb))
+        after = (refs(sb), sh(sb, "rev-parse", "HEAD"), sh(sb, "status", "--porcelain", "--untracked-files=all"))
+        return sb, c, cand, out, before == after
+
+    sb, c, cand, out, same = validate("V01_valid_candidate_passes")
+    R["V01_valid_candidate_passes"] = {"pass": out["pass"] and same, "got": out.get("checks")}
+    # V09: the same candidate committed ALONE on top of the validated HEAD is admitted by execute
+    head = sh(sb, "rev-parse", "HEAD").strip()
+    gc = commit(sb, head, {G._TEST_GRANT_PATH: cand.read_bytes()}, "TEST_ONLY grant (validated candidate)")
+    sh(sb, "update-ref", SB_BRANCH, gc)
+    sh(sb, "reset", "-q", "--hard", gc)
+    R["V09_validated_candidate_admitted_by_execute"] = {"pass": execute(sb) == 0}
+    for name, over, key in (
+            ("V02_placeholder_authority", {"authority": "<THE OWNER'S GRANT INSTRUCTION, verbatim reference>"},
+             "authority"),
+            ("V03_missing_worktree", {"execution_host": {"host_id_sha256": G.host_id()}}, "worktree"),
+            ("V04_short_horizon", {"not_after_utc": utc_in(86400)}, "not_after_horizon"),
+            ("V05_wrong_verifier", {"verifier_id": "sha256:" + "7" * 64}, "verifier_id"),
+            ("V06_wrong_host", {"execution_host": {"host_id_sha256": "6" * 64, "worktree": "/x"}},
+             "guard_candidate_check")):
+        sb, c, cand, out, same = validate(name, over)
+        R[name] = {"pass": out["pass"] is False and out["checks"].get(key) is False and same,
+                   "got": {k: v for k, v in out["checks"].items() if not v}}
+    sb, c, cand, out, same = validate("V07_wrong_chain_commit", {"qualification_commit": "8" * 40})
+    R["V07_wrong_chain_commit"] = {"pass": out["pass"] is False and out["chain"] is False and same}
+    sb, c, cand, out, same = validate("V08_dirty_tree", dirty=True)
+    R["V08_dirty_tree"] = {"pass": out["pass"] is False and out["clean_tree_before"] is False and same}
     return R
 
 
@@ -702,7 +766,10 @@ def integration_flows() -> dict:
     # certifier's kappa and the RLR307 independent reconstruction, on a synthetic out-of-band interval; no campaign
     # results file and no cover-cell entry is read
     cell_1b = (F(1, 2), F(51, 100))
-    mods = D._load_certifier_isolated(D.load_rlr307(m)["rlr307_pinned"], G.producer_adapter(G.PRODUCTION))
+    sb = new_sandbox("I03_whole_evaluation_on_decoys")
+    build_chain(sb)
+    # the isolated certifier is loaded only for its kappa constants; its drift adapter is a TEST-context one (R4F T7)
+    mods = D._load_certifier_isolated(D.load_rlr307(m)["rlr307_pinned"], G.producer_adapter(G.TestContext(sb)))
     kappa = (mods["c1b_certpw"].KAPPA1, mods["c1b_certpw"].KAPPA2)
     IND = D._ind()
 
@@ -735,8 +802,6 @@ def integration_flows() -> dict:
         out = D.evaluate(con, prep, mode="decoy", runner1a=_stub_runner(run1a), runner1b=_stub_runner(run1b))
         seen["out"] = out
         return out
-    sb = new_sandbox("I03_whole_evaluation_on_decoys")
-    build_chain(sb)
     rc = execute(sb, evaluator=ev_decoys)
     rec = json.loads(result_path(sb).read_text()) if result_path(sb).exists() else {}
     px = PX.checks(ctx_of(sb), reverify=lambda r: PX.reverify(r, sandbox=sb))
@@ -767,6 +832,7 @@ if __name__ == "__main__":
     res = {}
     res.update(pre_marker_flows())
     res.update(admission_flows())
+    res.update(validate_flows())
     res.update(post_marker_flows())
     res.update(stage_flows())
     res.update(integration_flows())

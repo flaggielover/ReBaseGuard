@@ -134,11 +134,23 @@ def main() -> int:
                          "seal commit, O_EXCL materialization)",
             "post_execution_checks": "python3 -I -S -B code/p309_postexec.py (P1-P10; P10 = review-mode "
                                      "re-verification; refuses to start without these flags)",
+            "grant_validation": "BEFORE the grant commit (R4 follow-up F2): on the named host, in the named "
+                                "worktree, with the branch attached and HEAD at the would-be parent of the grant "
+                                "commit, save the candidate grant as a file OUTSIDE the worktree and run `python3 -I "
+                                "-S -B code/p309_driver.py validate-grant --grant <that file>`. It creates no commit "
+                                "and no ref and runs nothing of Stage 1 or 2; it runs execute's own content checks, "
+                                "chain walk and the guard's checks on the uncommitted candidate, and prints each "
+                                "check. Only on `P309 VALIDATE-GRANT PASS`: commit the ledger lines it wrote as ONE "
+                                "ledger-only commit, then copy the candidate byte-identically to the grant path and "
+                                "commit it ALONE on top (single parent, attached branch, nothing pushed past it). A "
+                                "grant commit that execute refuses is TERMINAL: it cannot be repaired or superseded "
+                                "without a new owner decision (a second grant commit breaks the chain)",
             "execution_procedure": "on the named host, in the named worktree, on the named branch with HEAD attached "
-                                   "at the grant commit; remove every __pycache__ from the campaign namespace first "
-                                   "(check_clean refuses ignored objects); run nothing ledgered between the grant "
-                                   "commit and execute; then `python3 -I -S -B code/p309_driver.py execute`; after a "
-                                   "seal, `python3 -I -S -B code/p309_postexec.py`; never run execute twice (R4 NB15)",
+                                   "at the grant commit (made after a validate-grant PASS, above); remove every "
+                                   "__pycache__ from the campaign namespace first (check_clean refuses ignored "
+                                   "objects); run nothing ledgered between the grant commit and execute; then "
+                                   "`python3 -I -S -B code/p309_driver.py execute`; after a seal, `python3 -I -S -B "
+                                   "code/p309_postexec.py`; never run execute twice (R4 NB15)",
             "execution_review": "research protocol_prep/P309_REVIEW_BRIEFS.md section 3 (brief committed before "
                                 "issue)", "adjudication": "package section H; the protocol section 5 table verbatim",
             "adjudication_review": "research protocol_prep/P309_REVIEW_BRIEFS.md section 4"},
@@ -148,7 +160,9 @@ def main() -> int:
                        "exact (geometry the exact strings, cell the integer, verifier_id / guard_id the pinned "
                        "sha256, marker_ref the production marker NAME, host id, worktree and runtime of the execution "
                        "host); not_after_utc >= now + 14 days at arming (rev. 2c amendment, R4 B3); issued_utc not in "
-                       "the future; authority a non-placeholder reference to the owner's grant instruction; the grant "
+                       "the future; authority a non-empty reference to the owner's grant instruction (only the "
+                       "proposal's own placeholder text is refused; quoting the owner, with < > or ->, is allowed); "
+                       "execution_host.worktree present; the grant "
                        "commit is the only change of a single-parent commit on top of this chain, HEAD attached to "
                        "the branch, and no ref points past it",
         "granted_after": review_c,

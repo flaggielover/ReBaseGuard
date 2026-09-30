@@ -104,3 +104,22 @@ Also include:
   is read.
 * **Latent proxies.** QC09's Stage-1b decoy outputs (cover cells 297 and 316) are latent-proxy class (E5). Check that
   they are labelled and never displayed in summaries.
+
+## Addendum 2 (before issue; R4 follow-up, rev. 2c third delta A31–A36)
+
+* **Checklist 4 (one attempt), R4F NF2.** Check the attempt tree and the committed execution ledger together. An attempt
+  directory deleted before the Q commit leaves no trace in the tree, only its `QUALIFICATION RUN START` ledger line.
+  Exactly one such line after the freeze record, and exactly one attempt directory, `attempt_1`.
+* **Checklist 11 (static check).** QC12 now has T1–T8. T8 is the runtime backstop's structure (A31). T7 is the
+  hardened form (A33); its `t7_exemptions` are rule-specific and bound to each file's AST hash.
+* **Checklist 14 (quarantine), and Q-D5.** Scanner schema 4 allowlists process execution (A32). Check that:
+  * every `process_policy.reviewed_functions` entry, `git_runners` entry and `ref_mutation_functions` entry has a true
+    reason and a current hash;
+  * the two sites keep the owner-ratified hashes;
+  * Q-D5 ran the D5 controls, including R4's M01–M15, and the backstop controls `tests/test_p309_site_backstop.py`.
+* **Checklist 10 (QC11).** QC11 also contains:
+  * A27 (an authority quoting the owner is admitted);
+  * A28 (a missing worktree is refused);
+  * V01–V09 (`validate-grant`).
+* **Checklist 17 (scope).** Check that the proposal carries the `grant_validation` step: run validate-grant before
+  the grant commit, and a refused grant commit is terminal without a new owner decision.

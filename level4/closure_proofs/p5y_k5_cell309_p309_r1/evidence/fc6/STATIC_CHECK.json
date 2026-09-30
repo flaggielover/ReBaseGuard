@@ -1,6 +1,6 @@
 {
  "all_pass": true,
- "driver_sha256": "992178a8ce28e704e366dc0c4e3a581b3da75bbb0e6ae02d01958b8077f1dfae",
+ "driver_sha256": "c9da2b280e7df6d1bc3d2e4eeab0df34df031d2389fe2e8136feb5dbd79d28c0",
  "results": {
   "T1_no_path_from_qualification_modes_to_target": {
    "detail": {
@@ -8,7 +8,8 @@
     "decoy-stage1a": [],
     "decoy-stage1b": [],
     "preflight": [],
-    "rehearse": []
+    "rehearse": [],
+    "validate-grant": []
    },
    "pass": true
   },
@@ -50,8 +51,37 @@
   "T5_formal_scan": {
    "detail": "PASS",
    "pass": true
+  },
+  "T6_mutation_dominated_by_the_grant": {
+   "detail": {
+    "_arm_marker_single_top_level": true,
+    "after_marker_only_from_run_execute": true,
+    "after_marker_single_top_level": true,
+    "check_grant_single_top_level": true,
+    "create_run_nonce_single_top_level": true,
+    "hooks_refused_first": true,
+    "order": true,
+    "premarker_admission_single_top_level": true,
+    "seal_only_persist_guarded": true
+   },
+   "pass": true
+  },
+  "T7_no_production_execution_from_tests_or_qualification": {
+   "detail": [],
+   "pass": true
+  },
+  "T8_runtime_backstop_at_the_sites": {
+   "detail": {
+    "arm_requires_execute_grant_and_nonce": true,
+    "assert_ends_with_site_check_and_backstop": true,
+    "nonce_names_this_process": true,
+    "pending_requires_marker_and_grant": true,
+    "site_backstop_referenced_only_by_assert": true,
+    "site_codes_is_the_only_module_reference": true
+   },
+   "pass": true
   }
  },
- "tool_sha256": "51c74412a5eddf38c5308f26a11745ff1e42f512dafc8ea81bf0709f93eb3536",
- "utc": "2026-09-30T03:31:22Z"
+ "tool_sha256": "f6f0824ae548ebf64d5a284c61c09b70fc747fbe6646b19cfb499097fd644bc9",
+ "utc": "2026-09-30T06:04:50Z"
 }

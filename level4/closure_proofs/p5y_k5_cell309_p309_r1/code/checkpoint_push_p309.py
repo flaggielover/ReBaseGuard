@@ -92,12 +92,12 @@ def main(dry: bool) -> int:
     fs = REPO / NS_PREFIX / "code" / "p309_scan.py"
     for root in (REPO / NS_PREFIX, REPO / "level4" / "closure_proofs" / "p5y_k5_cell309_research_r1"):
         if root == REPO / NS_PREFIX:
-            code = ("import sys, json; sys.path.insert(0, %r); import p309_scan as S; print(json.dumps(S.scan()))"
-                    % str(fs.parent))
+            sc = subprocess.run([sys.executable, "-c", "import sys, json; sys.path.insert(0, %r); import p309_scan as "
+                                 "S; print(json.dumps(S.scan()))" % str(fs.parent)], capture_output=True, text=True)
         else:
-            code = ("import sys, json; sys.path.insert(0, %r); import q309_guard as Q; from pathlib import Path; "
-                    "Q.NS = Path(%r); print(json.dumps(Q.scan(Path(%r))))" % (str(rq.parent), str(root), str(root)))
-        sc = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True)
+            sc = subprocess.run([sys.executable, "-c", "import sys, json; sys.path.insert(0, %r); import q309_guard "
+                                 "as Q; from pathlib import Path; Q.NS = Path(%r); print(json.dumps(Q.scan(Path(%r))))"
+                                 % (str(rq.parent), str(root), str(root))], capture_output=True, text=True)
         try:
             verdicts.append(json.loads(sc.stdout)["verdict"])
         except Exception:  # noqa: BLE001
