@@ -97,19 +97,9 @@ def main() -> int:
         "non_reattribution": "Stage-1 material of the cell is bound to it and never reused for another cell",
         "outcome_table": fp["outcome_table"],
         "u2": fp["u2"], "independence_statement": fp["independence_statement"], "efficacy": fp["efficacy"],
-        "disclosed_liabilities": [
-            "overnight incidents 01-03 (2026-09-27 UTC) and residues", "309R1-01 (qualitative mental proxy: TPT at 309)",
-            "309R1-02 (mental in-band estimate; SRK)", "309R1-03 (refused in-band probe; NONE)",
-            "309R1-04 (premature drafting; LOW)", "ERRATA E-3", "ERRATA E-17(a)", "ERRATA E-18 and the manifest-"
-            "generator runs", "the ledgered necessary reads (research and formal exposure ledgers)",
-            "SRK motivation provenance MEDIUM-HIGH (upper end); RLR MEDIUM (knockout known)",
-            "rule choices with direction: exceptions -> INDETERMINATE (against closure); budget exhaustion -> "
-            "fallback and 6 -> 48 CPU-h (toward closure); Stage-1b fallback to S_I1 (toward closure)",
-            "briefs not committed before issue (C5; recovered verbatim, content not timing)",
-            "zero computed target-equivalent proxies; one qualitative mental proxy exposure (309R1-01) and one "
-            "mental in-band estimate (309R1-02) (formal errata FE-4)",
-            "the formal errata FE-1..FE-7", "host dependence of the Stage-1a outcome when the budget binds"],
-        "incident_review_conditions_verbatim": fp["reviews"]["incident_independence"]["conditions_verbatim"],
+        "disclosed_liabilities": fp["disclosed_liabilities"],
+        "incident_review_conditions_verbatim": fp["reviews"]["incident_independence"]["conditions_verbatim"] + "\n"
+                                               + fp["reviews"]["delta_incident_independence"]["conditions_verbatim"],
         "u2_check_conditions_verbatim": fp["reviews"]["u2_check"]["conditions_verbatim"],
         "delta_review": fp["reviews"]["delta_incident_independence"],
         "prefreeze_review": fp["reviews"]["prefreeze_r4"],

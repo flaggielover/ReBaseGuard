@@ -44,11 +44,41 @@ DOCS = {
     "scanner_allowance": NS + "config/SCANNER_ALLOWANCE_P309.json",
     "errata_formal": NS + "governance/ERRATA_FORMAL_P309.md",
     "briefs_recovered": NS + "governance/briefs_recovered/README.md",
+    "incident_p309f_01": NS + "governance/INCIDENT_P309F_01_FC2_REV1_INSTRUCTION.md",
+    "no_placeholder_statement": NS + "governance/NO_PLACEHOLDER_STATEMENT_P309.md",
 }
+# the disclosed liabilities (carried verbatim into the proposed grant); delta review D3 adds its section 5 items
+DISCLOSED_LIABILITIES = [
+    "overnight incidents 01-03 (2026-09-27 UTC) and residues", "309R1-01 (qualitative mental proxy: TPT at 309)",
+    "309R1-02 (mental in-band estimate; SRK)", "309R1-03 (refused in-band probe; NONE)",
+    "309R1-04 (premature drafting; LOW)", "ERRATA E-3", "ERRATA E-17(a)", "ERRATA E-18 and the manifest-generator runs",
+    "the ledgered necessary reads (research and formal exposure ledgers)",
+    "SRK motivation provenance MEDIUM-HIGH (upper end); RLR MEDIUM (knockout known)",
+    "rule choices with direction: exceptions -> INDETERMINATE (against closure); budget exhaustion -> fallback and "
+    "6 -> 48 CPU-h (toward closure); Stage-1b fallback to S_I1 (toward closure)",
+    "briefs not committed before issue (C5; recovered verbatim, content not timing)",
+    "zero computed target-equivalent proxies; one qualitative mental proxy exposure (309R1-01) and one mental in-band "
+    "estimate (309R1-02) (formal errata FE-4)",
+    "the formal errata FE-1..FE-8", "host dependence of the Stage-1a outcome when the budget binds",
+    "rev. 2c closure-relevant changes with direction (delta review section 5): A4 toward closure (restores "
+    "executability); E1-1 toward closure (prevents a silent SRK loss); A6 toward a conclusive outcome (no wall cap; wall "
+    "time unbounded); A5 a new parameter, efficacy-relevant, ambiguous direction, the maximal per-job limit 21 600 s "
+    "(corrected per D2); A14 host speed is efficacy-relevant",
+    "the reader-A brief (2026-09-29 12:59:21Z, before 309R1-01 and THEOREM_SRK) solicited the terms identified "
+    "(qualitatively) as dominant for 309 by committed records: the 309-specific qualitative dominance behind SRK was "  # q309: literal-ok (disclosure text)
+    "solicited (delta review section 4)",
+    "incident P309F-01: the FC2(b) rev-1 brief (2026-09-30 01:49:53Z) instructed an in-band synthetic test band and the "
+    "REAL names in a sandbox; never executed; withdrawn by FC2_SPEC_R2 and owner rulings 2; liability NONE",
+    "the verifier author's rev-1 read-only inspections, ledgered only retrospectively (ZTL lines 7-8; FE-6)",
+    "FE-8: before the freeze, a QC11 development run found that Stage 1b could not load the pinned certifier in execute "
+    "(it would have made every execution INDETERMINATE); repaired by an isolated load (toward a conclusive outcome; no "
+    "rule, parameter or binding changed)",
+    "delta result-chasing component LOW-MEDIUM; the route's overall rating unchanged: MEDIUM-HIGH, upper end",
+]
 REVIEWS = {
     "incident_independence": (NS + "reviews/REVIEW_INCIDENT_INDEPENDENCE_P309.md", "## 10. Conditions"),
     "u2_check": (NS + "reviews/REVIEW_U2_CHECK_P309.md", "## 8. Conditions"),
-    "delta_incident_independence": (NS + "reviews/REVIEW_DELTA_INCIDENT_P309.md", None),
+    "delta_incident_independence": (NS + "reviews/REVIEW_DELTA_INCIDENT_P309.md", "## 7. Conditions"),
     "prefreeze_r4": (NS + "reviews/REVIEW_PREFREEZE_R4_P309.md", None),
 }
 
@@ -115,14 +145,20 @@ def build() -> dict:
                     "budget": {"start_threshold_cpu_s": 48 * 3600, "per_job_limit_cpu_s": 12 * 3600, "workers_max": 4,
                                "order": "rung-major: b1..b4 at d = 8, then 10, then 12",
                                "accounting": "user + system CPU of each job process, verification included",
-                               "stopping": "only by not starting jobs and by discarding a terminated job; never raises"},
+                               "stopping": "only by not starting jobs and by discarding a terminated job; never raises",
+                               "total_cpu_bound": "< threshold + 4 x per-job limit = 96 CPU-h (rev. 2c A6 as corrected, D2)",
+                               "wall_clock": "unbounded; no post-marker wall-clock cap (rev. 2c A6)"},
                     "genuine_only": "no mutant battery, no shifted or widened probe on in-band certificates"},
         "stage1b": {"rules": "RLR307 Stage-1 rules verbatim (rlr307_stage1 / rlr307_independent / rlr307_pinned at "
                              "their pinned bytes; C1B_R2 certifier pins)", "ladder": [4, 6, 8],
                     "partition": "rlr307_stage1.blocks_for (sub-block width <= 1/100; outward 2^-20 hulls)",
                     "fallback": "CERTIFICATION_FAILED -> A1_RLR, A2_RLR := None -> S = S_I1 (protocol 3; owner G3)",
                     "budget": {"start_threshold_cpu_s": 21600, "per_job_limit_cpu_s": 21600, "workers_max": 4,
-                               "order": "degree descending, then block (the RLR307 order)"},
+                               "order": "degree descending, then block (the RLR307 order)",
+                               "per_job_limit_classification": "rev. 2c A5 as corrected (D2): a new parameter, "
+                                                               "efficacy-relevant, ambiguous direction; the maximal limit",
+                               "total_cpu_bound": "< 21 600 + 4 x 21 600 s = 30 CPU-h (rev. 2c A6 as corrected, D2)",
+                               "wall_clock": "unbounded; no post-marker wall-clock cap (rev. 2c A6)"},
                     "exceptions": "an exception or an independent-reconstruction mismatch -> EXECUTION_INDETERMINATE",
                     "guard": "code/p309_guard.producer_adapter injected as ov_quarantine (rev. 2c A4)"},
         "stage2": {"supply": "S = (A0_I1, min(A1_I1, A1_RLR), min(A2_I1, A2_RLR)); S_I1 from the frozen combine",
@@ -154,6 +190,7 @@ def build() -> dict:
                "withdrawn_wording": "P309 uses no P3-derived quantity (withdrawn as false)"},
         "independence_statement": "temporal and parametric independence only (incident review C1); route choice and "
                                   "motivation are NOT independent (MEDIUM-HIGH, upper end)",
+        "disclosed_liabilities": DISCLOSED_LIABILITIES,
         "efficacy": "UNKNOWN BY DESIGN; no decoy output is used to predict Gamma309 or SRK's efficacy at 309",
         "proposed_execution_host": {"description": "this isolated cloud environment (rev. 2c A14)",
                                     "host_id_sha256": G.host_id()},
