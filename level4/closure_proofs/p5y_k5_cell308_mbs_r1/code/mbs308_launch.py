@@ -12,16 +12,14 @@ process tree, session and coalition. The launcher then records the label, pid, P
 time and the boot UUID, and PROVES detachment by test, not by PPID = 1: the job is not a descendant of the launcher or
 of the launcher's ancestors, its session differs from the launcher's, and launchd names it as the running job.
 
-`execute` is refused unless the driver's `preflight` passes first (run synchronously here, with the timeout RULE
-PRE_CAP_S + 100 s, PRE_CAP_S read from the driver's own bytes, so the driver's own PRE_CAP refusal always comes first);
-`resume` is refused unless `status` prints CONSUMED_INTERRUPTED. With --wait (default) the launcher waits for the job,
-then boots it out and removes the plist; with --no-wait it returns after the detachment proof and `cleanup <label>` boots out a finished job.
+`execute` is refused unless the driver's `preflight` passes first (run synchronously here); `resume` is refused unless
+`status` prints CONSUMED_INTERRUPTED. With --wait (default) the launcher waits for the job, then boots it out and
+removes the plist; with --no-wait it returns after the detachment proof and `cleanup <label>` boots out a finished job.
 The launcher never computes and never touches a ref.
 """
 from __future__ import annotations
 
 import argparse
-import ast
 import datetime
 import hashlib
 import json
@@ -44,20 +42,6 @@ LABEL_PREFIX = "org.rebaseguard.mbs308."
 LOG_DIR = Path.home() / "Library/Logs/ReBaseGuard/mbs308"
 MODES = ("execute", "resume", "recover")
 ENV = {"PATH": "/usr/bin:/bin:/usr/sbin", "LC_ALL": "C"}
-
-
-def driver_literal(name: str):
-    """A module-level literal of the driver, read from its bytes: the launcher never imports the driver (that would
-    load the science). No such literal: the launcher refuses to load."""
-    for node in ast.parse(DRIVER.read_text()).body:
-        if isinstance(node, ast.Assign) and [getattr(t, "id", None) for t in node.targets] == [name]:
-            return ast.literal_eval(node.value)
-    raise RuntimeError(f"the driver defines no literal {name}")
-
-
-# CONSTANTS_RATIFICATION_MBS308 item 31 (research 3c2a7854): the preflight timeout is the RULE PRE_CAP_S + 100 s; it
-# follows the driver's PRE_CAP_S
-PRE_CAP_S = driver_literal("PRE_CAP_S")
 
 
 class LaunchRefused(Exception):
@@ -212,7 +196,7 @@ def pre_launch(mode: str) -> dict:
     """execute: the driver's preflight must pass (synchronously, before anything is launched); resume: status must be
     CONSUMED_INTERRUPTED. recover: no gate (the driver itself refuses what it must)."""
     if mode == "execute":
-        p = _run(driver_cmd("preflight"), timeout=PRE_CAP_S + 100)
+        p = _run(driver_cmd("preflight"), timeout=1900)
         if p.returncode != 0 or "MBS308 PREFLIGHT PASS" not in p.stdout:
             raise LaunchRefused("PREFLIGHT_FAILED", (p.stdout.strip().splitlines() or ["(no output)"])[-1][:300])
         return {"preflight": "PASS"}

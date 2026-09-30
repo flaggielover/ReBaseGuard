@@ -1,7 +1,7 @@
 # DRIVER_DIFF: mbs308_driver.py against MB r1's mb308_driver.py (NOT frozen; regenerated from the files)
 
 * Base: `level4/closure_proofs/p5y_k5_cell308_mb_r1/code/mb308_driver.py` at freeze r3 `c46434a3` (byte-identical at `21e99cf0`), sha256 `411252b2a9fa601cc5c1ba34abaf08482cf95a06e2ce7e4d5e5a5bd9e1f56dcb`.
-* New: `code/mbs308_driver.py`, sha256 `d13688d120fb7efb64e5c08169ea6481a93fb8b110f0f442e2030092ac8c4aa4` (changes with every re-pin; the freeze binds the final bytes).
+* New: `code/mbs308_driver.py`, sha256 `6577d88d4bee86bb752be8fc764a360c7afaf982370147bfbfa42a65e0ec7e37` (changes with every re-pin; the freeze binds the final bytes).
 * Hunks: 22; by class: IDENTITY 1, IDENTITY + LIFECYCLE 10, LIFECYCLE 11.
 * Classes: **SCIENCE-GLUE identical** = every function in the RC1 list and every function it references is text-identical, so it appears in NO hunk (asserted by `tests/test_mbs308_static.py` t_rc1_science_glue_text_identical and t_mbs9_referenced_module_names; a hunk touching one would be classified `SCIENCE-GLUE (MUST NOT OCCUR)`); **IDENTITY** = the successor's worktree, branch, namespace, refs, grant schema and paths, MB r1's recorded state (GC-8), helper pins, lineage; **LIFECYCLE** = the durable state machine, persistence, checkpoints + resume, supervisor, host contract, platform pins, launcher gate, modes.
 * The carried (text-identical) functions: `Inconsistent`, `IndependentCheckFailed`, `Refusal`, `_eval_cap`, `_ser_block`, `_set_job_cap`, `_worker_init`, `_worker_job`, `admitted_pairs`, `check_bindings`, `check_clean`, `check_cpu_caps`, `check_flags`, `check_governance_state`, `check_helpers`, `check_identity`, `check_result_paths`, `compose_and_consume`, `control`, `controls`, `decide`, `decoy`, `decoy_bundles`, `decoy_cover`, `evaluate_target`, `failure_kind`, `freeze_commit`, `fs`, `git`, `git_blob_id`, `git_dir`, `jsonable`, `load_consumer`, `load_science`, `prepare_target`, `public_stage1`, `r0_order3_variant`, `read_pinned`, `rehearse`, `require_ac`, `sha`, `stage1`, `supply_scaled_variant`, `target_geometry`, `utc`, `verdict_ok`.
@@ -323,7 +323,7 @@
 +    "mbs308_guard.py": "48903487f648e9d39bb764497ceae87941c33be73cb4b1fa285ac83bbb1e9435",
 +    "mbs308_host.py": "26ac9538071ee1803b900c96390fbbba12f1ca6841ca7cf3cbb7d9533763d08d",
 +    "mbs308_state.py": "aaf76e86a059d07d24f868a2f136333af210a4ac8632f0aa757d4233e5cd5aff",
-+    "mbs308_launch.py": "38cb35a31a80f174b9f84837840c8f6cabdb9982d8d7a668fdb76993f01ba1cb",
++    "mbs308_launch.py": "c829b9ed375d25f5e1386001831015f2dde0fa07dcccd283ba822b0290022028",
  }
 -PIN.GUARD_SHA256 = HELPER_SHA256["mb308_guard.py"]
 +PIN.GUARD_SHA256 = HELPER_SHA256["mbs308_guard.py"]
@@ -461,7 +461,7 @@
 ### Hunk 8: IDENTITY + LIFECYCLE; <module-level assignment / statement>, busy_processes, check_launched, check_platform, free_memory_bytes, host_preflight, platform_readings
 
 ```diff
-@@ -309,6 +468,111 @@
+@@ -309,6 +468,109 @@
      if not os.access(parent, os.W_OK | os.X_OK):
          raise Refusal("SEAL_PRECONDITION", "the worktree copy's parent directory is not writable")
      return {"branch_head": head}
@@ -506,14 +506,12 @@
 +# R-FREE, EXCL_CPU_PCT by R-EXCL-PCT, EXCL_ALLOW by R-ALLOW.
 +FREE_MEM_MIN_BYTES = 2 * 1024 ** 3
 +EXCL_CPU_PCT = 25.0
-+# the 39 names as read by the ratifier, plus the four Apple OS daemons it ratified (item 16, H3 / H4)
 +EXCL_ALLOW = frozenset({"kernel_task", "WindowServer", "launchd", "logd", "mds", "mds_stores", "mdworker",
 +                        "mdworker_shared", "coreaudiod", "powerd", "hidd", "bluetoothd", "configd", "syslogd",
 +                        "opendirectoryd", "distnoted", "cfprefsd", "trustd", "securityd", "loginwindow", "Dock",
 +                        "SystemUIServer", "ControlCenter", "Finder", "backupd", "spindump", "ReportCrash",
 +                        "sysmond", "thermalmonitord", "watchdogd", "runningboardd", "symptomsd", "remoted",
-+                        "bird", "fseventsd", "diskarbitrationd", "coreservicesd", "notifyd", "UserEventAgent",
-+                        "spotlightknowledged.updater", "cloudd", "BackgroundShortcutRunner", "modelcatalogd"})
++                        "bird", "fseventsd", "diskarbitrationd", "coreservicesd", "notifyd", "UserEventAgent"})
 +
 +
 +def free_memory_bytes(text: str | None = None) -> int | None:
@@ -578,7 +576,7 @@
 ### Hunk 9: IDENTITY; check_grant
 
 ```diff
-@@ -594,9 +858,15 @@
+@@ -594,9 +856,15 @@
      if git("diff-tree", "--no-commit-id", "--name-only", "-r", "HEAD").stdout.split() != [GRANT_REL]:
          raise Refusal("GRANT_INVALID", "the grant commit changes more than the grant")
      g = json.loads((REPO / GRANT_REL).read_bytes())
@@ -601,7 +599,7 @@
 ### Hunk 10: IDENTITY + LIFECYCLE; persist_emergency, persist_pending, serialize
 
 ```diff
-@@ -623,33 +893,23 @@
+@@ -623,33 +891,23 @@
  
  # ------------------------------------------------------------------ persistence, seal and materialization
  def serialize(obj: dict) -> bytes:
@@ -653,7 +651,7 @@
 ### Hunk 11: LIFECYCLE; seal_blob
 
 ```diff
-@@ -657,7 +917,12 @@
+@@ -657,7 +915,12 @@
      for delay in (0.0, *SEAL_RETRY_DELAYS):
          time.sleep(delay)
          head = git("rev-parse", "HEAD").stdout.strip()
@@ -672,7 +670,7 @@
 ### Hunk 12: IDENTITY + LIFECYCLE; seal_blob
 
 ```diff
-@@ -667,12 +932,13 @@
+@@ -667,12 +930,13 @@
              if any(s.returncode for s in steps) or tree.returncode:
                  last = "index"
                  continue
@@ -693,7 +691,7 @@
 ### Hunk 13: IDENTITY + LIFECYCLE; materialize
 
 ```diff
-@@ -690,20 +956,19 @@
+@@ -690,20 +954,19 @@
          raise OSError("the object store returned other bytes")
      fds = [os.open(str(REPO), os.O_RDONLY | os.O_DIRECTORY)]
      try:
@@ -723,7 +721,7 @@
 ### Hunk 14: IDENTITY + LIFECYCLE; fallback_bytes, materialized_ok, seal_message
 
 ```diff
-@@ -719,19 +984,42 @@
+@@ -719,19 +982,42 @@
              os.close(fd)
  
  
@@ -774,7 +772,7 @@
 ### Hunk 15: LIFECYCLE; <module-level assignment / statement>, _journal, after_marker, keep_awake, persist_and_seal
 
 ```diff
-@@ -751,71 +1039,133 @@
+@@ -751,71 +1037,133 @@
      return "TARGET_EVALUATION_FAILED"
  
  
@@ -953,7 +951,7 @@
 ### Hunk 16: LIFECYCLE; close_host
 
 ```diff
-@@ -827,8 +1177,18 @@
+@@ -827,8 +1175,18 @@
  
  
  def close_host(common: dict) -> None:
@@ -978,7 +976,7 @@
 ### Hunk 17: LIFECYCLE; pre_marker_common, run_execute
 
 ```diff
-@@ -859,21 +1219,21 @@
+@@ -859,21 +1217,21 @@
              "kappa_check": sci["kappa_check"]}
  
  
@@ -1013,7 +1011,7 @@
 ### Hunk 18: LIFECYCLE; pre_marker_common, run_execute, run_resume
 
 ```diff
-@@ -884,40 +1244,180 @@
+@@ -884,40 +1242,180 @@
          raise Refusal(exc.code, str(exc))
      except PIN.PinError as exc:
          raise Refusal("PIN_MISMATCH", str(exc))
@@ -1228,7 +1226,7 @@
 ### Hunk 19: IDENTITY + LIFECYCLE; _pending_seal_materialize, _read_verified_spool, _seal_control_failed, run_close_indeterminate, run_recover, run_seal_only, run_status
 
 ```diff
-@@ -928,73 +1428,191 @@
+@@ -928,73 +1426,191 @@
      return controls(con, sci, k)
  
  
@@ -1486,7 +1484,7 @@
 ### Hunk 20: LIFECYCLE; main
 
 ```diff
-@@ -1097,13 +1715,18 @@
+@@ -1097,13 +1713,18 @@
  
  def main(argv=None) -> int:
      ap = argparse.ArgumentParser()
@@ -1511,7 +1509,7 @@
 ### Hunk 21: LIFECYCLE; main
 
 ```diff
-@@ -1112,25 +1735,31 @@
+@@ -1112,25 +1733,31 @@
      signal.signal(signal.SIGALRM, wall_cap)
      signal.alarm(DECOY_CAP_S if a.mode == "decoy" else PRE_CAP_S)
      try:
@@ -1553,7 +1551,7 @@
 ### Hunk 22: LIFECYCLE; <module-level assignment / statement>, main
 
 ```diff
-@@ -1139,27 +1768,50 @@
+@@ -1139,27 +1766,50 @@
              if a.workers > 5 or a.workers < 1:
                  raise Refusal("WORKERS", "1..5 workers")
              check_bindings(allow_uncommitted=True)
