@@ -59,6 +59,7 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 46 | 46_builder4_qualification_framework.txt | non-holder builder4: successor qualification framework, decision-independent cases only (option-dependent cases declared PENDING_USER_DECISION) | Agent | see ledger | no (tail-figure scan: 0 hits) |
 | 47 | 47_reviewB5_optionB_liveness.txt | fresh narrow independent review of option B (W 4a960e06, N b0dd8e93) + liveness delta L 216c465f, incl. the ENOSPC audit | Agent | see ledger | no (tail-figure scan: 0 hits) |
 | 48 | 48_briefer_decision_brief_r2.txt | non-holder briefer2 drafts the outcome-neutral decision brief r2 (S16(c), MBS-6, MBS-7, MBS-8, S1; 12 headings each; host pre-execution section) | Agent | see ledger | no (tail-figure scan: 0 hits) |
+| 49 | 49_builder4_integrate.txt | builder4 (resumed): INTEGRATE the decision-independent qualification framework onto 216c465f after DELTA_ACCEPTED (2308651e); chunked matrix with sandbox cleanup | SendMessage | see ledger | no (tail-figure scan: 0 hits) |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.

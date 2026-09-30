@@ -1,0 +1,26 @@
+INTEGRATE REQUEST (brief 49) — builder4, resumed (recorded before sending).
+
+The prerequisite is met: step L is committed at successor 216c465fd48d779ceef876fd13b1422773dfea31 and its fresh
+narrow review REVIEW_OPTIONB_LIVENESS_MBS308.md (research 2308651e) is DELTA_ACCEPTED. The successor worktree
+/Users/suzhe/ReBaseGuard-c308mbs is clean at 216c465f; you may now edit it (no git writes; the coordinator commits).
+
+TASK.
+1. Integrate your brief-46 scratch build onto 216c465f. Since your scratch base (b0dd8e93), builder3 changed
+   tests/test_mbs308_mutants.py (M53-M57 added; M11 and M15 re-targeted), tests/test_mbs308_state.py,
+   tests/test_mbs308_crash.py, code/mbs308_state.py, code/mbs308_driver.py (pin), DRIVER_DIFF.md, protocol section 4
+   and BUILD_REPORT section 14. Merge your changes onto those bytes: append your MQ mutants after M57, keep every
+   builder3 mutant unchanged, put your protocol section 11 text and BUILD_REPORT section 15 after builder3's section
+   14, and change nothing builder3 wrote. Your new files (code/mbs308_qualify.py, code/mbs308_manifest.py,
+   code/mbs308_rrules.py, config/MBS308_QUALIFICATION_CASES.json, tests/test_mbs308_qualify.py) are added as they are,
+   updated only where the new base requires it (e.g. the QS-MUTANTS count, QC13-S's record of the accepted review
+   2308651e). If a new helper is pinned by the driver, re-pin mechanically and regenerate DRIVER_DIFF.md with
+   the validated generator.
+2. Keep every PENDING_USER_DECISION case failing closed. Do not implement any of them now.
+3. Re-run on the integrated tree: static, launch, state, crash, qualify suites; and the FULL mutant matrix
+   (the 57 existing + your MQ mutants). DISK: the matrix leaves ~0.8 GB of sandbox per mutant. Run it in chunks
+   (--only) of at most 20 mutants, delete your sandboxes (`sbx` directories) between chunks keeping every result JSON,
+   check `df -h /Users/suzhe` before each chunk and stop if fewer than 20 GiB are free. Every kill must be the
+   target's own assertion (no error, timeout or missing result).
+4. Update BUILD_REPORT section 15 with the integration (base, merge notes, counts). Report in 12 lines or fewer.
+All rules of brief 46 still apply (no target, no science decoy computation, no freeze manifest in the worktree, no
+official qualification run, MBS-2 reading restrictions, own base store, no git writes, ledger as builder4).
