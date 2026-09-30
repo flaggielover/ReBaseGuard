@@ -113,6 +113,13 @@ def _func_of(tree) -> dict:
 _SHA_CACHE: dict = {}
 
 
+def clear_caches() -> None:
+    """the per-tree caches hold their trees; each scan (and each static-check T7 pass) starts empty, so that repeated
+    scans of planted copies (QC_D5) do not accumulate every parsed tree"""
+    for c in (_SHA_CACHE, _OWNERS_CACHE, _DEFS_CACHE, _QUAL_CACHE, _IMPORTS_CACHE, _MODULE_FILES):
+        c.clear()
+
+
 def ast_sha(fn) -> str:
     import hashlib
     hit = _SHA_CACHE.get(id(fn))
@@ -1037,6 +1044,7 @@ def formal_rules(tree, rel: str, sanctioned: list | None = None, root: Path = FN
 
 
 def scan(root: Path = FNS) -> dict:
+    clear_caches()
     Q.NS = root
     r = Q.scan(root)
     findings, allowed, sanctioned = [], [], []

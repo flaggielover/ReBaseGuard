@@ -199,8 +199,7 @@ def _ident_in(text: str, names: set) -> list:
 
 def t7_tree(tree, rel: str, root: Path, depth: int = 0) -> list:
     """[(rule, message)] for one file (or one parsed `python -c` code string)"""
-    sys.path.insert(0, str(FNS / "code"))
-    import p309_scan as SC
+    import p309_scan as SC                                 # on sys.path (t7)
     bad = []
     fc = SC.FileCtx(tree, rel)
     drv, grd = _t7_aliases(tree)
@@ -275,6 +274,9 @@ def _never_runs(tree) -> bool:
 
 def t7(root: Path) -> list:
     import hashlib as _h
+    sys.path.insert(0, str(FNS / "code"))
+    import p309_scan as SC
+    SC.clear_caches()
     ex = {e["file"]: e for e in ALLOW.get("t7_exemptions", []) if e.get("reason")}
     bad = []
     for p in sorted(root.rglob("*.py")):                   # R4F M01: no file is skipped by its name
