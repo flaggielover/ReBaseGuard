@@ -185,3 +185,31 @@ Also include:
 * **Checklist 17 (scope).** The proposal's post-execution step fixes the git environment
   (`GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null`, delta-5 I3). Its `host_git` texts say that a refusal at the
   re-check after the historical control spends the grant and leaves a failing control unrecorded.
+
+## Addendum 7 (before issue; at the freeze)
+
+* **Your output and the chain (A23, A24).** The review commit Rv may change only files whose path starts with
+  `reviews/REVIEW_QUALIFICATION_P309`. The coordinator commits your review file, together with a copy of your scratch
+  execution ledger (`reviews/REVIEW_QUALIFICATION_P309_EXEC_LEDGER.jsonl`) and a sha256 file. The execution-ledger
+  lines you write through `code/p309_env.py` stay uncommitted until after Rv and go into a window commit. Between Q and
+  Rv only checkpoint-record commits exist. Check that the chain F ← FR ← [records] ← Q is exactly that.
+* **Checklist 11 (static check).** Read "T1–T7" in the body as "T1–T10" (addenda 4, 5).
+* **Checklist 14 and 17 (placeholder check).** Commit `5de37e97` added two reviewed allowlist entries to
+  `code/p309_placeholder_check.py`. Both cover rule quotations that the third delta added:
+  * the delta-3 G3(a) liability, quoting A34: an owner's quote containing "TBD or TODO" is admitted;
+  * the D5 site-backstop report's "Placeholder test narrowed".
+
+  Check that each allowed hit is a rule statement and not an open decision.
+* **The pre-freeze dry runs (FE-11) are development, not qualification.** They are dated before the freeze record.
+  Part 5, at the fifth-delta tree, ran every runner item except QC11 and QC-D5; those two share sandbox directories
+  with R4's concurrent runs, and each was run at that tree separately (QC11 112/112; D5 166/166; backstop 27/27).
+  Results:
+  * PASS: QC01–QC10, QC12, QC14–QC17 and QC-U2. QC08 took 4559 s, QC09 9886 s and QC10 4129 s; QC10's 48
+    certificates were byte-identical.
+  * QC13 failed there only on its four freeze-dependent checks, which the freeze makes applicable:
+    * the freeze parameters regenerate (no parameter file yet);
+    * the freeze record (no FR yet);
+    * the placeholder check (it needs the parameter file);
+    * a single run since the freeze record.
+
+  These are development results. The qualification is the one attempt after the freeze.
