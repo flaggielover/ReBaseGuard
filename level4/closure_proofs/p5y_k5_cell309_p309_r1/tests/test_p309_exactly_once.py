@@ -67,8 +67,15 @@ def new_sandbox(name: str) -> Path:
     if sb.exists():
         shutil.rmtree(sb)
     SCRATCH.mkdir(parents=True, exist_ok=True)
-    subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(REPO), str(sb)], check=True,
-                   capture_output=True)
+    for attempt in range(3):                      # a clone can race a concurrent ref update in the source; retry
+        r = subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(REPO), str(sb)], capture_output=True)
+        if r.returncode == 0:
+            break
+        shutil.rmtree(sb, ignore_errors=True)
+        import time
+        time.sleep(2 + 3 * attempt)
+    else:
+        raise RuntimeError(f"sandbox clone failed: {r.stderr.decode()[-200:]}")
     sh(sb, "remote", "remove", "origin")
     sh(sb, "sparse-checkout", "set", "--no-cone", f"/{NS}/")
     return sb
