@@ -160,3 +160,28 @@ Also include:
 * **Checklist 14 (quarantine).** Five allowlist entries are removed (A47). The D5 controls add X01–X11.
 * **Checklist 17 (scope).** The proposal's `host_git` text now covers `seal-only` and the re-checks, including what to
   do after a post-marker `HOST_GIT` refusal (exit 4; remove the hook or key; then `seal-only`).
+
+## Addendum 6 (before issue; R4 follow-up 4 and the delta-5 review)
+
+* **R4F4-C1 (host-git hashes).** Recompute with `p309_scan.ast_sha`, at the frozen commit, the AST sha256 values that
+  `reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_4_P309.md` records in §5 and in R4F4-C1:
+  * the driver's `check_host_git`, `run_seal_only`, `after_marker`, `run_execute`, and the `ENV` and
+    `REPO_CONFIG_ALLOWED` statements;
+  * the guard's `_HERMETIC_GIT` statement and `_git`, `_git_bytes` and `_git_ok`.
+
+  Also check the two sites and the four A38 backstop pins. Any difference is a new delta, and your verdict is then a
+  rejection. This check stands in for R4F4-C2, which was not adopted before the freeze (F5, a disclosed liability).
+* **R4F4-C3 (suites).** In the qualification run, all of these pass at the frozen tree:
+  * QC12 T1–T10;
+  * QC-D5: the D5 controls, including X01–X11 and R4's N, K, T7, T8, R and M01–M15 mutants, and the backstop controls;
+  * QC11, including H01–H07, V10 and V11.
+* **Delta-5 I4 (exposure).** Cover the execution-ledger rows after `ac34a6e3`: the rest of the pre-freeze dry run
+  part 5, R4 follow-up 4's runs, the coordinator's D5 run at `fd7da22f`, and everything up to the qualification.
+* **Delta-5 I6 (git environment).** These are frozen and must be unchanged since R4 follow-up 4's confirmation:
+  * the driver's `ENV` and the job environment;
+  * `REPO_CONFIG_ALLOWED`;
+  * `check_host_git` and its four call sites, and validate-grant's use of it;
+  * the guard's `_HERMETIC_GIT`.
+* **Checklist 17 (scope).** The proposal's post-execution step fixes the git environment
+  (`GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null`, delta-5 I3). Its `host_git` texts say that a refusal at the
+  re-check after the historical control spends the grant and leaves a failing control unrecorded.

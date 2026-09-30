@@ -138,7 +138,26 @@ DISCLOSED_LIABILITIES = [
     "runs check_host_git before its first git call; A44: execute repeats it after the historical control, just "
     "before its first git write, and before the post-marker persist, where a refusal sends the evidence to the "
     "emergency file for seal-only; A45: the guard's git ignores the host's system and global configuration; A46: "
-    "controls QC11 H01-H07 and V11, QC12 T10, D5 X01-X11; A47: five unused allowlist entries removed)",
+    "controls QC11 H01-H07 and V11, QC12 T10, D5 X01-X11; A47: five unused allowlist entries removed); R4 follow-up 4 "
+    "was FREEZE_APPROVED with D5_EXCEPTION_LIMITED_TO_RATIFIED_SITES: YES (delta-5 I5)",
+    "R4 follow-up 4 F5 (non-blocking): QC12 T10 checks the shape of the code, not its behaviour; four static-only "
+    "mutants pass every scan and static check (a local rebinding that silences the check in seal-only, an empty "
+    "check_host_git, a write through a local alias before the post-marker check, a later rebinding of the driver's "
+    "ENV); the committed code contains none of them; bound instead by the AST sha256 values of the host-git code "
+    "recorded in R4 follow-up 4 (R4F4-C1), which the qualification reviewer recomputes, and by the freeze manifest; "
+    "R4F4-C2 (T10 as an equality check) was not adopted before the freeze because it would be a new delta",
+    "fifth-delta rule choices with direction (delta-5 review I2(a)): A43 fail-closed (the recovery is refused until "
+    "the host is clean; the evidence is kept); A44(a) before the marker fail-closed and outcome-neutral: a refusal "
+    "there spends the grant, as any execute refusal does, and if a hook or key appears during a failing historical "
+    "control that failure is not recorded (the HOST_GIT refusal replaces the CONTROL_FAILED record); A44(b) after the "
+    "marker the evidence is kept and the seal delayed (emergency file, exit 4, then seal-only once the host is "
+    "clean), the record and the mechanical outcome unchanged; A45 toward a conclusive outcome (it removes a "
+    "host-dependent guard refusal in the dry admission and in the Stage-1 jobs)",
+    "the verifier variant is unchanged by role separation (delta-5 review I2(b)): its git is hermetic inside execute "
+    "through the jobs' ENV; outside execute (p309_postexec.py review mode, the verifier's own runs) it reads the "
+    "host's git configuration, issuing only plumbing and blob reads in review mode; the proposal fixes the "
+    "post-execution environment in advance (GIT_CONFIG_NOSYSTEM=1, GIT_CONFIG_GLOBAL=/dev/null; I3)",
+    "fifth delta result-chasing component LOW (delta-5 review)",
     "E6's 'dry run' label clause is met by dating, not by label: every 'qualification:' execution-ledger line dated "
     "before the freeze record is development (the pre-freeze dry runs); a departure from E6's letter (delta-3 G5; "
     "formal erratum FE-11)",
@@ -296,7 +315,9 @@ def build() -> dict:
                                     "it after the historical control, just before its first git write, and before "
                                     "the post-marker persist, where a refusal sends the evidence to the emergency "
                                     "file for seal-only (A44); the guard's git ignores the host's system and global "
-                                    "configuration too (A45)",
+                                    "configuration too (A45); a refusal at the re-check after the historical "
+                                    "control spends the grant, as any execute refusal does, and a failing historical "
+                                    "control is then not recorded (delta-5 I3)",
                         "site_backstop": "at each exactly-once site, before its ref mutation: arm only in execute "
                                          "mode, with the guard's pre-marker grant checks passing and this process's "
                                          "run nonce; pending only with a marker whose commit carries the grant (and "

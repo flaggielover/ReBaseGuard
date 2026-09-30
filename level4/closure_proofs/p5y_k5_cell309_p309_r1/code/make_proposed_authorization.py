@@ -144,7 +144,9 @@ def main() -> int:
             "failure_and_recovery": "package section I; exit codes " + json.dumps(fp["exactly_once"]["exit_codes"]),
             "recording": "package section E (from memory: object store + pending ref, emergency file, private-index "
                          "seal commit, O_EXCL materialization)",
-            "post_execution_checks": "python3 -I -S -B code/p309_postexec.py (P1-P10; P10 = review-mode "
+            "post_execution_checks": "GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null python3 -I -S -B "
+                                     "code/p309_postexec.py (the git environment fixed in advance, delta-5 I3; "
+                                     "P1-P10; P10 = review-mode "
                                      "re-verification; refuses to start without these flags)",
             "grant_validation": "BEFORE the grant commit (R4 follow-up F2): on the named host, in the named "
                                 "worktree, with the branch attached and HEAD at the would-be parent of the grant "
@@ -172,8 +174,10 @@ def main() -> int:
                         "(listed exactly in host_git_allowed_keys) and the hooks directory must hold no hook; git >= "
                         "2.32; validate-grant reports any violation before the grant commit (rev. 2c A40). "
                         "seal-only runs the same check before its first git call (A43). execute repeats it after the "
-                        "historical control, just before its first git write (a refusal there is before the marker: "
-                        "nothing consumed), and after the marker just before the evidence persist: a refusal there "
+                        "historical control, just before its first git write (a refusal there is before the marker, "
+                        "so no marker is created, but it spends the grant, as any execute refusal does, and a failing "
+                        "historical control is then not recorded), and after the marker just before the evidence "
+                        "persist: a refusal there "
                         "writes the evidence to the emergency file and exits 4 (UNSEALED); remove the hook or key, "
                         "then run seal-only, which refuses until the host is clean (A44). The guard's git also "
                         "ignores the host's system and global configuration (A45)",
@@ -182,7 +186,8 @@ def main() -> int:
                                    "at the grant commit (made after a validate-grant PASS, above); remove every "
                                    "__pycache__ from the campaign namespace first (check_clean refuses ignored "
                                    "objects); run nothing ledgered between the grant commit and execute; then "
-                                   "`python3 -I -S -B code/p309_driver.py execute`; after a seal, `python3 -I -S -B "
+                                   "`python3 -I -S -B code/p309_driver.py execute`; after a seal, "
+                                   "`GIT_CONFIG_NOSYSTEM=1 GIT_CONFIG_GLOBAL=/dev/null python3 -I -S -B "
                                    "code/p309_postexec.py`; never run execute twice (R4 NB15)",
             "execution_review": "research protocol_prep/P309_REVIEW_BRIEFS.md section 3 (brief committed before "
                                 "issue)", "adjudication": "package section H; the protocol section 5 table verbatim",
