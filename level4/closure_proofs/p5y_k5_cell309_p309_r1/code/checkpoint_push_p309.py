@@ -2,13 +2,13 @@
 the dedicated formal-campaign branch/namespace with the same conservative single-ref procedure), adapted from the
 research campaign's checkpoint_push.py (standing authorization 2026-09-29): nine checks, all must pass, else no push.  Appends one line per attempt to ledger/CHECKPOINT_PUSHES.jsonl.
 
-  1 fetch origin read-only (branch + main)            6 new commits touch only the research namespace
+  1 fetch origin read-only (branch + main)            6 new commits touch only the formal namespace
   2 current branch == BRANCH                           7 no target artifact / grant / marker / r6 / adoption / status
   3 push changes only this single ref (dry run)        8 explicit single-ref refspec, no tags, no force
   4 zero remote-only unique commits would be lost      9 fetch again; remote HEAD == local HEAD
   5 no force required (remote tip is an ancestor of HEAD, or the ref is absent)
 
-Usage: python3 code/checkpoint_push.py [--dry]
+Usage: python3 code/checkpoint_push_p309.py [--dry]
 """
 from __future__ import annotations
 
@@ -130,7 +130,7 @@ def main(dry: bool) -> int:
     _log(rec)
     ledger_rel = str(LEDGER.relative_to(REPO))
     git("add", ledger_rel)
-    git("commit", "-q", "-m", f"p5y: K5 cell-309 research r1 — ledger: checkpoint push record ({head[:8]}; committed "
+    git("commit", "-q", "-m", f"p309 formal r1 — ledger: checkpoint push record ({head[:8]}; committed "
         "before the push, travels with it)\n\n"
         "Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>\n"
         "Claude-Session: https://claude.ai/code/session_01RiV5bfPm5GJ4GcvoBrCC3p")
