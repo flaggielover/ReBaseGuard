@@ -132,3 +132,20 @@ Also include:
 * **Pre-freeze lines.** The research-test lines of both pre-freeze dry runs read "qualification: …" (FE-11). They are
   development because they are dated before the freeze record. After the freeze record there must be exactly one
   `QUALIFICATION RUN START` line and no other QC-runner line outside the single run.
+
+## Addendum 4 (before issue; R4 follow-up 2 and the fourth delta, A37–A42)
+
+* **Checklist 4 (one attempt), R4 NF4.** QC13 now also checks `execution_ledger_append_only_since_the_freeze`: every
+  committed version of the execution ledger from the freeze to HEAD, and the working copy, is a byte prefix of the
+  next. Confirm it independently from git.
+* **Checklist 11 (static check).** QC12 has T1–T9:
+  * T8 is an equality check of the pinned backstop (A38);
+  * T9 checks validate-grant's pre-checks (A39).
+* **Checklist 14 (quarantine).** The scanner is schema 5 (A37). Check that each of these allowlists is exactly what
+  the tree uses:
+  * the import allowlists and the two module-level `multiprocessing` exemptions;
+  * the `introspection` and `import:importlib.util` permits;
+  * the `env_keys`;
+  * the per-verb option lists.
+* **Checklist 17 (scope).** The proposal carries `host_git` (A40). The execution host's repository config must pass
+  `check_host_git`, and the owner should know this before choosing the host.

@@ -24,6 +24,7 @@ import datetime
 import hashlib
 import json
 import os
+import re
 import resource
 import signal
 import stat
@@ -77,7 +78,18 @@ SIGXCPU_TOLERANCE_S = 0.05            # delta-2 E2: rusage granularity at the so
 PRE_CAP_S = 1800
 SEAL_RETRY_DELAYS = (0.5, 1.0, 2.0, 4.0)  # q309: literal-ok (seconds of delay, not drifts)
 ENV = {"PATH": "/usr/bin:/bin", "HOME": os.environ.get("HOME", "/var/empty"), "GIT_OPTIONAL_LOCKS": "0",
-       "GIT_NO_REPLACE_OBJECTS": "1", "LC_ALL": "C"}
+       "GIT_NO_REPLACE_OBJECTS": "1", "LC_ALL": "C",
+       # rev. 2c A40 (R4 follow-up 2 NF5): git ignores the host's system and global config (a global commit.gpgSign,
+       # core.hooksPath or core.fsmonitor would otherwise run a program inside execute); the repository's own config
+       # is allowlisted by check_host_git; commits carry a fixed identity
+       "GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": "/dev/null",
+       "GIT_AUTHOR_NAME": "p309-execute", "GIT_AUTHOR_EMAIL": "p309-execute@invalid",
+       "GIT_COMMITTER_NAME": "p309-execute", "GIT_COMMITTER_EMAIL": "p309-execute@invalid"}
+# the repository config keys execute accepts (any other key, or any system / global / command scope, refuses)
+REPO_CONFIG_ALLOWED = (r"core\.(repositoryformatversion|filemode|bare|logallrefupdates|ignorecase|precomposeunicode|"
+                       r"symlinks|sparsecheckout|sparsecheckoutcone)", r"remote\.[^.\s]+\.(url|fetch|pushurl)",
+                       r"branch\.[^.\s]+\.(remote|merge|rebase)", r"gc\.auto", r"user\.(name|email)",
+                       r"extensions\.(worktreeconfig|objectformat)")
 SCHEMA = "rebaseguard.p5y.k5.cell309-p309-r1.result.v1"  # q309: literal-ok (result schema name)
 DECOY_STAGE1A = {   # declared (research SRK_DECOY_DECLARATION_A2 cell family); the h3 cell is the FC2 TEST band
     "a2_h5": {"h": "5/1", "k": "1/2", "cell": ["1/2", "37/72"]},
@@ -286,6 +298,27 @@ def check_bindings(m: dict, repo: Path = REPO) -> dict:
 def check_flags() -> None:
     if not (sys.flags.isolated and sys.flags.no_site and sys.flags.dont_write_bytecode):
         raise Refusal("INTERPRETER_FLAGS", "execute and seal-only require python3 -I -S -B")
+
+
+def check_host_git(ctx: ExecContext) -> None:
+    """rev. 2c A40 (R4 follow-up 2 NF5): nothing configured on the host runs a program inside execute's git calls.
+    The driver's git ignores the system and global config (ENV); the repository's own config may hold only the
+    allowlisted keys, in the local or worktree scope, and the hooks directory holds no hook.  Read-only; it runs before
+    any git call that could start a configured program (status, update-ref, commit-tree)."""
+    r = git("config", "--list", "--show-scope", "--name-only", repo=ctx.repo)
+    if r.returncode:
+        raise Refusal("HOST_GIT", "the repository git config cannot be listed by scope (git >= 2.32 is required)")
+    bad = []
+    for line in r.stdout.splitlines():
+        scope, _, key = line.partition("\t")
+        if scope not in ("local", "worktree") or not any(re.fullmatch(p, key.lower()) for p in REPO_CONFIG_ALLOWED):
+            bad.append(f"{scope}:{key}")
+    if bad:
+        raise Refusal("HOST_GIT", f"git config outside the allowlist: {sorted(set(bad))}")
+    hooks = Path(git("rev-parse", "--path-format=absolute", "--git-path", "hooks", repo=ctx.repo).stdout.strip())
+    live = sorted(h.name for h in hooks.iterdir() if not h.name.endswith(".sample")) if hooks.is_dir() else []
+    if live:
+        raise Refusal("HOST_GIT", f"git hooks present: {live}")
 
 
 # ------------------------------------------------------------------------------------------------ governance checks
@@ -615,13 +648,35 @@ def validate_grant(path: Path, own_sha: str, ctx: ExecContext | None = None) -> 
             raise ValueError("not an object")
     except ValueError:
         return {"pass": False, "checks": {"json_object": False}}
+    pre = {}
+
+    def run_check(name, fn, *a):
+        try:
+            fn(*a)
+            pre[name] = True
+        except Refusal as exc:
+            pre[name] = False
+            pre[name + "_refusal"] = str(exc)
+    run_check("host_git", check_host_git, ctx)           # A40: before the status call below
     head = git("rev-parse", "HEAD", repo=ctx.repo).stdout.strip()
     clean = not git("status", "--porcelain", "--untracked-files=all", repo=ctx.repo).stdout.strip()
     attached = bool(ctx.branch_ref) and ctx.branch_ref.startswith("refs/heads/") and git(
         "symbolic-ref", "-q", "HEAD", repo=ctx.repo).stdout.strip() == ctx.branch_ref
     m = load_manifest(ctx.repo)
     fz = recorded_freeze(ctx.repo)
-    out = {"head": head, "recorded_freeze": fz, "clean_tree_before": clean, "branch_attached": attached}
+    # R4F2-C2: execute's read-only pre-marker checks that do not depend on the grant commit, under the same
+    # conditions as run_execute (bindings and governance state in the PRODUCTION context only)
+    run_check("flags", check_flags)
+    run_check("branch", check_branch, ctx)
+    run_check("not_evaluated", check_not_evaluated, ctx)
+    run_check("result_paths", check_result_paths, ctx)
+    run_check("clean", check_clean, ctx)
+    shas = run_check("bindings", check_bindings, m, ctx.repo) if ctx.kind == "PRODUCTION" else {"sandbox": True}
+    state = run_check("governance_state", check_governance_state, m, ctx.repo) if ctx.kind == "PRODUCTION" else \
+        {"sandbox": True}
+    out = {"head": head, "recorded_freeze": fz, "clean_tree_before": clean, "branch_attached": attached,
+           "execute_prechecks": pre, "sandbox_skips": [k for k, v in (("bindings", shas), ("governance_state", state))
+                                                       if v == {"sandbox": True}]}
     try:
         qual_c, review_c = walk_chain(ctx.repo, head, fz)
         out["chain"] = (g.get("frozen_commit"), g.get("qualification_commit"),
@@ -639,7 +694,8 @@ def validate_grant(path: Path, own_sha: str, ctx: ExecContext | None = None) -> 
     ok, why = G.candidate_check(ctx.guard_ctx, raw, head)
     checks["guard_candidate_check"] = ok
     out.update({"checks": checks, "guard": why})
-    out["pass"] = bool(out["chain"] and clean and attached and all(checks.values()))
+    out["pass"] = bool(out["chain"] and clean and attached and all(checks.values())
+                       and all(v for k, v in pre.items() if not k.endswith("_refusal")))
     out["notice"] = ("on PASS: commit the ledger lines this run wrote as ONE ledger-only commit; then commit the grant "
                      "file ALONE on top of it (single parent, attached branch, nothing pushed past it); then execute. "
                      "A grant commit that execute refuses is terminal: it cannot be repaired without a new owner "
@@ -1383,6 +1439,7 @@ def run_execute(own_sha: str, ctx: ExecContext | None = None, prepare=None, eval
     ctx = ctx or production_context()
     t0, started = time.time(), utc()
     check_flags()
+    check_host_git(ctx)                                   # A40: before any git call that could start a program
     check_branch(ctx)
     check_not_evaluated(ctx)
     check_result_paths(ctx)

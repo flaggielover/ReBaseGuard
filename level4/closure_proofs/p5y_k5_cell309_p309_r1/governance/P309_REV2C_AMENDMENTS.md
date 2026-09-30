@@ -184,3 +184,89 @@ amended `premarker_admission` text, and the R4 follow-up liability.
   (`C29_ref_path_through_a_with_local`, `C29_ref_path_returned_by_a_helper`, `C29_ref_path_through_an_inner_local`).
 * **Other changes.** The per-scan cache reset (`147ba3a2`) is an implementation fix with no rule change: repeated
   plantings no longer retain every parsed tree.
+
+## Fourth delta: resolution of R4 follow-up 2 (FREEZE_BLOCKED; D5 exception not limited) (append-only)
+
+**Sources:**
+* `reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_2_P309.md`: F3 (a–d); conditions R4F2-C1 to R4F2-C4; notes NF3, NF4, NF5.
+* R4's round-3 mutant suites, committed as `reviews/R4_FOLLOWUP2_MUTANTS.py.txt`.
+* The delta-3 review's G4 question, which R4 answered as R4F2-C2.
+
+The earlier sections stay as written. Where they differ from this section, this section governs. The two
+owner-ratified sites are unchanged (`1ee764b7…`, `13ee3ec3…`). **The backstop functions are unchanged**: their AST
+hashes equal the ones R4 recorded (`c8a2fb51…`, `80d206ad…`, `23f3021d…`), and they are now pinned (A38).
+
+**Review status.**
+* A40 changes `execute`'s git environment and adds a pre-marker refusal, so it is a **binding and rule change**. It goes
+  to the delta reviewer (C2, G9).
+* A38 pins code already reviewed. It is reported to the owner and also goes to the delta reviewer.
+* All rows go to R4's focused confirmation (R4F2-C3).
+
+| id | source | change | direction | new rule? |
+|---|---|---|---|---|
+| **A37** | R4F2-C1 (a)–(f), (h), (i) | **Scanner schema 5: closed-world allowlists.** See the notes below the table. | none | no (implements the owner's D5 classes) |
+| **A38** | R4F2-C1(g) | **The backstop is pinned.** `backstop_pins` in the allowance holds the AST sha256 of `_assert_execute_context`, `_site_backstop`, `_require_own_run_nonce` and the `_SITE_CODES` statement, with the values R4 recorded. QC12 T8 is now an **equality** check against them. `p309_scan_pins.py` never refreshes them, and any change is a new delta. Reported to the owner (`governance/D5_SITE_BACKSTOP_REPORT_P309.md`, addendum) | fail-closed | yes (a binding) |
+| **A39** | R4F2-C2 (delta-3 G4) | `validate-grant` also runs `execute`'s read-only pre-marker checks, under `execute`'s conditions: `check_flags`, `check_host_git` (A40), `check_branch`, `check_not_evaluated`, `check_result_paths` and `check_clean`, and, in production, `check_bindings` and `check_governance_state`. It reports each one, and PASS requires all of them. T1's `validate-grant` entry set lists them. **New QC12 T9** checks that `validate_grant` calls them under the same conditions as `run_execute`. The `grant_validation` texts are updated | toward a conclusive outcome: host-specific refusal causes appear before the grant commit | no (an implementation change, per delta-3 G4) |
+| **A40** | R4F2-C4 NF5, and a coordinator finding | **Hermetic git for `execute`.** See the notes below the table. | toward a conclusive outcome; against a host-dependent failure after the marker; fail-closed before it | **yes** (a binding: `execute`'s git environment; a rule: the host-git refusal) |
+| **A41** | R4F2-C4 NF3, NF4 | QC11 **V10**: validate, then one ledger-only window commit touching both ledgers, then the candidate committed alone; `execute` admits it. QC13 **`execution_ledger_append_only_since_the_freeze`**: each committed version of the execution ledger from the freeze to HEAD, and the working copy, is a byte prefix of the next | none | no |
+| **A42** | R4F2-C1(e) | The verifier author's sandbox helper (`verify/scoped_sandbox.py`) puts `--end-of-options` before every caller-supplied operand: `Sandbox.commit`'s `read-tree` parent (follow-up 3); `reset_hard_index`'s `read-tree` and `update_ref` (follow-up 4); `reset_hard_index`'s `update-ref` (follow-up 5). The author found the last two cases, made each change and reported it. The variant file, the tests and the batch runner are unchanged | none | no |
+
+**A37 in detail.**
+* **(a) Imports.** Every import, including those inside `python -c` strings, is on its directory's allowlist
+  (`import_policy.allowed`). The modules R4 named are forbidden:
+  * ctypes, cffi, runpy, pickle, marshal, shelve, code, codeop, inspect, gc, multiprocessing, concurrent, pty,
+    builtins;
+  * importlib.machinery, importlib.util and importlib.abc.
+
+  A forbidden module is allowed only through an `import:<module>` permit of an AST-pinned reviewed function, or a
+  module-level exemption bound to the file's AST hash. The latter is used only for the verifier author's
+  `multiprocessing` pools. Relative imports are findings.
+* **(b) Introspection.** Each of the following is a finding outside AST-pinned reviewed functions (the `introspection`
+  permit) and the pinned backstop:
+  * `vars`, `globals`, `locals`, `dir` and `__import__`;
+  * `getattr`, `setattr`, `delattr` and `hasattr` with a computed name or on a module;
+  * `__dict__`, `__getattribute__`, `__builtins__`, `__globals__`, `__code__`, `f_globals`, `f_locals`, `__setattr__`,
+    `__delattr__` and `_getframe`;
+  * `sys.modules`;
+  * any reference to `exec`, `eval` or `compile`.
+* **(c) Module stores (QC12 T7).** A store or delete on an attribute of **any** module object is a finding, however the
+  module was obtained: an import alias, a local alias, an attribute of another project module (`P.D`, `D.G`), or a
+  `sys.modules` / `import_module` lookup. T7's driver and guard rules follow the same resolution. Every existing store
+  has a rule-specific, AST-hash-bound `t7_exemptions` entry with its reason. `T7_PATCHABLE` is removed.
+* **(d) Environment.** Outside reviewed runners, `env` / `env_extra` is None, a fixed module-level environment, or a
+  literal dict whose keys are in `env_keys` (`GIT_INDEX_FILE`). `os.environ` mutation is a finding. `p309_qualify.run`
+  no longer takes `env_extra`.
+* **(e) Git verbs and options.**
+  * Each verb has its own option list, exactly the options the tree uses; a verb absent from the map takes none.
+  * The 17 unused verbs are removed.
+  * `--end-of-options` ends option parsing.
+  * A `forwards_operands` function must carry a validation spec for every forwarded parameter, and the scanner checks
+    it: `--end-of-options` before the operand, the argument of a listed option, or literal callers only. The QC
+    mirror now passes `--end-of-options`.
+* **(f) Tokens and paths.**
+  * Bytes literals are subject to the token rules.
+  * Constant folding resolves `chr(<int>)`, `'<sep>'.join([...])`, `.decode()`, `.lower()` and similar calls, and
+    `.replace(<lit>, <lit>)`.
+  * A write target with an unresolved piece directly under the repository root, or a partly resolved piece that could
+    complete a git-internal name, is a REF_FILE_WRITE.
+* **(h)** `p309_postexec.py`'s blanket T7 exemption becomes a `FORBIDDEN_NAME`-only, hash-bound entry.
+* **(i) Controls.** R4's N01–N20, K01–K04, T7a–T7d, T8a–T8c and R01–R23 are D5 controls, each rejected. The planted
+  formal control fires the three new kinds (IMPORT_UNLISTED, INTROSPECTION, ENV_UNLISTED).
+
+**A40 in detail.**
+* **The environment.** The driver's `ENV` sets `GIT_CONFIG_NOSYSTEM=1` and `GIT_CONFIG_GLOBAL=/dev/null`, and a fixed
+  author and committer identity (`p309-execute`).
+* **The new check.** `check_host_git` runs right after the interpreter-flag check, before any git call that could
+  start a configured program. It refuses before the marker unless:
+  * `git config --list --show-scope` shows only local or worktree keys on an allowlist (core format and file-mode keys,
+    remote url/fetch, branch remote/merge, `gc.auto`, user name/email, two extensions);
+  * the hooks directory holds no hook.
+
+  This requires git ≥ 2.32.
+* **The finding behind it.** On the development host the global configuration sets `commit.gpgSign` with an ssh
+  signing program. `execute`'s git passed `HOME` through, so the post-marker seal's `commit-tree` would have run that
+  program. A failure there leaves the result unsealed until `seal-only`; a host hook on `update-ref` would have run
+  at arming.
+
+**Liabilities.** The freeze parameters add the R4 follow-up-2 item and the A40 finding. The proposal carries
+`host_git`.

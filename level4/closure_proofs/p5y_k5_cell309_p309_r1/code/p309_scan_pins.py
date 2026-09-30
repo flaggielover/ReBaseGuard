@@ -70,6 +70,8 @@ def entries(cfg: dict):
         yield "reviewed_functions", r, owner_hash(FNS, r["file"], r["function"])
     for r in cfg.get("t7_exemptions", []):
         yield "t7_exemptions", r, module_hash(FNS, r["file"])
+    for r in cfg.get("import_policy", {}).get("module_level_exemptions", []):
+        yield "module_level_exemptions", r, module_hash(FNS, r["file"])
 
 
 if __name__ == "__main__":

@@ -74,10 +74,9 @@ def xwrite(path: Path, text: str) -> None:
         os.close(fd)
 
 
-def run(cmd: list, cwd: Path, timeout: int = 6 * 3600, env_extra=None) -> dict:
+def run(cmd: list, cwd: Path, timeout: int = 6 * 3600) -> dict:
     env = dict(os.environ)
     env["P309_EVIDENCE_DIR"] = str(ATT["dir"] / "evidence")
-    env.update(env_extra or {})
     t0 = time.time()
     r0 = os.times()
     p = subprocess.run(cmd, cwd=str(cwd), capture_output=True, text=True, timeout=timeout, env=env)
@@ -92,8 +91,8 @@ def mirror(freeze_commit: str) -> Path:
     if m.exists():
         shutil.rmtree(m)
     m.mkdir(parents=True)
-    arch = subprocess.run(["git", "-C", str(REPO), "archive", freeze_commit, *MIRROR_PATHS], capture_output=True,
-                          check=True).stdout
+    arch = subprocess.run(["git", "-C", str(REPO), "archive", "--end-of-options", freeze_commit, *MIRROR_PATHS],
+                          capture_output=True, check=True).stdout
     subprocess.run(["tar", "-x", "-C", str(m)], input=arch, check=True)
     return m
 
@@ -240,6 +239,19 @@ def qc_formal(cmd_rel: str, *args, flags: bool = False) -> dict:
     return {"pass": r["rc"] == 0, "runs": [r]}
 
 
+def ledger_append_only(freeze: str) -> bool:
+    """R4 follow-up 2 NF4: every committed version of the execution ledger from the freeze commit to HEAD, and the
+    working copy, is a byte prefix of the next -- a deleted attempt directory AND a deleted ledger line would
+    otherwise leave no trace"""
+    rel = f"{D.NS_REL}/ledger/ZERO_TARGET_LEDGER.jsonl"
+    commits = git("rev-list", "--reverse", f"{freeze}..HEAD", "--", rel).split()
+    versions = [subprocess.run(["git", "-C", str(REPO), "show", f"{freeze}:{rel}"], capture_output=True).stdout]
+    for c in commits:
+        versions.append(subprocess.run(["git", "-C", str(REPO), "show", f"{c}:{rel}"], capture_output=True).stdout)
+    versions.append((REPO / rel).read_bytes())
+    return all(b.startswith(a) for a, b in zip(versions, versions[1:]))
+
+
 def qc13(freeze: str) -> dict:
     frozen_now = [git("rev-parse", f"HEAD:{D.NS_REL}/{d}") for d in D.FROZEN_DIRS]
     frozen_then = [git("rev-parse", f"{freeze}:{D.NS_REL}/{d}") for d in D.FROZEN_DIRS]
@@ -261,6 +273,7 @@ def qc13(freeze: str) -> dict:
     ok["no_r6"] = not any("COVERAGE_MAP_R6" in p.upper()
                           for p in git("ls-tree", "-r", "--name-only", "HEAD").splitlines())
     ok["single_qualification_run_since_the_freeze_record"] = single_run_since_freeze()
+    ok["execution_ledger_append_only_since_the_freeze"] = ledger_append_only(freeze)
     ph = qc_formal("code/p309_placeholder_check.py")
     ok["no_placeholder_or_choice"] = ph["pass"]
     params = subprocess.run([PY, str(FNS / "code" / "make_freeze_params.py"), "--check"], capture_output=True, text=True)

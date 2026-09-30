@@ -529,6 +529,17 @@ def validate_flows() -> dict:
         sb, c, cand, out, same = validate(name, over)
         R[name] = {"pass": out["pass"] is False and out["checks"].get(key) is False and same,
                    "got": {k: v for k, v in out["checks"].items() if not v}}
+    # V10 (R4 follow-up 2 NF3): the production sequence -- validate, ONE ledger-only window commit (the ledger lines
+    # validate-grant writes in production), then the candidate committed alone -- is admitted by execute
+    sb, c, cand, out, same = validate("V10_window_commit_between_validation_and_grant")
+    head = sh(sb, "rev-parse", "HEAD").strip()
+    ztl, exl = f"{NS}/ledger/ZERO_TARGET_LEDGER.jsonl", f"{NS}/ledger/EXPOSURE_LEDGER.jsonl"
+    w = commit(sb, head, {ztl: sh(sb, "show", f"{head}:{ztl}").encode() + b'{"validate": 1}\n',
+                          exl: sh(sb, "show", f"{head}:{exl}").encode() + b'{"validate": 1}\n'}, "ledger-only window")
+    gc = commit(sb, w, {G._TEST_GRANT_PATH: cand.read_bytes()}, "TEST_ONLY grant after the window commit")
+    sh(sb, "update-ref", SB_BRANCH, gc)
+    sh(sb, "reset", "-q", "--hard", gc)
+    R["V10_window_commit_between_validation_and_grant"] = {"pass": out["pass"] and same and execute(sb) == 0}
     sb, c, cand, out, same = validate("V07_wrong_chain_commit", {"qualification_commit": "8" * 40})
     R["V07_wrong_chain_commit"] = {"pass": out["pass"] is False and out["chain"] is False and same}
     sb, c, cand, out, same = validate("V08_dirty_tree", dirty=True)

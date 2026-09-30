@@ -115,10 +115,14 @@ def main() -> int:
                                                + "\n" + fp["reviews"]["delta2_incident_independence"][
                                                    "conditions_verbatim"]
                                                + "\n" + fp["reviews"]["delta3_incident_independence"][
+                                                   "conditions_verbatim"]
+                                               + "\n" + fp["reviews"]["delta4_incident_independence"][
                                                    "conditions_verbatim"],
         "prefreeze_review_conditions_verbatim": fp["reviews"]["prefreeze_r4"]["conditions_verbatim"] + "\n"
                                                 + fp["reviews"]["prefreeze_r4_followup"]["conditions_verbatim"]
                                                 + "\n" + fp["reviews"]["prefreeze_r4_followup_2"][
+                                                    "conditions_verbatim"]
+                                                + "\n" + fp["reviews"]["prefreeze_r4_followup_3"][
                                                     "conditions_verbatim"],
         "horizon_notice": "a run longer than the grant's remaining validity turns the per-call expiry check into "
                           "EXECUTION_INDETERMINATE or a silent SRK loss; not_after_utc must be at least 14 days after "
@@ -143,18 +147,24 @@ def main() -> int:
                                 "commit, save the candidate grant as a file OUTSIDE the worktree and run `python3 -I "
                                 "-S -B code/p309_driver.py validate-grant --grant <that file>`. It creates no commit "
                                 "and no ref and runs nothing of Stage 1 or 2. It checks the candidate's CONTENT and "
-                                "the chain below it: execute's shared grant-content checks, the chain walk from HEAD, "
-                                "the guard's field parser and the guard's checks 2, 3, 5-9, a clean tree and an "
-                                "attached branch. It does NOT check what only execute checks: the guard's check 4 (the "
-                                "grant commit itself: the only change of a single-parent commit on this HEAD), the "
-                                "interpreter flags, the branch and not-evaluated checks, the result paths, the input "
-                                "bindings, the governance state, the consumer-cover agreement and the historical "
+                                "the chain below it (execute's shared grant-content checks, the chain walk from HEAD, "
+                                "the guard's field parser and the guard's checks 2, 3, 5-9), and runs execute's "
+                                "read-only pre-marker checks under execute's conditions: the interpreter flags, the "
+                                "host git configuration, the branch, not-evaluated, the result paths, a clean tree, "
+                                "the input bindings and the governance state. It does NOT check what only execute "
+                                "checks: the guard's check 4 (the grant commit itself: the only change of a "
+                                "single-parent commit on this HEAD), the consumer-cover agreement and the historical "
                                 "control. A PASS therefore does NOT guarantee admission. Only on `P309 VALIDATE-GRANT "
                                 "PASS`: commit the ledger lines it wrote as ONE ledger-only commit, then copy the "
                                 "candidate byte-identically to the grant path and commit it ALONE on top (single "
                                 "parent, attached branch, nothing pushed past it). A grant commit that execute refuses "
                                 "is TERMINAL: it cannot be repaired or superseded without a new owner decision (a "
                                 "second grant commit breaks the chain)",
+            "host_git": "execute's git ignores the host's system and global git configuration and commits with a "
+                        "fixed identity; the repository's own .git/config may hold only allowlisted keys (core "
+                        "format and file-mode keys, remote url/fetch, branch remote/merge, gc.auto, user name/email) "
+                        "and the hooks directory must hold no hook; git >= 2.32; validate-grant reports any "
+                        "violation before the grant commit (rev. 2c A40)",
             "execution_procedure": "on the named host, in the named worktree, on the named branch with HEAD attached "
                                    "at the grant commit (made after a validate-grant PASS, above); remove every "
                                    "__pycache__ from the campaign namespace first (check_clean refuses ignored "

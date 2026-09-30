@@ -48,10 +48,9 @@ from pathlib import Path
 
 FNS = Path(__file__).resolve().parents[1]
 FILES = {"p309_driver": FNS / "code" / "p309_driver.py", "p309_rehearse": FNS / "code" / "p309_rehearse.py"}
-T7_EXEMPT = {"code/p309_driver.py", "code/p309_postexec.py"}
+T7_EXEMPT = {"code/p309_driver.py"}          # R4F2-C1(h): p309_postexec.py has a rule-specific, hash-bound exemption
 T7_FORBIDDEN = {"production_context", "_arm_marker", "_persist_pending", "after_marker", "reverify_production", "_MODE",
                 "_assert_execute_context", "_site_backstop", "_SITE_CODES", "_require_own_run_nonce"}
-T7_PATCHABLE = {"persist_emergency"}                   # QC11 F-flow stub: both evidence channels fail
 T7_STRING_SCOPE = ("tests/", "code/p309_qualify.py", "code/p309_rehearse.py", "verify/run_verify_all_scoped.py")
 ALLOW = json.loads((FNS / "config" / "SCANNER_ALLOWANCE_P309.json").read_text())
 TARGET_FUNCS = {"run_execute", "after_marker", "evaluate_target", "historical_control", "cell_inputs", "check_grant",
@@ -61,7 +60,9 @@ MODE_ENTRIES = {"preflight": {"check_not_evaluated", "check_bindings", "check_go
                 "rehearse": {"rehearse", "load_consumer", "load_manifest", "pin_table"},
                 "decoy-stage1a": {"decoy_stage1a", "load_manifest", "pin_table"},
                 "decoy-stage1b": {"decoy_stage1b", "load_manifest", "pin_table"},
-                "validate-grant": {"validate_grant"},
+                "validate-grant": {"validate_grant", "check_flags", "check_branch", "check_not_evaluated",
+                                   "check_result_paths", "check_clean", "check_bindings", "check_governance_state",
+                                   "check_host_git"},
                 "_job": {"job_stage1a", "job_stage1b"}}
 SITES = ("_arm_marker", "_persist_pending")
 SITE_CALLERS = {"run_execute", "after_marker", "run_seal_only"}
@@ -153,8 +154,7 @@ def t6(dtree, edges) -> dict:
     blk = None
     if len(ps) == 1:
         for n in ast.walk(so):
-            for field in ("body", "orelse"):
-                body = getattr(n, field, None)
+            for body in (getattr(n, "body", None), getattr(n, "orelse", None)):
                 if isinstance(body, list) and any(ps[0] in list(ast.walk(st)) for st in body) and any(
                         isinstance(st, ast.Assign) and ps[0] in list(ast.walk(st)) for st in body):
                     blk = body
@@ -184,12 +184,19 @@ def _t7_aliases(tree) -> tuple:
     return drv, grd
 
 
+_FC = {}
+
+
 def _is_mod(node, names: set, drv: set) -> bool:
-    """node denotes one of the modules named `names` (or, for the guard, `<driver alias>.G`)"""
-    if isinstance(node, ast.Name):
-        return node.id in names
-    return (isinstance(node, ast.Attribute) and node.attr == "G" and isinstance(node.value, ast.Name)
-            and node.value.id in drv and names is not drv)
+    """node denotes the driver (names is drv) or the guard (otherwise), however the module was obtained: an import
+    alias, a local alias, an attribute of another project module (P.D, D.G), a sys.modules / import_module lookup
+    (R4F2-C1(c); the scanner's FileCtx.module_of_expr)"""
+    fc, root = _FC.get("fc"), _FC.get("root")
+    if fc is None:
+        return isinstance(node, ast.Name) and node.id in names
+    m = fc.module_of_expr(node, root)
+    want = "p309_driver" if names is drv else "p309_guard"
+    return m == want or m == "*"
 
 
 def _ident_in(text: str, names: set) -> list:
@@ -202,6 +209,7 @@ def t7_tree(tree, rel: str, root: Path, depth: int = 0) -> list:
     import p309_scan as SC                                 # on sys.path (t7)
     bad = []
     fc = SC.FileCtx(tree, rel)
+    _FC.update(fc=fc, root=root)
     drv, grd = _t7_aliases(tree)
     both = drv | grd
     strings = rel.startswith(T7_STRING_SCOPE) or depth > 0
@@ -219,8 +227,8 @@ def t7_tree(tree, rel: str, root: Path, depth: int = 0) -> list:
             bad.append(("DYNAMIC_ACCESS", f"{rel}:{ln}: {ast.unparse(n)}"))
         if isinstance(n, ast.Attribute) and n.attr == "PRODUCTION" and _is_mod(n.value, grd, drv):
             bad.append(("PRODUCTION_REFERENCE", f"{rel}:{ln}: {ast.unparse(n)}"))
-        if isinstance(n, ast.Attribute) and isinstance(n.ctx, (ast.Store, ast.Del)) and (
-                (_is_mod(n.value, drv, drv) and n.attr not in T7_PATCHABLE) or _is_mod(n.value, grd, drv)):
+        if isinstance(n, ast.Attribute) and isinstance(n.ctx, (ast.Store, ast.Del)) and \
+                fc.module_of_expr(n.value, root) is not None:          # any module, however obtained
             bad.append(("MODULE_ATTRIBUTE_STORE", f"{rel}:{ln}: {ast.unparse(n)}"))
         if isinstance(n, ast.Subscript) and ast.unparse(n.value) in ("sys.modules",) and any(
                 isinstance(x, ast.Constant) and isinstance(x.value, str) and x.value in ("p309_driver", "p309_guard")
@@ -292,15 +300,47 @@ def t7(root: Path) -> list:
             continue                                        # a planted control raises at import: it never runs
         e = ex.get(rel)
         current = e is not None and e.get("ast_sha256") == _h.sha256(ast.dump(tree).encode()).hexdigest()
-        for rule, msg in t7_tree(tree, rel, root):
+        for rule, msg in t7_tree(tree, rel, root):          # a `-c` string's findings belong to its file
             if not (current and rule in e.get("rules", [])):
                 bad.append(f"[{rule}] {msg}")
     return bad
 
 
+def t9(dtree) -> dict:
+    """R4F2-C2: validate_grant runs execute's read-only pre-marker checks, under the same condition as run_execute
+    (check_bindings / check_governance_state only in the PRODUCTION context; the others unconditionally)"""
+    fns = {n.name: n for n in dtree.body if isinstance(n, ast.FunctionDef)}
+    vg, rx = fns.get("validate_grant"), fns.get("run_execute")
+    out = {}
+
+    def cond_of(fn, name):
+        for n in ast.walk(fn):
+            if isinstance(n, ast.IfExp) and any(isinstance(c, ast.Name) and c.id == name for c in ast.walk(n.body)):
+                return ast.unparse(n.test)
+        return None
+
+    def called(fn, name):
+        return any(isinstance(c, ast.Name) and c.id == name for c in ast.walk(fn))
+    for name in ("check_flags", "check_branch", "check_not_evaluated", "check_result_paths", "check_clean",
+                 "check_host_git"):
+        out[f"{name}_in_both"] = bool(vg and rx) and called(vg, name) and called(rx, name) and \
+            cond_of(vg, name) is None and cond_of(rx, name) is None
+    for name in ("check_bindings", "check_governance_state"):
+        out[f"{name}_same_condition"] = bool(vg and rx) and cond_of(vg, name) == cond_of(rx, name) == \
+            "ctx.kind == 'PRODUCTION'"
+    return out
+
+
 def t8(dtree) -> dict:
     fns = {n.name: n for n in dtree.body if isinstance(n, ast.FunctionDef)}
     out = {}
+    sys.path.insert(0, str(FNS / "code"))
+    import p309_scan as SC
+    for pin in ALLOW["backstop_pins"]:                     # R4F2-C1(g): equality with the pinned AST hashes
+        st = next((x for x in dtree.body if (isinstance(x, ast.FunctionDef) and x.name == pin["name"]) or (
+            isinstance(x, ast.Assign) and len(x.targets) == 1 and isinstance(x.targets[0], ast.Name)
+            and x.targets[0].id == pin["name"])), None)
+        out[f"pinned_{pin['name']}"] = st is not None and SC.ast_sha(st) == pin["ast_sha256"]
     ae = fns.get("_assert_execute_context")
     body = [st for st in (ae.body if ae else []) if not (isinstance(st, ast.Expr) and isinstance(st.value, ast.Constant))]
     out["assert_ends_with_site_check_and_backstop"] = (
@@ -404,6 +444,8 @@ def run(root: Path = FNS) -> dict:
     R["T7_no_production_execution_from_tests_or_qualification"] = {"pass": not d7, "detail": d7[:20]}
     d8 = t8(dtree)
     R["T8_runtime_backstop_at_the_sites"] = {"pass": all(d8.values()), "detail": d8}
+    d9 = t9(dtree)
+    R["T9_validate_grant_runs_execute_prechecks"] = {"pass": all(d9.values()), "detail": d9}
     return R
 
 

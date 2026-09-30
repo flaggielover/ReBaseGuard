@@ -68,3 +68,25 @@ is met more strictly than before.
   the authority narrowing, and the required worktree field.
 
 The freeze waits for both verdicts.
+
+## Addendum (R4 follow-up 2; rev. 2c fourth delta, A38 and A40)
+
+* **The backstop is now pinned like the sites.**
+  * The AST sha256 values of the three backstop functions and of the mapping of the two sites are pinned in the
+    scanner allowance: `_assert_execute_context` `c8a2fb51…`, `_site_backstop` `80d206ad…`, `_require_own_run_nonce`
+    `23f3021d…`, and the `_SITE_CODES` statement `696a6102…`.
+  * The static check requires equality. Any change is a new delta and is reported here.
+  * The code is unchanged since R4 reviewed it.
+* **Why the static rules were tightened again.** R4 showed that code the static checks accepted could switch the
+  backstop off from inside the same process. The checks are now closed-world allowlists (imports, introspection,
+  module stores, environments, git options). Each of R4's 54 mutants is a control that must be rejected.
+* **`execute`'s git no longer reads the host's system or global git configuration.**
+  * It commits with a fixed identity.
+  * Before the marker, it refuses unless the repository's own configuration holds only allowlisted keys and no git hook
+    is present.
+  * Before this change, a host setting (on the development host, commit signing with an ssh program) would have run a
+    program inside the post-marker seal.
+
+  The effect is fail-closed before the marker. After the marker, it removes a host-dependent failure.
+
+Execution authority remains withheld. No production ref exists.

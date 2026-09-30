@@ -1,5 +1,5 @@
 {
- "schema": "P309_SCANNER_ALLOWANCE/4",
+ "schema": "P309_SCANNER_ALLOWANCE/5",
  "authority": "owner rulings 2 (governance/OWNER_RULINGS_2_P309_VERBATIM.md), section OWNER RULING - QUARANTINE SCANNER; spec fc2/FC2_SPEC_R2.md section 7; the pending-result ref NAME (in the guard file only) and the two exactly-once sites _arm_marker and _persist_pending (AST-hash-pinned) RATIFIED by the owner's D5 decision (governance/OWNER_D5_RATIFICATION_P309_VERBATIM.md): they may EXIST in the frozen tree; no production ref may be created, mutated or consumed before the owner's explicit execution grant; every other ref-moving path is rejected (schema 3)",
  "scope": "the research scanner's TARGET_PATH finding for exactly these exactly-once ref NAMES, as inert metadata, in exactly the listed files, under conditions (a)-(e); nothing else",
  "names": [
@@ -146,13 +146,13 @@
   {
    "file": "verify/scoped_sandbox.py",
    "function": "Sandbox.commit",
-   "ast_sha256": "83f2c204a4c8eba1c96a4236fdebcca26223bd426c1ed351bb5f7fc1c6c49f5c",
+   "ast_sha256": "08c6057bf62bbf441566e8dd4427e0a62b193b2d9171a63cfe0b96e15a826721",
    "reason": "verifier-author sandbox helper: commits inside its own sandbox only"
   },
   {
    "file": "verify/scoped_sandbox.py",
    "function": "Sandbox.update_ref",
-   "ast_sha256": "9ac042318320d06fa20db5108d13ab5390a8d2497dfdf555aae6d3ec4622ece7",
+   "ast_sha256": "ef19ca74ade14fa3cb1fd411f9f4f63dd7645353e1dad1bb5fed8c92eabf46f3",
    "reason": "verifier-author sandbox helper: TEST refs inside its own sandbox only"
   },
   {
@@ -164,7 +164,7 @@
   {
    "file": "verify/scoped_sandbox.py",
    "function": "Sandbox.reset_hard_index",
-   "ast_sha256": "77cd22c50b4252f436da5e596899a44b18f1481f72aaa685a5dcb53a383c3d80",
+   "ast_sha256": "b8ca940738c00b2a81bf4e6f7f4892d74c03874989b16cdedb7cbd243ed3de81",
    "reason": "verifier-author sandbox helper: resets its own sandbox branch only"
   },
   {
@@ -176,13 +176,13 @@
   {
    "file": "tests/test_p309_site_backstop.py",
    "function": "run",
-   "ast_sha256": "203dee6e24af38ccea9048bec529c49151f9165076b32f0e510f7a53871fced1",
+   "ast_sha256": "4b1320cff26c1f587052c9fd21d6aa710de275163470a8710ba49ea696d500a5",
    "reason": "backstop controls B07/B09b set the TEST marker in scratch sandboxes (update-ref through the QC11 sandbox runner); TEST names only"
   },
   {
    "file": "tests/test_p309_exactly_once.py",
    "function": "validate_flows",
-   "ast_sha256": "7b261b33779c29b87f53103e94bad239b6586693b608240ec8cf1a5e8f96cc02",
+   "ast_sha256": "2f344c85979c411a01c90b4d8706f74edd2b37cdce45bc36aa512085ffa081be",
    "reason": "QC11 V01-V09: moves the SANDBOX branch back to the grant commit's parent (update-ref, reset --hard) so that validate-grant sees HEAD at the would-be parent, and commits a validated TEST grant; sandbox branch only"
   }
  ],
@@ -210,19 +210,7 @@
    "status",
    "merge-base",
    "var",
-   "show-ref",
-   "describe",
-   "archive",
-   "ls-remote",
-   "check-ignore",
-   "count-objects",
-   "version",
-   "diff-index",
-   "name-rev",
-   "cherry",
-   "shortlog",
-   "grep",
-   "verify-pack"
+   "ls-remote"
   ],
   "git_object_verbs": [
    "hash-object",
@@ -230,12 +218,7 @@
    "write-tree",
    "read-tree",
    "update-index",
-   "mktree",
-   "add",
-   "rm",
-   "unpack-objects",
-   "index-pack",
-   "pack-objects"
+   "rm"
   ],
   "git_global_options_with_operand": [
    "-C"
@@ -444,9 +427,10 @@
     "function": "exec_module",
     "ast_sha256": "bc58173dd57e3f2064e28db0cd2a5182eafa11930412e6ce211d1045efc04d3b",
     "permits": [
-     "dynamic_exec"
+     "dynamic_exec",
+     "introspection"
     ],
-    "reason": "executes the bytes of a pinned consumer / RLR307 module in a fresh module; every caller passes read_pinned(...) (sha256 and git blob verified against the frozen manifest)"
+    "reason": "executes the bytes of a pinned consumer / RLR307 module in a fresh module; every caller passes read_pinned(...) (sha256 and git blob verified against the frozen manifest); registers the new module in sys.modules and executes into its __dict__ (R4F2-C1(b))"
    },
    {
     "file": "code/p309_driver.py",
@@ -478,7 +462,7 @@
    {
     "file": "code/p309_driver.py",
     "function": "run_execute",
-    "ast_sha256": "ed4a49381ad832231100aa5b28a6f2eefdf06248115c757a75d31dcc3f61d6e7",
+    "ast_sha256": "ba0d4448c39bcbb4aafdee2ed5bebe3c59a504926c1d1f130b617221cf86e6a2",
     "permits": [
      "git_write"
     ],
@@ -577,7 +561,7 @@
    {
     "file": "code/p309_qualify.py",
     "function": "run",
-    "ast_sha256": "127e8929f9d54627c6214268490dee4e41ca94ef5887203d159ffe2d46e38f9c",
+    "ast_sha256": "c834625427077625441d17e9e965f870b7785a8c53d75e8ea9cdc45d01efd578",
     "permits": [
      "process"
     ],
@@ -613,12 +597,23 @@
    {
     "file": "code/p309_qualify.py",
     "function": "mirror",
-    "ast_sha256": "39ac0b57c418899a852569b22e777dcd10ba2db6f285422bbf0576ed3fb7ce9b",
+    "ast_sha256": "98254406862c93a64dcc1bd7be05227bb183b25bfcb79de9d9fab6273ab07cf7",
     "permits": [
      "process",
      "forwards_operands"
     ],
-    "reason": "git archive <freeze commit> <MIRROR_PATHS> piped into tar -x -C <scratch mirror>: a read-only export of the frozen commit into the scratchpad (no ref, no git dir); the parameter reaches only the archive's tree-ish operand"
+    "reason": "git archive <freeze commit> <MIRROR_PATHS> piped into tar -x -C <scratch mirror>: a read-only export of the frozen commit into the scratchpad (no ref, no git dir); the parameter reaches only the archive's tree-ish operand",
+    "forwarded": {
+     "freeze_commit": {
+      "how": [
+       "end_of_options",
+       "option_argument"
+      ],
+      "options": [
+       "-C"
+      ]
+     }
+    }
    },
    {
     "file": "tests/test_p309_exactly_once.py",
@@ -760,13 +755,30 @@
    {
     "file": "verify/scoped_sandbox.py",
     "function": "Sandbox.commit",
-    "ast_sha256": "83f2c204a4c8eba1c96a4236fdebcca26223bd426c1ed351bb5f7fc1c6c49f5c",
+    "ast_sha256": "08c6057bf62bbf441566e8dd4427e0a62b193b2d9171a63cfe0b96e15a826721",
     "permits": [
      "process",
      "forwards_operands",
      "gitdir_write"
     ],
-    "reason": "builds git -C <sandbox> commit-tree <tree> -p <parent>... -m <message> as a list (the parameters reach only the parent and message operands) and removes its temporary index from the sandbox git dir"
+    "reason": "builds git -C <sandbox> commit-tree <tree> -p <parent>... -m <message> as a list (the parameters reach only the parent and message operands) and removes its temporary index from the sandbox git dir",
+    "forwarded": {
+     "parents": {
+      "how": [
+       "option_argument",
+       "end_of_options"
+      ],
+      "options": [
+       "-p"
+      ]
+     },
+     "message": {
+      "how": "option_argument",
+      "options": [
+       "-m"
+      ]
+     }
+    }
    },
    {
     "file": "verify/srk_verify_indep_scoped.py",
@@ -794,7 +806,15 @@
      "process",
      "forwards_operands"
     ],
-    "reason": "git diff-tree --no-commit-id --name-only -r <extra> <commit> (read); `extra` is a literal option tuple from its callers ('--diff-filter=A' or none)"
+    "reason": "git diff-tree --no-commit-id --name-only -r <extra> <commit> (read); `extra` is a literal option tuple from its callers ('--diff-filter=A' or none)",
+    "forwarded": {
+     "extra": {
+      "how": "literal_callers",
+      "options": [
+       "--diff-filter="
+      ]
+     }
+    }
    },
    {
     "file": "tests/test_p309_site_backstop.py",
@@ -813,9 +833,239 @@
      "gitdir_write"
     ],
     "reason": "removes that nonce from the SANDBOX git dir"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "function": "_ind",
+    "ast_sha256": "890621391f166bd8f76fbe275b49b17c75d470dde6f2dcab6829ec85a3cfb290",
+    "permits": [
+     "introspection"
+    ],
+    "reason": "reads the isolated RLR307 reconstruction module back from sys.modules (loaded by load_rlr307)"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "function": "job_stage1a",
+    "ast_sha256": "0ee1beae5bb5008461043467f742eb4cc2a57f01a7f876c4959777faf0ef8af5",
+    "permits": [
+     "introspection",
+     "import:importlib.util"
+    ],
+    "reason": "a Stage-1a job re-verifies the pins of the modules it runs (srk_envelope and srk_float through sys.modules) and loads the pinned variant from its file with importlib.util (spec_from_file_location / module_from_spec)"
+   },
+   {
+    "file": "code/p309_driver.py",
+    "function": "_load_certifier_isolated",
+    "ast_sha256": "2d8d15737ab3ad64202f40bcadb8379aea28ddc2bdd6fcdfba42534f9173eca3",
+    "permits": [
+     "introspection"
+    ],
+    "reason": "saves, isolates and restores the module table (sys.modules) around the certifier's isolated load (FE-8)"
+   },
+   {
+    "file": "code/p309_postexec.py",
+    "function": "reverify",
+    "ast_sha256": "40c2a2fd8562a85c07591725193ce5a0ea10b607f42b3857874da710806256f3",
+    "permits": [
+     "import:importlib.util"
+    ],
+    "reason": "loads the pinned variant from its file with importlib.util for the review-mode re-verification (P10)"
+   },
+   {
+    "file": "code/p309_rehearse.py",
+    "function": "decoy_gate",
+    "ast_sha256": "0d29ba3755ce438b9c9e777618b5f41cb1ef8f178aaa74f546bac3911f01fe99",
+    "permits": [
+     "import:importlib.util"
+    ],
+    "reason": "loads the pinned variant from its file with importlib.util for the rehearsal's in-process verdicts"
+   },
+   {
+    "file": "code/p309_guard.py",
+    "function": "_ProducerAdapter.__getattr__",
+    "ast_sha256": "beae3fc5a0132f7fe32ddf386f6952720ad70ad29d4883ea0758ab6e1e46b4d0",
+    "permits": [
+     "introspection"
+    ],
+    "reason": "the producer adapter forwards every attribute it does not override to the research guard (getattr with the requested name)"
+   },
+   {
+    "file": "code/p309_guard.py",
+    "function": "TestContext.__init__",
+    "ast_sha256": "777ad64d080cb1b6c60439b7fcd0a8020a75bd88a03f851395113703d1a6af1b",
+    "permits": [
+     "introspection"
+    ],
+    "reason": "sets the immutable context's repository with object.__setattr__ (the class forbids __setattr__)"
+   },
+   {
+    "file": "code/p309_guard.py",
+    "function": "_ProducerAdapter.__init__",
+    "ast_sha256": "e78ebfea16708c6f16902c463e8ae96fc8c27872debac928a7f4e5d735c79054",
+    "permits": [
+     "introspection"
+    ],
+    "reason": "sets the immutable adapter's fields with object.__setattr__"
+   },
+   {
+    "file": "code/p309_guard.py",
+    "function": "_Production.__init__",
+    "ast_sha256": "43a86aa4606a8511dc1847204595f77c3e3956031dad24a8f9610b6bcb51e598",
+    "permits": [
+     "introspection"
+    ],
+    "reason": "copies the guard's module-level production constants (globals()) into the immutable production context"
+   },
+   {
+    "file": "tests/test_p309_exactly_once.py",
+    "function": "stage_flows",
+    "ast_sha256": "baeda306fc89c779905dc93ce03c5340d77044c4d5670481ce3a093f41a5ed1f",
+    "permits": [
+     "introspection"
+    ],
+    "reason": "S13 compares the module table (sys.modules) before and after the Stage-1b isolated load"
+   },
+   {
+    "file": "verify/srk_verify_indep_scoped.py",
+    "function": "TestContext.__init__",
+    "ast_sha256": "2afbf307f49119f37622a13d3655f1bc782dcbdea77c8e0cf24660ef1864563b",
+    "permits": [
+     "introspection"
+    ],
+    "reason": "the verifier author's immutable TestContext sets its root with object.__setattr__"
    }
   ],
-  "git_forbidden_options_note": "global options before the verb are allowlisted (git_global_options_*; anything else, e.g. -c, --git-dir, --work-tree, --exec-path, --namespace, is a finding); after the verb the listed options (program execution, output files, templates, prefixes, remotes) are findings"
+  "git_forbidden_options_note": "global options before the verb are allowlisted (git_global_options_*; anything else, e.g. -c, --git-dir, --work-tree, --exec-path, --namespace, is a finding); after the verb the listed options (program execution, output files, templates, prefixes, remotes) are findings",
+  "git_verb_options": {
+   "cat-file": [
+    "-e"
+   ],
+   "checkout": [
+    "--detach",
+    "-q"
+   ],
+   "commit": [
+    "--allow-empty",
+    "--quiet",
+    "-m",
+    "-q"
+   ],
+   "commit-tree": [
+    "-F",
+    "-m",
+    "-p"
+   ],
+   "config": [
+    "--list",
+    "--show-scope",
+    "--name-only"
+   ],
+   "diff": [
+    "--name-only"
+   ],
+   "diff-tree": [
+    "--name-only",
+    "--no-commit-id",
+    "-r",
+    "--diff-filter="
+   ],
+   "fetch": [],
+   "for-each-ref": [
+    "--format="
+   ],
+   "hash-object": [
+    "--stdin",
+    "-w"
+   ],
+   "init": [
+    "--quiet",
+    "-q"
+   ],
+   "log": [
+    "--all",
+    "--diff-filter=",
+    "--format=",
+    "-1"
+   ],
+   "ls-files": [
+    "--exclude-standard",
+    "--others"
+   ],
+   "ls-remote": [],
+   "ls-tree": [
+    "--name-only",
+    "-r"
+   ],
+   "merge-base": [
+    "--is-ancestor"
+   ],
+   "push": [
+    "--dry-run",
+    "--porcelain"
+   ],
+   "read-tree": [
+    "--end-of-options"
+   ],
+   "remote": [],
+   "reset": [
+    "--hard",
+    "-q"
+   ],
+   "rev-list": [
+    "--all",
+    "--ancestry-path",
+    "--not",
+    "--parents",
+    "-n",
+    "--reverse"
+   ],
+   "rev-parse": [
+    "--abbrev-ref",
+    "--git-common-dir",
+    "--git-dir",
+    "--git-path",
+    "--path-format=",
+    "--quiet",
+    "--show-toplevel",
+    "--verify",
+    "-q"
+   ],
+   "rm": [
+    "--cached",
+    "--quiet"
+   ],
+   "show": [],
+   "sparse-checkout": [
+    "--no-cone"
+   ],
+   "status": [
+    "--ignored",
+    "--porcelain",
+    "--untracked-files="
+   ],
+   "symbolic-ref": [
+    "-q"
+   ],
+   "update-index": [
+    "--add",
+    "--cacheinfo",
+    "--force-remove"
+   ],
+   "update-ref": [
+    "-d"
+   ],
+   "var": [],
+   "write-tree": [],
+   "archive": [
+    "--end-of-options"
+   ],
+   "add": []
+  },
+  "git_verb_options_rule": "R4F2-C1(e): a literal option after the verb must be on that verb's list (an entry ending in '=' allows its prefix); a verb absent from the map takes no option; the lists are exactly the options the genuine tree uses (plus --end-of-options for the archive mirror and the scope listing of check_host_git)",
+  "env_keys": [
+   "GIT_INDEX_FILE"
+  ],
+  "env_rule": "R4F2-C1(d): outside a reviewed runner, env / env_extra of a process or runner call is None, a fixed module-level environment, dict(<fixed>) or a dict literal (optionally **<fixed>) whose literal keys are in env_keys, or a local bound only to such values; os.environ mutation is a finding"
  },
  "t7_exemptions_rule": "R4 follow-up F1(c): a test file listed here (module AST sha256, the exempted QC12 T7 rules, a reason) is exempt from exactly those rules; any change to the file's AST voids the exemption; entries are added only by review, and code/p309_scan_pins.py refreshes the hashes of listed entries before the freeze only",
  "t7_exemptions": [
@@ -834,8 +1084,232 @@
     "FORBIDDEN_NAME",
     "PRODUCTION_REFERENCE"
    ],
-   "ast_sha256": "66206f0f530d97e2c6e70a5a5c2f277e76e18441239f618f2e218996f88eb0b0",
+   "ast_sha256": "f80674272b14ae8dc3d6c2c3bd0bb920083df1f3234e69689712170288a81e4e",
    "reason": "the runtime backstop controls (R4F F1(a)) must call the two sites, the execute-context assertion and the mode switch; every site call gets a SANDBOX context on a scratch sandbox with the TEST names; the production guard context and marker NAME appear only inside SANDBOX-kind shape controls, which are refused (CONTEXT) before any site check"
+  },
+  {
+   "file": "code/p309_postexec.py",
+   "rules": [
+    "FORBIDDEN_NAME"
+   ],
+   "ast_sha256": "0f871dd2c669685b82e13ea7f3072834287bfe83bdba6d1c2920c05c33b6f6bd",
+   "reason": "R4F2-C1(h), replacing the former blanket T7 exemption: the post-execution tool must name production_context and reverify_production (it re-verifies the sealed production record); it is read-only and creates no ref"
+  },
+  {
+   "file": "code/p309_env.py",
+   "rules": [
+    "MODULE_ATTRIBUTE_STORE"
+   ],
+   "ast_sha256": "b02c22e45055ba63f1c27461ebfd7c9080830c1cd9719476ba3b074251a74954",
+   "reason": "points the research guard's two ledger paths (q309_guard.EXEC_LEDGER / EXPOSURE_LEDGER) at this namespace's ledgers, so that no formal run writes a research file"
+  },
+  {
+   "file": "code/p309_scan.py",
+   "rules": [
+    "MODULE_ATTRIBUTE_STORE"
+   ],
+   "ast_sha256": "f9c53ce0b6d4e400051783b5441c080912353edfef31b0ad5327d59b2546a6f8",
+   "reason": "points the research scanner at the scanned root (q309_guard.NS) before calling it"
+  },
+  {
+   "file": "code/checkpoint_push_p309.py",
+   "rules": [
+    "MODULE_ATTRIBUTE_STORE"
+   ],
+   "ast_sha256": "9d1cf93f27cf7200d055bb5ca9d93ae777483c92558f375434583f1bc7e32673",
+   "reason": "the research-namespace scan in its `python -c` child points the research scanner at the research root (q309_guard.NS)"
+  },
+  {
+   "file": "tests/test_p309_exactly_once.py",
+   "rules": [
+    "MODULE_ATTRIBUTE_STORE"
+   ],
+   "ast_sha256": "1d1edc1dc663228a04484db369ee7c34fdea0599176d8daa5ed37ea401d7042b",
+   "reason": "F-flow stub: replaces the driver's persist_emergency by a raising stub and restores it, to prove CONSUMED_UNRECORDED when both evidence channels fail; the stub is not a site and moves no ref"
+  },
+  {
+   "file": "tests/test_verify_scoped.py",
+   "rules": [
+    "MODULE_ATTRIBUTE_STORE"
+   ],
+   "ast_sha256": "1398968829daf35fd0d52efc5faaee4dbc7f2f271c022c257417cdcd71b81f0c",
+   "reason": "the verifier author's tests: a tripwire on V.prepare (installed and restored), V.CTX for the shared test context, and N13's fault injection on V._run_git (restored); the variant moves no ref"
+  },
+  {
+   "file": "verify/run_verify_all_scoped.py",
+   "rules": [
+    "MODULE_ATTRIBUTE_STORE"
+   ],
+   "ast_sha256": "5ede1f0f961e49901f41b5563809233753e749e0a3fc0d3dd28f831130e934b3",
+   "reason": "the verifier author's batch runner installs and later restores a tripwire on V.prepare around the unit tests"
   }
- ]
+ ],
+ "import_policy": {
+  "rule": "R4F2-C1(a): every module imported by a file under code/, tests/, verify/ or start_state/ (or inside one of their `python -c` strings) is on that directory's list; a forbidden module is allowed only inside a reviewed function with the permit 'import:<module>', or at module level by a module_level_exemptions entry bound to the file's AST sha256; relative imports are findings",
+  "forbidden": [
+   "ctypes",
+   "cffi",
+   "runpy",
+   "pickle",
+   "marshal",
+   "shelve",
+   "code",
+   "codeop",
+   "inspect",
+   "gc",
+   "multiprocessing",
+   "concurrent",
+   "pty",
+   "builtins",
+   "importlib.machinery",
+   "importlib.util",
+   "importlib.abc"
+  ],
+  "allowed": {
+   "code": [
+    "__future__",
+    "argparse",
+    "ast",
+    "datetime",
+    "fractions",
+    "hashlib",
+    "importlib",
+    "json",
+    "os",
+    "p309_driver",
+    "p309_env",
+    "p309_guard",
+    "p309_rehearse",
+    "p309_scan",
+    "pathlib",
+    "platform",
+    "q309_guard",
+    "random",
+    "re",
+    "resource",
+    "shutil",
+    "signal",
+    "socket",
+    "srk_adapter",
+    "srk_certify",
+    "srk_gate",
+    "srk_kernel",
+    "stat",
+    "subprocess",
+    "sys",
+    "tempfile",
+    "time",
+    "types"
+   ],
+   "tests": [
+    "__future__",
+    "ast",
+    "c2_d5_forecast",
+    "copy",
+    "datetime",
+    "fractions",
+    "glob",
+    "hashlib",
+    "importlib",
+    "json",
+    "math",
+    "os",
+    "p309_driver",
+    "p309_env",
+    "p309_guard",
+    "p309_postexec",
+    "p309_rehearse",
+    "p309_scan",
+    "p309_static_check",
+    "pathlib",
+    "platform",
+    "random",
+    "re",
+    "resource",
+    "scoped_sandbox",
+    "shutil",
+    "signal",
+    "srk_certify",
+    "srk_gate",
+    "srk_kernel",
+    "srk_verify_indep_scoped",
+    "subprocess",
+    "sys",
+    "tct_rule",
+    "tempfile",
+    "test_p309_exactly_once",
+    "types",
+    "unittest"
+   ],
+   "verify": [
+    "argparse",
+    "copy",
+    "datetime",
+    "fractions",
+    "functools",
+    "glob",
+    "hashlib",
+    "json",
+    "math",
+    "os",
+    "p309_env",
+    "platform",
+    "re",
+    "scoped_sandbox",
+    "shutil",
+    "socket",
+    "srk_verify_indep_scoped",
+    "subprocess",
+    "sys",
+    "test_verify_scoped",
+    "time",
+    "types",
+    "unittest",
+    "uuid"
+   ],
+   "start_state": [
+    "hashlib",
+    "json",
+    "subprocess",
+    "sys"
+   ]
+  },
+  "module_level_exemptions": [
+   {
+    "file": "verify/srk_verify_indep_scoped.py",
+    "module": "multiprocessing",
+    "ast_sha256": "9c72beccda731fe6ad1af6486c10cf5edfba37905ccf3a1c5346f2d534fdb3b6",
+    "reason": "the verifier author's variant: a worker pool for batch verification; the workers run functions of this scanned file; no program is started"
+   },
+   {
+    "file": "verify/run_verify_all_scoped.py",
+    "module": "multiprocessing",
+    "ast_sha256": "5ede1f0f961e49901f41b5563809233753e749e0a3fc0d3dd28f831130e934b3",
+    "reason": "the verifier author's batch runner: a worker pool over the variant's own functions; no program is started"
+   }
+  ]
+ },
+ "backstop_pins": [
+  {
+   "file": "code/p309_driver.py",
+   "name": "_assert_execute_context",
+   "ast_sha256": "c8a2fb51264e7f7b993adb2091fd7cbcf7cad6a9d65df09203206f76152b1d33"
+  },
+  {
+   "file": "code/p309_driver.py",
+   "name": "_site_backstop",
+   "ast_sha256": "80d206ad68780bed1991679f3a5b544bc2956d641c32d718a7d9d6d9fd476815"
+  },
+  {
+   "file": "code/p309_driver.py",
+   "name": "_require_own_run_nonce",
+   "ast_sha256": "23f3021dd77a3005f18fa03aa35f4399dd7876f345cda11122024b3a79cc81de"
+  },
+  {
+   "file": "code/p309_driver.py",
+   "name": "_SITE_CODES",
+   "ast_sha256": "696a61027780f58966def2dbff4c393ddcb160a32ad934ffd45c91b9b3741592"
+  }
+ ],
+ "backstop_pins_rule": "R4F2-C1(g): the runtime backstop (the three functions and the _SITE_CODES statement) is pinned by AST sha256 like the two sites, with the hashes R4 follow-up 2 recorded; QC12 T8 is an equality check against them; code/p309_scan_pins.py never refreshes them; any change is a new delta and is reported to the owner with the D5 record"
 }

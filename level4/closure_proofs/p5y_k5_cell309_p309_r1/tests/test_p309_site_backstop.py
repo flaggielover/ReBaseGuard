@@ -127,20 +127,21 @@ def run() -> dict:
       and set(D._SITE_CODES.values()) == {"arm", "pending"} and len(D._SITE_CODES) == 2)
 
     # shape: refused before any site check (formerly the D5 R-controls), on the assertion itself
-    good = types.SimpleNamespace(kind="SANDBOX", repo=ctx.repo, guard_ctx=ctx.guard_ctx, marker_ref=G.TEST_MARKER,
-                                 pending_ref=G.TEST_PENDING_REF)
+    fields = {"kind": "SANDBOX", "repo": ctx.repo, "guard_ctx": ctx.guard_ctx, "marker_ref": G.TEST_MARKER,
+              "pending_ref": G.TEST_PENDING_REF}
+    good = types.SimpleNamespace(**fields)
     A = D._assert_execute_context
     t("B11a_outside_execute_mode_refused", refusal(A, "preflight", good) == "NOT_EXECUTE_MODE")
     t("B11b_no_mode_refused", refusal(A, None, good) == "NOT_EXECUTE_MODE")
     t("B11c_production_kind_with_test_names_refused",
-      refusal(A, "execute", types.SimpleNamespace(**{**vars(good), "kind": "PRODUCTION"})) == "CONTEXT")
+      refusal(A, "execute", types.SimpleNamespace(**{**fields, "kind": "PRODUCTION"})) == "CONTEXT")
     t("B11d_sandbox_kind_on_this_repository_refused",
-      refusal(A, "execute", types.SimpleNamespace(**{**vars(good), "repo": D.REPO})) == "CONTEXT")
+      refusal(A, "execute", types.SimpleNamespace(**{**fields, "repo": D.REPO})) == "CONTEXT")
     t("B11e_sandbox_kind_with_production_guard_refused",
-      refusal(A, "execute", types.SimpleNamespace(**{**vars(good), "guard_ctx": G.PRODUCTION})) == "CONTEXT")
+      refusal(A, "execute", types.SimpleNamespace(**{**fields, "guard_ctx": G.PRODUCTION})) == "CONTEXT")
     t("B11f_sandbox_kind_with_production_marker_name_refused",
-      refusal(A, "execute", types.SimpleNamespace(**{**vars(good), "marker_ref": G.PRODUCTION.marker_ref})) == "CONTEXT")
-    t("B11g_unknown_kind_refused", refusal(A, "execute", types.SimpleNamespace(**{**vars(good), "kind": "OTHER"})) ==
+      refusal(A, "execute", types.SimpleNamespace(**{**fields, "marker_ref": G.PRODUCTION.marker_ref})) == "CONTEXT")
+    t("B11g_unknown_kind_refused", refusal(A, "execute", types.SimpleNamespace(**{**fields, "kind": "OTHER"})) ==
       "CONTEXT")
     t("B11h_good_shape_reaches_the_caller_check", refusal(A, "seal-only", good) == "NOT_A_SITE")
 

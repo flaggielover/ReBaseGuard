@@ -112,6 +112,16 @@ DISCLOSED_LIABILITIES = [
     "validate-grant reads the target's pinned cells.json entry after the qualification review: the same class as the "
     "proposal tool's C4 read, compared and not displayed, one exposure row per run (delta-3 review G3(b))",
     "third delta result-chasing component LOW (delta-3 review)",
+    "R4 follow-up 2 was FREEZE_BLOCKED with D5_EXCEPTION_LIMITED_TO_RATIFIED_SITES: NO (F3: 28 of 54 new static-only "
+    "mutants passed schema 4 and T1-T8, three of which neutralize the backstop in-process); resolved before the "
+    "freeze by the fourth delta (A37-A42: closed-world allowlists for imports, introspection, module stores, "
+    "environments and per-verb git options; bytes tokens and chr()/join folding; the backstop pinned by AST hash; "
+    "validate-grant runs execute's read-only pre-marker checks; execute's git ignores host system/global config, "
+    "with a repository-config allowlist and no hooks); R4's mutants are controls",
+    "the host git dependency found in the fourth delta: before A40, execute's git read the host's global "
+    "configuration (on the development host commit.gpgSign with an ssh signing program, which the post-marker "
+    "seal's commit-tree would have run); removed (A40), toward a conclusive outcome and against a host-dependent "
+    "failure after the marker",
     "E6's 'dry run' label clause is met by dating, not by label: every 'qualification:' execution-ledger line dated "
     "before the freeze record is development (the pre-freeze dry runs); a departure from E6's letter (delta-3 G5; "
     "formal erratum FE-11)",
@@ -125,6 +135,8 @@ REVIEWS = {
     "delta2_incident_independence": (NS + "reviews/REVIEW_DELTA2_INCIDENT_P309.md", "## Conditions"),
     "prefreeze_r4_followup_2": (NS + "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_2_P309.md", "## Conditions"),
     "delta3_incident_independence": (NS + "reviews/REVIEW_DELTA3_INCIDENT_P309.md", "## Conditions"),
+    "prefreeze_r4_followup_3": (NS + "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_3_P309.md", "## Conditions"),
+    "delta4_incident_independence": (NS + "reviews/REVIEW_DELTA4_INCIDENT_P309.md", "## Conditions"),
 }
 
 
@@ -245,15 +257,20 @@ def build() -> dict:
                                                "runtime, issued_utc not in the future, an authority that is not the "
                                                "proposal's placeholder text (A34), committer identity (A21)",
                         "grant_validation": "validate-grant on the uncommitted candidate before the grant commit "
-                                            "(A34) checks the candidate's content and the chain below it: execute's "
-                                            "shared grant-content checks, the chain walk, the guard's field parser "
-                                            "and checks 2, 3, 5-9, a clean tree and an attached branch; only execute "
-                                            "checks the guard's check 4 (the grant commit itself), the interpreter "
-                                            "flags, the branch and not-evaluated checks, the result paths, the input "
-                                            "bindings, the governance state, the consumer-cover agreement and the "
-                                            "historical control; a PASS does not guarantee admission; a grant commit "
-                                            "that execute refuses is terminal without a new owner decision "
-                                            "(delta-3 G4)",
+                                            "(A34, A39) checks the candidate's content and the chain below it "
+                                            "(execute's shared grant-content checks, the chain walk, the guard's "
+                                            "field parser and checks 2, 3, 5-9) and runs execute's read-only "
+                                            "pre-marker checks under execute's conditions: interpreter flags, host "
+                                            "git configuration, branch, not-evaluated, result paths, clean tree, "
+                                            "and in production the input bindings and the governance state; only "
+                                            "execute checks the guard's check 4 (the grant commit itself), the "
+                                            "consumer-cover agreement and the historical control; a PASS does not "
+                                            "guarantee admission; a grant commit that execute refuses is terminal "
+                                            "without a new owner decision (delta-3 G4, R4F2-C2)",
+                        "host_git": "execute's git ignores the host's system and global configuration and commits "
+                                    "with a fixed identity; before any git call that could start a program, it "
+                                    "refuses unless the repository's own configuration holds only allowlisted keys "
+                                    "(local or worktree scope) and no git hook is present; git >= 2.32 (A40)",
                         "site_backstop": "at each exactly-once site, before its ref mutation: arm only in execute "
                                          "mode, with the guard's pre-marker grant checks passing and this process's "
                                          "run nonce; pending only with a marker whose commit carries the grant (and "

@@ -1,22 +1,22 @@
 {
  "all_pass": true,
- "allowance_config_sha256": "e27f2ec2f08166638971288708ea9a2e15e8ab077a39588a84b49886ba434956",
- "controls": 101,
+ "allowance_config_sha256": "cc3e9cdc6e30c4ae450f98801a388883b69372f1d79adc3baab79b1994701945",
+ "controls": 155,
  "results": {
   "C01_additional_marker_site": {
-   "detail": "{'REF_MUTATION_UNLISTED', 'MARKER_MUTATION'}",
+   "detail": "{'MARKER_MUTATION', 'REF_MUTATION_UNLISTED'}",
    "pass": true
   },
   "C02_additional_pending_site": {
-   "detail": "{'REF_MUTATION_UNLISTED', 'MARKER_MUTATION'}",
+   "detail": "{'MARKER_MUTATION', 'REF_MUTATION_UNLISTED'}",
    "pass": true
   },
   "C03_duplicate_named_site": {
-   "detail": "{'REF_MUTATION_UNLISTED', 'MARKER_MUTATION'}",
+   "detail": "{'MARKER_MUTATION', 'REF_MUTATION_UNLISTED'}",
    "pass": true
   },
   "C04_identical_site_in_another_file": {
-   "detail": "{'REF_MUTATION_UNLISTED', 'MARKER_MUTATION'}",
+   "detail": "{'MARKER_MUTATION', 'REF_MUTATION_UNLISTED'}",
    "pass": true
   },
   "C05_unlisted_ref_mutation_non_production": {
@@ -100,27 +100,27 @@
    "pass": true
   },
   "C11_getattr_constructed": {
-   "detail": "{'REF_MUTATION_UNLISTED'}",
+   "detail": "{'REF_MUTATION_UNLISTED', 'INTROSPECTION'}",
    "pass": true
   },
   "C12_alias_through_tuple": {
-   "detail": "{'REF_MUTATION_UNLISTED', 'MARKER_MUTATION'}",
+   "detail": "{'MARKER_MUTATION', 'REF_MUTATION_UNLISTED'}",
    "pass": true
   },
   "C13_alias_through_return": {
-   "detail": "{'REF_MUTATION_UNLISTED', 'MARKER_MUTATION'}",
+   "detail": "{'MARKER_MUTATION', 'REF_MUTATION_UNLISTED'}",
    "pass": true
   },
   "C14_alias_through_parameter": {
-   "detail": "{'REF_MUTATION_UNLISTED', 'MARKER_MUTATION'}",
+   "detail": "{'MARKER_MUTATION', 'REF_MUTATION_UNLISTED'}",
    "pass": true
   },
   "C15_alias_through_fstring": {
-   "detail": "{'REF_MUTATION_UNLISTED', 'MARKER_MUTATION'}",
+   "detail": "{'MARKER_MUTATION', 'REF_MUTATION_UNLISTED'}",
    "pass": true
   },
   "C16_production_token_outside_definitions": {
-   "detail": "{'MARKER_TOKEN', 'CELL_LITERAL'}",
+   "detail": "{'CELL_LITERAL', 'MARKER_TOKEN'}",
    "pass": true
   },
   "C17_grant_path_alias_write": {
@@ -132,7 +132,7 @@
    "pass": true
   },
   "C19_site_without_execute_assertion": {
-   "detail": "({'REF_MUTATION_UNLISTED', 'MARKER_MUTATION'}, {'_arm_marker': {'starts_with_assert': False, 'referrers': ['run_execute'], 'ok': False}, '_persist_pending': {'starts_with_assert': True, 'referrers': ['after_marker', 'run_seal_only'], 'ok': True}})",
+   "detail": "({'MARKER_MUTATION', 'REF_MUTATION_UNLISTED'}, {'_arm_marker': {'starts_with_assert': False, 'referrers': ['run_execute'], 'ok': False}, '_persist_pending': {'starts_with_assert': True, 'referrers': ['after_marker', 'run_seal_only'], 'ok': True}})",
    "pass": true
   },
   "C20_site_called_from_a_qualification_mode": {
@@ -160,31 +160,31 @@
    "pass": true
   },
   "C25b_backstop_arm_grant_check_removed": {
-   "detail": "{'assert_ends_with_site_check_and_backstop': True, 'arm_requires_execute_grant_and_nonce': False, 'pending_requires_marker_and_grant': True, 'nonce_names_this_process': True, 'site_codes_is_the_only_module_reference': True, 'site_backstop_referenced_only_by_assert': True}",
+   "detail": "{'pinned__assert_execute_context': True, 'pinned__site_backstop': False, 'pinned__require_own_run_nonce': True, 'pinned__SITE_CODES': True, 'assert_ends_with_site_check_and_backstop': True, 'arm_requires_execute_grant_and_nonce': False, 'pending_requires_marker_and_grant': True, 'nonce_names_this_pr",
    "pass": true
   },
   "C25b_backstop_arm_nonce_removed": {
-   "detail": "{'assert_ends_with_site_check_and_backstop': True, 'arm_requires_execute_grant_and_nonce': False, 'pending_requires_marker_and_grant': True, 'nonce_names_this_process': True, 'site_codes_is_the_only_module_reference': True, 'site_backstop_referenced_only_by_assert': True}",
+   "detail": "{'pinned__assert_execute_context': True, 'pinned__site_backstop': False, 'pinned__require_own_run_nonce': True, 'pinned__SITE_CODES': True, 'assert_ends_with_site_check_and_backstop': True, 'arm_requires_execute_grant_and_nonce': False, 'pending_requires_marker_and_grant': True, 'nonce_names_this_pr",
    "pass": true
   },
   "C25b_backstop_backstop_call_removed": {
-   "detail": "{'assert_ends_with_site_check_and_backstop': False, 'arm_requires_execute_grant_and_nonce': True, 'pending_requires_marker_and_grant': True, 'nonce_names_this_process': True, 'site_codes_is_the_only_module_reference': True, 'site_backstop_referenced_only_by_assert': False}",
+   "detail": "{'pinned__assert_execute_context': False, 'pinned__site_backstop': True, 'pinned__require_own_run_nonce': True, 'pinned__SITE_CODES': True, 'assert_ends_with_site_check_and_backstop': False, 'arm_requires_execute_grant_and_nonce': True, 'pending_requires_marker_and_grant': True, 'nonce_names_this_pr",
    "pass": true
   },
   "C25b_backstop_nonce_pid_check_removed": {
-   "detail": "{'assert_ends_with_site_check_and_backstop': True, 'arm_requires_execute_grant_and_nonce': True, 'pending_requires_marker_and_grant': True, 'nonce_names_this_process': False, 'site_codes_is_the_only_module_reference': True, 'site_backstop_referenced_only_by_assert': True}",
+   "detail": "{'pinned__assert_execute_context': True, 'pinned__site_backstop': True, 'pinned__require_own_run_nonce': False, 'pinned__SITE_CODES': True, 'assert_ends_with_site_check_and_backstop': True, 'arm_requires_execute_grant_and_nonce': True, 'pending_requires_marker_and_grant': True, 'nonce_names_this_pro",
    "pass": true
   },
   "C25b_backstop_pending_marker_check_removed": {
-   "detail": "{'assert_ends_with_site_check_and_backstop': True, 'arm_requires_execute_grant_and_nonce': True, 'pending_requires_marker_and_grant': False, 'nonce_names_this_process': True, 'site_codes_is_the_only_module_reference': True, 'site_backstop_referenced_only_by_assert': True}",
+   "detail": "{'pinned__assert_execute_context': True, 'pinned__site_backstop': False, 'pinned__require_own_run_nonce': True, 'pinned__SITE_CODES': True, 'assert_ends_with_site_check_and_backstop': True, 'arm_requires_execute_grant_and_nonce': True, 'pending_requires_marker_and_grant': False, 'nonce_names_this_pr",
    "pass": true
   },
   "C25b_backstop_site_check_removed": {
-   "detail": "{'assert_ends_with_site_check_and_backstop': False, 'arm_requires_execute_grant_and_nonce': True, 'pending_requires_marker_and_grant': True, 'nonce_names_this_process': True, 'site_codes_is_the_only_module_reference': True, 'site_backstop_referenced_only_by_assert': True}",
+   "detail": "{'pinned__assert_execute_context': False, 'pinned__site_backstop': True, 'pinned__require_own_run_nonce': True, 'pinned__SITE_CODES': True, 'assert_ends_with_site_check_and_backstop': False, 'arm_requires_execute_grant_and_nonce': True, 'pending_requires_marker_and_grant': True, 'nonce_names_this_pr",
    "pass": true
   },
   "C25b_backstop_third_site_code": {
-   "detail": "{'assert_ends_with_site_check_and_backstop': True, 'arm_requires_execute_grant_and_nonce': True, 'pending_requires_marker_and_grant': True, 'nonce_names_this_process': True, 'site_codes_is_the_only_module_reference': False, 'site_backstop_referenced_only_by_assert': True}",
+   "detail": "{'pinned__assert_execute_context': True, 'pinned__site_backstop': True, 'pinned__require_own_run_nonce': True, 'pinned__SITE_CODES': False, 'assert_ends_with_site_check_and_backstop': True, 'arm_requires_execute_grant_and_nonce': True, 'pending_requires_marker_and_grant': True, 'nonce_names_this_pro",
    "pass": true
   },
   "C26_test_path_driver_attribute_store": {
@@ -272,11 +272,11 @@
    "pass": true
   },
   "C28_t7_exemption_is_hash_bound": {
-   "detail": "['[MODULE_ATTRIBUTE_STORE] tests/test_p309_guard.py:396: G._git_bytes', '[MODULE_ATTRIBUTE_STORE] tests/test_p309_guard.py:400: G._git_bytes', '[FORBIDDEN_NAME] tests/test_p309_guard.py:436: reference to _MODE', '[PRODUCTION_REFERENCE] tests/test_p309_guard.py:365: G.PRODUCTION']",
+   "detail": "['[MODULE_ATTRIBUTE_STORE] tests/test_p309_guard.py:396: G._git_bytes', '[MODULE_ATTRIBUTE_STORE] tests/test_p309_guard.py:409: S.Q', '[MODULE_ATTRIBUTE_STORE] tests/test_p309_guard.py:400: G._git_bytes', '[MODULE_ATTRIBUTE_STORE] tests/test_p309_guard.py:417: S.Q', '[FORBIDDEN_NAME] tests/test_p309",
    "pass": true
   },
   "C29_dynamic_import": {
-   "detail": "{'DYNAMIC_IMPORT_UNRESOLVED', 'DYNAMIC_IMPORT'}",
+   "detail": "{'DYNAMIC_IMPORT_UNRESOLVED', 'DYNAMIC_IMPORT', 'INTROSPECTION'}",
    "pass": true
   },
   "C29_executable_file": {
@@ -288,7 +288,7 @@
    "pass": true
   },
   "C29_listed_runner_changed": {
-   "detail": "{'RUNNER_UNREVIEWED', 'GIT_CALL_OPAQUE'}",
+   "detail": "{'ENV_UNLISTED', 'GIT_CALL_OPAQUE', 'RUNNER_UNREVIEWED'}",
    "pass": true
   },
   "C29_non_python_file": {
@@ -324,7 +324,23 @@
    "pass": true
   },
   "C29_unregistered_wrapper": {
-   "detail": "{'RUNNER_UNREGISTERED', 'GIT_CALL_OPAQUE'}",
+   "detail": "{'GIT_CALL_OPAQUE', 'RUNNER_UNREGISTERED'}",
+   "pass": true
+  },
+  "K01_composite_introspection_site_call": {
+   "detail": "(['GITDIR_WRITE', 'IMPORT_UNLISTED'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "K02_getmembers_only": {
+   "detail": "(['IMPORT_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "K03_guard_alias_store_only": {
+   "detail": "([], ['T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "K04_same_in_a_qc_tool": {
+   "detail": "(['GITDIR_WRITE', 'IMPORT_UNLISTED'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
    "pass": true
   },
   "M01_file_named_q309_guard_in_FNS": {
@@ -364,7 +380,7 @@
    "pass": true
   },
   "M10_getattr_runner": {
-   "detail": "(['PROCESS_ALIAS'], ['T5_formal_scan'])",
+   "detail": "(['INTROSPECTION', 'PROCESS_ALIAS'], ['T5_formal_scan'])",
    "pass": true
   },
   "M11_os_execvp": {
@@ -380,11 +396,91 @@
    "pass": true
   },
   "M14_test_site_via_module_dict": {
-   "detail": "([], ['T7_no_production_execution_from_tests_or_qualification'])",
+   "detail": "(['INTROSPECTION'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
    "pass": true
   },
   "M15_shell_script_invoked": {
    "detail": "(['NONPY_FILE', 'PROCESS_UNLISTED', 'RUNNER_UNREGISTERED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N01_ctypes_system_bytes_marker": {
+   "detail": "(['IMPORT_UNLISTED', 'MARKER_ALIAS', 'MARKER_TOKEN'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N02_runpy_txt_script": {
+   "detail": "(['IMPORT_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N03_sourcefileloader_json": {
+   "detail": "(['IMPORT_UNLISTED', 'PROCESS_ALIAS'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N04_env_config_fsmonitor_read_verb": {
+   "detail": "(['ENV_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N05_env_external_diff_read_verb": {
+   "detail": "(['ENV_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N06_env_ssh_command_ls_remote": {
+   "detail": "(['ENV_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N07_builtins_dunder_exec": {
+   "detail": "(['INTROSPECTION'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N08_builtins_module_dict_exec": {
+   "detail": "(['IMPORT_UNLISTED', 'INTROSPECTION'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N09_pickle_loads": {
+   "detail": "(['IMPORT_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N10_code_interpreter": {
+   "detail": "(['IMPORT_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N11_ref_file_chr_built": {
+   "detail": "(['GITDIR_WRITE', 'REF_FILE_WRITE'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N12_git_grep_open_files_in_pager": {
+   "detail": "(['GIT_OPTION_FORBIDDEN'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N13_git_grep_O_pager": {
+   "detail": "(['GIT_OPTION_FORBIDDEN'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N14_test_module_alias_store": {
+   "detail": "([], ['T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "N15_test_guard_store_via_driver": {
+   "detail": "([], ['T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "N16_test_guard_store_alias": {
+   "detail": "([], ['T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "N17_multiprocessing_target": {
+   "detail": "(['IMPORT_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N18_pager_env": {
+   "detail": "(['ENV_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N19_git_config_global_env": {
+   "detail": "(['ENV_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "N20_raw_git_env": {
+   "detail": "(['ENV_UNLISTED'], ['T5_formal_scan'])",
    "pass": true
   },
   "P0_genuine_tree_scan_pass": {
@@ -396,11 +492,131 @@
    "pass": true
   },
   "P0c_exactly_two_sanctioned_sites": {
-   "detail": "[{'file': 'code/p309_driver.py', 'line': 1165, 'function': '_persist_pending', 'kind': 'EXACTLY_ONCE_SITE', 'verbs': ['update-ref']}, {'file': 'code/p309_driver.py', 'line': 1155, 'function': '_arm_marker', 'kind': 'EXACTLY_ONCE_SITE', 'verbs': ['update-ref']}]",
+   "detail": "[{'file': 'code/p309_driver.py', 'line': 1221, 'function': '_persist_pending', 'kind': 'EXACTLY_ONCE_SITE', 'verbs': ['update-ref']}, {'file': 'code/p309_driver.py', 'line': 1211, 'function': '_arm_marker', 'kind': 'EXACTLY_ONCE_SITE', 'verbs': ['update-ref']}]",
    "pass": true
   },
   "P0d_formal_control_fires_every_process_kind": {
-   "detail": "[{'file': 'tests/planted_control_p309.py', 'fired': []}, {'file': 'tests/planted_control_p309_formal.py', 'fired': ['DYNAMIC_EXEC', 'DYNAMIC_IMPORT', 'GITDIR_WRITE', 'GIT_CALL_OPAQUE', 'GIT_OPTION_FORBIDDEN', 'GIT_WRITE_UNLISTED', 'GRANT_WRITE', 'MARKER_ALIAS', 'MARKER_MUTATION', 'MARKER_REBIND', 'M",
+   "detail": "[{'file': 'tests/planted_control_p309.py', 'fired': []}, {'file': 'tests/planted_control_p309_formal.py', 'fired': ['DYNAMIC_EXEC', 'DYNAMIC_IMPORT', 'ENV_UNLISTED', 'GITDIR_WRITE', 'GIT_CALL_OPAQUE', 'GIT_OPTION_FORBIDDEN', 'GIT_WRITE_UNLISTED', 'GRANT_WRITE', 'IMPORT_UNLISTED', 'INTROSPECTION', 'M",
+   "pass": true
+  },
+  "R01_driver_git": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R02_guard__git": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R03_guard__git_bytes": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R04_guard__git_ok": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R05_make_freeze_manifest_git": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R06_make_freeze_params_git": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R07_make_proposed_authorization_git": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R08_checkpoint_push_git": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "R09_qualify_git": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R10_self_audit_git": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R11_verify_start_state_git": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R12_qc11_sh": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "R13_guard_test_sh": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "R14_scoped_sandbox__git": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R15_variant__run_git_list": {
+   "detail": "(['IMPORT_UNLISTED', 'REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R16_variant__git_ok": {
+   "detail": "(['IMPORT_UNLISTED', 'REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R17_qualify_run_argv": {
+   "detail": "(['REF_MUTATION_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R18_qualify_qc_formal_param": {
+   "detail": "(['PROCESS_UNLISTED', 'RUNNER_UNREGISTERED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R19_qualify_research_test_param": {
+   "detail": "(['PROCESS_UNLISTED', 'RUNNER_UNREGISTERED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R20_qualify_qc_research_simple_param": {
+   "detail": "(['PROCESS_UNLISTED', 'RUNNER_UNREGISTERED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "R21_qc11_sh_env_config_read_verb": {
+   "detail": "(['ENV_UNLISTED'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "R22_guard_test_sh_env_config_read_verb": {
+   "detail": "(['ENV_UNLISTED'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "R23_qualify_run_env": {
+   "detail": "(['ENV_UNLISTED'], ['T5_formal_scan'])",
+   "pass": true
+  },
+  "T7a_import_module_computed_name_getattr": {
+   "detail": "(['DYNAMIC_IMPORT_UNRESOLVED', 'INTROSPECTION'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "T7b_sys_modules_computed_name": {
+   "detail": "(['INTROSPECTION'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "T7c_driver_reached_via_postexec": {
+   "detail": "(['GITDIR_WRITE', 'INTROSPECTION'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "T7d_composite_in_postexec": {
+   "detail": "(['GITDIR_WRITE'], ['T5_formal_scan', 'T7_no_production_execution_from_tests_or_qualification'])",
+   "pass": true
+  },
+  "T8a_arm_backstop_neutered_same_shape": {
+   "detail": "([], ['T8_runtime_backstop_at_the_sites'])",
+   "pass": true
+  },
+  "T8b_nonce_neutered_same_shape": {
+   "detail": "([], ['T8_runtime_backstop_at_the_sites'])",
+   "pass": true
+  },
+  "T8c_nonce_neutered_mismatch": {
+   "detail": "([], ['T8_runtime_backstop_at_the_sites'])",
    "pass": true
   },
   "Z_no_marker_namespace_ref_anywhere": {
@@ -408,8 +624,8 @@
    "pass": true
   }
  },
- "scan_sha256": "055464e9b7a484a2ad781ee839978c0c1354d26ce95c32ee8e830eafa41d4c74",
- "static_check_sha256": "c920a2c850a1a2cd7d06a0aebd0b5bb8e241bf68bc5578b0c983a6c45b46ec41",
- "test_sha256": "5e45db388b73d1634f7ad25ff63048082d0376d31de2d542ca25a21d3c6e197f",
- "utc": "2026-09-30T06:52:39Z"
+ "scan_sha256": "aba944832c716cb9681bf52611ea220c36094ccebe71c954cafb042b640f0d65",
+ "static_check_sha256": "45d6e38bf0f8a6f1147ead9e51724b0462d546eec8b2191feeec487b85cda28b",
+ "test_sha256": "30f02b2e02722e0d66b38be8fb52518a751c82b0d1623c9bd4905b819c1bb51f",
+ "utc": "2026-09-30T08:56:25Z"
 }

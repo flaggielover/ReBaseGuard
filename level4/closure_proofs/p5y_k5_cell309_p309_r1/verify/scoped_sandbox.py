@@ -124,7 +124,8 @@ class Sandbox(object):
             # build a commit object from the tree of parents[0] plus the files; HEAD is not moved
             idx = os.path.join(self.root, '.git', 'fc2_tmp_index')
             env = dict(_ENV, GIT_INDEX_FILE=idx)
-            subprocess.run(['git', '-C', self.root, 'read-tree', parents[0]], check=True, env=env, capture_output=True)
+            subprocess.run(['git', '-C', self.root, 'read-tree', '--end-of-options', parents[0]], check=True, env=env,
+                           capture_output=True)
             self._stage(files, env)
             tree = subprocess.run(['git', '-C', self.root, 'write-tree'], check=True, env=env,
                                   capture_output=True).stdout.decode().strip()
@@ -155,7 +156,7 @@ class Sandbox(object):
     def update_ref(self, ref, target):
         self._assert_sandbox()
         self._assert_ref(ref)
-        _git(self.root, 'update-ref', ref, target)
+        _git(self.root, 'update-ref', '--end-of-options', ref, target)
 
     def delete_ref(self, ref):
         self._assert_sandbox()
@@ -167,8 +168,8 @@ class Sandbox(object):
         self._assert_sandbox()
         cur = _git(self.root, 'symbolic-ref', 'HEAD').strip()
         self._assert_ref(cur)
-        _git(self.root, 'update-ref', cur, commit)
-        _git(self.root, 'read-tree', commit)
+        _git(self.root, 'update-ref', '--end-of-options', cur, commit)
+        _git(self.root, 'read-tree', '--end-of-options', commit)
 
     def teardown(self):
         root = os.path.realpath(self.root)

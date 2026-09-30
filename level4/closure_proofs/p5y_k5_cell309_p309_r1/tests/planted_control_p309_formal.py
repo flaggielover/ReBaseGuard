@@ -4,7 +4,8 @@ Each statement below is a deliberate violation that the scan must detect.  The m
 below ever executes.  Research kinds: CELL_LITERAL, BAND_LITERAL, FORBIDDEN_IMPORT, TARGET_PATH.  Formal kinds:
 MARKER_MUTATION, MARKER_ALIAS, MARKER_REBIND, GRANT_WRITE; owner D5 kinds: REF_MUTATION_UNLISTED, MARKER_TOKEN,
 REF_FILE_WRITE; R4 follow-up F1(b) process kinds: PROCESS_FORBIDDEN, PROCESS_SHELL, PROCESS_UNLISTED, PROCESS_ALIAS,
-RUNNER_ALIAS, DYNAMIC_IMPORT, DYNAMIC_EXEC, GIT_OPTION_FORBIDDEN, GIT_CALL_OPAQUE, GIT_WRITE_UNLISTED, GITDIR_WRITE.
+RUNNER_ALIAS, DYNAMIC_IMPORT, DYNAMIC_EXEC, GIT_OPTION_FORBIDDEN, GIT_CALL_OPAQUE, GIT_WRITE_UNLISTED, GITDIR_WRITE; R4 follow-up 2 closed-world kinds:
+IMPORT_UNLISTED, INTROSPECTION, ENV_UNLISTED.
 """
 raise SystemExit("planted control: never run")
 
@@ -37,3 +38,6 @@ G._git(Path("."), "-c", "alias.x=update-ref", "x")                              
 G._git(Path("."), *sys.argv)                                                             # GIT_CALL_OPAQUE
 G._git(Path("."), "hash-object", "-w", "planted")                                        # GIT_WRITE_UNLISTED
 (Path(".git") / "planted").write_text("x")                                               # GITDIR_WRITE
+import runpy  # noqa: E402                                                                # IMPORT_UNLISTED
+vars(G)                                                                                  # INTROSPECTION
+subprocess.run(["git", "status"], env={"GIT_CONFIG_COUNT": "1"})                        # ENV_UNLISTED

@@ -39,7 +39,7 @@ SCRATCH = Path("/tmp/claude-0/-home-user-ReBaseGuard/ea54e9f6-e828-5447-be15-220
 
 def copy_tree() -> Path:
     root = Path(tempfile.mkdtemp(prefix="d5ctl", dir=SCRATCH))
-    for d in ("code", "config", "tests", "verify"):
+    for d in ("code", "config", "tests", "verify", "start_state"):
         shutil.copytree(FNS / d, root / d, ignore=shutil.ignore_patterns("__pycache__"))
     return root
 
@@ -186,9 +186,9 @@ def run() -> dict:
       static["T4_exactly_once_sites"]["detail"])
 
     # (6) mutation reachable without a valid owner grant
-    scan, static = planted({DRIVER: ("    check_flags()\n    check_branch(ctx)\n    check_not_evaluated(ctx)\n",
-                                     f"    check_flags()\n    {ARM}(ctx, 'x')\n    check_branch(ctx)\n"
-                                     "    check_not_evaluated(ctx)\n")})
+    scan, static = planted({DRIVER: ("    check_branch(ctx)\n    check_not_evaluated(ctx)\n    check_result_paths(ctx)\n",
+                                     f"    {ARM}(ctx, 'x')\n    check_branch(ctx)\n    check_not_evaluated(ctx)\n"
+                                     "    check_result_paths(ctx)\n")})
     t("C21_marker_before_check_grant", static_fail(static, "T6_mutation_dominated_by_the_grant"),
       static["T6_mutation_dominated_by_the_grant"]["detail"])
     scan, static = planted({DRIVER: ("    admission = premarker_admission(ctx, g, m, cell)      # R4 B3: includes grant "
@@ -341,10 +341,148 @@ def run() -> dict:
              "RUNNER_UNREVIEWED")):
         scan, _ = planted(edits)
         t(f"C29_{nm}", want in kinds(scan), kinds(scan))
+    R.update(r4_round3())
     own = subprocess.run(["git", "-C", str(D.REPO), "for-each-ref", "--format=%(refname)"], capture_output=True,
                          text=True).stdout.split()
     t("Z_no_marker_namespace_ref_anywhere", not [r for r in own if r.startswith((G._PROD_NAMESPACE, G._TEST_NAMESPACE))],
       [r for r in own if r.startswith((G._PROD_NAMESPACE, G._TEST_NAMESPACE))])
+    return R
+
+
+def r4_round3() -> dict:
+    """R4 follow-up 2 (reviews/R4_FOLLOWUP2_MUTANTS.py.txt): every mutant of R4F2-C1(i) must be rejected by the formal
+    scan or the static checks -- N01-N16 and N19-N20 (schema), K01-K04 (composite test paths), T7a-T7d and T8a-T8c
+    (T7 / T8), R01-R23 (every registered runner, and the runners' environment parameters).  Names are assembled from
+    pieces here; the planted sources are only parsed."""
+    R = {}
+    RH, PX = "code/p309_rehearse.py", "code/p309_postexec.py"
+    litb = "b" + repr(_NS + _LEAF)
+    mode_nm, prem = MODE, "premarker" + "_check"
+    N = {
+        "N01_ctypes_system_bytes_marker": {RH: ("+", "def _n01():\n    import ctypes\n    ctypes.CDLL(None).system(" +
+                                               litb[:-1] + " HEAD'.replace(b'', b''))\n")},
+        "N02_runpy_txt_script": {"code/notes_helper.txt": ("new", "import subprocess\nsubprocess.run(['git', 'update-ref', "
+                                                                  "'refs/heads/x', 'HEAD'])\n"),
+                                 RH: ("+", "def _n02():\n    import runpy\n    runpy.run_path(str(Path(__file__).parent / "
+                                           "'notes_helper.txt'))\n")},
+        "N03_sourcefileloader_json": {"code/params_extra.json": ("new", "import subprocess\n"),
+                                      RH: ("+", "def _n03():\n    from importlib.machinery import SourceFileLoader\n"
+                                                "    SourceFileLoader('pe', str(Path(__file__).parent / 'params_extra.json'))"
+                                                ".load_module()\n")},
+        "N04_env_config_fsmonitor_read_verb": {DRIVER: ("+", "def _n04(repo):\n    git('status', repo=repo, env_extra="
+                                                             "{'GIT_CONFIG_COUNT': '1', 'GIT_CONFIG_KEY_0': 'core.fsmonitor', "
+                                                             "'GIT_CONFIG_VALUE_0': 'sh evil.sh'})\n")},
+        "N05_env_external_diff_read_verb": {DRIVER: ("+", "def _n05(repo):\n    git('diff', 'HEAD', repo=repo, env_extra="
+                                                          "{'GIT_EXTERNAL_DIFF': 'sh evil.sh'})\n")},
+        "N06_env_ssh_command_ls_remote": {DRIVER: ("+", "def _n06(repo):\n    git('ls-remote', 'ssh://h/r', repo=repo, "
+                                                        "env_extra={'GIT_SSH_COMMAND': 'sh evil.sh'})\n")},
+        "N07_builtins_dunder_exec": {RH: ("+", "def _n07(parts):\n    __builtins__['ex' + 'ec'](''.join(parts))\n")},
+        "N08_builtins_module_dict_exec": {RH: ("+", "def _n08(parts):\n    import builtins\n    builtins.__dict__['ex' + "
+                                                    "'ec'](''.join(parts))\n")},
+        "N09_pickle_loads": {RH: ("+", "def _n09(blob):\n    import pickle\n    return pickle.loads(blob)\n")},
+        "N10_code_interpreter": {RH: ("+", "def _n10(src):\n    import code\n    code.InteractiveInterpreter()."
+                                           "runsource(src)\n")},
+        "N11_ref_file_chr_built": {DRIVER: ("+", "def _n11():\n    p = os.path.join(str(REPO), chr(46) + 'git', chr(114) + "
+                                                 "'efs', 'heads', 'x')\n    with open(p, 'w') as fh:\n        fh.write('0' * 40)\n")},
+        "N12_git_grep_open_files_in_pager": {DRIVER: ("+", "def _n12(repo):\n    git('grep', '--open-files-in-pager=sh "
+                                                           "evil.sh', 'x', repo=repo)\n")},
+        "N13_git_grep_O_pager": {DRIVER: ("+", "def _n13(repo):\n    git('grep', '-Osh evil.sh', 'x', repo=repo)\n")},
+        "N14_test_module_alias_store": {"tests/test_n14.py": ("new", "import p309_driver as D\n\n\ndef evil():\n    mod = D\n"
+                                                                     f"    mod.{AEC} = lambda c: None\n")},
+        "N15_test_guard_store_via_driver": {"tests/test_n15.py": ("new", "import p309_driver as D\n\n\ndef evil():\n"
+                                                                         f"    D.G.{prem} = lambda c: (True, '')\n")},
+        "N16_test_guard_store_alias": {"tests/test_n16.py": ("new", "import p309_guard as GG\n\n\ndef evil():\n    h = GG\n"
+                                                                    f"    h.{prem} = lambda c: (True, '')\n")},
+        "N17_multiprocessing_target": {RH: ("+", "def _n17():\n    import multiprocessing\n    multiprocessing.Process("
+                                                 "target=_n17b).start()\n\n\ndef _n17b():\n    pass\n")},
+        "N18_pager_env": {DRIVER: ("+", "def _n18(repo):\n    git('log', '-1', repo=repo, env_extra={'GIT_PAGER': "
+                                        "'sh evil.sh', 'PAGER': 'sh evil.sh'})\n")},
+        "N19_git_config_global_env": {DRIVER: ("+", "def _n19(repo):\n    git('status', repo=repo, env_extra="
+                                                    "{'GIT_CONFIG_GLOBAL': '/tmp/evil.cfg'})\n")},
+        "N20_raw_git_env": {RH: ("+", "def _n20(repo):\n    import subprocess, os\n    subprocess.run(['git', '-C', "
+                                      "str(repo), 'status'], env={**os.environ, 'GIT_CONFIG_COUNT': '1', "
+                                      "'GIT_CONFIG_KEY_0': 'core.fsmonitor', 'GIT_CONFIG_VALUE_0': 'sh evil.sh'})\n")},
+    }
+    composite = ("import inspect\nimport os\nimport types\nimport p309_driver as D\nimport p309_guard as GG\n\n\n"
+                 "def evil(head):\n    dm = dict(inspect.getmembers(D))\n    gm = dict(inspect.getmembers(GG))\n"
+                 f"    h = GG\n    h.{prem} = lambda c: (True, '')\n"
+                 "    dm['_MO' + 'DE']['mode'] = 'execute'\n"
+                 "    ctx = types.SimpleNamespace(kind='PRODUC' + 'TION', guard_ctx=gm['PRODUC' + 'TION'],\n"
+                 "                                marker_ref=gm['PRODUC' + 'TION'].marker_ref,\n"
+                 "                                pending_ref=gm['PRODUC' + 'TION'].pending_ref, repo=dm['RE' + 'PO'])\n"
+                 "    p = dm['RE' + 'PO'] / (chr(46) + 'git') / ('p309-run-' + 'nonce.json')\n"
+                 "    p.write_text('{\"pid\": %d, \"token\": \"x\"}' % os.getpid())\n"
+                 "    dm['_arm' + '_marker'](ctx, head)\n")
+    K = {
+        "K01_composite_introspection_site_call": {"tests/test_k01.py": ("new", composite)},
+        "K02_getmembers_only": {"tests/test_k02.py": ("new", "import inspect\nimport p309_driver as D\n\n\ndef f():\n"
+                                                             "    return dict(inspect.getmembers(D))['_arm' + '_marker']\n")},
+        "K03_guard_alias_store_only": {"tests/test_k03.py": ("new", "import p309_guard as GG\n\n\ndef f():\n    h = GG\n"
+                                                                    f"    h.{prem} = lambda c: (True, '')\n")},
+        "K04_same_in_a_qc_tool": {"code/p309_k04.py": ("new", composite)},
+    }
+    via_postexec = ("import os\nimport p309_postexec as P\n\n\ndef evil(head):\n    d = P.D\n"
+                    f"    d.G.{prem} = lambda c: (True, '')\n"
+                    "    getattr(d, '_MO' + 'DE')['mode'] = 'execute'\n"
+                    "    ctx = getattr(d, 'production' + '_context')()\n"
+                    "    (d.REPO / (chr(46) + 'git') / ('p309-run-' + 'nonce.json')).write_text('{\"pid\": %d}' % "
+                    "os.getpid())\n    getattr(d, '_arm' + '_marker')(ctx, head)\n")
+    arm_old = (f'        if {mode_nm}.get("mode") != "execute":\n'
+               '            raise Refusal("NOT_EXECUTE_MODE", "backstop: the marker is armed only in execute mode")\n'
+               '        ok, why = G.premarker_check(ctx.guard_ctx)\n        if not ok:\n')
+    arm_new = (f'        if {mode_nm}.get("mode") != "execute" and not ctx:\n'
+               '            raise Refusal("NOT_EXECUTE_MODE", "backstop: the marker is armed only in execute mode")\n'
+               '        ok, why = G.premarker_check(ctx.guard_ctx)\n        if not ok and not ctx:\n')
+    T = {
+        "T8a_arm_backstop_neutered_same_shape": {DRIVER: (arm_old, arm_new)},
+        "T8b_nonce_neutered_same_shape": {DRIVER: (
+            '        raise Refusal("RUN_NONCE", "backstop: no run nonce (the site is reached only inside run_execute)") '
+            'from None\n', '        rec = {"pid": os.getpid()}\n')},
+        "T8c_nonce_neutered_mismatch": {DRIVER: (
+            '        raise Refusal("RUN_NONCE", "backstop: the run nonce does not name this process")\n', '        pass\n')},
+        "T7a_import_module_computed_name_getattr": {"tests/test_t7a.py": ("new",
+            "import importlib\n\n\ndef f():\n    m = importlib.import_module('p309_' + 'driver')\n"
+            "    return getattr(m, '_arm' + '_marker')\n")},
+        "T7b_sys_modules_computed_name": {"tests/test_t7b.py": ("new", "import sys\n\n\ndef f():\n"
+                                                                       "    return sys.modules['p309_' + 'driver'].__dict__\n")},
+        "T7c_driver_reached_via_postexec": {"tests/test_t7c.py": ("new", via_postexec)},
+        "T7d_composite_in_postexec": {PX: ("+", f"def _t7d(head):\n    D.G.{prem} = lambda c: (True, '')\n"
+                                                f"    D.{mode_nm}['mode'] = 'execute'\n"
+                                                "    (D.REPO / '.git' / 'p309-run-nonce.json').write_text('{}')\n"
+                                                f"    D.{ARM}(D.{PCTX}(), head)\n")},
+    }
+    ur = "'update-ref', 'refs/heads/r4probe', 'HEAD'"
+    cfg = "{'GIT_CONFIG_COUNT': '1', 'GIT_CONFIG_KEY_0': 'core.fsmonitor', 'GIT_CONFIG_VALUE_0': 'sh evil.sh'}"
+    Rp = {
+        "R01_driver_git": (DRIVER, f"def _r4probe(repo):\n    git({ur}, repo=repo)\n"),
+        "R02_guard__git": ("code/p309_guard.py", f"def _r4probe(repo):\n    _git(repo, {ur})\n"),
+        "R03_guard__git_bytes": ("code/p309_guard.py", f"def _r4probe(repo):\n    _git_bytes(repo, {ur})\n"),
+        "R04_guard__git_ok": ("code/p309_guard.py", f"def _r4probe(repo):\n    _git_ok(repo, {ur})\n"),
+        "R05_make_freeze_manifest_git": ("code/make_freeze_manifest.py", f"def _r4probe():\n    git({ur})\n"),
+        "R06_make_freeze_params_git": ("code/make_freeze_params.py", f"def _r4probe():\n    git({ur})\n"),
+        "R07_make_proposed_authorization_git": ("code/make_proposed_authorization.py", f"def _r4probe():\n    git({ur})\n"),
+        "R08_checkpoint_push_git": ("code/checkpoint_push_p309.py", f"def _r4probe():\n    git({ur})\n"),
+        "R09_qualify_git": ("code/p309_qualify.py", f"def _r4probe():\n    git({ur})\n"),
+        "R10_self_audit_git": ("code/p309_self_audit.py", f"def _r4probe():\n    git({ur})\n"),
+        "R11_verify_start_state_git": ("start_state/verify_start_state.py", f"def _r4probe():\n    git({ur})\n"),
+        "R12_qc11_sh": ("tests/test_p309_exactly_once.py", f"def _r4probe(repo):\n    sh(repo, {ur})\n"),
+        "R13_guard_test_sh": ("tests/test_p309_guard.py", f"def _r4probe(repo):\n    sh(repo, {ur})\n"),
+        "R14_scoped_sandbox__git": ("verify/scoped_sandbox.py", f"def _r4probe(cwd):\n    _git(cwd, {ur})\n"),
+        "R15_variant__run_git_list": ("verify/srk_verify_indep_scoped.py", f"def _r4probe(repo):\n    _run_git(repo, [{ur}])\n"),
+        "R16_variant__git_ok": ("verify/srk_verify_indep_scoped.py", f"def _r4probe(repo):\n    _git_ok(repo, 'x', {ur})\n"),
+        "R17_qualify_run_argv": ("code/p309_qualify.py", f"def _r4probe(cwd):\n    run(['git', {ur}], cwd)\n"),
+        "R18_qualify_qc_formal_param": ("code/p309_qualify.py", "def _r4probe(name):\n    qc_formal(name)\n"),
+        "R19_qualify_research_test_param": ("code/p309_qualify.py", "def _r4probe(m, rel):\n    research_test(m, rel)\n"),
+        "R20_qualify_qc_research_simple_param": ("code/p309_qualify.py", "def _r4probe(m, rel):\n    qc_research_simple(m, rel)\n"),
+        "R21_qc11_sh_env_config_read_verb": ("tests/test_p309_exactly_once.py", f"def _r4probe(repo):\n    sh(repo, 'status', env={cfg})\n"),
+        "R22_guard_test_sh_env_config_read_verb": ("tests/test_p309_guard.py", f"def _r4probe(repo):\n    sh(repo, 'status', env={cfg})\n"),
+        "R23_qualify_run_env": ("code/p309_qualify.py", f"def _r4probe(cwd):\n    run(['git', 'status'], cwd, env={cfg})\n"),
+    }
+    groups = list(N.items()) + list(K.items()) + list(T.items()) + [(k, {rel: ("+", "\n" + src)}) for k, (rel, src) in Rp.items()]
+    for name, edits in groups:
+        scan, static = planted(edits)
+        failed = sorted(k for k, v in static.items() if not v["pass"])
+        R[name] = {"pass": scan["verdict"] == "FAIL" or bool(failed), "detail": str((sorted(kinds(scan)), failed))[:300]}
     return R
 
 
