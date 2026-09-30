@@ -289,3 +289,126 @@ The R4 item says "re-reviewed (R4 follow-up)". That must be true at the freeze, 
 **Executions.** Read-only `git` and `grep`; one `code_skeleton.py json`; ledger summaries in scratch.
 
 **Writes.** This file only. No git write.
+
+---
+
+## Follow-up 1 (closure of E2, E3, E4, E8, E9)
+
+E_CONDITIONS_CLOSED
+
+**Basis.**
+* The committed bytes at 70927a08, diffed against 7c6fa27b, the state this review assessed. HEAD is 166df145, which
+  adds only a checkpoint-push ledger line.
+* The brief is `reviews/BRIEF_DELTA2_FOLLOWUP_1.md`.
+
+* **E2: closed.**
+  * `run_jobs` records TERMINATED_JOB_LIMIT only in two cases:
+    * SIGXCPU with `cpu ≥ job_limit_s − SIGXCPU_TOLERANCE_S`, where the tolerance is 0.05 s, documented where it is
+      defined;
+    * SIGKILL with `cpu ≥ job_limit_s`.
+  * Every other signalled end is JOB_EXCEPTION.
+  * QC11 S17: a stub child sends itself SIGXCPU at negligible CPU under a 60 s limit. The test expects JOB_EXCEPTION,
+    and expects the stage to raise.
+  * S06 still expects TERMINATED_JOB_LIMIT for a genuine CPU burn under a 1 s limit, so the real path exercises the
+    tolerance.
+  * The tolerance is the one E2 allowed, and it cannot turn a low-CPU fault into a budget stop.
+  * R4-C2's confirmation remains that review's task.
+* **E3: closed.**
+  * The FE-9 addendum in `governance/ERRATA_FORMAL_P309.md` does three things:
+    * records the pre-freeze in-memory parse, with no value displayed;
+    * names it as a departure from C4's letter;
+    * states the filter rule for any further structural check.
+  * `post_grant_derivations.cell_interval` no longer says "read after the freeze". It now names:
+    * execute's own derivation;
+    * the proposal tool's ledgered read after the qualification review;
+    * the FE-9 departure.
+  * QC11 has no remaining reference to `cells.json`.
+  * The other `cells.json` readers in `code/` already come under C4:
+    * the manifest pin, which hashes the file only;
+    * the driver's reads at execute time;
+    * the proposal tool's read after the qualification review.
+* **E4: closed, by the first option.**
+  * I03 composes manufactured Stage-1b rung records on a synthetic interval, following the S12 pattern. It validates
+    them through the independent block-supply check, with kappa taken from the pinned certifier.
+  * No test in `tests/` refers to `cells.json`, to cover cell 297, or to the cell-307 campaign.
+  * The exposure ledger has the retrospective row for `RLR307_DECOY_STAGE1_297.json`. Its content class is "decoy
+    cover-cell-297 RLR record, latent-proxy class".
+  * The row also discloses that the coordinator displayed the file's key structure, rung statuses, degrees, one rung
+    timing and the cell status. That goes beyond E4's second option ("never displayed").
+  * My classification of that display:
+    * it concerns a decoy record, not a 305–309 value;
+    * it came after A5's value was set, and this delta leaves A5 unchanged, so it does not affect the temporal and
+      parametric verdict;
+    * it remains a latent proxy under E5, so it must not be quoted again or juxtaposed with any tail-cell quantity.
+* **E8: closed, with one standing check.**
+  * In the allowance diff from 7c6fa27b to 70927a08, only the `authority` line changed. It now cites
+    `governance/OWNER_D5_RATIFICATION_P309_VERBATIM.md`.
+  * The `ref_mutation_functions` hashes are byte-identical to those at 7c6fa27b and 4ac99bc1.
+  * `p309_scan_pins.py --list`, run read-only, shows:
+    * every listed mover as current;
+    * `_arm_marker` and `_persist_pending` as SITE;
+    * nothing unlisted.
+  * **Standing check.** R4-C2 has not reported: there is no `REVIEW_PREFREEZE_R4_FOLLOWUP_P309.md` at HEAD.
+    * The freeze must carry exactly the hashes that review saw.
+    * A change to a listed function after that review reopens E8.
+    * `make_freeze_params.py` refuses to build while that review is missing, which enforces the order. It does not
+      compare hashes, so R4-C2 or the coordinator must confirm the equality at the freeze.
+* **E9: closed.**
+  * `DISCLOSED_LIABILITIES` gains five entries matching §4 (a)–(e):
+    * (a) gives every direction as §4 writes it, and adds the E2 precision under A22;
+    * (b) records FE-9 as a departure from C4. It also names the 305–309 entries parsed, which is accurate, and gives
+      no value;
+    * (c) records the I03 read, its removal and the retrospective row;
+    * (d) records the latent-proxy status and the bracketing (297 below the band, 316 above it, by the cover's
+      ordering; A15 and D6 unchanged), which also meets E5's disclosure;
+    * (e) reads "second delta result-chasing component LOW".
+  * Entry (c) omits the display detail, but the exposure ledger records it, so this is not a gap.
+  * In the grant, `incident_review_conditions_verbatim` concatenates three sections:
+    * C, from `## 10. Conditions`;
+    * D, from `## 7. Conditions`;
+    * E, from this file's `## Conditions`.
+  * I applied the frozen extractor's logic (`section()`: from the heading to the next `\n---`) to this file. It returns
+    E1–E10 complete, and takes nothing from §5 or from this follow-up.
+  * §4's requirement that the R4 item's "re-reviewed" wording be true at the freeze is carried structurally. The frozen
+    `reviews` block records the R4 follow-up review's verdict lines and conditions, and the build refuses to run
+    without that review.
+
+**E10: are there changes beyond the conditions?** None changes a rule, a parameter or a binding.
+* The 0.05 s tolerance is the tolerance E2 allowed.
+* The E6/E7 changes implement E6 and E7, or add disclosure fields:
+  * the single `QUALIFICATION RUN START` line;
+  * QC13's `single_qualification_run_since_the_freeze_record`;
+  * the `host_rerun_commit` field;
+  * `horizon_notice` and the new `not_after_utc` text;
+  * the new grant field `prefreeze_review_conditions_verbatim`, which carries R4's conditions and R4-C2's.
+* The addendum to the qualification-review brief restates E2 and E4–E6 as checklist items.
+* No change raises a budget, loosens a guard or moves a decision point. There is no new delta under C2.
+
+**For the qualification review (E6, not in this closure).**
+* The runner has a `label` field, but no committed path sets it to "dry run". That part of E6 is moot, because the
+  runner refuses to start without a recorded freeze. Every run it starts after the freeze logs
+  `QUALIFICATION RUN START`, so any further invocation counts as an attempt and fails QC13.
+* The earlier lines labelled "qualification:" or "dry run" are told apart by their date, which is before the freeze
+  record, as the brief's addendum says.
+* QC13 anchors on the time of the most recent commit touching the freeze record (`git log`, newest first). The review
+  should confirm that exactly one commit touches the record. Otherwise a later commit to the record would move the
+  anchor past an earlier run.
+
+**Notes.**
+* This append changes the file's bytes, so the committed `REVIEW_DELTA2_INCIDENT_P309.sha256` no longer matches.
+  Re-recording it is the coordinator's task.
+* The working tree has two uncommitted lines in `ledger/ZERO_TARGET_LEDGER.jsonl`. They are not mine. From that file I
+  took only counts of label strings.
+
+**Firewall.**
+* I saw and reproduced no 305–309 value.
+* I ran no evaluation and no kernel run.
+* I opened no file of the cell-307 or cell-308 campaigns: I read the exposure row that names the cell-307 file, not
+  the file.
+* I made no git write, and I wrote only this file.
+* Ledger: `/tmp/claude-0/-home-user-ReBaseGuard/ea54e9f6-e828-5447-be15-220ef2c329fd/scratchpad/delta2fu1/FU1_LEDGER.jsonl`.
+  It records:
+  * the reads: the brief, the diffs from 7c6fa27b to 70927a08 of the changed files, and the `git grep` searches;
+  * the one read-only execution of `p309_scan_pins.py --list`;
+  * the extractor check;
+  * this write.
