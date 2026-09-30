@@ -1,10 +1,10 @@
-# P309 formal-campaign package (CANDIDATE rev. 2): qualification, exactly-once mechanics, reviews, adjudication
+# P309 formal-campaign package (CANDIDATE rev. 2b): qualification, exactly-once mechanics, reviews, adjudication
 
 **Status (2026-09-30).** CANDIDATE. It is not frozen, not authorized and not executed. Route class: FREEZE_READY
 (independent review R2). Rev. 2 settles independent package review R3's notes (`reviews/REVIEW_P309_PACKAGE_R3.md`).
 Freezing needs the owner's explicit authorization (P0-1; `P309_OWNER_DECISIONS.md`). The anatomy follows the accepted
 earlier formal-campaign pattern, as described in the sanitized `dossier/sources/READER_B_GOVERNANCE_REPORT.md` §3,
-adapted to P309. `P309_PROTOCOL.md` (rev. 2) governs wherever the two documents overlap.
+adapted to P309. `P309_PROTOCOL.md` (rev. 2b) governs wherever the two documents overlap.
 
 ## A. Frozen parameter specification (serialized as `protocol/P309_FREEZE.json` at a future, authorized freeze)
 
@@ -22,7 +22,7 @@ adapted to P309. `P309_PROTOCOL.md` (rev. 2) governs wherever the two documents 
 | RLR (Stage 1b) | the RLR307 Stage-1 rules verbatim (C1B_R2 pins), with the independent reconstruction. A CERTIFICATION_FAILED falls back to S_I1 values (protocol §3). An exception or reconstruction mismatch gives EXECUTION_INDETERMINATE |
 | pins | **All pins are listed in `P309_CANDIDATE_FREEZE_MANIFEST.json`, each with git blob AND sha256** (this table deliberately lists no prefixes, to avoid mixing notations). The freeze adds, pinned by the freeze commit: the grant-scoped guard and the grant-scoped verifier variant (protocol §7; its sha256 is `verifier_id`); the Stage-1 driver and its per-rung serializer; the interpreter and platform string of the execution host (QC10); the floor r2 record; the K1 record manifest |
 | exactly-once names | marker `refs/p5y-k5-cell309-p309-r1/target-consumed`; pending ref `refs/p5y-k5-cell309-p309-r1/pending-result`; emergency file `<gitdir>/p309-cell309-emergency-result.json`. Refuse if any prior marker namespace of 307/308/309 designs exists for 309 |
-| budgets | Stage 1a ≤ **48 CPU-h** total (target-free basis: about 10× the qualified real-kernel decoy cell of about 4.5 CPU-h), with a per-job limit of 12 CPU-h and rung-major job order. Stage 1b ≤ 21 600 s CPU (307 precedent). Workers ≤ 4. Accounting, stopping and host dependence follow protocol §2.5 and §3. Budget exhaustion is a fallback, not a failure |
+| budgets | Stage 1a start threshold **48 CPU-h** total (running jobs may finish, up to 12 CPU-h each; target-free basis: about 10× the qualified real-kernel decoy cell of about 4.5 CPU-h), with a per-job limit of 12 CPU-h and rung-major job order. Stage 1b ≤ 21 600 s CPU (307 precedent). Workers ≤ 4. Accounting, stopping and host dependence follow protocol §2.5 and §3. Budget exhaustion is a fallback, not a failure |
 
 ## B. Qualification suite (all non-target; frozen before any run; no new quantity for cells 305–309; the real band is never used. QC16's positive-path test uses a substituted test band and hull, or a synthetic geometry)
 
@@ -92,7 +92,7 @@ extends it. The verifier has an official mode (grant-scoped, for Stage 1a) and a
 * **Chain fields:** `freeze_commit`, `freeze_tree`, `qualification_commit`, `qualification_review_commit`,
   `input_manifest_path`, `input_manifest_sha256`, `driver_path`, `driver_sha256`, `evaluator`.
 * **Execution fields:** `executions_authorized` (1), `exactly_once` (names), `consumed_marker`, `outcome_table`.
-* **`disclosed_liabilities`:** overnight 01–03; 309R1-01, 309R1-02 and **309R1-03**; ERRATA **E-3** and
+* **`disclosed_liabilities`:** overnight 01–03; 309R1-01, 309R1-02, **309R1-03** and **309R1-04**; ERRATA **E-3** and
   **E-17(a)**; the ledgered reads.
 * **Review record fields:** `incident_review_conditions_verbatim`, `qualification_review_conditions_verbatim`,
   `qualification_review_notes_verbatim`, `issued_utc`, `granted_after`, `authority` (the owner instruction, verbatim

@@ -556,3 +556,94 @@ evaluates any drift in the band or its mirror.
   (metadata), and the class-level description of THEOREM_TCT lines 12 and 39 in the briefs (no values).
 * The only runs were FU-0 (read-only) and FU-1 (self-audit, no evaluation).
 * Nothing in the repository was written except this file. No git write.
+
+---
+
+## Follow-up 2 (2026-09-30): check of rev. 2b against the N13 residue and F2.1–F2.8
+
+### G0. Declaration (written 00:42Z, before any run beyond read-only checks)
+
+Reviewed state: HEAD `c391bc47`. It contains rev. 2b content (`36e672be`) and manifest rev. 2b (`d8016525`). My
+follow-up is preserved at `429305b6`. The same brief, firewall and rules apply. Earlier text is not rewritten; only
+line 2 is updated at the end.
+
+| id | what | kernel / geometry / drift | evaluates? |
+|---|---|---|---|
+| FU2-0 | Read-only checks: `git diff a2678cc7..HEAD`; reading the changed `protocol_prep/*` text and the new ledger lines; manifest rev. 2b pins recomputed as before (outside NS: blob by tree lookup only); generator copy against its recorded sha256 | none | no |
+| FU2-1 | `code/self_audit.py` through my RD3-1 wrapper, output to `scratchpad/r3/fu2/` | none | no |
+
+I do not open `C1B_R2_CODE_PINS.json` (it is outside NS). The claim about its file names stays a coordinator claim.
+
+**Executed as declared.**
+* **FU2-0 (read-only checks).**
+  * Since `a2678cc7`, no `impl/`, `code/`, `verify/`, `tests/`, `config/` or `theory/` file changed. `git status` was
+    clean apart from this file.
+  * Manifest rev. 2b (`repository_head` `36e672be`): 48 code pins and 7 data pins. **Every blob matches** at
+    `36e672be` and at HEAD, and the sha256 of every NS pin matches the committed bytes and the working tree.
+    * The three new pins are exactly `tests/planted_control_q309.py`, `registry/PHASE3_ROUTE_COMPARISON.md` and
+      `ERRATA.md`.
+    * Only the three edited package documents changed blob.
+    * No pin was dropped, and the data pins still carry only `path` and `git_blob`.
+  * The generator copy matches `MANIFEST_GENERATOR_SHA256.txt`.
+* **FU2-1 (self-audit at HEAD `c391bc47`).** A1–A10 all PASS, with 538 ledger lines and max drift 37/32. The A10
+  envelope output is byte-identical to the committed file. Outputs are in `scratchpad/r3/fu2/`.
+* I did not open `C1B_R2_CODE_PINS.json`. Nothing was written except this file, and there was no git write.
+
+### G1. Status of the N13 residue and F2.1–F2.8
+
+| item | status | evidence |
+|---|---|---|
+| N13 residue | **SETTLED** | New pins verified (FU2-0). `P309_FORMAL_PACKAGE.md:181-185`: the planted control, ERRATA and PHASE3 are listed in FC1. The claim that c1b_kernel is covered through the pinned `C1B_R2_CODE_PINS.json` is stated honestly as a "file names only" check by the coordinator. I cannot verify it under the firewall, so the formal freeze should verify those pins' content |
+| F2.1 host dependence | **SETTLED** | `P309_PROTOCOL.md:93-95` (the caveat, the recorded job list, validity unaffected), `:99-100` (§2.8 now conditional on the budget not binding) |
+| F2.2 budget mechanics | **SETTLED** (polish P1, P2 below) | `P309_PROTOCOL.md:82-95`: CPU accounting as user+sys over workers, verification included; job = (b_j, rung); rung-major fixed order; start threshold 48 CPU-h; per-job limit 12 CPU-h (terminate and discard); stopping never raises. Also `P309_FORMAL_PACKAGE.md:25`, QC11 `:41` (the mechanics are exercised in the sandbox). The design is coherent: rung-major order gives every sub-block its cheapest rung first, and discarding only ever removes certificates, so validity is unaffected |
+| F2.3 Stage-1b budget | **SETTLED** | `P309_PROTOCOL.md:112-114` (21 600 s CPU; not certified within budget → CERTIFICATION_FAILED → S_I1; the stop never raises) |
+| F2.4 review mode qualified | **SETTLED** | `P309_FORMAL_PACKAGE.md:46` (QC16: review mode in a sandbox with a test marker, test grant and test sealed result; admits only then, refuses otherwise) |
+| F2.5 band wording | **PARTLY SETTLED** (polish P3) | Fixed in `P309_FORMAL_PACKAGE.md:27`. Unchanged in the qualification checklist, `P309_REVIEW_BRIEFS.md:78` ("touches the target or the band, except the QC16 test substitution") |
+| F2.6 ledger timing | **SETTLED** (disclosure D1; polish P4) | `ledger/ZERO_TARGET_LEDGER.jsonl:537` is an append-only PROCESS_NOTE correction, and `:538` records the rev.-2b generator run |
+| F2.7 README | **SETTLED** | `protocol_prep/README.md:3-4` (no "settles every note" claim), `:9` (QC01–QC17, Q01–Q17), `:22-24` (data metadata only; code bytes hashed) |
+| F2.8 incident brief | **SETTLED** | `P309_REVIEW_BRIEFS.md:40-45` (task 3 names the §2.5 mapping, the 48 CPU-h budget with its mechanics, and the Stage-1b fallback, with the RLR-knockout context) |
+
+### G2. New issues
+
+* **D1 (disclosure; recommended before the owner decides; changes no rule).** The F2.6 correction line
+  (`ZERO_TARGET_LEDGER.jsonl:537`) reveals that the generator also ran in scratch on 2026-09-29 at about 23:14Z and
+  about 23:59Z.
+  * Both runs preceded R2's final FREEZE_READY commit `f026c80b` (2026-09-30 00:06:01Z). The 23:14Z run fell inside
+    R2's phase-B window. The charter prepares `protocol_prep/` "only if a route is independently reviewed as
+    FREEZE_READY" (`README.md:42`).
+  * The runs were metadata and hashes only, with no target risk. But the owner row still says "the manifest-generator
+    **run**" (`P309_OWNER_DECISIONS.md:24`), as does the incident brief (`P309_REVIEW_BRIEFS.md:35`), with no timing.
+  * State "runs, from 2026-09-29 ~23:14Z, i.e. before R2's final verdict" in both places, so that the owner's P0-2
+    acknowledgement and the incident-independence review cover the sequencing.
+* **D2 (polish).** The coordinator's file-name read of `C1B_R2_CODE_PINS.json` (outside NS) appears in no ledger
+  line. The rev.-2b ledger lines do not mention it, and `EXPOSURE_LEDGER.jsonl` is unchanged since `fae64157`, which
+  I checked by git metadata without opening it. Add a GOVERNANCE line if the campaign ledgers necessary reads outside
+  NS.
+
+**Optional polish (changes no rule; not needed before a freeze).**
+* **P1.** "Stage 1a ≤ 48 CPU-h total" (`P309_FORMAL_PACKAGE.md:25`; `P309_PROTOCOL.md:75`) is really a *start
+  threshold*. Jobs already running may finish past it, up to the 12 CPU-h per-job limit (worst case about 48 + 4 × 12
+  CPU-h). The mechanics at `P309_PROTOCOL.md:90-92` are explicit and govern, so only the label is loose.
+* **P2.** §2.2 (`P309_PROTOCOL.md:46`) could say "`run_block` with `ladder = (d,)`" to match the (b_j, rung) job
+  unit. The pinned `run_block` accepts a one-rung ladder (`impl/srk_certify.py:273`).
+* **P3.** Reword checklist item 16 (`P309_REVIEW_BRIEFS.md:78`) as "the real band is never used; QC16 uses a test
+  band".
+* **P4.** The correction line says the rev.-2 manifest was "at a2678cc7". It was committed at `2db92936`; `a2678cc7` is
+  its push record.
+* **P5.** The protocol_prep documents' headers still read "rev. 2" for the rev.-2b content.
+
+### G3. Follow-up 2 verdict
+
+**COMPLETE_WITH_NOTES** (line 2).
+* The N13 residue and F2.1–F2.4 and F2.6–F2.8 are SETTLED. F2.5 is settled except one checklist sentence (P3).
+* The rev.-2b budget mechanics and the Stage-1b budget mapping are coherent and add no rule inconsistency.
+* **Why not COMPLETE:** the only item I do not regard as optional is D1, a one-line disclosure fix in the owner row
+  and the incident brief. It concerns what the owner acknowledges under P0-2, not any rule.
+* **Once D1 is written, the remaining items (D2, P1–P5) are optional polish.** They change no rule, are not needed
+  before a freeze, and would **justify COMPLETE** on their own.
+* This classification authorizes nothing; a freeze still requires the owner (P0-1).
+
+**Follow-up 2 disclosures.**
+* I saw no 305–309 value. I met only file paths, blob ids and generator run times (metadata).
+* The only runs were FU2-0 (read-only) and FU2-1 (self-audit, no evaluation).
+* Nothing in the repository was written except this file. No git write.

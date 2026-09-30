@@ -32,8 +32,9 @@ is preserved verbatim. **REJECTED ⇒ STOP**, with no same-round repair.
   * the coordinator's audit and addendum.
 * **Tasks:**
   1. For each incident: overnight 01–03 and residues; 309R1-01, 309R1-02, 309R1-03; E-3; E-17(a) (unrecorded
-     pre-commit verifier self-test runs); and the manifest-generator run hashing two other campaigns' governance files
-     (R3 N13). Decide whether P309's design, parameters and route choice are temporally and parametrically independent
+     pre-commit verifier self-test runs); the manifest-generator runs hashing two other campaigns' governance files (from 2026-09-29 23:11Z, before R2's final
+     verdict; R3 N13/D1); and 309R1-04 (Phase-4 drafting in the uncommitted scratchpad from 2026-09-29 14:11Z, before
+     any FREEZE_READY). Decide whether P309's design, parameters and route choice are temporally and parametrically independent
      of the exposed information.
   2. Rate result-chasing (the reviewer decides; the coordinator's MEDIUM-HIGH rating for SRK is an input, not a
      bound).
@@ -75,7 +76,7 @@ is preserved verbatim. **REJECTED ⇒ STOP**, with no same-round repair.
   13. Budgets are declared: Stage 1a 48 CPU-h, Stage 1b 21 600 s, ≤ 4 workers.
   14. The quarantine is intact: self-audit A1–A10 and the verifier-probe envelope (QC15).
   15. Temporal order: freeze → qualification → review, with r5 unchanged and no r6 (QC13).
-  16. No qualification artifact touches the target or the band, except the QC16 test substitution.
+  16. No qualification artifact touches the target or the real band. QC16 uses only a substituted test band and hull, or a synthetic geometry.
   17. The outcome table and grant schema are for CLOSURE_ONLY, consistent with the owner's U3 decision.
 * **Verdict tokens:** `QUALIFICATION_ACCEPTED` (with conditions G… and notes E…) or `QUALIFICATION_REJECTED`.
 

@@ -1,4 +1,4 @@
-# P309: decisions reserved to the owner (rev. 2; none taken by the research campaign)
+# P309: decisions reserved to the owner (rev. 2b; none taken by the research campaign)
 
 The research campaign has established only that the route is **FREEZE_READY** (independent review R2, phases A–D).
 The candidate package was reviewed by independent package review R3 (see `reviews/`). Everything below is the owner's
@@ -21,7 +21,7 @@ Until then:
 | **U2** | Rule on U2, or confirm it is not triggered (P309 uses no P3-derived quantity) | Required before any Stage-1 freeze (R2) |
 | **U3** | CLOSURE_ONLY (the default), or a frozen floor extension naming P309, before Stage 1 | The outcome table and grant schema are written for CLOSURE_ONLY. An extension would require revising them before the freeze |
 | **Stage-1a failure mapping** | Accept protocol §2.5: non-CERTIFIED statuses, non-ACCEPT verdicts and exhaustion of the 48 CPU-h budget fall back to TC-T; **any exception gives EXECUTION_INDETERMINATE**. Or instead map exceptions to fallback | An exception after the marker consumes the target with no conclusion. A fallback spends the single evaluation without that SRK index. Either way, efficacy is at risk, never validity |
-| **Incidents** | Acknowledge every disclosed incident and liability: overnight 01–03; 309R1-01; 309R1-02; **309R1-03** (an unsanctioned in-band verifier probe, refused at parse time, nothing evaluated, liability NONE); ERRATA **E-3** (unverifiable ordering of the early real-kernel probe); ERRATA **E-17(a)** (unrecorded pre-commit verifier self-test runs); the manifest-generator run that hashed two other campaigns' governance files (R3 N13) | Assessment in `ledger/INCIDENT_309R1_0*.md`, `reviews/REVIEW_SRK_R2.md` and `ERRATA.md` |
+| **Incidents** | Acknowledge every disclosed incident and liability: overnight 01–03; 309R1-01; 309R1-02; **309R1-03** (an unsanctioned in-band verifier probe, refused at parse time, nothing evaluated, liability NONE); ERRATA **E-3** (unverifiable ordering of the early real-kernel probe); ERRATA **E-17(a)** (unrecorded pre-commit verifier self-test runs); the manifest-generator runs that hashed two other campaigns' governance files, from 2026-09-29 23:11Z, before R2's final verdict (R3 N13/D1); **309R1-04** (Phase-4 drafting in the uncommitted scratchpad from 2026-09-29 14:11Z, before any FREEZE_READY and before R1's verdict; no target information; liability LOW) | Assessment in `ledger/INCIDENT_309R1_0*.md`, `reviews/REVIEW_SRK_R2.md` and `ERRATA.md` |
 | **Efficacy** | Acknowledge that efficacy at 309 is unknown by design | Decoys stop at 33/32. If SRK does not certify at 309, the route falls back to TC-T. That is safe for validity, but spends the single evaluation |
 
 ## Required later, inside an authorized campaign

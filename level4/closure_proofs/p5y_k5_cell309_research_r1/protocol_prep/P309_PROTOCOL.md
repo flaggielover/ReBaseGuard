@@ -1,4 +1,4 @@
-# P309 formal campaign: prospective protocol (CANDIDATE rev. 2; NOT frozen, NOT authorized, NOT executable)
+# P309 formal campaign: prospective protocol (CANDIDATE rev. 2b; NOT frozen, NOT authorized, NOT executable)
 
 **Status (2026-09-30).** The route class is FREEZE_READY, by independent review R2 (`reviews/REVIEW_SRK_R2.md`,
 phases A–D). This file is a candidate protocol. Rev. 2 settles independent package review R3's notes N1–N4, N9, N10,
@@ -16,7 +16,7 @@ qualification review, and a separate grant.
 | id | decision |
 |---|---|
 | P0-1 | An explicit owner instruction authorizing a formal, exactly-once, **closure-only** campaign for cell 309 on route P309, including new in-band Stage-1 computation over the drift hull Ew |
-| P0-2 | The owner acknowledges the disclosed liabilities: overnight incidents 01–03 and their residues; research-campaign incidents 309R1-01, 309R1-02 and 309R1-03; the unverifiable ordering of the early real-kernel probe (ERRATA E-3); the unrecorded pre-commit verifier self-test runs (ERRATA E-17(a)); the ledgered necessary reads; the MEDIUM-HIGH motivation-provenance rating of SRK; and the MEDIUM rating of RLR, whose knockout is known |
+| P0-2 | The owner acknowledges the disclosed liabilities: overnight incidents 01–03 and their residues; research-campaign incidents 309R1-01, 309R1-02, 309R1-03 and 309R1-04; the unverifiable ordering of the early real-kernel probe (ERRATA E-3); the unrecorded pre-commit verifier self-test runs (ERRATA E-17(a)); the ledgered necessary reads; the MEDIUM-HIGH motivation-provenance rating of SRK; and the MEDIUM rating of RLR, whose knockout is known |
 | P0-3 | U3: either explicitly CLOSURE_ONLY (the default), or a floor extension naming P309, frozen and reviewed **before** any Stage 1 (C2 Condition 1; KG-U3). **The outcome table (§5) and the grant schema are written for CLOSURE_ONLY.** A U3 extension would require revising them before the freeze. With no decision: CLOSURE_ONLY |
 | P0-4 | Permission to create the campaign namespace, branch and exactly-once refs, and a statement of the execution host. Cell 308's campaign must be finished or run on another machine. Stage 1 is operator-only stdlib, so no U1 host is needed. QC10 determinism is re-run on the named host |
 
@@ -43,7 +43,7 @@ qualification review, and a separate grant.
 1. **Cell and hull.** C = [e0 − ρ, e0 + ρ], from the pinned `cells.json` after filtering to CUSUM. The weight block Ew
    and the check sub-blocks b₁..b₄ come from `srk_certify.cell_blocks(C)`: the outward 2⁻¹⁰ dyadic hull split into
    N_E = 4 equal parts (THEOREM_SRK §11).
-2. **Certificates.** For each b_j (via `srk_certify.run_block` with weight_block = Ew, as `run_cell` does), each rung
+2. **Certificates.** For each b_j (via `srk_certify.run_block` with weight_block = Ew and `ladder = (d,)`, one job per (b_j, d), as the budget mechanics require), each rung
    d ∈ {8, 10, 12} and each index i ∈ {1, 2, 3, 4}, with the pinned constants of THEOREM_SRK §12:
    * `certify_W` on b_j (whole kernel);
    * `certify_weight(i, weight_block = Ew)`.
@@ -87,7 +87,7 @@ qualification review, and a separate grant.
    * **Fixed order.** Rung-major: every sub-block at d = 8, then every one at d = 10, then d = 12, with b₁..b₄ in
      order within each rung. A binding budget therefore removes the most expensive rungs first, and every sub-block
      gets its cheapest rung before any sub-block gets a costlier one.
-   * **Stopping.** No job starts once the cumulative CPU reaches 48 CPU-h. A job that exceeds a per-job limit of
+   * **Stopping.** 48 CPU-h is a **start threshold**: no job starts once the cumulative CPU reaches it. Jobs already running may finish past it, up to their 12 CPU-h limit each. A job that exceeds a per-job limit of
      12 CPU-h is terminated and its outputs are discarded. Stopping is only by not starting jobs and by discarding a
      terminated job's outputs; neither raises an exception.
    * **Host dependence (R3 F2.1).** When the budget binds, which certificates exist depends on timing, so the outcome
