@@ -1,0 +1,83 @@
+"""R4 reviewer: independent adversarial mutants against the D5 scanner exception (static only).
+Each mutant is planted into a temporary copy of code/config/tests/verify under scratchpad/r4/mut; the copy is only
+parsed (p309_scan.scan, p309_static_check.run), never executed, and deleted afterwards."""
+import shutil, sys, tempfile
+from pathlib import Path
+FNS = Path("/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_p309_r1")
+sys.path.insert(0, str(FNS / "code"))
+import p309_env as E
+E.log("scratchpad/r4/d5_mutants.py", "R4 follow-up task 4 (re-run at 70927a08): independent adversarial mutants against the D5 scanner exception "
+      "(scan + static check on planted temporary copies)", klass="GOVERNANCE",
+      notes="R4 reviewer: static AST analysis of temporary copies under scratchpad/r4/mut; nothing from them is executed; "
+            "no ref created; nothing evaluated")
+import p309_scan as S
+import p309_static_check as SC
+MUT = Path("/tmp/claude-0/-home-user-ReBaseGuard/ea54e9f6-e828-5447-be15-220ef2c329fd/scratchpad/r4/mut")
+NS, LEAF = S.TOKENS[0] + "/", S.TOKENS[1]          # pieces, never a production token in this file
+LIT = NS + LEAF
+
+def planted(edits):
+    root = Path(tempfile.mkdtemp(prefix="m", dir=MUT))
+    for d in ("code", "config", "tests", "verify"):
+        shutil.copytree(FNS / d, root / d, ignore=shutil.ignore_patterns("__pycache__"))
+    for rel, (how, text) in edits.items():
+        p = root / rel
+        if how == "new":
+            p.write_text(text)
+        else:
+            p.write_text(p.read_text() + "\n" + text)
+    scan = S.scan(root)
+    static = SC.run(root)
+    shutil.rmtree(root)
+    kinds = sorted({f["kind"] for f in scan["findings"]})
+    failed = sorted(k for k, v in static.items() if not v["pass"])
+    return scan["verdict"], kinds, failed
+
+DRV = "code/p309_driver.py"
+M = {
+ "M00_genuine": {},
+ "M01_file_named_q309_guard_in_FNS": {"code/q309_guard.py": ("new",
+     "import subprocess\n\ndef arm(repo, g):\n    subprocess.run(['git', '-C', repo, 'update-ref', " + repr(LIT) + ", g])\n")},
+ "M02_os_system_shell_string_production": {DRV: ("+",
+     "def _m02(ctx, g):\n    os.system('git update-ref ' + G.PRODUCTION_MARKER + ' ' + g)\n")},
+ "M03_shell_true_string": {"code/p309_rehearse.py": ("+",
+     "def _m03(repo):\n    import subprocess\n    subprocess.run('git -C ' + str(repo) + ' update-ref refs/heads/x HEAD', shell=True)\n")},
+ "M04_dynamic_verb_production": {DRV: ("+",
+     "def _m04(ctx, g):\n    verb = 'update-' + 'ref'\n    git(verb, ctx.marker_ref, g, '0' * 40, repo=ctx.repo)\n")},
+ "M05_starred_args_pending": {DRV: ("+",
+     "def _m05(ctx, b):\n    r = ctx.pending_ref\n    args = ['update-ref', r, b]\n    git(*args, repo=ctx.repo)\n")},
+ "M06_git_config_alias_production": {DRV: ("+",
+     "def _m06(ctx, g):\n    git('-c', 'alias.u=update-ref', 'u', ctx.marker_ref, g, '0' * 40, repo=ctx.repo)\n")},
+ "M07_ref_file_dynamic_path": {DRV: ("+",
+     "def _m07(gd):\n    p = Path(str(gd)) / ('re' + 'fs') / 'heads' / 'x'\n    p.write_text('0' * 40)\n")},
+ "M08_packed_refs_append_dynamic": {DRV: ("+",
+     "def _m08(gd):\n    with open(str(gd) + '/packed' + '-refs', 'a') as fh:\n        fh.write('x')\n")},
+ "M09_aliased_runner": {"code/p309_rehearse.py": ("+",
+     "def _m09():\n    import subprocess\n    r = subprocess.run\n    r(['git', 'update-ref', 'refs/heads/x', 'HEAD'])\n")},
+ "M10_getattr_runner": {"code/p309_rehearse.py": ("+",
+     "def _m10():\n    import subprocess\n    getattr(subprocess, 'run')(['git', 'update-ref', 'refs/heads/x', 'HEAD'])\n")},
+ "M11_os_execvp": {"code/p309_rehearse.py": ("+",
+     "def _m11():\n    import os\n    os.execvp('git', ['git', 'update-ref', 'refs/heads/x', 'HEAD'])\n")},
+ "M12_getoutput_shell": {"code/p309_rehearse.py": ("+",
+     "def _m12():\n    import subprocess\n    subprocess.getoutput('git update-ref refs/heads/x HEAD')\n")},
+ "M13_test_imports_site_under_alias": {"tests/test_m13.py": ("new",
+     "import types\nimport p309_driver as D\nfrom p309_driver import _arm_marker as arm\n\n\ndef evil(g):\n"
+     "    D._MODE['mode'] = 'execute'\n"
+     "    c = types.SimpleNamespace(kind='PRODUCTION', guard_ctx=D.G.PRODUCTION, marker_ref=D.G.PRODUCTION.marker_ref,\n"
+     "                              pending_ref=D.G.PRODUCTION.pending_ref, repo=D.REPO)\n    arm(c, g)\n")},
+ "M14_test_site_via_module_dict": {"tests/test_m14.py": ("new",
+     "import types\nimport p309_driver as D\n\n\ndef evil(data):\n    D._MODE['mode'] = 'seal-only'\n"
+     "    c = types.SimpleNamespace(kind='PRODUCTION', guard_ctx=D.G.PRODUCTION, marker_ref=D.G.PRODUCTION.marker_ref,\n"
+     "                              pending_ref=D.G.PRODUCTION.pending_ref, repo=D.REPO)\n"
+     "    D.__dict__['_persist_' + 'pending'](c, data)\n")},
+ "M15_shell_script_invoked": {"code/arm.sh": ("new", "git update-ref \"$1\" \"$2\"\n"),
+     "code/p309_rehearse.py": ("+", "def _m15(ref, g):\n    import subprocess\n    subprocess.run(['bash', 'code/arm.sh', ref, g])\n")},
+ "M16_NB1_alias_update_ref": {DRV: ("+", "def _n1(ctx, c):\n    r = ctx.marker_ref\n    return git('update-ref', r, c, '0' * 40)\n")},
+ "M17_NB1_pending_alias_delete": {DRV: ("+", "def _n2(ctx):\n    p = ctx.pending_ref\n    return git('update-ref', '-d', p)\n")},
+ "M18_NB1_grant_path_alias_write": {DRV: ("+", "def _n3(ctx):\n    p = ctx.guard_ctx.grant_path\n    Path(p).write_text('{}')\n")},
+}
+out = {}
+for name, edits in M.items():
+    out[name] = planted(edits)
+for k, v in out.items():
+    print(f"{k:45s} scan={v[0]:4s} findings={v[1]} static_failed={v[2]}")
