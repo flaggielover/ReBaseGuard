@@ -1,0 +1,65 @@
+{
+ "cells": {
+  "297": {
+   "cpu_s_total": 13973.555,
+   "independent_checks": {
+    "all_equal": true,
+    "rungs": 15
+   },
+   "status": "CERTIFIED"
+  },
+  "316": {
+   "cpu_s_total": 23914.91,
+   "independent_checks": {
+    "all_equal": true,
+    "rungs": 12
+   },
+   "status": "CERTIFICATION_FAILED"
+  }
+ },
+ "freeze_commit": "4c754a73767903a5ad5dddff725f1e173a0a6876",
+ "pass": true,
+ "qc": "QC09",
+ "runs": [
+  {
+   "cmd": [
+    "/usr/local/bin/python3",
+    "-B",
+    "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_p309_r1/code/p309_driver.py",
+    "decoy-stage1b",
+    "--cell",
+    "297",
+    "--workers",
+    "4",
+    "--out",
+    "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_p309_r1/qualification/attempt_1/QC09_DECOY_STAGE1B_297.json"
+   ],
+   "cpu_children_s": 13973.8,
+   "rc": 0,
+   "stderr_tail": "",
+   "stdout_tail": "P309 DECOY-STAGE1B cell 297: CERTIFIED\n",
+   "wall_s": 3660.3
+  },
+  {
+   "cmd": [
+    "/usr/local/bin/python3",
+    "-B",
+    "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_p309_r1/code/p309_driver.py",
+    "decoy-stage1b",
+    "--cell",
+    "316",
+    "--workers",
+    "4",
+    "--out",
+    "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_p309_r1/qualification/attempt_1/QC09_DECOY_STAGE1B_316.json"
+   ],
+   "cpu_children_s": 23915.1,
+   "rc": 0,
+   "stderr_tail": "",
+   "stdout_tail": "P309 DECOY-STAGE1B cell 316: CERTIFICATION_FAILED\n",
+   "wall_s": 6108.4
+  }
+ ],
+ "utc": "2026-09-30T21:18:07Z",
+ "wall_s": 9768.7
+}

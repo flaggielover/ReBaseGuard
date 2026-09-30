@@ -1,0 +1,52 @@
+{
+ "freeze_commit": "4c754a73767903a5ad5dddff725f1e173a0a6876",
+ "pass": true,
+ "qc": "QC14",
+ "rehearse": {
+  "checks": {
+   "R1_tct_crosscheck": true,
+   "R2_empty_reproduces_tct": true,
+   "R2_injection_equivalence": true,
+   "R3_gamma_dominance": true,
+   "R3_gate_source_GATE": true,
+   "R3_srk_inside_tct": true,
+   "R4_fallback_is_S_I1": true,
+   "R4_min_composition": true,
+   "R5_binding_refusals": true
+  },
+  "decoy_gate": {
+   "certificates": 16,
+   "source": "GATE",
+   "verdicts": [
+    "ACCEPT"
+   ]
+  },
+  "manufactured_seed": 20260930,
+  "mode": "rehearse",
+  "note": "manufactured values and decoy certificates only; no tail input read",
+  "pass": true,
+  "refusals": {
+   "other_cell": true,
+   "other_verifier": true
+  }
+ },
+ "runs": [
+  {
+   "cmd": [
+    "/usr/local/bin/python3",
+    "-B",
+    "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_p309_r1/code/p309_driver.py",
+    "rehearse",
+    "--out",
+    "/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_p309_r1/qualification/attempt_1/QC14_REHEARSE.json"
+   ],
+   "cpu_children_s": 60.3,
+   "rc": 0,
+   "stderr_tail": "",
+   "stdout_tail": "P309 REHEARSE (manufactured inputs): pass = True\n",
+   "wall_s": 60.7
+  }
+ ],
+ "utc": "2026-09-30T22:24:15Z",
+ "wall_s": 60.7
+}
