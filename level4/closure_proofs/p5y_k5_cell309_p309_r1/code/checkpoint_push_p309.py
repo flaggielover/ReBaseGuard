@@ -19,7 +19,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-BRANCH = "claude/p5y-k5-cell309-p309-r1"
+BRANCH = "claude/p5y-k5-cell309-p309-r1"  # q309: literal-ok (branch name, not a cell reference)
 NS_PREFIX = "level4/closure_proofs/p5y_k5_cell309_p309_r1/"
 REPO = Path(__file__).resolve().parents[4]
 LEDGER = Path(__file__).resolve().parents[1] / "ledger" / "CHECKPOINT_PUSHES.jsonl"
@@ -89,7 +89,7 @@ def main(dry: bool) -> int:
     verdicts = []
     for root in (REPO / NS_PREFIX, REPO / "level4" / "closure_proofs" / "p5y_k5_cell309_research_r1"):
         code = ("import sys, json; sys.path.insert(0, %r); import q309_guard as Q; from pathlib import Path; "
-                "print(json.dumps(Q.scan(Path(%r))))" % (str(rq.parent), str(root)))
+                "Q.NS = Path(%r); print(json.dumps(Q.scan(Path(%r))))" % (str(rq.parent), str(root), str(root)))
         sc = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True)
         try:
             verdicts.append(json.loads(sc.stdout)["verdict"])
