@@ -12,18 +12,39 @@ EVALUATIONS = 0.
 
 | file | sha256 |
 |---|---|
-| `verify/srk_verify_indep_scoped.py` (the variant; its `verifier_id` is `sha256:` + this) | `52c84ec22c4396d07019cf1f783355c014f258d1d0611fc522562b0104d2b278` |
-| `verify/run_verify_all_scoped.py` (I1 harness) | `e27dba41c1c61d5d771d383c2951602509e212e0832540c55a1a8dccd4c09430` |
-| `verify/scoped_sandbox.py` (spec §6 sandbox helper) | `71458b156a8d9418f229e84ff017a258ee8b37e5f0aa888c6df9fcfea70a9a00` |
-| `tests/test_verify_scoped.py` (21 ported self-tests plus D1, N1–N13, P1, P2) | `e17c01566ee1f08b18515ee40f94e5ca4e691088bdfee41a56f2675662aae8c8` |
+| `verify/srk_verify_indep_scoped.py` (the variant; its `verifier_id` is `sha256:` + this) | `9d9f8cec52cfd49ab146a45c44e03fde493614f81551af584317ab7d3545498f` |
+| `verify/run_verify_all_scoped.py` (I1 harness) | `2dc92f5697a52e71ec05fe047b51267258f5975ba61dc34f3f17a3f596605d76` |
+| `verify/scoped_sandbox.py` (spec §6 sandbox helper; unchanged by erratum 1) | `71458b156a8d9418f229e84ff017a258ee8b37e5f0aa888c6df9fcfea70a9a00` |
+| `tests/test_verify_scoped.py` (21 ported self-tests plus D1, N1–N13, P1, P2) | `1483d6c2f5c9d8d3a469915fe6ab85d0cb27f3abdfcac53b168ff6754a64a10c` |
 | original verifier `RNS/verify/srk_verify_indep.py` (unchanged) | `a32d5d397893a1fc698d3609f59cb65aab3bc4fe1445c51c676fd9ad54652333` |
+
+Superseded identities (commit 6522db10, before erratum 1):
+* variant `52c84ec22c4396d07019cf1f783355c014f258d1d0611fc522562b0104d2b278`;
+* harness `e27dba41c1c61d5d771d383c2951602509e212e0832540c55a1a8dccd4c09430`;
+* tests `e17c01566ee1f08b18515ee40f94e5ca4e691088bdfee41a56f2675662aae8c8`.
+
+## Erratum 1 (`fc2/FC2_SPEC_R2_ERRATUM_1.md`; follow-up brief 1)
+
+The only changes against commit 6522db10 are these; nothing else changed.
+* **E1-1, variant (2 lines).** Official-mode check 7 now uses the **strict-descendant** reading. A ref pointing at the
+  grant commit itself is allowed, for example the remote-tracking ref after the grant commit is pushed and fetched.
+  Only refs at a commit that has the grant commit as a **proper** ancestor, other than the marker and the current
+  branch, are refused. This corrects a real defect: under the old reading, the production remote-tracking ref would
+  have made every in-band certificate REFUSE.
+* **E1-1, test N7 (5 lines).** A ref at G itself must ADMIT when everything else is valid, and a ref at a child of G
+  must REFUSE ("strict descendant").
+* **E1-5, harness (5 lines).** `--out PATH` was added. The default stays `verify/VERIFY_RESULTS_SCOPED.json`.
+* **E1-2 to E1-4** record documented differences from the guard that need no code change:
+  * NOT_BANDED versus ADMIT "meets no band";
+  * exact grant geometry strings;
+  * `frozen_commit` a proper ancestor.
 
 `verify/VERIFY_RESULTS_SCOPED.json` records the variant and harness sha of the run, the expectation rule, both I1
 passes and the unit-test outcomes.
 
 ## What changed against the original verifier (diff summary)
 
-`diff -u` against the original: 441 lines added and 14 removed, in 9 hunks.
+`diff -u` against the original: 510 lines added (441 of them non-blank; the earlier 441 counted non-blank lines only) and 14 removed, in 9 hunks. Erratum 1 changed 2 of these lines in place.
 * **Module docstring:** a new header describing the variant. The original documentation is kept below it.
 * **Imports:** `datetime`, `platform`, `socket`, `subprocess` and `types`.
 * **Compiled band tables (§1):**
@@ -35,7 +56,8 @@ passes and the unit-test outcomes.
     the production and test field tables;
   * `bands_met`, the `PRODUCTION` singleton, `TestContext(sandbox_root)` and `TestContextRefused`;
   * grant validation (check 2), the outward 2⁻¹⁰ hull (check 3), grant-commit analysis (4), frozen identity (5), own
-    identity (6), marker binding (7), expiry (8), host and runtime (9), the item inside Ew (10), and review mode;
+    identity (6), marker binding (7; strict-descendant reading per erratum E1-1), expiry (8), host and runtime (9), the
+    item inside Ew (10), and review mode;
   * `admission_decision(item, *, ctx=PRODUCTION, mode="official")`.
   * **Fail closed:** any exception is returned as REFUSE. The git calls are read-only: `show`, `log`, `rev-parse`,
     `diff-tree`, `merge-base`, `for-each-ref`, `symbolic-ref`, `rev-list`, `cat-file`.
@@ -51,7 +73,7 @@ passes and the unit-test outcomes.
 
 ### Self-tests and N/P/D tests (run first)
 
-`37` tests, **all pass** (286 s). They were recorded by the I1
+After erratum 1: `37` tests, **all pass** (275 s), recorded by the I1
 invocation. Each FC2 test builds and tears down its own sandbox: a `git clone --shared --no-checkout` under
 `…/scratchpad/fc2_sandbox_verifier/`, with `origin` removed and never pushed. Only the TEST marker
 `refs/p309-test/TEST_ONLY_DO_NOT_EXECUTE_P309_MARKER` is ever created. A tripwire on the variant's `prepare` fails the
@@ -112,7 +134,8 @@ The FC2 tests check the following. REAL-band items are dry throughout.
 * **N7:** each of these is refused:
   * the marker absent, or pointing elsewhere;
   * an extra ref in the namespace;
-  * another ref at a descendant of the grant commit;
+  * another ref at a **strict** descendant of the grant commit. Per erratum E1-1, a ref at the grant commit itself is
+    ADMITted when everything else is valid;
   * HEAD ≠ the grant commit;
   * a grant commit touching another file;
   * two commits adding the grant;
@@ -153,8 +176,7 @@ The expectation rule was recorded before the run: in the harness docstring, in `
 Wherever the committed result is the expectation, the probe's harness-v2 reason-specific check must also hold.
 
 The run covered every certificate in `RNS/evidence/srk_decoys/` and `RNS/evidence/srk_decoys_cell/`: genuine, plus the
-v2 batteries, plus probe 7r (a geometry-blind REAL-band parse-time refusal for non-(5, 1/2) geometries). It used 3
-processes and took 563 s.
+v2 batteries, plus probe 7r (a geometry-blind REAL-band parse-time refusal for non-(5, 1/2) geometries). It used 3 processes and took 508 s (re-run after erratum 1).
 
 | pass | certificates | genuine: expectation met / identical | mutants | mutants: expectation met / identical |
 |---|---|---|---|---|
@@ -189,18 +211,21 @@ carry `q309: literal-ok` markers and are listed.
 1. **`verify_cert` reason.** It uses the admission reason verbatim. That reason already starts with "quarantine:", so it
    is not prefixed a second time.
 2. **An item meeting no band.** `admission_decision` returns ADMIT with the reason "meets no band: not an admission
-   question". `verify_cert` never asks it for such items.
+   question". `verify_cert` never asks it for such items. Erratum E1-2 records this convention.
 3. **An item meeting both bands** is refused.
 4. **Grant `geometry`** must be exactly the strings "5"/"1/2" (production) or "3"/"1/2" (test). Rational equivalents
-   such as "5/1" are refused.
+   such as "5/1" are refused. Erratum E1-3 makes the stricter reading govern the grant text.
 5. **Grant fields.** Unlisted extra fields are ignored. Hex fields must be lowercase. `not_after_utc` must carry a UTC
    designator (Z or +00:00), and expiry is inclusive (now ≤ not_after).
-6. **`frozen_commit`** must be a **proper** ancestor of the grant commit; equality is refused.
+6. **`frozen_commit`** must be a **proper** ancestor of the grant commit; equality is refused. Erratum E1-4 records
+   that there is no conflict in practice.
 7. **`code_pins` format** (not fixed by the spec). Accepted are a list of `{"path", "sha256"}` objects or an object
    `path → sha256`, with the sha as 64 hex or `sha256:`+hex. The implementing file's repository-relative path must
    appear exactly once, with its sha.
-8. **Check 7.**
-   * A ref pointing **at** the grant commit counts as pointing to a descendant, so it is refused.
+8. **Check 7, now settled by erratum E1-1.**
+   * Strict descendant: a ref pointing **at** the grant commit is allowed, and a ref at a commit having the grant commit
+     as a proper ancestor is refused. My original reading (a ref at the grant commit counts as a descendant) was
+     stricter than intended and would have refused all production admissions once the grant commit is fetched.
    * Refs are peeled to commits, and refs to non-commit objects are ignored.
    * A detached HEAD exempts no branch.
 9. **Review mode, additional requirements:**
@@ -226,6 +251,7 @@ carry `q309: literal-ok` markers and are listed.
   `srk_verify_indep.py` and its harness v1/v2, working separately from the producer side.
 * **Sources read for this work:**
   * `fc2/FC2_SPEC.md` (rev. 1), `fc2/FC2_SPEC_R2.md` and `reviews/BRIEF_FC2_VERIFIER_VARIANT_AUTHOR.md`;
+  * `fc2/FC2_SPEC_R2_ERRATUM_1.md` and `reviews/BRIEF_FC2_VERIFIER_VARIANT_AUTHOR_FOLLOWUP_1.md`;
   * `governance/OWNER_RULINGS_2_P309_VERBATIM.md` (full; fenced-body sha256 verified), and
     `governance/OWNER_DECISIONS_P309_VERBATIM.md` lines 240–275 plus a keyword search;
   * protocol rev. 2b §6 and §7 (`RNS/protocol_prep/P309_PROTOCOL.md`);
@@ -242,7 +268,7 @@ carry `q309: literal-ok` markers and are listed.
   never opened, imported or run. The FC2 guard `code/p309_guard.py`, its tests and the coordinator's other FC2 code
   were never opened; only their file names appeared in `git status` and the scanner output. No number of cells 305–309
   was read.
-* **Variant sha256:** `52c84ec22c4396d07019cf1f783355c014f258d1d0611fc522562b0104d2b278`.
+* **Variant sha256:** `9d9f8cec52cfd49ab146a45c44e03fde493614f81551af584317ab7d3545498f` (after erratum 1).
 
 Every execution of this work is ledgered in `ledger/ZERO_TARGET_LEDGER.jsonl` through `code/p309_env.py`: one line per
 test execution, the harness start and end, the sandbox smoke test, the sanity run, the scan and the governance

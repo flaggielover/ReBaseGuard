@@ -747,8 +747,11 @@ class TestFC2Scoped(_Ledgered):
             sb.update_ref('refs/p309-test/TEST_ONLY_CONSUMED', gc)
             self.refused(V.admission_decision(self.test_desc, ctx=ctx), 'only ref')                    # consumed
             fc, gc, _ = self.valid(sb)
-            sb.update_ref('refs/heads/extra-descendant', gc)
-            self.refused(V.admission_decision(self.test_desc, ctx=ctx), 'descendant')                  # other ref
+            sb.update_ref('refs/heads/extra-at-grant', gc)                   # a ref AT the grant commit itself:
+            self.assertEqual(V.admission_decision(self.test_desc, ctx=ctx)[0], 'ADMIT')     # allowed (erratum E1-1)
+            child = sb.commit({'TEST_ONLY/child.txt': 'child\n'}, 'child of the grant commit', parents=[gc])
+            sb.update_ref('refs/heads/extra-descendant', child)              # a STRICT descendant of the grant commit
+            self.refused(V.admission_decision(self.test_desc, ctx=ctx), 'strict descendant')
             fc, gc, _ = self.valid(sb)
             sb.commit({'TEST_ONLY/after.txt': 'after\n'}, 'after the grant')
             self.refused(V.admission_decision(self.test_desc, ctx=ctx), 'HEAD is not the grant commit')

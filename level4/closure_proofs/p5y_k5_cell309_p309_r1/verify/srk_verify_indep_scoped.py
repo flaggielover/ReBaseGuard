@@ -559,8 +559,8 @@ def _admission(item, ctx, mode):
                 if name in (F['marker_ref'], current):
                     continue
                 c = oid if t == 'commit' else (poid if pt == 'commit' else None)
-                if c is not None and _is_ancestor(repo, G, c):
-                    raise _NotAdmitted('ref %s points to a descendant of the grant commit' % name)
+                if c is not None and c != G and _is_ancestor(repo, G, c):     # STRICT descendant (erratum E1-1)
+                    raise _NotAdmitted('ref %s points to a strict descendant of the grant commit' % name)
             if datetime.datetime.now(datetime.timezone.utc) > gr['not_after']:  # check 8
                 raise _NotAdmitted('the grant has expired')
             if _host_id_sha256() != gr['host_id']:                               # check 9

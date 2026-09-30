@@ -375,7 +375,9 @@ def main():
     ap.add_argument('--jobs', type=int, default=3)
     ap.add_argument('--unit-tests', action='store_true')
     ap.add_argument('--skip-i1', action='store_true')
+    ap.add_argument('--out', default=OUT, help='results file (default verify/VERIFY_RESULTS_SCOPED.json; erratum E1-5)')
     a = ap.parse_args()
+    out_path = a.out
     if tuple(V.REAL_BAND) != _OWN_REAL_BAND or tuple(V.TEST_BAND) != _OWN_TEST_BAND:
         raise SystemExit('ABORT: the variant\'s compiled band tables differ from this harness\'s own copy')
     with open(COMMITTED) as fh:
@@ -389,10 +391,10 @@ def main():
            'settings': {'taylor_order': 8, 'max_depth': 24, 'item7_max_depth': 6, 'jobs': a.jobs}, 'passes': {}}
 
     def flush():
-        tmp = OUT + '.tmp'
+        tmp = out_path + '.tmp'
         with open(tmp, 'w') as fh:
             json.dump(res, fh, indent=1, sort_keys=True, default=str)
-        os.replace(tmp, OUT)
+        os.replace(tmp, out_path)
     if not a.skip_i1:
         E.log('verify/run_verify_all_scoped.py', 'I1 start (rule recorded before the run): scoped variant on every '
               'certificate of RNS/evidence/srk_decoys and srk_decoys_cell (production pass) and on the 16 h3 decoy-cell '
@@ -459,7 +461,7 @@ def main():
         flush()
         E.log('verify/run_verify_all_scoped.py', 'I1 end: %s' % json.dumps(
             {pn: {k: v for k, v in s.items() if k not in ('differences', 'by_rule')} for pn, s in summ.items()}),
-            klass='NONTARGET_DECOY', drifts=_EVALUATED_DRIFT_HULL, notes='see verify/VERIFY_RESULTS_SCOPED.json')
+            klass='NONTARGET_DECOY', drifts=_EVALUATED_DRIFT_HULL, notes='see %s' % out_path)
     if a.unit_tests:
         import unittest
         V.prepare = _ORIG_PREPARE            # restore BEFORE importing the tests: they install their own tripwire
@@ -490,8 +492,8 @@ def main():
                              'sha256': _sha_file(os.path.join(FNS, 'tests', 'test_verify_scoped.py')),
                              'ran': rr.testsRun, 'ok': rr.wasSuccessful(), 'sec': round(time.time() - t0, 1),
                              'tests': outcome}
-        if os.path.exists(OUT) and a.skip_i1:
-            with open(OUT) as fh:
+        if os.path.exists(out_path) and a.skip_i1:
+            with open(out_path) as fh:
                 prev = json.load(fh)
             prev['unit_tests'] = res['unit_tests']
             res = prev
