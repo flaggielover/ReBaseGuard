@@ -63,7 +63,10 @@ def checks(ctx: D.ExecContext, *, own_sha: str | None = None, reverify=None, sec
                  D.git("rev-parse", "HEAD", repo=ctx.repo).stdout)
         out["P4_second_execute_refused"] = rc == 2 and before == after
     head0 = D.git("rev-parse", "HEAD", repo=ctx.repo).stdout.strip()
-    rc = D.run_seal_only(ctx)
+    try:
+        rc = D.run_seal_only(ctx)
+    except D.Refusal:                                    # a refusal is a failed check, never a crash of the checker
+        rc = None
     out["P5_seal_only_changes_nothing"] = rc == 0 and D.git("rev-parse", "HEAD", repo=ctx.repo).stdout.strip() == head0
     wt = (ctx.repo / D.RESULT_REL)
     out["P6_worktree_copy_equals_sealed"] = wt.is_file() and not wt.is_symlink() and wt.read_bytes() == data

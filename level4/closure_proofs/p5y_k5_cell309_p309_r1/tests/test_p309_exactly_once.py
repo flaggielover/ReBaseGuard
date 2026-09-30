@@ -88,7 +88,10 @@ def build_chain(sb: Path, *, grant_over=None, grant_raw=None, drop_review=False,
                 qual_extra=None, review_extra=None, child_after_grant=False) -> dict:
     base = sh(sb, "rev-parse", "HEAD").strip()
     man = (REPO / D.MANIFEST_REL).read_bytes()
-    F_ = commit(sb, base, {D.MANIFEST_REL: man}, "sandbox freeze (manifest)")
+    # the sandbox freeze commit must change a frozen path even when the manifest bytes equal the base's (the driver
+    # locates the freeze as the last commit touching the frozen directories); the nonce file exists only in sandboxes
+    F_ = commit(sb, base, {D.MANIFEST_REL: man, f"{NS}/freeze/SANDBOX_FREEZE_NONCE.txt": sb.name.encode() + b"\n"},
+                "sandbox freeze (manifest)")
     c = {"F": F_}
     tip = F_
     if extra_after_freeze:
@@ -182,7 +185,9 @@ def pre_marker_flows() -> dict:
         before = (refs(sb), sh(sb, "rev-parse", "HEAD"))
         out = execute(sb)
         after = (refs(sb), sh(sb, "rev-parse", "HEAD"))
-        R[name] = {"pass": out == ("REFUSED", code) and before == after and G.TEST_MARKER not in after[0],
+        # refs and HEAD unchanged; execute creates no marker (F20 plants one in its setup, which must survive as is)
+        R[name] = {"pass": out == ("REFUSED", code) and before == after
+                   and (G.TEST_MARKER in before[0] or G.TEST_MARKER not in after[0]),
                    "got": str(out)}
 
     refused("F01_no_grant_commit", "GRANT_MISSING", setup=lambda sb, c: (
@@ -329,7 +334,11 @@ def _stub_runner(payload_for):
                 import resource as r
                 r.setrlimit(r.RLIMIT_CPU, (lim, lim + 5))
             return subprocess.Popen([sys.executable, "-c", code], preexec_fn=lim_fn)
-        code = f"open({spec['_out']!r},'w').write({json.dumps(pl)!r})"
+        # the payload goes through a side file (certificate payloads exceed the argv limit); the child moves it into
+        # place, so the output still appears only when the child runs
+        src = spec["_out"] + ".stub"
+        Path(src).write_text(json.dumps(pl))
+        code = f"import os; os.replace({src!r}, {spec['_out']!r})"
         return subprocess.Popen([sys.executable, "-c", code])
     return runner
 
@@ -402,7 +411,8 @@ def stage_flows() -> dict:
         R["S11_stage1b_job_exception_raises"] = {"pass": True}
     IND = D._ind()
     rec = {"status": "CERTIFIED", "degree": 4, "A_bar": "3", "tau": "2", "D_lo": "1/2", "C_T": "5", "D1": "1/3",
-           "D2": "1/5", "L1_up": "1/7", "L2_up": "1/9", "tau_a_lo": "1/2", "C_R": "4"}
+           "D2": "1/5", "L1_up": "1/7", "L2_up": "1/9", "tau_a_lo": "1/2", "C_R": "4",
+           "tau_a_up": "1", "S2_up": "1/3", "TN_up": "1/4", "Lambda_lo": "1/6"}    # every ladder key present
     sup = IND.block_supply(rec, F(1), F(1))
     bad = dict(rec, **{k: D.fs(v) for k, v in sup.items() if k in ("A0_SUPPLY", "G0", "G1", "G2")},
                A1_SUPPLY=D.fs(sup["A1_SUPPLY"] + 1), A2_SUPPLY=D.fs(sup["A2_SUPPLY"]))
@@ -414,6 +424,41 @@ def stage_flows() -> dict:
         R["S12_stage1b_reconstruction_mismatch_raises"] = {"pass": True}
     except Exception as exc:  # noqa: BLE001
         R["S12_stage1b_reconstruction_mismatch_raises"] = {"pass": False, "got": f"{type(exc).__name__}: {exc}"[:200]}
+    # S13: the execute order (historical control and Stage-1a gate import the SRK side, which imports c1b_gauss by a
+    # plain import; then Stage 1b loads the pinned certifier): Stage 1b loads, and the module table is unchanged
+    names = ("c1b_gauss", "c1b_kernel", "c1b_float", "c1b_pw", "c1b_prov", "c1b_certpw", "ov_quarantine")
+    before = {n: sys.modules.get(n) for n in names}
+    pre = before["c1b_gauss"] is not None and getattr(before["c1b_gauss"], "_rlr307_pinned", None) is None
+    try:
+        st1b = D.stage1b("decoy", (F(1, 2), F(51, 100)), m, workers=2, runner=_stub_runner(lambda s: nc))
+        after = {n: sys.modules.get(n) for n in names}
+        R["S13_stage1b_after_srk_imports_table_unchanged"] = {
+            "pass": pre and st1b["cell"]["status"] == "CERTIFICATION_FAILED" and all(after[n] is before[n] for n in names),
+            "got": {"srk_side_c1b_gauss_preloaded": pre, "changed": [n for n in names if after[n] is not before[n]]}}
+    except Exception as exc:  # noqa: BLE001
+        R["S13_stage1b_after_srk_imports_table_unchanged"] = {"pass": False, "got": f"{type(exc).__name__}: {exc}"[:200]}
+    # S14 (delta review D2): the frozen budget mechanics as the runner sees them: Stage 1b per-job limit and start
+    # threshold 21 600 s, RLR307 order (degree descending, then block); Stage 1a 12 CPU-h per job, 48 CPU-h threshold
+    seen = {"1a": [], "1b": []}
+
+    def capture(stage, payload):
+        inner = _stub_runner(lambda s: payload)
+
+        def runner(spec):
+            seen[stage].append(spec)
+            return inner(spec)
+        return runner
+    st1b = D.stage1b("decoy", (F(1, 2), F(51, 100)), m, workers=2, runner=capture("1b", nc))
+    st1a = D.stage1a("decoy", cell, dict(D.GEOMETRY), vid, workers=2, runner=capture("1a", base))
+    keys = [(s["degree"], s["block"]) for s in seen["1b"]]
+    R["S14_frozen_budget_mechanics"] = {
+        "pass": bool(keys) and keys == sorted(keys, key=lambda t: (-t[0], t[1]))
+        and len({t[0] for t in keys}) > 1
+        and all(s["_limit"] == 21600 for s in seen["1b"]) and st1b["run"]["budget_s"] == 21600
+        and st1b["run"]["job_limit_s"] == 21600 and D.STAGE1B_JOB_LIMIT_S == D.STAGE1B_BUDGET_S == 21600
+        and all(s["_limit"] == 12 * 3600 for s in seen["1a"]) and st1a["run"]["budget_s"] == 48 * 3600
+        and st1a["run"]["job_limit_s"] == 12 * 3600 and D.WORKERS == 4,
+        "got": {"stage1b_jobs": len(keys), "stage1b_order": keys[:8], "stage1a_jobs": len(seen["1a"])}}
     _ = GT
     return R
 

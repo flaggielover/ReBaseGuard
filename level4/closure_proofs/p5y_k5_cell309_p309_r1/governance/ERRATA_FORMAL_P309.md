@@ -69,3 +69,49 @@ Both describe the same read-only inspections. There was no evaluation.
 
 The exposure line at 2026-09-30 (C6 adjudication, first attempt) names a path that did not exist, so nothing was read
 under it. It was corrected append-only by the next line, and the read happened under the correct path.
+
+## FE-8: Stage 1b could not load its certifier in `execute` (found by a QC11 development run before the freeze)
+
+**Defect.** In `execute`, two steps run in the driver process before Stage 1b:
+* the historical control (pre-marker);
+* the Stage-1a gate (post-marker).
+
+Both import the SRK side (`srk_gate`), which imports `c1b_gauss` by a plain import. Stage 1b then called the pinned
+RLR307 loader, `load_certifier`. That loader refuses any certifier module it did not load itself ("already imported
+from somewhere else").
+
+**Consequence had it shipped.** Every production execution would have raised after the marker. The result would have
+been EXECUTION_INDETERMINATE, and the single evaluation would have been spent.
+
+**Why the earlier checks missed it.**
+* The decoy Stage-1b runs (QC09) start in a fresh process.
+* The QC14′ rehearsal does not load the RLR307 certifier in-process after the SRK side.
+
+**How it was found.** QC11 stage flow S10, the first run in which the stage flows ran after the SRK side was imported.
+That run used stubs only; nothing was evaluated for any cell.
+
+**Fix** (driver, `_load_certifier_isolated`). For the load, the certifier's module names and `ov_quarantine` are
+removed from `sys.modules`, and the previous table is restored afterwards.
+* The pinned helper is unchanged.
+* The loader's identity check still binds the certifier modules to each other.
+* Later imports, including those of Stage 2, resolve exactly as they did for the historical control.
+
+A new QC11 flow, `S13_stage1b_after_srk_imports_table_unchanged`, reproduces the execute order and checks that the
+module table is unchanged.
+
+**Direction.** The fix restores executability, which is toward a conclusive outcome. It is a repair of the implementation. No rule,
+parameter or binding changes. It is disclosed to the pre-freeze review (R4) and carried into the disclosures.
+
+**Other pre-freeze fixes found in the same QC11 development runs** (test fixtures and checker robustness; no driver
+rule is involved):
+* **Sandbox freeze commit.** It now also writes an inert `freeze/SANDBOX_FREEZE_NONCE.txt`, which exists only in
+  sandboxes. Otherwise, once the dev manifest was committed in HEAD, the sandbox freeze commit changed no frozen path.
+* **Stage-flow stub runner.** It passes its payload through a side file instead of argv (E2BIG).
+* **F20 pass condition.** The setup plants the TEST marker, and the flow now checks that `execute` changed no ref,
+  rather than that the marker is absent.
+* **S12 fixture.** The manufactured rung record now carries every ladder key.
+* **`p309_postexec.checks`.** A refusal from `run_seal_only` now makes P5 false instead of crashing the checker.
+* **New flow S14.** It checks the frozen budget mechanics (delta review D2).
+
+The development runs used a scratch evidence directory and wrote their ledger lines to `ledger/ZERO_TARGET_LEDGER.jsonl`
+as usual. Two scratch runs of the stage flows alone, made through `runpy`, wrote no ledger line; they used stubs only.

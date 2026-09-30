@@ -66,3 +66,48 @@ The changes come from:
 * No new quantity is computed on the target path.
 * No decoy result informed any change. A1 and A3 follow from the quarantine; A2 comes from the owner's ruling; A4–A19
   are mechanics and bindings.
+
+## Corrections required by the delta review (condition D2; append-only)
+
+The rows A5 and A6 above stay as written. Where they differ from this section, this section governs.
+Source: `reviews/REVIEW_DELTA_INCIDENT_P309.md` §7 D2, commit e53a678c.
+
+**A5, corrected.**
+* **Classification.** A5 introduces a **new parameter**: the Stage-1b per-job CPU limit. It is **efficacy-relevant, with
+  an ambiguous direction**.
+  * A larger limit lets a slow rung finish and certify (toward closure).
+  * It can also let one rung consume the budget that later rungs would have used (against closure).
+* **Rationale withdrawn.** The stated rationale "a job can never exceed the total anyway" is **false**, and is withdrawn.
+  The Stage-1b budget is a *start threshold*, not a cap on total consumption, so a job started below the threshold can run
+  past it.
+* **Value.** The value stays **21 600 s**, equal to the start threshold. This is the most generous limit considered. The
+  pre-freeze review, the delta review and the owner were each offered a smaller limit (for example 5 400 s, the Stage-1a
+  ratio 12/48 applied to 21 600 s); none has set one.
+* **Who may change it.** The exposed coordinator does not change the value. A change is possible only before any QC09
+  or other Stage-1b run, and would be reviewed as a delta (D2).
+* **Basis.** The limit was chosen without any target or decoy cost evidence.
+
+**A6, corrected bound.**
+* **No post-marker wall-clock cap.**
+* **CPU bound.** The CPU used is bounded by the start-threshold mechanics:
+  * a job is started only while the accounted CPU (finished jobs plus the live CPU of running jobs) is below the
+    threshold;
+  * at most `WORKERS` = 4 jobs run at once;
+  * each job is killed at its per-job limit.
+
+  So each stage's total CPU is **below threshold + 4 × per-job limit**:
+  * **Stage 1a:** < 48 + 4 × 12 = **96 CPU-h**.
+  * **Stage 1b:** < 21 600 + 4 × 21 600 s = **108 000 s = 30 CPU-h**.
+* **Wall time.** Wall time is **unbounded**: it depends on the host's speed and load (A14).
+
+The sentence "(48 + 4 × 12 CPU-h for Stage 1a, 6 CPU-h for Stage 1b)" in row A6 is superseded by the bound above.
+
+**"What is not changed", qualified.** The Stage-1b figure of 21 600 s in protocol §3 is a **start threshold**. The
+effective ceiling of Stage 1b is set by the threshold together with the per-job limit (A5), as stated above.
+
+**QC11 coverage.** QC11 flow `S14_frozen_budget_mechanics` checks the frozen values as the job runner receives them:
+* Stage 1b: per-job limit 21 600 s, start threshold 21 600 s, the RLR307 order (degree descending, then block);
+* Stage 1a: 12 CPU-h per job, 48 CPU-h threshold;
+* `WORKERS` = 4.
+
+Flows S06 and S07 check the limit and threshold mechanics themselves.

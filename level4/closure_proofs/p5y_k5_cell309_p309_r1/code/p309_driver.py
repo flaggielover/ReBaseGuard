@@ -732,13 +732,29 @@ def job_stage1b(spec: dict) -> dict:
             "record": rec, "adapter_records": list(guard.records)}
 
 
+def _load_certifier_isolated(PIN, guard) -> dict:
+    """The pinned RLR307 certifier, loaded without changing this process's module table.  In execute, the historical
+    control and the Stage-1a gate have already imported the SRK side, which imports c1b_gauss by a plain import, and
+    the pinned loader refuses a module it did not load itself.  The names are removed for the load and the previous
+    table is restored afterwards: the certifier modules are held only by the returned dict (the loader's identity
+    check binds them to each other), and later imports resolve as they did for the historical control."""
+    names = tuple(PIN.LOAD_ORDER) + ("ov_quarantine",)
+    saved = {n: sys.modules.pop(n) for n in names if n in sys.modules}
+    try:
+        return PIN.load_certifier(REPO, guard, check_git=True)
+    finally:
+        for n in names:
+            sys.modules.pop(n, None)
+        sys.modules.update(saved)
+
+
 def stage1b(mode: str, cell: tuple, m: dict, *, workers: int = WORKERS, runner=None,
             budget_s: float = STAGE1B_BUDGET_S) -> dict:
     """protocol 3: the RLR307 Stage-1 rules verbatim; CERTIFICATION_FAILED -> fallback to S_I1; an exception or an
     independent-reconstruction mismatch raises (post-marker -> EXECUTION_INDETERMINATE)."""
     rl = load_rlr307(m)
     S1, IND = rl["rlr307_stage1"], rl["rlr307_independent"]
-    mods = rl["rlr307_pinned"].load_certifier(REPO, G.producer_adapter(G.PRODUCTION), check_git=True)
+    mods = _load_certifier_isolated(rl["rlr307_pinned"], G.producer_adapter(G.PRODUCTION))
     cp = mods["c1b_certpw"]
     kappa = (cp.KAPPA1, cp.KAPPA2)
     kc = IND.kappa_check(*kappa)
