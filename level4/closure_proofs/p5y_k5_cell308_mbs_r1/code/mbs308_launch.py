@@ -12,14 +12,16 @@ process tree, session and coalition. The launcher then records the label, pid, P
 time and the boot UUID, and PROVES detachment by test, not by PPID = 1: the job is not a descendant of the launcher or
 of the launcher's ancestors, its session differs from the launcher's, and launchd names it as the running job.
 
-`execute` is refused unless the driver's `preflight` passes first (run synchronously here); `resume` is refused unless
-`status` prints CONSUMED_INTERRUPTED. With --wait (default) the launcher waits for the job, then boots it out and
-removes the plist; with --no-wait it returns after the detachment proof and `cleanup <label>` boots out a finished job.
-The launcher never computes and never touches a ref.
+`execute` is refused unless the driver's `preflight` passes first (run synchronously here, under the timeout RULE
+PRE_CAP_S + 100 s of CONSTANTS_RATIFICATION_MBS308 item 31, PRE_CAP_S read from the driver's bytes); `resume` is
+refused unless `status` prints CONSUMED_INTERRUPTED. With --wait (default) the launcher waits for the job, then boots it
+out and removes the plist; with --no-wait it returns after the detachment proof and `cleanup <label>` boots out a
+finished job. The launcher never computes and never touches a ref.
 """
 from __future__ import annotations
 
 import argparse
+import ast
 import datetime
 import hashlib
 import json
@@ -48,6 +50,34 @@ class LaunchRefused(Exception):
     def __init__(self, code: str, detail: str = ""):
         super().__init__(f"{code}: {detail}" if detail else code)
         self.code = code
+
+
+def driver_pre_cap_s() -> int:
+    """The driver's PRE_CAP_S, read from the driver's BYTES by the parser: the launcher never imports the driver (that
+    would load the science). The driver must bind PRE_CAP_S exactly once at module level, as `PRE_CAP_S = <int>`;
+    anything else (missing, bound twice, not an int literal) refuses to load the launcher."""
+    binds = []
+    for node in ast.parse(DRIVER.read_bytes(), filename=str(DRIVER)).body:
+        targets = node.targets if isinstance(node, ast.Assign) else \
+            [node.target] if isinstance(node, (ast.AnnAssign, ast.AugAssign)) else []
+        if any(isinstance(n, ast.Name) and n.id == "PRE_CAP_S" for t in targets for n in ast.walk(t)):
+            binds.append(node)
+    value = None
+    if len(binds) == 1 and isinstance(binds[0], ast.Assign) and len(binds[0].targets) == 1 and \
+            isinstance(binds[0].targets[0], ast.Name):
+        try:
+            value = ast.literal_eval(binds[0].value)
+        except (ValueError, TypeError):
+            value = None
+    if type(value) is not int:
+        raise LaunchRefused("DRIVER_PRE_CAP_S", f"the driver binds PRE_CAP_S {len(binds)} time(s), not once as an int")
+    return value
+
+
+# CONSTANTS_RATIFICATION_MBS308 item 31 (research 3c2a7854): the preflight timeout is recorded as the RULE
+# PRE_CAP_S + 100 s, so the driver's own PRE_CAP refusal always comes before the launcher's kill; PRE_CAP_S is the
+# driver's own (read from its bytes at every load), so the timeout follows any change of it
+PRE_CAP_S = driver_pre_cap_s()
 
 
 def utc_compact() -> str:
@@ -193,10 +223,11 @@ def driver_cmd(mode: str) -> list:
 
 
 def pre_launch(mode: str) -> dict:
-    """execute: the driver's preflight must pass (synchronously, before anything is launched); resume: status must be
-    CONSUMED_INTERRUPTED. recover: no gate (the driver itself refuses what it must)."""
+    """execute: the driver's preflight must pass (synchronously, before anything is launched, within the timeout rule
+    PRE_CAP_S + 100 s); resume: status must be CONSUMED_INTERRUPTED. recover: no gate (the driver itself refuses what
+    it must)."""
     if mode == "execute":
-        p = _run(driver_cmd("preflight"), timeout=1900)
+        p = _run(driver_cmd("preflight"), timeout=PRE_CAP_S + 100)
         if p.returncode != 0 or "MBS308 PREFLIGHT PASS" not in p.stdout:
             raise LaunchRefused("PREFLIGHT_FAILED", (p.stdout.strip().splitlines() or ["(no output)"])[-1][:300])
         return {"preflight": "PASS"}

@@ -217,7 +217,7 @@ HELPER_SHA256 = {
     "mbs308_guard.py": "48903487f648e9d39bb764497ceae87941c33be73cb4b1fa285ac83bbb1e9435",
     "mbs308_host.py": "26ac9538071ee1803b900c96390fbbba12f1ca6841ca7cf3cbb7d9533763d08d",
     "mbs308_state.py": "aaf76e86a059d07d24f868a2f136333af210a4ac8632f0aa757d4233e5cd5aff",
-    "mbs308_launch.py": "c829b9ed375d25f5e1386001831015f2dde0fa07dcccd283ba822b0290022028",
+    "mbs308_launch.py": "1510308a96911278ca157f0305ee122e1a2a9632f1330bfed3ab428c7d6ba5c8",
 }
 PIN.GUARD_SHA256 = HELPER_SHA256["mbs308_guard.py"]
 # per-job CPU caps (REVIEW_A0_CERTIFIER_R1 C3): each Stage-1 job runs in a FRESH worker process (max_tasks_per_child
@@ -509,12 +509,15 @@ def check_launched() -> dict:
 # R-FREE, EXCL_CPU_PCT by R-EXCL-PCT, EXCL_ALLOW by R-ALLOW.
 FREE_MEM_MIN_BYTES = 2 * 1024 ** 3
 EXCL_CPU_PCT = 25.0
+# CONSTANTS_RATIFICATION_MBS308 item 16 (provisional; R-ALLOW decides the frozen list at the freeze): the current
+# 39 names plus the four Apple OS daemons of its H3 readings (each under a SIP-protected OS path)
 EXCL_ALLOW = frozenset({"kernel_task", "WindowServer", "launchd", "logd", "mds", "mds_stores", "mdworker",
                         "mdworker_shared", "coreaudiod", "powerd", "hidd", "bluetoothd", "configd", "syslogd",
                         "opendirectoryd", "distnoted", "cfprefsd", "trustd", "securityd", "loginwindow", "Dock",
                         "SystemUIServer", "ControlCenter", "Finder", "backupd", "spindump", "ReportCrash",
                         "sysmond", "thermalmonitord", "watchdogd", "runningboardd", "symptomsd", "remoted",
-                        "bird", "fseventsd", "diskarbitrationd", "coreservicesd", "notifyd", "UserEventAgent"})
+                        "bird", "fseventsd", "diskarbitrationd", "coreservicesd", "notifyd", "UserEventAgent",
+                        "spotlightknowledged.updater", "cloudd", "BackgroundShortcutRunner", "modelcatalogd"})
 
 
 def free_memory_bytes(text: str | None = None) -> int | None:
