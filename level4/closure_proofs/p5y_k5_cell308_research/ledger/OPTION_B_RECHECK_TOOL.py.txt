@@ -1,0 +1,143 @@
+"""Mechanical byte-level re-check of the T6/M4 option-B re-application (read-only; git reads only).
+
+usage: recheck_optionB.py <W commit> <N commit>
+
+Checks, each a boolean:
+  R1  the four daemon names and the timeout rule are read from the committed ratification (3c2a7854) itself;
+  W1  at W, mbs308_launch.py is byte-identical to 35cabb50, and the EXCL_ALLOW set equals 35cabb50's 39 names;
+  N1  at N, EXCL_ALLOW == (the 39 names at 35cabb50) | (the four names from the ratification), nothing else;
+  N2  at N, the launcher's preflight call passes timeout=PRE_CAP_S + 100 (AST), and the launcher's PRE_CAP_S is
+      obtained from the driver's bytes (the value, evaluated from a scratch copy, equals the driver's literal, and it
+      follows a changed driver literal);
+  N3  at N, HELPER_SHA256 equals the sha256 of every committed helper;
+  N4  byte level: every file under the namespace is byte-identical between N and 191ce4a9, except the files listed
+      with their byte diffs (reported, never hidden);
+  N5  N changes only code/mbs308_driver.py, code/mbs308_launch.py, DRIVER_DIFF.md and (optionally) the M51 / M52
+      fragments of tests/test_mbs308_mutants.py relative to W.
+"""
+import ast, hashlib, json, re, shutil, subprocess, sys, tempfile
+from pathlib import Path
+
+REPO = "/Users/suzhe/ReBaseGuard"
+NS = "level4/closure_proofs/p5y_k5_cell308_mbs_r1"
+RAT = ("3c2a78544899c5772ea95b7b228b1059f056e3fd",
+       "level4/closure_proofs/p5y_k5_cell308_research/governance/CONSTANTS_RATIFICATION_MBS308.md")
+BASE, EDITOR = "35cabb507c70686e0545c3036dacc452dc7fe6ff", "191ce4a965d822284f42afa172bb898ab168b324"
+PY = "/Library/Frameworks/Python.framework/Versions/3.14/bin/python3.14"
+
+
+def show(rev, rel, text=True):
+    p = subprocess.run(["/usr/bin/git", "-C", REPO, "show", f"{rev}:{rel}"], capture_output=True, check=True)
+    return p.stdout.decode() if text else p.stdout
+
+
+def ls(rev):
+    out = subprocess.run(["/usr/bin/git", "-C", REPO, "ls-tree", "-r", "--name-only", rev, "--", NS],
+                         capture_output=True, text=True, check=True).stdout.split()
+    return sorted(out)
+
+
+def excl(src):
+    for n in ast.parse(src).body:
+        if isinstance(n, ast.Assign) and [getattr(t, "id", None) for t in n.targets] == ["EXCL_ALLOW"]:
+            v = n.value
+            return set(ast.literal_eval(v.args[0] if isinstance(v, ast.Call) else v))
+    return None
+
+
+def literal(src, name):
+    for n in ast.parse(src).body:
+        if isinstance(n, ast.Assign) and [getattr(t, "id", None) for t in n.targets] == [name]:
+            try:
+                return ast.literal_eval(n.value)
+            except ValueError:
+                return "<not a literal>"
+    return None
+
+
+def preflight_timeout_expr(src):
+    for n in ast.walk(ast.parse(src)):
+        if isinstance(n, ast.Call) and getattr(n.func, "id", None) == "_run" and n.args and \
+                "preflight" in ast.unparse(n.args[0]):
+            for kw in n.keywords:
+                if kw.arg == "timeout":
+                    return ast.unparse(kw.value)
+    return None
+
+
+def launcher_value(driver_src, launch_src, host_src, pre_cap_line=None):
+    """Load the launcher from a scratch copy (namespace layout) and return its PRE_CAP_S and preflight timeout."""
+    with tempfile.TemporaryDirectory(prefix="recheckB") as td:
+        d = Path(td) / "level4/closure_proofs/p5y_k5_cell308_mbs_r1/code"
+        d.mkdir(parents=True)
+        if pre_cap_line is not None:
+            lines = [ln for ln in driver_src.splitlines(keepends=True) if ln.startswith("PRE_CAP_S = ")]
+            assert len(lines) == 1
+            driver_src = driver_src.replace(lines[0], pre_cap_line, 1)
+        (d / "mbs308_driver.py").write_text(driver_src)
+        (d / "mbs308_launch.py").write_text(launch_src)
+        (d / "mbs308_host.py").write_text(host_src)
+        code = ("import sys, subprocess, json; sys.path.insert(0, sys.argv[1]); import mbs308_launch as L; seen = []\n"
+                "L._run = lambda a, timeout=60: (seen.append(timeout), subprocess.CompletedProcess(a, 0, 'MBS308 PREFLIGHT PASS\\n', ''))[1]\n"
+                "L.pre_launch('execute'); print(json.dumps({'PRE_CAP_S': getattr(L, 'PRE_CAP_S', None), 'timeout': seen}))")
+        p = subprocess.run([PY, "-I", "-S", "-B", "-c", code, str(d)], capture_output=True, text=True)
+        return json.loads(p.stdout) if p.returncode == 0 else {"error": p.stderr[-300:]}
+
+
+def main(W, N):
+    out = {}
+    rat = show(*RAT)
+    m = re.search(r"Tonight's provisional EXCL_ALLOW = the 39 ∪ \{([^}]*)\}", rat)
+    four = {x.strip().strip("`") for x in m.group(1).split(",")} if m else set()
+    rule31 = "Record the launcher's preflight timeout as PRE_CAP_S + 100 s." in rat and \
+        "1900 s is recorded **as a rule**: PRE_CAP_S + 100 s" in rat
+    out["R1_ratification"] = {"four": sorted(four), "rule31_text_present": rule31, "ok": len(four) == 4 and rule31}
+    base39 = excl(show(BASE, NS + "/code/mbs308_driver.py"))
+    out["W1_withdrawal"] = {"launch_byte_identical_to_35cabb50": show(W, NS + "/code/mbs308_launch.py", False) ==
+                            show(BASE, NS + "/code/mbs308_launch.py", False),
+                            "excl_equals_39": excl(show(W, NS + "/code/mbs308_driver.py")) == base39 and len(base39) == 39}
+    out["W1_withdrawal"]["ok"] = all(out["W1_withdrawal"].values())
+    drvN, lchN, hostN = (show(N, NS + f"/code/{f}") for f in ("mbs308_driver.py", "mbs308_launch.py", "mbs308_host.py"))
+    exN = excl(drvN)
+    out["N1_allow_list"] = {"n": len(exN or ()), "added": sorted((exN or set()) - base39),
+                            "removed": sorted(base39 - (exN or set())), "ok": exN == base39 | four}
+    expr = preflight_timeout_expr(lchN)
+    here = launcher_value(drvN, lchN, hostN)
+    moved = launcher_value(drvN, lchN, hostN, "PRE_CAP_S = 1234\n")
+    pre = literal(drvN, "PRE_CAP_S")
+    out["N2_timeout_rule"] = {"expr": expr, "driver_PRE_CAP_S": pre, "launcher": here, "launcher_if_1234": moved,
+                              "ok": expr == "PRE_CAP_S + 100" and here.get("PRE_CAP_S") == pre and
+                              here.get("timeout") == [pre + 100] and moved.get("timeout") == [1334]}
+    pins = literal(drvN, "HELPER_SHA256")
+    got = {k: hashlib.sha256(show(N, NS + "/code/" + k, False)).hexdigest() for k in pins}
+    out["N3_pins"] = {"ok": pins == got, "mismatch": sorted(k for k in pins if pins[k] != got[k])}
+    files = sorted(set(ls(N)) | set(ls(EDITOR)))
+    diff = {}
+    for f in files:
+        try:
+            a = show(EDITOR, f, False)
+        except subprocess.CalledProcessError:
+            a = None
+        try:
+            b = show(N, f, False)
+        except subprocess.CalledProcessError:
+            b = None
+        if a != b:
+            diff[f] = None if a is None or b is None else \
+                [ln for ln in subprocess.run(["/usr/bin/git", "-C", REPO, "diff", "-U0", EDITOR, N, "--", f],
+                                             capture_output=True, text=True).stdout.splitlines()
+                 if ln[:1] in "+-" and not ln.startswith(("+++", "---"))]
+    out["N4_bytes_vs_191ce4a9"] = {"files_compared": len(files), "identical": len(files) - len(diff),
+                                   "differing": diff, "byte_identical_all": not diff}
+    changed = subprocess.run(["/usr/bin/git", "-C", REPO, "diff", "--name-only", W, N], capture_output=True,
+                             text=True).stdout.split()
+    allowed = {NS + "/code/mbs308_driver.py", NS + "/code/mbs308_launch.py", NS + "/DRIVER_DIFF.md",
+               NS + "/tests/test_mbs308_mutants.py"}
+    out["N5_scope_vs_W"] = {"changed": changed, "ok": set(changed) <= allowed}
+    out["verdict"] = "PASS" if all(v.get("ok", True) for k, v in out.items() if isinstance(v, dict) and "ok" in v) \
+        else "FAIL"
+    print(json.dumps(out, indent=1, ensure_ascii=False))
+
+
+if __name__ == "__main__":
+    main(sys.argv[1], sys.argv[2])

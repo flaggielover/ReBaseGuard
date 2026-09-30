@@ -1,0 +1,170 @@
+{
+ "R1_ratification": {
+  "four": [
+   "BackgroundShortcutRunner",
+   "cloudd",
+   "modelcatalogd",
+   "spotlightknowledged.updater"
+  ],
+  "rule31_text_present": true,
+  "ok": true
+ },
+ "W1_withdrawal": {
+  "launch_byte_identical_to_35cabb50": true,
+  "excl_equals_39": true,
+  "ok": true
+ },
+ "N1_allow_list": {
+  "n": 43,
+  "added": [
+   "BackgroundShortcutRunner",
+   "cloudd",
+   "modelcatalogd",
+   "spotlightknowledged.updater"
+  ],
+  "removed": [],
+  "ok": true
+ },
+ "N2_timeout_rule": {
+  "expr": "PRE_CAP_S + 100",
+  "driver_PRE_CAP_S": 1800,
+  "launcher": {
+   "PRE_CAP_S": 1800,
+   "timeout": [
+    1900
+   ]
+  },
+  "launcher_if_1234": {
+   "PRE_CAP_S": 1234,
+   "timeout": [
+    1334
+   ]
+  },
+  "ok": true
+ },
+ "N3_pins": {
+  "ok": true,
+  "mismatch": []
+ },
+ "N4_bytes_vs_191ce4a9": {
+  "files_compared": 20,
+  "identical": 17,
+  "differing": {
+   "level4/closure_proofs/p5y_k5_cell308_mbs_r1/DRIVER_DIFF.md": [
+    "-* New: `code/mbs308_driver.py`, sha256 `d13688d120fb7efb64e5c08169ea6481a93fb8b110f0f442e2030092ac8c4aa4` (changes with every re-pin; the freeze binds the final bytes).",
+    "+* New: `code/mbs308_driver.py`, sha256 `8bac2f1299387f1b9f17591bfea340d07df2f8233b57eb4587d4b9014bbd209d` (changes with every re-pin; the freeze binds the final bytes).",
+    "-+    \"mbs308_launch.py\": \"38cb35a31a80f174b9f84837840c8f6cabdb9982d8d7a668fdb76993f01ba1cb\",",
+    "++    \"mbs308_launch.py\": \"1510308a96911278ca157f0305ee122e1a2a9632f1330bfed3ab428c7d6ba5c8\",",
+    "-@@ -309,6 +468,111 @@",
+    "+@@ -309,6 +468,112 @@",
+    "-+# the 39 names as read by the ratifier, plus the four Apple OS daemons it ratified (item 16, H3 / H4)",
+    "++# CONSTANTS_RATIFICATION_MBS308 item 16 (provisional; R-ALLOW decides the frozen list at the freeze): the current",
+    "++# 39 names plus the four Apple OS daemons of its H3 readings (each under a SIP-protected OS path)",
+    "-@@ -594,9 +858,15 @@",
+    "+@@ -594,9 +859,15 @@",
+    "-@@ -623,33 +893,23 @@",
+    "+@@ -623,33 +894,23 @@",
+    "-@@ -657,7 +917,12 @@",
+    "+@@ -657,7 +918,12 @@",
+    "-@@ -667,12 +932,13 @@",
+    "+@@ -667,12 +933,13 @@",
+    "-@@ -690,20 +956,19 @@",
+    "+@@ -690,20 +957,19 @@",
+    "-@@ -719,19 +984,42 @@",
+    "+@@ -719,19 +985,42 @@",
+    "-@@ -751,71 +1039,133 @@",
+    "+@@ -751,71 +1040,133 @@",
+    "-@@ -827,8 +1177,18 @@",
+    "+@@ -827,8 +1178,18 @@",
+    "-@@ -859,21 +1219,21 @@",
+    "+@@ -859,21 +1220,21 @@",
+    "-@@ -884,40 +1244,180 @@",
+    "+@@ -884,40 +1245,180 @@",
+    "-@@ -928,73 +1428,191 @@",
+    "+@@ -928,73 +1429,191 @@",
+    "-@@ -1097,13 +1715,18 @@",
+    "+@@ -1097,13 +1716,18 @@",
+    "-@@ -1112,25 +1735,31 @@",
+    "+@@ -1112,25 +1736,31 @@",
+    "-@@ -1139,27 +1768,50 @@",
+    "+@@ -1139,27 +1769,50 @@"
+   ],
+   "level4/closure_proofs/p5y_k5_cell308_mbs_r1/code/mbs308_driver.py": [
+    "-    \"mbs308_launch.py\": \"38cb35a31a80f174b9f84837840c8f6cabdb9982d8d7a668fdb76993f01ba1cb\",",
+    "+    \"mbs308_launch.py\": \"1510308a96911278ca157f0305ee122e1a2a9632f1330bfed3ab428c7d6ba5c8\",",
+    "-# the 39 names as read by the ratifier, plus the four Apple OS daemons it ratified (item 16, H3 / H4)",
+    "+# CONSTANTS_RATIFICATION_MBS308 item 16 (provisional; R-ALLOW decides the frozen list at the freeze): the current",
+    "+# 39 names plus the four Apple OS daemons of its H3 readings (each under a SIP-protected OS path)"
+   ],
+   "level4/closure_proofs/p5y_k5_cell308_mbs_r1/code/mbs308_launch.py": [
+    "-`execute` is refused unless the driver's `preflight` passes first (run synchronously here, with the timeout RULE",
+    "-PRE_CAP_S + 100 s, PRE_CAP_S read from the driver's own bytes, so the driver's own PRE_CAP refusal always comes first);",
+    "-`resume` is refused unless `status` prints CONSUMED_INTERRUPTED. With --wait (default) the launcher waits for the job,",
+    "-then boots it out and removes the plist; with --no-wait it returns after the detachment proof and `cleanup <label>` boots out a finished job.",
+    "-The launcher never computes and never touches a ref.",
+    "+`execute` is refused unless the driver's `preflight` passes first (run synchronously here, under the timeout RULE",
+    "+PRE_CAP_S + 100 s of CONSTANTS_RATIFICATION_MBS308 item 31, PRE_CAP_S read from the driver's bytes); `resume` is",
+    "+refused unless `status` prints CONSUMED_INTERRUPTED. With --wait (default) the launcher waits for the job, then boots it",
+    "+out and removes the plist; with --no-wait it returns after the detachment proof and `cleanup <label>` boots out a",
+    "+finished job. The launcher never computes and never touches a ref.",
+    "-def driver_literal(name: str):",
+    "-    \"\"\"A module-level literal of the driver, read from its bytes: the launcher never imports the driver (that would",
+    "-    load the science). No such literal: the launcher refuses to load.\"\"\"",
+    "-    for node in ast.parse(DRIVER.read_text()).body:",
+    "-        if isinstance(node, ast.Assign) and [getattr(t, \"id\", None) for t in node.targets] == [name]:",
+    "-            return ast.literal_eval(node.value)",
+    "-    raise RuntimeError(f\"the driver defines no literal {name}\")",
+    "-",
+    "-",
+    "-# CONSTANTS_RATIFICATION_MBS308 item 31 (research 3c2a7854): the preflight timeout is the RULE PRE_CAP_S + 100 s; it",
+    "-# follows the driver's PRE_CAP_S",
+    "-PRE_CAP_S = driver_literal(\"PRE_CAP_S\")",
+    "-",
+    "-",
+    "+def driver_pre_cap_s() -> int:",
+    "+    \"\"\"The driver's PRE_CAP_S, read from the driver's BYTES by the parser: the launcher never imports the driver (that",
+    "+    would load the science). The driver must bind PRE_CAP_S exactly once at module level, as `PRE_CAP_S = <int>`;",
+    "+    anything else (missing, bound twice, not an int literal) refuses to load the launcher.\"\"\"",
+    "+    binds = []",
+    "+    for node in ast.parse(DRIVER.read_bytes(), filename=str(DRIVER)).body:",
+    "+        targets = node.targets if isinstance(node, ast.Assign) else \\",
+    "+            [node.target] if isinstance(node, (ast.AnnAssign, ast.AugAssign)) else []",
+    "+        if any(isinstance(n, ast.Name) and n.id == \"PRE_CAP_S\" for t in targets for n in ast.walk(t)):",
+    "+            binds.append(node)",
+    "+    value = None",
+    "+    if len(binds) == 1 and isinstance(binds[0], ast.Assign) and len(binds[0].targets) == 1 and \\",
+    "+            isinstance(binds[0].targets[0], ast.Name):",
+    "+        try:",
+    "+            value = ast.literal_eval(binds[0].value)",
+    "+        except (ValueError, TypeError):",
+    "+            value = None",
+    "+    if type(value) is not int:",
+    "+        raise LaunchRefused(\"DRIVER_PRE_CAP_S\", f\"the driver binds PRE_CAP_S {len(binds)} time(s), not once as an int\")",
+    "+    return value",
+    "+",
+    "+",
+    "+# CONSTANTS_RATIFICATION_MBS308 item 31 (research 3c2a7854): the preflight timeout is recorded as the RULE",
+    "+# PRE_CAP_S + 100 s, so the driver's own PRE_CAP refusal always comes before the launcher's kill; PRE_CAP_S is the",
+    "+# driver's own (read from its bytes at every load), so the timeout follows any change of it",
+    "+PRE_CAP_S = driver_pre_cap_s()",
+    "+",
+    "+",
+    "-    \"\"\"execute: the driver's preflight must pass (synchronously, before anything is launched); resume: status must be",
+    "-    CONSUMED_INTERRUPTED. recover: no gate (the driver itself refuses what it must).\"\"\"",
+    "+    \"\"\"execute: the driver's preflight must pass (synchronously, before anything is launched, within the timeout rule",
+    "+    PRE_CAP_S + 100 s); resume: status must be CONSUMED_INTERRUPTED. recover: no gate (the driver itself refuses what",
+    "+    it must).\"\"\""
+   ]
+  },
+  "byte_identical_all": false
+ },
+ "N5_scope_vs_W": {
+  "changed": [
+   "level4/closure_proofs/p5y_k5_cell308_mbs_r1/DRIVER_DIFF.md",
+   "level4/closure_proofs/p5y_k5_cell308_mbs_r1/code/mbs308_driver.py",
+   "level4/closure_proofs/p5y_k5_cell308_mbs_r1/code/mbs308_launch.py"
+  ],
+  "ok": true
+ },
+ "verdict": "PASS"
+}
