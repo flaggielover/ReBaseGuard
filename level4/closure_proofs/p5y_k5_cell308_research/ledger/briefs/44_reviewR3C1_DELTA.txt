@@ -1,0 +1,64 @@
+DELTA REVIEW REQUEST, R3 + C-1 (+ bounded N-2 / N-3) — fresh independent reviewer `reviewR3C1` (recorded before sending).
+
+You are a FRESH, independent, non-holder reviewer. Your verdict is not predetermined.
+
+OBJECT. Successor branch p5y-k5-cell308-mbs-r1, worktree /Users/suzhe/ReBaseGuard-c308mbs,
+NSS = level4/closure_proofs/p5y_k5_cell308_mbs_r1. Review the committed bytes of the repair commit
+191ce4a965d822284f42afa172bb898ab168b324 (parent 35cabb50), diffed against 35cabb50 (`git diff 35cabb50 191ce4a965d822284f42afa172bb898ab168b324`). The editor's own account is
+BUILD_REPORT.md section 13; treat it as a claim to check, not as evidence.
+
+WHY. Research reviews/REVIEW_IMPLEMENTATION_MBS308_DELTA.md (commit 99185dcb) is DELTA_REJECTED: R1, R2, R4 MET;
+R3 NOT MET; correction C-1 required. Its verdict section lists exactly what an "R3-only delta (which also checks C-1)"
+must confirm (items 1-3) and recommends N-1, N-2, N-3. The constants were ratified by a non-holder in research
+governance/CONSTANTS_RATIFICATION_MBS308.md (commit 3c2a7854, CONSTANTS_RATIFIED_WITH_CHANGES). Read both.
+
+SCOPE (only these; everything else is out of scope and must be unchanged):
+1. R3 — (a) EXCL_ALLOW = the 39 names at 35cabb50 ∪ {spotlightknowledged.updater, cloudd, BackgroundShortcutRunner,
+   modelcatalogd}; (b) the launcher's preflight timeout written as PRE_CAP_S + 100 (the value must follow the driver's
+   PRE_CAP_S); (c) the protocol draft's section 8 carries R-MEM, R-FREE, R-EXCL-PCT and R-ALLOW VERBATIM, with
+   MEM_CAP / FREE_MEM_MIN / EXCL_CPU_PCT / EXCL_ALLOW frozen as rule outputs from official evidence; (d) NO other
+   operational change (compare every changed code line against the ratification: no new cap, limit, timeout,
+   threshold, allow-list entry, budget or poll value chosen by the editor); (e) HELPER_SHA256 re-pinned correctly and
+   DRIVER_DIFF.md regenerated faithfully (regenerate it yourself); (f) the ref-write retry schedule's reuse of
+   SEAL_RETRY_DELAYS is listed; (g) t_S01_worker_death gains the run {"worker_die": "RLR.0.6", "job_sleep": 90} under
+   its 60 s bound and mutant M33 is killed BY THAT RUN deterministically — run M33 at least twice, confirm from the
+   per-run results which run fails and why, and judge the editor's mechanism argument (docstring of t_S01; CPython
+   3.14 concurrent/futures/process.py terminate_broken holds the shutdown lock while joining).
+2. C-1 — packed-refs.lock is removed from stale-lock detection, the move-aside action, the campaign lock set and every
+   post-marker GIT_LOCKED refusal; nothing else manipulates it; MB r1's carried check_clean still refuses it before the
+   marker; L09 / L11 / M38 adjusted; a regression test shows it is never moved or quarantined; a mutant restoring it
+   is killed. Check that the campaign fails closed or defers to git instead of working around the lock.
+3. Bounded R2 hardening (optional; rule on it separately) — N-2 (identity_state never reads DEAD from a field that was
+   never recorded) and N-3 (git_lock_info: a recorded campaign identity holds the lock unless positively DEAD). Is each
+   correct, tested (t_identity_state_positive_evidence, t_L12_lock_ps_failure_not_stale) and mutant-killed (M49, M50)?
+   Is the editor's decision to LEAVE the other identity_alive call sites and N-1 for a separate reviewed delta
+   reasonable, and is it documented?
+4. Governance point. Under the T6 ruling's M4 as stated in briefs 40/42 (repairs by an exposed party only at a
+   non-holder reviewer's request; only a non-holder may change operational numbers), rule on the editor's exposure
+   disclosure in BUILD_REPORT section 13. You must not seek out the disclosed material itself. If you cannot rule, say
+   that the point needs the user's ruling and why.
+
+ABSOLUTE RULES.
+- No cell-308 target evaluation, direct or indirect; nothing may evaluate Γ(5,308; ·), cells 305-309 or any drift in
+  [6/5, 13/5] or its mirror. Do not touch cell 309. Create no authorization, grant, marker, pending result or seal.
+- MBS-2 reading restrictions: do NOT open reviews/REVIEW_EXECUTION_INTERRUPTION*, audit/EXECUTION_INTERRUPTION_*,
+  reviews/REVIEW_SUCCESSOR_GOVERNANCE_308*, reviews/INCIDENT_INDEPENDENCE_REVIEW_MBS308* (T6 included),
+  COORDINATOR_EXPOSURE_DISCLOSURE*, anything under p5y_k5_cell308_mb_r1/{review,adjudication,postexec,evidence}/,
+  BUILD_REPORT.md section 9, any other session's scratchpad, or anything under /Users/suzhe/.claude/. If your context
+  already holds any MB r1 run observation you did not read from an allowed file, disclose it in your review.
+- Sandboxes only on your OWN `git clone --no-local --bare` base store (set MBS308_BASE_STORE and MBS308_SCRATCH to your
+  own scratch); never the real object store; no real ref created, moved or deleted; no git writes of any kind (the
+  coordinator commits your file after your completion message).
+- The launch tests bootstrap real LaunchAgents with a SYNTHETIC payload: run them under your own review-label wrapper
+  or as they are, but every job must be booted out and no plist left; disclose what you did.
+- Ledger every run through the research namespace's code/c308_quarantine.log_event (klass='REVIEW' or
+  'SYNTHETIC_VALIDATION', agent='reviewR3C1', target_evaluations=0).
+
+RE-RUN YOURSELF on the committed bytes: static, launch, state and crash suites; the full mutant matrix; M33 at least
+twice more on its own; the C-1 regression. Report counts.
+
+OUTPUT. Write /Users/suzhe/ReBaseGuard-c308/level4/closure_proofs/p5y_k5_cell308_research/reviews/REVIEW_IMPLEMENTATION_MBS308_DELTA_R3.md:
+line 1 the title; line 2 EXACTLY one of DELTA_ACCEPTED or DELTA_REJECTED (once); short sections per scope item, each
+ruled MET / NOT MET, plus the governance point. DELTA_ACCEPTED only if you independently find R3 and C-1 satisfied.
+If accepted, say whether the build is IMPLEMENTATION_ACCEPTED as a pre-freeze candidate and list what remains before
+any freeze (do not choose freeze parameters). Final message: the verdict line and a 10-line summary.
