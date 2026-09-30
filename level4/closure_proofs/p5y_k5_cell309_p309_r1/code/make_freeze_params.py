@@ -83,6 +83,20 @@ DISCLOSED_LIABILITIES = [
     "owner D5: the two production mutation sites (_arm_marker, _persist_pending) and the pending-ref NAME were "
     "ratified to EXIST in the frozen tree (not to be used before the grant); scanner schema 3 rejects every other "
     "ref-moving path; independently verified",
+    "second-delta rule choices with direction (delta-2 review E9(a)): A20 against an invalid closure; A21 toward a "
+    "conclusive outcome, 14-day minimum horizon, residual mid-run expiry for runs longer than the horizon; A22 "
+    "against closure in a failure case (including E2: a SIGXCPU below the CPU limit is a job exception); A25 toward a "
+    "conclusive outcome; A26 and A28 against closure in a failure case; A27 no retry (a failed or interrupted single "
+    "attempt ends the campaign); A23 and A24 neutral",
+    "FE-9's pre-freeze in-memory parse of the target cell interval (and of cells 305-309), no value displayed: a "
+    "departure from C4's letter (delta-2 E3)",
+    "QC11 I03 read the cell-307 campaign's decoy record (cover cell 297) in development runs, outside the enumerated "
+    "reads and unledgered at the time; removed (manufactured Stage-1b records) and ledgered retrospectively (E4)",
+    "the Stage-1b decoy outputs (QC09, cover cells 297 and 316) are latent-proxy class: labelled, never displayed in "
+    "summaries or handoffs, never juxtaposed with any tail-cell quantity; the two decoys bracket the band (297 below, "
+    "316 above, by the cover's ordering; both guard-checked outside the band), which the research SRK decoy rule "
+    "avoided (delta-2 E5; A15/D6 unchanged)",
+    "second delta result-chasing component LOW (delta-2 review)",
 ]
 REVIEWS = {
     "incident_independence": (NS + "reviews/REVIEW_INCIDENT_INDEPENDENCE_P309.md", "## 10. Conditions"),
@@ -228,12 +242,16 @@ def build() -> dict:
         "proposed_execution_host": {"description": "this isolated cloud environment (rev. 2c A14)",
                                     "host_id_sha256": G.host_id()},
         "post_grant_derivations": {
-            "cell_interval": "the CUSUM-filtered entry of the pinned cells.json for the cell, as exact rationals; read "
-                             "after the freeze, ledgered (incident review C4)",
+            "cell_interval": "derived by execute itself from the pinned cells.json (the canonical sum form), after "
+                             "check_grant; the grant's value must equal it (rev. 2c A20); the proposal tool reads it "
+                             "after the qualification review, ledgered (C4). Disclosed departure: FE-9's pre-freeze "
+                             "in-memory equality check parsed it, no value displayed (delta-2 E3)",
             "drift_hull_Ew": "srk_certify.cell_blocks(cell_interval)[0]: the outward 2^-10 dyadic hull",
             "execution_host": "the host the owner names in the grant; if it is not the proposed host, QC10's host "
                               "re-run is repeated there before execute",
-            "not_after_utc": "the grant's expiry, set by the owner"},
+            "not_after_utc": "the grant's expiry, set by the owner: at least 14 days after execute starts (rev. 2c "
+                             "A21, checked before the marker); a run longer than the horizon turns the per-call expiry "
+                             "check into EXECUTION_INDETERMINATE or a silent SRK loss (delta-2 E7)"},
     }
 
 

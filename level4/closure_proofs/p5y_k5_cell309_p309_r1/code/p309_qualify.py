@@ -60,7 +60,9 @@ def sha_file(p: Path) -> str:
     return hashlib.sha256(p.read_bytes()).hexdigest()
 
 
-ATT = {"dir": None}                                    # the attempt directory of this run
+ATT = {"dir": None, "label": "qualification"}         # the attempt directory; the ledger label (delta-2 E6)
+RUN_START = "QUALIFICATION RUN START"                   # the single run's ledger line (delta-2 E6)
+HOST_START = "HOST RERUN START"
 
 
 def xwrite(path: Path, text: str) -> None:
@@ -98,7 +100,7 @@ def mirror(freeze_commit: str) -> Path:
 
 def research_test(m: Path, rel: str, *args, opt: bool = False) -> dict:
     cmd = [PY] + (["-O"] if opt else []) + [str(m / RMIR / rel), *args]
-    E.log(f"{RMIR}/{rel} (in the archive mirror)", f"qualification: research test {rel} {' '.join(args)}",
+    E.log(f"{RMIR}/{rel} (in the archive mirror)", f"{ATT['label']}: research test {rel} {' '.join(args)}",
           klass="NONTARGET_DECOY", notes="read-only export of the frozen commit; outputs stay in the mirror")
     return run(cmd, m / RMIR)
 
@@ -249,11 +251,29 @@ def qc13(freeze: str) -> dict:
           "qualification_after_freeze": subprocess.run(["git", "-C", str(REPO), "merge-base", "--is-ancestor", freeze,
                                                         "HEAD"]).returncode == 0}
     ok["no_r6"] = not any("COVERAGE_MAP_R6" in p.upper() for p in g("ls-tree", "-r", "--name-only", "HEAD").splitlines())
+    ok["single_qualification_run_since_the_freeze_record"] = single_run_since_freeze()
     ph = qc_formal("code/p309_placeholder_check.py")
     ok["no_placeholder_or_choice"] = ph["pass"]
     params = subprocess.run([PY, str(FNS / "code" / "make_freeze_params.py"), "--check"], capture_output=True, text=True)
     ok["freeze_params_regenerate_identically"] = params.returncode == 0
     return {"pass": all(ok.values()), "checks": ok, "runs": ph["runs"]}
+
+
+def single_run_since_freeze() -> bool:
+    """delta-2 E6: from the execution ledger, anchored at the freeze record's commit time, exactly one qualification
+    run started after the freeze (this one), and no host re-run started before it"""
+    try:
+        rec_commit = subprocess.run(["git", "-C", str(REPO), "log", "--format=%H %cI", "--", D.FREEZE_RECORD_REL],
+                                    capture_output=True, text=True).stdout.split()
+        t0 = datetime.datetime.fromisoformat(rec_commit[1]).astimezone(datetime.timezone.utc).strftime(
+            "%Y-%m-%dT%H:%M:%SZ")
+    except (IndexError, ValueError):
+        return False
+    rows = [json.loads(l) for l in (FNS / "ledger" / "ZERO_TARGET_LEDGER.jsonl").read_text().splitlines() if l.strip()]
+    after = [r for r in rows if r.get("utc", "") >= t0]
+    starts = [r for r in after if str(r.get("purpose", "")).startswith(RUN_START)]
+    hosts = [r for r in after if str(r.get("purpose", "")).startswith(HOST_START)]
+    return len(starts) == 1 and not hosts
 
 
 def qc16() -> dict:
@@ -304,7 +324,9 @@ def host_rerun(workers: int) -> int:
     base = QDIR / "host_rerun"
     base.mkdir(parents=True, exist_ok=True)
     ATT["dir"] = base / D.G.host_id()[:16]
-    os.mkdir(ATT["dir"])
+    os.mkdir(ATT["dir"])                                      # exclusive per host id
+    E.log("code/p309_qualify.py --host-rerun", f"{HOST_START} {D.G.host_id()[:16]} (rev. 2c A14 / delta D7)",
+          klass="NONTARGET_DECOY", drifts=[["1/2", "37/72"]], notes="QC10 host re-run; the declared a2_h5 decoy")
     (ATT["dir"] / "evidence").mkdir()
     a = decoy_stage1a("QC08_HOST", workers)
     d = decoy_stage1a("QC10_HOST", workers)
@@ -354,6 +376,8 @@ def main() -> int:
         return 2
     ATT["dir"] = QDIR / "attempt_1"
     os.mkdir(ATT["dir"])                                      # exclusive
+    E.log("code/p309_qualify.py", f"{RUN_START} attempt_1 at the recorded freeze {freeze[:12]} (the single "
+          "qualification run; R4 B8, delta-2 E6)", klass="GOVERNANCE", notes="no retry, no resumption")
     (ATT["dir"] / "evidence").mkdir()
     m = mirror(freeze)
     items = {

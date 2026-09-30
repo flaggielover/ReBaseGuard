@@ -73,6 +73,7 @@ STAGE1A_JOB_LIMIT_S = 12 * 3600       # per-job CPU limit (protocol 2.5)
 STAGE1B_BUDGET_S = 21600              # protocol 3 (307 precedent)
 STAGE1B_JOB_LIMIT_S = 21600           # rev. 2c: the Stage-1b per-job limit equals its total budget
 VERIFIER_N, VERIFIER_DEPTH = 8, 24
+SIGXCPU_TOLERANCE_S = 0.05            # delta-2 E2: rusage granularity at the soft limit (a SIGXCPU below it is a fault)
 PRE_CAP_S = 1800
 SEAL_RETRY_DELAYS = (0.5, 1.0, 2.0, 4.0)  # q309: literal-ok (seconds of delay, not drifts)
 ENV = {"PATH": "/usr/bin:/bin", "HOME": os.environ.get("HOME", "/var/empty"), "GIT_OPTIONAL_LOCKS": "0",
@@ -751,9 +752,11 @@ def run_jobs(specs: list, *, budget_s: float, job_limit_s: float, workers: int, 
         cum += cpu
         sig = os.WTERMSIG(status) if os.WIFSIGNALED(status) else None
         rc = os.WEXITSTATUS(status) if os.WIFEXITED(status) else None
-        if sig == signal.SIGXCPU or (sig == signal.SIGKILL and cpu >= job_limit_s):
-            # R4 B4: only the kernel's CPU-limit enforcement is budget exhaustion (fallback); any other abnormal end
-            # (an OOM kill, a kill -9 below the limit) is a runtime failure -> JOB_EXCEPTION -> the stage raises
+        if (sig == signal.SIGXCPU and cpu >= job_limit_s - SIGXCPU_TOLERANCE_S) or (
+                sig == signal.SIGKILL and cpu >= job_limit_s):
+            # R4 B4 and delta-2 E2: only the kernel's CPU-limit enforcement, evidenced by the CPU time, is budget
+            # exhaustion (fallback); any other abnormal end (an OOM kill, a kill -9 or kill -XCPU below the limit) is
+            # a runtime failure -> JOB_EXCEPTION -> the stage raises
             done[idx] = {"kind": "TERMINATED_JOB_LIMIT", "cpu_s": round(cpu, 3), "signal": sig}
         elif sig is not None:
             done[idx] = {"kind": "JOB_EXCEPTION", "error": f"killed by signal {sig} below the CPU limit",

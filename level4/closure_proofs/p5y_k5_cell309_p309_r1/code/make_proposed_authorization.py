@@ -98,7 +98,10 @@ def main() -> int:
                            "description": "the proposed host: this isolated cloud environment (rev. 2c A14); isolated "
                                           "from the other live campaign's machine (owner decisions: execution "
                                           "host); if the owner names another host, QC10's host "
-                                          "re-run is repeated there before execute"},
+                                          "re-run is repeated there before execute",
+                           "host_rerun_commit": "<only if the owner names another host: the grant-window commit of "
+                                                "qualification/host_rerun/<host id>/QC10_HOST_RERUN.json, which must be "
+                                                "a PASS (delta-2 E6); a failed host re-run blocks the grant>"},
         "runtime": {"python": platform.python_version()},
         "marker_ref": G.PRODUCTION_MARKER,
         "exactly_once": fp["exactly_once"], "executions_authorized": 1,
@@ -108,7 +111,14 @@ def main() -> int:
         "u2": fp["u2"], "independence_statement": fp["independence_statement"], "efficacy": fp["efficacy"],
         "disclosed_liabilities": fp["disclosed_liabilities"],
         "incident_review_conditions_verbatim": fp["reviews"]["incident_independence"]["conditions_verbatim"] + "\n"
-                                               + fp["reviews"]["delta_incident_independence"]["conditions_verbatim"],
+                                               + fp["reviews"]["delta_incident_independence"]["conditions_verbatim"]
+                                               + "\n" + fp["reviews"]["delta2_incident_independence"][
+                                                   "conditions_verbatim"],
+        "prefreeze_review_conditions_verbatim": fp["reviews"]["prefreeze_r4"]["conditions_verbatim"] + "\n"
+                                                + fp["reviews"]["prefreeze_r4_followup"]["conditions_verbatim"],
+        "horizon_notice": "a run longer than the grant's remaining validity turns the per-call expiry check into "
+                          "EXECUTION_INDETERMINATE or a silent SRK loss; not_after_utc must be at least 14 days after "
+                          "execute starts, and a longer horizon is the owner's choice (delta-2 E7)",
         "u2_check_conditions_verbatim": fp["reviews"]["u2_check"]["conditions_verbatim"],
         "delta_review": fp["reviews"]["delta_incident_independence"],
         "prefreeze_review": fp["reviews"]["prefreeze_r4"],

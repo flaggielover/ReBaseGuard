@@ -622,6 +622,22 @@ def stage_flows() -> dict:
         raised = True
     R["S15_sigkill_below_limit_is_job_exception"] = {"pass": run["results"][0]["kind"] == "JOB_EXCEPTION" and raised,
                                                      "got": run["results"][0]}
+    # S17 (delta-2 E2): a SIGXCPU below the CPU limit (a deliberate kill -XCPU) is a runtime failure, not a budget stop
+    def xcpu(spec):
+        import resource as _r
+
+        def nocore():
+            _r.setrlimit(_r.RLIMIT_CORE, (0, 0))
+        return subprocess.Popen([sys.executable, "-c", "import os, signal; os.kill(os.getpid(), signal.SIGXCPU)"],
+                                preexec_fn=nocore)
+    run = D.run_jobs([{"x": 1}], budget_s=100, job_limit_s=60, workers=1, runner=xcpu)
+    try:
+        D.stage1a("decoy", cell, dict(D.GEOMETRY), vid, workers=2, runner=xcpu)
+        raised = False
+    except RuntimeError:
+        raised = True
+    R["S17_sigxcpu_below_limit_is_job_exception"] = {"pass": run["results"][0]["kind"] == "JOB_EXCEPTION" and raised,
+                                                     "got": run["results"][0]}
     # S16 (R4 NB6): a target-mode job refuses unless it is a child of the live execute process holding the nonce
     outs = {}
     for name, spec in (("no_nonce", {}), ("wrong_token", {"_git_dir": str(SCRATCH), "_run_token": "x"})):
@@ -649,8 +665,9 @@ def integration_flows() -> dict:
     committed TEST-band h3 decoy-cell certificates sealed at the record's top level, and P5 runs seal-only on the
     interpreter-flag path.  I03: execute's whole evaluation (Stage 1a, Stage 1b, S, Stage 2, decision, recording) in
     one process, in execute's import order, on the declared decoys: stub job runners return the committed a2_h5
-    certificates and the committed RLR307 decoy records of cover cell 297; Stage 2 runs on the QC14' manufactured
-    inputs; then the sandbox seal and P1-P10.  Nothing is evaluated for any tail cell."""
+    certificates and manufactured, internally consistent Stage-1b rung records on a synthetic out-of-band interval
+    (delta-2 E4); Stage 2 runs on the QC14' manufactured inputs; then the sandbox seal and P1-P10.  Nothing is
+    evaluated for any tail cell."""
     import p309_postexec as PX
     import p309_rehearse as RH
     R = {}
@@ -681,11 +698,23 @@ def integration_flows() -> dict:
     import srk_gate  # noqa: F401  (as the historical control does)
     vid = "sha256:" + D.pin_table(m)[D.VARIANT_REL][0]
     a2 = _certs("cell_h5_k1_2_C1_2_37_72")
-    rec297 = json.loads((REPO / "level4/closure_proofs/p5y_k5_cell307_rlr_r1/qualification/"
-                                "RLR307_DECOY_STAGE1_297.json").read_text())
-    rungs = {(b["index"], r["degree"]): r for b in rec297["stage1"]["blocks"] for r in b["rungs"]}
-    cells = [c for c in json.loads(D.read_pinned(D.pin_table(m), D.data_rel(m, "cells_json")))
-             if c["detector"] == "CUSUM" and c["index"] == 297]
+    # delta-2 E4: MANUFACTURED Stage-1b rung records (the S12 fixture pattern), internally consistent with the pinned
+    # certifier's kappa and the RLR307 independent reconstruction, on a synthetic out-of-band interval; no campaign
+    # results file and no cover-cell entry is read
+    cell_1b = (F(1, 2), F(51, 100))
+    mods = D._load_certifier_isolated(D.load_rlr307(m)["rlr307_pinned"], G.producer_adapter(G.PRODUCTION))
+    kappa = (mods["c1b_certpw"].KAPPA1, mods["c1b_certpw"].KAPPA2)
+    IND = D._ind()
+
+    def mrec(block, degree):
+        f = F(100 + 7 * block + degree, 100)
+        rec = {"status": "CERTIFIED", "degree": degree, "A_bar": D.fs(3 * f), "tau": "2", "D_lo": "1/2",
+               "C_T": D.fs(5 / f), "D1": "1/3", "D2": "1/5", "L1_up": D.fs(F(1, 7) / f), "L2_up": "1/9",
+               "tau_a_lo": "1/2", "C_R": D.fs(4 * f), "tau_a_up": "1", "S2_up": "1/3", "TN_up": "1/4",
+               "Lambda_lo": "1/6"}
+        sup = IND.block_supply(rec, *kappa)
+        rec.update({k: D.fs(sup[k]) for k in ("A0_SUPPLY", "A1_SUPPLY", "A2_SUPPLY", "G0", "G1", "G2")})
+        return rec
 
     def run1a(spec):
         cs = [c for c in a2 if c["block"] == spec["block"] and c["degree"] == spec["degree"]]
@@ -695,11 +724,10 @@ def integration_flows() -> dict:
                 "verdict_source": vid, "adapter_records": [], "log_digest": ""}
 
     def run1b(spec):
-        r = rungs[(spec["block"], spec["degree"])]
-        return {"kind": "JOB_RETURNED", "block": spec["block"], "degree": spec["degree"], "status": r["status"],
-                "record": r["record"], "adapter_records": []}
+        return {"kind": "JOB_RETURNED", "block": spec["block"], "degree": spec["degree"], "status": "CERTIFIED",
+                "record": mrec(spec["block"], spec["degree"]), "adapter_records": []}
     mf = RH.manufactured()
-    prep = {"cell": RH.DECOY_CELL, "cell_1b": D.cover_interval(cells[0]), "verifier_id": vid, "manifest": m,
+    prep = {"cell": RH.DECOY_CELL, "cell_1b": cell_1b, "verifier_id": vid, "manifest": m,
             "A_I1": mf["A"], "ci": {k: mf[k] for k in ("meas", "aux", "ad", "cov")}, "cell_label": "DECOY_INTEGRATION"}
     seen = {}
 
@@ -714,7 +742,7 @@ def integration_flows() -> dict:
     px = PX.checks(ctx_of(sb), reverify=lambda r: PX.reverify(r, sandbox=sb))
     s1a = rec.get("stage1a") or {}
     tgt = rec.get("target") or {}
-    ok = (rc == 0 and rec.get("status") == "TARGET_EVALUATED" and len(cells) == 1
+    ok = (rc == 0 and rec.get("status") == "TARGET_EVALUATED"
           and set(s1a.get("verdict_details", {})) == set(s1a.get("verdicts", {})) and s1a.get("certificates")
           and tgt.get("stage1b", {}).get("cell", {}).get("status") == "CERTIFIED"
           and tgt.get("S") == {j: D.fs(x) for j, x in D._ind().consumed(mf["A"], {
@@ -728,18 +756,14 @@ def integration_flows() -> dict:
 
 
 if __name__ == "__main__":
-    _m = D.load_manifest()
-    _c297 = [c for c in json.loads(D.read_pinned(D.pin_table(_m), D.data_rel(_m, "cells_json")))
-             if c["detector"] == "CUSUM" and c["index"] == 297]
-    _i297 = D.cover_interval(_c297[0])
     D.E.log("tests/test_p309_exactly_once.py", "QC11 exactly-once sandbox flows (synthetic TEST names only) and the "
             "integration flows on declared decoys", klass="NONTARGET_DECOY",
-            drifts=[["1/2", "37/72"], [D.fs(_i297[0]), D.fs(_i297[1])], ["341/1024", "201/512"]],
+            drifts=[["1/2", "37/72"], ["1/2", "51/100"], ["341/1024", "201/512"]],
             notes="sandboxes are light repositories under the scratchpad (alternates, no remote), never pushed; no "
                   "production ref is created; stub job runners; I01/I02 verify the 16 committed TEST-band h3 decoy "
-                  "certificates in review mode; I03 composes the committed a2_h5 decoy certificates and the committed "
-                  "RLR307 decoy records of cover cell 297 and runs Stage 2 on the QC14' manufactured inputs; nothing is "
-                  "evaluated for any tail cell")
+                  "certificates in review mode; I03 composes the committed a2_h5 decoy certificates and MANUFACTURED "
+                  "Stage-1b records on a synthetic interval and runs Stage 2 on the QC14' manufactured inputs; no "
+                  "cover-cell entry and no campaign results file is read; nothing is evaluated for any tail cell")
     res = {}
     res.update(pre_marker_flows())
     res.update(admission_flows())

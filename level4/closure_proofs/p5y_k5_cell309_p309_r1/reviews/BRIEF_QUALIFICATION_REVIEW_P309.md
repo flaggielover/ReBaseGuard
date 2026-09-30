@@ -91,3 +91,16 @@ Give each item PASS or FAIL, with evidence.
 Also include:
 * a disclosure section listing your reads and runs, with ledger timestamps;
 * a statement that NEW Γ309 TARGET EVALUATIONS = 0 as far as you can verify.
+
+## Addendum (before issue; delta-2 review conditions E2–E9)
+
+* **Checklist 4 (one attempt).** Verify it from the committed execution ledger, anchored at the freeze record's commit
+  time. Exactly one line reading `QUALIFICATION RUN START`, and no `HOST RERUN START` before the review. QC13 checks
+  this as `single_qualification_run_since_the_freeze_record`. Lines labelled "qualification:" or "dry run" dated before
+  the freeze record belong to the coordinator's pre-freeze dry run (development).
+* **Checklist 13 (job ends).** It includes E2: a SIGXCPU below the CPU limit (tolerance 0.05 s) is JOB_EXCEPTION
+  (QC11 S17).
+* **Checklist 10.** QC11 I03 uses manufactured Stage-1b records (E4). No campaign results file and no cover-cell entry
+  is read.
+* **Latent proxies.** QC09's Stage-1b decoy outputs (cover cells 297 and 316) are latent-proxy class (E5). Check that
+  they are labelled and never displayed in summaries.

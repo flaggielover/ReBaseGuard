@@ -159,3 +159,18 @@ None of the four was in the qualification's `git archive` mirror or in the freez
 the attempt.
 
 **Direction:** none.
+
+## FE-9 addendum (delta-2 condition E3; append-only)
+
+**What the check did.** FE-9's equality check, run before the freeze, compared `cover_rat` with the canonical `rat` on
+all 326 CUSUM cover cells. To do that it parsed the endpoints of the quarantined cells 305–309 in memory, including the
+target cell's interval. No value was displayed; only the boolean result and cells 0 and 1 were shown.
+
+**Why it departs from C4.** Incident-review condition C4 requires the target interval to be read after the freeze and
+ledgered. This check was a departure from C4's letter. Restricting the check to cells outside 305–309 would have been
+enough, because `execute` derives and cross-checks the target interval itself (A20). The check is disclosed among the
+liabilities.
+
+**Rule from now on.** Any further structural check of `cells.json` filters out the 305–309 entries before parsing their
+values, unless that is strictly necessary. The only production reader is `execute`, after `check_grant`.
+QC11 no longer reads `cells.json` at all (E4).
