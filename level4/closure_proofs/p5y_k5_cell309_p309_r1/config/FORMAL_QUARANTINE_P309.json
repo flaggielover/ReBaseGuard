@@ -1,0 +1,27 @@
+{
+ "schema": "P309_FORMAL_QUARANTINE/1",
+ "campaign": "p5y_k5_cell309_p309_r1",
+ "authority": "governance/OWNER_DECISIONS_P309_VERBATIM.md (owner, 2026-09-30); does NOT issue the target execution grant",
+ "inherits": "level4/closure_proofs/p5y_k5_cell309_research_r1/config/TARGET_QUARANTINE_309.json (in force until a grant exists; protocol rev. 2b section 6)",
+ "grant_exists": false,
+ "forbidden_in_this_stage": [
+  "any Gamma(5,309) evaluation, target-equivalent proxy, or in-band target quantity",
+  "any in-band Stage-1 computation for cell 309 (Stage 1a or 1b at 309's drift hull)",
+  "arming, creating or consuming any exactly-once marker or pending-result ref",
+  "running the driver's execute mode (it must refuse without a grant; tested only in a sandbox with stubs)",
+  "running the historical control (post-grant, pre-marker by protocol)",
+  "any evaluation for cells 305, 306, 307, 308 (excluded from the cell set; quarantine inherited)",
+  "result-directed tuning, extrapolation from decoys, adoption, r6, r5 mutation, K5/P5Y status change, floor change",
+  "touching the cell-308 campaign in any way",
+  "rewriting or adding to the research branch; merging to main; pushing tags or unrelated refs"
+ ],
+ "necessary_reads_allowed_with_exposure_ledger": [
+  "the cell-309 drift interval from the pinned cells.json, only to compute the hull Ew for the grant (cell definition, not an evaluation)",
+  "RLR307 Stage-1 code (not evidence or results), only to reuse its Stage-1 rules verbatim (FC5)",
+  "the pinned frozen consumer code (tct_rule, tc_rule, c2_d5_forecast, deflated_consume, tail_forecast_r2) as code"
+ ],
+ "ledgers": {"executions": "ledger/ZERO_TARGET_LEDGER.jsonl", "exposures": "ledger/EXPOSURE_LEDGER.jsonl",
+             "checkpoint_pushes": "ledger/CHECKPOINT_PUSHES.jsonl"},
+ "cell_set": [309],
+ "non_reattribution": "Stage-1 material generated for 309 is permanently bound to cell 309 and never reused as evidence for another cell, including neighbours whose drift range overlaps Ew"
+}
