@@ -62,6 +62,8 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 49 | 49_builder4_integrate.txt | builder4 (resumed): INTEGRATE the decision-independent qualification framework onto 216c465f after DELTA_ACCEPTED (2308651e); chunked matrix with sandbox cleanup | SendMessage | see ledger | no (tail-figure scan: 0 hits) |
 | 50 | 50_builder5_disk_gate_prefreeze.txt | non-holder builder5: liveness robustness repairs O-1/O-2/O-3/K-1 (reviewB5), disk-safety and scratch-lifecycle gate with derived thresholds, re-pin tooling, R-MEM input recording, QS-RESUME-DECOY, host-readiness checklist | Agent | see ledger | no (tail-figure scan: 0 hits) |
 | 50-N | 50_builder5_NOTES.txt | practical notes appended to brief 50 as sent (skip BUILD_REPORT s6 and the governance determination: MB r1 clock times; AC / lid; disk; shell quirks) | Agent (same prompt) | see ledger | no |
+| 51 | 51_reviewSEQ_sequencing_determination.txt | fresh non-holder reviewSEQ: does accepted governance uniquely determine the R-rule sequencing resolution (protocol s11.2) given the user's MBS-8 = (i)? read-only | Agent | see ledger | no (tail-figure scan: 0 hits) |
+| 52 | 52_reviewS1T_decision_text_conformance.txt | fresh non-holder reviewS1T: conformance of the user's owner-decision text (5c2394ba) with the required S1 / S16(c) / MBS-6/7/8 content; MBS-8 (i) values vs MB r1 and the candidate; read-only | Agent | see ledger | no (tail-figure scan: 0 hits) |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.

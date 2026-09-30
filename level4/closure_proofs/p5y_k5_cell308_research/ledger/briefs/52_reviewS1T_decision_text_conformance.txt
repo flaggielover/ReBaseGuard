@@ -1,0 +1,54 @@
+CONFORMANCE CHECK (brief 52) — fresh independent non-holder reviewer `reviewS1T`: do the user's recorded owner
+decisions meet the content the accepted governance requires of them? Recorded before sending. Read-only. Your verdict
+is not predetermined; you rule on conformance of text only, never on whether the decisions are wise.
+
+WHO YOU ARE. A FRESH reviewer who is not a holder of any MB r1 run observation, independent of the coordinator
+(editorR3C1, exposed), of every builder, of the ratifier and of every earlier reviewer (the T6 ruling's M4 keeps
+exposed parties out of S1-related roles, so the coordinator does not self-adjudicate this).
+
+OBJECT. research ledger/USER_RULING_MBS308_OWNER_DECISIONS.txt (commit 5c2394ba; sha256
+34eb1d41b56742fda2ba7fb7b70a46de5e0219ba324aa510437cc6c6d1065ad1; the user's text byte for byte) and its clerical index
+ledger/USER_RULING_MBS308_OWNER_DECISIONS.md. Research namespace:
+/Users/suzhe/ReBaseGuard-c308/level4/closure_proofs/p5y_k5_cell308_research.
+
+CHECK, each ruled CONFORMS / DOES NOT CONFORM / NEEDS A RULING (say by whom):
+1. S1. The required content of the S1 ruling: governance/SUCCESSOR_GOVERNANCE_308_ADDENDUM_A1.md section 3 as read by
+   governance/SUCCESSOR_GOVERNANCE_308_ADDENDUM_A1_ERRATUM_E1.md D1 (items 1-6; note item 1's "expressly
+   notwithstanding the brief's §21 ... and mitigation 5"), the register rows S1, MBS-13, MBS-14, and the successor
+   protocol draft's grant fields (`user_ruling_s1`, verbatim text, its sha256, `reaffirms_c4`; `check_grant`). For each
+   item quote the user's words that meet it, or say it is absent or only implicit. If an item is only implicit, say
+   whether an accepted text requires it to be express. Also: is the conditional form of the ruling (section 5's
+   chain) compatible with the grant mechanics; which byte range of the .txt is the S1 text the grant must carry (state
+   the options if the texts do not fix it); and does anything in sections 6 and 15-18 conflict with an accepted
+   frozen-to-be rule (e.g. U1-U8, the recovery semantics)?
+2. S16(c). Does section 1 answer MB r1's protocol §14 / qualification-review G2 as governance addendum A1 section 1
+   (O4) requires, including A1's statement that the freeze decision "must also settle the caps question"?
+3. MBS-6, MBS-7, MBS-8. Does each of sections 2-4 unambiguously select one option as the register and the decision
+   brief r2 define it (governance/USER_DECISION_BRIEF_308_SUCCESSOR_R2.md, a DRAFT not yet reader-checked: use it for
+   option wording only; register governance/SUCCESSOR_CONDITIONS_REGISTER_308.md)? For MBS-8 (i): MECHANICALLY compare
+   every value the user lists (EVAL_CAP, the per-job caps RLR / C2b / C1b / VER, PRE_CAP, WORKERS; awake-time per
+   attempt) with (A) MB r1's frozen r3 values (MB r1 formal worktree /Users/suzhe/ReBaseGuard-c308mb, namespace
+   level4/closure_proofs/p5y_k5_cell308_mb_r1: its code and frozen protocol, NOT its review/adjudication/postexec/
+   evidence directories) and (B) the successor candidate's values (`git -C /Users/suzhe/ReBaseGuard-c308mbs show
+   cc723527:level4/closure_proofs/p5y_k5_cell308_mbs_r1/code/mbs308_driver.py` and the protocol draft at cc723527).
+   Report a table: name, user's value, MB r1 value (file:line), successor value (file:line), equal yes/no. Any
+   difference is DOES NOT CONFORM (say which side differs).
+4. Anything in the text that would, if applied, contradict an accepted governance condition or require a change the
+   governance does not allow (for example to r5, K5, cell 309, MB r1). Report it; do not resolve it.
+
+OUTPUT. Write reviews/REVIEW_OWNER_DECISION_CONFORMANCE_MBS308.md (research namespace): line 1 the title; line 2
+EXACTLY one of DECISIONS_CONFORM or DECISIONS_DO_NOT_CONFORM (once); DECISIONS_CONFORM only if every check 1-4 is
+CONFORMS. Then sections 1-4; and, if anything does not conform or needs a ruling, a final section stating for the user
+exactly which words are missing or ambiguous (neutral; no advice on what to decide).
+
+ABSOLUTE RULES. Read-only: reading and text search only; no git writes; write only your one output file. No cell-308
+target evaluation, direct or indirect; nothing evaluates Γ(5,308; ·) or any cell 305-309; cell 309 out of scope. Do NOT
+open: reviews/REVIEW_EXECUTION_INTERRUPTION*, audit/EXECUTION_INTERRUPTION_*, reviews/REVIEW_SUCCESSOR_GOVERNANCE_308*,
+reviews/INCIDENT_INDEPENDENCE_REVIEW_MB308*.md and *_MBS308* (T6 included), ledger/COORDINATOR_EXPOSURE_DISCLOSURE*,
+ledger/USER_TEXTS_SUCCESSOR_308.md, governance/SUCCESSOR_GOVERNANCE_308.md (its section 1 carries MB r1 run clock
+times), history/, anything under p5y_k5_cell308_mb_r1/{review,adjudication,postexec,evidence}/, successor BUILD_REPORT
+sections 6 and 9, any scratchpad of another session or agent, anything under /Users/suzhe/.claude/. Do not run
+`git log` on the MB r1 branch or print commit subjects of 21e99cf0 / afa93072. Disclose any MB r1 run observation
+already in your context and keep it out of your file. Scan your file with code/c308_quarantine.py `_TAIL_RE` and
+report the hit count (it must be 0). Ledger one line via code/c308_quarantine.log_event (klass='REVIEW',
+agent='reviewS1T', target_evaluations=0). Final message: the verdict line, the file's sha256 and an 8-line summary.
