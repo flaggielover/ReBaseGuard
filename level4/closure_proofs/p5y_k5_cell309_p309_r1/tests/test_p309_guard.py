@@ -6,7 +6,8 @@ Rules kept by every test (owner rulings 2):
 * the production marker name, and any ref under the production namespace, is never created anywhere;
 * nothing is ever written at the production grant path, in any repository;
 * REAL-band items are presented to the admission check only (dry); nothing is computed;
-* sandboxes are `git clone --shared --no-checkout` copies under the scratchpad with origin removed; never pushed.
+* sandboxes are light repositories under the scratchpad (`git init` + a read-only alternates link to this
+  repository's objects); they have no remote and are never pushed.
 """
 from __future__ import annotations
 
@@ -56,13 +57,20 @@ def forbid_production_refs(sb: Path) -> None:
 
 
 def new_sandbox(name: str) -> Path:
+    """a light sandbox: `git init` + a read-only alternates link to this repository's object store (+ its shallow
+    boundary); this repository is shallow, so `git clone --shared` would copy the whole pack per sandbox."""
     sb = SCRATCH / name
     if sb.exists():
         shutil.rmtree(sb)
     sb.parent.mkdir(parents=True, exist_ok=True)
-    subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(REPO), str(sb)], check=True,
-                   capture_output=True)
-    sh(sb, "remote", "remove", "origin")
+    subprocess.run(["git", "init", "-q", str(sb)], check=True, capture_output=True)
+    (sb / ".git" / "objects" / "info" / "alternates").write_text(str(REPO / ".git" / "objects") + "\n")
+    if (REPO / ".git" / "shallow").exists():
+        shutil.copy(REPO / ".git" / "shallow", sb / ".git" / "shallow")
+    head = subprocess.run(["git", "-C", str(REPO), "rev-parse", "HEAD"], capture_output=True, text=True,
+                          check=True).stdout.strip()
+    sh(sb, "update-ref", SB_BRANCH, head)
+    sh(sb, "symbolic-ref", "HEAD", SB_BRANCH)
     forbid_production_refs(sb)
     return sb
 
@@ -378,7 +386,7 @@ if __name__ == "__main__":
     E.log("tests/test_p309_guard.py", "FC2 guard tests (spec R2 section 8): sandbox TEST-band positive path on the "
           "declared h3 decoy-cell hull; dry REAL-band refusals", klass="SYNTHETIC",
           notes="admission checks only (git metadata, hashes, rationals); nothing evaluated; sandboxes are shared "
-                "clones under the scratchpad, origin removed, never pushed; no production ref or grant path created")
+                "light repositories under the scratchpad (alternates, no remote), never pushed; no production ref or grant path created")
     res = run()
     ok = all(v["pass"] for v in res.values())
     out = {"utc": datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),

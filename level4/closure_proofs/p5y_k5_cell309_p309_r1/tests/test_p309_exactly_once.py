@@ -3,8 +3,8 @@
   python3 tests/test_p309_exactly_once.py   -> evidence/fc6/EXACTLY_ONCE_FLOWS.json (qualification copies it);
                                                exit 0 iff every flow ends as specified
 
-Every sandbox is a `git clone --shared` of this repository under the scratchpad, sparse-checked-out to the formal
-namespace, with origin removed; it is never pushed.  Flows use ONLY the synthetic TEST names (the guard's TestContext:
+Every sandbox is a light repository under the scratchpad (`git init` + a read-only alternates link to this
+repository's objects), sparse-checked-out to the formal namespace, with no remote; it is never pushed.  Flows use ONLY the synthetic TEST names (the guard's TestContext:
 TEST_MARKER, TEST_PENDING_REF); the production marker name is never created anywhere.  Stage 1 and Stage 2 are stubs
 (post-marker evaluators, controls, job runners): nothing is evaluated for any cell.
 """
@@ -63,21 +63,23 @@ def commit(sb: Path, parent, files: dict, msg: str, parents=None, modes=None) ->
 
 
 def new_sandbox(name: str) -> Path:
+    """a light sandbox: `git init` + a read-only alternates link to this repository's object store (+ its shallow
+    boundary).  This repository is a shallow clone, so `git clone --shared` would copy the whole pack (~445 MB) per
+    sandbox.  New objects are written only into the sandbox; nothing is ever written to this repository."""
     sb = SCRATCH / name
     if sb.exists():
         shutil.rmtree(sb)
     SCRATCH.mkdir(parents=True, exist_ok=True)
-    for attempt in range(3):                      # a clone can race a concurrent ref update in the source; retry
-        r = subprocess.run(["git", "clone", "-q", "--shared", "--no-checkout", str(REPO), str(sb)], capture_output=True)
-        if r.returncode == 0:
-            break
-        shutil.rmtree(sb, ignore_errors=True)
-        import time
-        time.sleep(2 + 3 * attempt)
-    else:
-        raise RuntimeError(f"sandbox clone failed: {r.stderr.decode()[-200:]}")
-    sh(sb, "remote", "remove", "origin")
+    subprocess.run(["git", "init", "-q", str(sb)], check=True, capture_output=True)
+    (sb / ".git" / "objects" / "info" / "alternates").write_text(str(REPO / ".git" / "objects") + "\n")
+    if (REPO / ".git" / "shallow").exists():
+        shutil.copy(REPO / ".git" / "shallow", sb / ".git" / "shallow")
+    head = subprocess.run(["git", "-C", str(REPO), "rev-parse", "HEAD"], capture_output=True, text=True,
+                          check=True).stdout.strip()
+    sh(sb, "update-ref", SB_BRANCH, head)
+    sh(sb, "symbolic-ref", "HEAD", SB_BRANCH)
     sh(sb, "sparse-checkout", "set", "--no-cone", f"/{NS}/")
+    sh(sb, "reset", "-q", "--hard", head)
     return sb
 
 
@@ -418,7 +420,7 @@ def stage_flows() -> dict:
 
 if __name__ == "__main__":
     D.E.log("tests/test_p309_exactly_once.py", "QC11 exactly-once sandbox flows (stubs; synthetic TEST names only)",
-            klass="SYNTHETIC", notes="sandboxes are shared clones under the scratchpad, origin removed, never pushed; "
+            klass="SYNTHETIC", notes="sandboxes are light repositories under the scratchpad (alternates, no remote), never pushed; "
                                      "no production ref is created; nothing is evaluated for any cell")
     res = {}
     res.update(pre_marker_flows())

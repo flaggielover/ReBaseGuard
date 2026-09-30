@@ -223,7 +223,11 @@ def qc13(freeze: str) -> dict:
           "qualification_after_freeze": subprocess.run(["git", "-C", str(REPO), "merge-base", "--is-ancestor", freeze,
                                                         "HEAD"]).returncode == 0}
     ok["no_r6"] = not any("COVERAGE_MAP_R6" in p.upper() for p in g("ls-tree", "-r", "--name-only", "HEAD").splitlines())
-    return {"pass": all(ok.values()), "checks": ok}
+    ph = qc_formal("code/p309_placeholder_check.py")
+    ok["no_placeholder_or_choice"] = ph["pass"]
+    params = subprocess.run([PY, str(FNS / "code" / "make_freeze_params.py"), "--check"], capture_output=True, text=True)
+    ok["freeze_params_regenerate_identically"] = params.returncode == 0
+    return {"pass": all(ok.values()), "checks": ok, "runs": ph["runs"]}
 
 
 def qc16() -> dict:
