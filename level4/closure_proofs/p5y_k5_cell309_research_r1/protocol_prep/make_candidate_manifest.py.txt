@@ -1,0 +1,47 @@
+"""Candidate freeze manifest for P309 (a CANDIDATE only: not a freeze, not an authorization).
+Code files: git blob + sha256 of the committed bytes.  Data inputs (309 inputs, registries, cells, r5): git blob ids
+from repository metadata only (no content is read; the formal campaign computes sha256 at its own freeze)."""
+import hashlib, json, subprocess, sys, platform
+REPO = "/home/user/ReBaseGuard"
+NS = "level4/closure_proofs/p5y_k5_cell309_research_r1/"
+def git(*a):
+    return subprocess.run(["git", *a], cwd=REPO, capture_output=True, text=True, check=True).stdout.strip()
+head = git("rev-parse", "HEAD")
+code = [NS + p for p in ("impl/srk_kernel.py", "impl/srk_float.py", "impl/srk_envelope.py", "impl/srk_certify.py",
+                         "impl/srk_assemble.py", "impl/srk_gate.py", "impl/srk_adapter.py", "impl/srk_decoy_suite.py", "code/self_audit.py", "code/verifier_probe_envelope.py",
+                         "code/q309_guard.py", "verify/srk_verify_indep.py", "verify/run_verify_all.py", "tests/test_verify_selftests.py", "impl/SRK_CERT_SPEC.md",
+                         "theory/THEOREM_SRK.md", "config/SRK_DECOY_DECLARATION.json", "config/SRK_DECOY_DECLARATION_A1.json", "config/TARGET_QUARANTINE_309.json", "tests/test_q309_guard.py", "tests/test_srk_port_identity.py", "tests/test_srk_envelope.py", "tests/test_srk_fsm_truth.py", "tests/test_srk_assembly_twosided.py", "tests/test_srk_adapter.py", "tests/test_srk_gate.py", "tests/test_srk_wrec_refusal.py", "tests/test_srk_cert_mutants.py", "tests/srk_mc_control.py", "tests/e2e_cell_family.py", "tests/build_evidence_manifest.py", "protocol_prep/P309_PROTOCOL.md", "protocol_prep/P309_FORMAL_PACKAGE.md", "protocol_prep/P309_REVIEW_BRIEFS.md", "protocol_prep/P309_OWNER_DECISIONS.md",
+                         "config/SRK_DECOY_DECLARATION_A2.json", "registry/ROUTE_SELECTION_RULE.md")] + [
+    "level4/closure_proofs/p5y_k5_tail_overnight_research/streams/C_308/LR/cusum/c1b_gauss.py",
+    "level4/closure_proofs/p5y_k5_m5_tail_closure/code/tct_rule.py",
+    "level4/closure_proofs/p5y_k5_lower_front_order3/code/tc_rule.py",
+    "level4/closure_proofs/p5y_k5_tail_c2_closure/code/c2_d5_forecast.py",
+    "level4/closure_proofs/p5y_k5_perron_deflated_resolvent/code/deflated_consume.py",
+    "level4/closure_proofs/p5y_k5_m5_tail_closure/code/tail_forecast_r2.py",
+    "level4/closure_proofs/p5y_k5_tail_overnight_research/validation/C1B_R2_CODE_PINS.json",
+    "level4/closure_proofs/p5y_k5_cell307_rlr_r1/protocol/RLR307_FREEZE.json"]
+data = ["level4/closure_proofs/p5y_k5_m5_tail_closure/evidence/measurement_r1/TCT_INPUTS_309.json",
+        "level4/closure_proofs/p5y_k5_m5_tail_closure/evidence/measurement_r1/ADOPTED_TAIL_INPUTS.json",
+        "level4/closure_proofs/p5y_k5_tail_operator_registry/evidence/registry_c1/REGISTRY_C1.json",
+        "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/registry_c2/REGISTRY_C2.json",
+        "level4/closure_proofs/p5y_k1_cover_ledger_successor/config/cells.json",
+        "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/coverage/K5_COVERAGE_MAP_R5.json",
+        "level4/closure_proofs/p5y_k5_tail_floor_r2/FLOOR_R2_SPECIFICATION.md"]
+out = {"schema": "P309_CANDIDATE_FREEZE_MANIFEST/1", "status": "CANDIDATE (not frozen, not authorized)",
+       "repository_head": head,
+       "lock": {"evidence_code_state": "2a03e838498ab8a8c1c61b9a142ba45adb941592",
+                "producer_fingerprint": "377057bef1d1f21be4db38488235596c0e4134bb75ffdced08e667e6c48cc8db"},
+       "verifier_settings": {"taylor_order_N": 8, "max_depth": 24, "initial_cell_width": "1/4", "procs": 1}, "runtime": {"python_of_this_generator_run (NOT the qualification interpreter; the formal campaign records it per QC10)": sys.version.split()[0], "implementation": platform.python_implementation(),
+                   "stdlib_only": True, "network": "none required", "workers_max": 4},
+       "code_pins": [], "data_pins_blob_only": [], "open_items": [
+           "K1 record manifest path/pin: to be taken verbatim from the 307 RLR input-manifest pattern at the formal freeze",
+           "sha256 of every data input: computed by the formal campaign at its own freeze (not read here)",
+           "Stage-1b RLR pins: C1B_R2_CODE_PINS.json content applies verbatim (pinned here by blob)",
+           "freeze additions (formal package section A): grant-scoped guard and verifier variant, Stage-1 driver and per-rung serializer, execution-host interpreter/platform string"]}
+for p in code:
+    b = subprocess.run(["git", "show", f"HEAD:{p}"], cwd=REPO, capture_output=True, check=True).stdout
+    out["code_pins"].append({"path": p, "git_blob": git("rev-parse", f"HEAD:{p}"), "sha256": hashlib.sha256(b).hexdigest()})
+for p in data:
+    out["data_pins_blob_only"].append({"path": p, "git_blob": git("rev-parse", f"HEAD:{p}")})
+json.dump(out, open(sys.argv[1], "w"), indent=1)
+print(len(out["code_pins"]), "code pins,", len(out["data_pins_blob_only"]), "data pins; head", head[:8])
