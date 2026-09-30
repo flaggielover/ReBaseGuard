@@ -52,3 +52,12 @@ Route classes: REJECTED, BLOCKED, INSUFFICIENT_EVIDENCE, RESEARCHABLE, PROMISING
 
 Neither authorization permits any target evaluation, grant, marker, r5/r6 change, adoption, K5/P5Y change, or a push of
 any other ref.
+
+## Final status (2026-09-30)
+
+**READY_TO_FREEZE_PENDING_OWNER_AUTHORIZATION.**
+* Route P309 package 1 is **FREEZE_READY** (independent review R2).
+* The candidate formal package in `protocol_prep/` (rev. 2b) is **PACKAGE_REVIEW: COMPLETE** (independent review R3).
+* Nothing is frozen, authorized or executed. NEW Γ309 TARGET EVALUATIONS = 0.
+* See `FINAL_REPORT.md` (12 items) and `MORNING_HANDOFF.md` (26 items). Owner decisions are in
+  `protocol_prep/P309_OWNER_DECISIONS.md`.
