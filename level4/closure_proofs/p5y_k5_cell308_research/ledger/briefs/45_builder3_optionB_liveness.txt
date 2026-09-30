@@ -1,0 +1,80 @@
+BUILD REQUEST — fresh non-holder builder `builder3` (recorded before sending). Three steps, W, N and L. STOP after each
+step and report; the coordinator commits each step and then tells you to continue.
+
+WHO YOU ARE. A FRESH builder who is not a holder of any MB r1 run observation. The user ruled on the T6 ruling's M4
+(option B): the four ratified allow-list names and the preflight-timeout expression must be applied by a genuine
+non-holder, not by the exposed editor (`editorR3C1`) who applied them at 191ce4a9. The same user instruction asks for
+the liveness delta that the non-holder reviewer reviewR3C1 recommended. You change NO operational number of your own
+choosing: every operational value comes from the non-holder ratification.
+
+OBJECT. Successor worktree /Users/suzhe/ReBaseGuard-c308mbs, branch p5y-k5-cell308-mbs-r1, HEAD 191ce4a9 (clean),
+NSS = level4/closure_proofs/p5y_k5_cell308_mbs_r1. Research namespace (read-only for you except the ledger)
+/Users/suzhe/ReBaseGuard-c308/level4/closure_proofs/p5y_k5_cell308_research.
+Read: research governance/CONSTANTS_RATIFICATION_MBS308.md (commit 3c2a7854; items 16 and 31 and its "Changes
+requested of the builder" 2 and 3), reviews/REVIEW_IMPLEMENTATION_MBS308_DELTA.md (99185dcb) and
+reviews/REVIEW_IMPLEMENTATION_MBS308_DELTA_R3.md (58cfe66b; its sections 3 and 4), the NSS code, tests, protocol draft
+and BUILD_REPORT sections 12-13.
+
+STEP W — withdraw the editor's application of ratification items 16 and 31 (mechanical; no value chosen).
+  1. code/mbs308_launch.py: restore the whole file to its bytes at 35cabb50 (at 191ce4a9 it differs from 35cabb50
+     only by item 31's application).
+  2. code/mbs308_driver.py: restore the `EXCL_ALLOW = frozenset({...})` assignment, and the one comment line the
+     editor added directly above it, to their bytes at 35cabb50. Touch nothing else in the driver.
+  3. Re-pin `HELPER_SHA256["mbs308_launch.py"]` to the restored file's sha256, and regenerate DRIVER_DIFF.md (difflib
+     `SequenceMatcher(autojunk=False)`, 3 lines of context, against MB r1's code/mb308_driver.py at c46434a3; class
+     labels and header text carried from the committed file). Validate your generator by reproducing the committed
+     191ce4a9 DRIVER_DIFF.md byte for byte first.
+  4. Expected at W: the R3 gates (static t_r3_ratified_rules_applied, state t_gc10_ratified_allow_list, launch
+     t_preflight_timeout_rule) FAIL; everything else unchanged. Run the static suite to show it. Report the diff.
+
+STEP N — re-apply items 16 and 31 yourself, from the ratification text (not from 191ce4a9 and not from the tests).
+  1. EXCL_ALLOW: the 39 names plus the four OS daemons the ratification names in item 16 (the provisional list;
+     R-ALLOW decides the frozen list at the freeze).
+  2. The launcher's preflight timeout: the rule PRE_CAP_S + 100 s of item 31, where PRE_CAP_S must FOLLOW the driver's
+     own PRE_CAP_S. The launcher must not import the driver (that would load the science); read the literal from the
+     driver's bytes, and refuse to load if it is missing.
+  3. Keep the code style of the file. Re-pin, regenerate DRIVER_DIFF.md. If your bytes differ from the fragments of
+     mutants M51 / M52 in tests/test_mbs308_mutants.py, update only those two fragments (same meaning).
+  4. Run static, launch and the three R3 gate tests, and mutants M51 and M52. Report the diff of N against W and
+     against 191ce4a9 (the coordinator runs a byte-level re-check of N against 191ce4a9 and against the ratification).
+
+STEP L — the liveness delta (REVIEW_IMPLEMENTATION_MBS308_DELTA_R3 section 3 recommendation and coverage note X4).
+  1. The classifier's CONSUMED_COMPUTING test (code/mbs308_state.py, the line mutant M11 targets) and `Lock.acquire`:
+     a RECORDED identity counts as alive unless HOST.identity_state says DEAD (a failed `ps` or boot-UUID read is
+     UNKNOWN, never evidence of death); no recorded identity means no process, as `_not_dead` already does. Change
+     only these two sites. Update protocol draft section 4 to say so.
+  2. Tests: (a) the classifier: a journal whose recorded process is a live helper for which `ps` fails (planted,
+     e.g. the child harness knob `ps_fail_pids`) classifies CONSUMED_COMPUTING, recover waits (exit 8) and resume
+     refuses; once the helper is gone it is CONSUMED_INTERRUPTED and recover resumes and seals with the uninterrupted
+     bytes; (b) Lock.acquire: a recover lock held by a live helper whose `ps` fails refuses LOCKED; once the helper is
+     gone the stale lock is broken; (c) extend crash::t_L12_lock_ps_failure_not_stale (or add a sibling) so that the
+     journal-recorded process source of git_lock_info is tested on its own (the classifier change must not mask it:
+     test git_lock_info directly if needed), so that reviewR3C1's X4 (only the journal source reverted to
+     identity_alive) is killed; the recover-lock source likewise if cheap.
+  3. Mutants: one per new gate (the classifier site, Lock.acquire, X4, and the recover-lock source if tested);
+     re-target M11 (same meaning) if its fragment changed. Every kill must be the target test's own assertion (check
+     each per-mutant result file for `error`), never an exception, timeout or missing result.
+  4. Run the full static, launch, state and crash suites and the full mutant matrix on your final code. Append
+     BUILD_REPORT section 14 (additive; do not edit sections 1-13) recording W, N and L, what you read, the results,
+     and your own exposure statement.
+
+ABSOLUTE RULES.
+- No cell-308 target evaluation, direct or indirect; nothing may evaluate Γ(5,308; ·), cells 305-309 or any drift in
+  [6/5, 13/5] or its mirror. Cell 309 is out of scope. Create no authorization, grant, marker, pending result or seal.
+- MBS-2 reading restrictions: do NOT open reviews/REVIEW_EXECUTION_INTERRUPTION*, audit/EXECUTION_INTERRUPTION_*,
+  reviews/REVIEW_SUCCESSOR_GOVERNANCE_308*, reviews/INCIDENT_INDEPENDENCE_REVIEW_MBS308* (T6 included),
+  COORDINATOR_EXPOSURE_DISCLOSURE*, anything under p5y_k5_cell308_mb_r1/{review,adjudication,postexec,evidence}/,
+  BUILD_REPORT.md section 9, any other session's or agent's scratchpad (the editor's included), or anything under
+  /Users/suzhe/.claude/. If your context already holds any MB r1 run observation you did not read from an allowed file,
+  disclose it in section 14.
+- Sandboxes only on your OWN `git clone --no-local --bare` base store (set MBS308_BASE_STORE and MBS308_SCRATCH to
+  your own scratch); never the real object store; no real ref created, moved or deleted; NO git writes (no add,
+  commit, stash, reset, checkout of branches); `git show <rev>:<path>` and `git diff` reads are fine.
+- Launch tests bootstrap real LaunchAgents with a SYNTHETIC payload under the test prefix; every job must be booted
+  out and no plist left.
+- Ledger every run through the research namespace's code/c308_quarantine.log_event (klass 'SYNTHETIC_VALIDATION' or
+  'INFRASTRUCTURE', agent='builder3', target_evaluations=0).
+- Change no operational number: no cap, limit, timeout, threshold, allow-list entry, budget or poll value other than
+  the ratified items 16 and 31 in step N. Test-only values are allowed and must be stated.
+
+REPORT after each step: what you changed (file, lines), the test counts, and anything unexpected, in 10 lines or fewer.
