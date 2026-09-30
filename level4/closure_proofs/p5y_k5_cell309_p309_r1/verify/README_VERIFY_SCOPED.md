@@ -13,8 +13,8 @@ EVALUATIONS = 0.
 | file | sha256 |
 |---|---|
 | `verify/srk_verify_indep_scoped.py` (the variant; its `verifier_id` is `sha256:` + this) | `9d9f8cec52cfd49ab146a45c44e03fde493614f81551af584317ab7d3545498f` |
-| `verify/run_verify_all_scoped.py` (I1 harness) | `2dc92f5697a52e71ec05fe047b51267258f5975ba61dc34f3f17a3f596605d76` |
-| `verify/scoped_sandbox.py` (spec §6 sandbox helper; unchanged by erratum 1) | `71458b156a8d9418f229e84ff017a258ee8b37e5f0aa888c6df9fcfea70a9a00` |
+| `verify/run_verify_all_scoped.py` (I1 harness) | `45902e30cb59db718c2a133fa321e30ee183a3fa18781c3698a11ce7f48b90d8` |
+| `verify/scoped_sandbox.py` (sandbox helper, light sandboxes per erratum E1-6) | `6faef6168f1f8fa6337545c710a7003a35e975b6c62829ebeae5d830d51db097` |
 | `tests/test_verify_scoped.py` (21 ported self-tests plus D1, N1–N13, P1, P2) | `1483d6c2f5c9d8d3a469915fe6ab85d0cb27f3abdfcac53b168ff6754a64a10c` |
 | original verifier `RNS/verify/srk_verify_indep.py` (unchanged) | `a32d5d397893a1fc698d3609f59cb65aab3bc4fe1445c51c676fd9ad54652333` |
 
@@ -22,6 +22,30 @@ Superseded identities (commit 6522db10, before erratum 1):
 * variant `52c84ec22c4396d07019cf1f783355c014f258d1d0611fc522562b0104d2b278`;
 * harness `e27dba41c1c61d5d771d383c2951602509e212e0832540c55a1a8dccd4c09430`;
 * tests `e17c01566ee1f08b18515ee40f94e5ca4e691088bdfee41a56f2675662aae8c8`.
+
+Superseded by follow-up 2 (the erratum-1 state):
+* harness `2dc92f5697a52e71ec05fe047b51267258f5975ba61dc34f3f17a3f596605d76`;
+* sandbox helper `71458b156a8d9418f229e84ff017a258ee8b37e5f0aa888c6df9fcfea70a9a00`.
+
+## Follow-up 2 (review R4 NB3, NB12, NB9; `reviews/BRIEF_FC2_VERIFIER_VARIANT_AUTHOR_FOLLOWUP_2.md`)
+
+The variant and the tests are unchanged, and no admission rule or review-mode behaviour changed.
+* **NB3, harness (4 lines).** The prepare-tripwire classifies certificates with the harness's **own** band table
+  (`own_bands`), not with the variant's `cert.bands`. Behaviour on every current input is unchanged (see below).
+* **NB12, sandbox helper.** Sandboxes are now light (erratum E1-6):
+  * `git init`, a read-only `objects/info/alternates` link to this repository's object store, and a copy of its
+    `shallow` file;
+  * branch `refs/heads/fc2-sandbox` at this repository's HEAD commit, `gc.auto` 0 in the sandbox's own config, and
+    no remote.
+
+  The own ref checks, the refusal of any production-namespace ref, the path guards and the teardown are unchanged.
+  A sandbox is now about 2 MB and builds in under 0.5 s, instead of about 445 MB and 14 s. Peak sandbox disk use
+  during the full re-run was 2 MB, sampled every second. This repository's object store was verified unchanged
+  (`count-objects`) around a light-sandbox build.
+* **NB9, README.** §9 now states the shared top-level session.
+* **Re-run.** The re-run wrote to the scratchpad with `--out` (37 tests plus I1). Its counts are identical to the
+  previous run, and all 2369 genuine and mutant entries have identical verdict, reason and rule. The committed
+  `verify/VERIFY_RESULTS_SCOPED.json` was then refreshed from that run.
 
 ## Erratum 1 (`fc2/FC2_SPEC_R2_ERRATUM_1.md`; follow-up brief 1)
 
@@ -73,9 +97,9 @@ passes and the unit-test outcomes.
 
 ### Self-tests and N/P/D tests (run first)
 
-After erratum 1: `37` tests, **all pass** (275 s), recorded by the I1
-invocation. Each FC2 test builds and tears down its own sandbox: a `git clone --shared --no-checkout` under
-`…/scratchpad/fc2_sandbox_verifier/`, with `origin` removed and never pushed. Only the TEST marker
+After follow-up 2: `37` tests, **all pass** (100 s), recorded by the I1
+invocation. Each FC2 test builds and tears down its own light sandbox under `…/scratchpad/fc2_sandbox_verifier/`
+(`git init` plus a read-only alternates link and the `shallow` file; no remote; never pushed; erratum E1-6). Only the TEST marker
 `refs/p309-test/TEST_ONLY_DO_NOT_EXECUTE_P309_MARKER` is ever created. A tripwire on the variant's `prepare` fails the
 run if a REAL-band certificate, of any geometry, or a TEST-band certificate outside an admitting test, reaches
 evaluation.
@@ -176,7 +200,7 @@ The expectation rule was recorded before the run: in the harness docstring, in `
 Wherever the committed result is the expectation, the probe's harness-v2 reason-specific check must also hold.
 
 The run covered every certificate in `RNS/evidence/srk_decoys/` and `RNS/evidence/srk_decoys_cell/`: genuine, plus the
-v2 batteries, plus probe 7r (a geometry-blind REAL-band parse-time refusal for non-(5, 1/2) geometries). It used 3 processes and took 508 s (re-run after erratum 1).
+v2 batteries, plus probe 7r (a geometry-blind REAL-band parse-time refusal for non-(5, 1/2) geometries). It used 3 processes and took 492 s (re-run after follow-up 2).
 
 | pass | certificates | genuine: expectation met / identical | mutants | mutants: expectation met / identical |
 |---|---|---|---|---|
@@ -247,8 +271,17 @@ carry `q309: literal-ok` markers and are listed.
 
 ## §9 Evidence of independence (protocol §7(b); R3 N18)
 
-* **Author session:** `session_01RiV5bfPm5GJ4GcvoBrCC3p`. This is the session that wrote the research verifier
-  `srk_verify_indep.py` and its harness v1/v2, working separately from the producer side.
+* **Session (review R4 NB9).** This agent (the verifier's author) and the coordinator run under the **same top-level
+  session**, `session_01RiV5bfPm5GJ4GcvoBrCC3p`, as separate subagents. This is the agent that wrote the research
+  verifier `srk_verify_indep.py` and its harness v1/v2.
+  * I have no separate agent identifier available to me. The scratchpad directory uuid
+    `ea54e9f6-e828-5447-be15-220ef2c329fd` is shared with the coordinator, so it identifies the top-level session, not
+    this agent.
+  * Independence therefore rests on three things:
+    * subagent separation;
+    * the declared list of sources read below, which contains no guard, producer or driver code;
+    * the independent divergences found when the two implementations were compared (erratum 1, E1-1 to E1-4),
+      including a real defect in this variant (E1-1) that the comparison caught.
 * **Sources read for this work:**
   * `fc2/FC2_SPEC.md` (rev. 1), `fc2/FC2_SPEC_R2.md` and `reviews/BRIEF_FC2_VERIFIER_VARIANT_AUTHOR.md`;
   * `fc2/FC2_SPEC_R2_ERRATUM_1.md` and `reviews/BRIEF_FC2_VERIFIER_VARIANT_AUTHOR_FOLLOWUP_1.md`;

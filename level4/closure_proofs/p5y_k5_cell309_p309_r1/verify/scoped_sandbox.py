@@ -3,8 +3,10 @@
 FC2 sandbox helper for the verifier variant's tests and harness (FNS/fc2/FC2_SPEC_R2.md section 6), written by the
 verifier's author.
 
-* A sandbox is a `git clone --shared --no-checkout` of this repository under the scratchpad directory
-  .../scratchpad/fc2_sandbox_verifier/, with `origin` removed.  It is never pushed and no remote is ever added.
+* A sandbox is a LIGHT sandbox (FC2 erratum E1-6; review R4 NB12) under .../scratchpad/fc2_sandbox_verifier/:
+  `git init`, a read-only `objects/info/alternates` link to this repository's object store and a copy of its `shallow`
+  boundary file.  Its branch refs/heads/fc2-sandbox starts at this repository's HEAD commit.  It has no remote, is
+  never pushed, and writes objects only into itself.
 * Commits are made in the sandbox only.  The index is populated from HEAD with `git read-tree` (no checkout), so a
   fixture commit changes exactly the paths it writes.
 * Hard guards on every mutating call:
@@ -60,21 +62,31 @@ def local_host_id_sha256():
 
 
 class Sandbox(object):
-    """One sandbox clone.  Use as a context manager (torn down on exit)."""
+    """One light sandbox (FC2 erratum E1-6).  Use as a context manager (torn down on exit)."""
 
     def __init__(self, tag):
         os.makedirs(SANDBOX_BASE, exist_ok=True)
         self.root = os.path.join(SANDBOX_BASE, '%s-%s' % (tag, uuid.uuid4().hex[:10]))
         src = own_repo()
-        subprocess.run(['git', 'clone', '--quiet', '--shared', '--no-checkout', src, self.root], check=True,
-                       capture_output=True, env=_ENV, timeout=900)
+        subprocess.run(['git', 'init', '--quiet', self.root], check=True, capture_output=True, env=_ENV, timeout=120)
         self._assert_sandbox()
-        _git(self.root, 'remote', 'remove', 'origin')
+        src_objects = os.path.realpath(_git(src, 'rev-parse', '--path-format=absolute', '--git-path', 'objects').strip())
+        src_shallow = _git(src, 'rev-parse', '--path-format=absolute', '--git-path', 'shallow').strip()
+        gitdir = os.path.realpath(_git(self.root, 'rev-parse', '--path-format=absolute', '--git-dir').strip())
+        if not gitdir.startswith(os.path.realpath(self.root) + os.sep):
+            raise RuntimeError('refusing: sandbox git dir outside the sandbox')
+        with open(os.path.join(gitdir, 'objects', 'info', 'alternates'), 'w') as fh:   # read-only object link
+            fh.write(src_objects + '\n')
+        if os.path.exists(src_shallow):
+            shutil.copyfile(src_shallow, os.path.join(gitdir, 'shallow'))
+        _git(self.root, 'config', 'gc.auto', '0')                                       # sandbox-local config
         if _git(self.root, 'remote').strip():
-            raise RuntimeError('sandbox still has a remote')
+            raise RuntimeError('sandbox has a remote')
+        self.update_ref('refs/heads/fc2-sandbox', _git(src, 'rev-parse', 'HEAD').strip())
+        _git(self.root, 'symbolic-ref', 'HEAD', 'refs/heads/fc2-sandbox')
         _git(self.root, 'read-tree', 'HEAD')
         if _git(self.root, 'for-each-ref', '--format=%(refname)', _FORBIDDEN_REF_PREFIX).strip():
-            raise RuntimeError('sandbox clone carries a production-namespace ref')
+            raise RuntimeError('sandbox carries a production-namespace ref')
         self.base = self.head()
 
     # -- guards -----------------------------------------------------------------------------------------------------

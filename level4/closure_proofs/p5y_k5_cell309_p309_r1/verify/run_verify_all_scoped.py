@@ -320,9 +320,11 @@ _ORIG_PREPARE = V.prepare
 
 
 def _tripwire_prepare(cert):
-    if 'REAL' in cert.bands:
+    # classified with this harness's OWN band table (protocol section 7(c); review R4 NB3), not with cert.bands
+    bands = own_bands({'h': cert.h, 'k': cert.k}, [(cert.e_lo, cert.e_hi), (cert.w_lo, cert.w_hi)])
+    if 'REAL' in bands:
         raise AssertionError('TRIPWIRE: REAL-band certificate reached evaluation')
-    if 'TEST' in cert.bands and _PASS[0] != 'test_context':
+    if 'TEST' in bands and _PASS[0] != 'test_context':
         raise AssertionError('TRIPWIRE: TEST-band certificate reached evaluation outside the test-context pass')
     return _ORIG_PREPARE(cert)
 
