@@ -61,6 +61,7 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 48 | 48_briefer_decision_brief_r2.txt | non-holder briefer2 drafts the outcome-neutral decision brief r2 (S16(c), MBS-6, MBS-7, MBS-8, S1; 12 headings each; host pre-execution section) | Agent | see ledger | no (tail-figure scan: 0 hits) |
 | 49 | 49_builder4_integrate.txt | builder4 (resumed): INTEGRATE the decision-independent qualification framework onto 216c465f after DELTA_ACCEPTED (2308651e); chunked matrix with sandbox cleanup | SendMessage | see ledger | no (tail-figure scan: 0 hits) |
 | 50 | 50_builder5_disk_gate_prefreeze.txt | non-holder builder5: liveness robustness repairs O-1/O-2/O-3/K-1 (reviewB5), disk-safety and scratch-lifecycle gate with derived thresholds, re-pin tooling, R-MEM input recording, QS-RESUME-DECOY, host-readiness checklist | Agent | see ledger | no (tail-figure scan: 0 hits) |
+| 50-N | 50_builder5_NOTES.txt | practical notes appended to brief 50 as sent (skip BUILD_REPORT s6 and the governance determination: MB r1 clock times; AC / lid; disk; shell quirks) | Agent (same prompt) | see ledger | no |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.

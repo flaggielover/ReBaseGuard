@@ -1,0 +1,9 @@
+PRACTICAL NOTES appended to brief 50 as sent (not part of the recorded brief text; recorded after sending, verbatim):
+- ALSO SKIP BUILD_REPORT section 6 (it carries a clock time of an MB r1 object and is not needed for your tasks), and do not open research governance/SUCCESSOR_GOVERNANCE_308.md (its section 1 carries MB r1 run clock times). Do not run `git log` on the MB r1 branch or print commit subjects of 21e99cf0 / afa93072.
+- Interpreter /Library/Frameworks/Python.framework/Versions/3.14/bin/python3.14 (-I -S -B); suites `tests/test_mbs308_<suite>.py [t ...] --out <json>`; mutant runner `tests/test_mbs308_mutants.py [--only ...] --out <json>`.
+- Scratch: /private/tmp/claude-501/-Users-suzhe-ReBaseGuard/fb722654-cd8d-472d-928c-34a116f8b315/scratchpad/builder5 (create it); base store via `git clone -q --bare --no-local /Users/suzhe/ReBaseGuard <scratch>/base_store.git`. About 110 GiB are free now; run heavy matrices in chunks of at most 20 mutants with sandbox deletion between chunks until your per-mutant cleanup is in place.
+- The host is a laptop: before every heavy run check `pmset -g batt` shows AC Power; a lid-closed sleep on battery broke one of builder4's runs. If the host is on battery or slept, stop the heavy run and report rather than guess.
+- In this shell `find` is `bfs` (ISO timestamps only); in zsh write `"${VAR}:path"` in git revspecs; NEVER put backticks inside an unquoted heredoc.
+- You are the only agent editing the worktree until you report.
+- Keep your own context light: write long outputs to files, read back summaries.
+- (The brief's first line as sent also named its recording commit b71cb9ea.)
