@@ -1,0 +1,316 @@
+# ===== scratchpad/r4/d5_mutants2.py (R4 reviewer; copied verbatim, non-executable) =====
+"""R4 reviewer, follow-up 2: NEW adversarial mutants against scanner schema 4 and T7/T8 (static only).
+Each mutant is planted into a temporary copy of code/config/tests/verify (+ start_state) under scratchpad/r4/mut2; the copy
+is only parsed (p309_scan.scan, p309_static_check.run), never executed, and deleted afterwards."""
+import shutil, sys, tempfile
+from pathlib import Path
+FNS = Path("/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_p309_r1")
+sys.path.insert(0, str(FNS / "code"))
+import p309_env as E
+E.log("scratchpad/r4/d5_mutants2.py", "R4 follow-up 2 task 3: NEW adversarial mutants against scanner schema 4 and T7/T8 "
+      "(scan + static check on planted temporary copies)", klass="GOVERNANCE",
+      notes="R4 reviewer: static AST analysis of temporary copies under scratchpad/r4/mut2; nothing from them is executed; "
+            "no ref created; nothing evaluated")
+import p309_scan as S
+import p309_static_check as SC
+MUT = Path("/tmp/claude-0/-home-user-ReBaseGuard/ea54e9f6-e828-5447-be15-220ef2c329fd/scratchpad/r4/mut2")
+MUT.mkdir(parents=True, exist_ok=True)
+NS, LEAF = S.TOKENS[0] + "/", S.TOKENS[1]          # pieces only; no production token is written in this file
+LITB = "b" + repr(NS + LEAF)                        # a bytes literal of the marker name, only inside the planted copy
+
+def planted(edits):
+    root = Path(tempfile.mkdtemp(prefix="m", dir=MUT))
+    for d in ("code", "config", "tests", "verify", "start_state"):
+        if (FNS / d).exists():
+            shutil.copytree(FNS / d, root / d, ignore=shutil.ignore_patterns("__pycache__"))
+    for rel, (how, text) in edits.items():
+        p = root / rel
+        if how == "new":
+            p.write_text(text)
+        else:
+            p.write_text(p.read_text() + "\n" + text)
+    if hasattr(S, "clear_caches"):
+        S.clear_caches()
+    scan = S.scan(root)
+    static = SC.run(root)
+    shutil.rmtree(root)
+    kinds = sorted({f["kind"] for f in scan["findings"]})
+    failed = sorted(k for k, v in static.items() if not v["pass"])
+    return scan["verdict"], kinds, failed
+
+DRV, RH = "code/p309_driver.py", "code/p309_rehearse.py"
+M = {
+ "N00_genuine": {},
+ "N01_ctypes_system_bytes_marker": {RH: ("+", "def _n01():\n    import ctypes\n    ctypes.CDLL(None).system(" + LITB[:-1] +
+                                        " HEAD'.replace(b'', b''))\n")},
+ "N02_runpy_txt_script": {"code/notes_helper.txt": ("new", "import subprocess\nsubprocess.run(['git', 'update-ref', 'refs/heads/x', 'HEAD'])\n"),
+                          RH: ("+", "def _n02():\n    import runpy\n    runpy.run_path(str(Path(__file__).parent / 'notes_helper.txt'))\n")},
+ "N03_sourcefileloader_json": {"code/params_extra.json": ("new", "import subprocess\nsubprocess.run(['git', 'update-ref', 'refs/heads/x', 'HEAD'])\n"),
+                               RH: ("+", "def _n03():\n    from importlib.machinery import SourceFileLoader\n"
+                                         "    SourceFileLoader('pe', str(Path(__file__).parent / 'params_extra.json')).load_module()\n")},
+ "N04_env_config_fsmonitor_read_verb": {DRV: ("+", "def _n04(repo):\n    git('status', repo=repo, env_extra={'GIT_CONFIG_COUNT': '1', "
+                                                   "'GIT_CONFIG_KEY_0': 'core.fsmonitor', 'GIT_CONFIG_VALUE_0': 'sh evil.sh'})\n")},
+ "N05_env_external_diff_read_verb": {DRV: ("+", "def _n05(repo):\n    git('diff', 'HEAD', repo=repo, env_extra={'GIT_EXTERNAL_DIFF': 'sh evil.sh'})\n")},
+ "N06_env_ssh_command_ls_remote": {DRV: ("+", "def _n06(repo):\n    git('ls-remote', 'ssh://h/r', repo=repo, env_extra={'GIT_SSH_COMMAND': 'sh evil.sh'})\n")},
+ "N07_builtins_dunder_exec": {RH: ("+", "def _n07(parts):\n    __builtins__['ex' + 'ec'](''.join(parts))\n")},
+ "N08_builtins_module_dict_exec": {RH: ("+", "def _n08(parts):\n    import builtins\n    builtins.__dict__['ex' + 'ec'](''.join(parts))\n")},
+ "N09_pickle_loads": {RH: ("+", "def _n09(blob):\n    import pickle\n    return pickle.loads(blob)\n")},
+ "N10_code_interpreter": {RH: ("+", "def _n10(src):\n    import code\n    code.InteractiveInterpreter().runsource(src)\n")},
+ "N11_ref_file_chr_built": {DRV: ("+", "def _n11():\n    p = os.path.join(str(REPO), chr(46) + 'git', chr(114) + 'efs', 'heads', 'x')\n"
+                                       "    with open(p, 'w') as fh:\n        fh.write('0' * 40)\n")},
+ "N12_git_grep_open_files_in_pager": {DRV: ("+", "def _n12(repo):\n    git('grep', '--open-files-in-pager=sh evil.sh', 'x', repo=repo)\n")},
+ "N13_git_grep_O_pager": {DRV: ("+", "def _n13(repo):\n    git('grep', '-Osh evil.sh', 'x', repo=repo)\n")},
+ "N14_test_module_alias_store": {"tests/test_n14.py": ("new", "import p309_driver as D\n\n\ndef evil():\n    mod = D\n"
+                                                           "    mod._assert_execute_" + "context = lambda c: None\n")},
+ "N15_test_guard_store_via_driver": {"tests/test_n15.py": ("new", "import p309_driver as D\n\n\ndef evil():\n"
+                                                                "    D.G.premarker_" + "check = lambda c: (True, '')\n")},
+ "N16_test_guard_store_alias": {"tests/test_n16.py": ("new", "import p309_guard as GG\n\n\ndef evil():\n    h = GG\n"
+                                                           "    h.premarker_" + "check = lambda c: (True, '')\n")},
+ "N17_multiprocessing_target_git": {RH: ("+", "def _n17():\n    import multiprocessing\n"
+                                              "    multiprocessing.Process(target=_n17b).start()\n\n\ndef _n17b():\n    pass\n")},
+ "N18_shutil_which_env_git": {DRV: ("+", "def _n18(repo):\n    git('log', '-1', repo=repo, env_extra={'GIT_PAGER': 'sh evil.sh', 'PAGER': 'sh evil.sh'})\n")},
+ "N19_git_config_include_via_env": {DRV: ("+", "def _n19(repo):\n    git('status', repo=repo, env_extra={'GIT_CONFIG_GLOBAL': '/tmp/evil.cfg'})\n")},
+ "N20_raw_git_env_param": {RH: ("+", "def _n20(repo):\n    import subprocess, os\n"
+                                     "    subprocess.run(['git', '-C', str(repo), 'status'], env={**os.environ, 'GIT_CONFIG_COUNT': '1', "
+                                     "'GIT_CONFIG_KEY_0': 'core.fsmonitor', 'GIT_CONFIG_VALUE_0': 'sh evil.sh'})\n")},
+}
+out = {}
+for name, edits in M.items():
+    try:
+        out[name] = planted(edits)
+    except Exception as exc:
+        out[name] = ("ERROR", [f"{type(exc).__name__}: {str(exc)[:120]}"], [])
+for k, v in out.items():
+    print(f"{k:40s} scan={v[0]:5s} findings={v[1]} static_failed={v[2]}")
+
+# ===== scratchpad/r4/d5_mutants3.py (R4 reviewer; copied verbatim, non-executable) =====
+"""R4 reviewer, follow-up 2: composite mutants -- can a TEST file still reach a ratified site with a production context
+and neutralize the runtime backstop, without any static finding?  Static only: planted into a temporary copy, parsed by
+p309_scan.scan and p309_static_check.run, never executed, deleted afterwards."""
+import shutil, sys, tempfile
+from pathlib import Path
+FNS = Path("/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_p309_r1")
+sys.path.insert(0, str(FNS / "code"))
+import p309_env as E
+E.log("scratchpad/r4/d5_mutants3.py", "R4 follow-up 2 task 3 (re-run, os imported plainly): composite test-path mutants (introspection access to a site, "
+      "backstop neutralization by alias monkeypatching) -- static analysis of planted temporary copies", klass="GOVERNANCE",
+      notes="R4 reviewer: static AST analysis only; the planted test files are never executed; no ref created; nothing evaluated")
+import p309_scan as S
+import p309_static_check as SC
+MUT = Path("/tmp/claude-0/-home-user-ReBaseGuard/ea54e9f6-e828-5447-be15-220ef2c329fd/scratchpad/r4/mut3")
+MUT.mkdir(parents=True, exist_ok=True)
+
+def planted(edits):
+    root = Path(tempfile.mkdtemp(prefix="m", dir=MUT))
+    for d in ("code", "config", "tests", "verify", "start_state"):
+        if (FNS / d).exists():
+            shutil.copytree(FNS / d, root / d, ignore=shutil.ignore_patterns("__pycache__"))
+    for rel, (how, text) in edits.items():
+        (root / rel).write_text(text)
+    S.clear_caches()
+    scan = S.scan(root)
+    static = SC.run(root)
+    shutil.rmtree(root)
+    return scan["verdict"], sorted({f["kind"] for f in scan["findings"]}), sorted(k for k, v in static.items() if not v["pass"])
+
+# names are assembled from pieces in the planted source, as an evader would
+COMPOSITE = '''import inspect
+import os
+import types
+import p309_driver as D
+import p309_guard as GG
+
+
+def evil(head):
+    dm = dict(inspect.getmembers(D))
+    gm = dict(inspect.getmembers(GG))
+    h = GG
+    h.premarker_check = lambda c: (True, "")            # neutralize the backstop's grant check (alias store)
+    dm["_MO" + "DE"]["mode"] = "execute"
+    ctx = types.SimpleNamespace(kind="PRODUC" + "TION", guard_ctx=gm["PRODUC" + "TION"],
+                                marker_ref=gm["PRODUC" + "TION"].marker_ref, pending_ref=gm["PRODUC" + "TION"].pending_ref,
+                                repo=dm["RE" + "PO"])
+    p = dm["RE" + "PO"] / (chr(46) + "git") / ("p309-run-" + "nonce.json")
+    p.write_text('{"pid": %d, "token": "x"}' % os.getpid())
+    dm["_arm" + "_marker"](ctx, head)
+'''
+M = {
+ "K00_genuine": {},
+ "K01_composite_introspection_site_call": {"tests/test_k01.py": ("new", COMPOSITE)},
+ "K02_getmembers_only": {"tests/test_k02.py": ("new", "import inspect\nimport p309_driver as D\n\n\ndef f():\n"
+                                                    "    return dict(inspect.getmembers(D))['_arm' + '_marker']\n")},
+ "K03_guard_alias_store_only": {"tests/test_k03.py": ("new", "import p309_guard as GG\n\n\ndef f():\n    h = GG\n"
+                                                           "    h.premarker_check = lambda c: (True, '')\n")},
+ "K04_same_in_a_qc_tool": {"code/p309_k04.py": ("new", COMPOSITE)},
+}
+for name, edits in M.items():
+    try:
+        v = planted(edits)
+    except Exception as exc:
+        v = ("ERROR", [f"{type(exc).__name__}: {str(exc)[:150]}"], [])
+    print(f"{name:42s} scan={v[0]:5s} findings={v[1]} static_failed={v[2]}")
+
+# ===== scratchpad/r4/d5_mutants4.py (R4 reviewer; copied verbatim, non-executable) =====
+"""R4 reviewer, follow-up 2: NEW adversarial mutants against T7 and T8 (static only).
+Each mutant is planted into a temporary copy of code/config/tests/verify (+ start_state) under scratchpad/r4/mut4; the copy
+is only parsed (p309_scan.scan, p309_static_check.run), never executed, and deleted afterwards."""
+import shutil, sys, tempfile
+from pathlib import Path
+FNS = Path("/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_p309_r1")
+sys.path.insert(0, str(FNS / "code"))
+import p309_env as E
+E.log("scratchpad/r4/d5_mutants4.py", "R4 follow-up 2 task 3: NEW adversarial mutants against T7 and T8 "
+      "(neutered backstop shapes; module reached through a second module; computed module names) -- static analysis of "
+      "planted temporary copies", klass="GOVERNANCE",
+      notes="R4 reviewer: static AST analysis only; the planted files are never executed; no ref created; nothing evaluated")
+import p309_scan as S
+import p309_static_check as SC
+MUT = Path("/tmp/claude-0/-home-user-ReBaseGuard/ea54e9f6-e828-5447-be15-220ef2c329fd/scratchpad/r4/mut4")
+MUT.mkdir(parents=True, exist_ok=True)
+
+
+def planted(edits):
+    root = Path(tempfile.mkdtemp(prefix="m", dir=MUT))
+    try:
+        for d in ("code", "config", "tests", "verify", "start_state"):
+            if (FNS / d).exists():
+                shutil.copytree(FNS / d, root / d, ignore=shutil.ignore_patterns("__pycache__"))
+        for rel, (how, a, *b) in edits.items():
+            p = root / rel
+            if how == "new":
+                p.write_text(a)
+            elif how == "+":
+                p.write_text(p.read_text() + "\n" + a)
+            else:                                           # "sub": exact replacement, must match once
+                t = p.read_text()
+                assert t.count(a) == 1, (rel, a[:60])
+                p.write_text(t.replace(a, b[0]))
+        S.clear_caches()
+        scan = S.scan(root)
+        static = SC.run(root)
+    finally:
+        shutil.rmtree(root)
+    return scan["verdict"], sorted({f["kind"] for f in scan["findings"]}), sorted(k for k, v in static.items() if not v["pass"])
+
+
+DRV, PX = "code/p309_driver.py", "code/p309_postexec.py"
+ARM_OLD = ('        if _MODE.get("mode") != "execute":\n'
+           '            raise Refusal("NOT_EXECUTE_MODE", "backstop: the marker is armed only in execute mode")\n'
+           '        ok, why = G.premarker_check(ctx.guard_ctx)\n'
+           '        if not ok:\n')
+ARM_NEW = ('        if _MODE.get("mode") != "execute" and not ctx:\n'
+           '            raise Refusal("NOT_EXECUTE_MODE", "backstop: the marker is armed only in execute mode")\n'
+           '        ok, why = G.premarker_check(ctx.guard_ctx)\n'
+           '        if not ok and not ctx:\n')
+NONCE_OLD1 = '        raise Refusal("RUN_NONCE", "backstop: no run nonce (the site is reached only inside run_execute)") from None\n'
+NONCE_NEW1 = '        rec = {"pid": os.getpid()}\n'
+NONCE_OLD2 = '        raise Refusal("RUN_NONCE", "backstop: the run nonce does not name this process")\n'
+NONCE_NEW2 = '        pass\n'
+# a test reaches the driver through another module that imports it (names assembled from pieces, as an evader would)
+VIA_POSTEXEC = '''import os
+import p309_postexec as P
+
+
+def evil(head):
+    d = P.D
+    d.G.premarker_check = lambda c: (True, "")
+    getattr(d, "_MO" + "DE")["mode"] = "execute"
+    ctx = getattr(d, "production" + "_context")()
+    (d.REPO / (chr(46) + "git") / ("p309-run-" + "nonce.json")).write_text('{"pid": %d}' % os.getpid())
+    getattr(d, "_arm" + "_marker")(ctx, head)
+'''
+M = {
+ "T00_genuine": {},
+ "T8a_arm_backstop_neutered_same_shape": {DRV: ("sub", ARM_OLD, ARM_NEW)},
+ "T8b_nonce_neutered_same_shape": {DRV: ("sub", NONCE_OLD1, NONCE_NEW1)},
+ "T8c_nonce_neutered_both": {DRV: ("sub", NONCE_OLD2, NONCE_NEW2)},
+ "T7a_import_module_computed_name_getattr": {"tests/test_t7a.py": ("new",
+     "import importlib\n\n\ndef f():\n    m = importlib.import_module('p309_' + 'driver')\n"
+     "    return getattr(m, '_arm' + '_marker')\n")},
+ "T7b_sys_modules_computed_name": {"tests/test_t7b.py": ("new",
+     "import sys\n\n\ndef f():\n    return sys.modules['p309_' + 'driver'].__dict__\n")},
+ "T7c_driver_reached_via_postexec": {"tests/test_t7c.py": ("new", VIA_POSTEXEC)},
+ "T7d_composite_in_T7_exempt_postexec": {PX: ("+",
+     "def _t7d(head):\n    D.G.premarker_check = lambda c: (True, '')\n    D._MODE['mode'] = 'execute'\n"
+     "    (D.REPO / '.git' / 'p309-run-nonce.json').write_text('{\"pid\": %d}' % __import__('os').getpid())\n"
+     "    D._arm_marker(D.production_context(), head)\n")},
+}
+out = {}
+for name, edits in M.items():
+    try:
+        out[name] = planted(edits)
+    except Exception as exc:
+        out[name] = ("ERROR", [f"{type(exc).__name__}: {str(exc)[:150]}"], [])
+for k, v in out.items():
+    print(f"{k:42s} scan={v[0]:5s} findings={v[1]} static_failed={v[2]}")
+
+# ===== scratchpad/r4/d5_mutants5.py (R4 reviewer; copied verbatim, non-executable) =====
+"""R4 reviewer, follow-up 2, R4F-C1: every registered runner, called with a ref-mutating verb (or an opaque program /
+script) from an unlisted function of its own file, must be rejected; plus the env parameters of the test and QC runners.
+Static only: planted into a temporary copy, parsed by p309_scan.scan and p309_static_check.run, never executed, deleted."""
+import shutil, sys, tempfile
+from pathlib import Path
+FNS = Path("/home/user/ReBaseGuard/level4/closure_proofs/p5y_k5_cell309_p309_r1")
+sys.path.insert(0, str(FNS / "code"))
+import p309_env as E
+E.log("scratchpad/r4/d5_mutants5.py", "R4 follow-up 2 R4F-C1: per-runner ref-mutation probes and runner env parameters "
+      "(scan + static check on planted temporary copies)", klass="GOVERNANCE",
+      notes="R4 reviewer: static AST analysis only; the planted files are never executed; no ref created; nothing evaluated")
+import p309_scan as S
+import p309_static_check as SC
+MUT = Path("/tmp/claude-0/-home-user-ReBaseGuard/ea54e9f6-e828-5447-be15-220ef2c329fd/scratchpad/r4/mut5")
+MUT.mkdir(parents=True, exist_ok=True)
+
+
+def planted(rel, text):
+    root = Path(tempfile.mkdtemp(prefix="m", dir=MUT))
+    try:
+        for d in ("code", "config", "tests", "verify", "start_state"):
+            if (FNS / d).exists():
+                shutil.copytree(FNS / d, root / d, ignore=shutil.ignore_patterns("__pycache__"))
+        if rel:
+            p = root / rel
+            p.write_text(p.read_text() + "\n\n" + text)
+        S.clear_caches()
+        scan = S.scan(root)
+        static = SC.run(root)
+    finally:
+        shutil.rmtree(root)
+    return scan["verdict"], sorted({f["kind"] for f in scan["findings"]}), sorted(k for k, v in static.items() if not v["pass"])
+
+
+UR = "'update-ref', 'refs/heads/r4probe', 'HEAD'"
+CFG = "{'GIT_CONFIG_COUNT': '1', 'GIT_CONFIG_KEY_0': 'core.fsmonitor', 'GIT_CONFIG_VALUE_0': 'sh evil.sh'}"
+P = {
+ "R00_genuine": (None, ""),
+ "R01_driver_git": ("code/p309_driver.py", f"def _r4probe(repo):\n    git({UR}, repo=repo)\n"),
+ "R02_guard__git": ("code/p309_guard.py", f"def _r4probe(repo):\n    _git(repo, {UR})\n"),
+ "R03_guard__git_bytes": ("code/p309_guard.py", f"def _r4probe(repo):\n    _git_bytes(repo, {UR})\n"),
+ "R04_guard__git_ok": ("code/p309_guard.py", f"def _r4probe(repo):\n    _git_ok(repo, {UR})\n"),
+ "R05_make_freeze_manifest_git": ("code/make_freeze_manifest.py", f"def _r4probe():\n    git({UR})\n"),
+ "R06_make_freeze_params_git": ("code/make_freeze_params.py", f"def _r4probe():\n    git({UR})\n"),
+ "R07_make_proposed_authorization_git": ("code/make_proposed_authorization.py", f"def _r4probe():\n    git({UR})\n"),
+ "R08_checkpoint_push_git": ("code/checkpoint_push_p309.py", f"def _r4probe():\n    git({UR})\n"),
+ "R09_qualify_git": ("code/p309_qualify.py", f"def _r4probe():\n    git({UR})\n"),
+ "R10_self_audit_git": ("code/p309_self_audit.py", f"def _r4probe():\n    git({UR})\n"),
+ "R11_verify_start_state_git": ("start_state/verify_start_state.py", f"def _r4probe():\n    git({UR})\n"),
+ "R12_qc11_sh": ("tests/test_p309_exactly_once.py", f"def _r4probe(repo):\n    sh(repo, {UR})\n"),
+ "R13_guard_test_sh": ("tests/test_p309_guard.py", f"def _r4probe(repo):\n    sh(repo, {UR})\n"),
+ "R14_scoped_sandbox__git": ("verify/scoped_sandbox.py", f"def _r4probe(cwd):\n    _git(cwd, {UR})\n"),
+ "R15_variant__run_git_list": ("verify/srk_verify_indep_scoped.py", f"def _r4probe(repo):\n    _run_git(repo, [{UR}])\n"),
+ "R16_variant__git_ok": ("verify/srk_verify_indep_scoped.py", f"def _r4probe(repo):\n    _git_ok(repo, 'x', {UR})\n"),
+ "R17_qualify_run_argv": ("code/p309_qualify.py", f"def _r4probe(cwd):\n    run(['git', {UR}], cwd)\n"),
+ "R18_qualify_qc_formal_param": ("code/p309_qualify.py", "def _r4probe(name):\n    qc_formal(name)\n"),
+ "R19_qualify_research_test_param": ("code/p309_qualify.py", "def _r4probe(m, rel):\n    research_test(m, rel)\n"),
+ "R20_qualify_qc_research_simple_param": ("code/p309_qualify.py", "def _r4probe(m, rel):\n    qc_research_simple(m, rel)\n"),
+ "R21_qc11_sh_env_config_read_verb": ("tests/test_p309_exactly_once.py", f"def _r4probe(repo):\n    sh(repo, 'status', env={CFG})\n"),
+ "R22_guard_test_sh_env_config_read_verb": ("tests/test_p309_guard.py", f"def _r4probe(repo):\n    sh(repo, 'status', env={CFG})\n"),
+ "R23_qualify_run_env_extra_config": ("code/p309_qualify.py", f"def _r4probe(cwd):\n    run(['git', 'status'], cwd, env_extra={CFG})\n"),
+}
+for name, (rel, text) in P.items():
+    try:
+        v = planted(rel, text)
+    except Exception as exc:
+        v = ("ERROR", [f"{type(exc).__name__}: {str(exc)[:150]}"], [])
+    print(f"{name:42s} scan={v[0]:5s} findings={v[1]} static_failed={v[2]}", flush=True)
+
