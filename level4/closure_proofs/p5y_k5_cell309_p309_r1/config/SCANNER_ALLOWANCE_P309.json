@@ -1,0 +1,16 @@
+{
+ "schema": "P309_SCANNER_ALLOWANCE/1",
+ "authority": "owner rulings 2 (governance/OWNER_RULINGS_2_P309_VERBATIM.md), section OWNER RULING - QUARANTINE SCANNER; spec fc2/FC2_SPEC_R2.md section 7",
+ "scope": "the research scanner's TARGET_PATH finding for exactly the production marker NAME, as inert metadata, in exactly the listed files, under conditions (a)-(e); nothing else",
+ "marker_literal": "refs/p5y-k5-cell309-p309-r1/target-consumed",
+ "constant_name": "PRODUCTION_MARKER",
+ "files": [
+  "code/p309_guard.py",
+  "verify/srk_verify_indep_scoped.py"
+ ],
+ "mutating_git_verbs": ["update-ref", "push", "tag", "branch", "symbolic-ref", "replace", "notes", "fetch", "-d", "--delete", "-D"],
+ "production_ref_namespace": "refs/p5y-k5-cell309-p309-r1/",
+ "production_grant_markers": ["P309_GRANT.json", "authorization/P309_GRANT"],
+ "never_permits": ["creation of the marker ref", "mutation of the marker", "consumption of the marker", "construction of a production grant", "bypass of quarantine", "hidden evaluation"],
+ "amendment_rule": "adding a file (e.g. the FC6 driver) requires a reviewed amendment of this file before the freeze"
+}

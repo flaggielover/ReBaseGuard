@@ -87,9 +87,16 @@ def main(dry: bool) -> int:
     chk("7_no_target_or_governance_artifact", not bad and not refs, f"bad_paths={bad[:5]} marker_refs={refs[:5]}")
     rq = REPO / "level4" / "closure_proofs" / "p5y_k5_cell309_research_r1" / "code" / "q309_guard.py"
     verdicts = []
+    # formal namespace: code/p309_scan.py (research scanner + the owner-authorized narrow marker-name allowance +
+    # formal rules); research namespace: the research scanner unchanged
+    fs = REPO / NS_PREFIX / "code" / "p309_scan.py"
     for root in (REPO / NS_PREFIX, REPO / "level4" / "closure_proofs" / "p5y_k5_cell309_research_r1"):
-        code = ("import sys, json; sys.path.insert(0, %r); import q309_guard as Q; from pathlib import Path; "
-                "Q.NS = Path(%r); print(json.dumps(Q.scan(Path(%r))))" % (str(rq.parent), str(root), str(root)))
+        if root == REPO / NS_PREFIX:
+            code = ("import sys, json; sys.path.insert(0, %r); import p309_scan as S; print(json.dumps(S.scan()))"
+                    % str(fs.parent))
+        else:
+            code = ("import sys, json; sys.path.insert(0, %r); import q309_guard as Q; from pathlib import Path; "
+                    "Q.NS = Path(%r); print(json.dumps(Q.scan(Path(%r))))" % (str(rq.parent), str(root), str(root)))
         sc = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True)
         try:
             verdicts.append(json.loads(sc.stdout)["verdict"])
