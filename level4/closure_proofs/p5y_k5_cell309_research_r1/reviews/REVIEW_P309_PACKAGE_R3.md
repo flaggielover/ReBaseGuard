@@ -1,5 +1,5 @@
 # Independent package review R3 of the P309 formal-campaign package (candidate)
-PACKAGE_REVIEW: COMPLETE_WITH_NOTES
+PACKAGE_REVIEW: COMPLETE
 
 **Status.** Final, 2026-09-30, written 00:19–00:4xZ. I reviewed HEAD `f1f8a459`: the package content commit is
 `ce829bb4`, the manifest commit `65b64e9e` and the brief `b48a1fa2`. The tree was clean and no campaign process was
@@ -646,4 +646,99 @@ I do not open `C1B_R2_CODE_PINS.json` (it is outside NS). The claim about its fi
 **Follow-up 2 disclosures.**
 * I saw no 305–309 value. I met only file paths, blob ids and generator run times (metadata).
 * The only runs were FU2-0 (read-only) and FU2-1 (self-audit, no evaluation).
+* Nothing in the repository was written except this file. No git write.
+
+---
+
+## Follow-up 3 (2026-09-30): check of D1, D2 and P1–P5
+
+### H0. Declaration (written 00:47Z, before any run beyond read-only checks)
+
+Reviewed state: HEAD `29c0b49f`. The content is at `0a3f1604`, the manifest at `cb63fed6`, and follow-up 2 is
+preserved at `eb3b3432`. The same brief, firewall and rules apply. Earlier text is not rewritten; only line 2 is updated
+at the end.
+
+**Firewall choice.** My original instructions list "do not open `ledger/INCIDENT_*`" among the non-negotiable hard
+rules. So I do **not** open `ledger/INCIDENT_309R1_04_*`, although the coordinator now allows it. I assess 309R1-04 from
+ERRATA E-18, the ledger lines, the package texts and git metadata. I also do not open any scratchpad file other than
+my own `scratchpad/r3/`, and that includes the Phase-4 drafts.
+
+| id | what | kernel / geometry / drift | evaluates? |
+|---|---|---|---|
+| FU3-0 | Read-only checks: `git diff c391bc47..HEAD` (excluding the incident file's content); the changed `protocol_prep/*` text, `ERRATA.md`, the new ledger lines and the `code/self_audit.py` diff; manifest pins recomputed as before | none | no |
+| FU3-1 | `code/self_audit.py` (the new blob) through my RD3-1 wrapper, output to `scratchpad/r3/fu3/` | none | no |
+
+**Executed as declared.**
+* **FU3-0 (read-only checks).**
+  * Manifest at `0a3f1604`: 48 code pins and 7 data pins. **Every blob and every NS sha256 matches** at `0a3f1604` and
+    at HEAD.
+  * No pin was added or dropped. The changed blobs are exactly `code/self_audit.py`, `ERRATA.md` and the four package
+    documents. The data pins are unchanged and metadata only.
+  * The generator copy matches its recorded sha256.
+  * The `code/self_audit.py` diff only adds incidents 03 and 04 to the A3 immutability list (lines 43-46), so it is
+    strictly more checking.
+  * `EXPOSURE_LEDGER.jsonl` is unchanged, which I checked by git metadata only.
+* **FU3-1 (self-audit, new blob, at HEAD `29c0b49f`).** A1–A10 all PASS, with 542 ledger lines and max drift 37/32. A3
+  reports all five immutables unchanged, incidents 03 and 04 included. The A10 envelope output is byte-identical to the
+  committed file. Local = remote = `29c0b49f`. Outputs are in `scratchpad/r3/fu3/`.
+* I did not open `ledger/INCIDENT_309R1_04_*` or any other scratchpad file. Nothing was written except this file, and
+  there was no git write.
+
+### H1. Status
+
+| item | status | evidence |
+|---|---|---|
+| D1 disclosure | **SETTLED** | Incident 309R1-04 plus ERRATA E-18 (`ERRATA.md:24`) appear in all of: the owner incidents row, with the generator runs now plural and dated "from 2026-09-29 23:11Z, before R2's final verdict" (`P309_OWNER_DECISIONS.md:24`); P0-2 (`P309_PROTOCOL.md:19`); the grant's `disclosed_liabilities` (`P309_FORMAL_PACKAGE.md:95-96`); the incident brief's task 1 (`P309_REVIEW_BRIEFS.md:34-38`). The times are corrected append-only (`ledger/ZERO_TARGET_LEDGER.jsonl:539`) |
+| D2 ledger the C1B_R2 file-name read | **SETTLED** | `ledger/ZERO_TARGET_LEDGER.jsonl:540` (GOVERNANCE; names only; no pin value, hash or number) |
+| P1 start threshold | **SETTLED** | `P309_PROTOCOL.md:90-92`; `P309_FORMAL_PACKAGE.md:25`. The §2.5 table row (`P309_PROTOCOL.md:75`) points to the mechanics, which govern |
+| P2 `ladder = (d,)` | **SETTLED** | `P309_PROTOCOL.md:46` |
+| P3 checklist item 16 | **SETTLED** | `P309_REVIEW_BRIEFS.md:79` |
+| P4 commit ids | **SETTLED** | `ledger/ZERO_TARGET_LEDGER.jsonl:539` (`2db92936` is the content, `a2678cc7` the push record) |
+| P5 rev. 2b headers | **SETTLED** (trivial residue) | `P309_PROTOCOL.md:1`, `P309_FORMAL_PACKAGE.md:1`, `P309_OWNER_DECISIONS.md:1`. `protocol_prep/README.md:1` still says "rev. 2". It is unpinned and cosmetic |
+
+### H2. 309R1-04: adequacy, rating, effect on defensibility
+
+I assessed this from E-18, the ledger lines, the package texts and git timestamps. I did not open the incident file.
+* **Adequacy of the disclosure.** Adequate. It is recorded as an incident with an erratum. The times are corrected in
+  an append-only way, with the earlier approximations kept visible. It appears in every place an owner or reviewer acts
+  on: P0-2, the owner row, the grant's liabilities and the incident brief. It was self-reported and its scope widened
+  beyond my D1 reading, which counts in its favour.
+* **LOW is reasonable.**
+  * It is a sequencing deviation from the charter (`README.md:42`), with no evaluation and no new exposure. Nothing
+    entered the namespace before R2's final FREEZE_READY (`f026c80b`, 00:06:01Z).
+  * The route was already fixed before the first draft: rule S was committed at `7f1eb363` (09-29 13:52:08Z) and
+    THEOREM_SRK at `3df7a1a5` (13:15:54Z), while the first draft is from 14:11:58Z. So the drafting did not precede or
+    shape the route choice.
+  * R1 and R2 reviewed committed material only. R2 recorded `protocol_prep/` as empty, so neither route review saw a
+    draft.
+  * The package's rule choices with outcome effect (the §2.5 mapping, the budget, the Stage-1b fallback) were fixed
+    in committed rev. 2/2b after R3, before any 309 Stage-1 number. They are already routed to the incident review
+    (brief task 3).
+  * The residual risk is anchoring of design before independent review, which is what LOW describes.
+* **Effect on prospective defensibility: none on the package's rules.** Defensibility rests on three things, and
+  309R1-04 changes none of them:
+  * every rule and parameter is fixed and committed before any 309 Stage-1 number or target evaluation;
+  * the texts contain no target information;
+  * the independent reviews.
+
+  One caveat: "no target information in the drafts" currently rests on the coordinator's statement.
+* **Recommendation (process, not a package item; changes no rule).** The scratchpad is ephemeral. Before the
+  incident-independence review, preserve the drafts' sha256 and timestamps. After a quarantine scan, also preserve
+  inert copies, unless the incident file already does this. The review can then compare drafts with the committed
+  package on primary evidence.
+
+### H3. Follow-up 3 verdict
+
+**COMPLETE** (line 2 updated).
+* Every note of this review (N1–N19, F2.1–F2.8, D1, D2, P1–P5) is SETTLED.
+* The only residues are the `protocol_prep/README.md:1` "rev. 2" header and the draft-preservation recommendation in
+  H2. Both are optional: neither changes a rule, and neither is needed for the owner's freeze decision. The package is
+  ready to be presented to the owner.
+* **This verdict authorizes nothing.** A freeze requires the owner's explicit authorization (P0-1). It then requires,
+  in order, the incident-independence review, the freeze, qualification, the qualification review and a separate grant.
+
+**Follow-up 3 disclosures.**
+* I saw no 305–309 value. I met only file paths, blob ids, commit and draft timestamps, and incident and erratum
+  labels.
+* The only runs were FU3-0 (read-only) and FU3-1 (self-audit, no evaluation).
 * Nothing in the repository was written except this file. No git write.

@@ -1,4 +1,4 @@
-# protocol_prep/: prospective formal-campaign package for cell 309 (CANDIDATE rev. 2; prepared, never executed)
+# protocol_prep/: prospective formal-campaign package for cell 309 (CANDIDATE rev. 2b; prepared, never executed)
 
 Rev. 2 addresses independent package review R3's notes N1–N19 and its follow-up items F2.1–F2.8
 (`reviews/REVIEW_P309_PACKAGE_R3.md`). Its verdict is recorded there.
