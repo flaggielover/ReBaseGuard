@@ -72,16 +72,32 @@ qualification review, and a separate grant.
    |---|---|
    | a producer status other than CERTIFIED (W_REPAIR_INAPPLICABLE, W_NEGATIVE) for a (b, rung) | no certificate for that (b, rung): **fallback**, no retry |
    | a verifier verdict other than ACCEPT (REJECT or REFUSE) for a certificate | not admitted: **fallback** for that (b, i, rung) |
-   | jobs not started or not finished when the declared Stage-1a budget is exhausted (**48 CPU-h total**, workers ≤ 4) | no certificate for those jobs: **fallback** for the affected indices. The budget is a pre-declared resource limit, not a malfunction. It is set at about 10× the qualified real-kernel decoy cell (about 4.5 CPU-h), a target-free basis |
+   | jobs not started, or stopped by the budget mechanics below (**48 CPU-h total**; workers ≤ 4) | no certificate for those jobs: **fallback** for the affected indices. The budget is a pre-declared resource limit, not a malfunction. It is set at about 10× the qualified real-kernel decoy cell (about 4.5 CPU-h), a target-free basis |
    | **any exception**: producer, guard refusal, verifier, gate or driver | **post-marker failure → EXECUTION_INDETERMINATE** (target consumed; no rerun; no conclusion) |
 
    Here "fallback" means Γ̄_i = None for the affected index, and the min takes the TC-T term. Stage 2 still runs. The
    fallback is safe for validity, but it spends the single evaluation without that SRK index. Whether exceptions
    should instead fall back is an owner rule decision, to be taken before the freeze (P309_OWNER_DECISIONS).
+
+   **Budget mechanics (R3 F2.2; fixed now).**
+   * **Accounting.** CPU-h is the sum over worker processes of process CPU time (user + system), including in-process
+     verification.
+   * **Job.** One job is one (sub-block b_j, rung d) unit: `certify_W`, the four `certify_weight` calls, per-rung
+     serialization and the in-process verification of those certificates.
+   * **Fixed order.** Rung-major: every sub-block at d = 8, then every one at d = 10, then d = 12, with b₁..b₄ in
+     order within each rung. A binding budget therefore removes the most expensive rungs first, and every sub-block
+     gets its cheapest rung before any sub-block gets a costlier one.
+   * **Stopping.** No job starts once the cumulative CPU reaches 48 CPU-h. A job that exceeds a per-job limit of
+     12 CPU-h is terminated and its outputs are discarded. Stopping is only by not starting jobs and by discarding a
+     terminated job's outputs; neither raises an exception.
+   * **Host dependence (R3 F2.1).** When the budget binds, which certificates exist depends on timing, so the outcome
+     can depend on the host's speed. The budget use and the list of started, finished and terminated jobs are
+     recorded. Validity is unaffected, because missing certificates only fall back.
 6. **Recording.** **All** serialized certificates, all verdicts (with reasons) and the full GateResult report
    (admitted and refused, with reasons) are sealed, not only the admitted ones.
 7. **SRK-T.** SRK-T is **OUT of package 1** (rule S, C5). It is not computed.
-8. **Determinism.** Every Stage-1a output is a pure function of the pinned bytes and the pinned interpreter/platform.
+8. **Determinism.** While the budget does not bind, every Stage-1a output is a pure function of the pinned bytes and
+   the pinned interpreter/platform. When it binds, see the host-dependence caveat in §2.5.
    The research campaign showed byte-identical certificate reproduction for one decoy certificate (test T10). The
    formal campaign must show Stage-1a determinism in QC10, including a re-run on the execution host.
 
@@ -93,6 +109,9 @@ qualification review, and a separate grant.
 * **Failure mapping (R3 N12; fixed now; flagged to the owner under G3).** RLR is a **min-composed** component of P309.
   Unlike 307, where RLR was the whole route, a Stage-1b CERTIFICATION_FAILED for a block therefore gives A1_RLR,
   A2_RLR := None (+∞) for the cell. The min then takes the S_I1 values, which is valid, and Stage 2 still runs.
+* **Budget (R3 F2.3).** 21 600 s CPU, accounted as in §2.5 with jobs in the RLR307 order. Blocks not certified within
+  the budget are CERTIFICATION_FAILED and fall back to the S_I1 values, as above. The stop is by not starting and by
+  discarding, never by raising.
 * **Exceptions.** Any exception in Stage 1b, or a mismatch between the producer and the independent reconstruction,
   is a post-marker failure and gives EXECUTION_INDETERMINATE.
 

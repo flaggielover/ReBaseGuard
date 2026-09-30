@@ -37,7 +37,13 @@ is preserved verbatim. **REJECTED ⇒ STOP**, with no same-round repair.
      of the exposed information.
   2. Rate result-chasing (the reviewer decides; the coordinator's MEDIUM-HIGH rating for SRK is an input, not a
      bound).
-  3. Check that every firewalled-reader brief is hashed or committed.
+  3. Assess, explicitly, the target independence of the three rule choices made in candidate rev. 2 (R3 F2.8):
+     * the Stage-1a failure mapping (protocol §2.5);
+     * the 48 CPU-h budget and its mechanics;
+     * the Stage-1b fallback to S_I1 (protocol §3).
+
+     P0-2 records that RLR's knockout is known, and the Stage-1b fallback favours closure when Stage 1b fails.
+  4. Check that every firewalled-reader brief is hashed or committed.
 * **Verdict tokens:** `INCIDENT_AUDIT_ACCEPTED` (with conditions C…) or `INCIDENT_AUDIT_REJECTED`. The expected
   standard of wording is "temporal and parametric independence only".
 
