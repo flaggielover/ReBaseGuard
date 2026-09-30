@@ -40,8 +40,14 @@ ALLOW = [
                                          "authority before the marker (rev. 2c A21, R4 NB8)"),
     ("code/make_freeze_params.py", r"placeholder", "the frozen rule text: the driver refuses a placeholder authority "
                                                    "(rev. 2c A21)"),
+    ("code/make_freeze_params.py", r"TBD|TODO", "the delta-3 G3(a) liability quotes the A34 rule: an owner's quote "
+                                                "containing TBD or TODO is ADMITTED in a grant's authority (a rule "
+                                                "statement, not an open decision)"),
     ("code/make_proposed_authorization.py", r"placeholder", "the grant rules text: the owner's values must not be "
                                                             "placeholders; the driver refuses them (rev. 2c A21)"),
+    ("governance/D5_SITE_BACKSTOP_REPORT_P309.md", r"placeholder", "the report to the owner states the A34 narrowing "
+                                                                   "of the grant authority's placeholder test (a rule "
+                                                                   "statement, not an open decision)"),
     ("governance/P309_REV2C_AMENDMENTS.md", r"placeholder", "A21 states the rule that refuses placeholder grant values"),
     ("verify/scoped_sandbox.py", r"placeholder", "the verifier author's sandbox builder seeds a TEST_ONLY synthetic "
                                                 "guard_id from the bytes 'TEST_ONLY_DO_NOT_EXECUTE guard placeholder' "
