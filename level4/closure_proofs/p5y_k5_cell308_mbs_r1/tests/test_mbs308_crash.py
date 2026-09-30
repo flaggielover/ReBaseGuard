@@ -353,6 +353,67 @@ def t_S12_eval_cap_awake_time():
             and one_marker(ch) and took < 60, "eval_cap": rec["lifecycle"]["eval_cap"], "seconds": round(took, 1)}
 
 
+def _code_modules():
+    """The sandbox's own mbs308_host / mbs308_state (the code under test, possibly mutated), imported in-process."""
+    code = str(sb().p(T.NS_REL + "/code"))
+    if code not in sys.path:
+        sys.path.insert(0, code)
+    import mbs308_host as H
+    import mbs308_state as Sm
+    return H, Sm
+
+
+def _ps_fails_for(H, pids: set):
+    """In-process twin of the child harness knob `ps_fail_pids`: `ps` readings fail for these pids. Returns the undo."""
+    real_start, real_cmd = H.process_start, H.process_command_sha256
+    H.process_start = lambda pid, text=None: None if int(pid) in pids else real_start(pid, text)
+    H.process_command_sha256 = lambda pid, text=None: None if int(pid) in pids else real_cmd(pid, text)
+
+    def undo():
+        H.process_start, H.process_command_sha256 = real_start, real_cmd
+    return undo
+
+
+def t_S13_lock_ps_failure_not_broken():
+    """Liveness delta at Lock.acquire (REVIEW_IMPLEMENTATION_MBS308_DELTA_R3 s3): after a crash, the O_EXCL recover lock
+    names a LIVE helper for which `ps` fails (planted with the child knob ps_fail_pids). Its identity is UNKNOWN, never
+    dead, so recover's resume refuses LOCKED and the lock is left in place, byte for byte. Once the helper is gone
+    (positive evidence of death, whatever `ps` does) the stale lock is moved aside, and recover resumes and seals the
+    uninterrupted bytes without recomputing a verified checkpoint."""
+    ch = fresh()
+    T.child(sb(), "execute", {"fault": {"F3": {"at": 4, "how": "kill"}}})
+    names, before = sb().ckpt_names(), counts()
+    H, _Sm = _code_modules()
+    lock = sb().spool() / "recover.lock"
+
+    def aside() -> list:
+        return [n for n in os.listdir(sb().spool()) if n.startswith("recover.lock.rejected-stale-lock")]
+    h = T.Helper(120)
+    try:
+        live = H.identity(h.p.pid)
+        undo = _ps_fails_for(H, {h.p.pid})                  # control: the planted failure reads UNKNOWN, not DEAD
+        try:
+            planted = H.identity_state(live)
+        finally:
+            undo()
+        raw = json.dumps({"identity": live})
+        lock.write_text(raw)
+        bad = {"ps_fail_pids": [h.p.pid]}
+        r_live = recover(**bad)
+        st_live = status(**bad)
+        held = lock.exists() and lock.read_text() == raw and aside() == []
+    finally:
+        h.kill()
+    r = recover(**bad)
+    after = counts()
+    complete = all(live.get(k) for k in ("pid", "start_time", "boot_uuid", "command_sha256"))
+    return {"ok": complete and planted == "UNKNOWN" and r_live["out"] == {"rc": 2, "refused": "LOCKED"}
+            and st_live == "CONSUMED_INTERRUPTED" and held and r["out"] == {"rc": 0} and status() == "SEALED"
+            and sealed_ok() and len(aside()) == 1 and not lock.exists() and one_marker(ch)
+            and all(after.get(n) == before.get(n) for n in names),
+            "planted_identity_state": planted, "live_lock": r_live["out"], "stale_lock": r["out"]}
+
+
 # ====================================================================== R1 (iv): stale git lockfiles of the campaign
 MARKER_LOCK = T.PREFIX + "target-consumed.lock"
 JOURNAL_LOCK = T.PREFIX + "journal.lock"
@@ -618,6 +679,80 @@ def t_L12_lock_ps_failure_not_stale():
     complete = all(ident.get(k) for k in ("pid", "start_time", "boot_uuid", "command_sha256"))
     return {"ok": complete and r1["out"] == {"rc": 8} and held and moved_locks(r2) == 1 and status() == "SEALED"
             and sealed_ok() and one_marker(ch), "first": r1["out"], "second": r2["out"]}
+
+
+def t_L13_lock_sources_ps_failure_each():
+    """N-3 per source (reviewR3C1 coverage note X4). After a crash, with a campaign lockfile planted, git_lock_info is
+    read DIRECTLY (the classifier's own liveness test would otherwise mask it: a journal naming a live process already
+    makes the state CONSUMED_COMPUTING, and recover then waits without asking git_lock_info). Each recorded campaign
+    process source is tested on its own, naming a LIVE helper for which `ps` fails (planted in-process, the twin of the
+    child knob): the journal's recorded process, the O_EXCL recover lock's holder, and the pidfile. Each alone holds
+    the lockfile (not stale; exactly that source listed); with no source naming a live process it is stale. End to end:
+    the journal naming the live helper with `ps` failing makes recover wait (exit 8, lockfile untouched); once the
+    helper is gone, recover moves the lockfile aside and resumes and seals the uninterrupted bytes."""
+    ch = fresh()
+    T.child(sb(), "execute", {"fault": {"F3": {"at": 4, "how": "kill"}}})
+    names, before = sb().ckpt_names(), counts()
+    H, Sm = _code_modules()
+    st = Sm.Store(sb().root, "refs/heads/" + T.BRANCH)
+    jid, jrec = Sm.Journal.read(st)
+    crashed = jrec["process"]                                  # the killed driver: positively dead
+    pidf, lockf = sb().spool() / "driver.pid", sb().spool() / "recover.lock"
+    pid_raw = pidf.read_bytes()                                # the killed driver's pidfile: positively dead
+    lock_raw = lockf.read_bytes() if lockf.exists() else None  # the killed driver's recover lock, if it left one
+
+    def set_journal_process(proc: dict) -> None:
+        j, r = Sm.Journal.read(st)
+        Sm.Journal(st, j, r).advance(process=proc)
+
+    def info() -> dict:
+        i = Sm.git_lock_info(st)
+        return {"live": i.get("git_locks_live_campaign_process"), "stale": i.get("git_locks_stale"),
+                "locks": i.get("git_locks")}
+    lk = sb().plant_lock(CKPT_LOCK)
+    cases = {}
+    h = T.Helper(120)
+    try:
+        live = H.identity(h.p.pid)
+        undo = _ps_fails_for(H, {h.p.pid})
+        try:
+            cases["planted_identity_state"] = H.identity_state(live)
+            cases["none"] = info()                                             # every source positively dead
+            set_journal_process(live)                                          # the journal's recorded process only
+            cases["journal_process"] = info()
+            set_journal_process(crashed)
+            lockf.write_text(json.dumps({"identity": live}))                   # the recover lock's holder only
+            cases["recover_lock"] = info()
+            if lock_raw is None:
+                lockf.unlink()
+            else:
+                lockf.write_bytes(lock_raw)
+            pidf.write_text(json.dumps({"identity": live}))                    # the pidfile only
+            cases["pidfile"] = info()
+            pidf.write_bytes(pid_raw)
+            set_journal_process(live)                                          # end to end: the journal source
+        finally:
+            undo()
+        r1 = recover(ps_fail_pids=[h.p.pid])
+        held = _intact(lk) and sb().locks_aside() == []
+    finally:
+        h.kill()
+    undo = _ps_fails_for(H, {h.p.pid})
+    try:
+        cases["helper_gone"] = info()
+    finally:
+        undo()
+    r2 = recover(ps_fail_pids=[h.p.pid])
+    after = counts()
+    alone = all(cases[k] == {"live": [k], "stale": False, "locks": [CKPT_LOCK]}
+                for k in ("journal_process", "recover_lock", "pidfile"))
+    dead = all(cases[k] == {"live": [], "stale": True, "locks": [CKPT_LOCK]} for k in ("none", "helper_gone"))
+    complete = all(live.get(k) for k in ("pid", "start_time", "boot_uuid", "command_sha256"))
+    return {"ok": complete and cases["planted_identity_state"] == "UNKNOWN" and alone and dead
+            and r1["out"] == {"rc": 8} and held and moved_locks(r2) == 1 and r2["out"] == {"rc": 0}
+            and status() == "SEALED" and sealed_ok() and one_marker(ch) and not lk.exists()
+            and _actions()[-1]["lock"] == CKPT_LOCK and all(after.get(n) == before.get(n) for n in names),
+            "cases": cases, "first": r1["out"], "second": r2["out"]}
 
 
 if __name__ == "__main__":

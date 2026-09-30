@@ -171,6 +171,56 @@ def t_computing_then_interrupted():
             "recover": r["out"]}
 
 
+def _ps_fails_for(H, pids: set):
+    """In-process twin of the child harness knob `ps_fail_pids`: `ps` readings fail for these pids. Returns the undo."""
+    real_start, real_cmd = H.process_start, H.process_command_sha256
+    H.process_start = lambda pid, text=None: None if int(pid) in pids else real_start(pid, text)
+    H.process_command_sha256 = lambda pid, text=None: None if int(pid) in pids else real_cmd(pid, text)
+
+    def undo():
+        H.process_start, H.process_command_sha256 = real_start, real_cmd
+    return undo
+
+
+def t_computing_ps_failure_not_interrupted():
+    """Liveness delta (REVIEW_IMPLEMENTATION_MBS308_DELTA_R3 s3), the classifier's CONSUMED_COMPUTING test: the
+    journal's recorded process is a LIVE helper for which `ps` fails (planted with the child knob ps_fail_pids). Its
+    identity is UNKNOWN, never dead, so the state is CONSUMED_COMPUTING, recover waits (exit 8) and resume refuses,
+    with no ref moved. Once the helper is gone (positive evidence of death, whatever `ps` does) the state is
+    CONSUMED_INTERRUPTED and recover resumes and seals the uninterrupted bytes."""
+    base = baseline()
+    ch = fresh()
+    h = T.Helper(300)
+    try:
+        ident = host().identity(h.p.pid)
+        undo = _ps_fails_for(host(), {h.p.pid})              # control: the planted failure reads UNKNOWN, not DEAD
+        try:
+            planted = host().identity_state(ident)
+        finally:
+            undo()
+        plant_computing(ch, ident)
+        bad = {"ps_fail_pids": [h.p.pid]}
+        refs0 = sb().refs()
+        s1 = status(**bad)
+        r_wait = recover(**bad)
+        r_res = T.child(sb(), "resume", bad)
+        refs_before = sb().refs()
+    finally:
+        h.kill()
+    s2 = status(**bad)
+    r = recover(**bad)
+    s3 = status()
+    rec = sb().sealed_record()
+    complete = all(ident.get(k) for k in ("pid", "start_time", "boot_uuid", "command_sha256"))
+    return {"ok": complete and planted == "UNKNOWN" and s1 == "CONSUMED_COMPUTING" and r_wait["out"] == {"rc": 8}
+            and "-> wait" in r_wait["stdout"] and r_res["out"] == {"rc": 2, "refused": "RESUME_REFUSED"}
+            and refs_before == refs0 and s2 == "CONSUMED_INTERRUPTED" and r["out"] == {"rc": 0} and s3 == "SEALED"
+            and rec is not None and T.certified_bytes(rec) == base and one_marker(ch)
+            and rec["lifecycle"]["attempt"] == 2,
+            "planted_identity_state": planted, "states": [s1, s2, s3], "wait": r_wait["out"], "resume": r_res["out"],
+            "recover": r["out"]}
+
+
 def t_reboot():
     """A simulated reboot: the recorded process is alive, but the classifier's boot UUID differs -> INTERRUPTED."""
     ch = fresh()

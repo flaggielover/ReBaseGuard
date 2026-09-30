@@ -649,3 +649,210 @@ within one 2 s poll. M33 removes exactly that release.
   created or modified in the real object store since the snapshot (checked with a positive control). No launchd job or
   plist of the campaign is left.
 * MB r1's bytes, the guard, the science pins, PLATFORM_PINS and the historical reviews are unchanged.
+
+## 14. Option B: items 16 and 31 withdrawn and re-applied by a non-holder (steps W, N), and the liveness delta (step L) (builder `builder3`, brief 45, research 5e7b8cdc)
+
+**Scope.** The user ruled on the T6 ruling's M4 with option B: the four ratified allow-list names and the preflight
+timeout expression must be applied by a genuine non-holder, not by the exposed editor (`editorR3C1`) who applied them at
+191ce4a9. The same instruction asks for the liveness delta that the non-holder reviewer reviewR3C1 recommended
+(REVIEW_IMPLEMENTATION_MBS308_DELTA_R3, research 58cfe66b, section 3 and coverage note X4). I am `builder3`, a fresh
+builder who holds no MB r1 run observation (the exposure statement at the end of this section says exactly what my
+context holds). I chose no operational number: the two values of step N are the ratifier's (CONSTANTS_RATIFICATION_MBS308,
+research 3c2a7854, items 16 and 31 and its requested changes 2 and 3), and step L changes no number at all. Sections 1-13
+are unchanged; this section is additive.
+
+**Read.** Brief 45 (research ledger/briefs/45_builder3_optionB_liveness.txt); CONSTANTS_RATIFICATION_MBS308 (3c2a7854, in
+full); REVIEW_IMPLEMENTATION_MBS308_DELTA (99185dcb) and REVIEW_IMPLEMENTATION_MBS308_DELTA_R3 (58cfe66b), both in full;
+the successor's code, tests, protocol draft and this report's sections 12 and 13; MB r1's `mb308_driver.py` at c46434a3
+(only to regenerate DRIVER_DIFF.md); the diffs 35cabb50..191ce4a9 of the driver and the launcher (step W needs them); the
+research quarantine module's `log_event` and the ledger's last lines (format). **Not opened:** any MBS-2 file
+(REVIEW_EXECUTION_INTERRUPTION*, audit/EXECUTION_INTERRUPTION_*, REVIEW_SUCCESSOR_GOVERNANCE_308*,
+INCIDENT_INDEPENDENCE_REVIEW_MBS308* including T6, COORDINATOR_EXPOSURE_DISCLOSURE*), anything under
+`p5y_k5_cell308_mb_r1/{review,adjudication,postexec,evidence}/`, this report's section 9 (a `grep '^## '` listing of the
+headings showed its title line only), any other session's or agent's scratchpad, anything under `/Users/suzhe/.claude/`.
+
+### Step W — withdrawal of the editor's application (committed by the coordinator as 4a960e06)
+
+Mechanical; no value chosen.
+* `code/mbs308_launch.py`: the whole file restored to its bytes at 35cabb50 (sha256 c829b9ed…; `git diff 35cabb50`
+  empty).
+* `code/mbs308_driver.py`: the `EXCL_ALLOW` assignment (39 names) and the absence of a comment line above it restored to
+  35cabb50 (the assignment's AST source segment byte-identical); the launcher pin re-pinned to c829b9ed…. Nothing else
+  touched: the editor's comments for items 10/11/14/15 and the host / state pins stay as at 191ce4a9.
+* DRIVER_DIFF.md regenerated. The generator (Python `difflib.SequenceMatcher(autojunk=False)`, 3 lines of context,
+  unified-diff hunk headers; each hunk's touched top-level definitions from the AST line ranges of the CHANGED lines of
+  both files; class labels and header text carried from the committed file) first reproduced both the 191ce4a9 and the
+  35cabb50 committed DRIVER_DIFF.md byte for byte. It lives in my scratch, not in the namespace. Applying the regenerated
+  hunks to MB r1's c46434a3 driver reproduces the successor driver byte for byte (checked at W, N and L).
+* Expected and observed: static 9/10, only `t_r3_ratified_rules_applied` FAILS and only on `excl_allow` (old 39, new
+  39; its verbatim-rules, superseded-rule and section-7 checks pass); `launch::t_preflight_timeout_rule` FAILS (1900
+  when a copy's PRE_CAP_S is 1234); `state::t_gc10_ratified_allow_list` FAILS (each ratified daemon refused
+  HOST_PREFLIGHT). All by assertion (no error).
+
+### Step N — items 16 and 31 re-applied from the ratification text (committed by the coordinator as b0dd8e93)
+
+* **Item 16** (`code/mbs308_driver.py`): the `EXCL_ALLOW` literal continues after "UserEventAgent" with
+  `"spotlightknowledged.updater", "cloudd", "BackgroundShortcutRunner", "modelcatalogd"` (the ratification's order, filled
+  to the file's 120-column width), under a two-line comment naming item 16 and R-ALLOW. By AST: 39 → 43, exactly those
+  four added, nothing removed. Provisional; R-ALLOW decides the frozen list at the freeze.
+* **Item 31** (`code/mbs308_launch.py`): `pre_launch` runs the preflight with `timeout=PRE_CAP_S + 100`. `PRE_CAP_S`
+  is the driver's own: `driver_pre_cap_s()` parses the driver's BYTES (`ast.parse`; the launcher never imports the
+  driver, which would load the science) and requires exactly one module-level binding `PRE_CAP_S = <int literal>`;
+  anything else (missing, bound twice, augmented later, annotated, not an int literal) raises
+  `LaunchRefused("DRIVER_PRE_CAP_S")` at import, so the launcher refuses to load. The module and `pre_launch` docstrings
+  state the rule. A scratch probe on copies (the driver never run): 1900 as the files stand, 1334 at PRE_CAP_S 1234, and
+  a refusal for each malformed variant.
+* Against 191ce4a9: the `EXCL_ALLOW` literal is byte-identical (only its comment differs); the timeout expression and
+  its value (1900 s) are identical. My reader is stricter than the editor's `driver_literal` (which took the first match
+  and raised RuntimeError only when the name was missing). The M51 / M52 fragments occur exactly once in my bytes and
+  were not changed.
+* Results: static 10/10, launch 10/10, `state::t_gc10_ratified_allow_list` PASS; M51 and M52 KILLED by their targets'
+  own assertions. The coordinator's byte-level re-check of N was PASS (research b3cc9675; I did not read that file).
+
+### Step L — the liveness delta (REVIEW_IMPLEMENTATION_MBS308_DELTA_R3 section 3; coverage note X4)
+
+**Code (the two sites only), `code/mbs308_state.py`.**
+* The classifier's CONSUMED_COMPUTING test (the line M11 targets): `if _not_dead(jrec.get("process"), cur_boot, None):`
+  instead of `HOST.identity_alive(...)`. The why code is now `PROCESS_NOT_PROVABLY_DEAD` (it was
+  `PROCESS_ALIVE_SAME_BOOT`; no test or code reads it).
+* `Lock.acquire`: `if _not_dead(holder, None, None):` instead of `HOST.identity_alive(holder)`; the class docstring
+  states the rule.
+* Both reuse the N-3 function `_not_dead` unchanged, so the rule is literally the one N-3 already applies to the
+  git-lockfile sources: a RECORDED identity counts as alive unless `HOST.identity_state` says DEAD (a failed `ps` or
+  boot-UUID reading is UNKNOWN, never evidence of death); no recorded identity (not a record, or a record naming no pid)
+  means no process. With `exclude_pid` None, the reviewer's edge note (a record without a pid) now reads "no process" at
+  all three sites that pass None, and UNKNOWN only in `move_stale_git_locks`' own re-check, which fails closed.
+* Not changed (outside this delta, as the brief fixes): `read_pidfile` (the preflight's other-job gate) and
+  `check_not_evaluated`'s stale pre-marker intent takeover keep the all-fields-match `identity_alive`.
+* No number, cap, timeout or poll changed. Re-pinned: `mbs308_state.py` 81788fa8…; driver a75bafd3…; DRIVER_DIFF.md
+  regenerated (22 hunks, index unchanged; only the header sha and hunk 4's state pin change).
+
+**Protocol draft section 4.** The CONSUMED_UNRECORDED / COMPUTING / INTERRUPTED rows now say "positively dead" /
+"not positively dead (ALIVE or UNKNOWN)", and a new paragraph *Liveness of a recorded process identity* states the one
+rule for the classifier, the O_EXCL recover lock and the git-lockfile staleness test, and the **fail-closed
+consequence**: while `ps` keeps failing for a recorded pid that still exists, or the boot-UUID read keeps failing at all,
+the run stays CONSUMED_COMPUTING (recover waits, exit 8; resume, close-indeterminate and seal-only refuse) and a recover
+lock naming that identity is never broken (LOCKED); there is no timeout; it ends only on positive evidence (the boot UUID
+reads again and differs, or the pid is gone or belongs to another process), after which the table applies as written (a
+deadline passed meanwhile gives CONSUMED_UNRECORDED and close-indeterminate).
+
+**Tests (new; test-only values: the existing `T.Helper` sleep helper for 300 s / 120 s, the existing F3 crash at the
+4th checkpoint, planted `ps` failures for the helper's pid only).**
+
+| suite | test | what it asserts |
+|---|---|---|
+| state | `t_computing_ps_failure_not_interrupted` | (a) the journal's recorded process is a live helper whose `ps` fails (child knob `ps_fail_pids`; an in-process control shows the planted reading is UNKNOWN): CONSUMED_COMPUTING, recover waits (exit 8, "-> wait"), resume refuses RESUME_REFUSED, no ref moved; helper gone: CONSUMED_INTERRUPTED, recover resumes (attempt 2) and seals the uninterrupted certified bytes, one marker |
+| crash | `t_S13_lock_ps_failure_not_broken` | (b) after an F3 crash the recover lock names a live helper whose `ps` fails: recover refuses LOCKED, the state stays CONSUMED_INTERRUPTED, the lock stays byte for byte, nothing moved aside; helper gone: the stale lock is moved aside (one `recover.lock.rejected-stale-lock-*`), recover resumes and seals the uninterrupted bytes, no verified checkpoint recomputed |
+| crash | `t_L13_lock_sources_ps_failure_each` | (c) after an F3 crash, with the campaign's ckpt lockfile planted, `git_lock_info` read DIRECTLY (the classifier's change would mask the journal source end to end) with `ps` failing in-process for a live helper: each source alone — the journal's recorded process, the recover lock's holder, the pidfile — holds the lockfile (`live == [that source]`, not stale); no source live: stale (before, and after the helper dies). End to end: the journal naming the live helper → recover exits 8, lockfile intact; helper gone → recover moves it aside (recorded) and seals the uninterrupted bytes |
+
+**Mutants (new; M11 re-targeted).**
+
+| id | fragment (in `mbs308_state.py`) | target | result |
+|---|---|---|---|
+| M11 | (re-targeted, same meaning: resume on a live process) the new classifier line → `if False:` | `state::t_computing_then_interrupted` | KILLED |
+| M53 | classifier site reverted to `HOST.identity_alive(jrec.get("process"), cur_boot)` | `state::t_computing_ps_failure_not_interrupted` | KILLED |
+| M54 | `Lock.acquire` reverted to `HOST.identity_alive(holder)` | `crash::t_S13_lock_ps_failure_not_broken` | KILLED |
+| M55 | reviewR3C1's X4: only the journal source of `git_lock_info` reverted to `HOST.identity_alive(jrec.get("process"), boot_uuid)` | `crash::t_L13_lock_sources_ps_failure_each` | KILLED |
+| M56 | only the recover-lock source of `git_lock_info` reverted to `HOST.identity_alive(holder, boot_uuid)` | `crash::t_L13_lock_sources_ps_failure_each` | KILLED |
+| M15 | (re-targeted, same meaning: ignore the boot UUID, so a reboot is not an interruption) `identity_state`'s boot comparison → `if False:` | `state::t_reboot` | KILLED |
+| M57 | M15's former fragment: `identity_alive` ignores the boot UUID | `state::t_stale_pidfile` | KILLED |
+
+Each kill is the target test's own assertion (every per-mutant result file checked: `ok` false, no `error`): M53 reads
+CONSUMED_INTERRUPTED where COMPUTING is required; M54 resumes where LOCKED is required; M55's journal case reads
+`live []`, stale; M56's recover-lock case likewise. M50 (N-3's `_not_dead` body) now also reaches the two new sites and
+is still KILLED by L12.
+
+**M15 re-targeted (found by the full matrix).** The first full matrix on the final code gave 55/56: M15 SURVIVED. Its
+fragment removed the boot comparison from `HOST.identity_alive`, which the classifier no longer calls, so `t_reboot`
+(a simulated reboot: the recorded process is alive, the classifier's boot UUID differs) passed under it. The classifier's
+reboot detection now lives in `HOST.identity_state` (`if ident.get("boot_uuid") and ident["boot_uuid"] != cur_boot:
+return "DEAD"`), so M15 is re-targeted there with the same meaning and the same target; it is KILLED (under it the
+rebooted classification reads CONSUMED_COMPUTING and recover waits). M15's former fragment is kept as the new M57, whose
+target `t_stale_pidfile` already asserts that a pidfile recorded under another boot reads STALE (the `wrong_boot` case);
+it is KILLED (that case reads LIVE). Both were first run on the unchanged final code (`--only M15,M57`; unmutated `t_reboot`
+and `t_stale_pidfile` PASS), then the whole 57-mutant matrix was re-run as one run (below).
+
+### Results on the final code (my own `git clone --no-local --bare` base store; sandboxes only)
+
+| run | result |
+|---|---|
+| `test_mbs308_static.py` | **10/10 PASS** |
+| `test_mbs308_launch.py` | **10/10 PASS** (real LaunchAgents with the SYNTHETIC payload under the test prefix; see below) |
+| `test_mbs308_state.py` | **46/46 PASS** (45 + `t_computing_ps_failure_not_interrupted`) |
+| `test_mbs308_crash.py` | **50/50 PASS** (48 + `t_S13_lock_ps_failure_not_broken`, `t_L13_lock_sources_ps_failure_each`) |
+| **full mutant matrix (57), the reported run** | **57/57 KILLED**; unmutated: all 51 target tests PASS (one run, 09:11Z-09:48Z, after the coordinator freed disk: 98-111 GiB free at my checks) |
+| earlier full matrix (56, before M15's re-target) | 55/56 KILLED, survivor M15 (above); unmutated 51/51 PASS |
+| `--only M15,M57` | 2/2 KILLED, unmutated targets PASS |
+
+Every per-mutant result file of the reported run was checked: each kill is the target test's own assertion (`ok`
+false, no `error`), with no timeout and no missing result, and no report or result file contains an ENOSPC / "No space
+left" symptom. M33 was killed by the deterministic run (`RLR.0.6+sleep90`, 95.3 s against the 60 s bound); in this run
+one carried run also happened to hang (`C2B.2.20#1`, 96.6 s; the old timing-dependent path), the other six carried runs
+took 5.1-6.0 s and passed; in the earlier full matrix the deterministic run alone killed it (96.0 s; the seven carried
+runs 6.5-7.4 s). Earlier runs this step (same code): the new tests alone (state 2/2, crash 4/4 with L12 and S03), and
+the six liveness mutants M11, M50, M53-M56 alone (6/6 KILLED, unmutated PASS).
+
+**Disk check (the coordinator's request).** The static, launch, state and crash suites and the earlier matrices ran
+while the data volume was nearly full. I checked every step-L report and every per-mutant result file for ENOSPC / "No
+space left" / truncated-file symptoms and for `error` fields: none, apart from the one invalid run below; every suite
+test PASSED (a disk failure shows as a failure, never as a pass). The kills, which a disk failure could in principle
+fake as an assertion failure, were all re-established by the 57-mutant re-run on ample disk. My sandboxes were deleted
+afterwards; only the JSON reports and per-mutant result files remain in my scratch (plus my 458 MB base store).
+
+**One invalid run, disclosed.** The host's data volume filled up during this step (ENOSPC; 394 MiB free at the lowest,
+the space taken outside my scratch). To stay within it I deleted my own finished step-W/N sandboxes (my scratch only;
+their JSON reports kept) and ran the mutant matrices with a small cleaner of my own that deletes a mutant's sandbox once
+its result file exists. Its first version had a glob-count bug and deleted the UNMUTATED sandboxes while they were in
+use, so the first run of the six liveness mutants (ledger line 07:12:12Z) is INVALID (its unmutated targets errored on
+missing sandbox files). I fixed the cleaner and re-ran; every result above comes from the fixed cleaner. Nothing outside my scratch was
+touched. To diagnose the full disk I ran a size-only `du` over the project's temporary tree, which traversed other
+sessions' directories' metadata; I opened no file there and listed no names.
+
+**Launchd.** LaunchAgents with the SYNTHETIC payload were bootstrapped under the TEST prefix
+`org.rebaseguard.mbs308.test.`: step N `20260930T062221`, `ld20260930T062226`, `wc20260930T062227803790`,
+`nb20260930T062231170629`; step L's launch suite `20260930T072429`, `ld20260930T072434`, `wc20260930T072436687728`,
+`nb20260930T072440458628`; the matrices' launch targets `wc20260930T075438102052`, `nb20260930T075434852520`,
+`wc20260930T082305889954`, `nb20260930T082309230665` (earlier matrix), `wc20260930T091858365939`,
+`nb20260930T091855376530`, `wc20260930T094316745243`, `nb20260930T094320053923` (reported matrix). Each was booted out by its test's teardown; `launchctl list` shows
+no rebaseguard job and no plist is left (my scratch or `~/Library/LaunchAgents`). Their empty logs stay in
+`~/Library/Logs/ReBaseGuard/mbs308-test/`, as in the previous reviews.
+
+**Integrity.** New cell-308 target evaluations: **0**. No cell in 305-309 and no drift in [6/5, 13/5] or its mirror was
+evaluated; cell 309 not touched; no authorization, grant, marker, pending result or seal created. The only real-driver
+invocations were the launch suite's read-only `preflight` and the static suite's `status` in a sandbox copy. Real
+repository: the 144 refs are identical to my snapshot except the two branch heads the coordinator moved
+(`p5y-k5-cell308-mbs-r1` → 4a960e06 → b0dd8e93; the research branch); no ref under `refs/p5y-k5-cell308-mbs-r1/`; MB
+r1's marker still names afa93072; no `packed-refs.lock` and no `mbs308-spool` in the real git dir. I made no git write:
+every step is left in the successor worktree for the coordinator to commit. Pins at the end of step L:
+`mbs308_host.py` 26ac9538…, `mbs308_state.py` 81788fa8…, `mbs308_launch.py` 1510308a…, guard 48903487… (unchanged);
+driver a75bafd3…; PLATFORM_PINS and SCIENCE_PINS unchanged; MB r1's bytes unchanged.
+
+**Research-ledger lines** (agent `builder3`, `c308_quarantine.log_event`, classes INFRASTRUCTURE / SYNTHETIC_VALIDATION,
+target_evaluations 0 on every line, no LEAK_FLAG): step W 05:58:57Z, 06:05:07Z, 06:07:43Z; step N 06:21:50Z, 06:28:02Z;
+step L 07:06:25Z (new tests), 07:12:12Z (the invalid run), 07:16:41Z (its re-run; that line's note misdates the invalid
+run as 06:5xZ, corrected here and in my last line), 07:24:20Z (full suites), 07:45:55Z (full matrix), 08:37:32Z (M15 /
+M57), 09:05:21Z (this section, first version), 09:11:17Z (the reported matrix re-run), and a last line.
+
+**Left open (not in this delta).** `read_pidfile` and `check_not_evaluated`'s stale-intent takeover keep
+`identity_alive` (the brief fixes the two sites); N-1 is not applied; the other freeze prerequisites listed by
+REVIEW_IMPLEMENTATION_MBS308_DELTA_R3 are unchanged.
+
+### Exposure statement (builder3)
+
+I read no MB r1 run record, review, adjudication, postexec or evidence file. What my context holds about MB r1 that did
+not come from an allowed file, disclosed as brief 45 requires:
+1. **Auto-loaded memory index.** My session began with the user's memory index in context (I opened no file of it).
+   Lines touching MB r1: an outcome label of its one execution (the same label the allowed governance texts carry), with
+   the successor's pre-freeze status; a lesson line on host sleep and thermal slowdown inflating wall times (provenance
+   unknown to me); a successor-lessons line (never move `packed-refs.lock` aside; timing-dependent mutant kills are not
+   kills; liveness needs positive evidence), which are the conclusions of reviewIMPL's committed C-1, M33 and N-3 and of
+   reviewR3C1's recommendation, all re-read in the allowed reviews.
+2. **Two commit subjects.** My first `git log --oneline -5` in the successor worktree showed the one-line subjects of MB
+   r1's grant commit (afa93072) and postexec commit (21e99cf0). The postexec subject carries a qualitative chronology of
+   the execution with clock times. This is the same inadvertent exposure the ratifier and reviewR3C1 disclosed.
+3. **The editor's bytes.** Step W required reading the editor's 191ce4a9 application (the diffs of the driver and the
+   launcher against 35cabb50) before I re-applied items 16 and 31 in step N. Every value of step N comes from the
+   ratification's text; my launcher code is my own.
+
+None of this contains a per-job, progress, CPU, memory, host or science figure; I repeat none of it; no edit or value
+here depends on it.

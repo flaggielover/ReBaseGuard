@@ -57,7 +57,7 @@ MUTANTS = {
             '                rec.get("record_sha256") == sha(canon(rec["record"]))',
             '            ok = ok and isinstance(rec.get("record"), (dict, list))', "state::t_ckpt_wrong_record_hash",
             "skip the checkpoint record hash"),
-    "M11": ("mbs308_state.py", '    if HOST.identity_alive(jrec.get("process"), cur_boot):',
+    "M11": ("mbs308_state.py", '    if _not_dead(jrec.get("process"), cur_boot, None):',
             '    if False:', "state::t_computing_then_interrupted", "resume on a live process"),
     "M12": ("mbs308_driver.py", '        if cls["state"] != "CONSUMED_UNRECORDED":\n            raise Refusal("NO_DISCRETIONARY_ABANDONMENT"',
             '        if cls["state"] not in ("CONSUMED_UNRECORDED", "CONSUMED_INTERRUPTED"):\n'
@@ -68,8 +68,8 @@ MUTANTS = {
     "M14": ("mbs308_host.py", '            if not self._stop.is_set():\n                self._spawn()',
             '            if False:\n                self._spawn()', "launch::t_supervisor_respawns_in_process",
             "no caffeinate re-spawn"),
-    "M15": ("mbs308_host.py", '    if not ident.get("boot_uuid") or ident.get("boot_uuid") != cur_boot:\n        return False',
-            '    if not ident.get("boot_uuid"):\n        return False', "state::t_reboot",
+    "M15": ("mbs308_host.py", '    if ident.get("boot_uuid") and ident["boot_uuid"] != cur_boot:\n        return "DEAD"',
+            '    if False:\n        return "DEAD"', "state::t_reboot",
             "ignore the boot UUID (a reboot is not an interruption)"),
     "M16": ("mbs308_state.py", '        if not self.store.cas_ref(JOURNAL_REF, oid, self.jid or None):',
             '        if self.store.git("update-ref", JOURNAL_REF, oid, write=True).returncode != 0:',
@@ -171,6 +171,29 @@ MUTANTS = {
             "R3 undone: the four ratified OS daemons are not on the exclusivity allow-list"),
     "M52": ("mbs308_launch.py", 'timeout=PRE_CAP_S + 100)', 'timeout=1900)', "launch::t_preflight_timeout_rule",
             "R3 undone: the launcher's preflight timeout is the literal 1900 s, not the rule PRE_CAP_S + 100 s"),
+    # ---- liveness delta (REVIEW_IMPLEMENTATION_MBS308_DELTA_R3 s3 recommendation and coverage note X4; builder3)
+    "M53": ("mbs308_state.py", '    if _not_dead(jrec.get("process"), cur_boot, None):',
+            '    if HOST.identity_alive(jrec.get("process"), cur_boot):',
+            "state::t_computing_ps_failure_not_interrupted",
+            "liveness delta undone at the classifier: a failed `ps` makes the live recorded process read dead "
+            "(CONSUMED_INTERRUPTED), so a resume could race it"),
+    "M54": ("mbs308_state.py", '                if _not_dead(holder, None, None):',
+            '                if HOST.identity_alive(holder):', "crash::t_S13_lock_ps_failure_not_broken",
+            "liveness delta undone at Lock.acquire: a failed `ps` makes the live holder read dead, so its recover "
+            "lock is broken"),
+    "M55": ("mbs308_state.py", '    if jrec is not None and _not_dead(jrec.get("process"), boot_uuid, exclude_pid):',
+            '    if jrec is not None and HOST.identity_alive(jrec.get("process"), boot_uuid):',
+            "crash::t_L13_lock_sources_ps_failure_each",
+            "N-3 undone for the journal source only (reviewR3C1's X4): a failed `ps` makes the journal's live recorded "
+            "process read dead, so the lockfiles read stale"),
+    "M56": ("mbs308_state.py", '    if _not_dead(holder, boot_uuid, exclude_pid):',
+            '    if HOST.identity_alive(holder, boot_uuid):', "crash::t_L13_lock_sources_ps_failure_each",
+            "N-3 undone for the recover-lock source only: a failed `ps` makes the live lock holder read dead, so the "
+            "lockfiles read stale"),
+    # M15's former fragment (identity_alive's boot check; since the liveness delta the classifier no longer reads it)
+    "M57": ("mbs308_host.py", '    if not ident.get("boot_uuid") or ident.get("boot_uuid") != cur_boot:\n        return False',
+            '    if not ident.get("boot_uuid"):\n        return False', "state::t_stale_pidfile",
+            "trust a pidfile recorded under another boot (identity_alive ignores the boot UUID)"),
 }
 
 

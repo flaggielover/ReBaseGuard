@@ -216,7 +216,7 @@ PLATFORM_PINS = {
 HELPER_SHA256 = {
     "mbs308_guard.py": "48903487f648e9d39bb764497ceae87941c33be73cb4b1fa285ac83bbb1e9435",
     "mbs308_host.py": "26ac9538071ee1803b900c96390fbbba12f1ca6841ca7cf3cbb7d9533763d08d",
-    "mbs308_state.py": "aaf76e86a059d07d24f868a2f136333af210a4ac8632f0aa757d4233e5cd5aff",
+    "mbs308_state.py": "81788fa82e897538d94b1e27ac6af606cecc0359c8521c107549f9dff8b3cd3b",
     "mbs308_launch.py": "1510308a96911278ca157f0305ee122e1a2a9632f1330bfed3ab428c7d6ba5c8",
 }
 PIN.GUARD_SHA256 = HELPER_SHA256["mbs308_guard.py"]

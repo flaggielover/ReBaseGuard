@@ -124,9 +124,26 @@ performs exactly the frozen action.
 | INDETERMINATE | the branch holds the result path and the record is the value-free INDETERMINATE record, a post-marker failure status, or fails verification | materialize if missing; terminal, no rerun |
 | PENDING_RESULT | the pending ref names a blob whose bytes verify | seal-only: seal → materialize |
 | RESULT_DURABLE_UNSEALED | `result.json` in the spool verifies (a stale pending ref is recorded and replaced by CAS from its stale value) | seal-only: object store → pending → seal → materialize |
-| CONSUMED_UNRECORDED | marker and: no journal, an invalid journal, a journal not bound to the marker's grant / granted driver, a CLOSING / ABORTED_INTENT journal, the journal's checkpoint tree not contained in the ckpt ref, a job with 2 consecutive checkpoint failures, the resume budget exhausted, the 7-day deadline passed, or **the platform changed (RC2 / DR2)** — all only when the recorded process is not alive | close-indeterminate (value-free record) |
-| CONSUMED_COMPUTING | marker, journal ARMING … PENDING_RESULT, and the recorded process identity (pid, start time, command sha256) is alive under the **same boot UUID** | wait; `resume`, `close-indeterminate`, `seal-only`, `execute` refuse |
-| CONSUMED_INTERRUPTED | otherwise (the recorded process is dead or the boot UUID changed; checkpoints permit; budget and deadline remain; same platform) | `resume` (mandatory) |
+| CONSUMED_UNRECORDED | marker and: no journal, an invalid journal, a journal not bound to the marker's grant / granted driver, a CLOSING / ABORTED_INTENT journal, the journal's checkpoint tree not contained in the ckpt ref, a job with 2 consecutive checkpoint failures, the resume budget exhausted, the 7-day deadline passed, or **the platform changed (RC2 / DR2)** — all only when the recorded process is positively dead (see *Liveness* below) | close-indeterminate (value-free record) |
+| CONSUMED_COMPUTING | marker, journal ARMING … PENDING_RESULT, and the recorded process identity (pid, start time, boot UUID, command sha256) is **not positively dead**: ALIVE (every field matches under the **same boot UUID**) or UNKNOWN (a `ps` or boot-UUID reading failed; see *Liveness* below) | wait; `resume`, `close-indeterminate`, `seal-only`, `execute` refuse |
+| CONSUMED_INTERRUPTED | otherwise (the recorded process is positively dead: its pid is gone, the pid belongs to another process, or the boot UUID changed; or no process identity is recorded; checkpoints permit; budget and deadline remain; same platform) | `resume` (mandatory) |
+
+**Liveness of a recorded process identity (liveness delta; REVIEW_IMPLEMENTATION_MBS308_DELTA_R3 §3).** The
+classifier's CONSUMED_COMPUTING test, the O_EXCL recover lock (`Lock.acquire`, taken by `execute`, `resume`,
+`seal-only`, `close-indeterminate` and `recover`'s lockfile move) and the git-lockfile staleness test below use one
+rule: a RECORDED identity counts as alive unless `HOST.identity_state` finds positive evidence of death (the boot UUID
+changed, the pid does not exist, or the pid now belongs to another process: another start time or command). A failed
+`ps` or boot-UUID reading is UNKNOWN, never evidence of death, and a field that was never recorded is never compared.
+No recorded identity (none, or a record naming no pid) means no process. **Fail-closed consequence:** while `ps` keeps
+failing for a recorded pid that still exists, or the boot-UUID read keeps failing at all, the run stays
+CONSUMED_COMPUTING (`recover` waits, exit 8; `resume`, `close-indeterminate` and `seal-only` refuse) and a recover lock
+naming that identity is never broken (LOCKED). There is no timeout: however long the failure lasts, nothing resumes,
+seals or closes while the recorded process may still be running. It ends only on positive evidence, when the boot UUID
+reads again and either differs from the recorded one (a reboot) or the recorded pid is gone or belongs to another
+process; the table above then applies as written (a deadline that passed meanwhile gives CONSUMED_UNRECORDED and
+close-indeterminate). The two other users of the stricter all-fields-match test are unchanged by this delta: the
+pidfile's LIVE / STALE reading (the preflight's other-job gate) and `check_not_evaluated`'s stale pre-marker intent
+takeover (before the marker; the marker CAS decides).
 
 **Stale git lockfiles (repair R1 iii; correction C-1; note N-3).** Every classification also lists the campaign's git
 lockfiles (`refs/p5y-k5-cell308-mbs-r1/*.lock` and the branch lock: what a reset inside one of the campaign's own ref

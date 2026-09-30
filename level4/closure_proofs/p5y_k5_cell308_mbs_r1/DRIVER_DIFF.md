@@ -1,7 +1,7 @@
 # DRIVER_DIFF: mbs308_driver.py against MB r1's mb308_driver.py (NOT frozen; regenerated from the files)
 
 * Base: `level4/closure_proofs/p5y_k5_cell308_mb_r1/code/mb308_driver.py` at freeze r3 `c46434a3` (byte-identical at `21e99cf0`), sha256 `411252b2a9fa601cc5c1ba34abaf08482cf95a06e2ce7e4d5e5a5bd9e1f56dcb`.
-* New: `code/mbs308_driver.py`, sha256 `8bac2f1299387f1b9f17591bfea340d07df2f8233b57eb4587d4b9014bbd209d` (changes with every re-pin; the freeze binds the final bytes).
+* New: `code/mbs308_driver.py`, sha256 `a75bafd3d94d1d97f379ebcbd291ed71d44d628a4f47f4d6c1fd9d857495b26d` (changes with every re-pin; the freeze binds the final bytes).
 * Hunks: 22; by class: IDENTITY 1, IDENTITY + LIFECYCLE 10, LIFECYCLE 11.
 * Classes: **SCIENCE-GLUE identical** = every function in the RC1 list and every function it references is text-identical, so it appears in NO hunk (asserted by `tests/test_mbs308_static.py` t_rc1_science_glue_text_identical and t_mbs9_referenced_module_names; a hunk touching one would be classified `SCIENCE-GLUE (MUST NOT OCCUR)`); **IDENTITY** = the successor's worktree, branch, namespace, refs, grant schema and paths, MB r1's recorded state (GC-8), helper pins, lineage; **LIFECYCLE** = the durable state machine, persistence, checkpoints + resume, supervisor, host contract, platform pins, launcher gate, modes.
 * The carried (text-identical) functions: `Inconsistent`, `IndependentCheckFailed`, `Refusal`, `_eval_cap`, `_ser_block`, `_set_job_cap`, `_worker_init`, `_worker_job`, `admitted_pairs`, `check_bindings`, `check_clean`, `check_cpu_caps`, `check_flags`, `check_governance_state`, `check_helpers`, `check_identity`, `check_result_paths`, `compose_and_consume`, `control`, `controls`, `decide`, `decoy`, `decoy_bundles`, `decoy_cover`, `evaluate_target`, `failure_kind`, `freeze_commit`, `fs`, `git`, `git_blob_id`, `git_dir`, `jsonable`, `load_consumer`, `load_science`, `prepare_target`, `public_stage1`, `r0_order3_variant`, `read_pinned`, `rehearse`, `require_ac`, `sha`, `stage1`, `supply_scaled_variant`, `target_geometry`, `utc`, `verdict_ok`.
@@ -322,7 +322,7 @@
 -    "mb308_host.py": "6702a9be56b6e8a530407b8be2794f4d4266445a97d33c2f0601da8754760a8c",
 +    "mbs308_guard.py": "48903487f648e9d39bb764497ceae87941c33be73cb4b1fa285ac83bbb1e9435",
 +    "mbs308_host.py": "26ac9538071ee1803b900c96390fbbba12f1ca6841ca7cf3cbb7d9533763d08d",
-+    "mbs308_state.py": "aaf76e86a059d07d24f868a2f136333af210a4ac8632f0aa757d4233e5cd5aff",
++    "mbs308_state.py": "81788fa82e897538d94b1e27ac6af606cecc0359c8521c107549f9dff8b3cd3b",
 +    "mbs308_launch.py": "1510308a96911278ca157f0305ee122e1a2a9632f1330bfed3ab428c7d6ba5c8",
  }
 -PIN.GUARD_SHA256 = HELPER_SHA256["mb308_guard.py"]

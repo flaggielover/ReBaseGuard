@@ -671,8 +671,10 @@ class Locked(StateError):
 
 
 class Lock:
-    """O_EXCL lockfile in the spool holding the owner's identity. A stale lock (its identity is not a live process) is
-    reported, moved aside after re-reading it, and replaced; the journal CAS is the second line of defence."""
+    """O_EXCL lockfile in the spool holding the owner's identity. A stale lock (its recorded identity is positively
+    DEAD, HOST.identity_state; a failed `ps` or boot-UUID reading is UNKNOWN and keeps the lock held; no recorded
+    identity: no process) is reported, moved aside after re-reading it, and replaced; the journal CAS is the second line
+    of defence."""
 
     def __init__(self, store: Store, name: str = LOCKFILE):
         self.store, self.name, self.held, self.stale_broken = store, name, False, None
@@ -692,7 +694,7 @@ class Lock:
                     holder = json.loads(holder_raw).get("identity")
                 except (ValueError, AttributeError):
                     holder = None
-                if HOST.identity_alive(holder):
+                if _not_dead(holder, None, None):          # liveness delta: alive unless positively DEAD
                     raise Locked("LOCKED", "another recover / resume holds the lock")
                 aside = f"{self.name}.rejected-stale-lock-{datetime.datetime.now(datetime.timezone.utc):%Y%m%dT%H%M%S}-" \
                         f"{secrets.token_hex(3)}"
@@ -1035,8 +1037,10 @@ def classify(camp: Campaign, *, platform: dict, boot_uuid: str | None = None, no
     if jrec["state"] == "ABORTED_INTENT":        # an intent whose marker CAS failed: it never owned the marker
         return {"state": "CONSUMED_UNRECORDED", "why": why + ["ABORTED_INTENT"], **info}
     cur_boot = HOST.boot_session_uuid() if boot_uuid is None else boot_uuid
-    if HOST.identity_alive(jrec.get("process"), cur_boot):
-        return {"state": "CONSUMED_COMPUTING", "why": why + ["PROCESS_ALIVE_SAME_BOOT"], **info}
+    # liveness delta (REVIEW_IMPLEMENTATION_MBS308_DELTA_R3 s3): the recorded process is computing unless it is
+    # positively DEAD (HOST.identity_state); a failed `ps` or boot-UUID reading (UNKNOWN) is never evidence of death
+    if _not_dead(jrec.get("process"), cur_boot, None):
+        return {"state": "CONSUMED_COMPUTING", "why": why + ["PROCESS_NOT_PROVABLY_DEAD"], **info}
     why.append("PROCESS_DEAD" if jrec.get("boot_uuid") == cur_boot else "BOOT_UUID_CHANGED")
     # RC2 / DR2: the platform of the marker attempt, recorded in the journal, must be the platform now; a mismatch is
     # the frozen terminal rule (close-indeterminate), NEVER a mixed-platform resume
