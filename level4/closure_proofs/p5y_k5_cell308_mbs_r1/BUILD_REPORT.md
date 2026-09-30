@@ -856,3 +856,144 @@ not come from an allowed file, disclosed as brief 45 requires:
 
 None of this contains a per-job, progress, CPU, memory, host or science figure; I repeat none of it; no edit or value
 here depends on it.
+
+
+## 15. The qualification framework, decision-independent parts (non-holder builder4, research brief 46 at e2d2b026, integrated under brief 49 at 8c45f256; NOT frozen)
+
+**Scope.** Briefs 46 and 49 only: the successor's qualification FRAMEWORK and every case that is the same under every
+option of the user's pending decisions S16(c), MBS-6, MBS-7 and MBS-8; the option-dependent cases are declared and fail
+closed. Built in builder4's own scratch copy of the namespace (`git archive b0dd8e93`), then integrated on the
+coordinator's INTEGRATE (brief 49) onto successor `216c465f` (builder3's step L, DELTA_ACCEPTED at research 2308651e).
+Nothing here authorises a freeze, a qualification run or any target step. **New cell-308 target evaluations: 0.** No
+science computation, no decoy, no cell 305-309, no drift in [6/5, 13/5] or its mirror; cell 309 not touched. No
+operational number of the campaign was changed or chosen (caps, limits, timeouts, thresholds, allow-list, budgets,
+polls): the rule functions carry the ratification's numbers, and every test value is planted. No freeze manifest was
+written in the worktree; no official qualification run; no git write.
+
+**Read.** Briefs 46 and 49; MB r1's `code/mb308_qualify.py`, `code/mb308_manifest.py`, `config/QUALIFICATION_CASES.json`
+and protocol sections 3.2, 9 and 10 (at b0dd8e93); this namespace's protocol draft sections 1 and 3-11 (section 2 not
+needed), code, tests, BUILD_REPORT sections 1-8 and 10-13 (section 9 NOT opened; builder3's section 14 not needed and not
+read beyond its heading); builder3's diff b0dd8e93..216c465f of the mutant runner, the driver pin, DRIVER_DIFF.md and
+protocol section 4; research `governance/CONSTANTS_RATIFICATION_MBS308.md` (3c2a7854),
+`governance/USER_DECISION_BRIEF_308_SUCCESSOR.md` sections A and G (G only for the T6 record's commit, path, sha256 and
+verdict line), `governance/SUCCESSOR_CONDITIONS_REGISTER_308.md`, brief 45's lines naming the T6/M4 ruling, the ledger's
+agent names and classes, and `code/c308_quarantine.py`'s `log_event`. File NAMES only (never contents) of `reviews/`,
+`audit/` and of the commits the register cites (`git diff-tree --name-only`), to fill QC13-S's record table; for the
+record added at integration (REVIEW_OPTIONB_LIVENESS_MBS308.md, research 2308651e) the verifier's own `check_record`
+was run once against the real repository, printing only its status (OK). No MBS-2 file was opened; nothing under MB
+r1's review, adjudication, postexec or evidence directories was read; no other agent's scratchpad; nothing under
+~/.claude/.
+
+### 15.1 Built (integrated bytes at 216c465f + this section)
+
+| file | sha256 (prefix) | role |
+|---|---|---|
+| `code/mbs308_qualify.py` | `7d679dd2a422f104…` | the verifier framework: modes official / --review / --dev (MB r1's); preconditions; aggregator; the BUILT cases; the declared cases |
+| `code/mbs308_manifest.py` | `1a0698d17a40cbd7…` | the Q8 freeze-manifest writer (`--freeze` only, or `--out` outside the repository) |
+| `code/mbs308_rrules.py` | `688347d3a00e0317…` | R-MEM, R-FREE (attainability), R-EXCL-PCT, R-ALLOW as pure functions; every number the ratification's |
+| `config/MBS308_QUALIFICATION_CASES.json` | `a3df97e2d66d17c0…` | case -> gates -> status; suites; commit pins; QC13-S governance records (12); the ledger agents; the ratification's H3 readings |
+| `tests/test_mbs308_qualify.py` | `cc8de09884596360…` | 22 target-free tests |
+| `tests/test_mbs308_mutants.py` | (changed) | + MQ01-MQ34 appended after builder3's M57 (one per new gate); M01-M57 byte-identical |
+| `protocol/MBS308_PROTOCOL_DRAFT.md` | (changed) | + sections 11.1 (plan), 11.2 (the sequencing question), 11.3 (readings of the rule text), before section 12 |
+
+**Cases BUILT** (each summary carries a boolean `pass`): QS-STATIC, QS-STATE, QS-CRASH, QS-LAUNCH, QS-QUALIFY
+(suites run in a fresh process with `MBS308_SCRATCH` / `MBS308_BASE_STORE` under `--work`, i.e. sandboxes on a separate
+`--no-local` base store; counts recorded; pass iff > 0 tests, all ok, exit 0), QS-MUTANTS (pass iff the unmutated code
+passes, the matrix holds exactly the declared mutants and every one is killed BY ASSERTION: an error, a timeout or an
+invalid mutant is not a kill), QC09-S (the one-line guard diff against MB r1's pinned guard bytes, the driver's binding
+and pin, DECOY refusals in a fresh process importing only the guard, and the arming sequence in a throw-away repository:
+no marker, MB r1's marker at HEAD, a marker naming another commit, a grant not at HEAD, a dropped pair and an extra
+band pair are refused; the successor marker with exactly the frozen set arms), QC11-S (18 structure checks of the
+successor driver that QS-STATIC does not cover, plus MB r1's science-byte checks re-run on the pinned bytes; the list of
+what QS-STATIC already covers is in the case output), QC12-S (MB r1's scans re-targeted: the pinned pattern file read at
+run time, the timing-key exemption only for JSON under the post-freeze directories, the record-token scan with the
+exemption only in the guard source and the manifest's `guard.cell308_cover`; planted controls built at run time;
+counts and file names only), QC13-S (preconditions, r5 / no r6, the successor agents' ledger lines, 12 governance
+records by commit and path), Q8-S (every namespace file, 49 external pins at HEAD, 5 commit pins, the driver sha256,
+the recorded constants / pins / guard field, the driver's `check_bindings`), R_RULES_CONTROLS (37 planted controls
+through the four rules, and the ratification's H3 evidence reproducing the item-16 list).
+
+**Cases DECLARED, failing closed** (`pass: false`, `status: PENDING_USER_DECISION`, `depends_on`): QC01-QC08,
+Q1_theory, QC09-SCI (MB r1's in-process guard test through the science paths), MBR1_REPRO, QS-RESUME-DECOY (MBS-7;
+QC02 / QC03 / QC08 also MBS-8), Q12_caps and R_RULES_OFFICIAL (MBS-8 and the sequencing question of protocol 11.2).
+QC13-S is BUILT but fails closed while two records are un-named: the implementation review accepting the frozen build,
+and the user's freeze decision record (S16(c), MBS-6/7/8). No qualification can pass today.
+
+### 15.2 Integration onto 216c465f (brief 49): merge notes
+
+* Base: successor `216c465fd48d779ceef876fd13b1422773dfea31` (parent b0dd8e93, builder3's step L). builder3's bytes
+  are unchanged: the worktree diff against 216c465f has no deleted line in any tracked file.
+* New files added as built, with two updates the new base requires: `config/MBS308_QUALIFICATION_CASES.json` gains the
+  governance record LIVENESS_DELTA_ACCEPTED (research 2308651e, `reviews/REVIEW_OPTIONB_LIVENESS_MBS308.md`, verdict
+  DELTA_ACCEPTED on line 2, on the research branch; 12 records) and revision r1; `tests/test_mbs308_qualify.py`'s
+  QS-MUTANTS check expects the declared matrix to contain exactly M01-M57 and MQ01-MQ34 (91, later additions allowed).
+* `tests/test_mbs308_mutants.py`: MQ01-MQ34 appended after M57; M01-M57 (including builder3's re-targeted M11 / M15
+  and new M53-M57) unchanged. Protocol: sections 11.1-11.3 inserted before section 12 (builder3's section 4 text
+  untouched). BUILD_REPORT: this section after builder3's section 14.
+* No helper is pinned by the driver for the new files (HELPER_SHA256 still covers the four lifecycle helpers), so the
+  driver, its pin table and DRIVER_DIFF.md are unchanged by the integration. The manifest writer lists the new files as
+  frozen namespace files (Q8-S).
+
+### 15.3 Results
+
+**Scratch (brief 46; copy of b0dd8e93).** `tests/test_mbs308_qualify.py` 22/22 PASS; MQ01-MQ34 34/34 KILLED, every
+kill by assertion (unmutated targets 16/16); 9 static checks in a sparse sandbox 9/9.
+
+**Integrated tree (brief 49; 216c465f + the integration; builder4's own `--no-local` base store; every sandbox a
+`--shared` clone of it; reports in builder4's scratch).**
+
+| suite | result |
+|---|---|
+| `tests/test_mbs308_static.py` | 10/10 PASS (including `t_fault_hook_test_only`, full sandbox) |
+| `tests/test_mbs308_launch.py` | 10/10 PASS (synthetic payload; every job booted out; no plist left) |
+| `tests/test_mbs308_state.py` | 46/46 PASS |
+| `tests/test_mbs308_crash.py` | 50/50 PASS on the re-run (see the note) |
+| `tests/test_mbs308_qualify.py` | 22/22 PASS (declared matrix 91; 12 governance records; sparse sandbox: 25 frozen files, 49 external files, 5 commit pins; QC12-S 70 patterns, 26 files, 0 hits; QC13-S fails on exactly the two un-named records, passes once they are named) |
+| `tests/test_mbs308_mutants.py`, full matrix | **91/91 KILLED, every kill by the target's own assertion** (no error, timeout, invalid mutant or missing result); unmutated code passes all 67 target runs; 5 chunks of at most 20 (M01-M20, M21-M40, M41-M57 + MQ01-MQ03, MQ04-MQ23, MQ24-MQ34), `sbx` sandboxes deleted after every chunk, every result JSON kept; free disk checked before each chunk (>= 112 GiB throughout) |
+
+* **Crash-suite note (environmental, recorded).** The first crash run (from 13:58Z) lost its last 12 tests (L02-L13)
+  when the host entered clamshell sleep on battery at 14:07Z (`pmset -g log`): the synthetic executions then refused
+  with HOST_NOT_ON_AC, and the rest ran during dark wakes. The host was back on AC by 14:28Z; the whole suite was re-run
+  on AC and passed 50/50. No mutant chunk started unless the host read AC power, and `pmset -g log` shows no sleep and
+  no battery event during the matrix (14:44Z-15:30Z).
+* `tests/test_mbs308_decoy.py` was not run: it computes with the real science on decoy cells, which briefs 46 and 49
+  exclude (brief 49 lists static, launch, state, crash and qualify).
+
+### 15.4 Open questions (for the coordinator / a reviewer; none decided here)
+
+1. **Sequencing** (protocol 11.2): the R-rules and MBS-8 option (ii) take official decoy runs as inputs while the frozen
+   code must already carry the values; options (a)-(d) are stated there.
+2. **R-MEM's D and g**: the driver's decoy record carries per-job `ru_maxrss` and the run's watchdog peak, but not the
+   driver's own peak RSS and no <= 0.5 s growth sampler; the measurement harness (pending) must provide them.
+3. **Readings of the rule text** READING-1 ... READING-5 (protocol 11.3), e.g. per-run peaks in R-MEM step 3, AC as part
+   of a valid prepared-state reading: for the ratifier or a reviewer to confirm.
+4. **QC13-S record table**: every commit and path came from the register, the decision brief, brief 49 and
+   `git diff-tree` names. The expected token `EXECUTION_ACCEPTED` for MB r1's execution review (a40211cc) is inferred
+   from the register's "S14 met"; builder4 never read those files (MBS-2), and the verifier reads their line 2 at run
+   time (a mismatch fails closed). Only LIVENESS_DELTA_ACCEPTED was checked (status only, OK). The implementation-review
+   and freeze-decision records must be named at the freeze preparation.
+5. **QC11-S named exception**: QS-STATIC's `t_mbs12_static_carryovers` names the research reconstruction file in order
+   to assert its absence elsewhere; QC11-S exempts exactly the occurrences inside that function. Building that string
+   at run time in the static test would remove the exception (not builder4's file to change).
+6. **Host**: an official QS run needs several GB under `--work` (the crash, state and static sandboxes held about 2.5 GB
+   together here) and must keep the host on AC and awake: a lid close on battery invalidates the suites that execute
+   the synthetic lifecycle (see the crash-suite note).
+
+### 15.5 Exposure statement (MBS-2; T6 ruling M4)
+
+builder4 held no MB r1 run observation at the start. Two items reached its context, disclosed plainly:
+(i) the session's auto-loaded memory index (written earlier by a holder) states MB r1's recorded outcome
+(CELL308_EXECUTION_INDETERMINATE, consumed, not rerun) and qualitative lessons; the memory files themselves were not
+opened; (ii) a `git log -1 --format='%H %s' 21e99cf0` displayed the one-line subject of MB r1's postexec commit, which
+carries a qualitative chronology with clock times (no per-job, runtime, memory, host or science figure). Neither is
+repeated or used anywhere in this build: every number in the rule functions is the ratification's, every other value is
+a planted test value, and the case table comes from the briefs, the register and the ratification. MB r1's protocol
+section 3.2 (pre-freeze decoy costs, not an observation of the consumed run) and the ratification's evidence Q (MB r1's
+pre-grant qualification decoy resources) were read as listed above. Nothing new of this kind reached builder4 during the
+integration.
+
+Ledger (agent `builder4`, via `c308_quarantine.log_event`, target_evaluations 0 on every line): INFRASTRUCTURE
+2026-09-30T07:08:57Z (scratch and base store); SYNTHETIC_VALIDATION 08:22:12Z (scratch test runs);
+SYNTHETIC_VALIDATION 08:32:01Z (scratch MQ matrix); SYNTHETIC_VALIDATION 08:45:25Z (final scratch run);
+INFRASTRUCTURE 14:33:19Z (brief 49 integration edits); SYNTHETIC_VALIDATION 15:31:49Z (brief 49 suites and the full
+matrix).

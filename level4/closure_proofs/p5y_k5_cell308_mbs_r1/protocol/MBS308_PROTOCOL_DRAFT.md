@@ -415,6 +415,101 @@ launcher (RC6)**, plus:
   band than 297 / 316 (asserted); the successor's leak scanner (to be written for QC12) builds its planted strings at run
   time and carries no gain-beside-threshold phrase; no successor file reads C3_KNOCKOUT_RECONSTRUCTION.json (asserted).
 
+### 11.1 Qualification plan (framework built by the non-holder builder4, research brief 46; NOT frozen)
+
+The verifier `code/mbs308_qualify.py` (modes official / `--review` / `--dev`, as MB r1's; `--work` outside the
+repository is required: the suites' sandboxes and a separate `--no-local` base store live there), the manifest writer
+`code/mbs308_manifest.py` (runs only with `--freeze`, or `--out` outside the repository), the rule functions
+`code/mbs308_rrules.py`, the case list `config/MBS308_QUALIFICATION_CASES.json` (case → gates → status; the governance
+records QC13-S checks; the commit pins; the ratification's H3 readings), the tests `tests/test_mbs308_qualify.py` and
+the mutants MQ01–MQ34 (appended after builder3's M01–M57). Discipline (MB r1's): every case summary carries a boolean `pass`; the aggregator fails loudly on
+a missing or non-boolean `pass`, on a configured case that did not run and on an unknown case; a gate passes only when
+every case mapped to it passes; a dev report is never an official PASS; the configuration and the verifier must agree.
+Preconditions: HEAD = freeze (review: the qualification commit on it); no review, grant, result or other post-freeze
+record in the worktree or in history; no ref under `refs/p5y-k5-cell308-mbs-r1/`; MB r1's recorded state exactly
+(GC-8); no spool result; tracked tree clean, and (official) the namespace clean including ignored files; official runs
+also need the host ready as section 8 states it (AC, the platform pins, the section-8 preflight gates without the
+launcher gate, the sleep channels). A case that differs between the options of MBS-7 / MBS-8, or depends on the
+sequencing question of 11.2, is declared and returns `pass: false`, `status: PENDING_USER_DECISION`, `depends_on`:
+no qualification can pass until it is built after the user's decisions.
+
+| case | gates | status | depends on | content |
+|---|---|---|---|---|
+| `QS-STATIC` | Q12 | BUILT | none | tests/test_mbs308_static.py, official run |
+| `QS-STATE` | Q12 | BUILT | none | tests/test_mbs308_state.py |
+| `QS-CRASH` | Q12 | BUILT | none | tests/test_mbs308_crash.py |
+| `QS-LAUNCH` | Q12 | BUILT | none | tests/test_mbs308_launch.py (synthetic launchd payload) |
+| `QS-QUALIFY` | Q12 | BUILT | none | tests/test_mbs308_qualify.py: this verifier's own planted controls |
+| `QS-MUTANTS` | Q12 | BUILT | none | the full mutant matrix; every mutant killed BY ASSERTION |
+| `QC09-S` | Q9, Q12 | BUILT | none | the guard, adapted to the one-line guard diff (refusals; arming in a throw-away repository) |
+| `QC09-SCI` | Q9 | PENDING_USER_DECISION | MBS-7 | MB r1's in-process QC09 through every pinned science code path |
+| `QC11-S` | Q2, Q12 | BUILT | none | static structure (what QS-STATIC does not cover) and MB r1's science-byte checks |
+| `QC12-S` | Q9 | BUILT | none | leak scans: pinned tail-figure patterns; committed-record tokens (counts only) |
+| `QC13-S` | Q10, Q11 | BUILT | none | temporal and governance state by commit and path; fails closed until the implementation review and the user's freeze decision record are named |
+| `Q8-S` | Q2, Q8 | BUILT | none | freeze manifest |
+| `R_RULES_CONTROLS` | Q13 | BUILT | none | planted controls through the four rule functions; the ratification's H3 evidence reproduces the item-16 list |
+| `R_RULES_OFFICIAL` | Q13 | PENDING_USER_DECISION | MBS-8, SEQUENCING (protocol section 11) | the four rules on the official inputs, compared with the frozen constants |
+| `Q12_caps` | Q12 | PENDING_USER_DECISION | MBS-8, SEQUENCING (protocol section 11) | the caps against the official decoy runtimes under the launchd launcher (RC6) |
+| `QC01` | Q2 | PENDING_USER_DECISION | MBS-7 | committed-record rehearsal on cell 305 (C-A, C-B; equality only) |
+| `QC02` | Q2, Q6, Q7, Q12 | PENDING_USER_DECISION | MBS-7, MBS-8 | full Stage 1 + Stage 2 on decoy cover cell 297 |
+| `QC03` | Q6 | PENDING_USER_DECISION | MBS-7, MBS-8 | Stage 1 on blocks 0–2 of decoy cover cell 316 |
+| `QC04` | Q3 | PENDING_USER_DECISION | MBS-7 | determinism |
+| `QC05` | Q1, Q4, Q5, Q7 | PENDING_USER_DECISION | MBS-7 | two-sided composition with mutants |
+| `QC06` | Q2, Q4 | PENDING_USER_DECISION | MBS-7 | pointwise-certificate package |
+| `QC07` | Q5 | PENDING_USER_DECISION | MBS-7 | TPT-B controls |
+| `QC08` | Q6 | PENDING_USER_DECISION | MBS-7, MBS-8 | independent Monte Carlo on QC02's record |
+| `Q1_theory` | Q1 | PENDING_USER_DECISION | MBS-7 | the theorem text binding |
+| `MBR1_REPRO` | Q3 | PENDING_USER_DECISION | MBS-7 | RC2: MB r1's official non-target decoy / ladder jobs, exact equality |
+| `QS-RESUME-DECOY` | Q3 | PENDING_USER_DECISION | MBS-7 | MBS-9 (ii): a complete decoy cell, uninterrupted vs killed and resumed |
+
+MB r1's QC10 (MB r1's own exactly-once flows) is not carried: QS-STATE and QS-CRASH test the successor's lifecycle.
+
+### 11.2 An open sequencing question (stated, not decided)
+
+The four rules of section 8 take as inputs the OFFICIAL decoy runs of the qualification (R-MEM: the real driver's
+`decoy` under the launchd launcher, WORKERS 5, the provisional 3 GiB cap) and the prepared-state readings of the
+qualification host (R-FREE's attainability, R-EXCL-PCT, R-ALLOW), and the ratification freezes MEM_CAP_BYTES,
+FREE_MEM_MIN_BYTES, EXCL_CPU_PCT and EXCL_ALLOW as their outputs. The official qualification, however, runs at the
+freeze commit, and the manifest and the grant bind the driver's bytes: the code that the official decoys run must
+already carry the frozen values. MBS-8 option (ii) (MB r1's section 3.2 rule applied to MB-S's own official decoy
+runtimes) raises the same question for EVAL_CAP and the per-job caps; under option (i) the caps are fixed, but Q12
+still reads official runtimes. Options the builder sees (none is taken here):
+
+* (a) designated measurement runs BEFORE the freeze, in the official configuration, committed as pre-freeze evidence
+  (MB r1's precedent for its section 3.2: `evidence_prefreeze/`); the frozen code carries their rule outputs; the
+  official qualification recomputes the rules from its own runs and compares (equality, or a stated tolerance, which
+  would itself need a ruling);
+* (b) a two-step freeze: a freeze with the provisional values, the official qualification, then a constants-only
+  successor freeze with the outputs and a second qualification (in full or by a stated delta);
+* (c) the frozen code carries the rules, not the values, and `execute` reads the values from the committed
+  qualification evidence that the grant binds (a driver change);
+* (d) for the host-state rules only (R-FREE's attainability, R-EXCL-PCT, R-ALLOW): re-read the prepared host at a
+  pre-grant step instead of at the qualification (the rule text places them in the qualification).
+
+Whichever is chosen, the official decoy runs compute with the real science on decoy cells 297 / 316, so they and their
+measurement records are declared here (R_RULES_OFFICIAL, Q12_caps) and not built. A fact for whoever builds them: the
+driver's decoy record carries each job's `ru_maxrss` (`job_maxrss_bytes`) and the watchdog's peak for the run
+(`worker_peak_rss_bytes`), but not the driver's own peak RSS (R-MEM's D) and no ≤ 0.5 s growth-rate sampler (step 6);
+those inputs must come from the measurement harness or a recorded driver field.
+
+### 11.3 Readings of the rule text (made by the rule functions; for the ratifier or a reviewer to confirm)
+
+* READING-1: a prepared-state reading not on AC power is not a valid reading (R-FREE names AC as part of the prepared
+  host; the same series serves R-EXCL-PCT and R-ALLOW (a)); "30 s apart" is checked as every consecutive gap ≥ 30 s.
+* READING-2: R-MEM step 2's `worker_peak_rss_bytes` is recorded per RUN by the driver (the watchdog's peak over all
+  workers), so P = max(every job's `job_maxrss_bytes`, every run's watchdog peak); a per-job ps peak is used when a
+  record carries one.
+* READING-3: in step 3 a (kind, rung)'s peak in one run is the largest step-2 job peak of that kind and rung in that run
+  (its blocks); s compares those per-run peaks across the valid runs in which the (kind, rung) appears.
+* READING-4: the hosting app is every process whose executable lies inside its bundle path (given as an input); its
+  reading in one snapshot is the largest %cpu of those processes (the gate compares processes one by one).
+* READING-5: "any Python interpreter" is a basename `python`, `pythonN` or `pythonN.M`, or any path inside a
+  `Python.framework`. The ratification's H3 locations are given as directories, some abbreviated with "…"; condition
+  (b) is tested on the location as stated (its prefix).
+* A decoy re-run after a watchdog event (step 1) runs with the provisional cap doubled; the functions report which
+  runs must be re-run, never use the invalid run's peaks, and apply no rule until every such run has been re-run.
+  Whether the doubled cap is "within the step-5 bound" needs the valid runs' P and D and is left to the official case.
+
 ## 12. Liabilities carried forward verbatim (S5)
 
 Incidents 01–03 and residue; H4.3b; coordinator disclosures I-a…I-e and E1′; the F2 / F3 exposures through theorem
