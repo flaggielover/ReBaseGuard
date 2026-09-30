@@ -41,7 +41,9 @@ R5_PATH = "level4/closure_proofs/p5y_k5_tail_c2_closure/evidence/coverage/K5_COV
 R5_BLOB = "f978eeb6b41188eabaf3c6d590c9178d711f1ce6"
 BAND = (F(6, 5), F(13, 5))   # q309: literal-ok (the quarantine band definition, used only to REFUSE)
 IMMUTABLE = ["config/TARGET_QUARANTINE_309.json", "ledger/INCIDENT_309R1_01_TPT_SHARES.md",
-             "ledger/INCIDENT_309R1_02_INBAND_MENTAL_ESTIMATE.md"]
+             "ledger/INCIDENT_309R1_02_INBAND_MENTAL_ESTIMATE.md",
+             "ledger/INCIDENT_309R1_03_UNSANCTIONED_REFUSED_INBAND_PROBE.md",
+             "ledger/INCIDENT_309R1_04_PREMATURE_PHASE4_DRAFTING.md"]
 
 
 def git(*a) -> str:
