@@ -47,8 +47,7 @@ SCOPE (only these; everything else must be unchanged relative to 191ce4a9):
    what you rely on yourself on ample disk (check free space before and after your runs; delete your own sandboxes
    after each matrix run, keeping the JSON reports).
 4. Specific safety questions (answer each): (a) in the repaired liveness paths (classifier, Lock.acquire,
-   git_lock_info), can a failed   PID TTY           TIME CMD
- 6329 ttys001    0:00.11 /bin/zsh -l or boot-UUID reading ever be read as positive evidence that a recorded live
+   git_lock_info), can a failed `ps` or boot-UUID reading ever be read as positive evidence that a recorded live
    process is dead? (b) is Lock.acquire safe (a live holder's lock never broken; a dead holder's lock breakable; the
    LOCK_RACE path intact)? (c) is the classifier / resume behaviour safe (no resume can start beside a live or
    unverifiable recorded driver; a rebooted or positively dead one still resumes)? (d) does the L12/L13 coverage test
