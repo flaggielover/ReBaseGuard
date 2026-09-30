@@ -113,7 +113,10 @@ DISCLOSED_LIABILITIES = [
     "proposal tool's C4 read, compared and not displayed, one exposure row per run (delta-3 review G3(b))",
     "third delta result-chasing component LOW (delta-3 review)",
     "R4 follow-up 2 was FREEZE_BLOCKED with D5_EXCEPTION_LIMITED_TO_RATIFIED_SITES: NO (F3: 28 of 54 new static-only "
-    "mutants passed schema 4 and T1-T8, three of which neutralize the backstop in-process); resolved before the "
+    "mutants passed schema 4 and T1-T8 -- 3 complete test-path or QC-tool paths to the production marker with no "
+    "grant and outside execute mode, 16 complete ways to run an arbitrary program or write a ref file, 4 building "
+    "blocks, 3 in-driver backstop neuterings that T8 passed, 2 inert; the committed code contained none of them "
+    "(delta-4 H2)); resolved before the "
     "freeze by the fourth delta (A37-A42: closed-world allowlists for imports, introspection, module stores, "
     "environments and per-verb git options; bytes tokens and chr()/join folding; the backstop pinned by AST hash; "
     "validate-grant runs execute's read-only pre-marker checks; execute's git ignores host system/global config, "
@@ -122,6 +125,12 @@ DISCLOSED_LIABILITIES = [
     "configuration (on the development host commit.gpgSign with an ssh signing program, which the post-marker "
     "seal's commit-tree would have run); removed (A40), toward a conclusive outcome and against a host-dependent "
     "failure after the marker",
+    "fourth-delta rule choices with direction (delta-4 review H3(a)): A38 a fail-closed binding (the backstop pinned "
+    "by AST hash); A40 after the marker toward a conclusive outcome, removing a host-dependent seal failure (the seal "
+    "commit carries the fixed identity p309-execute and no signature); A40 before the marker, the host-git refusal "
+    "is fail-closed and outcome-neutral and requires git >= 2.32 and an allowlisted repository configuration with no "
+    "hooks on the execution host; A39 toward a conclusive outcome",
+    "fourth delta result-chasing component LOW (delta-4 review)",
     "E6's 'dry run' label clause is met by dating, not by label: every 'qualification:' execution-ledger line dated "
     "before the freeze record is development (the pre-freeze dry runs); a departure from E6's letter (delta-3 G5; "
     "formal erratum FE-11)",
@@ -265,8 +274,10 @@ def build() -> dict:
                                             "and in production the input bindings and the governance state; only "
                                             "execute checks the guard's check 4 (the grant commit itself), the "
                                             "consumer-cover agreement and the historical control; a PASS does not "
-                                            "guarantee admission; a grant commit that execute refuses is terminal "
-                                            "without a new owner decision (delta-3 G4, R4F2-C2)",
+                                            "guarantee admission; execute re-evaluates the 14-day horizon and the "
+                                            "expiry when it starts, so the grant commit and execute follow a PASS "
+                                            "promptly; a grant commit that execute refuses is terminal without a new "
+                                            "owner decision (delta-3 G4, R4F2-C2, delta-4 H4)",
                         "host_git": "execute's git ignores the host's system and global configuration and commits "
                                     "with a fixed identity; before any git call that could start a program, it "
                                     "refuses unless the repository's own configuration holds only allowlisted keys "

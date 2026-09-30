@@ -159,12 +159,15 @@ def main() -> int:
                                 "candidate byte-identically to the grant path and commit it ALONE on top (single "
                                 "parent, attached branch, nothing pushed past it). A grant commit that execute refuses "
                                 "is TERMINAL: it cannot be repaired or superseded without a new owner decision (a "
-                                "second grant commit breaks the chain)",
-            "host_git": "execute's git ignores the host's system and global git configuration and commits with a "
-                        "fixed identity; the repository's own .git/config may hold only allowlisted keys (core "
-                        "format and file-mode keys, remote url/fetch, branch remote/merge, gc.auto, user name/email) "
-                        "and the hooks directory must hold no hook; git >= 2.32; validate-grant reports any "
-                        "violation before the grant commit (rev. 2c A40)",
+                                "second grant commit breaks the chain). execute re-evaluates the 14-day horizon and the "
+                                "expiry when it starts, so the grant commit and execute should follow a PASS promptly "
+                                "(delta-4 H4)",
+            "host_git": "execute's git ignores the host's system and global git configuration and commits with the "
+                        "fixed identity p309-execute and no signature; the repository's own configuration, in the "
+                        "local or worktree scope, may hold only the keys matching the driver's REPO_CONFIG_ALLOWED "
+                        "(listed exactly in host_git_allowed_keys) and the hooks directory must hold no hook; git >= "
+                        "2.32; validate-grant reports any violation before the grant commit (rev. 2c A40)",
+            "host_git_allowed_keys": list(D.REPO_CONFIG_ALLOWED),
             "execution_procedure": "on the named host, in the named worktree, on the named branch with HEAD attached "
                                    "at the grant commit (made after a validate-grant PASS, above); remove every "
                                    "__pycache__ from the campaign namespace first (check_clean refuses ignored "
