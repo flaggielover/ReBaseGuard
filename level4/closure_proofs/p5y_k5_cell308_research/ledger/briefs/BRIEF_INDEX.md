@@ -54,6 +54,7 @@ sanctioned, so the check below is a separate grep recorded in `BRIEF_CHECK.json`
 | 43 | 43_reviewIMPL_DELTA.txt | implementation delta review R1-R4 (reviewIMPL resumed) | SendMessage | see ledger | no |
 | 43-E1 | 43_reviewIMPL_DELTA_ERRATUM_E1.txt | ratifier's code application did not happen; review 35cabb50; R3 ruled as recorded-not-applied | SendMessage | see ledger | no |
 | 44 | 44_reviewR3C1_DELTA.txt | fresh independent delta review of R3 + C-1 (+ N-2 / N-3) at 191ce4a9 (editor editorR3C1) | Agent | see ledger | no (tail-figure scan: 0 hits) |
+| 44-N | 44_reviewR3C1_DELTA_NOTES.txt | practical notes appended to brief 44 as sent (interpreter, scratch, shell quirks, time budget) | Agent (same prompt) | see ledger | no |
 
 Times are approximate (the coordinator has no transmission timestamps); the ledger lines of each agent give the
 first activity time.
