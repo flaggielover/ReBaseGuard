@@ -1,0 +1,386 @@
+{
+ "campaign": "p5y_k5_cell309_p309_r1",
+ "cell": 309,
+ "closure_criterion": "Gamma < 0, exact and strict; Gamma = 0 or an incomplete evaluation is not a pass",
+ "detector": "CUSUM",
+ "disclosed_liabilities": [
+  "overnight incidents 01-03 (2026-09-27 UTC) and residues",
+  "309R1-01 (qualitative mental proxy: TPT at 309)",
+  "309R1-02 (mental in-band estimate; SRK)",
+  "309R1-03 (refused in-band probe; NONE)",
+  "309R1-04 (premature drafting; LOW)",
+  "ERRATA E-3",
+  "ERRATA E-17(a)",
+  "ERRATA E-18 and the manifest-generator runs",
+  "the ledgered necessary reads (research and formal exposure ledgers)",
+  "SRK motivation provenance MEDIUM-HIGH (upper end); RLR MEDIUM (knockout known)",
+  "rule choices with direction: exceptions -> INDETERMINATE (against closure); budget exhaustion -> fallback and 6 -> 48 CPU-h (toward closure); Stage-1b fallback to S_I1 (toward closure)",
+  "briefs not committed before issue (C5; recovered verbatim, content not timing)",
+  "zero computed target-equivalent proxies; one qualitative mental proxy exposure (309R1-01) and one mental in-band estimate (309R1-02) (formal errata FE-4)",
+  "the formal errata FE-1..FE-11",
+  "host dependence of the Stage-1a outcome when the budget binds",
+  "rev. 2c closure-relevant changes with direction (delta review section 5): A4 toward closure (restores executability); E1-1 toward closure (prevents a silent SRK loss); A6 toward a conclusive outcome (no wall cap; wall time unbounded); A5 a new parameter, efficacy-relevant, ambiguous direction, the maximal per-job limit 21 600 s (corrected per D2); A14 host speed is efficacy-relevant",
+  "the reader-A brief (2026-09-29 12:59:21Z, before 309R1-01 and THEOREM_SRK) solicited the terms identified (qualitatively) as dominant for 309 by committed records: the 309-specific qualitative dominance behind SRK was solicited (delta review section 4)",
+  "incident P309F-01: the FC2(b) rev-1 brief (2026-09-30 01:49:53Z) instructed an in-band synthetic test band and the REAL names in a sandbox; never executed; withdrawn by FC2_SPEC_R2 and owner rulings 2; liability NONE",
+  "the verifier author's rev-1 read-only inspections, ledgered only retrospectively (ZTL lines 7-8; FE-6)",
+  "FE-8: before the freeze, a QC11 development run found that Stage 1b could not load the pinned certifier in execute (it would have made every execution INDETERMINATE); repaired by an isolated load (toward a conclusive outcome; no rule, parameter or binding changed)",
+  "delta result-chasing component LOW-MEDIUM; the route's overall rating unchanged: MEDIUM-HIGH, upper end",
+  "the independent pre-freeze review R4 was FREEZE_BLOCKED (B1-B8: the cell taken from the grant; post-seal checks that would fail a correct run; post-marker-only grant checks; SIGKILL as fallback; an impossible grant window; unsealed verdict reasons; QC blind spots; retry-until-pass); resolved before the freeze by rev. 2c A20-A30 and re-reviewed (R4 follow-up); FE-9 (cells.json endpoint form)",
+  "owner D5: the two production mutation sites (_arm_marker, _persist_pending) and the pending-ref NAME were ratified to EXIST in the frozen tree (not to be used before the grant); scanner schema 4 rejects every other ref-moving path; independently verified",
+  "the R4 follow-up review was FREEZE_BLOCKED with D5_EXCEPTION_LIMITED_TO_RATIFIED_SITES: NO (F1: fifteen static evasions M01-M15 and no runtime check of the grant at the sites; F2: an authority placeholder test that could refuse a genuine grant commit irreparably, and no validation before the grant commit); resolved before the freeze by the third delta (A31-A36: a runtime backstop in the execute-context assertion, the site ASTs unchanged; an allowlist for process execution, scanner schema 4; hardened T7 and a new T8; validate-grant; the authority test narrowed to the proposal's placeholders; the worktree field required), reported to the owner and re-confirmed (R4F-C3)",
+  "second-delta rule choices with direction (delta-2 review E9(a)): A20 against an invalid closure; A21 toward a conclusive outcome, 14-day minimum horizon, residual mid-run expiry for runs longer than the horizon; A22 against closure in a failure case (including E2: a SIGXCPU below the CPU limit is a job exception); A25 toward a conclusive outcome; A26 and A28 against closure in a failure case; A27 no retry (a failed or interrupted single attempt ends the campaign); A23 and A24 neutral",
+  "FE-9's pre-freeze in-memory parse of the target cell interval (and of cells 305-309), no value displayed: a departure from C4's letter (delta-2 E3)",
+  "QC11 I03 read the cell-307 campaign's decoy record (cover cell 297) in development runs, outside the enumerated reads and unledgered at the time; removed (manufactured Stage-1b records) and ledgered retrospectively (E4)",
+  "the Stage-1b decoy outputs (QC09, cover cells 297 and 316) are latent-proxy class: labelled, never displayed in summaries or handoffs, never juxtaposed with any tail-cell quantity; the two decoys bracket the band (297 below, 316 above, by the cover's ordering; both guard-checked outside the band), which the research SRK decoy rule avoided (delta-2 E5; A15/D6 unchanged)",
+  "second delta result-chasing component LOW (delta-2 review)",
+  "third-delta rule choices with direction (delta-3 review G3(a)): A31 fail-closed with no efficacy effect (if the grant expires between the dry admission and arming, the backstop refuses before the marker); A34 authority toward a conclusive outcome (a quote of the owner containing <, >, ->, TBD or TODO is admitted); A34 worktree against malformed grants, before the marker; validate-grant toward a conclusive outcome",
+  "validate-grant reads the target's pinned cells.json entry after the qualification review: the same class as the proposal tool's C4 read, compared and not displayed, one exposure row per run (delta-3 review G3(b))",
+  "third delta result-chasing component LOW (delta-3 review)",
+  "R4 follow-up 2 was FREEZE_BLOCKED with D5_EXCEPTION_LIMITED_TO_RATIFIED_SITES: NO (F3: 28 of 54 new static-only mutants passed schema 4 and T1-T8 -- 3 complete test-path or QC-tool paths to the production marker with no grant and outside execute mode, 16 complete ways to run an arbitrary program or write a ref file, 4 building blocks, 3 in-driver backstop neuterings that T8 passed, 2 inert; the committed code contained none of them (delta-4 H2)); resolved before the freeze by the fourth delta (A37-A42: closed-world allowlists for imports, introspection, module stores, environments and per-verb git options; bytes tokens and chr()/join folding; the backstop pinned by AST hash; validate-grant runs execute's read-only pre-marker checks; execute's git ignores host system/global config, with a repository-config allowlist and no hooks); R4's mutants are controls",
+  "the host git dependency found in the fourth delta: before A40, execute's git read the host's global configuration (on the development host commit.gpgSign with an ssh signing program, which the post-marker seal's commit-tree would have run); removed (A40), toward a conclusive outcome and against a host-dependent failure after the marker",
+  "fourth-delta rule choices with direction (delta-4 review H3(a)): A38 a fail-closed binding (the backstop pinned by AST hash); A40 after the marker toward a conclusive outcome, removing a host-dependent seal failure (the seal commit carries the fixed identity p309-execute and no signature); A40 before the marker, the host-git refusal is fail-closed and outcome-neutral and requires git >= 2.32 and an allowlisted repository configuration with no hooks on the execution host; A39 toward a conclusive outcome",
+  "fourth delta result-chasing component LOW (delta-4 review)",
+  "R4 follow-up 3 was FREEZE_BLOCKED with D5_EXCEPTION_LIMITED_TO_RATIFIED_SITES: YES (F4: the A40 host-git binding did not cover seal-only, a separate, later invocation that runs update-ref and commit-tree; a repository-local hook or a disallowed repository config key added between execute and seal-only would have run there; no second target evaluation was at risk); resolved before the freeze by the fifth delta (A43: seal-only runs check_host_git before its first git call; A44: execute repeats it after the historical control, just before its first git write, and before the post-marker persist, where a refusal sends the evidence to the emergency file for seal-only; A45: the guard's git ignores the host's system and global configuration; A46: controls QC11 H01-H07 and V11, QC12 T10, D5 X01-X11; A47: five unused allowlist entries removed); R4 follow-up 4 was FREEZE_APPROVED with D5_EXCEPTION_LIMITED_TO_RATIFIED_SITES: YES (delta-5 I5)",
+  "R4 follow-up 4 F5 (non-blocking): QC12 T10 checks the shape of the code, not its behaviour; four static-only mutants pass every scan and static check (a local rebinding that silences the check in seal-only, an empty check_host_git, a write through a local alias before the post-marker check, a later rebinding of the driver's ENV); the committed code contains none of them; bound instead by the AST sha256 values of the host-git code recorded in R4 follow-up 4 (R4F4-C1), which the qualification reviewer recomputes, and by the freeze manifest; R4F4-C2 (T10 as an equality check) was not adopted before the freeze because it would be a new delta",
+  "fifth-delta rule choices with direction (delta-5 review I2(a)): A43 fail-closed (the recovery is refused until the host is clean; the evidence is kept); A44(a) before the marker fail-closed and outcome-neutral: a refusal there spends the grant, as any execute refusal does, and if a hook or key appears during a failing historical control that failure is not recorded (the HOST_GIT refusal replaces the CONTROL_FAILED record); A44(b) after the marker the evidence is kept and the seal delayed (emergency file, exit 4, then seal-only once the host is clean), the record and the mechanical outcome unchanged; A45 toward a conclusive outcome (it removes a host-dependent guard refusal in the dry admission and in the Stage-1 jobs)",
+  "the verifier variant is unchanged by role separation (delta-5 review I2(b)): its git is hermetic inside execute through the jobs' ENV; outside execute (p309_postexec.py review mode, the verifier's own runs) it reads the host's git configuration, issuing only plumbing and blob reads in review mode; the proposal fixes the post-execution environment in advance (GIT_CONFIG_NOSYSTEM=1, GIT_CONFIG_GLOBAL=/dev/null; I3)",
+  "fifth delta result-chasing component LOW (delta-5 review)",
+  "E6's 'dry run' label clause is met by dating, not by label: every 'qualification:' execution-ledger line dated before the freeze record is development (the pre-freeze dry runs); a departure from E6's letter (delta-3 G5; formal erratum FE-11)"
+ ],
+ "documents": {
+  "amendments_rev2c": {
+   "git_blob": "2b6820f7a628764148977b4a24c74b7df08b5bc5",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/governance/P309_REV2C_AMENDMENTS.md"
+  },
+  "briefs_recovered": {
+   "git_blob": "ef161b95b1cfeefc828024d7ae2fcd3c86bf605d",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/governance/briefs_recovered/README.md"
+  },
+  "d5_ratification_request": {
+   "git_blob": "db62ce308821e76a5d5dcb5d4ce04403630fbc3e",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/governance/D5_OWNER_RATIFICATION_REQUEST_P309.md"
+  },
+  "d5_site_backstop_report": {
+   "git_blob": "ed61b370f91a59009a3a9ddbab713c8185c94c88",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/governance/D5_SITE_BACKSTOP_REPORT_P309.md"
+  },
+  "errata_formal": {
+   "git_blob": "72ee84b2e2577fac1df607c086bbd5f7c362c90d",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/governance/ERRATA_FORMAL_P309.md"
+  },
+  "fc2_spec_r2": {
+   "git_blob": "e29502ccff5962f817216bd462e3ab35225dbcd9",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/fc2/FC2_SPEC_R2.md"
+  },
+  "fc2_spec_r2_erratum_1": {
+   "git_blob": "7b2b0ba5b5256ee5476471e6584b16f9845e49f3",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/fc2/FC2_SPEC_R2_ERRATUM_1.md"
+  },
+  "formal_package_rev2b": {
+   "git_blob": "0867df9dbbd717e696b8039bbfcd75692a9a9446",
+   "path": "level4/closure_proofs/p5y_k5_cell309_research_r1/protocol_prep/P309_FORMAL_PACKAGE.md"
+  },
+  "formal_quarantine": {
+   "git_blob": "0ebe7caa27559cc509ef9bb2f8c02d4eb3b583ff",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/config/FORMAL_QUARANTINE_P309.json"
+  },
+  "incident_p309f_01": {
+   "git_blob": "ef6faf671336b16cb17f53ee468714aff9919512",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/governance/INCIDENT_P309F_01_FC2_REV1_INSTRUCTION.md"
+  },
+  "no_placeholder_statement": {
+   "git_blob": "ac73fa3f4bc364b41a1b4c7236f1fc8e9133eecf",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/governance/NO_PLACEHOLDER_STATEMENT_P309.md"
+  },
+  "owner_d5_ratification_verbatim": {
+   "git_blob": "cbddc98b7ce4e5c2b00ebb6e16a5d9515bc8646f",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/governance/OWNER_D5_RATIFICATION_P309_VERBATIM.md"
+  },
+  "owner_decisions_package_rev2b": {
+   "git_blob": "613b29493c437ef082b82daf763bafa3d5bbd8eb",
+   "path": "level4/closure_proofs/p5y_k5_cell309_research_r1/protocol_prep/P309_OWNER_DECISIONS.md"
+  },
+  "owner_decisions_verbatim": {
+   "git_blob": "5e5f960c8b21dd4e4da21fea91112f0d0c5250f5",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/governance/OWNER_DECISIONS_P309_VERBATIM.md"
+  },
+  "owner_rulings_2_verbatim": {
+   "git_blob": "b3a1c6e6d3761e95fd837055f4db7a75a29eb4e3",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/governance/OWNER_RULINGS_2_P309_VERBATIM.md"
+  },
+  "protocol_rev2b": {
+   "git_blob": "5ac10d0146eb71060ac1efac18e8875f7caf895d",
+   "path": "level4/closure_proofs/p5y_k5_cell309_research_r1/protocol_prep/P309_PROTOCOL.md"
+  },
+  "review_briefs_rev2b": {
+   "git_blob": "dadbf178dd21a666aef3bbc4ff0c35cea63c0fe1",
+   "path": "level4/closure_proofs/p5y_k5_cell309_research_r1/protocol_prep/P309_REVIEW_BRIEFS.md"
+  },
+  "route_selection_rule": {
+   "git_blob": "4fbc6c844b87842d259b8c7eb8a81d0d779bed68",
+   "path": "level4/closure_proofs/p5y_k5_cell309_research_r1/registry/ROUTE_SELECTION_RULE.md"
+  },
+  "scanner_allowance": {
+   "git_blob": "88b9c344b570c9bef54c2d17b1ce3de0ec3264b5",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/config/SCANNER_ALLOWANCE_P309.json"
+  },
+  "srk_cert_spec": {
+   "git_blob": "a94c5e733ca7c4309e51fe689679ee2ff2d517db",
+   "path": "level4/closure_proofs/p5y_k5_cell309_research_r1/impl/SRK_CERT_SPEC.md"
+  },
+  "theorem_srk": {
+   "git_blob": "9df02ab81a08120c7c28d7cb008c7d20b578b46f",
+   "path": "level4/closure_proofs/p5y_k5_cell309_research_r1/theory/THEOREM_SRK.md"
+  },
+  "u2_corrected_proposition_r2": {
+   "git_blob": "0c65e75517731e9582dac51f2a037b65a56283a3",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/governance/U2_CORRECTED_PROPOSITION_R2.md"
+  }
+ },
+ "driver": {
+  "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/code/p309_driver.py",
+  "sha256": "8cc96f34e6673d16fcf31f831328173f32ad7cdeaab455b06103a8668ddd1a81"
+ },
+ "efficacy": "UNKNOWN BY DESIGN; no decoy output is used to predict Gamma309 or SRK's efficacy at 309",
+ "exactly_once": {
+  "chain": "freeze F <- freeze record FR <- qualification Q <- review Rv <- [window commits] <- grant G; checkpoint-record commits anywhere (rev. 2c A8, A23, A24)",
+  "emergency_file": "<gitdir>/p309-emergency-result.json",
+  "exit_codes": {
+   "0": "sealed",
+   "2": "refused pre-marker",
+   "3": "CONTROL_FAILED (not consumed)",
+   "4": "UNSEALED",
+   "5": "sealed failure status",
+   "6": "CONSUMED_UNRECORDED",
+   "7": "sealed, not materialized"
+  },
+  "marker": "refs/p5y-k5-cell309-p309-r1/target-consumed",
+  "pending_ref": "refs/p5y-k5-cell309-p309-r1/pending-result",
+  "result_path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/evidence/execution/P309_RESULT.json",
+  "run_nonce": "<gitdir>/p309-run-nonce.json, O_EXCL, created just before the marker, binds target-mode jobs to the live execute process (A28)",
+  "seal_only_gate": "the pending ref is created by seal-only only for emergency evidence bound to a marker that names a commit carrying the grant (owner D5; A29)",
+  "sites": [
+   {
+    "ast_sha256": "1ee764b7b1cfca7b2fbda9b394e8af235239a2d308905a9f07f521b39b80be0c",
+    "file": "code/p309_driver.py",
+    "function": "_arm_marker"
+   },
+   {
+    "ast_sha256": "13ee3ec3b7ba4c3ff80103c16671d4697967bfb177f4ae964084c95ab2fbbaaf",
+    "file": "code/p309_driver.py",
+    "function": "_persist_pending"
+   }
+  ]
+ },
+ "grant_rules": {
+  "cell_source": "execute derives the cell interval from the pinned cells.json (canonical sum form); the grant's cell_interval and drift_hull_Ew must equal it (A20)",
+  "freeze_record": "level4/closure_proofs/p5y_k5_cell309_p309_r1/ledger/FREEZE_RECORD.json",
+  "grant_validation": "validate-grant on the uncommitted candidate before the grant commit (A34, A39) checks the candidate's content and the chain below it (execute's shared grant-content checks, the chain walk, the guard's field parser and checks 2, 3, 5-9) and runs execute's read-only pre-marker checks under execute's conditions: interpreter flags, host git configuration, branch, not-evaluated, result paths, clean tree, and in production the input bindings and the governance state; only execute checks the guard's check 4 (the grant commit itself), the consumer-cover agreement and the historical control; a PASS does not guarantee admission; execute re-evaluates the 14-day horizon and the expiry when it starts, so the grant commit and execute follow a PASS promptly; a grant commit that execute refuses is terminal without a new owner decision (delta-3 G4, R4F2-C2, delta-4 H4)",
+  "host_git": "execute's git ignores the host's system and global configuration and commits with a fixed identity; before any git call that could start a program, it refuses unless the repository's own configuration holds only allowlisted keys (local or worktree scope) and no git hook is present; git >= 2.32 (A40); seal-only runs the same check before its first git call (A43); execute repeats it after the historical control, just before its first git write, and before the post-marker persist, where a refusal sends the evidence to the emergency file for seal-only (A44); the guard's git ignores the host's system and global configuration too (A45); a refusal at the re-check after the historical control spends the grant, as any execute refusal does, and a failing historical control is then not recorded (delta-5 I3)",
+  "min_horizon_s_at_arming": 1209600,
+  "nothing_between_grant_and_execute": true,
+  "premarker_admission": "the guard's checks 2-6, 8, 9 and 7 without the marker, plus exact strings, pinned ids, host, worktree (the field required, A34), runtime, issued_utc not in the future, an authority that is not the proposal's placeholder text (A34), committer identity (A21)",
+  "site_backstop": "at each exactly-once site, before its ref mutation: arm only in execute mode, with the guard's pre-marker grant checks passing and this process's run nonce; pending only with a marker whose commit carries the grant (and the run nonce in execute mode); any other caller refused (A31)",
+  "window_paths": [
+   "ledger/ZERO_TARGET_LEDGER.jsonl",
+   "ledger/EXPOSURE_LEDGER.jsonl",
+   "ledger/CHECKPOINT_PUSHES.jsonl",
+   "handoff/",
+   "qualification/host_rerun/"
+  ]
+ },
+ "independence_statement": "temporal and parametric independence only (incident review C1); route choice and motivation are NOT independent (MEDIUM-HIGH, upper end)",
+ "m": 5,
+ "outcome_table": "protocol rev. 2b section 5 verbatim: CELL309_CLOSED_UNDER_P309 (scientific closure only) iff TARGET_EVALUATED, checks passed and Gamma < 0 exact; NOT_CLOSED iff Gamma >= 0; EXECUTION_INDETERMINATE for any post-marker failure or a disagreeing post-seal re-verification / control digest; CONTROL_FAILED -> no conclusion, not consumed",
+ "post_grant_derivations": {
+  "cell_interval": "derived by execute itself from the pinned cells.json (the canonical sum form), after check_grant; the grant's value must equal it (rev. 2c A20); the proposal tool reads it after the qualification review, ledgered (C4). Disclosed departure: FE-9's pre-freeze in-memory equality check parsed it, no value displayed (delta-2 E3)",
+  "drift_hull_Ew": "srk_certify.cell_blocks(cell_interval)[0]: the outward 2^-10 dyadic hull",
+  "execution_host": "the host the owner names in the grant; if it is not the proposed host, QC10's host re-run is repeated there before execute",
+  "not_after_utc": "the grant's expiry, set by the owner: at least 14 days after execute starts (rev. 2c A21, checked before the marker); a run longer than the horizon turns the per-call expiry check into EXECUTION_INDETERMINATE or a silent SRK loss (delta-2 E7)"
+ },
+ "proposed_execution_host": {
+  "description": "this isolated cloud environment (rev. 2c A14)",
+  "host_id_sha256": "a6744a7935d7e1d755e7112de8477438e2e444dd9cf9bb3359917825f996f6c0"
+ },
+ "qualification_rule": "one complete run (qualification/attempt_1, O_EXCL); no retry, no resumption (A27); gates Q01-Q17, Q-U2, Q-D5",
+ "reviews": {
+  "delta2_incident_independence": {
+   "conditions_verbatim": "## Conditions\n\n* **E1 (wording).** The second delta is accepted on **temporal and parametric independence only**. C1–C8 and D1–D8\n  continue.\n* **E2 (A22 residual lever; before the freeze).** Classify a job end as TERMINATED_JOB_LIMIT only if the kernel's\n  enforcement is evidenced by CPU time: SIGXCPU **or** SIGKILL, each with `cpu ≥ job_limit_s` (a documented tolerance\n  may apply for SIGXCPU at the soft limit). A SIGXCPU below the limit is JOB_EXCEPTION. Add a QC11 flow in which a stub\n  child sends itself SIGXCPU at low CPU, and the stage must raise. This is a precision within A22's stated intent, not a\n  new rule. R4-C2 confirms it.\n* **E3 (FE-9 / C4; before the freeze).**\n  * Record FE-9's pre-freeze in-memory parse of the 305–309 intervals (no value displayed) as a departure from C4's\n    letter, in the formal errata.\n  * Correct `post_grant_derivations.cell_interval`'s \"read after the freeze\" statement accordingly.\n  * Any further structural check of `cells.json` filters out the 305–309 entries before parsing, unless strictly\n    necessary.\n* **E4 (the cell-307 results file in QC11 I03; before the freeze).** Either:\n  * replace the read of `p5y_k5_cell307_rlr_r1/qualification/RLR307_DECOY_STAGE1_297.json` with a manufactured\n    Stage-1b record (the S12-fixture pattern); **or**\n  * add that exact file to the formal quarantine's enumerated necessary reads, with its content class (decoy\n    cover-cell-297 RLR record; latent-proxy class; never displayed).\n\n  In either case, add an exposure-ledger row, retrospectively, for the development runs that already read it.\n* **E5 (latent proxies of the Stage-1b decoys).**\n  * QC09's and I03's outputs for cover cells 297 and 316 are latent-proxy class. They are labelled as such, never\n    displayed in summaries or handoffs, and never juxtaposed with or interpolated toward any tail-cell quantity\n    (R2.1–R2.4).\n  * If cell 316 lies above the band, the two Stage-1b decoys bracket the band, which the research decoy rule avoided\n    for SRK. That fact is disclosed. It does not change A15 (D6).\n* **E6 (single-attempt audit).**\n  * QC13 and the qualification review verify, from the committed execution ledger anchored at the freeze record, that\n    exactly one qualification run and one host re-run per named host occurred after the freeze.\n  * Any extra, deleted or unrecorded attempt means STOP.\n  * Pre-freeze dry-run lines must be distinguishable. They are before the freeze record, and future ones are labelled\n    \"dry run\", not \"qualification\".\n  * The host re-run evidence (committed in the grant window after Rv) is cited in the grant by commit, and must be a\n    PASS. A failed host re-run blocks the grant; a different host needs the owner's naming.\n* **E7 (A21 disclosure).**\n  * The 14-day minimum is stated in the grant preparation text: `post_grant_derivations.not_after_utc`.\n  * The owner is told that a run longer than the horizon turns the per-call expiry into EXECUTION_INDETERMINATE or a\n    silent SRK loss.\n* **E8 (A29; before the freeze).**\n  * The frozen AST hashes of the listed non-production ref movers are exactly those R4-C2 reviews; no refresh after\n    that review.\n  * The allowance's `authority` text cites `governance/OWNER_D5_RATIFICATION_P309_VERBATIM.md`.\n* **E9 (liabilities; before the freeze).** Add §4 items (a)–(e) to `DISCLOSED_LIABILITIES`, and carry E1–E10 verbatim\n  among the conditions in the grant.\n* **E10 (later changes).** Any further rule, parameter or binding change after this review, including errata after\n  FE-10, is a new delta under C2.\n",
+   "git_blob": "14d60e7a0df3cd36308ec180e6ba0f412c55f297",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/reviews/REVIEW_DELTA2_INCIDENT_P309.md",
+   "verdict_lines_verbatim": [
+    "DELTA2_INDEPENDENCE_ACCEPTED",
+    ""
+   ]
+  },
+  "delta3_incident_independence": {
+   "conditions_verbatim": "## Conditions\n\n* **G1 (wording).** The third delta is accepted on **temporal and parametric independence only**. C1–C8, D1–D8 and\n  E1–E10 continue.\n* **G2 (grant; before the freeze).**\n  * The grant's `incident_review_conditions_verbatim` also carries this file's conditions, verbatim.\n  * `prefreeze_review_conditions_verbatim` also carries `REVIEW_PREFREEZE_R4_FOLLOWUP_2_P309.md`'s conditions,\n    verbatim.\n* **G3 (liabilities; before the freeze).** Add to `DISCLOSED_LIABILITIES`:\n  * **(a) the third-delta rule choices, with direction:**\n    * A31: fail-closed, with no effect on efficacy. If the grant expires between admission and arming, it refuses\n      before the marker.\n    * A34 authority: toward a conclusive outcome. It now admits `<`, `>`, `->`, \"TBD\" and \"TODO\" in a quote of the\n      owner.\n    * A34 worktree: against malformed grants, before the marker.\n    * validate-grant: toward a conclusive outcome.\n  * **(b)** validate-grant's read of the target's pinned `cells.json` entry. It is taken after the qualification\n    review, is of the same class as the proposal tool's C4 read, is compared but not displayed, and gets one exposure\n    row per run.\n  * **(c)** \"third delta result-chasing component LOW\".\n* **G4 (`grant_validation` text; before the freeze).** Correct `grant_rules.grant_validation` to name what\n  validate-grant checks and what only `execute` checks. Only `execute` checks:\n  * check 4;\n  * the flags, branch, not-evaluated and result-path checks;\n  * the bindings;\n  * the governance state;\n  * the consumer-cover agreement;\n  * the historical control.\n\n  Say plainly that a PASS does not guarantee admission. Whether validate-grant should also run the read-only\n  bindings and governance-state checks is R4's call; if it is added, it is an implementation change, not a new delta.\n* **G5 (E6 labelling; before the freeze).**\n  * Record in the formal errata or amendments that E6's \"dry run\" label clause is met by dating instead of by label:\n    every \"qualification:\" line dated before the freeze record is development.\n  * Record this as a departure from E6's letter.\n  * After the freeze record, the QC runner is invoked once only, for the single run. QC13 and the qualification review\n    enforce this.\n* **G6 (later ledger lines).** The next independence or qualification review covers the execution-ledger rows after\n  77991be1. That includes the part-2 dry run and R4 follow-up 2's runs.\n* **G7 (standing).** At the freeze:\n  * the liability item's \"re-confirmed (R4F-C3)\" is true, and cites R4 follow-up 2's verdict;\n  * the two sites keep the owner-ratified AST hashes.\n* **G8 (the backstop is binding).** `_assert_execute_context`, `_site_backstop`, `_require_own_run_nonce` and\n  `_SITE_CODES` are frozen as R4 follow-up 2 confirms them. Any change after that confirmation is a new delta under C2.\n* **G9 (later changes).** Any further rule, parameter or binding change after this review is a new delta under C2.\n",
+   "git_blob": "ad6bf0d373f1650b119835ff8ed3f1f7048c628c",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/reviews/REVIEW_DELTA3_INCIDENT_P309.md",
+   "verdict_lines_verbatim": [
+    "DELTA3_INDEPENDENCE_ACCEPTED",
+    ""
+   ]
+  },
+  "delta4_incident_independence": {
+   "conditions_verbatim": "## Conditions\n\n* **H1 (wording).** The fourth delta is accepted on **temporal and parametric independence only**. C1–C8, D1–D8,\n  E1–E10 and G1–G9 continue. G6 is discharged for the committed rows up to 5781b6da.\n* **H2 (R4 follow-up-2 liability; before the freeze).** State F3 as R4 classified it:\n  * 28 of 54 static-only mutants passed schema 4 and T1–T8;\n  * 3 were complete test-path or QC-tool paths to the production marker with no grant and outside execute mode;\n  * 16 were complete ways to run an arbitrary program or write a ref file;\n  * 4 were building blocks;\n  * 3 were in-driver backstop neuterings that T8 passed;\n  * 2 were inert;\n  * the committed code contained none of them.\n* **H3 (liabilities; before the freeze).** Add:\n  * **(a) the fourth-delta rule choices, with direction:**\n    * A38: a fail-closed binding.\n    * A40 after the marker: toward a conclusive outcome, removing a host-dependent seal failure. The seal commit\n      carries the fixed identity `p309-execute` and no signature.\n    * A40 before the marker: the host-git refusal is fail-closed and outcome-neutral. It requires git ≥ 2.32 and an\n      allowlisted repository config, with no hooks, on the execution host.\n    * A39: toward a conclusive outcome.\n  * **(b)** \"fourth delta result-chasing component LOW\".\n* **H4 (handoff texts; before the freeze).**\n  * The proposal's `host_git` key list either equals `REPO_CONFIG_ALLOWED` or is marked as examples.\n  * The `grant_validation` handoff step states that `execute` re-evaluates the horizon and expiry checks when it\n    starts, so the grant commit and `execute` should follow a PASS promptly.\n* **H5 (later ledger lines).** The next independence or qualification review covers the execution-ledger rows after\n  5781b6da, including the rest of dry run part 4 and R4 follow-up 3's runs.\n* **H6 (standing).** At the freeze:\n  * the third-delta item's \"re-confirmed (R4F-C3)\" and the R4 follow-up-2 item's \"resolved before the freeze\" are true,\n    and cite R4 follow-up 3's verdict;\n  * the two sites keep the owner-ratified AST hashes;\n  * the backstop keeps the A38-pinned hashes.\n* **H7 (the git environment is binding).** `ENV`, `REPO_CONFIG_ALLOWED` and `check_host_git` are frozen as R4 follow-up\n  3 confirms them. Any change after that confirmation is a new delta under C2.\n* **H8 (later changes).** Any further rule, parameter or binding change after this review is a new delta under C2.\n",
+   "git_blob": "9784317ae85b05091c83c9938c2276838d836038",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/reviews/REVIEW_DELTA4_INCIDENT_P309.md",
+   "verdict_lines_verbatim": [
+    "DELTA4_INDEPENDENCE_ACCEPTED",
+    ""
+   ]
+  },
+  "delta5_incident_independence": {
+   "conditions_verbatim": "## Conditions\n\n* **I1 (wording).** The fifth delta is accepted on **temporal and parametric independence only**. C1–C8, D1–D8,\n  E1–E10, G1–G9 and H1–H8 continue. H5 is discharged for the committed rows through ac34a6e3.\n* **I2 (liabilities; before the freeze).** Add to `DISCLOSED_LIABILITIES`:\n  * **(a) the fifth-delta rule choices, with direction:**\n    * A43: fail-closed. The recovery is refused until the host is clean, and the evidence is kept.\n    * A44(a): fail-closed and outcome-neutral, before the marker. A refusal there spends the grant. If a hook or key\n      appears during a failing historical control, that failure goes unrecorded: the HOST_GIT refusal replaces the\n      CONTROL_FAILED record.\n    * A44(b): after the marker, the evidence is kept and the seal is delayed (emergency file, exit 4, then `seal-only`\n      once the host is clean). The record and the mechanical outcome are unchanged.\n    * A45: toward a conclusive outcome. It removes a host-dependent guard refusal in the dry admission and in the\n      Stage-1 jobs.\n  * **(b)** The verifier variant is unchanged, by role separation. It is hermetic inside `execute`, through the jobs'\n    `ENV`. Outside `execute` (`p309_postexec.py` review mode, the verifier's own runs) its git reads the host's\n    configuration; in review mode it issues only plumbing and blob reads.\n  * **(c)** \"fifth delta result-chasing component LOW\".\n* **I3 (handoff texts; before the freeze).**\n  * The grant-rules and proposal `host_git` texts state that an A44(a) refusal spends the grant, as any `execute`\n    refusal does, and that a failing historical control is then not recorded.\n  * The proposal's post-execution step fixes the environment in advance: run `code/p309_postexec.py` with\n    `GIT_CONFIG_NOSYSTEM=1` and `GIT_CONFIG_GLOBAL=/dev/null`. The variant's `_run_git` copies the environment, and the\n    guard is already hermetic. That way no post-result choice of verification environment remains.\n* **I4 (later ledger lines).** The next independence or qualification review covers the execution-ledger rows after\n  ac34a6e3. That includes the rest of dry run part 5, R4 follow-up 4's runs, and the D5 run at this tree.\n* **I5 (standing).** At the freeze:\n  * the R4 follow-up-3 item's \"resolved before the freeze\" is true, and cites R4 follow-up 4's verdict;\n  * the two sites keep the owner-ratified AST hashes;\n  * the backstop keeps the A38 pins.\n* **I6 (the git environment is binding).** The following are frozen as R4 follow-up 4 confirms them:\n  * the driver's `ENV` and the job environment;\n  * `REPO_CONFIG_ALLOWED`;\n  * `check_host_git` and its four call sites (`run_execute` first and after the control, `after_marker`,\n    `run_seal_only`), plus `validate-grant`'s use of it;\n  * the guard's `_HERMETIC_GIT`.\n\n  Any change after that confirmation is a new delta under C2.\n* **I7 (later changes).** Any further rule, parameter or binding change after this review is a new delta under C2.\n",
+   "git_blob": "55de6e03975532a21a03467efe6f5379202f1bd8",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/reviews/REVIEW_DELTA5_INCIDENT_P309.md",
+   "verdict_lines_verbatim": [
+    "DELTA5_INDEPENDENCE_ACCEPTED",
+    ""
+   ]
+  },
+  "delta_incident_independence": {
+   "conditions_verbatim": "## 7. Conditions\n\n* **D1 (wording).** The rev. 2c delta is accepted on **temporal and parametric independence only**. C1–C8 continue.\n* **D2 (A5 / A6 text; before the freeze).**\n  * Correct A5's rationale. Classify A5 as a new parameter, **efficacy-relevant with an ambiguous direction**.\n  * Correct A6's bound to \"Stage 1b < 21 600 s + 4 × 21 600 s CPU\" (or whatever follows from the frozen per-job\n    limit).\n  * Qualify \"What is not changed\": the 21 600 s is a start threshold, and the effective ceiling depends on the new\n    per-job limit.\n  * The owner or the pre-freeze review may instead set a smaller per-job limit, for example 5 400 s, the Stage-1a\n    ratio. Any such change must be made **before any QC09 or other Stage-1b run** and reviewed as a delta.\n  * QC11 must exercise the frozen Stage-1b limit and order.\n* **D3 (disclosure).** Add the items of §5 to `disclosed_liabilities` and to the grant's\n  `incident_review_conditions_verbatim` together with D1–D8.\n* **D4 (incident record; before the freeze).** Record the FC2 rev-1 instruction as a formal incident (append-only),\n  with liability NONE. Record it as:\n  * an in-band synthetic test band, and the REAL names in a sandbox;\n  * issued at 01:49:53Z;\n  * never executed;\n  * withdrawn by FC2_SPEC_R2 and owner rulings 2.\n* **D5 (owner authority; before the freeze).** The owner must ratify the two scanner extensions: A10's pending-ref\n  NAME, and A19's sanctioned marker-mutating exactly-once sites. Independent review can confirm that they are narrow,\n  but it cannot supply the owner's authority. If the owner refuses, the design must change before the freeze.\n* **D6 (A15).** The Stage-1b decoys (297, 316) stay as declared. A guard refusal or failure in QC09 is recorded as is;\n  a substitute decoy needs a reviewed amendment.\n* **D7 (A14).** The execution host is fixed in the grant, with QC10 re-run there, and is never changed after the grant.\n* **D8 (pending implementation and later changes).**\n  * The pre-freeze review must confirm that the verifier author's implementation of E1-1/E1-5 changes only those\n    points. The uncommitted edits in the working tree are not reviewed here.\n  * Any further rule, parameter or binding change after this review, including errata after E1-6, is a new delta for\n    review under C2.\n",
+   "git_blob": "e3e069b7c80d1e1f95e6f59f2b74f14f3d1be58f",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/reviews/REVIEW_DELTA_INCIDENT_P309.md",
+   "verdict_lines_verbatim": [
+    "DELTA_INDEPENDENCE_ACCEPTED",
+    ""
+   ]
+  },
+  "incident_independence": {
+   "conditions_verbatim": "## 10. Conditions (for `incident_review_conditions_verbatim`)\n\n* **C1 (wording).**\n  * Independence is stated as **\"temporal and parametric independence only\"**.\n  * No record, grant or handoff may claim route-choice or motivational independence.\n  * SRK's MEDIUM-HIGH and RLR's MEDIUM liabilities stay in `disclosed_liabilities`. This review rates them MEDIUM-HIGH\n    (upper end) and MEDIUM respectively.\n* **C2 (freeze exactly as reviewed).**\n  * The freeze commits the rev. 2b rules unchanged: the §2.5 mapping, the 48 CPU-h start threshold with its mechanics\n    (12 CPU-h per job, (b_j, d) jobs, rung-major order, ≤ 4 workers), the Stage-1b fallback to S_I1 including its\n    budget mapping, the outcome table, and every Stage-1 parameter.\n  * The package documents must equal these blobs, apart from documented freeze fields: `P309_PROTOCOL.md` 5ac10d01,\n    `P309_FORMAL_PACKAGE.md` 0867df9d, `P309_REVIEW_BRIEFS.md` dadbf178, `P309_OWNER_DECISIONS.md` 613b2949.\n  * Any change to a rule or parameter after this review needs a new incident-independence review of the delta.\n  * No change is permitted once any 309 Stage-1 quantity exists.\n* **C3 (decoy latent proxies).**\n  * No decoy output (Γ̄, tightness ratios, costs) may be juxtaposed with any 305–309 figure, or used to predict Γ309\n    or SRK's efficacy at 309.\n  * The decoy-cost basis of the budget is recorded as resource sizing only.\n  * FC2 re-qualification and QC runs use decoys, synthetic geometries and the test band only.\n* **C4 (no new exposure; necessary reads).**\n  * Until the seal, any new exposure to a 305–309 value by the coordinator, the FC2 authors or the driver author is an\n    incident, and before the freeze it triggers re-review of the delta. This includes exposure through the cell-307\n    RLR code read for FC5.\n  * The cells.json read of the 309 interval to name Ew is ledgered, and it happens only after the freeze has pinned\n    every rule.\n* **C5 (brief integrity; before the freeze).**\n  * Commit verbatim, or hash, the briefs or prompts given to firewalled readers A, B and C and to the independent\n    verifier's author, plus the R2 phase B–D and R3 follow-up prompts, from the session transcripts if they are\n    recoverable. State that a post-hoc commitment evidences content, not timing.\n  * If they are not recoverable, record that as an append-only disclosure in the formal namespace, and carry it in\n    `disclosed_liabilities`.\n  * Every future brief is committed before it is issued: FC2 verifier-variant author, qualification, execution and\n    adjudication.\n* **C6 (record corrections; append-only in the formal namespace; research files untouched).**\n  * (a) Correct the coordinator audit: rule-choice 1's budget branch and the 6 → 48 CPU-h change are coordinator\n    choices, closure-favouring relative to R3's minimal fix. The pre-rev.-2 Stage-1b NOT_CLOSED rule also belongs in\n    the timeline.\n  * (b) Record the 309R1-03 and 309R1-04 \"found\"-time discrepancies against git.\n  * (c) The overnight incidents are dated 09-27.\n  * (d) Qualify every \"no target-equivalent proxy\" and zero-proxy counter statement in the owner-facing handoff and\n    grant: 0 computed proxies; one recorded qualitative (mental) proxy exposure, 309R1-01 (TPT at 309; TPT OUT); one\n    mental in-band estimate, 309R1-02 (SRK).\n  * (e) Fix the push-record subject template (O4) and note the two mislabelled commits.\n* **C7 (U2; before the freeze).**\n  * The freeze proceeds only after the owner confirms the U2 ruling on an accurate premise. That premise is the\n    reconstruction's option (a), amended to state explicitly that:\n    * S2 applies a new enclosure formula (THEOREM_SRK §3) that recombines P3-provenance scalars (s_F, s_D, s_H, σ3,\n      σ4, ε3, f_H) with operator-only certificates, in their established premise roles, and re-derives no record-level\n      quantity;\n    * the committed record classes R10 Corollary T, which tightens a recorded interval, as needing U2.\n  * Option (b) is not satisfied (§8).\n* **C8 (grant disclosures).**\n  * `disclosed_liabilities` adds E-18 and the manifest-generator runs.\n  * It also adds the three rev. 2/2b rule choices, each with its direction (exceptions against closure; budget\n    fallback, 48 CPU-h and the Stage-1b fallback toward closure).\n  * It adds the reader-brief gap (C5).\n  * C1–C8 are reproduced verbatim.\n",
+   "git_blob": "42bbbba6609dab5294f35a9ef47c426017805033",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/reviews/REVIEW_INCIDENT_INDEPENDENCE_P309.md",
+   "verdict_lines_verbatim": [
+    "INCIDENT_AUDIT_ACCEPTED",
+    "U2_FINDING: NOT_TRIGGERED_WORDING_DISCREPANCY"
+   ]
+  },
+  "prefreeze_r4": {
+   "conditions_verbatim": "## 7. Conditions\".\n* **NB14.** Job children run without `-I -S` (driver 635), while the parent insists on `-I -S -B`. Use the same flags.\n* **NB15.** The execution procedure should say three things:\n  * remove `__pycache__` from the namespace (`check_clean --ignored` refuses otherwise);\n  * run on the named branch, in the named worktree;\n  * use postexec's flags (B2(b)).\n",
+   "git_blob": "a475bd6849cb51d50b2fe40948fd53feafe2baeb",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/reviews/REVIEW_PREFREEZE_R4_P309.md",
+   "verdict_lines_verbatim": [
+    "FREEZE_BLOCKED",
+    ""
+   ]
+  },
+  "prefreeze_r4_followup": {
+   "conditions_verbatim": "## Conditions`.\n* **NB14**, children run `-I -S -B`.\n* **NB15**, the proposal tool's procedure text (`__pycache__`, branch, flags).\n\n**Residuals: the coordinator's view, and my ruling:**\n* **NB6, no guard refusal while an emergency file exists.** **Accepted.** The nonce binds target jobs. There remains an\n  accepted residual: while HEAD = G and the marker is the only ref in its namespace (during `execute`, or after\n  CONSUMED_UNRECORDED), official admission is open to a *direct* caller such as the variant CLI. That would be in-band\n  verification by deliberate misuse, not a ref mutation.\n* **B7(b), `check_bindings` and `check_governance_state` production-only.** **Accepted.** They are exercised by\n  `preflight`, QC13 and the self-audit on this repository.\n* **B7(b), the sandbox's guarded paths are its own TEST paths.** **Accepted.**\n* **No QC11 flow for the committer identity.** **Accepted.** `git var GIT_COMMITTER_IDENT` resolves the identity exactly\n  as `commit-tree` does.\n* **NB2 in QC11.** **Accepted.** Every refusal flow is a single defect on a base chain that is shown valid (F26, F27, A18,\n  A19). The guard tests assert reasons.\n\n**New non-blocking notes:**\n* **NF1.** `premarker_admission`'s worktree check passes when `execution_host.worktree` is missing and the cwd is the\n  repository root. Require the field to be present.\n* **NF2.** An attempt directory can be deleted before the Q commit. E6's ledger anchoring detects a second run only if the\n  ledger line is kept, so the qualification reviewer should check the ledger together with the attempt tree.\n",
+   "git_blob": "4dc70b92f296542b53a77150719d31ec46e424d1",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_P309.md",
+   "verdict_lines_verbatim": [
+    "FREEZE_BLOCKED",
+    "D5_EXCEPTION_LIMITED_TO_RATIFIED_SITES: NO"
+   ]
+  },
+  "prefreeze_r4_followup_2": {
+   "conditions_verbatim": "## Conditions\n\n* **R4F2-C1 (F3; before the freeze).** The formal scan and T7 reject the owner's seven D5 classes by closed-world\n  allowlists, not by call shape:\n  * **(a) Imports.** Every Python file under `code/`, `tests/`, `verify/` and `start_state/` imports only modules on a\n    per-directory allowlist in `SCANNER_ALLOWANCE_P309.json`. The following are never allowlisted except inside an\n    AST-pinned `reviewed_functions` entry with a true reason:\n    * ctypes, cffi, runpy, pickle, marshal, shelve, code, codeop, inspect, gc, multiprocessing, concurrent, pty and\n      builtins;\n    * `importlib.machinery`, `importlib.util` and `importlib.abc`.\n  * **(b) Introspection.** Outside AST-pinned reviewed functions, each of the following is a finding:\n    * `getattr`, `setattr`, `delattr` and `hasattr` with a non-literal name or on a module;\n    * `vars`, `globals`, `locals` and `dir`;\n    * `__dict__`, `__getattribute__`, `__builtins__`, `__globals__`, `__code__`, `f_globals` and `f_locals`;\n    * any `sys.modules` access and `sys._getframe`;\n    * `__import__`;\n    * `object.__setattr__` and `type.__setattr__`;\n    * `exec`, `eval` and `compile` under any spelling.\n  * **(c) Module attribute stores.** In tests and QC tools, a store or delete on an attribute of a module object is a\n    finding however the module was obtained. That includes an import alias, a local alias, an attribute of another\n    project module (`P.D`, `P.D.G`, `G = D.G`) and a `sys.modules` lookup. It is allowed only by a rule-specific,\n    AST-hash-bound `t7_exemptions` entry. T7's alias tracking follows the same bindings.\n  * **(d) Environment.** `env` / `env_extra` on every runner and subprocess call is one of:\n    * `None`;\n    * a module-level fixed environment, or one built inside an AST-pinned reviewed runner;\n    * such an environment extended by literal keys from an allowlist. The allowlist is `GIT_INDEX_FILE` for the\n      genuine tree.\n\n    `p309_qualify.run`'s unused `env_extra` parameter is removed.\n  * **(e) Git verbs and options.**\n    * Each allowlisted verb has its own option allowlist. At least `-O` and `--open-files-in-pager` are forbidden.\n    * The 17 verbs that no file uses are removed. They are: archive, check-ignore, cherry, count-objects, describe,\n      diff-index, grep, name-rev, shortlog, show-ref, verify-pack, version, add, index-pack, mktree, pack-objects,\n      unpack-objects.\n    * Forwarded operands are preceded by `--end-of-options` or validated.\n  * **(f) Tokens and paths.**\n    * `bytes` constants are subject to the token rules.\n    * A file suffix that is allowed but not parsed (`.txt`, `.md`, `.json`, …) is never opened as code. N02 becomes\n      rejected, and N03 stays rejected.\n    * A write whose target has an unresolved path piece directly under the repository root, where it could be `.git`,\n      or anywhere under the git dir is a finding (REF_FILE_WRITE / GITDIR_WRITE) unless reviewed. Examples of\n      unresolved pieces: `chr()`, or a join of non-literals. The same applies when the base itself is unresolved.\n  * **(g) Backstop pins.** T8 is an equality check. The AST sha256 of `_assert_execute_context` (`c8a2fb51…`),\n    `_site_backstop` (`80d206ad…`) and `_require_own_run_nonce` (`23f3021d…`), and the `_SITE_CODES` statement, are\n    pinned in the allowance like the two sites. They are reported to the owner with the D5 record.\n  * **(h) `p309_postexec.py`.** Its blanket `T7_EXEMPT` entry becomes a rule-specific, AST-hash-bound `t7_exemptions`\n    entry.\n  * **(i) Controls.** My mutants are added as D5 controls, each rejected, and the genuine tree passes:\n    * N01–N16 and N19–N20;\n    * K01–K04;\n    * T7a–T7d and T8a–T8c;\n    * R01–R23.\n\n    The sources are `scratchpad/r4/d5_mutants2.py` to `d5_mutants5.py`, or equivalent committed copies. N17 and N18\n    are optional.\n* **R4F2-C2 (G4; before the freeze).**\n  * `validate-grant` also runs, in the PRODUCTION context exactly as `run_execute` does:\n    * `check_flags`, `check_not_evaluated` and `check_result_paths`;\n    * `check_bindings` and `check_governance_state`.\n  * It reports each in `checks`, and PASS requires all of them.\n  * T1's `validate-grant` entry set lists them, and T1 still passes.\n  * A static control checks that `validate_grant` calls them under the same condition as `run_execute`.\n  * `grant_rules.grant_validation` moves them to the list of what validate-grant checks.\n  * This is an implementation change, not a new delta.\n* **R4F2-C3.** A focused confirmation by R4 or another independent reviewer, at the tree containing R4F2-C1 and\n  R4F2-C2:\n  * the D5 controls, including every mutant of R4F2-C1(i) and M01–M15;\n  * the backstop controls;\n  * one QC11 run under `-I -S -B`.\n\n  Only then `D5_EXCEPTION_LIMITED_TO_RATIFIED_SITES: YES` and FREEZE_APPROVED.\n* **R4F2-C4.** R4F-C4 is satisfied: NF1 is applied, and NF2 is accepted as addendum 2 of the qualification-review\n  brief. NF3 (V10), NF4 (the ledger append-only check) and NF5 (the host git-config check) are applied or recorded as\n  accepted residuals.\n",
+   "git_blob": "c91828639fac2e52f46d5053123e4beb625328d0",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_2_P309.md",
+   "verdict_lines_verbatim": [
+    "FREEZE_BLOCKED",
+    "D5_EXCEPTION_LIMITED_TO_RATIFIED_SITES: NO"
+   ]
+  },
+  "prefreeze_r4_followup_3": {
+   "conditions_verbatim": "## Conditions\n\n* **R4F3-C1 (F4; before the freeze).** `run_seal_only` calls `check_host_git(ctx)` before its first git call (before\n  the `rev-parse` of the marker), so that a repository-local hook or a disallowed repository-local config key added on\n  the host between `execute` and `seal-only` is refused before seal-only's `update-ref` or `commit-tree`. It is\n  `execute`'s own already-reviewed, read-only check; no new behaviour. A control plants a hook (and a disallowed\n  repository config key) in a sandbox and asserts that `seal-only` refuses with `HOST_GIT` before writing any ref\n  (this also discharges NF8's negative control for the shared function).\n* **R4F3-C2 (NF6, NF7, NF8; recommended, the owner's or coordinator's call).**\n  * **(NF6)** Make the guard's git wrappers (`code/p309_guard.py` `_git`, `_git_bytes`, `_git_ok`) and the verifier's\n    `_run_git` hermetic (`GIT_CONFIG_NOSYSTEM=1`, `GIT_CONFIG_GLOBAL=/dev/null`), or have `check_host_git` additionally\n    reject any host global or system config key that could run a program on a read (for example `log.showSignature`\n    with a signing program, `core.fsmonitor`, `core.pager`, or `include`/`includeIf`). Whichever is chosen becomes\n    part of the git environment frozen under H7.\n  * **(NF7)** Re-run `check_host_git` immediately before the post-marker seal in `run_execute`, to close the\n    time-of-check window between admission and the seal.\n  * **(NF8)** If R4F3-C1's control does not already cover it, add a negative control for `check_host_git`'s refusal\n    path.\n* **R4F3-C3 (re-confirmation).** A focused re-confirmation by R4 or another independent reviewer at the tree that\n  applies R4F3-C1 (and any of R4F3-C2 that is adopted): the D5 controls, the backstop controls, QC11, QC12 T1–T9, and\n  the new `check_host_git` refusal control. Only then FREEZE_APPROVED. `D5_EXCEPTION_LIMITED_TO_RATIFIED_SITES: YES`\n  already holds at this tree and R4F3-C1 does not affect it (F4 is not a ref-mutation-site question).\n* **R4F3-C4 (standing).** At the freeze, the two sites keep the owner-ratified AST hashes\n  (`1ee764b7…`, `13ee3ec3…`) and the backstop keeps the A38 pins (`c8a2fb51…`, `80d206ad…`, `23f3021d…`,\n  `696a6102…`); the R4 follow-up-2 item is cited as resolved and this review's verdict is cited (H6).\n",
+   "git_blob": "410f9edc5b0e0c870d99f0dfd41e4ba7943cab19",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_3_P309.md",
+   "verdict_lines_verbatim": [
+    "FREEZE_BLOCKED",
+    "D5_EXCEPTION_LIMITED_TO_RATIFIED_SITES: YES"
+   ]
+  },
+  "prefreeze_r4_followup_4": {
+   "conditions_verbatim": "## Conditions\n\n* **R4F4-C1 (standing, at the freeze).**\n  * The two sites keep the owner-ratified AST hashes (`_arm_marker` `1ee764b7…`, `_persist_pending` `13ee3ec3…`).\n  * The backstop keeps the A38 pins (`c8a2fb51…`, `80d206ad…`, `23f3021d…`, `696a6102…`).\n  * The host-git binding keeps the AST sha256 values recorded in §5 of this review, computed at fd7da22f:\n    * `check_host_git` `4110bb9d9d864a3ada3c8e691a8ffd01f82bfebb5b5edc7cf763800669e95053`;\n    * `run_seal_only` `159262fc99300d72b4edfff705b39682ea5f647691487e3e8e0141ba2ae73dbc`;\n    * `after_marker` `cf36c8dd8a0fda1bf1146e79b0fb6aaa625a1af3404380415179ed4b0ecab333`;\n    * `run_execute` `3eab4185400556f553c0cfd8eb395c07c60875107332bdfbd7c889bbce91a918`;\n    * the `ENV` statement `6a6a1821467cc112fcc28269c8763bf5c2da6650c6f0521015895fdd50946fa5`;\n    * the `REPO_CONFIG_ALLOWED` statement `2530ba04a0b6d3f5b37a26f19c9c1a054cfa8ab4cd6f507e1ea1048efff3c229`;\n    * in the guard: the `_HERMETIC_GIT` statement `3bfe879eefdb43b977a3e87e5ef9b927acc0b6fc19e9594f18993cd14b2cdd1d`,\n      `_git` `654e71dd8ff38c63741b822aa7ae994f075469569d7d02f92312d6f6a494546d`, `_git_bytes`\n      `c8af7037024be14427f311e603d87bec54c14bc98108e758d0403926d4847668` and `_git_ok`\n      `b4341f45d6d741c5ff04c0ca51c2aae03f465af627a1eb9cc3054583a0255e05`.\n  * The qualification reviewer recomputes them with `p309_scan.ast_sha`. Any difference is a new delta under H7/H8 and\n    needs a focused confirmation.\n* **R4F4-C2 (recommended, not required for the freeze; F5).** Make T10 an equality check, as A38 did for T8, by\n  pinning the R4F4-C1 hashes in the allowance. Alternatively, extend T10 to:\n  * resolve local aliases and rebindings of `WRITERS` functions and of `check_host_git`;\n  * reject any module-level mutation of `ENV`;\n  * check `check_host_git`'s body.\n\n  Then add Y01, Y02, Y03 and Y06 (`scratchpad/r4/d5_mutants6.py`) as D5 controls. If adopted before the freeze, it is\n  a new delta (H8) with its own focused confirmation. R4F4-C1 already gives the same assurance at the freeze.\n* **R4F4-C3 (standing).** QC12 T1–T10, the D5 controls (including X01–X11 and my N, K, T7, T8, R and M01–M15 mutants),\n  the backstop controls and QC11 (including H01–H07, V10 and V11) pass at the frozen tree in the qualification run.\n",
+   "git_blob": "33bca5daf1867ac37a08520c71537c7da52de5bb",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_4_P309.md",
+   "verdict_lines_verbatim": [
+    "FREEZE_APPROVED",
+    "D5_EXCEPTION_LIMITED_TO_RATIFIED_SITES: YES"
+   ]
+  },
+  "u2_check": {
+   "conditions_verbatim": "## 8. Conditions (binding before the freeze relies on U2-CP)\n\n* **U1 (text, before U2-CP is carried verbatim into any freeze document or grant).**\n  * **§4.3:** restrict it to the load-bearing path. State that the frozen `derived_identity_gate` rebuilds an R2\n    interval for a pass/fail containment and tolerance check, exactly as C2 did. State that C2 `main` copies C_upper\n    into the measurement dict. Neither is load-bearing, tightened or adopted.\n  * **§4.4:** replace \"forms no new function of adopted scalars\" with \"forms no new form of adopted scalars: they enter\n    only through the k_i-coefficients and k-free parts of the frozen f_G and Env4 and through the unchanged f_H, p1,\n    p0; only operator-side multipliers change, under a min with the frozen value\".\n  * **§3:** state that Q1–Q5 is a reading of the definition anchored in the committed examples and C6's standing\n    clause.\n* **U2 (inventory).** Complete §5 per §3 items 1–5 of this review, including the \"absent — must not be computed\" list,\n  and carry it into the freeze.\n* **U3 (checker completeness, pinned with it).**\n  * (a) Bind each `fields_for_r` entry by AST to the corresponding `tct_rule.tail_object` / `tail_enclosure`\n    expression.\n  * (b) Verify that `srk_coefficients` selects exactly min(old, new), with old = A0·f_G / A0·Env4 and None → old.\n  * (c) Extend S3 to the modules actually loaded (`c1b_float`, `c1b_prov`) and to the guard modules, with an explicit\n    role whitelist. Extend `pins_match` to the rlr307 and C1B files against their own pin files.\n  * (d) Add RV1–RV3 and controls for (b) and (c) to the planted-control suite.\n* **U4 (drivers; the binding condition).** Before the freeze relies on U2-CP, the extended checker must pass on the\n  **frozen** FC4 Stage-2 driver, the FC5 Stage-1b driver, the per-rung serializer and the FC2 guard / verifier\n  variant. It must show:\n  * (i) the clause evaluation is AST-equivalent to the frozen `direct` except that the enclosure is 𝓗_SRK, or `direct`\n    is called unchanged through a documented injection whose crosscheck semantics are stated;\n  * (ii) none of the forbidden calls or reads of §6 (F-U2-2) occurs;\n  * (iii) no Stage-1 driver reads a record, measurement, adopted-input or registry file, or passes a record-derived\n    value into a producer;\n  * (iv) every record-field access is a subscript read in its frozen role.\n\n  QC re-runs it. **If it cannot pass, U2 is UNRESOLVED and the campaign STOPs before the freeze.**\n* **U5 (freeze declarations).** The freeze carries the corrected U2-CP verbatim, with:\n  * (a) a **prospective** declaration that P3-provenance inputs are used solely under their existing adopted standing\n    (C6:175–178; cf. C6's condition requiring an already-adopted exception to be declared prospectively);\n  * (b) the governance anchors READER_B:25 and :140–145 (consumer changes are the U3 / closure-only axis; U3 =\n    CLOSURE_ONLY is decided);\n  * (c) the statement that the classification is a governance reading adopted by the owner's ruling, not a mechanical\n    result;\n  * (d) this review's NOT_TRIGGERED_WORDING_DISCREPANCY and U2_CP_ESTABLISHED lines.\n* **U6 (record binding).** The open manifest item \"K1 record manifest path/pin\" must be closed so that the K1 records\n  P309 loads are exactly those C2 consumed: bytes bound by the frozen loader's manifest hash, and the historical\n  control reproducing C2's Γ_exact. No other P3 copy may enter, including C6's recovered files, even if byte-identical,\n  under another path.\n",
+   "git_blob": "25dc078cdbcd78a02a02c1fc97722b2fe037c658",
+   "path": "level4/closure_proofs/p5y_k5_cell309_p309_r1/reviews/REVIEW_U2_CHECK_P309.md",
+   "verdict_lines_verbatim": [
+    "U2_CP_ESTABLISHED",
+    ""
+   ]
+  }
+ },
+ "route": "P309 package 1: frozen K5-B direct clause; S = (A0_I1, min(A1_I1, A1_RLR), min(A2_I1, A2_RLR)); the TC-T order-0 channel replaced by the SRK B3/B4 min construction (THEOREM_SRK section 3)",
+ "schema": "P309_FREEZE/1",
+ "scope": "CLOSURE_ONLY (U3); never adoption, never a floor change, never r6, never a K5/P5Y status change",
+ "stage1a": {
+  "admission": "srk_gate.gate (G1-G6) with in-process verdicts of the band-scoped verifier (verify/srk_verify_indep_scoped.py) at N = 8, max_depth = 24; verdict_source = its sha256",
+  "blocks": "srk_certify.cell_blocks(C): outward 2^-10 dyadic hull Ew of C, N_E = 4 equal check sub-blocks; weight block = Ew",
+  "budget": {
+   "accounting": "user + system CPU of each job process, verification included",
+   "order": "rung-major: b1..b4 at d = 8, then 10, then 12",
+   "per_job_limit_cpu_s": 43200,
+   "start_threshold_cpu_s": 172800,
+   "stopping": "only by not starting jobs and by discarding a terminated job; never raises",
+   "termination_mapping": "only SIGXCPU, or SIGKILL with CPU >= the per-job limit, is a budget termination (fallback); any other abnormal end is JOB_EXCEPTION -> EXECUTION_INDETERMINATE (rev. 2c A22)",
+   "total_cpu_bound": "< threshold + 4 x (per-job limit + 5 s hard margin) (rev. 2c A6 as corrected, D2; R4 3.2)",
+   "wall_clock": "unbounded; no post-marker wall-clock cap (rev. 2c A6)",
+   "workers_max": 4
+  },
+  "failure_mapping": "protocol 2.5: a producer status other than CERTIFIED, a verdict other than ACCEPT, or jobs not started / terminated by the budget mechanics -> fallback (Gamma-bar_i = None, TC-T term), no retry; any exception (producer, guard refusal, verifier, gate, driver) after the marker -> EXECUTION_INDETERMINATE",
+  "genuine_only": "no mutant battery, no shifted or widened probe on in-band certificates",
+  "indices": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "kernel": "whole (SRK-T OUT, rule S C5)",
+  "ladder": [
+   8,
+   10,
+   12
+  ],
+  "numerics": "THEOREM_SRK section 12 (A4) verbatim, as pinned in the producer at lock 2a03e838",
+  "serialization": "per rung: one job per (sub-block, rung) calls run_block with ladder=(d,), then certificate_json per index; never best-rung-only"
+ },
+ "stage1b": {
+  "budget": {
+   "order": "degree descending, then block (the RLR307 order)",
+   "per_job_limit_classification": "rev. 2c A5 as corrected (D2): a new parameter, efficacy-relevant, ambiguous direction; the maximal limit",
+   "per_job_limit_cpu_s": 21600,
+   "start_threshold_cpu_s": 21600,
+   "termination_mapping": "as Stage 1a (rev. 2c A22)",
+   "total_cpu_bound": "< 21 600 + 4 x (21 600 + 5) s (rev. 2c A6 as corrected, D2; R4 3.2)",
+   "wall_clock": "unbounded; no post-marker wall-clock cap (rev. 2c A6)",
+   "workers_max": 4
+  },
+  "exceptions": "an exception or an independent-reconstruction mismatch -> EXECUTION_INDETERMINATE",
+  "fallback": "CERTIFICATION_FAILED -> A1_RLR, A2_RLR := None -> S = S_I1 (protocol 3; owner G3)",
+  "guard": "code/p309_guard.producer_adapter injected as ov_quarantine (rev. 2c A4)",
+  "ladder": [
+   4,
+   6,
+   8
+  ],
+  "partition": "rlr307_stage1.blocks_for (sub-block width <= 1/100; outward 2^-20 hulls)",
+  "rules": "RLR307 Stage-1 rules verbatim (rlr307_stage1 / rlr307_independent / rlr307_pinned at their pinned bytes; C1B_R2 certifier pins)"
+ },
+ "stage2": {
+  "clause": "the pinned c2_d5_forecast.direct called unchanged through the shim (rev. 2c A11)",
+  "enclosure": "pinned tct_rule.tail_enclosure + crosscheck, then srk_adapter.srk_enclosure with the exact reproduction gate and binding to cell, geometry (5, 1/2), whole kernel and verifier_id",
+  "historical_control": "post-grant, pre-marker; both parts of rev. 2c A12 must reproduce C2's committed record for the cell byte-identically; CONTROL_FAILED -> not consumed, STOP",
+  "record_binding": "rev. 2c A13 (the 307 pattern)",
+  "supply": "S = (A0_I1, min(A1_I1, A1_RLR), min(A2_I1, A2_RLR)); S_I1 from the frozen combine"
+ },
+ "u2": {
+  "classification": "a governance reading adopted by the owner's ruling; not a mechanical result",
+  "corrected_proposition_rev2_verbatim": "**U2-CP (rev. 2).** P309 package 1's load-bearing path (Stage 1a, Stage 1b, Stage 2, as frozen) invokes no quantity\nof class Q1–Q5 (§3). Precisely:\n1. **New evidence objects are operator-only.** The only new evidence objects are the Stage-1a SRK certificates\n   (Γ̄_1..Γ̄_4) and the Stage-1b RLR certificates (A1_RLR, A2_RLR). They are computed from the CUSUM kernel\n   (h = 5, k = 1/2) at drifts in Ew, and from the frozen C2 partition of the cell interval. They read no P3 record,\n   measurement, adopted input or registry. No Stage-1 module, and no Stage-1 driver function, reads any of these or\n   passes a value derived from them into a producer.\n2. **P3-provenance inputs are used only under their existing adopted standing.** Every P3-provenance value on the\n   Stage-2 path is an already-adopted input (`TCT_INPUTS` for the cell, `ADOPTED_TAIL_INPUTS`, the adopted K1 record\n   data carried in it). It is read unchanged, from byte-pinned files, through the frozen validation gates, in exactly\n   the roles C2 consumed it. This is declared **prospectively**, as C6 requires for any use under an\n   already-adopted standing (C6:175–178, C6:665). The post-grant, pre-marker historical control must reproduce C2's\n   committed record for the cell byte-identically before the marker.\n3. **No record-level quantity is re-derived on the load-bearing path.** On that path no record field or recorded\n   interval (R2_interval, M_R2, R_interval, D_interval, eps_cell_refined, C_upper, candidate_suprema, midpoint_eps) is\n   recomputed, tightened or re-derived. The direct clause reads them by subscript only, and the SRK adapter never\n   reads them. Two gate-only operations exist, exactly as in C2, and neither is load-bearing, tightened or adopted:\n   * the frozen `derived_identity_gate` rebuilds an R2 interval (H_at_a ± eps_cell_refined, plus W2) for a pass/fail\n     containment and tolerance check;\n   * C_upper is copied from the adopted inputs into the measurement dict, as C2's `main` does.\n4. **The one new formula forms no new form of adopted scalars.** S2 replaces rad_r by rad_r^SRK (THEOREM_SRK §3),\n   a new consumer-level formula. Adopted scalars enter it only through:\n   * the k_i-coefficients and k-free parts of the frozen f_G and Env4: s_H, s_D, s_F, σ3 + ε3, σ4, s_D + ρs_H and\n     s_F + ρs_D + ρ²s_H/2;\n   * the unchanged f_H, p1 and p0.\n\n   Only operator-side multipliers change (A0·k_i → Γ̄_i), under a min with the frozen value (None → the frozen\n   value). rad_r^SRK ≤ rad_r is enforced as a refusal. The combined expression (new products, piecewise min) is a new\n   *function* of adopted scalars and Γ̄. It is not a new *form* of the adopted scalars.\n5. **The supply composition is a min.** S = (A0_I1, min(A1_I1, A1_RLR), min(A2_I1, A2_RLR)). S_I1 comes unchanged\n   from the frozen `combine` of Lemma G (built from the adopted C_upper) and the operator-only registries C1 and C2.\n   A Stage-1b CERTIFICATION_FAILED gives S = S_I1.\n\n**Consequently** the new consumer-level outputs (rad_r^SRK, 𝓗_SRK, M, Γ) are the same category as C2's own TC-T\nenclosure and Γ: consumer-level quantities built from adopted inputs in their established roles. They are not P3\nobjects adopted as new scientific evidence (C6 Condition 10). **U2 = NOT_TRIGGERED on this premise.** This\nclassification is a **governance reading adopted by the owner's ruling** (owner rulings 2, \"OWNER RULING — U2\"). It is\ngrounded in committed text, and it is not a mechanical result. The mechanical results (§6) establish the facts the\nreading rests on. Governance anchors:\n* READER_B:25 and READER_B:140–145 place consumer changes on the U3 / closure-only axis;\n* U3 = CLOSURE_ONLY is decided;\n* C6 Condition 10 is at C6:666.\n\nThe wording \"uses no P3-derived quantity\" is withdrawn and is not relied on.",
+  "incident_review_finding": "U2_FINDING: NOT_TRIGGERED_WORDING_DISCREPANCY",
+  "u2_check_verdict": "U2_CP_ESTABLISHED",
+  "withdrawn_wording": "P309 uses no P3-derived quantity (withdrawn as false)"
+ }
+}
