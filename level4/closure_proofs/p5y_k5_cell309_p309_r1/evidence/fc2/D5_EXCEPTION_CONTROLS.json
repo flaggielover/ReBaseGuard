@@ -1,7 +1,7 @@
 {
  "all_pass": true,
- "allowance_config_sha256": "cc3e9cdc6e30c4ae450f98801a388883b69372f1d79adc3baab79b1994701945",
- "controls": 155,
+ "allowance_config_sha256": "4f6db1ec96176336bd7edb62511725fac7a4611b9d3cdaedb6f5e67dd2433b4c",
+ "controls": 166,
  "results": {
   "C01_additional_marker_site": {
    "detail": "{'MARKER_MUTATION', 'REF_MUTATION_UNLISTED'}",
@@ -24,7 +24,7 @@
    "pass": true
   },
   "C06_listed_function_changed": {
-   "detail": "{'REF_MUTATION_UNLISTED', 'GIT_WRITE_UNLISTED'}",
+   "detail": "{'GIT_WRITE_UNLISTED', 'REF_MUTATION_UNLISTED'}",
    "pass": true
   },
   "C07_unlisted_an-unknown-verb": {
@@ -100,7 +100,7 @@
    "pass": true
   },
   "C11_getattr_constructed": {
-   "detail": "{'REF_MUTATION_UNLISTED', 'INTROSPECTION'}",
+   "detail": "{'INTROSPECTION', 'REF_MUTATION_UNLISTED'}",
    "pass": true
   },
   "C12_alias_through_tuple": {
@@ -120,7 +120,7 @@
    "pass": true
   },
   "C16_production_token_outside_definitions": {
-   "detail": "{'CELL_LITERAL', 'MARKER_TOKEN'}",
+   "detail": "{'MARKER_TOKEN', 'CELL_LITERAL'}",
    "pass": true
   },
   "C17_grant_path_alias_write": {
@@ -288,7 +288,7 @@
    "pass": true
   },
   "C29_listed_runner_changed": {
-   "detail": "{'ENV_UNLISTED', 'GIT_CALL_OPAQUE', 'RUNNER_UNREVIEWED'}",
+   "detail": "{'RUNNER_UNREVIEWED', 'ENV_UNLISTED', 'GIT_CALL_OPAQUE'}",
    "pass": true
   },
   "C29_non_python_file": {
@@ -324,7 +324,7 @@
    "pass": true
   },
   "C29_unregistered_wrapper": {
-   "detail": "{'GIT_CALL_OPAQUE', 'RUNNER_UNREGISTERED'}",
+   "detail": "{'RUNNER_UNREGISTERED', 'GIT_CALL_OPAQUE'}",
    "pass": true
   },
   "K01_composite_introspection_site_call": {
@@ -492,11 +492,11 @@
    "pass": true
   },
   "P0c_exactly_two_sanctioned_sites": {
-   "detail": "[{'file': 'code/p309_driver.py', 'line': 1221, 'function': '_persist_pending', 'kind': 'EXACTLY_ONCE_SITE', 'verbs': ['update-ref']}, {'file': 'code/p309_driver.py', 'line': 1211, 'function': '_arm_marker', 'kind': 'EXACTLY_ONCE_SITE', 'verbs': ['update-ref']}]",
+   "detail": "[{'file': 'code/p309_driver.py', 'line': 1223, 'function': '_persist_pending', 'kind': 'EXACTLY_ONCE_SITE', 'verbs': ['update-ref']}, {'file': 'code/p309_driver.py', 'line': 1213, 'function': '_arm_marker', 'kind': 'EXACTLY_ONCE_SITE', 'verbs': ['update-ref']}]",
    "pass": true
   },
   "P0d_formal_control_fires_every_process_kind": {
-   "detail": "[{'file': 'tests/planted_control_p309.py', 'fired': []}, {'file': 'tests/planted_control_p309_formal.py', 'fired': ['DYNAMIC_EXEC', 'DYNAMIC_IMPORT', 'ENV_UNLISTED', 'GITDIR_WRITE', 'GIT_CALL_OPAQUE', 'GIT_OPTION_FORBIDDEN', 'GIT_WRITE_UNLISTED', 'GRANT_WRITE', 'IMPORT_UNLISTED', 'INTROSPECTION', 'M",
+   "detail": "[{'file': 'tests/planted_control_p309.py', 'fired': ['IMPORT_UNLISTED']}, {'file': 'tests/planted_control_p309_formal.py', 'fired': ['DYNAMIC_EXEC', 'DYNAMIC_IMPORT', 'ENV_UNLISTED', 'GITDIR_WRITE', 'GIT_CALL_OPAQUE', 'GIT_OPTION_FORBIDDEN', 'GIT_WRITE_UNLISTED', 'GRANT_WRITE', 'IMPORT_UNLISTED', 'I",
    "pass": true
   },
   "R01_driver_git": {
@@ -619,13 +619,57 @@
    "detail": "([], ['T8_runtime_backstop_at_the_sites'])",
    "pass": true
   },
+  "X01_seal_only_check_removed": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': False, 'run_execute_recheck_after_control': True, 'after_marker_recheck_before_persist': True, 'driver_env_hermetic': True, 'jobs_inherit_env': True, 'guard_hermetic_constant': True, 'guard__git_hermetic': True, 'guard__git_bytes_h",
+   "pass": true
+  },
+  "X02_seal_only_check_after_first_git": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': False, 'run_execute_recheck_after_control': True, 'after_marker_recheck_before_persist': True, 'driver_env_hermetic': True, 'jobs_inherit_env': True, 'guard_hermetic_constant': True, 'guard__git_hermetic': True, 'guard__git_bytes_h",
+   "pass": true
+  },
+  "X03_seal_only_check_in_a_branch": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': False, 'run_execute_recheck_after_control': True, 'after_marker_recheck_before_persist': True, 'driver_env_hermetic': True, 'jobs_inherit_env': True, 'guard_hermetic_constant': True, 'guard__git_hermetic': True, 'guard__git_bytes_h",
+   "pass": true
+  },
+  "X04_execute_recheck_removed": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': True, 'run_execute_recheck_after_control': False, 'after_marker_recheck_before_persist': True, 'driver_env_hermetic': True, 'jobs_inherit_env': True, 'guard_hermetic_constant': True, 'guard__git_hermetic': True, 'guard__git_bytes_h",
+   "pass": true
+  },
+  "X05_post_marker_recheck_removed": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': True, 'run_execute_recheck_after_control': True, 'after_marker_recheck_before_persist': False, 'driver_env_hermetic': True, 'jobs_inherit_env': True, 'guard_hermetic_constant': True, 'guard__git_hermetic': True, 'guard__git_bytes_h",
+   "pass": true
+  },
+  "X06_post_marker_recheck_after_persist": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': True, 'run_execute_recheck_after_control': True, 'after_marker_recheck_before_persist': False, 'driver_env_hermetic': True, 'jobs_inherit_env': True, 'guard_hermetic_constant': True, 'guard__git_hermetic': True, 'guard__git_bytes_h",
+   "pass": true
+  },
+  "X07_driver_env_not_hermetic": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': True, 'run_execute_recheck_after_control': True, 'after_marker_recheck_before_persist': True, 'driver_env_hermetic': False, 'jobs_inherit_env': True, 'guard_hermetic_constant': True, 'guard__git_hermetic': True, 'guard__git_bytes_h",
+   "pass": true
+  },
+  "X08_job_env_overrides_global_config": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': True, 'run_execute_recheck_after_control': True, 'after_marker_recheck_before_persist': True, 'driver_env_hermetic': True, 'jobs_inherit_env': False, 'guard_hermetic_constant': True, 'guard__git_hermetic': True, 'guard__git_bytes_h",
+   "pass": true
+  },
+  "X09_guard_git_not_hermetic": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': True, 'run_execute_recheck_after_control': True, 'after_marker_recheck_before_persist': True, 'driver_env_hermetic': True, 'jobs_inherit_env': True, 'guard_hermetic_constant': True, 'guard__git_hermetic': False, 'guard__git_bytes_h",
+   "pass": true
+  },
+  "X10_guard_hermetic_value_changed": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': True, 'run_execute_recheck_after_control': True, 'after_marker_recheck_before_persist': True, 'driver_env_hermetic': True, 'jobs_inherit_env': True, 'guard_hermetic_constant': False, 'guard__git_hermetic': True, 'guard__git_bytes_h",
+   "pass": true
+  },
+  "X11_guard_git_key_after_hermetic": {
+   "detail": "{'run_execute_host_git_first': True, 'run_seal_only_host_git_first': True, 'run_execute_recheck_after_control': True, 'after_marker_recheck_before_persist': True, 'driver_env_hermetic': True, 'jobs_inherit_env': True, 'guard_hermetic_constant': True, 'guard__git_hermetic': True, 'guard__git_bytes_he",
+   "pass": true
+  },
   "Z_no_marker_namespace_ref_anywhere": {
    "detail": "[]",
    "pass": true
   }
  },
  "scan_sha256": "aba944832c716cb9681bf52611ea220c36094ccebe71c954cafb042b640f0d65",
- "static_check_sha256": "45d6e38bf0f8a6f1147ead9e51724b0462d546eec8b2191feeec487b85cda28b",
- "test_sha256": "30f02b2e02722e0d66b38be8fb52518a751c82b0d1623c9bd4905b819c1bb51f",
- "utc": "2026-09-30T08:56:25Z"
+ "static_check_sha256": "bd2a1b4723cb239ebd83058f9bc6625e3a68b1911d1aaaac7d34461e4c5f19be",
+ "test_sha256": "d968f5304a6f0edf0c0fac1bdf2eb6f38bbf84f547fe511ae3cadc3693cd92d8",
+ "utc": "2026-09-30T11:47:24Z"
 }
