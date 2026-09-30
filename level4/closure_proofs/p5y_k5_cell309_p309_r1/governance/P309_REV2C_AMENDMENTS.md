@@ -270,3 +270,74 @@ hashes equal the ones R4 recorded (`c8a2fb51…`, `80d206ad…`, `23f3021d…`),
 
 **Liabilities.** The freeze parameters add the R4 follow-up-2 item and the A40 finding. The proposal carries
 `host_git`.
+
+## Fifth delta: resolution of R4 follow-up 3 (FREEZE_BLOCKED; D5 exception limited) (append-only)
+
+**Sources:**
+* `reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_3_P309.md`: F4; conditions R4F3-C1 to R4F3-C4; notes NF6, NF7, NF8, NF9.
+
+The earlier sections stay as written. Where they differ from this section, this section governs.
+* The two owner-ratified sites are unchanged (`1ee764b7…`, `13ee3ec3…`).
+* The backstop is unchanged: its AST hashes equal the A38 pins (`c8a2fb51…`, `80d206ad…`, `23f3021d…`, `696a6102…`).
+* R4 found `D5_EXCEPTION_LIMITED_TO_RATIFIED_SITES: YES` at the preceding tree. No row here touches a ref-mutation site.
+
+**Review status.**
+* A43, A44 and A45 extend A40's host-git binding: A43 to seal-only, A44 to `execute`'s later git writes, A45 to the
+  guard's git. They are **binding and rule changes**, so they go to the delta reviewer (C2, G9, H7, H8).
+* All rows go to R4's focused re-confirmation (R4F3-C3).
+
+| id | source | change | direction | new rule? |
+|---|---|---|---|---|
+| **A43** | R4F3-C1 (F4) | **`seal-only` runs `check_host_git` first.** `run_seal_only` calls `check_host_git(ctx)` right after `check_flags()`, before its first git call (the `rev-parse` of the marker). A repository hook or a disallowed repository config key present at `seal-only` is refused (`HOST_GIT`) before `_persist_pending`'s `update-ref` and before `seal_blob`'s `commit-tree` and branch move | fail-closed: the recovery is refused until the host is clean, and the evidence stays where it was | **yes** (a binding: A40's rule extended to `seal-only`) |
+| **A44** | R4F3-C2 NF7 | **`execute` repeats the check before its later git writes.** (a) After the historical control, as the top-level statement just before the first git write (the CONTROL_FAILED seal, or the run nonce and the marker). A refusal there is before the marker: exit 2, nothing sealed, nothing consumed. (b) After the marker, in `after_marker`, inside the try that holds the evidence persist, just before it. A refusal there sends the evidence to the emergency file (exit 4, UNSEALED). `seal-only` (A43) refuses until the hook or key is removed, then seals | before the marker: fail-closed and outcome-neutral; after it: the evidence is kept and no git write runs under a hook | **yes** (a rule) |
+| **A45** | R4F3-C2 NF6 | **The guard's git is hermetic.** See the notes below the table. | fail-closed; removes a host-dependent refusal cause | **yes** (a binding: the guard's git environment) |
+| **A46** | R4F3-C1, NF8 | **Controls.** See the notes below the table. | none | no |
+| **A47** | NF9 | **Allowlist narrowing.** Removed: `importlib` from `import_policy.allowed.code`; `c2_d5_forecast` and `tct_rule` from `allowed.tests`; `--diff-filter=` from `git_verb_options.diff-tree`; the redundant `--end-of-options` entries of `read-tree` and `archive` (`classify_git` accepts it as a terminator before the per-verb check) | narrows only | no |
+
+**A45 in detail.**
+* **The change.** The guard's `_git`, `_git_bytes` and `_git_ok` strip `GIT_*` as before, then set
+  `GIT_CONFIG_NOSYSTEM=1` and `GIT_CONFIG_GLOBAL=/dev/null` (`_HERMETIC_GIT`).
+* **Why.** Before this, the guard's git read the host's `~/.gitconfig` through `HOME`, both in the driver process and
+  inside the Stage-1 jobs (the strip removed the driver's hermetic keys). R4 showed that a global `log.showSignature`
+  would corrupt the guard's one-commit count, a fail-closed refusal.
+* **The verifier variant is unchanged.** Inside `execute` it runs only in the Stage-1 jobs. `_spawn_job` starts those
+  with the driver's `ENV` (`{**ENV, "PYTHONHASHSEED": "0"}`), and the variant's `_run_git` copies that environment. So
+  the variant's git already ignores the host's system and global configuration there; T10 checks the spawn
+  environment. Outside `execute` (the post-execution checks, the verifier's own runs), the variant writes no ref.
+
+**A46 in detail.**
+* **QC11 (sandbox; TEST names only; the planted hook is a plain, non-executable file, so git never runs it):**
+  * H01 and H02: `execute` refuses a hook and a disallowed key (`core.hooksPath`) before the marker;
+  * H03 and H04: a hook that appears during the control is refused by the A44(a) re-check, with nothing sealed and
+    nothing consumed (a passing and a failing control);
+  * H05: a hook that appears during the evaluation. There is no pending ref, the evidence is in the emergency file
+    (exit 4), `seal-only` refuses while the hook exists and seals once it is removed;
+  * H06 and H07: `seal-only` on persisted, unsealed evidence refuses a hook and a disallowed key, with nothing
+    written, and seals once each is removed;
+  * V11: `validate-grant` fails exactly its `host_git` check when a hook is present.
+* **New QC12 T10.** The host-git check precedes every git write:
+  * in `run_execute` and `run_seal_only`, a top-level `check_host_git(ctx)` comes before any other call except the
+    hooks refusal, `production_context`, `check_flags` and the clock;
+  * in `run_execute`, a second one lies after the control and before the first later write;
+  * in `after_marker`, one precedes the persist within its try, and no earlier statement writes;
+  * the driver's `ENV` and the job environment are hermetic, and the guard's three runners apply `_HERMETIC_GIT`
+    with no later `GIT_` key.
+
+  T10 fails on the tree before this delta.
+* **D5 X01–X11.** Static mutants in temporary copies, never executed. Each must fail T10 itself:
+  * the seal-only check removed, moved after the first git call, or put in a branch;
+  * the execute re-check removed;
+  * the post-marker re-check removed or moved after the persist;
+  * the driver's `ENV` or the job environment made non-hermetic;
+  * the guard's hermetic update removed, its value changed, or a `GIT_` key stored after it.
+
+**Whitelist changes.**
+* `reviewed_functions`: rehashed `run_execute` and the guard's three runners (their reasons now name A45); added
+  `host_git_flows` and `validate_flows` (`gitdir_write`, `ref_file_write`: the planted hook and config key, sandbox
+  only).
+* `ref_mutation_functions`: rehashed `validate_flows` (reason V01–V11).
+* `t7_exemptions`: the QC11 file's module hash is refreshed.
+* The dev manifest is regenerated (pre-freeze).
+
+**Liabilities.** The freeze parameters add the R4 follow-up-3 item. The `host_git` texts of the grant rules and the
+proposal name A43–A45, and the proposal says what to do after a post-marker `HOST_GIT` refusal.

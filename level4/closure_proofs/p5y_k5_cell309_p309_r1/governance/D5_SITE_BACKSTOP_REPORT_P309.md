@@ -90,3 +90,23 @@ The freeze waits for both verdicts.
   The effect is fail-closed before the marker. After the marker, it removes a host-dependent failure.
 
 Execution authority remains withheld. No production ref exists.
+
+## Addendum 2 (R4 follow-up 3; rev. 2c fifth delta, A43–A45)
+
+* **Unchanged.**
+  * The two sites and their owner-ratified AST hashes.
+  * The backstop and its A38 pins.
+  * R4 found the D5 exception limited to the two ratified sites (`D5_EXCEPTION_LIMITED_TO_RATIFIED_SITES: YES`).
+* **Why the freeze was still blocked.** `seal-only`, the recovery step, did not run the host-git check that `execute`
+  runs. A repository hook added between `execute` and `seal-only` would have run at `seal-only`'s ref write.
+* **Fixed, before the freeze:**
+  * `seal-only` now runs that check first;
+  * `execute` repeats it just before its first git write after the historical control, and again before the
+    post-marker evidence persist. If it refuses there, the evidence goes to the emergency file and `seal-only` seals it
+    once the host is clean;
+  * the guard's own git calls ignore the host's system and global git configuration.
+
+  Each case is a control.
+
+The effect is fail-closed before the marker. After the marker, the evidence is kept and no git write runs under a hook.
+Execution authority remains withheld. No production ref exists.

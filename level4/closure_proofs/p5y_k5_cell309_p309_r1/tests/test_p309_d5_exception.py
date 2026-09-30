@@ -342,10 +342,55 @@ def run() -> dict:
         scan, _ = planted(edits)
         t(f"C29_{nm}", want in kinds(scan), kinds(scan))
     R.update(r4_round3())
+    R.update(r4f3_host_git())
     own = subprocess.run(["git", "-C", str(D.REPO), "for-each-ref", "--format=%(refname)"], capture_output=True,
                          text=True).stdout.split()
     t("Z_no_marker_namespace_ref_anywhere", not [r for r in own if r.startswith((G._PROD_NAMESPACE, G._TEST_NAMESPACE))],
       [r for r in own if r.startswith((G._PROD_NAMESPACE, G._TEST_NAMESPACE))])
+    return R
+
+
+def r4f3_host_git() -> dict:
+    """R4 follow-up 3 (R4F3-C1, NF6, NF7; rev. 2c A43-A45): static mutants in temporary copies (never executed) that
+    remove, move or branch the host-git check, or make the guard's or the jobs' git non-hermetic.  Each must fail QC12
+    T10 itself (not only the scanner's hash pins)."""
+    R = {}
+    GUARD = "code/p309_guard.py"
+    so = "    check_host_git(ctx)                                   # A43 (R4F3-C1): before seal-only's first git call\n"
+    rx = ("    check_host_git(ctx)                                   # A44 (R4F3 NF7): again, just before this run's "
+          "first git write\n")
+    am = ("        # the evidence then goes to the emergency file, and seal-only (which re-checks, A43) seals it once removed\n"
+          "        check_host_git(ctx)\n")
+    am_call = "        blob, channel = persist(ctx, data), \"pending_ref\"\n"
+    first_git = "    marker = git(\"rev-parse\", \"-q\", \"--verify\", ctx.marker_ref, repo=ctx.repo).stdout.strip()\n"
+    sig = "    for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP, signal.SIGQUIT):\n"
+    X = {
+        "X01_seal_only_check_removed": {DRIVER: (so, "")},
+        "X02_seal_only_check_after_first_git": {DRIVER: (
+            so + sig + "        signal.signal(sig, signal.SIG_IGN)\n    check_branch(ctx)\n" + first_git,
+            sig + "        signal.signal(sig, signal.SIG_IGN)\n    check_branch(ctx)\n" + first_git + so)},
+        "X03_seal_only_check_in_a_branch": {DRIVER: (so, "    if ctx.kind == \"PRODUCTION\":\n    " + so)},
+        "X04_execute_recheck_removed": {DRIVER: (rx, "")},
+        "X05_post_marker_recheck_removed": {DRIVER: (am, "")},
+        "X06_post_marker_recheck_after_persist": {DRIVER: (am + am_call, am_call + am)},
+        "X07_driver_env_not_hermetic": {DRIVER: ("       \"GIT_CONFIG_NOSYSTEM\": \"1\", \"GIT_CONFIG_GLOBAL\": \"/dev/null\",\n",
+                                                 "")},
+        "X08_job_env_overrides_global_config": {DRIVER: ("env={**ENV, \"PYTHONHASHSEED\": \"0\"})",
+                                                         "env={**ENV, \"PYTHONHASHSEED\": \"0\", "
+                                                         "\"GIT_CONFIG_GLOBAL\": \"/tmp/p309-x\"})")},
+        "X09_guard_git_not_hermetic": {GUARD: ("    env.update(_HERMETIC_GIT)\n    env[\"LC_ALL\"] = \"C\"\n",
+                                               "    env[\"LC_ALL\"] = \"C\"\n")},
+        "X10_guard_hermetic_value_changed": {GUARD: ("\"GIT_CONFIG_GLOBAL\": \"/dev/null\"}",
+                                                     "\"GIT_CONFIG_GLOBAL\": \"/tmp/p309-x\"}")},
+        "X11_guard_git_key_after_hermetic": {GUARD: (
+            "    env.update(_HERMETIC_GIT)\n    r = subprocess.run([\"git\", \"-C\", str(repo), *args], capture_output=True, "
+            "env=env)\n", "    env.update(_HERMETIC_GIT)\n    env[\"GIT_CONFIG_GLOBAL\"] = \"/tmp/p309-x\"\n"
+            "    r = subprocess.run([\"git\", \"-C\", str(repo), *args], capture_output=True, env=env)\n")},
+    }
+    T10 = "T10_host_git_checked_before_git_writes"
+    for name, edits in X.items():
+        scan, static = planted(edits)
+        R[name] = {"pass": static_fail(static, T10), "detail": str(static[T10]["detail"])[:300]}
     return R
 
 

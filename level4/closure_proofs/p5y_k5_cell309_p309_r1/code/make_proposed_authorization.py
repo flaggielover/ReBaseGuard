@@ -117,12 +117,16 @@ def main() -> int:
                                                + "\n" + fp["reviews"]["delta3_incident_independence"][
                                                    "conditions_verbatim"]
                                                + "\n" + fp["reviews"]["delta4_incident_independence"][
+                                                   "conditions_verbatim"]
+                                               + "\n" + fp["reviews"]["delta5_incident_independence"][
                                                    "conditions_verbatim"],
         "prefreeze_review_conditions_verbatim": fp["reviews"]["prefreeze_r4"]["conditions_verbatim"] + "\n"
                                                 + fp["reviews"]["prefreeze_r4_followup"]["conditions_verbatim"]
                                                 + "\n" + fp["reviews"]["prefreeze_r4_followup_2"][
                                                     "conditions_verbatim"]
                                                 + "\n" + fp["reviews"]["prefreeze_r4_followup_3"][
+                                                    "conditions_verbatim"]
+                                                + "\n" + fp["reviews"]["prefreeze_r4_followup_4"][
                                                     "conditions_verbatim"],
         "horizon_notice": "a run longer than the grant's remaining validity turns the per-call expiry check into "
                           "EXECUTION_INDETERMINATE or a silent SRK loss; not_after_utc must be at least 14 days after "
@@ -166,7 +170,13 @@ def main() -> int:
                         "fixed identity p309-execute and no signature; the repository's own configuration, in the "
                         "local or worktree scope, may hold only the keys matching the driver's REPO_CONFIG_ALLOWED "
                         "(listed exactly in host_git_allowed_keys) and the hooks directory must hold no hook; git >= "
-                        "2.32; validate-grant reports any violation before the grant commit (rev. 2c A40)",
+                        "2.32; validate-grant reports any violation before the grant commit (rev. 2c A40). "
+                        "seal-only runs the same check before its first git call (A43). execute repeats it after the "
+                        "historical control, just before its first git write (a refusal there is before the marker: "
+                        "nothing consumed), and after the marker just before the evidence persist: a refusal there "
+                        "writes the evidence to the emergency file and exits 4 (UNSEALED); remove the hook or key, "
+                        "then run seal-only, which refuses until the host is clean (A44). The guard's git also "
+                        "ignores the host's system and global configuration (A45)",
             "host_git_allowed_keys": list(D.REPO_CONFIG_ALLOWED),
             "execution_procedure": "on the named host, in the named worktree, on the named branch with HEAD attached "
                                    "at the grant commit (made after a validate-grant PASS, above); remove every "

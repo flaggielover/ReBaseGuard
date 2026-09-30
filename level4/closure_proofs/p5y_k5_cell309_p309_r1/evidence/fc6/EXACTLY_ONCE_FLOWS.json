@@ -1,7 +1,7 @@
 {
  "all_pass": true,
- "driver_sha256": "754386a55d0f5fbd1b136a7ca8734f8433a6134b8f34dd02f1f388929ff46451",
- "flows": 104,
+ "driver_sha256": "8cc96f34e6673d16fcf31f831328173f32ad7cdeaab455b06103a8668ddd1a81",
+ "flows": 112,
  "results": {
   "A01_shifted_cell_same_width": {
    "got": "('REFUSED', 'ADMISSION')",
@@ -317,6 +317,46 @@
    "got": "SEAL_ONLY: the marker does not name a grant commit",
    "pass": true
   },
+  "H01_execute_hook_refused_before_marker": {
+   "got": "('REFUSED', 'HOST_GIT')",
+   "pass": true
+  },
+  "H02_execute_config_key_refused_before_marker": {
+   "got": "('REFUSED', 'HOST_GIT')",
+   "pass": true
+  },
+  "H03_hook_during_control_refused_before_marker": {
+   "got": "('REFUSED', 'HOST_GIT')",
+   "pass": true
+  },
+  "H04_hook_during_failed_control_refused_before_seal": {
+   "got": "('REFUSED', 'HOST_GIT')",
+   "pass": true
+  },
+  "H05_hook_during_evaluation_emergency_then_seal_only": {
+   "got": [
+    4,
+    "HOST_GIT",
+    0
+   ],
+   "pass": true
+  },
+  "H06_seal_only_hook_refused": {
+   "got": [
+    4,
+    "HOST_GIT",
+    0
+   ],
+   "pass": true
+  },
+  "H07_seal_only_config_key_refused": {
+   "got": [
+    4,
+    "HOST_GIT",
+    0
+   ],
+   "pass": true
+  },
   "I01_review_mode_P10_TEST_band": {
    "got": {
     "P10": true,
@@ -407,7 +447,7 @@
   },
   "S06_job_limit_terminates_and_discards": {
    "got": {
-    "cpu_s": 1.003,
+    "cpu_s": 1.0,
     "kind": "TERMINATED_JOB_LIMIT",
     "signal": 24
    },
@@ -480,7 +520,7 @@
   },
   "S17_sigxcpu_below_limit_is_job_exception": {
    "got": {
-    "cpu_s": 0.016,
+    "cpu_s": 0.014,
     "error": "killed by signal 24 below the CPU limit",
     "kind": "JOB_EXCEPTION"
    },
@@ -553,11 +593,23 @@
   "V10_window_commit_between_validation_and_grant": {
    "pass": true
   },
+  "V11_hook_present": {
+   "got": {
+    "branch": true,
+    "clean": true,
+    "flags": true,
+    "host_git": false,
+    "host_git_refusal": "HOST_GIT: git hooks present: ['reference-transaction']",
+    "not_evaluated": true,
+    "result_paths": true
+   },
+   "pass": true
+  },
   "Z_no_production_ref_anywhere": {
    "got": [],
    "pass": true
   }
  },
- "test_sha256": "1c726634bdc63f84fb7c9eba3cc37c02b3b2ab517f5467c50c3fd7fbb2ef8a68",
- "utc": "2026-09-30T08:14:55Z"
+ "test_sha256": "935d91dc944b28f948f21b16550f0ec07cbcf77a1da0d791d857c099bf9103c0",
+ "utc": "2026-09-30T11:11:09Z"
 }

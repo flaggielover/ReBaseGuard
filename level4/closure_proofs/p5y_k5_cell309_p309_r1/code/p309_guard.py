@@ -53,6 +53,9 @@ _TEST_MANIFEST_PATH = "TEST_ONLY/P309_TEST_FREEZE_MANIFEST.json"
 _TEST_CELL = "TEST_ONLY_DO_NOT_EXECUTE"
 
 _HEX40 = frozenset("0123456789abcdef")
+# rev. 2c A45 (R4 follow-up 3 NF6): the guard's git ignores the host's system and global config, as the driver's
+# does (A40); the repository's own config and hooks are vetted by the driver's check_host_git
+_HERMETIC_GIT = {"GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": "/dev/null"}
 
 
 class QuarantineRefusal(RuntimeError):
@@ -61,6 +64,7 @@ class QuarantineRefusal(RuntimeError):
 
 def _git(repo: Path, *args: str) -> str:
     env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+    env.update(_HERMETIC_GIT)
     env["LC_ALL"] = "C"
     r = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, text=True, env=env)
     if r.returncode != 0:
@@ -70,6 +74,7 @@ def _git(repo: Path, *args: str) -> str:
 
 def _git_bytes(repo: Path, *args: str) -> bytes:
     env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+    env.update(_HERMETIC_GIT)
     r = subprocess.run(["git", "-C", str(repo), *args], capture_output=True, env=env)
     if r.returncode != 0:
         raise RuntimeError(f"git {args[0]} failed")
@@ -78,6 +83,7 @@ def _git_bytes(repo: Path, *args: str) -> bytes:
 
 def _git_ok(repo: Path, *args: str) -> bool:
     env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+    env.update(_HERMETIC_GIT)
     return subprocess.run(["git", "-C", str(repo), *args], capture_output=True, env=env).returncode == 0
 
 

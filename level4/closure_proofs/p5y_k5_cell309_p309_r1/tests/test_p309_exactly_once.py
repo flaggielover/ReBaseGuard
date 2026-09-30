@@ -478,6 +478,89 @@ def post_marker_flows() -> dict:
     return R
 
 
+# ------------------------------------------- R4 follow-up 3: the host-git check (rev. 2c A43, A44; R4F3-C1, NF7, NF8)
+def host_git_flows() -> dict:
+    """a repository hook (planted as a plain, NON-executable file: git never runs it) or a disallowed repository config
+    key is refused with HOST_GIT before any ref write: by execute before the marker (NF8), by execute's re-check after
+    the control (NF7), by the post-marker re-check before the persist (NF7: the evidence goes to the emergency file and
+    nothing is persisted as a ref), and by seal-only (R4F3-C1), which seals once the hook or key is gone."""
+    R = {}
+    HOOK = "reference-transaction"
+    hook = lambda sb: (git_dir_of(sb) / "hooks" / HOOK).write_text("# TEST_ONLY planted hook; not executable\n")  # noqa: E731
+    unhook = lambda sb: (git_dir_of(sb) / "hooks" / HOOK).unlink()  # noqa: E731
+
+    def badkey(sb):
+        cfg = git_dir_of(sb) / "config"
+        saved = cfg.read_bytes()
+        cfg.write_bytes(saved + b"[core]\n\thooksPath = /nonexistent-p309-test\n")
+        return lambda: cfg.write_bytes(saved)
+
+    def state(sb):
+        return (refs(sb), sh(sb, "rev-parse", "HEAD"), (git_dir_of(sb) / D.EMERGENCY_NAME).exists(),
+                (git_dir_of(sb) / D.RUN_NONCE_NAME).exists(), result_path(sb).exists())
+
+    def bad_seal(ctx, blob, msg):
+        raise OSError("stub: seal failed")
+    # H01 / H02: execute, before the marker
+    for name, plant in (("H01_execute_hook_refused_before_marker", hook),
+                        ("H02_execute_config_key_refused_before_marker", badkey)):
+        sb = new_sandbox(name)
+        build_chain(sb)
+        plant(sb)
+        before = state(sb)
+        out = execute(sb)
+        R[name] = {"pass": out == ("REFUSED", "HOST_GIT") and state(sb) == before and G.TEST_MARKER not in refs(sb),
+                   "got": str(out)}
+    # H03 / H04: a hook that appears during the historical control is refused by the re-check, before the
+    # CONTROL_FAILED seal or the marker (nothing sealed, nothing consumed)
+    for name, base in (("H03_hook_during_control_refused_before_marker", OK_CONTROL),
+                       ("H04_hook_during_failed_control_refused_before_seal", BAD_CONTROL)):
+        sb = new_sandbox(name)
+        build_chain(sb)
+        before = state(sb)
+        out = execute(sb, control=lambda: (hook(sb), base())[1])
+        R[name] = {"pass": out == ("REFUSED", "HOST_GIT") and state(sb) == before and G.TEST_MARKER not in refs(sb),
+                   "got": str(out)}
+    # H05: a hook that appears during the evaluation: no pending ref, the evidence goes to the emergency file (exit 4);
+    # seal-only refuses while the hook exists and seals once it is removed
+    sb = new_sandbox("H05_hook_during_evaluation")
+    build_chain(sb)
+    rc = execute(sb, evaluator=lambda con, prep: (hook(sb), ev_ok(con, prep))[1])
+    mid = state(sb)
+    try:
+        D.run_seal_only(ctx_of(sb))
+        so = "not refused"
+    except D.Refusal as exc:
+        so = exc.code
+    after = state(sb)
+    unhook(sb)
+    rc2 = D.run_seal_only(ctx_of(sb))
+    R["H05_hook_during_evaluation_emergency_then_seal_only"] = {
+        "pass": rc == 4 and G.TEST_MARKER in mid[0] and G.TEST_PENDING_REF not in mid[0] and mid[2] and not mid[4]
+        and so == "HOST_GIT" and after == mid and rc2 == 0 and status_of(sb) == "TARGET_EVALUATED"
+        and G.TEST_PENDING_REF in refs(sb), "got": [rc, so, rc2]}
+    # H06 / H07: seal-only on persisted, unsealed evidence (the seal failed): refused while a hook or a disallowed key
+    # is present, nothing written; sealed once it is removed
+    for name, plant in (("H06_seal_only_hook_refused", lambda sb: (hook(sb), lambda: unhook(sb))[1]),
+                        ("H07_seal_only_config_key_refused", badkey)):
+        sb = new_sandbox(name)
+        build_chain(sb)
+        rc = execute(sb, sealer=bad_seal)
+        undo = plant(sb)
+        before = state(sb)
+        try:
+            D.run_seal_only(ctx_of(sb))
+            so = "not refused"
+        except D.Refusal as exc:
+            so = exc.code
+        after = state(sb)
+        undo()
+        rc2 = D.run_seal_only(ctx_of(sb))
+        R[name] = {"pass": rc == 4 and so == "HOST_GIT" and after == before and rc2 == 0
+                   and status_of(sb) == "TARGET_EVALUATED", "got": [rc, so, rc2]}
+    return R
+
+
 # --------------------------------------------------------------------------- R4F F2: the pre-commit grant validator
 def validate_flows() -> dict:
     """validate-grant on an UNCOMMITTED candidate (a file outside the sandbox) with HEAD at the would-be parent of the
@@ -505,6 +588,8 @@ def validate_flows() -> dict:
         if dirty:
             (sb / NS / "evidence").mkdir(parents=True, exist_ok=True)
             (sb / NS / "evidence" / "dirty.txt").write_text("x")
+        if edit:
+            edit(sb)
         before = (refs(sb), sh(sb, "rev-parse", "HEAD"), sh(sb, "status", "--porcelain", "--untracked-files=all"))
         out = D.validate_grant(cand, OWN_SHA, ctx=ctx_of(sb))
         after = (refs(sb), sh(sb, "rev-parse", "HEAD"), sh(sb, "status", "--porcelain", "--untracked-files=all"))
@@ -544,6 +629,14 @@ def validate_flows() -> dict:
     R["V07_wrong_chain_commit"] = {"pass": out["pass"] is False and out["chain"] is False and same}
     sb, c, cand, out, same = validate("V08_dirty_tree", dirty=True)
     R["V08_dirty_tree"] = {"pass": out["pass"] is False and out["clean_tree_before"] is False and same}
+    # V11 (R4 follow-up 3 NF8): a planted repository hook fails the host_git check
+    sb, c, cand, out, same = validate("V11_hook_present", edit=lambda sb: (
+        git_dir_of(sb) / "hooks" / "reference-transaction").write_text("# TEST_ONLY planted hook; not executable\n"))
+    pre = out.get("execute_prechecks", {})
+    R["V11_hook_present"] = {"pass": out["pass"] is False and {k for k, v in pre.items() if not k.endswith("_refusal")
+                                                                and not v} == {"host_git"}
+                             and "HOST_GIT" in pre.get("host_git_refusal", "") and all(out["checks"].values())
+                             and out["chain"] and same, "got": pre}
     return R
 
 
@@ -845,6 +938,7 @@ if __name__ == "__main__":
     res.update(admission_flows())
     res.update(validate_flows())
     res.update(post_marker_flows())
+    res.update(host_git_flows())
     res.update(stage_flows())
     res.update(integration_flows())
     bad = [k for k, v in res.items() if not v.get("pass")]

@@ -131,6 +131,14 @@ DISCLOSED_LIABILITIES = [
     "is fail-closed and outcome-neutral and requires git >= 2.32 and an allowlisted repository configuration with no "
     "hooks on the execution host; A39 toward a conclusive outcome",
     "fourth delta result-chasing component LOW (delta-4 review)",
+    "R4 follow-up 3 was FREEZE_BLOCKED with D5_EXCEPTION_LIMITED_TO_RATIFIED_SITES: YES (F4: the A40 host-git "
+    "binding did not cover seal-only, a separate, later invocation that runs update-ref and commit-tree; a "
+    "repository-local hook or a disallowed repository config key added between execute and seal-only would have run "
+    "there; no second target evaluation was at risk); resolved before the freeze by the fifth delta (A43: seal-only "
+    "runs check_host_git before its first git call; A44: execute repeats it after the historical control, just "
+    "before its first git write, and before the post-marker persist, where a refusal sends the evidence to the "
+    "emergency file for seal-only; A45: the guard's git ignores the host's system and global configuration; A46: "
+    "controls QC11 H01-H07 and V11, QC12 T10, D5 X01-X11; A47: five unused allowlist entries removed)",
     "E6's 'dry run' label clause is met by dating, not by label: every 'qualification:' execution-ledger line dated "
     "before the freeze record is development (the pre-freeze dry runs); a departure from E6's letter (delta-3 G5; "
     "formal erratum FE-11)",
@@ -146,6 +154,8 @@ REVIEWS = {
     "delta3_incident_independence": (NS + "reviews/REVIEW_DELTA3_INCIDENT_P309.md", "## Conditions"),
     "prefreeze_r4_followup_3": (NS + "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_3_P309.md", "## Conditions"),
     "delta4_incident_independence": (NS + "reviews/REVIEW_DELTA4_INCIDENT_P309.md", "## Conditions"),
+    "prefreeze_r4_followup_4": (NS + "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_4_P309.md", "## Conditions"),
+    "delta5_incident_independence": (NS + "reviews/REVIEW_DELTA5_INCIDENT_P309.md", "## Conditions"),
 }
 
 
@@ -281,7 +291,12 @@ def build() -> dict:
                         "host_git": "execute's git ignores the host's system and global configuration and commits "
                                     "with a fixed identity; before any git call that could start a program, it "
                                     "refuses unless the repository's own configuration holds only allowlisted keys "
-                                    "(local or worktree scope) and no git hook is present; git >= 2.32 (A40)",
+                                    "(local or worktree scope) and no git hook is present; git >= 2.32 (A40); "
+                                    "seal-only runs the same check before its first git call (A43); execute repeats "
+                                    "it after the historical control, just before its first git write, and before "
+                                    "the post-marker persist, where a refusal sends the evidence to the emergency "
+                                    "file for seal-only (A44); the guard's git ignores the host's system and global "
+                                    "configuration too (A45)",
                         "site_backstop": "at each exactly-once site, before its ref mutation: arm only in execute "
                                          "mode, with the guard's pre-marker grant checks passing and this process's "
                                          "run nonce; pending only with a marker whose commit carries the grant (and "

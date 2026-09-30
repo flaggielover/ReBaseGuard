@@ -62,7 +62,11 @@ IMMUTABLE = ["governance/OWNER_DECISIONS_P309_VERBATIM.md", "governance/OWNER_RU
              # R4 follow-up 2: its review, ledger extract and mutant suites; the delta-3 review and its ledger
              "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_2_P309.md",
              "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_2_P309_EXEC_LEDGER.jsonl", "reviews/R4_FOLLOWUP2_MUTANTS.py.txt",
-             "reviews/REVIEW_DELTA3_INCIDENT_P309.md", "reviews/REVIEW_DELTA3_INCIDENT_P309_EXEC_LEDGER.jsonl"]
+             "reviews/REVIEW_DELTA3_INCIDENT_P309.md", "reviews/REVIEW_DELTA3_INCIDENT_P309_EXEC_LEDGER.jsonl",
+             # R4 follow-up 3 and the delta-4 review, each with its ledger extract
+             "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_3_P309.md",
+             "reviews/REVIEW_PREFREEZE_R4_FOLLOWUP_3_P309_EXEC_LEDGER.jsonl",
+             "reviews/REVIEW_DELTA4_INCIDENT_P309.md", "reviews/REVIEW_DELTA4_INCIDENT_P309_EXEC_LEDGER.jsonl"]
 # the append-only documents (FC2_SPEC_R2_ERRATUM_1, ERRATA_FORMAL, P309_REV2C_AMENDMENTS, D5_SITE_BACKSTOP_REPORT, the
 # qualification-review brief with its addenda) are not "unchanged since
 # their first commit"; after the freeze they are fixed like every frozen-directory file (QC13, check_grant)

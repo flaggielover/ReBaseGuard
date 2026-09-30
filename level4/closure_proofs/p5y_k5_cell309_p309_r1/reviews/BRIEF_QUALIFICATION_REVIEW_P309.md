@@ -149,3 +149,14 @@ Also include:
   * the per-verb option lists.
 * **Checklist 17 (scope).** The proposal carries `host_git` (A40). The execution host's repository config must pass
   `check_host_git`, and the owner should know this before choosing the host.
+
+## Addendum 5 (before issue; R4 follow-up 3 and the fifth delta, A43–A47)
+
+* **Checklist 11 (static check).** QC12 has T1–T10. T10 checks that the host-git check precedes every git write in
+  `execute`, `seal-only` and `after_marker`, and that the driver's, the jobs' and the guard's git environments are
+  hermetic (A43–A45).
+* **Checklist 12 (exactly-once flows).** QC11 adds H01–H07 and V11 (A46): refusals for a planted hook and a disallowed
+  repository config key before the marker, at the re-checks and at `seal-only`, and in `validate-grant`.
+* **Checklist 14 (quarantine).** Five allowlist entries are removed (A47). The D5 controls add X01–X11.
+* **Checklist 17 (scope).** The proposal's `host_git` text now covers `seal-only` and the re-checks, including what to
+  do after a post-marker `HOST_GIT` refusal (exit 4; remove the hook or key; then `seal-only`).

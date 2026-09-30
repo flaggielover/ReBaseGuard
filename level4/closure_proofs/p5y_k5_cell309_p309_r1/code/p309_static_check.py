@@ -35,6 +35,18 @@ T8 (R4 follow-up F1(a)) the runtime backstop: _assert_execute_context ends by re
    arm branch requires execute mode, G.premarker_check and the run nonce of this process; its pending branch requires
    the marker and the grant path at the marker; _SITE_CODES maps exactly the two sites' code objects and is the only
    module-level reference to them
+T9 (R4F2-C2) validate_grant runs execute's read-only pre-marker checks under the same conditions as run_execute
+T10 (R4 follow-up 3: R4F3-C1, NF6, NF7; rev. 2c A43-A45) the host-git check precedes every git write:
+   * run_execute and run_seal_only: a top-level check_host_git(ctx) comes before any other call except the hooks
+     refusal, production_context, check_flags and the clock;
+   * run_execute: a second top-level check_host_git(ctx) lies after the historical control and before the first later
+     statement that writes (the CONTROL_FAILED seal, the run nonce, the marker, after_marker);
+   * after_marker: check_host_git(ctx) precedes the persist call in the body of the same try, and no earlier statement
+     writes;
+   * the driver's ENV sets GIT_CONFIG_NOSYSTEM=1 and GIT_CONFIG_GLOBAL=/dev/null, and _spawn_job passes {**ENV, ...}
+     with no GIT_ key (the Stage-1 jobs, and the verifier variant loaded inside them, inherit it);
+   * the guard: _HERMETIC_GIT is exactly those two keys, and each of _git, _git_bytes and _git_ok applies it right
+     after stripping GIT_* and stores no GIT_ key afterwards
 """
 from __future__ import annotations
 
@@ -331,6 +343,73 @@ def t9(dtree) -> dict:
     return out
 
 
+HOST_GIT_PRE_ALLOWED = {"any", "Refusal", "production_context", "check_flags", "time", "utc"}
+WRITERS = {"git", "sealer", "seal_blob", "materializer", "materialize", "create_run_nonce", "_arm_marker",
+           "after_marker", "persist", "_persist_pending", "persist_emergency"}
+HERMETIC = {"GIT_CONFIG_NOSYSTEM": "1", "GIT_CONFIG_GLOBAL": "/dev/null"}
+
+
+def _callees(node) -> set:
+    return {c.func.id if isinstance(c.func, ast.Name) else c.func.attr for c in ast.walk(node)
+            if isinstance(c, ast.Call) and isinstance(c.func, (ast.Name, ast.Attribute))}
+
+
+def _is_host_check(st) -> bool:
+    return isinstance(st, ast.Expr) and isinstance(st.value, ast.Call) and ast.unparse(st.value) == "check_host_git(ctx)"
+
+
+def t10(dtree, gtree) -> dict:
+    fns = {n.name: n for n in dtree.body if isinstance(n, ast.FunctionDef)}
+    out = {}
+    for name in ("run_execute", "run_seal_only"):
+        body = fns[name].body if name in fns else []
+        k = next((i for i, st in enumerate(body) if _is_host_check(st)), None)
+        out[f"{name}_host_git_first"] = k is not None and all(
+            _callees(st) <= HOST_GIT_PRE_ALLOWED for st in body[:k])
+    rx = fns.get("run_execute")
+    body = rx.body if rx else []
+    ctl = [i for i, st in enumerate(body) if "historical_control" in _callees(st)]
+    later = [i for i, st in enumerate(body) if ctl and i > ctl[-1] and _callees(st) & WRITERS]
+    out["run_execute_recheck_after_control"] = bool(ctl and later) and any(
+        _is_host_check(body[i]) for i in range(ctl[-1] + 1, later[0]))
+    am = fns.get("after_marker")
+    ok = False
+    for i, st in enumerate(am.body if am else []):
+        if isinstance(st, ast.Try) and any(isinstance(c, ast.Call) and ast.unparse(c.func) == "persist"
+                                           for b in st.body for c in ast.walk(b)):
+            j = next(j for j, b in enumerate(st.body) if any(isinstance(c, ast.Call) and ast.unparse(c.func) ==
+                                                              "persist" for c in ast.walk(b)))
+            ok = any(_is_host_check(b) for b in st.body[:j]) and not any(
+                _callees(x) & WRITERS for x in am.body[:i])
+            break
+    out["after_marker_recheck_before_persist"] = ok
+    env = next((n.value for n in dtree.body if isinstance(n, ast.Assign) and ast.unparse(n.targets[0]) == "ENV"), None)
+    envd = {k.value: v.value for k, v in zip(env.keys, env.values) if isinstance(k, ast.Constant)
+            and isinstance(v, ast.Constant)} if isinstance(env, ast.Dict) else {}
+    out["driver_env_hermetic"] = all(envd.get(k) == v for k, v in HERMETIC.items())
+    sp = fns.get("_spawn_job")
+    kws = [kw.value for c in (ast.walk(sp) if sp else []) if isinstance(c, ast.Call) for kw in c.keywords
+           if kw.arg == "env"]
+    out["jobs_inherit_env"] = len(kws) == 1 and isinstance(kws[0], ast.Dict) and any(
+        k is None and ast.unparse(v) == "ENV" for k, v in zip(kws[0].keys, kws[0].values)) and not any(
+        isinstance(k, ast.Constant) and str(k.value).startswith("GIT_") for k in kws[0].keys)
+    her = [n.value for n in gtree.body if isinstance(n, ast.Assign) and ast.unparse(n.targets[0]) == "_HERMETIC_GIT"]
+    out["guard_hermetic_constant"] = len(her) == 1 and isinstance(her[0], ast.Dict) and {
+        getattr(k, "value", None): getattr(v, "value", None) for k, v in zip(her[0].keys, her[0].values)} == HERMETIC
+    gfns = {n.name: n for n in gtree.body if isinstance(n, ast.FunctionDef)}
+    for name in ("_git", "_git_bytes", "_git_ok"):
+        b = gfns[name].body if name in gfns else []
+        good = len(b) >= 2 and isinstance(b[0], ast.Assign) and ast.unparse(b[0].targets[0]) == "env" and \
+            "startswith('GIT_')" in ast.unparse(b[0].value) and ast.unparse(b[1]) == "env.update(_HERMETIC_GIT)"
+        stores = [t for st in b[2:] for n in ast.walk(st) if isinstance(n, ast.Assign) for t in n.targets
+                  if isinstance(t, ast.Subscript) and ast.unparse(t.value) == "env" and not (
+                      isinstance(t.slice, ast.Constant) and t.slice.value == "LC_ALL")]
+        calls = [n for n in ast.walk(gfns[name]) if isinstance(n, ast.Call) and ast.unparse(n.func) in (
+            "env.update", "env.setdefault", "env.pop")] if name in gfns else []
+        out[f"guard_{name}_hermetic"] = good and not stores and len(calls) == 1
+    return out
+
+
 def t8(dtree) -> dict:
     fns = {n.name: n for n in dtree.body if isinstance(n, ast.FunctionDef)}
     out = {}
@@ -446,6 +525,8 @@ def run(root: Path = FNS) -> dict:
     R["T8_runtime_backstop_at_the_sites"] = {"pass": all(d8.values()), "detail": d8}
     d9 = t9(dtree)
     R["T9_validate_grant_runs_execute_prechecks"] = {"pass": all(d9.values()), "detail": d9}
+    d10 = t10(dtree, ast.parse((root / "code" / "p309_guard.py").read_text()))
+    R["T10_host_git_checked_before_git_writes"] = {"pass": all(d10.values()), "detail": d10}
     return R
 
 

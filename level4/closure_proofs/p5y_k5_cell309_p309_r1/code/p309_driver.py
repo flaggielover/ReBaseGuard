@@ -304,7 +304,9 @@ def check_host_git(ctx: ExecContext) -> None:
     """rev. 2c A40 (R4 follow-up 2 NF5): nothing configured on the host runs a program inside execute's git calls.
     The driver's git ignores the system and global config (ENV); the repository's own config may hold only the
     allowlisted keys, in the local or worktree scope, and the hooks directory holds no hook.  Read-only; it runs before
-    any git call that could start a configured program (status, update-ref, commit-tree)."""
+    any git call that could start a configured program (status, update-ref, commit-tree).  Fifth delta (R4F3): also
+    first in seal-only (A43), and again in execute just before its first git write and before the post-marker
+    persist (A44)."""
     r = git("config", "--list", "--show-scope", "--name-only", repo=ctx.repo)
     if r.returncode:
         raise Refusal("HOST_GIT", "the repository git config cannot be listed by scope (git >= 2.32 is required)")
@@ -1395,6 +1397,9 @@ def after_marker(ctx: ExecContext, con, prep, common: dict, evaluator, t0: float
         status, data = "POST_MARKER_RECORDING_FAILED", fallback_bytes(common_min, "record", exc)
     blob, channel = None, None
     try:
+        # A44 (R4F3 NF7): a hook or config key that appeared during the evaluation refuses the post-marker git writes;
+        # the evidence then goes to the emergency file, and seal-only (which re-checks, A43) seals it once removed
+        check_host_git(ctx)
         blob, channel = persist(ctx, data), "pending_ref"
     except BaseException:  # noqa: BLE001
         try:
@@ -1430,8 +1435,8 @@ def run_execute(own_sha: str, ctx: ExecContext | None = None, prepare=None, eval
                 sealer=None, materializer=None, control=None) -> int:
     """THE execution.  Before the marker: hooks, flags, branch, not-evaluated, result paths, clean tree, check_grant,
     pins, governance, the cell from cells.json (B1), the dry admission (B3), the historical control (CONTROL_FAILED
-    -> exit 3, not consumed).  Then the run nonce and the marker (CAS), then Stage 1a / 1b / 2 and recording from
-    memory."""
+    -> exit 3, not consumed), the host git re-check (A44).  Then the run nonce and the marker (CAS), then Stage 1a /
+    1b / 2 and recording from memory."""
     if (ctx is None or ctx.kind != "SANDBOX") and any(h is not None for h in (prepare, evaluator, persist, sealer,
                                                                                 materializer, control)):
         raise Refusal("HOOKS", "test hooks are honoured only in a sandbox context")      # R4 NB4
@@ -1474,6 +1479,7 @@ def run_execute(own_sha: str, ctx: ExecContext | None = None, prepare=None, eval
               "driver_sha256": own_sha, "started_utc": started, "verifier_id": verifier_id,
               "historical_control": {k: v for k, v in ctl.items() if not k.startswith("_")},
               "python": sys.version.split()[0]}
+    check_host_git(ctx)                                   # A44 (R4F3 NF7): again, just before this run's first git write
     if not ctl["reproduces_C2_exactly"]:
         common.update({"status": "CONTROL_FAILED", "target_evaluated": False, "target_evaluations": 0,
                        "finished_utc": utc()})
@@ -1511,6 +1517,7 @@ def run_seal_only(ctx: ExecContext | None = None) -> int:
     _MODE["mode"] = "seal-only"
     ctx = ctx or production_context()
     check_flags()
+    check_host_git(ctx)                                   # A43 (R4F3-C1): before seal-only's first git call
     for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP, signal.SIGQUIT):
         signal.signal(sig, signal.SIG_IGN)
     check_branch(ctx)
