@@ -1,4 +1,4 @@
-# Overnight report: cell 309, formal campaign p5y_k5_cell309_p309_r1 (2026-09-30)
+# Overnight report (final): cell 309, formal campaign p5y_k5_cell309_p309_r1 (2026-09-30)
 
 ## 1. Final state
 
@@ -71,7 +71,9 @@ FAILURE"). **READY_FOR_OWNER_GRANT_DECISION was NOT reached.**
   D1–D5 are applied in the report's section 7.
 * **Follow-up 1:** CORRECTIONS_DISPUTED on F1 (the restart count) and F2 (the counterfactual's scope). Both are
   applied in section 8.
-* **Follow-up 2:** FOLLOWUP_2_VERDICT.
+* **Follow-up 2:** CORRECTIONS_CONFIRMED. Section 8 applies F1 and F2 exactly, and nothing before it changed. The
+  follow-up-2 brief was issued by message only. It is committed verbatim afterwards, disclosing the departure
+  from C5.
 * **Firewall disclosure by the reviewer:** hash-only reads of four pinned cell-307 files. No content was displayed,
   and no cell 305–309 value was read.
 
@@ -101,7 +103,8 @@ history.
 `ab1dcf26` addendum 7 · `f9a53745` record · `cffef234` placeholder fix + addendum 8 · **`4c754a73` F** · **`2f66bc56`
 FR** · `c950054a` record · `f433d490` failed attempt preserved · `61952023` record · `2b149412` postmortem + brief ·
 `91a5747f` record · `c7e0ff51` postmortem review + section 7 · `a491a453` record · `a5f5cb09` follow-up brief ·
-`9fefd218` record · `5f76c1bf` follow-up + section 8 · `988199b7` record · FINAL_COMMITS.
+`9fefd218` record · `5f76c1bf` follow-up + section 8 · `988199b7` record · `0a515d4c` draft of this report · `6fafd568` record · the final commit (follow-up 2, its brief
+and this final report) and its record.
 
 Every push was made with `code/checkpoint_push_p309.py`, and each one verified remote == local.
 
